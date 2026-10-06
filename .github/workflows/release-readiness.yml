@@ -162,7 +162,7 @@ jobs:
             architecture/product-surface-internal-closure.v1.generated.json
             .official-backend/contracts/product-authorization/authorization-negative-matrix.v1.json
             .official-backend/contracts/product-authorization/dwaion-agent-pep-attestation.v1.json
-            .official-backend/contracts/product-authorization/product-surfaces-v1.bundle-v4.json
+            .official-backend/contracts/product-authorization/product-surfaces-v1.bundle-v33.json
             .official-backend/contracts/product-authorization/product-surface-rollout-inventory.v1.generated.json
             .official-agent/contracts/product-authorization/dwaion-pep-v4.draft.json
             .official-agent/pyproject.toml

@@ -16,7 +16,7 @@ const authorizationSnapshotPath = path.join(
   'architecture/product-surface-authorization.v1.json'
 );
 const MATRIX_FILE = 'authorization-negative-matrix.v1.json';
-const BUNDLE_VERSION = 5;
+const BUNDLE_VERSION = 33;
 const BUNDLE_FILE = `product-surfaces-v1.bundle-v${BUNDLE_VERSION}.json`;
 const INVENTORY_FILE = 'product-surface-rollout-inventory.v1.generated.json';
 const AGENT_ATTESTATION_FILE = 'dwaion-agent-pep-attestation.v1.json';

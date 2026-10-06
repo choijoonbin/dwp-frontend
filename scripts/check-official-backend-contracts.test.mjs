@@ -122,7 +122,7 @@ function createOfficialContracts() {
       checksum: closure.generatedFrom.rolloutInventory.checksum,
     },
     exactContract: {
-      reference: 'contracts/product-authorization/product-surfaces-v1.bundle-v4.json',
+      reference: `contracts/product-authorization/${closure.generatedFrom.authorizationBundle.artifact}`,
       checksum: closure.generatedFrom.authorizationBundle.checksum,
       products: closure.products.map(({ productId }) => productId),
     },

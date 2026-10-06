@@ -4,18 +4,18 @@
   "generatedFrom": {
     "backend": {
       "repository": "https://github.com/choijoonbin/dwp-backend",
-      "revision": "0104f7ccc1298339a0d794423b94708a0e558366"
+      "revision": "2f6eff9c92c1e32dc82e8b0f00ec8b3fa70cb59c"
     },
     "authorizationBundle": {
-      "artifact": "product-surfaces-v1.bundle-v5.json",
-      "version": 5,
-      "checksum": "c69816a06349fcbd45a0d946debfbce1d67e09b3ed87a8b056ec8a43f852109f"
+      "artifact": "product-surfaces-v1.bundle-v33.json",
+      "version": 33,
+      "checksum": "254ead674e1126d50e8dcf1011486ea1127fb2479f7a82d832cdf0466995bc49"
     },
     "negativeMatrix": {
       "artifact": "authorization-negative-matrix.v1.json",
       "matrixId": "product-authorization-negative-matrix.v1",
-      "artifactChecksum": "bbe2ebff65efcaf4523e7517446e98ee21f74dc20279be93dc7502cd231f2eb8",
-      "projectionChecksum": "76bdd7d29ffbe1d6d13c8050403f91ed581a3224475de694bd074c271ae079df"
+      "artifactChecksum": "c724781668cc31284eceae5bdd535debe0bcccac1d18918a97074823713f6ac0",
+      "projectionChecksum": "275ad5024ea15cb54da4b3c226720d4adc510ea9f3f4a170cced50767194f1db"
     },
     "rolloutInventory": {
       "artifact": "product-surface-rollout-inventory.v1.generated.json",

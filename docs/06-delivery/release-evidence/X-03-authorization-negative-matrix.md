@@ -1,8 +1,8 @@
 # X-03 authorization negative matrix — external approval boundary
 
 The internal X-03 implementation boundary is **COMPLETE**. The authoritative backend artifacts are
-`dwp-backend/contracts/product-authorization/product-surfaces-v1.bundle-v4.json` with semantic
-checksum `a9cd08260fd9a11dd7c612f2db6f03bb312f1e7843a2eb10b4082660da151137` and
+`dwp-backend/contracts/product-authorization/product-surfaces-v1.bundle-v33.json` with semantic
+checksum `254ead674e1126d50e8dcf1011486ea1127fb2479f7a82d832cdf0466995bc49` and
 `authorization-negative-matrix.v1.json`. They are enforced by
 `dwp-backend/scripts/check-authorization-negative-matrix.py` and the backend root `check` task.
 
