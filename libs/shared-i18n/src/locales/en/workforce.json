@@ -302,6 +302,11 @@
     "count": "{{count}} assignments",
     "moreAvailable": "More assignments available",
     "loadMore": "Load more assignments",
+    "emptyTitle": "No effective assignment is available",
+    "emptyDescription": "Assignments appear when a worker and effective relationship are available in the current boundary.",
+    "filteredEmptyTitle": "No assignment matches these filters",
+    "filteredEmptyDescription": "Change the search, status, or effective date to review another assignment population.",
+    "resetFilters": "Reset assignment filters",
     "detail": {
       "title": "Assignment detail",
       "legalEmployer": "Legal employer",
@@ -312,6 +317,82 @@
       "current": "Current",
       "scheduled": "Scheduled",
       "empty": "No assignment is visible for this effective date."
+    },
+    "proposal": {
+      "title": "Assignment change proposal",
+      "createTitle": "Create assignment change proposal",
+      "description": "Review the current assignment, validate the effective-dated change, and submit it with governed authorization evidence.",
+      "loading": "Loading assignment change proposal",
+      "assignmentVersion": "Assignment version {{version}}",
+      "proposedChanges": "Proposed changes",
+      "findings": "Validation findings",
+      "noBlockingFindings": "Validation passed with no blocking findings.",
+      "notValidated": "Validate this draft before submission to refresh conflict and reference checks.",
+      "actions": {
+        "openCreate": "Create change proposal",
+        "create": "Save draft",
+        "validate": "Validate proposal",
+        "submit": "Submit proposal",
+        "cancel": "Cancel proposal",
+        "working": "Updating proposal",
+        "retry": "Retry"
+      },
+      "fields": {
+        "changeType": "Change type",
+        "effectiveDate": "Effective date",
+        "reasonCode": "Reason code",
+        "cancellationReason": "Cancellation reason",
+        "titleHelp": "Enter the corrected business title.",
+        "referenceKeyHelp": "Enter the canonical workforce reference key.",
+        "referenceIdHelp": "Enter the canonical UUID from workforce reference data."
+      },
+      "changeFields": {
+        "organizationId": "Destination organization ID",
+        "jobProfileKey": "Job profile key",
+        "managerAssignmentId": "Manager assignment ID",
+        "locationKey": "Location key",
+        "businessTitle": "Corrected business title"
+      },
+      "changeTypes": {
+        "TRANSFER": "Transfer",
+        "PROMOTION": "Promotion",
+        "DEMOTION": "Demotion",
+        "CHANGE_MANAGER": "Change manager",
+        "CHANGE_LOCATION": "Change location",
+        "CORRECTION": "Correct assignment"
+      },
+      "lifecycle": {
+        "DRAFT": "Draft",
+        "VALIDATED": "Validated",
+        "SUBMITTED": "Submitted",
+        "CANCELLED": "Cancelled"
+      },
+      "messages": {
+        "created": "The assignment change draft was created.",
+        "validated": "The assignment change proposal was validated.",
+        "submitted": "The assignment change proposal was submitted.",
+        "cancelled": "The assignment change proposal was cancelled."
+      },
+      "errors": {
+        "denied": "This assignment or action is outside your current workforce authority.",
+        "conflict": "The assignment or proposal changed. Current data was refreshed; review it before trying again.",
+        "invalid": "The proposal did not pass the current assignment validation rules.",
+        "unavailable": "The proposal service is temporarily unavailable. The assignment register remains available."
+      },
+      "timeline": {
+        "title": "Current and scheduled assignment timeline",
+        "loading": "Loading effective-dated assignment history",
+        "partialFailure": "The assignment is available, but its timeline could not be loaded.",
+        "empty": "No additional effective-dated assignment slices are available."
+      },
+      "audit": {
+        "title": "Proposal lifecycle evidence",
+        "created": "Draft created",
+        "validated": "Validation completed",
+        "submitted": "Proposal submitted",
+        "cancelled": "Proposal cancelled",
+        "cancellationReason": "Cancellation reason"
+      }
     },
     "filters": {
       "status": "Status",

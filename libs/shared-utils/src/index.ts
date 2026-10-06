@@ -96,6 +96,7 @@ export * from './api/notification-api';
 export * from './api/notification-attention-api';
 export * from './api/notification-app-summary-api';
 export * from './api/people-admin-api';
+export * from './api/assignment-proposal-api';
 export * from './api/hr-api';
 export * from './api/approval-api';
 export * from './api/approval-delegation-api';

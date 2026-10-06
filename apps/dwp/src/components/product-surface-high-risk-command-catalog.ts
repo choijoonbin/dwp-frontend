@@ -32,6 +32,7 @@ export type ProductSurfaceHighRiskOperation =
   | 'HCM_INTEGRATION_EXECUTE'
   | 'HCM_INTEGRATION_RETRY'
   | 'HCM_INTEGRATION_RECONCILE'
+  | 'HCM_ASSIGNMENT_PROPOSAL_SUBMIT'
   | 'DWAION_EMERGENCY_RECOVERY'
   | ApprovalRelease15HighRiskOperation;
 
@@ -221,6 +222,12 @@ export const PRODUCT_SURFACE_HIGH_RISK_COMMAND_CATALOG: readonly ProductSurfaceH
       productKey: 'hcm',
       surfaceKey: 'hcm.management',
       routeContractKey: 'route.hcm.management.integration-execute.action',
+    },
+    {
+      operation: 'HCM_ASSIGNMENT_PROPOSAL_SUBMIT',
+      productKey: 'hcm',
+      surfaceKey: 'hcm.operations',
+      routeContractKey: 'route.hcm.operations.assignment-proposal-submit.action',
     },
     {
       operation: 'DWAION_EMERGENCY_RECOVERY',

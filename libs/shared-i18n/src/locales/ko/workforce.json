@@ -302,6 +302,11 @@
     "count": "발령 {{count}}건",
     "moreAvailable": "추가 발령 있음",
     "loadMore": "발령 더 불러오기",
+    "emptyTitle": "현재 유효한 발령이 없습니다",
+    "emptyDescription": "현재 데이터 경계에 구성원과 유효 관계가 연결되면 발령이 표시됩니다.",
+    "filteredEmptyTitle": "조건에 맞는 발령이 없습니다",
+    "filteredEmptyDescription": "검색어, 상태 또는 유효일을 변경해 다른 발령 범위를 확인하세요.",
+    "resetFilters": "발령 필터 초기화",
     "detail": {
       "title": "발령 상세",
       "legalEmployer": "법적 고용 주체",
@@ -312,6 +317,82 @@
       "current": "현재",
       "scheduled": "예정",
       "empty": "이 유효일에 조회 가능한 발령이 없습니다."
+    },
+    "proposal": {
+      "title": "발령 변경안",
+      "createTitle": "발령 변경안 작성",
+      "description": "현재 발령을 확인하고 유효일 기반 변경을 검증한 뒤 통제된 권한 증적과 함께 제출합니다.",
+      "loading": "발령 변경안을 불러오는 중",
+      "assignmentVersion": "발령 버전 {{version}}",
+      "proposedChanges": "제안 변경 내용",
+      "findings": "검증 결과",
+      "noBlockingFindings": "차단 항목 없이 검증을 통과했습니다.",
+      "notValidated": "제출 전에 변경안을 검증해 충돌과 기준정보를 다시 확인하세요.",
+      "actions": {
+        "openCreate": "변경안 작성",
+        "create": "초안 저장",
+        "validate": "변경안 검증",
+        "submit": "변경안 제출",
+        "cancel": "변경안 취소",
+        "working": "변경안 처리 중",
+        "retry": "다시 시도"
+      },
+      "fields": {
+        "changeType": "변경 유형",
+        "effectiveDate": "유효일",
+        "reasonCode": "사유 코드",
+        "cancellationReason": "취소 사유",
+        "titleHelp": "정정할 직함을 입력하세요.",
+        "referenceKeyHelp": "표준 인력 기준정보 키를 입력하세요.",
+        "referenceIdHelp": "인력 기준정보의 표준 UUID를 입력하세요."
+      },
+      "changeFields": {
+        "organizationId": "이동 대상 조직 ID",
+        "jobProfileKey": "직무 프로필 키",
+        "managerAssignmentId": "관리자 발령 ID",
+        "locationKey": "근무지 키",
+        "businessTitle": "정정 직함"
+      },
+      "changeTypes": {
+        "TRANSFER": "조직 이동",
+        "PROMOTION": "승진",
+        "DEMOTION": "직급 하향",
+        "CHANGE_MANAGER": "관리자 변경",
+        "CHANGE_LOCATION": "근무지 변경",
+        "CORRECTION": "발령 정정"
+      },
+      "lifecycle": {
+        "DRAFT": "초안",
+        "VALIDATED": "검증 완료",
+        "SUBMITTED": "제출 완료",
+        "CANCELLED": "취소됨"
+      },
+      "messages": {
+        "created": "발령 변경안 초안을 생성했습니다.",
+        "validated": "발령 변경안을 검증했습니다.",
+        "submitted": "발령 변경안을 제출했습니다.",
+        "cancelled": "발령 변경안을 취소했습니다."
+      },
+      "errors": {
+        "denied": "현재 인력 권한 범위 밖의 발령 또는 작업입니다.",
+        "conflict": "발령 또는 변경안이 바뀌었습니다. 최신 정보를 반영했으니 검토 후 다시 시도하세요.",
+        "invalid": "변경안이 현재 발령 검증 규칙을 통과하지 못했습니다.",
+        "unavailable": "변경안 서비스를 일시적으로 사용할 수 없습니다. 발령 현황은 계속 확인할 수 있습니다."
+      },
+      "timeline": {
+        "title": "현재 및 예정 발령 타임라인",
+        "loading": "유효일 기반 발령 이력을 불러오는 중",
+        "partialFailure": "발령은 확인할 수 있지만 타임라인을 불러오지 못했습니다.",
+        "empty": "추가 유효일 발령 구간이 없습니다."
+      },
+      "audit": {
+        "title": "변경안 처리 증적",
+        "created": "초안 생성",
+        "validated": "검증 완료",
+        "submitted": "변경안 제출",
+        "cancelled": "변경안 취소",
+        "cancellationReason": "취소 사유"
+      }
     },
     "filters": {
       "status": "상태",

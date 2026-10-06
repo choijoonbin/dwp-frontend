@@ -510,6 +510,17 @@ function hcmContext(
   } as const;
 }
 
+const HCM_ASSIGNMENT_ACTION_CAPABILITY = {
+  'route.hcm.operations.assignment-proposal-create.action':
+    'hcm.operations.assignment-proposal.create',
+  'route.hcm.operations.assignment-proposal-validate.action':
+    'hcm.operations.assignment-proposal.validate',
+  'route.hcm.operations.assignment-proposal-submit.action':
+    'hcm.operations.assignment-proposal.submit',
+  'route.hcm.operations.assignment-proposal-cancel.action':
+    'hcm.operations.assignment-proposal.cancel',
+} as const;
+
 /** Server-authoritative HCM fixture used by the four-surface browser acceptance suite. */
 export async function mockHcmProductSurfaceAuthority(
   page: Page,
@@ -548,6 +559,10 @@ export async function mockHcmProductSurfaceAuthority(
         'hcm.operations.benefits.read',
         'hcm.operations.pay.read',
         'hcm.operations.talent.read',
+        'hcm.operations.assignment-proposal.create',
+        'hcm.operations.assignment-proposal.validate',
+        'hcm.operations.assignment-proposal.submit',
+        'hcm.operations.assignment-proposal.cancel',
       ]
     ),
     hcmContext(
@@ -621,11 +636,24 @@ export async function mockHcmProductSurfaceAuthority(
     const scope =
       context.scopes.find((candidate) => candidate.key === body.contextScopeKey) ??
       context.scopes[0];
+    const actionCapability =
+      HCM_ASSIGNMENT_ACTION_CAPABILITY[
+        routeContractKey as keyof typeof HCM_ASSIGNMENT_ACTION_CAPABILITY
+      ];
+    const evaluatedContext = actionCapability
+      ? {
+          ...context,
+          effectiveGrants: context.effectiveGrants.filter(
+            (grant) =>
+              grant.grantKind === 'CAPABILITY' && grant.capabilityContractKey === actionCapability
+          ),
+        }
+      : context;
     return success(route, {
       decision: 'ALLOWED',
       reasonCode: null,
       decisionRevision: 'e2e-hcm-authority-1',
-      context,
+      context: evaluatedContext,
       routeGrantRef: `grant:${routeContractKey}`,
       scope,
       effectiveReadOnly: false,

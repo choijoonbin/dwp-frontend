@@ -12,6 +12,7 @@ import { ActionButton } from '../actions';
 
 import type { ActionIntent } from '../actions';
 import type { DialogProps } from '@mui/material/Dialog';
+import type { SxProps, Theme } from '@mui/material/styles';
 
 export type FormDialogProps = {
   open: boolean;
@@ -30,6 +31,7 @@ export type FormDialogProps = {
   maxWidth?: DialogProps['maxWidth'];
   /** Optional exact desktop paper width while retaining full-screen mobile behavior. */
   desktopMaxWidth?: number | string;
+  paperSx?: SxProps<Theme>;
   mobileFullScreen?: boolean;
   showCancel?: boolean;
   showSubmit?: boolean;
@@ -51,6 +53,7 @@ export function FormDialog({
   secondaryActions,
   maxWidth = 'sm',
   desktopMaxWidth,
+  paperSx = [],
   mobileFullScreen = false,
   showCancel = true,
   showSubmit = true,
@@ -117,7 +120,12 @@ export function FormDialog({
       disableRestoreFocus
       transitionDuration={reducedMotion ? 0 : undefined}
       slotProps={{
-        ...(desktopMaxWidth && !fullScreen ? { paper: { sx: { maxWidth: desktopMaxWidth } } } : {}),
+        paper: {
+          sx: [
+            ...(desktopMaxWidth && !fullScreen ? [{ maxWidth: desktopMaxWidth }] : []),
+            ...(Array.isArray(paperSx) ? paperSx : [paperSx]),
+          ],
+        },
         transition: { onExited: restoreExternalFocus },
       }}
       sx={{
