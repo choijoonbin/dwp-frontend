@@ -974,6 +974,7 @@
     },
     "teamBoundary": "현재 팀 데이터 경계({{boundary}}) 안의 구성원과 요청만 표시합니다.",
     "names": {
+      "WORKFORCE": "인력",
       "TIME": "근태",
       "ABSENCE": "휴가",
       "BENEFITS": "복리후생",
@@ -1233,6 +1234,9 @@
         "CRITICAL": "즉시 조치"
       },
       "metricLabels": {
+        "WORKFORCE": {
+          "activeWorkers": "재직 인원"
+        },
         "TIME": {
           "submitted": "제출 대기",
           "openExceptions": "미해결 예외",

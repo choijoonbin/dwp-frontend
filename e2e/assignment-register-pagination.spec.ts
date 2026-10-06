@@ -143,6 +143,8 @@ test('assignment register sends filters to the server, paginates, and opens effe
       )
     )
     .toBe(true);
+  await expect(page).toHaveURL(/\bq=Mina\b/u);
+  await expect(page).toHaveURL(/\bstatus=ACTIVE\b/u);
 
   await page.getByRole('button', { name: 'Load more assignments' }).click();
   await expect(page.getByText('Alex Park', { exact: true })).toBeVisible();
@@ -166,6 +168,7 @@ test('assignment register sends filters to the server, paginates, and opens effe
   expect(actionGeometry.buttonRight).toBeLessThanOrEqual(actionGeometry.cellRight);
   expect(actionGeometry.buttonRight).toBeLessThanOrEqual(actionGeometry.viewportRight);
   await detailAction.click();
+  await expect(page).toHaveURL(/\bperson=person-mina\b/u);
   const inspector = page.getByRole('complementary', { name: 'Mina Kim' });
   await expect(inspector).toBeVisible();
   await expect(inspector.getByText('Assignment history and schedule')).toBeVisible();
@@ -234,4 +237,28 @@ test('assignment register preserves loaded rows when the next cursor temporarily
   await page.getByRole('button', { name: 'Retry' }).click();
   await expect(page.getByText('Alex Park', { exact: true })).toBeVisible();
   await expect(page.getByTestId('hcm-query-state')).toHaveCount(0);
+});
+
+test('assignment register distinguishes filtered and healthy empty states in the URL', async ({
+  page,
+}) => {
+  await mockShellSession(page, ['HR_ADMIN'], { permissions: FULL_PRODUCT_PERMISSIONS });
+  await page.route('**/api/people/v1/workforce/people**', (route) => {
+    const url = new URL(route.request().url());
+    if (url.pathname !== '/api/people/v1/workforce/people') return route.fallback();
+    return fulfillSuccess(route, {
+      items: [],
+      nextCursor: null,
+      size: 50,
+      hasMore: false,
+      asOf: url.searchParams.get('asOf') ?? '2026-10-06',
+    });
+  });
+
+  await page.goto('/hr/operations/assignments?q=Missing&status=TERMINATED&asOf=2026-10-05');
+
+  await expect(page.getByText('No assignment matches these filters')).toBeVisible();
+  await page.getByRole('button', { name: 'Reset assignment filters' }).click();
+  await expect(page).not.toHaveURL(/\b(?:q|status|asOf)=/u);
+  await expect(page.getByText('No effective assignment is available')).toBeVisible();
 });

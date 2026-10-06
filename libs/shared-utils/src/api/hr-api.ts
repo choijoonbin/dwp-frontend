@@ -265,7 +265,7 @@ export type HrDomainOperations = {
 };
 
 export type HrDomainOperationsSummary = {
-  domain: HrDomainOperations['domain'];
+  domain: 'WORKFORCE' | HrDomainOperations['domain'];
   metrics: HrDomainMetric[];
   pendingCount: number;
 };

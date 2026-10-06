@@ -974,6 +974,7 @@
     },
     "teamBoundary": "Only people and requests inside the current team data boundary ({{boundary}}) are shown.",
     "names": {
+      "WORKFORCE": "Workforce",
       "TIME": "Time",
       "ABSENCE": "Absence",
       "BENEFITS": "Benefits",
@@ -1233,6 +1234,9 @@
         "CRITICAL": "Act now"
       },
       "metricLabels": {
+        "WORKFORCE": {
+          "activeWorkers": "Active workers"
+        },
         "TIME": {
           "submitted": "Submitted cards",
           "openExceptions": "Open exceptions",

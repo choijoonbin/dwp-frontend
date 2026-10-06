@@ -51,13 +51,14 @@ describe('HCM query discriminator source contract', () => {
   it('connects every operations summary domain to its actionable workspace', () => {
     const overview = source('./hr-operations-overview.tsx');
     for (const path of [
+      '/hr/operations/people',
       '/hr/operations/time',
       '/hr/operations/absence',
       '/hr/operations/benefits',
       '/hr/operations/pay',
       '/hr/operations/talent',
     ]) {
-      expect(overview).toContain(`path: '${path}'`);
+      expect(source('./hr-operations-overview-model.ts')).toContain(`path: '${path}'`);
     }
     expect(overview).toContain('navigate(destination.path)');
   });

@@ -77,6 +77,7 @@ type Props = {
     create: boolean;
     update: boolean;
     approve: boolean;
+    publishAuthorized: boolean;
     publish: boolean;
   }>;
   currentUserId?: number;
@@ -906,7 +907,7 @@ export function OrganizationScenarioDrawer({
                   />
                 ) : null)}
 
-              {selected.lifecycleState === 'APPROVED' && capabilities.publish && (
+              {selected.lifecycleState === 'APPROVED' && capabilities.publishAuthorized && (
                 <Stack
                   direction={{ xs: 'column', sm: 'row' }}
                   alignItems={{ sm: 'center' }}
@@ -921,6 +922,14 @@ export function OrganizationScenarioDrawer({
                     <Typography variant="body2" color="text.secondary">
                       {t('orgChart.scenarios.publish.help', { date: selected.effectiveDate })}
                     </Typography>
+                    {!capabilities.publish && (
+                      <Alert severity="warning" sx={{ mt: 1 }}>
+                        {t('orgChart.scenarios.publish.releaseBlocked', {
+                          defaultValue:
+                            'Production publication remains disabled until the G-05 and PS-03 HCM + Security approvals are complete.',
+                        })}
+                      </Alert>
+                    )}
                   </Box>
                   <Button
                     variant="contained"

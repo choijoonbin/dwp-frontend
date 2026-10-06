@@ -302,6 +302,11 @@
     "count": "발령 {{count}}건",
     "moreAvailable": "추가 발령 있음",
     "loadMore": "발령 더 불러오기",
+    "emptyTitle": "현재 유효한 발령이 없습니다",
+    "emptyDescription": "현재 데이터 경계에 구성원과 유효 관계가 연결되면 발령이 표시됩니다.",
+    "filteredEmptyTitle": "조건에 맞는 발령이 없습니다",
+    "filteredEmptyDescription": "검색어, 상태 또는 유효일을 변경해 다른 발령 범위를 확인하세요.",
+    "resetFilters": "발령 필터 초기화",
     "detail": {
       "title": "발령 상세",
       "legalEmployer": "법적 고용 주체",
@@ -978,7 +983,8 @@
       "publish": {
         "title": "변경 게시",
         "help": "승인된 관계를 {{date}} 시행 이력으로 등록합니다.",
-        "action": "시행 예약"
+        "action": "시행 예약",
+        "releaseBlocked": "G-05 및 PS-03의 HCM·Security 승인이 완료될 때까지 운영 게시가 차단됩니다."
       },
       "states": {
         "DRAFT": "작성 중",

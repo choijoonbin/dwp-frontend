@@ -1,11 +1,10 @@
 import { useTranslation } from 'react-i18next';
-import { CalendarRange, ShieldCheck } from 'lucide-react';
+import { CalendarRange } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { EmptyState } from '@dwp-frontend/design-system';
 import { formatDate } from '@dwp-frontend/shared-i18n';
 import { getHrTeamAbsence } from '@dwp-frontend/shared-utils';
 
-import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
@@ -19,6 +18,7 @@ import {
   QueryBoundary,
   StatusChip,
 } from './hr-domain-components';
+import { HrTeamScopeContext } from './hr-team-scope-context';
 import { useProductSurfaceRequestScope } from '../../components/use-product-surface-request-scope';
 
 export function HrTeamAbsenceWorkspace() {
@@ -46,9 +46,13 @@ export function HrTeamAbsenceWorkspace() {
       onRetry={() => void query.refetch()}
     >
       <Stack gap={2}>
-        <Alert severity="info" icon={<ShieldCheck size={18} aria-hidden="true" />}>
-          {t('domains.teamBoundary', { boundary: query.data?.dataBoundary ?? '-' })}
-        </Alert>
+        {query.data && (
+          <HrTeamScopeContext
+            manager={query.data.manager}
+            dataBoundary={query.data.dataBoundary}
+            refreshedAt={query.dataUpdatedAt}
+          />
+        )}
         <Box
           sx={{
             display: 'grid',

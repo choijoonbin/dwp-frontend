@@ -1,13 +1,12 @@
 import { useTranslation } from 'react-i18next';
-import { ShieldCheck } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { getHrTeamTime } from '@dwp-frontend/shared-utils';
 
-import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 
 import { ApprovalQueue, ProgressSignal, QueryBoundary } from './hr-domain-components';
+import { HrTeamScopeContext } from './hr-team-scope-context';
 import { useProductSurfaceRequestScope } from '../../components/use-product-surface-request-scope';
 
 export function HrTeamTimeWorkspace() {
@@ -33,9 +32,13 @@ export function HrTeamTimeWorkspace() {
       onRetry={() => void query.refetch()}
     >
       <Stack gap={2}>
-        <Alert severity="info" icon={<ShieldCheck size={18} aria-hidden="true" />}>
-          {t('domains.teamBoundary', { boundary: query.data?.dataBoundary ?? '-' })}
-        </Alert>
+        {query.data && (
+          <HrTeamScopeContext
+            manager={query.data.manager}
+            dataBoundary={query.data.dataBoundary}
+            refreshedAt={query.dataUpdatedAt}
+          />
+        )}
         <Box
           sx={{
             display: 'grid',

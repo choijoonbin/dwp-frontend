@@ -302,6 +302,11 @@
     "count": "{{count}} assignments",
     "moreAvailable": "More assignments available",
     "loadMore": "Load more assignments",
+    "emptyTitle": "No effective assignment is available",
+    "emptyDescription": "Assignments appear when a worker and effective relationship are available in the current boundary.",
+    "filteredEmptyTitle": "No assignment matches these filters",
+    "filteredEmptyDescription": "Change the search, status, or effective date to review another assignment population.",
+    "resetFilters": "Reset assignment filters",
     "detail": {
       "title": "Assignment detail",
       "legalEmployer": "Legal employer",
@@ -978,7 +983,8 @@
       "publish": {
         "title": "Publish changes",
         "help": "Register approved relationships as effective-dated history for {{date}}.",
-        "action": "Schedule effective change"
+        "action": "Schedule effective change",
+        "releaseBlocked": "Production publication remains disabled until the G-05 and PS-03 HCM + Security approvals are complete."
       },
       "states": {
         "DRAFT": "Draft",

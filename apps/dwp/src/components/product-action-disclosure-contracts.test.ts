@@ -55,19 +55,19 @@ const DISCLOSURE_BINDINGS: readonly DisclosureBinding[] = [
     file: 'features/workforce/workforce-export-action-access.ts',
     capability: 'hcm.controlled-export.create',
     expected:
-      "create: access.governed ? access.hasWritableCapability('hcm.controlled-export.create') : legacyCanGovern,",
+      "create: access.governed && access.hasWritableCapability('hcm.controlled-export.create'),",
   },
   {
     file: 'features/workforce/workforce-export-action-access.ts',
     capability: 'hcm.controlled-export.cancel',
     expected:
-      "cancel: access.governed ? access.hasWritableCapability('hcm.controlled-export.cancel') : legacyCanGovern,",
+      "cancel: access.governed && access.hasWritableCapability('hcm.controlled-export.cancel'),",
   },
   {
     file: 'features/workforce/workforce-export-action-access.ts',
     capability: 'hcm.controlled-export.retry',
     expected:
-      "retry: access.governed ? access.hasWritableCapability('hcm.controlled-export.retry') : legacyCanGovern,",
+      "retry: access.governed && access.hasWritableCapability('hcm.controlled-export.retry'),",
   },
 ] as const;
 

@@ -77,6 +77,7 @@ type ScenarioCapabilities = Readonly<{
   create: boolean;
   update: boolean;
   approve: boolean;
+  publishAuthorized: boolean;
   publish: boolean;
 }>;
 

@@ -51,6 +51,7 @@ import {
   toggleSetValue,
   type OrganizationLens,
 } from './organization-chart-visuals';
+import { organizationPublishAccess } from './organization-publish-release';
 import { useCurrentProviderSupportContext } from '@dwp-frontend/shared-utils/auth/provider-support-context';
 import {
   isIsoDate,
@@ -154,6 +155,7 @@ export function OrganizationExplorer({
   const legacyCanManage = (auth.user?.roles ?? []).some((role) =>
     ['ADMIN', 'HR_ADMIN'].includes(role)
   );
+  const publishAccess = organizationPublishAccess(capabilityAccess);
   const scenarioCapabilities = {
     create: capabilityAccess.governed
       ? capabilityAccess.hasWritableCapability('hcm.org-design.create')
@@ -164,9 +166,8 @@ export function OrganizationExplorer({
     approve: capabilityAccess.governed
       ? capabilityAccess.hasWritableCapability('hcm.org-design.approve')
       : legacyCanManage,
-    publish: capabilityAccess.governed
-      ? capabilityAccess.hasWritableCapability('hcm.org-design.publish')
-      : legacyCanManage,
+    publishAuthorized: publishAccess.authorized,
+    publish: publishAccess.enabled,
   };
   const canOpenScenarios =
     workforceView && !supportContext.data && Object.values(scenarioCapabilities).some(Boolean);
