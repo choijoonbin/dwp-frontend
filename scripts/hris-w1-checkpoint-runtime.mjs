@@ -320,6 +320,32 @@ function validateNegativeProjections(value, environment, authorities, rollouts) 
   return Object.freeze({ ...projections, projections: Object.freeze(validated) });
 }
 
+function negativeOwnerRequestTarget(value, basePath, contextScopeKey, location) {
+  const candidate = textValue(value, location, 800);
+  const exactBasePath = safeApiPath(basePath, `${location}.basePath`);
+  const exactScopeKey = textValue(contextScopeKey, `${location}.contextScopeKey`, 200);
+  const expected = `${exactBasePath}?contextScopeKey=${encodeURIComponent(exactScopeKey)}`;
+  let parsed;
+  try {
+    parsed = new URL(candidate, 'http://127.0.0.1');
+  } catch {
+    hold(`${location} must be an exact scope-bound negative owner request target.`);
+  }
+  if (
+    !SCOPE_KEY.test(exactScopeKey) ||
+    candidate !== expected ||
+    parsed.origin !== 'http://127.0.0.1' ||
+    parsed.pathname !== exactBasePath ||
+    parsed.hash ||
+    parsed.searchParams.getAll('contextScopeKey').length !== 1 ||
+    parsed.searchParams.get('contextScopeKey') !== exactScopeKey ||
+    [...parsed.searchParams.keys()].some((key) => key !== 'contextScopeKey')
+  ) {
+    hold(`${location} must be an exact scope-bound negative owner request target.`);
+  }
+  return candidate;
+}
+
 export function validateNegativeObservations(value, tenants, runId, causality = undefined) {
   const root = record(value, 'projectionFeed.negativeObservations');
   exactKeys(root, ['schemaVersion', 'observations', 'aggregateSha256'], 'negativeObservations');
@@ -379,7 +405,12 @@ export function validateNegativeObservations(value, tenants, runId, causality = 
     if (
       observation.source !== 'LIVE_GATEWAY_OWNER_REQUEST' ||
       observation.method !== 'GET' ||
-      safeApiPath(observation.path, `${assertionName}.path`) !== contract.path ||
+      negativeOwnerRequestTarget(
+        observation.path,
+        contract.path,
+        observation.contextScopeKey,
+        `${assertionName}.path`
+      ) !== observation.path ||
       observation.tenantId !== tenantA.tenantId ||
       observation.actorId !== tenantA.userId ||
       observation.evidenceState !== contract.evidenceState ||
@@ -399,8 +430,7 @@ export function validateNegativeObservations(value, tenants, runId, causality = 
       sha256Canonical(projectionDigestMaterial) !== observation.projectionObservationSha256 ||
       observation.status !== contract.status ||
       observation.errorCode !== contract.errorCode ||
-      observation.ownerErrorMessage !==
-        'No current Payroll-owned legal-entity membership matches the authority.' ||
+      observation.ownerErrorMessage !== 'Authority resolution is temporarily unavailable.' ||
       (causality &&
         (!authority ||
           authority.decision !== 'ALLOWED' ||

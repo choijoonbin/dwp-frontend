@@ -446,6 +446,7 @@ function negativePath(assertionName) {
 
 function negativeObservation(assertionName, evidenceState, tenant) {
   const contract = expectedNegativeContracts(RUN_ID)[assertionName];
+  const contextScopeKey = `hcm-scope-${'1'.repeat(40)}`;
   const database = {
     STALE: {
       databaseTransition: 'BUILDING->ACTIVE->SUPERSEDED',
@@ -463,7 +464,7 @@ function negativeObservation(assertionName, evidenceState, tenant) {
     evidenceState,
     projectionId: contract.projectionId,
     projectionRevision: 'c'.repeat(64),
-    contextScopeKey: `hcm-scope-${'1'.repeat(40)}`,
+    contextScopeKey,
     policyRevision: `rollout-${'1'.repeat(64)}`,
     authorizationRevision: `psr-${'1'.repeat(64)}`,
     databaseTransition: database.databaseTransition,
@@ -475,7 +476,7 @@ function negativeObservation(assertionName, evidenceState, tenant) {
     assertionName,
     source: 'LIVE_GATEWAY_OWNER_REQUEST',
     method: 'GET',
-    path: negativePath(assertionName),
+    path: `${negativePath(assertionName)}?contextScopeKey=${encodeURIComponent(contextScopeKey)}`,
     tenantId: tenant.tenantId,
     actorId: tenant.userId,
     evidenceState,
@@ -483,7 +484,7 @@ function negativeObservation(assertionName, evidenceState, tenant) {
     projectionObservationSha256: sha256Canonical(projectionMaterial),
     status: 503,
     errorCode: 'AUTHORITY_RESOLUTION_UNAVAILABLE',
-    ownerErrorMessage: 'No current Payroll-owned legal-entity membership matches the authority.',
+    ownerErrorMessage: 'Authority resolution is temporarily unavailable.',
     observedAt: '2026-10-02T00:00:00.000Z',
     responseBodySha256: 'a'.repeat(64),
   };
@@ -783,7 +784,7 @@ test('runtime validator closes every backend field and database lineage relation
   );
 });
 
-test('negative feed accepts only three digest-bound live owner observations', () => {
+test('negative feed accepts only three digest-bound and scope-bound live owner observations', () => {
   const { tenants } = parseCheckpointEnvironment(validEnvironment());
   const feed = negativeFeed(tenants[0]);
 
@@ -793,13 +794,44 @@ test('negative feed accepts only three digest-bound live owner observations', ()
   wrongPath.observations[0].path = '/api/people/v1/workforce/people';
   assert.throws(
     () => validateNegativeObservations(rehash(wrongPath, 0), tenants, RUN_ID),
-    /exact state, projection, authority, and denial/u
+    /scope-bound negative owner request target/u
+  );
+
+  const missingScope = structuredClone(feed);
+  missingScope.observations[0].path = negativePath('negative.stale-evidence-denied');
+  assert.throws(
+    () => validateNegativeObservations(rehash(missingScope, 0), tenants, RUN_ID),
+    /scope-bound negative owner request target/u
+  );
+
+  const mismatchedScope = structuredClone(feed);
+  mismatchedScope.observations[0].path = `${negativePath(
+    'negative.stale-evidence-denied'
+  )}?contextScopeKey=hcm-scope-${'2'.repeat(40)}`;
+  assert.throws(
+    () => validateNegativeObservations(rehash(mismatchedScope, 0), tenants, RUN_ID),
+    /scope-bound negative owner request target/u
+  );
+
+  const expandedQuery = structuredClone(feed);
+  expandedQuery.observations[0].path += '&unexpected=true';
+  assert.throws(
+    () => validateNegativeObservations(rehash(expandedQuery, 0), tenants, RUN_ID),
+    /scope-bound negative owner request target/u
   );
 
   const relabelled = structuredClone(feed);
   relabelled.observations[1].evidenceState = 'REVOKED';
   assert.throws(
     () => validateNegativeObservations(rehash(relabelled, 1), tenants, RUN_ID),
+    /exact state, projection, authority, and denial/u
+  );
+
+  const internalOwnerMessage = structuredClone(feed);
+  internalOwnerMessage.observations[0].ownerErrorMessage =
+    'No current Payroll-owned legal-entity membership matches the authority.';
+  assert.throws(
+    () => validateNegativeObservations(rehash(internalOwnerMessage, 0), tenants, RUN_ID),
     /exact state, projection, authority, and denial/u
   );
 

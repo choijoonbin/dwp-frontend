@@ -72,7 +72,7 @@ exist in `runtime.json` at `projectionFeed.negativeObservations` with this close
       "assertionName": "negative.stale-evidence-denied",
       "source": "LIVE_GATEWAY_OWNER_REQUEST",
       "method": "GET",
-      "path": "/api/payroll/v1/hris/payroll/foundation/configurations/<run-bound UUIDv5>",
+      "path": "/api/payroll/v1/hris/payroll/foundation/configurations/<run-bound UUIDv5>?contextScopeKey=hcm-scope-<40 hex>",
       "tenantId": 1,
       "actorId": 2,
       "evidenceState": "STALE",
@@ -88,7 +88,7 @@ exist in `runtime.json` at `projectionFeed.negativeObservations` with this close
       "projectionObservationSha256": "<canonical projection-record SHA-256>",
       "status": 503,
       "errorCode": "AUTHORITY_RESOLUTION_UNAVAILABLE",
-      "ownerErrorMessage": "No current Payroll-owned legal-entity membership matches the authority.",
+      "ownerErrorMessage": "Authority resolution is temporarily unavailable.",
       "observedAt": "<UTC instant>",
       "responseBodySha256": "<lowercase SHA-256>",
       "observationSha256": "<SHA-256 of canonical JSON excluding this field>"
@@ -104,7 +104,10 @@ derives each API target again from URL-namespace UUIDv5 name
 from `dwp:<run-id>:payroll:negative:<lowercase-state>`. Stale uses configuration detail, expired
 uses configuration versions, and revoked uses receipt detail. Each observation must be the exact
 HTTP 503 / `AUTHORITY_RESOLUTION_UNAVAILABLE` caused by its matching run-bound projection and live
-allowed Gateway authority. The bridge verifies the tenant-A actor, per-record canonical digest,
+allowed Gateway authority. Every request target includes exactly one `contextScopeKey` query whose
+value is byte-for-byte equal to the observation's canonical owner scope; missing, mismatched,
+duplicated, or additional query parameters are rejected. The bridge verifies the tenant-A actor,
+the public generic authority-unavailable message, per-record canonical digest,
 ordered aggregate digest, and restored positive projection state. A missing, reordered, relabelled,
 or altered observation makes the checkpoint HOLD. The companion
 `negativeObservationProjections` object is also closed: it contains schema version 1, lifecycle
