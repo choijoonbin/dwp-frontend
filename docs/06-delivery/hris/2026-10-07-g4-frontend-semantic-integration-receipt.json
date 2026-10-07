@@ -1,0 +1,122 @@
+{
+  "schema": "dwp.hris.g4-frontend-semantic-integration-receipt.v1",
+  "receiptId": "HRIS-G4-FRONTEND-SEMANTIC-INTEGRATION-RECEIPT-20261007-R1",
+  "issuedAt": "2026-10-07T13:11:29+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "status": "PASS",
+  "decision": "G5_INTEGRATED_STABILIZATION_AUTHORIZED",
+  "sourcePins": {
+    "currentFrontend": "2fdf675138fbb975f90051b5532e544c6bf1a28c",
+    "reconciledFrontend": "7f39d12cd10b8827c67355a7f445973d05373cc9",
+    "backendContractInput": "f0a971eada612e6a267ece104707f0cab4191343",
+    "g4FrontendResult": "51ab8a8df6bcc44266be7d7edc708a6b4d8ce081",
+    "g4FrontendTree": "735b1e1818de2ff35de17a21c27155e17357ec8f"
+  },
+  "integration": {
+    "branch": "codex/hris-g1-integration-frontend-20261006",
+    "unresolvedConflictCount": 0,
+    "semanticMergeParents": [
+      "2fdf675138fbb975f90051b5532e544c6bf1a28c",
+      "7f39d12cd10b8827c67355a7f445973d05373cc9"
+    ],
+    "preservedCurrentSurfaces": [
+      "Home",
+      "Administration",
+      "Assignment Proposal"
+    ],
+    "integratedReconciledSurfaces": [
+      "HRIS shell and navigation",
+      "People 360",
+      "Performance",
+      "Payroll",
+      "Time",
+      "System Access"
+    ]
+  },
+  "materialization": {
+    "executionCount": 1,
+    "authorization": {
+      "latestVersion": 34,
+      "semanticChecksum": "852d20e1e639e1a7170f02b5714d21d8c51a9eb8ff5ac32d8b7940b82d6be83b",
+      "counts": {
+        "capabilities": 223,
+        "accessPolicies": 24,
+        "entitlementExpressions": 17,
+        "predicatePolicies": 54,
+        "routes": 952
+      },
+      "projectionSha256": "8938dca8f07d9c7710e78ea533676073969d5496ecc3b060e92acfd869c50091"
+    },
+    "fixtures": {
+      "semanticChecksum": "d344d6c2b8dcd6e79270c23f5e2db25f5583ef132e558fd01a88384d53c1938f",
+      "projectionSha256": "e5356d4e5e0fe3c01d3e860ba1ff26a64970f50927b680abbf3d742c841fda67"
+    },
+    "internalClosure": {
+      "products": "12/12",
+      "attackCells": "60/60",
+      "completionState": "COMPLETE",
+      "projectionSha256": "7a5dd4ca199786cfb9e99376323afd19641a77f3bfb4f89f9197becbda1dc54c"
+    },
+    "gatewayOpenApi": {
+      "paths": 1665,
+      "operations": 1905,
+      "schemas": 3591,
+      "projectionSha256": "b203455b032f938a0c37bbe11d2ef68981e4e3f106d549427b1a15f06497cd0c"
+    },
+    "postMaterializationNoOpChecks": [
+      "official backend authorization projection",
+      "official backend fixture projection",
+      "official backend internal closure projection",
+      "official backend Gateway OpenAPI projection"
+    ]
+  },
+  "visibleIdentity": {
+    "required": "HRIS",
+    "homeApplicationCatalog": "HRIS",
+    "englishAndKoreanRuntimeProjection": "HRIS",
+    "staleApplicationNameFound": false,
+    "note": "Korean domain nouns that mean human resources are not application-name regressions. Migrated database identity remains a G5 runtime assertion."
+  },
+  "verification": {
+    "vitest": [
+      {
+        "files": 13,
+        "tests": 106,
+        "status": "PASS"
+      },
+      {
+        "files": 5,
+        "tests": 48,
+        "status": "PASS"
+      }
+    ],
+    "nodeContractTests": [
+      {
+        "cluster": "official backend contract inputs",
+        "tests": 26,
+        "status": "PASS"
+      },
+      {
+        "cluster": "internal closure and production-readiness integrity",
+        "tests": 38,
+        "status": "PASS"
+      }
+    ],
+    "browser": {
+      "initialChromiumPassing": 19,
+      "initialChromiumSkipped": 2,
+      "fixedAndTargetedChromiumPassing": 4,
+      "mobileChromePassing": 18,
+      "mobileChromeSkipped": 7,
+      "status": "PASS",
+      "note": "The mobile project was executed with the installed Chrome channel because local WebKit was absent; application failures were not hidden or waived."
+    },
+    "i18nStaticCheck": "PASS",
+    "diffCheck": "PASS"
+  },
+  "exclusions": [
+    "G4 does not claim clean-install, existing-database upgrade, live owner OpenAPI parity or full deterministic promotion; those are G5 gates.",
+    "G4 does not claim the frozen-head W1 Successor; it runs exactly once in G6.",
+    "G4 does not authorize module-parallel development, customer activation or production release."
+  ]
+}
