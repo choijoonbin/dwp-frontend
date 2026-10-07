@@ -1,0 +1,3033 @@
+{
+  "registryId": "dwp.hris.g3.modern.public-identities-successor.v1",
+  "schemaVersion": 3,
+  "status": "SEALED_G3_DESIGN_NOT_IMPLEMENTED",
+  "authority": {
+    "generationStage": "G3_ONLY",
+    "canonicalSetId": "sha256:33ed6337dcd32316a9fb80c5271615ab2dc285ba08d139ebd4bcdf6bdf5f0946",
+    "sourceDisposition": "docs/06-delivery/hris/g2-successors/2026-10-07/g3-primary-ownership-disposition.v1.json",
+    "currentBackendCommit": "5612cc1a0b4a21a4d0b9107739579f23d165790f",
+    "reconciledBackendCommit": "0731f6df2d55cdeb4784a09ae6e28d4ae4b0c294",
+    "backendResultCommit": "ea630a5f2dec9b1f044f11dd5eb66ffb6f87941a",
+    "historicalBytesReused": false,
+    "historicalByteIdentityClaim": false,
+    "implementationState": "NOT_STARTED_G3",
+    "productionState": "NOT_AUTHORIZED_G6",
+    "moduleCodeGoGranted": false,
+    "productionAuthorizationGranted": false
+  },
+  "scope": {
+    "operations": 199,
+    "publicEvents": 157
+  },
+  "operationPublicIdentities": [
+    {
+      "operationId": "modern.ai.assist.cancel",
+      "method": "POST",
+      "path": "/api/platform/v1/hris/ai-assistance/{assistanceId}/cancel",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.ai.assist.create",
+      "method": "POST",
+      "path": "/api/platform/v1/hris/ai-assistance",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.ai.assist.review",
+      "method": "POST",
+      "path": "/api/platform/v1/hris/ai-assistance/{assistanceId}/review",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.ai.assist.revoke",
+      "method": "POST",
+      "path": "/api/platform/v1/hris/ai-assistance/{assistanceId}/revoke",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.ai.assistance.query",
+      "method": "GET",
+      "path": "/api/platform/v1/hris/ai-assistance/{assistanceId}",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.ai.assistances.query",
+      "method": "GET",
+      "path": "/api/platform/v1/hris/ai-assistance",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.ai.evaluation.cancel",
+      "method": "POST",
+      "path": "/api/platform/v1/admin/hris/ai-governance/evaluations/{evaluationId}/cancel",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.ai.evaluation.query",
+      "method": "GET",
+      "path": "/api/platform/v1/admin/hris/ai-governance/evaluations/{evaluationId}",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.ai.evaluations.query",
+      "method": "GET",
+      "path": "/api/platform/v1/admin/hris/ai-governance/evaluations",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.ai.kill.switch",
+      "method": "POST",
+      "path": "/api/platform/v1/admin/hris/ai-governance/kill-switches/{useCaseKey}/execute",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.ai.policies.query",
+      "method": "GET",
+      "path": "/api/platform/v1/admin/hris/ai-governance/policies",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.ai.policy.create",
+      "method": "POST",
+      "path": "/api/platform/v1/admin/hris/ai-governance/policies",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.ai.policy.evaluate",
+      "method": "POST",
+      "path": "/api/platform/v1/admin/hris/ai-governance/policies/{policyId}/evaluations",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.ai.policy.publish",
+      "method": "POST",
+      "path": "/api/platform/v1/admin/hris/ai-governance/policies/{policyId}/publish",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.ai.policy.query",
+      "method": "GET",
+      "path": "/api/platform/v1/admin/hris/ai-governance/policies/{policyId}",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.ai.policy.retire",
+      "method": "POST",
+      "path": "/api/platform/v1/admin/hris/ai-governance/policies/{policyId}/retire",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.ai.policy.revise",
+      "method": "POST",
+      "path": "/api/platform/v1/admin/hris/ai-governance/policies/{policyId}/revisions",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.analytics.export.cancel",
+      "method": "POST",
+      "path": "/api/platform/v1/admin/hris/people-analytics/exports/{exportId}/cancel",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-ANALYTICS",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.analytics.export.create",
+      "method": "POST",
+      "path": "/api/platform/v1/admin/hris/people-analytics/exports",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-ANALYTICS",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.analytics.export.query",
+      "method": "GET",
+      "path": "/api/platform/v1/admin/hris/people-analytics/exports/{exportId}",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-ANALYTICS",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.analytics.exports.query",
+      "method": "GET",
+      "path": "/api/platform/v1/admin/hris/people-analytics/exports",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-ANALYTICS",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.analytics.metric.create",
+      "method": "POST",
+      "path": "/api/platform/v1/admin/hris/people-analytics/metrics",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-ANALYTICS",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.analytics.metric.publish",
+      "method": "POST",
+      "path": "/api/platform/v1/admin/hris/people-analytics/metrics/{metricId}/versions/{version}/publish",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-ANALYTICS",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.analytics.metric.query",
+      "method": "GET",
+      "path": "/api/platform/v1/admin/hris/people-analytics/metrics/{metricId}",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-ANALYTICS",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.analytics.metric.retire",
+      "method": "POST",
+      "path": "/api/platform/v1/admin/hris/people-analytics/metrics/{metricId}/retire",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-ANALYTICS",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.analytics.metric.revise",
+      "method": "POST",
+      "path": "/api/platform/v1/admin/hris/people-analytics/metrics/{metricId}/revisions",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-ANALYTICS",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.analytics.metric.validate",
+      "method": "POST",
+      "path": "/api/platform/v1/admin/hris/people-analytics/metrics/{metricId}/versions/{version}/validate",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-ANALYTICS",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.analytics.metrics.query",
+      "method": "GET",
+      "path": "/api/platform/v1/admin/hris/people-analytics/metrics",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-ANALYTICS",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.analytics.projection.query",
+      "method": "GET",
+      "path": "/api/platform/v1/admin/hris/people-analytics/projections/{projectionId}",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-ANALYTICS",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.analytics.projection.request",
+      "method": "POST",
+      "path": "/api/platform/v1/admin/hris/people-analytics/metrics/{metricId}/projections",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-ANALYTICS",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.analytics.projections.query",
+      "method": "GET",
+      "path": "/api/platform/v1/admin/hris/people-analytics/projections",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-ANALYTICS",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.benefits.enrollment.cancel",
+      "method": "POST",
+      "path": "/api/people/v1/hris/benefits/enrollments/{enrollmentId}/cancel",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-BENEFITS",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.benefits.enrollment.decide",
+      "method": "POST",
+      "path": "/api/people/v1/hris/benefits/enrollments/{enrollmentId}/decisions",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-BENEFITS",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.benefits.enrollment.query",
+      "method": "GET",
+      "path": "/api/people/v1/hris/benefits/enrollments/{enrollmentId}",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-BENEFITS",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.benefits.enrollment.submit",
+      "method": "POST",
+      "path": "/api/people/v1/hris/benefits/enrollments",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-BENEFITS",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.benefits.enrollments.query",
+      "method": "GET",
+      "path": "/api/people/v1/hris/benefits/enrollments",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-BENEFITS",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.benefits.lifeevent.decide",
+      "method": "POST",
+      "path": "/api/people/v1/hris/benefits/life-events/{lifeEventId}/decisions",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-BENEFITS",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.benefits.lifeevent.query",
+      "method": "GET",
+      "path": "/api/people/v1/hris/benefits/life-events/{lifeEventId}",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-BENEFITS",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.benefits.lifeevent.submit",
+      "method": "POST",
+      "path": "/api/people/v1/hris/benefits/life-events",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-BENEFITS",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.benefits.lifeevents.query",
+      "method": "GET",
+      "path": "/api/people/v1/hris/benefits/life-events",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-BENEFITS",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.benefits.plan.create",
+      "method": "POST",
+      "path": "/api/people/v1/hris/benefits/plans",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-BENEFITS",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.benefits.plan.publish",
+      "method": "POST",
+      "path": "/api/people/v1/hris/benefits/plans/{planId}/versions/{version}/publish",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-BENEFITS",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.benefits.plan.query",
+      "method": "GET",
+      "path": "/api/people/v1/hris/benefits/plans/{planId}",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-BENEFITS",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.benefits.plan.retire",
+      "method": "POST",
+      "path": "/api/people/v1/hris/benefits/plans/{planId}/retire",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-BENEFITS",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.benefits.plan.revise",
+      "method": "POST",
+      "path": "/api/people/v1/hris/benefits/plans/{planId}/revisions",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-BENEFITS",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.benefits.plans.query",
+      "method": "GET",
+      "path": "/api/people/v1/hris/benefits/plans",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-BENEFITS",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.benefits.self.plans.query",
+      "method": "GET",
+      "path": "/api/people/v1/hris/benefits/my-eligible-plans",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-BENEFITS",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.compplan.budget.allocate",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/compensation-planning/cycles/{cycleId}/budget-allocations",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-COMPPLAN",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.compplan.cycle.cancel",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/compensation-planning/cycles/{cycleId}/cancel",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-COMPPLAN",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.compplan.cycle.create",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/compensation-planning/cycles",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-COMPPLAN",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.compplan.cycle.query",
+      "method": "GET",
+      "path": "/api/people/v1/hris/performance/compensation-planning/cycles/{cycleId}",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-COMPPLAN",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.compplan.cycle.revise",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/compensation-planning/cycles/{cycleId}/revisions",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-COMPPLAN",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.compplan.cycles.query",
+      "method": "GET",
+      "path": "/api/people/v1/hris/performance/compensation-planning/cycles",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-COMPPLAN",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.compplan.plan.approve",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/compensation-planning/cycles/{cycleId}/approve",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-COMPPLAN",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.compplan.proposal.query",
+      "method": "GET",
+      "path": "/api/people/v1/hris/performance/compensation-planning/proposals/{proposalId}",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-COMPPLAN",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.compplan.proposal.submit",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/compensation-planning/cycles/{cycleId}/proposals/{proposalId}/submit",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-COMPPLAN",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.compplan.proposal.upsert",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/compensation-planning/cycles/{cycleId}/proposals/{proposalId}",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-COMPPLAN",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.compplan.proposals.query",
+      "method": "GET",
+      "path": "/api/people/v1/hris/performance/compensation-planning/cycles/{cycleId}/proposals",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-COMPPLAN",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.compplan.snapshot.publish",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/compensation-planning/cycles/{cycleId}/approved-snapshots",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-COMPPLAN",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.contingent.engagement.activate",
+      "method": "POST",
+      "path": "/api/people/v1/hris/contingent-workforce/engagements/{engagementId}/activate",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-CONTINGENT",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.contingent.engagement.create",
+      "method": "POST",
+      "path": "/api/people/v1/hris/contingent-workforce/engagements",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-CONTINGENT",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.contingent.engagement.offboard",
+      "method": "POST",
+      "path": "/api/people/v1/hris/contingent-workforce/engagements/{engagementId}/offboard",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-CONTINGENT",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.contingent.engagement.query",
+      "method": "GET",
+      "path": "/api/people/v1/hris/contingent-workforce/engagements/{engagementId}",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-CONTINGENT",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.contingent.engagement.reject",
+      "method": "POST",
+      "path": "/api/people/v1/hris/contingent-workforce/engagements/{engagementId}/reject",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-CONTINGENT",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.contingent.engagement.revise",
+      "method": "POST",
+      "path": "/api/people/v1/hris/contingent-workforce/engagements/{engagementId}/revisions",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-CONTINGENT",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.contingent.engagement.submit",
+      "method": "POST",
+      "path": "/api/people/v1/hris/contingent-workforce/engagements/{engagementId}/submit",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-CONTINGENT",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.contingent.engagements.query",
+      "method": "GET",
+      "path": "/api/people/v1/hris/contingent-workforce/engagements",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-CONTINGENT",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.contingent.sponsor.reassign",
+      "method": "POST",
+      "path": "/api/people/v1/hris/contingent-workforce/engagements/{engagementId}/sponsor",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-CONTINGENT",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.growth.coaching.record",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/growth-profiles/{profileId}/coaching-notes",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-GROWTH",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.growth.evidence.link",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/growth-profiles/{profileId}/evidence-links",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-GROWTH",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.growth.evidence.unlink",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/growth-profiles/{profileId}/evidence-links/{evidenceLinkId}/unlink",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-GROWTH",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.growth.export.cancel",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/growth-profiles/exports/{exportId}/cancel",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-GROWTH",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.growth.export.query",
+      "method": "GET",
+      "path": "/api/people/v1/hris/performance/growth-profiles/exports/{exportId}",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-GROWTH",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.growth.export.request",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/growth-profiles/{profileId}/exports",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-GROWTH",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.growth.exports.query",
+      "method": "GET",
+      "path": "/api/people/v1/hris/performance/growth-profiles/exports",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-GROWTH",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.growth.profile.archive",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/growth-profiles/{profileId}/archive",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-GROWTH",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.growth.profile.create",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/growth-profiles",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-GROWTH",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.growth.profile.query",
+      "method": "GET",
+      "path": "/api/people/v1/hris/performance/growth-profiles/{profileId}",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-GROWTH",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.growth.profile.update",
+      "method": "PUT",
+      "path": "/api/people/v1/hris/performance/growth-profiles/{profileId}",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-GROWTH",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.growth.profiles.query",
+      "method": "GET",
+      "path": "/api/people/v1/hris/performance/growth-profiles",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-GROWTH",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.growth.self.query",
+      "method": "GET",
+      "path": "/api/people/v1/hris/performance/growth-profiles/me",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-GROWTH",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.hrservice.case.assign",
+      "method": "POST",
+      "path": "/api/people/v1/hris/hr-services/cases/{caseId}/assignments",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-HRSD",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.hrservice.case.cancel",
+      "method": "POST",
+      "path": "/api/people/v1/hris/hr-services/cases/{caseId}/cancel",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-HRSD",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.hrservice.case.create",
+      "method": "POST",
+      "path": "/api/people/v1/hris/hr-services/cases",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-HRSD",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.hrservice.case.query",
+      "method": "GET",
+      "path": "/api/people/v1/hris/hr-services/cases/{caseId}",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-HRSD",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.hrservice.case.resolve",
+      "method": "POST",
+      "path": "/api/people/v1/hris/hr-services/cases/{caseId}/resolve",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-HRSD",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.hrservice.case.respond",
+      "method": "POST",
+      "path": "/api/people/v1/hris/hr-services/cases/{caseId}/responses",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-HRSD",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.hrservice.case.triage",
+      "method": "POST",
+      "path": "/api/people/v1/hris/hr-services/cases/{caseId}/triage",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-HRSD",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.hrservice.cases.query",
+      "method": "GET",
+      "path": "/api/people/v1/hris/hr-services/cases",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-HRSD",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.learning.assignment.cancel",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/learning/assignments/{assignmentId}/cancel",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-LEARNING",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.learning.assignment.create",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/learning/assignments",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-LEARNING",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.learning.assignment.query",
+      "method": "GET",
+      "path": "/api/people/v1/hris/performance/learning/assignments/{assignmentId}",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-LEARNING",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.learning.assignment.start",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/learning/assignments/{assignmentId}/start",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-LEARNING",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.learning.assignments.query",
+      "method": "GET",
+      "path": "/api/people/v1/hris/performance/learning/assignments",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-LEARNING",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.learning.catalog.query",
+      "method": "GET",
+      "path": "/api/people/v1/hris/performance/learning/offerings",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-LEARNING",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.learning.completion.verify",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/learning/assignments/{assignmentId}/completion-verifications",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-LEARNING",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.learning.offering.create",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/learning/offerings",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-LEARNING",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.learning.offering.publish",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/learning/offerings/{offeringId}/publish",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-LEARNING",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.learning.offering.query",
+      "method": "GET",
+      "path": "/api/people/v1/hris/performance/learning/offerings/{offeringId}",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-LEARNING",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.learning.offering.retire",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/learning/offerings/{offeringId}/retire",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-LEARNING",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.learning.offering.revise",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/learning/offerings/{offeringId}/revisions",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-LEARNING",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.learning.self.enroll",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/learning/enrollments",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-LEARNING",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.listening.action.complete",
+      "method": "POST",
+      "path": "/api/platform/v1/admin/hris/listening/actions/{actionId}/complete",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-LISTEN",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.listening.action.create",
+      "method": "POST",
+      "path": "/api/platform/v1/admin/hris/listening/surveys/{surveyId}/actions",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-LISTEN",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.listening.active.query",
+      "method": "GET",
+      "path": "/api/platform/v1/hris/listening/surveys/active",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-LISTEN",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.listening.cohorts.query",
+      "method": "GET",
+      "path": "/api/platform/v1/admin/hris/listening/surveys/{surveyId}/cohort-projections",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-LISTEN",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.listening.response.submit",
+      "method": "POST",
+      "path": "/api/platform/v1/hris/listening/surveys/{surveyId}/responses",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-LISTEN",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.listening.survey.close",
+      "method": "POST",
+      "path": "/api/platform/v1/admin/hris/listening/surveys/{surveyId}/close",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-LISTEN",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.listening.survey.create",
+      "method": "POST",
+      "path": "/api/platform/v1/admin/hris/listening/surveys",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-LISTEN",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.listening.survey.publish",
+      "method": "POST",
+      "path": "/api/platform/v1/admin/hris/listening/surveys/{surveyId}/publish",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-LISTEN",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.listening.survey.revise",
+      "method": "PATCH",
+      "path": "/api/platform/v1/admin/hris/listening/surveys/{surveyId}",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-LISTEN",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.listening.surveys.query",
+      "method": "GET",
+      "path": "/api/platform/v1/admin/hris/listening/surveys",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-LISTEN",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.onboarding.assignment.query",
+      "method": "GET",
+      "path": "/api/people/v1/hris/onboarding/journey-assignments/{assignmentId}",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-ONBOARD",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.onboarding.assignments.query",
+      "method": "GET",
+      "path": "/api/people/v1/hris/onboarding/journey-assignments",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-ONBOARD",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.onboarding.journey.assign",
+      "method": "POST",
+      "path": "/api/people/v1/hris/onboarding/journey-assignments",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-ONBOARD",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.onboarding.journey.cancel",
+      "method": "POST",
+      "path": "/api/people/v1/hris/onboarding/journey-assignments/{assignmentId}/cancel",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-ONBOARD",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.onboarding.self.query",
+      "method": "GET",
+      "path": "/api/people/v1/hris/onboarding/my-journeys",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-ONBOARD",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.onboarding.task.complete",
+      "method": "POST",
+      "path": "/api/people/v1/hris/onboarding/journey-assignments/{assignmentId}/tasks/{taskId}/complete",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-ONBOARD",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.onboarding.task.waive",
+      "method": "POST",
+      "path": "/api/people/v1/hris/onboarding/journey-assignments/{assignmentId}/tasks/{taskId}/waive",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-ONBOARD",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.onboarding.template.create",
+      "method": "POST",
+      "path": "/api/people/v1/hris/onboarding/templates",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-ONBOARD",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.onboarding.template.publish",
+      "method": "POST",
+      "path": "/api/people/v1/hris/onboarding/templates/{templateId}/versions/{version}/publish",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-ONBOARD",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.onboarding.template.query",
+      "method": "GET",
+      "path": "/api/people/v1/hris/onboarding/templates/{templateId}",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-ONBOARD",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.onboarding.template.retire",
+      "method": "POST",
+      "path": "/api/people/v1/hris/onboarding/templates/{templateId}/retire",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-ONBOARD",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.onboarding.template.revise",
+      "method": "POST",
+      "path": "/api/people/v1/hris/onboarding/templates/{templateId}/revisions",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-ONBOARD",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.onboarding.templates.query",
+      "method": "GET",
+      "path": "/api/people/v1/hris/onboarding/templates",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-ONBOARD",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.opportunity.application.query",
+      "method": "GET",
+      "path": "/api/people/v1/hris/performance/opportunities/applications/{applicationId}",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-MARKET",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.opportunity.application.withdraw",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/opportunities/applications/{applicationId}/withdraw",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-MARKET",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.opportunity.applications.query",
+      "method": "GET",
+      "path": "/api/people/v1/hris/performance/opportunities/applications",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-MARKET",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.opportunity.apply",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/opportunities/{opportunityId}/applications",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-MARKET",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.opportunity.cancel",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/opportunities/{opportunityId}/cancel",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-MARKET",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.opportunity.catalog.query",
+      "method": "GET",
+      "path": "/api/people/v1/hris/performance/opportunities",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-MARKET",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.opportunity.close",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/opportunities/{opportunityId}/close",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-MARKET",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.opportunity.create",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/opportunities",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-MARKET",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.opportunity.publish",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/opportunities/{opportunityId}/publish",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-MARKET",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.opportunity.query",
+      "method": "GET",
+      "path": "/api/people/v1/hris/performance/opportunities/{opportunityId}",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-MARKET",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.opportunity.revise",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/opportunities/{opportunityId}/revisions",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-MARKET",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.opportunity.selection.record",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/opportunities/{opportunityId}/applications/{applicationId}/selection-decisions",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-MARKET",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.opportunity.shortlist",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/opportunities/{opportunityId}/applications/{applicationId}/shortlist",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-MARKET",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.recruiting.candidate.admit",
+      "method": "POST",
+      "path": "/api/people/v1/hris/recruiting/requisitions/{requisitionId}/candidates",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.recruiting.candidate.query",
+      "method": "GET",
+      "path": "/api/people/v1/hris/recruiting/candidate-cases/{candidateCaseId}",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.recruiting.candidate.stage",
+      "method": "PATCH",
+      "path": "/api/people/v1/hris/recruiting/candidate-cases/{candidateCaseId}/stage",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.recruiting.candidates.query",
+      "method": "GET",
+      "path": "/api/people/v1/hris/recruiting/candidate-cases",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.recruiting.hire.cancel",
+      "method": "POST",
+      "path": "/api/people/v1/hris/recruiting/hire-requests/{hireRequestId}/cancel",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.recruiting.hire.record",
+      "method": "POST",
+      "path": "/api/people/v1/hris/recruiting/candidate-cases/{candidateCaseId}/hire-decisions",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.recruiting.offer.issue",
+      "method": "POST",
+      "path": "/api/people/v1/hris/recruiting/candidate-cases/{candidateCaseId}/offers",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.recruiting.offer.respond",
+      "method": "POST",
+      "path": "/api/people/v1/hris/recruiting/offers/{offerId}/response",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.recruiting.offer.withdraw",
+      "method": "POST",
+      "path": "/api/people/v1/hris/recruiting/offers/{offerId}/withdraw",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.recruiting.requisition.create",
+      "method": "POST",
+      "path": "/api/people/v1/hris/recruiting/requisitions",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.recruiting.requisition.lifecycle.change",
+      "method": "POST",
+      "path": "/api/people/v1/hris/recruiting/requisitions/{requisitionId}/lifecycle",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.recruiting.requisition.publish",
+      "method": "POST",
+      "path": "/api/people/v1/hris/recruiting/requisitions/{requisitionId}/publish",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.recruiting.requisition.query",
+      "method": "GET",
+      "path": "/api/people/v1/hris/recruiting/requisitions/{requisitionId}",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.recruiting.requisition.revise",
+      "method": "POST",
+      "path": "/api/people/v1/hris/recruiting/requisitions/{requisitionId}/revisions",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.recruiting.requisitions.query",
+      "method": "GET",
+      "path": "/api/people/v1/hris/recruiting/requisitions",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.skills.evidence.query",
+      "method": "GET",
+      "path": "/api/people/v1/hris/performance/skills/evidence/{evidenceId}",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SKILLS",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.skills.evidence.record",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/skills/evidence",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SKILLS",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.skills.evidence.revoke",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/skills/evidence/{evidenceId}/revoke",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SKILLS",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.skills.evidence.verify",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/skills/worker-evidence/{evidenceId}/verify",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SKILLS",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.skills.evidences.query",
+      "method": "GET",
+      "path": "/api/people/v1/hris/performance/skills/evidence",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SKILLS",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.skills.taxonomies.query",
+      "method": "GET",
+      "path": "/api/people/v1/hris/performance/skills/taxonomies",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SKILLS",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.skills.taxonomy.create",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/skills/taxonomies",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SKILLS",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.skills.taxonomy.publish",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/skills/taxonomies/{taxonomyId}/versions/{version}/publish",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SKILLS",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.skills.taxonomy.query",
+      "method": "GET",
+      "path": "/api/people/v1/hris/performance/skills/taxonomies/{taxonomyId}",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SKILLS",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.skills.taxonomy.retire",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/skills/taxonomies/{taxonomyId}/retire",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SKILLS",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.skills.taxonomy.revise",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/skills/taxonomies/{taxonomyId}/revisions",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SKILLS",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.skills.taxonomy.validate",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/skills/taxonomies/{taxonomyId}/versions/{version}/validate",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SKILLS",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.skills.worker.query",
+      "method": "GET",
+      "path": "/api/people/v1/hris/performance/skills/workers/{workerId}",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SKILLS",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.succession.nomination.add",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/succession/plans/{planId}/nominations",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SUCCESSION",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.succession.nomination.withdraw",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/succession/plans/{planId}/nominations/{nominationId}/withdraw",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SUCCESSION",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.succession.plan.approve",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/succession/plans/{planId}/approve",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SUCCESSION",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.succession.plan.create",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/succession/plans",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SUCCESSION",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.succession.plan.publish",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/succession/plans/{planId}/publish",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SUCCESSION",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.succession.plan.query",
+      "method": "GET",
+      "path": "/api/people/v1/hris/performance/succession/plans/{planId}",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SUCCESSION",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.succession.plan.reject",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/succession/plans/{planId}/reject",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SUCCESSION",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.succession.plan.retire",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/succession/plans/{planId}/retire",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SUCCESSION",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.succession.plan.revise",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/succession/plans/{planId}/revisions",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SUCCESSION",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.succession.plan.submit",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/succession/plans/{planId}/submit",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SUCCESSION",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.succession.plans.query",
+      "method": "GET",
+      "path": "/api/people/v1/hris/performance/succession/plans",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SUCCESSION",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.succession.readiness.record",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/succession/plans/{planId}/readiness-evidence",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SUCCESSION",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.wfm.candidate.query",
+      "method": "GET",
+      "path": "/api/time/v1/workforce-management/schedule-candidates/{candidateId}",
+      "ownerSession": "HRIS-TIM",
+      "primarySliceId": "MOD-TIM-WFM",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.wfm.candidates.query",
+      "method": "GET",
+      "path": "/api/time/v1/workforce-management/schedule-candidates",
+      "ownerSession": "HRIS-TIM",
+      "primarySliceId": "MOD-TIM-WFM",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.wfm.forecast.create",
+      "method": "POST",
+      "path": "/api/time/v1/workforce-management/demand-forecasts",
+      "ownerSession": "HRIS-TIM",
+      "primarySliceId": "MOD-TIM-WFM",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.wfm.forecast.query",
+      "method": "GET",
+      "path": "/api/time/v1/workforce-management/demand-forecasts/{forecastId}",
+      "ownerSession": "HRIS-TIM",
+      "primarySliceId": "MOD-TIM-WFM",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.wfm.forecasts.query",
+      "method": "GET",
+      "path": "/api/time/v1/workforce-management/demand-forecasts",
+      "ownerSession": "HRIS-TIM",
+      "primarySliceId": "MOD-TIM-WFM",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.wfm.optimization.cancel",
+      "method": "POST",
+      "path": "/api/time/v1/workforce-management/schedule-optimizations/{optimizationId}/cancel",
+      "ownerSession": "HRIS-TIM",
+      "primarySliceId": "MOD-TIM-WFM",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.wfm.optimization.query",
+      "method": "GET",
+      "path": "/api/time/v1/workforce-management/schedule-optimizations/{optimizationId}",
+      "ownerSession": "HRIS-TIM",
+      "primarySliceId": "MOD-TIM-WFM",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.wfm.schedule.cancel",
+      "method": "POST",
+      "path": "/api/time/v1/workforce-management/schedule-candidates/{candidateId}/cancel",
+      "ownerSession": "HRIS-TIM",
+      "primarySliceId": "MOD-TIM-WFM",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.wfm.schedule.optimize",
+      "method": "POST",
+      "path": "/api/time/v1/workforce-management/demand-forecasts/{forecastId}/schedule-optimizations",
+      "ownerSession": "HRIS-TIM",
+      "primarySliceId": "MOD-TIM-WFM",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.wfm.schedule.publish",
+      "method": "POST",
+      "path": "/api/time/v1/workforce-management/schedule-candidates/{candidateId}/publish",
+      "ownerSession": "HRIS-TIM",
+      "primarySliceId": "MOD-TIM-WFM",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.wfm.schedule.submit",
+      "method": "POST",
+      "path": "/api/time/v1/workforce-management/schedule-candidates/{candidateId}/submit",
+      "ownerSession": "HRIS-TIM",
+      "primarySliceId": "MOD-TIM-WFM",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.wfm.schedule.validate",
+      "method": "POST",
+      "path": "/api/time/v1/workforce-management/schedule-candidates/{candidateId}/validations",
+      "ownerSession": "HRIS-TIM",
+      "primarySliceId": "MOD-TIM-WFM",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.workforceplan.scenario.approve",
+      "method": "POST",
+      "path": "/api/people/v1/hris/workforce-planning/scenarios/{scenarioId}/approve",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-WFP",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.workforceplan.scenario.cancel",
+      "method": "POST",
+      "path": "/api/people/v1/hris/workforce-planning/scenarios/{scenarioId}/cancel",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-WFP",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.workforceplan.scenario.create",
+      "method": "POST",
+      "path": "/api/people/v1/hris/workforce-planning/scenarios",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-WFP",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.workforceplan.scenario.publish",
+      "method": "POST",
+      "path": "/api/people/v1/hris/workforce-planning/scenarios/{scenarioId}/publish",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-WFP",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.workforceplan.scenario.query",
+      "method": "GET",
+      "path": "/api/people/v1/hris/workforce-planning/scenarios/{scenarioId}",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-WFP",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.workforceplan.scenario.revise",
+      "method": "POST",
+      "path": "/api/people/v1/hris/workforce-planning/scenarios/{scenarioId}/revisions",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-WFP",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.workforceplan.scenario.simulate",
+      "method": "POST",
+      "path": "/api/people/v1/hris/workforce-planning/scenarios/{scenarioId}/simulations",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-WFP",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.workforceplan.scenario.submit",
+      "method": "POST",
+      "path": "/api/people/v1/hris/workforce-planning/scenarios/{scenarioId}/submit",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-WFP",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    },
+    {
+      "operationId": "modern.workforceplan.scenarios.query",
+      "method": "GET",
+      "path": "/api/people/v1/hris/workforce-planning/scenarios",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-WFP",
+      "identityRule": "METHOD_PLUS_CANONICAL_PATH_PLUS_OPERATION_ID"
+    }
+  ],
+  "eventPublicIdentities": [
+    {
+      "eventName": "ApprovedCompensationPlanSnapshotPublished.v2",
+      "eventType": "ApprovedCompensationPlanSnapshotPublished",
+      "version": 2,
+      "topic": "dwp.hris.modern.approved-compensation-plan-snapshot-published.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-COMPPLAN",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "BenefitEnrollmentCancelled.v2",
+      "eventType": "BenefitEnrollmentCancelled",
+      "version": 2,
+      "topic": "dwp.hris.modern.benefit-enrollment-cancelled.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-BENEFITS",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "BenefitEnrollmentDecided.v2",
+      "eventType": "BenefitEnrollmentDecided",
+      "version": 2,
+      "topic": "dwp.hris.modern.benefit-enrollment-decided.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-BENEFITS",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "BenefitEnrollmentSubmitted.v2",
+      "eventType": "BenefitEnrollmentSubmitted",
+      "version": 2,
+      "topic": "dwp.hris.modern.benefit-enrollment-submitted.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-BENEFITS",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "BenefitLifeEventDecisionRecorded.v2",
+      "eventType": "BenefitLifeEventDecisionRecorded",
+      "version": 2,
+      "topic": "dwp.hris.modern.benefit-life-event-decision-recorded.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-BENEFITS",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "BenefitLifeEventExpired.v2",
+      "eventType": "BenefitLifeEventExpired",
+      "version": 2,
+      "topic": "dwp.hris.modern.benefit-life-event-expired.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-BENEFITS",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "BenefitLifeEventSubmitted.v2",
+      "eventType": "BenefitLifeEventSubmitted",
+      "version": 2,
+      "topic": "dwp.hris.modern.benefit-life-event-submitted.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-BENEFITS",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "BenefitPlanCreated.v2",
+      "eventType": "BenefitPlanCreated",
+      "version": 2,
+      "topic": "dwp.hris.modern.benefit-plan-created.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-BENEFITS",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "BenefitPlanPublished.v2",
+      "eventType": "BenefitPlanPublished",
+      "version": 2,
+      "topic": "dwp.hris.modern.benefit-plan-published.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-BENEFITS",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "BenefitPlanRetired.v2",
+      "eventType": "BenefitPlanRetired",
+      "version": 2,
+      "topic": "dwp.hris.modern.benefit-plan-retired.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-BENEFITS",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "BenefitPlanRevised.v2",
+      "eventType": "BenefitPlanRevised",
+      "version": 2,
+      "topic": "dwp.hris.modern.benefit-plan-revised.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-BENEFITS",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "BenefitProviderResultRecorded.v2",
+      "eventType": "BenefitProviderResultRecorded",
+      "version": 2,
+      "topic": "dwp.hris.modern.benefit-provider-result-recorded.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-BENEFITS",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "CandidateAdmitted.v2",
+      "eventType": "CandidateAdmitted",
+      "version": 2,
+      "topic": "dwp.hris.modern.candidate-admitted.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "CandidateHireHandoffCancelled.v2",
+      "eventType": "CandidateHireHandoffCancelled",
+      "version": 2,
+      "topic": "dwp.hris.modern.candidate-hire-handoff-cancelled.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "CandidateHireHandoffRequested.v2",
+      "eventType": "CandidateHireHandoffRequested",
+      "version": 2,
+      "topic": "dwp.hris.modern.candidate-hire-handoff-requested.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "CandidateHireHandoffResultRecorded.v2",
+      "eventType": "CandidateHireHandoffResultRecorded",
+      "version": 2,
+      "topic": "dwp.hris.modern.candidate-hire-handoff-result-recorded.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "CandidateOfferAccepted.v2",
+      "eventType": "CandidateOfferAccepted",
+      "version": 2,
+      "topic": "dwp.hris.modern.candidate-offer-accepted.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "CandidateOfferDeclined.v2",
+      "eventType": "CandidateOfferDeclined",
+      "version": 2,
+      "topic": "dwp.hris.modern.candidate-offer-declined.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "CandidateOfferExpired.v2",
+      "eventType": "CandidateOfferExpired",
+      "version": 2,
+      "topic": "dwp.hris.modern.candidate-offer-expired.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "CandidateOfferIssued.v2",
+      "eventType": "CandidateOfferIssued",
+      "version": 2,
+      "topic": "dwp.hris.modern.candidate-offer-issued.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "CandidateOfferWithdrawn.v2",
+      "eventType": "CandidateOfferWithdrawn",
+      "version": 2,
+      "topic": "dwp.hris.modern.candidate-offer-withdrawn.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "CandidateStageChanged.v2",
+      "eventType": "CandidateStageChanged",
+      "version": 2,
+      "topic": "dwp.hris.modern.candidate-stage-changed.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "CompensationBudgetAllocated.v2",
+      "eventType": "CompensationBudgetAllocated",
+      "version": 2,
+      "topic": "dwp.hris.modern.compensation-budget-allocated.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-COMPPLAN",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "CompensationCycleCancelled.v2",
+      "eventType": "CompensationCycleCancelled",
+      "version": 2,
+      "topic": "dwp.hris.modern.compensation-cycle-cancelled.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-COMPPLAN",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "CompensationCycleCreated.v2",
+      "eventType": "CompensationCycleCreated",
+      "version": 2,
+      "topic": "dwp.hris.modern.compensation-cycle-created.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-COMPPLAN",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "CompensationCycleRevised.v2",
+      "eventType": "CompensationCycleRevised",
+      "version": 2,
+      "topic": "dwp.hris.modern.compensation-cycle-revised.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-COMPPLAN",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "CompensationPlanApprovalRecorded.v2",
+      "eventType": "CompensationPlanApprovalRecorded",
+      "version": 2,
+      "topic": "dwp.hris.modern.compensation-plan-approval-recorded.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-COMPPLAN",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "CompensationProposalDrafted.v2",
+      "eventType": "CompensationProposalDrafted",
+      "version": 2,
+      "topic": "dwp.hris.modern.compensation-proposal-drafted.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-COMPPLAN",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "CompensationProposalSubmitted.v2",
+      "eventType": "CompensationProposalSubmitted",
+      "version": 2,
+      "topic": "dwp.hris.modern.compensation-proposal-submitted.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-COMPPLAN",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "ContingentAccessExpiryInitiated.v2",
+      "eventType": "ContingentAccessExpiryInitiated",
+      "version": 2,
+      "topic": "dwp.hris.modern.contingent-access-expiry-initiated.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-CONTINGENT",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "ContingentAccessGrantRequested.v2",
+      "eventType": "ContingentAccessGrantRequested",
+      "version": 2,
+      "topic": "dwp.hris.modern.contingent-access-grant-requested.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-CONTINGENT",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "ContingentAccessGrantResultRecorded.v2",
+      "eventType": "ContingentAccessGrantResultRecorded",
+      "version": 2,
+      "topic": "dwp.hris.modern.contingent-access-grant-result-recorded.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-CONTINGENT",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "ContingentAccessRevokeResultRecorded.v2",
+      "eventType": "ContingentAccessRevokeResultRecorded",
+      "version": 2,
+      "topic": "dwp.hris.modern.contingent-access-revoke-result-recorded.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-CONTINGENT",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "ContingentEngagementCreated.v2",
+      "eventType": "ContingentEngagementCreated",
+      "version": 2,
+      "topic": "dwp.hris.modern.contingent-engagement-created.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-CONTINGENT",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "ContingentEngagementOffboardingStarted.v2",
+      "eventType": "ContingentEngagementOffboardingStarted",
+      "version": 2,
+      "topic": "dwp.hris.modern.contingent-engagement-offboarding-started.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-CONTINGENT",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "ContingentEngagementRejected.v2",
+      "eventType": "ContingentEngagementRejected",
+      "version": 2,
+      "topic": "dwp.hris.modern.contingent-engagement-rejected.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-CONTINGENT",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "ContingentEngagementRevised.v2",
+      "eventType": "ContingentEngagementRevised",
+      "version": 2,
+      "topic": "dwp.hris.modern.contingent-engagement-revised.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-CONTINGENT",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "ContingentEngagementSubmitted.v2",
+      "eventType": "ContingentEngagementSubmitted",
+      "version": 2,
+      "topic": "dwp.hris.modern.contingent-engagement-submitted.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-CONTINGENT",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "ContingentSponsorReassigned.v2",
+      "eventType": "ContingentSponsorReassigned",
+      "version": 2,
+      "topic": "dwp.hris.modern.contingent-sponsor-reassigned.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-CONTINGENT",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "EmployeeListeningActionCompleted.v3",
+      "eventType": "EmployeeListeningActionCompleted",
+      "version": 3,
+      "topic": "dwp.hris.modern.employee-listening-action-completed.v3",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-LISTEN",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "EmployeeListeningActionCreated.v3",
+      "eventType": "EmployeeListeningActionCreated",
+      "version": 3,
+      "topic": "dwp.hris.modern.employee-listening-action-created.v3",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-LISTEN",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "EmployeeListeningCohortProjectionPublished.v1",
+      "eventType": "EmployeeListeningCohortProjectionPublished",
+      "version": 1,
+      "topic": "dwp.hris.modern.employee-listening-cohort-projection-published.v1",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-LISTEN",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "EmployeeListeningSurveyClosed.v3",
+      "eventType": "EmployeeListeningSurveyClosed",
+      "version": 3,
+      "topic": "dwp.hris.modern.employee-listening-survey-closed.v3",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-LISTEN",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "EmployeeListeningSurveyCreated.v3",
+      "eventType": "EmployeeListeningSurveyCreated",
+      "version": 3,
+      "topic": "dwp.hris.modern.employee-listening-survey-created.v3",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-LISTEN",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "EmployeeListeningSurveyPublished.v3",
+      "eventType": "EmployeeListeningSurveyPublished",
+      "version": 3,
+      "topic": "dwp.hris.modern.employee-listening-survey-published.v3",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-LISTEN",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "EmployeeListeningSurveyRevised.v3",
+      "eventType": "EmployeeListeningSurveyRevised",
+      "version": 3,
+      "topic": "dwp.hris.modern.employee-listening-survey-revised.v3",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-LISTEN",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "GovernedAiAssistanceCancelled.v2",
+      "eventType": "GovernedAiAssistanceCancelled",
+      "version": 2,
+      "topic": "dwp.hris.modern.governed-ai-assistance-cancelled.v2",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "GovernedAiAssistanceConfirmed.v2",
+      "eventType": "GovernedAiAssistanceConfirmed",
+      "version": 2,
+      "topic": "dwp.hris.modern.governed-ai-assistance-confirmed.v2",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "GovernedAiAssistanceRejected.v2",
+      "eventType": "GovernedAiAssistanceRejected",
+      "version": 2,
+      "topic": "dwp.hris.modern.governed-ai-assistance-rejected.v2",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "GovernedAiAssistanceRequested.v2",
+      "eventType": "GovernedAiAssistanceRequested",
+      "version": 2,
+      "topic": "dwp.hris.modern.governed-ai-assistance-requested.v2",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "GovernedAiAssistanceResultRecorded.v2",
+      "eventType": "GovernedAiAssistanceResultRecorded",
+      "version": 2,
+      "topic": "dwp.hris.modern.governed-ai-assistance-result-recorded.v2",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "GovernedAiAssistanceRevoked.v2",
+      "eventType": "GovernedAiAssistanceRevoked",
+      "version": 2,
+      "topic": "dwp.hris.modern.governed-ai-assistance-revoked.v2",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "GovernedAiPolicyCreated.v2",
+      "eventType": "GovernedAiPolicyCreated",
+      "version": 2,
+      "topic": "dwp.hris.modern.governed-ai-policy-created.v2",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "GovernedAiPolicyEvaluationCancelled.v2",
+      "eventType": "GovernedAiPolicyEvaluationCancelled",
+      "version": 2,
+      "topic": "dwp.hris.modern.governed-ai-policy-evaluation-cancelled.v2",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "GovernedAiPolicyEvaluationRequested.v2",
+      "eventType": "GovernedAiPolicyEvaluationRequested",
+      "version": 2,
+      "topic": "dwp.hris.modern.governed-ai-policy-evaluation-requested.v2",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "GovernedAiPolicyEvaluationResultRecorded.v2",
+      "eventType": "GovernedAiPolicyEvaluationResultRecorded",
+      "version": 2,
+      "topic": "dwp.hris.modern.governed-ai-policy-evaluation-result-recorded.v2",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "GovernedAiPolicyPublished.v2",
+      "eventType": "GovernedAiPolicyPublished",
+      "version": 2,
+      "topic": "dwp.hris.modern.governed-ai-policy-published.v2",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "GovernedAiPolicyRetired.v2",
+      "eventType": "GovernedAiPolicyRetired",
+      "version": 2,
+      "topic": "dwp.hris.modern.governed-ai-policy-retired.v2",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "GovernedAiPolicyRevised.v2",
+      "eventType": "GovernedAiPolicyRevised",
+      "version": 2,
+      "topic": "dwp.hris.modern.governed-ai-policy-revised.v2",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "GovernedAiPolicySuspended.v2",
+      "eventType": "GovernedAiPolicySuspended",
+      "version": 2,
+      "topic": "dwp.hris.modern.governed-ai-policy-suspended.v2",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "GrowthCoachingRecorded.v2",
+      "eventType": "GrowthCoachingRecorded",
+      "version": 2,
+      "topic": "dwp.hris.modern.growth-coaching-recorded.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-GROWTH",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "GrowthEvidenceLinked.v2",
+      "eventType": "GrowthEvidenceLinked",
+      "version": 2,
+      "topic": "dwp.hris.modern.growth-evidence-linked.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-GROWTH",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "GrowthEvidenceUnlinked.v2",
+      "eventType": "GrowthEvidenceUnlinked",
+      "version": 2,
+      "topic": "dwp.hris.modern.growth-evidence-unlinked.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-GROWTH",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "GrowthPortabilityExportCancelled.v2",
+      "eventType": "GrowthPortabilityExportCancelled",
+      "version": 2,
+      "topic": "dwp.hris.modern.growth-portability-export-cancelled.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-GROWTH",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "GrowthPortabilityExportExpired.v2",
+      "eventType": "GrowthPortabilityExportExpired",
+      "version": 2,
+      "topic": "dwp.hris.modern.growth-portability-export-expired.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-GROWTH",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "GrowthPortabilityExportRequested.v2",
+      "eventType": "GrowthPortabilityExportRequested",
+      "version": 2,
+      "topic": "dwp.hris.modern.growth-portability-export-requested.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-GROWTH",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "GrowthPortabilityExportResultRecorded.v2",
+      "eventType": "GrowthPortabilityExportResultRecorded",
+      "version": 2,
+      "topic": "dwp.hris.modern.growth-portability-export-result-recorded.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-GROWTH",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "GrowthProfileArchived.v2",
+      "eventType": "GrowthProfileArchived",
+      "version": 2,
+      "topic": "dwp.hris.modern.growth-profile-archived.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-GROWTH",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "GrowthProfileCreated.v2",
+      "eventType": "GrowthProfileCreated",
+      "version": 2,
+      "topic": "dwp.hris.modern.growth-profile-created.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-GROWTH",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "GrowthProfileUpdated.v2",
+      "eventType": "GrowthProfileUpdated",
+      "version": 2,
+      "topic": "dwp.hris.modern.growth-profile-updated.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-GROWTH",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "HrServiceCaseAssigned.v2",
+      "eventType": "HrServiceCaseAssigned",
+      "version": 2,
+      "topic": "dwp.hris.modern.hr-service-case-assigned.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-HRSD",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "HrServiceCaseCancelled.v2",
+      "eventType": "HrServiceCaseCancelled",
+      "version": 2,
+      "topic": "dwp.hris.modern.hr-service-case-cancelled.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-HRSD",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "HrServiceCaseCreated.v2",
+      "eventType": "HrServiceCaseCreated",
+      "version": 2,
+      "topic": "dwp.hris.modern.hr-service-case-created.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-HRSD",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "HrServiceCaseResolved.v2",
+      "eventType": "HrServiceCaseResolved",
+      "version": 2,
+      "topic": "dwp.hris.modern.hr-service-case-resolved.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-HRSD",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "HrServiceCaseResponseRecorded.v2",
+      "eventType": "HrServiceCaseResponseRecorded",
+      "version": 2,
+      "topic": "dwp.hris.modern.hr-service-case-response-recorded.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-HRSD",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "HrServiceCaseTriaged.v2",
+      "eventType": "HrServiceCaseTriaged",
+      "version": 2,
+      "topic": "dwp.hris.modern.hr-service-case-triaged.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-HRSD",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "HrServiceSlaMilestoneRecorded.v2",
+      "eventType": "HrServiceSlaMilestoneRecorded",
+      "version": 2,
+      "topic": "dwp.hris.modern.hr-service-sla-milestone-recorded.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-HRSD",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "LearningAssignmentCancelled.v2",
+      "eventType": "LearningAssignmentCancelled",
+      "version": 2,
+      "topic": "dwp.hris.modern.learning-assignment-cancelled.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-LEARNING",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "LearningAssignmentCreated.v2",
+      "eventType": "LearningAssignmentCreated",
+      "version": 2,
+      "topic": "dwp.hris.modern.learning-assignment-created.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-LEARNING",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "LearningAssignmentStarted.v2",
+      "eventType": "LearningAssignmentStarted",
+      "version": 2,
+      "topic": "dwp.hris.modern.learning-assignment-started.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-LEARNING",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "LearningCompletionVerified.v2",
+      "eventType": "LearningCompletionVerified",
+      "version": 2,
+      "topic": "dwp.hris.modern.learning-completion-verified.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-LEARNING",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "LearningEnrollmentCreated.v2",
+      "eventType": "LearningEnrollmentCreated",
+      "version": 2,
+      "topic": "dwp.hris.modern.learning-enrollment-created.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-LEARNING",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "LearningOfferingCreated.v2",
+      "eventType": "LearningOfferingCreated",
+      "version": 2,
+      "topic": "dwp.hris.modern.learning-offering-created.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-LEARNING",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "LearningOfferingPublished.v2",
+      "eventType": "LearningOfferingPublished",
+      "version": 2,
+      "topic": "dwp.hris.modern.learning-offering-published.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-LEARNING",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "LearningOfferingRetired.v2",
+      "eventType": "LearningOfferingRetired",
+      "version": 2,
+      "topic": "dwp.hris.modern.learning-offering-retired.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-LEARNING",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "LearningOfferingRevised.v2",
+      "eventType": "LearningOfferingRevised",
+      "version": 2,
+      "topic": "dwp.hris.modern.learning-offering-revised.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-LEARNING",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "OnboardingJourneyAssigned.v2",
+      "eventType": "OnboardingJourneyAssigned",
+      "version": 2,
+      "topic": "dwp.hris.modern.onboarding-journey-assigned.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-ONBOARD",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "OnboardingJourneyCancelled.v2",
+      "eventType": "OnboardingJourneyCancelled",
+      "version": 2,
+      "topic": "dwp.hris.modern.onboarding-journey-cancelled.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-ONBOARD",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "OnboardingJourneyCompleted.v2",
+      "eventType": "OnboardingJourneyCompleted",
+      "version": 2,
+      "topic": "dwp.hris.modern.onboarding-journey-completed.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-ONBOARD",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "OnboardingTaskCompleted.v2",
+      "eventType": "OnboardingTaskCompleted",
+      "version": 2,
+      "topic": "dwp.hris.modern.onboarding-task-completed.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-ONBOARD",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "OnboardingTaskWaived.v2",
+      "eventType": "OnboardingTaskWaived",
+      "version": 2,
+      "topic": "dwp.hris.modern.onboarding-task-waived.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-ONBOARD",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "OnboardingTemplateCreated.v2",
+      "eventType": "OnboardingTemplateCreated",
+      "version": 2,
+      "topic": "dwp.hris.modern.onboarding-template-created.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-ONBOARD",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "OnboardingTemplatePublished.v2",
+      "eventType": "OnboardingTemplatePublished",
+      "version": 2,
+      "topic": "dwp.hris.modern.onboarding-template-published.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-ONBOARD",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "OnboardingTemplateRetired.v2",
+      "eventType": "OnboardingTemplateRetired",
+      "version": 2,
+      "topic": "dwp.hris.modern.onboarding-template-retired.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-ONBOARD",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "OnboardingTemplateRevised.v2",
+      "eventType": "OnboardingTemplateRevised",
+      "version": 2,
+      "topic": "dwp.hris.modern.onboarding-template-revised.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-ONBOARD",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "PeopleAnalyticsExportCancelled.v2",
+      "eventType": "PeopleAnalyticsExportCancelled",
+      "version": 2,
+      "topic": "dwp.hris.modern.people-analytics-export-cancelled.v2",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-ANALYTICS",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "PeopleAnalyticsExportExpired.v2",
+      "eventType": "PeopleAnalyticsExportExpired",
+      "version": 2,
+      "topic": "dwp.hris.modern.people-analytics-export-expired.v2",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-ANALYTICS",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "PeopleAnalyticsExportRequested.v2",
+      "eventType": "PeopleAnalyticsExportRequested",
+      "version": 2,
+      "topic": "dwp.hris.modern.people-analytics-export-requested.v2",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-ANALYTICS",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "PeopleAnalyticsExportResultRecorded.v2",
+      "eventType": "PeopleAnalyticsExportResultRecorded",
+      "version": 2,
+      "topic": "dwp.hris.modern.people-analytics-export-result-recorded.v2",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-ANALYTICS",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "PeopleMetricCreated.v2",
+      "eventType": "PeopleMetricCreated",
+      "version": 2,
+      "topic": "dwp.hris.modern.people-metric-created.v2",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-ANALYTICS",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "PeopleMetricProjectionRequested.v2",
+      "eventType": "PeopleMetricProjectionRequested",
+      "version": 2,
+      "topic": "dwp.hris.modern.people-metric-projection-requested.v2",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-ANALYTICS",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "PeopleMetricProjectionResultRecorded.v2",
+      "eventType": "PeopleMetricProjectionResultRecorded",
+      "version": 2,
+      "topic": "dwp.hris.modern.people-metric-projection-result-recorded.v2",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-ANALYTICS",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "PeopleMetricPublished.v2",
+      "eventType": "PeopleMetricPublished",
+      "version": 2,
+      "topic": "dwp.hris.modern.people-metric-published.v2",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-ANALYTICS",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "PeopleMetricRetired.v2",
+      "eventType": "PeopleMetricRetired",
+      "version": 2,
+      "topic": "dwp.hris.modern.people-metric-retired.v2",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-ANALYTICS",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "PeopleMetricRevised.v2",
+      "eventType": "PeopleMetricRevised",
+      "version": 2,
+      "topic": "dwp.hris.modern.people-metric-revised.v2",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-ANALYTICS",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "PeopleMetricValidated.v2",
+      "eventType": "PeopleMetricValidated",
+      "version": 2,
+      "topic": "dwp.hris.modern.people-metric-validated.v2",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-ANALYTICS",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "RequisitionClosed.v2",
+      "eventType": "RequisitionClosed",
+      "version": 2,
+      "topic": "dwp.hris.modern.requisition-closed.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "RequisitionCreated.v2",
+      "eventType": "RequisitionCreated",
+      "version": 2,
+      "topic": "dwp.hris.modern.requisition-created.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "RequisitionPaused.v2",
+      "eventType": "RequisitionPaused",
+      "version": 2,
+      "topic": "dwp.hris.modern.requisition-paused.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "RequisitionPublished.v2",
+      "eventType": "RequisitionPublished",
+      "version": 2,
+      "topic": "dwp.hris.modern.requisition-published.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "RequisitionResumed.v2",
+      "eventType": "RequisitionResumed",
+      "version": 2,
+      "topic": "dwp.hris.modern.requisition-resumed.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "RequisitionRevised.v2",
+      "eventType": "RequisitionRevised",
+      "version": 2,
+      "topic": "dwp.hris.modern.requisition-revised.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "SkillsTaxonomyCreated.v2",
+      "eventType": "SkillsTaxonomyCreated",
+      "version": 2,
+      "topic": "dwp.hris.modern.skills-taxonomy-created.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SKILLS",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "SkillsTaxonomyPublished.v2",
+      "eventType": "SkillsTaxonomyPublished",
+      "version": 2,
+      "topic": "dwp.hris.modern.skills-taxonomy-published.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SKILLS",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "SkillsTaxonomyRetired.v2",
+      "eventType": "SkillsTaxonomyRetired",
+      "version": 2,
+      "topic": "dwp.hris.modern.skills-taxonomy-retired.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SKILLS",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "SkillsTaxonomyRevised.v2",
+      "eventType": "SkillsTaxonomyRevised",
+      "version": 2,
+      "topic": "dwp.hris.modern.skills-taxonomy-revised.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SKILLS",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "SkillsTaxonomyValidated.v2",
+      "eventType": "SkillsTaxonomyValidated",
+      "version": 2,
+      "topic": "dwp.hris.modern.skills-taxonomy-validated.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SKILLS",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "SuccessionNominationAdded.v2",
+      "eventType": "SuccessionNominationAdded",
+      "version": 2,
+      "topic": "dwp.hris.modern.succession-nomination-added.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SUCCESSION",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "SuccessionNominationWithdrawn.v2",
+      "eventType": "SuccessionNominationWithdrawn",
+      "version": 2,
+      "topic": "dwp.hris.modern.succession-nomination-withdrawn.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SUCCESSION",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "SuccessionPlanApproved.v2",
+      "eventType": "SuccessionPlanApproved",
+      "version": 2,
+      "topic": "dwp.hris.modern.succession-plan-approved.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SUCCESSION",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "SuccessionPlanCreated.v2",
+      "eventType": "SuccessionPlanCreated",
+      "version": 2,
+      "topic": "dwp.hris.modern.succession-plan-created.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SUCCESSION",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "SuccessionPlanPublished.v2",
+      "eventType": "SuccessionPlanPublished",
+      "version": 2,
+      "topic": "dwp.hris.modern.succession-plan-published.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SUCCESSION",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "SuccessionPlanRejected.v2",
+      "eventType": "SuccessionPlanRejected",
+      "version": 2,
+      "topic": "dwp.hris.modern.succession-plan-rejected.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SUCCESSION",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "SuccessionPlanRetired.v2",
+      "eventType": "SuccessionPlanRetired",
+      "version": 2,
+      "topic": "dwp.hris.modern.succession-plan-retired.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SUCCESSION",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "SuccessionPlanRevised.v2",
+      "eventType": "SuccessionPlanRevised",
+      "version": 2,
+      "topic": "dwp.hris.modern.succession-plan-revised.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SUCCESSION",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "SuccessionPlanSubmitted.v2",
+      "eventType": "SuccessionPlanSubmitted",
+      "version": 2,
+      "topic": "dwp.hris.modern.succession-plan-submitted.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SUCCESSION",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "SuccessionReadinessEvidenceRecorded.v2",
+      "eventType": "SuccessionReadinessEvidenceRecorded",
+      "version": 2,
+      "topic": "dwp.hris.modern.succession-readiness-evidence-recorded.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SUCCESSION",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "TalentOpportunityApplicationShortlisted.v2",
+      "eventType": "TalentOpportunityApplicationShortlisted",
+      "version": 2,
+      "topic": "dwp.hris.modern.talent-opportunity-application-shortlisted.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-MARKET",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "TalentOpportunityApplicationSubmitted.v2",
+      "eventType": "TalentOpportunityApplicationSubmitted",
+      "version": 2,
+      "topic": "dwp.hris.modern.talent-opportunity-application-submitted.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-MARKET",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "TalentOpportunityApplicationWithdrawn.v2",
+      "eventType": "TalentOpportunityApplicationWithdrawn",
+      "version": 2,
+      "topic": "dwp.hris.modern.talent-opportunity-application-withdrawn.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-MARKET",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "TalentOpportunityCancelled.v2",
+      "eventType": "TalentOpportunityCancelled",
+      "version": 2,
+      "topic": "dwp.hris.modern.talent-opportunity-cancelled.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-MARKET",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "TalentOpportunityClosed.v2",
+      "eventType": "TalentOpportunityClosed",
+      "version": 2,
+      "topic": "dwp.hris.modern.talent-opportunity-closed.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-MARKET",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "TalentOpportunityCreated.v2",
+      "eventType": "TalentOpportunityCreated",
+      "version": 2,
+      "topic": "dwp.hris.modern.talent-opportunity-created.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-MARKET",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "TalentOpportunityPublished.v2",
+      "eventType": "TalentOpportunityPublished",
+      "version": 2,
+      "topic": "dwp.hris.modern.talent-opportunity-published.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-MARKET",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "TalentOpportunityRevised.v2",
+      "eventType": "TalentOpportunityRevised",
+      "version": 2,
+      "topic": "dwp.hris.modern.talent-opportunity-revised.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-MARKET",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "TalentOpportunitySelectionRecorded.v2",
+      "eventType": "TalentOpportunitySelectionRecorded",
+      "version": 2,
+      "topic": "dwp.hris.modern.talent-opportunity-selection-recorded.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-MARKET",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "WorkerSkillEvidenceRecorded.v2",
+      "eventType": "WorkerSkillEvidenceRecorded",
+      "version": 2,
+      "topic": "dwp.hris.modern.worker-skill-evidence-recorded.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SKILLS",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "WorkerSkillEvidenceRevoked.v2",
+      "eventType": "WorkerSkillEvidenceRevoked",
+      "version": 2,
+      "topic": "dwp.hris.modern.worker-skill-evidence-revoked.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SKILLS",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "WorkerSkillEvidenceVerified.v2",
+      "eventType": "WorkerSkillEvidenceVerified",
+      "version": 2,
+      "topic": "dwp.hris.modern.worker-skill-evidence-verified.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SKILLS",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "WorkforceDemandForecastCreated.v2",
+      "eventType": "WorkforceDemandForecastCreated",
+      "version": 2,
+      "topic": "dwp.hris.modern.workforce-demand-forecast-created.v2",
+      "ownerSession": "HRIS-TIM",
+      "primarySliceId": "MOD-TIM-WFM",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "WorkforceScenarioCancelled.v2",
+      "eventType": "WorkforceScenarioCancelled",
+      "version": 2,
+      "topic": "dwp.hris.modern.workforce-scenario-cancelled.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-WFP",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "WorkforceScenarioCreated.v2",
+      "eventType": "WorkforceScenarioCreated",
+      "version": 2,
+      "topic": "dwp.hris.modern.workforce-scenario-created.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-WFP",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "WorkforceScenarioDecisionRecorded.v2",
+      "eventType": "WorkforceScenarioDecisionRecorded",
+      "version": 2,
+      "topic": "dwp.hris.modern.workforce-scenario-decision-recorded.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-WFP",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "WorkforceScenarioPublished.v2",
+      "eventType": "WorkforceScenarioPublished",
+      "version": 2,
+      "topic": "dwp.hris.modern.workforce-scenario-published.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-WFP",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "WorkforceScenarioRevised.v2",
+      "eventType": "WorkforceScenarioRevised",
+      "version": 2,
+      "topic": "dwp.hris.modern.workforce-scenario-revised.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-WFP",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "WorkforceScenarioSimulated.v2",
+      "eventType": "WorkforceScenarioSimulated",
+      "version": 2,
+      "topic": "dwp.hris.modern.workforce-scenario-simulated.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-WFP",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "WorkforceScenarioSimulationFailed.v2",
+      "eventType": "WorkforceScenarioSimulationFailed",
+      "version": 2,
+      "topic": "dwp.hris.modern.workforce-scenario-simulation-failed.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-WFP",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "WorkforceScenarioSimulationRequested.v2",
+      "eventType": "WorkforceScenarioSimulationRequested",
+      "version": 2,
+      "topic": "dwp.hris.modern.workforce-scenario-simulation-requested.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-WFP",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "WorkforceScenarioSubmitted.v2",
+      "eventType": "WorkforceScenarioSubmitted",
+      "version": 2,
+      "topic": "dwp.hris.modern.workforce-scenario-submitted.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-WFP",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "WorkforceScheduleApprovalResultRecorded.v2",
+      "eventType": "WorkforceScheduleApprovalResultRecorded",
+      "version": 2,
+      "topic": "dwp.hris.modern.workforce-schedule-approval-result-recorded.v2",
+      "ownerSession": "HRIS-TIM",
+      "primarySliceId": "MOD-TIM-WFM",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "WorkforceScheduleCandidateCancelled.v2",
+      "eventType": "WorkforceScheduleCandidateCancelled",
+      "version": 2,
+      "topic": "dwp.hris.modern.workforce-schedule-candidate-cancelled.v2",
+      "ownerSession": "HRIS-TIM",
+      "primarySliceId": "MOD-TIM-WFM",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "WorkforceScheduleCandidateSubmitted.v2",
+      "eventType": "WorkforceScheduleCandidateSubmitted",
+      "version": 2,
+      "topic": "dwp.hris.modern.workforce-schedule-candidate-submitted.v2",
+      "ownerSession": "HRIS-TIM",
+      "primarySliceId": "MOD-TIM-WFM",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "WorkforceScheduleOptimizationCancelled.v2",
+      "eventType": "WorkforceScheduleOptimizationCancelled",
+      "version": 2,
+      "topic": "dwp.hris.modern.workforce-schedule-optimization-cancelled.v2",
+      "ownerSession": "HRIS-TIM",
+      "primarySliceId": "MOD-TIM-WFM",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "WorkforceScheduleOptimizationRequested.v2",
+      "eventType": "WorkforceScheduleOptimizationRequested",
+      "version": 2,
+      "topic": "dwp.hris.modern.workforce-schedule-optimization-requested.v2",
+      "ownerSession": "HRIS-TIM",
+      "primarySliceId": "MOD-TIM-WFM",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "WorkforceScheduleOptimizationResultRecorded.v2",
+      "eventType": "WorkforceScheduleOptimizationResultRecorded",
+      "version": 2,
+      "topic": "dwp.hris.modern.workforce-schedule-optimization-result-recorded.v2",
+      "ownerSession": "HRIS-TIM",
+      "primarySliceId": "MOD-TIM-WFM",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "WorkforceSchedulePublished.v2",
+      "eventType": "WorkforceSchedulePublished",
+      "version": 2,
+      "topic": "dwp.hris.modern.workforce-schedule-published.v2",
+      "ownerSession": "HRIS-TIM",
+      "primarySliceId": "MOD-TIM-WFM",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    },
+    {
+      "eventName": "WorkforceScheduleValidationCompleted.v2",
+      "eventType": "WorkforceScheduleValidationCompleted",
+      "version": 2,
+      "topic": "dwp.hris.modern.workforce-schedule-validation-completed.v2",
+      "ownerSession": "HRIS-TIM",
+      "primarySliceId": "MOD-TIM-WFM",
+      "identityRule": "EXACT_EVENT_NAME_AND_VERSION_NO_ALIAS"
+    }
+  ],
+  "sealedPayloadSha256": "f3fe94e340ebfebe78e2e214c05c3f73d4781f99e1a0fb1f3aaf8d28a0db86ba"
+}

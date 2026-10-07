@@ -1,0 +1,4096 @@
+{
+  "registryId": "dwp.hris.g3.modern.semantic-bindings-successor.v1",
+  "schemaVersion": 3,
+  "status": "SEALED_G3_DESIGN_NOT_IMPLEMENTED",
+  "authority": {
+    "generationStage": "G3_ONLY",
+    "canonicalSetId": "sha256:33ed6337dcd32316a9fb80c5271615ab2dc285ba08d139ebd4bcdf6bdf5f0946",
+    "sourceDisposition": "docs/06-delivery/hris/g2-successors/2026-10-07/g3-primary-ownership-disposition.v1.json",
+    "currentBackendCommit": "5612cc1a0b4a21a4d0b9107739579f23d165790f",
+    "reconciledBackendCommit": "0731f6df2d55cdeb4784a09ae6e28d4ae4b0c294",
+    "backendResultCommit": "ea630a5f2dec9b1f044f11dd5eb66ffb6f87941a",
+    "historicalBytesReused": false,
+    "historicalByteIdentityClaim": false,
+    "implementationState": "NOT_STARTED_G3",
+    "productionState": "NOT_AUTHORIZED_G6",
+    "moduleCodeGoGranted": false,
+    "productionAuthorizationGranted": false
+  },
+  "scope": {
+    "operations": 199,
+    "commands": 133,
+    "queries": 66,
+    "events": 157
+  },
+  "operationSemanticBindings": [
+    {
+      "operationId": "modern.ai.assist.cancel",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "capabilityId": "HRIS.MODERN.GOVERNED_AI",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/platform/v1/hris/ai-assistance/{assistanceId}/cancel",
+      "authorizationCapability": "hcm.ai.assist.use",
+      "eventIds": [
+        "GovernedAiAssistanceCancelled.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/0"
+    },
+    {
+      "operationId": "modern.ai.assist.create",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "capabilityId": "HRIS.MODERN.GOVERNED_AI",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/platform/v1/hris/ai-assistance",
+      "authorizationCapability": "hcm.ai.assist.use",
+      "eventIds": [
+        "GovernedAiAssistanceRequested.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/1"
+    },
+    {
+      "operationId": "modern.ai.assist.review",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "capabilityId": "HRIS.MODERN.GOVERNED_AI",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/platform/v1/hris/ai-assistance/{assistanceId}/review",
+      "authorizationCapability": "hcm.ai.assist.use",
+      "eventIds": [
+        "GovernedAiAssistanceConfirmed.v2",
+        "GovernedAiAssistanceRejected.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/2"
+    },
+    {
+      "operationId": "modern.ai.assist.revoke",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "capabilityId": "HRIS.MODERN.GOVERNED_AI",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/platform/v1/hris/ai-assistance/{assistanceId}/revoke",
+      "authorizationCapability": "hcm.ai.assist.use",
+      "eventIds": [
+        "GovernedAiAssistanceRevoked.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/3"
+    },
+    {
+      "operationId": "modern.ai.assistance.query",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "capabilityId": "HRIS.MODERN.GOVERNED_AI",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/platform/v1/hris/ai-assistance/{assistanceId}",
+      "authorizationCapability": "hcm.ai.assist.use",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/4"
+    },
+    {
+      "operationId": "modern.ai.assistances.query",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "capabilityId": "HRIS.MODERN.GOVERNED_AI",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/platform/v1/hris/ai-assistance",
+      "authorizationCapability": "hcm.ai.assist.use",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/5"
+    },
+    {
+      "operationId": "modern.ai.evaluation.cancel",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "capabilityId": "HRIS.MODERN.GOVERNED_AI",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/platform/v1/admin/hris/ai-governance/evaluations/{evaluationId}/cancel",
+      "authorizationCapability": "hcm.ai.policy.manage",
+      "eventIds": [
+        "GovernedAiPolicyEvaluationCancelled.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/6"
+    },
+    {
+      "operationId": "modern.ai.evaluation.query",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "capabilityId": "HRIS.MODERN.GOVERNED_AI",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/platform/v1/admin/hris/ai-governance/evaluations/{evaluationId}",
+      "authorizationCapability": "hcm.ai.policy.manage",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/7"
+    },
+    {
+      "operationId": "modern.ai.evaluations.query",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "capabilityId": "HRIS.MODERN.GOVERNED_AI",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/platform/v1/admin/hris/ai-governance/evaluations",
+      "authorizationCapability": "hcm.ai.policy.manage",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/8"
+    },
+    {
+      "operationId": "modern.ai.kill.switch",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "capabilityId": "HRIS.MODERN.GOVERNED_AI",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/platform/v1/admin/hris/ai-governance/kill-switches/{useCaseKey}/execute",
+      "authorizationCapability": "hcm.ai.kill-switch.execute",
+      "eventIds": [
+        "GovernedAiPolicySuspended.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/9"
+    },
+    {
+      "operationId": "modern.ai.policies.query",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "capabilityId": "HRIS.MODERN.GOVERNED_AI",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/platform/v1/admin/hris/ai-governance/policies",
+      "authorizationCapability": "hcm.ai.policy.manage",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/10"
+    },
+    {
+      "operationId": "modern.ai.policy.create",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "capabilityId": "HRIS.MODERN.GOVERNED_AI",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/platform/v1/admin/hris/ai-governance/policies",
+      "authorizationCapability": "hcm.ai.policy.manage",
+      "eventIds": [
+        "GovernedAiPolicyCreated.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/11"
+    },
+    {
+      "operationId": "modern.ai.policy.evaluate",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "capabilityId": "HRIS.MODERN.GOVERNED_AI",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/platform/v1/admin/hris/ai-governance/policies/{policyId}/evaluations",
+      "authorizationCapability": "hcm.ai.policy.manage",
+      "eventIds": [
+        "GovernedAiPolicyEvaluationRequested.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/12"
+    },
+    {
+      "operationId": "modern.ai.policy.publish",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "capabilityId": "HRIS.MODERN.GOVERNED_AI",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/platform/v1/admin/hris/ai-governance/policies/{policyId}/publish",
+      "authorizationCapability": "hcm.ai.policy.manage",
+      "eventIds": [
+        "GovernedAiPolicyPublished.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/13"
+    },
+    {
+      "operationId": "modern.ai.policy.query",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "capabilityId": "HRIS.MODERN.GOVERNED_AI",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/platform/v1/admin/hris/ai-governance/policies/{policyId}",
+      "authorizationCapability": "hcm.ai.policy.manage",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/14"
+    },
+    {
+      "operationId": "modern.ai.policy.retire",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "capabilityId": "HRIS.MODERN.GOVERNED_AI",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/platform/v1/admin/hris/ai-governance/policies/{policyId}/retire",
+      "authorizationCapability": "hcm.ai.policy.manage",
+      "eventIds": [
+        "GovernedAiPolicyRetired.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/15"
+    },
+    {
+      "operationId": "modern.ai.policy.revise",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "capabilityId": "HRIS.MODERN.GOVERNED_AI",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/platform/v1/admin/hris/ai-governance/policies/{policyId}/revisions",
+      "authorizationCapability": "hcm.ai.policy.manage",
+      "eventIds": [
+        "GovernedAiPolicyRevised.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/16"
+    },
+    {
+      "operationId": "modern.analytics.export.cancel",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-ANALYTICS",
+      "capabilityId": "HRIS.MODERN.PEOPLE_ANALYTICS",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/platform/v1/admin/hris/people-analytics/exports/{exportId}/cancel",
+      "authorizationCapability": "hcm.analytics.export",
+      "eventIds": [
+        "PeopleAnalyticsExportCancelled.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/17"
+    },
+    {
+      "operationId": "modern.analytics.export.create",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-ANALYTICS",
+      "capabilityId": "HRIS.MODERN.PEOPLE_ANALYTICS",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/platform/v1/admin/hris/people-analytics/exports",
+      "authorizationCapability": "hcm.analytics.export",
+      "eventIds": [
+        "PeopleAnalyticsExportRequested.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/18"
+    },
+    {
+      "operationId": "modern.analytics.export.query",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-ANALYTICS",
+      "capabilityId": "HRIS.MODERN.PEOPLE_ANALYTICS",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/platform/v1/admin/hris/people-analytics/exports/{exportId}",
+      "authorizationCapability": "hcm.analytics.export",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/19"
+    },
+    {
+      "operationId": "modern.analytics.exports.query",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-ANALYTICS",
+      "capabilityId": "HRIS.MODERN.PEOPLE_ANALYTICS",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/platform/v1/admin/hris/people-analytics/exports",
+      "authorizationCapability": "hcm.analytics.export",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/20"
+    },
+    {
+      "operationId": "modern.analytics.metric.create",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-ANALYTICS",
+      "capabilityId": "HRIS.MODERN.PEOPLE_ANALYTICS",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/platform/v1/admin/hris/people-analytics/metrics",
+      "authorizationCapability": "hcm.analytics.metric.manage",
+      "eventIds": [
+        "PeopleMetricCreated.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/21"
+    },
+    {
+      "operationId": "modern.analytics.metric.publish",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-ANALYTICS",
+      "capabilityId": "HRIS.MODERN.PEOPLE_ANALYTICS",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/platform/v1/admin/hris/people-analytics/metrics/{metricId}/versions/{version}/publish",
+      "authorizationCapability": "hcm.analytics.metric.manage",
+      "eventIds": [
+        "PeopleMetricPublished.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/22"
+    },
+    {
+      "operationId": "modern.analytics.metric.query",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-ANALYTICS",
+      "capabilityId": "HRIS.MODERN.PEOPLE_ANALYTICS",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/platform/v1/admin/hris/people-analytics/metrics/{metricId}",
+      "authorizationCapability": "hcm.analytics.metric.view",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/23"
+    },
+    {
+      "operationId": "modern.analytics.metric.retire",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-ANALYTICS",
+      "capabilityId": "HRIS.MODERN.PEOPLE_ANALYTICS",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/platform/v1/admin/hris/people-analytics/metrics/{metricId}/retire",
+      "authorizationCapability": "hcm.analytics.metric.manage",
+      "eventIds": [
+        "PeopleMetricRetired.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/24"
+    },
+    {
+      "operationId": "modern.analytics.metric.revise",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-ANALYTICS",
+      "capabilityId": "HRIS.MODERN.PEOPLE_ANALYTICS",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/platform/v1/admin/hris/people-analytics/metrics/{metricId}/revisions",
+      "authorizationCapability": "hcm.analytics.metric.manage",
+      "eventIds": [
+        "PeopleMetricRevised.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/25"
+    },
+    {
+      "operationId": "modern.analytics.metric.validate",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-ANALYTICS",
+      "capabilityId": "HRIS.MODERN.PEOPLE_ANALYTICS",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/platform/v1/admin/hris/people-analytics/metrics/{metricId}/versions/{version}/validate",
+      "authorizationCapability": "hcm.analytics.metric.manage",
+      "eventIds": [
+        "PeopleMetricValidated.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/26"
+    },
+    {
+      "operationId": "modern.analytics.metrics.query",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-ANALYTICS",
+      "capabilityId": "HRIS.MODERN.PEOPLE_ANALYTICS",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/platform/v1/admin/hris/people-analytics/metrics",
+      "authorizationCapability": "hcm.analytics.metric.view",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/27"
+    },
+    {
+      "operationId": "modern.analytics.projection.query",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-ANALYTICS",
+      "capabilityId": "HRIS.MODERN.PEOPLE_ANALYTICS",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/platform/v1/admin/hris/people-analytics/projections/{projectionId}",
+      "authorizationCapability": "hcm.analytics.metric.view",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/28"
+    },
+    {
+      "operationId": "modern.analytics.projection.request",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-ANALYTICS",
+      "capabilityId": "HRIS.MODERN.PEOPLE_ANALYTICS",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/platform/v1/admin/hris/people-analytics/metrics/{metricId}/projections",
+      "authorizationCapability": "hcm.analytics.export",
+      "eventIds": [
+        "PeopleMetricProjectionRequested.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/29"
+    },
+    {
+      "operationId": "modern.analytics.projections.query",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-ANALYTICS",
+      "capabilityId": "HRIS.MODERN.PEOPLE_ANALYTICS",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/platform/v1/admin/hris/people-analytics/projections",
+      "authorizationCapability": "hcm.analytics.metric.view",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/30"
+    },
+    {
+      "operationId": "modern.benefits.enrollment.cancel",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-BENEFITS",
+      "capabilityId": "HRIS.MODERN.BENEFITS_ADMIN",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/benefits/enrollments/{enrollmentId}/cancel",
+      "authorizationCapability": "hcm.benefits.operate",
+      "eventIds": [
+        "BenefitEnrollmentCancelled.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/31"
+    },
+    {
+      "operationId": "modern.benefits.enrollment.decide",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-BENEFITS",
+      "capabilityId": "HRIS.MODERN.BENEFITS_ADMIN",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/benefits/enrollments/{enrollmentId}/decisions",
+      "authorizationCapability": "hcm.benefits.operate",
+      "eventIds": [
+        "BenefitEnrollmentDecided.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/32"
+    },
+    {
+      "operationId": "modern.benefits.enrollment.query",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-BENEFITS",
+      "capabilityId": "HRIS.MODERN.BENEFITS_ADMIN",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/people/v1/hris/benefits/enrollments/{enrollmentId}",
+      "authorizationCapability": "hcm.benefits.self.view",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/33"
+    },
+    {
+      "operationId": "modern.benefits.enrollment.submit",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-BENEFITS",
+      "capabilityId": "HRIS.MODERN.BENEFITS_ADMIN",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/benefits/enrollments",
+      "authorizationCapability": "hcm.benefits.self.enroll",
+      "eventIds": [
+        "BenefitEnrollmentSubmitted.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/34"
+    },
+    {
+      "operationId": "modern.benefits.enrollments.query",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-BENEFITS",
+      "capabilityId": "HRIS.MODERN.BENEFITS_ADMIN",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/people/v1/hris/benefits/enrollments",
+      "authorizationCapability": "hcm.benefits.self.view",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/35"
+    },
+    {
+      "operationId": "modern.benefits.lifeevent.decide",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-BENEFITS",
+      "capabilityId": "HRIS.MODERN.BENEFITS_ADMIN",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/benefits/life-events/{lifeEventId}/decisions",
+      "authorizationCapability": "hcm.benefits.operate",
+      "eventIds": [
+        "BenefitLifeEventDecisionRecorded.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/36"
+    },
+    {
+      "operationId": "modern.benefits.lifeevent.query",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-BENEFITS",
+      "capabilityId": "HRIS.MODERN.BENEFITS_ADMIN",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/people/v1/hris/benefits/life-events/{lifeEventId}",
+      "authorizationCapability": "hcm.benefits.self.view",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/37"
+    },
+    {
+      "operationId": "modern.benefits.lifeevent.submit",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-BENEFITS",
+      "capabilityId": "HRIS.MODERN.BENEFITS_ADMIN",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/benefits/life-events",
+      "authorizationCapability": "hcm.benefits.self.enroll",
+      "eventIds": [
+        "BenefitLifeEventSubmitted.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/38"
+    },
+    {
+      "operationId": "modern.benefits.lifeevents.query",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-BENEFITS",
+      "capabilityId": "HRIS.MODERN.BENEFITS_ADMIN",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/people/v1/hris/benefits/life-events",
+      "authorizationCapability": "hcm.benefits.self.view",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/39"
+    },
+    {
+      "operationId": "modern.benefits.plan.create",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-BENEFITS",
+      "capabilityId": "HRIS.MODERN.BENEFITS_ADMIN",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/benefits/plans",
+      "authorizationCapability": "hcm.benefits.operate",
+      "eventIds": [
+        "BenefitPlanCreated.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/40"
+    },
+    {
+      "operationId": "modern.benefits.plan.publish",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-BENEFITS",
+      "capabilityId": "HRIS.MODERN.BENEFITS_ADMIN",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/benefits/plans/{planId}/versions/{version}/publish",
+      "authorizationCapability": "hcm.benefits.operate",
+      "eventIds": [
+        "BenefitPlanPublished.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/41"
+    },
+    {
+      "operationId": "modern.benefits.plan.query",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-BENEFITS",
+      "capabilityId": "HRIS.MODERN.BENEFITS_ADMIN",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/people/v1/hris/benefits/plans/{planId}",
+      "authorizationCapability": "hcm.benefits.operate",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/42"
+    },
+    {
+      "operationId": "modern.benefits.plan.retire",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-BENEFITS",
+      "capabilityId": "HRIS.MODERN.BENEFITS_ADMIN",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/benefits/plans/{planId}/retire",
+      "authorizationCapability": "hcm.benefits.operate",
+      "eventIds": [
+        "BenefitPlanRetired.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/43"
+    },
+    {
+      "operationId": "modern.benefits.plan.revise",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-BENEFITS",
+      "capabilityId": "HRIS.MODERN.BENEFITS_ADMIN",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/benefits/plans/{planId}/revisions",
+      "authorizationCapability": "hcm.benefits.operate",
+      "eventIds": [
+        "BenefitPlanRevised.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/44"
+    },
+    {
+      "operationId": "modern.benefits.plans.query",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-BENEFITS",
+      "capabilityId": "HRIS.MODERN.BENEFITS_ADMIN",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/people/v1/hris/benefits/plans",
+      "authorizationCapability": "hcm.benefits.operate",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/45"
+    },
+    {
+      "operationId": "modern.benefits.self.plans.query",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-BENEFITS",
+      "capabilityId": "HRIS.MODERN.BENEFITS_ADMIN",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/people/v1/hris/benefits/my-eligible-plans",
+      "authorizationCapability": "hcm.benefits.self.view",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/46"
+    },
+    {
+      "operationId": "modern.compplan.budget.allocate",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-COMPPLAN",
+      "capabilityId": "HRIS.MODERN.COMPENSATION_PLANNING",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/compensation-planning/cycles/{cycleId}/budget-allocations",
+      "authorizationCapability": "hcm.compensation.plan.propose",
+      "eventIds": [
+        "CompensationBudgetAllocated.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/47"
+    },
+    {
+      "operationId": "modern.compplan.cycle.cancel",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-COMPPLAN",
+      "capabilityId": "HRIS.MODERN.COMPENSATION_PLANNING",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/compensation-planning/cycles/{cycleId}/cancel",
+      "authorizationCapability": "hcm.compensation.plan.propose",
+      "eventIds": [
+        "CompensationCycleCancelled.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/48"
+    },
+    {
+      "operationId": "modern.compplan.cycle.create",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-COMPPLAN",
+      "capabilityId": "HRIS.MODERN.COMPENSATION_PLANNING",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/compensation-planning/cycles",
+      "authorizationCapability": "hcm.compensation.plan.propose",
+      "eventIds": [
+        "CompensationCycleCreated.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/49"
+    },
+    {
+      "operationId": "modern.compplan.cycle.query",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-COMPPLAN",
+      "capabilityId": "HRIS.MODERN.COMPENSATION_PLANNING",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/people/v1/hris/performance/compensation-planning/cycles/{cycleId}",
+      "authorizationCapability": "hcm.compensation.plan.view",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/50"
+    },
+    {
+      "operationId": "modern.compplan.cycle.revise",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-COMPPLAN",
+      "capabilityId": "HRIS.MODERN.COMPENSATION_PLANNING",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/compensation-planning/cycles/{cycleId}/revisions",
+      "authorizationCapability": "hcm.compensation.plan.propose",
+      "eventIds": [
+        "CompensationCycleRevised.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/51"
+    },
+    {
+      "operationId": "modern.compplan.cycles.query",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-COMPPLAN",
+      "capabilityId": "HRIS.MODERN.COMPENSATION_PLANNING",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/people/v1/hris/performance/compensation-planning/cycles",
+      "authorizationCapability": "hcm.compensation.plan.view",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/52"
+    },
+    {
+      "operationId": "modern.compplan.plan.approve",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-COMPPLAN",
+      "capabilityId": "HRIS.MODERN.COMPENSATION_PLANNING",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/compensation-planning/cycles/{cycleId}/approve",
+      "authorizationCapability": "hcm.compensation.plan.approve",
+      "eventIds": [
+        "CompensationPlanApprovalRecorded.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/53"
+    },
+    {
+      "operationId": "modern.compplan.proposal.query",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-COMPPLAN",
+      "capabilityId": "HRIS.MODERN.COMPENSATION_PLANNING",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/people/v1/hris/performance/compensation-planning/proposals/{proposalId}",
+      "authorizationCapability": "hcm.compensation.plan.view",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/54"
+    },
+    {
+      "operationId": "modern.compplan.proposal.submit",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-COMPPLAN",
+      "capabilityId": "HRIS.MODERN.COMPENSATION_PLANNING",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/compensation-planning/cycles/{cycleId}/proposals/{proposalId}/submit",
+      "authorizationCapability": "hcm.compensation.plan.propose",
+      "eventIds": [
+        "CompensationProposalSubmitted.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/55"
+    },
+    {
+      "operationId": "modern.compplan.proposal.upsert",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-COMPPLAN",
+      "capabilityId": "HRIS.MODERN.COMPENSATION_PLANNING",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/compensation-planning/cycles/{cycleId}/proposals/{proposalId}",
+      "authorizationCapability": "hcm.compensation.plan.propose",
+      "eventIds": [
+        "CompensationProposalDrafted.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/56"
+    },
+    {
+      "operationId": "modern.compplan.proposals.query",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-COMPPLAN",
+      "capabilityId": "HRIS.MODERN.COMPENSATION_PLANNING",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/people/v1/hris/performance/compensation-planning/cycles/{cycleId}/proposals",
+      "authorizationCapability": "hcm.compensation.plan.view",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/57"
+    },
+    {
+      "operationId": "modern.compplan.snapshot.publish",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-COMPPLAN",
+      "capabilityId": "HRIS.MODERN.COMPENSATION_PLANNING",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/compensation-planning/cycles/{cycleId}/approved-snapshots",
+      "authorizationCapability": "hcm.compensation.plan.approve",
+      "eventIds": [
+        "ApprovedCompensationPlanSnapshotPublished.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/58"
+    },
+    {
+      "operationId": "modern.contingent.engagement.activate",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-CONTINGENT",
+      "capabilityId": "HRIS.MODERN.CONTINGENT_WORKFORCE",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/contingent-workforce/engagements/{engagementId}/activate",
+      "authorizationCapability": "hcm.contingent.operate",
+      "eventIds": [
+        "ContingentAccessGrantRequested.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/59"
+    },
+    {
+      "operationId": "modern.contingent.engagement.create",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-CONTINGENT",
+      "capabilityId": "HRIS.MODERN.CONTINGENT_WORKFORCE",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/contingent-workforce/engagements",
+      "authorizationCapability": "hcm.contingent.operate",
+      "eventIds": [
+        "ContingentEngagementCreated.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/60"
+    },
+    {
+      "operationId": "modern.contingent.engagement.offboard",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-CONTINGENT",
+      "capabilityId": "HRIS.MODERN.CONTINGENT_WORKFORCE",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/contingent-workforce/engagements/{engagementId}/offboard",
+      "authorizationCapability": "hcm.contingent.offboard",
+      "eventIds": [
+        "ContingentEngagementOffboardingStarted.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/61"
+    },
+    {
+      "operationId": "modern.contingent.engagement.query",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-CONTINGENT",
+      "capabilityId": "HRIS.MODERN.CONTINGENT_WORKFORCE",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/people/v1/hris/contingent-workforce/engagements/{engagementId}",
+      "authorizationCapability": "hcm.contingent.view",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/62"
+    },
+    {
+      "operationId": "modern.contingent.engagement.reject",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-CONTINGENT",
+      "capabilityId": "HRIS.MODERN.CONTINGENT_WORKFORCE",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/contingent-workforce/engagements/{engagementId}/reject",
+      "authorizationCapability": "hcm.contingent.operate",
+      "eventIds": [
+        "ContingentEngagementRejected.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/63"
+    },
+    {
+      "operationId": "modern.contingent.engagement.revise",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-CONTINGENT",
+      "capabilityId": "HRIS.MODERN.CONTINGENT_WORKFORCE",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/contingent-workforce/engagements/{engagementId}/revisions",
+      "authorizationCapability": "hcm.contingent.operate",
+      "eventIds": [
+        "ContingentEngagementRevised.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/64"
+    },
+    {
+      "operationId": "modern.contingent.engagement.submit",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-CONTINGENT",
+      "capabilityId": "HRIS.MODERN.CONTINGENT_WORKFORCE",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/contingent-workforce/engagements/{engagementId}/submit",
+      "authorizationCapability": "hcm.contingent.operate",
+      "eventIds": [
+        "ContingentEngagementSubmitted.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/65"
+    },
+    {
+      "operationId": "modern.contingent.engagements.query",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-CONTINGENT",
+      "capabilityId": "HRIS.MODERN.CONTINGENT_WORKFORCE",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/people/v1/hris/contingent-workforce/engagements",
+      "authorizationCapability": "hcm.contingent.view",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/66"
+    },
+    {
+      "operationId": "modern.contingent.sponsor.reassign",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-CONTINGENT",
+      "capabilityId": "HRIS.MODERN.CONTINGENT_WORKFORCE",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/contingent-workforce/engagements/{engagementId}/sponsor",
+      "authorizationCapability": "hcm.contingent.operate",
+      "eventIds": [
+        "ContingentSponsorReassigned.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/67"
+    },
+    {
+      "operationId": "modern.growth.coaching.record",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-GROWTH",
+      "capabilityId": "HRIS.MODERN.GROWTH_PROFILE",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/growth-profiles/{profileId}/coaching-notes",
+      "authorizationCapability": "hcm.growth.manager.coach",
+      "eventIds": [
+        "GrowthCoachingRecorded.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/68"
+    },
+    {
+      "operationId": "modern.growth.evidence.link",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-GROWTH",
+      "capabilityId": "HRIS.MODERN.GROWTH_PROFILE",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/growth-profiles/{profileId}/evidence-links",
+      "authorizationCapability": "hcm.growth.self.manage",
+      "eventIds": [
+        "GrowthEvidenceLinked.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/69"
+    },
+    {
+      "operationId": "modern.growth.evidence.unlink",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-GROWTH",
+      "capabilityId": "HRIS.MODERN.GROWTH_PROFILE",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/growth-profiles/{profileId}/evidence-links/{evidenceLinkId}/unlink",
+      "authorizationCapability": "hcm.growth.self.manage",
+      "eventIds": [
+        "GrowthEvidenceUnlinked.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/70"
+    },
+    {
+      "operationId": "modern.growth.export.cancel",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-GROWTH",
+      "capabilityId": "HRIS.MODERN.GROWTH_PROFILE",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/growth-profiles/exports/{exportId}/cancel",
+      "authorizationCapability": "hcm.growth.self.manage",
+      "eventIds": [
+        "GrowthPortabilityExportCancelled.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/71"
+    },
+    {
+      "operationId": "modern.growth.export.query",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-GROWTH",
+      "capabilityId": "HRIS.MODERN.GROWTH_PROFILE",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/people/v1/hris/performance/growth-profiles/exports/{exportId}",
+      "authorizationCapability": "hcm.growth.self.view",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/72"
+    },
+    {
+      "operationId": "modern.growth.export.request",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-GROWTH",
+      "capabilityId": "HRIS.MODERN.GROWTH_PROFILE",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/growth-profiles/{profileId}/exports",
+      "authorizationCapability": "hcm.growth.self.manage",
+      "eventIds": [
+        "GrowthPortabilityExportRequested.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/73"
+    },
+    {
+      "operationId": "modern.growth.exports.query",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-GROWTH",
+      "capabilityId": "HRIS.MODERN.GROWTH_PROFILE",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/people/v1/hris/performance/growth-profiles/exports",
+      "authorizationCapability": "hcm.growth.self.view",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/74"
+    },
+    {
+      "operationId": "modern.growth.profile.archive",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-GROWTH",
+      "capabilityId": "HRIS.MODERN.GROWTH_PROFILE",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/growth-profiles/{profileId}/archive",
+      "authorizationCapability": "hcm.growth.self.manage",
+      "eventIds": [
+        "GrowthProfileArchived.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/75"
+    },
+    {
+      "operationId": "modern.growth.profile.create",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-GROWTH",
+      "capabilityId": "HRIS.MODERN.GROWTH_PROFILE",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/growth-profiles",
+      "authorizationCapability": "hcm.growth.self.manage",
+      "eventIds": [
+        "GrowthProfileCreated.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/76"
+    },
+    {
+      "operationId": "modern.growth.profile.query",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-GROWTH",
+      "capabilityId": "HRIS.MODERN.GROWTH_PROFILE",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/people/v1/hris/performance/growth-profiles/{profileId}",
+      "authorizationCapability": "hcm.growth.self.view",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/77"
+    },
+    {
+      "operationId": "modern.growth.profile.update",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-GROWTH",
+      "capabilityId": "HRIS.MODERN.GROWTH_PROFILE",
+      "mode": "COMMAND",
+      "method": "PUT",
+      "path": "/api/people/v1/hris/performance/growth-profiles/{profileId}",
+      "authorizationCapability": "hcm.growth.self.manage",
+      "eventIds": [
+        "GrowthProfileUpdated.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/78"
+    },
+    {
+      "operationId": "modern.growth.profiles.query",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-GROWTH",
+      "capabilityId": "HRIS.MODERN.GROWTH_PROFILE",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/people/v1/hris/performance/growth-profiles",
+      "authorizationCapability": "hcm.growth.self.view",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/79"
+    },
+    {
+      "operationId": "modern.growth.self.query",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-GROWTH",
+      "capabilityId": "HRIS.MODERN.GROWTH_PROFILE",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/people/v1/hris/performance/growth-profiles/me",
+      "authorizationCapability": "hcm.growth.self.view",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/80"
+    },
+    {
+      "operationId": "modern.hrservice.case.assign",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-HRSD",
+      "capabilityId": "HRIS.MODERN.HR_SERVICE_DELIVERY",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/hr-services/cases/{caseId}/assignments",
+      "authorizationCapability": "hcm.hrservice.restricted.assign",
+      "eventIds": [
+        "HrServiceCaseAssigned.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/81"
+    },
+    {
+      "operationId": "modern.hrservice.case.cancel",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-HRSD",
+      "capabilityId": "HRIS.MODERN.HR_SERVICE_DELIVERY",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/hr-services/cases/{caseId}/cancel",
+      "authorizationCapability": "hcm.hrservice.case.work",
+      "eventIds": [
+        "HrServiceCaseCancelled.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/82"
+    },
+    {
+      "operationId": "modern.hrservice.case.create",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-HRSD",
+      "capabilityId": "HRIS.MODERN.HR_SERVICE_DELIVERY",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/hr-services/cases",
+      "authorizationCapability": "hcm.hrservice.self.create",
+      "eventIds": [
+        "HrServiceCaseCreated.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/83"
+    },
+    {
+      "operationId": "modern.hrservice.case.query",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-HRSD",
+      "capabilityId": "HRIS.MODERN.HR_SERVICE_DELIVERY",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/people/v1/hris/hr-services/cases/{caseId}",
+      "authorizationCapability": "hcm.hrservice.case.work",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/84"
+    },
+    {
+      "operationId": "modern.hrservice.case.resolve",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-HRSD",
+      "capabilityId": "HRIS.MODERN.HR_SERVICE_DELIVERY",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/hr-services/cases/{caseId}/resolve",
+      "authorizationCapability": "hcm.hrservice.case.work",
+      "eventIds": [
+        "HrServiceCaseResolved.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/85"
+    },
+    {
+      "operationId": "modern.hrservice.case.respond",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-HRSD",
+      "capabilityId": "HRIS.MODERN.HR_SERVICE_DELIVERY",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/hr-services/cases/{caseId}/responses",
+      "authorizationCapability": "hcm.hrservice.case.work",
+      "eventIds": [
+        "HrServiceCaseResponseRecorded.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/86"
+    },
+    {
+      "operationId": "modern.hrservice.case.triage",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-HRSD",
+      "capabilityId": "HRIS.MODERN.HR_SERVICE_DELIVERY",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/hr-services/cases/{caseId}/triage",
+      "authorizationCapability": "hcm.hrservice.case.work",
+      "eventIds": [
+        "HrServiceCaseTriaged.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/87"
+    },
+    {
+      "operationId": "modern.hrservice.cases.query",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-HRSD",
+      "capabilityId": "HRIS.MODERN.HR_SERVICE_DELIVERY",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/people/v1/hris/hr-services/cases",
+      "authorizationCapability": "hcm.hrservice.case.work",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/88"
+    },
+    {
+      "operationId": "modern.learning.assignment.cancel",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-LEARNING",
+      "capabilityId": "HRIS.MODERN.LEARNING",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/learning/assignments/{assignmentId}/cancel",
+      "authorizationCapability": "hcm.learning.self.enroll",
+      "eventIds": [
+        "LearningAssignmentCancelled.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/89"
+    },
+    {
+      "operationId": "modern.learning.assignment.create",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-LEARNING",
+      "capabilityId": "HRIS.MODERN.LEARNING",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/learning/assignments",
+      "authorizationCapability": "hcm.learning.self.enroll",
+      "eventIds": [
+        "LearningAssignmentCreated.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/90"
+    },
+    {
+      "operationId": "modern.learning.assignment.query",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-LEARNING",
+      "capabilityId": "HRIS.MODERN.LEARNING",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/people/v1/hris/performance/learning/assignments/{assignmentId}",
+      "authorizationCapability": "hcm.learning.self.view",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/91"
+    },
+    {
+      "operationId": "modern.learning.assignment.start",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-LEARNING",
+      "capabilityId": "HRIS.MODERN.LEARNING",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/learning/assignments/{assignmentId}/start",
+      "authorizationCapability": "hcm.learning.self.enroll",
+      "eventIds": [
+        "LearningAssignmentStarted.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/92"
+    },
+    {
+      "operationId": "modern.learning.assignments.query",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-LEARNING",
+      "capabilityId": "HRIS.MODERN.LEARNING",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/people/v1/hris/performance/learning/assignments",
+      "authorizationCapability": "hcm.learning.self.view",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/93"
+    },
+    {
+      "operationId": "modern.learning.catalog.query",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-LEARNING",
+      "capabilityId": "HRIS.MODERN.LEARNING",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/people/v1/hris/performance/learning/offerings",
+      "authorizationCapability": "hcm.learning.self.view",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/94"
+    },
+    {
+      "operationId": "modern.learning.completion.verify",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-LEARNING",
+      "capabilityId": "HRIS.MODERN.LEARNING",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/learning/assignments/{assignmentId}/completion-verifications",
+      "authorizationCapability": "hcm.learning.operate",
+      "eventIds": [
+        "LearningCompletionVerified.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/95"
+    },
+    {
+      "operationId": "modern.learning.offering.create",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-LEARNING",
+      "capabilityId": "HRIS.MODERN.LEARNING",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/learning/offerings",
+      "authorizationCapability": "hcm.learning.operate",
+      "eventIds": [
+        "LearningOfferingCreated.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/96"
+    },
+    {
+      "operationId": "modern.learning.offering.publish",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-LEARNING",
+      "capabilityId": "HRIS.MODERN.LEARNING",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/learning/offerings/{offeringId}/publish",
+      "authorizationCapability": "hcm.learning.operate",
+      "eventIds": [
+        "LearningOfferingPublished.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/97"
+    },
+    {
+      "operationId": "modern.learning.offering.query",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-LEARNING",
+      "capabilityId": "HRIS.MODERN.LEARNING",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/people/v1/hris/performance/learning/offerings/{offeringId}",
+      "authorizationCapability": "hcm.learning.self.view",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/98"
+    },
+    {
+      "operationId": "modern.learning.offering.retire",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-LEARNING",
+      "capabilityId": "HRIS.MODERN.LEARNING",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/learning/offerings/{offeringId}/retire",
+      "authorizationCapability": "hcm.learning.operate",
+      "eventIds": [
+        "LearningOfferingRetired.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/99"
+    },
+    {
+      "operationId": "modern.learning.offering.revise",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-LEARNING",
+      "capabilityId": "HRIS.MODERN.LEARNING",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/learning/offerings/{offeringId}/revisions",
+      "authorizationCapability": "hcm.learning.operate",
+      "eventIds": [
+        "LearningOfferingRevised.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/100"
+    },
+    {
+      "operationId": "modern.learning.self.enroll",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-LEARNING",
+      "capabilityId": "HRIS.MODERN.LEARNING",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/learning/enrollments",
+      "authorizationCapability": "hcm.learning.self.enroll",
+      "eventIds": [
+        "LearningEnrollmentCreated.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/101"
+    },
+    {
+      "operationId": "modern.listening.action.complete",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-LISTEN",
+      "capabilityId": "HRIS.MODERN.EMPLOYEE_LISTENING",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/platform/v1/admin/hris/listening/actions/{actionId}/complete",
+      "authorizationCapability": "hcm.listening.manage",
+      "eventIds": [
+        "EmployeeListeningActionCompleted.v3"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/102"
+    },
+    {
+      "operationId": "modern.listening.action.create",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-LISTEN",
+      "capabilityId": "HRIS.MODERN.EMPLOYEE_LISTENING",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/platform/v1/admin/hris/listening/surveys/{surveyId}/actions",
+      "authorizationCapability": "hcm.listening.manage",
+      "eventIds": [
+        "EmployeeListeningActionCreated.v3"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/103"
+    },
+    {
+      "operationId": "modern.listening.active.query",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-LISTEN",
+      "capabilityId": "HRIS.MODERN.EMPLOYEE_LISTENING",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/platform/v1/hris/listening/surveys/active",
+      "authorizationCapability": "hcm.listening.respond",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/104"
+    },
+    {
+      "operationId": "modern.listening.cohorts.query",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-LISTEN",
+      "capabilityId": "HRIS.MODERN.EMPLOYEE_LISTENING",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/platform/v1/admin/hris/listening/surveys/{surveyId}/cohort-projections",
+      "authorizationCapability": "hcm.listening.cohort.view",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/105"
+    },
+    {
+      "operationId": "modern.listening.response.submit",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-LISTEN",
+      "capabilityId": "HRIS.MODERN.EMPLOYEE_LISTENING",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/platform/v1/hris/listening/surveys/{surveyId}/responses",
+      "authorizationCapability": "hcm.listening.respond",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/106"
+    },
+    {
+      "operationId": "modern.listening.survey.close",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-LISTEN",
+      "capabilityId": "HRIS.MODERN.EMPLOYEE_LISTENING",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/platform/v1/admin/hris/listening/surveys/{surveyId}/close",
+      "authorizationCapability": "hcm.listening.manage",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/107"
+    },
+    {
+      "operationId": "modern.listening.survey.create",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-LISTEN",
+      "capabilityId": "HRIS.MODERN.EMPLOYEE_LISTENING",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/platform/v1/admin/hris/listening/surveys",
+      "authorizationCapability": "hcm.listening.manage",
+      "eventIds": [
+        "EmployeeListeningSurveyCreated.v3"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/108"
+    },
+    {
+      "operationId": "modern.listening.survey.publish",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-LISTEN",
+      "capabilityId": "HRIS.MODERN.EMPLOYEE_LISTENING",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/platform/v1/admin/hris/listening/surveys/{surveyId}/publish",
+      "authorizationCapability": "hcm.listening.manage",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/109"
+    },
+    {
+      "operationId": "modern.listening.survey.revise",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-LISTEN",
+      "capabilityId": "HRIS.MODERN.EMPLOYEE_LISTENING",
+      "mode": "COMMAND",
+      "method": "PATCH",
+      "path": "/api/platform/v1/admin/hris/listening/surveys/{surveyId}",
+      "authorizationCapability": "hcm.listening.manage",
+      "eventIds": [
+        "EmployeeListeningSurveyRevised.v3"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/110"
+    },
+    {
+      "operationId": "modern.listening.surveys.query",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-LISTEN",
+      "capabilityId": "HRIS.MODERN.EMPLOYEE_LISTENING",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/platform/v1/admin/hris/listening/surveys",
+      "authorizationCapability": "hcm.listening.manage",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/111"
+    },
+    {
+      "operationId": "modern.onboarding.assignment.query",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-ONBOARD",
+      "capabilityId": "HRIS.MODERN.ONBOARDING",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/people/v1/hris/onboarding/journey-assignments/{assignmentId}",
+      "authorizationCapability": "hcm.onboarding.self.view",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/112"
+    },
+    {
+      "operationId": "modern.onboarding.assignments.query",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-ONBOARD",
+      "capabilityId": "HRIS.MODERN.ONBOARDING",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/people/v1/hris/onboarding/journey-assignments",
+      "authorizationCapability": "hcm.onboarding.self.view",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/113"
+    },
+    {
+      "operationId": "modern.onboarding.journey.assign",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-ONBOARD",
+      "capabilityId": "HRIS.MODERN.ONBOARDING",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/onboarding/journey-assignments",
+      "authorizationCapability": "hcm.onboarding.operate",
+      "eventIds": [
+        "OnboardingJourneyAssigned.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/114"
+    },
+    {
+      "operationId": "modern.onboarding.journey.cancel",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-ONBOARD",
+      "capabilityId": "HRIS.MODERN.ONBOARDING",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/onboarding/journey-assignments/{assignmentId}/cancel",
+      "authorizationCapability": "hcm.onboarding.operate",
+      "eventIds": [
+        "OnboardingJourneyCancelled.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/115"
+    },
+    {
+      "operationId": "modern.onboarding.self.query",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-ONBOARD",
+      "capabilityId": "HRIS.MODERN.ONBOARDING",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/people/v1/hris/onboarding/my-journeys",
+      "authorizationCapability": "hcm.onboarding.self.view",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/116"
+    },
+    {
+      "operationId": "modern.onboarding.task.complete",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-ONBOARD",
+      "capabilityId": "HRIS.MODERN.ONBOARDING",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/onboarding/journey-assignments/{assignmentId}/tasks/{taskId}/complete",
+      "authorizationCapability": "hcm.onboarding.task.complete",
+      "eventIds": [
+        "OnboardingJourneyCompleted.v2",
+        "OnboardingTaskCompleted.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/117"
+    },
+    {
+      "operationId": "modern.onboarding.task.waive",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-ONBOARD",
+      "capabilityId": "HRIS.MODERN.ONBOARDING",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/onboarding/journey-assignments/{assignmentId}/tasks/{taskId}/waive",
+      "authorizationCapability": "hcm.onboarding.task.complete",
+      "eventIds": [
+        "OnboardingTaskWaived.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/118"
+    },
+    {
+      "operationId": "modern.onboarding.template.create",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-ONBOARD",
+      "capabilityId": "HRIS.MODERN.ONBOARDING",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/onboarding/templates",
+      "authorizationCapability": "hcm.onboarding.operate",
+      "eventIds": [
+        "OnboardingTemplateCreated.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/119"
+    },
+    {
+      "operationId": "modern.onboarding.template.publish",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-ONBOARD",
+      "capabilityId": "HRIS.MODERN.ONBOARDING",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/onboarding/templates/{templateId}/versions/{version}/publish",
+      "authorizationCapability": "hcm.onboarding.operate",
+      "eventIds": [
+        "OnboardingTemplatePublished.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/120"
+    },
+    {
+      "operationId": "modern.onboarding.template.query",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-ONBOARD",
+      "capabilityId": "HRIS.MODERN.ONBOARDING",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/people/v1/hris/onboarding/templates/{templateId}",
+      "authorizationCapability": "hcm.onboarding.self.view",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/121"
+    },
+    {
+      "operationId": "modern.onboarding.template.retire",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-ONBOARD",
+      "capabilityId": "HRIS.MODERN.ONBOARDING",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/onboarding/templates/{templateId}/retire",
+      "authorizationCapability": "hcm.onboarding.operate",
+      "eventIds": [
+        "OnboardingTemplateRetired.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/122"
+    },
+    {
+      "operationId": "modern.onboarding.template.revise",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-ONBOARD",
+      "capabilityId": "HRIS.MODERN.ONBOARDING",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/onboarding/templates/{templateId}/revisions",
+      "authorizationCapability": "hcm.onboarding.operate",
+      "eventIds": [
+        "OnboardingTemplateRevised.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/123"
+    },
+    {
+      "operationId": "modern.onboarding.templates.query",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-ONBOARD",
+      "capabilityId": "HRIS.MODERN.ONBOARDING",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/people/v1/hris/onboarding/templates",
+      "authorizationCapability": "hcm.onboarding.self.view",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/124"
+    },
+    {
+      "operationId": "modern.opportunity.application.query",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-MARKET",
+      "capabilityId": "HRIS.MODERN.INTERNAL_MARKETPLACE",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/people/v1/hris/performance/opportunities/applications/{applicationId}",
+      "authorizationCapability": "hcm.opportunity.self.view",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/125"
+    },
+    {
+      "operationId": "modern.opportunity.application.withdraw",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-MARKET",
+      "capabilityId": "HRIS.MODERN.INTERNAL_MARKETPLACE",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/opportunities/applications/{applicationId}/withdraw",
+      "authorizationCapability": "hcm.opportunity.operate",
+      "eventIds": [
+        "TalentOpportunityApplicationWithdrawn.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/126"
+    },
+    {
+      "operationId": "modern.opportunity.applications.query",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-MARKET",
+      "capabilityId": "HRIS.MODERN.INTERNAL_MARKETPLACE",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/people/v1/hris/performance/opportunities/applications",
+      "authorizationCapability": "hcm.opportunity.self.view",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/127"
+    },
+    {
+      "operationId": "modern.opportunity.apply",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-MARKET",
+      "capabilityId": "HRIS.MODERN.INTERNAL_MARKETPLACE",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/opportunities/{opportunityId}/applications",
+      "authorizationCapability": "hcm.opportunity.self.apply",
+      "eventIds": [
+        "TalentOpportunityApplicationSubmitted.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/128"
+    },
+    {
+      "operationId": "modern.opportunity.cancel",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-MARKET",
+      "capabilityId": "HRIS.MODERN.INTERNAL_MARKETPLACE",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/opportunities/{opportunityId}/cancel",
+      "authorizationCapability": "hcm.opportunity.operate",
+      "eventIds": [
+        "TalentOpportunityCancelled.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/129"
+    },
+    {
+      "operationId": "modern.opportunity.catalog.query",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-MARKET",
+      "capabilityId": "HRIS.MODERN.INTERNAL_MARKETPLACE",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/people/v1/hris/performance/opportunities",
+      "authorizationCapability": "hcm.opportunity.self.view",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/130"
+    },
+    {
+      "operationId": "modern.opportunity.close",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-MARKET",
+      "capabilityId": "HRIS.MODERN.INTERNAL_MARKETPLACE",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/opportunities/{opportunityId}/close",
+      "authorizationCapability": "hcm.opportunity.operate",
+      "eventIds": [
+        "TalentOpportunityClosed.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/131"
+    },
+    {
+      "operationId": "modern.opportunity.create",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-MARKET",
+      "capabilityId": "HRIS.MODERN.INTERNAL_MARKETPLACE",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/opportunities",
+      "authorizationCapability": "hcm.opportunity.operate",
+      "eventIds": [
+        "TalentOpportunityCreated.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/132"
+    },
+    {
+      "operationId": "modern.opportunity.publish",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-MARKET",
+      "capabilityId": "HRIS.MODERN.INTERNAL_MARKETPLACE",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/opportunities/{opportunityId}/publish",
+      "authorizationCapability": "hcm.opportunity.operate",
+      "eventIds": [
+        "TalentOpportunityPublished.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/133"
+    },
+    {
+      "operationId": "modern.opportunity.query",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-MARKET",
+      "capabilityId": "HRIS.MODERN.INTERNAL_MARKETPLACE",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/people/v1/hris/performance/opportunities/{opportunityId}",
+      "authorizationCapability": "hcm.opportunity.self.view",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/134"
+    },
+    {
+      "operationId": "modern.opportunity.revise",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-MARKET",
+      "capabilityId": "HRIS.MODERN.INTERNAL_MARKETPLACE",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/opportunities/{opportunityId}/revisions",
+      "authorizationCapability": "hcm.opportunity.operate",
+      "eventIds": [
+        "TalentOpportunityRevised.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/135"
+    },
+    {
+      "operationId": "modern.opportunity.selection.record",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-MARKET",
+      "capabilityId": "HRIS.MODERN.INTERNAL_MARKETPLACE",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/opportunities/{opportunityId}/applications/{applicationId}/selection-decisions",
+      "authorizationCapability": "hcm.opportunity.operate",
+      "eventIds": [
+        "TalentOpportunitySelectionRecorded.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/136"
+    },
+    {
+      "operationId": "modern.opportunity.shortlist",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-MARKET",
+      "capabilityId": "HRIS.MODERN.INTERNAL_MARKETPLACE",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/opportunities/{opportunityId}/applications/{applicationId}/shortlist",
+      "authorizationCapability": "hcm.opportunity.operate",
+      "eventIds": [
+        "TalentOpportunityApplicationShortlisted.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/137"
+    },
+    {
+      "operationId": "modern.recruiting.candidate.admit",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "capabilityId": "HRIS.MODERN.RECRUITING_ATS",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/recruiting/requisitions/{requisitionId}/candidates",
+      "authorizationCapability": "hcm.recruiting.operate",
+      "eventIds": [
+        "CandidateAdmitted.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/138"
+    },
+    {
+      "operationId": "modern.recruiting.candidate.query",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "capabilityId": "HRIS.MODERN.RECRUITING_ATS",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/people/v1/hris/recruiting/candidate-cases/{candidateCaseId}",
+      "authorizationCapability": "hcm.recruiting.view",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/139"
+    },
+    {
+      "operationId": "modern.recruiting.candidate.stage",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "capabilityId": "HRIS.MODERN.RECRUITING_ATS",
+      "mode": "COMMAND",
+      "method": "PATCH",
+      "path": "/api/people/v1/hris/recruiting/candidate-cases/{candidateCaseId}/stage",
+      "authorizationCapability": "hcm.recruiting.operate",
+      "eventIds": [
+        "CandidateStageChanged.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/140"
+    },
+    {
+      "operationId": "modern.recruiting.candidates.query",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "capabilityId": "HRIS.MODERN.RECRUITING_ATS",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/people/v1/hris/recruiting/candidate-cases",
+      "authorizationCapability": "hcm.recruiting.view",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/141"
+    },
+    {
+      "operationId": "modern.recruiting.hire.cancel",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "capabilityId": "HRIS.MODERN.RECRUITING_ATS",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/recruiting/hire-requests/{hireRequestId}/cancel",
+      "authorizationCapability": "hcm.recruiting.decide",
+      "eventIds": [
+        "CandidateHireHandoffCancelled.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/142"
+    },
+    {
+      "operationId": "modern.recruiting.hire.record",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "capabilityId": "HRIS.MODERN.RECRUITING_ATS",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/recruiting/candidate-cases/{candidateCaseId}/hire-decisions",
+      "authorizationCapability": "hcm.recruiting.decide",
+      "eventIds": [
+        "CandidateHireHandoffRequested.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/143"
+    },
+    {
+      "operationId": "modern.recruiting.offer.issue",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "capabilityId": "HRIS.MODERN.RECRUITING_ATS",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/recruiting/candidate-cases/{candidateCaseId}/offers",
+      "authorizationCapability": "hcm.recruiting.decide",
+      "eventIds": [
+        "CandidateOfferIssued.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/144"
+    },
+    {
+      "operationId": "modern.recruiting.offer.respond",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "capabilityId": "HRIS.MODERN.RECRUITING_ATS",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/recruiting/offers/{offerId}/response",
+      "authorizationCapability": "hcm.recruiting.decide",
+      "eventIds": [
+        "CandidateOfferAccepted.v2",
+        "CandidateOfferDeclined.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/145"
+    },
+    {
+      "operationId": "modern.recruiting.offer.withdraw",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "capabilityId": "HRIS.MODERN.RECRUITING_ATS",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/recruiting/offers/{offerId}/withdraw",
+      "authorizationCapability": "hcm.recruiting.decide",
+      "eventIds": [
+        "CandidateOfferWithdrawn.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/146"
+    },
+    {
+      "operationId": "modern.recruiting.requisition.create",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "capabilityId": "HRIS.MODERN.RECRUITING_ATS",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/recruiting/requisitions",
+      "authorizationCapability": "hcm.recruiting.operate",
+      "eventIds": [
+        "RequisitionCreated.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/147"
+    },
+    {
+      "operationId": "modern.recruiting.requisition.lifecycle.change",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "capabilityId": "HRIS.MODERN.RECRUITING_ATS",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/recruiting/requisitions/{requisitionId}/lifecycle",
+      "authorizationCapability": "hcm.recruiting.decide",
+      "eventIds": [
+        "RequisitionClosed.v2",
+        "RequisitionPaused.v2",
+        "RequisitionResumed.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/148"
+    },
+    {
+      "operationId": "modern.recruiting.requisition.publish",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "capabilityId": "HRIS.MODERN.RECRUITING_ATS",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/recruiting/requisitions/{requisitionId}/publish",
+      "authorizationCapability": "hcm.recruiting.decide",
+      "eventIds": [
+        "RequisitionPublished.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/149"
+    },
+    {
+      "operationId": "modern.recruiting.requisition.query",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "capabilityId": "HRIS.MODERN.RECRUITING_ATS",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/people/v1/hris/recruiting/requisitions/{requisitionId}",
+      "authorizationCapability": "hcm.recruiting.view",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/150"
+    },
+    {
+      "operationId": "modern.recruiting.requisition.revise",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "capabilityId": "HRIS.MODERN.RECRUITING_ATS",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/recruiting/requisitions/{requisitionId}/revisions",
+      "authorizationCapability": "hcm.recruiting.decide",
+      "eventIds": [
+        "RequisitionRevised.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/151"
+    },
+    {
+      "operationId": "modern.recruiting.requisitions.query",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "capabilityId": "HRIS.MODERN.RECRUITING_ATS",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/people/v1/hris/recruiting/requisitions",
+      "authorizationCapability": "hcm.recruiting.view",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/152"
+    },
+    {
+      "operationId": "modern.skills.evidence.query",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SKILLS",
+      "capabilityId": "HRIS.MODERN.SKILLS_ONTOLOGY",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/people/v1/hris/performance/skills/evidence/{evidenceId}",
+      "authorizationCapability": "hcm.skills.view",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/153"
+    },
+    {
+      "operationId": "modern.skills.evidence.record",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SKILLS",
+      "capabilityId": "HRIS.MODERN.SKILLS_ONTOLOGY",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/skills/evidence",
+      "authorizationCapability": "hcm.skills.evidence.verify",
+      "eventIds": [
+        "WorkerSkillEvidenceRecorded.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/154"
+    },
+    {
+      "operationId": "modern.skills.evidence.revoke",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SKILLS",
+      "capabilityId": "HRIS.MODERN.SKILLS_ONTOLOGY",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/skills/evidence/{evidenceId}/revoke",
+      "authorizationCapability": "hcm.skills.evidence.verify",
+      "eventIds": [
+        "WorkerSkillEvidenceRevoked.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/155"
+    },
+    {
+      "operationId": "modern.skills.evidence.verify",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SKILLS",
+      "capabilityId": "HRIS.MODERN.SKILLS_ONTOLOGY",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/skills/worker-evidence/{evidenceId}/verify",
+      "authorizationCapability": "hcm.skills.evidence.verify",
+      "eventIds": [
+        "WorkerSkillEvidenceVerified.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/156"
+    },
+    {
+      "operationId": "modern.skills.evidences.query",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SKILLS",
+      "capabilityId": "HRIS.MODERN.SKILLS_ONTOLOGY",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/people/v1/hris/performance/skills/evidence",
+      "authorizationCapability": "hcm.skills.view",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/157"
+    },
+    {
+      "operationId": "modern.skills.taxonomies.query",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SKILLS",
+      "capabilityId": "HRIS.MODERN.SKILLS_ONTOLOGY",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/people/v1/hris/performance/skills/taxonomies",
+      "authorizationCapability": "hcm.skills.view",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/158"
+    },
+    {
+      "operationId": "modern.skills.taxonomy.create",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SKILLS",
+      "capabilityId": "HRIS.MODERN.SKILLS_ONTOLOGY",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/skills/taxonomies",
+      "authorizationCapability": "hcm.skills.manage",
+      "eventIds": [
+        "SkillsTaxonomyCreated.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/159"
+    },
+    {
+      "operationId": "modern.skills.taxonomy.publish",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SKILLS",
+      "capabilityId": "HRIS.MODERN.SKILLS_ONTOLOGY",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/skills/taxonomies/{taxonomyId}/versions/{version}/publish",
+      "authorizationCapability": "hcm.skills.manage",
+      "eventIds": [
+        "SkillsTaxonomyPublished.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/160"
+    },
+    {
+      "operationId": "modern.skills.taxonomy.query",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SKILLS",
+      "capabilityId": "HRIS.MODERN.SKILLS_ONTOLOGY",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/people/v1/hris/performance/skills/taxonomies/{taxonomyId}",
+      "authorizationCapability": "hcm.skills.view",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/161"
+    },
+    {
+      "operationId": "modern.skills.taxonomy.retire",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SKILLS",
+      "capabilityId": "HRIS.MODERN.SKILLS_ONTOLOGY",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/skills/taxonomies/{taxonomyId}/retire",
+      "authorizationCapability": "hcm.skills.manage",
+      "eventIds": [
+        "SkillsTaxonomyRetired.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/162"
+    },
+    {
+      "operationId": "modern.skills.taxonomy.revise",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SKILLS",
+      "capabilityId": "HRIS.MODERN.SKILLS_ONTOLOGY",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/skills/taxonomies/{taxonomyId}/revisions",
+      "authorizationCapability": "hcm.skills.manage",
+      "eventIds": [
+        "SkillsTaxonomyRevised.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/163"
+    },
+    {
+      "operationId": "modern.skills.taxonomy.validate",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SKILLS",
+      "capabilityId": "HRIS.MODERN.SKILLS_ONTOLOGY",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/skills/taxonomies/{taxonomyId}/versions/{version}/validate",
+      "authorizationCapability": "hcm.skills.manage",
+      "eventIds": [
+        "SkillsTaxonomyValidated.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/164"
+    },
+    {
+      "operationId": "modern.skills.worker.query",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SKILLS",
+      "capabilityId": "HRIS.MODERN.SKILLS_ONTOLOGY",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/people/v1/hris/performance/skills/workers/{workerId}",
+      "authorizationCapability": "hcm.skills.view",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/165"
+    },
+    {
+      "operationId": "modern.succession.nomination.add",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SUCCESSION",
+      "capabilityId": "HRIS.MODERN.SUCCESSION",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/succession/plans/{planId}/nominations",
+      "authorizationCapability": "hcm.succession.manage",
+      "eventIds": [
+        "SuccessionNominationAdded.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/166"
+    },
+    {
+      "operationId": "modern.succession.nomination.withdraw",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SUCCESSION",
+      "capabilityId": "HRIS.MODERN.SUCCESSION",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/succession/plans/{planId}/nominations/{nominationId}/withdraw",
+      "authorizationCapability": "hcm.succession.manage",
+      "eventIds": [
+        "SuccessionNominationWithdrawn.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/167"
+    },
+    {
+      "operationId": "modern.succession.plan.approve",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SUCCESSION",
+      "capabilityId": "HRIS.MODERN.SUCCESSION",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/succession/plans/{planId}/approve",
+      "authorizationCapability": "hcm.succession.publish",
+      "eventIds": [
+        "SuccessionPlanApproved.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/168"
+    },
+    {
+      "operationId": "modern.succession.plan.create",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SUCCESSION",
+      "capabilityId": "HRIS.MODERN.SUCCESSION",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/succession/plans",
+      "authorizationCapability": "hcm.succession.manage",
+      "eventIds": [
+        "SuccessionPlanCreated.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/169"
+    },
+    {
+      "operationId": "modern.succession.plan.publish",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SUCCESSION",
+      "capabilityId": "HRIS.MODERN.SUCCESSION",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/succession/plans/{planId}/publish",
+      "authorizationCapability": "hcm.succession.publish",
+      "eventIds": [
+        "SuccessionPlanPublished.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/170"
+    },
+    {
+      "operationId": "modern.succession.plan.query",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SUCCESSION",
+      "capabilityId": "HRIS.MODERN.SUCCESSION",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/people/v1/hris/performance/succession/plans/{planId}",
+      "authorizationCapability": "hcm.succession.view.restricted",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/171"
+    },
+    {
+      "operationId": "modern.succession.plan.reject",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SUCCESSION",
+      "capabilityId": "HRIS.MODERN.SUCCESSION",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/succession/plans/{planId}/reject",
+      "authorizationCapability": "hcm.succession.publish",
+      "eventIds": [
+        "SuccessionPlanRejected.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/172"
+    },
+    {
+      "operationId": "modern.succession.plan.retire",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SUCCESSION",
+      "capabilityId": "HRIS.MODERN.SUCCESSION",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/succession/plans/{planId}/retire",
+      "authorizationCapability": "hcm.succession.publish",
+      "eventIds": [
+        "SuccessionPlanRetired.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/173"
+    },
+    {
+      "operationId": "modern.succession.plan.revise",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SUCCESSION",
+      "capabilityId": "HRIS.MODERN.SUCCESSION",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/succession/plans/{planId}/revisions",
+      "authorizationCapability": "hcm.succession.manage",
+      "eventIds": [
+        "SuccessionPlanRevised.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/174"
+    },
+    {
+      "operationId": "modern.succession.plan.submit",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SUCCESSION",
+      "capabilityId": "HRIS.MODERN.SUCCESSION",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/succession/plans/{planId}/submit",
+      "authorizationCapability": "hcm.succession.manage",
+      "eventIds": [
+        "SuccessionPlanSubmitted.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/175"
+    },
+    {
+      "operationId": "modern.succession.plans.query",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SUCCESSION",
+      "capabilityId": "HRIS.MODERN.SUCCESSION",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/people/v1/hris/performance/succession/plans",
+      "authorizationCapability": "hcm.succession.view.restricted",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/176"
+    },
+    {
+      "operationId": "modern.succession.readiness.record",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SUCCESSION",
+      "capabilityId": "HRIS.MODERN.SUCCESSION",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/performance/succession/plans/{planId}/readiness-evidence",
+      "authorizationCapability": "hcm.succession.manage",
+      "eventIds": [
+        "SuccessionReadinessEvidenceRecorded.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/177"
+    },
+    {
+      "operationId": "modern.wfm.candidate.query",
+      "ownerSession": "HRIS-TIM",
+      "primarySliceId": "MOD-TIM-WFM",
+      "capabilityId": "HRIS.MODERN.ADVANCED_WFM",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/time/v1/workforce-management/schedule-candidates/{candidateId}",
+      "authorizationCapability": "hcm.wfm.view",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/178"
+    },
+    {
+      "operationId": "modern.wfm.candidates.query",
+      "ownerSession": "HRIS-TIM",
+      "primarySliceId": "MOD-TIM-WFM",
+      "capabilityId": "HRIS.MODERN.ADVANCED_WFM",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/time/v1/workforce-management/schedule-candidates",
+      "authorizationCapability": "hcm.wfm.view",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/179"
+    },
+    {
+      "operationId": "modern.wfm.forecast.create",
+      "ownerSession": "HRIS-TIM",
+      "primarySliceId": "MOD-TIM-WFM",
+      "capabilityId": "HRIS.MODERN.ADVANCED_WFM",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/time/v1/workforce-management/demand-forecasts",
+      "authorizationCapability": "hcm.wfm.optimize",
+      "eventIds": [
+        "WorkforceDemandForecastCreated.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/180"
+    },
+    {
+      "operationId": "modern.wfm.forecast.query",
+      "ownerSession": "HRIS-TIM",
+      "primarySliceId": "MOD-TIM-WFM",
+      "capabilityId": "HRIS.MODERN.ADVANCED_WFM",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/time/v1/workforce-management/demand-forecasts/{forecastId}",
+      "authorizationCapability": "hcm.wfm.view",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/181"
+    },
+    {
+      "operationId": "modern.wfm.forecasts.query",
+      "ownerSession": "HRIS-TIM",
+      "primarySliceId": "MOD-TIM-WFM",
+      "capabilityId": "HRIS.MODERN.ADVANCED_WFM",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/time/v1/workforce-management/demand-forecasts",
+      "authorizationCapability": "hcm.wfm.view",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/182"
+    },
+    {
+      "operationId": "modern.wfm.optimization.cancel",
+      "ownerSession": "HRIS-TIM",
+      "primarySliceId": "MOD-TIM-WFM",
+      "capabilityId": "HRIS.MODERN.ADVANCED_WFM",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/time/v1/workforce-management/schedule-optimizations/{optimizationId}/cancel",
+      "authorizationCapability": "hcm.wfm.optimize",
+      "eventIds": [
+        "WorkforceScheduleOptimizationCancelled.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/183"
+    },
+    {
+      "operationId": "modern.wfm.optimization.query",
+      "ownerSession": "HRIS-TIM",
+      "primarySliceId": "MOD-TIM-WFM",
+      "capabilityId": "HRIS.MODERN.ADVANCED_WFM",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/time/v1/workforce-management/schedule-optimizations/{optimizationId}",
+      "authorizationCapability": "hcm.wfm.view",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/184"
+    },
+    {
+      "operationId": "modern.wfm.schedule.cancel",
+      "ownerSession": "HRIS-TIM",
+      "primarySliceId": "MOD-TIM-WFM",
+      "capabilityId": "HRIS.MODERN.ADVANCED_WFM",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/time/v1/workforce-management/schedule-candidates/{candidateId}/cancel",
+      "authorizationCapability": "hcm.wfm.optimize",
+      "eventIds": [
+        "WorkforceScheduleCandidateCancelled.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/185"
+    },
+    {
+      "operationId": "modern.wfm.schedule.optimize",
+      "ownerSession": "HRIS-TIM",
+      "primarySliceId": "MOD-TIM-WFM",
+      "capabilityId": "HRIS.MODERN.ADVANCED_WFM",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/time/v1/workforce-management/demand-forecasts/{forecastId}/schedule-optimizations",
+      "authorizationCapability": "hcm.wfm.optimize",
+      "eventIds": [
+        "WorkforceScheduleOptimizationRequested.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/186"
+    },
+    {
+      "operationId": "modern.wfm.schedule.publish",
+      "ownerSession": "HRIS-TIM",
+      "primarySliceId": "MOD-TIM-WFM",
+      "capabilityId": "HRIS.MODERN.ADVANCED_WFM",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/time/v1/workforce-management/schedule-candidates/{candidateId}/publish",
+      "authorizationCapability": "hcm.wfm.publish",
+      "eventIds": [
+        "WorkforceSchedulePublished.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/187"
+    },
+    {
+      "operationId": "modern.wfm.schedule.submit",
+      "ownerSession": "HRIS-TIM",
+      "primarySliceId": "MOD-TIM-WFM",
+      "capabilityId": "HRIS.MODERN.ADVANCED_WFM",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/time/v1/workforce-management/schedule-candidates/{candidateId}/submit",
+      "authorizationCapability": "hcm.wfm.optimize",
+      "eventIds": [
+        "WorkforceScheduleCandidateSubmitted.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/188"
+    },
+    {
+      "operationId": "modern.wfm.schedule.validate",
+      "ownerSession": "HRIS-TIM",
+      "primarySliceId": "MOD-TIM-WFM",
+      "capabilityId": "HRIS.MODERN.ADVANCED_WFM",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/time/v1/workforce-management/schedule-candidates/{candidateId}/validations",
+      "authorizationCapability": "hcm.wfm.optimize",
+      "eventIds": [
+        "WorkforceScheduleValidationCompleted.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/189"
+    },
+    {
+      "operationId": "modern.workforceplan.scenario.approve",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-WFP",
+      "capabilityId": "HRIS.MODERN.WORKFORCE_PLANNING",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/workforce-planning/scenarios/{scenarioId}/approve",
+      "authorizationCapability": "hcm.workforce.plan.publish",
+      "eventIds": [
+        "WorkforceScenarioDecisionRecorded.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/190"
+    },
+    {
+      "operationId": "modern.workforceplan.scenario.cancel",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-WFP",
+      "capabilityId": "HRIS.MODERN.WORKFORCE_PLANNING",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/workforce-planning/scenarios/{scenarioId}/cancel",
+      "authorizationCapability": "hcm.workforce.plan.model",
+      "eventIds": [
+        "WorkforceScenarioCancelled.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/191"
+    },
+    {
+      "operationId": "modern.workforceplan.scenario.create",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-WFP",
+      "capabilityId": "HRIS.MODERN.WORKFORCE_PLANNING",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/workforce-planning/scenarios",
+      "authorizationCapability": "hcm.workforce.plan.model",
+      "eventIds": [
+        "WorkforceScenarioCreated.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/192"
+    },
+    {
+      "operationId": "modern.workforceplan.scenario.publish",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-WFP",
+      "capabilityId": "HRIS.MODERN.WORKFORCE_PLANNING",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/workforce-planning/scenarios/{scenarioId}/publish",
+      "authorizationCapability": "hcm.workforce.plan.publish",
+      "eventIds": [
+        "WorkforceScenarioPublished.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/193"
+    },
+    {
+      "operationId": "modern.workforceplan.scenario.query",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-WFP",
+      "capabilityId": "HRIS.MODERN.WORKFORCE_PLANNING",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/people/v1/hris/workforce-planning/scenarios/{scenarioId}",
+      "authorizationCapability": "hcm.workforce.plan.view",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/194"
+    },
+    {
+      "operationId": "modern.workforceplan.scenario.revise",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-WFP",
+      "capabilityId": "HRIS.MODERN.WORKFORCE_PLANNING",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/workforce-planning/scenarios/{scenarioId}/revisions",
+      "authorizationCapability": "hcm.workforce.plan.model",
+      "eventIds": [
+        "WorkforceScenarioRevised.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/195"
+    },
+    {
+      "operationId": "modern.workforceplan.scenario.simulate",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-WFP",
+      "capabilityId": "HRIS.MODERN.WORKFORCE_PLANNING",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/workforce-planning/scenarios/{scenarioId}/simulations",
+      "authorizationCapability": "hcm.workforce.plan.model",
+      "eventIds": [
+        "WorkforceScenarioSimulationRequested.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/196"
+    },
+    {
+      "operationId": "modern.workforceplan.scenario.submit",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-WFP",
+      "capabilityId": "HRIS.MODERN.WORKFORCE_PLANNING",
+      "mode": "COMMAND",
+      "method": "POST",
+      "path": "/api/people/v1/hris/workforce-planning/scenarios/{scenarioId}/submit",
+      "authorizationCapability": "hcm.workforce.plan.model",
+      "eventIds": [
+        "WorkforceScenarioSubmitted.v2"
+      ],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/197"
+    },
+    {
+      "operationId": "modern.workforceplan.scenarios.query",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-WFP",
+      "capabilityId": "HRIS.MODERN.WORKFORCE_PLANNING",
+      "mode": "QUERY",
+      "method": "GET",
+      "path": "/api/people/v1/hris/workforce-planning/scenarios",
+      "authorizationCapability": "hcm.workforce.plan.view",
+      "eventIds": [],
+      "exactSchemaRef": "modern-capability-exact-schema-contracts.v1.json#/operationBindings/198"
+    }
+  ],
+  "eventSemanticBindings": [
+    {
+      "eventName": "ApprovedCompensationPlanSnapshotPublished.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-COMPPLAN",
+      "capabilityId": "HRIS.MODERN.COMPENSATION_PLANNING",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.compplan.snapshot.publish",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/0"
+    },
+    {
+      "eventName": "BenefitEnrollmentCancelled.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-BENEFITS",
+      "capabilityId": "HRIS.MODERN.BENEFITS_ADMIN",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.benefits.enrollment.cancel",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/1"
+    },
+    {
+      "eventName": "BenefitEnrollmentDecided.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-BENEFITS",
+      "capabilityId": "HRIS.MODERN.BENEFITS_ADMIN",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.benefits.enrollment.decide",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/2"
+    },
+    {
+      "eventName": "BenefitEnrollmentSubmitted.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-BENEFITS",
+      "capabilityId": "HRIS.MODERN.BENEFITS_ADMIN",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.benefits.enrollment.submit",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/3"
+    },
+    {
+      "eventName": "BenefitLifeEventDecisionRecorded.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-BENEFITS",
+      "capabilityId": "HRIS.MODERN.BENEFITS_ADMIN",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.benefits.lifeevent.decide",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/4"
+    },
+    {
+      "eventName": "BenefitLifeEventExpired.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-BENEFITS",
+      "capabilityId": "HRIS.MODERN.BENEFITS_ADMIN",
+      "producerKind": "OWNER_LOCAL_HANDLER",
+      "producerId": "internal.benefits.life-event.expire",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/5"
+    },
+    {
+      "eventName": "BenefitLifeEventSubmitted.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-BENEFITS",
+      "capabilityId": "HRIS.MODERN.BENEFITS_ADMIN",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.benefits.lifeevent.submit",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/6"
+    },
+    {
+      "eventName": "BenefitPlanCreated.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-BENEFITS",
+      "capabilityId": "HRIS.MODERN.BENEFITS_ADMIN",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.benefits.plan.create",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/7"
+    },
+    {
+      "eventName": "BenefitPlanPublished.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-BENEFITS",
+      "capabilityId": "HRIS.MODERN.BENEFITS_ADMIN",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.benefits.plan.publish",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/8"
+    },
+    {
+      "eventName": "BenefitPlanRetired.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-BENEFITS",
+      "capabilityId": "HRIS.MODERN.BENEFITS_ADMIN",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.benefits.plan.retire",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/9"
+    },
+    {
+      "eventName": "BenefitPlanRevised.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-BENEFITS",
+      "capabilityId": "HRIS.MODERN.BENEFITS_ADMIN",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.benefits.plan.revise",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/10"
+    },
+    {
+      "eventName": "BenefitProviderResultRecorded.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-BENEFITS",
+      "capabilityId": "HRIS.MODERN.BENEFITS_ADMIN",
+      "producerKind": "OWNER_LOCAL_HANDLER",
+      "producerId": "internal.benefits.provider-result.consume",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/11"
+    },
+    {
+      "eventName": "CandidateAdmitted.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "capabilityId": "HRIS.MODERN.RECRUITING_ATS",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.recruiting.candidate.admit",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/12"
+    },
+    {
+      "eventName": "CandidateHireHandoffCancelled.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "capabilityId": "HRIS.MODERN.RECRUITING_ATS",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.recruiting.hire.cancel",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/13"
+    },
+    {
+      "eventName": "CandidateHireHandoffRequested.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "capabilityId": "HRIS.MODERN.RECRUITING_ATS",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.recruiting.hire.record",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/14"
+    },
+    {
+      "eventName": "CandidateHireHandoffResultRecorded.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "capabilityId": "HRIS.MODERN.RECRUITING_ATS",
+      "producerKind": "OWNER_LOCAL_HANDLER",
+      "producerId": "internal.recruiting.hire-handoff.result.consume",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/15"
+    },
+    {
+      "eventName": "CandidateOfferAccepted.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "capabilityId": "HRIS.MODERN.RECRUITING_ATS",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.recruiting.offer.respond",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/16"
+    },
+    {
+      "eventName": "CandidateOfferDeclined.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "capabilityId": "HRIS.MODERN.RECRUITING_ATS",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.recruiting.offer.respond",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/17"
+    },
+    {
+      "eventName": "CandidateOfferExpired.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "capabilityId": "HRIS.MODERN.RECRUITING_ATS",
+      "producerKind": "OWNER_LOCAL_HANDLER",
+      "producerId": "internal.recruiting.offer.expire",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/18"
+    },
+    {
+      "eventName": "CandidateOfferIssued.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "capabilityId": "HRIS.MODERN.RECRUITING_ATS",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.recruiting.offer.issue",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/19"
+    },
+    {
+      "eventName": "CandidateOfferWithdrawn.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "capabilityId": "HRIS.MODERN.RECRUITING_ATS",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.recruiting.offer.withdraw",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/20"
+    },
+    {
+      "eventName": "CandidateStageChanged.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "capabilityId": "HRIS.MODERN.RECRUITING_ATS",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.recruiting.candidate.stage",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/21"
+    },
+    {
+      "eventName": "CompensationBudgetAllocated.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-COMPPLAN",
+      "capabilityId": "HRIS.MODERN.COMPENSATION_PLANNING",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.compplan.budget.allocate",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/22"
+    },
+    {
+      "eventName": "CompensationCycleCancelled.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-COMPPLAN",
+      "capabilityId": "HRIS.MODERN.COMPENSATION_PLANNING",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.compplan.cycle.cancel",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/23"
+    },
+    {
+      "eventName": "CompensationCycleCreated.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-COMPPLAN",
+      "capabilityId": "HRIS.MODERN.COMPENSATION_PLANNING",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.compplan.cycle.create",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/24"
+    },
+    {
+      "eventName": "CompensationCycleRevised.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-COMPPLAN",
+      "capabilityId": "HRIS.MODERN.COMPENSATION_PLANNING",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.compplan.cycle.revise",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/25"
+    },
+    {
+      "eventName": "CompensationPlanApprovalRecorded.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-COMPPLAN",
+      "capabilityId": "HRIS.MODERN.COMPENSATION_PLANNING",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.compplan.plan.approve",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/26"
+    },
+    {
+      "eventName": "CompensationProposalDrafted.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-COMPPLAN",
+      "capabilityId": "HRIS.MODERN.COMPENSATION_PLANNING",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.compplan.proposal.upsert",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/27"
+    },
+    {
+      "eventName": "CompensationProposalSubmitted.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-COMPPLAN",
+      "capabilityId": "HRIS.MODERN.COMPENSATION_PLANNING",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.compplan.proposal.submit",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/28"
+    },
+    {
+      "eventName": "ContingentAccessExpiryInitiated.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-CONTINGENT",
+      "capabilityId": "HRIS.MODERN.CONTINGENT_WORKFORCE",
+      "producerKind": "OWNER_LOCAL_HANDLER",
+      "producerId": "internal.contingent.access-expiry.initiate",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/29"
+    },
+    {
+      "eventName": "ContingentAccessGrantRequested.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-CONTINGENT",
+      "capabilityId": "HRIS.MODERN.CONTINGENT_WORKFORCE",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.contingent.engagement.activate",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/30"
+    },
+    {
+      "eventName": "ContingentAccessGrantResultRecorded.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-CONTINGENT",
+      "capabilityId": "HRIS.MODERN.CONTINGENT_WORKFORCE",
+      "producerKind": "OWNER_LOCAL_HANDLER",
+      "producerId": "internal.contingent.access-grant-result.consume",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/31"
+    },
+    {
+      "eventName": "ContingentAccessRevokeResultRecorded.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-CONTINGENT",
+      "capabilityId": "HRIS.MODERN.CONTINGENT_WORKFORCE",
+      "producerKind": "OWNER_LOCAL_HANDLER",
+      "producerId": "internal.contingent.access-revoke-result.consume",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/32"
+    },
+    {
+      "eventName": "ContingentEngagementCreated.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-CONTINGENT",
+      "capabilityId": "HRIS.MODERN.CONTINGENT_WORKFORCE",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.contingent.engagement.create",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/33"
+    },
+    {
+      "eventName": "ContingentEngagementOffboardingStarted.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-CONTINGENT",
+      "capabilityId": "HRIS.MODERN.CONTINGENT_WORKFORCE",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.contingent.engagement.offboard",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/34"
+    },
+    {
+      "eventName": "ContingentEngagementRejected.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-CONTINGENT",
+      "capabilityId": "HRIS.MODERN.CONTINGENT_WORKFORCE",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.contingent.engagement.reject",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/35"
+    },
+    {
+      "eventName": "ContingentEngagementRevised.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-CONTINGENT",
+      "capabilityId": "HRIS.MODERN.CONTINGENT_WORKFORCE",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.contingent.engagement.revise",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/36"
+    },
+    {
+      "eventName": "ContingentEngagementSubmitted.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-CONTINGENT",
+      "capabilityId": "HRIS.MODERN.CONTINGENT_WORKFORCE",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.contingent.engagement.submit",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/37"
+    },
+    {
+      "eventName": "ContingentSponsorReassigned.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-CONTINGENT",
+      "capabilityId": "HRIS.MODERN.CONTINGENT_WORKFORCE",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.contingent.sponsor.reassign",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/38"
+    },
+    {
+      "eventName": "EmployeeListeningActionCompleted.v3",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-LISTEN",
+      "capabilityId": "HRIS.MODERN.EMPLOYEE_LISTENING",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.listening.action.complete",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/39"
+    },
+    {
+      "eventName": "EmployeeListeningActionCreated.v3",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-LISTEN",
+      "capabilityId": "HRIS.MODERN.EMPLOYEE_LISTENING",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.listening.action.create",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/40"
+    },
+    {
+      "eventName": "EmployeeListeningCohortProjectionPublished.v1",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-LISTEN",
+      "capabilityId": "HRIS.MODERN.EMPLOYEE_LISTENING",
+      "producerKind": "OWNER_LOCAL_HANDLER",
+      "producerId": "internal.listening.insights.cohort-package.consume",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/41"
+    },
+    {
+      "eventName": "EmployeeListeningSurveyClosed.v3",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-LISTEN",
+      "capabilityId": "HRIS.MODERN.EMPLOYEE_LISTENING",
+      "producerKind": "OWNER_LOCAL_HANDLER",
+      "producerId": "internal.listening.configuration.admission-close-receipt.consume",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/42"
+    },
+    {
+      "eventName": "EmployeeListeningSurveyCreated.v3",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-LISTEN",
+      "capabilityId": "HRIS.MODERN.EMPLOYEE_LISTENING",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.listening.survey.create",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/43"
+    },
+    {
+      "eventName": "EmployeeListeningSurveyPublished.v3",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-LISTEN",
+      "capabilityId": "HRIS.MODERN.EMPLOYEE_LISTENING",
+      "producerKind": "OWNER_LOCAL_HANDLER",
+      "producerId": "internal.listening.configuration.admission-install-receipt.consume",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/44"
+    },
+    {
+      "eventName": "EmployeeListeningSurveyRevised.v3",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-LISTEN",
+      "capabilityId": "HRIS.MODERN.EMPLOYEE_LISTENING",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.listening.survey.revise",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/45"
+    },
+    {
+      "eventName": "GovernedAiAssistanceCancelled.v2",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "capabilityId": "HRIS.MODERN.GOVERNED_AI",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.ai.assist.cancel",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/46"
+    },
+    {
+      "eventName": "GovernedAiAssistanceConfirmed.v2",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "capabilityId": "HRIS.MODERN.GOVERNED_AI",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.ai.assist.review",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/47"
+    },
+    {
+      "eventName": "GovernedAiAssistanceRejected.v2",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "capabilityId": "HRIS.MODERN.GOVERNED_AI",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.ai.assist.review",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/48"
+    },
+    {
+      "eventName": "GovernedAiAssistanceRequested.v2",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "capabilityId": "HRIS.MODERN.GOVERNED_AI",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.ai.assist.create",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/49"
+    },
+    {
+      "eventName": "GovernedAiAssistanceResultRecorded.v2",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "capabilityId": "HRIS.MODERN.GOVERNED_AI",
+      "producerKind": "OWNER_LOCAL_HANDLER",
+      "producerId": "internal.ai.assistance-result.consume",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/50"
+    },
+    {
+      "eventName": "GovernedAiAssistanceRevoked.v2",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "capabilityId": "HRIS.MODERN.GOVERNED_AI",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.ai.assist.revoke",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/51"
+    },
+    {
+      "eventName": "GovernedAiPolicyCreated.v2",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "capabilityId": "HRIS.MODERN.GOVERNED_AI",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.ai.policy.create",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/52"
+    },
+    {
+      "eventName": "GovernedAiPolicyEvaluationCancelled.v2",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "capabilityId": "HRIS.MODERN.GOVERNED_AI",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.ai.evaluation.cancel",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/53"
+    },
+    {
+      "eventName": "GovernedAiPolicyEvaluationRequested.v2",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "capabilityId": "HRIS.MODERN.GOVERNED_AI",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.ai.policy.evaluate",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/54"
+    },
+    {
+      "eventName": "GovernedAiPolicyEvaluationResultRecorded.v2",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "capabilityId": "HRIS.MODERN.GOVERNED_AI",
+      "producerKind": "OWNER_LOCAL_HANDLER",
+      "producerId": "internal.ai.policy-evaluation-result.consume",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/55"
+    },
+    {
+      "eventName": "GovernedAiPolicyPublished.v2",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "capabilityId": "HRIS.MODERN.GOVERNED_AI",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.ai.policy.publish",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/56"
+    },
+    {
+      "eventName": "GovernedAiPolicyRetired.v2",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "capabilityId": "HRIS.MODERN.GOVERNED_AI",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.ai.policy.retire",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/57"
+    },
+    {
+      "eventName": "GovernedAiPolicyRevised.v2",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "capabilityId": "HRIS.MODERN.GOVERNED_AI",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.ai.policy.revise",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/58"
+    },
+    {
+      "eventName": "GovernedAiPolicySuspended.v2",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-AI",
+      "capabilityId": "HRIS.MODERN.GOVERNED_AI",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.ai.kill.switch",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/59"
+    },
+    {
+      "eventName": "GrowthCoachingRecorded.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-GROWTH",
+      "capabilityId": "HRIS.MODERN.GROWTH_PROFILE",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.growth.coaching.record",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/60"
+    },
+    {
+      "eventName": "GrowthEvidenceLinked.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-GROWTH",
+      "capabilityId": "HRIS.MODERN.GROWTH_PROFILE",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.growth.evidence.link",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/61"
+    },
+    {
+      "eventName": "GrowthEvidenceUnlinked.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-GROWTH",
+      "capabilityId": "HRIS.MODERN.GROWTH_PROFILE",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.growth.evidence.unlink",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/62"
+    },
+    {
+      "eventName": "GrowthPortabilityExportCancelled.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-GROWTH",
+      "capabilityId": "HRIS.MODERN.GROWTH_PROFILE",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.growth.export.cancel",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/63"
+    },
+    {
+      "eventName": "GrowthPortabilityExportExpired.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-GROWTH",
+      "capabilityId": "HRIS.MODERN.GROWTH_PROFILE",
+      "producerKind": "OWNER_LOCAL_HANDLER",
+      "producerId": "internal.growth.portability-export.expire",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/64"
+    },
+    {
+      "eventName": "GrowthPortabilityExportRequested.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-GROWTH",
+      "capabilityId": "HRIS.MODERN.GROWTH_PROFILE",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.growth.export.request",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/65"
+    },
+    {
+      "eventName": "GrowthPortabilityExportResultRecorded.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-GROWTH",
+      "capabilityId": "HRIS.MODERN.GROWTH_PROFILE",
+      "producerKind": "OWNER_LOCAL_HANDLER",
+      "producerId": "internal.growth.portability-export.result.consume",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/66"
+    },
+    {
+      "eventName": "GrowthProfileArchived.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-GROWTH",
+      "capabilityId": "HRIS.MODERN.GROWTH_PROFILE",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.growth.profile.archive",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/67"
+    },
+    {
+      "eventName": "GrowthProfileCreated.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-GROWTH",
+      "capabilityId": "HRIS.MODERN.GROWTH_PROFILE",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.growth.profile.create",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/68"
+    },
+    {
+      "eventName": "GrowthProfileUpdated.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-GROWTH",
+      "capabilityId": "HRIS.MODERN.GROWTH_PROFILE",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.growth.profile.update",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/69"
+    },
+    {
+      "eventName": "HrServiceCaseAssigned.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-HRSD",
+      "capabilityId": "HRIS.MODERN.HR_SERVICE_DELIVERY",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.hrservice.case.assign",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/70"
+    },
+    {
+      "eventName": "HrServiceCaseCancelled.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-HRSD",
+      "capabilityId": "HRIS.MODERN.HR_SERVICE_DELIVERY",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.hrservice.case.cancel",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/71"
+    },
+    {
+      "eventName": "HrServiceCaseCreated.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-HRSD",
+      "capabilityId": "HRIS.MODERN.HR_SERVICE_DELIVERY",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.hrservice.case.create",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/72"
+    },
+    {
+      "eventName": "HrServiceCaseResolved.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-HRSD",
+      "capabilityId": "HRIS.MODERN.HR_SERVICE_DELIVERY",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.hrservice.case.resolve",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/73"
+    },
+    {
+      "eventName": "HrServiceCaseResponseRecorded.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-HRSD",
+      "capabilityId": "HRIS.MODERN.HR_SERVICE_DELIVERY",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.hrservice.case.respond",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/74"
+    },
+    {
+      "eventName": "HrServiceCaseTriaged.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-HRSD",
+      "capabilityId": "HRIS.MODERN.HR_SERVICE_DELIVERY",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.hrservice.case.triage",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/75"
+    },
+    {
+      "eventName": "HrServiceSlaMilestoneRecorded.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-HRSD",
+      "capabilityId": "HRIS.MODERN.HR_SERVICE_DELIVERY",
+      "producerKind": "OWNER_LOCAL_HANDLER",
+      "producerId": "internal.hrservice.sla-milestone.consume",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/76"
+    },
+    {
+      "eventName": "LearningAssignmentCancelled.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-LEARNING",
+      "capabilityId": "HRIS.MODERN.LEARNING",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.learning.assignment.cancel",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/77"
+    },
+    {
+      "eventName": "LearningAssignmentCreated.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-LEARNING",
+      "capabilityId": "HRIS.MODERN.LEARNING",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.learning.assignment.create",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/78"
+    },
+    {
+      "eventName": "LearningAssignmentStarted.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-LEARNING",
+      "capabilityId": "HRIS.MODERN.LEARNING",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.learning.assignment.start",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/79"
+    },
+    {
+      "eventName": "LearningCompletionVerified.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-LEARNING",
+      "capabilityId": "HRIS.MODERN.LEARNING",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.learning.completion.verify",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/80"
+    },
+    {
+      "eventName": "LearningEnrollmentCreated.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-LEARNING",
+      "capabilityId": "HRIS.MODERN.LEARNING",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.learning.self.enroll",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/81"
+    },
+    {
+      "eventName": "LearningOfferingCreated.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-LEARNING",
+      "capabilityId": "HRIS.MODERN.LEARNING",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.learning.offering.create",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/82"
+    },
+    {
+      "eventName": "LearningOfferingPublished.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-LEARNING",
+      "capabilityId": "HRIS.MODERN.LEARNING",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.learning.offering.publish",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/83"
+    },
+    {
+      "eventName": "LearningOfferingRetired.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-LEARNING",
+      "capabilityId": "HRIS.MODERN.LEARNING",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.learning.offering.retire",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/84"
+    },
+    {
+      "eventName": "LearningOfferingRevised.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-LEARNING",
+      "capabilityId": "HRIS.MODERN.LEARNING",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.learning.offering.revise",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/85"
+    },
+    {
+      "eventName": "OnboardingJourneyAssigned.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-ONBOARD",
+      "capabilityId": "HRIS.MODERN.ONBOARDING",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.onboarding.journey.assign",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/86"
+    },
+    {
+      "eventName": "OnboardingJourneyCancelled.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-ONBOARD",
+      "capabilityId": "HRIS.MODERN.ONBOARDING",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.onboarding.journey.cancel",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/87"
+    },
+    {
+      "eventName": "OnboardingJourneyCompleted.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-ONBOARD",
+      "capabilityId": "HRIS.MODERN.ONBOARDING",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.onboarding.task.complete",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/88"
+    },
+    {
+      "eventName": "OnboardingTaskCompleted.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-ONBOARD",
+      "capabilityId": "HRIS.MODERN.ONBOARDING",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.onboarding.task.complete",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/89"
+    },
+    {
+      "eventName": "OnboardingTaskWaived.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-ONBOARD",
+      "capabilityId": "HRIS.MODERN.ONBOARDING",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.onboarding.task.waive",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/90"
+    },
+    {
+      "eventName": "OnboardingTemplateCreated.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-ONBOARD",
+      "capabilityId": "HRIS.MODERN.ONBOARDING",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.onboarding.template.create",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/91"
+    },
+    {
+      "eventName": "OnboardingTemplatePublished.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-ONBOARD",
+      "capabilityId": "HRIS.MODERN.ONBOARDING",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.onboarding.template.publish",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/92"
+    },
+    {
+      "eventName": "OnboardingTemplateRetired.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-ONBOARD",
+      "capabilityId": "HRIS.MODERN.ONBOARDING",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.onboarding.template.retire",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/93"
+    },
+    {
+      "eventName": "OnboardingTemplateRevised.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-ONBOARD",
+      "capabilityId": "HRIS.MODERN.ONBOARDING",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.onboarding.template.revise",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/94"
+    },
+    {
+      "eventName": "PeopleAnalyticsExportCancelled.v2",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-ANALYTICS",
+      "capabilityId": "HRIS.MODERN.PEOPLE_ANALYTICS",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.analytics.export.cancel",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/95"
+    },
+    {
+      "eventName": "PeopleAnalyticsExportExpired.v2",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-ANALYTICS",
+      "capabilityId": "HRIS.MODERN.PEOPLE_ANALYTICS",
+      "producerKind": "OWNER_LOCAL_HANDLER",
+      "producerId": "internal.analytics.export.expire",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/96"
+    },
+    {
+      "eventName": "PeopleAnalyticsExportRequested.v2",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-ANALYTICS",
+      "capabilityId": "HRIS.MODERN.PEOPLE_ANALYTICS",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.analytics.export.create",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/97"
+    },
+    {
+      "eventName": "PeopleAnalyticsExportResultRecorded.v2",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-ANALYTICS",
+      "capabilityId": "HRIS.MODERN.PEOPLE_ANALYTICS",
+      "producerKind": "OWNER_LOCAL_HANDLER",
+      "producerId": "internal.analytics.export.result.consume",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/98"
+    },
+    {
+      "eventName": "PeopleMetricCreated.v2",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-ANALYTICS",
+      "capabilityId": "HRIS.MODERN.PEOPLE_ANALYTICS",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.analytics.metric.create",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/99"
+    },
+    {
+      "eventName": "PeopleMetricProjectionRequested.v2",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-ANALYTICS",
+      "capabilityId": "HRIS.MODERN.PEOPLE_ANALYTICS",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.analytics.projection.request",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/100"
+    },
+    {
+      "eventName": "PeopleMetricProjectionResultRecorded.v2",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-ANALYTICS",
+      "capabilityId": "HRIS.MODERN.PEOPLE_ANALYTICS",
+      "producerKind": "OWNER_LOCAL_HANDLER",
+      "producerId": "internal.analytics.metric-projection.result.consume",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/101"
+    },
+    {
+      "eventName": "PeopleMetricPublished.v2",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-ANALYTICS",
+      "capabilityId": "HRIS.MODERN.PEOPLE_ANALYTICS",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.analytics.metric.publish",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/102"
+    },
+    {
+      "eventName": "PeopleMetricRetired.v2",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-ANALYTICS",
+      "capabilityId": "HRIS.MODERN.PEOPLE_ANALYTICS",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.analytics.metric.retire",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/103"
+    },
+    {
+      "eventName": "PeopleMetricRevised.v2",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-ANALYTICS",
+      "capabilityId": "HRIS.MODERN.PEOPLE_ANALYTICS",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.analytics.metric.revise",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/104"
+    },
+    {
+      "eventName": "PeopleMetricValidated.v2",
+      "ownerSession": "HRIS-SYS",
+      "primarySliceId": "MOD-SYS-ANALYTICS",
+      "capabilityId": "HRIS.MODERN.PEOPLE_ANALYTICS",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.analytics.metric.validate",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/105"
+    },
+    {
+      "eventName": "RequisitionClosed.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "capabilityId": "HRIS.MODERN.RECRUITING_ATS",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.recruiting.requisition.lifecycle.change",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/106"
+    },
+    {
+      "eventName": "RequisitionCreated.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "capabilityId": "HRIS.MODERN.RECRUITING_ATS",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.recruiting.requisition.create",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/107"
+    },
+    {
+      "eventName": "RequisitionPaused.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "capabilityId": "HRIS.MODERN.RECRUITING_ATS",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.recruiting.requisition.lifecycle.change",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/108"
+    },
+    {
+      "eventName": "RequisitionPublished.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "capabilityId": "HRIS.MODERN.RECRUITING_ATS",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.recruiting.requisition.publish",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/109"
+    },
+    {
+      "eventName": "RequisitionResumed.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "capabilityId": "HRIS.MODERN.RECRUITING_ATS",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.recruiting.requisition.lifecycle.change",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/110"
+    },
+    {
+      "eventName": "RequisitionRevised.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-RECRUIT",
+      "capabilityId": "HRIS.MODERN.RECRUITING_ATS",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.recruiting.requisition.revise",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/111"
+    },
+    {
+      "eventName": "SkillsTaxonomyCreated.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SKILLS",
+      "capabilityId": "HRIS.MODERN.SKILLS_ONTOLOGY",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.skills.taxonomy.create",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/112"
+    },
+    {
+      "eventName": "SkillsTaxonomyPublished.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SKILLS",
+      "capabilityId": "HRIS.MODERN.SKILLS_ONTOLOGY",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.skills.taxonomy.publish",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/113"
+    },
+    {
+      "eventName": "SkillsTaxonomyRetired.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SKILLS",
+      "capabilityId": "HRIS.MODERN.SKILLS_ONTOLOGY",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.skills.taxonomy.retire",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/114"
+    },
+    {
+      "eventName": "SkillsTaxonomyRevised.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SKILLS",
+      "capabilityId": "HRIS.MODERN.SKILLS_ONTOLOGY",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.skills.taxonomy.revise",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/115"
+    },
+    {
+      "eventName": "SkillsTaxonomyValidated.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SKILLS",
+      "capabilityId": "HRIS.MODERN.SKILLS_ONTOLOGY",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.skills.taxonomy.validate",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/116"
+    },
+    {
+      "eventName": "SuccessionNominationAdded.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SUCCESSION",
+      "capabilityId": "HRIS.MODERN.SUCCESSION",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.succession.nomination.add",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/117"
+    },
+    {
+      "eventName": "SuccessionNominationWithdrawn.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SUCCESSION",
+      "capabilityId": "HRIS.MODERN.SUCCESSION",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.succession.nomination.withdraw",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/118"
+    },
+    {
+      "eventName": "SuccessionPlanApproved.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SUCCESSION",
+      "capabilityId": "HRIS.MODERN.SUCCESSION",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.succession.plan.approve",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/119"
+    },
+    {
+      "eventName": "SuccessionPlanCreated.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SUCCESSION",
+      "capabilityId": "HRIS.MODERN.SUCCESSION",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.succession.plan.create",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/120"
+    },
+    {
+      "eventName": "SuccessionPlanPublished.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SUCCESSION",
+      "capabilityId": "HRIS.MODERN.SUCCESSION",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.succession.plan.publish",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/121"
+    },
+    {
+      "eventName": "SuccessionPlanRejected.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SUCCESSION",
+      "capabilityId": "HRIS.MODERN.SUCCESSION",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.succession.plan.reject",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/122"
+    },
+    {
+      "eventName": "SuccessionPlanRetired.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SUCCESSION",
+      "capabilityId": "HRIS.MODERN.SUCCESSION",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.succession.plan.retire",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/123"
+    },
+    {
+      "eventName": "SuccessionPlanRevised.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SUCCESSION",
+      "capabilityId": "HRIS.MODERN.SUCCESSION",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.succession.plan.revise",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/124"
+    },
+    {
+      "eventName": "SuccessionPlanSubmitted.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SUCCESSION",
+      "capabilityId": "HRIS.MODERN.SUCCESSION",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.succession.plan.submit",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/125"
+    },
+    {
+      "eventName": "SuccessionReadinessEvidenceRecorded.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SUCCESSION",
+      "capabilityId": "HRIS.MODERN.SUCCESSION",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.succession.readiness.record",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/126"
+    },
+    {
+      "eventName": "TalentOpportunityApplicationShortlisted.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-MARKET",
+      "capabilityId": "HRIS.MODERN.INTERNAL_MARKETPLACE",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.opportunity.shortlist",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/127"
+    },
+    {
+      "eventName": "TalentOpportunityApplicationSubmitted.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-MARKET",
+      "capabilityId": "HRIS.MODERN.INTERNAL_MARKETPLACE",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.opportunity.apply",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/128"
+    },
+    {
+      "eventName": "TalentOpportunityApplicationWithdrawn.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-MARKET",
+      "capabilityId": "HRIS.MODERN.INTERNAL_MARKETPLACE",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.opportunity.application.withdraw",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/129"
+    },
+    {
+      "eventName": "TalentOpportunityCancelled.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-MARKET",
+      "capabilityId": "HRIS.MODERN.INTERNAL_MARKETPLACE",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.opportunity.cancel",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/130"
+    },
+    {
+      "eventName": "TalentOpportunityClosed.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-MARKET",
+      "capabilityId": "HRIS.MODERN.INTERNAL_MARKETPLACE",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.opportunity.close",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/131"
+    },
+    {
+      "eventName": "TalentOpportunityCreated.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-MARKET",
+      "capabilityId": "HRIS.MODERN.INTERNAL_MARKETPLACE",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.opportunity.create",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/132"
+    },
+    {
+      "eventName": "TalentOpportunityPublished.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-MARKET",
+      "capabilityId": "HRIS.MODERN.INTERNAL_MARKETPLACE",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.opportunity.publish",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/133"
+    },
+    {
+      "eventName": "TalentOpportunityRevised.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-MARKET",
+      "capabilityId": "HRIS.MODERN.INTERNAL_MARKETPLACE",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.opportunity.revise",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/134"
+    },
+    {
+      "eventName": "TalentOpportunitySelectionRecorded.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-MARKET",
+      "capabilityId": "HRIS.MODERN.INTERNAL_MARKETPLACE",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.opportunity.selection.record",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/135"
+    },
+    {
+      "eventName": "WorkerSkillEvidenceRecorded.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SKILLS",
+      "capabilityId": "HRIS.MODERN.SKILLS_ONTOLOGY",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.skills.evidence.record",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/136"
+    },
+    {
+      "eventName": "WorkerSkillEvidenceRevoked.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SKILLS",
+      "capabilityId": "HRIS.MODERN.SKILLS_ONTOLOGY",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.skills.evidence.revoke",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/137"
+    },
+    {
+      "eventName": "WorkerSkillEvidenceVerified.v2",
+      "ownerSession": "HRIS-PER",
+      "primarySliceId": "MOD-PER-SKILLS",
+      "capabilityId": "HRIS.MODERN.SKILLS_ONTOLOGY",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.skills.evidence.verify",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/138"
+    },
+    {
+      "eventName": "WorkforceDemandForecastCreated.v2",
+      "ownerSession": "HRIS-TIM",
+      "primarySliceId": "MOD-TIM-WFM",
+      "capabilityId": "HRIS.MODERN.ADVANCED_WFM",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.wfm.forecast.create",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/139"
+    },
+    {
+      "eventName": "WorkforceScenarioCancelled.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-WFP",
+      "capabilityId": "HRIS.MODERN.WORKFORCE_PLANNING",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.workforceplan.scenario.cancel",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/140"
+    },
+    {
+      "eventName": "WorkforceScenarioCreated.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-WFP",
+      "capabilityId": "HRIS.MODERN.WORKFORCE_PLANNING",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.workforceplan.scenario.create",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/141"
+    },
+    {
+      "eventName": "WorkforceScenarioDecisionRecorded.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-WFP",
+      "capabilityId": "HRIS.MODERN.WORKFORCE_PLANNING",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.workforceplan.scenario.approve",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/142"
+    },
+    {
+      "eventName": "WorkforceScenarioPublished.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-WFP",
+      "capabilityId": "HRIS.MODERN.WORKFORCE_PLANNING",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.workforceplan.scenario.publish",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/143"
+    },
+    {
+      "eventName": "WorkforceScenarioRevised.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-WFP",
+      "capabilityId": "HRIS.MODERN.WORKFORCE_PLANNING",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.workforceplan.scenario.revise",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/144"
+    },
+    {
+      "eventName": "WorkforceScenarioSimulated.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-WFP",
+      "capabilityId": "HRIS.MODERN.WORKFORCE_PLANNING",
+      "producerKind": "OWNER_LOCAL_HANDLER",
+      "producerId": "internal.workforceplan.simulation-result.consume",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/145"
+    },
+    {
+      "eventName": "WorkforceScenarioSimulationFailed.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-WFP",
+      "capabilityId": "HRIS.MODERN.WORKFORCE_PLANNING",
+      "producerKind": "OWNER_LOCAL_HANDLER",
+      "producerId": "internal.workforceplan.simulation-result.consume",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/146"
+    },
+    {
+      "eventName": "WorkforceScenarioSimulationRequested.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-WFP",
+      "capabilityId": "HRIS.MODERN.WORKFORCE_PLANNING",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.workforceplan.scenario.simulate",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/147"
+    },
+    {
+      "eventName": "WorkforceScenarioSubmitted.v2",
+      "ownerSession": "HRIS-HRM",
+      "primarySliceId": "MOD-HRM-WFP",
+      "capabilityId": "HRIS.MODERN.WORKFORCE_PLANNING",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.workforceplan.scenario.submit",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/148"
+    },
+    {
+      "eventName": "WorkforceScheduleApprovalResultRecorded.v2",
+      "ownerSession": "HRIS-TIM",
+      "primarySliceId": "MOD-TIM-WFM",
+      "capabilityId": "HRIS.MODERN.ADVANCED_WFM",
+      "producerKind": "OWNER_LOCAL_HANDLER",
+      "producerId": "internal.wfm.approval-result.consume",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/149"
+    },
+    {
+      "eventName": "WorkforceScheduleCandidateCancelled.v2",
+      "ownerSession": "HRIS-TIM",
+      "primarySliceId": "MOD-TIM-WFM",
+      "capabilityId": "HRIS.MODERN.ADVANCED_WFM",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.wfm.schedule.cancel",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/150"
+    },
+    {
+      "eventName": "WorkforceScheduleCandidateSubmitted.v2",
+      "ownerSession": "HRIS-TIM",
+      "primarySliceId": "MOD-TIM-WFM",
+      "capabilityId": "HRIS.MODERN.ADVANCED_WFM",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.wfm.schedule.submit",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/151"
+    },
+    {
+      "eventName": "WorkforceScheduleOptimizationCancelled.v2",
+      "ownerSession": "HRIS-TIM",
+      "primarySliceId": "MOD-TIM-WFM",
+      "capabilityId": "HRIS.MODERN.ADVANCED_WFM",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.wfm.optimization.cancel",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/152"
+    },
+    {
+      "eventName": "WorkforceScheduleOptimizationRequested.v2",
+      "ownerSession": "HRIS-TIM",
+      "primarySliceId": "MOD-TIM-WFM",
+      "capabilityId": "HRIS.MODERN.ADVANCED_WFM",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.wfm.schedule.optimize",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/153"
+    },
+    {
+      "eventName": "WorkforceScheduleOptimizationResultRecorded.v2",
+      "ownerSession": "HRIS-TIM",
+      "primarySliceId": "MOD-TIM-WFM",
+      "capabilityId": "HRIS.MODERN.ADVANCED_WFM",
+      "producerKind": "OWNER_LOCAL_HANDLER",
+      "producerId": "internal.wfm.schedule-optimization.result.consume",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/154"
+    },
+    {
+      "eventName": "WorkforceSchedulePublished.v2",
+      "ownerSession": "HRIS-TIM",
+      "primarySliceId": "MOD-TIM-WFM",
+      "capabilityId": "HRIS.MODERN.ADVANCED_WFM",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.wfm.schedule.publish",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/155"
+    },
+    {
+      "eventName": "WorkforceScheduleValidationCompleted.v2",
+      "ownerSession": "HRIS-TIM",
+      "primarySliceId": "MOD-TIM-WFM",
+      "capabilityId": "HRIS.MODERN.ADVANCED_WFM",
+      "producerKind": "PUBLIC_OPERATION",
+      "producerId": "modern.wfm.schedule.validate",
+      "eventSchemaRef": "modern-capability-event-payload-contracts.v1.json#/eventPayloadSchemas/156"
+    }
+  ],
+  "sealedPayloadSha256": "19bd9f5d2188c55b9fd5eaf18c04d9cb04304b90f0c71279fcffdaaca86410b7"
+}
