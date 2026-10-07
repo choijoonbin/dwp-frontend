@@ -1,0 +1,254 @@
+{
+  "schema": "dwp.hris.g2.g3-primary-ownership-disposition.v1",
+  "registerId": "G2-OWNER-CONTRACT-DISPOSITION-2026-10-07",
+  "status": "G2_DISPOSITION_COMPLETE_G3_GENERATION_BLOCKED",
+  "supersedesHistorical": {
+    "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/g3-contract-primary-ownership-register.csv",
+    "state": "MISSING_FROM_RECOVERY",
+    "historicalExpectedSha256": "11f51f88e25ff01666f347467c82d2e825a81091926cff03f141fd750b476e9b",
+    "historicalExpectedBytes": 102456,
+    "historicalExpectedRows": 525,
+    "relationship": "SUCCESSOR_DISPOSITION_ONLY_NOT_ROW_RECONSTRUCTION"
+  },
+  "sourcePins": {
+    "currentBackendCommit": "5612cc1a0b4a21a4d0b9107739579f23d165790f",
+    "reconciledBackendCommit": "0731f6df2d55cdeb4784a09ae6e28d4ae4b0c294",
+    "backendResultCommit": "ea630a5f2dec9b1f044f11dd5eb66ffb6f87941a",
+    "backendResultParents": [
+      "5612cc1a0b4a21a4d0b9107739579f23d165790f",
+      "0731f6df2d55cdeb4784a09ae6e28d4ae4b0c294"
+    ]
+  },
+  "confirmedCurrentOwners": [
+    {
+      "ownershipId": "G2-OWNER-HRM-PEOPLE360-HTTP",
+      "contractFamily": "PEOPLE360_HTTP",
+      "contractKindCandidate": "PUBLIC_PEP",
+      "contractRefs": [
+        "GET /api/people/v1/workforce/people?projection=people360&asOf={date}",
+        "GET /api/people/v1/workforce/people/{publicId}?projection=people360&asOf={date}",
+        "GET /api/people/v1/hr/home?projection=people360&asOf={date}",
+        "GET /api/people/v1/hr/team?projection=people360&personId={publicId}&asOf={date}"
+      ],
+      "semanticOwnerSession": "HRIS-HRM",
+      "primarySliceId": "BASE-TFR-HRM-004",
+      "implementationOwnerService": "dwp-people-server",
+      "sourceSemanticRef": "hrm-api-event-contract-successor.v1.json#/httpOperations",
+      "sourceRegisterRef": "hrm-source-family-coverage-successor.v1.csv#TFR-HRM-004",
+      "sourceEvidence": [
+        "dwp-people-server/src/main/java/com/dwp/services/people/workforce/WorkforcePeopleController.java@bcccb098693d8d54169b8c4c15dbbb97e4bb3dc3",
+        "dwp-people-server/src/main/java/com/dwp/services/people/hr/HrController.java@8f5b02334c2d141cfbc291261fdb6e6834f15037",
+        "dwp-people-server/src/main/java/com/dwp/services/people/workforce/People360Service.java@447bc97561032e3ec8c9d749abceb65d1cdebb11"
+      ],
+      "implementationState": "CODE_PRESENT_DEFAULT_OFF",
+      "g3Disposition": "CARRY_CONFIRMED_OWNER_TO_G3_GENERATION"
+    },
+    {
+      "ownershipId": "G2-OWNER-HRM-ASSIGNMENT-PROPOSAL-HTTP",
+      "contractFamily": "ASSIGNMENT_PROPOSAL_HTTP",
+      "contractKindCandidate": "PUBLIC_PEP",
+      "contractRefs": [
+        "GET /api/people/v1/workforce/assignments/{assignmentId}",
+        "GET /api/people/v1/workforce/assignments/{assignmentId}/timeline",
+        "GET /api/people/v1/workforce/assignment-proposals/{proposalId}",
+        "POST /api/people/v1/workforce/assignment-proposals",
+        "POST /api/people/v1/workforce/assignment-proposals/{proposalId}/validate",
+        "POST /api/people/v1/workforce/assignment-proposals/{proposalId}/submit",
+        "POST /api/people/v1/workforce/assignment-proposals/{proposalId}/cancel"
+      ],
+      "semanticOwnerSession": "HRIS-HRM",
+      "primarySliceId": "BASE-TFR-HRM-008",
+      "implementationOwnerService": "dwp-people-server",
+      "sourceSemanticRef": "hrm-api-event-contract-successor.v1.json#/httpOperations",
+      "sourceRegisterRef": "hrm-source-family-coverage-successor.v1.csv#TFR-HRM-008",
+      "sourceEvidence": [
+        "dwp-people-server/src/main/java/com/dwp/services/people/hr/assignment/AssignmentProposalController.java@94600ae0e8423dc71d26a689acd6acb33e764235",
+        "dwp-people-server/src/main/java/com/dwp/services/people/hr/assignment/AssignmentProposalService.java@9f9578e40fa5e7b7e0ea2d51fe310a9f9adc6b3b"
+      ],
+      "implementationState": "IMPLEMENTED_CURRENT_PRESERVED",
+      "g3Disposition": "CARRY_CONFIRMED_OWNER_TO_G3_GENERATION"
+    },
+    {
+      "ownershipId": "G2-OWNER-HRM-ASSIGNMENT-PROPOSAL-OUTBOX",
+      "contractFamily": "ASSIGNMENT_PROPOSAL_OUTBOX",
+      "contractKindCandidate": "OWNER_LOCAL_OUTBOX_EVIDENCE_NOT_G3_ROW",
+      "contractRefs": [
+        "people.assignment-proposal.created.v1",
+        "people.assignment-proposal.validated.v1",
+        "people.assignment-proposal.submitted.v1",
+        "people.assignment-proposal.cancelled.v1"
+      ],
+      "semanticOwnerSession": "HRIS-HRM",
+      "primarySliceId": "BASE-TFR-HRM-008",
+      "implementationOwnerService": "dwp-people-server",
+      "sourceSemanticRef": "hrm-api-event-contract-successor.v1.json#/outboxEvents",
+      "sourceRegisterRef": "hrm-source-family-coverage-successor.v1.csv#TFR-HRM-008",
+      "sourceEvidence": [
+        "dwp-people-server/src/main/java/com/dwp/services/people/hr/assignment/AssignmentProposalRepository.java@3e4289d655a1213aa4fa7d743b82448545571f2c",
+        "dwp-people-server/src/main/resources/db/migration/V53__create_assignment_change_proposals.sql@abbc787c8aa32dfb907a73f606da6b1fe5d180c2"
+      ],
+      "implementationState": "OWNER_OUTBOX_ONLY_NO_PUBLISHER",
+      "publicEventAlias": null,
+      "explicitlyNot": "AssignmentChanged.v1",
+      "g3Disposition": "CARRY_AS_TRANSITIONAL_OWNER_LOCAL_EVIDENCE_ONLY"
+    },
+    {
+      "ownershipId": "G2-OWNER-HRM-PER-WORKFORCE-SNAPSHOT-PORT",
+      "contractFamily": "WORKFORCE_SNAPSHOT_QUERY_PORT",
+      "contractKindCandidate": "XCON_PRODUCER",
+      "contractRefs": ["WorkforceSnapshotQueryPort.v1"],
+      "semanticOwnerSession": "HRIS-HRM",
+      "primarySliceId": "BASE-TFR-HRM-004",
+      "consumerOwnerSession": "HRIS-PER",
+      "consumerSliceId": "BASE-TFR-PER-016",
+      "implementationOwnerService": "dwp-people-server",
+      "sourceSemanticRef": "hrm-api-event-contract-successor.v1.json#/inProcessContracts/0",
+      "sourceRegisterRef": "hrm-source-family-coverage-successor.v1.csv#TFR-HRM-004",
+      "sourceEvidence": [
+        "contracts/in-process/hris/workforce-snapshot-query-port.v1.schema.json@85f19f28e3216d73681f93cde850effbd723c3ef",
+        "dwp-people-server/src/main/java/com/dwp/services/people/hris/people/HrisWorkforceSnapshotProvider.java@cddc74cc2b8a5c35f8119f903579f9d42071a66b"
+      ],
+      "implementationState": "CODE_PRESENT_DEFAULT_OFF_PER_ONLY_PROJECTION",
+      "g3Disposition": "CARRY_CONFIRMED_PRODUCER_CONSUMER_TO_G3_GENERATION"
+    },
+    {
+      "ownershipId": "G2-OWNER-PER-CYCLE-HTTP",
+      "contractFamily": "PERFORMANCE_CYCLE_HTTP",
+      "contractKindCandidate": "PUBLIC_PEP",
+      "contractRefs": [
+        "GET /api/people/v1/hris/performance/cycles",
+        "GET /api/people/v1/hris/performance/cycles/{cycleId}",
+        "POST /api/people/v1/hris/performance/cycles",
+        "PATCH /api/people/v1/hris/performance/cycles/{cycleId}",
+        "POST /api/people/v1/hris/performance/cycles/{cycleId}/validate",
+        "POST /api/people/v1/hris/performance/cycles/{cycleId}/publish"
+      ],
+      "semanticOwnerSession": "HRIS-PER",
+      "primarySliceId": "BASE-TFR-PER-005",
+      "implementationOwnerService": "dwp-people-server",
+      "sourceSemanticRef": "CURRENT_SOURCE:PerformanceCycleController",
+      "sourceRegisterRef": "target-family-resolution-register.csv#TFR-PER-005",
+      "sourceEvidence": [
+        "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/PerformanceCycleController.java@0ecd7c3b8be8802ad62f26c4a33f618560413884",
+        "dwp-people-server/src/main/resources/db/performance-migration/V1__per_create_evaluation_cycle_foundation.sql@3bfb2b6570863e31f1916abe8dae03be90f8d96f"
+      ],
+      "implementationState": "CODE_PRESENT_DEFAULT_OFF",
+      "g3Disposition": "CARRY_CONFIRMED_OWNER_TO_G3_GENERATION"
+    },
+    {
+      "ownershipId": "G2-OWNER-PER-POPULATION-PREVIEW-HTTP",
+      "contractFamily": "PERFORMANCE_POPULATION_PREVIEW_HTTP",
+      "contractKindCandidate": "PUBLIC_PEP",
+      "contractRefs": [
+        "POST /api/people/v1/hris/performance/cycles/{cycleId}/population-previews"
+      ],
+      "semanticOwnerSession": "HRIS-PER",
+      "primarySliceId": "BASE-TFR-PER-006",
+      "implementationOwnerService": "dwp-people-server",
+      "sourceSemanticRef": "CURRENT_SOURCE:PerformanceCycleController",
+      "sourceRegisterRef": "target-family-resolution-register.csv#TFR-PER-006",
+      "sourceEvidence": [
+        "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/PerformanceCycleController.java@0ecd7c3b8be8802ad62f26c4a33f618560413884"
+      ],
+      "implementationState": "CODE_PRESENT_DEFAULT_OFF",
+      "g3Disposition": "CARRY_CONFIRMED_OWNER_TO_G3_GENERATION"
+    },
+    {
+      "ownershipId": "G2-OWNER-PER-COMMAND-RECEIPT-HTTP",
+      "contractFamily": "PERFORMANCE_COMMAND_RECEIPT_HTTP",
+      "contractKindCandidate": "PUBLIC_PEP",
+      "contractRefs": [
+        "GET /api/people/v1/hris/performance/command-receipts/{receiptId}"
+      ],
+      "semanticOwnerSession": "HRIS-PER",
+      "primarySliceId": "BASE-TFR-PER-011",
+      "implementationOwnerService": "dwp-people-server",
+      "sourceSemanticRef": "CURRENT_SOURCE:PerformanceCycleController",
+      "sourceRegisterRef": "target-family-resolution-register.csv#TFR-PER-011",
+      "sourceEvidence": [
+        "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/PerformanceCycleController.java@0ecd7c3b8be8802ad62f26c4a33f618560413884"
+      ],
+      "implementationState": "CODE_PRESENT_DEFAULT_OFF",
+      "g3Disposition": "CARRY_CONFIRMED_OWNER_TO_G3_GENERATION"
+    },
+    {
+      "ownershipId": "G2-OWNER-PER-CYCLE-OUTBOX",
+      "contractFamily": "PERFORMANCE_CYCLE_OUTBOX",
+      "contractKindCandidate": "BASE_EVENT",
+      "contractRefs": ["PerformanceCyclePublished.v1"],
+      "semanticOwnerSession": "HRIS-PER",
+      "primarySliceId": "BASE-TFR-PER-005",
+      "implementationOwnerService": "dwp-people-server",
+      "sourceSemanticRef": "CURRENT_SOURCE:PerformanceCycleCommandRepository",
+      "sourceRegisterRef": "target-family-resolution-register.csv#TFR-PER-005",
+      "sourceEvidence": [
+        "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/PerformanceCycleCommandRepository.java@3c05e915b905f4933d917fb8ee1c5523922d10cb"
+      ],
+      "implementationState": "OWNER_OUTBOX_ONLY_NO_PUBLISHER",
+      "internalMarker": "performance.command.applied",
+      "g3Disposition": "CARRY_AS_OWNER_OUTBOX_EVIDENCE_PENDING_CANONICAL_EVENT_INPUT"
+    }
+  ],
+  "ownershipSeparation": {
+    "people360": {"ownerSession": "HRIS-HRM", "primarySliceId": "BASE-TFR-HRM-004"},
+    "assignmentProposal": {"ownerSession": "HRIS-HRM", "primarySliceId": "BASE-TFR-HRM-008"},
+    "performanceCycle": {"ownerSession": "HRIS-PER", "primarySliceId": "BASE-TFR-PER-005"},
+    "performancePopulationPreview": {"ownerSession": "HRIS-PER", "primarySliceId": "BASE-TFR-PER-006"},
+    "performanceCommandReceipt": {"ownerSession": "HRIS-PER", "primarySliceId": "BASE-TFR-PER-011"},
+    "workforceSnapshot": {
+      "producerOwnerSession": "HRIS-HRM",
+      "producerSliceId": "BASE-TFR-HRM-004",
+      "consumerOwnerSession": "HRIS-PER",
+      "consumerSliceId": "BASE-TFR-PER-016"
+    }
+  },
+  "historicalProfile": {
+    "generationStage": "HISTORICAL_MISSING_REGISTER_ONLY",
+    "categories": {
+      "PUBLIC_PEP": 175,
+      "INTERNAL_SERVICE_PEP": 11,
+      "XCON_PRODUCER": 21,
+      "SYS_G2_CONTRACT": 84,
+      "BASE_EVENT": 48,
+      "MODERN_OPERATION": 100,
+      "MODERN_EVENT": 86
+    },
+    "totalRows": 525
+  },
+  "g3TargetProfile": {
+    "generationStage": "G3_ONLY",
+    "categories": {
+      "PUBLIC_PEP": 175,
+      "INTERNAL_SERVICE_PEP": 11,
+      "XCON_PRODUCER": 21,
+      "SYS_G2_CONTRACT": 84,
+      "BASE_EVENT": 48,
+      "MODERN_OPERATION": 199,
+      "MODERN_EVENT": 157
+    },
+    "totalRows": 695,
+    "statusReservedForGeneratedRows": "SEALED_G3_PRIMARY_OWNER",
+    "g2MayEmitFinalRows": false
+  },
+  "missingCanonicalInputs": [
+    "coding-readiness/modern-capability-exact-schema-contracts.v1.json",
+    "coding-readiness/modern-capability-event-payload-contracts.v1.json",
+    "coding-readiness/modern-capability-public-identity-registry.v1.json",
+    "coding-readiness/modern-capability-semantic-bindings.v1.json"
+  ],
+  "invariants": {
+    "confirmedOwnerRowsAreNotFinalG3Rows": true,
+    "proposalEventsAreNotAssignmentChangedV1": true,
+    "people360DoesNotProducePersonChangedV1": true,
+    "performanceContractsRemainPerOwned": true,
+    "final695RowRegisterGeneratedOnlyAtG3": true,
+    "historical525RowsNotFabricated": true
+  },
+  "authorityBoundary": {
+    "closesOwnerGate": "G2_OWNER_CONTRACT_DISPOSITION",
+    "doesNotCloseGate": "G3_CANONICAL_GENERATION",
+    "moduleCodeGoGranted": false,
+    "productionAuthorizationGranted": false,
+    "finalG3RegisterEmitted": false
+  }
+}

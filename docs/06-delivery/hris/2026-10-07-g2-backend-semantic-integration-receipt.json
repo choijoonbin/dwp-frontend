@@ -1,0 +1,495 @@
+{
+  "schema": "dwp.hris.g2-backend-semantic-integration-receipt.v1",
+  "receiptId": "HRIS-G2-BACKEND-SEMANTIC-INTEGRATION-RECEIPT-20261007-R1",
+  "issuedAt": "2026-10-07T09:48:27+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "status": "PASS_WITH_KNOWN_G5_BLOCKERS",
+  "decision": "G3_CANONICAL_AND_CONDITIONAL_V35_AUTHORIZED",
+  "completionMeaning": "The reconciled backend semantics are merged into the current backend base with zero unresolved conflicts. Current authorization v32 through v34 bytes are preserved, AUTH V242 and the admitted People, Payroll and Time migration streams are pinned, and cluster-targeted evidence is recorded. OpenAPI is provisional until the one-time G3 generation batch, Docker-backed migration checks and exact source-size gates remain mandatory G5 blockers, and no module development authority is granted before G7.",
+  "exclusions": [
+    "This receipt does not claim that G3 canonical generation or a conditional v35 successor has run.",
+    "This receipt does not treat the provisional Payroll or Time OpenAPI snapshots as live runtime truth.",
+    "This receipt does not waive Docker-backed clean-install, upgrade or persistence validation in G5.",
+    "This receipt does not waive any production or test source-size violation; baseline expansion is prohibited.",
+    "This receipt does not claim that the G6 frozen-head W1 Successor has run.",
+    "This receipt does not authorize module-parallel development, customer activation or production release."
+  ],
+  "sourcePins": {
+    "currentFrontend": "08a05f764a7c6dec38cce2627b81bcb8ef87ee6c",
+    "reconciledFrontend": "7f39d12cd10b8827c67355a7f445973d05373cc9",
+    "currentBackend": "5612cc1a0b4a21a4d0b9107739579f23d165790f",
+    "reconciledBackend": "0731f6df2d55cdeb4784a09ae6e28d4ae4b0c294",
+    "currentAgent": "1d46fc4ab49c604efb7464574c49d13ee453e059"
+  },
+  "backendIntegration": {
+    "branch": "codex/hris-g1-integration-backend-20261006",
+    "upstream": "origin/codex/hris-g1-integration-backend-20261006",
+    "resultCommit": "ea630a5f2dec9b1f044f11dd5eb66ffb6f87941a",
+    "mergeParents": [
+      "5612cc1a0b4a21a4d0b9107739579f23d165790f",
+      "0731f6df2d55cdeb4784a09ae6e28d4ae4b0c294"
+    ],
+    "localBranchHeadMatches": true,
+    "upstreamHeadMatches": true,
+    "resultCommitReachableFromLocalBranch": true,
+    "integrationWorktreeClean": true,
+    "unresolvedConflictCount": 0,
+    "committedConflictMarkerCount": 0
+  },
+  "authorizationDecision": {
+    "currentVersionsPreserved": [32, 33, 34],
+    "preservedArtifacts": [
+      {
+        "path": "contracts/product-authorization/product-surfaces-v1.bundle-v32.json",
+        "bytes": 2126200,
+        "sha256": "a884b986f35e11eac90d8fbd1f82c29e89d884d3b64e27d26844170d32000046",
+        "matchesCurrentBase": true
+      },
+      {
+        "path": "contracts/product-authorization/product-surfaces-v1.bundle-v33.json",
+        "bytes": 2216141,
+        "sha256": "ee4ba10cbfce41c9d108c5d1f3b7bc255ebd249e1a64fa09f8705fd8de965662",
+        "matchesCurrentBase": true
+      },
+      {
+        "path": "contracts/product-authorization/product-surfaces-v1.bundle-v34.json",
+        "bytes": 2234076,
+        "sha256": "8edd29e91a915fc035028c44af4055673bf5e53c7a5ca77e2af381d69bc60135",
+        "matchesCurrentBase": true
+      },
+      {
+        "path": "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v32.generated.json",
+        "bytes": 2126200,
+        "sha256": "a884b986f35e11eac90d8fbd1f82c29e89d884d3b64e27d26844170d32000046",
+        "matchesCurrentBase": true
+      },
+      {
+        "path": "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v33.generated.json",
+        "bytes": 2216141,
+        "sha256": "ee4ba10cbfce41c9d108c5d1f3b7bc255ebd249e1a64fa09f8705fd8de965662",
+        "matchesCurrentBase": true
+      },
+      {
+        "path": "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v34.generated.json",
+        "bytes": 2234076,
+        "sha256": "8edd29e91a915fc035028c44af4055673bf5e53c7a5ca77e2af381d69bc60135",
+        "matchesCurrentBase": true
+      }
+    ],
+    "v35Issued": false,
+    "v35ArtifactCount": 0,
+    "v243Issued": false,
+    "v243ArtifactCount": 0,
+    "g3Rule": "Compare the integrated canonical semantic source with preserved v34. Keep v34 byte-identical when the semantic diff is empty; generate v35 and conditionally lease AUTH V243 only when a reviewed non-empty diff requires a new seed."
+  },
+  "migrationDecision": {
+    "authV242": {
+      "leaseId": "HRIS-AUTH-V242-20261006-R1",
+      "status": "CONSUMED_IN_G2_RESULT_PENDING_G5_CLEAN_UPGRADE",
+      "path": "dwp-auth-server/src/main/resources/db/migration/V242__authorize_exact_payroll_foundation_operations.sql",
+      "bytes": 2668,
+      "sha256": "3d4fc515a6b3e4904f3d6eb89fc71991a709346eeeeaf04e13e601e7096668d9"
+    },
+    "immutableStreams": {
+      "PEOPLE": {
+        "versions": "49..52",
+        "artifactCount": 4,
+        "streamDigest": "b9ac105c7676bc5a09c6109dea8342216ec6ca4bbe67f1131e7dfdf73b7ec4e9",
+        "status": "ADMITTED_IMMUTABLE_PENDING_ENVIRONMENT_HISTORY_CHECK"
+      },
+      "PAYROLL": {
+        "versions": "1..5",
+        "artifactCount": 5,
+        "streamDigest": "679e84e6138cabcf2db3f0904017d4e980ac27788319827962cb04e47f7d27f6",
+        "status": "ADMITTED_IMMUTABLE"
+      },
+      "TIME": {
+        "versions": "1..7",
+        "artifactCount": 7,
+        "streamDigest": "76db530fbaa8ddce1188fc1446bed5d1c23c28a4bddda292a5032d573a71aaf9",
+        "status": "ADMITTED_IMMUTABLE"
+      }
+    },
+    "peopleCurrentSuccessor": {
+      "version": 53,
+      "path": "dwp-people-server/src/main/resources/db/migration/V53__create_assignment_change_proposals.sql",
+      "bytes": 10024,
+      "sha256": "2a2e420fefe2d780f0d7fd83c4840addb2fc94f9a8fe15e991f849ee3f69f950"
+    },
+    "cleanInstallAndUpgradeGate": "G5_REQUIRED_NO_WAIVER"
+  },
+  "openApiDecision": {
+    "status": "PROVISIONAL_G2_APPROVED_SNAPSHOT_COMPOSITION",
+    "approvedSnapshotCheck": "PASS",
+    "serviceCount": 12,
+    "gatewayPublicPathCount": 1658,
+    "payrollAndTimeDefaultLive": false,
+    "payrollAndTimeAreRuntimeTruth": false,
+    "g3OneTimeGenerationRequired": true,
+    "g3GenerationRule": "After integrated canonical semantic sources are stable, export Auth and Platform once, validate Payroll and Time against enabled live owner runtimes, review the resulting schema diff, and compose/check Gateway public OpenAPI once."
+  },
+  "ownerReclassification": [
+    {
+      "path": "dwp-notification-server/src/main/java/com/dwp/services/notification/domain/NotificationQueryRepository.java",
+      "formerCluster": "OTHER_BACKEND",
+      "owner": "NOTIFICATION",
+      "cluster": "VISIBLE_PRODUCT_IDENTITY_NOTIFICATION_PRESENTATION",
+      "disposition": "KEEP_IDENTICAL_BOTH_PINS"
+    },
+    {
+      "path": "dwp-notification-server/src/test/java/com/dwp/services/notification/domain/NotificationAdminRepositoryTest.java",
+      "formerCluster": "OTHER_BACKEND",
+      "owner": "NOTIFICATION",
+      "cluster": "VISIBLE_PRODUCT_IDENTITY_NOTIFICATION_PRESENTATION",
+      "disposition": "KEEP_IDENTICAL_BOTH_PINS"
+    },
+    {
+      "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/provisioning/PlatformTenantProvisioningService.java",
+      "formerCluster": "OTHER_BACKEND",
+      "owner": "PLATFORM",
+      "cluster": "PLATFORM_HOME_MIGRATION_VISIBLE_PRODUCT_IDENTITY",
+      "disposition": "KEEP_IDENTICAL_BOTH_PINS"
+    }
+  ],
+  "targetedValidation": [
+    {
+      "cluster": "AUTHORIZATION_CONTRACT",
+      "check": "Auth six-class targeted batch",
+      "status": "PASS",
+      "testClasses": 6,
+      "tests": null,
+      "countEvidence": "NOT_RECORDED"
+    },
+    {
+      "cluster": "AUTHORIZATION_CONTRACT",
+      "check": "PilotAuthorizationFixtureAdapterTest",
+      "status": "PASS",
+      "tests": 7,
+      "passed": 7,
+      "skipped": 0
+    },
+    {
+      "cluster": "AUTHORIZATION_CONTRACT",
+      "check": "ProductAuthorizationContractControllerTest",
+      "status": "PASS",
+      "tests": 2,
+      "passed": 2,
+      "skipped": 0
+    },
+    {
+      "cluster": "AUTHORIZATION_CONTRACT",
+      "check": "Python product authorization v32, v33 and v34 tests",
+      "status": "PASS",
+      "tests": 13,
+      "passed": 13,
+      "skipped": 0
+    },
+    {
+      "cluster": "AUTHORIZATION_CONTRACT",
+      "check": "W1 successor manifest and lineage unit tests",
+      "status": "PASS",
+      "tests": 37,
+      "passed": 37,
+      "skipped": 0,
+      "fullG6RuntimeW1": false
+    },
+    {
+      "cluster": "AUTHORIZATION_CONTRACT",
+      "check": "PayrollFoundationExactOperationsAuthorizationPostgresTest",
+      "status": "SKIP_DOCKER_UNAVAILABLE_G5_REQUIRED",
+      "tests": 1,
+      "passed": 0,
+      "skipped": 1
+    },
+    {
+      "cluster": "PEOPLE_ASSIGNMENT_SECURITY",
+      "check": "Directory, guard and registry targeted batch",
+      "status": "PASS",
+      "tests": 37,
+      "passed": 37,
+      "skipped": 0
+    },
+    {
+      "cluster": "PEOPLE_ASSIGNMENT_SECURITY",
+      "check": "Assignment, OpenAPI and security unique targeted batch",
+      "status": "PASS_WITH_DOCKER_SKIP",
+      "tests": 36,
+      "passed": 35,
+      "skipped": 1
+    },
+    {
+      "cluster": "GATEWAY",
+      "check": "GeneratedProductRouteCatalogTest after dual-inventory repair",
+      "status": "PASS",
+      "tests": 32,
+      "passed": 32,
+      "skipped": 0
+    },
+    {
+      "cluster": "GATEWAY",
+      "check": "Remaining exact fifteen-class targeted batch",
+      "status": "PASS",
+      "testClasses": 15,
+      "tests": null,
+      "countEvidence": "NOT_RECORDED"
+    },
+    {
+      "cluster": "PAYROLL_OWNER_RUNTIME",
+      "check": "Non-Docker Payroll targeted batch",
+      "status": "PASS",
+      "tests": 70,
+      "passed": 70,
+      "skipped": 0
+    },
+    {
+      "cluster": "TIME_OWNER_RUNTIME",
+      "check": "Non-Docker Time targeted batch",
+      "status": "PASS",
+      "tests": 127,
+      "passed": 127,
+      "skipped": 0
+    },
+    {
+      "cluster": "PLATFORM_HOME_MIGRATION",
+      "check": "Platform Home, catalog, OpenAPI and migration targeted batch",
+      "status": "PASS_WITH_DOCKER_SKIP",
+      "tests": 15,
+      "passed": 14,
+      "skipped": 1
+    },
+    {
+      "cluster": "VISIBLE_PRODUCT_IDENTITY_NOTIFICATION_PRESENTATION",
+      "check": "NotificationAdminRepositoryTest",
+      "status": "PASS",
+      "tests": 3,
+      "passed": 3,
+      "skipped": 0
+    },
+    {
+      "cluster": "OPENAPI_GENERATION",
+      "check": "Python export-openapi unit inventory",
+      "status": "PASS_BY_INITIAL_27_PLUS_CORRECTED_TARGET_1",
+      "uniqueTests": 28,
+      "passed": 28,
+      "fullBatchRerunAfterRepair": false
+    },
+    {
+      "cluster": "OPENAPI_GENERATION",
+      "check": "Approved snapshot composition",
+      "status": "PASS_PROVISIONAL",
+      "services": 12,
+      "gatewayPublicPaths": 1658
+    }
+  ],
+  "repairTrace": [
+    {
+      "cluster": "PEOPLE_ASSIGNMENT_SECURITY",
+      "initialFailure": "HcmWorkspaceOpenApiContractTest had one stale expectation after semantic integration.",
+      "repair": "The expectation was aligned to the integrated contract.",
+      "targetedClosure": "HcmWorkspaceOpenApiContractTest 3/3 PASS",
+      "fullBatchRerun": false
+    },
+    {
+      "cluster": "GATEWAY",
+      "initialFailure": "The auto-merged GeneratedProductRouteCatalogTest combined the current 321-entry assertion with the reconciled frozen v21 299-entry helper.",
+      "repair": "Historical v21 and current inventory invariants were split and both retained.",
+      "targetedClosure": "GeneratedProductRouteCatalogTest 32/32 PASS",
+      "fullBatchRerun": false
+    },
+    {
+      "cluster": "OPENAPI_GENERATION",
+      "initialFailure": "One of 28 export-openapi unit tests retained a stale v33 expectation.",
+      "repair": "The single expectation was corrected for the preserved current v34 registry.",
+      "targetedClosure": "The corrected test PASS",
+      "fullBatchRerun": false,
+      "finalUniqueDisposition": "28 PASS by initial 27 PASS plus corrected targeted 1 PASS"
+    }
+  ],
+  "dockerSkips": [
+    {
+      "class": "com.dwp.services.auth.migration.PayrollFoundationExactOperationsAuthorizationPostgresTest",
+      "tests": 1,
+      "nextGate": "G5"
+    },
+    {
+      "class": "com.dwp.services.people.hr.assignment.AssignmentProposalPostgresTest",
+      "tests": 1,
+      "nextGate": "G5"
+    },
+    {
+      "class": "com.dwp.services.platform.home.HomeWaveOneMigrationPostgresIntegrationTest",
+      "tests": 1,
+      "nextGate": "G5"
+    },
+    {
+      "class": "com.dwp.services.payroll.foundation.JdbcPayrollFoundationStoreTest",
+      "tests": null,
+      "execution": "DEFERRED_NOT_RUN",
+      "nextGate": "G5"
+    },
+    {
+      "class": "com.dwp.services.time.workregime.TimeMigrationCleanUpgradeTest",
+      "tests": null,
+      "execution": "DEFERRED_NOT_RUN",
+      "nextGate": "G5"
+    },
+    {
+      "class": "com.dwp.services.time.workregime.TimeOwnerPersistenceIntegrationTest",
+      "tests": null,
+      "execution": "DEFERRED_NOT_RUN",
+      "nextGate": "G5"
+    }
+  ],
+  "environmentStopConditions": [
+    "Stop if any target environment has People V53 applied without all immutable V49 through V52 predecessors.",
+    "Do not activate Payroll or Time owner runtimes before their separate databases, migration/runtime roles and migration-control evidence are provisioned.",
+    "Do not deploy the production Gateway without independent DWP_PAYROLL_SERVICE_TOKEN and DWP_TIME_SERVICE_TOKEN secrets of the required strength.",
+    "Do not enable Payroll Foundation or Time Work Regime owner APIs before trusted Gateway authority propagation and owner database readiness are validated.",
+    "Stop G3 generation if the canonical semantic source changes after any successor, seed, fixture or OpenAPI output is generated; discard the provisional output and regenerate one reviewed batch.",
+    "Do not issue v35 or AUTH V243 when the integrated canonical semantic diff against v34 is empty.",
+    "Do not freeze heads or enter G6 until every Docker-backed migration/persistence check and both exact size gates pass in G5."
+  ],
+  "sizeGateDebt": {
+    "policy": "KNOWN_G5_STATIC_GATE_BLOCKER_NO_WAIVER_NO_BASELINE_EXPANSION",
+    "production": {
+      "total": 38,
+      "currentBaseExistingNoG2IncreaseCount": 32,
+      "currentBaseExistingG2IncreasedCount": 1,
+      "g2IntroducedFromWithinLimitCount": 2,
+      "g2NewFileCount": 3,
+      "currentBaseExistingNoG2Increase": [
+        {"path": "dwp-approval-server/src/main/java/com/dwp/services/approval/domain/ApprovalCommandJdbcRepository.java", "limit": 700, "baseLines": 701, "resultLines": 701},
+        {"path": "dwp-approval-server/src/main/java/com/dwp/services/approval/domain/ApprovalDtos.java", "limit": 700, "baseLines": 729, "resultLines": 729},
+        {"path": "dwp-approval-server/src/main/java/com/dwp/services/approval/domain/ApprovalService.java", "limit": 700, "baseLines": 773, "resultLines": 773},
+        {"path": "dwp-approval-server/src/main/java/com/dwp/services/approval/security/ApprovalPilotPepRegistry.java", "limit": 700, "baseLines": 735, "resultLines": 735},
+        {"path": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/PrivilegedAccessService.java", "limit": 931, "baseLines": 996, "resultLines": 996},
+        {"path": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationAuthorityAdapter.java", "limit": 700, "baseLines": 708, "resultLines": 705},
+        {"path": "dwp-auth-server/src/main/java/com/dwp/services/auth/tenantsettings/TenantSettingsService.java", "limit": 700, "baseLines": 730, "resultLines": 730},
+        {"path": "dwp-people-server/src/main/java/com/dwp/services/people/directory/PeopleDirectoryRepository.java", "limit": 700, "baseLines": 825, "resultLines": 825},
+        {"path": "dwp-people-server/src/main/java/com/dwp/services/people/hr/assignment/AssignmentProposalRepository.java", "limit": 700, "baseLines": 732, "resultLines": 732},
+        {"path": "dwp-platform-server/src/main/java/com/dwp/services/platform/catalog/CatalogRepository.java", "limit": 755, "baseLines": 1109, "resultLines": 1109},
+        {"path": "dwp-platform-server/src/main/java/com/dwp/services/platform/home/HomeExperienceService.java", "limit": 700, "baseLines": 768, "resultLines": 768},
+        {"path": "dwp-platform-server/src/main/java/com/dwp/services/platform/home/personalization/HomeViewService.java", "limit": 700, "baseLines": 709, "resultLines": 709},
+        {"path": "dwp-platform-server/src/main/java/com/dwp/services/platform/mail/AdminMailCompletionRepository.java", "limit": 700, "baseLines": 2340, "resultLines": 2340},
+        {"path": "dwp-platform-server/src/main/java/com/dwp/services/platform/mail/AdminMailCompletionService.java", "limit": 700, "baseLines": 2725, "resultLines": 2725},
+        {"path": "dwp-platform-server/src/main/java/com/dwp/services/platform/mail/MailCommandRepository.java", "limit": 700, "baseLines": 763, "resultLines": 763},
+        {"path": "dwp-platform-server/src/main/java/com/dwp/services/platform/mail/MailQueryRepository.java", "limit": 700, "baseLines": 1284, "resultLines": 1284},
+        {"path": "dwp-platform-server/src/main/java/com/dwp/services/platform/mail/MailService.java", "limit": 700, "baseLines": 1329, "resultLines": 1329},
+        {"path": "dwp-platform-server/src/main/java/com/dwp/services/platform/mail/MailWorkspaceDtos.java", "limit": 700, "baseLines": 847, "resultLines": 847},
+        {"path": "dwp-platform-server/src/main/java/com/dwp/services/platform/mail/MailWorkspaceRepository.java", "limit": 700, "baseLines": 1715, "resultLines": 1715},
+        {"path": "dwp-platform-server/src/main/java/com/dwp/services/platform/mail/MailWorkspaceService.java", "limit": 700, "baseLines": 1403, "resultLines": 1403},
+        {"path": "dwp-platform-server/src/main/java/com/dwp/services/platform/productivity/ProductivityRepository.java", "limit": 950, "baseLines": 980, "resultLines": 980},
+        {"path": "dwp-platform-server/src/main/java/com/dwp/services/platform/productivity/ProductivityService.java", "limit": 734, "baseLines": 775, "resultLines": 775},
+        {"path": "dwp-platform-server/src/main/java/com/dwp/services/platform/security/PlatformSecurityFilter.java", "limit": 700, "baseLines": 1027, "resultLines": 1027},
+        {"path": "dwp-platform-server/src/main/java/com/dwp/services/platform/widgetregistry/WidgetCatalogService.java", "limit": 700, "baseLines": 770, "resultLines": 770},
+        {"path": "dwp-platform-server/src/main/java/com/dwp/services/platform/workplace/bookingorchestration/WorkplaceBookingOrchestrationRepository.java", "limit": 700, "baseLines": 741, "resultLines": 741},
+        {"path": "dwp-platform-server/src/main/java/com/dwp/services/platform/workplace/bookingorchestration/WorkplaceBookingOrchestrationRepositorySupport.java", "limit": 700, "baseLines": 705, "resultLines": 705},
+        {"path": "dwp-platform-server/src/main/java/com/dwp/services/platform/workplace/bookingorchestration/WorkplaceBookingOrchestrationService.java", "limit": 700, "baseLines": 771, "resultLines": 771},
+        {"path": "dwp-platform-server/src/main/java/com/dwp/services/platform/workplace/safetyoperations/SafetyIncidentRepository.java", "limit": 700, "baseLines": 762, "resultLines": 762},
+        {"path": "dwp-platform-server/src/main/java/com/dwp/services/platform/workplace/workplaceservices/WorkplaceServiceLineAdjustmentService.java", "limit": 700, "baseLines": 707, "resultLines": 707},
+        {"path": "dwp-platform-server/src/main/java/com/dwp/services/platform/workplace/workplaceservices/WorkplaceServiceOperationsRepository.java", "limit": 700, "baseLines": 986, "resultLines": 986},
+        {"path": "dwp-platform-server/src/main/java/com/dwp/services/platform/workplace/workplaceservices/WorkplaceServiceOperationsService.java", "limit": 700, "baseLines": 1173, "resultLines": 1173},
+        {"path": "dwp-platform-server/src/main/java/com/dwp/services/platform/workplace/workplaceservices/WorkplaceServicesService.java", "limit": 700, "baseLines": 741, "resultLines": 741}
+      ],
+      "currentBaseExistingG2Increased": [
+        {"path": "dwp-people-server/src/main/java/com/dwp/services/people/hr/HrService.java", "limit": 700, "baseLines": 741, "resultLines": 797}
+      ],
+      "g2IntroducedFromWithinLimit": [
+        {"path": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationContractValidator.java", "limit": 700, "baseLines": 689, "resultLines": 701},
+        {"path": "dwp-people-server/src/main/java/com/dwp/services/people/organization/OrganizationScenarioService.java", "limit": 733, "baseLines": 733, "resultLines": 737}
+      ],
+      "g2NewFiles": [
+        {"path": "dwp-time-server/src/main/java/com/dwp/services/time/workregime/JdbcWorkRegimeReadSupport.java", "limit": 700, "baseLines": null, "resultLines": 933},
+        {"path": "dwp-time-server/src/main/java/com/dwp/services/time/workregime/JdbcWorkRegimeRepository.java", "limit": 700, "baseLines": null, "resultLines": 768},
+        {"path": "dwp-time-server/src/main/java/com/dwp/services/time/workregime/WorkRegimeApplicationService.java", "limit": 700, "baseLines": null, "resultLines": 886}
+      ]
+    },
+    "test": {
+      "total": 10,
+      "currentBaseExistingNoG2IncreaseCount": 6,
+      "currentBaseExistingG2IncreasedCount": 1,
+      "g2IntroducedFromWithinLimitCount": 2,
+      "g2NewFileCount": 1,
+      "currentBaseExistingNoG2Increase": [
+        {"path": "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationContractValidatorTest.java", "limit": 1000, "baseLines": 1004, "resultLines": 1004},
+        {"path": "dwp-gateway/src/test/java/com/dwp/gateway/ProductSurfaceFeatureRolloutContractTest.java", "limit": 1000, "baseLines": 1182, "resultLines": 1182},
+        {"path": "dwp-platform-server/src/test/java/com/dwp/services/platform/mail/AdminMailCompletionServiceTest.java", "limit": 1000, "baseLines": 1064, "resultLines": 1064},
+        {"path": "dwp-platform-server/src/test/java/com/dwp/services/platform/security/PlatformSecurityFilterTest.java", "limit": 1050, "baseLines": 1479, "resultLines": 1479},
+        {"path": "dwp-platform-server/src/test/java/com/dwp/services/platform/workplace/bookingorchestration/WorkplaceBookingOrchestrationPostgresTest.java", "limit": 1000, "baseLines": 1017, "resultLines": 1017},
+        {"path": "dwp-platform-server/src/test/java/com/dwp/services/platform/workplace/workplaceservices/WorkplaceServicesPostgresTest.java", "limit": 1000, "baseLines": 1982, "resultLines": 1982}
+      ],
+      "currentBaseExistingG2Increased": [
+        {"path": "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationAuthorityAdapterTest.java", "limit": 1046, "baseLines": 1078, "resultLines": 1218}
+      ],
+      "g2IntroducedFromWithinLimit": [
+        {"path": "dwp-gateway/src/test/java/com/dwp/gateway/AuthSessionVerifierTest.java", "limit": 1092, "baseLines": 1092, "resultLines": 1184},
+        {"path": "dwp-gateway/src/test/java/com/dwp/gateway/productsurface/GeneratedProductRouteCatalogTest.java", "limit": 1000, "baseLines": 904, "resultLines": 1090}
+      ],
+      "g2NewFiles": [
+        {"path": "dwp-time-server/src/test/java/com/dwp/services/time/workregime/WorkRegimeApplicationServiceIdempotencyReplayTest.java", "limit": 1000, "baseLines": null, "resultLines": 1197}
+      ]
+    },
+    "g5ExitRule": "Refactor or split every listed violation without raising either exact baseline, then require both source-size validators to PASS before head freeze."
+  },
+  "successorArtifacts": {
+    "directory": "docs/06-delivery/hris/g2-successors/2026-10-07",
+    "manifestPath": "docs/06-delivery/hris/g2-successors/2026-10-07/manifest.v1.json",
+    "requiredFiles": [
+      "hrm-api-event-contract-successor.v1.json",
+      "hrm-source-family-coverage-successor.v1.csv",
+      "hrm-source-family-coverage-successor.v1.seal.json",
+      "g3-primary-ownership-disposition.v1.json",
+      "manifest.v1.json"
+    ],
+    "status": "PINNED_PASS",
+    "manifestBytes": 3548,
+    "manifestSha256": "0834294e6a195137c087cb40db88f9a673ec2fca7e76b1f0c49798a1b67e9fd4",
+    "validatorPath": "docs/06-delivery/hris/tools/validate_g2_successor_authorities.py",
+    "validatorBytes": 73503,
+    "validatorSha256": "cefdb378e80d165c0ab0ce7155029016abbd48aa24aba44b846b875e6da53ab0",
+    "validatorMode": "FINAL",
+    "validatorStatus": "PASS",
+    "finalAuthorityValid": true
+  },
+  "controlPlaneArtifactDigests": [
+    {
+      "path": "docs/06-delivery/hris/2026-10-06-g1-integration-lock-receipt.json",
+      "bytes": 9068,
+      "sha256": "d9acee4470cb0c8288976bf5af47c5f78713b08cd9fda87b05fa30d62bba7b24"
+    },
+    {
+      "path": "docs/06-delivery/hris/2026-10-06-g1-migration-admission-and-lease.json",
+      "bytes": 12736,
+      "sha256": "3dc4b2cdd28d31c3bd2b04a28de1168b92b130420443f08b2caaf387edb83a83"
+    },
+    {
+      "path": "docs/06-delivery/hris/2026-10-06-integration-roadmap.md",
+      "bytes": 11234,
+      "sha256": "ac1abe594d7fa509e0d299024c6d330ab377dd58885b58ab267449fd15c5344e"
+    },
+    {
+      "path": "docs/06-delivery/hris/2026-10-07-integration-roadmap-status.md",
+      "bytes": 2547,
+      "sha256": "25835cfd900c269086457cd1eb4c911ed20000a5b106aa0e0d05768b4337dc10"
+    }
+  ],
+  "g6W1Successor": {
+    "status": "NOT_RUN",
+    "reason": "G6 is reserved for the frozen Frontend and Backend head pair after every deterministic G5 gate passes."
+  },
+  "authority": {
+    "g3CanonicalGenerationAuthorized": true,
+    "conditionalV35AuthorizedOnlyForNonEmptyReviewedDiff": true,
+    "moduleParallelDevelopmentAuthorized": false,
+    "moduleAuthorizationGate": "G7_PACKET_ISSUANCE",
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextGate": {
+    "id": "G3_CANONICAL_AND_CONDITIONAL_V35",
+    "status": "AUTHORIZED_NOT_STARTED",
+    "fullStaticAndDockerDebtGate": "G5_REQUIRED_NO_WAIVER",
+    "w1Gate": "G6_NOT_RUN",
+    "moduleDelegationGate": "G7_NOT_AUTHORIZED"
+  }
+}

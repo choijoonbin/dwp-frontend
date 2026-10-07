@@ -1,0 +1,57 @@
+{
+  "schema": "dwp.hris.g2.hrm-source-family-coverage-successor-seal.v1",
+  "status": "SEALED_G2_SUCCESSOR_AGGREGATE_TRACE",
+  "artifact": {
+    "path": "docs/06-delivery/hris/g2-successors/2026-10-07/hrm-source-family-coverage-successor.v1.csv",
+    "sha256": "d8fb97afe366aa021e3e8462789410915ded39211d0750a8fed6d3ab72bf5252",
+    "bytes": 13594,
+    "dataRows": 17,
+    "sourceRowCount": 583
+  },
+  "historicalPredecessor": {
+    "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-registers/hris-hrm-source-coverage.csv",
+    "state": "MISSING_FROM_RECOVERY",
+    "historicalExpectedSha256": "8b9044ed595be8847fddab74075c5f308e61343f179da1da4e231e8ffe48e6c2",
+    "historicalExpectedBytes": 514029,
+    "historicalExpectedRows": 583
+  },
+  "authoritativeAggregateSource": {
+    "path": "docs/06-delivery/hris/recovery/exact-supplements/2026-10-06/hris-porting-blueprint-2026-09-09/coding-readiness/target-family-resolution-register.csv",
+    "sha256": "3e3618ff3ac150da8c9c7cbd3b1018e30e69652f28f3dbd8c87edb7df6a83819",
+    "bytes": 38399,
+    "gitBlob": "071237594bc67f8643de64f899ab1b5128df2731"
+  },
+  "sourcePins": {
+    "currentBackendCommit": "5612cc1a0b4a21a4d0b9107739579f23d165790f",
+    "reconciledBackendCommit": "0731f6df2d55cdeb4784a09ae6e28d4ae4b0c294",
+    "backendResultCommit": "ea630a5f2dec9b1f044f11dd5eb66ffb6f87941a"
+  },
+  "aggregateTraceSemantics": {
+    "familyRowsAreAggregateDispositions": true,
+    "familySha256Meaning": "SHA256_OF_HISTORICAL_TARGET_API_OR_EVENT_FAMILY_VALUE",
+    "familySha256IsNotSourceFileDigest": true,
+    "sourceRowCountSum": 583,
+    "historicalRowsReconstructed": false,
+    "successorPurpose": "PRESERVE_EXACT_17_FAMILY_HASH_COUNT_LINEAGE_AND_CURRENT_IMPLEMENTATION_DISPOSITION"
+  },
+  "validation": {
+    "expectedResolutionIds": [
+      "TFR-HRM-001", "TFR-HRM-002", "TFR-HRM-003", "TFR-HRM-004", "TFR-HRM-005",
+      "TFR-HRM-006", "TFR-HRM-007", "TFR-HRM-008", "TFR-HRM-009", "TFR-HRM-010",
+      "TFR-HRM-011", "TFR-HRM-012", "TFR-HRM-013", "TFR-HRM-014", "TFR-HRM-015",
+      "TFR-HRM-016", "TFR-HRM-017"
+    ],
+    "expectedFamilyCount": 17,
+    "expectedSourceRowCount": 583,
+    "ownerException": {
+      "resolutionId": "TFR-HRM-015",
+      "currentOwnerSession": "HRIS-SYS"
+    }
+  },
+  "authorityBoundary": {
+    "closesOwnerGate": "G2_HRM_SOURCE_COVERAGE_SUCCESSOR",
+    "exactHistoricalRowsRecovered": false,
+    "moduleCodeGoGranted": false,
+    "productionAuthorizationGranted": false
+  }
+}

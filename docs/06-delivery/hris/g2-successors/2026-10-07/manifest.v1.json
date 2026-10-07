@@ -1,0 +1,82 @@
+{
+  "schema": "dwp.hris.g2.successor-authority-manifest.v1",
+  "packetId": "G2-HRIS-SUCCESSORS-2026-10-07",
+  "status": "SEALED_SOURCE_INTEGRATION_DISPOSITION",
+  "generatedDate": "2026-10-07",
+  "sourcePins": {
+    "currentBackendCommit": "5612cc1a0b4a21a4d0b9107739579f23d165790f",
+    "reconciledBackendCommit": "0731f6df2d55cdeb4784a09ae6e28d4ae4b0c294",
+    "backendResultCommit": "ea630a5f2dec9b1f044f11dd5eb66ffb6f87941a",
+    "backendResultParents": [
+      "5612cc1a0b4a21a4d0b9107739579f23d165790f",
+      "0731f6df2d55cdeb4784a09ae6e28d4ae4b0c294"
+    ]
+  },
+  "artifacts": [
+    {
+      "path": "docs/06-delivery/hris/g2-successors/2026-10-07/hrm-api-event-contract-successor.v1.json",
+      "sha256": "aed6a7a8a80f387d495d9e685f52bd92f51b9a0824cafb5aa6fa36595b0939b7",
+      "bytes": 22006,
+      "role": "HRM_API_EVENT_SUCCESSOR_DISPOSITION"
+    },
+    {
+      "path": "docs/06-delivery/hris/g2-successors/2026-10-07/hrm-source-family-coverage-successor.v1.csv",
+      "sha256": "d8fb97afe366aa021e3e8462789410915ded39211d0750a8fed6d3ab72bf5252",
+      "bytes": 13594,
+      "role": "HRM_17_FAMILY_AGGREGATE_TRACE"
+    },
+    {
+      "path": "docs/06-delivery/hris/g2-successors/2026-10-07/hrm-source-family-coverage-successor.v1.seal.json",
+      "sha256": "08baa0c50f2bc9a99a2b27db68b8e0220dad08e3365f77ec8efbee1904d60509",
+      "bytes": 2496,
+      "role": "HRM_COVERAGE_SUCCESSOR_SEAL"
+    },
+    {
+      "path": "docs/06-delivery/hris/g2-successors/2026-10-07/g3-primary-ownership-disposition.v1.json",
+      "sha256": "22422a2e2971727991ee150acc2f0e4413d75b566ad448c70312c0b71f502afd",
+      "bytes": 12788,
+      "role": "G2_TO_G3_OWNERSHIP_DISPOSITION"
+    }
+  ],
+  "historicalFingerprints": {
+    "hrmApiEventContract": {
+      "historicalExpectedSha256": "5390eac887c06d33e744252ddf013183f2f1e55198f8a28d341197b6a6336e65",
+      "historicalExpectedBytes": 35196,
+      "recoveredSha256": "0c3ec58b29dcf534d1b887fed5678e878e4a514cf3f943165e47dd7a486355bb",
+      "recoveredBytes": 25944
+    },
+    "hrmSourceCoverage": {
+      "historicalExpectedSha256": "8b9044ed595be8847fddab74075c5f308e61343f179da1da4e231e8ffe48e6c2",
+      "historicalExpectedBytes": 514029,
+      "historicalExpectedRows": 583,
+      "recoveryState": "MISSING_FROM_RECOVERY"
+    },
+    "g3PrimaryOwnershipRegister": {
+      "historicalExpectedSha256": "11f51f88e25ff01666f347467c82d2e825a81091926cff03f141fd750b476e9b",
+      "historicalExpectedBytes": 102456,
+      "historicalExpectedRows": 525,
+      "recoveryState": "MISSING_FROM_RECOVERY"
+    }
+  },
+  "ownerGates": {
+    "G2_HRM_PEOPLE_CONTRACT_DISPOSITION": "CLOSED_BY_HRM_API_EVENT_SUCCESSOR",
+    "G2_HRM_SOURCE_COVERAGE_SUCCESSOR": "CLOSED_BY_17_FAMILY_AGGREGATE_TRACE",
+    "G2_OWNER_CONTRACT_DISPOSITION": "CLOSED_BY_G3_OWNERSHIP_DISPOSITION",
+    "G3_CANONICAL_GENERATION": "OPEN_FOUR_CANONICAL_INPUTS_MISSING"
+  },
+  "validation": {
+    "validator": "docs/06-delivery/hris/tools/validate_g2_successor_authorities.py",
+    "command": "python3 docs/06-delivery/hris/tools/validate_g2_successor_authorities.py --compact",
+    "selfTestCommand": "python3 docs/06-delivery/hris/tools/validate_g2_successor_authorities.py --self-test --compact",
+    "manifestPinsArtifactCount": 4,
+    "manifestSelfPinned": false
+  },
+  "authorityBoundary": {
+    "manifestIsInventoryNotAuthority": true,
+    "moduleParallelDevelopmentAuthorized": false,
+    "moduleCodeGoGranted": false,
+    "productionAuthorized": false,
+    "g3FinalOwnershipRowsEmitted": false,
+    "g3FinalOwnershipRowCount": 695
+  }
+}

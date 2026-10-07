@@ -1,0 +1,385 @@
+{
+  "schema": "dwp.hris.g2.hrm-api-event-contract-successor.v1",
+  "contractId": "dwp.hris.hrm.successor.v1",
+  "status": "G2_SOURCE_INTEGRATED_NOT_MODULE_CODE_GO",
+  "ownerSession": "HRIS-HRM",
+  "implementationOwnerService": "dwp-people-server",
+  "serviceBasePath": "/v1",
+  "gatewayBasePath": "/api/people/v1",
+  "supersedes": {
+    "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-evidence/hrm/g2-readiness/api-event-contracts.v1.json",
+    "historicalExpectedSha256": "5390eac887c06d33e744252ddf013183f2f1e55198f8a28d341197b6a6336e65",
+    "historicalExpectedBytes": 35196,
+    "recoveredSha256": "0c3ec58b29dcf534d1b887fed5678e878e4a514cf3f943165e47dd7a486355bb",
+    "recoveredBytes": 25944,
+    "relationship": "SUCCESSOR_DISPOSITION_ONLY_NOT_BYTE_RECONSTRUCTION"
+  },
+  "sourcePins": {
+    "currentBackendCommit": "5612cc1a0b4a21a4d0b9107739579f23d165790f",
+    "reconciledBackendCommit": "0731f6df2d55cdeb4784a09ae6e28d4ae4b0c294",
+    "backendResultCommit": "ea630a5f2dec9b1f044f11dd5eb66ffb6f87941a",
+    "backendResultParents": [
+      "5612cc1a0b4a21a4d0b9107739579f23d165790f",
+      "0731f6df2d55cdeb4784a09ae6e28d4ae4b0c294"
+    ],
+    "runtimePepRegistry": {
+      "path": "dwp-people-server/src/main/resources/product-authorization/hcm-people-pep-v34.generated.json",
+      "blob": "d067141811140de993d31ff968892c6410100933",
+      "projectionKey": "hcm-people-pep-v34",
+      "sourceRegistrySha256": "852d20e1e639e1a7170f02b5714d21d8c51a9eb8ff5ac32d8b7940b82d6be83b"
+    }
+  },
+  "compatibility": {
+    "tenantSource": "AUTHENTICATED_CONTEXT_ONLY",
+    "identifierPolicy": "PUBLIC_UUID_ONLY",
+    "effectivePeriod": "HALF_OPEN_FROM_TO",
+    "piiPolicy": "PAYLOAD_MINIMIZED_AND_FIELD_PROJECTED",
+    "queryExtensions": "ONLY_WHEN_DECLARED",
+    "commandUnknownFields": "REJECT"
+  },
+  "httpOperations": [
+    {
+      "operationId": "getAssignment",
+      "method": "GET",
+      "servicePath": "/v1/workforce/assignments/{assignmentId}",
+      "gatewayPath": "/api/people/v1/workforce/assignments/{assignmentId}",
+      "routeContractKey": "route.hcm.operations.assignment-detail.data",
+      "authorizationContract": {"kind": "CAPABILITY", "key": "hcm.operations.workforce.read"},
+      "requestContract": "PATH:assignmentId",
+      "responseContract": "AssignmentDetail",
+      "riskTier": "READ",
+      "stepUp": "NOT_REQUIRED_BY_CONTROLLER",
+      "idempotency": "NOT_APPLICABLE_QUERY",
+      "implementationState": "IMPLEMENTED_CURRENT_PRESERVED",
+      "productionState": "NOT_AUTHORIZED_G6",
+      "sourceEvidence": [
+        "dwp-people-server/src/main/java/com/dwp/services/people/hr/assignment/AssignmentProposalController.java@94600ae0e8423dc71d26a689acd6acb33e764235"
+      ]
+    },
+    {
+      "operationId": "getAssignmentTimeline",
+      "method": "GET",
+      "servicePath": "/v1/workforce/assignments/{assignmentId}/timeline",
+      "gatewayPath": "/api/people/v1/workforce/assignments/{assignmentId}/timeline",
+      "routeContractKey": "route.hcm.operations.assignment-timeline.data",
+      "authorizationContract": {"kind": "CAPABILITY", "key": "hcm.operations.workforce.read"},
+      "requestContract": "PATH:assignmentId",
+      "responseContract": "List<TimelineEntry>",
+      "riskTier": "READ",
+      "stepUp": "NOT_REQUIRED_BY_CONTROLLER",
+      "idempotency": "NOT_APPLICABLE_QUERY",
+      "implementationState": "IMPLEMENTED_CURRENT_PRESERVED",
+      "productionState": "NOT_AUTHORIZED_G6",
+      "sourceEvidence": [
+        "dwp-people-server/src/main/java/com/dwp/services/people/hr/assignment/AssignmentProposalController.java@94600ae0e8423dc71d26a689acd6acb33e764235"
+      ]
+    },
+    {
+      "operationId": "getAssignmentProposal",
+      "method": "GET",
+      "servicePath": "/v1/workforce/assignment-proposals/{proposalId}",
+      "gatewayPath": "/api/people/v1/workforce/assignment-proposals/{proposalId}",
+      "routeContractKey": "route.hcm.operations.assignment-proposal-detail.data",
+      "authorizationContract": {"kind": "CAPABILITY", "key": "hcm.operations.workforce.read"},
+      "requestContract": "PATH:proposalId",
+      "responseContract": "Proposal",
+      "riskTier": "READ",
+      "stepUp": "NOT_REQUIRED_BY_CONTROLLER",
+      "idempotency": "NOT_APPLICABLE_QUERY",
+      "implementationState": "IMPLEMENTED_CURRENT_PRESERVED",
+      "productionState": "NOT_AUTHORIZED_G6",
+      "sourceEvidence": [
+        "dwp-people-server/src/main/java/com/dwp/services/people/hr/assignment/AssignmentProposalController.java@94600ae0e8423dc71d26a689acd6acb33e764235"
+      ]
+    },
+    {
+      "operationId": "createAssignmentProposal",
+      "method": "POST",
+      "servicePath": "/v1/workforce/assignment-proposals",
+      "gatewayPath": "/api/people/v1/workforce/assignment-proposals",
+      "routeContractKey": "route.hcm.operations.assignment-proposal-create.action",
+      "authorizationContract": {"kind": "CAPABILITY", "key": "hcm.operations.assignment-proposal.create"},
+      "requestContract": "CreateRequest",
+      "responseContract": "CommandResult",
+      "requiredHeaders": ["Idempotency-Key"],
+      "riskTier": "MUTATION",
+      "stepUp": "NOT_REQUIRED_BY_CONTROLLER",
+      "idempotency": "REQUIRED",
+      "implementationState": "IMPLEMENTED_CURRENT_PRESERVED",
+      "productionState": "NOT_AUTHORIZED_G6",
+      "sourceEvidence": [
+        "dwp-people-server/src/main/java/com/dwp/services/people/hr/assignment/AssignmentProposalController.java@94600ae0e8423dc71d26a689acd6acb33e764235",
+        "dwp-people-server/src/main/resources/db/migration/V53__create_assignment_change_proposals.sql@abbc787c8aa32dfb907a73f606da6b1fe5d180c2"
+      ]
+    },
+    {
+      "operationId": "validateAssignmentProposal",
+      "method": "POST",
+      "servicePath": "/v1/workforce/assignment-proposals/{proposalId}/validate",
+      "gatewayPath": "/api/people/v1/workforce/assignment-proposals/{proposalId}/validate",
+      "routeContractKey": "route.hcm.operations.assignment-proposal-validate.action",
+      "authorizationContract": {"kind": "CAPABILITY", "key": "hcm.operations.assignment-proposal.validate"},
+      "requestContract": "VersionCommand",
+      "responseContract": "CommandResult",
+      "requiredHeaders": ["Idempotency-Key"],
+      "riskTier": "MUTATION",
+      "stepUp": "NOT_REQUIRED_BY_CONTROLLER",
+      "idempotency": "REQUIRED",
+      "implementationState": "IMPLEMENTED_CURRENT_PRESERVED",
+      "productionState": "NOT_AUTHORIZED_G6",
+      "sourceEvidence": [
+        "dwp-people-server/src/main/java/com/dwp/services/people/hr/assignment/AssignmentProposalController.java@94600ae0e8423dc71d26a689acd6acb33e764235"
+      ]
+    },
+    {
+      "operationId": "submitAssignmentProposal",
+      "method": "POST",
+      "servicePath": "/v1/workforce/assignment-proposals/{proposalId}/submit",
+      "gatewayPath": "/api/people/v1/workforce/assignment-proposals/{proposalId}/submit",
+      "routeContractKey": "route.hcm.operations.assignment-proposal-submit.action",
+      "authorizationContract": {"kind": "CAPABILITY", "key": "hcm.operations.assignment-proposal.submit"},
+      "requestContract": "VersionCommand",
+      "responseContract": "CommandResult",
+      "requiredHeaders": ["Idempotency-Key"],
+      "stepUpHeaders": ["X-Step-Up-Challenge", "X-Authorization-Decision-Revision", "If-Match"],
+      "riskTier": "HIGH_RISK_INTENT",
+      "stepUp": "REQUIRED_BY_ROUTE_AUTHORITY",
+      "idempotency": "REQUIRED",
+      "implementationState": "IMPLEMENTED_CURRENT_PRESERVED_INTENT_ONLY",
+      "productionState": "NOT_AUTHORIZED_G6",
+      "sourceEvidence": [
+        "dwp-people-server/src/main/java/com/dwp/services/people/hr/assignment/AssignmentProposalController.java@94600ae0e8423dc71d26a689acd6acb33e764235",
+        "dwp-people-server/src/main/java/com/dwp/services/people/hr/assignment/AssignmentProposalService.java@9f9578e40fa5e7b7e0ea2d51fe310a9f9adc6b3b"
+      ]
+    },
+    {
+      "operationId": "cancelAssignmentProposal",
+      "method": "POST",
+      "servicePath": "/v1/workforce/assignment-proposals/{proposalId}/cancel",
+      "gatewayPath": "/api/people/v1/workforce/assignment-proposals/{proposalId}/cancel",
+      "routeContractKey": "route.hcm.operations.assignment-proposal-cancel.action",
+      "authorizationContract": {"kind": "CAPABILITY", "key": "hcm.operations.assignment-proposal.cancel"},
+      "requestContract": "CancelCommand",
+      "responseContract": "CommandResult",
+      "requiredHeaders": ["Idempotency-Key"],
+      "riskTier": "MUTATION",
+      "stepUp": "NOT_REQUIRED_BY_CONTROLLER",
+      "idempotency": "REQUIRED",
+      "implementationState": "IMPLEMENTED_CURRENT_PRESERVED",
+      "productionState": "NOT_AUTHORIZED_G6",
+      "sourceEvidence": [
+        "dwp-people-server/src/main/java/com/dwp/services/people/hr/assignment/AssignmentProposalController.java@94600ae0e8423dc71d26a689acd6acb33e764235"
+      ]
+    },
+    {
+      "operationId": "searchPeople360",
+      "method": "GET",
+      "servicePath": "/v1/workforce/people",
+      "gatewayPath": "/api/people/v1/workforce/people",
+      "routeContractKey": "route.hcm.operations.people360-search.data",
+      "authorizationContract": {"kind": "CAPABILITY", "key": "hcm.operations.workforce.read"},
+      "queryConstraints": {"projection": "people360", "asOf": "REQUIRED"},
+      "responseContract": "People360Dtos.Page",
+      "riskTier": "READ_PII_PROJECTED",
+      "stepUp": "POLICY_DRIVEN",
+      "idempotency": "NOT_APPLICABLE_QUERY",
+      "implementationState": "CODE_PRESENT_DEFAULT_OFF",
+      "productionState": "NOT_AUTHORIZED_G6",
+      "sourceEvidence": [
+        "dwp-people-server/src/main/java/com/dwp/services/people/workforce/WorkforcePeopleController.java@bcccb098693d8d54169b8c4c15dbbb97e4bb3dc3",
+        "dwp-people-server/src/main/java/com/dwp/services/people/workforce/People360Service.java@447bc97561032e3ec8c9d749abceb65d1cdebb11"
+      ]
+    },
+    {
+      "operationId": "getPerson360",
+      "method": "GET",
+      "servicePath": "/v1/workforce/people/{publicId}",
+      "gatewayPath": "/api/people/v1/workforce/people/{publicId}",
+      "routeContractKey": "route.hcm.operations.people360-detail.data",
+      "authorizationContract": {"kind": "CAPABILITY", "key": "hcm.operations.workforce.read"},
+      "queryConstraints": {"projection": "people360", "asOf": "REQUIRED"},
+      "responseContract": "People360Dtos.Snapshot",
+      "riskTier": "READ_PII_PROJECTED",
+      "stepUp": "POLICY_DRIVEN",
+      "idempotency": "NOT_APPLICABLE_QUERY",
+      "implementationState": "CODE_PRESENT_DEFAULT_OFF",
+      "productionState": "NOT_AUTHORIZED_G6",
+      "sourceEvidence": [
+        "dwp-people-server/src/main/java/com/dwp/services/people/workforce/WorkforcePeopleController.java@bcccb098693d8d54169b8c4c15dbbb97e4bb3dc3"
+      ]
+    },
+    {
+      "operationId": "getSelfPeople360",
+      "method": "GET",
+      "servicePath": "/v1/hr/home",
+      "gatewayPath": "/api/people/v1/hr/home",
+      "routeContractKey": "route.hcm.personal.people360-self.data",
+      "authorizationContract": {"kind": "POLICY", "key": "hcm.personal-core-access.v1"},
+      "queryConstraints": {"projection": "people360", "asOf": "REQUIRED"},
+      "responseContract": "People360Dtos.Snapshot",
+      "riskTier": "READ_PII_PROJECTED",
+      "stepUp": "POLICY_DRIVEN",
+      "idempotency": "NOT_APPLICABLE_QUERY",
+      "implementationState": "CODE_PRESENT_DEFAULT_OFF",
+      "productionState": "NOT_AUTHORIZED_G6",
+      "sourceEvidence": [
+        "dwp-people-server/src/main/java/com/dwp/services/people/hr/HrController.java@8f5b02334c2d141cfbc291261fdb6e6834f15037"
+      ]
+    },
+    {
+      "operationId": "getTeamPerson360",
+      "method": "GET",
+      "servicePath": "/v1/hr/team",
+      "gatewayPath": "/api/people/v1/hr/team",
+      "routeContractKey": "route.hcm.team.people360-detail.data",
+      "authorizationContract": {"kind": "POLICY", "key": "hcm.team-access.v1"},
+      "queryConstraints": {"projection": "people360", "personId": "REQUIRED", "asOf": "REQUIRED"},
+      "responseContract": "People360Dtos.Snapshot",
+      "riskTier": "READ_PII_PROJECTED",
+      "stepUp": "POLICY_DRIVEN",
+      "idempotency": "NOT_APPLICABLE_QUERY",
+      "implementationState": "CODE_PRESENT_DEFAULT_OFF",
+      "productionState": "NOT_AUTHORIZED_G6",
+      "sourceEvidence": [
+        "dwp-people-server/src/main/java/com/dwp/services/people/hr/HrController.java@8f5b02334c2d141cfbc291261fdb6e6834f15037"
+      ]
+    }
+  ],
+  "inProcessContracts": [
+    {
+      "contractId": "WorkforceSnapshotQueryPort.v1",
+      "transport": "IN_PROCESS_JAVA_PORT",
+      "httpExposed": false,
+      "providerOwnerSession": "HRIS-HRM",
+      "providerSliceId": "BASE-TFR-HRM-004",
+      "consumerOwnerSession": "HRIS-PER",
+      "projection": "PERFORMANCE_V1",
+      "historicalOperationDisposition": "REPLACED_FOR_PER_BY_IN_PROCESS_PORT",
+      "notEquivalentTo": ["bootstrapWorkforceSnapshots", "XCON-001_FULL_MULTI_CONSUMER_CONTRACT"],
+      "implementationState": "CODE_PRESENT_DEFAULT_OFF",
+      "productionState": "NOT_AUTHORIZED_G6",
+      "sourceEvidence": [
+        "contracts/in-process/hris/workforce-snapshot-query-port.v1.schema.json@85f19f28e3216d73681f93cde850effbd723c3ef",
+        "dwp-people-server/src/main/java/com/dwp/services/people/hris/people/HrisWorkforceSnapshotProvider.java@cddc74cc2b8a5c35f8119f903579f9d42071a66b"
+      ]
+    }
+  ],
+  "outboxEvents": [
+    {
+      "eventType": "people.assignment-proposal.created.v1",
+      "ownerSession": "HRIS-HRM",
+      "sliceId": "BASE-TFR-HRM-008",
+      "deliveryState": "OWNER_OUTBOX_ONLY",
+      "publicContract": false
+    },
+    {
+      "eventType": "people.assignment-proposal.validated.v1",
+      "ownerSession": "HRIS-HRM",
+      "sliceId": "BASE-TFR-HRM-008",
+      "deliveryState": "OWNER_OUTBOX_ONLY",
+      "publicContract": false
+    },
+    {
+      "eventType": "people.assignment-proposal.submitted.v1",
+      "ownerSession": "HRIS-HRM",
+      "sliceId": "BASE-TFR-HRM-008",
+      "deliveryState": "OWNER_OUTBOX_ONLY",
+      "publicContract": false
+    },
+    {
+      "eventType": "people.assignment-proposal.cancelled.v1",
+      "ownerSession": "HRIS-HRM",
+      "sliceId": "BASE-TFR-HRM-008",
+      "deliveryState": "OWNER_OUTBOX_ONLY",
+      "publicContract": false
+    }
+  ],
+  "assignmentProposalBoundary": {
+    "lifecycle": ["DRAFT", "VALIDATED", "SUBMITTED", "CANCELLED"],
+    "payloadFields": ["proposalId", "targetAssignmentId", "changeType", "effectiveDate", "lifecycleState", "proposalVersion", "contentSha256"],
+    "submitMutatesAssignmentLedger": false,
+    "publisherImplemented": false,
+    "isAssignmentChangedV1": false,
+    "forbiddenAlias": "AssignmentChanged.v1",
+    "sourceEvidence": [
+      "dwp-people-server/src/main/java/com/dwp/services/people/hr/assignment/AssignmentProposalRepository.java@3e4289d655a1213aa4fa7d743b82448545571f2c",
+      "dwp-people-server/src/main/resources/db/migration/V53__create_assignment_change_proposals.sql@abbc787c8aa32dfb907a73f606da6b1fe5d180c2"
+    ]
+  },
+  "historicalOperationDispositions": [
+    {"operationId": "searchPeople", "disposition": "IMPLEMENTED_SUCCESSOR_PEOPLE360", "successorRefs": ["searchPeople360"]},
+    {"operationId": "getPerson360", "disposition": "IMPLEMENTED_SUCCESSOR_PEOPLE360", "successorRefs": ["getPerson360", "getSelfPeople360", "getTeamPerson360"]},
+    {"operationId": "createEmployeeChangeRequest", "disposition": "DEFERRED_NOT_IMPLEMENTED", "successorRefs": []},
+    {"operationId": "submitEmployeeChangeRequest", "disposition": "DEFERRED_NOT_IMPLEMENTED", "successorRefs": []},
+    {"operationId": "recordEmployeeChangeDecision", "disposition": "DEFERRED_NOT_IMPLEMENTED", "successorRefs": []},
+    {"operationId": "applyEmployeeChangeRequest", "disposition": "DEFERRED_NOT_IMPLEMENTED", "successorRefs": []},
+    {"operationId": "createAssignmentEvent", "disposition": "PARTIAL_OVERLAP_PROPOSAL_ONLY", "successorRefs": ["createAssignmentProposal"]},
+    {"operationId": "validateAssignmentEvent", "disposition": "PARTIAL_OVERLAP_PROPOSAL_ONLY", "successorRefs": ["validateAssignmentProposal"]},
+    {"operationId": "submitAssignmentEvent", "disposition": "PARTIAL_OVERLAP_PROPOSAL_ONLY", "successorRefs": ["submitAssignmentProposal"]},
+    {"operationId": "publishAssignmentEvent", "disposition": "DEFERRED_ASSIGNMENT_LEDGER_NOT_MUTATED", "successorRefs": []},
+    {"operationId": "queryOrganizationGraph", "disposition": "DEFERRED_NOT_IMPLEMENTED", "successorRefs": []},
+    {"operationId": "issueEmploymentContract", "disposition": "DEFERRED_NOT_IMPLEMENTED", "successorRefs": []},
+    {"operationId": "requestCertificate", "disposition": "DEFERRED_NOT_IMPLEMENTED", "successorRefs": []},
+    {"operationId": "createSeparationCase", "disposition": "DEFERRED_NOT_IMPLEMENTED", "successorRefs": []},
+    {"operationId": "getCommandReceipt", "disposition": "DEFERRED_NOT_IMPLEMENTED", "successorRefs": []},
+    {"operationId": "bootstrapWorkforceSnapshots", "disposition": "REPLACED_FOR_PER_BY_IN_PROCESS_PORT", "successorRefs": ["WorkforceSnapshotQueryPort.v1"]},
+    {"operationId": "initiateWorkforceIngestion", "disposition": "DEFERRED_NOT_IMPLEMENTED", "successorRefs": []},
+    {"operationId": "getWorkforceHomeWidgets", "disposition": "DEFERRED_NOT_IMPLEMENTED", "successorRefs": []}
+  ],
+  "historicalEventDispositions": [
+    {"eventType": "PersonChanged.v1", "disposition": "DEFERRED_NO_PRODUCER"},
+    {"eventType": "WorkerHired.v1", "disposition": "DEFERRED_NO_PRODUCER"},
+    {"eventType": "EmploymentChanged.v1", "disposition": "SCHEMA_PRESENT_NO_PRODUCER"},
+    {"eventType": "AssignmentChanged.v1", "disposition": "SCHEMA_PRESENT_NO_PRODUCER"},
+    {"eventType": "OrganizationChanged.v1", "disposition": "SCHEMA_PRESENT_NO_PRODUCER"},
+    {"eventType": "CompensationBasisChanged.v1", "disposition": "SCHEMA_PRESENT_NO_PRODUCER"},
+    {"eventType": "EmploymentContractIssued.v1", "disposition": "DEFERRED_NO_PRODUCER"},
+    {"eventType": "EmployeeChangeApplied.v1", "disposition": "DEFERRED_NO_PRODUCER"},
+    {"eventType": "WorkerSeparated.v1", "disposition": "DEFERRED_NO_PRODUCER"},
+    {"eventType": "CertificateIssued.v1", "disposition": "DEFERRED_NO_PRODUCER"},
+    {"eventType": "WorkforceIngestionReconciled.v1", "disposition": "DEFERRED_NO_PRODUCER"},
+    {"eventType": "WorkforceWidgetSnapshot.v1", "disposition": "DEFERRED_NO_PRODUCER"}
+  ],
+  "coverageTargetBindings": [
+    {"resolutionId": "TFR-HRM-001", "sourceFamilySha256": "32a61311affd13c7dcde712fd1bf793c77a5ee3c2b35dd0619476f35854c285d", "sourceRowCount": 34},
+    {"resolutionId": "TFR-HRM-002", "sourceFamilySha256": "ccb4d0f8c3ae4e7af17aaf892453d05ee089df060d3e204ed89f3430c36bfeb6", "sourceRowCount": 10},
+    {"resolutionId": "TFR-HRM-003", "sourceFamilySha256": "21b12d43ec49c0e7658f25477d258b4d76a910e770c8cca93bcd616cc27b1e51", "sourceRowCount": 19},
+    {"resolutionId": "TFR-HRM-004", "sourceFamilySha256": "fe867c1109d54c6e02d1486c5bd2f4aa83282695391dacef7bf410684d514a96", "sourceRowCount": 133},
+    {"resolutionId": "TFR-HRM-005", "sourceFamilySha256": "aff33d64feb7769426e17e372962e09ff34f27f37b021a5daa22079a7f2a70b2", "sourceRowCount": 43},
+    {"resolutionId": "TFR-HRM-006", "sourceFamilySha256": "c627c09c14e58e44bc51622dac392958ec88244e414b508020634f53cfcd1e69", "sourceRowCount": 23},
+    {"resolutionId": "TFR-HRM-007", "sourceFamilySha256": "9d2373936772c7f15ba4fde19d4d480235e7bcc1e18db24adf312cb6f6ee2066", "sourceRowCount": 31},
+    {"resolutionId": "TFR-HRM-008", "sourceFamilySha256": "83ca1a8dd958a525eb9f19432a728c8355a64d45106373b96544eeda8dc4489f", "sourceRowCount": 18},
+    {"resolutionId": "TFR-HRM-009", "sourceFamilySha256": "23593695008480f8100a3040dd21cc7011c3078b113902dc6b9e2e357084352a", "sourceRowCount": 21},
+    {"resolutionId": "TFR-HRM-010", "sourceFamilySha256": "3800c0ebee1b35406e2f3c4fdbaf678b0b50a159ff8821543776728d8b26c5b1", "sourceRowCount": 73},
+    {"resolutionId": "TFR-HRM-011", "sourceFamilySha256": "48c146cb90d7b21db80b1a0e24ab032d7ed50904b722bd01ac424b553c033c97", "sourceRowCount": 30},
+    {"resolutionId": "TFR-HRM-012", "sourceFamilySha256": "045228002731f170aa64cc37b82e02ff85a49873efaed9998486dcfbe8e99739", "sourceRowCount": 49},
+    {"resolutionId": "TFR-HRM-013", "sourceFamilySha256": "93814fefff93603210a584bcf442cf7b05b7e9524e35074ae0789498a9947db0", "sourceRowCount": 23},
+    {"resolutionId": "TFR-HRM-014", "sourceFamilySha256": "f83412aed61970f2a9fd7843aba10ea6226b1a8aba754a0e36762d7bec8979d6", "sourceRowCount": 12},
+    {"resolutionId": "TFR-HRM-015", "sourceFamilySha256": "51ab756e1c54caa3310e888ef454d37446d9e277b4832090f8600ff7bd1e2e1d", "sourceRowCount": 6},
+    {"resolutionId": "TFR-HRM-016", "sourceFamilySha256": "a8cf0d9ccc78c5829ef86d11212046a8899b022aef5ea6cc57d16a27d294c6b5", "sourceRowCount": 52},
+    {"resolutionId": "TFR-HRM-017", "sourceFamilySha256": "9d1d9b4bcb855d83286affb19020fb7cf6c10d6dc60d610407ea577dd3599989", "sourceRowCount": 6}
+  ],
+  "featureGates": [
+    {"property": "dwp.people.people360-runtime-enabled", "default": false, "scope": "PEOPLE360_HTTP"},
+    {"property": "dwp.hris.performance.wave1.enabled", "default": false, "scope": "WORKFORCE_SNAPSHOT_IN_PROCESS"}
+  ],
+  "validation": {
+    "historicalOperationClosedSetCount": 18,
+    "historicalEventClosedSetCount": 12,
+    "coverageFamilyCount": 17,
+    "coverageSourceRowCount": 583,
+    "successorHttpOperationCount": 11,
+    "proposalOutboxEventCount": 4
+  },
+  "authorityBoundary": {
+    "closesOwnerGate": "G2_HRM_PEOPLE_CONTRACT_DISPOSITION",
+    "moduleCodeGoGranted": false,
+    "productionAuthorizationGranted": false,
+    "g3CanonicalGenerationGranted": false,
+    "notes": [
+      "This successor records implemented and deferred disposition; it does not reconstruct missing historical bytes.",
+      "Assignment proposal outbox rows are owner-local evidence, not a public delivery guarantee.",
+      "Performance contracts remain HRIS-PER authority and are excluded from this HRIS-HRM operation list."
+    ]
+  }
+}
