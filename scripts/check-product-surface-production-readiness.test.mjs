@@ -516,7 +516,7 @@ function recalculateClosure(value) {
       checksum: closure.generatedFrom.rolloutInventory.checksum,
     },
     exactContract: {
-      reference: 'contracts/product-authorization/product-surfaces-v1.bundle-v4.json',
+      reference: `contracts/product-authorization/${closure.generatedFrom.authorizationBundle.artifact}`,
       checksum: closure.generatedFrom.authorizationBundle.checksum,
       products: closure.products.map(({ productId }) => productId),
     },
@@ -618,8 +618,40 @@ function canonicalChecksum(value) {
     .digest('hex');
 }
 
+function advanceAuthorizationRegistry(value) {
+  const current = value.authorization.latestAlias;
+  const version = current.version + 1;
+  const bundle = structuredClone(current);
+  bundle.version = version;
+  const bundleChecksumInput = structuredClone(bundle);
+  delete bundleChecksumInput.checksum;
+  delete bundleChecksumInput.bundleStatus;
+  bundle.checksum = canonicalChecksum(bundleChecksumInput);
+  value.authorization.bundles.push(bundle);
+
+  const previousIndexEntry = value.authorization.index.versions.at(-1);
+  const artifact = `product-surfaces-v1.bundle-v${version}.json`;
+  const authSeedArtifact = `product-surfaces-v1.bundle-v${version}.generated.json`;
+  value.authorization.index.versions.push({
+    ...structuredClone(previousIndexEntry),
+    version,
+    artifact,
+    authSeedArtifact,
+    checksum: bundle.checksum,
+  });
+  value.authorization.index.latestVersion = version;
+  value.authorization.index.latestArtifact = artifact;
+  value.authorization.index.latestAuthSeedArtifact = authSeedArtifact;
+  value.authorization.index.latestChecksum = bundle.checksum;
+  const indexChecksumInput = structuredClone(value.authorization.index);
+  delete indexChecksumInput.indexChecksum;
+  value.authorization.index.indexChecksum = canonicalChecksum(indexChecksumInput);
+  value.authorization.latestAlias = structuredClone(bundle);
+}
+
 test('integrity mode accepts the attested closure while a newer registry remains draft', () => {
   const value = fixture();
+  advanceAuthorizationRegistry(value);
   const result = run(value);
   assert.equal(result.status, 0, `${result.stdout}\n${result.stderr}`);
   assert.match(result.stdout, /exact product contracts: 12\/12/);
@@ -629,9 +661,12 @@ test('integrity mode accepts the attested closure while a newer registry remains
 
 test('integrity mode rejects duplicate immutable bundles for the attested closure version', () => {
   const value = fixture();
-  const v4 = value.authorization.bundles.find((bundle) => bundle.version === 4);
-  assert.ok(v4);
-  value.authorization.bundles.push(structuredClone(v4));
+  const attestedVersion = value.closure.generatedFrom.authorizationBundle.version;
+  const attestedBundle = value.authorization.bundles.find(
+    (bundle) => bundle.version === attestedVersion
+  );
+  assert.ok(attestedBundle);
+  value.authorization.bundles.push(structuredClone(attestedBundle));
 
   const result = run(value);
   assert.equal(result.status, 1);
@@ -643,9 +678,12 @@ test('integrity mode rejects duplicate immutable bundles for the attested closur
 
 test('integrity mode rejects an index entry that is not bound to the attested bundle', () => {
   const value = fixture();
-  const v4Index = value.authorization.index.versions.find((entry) => entry.version === 4);
-  assert.ok(v4Index);
-  v4Index.artifact = 'product-surfaces-v1.bundle-v4-tampered.json';
+  const closureReference = value.closure.generatedFrom.authorizationBundle;
+  const attestedIndex = value.authorization.index.versions.find(
+    (entry) => entry.version === closureReference.version
+  );
+  assert.ok(attestedIndex);
+  attestedIndex.artifact = `${closureReference.artifact}.tampered`;
 
   const result = run(value);
   assert.equal(result.status, 1);
@@ -671,18 +709,29 @@ test('keeps X-03 internal while the calculated five-vector matrix is partial', (
 
 test('release mode fails closed without converting pending approvals to completion', () => {
   const value = fixture();
-  const { version: latest } = value.authorization.latestAlias;
-  const { version: attested } = value.closure.generatedFrom.authorizationBundle;
   const result = run(value, ['--release']);
   assert.equal(result.status, 2);
-  assert.match(result.stderr, new RegExp(`latest authorization registry v${latest}`));
-  assert.match(result.stderr, new RegExp(`attested closure v${attested}`));
+  assert.doesNotMatch(result.stderr, /AUTHORIZATION_CLOSURE_ATTESTATION/);
   assert.match(result.stderr, /G-02 BLOCKED_EXTERNAL/);
   assert.match(
     result.stderr,
     new RegExp(`P-MEETINGS ${value.manifest.products.find(({ id }) => id === 'P-MEETINGS').state}`)
   );
   assert.match(result.stderr, /X-08 BLOCKED_EXTERNAL/);
+});
+
+test('release mode rejects an attested closure older than the registry head', () => {
+  const value = fixture();
+  advanceAuthorizationRegistry(value);
+  const { version: latest } = value.authorization.latestAlias;
+  const { version: attested } = value.closure.generatedFrom.authorizationBundle;
+
+  const result = run(value, ['--release']);
+
+  assert.equal(result.status, 2);
+  assert.match(result.stderr, /AUTHORIZATION_CLOSURE_ATTESTATION/);
+  assert.match(result.stderr, new RegExp(`latest authorization registry v${latest}`));
+  assert.match(result.stderr, new RegExp(`attested closure v${attested}`));
 });
 
 test('official release paths execute the Product Surface release gate and block this manifest', () => {
@@ -696,6 +745,8 @@ test('official release paths execute the Product Surface release gate and block 
   );
 
   const releaseWorkflow = readFileSync(releaseWorkflowSource, 'utf8');
+  const attestedBundle = JSON.parse(readFileSync(closureSource, 'utf8')).generatedFrom
+    .authorizationBundle.artifact;
   assert.match(
     releaseWorkflow,
     /run: corepack yarn product-surfaces:readiness:test/,
@@ -716,6 +767,10 @@ test('official release paths execute the Product Surface release gate and block 
     releaseWorkflow,
     /DWP_BACKEND_CHECKOUT: \$\{\{ github\.workspace \}\}\/\.official-backend/,
     'the standalone readiness step must receive the trusted Backend checkout'
+  );
+  assert.ok(
+    releaseWorkflow.includes(`.official-backend/contracts/product-authorization/${attestedBundle}`),
+    'the release evidence archive must preserve the raw attested authorization bundle'
   );
   assert.match(
     releaseWorkflow,

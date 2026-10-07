@@ -12,6 +12,12 @@ test.setTimeout(60_000);
 const SHELL_UTILITY_PERMISSIONS = [
   ...DEFAULT_APP_PERMISSIONS,
   {
+    resourceType: 'ADMIN',
+    resourceKey: 'ADMIN.TENANT_BRANDING',
+    permissionCode: 'VIEW',
+    effect: 'ALLOW' as const,
+  },
+  {
     resourceType: 'APP',
     resourceKey: 'APP.NOTIFICATIONS',
     permissionCode: 'VIEW',
@@ -98,8 +104,10 @@ test('tenant shells keep one application-context and global-utility contract', a
 
   await page.goto('/hr/directory');
   const hcmHeader = page.getByTestId('hcm-header');
-  await expectHeaderContract(hcmHeader, 'HRIS', 'tenant', mobile, 'hcm', false);
-  await expect(hcmHeader.getByText('Tenant Admin', { exact: true })).toBeHidden();
+  await expectHeaderContract(hcmHeader, 'HRIS', 'tenant', mobile, 'hcm');
+  const hcmIdentity = hcmHeader.getByText('Tenant Admin', { exact: true });
+  if (mobile) await expect(hcmIdentity).toBeHidden();
+  else await expect(hcmIdentity).toBeVisible();
   if (mobile) {
     await page.getByRole('button', { name: 'Open HRIS navigation' }).click();
     await expect(
@@ -404,7 +412,10 @@ test('OS forced-colors preserves the current account and administration destinat
     'Desktop forced-colors contract is covered once.'
   );
   await page.emulateMedia({ forcedColors: 'active', reducedMotion: 'reduce' });
-  await mockSession(page, ['TENANT_ADMIN'], { locale: 'en' });
+  await mockSession(page, ['TENANT_ADMIN'], {
+    locale: 'en',
+    permissions: SHELL_UTILITY_PERMISSIONS,
+  });
 
   await page.goto('/account/profile');
   const accountCurrent = page.getByTestId('account-sidebar').getByRole('link', { name: 'Profile' });
@@ -509,7 +520,7 @@ test('mobile navigation drawer isolates the global assistant layer', async ({ pa
 test('authentication boot screen reserves the resolved shell geometry', async ({
   page,
 }, testInfo) => {
-  await mockSession(page, ['TENANT_ADMIN']);
+  await mockSession(page, ['TENANT_ADMIN'], { permissions: SHELL_UTILITY_PERMISSIONS });
   let releaseAuthentication!: () => void;
   const authenticationGate = new Promise<void>((resolve) => {
     releaseAuthentication = resolve;

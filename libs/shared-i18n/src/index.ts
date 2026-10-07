@@ -9,6 +9,7 @@ export {
 } from './lib/locales';
 export {
   formatDate,
+  formatCivilDate,
   formatList,
   formatNumber,
   formatRelativeTime,
@@ -16,6 +17,7 @@ export {
   resolveZonedDateKey,
   resolveZonedClock,
   type ZonedDateKey,
+  type CivilDateFormatOptions,
   type ZonedClock,
 } from './lib/formatters';
 export {

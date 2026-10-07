@@ -218,6 +218,41 @@ test('people profile deep-links to the selected person in the reporting chart', 
   await expect(page.getByText('AI Platform Division', { exact: true }).last()).toBeVisible();
 });
 
+test('directory opens a deep-linked team member outside the loaded page', async ({ page }) => {
+  await mockAdminSession(page);
+  const person = {
+    personId: LEAD_ID,
+    displayName: 'Lee Hana',
+    lifecycleState: 'ACTIVE',
+    workerStatus: 'ACTIVE',
+    businessTitle: 'AI Lead',
+    organizationName: 'AI Platform Division',
+    directReportCount: 0,
+    dataAccess: {
+      classification: 'INTERNAL',
+      workerNumberMasked: false,
+      excludedFieldGroups: [],
+    },
+  };
+  await page.route('**/api/people/v1/people**', (route) => {
+    const path = new URL(route.request().url()).pathname;
+    const data = path.endsWith(`/${LEAD_ID}`)
+      ? { person, assignments: [], workers: [] }
+      : { items: [], nextCursor: null, size: 100, hasMore: false, asOf: '2026-10-06' };
+    return route.fulfill({ contentType: 'application/json', body: envelope(data) });
+  });
+  await page.route('**/api/people/v1/org-chart**', (route) =>
+    route.fulfill({ contentType: 'application/json', body: envelope(chartFixture()) })
+  );
+
+  await page.goto(`/hr/directory?person=${LEAD_ID}`);
+
+  const dialog = page.getByRole('dialog');
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByText('Lee Hana', { exact: true })).toBeVisible();
+  await expect(dialog.getByText('AI Lead', { exact: true })).toBeVisible();
+});
+
 function chartFixture() {
   return {
     asOf: '2026-08-10',

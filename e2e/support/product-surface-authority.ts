@@ -24,6 +24,7 @@ export type ApprovalAuthorityOptions = {
 
 export type HcmAuthorityOptions = {
   deniedRouteKeys?: readonly string[];
+  surfaceIds?: readonly HcmSurfaceId[];
 };
 
 const GENERATED_AT = '2026-08-24T00:00:00Z';
@@ -577,7 +578,7 @@ export async function mockHcmProductSurfaceAuthority(
         'hcm.controlled-export.read',
       ]
     ),
-  ] as const;
+  ].filter((context) => !options.surfaceIds || options.surfaceIds.includes(context.surfaceKey));
   const contextBySurface = new Map(contexts.map((context) => [context.surfaceKey, context]));
 
   await page.route('**/api/auth/product-surface-contexts', (route) =>

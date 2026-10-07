@@ -16,6 +16,7 @@ import {
   Network,
   ReceiptText,
   ShieldCheck,
+  Settings2,
   Sparkles,
   UserRoundCheck,
   UsersRound,
@@ -60,12 +61,14 @@ export type HcmView =
   | 'organization-design'
   | 'reference-data'
   | 'data-operations'
+  | 'system-access'
   | 'exports';
 
 export type HcmNavigationItem = ProductNavigationItem & {
   section: HcmSection;
   view: HcmView;
   audience: HcmAudience;
+  governedOnly?: boolean;
 };
 
 export type HcmNavigationGroup = {
@@ -190,7 +193,7 @@ export const HCM_NAVIGATION: readonly HcmNavigationGroup[] = [
         icon: Clock3,
         audience: 'time-admin',
         requiredResourceKey: 'DATA.HR_TIME',
-        requiredAnyPermissionCodes: ['VIEW', 'MANAGE'],
+        requiredAnyPermissionCodes: ['VIEW_TENANT', 'APPROVE', 'MANAGE'],
       },
       {
         section: 'operate',
@@ -199,7 +202,7 @@ export const HCM_NAVIGATION: readonly HcmNavigationGroup[] = [
         icon: CalendarCheck2,
         audience: 'absence-admin',
         requiredResourceKey: 'DATA.HR_ABSENCE',
-        requiredAnyPermissionCodes: ['VIEW', 'MANAGE'],
+        requiredAnyPermissionCodes: ['VIEW_TENANT', 'APPROVE', 'MANAGE'],
       },
       {
         section: 'operate',
@@ -208,7 +211,7 @@ export const HCM_NAVIGATION: readonly HcmNavigationGroup[] = [
         icon: HeartHandshake,
         audience: 'benefits-admin',
         requiredResourceKey: 'DATA.HR_BENEFITS',
-        requiredAnyPermissionCodes: ['VIEW', 'MANAGE'],
+        requiredAnyPermissionCodes: ['VIEW_TENANT', 'APPROVE', 'MANAGE'],
       },
       {
         section: 'operate',
@@ -217,7 +220,7 @@ export const HCM_NAVIGATION: readonly HcmNavigationGroup[] = [
         icon: ReceiptText,
         audience: 'pay-admin',
         requiredResourceKey: 'DATA.HR_PAY',
-        requiredAnyPermissionCodes: ['VIEW', 'MANAGE'],
+        requiredAnyPermissionCodes: ['VIEW_TENANT', 'APPROVE', 'MANAGE'],
       },
       {
         section: 'operate',
@@ -226,7 +229,7 @@ export const HCM_NAVIGATION: readonly HcmNavigationGroup[] = [
         icon: ShieldCheck,
         audience: 'talent-admin',
         requiredResourceKey: 'DATA.HR_TALENT',
-        requiredAnyPermissionCodes: ['VIEW', 'MANAGE'],
+        requiredAnyPermissionCodes: ['VIEW_TENANT', 'APPROVE', 'MANAGE'],
       },
       {
         section: 'operate',
@@ -263,6 +266,18 @@ export const HCM_NAVIGATION: readonly HcmNavigationGroup[] = [
   {
     id: 'foundation',
     items: [
+      {
+        section: 'foundation',
+        view: 'system-access',
+        path: '/hr/manage/system',
+        icon: Settings2,
+        // This read-only entry explains the current subject's effective HRIS access. The owner
+        // APIs still filter configuration/governance actions by exact authority. It remains
+        // dormant while product-surface governance is OFF because no safe legacy owner scope
+        // exists for this page.
+        audience: 'all',
+        governedOnly: true,
+      },
       {
         section: 'foundation',
         view: 'reference-data',
@@ -354,6 +369,10 @@ export const HCM_OPERATIONS_NAVIGATION = projectProductSurfaceNavigation(HCM_NAV
 });
 
 export const HCM_MANAGEMENT_NAVIGATION = projectProductSurfaceNavigation(HCM_NAVIGATION, {
+  'system-access': {
+    taskKind: 'administration',
+    access: policy('hcm.management-system-access.v1'),
+  },
   'organization-design': {
     taskKind: 'administration',
     access: capability('hcm.org-design.read'),
@@ -384,6 +403,7 @@ export function canAccessHcmNavigationAudience(
   item: HcmNavigationItem,
   access: HcmAudienceAccess
 ): boolean {
+  if (item.governedOnly) return false;
   if (item.audience === 'all') return true;
   if (item.audience === 'manager') return access.isManager;
   if (item.audience === 'time-admin') return access.canManageTime === true;

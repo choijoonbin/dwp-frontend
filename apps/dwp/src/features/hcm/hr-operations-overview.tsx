@@ -13,17 +13,8 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { DomainSection, QueryBoundary } from './hr-domain-components';
+import { hrOperationsDestination } from './hr-operations-overview-model';
 import { useProductSurfaceRequestScope } from '../../components/use-product-surface-request-scope';
-
-import type { HrDomainOperations } from '@dwp-frontend/shared-utils';
-
-const DOMAIN_DESTINATIONS: Record<HrDomainOperations['domain'], { path: string; view: string }> = {
-  TIME: { path: '/hr/operations/time', view: 'time-operations' },
-  ABSENCE: { path: '/hr/operations/absence', view: 'absence-operations' },
-  BENEFITS: { path: '/hr/operations/benefits', view: 'benefits-operations' },
-  PAY: { path: '/hr/operations/pay', view: 'pay-operations' },
-  TALENT: { path: '/hr/operations/talent', view: 'talent-operations' },
-};
 
 export function HrOperationsOverview() {
   const { t } = useTranslation('hcm');
@@ -80,7 +71,7 @@ export function HrOperationsOverview() {
 
         {(query.data?.domains ?? []).length ? (
           query.data!.domains.map((domain) => {
-            const destination = DOMAIN_DESTINATIONS[domain.domain];
+            const destination = hrOperationsDestination(domain.domain);
             return (
               <DomainSection
                 key={domain.domain}

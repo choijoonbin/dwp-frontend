@@ -682,7 +682,7 @@ test('HCM 다중 Surface 전환은 320px·200% text에서도 한 줄과 키보�
     if (zoomed) await page.addStyleTag({ content: ':root { font-size: 200% !important; }' });
 
     const switcher = page.getByTestId('hcm-mobile-surface-switcher');
-    const areaTrigger = switcher.getByRole('button', { name: '현재 영역: 나의 인사' });
+    const areaTrigger = switcher.getByRole('button', { name: '현재 영역: 내 HR' });
     const managementEntry = switcher.getByTestId('product-surface-management-entry');
     await expect(areaTrigger).toBeVisible();
     await expect(managementEntry).toBeVisible();
@@ -692,7 +692,7 @@ test('HCM 다중 Surface 전환은 320px·200% text에서도 한 줄과 키보�
 
     await areaTrigger.click();
     const workMenu = page.getByTestId('product-surface-mobile-disclosure');
-    await expect(workMenu.getByRole('menuitem', { name: '나의 인사' })).toBeVisible();
+    await expect(workMenu.getByRole('menuitem', { name: '내 HR' })).toBeVisible();
     await expect(workMenu.getByRole('menuitem', { name: '팀 관리' })).toBeVisible();
     await page.keyboard.press('Escape');
     await expect(areaTrigger).toBeFocused();

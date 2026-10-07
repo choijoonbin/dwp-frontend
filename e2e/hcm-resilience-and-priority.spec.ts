@@ -82,6 +82,7 @@ test('pay statements never expose a dead enabled action before secure document i
       ...HR_PAY_FIXTURE,
       statements: HR_PAY_FIXTURE.statements.map((statement) => ({
         ...statement,
+        availabilityState: 'AVAILABLE',
         downloadable: true,
       })),
     })
@@ -89,9 +90,11 @@ test('pay statements never expose a dead enabled action before secure document i
 
   await page.goto('/hr/pay');
 
-  await expect(page.getByRole('button', { name: 'Open statement' })).toBeDisabled();
-  await expect(page.getByText(/Secure statement access is being connected/u)).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Ask payroll' })).toBeEnabled();
+  await expect(
+    page.getByRole('button', { name: /Open statement|Download statement/u })
+  ).toHaveCount(0);
+  await expect(page.getByText(/secure download is not connected here yet/u).first()).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Ask payroll' })).toHaveCount(0);
 });
 
 test('my HR profile preserves permission guidance and the support reference', async ({ page }) => {

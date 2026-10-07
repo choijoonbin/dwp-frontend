@@ -1060,7 +1060,8 @@
       "publish": {
         "title": "Publish changes",
         "help": "Register approved relationships as effective-dated history for {{date}}.",
-        "action": "Schedule effective change"
+        "action": "Schedule effective change",
+        "releaseBlocked": "Production publication remains disabled until the G-05 and PS-03 HCM + Security approvals are complete."
       },
       "states": {
         "DRAFT": "Draft",

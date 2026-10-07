@@ -13,7 +13,10 @@ import {
 } from './product-surface-authority-bridge';
 import { createGlobalProductApplicationRuntime } from '../../components/create-global-product-application-runtime';
 import { GOVERNED_PRODUCT_MANIFESTS } from '../../components/product-manifest-registry';
-import { useProductSurfaceCanaryAuthority } from './product-surface-canary-runtime';
+import {
+  resolveCanarySurfaceDecision,
+  useProductSurfaceCanaryAuthority,
+} from './product-surface-canary-runtime';
 import { readProductSurfaceLastRoute } from './product-surface-last-route';
 import {
   ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE,
@@ -465,6 +468,175 @@ describe('mounted product surface authority bridge', () => {
       state: 'allowed',
       effectiveReadOnly: false,
       routeGrantRef: ACTIVE_ROUTE.routeContractKey,
+    });
+  });
+
+  it('uses an active PAGE denial instead of a sibling authority-unavailable result', async () => {
+    const siblingRoute = APPROVALS_ROUTES.find(
+      (route) =>
+        route.surfaceId === ACTIVE_ROUTE.surfaceId &&
+        route.routeContractKey !== ACTIVE_ROUTE.routeContractKey
+    );
+    expect(siblingRoute).toBeDefined();
+    const evaluateProduct = vi.fn(async (request: ProductSurfaceEvaluationRequest) => {
+      if (request.routeContractKey === ACTIVE_ROUTE.routeContractKey) {
+        return {
+          decision: 'ROUTE_DENIED' as const,
+          decisionRevision: REVISION,
+          correlationId: 'active-page-denial',
+        };
+      }
+      throw new Error('sibling authority unavailable');
+    });
+
+    await mountBridge(APPROVALS_PATH, authority(evaluateProduct, rollout('111')));
+    await vi.waitFor(() =>
+      expect(observedAuthority?.surfaceDecisions?.[ACTIVE_ROUTE.surfaceId]).toMatchObject({
+        state: 'route-denied',
+        detail: { correlationId: 'active-page-denial' },
+      })
+    );
+
+    expect(observedAuthority?.routeDecisions?.[siblingRoute!.routeContractKey]?.state).toBe(
+      'authority-unavailable'
+    );
+  });
+
+  it('keeps the active HCM PAGE denial when a raw allowed sibling lacks canonical context', async () => {
+    const path = '/hr/data/integrations';
+    const activeRoute = resolveActiveGovernedPageRoute(path, GOVERNED_SURFACE_PAGE_ROUTES)!;
+    const productRoutes = resolveGovernedPageEvaluationRoutes(path, GOVERNED_SURFACE_PAGE_ROUTES);
+    const rawAllowedSibling = productRoutes.find(
+      (route) => route.routeContractKey === 'route.hcm.management.system.page'
+    );
+    expect(activeRoute.routeContractKey).toBe('route.hcm.management.integration.page');
+    expect(rawAllowedSibling).toBeDefined();
+    const directScope = {
+      key: 'hcm-management-direct-scope',
+      kind: 'TENANT' as const,
+      displayName: 'HCM management',
+      isDefault: true,
+      readOnly: false,
+    };
+    const directContext: ProductSurfaceEffectiveContext = {
+      contextKey: 'hcm-management-direct-context',
+      productKey: 'hcm',
+      surfaceKey: 'hcm.management',
+      plane: 'management',
+      accessMode: 'NORMAL',
+      accessSource: 'MANAGEMENT',
+      appResourceKey: 'ADMIN.HCM.SYSTEM',
+      effectiveGrants: [],
+      scopes: [directScope],
+      revalidateAt: REVALIDATE_AT,
+    };
+    const evaluateProduct = vi.fn(async (request: ProductSurfaceEvaluationRequest) => {
+      if (request.routeContractKey === activeRoute.routeContractKey) {
+        return {
+          decision: 'ROUTE_DENIED' as const,
+          decisionRevision: REVISION,
+          correlationId: 'hcm-active-page-denial',
+        };
+      }
+      if (request.routeContractKey === rawAllowedSibling!.routeContractKey) {
+        return {
+          decision: 'ALLOWED' as const,
+          decisionRevision: REVISION,
+          context: directContext,
+          routeGrantRef: request.routeContractKey,
+          scope: directScope,
+          effectiveReadOnly: false,
+          revalidateAt: REVALIDATE_AT,
+        };
+      }
+      throw new Error('background PAGE authority unavailable');
+    });
+    const hcmRollout = rollout('111');
+    const hcmSnapshot: ProductSurfaceAuthoritySnapshot = {
+      ...snapshot,
+      envelope: {
+        ...snapshot.envelope,
+        contexts: snapshot.envelope.contexts.filter(
+          (context) => context.surfaceKey !== activeRoute.surfaceId
+        ),
+      },
+    };
+
+    await mountBridge(
+      path,
+      authority(
+        evaluateProduct,
+        { ...hcmRollout, rollout: { ...hcmRollout.rollout, productKey: 'hcm' } },
+        { productKey: 'hcm', snapshot: hcmSnapshot }
+      )
+    );
+    await act(async () => {
+      await vi.waitFor(() => {
+        expect(
+          observedAuthority?.routeDecisions?.[rawAllowedSibling!.routeContractKey]?.state
+        ).toBe('allowed');
+        expect(observedAuthority?.routeDecisions?.[activeRoute.routeContractKey]).toMatchObject({
+          state: 'route-denied',
+          detail: { correlationId: 'hcm-active-page-denial' },
+        });
+        expect(observedAuthority?.surfaceDecisions?.[activeRoute.surfaceId]).toMatchObject({
+          state: 'route-denied',
+          detail: { correlationId: 'hcm-active-page-denial' },
+        });
+      });
+    });
+
+    expect(observedAuthority?.productFlags?.hcm).toMatchObject({
+      contextShadow: true,
+      capabilityEnforcement: true,
+      surfaceUi: true,
+      surfaceUiEvaluation: 'resolved',
+    });
+    expect(observedAuthority?.pendingRoutes?.[activeRoute.routeContractKey]).toBe(false);
+    expect(observedAuthority?.pendingSurfaces?.[activeRoute.surfaceId]).toBe(false);
+    expect(
+      resolveCanarySurfaceDecision(observedAuthority!, {
+        productId: activeRoute.productId,
+        surfaceId: activeRoute.surfaceId,
+      })
+    ).toMatchObject({
+      state: 'route-denied',
+      detail: { correlationId: 'hcm-active-page-denial' },
+    });
+  });
+
+  it('keeps an allowed sibling as the Surface entry when the active PAGE is denied', async () => {
+    const allowedSibling = APPROVALS_ROUTES.find(
+      (route) =>
+        route.surfaceId === ACTIVE_ROUTE.surfaceId &&
+        route.routeContractKey !== ACTIVE_ROUTE.routeContractKey
+    );
+    expect(allowedSibling).toBeDefined();
+    const evaluateProduct = vi.fn(async (request: ProductSurfaceEvaluationRequest) => {
+      if (request.routeContractKey === ACTIVE_ROUTE.routeContractKey) {
+        return {
+          decision: 'ROUTE_DENIED' as const,
+          decisionRevision: REVISION,
+          correlationId: 'active-page-denial',
+        };
+      }
+      if (request.routeContractKey === allowedSibling!.routeContractKey) {
+        return allowedEvaluation(request);
+      }
+      throw new Error('sibling authority unavailable');
+    });
+
+    await mountBridge(APPROVALS_PATH, authority(evaluateProduct, rollout('111')));
+    await vi.waitFor(() =>
+      expect(observedAuthority?.surfaceDecisions?.[ACTIVE_ROUTE.surfaceId]).toMatchObject({
+        state: 'allowed',
+        routeGrantRef: allowedSibling!.routeContractKey,
+      })
+    );
+
+    expect(observedAuthority?.routeDecisions?.[ACTIVE_ROUTE.routeContractKey]).toMatchObject({
+      state: 'route-denied',
+      detail: { correlationId: 'active-page-denial' },
     });
   });
 

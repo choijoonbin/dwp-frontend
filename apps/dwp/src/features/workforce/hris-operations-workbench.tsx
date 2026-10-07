@@ -71,6 +71,7 @@ import {
   HrisReconciliationView,
   HrisStateChip,
 } from './hris-operations-secondary-views';
+import { hrisIntegrationActionAccess } from './hris-integration-action-access';
 
 import type { GridColDef } from '@mui/x-data-grid';
 import type {
@@ -106,15 +107,10 @@ export function HrisOperationsWorkbench() {
   const legacyCanManage = (auth.user?.roles ?? []).some((role) =>
     ['ADMIN', 'HR_ADMIN'].includes(role)
   );
-  const canCreate = capabilityAccess.governed
-    ? capabilityAccess.hasWritableCapability('hcm.integration.create')
-    : legacyCanManage;
-  const canUpdate = capabilityAccess.governed
-    ? capabilityAccess.hasWritableCapability('hcm.integration.update')
-    : legacyCanManage;
-  const canExecute = capabilityAccess.governed
-    ? capabilityAccess.hasWritableCapability('hcm.integration.execute')
-    : legacyCanManage;
+  const integrationAccess = hrisIntegrationActionAccess(capabilityAccess, legacyCanManage);
+  const canCreate = integrationAccess.create;
+  const canUpdate = integrationAccess.update;
+  const canExecute = integrationAccess.execute;
   const canManage = canCreate || canUpdate || canExecute;
   const syntheticImportEnabled = import.meta.env.DEV && !governedPage;
   const refresh = async () => {

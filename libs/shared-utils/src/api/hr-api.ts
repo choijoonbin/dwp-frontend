@@ -265,7 +265,7 @@ export type HrDomainOperations = {
 };
 
 export type HrDomainOperationsSummary = {
-  domain: HrDomainOperations['domain'];
+  domain: 'WORKFORCE' | HrDomainOperations['domain'];
   metrics: HrDomainMetric[];
   pendingCount: number;
 };
@@ -357,17 +357,18 @@ async function get<T>(path: string, contextScopeKey?: string, signal?: AbortSign
   return response.data.data;
 }
 
-export const getHrHome = async (): Promise<HrHomeOverview> => {
-  const value = await get<HrHomeOverviewWire>('/home');
-  const legacyDomainState: HrHomeDomainState = {
-    availability: 'AVAILABLE',
-    dataOrigin: 'UNKNOWN',
-    reasonCode: null,
-  };
+export type HrHomeRequestOptions = Readonly<{ signal?: AbortSignal }>;
+
+export const getHrHome = async (options: HrHomeRequestOptions = {}): Promise<HrHomeOverview> => {
+  const value = await get<HrHomeOverviewWire>('/home', undefined, options.signal);
   const domains: HrHomeDomain[] = ['TIME', 'ABSENCE', 'BENEFITS', 'PAY', 'TALENT', 'TEAM'];
   const domainStates = Object.fromEntries(
     domains.map((domain) => {
-      const state = value.domainStates?.[domain] ?? legacyDomainState;
+      const state = value.domainStates?.[domain] ?? {
+        availability: 'UNAVAILABLE' as const,
+        dataOrigin: 'UNKNOWN' as const,
+        reasonCode: `${domain}_DOMAIN_STATE_REQUIRED`,
+      };
       return [domain, { ...state, dataOrigin: normalizeHrHomeDataOrigin(state.dataOrigin) }];
     })
   ) as Record<HrHomeDomain, HrHomeDomainState>;

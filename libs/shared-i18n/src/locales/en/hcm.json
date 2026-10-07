@@ -3,6 +3,339 @@
     "loadError": "Information could not be loaded",
     "retry": "Retry"
   },
+  "hrisTime": {
+    "boundary": {
+      "title": "Time-card command boundary",
+      "scheduleConnected": "Editable dates come from the connected company work schedule. Card version and HRIS authority are revalidated for every command.",
+      "scheduleUnavailable": "The current API does not provide a per-day company work schedule. Existing source entries may be corrected, but empty dates remain read only instead of assuming Monday through Friday.",
+      "nonStandardPeriod": "This source period is not an exact Monday-to-Sunday week. Its actual date range is shown without reshaping it.",
+      "origin": "Origin: {{value}}"
+    },
+    "calendar": {
+      "invalidTitle": "The time-card period is invalid",
+      "invalidDescription": "No calendar was generated because the source period is missing, reversed, or longer than the supported review window."
+    },
+    "weekday": {
+      "1": "Monday",
+      "2": "Tuesday",
+      "3": "Wednesday",
+      "4": "Thursday",
+      "5": "Friday",
+      "6": "Saturday",
+      "7": "Sunday"
+    },
+    "editability": {
+      "CONNECTED_SCHEDULE": "Connected work schedule",
+      "EXISTING_ENTRY": "Existing source entry",
+      "REFERENCE_DATA": "Reference data · read only",
+      "CARD_NOT_OPEN": "Closed time card · read only",
+      "OUTSIDE_PERIOD": "Outside the time-card period",
+      "OUTSIDE_CONNECTED_SCHEDULE": "Outside the connected work schedule",
+      "SCHEDULE_UNAVAILABLE": "Schedule not connected"
+    },
+    "command": {
+      "refresh": "Refresh current card",
+      "reviewLatest": "Review latest and continue",
+      "retry": "Retry command",
+      "CONFLICT": {
+        "title": "The time card changed",
+        "description": "Your draft is preserved. Refresh the current card, review the new version, and then decide whether to save again."
+      },
+      "UNAUTHENTICATED": {
+        "title": "Your session is no longer valid",
+        "description": "Your draft is preserved in this dialog, but it cannot be sent. Sign in again before making another change."
+      },
+      "FORBIDDEN": {
+        "title": "This action is no longer permitted",
+        "description": "Your draft is preserved for review. The current HRIS authority does not allow this command."
+      },
+      "UNKNOWN_OUTCOME": {
+        "title": "The command outcome is unknown",
+        "description": "No confirmation was received and the command may have succeeded. Your draft is preserved; refresh and verify the current card before retrying."
+      },
+      "ABORTED": {
+        "title": "The command was cancelled",
+        "description": "Your draft is preserved. Reopen the current card before sending another command."
+      },
+      "REJECTED": {
+        "title": "The command was rejected",
+        "description": "Your draft is preserved. Correct the input or retry after the service condition is resolved."
+      }
+    },
+    "workPlanStudio": {
+      "query": {
+        "partialTitle": "Some work plans could not be loaded",
+        "partialDescription": "Available records remain visible, but simulation is paused until all policy inputs can be verified. {{failures}}",
+        "staleTitle": "Work plan data is stale",
+        "staleDescription": "Review remains available. Validation and simulation stay disabled until fresh policy and assignment data is returned.",
+        "unavailableTitle": "Work plans are unavailable",
+        "unavailableDescription": "No policy-sensitive action is available while the source cannot be verified."
+      },
+      "catalog": {
+        "ariaLabel": "Work plan catalog",
+        "workPlan": "Work plan",
+        "arrangement": "Arrangement",
+        "effective": "Effective",
+        "review": "Review",
+        "effectiveRange": "{{start}} – {{end}}",
+        "openEnded": "Open ended",
+        "reviewAriaLabel": "Review {{title}}",
+        "agendaAriaLabel": "Work plan agenda",
+        "mobileReviewAriaLabel": "Review {{title}} in the mobile agenda",
+        "selected": "Selected",
+        "title": "Work plan catalog",
+        "effectiveAsOf": "Effective as of {{asOf}}",
+        "planCount": "{{count}} plans"
+      },
+      "policy": {
+        "title": "Policy precedence",
+        "cannotResolveTitle": "Policy cannot be resolved safely",
+        "packState": "Policy pack is {{state}}.",
+        "resolvedTitle": "Effective policy resolved",
+        "resolvedDescription": "{{jurisdiction}} · revision {{revision}} · effective {{effectiveOn}}",
+        "unavailable": "Unavailable",
+        "traceDescription": "{{policyCode}} · revision {{revision}}",
+        "resolution": {
+          "NO_APPLICABLE_POLICY": "No policy applies for the selected effective date.",
+          "OVERLAP": "More than one policy wins at the same precedence level.",
+          "PACK_MISSING": "The required jurisdiction pack is missing.",
+          "PACK_EXPIRED": "The jurisdiction pack has expired.",
+          "OUT_OF_RANGE": "The effective date is outside the policy pack range.",
+          "STALE": "The policy resolution is stale.",
+          "REVOKED": "The selected policy pack has been revoked.",
+          "INVALID": "The selected policy pack is invalid.",
+          "SIGNATURE_INVALID": "The policy pack signature could not be verified."
+        }
+      },
+      "schedule": {
+        "title": "Schedule in {{timeZone}}",
+        "description": "Local times and offsets are returned by the schedule service for each date.",
+        "emptyTitle": "No schedule segments",
+        "emptyDescription": "Add schedule segments before requesting an impact simulation.",
+        "ariaLabel": "Date-resolved schedule segments",
+        "segment": "Segment",
+        "localStart": "Local start",
+        "localEnd": "Local end",
+        "dstOvernight": "DST / overnight",
+        "overnight": "Overnight"
+      },
+      "receipt": {
+        "title": "Simulation receipt: {{status}}",
+        "reconcile": "Reconcile receipt",
+        "unknownOutcome": "The outcome is unknown. Reconcile this same durable receipt; do not submit a duplicate command.",
+        "lastUpdated": "Last updated {{updatedAt}}."
+      },
+      "simulation": {
+        "title": "Current vs draft — server simulation",
+        "statusTitle": "Simulation is {{status}}",
+        "incompleteDescription": "Impact results cannot be treated as complete or publish-ready.",
+        "differencesAriaLabel": "Current and draft simulation differences",
+        "impact": "Impact",
+        "current": "Current",
+        "draft": "Draft",
+        "finding": "Finding"
+      },
+      "detail": {
+        "subtitle": "{{arrangement}} · version {{version}}",
+        "close": "Close work plan detail",
+        "runSimulation": "Run server simulation",
+        "publishingNote": "Publishing is intentionally separate and requires an independent publisher. This author studio never treats simulation as approval or publish authority.",
+        "effectivePeriod": "Effective period",
+        "assignment": "Assignment",
+        "assignmentSnapshot": "Assignment snapshot",
+        "assignmentSnapshotValue": "{{revision}} · {{freshness}}",
+        "scheduleTimeZone": "Schedule time zone",
+        "blockedTitle": "Simulation is blocked",
+        "commandNotAccepted": "Simulation command was not accepted"
+      },
+      "empty": {
+        "noEffectiveTitle": "No effective work plans",
+        "noEffectiveDescription": "No work plan applies to this effective date and scope.",
+        "chooseTitle": "Choose a work plan",
+        "chooseDescription": "Select a catalog row or agenda item to inspect assignment, precedence, schedule, and simulation impact."
+      },
+      "runtime": {
+        "loading": "Loading governed work plans",
+        "unavailableTitle": "Work plans could not be verified",
+        "unavailableDescription": "The catalog remains closed because its policy and assignment scope is unavailable.",
+        "retry": "Try again",
+        "responseMismatch": "The server response did not match the selected work plan revision.",
+        "outcomeNotVerified": "The command outcome could not be verified. Refresh authorization before trying again."
+      },
+      "codes": {
+        "arrangement": {
+          "FIXED": "Fixed",
+          "FLEX": "Flexible",
+          "AVERAGED": "Averaged",
+          "SELECTIVE": "Selective",
+          "COMPRESSED": "Compressed",
+          "PART_TIME": "Part time",
+          "REDUCED": "Reduced hours",
+          "SPLIT_SHIFT": "Split shift",
+          "SHIFT": "Shift",
+          "ON_CALL": "On call",
+          "DEEMED": "Deemed",
+          "DISCRETIONARY": "Discretionary",
+          "TENANT_EXTENSION": "Tenant extension"
+        },
+        "assignmentFreshness": {
+          "CURRENT": "Current",
+          "STALE": "Stale"
+        },
+        "blocker": {
+          "QUERY_EMPTY": "No work plans were returned",
+          "QUERY_PARTIAL": "Work plan data is incomplete",
+          "QUERY_UNAVAILABLE": "Work plan data is unavailable",
+          "WORKSPACE_STALE": "Work plan data is stale",
+          "WORKSPACE_UNAVAILABLE": "Work plan data is unavailable",
+          "ASSIGNMENT_STALE": "Assignment snapshot is stale",
+          "POLICY_PACK_MISSING": "Jurisdiction pack is missing",
+          "POLICY_PACK_EXPIRED": "Jurisdiction pack has expired",
+          "POLICY_PACK_OUT_OF_RANGE": "Effective date is outside the jurisdiction pack range",
+          "POLICY_PACK_STALE": "Jurisdiction pack is stale",
+          "POLICY_PACK_REVOKED": "Jurisdiction pack has been revoked",
+          "POLICY_PACK_INVALID": "Jurisdiction pack is invalid",
+          "POLICY_PACK_SIGNATURE_INVALID": "Jurisdiction pack signature is invalid",
+          "POLICY_NO_APPLICABLE_POLICY": "No applicable policy was resolved",
+          "POLICY_OVERLAP": "Policy precedence is ambiguous",
+          "POLICY_OUT_OF_RANGE": "Policy effective date is out of range",
+          "POLICY_STALE": "Policy resolution is stale",
+          "POLICY_REVOKED": "Policy pack has been revoked",
+          "POLICY_INVALID": "Policy pack is invalid",
+          "POLICY_SIGNATURE_INVALID": "Policy pack signature is invalid",
+          "SIMULATION_NOT_AUTHORIZED": "Simulation is not authorized"
+        },
+        "dstResolution": {
+          "EXACT": "Exact",
+          "GAP_REJECTED": "DST gap rejected",
+          "FOLD_EARLIER": "DST fold (earlier)",
+          "FOLD_LATER": "DST fold (later)"
+        },
+        "impact": {
+          "INFO": "Information",
+          "WARNING": "Warning",
+          "BLOCKING": "Blocking"
+        },
+        "lifecycle": {
+          "DRAFT": "Draft",
+          "VALIDATED": "Validated",
+          "SIMULATED": "Simulated",
+          "IN_REVIEW": "In review",
+          "APPROVED": "Approved",
+          "PUBLISHED": "Published"
+        },
+        "policyPack": {
+          "CURRENT": "Current",
+          "MISSING": "Missing",
+          "EXPIRED": "Expired",
+          "OUT_OF_RANGE": "Out of range",
+          "STALE": "Stale",
+          "REVOKED": "Revoked",
+          "INVALID": "Invalid",
+          "SIGNATURE_INVALID": "Signature invalid"
+        },
+        "receiptStatus": {
+          "ACCEPTED": "Accepted",
+          "RUNNING": "Running",
+          "SUCCEEDED": "Succeeded",
+          "REJECTED": "Rejected",
+          "FAILED": "Failed",
+          "RESULT_UNKNOWN": "Result unknown",
+          "RECONCILING": "Reconciling"
+        },
+        "resolution": {
+          "RESOLVED": "Resolved",
+          "NO_APPLICABLE_POLICY": "No applicable policy",
+          "OVERLAP": "Overlapping policy",
+          "PACK_MISSING": "Policy pack missing",
+          "PACK_EXPIRED": "Policy pack expired",
+          "OUT_OF_RANGE": "Out of range",
+          "STALE": "Stale",
+          "REVOKED": "Revoked",
+          "INVALID": "Invalid",
+          "SIGNATURE_INVALID": "Signature invalid"
+        },
+        "simulationStatus": {
+          "COMPLETE": "Complete",
+          "PARTIAL": "Partial",
+          "UNAVAILABLE": "Unavailable",
+          "STALE": "Stale"
+        },
+        "traceDisposition": {
+          "APPLIED": "Applied",
+          "SHADOWED": "Shadowed",
+          "NOT_APPLICABLE": "Not applicable"
+        }
+      }
+    },
+    "operationsAdapter": {
+      "scope": {
+        "title": "Work-plan operations are unavailable",
+        "description": "The tenant scope or current authorization decision could not be verified, so no work-plan data has been requested."
+      },
+      "ownerContract": {
+        "title": "Work-plan operations are not connected",
+        "description": "The owner DATA and governed ACTION contracts have not been registered. No work-plan data or simulations have been requested."
+      }
+    }
+  },
+  "productMap": {
+    "eyebrow": "HRIS · People · Time · Pay",
+    "title": "The complete HRIS work map",
+    "description": "People, time, payroll, and performance work is organized into five work surfaces. Only verifiable starting points open today; planned items explain the roadmap without leading to empty pages.",
+    "metrics": {
+      "total": "Target menus",
+      "pilot": "Pilot starts",
+      "surfaces": "Work surfaces"
+    },
+    "surfaceLabel": "HRIS work surfaces",
+    "surfaceOption": "{{label}} HRIS work surface · {{count}} menus",
+    "surface": {
+      "HOME": "Home",
+      "MY_HR": "My HR",
+      "TEAM": "My team",
+      "OPERATIONS": "HR operations",
+      "SETTINGS": "HRIS settings"
+    },
+    "moduleLabel": "Development module filter",
+    "module": {
+      "ALL": "All modules",
+      "SYS": "Core & settings",
+      "HRM": "People",
+      "TIM": "Time",
+      "PAY": "Payroll",
+      "PER": "Performance"
+    },
+    "personaLabel": "Primary persona filter",
+    "persona": {
+      "ALL": "All personas",
+      "EMPLOYEE": "Employee",
+      "MANAGER": "Manager",
+      "OPERATOR": "Operator",
+      "SETTINGS_ADMIN": "Settings admin",
+      "AUDITOR": "Enterprise auditor"
+    },
+    "legendLabel": "Menu delivery status",
+    "lifecycle": {
+      "PILOT": "Pilot start",
+      "PLANNED": "Planned",
+      "BLOCKED_EVIDENCE": "Policy or evidence required",
+      "EXTERNAL": "Provided in DWP administration"
+    },
+    "authorizationNote": "Primary personas are classification aids and role packages can be combined. This map is not an authorization decision.",
+    "authorizationRequired": "Route access required",
+    "availability": {
+      "CURRENT_RUNTIME": "Phase 1 available",
+      "LEGACY_PARTIAL": "Partly in existing UI",
+      "ROADMAP": "Target scope",
+      "DWP_CONTROL_PLANE": "DWP administration"
+    },
+    "filteredResult": "{{surface}} · {{count}} menus shown",
+    "resultCount": "{{count}} menus",
+    "open": "Open",
+    "emptyTitle": "No menu matches these filters",
+    "emptyDescription": "Change the work surface, module, or persona filter to continue."
+  },
   "shell": {
     "tenantFallback": "Company",
     "openNavigation": "Open HRIS navigation",
@@ -16,17 +349,27 @@
   "navigation": {
     "groups": {
       "hcm": {
-        "start": "Home",
+        "shell-home": "Start",
+        "workbenches": "Work areas",
+        "start": "HRIS home",
         "personal": "My HR",
-        "organization": "Organization",
-        "team": "Team management",
+        "organization": "My HR · Organization",
+        "team": "My team",
         "operate": "HR operations",
-        "design": "Organization design",
-        "foundation": "Data & integrations"
+        "design": "HRIS settings · Organization",
+        "foundation": "HRIS settings"
       }
     },
     "items": {
       "hcm": {
+        "shell-home": { "label": "HRIS home" },
+        "workbench-my-hr": { "label": "My HR" },
+        "workbench-team": { "label": "Team" },
+        "workbench-hr-operations": { "label": "People operations" },
+        "workbench-time": { "label": "Time" },
+        "workbench-payroll": { "label": "Payroll" },
+        "workbench-performance": { "label": "Performance" },
+        "workbench-settings": { "label": "Settings" },
         "home": { "label": "HRIS home" },
         "me": { "label": "My HR profile" },
         "time": { "label": "My time" },
@@ -49,6 +392,7 @@
         "pay-operations": { "label": "Pay operations" },
         "talent-operations": { "label": "Talent operations" },
         "organization-design": { "label": "Organization design" },
+        "system-access": { "label": "System access & configuration" },
         "reference-data": { "label": "Workforce reference data" },
         "data-operations": { "label": "Integrations & reconciliation" },
         "exports": { "label": "Governed exports" }
@@ -107,32 +451,32 @@
         "description": "Navigate teams and reporting relationships within the directory-safe boundary."
       },
       "team": {
-        "eyebrow": "HRIS / Team management",
+        "eyebrow": "HRIS / My team",
         "title": "My team",
         "description": "Review team composition and work locations from current reporting relationships."
       },
       "team-time": {
-        "eyebrow": "HRIS / Team management",
+        "eyebrow": "HRIS / My team",
         "title": "Team time approvals",
         "description": "Review submitted time cards inside your current reporting population."
       },
       "team-absence": {
-        "eyebrow": "HRIS / Team management",
+        "eyebrow": "HRIS / My team",
         "title": "Team leave approvals",
         "description": "Review time-off requests inside your current reporting population."
       },
       "operations": {
-        "eyebrow": "HRIS / Operations",
+        "eyebrow": "HRIS / HR operations",
         "title": "Workforce operations",
         "description": "Review workforce integrity, structure signals, and source freshness."
       },
       "people": {
-        "eyebrow": "HRIS / Operations",
+        "eyebrow": "HRIS / HR operations",
         "title": "Workforce people",
         "description": "Review effective-dated worker, assignment, organization, and access context."
       },
       "assignments": {
-        "eyebrow": "HRIS / Operations",
+        "eyebrow": "HRIS / HR operations",
         "title": "Assignment register",
         "description": "Inspect the current assignment projection for a selected effective date."
       },
@@ -166,8 +510,13 @@
         "title": "Organization design",
         "description": "Model organizations and positions through governed, reviewable scenarios."
       },
+      "system-access": {
+        "eyebrow": "HRIS / Settings",
+        "title": "System access and configuration",
+        "description": "Review the effective HRIS role groups, menu projection, widgets, and configuration evidence for this session."
+      },
       "reference-data": {
-        "eyebrow": "HRIS / Data governance",
+        "eyebrow": "HRIS / Settings",
         "title": "Workforce reference data",
         "description": "Govern company-owned HR codes while preserving product-owned contracts."
       },
@@ -177,7 +526,7 @@
         "description": "Control source connectors, mappings, synchronization, and reconciliation evidence."
       },
       "exports": {
-        "eyebrow": "HRIS / Data governance",
+        "eyebrow": "HRIS / Settings",
         "title": "Governed data exports",
         "description": "Review data boundaries and retain evidence across an approvable export lifecycle."
       }
@@ -625,6 +974,7 @@
     },
     "teamBoundary": "Only people and requests inside the current team data boundary ({{boundary}}) are shown.",
     "names": {
+      "WORKFORCE": "Workforce",
       "TIME": "Time",
       "ABSENCE": "Absence",
       "BENEFITS": "Benefits",
@@ -659,6 +1009,7 @@
       "COMPLETED": "Completed",
       "IN_PROGRESS": "In progress",
       "ASSIGNED": "Assigned",
+      "ON_TRACK": "On track",
       "AT_RISK": "At risk",
       "CANCELLED": "Cancelled",
       "RESOLVED": "Resolved",
@@ -883,6 +1234,9 @@
         "CRITICAL": "Act now"
       },
       "metricLabels": {
+        "WORKFORCE": {
+          "activeWorkers": "Active workers"
+        },
         "TIME": {
           "submitted": "Submitted cards",
           "openExceptions": "Open exceptions",

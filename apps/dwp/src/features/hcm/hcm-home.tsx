@@ -1,41 +1,26 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  ArrowDown,
-  BookOpenCheck,
-  CalendarDays,
-  CheckCircle2,
-  Clock3,
-  HeartPulse,
-  LayoutDashboard,
-  LifeBuoy,
-  ReceiptText,
-  RefreshCw,
-  ShieldAlert,
-  UsersRound,
-} from 'lucide-react';
+import { ArrowDown, CheckCircle2, LayoutDashboard, RefreshCw, ShieldAlert } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   ActionButton,
   ActionIconButton,
-  EmptyState,
   PageCanvas,
+  useDateTimePolicy,
 } from '@dwp-frontend/design-system';
-import { formatDate } from '@dwp-frontend/shared-i18n';
+import { resolveZonedClock, resolveZonedDateKey } from '@dwp-frontend/shared-i18n';
 import {
   HttpError,
   getHomeSurfacePreference,
-  getHrHome,
-  getOrganizationChart,
   updateHcmHomePreference,
   useAuth,
+  usePermissions,
   useToast,
 } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
-import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
@@ -54,68 +39,57 @@ import { WorkspaceWidgetGallery } from '../../components/workspace-composer/work
 import { HcmAttentionItem, hcmToneColor } from './hcm-home-visuals';
 import { HcmHomeWidgetContent } from './hcm-home-widgets';
 import { HCM_HOME_WIDGET_REGISTRY } from './hcm-home-widget-registry';
+import {
+  canLoadHcmHomeSourceSafely,
+  composeHcmHomeProvidersSafely,
+  hcmHomeProviderHasDegradation,
+  hcmHomeProviderStateSummary,
+  loadHcmHomeSourceSafely,
+  resolveHcmHomeSourceContributionSafely,
+  resolveHcmHomeProviderAudiences,
+  type HcmHomeProviderContext,
+  type HcmHomeModuleProviderRegistry,
+} from './hcm-home-provider-adapter';
+import { buildHcmHomeViewModel, greetingKey, type HcmHomeMode } from './hcm-home-view-model';
+import { useHcmHomeClock } from './use-hcm-home-clock';
 import { useHcmAccess } from './use-hcm-experience';
 import { useProductActionMutation } from '../../components/use-product-action-mutation';
+import { useProductSurfaceRequestScope } from '../../components/use-product-surface-request-scope';
 import {
   PRODUCT_PAGE_SHORTCUT_TARGETS,
   useProductPageShortcutAccess,
 } from '../../components/product-page-shortcut-access';
 
-import type { LucideIcon } from 'lucide-react';
 import type {
   HomePresentation,
   HomePreferenceLayout,
   HomeWidgetSize,
-  HrHomeOverview,
   PersonalHomeWidgetPreference,
 } from '@dwp-frontend/shared-utils';
 import type { HcmHomeWidgetKey } from './hcm-home-widget-registry';
-import type { HcmHomeTimeStage, HcmHomeToolLink } from './hcm-home-widgets';
 
-type HomeMode = 'personal' | 'team';
-type AttentionPriority = 'critical' | 'attention' | 'routine';
-
-type AttentionSignal = {
-  id: string;
-  icon: LucideIcon;
-  title: string;
-  description: string;
-  value: string;
-  actionLabel: string;
-  route: string;
-  priority: AttentionPriority;
-};
-
-function greetingKey(hour: number): 'morning' | 'afternoon' | 'evening' {
-  if (hour < 12) return 'morning';
-  if (hour < 18) return 'afternoon';
-  return 'evening';
-}
-
-function daysUntilDate(value: string | null | undefined, asOf: string) {
-  if (!value) return null;
-  const target = new Date(`${value.slice(0, 10)}T00:00:00Z`).getTime();
-  const reference = new Date(`${asOf.slice(0, 10)}T00:00:00Z`).getTime();
-  return Math.max(0, Math.ceil((target - reference) / 86_400_000));
-}
-
-function daysUntilInstant(value: string | null | undefined, generatedAt: string | null) {
-  if (!value) return null;
-  const reference = generatedAt ? new Date(generatedAt).getTime() : Date.now();
-  return Math.max(0, Math.ceil((new Date(value).getTime() - reference) / 86_400_000));
-}
-
-export function HcmHome() {
+export function HcmHome({
+  moduleProviderRegistry,
+}: {
+  moduleProviderRegistry: HcmHomeModuleProviderRegistry;
+}) {
   const { t } = useTranslation('hcm');
   const auth = useAuth();
   const toast = useToast();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { timeZone } = useDateTimePolicy();
+  const providerClockMs = useHcmHomeClock();
   const access = useHcmAccess();
+  const homeRequestScope = useProductSurfaceRequestScope({
+    productKey: 'hcm',
+    surfaceKey: 'hcm.personal',
+  });
+  const { permissions } = usePermissions();
   const employeeServicesShortcut = useProductPageShortcutAccess(
     PRODUCT_PAGE_SHORTCUT_TARGETS.hcmEmployeeServices
   );
-  const [homeMode, setHomeMode] = useState<HomeMode>('personal');
+  const [homeMode, setHomeMode] = useState<HcmHomeMode>('personal');
   const [editorOpen, setEditorOpen] = useState(false);
   const [galleryOpen, setGalleryOpen] = useState(false);
   const [editBaseVersion, setEditBaseVersion] = useState<number | null>(null);
@@ -123,14 +97,94 @@ export function HcmHome() {
   const [draftWidgets, setDraftWidgets] = useState<
     PersonalHomeWidgetPreference<HcmHomeWidgetKey>[]
   >(() => defaultWorkspaceWidgets(HCM_HOME_WIDGET_REGISTRY));
-  const hrOverview = useQuery({
-    queryKey: ['hcm', 'home-overview', auth.user?.tenantId, auth.user?.userId],
-    queryFn: getHrHome,
-    staleTime: 30_000,
-    retry: 1,
+  const resolvedIsManager = access.isManager;
+  const providerClockInstant = new Date(providerClockMs).toISOString();
+  const providerAsOf =
+    resolveZonedDateKey(providerClockMs, timeZone) ?? providerClockInstant.slice(0, 10);
+  const providerAudiences = resolveHcmHomeProviderAudiences({
+    roles: auth.user?.roles ?? [],
+    canAccessPersonal: access.canAccessPersonal,
+    isManager: resolvedIsManager,
+    canOperate: access.canOperate || access.canAccessOperationsOverview,
+    canManageSettings:
+      access.canAccessOrganizationDesign ||
+      access.canAccessReferenceData ||
+      access.canAccessDataOperations ||
+      access.canAccessExports,
   });
-  const resolvedIsManager =
-    access.isManager || (hrOverview.data?.employee.directReportCount ?? 0) > 0;
+  const authorityCacheKey = useMemo(
+    () =>
+      permissions
+        .map(
+          (permission) =>
+            `${permission.resourceType}:${permission.resourceKey}:${permission.permissionCode}:${permission.effect}`
+        )
+        .sort()
+        .join('|'),
+    [permissions]
+  );
+  const providerContext = useMemo<HcmHomeProviderContext>(
+    () => ({
+      audiences: providerAudiences,
+      scope: {
+        kind: homeMode === 'team' ? 'TEAM' : 'SELF',
+        key: homeMode === 'team' ? 'current-reporting-line' : 'current-person',
+      },
+      surfaceEntitled: access.canAccessPersonal && (homeMode === 'personal' || resolvedIsManager),
+      entitlements: permissions,
+      legacyCompatibilityAuthorities: [],
+      dataAuthorities: ['LEGACY_AGGREGATE_COMPATIBILITY', 'MODULE_API'],
+      tenantCacheKey:
+        auth.user?.tenantId === null || auth.user?.tenantId === undefined
+          ? null
+          : String(auth.user.tenantId),
+      subjectCacheKey:
+        auth.user?.userId === null || auth.user?.userId === undefined
+          ? null
+          : String(auth.user.userId),
+      authorityCacheKey,
+      contextScopeKey: homeRequestScope.contextScopeKey ?? null,
+      decisionRevision: homeRequestScope.queryMeta.decisionRevision,
+      accessMode: homeRequestScope.queryMeta.accessMode,
+      purpose: 'HRIS_HOME',
+      asOf: providerAsOf,
+      now: providerClockInstant,
+      traceId: null,
+    }),
+    [
+      access.canAccessPersonal,
+      authorityCacheKey,
+      auth.user?.tenantId,
+      auth.user?.userId,
+      homeMode,
+      homeRequestScope.contextScopeKey,
+      homeRequestScope.queryMeta.accessMode,
+      homeRequestScope.queryMeta.decisionRevision,
+      permissions,
+      providerAsOf,
+      providerAudiences,
+      providerClockInstant,
+      resolvedIsManager,
+    ]
+  );
+  const providerSourceQueries = useQueries({
+    queries: moduleProviderRegistry.sources.map((source) => {
+      const enabled = canLoadHcmHomeSourceSafely(
+        moduleProviderRegistry,
+        source.sourceId,
+        providerContext
+      );
+      return {
+        queryKey: source.queryKey(providerContext),
+        queryFn: ({ signal }: { signal: AbortSignal }) =>
+          loadHcmHomeSourceSafely(moduleProviderRegistry, source, providerContext, signal),
+        enabled,
+        meta: homeRequestScope.queryMeta,
+        staleTime: 30_000,
+        retry: 1,
+      };
+    }),
+  });
 
   useEffect(() => {
     if (homeMode === 'team' && !resolvedIsManager) setHomeMode('personal');
@@ -157,13 +211,6 @@ export function HcmHome() {
     queryKey: ['home-preference', 'hcm-home', auth.user?.tenantId, auth.user?.userId],
     queryFn: () => getHomeSurfacePreference<HcmHomeWidgetKey>('hcm-home'),
     staleTime: 5 * 60 * 1000,
-    retry: 1,
-  });
-  const teamChart = useQuery({
-    queryKey: ['hcm', 'team-chart'],
-    queryFn: () => getOrganizationChart({ depth: 12, surface: 'directory' }),
-    enabled: homeMode === 'team' && resolvedIsManager,
-    staleTime: 2 * 60 * 1000,
     retry: 1,
   });
   const persistedWidgets = useMemo(() => {
@@ -247,378 +294,109 @@ export function HcmHome() {
     },
   });
   const customizationBusy = homePreference.isLoading || preferenceMutation.isPending;
-
-  const directReports = useMemo(() => {
-    const managerPersonId = hrOverview.data?.employee.personId;
-    if (!managerPersonId) return [];
-    return (teamChart.data?.people ?? []).filter(
-      (person) => person.managerPersonId === managerPersonId
-    );
-  }, [hrOverview.data?.employee.personId, teamChart.data?.people]);
-  if (hrOverview.isLoading) {
-    return (
-      <PageCanvas>
-        <Typography component="h1" variant="h4" sx={{ mb: 2 }}>
-          {t('navigation.items.hcm.home.label')}
-        </Typography>
-        <Stack
-          data-testid="hcm-home-loading"
-          gap={2}
-          role="status"
-          aria-live="polite"
-          aria-busy="true"
-          aria-label={t('domains.loading')}
-        >
-          <Skeleton variant="rounded" height={112} />
-          <Skeleton variant="rounded" height={184} />
-          <Skeleton variant="rounded" height={300} />
-        </Stack>
-      </PageCanvas>
-    );
-  }
-
-  if (hrOverview.isError || !hrOverview.data) {
-    return (
-      <PageCanvas>
-        <Typography component="h1" variant="h4" sx={{ mb: 2 }}>
-          {t('navigation.items.hcm.home.label')}
-        </Typography>
-        <Box sx={{ minHeight: 360, display: 'grid', placeItems: 'center' }}>
-          <Stack alignItems="center" gap={1.5} role="alert">
-            <EmptyState
-              icon={<ShieldAlert size={30} />}
-              title={t('domains.loadError')}
-              description={t('home.error.description')}
-            />
-            <ActionButton
-              intent="secondary"
-              startIcon={<RefreshCw size={16} />}
-              onClick={() => void hrOverview.refetch()}
-            >
-              {t('common.retry')}
-            </ActionButton>
-          </Stack>
-        </Box>
-      </PageCanvas>
-    );
-  }
-
-  const overview: HrHomeOverview = hrOverview.data ?? {
-    asOf: new Date().toISOString().slice(0, 10),
-    generatedAt: null,
-    timeZone: 'UTC',
-    standardDayMinutes: null,
-    employee: {
-      personId: auth.user?.personPublicId ?? '',
-      displayName: auth.user?.displayName ?? t('home.personFallback'),
-      businessTitle: auth.user?.jobTitle,
-      organizationName: auth.user?.tenantName ?? auth.user?.tenantCode,
-      managerDisplayName: null,
-      directReportCount: 0,
-    },
-    time: null,
-    leaveBalances: [],
-    pay: null,
-    enrollmentWindows: [],
-    journeys: [],
-    activeBenefitCount: 0,
-    openBenefitWindowCount: 0,
-    activeGoalCount: 0,
-    requiredLearningCount: 0,
-    teamPendingCount: 0,
-    teamTimePendingCount: null,
-    teamAbsencePendingCount: null,
-    domainStates: {},
-    referenceDataPresent: false,
+  const providerResolutionNowMs = providerSourceQueries.reduce(
+    (latest, query) => Math.max(latest, query.dataUpdatedAt, query.errorUpdatedAt),
+    providerClockMs
+  );
+  const providerResolutionContext: HcmHomeProviderContext = {
+    ...providerContext,
+    now: new Date(providerResolutionNowMs).toISOString(),
   };
-  const domainAvailable = (domain: keyof typeof overview.domainStates) =>
-    overview.domainStates[domain]?.availability !== 'UNAVAILABLE';
-  const currentTime = domainAvailable('TIME') ? overview.time : null;
-  const selfDisplayName =
-    overview.employee.displayName || auth.user?.displayName || t('home.personFallback');
-  const firstName = selfDisplayName.trim().split(/\s+/u)[0] || t('home.personFallback');
-  const organizationName =
-    overview.employee.organizationName || auth.user?.tenantName || auth.user?.tenantCode || '-';
-  const recordedMinutes = currentTime?.recordedMinutes ?? 0;
-  const scheduledMinutes = currentTime?.scheduledMinutes ?? 0;
-  const remainingMinutes = Math.max(0, scheduledMinutes - recordedMinutes);
-  const recordedHours = Math.round((recordedMinutes / 60) * 10) / 10;
-  const scheduledHours = Math.round((scheduledMinutes / 60) * 10) / 10;
-  const primaryLeaveBalance = [...overview.leaveBalances].sort((left, right) => {
-    const leftAnnual = /ANNUAL/u.test(left.planKey) ? 1 : 0;
-    const rightAnnual = /ANNUAL/u.test(right.planKey) ? 1 : 0;
-    return rightAnnual - leftAnnual || right.grantedMinutes - left.grantedMinutes;
-  })[0];
-  const standardDayMinutes = overview.standardDayMinutes;
-  const availableLeaveDays =
-    primaryLeaveBalance && standardDayMinutes
-      ? Math.round((primaryLeaveBalance.availableMinutes / standardDayMinutes) * 10) / 10
-      : null;
-  const usedLeaveDays =
-    primaryLeaveBalance && standardDayMinutes
-      ? Math.round((primaryLeaveBalance.usedMinutes / standardDayMinutes) * 10) / 10
-      : null;
-  const payDaysRemaining = daysUntilDate(overview.pay?.payDate, overview.asOf);
-  const openBenefitWindows = [...overview.enrollmentWindows]
-    .filter((window) => window.lifecycleState === 'OPEN')
-    .sort((left, right) => new Date(left.closesAt).getTime() - new Date(right.closesAt).getTime());
-  const nearestBenefitWindow = openBenefitWindows[0];
-  const nearestBenefitWindowDays = daysUntilInstant(
-    nearestBenefitWindow?.closesAt,
-    overview.generatedAt
+  const providerContributions = moduleProviderRegistry.sources.flatMap((source, index) => {
+    const query = providerSourceQueries[index];
+    const reasonPrefix = source.sourceId.replace(/[^A-Z0-9]+/giu, '_').toLocaleUpperCase('en-US');
+    const reasonCode = query?.isError
+      ? `${reasonPrefix}_SOURCE_FAILED`
+      : query?.isLoading
+        ? `${reasonPrefix}_SOURCE_LOADING`
+        : `${reasonPrefix}_SOURCE_UNAVAILABLE`;
+    const contribution = resolveHcmHomeSourceContributionSafely(
+      moduleProviderRegistry,
+      source,
+      providerResolutionContext,
+      {
+        hasData: query?.data !== undefined,
+        data: query?.data,
+        reasonCode: query?.data !== undefined ? `${reasonPrefix}_PROJECTION_FAILED` : reasonCode,
+      }
+    );
+    return contribution ? [contribution] : [];
+  });
+  const providerComposition = composeHcmHomeProvidersSafely(
+    moduleProviderRegistry,
+    providerContributions,
+    providerResolutionContext
   );
-  const activeJourney = [...overview.journeys]
-    .filter((journey) => !['COMPLETED', 'CANCELLED'].includes(journey.status))
-    .sort((left, right) =>
-      (left.targetDate ?? '9999').localeCompare(right.targetDate ?? '9999')
-    )[0];
-  const journeyTargetDays = daysUntilDate(activeJourney?.targetDate, overview.asOf);
-  const currentDate = formatDate(overview.asOf, { dateStyle: 'full' });
-  const freshness = overview.generatedAt
-    ? formatDate(overview.generatedAt, {
-        dateStyle: 'medium',
-        timeStyle: 'short',
+  const moduleProviderSnapshots = providerComposition.snapshots;
+  const providerSourcesLoading = providerSourceQueries.some((query) => query.isLoading);
+  const providerSourcesRefreshing = providerSourceQueries.some((query) => query.isFetching);
+  const providerSourcesFailed = providerSourceQueries.some((query) => query.isError);
+  const refreshProviderSources = () =>
+    void Promise.all(
+      providerSourceQueries.flatMap((query, index) => {
+        const source = moduleProviderRegistry.sources[index];
+        return source &&
+          canLoadHcmHomeSourceSafely(
+            moduleProviderRegistry,
+            source.sourceId,
+            providerResolutionContext
+          )
+          ? [query.refetch()]
+          : [];
       })
-    : t('home.states.unavailable');
-  const hasSplitTeamPendingCounts =
-    typeof overview.teamTimePendingCount === 'number' &&
-    typeof overview.teamAbsencePendingCount === 'number';
-  const teamTimePendingCount = overview.teamTimePendingCount;
-  const teamAbsencePendingCount = overview.teamAbsencePendingCount;
-  const personalAttention: AttentionSignal[] = [
-    ...(currentTime?.exceptionCount
-      ? [
-          {
-            id: 'time-exception',
-            icon: ShieldAlert,
-            title: t('home.needsAttention.timeException.title'),
-            description: t('home.needsAttention.timeException.description'),
-            value: t('home.needsAttention.timeException.value', {
-              count: currentTime.exceptionCount,
-            }),
-            actionLabel: t('home.needsAttention.resolveTime'),
-            route: '/hr/time',
-            priority: 'critical' as const,
-          },
-        ]
-      : currentTime && currentTime.status === 'OPEN' && remainingMinutes > 0
-        ? [
-            {
-              id: 'time-remaining',
-              icon: Clock3,
-              title: t('home.needsAttention.timeRemaining.title'),
-              description: t('home.needsAttention.timeRemaining.description', {
-                end: formatDate(currentTime.periodEnd, { dateStyle: 'medium' }),
-              }),
-              value: t('home.needsAttention.timeRemaining.value', {
-                value: Math.round((remainingMinutes / 60) * 10) / 10,
-              }),
-              actionLabel: t('home.needsAttention.finishTime'),
-              route: '/hr/time',
-              priority: 'attention' as const,
-            },
-          ]
-        : []),
-    ...(domainAvailable('BENEFITS') && nearestBenefitWindow
-      ? [
-          {
-            id: 'benefit-window',
-            icon: HeartPulse,
-            title: t('home.needsAttention.benefitWindow.title'),
-            description: t('home.needsAttention.benefitWindow.description', {
-              name: nearestBenefitWindow.name,
-            }),
-            value: t('home.values.dDay', { value: nearestBenefitWindowDays ?? 0 }),
-            actionLabel: t('home.needsAttention.reviewEnrollment'),
-            route: '/hr/benefits',
-            priority: 'attention' as const,
-          },
-        ]
-      : []),
-    ...(domainAvailable('TALENT') && overview.requiredLearningCount > 0
-      ? [
-          {
-            id: 'required-learning',
-            icon: BookOpenCheck,
-            title: t('home.needsAttention.requiredLearning.title'),
-            description: t('home.needsAttention.requiredLearning.description'),
-            value: t('home.needsAttention.requiredLearning.value', {
-              count: overview.requiredLearningCount,
-            }),
-            actionLabel: t('home.needsAttention.continueLearning'),
-            route: '/hr/talent',
-            priority: 'routine' as const,
-          },
-        ]
-      : []),
-  ];
-  const teamAttention: AttentionSignal[] = [
-    ...(domainAvailable('TEAM') && (teamTimePendingCount ?? 0) > 0
-      ? [
-          {
-            id: 'team-time',
-            icon: Clock3,
-            title: t('home.needsAttention.teamTime.title'),
-            description: t('home.needsAttention.teamTime.description'),
-            value: t('home.needsAttention.teamTime.value', {
-              count: teamTimePendingCount,
-            }),
-            actionLabel: t('home.needsAttention.reviewTime'),
-            route: '/hr/team/time',
-            priority: 'attention' as const,
-          },
-        ]
-      : []),
-    ...(domainAvailable('TEAM') && (teamAbsencePendingCount ?? 0) > 0
-      ? [
-          {
-            id: 'team-absence',
-            icon: CalendarDays,
-            title: t('home.needsAttention.teamAbsence.title'),
-            description: t('home.needsAttention.teamAbsence.description'),
-            value: t('home.needsAttention.teamAbsence.value', {
-              count: teamAbsencePendingCount,
-            }),
-            actionLabel: t('home.needsAttention.reviewLeave'),
-            route: '/hr/team/absence',
-            priority: 'attention' as const,
-          },
-        ]
-      : []),
-    ...(domainAvailable('TEAM') && !hasSplitTeamPendingCounts && overview.teamPendingCount > 0
-      ? [
-          {
-            id: 'team-legacy',
-            icon: UsersRound,
-            title: t('home.guidance.teamApproval.title'),
-            description: t('home.guidance.teamApproval.description'),
-            value: t('home.guidance.teamApproval.value', {
-              count: overview.teamPendingCount,
-            }),
-            actionLabel: t('home.needsAttention.decide'),
-            route: '/hr/team',
-            priority: 'attention' as const,
-          },
-        ]
-      : []),
-  ];
-  const attentionSignals = homeMode === 'team' ? teamAttention : personalAttention;
-  const attentionUnavailable =
-    homeMode === 'team'
-      ? !domainAvailable('TEAM')
-      : !domainAvailable('TIME') || !domainAvailable('BENEFITS') || !domainAvailable('TALENT');
-  const personalTools: HcmHomeToolLink[] = [
-    {
-      id: 'time',
-      icon: Clock3,
-      label: t('home.tools.time'),
-      description: t('home.tools.descriptions.time'),
-      route: '/hr/time',
+    );
+  const providerStateSummary = hcmHomeProviderStateSummary(moduleProviderSnapshots);
+  const providerDegraded = hcmHomeProviderHasDegradation(moduleProviderSnapshots);
+  const greetingHour =
+    resolveZonedClock(providerResolutionNowMs, timeZone)?.hour ??
+    new Date(providerResolutionNowMs).getHours();
+  const today = providerAsOf;
+  const compositionMetadata = providerComposition.metadata;
+  const {
+    domainAvailable,
+    currentTime,
+    selfDisplayName,
+    firstName,
+    organizationName,
+    businessTitle,
+    managerDisplayName,
+    directReportCount,
+    primaryLeaveBalance,
+    standardDayMinutes,
+    availableLeaveDays,
+    usedLeaveDays,
+    payDaysRemaining,
+    hasPayCycle,
+    activeGoalCount,
+    requiredLearningCount,
+    activeJourneyCount,
+    activeJourneyProgressPercent,
+    journeyTargetDays,
+    currentDate,
+    freshness,
+    teamTimePendingCount,
+    teamAbsencePendingCount,
+    attentionSignals,
+    attentionUnavailable,
+    tools,
+    timeStages,
+    modeSummary,
+  } = buildHcmHomeViewModel({
+    aggregateMetadata: {
+      asOf: compositionMetadata?.asOf ?? today,
+      generatedAt: compositionMetadata?.generatedAt ?? null,
     },
-    {
-      id: 'leave',
-      icon: CalendarDays,
-      label: t('home.tools.requestLeave'),
-      description: t('home.tools.descriptions.requestLeave'),
-      route: '/hr/absence?request=open',
+    homeMode,
+    providerSnapshots: moduleProviderSnapshots,
+    identity: {
+      displayName: auth.user?.displayName,
+      jobTitle: auth.user?.jobTitle,
+      tenantName: auth.user?.tenantName,
+      tenantCode: auth.user?.tenantCode,
     },
-    {
-      id: 'pay',
-      icon: ReceiptText,
-      label: t('home.tools.pay'),
-      description: t('home.tools.descriptions.pay'),
-      route: '/hr/pay',
-    },
-    {
-      id: 'services',
-      icon: LifeBuoy,
-      label: t('home.tools.services'),
-      description: t('home.tools.descriptions.services'),
-      route: '/hr/services',
-    },
-    {
-      id: 'directory',
-      icon: UsersRound,
-      label: t('home.tools.directory'),
-      description: t('home.tools.descriptions.directory'),
-      route: '/hr/directory',
-    },
-  ];
-  const teamTools: HcmHomeToolLink[] = [
-    {
-      id: 'team',
-      icon: UsersRound,
-      label: t('home.tools.myTeam'),
-      description: t('home.tools.descriptions.myTeam'),
-      route: '/hr/team',
-    },
-    {
-      id: 'team-time',
-      icon: Clock3,
-      label: t('home.tools.teamTime'),
-      description: t('home.tools.descriptions.teamTime'),
-      route: '/hr/team/time',
-      badge: teamTimePendingCount ? String(teamTimePendingCount) : undefined,
-    },
-    {
-      id: 'team-absence',
-      icon: CalendarDays,
-      label: t('home.tools.teamAbsence'),
-      description: t('home.tools.descriptions.teamAbsence'),
-      route: '/hr/team/absence',
-      badge: teamAbsencePendingCount ? String(teamAbsencePendingCount) : undefined,
-    },
-    personalTools[4],
-  ];
-  const tools = (homeMode === 'team' ? teamTools : personalTools).filter(
-    (tool) => tool.id !== 'services' || employeeServicesShortcut.disclosed
-  );
-
-  const timeStatus = currentTime?.status ?? 'UNAVAILABLE';
-  const timeStages: HcmHomeTimeStage[] = [
-    {
-      label: t('home.rhythm.time.record'),
-      detail: currentTime
-        ? t('home.rhythm.time.recordValue', { recorded: recordedHours, target: scheduledHours })
-        : t('home.states.unavailable'),
-      state: !currentTime
-        ? 'upcoming'
-        : recordedMinutes >= scheduledMinutes && scheduledMinutes > 0
-          ? 'completed'
-          : 'current',
-    },
-    {
-      label: t('home.rhythm.time.validate'),
-      detail: currentTime
-        ? currentTime.exceptionCount
-          ? t('home.rhythm.time.exceptionValue', { count: currentTime.exceptionCount })
-          : t('home.rhythm.time.validated')
-        : t('home.states.unavailable'),
-      state: currentTime?.exceptionCount
-        ? 'current'
-        : recordedMinutes >= scheduledMinutes && scheduledMinutes > 0
-          ? 'completed'
-          : 'upcoming',
-    },
-    {
-      label: t('home.rhythm.time.submit'),
-      detail: t(`domains.status.${timeStatus}`, { defaultValue: timeStatus }),
-      state: ['SUBMITTED', 'APPROVED', 'LOCKED'].includes(timeStatus)
-        ? 'completed'
-        : currentTime && recordedMinutes >= scheduledMinutes && !currentTime.exceptionCount
-          ? 'current'
-          : 'upcoming',
-    },
-  ];
-
-  const modeSummary =
-    homeMode === 'team'
-      ? domainAvailable('TEAM')
-        ? t('home.header.teamSummary', { count: overview.teamPendingCount })
-        : t('home.header.teamUnavailableSummary')
-      : currentTime?.exceptionCount
-        ? t('home.header.personalExceptionSummary', { count: currentTime.exceptionCount })
-        : t('home.header.personalSummary');
+    employeeServicesDisclosed: employeeServicesShortcut.disclosed,
+    t,
+  });
 
   const openRhythm = () => {
     const target = document.getElementById('hcm-rhythm');
@@ -647,6 +425,17 @@ export function HcmHome() {
           {t(`home.needsAttention.${homeMode}Unavailable`)}
         </Typography>
       </Box>
+      {(providerSourcesFailed || providerDegraded) && (
+        <ActionButton
+          intent="quiet"
+          size="small"
+          startIcon={<RefreshCw size={15} />}
+          disabled={providerSourcesRefreshing}
+          onClick={refreshProviderSources}
+        >
+          {t('common.retry')}
+        </ActionButton>
+      )}
     </Stack>
   );
 
@@ -655,8 +444,8 @@ export function HcmHome() {
       widgetKey={widgetKey}
       size={size}
       homeMode={homeMode}
+      providerSnapshots={moduleProviderSnapshots}
       tools={tools}
-      overview={overview}
       currentTime={currentTime}
       timeStages={timeStages}
       domainAvailable={domainAvailable}
@@ -665,20 +454,19 @@ export function HcmHome() {
       standardDayMinutes={standardDayMinutes}
       primaryLeaveBalance={primaryLeaveBalance}
       payDaysRemaining={payDaysRemaining}
-      nearestBenefitWindow={nearestBenefitWindow}
-      nearestBenefitWindowDays={nearestBenefitWindowDays}
-      activeJourney={activeJourney}
+      hasPayCycle={hasPayCycle}
+      activeGoalCount={activeGoalCount}
+      requiredLearningCount={requiredLearningCount}
+      activeJourneyCount={activeJourneyCount}
+      activeJourneyProgressPercent={activeJourneyProgressPercent}
       journeyTargetDays={journeyTargetDays}
       selfDisplayName={selfDisplayName}
-      businessTitle={overview.employee.businessTitle || auth.user?.jobTitle}
+      businessTitle={businessTitle}
       organizationName={organizationName}
-      email={auth.user?.email}
+      managerDisplayName={managerDisplayName}
       teamTimePendingCount={teamTimePendingCount}
       teamAbsencePendingCount={teamAbsencePendingCount}
-      directReports={directReports}
-      teamLoading={teamChart.isLoading}
-      teamError={teamChart.isError}
-      onRetryTeam={() => void teamChart.refetch()}
+      directReportCount={directReportCount}
     />
   );
 
@@ -687,6 +475,12 @@ export function HcmHome() {
       <Box
         component="header"
         data-testid="hcm-home-overview"
+        data-hris-home-provider-registry={`v${moduleProviderRegistry.schemaVersion}`}
+        data-hris-home-data-authority={[
+          ...new Set(moduleProviderSnapshots.map((snapshot) => snapshot.dataAuthority)),
+        ].join(' ')}
+        data-hris-home-provider-states={providerStateSummary}
+        data-hris-home-provider-degraded={providerDegraded ? 'true' : 'false'}
         sx={{
           display: 'grid',
           gridTemplateColumns: { xs: '1fr', lg: 'minmax(0, 1fr) auto' },
@@ -705,12 +499,24 @@ export function HcmHome() {
             <Chip
               size="small"
               label={
-                overview.generatedAt
-                  ? t('home.header.updated', { value: freshness })
-                  : t('home.header.generatedUnavailable')
+                providerSourcesLoading
+                  ? t('domains.loading')
+                  : providerSourcesFailed
+                    ? t('domains.loadError')
+                    : compositionMetadata?.generatedAt
+                      ? t('home.header.updated', { value: freshness })
+                      : t('home.header.generatedUnavailable')
               }
-              color={overview.generatedAt ? 'default' : 'warning'}
-              variant={overview.generatedAt ? 'filled' : 'outlined'}
+              color={
+                compositionMetadata?.generatedAt && !providerSourcesFailed && !providerDegraded
+                  ? 'default'
+                  : 'warning'
+              }
+              variant={
+                compositionMetadata?.generatedAt && !providerSourcesFailed && !providerDegraded
+                  ? 'filled'
+                  : 'outlined'
+              }
               sx={{
                 height: 'auto',
                 minHeight: 22,
@@ -718,7 +524,7 @@ export function HcmHome() {
                 '& .MuiChip-label': { py: 0.25, whiteSpace: 'normal' },
               }}
             />
-            {overview.referenceDataPresent && (
+            {compositionMetadata?.referenceDataPresent && (
               <Chip
                 size="small"
                 icon={<ShieldAlert size={13} />}
@@ -733,6 +539,17 @@ export function HcmHome() {
                 }}
               />
             )}
+            {providerDegraded && (
+              <ActionButton
+                intent="quiet"
+                size="small"
+                startIcon={<RefreshCw size={14} aria-hidden="true" />}
+                disabled={providerSourcesRefreshing}
+                onClick={refreshProviderSources}
+              >
+                {t('common.retry')}
+              </ActionButton>
+            )}
           </Stack>
           <Typography
             component="h1"
@@ -744,7 +561,7 @@ export function HcmHome() {
               wordBreak: 'keep-all',
             }}
           >
-            {t(`home.greeting.${greetingKey(new Date().getHours())}`, { name: firstName })}
+            {t(`home.greeting.${greetingKey(greetingHour)}`, { name: firstName })}
           </Typography>
           <Typography
             variant="body2"
@@ -754,27 +571,21 @@ export function HcmHome() {
             {modeSummary}
           </Typography>
           <Typography variant="caption" color="text.secondary" sx={{ mt: 0.65, display: 'block' }}>
-            {[overview.employee.businessTitle || auth.user?.jobTitle, organizationName]
-              .filter(Boolean)
-              .join(' · ')}
+            {[businessTitle, organizationName].filter(Boolean).join(' · ')}
           </Typography>
         </Box>
         <Stack direction="row" alignItems="center" justifyContent="flex-end" gap={0.8}>
-          {hrOverview.data && resolvedIsManager && (
+          {resolvedIsManager && (
             <ToggleButtonGroup
               exclusive
               size="small"
               value={homeMode}
-              onChange={(_event, next: HomeMode | null) => next && setHomeMode(next)}
+              onChange={(_event, next: HcmHomeMode | null) => next && setHomeMode(next)}
               aria-label={t('home.mode.label')}
               sx={{ '& .MuiToggleButton-root': { minHeight: 34, px: 1.25, textTransform: 'none' } }}
             >
-              {hrOverview.data && (
-                <ToggleButton value="personal">{t('home.mode.personal')}</ToggleButton>
-              )}
-              {hrOverview.data && resolvedIsManager && (
-                <ToggleButton value="team">{t('home.mode.team')}</ToggleButton>
-              )}
+              <ToggleButton value="personal">{t('home.mode.personal')}</ToggleButton>
+              <ToggleButton value="team">{t('home.mode.team')}</ToggleButton>
             </ToggleButtonGroup>
           )}
           {!editorOpen && (
@@ -940,6 +751,7 @@ export function HcmHome() {
           editing={editorOpen}
           busy={customizationBusy}
           presentation={activePresentation}
+          scrollMode="document"
           getLabel={(widgetKey) => t(`home.widgets.${widgetKey}.label`)}
           onChange={setDraftWidgets}
           renderWidget={renderWidget}

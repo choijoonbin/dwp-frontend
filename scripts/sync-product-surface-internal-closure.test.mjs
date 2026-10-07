@@ -41,12 +41,13 @@ function createFixture() {
     (bundle) => bundle.version === closure.generatedFrom.authorizationBundle.version
   );
   assert.ok(closureBundle, 'the attested closure bundle must remain in the registry lineage');
+  const closureArtifact = closure.generatedFrom.authorizationBundle.artifact;
   fs.writeFileSync(
     path.join(architecture, 'product-surface-authorization.v1.json'),
     `${JSON.stringify(authorization, null, 2)}\n`
   );
   fs.writeFileSync(
-    path.join(official, 'product-surfaces-v1.bundle-v4.json'),
+    path.join(official, closureArtifact),
     `${JSON.stringify(closureBundle, null, 2)}\n`
   );
   fs.writeFileSync(
@@ -63,7 +64,7 @@ function createFixture() {
       checksum: closure.generatedFrom.rolloutInventory.checksum,
     },
     exactContract: {
-      reference: 'contracts/product-authorization/product-surfaces-v1.bundle-v4.json',
+      reference: `contracts/product-authorization/${closureArtifact}`,
       checksum: closure.generatedFrom.authorizationBundle.checksum,
       products: closure.products.map(({ productId }) => productId),
     },

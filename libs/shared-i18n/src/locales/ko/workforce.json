@@ -1060,7 +1060,8 @@
       "publish": {
         "title": "변경 게시",
         "help": "승인된 관계를 {{date}} 시행 이력으로 등록합니다.",
-        "action": "시행 예약"
+        "action": "시행 예약",
+        "releaseBlocked": "G-05 및 PS-03의 HCM·Security 승인이 완료될 때까지 운영 게시가 차단됩니다."
       },
       "states": {
         "DRAFT": "작성 중",

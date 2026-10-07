@@ -59,6 +59,11 @@ export type ProductNavigationItem = {
   path: string;
   view: string;
   icon: LucideIcon;
+  /**
+   * Presentation-only aliases used to keep a workbench selected while one of its already
+   * authorized descendant pages is open. These paths never grant route access.
+   */
+  activePathPrefixes?: readonly string[];
   requiredResourceKey?: string;
   requiredPermissionCode?: string;
   requiredAnyPermissionCodes?: readonly string[];
@@ -74,6 +79,17 @@ export type ProductNavigationGroup = {
   id: string;
   items: readonly ProductNavigationItem[];
 };
+
+/**
+ * Projects a product-wide shell from exact PAGE paths that have already passed the product's
+ * legacy or server authority boundary. The projection may only select from `authorizedPaths`.
+ */
+export type ProductShellNavigationProjection = Readonly<{
+  hideSurfaceNavigation?: boolean;
+  project: (authorizedPaths: ReadonlySet<string>) => readonly ProductNavigationGroup[];
+  /** Resolves canonical ownership independently of visibility so a hidden sibling cannot leak. */
+  resolveSelectedView?: (pathname: string) => string | undefined;
+}>;
 
 export type ProductSurfaceNavigationItem = ProductNavigationItem & {
   taskKind: ProductTaskKind;
@@ -165,6 +181,40 @@ export function isSegmentOwnedPath(pathname: string, prefix: string): boolean {
   return path === boundary || path.startsWith(`${boundary}/`);
 }
 
+/**
+ * Resolves one navigation owner for the current location.
+ *
+ * A broad workbench prefix may overlap a more specific workbench route. The longest matching
+ * segment boundary owns the location; an equal-rank collision fails closed instead of selecting
+ * multiple entries.
+ */
+export function resolveProductNavigationSelection(
+  pathname: string,
+  groups: readonly ProductNavigationGroup[]
+): ProductNavigationItem | undefined {
+  const normalizedPath = normalizeProductPath(pathname);
+  let owner: ProductNavigationItem | undefined;
+  let ownerLength = -1;
+  let ambiguous = false;
+
+  for (const item of groups.flatMap((group) => group.items)) {
+    const candidates = item.activePathPrefixes?.length ? item.activePathPrefixes : [item.path];
+    for (const candidate of candidates) {
+      const normalizedCandidate = normalizeProductPath(candidate);
+      if (!isSegmentOwnedPath(normalizedPath, normalizedCandidate)) continue;
+      if (normalizedCandidate.length > ownerLength) {
+        owner = item;
+        ownerLength = normalizedCandidate.length;
+        ambiguous = false;
+      } else if (normalizedCandidate.length === ownerLength && owner !== item) {
+        ambiguous = true;
+      }
+    }
+  }
+
+  return ambiguous ? undefined : owner;
+}
+
 export function matchesProductRoute(pathname: string, matcher: ProductRouteMatcher): boolean {
   const path = normalizeProductPath(pathname);
   const matcherPath = normalizeProductPath(matcher.path);
@@ -225,6 +275,15 @@ function validateLegacyNavigation(
   }
   if (item.requiredAnySupportScopes?.some((scope) => !scope.trim())) {
     throw new Error(`${manifest.id} navigation support scope is incomplete: ${item.path}`);
+  }
+  for (const activePath of item.activePathPrefixes ?? []) {
+    assertCanonicalPath(
+      activePath,
+      `${manifest.id} navigation active path must be canonical: ${activePath}`
+    );
+    if (!isSegmentOwnedPath(activePath, manifest.basePath)) {
+      throw new Error(`${manifest.id} navigation active path is outside its product boundary.`);
+    }
   }
 }
 

@@ -46,6 +46,7 @@ import { useGovernedHomeAppCatalog } from '../../features/shell/use-governed-hom
 import { homeUserAccessFingerprint } from '../../features/home/runtime/home-access-fingerprint';
 import { homeDeviceClassForAvailableWidth } from '../../features/home/runtime/home-available-width';
 import { resolveHomeDeviceClass } from '../../features/home/runtime/home-page-runtime-state';
+import { homeNotificationRuntimeAuthorized } from './home-notification-runtime';
 import {
   homeV2NativeRuntimeState,
   homeV2ToExperience,
@@ -187,6 +188,9 @@ export function useHomeCoreReadModel({
     legacy: recommendationFeedback,
     legacyEnabled,
   } as const;
+  const notificationSummaryAuthorized = homeNotificationRuntimeAuthorized(
+    hasPermission('APP.NOTIFICATIONS', 'VIEW')
+  );
   const legacyNotificationSummaryQuery = useQuery({
     queryKey: notificationQueryKeys.appSummary({
       tenantId: auth.user?.tenantId,
@@ -195,10 +199,7 @@ export function useHomeCoreReadModel({
     }),
     queryFn: ({ signal }) => getNotificationSummaryByApp(signal),
     enabled: Boolean(
-      legacyEnabled &&
-      auth.user?.tenantId &&
-      auth.user?.userId &&
-      hasPermission('APP.NOTIFICATIONS', 'VIEW')
+      legacyEnabled && notificationSummaryAuthorized && auth.user?.tenantId && auth.user?.userId
     ),
     staleTime: HOME_NOTIFICATION_BADGE_FRESHNESS_MS,
     refetchInterval: HOME_NOTIFICATION_BADGE_FRESHNESS_MS,
@@ -292,7 +293,6 @@ export function useHomeCoreReadModel({
       ),
     [homeExperienceQuery.data?.launchpadConfiguration, locale, translate]
   );
-  const notificationSummaryAuthorized = hasPermission('APP.NOTIFICATIONS', 'VIEW');
   const entitledAppsWithBadges = useHomeAppsWithBadges({
     apps: launchpadCatalog.apps,
     roles: auth.user?.roles ?? [],

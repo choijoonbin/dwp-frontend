@@ -49,6 +49,38 @@ test('workforce operators see governed aggregate evidence by HR domain', async (
   expect(accessibility.violations).toEqual([]);
 });
 
+test('workforce aggregate remains actionable when the owner returns its workforce domain', async ({
+  page,
+}) => {
+  await mockShellSession(page, ['ADMIN', 'HR_ADMIN', 'PEOPLE_ADMIN'], {
+    permissions: FULL_PRODUCT_PERMISSIONS,
+  });
+  await page.route('**/api/people/v1/workforce/operations/overview**', (route) =>
+    fulfillSuccess(route, {
+      generatedAt: '2026-10-06T08:00:00Z',
+      dataBoundary: 'ORGANIZATION_SET',
+      fieldGroups: ['DIRECTORY', 'EMPLOYMENT'],
+      domains: [
+        {
+          domain: 'WORKFORCE',
+          pendingCount: 0,
+          metrics: [{ key: 'activeWorkers', value: 176, severity: 'INFO' }],
+        },
+      ],
+    })
+  );
+
+  await page.goto('/hr/operations');
+
+  await expect(page.getByRole('heading', { name: 'Workforce operations summary' })).toBeVisible();
+  await expect(page.getByText('Active workers')).toBeVisible();
+  await expect(page.getByText('176', { exact: true })).toBeVisible();
+  const openPeople = page.getByRole('button', { name: 'Workforce people' });
+  await expect(openPeople).toBeVisible();
+  await openPeople.click();
+  await expect(page).toHaveURL(/\/hr\/operations\/people(?:\?|$)/u);
+});
+
 test('workforce overview exposes a retryable boundary when aggregate evidence fails', async ({
   page,
 }) => {

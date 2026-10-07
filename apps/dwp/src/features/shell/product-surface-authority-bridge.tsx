@@ -22,6 +22,7 @@ import {
 } from '../../components/direct-decision-lease';
 import { productSurfaceOperationCoordinator } from '../../components/product-surface-operation-coordinator';
 import {
+  isAllowedCanaryDecisionTrusted,
   isProductSurfaceEnforced,
   ProductSurfaceCanaryProvider,
   resolveProductSurfaceRolloutMode,
@@ -516,13 +517,14 @@ function pageEvaluationEnabled(flags: ProductSurfaceRolloutFlags | undefined): b
   );
 }
 
-function surfaceDecision(
+export function resolveSurfaceDecision(
   decisions: readonly SurfaceDecision[],
   activePageDecision?: SurfaceDecision
 ): SurfaceDecision {
   return (
     (activePageDecision?.state === 'allowed' ? activePageDecision : undefined) ??
     decisions.find((decision) => decision.state === 'allowed') ??
+    (activePageDecision?.state !== 'authority-unavailable' ? activePageDecision : undefined) ??
     decisions.find((decision) => decision.state === 'authority-unavailable') ??
     decisions[0] ?? { state: 'authority-unavailable' }
   );
@@ -823,19 +825,35 @@ export function ProductSurfaceAuthorityBridge({
   const surfaceDecisions = useMemo(
     () =>
       Object.fromEntries(
-        [...new Set(requests.map(({ route }) => route.surfaceId))].map((surfaceId) => [
-          surfaceId,
-          surfaceDecision(
-            requests
-              .filter(({ route }) => route.surfaceId === surfaceId)
-              .map(({ route }) => routeDecisions[route.routeContractKey]!),
+        [...new Set(requests.map(({ route }) => route.surfaceId))].map((surfaceId) => {
+          const surfaceRequests = requests.filter(({ route }) => route.surfaceId === surfaceId);
+          const aggregateDecisions = surfaceRequests.map(({ route }) => {
+            const decision = routeDecisions[route.routeContractKey]!;
+            return decision.state === 'allowed' &&
+              !isAllowedCanaryDecisionTrusted(
+                { envelope, serverNowMs: authority.serverNowMs },
+                decision,
+                { productId: route.productId, surfaceId }
+              )
+              ? ({ state: 'authority-unavailable' } as const)
+              : decision;
+          });
+          const activeDecisionIndex =
             activePageRoute?.surfaceId === surfaceId
-              ? routeDecisions[activePageRoute.routeContractKey]
-              : undefined
-          ),
-        ])
+              ? surfaceRequests.findIndex(
+                  ({ route }) => route.routeContractKey === activePageRoute.routeContractKey
+                )
+              : -1;
+          return [
+            surfaceId,
+            resolveSurfaceDecision(
+              aggregateDecisions,
+              activeDecisionIndex >= 0 ? aggregateDecisions[activeDecisionIndex] : undefined
+            ),
+          ];
+        })
       ),
-    [activePageRoute, requests, routeDecisions]
+    [activePageRoute, authority.serverNowMs, envelope, requests, routeDecisions]
   );
   const previousStorageRevision = useRef<string | undefined>(undefined);
   useEffect(() => {

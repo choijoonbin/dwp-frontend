@@ -55,19 +55,19 @@ const DISCLOSURE_BINDINGS: readonly DisclosureBinding[] = [
     file: 'features/workforce/workforce-export-action-access.ts',
     capability: 'hcm.controlled-export.create',
     expected:
-      "create: access.governed ? access.hasWritableCapability('hcm.controlled-export.create') : legacyCanGovern,",
+      "create: access.governed && access.hasWritableCapability('hcm.controlled-export.create'),",
   },
   {
     file: 'features/workforce/workforce-export-action-access.ts',
     capability: 'hcm.controlled-export.cancel',
     expected:
-      "cancel: access.governed ? access.hasWritableCapability('hcm.controlled-export.cancel') : legacyCanGovern,",
+      "cancel: access.governed && access.hasWritableCapability('hcm.controlled-export.cancel'),",
   },
   {
     file: 'features/workforce/workforce-export-action-access.ts',
     capability: 'hcm.controlled-export.retry',
     expected:
-      "retry: access.governed ? access.hasWritableCapability('hcm.controlled-export.retry') : legacyCanGovern,",
+      "retry: access.governed && access.hasWritableCapability('hcm.controlled-export.retry'),",
   },
 ] as const;
 
@@ -144,7 +144,7 @@ describe('Product action disclosure contracts', () => {
 
   it('keeps the HCM personal Work home free of management modes, data, and tools', () => {
     const home = source('features/hcm/hcm-home.tsx');
-    expect(home).toContain("type HomeMode = 'personal' | 'team';");
+    expect(home).toContain("useState<HcmHomeMode>('personal')");
     expect(home).not.toContain('experience.canOperate');
     expect(home).not.toContain('listHrisSyncRuns');
     expect(home).not.toContain("surface: 'workforce'");

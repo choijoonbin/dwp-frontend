@@ -638,8 +638,9 @@ function validateInternalClosureHandoff(manifestValue, closure, authorization) {
   if (
     closure.generatedFrom?.backend?.repository !== 'https://github.com/choijoonbin/dwp-backend' ||
     !/^[a-f0-9]{40}$/.test(closure.generatedFrom?.backend?.revision ?? '') ||
-    closure.generatedFrom?.authorizationBundle?.artifact !== 'product-surfaces-v1.bundle-v4.json' ||
-    closure.generatedFrom?.authorizationBundle?.version !== 4 ||
+    closure.generatedFrom?.authorizationBundle?.artifact !==
+      'product-surfaces-v1.bundle-v34.json' ||
+    closure.generatedFrom?.authorizationBundle?.version !== 34 ||
     !/^[a-f0-9]{64}$/.test(closure.generatedFrom?.authorizationBundle?.checksum ?? '') ||
     closure.generatedFrom?.negativeMatrix?.artifact !== 'authorization-negative-matrix.v1.json' ||
     closure.generatedFrom?.negativeMatrix?.matrixId !==
@@ -738,7 +739,7 @@ function validateInternalClosureHandoff(manifestValue, closure, authorization) {
       product.contractStatus !== expectedContractStatus
     ) {
       errors.push(
-        `${label} route kinds or contract status differ from the v4 authorization bundle.`
+        `${label} route kinds or contract status differ from the v${closureVersion} authorization bundle.`
       );
     }
     if (expectedContractStatus === 'EXACT') exactProducts += 1;

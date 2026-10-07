@@ -1,8 +1,8 @@
 # R1 DWP HCM Product Shell 및 Role-Aware Experience ADR
 
-> 상태: Accepted and Implemented Local Baseline v1.4
+> 상태: Accepted and Implemented Local Baseline v1.5
 >
-> 기준일: 2026-08-14
+> 기준일: 2026-09-29
 >
 > 적용 저장소: `dwp-frontend`, `dwp-backend`
 
@@ -92,6 +92,7 @@ Operator 여부는 운영 역할, `APP.WORKFORCE_MANAGEMENT` Entitlement와
 | HR 도메인 운영          | `/hr/operations/{time,absence,benefits,pay,talent}`               |
 | 구성원·발령 운영        | `/hr/operations/people`, `/hr/operations/assignments`             |
 | 조직 설계               | `/hr/design/organization`                                         |
+| 시스템 접근 및 구성     | `/hr/manage/system`                                               |
 | 기준정보·HRIS 연계·반출 | `/hr/data/reference`, `/hr/data/integrations`, `/hr/data/exports` |
 
 기존 Bookmark와 감사 Deep Link를 깨지 않기 위해 `/people/**`, `/workforce/**`는 Query와
@@ -134,6 +135,8 @@ HR Home은 마케팅 Hero나 장식용 Dashboard가 아니다. 사용자가 5초
   이메일과 표시 이름은 레거시·부분 동기화 계정의 제한된 Fallback으로만 사용한다.
 - `useHcmExperience`가 이 연결 결과로 Manager·Operator·Support Audience를 계산한다.
 - `visibleHcmNavigation`은 순수 함수로 유지해 역할 조합별 메뉴 계약을 단위 테스트한다.
+- `/hr/manage/system`은 `hcm.management-system-access.v1` 정책과 Tenant Scope로만 열고,
+  `view=system`으로 제한된 접근 Snapshot·구성 Projection을 읽기 전용으로 결합한다.
 - 직접 URL 접근도 `HcmPage`가 Audience와 Permission을 다시 검사해 허용되지 않은 화면을
   HR Home으로 복귀시킨다.
 - HR API는 Request의 Worker ID가 아니라 검증된 `person_public_id`로 본인을 결정하고,

@@ -1,7 +1,97 @@
 {
   "version": 1,
-  "maximumEntries": 1,
+  "maximumEntries": 16,
   "entries": [
+    {
+      "path": "apps/dwp/src/features/hris/shell/components/hris-product-map-group.tsx",
+      "owner": "HRIS Integration Control",
+      "reason": "Phase 1 review explorer intentionally remains outside the home dashboard after the approved home-versus-explorer separation.",
+      "removalCondition": "Remove when the governed HRIS work explorer route is added with its product-surface authorization contract."
+    },
+    {
+      "path": "apps/dwp/src/features/hris/shell/components/hris-product-map.tsx",
+      "owner": "HRIS Integration Control",
+      "reason": "Phase 1 review explorer intentionally remains outside the home dashboard after the approved home-versus-explorer separation.",
+      "removalCondition": "Remove when the governed HRIS work explorer route is added with its product-surface authorization contract."
+    },
+    {
+      "path": "apps/dwp/src/features/hris/shell/index.ts",
+      "owner": "HRIS Integration Control",
+      "reason": "Phase 1 review explorer public API intentionally remains outside the home dashboard after the approved home-versus-explorer separation.",
+      "removalCondition": "Remove when the governed HRIS work explorer route is added with its product-surface authorization contract."
+    },
+    {
+      "path": "apps/dwp/src/features/hris/shell/model/catalog/dwp-control.ts",
+      "owner": "HRIS Integration Control",
+      "reason": "Phase 1 review catalog intentionally remains outside the home dashboard after the approved home-versus-explorer separation.",
+      "removalCondition": "Remove when the governed HRIS work explorer route is added with its product-surface authorization contract."
+    },
+    {
+      "path": "apps/dwp/src/features/hris/shell/model/catalog/hr-operations.ts",
+      "owner": "HRIS Integration Control",
+      "reason": "Phase 1 review catalog intentionally remains outside the home dashboard after the approved home-versus-explorer separation.",
+      "removalCondition": "Remove when the governed HRIS work explorer route is added with its product-surface authorization contract."
+    },
+    {
+      "path": "apps/dwp/src/features/hris/shell/model/catalog/my-hr.ts",
+      "owner": "HRIS Integration Control",
+      "reason": "Phase 1 review catalog intentionally remains outside the home dashboard after the approved home-versus-explorer separation.",
+      "removalCondition": "Remove when the governed HRIS work explorer route is added with its product-surface authorization contract."
+    },
+    {
+      "path": "apps/dwp/src/features/hris/shell/model/catalog/payroll.ts",
+      "owner": "HRIS Integration Control",
+      "reason": "Phase 1 review catalog intentionally remains outside the home dashboard after the approved home-versus-explorer separation.",
+      "removalCondition": "Remove when the governed HRIS work explorer route is added with its product-surface authorization contract."
+    },
+    {
+      "path": "apps/dwp/src/features/hris/shell/model/catalog/performance.ts",
+      "owner": "HRIS Integration Control",
+      "reason": "Phase 1 review catalog intentionally remains outside the home dashboard after the approved home-versus-explorer separation.",
+      "removalCondition": "Remove when the governed HRIS work explorer route is added with its product-surface authorization contract."
+    },
+    {
+      "path": "apps/dwp/src/features/hris/shell/model/catalog/settings.ts",
+      "owner": "HRIS Integration Control",
+      "reason": "Phase 1 review catalog intentionally remains outside the home dashboard after the approved home-versus-explorer separation.",
+      "removalCondition": "Remove when the governed HRIS work explorer route is added with its product-surface authorization contract."
+    },
+    {
+      "path": "apps/dwp/src/features/hris/shell/model/catalog/team.ts",
+      "owner": "HRIS Integration Control",
+      "reason": "Phase 1 review catalog intentionally remains outside the home dashboard after the approved home-versus-explorer separation.",
+      "removalCondition": "Remove when the governed HRIS work explorer route is added with its product-surface authorization contract."
+    },
+    {
+      "path": "apps/dwp/src/features/hris/shell/model/catalog/time.ts",
+      "owner": "HRIS Integration Control",
+      "reason": "Phase 1 review catalog intentionally remains outside the home dashboard after the approved home-versus-explorer separation.",
+      "removalCondition": "Remove when the governed HRIS work explorer route is added with its product-surface authorization contract."
+    },
+    {
+      "path": "apps/dwp/src/features/hris/shell/model/hris-product-map-catalog.ts",
+      "owner": "HRIS Integration Control",
+      "reason": "Phase 1 review catalog intentionally remains outside the home dashboard after the approved home-versus-explorer separation.",
+      "removalCondition": "Remove when the governed HRIS work explorer route is added with its product-surface authorization contract."
+    },
+    {
+      "path": "apps/dwp/src/features/hris/shell/model/hris-product-map-contract.ts",
+      "owner": "HRIS Integration Control",
+      "reason": "Phase 1 review catalog intentionally remains outside the home dashboard after the approved home-versus-explorer separation.",
+      "removalCondition": "Remove when the governed HRIS work explorer route is added with its product-surface authorization contract."
+    },
+    {
+      "path": "apps/dwp/src/features/hris/shell/model/hris-retained-route-registry.ts",
+      "owner": "HRIS Integration Control",
+      "reason": "Phase 1 review catalog intentionally remains outside the home dashboard after the approved home-versus-explorer separation.",
+      "removalCondition": "Remove when the governed HRIS work explorer route is added with its product-surface authorization contract."
+    },
+    {
+      "path": "apps/dwp/src/features/hris/administration/index.ts",
+      "owner": "HRIS Integration Control",
+      "reason": "The legacy administration aggregate barrel remains unused; production routes import the governed system-access entry directly.",
+      "removalCondition": "Remove when another production administration surface consumes the aggregate barrel or the barrel is deleted."
+    },
     {
       "path": "apps/dwp/src/routes/product-menu-manifest.ts",
       "owner": "Frontend Architecture",

@@ -23,3 +23,7 @@ export const HOME_PERSONALIZATION_V2_ENABLED =
 
 export const HOME_WIDGET_LIBRARY_ENABLED =
   String(import.meta.env.VITE_HOME_WIDGET_LIBRARY_ENABLED || 'false').toLowerCase() === 'true';
+
+export const PRODUCT_NOTIFICATION_RUNTIME_ENABLED =
+  String(import.meta.env.VITE_PRODUCT_NOTIFICATION_RUNTIME || 'enabled').toLowerCase() !==
+  'disabled';

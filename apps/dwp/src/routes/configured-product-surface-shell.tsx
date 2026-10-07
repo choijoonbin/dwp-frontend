@@ -1,7 +1,11 @@
 import { useTranslation } from 'react-i18next';
 
 import { useProductApplicationRuntime } from '../components/product-application-runtime';
-import type { ProductPlane, ProductSurfaceManifest } from '../components/product-manifest';
+import type {
+  ProductPlane,
+  ProductShellNavigationProjection,
+  ProductSurfaceManifest,
+} from '../components/product-manifest';
 import { ProductSurfaceAccessState } from '../components/product-surface-access-state';
 import { useAllowedProductSurface } from '../features/shell/allowed-product-surface-context';
 import {
@@ -47,6 +51,7 @@ export function ConfiguredProductSurfaceShell({
   translationNamespace,
   resolveMobileShell,
   legacy,
+  shellNavigationProjection,
 }: {
   manifest: ProductSurfaceManifest;
   surfaceId: string;
@@ -54,6 +59,7 @@ export function ConfiguredProductSurfaceShell({
   translationNamespace: NonNullable<ProductAreaLayoutProps['translationNamespace']>;
   resolveMobileShell?: ProductAreaLayoutProps['resolveMobileShell'];
   legacy: ReactNode;
+  shellNavigationProjection?: ProductShellNavigationProjection;
 }) {
   const decision = useAllowedProductSurface();
   const applicationRuntime = useProductApplicationRuntime();
@@ -97,6 +103,7 @@ export function ConfiguredProductSurfaceShell({
     translationNamespace,
     resolveMobileShell,
     surface: runtime,
+    shellNavigationProjection,
   };
   if (presentation === 'compatibility-management' || presentation === 'compatibility-work') {
     return <ProductAreaLayout {...layoutProps} />;

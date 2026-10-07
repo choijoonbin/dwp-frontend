@@ -4,15 +4,11 @@ type CapabilityAccess = Readonly<{
 }>;
 
 export function workforceExportActionAccess(access: CapabilityAccess, legacyCanGovern: boolean) {
+  void legacyCanGovern;
   return {
-    create: access.governed
-      ? access.hasWritableCapability('hcm.controlled-export.create')
-      : legacyCanGovern,
-    cancel: access.governed
-      ? access.hasWritableCapability('hcm.controlled-export.cancel')
-      : legacyCanGovern,
-    retry: access.governed
-      ? access.hasWritableCapability('hcm.controlled-export.retry')
-      : legacyCanGovern,
+    // A legacy administrator role is not target-population-bound export evidence.
+    create: access.governed && access.hasWritableCapability('hcm.controlled-export.create'),
+    cancel: access.governed && access.hasWritableCapability('hcm.controlled-export.cancel'),
+    retry: access.governed && access.hasWritableCapability('hcm.controlled-export.retry'),
   } as const;
 }

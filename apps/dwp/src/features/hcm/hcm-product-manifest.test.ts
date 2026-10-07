@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import authorizationSource from '../../../../../architecture/product-surface-authorization.v1.json';
 import { PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE } from '../../routes/product-page-route-contracts';
 import { hcmRoutes } from '../../routes/hcm-routes';
-import { HCM_PRODUCT_MANIFEST } from './hcm-product-manifest';
+import { HCM_APP_ENTITLEMENT_CUTOVER, HCM_PRODUCT_MANIFEST } from './hcm-product-manifest';
 
 import type { RouteObject } from 'react-router-dom';
 
@@ -40,9 +40,24 @@ const HCM_DATA_ROUTE_KEYS = [
   'route.hcm.management.controlled-export-preview.data',
   'route.hcm.management.integration-code-sets.data',
   'route.hcm.management.org-code-sets.data',
+  'route.hcm.operations.payroll-foundation-configuration.data',
+  'route.hcm.operations.payroll-foundation-configurations.data',
+  'route.hcm.operations.payroll-foundation-receipt.data',
+  'route.hcm.operations.payroll-foundation-versions.data',
+  'route.hcm.operations.people360-detail.data',
+  'route.hcm.operations.people360-search.data',
+  'route.hcm.operations.performance-cycle-command-receipt.data',
+  'route.hcm.operations.performance-cycle-detail.data',
+  'route.hcm.operations.performance-cycles-list.data',
   'route.hcm.operations.person-detail.data',
+  'route.hcm.operations.work-plan-receipt.data',
+  'route.hcm.operations.work-plans-list.data',
+  'route.hcm.personal.configuration-projection.data',
   'route.hcm.personal.directory-person-detail.data',
   'route.hcm.personal.home-preference.data',
+  'route.hcm.personal.people360-self.data',
+  'route.hcm.personal.product-access-snapshot.data',
+  'route.hcm.team.people360-detail.data',
 ] as const;
 
 const HCM_ACTION_ROUTE_KEYS = [
@@ -59,7 +74,24 @@ const HCM_ACTION_ROUTE_KEYS = [
   'route.hcm.management.org-update.action',
   'route.hcm.management.reference-update.action',
   'route.hcm.operations.absence-approve.action',
+  'route.hcm.operations.payroll-foundation-create.action',
+  'route.hcm.operations.payroll-foundation-publish.action',
+  'route.hcm.operations.payroll-foundation-reconcile.action',
+  'route.hcm.operations.payroll-foundation-reverse.action',
+  'route.hcm.operations.payroll-foundation-simulate.action',
+  'route.hcm.operations.payroll-foundation-update.action',
+  'route.hcm.operations.performance-cycle-create.action',
+  'route.hcm.operations.performance-cycle-population-preview.action',
+  'route.hcm.operations.performance-cycle-publish.action',
+  'route.hcm.operations.performance-cycle-update.action',
+  'route.hcm.operations.performance-cycle-validate.action',
   'route.hcm.operations.time-approve.action',
+  'route.hcm.operations.work-plan-apply-approval.action',
+  'route.hcm.operations.work-plan-create.action',
+  'route.hcm.operations.work-plan-publish.action',
+  'route.hcm.operations.work-plan-simulate.action',
+  'route.hcm.operations.work-plan-submit-review.action',
+  'route.hcm.operations.work-plan-validate.action',
   'route.hcm.personal.absence-create.action',
   'route.hcm.personal.absence-withdraw.action',
   'route.hcm.personal.home-preference-update.action',
@@ -129,6 +161,21 @@ function sameAccess(left: RegistryRequiredAccess, right: RegistryRequiredAccess)
 }
 
 describe('HCM W1b product manifest', () => {
+  it('keeps the A004 APP.HCM cutover deferred for zero-APP administrators', () => {
+    expect(HCM_APP_ENTITLEMENT_CUTOVER).toMatchObject({
+      blockerId: 'A004',
+      state: 'DEFERRED_ZERO_APP_ADMIN_COMPATIBILITY',
+      canonicalResourceKey: 'APP.HCM',
+      compatibilityAlias: 'APP.HRIS',
+      requiresProductEntitlement: false,
+    });
+    expect(
+      HCM_PRODUCT_MANIFEST.surfaces.every(
+        (surface) => surface.entryAccess.requiresProductEntitlement === false
+      )
+    ).toBe(true);
+  });
+
   it('freezes the personal, team, operations, and management menu partition', () => {
     expect(
       Object.fromEntries(
@@ -141,22 +188,22 @@ describe('HCM W1b product manifest', () => {
       'hcm.personal': 10,
       'hcm.team': 3,
       'hcm.operations': 8,
-      'hcm.management': 4,
+      'hcm.management': 5,
     });
     expect(HCM_PRODUCT_MANIFEST.surfaces.map((surface) => surface.supportedScopeKinds)).toEqual([
       ['SELF'],
       ['TEAM', 'ORG_UNIT', 'TARGET_POPULATION'],
       ['ORG_UNIT', 'LEGAL_ENTITY', 'TARGET_POPULATION', 'SUPPORT_SESSION'],
-      ['RESOURCE_SET', 'RESOURCE', 'LEGAL_ENTITY', 'POLICY_NODE'],
+      ['TENANT', 'RESOURCE_SET', 'RESOURCE', 'LEGAL_ENTITY', 'POLICY_NODE'],
     ]);
   });
 
-  it('binds all 25 menu items to official PAGE records and exact latest access profiles', () => {
+  it('binds all 26 menu items to official PAGE records and exact latest access profiles', () => {
     const routerRecords = PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.filter(
       (route) => route.productId === 'hcm'
     );
     const registryRecords = registryRoutes().filter((route) => route.subject?.productKey === 'hcm');
-    expect(routerRecords).toHaveLength(25);
+    expect(routerRecords).toHaveLength(26);
 
     for (const surface of HCM_PRODUCT_MANIFEST.surfaces) {
       for (const item of surface.navigation.flatMap((group) => group.items)) {
@@ -192,10 +239,10 @@ describe('HCM W1b product manifest', () => {
       ])
     );
     expect(bySurfaceAndKind).toEqual({
-      'hcm.personal': { PAGE: 10, DATA: 2, ACTION: 6 },
-      'hcm.team': { PAGE: 3, DATA: 0, ACTION: 2 },
-      'hcm.operations': { PAGE: 8, DATA: 1, ACTION: 2 },
-      'hcm.management': { PAGE: 4, DATA: 3, ACTION: 12 },
+      'hcm.personal': { PAGE: 10, DATA: 5, ACTION: 6 },
+      'hcm.team': { PAGE: 3, DATA: 1, ACTION: 2 },
+      'hcm.operations': { PAGE: 8, DATA: 12, ACTION: 19 },
+      'hcm.management': { PAGE: 5, DATA: 3, ACTION: 12 },
     });
     expect(
       records

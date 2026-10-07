@@ -259,17 +259,17 @@ type GovernedMenuRecord = {
 ```
 
 `ProductSurfaceDefinition`은 업무 앱의 `work | management` Shell 계약이다. 이 Type을 회사 관리,
-Provider 또는 Account에 억지로 확장하지 않는다. 대신 `GovernedMenuRecord`가 현재 정적 메뉴 193개
+Provider 또는 Account에 억지로 확장하지 않는다. 대신 `GovernedMenuRecord`가 현재 정적 메뉴 228개
 모두를 한 `GovernedMenuPlane`과 `navigationContextId`에 귀속한다. 그중 12개 업무 앱의 메뉴
-146개는 `productSurfaceId`도 정확히 하나 가져야 한다. 고정 Context ID는 `home`, `catalog`,
+178개는 `productSurfaceId`도 정확히 하나 가져야 한다. 고정 Context ID는 `home`, `catalog`,
 `work.work`, `activity.work`, 각 업무 앱 Surface ID, `tenant.admin`, `provider.control`,
 `account.settings`다.
 
 모든 제품은 다음 정적 검사를 통과해야 한다.
 
-- 정적 Menu Route 193개는 정확히 한 `navigationContextId`에 속한다.
-- 12개 업무 앱 Menu Route 146개는 정확히 한 Product Surface에도 속한다.
-- 나머지 47개(Home·Catalog·Work·Activity·Tenant Governance·Provider·Account)는
+- 정적 Menu Route 228개는 정확히 한 `navigationContextId`에 속한다.
+- 12개 업무 앱 Menu Route 178개는 정확히 한 Product Surface에도 속한다.
+- 나머지 50개(Home·Catalog·Work·Activity·Tenant Governance·Provider·Account)는
   `productSurfaceId` 필드를 갖지 않으며 Product Surface로 잘못 투영되면 Build를 실패시킨다.
 - 등록된 Menu Item의 Task Kind는 Surface의 `taskKinds`에 포함되고 정확히 하나다.
 - 모든 Navigation Item은 `capability`, `capability-expression`, `policy` 중 정확히
@@ -429,7 +429,7 @@ Pair에 동일하게 저장하고 PEP가 실제 값과 재대조한다. 누락·
 Product Route는 `subject.type=PRODUCT`, 비제품 Governed Route는
 `subject.type=GOVERNED_CONTEXT`로 고정한다. Named Reviewer의 Work Queue는
 `navigationContextId=work.work`인 비제품 Route로
-등록하며 현재 Product Surface 메뉴 146개에 포함하지 않는다.
+등록하며 현재 Product Surface 메뉴 178개에 포함하지 않는다.
 `navigationContextId`의 권위는 Contract Top-level 필드 하나뿐이며 Subject 안에 중복 저장하지
 않는다. Non-product Key의 `navigation-context-token`을 위 총함수로 Decode한 값이 Top-level
 `navigationContextId`와 다르거나 `_`가 포함된 Context ID·비정규 Token이면 Bundle Build를
@@ -1014,7 +1014,7 @@ Product·Security·Privacy 승인 전 변경하지 않는다.
 
 다음이 승인되기 전 DRAFT 구현을 Production에서 활성화하거나 다음 Product Wave를 시작하지 않는다.
 
-1. 본 ADR과 현재 193개 전체 메뉴 분류표 승인 — 완료
+1. 본 ADR과 현재 228개 전체 메뉴 분류표 승인 — 완료
 2. `EffectiveProductSurfaceContext`·Direct Evaluation OpenAPI, 오류 Reason Code와 Invalidation 계약 승인
 3. Product Manifest, Governed Menu Ownership, Registered Route·Legacy Redirect Registry 정적 검사 승인
 4. APP Entitlement와 Management Guard 독립 Truth Table 승인
@@ -1061,8 +1061,8 @@ Rehearsal, Test Run, Privacy와 Accessibility·Manual AT 증거 중 각 항목�
 ## 15. 공통 수용 기준
 
 - Work Sidebar의 Management 메뉴 수 `0`, Management Sidebar의 개인 Work 메뉴 수 `0`
-- 등록 Menu Route 193개가 정확히 한 Plane·Task·Navigation Context를 가짐
-- 12개 업무 앱 Menu Route 146개가 정확히 한 Product Surface를 가짐
+- 등록 Menu Route 228개가 정확히 한 Plane·Task·Navigation Context를 가짐
+- 12개 업무 앱 Menu Route 178개가 정확히 한 Product Surface를 가짐
 - Work-only, Management-only, Both, Tenant Admin without product duty가 기대대로 분리됨
 - Direct URL, Refresh, Back/Forward, 새 Tab이 동일 Surface와 Scope를 유지함
 - Desktop과 Mobile 모두 Work Header의 Settings Icon이 포함된 단일 `앱 관리` 진입점으로 관리 모드에 전환하고,

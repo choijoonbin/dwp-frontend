@@ -65,6 +65,7 @@ function Fact({ label, value }: { label: string; value?: string | null }) {
 }
 
 function PersonDetailDialog({
+  personId,
   person,
   asOf,
   chart,
@@ -72,6 +73,7 @@ function PersonDetailDialog({
   requestScope,
   onClose,
 }: {
+  personId: string | null;
   person: PeopleDirectoryRow | null;
   asOf: string;
   chart?: OrganizationChart;
@@ -89,30 +91,29 @@ function PersonDetailDialog({
       experience,
       'people',
       'detail',
-      person?.personId,
+      personId,
       asOf,
       experience === 'directory' ? 'directory' : '',
       ...(experience === 'workforce' ? requestScope.cacheKey : []),
     ],
     queryFn: ({ signal }) =>
       getPerson(
-        person?.personId ?? '',
+        personId ?? '',
         asOf,
         experience,
         experience === 'workforce' ? requestScope.contextScopeKey : undefined,
         signal,
         experience === 'directory' ? 'directory' : undefined
       ),
-    enabled: Boolean(person) && (experience !== 'workforce' || requestScope.ready),
+    enabled: Boolean(personId) && (experience !== 'workforce' || requestScope.ready),
     meta: experience === 'workforce' ? requestScope.queryMeta : undefined,
   });
-  const chartPerson = chart?.people.find((candidate) => candidate.personId === person?.personId);
-  const directReports = chart?.people.filter(
-    (candidate) => candidate.managerPersonId === person?.personId
-  );
+  const displayPerson = person ?? detailQuery.data?.person ?? null;
+  const chartPerson = chart?.people.find((candidate) => candidate.personId === personId);
+  const directReports = chart?.people.filter((candidate) => candidate.managerPersonId === personId);
 
   return (
-    <Dialog open={Boolean(person)} onClose={onClose} fullWidth maxWidth="md">
+    <Dialog open={Boolean(personId)} onClose={onClose} fullWidth maxWidth="md">
       <DialogTitle sx={{ pr: 6 }}>
         {t('people.detail.title')}
         <IconButton
@@ -134,10 +135,10 @@ function PersonDetailDialog({
             size="compact"
           />
         )}
-        {detailQuery.data && person && (
+        {detailQuery.data && displayPerson && (
           <PersonProfile
             detail={detailQuery.data}
-            person={person}
+            person={displayPerson}
             experience={experience}
             managerName={
               chart?.people.find((candidate) => candidate.personId === chartPerson?.managerPersonId)
@@ -150,7 +151,7 @@ function PersonDetailDialog({
                     const params = new URLSearchParams({
                       asOf,
                       mode: 'people',
-                      person: person.personId,
+                      person: displayPerson.personId,
                     });
                     const href = `${experience === 'workforce' ? '/hr/design' : '/hr'}/organization?${params}`;
                     navigate(
@@ -449,7 +450,8 @@ export function PeopleDirectory({
     () => (peopleQuery.data?.pages ?? []).flatMap((page) => page.items),
     [peopleQuery.data]
   );
-  const selected = rows.find((row) => row.personId === searchParams.get('person')) ?? null;
+  const selectedPersonId = searchParams.get('person');
+  const selected = rows.find((row) => row.personId === selectedPersonId) ?? null;
 
   const options = useMemo(
     () => ({
@@ -925,6 +927,7 @@ export function PeopleDirectory({
         )}
       </Box>
       <PersonDetailDialog
+        personId={selectedPersonId}
         person={selected}
         asOf={asOf}
         chart={chartQuery.data}

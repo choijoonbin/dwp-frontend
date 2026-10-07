@@ -22,6 +22,7 @@ import { createQuestionLaunch } from '@dwp-frontend/shared-utils/api/agent-quest
 import { createDwaionQuestionLaunchState } from '@dwp-frontend/shared-utils/dwaion-contract';
 
 import { homeViewQueryKey } from '../../components/home-view-query-key';
+import { homeWidgetLibraryQueryEnabled } from './home-widget-library-runtime';
 import {
   canonicalizePersistedLaunchpadLayout,
   createDefaultLaunchpadLayout,
@@ -189,7 +190,11 @@ export function useHomePageController() {
     widgetShadowObservation,
     workspaceAppsQuery,
   } = homeCore;
-  const widgetKeys = useSystemCodeOptions('PLATFORM.HOME_WIDGET', HOME_WIDGET_KEYS, legacyEnabled);
+  const widgetKeys = useSystemCodeOptions(
+    'PLATFORM.HOME_WIDGET',
+    HOME_WIDGET_KEYS,
+    homeWidgetLibraryQueryEnabled(legacyEnabled)
+  );
   const {
     draftHistory,
     setDraftHistory,

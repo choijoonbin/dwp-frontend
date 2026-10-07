@@ -35,6 +35,26 @@ export const PRODUCT_PAGE_SHORTCUT_TARGET_CATALOG = {
     surfaceId: 'hcm.personal',
     routeContractKey: 'route.hcm.personal.services.page',
   },
+  hcmDirectory: {
+    productId: 'hcm',
+    surfaceId: 'hcm.personal',
+    routeContractKey: 'route.hcm.personal.directory.page',
+  },
+  hcmOrganization: {
+    productId: 'hcm',
+    surfaceId: 'hcm.personal',
+    routeContractKey: 'route.hcm.personal.organization.page',
+  },
+  hcmTeamTime: {
+    productId: 'hcm',
+    surfaceId: 'hcm.team',
+    routeContractKey: 'route.hcm.team.time.page',
+  },
+  hcmTeamAbsence: {
+    productId: 'hcm',
+    surfaceId: 'hcm.team',
+    routeContractKey: 'route.hcm.team.absence.page',
+  },
 } as const satisfies Readonly<
   Record<string, Readonly<{ productId: string; surfaceId: string; routeContractKey: string }>>
 >;

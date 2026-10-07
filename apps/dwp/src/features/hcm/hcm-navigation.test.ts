@@ -1,7 +1,12 @@
 import { describe, expect, it } from 'vitest';
 
 import { isHrWorkItem, selectCurrentPerson } from './hcm-experience-model';
-import { findHcmNavigationItem, mapLegacyHrPath, visibleHcmNavigation } from './hcm-navigation';
+import {
+  findHcmNavigationItem,
+  HCM_MANAGEMENT_NAVIGATION,
+  mapLegacyHrPath,
+  visibleHcmNavigation,
+} from './hcm-navigation';
 
 import type { PersonSummary } from '@dwp-frontend/shared-utils';
 
@@ -102,6 +107,20 @@ describe('HR product navigation', () => {
     expect(findHcmNavigationItem('/hr/data/exports')?.requiredResourceKey).toBe(
       'ACTION.WORKFORCE_CONTROLLED_EXPORT'
     );
+    expect(findHcmNavigationItem('/hr/manage/system')?.view).toBe('system-access');
+    expect(findHcmNavigationItem('/hr/manage/system')?.governedOnly).toBe(true);
+    expect(
+      HCM_MANAGEMENT_NAVIGATION.flatMap((group) => group.items).find(
+        (item) => item.view === 'system-access'
+      )
+    ).toMatchObject({
+      path: '/hr/manage/system',
+      taskKind: 'administration',
+      access: {
+        type: 'policy',
+        accessPolicyKey: 'hcm.management-system-access.v1',
+      },
+    });
   });
 });
 

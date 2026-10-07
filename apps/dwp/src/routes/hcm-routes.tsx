@@ -13,6 +13,7 @@ import {
 } from '../features/hcm/hcm-navigation';
 import { HCM_PRODUCT_MANIFEST } from '../features/hcm/hcm-product-manifest';
 import { canAccessLegacyHcmSurface, useHcmAccess } from '../features/hcm/hcm-surface-access';
+import { HRIS_SHELL_NAVIGATION_PROJECTION } from '../features/hris/shell/model/hris-shell-navigation-contract';
 import { useOptionalAllowedProductSurface } from '../components/allowed-product-surface-context';
 import { ProductSurfaceAccessState } from '../components/product-surface-access-state';
 import { ProductAreaNavigationItemAccessGuard } from '../layouts/product-area-navigation-access-guard';
@@ -199,6 +200,7 @@ function hcmSurfaceShell(surfaceId: string) {
       areaKey="hcm"
       translationNamespace="hcm"
       legacy={legacy}
+      shellNavigationProjection={HRIS_SHELL_NAVIGATION_PROJECTION}
     />
   );
 }
@@ -313,6 +315,7 @@ function hcmSurfaceRoutes(): RouteObject[] {
             />
           ),
         },
+        ...managementByPrefix('/hr/manage'),
         { path: '*', element: <ProductCanaryUnknownRoute productId="hcm" legacy={hcmPage} /> },
       ],
     },

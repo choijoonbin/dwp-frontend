@@ -8461,6 +8461,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/auth/hris/product-access/snapshot": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["auth_hrisProductAccessSnapshot"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/auth/idp": {
         parameters: {
             query?: never;
@@ -11838,6 +11854,134 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/payroll/v1/hris/payroll/foundation/configurations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["payroll_hrisPayrollConfigurations"];
+        put?: never;
+        post: operations["payroll_hrisPayrollCreateConfiguration"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/payroll/v1/hris/payroll/foundation/configurations/{configurationId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["payroll_hrisPayrollConfiguration"];
+        put: operations["payroll_hrisPayrollUpdateConfiguration"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/payroll/v1/hris/payroll/foundation/configurations/{configurationId}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["payroll_hrisPayrollPublishConfiguration"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/payroll/v1/hris/payroll/foundation/configurations/{configurationId}/reversals": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["payroll_hrisPayrollReverseConfiguration"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/payroll/v1/hris/payroll/foundation/configurations/{configurationId}/simulations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["payroll_hrisPayrollSimulateConfiguration"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/payroll/v1/hris/payroll/foundation/configurations/{configurationId}/versions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["payroll_hrisPayrollConfigurationVersions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/payroll/v1/hris/payroll/foundation/receipts/{commandId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["payroll_hrisPayrollCommandReceipt"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/payroll/v1/hris/payroll/foundation/receipts/{commandId}/reconcile": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["payroll_hrisPayrollReconcileCommand"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/people/v1/admin/workforce/access-policies": {
         parameters: {
             query?: never;
@@ -12190,6 +12334,102 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/people/v1/hris/performance/command-receipts/{receiptId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["people_hrisPerformanceCommandReceipt"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/people/v1/hris/performance/cycles": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["people_hrisPerformanceCycles"];
+        put?: never;
+        post: operations["people_hrisPerformanceCreateCycle"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/people/v1/hris/performance/cycles/{cycleId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["people_hrisPerformanceCycle"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["people_hrisPerformanceUpdateCycle"];
+        trace?: never;
+    };
+    "/api/people/v1/hris/performance/cycles/{cycleId}/population-previews": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["people_hrisPerformancePreviewPopulation"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/people/v1/hris/performance/cycles/{cycleId}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["people_hrisPerformancePublishCycle"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/people/v1/hris/performance/cycles/{cycleId}/validate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["people_hrisPerformanceValidateCycle"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/people/v1/org-chart": {
         parameters: {
             query?: never;
@@ -12230,6 +12470,118 @@ export interface paths {
             cookie?: never;
         };
         get: operations["people_get_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/people/v1/workforce/assignment-proposals": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["people_createAssignmentProposal"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/people/v1/workforce/assignment-proposals/{proposalId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["people_getAssignmentProposal"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/people/v1/workforce/assignment-proposals/{proposalId}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["people_cancelAssignmentProposal"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/people/v1/workforce/assignment-proposals/{proposalId}/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["people_submitAssignmentProposal"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/people/v1/workforce/assignment-proposals/{proposalId}/validate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["people_validateAssignmentProposal"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/people/v1/workforce/assignments/{assignmentId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["people_getAssignment"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/people/v1/workforce/assignments/{assignmentId}/timeline": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["people_getAssignmentTimeline"];
         put?: never;
         post?: never;
         delete?: never;
@@ -20288,6 +20640,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/platform/v1/hris/configuration/projection": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_hrisConfigurationProjection"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/platform/v1/mail/address-book": {
         parameters: {
             query?: never;
@@ -26431,6 +26799,86 @@ export interface paths {
         get: operations["space_templates_1"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/time/v1/hris/work-plan-receipts/{receiptId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["time_hrisTimeWorkPlanReceipt"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/time/v1/hris/work-plans": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["time_hrisTimeWorkPlans"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/time/v1/hris/work-plans/drafts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["time_hrisTimeCreateWorkPlanDraft"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/time/v1/hris/work-plans/{workPlanId}/actions/{action}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["time_hrisTimeTransitionWorkPlan"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/time/v1/hris/work-plans/{workPlanId}/simulations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["time_hrisTimeSimulateWorkPlan"];
         delete?: never;
         options?: never;
         head?: never;
@@ -49117,6 +49565,36 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        people_ApiResponseAssignmentProposal: {
+            correlationId?: string;
+            data?: components["schemas"]["people_AssignmentProposal"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        people_ApiResponseAssignmentProposalAssignmentDetail: {
+            correlationId?: string;
+            data?: components["schemas"]["people_AssignmentProposalAssignmentDetail"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        people_ApiResponseAssignmentProposalCommandResult: {
+            correlationId?: string;
+            data?: components["schemas"]["people_AssignmentProposalCommandResult"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         people_ApiResponseBenefitsWorkspace: {
             correlationId?: string;
             data?: components["schemas"]["people_BenefitsWorkspace"];
@@ -49210,6 +49688,16 @@ export interface components {
         people_ApiResponseLeaveRequest: {
             correlationId?: string;
             data?: components["schemas"]["people_LeaveRequest"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        people_ApiResponseListAssignmentProposalTimelineEntry: {
+            correlationId?: string;
+            data?: components["schemas"]["people_AssignmentProposalTimelineEntry"][];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -49600,6 +50088,144 @@ export interface components {
             summary?: string;
             /** Format: int64 */
             version?: number;
+        };
+        people_AssignmentProposal: {
+            assignmentKey?: string;
+            cancellationReason?: string;
+            /** Format: date-time */
+            cancelledAt?: string;
+            changeType?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date */
+            effectiveDate?: string;
+            lifecycleState?: string;
+            personDisplayName?: string;
+            /** Format: uuid */
+            proposalId?: string;
+            proposedChanges?: {
+                [key: string]: unknown;
+            };
+            reasonCode?: string;
+            /** Format: date-time */
+            submittedAt?: string;
+            /** Format: uuid */
+            targetAssignmentId?: string;
+            /** Format: int64 */
+            targetAssignmentVersion?: number;
+            /** Format: int64 */
+            targetRelationshipVersion?: number;
+            /** Format: uuid */
+            targetWorkRelationshipId?: string;
+            /** Format: uuid */
+            targetWorkerId?: string;
+            /** Format: int64 */
+            targetWorkerVersion?: number;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: date-time */
+            validatedAt?: string;
+            validationFindings?: components["schemas"]["people_AssignmentProposalValidationFinding"][];
+            /** Format: int64 */
+            version?: number;
+            workerNumber?: string;
+        };
+        people_AssignmentProposalAssignmentDetail: {
+            /** Format: uuid */
+            assignmentId?: string;
+            assignmentKey?: string;
+            assignmentStatus?: string;
+            /** Format: int64 */
+            assignmentVersion?: number;
+            businessTitle?: string;
+            changeReasonCode?: string;
+            /** Format: date */
+            effectiveEndDate?: string;
+            /** Format: date */
+            effectiveStartDate?: string;
+            fullTimeEquivalent?: number;
+            jobName?: string;
+            jobProfileKey?: string;
+            locationKey?: string;
+            locationName?: string;
+            /** Format: uuid */
+            managerAssignmentId?: string;
+            /** Format: uuid */
+            organizationId?: string;
+            organizationName?: string;
+            personDisplayName?: string;
+            primaryAssignment?: boolean;
+            /** Format: int64 */
+            relationshipVersion?: number;
+            /** Format: uuid */
+            workRelationshipId?: string;
+            workerHours?: number;
+            /** Format: uuid */
+            workerId?: string;
+            workerNumber?: string;
+            /** Format: int64 */
+            workerVersion?: number;
+        };
+        people_AssignmentProposalCancelCommand: {
+            /** Format: uuid */
+            commandId: string;
+            /** Format: int64 */
+            expectedVersion: number;
+            reason: string;
+        };
+        people_AssignmentProposalCommandResult: {
+            proposal?: components["schemas"]["people_AssignmentProposal"];
+            /** Format: uuid */
+            receiptId?: string;
+            replayed?: boolean;
+        };
+        people_AssignmentProposalCreateRequest: {
+            changeType: string;
+            /** Format: uuid */
+            commandId: string;
+            /** Format: date */
+            effectiveDate: string;
+            /** Format: int64 */
+            expectedAssignmentVersion: number;
+            proposedChanges: {
+                [key: string]: unknown;
+            };
+            reasonCode: string;
+            /** Format: uuid */
+            targetAssignmentId: string;
+        };
+        people_AssignmentProposalTimelineEntry: {
+            /** Format: uuid */
+            assignmentId?: string;
+            assignmentStatus?: string;
+            businessTitle?: string;
+            changeReasonCode?: string;
+            /** Format: date */
+            effectiveEndDate?: string;
+            /** Format: int32 */
+            effectiveSequence?: number;
+            /** Format: date */
+            effectiveStartDate?: string;
+            jobProfileKey?: string;
+            locationKey?: string;
+            /** Format: uuid */
+            managerAssignmentId?: string;
+            /** Format: uuid */
+            organizationId?: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        people_AssignmentProposalValidationFinding: {
+            code?: string;
+            field?: string;
+            message?: string;
+            severity?: string;
+        };
+        people_AssignmentProposalVersionCommand: {
+            /** Format: uuid */
+            commandId: string;
+            /** Format: int64 */
+            expectedVersion: number;
         };
         people_AssignmentSummary: {
             assignmentKey?: string;
@@ -90062,6 +90688,30 @@ export interface operations {
             };
         };
     };
+    auth_hrisProductAccessSnapshot: {
+        parameters: {
+            query?: {
+                view?: "system";
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                "X-Tenant-ID"?: number;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     auth_getIdentityProviders: {
         parameters: {
             query?: never;
@@ -96504,6 +97154,282 @@ export interface operations {
             };
         };
     };
+    payroll_hrisPayrollConfigurations: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    payroll_hrisPayrollCreateConfiguration: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": Record<string, never>;
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    payroll_hrisPayrollConfiguration: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path: {
+                configurationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    payroll_hrisPayrollUpdateConfiguration: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                configurationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": Record<string, never>;
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    payroll_hrisPayrollPublishConfiguration: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+                "X-DWP-Step-Up-Challenge": string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                configurationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": Record<string, never>;
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    payroll_hrisPayrollReverseConfiguration: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+                "X-DWP-Step-Up-Challenge": string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                configurationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": Record<string, never>;
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    payroll_hrisPayrollSimulateConfiguration: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                configurationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": Record<string, never>;
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    payroll_hrisPayrollConfigurationVersions: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path: {
+                configurationId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    payroll_hrisPayrollCommandReceipt: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path: {
+                commandId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    payroll_hrisPayrollReconcileCommand: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: {
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                commandId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     people_list_1: {
         parameters: {
             query?: never;
@@ -96744,6 +97670,8 @@ export interface operations {
     people_home: {
         parameters: {
             query?: {
+                projection?: "people360";
+                asOf?: string;
                 /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
                 contextScopeKey?: string;
             };
@@ -96871,6 +97799,9 @@ export interface operations {
     people_team: {
         parameters: {
             query?: {
+                projection?: "people360";
+                personId?: string;
+                asOf?: string;
                 /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
                 contextScopeKey?: string;
             };
@@ -97123,6 +98054,233 @@ export interface operations {
             };
         };
     };
+    people_hrisPerformanceCommandReceipt: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path: {
+                receiptId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    people_hrisPerformanceCycles: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    people_hrisPerformanceCreateCycle: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": Record<string, never>;
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    people_hrisPerformanceCycle: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path: {
+                cycleId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    people_hrisPerformanceUpdateCycle: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                cycleId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": Record<string, never>;
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    people_hrisPerformancePreviewPopulation: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                cycleId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": Record<string, never>;
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    people_hrisPerformancePublishCycle: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+                "X-DWP-Step-Up-Challenge": string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+                "X-DWP-Expected-Object-Version": number;
+            };
+            path: {
+                cycleId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": Record<string, never>;
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    people_hrisPerformanceValidateCycle: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                cycleId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": Record<string, never>;
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     people_get_2: {
         parameters: {
             query?: {
@@ -97199,6 +98357,216 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["people_ApiResponsePersonDetail"];
+                };
+            };
+        };
+    };
+    people_createAssignmentProposal: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["people_AssignmentProposalCreateRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["people_ApiResponseAssignmentProposalCommandResult"];
+                };
+            };
+        };
+    };
+    people_getAssignmentProposal: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path: {
+                proposalId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["people_ApiResponseAssignmentProposal"];
+                };
+            };
+        };
+    };
+    people_cancelAssignmentProposal: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                proposalId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["people_AssignmentProposalCancelCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["people_ApiResponseAssignmentProposalCommandResult"];
+                };
+            };
+        };
+    };
+    people_submitAssignmentProposal: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header: {
+                "Idempotency-Key": string;
+                "X-DWP-Step-Up-Challenge": string;
+                "X-DWP-Expected-Decision-Revision": string;
+                "X-DWP-Expected-Object-Version": number;
+                "X-Correlation-ID"?: string;
+            };
+            path: {
+                proposalId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["people_AssignmentProposalVersionCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["people_ApiResponseAssignmentProposalCommandResult"];
+                };
+            };
+        };
+    };
+    people_validateAssignmentProposal: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header: {
+                "Idempotency-Key": string;
+                "X-Correlation-ID"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                proposalId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["people_AssignmentProposalVersionCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["people_ApiResponseAssignmentProposalCommandResult"];
+                };
+            };
+        };
+    };
+    people_getAssignment: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path: {
+                assignmentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["people_ApiResponseAssignmentProposalAssignmentDetail"];
+                };
+            };
+        };
+    };
+    people_getAssignmentTimeline: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path: {
+                assignmentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["people_ApiResponseListAssignmentProposalTimelineEntry"];
                 };
             };
         };
@@ -98437,6 +99805,7 @@ export interface operations {
                 cursor?: string;
                 size?: number;
                 asOf?: string;
+                projection?: "people360";
                 /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
                 contextScopeKey?: string;
             };
@@ -98461,6 +99830,7 @@ export interface operations {
         parameters: {
             query?: {
                 asOf?: string;
+                projection?: "people360";
                 /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
                 contextScopeKey?: string;
             };
@@ -114422,6 +115792,29 @@ export interface operations {
             };
         };
     };
+    platform_hrisConfigurationProjection: {
+        parameters: {
+            query?: {
+                locale?: string;
+                view?: "system";
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     platform_addressBook: {
         parameters: {
             query?: {
@@ -126309,6 +127702,143 @@ export interface operations {
                 content: {
                     "*/*": components["schemas"]["space_ApiResponseListTemplateSummary"];
                 };
+            };
+        };
+    };
+    time_hrisTimeWorkPlanReceipt: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path: {
+                receiptId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    time_hrisTimeWorkPlans: {
+        parameters: {
+            query: {
+                effectiveOn: string;
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    time_hrisTimeCreateWorkPlanDraft: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header: {
+                "Idempotency-Key": string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": Record<string, never>;
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    time_hrisTimeTransitionWorkPlan: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header: {
+                "Idempotency-Key": string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                workPlanId: string;
+                action: "apply-approval" | "publish" | "submit-review" | "validate";
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": Record<string, never>;
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    time_hrisTimeSimulateWorkPlan: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header: {
+                "Idempotency-Key": string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                workPlanId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": Record<string, never>;
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

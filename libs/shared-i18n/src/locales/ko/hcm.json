@@ -3,6 +3,339 @@
     "loadError": "정보를 불러오지 못했습니다",
     "retry": "다시 시도"
   },
+  "hrisTime": {
+    "boundary": {
+      "title": "근태 명령 처리 경계",
+      "scheduleConnected": "회사의 연동 근무 일정에 포함된 날짜만 입력할 수 있습니다. 모든 변경 시 근태표 버전과 HRIS 권한을 다시 확인합니다.",
+      "scheduleUnavailable": "현재 API가 일자별 회사 근무 일정을 제공하지 않습니다. 기존 원천 기록은 정정할 수 있지만, 월요일부터 금요일까지를 임의로 가정하지 않도록 빈 날짜는 읽기 전용으로 유지합니다.",
+      "nonStandardPeriod": "원천 기간이 정확한 월요일~일요일 주간이 아닙니다. 기간을 임의로 바꾸지 않고 실제 날짜 범위를 표시합니다.",
+      "origin": "출처: {{value}}"
+    },
+    "calendar": {
+      "invalidTitle": "근태표 기간이 올바르지 않습니다",
+      "invalidDescription": "원천 기간이 없거나, 종료일이 시작일보다 빠르거나, 지원하는 검토 기간보다 길어 달력을 만들지 않았습니다."
+    },
+    "weekday": {
+      "1": "월요일",
+      "2": "화요일",
+      "3": "수요일",
+      "4": "목요일",
+      "5": "금요일",
+      "6": "토요일",
+      "7": "일요일"
+    },
+    "editability": {
+      "CONNECTED_SCHEDULE": "연동 근무 일정",
+      "EXISTING_ENTRY": "기존 기록",
+      "REFERENCE_DATA": "참조 데이터 · 읽기 전용",
+      "CARD_NOT_OPEN": "마감된 근태표 · 읽기 전용",
+      "OUTSIDE_PERIOD": "근태표 기간 밖 · 읽기 전용",
+      "OUTSIDE_CONNECTED_SCHEDULE": "연동 근무 일정 밖",
+      "SCHEDULE_UNAVAILABLE": "근무 일정이 연동되지 않음"
+    },
+    "command": {
+      "refresh": "현재 근태표 새로고침",
+      "reviewLatest": "최신 버전 검토 후 계속",
+      "retry": "명령 다시 시도",
+      "CONFLICT": {
+        "title": "근태표가 변경되었습니다",
+        "description": "작성 중인 내용은 보존했습니다. 현재 근태표를 새로고침하고 최신 버전을 검토한 뒤 다시 저장할지 결정해 주세요."
+      },
+      "UNAUTHENTICATED": {
+        "title": "로그인 세션이 더 이상 유효하지 않습니다",
+        "description": "작성 중인 내용은 이 대화상자에 보존했지만 전송할 수 없습니다. 다시 변경하기 전에 로그인해 주세요."
+      },
+      "FORBIDDEN": {
+        "title": "더 이상 허용되지 않는 작업입니다",
+        "description": "검토할 수 있도록 작성 중인 내용을 보존했습니다. 현재 HRIS 권한으로는 이 명령을 실행할 수 없습니다."
+      },
+      "UNKNOWN_OUTCOME": {
+        "title": "명령 처리 결과를 확인할 수 없습니다",
+        "description": "완료 응답을 받지 못했지만 명령이 처리됐을 수 있습니다. 작성 중인 내용을 보존했으니 다시 시도하기 전에 새로고침하여 현재 근태표를 확인해 주세요."
+      },
+      "ABORTED": {
+        "title": "명령이 취소되었습니다",
+        "description": "작성 중인 내용을 보존했습니다. 다른 명령을 보내기 전에 현재 근태표를 다시 열어 주세요."
+      },
+      "REJECTED": {
+        "title": "명령이 거절되었습니다",
+        "description": "작성 중인 내용을 보존했습니다. 입력을 수정하거나 서비스 상태가 정상화된 뒤 다시 시도해 주세요."
+      }
+    },
+    "workPlanStudio": {
+      "query": {
+        "partialTitle": "일부 근무계획을 불러오지 못했습니다",
+        "partialDescription": "확인 가능한 기록은 계속 표시하지만, 모든 정책 입력값을 검증할 때까지 시뮬레이션을 일시 중지합니다. {{failures}}",
+        "staleTitle": "근무계획 데이터가 오래되었습니다",
+        "staleDescription": "검토는 계속할 수 있습니다. 최신 정책 및 발령 데이터를 받을 때까지 검증과 시뮬레이션은 비활성화됩니다.",
+        "unavailableTitle": "근무계획을 사용할 수 없습니다",
+        "unavailableDescription": "원천을 검증할 수 없으므로 정책 영향을 받는 작업을 실행할 수 없습니다."
+      },
+      "catalog": {
+        "ariaLabel": "근무계획 목록",
+        "workPlan": "근무계획",
+        "arrangement": "근무 형태",
+        "effective": "적용 기간",
+        "review": "검토",
+        "effectiveRange": "{{start}} – {{end}}",
+        "openEnded": "종료일 없음",
+        "reviewAriaLabel": "{{title}} 검토",
+        "agendaAriaLabel": "근무계획 일정 목록",
+        "mobileReviewAriaLabel": "모바일 일정 목록에서 {{title}} 검토",
+        "selected": "선택됨",
+        "title": "근무계획 목록",
+        "effectiveAsOf": "기준일 {{asOf}}",
+        "planCount": "{{count}}개 계획"
+      },
+      "policy": {
+        "title": "정책 우선순위",
+        "cannotResolveTitle": "정책을 안전하게 결정할 수 없습니다",
+        "packState": "정책 팩 상태: {{state}}",
+        "resolvedTitle": "적용 정책이 결정되었습니다",
+        "resolvedDescription": "{{jurisdiction}} · 리비전 {{revision}} · 적용일 {{effectiveOn}}",
+        "unavailable": "사용할 수 없음",
+        "traceDescription": "{{policyCode}} · 리비전 {{revision}}",
+        "resolution": {
+          "NO_APPLICABLE_POLICY": "선택한 적용일에 해당하는 정책이 없습니다.",
+          "OVERLAP": "동일한 우선순위 수준에서 둘 이상의 정책이 선택되었습니다.",
+          "PACK_MISSING": "필수 관할 정책 팩이 없습니다.",
+          "PACK_EXPIRED": "관할 정책 팩이 만료되었습니다.",
+          "OUT_OF_RANGE": "적용일이 정책 팩의 적용 범위를 벗어났습니다.",
+          "STALE": "정책 결정 결과가 오래되었습니다.",
+          "REVOKED": "선택한 정책 팩이 철회되었습니다.",
+          "INVALID": "선택한 정책 팩이 올바르지 않습니다.",
+          "SIGNATURE_INVALID": "정책 팩의 서명을 검증할 수 없습니다."
+        }
+      },
+      "schedule": {
+        "title": "{{timeZone}} 기준 근무 일정",
+        "description": "각 날짜의 현지 시각과 오프셋은 일정 서비스에서 반환됩니다.",
+        "emptyTitle": "근무 구간이 없습니다",
+        "emptyDescription": "영향 시뮬레이션을 요청하기 전에 근무 구간을 추가해 주세요.",
+        "ariaLabel": "날짜 기준 근무 구간",
+        "segment": "구간",
+        "localStart": "현지 시작",
+        "localEnd": "현지 종료",
+        "dstOvernight": "일광절약시간/익일",
+        "overnight": "익일"
+      },
+      "receipt": {
+        "title": "시뮬레이션 영수증: {{status}}",
+        "reconcile": "영수증 대사",
+        "unknownOutcome": "처리 결과를 알 수 없습니다. 동일한 영속 영수증을 대사하고 중복 명령을 제출하지 마세요.",
+        "lastUpdated": "최종 갱신 {{updatedAt}}"
+      },
+      "simulation": {
+        "title": "현재안과 초안 비교 — 서버 시뮬레이션",
+        "statusTitle": "시뮬레이션 상태: {{status}}",
+        "incompleteDescription": "영향 결과를 완료 또는 게시 가능 상태로 볼 수 없습니다.",
+        "differencesAriaLabel": "현재안과 초안 시뮬레이션 차이",
+        "impact": "영향",
+        "current": "현재안",
+        "draft": "초안",
+        "finding": "확인 결과"
+      },
+      "detail": {
+        "subtitle": "{{arrangement}} · 버전 {{version}}",
+        "close": "근무계획 상세 닫기",
+        "runSimulation": "서버 시뮬레이션 실행",
+        "publishingNote": "게시 권한은 의도적으로 분리되어 있으며 독립적인 게시자가 필요합니다. 이 작성 도구는 시뮬레이션을 승인 또는 게시 권한으로 처리하지 않습니다.",
+        "effectivePeriod": "적용 기간",
+        "assignment": "발령",
+        "assignmentSnapshot": "발령 스냅샷",
+        "assignmentSnapshotValue": "{{revision}} · {{freshness}}",
+        "scheduleTimeZone": "일정 시간대",
+        "blockedTitle": "시뮬레이션이 차단되었습니다",
+        "commandNotAccepted": "시뮬레이션 명령이 허용되지 않았습니다"
+      },
+      "empty": {
+        "noEffectiveTitle": "적용되는 근무계획이 없습니다",
+        "noEffectiveDescription": "이 적용일과 범위에 해당하는 근무계획이 없습니다.",
+        "chooseTitle": "근무계획을 선택하세요",
+        "chooseDescription": "목록 행 또는 일정 항목을 선택하여 발령, 우선순위, 일정 및 시뮬레이션 영향을 확인하세요."
+      },
+      "runtime": {
+        "loading": "관리되는 근무계획을 불러오는 중",
+        "unavailableTitle": "근무계획을 검증할 수 없습니다",
+        "unavailableDescription": "정책 및 발령 범위를 사용할 수 없어 목록을 닫아 두었습니다.",
+        "retry": "다시 시도",
+        "responseMismatch": "서버 응답이 선택한 근무계획 리비전과 일치하지 않습니다.",
+        "outcomeNotVerified": "명령 처리 결과를 검증할 수 없습니다. 다시 시도하기 전에 권한을 새로고침하세요."
+      },
+      "codes": {
+        "arrangement": {
+          "FIXED": "고정 근무",
+          "FLEX": "유연 근무",
+          "AVERAGED": "탄력 근무",
+          "SELECTIVE": "선택 근무",
+          "COMPRESSED": "압축 근무",
+          "PART_TIME": "단시간 근무",
+          "REDUCED": "단축 근무",
+          "SPLIT_SHIFT": "분할 교대",
+          "SHIFT": "교대 근무",
+          "ON_CALL": "대기 근무",
+          "DEEMED": "간주 근무",
+          "DISCRETIONARY": "재량 근무",
+          "TENANT_EXTENSION": "테넌트 확장"
+        },
+        "assignmentFreshness": {
+          "CURRENT": "최신",
+          "STALE": "오래됨"
+        },
+        "blocker": {
+          "QUERY_EMPTY": "근무계획이 반환되지 않았습니다",
+          "QUERY_PARTIAL": "근무계획 데이터가 불완전합니다",
+          "QUERY_UNAVAILABLE": "근무계획 데이터를 사용할 수 없습니다",
+          "WORKSPACE_STALE": "근무계획 데이터가 오래되었습니다",
+          "WORKSPACE_UNAVAILABLE": "근무계획 데이터를 사용할 수 없습니다",
+          "ASSIGNMENT_STALE": "발령 스냅샷이 오래되었습니다",
+          "POLICY_PACK_MISSING": "필수 정책 팩이 없습니다",
+          "POLICY_PACK_EXPIRED": "필수 정책 팩이 만료되었습니다",
+          "POLICY_PACK_OUT_OF_RANGE": "적용일이 관할 정책 팩의 범위를 벗어났습니다",
+          "POLICY_PACK_STALE": "관할 정책 팩이 오래되었습니다",
+          "POLICY_PACK_REVOKED": "관할 정책 팩이 철회되었습니다",
+          "POLICY_PACK_INVALID": "관할 정책 팩이 올바르지 않습니다",
+          "POLICY_PACK_SIGNATURE_INVALID": "관할 정책 팩의 서명이 올바르지 않습니다",
+          "POLICY_NO_APPLICABLE_POLICY": "적용할 정책을 결정하지 못했습니다",
+          "POLICY_OVERLAP": "정책 우선순위가 모호합니다",
+          "POLICY_OUT_OF_RANGE": "정책 적용일이 범위를 벗어났습니다",
+          "POLICY_STALE": "정책 결정 결과가 오래되었습니다",
+          "POLICY_REVOKED": "정책 팩이 철회되었습니다",
+          "POLICY_INVALID": "정책 팩이 올바르지 않습니다",
+          "POLICY_SIGNATURE_INVALID": "정책 팩의 서명이 올바르지 않습니다",
+          "SIMULATION_NOT_AUTHORIZED": "시뮬레이션 권한이 없습니다"
+        },
+        "dstResolution": {
+          "EXACT": "정확",
+          "GAP_REJECTED": "일광절약시간 공백 거부",
+          "FOLD_EARLIER": "일광절약시간 중복(이른 시각)",
+          "FOLD_LATER": "일광절약시간 중복(늦은 시각)"
+        },
+        "impact": {
+          "INFO": "안내",
+          "WARNING": "주의",
+          "BLOCKING": "차단"
+        },
+        "lifecycle": {
+          "DRAFT": "초안",
+          "VALIDATED": "검증됨",
+          "SIMULATED": "시뮬레이션 완료",
+          "IN_REVIEW": "검토 중",
+          "APPROVED": "승인됨",
+          "PUBLISHED": "게시됨"
+        },
+        "policyPack": {
+          "CURRENT": "최신",
+          "MISSING": "없음",
+          "EXPIRED": "만료됨",
+          "OUT_OF_RANGE": "범위 밖",
+          "STALE": "오래됨",
+          "REVOKED": "철회됨",
+          "INVALID": "올바르지 않음",
+          "SIGNATURE_INVALID": "서명 올바르지 않음"
+        },
+        "receiptStatus": {
+          "ACCEPTED": "접수됨",
+          "RUNNING": "실행 중",
+          "SUCCEEDED": "완료됨",
+          "REJECTED": "거절됨",
+          "FAILED": "실패",
+          "RESULT_UNKNOWN": "결과 알 수 없음",
+          "RECONCILING": "대사 중"
+        },
+        "resolution": {
+          "RESOLVED": "결정됨",
+          "NO_APPLICABLE_POLICY": "적용 정책 없음",
+          "OVERLAP": "정책 중복",
+          "PACK_MISSING": "정책 팩 없음",
+          "PACK_EXPIRED": "정책 팩 만료",
+          "OUT_OF_RANGE": "범위 밖",
+          "STALE": "오래됨",
+          "REVOKED": "철회됨",
+          "INVALID": "올바르지 않음",
+          "SIGNATURE_INVALID": "서명 올바르지 않음"
+        },
+        "simulationStatus": {
+          "COMPLETE": "완료",
+          "PARTIAL": "일부 완료",
+          "UNAVAILABLE": "사용할 수 없음",
+          "STALE": "오래됨"
+        },
+        "traceDisposition": {
+          "APPLIED": "적용됨",
+          "SHADOWED": "우선순위 낮음",
+          "NOT_APPLICABLE": "적용 대상 아님"
+        }
+      }
+    },
+    "operationsAdapter": {
+      "scope": {
+        "title": "근무계획 운영을 사용할 수 없습니다",
+        "description": "테넌트 범위 또는 현재 권한 결정을 확인할 수 없어 근무계획 데이터를 요청하지 않았습니다."
+      },
+      "ownerContract": {
+        "title": "근무계획 운영이 연결되지 않았습니다",
+        "description": "소유 DATA 및 통제된 ACTION 계약이 아직 등록되지 않았습니다. 근무계획 데이터나 시뮬레이션을 요청하지 않았습니다."
+      }
+    }
+  },
+  "productMap": {
+    "eyebrow": "HRIS · People · Time · Pay",
+    "title": "HRIS 전체 업무 구조",
+    "description": "복잡한 인사·근태·급여·성과 업무를 다섯 작업면으로 정리했습니다. 현재 검증 가능한 시작점만 열리며 계획 항목은 향후 범위를 설명할 뿐 빈 화면으로 이동하지 않습니다.",
+    "metrics": {
+      "total": "목표 메뉴",
+      "pilot": "검증 시작점",
+      "surfaces": "작업면"
+    },
+    "surfaceLabel": "HRIS 작업면",
+    "surfaceOption": "{{label}} HRIS 작업면 · {{count}}개 메뉴",
+    "surface": {
+      "HOME": "홈",
+      "MY_HR": "내 HR",
+      "TEAM": "내 팀",
+      "OPERATIONS": "HR 운영",
+      "SETTINGS": "HRIS 설정"
+    },
+    "moduleLabel": "개발 모듈 필터",
+    "module": {
+      "ALL": "전체 모듈",
+      "SYS": "공통·설정",
+      "HRM": "인사",
+      "TIM": "근태",
+      "PAY": "급여",
+      "PER": "성과"
+    },
+    "personaLabel": "주 사용자(persona) 필터",
+    "persona": {
+      "ALL": "모든 역할",
+      "EMPLOYEE": "직원",
+      "MANAGER": "관리자",
+      "OPERATOR": "업무운영자",
+      "SETTINGS_ADMIN": "설정관리자",
+      "AUDITOR": "전사감사자"
+    },
+    "legendLabel": "메뉴 준비 상태",
+    "lifecycle": {
+      "PILOT": "검증 시작점",
+      "PLANNED": "개발 예정",
+      "BLOCKED_EVIDENCE": "정책·증빙 확정 필요",
+      "EXTERNAL": "DWP 관리자에서 제공"
+    },
+    "authorizationNote": "주 사용자는 분류 기준이며 역할 패키지는 조합할 수 있습니다. 이 지도는 실제 권한 판정 결과가 아닙니다.",
+    "authorizationRequired": "메뉴 권한 필요",
+    "availability": {
+      "CURRENT_RUNTIME": "1차 사용 가능",
+      "LEGACY_PARTIAL": "기존 화면 일부 제공",
+      "ROADMAP": "목표 범위",
+      "DWP_CONTROL_PLANE": "DWP 관리자 제공"
+    },
+    "filteredResult": "{{surface}} · {{count}}개 메뉴 표시",
+    "resultCount": "{{count}}개 메뉴",
+    "open": "열기",
+    "emptyTitle": "선택한 조건에 해당하는 메뉴가 없습니다",
+    "emptyDescription": "작업면, 모듈 또는 역할 필터를 바꿔 확인해 주세요."
+  },
   "shell": {
     "tenantFallback": "회사",
     "openNavigation": "HRIS 메뉴 열기",
@@ -16,17 +349,27 @@
   "navigation": {
     "groups": {
       "hcm": {
-        "start": "홈",
-        "personal": "나의 인사",
-        "organization": "조직",
-        "team": "팀 관리",
+        "shell-home": "시작",
+        "workbenches": "업무 영역",
+        "start": "HRIS 홈",
+        "personal": "내 HR",
+        "organization": "내 HR · 조직",
+        "team": "내 팀",
         "operate": "HR 운영",
-        "design": "조직 설계",
-        "foundation": "데이터 및 연계"
+        "design": "HRIS 설정 · 조직",
+        "foundation": "HRIS 설정"
       }
     },
     "items": {
       "hcm": {
+        "shell-home": { "label": "HRIS 홈" },
+        "workbench-my-hr": { "label": "내 HR" },
+        "workbench-team": { "label": "팀" },
+        "workbench-hr-operations": { "label": "인사 운영" },
+        "workbench-time": { "label": "근태" },
+        "workbench-payroll": { "label": "급여" },
+        "workbench-performance": { "label": "성과" },
+        "workbench-settings": { "label": "설정" },
         "home": { "label": "HRIS 홈" },
         "me": { "label": "나의 인사정보" },
         "time": { "label": "나의 근태" },
@@ -49,6 +392,7 @@
         "pay-operations": { "label": "급여 운영" },
         "talent-operations": { "label": "인재 운영" },
         "organization-design": { "label": "조직 설계" },
+        "system-access": { "label": "시스템 접근 및 구성" },
         "reference-data": { "label": "인력 기준정보" },
         "data-operations": { "label": "연계 및 정합성" },
         "exports": { "label": "통제형 반출" }
@@ -62,37 +406,37 @@
     },
     "hcm": {
       "me": {
-        "eyebrow": "HRIS / 나의 인사",
+        "eyebrow": "HRIS / 내 HR",
         "title": "나의 인사정보",
         "description": "현재 근로관계, 발령 및 조직 정보를 확인합니다."
       },
       "time": {
-        "eyebrow": "HRIS / 나의 인사",
+        "eyebrow": "HRIS / 내 HR",
         "title": "나의 근태",
         "description": "이번 주 근무 기록과 예외를 확인하고 제출합니다."
       },
       "absence": {
-        "eyebrow": "HRIS / 나의 인사",
+        "eyebrow": "HRIS / 내 HR",
         "title": "휴가",
         "description": "사용 가능 휴가를 확인하고 새로운 휴가를 신청합니다."
       },
       "benefits": {
-        "eyebrow": "HRIS / 나의 인사",
+        "eyebrow": "HRIS / 내 HR",
         "title": "복리후생",
         "description": "현재 가입 혜택과 등록 가능 기간을 한곳에서 확인합니다."
       },
       "pay": {
-        "eyebrow": "HRIS / 나의 인사",
+        "eyebrow": "HRIS / 내 HR",
         "title": "급여 명세",
         "description": "급여일과 보안이 적용된 급여 명세 제공 상태를 확인합니다."
       },
       "talent": {
-        "eyebrow": "HRIS / 나의 인사",
+        "eyebrow": "HRIS / 내 HR",
         "title": "성장과 커리어",
         "description": "성장 여정, 목표와 필수 학습을 이어서 관리합니다."
       },
       "services": {
-        "eyebrow": "HRIS / 나의 인사",
+        "eyebrow": "HRIS / 내 HR",
         "title": "HR 도움 및 요청",
         "description": "인사정보, 급여, 복리후생과 증명서 요청을 보안이 적용된 하나의 창구에서 관리합니다."
       },
@@ -107,17 +451,17 @@
         "description": "업무에 필요한 팀과 보고 관계를 공개 범위 안에서 탐색합니다."
       },
       "team": {
-        "eyebrow": "HRIS / 팀 관리",
+        "eyebrow": "HRIS / 내 팀",
         "title": "내 팀",
         "description": "현재 보고 관계를 기준으로 팀 구성과 업무 위치를 확인합니다."
       },
       "team-time": {
-        "eyebrow": "HRIS / 팀 관리",
+        "eyebrow": "HRIS / 내 팀",
         "title": "팀 근태 승인",
         "description": "현재 보고 관계에 속한 팀원의 제출 근태를 검토합니다."
       },
       "team-absence": {
-        "eyebrow": "HRIS / 팀 관리",
+        "eyebrow": "HRIS / 내 팀",
         "title": "팀 휴가 승인",
         "description": "현재 보고 관계에 속한 팀원의 휴가 신청을 검토합니다."
       },
@@ -166,8 +510,13 @@
         "title": "조직 설계",
         "description": "검토와 승인이 가능한 시나리오로 조직과 포지션을 설계합니다."
       },
+      "system-access": {
+        "eyebrow": "HRIS / 설정",
+        "title": "시스템 접근 및 구성",
+        "description": "현재 세션에 적용된 HRIS 권한그룹, 메뉴·위젯 투영과 구성 근거를 확인합니다."
+      },
       "reference-data": {
-        "eyebrow": "HRIS / 데이터 거버넌스",
+        "eyebrow": "HRIS / 설정",
         "title": "인력 기준정보",
         "description": "제품 소유 계약을 보존하면서 회사별 HR 코드값을 관리합니다."
       },
@@ -177,7 +526,7 @@
         "description": "원천 커넥터, 매핑, 동기화와 정합성 처리 근거를 통제합니다."
       },
       "exports": {
-        "eyebrow": "HRIS / 데이터 거버넌스",
+        "eyebrow": "HRIS / 설정",
         "title": "통제형 데이터 반출",
         "description": "데이터 경계를 검토하고 승인 가능한 반출 수명주기 근거를 보존합니다."
       }
@@ -625,6 +974,7 @@
     },
     "teamBoundary": "현재 팀 데이터 경계({{boundary}}) 안의 구성원과 요청만 표시합니다.",
     "names": {
+      "WORKFORCE": "인력",
       "TIME": "근태",
       "ABSENCE": "휴가",
       "BENEFITS": "복리후생",
@@ -659,6 +1009,7 @@
       "COMPLETED": "완료",
       "IN_PROGRESS": "진행 중",
       "ASSIGNED": "할당됨",
+      "ON_TRACK": "정상 진행",
       "AT_RISK": "주의 필요",
       "CANCELLED": "취소됨",
       "RESOLVED": "해결됨",
@@ -883,6 +1234,9 @@
         "CRITICAL": "즉시 조치"
       },
       "metricLabels": {
+        "WORKFORCE": {
+          "activeWorkers": "재직 인원"
+        },
         "TIME": {
           "submitted": "제출 대기",
           "openExceptions": "미해결 예외",

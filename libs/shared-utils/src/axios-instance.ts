@@ -351,11 +351,14 @@ async function request<T>(
   const timeout =
     controller && config.timeoutMs
       ? globalThis.setTimeout(() => {
+          if (controller.signal.aborted) return;
           timedOut = true;
           controller.abort('request-timeout');
         }, config.timeoutMs)
       : undefined;
   let response: Response;
+  let payload: unknown;
+  let accepted = false;
   try {
     try {
       response = await fetch(API_URL + scopedUrl, {
@@ -371,6 +374,11 @@ async function request<T>(
         signal: controller?.signal,
         keepalive: config.keepalive,
       });
+      accepted = response.ok || acceptedStatuses.includes(response.status);
+      // A response's headers do not finish the request: retain cancellation and
+      // timeout ownership until its body has been consumed, including downloads.
+      payload = await parseBody(response, accepted ? config.responseType : 'json');
+      if (controller?.signal.aborted) throw controller.signal.reason;
     } catch (cause) {
       throw new HttpTransportError(
         timedOut ? 'TIMEOUT' : controller?.signal.aborted ? 'ABORT' : 'NETWORK',
@@ -381,9 +389,6 @@ async function request<T>(
     if (timeout !== undefined) globalThis.clearTimeout(timeout);
     config.signal?.removeEventListener('abort', abortFromCaller);
   }
-  const accepted = response.ok || acceptedStatuses.includes(response.status);
-  const payload = await parseBody(response, accepted ? config.responseType : 'json');
-
   if (!accepted) {
     const csrfRejected = response.status === 403 && isMutation(method) && payload === undefined;
     if (csrfRejected) {

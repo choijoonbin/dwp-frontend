@@ -1,0 +1,236 @@
+{
+  "contractId": "HRIS_LAYER_CONTRACT_VERIFICATION_V1",
+  "schemaVersion": 1,
+  "state": "AUTHOR_ONLY_VERIFICATION_FIXTURE_NOT_DOMAIN_IMPLEMENTATION",
+  "g3StartAuthorized": false,
+  "domainRuntimeExecuted": false,
+  "notes": [
+    "Seven source strings compile in memory against installed TypeScript, React and React Query types; no files or JavaScript emit.",
+    "Transport declarations never execute. Wire DTO to model projection is a synthetic api-layer example, not a provider contract or business fixture.",
+    "testing>public-api is a separate AST positive witness, not one of the seven compiled sources.",
+    "@hris-fixture alias exists only in synthetic negative inputs, not repository tsconfig."
+  ],
+  "compileSources": {
+    "model/workspace.ts": "export type Scope={tenantId:string;scopeRevision:string;resourcePublicId:string};\nexport type Values={label:string};\nexport type WorkspaceVm={resourcePublicId:string;label:string;version:number};\nexport type ReceiptVm={receiptId:string;status:'ACCEPTED'|'SUCCEEDED'|'RESULT_UNKNOWN'};\nexport const queryKey=(s:Scope)=>['fixture.v1',s.tenantId,s.scopeRevision,s.resourcePublicId] as const;",
+    "forms/editor.ts": "import type {Values,WorkspaceVm} from '../model/workspace';\nexport const fieldLabel='Name';\nexport const defaults=(vm:WorkspaceVm|undefined):Values=>({label:vm?.label??''});\nexport const valid=(v:Values)=>v.label.trim().length>0;",
+    "api/workspace.ts": "import type {Scope,Values,WorkspaceVm,ReceiptVm} from '../model/workspace';\ntype WireWorkspace={public_id:string;display_name:string;row_version:number};\ntype WireReceipt={public_id:string;state:ReceiptVm['status']};\ndeclare function transportLoad(s:Scope):Promise<WireWorkspace>;\ndeclare function transportSave(s:Scope,v:Values,intentId:string):Promise<WireReceipt>;\nexport async function load(s:Scope):Promise<WorkspaceVm>{const dto=await transportLoad(s);return {resourcePublicId:dto.public_id,label:dto.display_name,version:dto.row_version};}\nexport async function save(s:Scope,v:Values,intentId:string):Promise<ReceiptVm>{const dto=await transportSave(s,v,intentId);return {receiptId:dto.public_id,status:dto.state};}",
+    "hooks/use-workspace.ts": "import {useEffect,useRef,useState} from 'react';\nimport {useQuery,useMutation} from '@tanstack/react-query';\nimport {load,save} from '../api/workspace';\nimport {queryKey} from '../model/workspace';\nimport type {Scope,Values} from '../model/workspace';\nimport {defaults,valid} from '../forms/editor';\nexport function useWorkspace(scope:Scope){\nconst query=useQuery({queryKey:queryKey(scope),queryFn:()=>load(scope)});\nconst [values,setValues]=useState<Values>(()=>defaults(undefined));\nconst intent=useRef<string|null>(null);\nuseEffect(()=>{setValues(defaults(query.data));intent.current=null;},[query.data,scope.tenantId,scope.scopeRevision]);\nconst command=useMutation({mutationFn:(input:{values:Values;intentId:string})=>save(scope,input.values,input.intentId)});\nreturn {vm:query.data,values,setValues,status:query.status,receipt:command.data,\nsubmit:()=>{if(valid(values)){intent.current??=crypto.randomUUID();command.mutate({values,intentId:intent.current});}}};\n}",
+    "components/workspace-card.tsx": "import type {Values,WorkspaceVm} from '../model/workspace';\nexport function Card(p:{vm:WorkspaceVm|undefined;values:Values;fieldLabel:string;onChange:(v:Values)=>void;onSubmit:()=>void}){\nreturn <section><h1>{p.vm?.label??'Loading'}</h1><input aria-label={p.fieldLabel} value={p.values.label} onChange={e=>p.onChange({label:e.currentTarget.value})}/><button onClick={p.onSubmit}>Save</button></section>;\n}",
+    "pages/workspace-page.tsx": "import type {Scope} from '../model/workspace';\nimport {useWorkspace} from '../hooks/use-workspace';\nimport {fieldLabel} from '../forms/editor';\nimport {Card} from '../components/workspace-card';\nexport function Page(p:{scope:Scope}){const state=useWorkspace(p.scope);return <Card vm={state.vm} values={state.values} fieldLabel={fieldLabel} onChange={state.setValues} onSubmit={state.submit}/>;}",
+    "routes/workspace-route.tsx": "import {Page} from '../pages/workspace-page';\nexport const WorkspaceRoute=Page;"
+  },
+  "testingSources": {
+    "apps/dwp/src/features/hris/people/index.ts": "export const publicWitness=1;",
+    "apps/dwp/src/features/hris/people/testing/contract.test.ts": "import {publicWitness} from '../index'; export const witness=publicWitness;"
+  },
+  "fixtureAliases": {
+    "@hris-fixture/*": ["apps/dwp/src/features/hris/*"]
+  },
+  "negatives": [
+    {
+      "id": "pages_api",
+      "expectedCode": "FORBIDDEN_LAYER_EDGE",
+      "sources": {
+        "apps/dwp/src/features/hris/people/pages/x.ts": "import '../api/x';",
+        "apps/dwp/src/features/hris/people/api/x.ts": "export {};"
+      }
+    },
+    {
+      "id": "components_api",
+      "expectedCode": "FORBIDDEN_LAYER_EDGE",
+      "sources": {
+        "apps/dwp/src/features/hris/people/components/x.ts": "import '../api/x';",
+        "apps/dwp/src/features/hris/people/api/x.ts": "export {};"
+      }
+    },
+    {
+      "id": "forms_api",
+      "expectedCode": "FORBIDDEN_LAYER_EDGE",
+      "sources": {
+        "apps/dwp/src/features/hris/people/forms/x.ts": "import '../api/x';",
+        "apps/dwp/src/features/hris/people/api/x.ts": "export {};"
+      }
+    },
+    {
+      "id": "forms_hooks_reverse",
+      "expectedCode": "FORBIDDEN_LAYER_EDGE",
+      "sources": {
+        "apps/dwp/src/features/hris/people/forms/x.ts": "import '../hooks/x';",
+        "apps/dwp/src/features/hris/people/hooks/x.ts": "export {};"
+      }
+    },
+    {
+      "id": "api_hooks_reverse",
+      "expectedCode": "FORBIDDEN_LAYER_EDGE",
+      "sources": {
+        "apps/dwp/src/features/hris/people/api/x.ts": "import '../hooks/x';",
+        "apps/dwp/src/features/hris/people/hooks/x.ts": "export {};"
+      }
+    },
+    {
+      "id": "hooks_components",
+      "expectedCode": "FORBIDDEN_LAYER_EDGE",
+      "sources": {
+        "apps/dwp/src/features/hris/people/hooks/x.ts": "import '../components/x';",
+        "apps/dwp/src/features/hris/people/components/x.ts": "export {};"
+      }
+    },
+    {
+      "id": "production_testing",
+      "expectedCode": "FORBIDDEN_LAYER_EDGE",
+      "sources": {
+        "apps/dwp/src/features/hris/people/pages/x.ts": "import '../testing/x';",
+        "apps/dwp/src/features/hris/people/testing/x.ts": "export {};"
+      }
+    },
+    {
+      "id": "testing_internal",
+      "expectedCode": "FORBIDDEN_LAYER_EDGE",
+      "sources": {
+        "apps/dwp/src/features/hris/people/testing/x.ts": "import '../model/x';",
+        "apps/dwp/src/features/hris/people/model/x.ts": "export {};"
+      }
+    },
+    {
+      "id": "nested_hris_relative",
+      "expectedCode": "FOREIGN_FEATURE_INTERNAL",
+      "sources": {
+        "apps/dwp/src/features/hris/people/pages/x.ts": "import '../../performance/model/x';",
+        "apps/dwp/src/features/hris/performance/model/x.ts": "export type X=string;"
+      }
+    },
+    {
+      "id": "nested_hris_alias",
+      "expectedCode": "FOREIGN_FEATURE_INTERNAL",
+      "sources": {
+        "apps/dwp/src/features/hris/people/pages/x.ts": "import '@hris-fixture/performance/model/x';",
+        "apps/dwp/src/features/hris/performance/model/x.ts": "export type X=string;"
+      }
+    },
+    {
+      "id": "nested_hris_reexport",
+      "expectedCode": "FOREIGN_FEATURE_INTERNAL",
+      "sources": {
+        "apps/dwp/src/features/hris/people/pages/x.ts": "export * from '@hris-fixture/performance/model/x';",
+        "apps/dwp/src/features/hris/performance/model/x.ts": "export type X=string;"
+      }
+    },
+    {
+      "id": "nested_hris_dynamic_literal",
+      "expectedCode": "FOREIGN_FEATURE_INTERNAL",
+      "sources": {
+        "apps/dwp/src/features/hris/people/pages/x.ts": "export const x=()=>import('@hris-fixture/performance/model/x');",
+        "apps/dwp/src/features/hris/performance/model/x.ts": "export type X=string;"
+      }
+    },
+    {
+      "id": "nested_hris_type_query",
+      "expectedCode": "FOREIGN_FEATURE_INTERNAL",
+      "sources": {
+        "apps/dwp/src/features/hris/people/pages/x.ts": "export type X=import('@hris-fixture/performance/model/x').X;",
+        "apps/dwp/src/features/hris/performance/model/x.ts": "export type X=string;"
+      }
+    },
+    {
+      "id": "unknown_project_alias",
+      "expectedCode": "UNRESOLVED_PROJECT_IMPORT",
+      "sources": {
+        "apps/dwp/src/features/hris/people/pages/x.ts": "import '@/features/hris/performance/model/x';"
+      }
+    },
+    {
+      "id": "raw_dto_alias_renamed",
+      "expectedCode": "UI_TRANSPORT_DTO",
+      "sources": {
+        "apps/dwp/src/features/hris/people/pages/x.ts": "import type {Dto as View} from '@dwp-frontend/api-contracts'; export type X=View;"
+      }
+    },
+    {
+      "id": "generated_dto_relative",
+      "expectedCode": "UI_TRANSPORT_DTO",
+      "sources": {
+        "apps/dwp/src/features/hris/people/hooks/x.ts": "import type {X} from '../generated/x'; export type Y=X;",
+        "apps/dwp/src/features/hris/people/generated/x.ts": "// @generated\nexport type X=string;"
+      }
+    },
+    {
+      "id": "model_react",
+      "expectedCode": "MODEL_REACT",
+      "sources": {
+        "apps/dwp/src/features/hris/people/model/x.ts": "import type {ReactNode} from 'react'; export type X=ReactNode;"
+      }
+    },
+    {
+      "id": "forms_react",
+      "expectedCode": "FORM_REACT",
+      "sources": {
+        "apps/dwp/src/features/hris/people/forms/x.ts": "import {useState} from 'react'; export const x=useState;"
+      }
+    },
+    {
+      "id": "page_react_query",
+      "expectedCode": "UI_QUERY_ORCHESTRATION",
+      "sources": {
+        "apps/dwp/src/features/hris/people/pages/x.ts": "import {useQuery} from '@tanstack/react-query'; export const x=useQuery;"
+      }
+    },
+    {
+      "id": "raw_gateway",
+      "expectedCode": "FEATURE_GATEWAY_RAW_CLIENT",
+      "sources": {
+        "apps/dwp/src/features/hris/people/api/x.ts": "import 'shared/gateway-client';"
+      }
+    },
+    {
+      "id": "ui_axios",
+      "expectedCode": "UI_RAW_CLIENT",
+      "sources": {
+        "apps/dwp/src/features/hris/people/pages/x.ts": "import axios from 'axios'; export const x=axios;"
+      }
+    },
+    {
+      "id": "raw_fetch",
+      "expectedCode": "FEATURE_RAW_TRANSPORT",
+      "sources": {
+        "apps/dwp/src/features/hris/people/pages/x.ts": "export const x=()=>fetch('/api/x');"
+      }
+    },
+    {
+      "id": "computed_dynamic",
+      "expectedCode": "COMPUTED_IMPORT",
+      "sources": {
+        "apps/dwp/src/features/hris/people/pages/x.ts": "export const x=(name:string)=>import(name);"
+      }
+    },
+    {
+      "id": "computed_require",
+      "expectedCode": "COMPUTED_IMPORT",
+      "sources": {
+        "apps/dwp/src/features/hris/people/hooks/x.ts": "export const x=(name:string)=>require(name);"
+      }
+    },
+    {
+      "id": "same_layer_relative_cycle",
+      "expectedCode": "IMPORT_CYCLE",
+      "sources": {
+        "apps/dwp/src/features/hris/people/model/a.ts": "import './b';",
+        "apps/dwp/src/features/hris/people/model/b.ts": "import './a';"
+      }
+    },
+    {
+      "id": "same_layer_alias_cycle",
+      "expectedCode": "IMPORT_CYCLE",
+      "sources": {
+        "apps/dwp/src/features/hris/people/model/a.ts": "import '@hris-fixture/people/model/b';",
+        "apps/dwp/src/features/hris/people/model/b.ts": "import '@hris-fixture/people/model/a';"
+      }
+    },
+    {
+      "id": "invalid_syntax",
+      "expectedCode": "PARSE_ERROR",
+      "sources": {
+        "apps/dwp/src/features/hris/people/pages/x.ts": "export const = ;"
+      }
+    }
+  ]
+}

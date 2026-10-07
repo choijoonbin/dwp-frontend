@@ -64,8 +64,13 @@ import {
 import type {
   ProductNavigationGroup as ProductAreaNavigationGroup,
   ProductNavigationItem as ProductAreaNavigationItem,
+  ProductShellNavigationProjection,
   ProductSurfaceManifest,
   ProductSurfaceNavigationItem,
+} from '../components/product-manifest';
+import {
+  normalizeProductPath,
+  resolveProductNavigationSelection,
 } from '../components/product-manifest';
 import type { ProductSurfaceLayoutRuntime } from '../components/product-surface-controls';
 import { canAccessProductAreaNavigationItem } from './product-area-permissions';
@@ -132,6 +137,7 @@ export type ProductAreaLayoutProps = {
     | 'notifications'
     | 'spaces';
   surface?: ProductSurfaceLayoutRuntime;
+  shellNavigationProjection?: ProductShellNavigationProjection;
   canAccessLegacySurface?: (surface: ProductSurfaceManifest['surfaces'][number]) => boolean;
   renderNavigationItemChildren?: (
     context: ProductAreaNavigationItemChildrenContext
@@ -155,6 +161,7 @@ export function ProductAreaLayout({
   manifest,
   translationNamespace = 'workforce',
   surface,
+  shellNavigationProjection,
   canAccessLegacySurface,
   renderNavigationItemChildren,
   navigationChildrenPresentation = 'disclosure',
@@ -220,11 +227,45 @@ export function ProductAreaLayout({
             isExplicitAppResourceEntitled(legacyManifest.appKey, permissions)),
       })
     : undefined;
-  const navigationSource = legacyManifest ? (legacyPresentation?.navigation ?? []) : navigation;
+  const authorizedShellPaths = new Set(
+    surface
+      ? [...(surface.compatibilityNavigationTargets?.keys() ?? [])].map(normalizeProductPath)
+      : legacyPresentation
+        ? [...legacyPresentation.navigationBySurfaceId.values()].flatMap((groups) =>
+            groups.flatMap((group) => group.items.map((item) => normalizeProductPath(item.path)))
+          )
+        : []
+  );
+  const projectedShellNavigation = shellNavigationProjection
+    ? shellNavigationProjection.project(authorizedShellPaths).flatMap((group) => {
+        const items = group.items.flatMap((item) => {
+          const path = normalizeProductPath(item.path);
+          if (!authorizedShellPaths.has(path)) return [];
+          return [
+            {
+              ...item,
+              path,
+              activePathPrefixes: item.activePathPrefixes
+                ?.map(normalizeProductPath)
+                .filter((activePath) => authorizedShellPaths.has(activePath)),
+            },
+          ];
+        });
+        return items.length ? [{ ...group, items }] : [];
+      })
+    : undefined;
+  const navigationSource = shellNavigationProjection
+    ? (projectedShellNavigation ?? [])
+    : legacyManifest
+      ? (legacyPresentation?.navigation ?? [])
+      : navigation;
   const visibleNavigation = navigationSource
     .map((group) => ({
       ...group,
       items: group.items.filter((item) => {
+        if (shellNavigationProjection) {
+          return authorizedShellPaths.has(normalizeProductPath(item.path));
+        }
         if (surface?.compatibilityNavigationTargets && isSurfaceNavigationItem(item)) {
           return surface.compatibilityNavigationTargets?.has(item.path) === true;
         }
@@ -257,10 +298,13 @@ export function ProductAreaLayout({
         : { path: '/', label: t('shell.backToHome') };
   const presentationPlane =
     surface?.decision.context.plane ?? legacyPresentation?.currentSurface.plane;
-  const presentationLabel =
-    surface?.label ??
-    (legacyPresentation ? t(legacyPresentation.currentSurface.labelKey) : undefined);
-  const presentationEntries = surface?.entryPoints ?? legacyPresentation?.headerEntryPoints;
+  const presentationLabel = shellNavigationProjection
+    ? undefined
+    : (surface?.label ??
+      (legacyPresentation ? t(legacyPresentation.currentSurface.labelKey) : undefined));
+  const presentationEntries = shellNavigationProjection?.hideSurfaceNavigation
+    ? undefined
+    : (surface?.entryPoints ?? legacyPresentation?.headerEntryPoints);
   const currentSurfaceId =
     surface?.decision.context.surfaceKey ?? legacyPresentation?.currentSurface.id;
   const focusLocation = `${location.pathname}${location.search}${location.hash}`;
@@ -386,6 +430,10 @@ export function ProductAreaLayout({
     },
     onNavigate: (path) => navigate(path),
   });
+  const projectedSelectedView = shellNavigationProjection?.resolveSelectedView?.(pathname);
+  const selectedNavigationItem = shellNavigationProjection?.resolveSelectedView
+    ? undefined
+    : resolveProductNavigationSelection(pathname, visibleNavigation);
 
   const navigationContent = (
     compactNavigation: boolean,
@@ -432,9 +480,9 @@ export function ProductAreaLayout({
             >
               {group.items.map((item) => {
                 const Icon = item.icon;
-                const selected =
-                  pathname === item.path ||
-                  (item.path !== '/' && pathname.startsWith(`${item.path}/`));
+                const selected = shellNavigationProjection?.resolveSelectedView
+                  ? projectedSelectedView === item.view
+                  : selectedNavigationItem === item;
                 const label = t(`navigation.items.${areaKey}.${item.view}.label`);
                 const exactNavigationTarget = surface?.compatibilityNavigationTargets?.get(
                   item.path

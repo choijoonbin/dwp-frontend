@@ -97,8 +97,8 @@ export function resolveCanaryProductFlags(
   return authority.productFlags[productId] ?? INVALID_PRODUCT_SURFACE_FLAGS;
 }
 
-function allowedDecisionIsTrusted(
-  authority: ProductSurfaceCanaryAuthority,
+export function isAllowedCanaryDecisionTrusted(
+  authority: Pick<ProductSurfaceCanaryAuthority, 'envelope' | 'serverNowMs'>,
   decision: Extract<SurfaceDecision, { state: 'allowed' }>,
   expected: { productId: string; surfaceId: string }
 ): boolean {
@@ -310,7 +310,7 @@ export function resolveCanarySurfaceDecision(
   const decision = authority.surfaceDecisions?.[expected.surfaceId];
   if (!decision) return { state: 'authority-unavailable' };
   if (decision.state !== 'allowed') return decision;
-  return allowedDecisionIsTrusted(authority, decision, expected)
+  return isAllowedCanaryDecisionTrusted(authority, decision, expected)
     ? decision
     : { state: 'authority-unavailable' };
 }
@@ -322,7 +322,7 @@ export function resolveCanaryRouteDecision(
   const decision = authority.routeDecisions?.[expected.routeContractKey];
   if (!decision) return { state: 'authority-unavailable' };
   if (decision.state !== 'allowed') return decision;
-  return allowedDecisionIsTrusted(authority, decision, expected)
+  return isAllowedCanaryDecisionTrusted(authority, decision, expected)
     ? decision
     : { state: 'authority-unavailable' };
 }

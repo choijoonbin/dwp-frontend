@@ -44,13 +44,15 @@ export type ApprovalHighRiskCommandDescriptor = Readonly<{
     | 'HCM_CONNECTOR'
     | 'HCM_SYNC_RUN'
     | 'ASSIGNMENT_PROPOSAL'
+    | 'PERFORMANCE_CYCLE'
+    | 'PAYROLL_CONFIGURATION'
     | 'DWAI_ON_CONTROL_PLANE';
   targetId: string;
   expectedObjectVersion: number;
   payload: Readonly<Record<string, unknown>>;
   idempotencyKey?: string;
   rotateIdempotencyInCommandPayload?: boolean;
-  idempotencyPayloadPath?: 'ROOT';
+  idempotencyPayloadPath?: 'ROOT' | 'ROOT_COMMAND_ID';
 }>;
 
 export type ApprovalHighRiskAuthority = Readonly<{
@@ -461,20 +463,28 @@ export function restartApprovalHighRiskAttempt(
           idempotencyKey,
           payload: { ...attempt.descriptor.payload, idempotencyKey },
         }
-      : attempt.descriptor.rotateIdempotencyInCommandPayload
+      : attempt.descriptor.idempotencyPayloadPath === 'ROOT_COMMAND_ID'
         ? {
             ...attempt.descriptor,
             idempotencyKey,
-            payload: {
-              ...attempt.descriptor.payload,
-              command: {
-                ...((attempt.descriptor.payload.command as Readonly<Record<string, unknown>>) ??
-                  {}),
-                idempotencyKey,
-              },
-            },
+            payload: { ...attempt.descriptor.payload, commandId: idempotencyKey },
           }
-        : attempt.descriptor;
+        : attempt.descriptor.rotateIdempotencyInCommandPayload
+          ? {
+              ...attempt.descriptor,
+              idempotencyKey,
+              payload: {
+                ...attempt.descriptor.payload,
+                command: {
+                  ...((attempt.descriptor.payload.command as Readonly<Record<string, unknown>>) ??
+                    {}),
+                  idempotencyKey,
+                },
+              },
+            }
+          : attempt.descriptor.idempotencyKey
+            ? { ...attempt.descriptor, idempotencyKey }
+            : attempt.descriptor;
   return createApprovalHighRiskAttempt(command, authority, idempotencyKey);
 }
 

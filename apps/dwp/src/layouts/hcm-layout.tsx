@@ -1,6 +1,7 @@
 import { visibleHcmNavigation } from '../features/hcm/hcm-navigation';
 import { HCM_PRODUCT_MANIFEST } from '../features/hcm/hcm-product-manifest';
 import { canAccessLegacyHcmSurface, useHcmAccess } from '../features/hcm/hcm-surface-access';
+import { HRIS_SHELL_NAVIGATION_PROJECTION } from '../features/hris/shell/model/hris-shell-navigation-contract';
 import { ProductAreaLayout } from './product-area-layout';
 
 import type { HcmLegacySurfaceId } from '../features/hcm/hcm-surface-access';
@@ -27,6 +28,7 @@ export function HcmLayout() {
       areaKey="hcm"
       manifest={HCM_PRODUCT_MANIFEST}
       navigation={navigation}
+      shellNavigationProjection={HRIS_SHELL_NAVIGATION_PROJECTION}
       translationNamespace="hcm"
       canAccessLegacySurface={(surface) =>
         canAccessLegacyHcmSurface(surface.id as HcmLegacySurfaceId, {
