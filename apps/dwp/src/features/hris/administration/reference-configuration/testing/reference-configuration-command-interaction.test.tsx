@@ -8,6 +8,7 @@ import { ReferenceConfigurationStudio } from '../components/reference-configurat
 
 import type {
   ReferenceConfigurationCommandInput,
+  ReferenceConfigurationCommandReceipt,
   ReferenceConfigurationLifecycle,
   ReferenceConfigurationLifecycleAction,
 } from '../model/reference-configuration-model';
@@ -158,7 +159,9 @@ describe('ReferenceConfigurationStudio command-owner boundary', () => {
     action: ReferenceConfigurationLifecycleAction;
     aggregateVersion: number;
     commandOwner?: { execute(input: ReferenceConfigurationCommandInput): Promise<unknown> };
-    onCommitted?: ReturnType<typeof vi.fn>;
+    onCommitted?: (
+      receipt: ReferenceConfigurationCommandReceipt
+    ) => void | Promise<void>;
   }) {
     await act(async () => {
       root.render(
