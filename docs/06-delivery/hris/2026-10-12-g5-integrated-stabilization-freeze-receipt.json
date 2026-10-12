@@ -1,0 +1,298 @@
+{
+  "schema": "dwp.hris.g5-integrated-stabilization-freeze-receipt.v1",
+  "receiptId": "HRIS-G5-INTEGRATED-STABILIZATION-FREEZE-RECEIPT-20261012-R1",
+  "issuedAt": "2026-10-12T09:50:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "status": "PASS",
+  "decision": "G6_W1_SUCCESSOR_AUTHORIZED_NOT_RUN",
+  "completionMeaning": "The G5 backend, frontend and Agent candidates are committed, pushed and clean. Authorization v34 and the final Gateway OpenAPI projection are byte-pinned; required isolated runtime, owner restart, migration, persistence, static, build, browser and product-artifact gates are closed. Failures found by broad candidate runs were repaired by cluster and only their affected scopes were rerun. G6 may now execute once in full mode against the final clean evidence-carrier frontend head and the pinned backend head.",
+  "exclusions": [
+    "This receipt does not claim that G6 W1 has run or passed.",
+    "This receipt does not authorize G7 packet issuance, module-parallel implementation, migration admission, customer activation or production release.",
+    "The read-only G7 preflight remains non-authorizing and its requiredFrozenEvidence fields remain intentionally empty until G7 promotion."
+  ],
+  "sourcePins": {
+    "g3BackendSemanticResult": {
+      "commit": "f0a971eada612e6a267ece104707f0cab4191343",
+      "tree": "a51b7e6641100e4223761b9ef5f8529d14eeedcc"
+    },
+    "g4FrontendSemanticResult": {
+      "commit": "51ab8a8df6bcc44266be7d7edc708a6b4d8ce081",
+      "tree": "735b1e1818de2ff35de17a21c27155e17357ec8f"
+    },
+    "g4EvidenceCommit": {
+      "commit": "c1ed2dc5f77370aa144aebf86206b2c9086a3f9b",
+      "tree": "f60bf15210073e1498fdf02e956c0a55a34c5678"
+    },
+    "g5FrontendSourceResult": {
+      "commit": "c05ffa3f9d647968fdcb224ec51f811c7d2cc538",
+      "tree": "761dd5e5ba232992dbac3a11fcd73ad2de787f24"
+    },
+    "g5BackendResult": {
+      "commit": "c0d72ca8e26a6e2a0b3885b62c0aa0e3ad7b1329",
+      "tree": "099c88ee32c584764802f3efd77c23364c65b8c4"
+    },
+    "agentBaseline": {
+      "commit": "1d46fc4ab49c604efb7464574c49d13ee453e059",
+      "tree": "0b9a8dbfd828478ee825452e5aca8688c83e37ab"
+    }
+  },
+  "frozenCandidates": {
+    "frontend": {
+      "branch": "codex/hris-g1-integration-frontend-20261006",
+      "upstream": "origin/codex/hris-g1-integration-frontend-20261006",
+      "sourceCommit": "c05ffa3f9d647968fdcb224ec51f811c7d2cc538",
+      "sourceTree": "761dd5e5ba232992dbac3a11fcd73ad2de787f24",
+      "stateSha256AtPin": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "worktreeCleanAtPin": true,
+      "upstreamHeadMatchedAtPin": true,
+      "receiptCarrierRule": "The evidence-carrier commit cannot self-reference. G6 must capture the final pushed frontend HEAD containing this receipt and must observe a clean worktree."
+    },
+    "backend": {
+      "branch": "codex/hris-g1-integration-backend-20261006",
+      "upstream": "origin/codex/hris-g1-integration-backend-20261006",
+      "commit": "c0d72ca8e26a6e2a0b3885b62c0aa0e3ad7b1329",
+      "tree": "099c88ee32c584764802f3efd77c23364c65b8c4",
+      "stateSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "worktreeClean": true,
+      "upstreamHeadMatches": true
+    },
+    "agent": {
+      "branch": "dwp-dev",
+      "upstream": "origin/dwp-dev",
+      "commit": "1d46fc4ab49c604efb7464574c49d13ee453e059",
+      "tree": "0b9a8dbfd828478ee825452e5aca8688c83e37ab",
+      "stateSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "worktreeClean": true,
+      "upstreamHeadMatches": true,
+      "hrisModuleSliceAuthority": false
+    }
+  },
+  "authorization": {
+    "version": 34,
+    "semanticChecksum": "852d20e1e639e1a7170f02b5714d21d8c51a9eb8ff5ac32d8b7940b82d6be83b",
+    "bundleSha256": "8edd29e91a915fc035028c44af4055673bf5e53c7a5ca77e2af381d69bc60135",
+    "indexSha256": "9b47d5aac66ce2f8b035b49fbc5f77f2715f9e08a5733e4fe3739bbcba5bff28",
+    "counts": {
+      "capabilities": 223,
+      "accessPolicies": 24,
+      "entitlementExpressions": 17,
+      "predicatePolicies": 54,
+      "routes": 952
+    },
+    "status": "PASS"
+  },
+  "visibleIdentity": {
+    "requiredApplicationName": "HRIS",
+    "homeApplicationCatalog": "HRIS",
+    "englishRuntimeProjection": "HRIS",
+    "koreanRuntimeProjection": "HRIS",
+    "migratedRuntimeDatabase": "PASS",
+    "staleApplicationNameFound": false
+  },
+  "gatewayOpenApi": {
+    "sha256": "325fd7acfcf0ed42cd03db0105003c6a53d8434467e594e023d227c64b734856",
+    "paths": 1664,
+    "operations": 1904,
+    "schemas": 3682,
+    "backendPath": "contracts/openapi/gateway-public.json",
+    "frontendPath": "libs/api-contracts/openapi/gateway-public.json",
+    "frontendBackendBytesEqual": true,
+    "status": "PASS"
+  },
+  "runtimeEvidence": {
+    "backend": {
+      "isolatedAuthOpenApiExport": "PASS",
+      "isolatedPlatformOpenApiExport": "PASS",
+      "enabledOwnerLiveParity": {
+        "people": "PASS",
+        "payroll": "PASS",
+        "time": "PASS"
+      },
+      "ownerRestartAcceptance": {
+        "command": "python3 scripts/hris-g5-owner-runtime-acceptance.py",
+        "services": 3,
+        "bootsPerService": 2,
+        "syntheticOnly": true,
+        "status": "PASS"
+      },
+      "cleanInstall": "PASS",
+      "existingDatabaseUpgrade": "PASS",
+      "ownerPersistenceAfterRestart": "PASS",
+      "runtimeSmoke": "PASS",
+      "openApiExactCheck": "PASS",
+      "codeContractAudit": {
+        "passed": 170,
+        "total": 170,
+        "status": "PASS"
+      },
+      "productionSourceSizeExactGate": "PASS",
+      "testSourceSizeExactGate": "PASS"
+    },
+    "frontend": {
+      "nodeRuntime": "24.x",
+      "immutableInstall": "PASS",
+      "fullVitest": {
+        "files": 1083,
+        "tests": 8367,
+        "status": "PASS"
+      },
+      "productSurfaceBrowserComposite": {
+        "passing": 152,
+        "expectedSkipped": 12,
+        "initialFailureCount": 20,
+        "targetedClosureCount": 20,
+        "status": "PASS"
+      },
+      "mainBundleBudget": {
+        "initialRawKiB": 1073.5,
+        "initialRawLimitKiB": 1074.2,
+        "initialGzipKiB": 310.1,
+        "initialGzipLimitKiB": 317.4,
+        "initialRequests": 4,
+        "initialRequestLimit": 5,
+        "status": "PASS"
+      },
+      "productBuildsComposite": {
+        "passing": 16,
+        "total": 16,
+        "status": "PASS"
+      },
+      "productArtifactsComposite": {
+        "passing": 8,
+        "total": 8,
+        "status": "PASS"
+      },
+      "performanceBudget": {
+        "passing": 1,
+        "total": 1,
+        "status": "PASS"
+      },
+      "productionSourceInventory": {
+        "productionFiles": 3528,
+        "generatedFiles": 4,
+        "status": "PASS"
+      },
+      "maintenanceInventory": {
+        "checkedFiles": 516,
+        "legacyExceptions": 12,
+        "status": "PASS"
+      },
+      "designSystemAdoption": {
+        "grandfatheredJsxUses": 4044,
+        "status": "PASS"
+      },
+      "typescript": "PASS",
+      "eslint": {
+        "errors": 0,
+        "warnings": 5,
+        "status": "PASS_WITH_EXISTING_WARNINGS"
+      },
+      "i18n": "PASS",
+      "displayContracts": "PASS",
+      "diffCheck": "PASS"
+    }
+  },
+  "deterministicPromotion": {
+    "backend": {
+      "status": "COMPOSITE_PASS_AFTER_TARGETED_APPROVAL_CLOSURE",
+      "policy": "The broad candidate gate established every unaffected result once. Four failures in one approval-readiness cluster were fixed together and the affected approval scope was rerun to PASS; the unchanged backend gate was not repeated."
+    },
+    "frontend": {
+      "status": "COMPOSITE_PASS_AFTER_TARGETED_CLOSURES",
+      "successfulEvidenceDigests": [
+        {
+          "scope": "internal exports",
+          "sha256": "f8f60e33a7364bc32da7490b0e38c0e194554257e2e28a89c8dae794fe68789e"
+        },
+        {
+          "scope": "design-system adoption",
+          "sha256": "1bc2d3619cc19bb247642948af8a4358d4c60187713172837b89bd5449c42ac4"
+        },
+        {
+          "scope": "final main Vite budget",
+          "sha256": "f1afa78c02d7a09d9f14c1a6a265a45b5baa32224d235b59d58bec59c679c0f3"
+        },
+        {
+          "scope": "Approvals product build closure",
+          "sha256": "d09f5db936abe89ca1aa3e8ffa79711e9460f7647c6e11d73a51357af85d7986"
+        },
+        {
+          "scope": "Workspace product build closure",
+          "sha256": "12bb5b58fc542fa74af1583c271263e53a42e9621f51c82ce2be41824e0b6bdc"
+        },
+        {
+          "scope": "Workspace product artifact closure",
+          "sha256": "d0e0d4124711b31054c415e9fdcaa5eff40a945d4a2334588e11ed1fb50cc1c6"
+        },
+        {
+          "scope": "performance budget closure",
+          "sha256": "e2204ea9a7069334b216d1e70c3d31a2fc8effe46529c9f551ff5d1311e4b18d"
+        }
+      ],
+      "rawLogPolicy": "Local session logs are not repository artifacts; their digests are pinned here and the deterministic commands remain in package scripts and Playwright configuration."
+    },
+    "agent": {
+      "sourceOrConsumerContractChanged": false,
+      "baselineReused": true,
+      "status": "PASS_NO_RERUN_REQUIRED"
+    }
+  },
+  "repairTrace": [
+    {
+      "cluster": "backend approval readiness",
+      "initialFinding": "Four tests failed in one approval-readiness cluster.",
+      "closure": "The shared cause was repaired and the affected approval module passed its scoped rerun.",
+      "broadRerun": false
+    },
+    {
+      "cluster": "frontend static build",
+      "initialFinding": "One internal export was unused and one design-system token use was non-canonical.",
+      "closure": "The export was localized, the style used theme tokens, and only the failed static gates plus required downstream compile/bundle gates were rerun.",
+      "broadRerun": false
+    },
+    {
+      "cluster": "product isolation and artifact runtime",
+      "initialFinding": "Approvals imported a global route barrel and Workspace had a shell/token chunk cycle.",
+      "closure": "Approvals now imports the official-only route contract; Workspace uses the direct token module and stable initial-vendor placement. The failed Approvals build and two Workspace artifact cases passed targeted reruns.",
+      "broadRerun": false
+    },
+    {
+      "cluster": "runtime performance journey",
+      "initialFinding": "The scenario used an obsolete accessible name and then selected the already-active canonical queue route.",
+      "closure": "The journey now selects the stable non-active /work/action-required href and passed 1/1 with the performance configuration.",
+      "broadRerun": false
+    }
+  ],
+  "g6W1Successor": {
+    "status": "AUTHORIZED_NOT_RUN",
+    "executionCount": 0,
+    "executionPolicy": "EXACTLY_ONCE_FULL_MODE",
+    "frontendExecutableSha256": "05b6815688b061c7237d3ced2180215f268e3cb47cddb9bcea2b482765449048",
+    "frontendCoreSha256": "f125751ee95d36ac9b0850ef8478d30ecae10c57c89bcc55f9f001d5d961a5f2",
+    "backendRunnerSha256": "1a65e1a639f381bfb32094014691d07c4bad016098d4b4c4e7ae57284e60368b",
+    "requiredFrontendState": "FINAL_RECEIPT_CARRIER_COMMITTED_PUSHED_CLEAN",
+    "requiredBackendCommit": "c0d72ca8e26a6e2a0b3885b62c0aa0e3ad7b1329",
+    "requiredAuthorizationChecksum": "852d20e1e639e1a7170f02b5714d21d8c51a9eb8ff5ac32d8b7940b82d6be83b",
+    "requiredGatewayOpenApiSha256": "325fd7acfcf0ed42cd03db0105003c6a53d8434467e594e023d227c64b734856"
+  },
+  "authority": {
+    "g5Complete": true,
+    "g5SourceFrozen": true,
+    "g6Authorized": true,
+    "g6Executed": false,
+    "g7Authorized": false,
+    "modulePacketIssuanceAuthorized": false,
+    "moduleParallelDevelopmentAuthorized": false,
+    "migrationAdmissionAuthorized": false,
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "startTokensIssued": []
+  },
+  "nextGate": {
+    "id": "G6_W1_SUCCESSOR",
+    "status": "AUTHORIZED_NOT_RUN",
+    "executionPolicy": "EXACTLY_ONCE_FULL_MODE",
+    "successCondition": "The backend runner and frontend checkpoint must produce one full-mode PASS with 15 unique assertions, verified rollback and teardown, no customer data and no production activation."
+  }
+}
