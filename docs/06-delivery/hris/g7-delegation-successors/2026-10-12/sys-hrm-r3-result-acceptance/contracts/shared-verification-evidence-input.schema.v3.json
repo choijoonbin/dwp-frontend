@@ -1,0 +1,170 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dwp.example/hris/g7/shared-verification-evidence-input.schema.v3.json",
+  "title": "G7 SYS/HRM exact-command runner evidence input v3",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "evidenceId", "issuedBy", "authorityStatus", "plan", "sourcePins", "runner", "singleBatch", "closedSet", "results", "startedAt", "completedAt", "sealedPayloadSha256"],
+  "properties": {
+    "schema": {"const": "dwp.hris.g7-sys-hrm-shared-verification-evidence-input.v3"},
+    "evidenceId": {"type": "string", "minLength": 1},
+    "issuedBy": {"const": "SYS_COMMON_INTEGRATION_CONTROL"},
+    "authorityStatus": {"const": "CONTROL_AUTHORED_POST_INTEGRATION_EVIDENCE"},
+    "plan": {"$ref": "#/$defs/filePin"},
+    "sourcePins": {"$ref": "#/$defs/sourcePins"},
+    "runner": {"$ref": "#/$defs/runner"},
+    "singleBatch": {"const": true},
+    "closedSet": {"const": ["CONTROL_AUTHORIZATION_CHECK", "CONTROL_BACKEND_OPENAPI_CHECK", "CONTROL_FRONTEND_OPENAPI_CHECK", "CONTROL_SHARED_ROUTE_ACCESS", "CONTROL_FRONTEND_TYPECHECK", "CONTROL_FRONTEND_ARCHITECTURE", "CONTROL_RESPONSIVE_ACCESSIBILITY_PLAYWRIGHT"]},
+    "results": {"type": "array", "minItems": 7, "maxItems": 7, "uniqueItems": true, "items": {"$ref": "#/$defs/result"}},
+    "startedAt": {"type": "string", "format": "date-time"},
+    "completedAt": {"type": "string", "format": "date-time"},
+    "sealedPayloadSha256": {"$ref": "#/$defs/sha256"}
+  },
+  "$defs": {
+    "sha1": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "commitPin": {"type": "object", "additionalProperties": false, "required": ["commit", "tree"], "properties": {"commit": {"$ref": "#/$defs/sha1"}, "tree": {"$ref": "#/$defs/sha1"}}},
+    "sourcePins": {"type": "object", "additionalProperties": false, "required": ["frontend", "backend"], "properties": {"frontend": {"$ref": "#/$defs/commitPin"}, "backend": {"$ref": "#/$defs/commitPin"}}},
+    "filePin": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "gitBlobSha1", "sha256", "bytes"],
+      "properties": {"path": {"type": "string", "minLength": 1}, "gitBlobSha1": {"$ref": "#/$defs/sha1"}, "sha256": {"$ref": "#/$defs/sha256"}, "bytes": {"type": "integer", "minimum": 1}}
+    },
+    "outputPin": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "gitBlobSha1", "sha256", "bytes", "redactionStatus"],
+      "properties": {"path": {"type": "string", "minLength": 1}, "gitBlobSha1": {"$ref": "#/$defs/sha1"}, "sha256": {"$ref": "#/$defs/sha256"}, "bytes": {"type": "integer", "minimum": 0}, "redactionStatus": {"const": "SANITIZED_NO_SECRET_OR_CUSTOMER_DATA"}}
+    },
+    "runner": {
+      "type": "object", "additionalProperties": false,
+      "required": ["implementation", "executionMode", "argvDispatch", "environmentDispatch", "sourceEnvironment", "commandCount", "genesisSha256", "finalRecordSha256"],
+      "properties": {
+        "implementation": {"$ref": "#/$defs/filePin"},
+        "executionMode": {"enum": ["DIRECT_EXACT_ARGV_NO_SHELL", "SELF_TEST_STUB_SUBPROCESS"]},
+        "argvDispatch": {"const": "DIRECT_LIST_NO_SHELL"},
+        "environmentDispatch": {"const": "INHERITED_PLUS_EXACT_SOURCE_PINS"},
+        "sourceEnvironment": {"$ref": "#/$defs/sourceEnvironment"},
+        "commandCount": {"const": 7},
+        "genesisSha256": {"const": "0000000000000000000000000000000000000000000000000000000000000000"},
+        "finalRecordSha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "sourceEnvironment": {
+      "type": "object", "additionalProperties": false,
+      "required": ["G7_FRONTEND_SOURCE_COMMIT", "G7_FRONTEND_SOURCE_TREE", "G7_BACKEND_SOURCE_COMMIT", "G7_BACKEND_SOURCE_TREE"],
+      "properties": {
+        "G7_FRONTEND_SOURCE_COMMIT": {"$ref": "#/$defs/sha1"},
+        "G7_FRONTEND_SOURCE_TREE": {"$ref": "#/$defs/sha1"},
+        "G7_BACKEND_SOURCE_COMMIT": {"$ref": "#/$defs/sha1"},
+        "G7_BACKEND_SOURCE_TREE": {"$ref": "#/$defs/sha1"}
+      }
+    },
+    "totalSummary": {
+      "type": "object", "additionalProperties": false,
+      "required": ["expected", "passed", "unexpected", "flaky", "skipped"],
+      "properties": {"expected": {"const": 4}, "passed": {"const": 4}, "unexpected": {"const": 0}, "flaky": {"const": 0}, "skipped": {"const": 0}}
+    },
+    "playwrightSummary": {
+      "type": "object", "additionalProperties": false,
+      "required": ["format", "specPath", "workers", "sourcePins", "projects", "total"],
+      "properties": {
+        "format": {"const": "PLAYWRIGHT_JSON_REPORT_V1"}, "specPath": {"const": "e2e/hris-sys-hrm-responsive-accessibility.spec.ts"}, "workers": {"const": 1},
+        "sourcePins": {"$ref": "#/$defs/sourcePins"},
+        "projects": {"const": [{"name": "chromium", "expected": 2, "passed": 2}, {"name": "mobile", "expected": 2, "passed": 2}]},
+        "total": {"$ref": "#/$defs/totalSummary"}
+      }
+    },
+    "authorizationSummary": {
+      "type": "object", "additionalProperties": false,
+      "required": ["format", "markers", "stderrEmpty"],
+      "properties": {
+        "format": {"const": "AUTHORIZATION_CHECK_STDOUT_V1"},
+        "markers": {"const": ["PRODUCT_SURFACE_AUTHORIZATION"]},
+        "stderrEmpty": {"const": true}
+      }
+    },
+    "backendOpenapiSummary": {
+      "type": "object", "additionalProperties": false,
+      "required": ["format", "markers", "stderrEmpty"],
+      "properties": {
+        "format": {"const": "BACKEND_OPENAPI_CHECK_STDOUT_V1"},
+        "markers": {"const": ["BACKEND_APPROVED_SNAPSHOTS"]},
+        "stderrEmpty": {"const": true}
+      }
+    },
+    "frontendOpenapiSummary": {
+      "type": "object", "additionalProperties": false,
+      "required": ["format", "markers", "stderrEmpty"],
+      "properties": {
+        "format": {"const": "FRONTEND_OPENAPI_CHECK_STDOUT_V1"},
+        "markers": {"const": ["GATEWAY_TYPES", "AGENT_TYPES"]},
+        "stderrEmpty": {"const": true}
+      }
+    },
+    "vitestSummary": {
+      "type": "object", "additionalProperties": false,
+      "required": ["format", "requestedFiles", "fileCount", "totalTests", "passedTests", "failedTests", "pendingTests", "todoTests", "stderrEmpty"],
+      "properties": {
+        "format": {"const": "VITEST_JSON_REPORT_V1"},
+        "requestedFiles": {"const": ["apps/dwp/src/routes/product-route-contracts.generated.test.ts", "apps/dwp/src/features/hris/shell/testing/hris-shell-navigation-contract.test.ts", "apps/dwp/src/features/hris/administration/reference-configuration/testing/hris-reference-configuration-workspace.test.tsx", "apps/dwp/src/features/hris/employee-services/employee-change/testing/hris-employee-change-workspace.test.tsx"]},
+        "fileCount": {"const": 4},
+        "totalTests": {"type": "integer", "minimum": 1},
+        "passedTests": {"type": "integer", "minimum": 1},
+        "failedTests": {"const": 0},
+        "pendingTests": {"const": 0},
+        "todoTests": {"const": 0},
+        "stderrEmpty": {"const": true}
+      }
+    },
+    "typecheckSummary": {
+      "type": "object", "additionalProperties": false,
+      "required": ["format", "canonicalScript", "stdoutEmpty", "stderrEmpty"],
+      "properties": {
+        "format": {"const": "TSC_NO_EMIT_SILENT_V1"},
+        "canonicalScript": {"const": "tsc --noEmit"},
+        "stdoutEmpty": {"const": true},
+        "stderrEmpty": {"const": true}
+      }
+    },
+    "architectureSummary": {
+      "type": "object", "additionalProperties": false,
+      "required": ["format", "markers", "markerCount", "stderrEmpty"],
+      "properties": {
+        "format": {"const": "ARCHITECTURE_CLOSED_MARKERS_V1"},
+        "markers": {"const": ["APPROVAL_STITCH_SOURCE", "APPROVAL_STITCH_EXTENSION", "APPROVAL_TRACEABILITY", "PRODUCT_AUTHORIZATION", "PRODUCT_INTERNAL_CLOSURE", "AUTHORIZATION_FIXTURES", "APP_ARCHITECTURE", "ROUTE_COMPOSITION", "FEATURE_BOUNDARIES", "API_BOUNDARIES", "RELATIVE_IMPORT_CYCLES", "PRODUCTION_REACHABILITY", "INTERNAL_EXPORTS", "SOURCE_SIZE", "MAINTENANCE_SOURCE_SIZE", "READINESS_HEADER", "READINESS_MANIFEST", "READINESS_STATUS", "READINESS_COMPLETE", "READINESS_EXACT_PRODUCTS", "READINESS_INTERNAL_CLOSURE", "READINESS_PEP", "READINESS_RELEASE_CLOSURE", "READINESS_INTERNAL_PENDING", "READINESS_INCOMPLETE", "READINESS_MODE"]},
+        "markerCount": {"const": 26},
+        "stderrEmpty": {"const": true}
+      }
+    },
+    "structuredResult": {
+      "type": "object", "additionalProperties": false,
+      "required": ["proofKind", "sourcePins", "exitCode", "stdoutSha256", "stderrSha256", "report"],
+      "properties": {
+        "proofKind": {"enum": ["AUTHORIZATION_GENERATION_AND_SYNC_EXIT_ZERO", "BACKEND_OPENAPI_APPROVED_SNAPSHOTS_EXIT_ZERO", "FRONTEND_OPENAPI_SYNC_EXIT_ZERO", "VITEST_EXACT_FOUR_ROUTE_ACCESS_TARGETS_EXIT_ZERO", "TYPESCRIPT_NO_EMIT_EXIT_ZERO", "ARCHITECTURE_CLOSED_SCRIPT_EXIT_ZERO", "PLAYWRIGHT_EXACT_INTEGRATED_JOURNEYS_EXIT_ZERO"]},
+        "sourcePins": {"$ref": "#/$defs/sourcePins"},
+        "exitCode": {"const": 0},
+        "stdoutSha256": {"$ref": "#/$defs/sha256"},
+        "stderrSha256": {"$ref": "#/$defs/sha256"},
+        "report": {"oneOf": [{"$ref": "#/$defs/authorizationSummary"}, {"$ref": "#/$defs/backendOpenapiSummary"}, {"$ref": "#/$defs/frontendOpenapiSummary"}, {"$ref": "#/$defs/vitestSummary"}, {"$ref": "#/$defs/typecheckSummary"}, {"$ref": "#/$defs/architectureSummary"}, {"$ref": "#/$defs/playwrightSummary"}]}
+      }
+    },
+    "result": {
+      "type": "object", "additionalProperties": false,
+      "required": ["recordIndex", "commandId", "category", "repo", "cwd", "argv", "executionMode", "startedAt", "completedAt", "elapsedMs", "sourcePins", "status", "exitCode", "stdout", "stderr", "structuredResult", "previousRecordSha256", "recordSha256"],
+      "properties": {
+        "recordIndex": {"type": "integer", "minimum": 1, "maximum": 7},
+        "commandId": {"enum": ["CONTROL_AUTHORIZATION_CHECK", "CONTROL_BACKEND_OPENAPI_CHECK", "CONTROL_FRONTEND_OPENAPI_CHECK", "CONTROL_SHARED_ROUTE_ACCESS", "CONTROL_FRONTEND_TYPECHECK", "CONTROL_FRONTEND_ARCHITECTURE", "CONTROL_RESPONSIVE_ACCESSIBILITY_PLAYWRIGHT"]},
+        "category": {"enum": ["CONTRACT_AUTHORIZATION_SYNC", "SHARED_ROUTE_ACCESS", "TYPECHECK_ARCHITECTURE", "RESPONSIVE_ACCESSIBILITY"]},
+        "repo": {"enum": ["frontend", "backend"]}, "cwd": {"enum": ["frontend", "backend"]},
+        "argv": {"type": "array", "minItems": 3, "maxItems": 14, "items": {"type": "string", "minLength": 1}},
+        "executionMode": {"enum": ["DIRECT_EXACT_ARGV_NO_SHELL", "SELF_TEST_STUB_SUBPROCESS"]},
+        "startedAt": {"type": "string", "format": "date-time"}, "completedAt": {"type": "string", "format": "date-time"},
+        "elapsedMs": {"type": "integer", "minimum": 0}, "sourcePins": {"$ref": "#/$defs/sourcePins"},
+        "status": {"const": "PASS"}, "exitCode": {"const": 0},
+        "stdout": {"$ref": "#/$defs/outputPin"}, "stderr": {"$ref": "#/$defs/outputPin"},
+        "structuredResult": {"$ref": "#/$defs/structuredResult"},
+        "previousRecordSha256": {"$ref": "#/$defs/sha256"}, "recordSha256": {"$ref": "#/$defs/sha256"}
+      }
+    }
+  }
+}
