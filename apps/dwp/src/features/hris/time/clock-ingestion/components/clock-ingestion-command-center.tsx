@@ -16,24 +16,31 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 
-import type { ClockEvent, ClockWorkspace } from '../model/clock-ingestion-model';
+import type { ClockEvent, ClockException, ClockWorkspace } from '../model/clock-ingestion-model';
 import type { ClockIngestionCopy } from '../model/clock-ingestion-copy';
 
 export type ClockEvidenceFilter = 'ALL' | 'NEEDS_REVIEW';
+export type ClockPageEntryMode = 'CLOCK_INGESTION' | 'TIME_EXCEPTIONS';
 
 export type ClockIngestionCommandCenterProps = Readonly<{
   workspace: ClockWorkspace;
   copy: ClockIngestionCopy;
+  entryMode: ClockPageEntryMode;
   selectedEventId: string | null;
   filter: ClockEvidenceFilter;
   busy?: boolean;
   canIngest?: boolean;
   canVoid?: boolean;
-  onSelect: (eventId: string | null) => void;
+  onSelectEvent: (event: ClockEvent) => void;
+  onSelectException: (exception: ClockException) => void;
   onFilterChange: (filter: ClockEvidenceFilter) => void;
   onRefresh?: () => void;
   onIngest?: () => void;
   onVoid?: (event: ClockEvent) => void;
+  onLoadMoreEvents?: () => void;
+  onLoadMoreExceptions?: () => void;
+  loadingMoreEvents?: boolean;
+  loadingMoreExceptions?: boolean;
 }>;
 
 function shortId(value: string): string {
@@ -64,16 +71,22 @@ function Fact({ label, value }: Readonly<{ label: string; value: string }>) {
 export function ClockIngestionCommandCenter({
   workspace,
   copy,
+  entryMode,
   selectedEventId,
   filter,
   busy = false,
   canIngest = false,
   canVoid = false,
-  onSelect,
+  onSelectEvent,
+  onSelectException,
   onFilterChange,
   onRefresh,
   onIngest,
   onVoid,
+  onLoadMoreEvents,
+  onLoadMoreExceptions,
+  loadingMoreEvents = false,
+  loadingMoreExceptions = false,
 }: ClockIngestionCommandCenterProps) {
   const exceptionEventIds = new Set(
     workspace.exceptions
@@ -97,10 +110,10 @@ export function ClockIngestionCommandCenter({
       >
         <Box minWidth={0}>
           <Typography component="h1" variant="h4">
-            {copy.title}
+            {entryMode === 'TIME_EXCEPTIONS' ? copy.exceptionsTitle : copy.title}
           </Typography>
           <Typography color="text.secondary" sx={{ mt: 0.5 }}>
-            {copy.description}
+            {entryMode === 'TIME_EXCEPTIONS' ? copy.exceptionsDescription : copy.description}
           </Typography>
           <Stack direction={{ xs: 'column', sm: 'row' }} gap={0.75} sx={{ mt: 1.5 }}>
             <Chip size="small" label={`${copy.freshness}: ${workspace.freshness}`} />
@@ -152,6 +165,7 @@ export function ClockIngestionCommandCenter({
         <>
           <Box
             sx={{
+              order: entryMode === 'TIME_EXCEPTIONS' ? 3 : 2,
               display: 'grid',
               gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, minmax(0, 1fr))' },
               gap: 1,
@@ -195,6 +209,7 @@ export function ClockIngestionCommandCenter({
           ) : (
             <Box
               sx={{
+                order: entryMode === 'TIME_EXCEPTIONS' ? 4 : 3,
                 display: 'grid',
                 gridTemplateColumns: {
                   xs: 'minmax(0, 1fr)',
@@ -271,7 +286,7 @@ export function ClockIngestionCommandCenter({
                               <ActionButton
                                 intent="quiet"
                                 size="small"
-                                onClick={() => onSelect(event.clockEventId)}
+                                onClick={() => onSelectEvent(event)}
                                 aria-label={`${copy.review}: ${event.title} ${shortId(event.clockEventId)}`}
                               >
                                 {event.clockEventId === selectedEventId
@@ -312,7 +327,7 @@ export function ClockIngestionCommandCenter({
                         <ActionButton
                           intent="secondary"
                           size="small"
-                          onClick={() => onSelect(event.clockEventId)}
+                          onClick={() => onSelectEvent(event)}
                         >
                           {copy.review}
                         </ActionButton>
@@ -320,6 +335,20 @@ export function ClockIngestionCommandCenter({
                     </Paper>
                   ))}
                 </Stack>
+                {workspace.eventPage.nextCursor && onLoadMoreEvents && (
+                  <Box sx={{ p: 1.5, pt: 0 }}>
+                    <ActionButton
+                      intent="secondary"
+                      size="small"
+                      loading={loadingMoreEvents}
+                      loadingLabel={copy.loadingMore}
+                      onClick={onLoadMoreEvents}
+                      sx={{ width: { xs: '100%', sm: 'auto' } }}
+                    >
+                      {copy.loadMore}
+                    </ActionButton>
+                  </Box>
+                )}
               </Paper>
 
               <Paper
@@ -362,7 +391,15 @@ export function ClockIngestionCommandCenter({
             </Box>
           )}
 
-          <Paper component="section" variant="outlined" sx={{ p: 2, minWidth: 0 }}>
+          <Paper
+            component="section"
+            variant="outlined"
+            sx={{
+              p: 2,
+              minWidth: 0,
+              order: entryMode === 'TIME_EXCEPTIONS' ? 2 : 4,
+            }}
+          >
             <Typography component="h2" variant="h6">
               {copy.exceptions}
             </Typography>
@@ -400,7 +437,7 @@ export function ClockIngestionCommandCenter({
                             intent="quiet"
                             size="small"
                             disabled={!exception.clockEventId}
-                            onClick={() => onSelect(exception.clockEventId)}
+                            onClick={() => onSelectException(exception)}
                           >
                             {copy.review}
                           </ActionButton>
@@ -410,6 +447,18 @@ export function ClockIngestionCommandCenter({
                   </TableBody>
                 </Table>
               </TableContainer>
+            )}
+            {workspace.exceptionPage.nextCursor && onLoadMoreExceptions && (
+              <ActionButton
+                intent="secondary"
+                size="small"
+                loading={loadingMoreExceptions}
+                loadingLabel={copy.loadingMore}
+                onClick={onLoadMoreExceptions}
+                sx={{ mt: 1.5, width: { xs: '100%', sm: 'auto' } }}
+              >
+                {copy.loadMore}
+              </ActionButton>
             )}
           </Paper>
         </>

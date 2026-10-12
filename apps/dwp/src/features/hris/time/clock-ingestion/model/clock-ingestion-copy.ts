@@ -1,6 +1,8 @@
 export type ClockIngestionCopy = Readonly<{
   title: string;
   description: string;
+  exceptionsTitle: string;
+  exceptionsDescription: string;
   ingest: string;
   refresh: string;
   freshness: string;
@@ -36,11 +38,53 @@ export type ClockIngestionCopy = Readonly<{
   emptyTitle: string;
   emptyDescription: string;
   loading: string;
+  loadMore: string;
+  loadingMore: string;
+  commandSucceededTitle: string;
+  commandSucceededDescription: string;
+  commandRejectedTitle: string;
+  commandRejectedDescription: string;
+  resultUnknownTitle: string;
+  resultUnknownDescription: string;
+  retryExact: string;
+  close: string;
+  recordDialogTitle: string;
+  recordDialogDescription: string;
+  submitRecord: string;
+  voidDialogTitle: string;
+  voidDialogDescription: string;
+  submitVoid: string;
+  commandWorking: string;
+  voidReasonCode: string;
+  voidReasonHelp: string;
+  sourcePublicId: string;
+  sourceEventKey: string;
+  sourceSequence: string;
+  sourceType: string;
+  devicePublicId: string;
+  captureMode: string;
+  offlineBatchPublicId: string;
+  workerPublicId: string;
+  assignmentPublicId: string;
+  assignmentRevision: string;
+  eventType: string;
+  occurredAt: string;
+  sourceLocalDateTime: string;
+  sourceTimeZone: string;
+  sourceUtcOffset: string;
+  dstResolution: string;
+  instantAuthority: string;
+  tzdbVersion: string;
+  timeZoneRuleVersion: string;
+  sourceProvenanceDigest: string;
+  trustLevel: string;
 }>;
 
 const en: ClockIngestionCopy = {
   title: 'Clock ingestion',
   description: 'Review ordered clock evidence, provenance, and corrective voids.',
+  exceptionsTitle: 'Time exceptions',
+  exceptionsDescription: 'Prioritize open clock exceptions and inspect their immutable evidence.',
   ingest: 'Ingest clock event',
   refresh: 'Refresh evidence',
   freshness: 'Evidence status',
@@ -76,11 +120,55 @@ const en: ClockIngestionCopy = {
   emptyTitle: 'No clock evidence in this scope',
   emptyDescription: 'Ingest an authorized event or change the governed scope.',
   loading: 'Loading clock evidence…',
+  loadMore: 'Load more',
+  loadingMore: 'Loading more…',
+  commandSucceededTitle: 'Clock command completed',
+  commandSucceededDescription: 'The sealed receipt was accepted and owner evidence is refreshing.',
+  commandRejectedTitle: 'Clock command was rejected',
+  commandRejectedDescription: 'No retry is pending. Review the inputs and current authority.',
+  resultUnknownTitle: 'Command result is unknown',
+  resultUnknownDescription:
+    'Retry only the preserved command. Its payload and idempotency key will remain unchanged.',
+  retryExact: 'Retry exact command',
+  close: 'Close',
+  recordDialogTitle: 'Ingest clock evidence',
+  recordDialogDescription:
+    'Record the immutable source, assignment, civil-time, and provenance facts.',
+  submitRecord: 'Record evidence',
+  voidDialogTitle: 'Append corrective void',
+  voidDialogDescription: 'The original evidence remains immutable. A verified reason is appended.',
+  submitVoid: 'Append void',
+  commandWorking: 'Submitting…',
+  voidReasonCode: 'Closed reason code',
+  voidReasonHelp: 'Use an approved uppercase code such as DEVICE_DUPLICATE.',
+  sourcePublicId: 'Source public ID',
+  sourceEventKey: 'Source event key',
+  sourceSequence: 'Source sequence',
+  sourceType: 'Source type',
+  devicePublicId: 'Device public ID',
+  captureMode: 'Capture mode',
+  offlineBatchPublicId: 'Offline batch public ID',
+  workerPublicId: 'Worker public ID',
+  assignmentPublicId: 'People assignment public ID',
+  assignmentRevision: 'People assignment revision',
+  eventType: 'Clock event type',
+  occurredAt: 'Occurrence instant (ISO 8601)',
+  sourceLocalDateTime: 'Source local date-time',
+  sourceTimeZone: 'Source time zone',
+  sourceUtcOffset: 'UTC offset in minutes',
+  dstResolution: 'DST resolution',
+  instantAuthority: 'Instant authority',
+  tzdbVersion: 'TZDB version',
+  timeZoneRuleVersion: 'Time-zone rule version',
+  sourceProvenanceDigest: 'Source provenance SHA-256',
+  trustLevel: 'Trust level',
 };
 
 const ko: ClockIngestionCopy = {
   title: '출퇴근 이벤트 수집',
   description: '순서가 보장된 출퇴근 증적, 출처, 정정 무효화 이력을 검토합니다.',
+  exceptionsTitle: '근태 예외',
+  exceptionsDescription: '미해결 출퇴근 예외를 우선 검토하고 변경 불가능한 원본 증적을 확인합니다.',
   ingest: '출퇴근 이벤트 수집',
   refresh: '증적 새로고침',
   freshness: '증적 상태',
@@ -116,6 +204,47 @@ const ko: ClockIngestionCopy = {
   emptyTitle: '현재 범위에 출퇴근 증적이 없습니다',
   emptyDescription: '승인된 이벤트를 수집하거나 통제된 범위를 변경하세요.',
   loading: '출퇴근 증적을 불러오는 중…',
+  loadMore: '더 보기',
+  loadingMore: '추가 항목을 불러오는 중…',
+  commandSucceededTitle: '출퇴근 명령 완료',
+  commandSucceededDescription: '봉인된 영수증을 확인했으며 소유자 증적을 새로고침합니다.',
+  commandRejectedTitle: '출퇴근 명령이 거부되었습니다',
+  commandRejectedDescription: '대기 중인 재시도는 없습니다. 입력과 현재 권한을 확인하세요.',
+  resultUnknownTitle: '명령 결과를 확인할 수 없습니다',
+  resultUnknownDescription:
+    '보존된 명령만 다시 시도합니다. payload와 idempotency key는 변경되지 않습니다.',
+  retryExact: '동일 명령 다시 시도',
+  close: '닫기',
+  recordDialogTitle: '출퇴근 증적 수집',
+  recordDialogDescription: '소스, 배정, 현지 시각, 출처 증적을 변경 불가능한 사실로 기록합니다.',
+  submitRecord: '증적 기록',
+  voidDialogTitle: '정정 무효화 추가',
+  voidDialogDescription: '원본 증적은 그대로 보존되며 검증된 사유를 별도 이벤트로 추가합니다.',
+  submitVoid: '무효화 추가',
+  commandWorking: '전송 중…',
+  voidReasonCode: '폐쇄형 사유 코드',
+  voidReasonHelp: 'DEVICE_DUPLICATE처럼 승인된 영문 대문자 코드를 입력하세요.',
+  sourcePublicId: '소스 공개 ID',
+  sourceEventKey: '소스 이벤트 키',
+  sourceSequence: '소스 순번',
+  sourceType: '소스 유형',
+  devicePublicId: '장치 공개 ID',
+  captureMode: '수집 모드',
+  offlineBatchPublicId: '오프라인 배치 공개 ID',
+  workerPublicId: '근로자 공개 ID',
+  assignmentPublicId: 'People 배정 공개 ID',
+  assignmentRevision: 'People 배정 revision',
+  eventType: '출퇴근 이벤트 유형',
+  occurredAt: '발생 instant (ISO 8601)',
+  sourceLocalDateTime: '소스 현지 일시',
+  sourceTimeZone: '소스 시간대',
+  sourceUtcOffset: 'UTC 오프셋(분)',
+  dstResolution: 'DST 해석 방식',
+  instantAuthority: 'Instant 권위',
+  tzdbVersion: 'TZDB 버전',
+  timeZoneRuleVersion: '시간대 규칙 버전',
+  sourceProvenanceDigest: '소스 출처 SHA-256',
+  trustLevel: '신뢰 수준',
 };
 
 export function clockIngestionCopy(language: 'en' | 'ko'): ClockIngestionCopy {

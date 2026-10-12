@@ -1,6 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { createClockIngestionDataSource } from '../api/clock-ingestion-api';
+import {
+  ClockCommandOutcomeUnknownError,
+  createClockIngestionDataSource,
+} from '../api/clock-ingestion-api';
 
 import type { ClockHttpClient } from '../api/clock-ingestion-api';
 import type { ClockIngestionScope, RecordClockEventRequest } from '../model/clock-ingestion-model';
@@ -123,15 +126,19 @@ function request(): RecordClockEventRequest {
 function receipt(commandType: 'CLOCK_RECORD' | 'CLOCK_VOID') {
   return {
     receiptId: RECEIPT_ID,
-    idempotencyKey: COMMAND_ID,
     commandType,
-    clockEventId: EVENT_ID,
+    originatingAction: commandType === 'CLOCK_RECORD' ? 'TIME_CLOCK_RECORD' : 'TIME_CLOCK_CORRECT',
+    subjectPrincipalPublicId: '10000000-0000-4000-8000-000000000008',
+    populationScopeDigest: 'e'.repeat(64),
+    fieldPolicyRevision: 5,
+    purposeCode: 'TIME_CAPTURE',
+    authorizationRevision: 9,
     status: 'SUCCEEDED',
     requestDigest: 'c'.repeat(64),
-    resultDigest: 'd'.repeat(64),
     correlationId: CORRELATION_ID,
     createdAt: '2026-10-12T01:30:01Z',
-    replayed: false,
+    aggregateVersion: null,
+    resultRef: EVENT_ID,
   };
 }
 
@@ -167,8 +174,8 @@ describe('clock ingestion owner adapter', () => {
     const client: ClockHttpClient = { get, post: vi.fn() };
     const dataSource = createClockIngestionDataSource(client);
 
-    await expect(dataSource.readEvents(scope, signal)).resolves.toMatchObject({ events: [{}] });
-    await expect(dataSource.readExceptions(scope, signal)).resolves.toMatchObject({
+    await expect(dataSource.readEvents(scope, {}, signal)).resolves.toMatchObject({ events: [{}] });
+    await expect(dataSource.readExceptions(scope, {}, signal)).resolves.toMatchObject({
       exceptions: [],
     });
     expect(get).toHaveBeenNthCalledWith(
@@ -189,13 +196,28 @@ describe('clock ingestion owner adapter', () => {
     );
   });
 
+  it('keeps each continuation bound to its first asOf and opaque cursor', async () => {
+    const get = vi.fn(async (_url: string) => envelope(clockProjection()));
+    const dataSource = createClockIngestionDataSource({ get, post: vi.fn() });
+    const cursor = 'abcdefghijklmnop';
+
+    await dataSource.readEvents(scope, { asOf: '2026-10-12T02:00:00Z', cursor }, signal);
+
+    expect(get.mock.calls[0]?.[0]).toContain('asOf=2026-10-12T02%3A00%3A00Z');
+    expect(get.mock.calls[0]?.[0]).toContain(`cursor=${cursor}`);
+    await expect(dataSource.readEvents(scope, { cursor }, signal)).rejects.toThrow(
+      'Invalid TIM clock continuation request'
+    );
+    expect(get).toHaveBeenCalledTimes(1);
+  });
+
   it('sends an idempotent record only with matching secure authority', async () => {
     const post = vi.fn(async () => envelope(receipt('CLOCK_RECORD')));
     const dataSource = createClockIngestionDataSource({ get: vi.fn(), post });
 
     await expect(dataSource.record(request(), scope, authority(), signal)).resolves.toMatchObject({
       commandType: 'CLOCK_RECORD',
-      idempotencyKey: COMMAND_ID,
+      originatingAction: 'TIME_CLOCK_RECORD',
     });
     expect(post).toHaveBeenCalledWith('/api/time/v1/clock-events', request(), {
       contextScopeKey: scope.contextScopeKey,
@@ -212,7 +234,7 @@ describe('clock ingestion owner adapter', () => {
     const dataSource = createClockIngestionDataSource({ get: vi.fn(), post });
 
     await expect(
-      dataSource.voidEvent(EVENT_ID, 'DEVICE_DUPLICATE', scope, authority(true), signal)
+      dataSource.voidEvent(EVENT_ID, 'DEVICE_DUPLICATE', 1, scope, authority(true), signal)
     ).resolves.toMatchObject({ commandType: 'CLOCK_VOID' });
     expect(post).toHaveBeenCalledWith(
       `/api/time/v1/clock-events/${EVENT_ID}/voids`,
@@ -237,11 +259,23 @@ describe('clock ingestion owner adapter', () => {
       dataSource.record({ ...request(), sourceProvenanceDigest: 'bad' }, scope, authority(), signal)
     ).rejects.toThrow('Invalid TIM clock evidence request');
     await expect(
-      dataSource.voidEvent(EVENT_ID, 'DEVICE_DUPLICATE', scope, authority(), signal)
+      dataSource.voidEvent(EVENT_ID, 'DEVICE_DUPLICATE', 1, scope, authority(), signal)
     ).rejects.toThrow('Governed TIM clock authority is invalid');
     await expect(
       dataSource.record(request(), { ...scope, ready: false }, authority(), signal)
     ).rejects.toThrow('Invalid TIM clock operation scope');
     expect(post).not.toHaveBeenCalled();
+  });
+
+  it('marks a malformed post-dispatch receipt as unknown so the exact command can be retried', async () => {
+    const post = vi.fn(async () =>
+      envelope({ ...receipt('CLOCK_RECORD'), idempotencyKey: COMMAND_ID })
+    );
+    const dataSource = createClockIngestionDataSource({ get: vi.fn(), post });
+
+    await expect(dataSource.record(request(), scope, authority(), signal)).rejects.toBeInstanceOf(
+      ClockCommandOutcomeUnknownError
+    );
+    expect(post).toHaveBeenCalledTimes(1);
   });
 });
