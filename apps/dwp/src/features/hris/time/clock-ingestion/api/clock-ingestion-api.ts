@@ -53,10 +53,27 @@ export type ClockHttpClient = Readonly<{
   ) => Promise<Readonly<{ data: ApiResponse<unknown> }>>;
 }>;
 
+export type ClockPageRequest = Readonly<{
+  asOf?: string;
+  cursor?: string;
+}>;
+
+export class ClockCommandOutcomeUnknownError extends Error {
+  constructor(cause: unknown) {
+    super('The TIM owner returned an unverifiable command receipt.', { cause });
+    this.name = 'ClockCommandOutcomeUnknownError';
+  }
+}
+
 export type ClockIngestionDataSource = Readonly<{
-  readEvents: (scope: ClockIngestionScope, signal: AbortSignal) => Promise<ClockWorkbench>;
+  readEvents: (
+    scope: ClockIngestionScope,
+    page: ClockPageRequest,
+    signal: AbortSignal
+  ) => Promise<ClockWorkbench>;
   readExceptions: (
     scope: ClockIngestionScope,
+    page: ClockPageRequest,
     signal: AbortSignal
   ) => Promise<ClockExceptionWorkbench>;
   record: (
@@ -68,13 +85,12 @@ export type ClockIngestionDataSource = Readonly<{
   voidEvent: (
     eventId: string,
     reasonCode: string,
+    expectedEventOrder: number,
     scope: ClockIngestionScope,
     authority: ProductSurfaceGovernedMutationAuthority,
     signal: AbortSignal
   ) => Promise<ClockCommandReceipt>;
 }>;
-
-export type ClockIdFactory = () => string;
 
 export const clockHttpClient: ClockHttpClient = Object.freeze({
   get: (url, config) =>
@@ -135,36 +151,64 @@ function assertScope(scope: ClockIngestionScope): void {
   }
 }
 
-function projectionUrl(base: string, scope: ClockIngestionScope, sort: readonly string[]): string {
+function projectionUrl(
+  base: string,
+  scope: ClockIngestionScope,
+  sort: readonly string[],
+  page: ClockPageRequest
+): string {
+  const hasAsOf = page.asOf !== undefined;
+  const hasCursor = page.cursor !== undefined;
+  if (
+    (hasAsOf && !Number.isFinite(Date.parse(page.asOf as string))) ||
+    (hasCursor && (!hasAsOf || !/^[A-Za-z0-9_-]{16,1024}$/u.test(page.cursor as string)))
+  ) {
+    throw new Error('Invalid TIM clock continuation request.');
+  }
   const query = new URLSearchParams();
   query.set('limit', '100');
   sort.forEach((value) => query.append('sort', value));
   query.set('locale', scope.locale);
   query.set('timeZone', scope.timeZone);
   query.set('correlationId', scope.correlationId);
+  if (page.asOf) query.set('asOf', page.asOf);
+  if (page.cursor) query.set('cursor', page.cursor);
   return `${base}?${query.toString()}`;
 }
 
-function assertRecordRequest(request: RecordClockEventRequest): void {
+export function assertRecordClockEventRequest(request: RecordClockEventRequest): void {
   if (
     !request ||
     !validUuid(request.sourcePublicId) ||
     !safeText(request.sourceEventKey, 200) ||
     !Number.isSafeInteger(request.sourceSequence) ||
     request.sourceSequence < 1 ||
+    !['WEB', 'MOBILE', 'KIOSK', 'DEVICE', 'IMPORT', 'API'].includes(request.sourceType) ||
+    !['ONLINE', 'OFFLINE'].includes(request.captureMode) ||
     !validUuid(request.workerPublicId) ||
     !validUuid(request.peopleAssignmentPublicId) ||
     !Number.isSafeInteger(request.peopleAssignmentRevision) ||
     request.peopleAssignmentRevision < 0 ||
+    !['IN', 'OUT', 'BREAK_START', 'BREAK_END'].includes(request.eventType) ||
     !Number.isFinite(Date.parse(request.occurredAt)) ||
     !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,9})?$/u.test(request.sourceLocalDateTime) ||
     !safeText(request.sourceTimeZone, 80) ||
     !Number.isSafeInteger(request.sourceUtcOffsetMinutes) ||
     request.sourceUtcOffsetMinutes < -840 ||
     request.sourceUtcOffsetMinutes > 840 ||
+    ![
+      'EXACT_OFFSET_SUPPLIED',
+      'EARLIER_OFFSET_SELECTED',
+      'LATER_OFFSET_SELECTED',
+      'GAP_SHIFT_FORWARD',
+    ].includes(request.dstResolution) ||
+    !['SOURCE_INSTANT', 'LOCAL_WITH_OFFSET', 'SERVER_RESOLVED'].includes(
+      request.instantAuthority
+    ) ||
     !safeText(request.tzdbVersion, 40) ||
     !safeText(request.timeZoneRuleVersion, 80) ||
     !/^[0-9a-f]{64}$/u.test(request.sourceProvenanceDigest) ||
+    !['LOW', 'STANDARD', 'VERIFIED'].includes(request.trustLevel) ||
     (request.sourceType === 'MOBILE' ||
       request.sourceType === 'KIOSK' ||
       request.sourceType === 'DEVICE') !== validUuid(request.devicePublicId) ||
@@ -178,23 +222,27 @@ function secureAuthority(
   authority: ProductSurfaceGovernedMutationAuthority,
   scope: ClockIngestionScope,
   highRisk: boolean,
-  idFactory: ClockIdFactory
+  expectedObjectVersion?: number
 ) {
   if (
     authority.mode !== 'SECURE' ||
     authority.expectedDecisionRevision !== scope.decisionRevision ||
     authority.contextScopeKey !== scope.contextScopeKey ||
-    (highRisk && !authority.stepUp) ||
+    (highRisk &&
+      (!authority.stepUp ||
+        typeof expectedObjectVersion !== 'number' ||
+        !Number.isSafeInteger(expectedObjectVersion) ||
+        expectedObjectVersion < 1 ||
+        authority.objectVersion !== expectedObjectVersion)) ||
     (!highRisk && (authority.stepUp !== undefined || authority.objectVersion !== undefined))
   ) {
     throw new Error('Governed TIM clock authority is invalid.');
   }
-  const idempotencyKey = authority.idempotencyKey ?? idFactory();
+  const idempotencyKey = authority.idempotencyKey;
   if (!validUuid(idempotencyKey)) throw new Error('Invalid TIM clock idempotency key.');
-  const boundAuthority = { ...authority, idempotencyKey };
   const governed = highRisk
-    ? productSurfaceHighRiskMutationConfig(boundAuthority, { objectVersionHeader: false })
-    : productSurfaceGovernedMutationConfig(boundAuthority);
+    ? productSurfaceHighRiskMutationConfig(authority, { objectVersionHeader: false })
+    : productSurfaceGovernedMutationConfig(authority);
   return {
     idempotencyKey,
     config: {
@@ -204,20 +252,14 @@ function secureAuthority(
   };
 }
 
-function defaultIdFactory(): string {
-  if (!globalThis.crypto?.randomUUID) throw new Error('A secure idempotency key is unavailable.');
-  return globalThis.crypto.randomUUID();
-}
-
 export function createClockIngestionDataSource(
-  client: ClockHttpClient = clockHttpClient,
-  idFactory: ClockIdFactory = defaultIdFactory
+  client: ClockHttpClient = clockHttpClient
 ): ClockIngestionDataSource {
   return {
-    async readEvents(scope, signal) {
+    async readEvents(scope, page, signal) {
       assertScope(scope);
       const response = await client.get(
-        projectionUrl(CLOCK_WORKBENCH, scope, ['clockEvent:DESC', 'itemPublicId:ASC']),
+        projectionUrl(CLOCK_WORKBENCH, scope, ['clockEvent:DESC', 'itemPublicId:ASC'], page),
         {
           contextScopeKey: scope.contextScopeKey,
           signal,
@@ -225,10 +267,10 @@ export function createClockIngestionDataSource(
       );
       return parseClockWorkbench(unwrap(response));
     },
-    async readExceptions(scope, signal) {
+    async readExceptions(scope, page, signal) {
       assertScope(scope);
       const response = await client.get(
-        projectionUrl(CLOCK_EXCEPTIONS, scope, ['exception:DESC', 'itemPublicId:ASC']),
+        projectionUrl(CLOCK_EXCEPTIONS, scope, ['exception:DESC', 'itemPublicId:ASC'], page),
         {
           contextScopeKey: scope.contextScopeKey,
           signal,
@@ -238,40 +280,57 @@ export function createClockIngestionDataSource(
     },
     async record(request, scope, authority, signal) {
       assertScope(scope);
-      assertRecordRequest(request);
-      const governed = secureAuthority(authority, scope, false, idFactory);
+      assertRecordClockEventRequest(request);
+      const governed = secureAuthority(authority, scope, false);
       const response = await client.post(CLOCK_EVENT_BASE, request, {
         ...governed.config,
         signal,
       });
-      const receipt = parseClockCommandReceipt(unwrap(response));
-      if (
-        receipt.commandType !== 'CLOCK_RECORD' ||
-        receipt.idempotencyKey !== governed.idempotencyKey
-      ) {
-        throw new Error('TIM clock record receipt does not match the command.');
+      try {
+        const receipt = parseClockCommandReceipt(unwrap(response));
+        if (
+          receipt.commandType !== 'CLOCK_RECORD' ||
+          receipt.originatingAction !== 'TIME_CLOCK_RECORD' ||
+          receipt.purposeCode !== 'TIME_CAPTURE' ||
+          receipt.correlationId !== scope.correlationId
+        ) {
+          throw new Error('TIM clock record receipt does not match the command.');
+        }
+        return receipt;
+      } catch (error) {
+        throw new ClockCommandOutcomeUnknownError(error);
       }
-      return receipt;
     },
-    async voidEvent(eventId, reasonCode, scope, authority, signal) {
+    async voidEvent(eventId, reasonCode, expectedEventOrder, scope, authority, signal) {
       assertScope(scope);
-      if (!validUuid(eventId) || !/^[A-Z][A-Z0-9_]{1,79}$/u.test(reasonCode)) {
+      if (
+        !validUuid(eventId) ||
+        !/^[A-Z][A-Z0-9_]{1,79}$/u.test(reasonCode) ||
+        !Number.isSafeInteger(expectedEventOrder) ||
+        expectedEventOrder < 1
+      ) {
         throw new Error('Invalid TIM corrective void command.');
       }
-      const governed = secureAuthority(authority, scope, true, idFactory);
+      const governed = secureAuthority(authority, scope, true, expectedEventOrder);
       const response = await client.post(
         `${CLOCK_EVENT_BASE}/${encodeURIComponent(eventId)}/voids`,
         { reasonCode },
         { ...governed.config, signal }
       );
-      const receipt = parseClockCommandReceipt(unwrap(response));
-      if (
-        receipt.commandType !== 'CLOCK_VOID' ||
-        receipt.idempotencyKey !== governed.idempotencyKey
-      ) {
-        throw new Error('TIM corrective void receipt does not match the command.');
+      try {
+        const receipt = parseClockCommandReceipt(unwrap(response));
+        if (
+          receipt.commandType !== 'CLOCK_VOID' ||
+          receipt.originatingAction !== 'TIME_CLOCK_CORRECT' ||
+          receipt.purposeCode !== 'TIME_CAPTURE' ||
+          receipt.correlationId !== scope.correlationId
+        ) {
+          throw new Error('TIM corrective void receipt does not match the command.');
+        }
+        return receipt;
+      } catch (error) {
+        throw new ClockCommandOutcomeUnknownError(error);
       }
-      return receipt;
     },
   };
 }

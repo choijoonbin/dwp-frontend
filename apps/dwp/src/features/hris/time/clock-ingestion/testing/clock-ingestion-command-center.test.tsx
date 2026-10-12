@@ -14,6 +14,7 @@ const EXCEPTION_ID = '40000000-0000-4000-8000-000000000006';
 
 const event: ClockEvent = {
   clockEventId: EVENT_ID,
+  deepLinkResourceId: EVENT_ID,
   title: 'IN clock event',
   statusCode: 'ACCEPTED',
   occurredAt: '2026-10-12T01:30:00Z',
@@ -40,6 +41,7 @@ const workspace: ClockWorkspace = {
   exceptions: [
     {
       exceptionId: EXCEPTION_ID,
+      deepLinkResourceId: EXCEPTION_ID,
       clockEventId: EVENT_ID,
       code: 'SOURCE_SEQUENCE_GAP',
       state: 'OPEN',
@@ -48,6 +50,8 @@ const workspace: ClockWorkspace = {
       availableActions: [],
     },
   ],
+  eventPage: { asOf: '2026-10-12T02:00:00Z', nextCursor: null },
+  exceptionPage: { asOf: '2026-10-12T02:00:00Z', nextCursor: null },
 };
 
 describe('clock ingestion command center', () => {
@@ -77,11 +81,13 @@ describe('clock ingestion command center', () => {
       return createElement(ClockIngestionCommandCenter, {
         workspace,
         copy: clockIngestionCopy('ko'),
+        entryMode: 'CLOCK_INGESTION',
         selectedEventId: selected,
         filter,
         canIngest: true,
         canVoid: true,
-        onSelect: setSelected,
+        onSelectEvent: (selectedEvent) => setSelected(selectedEvent.clockEventId),
+        onSelectException: (exception) => setSelected(exception.clockEventId),
         onFilterChange: setFilter,
         onIngest: vi.fn(),
         onVoid,
@@ -119,9 +125,11 @@ describe('clock ingestion command center', () => {
             failures: ['TIME_EXCEPTIONS_UNAVAILABLE'],
           },
           copy: clockIngestionCopy('en'),
+          entryMode: 'TIME_EXCEPTIONS',
           selectedEventId: null,
           filter: 'ALL',
-          onSelect: vi.fn(),
+          onSelectEvent: vi.fn(),
+          onSelectException: vi.fn(),
           onFilterChange: vi.fn(),
         })
       );
@@ -129,5 +137,30 @@ describe('clock ingestion command center', () => {
     expect(host.textContent).toContain('Some clock evidence is unavailable');
     expect(host.textContent).toContain('Clock evidence may be stale');
     expect(host.textContent).toContain('TIME_EXCEPTIONS_UNAVAILABLE');
+    expect(host.textContent).toContain('Time exceptions');
+    expect(host.textContent).toContain('Prioritize open clock exceptions');
+  });
+
+  it('never exposes a corrective command when the item omits its exact availableAction', async () => {
+    await act(async () => {
+      root.render(
+        createElement(ClockIngestionCommandCenter, {
+          workspace: {
+            ...workspace,
+            events: [{ ...event, availableActions: [] }],
+          },
+          copy: clockIngestionCopy('en'),
+          entryMode: 'CLOCK_INGESTION',
+          selectedEventId: EVENT_ID,
+          filter: 'ALL',
+          canVoid: true,
+          onSelectEvent: vi.fn(),
+          onSelectException: vi.fn(),
+          onFilterChange: vi.fn(),
+          onVoid: vi.fn(),
+        })
+      );
+    });
+    expect(host.textContent).not.toContain('Append corrective void');
   });
 });

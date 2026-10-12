@@ -1,7 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  assertClockReceiptReplayInvariant,
   combineClockWorkspace,
+  mergeClockWorkbench,
+  parseClockCommandReceipt,
   parseClockExceptionWorkbench,
   parseClockWorkbench,
 } from '../model/clock-ingestion-model';
@@ -170,5 +173,53 @@ describe('clock ingestion IAQ projection boundary', () => {
         },
       })
     ).toThrow('Invalid field decision summary');
+  });
+
+  it('strictly parses the sealed TimeCommandReceipt.v1 wire and rejects internal replay fields', () => {
+    const wire = {
+      receiptId: '30000000-0000-4000-8000-000000000007',
+      commandType: 'CLOCK_RECORD',
+      originatingAction: 'TIME_CLOCK_RECORD',
+      subjectPrincipalPublicId: '30000000-0000-4000-8000-000000000008',
+      populationScopeDigest: 'c'.repeat(64),
+      fieldPolicyRevision: 5,
+      purposeCode: 'TIME_CAPTURE',
+      authorizationRevision: 9,
+      status: 'SUCCEEDED',
+      correlationId: CORRELATION_ID,
+      requestDigest: 'd'.repeat(64),
+      createdAt: '2026-10-12T02:00:01Z',
+      resultRef: EVENT_ID,
+    };
+    const receipt = parseClockCommandReceipt(wire);
+    expect(receipt).toMatchObject({
+      originatingAction: 'TIME_CLOCK_RECORD',
+      fieldPolicyRevision: 5,
+      authorizationRevision: 9,
+      aggregateVersion: null,
+      resultRef: EVENT_ID,
+    });
+    expect(() => parseClockCommandReceipt({ ...wire, replayed: true })).toThrow(
+      'Invalid clock command receipt'
+    );
+    expect(() =>
+      parseClockCommandReceipt({ ...wire, originatingAction: 'TIME_CLOCK_CORRECT' })
+    ).toThrow('Invalid clock receipt action binding');
+    expect(() => assertClockReceiptReplayInvariant(receipt, { ...receipt })).not.toThrow();
+    expect(() =>
+      assertClockReceiptReplayInvariant(receipt, {
+        ...receipt,
+        authorizationRevision: 10,
+      })
+    ).toThrow('replay changed its sealed receipt');
+  });
+
+  it('merges stable-asOf continuation pages once per event and rejects a shifted snapshot', () => {
+    const first = parseClockWorkbench(clockProjection());
+    const duplicate = parseClockWorkbench(clockProjection());
+    expect(mergeClockWorkbench(first, duplicate).events).toHaveLength(1);
+    expect(() =>
+      mergeClockWorkbench(first, { ...duplicate, asOf: '2026-10-12T02:00:01Z' })
+    ).toThrow('changed its asOf instant');
   });
 });

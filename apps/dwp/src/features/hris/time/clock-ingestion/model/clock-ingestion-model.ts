@@ -12,6 +12,7 @@ export type ClockAvailableAction = Readonly<{
 
 export type ClockEvent = Readonly<{
   clockEventId: string;
+  deepLinkResourceId: string;
   title: string;
   statusCode: string;
   occurredAt: string | null;
@@ -23,6 +24,7 @@ export type ClockEvent = Readonly<{
 
 export type ClockException = Readonly<{
   exceptionId: string;
+  deepLinkResourceId: string;
   clockEventId: string | null;
   code: string;
   state: string;
@@ -56,6 +58,13 @@ export type ClockWorkspace = Readonly<{
   failures: readonly string[];
   events: readonly ClockEvent[];
   exceptions: readonly ClockException[];
+  eventPage: ClockPageState;
+  exceptionPage: ClockPageState;
+}>;
+
+export type ClockPageState = Readonly<{
+  asOf: string | null;
+  nextCursor: string | null;
 }>;
 
 export type ClockIngestionScope = Readonly<{
@@ -97,15 +106,19 @@ export type RecordClockEventRequest = Readonly<{
 
 export type ClockCommandReceipt = Readonly<{
   receiptId: string;
-  idempotencyKey: string;
   commandType: 'CLOCK_RECORD' | 'CLOCK_VOID';
-  clockEventId: string;
+  originatingAction: 'TIME_CLOCK_RECORD' | 'TIME_CLOCK_CORRECT';
+  subjectPrincipalPublicId: string;
+  populationScopeDigest: string;
+  fieldPolicyRevision: number;
+  purposeCode: 'TIME_CAPTURE';
+  authorizationRevision: number;
   status: 'SUCCEEDED';
   requestDigest: string;
-  resultDigest: string;
   correlationId: string;
   createdAt: string;
-  replayed: boolean;
+  aggregateVersion: number | null;
+  resultRef: string | null;
 }>;
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/u;
@@ -478,7 +491,8 @@ export function parseClockWorkbench(value: unknown): ClockWorkbench {
       'clock projection item'
     );
     const clockEventId = patternText(item.itemPublicId, PUBLIC_ID, 128, 'clock item identifier');
-    parseDeepLink(item.deepLink, '/hr/operations/time/clock-ingestion');
+    const deepLinkResourceId = parseDeepLink(item.deepLink, '/hr/operations/time/clock-ingestion');
+    if (deepLinkResourceId !== clockEventId) throw new Error('Invalid clock deep-link target.');
     const groups = record(item.fieldGroups, 'clock field groups');
     exactKeys(
       groups,
@@ -496,6 +510,7 @@ export function parseClockWorkbench(value: unknown): ClockWorkbench {
     const qualityValue = quality.value as ReturnType<typeof parseAuditValue> | null;
     return {
       clockEventId,
+      deepLinkResourceId,
       title: exactText(item.title, 512, 'clock item title'),
       statusCode: patternText(item.statusCode, CODE, 64, 'clock item status'),
       occurredAt: temporalValue?.startAt ?? qualityValue?.occurredAt ?? null,
@@ -541,7 +556,10 @@ export function parseClockExceptionWorkbench(value: unknown): ClockExceptionWork
       'clock exception item'
     );
     const exceptionId = patternText(item.itemPublicId, PUBLIC_ID, 128, 'exception item identifier');
-    parseDeepLink(item.deepLink, '/hr/operations/time/exceptions');
+    const deepLinkResourceId = parseDeepLink(item.deepLink, '/hr/operations/time/exceptions');
+    if (deepLinkResourceId !== exceptionId) {
+      throw new Error('Invalid exception deep-link target.');
+    }
     const groups = record(item.fieldGroups, 'exception field groups');
     exactKeys(
       groups,
@@ -559,6 +577,7 @@ export function parseClockExceptionWorkbench(value: unknown): ClockExceptionWork
     const recoveryValue = recovery.value as ReturnType<typeof parseMetadataValue> | null;
     return {
       exceptionId,
+      deepLinkResourceId,
       clockEventId: ownerValue?.publicId ?? null,
       code: exceptionValue?.code ?? exactText(item.title, 512, 'exception item title'),
       state: patternText(item.statusCode, CODE, 64, 'exception item status'),
@@ -581,25 +600,102 @@ export function parseClockExceptionWorkbench(value: unknown): ClockExceptionWork
 
 export function parseClockCommandReceipt(value: unknown): ClockCommandReceipt {
   const source = record(value, 'clock command receipt');
+  exactKeys(
+    source,
+    [
+      'receiptId',
+      'commandType',
+      'originatingAction',
+      'subjectPrincipalPublicId',
+      'populationScopeDigest',
+      'fieldPolicyRevision',
+      'purposeCode',
+      'authorizationRevision',
+      'status',
+      'correlationId',
+      'requestDigest',
+      'createdAt',
+      'aggregateVersion',
+      'resultRef',
+    ],
+    [
+      'receiptId',
+      'commandType',
+      'originatingAction',
+      'subjectPrincipalPublicId',
+      'populationScopeDigest',
+      'fieldPolicyRevision',
+      'purposeCode',
+      'authorizationRevision',
+      'status',
+      'correlationId',
+      'requestDigest',
+      'createdAt',
+    ],
+    'clock command receipt'
+  );
   const requestDigest = patternText(source.requestDigest, DIGEST, 64, 'request digest');
-  const resultDigest = patternText(source.resultDigest, DIGEST, 64, 'result digest');
-  if (typeof source.replayed !== 'boolean') throw new Error('Invalid clock replay state.');
-  return {
+  const commandType = literal(
+    source.commandType,
+    ['CLOCK_RECORD', 'CLOCK_VOID'] as const,
+    'command type'
+  );
+  const originatingAction = literal(
+    source.originatingAction,
+    ['TIME_CLOCK_RECORD', 'TIME_CLOCK_CORRECT'] as const,
+    'originating action'
+  );
+  if (
+    (commandType === 'CLOCK_RECORD' && originatingAction !== 'TIME_CLOCK_RECORD') ||
+    (commandType === 'CLOCK_VOID' && originatingAction !== 'TIME_CLOCK_CORRECT')
+  ) {
+    throw new Error('Invalid clock receipt action binding.');
+  }
+  const aggregateVersion =
+    source.aggregateVersion == null
+      ? null
+      : integer(source.aggregateVersion, 1, 'aggregate version');
+  const resultRef =
+    source.resultRef == null ? null : uuid(source.resultRef, 'receipt result reference');
+  return Object.freeze({
     receiptId: uuid(source.receiptId, 'receipt identifier'),
-    idempotencyKey: uuid(source.idempotencyKey, 'idempotency key'),
-    commandType: literal(
-      source.commandType,
-      ['CLOCK_RECORD', 'CLOCK_VOID'] as const,
-      'command type'
+    commandType,
+    originatingAction,
+    subjectPrincipalPublicId: uuid(source.subjectPrincipalPublicId, 'subject principal identifier'),
+    populationScopeDigest: patternText(
+      source.populationScopeDigest,
+      DIGEST,
+      64,
+      'population scope digest'
     ),
-    clockEventId: uuid(source.clockEventId, 'clock event identifier'),
+    fieldPolicyRevision: integer(source.fieldPolicyRevision, 1, 'field policy revision'),
+    purposeCode: literal(source.purposeCode, ['TIME_CAPTURE'] as const, 'purpose code'),
+    authorizationRevision: integer(source.authorizationRevision, 1, 'authorization revision'),
     status: literal(source.status, ['SUCCEEDED'] as const, 'receipt status'),
     requestDigest,
-    resultDigest,
     correlationId: uuid(source.correlationId, 'correlation identifier'),
     createdAt: instant(source.createdAt, 'receipt timestamp'),
-    replayed: source.replayed,
-  };
+    aggregateVersion,
+    resultRef,
+  });
+}
+
+/** A replay of one idempotent command must return the same sealed public receipt. */
+export function assertClockReceiptReplayInvariant(
+  first: ClockCommandReceipt,
+  replay: ClockCommandReceipt
+): void {
+  const keys = Object.keys(first) as (keyof ClockCommandReceipt)[];
+  if (
+    keys.length !== Object.keys(replay).length ||
+    keys.some((key) => first[key] !== replay[key])
+  ) {
+    throw new Error('TIM clock command replay changed its sealed receipt.');
+  }
+}
+
+function emptyPage(): ClockPageState {
+  return { asOf: null, nextCursor: null };
 }
 
 export function combineClockWorkspace(
@@ -620,6 +716,8 @@ export function combineClockWorkspace(
       failures: combinedFailures,
       events: [],
       exceptions: [],
+      eventPage: emptyPage(),
+      exceptionPage: emptyPage(),
     };
   }
   const eventItems = events?.events ?? [];
@@ -645,5 +743,40 @@ export function combineClockWorkspace(
     failures: combinedFailures,
     events: eventItems,
     exceptions: exceptionItems,
+    eventPage: events ? { asOf: events.asOf, nextCursor: events.nextCursor } : emptyPage(),
+    exceptionPage: exceptions
+      ? { asOf: exceptions.asOf, nextCursor: exceptions.nextCursor }
+      : emptyPage(),
+  };
+}
+
+export function mergeClockWorkbench(current: ClockWorkbench, next: ClockWorkbench): ClockWorkbench {
+  if (current.asOf !== next.asOf) throw new Error('Clock continuation changed its asOf instant.');
+  const byId = new Map(current.events.map((event) => [event.clockEventId, event]));
+  next.events.forEach((event) => {
+    if (!byId.has(event.clockEventId)) byId.set(event.clockEventId, event);
+  });
+  return {
+    ...next,
+    partialFailures: [...new Set([...current.partialFailures, ...next.partialFailures])],
+    events: [...byId.values()],
+  };
+}
+
+export function mergeClockExceptionWorkbench(
+  current: ClockExceptionWorkbench,
+  next: ClockExceptionWorkbench
+): ClockExceptionWorkbench {
+  if (current.asOf !== next.asOf) {
+    throw new Error('Clock exception continuation changed its asOf instant.');
+  }
+  const byId = new Map(current.exceptions.map((entry) => [entry.exceptionId, entry]));
+  next.exceptions.forEach((entry) => {
+    if (!byId.has(entry.exceptionId)) byId.set(entry.exceptionId, entry);
+  });
+  return {
+    ...next,
+    partialFailures: [...new Set([...current.partialFailures, ...next.partialFailures])],
+    exceptions: [...byId.values()],
   };
 }
