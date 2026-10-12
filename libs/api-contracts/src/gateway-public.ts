@@ -12318,6 +12318,54 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/people/v1/hris/employee-change-requests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["people_createEmployeeChangeRequest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/people/v1/hris/employee-change-requests/{requestPublicId}/apply": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["people_applyEmployeeChangeRequest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/people/v1/hris/employee-change-requests/{requestPublicId}/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["people_submitEmployeeChangeRequest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/people/v1/hris/performance/command-receipts/{receiptId}": {
         parameters: {
             query?: never;
@@ -12438,6 +12486,22 @@ export interface paths {
             cookie?: never;
         };
         get: operations["people_hrisPerformanceReviewOperations"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/people/v1/hris/workbench/operations/employee/change/requests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["people_employeeChangeRequestWorkbench"];
         put?: never;
         post?: never;
         delete?: never;
@@ -51100,6 +51164,27 @@ export interface components {
             resultRef?: string;
             state?: string;
         };
+        people_CommandReceiptV1: {
+            /** Format: int64 */
+            authorizationRevision: number;
+            commandType: string;
+            /** Format: uuid */
+            correlationId: string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: int64 */
+            fieldPolicyRevision: number;
+            originatingAction: string;
+            populationScopeDigest: string;
+            purposeCode: string;
+            /** Format: uuid */
+            receiptId: string;
+            requestDigest: string;
+            /** @enum {string} */
+            status: "ACCEPTED" | "RUNNING" | "SUCCEEDED" | "REJECTED" | "FAILED" | "RESULT_UNKNOWN";
+            /** Format: uuid */
+            subjectPrincipalPublicId: string;
+        };
         people_Company: {
             description?: string;
             name?: string;
@@ -51501,6 +51586,26 @@ export interface components {
             /** Format: int32 */
             pendingCount?: number;
         };
+        people_EmployeeChangeRequestCreateV1: {
+            changeType: string;
+            effectiveDate: components["schemas"]["people_HrisDate"];
+            evidence: {
+                digest: components["schemas"]["people_HrisDigest"];
+                objectRef: string;
+            }[];
+            patch: {
+                /** @enum {string} */
+                op: "add" | "replace" | "remove";
+                path: string;
+                value?: string | number | boolean | Record<string, never> | unknown[] | null;
+            }[];
+            patchSchemaKey: string;
+            patchSchemaVersion: number;
+            targetAggregatePublicId: components["schemas"]["people_HrisUuid"];
+            /** @enum {string} */
+            targetAggregateType: "PERSON" | "WORKER" | "EMPLOYMENT_RELATIONSHIP" | "ASSIGNMENT";
+            targetPersonPublicId: components["schemas"]["people_HrisUuid"];
+        };
         people_EmployeeContext: {
             businessTitle?: string;
             /** Format: int32 */
@@ -51511,6 +51616,7 @@ export interface components {
             /** Format: uuid */
             personId?: string;
         };
+        people_EmptyCommandV1: Record<string, never>;
         people_EnrollmentWindow: {
             /** Format: date-time */
             closesAt?: string;
@@ -51638,6 +51744,200 @@ export interface components {
             teamTimePendingCount?: number;
             time?: components["schemas"]["people_TimeCard"];
             timeZone?: string;
+        };
+        /** Format: date */
+        people_HrisDate: string;
+        people_HrisDigest: string;
+        people_HrisProblemDetailsV1: {
+            code: string;
+            correlationId: components["schemas"]["people_HrisUuid"];
+            currentVersion?: number;
+            fieldErrors?: {
+                code: string;
+                field: string;
+            }[];
+            receiptId?: components["schemas"]["people_HrisUuid"];
+            retryable: boolean;
+            safeDetail?: string;
+            /** @enum {integer} */
+            status: 400 | 401 | 403 | 404 | 409 | 422 | 423 | 429 | 500;
+            title: string;
+            /** Format: uri-reference */
+            type: string;
+        };
+        /** Format: uuid */
+        people_HrisUuid: string;
+        people_Iaq009EmployeeChangeRequestFilterV1: {
+            approvalStatus?: components["schemas"]["people_IaqStatusFilterV1"] | null;
+            changeRequestSummary?: components["schemas"]["people_IaqAggregateFilterV1"] | null;
+            effectiveOn?: string | null;
+            employment?: components["schemas"]["people_IaqEffectiveRangeFilterV1"] | null;
+        };
+        people_Iaq009EmployeeChangeRequestProjectionV1: {
+            /** Format: date-time */
+            asOf: string;
+            items: {
+                availableActions: ({
+                    /** @constant */
+                    actionKey: "hris.action.hrm.create-employee-change-request";
+                    /** @constant */
+                    hrefTemplate: "/api/people/v1/hris/employee-change-requests";
+                    /** @constant */
+                    idempotencyPolicy: "REQUIRED_IDEMPOTENCY_KEY";
+                    /** @constant */
+                    method: "POST";
+                    /** @constant */
+                    stepUpPolicy: "OWNER_PEP_RISK_POLICY_DECISION_REQUIRED";
+                } | {
+                    /** @constant */
+                    actionKey: "hris.action.hrm.submit-employee-change-request";
+                    /** @constant */
+                    hrefTemplate: "/api/people/v1/hris/employee-change-requests/{requestPublicId}/submit";
+                    /** @constant */
+                    idempotencyPolicy: "REQUIRED_IDEMPOTENCY_KEY";
+                    /** @constant */
+                    method: "POST";
+                    /** @constant */
+                    stepUpPolicy: "OWNER_PEP_RISK_POLICY_DECISION_REQUIRED";
+                } | {
+                    /** @constant */
+                    actionKey: "hris.action.hrm.apply-employee-change-request";
+                    /** @constant */
+                    hrefTemplate: "/api/people/v1/hris/employee-change-requests/{requestPublicId}/apply";
+                    /** @constant */
+                    idempotencyPolicy: "REQUIRED_IDEMPOTENCY_KEY";
+                    /** @constant */
+                    method: "POST";
+                    /** @constant */
+                    stepUpPolicy: "OWNER_PEP_RISK_POLICY_DECISION_REQUIRED";
+                })[];
+                deepLink: {
+                    resourcePublicId: string;
+                    /** @constant */
+                    route: "/hr/operations/people/employee-change-requests";
+                };
+                fieldGroups: {
+                    APPROVAL_STATUS?: {
+                        /** @constant */
+                        decision: "VIEW";
+                        value: components["schemas"]["people_IaqStatusValueV1"];
+                    } | {
+                        /** @constant */
+                        decision: "MASK";
+                        maskReason: string;
+                        maskedDisplayKey: string;
+                        value: null;
+                    };
+                    CHANGE_REQUEST_SUMMARY?: {
+                        /** @constant */
+                        decision: "VIEW";
+                        value: components["schemas"]["people_IaqAggregateValueV1"];
+                    } | {
+                        /** @constant */
+                        decision: "MASK";
+                        maskReason: string;
+                        maskedDisplayKey: string;
+                        value: null;
+                    };
+                    EMPLOYMENT?: {
+                        /** @constant */
+                        decision: "VIEW";
+                        value: components["schemas"]["people_IaqEffectiveRangeValueV1"];
+                    } | {
+                        /** @constant */
+                        decision: "MASK";
+                        maskReason: string;
+                        maskedDisplayKey: string;
+                        value: null;
+                    };
+                };
+                itemPublicId: string;
+                statusCode: string;
+                title: string;
+            }[];
+            /** @constant */
+            projectionVersion: "1";
+            queryState: {
+                cachePolicy: {
+                    authorizationDecisionRevision: string;
+                    /** @constant */
+                    invalidationEvent: "dwp.hris.access.assignment.changed.v1";
+                    maxAgeSeconds: number;
+                };
+                /** Format: uuid */
+                correlationId: string;
+                fieldDecisionSummary: {
+                    maskedCount: number;
+                    omittedCount: number;
+                    viewCount: number;
+                };
+                /** @enum {string} */
+                freshness: "CURRENT" | "STALE" | "UNAVAILABLE";
+                nextCursor: string | null;
+                partialFailures: {
+                    componentKey: string;
+                    /** Format: uuid */
+                    correlationId: string;
+                    errorCode: string;
+                    retryable: boolean;
+                }[];
+                scopeDecisionRevision: string;
+                /** @enum {string} */
+                state: "COMPLETE" | "EMPTY" | "PARTIAL" | "UNAVAILABLE";
+            };
+            /** @constant */
+            variantKey: "EMPLOYEE_CHANGE_REQUESTS";
+        } & (unknown & unknown & unknown & unknown & unknown);
+        people_Iaq009EmployeeChangeRequestQueryV1: {
+            asOf?: string | null;
+            /** Format: uuid */
+            correlationId: string;
+            cursor?: string | null;
+            filter: components["schemas"]["people_Iaq009EmployeeChangeRequestFilterV1"];
+            limit: number;
+            locale: string;
+            sort: ("changeRequestSummary:ASC" | "approvalStatus:ASC" | "employment:ASC" | "changeRequestSummary:DESC" | "approvalStatus:DESC" | "employment:DESC" | "itemPublicId:ASC" | "itemPublicId:DESC")[];
+            timeZone: string;
+        };
+        people_Iaq009ProblemDetailsV1: {
+            code: string;
+            /** Format: uuid */
+            correlationId: string;
+            retryable: boolean;
+            /** @enum {integer} */
+            status: 400 | 401 | 403 | 404 | 409 | 429 | 503;
+            title: string;
+            /** Format: uri */
+            type: string;
+        };
+        people_IaqAggregateFilterV1: {
+            maximumItemCount?: number | null;
+            minimumItemCount?: number | null;
+        };
+        people_IaqAggregateValueV1: {
+            /** Format: date-time */
+            asOf: string;
+            itemCount: number;
+            revision: number;
+        };
+        people_IaqEffectiveRangeFilterV1: {
+            activeOn?: string | null;
+            from?: string | null;
+            to?: string | null;
+        };
+        people_IaqEffectiveRangeValueV1: {
+            /** Format: date */
+            effectiveFrom: string;
+            effectiveTo: string | null;
+            revision: number;
+        };
+        people_IaqStatusFilterV1: {
+            codes?: string[];
+            minimumRevision?: number | null;
+        };
+        people_IaqStatusValueV1: {
+            code: string;
+            revision: number;
         };
         people_ImportResult: {
             /** Format: int64 */
@@ -99618,6 +99918,596 @@ export interface operations {
             };
         };
     };
+    people_createEmployeeChangeRequest: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header: {
+                "Idempotency-Key": string;
+                "If-Match": string;
+                "X-Correlation-ID": string;
+                "X-Purpose-Code"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["people_EmployeeChangeRequestCreateV1"];
+            };
+        };
+        responses: {
+            /** @description Accepted */
+            202: {
+                headers: {
+                    /** @description Authorization-aware response cache policy. */
+                    "Cache-Control"?: string;
+                    /** @description Entity version for conditional follow-up requests. */
+                    ETag?: string;
+                    /** @description Authorization decision revision used for this response. */
+                    "X-Authorization-Decision-Revision"?: string;
+                    /** @description End-to-end request correlation identifier. */
+                    "X-Correlation-ID"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["people_CommandReceiptV1"];
+                };
+            };
+            /** @description Schema invalid */
+            400: {
+                headers: {
+                    /** @description Authorization-aware response cache policy. */
+                    "Cache-Control"?: string;
+                    /** @description Entity version for conditional follow-up requests. */
+                    ETag?: string;
+                    /** @description Authorization decision revision used for this response. */
+                    "X-Authorization-Decision-Revision"?: string;
+                    /** @description End-to-end request correlation identifier. */
+                    "X-Correlation-ID"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["people_HrisProblemDetailsV1"];
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    /** @description Authorization-aware response cache policy. */
+                    "Cache-Control"?: string;
+                    /** @description Entity version for conditional follow-up requests. */
+                    ETag?: string;
+                    /** @description Authorization decision revision used for this response. */
+                    "X-Authorization-Decision-Revision"?: string;
+                    /** @description End-to-end request correlation identifier. */
+                    "X-Correlation-ID"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["people_HrisProblemDetailsV1"];
+                };
+            };
+            /** @description Capability, scope, field, purpose, or step-up denied */
+            403: {
+                headers: {
+                    /** @description Authorization-aware response cache policy. */
+                    "Cache-Control"?: string;
+                    /** @description Entity version for conditional follow-up requests. */
+                    ETag?: string;
+                    /** @description Authorization decision revision used for this response. */
+                    "X-Authorization-Decision-Revision"?: string;
+                    /** @description End-to-end request correlation identifier. */
+                    "X-Correlation-ID"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["people_HrisProblemDetailsV1"];
+                };
+            };
+            /** @description Target not disclosed */
+            404: {
+                headers: {
+                    /** @description Authorization-aware response cache policy. */
+                    "Cache-Control"?: string;
+                    /** @description Entity version for conditional follow-up requests. */
+                    ETag?: string;
+                    /** @description Authorization decision revision used for this response. */
+                    "X-Authorization-Decision-Revision"?: string;
+                    /** @description End-to-end request correlation identifier. */
+                    "X-Correlation-ID"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["people_HrisProblemDetailsV1"];
+                };
+            };
+            /** @description Stale version, effective overlap, or idempotency mismatch */
+            409: {
+                headers: {
+                    /** @description Authorization-aware response cache policy. */
+                    "Cache-Control"?: string;
+                    /** @description Entity version for conditional follow-up requests. */
+                    ETag?: string;
+                    /** @description Authorization decision revision used for this response. */
+                    "X-Authorization-Decision-Revision"?: string;
+                    /** @description End-to-end request correlation identifier. */
+                    "X-Correlation-ID"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["people_HrisProblemDetailsV1"];
+                };
+            };
+            /** @description Domain rule rejected */
+            422: {
+                headers: {
+                    /** @description Authorization-aware response cache policy. */
+                    "Cache-Control"?: string;
+                    /** @description Entity version for conditional follow-up requests. */
+                    ETag?: string;
+                    /** @description Authorization decision revision used for this response. */
+                    "X-Authorization-Decision-Revision"?: string;
+                    /** @description End-to-end request correlation identifier. */
+                    "X-Correlation-ID"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["people_HrisProblemDetailsV1"];
+                };
+            };
+            /** @description Aggregate locked */
+            423: {
+                headers: {
+                    /** @description Authorization-aware response cache policy. */
+                    "Cache-Control"?: string;
+                    /** @description Entity version for conditional follow-up requests. */
+                    ETag?: string;
+                    /** @description Authorization decision revision used for this response. */
+                    "X-Authorization-Decision-Revision"?: string;
+                    /** @description End-to-end request correlation identifier. */
+                    "X-Correlation-ID"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["people_HrisProblemDetailsV1"];
+                };
+            };
+            /** @description Rate limited */
+            429: {
+                headers: {
+                    /** @description Authorization-aware response cache policy. */
+                    "Cache-Control"?: string;
+                    /** @description Entity version for conditional follow-up requests. */
+                    ETag?: string;
+                    /** @description Authorization decision revision used for this response. */
+                    "X-Authorization-Decision-Revision"?: string;
+                    /** @description End-to-end request correlation identifier. */
+                    "X-Correlation-ID"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["people_HrisProblemDetailsV1"];
+                };
+            };
+            /** @description Result unknown; reconcile using the receipt */
+            500: {
+                headers: {
+                    /** @description Authorization-aware response cache policy. */
+                    "Cache-Control"?: string;
+                    /** @description Entity version for conditional follow-up requests. */
+                    ETag?: string;
+                    /** @description Authorization decision revision used for this response. */
+                    "X-Authorization-Decision-Revision"?: string;
+                    /** @description End-to-end request correlation identifier. */
+                    "X-Correlation-ID"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["people_HrisProblemDetailsV1"];
+                };
+            };
+        };
+    };
+    people_applyEmployeeChangeRequest: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header: {
+                "Idempotency-Key": string;
+                "If-Match": string;
+                "X-DWP-Step-Up-Challenge": string;
+                "X-DWP-Expected-Decision-Revision": string;
+                "X-DWP-Expected-Object-Version": number;
+                "X-Correlation-ID": string;
+                "X-Purpose-Code"?: string;
+            };
+            path: {
+                requestPublicId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["people_EmptyCommandV1"];
+            };
+        };
+        responses: {
+            /** @description Accepted */
+            202: {
+                headers: {
+                    /** @description Authorization-aware response cache policy. */
+                    "Cache-Control"?: string;
+                    /** @description Entity version for conditional follow-up requests. */
+                    ETag?: string;
+                    /** @description Authorization decision revision used for this response. */
+                    "X-Authorization-Decision-Revision"?: string;
+                    /** @description End-to-end request correlation identifier. */
+                    "X-Correlation-ID"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["people_CommandReceiptV1"];
+                };
+            };
+            /** @description Schema invalid */
+            400: {
+                headers: {
+                    /** @description Authorization-aware response cache policy. */
+                    "Cache-Control"?: string;
+                    /** @description Entity version for conditional follow-up requests. */
+                    ETag?: string;
+                    /** @description Authorization decision revision used for this response. */
+                    "X-Authorization-Decision-Revision"?: string;
+                    /** @description End-to-end request correlation identifier. */
+                    "X-Correlation-ID"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["people_HrisProblemDetailsV1"];
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    /** @description Authorization-aware response cache policy. */
+                    "Cache-Control"?: string;
+                    /** @description Entity version for conditional follow-up requests. */
+                    ETag?: string;
+                    /** @description Authorization decision revision used for this response. */
+                    "X-Authorization-Decision-Revision"?: string;
+                    /** @description End-to-end request correlation identifier. */
+                    "X-Correlation-ID"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["people_HrisProblemDetailsV1"];
+                };
+            };
+            /** @description Capability, scope, field, purpose, or step-up denied */
+            403: {
+                headers: {
+                    /** @description Authorization-aware response cache policy. */
+                    "Cache-Control"?: string;
+                    /** @description Entity version for conditional follow-up requests. */
+                    ETag?: string;
+                    /** @description Authorization decision revision used for this response. */
+                    "X-Authorization-Decision-Revision"?: string;
+                    /** @description End-to-end request correlation identifier. */
+                    "X-Correlation-ID"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["people_HrisProblemDetailsV1"];
+                };
+            };
+            /** @description Target not disclosed */
+            404: {
+                headers: {
+                    /** @description Authorization-aware response cache policy. */
+                    "Cache-Control"?: string;
+                    /** @description Entity version for conditional follow-up requests. */
+                    ETag?: string;
+                    /** @description Authorization decision revision used for this response. */
+                    "X-Authorization-Decision-Revision"?: string;
+                    /** @description End-to-end request correlation identifier. */
+                    "X-Correlation-ID"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["people_HrisProblemDetailsV1"];
+                };
+            };
+            /** @description Stale version, effective overlap, or idempotency mismatch */
+            409: {
+                headers: {
+                    /** @description Authorization-aware response cache policy. */
+                    "Cache-Control"?: string;
+                    /** @description Entity version for conditional follow-up requests. */
+                    ETag?: string;
+                    /** @description Authorization decision revision used for this response. */
+                    "X-Authorization-Decision-Revision"?: string;
+                    /** @description End-to-end request correlation identifier. */
+                    "X-Correlation-ID"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["people_HrisProblemDetailsV1"];
+                };
+            };
+            /** @description Domain rule rejected */
+            422: {
+                headers: {
+                    /** @description Authorization-aware response cache policy. */
+                    "Cache-Control"?: string;
+                    /** @description Entity version for conditional follow-up requests. */
+                    ETag?: string;
+                    /** @description Authorization decision revision used for this response. */
+                    "X-Authorization-Decision-Revision"?: string;
+                    /** @description End-to-end request correlation identifier. */
+                    "X-Correlation-ID"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["people_HrisProblemDetailsV1"];
+                };
+            };
+            /** @description Aggregate locked */
+            423: {
+                headers: {
+                    /** @description Authorization-aware response cache policy. */
+                    "Cache-Control"?: string;
+                    /** @description Entity version for conditional follow-up requests. */
+                    ETag?: string;
+                    /** @description Authorization decision revision used for this response. */
+                    "X-Authorization-Decision-Revision"?: string;
+                    /** @description End-to-end request correlation identifier. */
+                    "X-Correlation-ID"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["people_HrisProblemDetailsV1"];
+                };
+            };
+            /** @description Rate limited */
+            429: {
+                headers: {
+                    /** @description Authorization-aware response cache policy. */
+                    "Cache-Control"?: string;
+                    /** @description Entity version for conditional follow-up requests. */
+                    ETag?: string;
+                    /** @description Authorization decision revision used for this response. */
+                    "X-Authorization-Decision-Revision"?: string;
+                    /** @description End-to-end request correlation identifier. */
+                    "X-Correlation-ID"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["people_HrisProblemDetailsV1"];
+                };
+            };
+            /** @description Result unknown; reconcile using the receipt */
+            500: {
+                headers: {
+                    /** @description Authorization-aware response cache policy. */
+                    "Cache-Control"?: string;
+                    /** @description Entity version for conditional follow-up requests. */
+                    ETag?: string;
+                    /** @description Authorization decision revision used for this response. */
+                    "X-Authorization-Decision-Revision"?: string;
+                    /** @description End-to-end request correlation identifier. */
+                    "X-Correlation-ID"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["people_HrisProblemDetailsV1"];
+                };
+            };
+        };
+    };
+    people_submitEmployeeChangeRequest: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header: {
+                "Idempotency-Key": string;
+                "If-Match": string;
+                "X-Correlation-ID": string;
+                "X-Purpose-Code"?: string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path: {
+                requestPublicId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["people_EmptyCommandV1"];
+            };
+        };
+        responses: {
+            /** @description Accepted */
+            202: {
+                headers: {
+                    /** @description Authorization-aware response cache policy. */
+                    "Cache-Control"?: string;
+                    /** @description Entity version for conditional follow-up requests. */
+                    ETag?: string;
+                    /** @description Authorization decision revision used for this response. */
+                    "X-Authorization-Decision-Revision"?: string;
+                    /** @description End-to-end request correlation identifier. */
+                    "X-Correlation-ID"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["people_CommandReceiptV1"];
+                };
+            };
+            /** @description Schema invalid */
+            400: {
+                headers: {
+                    /** @description Authorization-aware response cache policy. */
+                    "Cache-Control"?: string;
+                    /** @description Entity version for conditional follow-up requests. */
+                    ETag?: string;
+                    /** @description Authorization decision revision used for this response. */
+                    "X-Authorization-Decision-Revision"?: string;
+                    /** @description End-to-end request correlation identifier. */
+                    "X-Correlation-ID"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["people_HrisProblemDetailsV1"];
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    /** @description Authorization-aware response cache policy. */
+                    "Cache-Control"?: string;
+                    /** @description Entity version for conditional follow-up requests. */
+                    ETag?: string;
+                    /** @description Authorization decision revision used for this response. */
+                    "X-Authorization-Decision-Revision"?: string;
+                    /** @description End-to-end request correlation identifier. */
+                    "X-Correlation-ID"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["people_HrisProblemDetailsV1"];
+                };
+            };
+            /** @description Capability, scope, field, purpose, or step-up denied */
+            403: {
+                headers: {
+                    /** @description Authorization-aware response cache policy. */
+                    "Cache-Control"?: string;
+                    /** @description Entity version for conditional follow-up requests. */
+                    ETag?: string;
+                    /** @description Authorization decision revision used for this response. */
+                    "X-Authorization-Decision-Revision"?: string;
+                    /** @description End-to-end request correlation identifier. */
+                    "X-Correlation-ID"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["people_HrisProblemDetailsV1"];
+                };
+            };
+            /** @description Target not disclosed */
+            404: {
+                headers: {
+                    /** @description Authorization-aware response cache policy. */
+                    "Cache-Control"?: string;
+                    /** @description Entity version for conditional follow-up requests. */
+                    ETag?: string;
+                    /** @description Authorization decision revision used for this response. */
+                    "X-Authorization-Decision-Revision"?: string;
+                    /** @description End-to-end request correlation identifier. */
+                    "X-Correlation-ID"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["people_HrisProblemDetailsV1"];
+                };
+            };
+            /** @description Stale version, effective overlap, or idempotency mismatch */
+            409: {
+                headers: {
+                    /** @description Authorization-aware response cache policy. */
+                    "Cache-Control"?: string;
+                    /** @description Entity version for conditional follow-up requests. */
+                    ETag?: string;
+                    /** @description Authorization decision revision used for this response. */
+                    "X-Authorization-Decision-Revision"?: string;
+                    /** @description End-to-end request correlation identifier. */
+                    "X-Correlation-ID"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["people_HrisProblemDetailsV1"];
+                };
+            };
+            /** @description Domain rule rejected */
+            422: {
+                headers: {
+                    /** @description Authorization-aware response cache policy. */
+                    "Cache-Control"?: string;
+                    /** @description Entity version for conditional follow-up requests. */
+                    ETag?: string;
+                    /** @description Authorization decision revision used for this response. */
+                    "X-Authorization-Decision-Revision"?: string;
+                    /** @description End-to-end request correlation identifier. */
+                    "X-Correlation-ID"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["people_HrisProblemDetailsV1"];
+                };
+            };
+            /** @description Aggregate locked */
+            423: {
+                headers: {
+                    /** @description Authorization-aware response cache policy. */
+                    "Cache-Control"?: string;
+                    /** @description Entity version for conditional follow-up requests. */
+                    ETag?: string;
+                    /** @description Authorization decision revision used for this response. */
+                    "X-Authorization-Decision-Revision"?: string;
+                    /** @description End-to-end request correlation identifier. */
+                    "X-Correlation-ID"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["people_HrisProblemDetailsV1"];
+                };
+            };
+            /** @description Rate limited */
+            429: {
+                headers: {
+                    /** @description Authorization-aware response cache policy. */
+                    "Cache-Control"?: string;
+                    /** @description Entity version for conditional follow-up requests. */
+                    ETag?: string;
+                    /** @description Authorization decision revision used for this response. */
+                    "X-Authorization-Decision-Revision"?: string;
+                    /** @description End-to-end request correlation identifier. */
+                    "X-Correlation-ID"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["people_HrisProblemDetailsV1"];
+                };
+            };
+            /** @description Result unknown; reconcile using the receipt */
+            500: {
+                headers: {
+                    /** @description Authorization-aware response cache policy. */
+                    "Cache-Control"?: string;
+                    /** @description Entity version for conditional follow-up requests. */
+                    ETag?: string;
+                    /** @description Authorization decision revision used for this response. */
+                    "X-Authorization-Decision-Revision"?: string;
+                    /** @description End-to-end request correlation identifier. */
+                    "X-Correlation-ID"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["people_HrisProblemDetailsV1"];
+                };
+            };
+        };
+    };
     people_hrisPerformanceCommandReceipt: {
         parameters: {
             query?: {
@@ -99932,6 +100822,164 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["people_ApiResponseProjection"];
+                };
+            };
+        };
+    };
+    people_employeeChangeRequestWorkbench: {
+        parameters: {
+            query: {
+                limit: number;
+                filter: components["schemas"]["people_Iaq009EmployeeChangeRequestFilterV1"];
+                sort: ("changeRequestSummary:ASC" | "approvalStatus:ASC" | "employment:ASC" | "changeRequestSummary:DESC" | "approvalStatus:DESC" | "employment:DESC" | "itemPublicId:ASC" | "itemPublicId:DESC")[];
+                locale: string;
+                timeZone: string;
+                correlationId: string;
+                asOf?: string | null;
+                cursor?: string | null;
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    /** @description Authorization-aware response cache policy. */
+                    "Cache-Control"?: string;
+                    /** @description Entity version for conditional follow-up requests. */
+                    ETag?: string;
+                    /** @description Authorization decision revision used for this response. */
+                    "X-Authorization-Decision-Revision"?: string;
+                    /** @description End-to-end request correlation identifier. */
+                    "X-Correlation-ID"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["people_Iaq009EmployeeChangeRequestProjectionV1"];
+                };
+            };
+            /** @description Schema invalid */
+            400: {
+                headers: {
+                    /** @description Authorization-aware response cache policy. */
+                    "Cache-Control"?: string;
+                    /** @description Entity version for conditional follow-up requests. */
+                    ETag?: string;
+                    /** @description Authorization decision revision used for this response. */
+                    "X-Authorization-Decision-Revision"?: string;
+                    /** @description End-to-end request correlation identifier. */
+                    "X-Correlation-ID"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["people_Iaq009ProblemDetailsV1"];
+                };
+            };
+            /** @description Authentication required */
+            401: {
+                headers: {
+                    /** @description Authorization-aware response cache policy. */
+                    "Cache-Control"?: string;
+                    /** @description Entity version for conditional follow-up requests. */
+                    ETag?: string;
+                    /** @description Authorization decision revision used for this response. */
+                    "X-Authorization-Decision-Revision"?: string;
+                    /** @description End-to-end request correlation identifier. */
+                    "X-Correlation-ID"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["people_Iaq009ProblemDetailsV1"];
+                };
+            };
+            /** @description Authorization denied */
+            403: {
+                headers: {
+                    /** @description Authorization-aware response cache policy. */
+                    "Cache-Control"?: string;
+                    /** @description Entity version for conditional follow-up requests. */
+                    ETag?: string;
+                    /** @description Authorization decision revision used for this response. */
+                    "X-Authorization-Decision-Revision"?: string;
+                    /** @description End-to-end request correlation identifier. */
+                    "X-Correlation-ID"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["people_Iaq009ProblemDetailsV1"];
+                };
+            };
+            /** @description Target not disclosed */
+            404: {
+                headers: {
+                    /** @description Authorization-aware response cache policy. */
+                    "Cache-Control"?: string;
+                    /** @description Entity version for conditional follow-up requests. */
+                    ETag?: string;
+                    /** @description Authorization decision revision used for this response. */
+                    "X-Authorization-Decision-Revision"?: string;
+                    /** @description End-to-end request correlation identifier. */
+                    "X-Correlation-ID"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["people_Iaq009ProblemDetailsV1"];
+                };
+            };
+            /** @description Projection state conflict */
+            409: {
+                headers: {
+                    /** @description Authorization-aware response cache policy. */
+                    "Cache-Control"?: string;
+                    /** @description Entity version for conditional follow-up requests. */
+                    ETag?: string;
+                    /** @description Authorization decision revision used for this response. */
+                    "X-Authorization-Decision-Revision"?: string;
+                    /** @description End-to-end request correlation identifier. */
+                    "X-Correlation-ID"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["people_Iaq009ProblemDetailsV1"];
+                };
+            };
+            /** @description Rate limited */
+            429: {
+                headers: {
+                    /** @description Authorization-aware response cache policy. */
+                    "Cache-Control"?: string;
+                    /** @description Entity version for conditional follow-up requests. */
+                    ETag?: string;
+                    /** @description Authorization decision revision used for this response. */
+                    "X-Authorization-Decision-Revision"?: string;
+                    /** @description End-to-end request correlation identifier. */
+                    "X-Correlation-ID"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["people_Iaq009ProblemDetailsV1"];
+                };
+            };
+            /** @description Projection unavailable */
+            503: {
+                headers: {
+                    /** @description Authorization-aware response cache policy. */
+                    "Cache-Control"?: string;
+                    /** @description Entity version for conditional follow-up requests. */
+                    ETag?: string;
+                    /** @description Authorization decision revision used for this response. */
+                    "X-Authorization-Decision-Revision"?: string;
+                    /** @description End-to-end request correlation identifier. */
+                    "X-Correlation-ID"?: string;
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["people_Iaq009ProblemDetailsV1"];
                 };
             };
         };

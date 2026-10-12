@@ -128,6 +128,11 @@ const HrisPeople360Workspace = lazy(() =>
     default: module.HrisPeople360Workspace,
   }))
 );
+const HrisEmployeeChangeWorkspace = lazy(() =>
+  import('../features/hris/employee-services/employee-change').then((module) => ({
+    default: module.HrisEmployeeChangeWorkspace,
+  }))
+);
 const OrganizationExplorer = lazy(() =>
   import('../features/people/organization/organization-chart-manager').then((module) => ({
     default: module.OrganizationExplorer,
@@ -209,6 +214,7 @@ function HcmPageContent({ page }: { page: HcmNavigationItem }) {
     'team-absence': <HrTeamAbsenceWorkspace />,
     operations: <HrOperationsOverview />,
     people: <HrisPeople360Workspace />,
+    'employee-change-requests': <HrisEmployeeChangeWorkspace />,
     assignments: <AssignmentRegister assignmentProposal={assignmentProposalPort} />,
     'time-operations': <HrisTimeOperationsWorkspace />,
     'time-clock-ingestion': <HrisClockIngestionOperationsWorkspace entryMode="CLOCK_INGESTION" />,

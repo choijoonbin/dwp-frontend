@@ -483,7 +483,12 @@
       "employee-change-requests": {
         "eyebrow": "HRIS / HR operations",
         "title": "Employee change requests",
-        "description": "Create, submit, review, and apply effective-dated employee changes with approval evidence."
+        "description": "Create, submit, review, and apply effective-dated employee changes with approval evidence.",
+        "availabilityTitle": "Employee-change lifecycle is unavailable",
+        "availabilityDescription": "The Control route is mounted, but the HRM owner lifecycle is feature-off. No employee-change data is loaded and no request command is available.",
+        "runtimeState": "Feature state: OFF",
+        "boundaryTitle": "Dedicated employee-change request family",
+        "boundaryDescription": "People 360 remains at /hr/operations/people and assignment proposals remain at /hr/operations/assignments. Neither surface is reused for this lifecycle."
       },
       "assignments": {
         "eyebrow": "HRIS / HR operations",

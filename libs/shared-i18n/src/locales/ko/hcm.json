@@ -483,7 +483,12 @@
       "employee-change-requests": {
         "eyebrow": "HRIS / HR 운영",
         "title": "직원변경 요청",
-        "description": "승인 근거와 함께 유효일 기준 직원변경을 생성·제출·검토·적용합니다."
+        "description": "승인 근거와 함께 유효일 기준 직원변경을 생성·제출·검토·적용합니다.",
+        "availabilityTitle": "직원변경 수명주기를 아직 사용할 수 없습니다",
+        "availabilityDescription": "Control 라우트는 연결되었지만 HRM 소유 수명주기 기능은 꺼져 있습니다. 직원변경 데이터를 불러오지 않으며 요청 명령도 제공하지 않습니다.",
+        "runtimeState": "기능 상태: 꺼짐",
+        "boundaryTitle": "직원변경 요청 전용 업무 영역입니다",
+        "boundaryDescription": "People 360은 /hr/operations/people, 발령 제안은 /hr/operations/assignments에서 계속 제공됩니다. 이 수명주기에는 두 화면을 재사용하지 않습니다."
       },
       "assignments": {
         "eyebrow": "HRIS / HR 운영",
