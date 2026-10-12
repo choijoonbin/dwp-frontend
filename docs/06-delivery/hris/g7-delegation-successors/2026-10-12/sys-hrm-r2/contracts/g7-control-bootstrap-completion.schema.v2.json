@@ -1,0 +1,180 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "dwp.hris.g7-control-bootstrap-completion.schema.v2",
+  "type": "object",
+  "required": [
+    "schema",
+    "receiptId",
+    "status",
+    "issuedAt",
+    "expiresAt",
+    "issuedBy",
+    "frontendPin",
+    "backendPin",
+    "requestResults",
+    "verification",
+    "authority",
+    "sealedPayloadSha256"
+  ],
+  "properties": {
+    "schema": {
+      "const": "dwp.hris.g7-control-bootstrap-completion.v2"
+    },
+    "receiptId": {
+      "const": "HRIS-G7-SYS-HRM-CONTROL-BOOTSTRAP-20261012-R2"
+    },
+    "status": {
+      "const": "PASS_SYS_HRM_CONTROL_BOOTSTRAP"
+    },
+    "issuedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "expiresAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "issuedBy": {
+      "const": "SYS_COMMON_INTEGRATION_CONTROL"
+    },
+    "frontendPin": {
+      "$ref": "#/$defs/repositoryPin"
+    },
+    "backendPin": {
+      "$ref": "#/$defs/repositoryPin"
+    },
+    "requestResults": {
+      "type": "array",
+      "minItems": 10,
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "required": ["requestId", "module", "status", "evidenceSha256"],
+        "properties": {
+          "requestId": {
+            "type": "string",
+            "pattern": "^G7-CR-(SYS-007|HRM-010)-[A-Z0-9-]+-R1$"
+          },
+          "module": {
+            "enum": ["SYS", "HRM"]
+          },
+          "status": {
+            "const": "PASS"
+          },
+          "evidenceSha256": {
+            "$ref": "#/$defs/sha256"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "verification": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["command", "result", "evidence"],
+        "properties": {
+          "command": {
+            "type": "string",
+            "minLength": 1
+          },
+          "result": {
+            "const": "PASS"
+          },
+          "evidence": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "authority": {
+      "type": "object",
+      "required": [
+        "controlBootstrapComplete",
+        "moduleSourceChangeAuthorized",
+        "sharedControlPathChangeAuthorizedForModules",
+        "integrationMergeAuthorized",
+        "customerDataAuthorized",
+        "customerActivationAuthorized",
+        "productionReleaseAuthorized"
+      ],
+      "properties": {
+        "controlBootstrapComplete": {
+          "const": true
+        },
+        "moduleSourceChangeAuthorized": {
+          "const": false
+        },
+        "sharedControlPathChangeAuthorizedForModules": {
+          "const": false
+        },
+        "integrationMergeAuthorized": {
+          "const": false
+        },
+        "customerDataAuthorized": {
+          "const": false
+        },
+        "customerActivationAuthorized": {
+          "const": false
+        },
+        "productionReleaseAuthorized": {
+          "const": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "sealedPayloadSha256": {
+      "$ref": "#/$defs/sha256"
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "repositoryPin": {
+      "type": "object",
+      "required": [
+        "commit",
+        "tree",
+        "stateSha256",
+        "branch",
+        "upstream",
+        "clean",
+        "upstreamMatched"
+      ],
+      "properties": {
+        "commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "tree": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "stateSha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "branch": {
+          "type": "string",
+          "minLength": 1
+        },
+        "upstream": {
+          "type": "string",
+          "minLength": 1
+        },
+        "clean": {
+          "const": true
+        },
+        "upstreamMatched": {
+          "const": true
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,159 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "dwp.hris.g7-promotion-receipt.schema.v2",
+  "type": "object",
+  "required": [
+    "schema",
+    "receiptId",
+    "issuedAt",
+    "issuedBy",
+    "status",
+    "decision",
+    "predecessor",
+    "bundleCommit",
+    "delegations",
+    "closedPredecessorTokens",
+    "activeTokenClosedSet",
+    "authority",
+    "sealedPayloadSha256"
+  ],
+  "properties": {
+    "schema": {
+      "const": "dwp.hris.g7-sys-hrm-promotion-receipt.v2"
+    },
+    "receiptId": {
+      "const": "HRIS-G7-SYS-HRM-PROMOTION-20261012-R2"
+    },
+    "issuedBy": {
+      "const": "SYS_COMMON_INTEGRATION_CONTROL"
+    },
+    "status": {
+      "const": "PASS_SCOPED_DELEGATION"
+    },
+    "decision": {
+      "const": "SYS_HRM_DOMAIN_AUTHORING_AUTHORIZED_PER_TIM_PREDECESSOR_TOKENS_CLOSED"
+    },
+    "delegations": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "prefixItems": [
+        {
+          "type": "object",
+          "required": [
+            "module",
+            "migrationAuthorityMode",
+            "migrationLeaseId",
+            "migrationLeaseSha256"
+          ],
+          "properties": {
+            "module": {
+              "const": "SYS"
+            },
+            "migrationAuthorityMode": {
+              "const": "ADMITTED_EXACT_LEASE"
+            },
+            "migrationLeaseId": {
+              "const": "G7-LEASE-SYS-PLATFORM-V325-R2"
+            }
+          },
+          "not": {
+            "required": ["controlOwnedMigrationPrerequisite"]
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "module",
+            "migrationAuthorityMode",
+            "controlOwnedMigrationPrerequisite"
+          ],
+          "properties": {
+            "module": {
+              "const": "HRM"
+            },
+            "migrationAuthorityMode": {
+              "const": "CONTROL_BOOTSTRAP_READ_ONLY_PIN"
+            },
+            "controlOwnedMigrationPrerequisite": {
+              "type": "object",
+              "required": [
+                "mode",
+                "exactRelativePath",
+                "sha256",
+                "frozenBackendCommit",
+                "state",
+                "migrationEditAuthorized"
+              ],
+              "properties": {
+                "mode": {
+                  "const": "CONTROL_BOOTSTRAP_READ_ONLY_PIN"
+                },
+                "exactRelativePath": {
+                  "const": "dwp-people-server/src/main/resources/db/migration/V54__create_employee_change_request_lifecycle.sql"
+                },
+                "state": {
+                  "const": "CONTROL_BOOTSTRAP_CONSUMED_READ_ONLY"
+                },
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                },
+                "frozenBackendCommit": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{40}$"
+                },
+                "migrationEditAuthorized": {
+                  "const": false
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "not": {
+            "anyOf": [
+              {
+                "required": ["migrationLeaseId"]
+              },
+              {
+                "required": ["migrationLeaseSha256"]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "closedPredecessorTokens": {
+      "const": [
+        {
+          "tokenId": "G7-START-PER-BASE-TFR-PER-006-R1",
+          "state": "RESULT_INTEGRATED_CLOSED"
+        },
+        {
+          "tokenId": "G7-START-TIM-BASE-TFR-TIM-006-R1",
+          "state": "RESULT_INTEGRATED_CLOSED"
+        }
+      ]
+    },
+    "activeTokenClosedSet": {
+      "const": [
+        "G7-START-SYS-BASE-TFR-SYS-007-R2",
+        "G7-START-HRM-BASE-TFR-HRM-010-R2"
+      ]
+    },
+    "authority": {
+      "type": "object",
+      "properties": {
+        "migrationAdmissionAuthorized": {
+          "const": ["G7-LEASE-SYS-PLATFORM-V325-R2"]
+        }
+      },
+      "required": ["migrationAdmissionAuthorized"]
+    },
+    "sealedPayloadSha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "additionalProperties": true
+}

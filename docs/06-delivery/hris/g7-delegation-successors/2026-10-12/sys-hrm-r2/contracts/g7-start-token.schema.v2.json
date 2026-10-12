@@ -1,0 +1,318 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "dwp.hris.g7-start-token.schema.v2",
+  "type": "object",
+  "required": [
+    "schema",
+    "tokenId",
+    "packetId",
+    "packetPath",
+    "packetFileSha256",
+    "sliceId",
+    "module",
+    "sessionId",
+    "issuedAt",
+    "expiresAt",
+    "activationReceiptId",
+    "state",
+    "predecessorAuthority",
+    "executionBasePins",
+    "worktreeBindings",
+    "effectiveAllowedPaths",
+    "protectedPaths",
+    "pathPolicySha256",
+    "dependencyPinsSha256",
+    "controlBootstrapReceiptSha256",
+    "permittedAction",
+    "invalidationConditions",
+    "authority",
+    "sealedPayloadSha256"
+  ],
+  "properties": {
+    "schema": {
+      "const": "dwp.hris.g7-module-start-token.v2"
+    },
+    "tokenId": {
+      "enum": [
+        "G7-START-SYS-BASE-TFR-SYS-007-R2",
+        "G7-START-HRM-BASE-TFR-HRM-010-R2"
+      ]
+    },
+    "module": {
+      "enum": ["SYS", "HRM"]
+    },
+    "state": {
+      "const": "ISSUED_PENDING_PROMOTION_RECEIPT"
+    },
+    "activationReceiptId": {
+      "const": "HRIS-G7-SYS-HRM-PROMOTION-20261012-R2"
+    },
+    "worktreeBindings": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {
+        "$ref": "#/$defs/worktreeBinding"
+      }
+    },
+    "effectiveAllowedPaths": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 4,
+      "uniqueItems": true,
+      "items": {
+        "type": "string"
+      }
+    },
+    "protectedPaths": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string"
+      }
+    },
+    "permittedAction": {
+      "const": "START_DOMAIN_MODULE_IMPLEMENTATION"
+    },
+    "authority": {
+      "$ref": "#/$defs/domainAuthority"
+    },
+    "migrationLeaseId": {
+      "const": "G7-LEASE-SYS-PLATFORM-V325-R2"
+    },
+    "migrationLeaseSha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "controlOwnedMigrationPrerequisite": {
+      "$ref": "#/$defs/controlOwnedMigrationPrerequisite"
+    },
+    "sealedPayloadSha256": {
+      "$ref": "#/$defs/sha256"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "module": {
+            "const": "SYS"
+          }
+        }
+      },
+      "then": {
+        "required": ["migrationLeaseId", "migrationLeaseSha256"],
+        "not": {
+          "required": ["controlOwnedMigrationPrerequisite"]
+        },
+        "properties": {
+          "tokenId": {
+            "const": "G7-START-SYS-BASE-TFR-SYS-007-R2"
+          },
+          "effectiveAllowedPaths": {
+            "minItems": 4,
+            "maxItems": 4,
+            "contains": {
+              "const": "backend:dwp-platform-server/src/main/resources/db/migration/V325__create_hris_reference_configuration_lifecycle.sql"
+            }
+          },
+          "authority": {
+            "properties": {
+              "migrationAuthorityMode": {
+                "const": "ADMITTED_EXACT_LEASE"
+              },
+              "migrationEditAuthorized": {
+                "const": true
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "required": ["controlOwnedMigrationPrerequisite"],
+        "not": {
+          "anyOf": [
+            {
+              "required": ["migrationLeaseId"]
+            },
+            {
+              "required": ["migrationLeaseSha256"]
+            }
+          ]
+        },
+        "properties": {
+          "tokenId": {
+            "const": "G7-START-HRM-BASE-TFR-HRM-010-R2"
+          },
+          "effectiveAllowedPaths": {
+            "minItems": 3,
+            "maxItems": 3,
+            "not": {
+              "contains": {
+                "const": "backend:dwp-people-server/src/main/resources/db/migration/V54__create_employee_change_request_lifecycle.sql"
+              }
+            }
+          },
+          "protectedPaths": {
+            "contains": {
+              "const": "backend:dwp-people-server/src/main/resources/db/migration/V54__create_employee_change_request_lifecycle.sql"
+            }
+          },
+          "authority": {
+            "properties": {
+              "migrationAuthorityMode": {
+                "const": "CONTROL_BOOTSTRAP_READ_ONLY_PIN"
+              },
+              "migrationEditAuthorized": {
+                "const": false
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "worktreeBinding": {
+      "type": "object",
+      "required": [
+        "module",
+        "slice_id",
+        "token_id",
+        "repo",
+        "absolute_path",
+        "branch",
+        "upstream",
+        "head",
+        "tree",
+        "state_sha256",
+        "clean",
+        "ahead",
+        "behind",
+        "state"
+      ],
+      "properties": {
+        "repo": {
+          "enum": ["frontend", "backend"]
+        },
+        "head": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "tree": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "state_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "clean": {
+          "const": "true"
+        },
+        "ahead": {
+          "const": "0"
+        },
+        "behind": {
+          "const": "0"
+        },
+        "state": {
+          "const": "CREATED_PUSHED_CLEAN"
+        }
+      },
+      "additionalProperties": true
+    },
+    "controlOwnedMigrationPrerequisite": {
+      "type": "object",
+      "required": [
+        "mode",
+        "exactRelativePath",
+        "sha256",
+        "frozenBackendCommit",
+        "state",
+        "migrationEditAuthorized"
+      ],
+      "properties": {
+        "mode": {
+          "const": "CONTROL_BOOTSTRAP_READ_ONLY_PIN"
+        },
+        "exactRelativePath": {
+          "const": "dwp-people-server/src/main/resources/db/migration/V54__create_employee_change_request_lifecycle.sql"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "frozenBackendCommit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "state": {
+          "const": "CONTROL_BOOTSTRAP_CONSUMED_READ_ONLY"
+        },
+        "migrationEditAuthorized": {
+          "const": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "domainAuthority": {
+      "type": "object",
+      "required": [
+        "domainAuthoringOnly",
+        "exactWorktreesOnly",
+        "exactAllowedPathsOnly",
+        "migrationAuthorityMode",
+        "migrationEditAuthorized",
+        "commitAndPushTokenBranchesAuthorized",
+        "sharedControlPathChangeAuthorized",
+        "integrationMergeAuthorized",
+        "customerDataAuthorized",
+        "customerActivationAuthorized",
+        "productionReleaseAuthorized"
+      ],
+      "properties": {
+        "domainAuthoringOnly": {
+          "const": true
+        },
+        "exactWorktreesOnly": {
+          "const": true
+        },
+        "exactAllowedPathsOnly": {
+          "const": true
+        },
+        "migrationAuthorityMode": {
+          "enum": [
+            "ADMITTED_EXACT_LEASE",
+            "CONTROL_BOOTSTRAP_READ_ONLY_PIN"
+          ]
+        },
+        "migrationEditAuthorized": {
+          "type": "boolean"
+        },
+        "commitAndPushTokenBranchesAuthorized": {
+          "const": true
+        },
+        "sharedControlPathChangeAuthorized": {
+          "const": false
+        },
+        "integrationMergeAuthorized": {
+          "const": false
+        },
+        "customerDataAuthorized": {
+          "const": false
+        },
+        "customerActivationAuthorized": {
+          "const": false
+        },
+        "productionReleaseAuthorized": {
+          "const": false
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": true
+}

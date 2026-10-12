@@ -1,0 +1,158 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "dwp.hris.g7-migration-lease-delta.schema.v2",
+  "type": "object",
+  "required": [
+    "schema",
+    "issuedAt",
+    "predecessorRegister",
+    "leases",
+    "closedPredecessorLeases",
+    "historicalRangesAreAuthority",
+    "openEndedVersionsAllowed",
+    "sealedPayloadSha256"
+  ],
+  "properties": {
+    "schema": {
+      "const": "dwp.hris.g7-migration-lease-delta.v2"
+    },
+    "leases": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "leaseId",
+          "supersedesLeaseId",
+          "module",
+          "sliceId",
+          "stream",
+          "streamRoot",
+          "frozenBackendCommit",
+          "frozenHighWater",
+          "version",
+          "exactRelativePath",
+          "status",
+          "ownerTokenId",
+          "migrationAdmissionAuthorized",
+          "sealedPayloadSha256"
+        ],
+        "properties": {
+          "leaseId": {
+            "const": "G7-LEASE-SYS-PLATFORM-V325-R2"
+          },
+          "supersedesLeaseId": {
+            "const": "G7-LEASE-SYS-PLATFORM-V325-R1"
+          },
+          "module": {
+            "const": "SYS"
+          },
+          "sliceId": {
+            "const": "BASE-TFR-SYS-007"
+          },
+          "stream": {
+            "const": "PLATFORM_MAIN"
+          },
+          "streamRoot": {
+            "const": "dwp-platform-server/src/main/resources/db/migration"
+          },
+          "frozenHighWater": {
+            "const": 324
+          },
+          "version": {
+            "const": 325
+          },
+          "exactRelativePath": {
+            "const": "dwp-platform-server/src/main/resources/db/migration/V325__create_hris_reference_configuration_lifecycle.sql"
+          },
+          "status": {
+            "const": "ADMITTED_DOMAIN_AUTHORING"
+          },
+          "ownerTokenId": {
+            "const": "G7-START-SYS-BASE-TFR-SYS-007-R2"
+          },
+          "migrationAdmissionAuthorized": {
+            "const": true
+          },
+          "sealedPayloadSha256": {
+            "$ref": "#/$defs/sha256"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "closedPredecessorLeases": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "prefixItems": [
+        {
+          "type": "object",
+          "required": ["leaseId", "state", "successorLeaseId"],
+          "properties": {
+            "leaseId": {
+              "const": "G7-LEASE-SYS-PLATFORM-V325-R1"
+            },
+            "state": {
+              "const": "SUPERSEDED_UNCONSUMED"
+            },
+            "successorLeaseId": {
+              "const": "G7-LEASE-SYS-PLATFORM-V325-R2"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "leaseId",
+            "state",
+            "consumedByBackendCommit",
+            "exactRelativePath",
+            "migrationSha256",
+            "successorLeaseId"
+          ],
+          "properties": {
+            "leaseId": {
+              "const": "G7-LEASE-HRM-PEOPLE-V54-R1"
+            },
+            "state": {
+              "const": "CONSUMED_BY_CONTROL_BOOTSTRAP"
+            },
+            "consumedByBackendCommit": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "exactRelativePath": {
+              "const": "dwp-people-server/src/main/resources/db/migration/V54__create_employee_change_request_lifecycle.sql"
+            },
+            "migrationSha256": {
+              "$ref": "#/$defs/sha256"
+            },
+            "successorLeaseId": {
+              "type": "null"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "historicalRangesAreAuthority": {
+      "const": false
+    },
+    "openEndedVersionsAllowed": {
+      "const": false
+    },
+    "sealedPayloadSha256": {
+      "$ref": "#/$defs/sha256"
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,173 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "dwp.hris.g7-successor-state.schema.v2",
+  "type": "object",
+  "required": [
+    "schema",
+    "stateId",
+    "state",
+    "activationReceiptId",
+    "predecessor",
+    "effectiveDelegations",
+    "closedPredecessorTokens",
+    "activeTokenClosedSetAfterPromotion",
+    "withheld",
+    "authority",
+    "sealedPayloadSha256"
+  ],
+  "properties": {
+    "schema": {
+      "const": "dwp.hris.g7-sys-hrm-successor-state.v2"
+    },
+    "state": {
+      "const": "BUNDLE_SEALED_PENDING_PROMOTION_RECEIPT"
+    },
+    "activationReceiptId": {
+      "const": "HRIS-G7-SYS-HRM-PROMOTION-20261012-R2"
+    },
+    "effectiveDelegations": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "prefixItems": [
+        {
+          "type": "object",
+          "required": ["module", "migrationAuthorityMode", "migrationAuthority"],
+          "not": {
+            "required": ["controlOwnedMigrationPrerequisite"]
+          },
+          "properties": {
+            "module": {
+              "const": "SYS"
+            },
+            "migrationAuthorityMode": {
+              "const": "ADMITTED_EXACT_LEASE"
+            },
+            "migrationAuthority": {
+              "type": "object",
+              "required": ["leaseId"],
+              "properties": {
+                "leaseId": {
+                  "const": "G7-LEASE-SYS-PLATFORM-V325-R2"
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["module", "migrationAuthorityMode", "migrationAuthority"],
+          "not": {
+            "anyOf": [
+              {
+                "required": ["migrationLeaseId"]
+              },
+              {
+                "required": ["migrationLeaseSha256"]
+              }
+            ]
+          },
+          "properties": {
+            "module": {
+              "const": "HRM"
+            },
+            "migrationAuthorityMode": {
+              "const": "CONTROL_BOOTSTRAP_READ_ONLY_PIN"
+            },
+            "migrationAuthority": {
+              "type": "object",
+              "required": [
+                "mode",
+                "exactRelativePath",
+                "sha256",
+                "frozenBackendCommit",
+                "state",
+                "migrationEditAuthorized"
+              ],
+              "properties": {
+                "mode": {
+                  "const": "CONTROL_BOOTSTRAP_READ_ONLY_PIN"
+                },
+                "exactRelativePath": {
+                  "const": "dwp-people-server/src/main/resources/db/migration/V54__create_employee_change_request_lifecycle.sql"
+                },
+                "state": {
+                  "const": "CONTROL_BOOTSTRAP_CONSUMED_READ_ONLY"
+                },
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                },
+                "frozenBackendCommit": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{40}$"
+                },
+                "migrationEditAuthorized": {
+                  "const": false
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        }
+      ]
+    },
+    "closedPredecessorTokens": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "activeTokenClosedSetAfterPromotion": {
+      "const": [
+        "G7-START-SYS-BASE-TFR-SYS-007-R2",
+        "G7-START-HRM-BASE-TFR-HRM-010-R2"
+      ]
+    },
+    "authority": {
+      "type": "object",
+      "required": [
+        "moduleParallelDevelopmentAuthorizedAfterPromotion",
+        "authorizedModulesAfterPromotion",
+        "migrationAdmissionAuthorized",
+        "sharedControlPathChangeAuthorizedForModules",
+        "integrationMergeAuthorized",
+        "customerDataAuthorized",
+        "customerActivationAuthorized",
+        "productionReleaseAuthorized"
+      ],
+      "properties": {
+        "moduleParallelDevelopmentAuthorizedAfterPromotion": {
+          "const": true
+        },
+        "authorizedModulesAfterPromotion": {
+          "const": ["SYS", "HRM"]
+        },
+        "migrationAdmissionAuthorized": {
+          "const": ["G7-LEASE-SYS-PLATFORM-V325-R2"]
+        },
+        "sharedControlPathChangeAuthorizedForModules": {
+          "const": false
+        },
+        "integrationMergeAuthorized": {
+          "const": false
+        },
+        "customerDataAuthorized": {
+          "const": false
+        },
+        "customerActivationAuthorized": {
+          "const": false
+        },
+        "productionReleaseAuthorized": {
+          "const": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "sealedPayloadSha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "additionalProperties": true
+}
