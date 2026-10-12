@@ -320,6 +320,14 @@ function hcmSurfaceRoutes(): RouteObject[] {
       ],
     },
     {
+      path: 'settings',
+      element: hcmSurfaceBoundary('hcm.management'),
+      children: [
+        ...managementByPrefix('/hr/settings'),
+        { path: '*', element: <ProductCanaryUnknownRoute productId="hcm" legacy={hcmPage} /> },
+      ],
+    },
+    {
       path: 'design',
       element: hcmSurfaceBoundary('hcm.management'),
       children: [

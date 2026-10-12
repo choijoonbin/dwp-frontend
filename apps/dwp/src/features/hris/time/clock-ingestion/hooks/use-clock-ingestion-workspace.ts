@@ -71,9 +71,20 @@ export function useClockIngestionWorkspace(readers: ClockPageReaders, scope: Clo
       scope.timeZone,
     ]
   );
-  const [workspace, setWorkspace] = useState<ClockWorkspace>(
-    (eventReader || exceptionReader) && scope.ready ? loading : closed
-  );
+  const scopeIdentity = JSON.stringify([
+    currentScope.ready,
+    currentScope.contextScopeKey,
+    currentScope.decisionRevision,
+    currentScope.locale,
+    currentScope.timeZone,
+    currentScope.correlationId,
+  ]);
+  const [workspaceState, setWorkspaceState] = useState<
+    Readonly<{ scopeIdentity: string; workspace: ClockWorkspace }>
+  >(() => ({
+    scopeIdentity,
+    workspace: (eventReader || exceptionReader) && scope.ready ? loading : closed,
+  }));
   const [revision, setRevision] = useState(0);
   const [loadingMoreEvents, setLoadingMoreEvents] = useState(false);
   const [loadingMoreExceptions, setLoadingMoreExceptions] = useState(false);
@@ -83,10 +94,15 @@ export function useClockIngestionWorkspace(readers: ClockPageReaders, scope: Clo
   const visitRef = useRef(0);
   const continuationAbortsRef = useRef(new Set<AbortController>());
 
-  const publish = useCallback(() => {
-    setWorkspace(
-      combineClockWorkspace(eventsRef.current, exceptionsRef.current, failuresRef.current)
-    );
+  const publish = useCallback((identity: string) => {
+    setWorkspaceState({
+      scopeIdentity: identity,
+      workspace: combineClockWorkspace(
+        eventsRef.current,
+        exceptionsRef.current,
+        failuresRef.current
+      ),
+    });
   }, []);
 
   const reload = useCallback(() => setRevision((current) => current + 1), []);
@@ -111,12 +127,12 @@ export function useClockIngestionWorkspace(readers: ClockPageReaders, scope: Clo
     setLoadingMoreEvents(false);
     setLoadingMoreExceptions(false);
     if ((!eventReader && !exceptionReader) || !currentScope.ready) {
-      setWorkspace(closed);
+      setWorkspaceState({ scopeIdentity, workspace: closed });
       return;
     }
 
     const abort = new AbortController();
-    setWorkspace(loading);
+    setWorkspaceState({ scopeIdentity, workspace: loading });
     const eventRead = eventReader
       ? eventReader(currentScope, {}, abort.signal)
       : Promise.reject(new Error('event page authority unavailable'));
@@ -132,10 +148,10 @@ export function useClockIngestionWorkspace(readers: ClockPageReaders, scope: Clo
       if (exceptionResult.status === 'fulfilled') exceptionsRef.current = exceptionResult.value;
       else failures.push('TIME_EXCEPTIONS_UNAVAILABLE');
       failuresRef.current = failures;
-      publish();
+      publish(scopeIdentity);
     });
     return () => abort.abort();
-  }, [publish, currentScope, eventReader, exceptionReader, revision]);
+  }, [publish, currentScope, eventReader, exceptionReader, revision, scopeIdentity]);
 
   const loadMoreEvents = useCallback(async () => {
     const current = eventsRef.current;
@@ -156,18 +172,18 @@ export function useClockIngestionWorkspace(readers: ClockPageReaders, scope: Clo
       failuresRef.current = failuresRef.current.filter(
         (failure) => failure !== 'CLOCK_EVENTS_CONTINUATION_UNAVAILABLE'
       );
-      publish();
+      publish(scopeIdentity);
     } catch {
       if (visitRef.current !== visit) return;
       failuresRef.current = [
         ...new Set([...failuresRef.current, 'CLOCK_EVENTS_CONTINUATION_UNAVAILABLE']),
       ];
-      publish();
+      publish(scopeIdentity);
     } finally {
       continuationAbortsRef.current.delete(abort);
       if (visitRef.current === visit) setLoadingMoreEvents(false);
     }
-  }, [currentScope, eventReader, loadingMoreEvents, publish]);
+  }, [currentScope, eventReader, loadingMoreEvents, publish, scopeIdentity]);
 
   const loadMoreExceptions = useCallback(async () => {
     const current = exceptionsRef.current;
@@ -188,18 +204,25 @@ export function useClockIngestionWorkspace(readers: ClockPageReaders, scope: Clo
       failuresRef.current = failuresRef.current.filter(
         (failure) => failure !== 'TIME_EXCEPTIONS_CONTINUATION_UNAVAILABLE'
       );
-      publish();
+      publish(scopeIdentity);
     } catch {
       if (visitRef.current !== visit) return;
       failuresRef.current = [
         ...new Set([...failuresRef.current, 'TIME_EXCEPTIONS_CONTINUATION_UNAVAILABLE']),
       ];
-      publish();
+      publish(scopeIdentity);
     } finally {
       continuationAbortsRef.current.delete(abort);
       if (visitRef.current === visit) setLoadingMoreExceptions(false);
     }
-  }, [currentScope, exceptionReader, loadingMoreExceptions, publish]);
+  }, [currentScope, exceptionReader, loadingMoreExceptions, publish, scopeIdentity]);
+
+  const workspace =
+    workspaceState.scopeIdentity === scopeIdentity
+      ? workspaceState.workspace
+      : (eventReader || exceptionReader) && currentScope.ready
+        ? loading
+        : closed;
 
   return {
     workspace,

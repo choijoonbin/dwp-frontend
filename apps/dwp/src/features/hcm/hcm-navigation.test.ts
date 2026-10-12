@@ -122,6 +122,39 @@ describe('HR product navigation', () => {
       },
     });
   });
+
+  it('keeps successor module pages governed-only and bound to their exact PAGE capability', () => {
+    expect(findHcmNavigationItem('/hr/operations/time/clock-ingestion')).toMatchObject({
+      view: 'time-clock-ingestion',
+      governedOnly: true,
+      requiredResourceKey: 'DATA.HR_TIME',
+      requiredPermissionCode: 'VIEW',
+    });
+    expect(findHcmNavigationItem('/hr/operations/time/exceptions')).toMatchObject({
+      view: 'time-exceptions',
+      governedOnly: true,
+      requiredResourceKey: 'DATA.HR_TIME',
+      requiredPermissionCode: 'VIEW',
+    });
+    expect(findHcmNavigationItem('/hr/operations/performance/review-operations')).toMatchObject({
+      view: 'performance-review-operations',
+      governedOnly: true,
+      requiredResourceKey: 'DATA.HR_TALENT',
+      requiredPermissionCode: 'VIEW',
+    });
+    expect(findHcmNavigationItem('/hr/operations/people/employee-change-requests')).toMatchObject({
+      view: 'employee-change-requests',
+      governedOnly: true,
+      requiredResourceKey: 'DATA.HRIS_WORKFORCE',
+      requiredPermissionCode: 'VIEW',
+    });
+    expect(findHcmNavigationItem('/hr/settings/reference-data')).toMatchObject({
+      view: 'settings-reference',
+      governedOnly: true,
+      requiredResourceKey: 'CONFIG.HRIS_WORKBENCH',
+      requiredPermissionCode: 'VIEW',
+    });
+  });
 });
 
 describe('HR experience evidence', () => {

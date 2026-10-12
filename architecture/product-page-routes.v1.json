@@ -360,6 +360,13 @@
       "surfaceId": "dwaion.work"
     },
     {
+      "routeContractKey": "route.hcm.configuration.settings-reference.page",
+      "routeId": "hcm.management.settings-reference",
+      "pattern": "/hr/settings/reference-data",
+      "productId": "hcm",
+      "surfaceId": "hcm.management"
+    },
+    {
       "routeContractKey": "route.hcm.management.controlled-export.page",
       "routeId": "hcm.management.controlled-export",
       "pattern": "/hr/data/exports",
@@ -416,6 +423,13 @@
       "surfaceId": "hcm.operations"
     },
     {
+      "routeContractKey": "route.hcm.operations.employee-change-requests.page",
+      "routeId": "hcm.operations.employee-change-requests",
+      "pattern": "/hr/operations/people/employee-change-requests",
+      "productId": "hcm",
+      "surfaceId": "hcm.operations"
+    },
+    {
       "routeContractKey": "route.hcm.operations.overview.page",
       "routeId": "hcm.operations.overview",
       "pattern": "/hr/operations",
@@ -437,9 +451,30 @@
       "surfaceId": "hcm.operations"
     },
     {
+      "routeContractKey": "route.hcm.operations.performance-review-operations.page",
+      "routeId": "hcm.operations.performance-review-operations",
+      "pattern": "/hr/operations/performance/review-operations",
+      "productId": "hcm",
+      "surfaceId": "hcm.operations"
+    },
+    {
       "routeContractKey": "route.hcm.operations.talent.page",
       "routeId": "hcm.operations.talent",
       "pattern": "/hr/operations/talent",
+      "productId": "hcm",
+      "surfaceId": "hcm.operations"
+    },
+    {
+      "routeContractKey": "route.hcm.operations.time-clock-ingestion.page",
+      "routeId": "hcm.operations.time-clock-ingestion",
+      "pattern": "/hr/operations/time/clock-ingestion",
+      "productId": "hcm",
+      "surfaceId": "hcm.operations"
+    },
+    {
+      "routeContractKey": "route.hcm.operations.time-exceptions.page",
+      "routeId": "hcm.operations.time-exceptions",
+      "pattern": "/hr/operations/time/exceptions",
       "productId": "hcm",
       "surfaceId": "hcm.operations"
     },

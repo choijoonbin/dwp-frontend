@@ -58,6 +58,7 @@ export type ClockCommandFeedback =
 type PendingRecord = Readonly<{
   kind: 'RECORD';
   scopeIdentity: string;
+  scopeEpoch: number;
   idempotencyKey: string;
   request: RecordClockEventRequest;
   observedReceipt?: ClockCommandReceipt;
@@ -66,6 +67,7 @@ type PendingRecord = Readonly<{
 type PendingVoid = Readonly<{
   kind: 'VOID';
   scopeIdentity: string;
+  scopeEpoch: number;
   idempotencyKey: string;
   event: ClockEvent;
   request: Readonly<{ reasonCode: string }>;
@@ -73,6 +75,15 @@ type PendingVoid = Readonly<{
 }>;
 
 type PendingCommand = PendingRecord | PendingVoid;
+
+type ScopeBinding = Readonly<{
+  identity: string;
+  epoch: number;
+}>;
+
+function sameScopeBinding(left: ScopeBinding, right: ScopeBinding): boolean {
+  return left.identity === right.identity && left.epoch === right.epoch;
+}
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/u;
 
@@ -151,13 +162,30 @@ export function useClockIngestionCommands({
     scope.timeZone,
     scope.correlationId,
   ]);
+  const renderedScopeIdentityRef = useRef(scopeIdentity);
+  const scopeEpochRef = useRef(0);
+  if (renderedScopeIdentityRef.current !== scopeIdentity) {
+    renderedScopeIdentityRef.current = scopeIdentity;
+    scopeEpochRef.current += 1;
+  }
+  const scopeEpoch = scopeEpochRef.current;
+  const currentScopeBinding: ScopeBinding = { identity: scopeIdentity, epoch: scopeEpoch };
   const mountedRef = useRef(true);
   const busyRef = useRef(false);
   const pendingRef = useRef<PendingCommand | null>(null);
   const commandAbortRef = useRef<AbortController | null>(null);
-  const scopeIdentityRef = useRef(scopeIdentity);
-  const previousScopeIdentityRef = useRef(scopeIdentity);
-  scopeIdentityRef.current = scopeIdentity;
+  const currentScopeBindingRef = useRef(currentScopeBinding);
+  const commandStateBindingRef = useRef(currentScopeBinding);
+  const [commandStateBinding, setCommandStateBinding] = useState(currentScopeBinding);
+  currentScopeBindingRef.current = currentScopeBinding;
+  const scopeBindingCurrent = sameScopeBinding(commandStateBinding, currentScopeBinding);
+  const isCurrentBinding = useCallback((identity: string, epoch: number) => {
+    const binding = { identity, epoch };
+    return (
+      sameScopeBinding(binding, currentScopeBindingRef.current) &&
+      sameScopeBinding(binding, commandStateBindingRef.current)
+    );
+  }, []);
   const storePending = useCallback((next: PendingCommand | null) => {
     pendingRef.current = next;
     setPending(next);
@@ -172,20 +200,28 @@ export function useClockIngestionCommands({
   }, []);
 
   useEffect(() => {
-    if (previousScopeIdentityRef.current === scopeIdentity) return;
-    previousScopeIdentityRef.current = scopeIdentity;
-    const interruptedCommand = busyRef.current || pendingRef.current !== null;
+    const nextScopeBinding = { identity: scopeIdentity, epoch: scopeEpoch };
+    if (sameScopeBinding(commandStateBindingRef.current, nextScopeBinding)) return;
+    commandStateBindingRef.current = nextScopeBinding;
+    setCommandStateBinding(nextScopeBinding);
     commandAbortRef.current?.abort();
     commandAbortRef.current = null;
     busyRef.current = false;
     setBusy(false);
     storePending(null);
-    setFeedback(interruptedCommand ? { kind: 'REJECTED', retryExact: false } : null);
-  }, [scopeIdentity, storePending]);
+    setRecordOpen(false);
+    setVoidTarget(null);
+    setFeedback(null);
+  }, [scopeEpoch, scopeIdentity, storePending]);
 
   const execute = useCallback(
     async (command: PendingCommand): Promise<void> => {
-      if (busyRef.current || !scope.ready) return;
+      if (
+        busyRef.current ||
+        !scope.ready ||
+        !isCurrentBinding(command.scopeIdentity, command.scopeEpoch)
+      )
+        return;
       const recordExecutor =
         owner?.record?.routeContractKey === 'route.hcm.personal.time-clock-event-record.action'
           ? owner.record.execute
@@ -195,7 +231,7 @@ export function useClockIngestionCommands({
           ? owner.voidEvent.execute
           : undefined;
       const executor = command.kind === 'RECORD' ? recordExecutor : voidExecutor;
-      if (!executor || command.scopeIdentity !== scopeIdentityRef.current) {
+      if (!executor || !isCurrentBinding(command.scopeIdentity, command.scopeEpoch)) {
         storePending(null);
         setFeedback({ kind: 'REJECTED', retryExact: false });
         return;
@@ -209,14 +245,17 @@ export function useClockIngestionCommands({
       let receipt: ClockCommandReceipt | undefined;
       try {
         if (command.kind === 'RECORD') {
-          receipt = await (executor as ClockRecordAuthorityExecutor)((authority) =>
-            dataSource.record(
+          receipt = await (executor as ClockRecordAuthorityExecutor)(async (authority) => {
+            if (signal.aborted || !isCurrentBinding(command.scopeIdentity, command.scopeEpoch)) {
+              throw new HttpTransportError('ABORT');
+            }
+            return dataSource.record(
               command.request,
               scope,
               authorityWithCommandId(authority, command.idempotencyKey),
               signal
-            )
-          );
+            );
+          });
         } else {
           const version = command.event.eventOrder;
           if (
@@ -228,15 +267,19 @@ export function useClockIngestionCommands({
             throw new HttpError('The corrective action is unavailable.', 403);
           }
           receipt = await (executor as ClockVoidAuthorityExecutor)(
-            (authority) =>
-              dataSource.voidEvent(
+            async (authority) => {
+              if (signal.aborted || !isCurrentBinding(command.scopeIdentity, command.scopeEpoch)) {
+                throw new HttpTransportError('ABORT');
+              }
+              return dataSource.voidEvent(
                 command.event.clockEventId,
                 command.request.reasonCode,
                 version,
                 scope,
                 authorityWithCommandId(authority, command.idempotencyKey),
                 signal
-              ),
+              );
+            },
             {
               eventId: command.event.clockEventId,
               expectedObjectVersion: version,
@@ -247,11 +290,7 @@ export function useClockIngestionCommands({
         }
         assertReceiptMatchesPending(command, receipt, scope);
         if (!mountedRef.current) return;
-        if (command.scopeIdentity !== scopeIdentityRef.current) {
-          storePending(null);
-          setFeedback({ kind: 'REJECTED', retryExact: false });
-          return;
-        }
+        if (!isCurrentBinding(command.scopeIdentity, command.scopeEpoch)) return;
         storePending(null);
         setRecordOpen(false);
         setVoidTarget(null);
@@ -259,8 +298,8 @@ export function useClockIngestionCommands({
         reload();
       } catch (error) {
         if (!mountedRef.current) return;
-        const sameScope = command.scopeIdentity === scopeIdentityRef.current;
-        const ambiguous = sameScope && (receipt !== undefined || isAmbiguous(error));
+        if (!isCurrentBinding(command.scopeIdentity, command.scopeEpoch)) return;
+        const ambiguous = receipt !== undefined || isAmbiguous(error);
         storePending(
           ambiguous ? { ...command, ...(receipt ? { observedReceipt: receipt } : {}) } : null
         );
@@ -270,16 +309,20 @@ export function useClockIngestionCommands({
             : { kind: 'REJECTED', retryExact: false }
         );
       } finally {
-        if (commandAbortRef.current === abort) commandAbortRef.current = null;
-        busyRef.current = false;
-        if (mountedRef.current) setBusy(false);
+        if (commandAbortRef.current === abort) {
+          commandAbortRef.current = null;
+          busyRef.current = false;
+          if (mountedRef.current && isCurrentBinding(command.scopeIdentity, command.scopeEpoch))
+            setBusy(false);
+        }
       }
     },
-    [dataSource, owner?.record, owner?.voidEvent, reload, scope, storePending]
+    [dataSource, isCurrentBinding, owner?.record, owner?.voidEvent, reload, scope, storePending]
   );
 
   const submitRecord = useCallback(
     (request: RecordClockEventRequest) => {
+      if (!scope.ready || !isCurrentBinding(scopeIdentity, scopeEpoch)) return Promise.resolve();
       if (busyRef.current || pendingRef.current) {
         if (pendingRef.current) setFeedback({ kind: 'RESULT_UNKNOWN', retryExact: true });
         return Promise.resolve();
@@ -297,18 +340,21 @@ export function useClockIngestionCommands({
       const command: PendingRecord = {
         kind: 'RECORD',
         scopeIdentity,
+        scopeEpoch,
         idempotencyKey,
         request: Object.freeze({ ...request }),
       };
       storePending(command);
       return execute(command);
     },
-    [execute, idFactory, scopeIdentity, storePending]
+    [execute, idFactory, isCurrentBinding, scope.ready, scopeEpoch, scopeIdentity, storePending]
   );
 
   const submitVoid = useCallback(
     (reasonCode: string) => {
-      if (!voidTarget) return Promise.resolve();
+      if (!scope.ready || !isCurrentBinding(scopeIdentity, scopeEpoch) || !voidTarget) {
+        return Promise.resolve();
+      }
       if (busyRef.current || pendingRef.current) {
         if (pendingRef.current) setFeedback({ kind: 'RESULT_UNKNOWN', retryExact: true });
         return Promise.resolve();
@@ -336,6 +382,7 @@ export function useClockIngestionCommands({
       const command: PendingVoid = {
         kind: 'VOID',
         scopeIdentity,
+        scopeEpoch,
         idempotencyKey,
         event: voidTarget,
         request: Object.freeze({ reasonCode }),
@@ -343,53 +390,85 @@ export function useClockIngestionCommands({
       storePending(command);
       return execute(command);
     },
-    [execute, idFactory, scopeIdentity, storePending, voidTarget]
+    [
+      execute,
+      idFactory,
+      isCurrentBinding,
+      scope.ready,
+      scopeEpoch,
+      scopeIdentity,
+      storePending,
+      voidTarget,
+    ]
   );
 
-  const retryExact = useCallback(
-    () => (pendingRef.current ? execute(pendingRef.current) : Promise.resolve()),
-    [execute]
-  );
+  const retryExact = useCallback(() => {
+    const command = pendingRef.current;
+    return command &&
+      isCurrentBinding(scopeIdentity, scopeEpoch) &&
+      command.scopeIdentity === scopeIdentity &&
+      command.scopeEpoch === scopeEpoch
+      ? execute(command)
+      : Promise.resolve();
+  }, [execute, isCurrentBinding, scopeEpoch, scopeIdentity]);
 
-  const openVoid = useCallback((event: ClockEvent) => {
+  const openRecord = useCallback(() => {
+    if (!scope.ready || !isCurrentBinding(scopeIdentity, scopeEpoch)) return;
     if (pendingRef.current) {
       setFeedback({ kind: 'RESULT_UNKNOWN', retryExact: true });
       return;
     }
-    if (
-      !event.availableActions.some((action) => action.actionKey === 'hris.action.tim.clock.void')
-    ) {
-      setFeedback({ kind: 'REJECTED', retryExact: false });
-      return;
-    }
     setFeedback(null);
-    setVoidTarget(event);
-  }, []);
+    setRecordOpen(true);
+  }, [isCurrentBinding, scope.ready, scopeEpoch, scopeIdentity]);
 
-  return {
-    recordOpen,
-    voidTarget,
-    pendingKind: pending?.kind ?? null,
-    busy,
-    feedback,
-    openRecord: () => {
+  const closeRecord = useCallback(() => {
+    if (isCurrentBinding(scopeIdentity, scopeEpoch) && !busyRef.current) setRecordOpen(false);
+  }, [isCurrentBinding, scopeEpoch, scopeIdentity]);
+
+  const openVoid = useCallback(
+    (event: ClockEvent) => {
+      if (!scope.ready || !isCurrentBinding(scopeIdentity, scopeEpoch)) return;
       if (pendingRef.current) {
         setFeedback({ kind: 'RESULT_UNKNOWN', retryExact: true });
         return;
       }
+      if (
+        !event.availableActions.some((action) => action.actionKey === 'hris.action.tim.clock.void')
+      ) {
+        setFeedback({ kind: 'REJECTED', retryExact: false });
+        return;
+      }
       setFeedback(null);
-      setRecordOpen(true);
+      setVoidTarget(event);
     },
-    closeRecord: () => {
-      if (!busy) setRecordOpen(false);
-    },
+    [isCurrentBinding, scope.ready, scopeEpoch, scopeIdentity]
+  );
+
+  const closeVoid = useCallback(() => {
+    if (isCurrentBinding(scopeIdentity, scopeEpoch) && !busyRef.current) setVoidTarget(null);
+  }, [isCurrentBinding, scopeEpoch, scopeIdentity]);
+
+  const dismissFeedback = useCallback(() => {
+    if (isCurrentBinding(scopeIdentity, scopeEpoch)) setFeedback(null);
+  }, [isCurrentBinding, scopeEpoch, scopeIdentity]);
+
+  return {
+    scopeIdentity,
+    scopeEpoch,
+    scopeBindingCurrent,
+    recordOpen: scopeBindingCurrent && recordOpen,
+    voidTarget: scopeBindingCurrent ? voidTarget : null,
+    pendingKind: scopeBindingCurrent ? (pending?.kind ?? null) : null,
+    busy: scopeBindingCurrent && busy,
+    feedback: scopeBindingCurrent ? feedback : null,
+    openRecord,
+    closeRecord,
     openVoid,
-    closeVoid: () => {
-      if (!busy) setVoidTarget(null);
-    },
+    closeVoid,
     submitRecord,
     submitVoid,
     retryExact,
-    dismissFeedback: () => setFeedback(null),
+    dismissFeedback,
   } as const;
 }

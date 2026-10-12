@@ -113,16 +113,24 @@ describe('IAQ-021 performance review-operations projection', () => {
   });
 
   it('enforces VIEW, MASK, and OMIT counts against the serialized field groups', () => {
-    const candidate = source();
-    candidate.items[0]!.fieldGroups = {
-      REVIEW_ASSIGNMENT: candidate.items[0]!.fieldGroups.REVIEW_ASSIGNMENT,
-      WORK_QUEUE: {
-        decision: 'MASK',
-        value: null,
-        maskReason: 'SENSITIVE_FIELD',
-        maskedDisplayKey: 'hris.field.masked',
-      },
-    } as (typeof candidate.items)[0]['fieldGroups'];
+    const sourceWithAllGroups = source();
+    const candidate = {
+      ...sourceWithAllGroups,
+      items: [
+        {
+          ...sourceWithAllGroups.items[0]!,
+          fieldGroups: {
+            REVIEW_ASSIGNMENT: sourceWithAllGroups.items[0]!.fieldGroups.REVIEW_ASSIGNMENT,
+            WORK_QUEUE: {
+              decision: 'MASK',
+              value: null,
+              maskReason: 'SENSITIVE_FIELD',
+              maskedDisplayKey: 'hris.field.masked',
+            },
+          },
+        },
+      ],
+    };
     candidate.queryState.fieldDecisionSummary = {
       viewCount: 1,
       maskedCount: 1,
@@ -156,8 +164,19 @@ describe('IAQ-021 performance review-operations projection', () => {
     expect(() => parsePerformanceReviewOperationsProjection(hostile)).toThrow(
       'Performance review-operations projection is invalid.'
     );
-    const mismatchedLink = source();
-    mismatchedLink.items[0]!.deepLink.resourcePublicId = IDS.correlation;
+    const sourceWithMatchingLink = source();
+    const mismatchedLink = {
+      ...sourceWithMatchingLink,
+      items: [
+        {
+          ...sourceWithMatchingLink.items[0]!,
+          deepLink: {
+            ...sourceWithMatchingLink.items[0]!.deepLink,
+            resourcePublicId: IDS.correlation,
+          },
+        },
+      ],
+    };
     expect(() => parsePerformanceReviewOperationsProjection(mismatchedLink)).toThrow(
       'Performance review-operations projection is invalid.'
     );

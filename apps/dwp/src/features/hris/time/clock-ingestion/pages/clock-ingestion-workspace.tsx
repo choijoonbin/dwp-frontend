@@ -204,7 +204,8 @@ export function ClockIngestionWorkspace({
     [entryMode, runtime.workspace.events, setFocus]
   );
 
-  const feedback = commands.feedback;
+  const commandIdentityCurrent = commands.scopeBindingCurrent;
+  const feedback = commandIdentityCurrent ? commands.feedback : null;
   const retryingRecord = feedback?.kind === 'RESULT_UNKNOWN' && commands.pendingKind === 'RECORD';
   const retryingVoid = feedback?.kind === 'RESULT_UNKNOWN' && commands.pendingKind === 'VOID';
 
@@ -243,8 +244,8 @@ export function ClockIngestionWorkspace({
           selectedEventId={selected?.clockEventId ?? null}
           filter={filter}
           busy={commands.busy}
-          canIngest={Boolean(ownerBinding?.commands?.record)}
-          canVoid={Boolean(ownerBinding?.commands?.voidEvent)}
+          canIngest={commandIdentityCurrent && Boolean(ownerBinding?.commands?.record)}
+          canVoid={commandIdentityCurrent && Boolean(ownerBinding?.commands?.voidEvent)}
           onSelectEvent={selectEvent}
           onSelectException={selectException}
           onFilterChange={setFilter}
@@ -252,11 +253,17 @@ export function ClockIngestionWorkspace({
             ownerBinding?.eventPage || ownerBinding?.exceptionPage ? runtime.reload : undefined
           }
           onIngest={
-            entryMode === 'CLOCK_INGESTION' && ownerBinding?.commands?.record
+            commandIdentityCurrent &&
+            entryMode === 'CLOCK_INGESTION' &&
+            ownerBinding?.commands?.record
               ? commands.openRecord
               : undefined
           }
-          onVoid={ownerBinding?.commands?.voidEvent ? commands.openVoid : undefined}
+          onVoid={
+            commandIdentityCurrent && ownerBinding?.commands?.voidEvent
+              ? commands.openVoid
+              : undefined
+          }
           onLoadMoreEvents={
             ownerBinding?.eventPage ? () => void runtime.loadMoreEvents() : undefined
           }
@@ -269,23 +276,31 @@ export function ClockIngestionWorkspace({
       </Stack>
 
       <ClockRecordDialog
-        open={commands.recordOpen}
+        key={`record:${commands.scopeIdentity}:${commands.scopeEpoch}`}
+        open={commandIdentityCurrent && commands.recordOpen}
         busy={commands.busy}
         retryExact={retryingRecord}
         timeZone={scope.timeZone}
         defaults={ownerBinding?.commands?.recordDefaults}
         copy={copy}
         onClose={commands.closeRecord}
-        onSubmit={commands.submitRecord}
+        onSubmit={(request) =>
+          commandIdentityCurrent ? commands.submitRecord(request) : Promise.resolve()
+        }
         onRetryExact={commands.retryExact}
       />
       <ClockVoidDialog
-        event={commands.busy && !retryingVoid ? null : commands.voidTarget}
+        key={`void:${commands.scopeIdentity}:${commands.scopeEpoch}`}
+        event={
+          commandIdentityCurrent && !(commands.busy && !retryingVoid) ? commands.voidTarget : null
+        }
         busy={commands.busy}
         retryExact={retryingVoid}
         copy={copy}
         onClose={commands.closeVoid}
-        onSubmit={commands.submitVoid}
+        onSubmit={(reasonCode) =>
+          commandIdentityCurrent ? commands.submitVoid(reasonCode) : Promise.resolve()
+        }
         onRetryExact={commands.retryExact}
       />
       {ownerBinding?.commands?.voidEvent && (

@@ -66,10 +66,11 @@ export async function queryPerformanceReviewOperations(
   contextScopeKey?: string,
   signal?: AbortSignal
 ): Promise<PerformanceReviewOperationsProjection> {
-  const response = await axiosInstance.get<ApiResponse<unknown>>(REVIEW_OPERATIONS_PATH, {
-    ...productSurfaceReadScopeConfig(contextScopeKey, signal),
-    params: queryParams(request),
-  });
+  const query = queryParams(request).toString();
+  const response = await axiosInstance.get<ApiResponse<unknown>>(
+    `${REVIEW_OPERATIONS_PATH}?${query}`,
+    productSurfaceReadScopeConfig(contextScopeKey, signal)
+  );
   return parsePerformanceReviewOperationsProjection(response.data.data);
 }
 

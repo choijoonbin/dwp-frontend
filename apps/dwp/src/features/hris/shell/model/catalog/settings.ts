@@ -27,7 +27,7 @@ export const HRIS_SETTINGS_CATALOG: readonly HrisCatalogNode[] = Object.freeze([
     'Reference data',
     '코드셋, 다국어, 사유, 통화·단위, 지역과 캘린더',
     'Code sets, localization, reasons, currency, units, regions, and calendars',
-    ['/hr/data/reference']
+    ['/hr/settings/reference-data']
   ),
   planned(
     'settings-people-employment',

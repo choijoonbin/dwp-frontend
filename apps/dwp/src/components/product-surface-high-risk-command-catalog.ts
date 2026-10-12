@@ -34,6 +34,8 @@ export type ProductSurfaceHighRiskOperation =
   | 'HCM_INTEGRATION_RECONCILE'
   | 'HCM_ASSIGNMENT_PROPOSAL_SUBMIT'
   | 'HCM_PERFORMANCE_CYCLE_PUBLISH'
+  | 'HCM_PERFORMANCE_POPULATION_FREEZE'
+  | 'HCM_TIME_CLOCK_EVENT_VOID'
   | 'HCM_PAYROLL_FOUNDATION_PUBLISH'
   | 'HCM_PAYROLL_FOUNDATION_REVERSE'
   | 'DWAION_EMERGENCY_RECOVERY'
@@ -237,6 +239,18 @@ export const PRODUCT_SURFACE_HIGH_RISK_COMMAND_CATALOG: readonly ProductSurfaceH
       productKey: 'hcm',
       surfaceKey: 'hcm.operations',
       routeContractKey: 'route.hcm.operations.performance-cycle-publish.action',
+    },
+    {
+      operation: 'HCM_PERFORMANCE_POPULATION_FREEZE',
+      productKey: 'hcm',
+      surfaceKey: 'hcm.operations',
+      routeContractKey: 'route.hcm.operations.performance-population-freeze.action',
+    },
+    {
+      operation: 'HCM_TIME_CLOCK_EVENT_VOID',
+      productKey: 'hcm',
+      surfaceKey: 'hcm.operations',
+      routeContractKey: 'route.hcm.operations.time-clock-event-void.action',
     },
     {
       operation: 'HCM_PAYROLL_FOUNDATION_PUBLISH',

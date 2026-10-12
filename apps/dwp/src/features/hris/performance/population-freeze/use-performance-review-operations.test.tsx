@@ -171,18 +171,20 @@ let queryClient: QueryClient;
 let latest: ReturnType<typeof usePerformanceReviewOperationsRuntime>;
 
 function Harness({
+  requestScope = scope,
   dataSource,
   commandExecutors,
   focusResourcePublicId,
   onFocusResourcePublicIdChange,
 }: {
+  requestScope?: ProductSurfaceRequestScope;
   dataSource: PerformanceReviewOperationsDataSource;
   commandExecutors: PerformanceReviewOperationsCommandExecutors;
   focusResourcePublicId?: string;
   onFocusResourcePublicIdChange?: (resourcePublicId: string | null) => void;
 }) {
   latest = usePerformanceReviewOperationsRuntime({
-    requestScope: scope,
+    requestScope,
     locale: 'en-US',
     timeZone: 'UTC',
     dataSource,
@@ -241,6 +243,121 @@ describe('performance review-operations runtime', () => {
     expect(query).toHaveBeenCalledTimes(1);
     expect(query.mock.calls[0]?.[0].filter.reviewAssignment?.publicIds).toEqual([ID.cycle]);
     expect(latest.selectedItem?.deepLink.resourcePublicId).toBe(ID.cycle);
+  });
+
+  it('clears the prior projection immediately when the governed authority changes', async () => {
+    let releaseNextScope: ((value: PerformanceReviewOperationsProjection) => void) | undefined;
+    const query = vi
+      .fn<
+        (
+          request: PerformanceReviewOperationsQuery
+        ) => Promise<PerformanceReviewOperationsProjection>
+      >()
+      .mockImplementationOnce(async (request) => projection(request))
+      .mockImplementationOnce(
+        () =>
+          new Promise((resolve) => {
+            releaseNextScope = resolve;
+          })
+      );
+    await renderHarness({ query });
+    expect(latest.projection).toBeDefined();
+
+    const nextScope: ProductSurfaceRequestScope = {
+      ...scope,
+      contextScopeKey: 'scope:talent:next',
+      cacheKey: [
+        'tenant-1',
+        'actor-1',
+        'NORMAL',
+        'hcm.operations',
+        'scope:talent:next',
+        'decision-2',
+      ],
+      queryMeta: {
+        ...scope.queryMeta,
+        contextScopeKey: 'scope:talent:next',
+        decisionRevision: 'decision-2',
+      },
+    };
+    await act(async () => {
+      root.render(
+        createElement(
+          QueryClientProvider,
+          { client: queryClient },
+          createElement(Harness, {
+            requestScope: nextScope,
+            dataSource: { query },
+            commandExecutors: {},
+          })
+        )
+      );
+    });
+
+    expect(query).toHaveBeenCalledTimes(2);
+    expect(latest.projection).toBeUndefined();
+    expect(latest.selectedItem).toBeNull();
+
+    await act(async () => releaseNextScope?.(projection(query.mock.calls[1]![0])));
+  });
+
+  it('drops a command completion that belongs to the previous governed authority', async () => {
+    const query = vi.fn(async (request: PerformanceReviewOperationsQuery) => projection(request));
+    let releasePreview: ((value: PerformancePopulationPreview) => void) | undefined;
+    const previewPopulation = vi.fn(
+      () =>
+        new Promise<PerformancePopulationPreview>((resolve) => {
+          releasePreview = resolve;
+        })
+    );
+    await renderHarness({ query }, { previewPopulation });
+
+    let pendingPreview: Promise<void> | undefined;
+    await act(async () => {
+      pendingPreview = latest.previewSelected();
+      await Promise.resolve();
+    });
+    expect(latest.commandBusy).toBe(true);
+
+    const nextScope: ProductSurfaceRequestScope = {
+      ...scope,
+      contextScopeKey: 'scope:talent:next',
+      cacheKey: [
+        'tenant-1',
+        'actor-1',
+        'NORMAL',
+        'hcm.operations',
+        'scope:talent:next',
+        'decision-2',
+      ],
+      queryMeta: {
+        ...scope.queryMeta,
+        contextScopeKey: 'scope:talent:next',
+        decisionRevision: 'decision-2',
+      },
+    };
+    await act(async () => {
+      root.render(
+        createElement(
+          QueryClientProvider,
+          { client: queryClient },
+          createElement(Harness, {
+            requestScope: nextScope,
+            dataSource: { query },
+            commandExecutors: { previewPopulation },
+          })
+        )
+      );
+    });
+    expect(latest.preview).toBeNull();
+    expect(latest.commandBusy).toBe(false);
+
+    await act(async () => {
+      releasePreview?.(preview);
+      await pendingPreview;
+    });
+    expect(latest.preview).toBeNull();
+    expect(latest.commandBusy).toBe(false);
   });
 
   it('requires the exact executor for each advertised action', async () => {
@@ -308,7 +425,9 @@ describe('performance review-operations runtime', () => {
     await renderHarness({ query }, { previewPopulation, freezePopulation }, undefined, onFocus);
 
     await act(async () => latest.previewSelected());
-    expect(latest.preview).toEqual(preview);
+    await act(async () => {
+      await vi.waitFor(() => expect(latest.previewConfirmedByProjection).toBe(true));
+    });
     act(() => latest.selectItem(`performance-cycle:${otherCycle}`));
     await act(async () => {
       await vi.waitFor(() => expect(latest.preview).toBeNull());
@@ -412,7 +531,10 @@ describe('performance review-operations runtime', () => {
 
     act(() => latest.nextPage());
     await act(async () => {
-      await vi.waitFor(() => expect(latest.pageIndex).toBe(1));
+      await vi.waitFor(() => {
+        expect(latest.pageIndex).toBe(1);
+        expect(latest.projection).toBeDefined();
+      });
     });
     await act(async () => latest.previewSelected());
     expect(latest.preview).toEqual(preview);

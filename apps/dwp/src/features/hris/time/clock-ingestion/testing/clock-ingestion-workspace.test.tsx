@@ -187,6 +187,90 @@ describe('clock ingestion workspace runtime', () => {
     expect(onFocusResourceChange).toHaveBeenCalledWith(null);
   });
 
+  it('hides the prior authority projection immediately when the governed scope changes', async () => {
+    let releaseNextScope: (() => void) | undefined;
+    const readEvents = vi
+      .fn<ClockIngestionDataSource['readEvents']>()
+      .mockResolvedValueOnce({
+        queryState: 'COMPLETE',
+        freshness: 'CURRENT',
+        asOf: '2026-10-12T02:00:00Z',
+        nextCursor: null,
+        partialFailures: [],
+        events: [event],
+      })
+      .mockImplementationOnce(
+        () =>
+          new Promise((resolve) => {
+            releaseNextScope = () =>
+              resolve({
+                queryState: 'EMPTY',
+                freshness: 'CURRENT',
+                asOf: '2026-10-12T03:00:00Z',
+                nextCursor: null,
+                partialFailures: [],
+                events: [],
+              });
+          })
+      );
+    const readExceptions = vi.fn<ClockIngestionDataSource['readExceptions']>().mockResolvedValue({
+      queryState: 'EMPTY',
+      freshness: 'CURRENT',
+      asOf: '2026-10-12T02:00:00Z',
+      nextCursor: null,
+      partialFailures: [],
+      exceptions: [],
+    });
+    const ownerBinding = {
+      eventPage: {
+        routeContractKey: 'route.hcm.operations.time-clock-ingestion.page' as const,
+        read: readEvents,
+      },
+      exceptionPage: {
+        routeContractKey: 'route.hcm.operations.time-exceptions.page' as const,
+        read: readExceptions,
+      },
+    };
+
+    await act(async () => {
+      root.render(
+        createElement(ClockIngestionWorkspace, {
+          scope,
+          copy: clockIngestionCopy('en'),
+          entryMode: 'CLOCK_INGESTION',
+          ownerBinding,
+        })
+      );
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+    expect(host.textContent).toContain(event.title);
+
+    await act(async () => {
+      root.render(
+        createElement(ClockIngestionWorkspace, {
+          scope: {
+            ...scope,
+            contextScopeKey: 'hcm-scope-clock-next',
+            decisionRevision: 'psr-clock-10',
+            correlationId: '50000000-0000-4000-8000-000000000010',
+          },
+          copy: clockIngestionCopy('en'),
+          entryMode: 'CLOCK_INGESTION',
+          ownerBinding,
+        })
+      );
+    });
+    expect(host.textContent).not.toContain(event.title);
+    expect(host.textContent).toContain('Loading clock evidence');
+
+    await act(async () => {
+      releaseNextScope?.();
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+  });
+
   it('continues event and exception pages with their own first asOf and cursor', async () => {
     const readEvents = vi
       .fn<ClockIngestionDataSource['readEvents']>()

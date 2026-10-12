@@ -35,8 +35,8 @@ const command = Object.freeze({
 });
 
 function authority(
-  commandId = COMMAND_ID,
-  objectVersion = command.expectedCycleRevision
+  commandId: string = COMMAND_ID,
+  objectVersion: number = command.expectedCycleRevision
 ): SecureAuthority {
   return {
     mode: 'SECURE',

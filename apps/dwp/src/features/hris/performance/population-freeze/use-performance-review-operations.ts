@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { HttpError, HttpTransportError } from '@dwp-frontend/shared-utils';
 
 import { useProductSurfaceRequestScope } from '../../../../components/use-product-surface-request-scope';
@@ -126,20 +126,52 @@ export function usePerformanceReviewOperationsRuntime({
   const [pendingFreeze, setPendingFreeze] = useState<PendingFreeze | null>(null);
   const [commandError, setCommandError] = useState<Error | null>(null);
   const [commandBusy, setCommandBusy] = useState(false);
-  const cursor = cursorHistory[pageIndex] ?? null;
+  const [stateScopeIdentity, setStateScopeIdentity] = useState(scopeIdentity);
+  const scopeEpochRef = useRef({ identity: scopeIdentity, epoch: 0 });
+  if (scopeEpochRef.current.identity !== scopeIdentity) {
+    scopeEpochRef.current = {
+      identity: scopeIdentity,
+      epoch: scopeEpochRef.current.epoch + 1,
+    };
+  }
+  const scopeCurrent = stateScopeIdentity === scopeIdentity;
+  const transitionCorrelationRef = useRef<{
+    scopeIdentity: string;
+    correlationId: string;
+  } | null>(null);
+  if (!scopeCurrent && transitionCorrelationRef.current?.scopeIdentity !== scopeIdentity) {
+    transitionCorrelationRef.current = {
+      scopeIdentity,
+      correlationId: newPerformanceCommandId(),
+    };
+  }
+  const activePageIndex = scopeCurrent ? pageIndex : 0;
+  const cursor = scopeCurrent ? (cursorHistory[activePageIndex] ?? null) : null;
+  const activeAnchorAsOf = scopeCurrent ? anchorAsOf : null;
+  const activeCorrelationId = scopeCurrent
+    ? correlationId
+    : transitionCorrelationRef.current!.correlationId;
+  const activeSelectedItemId = scopeCurrent ? selectedItemId : null;
+  const activePreview = scopeCurrent ? preview : null;
+  const activePreviewCycleId = scopeCurrent ? previewCycleId : null;
+  const activePreviewRefreshCorrelationId = scopeCurrent ? previewRefreshCorrelationId : null;
+  const activeFreezeResult = scopeCurrent ? freezeResult : null;
+  const activeReceipt = scopeCurrent ? receipt : null;
+  const activePendingFreeze = scopeCurrent ? pendingFreeze : null;
+  const activeCommandError = scopeCurrent ? commandError : null;
+  const activeCommandBusy = scopeCurrent ? commandBusy : false;
   const requestedFocus = normalizePerformanceReviewOperationsFocus(focusResourcePublicId);
-  const governedFocus = pendingFreeze?.cycleId ?? requestedFocus;
-  const previousScopeIdentity = useRef(scopeIdentity);
+  const governedFocus = activePendingFreeze?.cycleId ?? requestedFocus;
   const queryContextIdentity = JSON.stringify([locale, timeZone, governedFocus]);
   const previousQueryContextIdentity = useRef(queryContextIdentity);
 
   useEffect(() => {
-    if (previousScopeIdentity.current === scopeIdentity) return;
-    previousScopeIdentity.current = scopeIdentity;
+    if (scopeCurrent) return;
+    const nextCorrelationId = transitionCorrelationRef.current!.correlationId;
     setCursorHistory([null]);
     setPageIndex(0);
     setAnchorAsOf(null);
-    setCorrelationId(newPerformanceCommandId());
+    setCorrelationId(nextCorrelationId);
     setSelectedItemId(null);
     setPreview(null);
     setPreviewCycleId(null);
@@ -148,16 +180,20 @@ export function usePerformanceReviewOperationsRuntime({
     setReceipt(null);
     setPendingFreeze(null);
     setCommandError(null);
-  }, [scopeIdentity]);
+    setCommandBusy(false);
+    previousQueryContextIdentity.current = queryContextIdentity;
+    setStateScopeIdentity(scopeIdentity);
+  }, [queryContextIdentity, scopeCurrent, scopeIdentity]);
 
   useEffect(() => {
+    if (!scopeCurrent) return;
     if (previousQueryContextIdentity.current === queryContextIdentity) return;
     previousQueryContextIdentity.current = queryContextIdentity;
     setCursorHistory([null]);
     setPageIndex(0);
     setAnchorAsOf(null);
     setCorrelationId(newPerformanceCommandId());
-    if (!pendingFreeze) {
+    if (!activePendingFreeze) {
       setSelectedItemId(null);
       setPreview(null);
       setPreviewCycleId(null);
@@ -165,12 +201,12 @@ export function usePerformanceReviewOperationsRuntime({
       setFreezeResult(null);
       setReceipt(null);
     }
-  }, [pendingFreeze, queryContextIdentity]);
+  }, [activePendingFreeze, queryContextIdentity, scopeCurrent]);
 
   useEffect(() => {
-    if (!pendingFreeze || requestedFocus === pendingFreeze.cycleId) return;
-    onFocusResourcePublicIdChange?.(pendingFreeze.cycleId);
-  }, [onFocusResourcePublicIdChange, pendingFreeze, requestedFocus]);
+    if (!activePendingFreeze || requestedFocus === activePendingFreeze.cycleId) return;
+    onFocusResourcePublicIdChange?.(activePendingFreeze.cycleId);
+  }, [activePendingFreeze, onFocusResourcePublicIdChange, requestedFocus]);
 
   const request = useMemo<PerformanceReviewOperationsQuery>(
     () => ({
@@ -179,25 +215,25 @@ export function usePerformanceReviewOperationsRuntime({
       sort: ['dueStatus:ASC', 'itemPublicId:ASC'],
       locale,
       timeZone,
-      correlationId,
-      asOf: anchorAsOf,
+      correlationId: activeCorrelationId,
+      asOf: activeAnchorAsOf,
       cursor,
     }),
-    [anchorAsOf, correlationId, cursor, governedFocus, locale, timeZone]
+    [activeAnchorAsOf, activeCorrelationId, cursor, governedFocus, locale, timeZone]
   );
   const query = useQuery({
     queryKey: operationQueryKey(
       requestScope,
       cursor,
-      anchorAsOf,
-      correlationId,
+      activeAnchorAsOf,
+      activeCorrelationId,
       governedFocus,
       locale,
       timeZone
     ),
     queryFn: async ({ signal }) => {
       const projection = await dataSource.query(request, requestScope.contextScopeKey, signal);
-      if (projection.queryState.correlationId !== correlationId) {
+      if (projection.queryState.correlationId !== activeCorrelationId) {
         throw new Error('Performance review-operations correlation does not match the request.');
       }
       return projection;
@@ -205,36 +241,36 @@ export function usePerformanceReviewOperationsRuntime({
     enabled: requestScope.ready,
     meta: requestScope.queryMeta,
     staleTime: 0,
-    placeholderData: keepPreviousData,
   });
   const projection = query.data;
   const items = projection?.items ?? [];
   const selectedItem =
     items.find((item) => item.deepLink.resourcePublicId === governedFocus) ??
-    items.find((item) => item.itemPublicId === selectedItemId) ??
+    items.find((item) => item.itemPublicId === activeSelectedItemId) ??
     items[0] ??
     null;
   const selectedCycleId = selectedItem?.deepLink.resourcePublicId ?? null;
   const previewConfirmedByProjection = Boolean(
-    preview &&
-    previewCycleId === selectedCycleId &&
-    previewRefreshCorrelationId &&
-    projection?.queryState.correlationId === previewRefreshCorrelationId &&
+    activePreview &&
+    activePreviewCycleId === selectedCycleId &&
+    activePreviewRefreshCorrelationId &&
+    projection?.queryState.correlationId === activePreviewRefreshCorrelationId &&
     hasAction(selectedItem, 'hris.action.per.freeze-population')
   );
 
   useEffect(() => {
+    if (!scopeCurrent) return;
     if (!selectedItem) {
       setSelectedItemId(null);
       return;
     }
-    if (selectedItem.itemPublicId !== selectedItemId) {
+    if (selectedItem.itemPublicId !== activeSelectedItemId) {
       setSelectedItemId(selectedItem.itemPublicId);
     }
-  }, [selectedItem, selectedItemId]);
+  }, [activeSelectedItemId, scopeCurrent, selectedItem]);
 
   useEffect(() => {
-    if (preview && previewCycleId !== selectedCycleId) {
+    if (scopeCurrent && projection && activePreview && activePreviewCycleId !== selectedCycleId) {
       setPreview(null);
       setPreviewCycleId(null);
       setPreviewRefreshCorrelationId(null);
@@ -242,14 +278,14 @@ export function usePerformanceReviewOperationsRuntime({
       setReceipt(null);
       setCommandError(null);
     }
-  }, [preview, previewCycleId, selectedCycleId]);
+  }, [activePreview, activePreviewCycleId, projection, scopeCurrent, selectedCycleId]);
 
   const selectItem = (itemPublicId: string) => {
-    if (pendingFreeze || commandBusy) return;
+    if (!scopeCurrent || activePendingFreeze || activeCommandBusy) return;
     const resourcePublicId = items.find((item) => item.itemPublicId === itemPublicId)?.deepLink
       .resourcePublicId;
     if (resourcePublicId) onFocusResourcePublicIdChange?.(resourcePublicId);
-    if (itemPublicId === selectedItemId) return;
+    if (itemPublicId === activeSelectedItemId) return;
     setSelectedItemId(itemPublicId);
     setPreview(null);
     setPreviewCycleId(null);
@@ -260,7 +296,7 @@ export function usePerformanceReviewOperationsRuntime({
   };
 
   const refresh = () => {
-    if (pendingFreeze || commandBusy) return;
+    if (!scopeCurrent || activePendingFreeze || activeCommandBusy) return;
     setCursorHistory([null]);
     setPageIndex(0);
     setAnchorAsOf(null);
@@ -283,10 +319,10 @@ export function usePerformanceReviewOperationsRuntime({
   };
 
   const nextPage = () => {
-    if (pendingFreeze || commandBusy) return;
+    if (!scopeCurrent || activePendingFreeze || activeCommandBusy) return;
     const nextCursor = projection?.queryState.nextCursor;
     if (!nextCursor || !projection) return;
-    setCursorHistory((current) => [...current.slice(0, pageIndex + 1), nextCursor]);
+    setCursorHistory((current) => [...current.slice(0, activePageIndex + 1), nextCursor]);
     setAnchorAsOf(projection.asOf);
     setPageIndex((current) => current + 1);
     setSelectedItemId(null);
@@ -298,7 +334,7 @@ export function usePerformanceReviewOperationsRuntime({
   };
 
   const previousPage = () => {
-    if (pageIndex === 0 || pendingFreeze || commandBusy) return;
+    if (!scopeCurrent || activePageIndex === 0 || activePendingFreeze || activeCommandBusy) return;
     setPageIndex((current) => current - 1);
     setSelectedItemId(null);
     setPreview(null);
@@ -309,14 +345,16 @@ export function usePerformanceReviewOperationsRuntime({
   };
 
   const previewSelected = async () => {
+    const commandScopeEpoch = scopeEpochRef.current.epoch;
     const expectedCycleRevision = selectedItem ? cycleRevision(selectedItem) : null;
     if (
+      !scopeCurrent ||
       !selectedItem ||
       expectedCycleRevision === null ||
       !commandExecutors?.previewPopulation ||
       !hasAction(selectedItem, 'hris.action.per.preview-population') ||
-      pendingFreeze ||
-      commandBusy
+      activePendingFreeze ||
+      activeCommandBusy
     ) {
       return;
     }
@@ -330,28 +368,32 @@ export function usePerformanceReviewOperationsRuntime({
         expectedCycleRevision,
         new Date().toISOString()
       );
+      if (scopeEpochRef.current.epoch !== commandScopeEpoch) return;
       setPreview(result);
       setPreviewCycleId(selectedItem.deepLink.resourcePublicId);
       setPreviewRefreshCorrelationId(refreshAfterCommand());
     } catch (error) {
+      if (scopeEpochRef.current.epoch !== commandScopeEpoch) return;
       setCommandError(error instanceof Error ? error : new Error('Preview failed.'));
     } finally {
-      setCommandBusy(false);
+      if (scopeEpochRef.current.epoch === commandScopeEpoch) setCommandBusy(false);
     }
   };
 
   const freezeSelected = async (reason: string) => {
+    const commandScopeEpoch = scopeEpochRef.current.epoch;
     if (
+      !scopeCurrent ||
       !selectedItem ||
-      !preview ||
-      previewCycleId !== selectedItem.deepLink.resourcePublicId ||
+      !activePreview ||
+      activePreviewCycleId !== selectedItem.deepLink.resourcePublicId ||
       !previewConfirmedByProjection ||
       !commandExecutors?.freezePopulation ||
       !hasAction(selectedItem, 'hris.action.per.freeze-population') ||
       reason.trim().length < 10 ||
       reason.trim().length > 500 ||
-      pendingFreeze ||
-      commandBusy
+      activePendingFreeze ||
+      activeCommandBusy
     ) {
       return;
     }
@@ -361,18 +403,19 @@ export function usePerformanceReviewOperationsRuntime({
       cycleId: selectedItem.deepLink.resourcePublicId,
       command: {
         commandId: newPerformanceCommandId(),
-        expectedCycleRevision: preview.sourceCycleAggregateVersion,
-        populationPreviewId: preview.populationPreviewId,
-        populationRuleId: preview.populationRuleVersionId,
-        workforceSnapshotId: preview.workforceSnapshotId,
-        workforceSnapshotRevision: preview.workforceSnapshotRevision,
-        previewContentHash: preview.contentHash,
+        expectedCycleRevision: activePreview.sourceCycleAggregateVersion,
+        populationPreviewId: activePreview.populationPreviewId,
+        populationRuleId: activePreview.populationRuleVersionId,
+        workforceSnapshotId: activePreview.workforceSnapshotId,
+        workforceSnapshotRevision: activePreview.workforceSnapshotRevision,
+        previewContentHash: activePreview.contentHash,
         reason: reason.trim(),
       },
     };
     setPendingFreeze(pending);
     try {
       const result = await commandExecutors.freezePopulation(pending.cycleId, pending.command);
+      if (scopeEpochRef.current.epoch !== commandScopeEpoch) return;
       setFreezeResult(result);
       setReceipt(result.receipt);
       if (result.receipt.state === 'SUCCEEDED') {
@@ -385,24 +428,34 @@ export function usePerformanceReviewOperationsRuntime({
         );
       }
     } catch (error) {
+      if (scopeEpochRef.current.epoch !== commandScopeEpoch) return;
       if (!isAmbiguousPerformancePopulationFreezeFailure(error)) {
         setPendingFreeze(null);
       }
       setCommandError(error instanceof Error ? error : new Error('Freeze failed.'));
     } finally {
-      setCommandBusy(false);
+      if (scopeEpochRef.current.epoch === commandScopeEpoch) setCommandBusy(false);
     }
   };
 
   const reconcileFreeze = async () => {
-    if (!pendingFreeze || !commandExecutors?.freezePopulation || commandBusy) return;
+    const commandScopeEpoch = scopeEpochRef.current.epoch;
+    if (
+      !scopeCurrent ||
+      !activePendingFreeze ||
+      !commandExecutors?.freezePopulation ||
+      activeCommandBusy
+    ) {
+      return;
+    }
     setCommandBusy(true);
     setCommandError(null);
     try {
       const result = await commandExecutors.freezePopulation(
-        pendingFreeze.cycleId,
-        pendingFreeze.command
+        activePendingFreeze.cycleId,
+        activePendingFreeze.command
       );
+      if (scopeEpochRef.current.epoch !== commandScopeEpoch) return;
       setFreezeResult(result);
       setReceipt(result.receipt);
       if (result.receipt.state === 'SUCCEEDED') {
@@ -415,12 +468,13 @@ export function usePerformanceReviewOperationsRuntime({
         );
       }
     } catch (error) {
+      if (scopeEpochRef.current.epoch !== commandScopeEpoch) return;
       if (!isAmbiguousPerformancePopulationFreezeFailure(error)) {
         setPendingFreeze(null);
       }
       setCommandError(error instanceof Error ? error : new Error('Reconciliation failed.'));
     } finally {
-      setCommandBusy(false);
+      if (scopeEpochRef.current.epoch === commandScopeEpoch) setCommandBusy(false);
     }
   };
 
@@ -428,22 +482,22 @@ export function usePerformanceReviewOperationsRuntime({
     ready: requestScope.ready,
     projection,
     selectedItem,
-    selectedItemId,
-    preview,
+    selectedItemId: activeSelectedItemId,
+    preview: activePreview,
     previewConfirmedByProjection,
-    freezeResult,
-    receipt,
-    commandError,
-    commandBusy,
+    freezeResult: activeFreezeResult,
+    receipt: activeReceipt,
+    commandError: activeCommandError,
+    commandBusy: activeCommandBusy,
     previewExecutorConnected: Boolean(commandExecutors?.previewPopulation),
     freezeExecutorConnected: Boolean(commandExecutors?.freezePopulation),
-    freezeRetryPending: Boolean(pendingFreeze),
+    freezeRetryPending: Boolean(activePendingFreeze),
     loading: query.isPending,
     fetching: query.isFetching,
     error: query.error,
-    pageIndex,
+    pageIndex: activePageIndex,
     canNext: Boolean(projection?.queryState.nextCursor),
-    canPrevious: pageIndex > 0,
+    canPrevious: activePageIndex > 0,
     selectItem,
     refresh,
     nextPage,

@@ -93,7 +93,8 @@ export const HRIS_HR_OPERATIONS_CATALOG: readonly HrisCatalogNode[] = Object.fre
     '직원변경 요청',
     'Employee change requests',
     '요청 대기열, 증빙, 차이 비교, 결정과 적용 결과',
-    'Request queue, evidence, diff, decisions, and application results'
+    'Request queue, evidence, diff, decisions, and application results',
+    ['/hr/operations/people/employee-change-requests']
   ),
   planned(
     'hr-certificates-documents',

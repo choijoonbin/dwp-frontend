@@ -272,4 +272,148 @@ describe('clock command orchestration', () => {
     });
     expect(runtime?.feedback).toMatchObject({ kind: 'SUCCESS' });
   });
+
+  it('never revives prior dialog command facts or callbacks across an A-B-A scope transition', async () => {
+    const record = vi.fn<ClockIngestionDataSource['record']>();
+    const voidEvent = vi.fn<ClockIngestionDataSource['voidEvent']>();
+    const idFactory = vi.fn(() => COMMAND_ID);
+    const dataSource: ClockIngestionDataSource = {
+      readEvents: vi.fn(),
+      readExceptions: vi.fn(),
+      record,
+      voidEvent,
+    };
+    const frames: Array<{
+      revision: string;
+      epoch: number;
+      current: boolean;
+      recordOpen: boolean;
+      eventId: string | null;
+      eventVersion: number | null;
+      pendingKind: 'RECORD' | 'VOID' | null;
+      busy: boolean;
+      feedback: string | null;
+    }> = [];
+    let invokeDeferredVoidAuthority: (() => Promise<void>) | undefined;
+    const deferredVoidExecutor: ClockVoidAuthorityExecutor = <T,>(
+      execute: (candidate: ProductSurfaceGovernedMutationAuthority) => Promise<T>
+    ) =>
+      new Promise<T>((resolve, reject) => {
+        invokeDeferredVoidAuthority = async () => {
+          try {
+            resolve(await execute(authority()));
+          } catch (error) {
+            reject(error);
+          }
+        };
+      });
+    let runtime: ReturnType<typeof useClockIngestionCommands> | undefined;
+
+    function Harness({ activeScope }: Readonly<{ activeScope: ClockIngestionScope }>) {
+      runtime = useClockIngestionCommands({
+        dataSource,
+        owner: {
+          record: {
+            routeContractKey: 'route.hcm.personal.time-clock-event-record.action',
+            execute: (execute) => execute(authority()),
+          },
+          voidEvent: {
+            routeContractKey: 'route.hcm.operations.time-clock-event-void.action',
+            execute: deferredVoidExecutor,
+          },
+        },
+        scope: activeScope,
+        reload: vi.fn(),
+        idFactory,
+      });
+      frames.push({
+        revision: activeScope.decisionRevision,
+        epoch: runtime.scopeEpoch,
+        current: runtime.scopeBindingCurrent,
+        recordOpen: runtime.recordOpen,
+        eventId: runtime.voidTarget?.clockEventId ?? null,
+        eventVersion: runtime.voidTarget?.eventOrder ?? null,
+        pendingKind: runtime.pendingKind,
+        busy: runtime.busy,
+        feedback: runtime.feedback?.kind ?? null,
+      });
+      return null;
+    }
+
+    await act(async () => root.render(createElement(Harness, { activeScope: scope })));
+    const initialScopeEpoch = runtime?.scopeEpoch ?? -1;
+    await act(async () => {
+      runtime?.openRecord();
+      runtime?.openVoid(event);
+    });
+    expect(runtime?.recordOpen).toBe(true);
+    expect(runtime?.voidTarget).toMatchObject({ clockEventId: EVENT_ID, eventOrder: 17 });
+    let inFlight: Promise<void> | undefined;
+    await act(async () => {
+      inFlight = runtime?.submitVoid('DEVICE_DUPLICATE');
+      await Promise.resolve();
+    });
+    expect(runtime?.pendingKind).toBe('VOID');
+    expect(runtime?.busy).toBe(true);
+    const staleAuthorityCompletion = invokeDeferredVoidAuthority;
+    const staleSubmitRecord = runtime?.submitRecord;
+    const staleSubmitVoid = runtime?.submitVoid;
+    const frameStart = frames.length;
+    const nextScope: ClockIngestionScope = {
+      ...scope,
+      contextScopeKey: 'clock-scope-next',
+      decisionRevision: 'psr-clock-10',
+      correlationId: '60000000-0000-4000-8000-000000000010',
+    };
+
+    await act(async () => root.render(createElement(Harness, { activeScope: nextScope })));
+
+    const transitionFrames = frames
+      .slice(frameStart)
+      .filter((frame) => frame.revision === nextScope.decisionRevision);
+    expect(transitionFrames.length).toBeGreaterThan(0);
+    expect(transitionFrames.some((frame) => !frame.current)).toBe(true);
+    for (const frame of transitionFrames) {
+      expect(frame).toMatchObject({
+        recordOpen: false,
+        eventId: null,
+        eventVersion: null,
+        pendingKind: null,
+        busy: false,
+        feedback: null,
+      });
+    }
+    expect(runtime?.scopeBindingCurrent).toBe(true);
+
+    const returnFrameStart = frames.length;
+    await act(async () => root.render(createElement(Harness, { activeScope: scope })));
+
+    const returnedScopeFrames = frames.slice(returnFrameStart);
+    expect(returnedScopeFrames.length).toBeGreaterThan(0);
+    expect(returnedScopeFrames.some((frame) => !frame.current)).toBe(true);
+    for (const frame of returnedScopeFrames) {
+      expect(frame).toMatchObject({
+        recordOpen: false,
+        eventId: null,
+        eventVersion: null,
+        pendingKind: null,
+        busy: false,
+        feedback: null,
+      });
+    }
+    expect(runtime?.scopeBindingCurrent).toBe(true);
+    expect(runtime?.scopeEpoch).toBeGreaterThan(initialScopeEpoch);
+    expect(runtime?.scopeEpoch).toBe(returnedScopeFrames.at(-1)?.epoch);
+
+    await act(async () => {
+      await staleAuthorityCompletion?.();
+      await inFlight;
+      await staleSubmitRecord?.(request);
+      await staleSubmitVoid?.('DEVICE_DUPLICATE');
+      await runtime?.submitVoid('DEVICE_DUPLICATE');
+    });
+    expect(idFactory).toHaveBeenCalledTimes(1);
+    expect(record).not.toHaveBeenCalled();
+    expect(voidEvent).not.toHaveBeenCalled();
+  });
 });

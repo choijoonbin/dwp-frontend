@@ -1,6 +1,6 @@
 export const EXPECTED_REGISTRY_VERSIONS = [
   1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27,
-  28, 29, 30, 31, 32, 33, 34,
+  28, 29, 30, 31, 32, 33, 34, 35, 36, 37,
 ];
 export const PRESERVED_AUTHORIZATION_CHECKSUMS = Object.freeze({
   1: 'bc34f47b0ad783d27aa7979f25f75e2fdf29506a12a23c0088f94837abad0b67',
@@ -37,6 +37,9 @@ export const PRESERVED_AUTHORIZATION_CHECKSUMS = Object.freeze({
   32: 'b620ea86a8310cf23796e3e380b74c39764bdca28f41033496d21887a89da9cc',
   33: '9c9a18b44eb83de0e98f4ec16e44c1df0ce216e00bc7075462f4e35f7fb87639',
   34: '852d20e1e639e1a7170f02b5714d21d8c51a9eb8ff5ac32d8b7940b82d6be83b',
+  35: '38ef33070a33b5da9a7825c764bd24daacd24c8ca4008f3a926727321d3d098d',
+  36: '12e4b9329ab53ab1efd6c5f6e23ccc7869c4184a79e5a64f614fe9c40a9e704b',
+  37: '1f23280116bc5b29f1a7ea6cc4ccbd2092a91673979d6bb46164a0dbb95ae10c',
 });
 
 const authorizationCounts = (
@@ -87,4 +90,7 @@ export const EXPECTED_AUTHORIZATION_COUNTS = Object.freeze({
   32: authorizationCounts(205, 22, 16, 48, 912),
   33: authorizationCounts(219, 24, 17, 54, 945),
   34: authorizationCounts(223, 24, 17, 54, 952),
+  35: authorizationCounts(236, 24, 17, 57, 974),
+  36: authorizationCounts(237, 24, 17, 57, 974),
+  37: authorizationCounts(237, 24, 17, 57, 974),
 });

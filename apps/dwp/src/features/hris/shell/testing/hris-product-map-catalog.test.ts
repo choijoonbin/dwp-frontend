@@ -14,7 +14,7 @@ describe('HRIS target product map catalog', () => {
     const semanticJson = JSON.stringify(HRIS_PRODUCT_MAP_CATALOG);
 
     expect(createHash('sha256').update(semanticJson).digest('hex')).toBe(
-      '7a2990177d00873d9f4dfddc675b006eda538bf5a524f7a00d566feebb4e3098'
+      '6b6c93f1881d925dae981adf7c85242612fa78e226cdadc68e64084ac3779f94'
     );
     expect(Object.isFrozen(HRIS_PRODUCT_MAP_CATALOG)).toBe(true);
     expect(HRIS_PRODUCT_MAP_CATALOG.every((item) => Object.isFrozen(item))).toBe(true);
@@ -35,7 +35,7 @@ describe('HRIS target product map catalog', () => {
     expect(new Set(HRIS_PRODUCT_MAP_CATALOG.map((item) => item.id)).size).toBe(76);
   });
 
-  it('opens exactly one honest pilot per development module', () => {
+  it('opens only delivered, governed pilot routes', () => {
     const pilot = HRIS_PRODUCT_MAP_CATALOG.filter((item) => item.lifecycle === 'PILOT');
     expect(pilot.map(({ module, href }) => [module, href])).toEqual([
       ['SYS', '/hr/home'],
@@ -43,6 +43,9 @@ describe('HRIS target product map catalog', () => {
       ['PAY', '/hr/pay'],
       ['PER', '/hr/talent'],
       ['HRM', '/hr/operations/people'],
+      ['TIM', '/hr/operations/time/clock-ingestion'],
+      ['TIM', '/hr/operations/time/exceptions'],
+      ['PER', '/hr/operations/performance/review-operations'],
     ]);
     expect(new Set(pilot.map((item) => item.module))).toEqual(
       new Set(['SYS', 'HRM', 'TIM', 'PAY', 'PER'])
@@ -51,7 +54,7 @@ describe('HRIS target product map catalog', () => {
 
   it('never turns planned, evidence-blocked, or external work into a blank route', () => {
     const future = HRIS_PRODUCT_MAP_CATALOG.filter((item) => item.lifecycle !== 'PILOT');
-    expect(future).toHaveLength(71);
+    expect(future).toHaveLength(68);
     expect(future.every((item) => item.href === undefined)).toBe(true);
     expect(HRIS_PRODUCT_MAP_CATALOG.find((item) => item.id === 'pay-year-end-tax')).toMatchObject({
       lifecycle: 'BLOCKED_EVIDENCE',
@@ -121,7 +124,7 @@ describe('HRIS target product map catalog', () => {
     ).toEqual(new Set(['DWP_CONTROL_PLANE', 'LEGACY_PARTIAL']));
   });
 
-  it('reconciles all 25 governed routes without folding excluded BENSK work into HRIS', () => {
+  it('reconciles every governed route without folding retained legacy or BENSK work into HRIS', () => {
     const navigationSource = readFileSync(
       new URL('../../../hcm/hcm-navigation.ts', import.meta.url),
       'utf8'
@@ -134,6 +137,7 @@ describe('HRIS target product map catalog', () => {
 
     expect(new Set([...mapped, ...retained])).toEqual(new Set(governed));
     expect(HRIS_RETAINED_OUTSIDE_TARGET.map((item) => [item.path, item.sourceModule])).toEqual([
+      ['/hr/data/reference', 'LEGACY_WORKFORCE_REFERENCE'],
       ['/hr/benefits', 'BENSK'],
       ['/hr/operations/benefits', 'BENSK'],
     ]);

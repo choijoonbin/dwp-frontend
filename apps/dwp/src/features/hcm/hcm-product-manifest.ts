@@ -91,6 +91,7 @@ export const HCM_PRODUCT_MANIFEST = defineProductManifest({
       taskKinds: ['operations', 'administration'],
       routeMatchers: [
         { kind: 'prefix', path: '/hr/manage' },
+        { kind: 'prefix', path: '/hr/settings' },
         { kind: 'prefix', path: '/hr/design' },
         { kind: 'prefix', path: '/hr/data' },
       ],

@@ -1,5 +1,14 @@
 export const HRIS_RETAINED_OUTSIDE_TARGET = Object.freeze([
   {
+    path: '/hr/data/reference',
+    sourceModule: 'LEGACY_WORKFORCE_REFERENCE',
+    label: { ko: '인력 기준정보', en: 'Workforce reference data' },
+    reason: {
+      ko: '기존 인력 원천 조회를 유지하되, SYS가 소유한 HRIS 구성 수명주기와 같은 메뉴나 저장소로 병합하지 않습니다.',
+      en: 'The legacy workforce-source view remains available but is not merged with the SYS-owned HRIS configuration lifecycle or its store.',
+    },
+  },
+  {
     path: '/hr/benefits',
     sourceModule: 'BENSK',
     label: { ko: '내 복리후생', en: 'My benefits' },

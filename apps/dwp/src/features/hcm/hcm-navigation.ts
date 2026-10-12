@@ -52,16 +52,21 @@ export type HcmView =
   | 'team-absence'
   | 'operations'
   | 'people'
+  | 'employee-change-requests'
   | 'assignments'
   | 'time-operations'
+  | 'time-clock-ingestion'
+  | 'time-exceptions'
   | 'absence-operations'
   | 'benefits-operations'
   | 'pay-operations'
   | 'talent-operations'
+  | 'performance-review-operations'
   | 'organization-design'
   | 'reference-data'
   | 'data-operations'
   | 'system-access'
+  | 'settings-reference'
   | 'exports';
 
 export type HcmNavigationItem = ProductNavigationItem & {
@@ -197,6 +202,26 @@ export const HCM_NAVIGATION: readonly HcmNavigationGroup[] = [
       },
       {
         section: 'operate',
+        view: 'time-clock-ingestion',
+        path: '/hr/operations/time/clock-ingestion',
+        icon: Clock3,
+        audience: 'time-admin',
+        governedOnly: true,
+        requiredResourceKey: 'DATA.HR_TIME',
+        requiredPermissionCode: 'VIEW',
+      },
+      {
+        section: 'operate',
+        view: 'time-exceptions',
+        path: '/hr/operations/time/exceptions',
+        icon: CalendarCheck2,
+        audience: 'time-admin',
+        governedOnly: true,
+        requiredResourceKey: 'DATA.HR_TIME',
+        requiredPermissionCode: 'VIEW',
+      },
+      {
+        section: 'operate',
         view: 'absence-operations',
         path: '/hr/operations/absence',
         icon: CalendarCheck2,
@@ -233,11 +258,31 @@ export const HCM_NAVIGATION: readonly HcmNavigationGroup[] = [
       },
       {
         section: 'operate',
+        view: 'performance-review-operations',
+        path: '/hr/operations/performance/review-operations',
+        icon: ShieldCheck,
+        audience: 'talent-admin',
+        governedOnly: true,
+        requiredResourceKey: 'DATA.HR_TALENT',
+        requiredPermissionCode: 'VIEW',
+      },
+      {
+        section: 'operate',
         view: 'people',
         path: '/hr/operations/people',
         icon: BriefcaseBusiness,
         audience: 'operator',
         requiredAnySupportScopes: ['WORKFORCE_READ'],
+      },
+      {
+        section: 'operate',
+        view: 'employee-change-requests',
+        path: '/hr/operations/people/employee-change-requests',
+        icon: ClipboardList,
+        audience: 'operator',
+        governedOnly: true,
+        requiredResourceKey: 'DATA.HRIS_WORKFORCE',
+        requiredPermissionCode: 'VIEW',
       },
       {
         section: 'operate',
@@ -277,6 +322,16 @@ export const HCM_NAVIGATION: readonly HcmNavigationGroup[] = [
         // exists for this page.
         audience: 'all',
         governedOnly: true,
+      },
+      {
+        section: 'foundation',
+        view: 'settings-reference',
+        path: '/hr/settings/reference-data',
+        icon: BookKey,
+        audience: 'operator',
+        governedOnly: true,
+        requiredResourceKey: 'CONFIG.HRIS_WORKBENCH',
+        requiredPermissionCode: 'VIEW',
       },
       {
         section: 'foundation',
@@ -351,6 +406,14 @@ export const HCM_OPERATIONS_NAVIGATION = projectProductSurfaceNavigation(HCM_NAV
     },
   },
   'time-operations': { taskKind: 'operations', access: capability('hcm.operations.time.read') },
+  'time-clock-ingestion': {
+    taskKind: 'operations',
+    access: capability('hcm.operations.time.view'),
+  },
+  'time-exceptions': {
+    taskKind: 'operations',
+    access: capability('hcm.operations.time.view'),
+  },
   'absence-operations': {
     taskKind: 'operations',
     access: capability('hcm.operations.absence.read'),
@@ -364,7 +427,15 @@ export const HCM_OPERATIONS_NAVIGATION = projectProductSurfaceNavigation(HCM_NAV
     taskKind: 'operations',
     access: capability('hcm.operations.talent.read'),
   },
+  'performance-review-operations': {
+    taskKind: 'operations',
+    access: capability('hcm.operations.performance.view'),
+  },
   people: { taskKind: 'operations', access: capability('hcm.operations.workforce.read') },
+  'employee-change-requests': {
+    taskKind: 'operations',
+    access: capability('hcm.operations.people.view'),
+  },
   assignments: { taskKind: 'operations', access: capability('hcm.operations.workforce.read') },
 });
 
@@ -372,6 +443,10 @@ export const HCM_MANAGEMENT_NAVIGATION = projectProductSurfaceNavigation(HCM_NAV
   'system-access': {
     taskKind: 'administration',
     access: policy('hcm.management-system-access.v1'),
+  },
+  'settings-reference': {
+    taskKind: 'administration',
+    access: capability('hcm.configuration.workbench.view'),
   },
   'organization-design': {
     taskKind: 'administration',

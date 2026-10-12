@@ -385,14 +385,19 @@
         "team-absence": { "label": "팀 휴가 승인" },
         "operations": { "label": "운영 현황" },
         "people": { "label": "인력 정보" },
+        "employee-change-requests": { "label": "직원변경 요청" },
         "assignments": { "label": "발령 현황" },
         "time-operations": { "label": "근태 운영" },
+        "time-clock-ingestion": { "label": "타각 수집" },
+        "time-exceptions": { "label": "근태 예외" },
         "absence-operations": { "label": "휴가 운영" },
         "benefits-operations": { "label": "복리후생 운영" },
         "pay-operations": { "label": "급여 운영" },
         "talent-operations": { "label": "인재 운영" },
+        "performance-review-operations": { "label": "평가 운영" },
         "organization-design": { "label": "조직 설계" },
         "system-access": { "label": "시스템 접근 및 구성" },
+        "settings-reference": { "label": "HRIS 기준정보 구성" },
         "reference-data": { "label": "인력 기준정보" },
         "data-operations": { "label": "연계 및 정합성" },
         "exports": { "label": "통제형 반출" }
@@ -475,6 +480,11 @@
         "title": "인력 정보",
         "description": "유효일 기준 구성원, 발령, 조직 및 접근 권한 맥락을 검토합니다."
       },
+      "employee-change-requests": {
+        "eyebrow": "HRIS / HR 운영",
+        "title": "직원변경 요청",
+        "description": "승인 근거와 함께 유효일 기준 직원변경을 생성·제출·검토·적용합니다."
+      },
       "assignments": {
         "eyebrow": "HRIS / HR 운영",
         "title": "발령 현황",
@@ -484,6 +494,16 @@
         "eyebrow": "HRIS / HR 운영",
         "title": "근태 운영",
         "description": "근태 예외, 제출 대기와 마감 준비도를 관리합니다."
+      },
+      "time-clock-ingestion": {
+        "eyebrow": "HRIS / 근태 운영",
+        "title": "타각 수집",
+        "description": "수신된 타각, 원천 근거, 격리 상태와 통제된 정정을 검토합니다."
+      },
+      "time-exceptions": {
+        "eyebrow": "HRIS / 근태 운영",
+        "title": "근태 예외",
+        "description": "원천 및 권한 근거를 보존하면서 순서·해석 예외를 조사합니다."
       },
       "absence-operations": {
         "eyebrow": "HRIS / HR 운영",
@@ -505,6 +525,11 @@
         "title": "인재 운영",
         "description": "성장 여정, 목표 위험과 필수 학습 상태를 관리합니다."
       },
+      "performance-review-operations": {
+        "eyebrow": "HRIS / 성과 운영",
+        "title": "평가 운영",
+        "description": "권한이 적용된 평가 대상을 미리 보고 불변 주기 스냅샷과 근거를 동결합니다."
+      },
       "organization-design": {
         "eyebrow": "HRIS / 조직 설계",
         "title": "조직 설계",
@@ -514,6 +539,11 @@
         "eyebrow": "HRIS / 설정",
         "title": "시스템 접근 및 구성",
         "description": "현재 세션에 적용된 HRIS 권한그룹, 메뉴·위젯 투영과 구성 근거를 확인합니다."
+      },
+      "settings-reference": {
+        "eyebrow": "HRIS / 설정",
+        "title": "기준정보 구성",
+        "description": "버전이 지정된 구성 근거를 통해 테넌트 기준값을 게시·폐기·롤백합니다."
       },
       "reference-data": {
         "eyebrow": "HRIS / 설정",

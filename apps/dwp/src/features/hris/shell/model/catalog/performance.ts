@@ -1,5 +1,6 @@
 import {
   HRIS_OPERATOR_PERSONAS as operator,
+  hrisCatalogNode as node,
   plannedHrisCatalogNode as planned,
 } from '../hris-product-map-contract';
 
@@ -29,17 +30,25 @@ export const HRIS_PERFORMANCE_CATALOG: readonly HrisCatalogNode[] = Object.freez
     '목표 템플릿, 조직 전개, 수립·승인과 변경',
     'Goal templates, cascade, creation, approval, and changes'
   ),
-  planned(
-    'performance-review-operations',
-    'PERFORMANCE',
-    'OPERATIONS',
-    'PER',
-    operator,
-    '평가 운영',
-    'Review operations',
-    '평가군, 대상, 평가자, 일정, 단계와 예외',
-    'Review groups, population, reviewers, schedule, stages, and exceptions'
-  ),
+  node({
+    id: 'performance-review-operations',
+    inventoryGroup: 'PERFORMANCE',
+    surface: 'OPERATIONS',
+    module: 'PER',
+    personas: operator,
+    lifecycle: 'PILOT',
+    label: { ko: '평가 운영', en: 'Review operations' },
+    capability: {
+      ko: '평가군, 대상, 평가자, 일정, 단계와 예외',
+      en: 'Review groups, population, reviewers, schedule, stages, and exceptions',
+    },
+    coverageNote: {
+      ko: '평가주기 대상 미리보기와 최신 결과 재검증을 거친 고위험 대상 동결을 제공합니다.',
+      en: 'Provides review-cycle population preview and high-risk population freeze after latest-result revalidation.',
+    },
+    legacyPaths: ['/hr/operations/performance/review-operations'],
+    href: '/hr/operations/performance/review-operations',
+  }),
   planned(
     'performance-forms-scales',
     'PERFORMANCE',

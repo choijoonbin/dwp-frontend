@@ -66,6 +66,7 @@ export const HRIS_SHELL_ENTRIES: readonly HrisShellEntry[] = [
     candidates: [
       '/hr/operations',
       '/hr/operations/people',
+      '/hr/operations/people/employee-change-requests',
       '/hr/operations/assignments',
       '/hr/design/organization',
     ],
@@ -74,7 +75,12 @@ export const HRIS_SHELL_ENTRIES: readonly HrisShellEntry[] = [
   {
     view: 'workbench-time',
     groupId: 'workbenches',
-    candidates: ['/hr/operations/time', '/hr/operations/absence'],
+    candidates: [
+      '/hr/operations/time',
+      '/hr/operations/time/clock-ingestion',
+      '/hr/operations/time/exceptions',
+      '/hr/operations/absence',
+    ],
     icon: Clock3,
   },
   {
@@ -86,7 +92,7 @@ export const HRIS_SHELL_ENTRIES: readonly HrisShellEntry[] = [
   {
     view: 'workbench-performance',
     groupId: 'workbenches',
-    candidates: ['/hr/operations/talent'],
+    candidates: ['/hr/operations/talent', '/hr/operations/performance/review-operations'],
     icon: Sparkles,
   },
   {
@@ -94,6 +100,7 @@ export const HRIS_SHELL_ENTRIES: readonly HrisShellEntry[] = [
     groupId: 'workbenches',
     candidates: [
       '/hr/manage/system',
+      '/hr/settings/reference-data',
       '/hr/data/reference',
       '/hr/data/integrations',
       '/hr/data/exports',

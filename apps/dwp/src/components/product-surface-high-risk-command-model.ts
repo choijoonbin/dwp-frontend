@@ -44,6 +44,7 @@ export type ApprovalHighRiskCommandDescriptor = Readonly<{
     | 'HCM_CONNECTOR'
     | 'HCM_SYNC_RUN'
     | 'ASSIGNMENT_PROPOSAL'
+    | 'CLOCK_EVENT'
     | 'PERFORMANCE_CYCLE'
     | 'PAYROLL_CONFIGURATION'
     | 'DWAI_ON_CONTROL_PLANE';

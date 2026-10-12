@@ -1,5 +1,6 @@
 import {
   HRIS_OPERATOR_PERSONAS as operator,
+  hrisCatalogNode as node,
   plannedHrisCatalogNode as planned,
 } from '../hris-product-map-contract';
 
@@ -29,17 +30,25 @@ export const HRIS_TIME_CATALOG: readonly HrisCatalogNode[] = Object.freeze([
     '근무제·교대, 일정 배정, 캘린더와 시뮬레이션',
     'Work patterns, shifts, schedule assignment, calendar, and simulation'
   ),
-  planned(
-    'time-clock-ingestion',
-    'TIME',
-    'OPERATIONS',
-    'TIM',
-    operator,
-    '타각 수집',
-    'Clock ingestion',
-    '원천별 수집, 중복·순서 오류, 격리와 재처리',
-    'Source ingestion, duplicate and ordering errors, quarantine, and replay'
-  ),
+  node({
+    id: 'time-clock-ingestion',
+    inventoryGroup: 'TIME',
+    surface: 'OPERATIONS',
+    module: 'TIM',
+    personas: operator,
+    lifecycle: 'PILOT',
+    label: { ko: '타각 수집', en: 'Clock ingestion' },
+    capability: {
+      ko: '원천별 수집, 중복·순서 오류, 격리와 재처리',
+      en: 'Source ingestion, duplicate and ordering errors, quarantine, and replay',
+    },
+    coverageNote: {
+      ko: '타각 이벤트 조회·기록과 감사 가능한 고위험 무효화, 불명확 결과의 동일 명령 재시도를 제공합니다.',
+      en: 'Provides clock event review and recording, auditable high-risk voiding, and exact-command retry for ambiguous outcomes.',
+    },
+    legacyPaths: ['/hr/operations/time/clock-ingestion'],
+    href: '/hr/operations/time/clock-ingestion',
+  }),
   planned(
     'time-interpretation',
     'TIME',
@@ -51,17 +60,25 @@ export const HRIS_TIME_CATALOG: readonly HrisCatalogNode[] = Object.freeze([
     '규칙 버전, 지각·조퇴·결근·연장·휴일과 추적',
     'Rule versions, attendance outcomes, overtime, holidays, and trace'
   ),
-  planned(
-    'time-exceptions',
-    'TIME',
-    'OPERATIONS',
-    'TIM',
-    operator,
-    '예외 처리',
-    'Exception handling',
-    '누락, 겹침, 한도초과, 소명과 일괄 정정 제안',
-    'Missing and overlapping time, limit breaches, explanations, and bulk corrections'
-  ),
+  node({
+    id: 'time-exceptions',
+    inventoryGroup: 'TIME',
+    surface: 'OPERATIONS',
+    module: 'TIM',
+    personas: operator,
+    lifecycle: 'PILOT',
+    label: { ko: '예외 처리', en: 'Exception handling' },
+    capability: {
+      ko: '누락, 겹침, 한도초과, 소명과 일괄 정정 제안',
+      en: 'Missing and overlapping time, limit breaches, explanations, and bulk corrections',
+    },
+    coverageNote: {
+      ko: '독립 커서와 기준시점을 유지하는 예외 대기열, 관련 타각 증거 조회와 통제된 정정 진입을 제공합니다.',
+      en: 'Provides an exception queue with independent cursor and as-of state, related clock evidence, and governed correction entry.',
+    },
+    legacyPaths: ['/hr/operations/time/exceptions'],
+    href: '/hr/operations/time/exceptions',
+  }),
   planned(
     'time-daily-close',
     'TIME',

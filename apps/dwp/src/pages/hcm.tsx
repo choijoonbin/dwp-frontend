@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, type ReactNode } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { PageCanvas } from '@dwp-frontend/design-system';
 
@@ -20,7 +20,7 @@ import {
   assignmentProposalCreateReference,
 } from '../features/hris/employment/assignment-proposal-model';
 
-import type { HcmNavigationItem } from '../features/hcm/hcm-navigation';
+import type { HcmNavigationItem, HcmView } from '../features/hcm/hcm-navigation';
 import type {
   AssignmentProposalPort,
   AssignmentProposalWorkspacePortProps,
@@ -61,6 +61,11 @@ const HrisPerformanceCycleOperationsWorkspace = lazy(() =>
     default: module.HrisPerformanceCycleOperationsWorkspace,
   }))
 );
+const HrisPerformanceReviewOperationsPopulationFreezeRuntime = lazy(() =>
+  import('../features/hris/performance/population-freeze').then((module) => ({
+    default: module.HrisPerformanceReviewOperationsPopulationFreezeRuntime,
+  }))
+);
 const HrDomainOperations = lazy(() =>
   import('../features/hcm/hr-domain-operations').then((module) => ({
     default: module.HrDomainOperations,
@@ -80,6 +85,13 @@ const HrisTimeOperationsWorkspace = lazy(() =>
   import('../features/hris/time').then((module) => ({
     default: module.HrisTimeOperationsWorkspace,
   }))
+);
+const HrisClockIngestionOperationsWorkspace = lazy(() =>
+  import('../features/hris/integration/hris-clock-ingestion-operations-workspace').then(
+    (module) => ({
+      default: module.HrisClockIngestionOperationsWorkspace,
+    })
+  )
 );
 const HrTeamTimeWorkspace = lazy(() =>
   import('../features/hcm/hr-team-time-workspace').then((module) => ({
@@ -177,7 +189,7 @@ function HcmPageContent({ page }: { page: HcmNavigationItem }) {
     );
   }
 
-  const content = {
+  const contentByView: Partial<Record<HcmView, ReactNode>> = {
     me: <MyHrProfile />,
     time: <HrisTimeWorkspace />,
     absence: <HrAbsenceWorkspace />,
@@ -194,6 +206,8 @@ function HcmPageContent({ page }: { page: HcmNavigationItem }) {
     people: <HrisPeople360Workspace />,
     assignments: <AssignmentRegister assignmentProposal={assignmentProposalPort} />,
     'time-operations': <HrisTimeOperationsWorkspace />,
+    'time-clock-ingestion': <HrisClockIngestionOperationsWorkspace entryMode="CLOCK_INGESTION" />,
+    'time-exceptions': <HrisClockIngestionOperationsWorkspace entryMode="TIME_EXCEPTIONS" />,
     'absence-operations': <HrDomainOperations domain="ABSENCE" />,
     'benefits-operations': <HrDomainOperations domain="BENEFITS" />,
     // These owner workspaces bind every command to an exact generated ACTION contract. Their
@@ -201,11 +215,15 @@ function HcmPageContent({ page }: { page: HcmNavigationItem }) {
     // frontend never constructs or broadens that authority.
     'pay-operations': <HrisPayrollFoundationOperationsWorkspace />,
     'talent-operations': <HrisPerformanceCycleOperationsWorkspace />,
+    'performance-review-operations': <HrisPerformanceReviewOperationsPopulationFreezeRuntime />,
     'organization-design': <OrganizationExplorer experience="workforce" />,
     'reference-data': <WorkforceReferenceData />,
     'data-operations': <WorkforceDataOperations />,
     exports: <WorkforceExportCenter />,
-  }[page.view];
+  };
+  const content = contentByView[page.view];
+
+  if (!content) return <Navigate to="/403" replace />;
 
   return (
     <PageCanvas>

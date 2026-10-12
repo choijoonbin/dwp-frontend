@@ -273,7 +273,16 @@ function validateNoDroppedContracts(previous, next) {
       if (
         (!routeReferencesAreMonotonic ||
           !isAppendOnlySuperset(previousDescriptor, candidateDescriptor)) &&
-        !isV30ResearchAuthorityUpgrade(next.version, section, record[key], record, candidate)
+        !isV30ResearchAuthorityUpgrade(next.version, section, record[key], record, candidate) &&
+        !isV35PerformanceAuthorityUpgrade(next.version, section, record[key], record, candidate) &&
+        !isV36PerformanceFreezeAuthorityUpgrade(
+          next.version,
+          section,
+          record[key],
+          record,
+          candidate
+        ) &&
+        !isV37TimeVoidProfileRemoval(next.version, section, record[key], record, candidate)
       ) {
         fail(
           `v${next.version} non-monotonically changed v${previous.version} ${section} ${record[key]}`
@@ -318,6 +327,136 @@ function isV30ResearchAuthorityUpgrade(version, section, key, previous, candidat
     profile.requiredAccess = structuredClone(inherited.requiredAccess);
   }
   return isAppendOnlySuperset(normalized, previous);
+}
+
+function isV35PerformanceAuthorityUpgrade(version, section, key, previous, candidate) {
+  if (version !== 35) return false;
+  const previewRoute = 'route.hcm.operations.performance-cycle-population-preview.action';
+  const normalized = structuredClone(candidate);
+  if (section === 'capabilities' && key === 'hcm.operations.talent.update') {
+    normalized.routeContractKeys = [
+      ...new Set([...(normalized.routeContractKeys ?? []), previewRoute]),
+    ].sort();
+    return isAppendOnlySuperset(normalized, previous);
+  }
+  if (section !== 'routes' || key !== previewRoute) return false;
+  const profiles = new Map(
+    normalized.accessProfiles.map((profile) => [profile.profileKey, profile])
+  );
+  const inherited = new Map(
+    previous.accessProfiles.map((profile) => [profile.profileKey, profile])
+  );
+  const profile = profiles.get('full-management');
+  const prior = inherited.get('full-management');
+  if (
+    profiles.size !== 1 ||
+    !profile ||
+    !prior ||
+    canonicalJson(profile.requiredAccess) !==
+      canonicalJson({
+        type: 'CAPABILITY',
+        capabilityContractKey: 'hcm.operations.performance.update',
+      })
+  ) {
+    return false;
+  }
+  profile.requiredAccess = structuredClone(prior.requiredAccess);
+  return isAppendOnlySuperset(normalized, previous);
+}
+
+function isV36PerformanceFreezeAuthorityUpgrade(version, section, key, previous, candidate) {
+  if (version !== 36) return false;
+  const freezeRoute = 'route.hcm.operations.performance-population-freeze.action';
+  const normalized = structuredClone(candidate);
+  if (section === 'capabilities' && key === 'hcm.operations.performance.update') {
+    normalized.routeContractKeys = [
+      ...new Set([...(normalized.routeContractKeys ?? []), freezeRoute]),
+    ].sort();
+    return isAppendOnlySuperset(normalized, previous);
+  }
+  if (section !== 'routes' || key !== freezeRoute) return false;
+  const profiles = new Map(
+    normalized.accessProfiles.map((profile) => [profile.profileKey, profile])
+  );
+  const inherited = new Map(
+    previous.accessProfiles.map((profile) => [profile.profileKey, profile])
+  );
+  const profile = profiles.get('full-management');
+  const prior = inherited.get('full-management');
+  const expectedStepUp = [
+    {
+      audience: 'dwp-people-server',
+      bindingKey: `${freezeRoute}.binding.01`,
+      expectedObjectVersionName: 'X-DWP-Expected-Object-Version',
+      expectedObjectVersionSource: 'COMMAND_HEADER',
+      ownerServiceKey: 'people',
+      targetIdPathParameter: 'cycleId',
+      targetType: 'PERFORMANCE_CYCLE',
+    },
+  ];
+  if (
+    profiles.size !== 1 ||
+    !profile ||
+    !prior ||
+    canonicalJson(profile.requiredAccess) !==
+      canonicalJson({
+        type: 'CAPABILITY',
+        capabilityContractKey: 'hcm.operations.performance.freeze',
+      }) ||
+    canonicalJson(normalized.stepUpCommandBindings) !== canonicalJson(expectedStepUp)
+  ) {
+    return false;
+  }
+  profile.requiredAccess = structuredClone(prior.requiredAccess);
+  if (Object.hasOwn(previous, 'stepUpCommandBindings')) {
+    normalized.stepUpCommandBindings = structuredClone(previous.stepUpCommandBindings);
+  } else {
+    delete normalized.stepUpCommandBindings;
+  }
+  return isAppendOnlySuperset(normalized, previous);
+}
+
+function isV37TimeVoidProfileRemoval(version, section, key, previous, candidate) {
+  if (version !== 37) return false;
+  const voidRoute = 'route.hcm.operations.time-clock-event-void.action';
+  if (section === 'capabilities' && key === 'hcm.personal.time.submit') {
+    const previousRoutes = previous.routeContractKeys ?? [];
+    const candidateRoutes = candidate.routeContractKeys ?? [];
+    if (
+      new Set(previousRoutes).size !== previousRoutes.length ||
+      new Set(candidateRoutes).size !== candidateRoutes.length ||
+      previousRoutes.length !== candidateRoutes.length + 1 ||
+      !previousRoutes.includes(voidRoute) ||
+      candidateRoutes.includes(voidRoute) ||
+      candidateRoutes.some((route) => !previousRoutes.includes(route))
+    ) {
+      return false;
+    }
+    const normalized = structuredClone(candidate);
+    normalized.routeContractKeys = structuredClone(previousRoutes);
+    return canonicalJson(normalized) === canonicalJson(previous);
+  }
+  if (section !== 'routes' || key !== voidRoute) return false;
+  const previousProfiles = new Map(
+    previous.accessProfiles.map((profile) => [profile.profileKey, profile])
+  );
+  const candidateProfiles = new Map(
+    candidate.accessProfiles.map((profile) => [profile.profileKey, profile])
+  );
+  if (
+    previousProfiles.size !== 2 ||
+    !previousProfiles.has('full-management') ||
+    !previousProfiles.has('self-service') ||
+    candidateProfiles.size !== 1 ||
+    !candidateProfiles.has('full-management') ||
+    canonicalJson(candidateProfiles.get('full-management')) !==
+      canonicalJson(previousProfiles.get('full-management'))
+  ) {
+    return false;
+  }
+  const normalized = structuredClone(candidate);
+  normalized.accessProfiles = structuredClone(previous.accessProfiles);
+  return canonicalJson(normalized) === canonicalJson(previous);
 }
 
 function validateIndex(value, bundles) {

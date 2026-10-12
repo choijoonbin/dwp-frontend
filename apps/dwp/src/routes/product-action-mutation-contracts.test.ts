@@ -18,7 +18,9 @@ import {
 import { APPROVAL_GOVERNED_MUTATION_API_CONTRACTS } from '@dwp-frontend/shared-utils/api/approval-governed-mutation-api-contracts';
 import { PAYROLL_FOUNDATION_MUTATION_API_CONTRACTS } from '../features/hris/payroll/api/payroll-foundation-api';
 import { PERFORMANCE_CYCLE_MUTATION_API_CONTRACTS } from '../features/hris/performance/api/performance-cycle-api';
+import { PERFORMANCE_POPULATION_FREEZE_API_CONTRACT } from '../features/hris/performance/population-freeze/population-freeze-api';
 import { HRIS_TIME_WORK_PLAN_MUTATION_API_CONTRACTS } from '../features/hris/time/api/hris-time-work-plan-api';
+import { CLOCK_COMMAND_MUTATION_API_CONTRACTS } from '../features/hris/time/clock-ingestion/api/clock-ingestion-api';
 
 import { PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS } from './product-surface-authorization.generated';
 
@@ -42,8 +44,10 @@ const IMPLEMENTED_ACTION_CONTRACTS = [
   HCM_WORKFORCE_REFERENCE_MUTATION_API_CONTRACT,
   HCM_HOME_PREFERENCE_MUTATION_API_CONTRACT,
   ...PERFORMANCE_CYCLE_MUTATION_API_CONTRACTS,
+  PERFORMANCE_POPULATION_FREEZE_API_CONTRACT,
   ...PAYROLL_FOUNDATION_MUTATION_API_CONTRACTS,
   ...HRIS_TIME_WORK_PLAN_MUTATION_API_CONTRACTS,
+  ...CLOCK_COMMAND_MUTATION_API_CONTRACTS,
 ] as const;
 
 function comparable(values: readonly ComparableContract[]) {
@@ -157,6 +161,7 @@ const HRIS_EXECUTION_CHAINS: Readonly<Record<string, readonly string[]>> = {
   validatePerformanceCycle: ['commandConfig'],
   previewPerformancePopulation: ['commandConfig'],
   publishPerformanceCycle: ['commandConfig'],
+  freezePerformancePopulation: ['mutationConfig'],
   createPayrollFoundation: ['commandScope'],
   updatePayrollFoundation: ['commandScope'],
   simulatePayrollFoundation: ['postVersionCommand', 'commandScope'],
@@ -168,6 +173,8 @@ const HRIS_EXECUTION_CHAINS: Readonly<Record<string, readonly string[]>> = {
   submitHrisTimeWorkPlanReview: ['transitionHrisTimeWorkPlan', 'timeCommandConfig'],
   applyHrisTimeWorkPlanApproval: ['transitionHrisTimeWorkPlan', 'timeCommandConfig'],
   publishHrisTimeWorkPlan: ['transitionHrisTimeWorkPlan', 'timeCommandConfig'],
+  recordClockEvent: ['secureAuthority'],
+  voidClockEvent: ['secureAuthority'],
 };
 
 function hrisExecutionBody(source: ts.SourceFile, apiFunction: string) {
@@ -387,9 +394,17 @@ describe('Generated product ACTION mutation closure', () => {
       ),
       path.resolve(
         process.cwd(),
+        'apps/dwp/src/features/hris/performance/population-freeze/population-freeze-api.ts'
+      ),
+      path.resolve(
+        process.cwd(),
         'apps/dwp/src/features/hris/payroll/api/payroll-foundation-api.ts'
       ),
-      path.resolve(process.cwd(), 'apps/dwp/src/features/hris/time/api/hris-time-work-plan-api.ts')
+      path.resolve(process.cwd(), 'apps/dwp/src/features/hris/time/api/hris-time-work-plan-api.ts'),
+      path.resolve(
+        process.cwd(),
+        'apps/dwp/src/features/hris/time/clock-ingestion/api/clock-ingestion-api.ts'
+      )
     );
 
     for (const absolute of files) {

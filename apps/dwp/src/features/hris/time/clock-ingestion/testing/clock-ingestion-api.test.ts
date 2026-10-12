@@ -1,6 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import {
+  CLOCK_COMMAND_MUTATION_API_CONTRACTS,
+  CLOCK_INGESTION_API_CONTRACTS,
   ClockCommandOutcomeUnknownError,
   createClockIngestionDataSource,
 } from '../api/clock-ingestion-api';
@@ -142,13 +144,17 @@ function receipt(commandType: 'CLOCK_RECORD' | 'CLOCK_VOID') {
   };
 }
 
-function authority(highRisk = false): ProductSurfaceGovernedMutationAuthority {
+function authority(
+  highRisk = false,
+  overrides: Readonly<{ contextScopeKey?: string; decisionRevision?: string }> = {}
+): ProductSurfaceGovernedMutationAuthority {
+  const decisionRevision = overrides.decisionRevision ?? scope.decisionRevision;
   return {
     mode: 'SECURE',
     rolloutState: '111',
-    expectedDecisionRevision: scope.decisionRevision,
+    expectedDecisionRevision: decisionRevision,
     contextKey: 'psc-clock-9',
-    contextScopeKey: scope.contextScopeKey,
+    contextScopeKey: overrides.contextScopeKey ?? scope.contextScopeKey,
     idempotencyKey: COMMAND_ID,
     ...(highRisk
       ? {
@@ -156,7 +162,7 @@ function authority(highRisk = false): ProductSurfaceGovernedMutationAuthority {
           stepUp: {
             challenge: 'step-up-proof',
             challengeId: 'challenge-9',
-            decisionRevision: scope.decisionRevision,
+            decisionRevision,
             expiresAt: '2099-10-12T02:00:00Z',
           },
         }
@@ -165,6 +171,41 @@ function authority(highRisk = false): ProductSurfaceGovernedMutationAuthority {
 }
 
 describe('clock ingestion owner adapter', () => {
+  it('publishes the ACTION mutation boundaries without changing the owner contract shape', () => {
+    expect(CLOCK_INGESTION_API_CONTRACTS).toEqual([
+      {
+        bindingId: 'IAQ-034',
+        method: 'GET',
+        path: '/api/time/v1/hris/workbench/clock-ingestion',
+      },
+      {
+        bindingId: 'IAQ-042',
+        method: 'GET',
+        path: '/api/time/v1/hris/workbench/time-exceptions',
+      },
+      { bindingId: 'PEP-TIM-007', method: 'POST', path: '/api/time/v1/clock-events' },
+      {
+        bindingId: 'PEP-TIM-008',
+        method: 'POST',
+        path: '/api/time/v1/clock-events/{eventId}/voids',
+      },
+    ]);
+    expect(CLOCK_COMMAND_MUTATION_API_CONTRACTS).toEqual([
+      {
+        apiFunction: 'recordClockEvent',
+        routeContractKey: 'route.hcm.personal.time-clock-event-record.action',
+        method: 'POST',
+        path: '/api/time/v1/clock-events',
+      },
+      {
+        apiFunction: 'voidClockEvent',
+        routeContractKey: 'route.hcm.operations.time-clock-event-void.action',
+        method: 'POST',
+        path: '/api/time/v1/clock-events/{eventId}/voids',
+      },
+    ]);
+  });
+
   it('binds both IAQ reads to the exact governed scope', async () => {
     const get = vi.fn(async (url: string) =>
       url.includes('time-exceptions')
@@ -211,25 +252,38 @@ describe('clock ingestion owner adapter', () => {
     expect(get).toHaveBeenCalledTimes(1);
   });
 
-  it('sends an idempotent record only with matching secure authority', async () => {
+  it('binds a personal record to its own governed authority and the visible correlation', async () => {
     const post = vi.fn(async () => envelope(receipt('CLOCK_RECORD')));
     const dataSource = createClockIngestionDataSource({ get: vi.fn(), post });
+    const personalScope = 'hcm-scope-clock-self';
+    const personalRevision = 'psr-clock-self-10';
 
-    await expect(dataSource.record(request(), scope, authority(), signal)).resolves.toMatchObject({
+    await expect(
+      dataSource.record(
+        request(),
+        scope,
+        authority(false, {
+          contextScopeKey: personalScope,
+          decisionRevision: personalRevision,
+        }),
+        signal
+      )
+    ).resolves.toMatchObject({
       commandType: 'CLOCK_RECORD',
       originatingAction: 'TIME_CLOCK_RECORD',
     });
     expect(post).toHaveBeenCalledWith('/api/time/v1/clock-events', request(), {
-      contextScopeKey: scope.contextScopeKey,
+      contextScopeKey: personalScope,
       signal,
       headers: {
         'Idempotency-Key': COMMAND_ID,
-        'X-DWP-Expected-Decision-Revision': scope.decisionRevision,
+        'X-DWP-Expected-Decision-Revision': personalRevision,
+        'X-Correlation-ID': CORRELATION_ID,
       },
     });
   });
 
-  it('requires fresh step-up proof for a corrective void and never sends object version', async () => {
+  it('requires fresh step-up proof and sends the bound object version for corrective void', async () => {
     const post = vi.fn<ClockHttpClient['post']>(async () => envelope(receipt('CLOCK_VOID')));
     const dataSource = createClockIngestionDataSource({ get: vi.fn(), post });
 
@@ -245,11 +299,12 @@ describe('clock ingestion owner adapter', () => {
         headers: {
           'Idempotency-Key': COMMAND_ID,
           'X-DWP-Expected-Decision-Revision': scope.decisionRevision,
+          'X-DWP-Expected-Object-Version': '1',
           'X-DWP-Step-Up-Challenge': 'step-up-proof',
+          'X-Correlation-ID': CORRELATION_ID,
         },
       }
     );
-    expect(post.mock.calls[0]?.[2].headers).not.toHaveProperty('X-DWP-Expected-Object-Version');
   });
 
   it('fails before I/O for stale scope, malformed provenance, or missing step-up', async () => {

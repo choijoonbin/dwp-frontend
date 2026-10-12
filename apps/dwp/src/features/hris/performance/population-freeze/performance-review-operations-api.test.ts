@@ -82,10 +82,11 @@ describe('performance review-operations API', () => {
     ).resolves.toMatchObject({ variantKey: 'REVIEW_OPERATIONS', items: [] });
 
     expect(runtime.get).toHaveBeenCalledOnce();
-    const [path, config] = runtime.get.mock.calls[0]!;
-    expect(path).toBe('/api/people/v1/hris/performance/workbench/review-operations');
-    expect(config).toMatchObject({ contextScopeKey: 'scope:tenant/77', signal });
-    const params = config.params as URLSearchParams;
+    const [url, config] = runtime.get.mock.calls[0]!;
+    const requestUrl = new URL(url, 'https://dwp.invalid');
+    expect(requestUrl.pathname).toBe('/api/people/v1/hris/performance/workbench/review-operations');
+    expect(config).toEqual({ contextScopeKey: 'scope:tenant/77', signal });
+    const params = requestUrl.searchParams;
     expect(params.getAll('sort')).toEqual(['dueStatus:ASC', 'itemPublicId:ASC']);
     expect(params.get('correlationId')).toBe(CORRELATION);
     expect(params.get('effectiveOn')).toBe('2027-04-02');

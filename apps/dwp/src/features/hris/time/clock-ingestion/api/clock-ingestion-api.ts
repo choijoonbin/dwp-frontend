@@ -38,6 +38,21 @@ export const CLOCK_INGESTION_API_CONTRACTS = [
   },
 ] as const;
 
+export const CLOCK_COMMAND_MUTATION_API_CONTRACTS = [
+  {
+    apiFunction: 'recordClockEvent',
+    routeContractKey: 'route.hcm.personal.time-clock-event-record.action',
+    method: 'POST',
+    path: CLOCK_EVENT_BASE,
+  },
+  {
+    apiFunction: 'voidClockEvent',
+    routeContractKey: 'route.hcm.operations.time-clock-event-void.action',
+    method: 'POST',
+    path: `${CLOCK_EVENT_BASE}/{eventId}/voids`,
+  },
+] as const;
+
 export type ClockHttpConfig = Readonly<{
   contextScopeKey: string;
   signal: AbortSignal;
@@ -226,10 +241,10 @@ function secureAuthority(
 ) {
   if (
     authority.mode !== 'SECURE' ||
-    authority.expectedDecisionRevision !== scope.decisionRevision ||
-    authority.contextScopeKey !== scope.contextScopeKey ||
     (highRisk &&
-      (!authority.stepUp ||
+      (authority.expectedDecisionRevision !== scope.decisionRevision ||
+        authority.contextScopeKey !== scope.contextScopeKey ||
+        !authority.stepUp ||
         typeof expectedObjectVersion !== 'number' ||
         !Number.isSafeInteger(expectedObjectVersion) ||
         expectedObjectVersion < 1 ||
@@ -241,15 +256,88 @@ function secureAuthority(
   const idempotencyKey = authority.idempotencyKey;
   if (!validUuid(idempotencyKey)) throw new Error('Invalid TIM clock idempotency key.');
   const governed = highRisk
-    ? productSurfaceHighRiskMutationConfig(authority, { objectVersionHeader: false })
+    ? productSurfaceHighRiskMutationConfig(authority, { objectVersionHeader: true })
     : productSurfaceGovernedMutationConfig(authority);
   return {
     idempotencyKey,
     config: {
-      contextScopeKey: scope.contextScopeKey,
-      headers: governed.headers,
+      contextScopeKey: authority.contextScopeKey,
+      headers: {
+        ...governed.headers,
+        'X-Correlation-ID': scope.correlationId,
+      },
     },
   };
+}
+
+export async function recordClockEvent(
+  request: RecordClockEventRequest,
+  scope: ClockIngestionScope,
+  authority: ProductSurfaceGovernedMutationAuthority,
+  signal: AbortSignal,
+  client: ClockHttpClient = clockHttpClient
+): Promise<ClockCommandReceipt> {
+  assertScope(scope);
+  assertRecordClockEventRequest(request);
+  const governed = secureAuthority(authority, scope, false);
+  const response = await client.post(CLOCK_EVENT_BASE, request, {
+    ...governed.config,
+    signal,
+  });
+  try {
+    const receipt = parseClockCommandReceipt(unwrap(response));
+    if (
+      receipt.commandType !== 'CLOCK_RECORD' ||
+      receipt.originatingAction !== 'TIME_CLOCK_RECORD' ||
+      receipt.purposeCode !== 'TIME_CAPTURE' ||
+      receipt.correlationId !== scope.correlationId
+    ) {
+      throw new Error('TIM clock record receipt does not match the command.');
+    }
+    return receipt;
+  } catch (error) {
+    throw new ClockCommandOutcomeUnknownError(error);
+  }
+}
+
+export async function voidClockEvent(
+  eventId: string,
+  reasonCode: string,
+  expectedEventOrder: number,
+  scope: ClockIngestionScope,
+  authority: ProductSurfaceGovernedMutationAuthority,
+  signal: AbortSignal,
+  client: ClockHttpClient = clockHttpClient
+): Promise<ClockCommandReceipt> {
+  assertScope(scope);
+  if (
+    !validUuid(eventId) ||
+    !/^[A-Z][A-Z0-9_]{1,79}$/u.test(reasonCode) ||
+    !Number.isSafeInteger(expectedEventOrder) ||
+    expectedEventOrder < 1
+  ) {
+    throw new Error('Invalid TIM corrective void command.');
+  }
+  const governed = secureAuthority(authority, scope, true, expectedEventOrder);
+  const response = await client.post(
+    `${CLOCK_EVENT_BASE}/${encodeURIComponent(eventId)}/voids`,
+    { reasonCode },
+    { ...governed.config, signal }
+  );
+  try {
+    const receipt = parseClockCommandReceipt(unwrap(response));
+    if (
+      receipt.commandType !== 'CLOCK_VOID' ||
+      receipt.originatingAction !== 'TIME_CLOCK_CORRECT' ||
+      receipt.purposeCode !== 'TIME_CAPTURE' ||
+      receipt.correlationId !== scope.correlationId
+    ) {
+      throw new Error('TIM corrective void receipt does not match the command.');
+    }
+    return receipt;
+  } catch (error) {
+    throw new ClockCommandOutcomeUnknownError(error);
+  }
 }
 
 export function createClockIngestionDataSource(
@@ -278,59 +366,9 @@ export function createClockIngestionDataSource(
       );
       return parseClockExceptionWorkbench(unwrap(response));
     },
-    async record(request, scope, authority, signal) {
-      assertScope(scope);
-      assertRecordClockEventRequest(request);
-      const governed = secureAuthority(authority, scope, false);
-      const response = await client.post(CLOCK_EVENT_BASE, request, {
-        ...governed.config,
-        signal,
-      });
-      try {
-        const receipt = parseClockCommandReceipt(unwrap(response));
-        if (
-          receipt.commandType !== 'CLOCK_RECORD' ||
-          receipt.originatingAction !== 'TIME_CLOCK_RECORD' ||
-          receipt.purposeCode !== 'TIME_CAPTURE' ||
-          receipt.correlationId !== scope.correlationId
-        ) {
-          throw new Error('TIM clock record receipt does not match the command.');
-        }
-        return receipt;
-      } catch (error) {
-        throw new ClockCommandOutcomeUnknownError(error);
-      }
-    },
-    async voidEvent(eventId, reasonCode, expectedEventOrder, scope, authority, signal) {
-      assertScope(scope);
-      if (
-        !validUuid(eventId) ||
-        !/^[A-Z][A-Z0-9_]{1,79}$/u.test(reasonCode) ||
-        !Number.isSafeInteger(expectedEventOrder) ||
-        expectedEventOrder < 1
-      ) {
-        throw new Error('Invalid TIM corrective void command.');
-      }
-      const governed = secureAuthority(authority, scope, true, expectedEventOrder);
-      const response = await client.post(
-        `${CLOCK_EVENT_BASE}/${encodeURIComponent(eventId)}/voids`,
-        { reasonCode },
-        { ...governed.config, signal }
-      );
-      try {
-        const receipt = parseClockCommandReceipt(unwrap(response));
-        if (
-          receipt.commandType !== 'CLOCK_VOID' ||
-          receipt.originatingAction !== 'TIME_CLOCK_CORRECT' ||
-          receipt.purposeCode !== 'TIME_CAPTURE' ||
-          receipt.correlationId !== scope.correlationId
-        ) {
-          throw new Error('TIM corrective void receipt does not match the command.');
-        }
-        return receipt;
-      } catch (error) {
-        throw new ClockCommandOutcomeUnknownError(error);
-      }
-    },
+    record: (request, scope, authority, signal) =>
+      recordClockEvent(request, scope, authority, signal, client),
+    voidEvent: (eventId, reasonCode, expectedEventOrder, scope, authority, signal) =>
+      voidClockEvent(eventId, reasonCode, expectedEventOrder, scope, authority, signal, client),
   };
 }

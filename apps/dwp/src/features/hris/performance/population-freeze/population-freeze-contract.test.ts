@@ -67,8 +67,11 @@ describe('performance population-freeze result contract', () => {
       'Performance population-freeze source payload is invalid.'
     );
 
-    const mismatched = result();
-    mismatched.receipt.resultRef = ID.preview;
+    const matching = result();
+    const mismatched = {
+      ...matching,
+      receipt: { ...matching.receipt, resultRef: ID.preview },
+    };
     expect(() => parsePerformancePopulationFreezeResult(mismatched)).toThrow(
       'Performance population-freeze source payload is invalid.'
     );

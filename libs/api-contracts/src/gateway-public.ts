@@ -12366,6 +12366,22 @@ export interface paths {
         patch: operations["people_hrisPerformanceUpdateCycle"];
         trace?: never;
     };
+    "/api/people/v1/hris/performance/cycles/{cycleId}/population-freezes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["people_hrisPerformanceFreezePopulation"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/people/v1/hris/performance/cycles/{cycleId}/population-previews": {
         parameters: {
             query?: never;
@@ -12408,6 +12424,22 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["people_hrisPerformanceValidateCycle"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/people/v1/hris/performance/workbench/review-operations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["people_hrisPerformanceReviewOperations"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -26789,6 +26821,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/time/v1/clock-events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["time_hrisTimeRecordClockEvent"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/time/v1/clock-events/{eventId}/voids": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["time_hrisTimeVoidClockEvent"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/time/v1/hris/work-plan-receipts/{receiptId}": {
         parameters: {
             query?: never;
@@ -26863,6 +26927,38 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["time_hrisTimeSimulateWorkPlan"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/time/v1/hris/workbench/clock-ingestion": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["time_hrisTimeClockIngestionWorkbench"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/time/v1/hris/workbench/time-exceptions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["time_hrisTimeClockIngestionExceptions"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -50065,6 +50161,16 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        people_ApiResponseFreezeCommandResult: {
+            correlationId?: string;
+            data?: components["schemas"]["people_FreezeCommandResult"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         people_ApiResponseHomeOverview: {
             correlationId?: string;
             data?: components["schemas"]["people_HomeOverview"];
@@ -50348,6 +50454,16 @@ export interface components {
         people_ApiResponsePreviewCommandResult: {
             correlationId?: string;
             data?: components["schemas"]["people_PreviewCommandResult"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        people_ApiResponseProjection: {
+            correlationId?: string;
+            data?: components["schemas"]["people_Projection"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -50698,6 +50814,13 @@ export interface components {
             redactedFailureMessage?: string;
             workerReference?: string;
         };
+        people_AvailableAction: {
+            actionKey?: string;
+            hrefTemplate?: string;
+            idempotencyPolicy?: string;
+            method?: string;
+            stepUpPolicy?: string;
+        };
         people_BenefitPlan: {
             coverageLevel?: string;
             /** Format: date */
@@ -50716,6 +50839,12 @@ export interface components {
             plans?: components["schemas"]["people_BenefitPlan"][];
             referenceData?: boolean;
             windows?: components["schemas"]["people_EnrollmentWindow"][];
+        };
+        people_CachePolicy: {
+            authorizationDecisionRevision?: string;
+            invalidationEvent?: string;
+            /** Format: int32 */
+            maxAgeSeconds?: number;
         };
         people_CancelScenarioRequest: {
             reason: string;
@@ -51143,6 +51272,10 @@ export interface components {
             /** Format: int64 */
             version?: number;
         };
+        people_DeepLink: {
+            resourcePublicId?: string;
+            route?: string;
+        };
         people_DesignPolicy: {
             /** Format: double */
             maximumContingentPercent?: number;
@@ -51199,6 +51332,37 @@ export interface components {
         };
         people_ExecuteConnectorRequest: {
             syncMode: string;
+        };
+        people_FieldDecisionSummary: {
+            /** Format: int32 */
+            maskedCount?: number;
+            /** Format: int32 */
+            omittedCount?: number;
+            /** Format: int32 */
+            viewCount?: number;
+        };
+        people_FieldGroups: {
+            DUE_STATUS?: unknown;
+            REVIEW_ASSIGNMENT?: unknown;
+            WORK_QUEUE?: unknown;
+        };
+        people_FreezeCommandResult: {
+            freeze?: components["schemas"]["people_PopulationFreeze"];
+            receipt?: components["schemas"]["people_CommandReceipt"];
+        };
+        people_FreezePopulationRequest: {
+            /** Format: uuid */
+            commandId: string;
+            /** Format: uuid */
+            populationPreviewId: string;
+            /** Format: uuid */
+            populationRuleId: string;
+            previewContentHash: string;
+            reason: string;
+            /** Format: uuid */
+            workforceSnapshotId: string;
+            /** Format: int64 */
+            workforceSnapshotRevision?: number;
         };
         people_Goal: {
             /** Format: date */
@@ -51310,6 +51474,14 @@ export interface components {
             dataQualityIssues?: components["schemas"]["people_DataQualityIssue"][];
             health?: components["schemas"]["people_HealthSummary"];
             organizations?: components["schemas"]["people_OrganizationHealth"][];
+        };
+        people_Item: {
+            availableActions?: components["schemas"]["people_AvailableAction"][];
+            deepLink?: components["schemas"]["people_DeepLink"];
+            fieldGroups?: components["schemas"]["people_FieldGroups"];
+            itemPublicId?: string;
+            statusCode?: string;
+            title?: string;
         };
         people_Journey: {
             /** Format: uuid */
@@ -51519,6 +51691,13 @@ export interface components {
             /** Format: uuid */
             parentOrganizationId?: string;
         };
+        people_PartialFailure: {
+            componentKey?: string;
+            /** Format: uuid */
+            correlationId?: string;
+            errorCode?: string;
+            retryable?: boolean;
+        };
         people_PayCycle: {
             absenceValidated?: boolean;
             dataOrigin?: string;
@@ -51711,6 +51890,34 @@ export interface components {
             /** Format: int64 */
             version?: number;
         };
+        people_PopulationFreeze: {
+            /** Format: int64 */
+            aggregateVersion?: number;
+            contentHash?: string;
+            /** Format: uuid */
+            cycleId?: string;
+            /** Format: uuid */
+            cycleVersionId?: string;
+            /** Format: date-time */
+            frozenAt?: string;
+            /** Format: int32 */
+            participantCount?: number;
+            /** Format: uuid */
+            populationFreezeId?: string;
+            /** Format: uuid */
+            populationPreviewId?: string;
+            /** Format: uuid */
+            populationRuleVersionId?: string;
+            /** Format: int32 */
+            reviewerAssignmentCount?: number;
+            /** Format: int64 */
+            sourceCycleAggregateVersion?: number;
+            state?: string;
+            /** Format: uuid */
+            workforceSnapshotId?: string;
+            /** Format: int64 */
+            workforceSnapshotRevision?: number;
+        };
         people_PopulationPreview: {
             /** Format: int64 */
             aggregateVersion?: number;
@@ -51817,6 +52024,14 @@ export interface components {
                 [key: string]: string;
             };
         };
+        people_Projection: {
+            /** Format: date-time */
+            asOf?: string;
+            items?: components["schemas"]["people_Item"][];
+            projectionVersion?: string;
+            queryState?: components["schemas"]["people_QueryState"];
+            variantKey?: string;
+        };
         people_PublishCycleRequest: {
             /** Format: uuid */
             commandId: string;
@@ -51833,6 +52048,17 @@ export interface components {
         people_PublishScenarioRequest: {
             /** Format: int64 */
             version: number;
+        };
+        people_QueryState: {
+            cachePolicy?: components["schemas"]["people_CachePolicy"];
+            /** Format: uuid */
+            correlationId?: string;
+            fieldDecisionSummary?: components["schemas"]["people_FieldDecisionSummary"];
+            freshness?: string;
+            nextCursor?: string;
+            partialFailures?: components["schemas"]["people_PartialFailure"][];
+            scopeDecisionRevision?: string;
+            state?: string;
         };
         people_ReconciliationIssue: {
             /** Format: uuid */
@@ -72487,9 +72713,39 @@ export interface components {
             /** Format: int64 */
             expectedVersion: number;
         };
+        time_ApiResponseClockCommandReceipt: {
+            correlationId?: string;
+            data?: components["schemas"]["time_ClockCommandReceipt"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        time_ApiResponseClockProjection: {
+            correlationId?: string;
+            data?: components["schemas"]["time_ClockProjection"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         time_ApiResponseCreateDraftView: {
             correlationId?: string;
             data?: components["schemas"]["time_CreateDraftView"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        time_ApiResponseExceptionProjection: {
+            correlationId?: string;
+            data?: components["schemas"]["time_ExceptionProjection"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -72537,6 +72793,63 @@ export interface components {
             label?: string;
             snapshotRevision?: string;
         };
+        time_AvailableAction: {
+            actionKey?: string;
+            hrefTemplate?: string;
+            idempotencyPolicy?: string;
+            method?: string;
+            stepUpPolicy?: string;
+        };
+        time_CachePolicy: {
+            authorizationDecisionRevision?: string;
+            invalidationEvent?: string;
+            /** Format: int32 */
+            maxAgeSeconds?: number;
+        };
+        time_ClockCommandReceipt: {
+            /** Format: int64 */
+            aggregateVersion?: number;
+            /** Format: int64 */
+            authorizationRevision?: number;
+            commandType?: string;
+            /** Format: uuid */
+            correlationId?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: int64 */
+            fieldPolicyRevision?: number;
+            originatingAction?: string;
+            populationScopeDigest?: string;
+            purposeCode?: string;
+            /** Format: uuid */
+            receiptId?: string;
+            requestDigest?: string;
+            resultRef?: string;
+            status?: string;
+            /** Format: uuid */
+            subjectPrincipalPublicId?: string;
+        };
+        time_ClockFieldGroups: {
+            CLOCK_EVENT?: unknown;
+            INGESTION_STATUS?: unknown;
+            QUALITY_FINDING?: unknown;
+        };
+        time_ClockItem: {
+            availableActions?: components["schemas"]["time_AvailableAction"][];
+            deepLink?: components["schemas"]["time_DeepLink"];
+            fieldGroups?: components["schemas"]["time_ClockFieldGroups"];
+            itemPublicId?: string;
+            statusCode?: string;
+            title?: string;
+        };
+        time_ClockProjection: {
+            /** Format: date-time */
+            asOf?: string;
+            items?: components["schemas"]["time_ClockItem"][];
+            projectionVersion?: string;
+            queryState?: components["schemas"]["time_QueryState"];
+            variantKey?: string;
+        };
         time_CreateDraftRequest: {
             /** @enum {string} */
             arrangementKind?: "FIXED" | "FLEX" | "AVERAGED" | "SELECTIVE" | "COMPRESSED" | "PART_TIME" | "REDUCED" | "SPLIT_SHIFT" | "SHIFT" | "ON_CALL" | "DEEMED" | "DISCRETIONARY" | "TENANT_EXTENSION";
@@ -72574,9 +72887,49 @@ export interface components {
             receipt?: components["schemas"]["time_ReceiptView"];
             workPlanId?: string;
         };
+        time_DeepLink: {
+            resourcePublicId?: string;
+            route?: string;
+        };
+        time_ExceptionFieldGroups: {
+            EXCEPTION?: unknown;
+            OWNER_DEEP_LINK?: unknown;
+            RECOVERY_METADATA?: unknown;
+        };
+        time_ExceptionItem: {
+            availableActions?: components["schemas"]["time_AvailableAction"][];
+            deepLink?: components["schemas"]["time_DeepLink"];
+            fieldGroups?: components["schemas"]["time_ExceptionFieldGroups"];
+            itemPublicId?: string;
+            statusCode?: string;
+            title?: string;
+        };
+        time_ExceptionProjection: {
+            /** Format: date-time */
+            asOf?: string;
+            items?: components["schemas"]["time_ExceptionItem"][];
+            projectionVersion?: string;
+            queryState?: components["schemas"]["time_QueryState"];
+            variantKey?: string;
+        };
+        time_FieldDecisionSummary: {
+            /** Format: int32 */
+            maskedCount?: number;
+            /** Format: int32 */
+            omittedCount?: number;
+            /** Format: int32 */
+            viewCount?: number;
+        };
         time_LifecycleRequest: {
             /** Format: int64 */
             expectedVersion?: number;
+        };
+        time_PartialFailure: {
+            componentKey?: string;
+            /** Format: uuid */
+            correlationId?: string;
+            errorCode?: string;
+            retryable?: boolean;
         };
         time_PolicyPackView: {
             /** Format: date */
@@ -72605,6 +72958,17 @@ export interface components {
             policyCode?: string;
             policyRevision?: string;
         };
+        time_QueryState: {
+            cachePolicy?: components["schemas"]["time_CachePolicy"];
+            /** Format: uuid */
+            correlationId?: string;
+            fieldDecisionSummary?: components["schemas"]["time_FieldDecisionSummary"];
+            freshness?: string;
+            nextCursor?: string;
+            partialFailures?: components["schemas"]["time_PartialFailure"][];
+            scopeDecisionRevision?: string;
+            state?: string;
+        };
         time_ReceiptView: {
             idempotencyKey?: string;
             operation?: string;
@@ -72613,6 +72977,45 @@ export interface components {
             /** Format: date-time */
             updatedAt?: string;
             workPlanId?: string;
+        };
+        time_RecordClockCommand: {
+            /** @enum {string} */
+            captureMode: "ONLINE" | "OFFLINE";
+            /** Format: uuid */
+            devicePublicId?: string;
+            /** @enum {string} */
+            dstResolution: "EXACT_OFFSET_SUPPLIED" | "EARLIER_OFFSET_SELECTED" | "LATER_OFFSET_SELECTED" | "GAP_SHIFT_FORWARD";
+            /** @enum {string} */
+            eventType: "IN" | "OUT" | "BREAK_START" | "BREAK_END" | "VOID";
+            /** @enum {string} */
+            instantAuthority: "SOURCE_INSTANT" | "LOCAL_WITH_OFFSET" | "SERVER_RESOLVED";
+            /** Format: date-time */
+            occurredAt: string;
+            /** Format: uuid */
+            offlineBatchPublicId?: string;
+            /** Format: uuid */
+            peopleAssignmentPublicId: string;
+            /** Format: int64 */
+            peopleAssignmentRevision?: number;
+            sourceEventKey: string;
+            /** Format: date-time */
+            sourceLocalDateTime: string;
+            sourceProvenanceDigest: string;
+            /** Format: uuid */
+            sourcePublicId: string;
+            /** Format: int64 */
+            sourceSequence?: number;
+            sourceTimeZone: string;
+            /** @enum {string} */
+            sourceType: "WEB" | "MOBILE" | "KIOSK" | "DEVICE" | "IMPORT" | "API";
+            /** Format: int32 */
+            sourceUtcOffsetMinutes?: number;
+            timeZoneRuleVersion: string;
+            /** @enum {string} */
+            trustLevel: "LOW" | "STANDARD" | "VERIFIED";
+            tzdbVersion: string;
+            /** Format: uuid */
+            workerPublicId: string;
         };
         time_ResolutionView: {
             state?: string;
@@ -72701,6 +73104,9 @@ export interface components {
             schemaRef?: string;
             /** Format: int32 */
             schemaVersion?: number;
+        };
+        time_VoidClockCommand: {
+            reasonCode: string;
         };
         time_WorkPlanView: {
             arrangement?: components["schemas"]["time_ArrangementView"];
@@ -99159,6 +99565,43 @@ export interface operations {
             };
         };
     };
+    people_hrisPerformanceFreezePopulation: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header: {
+                "Idempotency-Key": string;
+                "If-Match": number;
+                "X-Correlation-ID"?: string;
+                "X-DWP-Step-Up-Challenge": string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+                "X-DWP-Expected-Object-Version": number;
+            };
+            path: {
+                cycleId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["people_FreezePopulationRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["people_ApiResponseFreezeCommandResult"];
+                };
+            };
+        };
+    };
     people_hrisPerformancePreviewPopulation: {
         parameters: {
             query?: {
@@ -99259,6 +99702,44 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["people_ApiResponseCycleCommandResult"];
+                };
+            };
+        };
+    };
+    people_hrisPerformanceReviewOperations: {
+        parameters: {
+            query: {
+                limit: number;
+                sort: string[];
+                locale: string;
+                timeZone: string;
+                correlationId: string;
+                asOf?: string;
+                cursor?: string;
+                reviewAssignmentCodes?: string[];
+                reviewAssignmentPublicIds?: string[];
+                minimumOpenCount?: number;
+                maximumOpenCount?: number;
+                slaStates?: string[];
+                dueStatusCodes?: string[];
+                minimumDueRevision?: number;
+                effectiveOn?: string;
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["people_ApiResponseProjection"];
                 };
             };
         };
@@ -128687,6 +129168,72 @@ export interface operations {
             };
         };
     };
+    time_hrisTimeRecordClockEvent: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header: {
+                "Idempotency-Key": string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["time_RecordClockCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["time_ApiResponseClockCommandReceipt"];
+                };
+            };
+        };
+    };
+    time_hrisTimeVoidClockEvent: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header: {
+                "Idempotency-Key": string;
+                "X-DWP-Step-Up-Challenge": string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+                "X-DWP-Expected-Object-Version": number;
+            };
+            path: {
+                eventId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["time_VoidClockCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["time_ApiResponseClockCommandReceipt"];
+                };
+            };
+        };
+    };
     time_hrisTimeWorkPlanReceipt: {
         parameters: {
             query?: {
@@ -128830,6 +129377,82 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["time_ApiResponseSimulationCommandView"];
+                };
+            };
+        };
+    };
+    time_hrisTimeClockIngestionWorkbench: {
+        parameters: {
+            query: {
+                limit: number;
+                sort: string[];
+                locale: string;
+                timeZone: string;
+                correlationId: string;
+                asOf?: string;
+                cursor?: string;
+                clockEventStartFrom?: string;
+                clockEventStartTo?: string;
+                clockEventEndFrom?: string;
+                clockEventEndTo?: string;
+                effectiveOn?: string;
+                ingestionStatusCodes?: string[];
+                minimumIngestionRevision?: number;
+                qualityDecisionCodes?: string[];
+                qualityEvidenceDigest?: string;
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["time_ApiResponseClockProjection"];
+                };
+            };
+        };
+    };
+    time_hrisTimeClockIngestionExceptions: {
+        parameters: {
+            query: {
+                limit: number;
+                sort: string[];
+                locale: string;
+                timeZone: string;
+                correlationId: string;
+                asOf?: string;
+                cursor?: string;
+                effectiveOn?: string;
+                exceptionCodes?: string[];
+                minimumExceptionRevision?: number;
+                ownerDeepLinkCodes?: string[];
+                ownerDeepLinkPublicIds?: string[];
+                recoveryMetadataKeys?: string[];
+                recoveryMetadataVersions?: string[];
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": components["schemas"]["time_ApiResponseExceptionProjection"];
                 };
             };
         };

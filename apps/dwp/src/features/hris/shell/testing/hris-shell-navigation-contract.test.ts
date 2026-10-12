@@ -78,6 +78,17 @@ describe('canonical HRIS shell navigation projection', () => {
     expect(resolveHrisShellSelectedView('/hr/operations/time/review')).toBe('workbench-time');
     expect(resolveHrisShellSelectedView('/hr/operations/pay')).toBe('workbench-payroll');
     expect(resolveHrisShellSelectedView('/hr/operations/talent')).toBe('workbench-performance');
+    expect(resolveHrisShellSelectedView('/hr/operations/time/clock-ingestion')).toBe(
+      'workbench-time'
+    );
+    expect(resolveHrisShellSelectedView('/hr/operations/time/exceptions')).toBe('workbench-time');
+    expect(resolveHrisShellSelectedView('/hr/operations/performance/review-operations')).toBe(
+      'workbench-performance'
+    );
+    expect(resolveHrisShellSelectedView('/hr/operations/people/employee-change-requests')).toBe(
+      'workbench-hr-operations'
+    );
+    expect(resolveHrisShellSelectedView('/hr/settings/reference-data')).toBe('workbench-settings');
     expect(selectedVisibleViews('/hr/operations/time', allCandidates)).toEqual(['workbench-time']);
     expect(selectedVisibleViews('/hr/operations/pay', allCandidates)).toEqual([
       'workbench-payroll',

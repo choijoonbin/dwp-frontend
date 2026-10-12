@@ -625,6 +625,7 @@ export function HrisPerformanceReviewOperationsWorkspace({
   });
   return (
     <PerformanceReviewOperationsWorkspaceView
+      key={JSON.stringify(requestScope.cacheKey)}
       copy={copy}
       locale={locale}
       timeZone={timeZone}
