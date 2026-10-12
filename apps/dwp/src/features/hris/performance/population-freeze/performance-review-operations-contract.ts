@@ -227,7 +227,7 @@ function referenceValue(value: unknown): PerformanceReviewReferenceValue {
     publicId: text(source.publicId, 128, PUBLIC_ID),
     code: text(source.code, 64, CODE),
     label: text(source.label, 512),
-    revision: integer(source.revision, 1),
+    revision: integer(source.revision),
   });
 }
 
@@ -237,7 +237,7 @@ function queueValue(value: unknown): PerformanceReviewQueueValue {
     openCount: integer(source.openCount),
     oldestAt: nullableInstant(source.oldestAt),
     slaStatus: text(source.slaStatus, 64, CODE),
-    revision: integer(source.revision, 1),
+    revision: integer(source.revision),
   });
 }
 
@@ -245,7 +245,7 @@ function statusValue(value: unknown): PerformanceReviewStatusValue {
   const source = exactRecord(value, ['code', 'revision']);
   return Object.freeze({
     code: text(source.code, 64, CODE),
-    revision: integer(source.revision, 1),
+    revision: integer(source.revision),
   });
 }
 
