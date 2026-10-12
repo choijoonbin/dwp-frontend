@@ -17,7 +17,6 @@ describe('ReferenceConfigurationStudio', () => {
         onStatusFilterChange: vi.fn(),
         onSelect: vi.fn(),
         onRefresh: vi.fn(),
-        onPrepareAction: vi.fn(),
       })
     );
 
@@ -27,6 +26,8 @@ describe('ReferenceConfigurationStudio', () => {
     expect(html).toContain('SCHEDULE');
     expect(html).toContain('PUBLISH');
     expect(html).toContain('Evidence: CURRENT');
+    expect(html).toContain('Lifecycle command authority is unavailable');
+    expect(html).toContain('disabled=""');
     expect(html).not.toContain('WorkforceReferenceData');
   });
 
@@ -37,7 +38,6 @@ describe('ReferenceConfigurationStudio', () => {
       onStatusFilterChange: vi.fn(),
       onSelect: vi.fn(),
       onRefresh: vi.fn(),
-      onPrepareAction: vi.fn(),
     };
     expect(
       renderToStaticMarkup(

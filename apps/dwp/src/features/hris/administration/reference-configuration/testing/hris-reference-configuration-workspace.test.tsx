@@ -51,5 +51,8 @@ describe('HrisReferenceConfigurationWorkspace', () => {
     expect(hcmPage).toContain("'reference-data': <WorkforceReferenceData />");
     expect(workspace).not.toContain('features/workforce');
     expect(workspace).not.toContain('WorkforceReferenceData');
+    expect(workspace).toContain('commandOwner={commandOwner}');
+    expect(workspace).not.toContain('productSurfaceHighRiskMutationConfig');
+    expect(workspace).not.toContain('preparedAction');
   });
 });

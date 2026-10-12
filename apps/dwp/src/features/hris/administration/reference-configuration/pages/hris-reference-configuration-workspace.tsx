@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { InlineFeedback } from '@dwp-frontend/design-system';
 
@@ -11,12 +10,15 @@ import { ReferenceConfigurationStudio } from '../components/reference-configurat
 import { useReferenceConfigurationWorkspace } from '../hooks/use-reference-configuration-workspace';
 import { referenceConfigurationRuntimeState } from '../model/reference-configuration-model';
 
+import type { ReferenceConfigurationCommandOwner } from '../model/reference-configuration-model';
+
 export const HRIS_REFERENCE_CONFIGURATION_RUNTIME_STATE = referenceConfigurationRuntimeState(
   import.meta.env.VITE_HRIS_REFERENCE_CONFIGURATION_ENABLED === 'true'
 );
 
 export type HrisReferenceConfigurationWorkspaceProps = Readonly<{
   runtimeEnabled?: boolean;
+  commandOwner?: ReferenceConfigurationCommandOwner;
 }>;
 
 /**
@@ -25,14 +27,16 @@ export type HrisReferenceConfigurationWorkspaceProps = Readonly<{
  */
 export function HrisReferenceConfigurationWorkspace({
   runtimeEnabled = HRIS_REFERENCE_CONFIGURATION_RUNTIME_STATE === 'ON',
+  commandOwner,
 }: HrisReferenceConfigurationWorkspaceProps) {
   if (!runtimeEnabled) return <ReferenceConfigurationUnavailable />;
-  return <ActiveReferenceConfigurationWorkspace />;
+  return <ActiveReferenceConfigurationWorkspace commandOwner={commandOwner} />;
 }
 
-function ActiveReferenceConfigurationWorkspace() {
+function ActiveReferenceConfigurationWorkspace({
+  commandOwner,
+}: Readonly<{ commandOwner?: ReferenceConfigurationCommandOwner }>) {
   const workspace = useReferenceConfigurationWorkspace();
-  const [preparedAction, setPreparedAction] = useState<string | null>(null);
 
   return (
     <Stack
@@ -41,12 +45,6 @@ function ActiveReferenceConfigurationWorkspace() {
       data-runtime-state="ON"
       sx={{ minWidth: 0, maxWidth: '100%' }}
     >
-      {preparedAction ? (
-        <InlineFeedback severity="info" title={`${preparedAction.replaceAll('_', ' ')} prepared`}>
-          Confirm impact, approval evidence, optimistic version, and step-up authority before the
-          command is submitted. Closing this message does not mutate configuration state.
-        </InlineFeedback>
-      ) : null}
       <ReferenceConfigurationStudio
         state={workspace.status}
         workbench={workspace.workbench}
@@ -57,7 +55,8 @@ function ActiveReferenceConfigurationWorkspace() {
         onStatusFilterChange={workspace.setStatusFilter}
         onSelect={workspace.select}
         onRefresh={() => void workspace.refresh()}
-        onPrepareAction={setPreparedAction}
+        commandOwner={commandOwner}
+        onCommandCommitted={() => void workspace.refresh()}
       />
     </Stack>
   );
