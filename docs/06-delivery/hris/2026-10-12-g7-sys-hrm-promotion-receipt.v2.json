@@ -1,0 +1,167 @@
+{
+  "schema": "dwp.hris.g7-sys-hrm-promotion-receipt.v2",
+  "receiptId": "HRIS-G7-SYS-HRM-PROMOTION-20261012-R2",
+  "issuedAt": "2026-10-12T09:32:01Z",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "status": "PASS_SCOPED_DELEGATION",
+  "decision": "SYS_HRM_DOMAIN_AUTHORING_AUTHORIZED_PER_TIM_PREDECESSOR_TOKENS_CLOSED",
+  "predecessor": {
+    "manifest": {
+      "path": "docs/06-delivery/hris/g7-delegation/2026-10-12/manifest.v1.json",
+      "sha256": "711cd8e282ed70be7fc8471adde26e96602ab697abf7b8eba568db568f220c07"
+    },
+    "promotionReceipt": {
+      "path": "docs/06-delivery/hris/2026-10-12-g7-evidence-promotion-and-delegation-receipt.json",
+      "sha256": "80bc8a7da69e3bb3fc733be28a02d8db4f5c2f5652bc3fb80659ae37437bf93b"
+    }
+  },
+  "bundleCommit": {
+    "commit": "5884eb4156325f229dcbe0f5b7aa4c92231ce83a",
+    "tree": "9fc5d53e69e1a2329c01a3bcdfee18378a12bdaa",
+    "manifestPath": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r2/manifest.v2.json",
+    "manifestSha256": "d0a14b0ff8396adbaf7080aebf46859ab3be7a6b599c8816e741d403988d9e42",
+    "selfReferenceRule": "The promotion receipt is carried by a later commit and pins the immutable R2 bundle commit."
+  },
+  "delegations": [
+    {
+      "module": "SYS",
+      "sliceId": "BASE-TFR-SYS-007",
+      "packetId": "G7-PACKET-SYS-BASE-TFR-SYS-007-R1",
+      "packetSha256": "13c9e32ddd24b20805060e9b1e1ebdf1549d0619fc7c9b32f4543e72556bfd4e",
+      "tokenId": "G7-START-SYS-BASE-TFR-SYS-007-R2",
+      "tokenPath": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r2/tokens/sys-007.start-token.v2.json",
+      "tokenSha256": "5e49ccf55b26df2f6ee6ffbea080afbb8e0a1c5f29fecefa23f266d229ae170c",
+      "migrationAuthorityMode": "ADMITTED_EXACT_LEASE",
+      "worktrees": [
+        {
+          "module": "SYS",
+          "slice_id": "BASE-TFR-SYS-007",
+          "token_id": "G7-START-SYS-BASE-TFR-SYS-007-R2",
+          "repo": "frontend",
+          "absolute_path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/g7-20261012-r2/sys-007/frontend",
+          "branch": "codex/hris-g7-sys-007-frontend-20261012-r2",
+          "upstream": "origin/codex/hris-g7-sys-007-frontend-20261012-r2",
+          "head": "407dcdfdc4af642838a62a4ac64e06baf50d546b",
+          "tree": "50f417758e5df7a289a0e2ac4e4761e48ae7a4e4",
+          "state_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "clean": "true",
+          "ahead": "0",
+          "behind": "0",
+          "state": "CREATED_PUSHED_CLEAN"
+        },
+        {
+          "module": "SYS",
+          "slice_id": "BASE-TFR-SYS-007",
+          "token_id": "G7-START-SYS-BASE-TFR-SYS-007-R2",
+          "repo": "backend",
+          "absolute_path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/g7-20261012-r2/sys-007/backend",
+          "branch": "codex/hris-g7-sys-007-backend-20261012-r2",
+          "upstream": "origin/codex/hris-g7-sys-007-backend-20261012-r2",
+          "head": "f3380042bd0c05d6f8946b25f4065b97e7a37d15",
+          "tree": "9198c5c9c72c32fb96f392836c4ca8e30ad9e8f1",
+          "state_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "clean": "true",
+          "ahead": "0",
+          "behind": "0",
+          "state": "CREATED_PUSHED_CLEAN"
+        }
+      ],
+      "effectivePacketState": "PACKET_AUTHORIZED_DOMAIN_AUTHORING",
+      "authority": "DOMAIN_AUTHORING_ONLY",
+      "migrationLeaseId": "G7-LEASE-SYS-PLATFORM-V325-R2",
+      "migrationLeaseSha256": "482d0905c788078e3d883d256d334d7d7c5ae7fe74fe97da96533e0dd6e8a072"
+    },
+    {
+      "module": "HRM",
+      "sliceId": "BASE-TFR-HRM-010",
+      "packetId": "G7-PACKET-HRM-BASE-TFR-HRM-010-R1",
+      "packetSha256": "95c151eb2b277518d31cc9733175c7f2e05fc0c73da37fa9f861d58eef9b8a65",
+      "tokenId": "G7-START-HRM-BASE-TFR-HRM-010-R2",
+      "tokenPath": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r2/tokens/hrm-010.start-token.v2.json",
+      "tokenSha256": "9972d971aaf603dc6a0052f703b631ac110f371d2a17449e01ce987dc46a3337",
+      "migrationAuthorityMode": "CONTROL_BOOTSTRAP_READ_ONLY_PIN",
+      "worktrees": [
+        {
+          "module": "HRM",
+          "slice_id": "BASE-TFR-HRM-010",
+          "token_id": "G7-START-HRM-BASE-TFR-HRM-010-R2",
+          "repo": "frontend",
+          "absolute_path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/g7-20261012-r2/hrm-010/frontend",
+          "branch": "codex/hris-g7-hrm-010-frontend-20261012-r2",
+          "upstream": "origin/codex/hris-g7-hrm-010-frontend-20261012-r2",
+          "head": "407dcdfdc4af642838a62a4ac64e06baf50d546b",
+          "tree": "50f417758e5df7a289a0e2ac4e4761e48ae7a4e4",
+          "state_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "clean": "true",
+          "ahead": "0",
+          "behind": "0",
+          "state": "CREATED_PUSHED_CLEAN"
+        },
+        {
+          "module": "HRM",
+          "slice_id": "BASE-TFR-HRM-010",
+          "token_id": "G7-START-HRM-BASE-TFR-HRM-010-R2",
+          "repo": "backend",
+          "absolute_path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/g7-20261012-r2/hrm-010/backend",
+          "branch": "codex/hris-g7-hrm-010-backend-20261012-r2",
+          "upstream": "origin/codex/hris-g7-hrm-010-backend-20261012-r2",
+          "head": "f3380042bd0c05d6f8946b25f4065b97e7a37d15",
+          "tree": "9198c5c9c72c32fb96f392836c4ca8e30ad9e8f1",
+          "state_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "clean": "true",
+          "ahead": "0",
+          "behind": "0",
+          "state": "CREATED_PUSHED_CLEAN"
+        }
+      ],
+      "effectivePacketState": "PACKET_AUTHORIZED_DOMAIN_AUTHORING",
+      "authority": "DOMAIN_AUTHORING_ONLY",
+      "controlOwnedMigrationPrerequisite": {
+        "mode": "CONTROL_BOOTSTRAP_READ_ONLY_PIN",
+        "exactRelativePath": "dwp-people-server/src/main/resources/db/migration/V54__create_employee_change_request_lifecycle.sql",
+        "sha256": "f701bfaff260331c83dc60bcd5b7c7fb2f9c58b11e888705c4c999a48d0ecac9",
+        "frozenBackendCommit": "f3380042bd0c05d6f8946b25f4065b97e7a37d15",
+        "state": "CONTROL_BOOTSTRAP_CONSUMED_READ_ONLY",
+        "migrationEditAuthorized": false
+      }
+    }
+  ],
+  "closedPredecessorTokens": [
+    {
+      "tokenId": "G7-START-PER-BASE-TFR-PER-006-R1",
+      "state": "RESULT_INTEGRATED_CLOSED"
+    },
+    {
+      "tokenId": "G7-START-TIM-BASE-TFR-TIM-006-R1",
+      "state": "RESULT_INTEGRATED_CLOSED"
+    }
+  ],
+  "activeTokenClosedSet": [
+    "G7-START-SYS-BASE-TFR-SYS-007-R2",
+    "G7-START-HRM-BASE-TFR-HRM-010-R2"
+  ],
+  "authority": {
+    "moduleParallelDevelopmentAuthorized": true,
+    "authorizedModules": [
+      "SYS",
+      "HRM"
+    ],
+    "authorizedSlices": [
+      "BASE-TFR-SYS-007",
+      "BASE-TFR-HRM-010"
+    ],
+    "startTokensIssued": [
+      "G7-START-SYS-BASE-TFR-SYS-007-R2",
+      "G7-START-HRM-BASE-TFR-HRM-010-R2"
+    ],
+    "migrationAdmissionAuthorized": [
+      "G7-LEASE-SYS-PLATFORM-V325-R2"
+    ],
+    "sharedControlPathChangeAuthorizedForModules": false,
+    "integrationMergeAuthorized": false,
+    "customerDataAuthorized": false,
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "sealedPayloadSha256": "953fd42532061633cb8933b857d80f40c1cec150323770249d695260a247f24c"
+}
