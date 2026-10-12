@@ -543,7 +543,12 @@
       "settings-reference": {
         "eyebrow": "HRIS / 설정",
         "title": "기준정보 구성",
-        "description": "버전이 지정된 구성 근거를 통해 테넌트 기준값을 게시·폐기·롤백합니다."
+        "description": "버전이 지정된 구성 근거를 통해 테넌트 기준값을 게시·폐기·롤백합니다.",
+        "availabilityTitle": "기준정보 구성 수명주기를 아직 사용할 수 없습니다",
+        "availabilityDescription": "Control 라우트는 연결되었지만 SYS 소유 수명주기 기능은 꺼져 있습니다. 구성 데이터를 불러오지 않으며 수명주기 명령도 제공하지 않습니다.",
+        "runtimeState": "기능 상태: 꺼짐",
+        "boundaryTitle": "인력 기준정보와 분리된 영역입니다",
+        "boundaryDescription": "이 작업공간은 버전 기반 HRIS 구성을 위한 전용 영역입니다. 인력 기준정보는 /hr/data/reference 경로에서만 계속 제공됩니다."
       },
       "reference-data": {
         "eyebrow": "HRIS / 설정",

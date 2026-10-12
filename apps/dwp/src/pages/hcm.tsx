@@ -165,6 +165,11 @@ const WorkforceReferenceData = lazy(() =>
     default: module.WorkforceReferenceData,
   }))
 );
+const HrisReferenceConfigurationWorkspace = lazy(() =>
+  import('../features/hris/administration/reference-configuration').then((module) => ({
+    default: module.HrisReferenceConfigurationWorkspace,
+  }))
+);
 const HrisSystemWorkspace = lazy(() =>
   import('../features/hris/administration/system-access').then((module) => ({
     default: module.HrisSystemWorkspace,
@@ -217,6 +222,7 @@ function HcmPageContent({ page }: { page: HcmNavigationItem }) {
     'talent-operations': <HrisPerformanceCycleOperationsWorkspace />,
     'performance-review-operations': <HrisPerformanceReviewOperationsPopulationFreezeRuntime />,
     'organization-design': <OrganizationExplorer experience="workforce" />,
+    'settings-reference': <HrisReferenceConfigurationWorkspace />,
     'reference-data': <WorkforceReferenceData />,
     'data-operations': <WorkforceDataOperations />,
     exports: <WorkforceExportCenter />,

@@ -543,7 +543,12 @@
       "settings-reference": {
         "eyebrow": "HRIS / Settings",
         "title": "Reference configuration",
-        "description": "Publish, retire, and roll back tenant reference values through versioned configuration evidence."
+        "description": "Publish, retire, and roll back tenant reference values through versioned configuration evidence.",
+        "availabilityTitle": "Reference-configuration lifecycle is unavailable",
+        "availabilityDescription": "The Control route is mounted, but the SYS owner lifecycle is feature-off. No configuration data is loaded and no lifecycle command is available.",
+        "runtimeState": "Feature state: OFF",
+        "boundaryTitle": "Separate from workforce reference data",
+        "boundaryDescription": "This workspace is reserved for versioned HRIS configuration. Workforce reference data remains available only at /hr/data/reference."
       },
       "reference-data": {
         "eyebrow": "HRIS / Settings",
