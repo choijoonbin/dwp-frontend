@@ -1,0 +1,854 @@
+{
+  "schema": "dwp.hris.g7-sys-hrm-result-admission-receipt.v3",
+  "receiptId": "HRIS-G7-SYS-HRM-RESULT-ADMISSION-SYS-HRM-R3-20261012-R1",
+  "runId": "sys-hrm-r3-20261012-r1",
+  "status": "PASS_RESULTS_ADMITTED_PENDING_CARRIER",
+  "issuedAt": "2026-10-12T13:00:37Z",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "predecessor": {
+    "r2PromotionReceipt": {
+      "path": "docs/06-delivery/hris/2026-10-12-g7-sys-hrm-promotion-receipt.v2.json",
+      "gitBlobSha1": "75d3dd7fb08520a026d051fb6121661171eefc28",
+      "sha256": "d09e250da60b797404109dca5342db7cb6806144b51e3f5c92cd2ebc9925d275",
+      "bytes": 7392,
+      "carrierCommit": "2fc4faa5d8631dda6a3cbabefeef9ba606feca52",
+      "carrierTree": "06807365ae5d289eda8ca82a6cc5071abc315037"
+    },
+    "activeTokenClosedSet": [
+      "G7-START-SYS-BASE-TFR-SYS-007-R2",
+      "G7-START-HRM-BASE-TFR-HRM-010-R2"
+    ],
+    "integrationMergeAuthorized": false
+  },
+  "testEvidence": {
+    "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r3-result-acceptance/runs/sys-hrm-r3-20261012-r1/module-test-evidence.v3.json",
+    "gitBlobSha1": "35cf511951cb17a62c38567b6783ad1090a77639",
+    "sha256": "5bd5c612bfd8353af579aaf20570c881ad07bccbbc5430914082359dbad823be",
+    "bytes": 5314,
+    "carrierCommit": "83de865d4d4ab1f3020e65ee3b089d53d1de2820",
+    "carrierTree": "529f6ac3b77a29020c7406e6c462f7a71c46ac23",
+    "evidenceId": "HRIS-G7-SYS-HRM-MODULE-TEST-EVIDENCE-SYS-HRM-R3-20261012-R1",
+    "closedSet": [
+      "SYS_BACKEND_TARGETED",
+      "SYS_FRONTEND_TARGETED",
+      "HRM_BACKEND_TARGETED",
+      "HRM_FRONTEND_TARGETED"
+    ]
+  },
+  "sharedVerificationPlan": {
+    "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r3-result-acceptance/runs/sys-hrm-r3-20261012-r1/shared-verification-plan.v3.json",
+    "gitBlobSha1": "7c997a1b2a1329d5ded3d97c4e4c8d9cc84625c6",
+    "sha256": "c7bf4d7d4a42cdad531d030f96d9abd57ae72e934ed40b8c95aaeaa843fdf225",
+    "bytes": 3605,
+    "carrierCommit": "83de865d4d4ab1f3020e65ee3b089d53d1de2820",
+    "carrierTree": "529f6ac3b77a29020c7406e6c462f7a71c46ac23",
+    "planId": "HRIS-G7-SYS-HRM-SHARED-PLAN-SYS-HRM-R3-20261012-R1",
+    "authorityStatus": "CONTROL_PROPOSAL_NOT_PREDECESSOR_AUTHORITY"
+  },
+  "sharedTestSource": {
+    "path": "e2e/hris-sys-hrm-responsive-accessibility.spec.ts",
+    "gitBlobSha1": "0f2c774c72e3f1ac42ab43bd267a67ec735b1942",
+    "sha256": "9190b562141d6d8ad797c929ef964e4bafc284b7c2fad9f9b2cbb36e87b9c262",
+    "bytes": 4001,
+    "templateId": "G7-SYS-HRM-RESPONSIVE-ACCESSIBILITY-V2",
+    "carrierCommit": "2f199f377590e147e018745ebf5ee260fd2589de",
+    "carrierTree": "1f38f169f2be37e7cc7ab38b0d3e8b7f763cc11f",
+    "toolingCarrierCommit": "39c04e8dab680a4e9af19e4f7687870374c5a96b",
+    "toolingCarrierTree": "10e839d9ffad040a1d56a107a245f77771b4f1ee",
+    "branch": "codex/hris-g1-integration-frontend-20261006",
+    "upstream": "origin/codex/hris-g1-integration-frontend-20261006",
+    "carrierPushed": true,
+    "soleAddedPath": true,
+    "sourceCarrierGate": {
+      "status": "REQUIRED_BEFORE_INPUT_CARRIER",
+      "requireCurrentHead": true,
+      "requireClean": true,
+      "requireExactUpstreamHead": true
+    },
+    "inputCarrierDirectChild": true
+  },
+  "toolchain": [
+    {
+      "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r3-result-acceptance/README.md",
+      "gitBlobSha1": "be4bce43287cbec3ecdcf87afc31b122be794816",
+      "sha256": "25ad52dd2b9dcaedaeafbd71584cc60818194e1cb7c874d9825224d9467ddfe7",
+      "bytes": 12548
+    },
+    {
+      "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r3-result-acceptance/contracts/module-test-evidence-input.schema.v3.json",
+      "gitBlobSha1": "f12e9e814344402fa6b68d17a6c7a672dcb2795d",
+      "sha256": "59f83762efe2493532664faffe1aaabb573c504961d4e37812ba070e3854b298",
+      "bytes": 2993
+    },
+    {
+      "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r3-result-acceptance/contracts/shared-verification-plan.schema.v3.json",
+      "gitBlobSha1": "93c3c252efb2eb52061eea63bcc98f5ad75de57a",
+      "sha256": "bc02f659f8e8d931b8f4dcb7282494cf31af716b5e4bbb06b9d17c1a0923ffa8",
+      "bytes": 3748
+    },
+    {
+      "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r3-result-acceptance/contracts/shared-verification-evidence-input.schema.v3.json",
+      "gitBlobSha1": "9b38e6de8d7a0c6dc495085037e2474a3dda5143",
+      "sha256": "31e23e60a29cb2222974d0320884ab48b5cb63df1c160ce9eec02554f218518f",
+      "bytes": 11215
+    },
+    {
+      "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r3-result-acceptance/contracts/result-admission-receipt.schema.v3.json",
+      "gitBlobSha1": "013c88b31c4ee919c2c29493120b9003a686aced",
+      "sha256": "954b3dcc876fc3616cd11805b82afcca882069b5fd35e6736c52de69e9c1a48b",
+      "bytes": 11283
+    },
+    {
+      "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r3-result-acceptance/contracts/integration-authorization-receipt.schema.v3.json",
+      "gitBlobSha1": "5b531dea62310308bac43bdd658ea8979179377f",
+      "sha256": "86cbbde093fbd3ca67ebb1040510542a50df802e268efbd1731cf1a60fd7655e",
+      "bytes": 7891
+    },
+    {
+      "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r3-result-acceptance/contracts/closure-receipt.schema.v3.json",
+      "gitBlobSha1": "bd6dc9e9aff71ea39cb6255051531dd847a7f909",
+      "sha256": "f5b8be3b1ac9ed9b02a2ced6856d2f58fb9a673a9bd405c52e43a9f983d703c3",
+      "bytes": 7609
+    },
+    {
+      "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r3-result-acceptance/materialize_g7_sys_hrm_result_acceptance.py",
+      "gitBlobSha1": "f9b859edc18472e40d9dae572495bbf8de130b77",
+      "sha256": "404d4301fdfc9949b793fa40e0c108e722a565a74cb5e5507ee7f3ad5cfc0a30",
+      "bytes": 130911
+    },
+    {
+      "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r3-result-acceptance/validate_g7_sys_hrm_result_acceptance.py",
+      "gitBlobSha1": "329285fb0ed50cd76c74f9641e68447924f85dfc",
+      "sha256": "1a5fb3d8a6293bf429a6558695901bbedd8ddc332d1f954851b8f09f1c425f88",
+      "bytes": 111763
+    },
+    {
+      "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r3-result-acceptance/test_g7_sys_hrm_result_acceptance.py",
+      "gitBlobSha1": "5528b9504fe8b3916d1647e2966cee31fa5e0b7f",
+      "sha256": "a93bae6a39e601b32dcdb902c3bd1bb481312318109daa07b11dd9b9ef32d88c",
+      "bytes": 88202
+    }
+  ],
+  "moduleResults": [
+    {
+      "module": "SYS",
+      "sliceId": "BASE-TFR-SYS-007",
+      "tokenId": "G7-START-SYS-BASE-TFR-SYS-007-R2",
+      "tokenExpiresAt": "2026-10-19T09:32:01Z",
+      "pathPolicySha256": "c8b56ea099ba546c434fc8d3f6bf2fe8a84f5bddc37d76dd2b372ac3c3fdda74",
+      "worktrees": [
+        {
+          "repo": "frontend",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/g7-20261012-r2/sys-007/frontend",
+          "branch": "codex/hris-g7-sys-007-frontend-20261012-r2",
+          "upstream": "origin/codex/hris-g7-sys-007-frontend-20261012-r2",
+          "basePin": {
+            "commit": "407dcdfdc4af642838a62a4ac64e06baf50d546b",
+            "tree": "50f417758e5df7a289a0e2ac4e4761e48ae7a4e4"
+          },
+          "resultPin": {
+            "commit": "717204888f8d14a9a320165f9939c1c142b4cc0a",
+            "tree": "94162788c785f7ef570e03dec7281fd807a18723"
+          },
+          "clean": true,
+          "upstreamMatched": true,
+          "changedFiles": [
+            {
+              "path": "apps/dwp/src/features/hris/administration/reference-configuration/api/reference-configuration-api.ts",
+              "change": "ADD",
+              "before": null,
+              "after": {
+                "mode": "100644",
+                "gitBlobSha1": "730e6738f97b81ada451f2ec6dd1dbaca3819fc2",
+                "bytes": 14236,
+                "sha256": "bf2f1d4e4d89d24611ee2e597e2b8495ac352bad05f3d4704bcbe842fbce80c3"
+              }
+            },
+            {
+              "path": "apps/dwp/src/features/hris/administration/reference-configuration/components/reference-configuration-studio.tsx",
+              "change": "ADD",
+              "before": null,
+              "after": {
+                "mode": "100644",
+                "gitBlobSha1": "b2f4fbcfc31d6135902bca419281cd0928860426",
+                "bytes": 16388,
+                "sha256": "eb57262f7b32281c79dd0d8b28ecc73e9cf991803257fa54e877e7ada6d75160"
+              }
+            },
+            {
+              "path": "apps/dwp/src/features/hris/administration/reference-configuration/hooks/use-reference-configuration-workspace.ts",
+              "change": "ADD",
+              "before": null,
+              "after": {
+                "mode": "100644",
+                "gitBlobSha1": "4a7fbdde60c84bf9997db0aace9c24bd11b7f4d0",
+                "bytes": 5958,
+                "sha256": "3c07447848b8a79a67c6bc7e9db954a3eb4e29a2924d75f269fc1bc9e199d28f"
+              }
+            },
+            {
+              "path": "apps/dwp/src/features/hris/administration/reference-configuration/index.ts",
+              "change": "MODIFY",
+              "before": {
+                "mode": "100644",
+                "gitBlobSha1": "4bcc04392c2c08c5cd31fb4e27267ae9fd4c3ffb",
+                "bytes": 64,
+                "sha256": "3610b097511e137ede7116ddfd299db66660393359662d75f1c362db669648f4"
+              },
+              "after": {
+                "mode": "100644",
+                "gitBlobSha1": "dc9c109405a0b22525d61c6279665898b475bd3d",
+                "bytes": 231,
+                "sha256": "fba265f37ccde12b473b4e86011a6409da4c9497185756b2c0e45e35eb27c0f5"
+              }
+            },
+            {
+              "path": "apps/dwp/src/features/hris/administration/reference-configuration/model/reference-configuration-model.ts",
+              "change": "ADD",
+              "before": null,
+              "after": {
+                "mode": "100644",
+                "gitBlobSha1": "71b98ba7506fd7ab2e0743e104382a3dd472a7ab",
+                "bytes": 8337,
+                "sha256": "8b98985d2ef9ae2222e3d838c7aea91da109dc0b6e55d05a60fa750a6e0039df"
+              }
+            },
+            {
+              "path": "apps/dwp/src/features/hris/administration/reference-configuration/pages/hris-reference-configuration-workspace.tsx",
+              "change": "MODIFY",
+              "before": {
+                "mode": "100644",
+                "gitBlobSha1": "4833f2ad57a8fc217e66101c92d74d9272abbcac",
+                "bytes": 2549,
+                "sha256": "71fc933227b4a17473c9f5f710a1add3e83acc3c0c91d84dfe01e14cad64b9c3"
+              },
+              "after": {
+                "mode": "100644",
+                "gitBlobSha1": "a0589508a8c45ab59ab20d3c1d4af03acca1ad8d",
+                "bytes": 4336,
+                "sha256": "c748ca201c9ae793617e319107b22314daac5905be31c9b8c90ab805bd6db98f"
+              }
+            },
+            {
+              "path": "apps/dwp/src/features/hris/administration/reference-configuration/testing/hris-reference-configuration-workspace.test.tsx",
+              "change": "MODIFY",
+              "before": {
+                "mode": "100644",
+                "gitBlobSha1": "0540d96ec127b3ad4c9a2a6fa47aaeb8258c1d64",
+                "bytes": 2415,
+                "sha256": "e10866b4c9a4f5c4d832f738577486b8b943a2753ff5bc3d30f1ac3be2dd3cbf"
+              },
+              "after": {
+                "mode": "100644",
+                "gitBlobSha1": "0723665bd80849f7fc09f356f1ce36872f1a681b",
+                "bytes": 3480,
+                "sha256": "647045ac8269d4847331f5d3858bfffbd3ae5184ba5413a589a9b7c5634ec4a0"
+              }
+            },
+            {
+              "path": "apps/dwp/src/features/hris/administration/reference-configuration/testing/reference-configuration-api.test.ts",
+              "change": "ADD",
+              "before": null,
+              "after": {
+                "mode": "100644",
+                "gitBlobSha1": "45ed615a18c8ad6b6b53e1988e6cb319bb76d3ba",
+                "bytes": 7354,
+                "sha256": "8597b0d38c568d665ae9a990f31b75eef08b74371450ebc4aa294bcaabf89271"
+              }
+            },
+            {
+              "path": "apps/dwp/src/features/hris/administration/reference-configuration/testing/reference-configuration-command-interaction.test.tsx",
+              "change": "ADD",
+              "before": null,
+              "after": {
+                "mode": "100644",
+                "gitBlobSha1": "28eddb96b225820c97eb612ff4723bab4c57e391",
+                "bytes": 9375,
+                "sha256": "aa437a5f453b08eb189238c8bdf8ec35bf15dc6571ed35decf7c86c2c5112962"
+              }
+            },
+            {
+              "path": "apps/dwp/src/features/hris/administration/reference-configuration/testing/reference-configuration-model.test.ts",
+              "change": "ADD",
+              "before": null,
+              "after": {
+                "mode": "100644",
+                "gitBlobSha1": "a5a0352ac52e254dec2a93e6a802bd3421edd420",
+                "bytes": 5426,
+                "sha256": "da240f6dada0bd7abc3e9850cf9b04bec4b6e7b65542fdeeb7852e0cdbdbbf2e"
+              }
+            },
+            {
+              "path": "apps/dwp/src/features/hris/administration/reference-configuration/testing/reference-configuration-studio.test.tsx",
+              "change": "ADD",
+              "before": null,
+              "after": {
+                "mode": "100644",
+                "gitBlobSha1": "bfd91e32321f7009a00d61ae350e01b4b501c7c7",
+                "bytes": 4329,
+                "sha256": "f76f5ff1adaf40a9b8adaf6406df63ab5acbd2d891699677a6ddbd5b2e54d3e5"
+              }
+            }
+          ],
+          "changedFilesSha256": "0ee392584fc14193cb9d117c8cd9d428d009894e588f41b429450a6affcf6e3d"
+        },
+        {
+          "repo": "backend",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/g7-20261012-r2/sys-007/backend",
+          "branch": "codex/hris-g7-sys-007-backend-20261012-r2",
+          "upstream": "origin/codex/hris-g7-sys-007-backend-20261012-r2",
+          "basePin": {
+            "commit": "f3380042bd0c05d6f8946b25f4065b97e7a37d15",
+            "tree": "9198c5c9c72c32fb96f392836c4ca8e30ad9e8f1"
+          },
+          "resultPin": {
+            "commit": "124269a8497eafa074199171cafc35adbef615ad",
+            "tree": "48685e63ac34d375f711b410105179f8f9613f6f"
+          },
+          "clean": true,
+          "upstreamMatched": true,
+          "changedFiles": [
+            {
+              "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/JdbcReferenceConfigurationRepository.java",
+              "change": "ADD",
+              "before": null,
+              "after": {
+                "mode": "100644",
+                "gitBlobSha1": "6528225674476bdf72684907d0e255443a64e2d2",
+                "bytes": 40864,
+                "sha256": "d064e4f8987ba27bc5496fd2c916b57032ea54de819dedfc979fc174f233a260"
+              }
+            },
+            {
+              "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/ReferenceConfigurationController.java",
+              "change": "ADD",
+              "before": null,
+              "after": {
+                "mode": "100644",
+                "gitBlobSha1": "00d55b7408629b0bae492f30be5e0d6a35fc15e8",
+                "bytes": 16315,
+                "sha256": "ec1de2c991a93579ae502408b96671b54d65540017f54931e982f15a4ec11f0f"
+              }
+            },
+            {
+              "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/ReferenceConfigurationDtos.java",
+              "change": "ADD",
+              "before": null,
+              "after": {
+                "mode": "100644",
+                "gitBlobSha1": "e9dca3057ee662551282b6001d004cca6a1e27a1",
+                "bytes": 11744,
+                "sha256": "65c3080ae47d0a8241768d33f51e4aacd875fb40f01276ddad1cf0ed128f7bb1"
+              }
+            },
+            {
+              "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/ReferenceConfigurationRepository.java",
+              "change": "ADD",
+              "before": null,
+              "after": {
+                "mode": "100644",
+                "gitBlobSha1": "bdf7f1416d1ef4a59ed47088fa8d23f72423c402",
+                "bytes": 6081,
+                "sha256": "4b33b4cd77c1dba42ac3673d02eddb7e874a74c54f5f6704a1ea5c12f04ed224"
+              }
+            },
+            {
+              "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/ReferenceConfigurationService.java",
+              "change": "ADD",
+              "before": null,
+              "after": {
+                "mode": "100644",
+                "gitBlobSha1": "e66d745028f56f1ac1b9d9bb86b9655b2f420233",
+                "bytes": 69501,
+                "sha256": "faa7e88bbd45615bb3a64e9059db06358a455fdab8925279a0273536808b9dce"
+              }
+            },
+            {
+              "path": "dwp-platform-server/src/main/resources/db/migration/V325__create_hris_reference_configuration_lifecycle.sql",
+              "change": "ADD",
+              "before": null,
+              "after": {
+                "mode": "100644",
+                "gitBlobSha1": "1296442ea31c2a21a3be4637a20d613a37500b92",
+                "bytes": 18352,
+                "sha256": "4d38c3fc78136506af6f55597e6b4d3a994a15fe2e788ea0d49689664a1035f3"
+              }
+            },
+            {
+              "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/ReferenceConfigurationMigrationContractTest.java",
+              "change": "ADD",
+              "before": null,
+              "after": {
+                "mode": "100644",
+                "gitBlobSha1": "4311a932e49d97f87caf77bbe851f7ba93ca082a",
+                "bytes": 2195,
+                "sha256": "fc94aa75d170d1729211e4ed581c0461b8ff8e3505928281196a83a565232991"
+              }
+            },
+            {
+              "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/ReferenceConfigurationPostgresTest.java",
+              "change": "ADD",
+              "before": null,
+              "after": {
+                "mode": "100644",
+                "gitBlobSha1": "12e7851fde6c07599e64b6b9f7eac188f9056c64",
+                "bytes": 16501,
+                "sha256": "3c45f5ea7a2db2b5be9f02e249a8b009319f2713da0084021587619970134508"
+              }
+            },
+            {
+              "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/ReferenceConfigurationServiceTest.java",
+              "change": "ADD",
+              "before": null,
+              "after": {
+                "mode": "100644",
+                "gitBlobSha1": "af34f1942c91bd61508bfc959819ec06d2ca4c90",
+                "bytes": 20816,
+                "sha256": "5d2f5681aac9a05ffe0321ed57665d7a992c9af5dc98569e3cfbccc66afff744"
+              }
+            },
+            {
+              "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/ReferenceConfigurationTestRepository.java",
+              "change": "ADD",
+              "before": null,
+              "after": {
+                "mode": "100644",
+                "gitBlobSha1": "a79bc1ebc7033f56c93a964fd45ba1fe5ee85bc4",
+                "bytes": 21904,
+                "sha256": "8eb74e5f71d2e39b80bf8c7361fee3df7dc4a8e8f8ebbdb118313edf1c66a9de"
+              }
+            },
+            {
+              "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/SysIaEntryQueryContractTest.java",
+              "change": "ADD",
+              "before": null,
+              "after": {
+                "mode": "100644",
+                "gitBlobSha1": "1b4b4029f54a4825c4f5c98e543e424fa0752ac3",
+                "bytes": 21034,
+                "sha256": "a83511d9c18a8936ed061a955623968531f8f1d7bea9f84a27e1f7b135284c5a"
+              }
+            }
+          ],
+          "changedFilesSha256": "3924bd6ef580aeca293961934af1bde676331679b16c2b5f840d30d138e5fad8"
+        }
+      ],
+      "migration": {
+        "mode": "ADMITTED_EXACT_LEASE",
+        "leaseId": "G7-LEASE-SYS-PLATFORM-V325-R2",
+        "exactRelativePath": "dwp-platform-server/src/main/resources/db/migration/V325__create_hris_reference_configuration_lifecycle.sql",
+        "used": true,
+        "status": "USED_EXACT_V325",
+        "artifact": {
+          "mode": "100644",
+          "gitBlobSha1": "1296442ea31c2a21a3be4637a20d613a37500b92",
+          "bytes": 18352,
+          "sha256": "4d38c3fc78136506af6f55597e6b4d3a994a15fe2e788ea0d49689664a1035f3"
+        }
+      }
+    },
+    {
+      "module": "HRM",
+      "sliceId": "BASE-TFR-HRM-010",
+      "tokenId": "G7-START-HRM-BASE-TFR-HRM-010-R2",
+      "tokenExpiresAt": "2026-10-19T09:32:01Z",
+      "pathPolicySha256": "1b9eef240654dcb21663615bbcf57a1285feaec6d47128be55d8a5b1173a2380",
+      "worktrees": [
+        {
+          "repo": "frontend",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/g7-20261012-r2/hrm-010/frontend",
+          "branch": "codex/hris-g7-hrm-010-frontend-20261012-r2",
+          "upstream": "origin/codex/hris-g7-hrm-010-frontend-20261012-r2",
+          "basePin": {
+            "commit": "407dcdfdc4af642838a62a4ac64e06baf50d546b",
+            "tree": "50f417758e5df7a289a0e2ac4e4761e48ae7a4e4"
+          },
+          "resultPin": {
+            "commit": "9a68bea3f01e1ff49ba7e314896da0feb3e3263c",
+            "tree": "61a329b99a2961889f43eb2767109cf7956e4953"
+          },
+          "clean": true,
+          "upstreamMatched": true,
+          "changedFiles": [
+            {
+              "path": "apps/dwp/src/features/hris/employee-services/employee-change/api/employee-change-api.ts",
+              "change": "ADD",
+              "before": null,
+              "after": {
+                "mode": "100644",
+                "gitBlobSha1": "c81fb5d5c25191379314c0900d41c965c52e6756",
+                "bytes": 9459,
+                "sha256": "44029ee4cf1c0ad6ac8b501f3b38887273af9d2eeb619c2f39f5cebf28f876e3"
+              }
+            },
+            {
+              "path": "apps/dwp/src/features/hris/employee-services/employee-change/hooks/use-employee-change-workspace.ts",
+              "change": "ADD",
+              "before": null,
+              "after": {
+                "mode": "100644",
+                "gitBlobSha1": "7eaab832e095a8bc5e5190c00b825519f046bdb3",
+                "bytes": 10933,
+                "sha256": "5700271263be053b11c938e2a2e79ecfb7b9df1bfab6e651b9f0c86d0b5c7262"
+              }
+            },
+            {
+              "path": "apps/dwp/src/features/hris/employee-services/employee-change/index.ts",
+              "change": "MODIFY",
+              "before": {
+                "mode": "100644",
+                "gitBlobSha1": "316fd9ff6b90ea684b505cd682d8c4b09c8d3774",
+                "bytes": 56,
+                "sha256": "ad9d7cb97c40b1a712d8bd37c03b42084d5bda7f91f506db3f8ddaeb4a4d923c"
+              },
+              "after": {
+                "mode": "100644",
+                "gitBlobSha1": "7a37fb4d1c6df13ec2c50023407cdd6854905e80",
+                "bytes": 204,
+                "sha256": "e03a4995c9d927cdc45a4a35e4b1a94b64ea2b462e9b89494b657cd5c67115d6"
+              }
+            },
+            {
+              "path": "apps/dwp/src/features/hris/employee-services/employee-change/model/employee-change-contract.ts",
+              "change": "ADD",
+              "before": null,
+              "after": {
+                "mode": "100644",
+                "gitBlobSha1": "f50e839396ee75cc0a5f1ca33ea9b4d9099ce526",
+                "bytes": 13296,
+                "sha256": "4a098368a8367cdaa9ecccdba355f6967cb6eefc1b927c4d45a96cbc93c25441"
+              }
+            },
+            {
+              "path": "apps/dwp/src/features/hris/employee-services/employee-change/pages/hris-employee-change-workspace.tsx",
+              "change": "MODIFY",
+              "before": {
+                "mode": "100644",
+                "gitBlobSha1": "70174778aec50b4d93649971b05b63bc3fdce14f",
+                "bytes": 2590,
+                "sha256": "2203cb8a29740bd9d1d6fa6a3ad32b8bac0424a0348a30ad956ec6ecf8999c27"
+              },
+              "after": {
+                "mode": "100644",
+                "gitBlobSha1": "71af0d045297d52ba466fd2455c4722ef834f93a",
+                "bytes": 21722,
+                "sha256": "17f1c0b9d0c70076392ce4a416ffb9547108e619391357ae60f0c584f88a07d7"
+              }
+            },
+            {
+              "path": "apps/dwp/src/features/hris/employee-services/employee-change/testing/employee-change-api.test.ts",
+              "change": "ADD",
+              "before": null,
+              "after": {
+                "mode": "100644",
+                "gitBlobSha1": "812649b949d5b888a36dd488a09c370a15276dda",
+                "bytes": 8884,
+                "sha256": "908754eae79086a14df3e0f9907e19e20afa8e8ecdc19e624d80ae273ee314aa"
+              }
+            },
+            {
+              "path": "apps/dwp/src/features/hris/employee-services/employee-change/testing/employee-change-command-ledger.test.ts",
+              "change": "ADD",
+              "before": null,
+              "after": {
+                "mode": "100644",
+                "gitBlobSha1": "1c48d07fab2b477f5a2ff7d93802aa8806c9773b",
+                "bytes": 2882,
+                "sha256": "cb66f9bac3d66a1644694080ae53e45c664fddbdced70b466dde9cfce3a7b19a"
+              }
+            },
+            {
+              "path": "apps/dwp/src/features/hris/employee-services/employee-change/testing/employee-change-contract.test.ts",
+              "change": "ADD",
+              "before": null,
+              "after": {
+                "mode": "100644",
+                "gitBlobSha1": "880b70112966c65160048f4d03931b065bffbbd6",
+                "bytes": 4425,
+                "sha256": "183b3587c17c4c7b67b5e9978164a2d60edb73434ba2c2ea61ddc3dafecf7217"
+              }
+            },
+            {
+              "path": "apps/dwp/src/features/hris/employee-services/employee-change/testing/employee-change-fixtures.test-support.ts",
+              "change": "ADD",
+              "before": null,
+              "after": {
+                "mode": "100644",
+                "gitBlobSha1": "f1e9ac7c135cd6ee421665da1f16c9061b0036a5",
+                "bytes": 2974,
+                "sha256": "f75fa6c67842c53595629934a8c10df12698007cbbb3d595b9b5997ffa72f371"
+              }
+            },
+            {
+              "path": "apps/dwp/src/features/hris/employee-services/employee-change/testing/hris-employee-change-workspace.test.tsx",
+              "change": "MODIFY",
+              "before": {
+                "mode": "100644",
+                "gitBlobSha1": "551213440cb502bd97b85997f29524a16c633400",
+                "bytes": 2799,
+                "sha256": "08bdbcf2b087fb4b1ba923ad8f052736a191ccbbf353228d6c16c8a673110940"
+              },
+              "after": {
+                "mode": "100644",
+                "gitBlobSha1": "5349cdff92e62ff0a7ae06e301bf1f32531006ce",
+                "bytes": 5456,
+                "sha256": "1f13fdb8e6f89910790f9cf0fa0ce5e097541c0b970a3fa3f9b9924155a3a915"
+              }
+            }
+          ],
+          "changedFilesSha256": "44f577e5ea3827c76d2ada50f3fa7e932f628c9f359225c682a87c7a34d11f4f"
+        },
+        {
+          "repo": "backend",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/g7-20261012-r2/hrm-010/backend",
+          "branch": "codex/hris-g7-hrm-010-backend-20261012-r2",
+          "upstream": "origin/codex/hris-g7-hrm-010-backend-20261012-r2",
+          "basePin": {
+            "commit": "f3380042bd0c05d6f8946b25f4065b97e7a37d15",
+            "tree": "9198c5c9c72c32fb96f392836c4ca8e30ad9e8f1"
+          },
+          "resultPin": {
+            "commit": "30bbcbeebb455e2f5a738c80ce1c8b0ef1575e89",
+            "tree": "43a2428a073586d6b40bb3685f6e73cb0ca6a660"
+          },
+          "clean": true,
+          "upstreamMatched": true,
+          "changedFiles": [
+            {
+              "path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/employeechange/EmployeeChangeAuthority.java",
+              "change": "ADD",
+              "before": null,
+              "after": {
+                "mode": "100644",
+                "gitBlobSha1": "06fc0f3e8c1219ab5bd466be2fd64b7afee2cc29",
+                "bytes": 4210,
+                "sha256": "5140f700d1f8bdfca15a7a5f2e454478dce53491f85a7ebd64b51b92c7f11681"
+              }
+            },
+            {
+              "path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/employeechange/EmployeeChangeCanonicalizer.java",
+              "change": "ADD",
+              "before": null,
+              "after": {
+                "mode": "100644",
+                "gitBlobSha1": "7230a5a3f51ab1bc7a25795f26c237137be88ffe",
+                "bytes": 15069,
+                "sha256": "78aa6ce6a37e8db3d1550fa4d1c9c41822122e2cd7bc1e854657c539cfc03f48"
+              }
+            },
+            {
+              "path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/employeechange/EmployeeChangeDtos.java",
+              "change": "ADD",
+              "before": null,
+              "after": {
+                "mode": "100644",
+                "gitBlobSha1": "787ebc53b32a2e74285c58454728fd89af9224e1",
+                "bytes": 7879,
+                "sha256": "9b8868a925e3224875f249e052f379dbd231c6f8d3245488f466dcdb792bb2b9"
+              }
+            },
+            {
+              "path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/employeechange/EmployeeChangePatchProtector.java",
+              "change": "ADD",
+              "before": null,
+              "after": {
+                "mode": "100644",
+                "gitBlobSha1": "b6de282691fc366933e3ff8f6f3b9e56235af9e1",
+                "bytes": 3712,
+                "sha256": "52621deb6725948940ca4bf4bcf73400e16df264afcbf1cf664cd19269579fa9"
+              }
+            },
+            {
+              "path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/employeechange/EmployeeChangeRepository.java",
+              "change": "ADD",
+              "before": null,
+              "after": {
+                "mode": "100644",
+                "gitBlobSha1": "9875126ca748beece4441dc5c95594e3097f4e7c",
+                "bytes": 49685,
+                "sha256": "9e3b923b1f387f4c24574c2d7e28d0dad35d398a2fec9444f6f8ab15dd447db4"
+              }
+            },
+            {
+              "path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/employeechange/EmployeeChangeRequestAdvice.java",
+              "change": "ADD",
+              "before": null,
+              "after": {
+                "mode": "100644",
+                "gitBlobSha1": "d1495926ba309f4da4030816f725fbee83141f67",
+                "bytes": 6110,
+                "sha256": "30db9370b39ac4b4a0a40ab92e2ec080a9df56dcd043fc3b87b0e0151a13de92"
+              }
+            },
+            {
+              "path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/employeechange/EmployeeChangeRequestController.java",
+              "change": "ADD",
+              "before": null,
+              "after": {
+                "mode": "100644",
+                "gitBlobSha1": "64f4ec99217039848ee142b2153bca68a17c9e9c",
+                "bytes": 10680,
+                "sha256": "0cc540b4b62c82a7b6009aa7cfda84dbee5f43f2bd7d28df6f9c006e02229898"
+              }
+            },
+            {
+              "path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/employeechange/EmployeeChangeService.java",
+              "change": "ADD",
+              "before": null,
+              "after": {
+                "mode": "100644",
+                "gitBlobSha1": "9ced6a24ec028a572026398cdb3177dbc7d88853",
+                "bytes": 38181,
+                "sha256": "c773829a4518f1e97a34a08a4ea444213ddb5726d8d2d9cd30a9deb85b20eb46"
+              }
+            },
+            {
+              "path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/employeechange/EmployeeChangeWorkbenchProjector.java",
+              "change": "ADD",
+              "before": null,
+              "after": {
+                "mode": "100644",
+                "gitBlobSha1": "ae2174fd48506246da0221f90955f305c69a72f9",
+                "bytes": 21811,
+                "sha256": "7c69ad784d47649253662e3b896d493c724e105ad7145f74eca1489febffac91"
+              }
+            },
+            {
+              "path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/employeechange/approvalbridge/EmployeeChangeApprovalBridgeService.java",
+              "change": "MODIFY",
+              "before": {
+                "mode": "100644",
+                "gitBlobSha1": "6b034aa496beb52be6061bb1502e542c9f54e6df",
+                "bytes": 24490,
+                "sha256": "49c50847ffa5e9fddccce98a8d74a0af2f490da7578dfa9cbe29159eafa56439"
+              },
+              "after": {
+                "mode": "100644",
+                "gitBlobSha1": "616c4499138943f551deac7eed95161d6f9b5ed5",
+                "bytes": 24517,
+                "sha256": "4b3a5bdb99df12a0f570169f9cfcf13173358603052efd8eaaf3742c6cfb9736"
+              }
+            },
+            {
+              "path": "dwp-people-server/src/test/java/com/dwp/services/people/hris/employeeservice/employeechange/EmployeeChangeAuthorityTest.java",
+              "change": "ADD",
+              "before": null,
+              "after": {
+                "mode": "100644",
+                "gitBlobSha1": "4119f3f003679ca4f669caacb6f8025ebaaf422d",
+                "bytes": 1772,
+                "sha256": "63948c4d5cb20021387209a4e0a4248c6b5860c5bc90def1f817d8824404f2fa"
+              }
+            },
+            {
+              "path": "dwp-people-server/src/test/java/com/dwp/services/people/hris/employeeservice/employeechange/EmployeeChangeCanonicalizerTest.java",
+              "change": "ADD",
+              "before": null,
+              "after": {
+                "mode": "100644",
+                "gitBlobSha1": "1c903eb245e2ece3ae4e711323219d261dd27d4b",
+                "bytes": 4886,
+                "sha256": "1d4c43f95106292b55eca2b6742cec58d2fabee7bbd11ae7d4fd51857a7a8f9c"
+              }
+            },
+            {
+              "path": "dwp-people-server/src/test/java/com/dwp/services/people/hris/employeeservice/employeechange/EmployeeChangeRepositoryTest.java",
+              "change": "ADD",
+              "before": null,
+              "after": {
+                "mode": "100644",
+                "gitBlobSha1": "203569a4231b9340d6c93e35e09a28cbdfd6cbc9",
+                "bytes": 6008,
+                "sha256": "f8a1f9f6b7017bfa364d93c88ec04d07b50bb52900780d39037e683a23cdb14c"
+              }
+            },
+            {
+              "path": "dwp-people-server/src/test/java/com/dwp/services/people/hris/employeeservice/employeechange/EmployeeChangeRequestAdviceTest.java",
+              "change": "ADD",
+              "before": null,
+              "after": {
+                "mode": "100644",
+                "gitBlobSha1": "33fca54e60b74b9780df022cdcf3cd544763e176",
+                "bytes": 6607,
+                "sha256": "06928a69baf9e3f65cf901731626c5573e556aea01e2e954baa4aa679bbbaf10"
+              }
+            },
+            {
+              "path": "dwp-people-server/src/test/java/com/dwp/services/people/hris/employeeservice/employeechange/EmployeeChangeServiceProxyTest.java",
+              "change": "ADD",
+              "before": null,
+              "after": {
+                "mode": "100644",
+                "gitBlobSha1": "a14bd81fd42dd01bcf7ef5897d08bd7849d44ee0",
+                "bytes": 3759,
+                "sha256": "41d36e9d26b508b7569d282c580f86039105add98c6473b4f681f4cfd9177100"
+              }
+            },
+            {
+              "path": "dwp-people-server/src/test/java/com/dwp/services/people/hris/employeeservice/employeechange/EmployeeChangeServiceTest.java",
+              "change": "ADD",
+              "before": null,
+              "after": {
+                "mode": "100644",
+                "gitBlobSha1": "ec19aaca45474972bd80c464acbac5dad61260a3",
+                "bytes": 30320,
+                "sha256": "31402f76347468201a87a1c76809e88a042b3fd51d0fc6b78c1255c7b3bba756"
+              }
+            },
+            {
+              "path": "dwp-people-server/src/test/java/com/dwp/services/people/hris/employeeservice/employeechange/HrmIaEntryQueryContractTest.java",
+              "change": "ADD",
+              "before": null,
+              "after": {
+                "mode": "100644",
+                "gitBlobSha1": "9b4d208c2ced66f055a053f420122c2fb7aa3c38",
+                "bytes": 17708,
+                "sha256": "67c002d72b0a1044e7998ae2d76afd769f9e08060d80c9f9ba2495b390d5bc12"
+              }
+            },
+            {
+              "path": "dwp-people-server/src/test/java/com/dwp/services/people/hris/employeeservice/employeechange/approvalbridge/EmployeeChangeApprovalCallbackPostgresTest.java",
+              "change": "MODIFY",
+              "before": {
+                "mode": "100644",
+                "gitBlobSha1": "91a001e5bd134e3e7a2b6f3f4288e9f0d55c9f51",
+                "bytes": 24986,
+                "sha256": "627d1a6911f15f61dfeb115627d203150b4f3216317fb45d0df32dcb8fdfae93"
+              },
+              "after": {
+                "mode": "100644",
+                "gitBlobSha1": "1bbe89015379d4cd59e6b31028c34e884524cce1",
+                "bytes": 24962,
+                "sha256": "62d0c187e075e375b7c90c7805825b426fa9291c7ea1aa74211297e8d31d3f7f"
+              }
+            }
+          ],
+          "changedFilesSha256": "6dd9d3dc2a7bf2d7c2dc3e3d40aa3e6660b3670e1479f62abeb2b179998eec2b"
+        }
+      ],
+      "migration": {
+        "mode": "CONTROL_BOOTSTRAP_READ_ONLY_PIN",
+        "exactRelativePath": "dwp-people-server/src/main/resources/db/migration/V54__create_employee_change_request_lifecycle.sql",
+        "used": false,
+        "status": "UNCHANGED_READ_ONLY_V54",
+        "artifact": {
+          "mode": "100644",
+          "gitBlobSha1": "5f90ce0886ad92464adeb608ecf9744dafae4d30",
+          "bytes": 30049,
+          "sha256": "f701bfaff260331c83dc60bcd5b7c7fb2f9c58b11e888705c4c999a48d0ecac9"
+        },
+        "migrationEditAuthorized": false
+      }
+    }
+  ],
+  "expectedUnionSha256": "cf52666e154a2ea51476b6edafa907949c086e158729244e32ed22af171df2ce",
+  "authority": {
+    "resultsAdmittedAfterCarrier": true,
+    "integrationMergeAuthorized": false,
+    "sharedControlPathChangeAuthorizedForModules": false,
+    "customerDataAuthorized": false,
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "sealedPayloadSha256": "1fda38a3d2e506410c2ea9bf482ef1755754c520ac5eeb74b509728007e14c0d"
+}
