@@ -1,0 +1,257 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dwp.example/hris/g7/result-admission-receipt.schema.v3.json",
+  "title": "G7 SYS/HRM result admission receipt v3",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "receiptId", "runId", "status", "issuedAt", "issuedBy", "predecessor", "testEvidence", "sharedVerificationPlan", "sharedTestSource", "toolchain", "moduleResults", "expectedUnionSha256", "authority", "sealedPayloadSha256"],
+  "properties": {
+    "schema": {"const": "dwp.hris.g7-sys-hrm-result-admission-receipt.v3"},
+    "receiptId": {"type": "string", "pattern": "^HRIS-G7-SYS-HRM-RESULT-ADMISSION-[A-Z0-9-]+$"},
+    "runId": {"$ref": "#/$defs/runId"},
+    "status": {"const": "PASS_RESULTS_ADMITTED_PENDING_CARRIER"},
+    "issuedAt": {"type": "string", "format": "date-time"},
+    "issuedBy": {"const": "SYS_COMMON_INTEGRATION_CONTROL"},
+    "predecessor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["r2PromotionReceipt", "activeTokenClosedSet", "integrationMergeAuthorized"],
+      "properties": {
+        "r2PromotionReceipt": {"$ref": "#/$defs/fileCarrierPin"},
+        "activeTokenClosedSet": {"const": ["G7-START-SYS-BASE-TFR-SYS-007-R2", "G7-START-HRM-BASE-TFR-HRM-010-R2"]},
+        "integrationMergeAuthorized": {"const": false}
+      }
+    },
+    "testEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "gitBlobSha1", "sha256", "bytes", "carrierCommit", "carrierTree", "evidenceId", "closedSet"],
+      "properties": {
+        "path": {"$ref": "#/$defs/path"},
+        "gitBlobSha1": {"$ref": "#/$defs/sha1"},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "bytes": {"type": "integer", "minimum": 1},
+        "carrierCommit": {"$ref": "#/$defs/sha1"},
+        "carrierTree": {"$ref": "#/$defs/sha1"},
+        "evidenceId": {"type": "string", "minLength": 1},
+        "closedSet": {"const": ["SYS_BACKEND_TARGETED", "SYS_FRONTEND_TARGETED", "HRM_BACKEND_TARGETED", "HRM_FRONTEND_TARGETED"]}
+      }
+    },
+    "sharedVerificationPlan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "gitBlobSha1", "sha256", "bytes", "carrierCommit", "carrierTree", "planId", "authorityStatus"],
+      "properties": {
+        "path": {"$ref": "#/$defs/path"},
+        "gitBlobSha1": {"$ref": "#/$defs/sha1"},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "bytes": {"type": "integer", "minimum": 1},
+        "carrierCommit": {"$ref": "#/$defs/sha1"},
+        "carrierTree": {"$ref": "#/$defs/sha1"},
+        "planId": {"type": "string", "minLength": 1},
+        "authorityStatus": {"const": "CONTROL_PROPOSAL_NOT_PREDECESSOR_AUTHORITY"}
+      }
+    },
+    "sharedTestSource": {"$ref": "#/$defs/sharedTestSource"},
+    "toolchain": {"type": "array", "minItems": 11, "maxItems": 11, "uniqueItems": true, "items": {"$ref": "#/$defs/filePin"}},
+    "moduleResults": {"type": "array", "minItems": 2, "maxItems": 2, "uniqueItems": true, "items": {"$ref": "#/$defs/moduleResult"}},
+    "expectedUnionSha256": {"$ref": "#/$defs/sha256"},
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["resultsAdmittedAfterCarrier", "integrationMergeAuthorized", "sharedControlPathChangeAuthorizedForModules", "customerDataAuthorized", "customerActivationAuthorized", "productionReleaseAuthorized"],
+      "properties": {
+        "resultsAdmittedAfterCarrier": {"const": true},
+        "integrationMergeAuthorized": {"const": false},
+        "sharedControlPathChangeAuthorizedForModules": {"const": false},
+        "customerDataAuthorized": {"const": false},
+        "customerActivationAuthorized": {"const": false},
+        "productionReleaseAuthorized": {"const": false}
+      }
+    },
+    "sealedPayloadSha256": {"$ref": "#/$defs/sha256"}
+  },
+  "$defs": {
+    "runId": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]{2,63}$"},
+    "path": {"type": "string", "minLength": 1},
+    "sha1": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "filePin": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "gitBlobSha1", "sha256", "bytes"],
+      "properties": {
+        "path": {"$ref": "#/$defs/path"},
+        "gitBlobSha1": {"$ref": "#/$defs/sha1"},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "bytes": {"type": "integer", "minimum": 1}
+      }
+    },
+    "fileCarrierPin": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "gitBlobSha1", "sha256", "bytes", "carrierCommit", "carrierTree"],
+      "properties": {
+        "path": {"$ref": "#/$defs/path"},
+        "gitBlobSha1": {"$ref": "#/$defs/sha1"},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "bytes": {"type": "integer", "minimum": 1},
+        "carrierCommit": {"$ref": "#/$defs/sha1"},
+        "carrierTree": {"$ref": "#/$defs/sha1"}
+      }
+    },
+    "sharedTestSource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "gitBlobSha1", "sha256", "bytes", "templateId", "carrierCommit", "carrierTree", "toolingCarrierCommit", "toolingCarrierTree", "branch", "upstream", "carrierPushed", "exactControlPrerequisites", "sourceCarrierGate", "inputCarrierDirectChild"],
+      "properties": {
+        "path": {"const": "e2e/hris-sys-hrm-responsive-accessibility.spec.ts"},
+        "gitBlobSha1": {"$ref": "#/$defs/sha1"},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "bytes": {"type": "integer", "minimum": 1},
+        "templateId": {"const": "G7-SYS-HRM-RESPONSIVE-ACCESSIBILITY-V2"},
+        "carrierCommit": {"$ref": "#/$defs/sha1"},
+        "carrierTree": {"$ref": "#/$defs/sha1"},
+        "toolingCarrierCommit": {"$ref": "#/$defs/sha1"},
+        "toolingCarrierTree": {"$ref": "#/$defs/sha1"},
+        "branch": {"type": "string", "minLength": 1},
+        "upstream": {"type": "string", "minLength": 1},
+        "carrierPushed": {"const": true},
+        "exactControlPrerequisites": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["patch", "modifiedPaths", "addedPaths", "carrierChangedPathsClosedSet", "patchMatchesModifiedDiff"],
+          "properties": {
+            "patch": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["path", "gitBlobSha1", "sha256", "bytes"],
+              "properties": {
+                "path": {"const": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r3-result-acceptance/control-prerequisites.patch"},
+                "gitBlobSha1": {"$ref": "#/$defs/sha1"},
+                "sha256": {"$ref": "#/$defs/sha256"},
+                "bytes": {"type": "integer", "minimum": 1}
+              }
+            },
+            "modifiedPaths": {"const": ["apps/dwp/src/routes/product-route-contract-source.test.ts", "apps/dwp/src/routes/product-route-contract-source.ts", "apps/dwp/src/routes/product-route-contracts.generated.test.ts", "package.json", "scripts/internal-export-allowlist.json", "scripts/production-reachability-allowlist.json"]},
+            "addedPaths": {"const": ["e2e/hris-sys-hrm-responsive-accessibility.spec.ts"]},
+            "carrierChangedPathsClosedSet": {"const": true},
+            "patchMatchesModifiedDiff": {"const": true}
+          }
+        },
+        "sourceCarrierGate": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "requireCurrentHead", "requireClean", "requireExactUpstreamHead"],
+          "properties": {
+            "status": {"const": "REQUIRED_BEFORE_INPUT_CARRIER"},
+            "requireCurrentHead": {"const": true},
+            "requireClean": {"const": true},
+            "requireExactUpstreamHead": {"const": true}
+          }
+        },
+        "inputCarrierDirectChild": {"const": true}
+      }
+    },
+    "commitPin": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["commit", "tree"],
+      "properties": {"commit": {"$ref": "#/$defs/sha1"}, "tree": {"$ref": "#/$defs/sha1"}}
+    },
+    "blobPin": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "gitBlobSha1", "bytes", "sha256"],
+      "properties": {
+        "mode": {"type": "string", "pattern": "^[0-9]{6}$"},
+        "gitBlobSha1": {"$ref": "#/$defs/sha1"},
+        "bytes": {"type": "integer", "minimum": 0},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "nullableBlobPin": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/blobPin"}]},
+    "manifestItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "change", "before", "after"],
+      "properties": {
+        "path": {"$ref": "#/$defs/path"},
+        "change": {"enum": ["ADD", "MODIFY", "DELETE"]},
+        "before": {"$ref": "#/$defs/nullableBlobPin"},
+        "after": {"$ref": "#/$defs/nullableBlobPin"}
+      }
+    },
+    "worktreeResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repo", "absolutePath", "branch", "upstream", "basePin", "resultPin", "clean", "upstreamMatched", "changedFiles", "changedFilesSha256"],
+      "properties": {
+        "repo": {"enum": ["frontend", "backend"]},
+        "absolutePath": {"type": "string", "minLength": 1},
+        "branch": {"type": "string", "minLength": 1},
+        "upstream": {"type": "string", "minLength": 1},
+        "basePin": {"$ref": "#/$defs/commitPin"},
+        "resultPin": {"$ref": "#/$defs/commitPin"},
+        "clean": {"const": true},
+        "upstreamMatched": {"const": true},
+        "changedFiles": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/manifestItem"}},
+        "changedFilesSha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "sysMigrationUnused": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "leaseId", "exactRelativePath", "used", "status", "artifact"],
+      "properties": {
+        "mode": {"const": "ADMITTED_EXACT_LEASE"},
+        "leaseId": {"const": "G7-LEASE-SYS-PLATFORM-V325-R2"},
+        "exactRelativePath": {"const": "dwp-platform-server/src/main/resources/db/migration/V325__create_hris_reference_configuration_lifecycle.sql"},
+        "used": {"const": false},
+        "status": {"const": "UNUSED"},
+        "artifact": {"type": "null"}
+      }
+    },
+    "sysMigrationUsed": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "leaseId", "exactRelativePath", "used", "status", "artifact"],
+      "properties": {
+        "mode": {"const": "ADMITTED_EXACT_LEASE"},
+        "leaseId": {"const": "G7-LEASE-SYS-PLATFORM-V325-R2"},
+        "exactRelativePath": {"const": "dwp-platform-server/src/main/resources/db/migration/V325__create_hris_reference_configuration_lifecycle.sql"},
+        "used": {"const": true},
+        "status": {"const": "USED_EXACT_V325"},
+        "artifact": {"$ref": "#/$defs/blobPin"}
+      }
+    },
+    "hrmMigration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "exactRelativePath", "used", "status", "artifact", "migrationEditAuthorized"],
+      "properties": {
+        "mode": {"const": "CONTROL_BOOTSTRAP_READ_ONLY_PIN"},
+        "exactRelativePath": {"const": "dwp-people-server/src/main/resources/db/migration/V54__create_employee_change_request_lifecycle.sql"},
+        "used": {"const": false},
+        "status": {"const": "UNCHANGED_READ_ONLY_V54"},
+        "artifact": {"$ref": "#/$defs/blobPin"},
+        "migrationEditAuthorized": {"const": false}
+      }
+    },
+    "migration": {"oneOf": [{"$ref": "#/$defs/sysMigrationUnused"}, {"$ref": "#/$defs/sysMigrationUsed"}, {"$ref": "#/$defs/hrmMigration"}]},
+    "moduleResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["module", "sliceId", "tokenId", "tokenExpiresAt", "pathPolicySha256", "worktrees", "migration"],
+      "properties": {
+        "module": {"enum": ["SYS", "HRM"]},
+        "sliceId": {"enum": ["BASE-TFR-SYS-007", "BASE-TFR-HRM-010"]},
+        "tokenId": {"enum": ["G7-START-SYS-BASE-TFR-SYS-007-R2", "G7-START-HRM-BASE-TFR-HRM-010-R2"]},
+        "tokenExpiresAt": {"type": "string", "format": "date-time"},
+        "pathPolicySha256": {"$ref": "#/$defs/sha256"},
+        "worktrees": {"type": "array", "minItems": 2, "maxItems": 2, "uniqueItems": true, "items": {"$ref": "#/$defs/worktreeResult"}},
+        "migration": {"$ref": "#/$defs/migration"}
+      }
+    }
+  }
+}
