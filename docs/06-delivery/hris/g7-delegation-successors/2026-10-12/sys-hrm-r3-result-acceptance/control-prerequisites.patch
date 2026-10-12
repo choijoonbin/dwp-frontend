@@ -1,0 +1,275 @@
+diff --git a/apps/dwp/src/routes/product-route-contract-source.test.ts b/apps/dwp/src/routes/product-route-contract-source.test.ts
+index 6d08e051839a68e88106918576b67d554ab63790..ed287ca412388cb57f565df6e6961d00978f50e6 100644
+--- a/apps/dwp/src/routes/product-route-contract-source.test.ts
++++ b/apps/dwp/src/routes/product-route-contract-source.test.ts
+@@ -197,4 +197,24 @@ describe('product route contract source', () => {
+       )
+     ).toThrow(/duplicated/u);
+   });
++
++  it('accepts a product-owned domain namespace while rejecting a foreign product contract', () => {
++    expect(
++      defineProductRouteContractSource(
++        [
++          {
++            ...source[1],
++            routeContractKey: 'route.example.configuration.policy-detail.page',
++          },
++        ],
++        [manifest]
++      )
++    ).toHaveLength(1);
++    expect(() =>
++      defineProductRouteContractSource(
++        [{ ...source[1], routeContractKey: 'route.foreign.admin.policy-detail.page' }],
++        [manifest]
++      )
++    ).toThrow(/outside its product/u);
++  });
+ });
+diff --git a/apps/dwp/src/routes/product-route-contract-source.ts b/apps/dwp/src/routes/product-route-contract-source.ts
+index 17363cf742d0a1c05b5031608296ebdbf4373be4..3795db7ae95e0ddb8fa6ed58f50aff85ec98850b 100644
+--- a/apps/dwp/src/routes/product-route-contract-source.ts
++++ b/apps/dwp/src/routes/product-route-contract-source.ts
+@@ -3,7 +3,6 @@ import {
+   matchesProductRoute,
+   normalizeProductPath,
+   type ProductManifest,
+-  type ProductSurfaceManifest,
+ } from '../components/product-manifest';
+ 
+ export type RegisteredProductRouteBase = {
+@@ -85,11 +84,6 @@ function assertRoutePattern(pattern: string, routeId: string): void {
+   }
+ }
+ 
+-function surfaceContractSegment(manifest: ProductSurfaceManifest, surfaceId: string): string {
+-  const prefix = `${manifest.id}.`;
+-  return surfaceId.startsWith(prefix) ? surfaceId.slice(prefix.length) : surfaceId;
+-}
+-
+ export function defineProductRouteContractSource(
+   records: readonly ProductPageRouteContractSource[],
+   manifests: readonly ProductManifest[] = []
+@@ -126,13 +120,10 @@ export function defineProductRouteContractSource(
+     if (!surface.routeMatchers.some((matcher) => matchesProductRoute(record.pattern, matcher))) {
+       throw new Error(`Product page route is outside its surface boundary: ${record.routeId}`);
+     }
+-    const expectedContractPrefix = `route.${manifest.id}.${surfaceContractSegment(
+-      manifest,
+-      surface.id
+-    )}.`;
++    const expectedContractPrefix = `route.${manifest.id}.`;
+     if (!record.routeContractKey.startsWith(expectedContractPrefix)) {
+       throw new Error(
+-        `Product page route contract is outside its product surface: ${record.routeId}`
++        `Product page route contract is outside its product: ${record.routeId}`
+       );
+     }
+     const knownRedirectIds = new Set((manifest.legacyRedirects ?? []).map(({ id }) => id));
+diff --git a/apps/dwp/src/routes/product-route-contracts.generated.test.ts b/apps/dwp/src/routes/product-route-contracts.generated.test.ts
+index ff2bd3a609e95f6013490a6d783729a2a55c2988..e02e568ca5d2b4b521b0dc8ff1b62457a9137765 100644
+--- a/apps/dwp/src/routes/product-route-contracts.generated.test.ts
++++ b/apps/dwp/src/routes/product-route-contracts.generated.test.ts
+@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
+ import fs from 'node:fs';
+ import path from 'node:path';
+ 
++import { HCM_PRODUCT_MANIFEST } from '../features/hcm/hcm-product-manifest';
+ import { MESSAGING_PRODUCT_MANIFEST } from '../features/messaging/messaging-product-manifest';
+ 
+ import {
+@@ -85,8 +86,11 @@ describe('generated product route authorization contracts', () => {
+       'spaces',
+       'workplace',
+     ]);
+-    expect(router).toHaveLength(119);
++    expect(router).toHaveLength(124);
+     expect(registry).toEqual(router);
++    expect(() =>
++      buildProductPageRouteContractSource([HCM_PRODUCT_MANIFEST], PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE)
++    ).not.toThrow();
+   });
+ 
+   it('never turns DATA or ACTION registry records into browser routes', () => {
+@@ -111,8 +115,8 @@ describe('generated product route authorization contracts', () => {
+     );
+     expect(nonPages.every((route) => route.routeId === null && route.pattern === null)).toBe(true);
+     expect(DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(71);
+-    expect(ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(190);
+-    expect(REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG).toHaveLength(190);
++    expect(ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(195);
++    expect(REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG).toHaveLength(195);
+     expect(REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG.every((route) => route.routeKind === 'PAGE')).toBe(
+       true
+     );
+diff --git a/package.json b/package.json
+index 81371b9ddff1a4cc964609ad44a88f91d101fe82..abf43eb561925ac4840aeb4249967d78b0eb2b74 100644
+--- a/package.json
++++ b/package.json
+@@ -28,17 +28,17 @@
+   "scripts": {
+     "dev": "node scripts/check-package-manager-policy.mjs && vite",
+     "start": "node scripts/check-package-manager-policy.mjs && vite preview",
+-    "build": "node scripts/check-package-manager-policy.mjs && node scripts/check-approval-stitch-source.mjs && node scripts/check-approval-stitch-extension-source.mjs && node scripts/check-approval-admin-v2-design-traceability.mjs && node scripts/sync-meeting-background-assets.mjs --check && node scripts/sync-openapi-contract.mjs --check && node scripts/sync-agent-openapi-contract.mjs --check && node scripts/sync-product-surface-authorization.mjs --check && node scripts/sync-product-surface-internal-closure.mjs --check && node scripts/sync-product-authorization-fixtures.mjs --check && node scripts/check-app-architecture.mjs && node scripts/generate-route-composition.mjs --check && node scripts/check-feature-boundaries.mjs && node scripts/check-api-boundaries.mjs && node scripts/check-relative-import-cycles.mjs && node scripts/check-production-reachability.mjs && node scripts/check-unused-internal-exports.mjs && node scripts/check-source-size.mjs && node scripts/check-maintenance-source-size.mjs && node scripts/check-design-system-adoption.mjs && node scripts/check-i18n.mjs && node scripts/check-display-dictionary.mjs && eslint . && tsc && vite build && node scripts/check-bundle-budget.mjs",
++    "build": "node scripts/check-package-manager-policy.mjs && node scripts/check-approval-stitch-source.mjs && node scripts/check-approval-stitch-extension-source.mjs && node scripts/check-approval-admin-v2-design-traceability.mjs && node scripts/sync-meeting-background-assets.mjs --check && node scripts/sync-openapi-contract.mjs --check && node scripts/sync-agent-openapi-contract.mjs --check && node scripts/sync-product-surface-authorization.mjs --check && node scripts/sync-product-surface-internal-closure.mjs --check && node scripts/sync-product-authorization-fixtures.mjs --check && node scripts/check-app-architecture.mjs && node scripts/generate-route-composition.mjs --check && node scripts/check-feature-boundaries.mjs && node scripts/check-api-boundaries.mjs && node scripts/check-relative-import-cycles.mjs && node scripts/check-production-reachability.mjs && node --max-old-space-size=8192 scripts/check-unused-internal-exports.mjs && node scripts/check-source-size.mjs && node scripts/check-maintenance-source-size.mjs && node scripts/check-design-system-adoption.mjs && node scripts/check-i18n.mjs && node scripts/check-display-dictionary.mjs && eslint . && tsc && vite build && node scripts/check-bundle-budget.mjs",
+     "approval:stitch:check": "node scripts/check-approval-stitch-source.mjs && node scripts/check-approval-stitch-extension-source.mjs && node scripts/check-approval-admin-v2-design-traceability.mjs && node --test scripts/check-approval-stitch-source.test.mjs scripts/check-approval-stitch-extension-source.test.mjs scripts/check-approval-admin-v2-design-traceability.test.mjs",
+     "bundle:check": "vite build && node scripts/check-bundle-budget.mjs",
+     "build:products": "nx run-many -t build --projects='dwp-*' --exclude=dwp --parallel=3",
+     "test:product-artifacts": "playwright test --config playwright.product-artifact.config.ts",
+-    "lint": "node scripts/check-package-manager-policy.mjs && node scripts/sync-meeting-background-assets.mjs --check && node scripts/check-feature-boundaries.mjs && node scripts/check-api-boundaries.mjs && node scripts/check-relative-import-cycles.mjs && node scripts/check-production-reachability.mjs && node scripts/check-unused-internal-exports.mjs && node scripts/check-source-size.mjs && node scripts/check-maintenance-source-size.mjs && eslint . && node scripts/check-design-system-adoption.mjs && node scripts/check-display-dictionary.mjs",
++    "lint": "node scripts/check-package-manager-policy.mjs && node scripts/sync-meeting-background-assets.mjs --check && node scripts/check-feature-boundaries.mjs && node scripts/check-api-boundaries.mjs && node scripts/check-relative-import-cycles.mjs && node scripts/check-production-reachability.mjs && node --max-old-space-size=8192 scripts/check-unused-internal-exports.mjs && node scripts/check-source-size.mjs && node scripts/check-maintenance-source-size.mjs && eslint . && node scripts/check-design-system-adoption.mjs && node scripts/check-display-dictionary.mjs",
+     "lint:fix": "eslint --fix .",
+     "format:check": "yarn recovery:evidence:check && prettier --check \"{apps,libs,e2e,e2e-storybook,.storybook,scripts}/**/*.{js,jsx,mjs,cjs,ts,tsx,json}\" \"*.{js,mjs,ts,json,md}\" \"docs/**/*.md\" \"docs/06-delivery/hris/2026-10-07-g7-module-delegation-preflight.json\"",
+     "format": "prettier --write \"{apps,libs,e2e,e2e-storybook,.storybook,scripts}/**/*.{js,jsx,mjs,cjs,ts,tsx,json}\" \"*.{js,mjs,ts,json,md}\" \"docs/**/*.md\"",
+-    "typecheck": "tsc --noEmit",
+-    "architecture:check": "node scripts/check-approval-stitch-source.mjs && node scripts/check-approval-stitch-extension-source.mjs && node scripts/check-approval-admin-v2-design-traceability.mjs && node scripts/sync-product-surface-authorization.mjs --check && node scripts/sync-product-surface-internal-closure.mjs --check && node scripts/sync-product-authorization-fixtures.mjs --check && node scripts/check-app-architecture.mjs && node scripts/generate-route-composition.mjs --check && node scripts/check-feature-boundaries.mjs && node scripts/check-api-boundaries.mjs && node scripts/check-relative-import-cycles.mjs && node scripts/check-production-reachability.mjs && node scripts/check-unused-internal-exports.mjs && node scripts/check-source-size.mjs && node scripts/check-maintenance-source-size.mjs && node scripts/check-product-surface-production-readiness.mjs",
++    "typecheck": "node --max-old-space-size=8192 ./node_modules/typescript/bin/tsc --noEmit",
++    "architecture:check": "node scripts/check-approval-stitch-source.mjs && node scripts/check-approval-stitch-extension-source.mjs && node scripts/check-approval-admin-v2-design-traceability.mjs && node scripts/sync-product-surface-authorization.mjs --check && node scripts/sync-product-surface-internal-closure.mjs --check && node scripts/sync-product-authorization-fixtures.mjs --check && node scripts/check-app-architecture.mjs && node scripts/generate-route-composition.mjs --check && node scripts/check-feature-boundaries.mjs && node scripts/check-api-boundaries.mjs && node scripts/check-relative-import-cycles.mjs && node scripts/check-production-reachability.mjs && node --max-old-space-size=8192 scripts/check-unused-internal-exports.mjs && node scripts/check-source-size.mjs && node scripts/check-maintenance-source-size.mjs && node scripts/check-product-surface-production-readiness.mjs",
+     "routes:sync": "node scripts/generate-route-composition.mjs --write",
+     "routes:check": "node scripts/generate-route-composition.mjs --check",
+     "source-size:check": "node scripts/check-source-size.mjs",
+@@ -49,7 +49,7 @@
+     "dependency-cycles:check": "node scripts/check-relative-import-cycles.mjs",
+     "production-reachability:check": "node scripts/check-production-reachability.mjs",
+     "production-reachability:test": "node --test scripts/check-production-reachability.test.mjs",
+-    "internal-exports:check": "node scripts/check-unused-internal-exports.mjs",
++    "internal-exports:check": "node --max-old-space-size=8192 scripts/check-unused-internal-exports.mjs",
+     "package-manager:check": "node scripts/check-package-manager-policy.mjs",
+     "design-system:check": "node scripts/check-design-system-adoption.mjs",
+     "design-system:baseline": "node scripts/check-design-system-adoption.mjs --write",
+diff --git a/scripts/internal-export-allowlist.json b/scripts/internal-export-allowlist.json
+index f04940a3b7091838dd1c5ca0f1a1024e7c0945da..28cda693fef59f58c5d4b643374c5dc1148bf2c7 100644
+--- a/scripts/internal-export-allowlist.json
++++ b/scripts/internal-export-allowlist.json
+@@ -1,5 +1,97 @@
+ {
+   "version": 1,
+-  "maximumEntries": 0,
+-  "entries": []
++  "maximumEntries": 13,
++  "entries": [
++    {
++      "path": "apps/dwp/src/features/hris/administration/reference-configuration/api/reference-configuration-api.ts",
++      "name": "approveReferenceConfigurationVersion",
++      "owner": "SYS Reference Configuration",
++      "reason": "Governed lifecycle command client retained as part of the complete generated-operation binding before its UI action is activated.",
++      "removalCondition": "Remove when the approved action is wired into the reference-configuration workspace or the operation is retired."
++    },
++    {
++      "path": "apps/dwp/src/features/hris/administration/reference-configuration/api/reference-configuration-api.ts",
++      "name": "createReferenceConfigurationVersion",
++      "owner": "SYS Reference Configuration",
++      "reason": "Governed lifecycle command client retained as part of the complete generated-operation binding before its UI action is activated.",
++      "removalCondition": "Remove when the create action is wired into the reference-configuration workspace or the operation is retired."
++    },
++    {
++      "path": "apps/dwp/src/features/hris/administration/reference-configuration/api/reference-configuration-api.ts",
++      "name": "ReferenceConfigurationGeneratedContracts",
++      "owner": "SYS Reference Configuration",
++      "reason": "Compile-time inventory pins every generated OpenAPI operation while staged lifecycle actions remain disabled.",
++      "removalCondition": "Remove when a production contract adapter consumes this inventory or generation provides an equivalent compile-time assertion."
++    },
++    {
++      "path": "apps/dwp/src/features/hris/administration/reference-configuration/api/reference-configuration-api.ts",
++      "name": "retireReferenceConfigurationVersion",
++      "owner": "SYS Reference Configuration",
++      "reason": "Governed lifecycle command client retained as part of the complete generated-operation binding before its UI action is activated.",
++      "removalCondition": "Remove when the retire action is wired into the reference-configuration workspace or the operation is retired."
++    },
++    {
++      "path": "apps/dwp/src/features/hris/administration/reference-configuration/api/reference-configuration-api.ts",
++      "name": "rollbackReferenceConfigurationVersion",
++      "owner": "SYS Reference Configuration",
++      "reason": "Governed lifecycle command client retained as part of the complete generated-operation binding before its UI action is activated.",
++      "removalCondition": "Remove when the rollback action is wired into the reference-configuration workspace or the operation is retired."
++    },
++    {
++      "path": "apps/dwp/src/features/hris/administration/reference-configuration/api/reference-configuration-api.ts",
++      "name": "scheduleReferenceConfigurationVersion",
++      "owner": "SYS Reference Configuration",
++      "reason": "Governed lifecycle command client retained as part of the complete generated-operation binding before its UI action is activated.",
++      "removalCondition": "Remove when the schedule action is wired into the reference-configuration workspace or the operation is retired."
++    },
++    {
++      "path": "apps/dwp/src/features/hris/administration/reference-configuration/api/reference-configuration-api.ts",
++      "name": "simulateReferenceConfigurationVersion",
++      "owner": "SYS Reference Configuration",
++      "reason": "Governed lifecycle command client retained as part of the complete generated-operation binding before its UI action is activated.",
++      "removalCondition": "Remove when the simulation action is wired into the reference-configuration workspace or the operation is retired."
++    },
++    {
++      "path": "apps/dwp/src/features/hris/administration/reference-configuration/api/reference-configuration-api.ts",
++      "name": "submitReferenceConfigurationVersion",
++      "owner": "SYS Reference Configuration",
++      "reason": "Governed lifecycle command client retained as part of the complete generated-operation binding before its UI action is activated.",
++      "removalCondition": "Remove when the submit action is wired into the reference-configuration workspace or the operation is retired."
++    },
++    {
++      "path": "apps/dwp/src/features/hris/administration/reference-configuration/model/reference-configuration-model.ts",
++      "name": "REFERENCE_CONFIGURATION_RUNTIME_FLAG",
++      "owner": "SYS Reference Configuration",
++      "reason": "The exported flag name is the stable activation contract while runtime gating remains owned by the shared shell.",
++      "removalCondition": "Remove when the shared activation registry imports this constant directly or the feature flag is retired."
++    },
++    {
++      "path": "apps/dwp/src/features/hris/performance/population-freeze/performance-review-operations-contract.ts",
++      "name": "PERFORMANCE_REVIEW_OPERATIONS_CAPABILITY",
++      "owner": "PER Performance Operations",
++      "reason": "Public capability metadata is retained for the next governed shell activation step.",
++      "removalCondition": "Remove when the shell authorization registry consumes the constant or the route is retired."
++    },
++    {
++      "path": "apps/dwp/src/features/hris/performance/population-freeze/performance-review-operations-contract.ts",
++      "name": "PERFORMANCE_REVIEW_OPERATIONS_ROUTE_CONTRACT",
++      "owner": "PER Performance Operations",
++      "reason": "Public route-contract metadata is retained for the next governed shell activation step.",
++      "removalCondition": "Remove when the generated route registry consumes the constant or the route is retired."
++    },
++    {
++      "path": "apps/dwp/src/features/hris/performance/population-freeze/population-freeze-api.ts",
++      "name": "performancePopulationFreezeDataSource",
++      "owner": "PER Performance Operations",
++      "reason": "Default governed data-source adapter remains available for the pending population-freeze workspace activation.",
++      "removalCondition": "Remove when the production workspace consumes the adapter or dependency injection replaces it."
++    },
++    {
++      "path": "apps/dwp/src/features/hris/performance/population-freeze/population-freeze-contract.ts",
++      "name": "PERFORMANCE_POPULATION_FREEZE_ROUTE_CONTRACT",
++      "owner": "PER Performance Operations",
++      "reason": "Public route-contract metadata is retained for the next governed population-freeze activation step.",
++      "removalCondition": "Remove when the generated route registry consumes the constant or the route is retired."
++    }
++  ]
+ }
+diff --git a/scripts/production-reachability-allowlist.json b/scripts/production-reachability-allowlist.json
+index 94600a0da250f180f1476a7ea1ca30d1475b0347..3abb5f477364e7aae2b81bdf3b6b2de855205151 100644
+--- a/scripts/production-reachability-allowlist.json
++++ b/scripts/production-reachability-allowlist.json
+@@ -1,6 +1,6 @@
+ {
+   "version": 1,
+-  "maximumEntries": 16,
++  "maximumEntries": 18,
+   "entries": [
+     {
+       "path": "apps/dwp/src/features/hris/shell/components/hris-product-map-group.tsx",
+@@ -97,6 +97,18 @@
+       "owner": "Frontend Architecture",
+       "reason": "Verification-only menu projection consumed by route and menu contract tests.",
+       "removalCondition": "Remove when menu verification reads the generated product manifests directly."
++    },
++    {
++      "path": "apps/dwp/src/routes/draft-product-page-route-contracts.ts",
++      "owner": "Frontend Architecture",
++      "reason": "Verification-only draft route projection consumed by generated product route contract tests.",
++      "removalCondition": "Remove when production routing consumes the projection or verification reads generated route data directly."
++    },
++    {
++      "path": "apps/dwp/src/routes/product-page-route-contracts.ts",
++      "owner": "Frontend Architecture",
++      "reason": "Verification-only registered route projection consumed by generated product route contract tests.",
++      "removalCondition": "Remove when production routing consumes the projection or verification reads generated route data directly."
+     }
+   ]
+ }

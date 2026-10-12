@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dwp.example/hris/g7/module-test-evidence-input.schema.v3.json",
+  "title": "G7 SYS/HRM Control-authored module test evidence input v3",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "evidenceId", "issuedBy", "authorityStatus", "closedSet", "results", "sealedPayloadSha256"],
+  "properties": {
+    "schema": {"const": "dwp.hris.g7-sys-hrm-module-test-evidence-input.v3"},
+    "evidenceId": {"type": "string", "minLength": 1},
+    "issuedBy": {"const": "SYS_COMMON_INTEGRATION_CONTROL"},
+    "authorityStatus": {"const": "CONTROL_AUTHORED_RESULT_EVIDENCE"},
+    "closedSet": {
+      "type": "array", "minItems": 4, "maxItems": 4, "uniqueItems": true,
+      "items": {"enum": ["SYS_BACKEND_TARGETED", "SYS_FRONTEND_TARGETED", "HRM_BACKEND_TARGETED", "HRM_FRONTEND_TARGETED"]}
+    },
+    "results": {"type": "array", "minItems": 4, "maxItems": 4, "uniqueItems": true, "items": {"$ref": "#/$defs/result"}},
+    "sealedPayloadSha256": {"$ref": "#/$defs/sha256"}
+  },
+  "$defs": {
+    "sha1": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "output": {
+      "type": "object", "additionalProperties": false,
+      "required": ["path", "gitBlobSha1", "sha256", "bytes", "redactionStatus"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "gitBlobSha1": {"$ref": "#/$defs/sha1"},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "bytes": {"type": "integer", "minimum": 1},
+        "redactionStatus": {"const": "SANITIZED_NO_SECRET_OR_CUSTOMER_DATA"}
+      }
+    },
+    "executionBinding": {
+      "type": "object", "additionalProperties": false,
+      "required": ["mode", "testedTree", "authorityStatus"],
+      "properties": {
+        "mode": {"enum": ["PRE_COMMIT_FINAL_TREE", "POST_COMMIT_EXACT_RESULT"]},
+        "testedTree": {"$ref": "#/$defs/sha1"},
+        "authorityStatus": {"enum": ["CONTROL_ASSERTED_WORKTREE_TREE_EQUALS_RESULT_TREE", "GIT_COMMIT_BOUND_EXACT_RESULT"]}
+      }
+    },
+    "result": {
+      "type": "object", "additionalProperties": false,
+      "required": ["commandId", "module", "repo", "cwd", "argv", "status", "exitCode", "resultCommit", "resultTree", "executedAt", "executionBinding", "output"],
+      "properties": {
+        "commandId": {"type": "string"},
+        "module": {"enum": ["SYS", "HRM"]},
+        "repo": {"enum": ["frontend", "backend"]},
+        "cwd": {"enum": ["frontend", "backend"]},
+        "argv": {"type": "array", "minItems": 2, "items": {"type": "string"}},
+        "status": {"const": "PASS"},
+        "exitCode": {"const": 0},
+        "resultCommit": {"$ref": "#/$defs/sha1"},
+        "resultTree": {"$ref": "#/$defs/sha1"},
+        "executedAt": {"type": "string", "format": "date-time"},
+        "executionBinding": {"$ref": "#/$defs/executionBinding"},
+        "output": {"$ref": "#/$defs/output"}
+      }
+    }
+  }
+}

@@ -1,0 +1,184 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dwp.example/hris/g7/integration-authorization-receipt.schema.v3.json",
+  "title": "G7 SYS/HRM integration authorization receipt v3",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "receiptId", "runId", "status", "issuedAt", "issuedBy", "admission", "authorizedResults", "expectedUnionSha256", "preIntegration", "sharedVerificationPlan", "sharedTestSource", "authority", "sealedPayloadSha256"],
+  "properties": {
+    "schema": {"const": "dwp.hris.g7-sys-hrm-integration-authorization-receipt.v3"},
+    "receiptId": {"type": "string", "pattern": "^HRIS-G7-SYS-HRM-INTEGRATION-AUTHORIZATION-[A-Z0-9-]+$"},
+    "runId": {"$ref": "#/$defs/runId"},
+    "status": {"const": "PASS_INTEGRATION_AUTHORIZATION_PENDING_CARRIER"},
+    "issuedAt": {"type": "string", "format": "date-time"},
+    "issuedBy": {"const": "SYS_COMMON_INTEGRATION_CONTROL"},
+    "admission": {"$ref": "#/$defs/receiptRef"},
+    "authorizedResults": {"type": "array", "minItems": 4, "maxItems": 4, "uniqueItems": true, "items": {"$ref": "#/$defs/authorizedResult"}},
+    "expectedUnionSha256": {"$ref": "#/$defs/sha256"},
+    "preIntegration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["frontend", "backend"],
+      "properties": {
+        "frontend": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["rule", "branch", "upstream"],
+          "properties": {
+            "rule": {"const": "AUTHORIZATION_CARRIER_COMMIT_EXACT"},
+            "branch": {"type": "string", "minLength": 1},
+            "upstream": {"type": "string", "minLength": 1}
+          }
+        },
+        "backend": {"$ref": "#/$defs/livePin"}
+      }
+    },
+    "sharedVerificationPlan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "gitBlobSha1", "sha256", "bytes", "carrierCommit", "carrierTree", "planId", "authorityStatus", "closedSet", "requiredCategories"],
+      "properties": {
+        "path": {"$ref": "#/$defs/path"},
+        "gitBlobSha1": {"$ref": "#/$defs/sha1"},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "bytes": {"type": "integer", "minimum": 1},
+        "carrierCommit": {"$ref": "#/$defs/sha1"},
+        "carrierTree": {"$ref": "#/$defs/sha1"},
+        "planId": {"type": "string", "minLength": 1},
+        "authorityStatus": {"const": "CONTROL_PROPOSAL_NOT_PREDECESSOR_AUTHORITY"},
+        "closedSet": {"const": ["CONTROL_AUTHORIZATION_CHECK", "CONTROL_BACKEND_OPENAPI_CHECK", "CONTROL_FRONTEND_OPENAPI_CHECK", "CONTROL_SHARED_ROUTE_ACCESS", "CONTROL_FRONTEND_TYPECHECK", "CONTROL_FRONTEND_ARCHITECTURE", "CONTROL_RESPONSIVE_ACCESSIBILITY_PLAYWRIGHT"]},
+        "requiredCategories": {"const": ["CONTRACT_AUTHORIZATION_SYNC", "SHARED_ROUTE_ACCESS", "TYPECHECK_ARCHITECTURE", "RESPONSIVE_ACCESSIBILITY"]}
+      }
+    },
+    "sharedTestSource": {"$ref": "#/$defs/sharedTestSource"},
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["beforeCarrier", "effectiveAfterCarrier", "customerDataAuthorized", "customerActivationAuthorized", "productionReleaseAuthorized"],
+      "properties": {
+        "beforeCarrier": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["integrationMergeAuthorized"],
+          "properties": {"integrationMergeAuthorized": {"const": false}}
+        },
+        "effectiveAfterCarrier": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["integrationMergeAuthorized", "exactResultsOnly", "frontendPreIntegrationRule", "backendPreIntegrationCommit"],
+          "properties": {
+            "integrationMergeAuthorized": {"const": true},
+            "exactResultsOnly": {"const": true},
+            "frontendPreIntegrationRule": {"const": "AUTHORIZATION_CARRIER_COMMIT_EXACT"},
+            "backendPreIntegrationCommit": {"$ref": "#/$defs/sha1"}
+          }
+        },
+        "customerDataAuthorized": {"const": false},
+        "customerActivationAuthorized": {"const": false},
+        "productionReleaseAuthorized": {"const": false}
+      }
+    },
+    "sealedPayloadSha256": {"$ref": "#/$defs/sha256"}
+  },
+  "$defs": {
+    "runId": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]{2,63}$"},
+    "path": {"type": "string", "minLength": 1},
+    "sha1": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "receiptRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "gitBlobSha1", "sha256", "bytes", "carrierCommit", "carrierTree", "receiptId"],
+      "properties": {
+        "path": {"$ref": "#/$defs/path"},
+        "gitBlobSha1": {"$ref": "#/$defs/sha1"},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "bytes": {"type": "integer", "minimum": 1},
+        "carrierCommit": {"$ref": "#/$defs/sha1"},
+        "carrierTree": {"$ref": "#/$defs/sha1"},
+        "receiptId": {"type": "string", "minLength": 1}
+      }
+    },
+    "authorizedResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["module", "sliceId", "tokenId", "repo", "commit", "tree", "changedFilesSha256"],
+      "properties": {
+        "module": {"enum": ["SYS", "HRM"]},
+        "sliceId": {"enum": ["BASE-TFR-SYS-007", "BASE-TFR-HRM-010"]},
+        "tokenId": {"enum": ["G7-START-SYS-BASE-TFR-SYS-007-R2", "G7-START-HRM-BASE-TFR-HRM-010-R2"]},
+        "repo": {"enum": ["frontend", "backend"]},
+        "commit": {"$ref": "#/$defs/sha1"},
+        "tree": {"$ref": "#/$defs/sha1"},
+        "changedFilesSha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "sharedTestSource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "gitBlobSha1", "sha256", "bytes", "templateId", "carrierCommit", "carrierTree", "toolingCarrierCommit", "toolingCarrierTree", "branch", "upstream", "carrierPushed", "exactControlPrerequisites", "sourceCarrierGate", "inputCarrierDirectChild"],
+      "properties": {
+        "path": {"const": "e2e/hris-sys-hrm-responsive-accessibility.spec.ts"},
+        "gitBlobSha1": {"$ref": "#/$defs/sha1"},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "bytes": {"type": "integer", "minimum": 1},
+        "templateId": {"const": "G7-SYS-HRM-RESPONSIVE-ACCESSIBILITY-V2"},
+        "carrierCommit": {"$ref": "#/$defs/sha1"},
+        "carrierTree": {"$ref": "#/$defs/sha1"},
+        "toolingCarrierCommit": {"$ref": "#/$defs/sha1"},
+        "toolingCarrierTree": {"$ref": "#/$defs/sha1"},
+        "branch": {"type": "string", "minLength": 1},
+        "upstream": {"type": "string", "minLength": 1},
+        "carrierPushed": {"const": true},
+        "exactControlPrerequisites": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["patch", "modifiedPaths", "addedPaths", "carrierChangedPathsClosedSet", "patchMatchesModifiedDiff"],
+          "properties": {
+            "patch": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["path", "gitBlobSha1", "sha256", "bytes"],
+              "properties": {
+                "path": {"const": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r3-result-acceptance/control-prerequisites.patch"},
+                "gitBlobSha1": {"$ref": "#/$defs/sha1"},
+                "sha256": {"$ref": "#/$defs/sha256"},
+                "bytes": {"type": "integer", "minimum": 1}
+              }
+            },
+            "modifiedPaths": {"const": ["apps/dwp/src/routes/product-route-contract-source.test.ts", "apps/dwp/src/routes/product-route-contract-source.ts", "apps/dwp/src/routes/product-route-contracts.generated.test.ts", "package.json", "scripts/internal-export-allowlist.json", "scripts/production-reachability-allowlist.json"]},
+            "addedPaths": {"const": ["e2e/hris-sys-hrm-responsive-accessibility.spec.ts"]},
+            "carrierChangedPathsClosedSet": {"const": true},
+            "patchMatchesModifiedDiff": {"const": true}
+          }
+        },
+        "sourceCarrierGate": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "requireCurrentHead", "requireClean", "requireExactUpstreamHead"],
+          "properties": {
+            "status": {"const": "REQUIRED_BEFORE_INPUT_CARRIER"},
+            "requireCurrentHead": {"const": true},
+            "requireClean": {"const": true},
+            "requireExactUpstreamHead": {"const": true}
+          }
+        },
+        "inputCarrierDirectChild": {"const": true}
+      }
+    },
+    "livePin": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["commit", "tree", "branch", "upstream", "clean", "upstreamMatched", "stateSha256"],
+      "properties": {
+        "commit": {"$ref": "#/$defs/sha1"},
+        "tree": {"$ref": "#/$defs/sha1"},
+        "branch": {"type": "string", "minLength": 1},
+        "upstream": {"type": "string", "minLength": 1},
+        "clean": {"const": true},
+        "upstreamMatched": {"const": true},
+        "stateSha256": {"$ref": "#/$defs/sha256"}
+      }
+    }
+  }
+}
