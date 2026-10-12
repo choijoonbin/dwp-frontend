@@ -5,12 +5,20 @@ The predecessor G7 v1 bundle remains immutable.  This tool refuses to emit an
 R2 bundle until the Control completion receipt, both central repositories, and
 all four exact SYS/HRM worktrees are clean, pushed, and mutually pinned.
 
-The process deliberately has two commits:
+The process deliberately has three carrier commits:
 
-* ``bundle`` creates the sealed SYS lease/HRM consumed-pin delta, worktree
-  register, tokens, state, and manifest.  Those files are carried by commit A.
-* ``promotion`` creates the receipt that pins commit A and is carried by a
-  later commit B.  This avoids a receipt/commit self-reference cycle.
+* ``control`` seals the ten Control request results from committed blobs at the
+  clean/pushed central source-result commits.  The receipt is carried by a
+  later commit and therefore never references its own carrier.
+* ``bundle`` consumes (but never creates) that receipt and creates the sealed
+  SYS lease/HRM consumed-pin delta, worktree register, tokens, state, and
+  manifest.  Those files are carried by the next commit.
+* ``promotion`` creates the receipt that pins the bundle commit and is carried
+  by a final later commit.  This avoids every receipt/commit self-reference.
+
+The required order is ``control``, commit/push, ``check-control``, ``bundle``,
+commit/push, ``check-bundle``, ``promotion``, commit/push,
+``check-promotion``.
 
 No application test or historical G7 validator is executed by this tool.
 """
@@ -25,7 +33,7 @@ import io
 import json
 import re
 import subprocess
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Iterable
 
@@ -49,6 +57,16 @@ CONTROL_RECEIPT_REL = SUCCESSOR_ROOT_REL / "control-bootstrap-completion.v2.json
 EMPTY_SHA256 = hashlib.sha256(b"").hexdigest()
 ACTIVATION_RECEIPT_ID = "HRIS-G7-SYS-HRM-PROMOTION-20261012-R2"
 CONTROL_RECEIPT_ID = "HRIS-G7-SYS-HRM-CONTROL-BOOTSTRAP-20261012-R2"
+CONTROL_EVIDENCE_SCHEMA = "dwp.hris.g7-control-request-evidence.v1"
+CONTROL_VALIDITY = timedelta(days=7)
+
+# These are the final Control implementation commits, not the later receipt or
+# governance carrier commits.  The clean source-result pins may be descendants
+# (for example, the tooling-fix carrier), but can never precede these results.
+CONTROL_RESULT_ANCESTORS = {
+    "frontend": "430dffa4755e6978654358e12cd90aa9a138464f",
+    "backend": "37b7f63e4cafd44be8f803888a378758e7afdccd",
+}
 
 CENTRAL_REPOSITORIES = {
     "frontend": {
@@ -106,6 +124,141 @@ CONTROL_REQUESTS = [
     "G7-CR-HRM-010-APPROVAL-CALLBACK-R1",
     "G7-CR-HRM-010-APPROVAL-CASE-HANDOFF-R1",
 ]
+
+# Fixed, ordered committed evidence for each Control request.  ``control``
+# reads these as Git blobs at the receipt's repository pins; working-tree bytes,
+# test caches, timestamps, and user-supplied digests are never evidence.  The
+# marker assertions deliberately make the currently incomplete HRM Gateway and
+# shell states fail until their persistent committed surfaces exist.
+CONTROL_EVIDENCE_SPECS: dict[str, dict[str, Any]] = {
+    "G7-CR-SYS-007-AUTH-PEP-R1": {
+        "artifacts": [
+            ("backend", "contracts/product-authorization/product-surfaces-v1.bundle-v37.json"),
+            ("backend", "dwp-platform-server/src/main/resources/product-authorization/hcm-platform-pep-v37.generated.json"),
+            ("backend", "dwp-platform-server/src/main/java/com/dwp/services/platform/security/HcmPlatformPepRegistry.java"),
+            ("backend", "dwp-platform-server/src/test/java/com/dwp/services/platform/security/HcmPlatformPepSecurityContractTest.java"),
+        ],
+        "markers": [
+            ("backend", "contracts/product-authorization/product-surfaces-v1.bundle-v37.json", "hcm.configuration.workbench.view"),
+            ("backend", "dwp-platform-server/src/test/java/com/dwp/services/platform/security/HcmPlatformPepSecurityContractTest.java", "genericRoleOrNearbyAdminPathCannotBypassExactRegistry"),
+        ],
+    },
+    "G7-CR-SYS-007-CONTRACT-GATEWAY-R1": {
+        "artifacts": [
+            ("backend", "contracts/openapi/platform.json"),
+            ("backend", "contracts/openapi/gateway-public.json"),
+            ("backend", "scripts/tests/test_export_openapi_contracts.py"),
+            ("frontend", "libs/api-contracts/openapi/gateway-public.json"),
+            ("frontend", "libs/api-contracts/src/gateway-public.ts"),
+        ],
+        "markers": [
+            ("backend", "contracts/openapi/gateway-public.json", "/api/platform/v1/hris/workbench/settings-reference"),
+            ("frontend", "libs/api-contracts/src/gateway-public.ts", "/api/platform/v1/admin/hris/configurations"),
+        ],
+    },
+    "G7-CR-SYS-007-SHELL-ROUTE-R1": {
+        "artifacts": [
+            ("frontend", "apps/dwp/src/features/hcm/hcm-navigation.ts"),
+            ("frontend", "apps/dwp/src/features/hris/shell/model/catalog/settings.ts"),
+            ("frontend", "apps/dwp/src/features/hris/shell/testing/hris-shell-navigation-contract.test.ts"),
+            ("frontend", "apps/dwp/src/pages/hcm.tsx"),
+            ("frontend", "apps/dwp/src/features/hris/administration/reference-configuration/testing/hris-reference-configuration-workspace.test.tsx"),
+        ],
+        "markers": [
+            ("frontend", "apps/dwp/src/pages/hcm.tsx", "'settings-reference': <HrisReferenceConfigurationWorkspace />"),
+            ("frontend", "apps/dwp/src/features/hris/shell/testing/hris-shell-navigation-contract.test.ts", "/hr/settings/reference-data"),
+        ],
+    },
+    "G7-CR-SYS-007-SECURITY-BRIDGE-R1": {
+        "artifacts": [
+            ("backend", "dwp-platform-server/src/main/resources/product-authorization/hcm-platform-pep-v37.generated.json"),
+            ("backend", "dwp-platform-server/src/main/java/com/dwp/services/platform/security/HcmPlatformPepRegistry.java"),
+            ("backend", "dwp-platform-server/src/main/java/com/dwp/services/platform/security/PlatformSecurityFilter.java"),
+            ("backend", "dwp-platform-server/src/test/java/com/dwp/services/platform/security/HcmPlatformPepSecurityContractTest.java"),
+        ],
+        "markers": [
+            ("backend", "dwp-platform-server/src/main/java/com/dwp/services/platform/security/HcmPlatformPepRegistry.java", "never generic /v1/admin"),
+            ("backend", "dwp-platform-server/src/test/java/com/dwp/services/platform/security/HcmPlatformPepSecurityContractTest.java", "/v1/admin/hris/configurations-admin"),
+        ],
+    },
+    "G7-CR-HRM-010-EVENT-CONTRACT-R1": {
+        "artifacts": [
+            ("backend", "contracts/asyncapi/domain-events.yaml"),
+            ("backend", "contracts/hris/canonical/schemas/cross-module-canonical-schemas.v1.json"),
+            ("backend", "dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/Xcon022EmployeeChangeAppliedV1.java"),
+            ("backend", "dwp-platform-contracts/src/test/java/com/dwp/platform/contract/Xcon022EmployeeChangeAppliedAsyncApiContractTest.java"),
+        ],
+        "markers": [
+            ("backend", "contracts/asyncapi/domain-events.yaml", "EmployeeChangeApplied.v1"),
+            ("backend", "dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/Xcon022EmployeeChangeAppliedV1.java", "XCON_022"),
+        ],
+    },
+    "G7-CR-HRM-010-AUTH-PEP-R1": {
+        "artifacts": [
+            ("backend", "contracts/product-authorization/product-surfaces-v1.bundle-v37.json"),
+            ("backend", "dwp-people-server/src/main/resources/product-authorization/hcm-people-pep-v37.generated.json"),
+            ("backend", "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmV3PepRegistry.java"),
+            ("backend", "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmV3PepRegistryTest.java"),
+        ],
+        "markers": [
+            ("backend", "contracts/product-authorization/product-surfaces-v1.bundle-v37.json", "route.hcm.operations.employee-change-request-apply.action"),
+            ("backend", "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmV3PepRegistryTest.java", "/v1/hris/employee-change-requests/{requestPublicId}/apply"),
+        ],
+    },
+    "G7-CR-HRM-010-CONTRACT-GATEWAY-R1": {
+        "artifacts": [
+            ("backend", "contracts/openapi/people.json"),
+            ("backend", "contracts/openapi/gateway-public.json"),
+            ("backend", "contracts/openapi/hris-wave1-design-time.json"),
+            ("backend", "scripts/tests/test_export_openapi_contracts.py"),
+            ("frontend", "libs/api-contracts/openapi/gateway-public.json"),
+            ("frontend", "libs/api-contracts/src/gateway-public.ts"),
+        ],
+        "markers": [
+            ("backend", "contracts/openapi/gateway-public.json", "/api/people/v1/hris/workbench/operations/employee/change/requests"),
+            ("backend", "contracts/openapi/people.json", "/v1/hris/employee-change-requests"),
+            ("frontend", "libs/api-contracts/src/gateway-public.ts", "/api/people/v1/hris/workbench/operations/employee/change/requests"),
+        ],
+    },
+    "G7-CR-HRM-010-SHELL-ROUTE-R1": {
+        "artifacts": [
+            ("frontend", "apps/dwp/src/features/hcm/hcm-navigation.ts"),
+            ("frontend", "apps/dwp/src/features/hris/shell/model/catalog/hr-operations.ts"),
+            ("frontend", "apps/dwp/src/features/hris/shell/testing/hris-shell-navigation-contract.test.ts"),
+            ("frontend", "apps/dwp/src/pages/hcm.tsx"),
+        ],
+        "markers": [
+            ("frontend", "apps/dwp/src/features/hris/shell/model/catalog/hr-operations.ts", "/hr/operations/people/employee-change-requests"),
+            ("frontend", "apps/dwp/src/pages/hcm.tsx", "'employee-change-requests':"),
+        ],
+    },
+    "G7-CR-HRM-010-APPROVAL-CALLBACK-R1": {
+        "artifacts": [
+            ("backend", "contracts/in-process/hris/approval-employee-change-bridge.v2.json"),
+            ("backend", "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/approval/v2/HrisWorkloadProofV2.java"),
+            ("backend", "dwp-platform-contracts/src/test/java/com/dwp/platform/contract/HrisApprovalBridgeV2Test.java"),
+            ("backend", "dwp-people-server/src/main/java/com/dwp/services/people/security/HrisEmployeeChangeSecurityBridge.java"),
+            ("backend", "dwp-people-server/src/test/java/com/dwp/services/people/security/HrisEmployeeChangeSecurityBridgeTest.java"),
+        ],
+        "markers": [
+            ("backend", "contracts/in-process/hris/approval-employee-change-bridge.v2.json", "/internal/hris-people/v1/employee-change-requests/{requestPublicId}/approval-decisions"),
+            ("backend", "dwp-people-server/src/test/java/com/dwp/services/people/security/HrisEmployeeChangeSecurityBridgeTest.java", "approvalCallbackBypassesBrowserAuthOnlyWhenFeatureAndExactPathAreEnabled"),
+        ],
+    },
+    "G7-CR-HRM-010-APPROVAL-CASE-HANDOFF-R1": {
+        "artifacts": [
+            ("backend", "contracts/in-process/hris/approval-employee-change-bridge.v2.json"),
+            ("backend", "dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/employeechange/approvalbridge/EmployeeChangeApprovalRequestOutbox.java"),
+            ("backend", "dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/employeechange/approvalbridge/EmployeeChangeApprovalRequestRelay.java"),
+            ("backend", "dwp-people-server/src/test/java/com/dwp/services/people/hris/employeeservice/employeechange/approvalbridge/EmployeeChangeApprovalRequestRelayPostgresTest.java"),
+            ("backend", "dwp-approval-server/src/test/java/com/dwp/services/approval/hrisbridge/HrisApprovalDecisionRelayTest.java"),
+        ],
+        "markers": [
+            ("backend", "contracts/in-process/hris/approval-employee-change-bridge.v2.json", "/internal/hris-approval/v1/approval-requests"),
+            ("backend", "dwp-people-server/src/test/java/com/dwp/services/people/hris/employeeservice/employeechange/approvalbridge/EmployeeChangeApprovalRequestRelayPostgresTest.java", "ppl_employee_change_approval_request_outbox"),
+        ],
+    },
+}
 
 MODULES: dict[str, dict[str, Any]] = {
     "SYS": {
@@ -240,6 +393,25 @@ AUTHORITY_CARRIER_PATHS = {
     str(PROMOTION_RECEIPT_REL),
 }
 
+REPOSITORY_PIN_KEYS = {
+    "commit",
+    "tree",
+    "stateSha256",
+    "branch",
+    "upstream",
+    "clean",
+    "upstreamMatched",
+}
+
+BUNDLE_RELATIVE_PATHS = {
+    "migration-leases.delta.v2.json",
+    "registers/module-worktrees.active.v2.csv",
+    MODULES["SYS"]["tokenRelativePath"],
+    MODULES["HRM"]["tokenRelativePath"],
+    "state/delegation-after-sys-hrm-promotion.v2.json",
+    "manifest.v2.json",
+}
+
 
 class PrerequisiteError(RuntimeError):
     """Raised before any authority artifact is written."""
@@ -366,6 +538,258 @@ def inspect_repository(
     }
 
 
+def validate_repository_pin_key_closure(pin: dict[str, Any], label: str) -> None:
+    actual = set(pin)
+    if actual != REPOSITORY_PIN_KEYS:
+        raise PrerequisiteError(
+            f"{label} repository pin field closed set mismatch: "
+            f"missing={sorted(REPOSITORY_PIN_KEYS - actual)}, "
+            f"unexpected={sorted(actual - REPOSITORY_PIN_KEYS)}"
+        )
+
+
+def validate_frontend_source_boundary(
+    frontend: Path, source_pin: dict[str, Any]
+) -> None:
+    validate_repository_pin_key_closure(source_pin, "Control frontend source")
+    commit = str(source_pin.get("commit", ""))
+    tree = str(source_pin.get("tree", ""))
+    if not re.fullmatch(r"[0-9a-f]{40}", commit):
+        raise PrerequisiteError("Control frontend source commit is invalid")
+    if not re.fullmatch(r"[0-9a-f]{40}", tree):
+        raise PrerequisiteError("Control frontend source tree is invalid")
+    actual_tree = run_git(frontend, "rev-parse", f"{commit}^{{tree}}")
+    if actual_tree != tree:
+        raise PrerequisiteError("Control frontend source tree does not match its commit")
+    present = []
+    for relative_path in sorted(AUTHORITY_CARRIER_PATHS):
+        listing = run_git(
+            frontend,
+            "ls-tree",
+            "-r",
+            "--name-only",
+            commit,
+            "--",
+            relative_path,
+        )
+        if listing:
+            present.append(relative_path)
+    if present:
+        raise PrerequisiteError(
+            "Control frontend source pin already contains authority carrier files: "
+            + ", ".join(present)
+        )
+
+
+def validate_control_result_ancestors(
+    frontend: Path,
+    backend: Path,
+    pins: dict[str, dict[str, Any]],
+) -> None:
+    roots = {"frontend": frontend, "backend": backend}
+    for repo in ("frontend", "backend"):
+        commit = str(pins[repo].get("commit", ""))
+        required = CONTROL_RESULT_ANCESTORS[repo]
+        run_git(roots[repo], "merge-base", "--is-ancestor", required, commit)
+
+
+def committed_blob(
+    root: Path,
+    commit: str,
+    repo: str,
+    relative_path: str,
+) -> tuple[dict[str, Any], bytes]:
+    listing = run_git(
+        root,
+        "ls-tree",
+        "--full-tree",
+        commit,
+        "--",
+        relative_path,
+    )
+    lines = listing.splitlines()
+    if len(lines) != 1 or "\t" not in lines[0]:
+        raise PrerequisiteError(
+            f"{repo} committed evidence is absent or ambiguous at {commit}: {relative_path}"
+        )
+    metadata, listed_path = lines[0].split("\t", 1)
+    parts = metadata.split()
+    if len(parts) != 3:
+        raise PrerequisiteError(
+            f"{repo} committed evidence has an invalid tree entry: {relative_path}"
+        )
+    mode, object_type, object_id = parts
+    if listed_path != relative_path or object_type != "blob" or mode not in {"100644", "100755"}:
+        raise PrerequisiteError(
+            f"{repo} committed evidence is not one exact regular blob: {relative_path}"
+        )
+    raw = run_git(root, "cat-file", "blob", f"{commit}:{relative_path}", raw=True)
+    return (
+        {
+            "repo": repo,
+            "path": relative_path,
+            "gitBlobSha1": object_id,
+            "byteLength": len(raw),
+            "contentSha256": sha256_bytes(raw),
+        },
+        raw,
+    )
+
+
+def build_control_request_results(
+    frontend: Path,
+    backend: Path,
+    pins: dict[str, dict[str, Any]],
+) -> list[dict[str, Any]]:
+    if list(CONTROL_EVIDENCE_SPECS) != CONTROL_REQUESTS:
+        raise PrerequisiteError("Control evidence specification is not the exact request closed set")
+    roots = {"frontend": frontend, "backend": backend}
+    results: list[dict[str, Any]] = []
+    for request_id in CONTROL_REQUESTS:
+        spec = CONTROL_EVIDENCE_SPECS[request_id]
+        declared = list(spec["artifacts"])
+        ordered = sorted(declared)
+        if len(ordered) != len(set(ordered)):
+            raise PrerequisiteError(
+                f"{request_id} evidence artifacts must be unique"
+            )
+        artifacts: list[dict[str, Any]] = []
+        raw_by_locator: dict[tuple[str, str], bytes] = {}
+        for repo, relative_path in ordered:
+            artifact, raw = committed_blob(
+                roots[repo], str(pins[repo]["commit"]), repo, relative_path
+            )
+            artifacts.append(artifact)
+            raw_by_locator[(repo, relative_path)] = raw
+        for repo, relative_path, marker in spec["markers"]:
+            raw = raw_by_locator.get((repo, relative_path))
+            if raw is None:
+                raise PrerequisiteError(
+                    f"{request_id} marker refers outside its evidence closure: {repo}:{relative_path}"
+                )
+            if marker.encode("utf-8") not in raw:
+                raise PrerequisiteError(
+                    f"{request_id} committed evidence is incomplete; marker {marker!r} "
+                    f"is absent from {repo}:{relative_path}"
+                )
+        evidence = {
+            "schema": CONTROL_EVIDENCE_SCHEMA,
+            "artifacts": artifacts,
+        }
+        digest_payload = {
+            "schema": CONTROL_EVIDENCE_SCHEMA,
+            "requestId": request_id,
+            "artifacts": artifacts,
+        }
+        results.append(
+            {
+                "requestId": request_id,
+                "module": "SYS" if request_id in CONTROL_REQUESTS[:4] else "HRM",
+                "status": "PASS",
+                "evidence": evidence,
+                "evidenceSha256": sha256_bytes(canonical_bytes(digest_payload)),
+            }
+        )
+    return results
+
+
+def control_window(
+    frontend: Path,
+    backend: Path,
+    pins: dict[str, dict[str, Any]],
+) -> tuple[str, str]:
+    instants = []
+    for repo, root in (("frontend", frontend), ("backend", backend)):
+        value = run_git(root, "show", "-s", "--format=%cI", str(pins[repo]["commit"]))
+        instants.append(parse_instant(value, f"{repo} source-result commit time"))
+    issued = max(instants).astimezone(timezone.utc).replace(microsecond=0)
+    expires = issued + CONTROL_VALIDITY
+
+    def render(value: datetime) -> str:
+        return value.isoformat(timespec="seconds").replace("+00:00", "Z")
+
+    return render(issued), render(expires)
+
+
+def build_control_verification(
+    pins: dict[str, dict[str, Any]], request_results: list[dict[str, Any]]
+) -> list[dict[str, str]]:
+    predecessor_payload = {
+        "predecessorPins": PREDECESSOR_PINS,
+        "packetPins": {
+            module: {
+                "path": spec["packetPath"],
+                "sha256": spec["packetSha256"],
+            }
+            for module, spec in MODULES.items()
+        },
+    }
+    checks = [
+        (
+            "CONTROL_RESULT_ANCESTORS",
+            {"requiredAncestors": CONTROL_RESULT_ANCESTORS},
+        ),
+        (
+            "CENTRAL_REPOSITORIES_CLEAN_PUSHED",
+            {"repositoryPins": pins},
+        ),
+        (
+            "CONTROL_REQUEST_EVIDENCE_CLOSED_SET",
+            {"requestResults": request_results},
+        ),
+        (
+            "PREDECESSOR_AUTHORITY_PINS_UNCHANGED",
+            predecessor_payload,
+        ),
+    ]
+    return [
+        {
+            "checkId": check_id,
+            "result": "PASS",
+            "algorithm": "SHA-256/CANONICAL-JSON",
+            "evidenceSha256": sha256_bytes(canonical_bytes(payload)),
+        }
+        for check_id, payload in checks
+    ]
+
+
+def build_control_receipt(
+    frontend: Path,
+    backend: Path,
+    pins: dict[str, dict[str, Any]],
+    source_boundary_validated: bool = False,
+) -> dict[str, Any]:
+    if not source_boundary_validated:
+        validate_frontend_source_boundary(frontend, pins["frontend"])
+    validate_repository_pin_key_closure(pins["backend"], "Control backend source")
+    validate_control_result_ancestors(frontend, backend, pins)
+    request_results = build_control_request_results(frontend, backend, pins)
+    issued_at, expires_at = control_window(frontend, backend, pins)
+    return sealed(
+        {
+            "schema": "dwp.hris.g7-control-bootstrap-completion.v2",
+            "receiptId": CONTROL_RECEIPT_ID,
+            "status": "PASS_SYS_HRM_CONTROL_BOOTSTRAP",
+            "issuedAt": issued_at,
+            "expiresAt": expires_at,
+            "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+            "frontendPin": pins["frontend"],
+            "backendPin": pins["backend"],
+            "requestResults": request_results,
+            "verification": build_control_verification(pins, request_results),
+            "authority": {
+                "controlBootstrapComplete": True,
+                "moduleSourceChangeAuthorized": False,
+                "sharedControlPathChangeAuthorizedForModules": False,
+                "integrationMergeAuthorized": False,
+                "customerDataAuthorized": False,
+                "customerActivationAuthorized": False,
+                "productionReleaseAuthorized": False,
+            },
+        }
+    )
+
+
 def validate_predecessors(frontend: Path) -> dict[str, dict[str, Any]]:
     for label, pin in PREDECESSOR_PINS.items():
         path = frontend / pin["path"]
@@ -421,6 +845,7 @@ def validate_predecessors(frontend: Path) -> dict[str, dict[str, Any]]:
 
 def validate_control_receipt(
     frontend: Path,
+    backend: Path,
     live_frontend_pin: dict[str, Any],
     live_backend_pin: dict[str, Any],
     verify_frontend_carrier: bool = True,
@@ -429,61 +854,26 @@ def validate_control_receipt(
     receipt = read_json(path)
     raw = path.read_bytes()
     verify_seal(receipt, "Control bootstrap completion receipt")
-    expected_scalars = {
-        "schema": "dwp.hris.g7-control-bootstrap-completion.v2",
-        "receiptId": CONTROL_RECEIPT_ID,
-        "status": "PASS_SYS_HRM_CONTROL_BOOTSTRAP",
-        "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
-    }
-    for key, expected in expected_scalars.items():
-        if receipt.get(key) != expected:
-            raise PrerequisiteError(
-                f"Control completion {key} mismatch: expected {expected!r}"
-            )
-    issued_at = parse_instant(receipt.get("issuedAt"), "Control issuedAt")
-    expires_at = parse_instant(receipt.get("expiresAt"), "Control expiresAt")
-    if expires_at <= issued_at:
-        raise PrerequisiteError("Control completion receipt is already expired by construction")
     frontend_source_pin = receipt.get("frontendPin")
-    if not isinstance(frontend_source_pin, dict):
+    backend_source_pin = receipt.get("backendPin")
+    if not isinstance(frontend_source_pin, dict) or not isinstance(backend_source_pin, dict):
         raise PrerequisiteError("Control completion frontend pin is absent")
     if verify_frontend_carrier:
         validate_frontend_authority_carrier(
             frontend, frontend_source_pin, live_frontend_pin
         )
-    if receipt.get("backendPin") != live_backend_pin:
+    if backend_source_pin != live_backend_pin:
         raise PrerequisiteError("Control completion backend pin is not the live clean repository")
-    results = receipt.get("requestResults")
-    if not isinstance(results, list):
-        raise PrerequisiteError("Control requestResults must be an array")
-    actual_ids = [row.get("requestId") for row in results if isinstance(row, dict)]
-    if actual_ids != CONTROL_REQUESTS:
+    expected = build_control_receipt(
+        frontend,
+        backend,
+        {"frontend": frontend_source_pin, "backend": backend_source_pin},
+        source_boundary_validated=verify_frontend_carrier,
+    )
+    if receipt != expected or raw != json_bytes(expected):
         raise PrerequisiteError(
-            f"Control request closed set mismatch: expected {CONTROL_REQUESTS}, found {actual_ids}"
+            "Control completion receipt is not the exact deterministic result of its committed evidence"
         )
-    for row in results:
-        request_id = row.get("requestId")
-        expected_module = "SYS" if request_id in MODULES["SYS"]["requestIds"] else "HRM"
-        if row.get("module") != expected_module or row.get("status") != "PASS":
-            raise PrerequisiteError(f"Control request did not pass exactly: {request_id}")
-        if not re.fullmatch(r"[0-9a-f]{64}", str(row.get("evidenceSha256", ""))):
-            raise PrerequisiteError(f"Control request evidence hash is invalid: {request_id}")
-    verification = receipt.get("verification")
-    if not isinstance(verification, list) or not verification:
-        raise PrerequisiteError("Control receipt has no verification evidence")
-    if any(not isinstance(row, dict) or row.get("result") != "PASS" for row in verification):
-        raise PrerequisiteError("Control receipt contains a non-PASS verification")
-    expected_authority = {
-        "controlBootstrapComplete": True,
-        "moduleSourceChangeAuthorized": False,
-        "sharedControlPathChangeAuthorizedForModules": False,
-        "integrationMergeAuthorized": False,
-        "customerDataAuthorized": False,
-        "customerActivationAuthorized": False,
-        "productionReleaseAuthorized": False,
-    }
-    if receipt.get("authority") != expected_authority:
-        raise PrerequisiteError("Control completion authority is not the fail-closed shape")
     return receipt, raw
 
 
@@ -499,6 +889,7 @@ def validate_frontend_authority_carrier(
     only by adding the exact receipt/bundle/promotion authority artifacts.
     """
 
+    validate_frontend_source_boundary(frontend, source_pin)
     expected_shape = {
         "branch": CENTRAL_REPOSITORIES["frontend"]["branch"],
         "upstream": CENTRAL_REPOSITORIES["frontend"]["upstream"],
@@ -511,15 +902,7 @@ def validate_frontend_authority_carrier(
             raise PrerequisiteError(
                 f"Control frontend source pin {key} mismatch: {source_pin.get(key)!r}"
             )
-    commit = source_pin.get("commit")
-    tree = source_pin.get("tree")
-    if not re.fullmatch(r"[0-9a-f]{40}", str(commit or "")):
-        raise PrerequisiteError("Control frontend source commit is invalid")
-    if not re.fullmatch(r"[0-9a-f]{40}", str(tree or "")):
-        raise PrerequisiteError("Control frontend source tree is invalid")
-    actual_tree = run_git(frontend, "rev-parse", f"{commit}^{{tree}}")
-    if actual_tree != tree:
-        raise PrerequisiteError("Control frontend source tree does not match its commit")
+    commit = source_pin["commit"]
     run_git(frontend, "merge-base", "--is-ancestor", str(commit), "HEAD")
     changed = run_git(frontend, "diff", "--name-only", f"{commit}..HEAD").splitlines()
     unexpected = sorted(set(changed) - AUTHORITY_CARRIER_PATHS)
@@ -647,7 +1030,7 @@ def prepare_context(
         CENTRAL_REPOSITORIES["backend"]["upstream"],
     )
     control_receipt, control_raw = validate_control_receipt(
-        frontend, live_frontend_pin, live_backend_pin
+        frontend, backend, live_frontend_pin, live_backend_pin
     )
     execution_pins = {
         "frontend": control_receipt["frontendPin"],
@@ -1101,10 +1484,60 @@ def write_append_only(outputs: dict[Path, bytes], root: Path, check_only: bool) 
         raise PrerequisiteError("; ".join(details))
 
 
+def validate_phase_inventory(frontend: Path, phase: str) -> None:
+    successor_root = frontend / SUCCESSOR_ROOT_REL
+    actual = {
+        str(path.relative_to(successor_root))
+        for path in successor_root.rglob("*")
+        if path.is_file()
+        and "__pycache__" not in path.relative_to(successor_root).parts
+        and path.suffix != ".pyc"
+    }
+    control_relative = str(CONTROL_RECEIPT_REL.relative_to(SUCCESSOR_ROOT_REL))
+    tools = set(TOOL_RELATIVE_PATHS)
+    expected_by_phase = {
+        "control": tools,
+        "check-control": tools | {control_relative},
+        "bundle": tools | {control_relative},
+        "check-bundle": tools | {control_relative} | BUNDLE_RELATIVE_PATHS,
+        "promotion": tools | {control_relative} | BUNDLE_RELATIVE_PATHS,
+        "check-promotion": tools | {control_relative} | BUNDLE_RELATIVE_PATHS,
+    }
+    expected = expected_by_phase[phase]
+    if actual != expected:
+        missing = sorted(expected - actual)
+        unexpected = sorted(actual - expected)
+        raise PrerequisiteError(
+            f"{phase} successor inventory mismatch; missing={missing}, unexpected={unexpected}"
+        )
+    # The promotion receipt is intentionally a sibling HRIS carrier, not a
+    # file below SUCCESSOR_ROOT_REL, so its phase boundary is checked here.
+    promotion_exists = (frontend / PROMOTION_RECEIPT_REL).is_file()
+    if promotion_exists != (phase == "check-promotion"):
+        raise PrerequisiteError(
+            f"{phase} promotion receipt boundary mismatch: exists={promotion_exists}"
+        )
+
+
 def main() -> int:
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+        description="Materialize the fail-closed SYS/HRM G7 R2 successor.",
+        epilog=(
+            "Required order: control; commit/push; check-control; bundle; "
+            "commit/push; check-bundle; promotion --bundle-commit/--bundle-tree; "
+            "commit/push; check-promotion."
+        ),
+    )
     parser.add_argument(
-        "phase", choices=("bundle", "check-bundle", "promotion", "check-promotion")
+        "phase",
+        choices=(
+            "control",
+            "check-control",
+            "bundle",
+            "check-bundle",
+            "promotion",
+            "check-promotion",
+        ),
     )
     parser.add_argument("--frontend-root", type=Path, default=DEFAULT_FRONTEND)
     parser.add_argument("--backend-root", type=Path, default=DEFAULT_BACKEND)
@@ -1116,16 +1549,47 @@ def main() -> int:
     frontend = args.frontend_root.resolve()
     backend = args.backend_root.resolve()
     worktree_root = args.worktree_root.resolve()
+    validate_phase_inventory(frontend, args.phase)
+
+    if args.phase in {"control", "check-control"}:
+        validate_predecessors(frontend)
+        live_pins = {
+            "frontend": inspect_repository(
+                frontend,
+                CENTRAL_REPOSITORIES["frontend"]["branch"],
+                CENTRAL_REPOSITORIES["frontend"]["upstream"],
+            ),
+            "backend": inspect_repository(
+                backend,
+                CENTRAL_REPOSITORIES["backend"]["branch"],
+                CENTRAL_REPOSITORIES["backend"]["upstream"],
+            ),
+        }
+        if args.phase == "control":
+            validate_migration_boundaries(backend, live_pins["backend"])
+            receipt = build_control_receipt(frontend, backend, live_pins)
+            write_append_only(
+                {CONTROL_RECEIPT_REL: json_bytes(receipt)},
+                frontend,
+                check_only=False,
+            )
+        else:
+            receipt, _raw = validate_control_receipt(
+                frontend,
+                backend,
+                live_pins["frontend"],
+                live_pins["backend"],
+            )
+            validate_migration_boundaries(backend, receipt["backendPin"])
+        print(f"PASS: G7 SYS/HRM R2 materializer {args.phase}")
+        return 0
+
     context = prepare_context(frontend, backend, worktree_root)
     tool_pins = read_tool_pins(frontend)
     bundle_outputs = build_bundle_bytes(context, tool_pins)
     successor_root = frontend / SUCCESSOR_ROOT_REL
 
     if args.phase in {"bundle", "check-bundle"}:
-        if (frontend / PROMOTION_RECEIPT_REL).exists():
-            raise PrerequisiteError(
-                "pre-promotion bundle phase refuses an existing promotion receipt"
-            )
         write_append_only(
             bundle_outputs,
             successor_root,

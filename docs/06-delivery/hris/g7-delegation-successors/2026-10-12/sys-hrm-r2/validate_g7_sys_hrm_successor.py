@@ -20,7 +20,7 @@ import re
 import subprocess
 import sys
 from collections import Counter
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
@@ -44,6 +44,12 @@ PROMOTION_RECEIPT_REL = (
 EMPTY_SHA256 = hashlib.sha256(b"").hexdigest()
 ACTIVATION_RECEIPT_ID = "HRIS-G7-SYS-HRM-PROMOTION-20261012-R2"
 CONTROL_RECEIPT_ID = "HRIS-G7-SYS-HRM-CONTROL-BOOTSTRAP-20261012-R2"
+CONTROL_EVIDENCE_SCHEMA = "dwp.hris.g7-control-request-evidence.v1"
+CONTROL_VALIDITY = timedelta(days=7)
+CONTROL_RESULT_ANCESTORS = {
+    "frontend": "430dffa4755e6978654358e12cd90aa9a138464f",
+    "backend": "37b7f63e4cafd44be8f803888a378758e7afdccd",
+}
 
 PREDECESSOR_PINS = {
     "manifest": {
@@ -88,6 +94,141 @@ CONTROL_REQUESTS = [
     "G7-CR-HRM-010-APPROVAL-CALLBACK-R1",
     "G7-CR-HRM-010-APPROVAL-CASE-HANDOFF-R1",
 ]
+
+# Independent copy of the immutable committed-blob evidence map.  Tuple item 0
+# is the artifact closure and tuple item 1 is the semantic marker closure.
+CONTROL_EVIDENCE_SPECS: dict[
+    str,
+    tuple[tuple[tuple[str, str], ...], tuple[tuple[str, str, str], ...]],
+] = {
+    "G7-CR-SYS-007-AUTH-PEP-R1": (
+        (
+            ("backend", "contracts/product-authorization/product-surfaces-v1.bundle-v37.json"),
+            ("backend", "dwp-platform-server/src/main/resources/product-authorization/hcm-platform-pep-v37.generated.json"),
+            ("backend", "dwp-platform-server/src/main/java/com/dwp/services/platform/security/HcmPlatformPepRegistry.java"),
+            ("backend", "dwp-platform-server/src/test/java/com/dwp/services/platform/security/HcmPlatformPepSecurityContractTest.java"),
+        ),
+        (
+            ("backend", "contracts/product-authorization/product-surfaces-v1.bundle-v37.json", "hcm.configuration.workbench.view"),
+            ("backend", "dwp-platform-server/src/test/java/com/dwp/services/platform/security/HcmPlatformPepSecurityContractTest.java", "genericRoleOrNearbyAdminPathCannotBypassExactRegistry"),
+        ),
+    ),
+    "G7-CR-SYS-007-CONTRACT-GATEWAY-R1": (
+        (
+            ("backend", "contracts/openapi/platform.json"),
+            ("backend", "contracts/openapi/gateway-public.json"),
+            ("backend", "scripts/tests/test_export_openapi_contracts.py"),
+            ("frontend", "libs/api-contracts/openapi/gateway-public.json"),
+            ("frontend", "libs/api-contracts/src/gateway-public.ts"),
+        ),
+        (
+            ("backend", "contracts/openapi/gateway-public.json", "/api/platform/v1/hris/workbench/settings-reference"),
+            ("frontend", "libs/api-contracts/src/gateway-public.ts", "/api/platform/v1/admin/hris/configurations"),
+        ),
+    ),
+    "G7-CR-SYS-007-SHELL-ROUTE-R1": (
+        (
+            ("frontend", "apps/dwp/src/features/hcm/hcm-navigation.ts"),
+            ("frontend", "apps/dwp/src/features/hris/shell/model/catalog/settings.ts"),
+            ("frontend", "apps/dwp/src/features/hris/shell/testing/hris-shell-navigation-contract.test.ts"),
+            ("frontend", "apps/dwp/src/pages/hcm.tsx"),
+            ("frontend", "apps/dwp/src/features/hris/administration/reference-configuration/testing/hris-reference-configuration-workspace.test.tsx"),
+        ),
+        (
+            ("frontend", "apps/dwp/src/pages/hcm.tsx", "'settings-reference': <HrisReferenceConfigurationWorkspace />"),
+            ("frontend", "apps/dwp/src/features/hris/shell/testing/hris-shell-navigation-contract.test.ts", "/hr/settings/reference-data"),
+        ),
+    ),
+    "G7-CR-SYS-007-SECURITY-BRIDGE-R1": (
+        (
+            ("backend", "dwp-platform-server/src/main/resources/product-authorization/hcm-platform-pep-v37.generated.json"),
+            ("backend", "dwp-platform-server/src/main/java/com/dwp/services/platform/security/HcmPlatformPepRegistry.java"),
+            ("backend", "dwp-platform-server/src/main/java/com/dwp/services/platform/security/PlatformSecurityFilter.java"),
+            ("backend", "dwp-platform-server/src/test/java/com/dwp/services/platform/security/HcmPlatformPepSecurityContractTest.java"),
+        ),
+        (
+            ("backend", "dwp-platform-server/src/main/java/com/dwp/services/platform/security/HcmPlatformPepRegistry.java", "never generic /v1/admin"),
+            ("backend", "dwp-platform-server/src/test/java/com/dwp/services/platform/security/HcmPlatformPepSecurityContractTest.java", "/v1/admin/hris/configurations-admin"),
+        ),
+    ),
+    "G7-CR-HRM-010-EVENT-CONTRACT-R1": (
+        (
+            ("backend", "contracts/asyncapi/domain-events.yaml"),
+            ("backend", "contracts/hris/canonical/schemas/cross-module-canonical-schemas.v1.json"),
+            ("backend", "dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/Xcon022EmployeeChangeAppliedV1.java"),
+            ("backend", "dwp-platform-contracts/src/test/java/com/dwp/platform/contract/Xcon022EmployeeChangeAppliedAsyncApiContractTest.java"),
+        ),
+        (
+            ("backend", "contracts/asyncapi/domain-events.yaml", "EmployeeChangeApplied.v1"),
+            ("backend", "dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/Xcon022EmployeeChangeAppliedV1.java", "XCON_022"),
+        ),
+    ),
+    "G7-CR-HRM-010-AUTH-PEP-R1": (
+        (
+            ("backend", "contracts/product-authorization/product-surfaces-v1.bundle-v37.json"),
+            ("backend", "dwp-people-server/src/main/resources/product-authorization/hcm-people-pep-v37.generated.json"),
+            ("backend", "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmV3PepRegistry.java"),
+            ("backend", "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmV3PepRegistryTest.java"),
+        ),
+        (
+            ("backend", "contracts/product-authorization/product-surfaces-v1.bundle-v37.json", "route.hcm.operations.employee-change-request-apply.action"),
+            ("backend", "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmV3PepRegistryTest.java", "/v1/hris/employee-change-requests/{requestPublicId}/apply"),
+        ),
+    ),
+    "G7-CR-HRM-010-CONTRACT-GATEWAY-R1": (
+        (
+            ("backend", "contracts/openapi/people.json"),
+            ("backend", "contracts/openapi/gateway-public.json"),
+            ("backend", "contracts/openapi/hris-wave1-design-time.json"),
+            ("backend", "scripts/tests/test_export_openapi_contracts.py"),
+            ("frontend", "libs/api-contracts/openapi/gateway-public.json"),
+            ("frontend", "libs/api-contracts/src/gateway-public.ts"),
+        ),
+        (
+            ("backend", "contracts/openapi/gateway-public.json", "/api/people/v1/hris/workbench/operations/employee/change/requests"),
+            ("backend", "contracts/openapi/people.json", "/v1/hris/employee-change-requests"),
+            ("frontend", "libs/api-contracts/src/gateway-public.ts", "/api/people/v1/hris/workbench/operations/employee/change/requests"),
+        ),
+    ),
+    "G7-CR-HRM-010-SHELL-ROUTE-R1": (
+        (
+            ("frontend", "apps/dwp/src/features/hcm/hcm-navigation.ts"),
+            ("frontend", "apps/dwp/src/features/hris/shell/model/catalog/hr-operations.ts"),
+            ("frontend", "apps/dwp/src/features/hris/shell/testing/hris-shell-navigation-contract.test.ts"),
+            ("frontend", "apps/dwp/src/pages/hcm.tsx"),
+        ),
+        (
+            ("frontend", "apps/dwp/src/features/hris/shell/model/catalog/hr-operations.ts", "/hr/operations/people/employee-change-requests"),
+            ("frontend", "apps/dwp/src/pages/hcm.tsx", "'employee-change-requests':"),
+        ),
+    ),
+    "G7-CR-HRM-010-APPROVAL-CALLBACK-R1": (
+        (
+            ("backend", "contracts/in-process/hris/approval-employee-change-bridge.v2.json"),
+            ("backend", "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/approval/v2/HrisWorkloadProofV2.java"),
+            ("backend", "dwp-platform-contracts/src/test/java/com/dwp/platform/contract/HrisApprovalBridgeV2Test.java"),
+            ("backend", "dwp-people-server/src/main/java/com/dwp/services/people/security/HrisEmployeeChangeSecurityBridge.java"),
+            ("backend", "dwp-people-server/src/test/java/com/dwp/services/people/security/HrisEmployeeChangeSecurityBridgeTest.java"),
+        ),
+        (
+            ("backend", "contracts/in-process/hris/approval-employee-change-bridge.v2.json", "/internal/hris-people/v1/employee-change-requests/{requestPublicId}/approval-decisions"),
+            ("backend", "dwp-people-server/src/test/java/com/dwp/services/people/security/HrisEmployeeChangeSecurityBridgeTest.java", "approvalCallbackBypassesBrowserAuthOnlyWhenFeatureAndExactPathAreEnabled"),
+        ),
+    ),
+    "G7-CR-HRM-010-APPROVAL-CASE-HANDOFF-R1": (
+        (
+            ("backend", "contracts/in-process/hris/approval-employee-change-bridge.v2.json"),
+            ("backend", "dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/employeechange/approvalbridge/EmployeeChangeApprovalRequestOutbox.java"),
+            ("backend", "dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/employeechange/approvalbridge/EmployeeChangeApprovalRequestRelay.java"),
+            ("backend", "dwp-people-server/src/test/java/com/dwp/services/people/hris/employeeservice/employeechange/approvalbridge/EmployeeChangeApprovalRequestRelayPostgresTest.java"),
+            ("backend", "dwp-approval-server/src/test/java/com/dwp/services/approval/hrisbridge/HrisApprovalDecisionRelayTest.java"),
+        ),
+        (
+            ("backend", "contracts/in-process/hris/approval-employee-change-bridge.v2.json", "/internal/hris-approval/v1/approval-requests"),
+            ("backend", "dwp-people-server/src/test/java/com/dwp/services/people/hris/employeeservice/employeechange/approvalbridge/EmployeeChangeApprovalRequestRelayPostgresTest.java", "ppl_employee_change_approval_request_outbox"),
+        ),
+    ),
+}
 
 CENTRAL_REPOSITORIES = {
     "frontend": (
@@ -229,6 +370,16 @@ AUTHORITY_CARRIER_PATHS = {
     str(PROMOTION_RECEIPT_REL),
 }
 
+REPOSITORY_PIN_KEYS = {
+    "commit",
+    "tree",
+    "stateSha256",
+    "branch",
+    "upstream",
+    "clean",
+    "upstreamMatched",
+}
+
 BUNDLE_RELATIVE_PATHS = [
     "migration-leases.delta.v2.json",
     "registers/module-worktrees.active.v2.csv",
@@ -238,9 +389,13 @@ BUNDLE_RELATIVE_PATHS = [
     "manifest.v2.json",
 ]
 
-SUCCESSOR_FILE_CLOSED_SET = {
+CONTROL_FILE_CLOSED_SET = {
     *TOOL_RELATIVE_PATHS,
     str(CONTROL_RECEIPT_REL.relative_to(SUCCESSOR_ROOT_REL)),
+}
+
+BUNDLE_FILE_CLOSED_SET = {
+    *CONTROL_FILE_CLOSED_SET,
     *BUNDLE_RELATIVE_PATHS,
 }
 
@@ -323,8 +478,13 @@ def verify_successor_inventory(frontend: Path, phase: str, audit: Audit) -> None
             str(path.relative_to(root))
             for path in root.rglob("*")
             if path.is_file()
+            and "__pycache__" not in path.relative_to(root).parts
+            and path.suffix != ".pyc"
         }
-        audit.equal(actual, SUCCESSOR_FILE_CLOSED_SET, "R2 successor file inventory")
+        expected = (
+            CONTROL_FILE_CLOSED_SET if phase == "control" else BUNDLE_FILE_CLOSED_SET
+        )
+        audit.equal(actual, expected, "R2 successor file inventory")
     promotion_exists = (frontend / PROMOTION_RECEIPT_REL).is_file()
     audit.equal(
         promotion_exists,
@@ -447,8 +607,147 @@ def verify_predecessors(frontend: Path, audit: Audit) -> None:
         )
 
 
+def committed_blob_evidence(
+    root: Path,
+    commit: str,
+    repo: str,
+    relative_path: str,
+    audit: Audit,
+) -> tuple[dict[str, Any], bytes]:
+    code, listing_raw = run_git(
+        root,
+        ["ls-tree", "--full-tree", commit, "--", relative_path],
+    )
+    audit.equal(code, 0, f"{repo}:{relative_path} committed tree lookup")
+    lines = listing_raw.decode("utf-8", errors="replace").strip().splitlines()
+    audit.equal(len(lines), 1, f"{repo}:{relative_path} exact committed blob count")
+    mode = object_type = object_id = listed_path = ""
+    if len(lines) == 1 and "\t" in lines[0]:
+        metadata, listed_path = lines[0].split("\t", 1)
+        parts = metadata.split()
+        if len(parts) == 3:
+            mode, object_type, object_id = parts
+    audit.equal(listed_path, relative_path, f"{repo}:{relative_path} exact committed path")
+    audit.require(mode in {"100644", "100755"}, f"{repo}:{relative_path} regular blob mode")
+    audit.equal(object_type, "blob", f"{repo}:{relative_path} object type")
+    code, raw = run_git(root, ["cat-file", "blob", f"{commit}:{relative_path}"])
+    audit.equal(code, 0, f"{repo}:{relative_path} committed blob read")
+    return (
+        {
+            "repo": repo,
+            "path": relative_path,
+            "gitBlobSha1": object_id,
+            "byteLength": len(raw),
+            "contentSha256": sha256_bytes(raw),
+        },
+        raw,
+    )
+
+
+def expected_control_request_results(
+    frontend: Path,
+    backend: Path,
+    pins: dict[str, dict[str, Any]],
+    audit: Audit,
+) -> list[dict[str, Any]]:
+    audit.equal(list(CONTROL_EVIDENCE_SPECS), CONTROL_REQUESTS, "Control evidence request closed set")
+    roots = {"frontend": frontend, "backend": backend}
+    results: list[dict[str, Any]] = []
+    for request_id in CONTROL_REQUESTS:
+        declared, markers = CONTROL_EVIDENCE_SPECS[request_id]
+        ordered = sorted(declared)
+        audit.equal(len(ordered), len(set(ordered)), f"{request_id} unique evidence paths")
+        artifacts: list[dict[str, Any]] = []
+        raws: dict[tuple[str, str], bytes] = {}
+        for repo, relative_path in ordered:
+            artifact, raw = committed_blob_evidence(
+                roots[repo], str(pins.get(repo, {}).get("commit", "")), repo, relative_path, audit
+            )
+            artifacts.append(artifact)
+            raws[(repo, relative_path)] = raw
+        for repo, relative_path, marker in markers:
+            audit.require(
+                marker.encode("utf-8") in raws.get((repo, relative_path), b""),
+                f"{request_id} semantic marker {marker!r} in {repo}:{relative_path}",
+            )
+        evidence = {"schema": CONTROL_EVIDENCE_SCHEMA, "artifacts": artifacts}
+        digest_payload = {
+            "schema": CONTROL_EVIDENCE_SCHEMA,
+            "requestId": request_id,
+            "artifacts": artifacts,
+        }
+        results.append(
+            {
+                "requestId": request_id,
+                "module": "SYS" if request_id in CONTROL_REQUESTS[:4] else "HRM",
+                "status": "PASS",
+                "evidence": evidence,
+                "evidenceSha256": sha256_bytes(canonical_bytes(digest_payload)),
+            }
+        )
+    return results
+
+
+def expected_control_window(
+    frontend: Path,
+    backend: Path,
+    pins: dict[str, dict[str, Any]],
+    audit: Audit,
+) -> tuple[str, str]:
+    instants: list[datetime] = []
+    for repo, root in (("frontend", frontend), ("backend", backend)):
+        value = git_text(
+            root,
+            ["show", "-s", "--format=%cI", str(pins.get(repo, {}).get("commit", ""))],
+            f"{repo} source-result commit time",
+            audit,
+        )
+        parsed = parse_instant(value, f"{repo} source-result commit time", audit)
+        if parsed is not None:
+            instants.append(parsed)
+    if len(instants) != 2:
+        return "", ""
+    issued = max(instants).astimezone(timezone.utc).replace(microsecond=0)
+    expires = issued + CONTROL_VALIDITY
+
+    def render(value: datetime) -> str:
+        return value.isoformat(timespec="seconds").replace("+00:00", "Z")
+
+    return render(issued), render(expires)
+
+
+def expected_control_verification(
+    pins: dict[str, dict[str, Any]], request_results: list[dict[str, Any]]
+) -> list[dict[str, str]]:
+    payloads = [
+        ("CONTROL_RESULT_ANCESTORS", {"requiredAncestors": CONTROL_RESULT_ANCESTORS}),
+        ("CENTRAL_REPOSITORIES_CLEAN_PUSHED", {"repositoryPins": pins}),
+        ("CONTROL_REQUEST_EVIDENCE_CLOSED_SET", {"requestResults": request_results}),
+        (
+            "PREDECESSOR_AUTHORITY_PINS_UNCHANGED",
+            {
+                "predecessorPins": PREDECESSOR_PINS,
+                "packetPins": {
+                    module: {"path": spec["packetPath"], "sha256": spec["packetSha256"]}
+                    for module, spec in MODULES.items()
+                },
+            },
+        ),
+    ]
+    return [
+        {
+            "checkId": check_id,
+            "result": "PASS",
+            "algorithm": "SHA-256/CANONICAL-JSON",
+            "evidenceSha256": sha256_bytes(canonical_bytes(payload)),
+        }
+        for check_id, payload in payloads
+    ]
+
+
 def verify_control_receipt(
     frontend: Path,
+    backend: Path,
     live_pins: dict[str, dict[str, Any]],
     audit: Audit,
 ) -> tuple[dict[str, Any], bytes]:
@@ -494,16 +793,35 @@ def verify_control_receipt(
         "Control receipt status",
     )
     frontend_source_pin = receipt.get("frontendPin", {})
+    backend_source_pin = receipt.get("backendPin", {})
     audit.require(isinstance(frontend_source_pin, dict), "Control frontend source pin absent")
+    audit.require(isinstance(backend_source_pin, dict), "Control backend source pin absent")
     if isinstance(frontend_source_pin, dict):
         verify_frontend_authority_carrier(
             frontend, frontend_source_pin, live_pins["frontend"], audit
         )
-    audit.equal(receipt.get("backendPin"), live_pins["backend"], "Control backend pin")
+    audit.equal(backend_source_pin, live_pins["backend"], "Control backend pin")
+    source_pins = {
+        "frontend": frontend_source_pin if isinstance(frontend_source_pin, dict) else {},
+        "backend": backend_source_pin if isinstance(backend_source_pin, dict) else {},
+    }
+    for repo, root in (("frontend", frontend), ("backend", backend)):
+        commit = str(source_pins[repo].get("commit", ""))
+        code, _raw = run_git(
+            root,
+            ["merge-base", "--is-ancestor", CONTROL_RESULT_ANCESTORS[repo], commit],
+        )
+        audit.equal(code, 0, f"{repo} final Control result ancestry")
     issued = parse_instant(receipt.get("issuedAt"), "Control issuedAt", audit)
     expires = parse_instant(receipt.get("expiresAt"), "Control expiresAt", audit)
     if issued is not None and expires is not None:
         audit.require(expires > issued, "Control receipt expiry is not after issue")
+        audit.equal(expires - issued, CONTROL_VALIDITY, "Control receipt exact seven-day validity")
+    expected_issued, expected_expires = expected_control_window(
+        frontend, backend, source_pins, audit
+    )
+    audit.equal(receipt.get("issuedAt"), expected_issued, "Control deterministic issuedAt")
+    audit.equal(receipt.get("expiresAt"), expected_expires, "Control deterministic expiresAt")
     results = receipt.get("requestResults", [])
     audit.require(isinstance(results, list), "Control requestResults is not a list")
     if isinstance(results, list):
@@ -516,7 +834,7 @@ def verify_control_receipt(
             if isinstance(row, dict):
                 audit.exact_keys(
                     row,
-                    {"requestId", "module", "status", "evidenceSha256"},
+                    {"requestId", "module", "status", "evidence", "evidenceSha256"},
                     f"{row.get('requestId')} result",
                 )
                 expected_module = (
@@ -533,6 +851,10 @@ def verify_control_receipt(
                     is not None,
                     f"{row.get('requestId')} evidence hash",
                 )
+    expected_results = expected_control_request_results(
+        frontend, backend, source_pins, audit
+    )
+    audit.equal(results, expected_results, "Control committed request evidence")
     verification = receipt.get("verification", [])
     audit.require(isinstance(verification, list) and bool(verification), "Control verification empty")
     if isinstance(verification, list):
@@ -544,17 +866,14 @@ def verify_control_receipt(
             if isinstance(row, dict):
                 audit.exact_keys(
                     row,
-                    {"command", "result", "evidence"},
+                    {"checkId", "result", "algorithm", "evidenceSha256"},
                     f"Control verification[{index}]",
                 )
-                audit.require(
-                    isinstance(row.get("command"), str) and bool(row["command"]),
-                    f"Control verification[{index}] command empty",
-                )
-                audit.require(
-                    isinstance(row.get("evidence"), str) and bool(row["evidence"]),
-                    f"Control verification[{index}] evidence empty",
-                )
+    audit.equal(
+        verification,
+        expected_control_verification(source_pins, expected_results),
+        "Control deterministic verification facts",
+    )
     expected_authority = {
         "controlBootstrapComplete": True,
         "moduleSourceChangeAuthorized": False,
@@ -574,6 +893,11 @@ def verify_frontend_authority_carrier(
     live_pin: dict[str, Any],
     audit: Audit,
 ) -> None:
+    audit.exact_keys(
+        source_pin,
+        REPOSITORY_PIN_KEYS,
+        "Control frontend source repository pin",
+    )
     expected_shape = {
         "branch": CENTRAL_REPOSITORIES["frontend"][0],
         "upstream": CENTRAL_REPOSITORIES["frontend"][1],
@@ -595,6 +919,28 @@ def verify_frontend_authority_carrier(
             audit,
         )
         audit.equal(actual_tree, tree, "Control frontend source tree pin")
+        for relative_path in sorted(AUTHORITY_CARRIER_PATHS):
+            code, source_listing = run_git(
+                frontend,
+                [
+                    "ls-tree",
+                    "-r",
+                    "--name-only",
+                    commit,
+                    "--",
+                    relative_path,
+                ],
+            )
+            audit.equal(
+                code,
+                0,
+                f"Control source authority absence lookup {relative_path}",
+            )
+            audit.equal(
+                source_listing,
+                b"",
+                f"Control source authority path absent {relative_path}",
+            )
         code, _raw = run_git(frontend, ["merge-base", "--is-ancestor", commit, "HEAD"])
         audit.equal(code, 0, "Control frontend source is ancestor of authority carrier")
         code, changed_raw = run_git(frontend, ["diff", "--name-only", f"{commit}..HEAD"])
@@ -1398,6 +1744,13 @@ def verify_static_contract() -> None:
     """Small pure invariant used by self-tests as well as CLI startup."""
     if list(MODULES) != ["SYS", "HRM"]:
         raise AssertionError("module order must remain SYS, HRM")
+    if list(CONTROL_EVIDENCE_SPECS) != CONTROL_REQUESTS:
+        raise AssertionError("Control evidence request closed set drift")
+    for request_id, (artifacts, markers) in CONTROL_EVIDENCE_SPECS.items():
+        if len(artifacts) != len(set(artifacts)):
+            raise AssertionError(f"{request_id} duplicate evidence artifact")
+        if any((repo, path) not in artifacts for repo, path, _marker in markers):
+            raise AssertionError(f"{request_id} marker escaped evidence closure")
     if ACTIVE_TOKEN_CLOSED_SET != [MODULES["SYS"]["tokenId"], MODULES["HRM"]["tokenId"]]:
         raise AssertionError("active token closed set drift")
     for module, spec in MODULES.items():
@@ -1430,8 +1783,12 @@ def verify_static_contract() -> None:
 
 def main() -> int:
     verify_static_contract()
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--phase", choices=("bundle", "promotion"), default="bundle")
+    parser = argparse.ArgumentParser(
+        description="Independently validate the Control, bundle, or promotion carrier phase."
+    )
+    parser.add_argument(
+        "--phase", choices=("control", "bundle", "promotion"), default="bundle"
+    )
     parser.add_argument("--frontend-root", type=Path, default=DEFAULT_FRONTEND)
     parser.add_argument("--backend-root", type=Path, default=DEFAULT_BACKEND)
     parser.add_argument("--worktree-root", type=Path, default=DEFAULT_WORKTREE_ROOT)
@@ -1454,7 +1811,7 @@ def main() -> int:
         )
         for repo in ("frontend", "backend")
     }
-    control, control_raw = verify_control_receipt(frontend, live_pins, audit)
+    control, control_raw = verify_control_receipt(frontend, backend, live_pins, audit)
     execution_pins = {
         "frontend": control.get("frontendPin", live_pins["frontend"]),
         "backend": control.get("backendPin", live_pins["backend"]),
@@ -1462,6 +1819,9 @@ def main() -> int:
     migration_prerequisites = verify_migration_boundaries(
         backend, execution_pins["backend"], audit
     )
+    if args.phase == "control":
+        audit.finish()
+        return 0
     register_rows, register_raw = verify_register_and_worktrees(
         frontend, worktree_root, execution_pins, audit
     )

@@ -49,7 +49,7 @@
       "maxItems": 10,
       "items": {
         "type": "object",
-        "required": ["requestId", "module", "status", "evidenceSha256"],
+        "required": ["requestId", "module", "status", "evidence", "evidenceSha256"],
         "properties": {
           "requestId": {
             "type": "string",
@@ -61,6 +61,9 @@
           "status": {
             "const": "PASS"
           },
+          "evidence": {
+            "$ref": "#/$defs/requestEvidence"
+          },
           "evidenceSha256": {
             "$ref": "#/$defs/sha256"
           }
@@ -70,21 +73,28 @@
     },
     "verification": {
       "type": "array",
-      "minItems": 1,
+      "minItems": 4,
+      "maxItems": 4,
       "items": {
         "type": "object",
-        "required": ["command", "result", "evidence"],
+        "required": ["checkId", "result", "algorithm", "evidenceSha256"],
         "properties": {
-          "command": {
-            "type": "string",
-            "minLength": 1
+          "checkId": {
+            "enum": [
+              "CONTROL_RESULT_ANCESTORS",
+              "CENTRAL_REPOSITORIES_CLEAN_PUSHED",
+              "CONTROL_REQUEST_EVIDENCE_CLOSED_SET",
+              "PREDECESSOR_AUTHORITY_PINS_UNCHANGED"
+            ]
           },
           "result": {
             "const": "PASS"
           },
-          "evidence": {
-            "type": "string",
-            "minLength": 1
+          "algorithm": {
+            "const": "SHA-256/CANONICAL-JSON"
+          },
+          "evidenceSha256": {
+            "$ref": "#/$defs/sha256"
           }
         },
         "additionalProperties": false
@@ -134,6 +144,50 @@
     "sha256": {
       "type": "string",
       "pattern": "^[0-9a-f]{64}$"
+    },
+    "requestEvidence": {
+      "type": "object",
+      "required": ["schema", "artifacts"],
+      "properties": {
+        "schema": {
+          "const": "dwp.hris.g7-control-request-evidence.v1"
+        },
+        "artifacts": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 16,
+          "items": {
+            "$ref": "#/$defs/committedArtifact"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "committedArtifact": {
+      "type": "object",
+      "required": ["repo", "path", "gitBlobSha1", "byteLength", "contentSha256"],
+      "properties": {
+        "repo": {
+          "enum": ["frontend", "backend"]
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$"
+        },
+        "gitBlobSha1": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "byteLength": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "contentSha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      },
+      "additionalProperties": false
     },
     "repositoryPin": {
       "type": "object",

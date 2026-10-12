@@ -8,6 +8,7 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 import materialize_g7_sys_hrm_successor as materializer
 import validate_g7_sys_hrm_successor as validator
@@ -53,6 +54,40 @@ class G7SysHrmSuccessorSelfTest(unittest.TestCase):
         }
 
     def control_receipt(self) -> dict[str, object]:
+        request_results = []
+        for index, request_id in enumerate(materializer.CONTROL_REQUESTS):
+            artifact = {
+                "repo": "frontend" if index % 2 == 0 else "backend",
+                "path": f"fixture/{index:02d}.txt",
+                "gitBlobSha1": f"{index + 1:040x}",
+                "byteLength": index + 1,
+                "contentSha256": f"{index + 1:064x}",
+            }
+            evidence = {
+                "schema": materializer.CONTROL_EVIDENCE_SCHEMA,
+                "artifacts": [artifact],
+            }
+            request_results.append(
+                {
+                    "requestId": request_id,
+                    "module": "SYS" if "SYS-007" in request_id else "HRM",
+                    "status": "PASS",
+                    "evidence": evidence,
+                    "evidenceSha256": materializer.sha256_bytes(
+                        materializer.canonical_bytes(
+                            {
+                                "schema": materializer.CONTROL_EVIDENCE_SCHEMA,
+                                "requestId": request_id,
+                                "artifacts": [artifact],
+                            }
+                        )
+                    ),
+                }
+            )
+        pins = {
+            "frontend": self.repository_pin("frontend"),
+            "backend": self.repository_pin("backend"),
+        }
         return materializer.sealed(
             {
                 "schema": "dwp.hris.g7-control-bootstrap-completion.v2",
@@ -61,24 +96,12 @@ class G7SysHrmSuccessorSelfTest(unittest.TestCase):
                 "issuedAt": "2026-10-12T15:00:00+09:00",
                 "expiresAt": "2026-10-19T15:00:00+09:00",
                 "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
-                "frontendPin": self.repository_pin("frontend"),
-                "backendPin": self.repository_pin("backend"),
-                "requestResults": [
-                    {
-                        "requestId": request_id,
-                        "module": "SYS" if "SYS-007" in request_id else "HRM",
-                        "status": "PASS",
-                        "evidenceSha256": "e" * 64,
-                    }
-                    for request_id in materializer.CONTROL_REQUESTS
-                ],
-                "verification": [
-                    {
-                        "command": "focused-control-verification",
-                        "result": "PASS",
-                        "evidence": "synthetic self-test evidence",
-                    }
-                ],
+                "frontendPin": pins["frontend"],
+                "backendPin": pins["backend"],
+                "requestResults": request_results,
+                "verification": materializer.build_control_verification(
+                    pins, request_results
+                ),
                 "authority": {
                     "controlBootstrapComplete": True,
                     "moduleSourceChangeAuthorized": False,
@@ -309,22 +332,205 @@ class G7SysHrmSuccessorSelfTest(unittest.TestCase):
             with self.assertRaises(materializer.PrerequisiteError):
                 materializer.write_append_only(outputs, root, check_only=False)
 
-    def test_control_receipt_rejects_request_reordering(self) -> None:
-        receipt = self.control_receipt()
-        receipt["requestResults"] = list(reversed(receipt["requestResults"]))
-        receipt = materializer.sealed(receipt)
+    def test_control_phase_output_is_deterministic(self) -> None:
+        pins = {
+            "frontend": self.repository_pin("frontend"),
+            "backend": self.repository_pin("backend"),
+        }
+        results = self.control_receipt()["requestResults"]
+        with (
+            patch.object(materializer, "validate_frontend_source_boundary"),
+            patch.object(materializer, "validate_control_result_ancestors"),
+            patch.object(materializer, "build_control_request_results", return_value=results),
+            patch.object(
+                materializer,
+                "control_window",
+                return_value=("2026-10-12T06:00:00Z", "2026-10-19T06:00:00Z"),
+            ),
+        ):
+            first = materializer.build_control_receipt(Path("/frontend"), Path("/backend"), pins)
+            second = materializer.build_control_receipt(Path("/frontend"), Path("/backend"), pins)
+        self.assertEqual(first, second)
+        self.assertEqual(materializer.json_bytes(first), materializer.json_bytes(second))
+
+    def test_control_request_evidence_has_exact_blob_closure(self) -> None:
+        marker_bytes: dict[tuple[str, str], list[str]] = {}
+        for spec in materializer.CONTROL_EVIDENCE_SPECS.values():
+            for repo, path, marker in spec["markers"]:
+                marker_bytes.setdefault((repo, path), []).append(marker)
+
+        def fake_blob(
+            _root: Path, _commit: str, repo: str, path: str
+        ) -> tuple[dict[str, object], bytes]:
+            raw = ("fixture\n" + "\n".join(marker_bytes.get((repo, path), []))).encode()
+            return (
+                {
+                    "repo": repo,
+                    "path": path,
+                    "gitBlobSha1": materializer.sha256_bytes(raw)[:40],
+                    "byteLength": len(raw),
+                    "contentSha256": materializer.sha256_bytes(raw),
+                },
+                raw,
+            )
+
+        pins = {
+            "frontend": self.repository_pin("frontend"),
+            "backend": self.repository_pin("backend"),
+        }
+        with patch.object(materializer, "committed_blob", side_effect=fake_blob):
+            results = materializer.build_control_request_results(
+                Path("/frontend"), Path("/backend"), pins
+            )
+        self.assertEqual([row["requestId"] for row in results], materializer.CONTROL_REQUESTS)
+        for row in results:
+            expected_paths = sorted(
+                materializer.CONTROL_EVIDENCE_SPECS[row["requestId"]]["artifacts"]
+            )
+            actual_paths = [
+                (artifact["repo"], artifact["path"])
+                for artifact in row["evidence"]["artifacts"]
+            ]
+            self.assertEqual(actual_paths, expected_paths)
+            self.assertEqual(len(actual_paths), len(set(actual_paths)))
+            self.assertEqual(
+                row["evidenceSha256"],
+                materializer.sha256_bytes(
+                    materializer.canonical_bytes(
+                        {
+                            "schema": materializer.CONTROL_EVIDENCE_SCHEMA,
+                            "requestId": row["requestId"],
+                            "artifacts": row["evidence"]["artifacts"],
+                        }
+                    )
+                ),
+            )
+
+    def test_check_control_rejects_tamper_path_and_commit_drift(self) -> None:
+        expected = self.control_receipt()
         with tempfile.TemporaryDirectory() as directory:
             frontend = Path(directory)
+            backend = frontend / "backend"
+            backend.mkdir()
             target = frontend / materializer.CONTROL_RECEIPT_REL
             target.parent.mkdir(parents=True)
-            target.write_bytes(materializer.json_bytes(receipt))
-            with self.assertRaises(materializer.PrerequisiteError):
+            with patch.object(materializer, "build_control_receipt", return_value=expected):
+                target.write_bytes(materializer.json_bytes(expected))
                 materializer.validate_control_receipt(
                     frontend,
+                    backend,
                     self.repository_pin("frontend"),
                     self.repository_pin("backend"),
                     verify_frontend_carrier=False,
                 )
+                cases = []
+                path_tamper = copy.deepcopy(expected)
+                path_tamper["requestResults"][0]["evidence"]["artifacts"][0]["path"] = "tampered/path"
+                cases.append(materializer.sealed(path_tamper))
+                digest_tamper = copy.deepcopy(expected)
+                digest_tamper["requestResults"][0]["evidenceSha256"] = "0" * 64
+                cases.append(materializer.sealed(digest_tamper))
+                commit_drift = copy.deepcopy(expected)
+                commit_drift["frontendPin"]["commit"] = "9" * 40
+                cases.append(materializer.sealed(commit_drift))
+                extra_pin_field = copy.deepcopy(expected)
+                extra_pin_field["frontendPin"]["renewedAt"] = "2026-10-13T00:00:00Z"
+                cases.append(materializer.sealed(extra_pin_field))
+                for tampered in cases:
+                    with self.subTest(tamper=tampered["sealedPayloadSha256"]):
+                        target.write_bytes(materializer.json_bytes(tampered))
+                        with self.assertRaises(materializer.PrerequisiteError):
+                            materializer.validate_control_receipt(
+                                frontend,
+                                backend,
+                                self.repository_pin("frontend"),
+                                self.repository_pin("backend"),
+                                verify_frontend_carrier=False,
+                            )
+
+    def test_source_pin_rejects_extra_fields_and_prior_authority_carrier(self) -> None:
+        source_pin = self.repository_pin("frontend")
+        extra_field_pin = copy.deepcopy(source_pin)
+        extra_field_pin["renewedAt"] = "2026-10-13T00:00:00Z"
+        with self.assertRaises(materializer.PrerequisiteError):
+            materializer.validate_repository_pin_key_closure(
+                extra_field_pin, "Control frontend source"
+            )
+
+        control_path = str(materializer.CONTROL_RECEIPT_REL)
+
+        def materializer_git(
+            _root: Path, *args: str, raw: bool = False
+        ) -> str | bytes:
+            if args[0] == "rev-parse":
+                value = str(source_pin["tree"])
+            elif args[0] == "ls-tree" and args[-1] == control_path:
+                value = control_path
+            elif args[0] == "ls-tree":
+                value = ""
+            else:
+                raise AssertionError(args)
+            return value.encode() if raw else value
+
+        with patch.object(materializer, "run_git", side_effect=materializer_git):
+            with self.assertRaises(materializer.PrerequisiteError):
+                materializer.validate_frontend_source_boundary(
+                    Path("/frontend"), source_pin
+                )
+
+        def validator_git(
+            _root: Path, args: list[str]
+        ) -> tuple[int, bytes]:
+            if args[0] == "rev-parse":
+                return 0, f"{source_pin['tree']}\n".encode()
+            if args[0] == "ls-tree" and args[-1] == control_path:
+                return 0, f"{control_path}\n".encode()
+            if args[0] in {"ls-tree", "diff"}:
+                return 0, b""
+            if args[0] == "merge-base":
+                return 0, b""
+            raise AssertionError(args)
+
+        independent_pin = copy.deepcopy(source_pin)
+        independent_pin["renewedAt"] = "2026-10-13T00:00:00Z"
+        audit = validator.Audit()
+        with patch.object(validator, "run_git", side_effect=validator_git):
+            validator.verify_frontend_authority_carrier(
+                Path("/frontend"), independent_pin, source_pin, audit
+            )
+        with self.assertRaises(SystemExit):
+            audit.finish()
+        self.assertTrue(
+            any("field closed set" in error for error in audit.errors), audit.errors
+        )
+        self.assertTrue(
+            any("authority path absent" in error for error in audit.errors), audit.errors
+        )
+
+    def test_fresh_phase_inventory_requires_control_before_bundle(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            frontend = Path(directory)
+            root = frontend / materializer.SUCCESSOR_ROOT_REL
+            for relative in materializer.TOOL_RELATIVE_PATHS:
+                path = root / relative
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text("fixture", encoding="utf-8")
+            materializer.validate_phase_inventory(frontend, "control")
+            with self.assertRaises(materializer.PrerequisiteError):
+                materializer.validate_phase_inventory(frontend, "bundle")
+            receipt = frontend / materializer.CONTROL_RECEIPT_REL
+            receipt.write_text("fixture", encoding="utf-8")
+            materializer.validate_phase_inventory(frontend, "check-control")
+            materializer.validate_phase_inventory(frontend, "bundle")
+            for relative in materializer.BUNDLE_RELATIVE_PATHS:
+                path = root / relative
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text("fixture", encoding="utf-8")
+            materializer.validate_phase_inventory(frontend, "promotion")
+            promotion = frontend / materializer.PROMOTION_RECEIPT_REL
+            promotion.parent.mkdir(parents=True, exist_ok=True)
+            promotion.write_text("fixture", encoding="utf-8")
+            materializer.validate_phase_inventory(frontend, "check-promotion")
 
     def test_independent_validator_rejects_path_expansion(self) -> None:
         context = self.context()
@@ -409,6 +615,26 @@ class G7SysHrmSuccessorSelfTest(unittest.TestCase):
         self.assertEqual(materializer.ACTIVE_TOKEN_CLOSED_SET, validator.ACTIVE_TOKEN_CLOSED_SET)
         self.assertEqual(materializer.CLOSED_PREDECESSOR_TOKENS, validator.CLOSED_PREDECESSOR_TOKENS)
         self.assertEqual(materializer.PREDECESSOR_PINS, validator.PREDECESSOR_PINS)
+        self.assertEqual(materializer.CONTROL_REQUESTS, validator.CONTROL_REQUESTS)
+        self.assertEqual(
+            materializer.CONTROL_RESULT_ANCESTORS,
+            validator.CONTROL_RESULT_ANCESTORS,
+        )
+        self.assertEqual(
+            materializer.REPOSITORY_PIN_KEYS,
+            validator.REPOSITORY_PIN_KEYS,
+        )
+        normalized_materializer_specs = {
+            request_id: (
+                tuple(spec["artifacts"]),
+                tuple(spec["markers"]),
+            )
+            for request_id, spec in materializer.CONTROL_EVIDENCE_SPECS.items()
+        }
+        self.assertEqual(
+            normalized_materializer_specs,
+            validator.CONTROL_EVIDENCE_SPECS,
+        )
         for module in materializer.MODULES:
             for key in (
                 "sliceId",
