@@ -1,0 +1,121 @@
+{
+  "schema": "dwp.hris.g7-migration-lease-register.v1",
+  "issuedAt": "2026-10-12T10:45:00+09:00",
+  "leases": [
+    {
+      "leaseId": "G7-LEASE-SYS-PLATFORM-V325-R1",
+      "module": "SYS",
+      "sliceId": "BASE-TFR-SYS-007",
+      "stream": "PLATFORM_MAIN",
+      "streamRoot": "dwp-platform-server/src/main/resources/db/migration",
+      "frozenBackendCommit": "c0d72ca8e26a6e2a0b3885b62c0aa0e3ad7b1329",
+      "frozenHighWater": 324,
+      "version": 325,
+      "exactRelativePath": "dwp-platform-server/src/main/resources/db/migration/V325__create_hris_reference_configuration_lifecycle.sql",
+      "schemaEffect": [
+        "reference configuration lifecycle set and version records",
+        "evaluation evidence and immutable command receipts",
+        "outbox and audit controls; no duplicate raw reference-data store"
+      ],
+      "status": "RESERVED_CONTROL_ONLY",
+      "ownerTokenId": null,
+      "reservedForPacketId": "G7-PACKET-SYS-BASE-TFR-SYS-007-R1",
+      "issuedAt": "2026-10-12T10:45:00+09:00",
+      "expiresAt": "2026-10-19T10:45:00+09:00",
+      "invalidationConditions": [
+        "frozen backend base commit or migration high-water changes",
+        "another migration claims the exact version or path",
+        "packet or token expires, is revoked or changes scope"
+      ],
+      "migrationAdmissionAuthorized": false,
+      "sealedPayloadSha256": "f79ea16e8fa389bc44eec07e975a9351b44d5df6d30434bfec85ce6aa5206cc8"
+    },
+    {
+      "leaseId": "G7-LEASE-HRM-PEOPLE-V54-R1",
+      "module": "HRM",
+      "sliceId": "BASE-TFR-HRM-010",
+      "stream": "PEOPLE_MAIN",
+      "streamRoot": "dwp-people-server/src/main/resources/db/migration",
+      "frozenBackendCommit": "c0d72ca8e26a6e2a0b3885b62c0aa0e3ad7b1329",
+      "frozenHighWater": 53,
+      "version": 54,
+      "exactRelativePath": "dwp-people-server/src/main/resources/db/migration/V54__create_employee_change_request_lifecycle.sql",
+      "schemaEffect": [
+        "employee-change request and frozen patch evidence",
+        "approval decision inbox and immutable command receipts",
+        "transactional outbox; no assignment-proposal table changes"
+      ],
+      "status": "RESERVED_CONTROL_ONLY",
+      "ownerTokenId": null,
+      "reservedForPacketId": "G7-PACKET-HRM-BASE-TFR-HRM-010-R1",
+      "issuedAt": "2026-10-12T10:45:00+09:00",
+      "expiresAt": "2026-10-19T10:45:00+09:00",
+      "invalidationConditions": [
+        "frozen backend base commit or migration high-water changes",
+        "another migration claims the exact version or path",
+        "packet or token expires, is revoked or changes scope"
+      ],
+      "migrationAdmissionAuthorized": false,
+      "sealedPayloadSha256": "f4a459ab472198008decb1f1e2d43b4108f2eb6f6e3e716113100a2a24cc0add"
+    },
+    {
+      "leaseId": "G7-LEASE-PER-PERFORMANCE-V2-R1",
+      "module": "PER",
+      "sliceId": "BASE-TFR-PER-006",
+      "stream": "PEOPLE_PERFORMANCE",
+      "streamRoot": "dwp-people-server/src/main/resources/db/performance-migration",
+      "frozenBackendCommit": "c0d72ca8e26a6e2a0b3885b62c0aa0e3ad7b1329",
+      "frozenHighWater": 1,
+      "version": 2,
+      "exactRelativePath": "dwp-people-server/src/main/resources/db/performance-migration/V2__per_create_population_freeze.sql",
+      "schemaEffect": [
+        "immutable population freeze and member/reviewer snapshots",
+        "tenant RLS, append-only guards, foreign keys and deterministic indexes",
+        "receipt/outbox integration without changing V1 preview semantics"
+      ],
+      "status": "ADMITTED_DOMAIN_AUTHORING",
+      "ownerTokenId": "G7-START-PER-BASE-TFR-PER-006-R1",
+      "reservedForPacketId": "G7-PACKET-PER-BASE-TFR-PER-006-R1",
+      "issuedAt": "2026-10-12T10:45:00+09:00",
+      "expiresAt": "2026-10-19T10:45:00+09:00",
+      "invalidationConditions": [
+        "frozen backend base commit or migration high-water changes",
+        "another migration claims the exact version or path",
+        "packet or token expires, is revoked or changes scope"
+      ],
+      "migrationAdmissionAuthorized": true,
+      "sealedPayloadSha256": "211b3b7664057076a7072143994bdce2e7812f5b9219d2eafded7960e310e1c1"
+    },
+    {
+      "leaseId": "G7-LEASE-TIM-TIME-V8-R1",
+      "module": "TIM",
+      "sliceId": "BASE-TFR-TIM-006",
+      "stream": "TIME_MAIN",
+      "streamRoot": "dwp-time-server/src/main/resources/db/migration",
+      "frozenBackendCommit": "c0d72ca8e26a6e2a0b3885b62c0aa0e3ad7b1329",
+      "frozenHighWater": 7,
+      "version": 8,
+      "exactRelativePath": "dwp-time-server/src/main/resources/db/migration/V8__tim_create_clock_ingestion.sql",
+      "schemaEffect": [
+        "immutable clock source, event, corrective void and finding records",
+        "tenant RLS, append-only guards, one-void-per-event uniqueness and provenance/order indexes",
+        "receipt, outbox, audit and projection storage without touching work-regime or absence tables"
+      ],
+      "status": "ADMITTED_DOMAIN_AUTHORING",
+      "ownerTokenId": "G7-START-TIM-BASE-TFR-TIM-006-R1",
+      "reservedForPacketId": "G7-PACKET-TIM-BASE-TFR-TIM-006-R1",
+      "issuedAt": "2026-10-12T10:45:00+09:00",
+      "expiresAt": "2026-10-19T10:45:00+09:00",
+      "invalidationConditions": [
+        "frozen backend base commit or migration high-water changes",
+        "another migration claims the exact version or path",
+        "packet or token expires, is revoked or changes scope"
+      ],
+      "migrationAdmissionAuthorized": true,
+      "sealedPayloadSha256": "0ebcef3fbae39ed33fe56af7bc16d4ce89a0828fdfc95d6be107362c176a29f5"
+    }
+  ],
+  "historicalRangesAreAuthority": false,
+  "openEndedVersionsAllowed": false,
+  "sealedPayloadSha256": "b6f4e1c26e1aee804f4d6d01d8ab9612aa8171b5364a02fbb6d4b9466cbcfbae"
+}

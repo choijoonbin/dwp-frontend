@@ -1,0 +1,134 @@
+{
+  "schema": "dwp.hris.g6-w1-successor-receipt.v1",
+  "receiptId": "HRIS-G6-W1-SUCCESSOR-RECEIPT-20261012-R1",
+  "issuedAt": "2026-10-12T10:45:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "status": "PASS",
+  "decision": "G7_EVIDENCE_PROMOTION_AUTHORIZED",
+  "completionMeaning": "The exactly-once full-mode W1 successor passed on the frozen frontend/backend pair with 28/28 phases, 15/15 checkpoint assertions, verified rollback and clean teardown.",
+  "sourcePins": {
+    "frontend": {
+      "commit": "4546024ca9036f217c1d13ddb0622c21a3264b60",
+      "tree": "8f2a3068f9efbca5daf77a5fdf7f0d7d1670976c",
+      "stateSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "branch": "codex/hris-g1-integration-frontend-20261006",
+      "upstream": "origin/codex/hris-g1-integration-frontend-20261006",
+      "clean": true,
+      "upstreamMatched": true
+    },
+    "frontendSourceResult": {
+      "commit": "c05ffa3f9d647968fdcb224ec51f811c7d2cc538",
+      "tree": "761dd5e5ba232992dbac3a11fcd73ad2de787f24"
+    },
+    "backend": {
+      "commit": "c0d72ca8e26a6e2a0b3885b62c0aa0e3ad7b1329",
+      "tree": "099c88ee32c584764802f3efd77c23364c65b8c4",
+      "stateSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "branch": "codex/hris-g1-integration-backend-20261006",
+      "upstream": "origin/codex/hris-g1-integration-backend-20261006",
+      "clean": true,
+      "upstreamMatched": true
+    },
+    "agent": {
+      "commit": "1d46fc4ab49c604efb7464574c49d13ee453e059",
+      "tree": "0b9a8dbfd828478ee825452e5aca8688c83e37ab",
+      "stateSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "branch": "dwp-dev",
+      "upstream": "origin/dwp-dev",
+      "clean": true,
+      "upstreamMatched": true,
+      "hrisModuleSliceAuthority": false
+    }
+  },
+  "rawEvidence": {
+    "locator": "backend:output/hris-w1-synthetic-20261012t005606z-dd1c1db1",
+    "result": {
+      "path": "result.json",
+      "bytes": 54891,
+      "sha256": "0a4675a69a658b0fc7695877a267ff36f18b0a5820c865a9b55c2195d79969b1"
+    },
+    "checkpointManifest": {
+      "path": "checkpoint/manifest.json",
+      "bytes": 8918,
+      "sha256": "fe1b549f3f31a9e14ec75e9c3c23b0f194b0a911e9b5bef5a21dbee80018f877"
+    },
+    "runtime": {
+      "path": "runtime.json",
+      "bytes": 21468,
+      "sha256": "ff83fd941e7433ef9245d8b8f6de35e4722a710a7b32cdc3443152766a6ad145"
+    }
+  },
+  "execution": {
+    "runId": "w1-20261012t005606z-dd1c1db1",
+    "scope": "FULL_BACKEND_WITH_EXTERNAL_CHECKPOINT",
+    "executionCount": 1,
+    "startedAt": "2026-10-12T00:56:06.593060Z",
+    "finishedAt": "2026-10-12T00:59:46.695714Z",
+    "phasesPassed": 28,
+    "phasesTotal": 28,
+    "status": "BACKEND_RUNTIME_SUBGATE_PASS"
+  },
+  "checkpoint": {
+    "status": "PASS",
+    "assertionsPassed": 15,
+    "assertionsTotal": 15,
+    "frontendCommit": "4546024ca9036f217c1d13ddb0622c21a3264b60",
+    "frontendClean": true,
+    "activeAuthorization": {
+      "version": 34,
+      "revision": 2,
+      "checksum": "852d20e1e639e1a7170f02b5714d21d8c51a9eb8ff5ac32d8b7940b82d6be83b"
+    },
+    "rawHarDeleted": true
+  },
+  "rollbackAndCleanup": {
+    "rollbackComplete": true,
+    "activeBundleAtFinish": {
+      "checksum": "9c9a18b44eb83de0e98f4ec16e44c1df0ce216e00bc7075462f4e35f7fb87639",
+      "revision": 3,
+      "version": 33
+    },
+    "teardownVerifiedClean": true,
+    "errors": [],
+    "residuals": []
+  },
+  "security": {
+    "syntheticOnly": true,
+    "customerDataUsed": false,
+    "productionActivationPerformed": false,
+    "evidenceSecretScanFindings": 0,
+    "finalResultSecretScanFindings": 0
+  },
+  "executables": {
+    "frontendExecutableSha256": "05b6815688b061c7237d3ced2180215f268e3cb47cddb9bcea2b482765449048",
+    "frontendCoreSha256": "f125751ee95d36ac9b0850ef8478d30ecae10c57c89bcc55f9f001d5d961a5f2",
+    "backendRunnerSha256": "1a65e1a639f381bfb32094014691d07c4bad016098d4b4c4e7ae57284e60368b",
+    "gatewayOpenApi": {
+      "sha256": "325fd7acfcf0ed42cd03db0105003c6a53d8434467e594e023d227c64b734856",
+      "paths": 1664,
+      "operations": 1904,
+      "schemas": 3682,
+      "frontendBackendBytesEqual": true
+    }
+  },
+  "authority": {
+    "g6Complete": true,
+    "g7EvidencePromotionAuthorized": true,
+    "modulePacketIssuanceAuthorized": false,
+    "moduleParallelDevelopmentAuthorized": false,
+    "migrationAdmissionAuthorized": false,
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "startTokensIssued": []
+  },
+  "exclusions": [
+    "This receipt does not itself issue a module packet, start token or migration admission.",
+    "This receipt does not authorize customer data, customer activation or production release.",
+    "The W1 run is not re-executed by G7."
+  ],
+  "nextGate": {
+    "id": "G7_EVIDENCE_PROMOTION_AND_DELEGATION_DECISION",
+    "status": "AUTHORIZED"
+  },
+  "sealedPayloadSha256": "47fd047754c78c918d51376e3bd7a5775a745991bb9f32e767f1641140bdade7"
+}

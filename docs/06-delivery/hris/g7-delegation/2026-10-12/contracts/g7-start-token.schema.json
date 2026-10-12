@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "dwp.hris.g7-start-token.schema.v1",
+  "type": "object",
+  "required": [
+    "schema",
+    "tokenId",
+    "packetId",
+    "packetFileSha256",
+    "sliceId",
+    "module",
+    "state",
+    "worktreeBindings",
+    "authority",
+    "sealedPayloadSha256"
+  ],
+  "properties": {
+    "schema": {
+      "const": "dwp.hris.g7-module-start-token.v1"
+    },
+    "state": {
+      "const": "ISSUED_PENDING_PROMOTION_RECEIPT"
+    },
+    "module": {
+      "enum": [
+        "PER",
+        "TIM"
+      ]
+    },
+    "sealedPayloadSha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "additionalProperties": true
+}

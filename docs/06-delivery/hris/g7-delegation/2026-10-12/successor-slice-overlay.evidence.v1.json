@@ -1,0 +1,45 @@
+{
+  "schema": "dwp.hris.g7-successor-slice-overlay-evidence.v1",
+  "issuedAt": "2026-10-12T10:45:00+09:00",
+  "sourceOverlay": {
+    "path": "docs/06-delivery/hris/current-slice-integration-status.v1.csv",
+    "sha256": "603f81f13f5168825468c18d9f5a04e4ca389288a121fe1ad33c21b2ff6812de",
+    "evidencePath": "docs/06-delivery/hris/current-slice-integration-status.v1.evidence.json",
+    "evidenceSha256": "d17ed348749715c660fae624e05e1df7dbee6adf6c4679c73b7c9883eab25047",
+    "immutable": true
+  },
+  "successorOverlay": {
+    "path": "docs/06-delivery/hris/g7-delegation/2026-10-12/successor-slice-overlay.v1.csv",
+    "bytes": 140896,
+    "sha256": "dc0249b33af6194ff832d8f4e8348b519a489130cde8b0a01b364ebf8ea2f147",
+    "rows": 102,
+    "uniqueSliceIds": 102,
+    "orderedSliceIdSha256": "10256b4f5b2098f3616cbb4316a5551ddf103b4e2babf81559641ef735cd1bd2",
+    "sortedSliceIdSetSha256": "b85059fa5048866ebf7c134d74d8e07a9cc7af68485093260d0c18010b1d6216",
+    "moduleCounts": {
+      "HRM": 22,
+      "PAY": 21,
+      "PER": 22,
+      "SYS": 17,
+      "TIM": 20
+    },
+    "sourceKindCounts": {
+      "BASE_TARGET_FAMILY": 86,
+      "MODERN_CAPABILITY": 16
+    },
+    "classificationCounts": {
+      "AUTHORIZED_DOMAIN_AUTHORING": 2,
+      "INTEGRATED_FROZEN_G5_G6": 5,
+      "PACKET_PREPARED_START_WITHHELD": 2,
+      "QUEUED_NOT_SELECTED": 89,
+      "RETIRED_UNCHANGED": 2,
+      "WITHHELD_PRODUCER_AND_NAMED_TESTS_REQUIRED": 1,
+      "WITHHELD_PRODUCER_NOT_IMPLEMENTED": 1
+    }
+  },
+  "transitionRule": "All pre-G7 columns and row order remain byte-value equivalent after CSV parsing; only the ten g7_* columns are appended.",
+  "newSliceIdsAllowed": false,
+  "missingSliceIdsAllowed": false,
+  "duplicateSliceIdsAllowed": false,
+  "sealedPayloadSha256": "9710b0f4aab10330c9556b554a4bce1a036754d1136b0f2f4b4ba3ff8d83d789"
+}

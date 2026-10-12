@@ -1,0 +1,225 @@
+{
+  "schema": "dwp.hris.g7-delegation-manifest.v1",
+  "issuedAt": "2026-10-12T10:45:00+09:00",
+  "sourcePins": [
+    {
+      "path": "docs/06-delivery/hris/2026-10-06-integration-roadmap.md",
+      "bytes": 11234,
+      "sha256": "ac1abe594d7fa509e0d299024c6d330ab377dd58885b58ab267449fd15c5344e"
+    },
+    {
+      "path": "docs/06-delivery/hris/2026-10-07-g4-frontend-semantic-integration-receipt.json",
+      "bytes": 4199,
+      "sha256": "82d85474d98503fda6c5cfdf4fcadff48bb6f2adbb45619fa47f454c4822961d"
+    },
+    {
+      "path": "docs/06-delivery/hris/2026-10-07-g7-module-delegation-preflight.json",
+      "bytes": 46745,
+      "sha256": "5a95ded883cc520be5cf3705b26348972801f19f4565d65a2896e5515bf02e29"
+    },
+    {
+      "path": "docs/06-delivery/hris/2026-10-12-g5-integrated-stabilization-freeze-receipt.json",
+      "bytes": 12163,
+      "sha256": "4a5a3505414dbec26ea4ef35eb4b4371c9c765272a39285298f3374090ec58ae"
+    },
+    {
+      "path": "docs/06-delivery/hris/current-slice-integration-status.v1.csv",
+      "bytes": 126216,
+      "sha256": "603f81f13f5168825468c18d9f5a04e4ca389288a121fe1ad33c21b2ff6812de"
+    },
+    {
+      "path": "docs/06-delivery/hris/current-slice-integration-status.v1.evidence.json",
+      "bytes": 28108,
+      "sha256": "d17ed348749715c660fae624e05e1df7dbee6adf6c4679c73b7c9883eab25047"
+    },
+    {
+      "path": "docs/06-delivery/hris/development-agent-work-packet-template.md",
+      "bytes": 6143,
+      "sha256": "e5564d310b6b2d3ef84b0a6d7b53fc9a6d2a2fd084770df7f10abb4bae9a83f7"
+    },
+    {
+      "path": "docs/06-delivery/hris/g3-successors/2026-10-07/g3-contract-primary-ownership-register.csv",
+      "bytes": 180380,
+      "sha256": "2ef33aaf3534859b92a5d68267ddadf3aab1fe94c8dab4fe321992740b3c3629"
+    },
+    {
+      "path": "docs/06-delivery/hris/g3-successors/2026-10-07/manifest.v1.json",
+      "bytes": 251943,
+      "sha256": "af5238d3610e96aeb12ce6376d37175d77ef65372be135369b9a5faeabe2de8e"
+    },
+    {
+      "path": "docs/06-delivery/hris/recovery/exact-supplements/2026-10-06/accepted-successors/hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-api-contract-register.csv",
+      "bytes": 100020,
+      "sha256": "5f47efd33a1d5aa3d11a4d9fd5716cd4e35650e9fec0868ecb77c8c90a4cd988"
+    },
+    {
+      "path": "docs/06-delivery/hris/recovery/exact-supplements/2026-10-06/accepted-successors/hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-runtime-invariant-register.csv",
+      "bytes": 51783,
+      "sha256": "fcdfd1a26d8fca2c8d9a2a8279a3c5a99844ba827aefe47cbac2210b8753f77a"
+    },
+    {
+      "path": "docs/06-delivery/hris/recovery/exact-supplements/2026-10-06/hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-action-key-register.csv",
+      "bytes": 78170,
+      "sha256": "19a12600eb11e4d6c7c6098ad7f44f8afb544a1d9c698c3d2305e9e8150b5b7e"
+    },
+    {
+      "path": "docs/06-delivery/hris/recovery/exact-supplements/2026-10-06/hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-projection-schemas.v1.json",
+      "bytes": 1523618,
+      "sha256": "b185accd712216c39bf8a66f70cbbf0092a27a8c2c5e3d7457ecd4d511afa048"
+    },
+    {
+      "path": "docs/06-delivery/hris/recovery/exact-supplements/2026-10-06/hris-porting-blueprint-2026-09-09/coding-readiness/target-family-resolution-register.csv",
+      "bytes": 38399,
+      "sha256": "3e3618ff3ac150da8c9c7cbd3b1018e30e69652f28f3dbd8c87edb7df6a83819"
+    },
+    {
+      "path": "docs/06-delivery/hris/recovery/exact-supplements/2026-10-06/manifest.json",
+      "bytes": 9995,
+      "sha256": "342488e9e5f2ec3ede83a0c99e83bd990892169fc913dc60afb3255ded037a6d"
+    },
+    {
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/api-pep-binding-register.csv",
+      "bytes": 126576,
+      "sha256": "0e38d724516a8b271069241ffa0fb6400984dc703758767de53cbaffb4f93da3"
+    },
+    {
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/cross-module-contract-register.csv",
+      "bytes": 13108,
+      "sha256": "783bd3f6c6fdcf5d35da73020b2cc01f0c59cfd6e9fe9d56ffa75a3cd380f725"
+    },
+    {
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/g3-file-allocation-register.csv",
+      "bytes": 28987,
+      "sha256": "a9deb03deff95bc7fc8c3126666d71a552eb9503c82508f2483d8bf4e1561219"
+    },
+    {
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/g3-slice-code-go-register.csv",
+      "bytes": 305301,
+      "sha256": "fb646668329e93ca0b83b74e2a3e43619954cec1cb2f6770029677edbc8d5725"
+    },
+    {
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/hris-information-architecture-register.csv",
+      "bytes": 103877,
+      "sha256": "ab506a2bb2f80c8ab81a4b9d575374d6bda83b312d11dce07495d4812bdf4686"
+    },
+    {
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/module-dependency-register.csv",
+      "bytes": 3652,
+      "sha256": "b8f1a11d1a32cf6f5a9a99ff73066b7e65787319ac18cf0d2b4891d22587c348"
+    },
+    {
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/service-api-auth-binding-register.csv",
+      "bytes": 14356,
+      "sha256": "a54272429e70d0e2494e082b214615a4befe2354d5ab72bf7619500e2b0fdcaa"
+    }
+  ],
+  "toolPins": [
+    {
+      "path": "docs/06-delivery/hris/g7-delegation/2026-10-12/materialize_g7_module_delegation.py",
+      "bytes": 83072,
+      "sha256": "5ab1869c1c0f97ad9e502cfaaa73baf6d1912a60e743ed0370100b4cbb42e9be"
+    },
+    {
+      "path": "docs/06-delivery/hris/g7-delegation/2026-10-12/validate_g7_module_delegation.py",
+      "bytes": 32992,
+      "sha256": "2907dd4ae3da84d6692f98c8f5f255859d3c8d00124f75821c9846d70cd74aae"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "docs/06-delivery/hris/2026-10-12-g6-w1-successor-receipt.json",
+      "bytes": 5008,
+      "sha256": "e9844302d03b81a8a473be4b85ee80862a16946264c0d0d9e4636f6cac80107c"
+    },
+    {
+      "path": "docs/06-delivery/hris/g7-delegation/2026-10-12/contracts/g7-module-work-packet.schema.json",
+      "bytes": 1226,
+      "sha256": "222dc2b06af58509ec0394a3afafb25428353dd942b983d6d22171acda66d8f8"
+    },
+    {
+      "path": "docs/06-delivery/hris/g7-delegation/2026-10-12/contracts/g7-promotion-receipt.schema.json",
+      "bytes": 608,
+      "sha256": "940eabfa3b8334e046f6614aa4d13acb42be845d1c8634299ff5bdb5db35b32a"
+    },
+    {
+      "path": "docs/06-delivery/hris/g7-delegation/2026-10-12/contracts/g7-start-token.schema.json",
+      "bytes": 699,
+      "sha256": "c0cdeafdd00b91012f66f7da4cb2e3706349ef2364b31ad6fee87286bc25a654"
+    },
+    {
+      "path": "docs/06-delivery/hris/g7-delegation/2026-10-12/control-requests.v1.json",
+      "bytes": 9089,
+      "sha256": "1e96cacc713837cfd81313b13f26d0c25205138f215b24ba22f667653d8ae858"
+    },
+    {
+      "path": "docs/06-delivery/hris/g7-delegation/2026-10-12/delegation-plan.v1.json",
+      "bytes": 8610,
+      "sha256": "3392edb49c118b325bed6d599f672561233b9d8b5a7dd3cf479e231c4ccbb2cb"
+    },
+    {
+      "path": "docs/06-delivery/hris/g7-delegation/2026-10-12/migration-leases.v1.json",
+      "bytes": 5754,
+      "sha256": "4df1f5375fd82549ee022f935184044074d7306b848d97238033296a83ab54b5"
+    },
+    {
+      "path": "docs/06-delivery/hris/g7-delegation/2026-10-12/packets/hrm-010.v1.json",
+      "bytes": 18746,
+      "sha256": "95c151eb2b277518d31cc9733175c7f2e05fc0c73da37fa9f861d58eef9b8a65"
+    },
+    {
+      "path": "docs/06-delivery/hris/g7-delegation/2026-10-12/packets/per-006.v1.json",
+      "bytes": 19531,
+      "sha256": "0b1f08f90ee1e7b1fffc69448a1341a4ccc1143ec06e0ad058ba71c3090777c8"
+    },
+    {
+      "path": "docs/06-delivery/hris/g7-delegation/2026-10-12/packets/sys-007.v1.json",
+      "bytes": 21802,
+      "sha256": "13c9e32ddd24b20805060e9b1e1ebdf1549d0619fc7c9b32f4543e72556bfd4e"
+    },
+    {
+      "path": "docs/06-delivery/hris/g7-delegation/2026-10-12/packets/tim-006.v1.json",
+      "bytes": 19279,
+      "sha256": "380d43d51805038ed37fb8d1e6bab7d031739b672ab4552878cebf932141f14e"
+    },
+    {
+      "path": "docs/06-delivery/hris/g7-delegation/2026-10-12/registers/module-worktrees.v1.csv",
+      "bytes": 1704,
+      "sha256": "595ec592424f02fbeeca7f8ff0ea94a4f27e9ec56627e5b3b8ab0da98603ee36"
+    },
+    {
+      "path": "docs/06-delivery/hris/g7-delegation/2026-10-12/state/current-delegation.v1.json",
+      "bytes": 1488,
+      "sha256": "3dbd29dd17ea4e5e7f24243fd2a68f77c8f61cb848294ec27bbedea0e2a23f0b"
+    },
+    {
+      "path": "docs/06-delivery/hris/g7-delegation/2026-10-12/successor-slice-overlay.evidence.v1.json",
+      "bytes": 1830,
+      "sha256": "a0bd4ed203bdfbf9c867c576a4370799ed2bc98e9e09a611342c1ba0774b19d2"
+    },
+    {
+      "path": "docs/06-delivery/hris/g7-delegation/2026-10-12/successor-slice-overlay.v1.csv",
+      "bytes": 140896,
+      "sha256": "dc0249b33af6194ff832d8f4e8348b519a489130cde8b0a01b364ebf8ea2f147"
+    },
+    {
+      "path": "docs/06-delivery/hris/g7-delegation/2026-10-12/tokens/per-006.start-token.v1.json",
+      "bytes": 4700,
+      "sha256": "814fdc1724119b54f7407b4e07e3e19535950976fa0cabf2849cef6dfcb18abd"
+    },
+    {
+      "path": "docs/06-delivery/hris/g7-delegation/2026-10-12/tokens/tim-006.start-token.v1.json",
+      "bytes": 4693,
+      "sha256": "338ad880fb376833475734df607992f3df62528beabf66e7b66461c72ffa907c"
+    }
+  ],
+  "artifactCount": 17,
+  "activeTokenCandidates": [
+    "G7-START-PER-BASE-TFR-PER-006-R1",
+    "G7-START-TIM-BASE-TFR-TIM-006-R1"
+  ],
+  "packetCount": 4,
+  "tokenCount": 2,
+  "overlayRows": 102,
+  "codeReexecutionPerformed": false,
+  "sealedPayloadSha256": "4ee118eaeb8bd1a741b3cab010b7cdab74479db49ea071adfbb54a652a42b5e9"
+}

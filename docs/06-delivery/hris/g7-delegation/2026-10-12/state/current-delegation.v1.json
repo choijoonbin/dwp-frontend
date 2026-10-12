@@ -1,0 +1,48 @@
+{
+  "schema": "dwp.hris.g7-current-delegation-state.v1",
+  "asOf": "2026-10-12T10:45:00+09:00",
+  "state": "PENDING_PROMOTION_RECEIPT",
+  "authorizedAfterPromotion": [
+    {
+      "module": "PER",
+      "sliceId": "BASE-TFR-PER-006",
+      "packetId": "G7-PACKET-PER-BASE-TFR-PER-006-R1",
+      "tokenId": "G7-START-PER-BASE-TFR-PER-006-R1",
+      "authority": "DOMAIN_AUTHORING_ONLY"
+    },
+    {
+      "module": "TIM",
+      "sliceId": "BASE-TFR-TIM-006",
+      "packetId": "G7-PACKET-TIM-BASE-TFR-TIM-006-R1",
+      "tokenId": "G7-START-TIM-BASE-TFR-TIM-006-R1",
+      "authority": "DOMAIN_AUTHORING_ONLY"
+    }
+  ],
+  "preparedStartWithheld": [
+    {
+      "module": "SYS",
+      "sliceId": "BASE-TFR-SYS-007",
+      "packetId": "G7-PACKET-SYS-BASE-TFR-SYS-007-R1",
+      "tokenId": null,
+      "sourceChangeAuthorized": false
+    },
+    {
+      "module": "HRM",
+      "sliceId": "BASE-TFR-HRM-010",
+      "packetId": "G7-PACKET-HRM-BASE-TFR-HRM-010-R1",
+      "tokenId": null,
+      "sourceChangeAuthorized": false
+    }
+  ],
+  "noPacketNoToken": [
+    "BASE-TFR-PAY-016",
+    "AGENT"
+  ],
+  "worktreeRegister": {
+    "path": "docs/06-delivery/hris/g7-delegation/2026-10-12/registers/module-worktrees.v1.csv",
+    "sha256": "595ec592424f02fbeeca7f8ff0ea94a4f27e9ec56627e5b3b8ab0da98603ee36",
+    "rows": 4
+  },
+  "activationReceiptId": "HRIS-G7-EVIDENCE-PROMOTION-DELEGATION-20261012-R1",
+  "sealedPayloadSha256": "83c14acf4205fc149cdb4da59f155bf6a342c47e1d9c68b6aeef9c89ec51acd0"
+}

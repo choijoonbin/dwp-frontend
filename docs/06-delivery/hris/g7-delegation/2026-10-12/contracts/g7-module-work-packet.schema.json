@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "dwp.hris.g7-module-work-packet.schema.v1",
+  "type": "object",
+  "required": [
+    "schema",
+    "packetId",
+    "module",
+    "slice",
+    "lifecycleState",
+    "basePins",
+    "pathPolicy",
+    "migrationLease",
+    "authority",
+    "sealedPayloadSha256"
+  ],
+  "properties": {
+    "schema": {
+      "const": "dwp.hris.g7-module-work-packet.v1"
+    },
+    "lifecycleState": {
+      "enum": [
+        "PACKET_PREPARED_START_WITHHELD",
+        "PACKET_AUTHORIZED_DOMAIN_AUTHORING"
+      ]
+    },
+    "startTokenId": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "sealedPayloadSha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "lifecycleState": {
+            "const": "PACKET_AUTHORIZED_DOMAIN_AUTHORING"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "startTokenId": {
+            "type": "string"
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "startTokenId": {
+            "type": "null"
+          }
+        }
+      }
+    }
+  ],
+  "additionalProperties": true
+}

@@ -1,0 +1,387 @@
+{
+  "schema": "dwp.hris.g7-module-work-packet.v1",
+  "packetId": "G7-PACKET-HRM-BASE-TFR-HRM-010-R1",
+  "revision": 1,
+  "issuedAt": "2026-10-12T10:45:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "expiresAt": "2026-10-19T10:45:00+09:00",
+  "lifecycleState": "PACKET_PREPARED_START_WITHHELD",
+  "sessionId": "HRIS-HRM",
+  "module": "HRM",
+  "slice": {
+    "sliceId": "BASE-TFR-HRM-010",
+    "sourceRef": "TFR-HRM-010",
+    "sourceFamilySha256": "3800c0ebee1b35406e2f3c4fdbaf678b0b50a159ff8821543776728d8b26c5b1",
+    "sourceRowCount": 73,
+    "workDefinition": "Implement the employee-change request, submit, approval-decision callback, apply, immutable receipt, and no-self-approval journey as a new exact family.",
+    "priorIntegratedSlice": "BASE-TFR-HRM-004",
+    "primaryContractRefs": [
+      "EVT-HRM:EmployeeChangeApplied.v1",
+      "IAQ-009",
+      "PEP-HRM-003",
+      "PEP-HRM-004",
+      "PEP-HRM-005",
+      "SVC-PEP-HRM-001"
+    ],
+    "operationBindings": [
+      {
+        "bindingId": "IAQ-009",
+        "method": "GET",
+        "browserPath": "/api/people/v1/hris/workbench/operations/employee/change/requests",
+        "ownerPath": "/v1/hris/workbench/operations/employee/change/requests",
+        "ownerService": "dwp-people-server",
+        "uiRoute": "/hr/operations/people/employee-change-requests"
+      },
+      {
+        "bindingId": "PEP-HRM-003",
+        "method": "POST",
+        "browserPath": "/api/people/v1/hris/employee-change-requests",
+        "ownerPath": "/v1/hris/employee-change-requests",
+        "ownerService": "dwp-people-server"
+      },
+      {
+        "bindingId": "PEP-HRM-004",
+        "method": "POST",
+        "browserPath": "/api/people/v1/hris/employee-change-requests/{requestPublicId}/submit",
+        "ownerPath": "/v1/hris/employee-change-requests/{requestPublicId}/submit",
+        "ownerService": "dwp-people-server"
+      },
+      {
+        "bindingId": "SVC-PEP-HRM-001",
+        "method": "POST",
+        "browserPath": null,
+        "ownerPath": "/internal/hris-people/v1/employee-change-requests/{requestPublicId}/approval-decisions",
+        "ownerService": "dwp-people-server"
+      },
+      {
+        "bindingId": "PEP-HRM-005",
+        "method": "POST",
+        "browserPath": "/api/people/v1/hris/employee-change-requests/{requestPublicId}/apply",
+        "ownerPath": "/v1/hris/employee-change-requests/{requestPublicId}/apply",
+        "ownerService": "dwp-people-server"
+      }
+    ]
+  },
+  "owners": {
+    "ownerAgent": "HRIS-HRM",
+    "reviewer": "SYS_COMMON_INTEGRATION_CONTROL",
+    "controlOwner": "SYS_COMMON_INTEGRATION_CONTROL",
+    "singleWriterRequired": true
+  },
+  "userOutcome": {
+    "primaryUser": "HR operations specialist and independent approver",
+    "operationalQuestion": "Which employee changes are ready to submit, decide and apply?",
+    "primaryAction": "create, submit, independently decide and apply an employee change",
+    "outcome": "an effective employee change with immutable evidence and no self-approval",
+    "pageArchetype": "workflow"
+  },
+  "basePins": {
+    "frontend": {
+      "commit": "4546024ca9036f217c1d13ddb0622c21a3264b60",
+      "tree": "8f2a3068f9efbca5daf77a5fdf7f0d7d1670976c",
+      "stateSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "branch": "codex/hris-g1-integration-frontend-20261006",
+      "upstream": "origin/codex/hris-g1-integration-frontend-20261006",
+      "clean": true,
+      "upstreamMatched": true
+    },
+    "frontendSourceResult": {
+      "commit": "c05ffa3f9d647968fdcb224ec51f811c7d2cc538",
+      "tree": "761dd5e5ba232992dbac3a11fcd73ad2de787f24"
+    },
+    "backend": {
+      "commit": "c0d72ca8e26a6e2a0b3885b62c0aa0e3ad7b1329",
+      "tree": "099c88ee32c584764802f3efd77c23364c65b8c4",
+      "stateSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "branch": "codex/hris-g1-integration-backend-20261006",
+      "upstream": "origin/codex/hris-g1-integration-backend-20261006",
+      "clean": true,
+      "upstreamMatched": true
+    },
+    "agent": {
+      "commit": "1d46fc4ab49c604efb7464574c49d13ee453e059",
+      "tree": "0b9a8dbfd828478ee825452e5aca8688c83e37ab",
+      "stateSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "branch": "dwp-dev",
+      "upstream": "origin/dwp-dev",
+      "clean": true,
+      "upstreamMatched": true,
+      "hrisModuleSliceAuthority": false
+    }
+  },
+  "contractPins": {
+    "authorization": {
+      "version": 34,
+      "semanticChecksum": "852d20e1e639e1a7170f02b5714d21d8c51a9eb8ff5ac32d8b7940b82d6be83b",
+      "bundleSha256": "8edd29e91a915fc035028c44af4055673bf5e53c7a5ca77e2af381d69bc60135",
+      "indexSha256": "9b47d5aac66ce2f8b035b49fbc5f77f2715f9e08a5733e4fe3739bbcba5bff28"
+    },
+    "gatewayOpenApi": {
+      "sha256": "325fd7acfcf0ed42cd03db0105003c6a53d8434467e594e023d227c64b734856",
+      "paths": 1664,
+      "operations": 1904,
+      "schemas": 3682,
+      "frontendBackendBytesEqual": true
+    },
+    "preflightSha256": "5a95ded883cc520be5cf3705b26348972801f19f4565d65a2896e5515bf02e29",
+    "g5ReceiptSha256": "4a5a3505414dbec26ea4ef35eb4b4371c9c765272a39285298f3374090ec58ae",
+    "g6ReceiptSha256": "e9844302d03b81a8a473be4b85ee80862a16946264c0d0d9e4636f6cac80107c",
+    "g3ManifestSha256": "af5238d3610e96aeb12ce6376d37175d77ef65372be135369b9a5faeabe2de8e",
+    "g3OwnershipSha256": "2ef33aaf3534859b92a5d68267ddadf3aab1fe94c8dab4fe321992740b3c3629",
+    "acceptedIaApiSuccessorSha256": "5f47efd33a1d5aa3d11a4d9fd5716cd4e35650e9fec0868ecb77c8c90a4cd988",
+    "acceptedIaRuntimeSuccessorSha256": "fcdfd1a26d8fca2c8d9a2a8279a3c5a99844ba827aefe47cbac2210b8753f77a",
+    "acceptedIaProjectionSchemaSha256": "b185accd712216c39bf8a66f70cbbf0092a27a8c2c5e3d7457ecd4d511afa048",
+    "acceptedIaActionKeySha256": "19a12600eb11e4d6c7c6098ad7f44f8afb544a1d9c698c3d2305e9e8150b5b7e",
+    "moduleSourceEvidence": []
+  },
+  "dependencies": [
+    {
+      "dependencyId": "DEP-001",
+      "state": "READY_AT_FROZEN_BASE",
+      "authoritySha256": "b8f1a11d1a32cf6f5a9a99ff73066b7e65787319ac18cf0d2b4891d22587c348",
+      "resultPin": "AUTHORIZATION_V34:852d20e1e639e1a7170f02b5714d21d8c51a9eb8ff5ac32d8b7940b82d6be83b"
+    },
+    {
+      "dependencyId": "DEP-002",
+      "state": "READY_AT_FROZEN_BASE",
+      "authoritySha256": "b8f1a11d1a32cf6f5a9a99ff73066b7e65787319ac18cf0d2b4891d22587c348",
+      "resultPin": "AUTHORIZATION_V34:852d20e1e639e1a7170f02b5714d21d8c51a9eb8ff5ac32d8b7940b82d6be83b"
+    },
+    {
+      "dependencyId": "DEP-003",
+      "state": "READY_AT_FROZEN_BASE",
+      "authoritySha256": "b8f1a11d1a32cf6f5a9a99ff73066b7e65787319ac18cf0d2b4891d22587c348",
+      "resultPin": "BACKEND_G5:c0d72ca8e26a6e2a0b3885b62c0aa0e3ad7b1329|G6:w1-20261012t005606z-dd1c1db1"
+    },
+    {
+      "dependencyId": "DEP-016",
+      "state": "READY_AT_FROZEN_BASE",
+      "authoritySha256": "b8f1a11d1a32cf6f5a9a99ff73066b7e65787319ac18cf0d2b4891d22587c348",
+      "resultPin": "BACKEND_G5:c0d72ca8e26a6e2a0b3885b62c0aa0e3ad7b1329|G6:w1-20261012t005606z-dd1c1db1"
+    }
+  ],
+  "dependencyPinsSha256": "c985183adb748fca02559695cf293fd4da96602099523da3d871d115612ecfb9",
+  "producerResultPins": [],
+  "scope": {
+    "included": [
+      "Implement the employee-change request, submit, approval-decision callback, apply, immutable receipt, and no-self-approval journey as a new exact family.",
+      "backend:dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/employeechange/**",
+      "backend:dwp-people-server/src/test/java/com/dwp/services/people/hris/employeeservice/employeechange/**",
+      "frontend:apps/dwp/src/features/hris/employee-services/employee-change/**"
+    ],
+    "excluded": [
+      "shared/generated/Gateway/navigation/shell work owned by Control",
+      "customer data, customer activation and production release",
+      "capabilities outside the canonical slice and operation bindings"
+    ]
+  },
+  "pathPolicy": {
+    "allowedPaths": [
+      "backend:dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/employeechange/**",
+      "backend:dwp-people-server/src/test/java/com/dwp/services/people/hris/employeeservice/employeechange/**",
+      "frontend:apps/dwp/src/features/hris/employee-services/employee-change/**"
+    ],
+    "protectedPaths": [
+      "backend:dwp-people-server/src/main/java/com/dwp/services/people/hr/assignment/**",
+      "backend:dwp-people-server/src/main/resources/db/migration/V53__create_assignment_change_proposals.sql",
+      "backend:dwp-people-server/src/main/java/com/dwp/services/people/hris/people/**",
+      "frontend:apps/dwp/src/features/hris/employment/assignment-proposal-*.ts*",
+      "frontend:libs/shared-utils/src/api/assignment-proposal-api.ts",
+      "frontend:apps/dwp/src/features/hris/people/**",
+      "backend:dwp-people-server/src/main/java/com/dwp/services/people/security/PeopleSecurityFilter.java",
+      "backend:dwp-people-server/src/test/java/com/dwp/services/people/security/PeopleSecurityFilterTest.java"
+    ],
+    "commonControlOnlyPaths": [
+      "backend:contracts/hris/**",
+      "backend:contracts/openapi/**",
+      "backend:contracts/asyncapi/**",
+      "backend:contracts/product-authorization/**",
+      "backend:dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/**",
+      "backend:dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/generated/**",
+      "backend:scripts/generate-hris-contracts.py",
+      "backend:dwp-approval-server/src/main/resources/product-authorization/**",
+      "backend:dwp-auth-server/src/main/resources/product-authorization/**",
+      "backend:dwp-meeting-server/src/main/resources/product-authorization/**",
+      "backend:dwp-people-server/src/main/resources/product-authorization/**",
+      "backend:dwp-platform-server/src/main/resources/product-authorization/**",
+      "backend:dwp-space-server/src/main/resources/product-authorization/**",
+      "backend:scripts/export-openapi-contracts.py",
+      "backend:scripts/generate-product-authorization-contracts.py",
+      "backend:scripts/generate-product-authorization-fixtures.py",
+      "backend:scripts/generate-approval-document-projection-contracts.py",
+      "backend:scripts/generate-approval-extension-projection-contracts.py",
+      "backend:scripts/generate-approval-recovery11-projection-contracts.py",
+      "backend:scripts/generate-approval-release10-projection-contracts.py",
+      "backend:scripts/generate-approval-work-projection-contracts.py",
+      "backend:dwp-gateway/**",
+      "backend:dwp-migration-control/**",
+      "backend:root build/runtime/CI files",
+      "frontend:apps/dwp/src/routes/**",
+      "frontend:apps/dwp/src/features/hcm/hcm-navigation*.ts*",
+      "frontend:apps/dwp/src/features/hcm/hcm-product-manifest*.ts*",
+      "frontend:apps/dwp/src/features/hris/shell/**",
+      "frontend:apps/dwp/src/routes/product-surface-authorization.generated.ts",
+      "frontend:architecture/**",
+      "frontend:libs/api-contracts/**",
+      "frontend:libs/shared-utils/src/auth/**",
+      "frontend:libs/shared-utils/src/test-utils/pilot-authorization-fixtures.generated.ts",
+      "frontend:libs/shared-i18n/**",
+      "frontend:scripts/sync-openapi-contract.mjs",
+      "frontend:scripts/sync-agent-openapi-contract.mjs",
+      "frontend:scripts/sync-product-surface-authorization.mjs",
+      "frontend:scripts/sync-product-authorization-fixtures.mjs",
+      "frontend:scripts/sync-product-surface-internal-closure.mjs",
+      "frontend:scripts/generate-route-composition.mjs",
+      "frontend:scripts/product-authorization-fixture-versions.mjs",
+      "frontend:scripts/check-official-backend-contracts.mjs",
+      "frontend:scripts/check-official-backend-contracts.test.mjs",
+      "frontend:scripts/check-product-surface-production-readiness.mjs",
+      "frontend:scripts/check-product-surface-production-readiness.test.mjs",
+      "frontend:scripts/product-surface-readiness-authorization.mjs",
+      "frontend:scripts/sync-product-surface-internal-closure.test.mjs",
+      "frontend:deploy/nginx/dwp-product-routes.conf",
+      "frontend:root project manifests and lockfiles"
+    ],
+    "existingBridgeFilesAllocatedToModule": [],
+    "outsideAllowedPathAction": "STOP_AND_RAISE_CONTROL_REQUEST"
+  },
+  "pathPolicySha256": "1b9eef240654dcb21663615bbcf57a1285feaec6d47128be55d8a5b1173a2380",
+  "centralControlRequests": {
+    "registerSha256": "1e96cacc713837cfd81313b13f26d0c25205138f215b24ba22f667653d8ae858",
+    "requestIds": [
+      "G7-CR-HRM-010-EVENT-CONTRACT-R1",
+      "G7-CR-HRM-010-AUTH-PEP-R1",
+      "G7-CR-HRM-010-CONTRACT-GATEWAY-R1",
+      "G7-CR-HRM-010-SHELL-ROUTE-R1",
+      "G7-CR-HRM-010-APPROVAL-CALLBACK-R1",
+      "G7-CR-HRM-010-APPROVAL-CASE-HANDOFF-R1"
+    ],
+    "moduleMayImplement": false
+  },
+  "migrationLease": {
+    "leaseId": "G7-LEASE-HRM-PEOPLE-V54-R1",
+    "leaseDigestSha256": "f4a459ab472198008decb1f1e2d43b4108f2eb6f6e3e716113100a2a24cc0add",
+    "status": "RESERVED_CONTROL_ONLY",
+    "stream": "PEOPLE_MAIN",
+    "version": 54,
+    "exactRelativePath": "dwp-people-server/src/main/resources/db/migration/V54__create_employee_change_request_lifecycle.sql",
+    "migrationAdmissionAuthorized": false
+  },
+  "runtimeSecurityRollout": {
+    "ownerService": "dwp-people-server",
+    "systemOfRecord": "dwp-people-server employee-change family; assignment proposals and People 360 remain separate protected owners.",
+    "tenantPopulationBoundary": "Owner-side trusted tenant, population and field decisions; negative and cross-tenant cases fail closed.",
+    "permissionSoDStepUp": "Use only the pinned G3 primary contract bindings; command, approval and corrective actions require their exact duty/SoD/step-up decisions.",
+    "idempotencyVersionAudit": "Idempotency key plus payload digest, optimistic version/CAS, immutable receipt and transactional outbox.",
+    "dataOriginMaskingRetention": "SOURCE/REFERENCE provenance is explicit; raw sensitive identifiers never enter logs, cursors or cross-owner events.",
+    "featureFlag": {
+      "key": "dwp.hris.employee-change.enabled",
+      "default": "OFF",
+      "activationAuthority": "NOT_GRANTED"
+    },
+    "partialEmptyDeniedStates": "Loading, empty, partial failure, stale, denied and unavailable are distinct and accessible."
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "AC-AUTHZ",
+      "criterion": "Bound capability, population and field decisions allow only the intended tenant scope; denied cases disclose no protected data."
+    },
+    {
+      "id": "AC-IDEMPOTENCY",
+      "criterion": "A repeated idempotency key with the same digest returns the original receipt and a mismatched payload fails closed."
+    },
+    {
+      "id": "AC-RECOVERY",
+      "criterion": "A worker crash or replay cannot duplicate the immutable receipt or published fact."
+    },
+    {
+      "id": "AC-MIGRATION",
+      "criterion": "Clean install and upgrade through the exact leased migration pass with tenant RLS/backfill and forward-fix evidence."
+    },
+    {
+      "id": "AC-FLAG",
+      "criterion": "The feature flag is default OFF; disabled tenants receive the canonical unavailable/denied state."
+    },
+    {
+      "id": "AC-TELEMETRY",
+      "criterion": "Correlation, audit and failure telemetry contain no raw sensitive identifiers."
+    },
+    {
+      "id": "AC-HRM-GOLDEN",
+      "criterion": "Create, submit, independent decision and apply complete with a single immutable EmployeeChangeApplied.v1 fact."
+    },
+    {
+      "id": "AC-HRM-NO-SELF",
+      "criterion": "Requester self-approval, stale evidence and cross-tenant decisions fail closed."
+    }
+  ],
+  "verificationBindings": {
+    "policy": "Run changed-cluster tests first, collect all failures in the cluster, then run one module batch; do not rerun broad suites per fix.",
+    "moduleCommands": [
+      {
+        "cwd": "backend",
+        "argv": [
+          "./gradlew",
+          ":dwp-people-server:test",
+          "--tests",
+          "*EmployeeChange*",
+          "--tests",
+          "*HrmIaEntryQueryContractTest",
+          "-PhrisSlice=BASE-TFR-HRM-010",
+          "--no-daemon"
+        ],
+        "stage": "TARGETED_MODULE"
+      },
+      {
+        "cwd": "frontend",
+        "argv": [
+          "yarn",
+          "vitest",
+          "run",
+          "apps/dwp/src/features/hris/employee-services/employee-change"
+        ],
+        "stage": "TARGETED_MODULE"
+      }
+    ],
+    "controlOnlyAfterModuleResult": [
+      "product authorization generation/check",
+      "OpenAPI/AsyncAPI export and frontend synchronization",
+      "focused shared route/access tests and one typecheck/architecture batch",
+      "new focused responsive/accessibility Playwright journeys"
+    ],
+    "fullW1OrPromotionRunInModulePacket": false
+  },
+  "deliverables": [
+    "separate frontend and backend result commits on the token-bound branches",
+    "exact changed-file manifest proving path-policy compliance",
+    "targeted command results and evidence locators",
+    "migration lease used/unused status",
+    "Control request handoff without direct shared-path edits"
+  ],
+  "releaseConditions": [
+    "Pin generated EmployeeChangeApplied.v1 contracts and provider/consumer tests; local shadow DTO/event types are forbidden.",
+    "Pin product authorization, canonical /api/people/v1 forwarding and shared shell/route/i18n composition; no /api/hris/v1 alias.",
+    "Pin the Approval-to-People callback producer with workload identity, tenant revalidation, purpose binding, inbox idempotency and no-self-approval.",
+    "Define and pin a People-to-Approval create/submit owner contract including owner path, workload auth, tenant/purpose, idempotency and failure semantics; browser APIs and user credentials are forbidden substitutes.",
+    "Pin the exact PeopleSecurityFilter bridge as a Control-owned file change."
+  ],
+  "stopConditions": [
+    "base pin, clean state, worktree branch or upstream diverges",
+    "an edit outside the allowed path set is required",
+    "the migration version/path is occupied, expired or changed",
+    "a shared/generated/Gateway/shell/authorization change is required directly",
+    "a tenant, SoR, dependency, contract or rollback invariant is ambiguous"
+  ],
+  "authority": {
+    "sourceChangeAuthorized": false,
+    "domainAuthoringOnly": false,
+    "commitAndPushTokenBranchesAuthorized": false,
+    "sharedControlPathChangeAuthorized": false,
+    "integrationMergeAuthorized": false,
+    "customerDataAuthorized": false,
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "startTokenId": null,
+  "sealedPayloadSha256": "de3b8a8069502c79ac469aec4c6b992cccbe6b554fce764d29349c35b47bc442"
+}

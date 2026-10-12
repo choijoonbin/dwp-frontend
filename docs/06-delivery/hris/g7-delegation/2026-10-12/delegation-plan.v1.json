@@ -1,0 +1,208 @@
+{
+  "schema": "dwp.hris.g7-delegation-plan.v1",
+  "planId": "HRIS-G7-DELEGATION-PLAN-20261012-R1",
+  "issuedAt": "2026-10-12T10:45:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "BUNDLE_SEALED_PENDING_PROMOTION_RECEIPT",
+  "frozenEvidence": {
+    "g5Receipt": {
+      "path": "docs/06-delivery/hris/2026-10-12-g5-integrated-stabilization-freeze-receipt.json",
+      "sha256": "4a5a3505414dbec26ea4ef35eb4b4371c9c765272a39285298f3374090ec58ae"
+    },
+    "g6Receipt": {
+      "path": "docs/06-delivery/hris/2026-10-12-g6-w1-successor-receipt.json",
+      "sha256": "e9844302d03b81a8a473be4b85ee80862a16946264c0d0d9e4636f6cac80107c"
+    },
+    "frontend": {
+      "commit": "4546024ca9036f217c1d13ddb0622c21a3264b60",
+      "tree": "8f2a3068f9efbca5daf77a5fdf7f0d7d1670976c",
+      "stateSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "branch": "codex/hris-g1-integration-frontend-20261006",
+      "upstream": "origin/codex/hris-g1-integration-frontend-20261006",
+      "clean": true,
+      "upstreamMatched": true
+    },
+    "backend": {
+      "commit": "c0d72ca8e26a6e2a0b3885b62c0aa0e3ad7b1329",
+      "tree": "099c88ee32c584764802f3efd77c23364c65b8c4",
+      "stateSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "branch": "codex/hris-g1-integration-backend-20261006",
+      "upstream": "origin/codex/hris-g1-integration-backend-20261006",
+      "clean": true,
+      "upstreamMatched": true
+    },
+    "agent": {
+      "commit": "1d46fc4ab49c604efb7464574c49d13ee453e059",
+      "tree": "0b9a8dbfd828478ee825452e5aca8688c83e37ab",
+      "stateSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "branch": "dwp-dev",
+      "upstream": "origin/dwp-dev",
+      "clean": true,
+      "upstreamMatched": true,
+      "hrisModuleSliceAuthority": false
+    },
+    "gatewayOpenApi": {
+      "sha256": "325fd7acfcf0ed42cd03db0105003c6a53d8434467e594e023d227c64b734856",
+      "paths": 1664,
+      "operations": 1904,
+      "schemas": 3682,
+      "frontendBackendBytesEqual": true
+    },
+    "authorization": {
+      "version": 34,
+      "semanticChecksum": "852d20e1e639e1a7170f02b5714d21d8c51a9eb8ff5ac32d8b7940b82d6be83b",
+      "bundleSha256": "8edd29e91a915fc035028c44af4055673bf5e53c7a5ca77e2af381d69bc60135",
+      "indexSha256": "9b47d5aac66ce2f8b035b49fbc5f77f2715f9e08a5733e4fe3739bbcba5bff28"
+    }
+  },
+  "decisions": [
+    {
+      "module": "SYS",
+      "sliceId": "BASE-TFR-SYS-007",
+      "packetId": "G7-PACKET-SYS-BASE-TFR-SYS-007-R1",
+      "packetState": "PACKET_PREPARED_START_WITHHELD",
+      "tokenId": null,
+      "sourceChangeAuthorizedAfterPromotion": false
+    },
+    {
+      "module": "HRM",
+      "sliceId": "BASE-TFR-HRM-010",
+      "packetId": "G7-PACKET-HRM-BASE-TFR-HRM-010-R1",
+      "packetState": "PACKET_PREPARED_START_WITHHELD",
+      "tokenId": null,
+      "sourceChangeAuthorizedAfterPromotion": false
+    },
+    {
+      "module": "PER",
+      "sliceId": "BASE-TFR-PER-006",
+      "packetId": "G7-PACKET-PER-BASE-TFR-PER-006-R1",
+      "packetState": "PACKET_AUTHORIZED_DOMAIN_AUTHORING",
+      "tokenId": "G7-START-PER-BASE-TFR-PER-006-R1",
+      "sourceChangeAuthorizedAfterPromotion": true
+    },
+    {
+      "module": "TIM",
+      "sliceId": "BASE-TFR-TIM-006",
+      "packetId": "G7-PACKET-TIM-BASE-TFR-TIM-006-R1",
+      "packetState": "PACKET_AUTHORIZED_DOMAIN_AUTHORING",
+      "tokenId": "G7-START-TIM-BASE-TFR-TIM-006-R1",
+      "sourceChangeAuthorizedAfterPromotion": true
+    }
+  ],
+  "activeTokenClosedSetAfterPromotion": [
+    "G7-START-PER-BASE-TFR-PER-006-R1",
+    "G7-START-TIM-BASE-TFR-TIM-006-R1"
+  ],
+  "withheld": [
+    {
+      "module": "SYS",
+      "sliceId": "BASE-TFR-SYS-007",
+      "state": "PACKET_PREPARED_START_WITHHELD",
+      "packetId": "G7-PACKET-SYS-BASE-TFR-SYS-007-R1",
+      "packetIssued": true,
+      "tokenIssued": false,
+      "migrationLeaseId": "G7-LEASE-SYS-PLATFORM-V325-R1",
+      "migrationLeaseStatus": "RESERVED_CONTROL_ONLY",
+      "releaseConditions": [
+        "Pin product-authorization successor and generated Platform PEP/auth fixtures for IAQ-052 and all eleven PEP operations.",
+        "Pin Gateway/OpenAPI/contract export and frontend sync without changing the frozen source contract semantics.",
+        "Pin the shared /hr/settings/reference-data route, navigation, shell and i18n composition; keep /hr/data/reference distinct.",
+        "Pin any exact PlatformSecurityFilter bridge as a Control-owned change; broad /v1/admin bypass is forbidden."
+      ]
+    },
+    {
+      "module": "HRM",
+      "sliceId": "BASE-TFR-HRM-010",
+      "state": "PACKET_PREPARED_START_WITHHELD",
+      "packetId": "G7-PACKET-HRM-BASE-TFR-HRM-010-R1",
+      "packetIssued": true,
+      "tokenIssued": false,
+      "migrationLeaseId": "G7-LEASE-HRM-PEOPLE-V54-R1",
+      "migrationLeaseStatus": "RESERVED_CONTROL_ONLY",
+      "releaseConditions": [
+        "Pin generated EmployeeChangeApplied.v1 contracts and provider/consumer tests; local shadow DTO/event types are forbidden.",
+        "Pin product authorization, canonical /api/people/v1 forwarding and shared shell/route/i18n composition; no /api/hris/v1 alias.",
+        "Pin the Approval-to-People callback producer with workload identity, tenant revalidation, purpose binding, inbox idempotency and no-self-approval.",
+        "Define and pin a People-to-Approval create/submit owner contract including owner path, workload auth, tenant/purpose, idempotency and failure semantics; browser APIs and user credentials are forbidden substitutes.",
+        "Pin the exact PeopleSecurityFilter bridge as a Control-owned file change."
+      ]
+    },
+    {
+      "module": "PAY",
+      "sliceId": "BASE-TFR-PAY-016",
+      "state": "WITHHELD_PRODUCER_AND_NAMED_TESTS_REQUIRED",
+      "dependencyResolution": {
+        "keep": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016",
+          "DEP-019"
+        ],
+        "dropFromThisSlice": {
+          "DEP-007": "owned by PAY-021 HRM projection consumption",
+          "DEP-008": "owned by PAY-021 HRM protected-data projection consumption",
+          "DEP-009": "owned by PAY-020 closed-time payroll calculation"
+        }
+      },
+      "operationBindings": [
+        {
+          "bindingId": "IAQ-015",
+          "method": "GET",
+          "browserPath": "/api/payroll/v1/workbench/inputs",
+          "ownerPath": "/v1/workbench/inputs",
+          "ownerService": "dwp-payroll-server",
+          "uiRoute": "/hr/operations/payroll/inputs"
+        },
+        {
+          "bindingId": "PEP-PAY-009",
+          "method": "POST",
+          "browserPath": "/api/payroll/v1/worker-entries",
+          "ownerPath": "/v1/worker-entries",
+          "ownerService": "dwp-payroll-server"
+        },
+        {
+          "bindingId": "PEP-PAY-010",
+          "method": "POST",
+          "browserPath": "/api/payroll/v1/worker-entries/{entryId}/corrections",
+          "ownerPath": "/v1/worker-entries/{entryId}/corrections",
+          "ownerService": "dwp-payroll-server"
+        }
+      ],
+      "producerBinding": {
+        "bindingId": "SVC-PEP-PER-001",
+        "method": "GET",
+        "browserPath": null,
+        "ownerPath": "/internal/hris-performance/v1/approved-compensation-plan-snapshots/{snapshotId}",
+        "ownerService": "dwp-people-server"
+      },
+      "releaseConditions": [
+        "Pin a pushed MOD-PER-COMPPLAN runtime result commit.",
+        "Implement and pin SVC-PEP-PER-001 plus immutable XCON-020 ordered lines.",
+        "Publish XCON-021 v2 only after snapshot commit; v1 and dual publish are forbidden.",
+        "Implement the named PayIaEntryQueryContractTest invariant methods before packet issuance."
+      ],
+      "packetIssued": false,
+      "tokenIssued": false,
+      "migrationLeaseIssued": false
+    },
+    {
+      "module": "AGENT",
+      "sliceId": null,
+      "state": "NO_CANONICAL_SLICE_NO_PACKET",
+      "releaseConditions": [
+        "Pin deterministic owner APIs/actions and tool contracts.",
+        "Add a canonical Agent work definition in a later authority revision with delegated identity, PEP and receipt semantics."
+      ],
+      "packetIssued": false,
+      "tokenIssued": false,
+      "systemOfRecordAuthorized": false,
+      "directDatabaseWriterAuthorized": false
+    }
+  ],
+  "codeReexecutionPerformed": false,
+  "applicationSourceChanged": false,
+  "customerActivationAuthorized": false,
+  "productionReleaseAuthorized": false,
+  "sealedPayloadSha256": "c1e25abef800112f6307404427f1cc6a4ad5e62d130ee39306a6db31e6f2215a"
+}

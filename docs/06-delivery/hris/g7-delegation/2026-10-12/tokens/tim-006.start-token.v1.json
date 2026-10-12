@@ -1,0 +1,108 @@
+{
+  "schema": "dwp.hris.g7-module-start-token.v1",
+  "tokenId": "G7-START-TIM-BASE-TFR-TIM-006-R1",
+  "packetId": "G7-PACKET-TIM-BASE-TFR-TIM-006-R1",
+  "packetPath": "docs/06-delivery/hris/g7-delegation/2026-10-12/packets/tim-006.v1.json",
+  "packetFileSha256": "380d43d51805038ed37fb8d1e6bab7d031739b672ab4552878cebf932141f14e",
+  "sliceId": "BASE-TFR-TIM-006",
+  "module": "TIM",
+  "sessionId": "HRIS-TIM",
+  "issuedAt": "2026-10-12T10:45:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "expiresAt": "2026-10-19T10:45:00+09:00",
+  "activationReceiptId": "HRIS-G7-EVIDENCE-PROMOTION-DELEGATION-20261012-R1",
+  "state": "ISSUED_PENDING_PROMOTION_RECEIPT",
+  "basePins": {
+    "frontend": {
+      "commit": "4546024ca9036f217c1d13ddb0622c21a3264b60",
+      "tree": "8f2a3068f9efbca5daf77a5fdf7f0d7d1670976c",
+      "stateSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "branch": "codex/hris-g1-integration-frontend-20261006",
+      "upstream": "origin/codex/hris-g1-integration-frontend-20261006",
+      "clean": true,
+      "upstreamMatched": true
+    },
+    "frontendSourceResult": {
+      "commit": "c05ffa3f9d647968fdcb224ec51f811c7d2cc538",
+      "tree": "761dd5e5ba232992dbac3a11fcd73ad2de787f24"
+    },
+    "backend": {
+      "commit": "c0d72ca8e26a6e2a0b3885b62c0aa0e3ad7b1329",
+      "tree": "099c88ee32c584764802f3efd77c23364c65b8c4",
+      "stateSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "branch": "codex/hris-g1-integration-backend-20261006",
+      "upstream": "origin/codex/hris-g1-integration-backend-20261006",
+      "clean": true,
+      "upstreamMatched": true
+    },
+    "agent": {
+      "commit": "1d46fc4ab49c604efb7464574c49d13ee453e059",
+      "tree": "0b9a8dbfd828478ee825452e5aca8688c83e37ab",
+      "stateSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "branch": "dwp-dev",
+      "upstream": "origin/dwp-dev",
+      "clean": true,
+      "upstreamMatched": true,
+      "hrisModuleSliceAuthority": false
+    }
+  },
+  "worktreeBindings": [
+    {
+      "module": "TIM",
+      "slice_id": "BASE-TFR-TIM-006",
+      "token_id": "G7-START-TIM-BASE-TFR-TIM-006-R1",
+      "repo": "frontend",
+      "absolute_path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/g7-20261012/tim-006/frontend",
+      "branch": "codex/hris-g7-tim-006-frontend-20261012",
+      "upstream": "origin/codex/hris-g7-tim-006-frontend-20261012",
+      "head": "4546024ca9036f217c1d13ddb0622c21a3264b60",
+      "tree": "8f2a3068f9efbca5daf77a5fdf7f0d7d1670976c",
+      "state_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "clean": "true",
+      "ahead": "0",
+      "behind": "0",
+      "state": "CREATED_PUSHED_CLEAN"
+    },
+    {
+      "module": "TIM",
+      "slice_id": "BASE-TFR-TIM-006",
+      "token_id": "G7-START-TIM-BASE-TFR-TIM-006-R1",
+      "repo": "backend",
+      "absolute_path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/g7-20261012/tim-006/backend",
+      "branch": "codex/hris-g7-tim-006-backend-20261012",
+      "upstream": "origin/codex/hris-g7-tim-006-backend-20261012",
+      "head": "c0d72ca8e26a6e2a0b3885b62c0aa0e3ad7b1329",
+      "tree": "099c88ee32c584764802f3efd77c23364c65b8c4",
+      "state_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "clean": "true",
+      "ahead": "0",
+      "behind": "0",
+      "state": "CREATED_PUSHED_CLEAN"
+    }
+  ],
+  "pathPolicySha256": "86cc4c4ebdf96a5c17a7c9e6d5707a007eaca779221126d5d4a72df62b1e6dfe",
+  "dependencyPinsSha256": "919a36c63c3f33a03596c4bfc897e3ecb41e2affc3404bb08de2d4f82836deb9",
+  "migrationLeaseSha256": "0ebcef3fbae39ed33fe56af7bc16d4ce89a0828fdfc95d6be107362c176a29f5",
+  "migrationLeaseId": "G7-LEASE-TIM-TIME-V8-R1",
+  "permittedAction": "START_DOMAIN_MODULE_IMPLEMENTATION",
+  "invalidationConditions": [
+    "promotion receipt does not list this exact token as active",
+    "packet/token/worktree/lease digest or base pin changes",
+    "worktree is dirty, unpublished, ahead/behind or on another branch",
+    "an allowed-path or common-Control boundary is crossed",
+    "token expires or is revoked"
+  ],
+  "authority": {
+    "domainAuthoringOnly": true,
+    "exactWorktreesOnly": true,
+    "exactAllowedPathsOnly": true,
+    "exactMigrationLeaseOnly": true,
+    "commitAndPushTokenBranchesAuthorized": true,
+    "sharedControlPathChangeAuthorized": false,
+    "integrationMergeAuthorized": false,
+    "customerDataAuthorized": false,
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "sealedPayloadSha256": "80e422594716f3454fbc75691cbcadaee0d3fab9d489f23e0d87cec7bb407f15"
+}

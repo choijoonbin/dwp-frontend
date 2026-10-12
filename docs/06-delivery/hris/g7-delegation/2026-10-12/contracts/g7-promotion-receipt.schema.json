@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "dwp.hris.g7-promotion-receipt.schema.v1",
+  "type": "object",
+  "required": [
+    "schema",
+    "receiptId",
+    "status",
+    "bundleCommit",
+    "delegations",
+    "withheld",
+    "authority",
+    "sealedPayloadSha256"
+  ],
+  "properties": {
+    "schema": {
+      "const": "dwp.hris.g7-evidence-promotion-and-delegation-receipt.v1"
+    },
+    "status": {
+      "const": "PASS_SCOPED_DELEGATION"
+    },
+    "sealedPayloadSha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,207 @@
+{
+  "schema": "dwp.hris.g7-control-request-register.v1",
+  "issuedAt": "2026-10-12T10:45:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "requests": [
+    {
+      "requestId": "G7-CR-SYS-007-AUTH-PEP-R1",
+      "module": "SYS",
+      "sliceId": "BASE-TFR-SYS-007",
+      "owner": "SYS_COMMON_INTEGRATION_CONTROL",
+      "state": "PRE_START_REQUIRED_NOT_IMPLEMENTED",
+      "description": "Publish product-authorization successor and generated Platform PEP/auth fixtures for IAQ-052 and the eleven SYS lifecycle operations.",
+      "moduleDirectEditAuthorized": false,
+      "customerActivationAuthorized": false,
+      "productionReleaseAuthorized": false
+    },
+    {
+      "requestId": "G7-CR-SYS-007-CONTRACT-GATEWAY-R1",
+      "module": "SYS",
+      "sliceId": "BASE-TFR-SYS-007",
+      "owner": "SYS_COMMON_INTEGRATION_CONTROL",
+      "state": "PRE_START_REQUIRED_NOT_IMPLEMENTED",
+      "description": "Publish Gateway/OpenAPI/contract export and frontend API sync for canonical Platform paths.",
+      "moduleDirectEditAuthorized": false,
+      "customerActivationAuthorized": false,
+      "productionReleaseAuthorized": false
+    },
+    {
+      "requestId": "G7-CR-SYS-007-SHELL-ROUTE-R1",
+      "module": "SYS",
+      "sliceId": "BASE-TFR-SYS-007",
+      "owner": "SYS_COMMON_INTEGRATION_CONTROL",
+      "state": "PRE_START_REQUIRED_NOT_IMPLEMENTED",
+      "description": "Compose /hr/settings/reference-data in shared navigation, shell, page and i18n without relabeling /hr/data/reference.",
+      "moduleDirectEditAuthorized": false,
+      "customerActivationAuthorized": false,
+      "productionReleaseAuthorized": false
+    },
+    {
+      "requestId": "G7-CR-SYS-007-SECURITY-BRIDGE-R1",
+      "module": "SYS",
+      "sliceId": "BASE-TFR-SYS-007",
+      "owner": "SYS_COMMON_INTEGRATION_CONTROL",
+      "state": "PRE_START_REQUIRED_NOT_IMPLEMENTED",
+      "description": "Implement only the exact generated Platform security bridge; generic admin bypass remains forbidden.",
+      "moduleDirectEditAuthorized": false,
+      "customerActivationAuthorized": false,
+      "productionReleaseAuthorized": false
+    },
+    {
+      "requestId": "G7-CR-HRM-010-EVENT-CONTRACT-R1",
+      "module": "HRM",
+      "sliceId": "BASE-TFR-HRM-010",
+      "owner": "SYS_COMMON_INTEGRATION_CONTROL",
+      "state": "PRE_START_REQUIRED_NOT_IMPLEMENTED",
+      "description": "Generate and pin EmployeeChangeApplied.v1 plus provider/consumer tests and OpenAPI/AsyncAPI/frontend sync.",
+      "moduleDirectEditAuthorized": false,
+      "customerActivationAuthorized": false,
+      "productionReleaseAuthorized": false
+    },
+    {
+      "requestId": "G7-CR-HRM-010-AUTH-PEP-R1",
+      "module": "HRM",
+      "sliceId": "BASE-TFR-HRM-010",
+      "owner": "SYS_COMMON_INTEGRATION_CONTROL",
+      "state": "PRE_START_REQUIRED_NOT_IMPLEMENTED",
+      "description": "Publish product authorization and People PEP fixtures for IAQ-009 and create/submit/apply operations.",
+      "moduleDirectEditAuthorized": false,
+      "customerActivationAuthorized": false,
+      "productionReleaseAuthorized": false
+    },
+    {
+      "requestId": "G7-CR-HRM-010-CONTRACT-GATEWAY-R1",
+      "module": "HRM",
+      "sliceId": "BASE-TFR-HRM-010",
+      "owner": "SYS_COMMON_INTEGRATION_CONTROL",
+      "state": "PRE_START_REQUIRED_NOT_IMPLEMENTED",
+      "description": "Publish canonical /api/people/v1 Gateway projection with no /api/hris/v1 alias.",
+      "moduleDirectEditAuthorized": false,
+      "customerActivationAuthorized": false,
+      "productionReleaseAuthorized": false
+    },
+    {
+      "requestId": "G7-CR-HRM-010-SHELL-ROUTE-R1",
+      "module": "HRM",
+      "sliceId": "BASE-TFR-HRM-010",
+      "owner": "SYS_COMMON_INTEGRATION_CONTROL",
+      "state": "PRE_START_REQUIRED_NOT_IMPLEMENTED",
+      "description": "Compose the employee-change workflow in shared navigation, shell, page and i18n.",
+      "moduleDirectEditAuthorized": false,
+      "customerActivationAuthorized": false,
+      "productionReleaseAuthorized": false
+    },
+    {
+      "requestId": "G7-CR-HRM-010-APPROVAL-CALLBACK-R1",
+      "module": "HRM",
+      "sliceId": "BASE-TFR-HRM-010",
+      "owner": "SYS_COMMON_INTEGRATION_CONTROL",
+      "state": "PRE_START_REQUIRED_NOT_IMPLEMENTED",
+      "description": "Implement the Approval-to-People callback producer/client and exact workload/tenant/purpose security bridge.",
+      "moduleDirectEditAuthorized": false,
+      "customerActivationAuthorized": false,
+      "productionReleaseAuthorized": false
+    },
+    {
+      "requestId": "G7-CR-HRM-010-APPROVAL-CASE-HANDOFF-R1",
+      "module": "HRM",
+      "sliceId": "BASE-TFR-HRM-010",
+      "owner": "SYS_COMMON_INTEGRATION_CONTROL",
+      "state": "PRE_START_REQUIRED_NOT_IMPLEMENTED",
+      "description": "Define and implement the missing People-to-Approval approval-case create/submit owner contract and provider/consumer tests.",
+      "moduleDirectEditAuthorized": false,
+      "customerActivationAuthorized": false,
+      "productionReleaseAuthorized": false
+    },
+    {
+      "requestId": "G7-CR-PER-006-AUTH-PEP-R1",
+      "module": "PER",
+      "sliceId": "BASE-TFR-PER-006",
+      "owner": "SYS_COMMON_INTEGRATION_CONTROL",
+      "state": "ISSUED_POST_MODULE_RESULT_REQUIRED",
+      "description": "Publish additive performance population-freeze product authorization and People PEP projections.",
+      "moduleDirectEditAuthorized": false,
+      "customerActivationAuthorized": false,
+      "productionReleaseAuthorized": false
+    },
+    {
+      "requestId": "G7-CR-PER-006-CONTRACT-GATEWAY-R1",
+      "module": "PER",
+      "sliceId": "BASE-TFR-PER-006",
+      "owner": "SYS_COMMON_INTEGRATION_CONTROL",
+      "state": "ISSUED_POST_MODULE_RESULT_REQUIRED",
+      "description": "After the module result, export OpenAPI/AsyncAPI/Gateway and sync generated frontend contracts.",
+      "moduleDirectEditAuthorized": false,
+      "customerActivationAuthorized": false,
+      "productionReleaseAuthorized": false
+    },
+    {
+      "requestId": "G7-CR-PER-006-SHELL-ROUTE-R1",
+      "module": "PER",
+      "sliceId": "BASE-TFR-PER-006",
+      "owner": "SYS_COMMON_INTEGRATION_CONTROL",
+      "state": "ISSUED_POST_MODULE_RESULT_REQUIRED",
+      "description": "After the module result, mount /hr/operations/performance/review-operations through Control-owned shell paths.",
+      "moduleDirectEditAuthorized": false,
+      "customerActivationAuthorized": false,
+      "productionReleaseAuthorized": false
+    },
+    {
+      "requestId": "G7-CR-PER-006-INTEGRATION-VERIFY-R1",
+      "module": "PER",
+      "sliceId": "BASE-TFR-PER-006",
+      "owner": "SYS_COMMON_INTEGRATION_CONTROL",
+      "state": "ISSUED_POST_MODULE_RESULT_REQUIRED",
+      "description": "Run focused shared route/access/contract checks after module result integration.",
+      "moduleDirectEditAuthorized": false,
+      "customerActivationAuthorized": false,
+      "productionReleaseAuthorized": false
+    },
+    {
+      "requestId": "G7-CR-TIM-006-AUTH-PEP-R1",
+      "module": "TIM",
+      "sliceId": "BASE-TFR-TIM-006",
+      "owner": "SYS_COMMON_INTEGRATION_CONTROL",
+      "state": "ISSUED_POST_MODULE_RESULT_REQUIRED",
+      "description": "Publish additive clock-ingestion product authorization and Time PEP projections.",
+      "moduleDirectEditAuthorized": false,
+      "customerActivationAuthorized": false,
+      "productionReleaseAuthorized": false
+    },
+    {
+      "requestId": "G7-CR-TIM-006-CONTRACT-GATEWAY-R1",
+      "module": "TIM",
+      "sliceId": "BASE-TFR-TIM-006",
+      "owner": "SYS_COMMON_INTEGRATION_CONTROL",
+      "state": "ISSUED_POST_MODULE_RESULT_REQUIRED",
+      "description": "After the module result, export OpenAPI/AsyncAPI/Gateway and sync generated frontend contracts.",
+      "moduleDirectEditAuthorized": false,
+      "customerActivationAuthorized": false,
+      "productionReleaseAuthorized": false
+    },
+    {
+      "requestId": "G7-CR-TIM-006-SHELL-ROUTES-R1",
+      "module": "TIM",
+      "sliceId": "BASE-TFR-TIM-006",
+      "owner": "SYS_COMMON_INTEGRATION_CONTROL",
+      "state": "ISSUED_POST_MODULE_RESULT_REQUIRED",
+      "description": "After the module result, mount clock-ingestion and time-exceptions routes through Control-owned shell paths.",
+      "moduleDirectEditAuthorized": false,
+      "customerActivationAuthorized": false,
+      "productionReleaseAuthorized": false
+    },
+    {
+      "requestId": "G7-CR-TIM-006-INTEGRATION-VERIFY-R1",
+      "module": "TIM",
+      "sliceId": "BASE-TFR-TIM-006",
+      "owner": "SYS_COMMON_INTEGRATION_CONTROL",
+      "state": "ISSUED_POST_MODULE_RESULT_REQUIRED",
+      "description": "Run focused shared route/access/contract checks after module result integration.",
+      "moduleDirectEditAuthorized": false,
+      "customerActivationAuthorized": false,
+      "productionReleaseAuthorized": false
+    }
+  ],
+  "rule": "Request IDs assign common-path work to Control; they never grant module agents direct access to common paths.",
+  "sealedPayloadSha256": "8c95fe271b5d78f0ab69334ddbc4af4b6bb306b2f8986513707d43c9c03b123d"
+}

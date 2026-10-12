@@ -1,0 +1,459 @@
+{
+  "schema": "dwp.hris.g7-module-work-packet.v1",
+  "packetId": "G7-PACKET-SYS-BASE-TFR-SYS-007-R1",
+  "revision": 1,
+  "issuedAt": "2026-10-12T10:45:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "expiresAt": "2026-10-19T10:45:00+09:00",
+  "lifecycleState": "PACKET_PREPARED_START_WITHHELD",
+  "sessionId": "HRIS-SYS",
+  "module": "SYS",
+  "slice": {
+    "sliceId": "BASE-TFR-SYS-007",
+    "sourceRef": "TFR-SYS-007",
+    "sourceFamilySha256": "c36c35b9ff77e9dfd8149cde55970c364febd07af1ee3c6f9b89d0390330974d",
+    "sourceRowCount": 37,
+    "workDefinition": "Implement the HRIS configuration/reference lifecycle workbench without creating a second raw reference-data source of record.",
+    "priorIntegratedSlice": "BASE-TFR-SYS-004",
+    "primaryContractRefs": [
+      "IAQ-052",
+      "PEP-SYS-011",
+      "PEP-SYS-012",
+      "PEP-SYS-013",
+      "PEP-SYS-014",
+      "PEP-SYS-015",
+      "PEP-SYS-016",
+      "PEP-SYS-043",
+      "PEP-SYS-044",
+      "PEP-SYS-045",
+      "PEP-SYS-046",
+      "PEP-SYS-047",
+      "SYS-API-011",
+      "SYS-API-012",
+      "SYS-API-013",
+      "SYS-API-014",
+      "SYS-API-015",
+      "SYS-API-016",
+      "SYS-API-041",
+      "SYS-API-042",
+      "SYS-API-043",
+      "SYS-API-044",
+      "SYS-API-045",
+      "SYS-EVT-003"
+    ],
+    "operationBindings": [
+      {
+        "bindingId": "IAQ-052",
+        "method": "GET",
+        "browserPath": "/api/platform/v1/hris/workbench/settings-reference",
+        "ownerPath": "/v1/hris/workbench/settings-reference",
+        "ownerService": "dwp-platform-server",
+        "uiRoute": "/hr/settings/reference-data"
+      },
+      {
+        "bindingId": "PEP-SYS-011",
+        "method": "GET",
+        "browserPath": "/api/platform/v1/admin/hris/configurations",
+        "ownerPath": "/v1/admin/hris/configurations",
+        "ownerService": "dwp-platform-server"
+      },
+      {
+        "bindingId": "PEP-SYS-012",
+        "method": "POST",
+        "browserPath": "/api/platform/v1/admin/hris/configurations/{configId}/versions",
+        "ownerPath": "/v1/admin/hris/configurations/{configId}/versions",
+        "ownerService": "dwp-platform-server"
+      },
+      {
+        "bindingId": "PEP-SYS-013",
+        "method": "POST",
+        "browserPath": "/api/platform/v1/admin/hris/configurations/{configId}/versions/{version}/validate",
+        "ownerPath": "/v1/admin/hris/configurations/{configId}/versions/{version}/validate",
+        "ownerService": "dwp-platform-server"
+      },
+      {
+        "bindingId": "PEP-SYS-014",
+        "method": "POST",
+        "browserPath": "/api/platform/v1/admin/hris/configurations/{configId}/versions/{version}/simulate",
+        "ownerPath": "/v1/admin/hris/configurations/{configId}/versions/{version}/simulate",
+        "ownerService": "dwp-platform-server"
+      },
+      {
+        "bindingId": "PEP-SYS-015",
+        "method": "POST",
+        "browserPath": "/api/platform/v1/admin/hris/configurations/{configId}/versions/{version}/approve",
+        "ownerPath": "/v1/admin/hris/configurations/{configId}/versions/{version}/approve",
+        "ownerService": "dwp-platform-server"
+      },
+      {
+        "bindingId": "PEP-SYS-016",
+        "method": "POST",
+        "browserPath": "/api/platform/v1/admin/hris/configurations/{configId}/versions/{version}/publish",
+        "ownerPath": "/v1/admin/hris/configurations/{configId}/versions/{version}/publish",
+        "ownerService": "dwp-platform-server"
+      },
+      {
+        "bindingId": "PEP-SYS-043",
+        "method": "GET",
+        "browserPath": "/api/platform/v1/admin/hris/configurations/{configId}/versions/{version}",
+        "ownerPath": "/v1/admin/hris/configurations/{configId}/versions/{version}",
+        "ownerService": "dwp-platform-server"
+      },
+      {
+        "bindingId": "PEP-SYS-044",
+        "method": "POST",
+        "browserPath": "/api/platform/v1/admin/hris/configurations/{configId}/versions/{version}/submit",
+        "ownerPath": "/v1/admin/hris/configurations/{configId}/versions/{version}/submit",
+        "ownerService": "dwp-platform-server"
+      },
+      {
+        "bindingId": "PEP-SYS-045",
+        "method": "POST",
+        "browserPath": "/api/platform/v1/admin/hris/configurations/{configId}/versions/{version}/schedule",
+        "ownerPath": "/v1/admin/hris/configurations/{configId}/versions/{version}/schedule",
+        "ownerService": "dwp-platform-server"
+      },
+      {
+        "bindingId": "PEP-SYS-046",
+        "method": "POST",
+        "browserPath": "/api/platform/v1/admin/hris/configurations/{configId}/versions/{version}/rollback",
+        "ownerPath": "/v1/admin/hris/configurations/{configId}/versions/{version}/rollback",
+        "ownerService": "dwp-platform-server"
+      },
+      {
+        "bindingId": "PEP-SYS-047",
+        "method": "POST",
+        "browserPath": "/api/platform/v1/admin/hris/configurations/{configId}/versions/{version}/retire",
+        "ownerPath": "/v1/admin/hris/configurations/{configId}/versions/{version}/retire",
+        "ownerService": "dwp-platform-server"
+      }
+    ]
+  },
+  "owners": {
+    "ownerAgent": "HRIS-SYS",
+    "reviewer": "SYS_COMMON_INTEGRATION_CONTROL",
+    "controlOwner": "SYS_COMMON_INTEGRATION_CONTROL",
+    "singleWriterRequired": true
+  },
+  "userOutcome": {
+    "primaryUser": "HRIS configuration administrator",
+    "operationalQuestion": "Which reference-configuration version is safe to publish, retire or roll back?",
+    "primaryAction": "validate, simulate, approve, publish, retire or roll back a version",
+    "outcome": "an immutable lifecycle receipt while domain content remains with its existing owner",
+    "pageArchetype": "studio"
+  },
+  "basePins": {
+    "frontend": {
+      "commit": "4546024ca9036f217c1d13ddb0622c21a3264b60",
+      "tree": "8f2a3068f9efbca5daf77a5fdf7f0d7d1670976c",
+      "stateSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "branch": "codex/hris-g1-integration-frontend-20261006",
+      "upstream": "origin/codex/hris-g1-integration-frontend-20261006",
+      "clean": true,
+      "upstreamMatched": true
+    },
+    "frontendSourceResult": {
+      "commit": "c05ffa3f9d647968fdcb224ec51f811c7d2cc538",
+      "tree": "761dd5e5ba232992dbac3a11fcd73ad2de787f24"
+    },
+    "backend": {
+      "commit": "c0d72ca8e26a6e2a0b3885b62c0aa0e3ad7b1329",
+      "tree": "099c88ee32c584764802f3efd77c23364c65b8c4",
+      "stateSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "branch": "codex/hris-g1-integration-backend-20261006",
+      "upstream": "origin/codex/hris-g1-integration-backend-20261006",
+      "clean": true,
+      "upstreamMatched": true
+    },
+    "agent": {
+      "commit": "1d46fc4ab49c604efb7464574c49d13ee453e059",
+      "tree": "0b9a8dbfd828478ee825452e5aca8688c83e37ab",
+      "stateSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "branch": "dwp-dev",
+      "upstream": "origin/dwp-dev",
+      "clean": true,
+      "upstreamMatched": true,
+      "hrisModuleSliceAuthority": false
+    }
+  },
+  "contractPins": {
+    "authorization": {
+      "version": 34,
+      "semanticChecksum": "852d20e1e639e1a7170f02b5714d21d8c51a9eb8ff5ac32d8b7940b82d6be83b",
+      "bundleSha256": "8edd29e91a915fc035028c44af4055673bf5e53c7a5ca77e2af381d69bc60135",
+      "indexSha256": "9b47d5aac66ce2f8b035b49fbc5f77f2715f9e08a5733e4fe3739bbcba5bff28"
+    },
+    "gatewayOpenApi": {
+      "sha256": "325fd7acfcf0ed42cd03db0105003c6a53d8434467e594e023d227c64b734856",
+      "paths": 1664,
+      "operations": 1904,
+      "schemas": 3682,
+      "frontendBackendBytesEqual": true
+    },
+    "preflightSha256": "5a95ded883cc520be5cf3705b26348972801f19f4565d65a2896e5515bf02e29",
+    "g5ReceiptSha256": "4a5a3505414dbec26ea4ef35eb4b4371c9c765272a39285298f3374090ec58ae",
+    "g6ReceiptSha256": "e9844302d03b81a8a473be4b85ee80862a16946264c0d0d9e4636f6cac80107c",
+    "g3ManifestSha256": "af5238d3610e96aeb12ce6376d37175d77ef65372be135369b9a5faeabe2de8e",
+    "g3OwnershipSha256": "2ef33aaf3534859b92a5d68267ddadf3aab1fe94c8dab4fe321992740b3c3629",
+    "acceptedIaApiSuccessorSha256": "5f47efd33a1d5aa3d11a4d9fd5716cd4e35650e9fec0868ecb77c8c90a4cd988",
+    "acceptedIaRuntimeSuccessorSha256": "fcdfd1a26d8fca2c8d9a2a8279a3c5a99844ba827aefe47cbac2210b8753f77a",
+    "acceptedIaProjectionSchemaSha256": "b185accd712216c39bf8a66f70cbbf0092a27a8c2c5e3d7457ecd4d511afa048",
+    "acceptedIaActionKeySha256": "19a12600eb11e4d6c7c6098ad7f44f8afb544a1d9c698c3d2305e9e8150b5b7e",
+    "moduleSourceEvidence": []
+  },
+  "dependencies": [
+    {
+      "dependencyId": "DEP-001",
+      "state": "READY_AT_FROZEN_BASE",
+      "authoritySha256": "b8f1a11d1a32cf6f5a9a99ff73066b7e65787319ac18cf0d2b4891d22587c348",
+      "resultPin": "AUTHORIZATION_V34:852d20e1e639e1a7170f02b5714d21d8c51a9eb8ff5ac32d8b7940b82d6be83b"
+    },
+    {
+      "dependencyId": "DEP-002",
+      "state": "READY_AT_FROZEN_BASE",
+      "authoritySha256": "b8f1a11d1a32cf6f5a9a99ff73066b7e65787319ac18cf0d2b4891d22587c348",
+      "resultPin": "AUTHORIZATION_V34:852d20e1e639e1a7170f02b5714d21d8c51a9eb8ff5ac32d8b7940b82d6be83b"
+    },
+    {
+      "dependencyId": "DEP-003",
+      "state": "READY_AT_FROZEN_BASE",
+      "authoritySha256": "b8f1a11d1a32cf6f5a9a99ff73066b7e65787319ac18cf0d2b4891d22587c348",
+      "resultPin": "BACKEND_G5:c0d72ca8e26a6e2a0b3885b62c0aa0e3ad7b1329|G6:w1-20261012t005606z-dd1c1db1"
+    },
+    {
+      "dependencyId": "DEP-004",
+      "state": "READY_AT_FROZEN_BASE",
+      "authoritySha256": "b8f1a11d1a32cf6f5a9a99ff73066b7e65787319ac18cf0d2b4891d22587c348",
+      "resultPin": "CONFIG_LIFECYCLE_CONTRACT_BASE:c0d72ca8e26a6e2a0b3885b62c0aa0e3ad7b1329"
+    },
+    {
+      "dependencyId": "DEP-016",
+      "state": "READY_AT_FROZEN_BASE",
+      "authoritySha256": "b8f1a11d1a32cf6f5a9a99ff73066b7e65787319ac18cf0d2b4891d22587c348",
+      "resultPin": "BACKEND_G5:c0d72ca8e26a6e2a0b3885b62c0aa0e3ad7b1329|G6:w1-20261012t005606z-dd1c1db1"
+    }
+  ],
+  "dependencyPinsSha256": "9630aa6033139fb3982cc30fdb8294a7e7a7669531dbbb41130265972a04c233",
+  "producerResultPins": [],
+  "scope": {
+    "included": [
+      "Implement the HRIS configuration/reference lifecycle workbench without creating a second raw reference-data source of record.",
+      "backend:dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/**",
+      "backend:dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/**",
+      "frontend:apps/dwp/src/features/hris/administration/reference-configuration/**"
+    ],
+    "excluded": [
+      "shared/generated/Gateway/navigation/shell work owned by Control",
+      "customer data, customer activation and production release",
+      "capabilities outside the canonical slice and operation bindings"
+    ]
+  },
+  "pathPolicy": {
+    "allowedPaths": [
+      "backend:dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/**",
+      "backend:dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/**",
+      "frontend:apps/dwp/src/features/hris/administration/reference-configuration/**"
+    ],
+    "protectedPaths": [
+      "backend:dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/HrisConfigurationProjectionController.java",
+      "backend:dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/HrisConfigurationProjectionDtos.java",
+      "backend:dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/HrisConfigurationProjectionService.java",
+      "backend:dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/HrisConfigurationProjectionControllerContractTest.java",
+      "backend:dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/HrisConfigurationProjectionServiceTest.java",
+      "backend:dwp-platform-server/src/main/java/com/dwp/services/platform/reference/**",
+      "backend:dwp-people-server/src/main/java/com/dwp/services/people/workforce/WorkforceReference*",
+      "frontend:apps/dwp/src/features/workforce/workforce-reference-data.tsx",
+      "frontend:apps/dwp/src/features/admin/reference-data-*.ts*",
+      "frontend:apps/dwp/src/features/hris/administration/system-access/**"
+    ],
+    "commonControlOnlyPaths": [
+      "backend:contracts/hris/**",
+      "backend:contracts/openapi/**",
+      "backend:contracts/asyncapi/**",
+      "backend:contracts/product-authorization/**",
+      "backend:dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/**",
+      "backend:dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/generated/**",
+      "backend:scripts/generate-hris-contracts.py",
+      "backend:dwp-approval-server/src/main/resources/product-authorization/**",
+      "backend:dwp-auth-server/src/main/resources/product-authorization/**",
+      "backend:dwp-meeting-server/src/main/resources/product-authorization/**",
+      "backend:dwp-people-server/src/main/resources/product-authorization/**",
+      "backend:dwp-platform-server/src/main/resources/product-authorization/**",
+      "backend:dwp-space-server/src/main/resources/product-authorization/**",
+      "backend:scripts/export-openapi-contracts.py",
+      "backend:scripts/generate-product-authorization-contracts.py",
+      "backend:scripts/generate-product-authorization-fixtures.py",
+      "backend:scripts/generate-approval-document-projection-contracts.py",
+      "backend:scripts/generate-approval-extension-projection-contracts.py",
+      "backend:scripts/generate-approval-recovery11-projection-contracts.py",
+      "backend:scripts/generate-approval-release10-projection-contracts.py",
+      "backend:scripts/generate-approval-work-projection-contracts.py",
+      "backend:dwp-gateway/**",
+      "backend:dwp-migration-control/**",
+      "backend:root build/runtime/CI files",
+      "frontend:apps/dwp/src/routes/**",
+      "frontend:apps/dwp/src/features/hcm/hcm-navigation*.ts*",
+      "frontend:apps/dwp/src/features/hcm/hcm-product-manifest*.ts*",
+      "frontend:apps/dwp/src/features/hris/shell/**",
+      "frontend:apps/dwp/src/routes/product-surface-authorization.generated.ts",
+      "frontend:architecture/**",
+      "frontend:libs/api-contracts/**",
+      "frontend:libs/shared-utils/src/auth/**",
+      "frontend:libs/shared-utils/src/test-utils/pilot-authorization-fixtures.generated.ts",
+      "frontend:libs/shared-i18n/**",
+      "frontend:scripts/sync-openapi-contract.mjs",
+      "frontend:scripts/sync-agent-openapi-contract.mjs",
+      "frontend:scripts/sync-product-surface-authorization.mjs",
+      "frontend:scripts/sync-product-authorization-fixtures.mjs",
+      "frontend:scripts/sync-product-surface-internal-closure.mjs",
+      "frontend:scripts/generate-route-composition.mjs",
+      "frontend:scripts/product-authorization-fixture-versions.mjs",
+      "frontend:scripts/check-official-backend-contracts.mjs",
+      "frontend:scripts/check-official-backend-contracts.test.mjs",
+      "frontend:scripts/check-product-surface-production-readiness.mjs",
+      "frontend:scripts/check-product-surface-production-readiness.test.mjs",
+      "frontend:scripts/product-surface-readiness-authorization.mjs",
+      "frontend:scripts/sync-product-surface-internal-closure.test.mjs",
+      "frontend:deploy/nginx/dwp-product-routes.conf",
+      "frontend:root project manifests and lockfiles"
+    ],
+    "existingBridgeFilesAllocatedToModule": [],
+    "outsideAllowedPathAction": "STOP_AND_RAISE_CONTROL_REQUEST"
+  },
+  "pathPolicySha256": "c8b56ea099ba546c434fc8d3f6bf2fe8a84f5bddc37d76dd2b372ac3c3fdda74",
+  "centralControlRequests": {
+    "registerSha256": "1e96cacc713837cfd81313b13f26d0c25205138f215b24ba22f667653d8ae858",
+    "requestIds": [
+      "G7-CR-SYS-007-AUTH-PEP-R1",
+      "G7-CR-SYS-007-CONTRACT-GATEWAY-R1",
+      "G7-CR-SYS-007-SHELL-ROUTE-R1",
+      "G7-CR-SYS-007-SECURITY-BRIDGE-R1"
+    ],
+    "moduleMayImplement": false
+  },
+  "migrationLease": {
+    "leaseId": "G7-LEASE-SYS-PLATFORM-V325-R1",
+    "leaseDigestSha256": "f79ea16e8fa389bc44eec07e975a9351b44d5df6d30434bfec85ce6aa5206cc8",
+    "status": "RESERVED_CONTROL_ONLY",
+    "stream": "PLATFORM_MAIN",
+    "version": 325,
+    "exactRelativePath": "dwp-platform-server/src/main/resources/db/migration/V325__create_hris_reference_configuration_lifecycle.sql",
+    "migrationAdmissionAuthorized": false
+  },
+  "runtimeSecurityRollout": {
+    "ownerService": "dwp-platform-server",
+    "systemOfRecord": "dwp-platform-server owns lifecycle metadata and content references only; existing domain-content owners remain authoritative.",
+    "tenantPopulationBoundary": "Owner-side trusted tenant, population and field decisions; negative and cross-tenant cases fail closed.",
+    "permissionSoDStepUp": "Use only the pinned G3 primary contract bindings; command, approval and corrective actions require their exact duty/SoD/step-up decisions.",
+    "idempotencyVersionAudit": "Idempotency key plus payload digest, optimistic version/CAS, immutable receipt and transactional outbox.",
+    "dataOriginMaskingRetention": "SOURCE/REFERENCE provenance is explicit; raw sensitive identifiers never enter logs, cursors or cross-owner events.",
+    "featureFlag": {
+      "key": "dwp.hris.reference-configuration.enabled",
+      "default": "OFF",
+      "activationAuthority": "NOT_GRANTED"
+    },
+    "partialEmptyDeniedStates": "Loading, empty, partial failure, stale, denied and unavailable are distinct and accessible."
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "AC-AUTHZ",
+      "criterion": "Bound capability, population and field decisions allow only the intended tenant scope; denied cases disclose no protected data."
+    },
+    {
+      "id": "AC-IDEMPOTENCY",
+      "criterion": "A repeated idempotency key with the same digest returns the original receipt and a mismatched payload fails closed."
+    },
+    {
+      "id": "AC-RECOVERY",
+      "criterion": "A worker crash or replay cannot duplicate the immutable receipt or published fact."
+    },
+    {
+      "id": "AC-MIGRATION",
+      "criterion": "Clean install and upgrade through the exact leased migration pass with tenant RLS/backfill and forward-fix evidence."
+    },
+    {
+      "id": "AC-FLAG",
+      "criterion": "The feature flag is default OFF; disabled tenants receive the canonical unavailable/denied state."
+    },
+    {
+      "id": "AC-TELEMETRY",
+      "criterion": "Correlation, audit and failure telemetry contain no raw sensitive identifiers."
+    },
+    {
+      "id": "AC-SYS-OWNER",
+      "criterion": "Lifecycle metadata stores only a content reference and digest; no second raw reference-data writer is introduced."
+    },
+    {
+      "id": "AC-SYS-LIFECYCLE",
+      "criterion": "Validate, simulate, submit, approve, schedule, publish, rollback and retire preserve immutable evidence and SoD."
+    }
+  ],
+  "verificationBindings": {
+    "policy": "Run changed-cluster tests first, collect all failures in the cluster, then run one module batch; do not rerun broad suites per fix.",
+    "moduleCommands": [
+      {
+        "cwd": "backend",
+        "argv": [
+          "./gradlew",
+          ":dwp-platform-server:test",
+          "--tests",
+          "*ReferenceConfiguration*",
+          "--tests",
+          "*SysIaEntryQueryContractTest",
+          "-PhrisSlice=BASE-TFR-SYS-007",
+          "--no-daemon"
+        ],
+        "stage": "TARGETED_MODULE"
+      },
+      {
+        "cwd": "frontend",
+        "argv": [
+          "yarn",
+          "vitest",
+          "run",
+          "apps/dwp/src/features/hris/administration/reference-configuration"
+        ],
+        "stage": "TARGETED_MODULE"
+      }
+    ],
+    "controlOnlyAfterModuleResult": [
+      "product authorization generation/check",
+      "OpenAPI/AsyncAPI export and frontend synchronization",
+      "focused shared route/access tests and one typecheck/architecture batch",
+      "new focused responsive/accessibility Playwright journeys"
+    ],
+    "fullW1OrPromotionRunInModulePacket": false
+  },
+  "deliverables": [
+    "separate frontend and backend result commits on the token-bound branches",
+    "exact changed-file manifest proving path-policy compliance",
+    "targeted command results and evidence locators",
+    "migration lease used/unused status",
+    "Control request handoff without direct shared-path edits"
+  ],
+  "releaseConditions": [
+    "Pin product-authorization successor and generated Platform PEP/auth fixtures for IAQ-052 and all eleven PEP operations.",
+    "Pin Gateway/OpenAPI/contract export and frontend sync without changing the frozen source contract semantics.",
+    "Pin the shared /hr/settings/reference-data route, navigation, shell and i18n composition; keep /hr/data/reference distinct.",
+    "Pin any exact PlatformSecurityFilter bridge as a Control-owned change; broad /v1/admin bypass is forbidden."
+  ],
+  "stopConditions": [
+    "base pin, clean state, worktree branch or upstream diverges",
+    "an edit outside the allowed path set is required",
+    "the migration version/path is occupied, expired or changed",
+    "a shared/generated/Gateway/shell/authorization change is required directly",
+    "a tenant, SoR, dependency, contract or rollback invariant is ambiguous"
+  ],
+  "authority": {
+    "sourceChangeAuthorized": false,
+    "domainAuthoringOnly": false,
+    "commitAndPushTokenBranchesAuthorized": false,
+    "sharedControlPathChangeAuthorized": false,
+    "integrationMergeAuthorized": false,
+    "customerDataAuthorized": false,
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "startTokenId": null,
+  "sealedPayloadSha256": "338586e5f6a4b3c3b0d758ef5c0563184701b0a41952f559ae630ec43423dbbd"
+}

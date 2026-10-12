@@ -1,0 +1,401 @@
+{
+  "schema": "dwp.hris.g7-module-work-packet.v1",
+  "packetId": "G7-PACKET-TIM-BASE-TFR-TIM-006-R1",
+  "revision": 1,
+  "issuedAt": "2026-10-12T10:45:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "expiresAt": "2026-10-19T10:45:00+09:00",
+  "lifecycleState": "PACKET_AUTHORIZED_DOMAIN_AUTHORING",
+  "sessionId": "HRIS-TIM",
+  "module": "TIM",
+  "slice": {
+    "sliceId": "BASE-TFR-TIM-006",
+    "sourceRef": "TFR-TIM-006",
+    "sourceFamilySha256": "7c11c39eddee9036c8c7a25ba713930d354791606f8393703bf5d48b6e885a83",
+    "sourceRowCount": 6,
+    "workDefinition": "Implement a narrow clock-event ingest and void family with idempotency, order, offline/device provenance, immutable receipts, and ClockEventRecorded publication.",
+    "priorIntegratedSlice": "BASE-TFR-TIM-016",
+    "primaryContractRefs": [
+      "EVT-TIM:ClockEventRecorded",
+      "IAQ-034",
+      "IAQ-042",
+      "PEP-TIM-007",
+      "PEP-TIM-008"
+    ],
+    "operationBindings": [
+      {
+        "bindingId": "IAQ-034",
+        "method": "GET",
+        "browserPath": "/api/time/v1/hris/workbench/clock-ingestion",
+        "ownerPath": "/v1/hris/workbench/clock-ingestion",
+        "ownerService": "dwp-time-server",
+        "uiRoute": "/hr/operations/time/clock-ingestion"
+      },
+      {
+        "bindingId": "IAQ-042",
+        "method": "GET",
+        "browserPath": "/api/time/v1/hris/workbench/time-exceptions",
+        "ownerPath": "/v1/hris/workbench/time-exceptions",
+        "ownerService": "dwp-time-server",
+        "uiRoute": "/hr/operations/time/exceptions"
+      },
+      {
+        "bindingId": "PEP-TIM-007",
+        "method": "POST",
+        "browserPath": "/api/time/v1/clock-events",
+        "ownerPath": "/v1/clock-events",
+        "ownerService": "dwp-time-server"
+      },
+      {
+        "bindingId": "PEP-TIM-008",
+        "method": "POST",
+        "browserPath": "/api/time/v1/clock-events/{eventId}/voids",
+        "ownerPath": "/v1/clock-events/{eventId}/voids",
+        "ownerService": "dwp-time-server"
+      }
+    ]
+  },
+  "owners": {
+    "ownerAgent": "HRIS-TIM",
+    "reviewer": "SYS_COMMON_INTEGRATION_CONTROL",
+    "controlOwner": "SYS_COMMON_INTEGRATION_CONTROL",
+    "singleWriterRequired": true
+  },
+  "userOutcome": {
+    "primaryUser": "time operations specialist",
+    "operationalQuestion": "Which clock events were accepted, rejected or require a corrective void?",
+    "primaryAction": "ingest a provenance-bound clock event or append an authorized void",
+    "outcome": "ordered immutable clock evidence and ClockEventRecorded.v1 publication",
+    "pageArchetype": "command center"
+  },
+  "basePins": {
+    "frontend": {
+      "commit": "4546024ca9036f217c1d13ddb0622c21a3264b60",
+      "tree": "8f2a3068f9efbca5daf77a5fdf7f0d7d1670976c",
+      "stateSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "branch": "codex/hris-g1-integration-frontend-20261006",
+      "upstream": "origin/codex/hris-g1-integration-frontend-20261006",
+      "clean": true,
+      "upstreamMatched": true
+    },
+    "frontendSourceResult": {
+      "commit": "c05ffa3f9d647968fdcb224ec51f811c7d2cc538",
+      "tree": "761dd5e5ba232992dbac3a11fcd73ad2de787f24"
+    },
+    "backend": {
+      "commit": "c0d72ca8e26a6e2a0b3885b62c0aa0e3ad7b1329",
+      "tree": "099c88ee32c584764802f3efd77c23364c65b8c4",
+      "stateSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "branch": "codex/hris-g1-integration-backend-20261006",
+      "upstream": "origin/codex/hris-g1-integration-backend-20261006",
+      "clean": true,
+      "upstreamMatched": true
+    },
+    "agent": {
+      "commit": "1d46fc4ab49c604efb7464574c49d13ee453e059",
+      "tree": "0b9a8dbfd828478ee825452e5aca8688c83e37ab",
+      "stateSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "branch": "dwp-dev",
+      "upstream": "origin/dwp-dev",
+      "clean": true,
+      "upstreamMatched": true,
+      "hrisModuleSliceAuthority": false
+    }
+  },
+  "contractPins": {
+    "authorization": {
+      "version": 34,
+      "semanticChecksum": "852d20e1e639e1a7170f02b5714d21d8c51a9eb8ff5ac32d8b7940b82d6be83b",
+      "bundleSha256": "8edd29e91a915fc035028c44af4055673bf5e53c7a5ca77e2af381d69bc60135",
+      "indexSha256": "9b47d5aac66ce2f8b035b49fbc5f77f2715f9e08a5733e4fe3739bbcba5bff28"
+    },
+    "gatewayOpenApi": {
+      "sha256": "325fd7acfcf0ed42cd03db0105003c6a53d8434467e594e023d227c64b734856",
+      "paths": 1664,
+      "operations": 1904,
+      "schemas": 3682,
+      "frontendBackendBytesEqual": true
+    },
+    "preflightSha256": "5a95ded883cc520be5cf3705b26348972801f19f4565d65a2896e5515bf02e29",
+    "g5ReceiptSha256": "4a5a3505414dbec26ea4ef35eb4b4371c9c765272a39285298f3374090ec58ae",
+    "g6ReceiptSha256": "e9844302d03b81a8a473be4b85ee80862a16946264c0d0d9e4636f6cac80107c",
+    "g3ManifestSha256": "af5238d3610e96aeb12ce6376d37175d77ef65372be135369b9a5faeabe2de8e",
+    "g3OwnershipSha256": "2ef33aaf3534859b92a5d68267ddadf3aab1fe94c8dab4fe321992740b3c3629",
+    "acceptedIaApiSuccessorSha256": "5f47efd33a1d5aa3d11a4d9fd5716cd4e35650e9fec0868ecb77c8c90a4cd988",
+    "acceptedIaRuntimeSuccessorSha256": "fcdfd1a26d8fca2c8d9a2a8279a3c5a99844ba827aefe47cbac2210b8753f77a",
+    "acceptedIaProjectionSchemaSha256": "b185accd712216c39bf8a66f70cbbf0092a27a8c2c5e3d7457ecd4d511afa048",
+    "acceptedIaActionKeySha256": "19a12600eb11e4d6c7c6098ad7f44f8afb544a1d9c698c3d2305e9e8150b5b7e",
+    "moduleSourceEvidence": [
+      {
+        "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-evidence/tim/g2-api-event-contracts.json",
+        "bytes": 19564,
+        "sha256": "1251365481d7063bf3fcf0e3e5bfaeca148554da354ac60fe29d2e67d1c1cb7f"
+      },
+      {
+        "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-evidence/tim/g2-physical-schema.sql",
+        "bytes": 45482,
+        "sha256": "01325e939dc1d116d53067d0332f348146d13c2be6a1e314357e82d3e2769a80"
+      },
+      {
+        "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-evidence/tim/g2-authorization.md",
+        "bytes": 4977,
+        "sha256": "20577988f161e48d2e452b7fadf10e53ee0df9ff1ef04dc595e60f1239b701b0"
+      },
+      {
+        "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-evidence/tim/g2-runtime-controls.md",
+        "bytes": 9038,
+        "sha256": "9d55b28834fd018abe8af3cf66fa3ef035bd4ecb0d264cc72da1f5bde8eaabe5"
+      }
+    ]
+  },
+  "dependencies": [
+    {
+      "dependencyId": "DEP-001",
+      "state": "READY_AT_FROZEN_BASE",
+      "authoritySha256": "b8f1a11d1a32cf6f5a9a99ff73066b7e65787319ac18cf0d2b4891d22587c348",
+      "resultPin": "AUTHORIZATION_V34:852d20e1e639e1a7170f02b5714d21d8c51a9eb8ff5ac32d8b7940b82d6be83b"
+    },
+    {
+      "dependencyId": "DEP-002",
+      "state": "READY_AT_FROZEN_BASE",
+      "authoritySha256": "b8f1a11d1a32cf6f5a9a99ff73066b7e65787319ac18cf0d2b4891d22587c348",
+      "resultPin": "AUTHORIZATION_V34:852d20e1e639e1a7170f02b5714d21d8c51a9eb8ff5ac32d8b7940b82d6be83b"
+    },
+    {
+      "dependencyId": "DEP-003",
+      "state": "READY_AT_FROZEN_BASE",
+      "authoritySha256": "b8f1a11d1a32cf6f5a9a99ff73066b7e65787319ac18cf0d2b4891d22587c348",
+      "resultPin": "BACKEND_G5:c0d72ca8e26a6e2a0b3885b62c0aa0e3ad7b1329|G6:w1-20261012t005606z-dd1c1db1"
+    },
+    {
+      "dependencyId": "DEP-006",
+      "state": "READY_AT_FROZEN_BASE",
+      "authoritySha256": "b8f1a11d1a32cf6f5a9a99ff73066b7e65787319ac18cf0d2b4891d22587c348",
+      "resultPin": "CONNECTOR_POLICY_BASE:c0d72ca8e26a6e2a0b3885b62c0aa0e3ad7b1329|G6:w1-20261012t005606z-dd1c1db1"
+    },
+    {
+      "dependencyId": "DEP-016",
+      "state": "READY_AT_FROZEN_BASE",
+      "authoritySha256": "b8f1a11d1a32cf6f5a9a99ff73066b7e65787319ac18cf0d2b4891d22587c348",
+      "resultPin": "BACKEND_G5:c0d72ca8e26a6e2a0b3885b62c0aa0e3ad7b1329|G6:w1-20261012t005606z-dd1c1db1"
+    }
+  ],
+  "dependencyPinsSha256": "919a36c63c3f33a03596c4bfc897e3ecb41e2affc3404bb08de2d4f82836deb9",
+  "producerResultPins": [],
+  "scope": {
+    "included": [
+      "Implement a narrow clock-event ingest and void family with idempotency, order, offline/device provenance, immutable receipts, and ClockEventRecorded publication.",
+      "backend:dwp-time-server/src/main/java/com/dwp/services/time/clockingestion/**",
+      "backend:dwp-time-server/src/test/java/com/dwp/services/time/clockingestion/**",
+      "backend:dwp-time-server/src/main/resources/db/migration/V8__tim_create_clock_ingestion.sql",
+      "frontend:apps/dwp/src/features/hris/time/clock-ingestion/**"
+    ],
+    "excluded": [
+      "shared/generated/Gateway/navigation/shell work owned by Control",
+      "customer data, customer activation and production release",
+      "capabilities outside the canonical slice and operation bindings"
+    ]
+  },
+  "pathPolicy": {
+    "allowedPaths": [
+      "backend:dwp-time-server/src/main/java/com/dwp/services/time/clockingestion/**",
+      "backend:dwp-time-server/src/test/java/com/dwp/services/time/clockingestion/**",
+      "backend:dwp-time-server/src/main/resources/db/migration/V8__tim_create_clock_ingestion.sql",
+      "frontend:apps/dwp/src/features/hris/time/clock-ingestion/**"
+    ],
+    "protectedPaths": [
+      "backend:dwp-time-server/src/main/java/com/dwp/services/time/workregime/**",
+      "backend:dwp-time-server/src/main/java/com/dwp/services/time/absence/**",
+      "backend:dwp-time-server/src/main/resources/db/migration/V1__tim_create_work_regime_foundation.sql",
+      "backend:dwp-time-server/src/main/resources/db/migration/V2__tim_create_target_population_authority_projection.sql",
+      "backend:dwp-time-server/src/main/resources/db/migration/V3__tim_create_command_target_authority_evidence.sql",
+      "backend:dwp-time-server/src/main/resources/db/migration/V4__tim_harden_sod_and_projection_locks.sql",
+      "backend:dwp-time-server/src/main/resources/db/migration/V5__tim_authorize_projection_publisher.sql",
+      "backend:dwp-time-server/src/main/resources/db/migration/V6__tim_adopt_derived_hcm_scope_keys.sql",
+      "backend:dwp-time-server/src/main/resources/db/migration/V7__tim_harden_owner_trigger_boundaries.sql",
+      "frontend:apps/dwp/src/features/hris/time/api/hris-time-work-plan-*.ts",
+      "frontend:apps/dwp/src/features/hris/time/components/hris-time-work-plan-studio.tsx",
+      "frontend:apps/dwp/src/features/hris/time/model/hris-time-work-plan-*.ts"
+    ],
+    "commonControlOnlyPaths": [
+      "backend:contracts/hris/**",
+      "backend:contracts/openapi/**",
+      "backend:contracts/asyncapi/**",
+      "backend:contracts/product-authorization/**",
+      "backend:dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/**",
+      "backend:dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/generated/**",
+      "backend:scripts/generate-hris-contracts.py",
+      "backend:dwp-approval-server/src/main/resources/product-authorization/**",
+      "backend:dwp-auth-server/src/main/resources/product-authorization/**",
+      "backend:dwp-meeting-server/src/main/resources/product-authorization/**",
+      "backend:dwp-people-server/src/main/resources/product-authorization/**",
+      "backend:dwp-platform-server/src/main/resources/product-authorization/**",
+      "backend:dwp-space-server/src/main/resources/product-authorization/**",
+      "backend:scripts/export-openapi-contracts.py",
+      "backend:scripts/generate-product-authorization-contracts.py",
+      "backend:scripts/generate-product-authorization-fixtures.py",
+      "backend:scripts/generate-approval-document-projection-contracts.py",
+      "backend:scripts/generate-approval-extension-projection-contracts.py",
+      "backend:scripts/generate-approval-recovery11-projection-contracts.py",
+      "backend:scripts/generate-approval-release10-projection-contracts.py",
+      "backend:scripts/generate-approval-work-projection-contracts.py",
+      "backend:dwp-gateway/**",
+      "backend:dwp-migration-control/**",
+      "backend:root build/runtime/CI files",
+      "frontend:apps/dwp/src/routes/**",
+      "frontend:apps/dwp/src/features/hcm/hcm-navigation*.ts*",
+      "frontend:apps/dwp/src/features/hcm/hcm-product-manifest*.ts*",
+      "frontend:apps/dwp/src/features/hris/shell/**",
+      "frontend:apps/dwp/src/routes/product-surface-authorization.generated.ts",
+      "frontend:architecture/**",
+      "frontend:libs/api-contracts/**",
+      "frontend:libs/shared-utils/src/auth/**",
+      "frontend:libs/shared-utils/src/test-utils/pilot-authorization-fixtures.generated.ts",
+      "frontend:libs/shared-i18n/**",
+      "frontend:scripts/sync-openapi-contract.mjs",
+      "frontend:scripts/sync-agent-openapi-contract.mjs",
+      "frontend:scripts/sync-product-surface-authorization.mjs",
+      "frontend:scripts/sync-product-authorization-fixtures.mjs",
+      "frontend:scripts/sync-product-surface-internal-closure.mjs",
+      "frontend:scripts/generate-route-composition.mjs",
+      "frontend:scripts/product-authorization-fixture-versions.mjs",
+      "frontend:scripts/check-official-backend-contracts.mjs",
+      "frontend:scripts/check-official-backend-contracts.test.mjs",
+      "frontend:scripts/check-product-surface-production-readiness.mjs",
+      "frontend:scripts/check-product-surface-production-readiness.test.mjs",
+      "frontend:scripts/product-surface-readiness-authorization.mjs",
+      "frontend:scripts/sync-product-surface-internal-closure.test.mjs",
+      "frontend:deploy/nginx/dwp-product-routes.conf",
+      "frontend:root project manifests and lockfiles"
+    ],
+    "existingBridgeFilesAllocatedToModule": [],
+    "outsideAllowedPathAction": "STOP_AND_RAISE_CONTROL_REQUEST"
+  },
+  "pathPolicySha256": "86cc4c4ebdf96a5c17a7c9e6d5707a007eaca779221126d5d4a72df62b1e6dfe",
+  "centralControlRequests": {
+    "registerSha256": "1e96cacc713837cfd81313b13f26d0c25205138f215b24ba22f667653d8ae858",
+    "requestIds": [
+      "G7-CR-TIM-006-AUTH-PEP-R1",
+      "G7-CR-TIM-006-CONTRACT-GATEWAY-R1",
+      "G7-CR-TIM-006-SHELL-ROUTES-R1",
+      "G7-CR-TIM-006-INTEGRATION-VERIFY-R1"
+    ],
+    "moduleMayImplement": false
+  },
+  "migrationLease": {
+    "leaseId": "G7-LEASE-TIM-TIME-V8-R1",
+    "leaseDigestSha256": "0ebcef3fbae39ed33fe56af7bc16d4ce89a0828fdfc95d6be107362c176a29f5",
+    "status": "ADMITTED_DOMAIN_AUTHORING",
+    "stream": "TIME_MAIN",
+    "version": 8,
+    "exactRelativePath": "dwp-time-server/src/main/resources/db/migration/V8__tim_create_clock_ingestion.sql",
+    "migrationAdmissionAuthorized": true
+  },
+  "runtimeSecurityRollout": {
+    "ownerService": "dwp-time-server",
+    "systemOfRecord": "dwp-time-server clock-ingestion family; work-regime and absence owners remain protected.",
+    "tenantPopulationBoundary": "Owner-side trusted tenant, population and field decisions; negative and cross-tenant cases fail closed.",
+    "permissionSoDStepUp": "Use only the pinned G3 primary contract bindings; command, approval and corrective actions require their exact duty/SoD/step-up decisions.",
+    "idempotencyVersionAudit": "Idempotency key plus payload digest, optimistic version/CAS, immutable receipt and transactional outbox.",
+    "dataOriginMaskingRetention": "SOURCE/REFERENCE provenance is explicit; raw sensitive identifiers never enter logs, cursors or cross-owner events.",
+    "featureFlag": {
+      "key": "dwp.hris.time.clock-ingestion.enabled",
+      "default": "OFF",
+      "activationAuthority": "NOT_GRANTED"
+    },
+    "partialEmptyDeniedStates": "Loading, empty, partial failure, stale, denied and unavailable are distinct and accessible."
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "AC-AUTHZ",
+      "criterion": "Bound capability, population and field decisions allow only the intended tenant scope; denied cases disclose no protected data."
+    },
+    {
+      "id": "AC-IDEMPOTENCY",
+      "criterion": "A repeated idempotency key with the same digest returns the original receipt and a mismatched payload fails closed."
+    },
+    {
+      "id": "AC-RECOVERY",
+      "criterion": "A worker crash or replay cannot duplicate the immutable receipt or published fact."
+    },
+    {
+      "id": "AC-MIGRATION",
+      "criterion": "Clean install and upgrade through the exact leased migration pass with tenant RLS/backfill and forward-fix evidence."
+    },
+    {
+      "id": "AC-FLAG",
+      "criterion": "The feature flag is default OFF; disabled tenants receive the canonical unavailable/denied state."
+    },
+    {
+      "id": "AC-TELEMETRY",
+      "criterion": "Correlation, audit and failure telemetry contain no raw sensitive identifiers."
+    },
+    {
+      "id": "AC-TIM-PROVENANCE",
+      "criterion": "Clock ingest binds instant, local time, IANA zone, UTC offset, DST resolution, tzdb/rule version, source and device provenance."
+    },
+    {
+      "id": "AC-TIM-VOID",
+      "criterion": "A void is a step-up-protected corrective append-only fact; the original clock event is never updated or deleted."
+    }
+  ],
+  "verificationBindings": {
+    "policy": "Run changed-cluster tests first, collect all failures in the cluster, then run one module batch; do not rerun broad suites per fix.",
+    "moduleCommands": [
+      {
+        "cwd": "backend",
+        "argv": [
+          "./gradlew",
+          ":dwp-time-server:test",
+          "--tests",
+          "com.dwp.services.time.clockingestion.*"
+        ],
+        "stage": "TARGETED_MODULE"
+      },
+      {
+        "cwd": "frontend",
+        "argv": [
+          "yarn",
+          "vitest",
+          "run",
+          "apps/dwp/src/features/hris/time/clock-ingestion"
+        ],
+        "stage": "TARGETED_MODULE"
+      }
+    ],
+    "controlOnlyAfterModuleResult": [
+      "product authorization generation/check",
+      "OpenAPI/AsyncAPI export and frontend synchronization",
+      "focused shared route/access tests and one typecheck/architecture batch",
+      "new focused responsive/accessibility Playwright journeys"
+    ],
+    "fullW1OrPromotionRunInModulePacket": false
+  },
+  "deliverables": [
+    "separate frontend and backend result commits on the token-bound branches",
+    "exact changed-file manifest proving path-policy compliance",
+    "targeted command results and evidence locators",
+    "migration lease used/unused status",
+    "Control request handoff without direct shared-path edits"
+  ],
+  "releaseConditions": [],
+  "stopConditions": [
+    "base pin, clean state, worktree branch or upstream diverges",
+    "an edit outside the allowed path set is required",
+    "the migration version/path is occupied, expired or changed",
+    "a shared/generated/Gateway/shell/authorization change is required directly",
+    "a tenant, SoR, dependency, contract or rollback invariant is ambiguous"
+  ],
+  "authority": {
+    "sourceChangeAuthorized": true,
+    "domainAuthoringOnly": true,
+    "commitAndPushTokenBranchesAuthorized": true,
+    "sharedControlPathChangeAuthorized": false,
+    "integrationMergeAuthorized": false,
+    "customerDataAuthorized": false,
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "startTokenId": "G7-START-TIM-BASE-TFR-TIM-006-R1",
+  "sealedPayloadSha256": "cdae1945c804550e01f716a641b02d579bd08747d7b5192bb65a9b372ca6dc4a"
+}
