@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { useProductSurfaceRequestScope } from '../../../../../components/use-product-surface-request-scope';
 import {
@@ -9,6 +9,7 @@ import {
 import { resolveReferenceConfigurationViewState } from '../model/reference-configuration-model';
 
 import type { ReferenceConfigurationWorkbenchQuery } from '../api/reference-configuration-api';
+import type { ReferenceConfigurationCommandReceipt } from '../model/reference-configuration-model';
 
 export function useHrisReferenceConfigurationRequestScope() {
   return useProductSurfaceRequestScope({
@@ -19,6 +20,7 @@ export function useHrisReferenceConfigurationRequestScope() {
 
 export function useReferenceConfigurationWorkspace() {
   const requestScope = useHrisReferenceConfigurationRequestScope();
+  const queryClient = useQueryClient();
   const [correlationId] = useState(() => crypto.randomUUID());
   const [selected, setSelected] = useState<{ configurationId: string; version: number } | null>(
     null
@@ -105,7 +107,63 @@ export function useReferenceConfigurationWorkspace() {
     refresh() {
       return workbenchQuery.refetch();
     },
+    refreshAfterCommand(receipt: ReferenceConfigurationCommandReceipt) {
+      const target = resultTarget(receipt.resultRef);
+      setSelected(target);
+      const detailKey = [
+        'hris',
+        'reference-configuration',
+        'version',
+        requestScope.cacheKey,
+        target.configurationId,
+        target.version,
+      ] as const;
+      return refetchReferenceConfigurationCommandResult(
+        () => workbenchQuery.refetch(),
+        async () => {
+          try {
+            await queryClient.fetchQuery({
+              queryKey: detailKey,
+              queryFn: ({ signal }) =>
+                readReferenceConfigurationVersion(
+                  target.configurationId,
+                  target.version,
+                  requestScope.contextScopeKey,
+                  signal
+                ),
+              staleTime: 0,
+            });
+            return { isError: false };
+          } catch (error) {
+            return { isError: true, error };
+          }
+        }
+      );
+    },
   };
+}
+
+function resultTarget(resultRef: string) {
+  const [configurationId, rawVersion] = resultRef.split('/', 2);
+  const version = Number(rawVersion);
+  if (!configurationId || !Number.isSafeInteger(version) || version < 1) {
+    throw new Error('Reference-configuration receipt result is invalid.');
+  }
+  return { configurationId, version };
+}
+
+type RefetchResult = Readonly<{ isError: boolean; error?: unknown }>;
+
+export async function refetchReferenceConfigurationCommandResult(
+  refetchWorkbench: () => Promise<RefetchResult>,
+  refetchDetail: () => Promise<RefetchResult>
+): Promise<void> {
+  const [workbench, detail] = await Promise.all([refetchWorkbench(), refetchDetail()]);
+  const failure = workbench.isError ? workbench.error : detail.isError ? detail.error : undefined;
+  if (failure) throw failure;
+  if (workbench.isError || detail.isError) {
+    throw new Error('Reference-configuration command result could not be refreshed.');
+  }
 }
 
 function isDenied(error: unknown) {

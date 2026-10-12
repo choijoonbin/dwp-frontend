@@ -31,7 +31,7 @@ export type ReferenceConfigurationAction = Readonly<{
 export type ReferenceConfigurationWorkbenchItem = Readonly<{
   itemPublicId: string;
   title: string;
-  statusCode: ReferenceConfigurationLifecycle;
+  statusCode: ReferenceConfigurationLifecycle | 'RESTRICTED';
   fieldGroups: Readonly<Record<string, unknown>>;
   deepLink: Readonly<{ route: '/hr/settings/reference-data'; resourcePublicId: string }>;
   availableActions: readonly ReferenceConfigurationAction[];
@@ -151,6 +151,12 @@ export function referenceConfigurationCommandType(
   return `${action}_VERSION`;
 }
 
+export function referenceConfigurationOriginatingAction(
+  action: ReferenceConfigurationLifecycleAction
+): string {
+  return `configuration.version.${action.toLowerCase()}`;
+}
+
 export function resolveReferenceConfigurationViewState(input: {
   loading: boolean;
   denied: boolean;
@@ -168,17 +174,27 @@ export function resolveReferenceConfigurationViewState(input: {
 
 export function assertReferenceConfigurationReceipt(
   value: unknown,
-  expected: { commandType: string; resultRefPrefix: string }
+  expected: { commandType: string; originatingAction: string; resultRefPrefix: string }
 ): ReferenceConfigurationCommandReceipt {
   if (!isRecord(value)) throw new Error('Reference-configuration receipt is invalid.');
   if (
     !isUuid(value.receiptId) ||
     value.commandType !== expected.commandType ||
+    value.originatingAction !== expected.originatingAction ||
+    value.purposeCode !== 'HRIS_SYSTEM_ADMIN' ||
+    value.status !== 'SUCCEEDED' ||
+    !isUuid(value.subjectPrincipalPublicId) ||
+    typeof value.populationScopeDigest !== 'string' ||
+    !/^[a-f0-9]{64}$/i.test(value.populationScopeDigest) ||
+    !isPositiveRevision(value.fieldPolicyRevision) ||
+    !isPositiveRevision(value.authorizationRevision) ||
     typeof value.resultRef !== 'string' ||
-    !value.resultRef.startsWith(expected.resultRefPrefix) ||
+    !matchesResultRef(value.resultRef, expected.resultRefPrefix) ||
     !isUuid(value.correlationId) ||
     typeof value.requestDigest !== 'string' ||
     !/^[a-f0-9]{64}$/i.test(value.requestDigest) ||
+    typeof value.createdAt !== 'string' ||
+    !Number.isFinite(Date.parse(value.createdAt)) ||
     typeof value.aggregateVersion !== 'number' ||
     !Number.isSafeInteger(value.aggregateVersion) ||
     value.aggregateVersion < 0
@@ -186,6 +202,15 @@ export function assertReferenceConfigurationReceipt(
     throw new Error('Reference-configuration receipt identity does not match the command.');
   }
   return value as ReferenceConfigurationCommandReceipt;
+}
+
+function matchesResultRef(value: string, expected: string): boolean {
+  if (!expected.endsWith('/')) return value === expected;
+  return value.startsWith(expected) && /^[1-9][0-9]*$/.test(value.slice(expected.length));
+}
+
+function isPositiveRevision(value: unknown): value is number {
+  return typeof value === 'number' && Number.isSafeInteger(value) && value >= 1;
 }
 
 export function isReferenceConfigurationWorkbench(
