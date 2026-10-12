@@ -15,6 +15,9 @@ export type ReferenceConfigurationLifecycle =
   | 'RETIRED'
   | 'FAILED_ACTIVATION';
 
+export type ReferenceConfigurationLifecycleAction =
+  'VALIDATE' | 'SIMULATE' | 'SUBMIT' | 'APPROVE' | 'SCHEDULE' | 'PUBLISH' | 'ROLLBACK' | 'RETIRE';
+
 export type ReferenceConfigurationQueryState = 'COMPLETE' | 'EMPTY' | 'PARTIAL' | 'UNAVAILABLE';
 
 export type ReferenceConfigurationAction = Readonly<{
@@ -94,10 +97,30 @@ export type ReferenceConfigurationCommandReceipt = Readonly<{
   resultRef: string;
 }>;
 
+export type ReferenceConfigurationCommandInput = Readonly<{
+  action: ReferenceConfigurationLifecycleAction;
+  configurationId: string;
+  version: number;
+  aggregateVersion: number;
+}>;
+
+/**
+ * Control-owned command seam. This SYS feature never manufactures governance, step-up, or
+ * high-risk catalog authority; an activated shell must inject the owner that holds those facts.
+ */
+export type ReferenceConfigurationCommandOwner = Readonly<{
+  execute(input: ReferenceConfigurationCommandInput): Promise<unknown>;
+}>;
+
+export type ReferenceConfigurationCommandState =
+  'IDLE' | 'RUNNING' | 'SUCCEEDED' | 'STALE' | 'ERROR';
+
 export type ReferenceConfigurationViewState =
   'LOADING' | 'READY' | 'EMPTY' | 'PARTIAL' | 'UNAVAILABLE' | 'DENIED' | 'ERROR';
 
-const LIFECYCLE_ACTIONS: Readonly<Record<ReferenceConfigurationLifecycle, readonly string[]>> = {
+const LIFECYCLE_ACTIONS: Readonly<
+  Record<ReferenceConfigurationLifecycle, readonly ReferenceConfigurationLifecycleAction[]>
+> = {
   DRAFT: ['VALIDATE'],
   VALIDATED: ['SIMULATE'],
   SIMULATED: ['SUBMIT'],
@@ -118,8 +141,14 @@ export function referenceConfigurationRuntimeState(
 
 export function referenceConfigurationActions(
   lifecycle: ReferenceConfigurationLifecycle
-): readonly string[] {
+): readonly ReferenceConfigurationLifecycleAction[] {
   return LIFECYCLE_ACTIONS[lifecycle];
+}
+
+export function referenceConfigurationCommandType(
+  action: ReferenceConfigurationLifecycleAction
+): string {
+  return `${action}_VERSION`;
 }
 
 export function resolveReferenceConfigurationViewState(input: {
