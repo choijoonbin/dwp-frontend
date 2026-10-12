@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { InlineFeedback } from '@dwp-frontend/design-system';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
@@ -14,10 +15,18 @@ import Select from '@mui/material/Select';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-import { referenceConfigurationActions } from '../model/reference-configuration-model';
+import {
+  assertReferenceConfigurationReceipt,
+  referenceConfigurationActions,
+  referenceConfigurationCommandType,
+} from '../model/reference-configuration-model';
 
 import type {
   ReferenceConfigurationAction,
+  ReferenceConfigurationCommandOwner,
+  ReferenceConfigurationCommandReceipt,
+  ReferenceConfigurationCommandState,
+  ReferenceConfigurationLifecycleAction,
   ReferenceConfigurationVersion,
   ReferenceConfigurationViewState,
   ReferenceConfigurationWorkbench,
@@ -33,7 +42,8 @@ export type ReferenceConfigurationStudioProps = Readonly<{
   onStatusFilterChange(value: string): void;
   onSelect(configurationId: string, version: number): void;
   onRefresh(): void;
-  onPrepareAction(action: string): void;
+  commandOwner?: ReferenceConfigurationCommandOwner;
+  onCommandCommitted?(receipt: ReferenceConfigurationCommandReceipt): void;
 }>;
 
 const STATES = [
@@ -57,8 +67,48 @@ export function ReferenceConfigurationStudio({
   onStatusFilterChange,
   onSelect,
   onRefresh,
-  onPrepareAction,
+  commandOwner,
+  onCommandCommitted,
 }: ReferenceConfigurationStudioProps) {
+  const [commandState, setCommandState] = useState<ReferenceConfigurationCommandState>('IDLE');
+  const [commandAction, setCommandAction] = useState<ReferenceConfigurationLifecycleAction>();
+  const [receipt, setReceipt] = useState<ReferenceConfigurationCommandReceipt>();
+  const [commandError, setCommandError] = useState<string>();
+
+  useEffect(() => {
+    setCommandState('IDLE');
+    setCommandAction(undefined);
+    setReceipt(undefined);
+    setCommandError(undefined);
+  }, [detail?.configurationId, detail?.version, detail?.aggregateVersion]);
+
+  async function executeAction(action: ReferenceConfigurationLifecycleAction) {
+    if (!commandOwner || !detail || commandState === 'RUNNING') return;
+    setCommandState('RUNNING');
+    setCommandAction(action);
+    setReceipt(undefined);
+    setCommandError(undefined);
+    try {
+      const candidate = await commandOwner.execute({
+        action,
+        configurationId: detail.configurationId,
+        version: detail.version,
+        aggregateVersion: detail.aggregateVersion,
+      });
+      const verified = assertReferenceConfigurationReceipt(candidate, {
+        commandType: referenceConfigurationCommandType(action),
+        resultRefPrefix: `${detail.configurationId}/${detail.version}`,
+      });
+      const immutable = Object.freeze({ ...verified });
+      setReceipt(immutable);
+      setCommandState('SUCCEEDED');
+      onCommandCommitted?.(immutable);
+    } catch (error) {
+      setCommandError(commandErrorMessage(error));
+      setCommandState(isStaleCommandError(error) ? 'STALE' : 'ERROR');
+    }
+  }
+
   if (state === 'LOADING') {
     return (
       <Stack alignItems="center" justifyContent="center" minHeight={280} gap={2} role="status">
@@ -223,12 +273,44 @@ export function ReferenceConfigurationStudio({
                 <Divider />
                 <Stack gap={1}>
                   <Typography variant="subtitle2">Available lifecycle decisions</Typography>
+                  {!commandOwner && lifecycleActions.length > 0 ? (
+                    <InlineFeedback
+                      severity="warning"
+                      title="Lifecycle command authority is unavailable"
+                    >
+                      Control has not injected the governed command owner. All lifecycle decisions
+                      remain disabled and no request will be sent.
+                    </InlineFeedback>
+                  ) : null}
+                  {commandState === 'RUNNING' ? (
+                    <InlineFeedback severity="info" title={`${commandAction} is running`}>
+                      Waiting for the immutable command receipt from the command owner.
+                    </InlineFeedback>
+                  ) : null}
+                  {commandState === 'SUCCEEDED' && receipt ? (
+                    <InlineFeedback severity="success" title={`${commandAction} completed`}>
+                      Immutable receipt {receipt.receiptId} · aggregate revision{' '}
+                      {receipt.aggregateVersion}
+                    </InlineFeedback>
+                  ) : null}
+                  {commandState === 'STALE' ? (
+                    <InlineFeedback severity="warning" title="Lifecycle evidence is stale">
+                      {commandError} Refresh owner evidence before retrying this decision.
+                    </InlineFeedback>
+                  ) : null}
+                  {commandState === 'ERROR' ? (
+                    <InlineFeedback severity="error" title={`${commandAction} failed`}>
+                      {commandError} No successful receipt was recorded by this workspace.
+                    </InlineFeedback>
+                  ) : null}
                   <Stack direction="row" gap={1} flexWrap="wrap">
                     {lifecycleActions.map((action) => (
                       <Button
                         key={action}
                         variant="outlined"
-                        onClick={() => onPrepareAction(action)}
+                        aria-label={`${action} reference configuration`}
+                        disabled={!commandOwner || commandState === 'RUNNING'}
+                        onClick={() => void executeAction(action)}
                       >
                         {action.replaceAll('_', ' ')}
                       </Button>
@@ -280,6 +362,34 @@ function permittedLifecycleActions(
     availableActions.map((action) => action.hrefTemplate.split('/').at(-1)?.toUpperCase())
   );
   return referenceConfigurationActions(lifecycle).filter((action) => authorized.has(action));
+}
+
+function isStaleCommandError(error: unknown) {
+  if (!error || typeof error !== 'object') return false;
+  const candidate = error as {
+    status?: unknown;
+    code?: unknown;
+    message?: unknown;
+    response?: { status?: unknown; data?: { code?: unknown; message?: unknown } };
+  };
+  const status = candidate.status ?? candidate.response?.status;
+  const identity = [
+    candidate.code,
+    candidate.message,
+    candidate.response?.data?.code,
+    candidate.response?.data?.message,
+  ]
+    .filter((value): value is string => typeof value === 'string')
+    .join(' ')
+    .toUpperCase();
+  return (
+    status === 409 || /STALE|OBJECT_VERSION|DECISION_REVISION|VERSION_CONFLICT/u.test(identity)
+  );
+}
+
+function commandErrorMessage(error: unknown) {
+  if (error instanceof Error && error.message.trim()) return `${error.message.trim()}.`;
+  return 'The governed command owner rejected the operation.';
 }
 
 function referenceDataValue(fieldGroups?: Readonly<Record<string, unknown>>) {

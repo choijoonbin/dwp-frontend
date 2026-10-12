@@ -27,8 +27,10 @@ export function useReferenceConfigurationWorkspace() {
   const query = useMemo<ReferenceConfigurationWorkbenchQuery>(
     () => ({
       limit: 100,
-      effectiveStatus: statusFilter || undefined,
+      effectiveStatus: statusFilter ? { codes: [statusFilter] } : undefined,
       sort: ['referenceData:ASC', 'itemPublicId:ASC'],
+      fields: ['POLICY_VERSION', 'REFERENCE_DATA', 'EFFECTIVE_STATUS'],
+      freshness: 'FRESH_ONLY',
       locale: navigator.language || 'en',
       timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
       correlationId,
