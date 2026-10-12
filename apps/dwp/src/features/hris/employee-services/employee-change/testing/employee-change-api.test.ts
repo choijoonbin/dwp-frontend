@@ -126,8 +126,37 @@ describe('employee-change owner API', () => {
     expect(config).toEqual({ contextScopeKey: 'scope:employee-change:31', signal });
   });
 
+  it('serializes the required deep-object filter even when it is empty', async () => {
+    runtime.get.mockResolvedValue({ data: employeeChangeProjection() });
+
+    await queryEmployeeChangeWorkbench({
+      limit: 25,
+      filter: {},
+      sort: ['itemPublicId:ASC'],
+      locale: 'ko-KR',
+      timeZone: 'Asia/Seoul',
+      correlationId: CORRELATION_ID,
+      asOf: null,
+      cursor: null,
+    });
+
+    const requestUrl = new URL(runtime.get.mock.calls[0]![0], 'https://dwp.invalid');
+    expect(requestUrl.searchParams.get('filter')).toBe('{}');
+    expect([...requestUrl.searchParams.keys()].filter((key) => key.startsWith('filter['))).toEqual(
+      []
+    );
+  });
+
   it('binds create and submit to idempotency, version, correlation and route authority', async () => {
-    runtime.post.mockResolvedValue({ data: employeeChangeReceipt() });
+    runtime.post
+      .mockResolvedValueOnce({
+        data: {
+          ...employeeChangeReceipt(),
+          commandType: 'EMPLOYEE_CHANGE_CREATE',
+          originatingAction: 'CREATE_EMPLOYEE_CHANGE_REQUEST',
+        },
+      })
+      .mockResolvedValueOnce({ data: employeeChangeReceipt() });
     const command = {
       requestPublicId: REQUEST_ID,
       expectedRequestVersion: 3,
@@ -137,7 +166,7 @@ describe('employee-change owner API', () => {
 
     await createEmployeeChangeRequest(
       {
-        expectedTargetVersion: 7,
+        expectedTargetVersion: 0,
         idempotencyKey: COMMAND_ID,
         correlationId: CORRELATION_ID,
         request: {
@@ -162,7 +191,7 @@ describe('employee-change owner API', () => {
       csrfReplay: 'NEVER',
       headers: {
         'Idempotency-Key': COMMAND_ID,
-        'If-Match': '"v:7"',
+        'If-Match': '"v:0"',
         'X-Correlation-ID': CORRELATION_ID,
         'X-DWP-Expected-Decision-Revision': 'decision:employee-change:31',
       },
@@ -172,10 +201,20 @@ describe('employee-change owner API', () => {
     );
     expect(runtime.post.mock.calls[1]![1]).toEqual({});
     expect(runtime.post.mock.calls[1]![2].headers['If-Match']).toBe('"v:3"');
+
+    await expect(
+      submitEmployeeChangeRequest({ ...command, expectedRequestVersion: 0 }, authority())
+    ).rejects.toThrow('Employee-change optimistic version is invalid.');
   });
 
   it('requires apply authority to carry the exact step-up key and object version', async () => {
-    runtime.post.mockResolvedValue({ data: employeeChangeReceipt() });
+    runtime.post.mockResolvedValue({
+      data: {
+        ...employeeChangeReceipt(),
+        commandType: 'EMPLOYEE_CHANGE_APPLY',
+        originatingAction: 'APPLY_EMPLOYEE_CHANGE_REQUEST',
+      },
+    });
     const command = {
       requestPublicId: REQUEST_ID,
       expectedRequestVersion: 3,
@@ -204,5 +243,23 @@ describe('employee-change owner API', () => {
         objectVersion: 4,
       } as ProductSurfaceGovernedMutationAuthority)
     ).rejects.toThrow('Employee-change command authority does not match the command.');
+  });
+
+  it('rejects a structurally valid receipt that is not bound to the submitted command', async () => {
+    runtime.post.mockResolvedValue({
+      data: { ...employeeChangeReceipt(), correlationId: '10000000-0000-4000-8000-000000000099' },
+    });
+
+    await expect(
+      submitEmployeeChangeRequest(
+        {
+          requestPublicId: REQUEST_ID,
+          expectedRequestVersion: 3,
+          idempotencyKey: COMMAND_ID,
+          correlationId: CORRELATION_ID,
+        },
+        authority()
+      )
+    ).rejects.toThrow('Employee-change receipt does not match the submitted command.');
   });
 });

@@ -86,6 +86,7 @@ describe('HrisEmployeeChangeWorkspace', () => {
         pageIndex: 0,
         canNext: false,
         canPrevious: false,
+        canCreate: true,
         applyConnected: false,
         onSelect: vi.fn(),
         onRefresh: vi.fn(),
@@ -101,5 +102,41 @@ describe('HrisEmployeeChangeWorkspace', () => {
     expect(html).toContain('Kim Minsoo · PROFILE_UPDATE');
     expect(html).toContain('Submit for approval');
     expect(html).not.toContain('Apply approved change');
+  });
+
+  it('does not expose New request without exact create action truth', () => {
+    const projection = parseEmployeeChangeProjection(employeeChangeProjection());
+    const html = renderToStaticMarkup(
+      createElement(EmployeeChangeWorkspaceView, {
+        copy: {
+          title: 'Employee-change requests',
+          description: 'Governed employee changes',
+          unavailableTitle: 'Unavailable',
+          unavailableDescription: 'Unavailable',
+        },
+        projection,
+        selectedItem: projection.items[0]!,
+        receipt: null,
+        loading: false,
+        fetching: false,
+        error: null,
+        commandError: null,
+        commandBusy: false,
+        pageIndex: 0,
+        canNext: false,
+        canPrevious: false,
+        canCreate: false,
+        applyConnected: false,
+        onSelect: vi.fn(),
+        onRefresh: vi.fn(),
+        onNext: vi.fn(),
+        onPrevious: vi.fn(),
+        onCreate: vi.fn().mockResolvedValue(null),
+        onSubmit: vi.fn().mockResolvedValue(null),
+        onApply: vi.fn().mockResolvedValue(null),
+      })
+    );
+
+    expect(html).not.toContain('New request');
   });
 });

@@ -53,6 +53,7 @@ export type EmployeeChangeWorkspaceViewProps = Readonly<{
   pageIndex: number;
   canNext: boolean;
   canPrevious: boolean;
+  canCreate: boolean;
   applyConnected: boolean;
   onSelect: (itemPublicId: string) => void;
   onRefresh: () => void;
@@ -117,7 +118,7 @@ function CreateRequestForm({
   const [changeType, setChangeType] = useState('PROFILE_UPDATE');
   const [effectiveDate, setEffectiveDate] = useState(new Date().toISOString().slice(0, 10));
   const [schemaKey, setSchemaKey] = useState('employee-change.person.v1');
-  const [expectedVersion, setExpectedVersion] = useState('1');
+  const [expectedVersion, setExpectedVersion] = useState('0');
   const [patchText, setPatchText] = useState(
     '[{"op":"replace","path":"/displayName","value":"Updated name"}]'
   );
@@ -136,7 +137,7 @@ function CreateRequestForm({
         patch.length === 0 ||
         !Array.isArray(evidence) ||
         !Number.isSafeInteger(version) ||
-        version < 1
+        version < 0
       ) {
         throw new Error('Complete the target, version, patch and evidence fields.');
       }
@@ -231,6 +232,7 @@ function CreateRequestForm({
             type="number"
             label="Expected target version"
             value={expectedVersion}
+            slotProps={{ htmlInput: { min: 0, step: 1 } }}
             onChange={(event) => setExpectedVersion(event.target.value)}
           />
           <TextField
@@ -281,6 +283,7 @@ export function EmployeeChangeWorkspaceView({
   pageIndex,
   canNext,
   canPrevious,
+  canCreate,
   applyConnected,
   onSelect,
   onRefresh,
@@ -292,6 +295,12 @@ export function EmployeeChangeWorkspaceView({
 }: EmployeeChangeWorkspaceViewProps) {
   const [creating, setCreating] = useState(false);
   const state = projection?.queryState.state;
+  const receiptSeverity =
+    receipt?.status === 'SUCCEEDED'
+      ? ('success' as const)
+      : receipt && ['ACCEPTED', 'RUNNING', 'RESULT_UNKNOWN'].includes(receipt.status)
+        ? ('warning' as const)
+        : ('error' as const);
   return (
     <Stack
       gap={2}
@@ -311,14 +320,20 @@ export function EmployeeChangeWorkspaceView({
             <ActionButton intent="secondary" disabled={commandBusy} onClick={onRefresh}>
               Refresh
             </ActionButton>
-            <ActionButton intent="primary" disabled={commandBusy} onClick={() => setCreating(true)}>
-              New request
-            </ActionButton>
+            {canCreate && (
+              <ActionButton
+                intent="primary"
+                disabled={commandBusy}
+                onClick={() => setCreating(true)}
+              >
+                New request
+              </ActionButton>
+            )}
           </Stack>
         </Stack>
       </Paper>
 
-      {creating && (
+      {creating && canCreate && (
         <CreateRequestForm
           busy={commandBusy}
           onCancel={() => setCreating(false)}
@@ -357,7 +372,10 @@ export function EmployeeChangeWorkspaceView({
         </InlineFeedback>
       )}
       {receipt && (
-        <InlineFeedback severity="success" title={`Command ${receipt.status.toLowerCase()}`}>
+        <InlineFeedback
+          severity={receiptSeverity}
+          title={`Command ${receipt.status.toLowerCase().replaceAll('_', ' ')}`}
+        >
           Receipt {receipt.receiptId} is bound to correlation {receipt.correlationId}.
         </InlineFeedback>
       )}
@@ -368,7 +386,7 @@ export function EmployeeChangeWorkspaceView({
             No employee-change requests
           </Typography>
           <Typography color="text.secondary">
-            Create a request or adjust the governed population scope.
+            No requests are visible in the governed population scope.
           </Typography>
         </Paper>
       )}
@@ -545,6 +563,7 @@ function EnabledWorkspace({
       pageIndex={runtime.pageIndex}
       canNext={runtime.canNext}
       canPrevious={runtime.canPrevious}
+      canCreate={runtime.canCreate}
       applyConnected={runtime.applyConnected}
       onSelect={runtime.select}
       onRefresh={runtime.refresh}

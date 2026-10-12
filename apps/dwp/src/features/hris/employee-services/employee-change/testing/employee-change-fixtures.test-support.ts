@@ -2,6 +2,12 @@ export const REQUEST_ID = '10000000-0000-4000-8000-000000000001';
 export const CORRELATION_ID = '10000000-0000-4000-8000-000000000002';
 
 export function employeeChangeProjection() {
+  const partialFailures: Array<{
+    componentKey: string;
+    errorCode: string;
+    correlationId: string;
+    retryable: boolean;
+  }> = [];
   return {
     projectionVersion: '1',
     asOf: '2026-10-12T08:00:00Z',
@@ -12,7 +18,7 @@ export function employeeChangeProjection() {
       freshness: 'CURRENT',
       nextCursor: null,
       fieldDecisionSummary: { viewCount: 3, maskedCount: 0, omittedCount: 0 },
-      partialFailures: [],
+      partialFailures,
       correlationId: CORRELATION_ID,
       cachePolicy: {
         maxAgeSeconds: 0,
