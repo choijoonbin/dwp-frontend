@@ -1,0 +1,139 @@
+{
+  "schema": "dwp.hris.g7-sys-hrm-module-test-evidence-input.v3",
+  "evidenceId": "HRIS-G7-SYS-HRM-MODULE-TEST-EVIDENCE-SYS-HRM-R3-20261012-R3",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "authorityStatus": "CONTROL_AUTHORED_RESULT_EVIDENCE",
+  "closedSet": [
+    "SYS_BACKEND_TARGETED",
+    "SYS_FRONTEND_TARGETED",
+    "HRM_BACKEND_TARGETED",
+    "HRM_FRONTEND_TARGETED"
+  ],
+  "results": [
+    {
+      "commandId": "SYS_BACKEND_TARGETED",
+      "module": "SYS",
+      "repo": "backend",
+      "cwd": "backend",
+      "argv": [
+        "./gradlew",
+        ":dwp-platform-server:test",
+        "--tests",
+        "*ReferenceConfiguration*",
+        "--tests",
+        "*SysIaEntryQueryContractTest",
+        "-PhrisSlice=BASE-TFR-SYS-007",
+        "--no-daemon"
+      ],
+      "status": "PASS",
+      "exitCode": 0,
+      "resultCommit": "124269a8497eafa074199171cafc35adbef615ad",
+      "resultTree": "48685e63ac34d375f711b410105179f8f9613f6f",
+      "executedAt": "2026-10-12T11:37:57Z",
+      "executionBinding": {
+        "mode": "PRE_COMMIT_FINAL_TREE",
+        "testedTree": "48685e63ac34d375f711b410105179f8f9613f6f",
+        "authorityStatus": "CONTROL_ASSERTED_WORKTREE_TREE_EQUALS_RESULT_TREE"
+      },
+      "output": {
+        "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r3-result-acceptance/runs/sys-hrm-r3-20261012-r3/logs/sys-backend-targeted.log",
+        "gitBlobSha1": "d81aa6fe669868c199d76fd310d713e1d19a7b8f",
+        "sha256": "a22acb297bd99842a480e5b336b44aa7f06b08c88a4d295ab5484f4d36c5c31d",
+        "bytes": 578,
+        "redactionStatus": "SANITIZED_NO_SECRET_OR_CUSTOMER_DATA"
+      }
+    },
+    {
+      "commandId": "SYS_FRONTEND_TARGETED",
+      "module": "SYS",
+      "repo": "frontend",
+      "cwd": "frontend",
+      "argv": [
+        "yarn",
+        "vitest",
+        "run",
+        "apps/dwp/src/features/hris/administration/reference-configuration"
+      ],
+      "status": "PASS",
+      "exitCode": 0,
+      "resultCommit": "bb551d5607a4bff3e2b51be9e1af5483470b1647",
+      "resultTree": "8a163975fcc900141ef9e3c1aafeae7403355a87",
+      "executedAt": "2026-10-12T13:43:11Z",
+      "executionBinding": {
+        "mode": "POST_COMMIT_EXACT_RESULT",
+        "testedTree": "8a163975fcc900141ef9e3c1aafeae7403355a87",
+        "authorityStatus": "GIT_COMMIT_BOUND_EXACT_RESULT"
+      },
+      "output": {
+        "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r3-result-acceptance/runs/sys-hrm-r3-20261012-r3/logs/sys-frontend-targeted.log",
+        "gitBlobSha1": "552aa4ac02f4a296647d353cca4c093ef8fdfe74",
+        "sha256": "497a1561345c95c7ee73b221b423c3b76622acbc96aacc83fc3a745143ae9a84",
+        "bytes": 510,
+        "redactionStatus": "SANITIZED_NO_SECRET_OR_CUSTOMER_DATA"
+      }
+    },
+    {
+      "commandId": "HRM_BACKEND_TARGETED",
+      "module": "HRM",
+      "repo": "backend",
+      "cwd": "backend",
+      "argv": [
+        "./gradlew",
+        ":dwp-people-server:test",
+        "--tests",
+        "*EmployeeChange*",
+        "--tests",
+        "*HrmIaEntryQueryContractTest",
+        "-PhrisSlice=BASE-TFR-HRM-010",
+        "--no-daemon"
+      ],
+      "status": "PASS",
+      "exitCode": 0,
+      "resultCommit": "30bbcbeebb455e2f5a738c80ce1c8b0ef1575e89",
+      "resultTree": "43a2428a073586d6b40bb3685f6e73cb0ca6a660",
+      "executedAt": "2026-10-12T11:18:23Z",
+      "executionBinding": {
+        "mode": "PRE_COMMIT_FINAL_TREE",
+        "testedTree": "43a2428a073586d6b40bb3685f6e73cb0ca6a660",
+        "authorityStatus": "CONTROL_ASSERTED_WORKTREE_TREE_EQUALS_RESULT_TREE"
+      },
+      "output": {
+        "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r3-result-acceptance/runs/sys-hrm-r3-20261012-r3/logs/hrm-backend-targeted.log",
+        "gitBlobSha1": "39489d170bfec73d7eaefb12d977f81eea7b8ec0",
+        "sha256": "b2a0c58eea3b246b805e5608c49a85db4579c993d7b9b87a990612b4820afd62",
+        "bytes": 570,
+        "redactionStatus": "SANITIZED_NO_SECRET_OR_CUSTOMER_DATA"
+      }
+    },
+    {
+      "commandId": "HRM_FRONTEND_TARGETED",
+      "module": "HRM",
+      "repo": "frontend",
+      "cwd": "frontend",
+      "argv": [
+        "yarn",
+        "vitest",
+        "run",
+        "apps/dwp/src/features/hris/employee-services/employee-change"
+      ],
+      "status": "PASS",
+      "exitCode": 0,
+      "resultCommit": "019923260d03a497f8efe7bfbd528ec749e59c08",
+      "resultTree": "d599c0bc97061383a9095ccbeb0bbb019d5f006e",
+      "executedAt": "2026-10-12T13:43:11Z",
+      "executionBinding": {
+        "mode": "POST_COMMIT_EXACT_RESULT",
+        "testedTree": "d599c0bc97061383a9095ccbeb0bbb019d5f006e",
+        "authorityStatus": "GIT_COMMIT_BOUND_EXACT_RESULT"
+      },
+      "output": {
+        "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r3-result-acceptance/runs/sys-hrm-r3-20261012-r3/logs/hrm-frontend-targeted.log",
+        "gitBlobSha1": "df8c5f11e08659ddf89582c2f110eff15e90c0e5",
+        "sha256": "f78e3d0f7772985318a73309db12b0dded4bf652e3ee74e635de6b3cea208486",
+        "bytes": 505,
+        "redactionStatus": "SANITIZED_NO_SECRET_OR_CUSTOMER_DATA"
+      }
+    }
+  ],
+  "sealedPayloadSha256": "5ba79baf1b588c1894d880f107dec3758dd294c1e64e3b28e6d4435a31cb69d0"
+}

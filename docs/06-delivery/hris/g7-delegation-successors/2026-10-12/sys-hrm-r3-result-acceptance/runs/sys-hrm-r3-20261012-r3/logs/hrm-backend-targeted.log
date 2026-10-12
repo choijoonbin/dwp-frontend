@@ -1,0 +1,16 @@
+G7 HRM_BACKEND_TARGETED sanitized result evidence
+command=./gradlew :dwp-people-server:test --tests *EmployeeChange* --tests *HrmIaEntryQueryContractTest -PhrisSlice=BASE-TFR-HRM-010 --no-daemon
+resultCommit=30bbcbeebb455e2f5a738c80ce1c8b0ef1575e89
+resultTree=43a2428a073586d6b40bb3685f6e73cb0ca6a660
+executionBinding=PRE_COMMIT_FINAL_TREE
+executedAt=2026-10-12T11:18:23Z
+source=preserved Gradle JUnit XML in the final module worktree
+suites=15
+tests=59
+passed=59
+failures=0
+errors=0
+skipped=0
+postgresSuites=3
+status=PASS
+redaction=SANITIZED_NO_SECRET_OR_CUSTOMER_DATA
