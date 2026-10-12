@@ -119,7 +119,10 @@ export function WorkplaceWeekRhythm({
                   minWidth: 0,
                   p: 0.5,
                   display: 'grid',
-                  gridTemplateColumns: '28px minmax(0, 1fr) 50px',
+                  gridTemplateColumns: {
+                    xs: 'max-content minmax(0, 1fr) max-content',
+                    md: '28px minmax(0, 1fr) 50px',
+                  },
                   alignItems: 'center',
                   gap: 1,
                   borderRadius: foundationTokens.radius.control + 'px',

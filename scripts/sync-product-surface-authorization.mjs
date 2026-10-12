@@ -273,13 +273,7 @@ function validateNoDroppedContracts(previous, next) {
       if (
         (!routeReferencesAreMonotonic ||
           !isAppendOnlySuperset(previousDescriptor, candidateDescriptor)) &&
-        !isV30ResearchAuthorityUpgrade(
-          next.version,
-          section,
-          record[key],
-          record,
-          candidate
-        )
+        !isV30ResearchAuthorityUpgrade(next.version, section, record[key], record, candidate)
       ) {
         fail(
           `v${next.version} non-monotonically changed v${previous.version} ${section} ${record[key]}`

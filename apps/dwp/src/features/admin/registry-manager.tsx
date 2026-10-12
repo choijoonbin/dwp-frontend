@@ -225,37 +225,43 @@ export function RegistryManager() {
         {entry.lifecycleState === 'DRAFT' ? (
           <>
             <Tooltip title={t('registry.actions.editDraft')}>
-              <IconButton
-                size="small"
-                aria-label={t('registry.actions.editNamed', { key: entry.entryKey })}
-                disabled={!canManage}
-                onClick={() => setDialog({ mode: 'edit', entry })}
-              >
-                <Pencil size={17} strokeWidth={1.8} />
-              </IconButton>
+              <span>
+                <IconButton
+                  size="small"
+                  aria-label={t('registry.actions.editNamed', { key: entry.entryKey })}
+                  disabled={!canManage}
+                  onClick={() => setDialog({ mode: 'edit', entry })}
+                >
+                  <Pencil size={17} strokeWidth={1.8} />
+                </IconButton>
+              </span>
             </Tooltip>
             <Tooltip title={t('registry.actions.activateRevision')}>
-              <IconButton
-                size="small"
-                color="success"
-                aria-label={t('registry.actions.activateNamed', { key: entry.entryKey })}
-                disabled={!canManage}
-                onClick={() => setPendingAction({ kind: 'activate', entry })}
-              >
-                <CheckCircle2 size={17} strokeWidth={1.8} />
-              </IconButton>
+              <span>
+                <IconButton
+                  size="small"
+                  color="success"
+                  aria-label={t('registry.actions.activateNamed', { key: entry.entryKey })}
+                  disabled={!canManage}
+                  onClick={() => setPendingAction({ kind: 'activate', entry })}
+                >
+                  <CheckCircle2 size={17} strokeWidth={1.8} />
+                </IconButton>
+              </span>
             </Tooltip>
           </>
         ) : (
           <Tooltip title={t('registry.actions.createRevision')}>
-            <IconButton
-              size="small"
-              aria-label={t('registry.actions.createRevisionFor', { key: entry.entryKey })}
-              disabled={!canManage}
-              onClick={() => setDialog({ mode: 'revision', entry })}
-            >
-              <CopyPlus size={17} strokeWidth={1.8} />
-            </IconButton>
+            <span>
+              <IconButton
+                size="small"
+                aria-label={t('registry.actions.createRevisionFor', { key: entry.entryKey })}
+                disabled={!canManage}
+                onClick={() => setDialog({ mode: 'revision', entry })}
+              >
+                <CopyPlus size={17} strokeWidth={1.8} />
+              </IconButton>
+            </span>
           </Tooltip>
         )}
         <Tooltip
@@ -402,13 +408,15 @@ export function RegistryManager() {
               </IconButton>
             </Tooltip>
             <Tooltip title={t('registry.actions.newEntry')}>
-              <IconButton
-                aria-label={t('registry.actions.newEntry')}
-                disabled={!canManage}
-                onClick={() => setDialog({ mode: 'create' })}
-              >
-                <Plus size={19} strokeWidth={1.8} />
-              </IconButton>
+              <span>
+                <IconButton
+                  aria-label={t('registry.actions.newEntry')}
+                  disabled={!canManage}
+                  onClick={() => setDialog({ mode: 'create' })}
+                >
+                  <Plus size={19} strokeWidth={1.8} />
+                </IconButton>
+              </span>
             </Tooltip>
           </Stack>
         </Stack>

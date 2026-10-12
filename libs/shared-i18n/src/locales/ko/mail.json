@@ -1596,6 +1596,7 @@
       "title": "메일 연결",
       "description": "Microsoft, Google, NAVER WORKS와 표준 회사 메일 연결을 한곳에서 관리합니다.",
       "configure": "연결 설정",
+      "emptyTitle": "설정된 메일 연결이 없습니다",
       "dialogTitle": "메일 연결 설정",
       "dialogDescription": "비밀값 대신 외부 보안 저장소의 참조만 등록합니다.",
       "displayName": "연결 이름",

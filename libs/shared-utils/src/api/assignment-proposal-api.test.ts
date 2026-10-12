@@ -137,4 +137,46 @@ describe('assignment proposal API adapter', () => {
     ).rejects.toThrow('requires secure step-up authority');
     expect(http.post).not.toHaveBeenCalled();
   });
+
+  it('fails closed before dispatch when submit command and authority idempotency differ', async () => {
+    await expect(
+      submitAssignmentProposal(
+        'proposal-1',
+        { commandId: 'command-submit', expectedVersion: 4 },
+        {
+          ...AUTHORITY,
+          idempotencyKey: 'different-command',
+          objectVersion: 4,
+          stepUp: {
+            challenge: 'signed-challenge',
+            challengeId: 'challenge-1',
+            decisionRevision: AUTHORITY.expectedDecisionRevision,
+            expiresAt: '2099-01-01T00:00:00Z',
+          },
+        }
+      )
+    ).rejects.toThrow('authority does not match the command');
+    expect(http.post).not.toHaveBeenCalled();
+  });
+
+  it('fails closed before dispatch when submit body and authority object versions differ', async () => {
+    await expect(
+      submitAssignmentProposal(
+        'proposal-1',
+        { commandId: 'command-submit', expectedVersion: 4 },
+        {
+          ...AUTHORITY,
+          idempotencyKey: 'command-submit',
+          objectVersion: 5,
+          stepUp: {
+            challenge: 'signed-challenge',
+            challengeId: 'challenge-1',
+            decisionRevision: AUTHORITY.expectedDecisionRevision,
+            expiresAt: '2099-01-01T00:00:00Z',
+          },
+        }
+      )
+    ).rejects.toThrow('authority does not match the command');
+    expect(http.post).not.toHaveBeenCalled();
+  });
 });

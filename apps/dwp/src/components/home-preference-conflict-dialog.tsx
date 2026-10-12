@@ -132,11 +132,18 @@ export function HomePreferenceConflictDialog({
   onClose,
 }: HomePreferenceConflictDialogProps) {
   const { t } = useTranslation('home');
-  const closeAndRestoreFocus = () => {
-    onClose();
+  const restoreSaveFocus = () => {
     window.setTimeout(() => {
       document.querySelector<HTMLElement>('[data-composer-control="save"]')?.focus();
     }, 0);
+  };
+  const closeAndRestoreFocus = () => {
+    onClose();
+    restoreSaveFocus();
+  };
+  const reapplyAndRestoreFocus = () => {
+    onReapply();
+    restoreSaveFocus();
   };
 
   return (
@@ -211,6 +218,7 @@ export function HomePreferenceConflictDialog({
         },
       }}
       contentSx={{ px: { xs: 2.25, sm: 3 }, pb: { xs: 2, sm: 3 } }}
+      contentTabIndex={0}
       footerSx={{
         px: { xs: 2.25, sm: 3 },
         py: { xs: 2, sm: 2.25 },
@@ -228,7 +236,7 @@ export function HomePreferenceConflictDialog({
             type="button"
             intent="primary"
             aria-label={t('flow.conflict.reapply')}
-            onClick={onReapply}
+            onClick={reapplyAndRestoreFocus}
             disabled={busy || !canReapply}
             startIcon={<RefreshCw size={17} aria-hidden="true" />}
             sx={{

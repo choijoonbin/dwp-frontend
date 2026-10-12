@@ -54,6 +54,7 @@ const ALLOWED_DWP_W1_ENV = new Set([
   'DWP_W1_CHECKPOINT_MANIFEST',
   'DWP_W1_ACTIVE_BUNDLE_VERSION',
   'DWP_W1_ACTIVE_BUNDLE_REVISION',
+  'DWP_W1_ACTIVE_BUNDLE_CHECKSUM',
   ...ENDPOINT_NAMES.map((name) => `DWP_W1_${name.toUpperCase()}_URL`),
   ...['A', 'B'].flatMap((lane) =>
     TENANT_ENV_FIELDS.map((field) => `DWP_W1_TENANT_${lane}_${field}`)
@@ -423,9 +424,7 @@ function tenantFromEnvironment(env, lane) {
     `^[0-9a-f]{32}:true\\|\\[\\]\\|\\[${populationFieldGroups}\\]\\|READ$`,
     'u'
   );
-  if (
-    !targetPopulationPattern.test(targetPopulationRevision)
-  ) {
+  if (!targetPopulationPattern.test(targetPopulationRevision)) {
     hold(`${prefix}_TARGET_POPULATION_REVISION must be the exact owner policy revision.`);
   }
   const key = required(env, `${prefix}_KEY`);
@@ -481,9 +480,19 @@ export function parseCheckpointEnvironment(env) {
       required(env, 'DWP_W1_ACTIVE_BUNDLE_REVISION'),
       'DWP_W1_ACTIVE_BUNDLE_REVISION'
     ),
+    checksum: required(env, 'DWP_W1_ACTIVE_BUNDLE_CHECKSUM'),
   };
-  if (activeBundle.version !== 33 || activeBundle.revision !== 2) {
-    hold('The checkpoint is bound only to active product authorization bundle v33 revision 2.');
+  if (!SHA256.test(activeBundle.checksum)) {
+    hold('DWP_W1_ACTIVE_BUNDLE_CHECKSUM must be a lowercase SHA-256.');
+  }
+  if (
+    activeBundle.version !== 34 ||
+    activeBundle.revision !== 2 ||
+    activeBundle.checksum !== '852d20e1e639e1a7170f02b5714d21d8c51a9eb8ff5ac32d8b7940b82d6be83b'
+  ) {
+    hold(
+      'The checkpoint is bound only to active product authorization bundle v34 revision 2 checksum 852d20e1e639e1a7170f02b5714d21d8c51a9eb8ff5ac32d8b7940b82d6be83b.'
+    );
   }
   const endpoints = Object.fromEntries(
     ENDPOINT_NAMES.map((name) => [

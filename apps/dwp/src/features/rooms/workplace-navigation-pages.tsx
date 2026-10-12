@@ -7,10 +7,12 @@ import { useQuery } from '@tanstack/react-query';
 import { InlineFeedback, LoadingState, PageCanvas } from '@dwp-frontend/design-system';
 
 import { useRoomsCapabilities } from './rooms-capabilities';
+import { RoomsPageHeading } from './rooms-ui';
 import { WorkplaceDeviceOperations } from './workplace-navigation-device-operations';
 import { WorkplaceWayfinding } from './workplace-navigation-wayfinding';
 
 import type { WorkplaceNavigationLocale } from './workplace-navigation-model';
+import { workplaceNavigationCopy } from './workplace-navigation-model';
 
 function useNavigationLocale(): WorkplaceNavigationLocale {
   const { i18n } = useTranslation('rooms');
@@ -21,6 +23,14 @@ export function WorkplaceWayfindingPage() {
   const { t } = useTranslation('rooms');
   const [search, setSearch] = useSearchParams();
   const locale = useNavigationLocale();
+  const copy = workplaceNavigationCopy(locale);
+  const heading = (
+    <RoomsPageHeading
+      eyebrow={t('screen19.wayfinding.eyebrow')}
+      title={copy.wayfindingTitle}
+      description={copy.wayfindingDescription}
+    />
+  );
   const capabilities = useRoomsCapabilities();
   const authority = useProductSurfaceAuthority();
   const range = useMemo(() => {
@@ -35,16 +45,22 @@ export function WorkplaceWayfindingPage() {
   });
   if (contextQuery.isLoading) {
     return (
-      <LoadingState
-        label={
-          locale === 'ko' ? '권한 있는 캠퍼스를 불러오는 중입니다.' : 'Loading authorized campuses.'
-        }
-      />
+      <PageCanvas topInset="compact">
+        {heading}
+        <LoadingState
+          label={
+            locale === 'ko'
+              ? '권한 있는 캠퍼스를 불러오는 중입니다.'
+              : 'Loading authorized campuses.'
+          }
+        />
+      </PageCanvas>
     );
   }
   if (contextQuery.isError || !contextQuery.data) {
     return (
       <PageCanvas topInset="compact">
+        {heading}
         <InlineFeedback severity="error">
           {locale === 'ko'
             ? '실내 길찾기 기본 컨텍스트를 불러오지 못했습니다.'
@@ -68,6 +84,7 @@ export function WorkplaceWayfindingPage() {
   if (!selectedSiteId) {
     return (
       <PageCanvas topInset="compact">
+        {heading}
         <InlineFeedback severity="warning">
           {t('screen19.wayfinding.startFromContext')}
         </InlineFeedback>

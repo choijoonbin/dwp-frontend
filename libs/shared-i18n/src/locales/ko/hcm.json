@@ -913,7 +913,8 @@
       "dataQuality": "데이터 품질",
       "openPositions": "공석 포지션",
       "latestSync": "최근 동기화",
-      "noSync": "실행 없음"
+      "noSync": "실행 없음",
+      "generatedAt": "{{value}} 기준"
     }
   },
   "services": {
@@ -1263,6 +1264,40 @@
           "requiredLearning": "미완료 필수 학습"
         }
       }
+    }
+  },
+  "system": {
+    "title": "HRIS 시스템 접근",
+    "description": "이 세션에 적용되는 테넌트, 범위, 메뉴, 위젯, 구성 근거입니다.",
+    "loading": "HRIS 시스템 근거를 불러오는 중",
+    "governance": {
+      "open": "앱 거버넌스 열기"
+    },
+    "denied": "이 세션에서는 HRIS에 접근할 수 없습니다. 사유: {{reason}}",
+    "configurationRequired": "현재 허용된 메뉴 또는 위젯 투영이 없습니다. 구성하거나 게시해야 합니다.",
+    "partial": "HRIS 투영 일부를 사용할 수 없습니다. 사용 가능한 영역은 최신 읽기 전용 상태로 유지됩니다.",
+    "readOnly": "읽기 전용",
+    "authority": {
+      "title": "유효 권한",
+      "boundary": "이 투영은 화면 표시만 제어합니다. 모든 소유자 또는 구성 명령은 소유 API에서 다시 권한을 확인합니다."
+    },
+    "menu": {
+      "title": "현재 메뉴 투영",
+      "empty": "현재 허용된 메뉴 항목이 없습니다."
+    },
+    "widget": {
+      "title": "현재 위젯 투영",
+      "empty": "현재 허용된 위젯이 없습니다."
+    },
+    "owner": {
+      "reconciling": "소유자 요청 결과를 조정하는 중",
+      "reconcile": "결과 조정",
+      "resultUnknown": "요청 결과를 확인할 수 없습니다. 자동으로 다시 제출하지 말고 기존 멱등성 영수증을 먼저 조정하세요.",
+      "receiptConfirmed": "소유자 요청 영수증을 거버넌스 상태와 조정했습니다."
+    },
+    "error": {
+      "title": "HRIS 시스템 근거를 사용할 수 없습니다",
+      "description": "변경된 내용이 없습니다. 테넌트 범위 투영을 새로 요청하려면 다시 시도하세요."
     }
   },
   "myProfile": {

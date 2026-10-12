@@ -148,9 +148,7 @@ function DiscoverView() {
     setDwaionCategory(dwaionHandoffText(dwaionHandoff, 'serviceCategory') ?? '');
     setDwaionDraft(true);
     const binding = parseDwaionProposalHandoffBinding(location.state);
-    setDwaionProposalBinding(
-      binding?.actionKey === 'SERVICE.REQUEST.CREATE' ? binding : null
-    );
+    setDwaionProposalBinding(binding?.actionKey === 'SERVICE.REQUEST.CREATE' ? binding : null);
     navigate(
       { pathname: location.pathname, search: location.search },
       { replace: true, state: null }

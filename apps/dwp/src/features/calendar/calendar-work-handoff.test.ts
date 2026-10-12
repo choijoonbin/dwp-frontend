@@ -10,12 +10,14 @@ import {
   workCalendarEventHandoffDescription,
   type WorkCalendarLink,
 } from '@dwp-frontend/shared-utils/api/work-hub-calendar-api';
+import { persistWorkCalendarDocumentHandoff } from '@dwp-frontend/shared-utils/api/work-calendar-document-handoff';
 
 import {
   authorizedWorkCalendarEventHandoff,
   authorizedWorkCalendarHandoffReturnTarget,
   calendarWorkHandoffRecoveryReceipt,
   clearCalendarWorkHandoffRecovery,
+  consumeAuthorizedWorkCalendarDocumentHandoff,
   hasWorkCalendarEventHandoff,
   isExactWorkHandoffEventReceipt,
   isCurrentWorkCalendarHandoffOwner,
@@ -137,6 +139,61 @@ describe('Calendar Work handoff boundary', () => {
       ownerFingerprint,
       expiresAt: handoff.expiresAt,
     });
+  });
+
+  it('consumes a document envelope once after owner, TTL, route and permission validation', () => {
+    const sessionStorage = memoryStorage();
+    expect(persistWorkCalendarDocumentHandoff(state, now.getTime(), sessionStorage)).toBe(true);
+    expect(
+      consumeAuthorizedWorkCalendarDocumentHandoff(
+        permissions,
+        ownerFingerprint,
+        now.getTime(),
+        sessionStorage
+      )
+    ).toEqual(handoff);
+    expect(sessionStorage.length).toBe(0);
+    expect(
+      consumeAuthorizedWorkCalendarDocumentHandoff(
+        permissions,
+        ownerFingerprint,
+        now.getTime(),
+        sessionStorage
+      )
+    ).toBeNull();
+
+    expect(persistWorkCalendarDocumentHandoff(state, now.getTime(), sessionStorage)).toBe(true);
+    expect(
+      consumeAuthorizedWorkCalendarDocumentHandoff(
+        permissions,
+        `sha256:${'b'.repeat(64)}`,
+        now.getTime(),
+        sessionStorage
+      )
+    ).toBeNull();
+    expect(sessionStorage.length).toBe(0);
+
+    expect(persistWorkCalendarDocumentHandoff(state, now.getTime(), sessionStorage)).toBe(true);
+    expect(
+      consumeAuthorizedWorkCalendarDocumentHandoff(
+        permissions.slice(0, 1),
+        ownerFingerprint,
+        now.getTime(),
+        sessionStorage
+      )
+    ).toBeNull();
+    expect(sessionStorage.length).toBe(0);
+
+    expect(persistWorkCalendarDocumentHandoff(state, now.getTime(), sessionStorage)).toBe(true);
+    expect(
+      consumeAuthorizedWorkCalendarDocumentHandoff(
+        permissions,
+        ownerFingerprint,
+        Date.parse(handoff.expiresAt),
+        sessionStorage
+      )
+    ).toBeNull();
+    expect(sessionStorage.length).toBe(0);
   });
 
   it('accepts only an exact private focus event receipt before linking with the same identity', async () => {

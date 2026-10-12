@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { ActionButton } from '@dwp-frontend/design-system';
+import { ActionButton } from '@dwp-frontend/design-system/components/actions/action-button';
 
 import Box from '@mui/material/Box';
 import Dialog from '@mui/material/Dialog';

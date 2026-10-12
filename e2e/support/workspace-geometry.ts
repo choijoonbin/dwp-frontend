@@ -15,7 +15,7 @@ export async function readHorizontalWorkspaceSurfaceGaps(
     const widgets = Array.from(element.querySelectorAll<HTMLElement>('[data-workspace-widget]'))
       .map((widget) => {
         const surface = widget.querySelector<HTMLElement>(
-          ':scope > [data-workspace-widget-content] > section'
+          ':scope > [data-workspace-widget-content] > section, :scope > [data-workspace-widget-content] > [data-workspace-widget-transparent] > section'
         );
         if (!surface) return null;
         const widgetBounds = widget.getBoundingClientRect();

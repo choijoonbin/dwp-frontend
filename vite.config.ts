@@ -79,6 +79,16 @@ export default defineConfig(({ command, mode }) => {
       manifest: true,
       chunkSizeWarningLimit: 700,
       rollupOptions: {
+        treeshake: {
+          // shared-utils API/query modules are declarative clients and parsers. They do not
+          // register runtime behavior at module evaluation time, so unused root-barrel
+          // re-exports can be removed instead of becoming one oversized async common chunk.
+          moduleSideEffects: (moduleId) =>
+            moduleId.includes('/libs/shared-utils/src/api/') ||
+            moduleId.includes('/libs/shared-utils/src/queries/')
+              ? false
+              : undefined,
+        },
         output: {
           codeSplitting: {
             minSize: 50 * 1024,

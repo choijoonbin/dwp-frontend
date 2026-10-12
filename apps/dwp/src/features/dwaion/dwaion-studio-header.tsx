@@ -7,6 +7,8 @@ import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import type { Theme } from '@mui/material/styles';
 
 type DwaionStudioDetail = {
   conversationId: string | null;
@@ -27,6 +29,7 @@ export function DwaionStudioHeader({
   const { t } = useTranslation('work');
   const navigate = useNavigate();
   const auth = useAuth();
+  const desktopHeader = useMediaQuery((theme: Theme) => theme.breakpoints.up('md'));
   const tenant = auth.user?.tenantName || auth.user?.tenantCode || t('shell.tenantFallback');
   const identity = auth.user?.displayName?.trim();
   const shareConversation = async () => {
@@ -130,102 +133,114 @@ export function DwaionStudioHeader({
           </>
         )}
       </Box>
-      <Box
-        sx={{
-          display: { xs: 'none', md: 'flex' },
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: 2,
-        }}
-      >
-        {detail ? (
-          <Stack direction="row" alignItems="center" gap={0.75} sx={{ minWidth: 0 }}>
-            <Typography component="h1" variant="subtitle1" fontWeight="fontWeightBold" noWrap>
-              {t('dwaionMobileHeader.product')}
-            </Typography>
-            <Typography color="text.disabled" aria-hidden="true">
-              /
-            </Typography>
-            <Typography variant="body2" fontWeight="fontWeightMedium" noWrap>
-              {t('dwaionMobileHeader.answerTitle')}
-            </Typography>
-            {detail.conversationId && (
-              <Chip
-                size="small"
-                color="primary"
-                variant="outlined"
-                label={`#${detail.conversationId}`}
-                sx={{
-                  maxWidth: 240,
-                  '& .MuiChip-label': { overflow: 'hidden', textOverflow: 'ellipsis' },
-                }}
-              />
-            )}
-            <Chip size="small" variant="outlined" label={tenant} />
-          </Stack>
-        ) : (
-          <Stack direction="row" spacing={1.25} alignItems="center" sx={{ minWidth: 0 }}>
-            <Box
-              component="img"
-              src="/assets/assistants/dwaion-link-v1.png"
-              alt=""
-              sx={{ width: 40, height: 40, objectFit: 'contain', flexShrink: 0 }}
-            />
-            <Box sx={{ minWidth: 0 }}>
-              <Typography variant="overline" color="primary.main">
-                {t(expert ? 'askPage.approvalExpert.header.eyebrow' : 'askPage.header.eyebrow')}
+      {desktopHeader ? (
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: 2,
+          }}
+        >
+          {detail ? (
+            <Stack direction="row" alignItems="center" gap={0.75} sx={{ minWidth: 0 }}>
+              <Typography component="h1" variant="subtitle1" fontWeight="fontWeightBold" noWrap>
+                {t('dwaionMobileHeader.product')}
               </Typography>
-              <Typography component="h1" variant="h5">
-                {t(expert ? 'askPage.approvalExpert.header.title' : 'askPage.header.title')}
+              <Typography color="text.disabled" aria-hidden="true">
+                /
               </Typography>
-            </Box>
-          </Stack>
-        )}
-        <Stack direction="row" gap={1} flexWrap="wrap" alignItems="center">
-          {!detail && (
-            <>
-              <Chip
-                size="small"
-                variant="outlined"
-                icon={<ShieldCheck size={14} />}
-                label={t('askPage.permissionScoped')}
+              <Typography variant="body2" fontWeight="fontWeightMedium" noWrap>
+                {t('dwaionMobileHeader.answerTitle')}
+              </Typography>
+              {detail.conversationId && (
+                <Chip
+                  size="small"
+                  color="primary"
+                  variant="outlined"
+                  label={`#${detail.conversationId}`}
+                  sx={{
+                    maxWidth: 240,
+                    '& .MuiChip-label': { overflow: 'hidden', textOverflow: 'ellipsis' },
+                  }}
+                />
+              )}
+              <Chip size="small" variant="outlined" label={tenant} />
+            </Stack>
+          ) : (
+            <Stack direction="row" spacing={1.25} alignItems="center" sx={{ minWidth: 0 }}>
+              <Box
+                component="img"
+                src="/assets/assistants/dwaion-link-v1.png"
+                alt=""
+                sx={{ width: 40, height: 40, objectFit: 'contain', flexShrink: 0 }}
               />
-              <Chip
-                size="small"
-                variant="outlined"
-                icon={<LockKeyhole size={14} />}
-                label={t('askPage.readOnly')}
-              />
-            </>
+              <Box sx={{ minWidth: 0 }}>
+                <Typography variant="overline" color="primary.main">
+                  {t(expert ? 'askPage.approvalExpert.header.eyebrow' : 'askPage.header.eyebrow')}
+                </Typography>
+                <Typography component="h1" variant="h5">
+                  {t(expert ? 'askPage.approvalExpert.header.title' : 'askPage.header.title')}
+                </Typography>
+              </Box>
+            </Stack>
           )}
-          {!expert &&
-            (detail ? (
-              <ActionButton
-                intent="quiet"
-                startIcon={<Share size={16} />}
-                onClick={() => void shareConversation()}
-              >
-                {t('dwaionMobileHeader.share')}
-              </ActionButton>
-            ) : (
-              <ActionButton
-                intent="quiet"
-                startIcon={<History size={16} />}
-                onClick={() => navigate('/dwaion/conversations')}
-              >
-                {t('dwaionConversations.title')}
-              </ActionButton>
-            ))}
-          <ActionButton
-            intent="primary"
-            startIcon={<MessageSquarePlus size={16} />}
-            onClick={onNew}
-          >
-            {t('dwaionConversations.new')}
-          </ActionButton>
-        </Stack>
-      </Box>
+          <Stack direction="row" gap={1} flexWrap="wrap" alignItems="center">
+            {!detail && (
+              <>
+                <Chip
+                  size="small"
+                  variant="outlined"
+                  icon={<ShieldCheck size={14} />}
+                  label={t('askPage.permissionScoped')}
+                />
+                <Chip
+                  size="small"
+                  variant="outlined"
+                  icon={<LockKeyhole size={14} />}
+                  label={t('askPage.readOnly')}
+                />
+              </>
+            )}
+            {!expert &&
+              (detail ? (
+                <ActionButton
+                  intent="quiet"
+                  startIcon={<Share size={16} />}
+                  onClick={() => void shareConversation()}
+                >
+                  {t('dwaionMobileHeader.share')}
+                </ActionButton>
+              ) : (
+                <ActionButton
+                  intent="quiet"
+                  startIcon={<History size={16} />}
+                  onClick={() => navigate('/dwaion/conversations')}
+                >
+                  {t('dwaionConversations.title')}
+                </ActionButton>
+              ))}
+            <ActionButton
+              intent="primary"
+              startIcon={<MessageSquarePlus size={16} />}
+              onClick={onNew}
+            >
+              {t('dwaionConversations.new')}
+            </ActionButton>
+          </Stack>
+        </Box>
+      ) : (
+        <Typography component="h1" variant="h5" sx={{ px: 1.25, pt: 1.5 }}>
+          {t(
+            detail
+              ? 'dwaionMobileHeader.answerTitle'
+              : expert
+                ? 'askPage.approvalExpert.header.title'
+                : 'askPage.header.title'
+          )}
+        </Typography>
+      )}
     </Stack>
   );
 }

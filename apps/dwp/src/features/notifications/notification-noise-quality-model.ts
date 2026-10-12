@@ -52,8 +52,7 @@ export type NotificationNoisyType = {
   finding?: NotificationNoiseFinding | null;
 };
 
-export type NotificationNoiseTimeRange =
-  'LAST_24_HOURS' | 'LAST_7_DAYS' | 'LAST_30_DAYS';
+export type NotificationNoiseTimeRange = 'LAST_24_HOURS' | 'LAST_7_DAYS' | 'LAST_30_DAYS';
 
 export type NotificationNoiseSeverity = 'INFO' | 'WARNING' | 'CRITICAL';
 export type NotificationNoiseRisk =

@@ -3,15 +3,15 @@
   "files": {
     "e2e/admin.spec.ts": 1603,
     "e2e/flow-home-visual.spec.ts": 1308,
-    "e2e/flow-home.spec.ts": 3445,
+    "e2e/flow-home.spec.ts": 3425,
     "e2e/home-command-center.spec.ts": 1047,
     "e2e/messaging.spec.ts": 1410,
     "e2e/product-surface-approvals-pilot.spec.ts": 1296,
-    "e2e/rooms.spec.ts": 3842,
-    "e2e/shell.spec.ts": 1992,
+    "e2e/rooms.spec.ts": 3836,
+    "e2e/shell.spec.ts": 1966,
     "e2e/support/shell-session.ts": 4122,
     "scripts/check-product-surface-production-readiness.mjs": 2159,
-    "scripts/check-product-surface-production-readiness.test.mjs": 1198,
+    "scripts/check-product-surface-production-readiness.test.mjs": 1152,
     "scripts/sync-product-authorization-fixtures.mjs": 1331
   }
 }

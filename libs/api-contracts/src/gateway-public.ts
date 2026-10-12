@@ -7613,22 +7613,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/auth/admin/access/reviews/security-probe": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["auth_available"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/auth/admin/access/reviews/{campaignId}": {
         parameters: {
             query?: never;
@@ -42221,13 +42205,6 @@ export interface components {
             /** Format: int64 */
             version: number;
         };
-        auth_ActivationCommand: {
-            activatedBy: string;
-            changeRef: string;
-            checksum: string;
-            /** Format: int64 */
-            expectedRevision: number;
-        };
         auth_ActivationRequest: {
             /** Format: int32 */
             durationMinutes: number;
@@ -42653,6 +42630,16 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        auth_ApiResponseListIdentityAdminRoleSummary: {
+            correlationId?: string;
+            data?: components["schemas"]["auth_IdentityAdminRoleSummary"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         auth_ApiResponseListIdentityProviderResponse: {
             correlationId?: string;
             data?: components["schemas"]["auth_IdentityProviderResponse"][];
@@ -42716,6 +42703,16 @@ export interface components {
         auth_ApiResponseListRoleSummary: {
             correlationId?: string;
             data?: components["schemas"]["auth_RoleSummary"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        auth_ApiResponseListTenantSettingsEffectiveSetting: {
+            correlationId?: string;
+            data?: components["schemas"]["auth_TenantSettingsEffectiveSetting"][];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -42923,6 +42920,26 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        auth_ApiResponseTenantAppAdoptionAssignment: {
+            correlationId?: string;
+            data?: components["schemas"]["auth_TenantAppAdoptionAssignment"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        auth_ApiResponseTenantCapabilityOverrideChange: {
+            correlationId?: string;
+            data?: components["schemas"]["auth_TenantCapabilityOverrideChange"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         auth_ApiResponseTenantGovernanceSnapshot: {
             correlationId?: string;
             data?: components["schemas"]["auth_TenantGovernanceSnapshot"];
@@ -43109,6 +43126,16 @@ export interface components {
             preset?: components["schemas"]["auth_AppAdminPreset"];
             resourceSets?: components["schemas"]["auth_AppAdminPresetResourceSetOption"][];
         };
+        auth_AppGovernanceCreateAssignmentRequest: {
+            justification: string;
+            principalRef: string;
+            principalType: string;
+            /** Format: uuid */
+            resourceSetId: string;
+            responsibilityCode: string;
+            /** Format: date-time */
+            validTo?: string;
+        };
         auth_ApplicationContext: null;
         auth_ApprovalDecisionRequest: {
             decision: string;
@@ -43127,42 +43154,35 @@ export interface components {
         };
         auth_Assignment: {
             /** Format: date-time */
-            activatedAt?: string;
-            /** Format: int64 */
-            activatedBy?: number;
-            /** Format: uuid */
-            activationReceiptId?: string;
-            allowedActions?: string[];
-            /** Format: date-time */
             approvedAt?: string;
             /** Format: int64 */
             approvedBy?: number;
+            approvedByName?: string;
             /** Format: uuid */
             assignmentId?: string;
+            assignmentSource?: string;
             /** Format: date-time */
             createdAt?: string;
             decisionReason?: string;
-            externalSettlementState?: string;
-            /** Format: uuid */
-            installationId?: string;
+            /** @description Actor-specific, non-authoritative hint that the current dashboard viewer may decide this assignment through the one-time first APP_ACCESS_APPROVER bootstrap path. The decision endpoint always revalidates authority, independence, state, scope, and version. */
+            firstApproverBootstrapEligible?: boolean;
             justification?: string;
             lifecycleState?: string;
-            productKey?: string;
+            principalName?: string;
+            principalRef?: string;
+            principalType?: string;
             /** Format: int64 */
             requestedBy?: number;
-            revocationReason?: string;
+            requestedByName?: string;
+            /** Format: uuid */
+            resourceSetId?: string;
+            resourceSetKey?: string;
+            resourceSetName?: string;
+            responsibilityCode?: string;
             /** Format: date-time */
-            revokedAt?: string;
-            /** Format: int64 */
-            revokedBy?: number;
-            /** Format: int32 */
-            seatQuantity?: number;
-            sourceType?: string;
+            reviewDueAt?: string;
             /** Format: date-time */
             updatedAt?: string;
-            userDisplayName?: string;
-            /** Format: int64 */
-            userId?: number;
             /** Format: date-time */
             validFrom?: string;
             /** Format: date-time */
@@ -43178,7 +43198,7 @@ export interface components {
         };
         auth_AssignmentPage: {
             hasMore?: boolean;
-            items?: components["schemas"]["auth_Assignment"][];
+            items?: components["schemas"]["auth_TenantAppAdoptionAssignment"][];
             /** Format: int32 */
             limit?: number;
         };
@@ -43480,11 +43500,12 @@ export interface components {
             parentOrgUnitId?: number;
         };
         auth_CreateRequest: {
-            contractKey: string;
-            desiredState: string;
-            justification: string;
-            /** Format: date-time */
-            validTo?: string;
+            allowedOperations: string[];
+            connectorKey: string;
+            /** Format: int32 */
+            credentialTtlDays: number;
+            displayName: string;
+            purpose: string;
         };
         auth_CreateResourceRequest: {
             key: string;
@@ -43631,7 +43652,7 @@ export interface components {
             validTo?: string;
         };
         auth_EffectiveCapability: {
-            activeOverride?: components["schemas"]["auth_Change"];
+            activeOverride?: components["schemas"]["auth_TenantCapabilityOverrideChange"];
             baselineState?: string;
             effectiveSource?: string;
             effectiveState?: string;
@@ -43786,6 +43807,17 @@ export interface components {
             is3xxRedirection?: boolean;
             is4xxClientError?: boolean;
             is5xxServerError?: boolean;
+        };
+        auth_IdentityAdminRoleSummary: {
+            assignmentClass?: string;
+            assignmentMode?: string;
+            code?: string;
+            conflictsWith?: string[];
+            description?: string;
+            name?: string;
+            privileged?: boolean;
+            roleFamily?: string;
+            status?: string;
         };
         auth_IdentityAuditEventResponse: {
             action?: string;
@@ -44361,7 +44393,7 @@ export interface components {
         };
         auth_Projection: {
             capabilities?: components["schemas"]["auth_EffectiveCapability"][];
-            changes?: components["schemas"]["auth_Change"][];
+            changes?: components["schemas"]["auth_TenantCapabilityOverrideChange"][];
             coverageState?: string;
             exclusions?: string[];
             includedOwners?: string[];
@@ -44608,6 +44640,9 @@ export interface components {
             explicitConfirmation: boolean;
             reason: string;
         };
+        auth_ScimConnectorLifecycleRequest: {
+            state: string;
+        };
         auth_ServletContext: {
             attributeNames?: unknown;
             classLoader?: {
@@ -44686,6 +44721,13 @@ export interface components {
             idleExpiresAt?: string;
             rotated?: boolean;
         };
+        auth_SettingSource: {
+            evaluation?: string;
+            level?: string;
+            ownerKey?: string;
+            reason?: string;
+            value?: components["schemas"]["auth_JsonNode"];
+        };
         auth_SsoTestLoginCommand: {
             /** Format: uuid */
             idempotencyKey: string;
@@ -44723,6 +44765,109 @@ export interface components {
             taglibLocation?: string;
             taglibURI?: string;
         };
+        auth_TenantAppAdoptionActivationCommand: {
+            reason: string;
+            /** Format: int64 */
+            version: number;
+        };
+        auth_TenantAppAdoptionAssignment: {
+            /** Format: date-time */
+            activatedAt?: string;
+            /** Format: int64 */
+            activatedBy?: number;
+            /** Format: uuid */
+            activationReceiptId?: string;
+            allowedActions?: string[];
+            /** Format: date-time */
+            approvedAt?: string;
+            /** Format: int64 */
+            approvedBy?: number;
+            /** Format: uuid */
+            assignmentId?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            decisionReason?: string;
+            externalSettlementState?: string;
+            /** Format: uuid */
+            installationId?: string;
+            justification?: string;
+            lifecycleState?: string;
+            productKey?: string;
+            /** Format: int64 */
+            requestedBy?: number;
+            revocationReason?: string;
+            /** Format: date-time */
+            revokedAt?: string;
+            /** Format: int64 */
+            revokedBy?: number;
+            /** Format: int32 */
+            seatQuantity?: number;
+            sourceType?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            userDisplayName?: string;
+            /** Format: int64 */
+            userId?: number;
+            /** Format: date-time */
+            validFrom?: string;
+            /** Format: date-time */
+            validTo?: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        auth_TenantCapabilityOverrideChange: {
+            /** Format: date-time */
+            activatedAt?: string;
+            /** Format: int64 */
+            activatedBy?: number;
+            /** Format: uuid */
+            activationReceiptId?: string;
+            allowedActions?: string[];
+            appResourceKey?: string;
+            /** Format: date-time */
+            approvedAt?: string;
+            /** Format: int64 */
+            approvedBy?: number;
+            /** Format: int64 */
+            baseActiveRevision?: number;
+            /** Format: uuid */
+            baseBundleId?: string;
+            contractKey?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            decisionReason?: string;
+            desiredState?: string;
+            justification?: string;
+            lifecycleState?: string;
+            /** Format: uuid */
+            overrideChangeId?: string;
+            policyRuleKey?: string;
+            /** Format: int64 */
+            policyRuleVersion?: number;
+            productKey?: string;
+            /** Format: int64 */
+            requestedBy?: number;
+            revocationReason?: string;
+            /** Format: date-time */
+            revokedAt?: string;
+            /** Format: int64 */
+            revokedBy?: number;
+            /** Format: date-time */
+            submittedAt?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: date-time */
+            validTo?: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        auth_TenantCapabilityOverrideCreateRequest: {
+            contractKey: string;
+            desiredState: string;
+            justification: string;
+            /** Format: date-time */
+            validTo?: string;
+        };
         auth_TenantDirectoryProjection: {
             defaultLocale?: string;
             /** Format: date-time */
@@ -44734,7 +44879,7 @@ export interface components {
             tenantName?: string;
         };
         auth_TenantGovernanceSnapshot: {
-            effectiveSettings?: components["schemas"]["auth_EffectiveSetting"][];
+            effectiveSettings?: components["schemas"]["auth_TenantSettingsEffectiveSetting"][];
             loginVerification?: components["schemas"]["auth_LoginVerification"];
             /** Format: date-time */
             observedAt?: string;
@@ -44742,6 +44887,19 @@ export interface components {
             providerDomain?: components["schemas"]["auth_OwnerObservation"];
             recoveryVerification?: components["schemas"]["auth_RecoveryCoverage"];
             tenantDirectory?: components["schemas"]["auth_TenantDirectoryProjection"];
+        };
+        auth_TenantSettingsEffectiveSetting: {
+            effectiveSource?: string;
+            effectiveValue?: components["schemas"]["auth_JsonNode"];
+            /** Format: date-time */
+            evaluatedAt?: string;
+            evidenceState?: string;
+            locked?: boolean;
+            overrideAllowed?: boolean;
+            overrideState?: string;
+            resolutionStrategy?: string;
+            settingKey?: string;
+            sources?: components["schemas"]["auth_SettingSource"][];
         };
         auth_UpdateDirectoryGroupRequest: {
             description?: string;
@@ -49482,6 +49640,218 @@ export interface components {
             /** Format: date-time */
             generatedAt?: string;
         };
+        payroll_AccessProjection: {
+            canCreate?: boolean;
+            canEdit?: boolean;
+            canPublish?: boolean;
+            canReconcile?: boolean;
+            canReverse?: boolean;
+            canSimulate?: boolean;
+            publishDenialCode?: string;
+        };
+        payroll_ApiResponseConfigurationView: {
+            correlationId?: string;
+            data?: components["schemas"]["payroll_ConfigurationView"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        payroll_ApiResponseListConfigurationView: {
+            correlationId?: string;
+            data?: components["schemas"]["payroll_ConfigurationView"][];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        payroll_ApiResponseMutationResult: {
+            correlationId?: string;
+            data?: components["schemas"]["payroll_MutationResult"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        payroll_ApiResponseWorkspaceView: {
+            correlationId?: string;
+            data?: components["schemas"]["payroll_WorkspaceView"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        payroll_CalendarPeriod: {
+            code: string;
+            /** Format: date */
+            endsOn: string;
+            /** Format: date */
+            paymentDate: string;
+            /** Format: date */
+            startsOn: string;
+        };
+        payroll_CommandReceiptView: {
+            /** Format: uuid */
+            commandId?: string;
+            /** @enum {string} */
+            commandType?: "CREATE" | "UPDATE" | "SIMULATE" | "PUBLISH" | "REVERSE";
+            /** Format: date-time */
+            completedAt?: string;
+            /** Format: uuid */
+            configurationId?: string;
+            correlationId?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            failureCode?: string;
+            /** Format: int64 */
+            resultVersion?: number;
+            /** Format: uuid */
+            reversalOfCommandId?: string;
+            /** @enum {string} */
+            status?: "PENDING" | "SUCCEEDED" | "RESULT_UNKNOWN" | "REVERSAL_FAILED";
+        };
+        payroll_ConfigurationView: {
+            access?: components["schemas"]["payroll_AccessProjection"];
+            /** Format: int64 */
+            authorId?: number;
+            /** Format: uuid */
+            configurationId?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            definition?: components["schemas"]["payroll_FoundationDefinition"];
+            freshness?: components["schemas"]["payroll_Freshness"];
+            /** Format: uuid */
+            lastCommandId?: string;
+            /** Format: int64 */
+            publisherId?: number;
+            simulation?: components["schemas"]["payroll_SimulationReport"];
+            /** @enum {string} */
+            status?: "DRAFT" | "SIMULATED" | "PUBLISHED" | "REVERSED";
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        payroll_CreateConfigurationRequest: {
+            definition: components["schemas"]["payroll_FoundationDefinition"];
+        };
+        payroll_DependencyPin: {
+            owner: string;
+            /** Format: uuid */
+            resourceId: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        payroll_EffectivePeriod: {
+            /** Format: date */
+            endsOn?: string;
+            /** Format: date */
+            startsOn: string;
+        };
+        payroll_FoundationDefinition: {
+            dependencies: components["schemas"]["payroll_DependencyPin"][];
+            effectivePeriod: components["schemas"]["payroll_EffectivePeriod"];
+            legalEntity: components["schemas"]["payroll_LegalEntity"];
+            payCalendar: components["schemas"]["payroll_PayCalendar"];
+            payrollGroup: components["schemas"]["payroll_PayrollGroup"];
+            roundingPolicies: {
+                [key: string]: components["schemas"]["payroll_RoundingPolicy"];
+            };
+        };
+        payroll_Freshness: {
+            /** Format: date-time */
+            lastSuccessfulRefreshAt?: string;
+            /** @enum {string} */
+            state?: "LIVE" | "STALE" | "PARTIAL" | "UNAVAILABLE";
+        };
+        payroll_LegalEntity: {
+            code: string;
+            countryPack: components["schemas"]["payroll_VersionedCountryPackReference"];
+            displayName: string;
+            /** Format: uuid */
+            id: string;
+        };
+        payroll_MutationResult: {
+            configuration?: components["schemas"]["payroll_ConfigurationView"];
+            receipt?: components["schemas"]["payroll_CommandReceiptView"];
+        };
+        payroll_PartialFailure: {
+            code?: string;
+            source?: string;
+        };
+        payroll_PayCalendar: {
+            /** @enum {string} */
+            cadence: "WEEKLY" | "BIWEEKLY" | "SEMIMONTHLY" | "MONTHLY" | "CUSTOM";
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            payrollGroupId: string;
+            periods: components["schemas"]["payroll_CalendarPeriod"][];
+        };
+        payroll_PayrollGroup: {
+            code: string;
+            currencies: string[];
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            legalEntityId: string;
+            settlementCurrency: string;
+        };
+        payroll_ReversalCommand: {
+            /** Format: int64 */
+            expectedVersion?: number;
+            /** Format: uuid */
+            publishCommandId: string;
+        };
+        payroll_RoundingPolicy: {
+            increment: number;
+            /** @enum {string} */
+            mode: "UP" | "DOWN" | "CEILING" | "FLOOR" | "HALF_UP" | "HALF_DOWN" | "HALF_EVEN" | "UNNECESSARY";
+            /** Format: int32 */
+            scale?: number;
+        };
+        payroll_SimulationReport: {
+            /** Format: int64 */
+            configurationVersion?: number;
+            definitionDigest?: string;
+            dependencyDigest?: string;
+            findings?: string[];
+            /** Format: date-time */
+            simulatedAt?: string;
+            /** Format: int64 */
+            simulatedBy?: number;
+            /** Format: uuid */
+            simulationId?: string;
+            successful?: boolean;
+        };
+        payroll_UpdateConfigurationRequest: {
+            definition: components["schemas"]["payroll_FoundationDefinition"];
+            /** Format: int64 */
+            expectedVersion?: number;
+        };
+        payroll_VersionCommand: {
+            /** Format: int64 */
+            expectedVersion?: number;
+        };
+        payroll_VersionedCountryPackReference: {
+            digest: string;
+            packId: string;
+            /** Format: int64 */
+            version?: number;
+        };
+        payroll_WorkspaceView: {
+            access?: components["schemas"]["payroll_AccessProjection"];
+            configurations?: components["schemas"]["payroll_ConfigurationView"][];
+            partialFailures?: components["schemas"]["payroll_PartialFailure"][];
+        };
         people_AbsenceWorkspace: {
             balances?: components["schemas"]["people_LeaveBalance"][];
             employee?: components["schemas"]["people_EmployeeContext"];
@@ -49605,6 +49975,16 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        people_ApiResponseCommandReceipt: {
+            correlationId?: string;
+            data?: components["schemas"]["people_CommandReceipt"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         people_ApiResponseConfigurationCheck: {
             correlationId?: string;
             data?: components["schemas"]["people_ConfigurationCheck"];
@@ -49628,6 +50008,36 @@ export interface components {
         people_ApiResponseCursorPagePersonSummary: {
             correlationId?: string;
             data?: components["schemas"]["people_CursorPagePersonSummary"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        people_ApiResponseCycleCollection: {
+            correlationId?: string;
+            data?: components["schemas"]["people_CycleCollection"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        people_ApiResponseCycleCommandResult: {
+            correlationId?: string;
+            data?: components["schemas"]["people_CycleCommandResult"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        people_ApiResponseCycleDetail: {
+            correlationId?: string;
+            data?: components["schemas"]["people_CycleDetail"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -49885,6 +50295,26 @@ export interface components {
             /** Format: date-time */
             timestamp?: string;
         };
+        people_ApiResponsePeople360PageV1: {
+            correlationId?: string;
+            data?: components["schemas"]["people_People360PageV1"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        people_ApiResponsePeople360SnapshotV1: {
+            correlationId?: string;
+            data?: components["schemas"]["people_People360SnapshotV1"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
         people_ApiResponsePersonDetail: {
             correlationId?: string;
             data?: components["schemas"]["people_PersonDetail"];
@@ -49908,6 +50338,16 @@ export interface components {
         people_ApiResponsePreview: {
             correlationId?: string;
             data?: components["schemas"]["people_Preview"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        people_ApiResponsePreviewCommandResult: {
+            correlationId?: string;
+            data?: components["schemas"]["people_PreviewCommandResult"];
             errorCode?: string;
             message?: string;
             status?: string;
@@ -50319,6 +50759,26 @@ export interface components {
             /** Format: int64 */
             version: number;
         };
+        people_CommandReceipt: {
+            /** Format: date-time */
+            acceptedAt?: string;
+            /** Format: uuid */
+            aggregateId?: string;
+            /** Format: int64 */
+            appliedAggregateVersion?: number;
+            commandType?: string;
+            /** Format: date-time */
+            completedAt?: string;
+            errorCode?: string;
+            /** Format: int64 */
+            expectedAggregateVersion?: number;
+            originatingAction?: string;
+            /** Format: uuid */
+            receiptId?: string;
+            /** Format: uuid */
+            resultRef?: string;
+            state?: string;
+        };
         people_Company: {
             description?: string;
             name?: string;
@@ -50402,6 +50862,24 @@ export interface components {
             sourceName: string;
             sourceType: string;
         };
+        people_CreateCycleRequest: {
+            /** Format: uuid */
+            commandId: string;
+            cycleKey: string;
+            displayName: string;
+            /** Format: date-time */
+            effectiveFrom: string;
+            /** Format: date-time */
+            effectiveTo?: string;
+            /** Format: uuid */
+            policyVersionId: string;
+            /** Format: uuid */
+            populationRuleVersionId?: string;
+            /** Format: uuid */
+            retentionPolicyId: string;
+            stages: components["schemas"]["people_StageInput"][];
+            timezoneId: string;
+        };
         people_CreateLeaveRequest: {
             /** Format: date-time */
             endAt: string;
@@ -50481,6 +50959,95 @@ export interface components {
             nextCursor?: string;
             /** Format: int32 */
             size?: number;
+        };
+        people_CycleCollection: {
+            allowedActions?: string[];
+            cycles?: components["schemas"]["people_CycleSummary"][];
+        };
+        people_CycleCommandResult: {
+            cycle?: components["schemas"]["people_CycleDetail"];
+            receipt?: components["schemas"]["people_CommandReceipt"];
+        };
+        people_CycleDetail: {
+            /** Format: int32 */
+            activeVersionNo?: number;
+            /** Format: int64 */
+            aggregateVersion?: number;
+            allowedActions?: string[];
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: int64 */
+            createdBy?: number;
+            /** Format: uuid */
+            cycleId?: string;
+            cycleKey?: string;
+            displayName?: string;
+            lifecycleState?: string;
+            /** Format: uuid */
+            retentionPolicyId?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            /** Format: int64 */
+            updatedBy?: number;
+            version?: components["schemas"]["people_CycleVersion"];
+        };
+        people_CycleStage: {
+            /** Format: date-time */
+            closesAt?: string;
+            /** Format: date-time */
+            opensAt?: string;
+            required?: boolean;
+            /** Format: int32 */
+            sequenceNo?: number;
+            stageConfig?: {
+                [key: string]: unknown;
+            };
+            /** Format: uuid */
+            stageId?: string;
+            stageKey?: string;
+            stageType?: string;
+        };
+        people_CycleSummary: {
+            /** Format: int32 */
+            activeVersionNo?: number;
+            /** Format: int64 */
+            aggregateVersion?: number;
+            allowedActions?: string[];
+            /** Format: uuid */
+            cycleId?: string;
+            cycleKey?: string;
+            displayName?: string;
+            /** Format: date-time */
+            effectiveFrom?: string;
+            /** Format: date-time */
+            effectiveTo?: string;
+            lifecycleState?: string;
+        };
+        people_CycleVersion: {
+            /** Format: int64 */
+            aggregateVersion?: number;
+            /** Format: int64 */
+            authoredBy?: number;
+            contentHash?: string;
+            /** Format: uuid */
+            cycleVersionId?: string;
+            /** Format: date-time */
+            effectiveFrom?: string;
+            /** Format: date-time */
+            effectiveTo?: string;
+            /** Format: uuid */
+            policyVersionId?: string;
+            /** Format: uuid */
+            populationRuleVersionId?: string;
+            /** Format: date-time */
+            publishedAt?: string;
+            /** Format: int64 */
+            publishedBy?: number;
+            stages?: components["schemas"]["people_CycleStage"][];
+            timezoneId?: string;
+            /** Format: int32 */
+            versionNo?: number;
+            versionState?: string;
         };
         people_DataAccess: {
             classification?: string;
@@ -50983,6 +51550,75 @@ export interface components {
             nextCycle?: components["schemas"]["people_PayCycle"];
             statements?: components["schemas"]["people_PayStatement"][];
         };
+        people_People360AccessV1: {
+            /** @enum {string} */
+            archetype?: "SELF" | "MANAGER" | "HR_OPERATOR" | "AUDITOR";
+            fieldDecisions?: components["schemas"]["people_People360FieldDecisionV1"][];
+            policyRevision?: string;
+            scope?: string;
+        };
+        people_People360EmploymentV1: {
+            legalEmployerName?: string;
+            /** Format: date */
+            originalHireDate?: string;
+            /** Format: date */
+            relationshipEndDate?: string;
+            /** Format: date */
+            relationshipStartDate?: string;
+            relationshipType?: string;
+            workerNumber?: string;
+            workerStatus?: string;
+            workerType?: string;
+        };
+        people_People360FieldDecisionV1: {
+            /** @enum {string} */
+            decision?: "VIEW" | "MASK" | "OMIT";
+            field?: string;
+        };
+        people_People360PageV1: {
+            /** Format: date */
+            asOf?: string;
+            hasMore?: boolean;
+            items?: components["schemas"]["people_People360SnapshotV1"][];
+            nextCursor?: string;
+            /** Format: int32 */
+            size?: number;
+        };
+        people_People360PersonV1: {
+            displayName?: string;
+            lifecycleState?: string;
+            /** Format: uuid */
+            personId?: string;
+            preferredLocale?: string;
+            timeZone?: string;
+        };
+        people_People360PrimaryAssignmentV1: {
+            assignmentKey?: string;
+            assignmentStatus?: string;
+            businessTitle?: string;
+            /** Format: date */
+            effectiveEndDate?: string;
+            /** Format: date */
+            effectiveStartDate?: string;
+            jobGradeName?: string;
+            jobProfileName?: string;
+            locationName?: string;
+            managerDisplayName?: string;
+            organizationName?: string;
+        };
+        people_People360SnapshotV1: {
+            access?: components["schemas"]["people_People360AccessV1"];
+            /** Format: date */
+            asOf?: string;
+            employment?: components["schemas"]["people_People360EmploymentV1"];
+            person?: components["schemas"]["people_People360PersonV1"];
+            primaryAssignment?: components["schemas"]["people_People360PrimaryAssignmentV1"];
+            projectionRevision?: string;
+            /** Format: int32 */
+            schemaVersion?: number;
+            /** @enum {string} */
+            state?: "READY" | "PARTIAL";
+        };
         people_Person: {
             assignmentKey?: string;
             businessTitle?: string;
@@ -51075,6 +51711,33 @@ export interface components {
             /** Format: int64 */
             version?: number;
         };
+        people_PopulationPreview: {
+            /** Format: int64 */
+            aggregateVersion?: number;
+            contentHash?: string;
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: uuid */
+            cycleVersionId?: string;
+            /** Format: date-time */
+            expiresAt?: string;
+            members?: components["schemas"]["people_PreviewMember"][];
+            /** Format: int32 */
+            participantCount?: number;
+            /** Format: uuid */
+            populationPreviewId?: string;
+            /** Format: uuid */
+            populationRuleVersionId?: string;
+            /** Format: int32 */
+            reviewerAssignmentCount?: number;
+            /** Format: int64 */
+            sourceCycleAggregateVersion?: number;
+            state?: string;
+            /** Format: uuid */
+            workforceSnapshotId?: string;
+            /** Format: int64 */
+            workforceSnapshotRevision?: number;
+        };
         people_Position: {
             annualCostAmount?: number;
             /** Format: date */
@@ -51120,11 +51783,52 @@ export interface components {
             populationType?: string;
             watermarkTemplate?: string;
         };
+        people_PreviewCommandResult: {
+            preview?: components["schemas"]["people_PopulationPreview"];
+            receipt?: components["schemas"]["people_CommandReceipt"];
+        };
+        people_PreviewMember: {
+            eligibilityCode?: string;
+            /** Format: uuid */
+            gradeRef?: string;
+            /** Format: uuid */
+            jobProfileRef?: string;
+            /** Format: uuid */
+            organizationRef?: string;
+            /** Format: uuid */
+            participantRef?: string;
+            /** Format: uuid */
+            primaryAssignmentRef?: string;
+            /** Format: uuid */
+            reviewerAssignmentRef?: string;
+            workforceStatus?: string;
+        };
+        people_PreviewPopulationRequest: {
+            /** Format: date-time */
+            asOf: string;
+            /** Format: uuid */
+            commandId: string;
+            /** Format: int64 */
+            expectedRevision?: number;
+        };
         people_PreviewRequest: {
             datasetKey: string;
             selection: {
                 [key: string]: string;
             };
+        };
+        people_PublishCycleRequest: {
+            /** Format: uuid */
+            commandId: string;
+            /** Format: int64 */
+            expectedRevision?: number;
+            /** Format: int64 */
+            expectedWorkforceOwnerRevision?: number;
+            /** Format: uuid */
+            populationPreviewId: string;
+            /** Format: uuid */
+            publicationApprovalRef: string;
+            reason: string;
         };
         people_PublishScenarioRequest: {
             /** Format: int64 */
@@ -51302,6 +52006,20 @@ export interface components {
             /** Format: int64 */
             version?: number;
         };
+        people_StageInput: {
+            /** Format: date-time */
+            closesAt: string;
+            /** Format: date-time */
+            opensAt: string;
+            required?: boolean;
+            /** Format: int32 */
+            sequenceNo?: number;
+            stageConfig: {
+                [key: string]: unknown;
+            };
+            stageKey: string;
+            stageType: string;
+        };
         people_SubmitScenarioRequest: {
             reason: string;
             /** Format: int64 */
@@ -51451,6 +52169,25 @@ export interface components {
             /** Format: int64 */
             version: number;
         };
+        people_UpdateCycleRequest: {
+            /** Format: uuid */
+            commandId: string;
+            displayName: string;
+            /** Format: date-time */
+            effectiveFrom: string;
+            /** Format: date-time */
+            effectiveTo?: string;
+            /** Format: int64 */
+            expectedRevision?: number;
+            /** Format: uuid */
+            policyVersionId: string;
+            /** Format: uuid */
+            populationRuleVersionId?: string;
+            /** Format: uuid */
+            retentionPolicyId: string;
+            stages: components["schemas"]["people_StageInput"][];
+            timezoneId: string;
+        };
         people_UpdateGoalRequest: {
             /** Format: int32 */
             progressPercent?: number;
@@ -51475,6 +52212,12 @@ export interface components {
             minutes?: number;
             note?: string;
             workMode: string;
+        };
+        people_ValidateCycleRequest: {
+            /** Format: uuid */
+            commandId: string;
+            /** Format: int64 */
+            expectedRevision?: number;
         };
         people_ValidateScenarioRequest: {
             /** Format: int64 */
@@ -71744,6 +72487,239 @@ export interface components {
             /** Format: int64 */
             expectedVersion: number;
         };
+        time_ApiResponseCreateDraftView: {
+            correlationId?: string;
+            data?: components["schemas"]["time_CreateDraftView"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        time_ApiResponseReceiptView: {
+            correlationId?: string;
+            data?: components["schemas"]["time_ReceiptView"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        time_ApiResponseSimulationCommandView: {
+            correlationId?: string;
+            data?: components["schemas"]["time_SimulationCommandView"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        time_ApiResponseStudioView: {
+            correlationId?: string;
+            data?: components["schemas"]["time_StudioView"];
+            errorCode?: string;
+            message?: string;
+            status?: string;
+            success?: boolean;
+            /** Format: date-time */
+            timestamp?: string;
+        };
+        time_ArrangementView: {
+            extensionCode?: string;
+            kind?: string;
+        };
+        time_AssignmentView: {
+            assignmentId?: string;
+            freshness?: string;
+            label?: string;
+            snapshotRevision?: string;
+        };
+        time_CreateDraftRequest: {
+            /** @enum {string} */
+            arrangementKind?: "FIXED" | "FLEX" | "AVERAGED" | "SELECTIVE" | "COMPRESSED" | "PART_TIME" | "REDUCED" | "SPLIT_SHIFT" | "SHIFT" | "ON_CALL" | "DEEMED" | "DISCRETIONARY" | "TENANT_EXTENSION";
+            /** Format: int64 */
+            assignmentSnapshotRevision?: number;
+            displayName?: string;
+            /** Format: date */
+            effectiveEnd?: string;
+            /** Format: date */
+            effectiveStart?: string;
+            jurisdiction?: string;
+            jurisdictionSubdivision?: string;
+            /** Format: uuid */
+            peopleAssignmentPublicId?: string;
+            /** Format: int64 */
+            policyRevision?: number;
+            /** Format: int32 */
+            priority?: number;
+            regimeKey?: string;
+            /** Format: uuid */
+            rulePackPublicId?: string;
+            scopeRef?: string;
+            /** @enum {string} */
+            scopeType?: "GLOBAL" | "COUNTRY" | "SUBDIVISION" | "TENANT" | "LEGAL_ENTITY" | "BUSINESS_UNIT" | "WORKPLACE" | "POPULATION" | "PERSON" | "ASSIGNMENT";
+            segments?: components["schemas"]["time_SegmentInput"][];
+            /** Format: int32 */
+            templateSchemaVersion?: number;
+            tenantExtension?: components["schemas"]["time_TenantExtensionInput"];
+            terms?: components["schemas"]["time_PolicyTermInput"][];
+            timeZone?: string;
+            /** Format: uuid */
+            workerPublicId?: string;
+        };
+        time_CreateDraftView: {
+            receipt?: components["schemas"]["time_ReceiptView"];
+            workPlanId?: string;
+        };
+        time_LifecycleRequest: {
+            /** Format: int64 */
+            expectedVersion?: number;
+        };
+        time_PolicyPackView: {
+            /** Format: date */
+            effectiveOn?: string;
+            jurisdiction?: string;
+            revision?: string;
+            state?: string;
+        };
+        time_PolicyTermInput: {
+            booleanValue?: boolean;
+            /** Format: date */
+            dateValue?: string;
+            decimalValue?: number;
+            /** @enum {string} */
+            extensionKind?: "FLEXIBLE" | "ELASTIC" | "AVERAGED" | "SELECTIVE" | "DISCRETIONARY" | "DEEMED" | "REDUCED" | "SHIFT" | "SPLIT_SHIFT" | "ON_CALL" | "OVERTIME" | "BREAK" | "WEEKLY_LIMIT";
+            /** Format: int64 */
+            integerValue?: number;
+            parameterName?: string;
+            stringValue?: string;
+            valueType?: string;
+        };
+        time_PolicyTraceView: {
+            disposition?: string;
+            label?: string;
+            level?: string;
+            policyCode?: string;
+            policyRevision?: string;
+        };
+        time_ReceiptView: {
+            idempotencyKey?: string;
+            operation?: string;
+            receiptId?: string;
+            status?: string;
+            /** Format: date-time */
+            updatedAt?: string;
+            workPlanId?: string;
+        };
+        time_ResolutionView: {
+            state?: string;
+            trace?: components["schemas"]["time_PolicyTraceView"][];
+            winningLevel?: string;
+        };
+        time_SegmentInput: {
+            /** @enum {string} */
+            dayOfWeek?: "MONDAY" | "TUESDAY" | "WEDNESDAY" | "THURSDAY" | "FRIDAY" | "SATURDAY" | "SUNDAY";
+            end?: string;
+            /** Format: int32 */
+            endDayOffset?: number;
+            key?: string;
+            /** @enum {string} */
+            kind?: "WORK" | "BREAK" | "ON_CALL" | "TRAINING";
+            /** @enum {string} */
+            overlapPolicy?: "REJECT" | "EARLIER" | "LATER";
+            start?: string;
+        };
+        time_SegmentView: {
+            dstResolution?: string;
+            /** Format: date-time */
+            endInstant?: string;
+            endOffset?: string;
+            label?: string;
+            localEnd?: string;
+            localStart?: string;
+            overnight?: boolean;
+            segmentId?: string;
+            /** Format: date-time */
+            startInstant?: string;
+            startOffset?: string;
+        };
+        time_SimulationCommandView: {
+            receipt?: components["schemas"]["time_ReceiptView"];
+            simulation?: components["schemas"]["time_SimulationView"];
+        };
+        time_SimulationRequest: {
+            assignmentSnapshotRevision?: string;
+            /** Format: int64 */
+            expectedVersion?: number;
+            policyRevision?: string;
+            purpose?: string;
+        };
+        time_SimulationRowView: {
+            currentValue?: string;
+            draftValue?: string;
+            impact?: string;
+            key?: string;
+            label?: string;
+        };
+        time_SimulationView: {
+            /** Format: int64 */
+            baseVersion?: number;
+            findings?: string[];
+            /** Format: date-time */
+            generatedAt?: string;
+            partialFailures?: string[];
+            policyRevision?: string;
+            rows?: components["schemas"]["time_SimulationRowView"][];
+            status?: string;
+            workPlanId?: string;
+        };
+        time_StudioView: {
+            /** Format: date-time */
+            asOf?: string;
+            freshness?: string;
+            partialFailures?: string[];
+            queryState?: string;
+            workPlans?: components["schemas"]["time_WorkPlanView"][];
+        };
+        time_TenantExtensionFieldInput: {
+            booleanValue?: boolean;
+            /** Format: date */
+            dateValue?: string;
+            decimalValue?: number;
+            fieldName?: string;
+            /** Format: int64 */
+            integerValue?: number;
+            stringValue?: string;
+            /** @enum {string} */
+            valueType?: "STRING" | "INTEGER" | "DECIMAL" | "BOOLEAN" | "DATE";
+        };
+        time_TenantExtensionInput: {
+            fields?: components["schemas"]["time_TenantExtensionFieldInput"][];
+            schemaRef?: string;
+            /** Format: int32 */
+            schemaVersion?: number;
+        };
+        time_WorkPlanView: {
+            arrangement?: components["schemas"]["time_ArrangementView"];
+            assignment?: components["schemas"]["time_AssignmentView"];
+            availableActions?: string[];
+            /** Format: date */
+            effectiveEnd?: string;
+            /** Format: date */
+            effectiveStart?: string;
+            lifecycle?: string;
+            policyPack?: components["schemas"]["time_PolicyPackView"];
+            resolution?: components["schemas"]["time_ResolutionView"];
+            segments?: components["schemas"]["time_SegmentView"][];
+            timeZone?: string;
+            title?: string;
+            /** Format: int64 */
+            version?: number;
+            workPlanId?: string;
+        };
     };
     responses: never;
     parameters: never;
@@ -87841,7 +88817,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["auth_CreateAssignmentRequest"];
+                "application/json": components["schemas"]["auth_AppGovernanceCreateAssignmentRequest"];
             };
         };
         responses: {
@@ -88938,9 +89914,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": {
-                        [key: string]: boolean;
-                    } | components["schemas"]["auth_ApiResponseListCampaignSummary"];
+                    "*/*": components["schemas"]["auth_ApiResponseListCampaignSummary"];
                 };
             };
         };
@@ -88968,28 +89942,6 @@ export interface operations {
                 };
                 content: {
                     "*/*": components["schemas"]["auth_ApiResponseCampaignSummary"];
-                };
-            };
-        };
-    };
-    auth_available: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": {
-                        [key: string]: boolean;
-                    };
                 };
             };
         };
@@ -89563,7 +90515,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["auth_ApiResponseListRoleSummary"];
+                    "*/*": components["schemas"]["auth_ApiResponseListIdentityAdminRoleSummary"];
                 };
             };
         };
@@ -89711,7 +90663,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["auth_LifecycleRequest"];
+                "application/json": components["schemas"]["auth_ScimConnectorLifecycleRequest"];
             };
         };
         responses: {
@@ -89823,7 +90775,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["auth_ApiResponseAssignment"];
+                    "*/*": components["schemas"]["auth_ApiResponseTenantAppAdoptionAssignment"];
                 };
             };
         };
@@ -89842,7 +90794,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["auth_ActivationCommand"];
+                "application/json": components["schemas"]["auth_TenantAppAdoptionActivationCommand"];
             };
         };
         responses: {
@@ -89852,7 +90804,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["auth_ApiResponseAssignment"];
+                    "*/*": components["schemas"]["auth_ApiResponseTenantAppAdoptionAssignment"];
                 };
             };
         };
@@ -89881,7 +90833,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["auth_ApiResponseAssignment"];
+                    "*/*": components["schemas"]["auth_ApiResponseTenantAppAdoptionAssignment"];
                 };
             };
         };
@@ -89910,7 +90862,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["auth_ApiResponseAssignment"];
+                    "*/*": components["schemas"]["auth_ApiResponseTenantAppAdoptionAssignment"];
                 };
             };
         };
@@ -89949,7 +90901,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["auth_CreateRequest"];
+                "application/json": components["schemas"]["auth_TenantCapabilityOverrideCreateRequest"];
             };
         };
         responses: {
@@ -89959,7 +90911,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["auth_ApiResponseChange"];
+                    "*/*": components["schemas"]["auth_ApiResponseTenantCapabilityOverrideChange"];
                 };
             };
         };
@@ -89988,7 +90940,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["auth_ApiResponseChange"];
+                    "*/*": components["schemas"]["auth_ApiResponseTenantCapabilityOverrideChange"];
                 };
             };
         };
@@ -90017,7 +90969,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["auth_ApiResponseChange"];
+                    "*/*": components["schemas"]["auth_ApiResponseTenantCapabilityOverrideChange"];
                 };
             };
         };
@@ -90046,7 +90998,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["auth_ApiResponseChange"];
+                    "*/*": components["schemas"]["auth_ApiResponseTenantCapabilityOverrideChange"];
                 };
             };
         };
@@ -90075,7 +91027,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["auth_ApiResponseChange"];
+                    "*/*": components["schemas"]["auth_ApiResponseTenantCapabilityOverrideChange"];
                 };
             };
         };
@@ -90121,7 +91073,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["auth_ActivationCommand"];
+                "application/json": components["schemas"]["auth_TenantAppAdoptionActivationCommand"];
             };
         };
         responses: {
@@ -90729,9 +91681,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": {
-                        [key: string]: boolean;
-                    } | components["schemas"]["auth_ApiResponseListIdentityProviderResponse"];
+                    "*/*": components["schemas"]["auth_ApiResponseListIdentityProviderResponse"];
                 };
             };
         };
@@ -90847,9 +91797,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": {
-                        [key: string]: boolean;
-                    } | components["schemas"]["auth_ApiResponseAuthPolicyResponse"];
+                    "*/*": components["schemas"]["auth_ApiResponseAuthPolicyResponse"];
                 };
             };
         };
@@ -90940,9 +91888,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": {
-                        [key: string]: boolean;
-                    } | components["schemas"]["auth_ApiResponseLoginOptionsResponse"];
+                    "*/*": components["schemas"]["auth_ApiResponseLoginOptionsResponse"];
                 };
             };
         };
@@ -91219,7 +92165,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["auth_ApiResponseListEffectiveSetting"];
+                    "*/*": components["schemas"]["auth_ApiResponseListTenantSettingsEffectiveSetting"];
                 };
             };
         };
@@ -97171,7 +98117,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "*/*": components["schemas"]["payroll_ApiResponseWorkspaceView"];
+                };
             };
         };
     };
@@ -97192,7 +98140,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": Record<string, never>;
+                "application/json": components["schemas"]["payroll_CreateConfigurationRequest"];
             };
         };
         responses: {
@@ -97201,7 +98149,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "*/*": components["schemas"]["payroll_ApiResponseMutationResult"];
+                };
             };
         };
     };
@@ -97224,7 +98174,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "*/*": components["schemas"]["payroll_ApiResponseConfigurationView"];
+                };
             };
         };
     };
@@ -97247,7 +98199,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": Record<string, never>;
+                "application/json": components["schemas"]["payroll_UpdateConfigurationRequest"];
             };
         };
         responses: {
@@ -97256,7 +98208,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "*/*": components["schemas"]["payroll_ApiResponseMutationResult"];
+                };
             };
         };
     };
@@ -97280,7 +98234,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": Record<string, never>;
+                "application/json": components["schemas"]["payroll_VersionCommand"];
             };
         };
         responses: {
@@ -97289,7 +98243,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "*/*": components["schemas"]["payroll_ApiResponseMutationResult"];
+                };
             };
         };
     };
@@ -97313,7 +98269,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": Record<string, never>;
+                "application/json": components["schemas"]["payroll_ReversalCommand"];
             };
         };
         responses: {
@@ -97322,7 +98278,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "*/*": components["schemas"]["payroll_ApiResponseMutationResult"];
+                };
             };
         };
     };
@@ -97345,7 +98303,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": Record<string, never>;
+                "application/json": components["schemas"]["payroll_VersionCommand"];
             };
         };
         responses: {
@@ -97354,7 +98312,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "*/*": components["schemas"]["payroll_ApiResponseMutationResult"];
+                };
             };
         };
     };
@@ -97377,7 +98337,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "*/*": components["schemas"]["payroll_ApiResponseListConfigurationView"];
+                };
             };
         };
     };
@@ -97400,7 +98362,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "*/*": components["schemas"]["payroll_ApiResponseMutationResult"];
+                };
             };
         };
     };
@@ -97426,7 +98390,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "*/*": components["schemas"]["payroll_ApiResponseMutationResult"];
+                };
             };
         };
     };
@@ -97670,8 +98636,8 @@ export interface operations {
     people_home: {
         parameters: {
             query?: {
-                projection?: "people360";
                 asOf?: string;
+                projection?: "people360";
                 /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
                 contextScopeKey?: string;
             };
@@ -97687,7 +98653,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["people_ApiResponseHomeOverview"];
+                    "*/*": components["schemas"]["people_ApiResponseHomeOverview"] | components["schemas"]["people_ApiResponsePeople360SnapshotV1"];
                 };
             };
         };
@@ -97799,9 +98765,9 @@ export interface operations {
     people_team: {
         parameters: {
             query?: {
-                projection?: "people360";
                 personId?: string;
                 asOf?: string;
+                projection?: "people360";
                 /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
                 contextScopeKey?: string;
             };
@@ -97817,7 +98783,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["people_ApiResponseTeamWorkspace"];
+                    "*/*": components["schemas"]["people_ApiResponseTeamWorkspace"] | components["schemas"]["people_ApiResponsePeople360SnapshotV1"];
                 };
             };
         };
@@ -98073,7 +99039,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "*/*": components["schemas"]["people_ApiResponseCommandReceipt"];
+                };
             };
         };
     };
@@ -98094,7 +99062,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "*/*": components["schemas"]["people_ApiResponseCycleCollection"];
+                };
             };
         };
     };
@@ -98115,7 +99085,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": Record<string, never>;
+                "application/json": components["schemas"]["people_CreateCycleRequest"];
             };
         };
         responses: {
@@ -98124,7 +99094,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "*/*": components["schemas"]["people_ApiResponseCycleCommandResult"];
+                };
             };
         };
     };
@@ -98147,7 +99119,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "*/*": components["schemas"]["people_ApiResponseCycleDetail"];
+                };
             };
         };
     };
@@ -98170,7 +99144,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": Record<string, never>;
+                "application/json": components["schemas"]["people_UpdateCycleRequest"];
             };
         };
         responses: {
@@ -98179,7 +99153,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "*/*": components["schemas"]["people_ApiResponseCycleCommandResult"];
+                };
             };
         };
     };
@@ -98202,7 +99178,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": Record<string, never>;
+                "application/json": components["schemas"]["people_PreviewPopulationRequest"];
             };
         };
         responses: {
@@ -98211,7 +99187,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "*/*": components["schemas"]["people_ApiResponsePreviewCommandResult"];
+                };
             };
         };
     };
@@ -98236,7 +99214,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": Record<string, never>;
+                "application/json": components["schemas"]["people_PublishCycleRequest"];
             };
         };
         responses: {
@@ -98245,7 +99223,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "*/*": components["schemas"]["people_ApiResponseCycleCommandResult"];
+                };
             };
         };
     };
@@ -98268,7 +99248,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": Record<string, never>;
+                "application/json": components["schemas"]["people_ValidateCycleRequest"];
             };
         };
         responses: {
@@ -98277,7 +99257,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "*/*": components["schemas"]["people_ApiResponseCycleCommandResult"];
+                };
             };
         };
     };
@@ -99821,7 +100803,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["people_ApiResponseCursorPagePersonSummary"];
+                    "*/*": components["schemas"]["people_ApiResponseCursorPagePersonSummary"] | components["schemas"]["people_ApiResponsePeople360PageV1"];
                 };
             };
         };
@@ -99848,7 +100830,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": components["schemas"]["people_ApiResponsePersonDetail"];
+                    "*/*": components["schemas"]["people_ApiResponsePersonDetail"] | components["schemas"]["people_ApiResponsePeople360SnapshotV1"];
                 };
             };
         };
@@ -127724,7 +128706,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "*/*": components["schemas"]["time_ApiResponseSimulationCommandView"];
+                };
             };
         };
     };
@@ -127746,7 +128730,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "*/*": components["schemas"]["time_ApiResponseStudioView"];
+                };
             };
         };
     };
@@ -127766,7 +128752,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": Record<string, never>;
+                "application/json": components["schemas"]["time_CreateDraftRequest"];
             };
         };
         responses: {
@@ -127775,7 +128761,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "*/*": components["schemas"]["time_ApiResponseCreateDraftView"];
+                };
             };
         };
     };
@@ -127798,7 +128786,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": Record<string, never>;
+                "application/json": components["schemas"]["time_LifecycleRequest"];
             };
         };
         responses: {
@@ -127807,7 +128795,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "*/*": components["schemas"]["time_ApiResponseReceiptView"];
+                };
             };
         };
     };
@@ -127829,7 +128819,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": Record<string, never>;
+                "application/json": components["schemas"]["time_SimulationRequest"];
             };
         };
         responses: {
@@ -127838,7 +128828,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "*/*": components["schemas"]["time_ApiResponseSimulationCommandView"];
+                };
             };
         };
     };

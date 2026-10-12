@@ -31,8 +31,10 @@ vi.mock('@dwp-frontend/shared-utils/api/work-hub-calendar-api', () => ({
   workCalendarOwnerFingerprint: boundary.fingerprint,
 }));
 vi.mock('../features/calendar/calendar-work-handoff', () => ({
-  clearCalendarWorkHandoffRecovery: boundary.clear,
   readCalendarWorkHandoffRecovery: boundary.read,
+}));
+vi.mock('../features/calendar/calendar-work-handoff-recovery-storage', () => ({
+  clearCalendarWorkHandoffRecovery: boundary.clear,
 }));
 vi.mock('./use-work-hub-operation-owner', () => ({
   useWorkHubOperationOwner: () => ownerState.current,
@@ -45,12 +47,14 @@ import { CalendarWorkHandoffSessionGuard } from './calendar-work-handoff-session
 
 describe('Calendar Work handoff session guard', () => {
   let container: HTMLDivElement;
+  let removeSessionItem: ReturnType<typeof vi.spyOn>;
   let root: Root;
 
   beforeEach(() => {
     container = document.createElement('div');
     document.body.appendChild(container);
     root = createRoot(container);
+    removeSessionItem = vi.spyOn(Storage.prototype, 'removeItem');
     authState.current = { isLoading: true, isAuthenticated: false, user: null };
     permissionState.loaded = false;
     permissionState.permissions = [];
@@ -62,6 +66,7 @@ describe('Calendar Work handoff session guard', () => {
 
   afterEach(async () => {
     await act(async () => root.unmount());
+    removeSessionItem.mockRestore();
     container.remove();
   });
 
@@ -73,6 +78,7 @@ describe('Calendar Work handoff session guard', () => {
     await render();
     expect(boundary.read).not.toHaveBeenCalled();
     expect(boundary.clear).not.toHaveBeenCalled();
+    expect(removeSessionItem).not.toHaveBeenCalled();
 
     const granted = [{ resourceKey: 'APP.WORK', permissionCode: 'UPDATE' }];
     authState.current = { isLoading: false, isAuthenticated: true, user: {} };
@@ -96,5 +102,19 @@ describe('Calendar Work handoff session guard', () => {
     ownerState.current = null;
     await render();
     expect(boundary.clear).toHaveBeenCalledOnce();
+    expect(removeSessionItem).toHaveBeenCalledWith('dwp.calendar.work-document-handoff.v1');
+  });
+
+  it('clears both tab-local receipts when the settled owner cannot be fingerprinted', async () => {
+    authState.current = { isLoading: false, isAuthenticated: true, user: {} };
+    permissionState.loaded = true;
+    permissionState.permissions = [{ resourceKey: 'APP.WORK', permissionCode: 'UPDATE' }];
+    ownerState.current = 'unhashable-owner';
+    boundary.fingerprint.mockRejectedValueOnce(new Error('crypto unavailable'));
+
+    await render();
+    await vi.waitFor(() => expect(boundary.clear).toHaveBeenCalledOnce());
+    expect(removeSessionItem).toHaveBeenCalledWith('dwp.calendar.work-document-handoff.v1');
+    expect(boundary.read).not.toHaveBeenCalled();
   });
 });

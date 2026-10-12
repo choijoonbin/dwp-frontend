@@ -248,7 +248,7 @@ export function ShellHeader({
               ml: 0.5,
               display: { xs: 'none', md: 'block' },
               flex: '0 1 auto',
-              '@container dwp-shell-header (max-width: 900px)': { display: 'none' },
+              '@container dwp-shell-header (max-width: 62.5rem)': { display: 'none' },
               ...(primaryNavigation
                 ? {
                     '@container dwp-shell-header (max-width: 1400px)': { display: 'none' },

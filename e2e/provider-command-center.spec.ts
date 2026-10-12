@@ -64,7 +64,7 @@ test('exposes operational scope, freshness, signals, and priority filtering', as
   await expect(page.getByText('No urgent actions in this scope')).toBeVisible();
 
   await severityFilter.getByRole('button', { name: 'Review' }).click();
-  await expect(page.getByText('Tenant upgrade')).toBeVisible();
+  await expect(page.getByText('Tenant upgrade', { exact: true })).toBeVisible();
   await expect(page.getByText(/Last successful observation/).first()).toBeVisible();
 });
 

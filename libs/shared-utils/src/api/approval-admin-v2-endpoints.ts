@@ -12,6 +12,7 @@ export const APPROVAL_ADMIN_V2_ENDPOINTS = {
     cloneDraft: (templateId: string) => `${BASE}/forms/templates/${segment(templateId)}/draft`,
     installDraft: (templateVersionId: string) =>
       `${BASE}/forms/templates/versions/${segment(templateVersionId)}/install`,
+    importPackage: `${BASE}/forms/templates/packages/import`,
   },
   formStudio: {
     workspaces: `${BASE}/forms/studio-v3`,
@@ -23,6 +24,15 @@ export const APPROVAL_ADMIN_V2_ENDPOINTS = {
     cloneDraft: (formId: string) => `${BASE}/forms/studio-v3/${segment(formId)}/draft`,
     updateDraft: (formId: string) => `${BASE}/forms/studio-v3/${segment(formId)}/draft`,
     archive: (formId: string) => `${BASE}/forms/studio-v3/${segment(formId)}/archive`,
+    addField: (formId: string) => `${BASE}/forms/studio-v3/${segment(formId)}/fields`,
+    field: (formId: string, fieldKey: string) =>
+      `${BASE}/forms/studio-v3/${segment(formId)}/fields/${segment(fieldKey)}`,
+    cloneField: (formId: string, fieldKey: string) =>
+      `${BASE}/forms/studio-v3/${segment(formId)}/fields/${segment(fieldKey)}/clone`,
+    fieldProperties: (formId: string, fieldKey: string) =>
+      `${BASE}/forms/studio-v3/${segment(formId)}/fields/${segment(fieldKey)}/properties`,
+    fieldOrder: (formId: string, sectionKey: string) =>
+      `${BASE}/forms/studio-v3/${segment(formId)}/sections/${segment(sectionKey)}/field-order`,
   },
   routing: {
     groups: `${BASE}/workflows/routing-directory/groups`,
@@ -68,6 +78,16 @@ export const APPROVAL_ADMIN_V2_ENDPOINTS = {
       `${BASE}/policies/automation/delegations/${segment(delegationId)}`,
     delegationReviews: (delegationId: string) =>
       `${BASE}/policies/automation/delegations/${segment(delegationId)}/reviews`,
+    delegationRevoke: (delegationId: string) =>
+      `${BASE}/policies/automation/delegations/${segment(delegationId)}/revoke`,
+    delegationScheduledCancel: (delegationId: string) =>
+      `${BASE}/policies/automation/delegations/${segment(delegationId)}/scheduled-cancel`,
+    simulation: (policyId: string) =>
+      `${BASE}/policies/automation/rules/${segment(policyId)}/simulations`,
+  },
+  workflows: {
+    canvas: (workflowId: string) => `${BASE}/workflows/${segment(workflowId)}/studio-v3/canvas`,
+    dryRun: (workflowId: string) => `${BASE}/workflows/${segment(workflowId)}/studio-v3/dry-run`,
   },
   connectors: {
     list: `${BASE}/operations/connectors`,

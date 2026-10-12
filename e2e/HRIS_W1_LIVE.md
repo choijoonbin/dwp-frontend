@@ -8,7 +8,7 @@ external traffic and owner mutations are aborted before transmission. The exact 
 forwarded. A collected test and a successful `--list` command are not live acceptance evidence.
 
 Current handoff status (2026-10-01): **HOLD — not live-executed**. Run only after the isolated
-Gateway, version-33 authorization activation, and two synthetic tenants are ready. Never use a
+Gateway, version-34 authorization activation, and two synthetic tenants are ready. Never use a
 production URL, customer tenant, or real account.
 
 ## Repository checkpoint bridge
@@ -19,13 +19,20 @@ the executable's SHA-256. The bridge accepts no command-line configuration and f
 unknown `DWP_W1_*` variables.
 
 The runner supplies one run id, its evidence directory and checkpoint-manifest path, active bundle
-version/revision, seven distinct loopback service origins (`AUTH`, `PLATFORM`, `PEOPLE`, `PROVIDER`,
-`PAYROLL`, `TIME`, and `GATEWAY`), and both synthetic tenant credentials. Each tenant binding
-contains provider tenant/tenant/user ids; actor person, worker, assignment, and legal-employer
-public ids; target person, worker, and assignment public ids; the exact target-population revision
-and count; tenant key; email; and password. The exact actor legal-employer variable is
+version/revision/checksum, seven distinct loopback service origins (`AUTH`, `PLATFORM`, `PEOPLE`,
+`PROVIDER`, `PAYROLL`, `TIME`, and `GATEWAY`), and both synthetic tenant credentials. Each tenant
+binding contains provider tenant/tenant/user ids; actor person, worker, assignment, and
+legal-employer public ids; target person, worker, and assignment public ids; the exact
+target-population revision and count; tenant key; email; and password. The exact actor
+legal-employer variable is
 `DWP_W1_TENANT_<A|B>_ACTOR_LEGAL_EMPLOYER_PUBLIC_ID`; the bridge does not accept the deprecated
 unqualified name.
+
+The active bundle binding is exact and fail-closed: `DWP_W1_ACTIVE_BUNDLE_VERSION=34`,
+`DWP_W1_ACTIVE_BUNDLE_REVISION=2`, and `DWP_W1_ACTIVE_BUNDLE_CHECKSUM=`
+`852d20e1e639e1a7170f02b5714d21d8c51a9eb8ff5ac32d8b7940b82d6be83b`. The checksum must be a
+lowercase SHA-256 and is preserved in `activeBundle` so `runtime.json` and the checkpoint evidence
+cannot attest a different activation.
 
 Before the browser run, the bridge obtains the PAGE, browser DATA, and initial update ACTION
 decisions needed to build the route matrices. After browser acceptance it independently evaluates

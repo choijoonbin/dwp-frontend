@@ -31,11 +31,6 @@ import {
   useProductSurfaceRequestScope,
   type ProductSurfaceRequestScope,
 } from '../../components/use-product-surface-request-scope';
-import { AssignmentProposalWorkspace } from '../hris/employment/assignment-proposal-workspace';
-import {
-  assignmentProposalActionAvailable,
-  assignmentProposalCreateReference,
-} from '../hris/employment/assignment-proposal-model';
 import {
   ASSIGNMENT_REGISTER_STATUSES,
   replaceAssignmentRegisterSearchParams,
@@ -44,6 +39,7 @@ import {
 
 import type { GridColDef } from '@mui/x-data-grid';
 import type { PersonSummary } from '@dwp-frontend/shared-utils';
+import type { AssignmentProposalPort } from '../../components/assignment-proposal-port';
 
 function today(): string {
   return new Date().toISOString().slice(0, 10);
@@ -226,7 +222,9 @@ function AssignmentDetailInspector({
   );
 }
 
-export function AssignmentRegister() {
+export function AssignmentRegister({
+  assignmentProposal,
+}: Readonly<{ assignmentProposal: AssignmentProposalPort }>) {
   const { t } = useTranslation('workforce');
   const auth = useAuth();
   const currentDate = today();
@@ -247,7 +245,7 @@ export function AssignmentRegister() {
   });
   const canOpenDetail = requestScope.queryMeta.accessMode !== 'PROVIDER_SUPPORT';
   const capabilityAccess = useProductSurfaceCapabilityAccess();
-  const canCreateProposal = assignmentProposalActionAvailable({
+  const canCreateProposal = assignmentProposal.actionAvailable({
     accessMode: requestScope.queryMeta.accessMode,
     governed: capabilityAccess.governed,
     capabilityGranted: capabilityAccess.hasWritableCapability(
@@ -540,11 +538,11 @@ export function AssignmentRegister() {
         requestScope={requestScope}
         canCreateProposal={canCreateProposal}
         onOpenProposal={(assignmentId) =>
-          updateParams({ proposal: assignmentProposalCreateReference(assignmentId) })
+          updateParams({ proposal: assignmentProposal.createReference(assignmentId) })
         }
         onClose={() => updateParams({ person: null, proposal: null })}
       />
-      <AssignmentProposalWorkspace
+      <assignmentProposal.Workspace
         proposalReference={filters.proposalReference}
         requestScope={requestScope}
         onProposalReferenceChange={(proposalReference) =>

@@ -114,6 +114,13 @@
       "removalCondition": "Migrate after draft, preview, publish-conflict, responsive-device, and keyboard journeys use public contracts."
     },
     {
+      "id": "DS-EX-FEATURE-HRIS-EMPLOYMENT",
+      "pathPrefix": "apps/dwp/src/features/hris/employment/",
+      "owner": "HRIS Employment Experience",
+      "reason": "Assignment proposal controls retain contextual presentation around governed preview, submit, and replay behavior.",
+      "removalCondition": "Migrate to shared design-system contracts after desktop, mobile, keyboard, stale-version, and replay journeys pass."
+    },
+    {
       "id": "DS-EX-FEATURE-MAIL",
       "pathPrefix": "apps/dwp/src/features/mail/",
       "owner": "Mail Experience",
@@ -168,6 +175,13 @@
       "owner": "Workforce Experience",
       "reason": "Workforce planning and export workflows retain legacy state presentation around governed datasets.",
       "removalCondition": "Migrate after planning, export, privacy, partial-data, effective-date, and mobile journeys pass."
+    },
+    {
+      "id": "DS-EX-PROVIDERS",
+      "pathPrefix": "apps/dwp/src/providers/",
+      "owner": "Frontend Platform",
+      "reason": "The personal-preference conflict dialog retains contextual presentation for optimistic conflict and focus recovery.",
+      "removalCondition": "Migrate to the shared dialog contract after conflict, focus-restoration, and mobile journeys pass."
     },
     {
       "id": "DS-EX-ROUTES",

@@ -13,7 +13,7 @@ import {
   secureProductSurfaceMutationAuthority,
 } from './use-product-surface-governed-mutation';
 import {
-  DWAION_MUTATION_BINDINGS,
+  resolveDwaionMutationBinding,
   type DwaionMutationRouteContractKey,
 } from './dwaion-governed-mutation-bindings';
 
@@ -27,7 +27,7 @@ export type { DwaionMutationRouteContractKey } from './dwaion-governed-mutation-
 export function useDwaionGovernedMutation(routeContractKey: DwaionMutationRouteContractKey) {
   const authority = useProductSurfaceAuthority();
   const pageDecision = useOptionalAllowedProductSurface();
-  const binding = DWAION_MUTATION_BINDINGS[routeContractKey];
+  const binding = useMemo(() => resolveDwaionMutationBinding(routeContractKey), [routeContractKey]);
   const rollout = authority.rolloutForProduct('dwaion');
   const rolloutState = rollout.state === 'ready' ? rollout.rollout.state : undefined;
   const selectedScopeKey =

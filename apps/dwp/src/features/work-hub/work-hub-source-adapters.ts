@@ -1,4 +1,5 @@
-import type { ApprovalRequest, ApprovalTask } from '@dwp-frontend/shared-utils/api/approval-api';
+import type { ApprovalTask } from '@dwp-frontend/shared-utils/api/approval-management-contract';
+import type { ApprovalRequest } from '@dwp-frontend/shared-utils/api/approval-request-contract';
 import type { ServiceRequestSummary } from '@dwp-frontend/shared-utils/api/service-center-api';
 import type { PersonalWorkTask } from '@dwp-frontend/shared-utils/api/personal-work-contracts';
 import type { WorkspaceWorkItem } from '@dwp-frontend/shared-utils/api/workspace-api';

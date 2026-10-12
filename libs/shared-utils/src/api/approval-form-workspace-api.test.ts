@@ -227,13 +227,15 @@ describe('approval version-owned form workspace API', () => {
   });
   it('combines the immutable review projection with its governed review request', async () => {
     const { reviewRequest, ...projection } = review;
-    const fetch = vi.fn().mockImplementation((url: string) =>
-      Promise.resolve(
-        response(
-          url.endsWith('/publish-review-request') ? { request: reviewRequest } : projection
+    const fetch = vi
+      .fn()
+      .mockImplementation((url: string) =>
+        Promise.resolve(
+          response(
+            url.endsWith('/publish-review-request') ? { request: reviewRequest } : projection
+          )
         )
-      )
-    );
+      );
     vi.stubGlobal('fetch', fetch);
 
     await expect(getApprovalFormWorkspacePublishReview(formId)).resolves.toEqual(review);

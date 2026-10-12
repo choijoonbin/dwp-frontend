@@ -1,9 +1,9 @@
 import {
-  resolveApprovalContentAccess,
   type ApprovalRequestDetail,
   type ApprovalTaskDetail,
   type ApprovalTimelineEvent,
-} from '@dwp-frontend/shared-utils/api/approval-api';
+} from '@dwp-frontend/shared-utils/api/approval-api-contracts';
+import { resolveApprovalContentAccess } from '@dwp-frontend/shared-utils/api/approval-content-access';
 import type {
   ServiceRequestDetail,
   ServiceTimelineEvent,

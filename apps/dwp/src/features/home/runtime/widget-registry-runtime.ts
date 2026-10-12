@@ -13,6 +13,7 @@ import type {
   HomeWidgetRuntimeDecisions,
   HomeWidgetShadowObservation,
 } from '../../../components/home-widget-runtime-contract';
+import { createStaticHomeWidgetRuntimeDecisions } from '../../../components/home-widget-runtime-contract';
 
 export type {
   HomeWidgetRuntimeDecision,
@@ -212,23 +213,12 @@ function unavailable(
   };
 }
 
-function staticDecision(binding: NativeHomeWidgetBinding): HomeWidgetRuntimeDecision {
-  return {
+const STATIC_HOME_WIDGET_RUNTIME_DECISIONS = createStaticHomeWidgetRuntimeDecisions(
+  NATIVE_HOME_WIDGET_BINDINGS.map((binding) => ({
     widgetKey: binding.legacyWidgetKey,
     rendererKey: binding.rendererKey,
-    render: 'NATIVE',
-    canAdd: true,
-    canRestore: true,
-    deprecated: false,
-    publicReason: 'AVAILABLE',
-  };
-}
-
-const STATIC_HOME_WIDGET_RUNTIME_DECISIONS = Object.freeze(
-  Object.fromEntries(
-    NATIVE_HOME_WIDGET_BINDINGS.map((binding) => [binding.legacyWidgetKey, staticDecision(binding)])
-  )
-) as HomeWidgetRuntimeDecisions;
+  }))
+);
 
 export function staticHomeWidgetRuntimeDecisions(): HomeWidgetRuntimeDecisions {
   return STATIC_HOME_WIDGET_RUNTIME_DECISIONS;

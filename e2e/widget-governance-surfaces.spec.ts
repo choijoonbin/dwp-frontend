@@ -224,45 +224,49 @@ test('tenant administrators review blueprint impact and recovery before lifecycl
         status: 'SUCCESS',
         message: 'OK',
         success: true,
-        data: [
-          {
-            templateId: '11111111-1111-4111-8111-111111111111',
-            templateKey: 'quarterly-launch',
-            name: 'Quarterly launch',
-            audience: { type: 'ALL', values: [] },
-            lifecycle: 'DRAFT',
-            schemaVersion: 5,
-            layout: {
-              appLayout: null,
-              presentation: 'balanced',
-              widgets: [
-                { widgetKey: 'activity', visible: true, size: 'medium' },
-                { widgetKey: 'focus', visible: true, size: 'medium' },
-              ],
+        data: {
+          items: [
+            {
+              templateId: '11111111-1111-4111-8111-111111111111',
+              templateKey: 'quarterly-launch',
+              name: 'Quarterly launch',
+              audience: { type: 'ALL', values: [] },
+              lifecycle: 'DRAFT',
+              schemaVersion: 5,
+              layout: {
+                appLayout: null,
+                presentation: 'balanced',
+                widgets: [
+                  { widgetKey: 'activity', visible: true, size: 'medium' },
+                  { widgetKey: 'focus', visible: true, size: 'medium' },
+                ],
+              },
+              version: 3,
+              publishedAt: null,
+              publishedBy: null,
+              updatedAt: '2026-08-27T06:00:00Z',
             },
-            version: 3,
-            publishedAt: null,
-            publishedBy: null,
-            updatedAt: '2026-08-27T06:00:00Z',
-          },
-          {
-            templateId: '22222222-2222-4222-8222-222222222222',
-            templateKey: 'service-operations',
-            name: 'Service operations',
-            audience: { type: 'ROLE', values: ['Operations'] },
-            lifecycle: 'PUBLISHED',
-            schemaVersion: 5,
-            layout: {
-              appLayout: null,
-              presentation: 'focused',
-              widgets: [{ widgetKey: 'command-rail', visible: true, size: 'full' }],
+            {
+              templateId: '22222222-2222-4222-8222-222222222222',
+              templateKey: 'service-operations',
+              name: 'Service operations',
+              audience: { type: 'ROLE', values: ['Operations'] },
+              lifecycle: 'PUBLISHED',
+              schemaVersion: 5,
+              layout: {
+                appLayout: null,
+                presentation: 'focused',
+                widgets: [{ widgetKey: 'command-rail', visible: true, size: 'full' }],
+              },
+              version: 7,
+              publishedAt: '2026-08-20T06:00:00Z',
+              publishedBy: 41,
+              updatedAt: '2026-08-20T06:00:00Z',
             },
-            version: 7,
-            publishedAt: '2026-08-20T06:00:00Z',
-            publishedBy: 41,
-            updatedAt: '2026-08-20T06:00:00Z',
-          },
-        ],
+          ],
+          hasMore: false,
+          limit: 100,
+        },
       }),
     });
   });
@@ -349,7 +353,8 @@ test('provider governance shows legacy-unverified evidence and keeps lifecycle c
     label: 'core.activity.activity',
   });
   await expect(page.getByText('Certification evidence incomplete')).toBeVisible();
-  await expect(page.getByText('NOT_RUN', { exact: true })).toBeVisible();
+  await expect(page.getByText('Not run', { exact: true })).toBeVisible();
+  await expect(page.getByText('NOT_RUN', { exact: true })).toHaveCount(0);
   await expect(page.getByText('1 of 6 required evidence categories currently pass.')).toBeVisible();
   await expect(page.getByText('Current evidence gate passed')).toHaveCount(0);
   for (const action of ['Publish', 'Block', 'Deprecate', 'Rollback']) {
@@ -499,7 +504,7 @@ test('shadow evaluation cannot change Home and authoritative denial fails closed
   injectUnknownRenderer = false;
   await page.reload();
   const unavailable = page.locator('[data-widget-runtime-state="unavailable"]');
-  await expect(unavailable).toHaveCount(4);
+  await expect(unavailable).toHaveCount(7);
   await expect(
     page.getByRole('status', { name: 'Schedule is unavailable', includeHidden: true })
   ).toContainText('Your organization has disabled this widget.');
@@ -509,7 +514,7 @@ test('shadow evaluation cannot change Home and authoritative denial fails closed
   // authoritative response must fail closed, rather than trust sibling reasons.
   injectUnknownRenderer = true;
   await page.reload();
-  await expect(unavailable).toHaveCount(4);
+  await expect(unavailable).toHaveCount(7);
   await expect(
     page.getByRole('status', { name: 'Schedule is unavailable', includeHidden: true })
   ).toContainText('The widget was stopped by a safety or availability control.');

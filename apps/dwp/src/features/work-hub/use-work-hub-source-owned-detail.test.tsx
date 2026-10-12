@@ -8,10 +8,10 @@ import { approvalTaskToHub, approvalRequestToHub } from './work-hub-source-adapt
 import { useWorkHubSourceOwnedDetail } from './use-work-hub-source-owned-detail';
 
 import type {
-  ApprovalTask,
   ApprovalTaskDetail,
   ApprovalRequestDetail,
-} from '@dwp-frontend/shared-utils/api/approval-api';
+} from '@dwp-frontend/shared-utils/api/approval-api-contracts';
+import type { ApprovalTask } from '@dwp-frontend/shared-utils/api/approval-management-contract';
 import { HttpError } from '@dwp-frontend/shared-utils/http-error';
 import type { Root } from 'react-dom/client';
 
@@ -25,14 +25,9 @@ const mocks = vi.hoisted(() => ({
 vi.mock('./use-work-hub-operation-owner', () => ({
   useWorkHubOperationOwner: () => mocks.owner,
 }));
-vi.mock('@dwp-frontend/shared-utils/api/approval-api', () => ({
-  getApprovalTask: mocks.getApprovalTask,
-  getApprovalRequestDetail: mocks.getApprovalRequestDetail,
-  resolveApprovalContentAccess: (approval: ApprovalTaskDetail) => ({
-    full: approval.contentAccess.state === 'FULL',
-    reason: approval.contentAccess.reason,
-    evaluatedAt: approval.contentAccess.evaluatedAt,
-  }),
+vi.mock('@dwp-frontend/shared-utils/api/work-hub-approval-read-api', () => ({
+  getWorkHubApprovalTask: mocks.getApprovalTask,
+  getWorkHubApprovalRequestDetail: mocks.getApprovalRequestDetail,
 }));
 vi.mock('@dwp-frontend/shared-utils/api/service-center-api', () => ({
   getServiceMyRequest: mocks.getServiceMyRequest,

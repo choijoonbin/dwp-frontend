@@ -8,6 +8,7 @@ export function DwaionLayout() {
     <ProductAreaLayout
       areaKey={DWAION_PRODUCT_MANIFEST.shellKey}
       manifest={DWAION_SURFACE_MANIFEST}
+      mobileSurfaceNavigation="drawer"
       navigation={DWAION_PRODUCT_MANIFEST.navigation}
       resolveMobileShell={resolveDwaionProductAreaMobileShell}
       translationNamespace="work"

@@ -87,7 +87,7 @@ export async function readFlowLauncherCollisionContract(stage: Locator) {
     const widgets = Array.from(root.querySelectorAll<HTMLElement>('[data-workspace-widget]')).map(
       (widget) => {
         const section = widget.querySelector<HTMLElement>(
-          '[data-workspace-widget-content] > section'
+          ':is([data-workspace-widget-content], [data-workspace-widget-transparent]) > section'
         );
         const rect = (section ?? widget).getBoundingClientRect();
         const expectedClearance =
@@ -173,7 +173,10 @@ export async function positionFlowWidgetAtLauncher(page: Page, widgetKey: string
   const previous = await readLauncherClearanceState(page);
   const scrollY = await page.evaluate((key) => {
     const widget = document.querySelector<HTMLElement>(`[data-workspace-widget="${key}"]`)!;
-    const section = widget.querySelector<HTMLElement>('[data-workspace-widget-content] > section')!;
+    const section =
+      widget.querySelector<HTMLElement>(
+        ':is([data-workspace-widget-content], [data-workspace-widget-transparent]) > section'
+      ) ?? widget;
     const launcher = document.querySelector<HTMLElement>('[data-testid="dwaion-launcher"]')!;
     const bounds = section.getBoundingClientRect();
     const launcherBounds = launcher.getBoundingClientRect();

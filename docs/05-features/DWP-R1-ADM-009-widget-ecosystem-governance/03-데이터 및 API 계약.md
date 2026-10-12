@@ -1275,9 +1275,7 @@ Cache-Control: private, no-store
           "resolvedVersionId": "uuid",
           "semanticVersion": "1.0.0",
           "effectiveState": "AVAILABLE",
-          "reasonCodes": [
-            "AVAILABLE"
-          ],
+          "reasonCodes": ["AVAILABLE"],
           "placementCapabilities": {
             "canAdd": true,
             "canHide": true,
@@ -1293,9 +1291,7 @@ Cache-Control: private, no-store
           "resolvedVersionId": "uuid",
           "semanticVersion": "1.0.1",
           "effectiveState": "ALREADY_ADDED",
-          "reasonCodes": [
-            "ALREADY_ADDED"
-          ],
+          "reasonCodes": ["ALREADY_ADDED"],
           "placementCapabilities": {
             "canAdd": false,
             "canHide": true,
@@ -1369,9 +1365,9 @@ Mutation은 응답의 `hostContext.decisionRevision`과 대상 `placementContext
 
 Manifest 지원 여부와 서버 Zone을 교차한 최종 Capability는 다음 규칙을 사용한다.
 
-| Placement context  | Personal Definition (`command-rail` 1.0.1 포함) | 향후 별도 Governed Definition |
+| Placement context  | Personal Definition (`command-rail` 1.0.1 포함) | 향후 별도 Governed Definition                                 |
 | ------------------ | ----------------------------------------------- | ------------------------------------------------------------- |
-| `CLASSIC_PERSONAL` | `add/hide/move/resize`를 Manifest 범위에서 허용 | Manifest와 호환 정책에 따라 별도 평가 |
+| `CLASSIC_PERSONAL` | `add/hide/move/resize`를 Manifest 범위에서 허용 | Manifest와 호환 정책에 따라 별도 평가                         |
 | `FLOW_PERSONAL`    | `add/hide/move/resize`를 Manifest 범위에서 허용 | 일반 Library Payload에서 생략                                 |
 | `FLOW_GOVERNED`    | 일반 Library Payload에서 생략                   | `add=false, hide=false, move=false, resize=false`인 Host 항목 |
 

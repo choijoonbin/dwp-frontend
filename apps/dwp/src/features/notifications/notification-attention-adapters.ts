@@ -400,16 +400,9 @@ function fourEyesPolicy(
   };
 }
 
-function noiseFinding(
-  item: NotificationNoiseTypeMetric,
-  t: Translate
-): NotificationNoiseFinding {
+function noiseFinding(item: NotificationNoiseTypeMetric, t: Translate): NotificationNoiseFinding {
   const code = item.findingCode ?? 'UNKNOWN';
-  const known = new Set([
-    'HIGH_MUTE_RATE',
-    'LOW_ACTION_CONVERSION',
-    'DEDUPLICATION_OPPORTUNITY',
-  ]);
+  const known = new Set(['HIGH_MUTE_RATE', 'LOW_ACTION_CONVERSION', 'DEDUPLICATION_OPPORTUNITY']);
   const key = known.has(code) ? code : 'UNKNOWN';
   const candidateTarget = new Set(['CONTRACT', 'POLICY', 'TEMPLATE', 'DELIVERY_CONTROL']).has(
     item.findingTarget ?? ''
@@ -419,9 +412,7 @@ function noiseFinding(
   const candidateTargetKey = item.findingTargetKey?.trim() ?? '';
   const exactTargetAvailable =
     candidateTarget === 'CONTRACT' ||
-    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
-      candidateTargetKey
-    );
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(candidateTargetKey);
   const target = exactTargetAvailable ? candidateTarget : 'CONTRACT';
   const severity = new Set(['INFO', 'WARNING', 'CRITICAL']).has(item.findingSeverity ?? '')
     ? (item.findingSeverity as NotificationNoiseFinding['severity'])

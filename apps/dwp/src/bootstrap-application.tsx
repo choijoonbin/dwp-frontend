@@ -23,7 +23,6 @@ import { tenantBrandingQueryOptions } from './features/shell/tenant-branding-que
 import { ErrorBoundary } from './routes/components/error-boundary';
 import { PersonalPreferenceProvider } from './providers/personal-preference-provider';
 import { ShellBootScreen } from './components/shell-boot-screen';
-import { CalendarWorkHandoffSessionGuard } from './components/calendar-work-handoff-session-guard';
 import { ProductSurfaceTelemetryConsentBoundary } from './observability/product-surface-telemetry-consent-boundary';
 
 const ProviderSupportAuthorityBoundary = lazy(() =>
@@ -179,7 +178,6 @@ export function bootstrapApplication(routes: RouteObject[], runtime: ProductAppl
           <AuthProvider
             prepareAuthenticatedSession={(user) => prepareAuthenticatedShell(queryClient, user)}
           >
-            <CalendarWorkHandoffSessionGuard />
             <ProductThemeProvider>
               <ProductDateTimeProvider>
                 <ApplicationAuthorityBoundary runtime={runtime}>

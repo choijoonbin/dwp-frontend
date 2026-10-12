@@ -3,11 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { UserRoundPlus } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { listPeople } from '@dwp-frontend/shared-utils';
-import {
-  ActionButton,
-  AutocompleteField,
-  ContentDialog,
-} from '@dwp-frontend/design-system';
+import { ActionButton, AutocompleteField, ContentDialog } from '@dwp-frontend/design-system';
 
 import Alert from '@mui/material/Alert';
 import Checkbox from '@mui/material/Checkbox';
@@ -25,11 +21,7 @@ import type {
   PersonSummary,
 } from '@dwp-frontend/shared-utils';
 
-const ALL_SCOPES: readonly CalendarDelegationScope[] = [
-  'RESPOND',
-  'EDIT_SCHEDULE',
-  'CREATE',
-];
+const ALL_SCOPES: readonly CalendarDelegationScope[] = ['RESPOND', 'EDIT_SCHEDULE', 'CREATE'];
 
 function localDateTimeValue(value: Date): string {
   const local = new Date(value.getTime() - value.getTimezoneOffset() * 60_000);
@@ -84,15 +76,14 @@ export function CalendarDelegationDialog({
     () =>
       new Set(
         existing
-          .filter((delegation) =>
-            ['ACTIVE', 'SCHEDULED'].includes(delegation.status)
-          )
+          .filter((delegation) => ['ACTIVE', 'SCHEDULED'].includes(delegation.status))
           .map((delegation) => delegation.delegatePersonPublicId)
       ),
     [existing]
   );
   const people = useMemo(
-    () => (peopleQuery.data?.items ?? []).filter((candidate) => !blockedIds.has(candidate.personId)),
+    () =>
+      (peopleQuery.data?.items ?? []).filter((candidate) => !blockedIds.has(candidate.personId)),
     [blockedIds, peopleQuery.data?.items]
   );
   const validRange = Boolean(from && until && Date.parse(until) > Date.parse(from));

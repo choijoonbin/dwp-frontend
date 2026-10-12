@@ -347,14 +347,16 @@ export function ReferenceDataManagerView({
               </Typography>
             </Box>
             <Tooltip title={t('referenceData.actions.newSet')}>
-              <IconButton
-                size="small"
-                aria-label={t('referenceData.actions.newSet')}
-                disabled={!canManage}
-                onClick={() => setSetDialogMode('create')}
-              >
-                <Plus size={18} strokeWidth={1.8} />
-              </IconButton>
+              <span>
+                <IconButton
+                  size="small"
+                  aria-label={t('referenceData.actions.newSet')}
+                  disabled={!canManage}
+                  onClick={() => setSetDialogMode('create')}
+                >
+                  <Plus size={18} strokeWidth={1.8} />
+                </IconButton>
+              </span>
             </Tooltip>
           </Stack>
           <Box sx={{ px: 2, pb: 1.5 }}>

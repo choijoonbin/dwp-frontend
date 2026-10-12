@@ -80,7 +80,9 @@ test('change control connects approval, execution ledger, and auditable evidence
   await expect(review.getByText('Provider administrator', { exact: true })).toBeVisible();
   await expect(review.getByText('Governed service owner', { exact: true })).toBeVisible();
   await expect(review.getByText('platform-service', { exact: true })).toHaveCount(0);
-  await expect(review.getByText('Execution evidence')).toBeVisible();
+  await expect(
+    review.getByRole('heading', { name: 'Execution evidence', exact: true })
+  ).toBeVisible();
   await expect(review.getByText('Execution steps')).toBeVisible();
   await review.getByRole('button', { name: 'Close' }).click();
 
@@ -139,8 +141,13 @@ test('privileged support separates request approval, sessions, and post-access r
   await expect(recordedEvidence).toContainText('All evidence · 12');
   await expect(recordedEvidence).toContainText('Authorized uses · 10');
   await expect(recordedEvidence).toContainText('Denied attempts · 2');
-  await expect(recordedEvidence).toContainText('Actual scope · TENANT_EXPERIENCE_PREVIEW');
-  await expect(recordedEvidence).toContainText('Denial reason · SCOPE_INSUFFICIENT');
+  await expect(recordedEvidence).toContainText(
+    'Actual scope · Preview redacted tenant experience configuration'
+  );
+  await expect(recordedEvidence).toContainText(
+    'Denial reason · Reason recorded in protected audit evidence'
+  );
+  await expect(recordedEvidence).not.toContainText('SCOPE_INSUFFICIENT');
   await expect(recordedEvidence).toContainText('0123456789abcdef0123456789abcdef');
   const longCorrelation = recordedEvidence.getByText(/sha256:0123456789abcdef/);
   await expect(longCorrelation).toBeVisible();

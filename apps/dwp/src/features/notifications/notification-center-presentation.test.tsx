@@ -159,7 +159,11 @@ describe('notification center presentation', () => {
 
     await act(async () =>
       root.render(
-        renderList({ ...DEFAULT_NOTIFICATION_CENTER_PRESENTATION, density: 'DENSE', grouping: 'CONTEXT' })
+        renderList({
+          ...DEFAULT_NOTIFICATION_CENTER_PRESENTATION,
+          density: 'DENSE',
+          grouping: 'CONTEXT',
+        })
       )
     );
     expect(container.querySelectorAll('[data-density="compact"]')).toHaveLength(3);
@@ -168,9 +172,7 @@ describe('notification center presentation', () => {
     expect(getByRole(container, 'heading', { name: 'Approvals context 1' })).toBeTruthy();
 
     await act(async () =>
-      root.render(
-        renderList({ ...DEFAULT_NOTIFICATION_CENTER_PRESENTATION, grouping: 'CONTEXT' })
-      )
+      root.render(renderList({ ...DEFAULT_NOTIFICATION_CENTER_PRESENTATION, grouping: 'CONTEXT' }))
     );
     expect(container.querySelectorAll('[data-density="standard"]')).toHaveLength(3);
   });

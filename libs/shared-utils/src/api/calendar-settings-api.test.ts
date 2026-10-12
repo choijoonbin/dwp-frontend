@@ -26,11 +26,9 @@ describe('Calendar settings API boundary', () => {
     await expect(getCalendarDelegations(signal)).resolves.toEqual([]);
 
     expect(get).toHaveBeenNthCalledWith(1, '/api/platform/v1/calendar/settings', { signal });
-    expect(get).toHaveBeenNthCalledWith(
-      2,
-      '/api/platform/v1/calendar/settings/delegations',
-      { signal }
-    );
+    expect(get).toHaveBeenNthCalledWith(2, '/api/platform/v1/calendar/settings/delegations', {
+      signal,
+    });
   });
 
   it('keeps the optimistic settings version on update and reset', async () => {
@@ -60,9 +58,7 @@ describe('Calendar settings API boundary', () => {
 
   it('creates and revokes a bounded delegation without conflating calendar sharing', async () => {
     const delegation = { delegationId: 'delegation/id', version: 4 };
-    const post = vi
-      .spyOn(axiosInstance, 'post')
-      .mockResolvedValue({ data: { data: delegation } });
+    const post = vi.spyOn(axiosInstance, 'post').mockResolvedValue({ data: { data: delegation } });
     const input: CreateCalendarDelegationInput = {
       delegatePersonPublicId: '00000000-0000-4000-8000-000000000001',
       scopes: ['RESPOND', 'EDIT_SCHEDULE'],

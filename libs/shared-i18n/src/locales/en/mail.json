@@ -1596,6 +1596,7 @@
       "title": "Mail connections",
       "description": "Manage Microsoft, Google, NAVER WORKS, and standard company mail connections in one place.",
       "configure": "Configure",
+      "emptyTitle": "No mail connections are configured",
       "dialogTitle": "Configure mail connection",
       "dialogDescription": "Register only a reference to an external secret store, never the secret itself.",
       "displayName": "Connection name",

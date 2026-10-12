@@ -381,6 +381,37 @@ export async function mockNotificationProfile(
   });
 }
 
+export async function mockNotificationContextCatalog(page: Page) {
+  await page.route('**/api/notifications/v1/me/attention-contexts**', (route) => {
+    const kind = new URL(route.request().url()).searchParams.get('kind');
+    const items =
+      kind === 'RESOURCE'
+        ? [
+            {
+              scopeKind: 'RESOURCE',
+              contextKind: 'PROJECT',
+              scopeKey: 'project:roadmap',
+              displayLabel: 'Roadmap project',
+              lastSeenAt: '2026-09-17T00:00:00Z',
+            },
+          ]
+        : [
+            {
+              scopeKind: 'TOPIC_TOKEN',
+              contextKind: 'TOPIC',
+              scopeKey: 'security',
+              displayLabel: 'Security topic',
+              lastSeenAt: '2026-09-17T00:00:00Z',
+            },
+          ];
+    return fulfillSuccess(route, {
+      items,
+      limit: 50,
+      generatedAt: '2026-09-17T00:00:00Z',
+    });
+  });
+}
+
 export async function mockNotificationAttentionR2(page: Page) {
   const createdAt = '2026-09-16T01:00:00Z';
   let rules = [

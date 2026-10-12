@@ -11,6 +11,33 @@ import type { ProductSurfaceGovernedMutationAuthority } from './product-surface-
 
 const WORKFORCE_BASE = '/api/people/v1/workforce';
 
+export const HCM_ASSIGNMENT_PROPOSAL_MUTATION_API_CONTRACTS = [
+  {
+    apiFunction: 'createAssignmentProposal',
+    routeContractKey: 'route.hcm.operations.assignment-proposal-create.action',
+    method: 'POST',
+    path: `${WORKFORCE_BASE}/assignment-proposals`,
+  },
+  {
+    apiFunction: 'validateAssignmentProposal',
+    routeContractKey: 'route.hcm.operations.assignment-proposal-validate.action',
+    method: 'POST',
+    path: `${WORKFORCE_BASE}/assignment-proposals/{proposalId}/validate`,
+  },
+  {
+    apiFunction: 'submitAssignmentProposal',
+    routeContractKey: 'route.hcm.operations.assignment-proposal-submit.action',
+    method: 'POST',
+    path: `${WORKFORCE_BASE}/assignment-proposals/{proposalId}/submit`,
+  },
+  {
+    apiFunction: 'cancelAssignmentProposal',
+    routeContractKey: 'route.hcm.operations.assignment-proposal-cancel.action',
+    method: 'POST',
+    path: `${WORKFORCE_BASE}/assignment-proposals/{proposalId}/cancel`,
+  },
+] as const;
+
 export const ASSIGNMENT_CHANGE_TYPES = [
   'TRANSFER',
   'PROMOTION',
@@ -211,19 +238,23 @@ export async function submitAssignmentProposal(
   if (authority.mode !== 'SECURE') {
     throw new Error('Assignment proposal submission requires secure step-up authority.');
   }
+  if (
+    authority.idempotencyKey !== request.commandId ||
+    authority.objectVersion !== request.expectedVersion
+  ) {
+    throw new Error('Assignment proposal submission authority does not match the command.');
+  }
   const governed = productSurfaceHighRiskMutationConfig(authority, {
     objectVersionHeader: true,
   });
   const response = await axiosInstance.post<
     ApiResponse<AssignmentProposalCommandResult>,
     AssignmentProposalVersionCommand
-  >(`${WORKFORCE_BASE}/assignment-proposals/${encodeURIComponent(proposalId)}/submit`, request, {
-    ...governed,
-    headers: {
-      ...governed.headers,
-      [PRODUCT_SURFACE_IDEMPOTENCY_KEY_HEADER]: request.commandId,
-    },
-  });
+  >(
+    `${WORKFORCE_BASE}/assignment-proposals/${encodeURIComponent(proposalId)}/submit`,
+    request,
+    governed
+  );
   return response.data.data;
 }
 

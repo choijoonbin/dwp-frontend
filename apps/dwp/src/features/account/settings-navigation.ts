@@ -12,6 +12,8 @@ import type { PersonalSettingKey } from '@dwp-frontend/shared-utils';
 
 import type { LucideIcon } from 'lucide-react';
 
+export { ACCOUNT_SETTINGS_HOME_PATH } from '../../components/account-menu-routes';
+
 export const settingsSections = [
   'appearance',
   'accessibility',
@@ -35,8 +37,6 @@ export type AccountNavigationGroup = {
 };
 
 export type ProviderAccountRouteDecision = 'allow' | 'loading' | 'redirect-support';
-
-export const ACCOUNT_SETTINGS_HOME_PATH = '/account/settings';
 
 export function resolveProviderAccountRouteDecision({
   providerAccount,

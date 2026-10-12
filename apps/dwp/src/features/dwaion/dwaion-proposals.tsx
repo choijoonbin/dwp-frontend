@@ -35,6 +35,8 @@ import Stack from '@mui/material/Stack';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import type { Theme } from '@mui/material/styles';
 
 import { useDwaionProposalSelection } from './use-dwaion-proposal-selection';
 import { DwaionProposalDetail } from './dwaion-proposal-detail';
@@ -74,6 +76,7 @@ export function DwaionProposals() {
   const toast = useToast();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const desktopInbox = useMediaQuery((theme: Theme) => theme.breakpoints.up('md'));
   const governDecision = useDwaionGovernedMutation('route.dwaion.work.proposal-decision.action');
   const governAnalysis = useDwaionGovernedMutation('route.dwaion.work.proposal-analyze.action');
   const governPreference = useDwaionGovernedMutation(
@@ -452,12 +455,15 @@ export function DwaionProposals() {
           gap: { md: 3 },
         }}
       >
-        <Box sx={{ display: { xs: 'none', md: 'block' } }}>{header}</Box>
-        <DwaionProposalMobileToolbar
-          reviewCount={summary.active}
-          filtersOpen={mobileFiltersOpen}
-          onToggleFilters={() => setMobileFiltersOpen((current) => !current)}
-        />
+        {desktopInbox ? (
+          header
+        ) : (
+          <DwaionProposalMobileToolbar
+            reviewCount={summary.active}
+            filtersOpen={mobileFiltersOpen}
+            onToggleFilters={() => setMobileFiltersOpen((current) => !current)}
+          />
+        )}
         <DwaionProposalControls
           preference={analysisPreference.data}
           preferenceLoading={analysisPreference.isLoading}

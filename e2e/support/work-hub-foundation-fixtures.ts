@@ -71,6 +71,9 @@ export async function mockWorkHubFoundation(
     personalTitle?: string;
     nativeWorkspace?: boolean;
     workspaceGeneratedAt?: string;
+    sessionRoles?: string[];
+    sessionDisplayName?: string;
+    sessionJobTitle?: string;
     additionalPermissions?: Array<{
       resourceType: string;
       resourceKey: string;
@@ -80,9 +83,10 @@ export async function mockWorkHubFoundation(
   } = {}
 ) {
   await page.emulateMedia({ reducedMotion: 'reduce', colorScheme: options.mode ?? 'light' });
-  await mockShellSession(page, ['WORKSPACE_MEMBER'], {
+  await mockShellSession(page, options.sessionRoles ?? ['WORKSPACE_MEMBER'], {
     locale: options.locale ?? 'en',
-    displayName: 'Mina Kim',
+    displayName: options.sessionDisplayName ?? 'Mina Kim',
+    jobTitle: options.sessionJobTitle,
     appearance: {
       mode: options.mode ?? 'light',
       density: 'standard',

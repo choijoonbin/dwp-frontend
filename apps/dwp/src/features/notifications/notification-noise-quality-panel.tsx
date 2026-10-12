@@ -21,9 +21,7 @@ import {
   ErrorState,
   LoadingState,
 } from '@dwp-frontend/design-system/components/states/state-panels';
-import { foundationTokens } from '@dwp-frontend/design-system/foundation/tokens';
-import { formatDate, formatNumber } from '@dwp-frontend/shared-i18n/lib/formatters';
-import { resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
+import { formatDate } from '@dwp-frontend/shared-i18n/lib/formatters';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -43,6 +41,7 @@ import {
   sortNotificationNoisyTypes,
   validNotificationNoisePrivacyPolicy,
 } from './notification-noise-quality-model';
+import { NotificationNoiseQualityTrend } from './notification-noise-quality-trend';
 
 import type { ReactNode } from 'react';
 import type {
@@ -88,10 +87,6 @@ function findingColor(
   if (severity === 'CRITICAL') return 'error';
   if (severity === 'WARNING') return 'warning';
   return 'default';
-}
-
-function trendRate(value: number | null, locale: 'en' | 'ko') {
-  return value == null ? '-' : `${formatNumber(value * 100, { maximumFractionDigits: 1 }, locale)}%`;
 }
 
 function DatumValue({
@@ -216,7 +211,11 @@ function NoiseInvestigationFilters({
               ),
             },
           }}
-          sx={{ flex: { xs: '0 0 auto', lg: '1 1 260px' }, width: { xs: '100%', lg: 'auto' }, minWidth: 0 }}
+          sx={{
+            flex: { xs: '0 0 auto', lg: '1 1 260px' },
+            width: { xs: '100%', lg: 'auto' },
+            minWidth: 0,
+          }}
         />
         <Stack direction="row" gap={0.5} flexWrap="wrap" aria-label={t('noiseQuality.title')}>
           {TIME_RANGES.map(([range, label]) => (
@@ -271,52 +270,6 @@ function NoiseInvestigationFilters({
           </ActionButton>
         )}
       </Stack>
-    </Box>
-  );
-}
-
-function NoiseTrend({
-  points,
-  range,
-  locale,
-}: {
-  points: readonly NotificationNoiseTrendPoint[];
-  range: NotificationNoiseTimeRange;
-  locale: string;
-}) {
-  const { t } = useTranslation('notifications');
-  if (points.length === 0) return null;
-  const maximum = Math.max(...points.map((point) => point.volume), 1);
-  const supportedLocale = resolveSupportedLocale(locale);
-  return (
-    <Box sx={{ px: { xs: 1.25, sm: 1.5 }, py: 1.25, borderBottom: 1, borderColor: 'divider' }}>
-      <Typography component="h3" variant="subtitle2">
-        {t('admin.overview.trendTitle')}
-      </Typography>
-      <Box
-        role="img"
-        aria-label={t('admin.overview.trendChartLabel')}
-        sx={{ mt: 1, display: 'flex', gap: 0.5, alignItems: 'flex-end', minHeight: 78, overflowX: 'auto' }}
-      >
-        {points.map((point) => (
-          <Tooltip
-            key={point.bucketStart}
-            title={`${formatDate(point.bucketStart, {
-              dateStyle: 'medium', ...(range === 'LAST_24_HOURS' ? { timeStyle: 'short' as const } : {}),
-            }, supportedLocale)} · ${t('noiseQuality.types.sent')} ${formatNumber(point.volume, {}, supportedLocale)} · ${t('noiseQuality.types.muted')} ${trendRate(point.muteRate, supportedLocale)} · ${t('noiseQuality.types.deduplicated')} ${trendRate(point.deduplicationRate, supportedLocale)} · ${t('noiseQuality.types.actionConversion')} ${trendRate(point.actionConversionRate, supportedLocale)}`}
-          >
-            <Box sx={{ flex: '1 0 16px', minWidth: 16, textAlign: 'center' }}>
-              <Box
-                sx={{
-                  height: Math.max(6, Math.round((point.volume / maximum) * 54)),
-                  bgcolor: point.muteRate != null && point.muteRate >= 0.25 ? 'warning.main' : 'primary.main',
-                  borderRadius: foundationTokens.radius.compact,
-                }}
-              />
-            </Box>
-          </Tooltip>
-        ))}
-      </Box>
     </Box>
   );
 }
@@ -919,7 +872,11 @@ export function NotificationNoiseQualityPanel({
             </InlineFeedback>
           )}
 
-          <NoiseTrend points={trend} range={filters?.range ?? 'LAST_30_DAYS'} locale={locale} />
+          <NotificationNoiseQualityTrend
+            points={trend}
+            range={filters?.range ?? 'LAST_30_DAYS'}
+            locale={locale}
+          />
 
           {validPrivacyPolicy ? (
             <Box

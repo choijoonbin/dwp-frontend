@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import {
-  getApprovalTask,
-  getApprovalRequestDetail,
-} from '@dwp-frontend/shared-utils/api/approval-api';
+  getWorkHubApprovalRequestDetail,
+  getWorkHubApprovalTask,
+} from '@dwp-frontend/shared-utils/api/work-hub-approval-read-api';
 import { getServiceMyRequest } from '@dwp-frontend/shared-utils/api/service-center-api';
 
 import { useWorkHubOperationOwner } from './use-work-hub-operation-owner';
@@ -38,12 +38,16 @@ export function useWorkHubSourceOwnedDetail(item: WorkHubItem) {
         item.sourceContext?.kind === 'APPROVAL_TASK'
           ? projectApprovalSourceDetail(
               item,
-              await getApprovalTask(item.reference.sourceReference, undefined, signal)
+              await getWorkHubApprovalTask(item.reference.sourceReference, undefined, signal)
             )
           : item.sourceContext?.kind === 'APPROVAL_REQUEST'
             ? projectApprovalRequestSourceDetail(
                 item,
-                await getApprovalRequestDetail(item.reference.sourceReference, undefined, signal)
+                await getWorkHubApprovalRequestDetail(
+                  item.reference.sourceReference,
+                  undefined,
+                  signal
+                )
               )
             : item.sourceContext?.kind === 'SERVICE_REQUEST'
               ? projectServiceSourceDetail(

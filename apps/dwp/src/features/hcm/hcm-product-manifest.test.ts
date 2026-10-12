@@ -40,6 +40,9 @@ const HCM_DATA_ROUTE_KEYS = [
   'route.hcm.management.controlled-export-preview.data',
   'route.hcm.management.integration-code-sets.data',
   'route.hcm.management.org-code-sets.data',
+  'route.hcm.operations.assignment-detail.data',
+  'route.hcm.operations.assignment-proposal-detail.data',
+  'route.hcm.operations.assignment-timeline.data',
   'route.hcm.operations.payroll-foundation-configuration.data',
   'route.hcm.operations.payroll-foundation-configurations.data',
   'route.hcm.operations.payroll-foundation-receipt.data',
@@ -74,6 +77,10 @@ const HCM_ACTION_ROUTE_KEYS = [
   'route.hcm.management.org-update.action',
   'route.hcm.management.reference-update.action',
   'route.hcm.operations.absence-approve.action',
+  'route.hcm.operations.assignment-proposal-cancel.action',
+  'route.hcm.operations.assignment-proposal-create.action',
+  'route.hcm.operations.assignment-proposal-submit.action',
+  'route.hcm.operations.assignment-proposal-validate.action',
   'route.hcm.operations.payroll-foundation-create.action',
   'route.hcm.operations.payroll-foundation-publish.action',
   'route.hcm.operations.payroll-foundation-reconcile.action',
@@ -241,7 +248,7 @@ describe('HCM W1b product manifest', () => {
     expect(bySurfaceAndKind).toEqual({
       'hcm.personal': { PAGE: 10, DATA: 5, ACTION: 6 },
       'hcm.team': { PAGE: 3, DATA: 1, ACTION: 2 },
-      'hcm.operations': { PAGE: 8, DATA: 12, ACTION: 19 },
+      'hcm.operations': { PAGE: 8, DATA: 15, ACTION: 23 },
       'hcm.management': { PAGE: 5, DATA: 3, ACTION: 12 },
     });
     expect(

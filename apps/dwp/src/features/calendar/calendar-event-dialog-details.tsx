@@ -312,9 +312,9 @@ export const CalendarEventDialogDetails = memo(function CalendarEventDialogDetai
           {form.type === 'MEETING' ? (
             <FormControlLabel
               control={
-              <Checkbox
-                checked={form.responseRequired}
-                disabled={occurrenceOnly}
+                <Checkbox
+                  checked={form.responseRequired}
+                  disabled={occurrenceOnly}
                   onChange={(event) => onFormPatch({ responseRequired: event.target.checked })}
                 />
               }

@@ -136,7 +136,7 @@ export function WorkLayout() {
   );
   const desktop = availableWidth >= 1200;
   const profile = getProductExperienceProfile('work');
-  const navigation = useDesktopNavigation({ ...shellRegistry.work, desktopNavigationWidth: 240 });
+  const navigation = useDesktopNavigation(shellRegistry.work);
   const mobile = useShellMobileNavigation({ headerTestId: 'work-header' });
   const activeView = workHubViewFromPath(location.pathname);
   const sourceNeedsAttention = Boolean(

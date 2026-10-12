@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { Navigate, useLocation, type RouteObject } from 'react-router-dom';
 import { AuthGuard } from '@dwp-frontend/shared-utils/auth/auth-guard';
 
@@ -15,10 +15,6 @@ const WorkPage = lazy(() => import('../pages/work'));
 const WorkLayout = lazy(() =>
   import('../layouts/work-layout').then(({ WorkLayout }) => ({ default: WorkLayout }))
 );
-const DwaionWorkCalendarContext = lazy(
-  () => import('../components/dwaion-assistant/dwaion-work-calendar-context')
-);
-
 export const workRoutes: RouteObject[] = [
   {
     path: 'work',
@@ -38,11 +34,7 @@ export const workRoutes: RouteObject[] = [
       { path: 'home', element: <WorkQueueRedirect /> },
       {
         path: 'calendar',
-        element: (
-          <Suspense fallback={routeFallback}>
-            <DwaionWorkCalendarContext />
-          </Suspense>
-        ),
+        element: <CalendarApplicationRedirect />,
       },
       ...WORK_HUB_VIEWS.map(({ view }) => ({
         path: view,
@@ -56,6 +48,24 @@ export const workRoutes: RouteObject[] = [
     ],
   },
 ];
+
+function CalendarApplicationRedirect() {
+  const { search, hash } = useLocation();
+  const target = workCalendarCompatibilityTarget(search, hash);
+  useEffect(() => replaceWorkCalendarApplication(target), [target]);
+  return routeFallback;
+}
+
+export function workCalendarCompatibilityTarget(search: string, hash: string) {
+  return `/calendar/schedule${search}${hash}`;
+}
+
+export function replaceWorkCalendarApplication(
+  target: string,
+  replace: (next: string) => void = (next) => window.location.replace(next)
+) {
+  replace(target);
+}
 
 function WorkQueueRedirect() {
   const { search } = useLocation();

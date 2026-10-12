@@ -1,7 +1,6 @@
 import { lazy, Suspense, useEffect, useRef } from 'react';
 import { useLocation, useNavigationType } from 'react-router-dom';
 import { ToastViewport } from '@dwp-frontend/design-system/components/toast-viewport';
-import { PRODUCT_NOTIFICATION_RUNTIME_ENABLED } from '@dwp-frontend/shared-utils/env';
 
 import { AuthUnauthorizedHandler } from './components/auth-unauthorized-handler';
 import { SkipNavigationLink } from './components/skip-navigation-link';
@@ -14,7 +13,8 @@ import {
 } from './components/product-application-runtime';
 
 const dwaionRuntimeBundled = import.meta.env.VITE_PRODUCT_DWAION_RUNTIME !== 'disabled';
-const NotificationRuntimeHost = PRODUCT_NOTIFICATION_RUNTIME_ENABLED
+const notificationRuntimeBundled = import.meta.env.VITE_PRODUCT_NOTIFICATION_RUNTIME !== 'disabled';
+const NotificationRuntimeHost = notificationRuntimeBundled
   ? lazy(() =>
       import('./components/notification-runtime-host').then((module) => ({
         default: module.NotificationRuntimeHost,

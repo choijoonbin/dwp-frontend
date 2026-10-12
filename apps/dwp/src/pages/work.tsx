@@ -37,7 +37,6 @@ import { WorkHubInitialState } from '../features/work-hub/work-hub-initial-state
 import { useWorkHubTaskSave } from '../features/work-hub/use-work-hub-task-save';
 import { useWorkHubReturnHandoff } from '../features/work-hub/use-work-hub-return-handoff';
 import { useWorkHubCalendarHandoff } from '../features/work-hub/use-work-hub-calendar-handoff';
-import { useWorkHubServiceResponse } from './use-work-hub-service-response';
 import { WorkHubAssistPanel } from '../features/work-hub/work-hub-assist-dialog';
 import { selectedWorkConversationRoute } from '@dwp-frontend/shared-utils/api/agent-selected-work-api';
 import { WorkHubRecoveryDialogs } from '../features/work-hub/work-hub-recovery-dialogs';
@@ -299,11 +298,6 @@ export default function WorkPage() {
   const selectedItem =
     explicitSelection ??
     (!mobile && detailSelection.state === 'SELECTED' ? detailSelection.item : undefined);
-  const serviceResponse = useWorkHubServiceResponse({
-    owner,
-    item: selectedItem,
-    onConfirmed: () => void query.refetch(),
-  });
   const openActivity = useWorkHubActivityReturn(selectedItem, Boolean(snapshot), query.refetch);
   const showMobileDetail = mobile && Boolean(requested);
   const assistActive = Boolean(
@@ -361,7 +355,6 @@ export default function WorkPage() {
   };
   const openItem = (item: WorkHubItem, focusToken?: string) => {
     setAssistItem(null);
-    serviceResponse.clear();
     lastMobileSelection.current = focusToken ?? null;
     queueScrollTop.current = queueScroll.current?.scrollTop ?? window.scrollY;
     controller.select(item.reference);
@@ -376,7 +369,6 @@ export default function WorkPage() {
   };
   const backToQueue = () => {
     restoreQueueFocus.current = true;
-    serviceResponse.clear();
     setSearchParams(
       mergeFilterSearchParams(searchParams, { work: null, item: null, personalTaskId: null }),
       { replace: true }
@@ -872,13 +864,7 @@ export default function WorkPage() {
                         onOpenSource={(route) => openSource(selectedItem, route, 'SOURCE')}
                       />
                     ) : (
-                      <>
-                        <WorkHubSourceOwnedDetail
-                          item={selectedItem}
-                          onSourceInvalid={backToQueue}
-                        />
-                        {serviceResponse.bridge}
-                      </>
+                      <WorkHubSourceOwnedDetail item={selectedItem} onSourceInvalid={backToQueue} />
                     )}
                     {runtime.canUseCalendar &&
                       canUseWorkHubGenericAdjunct(selectedItem, 'CALENDAR') && (
@@ -936,7 +922,6 @@ export default function WorkPage() {
                   });
                 }
               }}
-              onDraftApply={serviceResponse.applyDraft}
               onContinue={(response) => {
                 const route = selectedWorkConversationRoute(response);
                 if (route) navigate(route);

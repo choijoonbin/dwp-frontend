@@ -1,8 +1,8 @@
 import { createContext, useContext, useMemo } from 'react';
 
-import { resolveProductDateLocale, resolveProductTimeZone } from './date-time-policy';
+import { resolveProductDateLocale, resolveProductTimeZone } from './date-time-policy-resolution';
 
-import type { ProductDateLocale } from './date-time-policy';
+import type { ProductDateLocale } from './date-time-policy-resolution';
 
 export type DateTimePolicy = {
   locale: ProductDateLocale;

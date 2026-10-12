@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 
-import { getProviderSupportSessionContext } from '../api/provider-control-api';
+import { getProviderSupportSessionContext } from '../api/provider-control-support-client';
 import { publishCrossTabRevision, subscribeCrossTabRevision } from './cross-tab-revision';
 import { useAuth } from './auth-provider';
 import { isProviderIdentity } from './control-plane-access';
 
-import type { ProviderSupportSessionContext } from '../api/provider-control-api';
+import type { ProviderSupportSessionContext } from '../api/provider-control-contracts';
 
 export const providerSupportContextQueryKey = ['provider', 'support-context'] as const;
 export const providerSupportContextRevisionChannel = 'dwp:provider-support-context:revision:v1';

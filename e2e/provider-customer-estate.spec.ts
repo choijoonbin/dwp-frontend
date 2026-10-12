@@ -40,7 +40,7 @@ test('customer estate connects global posture, placement, and tenant 360', async
   await expect(page).toHaveURL(/\/provider\/tenants\/tenant-skax$/);
   await expect(page.getByRole('heading', { name: 'SKAX Production', exact: true })).toBeVisible();
   await expect(page.getByRole('region', { name: 'Tenant 360 scope' })).toContainText(
-    'ap-northeast-2 / Bridge'
+    'ap-northeast-2 / Dedicated bridge'
   );
   await expect(
     page.getByRole('heading', { name: 'The tenant meets operational readiness criteria' })

@@ -9,8 +9,8 @@ import Typography from '@mui/material/Typography';
 import {
   HOME_LAUNCHPAD_FIVE_COLUMN_DOCK_MIN_WIDTH,
   HOME_LAUNCHPAD_FOUR_COLUMN_DOCK_MIN_WIDTH,
+  HOME_LAUNCHPAD_GROUP_GRID_MAX_WIDTH,
   HOME_LAUNCHPAD_TWO_COLUMN_DOCK_MIN_WIDTH,
-  HOME_LAUNCHPAD_VISIBLE_COLUMNS,
   homeLaunchpadEqualColumnTemplate,
 } from '../../../components/workspace-composer/home-launchpad-layout-contract';
 import { AppGlyph } from '../app-glyph';
@@ -44,11 +44,6 @@ type PressState = {
   startX: number;
   startY: number;
 };
-
-const FLOW_GROUP_ITEM_GAP = 6;
-const FLOW_GROUP_GRID_MAX_WIDTH =
-  HOME_LAUNCHPAD_VISIBLE_COLUMNS * LAUNCHPAD_TILE_WIDTH +
-  (HOME_LAUNCHPAD_VISIBLE_COLUMNS - 1) * FLOW_GROUP_ITEM_GAP;
 
 export function FlowAppDockList({
   apps,
@@ -262,7 +257,7 @@ export function FlowAppDockList({
               [`@container flow-dock (min-width: ${HOME_LAUNCHPAD_TWO_COLUMN_DOCK_MIN_WIDTH}px)`]: {
                 display: 'grid',
                 width: 1,
-                maxWidth: FLOW_GROUP_GRID_MAX_WIDTH,
+                maxWidth: HOME_LAUNCHPAD_GROUP_GRID_MAX_WIDTH,
                 mr: 'auto',
                 gridTemplateColumns: `repeat(auto-fill, minmax(min(${LAUNCHPAD_TILE_WIDTH}px, 100%), 1fr))`,
                 alignItems: 'start',

@@ -93,24 +93,22 @@ describe('approval work API boundary', () => {
   );
 
   it('binds preflight to the exact persisted request version', async () => {
-    const fetchMock = vi
-      .fn()
-      .mockImplementation((url: string) =>
-        Promise.resolve(
-          response(
-            url.includes('/csrf')
-              ? { token: 'csrf', headerName: 'X-XSRF-TOKEN' }
-              : {
-                  requestId: 'request-1',
-                  expectedVersion: 7,
-                  ready: true,
-                  workflowContract: 'LEGACY_SEQUENTIAL',
-                  checks: [],
-                  evaluatedAt: '2026-09-14T00:00:00Z',
-                }
-          )
+    const fetchMock = vi.fn().mockImplementation((url: string) =>
+      Promise.resolve(
+        response(
+          url.includes('/csrf')
+            ? { token: 'csrf', headerName: 'X-XSRF-TOKEN' }
+            : {
+                requestId: 'request-1',
+                expectedVersion: 7,
+                ready: true,
+                workflowContract: 'LEGACY_SEQUENTIAL',
+                checks: [],
+                evaluatedAt: '2026-09-14T00:00:00Z',
+              }
         )
-      );
+      )
+    );
     vi.stubGlobal('fetch', fetchMock);
 
     await expect(
@@ -120,8 +118,8 @@ describe('approval work API boundary', () => {
       })
     ).resolves.toMatchObject({ requestId: 'request-1', expectedVersion: 7, ready: true });
 
-    const command = fetchMock.mock.calls.find(
-      ([url]) => String(url).endsWith('/requests/request-1/preflight')
+    const command = fetchMock.mock.calls.find(([url]) =>
+      String(url).endsWith('/requests/request-1/preflight')
     );
     expect(command?.[1]).toMatchObject({ method: 'POST' });
     expect(JSON.parse(command?.[1].body as string)).toEqual({ expectedVersion: 7 });

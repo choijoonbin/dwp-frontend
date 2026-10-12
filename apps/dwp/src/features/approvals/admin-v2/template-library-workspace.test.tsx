@@ -88,9 +88,7 @@ describe('APR-17 template library workspace', () => {
       selectedTemplateId: 'template-1',
       packagePreview: {
         schemaSha256: 'a'.repeat(64),
-        fields: [
-          { id: 'summary', label: 'Summary', type: 'TEXTAREA', required: true },
-        ],
+        fields: [{ id: 'summary', label: 'Summary', type: 'TEXTAREA', required: true }],
       },
       packageLoading: false,
       comparison: null,

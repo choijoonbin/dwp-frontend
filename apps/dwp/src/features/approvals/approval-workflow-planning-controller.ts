@@ -123,12 +123,18 @@ export class ApprovalWorkflowPlanningController {
         if (!verified) throw new HttpError('Fresh paired planning DATA authority denied', 403);
         return verified;
       };
-      const result = await action({
-        signal: abort.signal,
-        assertCurrent,
-        proof,
-        snapshot: entry.source.snapshot,
-      });
+      let result: T;
+      try {
+        result = await action({
+          signal: abort.signal,
+          assertCurrent,
+          proof,
+          snapshot: entry.source.snapshot,
+        });
+      } catch (error) {
+        assertCurrent();
+        throw error;
+      }
       assertCurrent();
       return result;
     } finally {

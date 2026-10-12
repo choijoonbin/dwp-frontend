@@ -75,9 +75,9 @@ describe('DWAI-ON AI runtime control unavailable presentation', () => {
     });
     await act(async () => {
       await vi.waitFor(() =>
-        expect(client.getQueryState(['dwaion', 'admin', 'ai-runtime-control'])?.status).toBe(
-          'error'
-        )
+        expect(
+          host.querySelector('[data-ai-runtime-control-state="rollout-unavailable"]')
+        ).not.toBeNull()
       );
     });
 

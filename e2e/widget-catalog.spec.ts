@@ -4,6 +4,7 @@ import { expect, test } from '@playwright/test';
 import type { Locator, Page } from '@playwright/test';
 
 import { mockShellSession } from './support/shell-session';
+import { routeHomeWave4ShadowRuntime } from './support/home-wave4-runtime-fixtures';
 
 const reducedMotionAppearance = {
   mode: 'light',
@@ -52,6 +53,7 @@ test.beforeEach(async ({ page }) => {
     displayName: 'Mina Kim',
     appearance: reducedMotionAppearance,
   });
+  await routeHomeWave4ShadowRuntime(page);
 });
 
 async function startEditing(page: Page) {
@@ -112,9 +114,11 @@ test('opens the entitled app and widget library immediately without an empty res
   await expect(items.first()).toBeVisible();
   expect(await items.count()).toBeGreaterThanOrEqual(5);
 
-  // The default member has no APP.CALENDAR entitlement. The catalog must not disclose it.
+  // The default member has no APP.CALENDAR or APP.ACTIVITY entitlement. The catalog must not
+  // disclose either source, while APP.WORK-backed widgets remain available.
   await expect(dialog.locator('[data-home-gallery-item="widget:schedule"]')).toHaveCount(0);
-  await expect(dialog.locator('[data-home-gallery-item="widget:activity"]')).toHaveAttribute(
+  await expect(dialog.locator('[data-home-gallery-item="widget:activity"]')).toHaveCount(0);
+  await expect(dialog.locator('[data-home-gallery-item="widget:focus"]')).toHaveAttribute(
     'data-home-gallery-state',
     'ADDED'
   );
@@ -132,7 +136,7 @@ test('opens the entitled app and widget library immediately without an empty res
     await dialog
       .locator('[data-home-gallery-item]')
       .evaluateAll((rows) => rows.map((row) => row.getAttribute('data-home-gallery-item')))
-  ).toEqual(expect.arrayContaining(['widget:daily-brief', 'widget:focus', 'widget:activity']));
+  ).toEqual(expect.arrayContaining(['widget:command-rail', 'widget:daily-brief', 'widget:focus']));
   await search.fill('a result that does not exist');
   const emptyState = dialog.locator('[data-home-gallery-empty]');
   await expect(emptyState).toHaveAccessibleName('No item matches this search and filter');
@@ -161,10 +165,10 @@ test('persists a hide and restore journey across reloads and restores focus safe
   await page.goto('/');
   const initialPreference = (await (await initialResponsePromise).json())
     .data as WorkspaceHomePreference;
-  expect(widgetVisibility(initialPreference, 'activity')).toBe(true);
+  expect(widgetVisibility(initialPreference, 'focus')).toBe(true);
   await page.getByRole('button', { name: 'Edit home' }).click();
 
-  await page.getByRole('button', { name: 'Hide Live activity widget' }).click();
+  await page.getByRole('button', { name: 'Hide Focus now widget' }).click();
   const hideResponsePromise = page.waitForResponse((response) =>
     isWorkspaceHomePreferenceResponse(response, 'PUT')
   );
@@ -180,11 +184,13 @@ test('persists a hide and restore journey across reloads and restores focus safe
     'daily-brief',
     'focus',
     'activity',
+    'focus-balance',
+    'meeting-load',
   ]);
-  expect(widgetVisibility(hideRequest, 'activity')).toBe(false);
+  expect(widgetVisibility(hideRequest, 'focus')).toBe(false);
   expect(hiddenPreference.version).toBe(initialPreference.version);
   expect(widgetKeys(hiddenPreference)).toEqual(persistedWidgetKeys);
-  expect(widgetVisibility(hiddenPreference, 'activity')).toBe(false);
+  expect(widgetVisibility(hiddenPreference, 'focus')).toBe(false);
   await expect(page.getByText('Home view saved.')).toBeVisible();
   await expect(page).not.toHaveURL(/[?&]edit=home/u);
   await expect(page.getByRole('button', { name: 'Edit home' })).toBeVisible();
@@ -196,21 +202,21 @@ test('persists a hide and restore journey across reloads and restores focus safe
   const hiddenReload = (await (await hiddenReloadPromise).json()).data as WorkspaceHomePreference;
   expect(hiddenReload.version).toBe(hiddenPreference.version);
   expect(widgetKeys(hiddenReload)).toEqual(persistedWidgetKeys);
-  expect(widgetVisibility(hiddenReload, 'activity')).toBe(false);
+  expect(widgetVisibility(hiddenReload, 'focus')).toBe(false);
   await ensureEditing(page);
   let dialog = await openItemLibrary(page);
-  await expect(dialog.locator('[data-home-gallery-item="widget:activity"]')).toHaveAttribute(
+  await expect(dialog.locator('[data-home-gallery-item="widget:focus"]')).toHaveAttribute(
     'data-home-gallery-state',
     'RESTORE'
   );
 
   await dialog.getByRole('tab', { name: 'Hidden 1' }).click();
-  await dialog.getByRole('button', { name: 'Restore Live activity widget to home' }).click();
+  await dialog.getByRole('button', { name: 'Restore Focus now widget to home' }).click();
   await expect(dialog.locator('[data-home-gallery-empty]')).toBeFocused();
   await expect(dialog.locator('[data-home-gallery-empty]')).toHaveAccessibleName('No hidden items');
   await expect(dialog.locator('[aria-live]')).toHaveCount(1);
   await expect(dialog.getByRole('status')).toContainText(
-    'Live activity was restored to the home draft.'
+    'Focus now was restored to the home draft.'
   );
   await dialog.getByRole('button', { name: 'Close the home item library' }).click();
   await expect(page.getByRole('button', { name: 'Add items' })).toBeFocused();
@@ -223,10 +229,10 @@ test('persists a hide and restore journey across reloads and restores focus safe
   const restoredPreference = (await restoreResponse.json()).data as WorkspaceHomePreference;
   expect(restoreRequest.version).toBe(hiddenReload.version);
   expect(widgetKeys(restoreRequest)).toEqual(persistedWidgetKeys);
-  expect(widgetVisibility(restoreRequest, 'activity')).toBe(true);
+  expect(widgetVisibility(restoreRequest, 'focus')).toBe(true);
   expect(restoredPreference.version).toBe(hiddenReload.version + 1);
   expect(widgetKeys(restoredPreference)).toEqual(persistedWidgetKeys);
-  expect(widgetVisibility(restoredPreference, 'activity')).toBe(true);
+  expect(widgetVisibility(restoredPreference, 'focus')).toBe(true);
   await expect(page.getByText('Home view saved.')).toBeVisible();
   await expect(page).not.toHaveURL(/[?&]edit=home/u);
   await expect(page.getByRole('button', { name: 'Edit home' })).toBeVisible();
@@ -239,10 +245,10 @@ test('persists a hide and restore journey across reloads and restores focus safe
     .data as WorkspaceHomePreference;
   expect(restoredReload.version).toBe(restoredPreference.version);
   expect(widgetKeys(restoredReload)).toEqual(persistedWidgetKeys);
-  expect(widgetVisibility(restoredReload, 'activity')).toBe(true);
+  expect(widgetVisibility(restoredReload, 'focus')).toBe(true);
   await ensureEditing(page);
   dialog = await openItemLibrary(page);
-  await expect(dialog.locator('[data-home-gallery-item="widget:activity"]')).toHaveAttribute(
+  await expect(dialog.locator('[data-home-gallery-item="widget:focus"]')).toHaveAttribute(
     'data-home-gallery-state',
     'ADDED'
   );
@@ -298,8 +304,8 @@ test('supports keyboard entry, Escape focus return, and 200 percent text sizing'
 });
 
 test('item library reflows without horizontal overflow on a 320px viewport', async ({ page }) => {
-  await page.setViewportSize({ width: 320, height: 568 });
   await startEditing(page);
+  await page.setViewportSize({ width: 320, height: 568 });
   const dialog = await openItemLibrary(page);
   await expect(dialog.locator('[data-home-gallery-item]').first()).toBeVisible();
 
@@ -346,9 +352,11 @@ test('Korean item library preserves readable labels at 390px', async ({ page }) 
     displayName: '김민아',
     appearance: reducedMotionAppearance,
   });
-  await page.setViewportSize({ width: 390, height: 844 });
+  await routeHomeWave4ShadowRuntime(page);
+  await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto('/');
   await page.getByRole('button', { name: '홈 화면 편집' }).click();
+  await page.setViewportSize({ width: 390, height: 844 });
   await page.getByRole('button', { name: '항목 추가' }).click();
   const dialog = page.getByRole('dialog', { name: '홈에 항목 추가' });
 
@@ -380,6 +388,7 @@ test('preserves structure and semantics in dark forced-colors mode', async ({ pa
       reduceMotion: true,
     },
   });
+  await routeHomeWave4ShadowRuntime(page);
   await page.setViewportSize({ width: 1280, height: 900 });
   await startEditing(page);
   const dialog = await openItemLibrary(page);

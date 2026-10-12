@@ -215,11 +215,7 @@ type HomeWidgetErrorBoundaryProps = Readonly<{
 
 type HomeWidgetErrorBoundaryState = Readonly<{ error: Error | null }>;
 
-function HomeWidgetCrashFallback({
-  onRetry,
-}: {
-  onRetry: () => void;
-}) {
+function HomeWidgetCrashFallback({ onRetry }: { onRetry: () => void }) {
   const { t } = useTranslation('home');
   return (
     <HomeContentState

@@ -10,7 +10,7 @@ import {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, ChevronDown, ChevronRight, Home, LifeBuoy, Settings2 } from 'lucide-react';
-import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAppearance } from '@dwp-frontend/design-system/appearance';
 import { ActionButton } from '@dwp-frontend/design-system/components/actions/action-button';
 import {
@@ -508,7 +508,13 @@ export function ProductAreaLayout({
                     <Tooltip title={compactNavigation ? label : ''} placement="right">
                       <ListItemButton
                         data-testid={`${areaKey}-navigation-item-${item.view}`}
-                        component={disclosureChildren ? 'button' : NavLink}
+                        component={
+                          disclosureChildren
+                            ? 'button'
+                            : shellNavigationProjection?.resolveSelectedView
+                              ? Link
+                              : NavLink
+                        }
                         type={disclosureChildren ? 'button' : undefined}
                         to={
                           disclosureChildren

@@ -95,7 +95,9 @@ test('calendar supports governed range creation and drag rescheduling', async ({
   ).toEqual([]);
 });
 
-test('calendar edits one recurring occurrence with an explicit stable command', async ({ page }) => {
+test('calendar edits one recurring occurrence with an explicit stable command', async ({
+  page,
+}) => {
   await mockShellSession(page, ['CALENDAR_ADMIN'], {
     locale: 'en',
     permissions: FULL_PRODUCT_PERMISSIONS,

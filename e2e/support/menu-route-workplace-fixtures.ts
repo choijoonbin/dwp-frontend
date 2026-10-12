@@ -1,7 +1,15 @@
 import type {
   MailAdminOverview,
+  MailAdminOperationsSnapshot,
+  MailActionProposalPage,
+  MailDeliveryAuditPage,
+  MailDeliveryPage,
   MailHome,
   MailOrganization,
+  MailOrganizationWritingAsset,
+  MailPolicyGovernance,
+  MailRetentionSnapshot,
+  MailSavedView,
   MailThreadPage,
   PageResult,
   RegistryEntry,
@@ -23,6 +31,11 @@ import type {
 } from '@dwp-frontend/shared-utils';
 
 import type { MenuRouteFixtureResolution } from './menu-route-fixture-contract';
+import {
+  defaultMailComposeContext,
+  defaultMailPreferences,
+  mailAddressBook,
+} from './mail-fixtures';
 
 const OBSERVED_AT = '2026-08-11T00:20:00Z';
 
@@ -106,6 +119,36 @@ const resolveMailFixture = (path: string): MenuRouteFixtureResolution | null => 
           generatedAt: OBSERVED_AT,
         } satisfies MailOrganization,
       };
+    case '/api/platform/v1/mail/address-book':
+      return { data: mailAddressBook() };
+    case '/api/platform/v1/mail/follow-ups':
+      return { data: [] };
+    case '/api/platform/v1/mail/deliveries':
+      return {
+        data: {
+          items: [],
+          total: 0,
+          page: 0,
+          pageSize: 30,
+        } satisfies MailDeliveryPage,
+      };
+    case '/api/platform/v1/mail/proposals':
+      return {
+        data: {
+          items: [],
+          total: 0,
+          page: 0,
+          pageSize: 20,
+        } satisfies MailActionProposalPage,
+      };
+    case '/api/platform/v1/mail/writing-assets':
+      return { data: { templates: [], signatures: [] } };
+    case '/api/platform/v1/mail/preferences':
+      return { data: defaultMailPreferences() };
+    case '/api/platform/v1/mail/compose-context':
+      return { data: defaultMailComposeContext() };
+    case '/api/platform/v1/mail/saved-views':
+      return { data: [] satisfies MailSavedView[] };
     case '/api/platform/v1/admin/mail/overview':
       return {
         data: {
@@ -123,6 +166,46 @@ const resolveMailFixture = (path: string): MenuRouteFixtureResolution | null => 
           providerCatalog: [],
           generatedAt: OBSERVED_AT,
         } satisfies MailAdminOverview,
+      };
+    case '/api/platform/v1/admin/mail/operations':
+      return {
+        data: {
+          generatedAt: OBSERVED_AT,
+          sources: [],
+          exceptions: [],
+          commands: [],
+        } satisfies MailAdminOperationsSnapshot,
+      };
+    case '/api/platform/v1/admin/mail/writing-assets':
+      return { data: [] satisfies MailOrganizationWritingAsset[] };
+    case '/api/platform/v1/admin/mail/policy/evidence':
+      return {
+        data: {
+          generatedAt: OBSERVED_AT,
+          policyVersion: 1,
+          rows: [],
+          history: [],
+        } satisfies MailPolicyGovernance,
+      };
+    case '/api/platform/v1/admin/mail/retention':
+      return {
+        data: {
+          generatedAt: OBSERVED_AT,
+          policyVersion: 1,
+          resourcePolicies: [],
+          holds: [],
+          purgeJobs: [],
+        } satisfies MailRetentionSnapshot,
+      };
+    case '/api/platform/v1/admin/mail/delivery-audit':
+      return {
+        data: {
+          items: [],
+          total: 0,
+          page: 0,
+          pageSize: 50,
+          generatedAt: OBSERVED_AT,
+        } satisfies MailDeliveryAuditPage,
       };
     default:
       return null;
@@ -145,6 +228,23 @@ const resolveWorkplaceFixture = (path: string): MenuRouteFixtureResolution | nul
       };
     case '/api/platform/v1/workplace/bookings':
       return { data: [] satisfies WorkplaceBooking[] };
+    case '/api/platform/v1/workplace/booking-intents/beneficiaries':
+      return { data: { beneficiaries: [], generatedAt: OBSERVED_AT } };
+    case '/api/platform/v1/workplace/waitlist-entries':
+      return {
+        data: {
+          content: [],
+          page: 0,
+          size: 50,
+          totalElements: 0,
+          totalPages: 0,
+          generatedAt: OBSERVED_AT,
+        },
+      };
+    case '/api/platform/v1/workplace/service-orders':
+      return { data: { items: [], nextCursor: null, hasMore: false, generatedAt: OBSERVED_AT } };
+    case '/api/platform/v1/workplace/safety/incidents/active':
+      return { data: [] };
     case '/api/platform/v1/admin/workplace/overview':
       return {
         data: {
@@ -175,6 +275,74 @@ const resolveWorkplaceFixture = (path: string): MenuRouteFixtureResolution | nul
       return { data: WORKPLACE_POLICY };
     case '/api/platform/v1/admin/workplace/governance/campuses':
       return { data: [] satisfies WorkplaceGovernanceCampus[] };
+    case '/api/platform/v1/admin/workplace/experience/facilities/requests':
+      return {
+        data: {
+          content: [],
+          page: 0,
+          size: 1,
+          totalElements: 0,
+          totalPages: 0,
+          generatedAt: OBSERVED_AT,
+          countsScope: 'SITE',
+          allowedFloorIds: [],
+        },
+      };
+    case '/api/platform/v1/admin/workplace/safety/incidents':
+    case '/api/platform/v1/admin/workplace/safety/connectors':
+    case '/api/platform/v1/admin/workplace/devices':
+    case '/api/platform/v1/admin/workplace/device-providers':
+    case '/api/platform/v1/admin/workplace/visit-policies':
+    case '/api/platform/v1/admin/workplace/access-zones':
+    case '/api/platform/v1/admin/workplace/provider-bindings':
+    case '/api/platform/v1/admin/workplace/kiosk-devices':
+      return { data: [] };
+    case '/api/platform/v1/admin/workplace/assistant/governance':
+      return {
+        data: {
+          tenantOptIn: false,
+          killSwitch: true,
+          modelProviderReference: null,
+          modelVersion: null,
+          promptVersion: null,
+          toolVersion: null,
+          retentionDays: 30,
+          feedbackUseEnabled: false,
+          redactionState: 'READY',
+          version: 0,
+          updatedAt: null,
+          updatedBy: null,
+        },
+      };
+    case '/api/platform/v1/admin/workplace/assistant/audit-events':
+      return { data: { items: [], generatedAt: OBSERVED_AT } };
+    case '/api/platform/v1/admin/workplace/service-orders':
+      return { data: { items: [], nextCursor: null, hasMore: false, generatedAt: OBSERVED_AT } };
+    case '/api/platform/v1/admin/workplace/service-catalog':
+      return { data: { items: [], generatedAt: OBSERVED_AT } };
+    case '/api/platform/v1/admin/workplace/service-providers':
+      return { data: { items: [], generatedAt: OBSERVED_AT } };
+    case '/api/platform/v1/admin/workplace/visits/exceptions':
+      return { data: { items: [], generatedAt: OBSERVED_AT } };
+    case '/api/platform/v1/admin/workplace/exceptions':
+      return {
+        data: {
+          summary: {
+            active: 0,
+            critical: 0,
+            warning: 0,
+            error: 0,
+            concurrencyConflicts24h: 0,
+            deadLetterQueueDepth: 0,
+            automaticRecoveryPercent: null,
+            slaCompliancePercent: null,
+          },
+          exceptions: [],
+          guardrails: [],
+          generatedAt: OBSERVED_AT,
+          externalTelemetryUrl: null,
+        },
+      };
     default:
       return null;
   }

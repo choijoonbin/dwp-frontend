@@ -3,10 +3,10 @@ import fs from 'node:fs';
 import path from 'node:path';
 import ts from 'typescript';
 import {
-  APPROVAL_GOVERNED_MUTATION_API_CONTRACTS,
   APPROVAL_HOME_PREFERENCE_MUTATION_API_CONTRACT,
   COMMUNICATIONS_MANAGEMENT_MUTATION_API_CONTRACTS,
   COMMUNICATIONS_WORK_MUTATION_API_CONTRACTS,
+  HCM_ASSIGNMENT_PROPOSAL_MUTATION_API_CONTRACTS,
   HCM_HRIS_MUTATION_API_CONTRACTS,
   HCM_HOME_PREFERENCE_MUTATION_API_CONTRACT,
   HCM_HR_MUTATION_API_CONTRACTS,
@@ -15,6 +15,7 @@ import {
   HCM_WORKFORCE_REFERENCE_MUTATION_API_CONTRACT,
   SERVICES_MUTATION_API_CONTRACTS,
 } from '@dwp-frontend/shared-utils';
+import { APPROVAL_GOVERNED_MUTATION_API_CONTRACTS } from '@dwp-frontend/shared-utils/api/approval-governed-mutation-api-contracts';
 import { PAYROLL_FOUNDATION_MUTATION_API_CONTRACTS } from '../features/hris/payroll/api/payroll-foundation-api';
 import { PERFORMANCE_CYCLE_MUTATION_API_CONTRACTS } from '../features/hris/performance/api/performance-cycle-api';
 import { HRIS_TIME_WORK_PLAN_MUTATION_API_CONTRACTS } from '../features/hris/time/api/hris-time-work-plan-api';
@@ -34,6 +35,7 @@ const IMPLEMENTED_ACTION_CONTRACTS = [
   ...COMMUNICATIONS_WORK_MUTATION_API_CONTRACTS,
   ...SERVICES_MUTATION_API_CONTRACTS,
   ...HCM_HR_MUTATION_API_CONTRACTS,
+  ...HCM_ASSIGNMENT_PROPOSAL_MUTATION_API_CONTRACTS,
   ...HCM_ORGANIZATION_MUTATION_API_CONTRACTS,
   ...HCM_HRIS_MUTATION_API_CONTRACTS,
   ...HCM_WORKFORCE_EXPORT_MUTATION_API_CONTRACTS,
@@ -131,9 +133,25 @@ const APPROVAL_EXECUTION_CHAINS: Readonly<Record<string, readonly string[]>> = {
   recordApprovalRoutingResolverObservation: ['approvalAdminV2CanonicalMutation'],
   recordApprovalRoutingGroupUsage: ['approvalAdminV2CanonicalMutation'],
   cloneApprovalTemplateDraft: ['approvalAdminV2CanonicalMutation'],
+  addApprovalFormStudioField: ['approvalAdminV2CanonicalMutation'],
+  deleteApprovalFormStudioField: ['approvalAdminV2CanonicalMutation'],
+  cloneApprovalFormStudioField: ['approvalAdminV2CanonicalMutation'],
+  updateApprovalFormStudioFieldProperties: ['approvalAdminV2CanonicalMutation'],
+  reorderApprovalFormStudioSectionFields: ['approvalAdminV2CanonicalMutation'],
+  createApprovalAutomationDelegation: ['approvalAdminV2CanonicalMutation'],
+  updateApprovalAutomationDelegation: ['approvalAdminV2CanonicalMutation'],
+  revokeApprovalAutomationDelegation: ['approvalAdminV2CanonicalMutation'],
+  cancelScheduledApprovalAutomationDelegation: ['approvalAdminV2CanonicalMutation'],
+  simulateApprovalAutomationPolicy: ['approvalAdminV2CanonicalMutation'],
+  importApprovalTemplatePackage: ['approvalAdminV2CanonicalMutation'],
+  saveApprovalWorkflowStudioCanvas: ['approvalAdminV2CanonicalMutation'],
+  dryRunApprovalWorkflowStudio: ['approvalAdminV2CanonicalMutation'],
 };
 
 const HRIS_EXECUTION_CHAINS: Readonly<Record<string, readonly string[]>> = {
+  createAssignmentProposal: ['idempotentMutationConfig'],
+  validateAssignmentProposal: ['idempotentMutationConfig'],
+  cancelAssignmentProposal: ['idempotentMutationConfig'],
   createPerformanceCycle: ['commandConfig'],
   updatePerformanceCycle: ['commandConfig'],
   validatePerformanceCycle: ['commandConfig'],
@@ -360,6 +378,7 @@ describe('Generated product ACTION mutation closure', () => {
       'workforce-export-api.ts',
       'workforce-api.ts',
       'home-preference-api.ts',
+      'assignment-proposal-api.ts',
     ].map((filename) => path.join(apiRoot, filename));
     files.push(
       path.resolve(

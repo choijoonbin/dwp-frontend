@@ -2,6 +2,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
 import { FULL_PRODUCT_PERMISSIONS, mockShellSession } from './support/shell-session';
+import { routeHomeWave4ShadowRuntime } from './support/home-wave4-runtime-fixtures';
 
 import type { Page } from '@playwright/test';
 
@@ -24,6 +25,7 @@ for (const viewport of viewports) {
   test(`workspace resource views reflow at ${viewport.name}`, async ({ page }) => {
     await page.setViewportSize(viewport);
     await mockShellSession(page, ['WORKSPACE_MEMBER']);
+    await routeHomeWave4ShadowRuntime(page);
 
     for (const path of ['/', '/work', '/activity', '/apps']) {
       await page.goto(path);

@@ -4,6 +4,7 @@ import { expect, test } from '@playwright/test';
 import type { Locator, Page } from '@playwright/test';
 
 import { fulfillSuccess, mockShellSession } from './support/shell-session';
+import { routeHomeWave4ShadowRuntime } from './support/home-wave4-runtime-fixtures';
 
 const reducedMotionAppearance = {
   mode: 'light',
@@ -11,6 +12,8 @@ const reducedMotionAppearance = {
   highContrast: false,
   reduceMotion: true,
 } as const;
+
+const minimumSupportedViewport = { width: 320, height: 568 } as const;
 
 type WorkspaceHomePreference = {
   schemaVersion: 5;
@@ -54,11 +57,14 @@ test.beforeEach(async ({ page }) => {
     displayName: 'Mina Kim',
     appearance: reducedMotionAppearance,
   });
+  await routeHomeWave4ShadowRuntime(page);
 });
 
-async function startEditing(page: Page) {
+async function startEditing(page: Page, viewport?: { width: number; height: number }) {
+  if (viewport) await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto('/');
   await page.getByRole('button', { name: 'Edit home' }).click();
+  if (viewport) await page.setViewportSize(viewport);
 }
 
 async function openItemLibrary(page: Page) {
@@ -66,9 +72,9 @@ async function openItemLibrary(page: Page) {
   return page.getByRole('dialog', { name: 'Add to home' });
 }
 
-async function expectActivityState(page: Page, state: 'ADDED' | 'RESTORE') {
+async function expectFocusState(page: Page, state: 'ADDED' | 'RESTORE') {
   const dialog = await openItemLibrary(page);
-  await expect(dialog.locator('[data-home-gallery-item="widget:activity"]')).toHaveAttribute(
+  await expect(dialog.locator('[data-home-gallery-item="widget:focus"]')).toHaveAttribute(
     'data-home-gallery-state',
     state
   );
@@ -181,18 +187,17 @@ async function expectAccessibleDialogWithoutOverflow(page: Page, dialog: Locator
 }
 
 test('keeps a hidden widget draft after a 500 and persists it on retry', async ({ page }) => {
-  await page.setViewportSize({ width: 320, height: 568 });
-  await startEditing(page);
+  await startEditing(page, minimumSupportedViewport);
   const injectedFailure = await failNextHomePreferenceSave(page);
 
-  await page.getByRole('button', { name: 'Hide Live activity widget' }).click();
+  await page.getByRole('button', { name: 'Hide Focus now widget' }).click();
   const saveButton = page.getByRole('button', { name: 'Save' });
   await saveButton.click();
 
   await expect(page.getByText('The home preference could not be saved.')).toBeVisible();
   expect(injectedFailure.count).toBe(1);
   await expect(saveButton).toBeEnabled();
-  let dialog = await expectActivityState(page, 'RESTORE');
+  let dialog = await expectFocusState(page, 'RESTORE');
   await dialog.getByRole('button', { name: 'Close the home item library' }).click();
   await expect(dialog).toBeHidden();
 
@@ -201,9 +206,8 @@ test('keeps a hidden widget draft after a 500 and persists it on retry', async (
   await page.keyboard.press('Enter');
   await expect(page.getByText('Home view saved.')).toBeVisible();
 
-  await page.reload();
-  await page.getByRole('button', { name: 'Edit home' }).click();
-  dialog = await expectActivityState(page, 'RESTORE');
+  await startEditing(page, minimumSupportedViewport);
+  dialog = await expectFocusState(page, 'RESTORE');
   await expect(dialog.getByRole('tab', { name: 'Hidden 1' })).toBeVisible();
 });
 
@@ -217,8 +221,8 @@ test('discards a gallery draft only after confirmation without mutating the save
     await route.fallback();
   });
 
-  await page.getByRole('button', { name: 'Hide Live activity widget' }).click();
-  let dialog = await expectActivityState(page, 'RESTORE');
+  await page.getByRole('button', { name: 'Hide Focus now widget' }).click();
+  let dialog = await expectFocusState(page, 'RESTORE');
   await dialog.getByRole('button', { name: 'Close the home item library' }).click();
 
   const cancelButton = page.getByRole('button', { name: 'Cancel changes' });
@@ -226,7 +230,7 @@ test('discards a gallery draft only after confirmation without mutating the save
   const confirmation = page.getByRole('alertdialog', { name: 'Discard your home changes?' });
   await confirmation.getByRole('button', { name: 'Keep editing' }).click();
   await expect(cancelButton).toBeFocused();
-  dialog = await expectActivityState(page, 'RESTORE');
+  dialog = await expectFocusState(page, 'RESTORE');
   await dialog.getByRole('button', { name: 'Close the home item library' }).click();
 
   await cancelButton.click();
@@ -236,28 +240,29 @@ test('discards a gallery draft only after confirmation without mutating the save
 
   await page.reload();
   await startEditing(page);
-  await expectActivityState(page, 'ADDED');
+  await expectFocusState(page, 'ADDED');
 });
 
 test('keeps a hidden widget draft when a 409 conflict is dismissed', async ({ page }) => {
-  await page.setViewportSize({ width: 320, height: 568 });
-  await startEditing(page);
+  await startEditing(page, minimumSupportedViewport);
   const conflictState = await routeConcurrentHomePreference(page);
 
-  await page.getByRole('button', { name: 'Hide Live activity widget' }).click();
+  await page.getByRole('button', { name: 'Hide Focus now widget' }).click();
   await page.getByRole('button', { name: 'Save' }).click();
 
   const conflict = page.getByRole('dialog', { name: 'Your home changed in another session' });
   await expect(conflict).toBeVisible();
   expect(conflictState.conflictCount).toBe(1);
   expect(conflictState.submittedVersions).toEqual([0]);
-  await expect(conflict.getByText(/My draft: 1 change/)).toBeVisible();
-  await expect(conflict.getByText('Latest version: 1')).toBeVisible();
-  const conflictToast = page.getByRole('alert', { includeHidden: true }).filter({
-    hasText: 'A newer home version was found. Your draft has been kept.',
-  });
-  await expect(conflictToast).toBeVisible();
-  await conflictToast.hover();
+  await expect(conflict.getByRole('region', { name: 'My draft (1 changes)' })).toBeVisible();
+  await expect(
+    conflict.getByRole('region', { name: 'Latest saved version (Version 1)' })
+  ).toBeVisible();
+  await expect(
+    conflict.getByText(
+      'The latest saved version is different. Your current draft is kept safely until you choose how to continue.'
+    )
+  ).toBeVisible();
   expect(await conflict.evaluate((element) => element.contains(document.activeElement))).toBe(true);
   await expectAccessibleDialogWithoutOverflow(page, conflict);
   const content = conflict.locator('.MuiDialogContent-root');
@@ -278,20 +283,18 @@ test('keeps a hidden widget draft when a 409 conflict is dismissed', async ({ pa
   const keepEditingButton = conflict.getByRole('button', { name: 'Keep editing' });
   const reapplyButton = conflict.getByRole('button', { name: 'Reapply my draft' });
   await page.keyboard.press('Tab');
+  await expect(reapplyButton).toBeFocused();
+  await page.keyboard.press('Tab');
   await expect(reloadButton).toBeFocused();
   await page.keyboard.press('Tab');
   await expect(keepEditingButton).toBeFocused();
-  await page.keyboard.press('Tab');
-  await expect(reapplyButton).toBeFocused();
   await page.keyboard.press('Escape');
 
   await expect(conflict).toBeHidden();
   const saveButton = page.getByRole('button', { name: 'Save' });
   await expect(saveButton).toBeFocused();
   await expect(saveButton).toBeEnabled();
-  await conflictToast.getByRole('button', { name: 'Close' }).click();
-  await expect(conflictToast).toBeHidden();
-  await expectActivityState(page, 'RESTORE');
+  await expectFocusState(page, 'RESTORE');
 });
 
 test('reapplies a widget draft after a 409 without overwriting the latest home', async ({
@@ -300,7 +303,7 @@ test('reapplies a widget draft after a 409 without overwriting the latest home',
   await startEditing(page);
   const conflictState = await routeConcurrentHomePreference(page);
 
-  await page.getByRole('button', { name: 'Hide Live activity widget' }).click();
+  await page.getByRole('button', { name: 'Hide Focus now widget' }).click();
   await page.getByRole('button', { name: 'Save' }).click();
 
   const conflict = page.getByRole('dialog', { name: 'Your home changed in another session' });
@@ -325,8 +328,8 @@ test('reapplies a widget draft after a 409 without overwriting the latest home',
   expect(conflictState.submittedLayouts[1]?.presentation).toBe('focused');
   expect(conflictState.submittedLayouts[1]?.widgets).toEqual(
     expect.arrayContaining([
-      expect.objectContaining({ widgetKey: 'activity', visible: false }),
-      expect.objectContaining({ widgetKey: 'focus', visible: true, size: 'quarter' }),
+      expect.objectContaining({ widgetKey: 'activity', visible: true, size: 'quarter' }),
+      expect.objectContaining({ widgetKey: 'focus', visible: false }),
     ])
   );
   expect(conflictState.submittedLayouts[1]?.widgets.map((widget) => widget.widgetKey)).toEqual([
@@ -335,6 +338,8 @@ test('reapplies a widget draft after a 409 without overwriting the latest home',
     'schedule',
     'daily-brief',
     'command-rail',
+    'focus-balance',
+    'meeting-load',
   ]);
   expect(conflictState.serverVersion).toBe(2);
 
@@ -346,16 +351,15 @@ test('reapplies a widget draft after a 409 without overwriting the latest home',
   );
   await page.reload();
   await page.getByRole('button', { name: 'Edit home' }).click();
-  await expectActivityState(page, 'RESTORE');
+  await expectFocusState(page, 'RESTORE');
 });
 
 test('restores a widget by keyboard and returns focus at 320px without accessibility regressions', async ({
   page,
 }) => {
-  await page.setViewportSize({ width: 320, height: 568 });
-  await startEditing(page);
+  await startEditing(page, minimumSupportedViewport);
 
-  const hideButton = page.getByRole('button', { name: 'Hide Live activity widget' });
+  const hideButton = page.getByRole('button', { name: 'Hide Focus now widget' });
   await hideButton.focus();
   await page.keyboard.press('Enter');
 
@@ -371,7 +375,7 @@ test('restores a widget by keyboard and returns focus at 320px without accessibi
   await hiddenTab.focus();
   await page.keyboard.press('Enter');
   const restoreButton = dialog.getByRole('button', {
-    name: 'Restore Live activity widget to home',
+    name: 'Restore Focus now widget to home',
   });
   await restoreButton.focus();
   await page.keyboard.press('Enter');
@@ -380,7 +384,7 @@ test('restores a widget by keyboard and returns focus at 320px without accessibi
   await expect(emptyState).toBeFocused();
   await expect(emptyState).toHaveAccessibleName('No hidden items');
   await expect(dialog.getByRole('status')).toContainText(
-    'Live activity was restored to the home draft.'
+    'Focus now was restored to the home draft.'
   );
 
   await page.keyboard.press('Escape');

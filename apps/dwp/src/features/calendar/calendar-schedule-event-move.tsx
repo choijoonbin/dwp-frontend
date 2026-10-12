@@ -1,7 +1,4 @@
-import type {
-  CalendarEvent,
-  UpdateCalendarEventInput,
-} from '@dwp-frontend/shared-utils';
+import type { CalendarEvent, UpdateCalendarEventInput } from '@dwp-frontend/shared-utils';
 
 /** Preserves every editable field when a grid drag or resize changes only event timing. */
 export function calendarScheduleMoveInput(

@@ -46,8 +46,8 @@ test('authenticated shell and SPA transitions stay within the runtime budget', a
   );
   expect(initialCls).toBeLessThanOrEqual(budgets.cumulativeLayoutShift);
 
-  await page.getByRole('link', { name: 'Unified work queue', exact: true }).click();
-  await expect(page).toHaveURL(/\/work\/queue$/);
+  await page.locator('a[href="/work/action-required"]').click();
+  await expect(page).toHaveURL(/\/work\/action-required$/);
   await expect
     .poll(() =>
       page.evaluate(

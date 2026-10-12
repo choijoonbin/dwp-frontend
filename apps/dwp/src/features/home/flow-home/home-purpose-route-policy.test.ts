@@ -53,5 +53,20 @@ describe('Home purpose all-route policy', () => {
         item('APP.APPROVALS', '/approvals/requests/needs-info?request=1'),
       ])
     ).toBeUndefined();
+    expect(
+      homePurposeAllRoute('action', [
+        item('APP.WORK', '/work/queue?item=1'),
+        item('APP.APPROVALS', '/approvals/inbox?task=2'),
+      ])
+    ).toBeUndefined();
+  });
+
+  it('uses the Work Hub only when every action belongs to Work', () => {
+    expect(
+      homePurposeAllRoute('action', [
+        item('APP.WORK', '/work/queue?item=1'),
+        item('APP.WORK', '/work/queue?item=2'),
+      ])
+    ).toBe('/work/queue');
   });
 });

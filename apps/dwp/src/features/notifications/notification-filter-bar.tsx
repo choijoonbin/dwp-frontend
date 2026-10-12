@@ -487,9 +487,7 @@ export function NotificationFilterBar({
   }
 
   function includedTypeLabel(type: NotificationIncludedType): string {
-    return type === 'ASSIGNED'
-      ? t('reason.ROLE')
-      : t(`reason.${type}`, { defaultValue: type });
+    return type === 'ASSIGNED' ? t('reason.ROLE') : t(`reason.${type}`, { defaultValue: type });
   }
 }
 

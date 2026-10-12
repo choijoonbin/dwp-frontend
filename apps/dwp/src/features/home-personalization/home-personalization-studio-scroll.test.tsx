@@ -11,7 +11,7 @@ import { buildDwpTheme } from '@dwp-frontend/design-system';
 import { foundationTokens } from '@dwp-frontend/design-system/foundation/tokens';
 import homeStudioKo from '@dwp-frontend/shared-i18n/locales/ko/homeStudio.json';
 
-import { staticHomeWidgetRuntimeDecisions } from '../home/runtime/widget-registry-runtime';
+import { createStaticHomeWidgetRuntimeDecisions } from '../../components/home-widget-runtime-contract';
 import { HomePersonalizationStudio } from './home-personalization-studio';
 
 import type { HomePersonalizationStudioProps } from './home-personalization-studio-contracts';
@@ -25,6 +25,20 @@ const theme = buildDwpTheme({
   fontFamily: foundationTokens.font.ui,
 });
 
+const widgetRuntimeDecisions = createStaticHomeWidgetRuntimeDecisions(
+  (
+    [
+      'command-rail',
+      'daily-brief',
+      'focus',
+      'schedule',
+      'activity',
+      'focus-balance',
+      'meeting-load',
+    ] as const
+  ).map((widgetKey) => ({ widgetKey, rendererKey: `home.${widgetKey}` }))
+);
+
 const baseProps: HomePersonalizationStudioProps = {
   open: true,
   composerEnabled: false,
@@ -36,7 +50,7 @@ const baseProps: HomePersonalizationStudioProps = {
   overviewLoading: false,
   overviewFetching: false,
   overviewFailed: false,
-  widgetRuntimeDecisions: staticHomeWidgetRuntimeDecisions(),
+  widgetRuntimeDecisions,
   feedbackBusy: false,
   onRetryOverview: () => undefined,
   onClose: () => undefined,

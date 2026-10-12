@@ -50,7 +50,9 @@ export const APPROVAL_ADMIN_V2_OPERATIONS_ROUTE_MATRIX = [
   ['GET', '/api/approvals/v1/admin/operations/audit-records/saved-views/{savedViewId}'],
   ['POST', '/api/approvals/v1/admin/operations/audit-records/saved-views'],
   ['GET', '/api/approvals/v1/admin/operations/audit-records/exports/{exportId}'],
+  ['GET', '/api/approvals/v1/admin/operations/audit-records/exports/{exportId}/verifications'],
   ['POST', '/api/approvals/v1/admin/operations/audit-records/exports'],
+  ['POST', '/api/approvals/v1/admin/operations/audit-records/exports/{exportId}/verifications'],
   [
     'POST',
     '/api/approvals/v1/admin/operations/audit-records/exports/{exportId}/external-attestations',
@@ -69,6 +71,16 @@ export const APPROVAL_ADMIN_V2_OPERATIONS_ROUTE_MATRIX = [
   ['POST', '/api/approvals/v1/admin/operations/deployments/promotions/{promotionId}/approval'],
   ['POST', '/api/approvals/v1/admin/operations/deployments/promotions/{promotionId}/schedule'],
   ['POST', '/api/approvals/v1/admin/operations/deployments/promotions/{promotionId}/activation'],
+  ['GET', '/api/approvals/v1/admin/operations/deployments/promotions/{promotionId}/canary'],
+  ['GET', '/api/approvals/v1/admin/operations/deployments/promotions/{promotionId}/ledger'],
+  [
+    'POST',
+    '/api/approvals/v1/admin/operations/deployments/promotions/{promotionId}/canary/control',
+  ],
+  [
+    'POST',
+    '/api/approvals/v1/admin/operations/deployments/promotions/{promotionId}/canary/telemetry',
+  ],
   [
     'POST',
     '/api/approvals/v1/admin/operations/deployments/promotions/{promotionId}/activation-evidence',

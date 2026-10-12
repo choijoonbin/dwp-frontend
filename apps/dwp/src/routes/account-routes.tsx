@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { AuthGuard } from '@dwp-frontend/shared-utils/auth/auth-guard';
 import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
 import { isProviderIdentity } from '@dwp-frontend/shared-utils/auth/control-plane-access';
@@ -10,6 +10,7 @@ import {
   isSettingsSection,
   resolveProviderAccountRouteDecision,
 } from '../features/account/settings-navigation';
+import { replaceHomeWorkspaceApplication } from '../components/home-workspace-application-handoff';
 import { authenticationFallback, RouteFallback, routeFallback } from './route-support';
 
 const AccountLayout = lazy(() =>
@@ -18,8 +19,12 @@ const AccountLayout = lazy(() =>
 const ProfilePage = lazy(() => import('../pages/account/profile'));
 const SettingsHomePage = lazy(() => import('../pages/account/settings-home'));
 const SettingsPage = lazy(() => import('../pages/account/settings'));
-const HomeSettingsPage = lazy(() => import('../pages/account/home-settings'));
 const SecurityPage = lazy(() => import('../pages/account/security'));
+
+export function AccountHomeWorkspaceLegacyRedirect() {
+  useEffect(() => replaceHomeWorkspaceApplication(), []);
+  return <RouteFallback />;
+}
 
 function ProviderAccountRouteGuard({ children }: { children: React.ReactNode }) {
   const auth = useAuth();
@@ -87,14 +92,11 @@ export const accountRoutes: RouteObject[] = [
           </Suspense>
         ),
       },
-      { path: 'settings/home', element: <Navigate to="overview" replace /> },
       {
         path: 'settings/home/:homeSection',
         element: (
           <AccountSettingsSectionGuard sectionOverride="home">
-            <Suspense fallback={routeFallback}>
-              <HomeSettingsPage />
-            </Suspense>
+            <AccountHomeWorkspaceLegacyRedirect />
           </AccountSettingsSectionGuard>
         ),
       },

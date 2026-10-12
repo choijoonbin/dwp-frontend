@@ -64,9 +64,7 @@ describe('Home content state contract', () => {
   });
 
   it('renders a generic widget failure without requiring an internal widget identifier', () => {
-    const markup = renderToStaticMarkup(
-      createElement(HomeContentState, { kind: 'widget-error' })
-    );
+    const markup = renderToStaticMarkup(createElement(HomeContentState, { kind: 'widget-error' }));
     expect(markup).not.toContain('{{widget}}');
     expect(markup).not.toContain('fixture.widget');
   });

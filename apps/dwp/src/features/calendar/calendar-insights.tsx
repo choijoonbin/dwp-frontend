@@ -226,14 +226,8 @@ export function CalendarInsights() {
 
       {(sourceState === 'DENIED' || sourceState === 'UNAVAILABLE') && !data ? (
         <ErrorState
-          title={
-            sourceState === 'DENIED'
-              ? t('insights.authorityError')
-              : t('insights.loadError')
-          }
-          description={t(
-            sourceState === 'DENIED' ? 'readState.denied' : 'readState.unavailable'
-          )}
+          title={sourceState === 'DENIED' ? t('insights.authorityError') : t('insights.loadError')}
+          description={t(sourceState === 'DENIED' ? 'readState.denied' : 'readState.unavailable')}
           retryLabel={t('actions.retry')}
           onRetry={() => query.refetch()}
         />
@@ -373,7 +367,12 @@ export function CalendarInsights() {
           >
             <Box
               component="section"
-              sx={{ bgcolor: 'background.paper', border: 1, borderColor: 'divider', borderRadius: 1 }}
+              sx={{
+                bgcolor: 'background.paper',
+                border: 1,
+                borderColor: 'divider',
+                borderRadius: 1,
+              }}
             >
               <CalendarSectionHeader
                 icon={BarChart3}
@@ -504,7 +503,12 @@ export function CalendarInsights() {
 
             <Box
               component="section"
-              sx={{ bgcolor: 'background.paper', border: 1, borderColor: 'divider', borderRadius: 1 }}
+              sx={{
+                bgcolor: 'background.paper',
+                border: 1,
+                borderColor: 'divider',
+                borderRadius: 1,
+              }}
             >
               <CalendarSectionHeader
                 icon={ListChecks}

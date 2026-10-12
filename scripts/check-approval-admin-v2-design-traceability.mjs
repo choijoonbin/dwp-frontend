@@ -216,29 +216,30 @@ export async function validateApprovalAdminV2Traceability(
     (match) => match[1]
   );
   assert(
-    actionFunctions.length === 42 && new Set(actionFunctions).size === 42,
-    'owner action contract inventory must contain 42 unique API functions'
+    actionFunctions.length === 64 && new Set(actionFunctions).size === 64,
+    'owner action contract inventory must contain 64 unique API functions'
   );
   assert(
-    highRiskRoutes.length === 16 && new Set(highRiskRoutes).size === 16,
-    'owner high-risk route inventory must contain 16 unique operations'
+    highRiskRoutes.length === 23 && new Set(highRiskRoutes).size === 23,
+    'owner high-risk route inventory must contain 23 unique operations'
   );
   assert(
-    canonicalMutationWrappers.length === 10 && new Set(canonicalMutationWrappers).size === 10,
-    'canonical mutation wrapper inventory must contain 10 unique functions'
+    canonicalMutationWrappers.length === 23 && new Set(canonicalMutationWrappers).size === 23,
+    'canonical mutation wrapper inventory must contain 23 unique functions'
   );
   assert(
-    intentionallyUnboundFunctions.length === 9 && new Set(intentionallyUnboundFunctions).size === 9,
-    'intentionally unbound mutation inventory must contain 9 unique functions'
+    intentionallyUnboundFunctions.length === 22 &&
+      new Set(intentionallyUnboundFunctions).size === 22,
+    'intentionally unbound mutation inventory must contain 22 unique functions'
   );
-  assert(ownerActions.actionContractCount === 42, 'owner action contract count differs');
-  assert(ownerActions.highRiskRouteCount === 16, 'owner high-risk route count differs');
+  assert(ownerActions.actionContractCount === 64, 'owner action contract count differs');
+  assert(ownerActions.highRiskRouteCount === 23, 'owner high-risk route count differs');
   assert(
-    ownerActions.canonicalMutationWrapperCount === 10,
+    ownerActions.canonicalMutationWrapperCount === 23,
     'canonical mutation wrapper count differs'
   );
   assert(
-    ownerActions.intentionallyUnboundMutationApiFunctionCount === 9,
+    ownerActions.intentionallyUnboundMutationApiFunctionCount === 22,
     'intentionally unbound mutation API function count differs'
   );
   assert(

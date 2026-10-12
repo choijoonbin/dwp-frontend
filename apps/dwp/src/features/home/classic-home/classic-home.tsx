@@ -537,6 +537,7 @@ export function ClassicHome({
             <WorkspaceWidgetCanvas
               registry={HOME_WIDGET_REGISTRY}
               widgets={widgets}
+              governedWidgets={governedWidgets}
               editing={customizationEnabled}
               busy={customizationBusy}
               presentation={presentation}

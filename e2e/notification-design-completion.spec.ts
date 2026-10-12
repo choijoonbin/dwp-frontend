@@ -410,10 +410,7 @@ test('메신저 상세 패널의 답장은 원천 API 성공 후 알림을 완�
     page.getByTestId('notification-detail-scroll').getByText(messagingNotification.preview, {
       exact: true,
     })
-  ).toHaveCSS(
-    'white-space',
-    'pre-wrap'
-  );
+  ).toHaveCSS('white-space', 'pre-wrap');
   await page.getByRole('button', { name: messagingNotification.title }).click();
   const detail = page.getByRole('complementary', { name: '선택한 알림 상세' });
   await detail.getByRole('textbox', { name: '답장 내용' }).fill('점검 완료했습니다.');

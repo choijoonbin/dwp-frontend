@@ -1,13 +1,15 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import {
+  COMPANY_APP_GOVERNANCE_RESPONSIBILITIES,
   canEnterTenantControlPlane,
   hasProviderControlPlaneRole,
   resolvePrimaryAuthorityRole,
 } from '@dwp-frontend/shared-utils/auth/control-plane-access';
 
+import { COMPANY_ADMINISTRATION_ENTRY_PERMISSIONS } from '../../components/company-administration-entry-policy';
 import { canAccessAdminNavigationItem, canEnterCompanyAdministration } from './admin-access-policy';
-import type { AdminNavigationItem } from './admin-navigation';
+import { ADMIN_NAVIGATION, type AdminNavigationItem } from './admin-navigation';
 
 const item = (
   view: AdminNavigationItem['view'],
@@ -22,9 +24,7 @@ const item = (
   requiredPermissionCode: permission,
 });
 
-type TestResourceRole = NonNullable<
-  Parameters<typeof resolvePrimaryAuthorityRole>[1]
->[number];
+type TestResourceRole = NonNullable<Parameters<typeof resolvePrimaryAuthorityRole>[1]>[number];
 
 function identity(
   roles: string[],
@@ -50,13 +50,36 @@ function companyAccess(
 }
 
 describe('control plane access policy', () => {
+  it('keeps the shell entry projection aligned with administration navigation authority', () => {
+    const navigationPermissions = new Set(
+      ADMIN_NAVIGATION.flatMap((group) =>
+        group.items.flatMap((candidate) =>
+          candidate.requiredResourceKey && candidate.requiredPermissionCode
+            ? [`${candidate.requiredResourceKey}:${candidate.requiredPermissionCode}`]
+            : []
+        )
+      )
+    );
+    const entryPermissions = new Set(
+      COMPANY_ADMINISTRATION_ENTRY_PERMISSIONS.map(
+        ([resourceKey, permissionCode]) => `${resourceKey}:${permissionCode}`
+      )
+    );
+    const navigationResponsibilities = new Set(
+      ADMIN_NAVIGATION.flatMap((group) =>
+        group.items.flatMap((candidate) => candidate.requiredResponsibilityCodes ?? [])
+      )
+    );
+
+    expect(entryPermissions).toEqual(navigationPermissions);
+    expect(new Set(COMPANY_APP_GOVERNANCE_RESPONSIBILITIES)).toEqual(navigationResponsibilities);
+  });
+
   it('requires exact shell and leaf permissions for an ordinary tenant identity', () => {
     const customGroupRole = ['CUSTOM_IDENTITY_REVIEWER'];
 
     expect(
-      canEnterCompanyAdministration(
-        companyAccess(customGroupRole, ['APP.ADMINISTRATION:VIEW'])
-      )
+      canEnterCompanyAdministration(companyAccess(customGroupRole, ['APP.ADMINISTRATION:VIEW']))
     ).toBe(false);
     expect(
       canEnterCompanyAdministration(
@@ -65,10 +88,7 @@ describe('control plane access policy', () => {
     ).toBe(false);
     expect(
       canEnterCompanyAdministration(
-        companyAccess(customGroupRole, [
-          'APP.ADMINISTRATION:VIEW',
-          'ADMIN.ACCESS_GOVERNANCE:VIEW',
-        ])
+        companyAccess(customGroupRole, ['APP.ADMINISTRATION:VIEW', 'ADMIN.ACCESS_GOVERNANCE:VIEW'])
       )
     ).toBe(true);
     expect(canEnterCompanyAdministration(companyAccess(['TENANT_ADMIN'], []))).toBe(false);
@@ -77,15 +97,19 @@ describe('control plane access policy', () => {
   it('never opens company administration for an app configuration responsibility alone', () => {
     expect(
       canEnterCompanyAdministration(
-        companyAccess(['WORKSPACE_MEMBER'], [], [
-          {
-            responsibilityCode: 'APP_CONFIG_ADMIN',
-            resourceType: 'APP',
-            resourceKey: 'APP.APPROVALS',
-            resourceSetId: 'set-1',
-            resourceSetKey: 'APP_APPROVALS',
-          },
-        ])
+        companyAccess(
+          ['WORKSPACE_MEMBER'],
+          [],
+          [
+            {
+              responsibilityCode: 'APP_CONFIG_ADMIN',
+              resourceType: 'APP',
+              resourceKey: 'APP.APPROVALS',
+              resourceSetId: 'set-1',
+              resourceSetKey: 'APP_APPROVALS',
+            },
+          ]
+        )
       )
     ).toBe(false);
   });
@@ -140,9 +164,9 @@ describe('control plane access policy', () => {
   });
 
   it('never admits a provider operator to tenant administration', () => {
-    expect(
-      canEnterTenantControlPlane(identity(['PROVIDER_SUPPORT'], [], 'PROVIDER'), true)
-    ).toBe(false);
+    expect(canEnterTenantControlPlane(identity(['PROVIDER_SUPPORT'], [], 'PROVIDER'), true)).toBe(
+      false
+    );
     expect(
       canEnterCompanyAdministration(
         companyAccess(
@@ -196,9 +220,7 @@ describe('control plane access policy', () => {
 
     for (const role of productRoles) {
       expect(
-        canEnterCompanyAdministration(
-          companyAccess([role], ['APP.ADMINISTRATION:VIEW'])
-        )
+        canEnterCompanyAdministration(companyAccess([role], ['APP.ADMINISTRATION:VIEW']))
       ).toBe(false);
       expect(
         canAccessAdminNavigationItem(item('branding', 'ADMIN.PRODUCT_SPECIALIST'), {

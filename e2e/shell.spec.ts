@@ -12,39 +12,15 @@ import { expectDialogViewportInset } from './support/ui-contracts';
 import { readHorizontalWorkspaceSurfaceGaps } from './support/workspace-geometry';
 import { mockPendingBootstrapSignIn } from './support/sign-in-session';
 import {
+  SHELL_ACTIVITY_AUDIT_RECORD_ID,
+  createShellPersonalPreference,
   mockShellHomeReadModels,
   mockShellWorkspaceReadModels,
+  routeWorkOnlyShellWorkspaceApp,
 } from './support/shell-spec-foundation';
 
 test.beforeEach(async ({ page }) => {
-  let personalPreference = {
-    schemaVersion: 2 as const,
-    customized: false,
-    preferences: {
-      appearance: { mode: 'system', density: 'standard' },
-      accessibility: {
-        highContrast: false,
-        reduceMotion: false,
-        underlineLinks: false,
-        reduceTransparency: false,
-      },
-      regional: {
-        timeZone: 'Asia/Seoul',
-        dateFormat: 'LOCALE',
-        timeFormat: '24_HOUR',
-        firstDayOfWeek: 'MONDAY',
-        numberFormat: 'LOCALE',
-      },
-    },
-    managedPolicy: {
-      scope: 'TENANT',
-      source: 'TENANT_EXPERIENCE_POLICY',
-      owner: 'TENANT_ADMINISTRATOR',
-      managedPaths: [] as string[],
-    },
-    version: 0,
-    updatedAt: null as string | null,
-  };
+  let personalPreference = createShellPersonalPreference();
   let homePreference = {
     schemaVersion: 4,
     surfaceKey: 'workspace-home',
@@ -98,6 +74,8 @@ test.beforeEach(async ({ page }) => {
         focus: ['quarter', 'compact', 'medium', 'large', 'full'],
         schedule: ['fifth', 'quarter', 'compact', 'medium'],
         activity: ['fifth', 'quarter', 'compact', 'medium'],
+        'focus-balance': ['medium'],
+        'meeting-load': ['medium'],
       };
       const invalidWidget = body.layout.widgets.find(
         (widget) => !allowedSizes[widget.widgetKey]?.includes(widget.size)
@@ -612,7 +590,7 @@ test('authenticated users enter a personal home before the business shell', asyn
     await expect(fullscreenControl).toHaveAttribute('aria-pressed', 'false');
     await expect(page.getByText('Platform administrator', { exact: true })).toBeVisible();
   }
-  await expect(page.getByRole('heading', { name: 'Welcome back, Admin', level: 1 })).toBeVisible();
+  await expect(page.getByRole('region', { name: 'Organization portal' })).toBeVisible();
   await expect(page.getByTestId('personal-home-shell')).toBeVisible();
   await expect(page.getByTestId('desktop-sidebar')).toHaveCount(0);
   await expect(page.getByTestId('mobile-sidebar')).toHaveCount(0);
@@ -639,9 +617,8 @@ test('authenticated users enter a personal home before the business shell', asyn
   });
   await expect(page.getByRole('dialog', { name: 'Search DWP' })).toBeVisible();
   await page.getByRole('button', { name: 'Close search' }).click();
-
   if (testInfo.project.name === 'mobile') {
-    await page.getByRole('button', { name: 'Open priority in Work' }).click();
+    await page.getByRole('link', { name: /Approve software access request/u }).click();
   } else {
     await page.getByRole('button', { name: 'Open Work' }).click();
   }
@@ -677,13 +654,13 @@ test('authenticated users enter a personal home before the business shell', asyn
     .toBe('preserved');
   await expect(page.getByTestId('personal-home-shell')).toBeVisible();
   await expect(page.getByTestId('desktop-sidebar')).toHaveCount(0);
-
   const accountButton = page.getByRole('button', { name: 'Account' });
   await accountButton.click();
   await expectDialogViewportInset(page, 'Account and session');
   await expect(page.getByText('admin@dwp.local', { exact: true })).toBeVisible();
   await expect(page.getByText('Workspace · default', { exact: true })).toBeVisible();
   const accountSettingsItem = page.getByRole('menuitem', { name: 'Account settings' });
+  const sessionMonitorItem = page.getByRole('menuitem', { name: 'Session monitor' });
   const administrationItem = page.getByRole('menuitem', { name: 'Administration console' });
   await expect(accountSettingsItem).toBeVisible();
   await expect(accountSettingsItem).toBeFocused();
@@ -691,9 +668,10 @@ test('authenticated users enter a personal home before the business shell', asyn
   await expect(administrationItem).toBeVisible();
   await expect(page.getByText('Users, policy, and system controls', { exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Log out' })).toBeVisible();
-  await expect(page.locator('[role="menuitem"]')).toHaveCount(2);
+  await expect(page.locator('[role="menuitem"]')).toHaveCount(3);
   await expectNoAutomaticAccessibilityViolations(page);
-
+  await page.keyboard.press('ArrowDown');
+  await expect(sessionMonitorItem).toBeFocused();
   await page.keyboard.press('ArrowDown');
   await expect(administrationItem).toBeFocused();
   await page.keyboard.press('Escape');
@@ -701,26 +679,18 @@ test('authenticated users enter a personal home before the business shell', asyn
   await expect(accountButton).toBeFocused();
   await accountButton.press('Enter');
   await expect(accountSettingsItem).toBeFocused();
-
   await accountSettingsItem.click();
-  await expect(page).toHaveURL(/\/account\/profile/);
+  await expect(page).toHaveURL(/\/account\/settings$/);
   await expect(page.locator('[role="menuitem"]')).toHaveCount(0);
-  await expect(page.getByRole('heading', { name: 'Profile' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Personal settings' })).toBeVisible();
   await expect(page.getByTestId('account-shell')).toBeVisible();
-
   const settingsNavigation =
     testInfo.project.name === 'mobile'
       ? page.getByTestId('account-mobile-sidebar')
       : page.getByTestId('account-sidebar');
-
   if (testInfo.project.name === 'mobile') {
     await page.getByRole('button', { name: 'Open settings navigation' }).click();
   }
-
-  await expect(settingsNavigation.getByRole('link', { name: 'Profile' })).toHaveAttribute(
-    'aria-current',
-    'page'
-  );
   await settingsNavigation.getByRole('link', { name: 'Appearance' }).click();
   await expect(page).toHaveURL(/\/account\/settings\/appearance/);
   await expect(page.getByRole('group', { name: 'Color mode' })).toBeVisible();
@@ -807,17 +777,17 @@ test('authenticated users enter a personal home before the business shell', asyn
     await page.getByRole('button', { name: '설정 탐색 열기' }).click();
   }
   await settingsNavigation.getByRole('link', { name: '워크스페이스로 돌아가기' }).click();
-  await expect(
-    page.getByRole('heading', { name: 'Admin님, 다시 오신 것을 환영합니다' })
-  ).toBeVisible();
+  await expect(page.getByRole('region', { name: '조직 포털' })).toBeVisible();
   if (testInfo.project.name === 'mobile') {
-    await page.getByRole('button', { name: '업무에서 우선 항목 열기', exact: true }).click();
+    await page.getByRole('link', { name: /Approve software access request/u }).click();
   } else {
     await page.getByRole('button', { name: '업무 열기', exact: true }).click();
   }
-  await expect(
-    page.getByRole('heading', { name: '통합업무함', level: 1, exact: true })
-  ).toBeVisible();
+  const localizedWorkHeading =
+    testInfo.project.name === 'mobile'
+      ? { name: 'Approve software access request', level: 1, exact: true }
+      : { name: '통합업무함', level: 1, exact: true };
+  await expect(page.getByRole('heading', localizedWorkHeading)).toBeVisible();
   await page.goto('/admin/identity/access');
   await expect(page.getByRole('heading', { name: '사용자 접근 권한', level: 1 })).toBeVisible();
 
@@ -949,11 +919,12 @@ test('home falls back to the tenant name when branding has no logo', async ({ pa
 test('workspace widget surfaces use the governed responsive visual gap', async ({
   page,
 }, testInfo) => {
-  if (testInfo.project.name !== 'mobile') {
-    await page.setViewportSize({ width: 1920, height: 1080 });
-  }
+  test.skip(testInfo.project.name === 'mobile', 'The compact mobile home omits widget editing.');
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.setViewportSize({ width: 1920, height: 1080 });
   await mockAuthenticatedAdminSession(page);
   await page.goto('/');
+  await page.getByRole('button', { name: 'Edit home', exact: true }).click();
 
   const canvas = page.locator('[data-workspace-presentation]');
   const widgets = canvas.locator('[data-workspace-widget]');
@@ -1004,7 +975,10 @@ test('workspace widget surfaces use the governed responsive visual gap', async (
     const horizontalSurfaceGaps = await readHorizontalWorkspaceSurfaceGaps(canvas);
     expect(horizontalSurfaceGaps.length).toBeGreaterThan(0);
     for (const gap of horizontalSurfaceGaps) {
-      expect(gap.actual, `${gap.leftKey} to ${gap.rightKey}`).toBeCloseTo(expectedGap, 0);
+      expect(
+        Math.abs(gap.actual - gap.expected),
+        `${gap.leftKey} to ${gap.rightKey} subpixel delta`
+      ).toBeLessThanOrEqual(1);
       expect(gap.expected, `${gap.leftKey}/${gap.rightKey} spacing`).toBeCloseTo(expectedGap, 0);
     }
   }
@@ -1080,7 +1054,11 @@ test('compact navigation reflows the desktop workspace canvas', async ({ page },
   await page.getByRole('button', { name: 'Collapse navigation' }).click();
   await expect(page.getByTestId('work-sidebar')).toHaveCSS('width', '72px');
   await expect(page.locator('[data-dwp-navigation-state="compact"]')).toBeVisible();
-  await expect.poll(async () => (await readGeometry()).canvas?.width).toBe(1848);
+  await expect.poll(readGeometry).toEqual({
+    header: { left: 72, right: 1920, width: 1848 },
+    main: { left: 72, right: 1920, width: 1848 },
+    canvas: { left: 72, right: 1920, width: 1848 },
+  });
 
   const compact = await readGeometry();
   expect(compact.header).toEqual({ left: 72, right: 1920, width: 1848 });
@@ -1428,12 +1406,12 @@ test('cross-group app drag commits the blank slot shown in the preview', async (
   await page.goto('/');
   await page.getByRole('button', { name: 'Edit home', exact: true }).click();
 
-  const connectApps = page.getByRole('list', { name: 'Connect apps' });
+  const destinationApps = page.getByRole('list', { name: 'Start work apps' });
   const serviceButton = page.getByRole('button', { name: 'Move Services', exact: true });
-  const initialConnectItems = await connectApps
+  const initialDestinationItems = await destinationApps
     .locator('[data-launchpad-item]')
     .evaluateAll((items) => items.map((item) => item.getAttribute('data-launchpad-item')));
-  const blankSlot = await connectApps.evaluate((list) => {
+  const blankSlot = await destinationApps.evaluate((list) => {
     const items = Array.from(list.querySelectorAll<HTMLElement>(':scope > [data-launchpad-item]'));
     const firstItem = items[0];
     if (!firstItem) return null;
@@ -1466,13 +1444,13 @@ test('cross-group app drag commits the blank slot shown in the preview', async (
   await page.mouse.down();
   try {
     await page.mouse.move(blankSlot?.x ?? 0, blankSlot?.y ?? 0, { steps: 18 });
-    const previewItems = [...initialConnectItems, 'ref-app-service'];
+    const previewItems = [...initialDestinationItems, 'ref-app-service'];
     await expect(
       page.locator('[data-launchpad-item="ref-app-service"][data-launchpad-drop-preview="true"]')
-    ).toHaveAttribute('data-launchpad-group-id', 'connect');
+    ).toHaveAttribute('data-launchpad-group-id', 'work');
     await expect
       .poll(() =>
-        connectApps
+        destinationApps
           .locator('[data-launchpad-item]')
           .evaluateAll((items) => items.map((item) => item.getAttribute('data-launchpad-item')))
       )
@@ -1483,11 +1461,11 @@ test('cross-group app drag commits the blank slot shown in the preview', async (
 
   await expect
     .poll(() =>
-      connectApps
+      destinationApps
         .locator('[data-launchpad-item]')
         .evaluateAll((items) => items.map((item) => item.getAttribute('data-launchpad-item')))
     )
-    .toEqual([...initialConnectItems, 'ref-app-service']);
+    .toEqual([...initialDestinationItems, 'ref-app-service']);
   await expect(page.getByRole('dialog', { name: 'Create folder' })).toHaveCount(0);
 });
 
@@ -1569,6 +1547,8 @@ test('personal home widgets persist user choices and restore governed defaults',
     'schedule',
     'daily-brief',
     'focus',
+    'meeting-load',
+    'focus-balance',
   ]);
   expect(savedLayout.widgets.find((widget) => widget.widgetKey === 'activity')?.size).toBe('fifth');
   await expect(page.getByRole('button', { name: 'Edit home', exact: true })).toBeVisible();
@@ -1715,13 +1695,7 @@ test('personal home launcher only exposes explicitly entitled apps when app perm
       }),
     })
   );
-  await page.route('**/api/platform/v1/workspace/apps', (route) =>
-    route.fulfill({
-      contentType: 'application/json',
-      body: JSON.stringify({ status: 'SUCCESS', message: 'OK', data: [] }),
-    })
-  );
-
+  await routeWorkOnlyShellWorkspaceApp(page);
   await page.goto('/');
   await expect(page.getByRole('button', { name: 'Open Work' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Open DWAI·ON Workspace' })).toHaveCount(0);
@@ -1730,14 +1704,13 @@ test('personal home launcher only exposes explicitly entitled apps when app perm
     page.getByRole('region', { name: 'Work tools' }).getByRole('button', { name: /^Open / })
   ).toHaveCount(1);
   await expectNoAutomaticAccessibilityViolations(page);
-
   await page.getByRole('button', { name: 'Account' }).click();
   await expect(page.getByRole('menuitem', { name: 'Administration console' })).toHaveCount(0);
   await page.keyboard.press('Escape');
-
   await page.goto('/apps');
   await expect(page.getByRole('heading', { name: 'Apps', exact: true })).toBeVisible();
-  await expect(page.getByText('No apps are available')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Work', level: 3 })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'DWAI·ON Workspace', level: 3 })).toHaveCount(0);
 
   await page.goto('/dwaion');
   await expect(page).toHaveURL(/\/403/);
@@ -1787,7 +1760,7 @@ test('reference work hub connects Home, Work, DWAI·ON, Activity, and Apps', asy
         await page.getByRole('button', { name: 'Open navigation' }).click();
       }
       await page.getByRole('link', { name: 'Back to personal home' }).click();
-      await expect(page.getByRole('heading', { name: 'Welcome back, Admin' })).toBeVisible();
+      await expect(page.getByRole('region', { name: 'Organization portal' })).toBeVisible();
     }
     await page
       .getByRole('button', { name: label === 'Apps' ? 'All apps' : `Open ${label}` })
@@ -1795,15 +1768,15 @@ test('reference work hub connects Home, Work, DWAI·ON, Activity, and Apps', asy
   };
 
   await page.goto('/');
-  await expect(page.getByRole('heading', { name: 'Welcome back, Admin' })).toBeVisible();
-  await page.getByRole('button', { name: 'Open priority in Work' }).click();
+  await expect(page.getByRole('region', { name: 'Organization portal' })).toBeVisible();
+  await page.getByRole('link', { name: /Approve software access request/u }).click();
   await expect(page).toHaveURL(/\/work\/queue\?item=WK-1042/);
-  await expect(
-    page.getByRole('heading', { name: 'Unified work queue', level: 1, exact: true })
-  ).toBeVisible();
   if (testInfo.project.name === 'mobile') {
     await expect(page.getByRole('list', { name: 'Unified work list' })).toHaveCount(0);
   } else {
+    await expect(
+      page.getByRole('heading', { name: 'Unified work inbox', level: 1, exact: true })
+    ).toBeVisible();
     await expect(page.getByRole('list', { name: 'Unified work list' })).toBeVisible();
     await expect(
       page.getByRole('button', { name: 'Open details for Approve software access request' })
@@ -1812,7 +1785,7 @@ test('reference work hub connects Home, Work, DWAI·ON, Activity, and Apps', asy
   await expect(
     page.getByRole('heading', {
       name: 'Approve software access request',
-      level: 2,
+      level: testInfo.project.name === 'mobile' ? 1 : 2,
       exact: true,
     })
   ).toBeVisible();
@@ -1848,6 +1821,9 @@ test('reference work hub connects Home, Work, DWAI·ON, Activity, and Apps', asy
   await expect(page.getByRole('heading', { name: 'Activity home', exact: true })).toBeVisible();
   await page.getByRole('link', { name: 'Open full timeline' }).click();
   await expect(page).toHaveURL(/\/activity\/timeline/);
+  if (testInfo.project.name === 'mobile') {
+    await page.getByRole('button', { name: 'Activity filters and saved views' }).click();
+  }
   await page.getByRole('button', { name: 'Agents' }).click();
   await expect(
     page.getByRole('list', { name: 'Workspace activity' }).getByRole('listitem')
@@ -1855,7 +1831,7 @@ test('reference work hub connects Home, Work, DWAI·ON, Activity, and Apps', asy
   await page.getByRole('button', { name: 'All activity' }).click();
   await page.getByRole('button', { name: /External sharing blocked/ }).click();
   await expect(page.getByRole('heading', { name: 'Audit reference', level: 3 })).toBeVisible();
-  await expect(page.getByText('AUD-WRK-903', { exact: true })).toBeVisible();
+  await expect(page.getByText(SHELL_ACTIVITY_AUDIT_RECORD_ID, { exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Close signal detail' }).click();
 
   await navigateTo('Apps');
@@ -1863,10 +1839,8 @@ test('reference work hub connects Home, Work, DWAI·ON, Activity, and Apps', asy
   await page.getByRole('textbox', { name: 'Search apps' }).fill('legacy');
   await expect(page.getByRole('region', { name: 'App filter' }).getByText('1 apps')).toBeVisible();
   await page.getByRole('button', { name: /^Legacy operations/ }).click();
-  await expect(page.getByRole('alert')).toContainText(
-    'Legacy operations can be used after an administrator connects SSO or a deep link.'
-  );
-  await expect(page.locator('.MuiAlert-root')).toHaveCSS('opacity', '1');
+  await expect(page).toHaveURL(/\/apps\?app=ref-app-legacy$/u);
+  await expect(page.getByRole('alert')).toHaveCount(0);
   await expectNoAutomaticAccessibilityViolations(page);
 });
 

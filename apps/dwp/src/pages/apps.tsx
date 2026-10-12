@@ -745,7 +745,7 @@ export default function AppsPage() {
               const governedEntry = findGovernedProductEntry(governedEntries, app.resourceKey);
               const healthColor =
                 app.health === 'healthy'
-                  ? 'success.main'
+                  ? 'success.dark'
                   : app.health === 'attention'
                     ? 'warning.main'
                     : app.health === 'configuration-required'
@@ -800,6 +800,9 @@ export default function AppsPage() {
                                 : 'warning'
                           }
                           variant="outlined"
+                          sx={
+                            app.accessState === 'AVAILABLE' ? { color: 'success.dark' } : undefined
+                          }
                         />
                       </Box>
                       <Typography variant="body2" color="text.secondary" sx={{ mt: 0.2 }}>

@@ -100,8 +100,8 @@ afterEach(() => {
 });
 
 describe('Approval administration V2 commands', () => {
-  it('matches the finalized APR-23/24 27-route operations matrix', () => {
-    expect(APPROVAL_ADMIN_V2_OPERATIONS_ROUTE_MATRIX).toHaveLength(27);
+  it('matches the finalized APR-23/24 operations matrix', () => {
+    expect(APPROVAL_ADMIN_V2_OPERATIONS_ROUTE_MATRIX).toHaveLength(33);
     expect(APPROVAL_ADMIN_V2_OPERATIONS_ROUTE_MATRIX).toContainEqual([
       'GET',
       '/api/approvals/v1/admin/operations/audit-records/events',

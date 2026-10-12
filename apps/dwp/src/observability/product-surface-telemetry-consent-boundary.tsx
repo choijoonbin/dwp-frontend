@@ -1,10 +1,11 @@
-import { useEffect, useState, type PropsWithChildren } from 'react';
+import { lazy, useEffect, useState, type PropsWithChildren } from 'react';
 
-import ProductSurfaceTelemetryProvider from './product-surface-telemetry-provider';
 import {
   PRODUCT_SURFACE_TELEMETRY_CONSENT_EVENT,
   readProductSurfaceTelemetryConsent,
 } from './product-surface-telemetry-context';
+
+const ProductSurfaceTelemetryProvider = lazy(() => import('./product-surface-telemetry-provider'));
 
 export function ProductSurfaceTelemetryConsentBoundary({
   children,
@@ -24,6 +25,8 @@ export function ProductSurfaceTelemetryConsentBoundary({
       window.removeEventListener('storage', refresh);
     };
   }, []);
+
+  if (!productionCollectionEnabled || !privacyConsentGranted) return children;
 
   return (
     <ProductSurfaceTelemetryProvider

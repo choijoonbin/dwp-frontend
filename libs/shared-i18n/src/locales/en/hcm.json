@@ -913,7 +913,8 @@
       "dataQuality": "Data quality",
       "openPositions": "Open positions",
       "latestSync": "Latest synchronization",
-      "noSync": "No run"
+      "noSync": "No run",
+      "generatedAt": "Updated {{value}}"
     }
   },
   "services": {
@@ -1263,6 +1264,40 @@
           "requiredLearning": "Incomplete required learning"
         }
       }
+    }
+  },
+  "system": {
+    "title": "HRIS system access",
+    "description": "Effective tenant, scope, menu, widget, and configuration evidence for this session.",
+    "loading": "Loading HRIS system evidence",
+    "governance": {
+      "open": "Open app governance"
+    },
+    "denied": "HRIS access is unavailable for this session. Reason: {{reason}}",
+    "configurationRequired": "No current authorized menu or widget projection is available. Configuration or publication is required.",
+    "partial": "Part of the HRIS projection is unavailable. Available sections remain read-only and current.",
+    "readOnly": "Read only",
+    "authority": {
+      "title": "Effective authority",
+      "boundary": "This projection controls presentation only. Every owner or configuration command is re-authorized by its owning API."
+    },
+    "menu": {
+      "title": "Current menu projection",
+      "empty": "No current authorized menu items."
+    },
+    "widget": {
+      "title": "Current widget projection",
+      "empty": "No current authorized widgets."
+    },
+    "owner": {
+      "reconciling": "Reconciling owner request",
+      "reconcile": "Reconcile result",
+      "resultUnknown": "The request result is unknown. Do not submit it again automatically; reconcile the original idempotency receipt first.",
+      "receiptConfirmed": "The owner request receipt has been reconciled with governance state."
+    },
+    "error": {
+      "title": "HRIS system evidence is unavailable",
+      "description": "Nothing was changed. Retry to request a fresh tenant-bound projection."
     }
   },
   "myProfile": {

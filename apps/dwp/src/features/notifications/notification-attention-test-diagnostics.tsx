@@ -550,11 +550,7 @@ export function NotificationTestDiagnosticsPanel({
           <Typography variant="caption" color="text.secondary">
             {t('attention.diagnostics.resultExpiry')}
           </Typography>
-          <Typography
-            variant="body2"
-            fontWeight="fontWeightBold"
-            sx={{ overflowWrap: 'anywhere' }}
-          >
+          <Typography variant="body2" fontWeight="fontWeightBold" sx={{ overflowWrap: 'anywhere' }}>
             {expiration}
           </Typography>
         </Box>

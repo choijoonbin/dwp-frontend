@@ -137,14 +137,14 @@ for (const viewport of [
       });
     });
 
-    await page.goto('/work/calendar');
+    await page.goto('/calendar/schedule');
     await page
       .getByTestId('dwaion-launcher')
       .getByRole('button', { name: 'DWAI·ON 열기', exact: true })
       .click();
     const panel = page.getByRole('dialog', { name: 'DWAI·ON 대화 및 지원 패널' });
     await expect(panel).toBeVisible();
-    await expect(panel.getByTestId('dwaion-page-context')).toContainText('/work/calendar');
+    await expect(panel.getByTestId('dwaion-page-context')).toContainText('/calendar/schedule');
     const composer = panel.getByRole('textbox', { name: 'DWAI·ON에게 질문하기' });
     await composer.fill('오늘 일정과 준비할 내용을 요약해 주세요');
     await panel.getByRole('button', { name: '질문 보내기' }).click();
@@ -154,9 +154,9 @@ for (const viewport of [
     expect(askRequests).toHaveLength(1);
     expect(askRequests[0]).toMatchObject({
       pageContext: {
-        route: '/work/calendar',
+        route: '/calendar/schedule',
         appKey: 'APP.CALENDAR',
-        surface: 'work-calendar',
+        surface: 'schedule',
       },
     });
 
@@ -201,9 +201,9 @@ for (const viewport of [
     expect(askRequests[1]).toMatchObject({
       query: '내일 회의 준비에 필요한 업무와 담당자를 알려줘',
       pageContext: {
-        route: '/work/calendar',
+        route: '/calendar/schedule',
         appKey: 'APP.CALENDAR',
-        surface: 'work-calendar',
+        surface: 'schedule',
       },
     });
     expect(i18nWarnings).toEqual([]);
@@ -231,7 +231,7 @@ test('global assistant keeps keyboard input available when voice recording is un
   });
   await mockQuestionLaunches(page);
 
-  await page.goto('/work/calendar');
+  await page.goto('/calendar/schedule');
   await page
     .getByTestId('dwaion-launcher')
     .getByRole('button', { name: 'DWAI·ON 열기', exact: true })
@@ -277,7 +277,7 @@ test('global assistant exposes a keyboard fallback after microphone permission i
     if (request.url().includes('/api/agent/v1/ask/stream')) askRequests += 1;
   });
 
-  await page.goto('/work/calendar');
+  await page.goto('/calendar/schedule');
   await page
     .getByTestId('dwaion-launcher')
     .getByRole('button', { name: 'DWAI·ON 열기', exact: true })

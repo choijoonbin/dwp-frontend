@@ -16,8 +16,12 @@ import {
 } from 'lucide-react';
 import { useAppearance } from '@dwp-frontend/design-system/appearance';
 import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
-import { getAuthSessions } from '@dwp-frontend/shared-utils';
+import { getAuthSessions } from '@dwp-frontend/shared-utils/api/auth-api';
 import { redirectToSignIn } from '@dwp-frontend/shared-utils/auth/auth-redirect';
+import {
+  isProviderSupportSessionActive,
+  useProviderSupportContext,
+} from '@dwp-frontend/shared-utils/auth/provider-support-context';
 import { usePermissions } from '@dwp-frontend/shared-utils/auth/use-permissions';
 import {
   hasProviderControlPlaneRole,
@@ -36,12 +40,8 @@ import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
 
 import { exitSessionWithTransition } from '../features/auth/session-exit-transition';
-import { ACCOUNT_SETTINGS_HOME_PATH } from '../features/account/settings-navigation';
-import {
-  isProviderSupportSessionActive,
-  useProviderSupportContext,
-} from '@dwp-frontend/shared-utils/auth/provider-support-context';
-import { canEnterCompanyAdministration } from '../features/admin/admin-access-policy';
+import { ACCOUNT_SETTINGS_HOME_PATH } from './account-menu-routes';
+import { canEnterCompanyAdministration } from './company-administration-entry-policy';
 
 const menuIconProps = { size: 19, strokeWidth: 1.8, 'aria-hidden': true } as const;
 

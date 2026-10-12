@@ -27,6 +27,7 @@ export function launchpadInteractionFrameSx(editing: boolean): SxProps<Theme> {
     isolation: 'isolate',
     width: editing ? 60 : 52,
     height: editing ? 60 : 52,
+    flexShrink: 0,
     boxSizing: 'border-box',
     display: 'grid',
     placeItems: 'center',

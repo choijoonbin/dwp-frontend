@@ -30,12 +30,13 @@ const APPROVAL_ADMIN_PERMISSIONS = [
   effect: 'ALLOW' as const,
 }));
 async function expectSnapshot(page: Page, name: string) {
-  await expect(page).toHaveScreenshot(name, {
+  await page.evaluate(() => window.scrollTo(0, 0));
+  const actual = await page.screenshot({
     animations: 'disabled',
     caret: 'hide',
-    fullPage: false,
-    maxDiffPixelRatio: 0.002,
+    scale: 'css',
   });
+  expect(actual).toMatchSnapshot(name, { maxDiffPixelRatio: 0.002 });
 }
 
 const horizontalOverflow = (locator: Locator) =>
@@ -508,6 +509,7 @@ test('320px 관리 Context Rail은 단일 Scope와 읽기 전용·재확인 상�
   page,
 }, testInfo) => {
   test.skip(testInfo.project.name !== 'mobile', '모바일 관리 Context Rail 전용 검증');
+  await page.clock.setFixedTime(new Date('2026-08-24T00:20:00Z'));
   await page.setViewportSize({ width: 320, height: 720 });
   await mockShellSession(page, ['WORKSPACE_MEMBER', 'APPROVAL_OPERATOR'], {
     locale: 'ko',
@@ -542,6 +544,8 @@ test('320px 관리 Context Rail은 단일 Scope와 읽기 전용·재확인 상�
   );
   await expect(contextRail.getByTestId('product-surface-revalidation-status')).toBeVisible();
   expect(await horizontalOverflow(contextRail)).toBeLessThanOrEqual(1);
+  await page.waitForLoadState('networkidle');
+  await expect(page.getByText(/마지막 수신/u)).toBeVisible();
   await expectSnapshot(page, 'approvals-governed-management-both-320.png');
   await page.emulateMedia({ forcedColors: 'active' });
   await page.getByRole('button', { name: '전자결재 메뉴 열기' }).click();
@@ -612,6 +616,7 @@ test('1024px 관리 Context Rail은 읽기 전용·재확인 상태를 텍스트
   page,
 }, testInfo) => {
   test.skip(testInfo.project.name !== 'chromium', '태블릿 관리 Context Rail 전용 검증');
+  await page.clock.setFixedTime(new Date('2026-08-24T00:20:00Z'));
   await page.setViewportSize({ width: 1024, height: 768 });
   await mockShellSession(page, ['WORKSPACE_MEMBER', 'APPROVAL_OPERATOR'], {
     locale: 'ko',
@@ -622,7 +627,6 @@ test('1024px 관리 Context Rail은 읽기 전용·재확인 상태를 텍스트
     management: true,
     managementReadOnly: true,
   });
-
   await page.goto('/approvals/admin/overview');
   await expect(page.getByRole('heading', { name: '결재 운영 개요', level: 1 })).toBeVisible();
   const header = page.getByTestId('approvals-header');
@@ -859,6 +863,7 @@ test('320px management-only read-only 관리 rail은 tenant·scope·상태를 �
   page,
 }, testInfo) => {
   test.skip(testInfo.project.name !== 'mobile', '모바일 관리 Context Rail 전용 검증');
+  await page.clock.setFixedTime(new Date('2026-08-24T00:20:00Z'));
   await page.setViewportSize({ width: 320, height: 720 });
   await mockShellSession(page, ['APPROVAL_OPERATOR'], {
     locale: 'ko',
@@ -869,7 +874,6 @@ test('320px management-only read-only 관리 rail은 tenant·scope·상태를 �
     management: true,
     managementReadOnly: true,
   });
-
   await page.goto('/approvals/admin/overview');
   await expect(page.getByRole('heading', { name: '결재 운영 개요', level: 1 })).toBeVisible();
   const contextRail = page.getByTestId('shell-mobile-context-rail');
@@ -932,7 +936,6 @@ test('관리 딥링크의 query/hash와 back/forward 및 새 탭 URL을 보존�
     permissions: APPROVAL_ADMIN_PERMISSIONS,
   });
   await mockApprovalProductSurfaceAuthority(page, { work: false, management: true });
-
   await page.goto('/approvals/admin/forms?view=published#catalog');
   const canonicalManagementUrl = (url: URL, pathname: string) =>
     url.pathname === pathname &&
@@ -941,13 +944,12 @@ test('관리 딥링크의 query/hash와 back/forward 및 새 탭 URL을 보존�
     url.hash === '#catalog';
   await expect(page).toHaveURL((url) => canonicalManagementUrl(url, '/approvals/admin/forms'));
   const navigation = await approvalNavigation(page);
-  await navigation.getByRole('link', { name: '결재 정책', exact: true }).click();
+  await navigation.getByRole('link', { name: '정책 및 알림', exact: true }).click();
   await expect(page).toHaveURL((url) => canonicalManagementUrl(url, '/approvals/admin/policies'));
   await page.goBack();
   await expect(page).toHaveURL((url) => canonicalManagementUrl(url, '/approvals/admin/forms'));
   await page.goForward();
   await expect(page).toHaveURL((url) => canonicalManagementUrl(url, '/approvals/admin/policies'));
-
   const second = await context.newPage();
   await mockShellSession(second, ['APPROVAL_DESIGNER'], {
     locale: 'ko',
@@ -970,9 +972,7 @@ test('제품 root는 명시한 non-default Scope와 query/hash를 canonical 관�
     management: true,
     managementScopes: 'two-no-default',
   });
-
   await page.goto('/approvals?scope=S2&view=exceptions#queue');
-
   await expect(page).toHaveURL(
     (url) =>
       url.pathname === '/approvals/admin/overview' &&
@@ -1108,7 +1108,6 @@ test('browser back의 지연된 A→B Scope 전환은 stale A mutation을 dispat
     management: true,
     managementScopes: 'two-no-default',
   });
-
   const draftWorkflow = { ...APPROVAL_WORKFLOW_FIXTURE, lifecycleState: 'DRAFT' as const };
   await page.route(
     (url) => url.pathname === '/api/approvals/v1/admin/workflows',
@@ -1123,7 +1122,6 @@ test('browser back의 지연된 A→B Scope 전환은 stale A mutation을 dispat
         workflow: draftWorkflow,
       })
   );
-
   await page.goto('/approvals/admin/workflows?scope=S2');
   await expect(page.getByRole('heading', { name: '프로세스 설계', level: 1 })).toBeVisible();
   const scopeSelector = page
@@ -1150,14 +1148,12 @@ test('browser back의 지연된 A→B Scope 전환은 stale A mutation을 dispat
       ? scopeSelector
       : selectedMobileScopeTrigger;
   await expect(selectedScopeControl).toBeVisible();
-
   const actionGate = deferred();
   const actionStarted = deferred();
   const actionSettled = deferred();
   const scopeBPageGate = deferred();
   const scopeBPageStarted = deferred();
   let createDispatchCount = 0;
-
   await page.route('**/api/auth/product-surface-access/evaluate', async (route) => {
     const body = route.request().postDataJSON() as {
       routeContractKey?: string;
@@ -1199,13 +1195,18 @@ test('browser back의 지연된 A→B Scope 전환은 stale A mutation을 dispat
   );
 
   try {
+    const compact = (page.viewportSize()?.width ?? 1280) < 1200;
+    if (compact) await page.getByRole('button', { name: '결재 프로세스', exact: true }).click();
     await page.getByRole('button', { name: '새 프로세스 초안' }).click();
+    if (compact) await page.getByRole('button', { name: '프로세스·단계 상세' }).click();
     await page.getByRole('textbox', { name: '프로세스 키' }).fill('STALE_SCOPE_CREATE');
     await page.getByRole('textbox', { name: '한국어 이름' }).fill('이전 범위 초안');
     await page.getByRole('textbox', { name: '영어 이름' }).fill('Stale scope draft');
+    await page.getByRole('textbox', { name: '한국어 설명' }).fill('이전 관리 범위의 초안 설명');
+    await page.getByRole('textbox', { name: '영어 설명' }).fill('Previous scope draft');
+    await page.getByRole('textbox', { name: '단계 이름' }).fill('검토');
     await page.getByRole('button', { name: '저장', exact: true }).click();
     await actionStarted.promise;
-
     await page.goBack();
     await expect(page).toHaveURL((url) => url.searchParams.get('scope') === 'S2');
     await scopeBPageStarted.promise;
@@ -1215,7 +1216,6 @@ test('browser back의 지연된 A→B Scope 전환은 stale A mutation을 dispat
       'true'
     );
     await expect(page.getByRole('heading', { name: '프로세스 설계', level: 1 })).toHaveCount(0);
-
     actionGate.resolve();
     await actionSettled.promise;
     expect(createDispatchCount).toBe(0);
@@ -1277,7 +1277,7 @@ test('surface UI flag off는 canonical URL과 기존 호환 shell을 유지한�
   await page.goto('/approvals/admin/forms?view=published#catalog');
 
   await expect(page).toHaveURL(/\/approvals\/admin\/forms\?view=published#catalog$/u);
-  await expect(page.getByRole('heading', { name: '양식 카탈로그', level: 1 })).toBeVisible();
+  await expect(page.getByRole('heading', { name: '양식 및 템플릿', level: 1 })).toBeVisible();
   await expect(page.getByTestId('product-surface-context-bar')).toHaveCount(0);
   if (mobile) {
     const rail = page.getByTestId('shell-mobile-context-rail');

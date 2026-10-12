@@ -159,7 +159,7 @@ function DockSkeleton({ layout }: { layout: BrowserHomeLoadingLayout }) {
         width: 1,
         maxWidth: 'none',
         mx: 'auto',
-        minHeight: layout.dockStacked ? (largeText ? 540 : { xs: 272, sm: 480, lg: 272 }) : 138,
+        minHeight: layout.dockStacked ? (largeText ? 540 : { xs: 272, sm: 480, lg: 381 }) : 138,
         p: { xs: 1.5, md: 2 },
         border: 1,
         borderColor: 'divider',
@@ -171,6 +171,9 @@ function DockSkeleton({ layout }: { layout: BrowserHomeLoadingLayout }) {
         gridTemplateRows: 'auto minmax(0, 1fr)',
         alignContent: 'stretch',
         gap: 1.5,
+        '@media (min-width:1800px)': {
+          minHeight: layout.dockStacked ? (largeText ? 540 : 291) : 138,
+        },
       }}
     >
       <Box sx={{ ...skeletonLine, width: 42, height: 16 }} />

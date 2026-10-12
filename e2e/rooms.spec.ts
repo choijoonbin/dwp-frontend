@@ -1,5 +1,7 @@
 import { fulfillWorkplaceResourcePhotoFixture } from './support/workplace-resource-photo-fixture';
 import { isolateWorkplaceDevelopmentUpdates } from './support/workplace-runtime-isolation';
+import { createWorkplaceBookingPolicyFixture } from './support/workplace-booking-policy-fixture';
+import { chooseWorkplaceGovernanceArea } from './support/workplace-governance-controls';
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 import {
@@ -309,6 +311,12 @@ const workplaceCalendarHome = {
   attention: [],
   generatedAt: '2026-08-19T00:00:00Z',
 } satisfies CalendarHome;
+const emptyWorkplaceCalendarHome = {
+  ...workplaceCalendarHome,
+  nextEvent: null,
+  today: [],
+  attention: [],
+};
 const workplaceExploreFixture = {
   sites: [site],
   floors: [floor],
@@ -318,6 +326,40 @@ const workplaceExploreFixture = {
   policy,
   generatedAt: '2026-08-19T00:00:00Z',
 };
+const mappedCalendarRoom = {
+  ...resource,
+  resourceId: '30000000-0000-0000-0000-000000000025',
+  calendarResourceId: CALENDAR_RESOURCES_FIXTURE[0].resourceId,
+  code: CALENDAR_RESOURCES_FIXTURE[0].code,
+  name: CALENDAR_RESOURCES_FIXTURE[0].name,
+  nameKo: CALENDAR_RESOURCES_FIXTURE[0].name,
+  nameEn: CALENDAR_RESOURCES_FIXTURE[0].name,
+  type: 'ROOM',
+  capacity: CALENDAR_RESOURCES_FIXTURE[0].capacity,
+  version: CALENDAR_RESOURCES_FIXTURE[0].version,
+};
+function workplaceFindPath({
+  start = '09:30',
+  duration = 60,
+  tz = 'Asia/Seoul',
+  types = 'ALL',
+  suffix = '',
+}: {
+  start?: string;
+  duration?: number;
+  tz?: string;
+  types?: 'ALL' | 'DESK' | 'ROOM';
+  suffix?: string;
+} = {}) {
+  return `/workplace/find?v=1&date=2026-08-19&start=${encodeURIComponent(start)}&duration=${duration}&tz=${encodeURIComponent(tz)}&sites=${site.siteId}&floors=${floor.floorId}&types=${types}${suffix}`;
+}
+function workplaceReservationsPath(authority: 'WORKPLACE' | 'CALENDAR', reservationId?: string) {
+  const type = authority === 'WORKPLACE' ? 'WORKSPACE' : 'MEETING';
+  const selection = reservationId
+    ? `&reservation=${encodeURIComponent(reservationId)}&reservationAuthority=${authority}`
+    : '';
+  return `/workplace/reservations?v=1&period=UPCOMING&types=${type}&status=ACTIVE&authority=${authority}${selection}`;
+}
 async function mockWorkplace(page: Page) {
   await page.route(
     '**/api/platform/v1/workplace/experience/collaboration/resources/*/photo**',
@@ -327,6 +369,7 @@ async function mockWorkplace(page: Page) {
   let draftVersion = draftRevision.version;
   let draftBackgroundAssetPath: string | null = null;
   let draftBackgroundAssetKey: string | null = null;
+  const fulfillPolicy = createWorkplaceBookingPolicyFixture(policy);
   await page.route('**/api/platform/v1/workplace/**', async (route) => {
     const request = route.request();
     const path = new URL(request.url()).pathname;
@@ -478,12 +521,12 @@ async function mockWorkplace(page: Page) {
     if (path.endsWith('/admin/workplace/governance/delegated-admin-scopes')) {
       return fulfillSuccess(route, []);
     }
-    if (path.endsWith('/admin/workplace/policy')) {
-      const value =
-        request.method() === 'PUT'
-          ? { ...request.postDataJSON(), version: policy.version + 1 }
-          : policy;
-      return fulfillSuccess(route, value);
+    if (
+      path.endsWith('/booking-policy/review') ||
+      path.endsWith('/booking-policy/changes') ||
+      path.endsWith('/admin/workplace/policy')
+    ) {
+      return fulfillPolicy(route);
     }
     return route.fallback();
   });
@@ -526,12 +569,10 @@ test('workplace home prioritizes the next action and reflows with accessible vis
   await expect(page.getByText('Preparing your workplace overview', { exact: true })).toHaveCount(0);
   await expect(page.getByTestId('workplace-day-brief')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Check in now' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: "Today's flow" })).toBeVisible();
-  await expect(
-    page.getByRole('heading', { name: 'Spaces open for the next 60 minutes' })
-  ).toBeVisible();
+  await expect(page.getByRole('heading', { name: "Today's schedule" })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Spaces for the next 60 minutes' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Your workweek rhythm' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Worth your attention' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Items needing attention' })).toBeVisible();
   await expect(page.getByTestId('workplace-week-day')).toHaveCount(5);
   await expect(page.getByTestId('workplace-week-workload')).toHaveCount(5);
   const desktopWeekLayout = await page.getByTestId('workplace-week-day').evaluateAll((elements) =>
@@ -674,10 +715,17 @@ test('workplace home distinguishes an unconfigured or inaccessible site from an 
     })
   );
   await page.route('**/api/platform/v1/workplace/bookings**', (route) => fulfillSuccess(route, []));
+  await page.route('**/api/platform/v1/calendar/home**', (route) =>
+    fulfillSuccess(route, emptyWorkplaceCalendarHome)
+  );
+  await page.route('**/api/platform/v1/rooms/bookings**', (route) => fulfillSuccess(route, []));
   await page.goto('/workplace');
   await expect(page.getByText('No workplace site is available to you')).toBeVisible();
-  await expect(page.getByRole('link', { name: 'Configure sites' })).toHaveCount(1);
-  await expect(page.getByText('No site selected')).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Access control' })).toHaveAttribute(
+    'href',
+    '/workplace/admin/governance?area=access'
+  );
+  await expect(page.getByRole('heading', { name: 'No site selected', level: 1 })).toBeVisible();
 });
 test('workplace home distinguishes missing floors from an empty resource catalog', async ({
   page,
@@ -695,6 +743,10 @@ test('workplace home distinguishes missing floors from an empty resource catalog
     })
   );
   await page.route('**/api/platform/v1/workplace/bookings**', (route) => fulfillSuccess(route, []));
+  await page.route('**/api/platform/v1/calendar/home**', (route) =>
+    fulfillSuccess(route, emptyWorkplaceCalendarHome)
+  );
+  await page.route('**/api/platform/v1/rooms/bookings**', (route) => fulfillSuccess(route, []));
   await page.goto('/workplace');
   await expect(page.getByText('No active floor is available at this site').first()).toBeVisible();
   await expect(page.getByRole('link', { name: 'Configure floors' })).toHaveCount(1);
@@ -787,7 +839,7 @@ test('workplace home does not query Calendar without Calendar view permission', 
   });
   await page.route('**/api/auth/permissions', (route) => fulfillSuccess(route, permissions));
   await page.goto('/workplace');
-  await expect(page.getByRole('heading', { name: "Today's flow" })).toBeVisible();
+  await expect(page.getByRole('heading', { name: "Today's schedule" })).toBeVisible();
   expect(calendarHomeCalls).toBe(0);
 });
 test('workplace home waits for every required source before announcing a live or empty state', async ({
@@ -802,12 +854,25 @@ test('workplace home waits for every required source before announcing a live or
     return fulfillSuccess(route, workplaceCalendarHome);
   });
   await page.goto('/workplace');
-  await expect(page.getByText('Preparing your workplace overview').first()).toBeVisible();
+  await expect(
+    page
+      .getByTestId('workplace-home-scope')
+      .getByRole('status')
+      .filter({ hasText: 'Preparing your workplace overview' })
+  ).toBeVisible();
   await expect(page.getByText('No workplace events are scheduled today')).toHaveCount(0);
-  await expect(page.getByText('Workplace information')).toHaveCount(0);
+  await expect(
+    page.getByText('Schedule information').locator('..').locator('..').getByText('Unverified')
+  ).toBeVisible();
   releaseCalendar?.();
-  await expect(page.getByRole('heading', { name: "Today's flow" })).toBeVisible();
-  await expect(page.getByText('Workplace information')).toBeVisible();
+  await expect(page.getByRole('heading', { name: "Today's schedule" })).toBeVisible();
+  await expect(
+    page
+      .getByText('Schedule information')
+      .locator('..')
+      .locator('..')
+      .getByText('Workplace information')
+  ).toBeVisible();
 });
 test('workplace home does not confirm a next action or an empty week from partial sources', async ({
   page,
@@ -854,7 +919,9 @@ test('workplace home discards cached availability after an authoritative access 
   await expectWorkplaceHomeAvailability(page, 2, 2);
   denied = true;
   await page.getByRole('button', { name: 'Try again' }).first().click();
-  await expect(page.getByText('Availability could not be verified').first()).toBeVisible();
+  await expect(
+    page.getByText('Some workplace information is unavailable. Available sections remain usable.')
+  ).toBeVisible();
   await expect(page.getByTestId('workplace-physical-open-count')).toHaveCount(0);
   await expect(page.getByTestId('workplace-initial-checks-count')).toHaveCount(0);
   await expect(page.getByRole('link', { name: /Desk spaces physically open/u })).toHaveCount(0);
@@ -987,9 +1054,7 @@ test('workplace home replaces an unverified check-in notice after authoritative 
     .getByRole('button', { name: 'Try again' })
     .click();
   await recoveryStarted;
-  const stableFocus = page
-    .getByTestId('workplace-day-brief')
-    .getByRole('link', { name: 'Find a space' });
+  const stableFocus = page.getByRole('button', { name: 'Change location and time' });
   await stableFocus.focus();
   await expect(stableFocus).toBeFocused();
   releaseRecovery?.();
@@ -1063,7 +1128,11 @@ test('workplace home separates open spaces from booking eligibility for read-onl
   await expect(
     page.getByRole('heading', { name: 'Browse the floor before choosing your next space' })
   ).toBeVisible();
-  await expect(page.getByText('2 spaces are physically open.')).toBeVisible();
+  await expect(
+    page.getByText(
+      '2 spaces are open by reservation state. Your account or a booking policy still requires review before reservation.'
+    )
+  ).toBeVisible();
   await expectWorkplaceHomeAvailability(page, 2, 0);
   await expect(page.getByRole('link', { name: 'Find a space' }).first()).toBeVisible();
 });
@@ -1089,10 +1158,7 @@ test('workplace home preserves its verified 60-minute scope when opening discove
   );
   await page.goto('/workplace');
   const link = page.getByTestId('workplace-day-brief').getByRole('link', { name: 'Find a space' });
-  await expect(link).toHaveAttribute(
-    'href',
-    `/workplace/explore?site=${site.siteId}&floor=${floor.floorId}&timeZone=Asia%2FSeoul&date=2026-08-19&time=09%3A01&duration=60&type=DESK`
-  );
+  await expect(link).toHaveAttribute('href', workplaceFindPath({ start: '09:01', types: 'DESK' }));
   const exploreRequest = page.waitForRequest((request) => {
     const url = new URL(request.url());
     return url.pathname === '/api/platform/v1/workplace/explore' && url.searchParams.has('from');
@@ -1106,10 +1172,10 @@ test('workplace home preserves its verified 60-minute scope when opening discove
   });
   expect(url.searchParams.get('from')).toBe(ranges[0]?.from);
   expect(url.searchParams.get('to')).toBe(ranges[0]?.to);
-  await expect(page).toHaveURL(/site=10000000-0000-0000-0000-000000000001/u);
-  await expect(page).toHaveURL(/floor=20000000-0000-0000-0000-000000000012/u);
+  await expect(page).toHaveURL(/sites=10000000-0000-0000-0000-000000000001/u);
+  await expect(page).toHaveURL(/floors=20000000-0000-0000-0000-000000000012/u);
   await expect(page).toHaveURL(/duration=60/u);
-  await expect(page).toHaveURL(/type=DESK/u);
+  await expect(page).toHaveURL(/types=DESK/u);
 });
 test('workplace home keeps eligibility attached to the verified range during a delayed rollover', async ({
   page,
@@ -1167,12 +1233,12 @@ test('workplace home keeps eligibility attached to the verified range during a d
   const discovery = page
     .getByTestId('workplace-day-brief')
     .getByRole('link', { name: 'Find a space' });
-  await expect(discovery).toHaveAttribute('href', /time=09%3A01/u);
+  await expect(discovery).toHaveAttribute('href', /start=09%3A01/u);
   await page.clock.setFixedTime(new Date('2026-08-19T00:01:00.100Z'));
   await page.clock.fastForward(21_600);
   await expect.poll(() => exploreCalls).toBeGreaterThanOrEqual(2);
   expect(refreshedFrom).toBe('2026-08-19T00:02:00Z');
-  await expect(discovery).not.toHaveAttribute('href', /time=/u);
+  await expect(discovery).not.toHaveAttribute('href', /start=/u);
   await expectWorkplaceHomeAvailability(page, 2, 0);
   const refreshed = page.waitForResponse(
     (response) =>
@@ -1180,7 +1246,7 @@ test('workplace home keeps eligibility attached to the verified range during a d
   );
   releaseRefresh?.();
   await refreshed;
-  await expect(discovery).toHaveAttribute('href', /time=09%3A02/u);
+  await expect(discovery).toHaveAttribute('href', /start=09%3A02/u);
   await expectWorkplaceHomeAvailability(page, 0, 0);
 });
 
@@ -1265,13 +1331,22 @@ test('workplace home only raises room-needed attention for actionable full-detai
   );
 
   await page.goto('/workplace');
-  await expect(page.getByText('Actionable planning still needs a room')).toBeVisible();
-  await expect(page.getByText('Busy still needs a room')).toHaveCount(0);
-  await expect(page.getByText('Read-only planning still needs a room')).toHaveCount(0);
-  await expect(page.getByText('Declined planning still needs a room')).toHaveCount(0);
-  await expect(page.getByText('All-day planning still needs a room')).toHaveCount(0);
-  await expect(page.getByText('Ongoing planning still needs a room')).toHaveCount(0);
-  await expect(page.getByText('Starting now planning still needs a room')).toHaveCount(0);
+  const attention = page.getByRole('region', { name: 'Items needing attention' });
+  await expect(
+    attention.getByRole('link', {
+      name: 'Actionable planning Connect a suitable space before the meeting begins. Open event',
+    })
+  ).toHaveCount(1);
+  for (const excluded of [
+    'Busy planning',
+    'Read-only planning',
+    'Declined planning',
+    'All-day planning',
+    'Ongoing planning',
+    'Starting now planning',
+  ]) {
+    await expect(attention).not.toContainText(excluded);
+  }
 });
 
 test('workplace home removes room-needed attention at the meeting start boundary', async ({
@@ -1303,11 +1378,16 @@ test('workplace home removes room-needed attention at the meeting start boundary
   );
 
   await page.goto('/workplace');
-  await expect(page.getByText('Boundary planning still needs a room')).toBeVisible();
+  const boundaryAttention = page
+    .getByRole('region', { name: 'Items needing attention' })
+    .getByRole('link', {
+      name: 'Boundary planning Connect a suitable space before the meeting begins. Open event',
+    });
+  await expect(boundaryAttention).toBeVisible();
 
   await page.clock.setFixedTime(new Date('2026-08-19T00:00:30.050Z'));
   await page.clock.fastForward(30_050);
-  await expect(page.getByText('Boundary planning still needs a room')).toHaveCount(0);
+  await expect(boundaryAttention).toHaveCount(0);
 });
 
 test('workplace home transfers focused release attention at the reservation end boundary', async ({
@@ -1363,7 +1443,11 @@ test('workplace home transfers focused release attention at the reservation end 
 
   await page.goto('/workplace');
   await expect(page.getByRole('button', { name: 'Check in now' })).toBeVisible();
-  await expect(page.getByText('You can release Boundary release desk')).toBeVisible();
+  await expect(
+    page.getByRole('region', { name: 'Items needing attention' }).getByRole('link', {
+      name: 'Boundary release desk Release the space for someone else when you no longer need it. Release',
+    })
+  ).toBeVisible();
   const releaseAttention = page.locator(
     `[data-workplace-decision-action="release:${releaseBooking.bookingId}"]`
   );
@@ -1374,7 +1458,7 @@ test('workplace home transfers focused release attention at the reservation end 
   await page.clock.fastForward(30_050);
   await expect.poll(() => bookingCalls).toBeGreaterThanOrEqual(2);
   await expect(page.getByRole('button', { name: 'Check in now' })).toHaveCount(0);
-  await expect(page.getByText('You can release Boundary release desk')).toHaveCount(0);
+  await expect(releaseAttention).toHaveCount(0);
   const decisionStatus = page.getByTestId('workplace-decision-status');
   await expect(decisionStatus).toHaveText(
     'The reservation has ended. Release is closed and no action was sent.'
@@ -1392,7 +1476,7 @@ test('workplace home transfers focused release attention at the reservation end 
   await unavailable;
   await page.clock.fastForward(2_000);
   await expect(page.getByRole('button', { name: 'Check in now' })).toHaveCount(0);
-  await expect(page.getByText('You can release Boundary release desk')).toHaveCount(0);
+  await expect(releaseAttention).toHaveCount(0);
   await expect(decisionStatus).toBeFocused();
   expect(checkInWrites).toBe(0);
   expect(releaseWrites).toBe(0);
@@ -1407,7 +1491,7 @@ test('workplace home transfers focused release attention at the reservation end 
   await page.clock.fastForward(60_000);
   await recovered;
   await expect(page.getByRole('button', { name: 'Check in now' })).toHaveCount(0);
-  await expect(page.getByText('You can release Boundary release desk')).toHaveCount(0);
+  await expect(releaseAttention).toHaveCount(0);
   expect(checkInWrites).toBe(0);
   expect(releaseWrites).toBe(0);
 });
@@ -1473,23 +1557,39 @@ test('workplace home closes cached room-policy eligibility until recovery', asyn
 test('Workplace booking deep links focus the requested personal and meeting reservation', async ({
   page,
 }) => {
-  await page.goto(`/workplace/my-bookings?booking=${booking().bookingId}`);
-  await expect(page.getByTestId(`workplace-booking-${booking().bookingId}`)).toBeFocused();
-
-  await page.goto(`/workplace/my-meetings?event=${ROOM_BOOKING_EVENT_FIXTURE.eventId}`);
+  await page.goto(workplaceReservationsPath('WORKPLACE', booking().bookingId));
+  expect(new URL(page.url()).searchParams.get('reservation')).toBe(booking().bookingId);
   await expect(
-    page.getByTestId(`room-booking-${ROOM_BOOKING_EVENT_FIXTURE.eventId}`)
-  ).toBeFocused();
+    page.getByTestId(`workplace-reservation-workplace-${booking().bookingId.replaceAll(':', '-')}`)
+  ).toBeVisible();
+  await expect(
+    page.getByRole('complementary', { name: 'Reservation inspector' }).getByRole('heading', {
+      name: booking().resourceName,
+    })
+  ).toBeVisible();
+
+  await page.goto(workplaceReservationsPath('CALENDAR', ROOM_BOOKING_EVENT_FIXTURE.eventId));
+  expect(new URL(page.url()).searchParams.get('reservation')).toBe(
+    ROOM_BOOKING_EVENT_FIXTURE.eventId
+  );
+  await expect(
+    page.getByTestId(`workplace-reservation-calendar-${ROOM_BOOKING_EVENT_FIXTURE.eventId}`)
+  ).toBeVisible();
+  await expect(
+    page.getByRole('complementary', { name: 'Reservation inspector' }).getByRole('heading', {
+      name: ROOM_BOOKING_EVENT_FIXTURE.title,
+    })
+  ).toBeVisible();
 });
 
 test('members discover and book a workspace using tenant policy and site time zone', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto('/workplace/explore');
+  await page.goto(workplaceFindPath());
 
   await expect(page.getByRole('heading', { name: 'Find a space', level: 1 })).toBeVisible();
-  await expect(page.getByLabel('Start time')).toContainText('09:30');
+  await expect(page.getByTestId('workplace-discovery-scope')).toContainText('09:30');
   await page
     .getByRole('button', {
       name: /^Focus desk 12.*Open by reservation state.*Initial booking checks passed$/u,
@@ -1500,13 +1600,12 @@ test('members discover and book a workspace using tenant policy and site time zo
 
   const dialog = page.getByRole('dialog', { name: 'Book a workspace' });
   await expect(dialog).toBeVisible();
-  await expect(dialog.getByText('Asia/Seoul')).toBeVisible();
+  await expect(dialog.getByText('Asia/Seoul', { exact: true })).toBeVisible();
   await dialog.getByLabel('Purpose').fill('Workplace E2E review');
   await dialog.getByRole('button', { name: 'Book', exact: true }).click();
   await expect(dialog).toBeHidden();
-  await expect(page).toHaveURL(
-    new RegExp(`/workplace/my-bookings\\?booking=${booking().bookingId}`, 'u')
-  );
+  await expect(page).toHaveURL(/\/workplace\/reservations\?/u);
+  expect(new URL(page.url()).searchParams.get('reservation')).toBe(booking().bookingId);
   const accessibility = await new AxeBuilder({ page }).include('main').analyze();
   expect(
     accessibility.violations.filter(
@@ -1539,9 +1638,7 @@ test('discovery routes create permission to the resource booking owner', async (
     })
   );
 
-  await page.goto(
-    `/workplace/explore?site=${site.siteId}&floor=${floor.floorId}&date=2026-08-19&time=09%3A30`
-  );
+  await page.goto(workplaceFindPath());
   await expect(page.getByText('1 pass initial booking checks')).toBeVisible();
   await page
     .getByRole('button', {
@@ -1564,9 +1661,7 @@ test('discovery routes create permission to the resource booking owner', async (
 test('discovery applies the Workplace owner policy before enabling a booking action', async ({
   page,
 }) => {
-  await page.goto(
-    `/workplace/explore?site=${site.siteId}&floor=${floor.floorId}&date=2026-08-19&time=13%3A00&duration=480`
-  );
+  await page.goto(workplaceFindPath({ start: '13:00', duration: 480 }));
 
   await expect(page.getByText('0 pass initial booking checks')).toBeVisible();
   await page
@@ -1606,9 +1701,7 @@ for (const failure of [
         : fulfillSuccess(route, workplaceExploreFixture)
     );
 
-    await page.goto(
-      `/workplace/explore?site=${site.siteId}&floor=${floor.floorId}&date=2026-08-19&time=09%3A30`
-    );
+    await page.goto(workplaceFindPath());
     await page
       .getByRole('button', {
         name: /^Focus desk 12.*Open by reservation state.*Initial booking checks passed$/u,
@@ -1647,19 +1740,30 @@ test('discovery keeps booking closed until a cross-time-zone query is freshly ve
   });
   await mockWorkplace(page);
   let calls = 0;
+  const requestedRanges: Array<{ from: string; to: string }> = [];
   let releaseSiteTimeZone: (() => void) | undefined;
   const siteTimeZoneGate = new Promise<void>((resolve) => {
     releaseSiteTimeZone = resolve;
   });
   await page.route('**/api/platform/v1/workplace/explore**', async (route) => {
+    const query = new URL(route.request().url()).searchParams;
+    requestedRanges.push({ from: query.get('from') ?? '', to: query.get('to') ?? '' });
     calls += 1;
     if (calls > 1) await siteTimeZoneGate;
     return fulfillSuccess(route, workplaceExploreFixture);
   });
 
-  await page.goto(
-    `/workplace/explore?site=${site.siteId}&floor=${floor.floorId}&date=2026-08-19&time=09%3A30`
-  );
+  await page.goto(workplaceFindPath({ tz: 'America/Los_Angeles' }));
+  await expect.poll(() => calls).toBe(2);
+  expect(requestedRanges.map((range) => new Date(range.from).toISOString())).toEqual([
+    '2026-08-19T16:30:00.000Z',
+    '2026-08-19T00:30:00.000Z',
+  ]);
+  expect(requestedRanges.map((range) => new Date(range.to).toISOString())).toEqual([
+    '2026-08-19T17:30:00.000Z',
+    '2026-08-19T01:30:00.000Z',
+  ]);
+  await expect(page).toHaveURL(/tz=Asia%2FSeoul/u);
   await page
     .getByRole('button', {
       name: /^Focus desk 12.*Open by reservation state.*Booking unavailable$/u,
@@ -1709,9 +1813,7 @@ test('discovery uses one eligibility contract for count, order, and booking acti
     })
   );
 
-  await page.goto(
-    `/workplace/explore?site=${site.siteId}&floor=${floor.floorId}&date=2026-08-19&time=09%3A30`
-  );
+  await page.goto(workplaceFindPath());
   await expect(page.getByText('1 pass initial booking checks')).toBeVisible();
   const results = page.locator('[aria-labelledby="workplace-discovery-results"]');
   await expect(results.getByRole('button').first()).toContainText('Focus desk 12');
@@ -1762,9 +1864,7 @@ test('cached room policy refresh failures close Explore booking until recovery',
     return route.fulfill({ status: 503, contentType: 'application/json', body: '{}' });
   });
 
-  await page.goto(
-    `/workplace/explore?site=${site.siteId}&floor=${floor.floorId}&date=2026-08-19&time=09%3A30`
-  );
+  await page.goto(workplaceFindPath());
   await expect(page.getByText('1 pass initial booking checks')).toBeVisible();
   await page
     .getByRole('button', {
@@ -1830,7 +1930,7 @@ test('an open workspace booking dialog becomes read-only on the first stale read
     }
   });
 
-  await page.goto('/workplace/explore');
+  await page.goto(workplaceFindPath());
   await page
     .getByRole('button', {
       name: /^Focus desk 12.*Open by reservation state.*Initial booking checks passed$/u,
@@ -1941,7 +2041,7 @@ test('an open room booking dialog fails closed across stale recovery and authori
     }
   });
 
-  await page.goto('/workplace/explore');
+  await page.goto(workplaceFindPath());
   await page
     .getByRole('button', {
       name: /^Authority room.*Open by reservation state.*Initial booking checks passed$/u,
@@ -2026,10 +2126,10 @@ test('my bookings discards retained rows after an authoritative access rejection
       : fulfillSuccess(route, [booking()]);
   });
 
-  await page.goto('/workplace/my-bookings');
+  await page.goto(workplaceReservationsPath('WORKPLACE'));
   await expect(
     page
-      .getByTestId(/^workplace-booking-400/u)
+      .getByTestId(/^workplace-reservation-workplace-400/u)
       .getByRole('heading', { name: 'Focus desk 12', exact: true })
   ).toBeVisible();
 
@@ -2042,18 +2142,27 @@ test('my bookings discards retained rows after an authoritative access rejection
   await page.clock.fastForward(60_010);
   await deniedResponse;
 
-  await expect(page.getByText('Your space bookings could not be loaded.')).toBeVisible();
+  await expect(
+    page.getByTestId('workplace-reservations-source-workplace').getByText('No access', {
+      exact: true,
+    })
+  ).toBeVisible();
   await expect(
     page
-      .getByTestId(/^workplace-booking-400/u)
+      .getByTestId(/^workplace-reservation-workplace-400/u)
       .getByRole('heading', { name: 'Focus desk 12', exact: true })
   ).toHaveCount(0);
-  await expect(page.getByText('No upcoming space bookings')).toHaveCount(0);
+  await expect(
+    page.getByRole('heading', { name: 'No reservations match these filters' })
+  ).toBeVisible();
 });
 
 test('room finder keeps a stale draft read-only and discards it after authority denial', async ({
   page,
 }) => {
+  await page.route('**/api/platform/v1/workplace/explore**', (route) =>
+    fulfillSuccess(route, { ...workplaceExploreFixture, resources: [mappedCalendarRoom] })
+  );
   let source: 'READY' | 'STALE' | 'DENIED' = 'READY';
   let eligibilityReason:
     'ELIGIBLE' | 'RESOURCE_UNAVAILABLE' | 'POLICY_BLOCKED' | 'RESOURCE_CONFLICT' = 'ELIGIBLE';
@@ -2099,7 +2208,13 @@ test('room finder keeps a stale draft read-only and discards it after authority 
     }
   });
 
-  await page.goto('/workplace/rooms?date=2026-08-19');
+  await page.goto(
+    workplaceFindPath({
+      duration: 30,
+      types: 'ROOM',
+      suffix: `&resource=${mappedCalendarRoom.resourceId}`,
+    })
+  );
   const ownerAvailability = page.waitForResponse((response) => {
     const url = new URL(response.url());
     return (
@@ -2109,25 +2224,13 @@ test('room finder keeps a stale draft read-only and discards it after authority 
       Date.parse(url.searchParams.get('to') ?? '') === Date.parse('2026-08-19T01:00:00Z')
     );
   });
-  await page.getByRole('button', { name: /Book Focus 08 at 09:30 AM/u }).click();
+  await page.getByRole('button', { name: 'Book this space' }).click();
   await ownerAvailability;
   const dialog = page.getByRole('dialog', { name: 'Book a room' });
   await dialog.getByLabel('Meeting subject').fill('Keep this finder draft');
   const submit = dialog.getByRole('button', { name: 'Book', exact: true });
   await expect(submit).toBeEnabled();
 
-  const finderRefresh = page.waitForResponse((response) => {
-    const url = new URL(response.url());
-    return (
-      response.status() === 200 &&
-      url.pathname === '/api/platform/v1/rooms/availability' &&
-      Date.parse(url.searchParams.get('to') ?? '') -
-        Date.parse(url.searchParams.get('from') ?? '') >
-        24 * 60 * 60_000
-    );
-  });
-  await page.clock.fastForward(60_010);
-  await finderRefresh;
   await expect(dialog.getByLabel('Meeting subject')).toHaveValue('Keep this finder draft');
   await expect(submit).toBeEnabled();
 
@@ -2170,7 +2273,7 @@ test('room finder keeps a stale draft read-only and discards it after authority 
   await page.clock.fastForward(60_010);
   await denied;
   await expect(dialog).toHaveCount(0);
-  await expect(page.getByText('Focus 08', { exact: true })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: /Focus 08/u })).toBeVisible();
   expect(bookingWrites).toBe(0);
 });
 
@@ -2252,8 +2355,12 @@ test('room booking edits revalidate their range and cached meeting actions fail 
     );
   });
 
-  await page.goto('/workplace/my-meetings');
-  await expect(page.getByText(editableEvent.title, { exact: true })).toBeVisible();
+  await page.goto(workplaceReservationsPath('CALENDAR'));
+  await expect(
+    page.getByRole('complementary', { name: 'Reservation inspector' }).getByRole('heading', {
+      name: editableEvent.title,
+    })
+  ).toBeVisible();
   await page.getByRole('button', { name: 'Edit', exact: true }).click();
   const editDialog = page.getByRole('dialog', { name: 'Change room booking' });
   const save = editDialog.getByRole('button', { name: 'Save', exact: true });
@@ -2294,7 +2401,7 @@ test('room booking edits revalidate their range and cached meeting actions fail 
   expect(updateWrites).toBe(1);
 
   await page.getByRole('button', { name: 'Cancel booking', exact: true }).click();
-  const cancelDialog = page.getByRole('alertdialog', { name: 'Cancel this room booking?' });
+  const cancelDialog = page.getByRole('alertdialog', { name: 'Cancel this reservation?' });
   await expect(cancelDialog).toBeVisible();
 
   bookingSource = 'STALE';
@@ -2306,7 +2413,11 @@ test('room booking edits revalidate their range and cached meeting actions fail 
   await page.clock.fastForward(60_010);
   await firstFailure;
   await expect(cancelDialog).toHaveCount(0);
-  await expect(page.getByText(editableEvent.title, { exact: true })).toBeVisible();
+  await expect(
+    page.getByRole('complementary', { name: 'Reservation inspector' }).getByRole('heading', {
+      name: editableEvent.title,
+    })
+  ).toBeVisible();
   await expect(page.getByRole('button', { name: 'Edit', exact: true })).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Cancel booking', exact: true })).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Accept', exact: true })).toHaveCount(0);
@@ -2338,7 +2449,7 @@ test('Korean discovery reflows at 200 percent text and preserves keyboard access
   });
   await mockWorkplace(page);
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto('/workplace/explore');
+  await page.goto(workplaceFindPath());
   await expect(page.getByRole('heading', { name: '공간 찾기', level: 1 })).toBeVisible();
   await page.getByRole('button', { name: '필터', exact: true }).click();
   const search = page.getByRole('dialog').getByLabel('공간, 구역 또는 설비 검색');
@@ -2372,15 +2483,13 @@ test('Korean discovery reflows at 200 percent text and preserves keyboard access
 test('discovery preserves filter context and never fabricates an unregistered floor plan', async ({
   page,
 }) => {
-  const runtimeProblems: string[] = [];
-  page.on('console', (message) => {
-    if (message.type() === 'error' || message.type() === 'warning') {
-      runtimeProblems.push(message.text());
-    }
-  });
-  page.on('pageerror', (error) => runtimeProblems.push(error.message));
-  await page.goto('/workplace/explore?q=Focus&type=DESK&accessible=true&view=map');
+  const pageErrors: string[] = [];
+  page.on('pageerror', (error) => pageErrors.push(error.message));
+  await page.goto(
+    workplaceFindPath({ types: 'DESK', suffix: '&q=Focus&accessible=true&view=map' })
+  );
 
+  await page.getByRole('button', { name: 'Filters' }).click();
   await expect(page.getByLabel('Search spaces, neighborhoods, or amenities')).toHaveValue('Focus');
   await expect(page.getByRole('checkbox', { name: 'Accessible spaces only' })).toBeChecked();
   await expect(page.getByRole('button', { name: 'Map view' })).toBeDisabled();
@@ -2388,9 +2497,10 @@ test('discovery preserves filter context and never fabricates an unregistered fl
   await expect(page.getByRole('button', { name: /Focus desk 12/u })).toBeVisible();
 
   await page.reload();
+  await page.getByRole('button', { name: 'Filters' }).click();
   await expect(page.getByLabel('Search spaces, neighborhoods, or amenities')).toHaveValue('Focus');
   await expect(page.getByRole('checkbox', { name: 'Accessible spaces only' })).toBeChecked();
-  expect(runtimeProblems).toEqual([]);
+  expect(pageErrors).toEqual([]);
 });
 
 test('registered floor plans keep map selection and keyboard focus synchronized', async ({
@@ -2419,7 +2529,7 @@ test('registered floor plans keep map selection and keyboard focus synchronized'
     })
   );
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto('/workplace/explore?view=map');
+  await page.goto(workplaceFindPath({ suffix: '&view=map' }));
 
   const floorPlan = page.getByTestId('workplace-floor-plan');
   await expect(floorPlan).toBeVisible();
@@ -2449,6 +2559,7 @@ test('booking retries preserve the idempotency key for the same user intent', as
   page,
 }, testInfo) => {
   const keys: string[] = [];
+  const purposes: string[] = [];
   let attempts = 0;
   let persisted: ReturnType<typeof booking> | null = null;
   await page.route('**/api/platform/v1/workplace/bookings**', async (route) => {
@@ -2458,6 +2569,7 @@ test('booking retries preserve the idempotency key for the same user intent', as
         ? fulfillSuccess(route, persisted ? [persisted] : [])
         : route.fallback();
     keys.push(request.headers()['idempotency-key'] ?? '');
+    purposes.push(request.postDataJSON().purpose);
     attempts += 1;
     if (attempts === 1) {
       return route.fulfill({ status: 503, contentType: 'application/json', body: '{}' });
@@ -2466,7 +2578,7 @@ test('booking retries preserve the idempotency key for the same user intent', as
     return fulfillSuccess(route, persisted);
   });
 
-  await page.goto('/workplace/explore');
+  await page.goto(workplaceFindPath());
   await page
     .getByRole('button', {
       name: /^Focus desk 12.*Open by reservation state.*Initial booking checks passed$/u,
@@ -2479,7 +2591,7 @@ test('booking retries preserve the idempotency key for the same user intent', as
   await submit.click();
   await expect.poll(() => keys.length).toBe(1);
   await expect(dialog).toBeVisible();
-  await expect(page).toHaveURL(/\/workplace\/explore/);
+  await expect(page).toHaveURL(/\/workplace\/find/);
   await expect(submit).toBeEnabled();
   await expect(submit).toHaveText('Retry the same request');
   await expect(dialog.getByLabel('Purpose')).toBeDisabled();
@@ -2490,11 +2602,13 @@ test('booking retries preserve the idempotency key for the same user intent', as
   expect(keys).toHaveLength(2);
   expect(keys[0]).toBeTruthy();
   expect(keys[1]).toBe(keys[0]);
-  await expect(page).toHaveURL(
-    new RegExp(`/workplace/my-bookings\\?booking=${booking().bookingId}`)
-  );
+  expect(purposes).toEqual(['Retry-safe booking', 'Retry-safe booking']);
+  await expect(page).toHaveURL(/\/workplace\/reservations\?/u);
+  expect(new URL(page.url()).searchParams.get('reservation')).toBe(booking().bookingId);
   await expect(
-    page.getByTestId(`workplace-booking-${booking().bookingId}`).getByText('Retry-safe booking')
+    page
+      .getByRole('complementary', { name: 'Reservation inspector' })
+      .getByRole('heading', { name: booking().resourceName })
   ).toBeVisible();
   await page.screenshot({
     path: testInfo.outputPath('native-booking-owner-detail-1280.png'),
@@ -2505,7 +2619,7 @@ test('booking retries preserve the idempotency key for the same user intent', as
 test('changed search criteria keep previous results read-only until availability is verified', async ({
   page,
 }) => {
-  await page.goto('/workplace/explore');
+  await page.goto(workplaceFindPath());
   await page
     .getByRole('button', {
       name: /^Focus desk 12.*Open by reservation state.*Initial booking checks passed$/u,
@@ -2517,6 +2631,7 @@ test('changed search criteria keep previous results read-only until availability
   await page.route('**/api/platform/v1/workplace/explore**', (route) =>
     route.fulfill({ status: 503, contentType: 'application/json', body: '{}' })
   );
+  await page.getByRole('button', { name: 'Filters' }).click();
   await page.getByLabel('Duration').click();
   await page.getByRole('option', { name: '90 min' }).click();
   await page.getByRole('button', { name: /^Focus desk 12.*Open by reservation state/u }).click();
@@ -2532,25 +2647,21 @@ test('changed search criteria keep previous results read-only until availability
 test('authoritative access rejection discards previously visible Workplace data', async ({
   page,
 }) => {
-  await page.goto('/workplace/explore');
-  await expect(
-    page
-      .getByTestId(/^workplace-booking-400/u)
-      .getByRole('heading', { name: 'Focus desk 12', exact: true })
-  ).toBeVisible();
+  await page.goto(workplaceFindPath());
+  const resourceResult = page.getByRole('button', {
+    name: /^Focus desk 12.*Open by reservation state/u,
+  });
+  await expect(resourceResult).toBeVisible();
 
   await page.route('**/api/platform/v1/workplace/explore**', (route) =>
     route.fulfill({ status: 403, contentType: 'application/json', body: '{}' })
   );
+  await page.getByRole('button', { name: 'Filters' }).click();
   await page.getByLabel('Duration').click();
   await page.getByRole('option', { name: '90 min' }).click();
 
   await expect(page.getByText('Workplace availability could not be loaded.')).toBeVisible();
-  await expect(
-    page
-      .getByTestId(/^workplace-booking-400/u)
-      .getByRole('heading', { name: 'Focus desk 12', exact: true })
-  ).toHaveCount(0);
+  await expect(resourceResult).toHaveCount(0);
 });
 
 test('background refresh failures keep the last successful Workplace data visible', async ({
@@ -2574,85 +2685,12 @@ test('background refresh failures keep the last successful Workplace data visibl
   await expect(page.getByText(/Focus desk 12/u).first()).toBeVisible();
 });
 
-test('members receive server-authoritative booking actions', async ({ page }) => {
-  const releaseBooking = booking({
-    bookingId: '40000000-0000-0000-0000-000000000041',
-    resourceName: 'My bookings release desk',
-    startsAt: '2026-08-18T23:30:00Z',
-    endsAt: '2026-08-19T00:00:30Z',
-    canCheckIn: false,
-    canCancel: false,
-    canRelease: true,
-  });
-  let bookingCalls = 0;
-  let releaseWrites = 0;
-  let releaseRefresh: (() => void) | undefined;
-  const refreshGate = new Promise<void>((resolve) => {
-    releaseRefresh = resolve;
-  });
-  page.on('request', (request) => {
-    if (request.method() === 'POST' && request.url().endsWith('/release')) releaseWrites += 1;
-  });
-  await page.route('**/api/platform/v1/workplace/bookings**', async (route) => {
-    const request = route.request();
-    if (
-      request.method() !== 'GET' ||
-      new URL(request.url()).pathname !== '/api/platform/v1/workplace/bookings'
-    ) {
-      return route.fallback();
-    }
-    bookingCalls += 1;
-    if (bookingCalls === 1) return fulfillSuccess(route, [booking(), releaseBooking]);
-    await refreshGate;
-    return route.fulfill({
-      status: 503,
-      contentType: 'application/json',
-      body: JSON.stringify({ code: 'UPSTREAM_UNAVAILABLE', message: 'Retry later.' }),
-    });
-  });
+// Canonical member journeys cover command/version/busy writes; recovery and boundary remain here.
 
-  await page.goto('/workplace/my-bookings');
-  await expect(page.getByRole('heading', { name: 'My space bookings', level: 1 })).toBeVisible();
-  await expect(
-    page
-      .getByTestId(/^workplace-booking-400/u)
-      .getByRole('heading', { name: 'Focus desk 12', exact: true })
-  ).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Check in' })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Cancel booking' })).toBeVisible();
-  await page.getByRole('button', { name: 'Release' }).click();
-  const releaseDialog = page.getByRole('dialog', { name: 'Release this space?' });
-  await expect(releaseDialog).toBeVisible();
-
-  await page.clock.setFixedTime(new Date('2026-08-19T00:00:30.050Z'));
-  await page.clock.fastForward(30_050);
-  await expect.poll(() => bookingCalls).toBeGreaterThanOrEqual(2);
-  await expect(page.getByRole('dialog', { name: 'Release this space?' })).toHaveCount(0);
-  await expect(page.getByRole('button', { name: 'Release' })).toHaveCount(0);
-  const decisionStatus = page.getByTestId('workplace-booking-decision-status');
-  await expect(decisionStatus).toHaveText(
-    'The reservation has ended. Release is closed and no action was sent.'
-  );
-  await expect(decisionStatus).toBeFocused();
-  expect(releaseWrites).toBe(0);
-
-  const unavailable = page.waitForResponse(
-    (response) =>
-      response.status() === 503 &&
-      new URL(response.url()).pathname === '/api/platform/v1/workplace/bookings'
-  );
-  releaseRefresh?.();
-  await unavailable;
-  await page.clock.setFixedTime(new Date('2026-08-18T23:59:00Z'));
-  await page.clock.fastForward(60_000);
-  await expect(page.getByRole('button', { name: 'Release' })).toHaveCount(0);
-  expect(releaseWrites).toBe(0);
-});
-
-test('my bookings replaces an unverified release notice after authoritative recovery', async ({
+test('unified reservations restore release after source recovery without stealing focus', async ({
   page,
 }) => {
-  const recoverableBooking = booking({
+  const currentBooking = booking({
     bookingId: '40000000-0000-0000-0000-000000000042',
     resourceName: 'Recoverable release desk',
     startsAt: '2026-08-18T23:30:00Z',
@@ -2661,16 +2699,17 @@ test('my bookings replaces an unverified release notice after authoritative reco
     canCancel: false,
     canRelease: true,
   });
-  let source: 'READY' | 'UNAVAILABLE' | 'RECOVERING' = 'READY';
-  let releaseWrites = 0;
-  let releaseRecovery: (() => void) | undefined;
+  let unavailable = false;
+  let holdRecovery = false;
   let markRecoveryStarted: (() => void) | undefined;
-  const recoveryGate = new Promise<void>((resolve) => {
-    releaseRecovery = resolve;
-  });
+  let finishRecovery: (() => void) | undefined;
   const recoveryStarted = new Promise<void>((resolve) => {
     markRecoveryStarted = resolve;
   });
+  const recoveryGate = new Promise<void>((resolve) => {
+    finishRecovery = resolve;
+  });
+  let releaseWrites = 0;
   await page.route('**/api/platform/v1/workplace/bookings**', async (route) => {
     const request = route.request();
     const path = new URL(request.url()).pathname;
@@ -2681,194 +2720,156 @@ test('my bookings replaces an unverified release notice after authoritative reco
     if (request.method() !== 'GET' || path !== '/api/platform/v1/workplace/bookings') {
       return route.fallback();
     }
-    if (source === 'UNAVAILABLE') {
-      return route.fulfill({
-        status: 503,
-        contentType: 'application/json',
-        body: JSON.stringify({ code: 'UPSTREAM_UNAVAILABLE', message: 'Retry later.' }),
-      });
+    if (unavailable) {
+      return route.fulfill({ status: 503, contentType: 'application/json', body: '{}' });
     }
-    if (source === 'RECOVERING') {
+    if (holdRecovery) {
       markRecoveryStarted?.();
       await recoveryGate;
     }
-    return fulfillSuccess(route, [recoverableBooking]);
+    return fulfillSuccess(route, [currentBooking]);
   });
 
-  await page.goto('/workplace/my-bookings');
-  const actionId = `release:${recoverableBooking.bookingId}`;
-  const release = page.locator(`[data-workplace-decision-action="${actionId}"]`);
+  await page.goto(workplaceReservationsPath('WORKPLACE', currentBooking.bookingId));
+  const source = page.getByTestId('workplace-reservations-source-workplace');
+  const release = page
+    .getByRole('complementary', { name: 'Reservation inspector' })
+    .getByRole('button', {
+      name: 'Release space',
+    });
+  await expect(source.getByText('Current', { exact: true })).toBeVisible();
   await expect(release).toBeVisible();
-  await release.focus();
 
-  source = 'UNAVAILABLE';
-  const firstFailure = page.waitForResponse(
+  unavailable = true;
+  const failedRead = page.waitForResponse(
     (response) =>
       response.status() === 503 &&
       new URL(response.url()).pathname === '/api/platform/v1/workplace/bookings'
   );
   await page.clock.fastForward(60_010);
-  await firstFailure;
-  const decisionStatus = page.getByTestId('workplace-booking-decision-status');
+  await failedRead;
+  await expect(source.getByText('Stale', { exact: true })).toBeVisible();
   await expect(release).toHaveCount(0);
-  await expect(decisionStatus).toHaveText(
-    'The current reservation state could not be verified. Release is closed and no action was sent.'
-  );
-  await expect(decisionStatus).toBeFocused();
 
-  source = 'RECOVERING';
-  await page
-    .getByRole('alert')
-    .filter({ hasText: 'The latest data could not be refreshed' })
-    .getByRole('button', { name: 'Try again' })
-    .click();
+  unavailable = false;
+  holdRecovery = true;
+  await source.getByRole('button', { name: 'Try again' }).click();
   await recoveryStarted;
-  const stableFocus = page.getByRole('tab', { name: 'Upcoming' });
+  const stableFocus = page.getByRole('textbox', { name: 'Search reservations' });
   await stableFocus.focus();
-  await expect(stableFocus).toBeFocused();
-  releaseRecovery?.();
-
+  finishRecovery?.();
+  await expect(source.getByText('Current', { exact: true })).toBeVisible();
   await expect(release).toBeVisible();
-  await expect(decisionStatus).toHaveText(
-    'The current reservation state is verified again. Release is available.'
-  );
   await expect(stableFocus).toBeFocused();
-  await expect(decisionStatus).not.toBeFocused();
   expect(releaseWrites).toBe(0);
-
-  source = 'UNAVAILABLE';
-  const secondFailure = page.waitForResponse(
-    (response) =>
-      response.status() === 503 &&
-      new URL(response.url()).pathname === '/api/platform/v1/workplace/bookings'
-  );
-  await page.clock.fastForward(60_010);
-  await secondFailure;
-  await page.clock.fastForward(1_100);
-
-  await expect(release).toHaveCount(0);
-  await expect(decisionStatus).toHaveText(
-    'The current reservation state could not be verified. Release is closed and no action was sent.'
-  );
-  await expect(stableFocus).toBeFocused();
-  await expect(decisionStatus).not.toBeFocused();
-  expect(releaseWrites).toBe(0);
-
-  source = 'READY';
-  await page
-    .getByRole('alert')
-    .filter({ hasText: 'The latest data could not be refreshed' })
-    .getByRole('button', { name: 'Try again' })
-    .click();
-  await expect(release).toBeVisible();
-  await expect(decisionStatus).toHaveText(
-    'The current reservation state is verified again. Release is available.'
-  );
-  await expect(decisionStatus).not.toBeFocused();
-
-  await release.click();
-  const releaseDialog = page.getByRole('dialog', { name: 'Release this space?' });
-  await releaseDialog.getByRole('button', { name: 'Release' }).click();
-  await expect(page.getByText('The space was released.')).toBeVisible();
-  await expect(decisionStatus).toHaveText('');
-  expect(releaseWrites).toBe(1);
 });
 
-test('a recovered release notice becomes terminal at the reservation boundary without stealing focus', async ({
-  browser,
-}, testInfo) => {
-  const context = await browser.newContext({ baseURL: String(testInfo.project.use.baseURL) });
-  const page = await context.newPage();
-  await page.clock.install({ time: new Date('2026-08-19T00:00:00Z') });
-  await mockShellSession(page, ['TENANT_ADMIN'], {
-    locale: 'en',
-    permissions: FULL_PRODUCT_PERMISSIONS,
-  });
-  await mockWorkplace(page);
-  const recoverableBooking = booking({
+test('unsubmitted unified release closes at the reservation end without a write', async ({
+  page,
+}) => {
+  const endingBooking = booking({
     bookingId: '40000000-0000-0000-0000-000000000043',
-    resourceName: 'Boundary recovery desk',
+    resourceName: 'Boundary release desk',
     startsAt: '2026-08-18T23:30:00Z',
-    endsAt: '2026-08-19T00:01:10Z',
+    endsAt: '2026-08-19T00:00:30Z',
     canCheckIn: false,
     canCancel: false,
     canRelease: true,
   });
-  let source: 'READY' | 'UNAVAILABLE' = 'READY';
   let releaseWrites = 0;
-  await page.route('**/api/platform/v1/workplace/bookings**', async (route) => {
+  await page.route('**/api/platform/v1/workplace/bookings**', (route) => {
     const request = route.request();
     const path = new URL(request.url()).pathname;
     if (request.method() === 'POST' && path.endsWith('/release')) {
       releaseWrites += 1;
       return route.fallback();
     }
-    if (request.method() !== 'GET' || path !== '/api/platform/v1/workplace/bookings') {
-      return route.fallback();
+    if (request.method() === 'GET' && path === '/api/platform/v1/workplace/bookings') {
+      return fulfillSuccess(route, [endingBooking]);
     }
-    return source === 'READY'
-      ? fulfillSuccess(route, [recoverableBooking])
-      : route.fulfill({
-          status: 503,
-          contentType: 'application/json',
-          body: JSON.stringify({ code: 'UPSTREAM_UNAVAILABLE', message: 'Retry later.' }),
-        });
+    return route.fallback();
   });
 
-  await page.goto('/workplace/my-bookings');
-  const actionId = `release:${recoverableBooking.bookingId}`;
-  const release = page.locator(`[data-workplace-decision-action="${actionId}"]`);
-  await release.focus();
+  await page.goto(workplaceReservationsPath('WORKPLACE', endingBooking.bookingId));
+  const inspector = page.getByRole('complementary', { name: 'Reservation inspector' });
+  await inspector.getByRole('button', { name: 'Release space' }).click();
+  const confirmation = page.getByRole('alertdialog', { name: 'Release this workplace space?' });
+  await expect(confirmation).toBeVisible();
 
-  source = 'UNAVAILABLE';
-  const failure = page.waitForResponse(
-    (response) =>
-      response.status() === 503 &&
-      new URL(response.url()).pathname === '/api/platform/v1/workplace/bookings'
-  );
-  await page.clock.fastForward(60_010);
-  await failure;
-  await page.clock.fastForward(2_000);
-  await expect(
-    page.getByRole('alert').filter({ hasText: 'The latest data could not be refreshed' })
-  ).toBeVisible();
-
-  source = 'READY';
-  await page
-    .getByRole('alert')
-    .filter({ hasText: 'The latest data could not be refreshed' })
-    .getByRole('button', { name: 'Try again' })
-    .click();
-  const decisionStatus = page.getByTestId('workplace-booking-decision-status');
-  await expect(decisionStatus).toHaveText(
-    'The current reservation state is verified again. Release is available.'
-  );
-  const stableFocus = page.getByRole('tab', { name: 'Upcoming' });
-  await stableFocus.focus();
-
-  await page.waitForTimeout(100);
-  await page.clock.runFor(15_000);
-  await expect(release).toHaveCount(0);
-  await expect(decisionStatus).toHaveText(
-    'The reservation has ended. Release is closed and no action was sent.'
-  );
-  await expect(stableFocus).toBeFocused();
-  await expect(decisionStatus).not.toBeFocused();
+  await page.clock.setFixedTime(new Date('2026-08-19T00:00:30.050Z'));
+  await page.clock.fastForward(1_000);
+  await expect(confirmation).toHaveCount(0);
+  await expect(inspector.getByRole('button', { name: 'Release space' })).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: 'Reservation timeline' })).toBeFocused();
   expect(releaseWrites).toBe(0);
-  await context.close();
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.clock.setFixedTime(new Date('2026-08-19T00:00:00Z'));
+  await page.reload();
+  const mobileInspector = page.getByRole('dialog', { name: 'Reservation inspector' });
+  await mobileInspector.getByRole('button', { name: 'Release space' }).click();
+  const mobileConfirmation = page.getByRole('alertdialog', {
+    name: 'Release this workplace space?',
+  });
+  await expect(mobileConfirmation).toBeVisible();
+  await page.clock.setFixedTime(new Date('2026-08-19T00:00:30.050Z'));
+  await page.clock.fastForward(1_000);
+  await expect(mobileConfirmation).toHaveCount(0);
+  await expect(
+    mobileInspector.getByRole('heading', { name: 'Boundary release desk' })
+  ).toBeFocused();
+  expect(releaseWrites).toBe(0);
 });
 
-test('submitted release and cancel commands keep truthful state and preserve version contracts', async ({
+test('mobile release returns focus to the timeline when authoritative access removes the inspector', async ({
   page,
 }) => {
-  const checkInBooking = booking({
-    bookingId: '40000000-0000-0000-0000-000000000050',
-    resourceName: 'Single-flight check-in desk',
+  await page.setViewportSize({ width: 390, height: 844 });
+  const currentBooking = booking({
+    bookingId: '40000000-0000-0000-0000-000000000045',
+    resourceName: 'Access revoked desk',
+    startsAt: '2026-08-18T23:30:00Z',
+    endsAt: '2026-08-19T01:00:00Z',
+    canCheckIn: false,
     canCancel: false,
-    version: 3,
+    canRelease: true,
   });
-  const releaseBooking = booking({
-    bookingId: '40000000-0000-0000-0000-000000000051',
+  let denied = false;
+  let releaseWrites = 0;
+  await page.route('**/api/platform/v1/workplace/bookings**', (route) => {
+    const request = route.request();
+    const path = new URL(request.url()).pathname;
+    if (request.method() === 'POST' && path.endsWith('/release')) {
+      releaseWrites += 1;
+      return route.fallback();
+    }
+    if (request.method() === 'GET' && path === '/api/platform/v1/workplace/bookings') {
+      return denied
+        ? route.fulfill({ status: 403, contentType: 'application/json', body: '{}' })
+        : fulfillSuccess(route, [currentBooking]);
+    }
+    return route.fallback();
+  });
+
+  await page.goto(workplaceReservationsPath('WORKPLACE', currentBooking.bookingId));
+  const inspector = page.getByRole('dialog', { name: 'Reservation inspector' });
+  await inspector.getByRole('button', { name: 'Release space' }).click();
+  const confirmation = page.getByRole('alertdialog', { name: 'Release this workplace space?' });
+  await expect(confirmation).toBeVisible();
+
+  denied = true;
+  await page.clock.fastForward(60_010);
+  await expect(confirmation).toHaveCount(0);
+  await expect(inspector).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: 'Reservation timeline' })).toBeFocused();
+  expect(releaseWrites).toBe(0);
+});
+
+test('submitted unified release stays truthful across the end boundary and sends one version', async ({
+  page,
+}) => {
+  let currentBooking = booking({
+    bookingId: '40000000-0000-0000-0000-000000000044',
     resourceName: 'Submitted release desk',
     startsAt: '2026-08-18T23:30:00Z',
     endsAt: '2026-08-19T00:00:30Z',
@@ -2877,115 +2878,50 @@ test('submitted release and cancel commands keep truthful state and preserve ver
     canRelease: true,
     version: 7,
   });
-  const cancelBooking = booking({
-    bookingId: '40000000-0000-0000-0000-000000000052',
-    resourceName: 'Cancelable future desk',
-    startsAt: '2026-08-19T00:30:00Z',
-    endsAt: '2026-08-19T01:30:00Z',
-    canCheckIn: false,
-    canCancel: true,
-    canRelease: false,
-    version: 11,
-  });
-  let activeBookings = [checkInBooking, releaseBooking, cancelBooking];
-  let checkInWrites = 0;
   let releaseWrites = 0;
-  let cancelWrites = 0;
-  let checkInPayload: unknown;
   let releasePayload: unknown;
-  let cancelPayload: unknown;
-  let releaseCheckIn: (() => void) | undefined;
-  const checkInGate = new Promise<void>((resolve) => {
-    releaseCheckIn = resolve;
-  });
-  let releaseSubmitted: (() => void) | undefined;
+  let finishRelease: (() => void) | undefined;
   const releaseGate = new Promise<void>((resolve) => {
-    releaseSubmitted = resolve;
+    finishRelease = resolve;
   });
   await page.route('**/api/platform/v1/workplace/bookings**', async (route) => {
     const request = route.request();
     const path = new URL(request.url()).pathname;
-    if (request.method() === 'GET' && path === '/api/platform/v1/workplace/bookings') {
-      return fulfillSuccess(route, activeBookings);
-    }
-    if (request.method() === 'POST' && path.endsWith(`/${checkInBooking.bookingId}/check-in`)) {
-      checkInWrites += 1;
-      checkInPayload = request.postDataJSON();
-      await checkInGate;
-      activeBookings = activeBookings.filter(
-        (candidate) => candidate.bookingId !== checkInBooking.bookingId
-      );
-      return fulfillSuccess(route, {
-        ...checkInBooking,
-        status: 'CHECKED_IN',
-        canCheckIn: false,
-        version: checkInBooking.version + 1,
-      });
-    }
-    if (request.method() === 'POST' && path.endsWith(`/${releaseBooking.bookingId}/release`)) {
+    if (request.method() === 'POST' && path.endsWith('/release')) {
       releaseWrites += 1;
       releasePayload = request.postDataJSON();
       await releaseGate;
-      activeBookings = activeBookings.filter(
-        (candidate) => candidate.bookingId !== releaseBooking.bookingId
-      );
-      return fulfillSuccess(route, {
-        ...releaseBooking,
-        status: 'RELEASED',
-        canRelease: false,
-        version: releaseBooking.version + 1,
-      });
+      currentBooking = { ...currentBooking, status: 'RELEASED', canRelease: false, version: 8 };
+      return fulfillSuccess(route, currentBooking);
     }
-    if (request.method() === 'POST' && path.endsWith(`/${cancelBooking.bookingId}/cancel`)) {
-      cancelWrites += 1;
-      cancelPayload = request.postDataJSON();
-      activeBookings = activeBookings.filter(
-        (candidate) => candidate.bookingId !== cancelBooking.bookingId
-      );
-      return fulfillSuccess(route, {
-        ...cancelBooking,
-        status: 'CANCELLED',
-        canCancel: false,
-        version: cancelBooking.version + 1,
-      });
+    if (request.method() === 'GET' && path === '/api/platform/v1/workplace/bookings') {
+      return fulfillSuccess(route, [currentBooking]);
     }
     return route.fallback();
   });
 
-  await page.goto('/workplace/my-bookings');
-  const checkIn = page.getByRole('button', { name: 'Check in' });
-  await checkIn.dblclick();
-  await expect.poll(() => checkInWrites).toBe(1);
-  await expect(checkIn).toBeDisabled();
-  expect(checkInPayload).toEqual({ version: 3 });
-  releaseCheckIn?.();
-  await expect(page.getByText('You checked in to the space.')).toBeVisible();
-  expect(checkInWrites).toBe(1);
-
-  await page.getByRole('button', { name: 'Release' }).click();
-  const releaseDialog = page.getByRole('dialog', { name: 'Release this space?' });
-  await releaseDialog.getByRole('button', { name: 'Release' }).click();
+  await page.goto(workplaceReservationsPath('WORKPLACE', currentBooking.bookingId));
+  await page
+    .getByRole('complementary', { name: 'Reservation inspector' })
+    .getByRole('button', {
+      name: 'Release space',
+    })
+    .click();
+  const confirmation = page.getByRole('alertdialog', { name: 'Release this workplace space?' });
+  await confirmation.getByRole('button', { name: 'Release space' }).dblclick();
   await expect.poll(() => releaseWrites).toBe(1);
+  expect(releasePayload).toEqual({ version: 7 });
 
   await page.clock.setFixedTime(new Date('2026-08-19T00:00:30.050Z'));
-  await page.clock.fastForward(30_050);
-  await expect(releaseDialog).toBeVisible();
-  await expect(page.getByTestId('workplace-booking-decision-status')).toHaveText('');
-  await expect(page.getByText(/no action was sent/u)).toHaveCount(0);
-  expect(releasePayload).toEqual({ version: 7 });
+  await page.clock.fastForward(1_000);
+  await expect(confirmation).toBeVisible();
+  await expect(confirmation.getByRole('button').last()).toBeDisabled();
   expect(releaseWrites).toBe(1);
 
-  releaseSubmitted?.();
+  finishRelease?.();
+  await expect(confirmation).toHaveCount(0);
   await expect(page.getByText('The space was released.')).toBeVisible();
-  await expect(page.locator('.MuiDialog-root')).toHaveCount(0);
   expect(releaseWrites).toBe(1);
-
-  await page.getByRole('button', { name: 'Cancel booking' }).click();
-  const cancelDialog = page.getByRole('alertdialog', { name: 'Cancel this space booking?' });
-  await cancelDialog.getByRole('button', { name: 'Cancel booking' }).click();
-  await expect(page.getByText('The space booking was cancelled.')).toBeVisible();
-  expect(cancelPayload).toEqual({ version: 11 });
-  expect(cancelWrites).toBe(1);
 });
 
 test('identity changes clear prior decision state and block cross-account booking commands', async ({
@@ -3073,14 +3009,16 @@ test('identity changes clear prior decision state and block cross-account bookin
     return fulfillSuccess(route, currentBooking ? [currentBooking] : []);
   });
 
-  await page.goto('/workplace/my-bookings');
+  await page.goto(workplaceReservationsPath('WORKPLACE'));
   await expect(
     page
-      .getByTestId(/^workplace-booking-400/u)
+      .getByTestId(/^workplace-reservation-workplace-400/u)
       .getByRole('heading', { name: 'Identity A desk', exact: true })
   ).toBeVisible();
-  await page.getByRole('button', { name: 'Release' }).click();
-  const staleVersionDialog = page.getByRole('dialog', { name: 'Release this space?' });
+  await page.getByRole('button', { name: 'Release space' }).click();
+  const staleVersionDialog = page.getByRole('alertdialog', {
+    name: 'Release this workplace space?',
+  });
   await expect(staleVersionDialog).toBeVisible();
   identityBookings.set(1, { ...identityBookings.get(1)!, version: 1 });
   const refreshedVersion = page.waitForResponse(
@@ -3093,14 +3031,13 @@ test('identity changes clear prior decision state and block cross-account bookin
   await expect(staleVersionDialog).toHaveCount(0);
   expect(actionWrites).toBe(0);
 
-  const identityARelease = page.getByRole('button', { name: 'Release' });
+  const identityARelease = page.getByRole('button', { name: 'Release space' });
   await identityARelease.focus();
   bookingUnavailable = true;
   await page.clock.fastForward(60_010);
-  const priorDecisionStatus = page.getByTestId('workplace-booking-decision-status');
-  await expect(priorDecisionStatus).toHaveText(
-    'The current reservation state could not be verified. Release is closed and no action was sent.'
-  );
+  const sourceStatus = page.getByTestId('workplace-reservations-source-workplace');
+  await expect(sourceStatus.getByText('Stale', { exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Release space' })).toHaveCount(0);
 
   bookingUnavailable = false;
   activeUserId = 2;
@@ -3109,25 +3046,29 @@ test('identity changes clear prior decision state and block cross-account bookin
   await expect.poll(() => meCalls).toBeGreaterThanOrEqual(2);
   await expect(
     page
-      .getByTestId(/^workplace-booking-400/u)
+      .getByTestId(/^workplace-reservation-workplace-400/u)
       .getByRole('heading', { name: 'Identity B desk', exact: true })
   ).toBeVisible();
-  await expect(priorDecisionStatus).toHaveText('');
+  await expect(sourceStatus.getByText('Current', { exact: true })).toBeVisible();
 
-  await page.getByRole('button', { name: 'Release' }).click();
-  await expect(page.getByRole('dialog', { name: 'Release this space?' })).toBeVisible();
+  await page.getByRole('button', { name: 'Release space' }).click();
+  await expect(
+    page.getByRole('alertdialog', { name: 'Release this workplace space?' })
+  ).toBeVisible();
   activeUserId = 3;
   await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')));
   await expect.poll(() => meCalls).toBeGreaterThanOrEqual(3);
-  await expect(page.getByRole('dialog', { name: 'Release this space?' })).toHaveCount(0);
+  await expect(
+    page.getByRole('alertdialog', { name: 'Release this workplace space?' })
+  ).toHaveCount(0);
   await expect(
     page
-      .getByTestId(/^workplace-booking-400/u)
+      .getByTestId(/^workplace-reservation-workplace-400/u)
       .getByRole('heading', { name: 'Identity B desk', exact: true })
   ).toHaveCount(0);
   await expect(
     page
-      .getByTestId(/^workplace-booking-400/u)
+      .getByTestId(/^workplace-reservation-workplace-400/u)
       .getByRole('heading', { name: 'Identity C desk', exact: true })
   ).toBeVisible();
   expect(actionWrites).toBe(0);
@@ -3199,18 +3140,18 @@ test('relocation is bound to the current identity and booking snapshot', async (
     await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')));
     await expect.poll(() => meCalls).toBeGreaterThanOrEqual(expectedCalls);
     const name = `Relocate identity ${userId} desk`;
-    const cards = page.getByTestId(/^workplace-booking-400/u);
+    const cards = page.getByTestId(/^workplace-reservation-workplace-400/u);
     await expect(cards.getByRole('heading', { name })).toBeVisible();
   };
-  await page.goto('/workplace/my-bookings');
-  await page.getByRole('button', { name: 'Change reservation' }).click();
+  await page.goto(workplaceReservationsPath('WORKPLACE'));
+  await page.getByRole('button', { name: 'Change space' }).click();
   const relocateDialog = page.getByRole('dialog', { name: 'Change space or time' });
   await expect(relocateDialog).toBeVisible();
   await switchIdentity(2);
   await expect(relocateDialog).toHaveCount(0);
   expect(relocateWrites).toBe(0);
 
-  await page.getByRole('button', { name: 'Change reservation' }).click();
+  await page.getByRole('button', { name: 'Change space' }).click();
   await relocateDialog.getByLabel('Space passing initial checks').click();
   await page.getByRole('option', { name: /Focus desk 13/u }).click();
   await relocateDialog.getByLabel('Reason for change').fill('Move under the active identity');
@@ -3257,8 +3198,8 @@ test('members can move a future reservation to an available space of the same ty
     return route.fallback();
   });
 
-  await page.goto('/workplace/my-bookings');
-  await page.getByRole('button', { name: 'Change reservation' }).click();
+  await page.goto(workplaceReservationsPath('WORKPLACE'));
+  await page.getByRole('button', { name: 'Change space' }).click();
 
   const dialog = page.getByRole('dialog', { name: 'Change space or time' });
   await expect(dialog).toBeVisible();
@@ -3268,11 +3209,20 @@ test('members can move a future reservation to an available space of the same ty
   await expect(dialog).toHaveCount(0);
   expect(relocationWrites).toBe(0);
 
-  await page.getByRole('button', { name: 'Change reservation' }).click();
+  await page.getByRole('button', { name: 'Change space' }).click();
   await expect(dialog).toBeVisible();
   await dialog.getByLabel('Space passing initial checks').click();
   await page.getByRole('option', { name: /Focus desk 13/u }).click();
   await dialog.getByLabel('Reason for change').fill('Move closer to the project team');
+
+  let finishRelocation: (() => void) | undefined;
+  const relocationGate = new Promise<void>((resolve) => {
+    finishRelocation = resolve;
+  });
+  await page.route('**/api/platform/v1/workplace/bookings/*/relocate', async (route) => {
+    await relocationGate;
+    return route.fallback();
+  });
 
   const relocation = page.waitForRequest(
     (request) => request.url().endsWith('/relocate') && request.method() === 'POST'
@@ -3285,6 +3235,12 @@ test('members can move a future reservation to an available space of the same ty
     version: 1,
   });
   expect(relocationWrites).toBe(1);
+  currentBooking = booking({ version: 2 });
+  await page.clock.fastForward(60_010);
+  await expect.poll(() => bookingGets).toBeGreaterThanOrEqual(3);
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByRole('button', { name: /Saving/u })).toBeVisible();
+  finishRelocation?.();
   await expect(dialog).toBeHidden();
 });
 
@@ -3325,8 +3281,8 @@ test('relocation only offers targets that pass the shared eligibility checks', a
     }
   });
 
-  await page.goto('/workplace/my-bookings');
-  await page.getByRole('button', { name: 'Change reservation' }).click();
+  await page.goto(workplaceReservationsPath('WORKPLACE'));
+  await page.getByRole('button', { name: 'Change space' }).click();
   const dialog = page.getByRole('dialog', { name: 'Change space or time' });
   const target = dialog.getByLabel('Space passing initial checks');
   const save = dialog.getByRole('button', { name: 'Save reservation change' });
@@ -3414,8 +3370,8 @@ test('relocation requires a fresh authoritative target snapshot before saving', 
     }
   });
 
-  await page.goto('/workplace/my-bookings');
-  const relocateTrigger = page.getByRole('button', { name: 'Change reservation', exact: true });
+  await page.goto(workplaceReservationsPath('WORKPLACE'));
+  const relocateTrigger = page.getByRole('button', { name: 'Change space', exact: true });
   await relocateTrigger.click();
   const dialog = page.getByRole('dialog', { name: 'Change space or time' });
   const save = dialog.getByRole('button', { name: 'Save reservation change' });
@@ -3455,13 +3411,14 @@ test('relocation requires a fresh authoritative target snapshot before saving', 
   deniedFailure.value.release();
 
   await expect(dialog).toHaveCount(0);
-  const deniedNotice = page.getByTestId('workplace-relocate-denied-alert');
+  const deniedNotice = page.getByRole('alert').filter({
+    hasText:
+      'You no longer have permission to view relocation options. The reservation change was closed and no update was sent.',
+  });
   await expect(deniedNotice).toHaveText(
     'You no longer have permission to view relocation options. The reservation change was closed and no update was sent.'
   );
   await expect(deniedNotice).toHaveAttribute('role', 'alert');
-  await expect(deniedNotice).toHaveAttribute('aria-live', 'assertive');
-  await expect(deniedNotice).toHaveAttribute('aria-atomic', 'true');
   await expect(relocateTrigger).toBeFocused();
   expect(relocationWrites).toBe(0);
 
@@ -3472,7 +3429,6 @@ test('relocation requires a fresh authoritative target snapshot before saving', 
   await expect(dialog).toBeVisible();
   await expect(dialog.getByLabel('Space passing initial checks')).toHaveCount(0);
   await expect(save).toBeDisabled();
-  await expect(deniedNotice).toHaveCount(0);
   releaseFreshRecovery?.();
   await dialog.getByLabel('Space passing initial checks').click();
   await page.getByRole('option', { name: /Focus desk 13/u }).click();
@@ -3518,8 +3474,8 @@ test('Korean relocation denial persists outside the dialog and restores its trig
     }
   });
 
-  await page.goto('/workplace/my-bookings');
-  const relocateTrigger = page.getByRole('button', { name: '예약 변경', exact: true });
+  await page.goto(workplaceReservationsPath('WORKPLACE'));
+  const relocateTrigger = page.getByRole('button', { name: '공간 변경', exact: true });
   await relocateTrigger.click();
   const dialog = page.getByRole('dialog', { name: '공간 또는 시간 변경', exact: true });
   const save = dialog.getByRole('button', { name: '예약 변경 저장', exact: true });
@@ -3537,12 +3493,13 @@ test('Korean relocation denial persists outside the dialog and restores its trig
   releaseDenied?.();
 
   await expect(dialog).toHaveCount(0);
-  const deniedNotice = page.getByTestId('workplace-relocate-denied-alert');
+  const deniedNotice = page.getByRole('alert').filter({
+    hasText:
+      '이동 후보를 조회할 권한이 없어 예약 변경을 닫았습니다. 변경 요청은 전송되지 않았습니다.',
+  });
   await expect(deniedNotice).toHaveText(
-    '이동 후보를 볼 권한이 없습니다. 예약 변경 창을 닫았으며 변경 요청은 전송되지 않았습니다.'
+    '이동 후보를 조회할 권한이 없어 예약 변경을 닫았습니다. 변경 요청은 전송되지 않았습니다.'
   );
-  await expect(deniedNotice).toHaveAttribute('role', 'alert');
-  await expect(deniedNotice).toHaveAttribute('aria-live', 'assertive');
   await expect(relocateTrigger).toBeFocused();
   expect(relocationWrites).toBe(0);
 });
@@ -3550,39 +3507,38 @@ test('Korean relocation denial persists outside the dialog and restores its trig
 test('room booking fails closed when the tenant meeting policy is unavailable', async ({
   page,
 }) => {
+  await page.route('**/api/platform/v1/workplace/explore**', (route) =>
+    fulfillSuccess(route, { ...workplaceExploreFixture, resources: [mappedCalendarRoom] })
+  );
   await page.route('**/api/platform/v1/rooms/policy', (route) =>
     route.fulfill({ status: 503, contentType: 'application/json', body: '{}' })
   );
-  await page.goto('/workplace/rooms');
+  await page.goto(
+    workplaceFindPath({ types: 'ROOM', suffix: `&resource=${mappedCalendarRoom.resourceId}` })
+  );
 
-  await expect(
-    page.getByText(
-      'The meeting-room booking policy could not be loaded. Booking is temporarily disabled.'
-    )
-  ).toBeVisible();
-  await expect(
-    page.getByRole('button', { name: /Focus 08 is unavailable at 09:00 AM/u })
-  ).toHaveAttribute('aria-disabled', 'true');
+  const policyUnavailable =
+    'The meeting-room booking policy is unavailable. Room booking is disabled until it is restored.';
+  const footer = page.getByTestId('detail-inspector-footer');
+  await expect(footer.getByRole('status').filter({ hasText: policyUnavailable })).toBeVisible();
+  await expect(footer.getByRole('button', { name: 'Book this space' })).toBeDisabled();
 });
 
-test('room timelines use Calendar policy hours and each resource IANA time zone', async ({
+test('mapped rooms preserve Calendar authority and resource time zone in booking', async ({
   page,
 }) => {
-  await page.goto('/workplace/rooms');
-
-  await expect(page.getByRole('heading', { name: 'Find a room', level: 1 })).toBeVisible();
-  await expect(page.getByText('Local time · Asia/Seoul').first()).toBeVisible();
-  await expect(
-    page.getByRole('button', { name: /Focus 08 is unavailable at 09:00 AM/u })
-  ).toHaveAttribute('aria-disabled', 'true');
-  await expect(page.getByRole('button', { name: /Book Focus 08 at 09:30 AM/u })).toBeEnabled();
-  await expect(page.getByRole('button', { name: /Focus 08 at 08:00 AM/u })).toHaveCount(0);
-  const timeline = page.getByRole('toolbar', { name: 'Availability for Focus 08' });
-  await expect(timeline.locator('button[tabindex="0"]')).toHaveCount(1);
-  const firstSlot = timeline.locator('button[tabindex="0"]');
-  await firstSlot.focus();
-  await firstSlot.press('ArrowRight');
-  await expect(timeline.locator('button').nth(1)).toBeFocused();
+  await page.route('**/api/platform/v1/workplace/explore**', (route) =>
+    fulfillSuccess(route, { ...workplaceExploreFixture, resources: [mappedCalendarRoom] })
+  );
+  await page.goto(
+    workplaceFindPath({ types: 'ROOM', suffix: `&resource=${mappedCalendarRoom.resourceId}` })
+  );
+  await expect(page.getByRole('heading', { name: 'Find a space', level: 1 })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Book this space' })).toBeEnabled();
+  await page.getByRole('button', { name: 'Book this space' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Book a room' });
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByText('Asia/Seoul', { exact: true })).toBeVisible();
 });
 
 test('read-only roles see accessible reasons and cannot invoke booking or administration writes', async ({
@@ -3592,7 +3548,7 @@ test('read-only roles see accessible reasons and cannot invoke booking or admini
     fulfillSuccess(route, READ_ONLY_WORKPLACE_PERMISSIONS)
   );
 
-  await page.goto('/workplace/explore');
+  await page.goto(workplaceFindPath());
   await expect(page.getByTestId('rooms-permission-notice')).toContainText(
     'cannot create Workplace bookings'
   );
@@ -3604,11 +3560,15 @@ test('read-only roles see accessible reasons and cannot invoke booking or admini
   await expect(page.getByRole('dialog', { name: 'Book a workspace' })).toHaveCount(0);
   await expect(page.getByText('cannot create Workplace bookings').last()).toBeVisible();
 
-  await page.goto('/workplace/my-bookings');
-  await expect(page.getByTestId('rooms-permission-notice')).toContainText(
+  await page.goto(workplaceReservationsPath('WORKPLACE'));
+  await expect(page.getByRole('heading', { name: 'My reservations', level: 1 })).toBeVisible();
+  await expect(page.getByTestId('rooms-permission-notice').first()).toContainText(
     'cannot cancel, check in, or release'
   );
-  await expect(page.getByRole('button', { name: 'Check in' })).toHaveCount(0);
+  await expect(page.getByTestId('workplace-reservations-source-workplace')).toContainText(
+    'Current'
+  );
+  await expect(page.getByRole('button', { name: 'Check in now' })).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Cancel booking' })).toHaveCount(0);
 
   await page.goto('/workplace/admin/locations');
@@ -3619,9 +3579,12 @@ test('read-only roles see accessible reasons and cannot invoke booking or admini
   await expect(page.getByRole('button', { name: 'Save layout' })).toBeDisabled();
 
   await page.goto('/workplace/admin/policies');
-  await expect(page.getByTestId('rooms-permission-notice')).toContainText(
-    'policy management permission is required'
-  );
+  await expect(
+    page
+      .getByTestId('rooms-permission-notice')
+      .filter({ hasText: 'policy management permission is required' })
+  ).toContainText('policy management permission is required');
+  await page.getByRole('button', { name: 'Colleague visibility' }).click();
   await expect(
     page.getByRole('switch', { name: 'Show member names on reserved spaces' })
   ).toBeDisabled();
@@ -3644,10 +3607,21 @@ test('administrators can distinguish lifecycle state and edit the spatial invent
 });
 
 test('administrators can change and persist tenant booking governance', async ({ page }) => {
+  let appliedPolicy: Record<string, unknown> | null = null;
+  page.on('request', (request) => {
+    if (
+      request.method() === 'POST' &&
+      new URL(request.url()).pathname.endsWith('/booking-policy/changes')
+    ) {
+      appliedPolicy = request.postDataJSON();
+    }
+  });
   await page.goto('/workplace/admin/policies');
   await expect(
     page.getByRole('heading', { name: 'Workplace operating policy', level: 1 })
   ).toBeVisible();
+
+  await page.getByRole('button', { name: 'Colleague visibility' }).click();
 
   const visibility = page.getByRole('switch', {
     name: 'Show member names on reserved spaces',
@@ -3655,7 +3629,26 @@ test('administrators can change and persist tenant booking governance', async ({
   await expect(visibility).toBeChecked();
   await visibility.uncheck();
   await page.getByRole('button', { name: 'Save' }).click();
-  await expect(page.getByText('The Workplace policy was saved.')).toBeVisible();
+  const review = page.getByRole('dialog', { name: 'Policy change impact' });
+  await review.getByRole('button', { name: 'Review change impact' }).click();
+  await review.getByRole('textbox', { name: 'Reason for change' }).fill('Privacy policy review');
+  await review
+    .getByRole('checkbox', {
+      name: 'I have reviewed the current values, proposed values and known impact.',
+    })
+    .check();
+  await review.getByRole('button', { name: 'Save reviewed change' }).click();
+  await expect(review).toHaveCount(0);
+  expect(appliedPolicy).toMatchObject({
+    proposed: { showColleagueNames: false, version: policy.version },
+    reason: 'Privacy policy review',
+    confirmed: true,
+  });
+  await page.reload();
+  await page.getByRole('button', { name: 'Colleague visibility' }).click();
+  await expect(
+    page.getByRole('switch', { name: 'Show member names on reserved spaces' })
+  ).not.toBeChecked();
 });
 
 test('workplace governance remains complete on mobile and resumes persisted floor-plan drafts', async ({
@@ -3667,18 +3660,18 @@ test('workplace governance remains complete on mobile and resumes persisted floo
   await expect(page.getByRole('heading', { name: 'Workplace governance', level: 1 })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Campuses', level: 2 })).toBeVisible();
 
-  await page.getByRole('tab', { name: 'Access control' }).click();
+  await chooseWorkplaceGovernanceArea(page, 'Access control');
   await expect(
     page.getByRole('heading', { name: 'Building access rules', level: 2 })
   ).toBeVisible();
   await expect(page.getByText(/closed by default/u).first()).toBeVisible();
 
-  await page.getByRole('tab', { name: 'Policy inheritance' }).click();
+  await chooseWorkplaceGovernanceArea(page, 'Policy inheritance');
   await expect(
     page.getByRole('heading', { name: 'Partial policies', level: 2, exact: true })
   ).toBeVisible();
 
-  await page.getByRole('tab', { name: 'Floor-plan releases' }).click();
+  await chooseWorkplaceGovernanceArea(page, 'Floor-plan releases');
   await expect(page.getByRole('heading', { name: 'Revision history', level: 2 })).toBeVisible();
   await page.getByRole('button', { name: 'Edit draft' }).click();
   await expect(
@@ -3718,7 +3711,7 @@ test('workplace governance remains complete on mobile and resumes persisted floo
   const persistedHorizontalPosition = await horizontalPosition.inputValue();
   await expect(page.getByText('2 unsaved')).toBeVisible();
 
-  await page.getByRole('tab', { name: 'Admin delegation' }).click();
+  await chooseWorkplaceGovernanceArea(page, 'Admin delegation');
   const unsavedDialog = page.getByRole('alertdialog', {
     name: 'Discard unsaved floor-plan changes?',
   });
@@ -3740,7 +3733,7 @@ test('workplace governance remains complete on mobile and resumes persisted floo
   await expect(page).toHaveURL(/area=floorPlans/u);
   await expect(page.getByRole('heading', { name: 'Revision history', level: 2 })).toBeVisible();
 
-  await page.getByRole('tab', { name: 'Admin delegation' }).click();
+  await chooseWorkplaceGovernanceArea(page, 'Admin delegation');
   await expect(page).toHaveURL(/area=delegation/u);
   await expect(
     page.getByRole('heading', { name: 'Administrative delegations', level: 2 })
@@ -3762,6 +3755,7 @@ test('administrators are warned before discarding unsaved Workplace policy chang
   page,
 }) => {
   await page.goto('/workplace/admin/policies');
+  await page.getByRole('button', { name: 'Colleague visibility' }).click();
   const visibility = page.getByRole('switch', {
     name: 'Show member names on reserved spaces',
   });
@@ -3783,7 +3777,7 @@ test('administrators are warned before discarding unsaved Workplace policy chang
 });
 test('mobile discovery defaults to the complete list without page overflow', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto('/workplace/explore');
+  await page.goto(workplaceFindPath());
   await expect(page.getByRole('heading', { name: 'Find a space', level: 1 })).toBeVisible();
   await expect(page.getByRole('button', { name: /Focus desk 12/u })).toBeVisible();
   const dimensions = await page.evaluate(() => ({
@@ -3801,7 +3795,7 @@ test('workplace discovery reflows without page overflow across compact viewports
     { width: 1280, height: 900 },
   ]) {
     await page.setViewportSize(viewport);
-    await page.goto('/workplace/explore');
+    await page.goto(workplaceFindPath());
     await expect(page.getByRole('heading', { name: 'Find a space', level: 1 })).toBeVisible();
     const dimensions = await page.evaluate(() => ({
       viewport: document.documentElement.clientWidth,
@@ -3824,9 +3818,9 @@ test('every member Workplace surface reflows at mobile and tablet widths', async
     await page.setViewportSize(viewport);
     for (const path of [
       '/workplace',
-      '/workplace/rooms',
-      '/workplace/my-bookings',
-      '/workplace/my-meetings',
+      workplaceFindPath({ types: 'ROOM' }),
+      workplaceReservationsPath('WORKPLACE'),
+      workplaceReservationsPath('CALENDAR'),
     ]) {
       await page.goto(path);
       await expect(page.locator('main')).toBeVisible();

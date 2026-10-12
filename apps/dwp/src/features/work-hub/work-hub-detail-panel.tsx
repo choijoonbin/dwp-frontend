@@ -147,7 +147,7 @@ export function WorkHubDetailPanel({
             <Typography
               ref={titleRef}
               id={titleId}
-              component="h2"
+              component={mobile ? 'h1' : 'h2'}
               variant="h5"
               tabIndex={mobile ? -1 : undefined}
               sx={{

@@ -30,6 +30,7 @@ type WorkspaceComposerToolbarProps = {
   presentation: HomePresentation;
   placement?: 'sticky' | 'floating';
   busy?: boolean;
+  addControlId?: string;
   onPresentationChange: (presentation: HomePresentation) => void;
   onAdd: () => void;
   addLabel?: string;
@@ -93,6 +94,7 @@ export function WorkspaceComposerToolbar({
   presentation,
   placement = 'sticky',
   busy = false,
+  addControlId,
   onPresentationChange,
   onAdd,
   addLabel,
@@ -201,6 +203,7 @@ export function WorkspaceComposerToolbar({
     >
       <Tooltip title={addUnavailableReason ?? ''} describeChild>
         <ActionButton
+          id={addControlId}
           data-composer-control="add"
           intent="quiet"
           size="small"

@@ -1,6 +1,7 @@
 import { lazy } from 'react';
 
 import type { ApprovalAdminView } from './approval-navigation';
+import type { ReactNode } from 'react';
 
 const ApprovalAdminOverview = lazy(() =>
   import('./approval-admin-overview').then((module) => ({ default: module.ApprovalAdminOverview }))
@@ -57,11 +58,26 @@ const ApprovalAdminDeploymentsRuntime = lazy(() =>
   adminV2().then((module) => ({ default: module.ApprovalAdminDeploymentsRuntime }))
 );
 
-export function ApprovalAdmin({ view }: { view: ApprovalAdminView }) {
+export function ApprovalAdmin({
+  view,
+  routeHeader,
+}: {
+  view: ApprovalAdminView;
+  routeHeader?: ReactNode;
+}) {
+  const withRouteHeader = (workspace: ReactNode) =>
+    routeHeader ? (
+      <>
+        {routeHeader}
+        {workspace}
+      </>
+    ) : (
+      workspace
+    );
   if (view === 'admin-overview') return <ApprovalAdminOverview />;
   if (view === 'workflows') return <ApprovalWorkflowStudio />;
   if (view === 'forms') {
-    return <ApprovalAdminFormsRuntime matureWorkspace={<ApprovalFormStudio />} />;
+    return <ApprovalAdminFormsRuntime matureWorkspace={withRouteHeader(<ApprovalFormStudio />)} />;
   }
   if (view === 'routing') return <ApprovalAdminRoutingRuntime />;
   if (view === 'policies') {
@@ -75,7 +91,11 @@ export function ApprovalAdmin({ view }: { view: ApprovalAdminView }) {
   if (view === 'integrations') return <ApprovalAdminIntegrationsRuntime />;
   if (view === 'audit') return <ApprovalAdminAuditRuntime />;
   if (view === 'operations') {
-    return <ApprovalAdminOperationsRuntime deliveryWorkspace={<ApprovalOperationsAdmin />} />;
+    return (
+      <ApprovalAdminOperationsRuntime
+        deliveryWorkspace={withRouteHeader(<ApprovalOperationsAdmin />)}
+      />
+    );
   }
   if (view === 'signatures') return <ApprovalSignatureAdmin />;
   if (view === 'analytics') return <ApprovalAdminAnalyticsRuntime />;

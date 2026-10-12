@@ -17,8 +17,8 @@ test('tracked APR-17 through APR-24 design contract maps all source frames to pr
     visualCaptureCount: 20,
     supportedCommandCount: 13,
     unavailableControlCount: 12,
-    ownerActionContractCount: 42,
-    ownerHighRiskRouteCount: 16,
+    ownerActionContractCount: 64,
+    ownerHighRiskRouteCount: 23,
   });
 });
 
@@ -90,7 +90,7 @@ test('traceability rejects a missing backend-supported command contract', async 
 
 test('traceability rejects an overstated owner action contract inventory', async () => {
   const traceability = structuredClone(await readApprovalAdminV2Traceability());
-  traceability.commandEvidenceContract.ownerActionInventory.actionContractCount = 41;
+  traceability.commandEvidenceContract.ownerActionInventory.actionContractCount = 65;
   await assert.rejects(
     validateApprovalAdminV2Traceability(traceability),
     (error) =>

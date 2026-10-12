@@ -15,8 +15,16 @@ import { useHcmAccess } from '../features/hcm/use-hcm-experience';
 import { ProductAreaNavigationItemAccessGuard } from '../layouts/product-area-navigation-access-guard';
 import { RouteFallback } from '../routes/route-support';
 import { HRIS_HOME_RUNTIME_PROVIDER_REGISTRY } from '../features/hris/integration';
+import {
+  assignmentProposalActionAvailable,
+  assignmentProposalCreateReference,
+} from '../features/hris/employment/assignment-proposal-model';
 
 import type { HcmNavigationItem } from '../features/hcm/hcm-navigation';
+import type {
+  AssignmentProposalPort,
+  AssignmentProposalWorkspacePortProps,
+} from '../components/assignment-proposal-port';
 
 const HcmHome = lazy(() =>
   import('../features/hcm/hcm-home').then((module) => ({
@@ -118,6 +126,18 @@ const AssignmentRegister = lazy(() =>
     default: module.AssignmentRegister,
   }))
 );
+const AssignmentProposalWorkspace = lazy(() =>
+  import('../features/hris/employment/assignment-proposal-workspace').then((module) => ({
+    default: module.AssignmentProposalWorkspace,
+  }))
+);
+const assignmentProposalPort: AssignmentProposalPort = {
+  Workspace: (props: AssignmentProposalWorkspacePortProps) => (
+    <AssignmentProposalWorkspace {...props} />
+  ),
+  actionAvailable: assignmentProposalActionAvailable,
+  createReference: assignmentProposalCreateReference,
+};
 const WorkforceDataOperations = lazy(() =>
   import('../features/workforce/workforce-data-operations').then((module) => ({
     default: module.WorkforceDataOperations,
@@ -172,7 +192,7 @@ function HcmPageContent({ page }: { page: HcmNavigationItem }) {
     'team-absence': <HrTeamAbsenceWorkspace />,
     operations: <HrOperationsOverview />,
     people: <HrisPeople360Workspace />,
-    assignments: <AssignmentRegister />,
+    assignments: <AssignmentRegister assignmentProposal={assignmentProposalPort} />,
     'time-operations': <HrisTimeOperationsWorkspace />,
     'absence-operations': <HrDomainOperations domain="ABSENCE" />,
     'benefits-operations': <HrDomainOperations domain="BENEFITS" />,

@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Activity, History, Home, Inbox, Menu, MessageSquarePlus } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
@@ -9,12 +10,15 @@ import type {
   ProductAreaMobileShellContext,
   ProductAreaMobileShellPresentation,
 } from '../../layouts/product-area-layout';
-import { DwaionMobileHeader } from './dwaion-mobile-header';
 import {
   resolveDwaionMobileHeaderProfile,
   type DwaionMobileDestination,
   type DwaionMobileHeaderProfile,
 } from './dwaion-mobile-shell-profile';
+
+const DwaionMobileHeader = lazy(() =>
+  import('./dwaion-mobile-header').then((module) => ({ default: module.DwaionMobileHeader }))
+);
 
 const DESTINATIONS = {
   home: { path: '/dwaion/home', view: 'home', icon: Home },
@@ -162,11 +166,13 @@ export function resolveDwaionProductAreaMobileShell(
 
   return {
     header: (
-      <DwaionMobileHeader
-        profile={profile}
-        navigation={context.navigation}
-        onBack={context.onNavigate}
-      />
+      <Suspense fallback={null}>
+        <DwaionMobileHeader
+          profile={profile}
+          navigation={context.navigation}
+          onBack={context.onNavigate}
+        />
+      </Suspense>
     ),
     footer: profile.showNavigation ? (
       <DwaionMobileNavigation context={context} profile={profile} />

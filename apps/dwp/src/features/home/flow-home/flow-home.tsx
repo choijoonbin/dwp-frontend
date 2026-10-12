@@ -826,7 +826,11 @@ export function FlowHome({
                     items={homeWorkActions.actionItems}
                     state={contributionModel.bucketStates.action}
                     maxItems={HOME_WORK_CARD_VISIBLE_LIMIT}
-                    allRoute={workHubAccessible ? '/work/queue' : undefined}
+                    allRoute={
+                      workHubAccessible
+                        ? homePurposeAllRoute('action', homeWorkActions.actionItems)
+                        : undefined
+                    }
                     featuredFirst
                     wideFeatured={readLayout.template !== 'adaptive-wide'}
                     headerAccessory={

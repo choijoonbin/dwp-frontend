@@ -1,13 +1,17 @@
 type ApprovalRelease15ActionContract = Readonly<{
   apiFunction: string;
   routeContractKey: `route.approvals.${string}.action`;
-  method: 'POST' | 'PUT';
+  method: 'DELETE' | 'POST' | 'PUT';
   path: string;
 }>;
 
 const ADMIN = '/api/approvals/v1/admin';
 
 export const APPROVAL_RELEASE15_HIGH_RISK_ROUTE_OPERATIONS = [
+  {
+    operation: 'APPROVAL_AUDIT_EXPORT_VERIFY',
+    routeContractKey: 'route.approvals.admin.audit-export-verify.action',
+  },
   {
     operation: 'APPROVAL_AUDIT_EXPORT_ATTESTATION',
     routeContractKey: 'route.approvals.admin.audit-export-attestation.action',
@@ -31,6 +35,14 @@ export const APPROVAL_RELEASE15_HIGH_RISK_ROUTE_OPERATIONS = [
   {
     operation: 'APPROVAL_DEPLOYMENT_ACTIVATION',
     routeContractKey: 'route.approvals.admin.deployment-activation.action',
+  },
+  {
+    operation: 'APPROVAL_DEPLOYMENT_CANARY_CONTROL',
+    routeContractKey: 'route.approvals.admin.deployment-canary-control.action',
+  },
+  {
+    operation: 'APPROVAL_DEPLOYMENT_CANARY_TELEMETRY',
+    routeContractKey: 'route.approvals.admin.deployment-canary-telemetry.action',
   },
   {
     operation: 'APPROVAL_DEPLOYMENT_PACKAGE_CREATE',
@@ -61,6 +73,18 @@ export const APPROVAL_RELEASE15_HIGH_RISK_ROUTE_OPERATIONS = [
     routeContractKey: 'route.approvals.admin.incident-command.action',
   },
   {
+    operation: 'APPROVAL_INCIDENT_REPORT_CREATE',
+    routeContractKey: 'route.approvals.admin.incident-report-create.action',
+  },
+  {
+    operation: 'APPROVAL_POLICY_DELEGATION_KILL_SWITCH',
+    routeContractKey: 'route.approvals.admin.policy-delegation-kill-switch.action',
+  },
+  {
+    operation: 'APPROVAL_POLICY_GOVERNANCE_PUBLISH',
+    routeContractKey: 'route.approvals.admin.policy-governance-publish.action',
+  },
+  {
     operation: 'APPROVAL_POLICY_AUTOMATION_PUBLISH',
     routeContractKey: 'route.approvals.admin.policy-automation-publish.action',
   },
@@ -72,9 +96,19 @@ export const APPROVAL_RELEASE15_HIGH_RISK_ROUTE_OPERATIONS = [
     operation: 'APPROVAL_ROUTING_DIRECTORY_RETIRE',
     routeContractKey: 'route.approvals.admin.routing-directory-retire.action',
   },
+  {
+    operation: 'APPROVAL_WORKFLOW_STUDIO_RETIRE',
+    routeContractKey: 'route.approvals.admin.workflow-studio-retire.action',
+  },
 ] as const;
 
 export const APPROVAL_RELEASE15_ACTION_CONTRACTS = [
+  {
+    apiFunction: 'executeApprovalAdminV2HighRiskCommand:audit-export-verify',
+    routeContractKey: 'route.approvals.admin.audit-export-verify.action',
+    method: 'POST',
+    path: `${ADMIN}/operations/audit-records/exports/{exportId}/verifications`,
+  },
   {
     apiFunction: 'executeApprovalAdminV2HighRiskCommand:audit-export-attestation',
     routeContractKey: 'route.approvals.admin.audit-export-attestation.action',
@@ -136,6 +170,18 @@ export const APPROVAL_RELEASE15_ACTION_CONTRACTS = [
     path: `${ADMIN}/operations/deployments/promotions/{promotionId}/activation`,
   },
   {
+    apiFunction: 'executeApprovalAdminV2HighRiskCommand:deployment-canary-control',
+    routeContractKey: 'route.approvals.admin.deployment-canary-control.action',
+    method: 'POST',
+    path: `${ADMIN}/operations/deployments/promotions/{promotionId}/canary/control`,
+  },
+  {
+    apiFunction: 'executeApprovalAdminV2HighRiskCommand:deployment-canary-telemetry',
+    routeContractKey: 'route.approvals.admin.deployment-canary-telemetry.action',
+    method: 'POST',
+    path: `${ADMIN}/operations/deployments/promotions/{promotionId}/canary/telemetry`,
+  },
+  {
     apiFunction: 'executeApprovalAdminV2HighRiskCommand:deployment-package-create',
     routeContractKey: 'route.approvals.admin.deployment-package-create.action',
     method: 'POST',
@@ -188,6 +234,36 @@ export const APPROVAL_RELEASE15_ACTION_CONTRACTS = [
     routeContractKey: 'route.approvals.admin.form-studio-draft.action',
     method: 'POST',
     path: `${ADMIN}/forms/studio-v3/{formId}/archive`,
+  },
+  {
+    apiFunction: 'addApprovalFormStudioField',
+    routeContractKey: 'route.approvals.admin.form-studio-field-update.action',
+    method: 'POST',
+    path: `${ADMIN}/forms/studio-v3/{formId}/fields`,
+  },
+  {
+    apiFunction: 'deleteApprovalFormStudioField',
+    routeContractKey: 'route.approvals.admin.form-studio-field-update.action',
+    method: 'DELETE',
+    path: `${ADMIN}/forms/studio-v3/{formId}/fields/{fieldKey}`,
+  },
+  {
+    apiFunction: 'cloneApprovalFormStudioField',
+    routeContractKey: 'route.approvals.admin.form-studio-field-update.action',
+    method: 'POST',
+    path: `${ADMIN}/forms/studio-v3/{formId}/fields/{fieldKey}/clone`,
+  },
+  {
+    apiFunction: 'updateApprovalFormStudioFieldProperties',
+    routeContractKey: 'route.approvals.admin.form-studio-field-update.action',
+    method: 'PUT',
+    path: `${ADMIN}/forms/studio-v3/{formId}/fields/{fieldKey}/properties`,
+  },
+  {
+    apiFunction: 'reorderApprovalFormStudioSectionFields',
+    routeContractKey: 'route.approvals.admin.form-studio-field-update.action',
+    method: 'PUT',
+    path: `${ADMIN}/forms/studio-v3/{formId}/sections/{sectionKey}/field-order`,
   },
   {
     apiFunction: 'executeApprovalAdminV2HighRiskCommand:incident-open',
@@ -244,6 +320,12 @@ export const APPROVAL_RELEASE15_ACTION_CONTRACTS = [
     path: `${ADMIN}/operations/incidents/{incidentId}/postmortem`,
   },
   {
+    apiFunction: 'executeApprovalAdminV2HighRiskCommand:incident-report-create',
+    routeContractKey: 'route.approvals.admin.incident-report-create.action',
+    method: 'POST',
+    path: `${ADMIN}/operations/incidents/{incidentId}/reports`,
+  },
+  {
     apiFunction: 'executeApprovalAdminV2HighRiskCommand:policy-automation-publish',
     routeContractKey: 'route.approvals.admin.policy-automation-publish.action',
     method: 'POST',
@@ -278,6 +360,60 @@ export const APPROVAL_RELEASE15_ACTION_CONTRACTS = [
     routeContractKey: 'route.approvals.admin.policy-automation-update.action',
     method: 'POST',
     path: `${ADMIN}/policies/automation/delegations/{delegationId}/reviews`,
+  },
+  {
+    apiFunction: 'createApprovalAutomationDelegation',
+    routeContractKey: 'route.approvals.admin.policy-delegation-update.action',
+    method: 'POST',
+    path: `${ADMIN}/policies/automation/delegations`,
+  },
+  {
+    apiFunction: 'updateApprovalAutomationDelegation',
+    routeContractKey: 'route.approvals.admin.policy-delegation-update.action',
+    method: 'PUT',
+    path: `${ADMIN}/policies/automation/delegations/{delegationId}`,
+  },
+  {
+    apiFunction: 'revokeApprovalAutomationDelegation',
+    routeContractKey: 'route.approvals.admin.policy-delegation-update.action',
+    method: 'POST',
+    path: `${ADMIN}/policies/automation/delegations/{delegationId}/revoke`,
+  },
+  {
+    apiFunction: 'cancelScheduledApprovalAutomationDelegation',
+    routeContractKey: 'route.approvals.admin.policy-delegation-update.action',
+    method: 'POST',
+    path: `${ADMIN}/policies/automation/delegations/{delegationId}/scheduled-cancel`,
+  },
+  {
+    apiFunction: 'executeApprovalAdminV2HighRiskCommand:policy-delegation-kill-switch',
+    routeContractKey: 'route.approvals.admin.policy-delegation-kill-switch.action',
+    method: 'POST',
+    path: `${ADMIN}/policies/automation/delegations/kill-switch`,
+  },
+  {
+    apiFunction: 'simulateApprovalAutomationPolicy',
+    routeContractKey: 'route.approvals.admin.policy-simulation.action',
+    method: 'POST',
+    path: `${ADMIN}/policies/automation/rules/{policyId}/simulations`,
+  },
+  {
+    apiFunction: 'executeApprovalAdminV2HighRiskCommand:policy-governance-review',
+    routeContractKey: 'route.approvals.admin.policy-governance-publish.action',
+    method: 'POST',
+    path: `${ADMIN}/policies/automation/rules/{policyId}/reviews`,
+  },
+  {
+    apiFunction: 'executeApprovalAdminV2HighRiskCommand:policy-governance-freeze',
+    routeContractKey: 'route.approvals.admin.policy-governance-publish.action',
+    method: 'POST',
+    path: `${ADMIN}/policies/automation/rules/{policyId}/freeze`,
+  },
+  {
+    apiFunction: 'executeApprovalAdminV2HighRiskCommand:policy-governance-export',
+    routeContractKey: 'route.approvals.admin.policy-governance-publish.action',
+    method: 'POST',
+    path: `${ADMIN}/policies/automation/rules/{policyId}/exports`,
   },
   {
     apiFunction: 'executeApprovalAdminV2HighRiskCommand:routing-publish',
@@ -326,5 +462,29 @@ export const APPROVAL_RELEASE15_ACTION_CONTRACTS = [
     routeContractKey: 'route.approvals.admin.template-draft.action',
     method: 'POST',
     path: `${ADMIN}/forms/templates/versions/{templateVersionId}/install`,
+  },
+  {
+    apiFunction: 'importApprovalTemplatePackage',
+    routeContractKey: 'route.approvals.admin.template-package-import.action',
+    method: 'POST',
+    path: `${ADMIN}/forms/templates/packages/import`,
+  },
+  {
+    apiFunction: 'saveApprovalWorkflowStudioCanvas',
+    routeContractKey: 'route.approvals.admin.workflow-studio-update.action',
+    method: 'PUT',
+    path: `${ADMIN}/workflows/{workflowId}/studio-v3/canvas`,
+  },
+  {
+    apiFunction: 'dryRunApprovalWorkflowStudio',
+    routeContractKey: 'route.approvals.admin.workflow-studio-update.action',
+    method: 'POST',
+    path: `${ADMIN}/workflows/{workflowId}/studio-v3/dry-run`,
+  },
+  {
+    apiFunction: 'executeApprovalAdminV2HighRiskCommand:workflow-studio-retire',
+    routeContractKey: 'route.approvals.admin.workflow-studio-retire.action',
+    method: 'POST',
+    path: `${ADMIN}/workflows/{workflowId}/studio-v3/retire`,
   },
 ] as const satisfies readonly ApprovalRelease15ActionContract[];

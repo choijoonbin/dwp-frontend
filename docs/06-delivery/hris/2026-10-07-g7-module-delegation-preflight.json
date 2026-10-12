@@ -1,0 +1,1017 @@
+{
+  "schema": "dwp.hris.pre-g7-module-delegation-preflight.v1",
+  "artifactId": "HRIS-PRE-G7-MODULE-DELEGATION-PREFLIGHT-20261007-R1",
+  "issuedAt": "2026-10-07T15:06:33+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "PREPARED_BLOCKED_PENDING_G5_G6_PROMOTION",
+  "purpose": "Freeze the verified module-work inventory and the conditions that G7 must satisfy before any module packet or start token can be issued.",
+  "authority": {
+    "artifactClass": "READ_ONLY_NON_AUTHORIZING_PREFLIGHT",
+    "moduleParallelDevelopmentAuthorized": false,
+    "packetIssuanceAuthorized": false,
+    "migrationAdmissionAuthorized": false,
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "startTokensIssued": [],
+    "separateG7PromotionReceiptRequired": true
+  },
+  "lineageAnchors": {
+    "g3BackendSemanticResult": {
+      "commit": "f0a971eada612e6a267ece104707f0cab4191343",
+      "tree": "a51b7e6641100e4223761b9ef5f8529d14eeedcc"
+    },
+    "g4FrontendSemanticResult": {
+      "commit": "51ab8a8df6bcc44266be7d7edc708a6b4d8ce081",
+      "tree": "735b1e1818de2ff35de17a21c27155e17357ec8f"
+    },
+    "g4EvidenceCommit": {
+      "commit": "c1ed2dc5f77370aa144aebf86206b2c9086a3f9b",
+      "tree": "f60bf15210073e1498fdf02e956c0a55a34c5678"
+    },
+    "agentBaseline": {
+      "commit": "1d46fc4ab49c604efb7464574c49d13ee453e059",
+      "tree": "0b9a8dbfd828478ee825452e5aca8688c83e37ab"
+    },
+    "authorization": {
+      "version": 34,
+      "semanticChecksum": "852d20e1e639e1a7170f02b5714d21d8c51a9eb8ff5ac32d8b7940b82d6be83b",
+      "bundleSha256": "8edd29e91a915fc035028c44af4055673bf5e53c7a5ca77e2af381d69bc60135"
+    },
+    "g4GatewayProjectionLineageOnly": {
+      "sha256": "b203455b032f938a0c37bbe11d2ef68981e4e3f106d549427b1a15f06497cd0c",
+      "currentG5Authority": false,
+      "rule": "The G5 final gateway projection must be pinned after the frozen backend commit; no dirty intermediate projection is admissible."
+    }
+  },
+  "requiredFrozenEvidence": {
+    "g5Receipt": null,
+    "frontendCommit": null,
+    "frontendTree": null,
+    "frontendStateSha256": null,
+    "backendCommit": null,
+    "backendTree": null,
+    "backendStateSha256": null,
+    "gatewayOpenApiSha256": null,
+    "agentCommit": null,
+    "agentTree": null,
+    "agentStateSha256": null,
+    "g6W1Receipt": null,
+    "g6ExecutionCount": null,
+    "status": "ABSENT_BLOCKING"
+  },
+  "inputAuthorities": [
+    {
+      "id": "G4_RECEIPT",
+      "path": "docs/06-delivery/hris/2026-10-07-g4-frontend-semantic-integration-receipt.json",
+      "bytes": 4199,
+      "sha256": "82d85474d98503fda6c5cfdf4fcadff48bb6f2adbb45619fa47f454c4822961d"
+    },
+    {
+      "id": "STALE_G1_OVERLAY",
+      "path": "docs/06-delivery/hris/current-slice-integration-status.v1.csv",
+      "sha256": "603f81f13f5168825468c18d9f5a04e4ca389288a121fe1ad33c21b2ff6812de"
+    },
+    {
+      "id": "STALE_G1_OVERLAY_EVIDENCE",
+      "path": "docs/06-delivery/hris/current-slice-integration-status.v1.evidence.json",
+      "sha256": "d17ed348749715c660fae624e05e1df7dbee6adf6c4679c73b7c9883eab25047"
+    },
+    {
+      "id": "RECOVERED_SLICE_REGISTER",
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/g3-slice-code-go-register.csv",
+      "sha256": "fb646668329e93ca0b83b74e2a3e43619954cec1cb2f6770029677edbc8d5725"
+    },
+    {
+      "id": "G3_CANONICAL_MANIFEST",
+      "path": "docs/06-delivery/hris/g3-successors/2026-10-07/manifest.v1.json",
+      "sha256": "af5238d3610e96aeb12ce6376d37175d77ef65372be135369b9a5faeabe2de8e"
+    },
+    {
+      "id": "G3_PRIMARY_OWNERSHIP",
+      "path": "docs/06-delivery/hris/g3-successors/2026-10-07/g3-contract-primary-ownership-register.csv",
+      "sha256": "2ef33aaf3534859b92a5d68267ddadf3aab1fe94c8dab4fe321992740b3c3629"
+    },
+    {
+      "id": "MODULE_DEPENDENCIES",
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/module-dependency-register.csv",
+      "sha256": "b8f1a11d1a32cf6f5a9a99ff73066b7e65787319ac18cf0d2b4891d22587c348"
+    },
+    {
+      "id": "CROSS_MODULE_CONTRACTS",
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/cross-module-contract-register.csv",
+      "sha256": "783bd3f6c6fdcf5d35da73020b2cc01f0c59cfd6e9fe9d56ffa75a3cd380f725"
+    },
+    {
+      "id": "FILE_ALLOCATIONS",
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/g3-file-allocation-register.csv",
+      "sha256": "a9deb03deff95bc7fc8c3126666d71a552eb9503c82508f2483d8bf4e1561219"
+    },
+    {
+      "id": "INFORMATION_ARCHITECTURE",
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/hris-information-architecture-register.csv",
+      "sha256": "ab506a2bb2f80c8ab81a4b9d575374d6bda83b312d11dce07495d4812bdf4686"
+    },
+    {
+      "id": "API_PEP_BINDINGS",
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/api-pep-binding-register.csv",
+      "sha256": "0e38d724516a8b271069241ffa0fb6400984dc703758767de53cbaffb4f93da3"
+    },
+    {
+      "id": "SERVICE_API_AUTH_BINDINGS",
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/service-api-auth-binding-register.csv",
+      "sha256": "a54272429e70d0e2494e082b214615a4befe2354d5ab72bf7619500e2b0fdcaa"
+    },
+    {
+      "id": "ENTRY_QUERY_API_SUCCESSOR",
+      "path": "docs/06-delivery/hris/recovery/exact-supplements/2026-10-06/accepted-successors/hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-api-contract-register.csv",
+      "sha256": "5f47efd33a1d5aa3d11a4d9fd5716cd4e35650e9fec0868ecb77c8c90a4cd988"
+    },
+    {
+      "id": "ENTRY_QUERY_RUNTIME_SUCCESSOR",
+      "path": "docs/06-delivery/hris/recovery/exact-supplements/2026-10-06/accepted-successors/hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-runtime-invariant-register.csv",
+      "sha256": "fcdfd1a26d8fca2c8d9a2a8279a3c5a99844ba827aefe47cbac2210b8753f77a"
+    },
+    {
+      "id": "ENTRY_QUERY_PROJECTION_SCHEMAS",
+      "path": "docs/06-delivery/hris/recovery/exact-supplements/2026-10-06/hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-projection-schemas.v1.json",
+      "sha256": "b185accd712216c39bf8a66f70cbbf0092a27a8c2c5e3d7457ecd4d511afa048"
+    },
+    {
+      "id": "ENTRY_QUERY_ACTION_KEYS",
+      "path": "docs/06-delivery/hris/recovery/exact-supplements/2026-10-06/hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-action-key-register.csv",
+      "sha256": "19a12600eb11e4d6c7c6098ad7f44f8afb544a1d9c698c3d2305e9e8150b5b7e"
+    },
+    {
+      "id": "EXACT_SUPPLEMENT_MANIFEST",
+      "path": "docs/06-delivery/hris/recovery/exact-supplements/2026-10-06/manifest.json",
+      "sha256": "342488e9e5f2ec3ede83a0c99e83bd990892169fc913dc60afb3255ded037a6d"
+    },
+    {
+      "id": "TARGET_FAMILY_RESOLUTION",
+      "path": "docs/06-delivery/hris/recovery/exact-supplements/2026-10-06/hris-porting-blueprint-2026-09-09/coding-readiness/target-family-resolution-register.csv",
+      "sha256": "3e3618ff3ac150da8c9c7cbd3b1018e30e69652f28f3dbd8c87edb7df6a83819"
+    },
+    {
+      "id": "INTEGRATION_ROADMAP",
+      "path": "docs/06-delivery/hris/2026-10-06-integration-roadmap.md",
+      "sha256": "ac1abe594d7fa509e0d299024c6d330ab377dd58885b58ab267449fd15c5344e"
+    },
+    {
+      "id": "MODULE_PACKET_TEMPLATE",
+      "path": "docs/06-delivery/hris/development-agent-work-packet-template.md",
+      "sha256": "e5564d310b6b2d3ef84b0a6d7b53fc9a6d2a2fd084770df7f10abb4bae9a83f7"
+    }
+  ],
+  "staleOverlayDisposition": {
+    "createdAt": "2026-10-06T22:02:11+09:00",
+    "frontendPinPrefix": "08a05f",
+    "backendPinPrefix": "5612cc",
+    "result": "OVERLAY_VALID_WITH_DECLARED_HISTORICAL_BLOCKERS_NOT_MODULE_AUTHORITY",
+    "currentModuleAuthorizationReady": false,
+    "packetStates": {
+      "SYS": "PACKET_ISSUED_HOLD",
+      "HRM": "PACKET_ISSUED_HOLD",
+      "PER": "PACKET_ISSUED_HOLD",
+      "TIM": "PACKET_ISSUED_HOLD",
+      "PAY": "PACKET_ISSUED_HOLD"
+    },
+    "startToken": "WITHHELD",
+    "knownBindingCoverage": "49/50",
+    "allowedUses": [
+      "historical slice identity",
+      "historical dependency and acceptance seeds",
+      "successor overlay comparison input"
+    ],
+    "prohibitedUses": [
+      "current implementation classification",
+      "module start authority",
+      "migration lease",
+      "reactivating a historical packet"
+    ],
+    "successorOverlayRequired": true
+  },
+  "commonControlOnlyPaths": {
+    "backend": [
+      "contracts/hris/**",
+      "contracts/openapi/**",
+      "contracts/asyncapi/**",
+      "contracts/product-authorization/**",
+      "dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/**",
+      "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/generated/**",
+      "scripts/generate-hris-contracts.py",
+      "dwp-approval-server/src/main/resources/product-authorization/**",
+      "dwp-auth-server/src/main/resources/product-authorization/**",
+      "dwp-meeting-server/src/main/resources/product-authorization/**",
+      "dwp-people-server/src/main/resources/product-authorization/**",
+      "dwp-platform-server/src/main/resources/product-authorization/**",
+      "dwp-space-server/src/main/resources/product-authorization/**",
+      "scripts/export-openapi-contracts.py",
+      "scripts/generate-product-authorization-contracts.py",
+      "scripts/generate-product-authorization-fixtures.py",
+      "scripts/generate-approval-document-projection-contracts.py",
+      "scripts/generate-approval-extension-projection-contracts.py",
+      "scripts/generate-approval-recovery11-projection-contracts.py",
+      "scripts/generate-approval-release10-projection-contracts.py",
+      "scripts/generate-approval-work-projection-contracts.py",
+      "dwp-gateway/**",
+      "dwp-migration-control/**",
+      "root build/runtime/CI files"
+    ],
+    "frontend": [
+      "apps/dwp/src/routes/**",
+      "apps/dwp/src/features/hcm/hcm-navigation*.ts*",
+      "apps/dwp/src/features/hcm/hcm-product-manifest*.ts*",
+      "apps/dwp/src/features/hris/shell/**",
+      "apps/dwp/src/routes/product-surface-authorization.generated.ts",
+      "architecture/**",
+      "libs/api-contracts/**",
+      "libs/shared-utils/src/auth/**",
+      "libs/shared-utils/src/test-utils/pilot-authorization-fixtures.generated.ts",
+      "libs/shared-i18n/**",
+      "scripts/sync-openapi-contract.mjs",
+      "scripts/sync-agent-openapi-contract.mjs",
+      "scripts/sync-product-surface-authorization.mjs",
+      "scripts/sync-product-authorization-fixtures.mjs",
+      "scripts/sync-product-surface-internal-closure.mjs",
+      "scripts/generate-route-composition.mjs",
+      "scripts/product-authorization-fixture-versions.mjs",
+      "scripts/check-official-backend-contracts.mjs",
+      "scripts/check-official-backend-contracts.test.mjs",
+      "scripts/check-product-surface-production-readiness.mjs",
+      "scripts/check-product-surface-production-readiness.test.mjs",
+      "scripts/product-surface-readiness-authorization.mjs",
+      "scripts/sync-product-surface-internal-closure.test.mjs",
+      "deploy/nginx/dwp-product-routes.conf",
+      "root project manifests and lockfiles"
+    ],
+    "rule": "Module packets cannot allocate these paths directly. Generated contracts, shared routes, Gateway, shared authorization, CI, and migration ranges require an explicit Control request."
+  },
+  "promotionPlan": {
+    "promoteBeforeSelectingNext": [
+      "BASE-TFR-SYS-004",
+      "BASE-TFR-HRM-004",
+      "BASE-TFR-PER-005",
+      "BASE-TFR-PAY-007",
+      "BASE-TFR-TIM-016"
+    ],
+    "reclassifyAtFrozenPins": [
+      "BASE-TFR-SYS-007",
+      "BASE-TFR-HRM-010",
+      "BASE-TFR-PER-006",
+      "BASE-TFR-TIM-006",
+      "MOD-PER-COMPPLAN",
+      "BASE-TFR-PAY-016"
+    ],
+    "successorOverlayInvariant": {
+      "canonicalRows": 102,
+      "canonicalUniqueSliceIds": 102,
+      "newSliceIdsAllowed": false,
+      "missingSliceIdsAllowed": false,
+      "duplicateSliceIdsAllowed": false,
+      "unsupportedLineageChangesAllowed": false,
+      "sortedSliceIdSetSha256": "b85059fa5048866ebf7c134d74d8e07a9cc7af68485093260d0c18010b1d6216",
+      "sortedSliceIdSetDigestAlgorithm": "SHA-256 of UTF-8 sorted slice_id values joined by LF with one trailing LF",
+      "orderedSliceIdSha256": "10256b4f5b2098f3616cbb4316a5551ddf103b4e2babf81559641ef735cd1bd2",
+      "moduleCounts": {
+        "HRM": 22,
+        "PAY": 21,
+        "PER": 22,
+        "SYS": 17,
+        "TIM": 20
+      },
+      "sourceKindCounts": {
+        "BASE_TARGET_FAMILY": 86,
+        "MODERN_CAPABILITY": 16
+      },
+      "dispositionCountsAtStaleOverlay": {
+        "NOT_STARTED": 90,
+        "PARTIAL_OVERLAP": 5,
+        "PRESENT_RECONCILED_PENDING_INTEGRATION": 5,
+        "RETIRED": 2
+      },
+      "activeRows": 100,
+      "retiredRows": 2,
+      "staleOverlayMustRemainImmutable": true,
+      "currentModuleAuthorizationReady": false,
+      "rule": "The immutable successor overlay must preserve the exact canonical 102-slice set and supported lineage; it may reclassify evidence at frozen pins but may not invent, omit, duplicate, or silently relabel a slice."
+    },
+    "codeReexecutionInG7": false,
+    "requiredOutput": "IMMUTABLE_SUCCESSOR_OVERLAY_AND_SEPARATE_G7_PROMOTION_RECEIPT"
+  },
+  "commonRequiredG4Assertions": [
+    "authorization-negative",
+    "feature-flag-event-forward-correction",
+    "idempotency-cas",
+    "migration-clean-upgrade-rls-backfill",
+    "runbook-rollback-forward-correction",
+    "telemetry-alert",
+    "tenant-isolation",
+    "worker-crash-replay"
+  ],
+  "candidates": [
+    {
+      "module": "SYS",
+      "sliceId": "BASE-TFR-SYS-007",
+      "sourceRef": "TFR-SYS-007",
+      "sourceFamilySha256": "c36c35b9ff77e9dfd8149cde55970c364febd07af1ee3c6f9b89d0390330974d",
+      "sourceRowCount": 37,
+      "proposedState": "CONDITIONAL_CANDIDATE_OWNER_BOUNDARY_AND_ROUTE_BRIDGE_REQUIRED",
+      "priorSlice": "BASE-TFR-SYS-004",
+      "dependencyIds": ["DEP-001", "DEP-002", "DEP-003", "DEP-004", "DEP-016"],
+      "workDefinition": "Implement the HRIS configuration/reference lifecycle workbench without creating a second raw reference-data source of record.",
+      "entryQuery": {
+        "id": "IAQ-052",
+        "uiRoute": "/hr/settings/reference-data",
+        "gatewayPath": "/api/platform/v1/hris/workbench/settings-reference",
+        "ownerPath": "/v1/hris/workbench/settings-reference"
+      },
+      "primaryContractRefs": [
+        "IAQ-052",
+        "PEP-SYS-011",
+        "PEP-SYS-012",
+        "PEP-SYS-013",
+        "PEP-SYS-014",
+        "PEP-SYS-015",
+        "PEP-SYS-016",
+        "PEP-SYS-043",
+        "PEP-SYS-044",
+        "PEP-SYS-045",
+        "PEP-SYS-046",
+        "PEP-SYS-047",
+        "SYS-API-011",
+        "SYS-API-012",
+        "SYS-API-013",
+        "SYS-API-014",
+        "SYS-API-015",
+        "SYS-API-016",
+        "SYS-API-041",
+        "SYS-API-042",
+        "SYS-API-043",
+        "SYS-API-044",
+        "SYS-API-045",
+        "SYS-EVT-003"
+      ],
+      "operationBindings": [
+        {
+          "bindingId": "IAQ-052",
+          "method": "GET",
+          "browserPath": "/api/platform/v1/hris/workbench/settings-reference",
+          "ownerPath": "/v1/hris/workbench/settings-reference",
+          "ownerService": "dwp-platform-server",
+          "uiRoute": "/hr/settings/reference-data"
+        },
+        {
+          "bindingId": "PEP-SYS-011",
+          "method": "GET",
+          "browserPath": "/api/platform/v1/admin/hris/configurations",
+          "ownerPath": "/v1/admin/hris/configurations",
+          "ownerService": "dwp-platform-server"
+        },
+        {
+          "bindingId": "PEP-SYS-012",
+          "method": "POST",
+          "browserPath": "/api/platform/v1/admin/hris/configurations/{configId}/versions",
+          "ownerPath": "/v1/admin/hris/configurations/{configId}/versions",
+          "ownerService": "dwp-platform-server"
+        },
+        {
+          "bindingId": "PEP-SYS-013",
+          "method": "POST",
+          "browserPath": "/api/platform/v1/admin/hris/configurations/{configId}/versions/{version}/validate",
+          "ownerPath": "/v1/admin/hris/configurations/{configId}/versions/{version}/validate",
+          "ownerService": "dwp-platform-server"
+        },
+        {
+          "bindingId": "PEP-SYS-014",
+          "method": "POST",
+          "browserPath": "/api/platform/v1/admin/hris/configurations/{configId}/versions/{version}/simulate",
+          "ownerPath": "/v1/admin/hris/configurations/{configId}/versions/{version}/simulate",
+          "ownerService": "dwp-platform-server"
+        },
+        {
+          "bindingId": "PEP-SYS-015",
+          "method": "POST",
+          "browserPath": "/api/platform/v1/admin/hris/configurations/{configId}/versions/{version}/approve",
+          "ownerPath": "/v1/admin/hris/configurations/{configId}/versions/{version}/approve",
+          "ownerService": "dwp-platform-server"
+        },
+        {
+          "bindingId": "PEP-SYS-016",
+          "method": "POST",
+          "browserPath": "/api/platform/v1/admin/hris/configurations/{configId}/versions/{version}/publish",
+          "ownerPath": "/v1/admin/hris/configurations/{configId}/versions/{version}/publish",
+          "ownerService": "dwp-platform-server"
+        },
+        {
+          "bindingId": "PEP-SYS-043",
+          "method": "GET",
+          "browserPath": "/api/platform/v1/admin/hris/configurations/{configId}/versions/{version}",
+          "ownerPath": "/v1/admin/hris/configurations/{configId}/versions/{version}",
+          "ownerService": "dwp-platform-server"
+        },
+        {
+          "bindingId": "PEP-SYS-044",
+          "method": "POST",
+          "browserPath": "/api/platform/v1/admin/hris/configurations/{configId}/versions/{version}/submit",
+          "ownerPath": "/v1/admin/hris/configurations/{configId}/versions/{version}/submit",
+          "ownerService": "dwp-platform-server"
+        },
+        {
+          "bindingId": "PEP-SYS-045",
+          "method": "POST",
+          "browserPath": "/api/platform/v1/admin/hris/configurations/{configId}/versions/{version}/schedule",
+          "ownerPath": "/v1/admin/hris/configurations/{configId}/versions/{version}/schedule",
+          "ownerService": "dwp-platform-server"
+        },
+        {
+          "bindingId": "PEP-SYS-046",
+          "method": "POST",
+          "browserPath": "/api/platform/v1/admin/hris/configurations/{configId}/versions/{version}/rollback",
+          "ownerPath": "/v1/admin/hris/configurations/{configId}/versions/{version}/rollback",
+          "ownerService": "dwp-platform-server"
+        },
+        {
+          "bindingId": "PEP-SYS-047",
+          "method": "POST",
+          "browserPath": "/api/platform/v1/admin/hris/configurations/{configId}/versions/{version}/retire",
+          "ownerPath": "/v1/admin/hris/configurations/{configId}/versions/{version}/retire",
+          "ownerService": "dwp-platform-server"
+        }
+      ],
+      "touchPathInventory": {
+        "existingOwnerRoots": [
+          "backend:dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/**",
+          "backend:dwp-platform-server/src/main/java/com/dwp/services/platform/reference/**",
+          "backend:dwp-people-server/src/main/java/com/dwp/services/people/workforce/WorkforceReference*",
+          "frontend:apps/dwp/src/features/workforce/workforce-reference-data.tsx",
+          "frontend:apps/dwp/src/features/admin/reference-data-*.ts*"
+        ],
+        "protectedExclusions": [
+          "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/HrisConfigurationProjectionController.java",
+          "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/HrisConfigurationProjectionDtos.java",
+          "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/HrisConfigurationProjectionService.java",
+          "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/HrisConfigurationProjectionControllerContractTest.java",
+          "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/HrisConfigurationProjectionServiceTest.java",
+          "dwp-platform-server/src/main/java/com/dwp/services/platform/reference/**",
+          "dwp-people-server/src/main/java/com/dwp/services/people/workforce/WorkforceReference*",
+          "dwp-auth-server/src/main/java/com/dwp/services/auth/productaccess/**",
+          "apps/dwp/src/features/workforce/workforce-reference-data.tsx",
+          "apps/dwp/src/features/admin/reference-data-*.ts*",
+          "apps/dwp/src/features/hris/administration/system-access/**"
+        ],
+        "newPathSeeds": [
+          "backend:dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/**",
+          "backend:dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/**",
+          "frontend:apps/dwp/src/features/hris/administration/reference-configuration/**"
+        ]
+      },
+      "blockingDecisions": [
+        "Record the lifecycle-framework owner separately from the domain-content owner.",
+        "Resolve /hr/settings/reference-data against the current /hr/data/reference route and People WorkforceReferenceData owner without duplicating a writer.",
+        "Exclude existing HrisConfigurationProjection, generic Platform reference, workforce reference, product-access, and system-access surfaces from the packet."
+      ],
+      "migration": {
+        "historicalLineage": "MIG-SYS-PLATFORM-261-289",
+        "currentObservation": "The Platform stream reaches V321; the historical range is superseded or collided.",
+        "jitLease": "NOT_ISSUED_REQUIRED_IF_SCHEMA_TOUCH"
+      },
+      "acceptanceSeeds": [
+        "DEC-SYS-003",
+        "SYS-GOLDEN-REFERENCE",
+        "tenant-negative",
+        "SoD-negative",
+        "receipt-replay"
+      ],
+      "requiredG4Assertions": [
+        "authorization-negative",
+        "feature-flag-event-forward-correction",
+        "idempotency-cas",
+        "migration-clean-upgrade-rls-backfill",
+        "runbook-rollback-forward-correction",
+        "telemetry-alert",
+        "tenant-isolation",
+        "worker-crash-replay"
+      ],
+      "packetState": "WITHHELD"
+    },
+    {
+      "module": "HRM",
+      "sliceId": "BASE-TFR-HRM-010",
+      "sourceRef": "TFR-HRM-010",
+      "sourceFamilySha256": "3800c0ebee1b35406e2f3c4fdbaf678b0b50a159ff8821543776728d8b26c5b1",
+      "sourceRowCount": 73,
+      "proposedState": "CONDITIONAL_NEW_EXACT_FAMILY_ASSIGNMENT_PROPOSAL_EXCLUDED",
+      "priorSlice": "BASE-TFR-HRM-004",
+      "dependencyIds": ["DEP-001", "DEP-002", "DEP-003", "DEP-016"],
+      "workDefinition": "Implement the employee-change request, submit, approval-decision callback, apply, immutable receipt, and no-self-approval journey as a new exact family.",
+      "entryQuery": {
+        "id": "IAQ-009",
+        "uiRoute": "/hr/operations/people/employee-change-requests",
+        "gatewayPath": "/api/people/v1/hris/workbench/operations/employee/change/requests",
+        "ownerPath": "/v1/hris/workbench/operations/employee/change/requests"
+      },
+      "primaryContractRefs": [
+        "EVT-HRM:EmployeeChangeApplied.v1",
+        "IAQ-009",
+        "PEP-HRM-003",
+        "PEP-HRM-004",
+        "PEP-HRM-005",
+        "SVC-PEP-HRM-001"
+      ],
+      "operationBindings": [
+        {
+          "bindingId": "IAQ-009",
+          "method": "GET",
+          "browserPath": "/api/people/v1/hris/workbench/operations/employee/change/requests",
+          "ownerPath": "/v1/hris/workbench/operations/employee/change/requests",
+          "ownerService": "dwp-people-server",
+          "uiRoute": "/hr/operations/people/employee-change-requests"
+        },
+        {
+          "bindingId": "PEP-HRM-003",
+          "method": "POST",
+          "browserPath": "/api/people/v1/hris/employee-change-requests",
+          "ownerPath": "/v1/hris/employee-change-requests",
+          "ownerService": "dwp-people-server"
+        },
+        {
+          "bindingId": "PEP-HRM-004",
+          "method": "POST",
+          "browserPath": "/api/people/v1/hris/employee-change-requests/{requestPublicId}/submit",
+          "ownerPath": "/v1/hris/employee-change-requests/{requestPublicId}/submit",
+          "ownerService": "dwp-people-server"
+        },
+        {
+          "bindingId": "SVC-PEP-HRM-001",
+          "method": "POST",
+          "browserPath": null,
+          "ownerPath": "/internal/hris-people/v1/employee-change-requests/{requestPublicId}/approval-decisions",
+          "ownerService": "dwp-people-server"
+        },
+        {
+          "bindingId": "PEP-HRM-005",
+          "method": "POST",
+          "browserPath": "/api/people/v1/hris/employee-change-requests/{requestPublicId}/apply",
+          "ownerPath": "/v1/hris/employee-change-requests/{requestPublicId}/apply",
+          "ownerService": "dwp-people-server"
+        }
+      ],
+      "touchPathInventory": {
+        "protectedExclusions": [
+          "dwp-people-server/src/main/java/com/dwp/services/people/hr/assignment/**",
+          "dwp-people-server/src/main/resources/db/migration/V53__create_assignment_change_proposals.sql",
+          "apps/dwp/src/features/hris/employment/assignment-proposal-*.ts*",
+          "libs/shared-utils/src/api/assignment-proposal-api.ts",
+          "dwp-people-server/src/main/java/com/dwp/services/people/hris/people/**",
+          "apps/dwp/src/features/hris/people/**"
+        ],
+        "newPathSeeds": [
+          "backend:dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/employeechange/**",
+          "backend:dwp-people-server/src/test/java/com/dwp/services/people/hris/employeeservice/employeechange/**",
+          "frontend:apps/dwp/src/features/hris/employee-services/employee-change/**"
+        ]
+      },
+      "blockingDecisions": [
+        "Publish an exact current owner-root bridge; the recovered hris/employeeservice root is absent.",
+        "Keep HRM-008 assignment proposals as protected partial overlap and do not relabel or extend them as HRM-010.",
+        "Resolve the historical /api/hris/v1 convention against the canonical /api/people/v1 paths through Control-owned Gateway and route changes."
+      ],
+      "migration": {
+        "historicalLineage": "MIG-HRM-PEOPLE-51-73",
+        "currentObservation": "V51 through V53 are occupied; the historical range is not a lease.",
+        "jitLease": "NOT_ISSUED_REQUIRED_IF_SCHEMA_TOUCH"
+      },
+      "acceptanceSeeds": [
+        "request-submit-decide-apply golden journey",
+        "evidence",
+        "stale",
+        "replay",
+        "no-self-approval"
+      ],
+      "requiredG4Assertions": [
+        "authorization-negative",
+        "feature-flag-event-forward-correction",
+        "idempotency-cas",
+        "migration-clean-upgrade-rls-backfill",
+        "runbook-rollback-forward-correction",
+        "telemetry-alert",
+        "tenant-isolation",
+        "worker-crash-replay"
+      ],
+      "packetState": "WITHHELD"
+    },
+    {
+      "module": "PER",
+      "sliceId": "BASE-TFR-PER-006",
+      "sourceRef": "TFR-PER-006",
+      "sourceFamilySha256": "4a8efebbae76c0aab5c9b4b740daf6945ac6f22ca628fdf066bf8aa286e30ca2",
+      "sourceRowCount": 42,
+      "proposedState": "PARTIAL_COMPLETION_CANDIDATE_CURRENT_ROOT_OVERRIDE_REQUIRED",
+      "priorSlice": "BASE-TFR-PER-005",
+      "dependencyIds": ["DEP-001", "DEP-002", "DEP-003", "DEP-016"],
+      "workDefinition": "Preserve the current population preview and complete only the missing population freeze, immutable receipt, and PerformancePopulationFrozen.v1 publication.",
+      "entryQuery": {
+        "id": "IAQ-021",
+        "uiRoute": "/hr/operations/performance/review-operations",
+        "gatewayPath": "/api/people/v1/hris/performance/workbench/review-operations",
+        "ownerPath": "/v1/hris/performance/workbench/review-operations"
+      },
+      "primaryContractRefs": [
+        "EVT-PER:PerformancePopulationFrozen.v1",
+        "IAQ-021",
+        "PEP-PER-008",
+        "PEP-PER-009"
+      ],
+      "operationBindings": [
+        {
+          "bindingId": "IAQ-021",
+          "method": "GET",
+          "browserPath": "/api/people/v1/hris/performance/workbench/review-operations",
+          "ownerPath": "/v1/hris/performance/workbench/review-operations",
+          "ownerService": "dwp-people-server",
+          "uiRoute": "/hr/operations/performance/review-operations"
+        },
+        {
+          "bindingId": "PEP-PER-008",
+          "method": "POST",
+          "browserPath": "/api/people/v1/hris/performance/cycles/{cycleId}/population-previews",
+          "ownerPath": "/v1/hris/performance/cycles/{cycleId}/population-previews",
+          "ownerService": "dwp-people-server"
+        },
+        {
+          "bindingId": "PEP-PER-009",
+          "method": "POST",
+          "browserPath": "/api/people/v1/hris/performance/cycles/{cycleId}/population-freezes",
+          "ownerPath": "/v1/hris/performance/cycles/{cycleId}/population-freezes",
+          "ownerService": "dwp-people-server"
+        }
+      ],
+      "implementationEvidence": {
+        "previewPresent": true,
+        "freezeEndpointPresent": false,
+        "frozenStorePresent": false,
+        "performancePopulationFrozenProducerPresent": false,
+        "performanceCyclePublishedIsNotASubstitute": true
+      },
+      "touchPathInventory": {
+        "currentOwnerRoot": "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/**",
+        "historicalAllocatedButAbsentRoot": "dwp-people-server/src/main/java/com/dwp/services/people/hris/performance/**",
+        "protectedExclusions": [
+          "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/PerformanceParticipantPreviewService.java",
+          "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/PerformancePopulationRuleEvaluator.java",
+          "apps/dwp/src/features/hris/performance/api/performance-cycle-api.ts",
+          "apps/dwp/src/features/hris/performance/model/performance-cycle-contract.ts",
+          "dwp-people-server/src/main/resources/db/performance-migration/V1__per_create_evaluation_cycle_foundation.sql"
+        ],
+        "newPathSeeds": [
+          "backend:dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/populationfreeze/**",
+          "backend:dwp-people-server/src/test/java/com/dwp/services/people/hr/performance/populationfreeze/**",
+          "frontend:apps/dwp/src/features/hris/performance/population-freeze/**"
+        ],
+        "bridgeFilesRequireExplicitLease": [
+          "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/PerformanceCycleService.java",
+          "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/PerformanceCycleCommandRepository.java",
+          "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/PerformanceCycleDtos.java",
+          "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/PerformanceCycleController.java",
+          "apps/dwp/src/features/hris/performance/index.ts"
+        ]
+      },
+      "blockingDecisions": [
+        "Override the stale historical allocation with the current people/hr/performance owner root.",
+        "Define the canonical UI bridge without creating a parallel performance owner.",
+        "Lease only the exact existing bridge files needed to connect the new freeze child."
+      ],
+      "migration": {
+        "historicalLineage": "MIG-PER-PERFORMANCE-1-63",
+        "historicalPlannedFile": "dwp-people-server/src/main/resources/db/performance-migration/V6__per_base_tfr_per_006.sql",
+        "currentObservation": "V1 is occupied; V6 is a historical plan, not a current lease.",
+        "jitLease": "NOT_ISSUED_REQUIRED_IF_SCHEMA_TOUCH"
+      },
+      "acceptanceSeeds": [
+        "PER-CONTRACT-POPULATION",
+        "PER-GOLDEN-POPULATION-001",
+        "AUTHZ-ASSIGNED-POPULATION",
+        "preview-preserved",
+        "freeze-idempotency",
+        "immutable-event"
+      ],
+      "requiredG4Assertions": [
+        "authorization-negative",
+        "feature-flag-event-forward-correction",
+        "idempotency-cas",
+        "migration-clean-upgrade-rls-backfill",
+        "runbook-rollback-forward-correction",
+        "telemetry-alert",
+        "tenant-isolation",
+        "worker-crash-replay"
+      ],
+      "packetState": "WITHHELD"
+    },
+    {
+      "module": "TIM",
+      "sliceId": "BASE-TFR-TIM-006",
+      "sourceRef": "TFR-TIM-006",
+      "sourceFamilySha256": "7c11c39eddee9036c8c7a25ba713930d354791606f8393703bf5d48b6e885a83",
+      "sourceRowCount": 6,
+      "proposedState": "CONDITIONAL_NEW_CLOCK_INGESTION_CANDIDATE",
+      "priorSlice": "BASE-TFR-TIM-016",
+      "dependencyIds": ["DEP-001", "DEP-002", "DEP-003", "DEP-006", "DEP-016"],
+      "workDefinition": "Implement a narrow clock-event ingest and void family with idempotency, order, offline/device provenance, immutable receipts, and ClockEventRecorded publication.",
+      "entryQueries": [
+        {
+          "id": "IAQ-034",
+          "uiRoute": "/hr/operations/time/clock-ingestion",
+          "gatewayPath": "/api/time/v1/hris/workbench/clock-ingestion",
+          "ownerPath": "/v1/hris/workbench/clock-ingestion"
+        },
+        {
+          "id": "IAQ-042",
+          "uiRoute": "/hr/operations/time/exceptions",
+          "gatewayPath": "/api/time/v1/hris/workbench/time-exceptions",
+          "ownerPath": "/v1/hris/workbench/time-exceptions"
+        }
+      ],
+      "primaryContractRefs": [
+        "EVT-TIM:ClockEventRecorded",
+        "IAQ-034",
+        "IAQ-042",
+        "PEP-TIM-007",
+        "PEP-TIM-008"
+      ],
+      "operationBindings": [
+        {
+          "bindingId": "IAQ-034",
+          "method": "GET",
+          "browserPath": "/api/time/v1/hris/workbench/clock-ingestion",
+          "ownerPath": "/v1/hris/workbench/clock-ingestion",
+          "ownerService": "dwp-time-server",
+          "uiRoute": "/hr/operations/time/clock-ingestion"
+        },
+        {
+          "bindingId": "IAQ-042",
+          "method": "GET",
+          "browserPath": "/api/time/v1/hris/workbench/time-exceptions",
+          "ownerPath": "/v1/hris/workbench/time-exceptions",
+          "ownerService": "dwp-time-server",
+          "uiRoute": "/hr/operations/time/exceptions"
+        },
+        {
+          "bindingId": "PEP-TIM-007",
+          "method": "POST",
+          "browserPath": "/api/time/v1/clock-events",
+          "ownerPath": "/v1/clock-events",
+          "ownerService": "dwp-time-server"
+        },
+        {
+          "bindingId": "PEP-TIM-008",
+          "method": "POST",
+          "browserPath": "/api/time/v1/clock-events/{eventId}/voids",
+          "ownerPath": "/v1/clock-events/{eventId}/voids",
+          "ownerService": "dwp-time-server"
+        }
+      ],
+      "implementationEvidence": {
+        "clockPackagePresent": false,
+        "clockEndpointPresent": false,
+        "clockEventRecordedProducerPresent": false,
+        "existingWorkRegimeIsTIM016": true
+      },
+      "touchPathInventory": {
+        "protectedExclusions": [
+          "dwp-time-server/src/main/java/com/dwp/services/time/workregime/**",
+          "dwp-time-server/src/main/java/com/dwp/services/time/absence/**",
+          "dwp-time-server/src/main/resources/db/migration/V1__tim_create_work_regime_foundation.sql",
+          "dwp-time-server/src/main/resources/db/migration/V2__tim_create_target_population_authority_projection.sql",
+          "dwp-time-server/src/main/resources/db/migration/V3__tim_create_command_target_authority_evidence.sql",
+          "dwp-time-server/src/main/resources/db/migration/V4__tim_harden_sod_and_projection_locks.sql",
+          "dwp-time-server/src/main/resources/db/migration/V5__tim_authorize_projection_publisher.sql",
+          "dwp-time-server/src/main/resources/db/migration/V6__tim_adopt_derived_hcm_scope_keys.sql",
+          "dwp-time-server/src/main/resources/db/migration/V7__tim_harden_owner_trigger_boundaries.sql",
+          "apps/dwp/src/features/hris/time/api/hris-time-work-plan-*.ts",
+          "apps/dwp/src/features/hris/time/components/hris-time-work-plan-studio.tsx",
+          "apps/dwp/src/features/hris/time/model/hris-time-work-plan-*.ts"
+        ],
+        "newPathSeeds": [
+          "backend:dwp-time-server/src/main/java/com/dwp/services/time/clockingestion/**",
+          "backend:dwp-time-server/src/test/java/com/dwp/services/time/clockingestion/**",
+          "frontend:apps/dwp/src/features/hris/time/clock-ingestion/**"
+        ]
+      },
+      "blockingDecisions": [
+        "Issue an exact clockingestion allocation that excludes absence and workregime.",
+        "Keep Gateway, shell catalog, shared routes, and generated contracts Control-owned."
+      ],
+      "migration": {
+        "historicalLineage": "MIG-TIM-TIME-1-39",
+        "currentObservation": "V1 through V7 are occupied; do not assume V8 before a JIT lease.",
+        "jitLease": "NOT_ISSUED_REQUIRED_IF_SCHEMA_TOUCH"
+      },
+      "acceptanceSeeds": [
+        "idempotency",
+        "order",
+        "offline",
+        "device-provenance",
+        "immutable-event"
+      ],
+      "requiredG4Assertions": [
+        "authorization-negative",
+        "feature-flag-event-forward-correction",
+        "idempotency-cas",
+        "migration-clean-upgrade-rls-backfill",
+        "runbook-rollback-forward-correction",
+        "telemetry-alert",
+        "tenant-isolation",
+        "worker-crash-replay"
+      ],
+      "packetState": "WITHHELD"
+    },
+    {
+      "module": "PAY",
+      "sliceId": "BASE-TFR-PAY-016",
+      "sourceRef": "TFR-PAY-016",
+      "sourceFamilySha256": "9b6cf3f5f875a60c8e7588be7d80a7c452de669ee09c53ac6fcb6ee6e9a0da5d",
+      "sourceRowCount": 91,
+      "proposedState": "HELD_PRODUCER_RESULT_PIN_REQUIRED",
+      "priorSlice": "BASE-TFR-PAY-007",
+      "dependencyIds": ["DEP-001", "DEP-002", "DEP-003", "DEP-016", "DEP-019"],
+      "sourcePrerequisiteContracts": [
+        "DEP-001",
+        "DEP-002",
+        "DEP-003",
+        "DEP-007",
+        "DEP-008",
+        "DEP-009",
+        "DEP-016",
+        "DEP-019"
+      ],
+      "dependencyDiscrepancy": "G7 must record an explicit keep/drop rationale for DEP-007, DEP-008, and DEP-009 before packet issuance.",
+      "workDefinition": "Worker input variants consolidate into typed create and corrective commands with no direct People database access.",
+      "workDefinitionAuthority": {
+        "register": "target-family-resolution-register.csv",
+        "row": "TFR-PAY-016",
+        "field": "consolidation_rationale"
+      },
+      "producerConsumptionRule": "Consume the immutable approved compensation-plan snapshot and published event only after the PER compensation-planning producer is implemented and pinned.",
+      "entryQuery": {
+        "id": "IAQ-015",
+        "bindingId": "IAQ-015",
+        "method": "GET",
+        "browserPath": "/api/payroll/v1/workbench/inputs",
+        "ownerPath": "/v1/workbench/inputs",
+        "ownerService": "dwp-payroll-server",
+        "uiRoute": "/hr/operations/payroll/inputs"
+      },
+      "primaryContractRefs": ["IAQ-015", "PEP-PAY-009", "PEP-PAY-010"],
+      "operationBindings": [
+        {
+          "bindingId": "IAQ-015",
+          "method": "GET",
+          "browserPath": "/api/payroll/v1/workbench/inputs",
+          "ownerPath": "/v1/workbench/inputs",
+          "ownerService": "dwp-payroll-server",
+          "uiRoute": "/hr/operations/payroll/inputs"
+        },
+        {
+          "bindingId": "PEP-PAY-009",
+          "method": "POST",
+          "browserPath": "/api/payroll/v1/worker-entries",
+          "ownerPath": "/v1/worker-entries",
+          "ownerService": "dwp-payroll-server"
+        },
+        {
+          "bindingId": "PEP-PAY-010",
+          "method": "POST",
+          "browserPath": "/api/payroll/v1/worker-entries/{entryId}/corrections",
+          "ownerPath": "/v1/worker-entries/{entryId}/corrections",
+          "ownerService": "dwp-payroll-server"
+        }
+      ],
+      "producerSlice": "MOD-PER-COMPPLAN",
+      "producerContractRefs": ["SVC-PEP-PER-001", "XCON-020", "XCON-021"],
+      "producerBinding": {
+        "bindingId": "SVC-PEP-PER-001",
+        "method": "GET",
+        "browserPath": null,
+        "ownerPath": "/internal/hris-performance/v1/approved-compensation-plan-snapshots/{snapshotId}",
+        "ownerService": "dwp-people-server"
+      },
+      "producerHold": {
+        "blockerRaw": "NO_EXACT_SLICE_ID_OR_EXACT_IMPLEMENTATION_PATH_EVIDENCE_AT_PINNED_COMMITS|REQUIRES_MOD_PER_COMPPLAN_PRODUCER_RESULT_PIN_BEFORE_TYPED_CONSUMER_INPUT",
+        "producerResultCommitPinned": false,
+        "runtimeProducerPresent": false,
+        "runtimeConsumerPresent": false,
+        "generatedSchemasAreImplementationEvidence": false,
+        "releaseCondition": "MOD-PER-COMPPLAN producer result commit must be pinned before BASE-TFR-PAY-016 typed consumer input.",
+        "xcon020RequiredFieldsSha256": "46b861794e318b6e3150f0b28807597c7bfcf448ddf7d8938b0e49dec49e5de5",
+        "xcon020NestedRequiredFieldsSha256": "86fc82d68b8bd4b0fa7f268f428fcdfe9b6bafccc2671dd7e00d1e9d5229a674",
+        "xcon021RequiredFieldsSha256": "9d86a14b30c958ab9dacb98fe6b8e2fea38e7cbfd9a9d29fd2d0ddc388ab90a7"
+      },
+      "contractAssertions": {
+        "typedCreateCommandRequired": true,
+        "typedCorrectiveCommandRequired": true,
+        "directPeopleDatabaseAccessForbidden": true,
+        "producerResultPinRequiredBeforeTypedConsumer": true
+      },
+      "acceptanceEvidenceRefs": [
+        "../session-evidence/pay/g3-modern-capability-consumer-contracts.v1.json",
+        "eligibility/overlap/CAS/bulk reject/field permission/effective-date tests"
+      ],
+      "acceptanceSeeds": [
+        "eligibility",
+        "overlap",
+        "CAS",
+        "bulk reject",
+        "field permission",
+        "effective-date tests"
+      ],
+      "entryQueryRequiredAssertions": {
+        "runtimeInvariantIds": [
+          "QUERY_STATE_ITEM_CARDINALITY",
+          "PARTIAL_FAILURE_STATE_MATCH",
+          "CURSOR_SCOPE_REVISION_BINDING",
+          "PAGE_LIMIT_AND_STABLE_ORDER",
+          "FIELD_DECISION_SUMMARY_MATCH",
+          "DEEP_LINK_ACTION_ALLOWLIST",
+          "TRUSTED_TENANT_CONTEXT_NON_SERIALIZATION",
+          "LOCALE_TIMEZONE_CANONICALIZATION",
+          "FIELD_DECISION_VIEW_MASK_OMIT",
+          "PROBLEM_STATUS_AND_CORRELATION"
+        ],
+        "requiredTestClass": "*PayIaEntryQueryContractTest",
+        "requiredTestMethods": [
+          "emptyUnavailableHaveNoItems",
+          "partialRequiresFailure",
+          "completeHasNoFailure",
+          "cursorBindsScopeAndRevision",
+          "pageHonorsLimitAndStableOrder",
+          "fieldSummaryMatchesSerializedDecisions",
+          "deepLinksAndActionsAreAllowlisted",
+          "trustedTenantContextIsNotSerialized",
+          "localeAndTimeZoneAreCanonical",
+          "fieldDecisionViewMaskOmitSemantics",
+          "problemStatusAndCorrelationAreClosed"
+        ],
+        "evidenceState": "REQUIRED_G3_NAMED_TEST_NOT_IMPLEMENTED"
+      },
+      "touchPathInventory": {
+        "protectedExistingFiles": {
+          "mode": "EXISTING_FILES_ONLY_AT_PREFLIGHT_BASELINE",
+          "roots": [
+            "dwp-payroll-server/src/main/java/com/dwp/services/payroll/foundation/**",
+            "dwp-payroll-server/src/main/resources/db/migration/V1__pay_create_payroll_foundation.sql",
+            "dwp-payroll-server/src/main/resources/db/migration/V2__pay_create_legal_entity_scope_projection.sql",
+            "dwp-payroll-server/src/main/resources/db/migration/V3__pay_authorize_projection_publisher.sql",
+            "dwp-payroll-server/src/main/resources/db/migration/V4__pay_adopt_derived_hcm_scope_keys.sql",
+            "dwp-payroll-server/src/main/resources/db/migration/V5__pay_harden_owner_trigger_boundaries.sql",
+            "apps/dwp/src/features/hris/payroll/**"
+          ],
+          "futureCarveOutAfterHoldRelease": "apps/dwp/src/features/hris/payroll/inputs/compensation-plan/**"
+        },
+        "newPathSeedsAfterHoldRelease": [
+          "backend:dwp-payroll-server/src/main/java/com/dwp/services/payroll/input/compensationplan/**",
+          "backend:dwp-payroll-server/src/test/java/com/dwp/services/payroll/input/compensationplan/**",
+          "frontend:apps/dwp/src/features/hris/payroll/inputs/compensation-plan/**"
+        ]
+      },
+      "dependencyOrder": [
+        "BASE-TFR-PAY-007",
+        "MOD-PER-COMPPLAN",
+        "BASE-TFR-PAY-016",
+        "BASE-TFR-PAY-011"
+      ],
+      "migration": {
+        "historicalLineage": "MIG-PAY-PAYROLL-1-49",
+        "historicalPlannedFile": "dwp-payroll-server/src/main/resources/db/migration/V49__pay_modern_compensation_plan_input.sql",
+        "currentObservation": "V1 through V5 are occupied; V49 is a historical plan, not a current lease.",
+        "jitLease": "PROHIBITED_WHILE_HELD"
+      },
+      "requiredG4Assertions": [
+        "authorization-negative",
+        "feature-flag-event-forward-correction",
+        "idempotency-cas",
+        "migration-clean-upgrade-rls-backfill",
+        "runbook-rollback-forward-correction",
+        "telemetry-alert",
+        "tenant-isolation",
+        "worker-crash-replay"
+      ],
+      "packetState": "WITHHELD"
+    }
+  ],
+  "agentDisposition": {
+    "module": "AGENT",
+    "sliceId": null,
+    "state": "NO_CANONICAL_SLICE_NO_PACKET",
+    "packetState": "WITHHELD",
+    "rule": "A repository baseline is not an HRIS work definition. Add Agent actions only after deterministic owner API and tool contracts are pinned; Agent is never an HRIS source of record or a direct database writer."
+  },
+  "g7PromotionRequirements": [
+    "Pin clean, pushed G5 frontend, backend, and agent commits, trees, and state digests.",
+    "Pin the final G5 gateway OpenAPI digest and the one-run G6 W1 PASS result to the same frontend/backend pair and Authorization v34 checksum.",
+    "Issue an immutable successor overlay; do not edit or reactivate the stale overlay.",
+    "Resolve every candidate's owner-root, route, protected-exclusion, shared-Control request, and dependency discrepancy before packet issuance.",
+    "Issue one separate exact-touch packet and start token per authorized slice.",
+    "Issue a new exact-version, exact-path JIT migration lease only if the packet proves a schema touch; historical ranges and planned filenames are never leases.",
+    "Keep PAY and AGENT withheld until their explicit hold conditions are closed."
+  ]
+}

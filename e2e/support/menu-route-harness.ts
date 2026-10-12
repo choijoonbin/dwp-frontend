@@ -6,9 +6,26 @@ import {
   mockDwaionPersonalIntelligence,
 } from './dwaion-personal-intelligence-fixtures';
 import { FULL_PRODUCT_PERMISSIONS, mockShellSession } from './shell-session';
+import { mockWorkHubFoundation } from './work-hub-foundation-fixtures';
+import { mockShellHomeReadModels, mockShellWorkspaceReadModels } from './shell-spec-foundation';
+import { mockDwaionAdminStitch } from './dwaion-admin-stitch-fixtures';
+import {
+  mockNotificationAdminOverview,
+  mockNotificationCenter,
+  mockNotificationContextCatalog,
+  mockNotificationPreferences,
+} from './notification-fixtures';
+import { mockNotificationAdminGovernance } from './notification-admin-governance-fixtures';
+import { mockNotificationOperationsAndSuppressions } from './notification-design-completion-fixtures';
+import { mockCalendarShellSession } from './calendar-shell-session';
+import {
+  mockApprovedFollowUps,
+  mockApprovedTemplatesAndPreferences,
+} from './meeting-approved-frame-evidence-fixtures';
+import { mockHcmProductSurfaceAuthority } from './product-surface-authority';
 
 const isExpectedFixtureTransportError = (text: string) =>
-  text.includes('Failed to load resource') && text.includes('503');
+  text.includes('Failed to load resource') && /\b[45]\d{2}\b/u.test(text);
 
 function rolesForMenuRoute(productRoute: ProductMenuRoute): string[] {
   if (productRoute.shell === 'provider') return ['PROVIDER_ADMIN'];
@@ -35,9 +52,11 @@ export async function exerciseGovernedMenuRoute(
   let expectedFixtureTransportErrors = 0;
   page.on('pageerror', (error) => pageErrors.push(error.message));
   page.on('response', (response) => {
-    if (response.status() !== 503) return;
+    if (response.status() < 400) return;
     const requestUrl = new URL(response.url());
-    fixtureTransportFailures.push(`${response.request().method()} ${requestUrl.pathname}`);
+    fixtureTransportFailures.push(
+      `${response.status()} ${response.request().method()} ${requestUrl.pathname}`
+    );
   });
   page.on('console', (message) => {
     if (message.type() === 'warning') {
@@ -61,15 +80,54 @@ export async function exerciseGovernedMenuRoute(
     ),
   });
   await page.emulateMedia({ reducedMotion: 'reduce', colorScheme: 'light' });
-  await mockShellSession(page, rolesForMenuRoute(productRoute), {
-    locale: 'ko',
-    displayName: productRoute.shell === 'provider' ? 'Provider Admin' : '박현우',
-    jobTitle: productRoute.shell === 'provider' ? 'Platform operations lead' : '회사 관리자',
-    permissions: isPersonalIntelligenceRoute
-      ? [...FULL_PRODUCT_PERMISSIONS, ...DWAION_PERSONAL_PERMISSIONS]
-      : FULL_PRODUCT_PERMISSIONS,
-    appearance: { mode: 'light', density: 'standard', highContrast: false, reduceMotion: true },
-  });
+  if (productRoute.shell === 'work') {
+    await mockWorkHubFoundation(page, {
+      locale: 'ko',
+      sessionRoles: rolesForMenuRoute(productRoute),
+      sessionDisplayName: '박현우',
+      sessionJobTitle: '회사 관리자',
+      additionalPermissions: FULL_PRODUCT_PERMISSIONS,
+    });
+  } else if (productRoute.path.startsWith('/dwaion/admin')) {
+    await mockDwaionAdminStitch(page, { locale: 'ko' });
+  } else if (productRoute.shell === 'calendar') {
+    await mockCalendarShellSession(page, rolesForMenuRoute(productRoute), {
+      locale: 'ko',
+      displayName: '박현우',
+      jobTitle: '회사 관리자',
+      permissions: FULL_PRODUCT_PERMISSIONS,
+      appearance: { mode: 'light', density: 'standard', highContrast: false, reduceMotion: true },
+    });
+  } else if (productRoute.id === 'meetings.follow-ups') {
+    await mockApprovedFollowUps(page);
+  } else {
+    await mockShellSession(page, rolesForMenuRoute(productRoute), {
+      locale: 'ko',
+      displayName: productRoute.shell === 'provider' ? 'Provider Admin' : '박현우',
+      jobTitle: productRoute.shell === 'provider' ? 'Platform operations lead' : '회사 관리자',
+      permissions: isPersonalIntelligenceRoute
+        ? [...FULL_PRODUCT_PERMISSIONS, ...DWAION_PERSONAL_PERMISSIONS]
+        : FULL_PRODUCT_PERMISSIONS,
+      appearance: { mode: 'light', density: 'standard', highContrast: false, reduceMotion: true },
+    });
+  }
+  if (productRoute.shell === 'hcm') await mockHcmProductSurfaceAuthority(page);
+  if (productRoute.id === 'home.personal') {
+    await mockShellHomeReadModels(page);
+    await mockShellWorkspaceReadModels(page);
+  }
+  if (productRoute.path.startsWith('/activity')) await mockShellWorkspaceReadModels(page);
+  if (productRoute.path.startsWith('/notifications')) {
+    await mockNotificationCenter(page);
+    await mockNotificationContextCatalog(page);
+    await mockNotificationPreferences(page);
+    await mockNotificationAdminOverview(page);
+    await mockNotificationAdminGovernance(page);
+    await mockNotificationOperationsAndSuppressions(page);
+  }
+  if (productRoute.shell === 'meetings') {
+    await mockApprovedTemplatesAndPreferences(page, false, false);
+  }
   if (isPersonalIntelligenceRoute) await mockDwaionPersonalIntelligence(page);
   await page.goto(productRoute.path);
   await page.waitForLoadState('domcontentloaded');
@@ -117,7 +175,7 @@ export async function exerciseGovernedMenuRoute(
     ).toBe(true);
     testInfo.annotations.push({
       type: 'expected-fixture-transport-error',
-      description: `${failureCount} raw 503 response(s): ${failureSummary}`,
+      description: `${failureCount} raw 4xx/5xx response(s): ${failureSummary}`,
     });
   }
   testInfo.annotations.push({

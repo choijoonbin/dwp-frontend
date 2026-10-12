@@ -181,8 +181,7 @@ export function CalendarShareDialog({
   });
 
   const activeShares = useMemo(
-    () =>
-      (sharesQuery.data ?? []).filter((share) => share.lifecycleState !== 'REVOKED'),
+    () => (sharesQuery.data ?? []).filter((share) => share.lifecycleState !== 'REVOKED'),
     [sharesQuery.data]
   );
   const people = useMemo(() => {

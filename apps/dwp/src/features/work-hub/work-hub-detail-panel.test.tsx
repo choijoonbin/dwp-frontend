@@ -89,7 +89,8 @@ describe('WorkHubDetailPanel Activity handoff', () => {
     await render({ mobile: true });
     await act(async () => new Promise<void>((resolve) => requestAnimationFrame(() => resolve())));
 
-    expect(document.activeElement).toBe(host.querySelector('h2'));
+    expect(document.activeElement).toBe(host.querySelector('h1'));
+    expect(host.querySelectorAll('h1')).toHaveLength(1);
   });
 
   it('keeps a terminal due date without showing a contradictory urgency chip', async () => {

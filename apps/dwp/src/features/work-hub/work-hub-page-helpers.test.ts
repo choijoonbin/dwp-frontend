@@ -281,7 +281,7 @@ describe('selected work URL identity', () => {
 });
 
 describe('work Calendar composer navigation', () => {
-  it('keeps the work return URL and sensitive prefill metadata only in fresh router state', () => {
+  it('keeps the work return URL and sensitive prefill metadata in validated handoff state', () => {
     const now = new Date('2026-09-16T00:00:00.000Z');
     const returnTo = `/work/queue?work=${encodeURIComponent(item.key)}#selected`;
     const navigation = workHubCalendarComposerRoute(

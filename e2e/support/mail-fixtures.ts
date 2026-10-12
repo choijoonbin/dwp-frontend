@@ -272,7 +272,7 @@ export async function mockMailMember(
   );
 }
 
-function defaultMailPreferences() {
+export function defaultMailPreferences() {
   return {
     density: 'COMFORTABLE',
     remoteImages: 'BLOCK',
@@ -288,7 +288,7 @@ function defaultMailPreferences() {
   };
 }
 
-function defaultMailComposeContext() {
+export function defaultMailComposeContext() {
   const capabilities = {
     multipleRecipients: true,
     cc: true,

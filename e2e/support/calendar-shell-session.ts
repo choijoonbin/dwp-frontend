@@ -10,6 +10,7 @@ import type {
   CalendarInsightsMetrics,
   CalendarRestoreEventResponse,
   CalendarSettings,
+  CalendarTeamAvailabilitySnapshot,
   UpdateCalendarSettingsInput,
 } from '@dwp-frontend/shared-utils';
 
@@ -197,6 +198,22 @@ async function mockCalendarSharingContracts(page: Page) {
   });
 }
 
+async function mockCalendarTeamAvailabilityContract(page: Page) {
+  const snapshot = {
+    date: '2026-08-11',
+    timeZone: 'Asia/Seoul',
+    generatedAt: '2026-08-11T00:20:00Z',
+    validUntil: '2026-08-11T00:20:30Z',
+    source: 'DWP_NATIVE_CALENDAR',
+    scope: 'SHARED_WITH_ME',
+    members: [],
+    hasMore: false,
+  } satisfies CalendarTeamAvailabilitySnapshot;
+  await page.route('**/api/platform/v1/calendar/team-availability/snapshot**', (route) =>
+    fulfillSuccess(route, snapshot)
+  );
+}
+
 async function mockCalendarSettingsContracts(page: Page) {
   let settings: CalendarSettings = structuredClone(CALENDAR_SETTINGS_FIXTURE);
   let delegations: CalendarDelegation[] = structuredClone(CALENDAR_DELEGATIONS_FIXTURE);
@@ -263,12 +280,11 @@ async function mockCalendarSettingsContracts(page: Page) {
   });
 }
 
-export async function mockCalendarShellSession(
-  ...args: Parameters<typeof mockBaseShellSession>
-) {
+export async function mockCalendarShellSession(...args: Parameters<typeof mockBaseShellSession>) {
   await mockBaseShellSession(...args);
   await mockCalendarSettingsContracts(args[0]);
   await mockCalendarInsightsContract(args[0]);
   await mockCalendarRecoveryContracts(args[0]);
   await mockCalendarSharingContracts(args[0]);
+  await mockCalendarTeamAvailabilityContract(args[0]);
 }

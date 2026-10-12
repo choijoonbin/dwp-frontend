@@ -2142,7 +2142,6 @@ function range(prefix, start, end) {
     (_, index) => `${prefix}${String(start + index).padStart(2, '0')}`
   );
 }
-
 function isoDate(value) {
   return /^\d{4}-\d{2}-\d{2}$/.test(value ?? '') && Number.isFinite(Date.parse(value));
 }

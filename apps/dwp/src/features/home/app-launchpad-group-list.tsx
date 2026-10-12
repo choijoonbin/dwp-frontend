@@ -7,6 +7,7 @@ import { groupTargetId } from './app-launchpad-dnd';
 import {
   HOME_LAUNCHPAD_FIVE_ITEM_COLUMNS_MIN_WIDTH,
   HOME_LAUNCHPAD_FOUR_ITEM_COLUMNS_MIN_WIDTH,
+  HOME_LAUNCHPAD_GROUP_GRID_MAX_WIDTH,
   HOME_LAUNCHPAD_THREE_ITEM_COLUMNS_MIN_WIDTH,
   HOME_LAUNCHPAD_VISIBLE_ROWS,
   homeLaunchpadFixedItemColumnTemplate,
@@ -75,6 +76,9 @@ export function AppLaunchpadGroupList({
           boxSizing: 'border-box',
           listStyle: 'none',
           display: 'grid',
+          width: 1,
+          maxWidth: flow ? HOME_LAUNCHPAD_GROUP_GRID_MAX_WIDTH : 'none',
+          mr: flow ? 'auto' : 0,
           gridTemplateColumns: homeLaunchpadFixedItemColumnTemplate(2),
           gridAutoRows: flow ? LAUNCHPAD_TILE_HEIGHT_CSS : `${LAUNCHPAD_TILE_HEIGHT}px`,
           justifyItems: immersive ? 'stretch' : 'center',

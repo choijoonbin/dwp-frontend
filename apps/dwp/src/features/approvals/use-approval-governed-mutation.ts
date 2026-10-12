@@ -1,7 +1,5 @@
-import {
-  APPROVAL_GOVERNED_MUTATION_API_CONTRACTS,
-  APPROVAL_HOME_PREFERENCE_MUTATION_API_CONTRACT,
-} from '@dwp-frontend/shared-utils';
+import { APPROVAL_HOME_PREFERENCE_MUTATION_API_CONTRACT } from '@dwp-frontend/shared-utils';
+import { APPROVAL_GOVERNED_MUTATION_API_CONTRACTS } from '@dwp-frontend/shared-utils/api/approval-governed-mutation-api-contracts';
 
 import { PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS } from '../../routes/product-surface-authorization.generated';
 import { useProductSurfaceGovernedMutation } from '../../components/use-product-surface-governed-mutation';

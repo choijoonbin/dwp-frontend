@@ -31,6 +31,13 @@ import type {
 } from './apps/dwp/src/routes/product-route-contract-source.ts';
 
 const workspaceRoot = path.dirname(fileURLToPath(import.meta.url));
+const DWAION_GLOBAL_RUNTIME_ROUTE_CONTRACT_KEYS = [
+  'route.dwaion.work.ask-stream.action',
+  'route.dwaion.work.feedback.action',
+  'route.dwaion.work.question-launch-create.action',
+  'route.dwaion.work.voice-synthesize.action',
+  'route.dwaion.work.voice-transcribe.action',
+] as const;
 const productId = process.env.DWP_PRODUCT_ID;
 if (!productId || !/^[a-z][a-z0-9-]*$/.test(productId)) {
   throw new Error('DWP_PRODUCT_ID must identify the product application being built.');
@@ -181,7 +188,7 @@ const scopedOfficialPageRoutes = routerSource.pageRoutes.filter((route) =>
   mountedProductIds.includes(route.productId)
 );
 const allowedPages: Record<string, string[]> = {
-  workspace: ['home.tsx', 'work.tsx', 'activity.tsx', 'apps.tsx', 'notifications.tsx'],
+  workspace: ['home.tsx', 'home/', 'work.tsx', 'activity.tsx', 'apps.tsx', 'notifications.tsx'],
   dwaion: ['dwaion.tsx'],
   hcm: ['hcm.tsx'],
   approvals: ['approvals.tsx'],
@@ -424,6 +431,9 @@ const productIsolationPlugin = {
           ...productApplicationDescriptor.pageRoutes.map((route) => route.routeContractKey),
           ...scopedAuthorizationRoutes.map((route) => route.routeContractKey),
           ...scopedDynamicDraftRoutes.map((route) => route.routeContractKey),
+          ...(globalRuntimeHosts.includes('dwaion')
+            ? DWAION_GLOBAL_RUNTIME_ROUTE_CONTRACT_KEYS
+            : []),
         ],
       })) {
         violations.add(`foreign route contract ${routeContractKey}`);
@@ -496,7 +506,10 @@ export default defineConfig(({ mode }) => {
               {
                 name: 'product-initial-vendor',
                 test: (moduleId) =>
-                  moduleId === resolvedScopedLocaleLoaderId || moduleId.includes('/node_modules/'),
+                  moduleId === resolvedScopedLocaleLoaderId ||
+                  moduleId.includes('/node_modules/') ||
+                  (productId === 'workspace' &&
+                    moduleId.endsWith('/libs/design-system/src/foundation/tokens.ts')),
                 tags: ['$initial'],
                 includeDependenciesRecursively: true,
                 priority: 20,
@@ -509,7 +522,9 @@ export default defineConfig(({ mode }) => {
                   moduleId.includes('dynamic_import_helper') ||
                   moduleId.includes('dynamic-import-helper'),
                 tags: ['$initial'],
-                includeDependenciesRecursively: false,
+                // Keep the initial shell dependency-closed so Rolldown does not emit a circular
+                // shell-to-entry bridge as a sixth blocking request for richer product runtimes.
+                includeDependenciesRecursively: true,
                 maxSize: 450 * 1024,
                 priority: 10,
               },

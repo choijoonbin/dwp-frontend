@@ -2,6 +2,7 @@ import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
 
+import { HomeDayRail } from '../home-day-rail';
 import { resolveClassicCommunicationState } from './classic-home';
 import { ClassicPersonalSummary } from './classic-personal-summary';
 
@@ -20,9 +21,50 @@ vi.mock('react-i18next', () => ({
 
 const NOW = Date.parse('2026-09-16T00:00:00.000Z');
 
-function overviewWithCommunications(
-  communications: HomeOverview['communications']
-): HomeOverview {
+const FEATURED_STORY = {
+  communicationId: 1,
+  title: 'Verified featured story',
+  summary: 'Verified story summary',
+  severity: 'INFO',
+  contentType: 'NEWS',
+  categoryKey: 'NEWS',
+  publisherName: 'DWP',
+  featured: true,
+  pinned: false,
+  acknowledgementRequired: false,
+  dismissible: true,
+  readingMinutes: 1,
+  sourceLocale: 'en',
+  readerState: { unread: true, saved: false, acknowledged: false, dismissed: false },
+  reactions: { counts: {}, viewerReaction: null, total: 0 },
+} satisfies CommunicationItem;
+
+function classicDayRailMarkup(featuredStory: CommunicationItem | null) {
+  return renderToStaticMarkup(
+    createElement(
+      'main',
+      null,
+      createElement(HomeDayRail, {
+        audience: 'MEMBER',
+        currentDate: '2026-09-16',
+        headline: 'Welcome',
+        subheadline: 'Your workday',
+        backgroundUrl: '/background.jpg',
+        usesDefaultBackground: true,
+        backgroundPosition: 'CENTER',
+        overlayOpacity: 18,
+        featuredStory,
+        requiredStory: null,
+        communicationState: featuredStory ? null : 'empty',
+        assignedAppCount: 0,
+        onBrowseAll: () => undefined,
+        onOpenOrganizationUpdates: () => undefined,
+      })
+    )
+  );
+}
+
+function overviewWithCommunications(communications: HomeOverview['communications']): HomeOverview {
   return { communications } as HomeOverview;
 }
 
@@ -76,6 +118,15 @@ function communicationSection(
 }
 
 describe('Classic Home source-state truthfulness', () => {
+  it.each([
+    ['loaded', FEATURED_STORY],
+    ['empty', null],
+  ] as const)('keeps exactly one page h1 when communications are %s', (_state, story) => {
+    const markup = classicDayRailMarkup(story);
+
+    expect(markup.match(/<h1(?:\s|>)/g)).toHaveLength(1);
+  });
+
   it('never turns unavailable or forbidden communications into an empty success state', () => {
     expect(
       resolveClassicCommunicationState({
@@ -99,9 +150,7 @@ describe('Classic Home source-state truthfulness', () => {
 
   it('distinguishes verified empty, refresh, stale, and ready communication snapshots', () => {
     const empty = overviewWithCommunications(communicationSection('AVAILABLE'));
-    const ready = overviewWithCommunications(
-      communicationSection('AVAILABLE', { hasStory: true })
-    );
+    const ready = overviewWithCommunications(communicationSection('AVAILABLE', { hasStory: true }));
     const stale = overviewWithCommunications(
       communicationSection('AVAILABLE', {
         hasStory: true,

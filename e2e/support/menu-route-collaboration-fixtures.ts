@@ -170,6 +170,16 @@ const resolveMeetingFixture = (path: string): MenuRouteFixtureResolution | null 
   } satisfies VideoMeetingAdminPolicy;
 
   switch (path) {
+    case '/api/platform/v1/workspace/work-hub/assignments':
+      return {
+        data: {
+          items: [],
+          page: 0,
+          size: 100,
+          totalElements: 0,
+          hasMore: false,
+        },
+      };
     case '/api/meetings/v1/home':
       return {
         data: {
@@ -189,6 +199,8 @@ const resolveMeetingFixture = (path: string): MenuRouteFixtureResolution | null 
           capabilities,
         } satisfies VideoMeetingHome,
       };
+    case '/api/meetings/v1/personal-room':
+      return { data: null };
     case '/api/meetings/v1/history':
     case '/api/meetings/v1/meetings':
       return {
@@ -265,6 +277,8 @@ const resolveMessagingFixture = (path: string): MenuRouteFixtureResolution | nul
           people: [],
         } satisfies MessagingHome,
       };
+    case '/api/messaging/v1/home/shared-assets':
+      return { data: { generatedAt: OBSERVED_AT, items: [] } };
     case '/api/messaging/v1/conversations':
       return {
         data: { items: [], total: 0, page: 0, pageSize: 30 } satisfies MessagingConversationPage,

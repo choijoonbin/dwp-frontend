@@ -634,7 +634,6 @@ test('S10 labels a bounded resource ledger as partial evidence', async ({ page }
         hasMore: true,
       })
   );
-
   await page.goto('/provider/resource-governance');
   await page
     .getByRole('row', { name: /API_CALLS/ })
@@ -643,12 +642,10 @@ test('S10 labels a bounded resource ledger as partial evidence', async ({ page }
     .press('Enter');
   await expect(page.getByText(/Showing the newest 1 ledger entries/)).toBeVisible();
 });
-
 test('S10 request owner cancels a current tenant lifecycle request with audit reason', async ({
   page,
 }, testInfo) => {
   await page.goto('/provider/resource-governance');
-
   const lifecycleSection = page.getByRole('heading', {
     name: 'Tenant retirement and purge governance',
   });
@@ -659,7 +656,6 @@ test('S10 request owner cancels a current tenant lifecycle request with audit re
   ).toBeVisible();
   await page.getByRole('textbox', { name: 'Reason' }).fill('Customer retained the tenant');
   await page.getByRole('button', { name: 'Cancel request', exact: true }).click();
-
   await expect(page.getByText('Cancelled', { exact: true })).toBeVisible();
   await expect(page.getByText(/No owner execution required/)).toBeVisible();
   await expect(page.getByText(/Recorded reason: Customer retained the tenant/)).toBeVisible();
@@ -667,12 +663,10 @@ test('S10 request owner cancels a current tenant lifecycle request with audit re
   await expectNoHorizontalOverflow(page, 'S10 lifecycle cancellation');
   await capture(page, testInfo, 'S10-lifecycle-cancellation');
 });
-
 test('S11 exposes effective value, provenance, and unsupported observation honestly', async ({
   page,
 }, testInfo) => {
   await page.goto('/provider/feature-rollouts');
-
   await expect(
     page.getByRole('heading', { name: 'Effective configuration and application state' })
   ).toBeVisible();
@@ -685,7 +679,6 @@ test('S11 exposes effective value, provenance, and unsupported observation hones
   await expectNoHorizontalOverflow(page, 'S11');
   await capture(page, testInfo, 'S11-effective-configuration');
 });
-
 test('S12 preserves rollout, incident, and time-bound support control paths', async ({
   page,
 }, testInfo) => {
@@ -701,7 +694,6 @@ test('S12 preserves rollout, incident, and time-bound support control paths', as
   ).toBeVisible();
   await expect(page.getByRole('button', { name: 'Approve rollout' })).toHaveCount(0);
   await expectNoSeriousAxeViolations(page);
-
   await page.goto('/provider/health');
   await expect(
     page.getByRole('heading', { name: 'Service operations', exact: true })
@@ -711,7 +703,6 @@ test('S12 preserves rollout, incident, and time-bound support control paths', as
   await expect(page.getByText('Workspace latency elevated in Seoul cell')).toBeVisible();
   await expectNoHorizontalOverflow(page, 'S12 incidents');
   await capture(page, testInfo, 'S12-incidents');
-
   await page.goto('/provider/support');
   await expect(
     page.getByRole('heading', { name: 'Privileged support', exact: true })
@@ -724,12 +715,10 @@ test('S12 preserves rollout, incident, and time-bound support control paths', as
   await expectNoHorizontalOverflow(page, 'S12 support');
   await capture(page, testInfo, 'S12-support-access');
 });
-
 test('S15 stages configuration while keeping software distribution unavailable', async ({
   page,
 }, testInfo) => {
   await page.goto('/provider/feature-rollouts');
-
   await expect(
     page.getByRole('region', { name: 'Feature rollout operating boundary' })
   ).toContainText('External execution');
@@ -750,7 +739,6 @@ test('S15 stages configuration while keeping software distribution unavailable',
   ).toHaveCount(0);
   await expectNoHorizontalOverflow(page, 'S15');
   await capture(page, testInfo, 'S15-configuration-rollout-boundary');
-
   await page.goto('/provider/artifact-governance');
   await expect(
     page.getByText(
@@ -784,12 +772,10 @@ test('S15 stages configuration while keeping software distribution unavailable',
   await expectNoSeriousAxeViolations(page);
   await expectNoHorizontalOverflow(page, 'S15 artifact governance');
 });
-
 test('S16 keeps plan, approval, execution, and evidence as separate states', async ({
   page,
 }, testInfo) => {
   await page.goto('/provider/operations');
-
   await expect(page.getByRole('heading', { name: 'Change control', exact: true })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Change approval queue' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Control path' })).toBeVisible();
@@ -797,7 +783,6 @@ test('S16 keeps plan, approval, execution, and evidence as separate states', asy
   const operationRow = page.getByRole('row', { name: /operation-1/ });
   await operationRow.getByRole('gridcell').first().focus();
   await operationRow.getByRole('gridcell').first().press('Enter');
-
   const review = page.getByRole('dialog', { name: 'Review change plan' });
   await expect(review).toBeVisible();
   await expect(review.getByText('Execution impact')).toBeVisible();
@@ -809,7 +794,6 @@ test('S16 keeps plan, approval, execution, and evidence as separate states', asy
   await expectNoHorizontalOverflow(page, 'S16');
   await capture(page, testInfo, 'S16-governed-change-review');
 });
-
 test('S15 preserves cached artifact evidence when rollout plans fail', async ({ page }) => {
   await page.route('**/api/provider/v1/admin/artifact-governance/rollout-plans', async (route) => {
     await route.fulfill({
@@ -818,9 +802,7 @@ test('S15 preserves cached artifact evidence when rollout plans fail', async ({ 
       body: JSON.stringify({ status: 'ERROR', message: 'owner unavailable' }),
     });
   });
-
   await page.goto('/provider/artifact-governance');
-
   await expect(page.getByText('WORKSPACE_CORE · 2.5.0').first()).toBeVisible();
   await expect(page.getByText(/rollout plans could not be loaded/i)).toBeVisible();
   await expect(page.getByText('Unavailable', { exact: true }).first()).toBeVisible();

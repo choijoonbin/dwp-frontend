@@ -215,7 +215,9 @@ export function useHomePageController() {
   const draftPresentation = draftHistory.present.presentation;
   const homeExperience = homeExperienceQuery.data;
   const viewStoreEnabled = Boolean(
-    HOME_PERSONALIZATION_V2_ENABLED && homeExperience?.homePreferenceStore === 'VIEWS'
+    HOME_PERSONALIZATION_V2_ENABLED &&
+    homeExperience?.effectiveExperienceVariant &&
+    homeExperience.homePreferenceStore === 'VIEWS'
   );
   const modeScopedHomeViewsSupported = hasHomeContractCapability(
     homeExperience,
@@ -226,11 +228,14 @@ export function useHomePageController() {
     HOME_CONTRACT_CAPABILITIES.fourDeviceLayouts
   );
   const homeModePolicy = reconcileHomeCompositionPolicy(homeExperience?.compositionPolicy);
-  const preferredMode = homePreferenceQuery.data?.currentMode;
+  // The server-resolved variant is the display authority after tenant policy and
+  // runtime kill-switch evaluation. A requested mode is never sufficient on its
+  // own; older or incomplete responses therefore fail closed to Classic.
   const configuredHomeMode =
-    preferredMode && homeModePolicy.allowedModes.includes(preferredMode)
-      ? preferredMode
-      : homeModePolicy.defaultMode;
+    homeExperience?.effectiveExperienceVariant &&
+    homeModePolicy.allowedModes.includes(homeExperience.effectiveExperienceVariant)
+      ? homeExperience.effectiveExperienceVariant
+      : 'CLASSIC';
   const homeModeKey = resolveBrokeredHomeExperience(
     homeV2Runtime.activation.kind === 'ACTIVE'
       ? homeV2Runtime.activation.result.snapshot.data.mode

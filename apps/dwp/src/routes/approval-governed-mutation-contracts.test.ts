@@ -2,11 +2,9 @@ import { describe, expect, it } from 'vitest';
 import fs from 'node:fs';
 import path from 'node:path';
 import ts from 'typescript';
-import {
-  APPROVAL_GOVERNED_MUTATION_API_CONTRACTS,
-  APPROVAL_HOME_PREFERENCE_MUTATION_API_CONTRACT,
-} from '@dwp-frontend/shared-utils';
+import { APPROVAL_HOME_PREFERENCE_MUTATION_API_CONTRACT } from '@dwp-frontend/shared-utils';
 import { APPROVAL_ADMIN_V2_UNSUPPORTED_MUTATION_API_FUNCTIONS } from '@dwp-frontend/shared-utils/api/approval-admin-v2-canonical-mutation-api';
+import { APPROVAL_GOVERNED_MUTATION_API_CONTRACTS } from '@dwp-frontend/shared-utils/api/approval-governed-mutation-api-contracts';
 
 import { PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS } from './product-surface-authorization.generated';
 import { PRODUCT_SURFACE_HIGH_RISK_COMMAND_CATALOG } from '../components/product-surface-high-risk-command-catalog';

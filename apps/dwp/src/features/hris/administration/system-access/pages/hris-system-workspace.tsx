@@ -325,7 +325,7 @@ export function HrisSystemWorkspace({
         description={t('system.error.description', {
           defaultValue: 'Nothing was changed. Retry to request a fresh tenant-bound projection.',
         })}
-        retryLabel={t('common.actions.retry', { defaultValue: 'Retry' })}
+        retryLabel={t('common.retry', { defaultValue: 'Retry' })}
         retrying={query.isFetching}
         onRetry={() => void query.refetch()}
       />

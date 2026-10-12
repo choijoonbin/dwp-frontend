@@ -3,13 +3,7 @@ import { axiosInstance } from '../axios-instance';
 import type { ApiResponse } from '../types';
 
 export type CalendarDayOfWeek =
-  | 'MONDAY'
-  | 'TUESDAY'
-  | 'WEDNESDAY'
-  | 'THURSDAY'
-  | 'FRIDAY'
-  | 'SATURDAY'
-  | 'SUNDAY';
+  'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY';
 
 export type CalendarSpeedyMeetingMode = 'STANDARD' | 'FIVE_TEN';
 export type CalendarDefaultVisibility = 'FREE_BUSY' | 'DETAILS' | 'PRIVATE';
@@ -97,10 +91,10 @@ export async function getCalendarSettings(signal?: AbortSignal): Promise<Calenda
 export async function updateCalendarSettings(
   input: UpdateCalendarSettingsInput
 ): Promise<CalendarSettings> {
-  const response = await axiosInstance.put<ApiResponse<CalendarSettings>, UpdateCalendarSettingsInput>(
-    '/api/platform/v1/calendar/settings',
-    input
-  );
+  const response = await axiosInstance.put<
+    ApiResponse<CalendarSettings>,
+    UpdateCalendarSettingsInput
+  >('/api/platform/v1/calendar/settings', input);
   return response.data.data;
 }
 
@@ -112,9 +106,7 @@ export async function resetCalendarSettings(version: number): Promise<CalendarSe
   return response.data.data;
 }
 
-export async function getCalendarDelegations(
-  signal?: AbortSignal
-): Promise<CalendarDelegation[]> {
+export async function getCalendarDelegations(signal?: AbortSignal): Promise<CalendarDelegation[]> {
   const response = await axiosInstance.get<ApiResponse<CalendarDelegation[]>>(
     '/api/platform/v1/calendar/settings/delegations',
     signal ? { signal } : undefined
@@ -136,10 +128,7 @@ export async function revokeCalendarDelegation(
   delegationId: string,
   version: number
 ): Promise<CalendarDelegation> {
-  const response = await axiosInstance.post<
-    ApiResponse<CalendarDelegation>,
-    { version: number }
-  >(
+  const response = await axiosInstance.post<ApiResponse<CalendarDelegation>, { version: number }>(
     `/api/platform/v1/calendar/settings/delegations/${encodeURIComponent(delegationId)}/revoke`,
     { version }
   );

@@ -125,7 +125,9 @@ export function CalendarTrash() {
       );
       setRestoreReceipt((current) => {
         if (!current || current.event.eventId !== command.eventId) return current;
-        const replacements = new Map(result.resources.map((resource) => [resource.resourceId, resource]));
+        const replacements = new Map(
+          result.resources.map((resource) => [resource.resourceId, resource])
+        );
         return {
           ...current,
           result: {
@@ -209,7 +211,11 @@ export function CalendarTrash() {
                       <Typography variant="caption" fontWeight={700}>
                         {t('trash.resourceResultLabel', { index: index + 1 })}
                       </Typography>
-                      <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        sx={{ display: 'block' }}
+                      >
                         {t(`trash.restoreReasons.${resource.reason}`)}
                       </Typography>
                     </Box>

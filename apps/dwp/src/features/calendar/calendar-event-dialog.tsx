@@ -115,11 +115,7 @@ function creationDraftWithSettings(
   if (!settings) return draft;
   const startsAt = new Date(draft.startsAt);
   const speedyMinutes =
-    settings.speedyMeetingMode === 'FIVE_TEN'
-      ? settings.defaultEventMinutes >= 60
-        ? 10
-        : 5
-      : 0;
+    settings.speedyMeetingMode === 'FIVE_TEN' ? (settings.defaultEventMinutes >= 60 ? 10 : 5) : 0;
   const durationMinutes = Math.max(5, settings.defaultEventMinutes - speedyMinutes);
   return {
     ...draft,
@@ -191,22 +187,26 @@ export function CalendarEventDialog({
   );
   const workProtected = Boolean(workDescription);
   const [form, setForm] = useState<CalendarEventDraft>(() => {
-    const draft = creationDraftWithSettings(calendarEventDraft(event, {
-      initialStart,
-      initialEnd,
-      initialType: workHandoff ? 'FOCUS' : initialType,
-      initialTitle,
-      initialDescription: workDescription ?? initialDescription,
-      initialVisibility: workHandoff ? 'PRIVATE' : initialVisibility,
-      initialResourceId,
-      initialCalendarId,
-      fallbackTimeZone: initialTimeZone ?? undefined,
-      initialImportance,
-    }), event ? undefined : settingsQuery.data, {
-      end: Boolean(initialEnd),
-      timeZone: Boolean(initialTimeZone),
-      visibility: Boolean(initialVisibility || workHandoff),
-    });
+    const draft = creationDraftWithSettings(
+      calendarEventDraft(event, {
+        initialStart,
+        initialEnd,
+        initialType: workHandoff ? 'FOCUS' : initialType,
+        initialTitle,
+        initialDescription: workDescription ?? initialDescription,
+        initialVisibility: workHandoff ? 'PRIVATE' : initialVisibility,
+        initialResourceId,
+        initialCalendarId,
+        fallbackTimeZone: initialTimeZone ?? undefined,
+        initialImportance,
+      }),
+      event ? undefined : settingsQuery.data,
+      {
+        end: Boolean(initialEnd),
+        timeZone: Boolean(initialTimeZone),
+        visibility: Boolean(initialVisibility || workHandoff),
+      }
+    );
     return workDescription ? protectWorkCalendarEventDraft(draft, workDescription) : draft;
   });
   const [attendees, setAttendees] = useState<CalendarEditorAttendee[]>([]);
@@ -256,22 +256,26 @@ export function CalendarEventDialog({
 
   useEffect(() => {
     if (!open) return;
-    const draft = creationDraftWithSettings(calendarEventDraft(event, {
-      initialStart,
-      initialEnd,
-      initialType: workHandoff ? 'FOCUS' : initialType,
-      initialTitle,
-      initialDescription: workDescription ?? initialDescription,
-      initialVisibility: workHandoff ? 'PRIVATE' : initialVisibility,
-      initialResourceId,
-      initialCalendarId,
-      fallbackTimeZone: initialTimeZone ?? undefined,
-      initialImportance,
-    }), event ? undefined : settingsQuery.data, {
-      end: Boolean(initialEnd),
-      timeZone: Boolean(initialTimeZone),
-      visibility: Boolean(initialVisibility || workHandoff),
-    });
+    const draft = creationDraftWithSettings(
+      calendarEventDraft(event, {
+        initialStart,
+        initialEnd,
+        initialType: workHandoff ? 'FOCUS' : initialType,
+        initialTitle,
+        initialDescription: workDescription ?? initialDescription,
+        initialVisibility: workHandoff ? 'PRIVATE' : initialVisibility,
+        initialResourceId,
+        initialCalendarId,
+        fallbackTimeZone: initialTimeZone ?? undefined,
+        initialImportance,
+      }),
+      event ? undefined : settingsQuery.data,
+      {
+        end: Boolean(initialEnd),
+        timeZone: Boolean(initialTimeZone),
+        visibility: Boolean(initialVisibility || workHandoff),
+      }
+    );
     setForm(workDescription ? protectWorkCalendarEventDraft(draft, workDescription) : draft);
     setAttendees(
       workProtected ? [] : calendarEditorAttendees(event, initialAttendees, initialAttendeeEmails)
@@ -365,9 +369,7 @@ export function CalendarEventDialog({
   });
   const resources = resourcesQuery.data ?? EMPTY_CALENDAR_RESOURCES;
   const recurringEvent = event?.recurrence && event.recurrence !== 'NONE' ? event : null;
-  const occurrenceOnly = Boolean(
-    recurringEvent && editScope === 'THIS_OCCURRENCE'
-  );
+  const occurrenceOnly = Boolean(recurringEvent && editScope === 'THIS_OCCURRENCE');
 
   const typeOptions = useMemo(
     () =>
@@ -657,11 +659,13 @@ export function CalendarEventDialog({
                 <ToggleButton value="THIS_OCCURRENCE" disabled={Boolean(recurringEvent.resource)}>
                   {t('event.recurrenceEditScopes.THIS_OCCURRENCE')}
                 </ToggleButton>
-                <ToggleButton value="SERIES">
-                  {t('event.recurrenceEditScopes.SERIES')}
-                </ToggleButton>
+                <ToggleButton value="SERIES">{t('event.recurrenceEditScopes.SERIES')}</ToggleButton>
               </ToggleButtonGroup>
-              <Typography variant="caption" color="text.secondary" sx={{ mt: 0.75, display: 'block' }}>
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                sx={{ mt: 0.75, display: 'block' }}
+              >
                 {recurringEvent.resource
                   ? t('event.occurrenceResourceSeriesOnly')
                   : occurrenceOnly

@@ -593,12 +593,53 @@ function validRuntime(environment) {
 test('checkpoint environment parser accepts only the frozen runner contract', () => {
   const parsed = parseCheckpointEnvironment(validEnvironment());
 
+  assert.deepEqual(parsed.activeBundle, {
+    version: 34,
+    revision: 2,
+    checksum: '852d20e1e639e1a7170f02b5714d21d8c51a9eb8ff5ac32d8b7940b82d6be83b',
+  });
   assert.equal(parsed.endpoints.gateway, 'http://127.0.0.1:21007');
   assert.equal(parsed.tenants[0].workerPublicId, uuid('1', 3));
   assert.equal(parsed.tenants[0].targetPopulationCount, 1);
   assert.equal(parsed.tenants[1].actorLegalEmployerPublicId, uuid('2', 5));
   assert.match(parsed.tenants[0].targetPopulationRevision, /JOB_GRADE/u);
   assert.doesNotMatch(parsed.tenants[1].targetPopulationRevision, /JOB_GRADE/u);
+});
+
+test('checkpoint environment parser fails closed on missing or wrong active bundle bindings', () => {
+  for (const variable of [
+    'DWP_W1_ACTIVE_BUNDLE_VERSION',
+    'DWP_W1_ACTIVE_BUNDLE_REVISION',
+    'DWP_W1_ACTIVE_BUNDLE_CHECKSUM',
+  ]) {
+    const environment = validEnvironment();
+    delete environment[variable];
+    assert.throws(
+      () => parseCheckpointEnvironment(environment),
+      new RegExp(`${variable} is required`, 'u')
+    );
+  }
+
+  for (const [variable, value] of [
+    ['DWP_W1_ACTIVE_BUNDLE_VERSION', '33'],
+    ['DWP_W1_ACTIVE_BUNDLE_REVISION', '3'],
+    ['DWP_W1_ACTIVE_BUNDLE_CHECKSUM', '1'.repeat(64)],
+  ]) {
+    assert.throws(
+      () => parseCheckpointEnvironment({ ...validEnvironment(), [variable]: value }),
+      /bound only to active product authorization bundle v34 revision 2 checksum/u
+    );
+  }
+
+  assert.throws(
+    () =>
+      parseCheckpointEnvironment({
+        ...validEnvironment(),
+        DWP_W1_ACTIVE_BUNDLE_CHECKSUM:
+          '852D20E1E639E1A7170F02B5714D21D8C51A9EB8FF5AC32D8B7940B82D6BE83B',
+      }),
+    /must be a lowercase SHA-256/u
+  );
 });
 
 test('checkpoint environment parser fails closed on unknown variables and ambiguous bindings', () => {
@@ -617,8 +658,7 @@ test('checkpoint environment parser fails closed on unknown variables and ambigu
   assert.throws(() => parseCheckpointEnvironment(actorAsTarget), CheckpointHold);
 
   const tenantBWithTenantARoles = validEnvironment();
-  tenantBWithTenantARoles.DWP_W1_TENANT_B_TARGET_POPULATION_REVISION =
-    `${'b'.repeat(32)}:true|[]|[DIRECTORY, EMPLOYMENT, JOB_GRADE, WORKER_IDENTIFIERS]|READ`;
+  tenantBWithTenantARoles.DWP_W1_TENANT_B_TARGET_POPULATION_REVISION = `${'b'.repeat(32)}:true|[]|[DIRECTORY, EMPLOYMENT, JOB_GRADE, WORKER_IDENTIFIERS]|READ`;
   assert.throws(() => parseCheckpointEnvironment(tenantBWithTenantARoles), CheckpointHold);
 });
 

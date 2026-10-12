@@ -17,7 +17,7 @@ import {
   Sparkles,
   Video,
 } from 'lucide-react';
-import { foundationTokens } from '@dwp-frontend/design-system/foundation';
+import { foundationTokens } from '@dwp-frontend/design-system/foundation/tokens';
 
 import type { LucideIcon } from 'lucide-react';
 

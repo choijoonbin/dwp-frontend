@@ -33,7 +33,10 @@ import {
   updateCalendarSubscription,
   useToast,
 } from '@dwp-frontend/shared-utils';
-import { timeZoneOptions, type TimeZonePreference } from '@dwp-frontend/shared-utils/regional-preference';
+import {
+  timeZoneOptions,
+  type TimeZonePreference,
+} from '@dwp-frontend/shared-utils/regional-preference';
 import {
   ActionButton,
   ActionIconButton,
@@ -241,7 +244,11 @@ export function CalendarSettings() {
     },
   });
   const subscriptionMutation = useMutation({
-    mutationFn: ({ calendar, selected, favorite }: {
+    mutationFn: ({
+      calendar,
+      selected,
+      favorite,
+    }: {
       calendar: CalendarSummary;
       selected: boolean;
       favorite: boolean;
@@ -458,7 +465,10 @@ export function CalendarSettings() {
                       border: 1,
                       borderColor: selected ? 'primary.main' : 'divider',
                       bgcolor: selected
-                        ? alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.18 : 0.07)
+                        ? alpha(
+                            theme.palette.primary.main,
+                            theme.palette.mode === 'dark' ? 0.18 : 0.07
+                          )
                         : 'transparent',
                       '& .MuiCheckbox-root': { p: 0.25 },
                       '& .MuiFormControlLabel-label': {
@@ -584,9 +594,7 @@ export function CalendarSettings() {
                 disabled={settingLocked(settingsQuery.data, 'DEFAULT_BUFFER_MINUTES')}
                 options={[0, 5, 10, 15, 30].map((value) => ({
                   value,
-                  label: value
-                    ? t('units.minutes', { count: value })
-                    : t('settings.defaults.none'),
+                  label: value ? t('units.minutes', { count: value }) : t('settings.defaults.none'),
                 }))}
                 onValueChange={(value) => {
                   if (typeof value === 'number') patchDraft({ defaultBufferMinutes: value });
@@ -731,12 +739,7 @@ export function CalendarSettings() {
                       {personInitials(name)}
                     </Avatar>
                     <Box sx={{ flex: 1, minWidth: 0 }}>
-                      <Stack
-                        direction="row"
-                        spacing={0.75}
-                        flexWrap="wrap"
-                        alignItems="center"
-                      >
+                      <Stack direction="row" spacing={0.75} flexWrap="wrap" alignItems="center">
                         <Typography variant="body2" fontWeight={700} noWrap>
                           {name}
                         </Typography>
@@ -771,9 +774,7 @@ export function CalendarSettings() {
             </Box>
           ) : (
             <Stack spacing={0.5} alignItems="flex-start" sx={{ p: 2.5 }}>
-              <Typography variant="subtitle2">
-                {t('settings.delegation.emptyTitle')}
-              </Typography>
+              <Typography variant="subtitle2">{t('settings.delegation.emptyTitle')}</Typography>
               <Typography variant="body2" color="text.secondary">
                 {t('settings.delegation.emptyDescription')}
               </Typography>
@@ -949,9 +950,7 @@ export function CalendarSettings() {
         existing={delegationsQuery.data ?? []}
         busy={createDelegationMutation.isPending}
         onClose={() => setDelegationDialogOpen(false)}
-        onSubmit={(input: CreateCalendarDelegationInput) =>
-          createDelegationMutation.mutate(input)
-        }
+        onSubmit={(input: CreateCalendarDelegationInput) => createDelegationMutation.mutate(input)}
       />
       <ConfirmDialog
         open={Boolean(revokeTarget)}

@@ -12,6 +12,32 @@ export type HomeWidgetRuntimeDecision = Readonly<{
 
 export type HomeWidgetRuntimeDecisions = Readonly<Record<HomeWidgetKey, HomeWidgetRuntimeDecision>>;
 
+export type StaticHomeWidgetRuntimeBinding = Readonly<{
+  widgetKey: HomeWidgetKey;
+  rendererKey: string;
+}>;
+
+export function createStaticHomeWidgetRuntimeDecisions(
+  bindings: readonly StaticHomeWidgetRuntimeBinding[]
+): HomeWidgetRuntimeDecisions {
+  return Object.freeze(
+    Object.fromEntries(
+      bindings.map(({ widgetKey, rendererKey }) => [
+        widgetKey,
+        {
+          widgetKey,
+          rendererKey,
+          render: 'NATIVE',
+          canAdd: true,
+          canRestore: true,
+          deprecated: false,
+          publicReason: 'AVAILABLE',
+        },
+      ])
+    )
+  ) as HomeWidgetRuntimeDecisions;
+}
+
 export type HomeWidgetShadowObservationStatus =
   'MATCH' | 'DRIFT' | 'INVALID' | 'PENDING' | 'INACTIVE';
 

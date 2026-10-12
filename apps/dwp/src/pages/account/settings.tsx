@@ -21,7 +21,7 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Navigate, useNavigate, useParams } from 'react-router-dom';
+import { Navigate, useParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { formatDate, productLocales, type SupportedLocale } from '@dwp-frontend/shared-i18n';
 import {
@@ -70,6 +70,7 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import type { TFunction } from 'i18next';
 
 import { isSettingsSection } from '../../features/account/settings-navigation';
+import { assignHomeWorkspaceApplication } from '../../components/home-workspace-application-handoff';
 import { usePreferredLanguage } from '../../components/use-preferred-language';
 import { useSystemCodeOptions } from '../../components/use-system-code-options';
 import { usePersonalPreference } from '../../providers/personal-preference-provider';
@@ -104,7 +105,6 @@ function managedRequestedValue(value: unknown, t: TFunction<'account'>): string 
 export default function SettingsPage() {
   const { t } = useTranslation('account');
   const { section } = useParams();
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const toast = useToast();
   const [exceptionRule, setExceptionRule] = useState<ManagedPreferenceRule | null>(null);
@@ -600,7 +600,7 @@ export default function SettingsPage() {
             <ActionButton
               intent="secondary"
               startIcon={<LayoutDashboard size={17} />}
-              onClick={() => navigate('/?edit=home')}
+              onClick={() => assignHomeWorkspaceApplication()}
             >
               {t('actions.editHome')}
             </ActionButton>

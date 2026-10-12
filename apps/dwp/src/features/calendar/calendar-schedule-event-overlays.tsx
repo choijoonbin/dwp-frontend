@@ -4,10 +4,7 @@ import { ConfirmDialog } from '@dwp-frontend/design-system';
 import { CalendarEventDrawer } from './calendar-components';
 import { CalendarEventDialog } from './calendar-event-dialog';
 
-import type {
-  CalendarEvent,
-  CalendarResponseStatus,
-} from '@dwp-frontend/shared-utils';
+import type { CalendarEvent, CalendarResponseStatus } from '@dwp-frontend/shared-utils';
 
 type OverlayState = Readonly<{
   selected: CalendarEvent | null;
@@ -36,9 +33,7 @@ type OverlayActions = Readonly<{
   cancelSelected: () => void;
   trashSelected: () => void;
   toggleSelectedStar: () => void;
-  respondToSelected: (
-    response: Exclude<CalendarResponseStatus, 'NEEDS_ACTION'>
-  ) => void;
+  respondToSelected: (response: Exclude<CalendarResponseStatus, 'NEEDS_ACTION'>) => void;
   closeEditing: () => void;
   saveEditing: (event: CalendarEvent) => void;
   closeCancelling: () => void;

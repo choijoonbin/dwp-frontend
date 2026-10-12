@@ -1,5 +1,6 @@
 import type { Page } from '@playwright/test';
 import type {
+  AIControlOverview,
   DwaionActionPolicy,
   DwaionDataSourcePolicy,
   DwaionEvaluationRun,
@@ -187,6 +188,55 @@ export const ADMIN_SAFETY: DwaionSafetyPolicy = {
   policyVersion: 8,
   updatedAt: ADMIN_STAMP,
 };
+export const ADMIN_AI_CONTROL = {
+  controlScope: 'ASK_RUNTIME',
+  enforcementActivationState: 'DISABLED',
+  runtimeControlState: 'ENABLED',
+  toolEnforcementState: 'NOT_CONNECTED',
+  policy: {
+    emergencyDisabled: false,
+    allowedModelRoutes: [
+      {
+        provider: 'OPENAI',
+        model: 'approved-enterprise-model',
+        region: 'kr',
+        availabilityState: 'VERIFIED',
+        availabilityObservedAt: ADMIN_STAMP,
+      },
+    ],
+    allowedToolKeys: ['CALENDAR.READ'],
+    allowedKnowledgeSources: ['WORK_ITEM', 'CALENDAR'],
+    maxOutputTokensPerRequest: 900,
+    budgetEnforcementMode: 'ENFORCED',
+    periodTokenLimit: 1_000_000,
+    alertThresholdPercent: 80,
+    requireEvaluationPass: true,
+    evaluationGateStatus: 'PASSED',
+    evaluationEvidenceState: 'VERIFIED',
+    evaluationObservedAt: ADMIN_STAMP,
+    evaluationPolicyVersion: 3,
+    policyVersion: 4,
+    updatedAt: ADMIN_STAMP,
+  },
+  usage: {
+    periodStart: '2026-09-01T00:00:00Z',
+    periodEnd: '2026-10-01T00:00:00Z',
+    measuredInputTokens: 35_000,
+    measuredOutputTokens: 15_000,
+    measuredTotalTokens: 50_000,
+    reservedTokens: 7_500,
+    unmeasuredReservedTokens: 0,
+    measurementFreshness: 'CURRENT',
+    measurementObservedAt: ADMIN_STAMP,
+    estimatedCostMinor: 125_000,
+    billedCostMinor: 120_000,
+    currency: 'KRW',
+    providerUsageState: 'VERIFIED',
+    providerPricingState: 'VERIFIED',
+    providerBillingState: 'VERIFIED',
+  },
+  warnings: ['AI_TOOL_EXECUTION_NOT_CONNECTED'],
+} satisfies AIControlOverview;
 export const ADMIN_OVERVIEW: DwaionOperationsOverview = {
   periodDays: 30,
   runCount: 24,
@@ -753,6 +803,7 @@ export async function mockDwaionAdminStitch(page: Page, options: AdminFixtureOpt
         } as DwaionActionPolicy;
         return success(state.actions[0]);
       }
+      if (path === '/api/agent/v1/admin/ai-control') return success(ADMIN_AI_CONTROL);
       if (path.endsWith('/safety/bootstrap')) {
         state.safetyInitialized = true;
         return success(state.safety);

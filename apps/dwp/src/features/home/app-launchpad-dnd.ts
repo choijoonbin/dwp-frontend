@@ -75,6 +75,14 @@ export function createLaunchpadCollisionDetection(
       return collisions;
     }
 
+    // A container hit in a different group is genuine empty-space intent.
+    // Do not let the last item crossed on the pointer path replace that blank
+    // destination; same-group previews still retain their stable item target.
+    if (findGroupId(String(args.active.id)) !== broadGroupId) {
+      lastItemCollisionRef.current = collisions;
+      return collisions;
+    }
+
     const previousCollision = lastItemCollisionRef.current[0];
     if (!previousCollision) return collisions;
     const previousId = String(previousCollision.id);

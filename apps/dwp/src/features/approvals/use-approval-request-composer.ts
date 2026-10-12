@@ -158,12 +158,13 @@ export function useApprovalRequestComposer() {
     () => parseDwaionProposalHandoffBinding(location.state),
     [location.state]
   );
-  const [dwaionProposalContext, setDwaionProposalContext] =
-    useState<DwaionProposalBindingContext | undefined>(() =>
-      incomingDwaionProposalHandoff
-        ? { binding: incomingDwaionProposalHandoff, sessionKey }
-        : undefined
-    );
+  const [dwaionProposalContext, setDwaionProposalContext] = useState<
+    DwaionProposalBindingContext | undefined
+  >(() =>
+    incomingDwaionProposalHandoff
+      ? { binding: incomingDwaionProposalHandoff, sessionKey }
+      : undefined
+  );
   const currentDraftDetail =
     draftId &&
     !draft.isError &&

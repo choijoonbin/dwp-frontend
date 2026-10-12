@@ -41,10 +41,14 @@ export function projectProductAuthorizationRoutes<
       return scope.includeGovernedContextRoutes;
     }
 
+    const routeMatchesProduct =
+      projection.routeContractKey.startsWith(`route.${projection.productId}.`) ||
+      (projection.productId === 'mail' &&
+        projection.routeContractKey.startsWith('route.admin.mail.'));
     if (
       !projection.productId ||
       !projection.surfaceId?.startsWith(`${projection.productId}.`) ||
-      !projection.routeContractKey.startsWith(`route.${projection.productId}.`)
+      !routeMatchesProduct
     ) {
       throw new Error(
         `Product authorization route has an invalid product identity: ${projection.routeContractKey}`

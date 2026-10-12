@@ -103,6 +103,7 @@ type DragPreview = {
   layout: LaunchpadLayout;
   targetGroupId: HomeAppGroupId;
   targetItemId: string | null;
+  delta: Readonly<{ x: number; y: number }>;
 } | null;
 export function AppLaunchpad({
   apps,
@@ -335,7 +336,7 @@ export function AppLaunchpad({
     setKeyboardDragging(keyboardDraggingRef.current);
   };
 
-  const handleDragOver = ({ active, over }: DragOverEvent) => {
+  const handleDragOver = ({ active, over, delta }: DragOverEvent) => {
     if (keyboardDraggingRef.current) return;
 
     const draggedId = String(active.id);
@@ -347,20 +348,35 @@ export function AppLaunchpad({
     }
     if (isLaunchpadOriginTarget(draggedId, overId)) {
       clearFolderHoverIntent();
-      updateDragPreview(null);
+      // A cross-group preview replaces the destination tile underneath the pointer.
+      // DnD can then report the transformed origin for one frame; retain the last
+      // meaningful destination until a real group/item collision supersedes it.
+      if (!dragPreviewRef.current) updateDragPreview(null);
+      return;
+    }
+
+    const sourceGroupId = findGroupId(draggedId);
+    const directTargetGroupId = groupIdFromTarget(overId);
+    const currentPreview = dragPreviewRef.current;
+    if (
+      currentPreview?.targetItemId === null &&
+      currentPreview.targetGroupId !== sourceGroupId &&
+      !directTargetGroupId &&
+      Math.abs(currentPreview.delta.x - delta.x) < 0.5 &&
+      Math.abs(currentPreview.delta.y - delta.y) < 0.5
+    ) {
       return;
     }
 
     const folderTarget = targetItemId(overId);
     if (folderTarget) {
+      if (currentPreview?.targetItemId === null) updateDragPreview(null);
       scheduleFolderHoverIntent(folderTarget);
       return;
     }
 
     clearFolderHoverIntent();
 
-    const sourceGroupId = findGroupId(draggedId);
-    const directTargetGroupId = groupIdFromTarget(overId);
     const targetGroupId = directTargetGroupId ?? findGroupId(overId);
     if (!sourceGroupId || !targetGroupId) {
       updateDragPreview(null);
@@ -368,7 +384,6 @@ export function AppLaunchpad({
     }
 
     const targetItem = directTargetGroupId ? null : overId;
-    const currentPreview = dragPreviewRef.current;
     if (
       currentPreview?.targetGroupId === targetGroupId &&
       currentPreview.targetItemId === targetItem
@@ -386,6 +401,7 @@ export function AppLaunchpad({
       ),
       targetGroupId,
       targetItemId: targetItem,
+      delta,
     });
   };
 
@@ -422,12 +438,22 @@ export function AppLaunchpad({
       return;
     }
 
-    if (!overId || isLaunchpadOriginTarget(draggedId, overId)) return;
+    if (!overId) return;
+    if (isLaunchpadOriginTarget(draggedId, overId)) {
+      if (completedPreview && completedPreview.targetGroupId !== sourceGroupId) {
+        onLayoutChange(completedPreview.layout);
+      }
+      return;
+    }
 
     const folderTarget = targetItemId(overId);
 
     const directTargetGroupId = groupIdFromTarget(overId);
     if (directTargetGroupId) {
+      if (completedPreview?.targetGroupId === directTargetGroupId) {
+        onLayoutChange(completedPreview.layout);
+        return;
+      }
       onLayoutChange(
         moveLaunchpadItemToGroup(layout, sourceGroupId, directTargetGroupId, draggedId)
       );
@@ -461,6 +487,11 @@ export function AppLaunchpad({
       onLayoutChange(
         moveLaunchpadItemToGroup(layout, sourceGroupId, targetGroupId, draggedId, folderTarget)
       );
+      return;
+    }
+
+    if (completedPreview?.targetItemId === null) {
+      onLayoutChange(completedPreview.layout);
       return;
     }
 

@@ -14,10 +14,18 @@ import {
   type WorkCalendarEventHandoff,
   type WorkCalendarLink,
 } from '@dwp-frontend/shared-utils/api/work-hub-calendar-api';
+import {
+  clearWorkCalendarDocumentHandoff,
+  readWorkCalendarDocumentHandoff,
+} from '@dwp-frontend/shared-utils/api/work-calendar-document-handoff';
 
 import { authorizedCalendarWorkReturnTarget } from './calendar-schedule-state';
+import {
+  CALENDAR_WORK_HANDOFF_RECOVERY_KEY,
+  calendarWorkHandoffRecoveryStorage,
+} from './calendar-work-handoff-recovery-storage';
 
-const WORK_HANDOFF_RECOVERY_KEY = 'dwp.calendar.work-handoff-recovery.v1';
+export { clearCalendarWorkHandoffRecovery } from './calendar-work-handoff-recovery-storage';
 
 export type CalendarWorkHandoffRecovery = Readonly<{
   handoff: WorkCalendarEventHandoff;
@@ -59,14 +67,6 @@ export type CalendarWorkHandoffReturnTarget = Readonly<{
   expiresAt: string;
 }>;
 
-function recoveryStorage(): Storage | null {
-  try {
-    return typeof window === 'undefined' ? null : window.sessionStorage;
-  } catch {
-    return null;
-  }
-}
-
 export function hasWorkCalendarEventHandoff(state: unknown): boolean {
   return Boolean(
     state &&
@@ -97,6 +97,25 @@ export function authorizedWorkCalendarEventHandoff(
   const sourceUrl = authorizedCalendarWorkReturnTarget(handoff.sourceUrl, permissions);
   const returnTo = authorizedCalendarWorkReturnTarget(handoff.returnTo, permissions);
   return sourceUrl === handoff.sourceUrl && returnTo === handoff.returnTo ? handoff : null;
+}
+
+/**
+ * Consumes the tab-local cross-product envelope only after Calendar has authoritative identity
+ * and permission state. Every definitive outcome removes that exact command; malformed and stale
+ * envelopes are already destroyed by the transport reader.
+ */
+export function consumeAuthorizedWorkCalendarDocumentHandoff(
+  permissions: readonly PermissionDTO[],
+  ownerFingerprint: string | null,
+  now = Date.now(),
+  storage?: Storage | null
+): WorkCalendarEventHandoff | null {
+  const state = readWorkCalendarDocumentHandoff(now, storage);
+  if (!state) return null;
+  const handoff = state.workCalendarEventHandoff;
+  const authorized = authorizedWorkCalendarEventHandoff(state, permissions, ownerFingerprint, now);
+  clearWorkCalendarDocumentHandoff(handoff.handoffId, storage);
+  return authorized;
 }
 
 /** Return navigation stays attached to the same short-lived Work command as the composer. */
@@ -190,12 +209,15 @@ export function persistCalendarWorkHandoffRecovery(
   input: CreateCalendarEventInput,
   now = Date.now()
 ): boolean {
-  const storage = recoveryStorage();
+  const storage = calendarWorkHandoffRecoveryStorage();
   const linkId = input.idempotencyKey;
   if (!storage || !isExactWorkHandoffRecoveryReceipt(handoff, event, input, linkId)) return false;
   if (!parseWorkCalendarEventHandoff({ workCalendarEventHandoff: handoff }, now)) return false;
   try {
-    storage.setItem(WORK_HANDOFF_RECOVERY_KEY, JSON.stringify({ handoff, event, input, linkId }));
+    storage.setItem(
+      CALENDAR_WORK_HANDOFF_RECOVERY_KEY,
+      JSON.stringify({ handoff, event, input, linkId })
+    );
     return true;
   } catch {
     return false;
@@ -209,10 +231,10 @@ export function readCalendarWorkHandoffRecovery(
   permissionsLoaded: boolean,
   now = Date.now()
 ): CalendarWorkHandoffRecovery | null {
-  const storage = recoveryStorage();
+  const storage = calendarWorkHandoffRecoveryStorage();
   if (!storage) return null;
   try {
-    const raw = storage.getItem(WORK_HANDOFF_RECOVERY_KEY);
+    const raw = storage.getItem(CALENDAR_WORK_HANDOFF_RECOVERY_KEY);
     if (!raw) return null;
     const value: unknown = JSON.parse(raw);
     if (!value || typeof value !== 'object' || Array.isArray(value))
@@ -252,32 +274,8 @@ export function readCalendarWorkHandoffRecovery(
       linkId: candidate.linkId,
     };
   } catch {
-    storage.removeItem(WORK_HANDOFF_RECOVERY_KEY);
+    storage.removeItem(CALENDAR_WORK_HANDOFF_RECOVERY_KEY);
     return null;
-  }
-}
-
-export function clearCalendarWorkHandoffRecovery(handoffId?: string): void {
-  const storage = recoveryStorage();
-  if (!storage) return;
-  try {
-    if (!handoffId) {
-      storage.removeItem(WORK_HANDOFF_RECOVERY_KEY);
-      return;
-    }
-    const raw = storage.getItem(WORK_HANDOFF_RECOVERY_KEY);
-    if (!raw) return;
-    const value: unknown = JSON.parse(raw);
-    if (
-      value &&
-      typeof value === 'object' &&
-      !Array.isArray(value) &&
-      (value as { handoff?: { handoffId?: unknown } }).handoff?.handoffId === handoffId
-    ) {
-      storage.removeItem(WORK_HANDOFF_RECOVERY_KEY);
-    }
-  } catch {
-    storage.removeItem(WORK_HANDOFF_RECOVERY_KEY);
   }
 }
 

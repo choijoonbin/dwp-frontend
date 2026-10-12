@@ -668,40 +668,33 @@ test('S04 keeps the last successful session list visibly stale when refresh fail
   });
   await page.route('**/api/auth/sessions/session-mobile', (route) => fulfillSuccess(route, null));
   await page.goto('/account/security');
-
   await page.getByRole('button', { name: '세션 종료' }).click();
   await page.getByRole('dialog').getByRole('button', { name: '로그아웃' }).click();
-
   await expect(
     page.getByText(/마지막으로 정상 조회한 세션을 아래에 계속 표시합니다/)
   ).toBeVisible();
   await expect(page.getByText('현재 세션', { exact: true })).toBeVisible();
 });
-
 test('S04 renders an explicit empty state when the owner returns no sessions', async ({ page }) => {
   await prepare(page);
   await page.unroute('**/api/auth/sessions');
   await page.route('**/api/auth/sessions', (route) => fulfillSuccess(route, []));
   await page.goto('/account/security');
-
   await expect(page.getByText('반환된 활성 브라우저 세션이 없습니다')).toBeVisible();
   await expect(
     page.getByText(/소유 서비스가 빈 목록을 반환한 경우 세션을 추정하지 않습니다/)
   ).toBeVisible();
 });
-
 test('S02 provider identity reports tenant activity as out of scope without loading forever', async ({
   page,
 }) => {
   await prepare(page, ['PROVIDER_ADMIN']);
   await page.goto('/account/settings');
-
   await expect(
     page.getByText(/프로바이더 신원에서는 개인 테넌트 설정 활동을 제공하지 않습니다/)
   ).toBeVisible();
   await expect(page.getByText('최근 활동을 불러오는 중입니다.')).toHaveCount(0);
 });
-
 test('S05 renders appearance, localization, and accessibility controls from real preferences', async ({
   page,
 }) => {

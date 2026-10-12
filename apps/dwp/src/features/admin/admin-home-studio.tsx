@@ -11,7 +11,7 @@ import {
   ScrollText,
 } from 'lucide-react';
 import { InlineFeedback, PageCanvas } from '@dwp-frontend/design-system';
-import { usePermissions } from '@dwp-frontend/shared-utils';
+import { HOME_WIDGET_LIBRARY_ENABLED, usePermissions } from '@dwp-frontend/shared-utils';
 
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -38,6 +38,13 @@ export const ADMIN_HOME_STUDIO_SECTIONS = [
 ] as const;
 
 export type AdminHomeStudioSection = (typeof ADMIN_HOME_STUDIO_SECTIONS)[number];
+
+const enabledAdminHomeStudioSections: readonly AdminHomeStudioSection[] =
+  HOME_WIDGET_LIBRARY_ENABLED
+    ? ADMIN_HOME_STUDIO_SECTIONS
+    : ADMIN_HOME_STUDIO_SECTIONS.filter(
+        (section) => section !== 'widgets' && section !== 'templates'
+      );
 
 const sectionIcons = {
   modes: LayoutGrid,
@@ -83,7 +90,10 @@ export default function AdminHomeStudio() {
   const { t } = useTranslation('admin');
   const { hasPermission } = usePermissions();
   const { studioSection } = useParams();
-  if (!isAdminHomeStudioSection(studioSection)) {
+  if (
+    !isAdminHomeStudioSection(studioSection) ||
+    !enabledAdminHomeStudioSections.includes(studioSection)
+  ) {
     return <Navigate to="/admin/experience/home/modes" replace />;
   }
 
@@ -128,7 +138,7 @@ export default function AdminHomeStudio() {
           aria-label={t('homeStudio.navigationLabel')}
           sx={{ mb: 3, borderBottom: 1, borderColor: 'divider' }}
         >
-          {ADMIN_HOME_STUDIO_SECTIONS.map((section) => {
+          {enabledAdminHomeStudioSections.map((section) => {
             const Icon = sectionIcons[section];
             return (
               <Tab

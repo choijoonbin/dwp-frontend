@@ -273,7 +273,7 @@ function checkSourceFile(file) {
     source,
     ts.ScriptTarget.Latest,
     true,
-    ts.ScriptKind.TSX
+    file.endsWith('.tsx') ? ts.ScriptKind.TSX : ts.ScriptKind.TS
   );
 
   function report(node, reason) {

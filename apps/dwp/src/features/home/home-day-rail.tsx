@@ -176,11 +176,12 @@ export function HomeDayRail({
                 aria-hidden="true"
               />
               <Typography
-                component="span"
+                component="h1"
                 sx={{
                   color: 'primary.main',
                   fontSize: { xs: 11, md: 15 },
                   fontWeight: foundationTokens.home.typography.weightEmphasis,
+                  m: 0,
                   whiteSpace: { xs: 'nowrap', md: 'normal' },
                 }}
               >
@@ -364,7 +365,7 @@ export function HomeDayRail({
                 )}
               </Stack>
               <Typography
-                component="h1"
+                component="h2"
                 sx={{
                   fontSize: { xs: 16, md: 22 },
                   lineHeight: foundationTokens.home.typography.cardLineHeight,

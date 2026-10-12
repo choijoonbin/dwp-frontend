@@ -12,7 +12,6 @@ import { useTranslation } from 'react-i18next';
 import { Bell, Maximize2, Minimize2, Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { ContentDialog } from '@dwp-frontend/design-system/components/dialogs/content-dialog';
 import { GlyphSurface } from '@dwp-frontend/design-system/components/glyph-surface';
 import { getNotificationSummary } from '@dwp-frontend/shared-utils/api/notification-summary-api';
 import {
@@ -42,6 +41,11 @@ import type { ReactNode, Ref } from 'react';
 const GlobalSearchDialogRuntime = lazy(() =>
   import('../features/search/global-search-dialog-runtime').then((module) => ({
     default: module.GlobalSearchDialogRuntime,
+  }))
+);
+const ContentDialog = lazy(() =>
+  import('@dwp-frontend/design-system/components/dialogs/content-dialog').then((module) => ({
+    default: module.ContentDialog,
   }))
 );
 const NotificationHeaderGlance = lazy(() =>
@@ -343,29 +347,31 @@ function ShellLazyDialogLoadingState({
 
   const statusLabel = timedOut ? slowLabel : label;
   return (
-    <ContentDialog
-      open={open}
-      title={statusLabel}
-      closeLabel={closeLabel}
-      maxWidth="xs"
-      onClose={onClose}
-      contentSx={{ py: 3 }}
-      slotProps={{ transition: { onExited } }}
-    >
-      <Box sx={{ display: 'grid', justifyItems: 'start', gap: 1.5 }}>
-        <Typography role="status" aria-live="polite" color="text.secondary">
-          {statusLabel}
-        </Typography>
-        {timedOut && (
-          <ButtonBase
-            onClick={onReload}
-            sx={{ minHeight: 40, px: 2, borderRadius: 1, color: 'primary.main' }}
-          >
-            {reloadLabel}
-          </ButtonBase>
-        )}
-      </Box>
-    </ContentDialog>
+    <Suspense fallback={null}>
+      <ContentDialog
+        open={open}
+        title={statusLabel}
+        closeLabel={closeLabel}
+        maxWidth="xs"
+        onClose={onClose}
+        contentSx={{ py: 3 }}
+        slotProps={{ transition: { onExited } }}
+      >
+        <Box sx={{ display: 'grid', justifyItems: 'start', gap: 1.5 }}>
+          <Typography role="status" aria-live="polite" color="text.secondary">
+            {statusLabel}
+          </Typography>
+          {timedOut && (
+            <ButtonBase
+              onClick={onReload}
+              sx={{ minHeight: 40, px: 2, borderRadius: 1, color: 'primary.main' }}
+            >
+              {reloadLabel}
+            </ButtonBase>
+          )}
+        </Box>
+      </ContentDialog>
+    </Suspense>
   );
 }
 
@@ -381,36 +387,38 @@ function ShellDialogStateFrame({
   children: ReactNode;
 }) {
   return (
-    <ContentDialog
-      open
-      title={label}
-      closeLabel={closeLabel}
-      maxWidth="sm"
-      onClose={onClose}
-      contentSx={{ p: 0 }}
-      slotProps={{
-        paper: {
-          sx: {
-            alignSelf: 'flex-start',
-            mt: { xs: 1.5, sm: 8 },
-            mx: { xs: 1.5, sm: 3 },
-            width: { xs: 'calc(100% - 24px)', sm: 'calc(100% - 64px)' },
+    <Suspense fallback={null}>
+      <ContentDialog
+        open
+        title={label}
+        closeLabel={closeLabel}
+        maxWidth="sm"
+        onClose={onClose}
+        contentSx={{ p: 0 }}
+        slotProps={{
+          paper: {
+            sx: {
+              alignSelf: 'flex-start',
+              mt: { xs: 1.5, sm: 8 },
+              mx: { xs: 1.5, sm: 3 },
+              width: { xs: 'calc(100% - 24px)', sm: 'calc(100% - 64px)' },
+            },
           },
-        },
-      }}
-    >
-      <Box
-        sx={{
-          minHeight: 120,
-          display: 'grid',
-          placeItems: 'center',
-          alignContent: 'center',
-          gap: 1,
         }}
       >
-        {children}
-      </Box>
-    </ContentDialog>
+        <Box
+          sx={{
+            minHeight: 120,
+            display: 'grid',
+            placeItems: 'center',
+            alignContent: 'center',
+            gap: 1,
+          }}
+        >
+          {children}
+        </Box>
+      </ContentDialog>
+    </Suspense>
   );
 }
 

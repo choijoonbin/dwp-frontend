@@ -37,7 +37,7 @@ import {
 } from '../../../components/product-surface-high-risk-command';
 import { useProductSurfaceCapabilityAccess } from '../../../components/product-surface-capability-access';
 import { useProductSurfaceGovernedMutation } from '../../../components/use-product-surface-governed-mutation';
-import type { ProductSurfaceRequestScope } from '../../../components/use-product-surface-request-scope';
+import type { AssignmentProposalWorkspacePortProps } from '../../../components/assignment-proposal-port';
 import {
   ASSIGNMENT_PROPOSAL_ROUTE_BINDINGS,
   assignmentProposalActionAvailable,
@@ -61,13 +61,6 @@ import type {
 } from '@dwp-frontend/shared-utils';
 import type { AssignmentProposalFailureKind } from './assignment-proposal-model';
 
-type Props = Readonly<{
-  proposalReference: string | null;
-  requestScope: ProductSurfaceRequestScope;
-  onProposalReferenceChange: (proposalReference: string) => void;
-  onClose: () => void;
-}>;
-
 const CAPABILITIES = {
   create: 'hcm.operations.assignment-proposal.create',
   validate: 'hcm.operations.assignment-proposal.validate',
@@ -85,7 +78,10 @@ function commandId(): string {
   return crypto.randomUUID();
 }
 
-function proposalQueryKey(proposalId: string, requestScope: ProductSurfaceRequestScope) {
+function proposalQueryKey(
+  proposalId: string,
+  requestScope: AssignmentProposalWorkspacePortProps['requestScope']
+) {
   return [
     'hris',
     'employment',
@@ -113,7 +109,7 @@ export function AssignmentProposalWorkspace({
   requestScope,
   onProposalReferenceChange,
   onClose,
-}: Props) {
+}: AssignmentProposalWorkspacePortProps) {
   const { t } = useTranslation('workforce');
   const auth = useAuth();
   const toast = useToast();
@@ -123,10 +119,9 @@ export function AssignmentProposalWorkspace({
     () => resolveAssignmentProposalSelection(proposalReference),
     [proposalReference]
   );
-  const shortMobileViewport = useMediaQuery(
-    '(max-width:599.95px) and (max-height:759.95px)',
-    { noSsr: true }
-  );
+  const shortMobileViewport = useMediaQuery('(max-width:599.95px) and (max-height:759.95px)', {
+    noSsr: true,
+  });
   const [changeType, setChangeType] = useState<AssignmentChangeType>('TRANSFER');
   const [effectiveDate, setEffectiveDate] = useState(today());
   const [reasonCode, setReasonCode] = useState('');

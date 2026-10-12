@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 import { FULL_PRODUCT_PERMISSIONS, mockShellSession } from './support/shell-session';
+import { routeHomeWave4ShadowRuntime } from './support/home-wave4-runtime-fixtures';
 
 const reducedMotionAppearance = {
   mode: 'light',
@@ -14,6 +15,7 @@ test('flag off keeps Home on the legacy hidden-item restore contract', async ({ 
     locale: 'en',
     appearance: reducedMotionAppearance,
   });
+  await routeHomeWave4ShadowRuntime(page);
   await page.goto('/');
   await page.getByRole('button', { name: 'Edit home' }).click();
   await expect(page.getByRole('button', { name: 'Add items' })).toHaveCount(0);
@@ -26,7 +28,7 @@ test('flag off keeps Home on the legacy hidden-item restore contract', async ({ 
   await restoreItemsButton.click({ force: true });
   await expect(page.getByRole('dialog')).toHaveCount(0);
 
-  await page.getByRole('button', { name: 'Hide Live activity widget' }).click();
+  await page.getByRole('button', { name: 'Hide Focus now widget' }).click();
   await expect(restoreItemsButton).not.toHaveAttribute('aria-disabled', 'true');
   await restoreItemsButton.click();
   const dialog = page.getByRole('dialog', { name: 'Hidden items' });
@@ -38,7 +40,8 @@ test('flag off keeps Home on the legacy hidden-item restore contract', async ({ 
   await expect(page.getByRole('dialog', { name: 'Add to home' })).toHaveCount(0);
   await expect(dialog.getByRole('tab', { name: /Library/ })).toHaveCount(0);
   await expect(dialog.getByText('The item library preview is off')).toBeVisible();
-  await dialog.getByRole('button', { name: 'Restore Live activity widget to home' }).click();
+  await expect(dialog.getByText('Live activity')).toHaveCount(0);
+  await dialog.getByRole('button', { name: 'Restore Focus now widget to home' }).click();
   await expect(dialog.getByText('No hidden items')).toBeVisible();
   await dialog.getByRole('button', { name: 'Close hidden items' }).click();
   await expect(restoreItemsButton).toBeFocused();

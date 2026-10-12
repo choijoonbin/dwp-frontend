@@ -14,7 +14,11 @@ import type * as ReactRouterDom from 'react-router-dom';
 import { WORK_NAVIGATION } from '../features/work/work-navigation';
 import { WORK_HUB_VIEWS } from '../features/work-hub/work-hub-view-contract';
 import { ProductRouteGuard } from './route-support';
-import { workRoutes } from './work-routes';
+import {
+  replaceWorkCalendarApplication,
+  workCalendarCompatibilityTarget,
+  workRoutes,
+} from './work-routes';
 
 const routeMocks = vi.hoisted(() => ({
   useAuth: vi.fn(),
@@ -199,6 +203,17 @@ describe('Work information architecture', () => {
       workChild((route) => route.path === 'home'),
       '?view=mine&filter=overdue'
     );
+  });
+
+  it('hands the legacy Work calendar route to Calendar once and preserves search and hash', () => {
+    const replace = vi.fn();
+    const target = workCalendarCompatibilityTarget('?date=2026-10-08&view=week', '#event-17');
+
+    replaceWorkCalendarApplication(target, replace);
+
+    expect(target).toBe('/calendar/schedule?date=2026-10-08&view=week#event-17');
+    expect(replace).toHaveBeenCalledTimes(1);
+    expect(replace).toHaveBeenCalledWith(target);
   });
 
   it('converges unknown Work children on the queue and preserves compatibility search params', () => {

@@ -102,7 +102,7 @@ export function useProductSurfaceHighRiskCommandExecutor<TBinding>({
   const begin = coordinator.begin;
 
   const execute = useCallback(
-    <TResult,>(
+    <TResult>(
       run: ProductSurfaceHighRiskExecution<TResult>,
       binding: TBinding
     ): Promise<TResult> => {

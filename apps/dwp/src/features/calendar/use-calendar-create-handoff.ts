@@ -16,17 +16,23 @@ import {
   workCalendarOwnerFingerprint,
   type WorkCalendarEventHandoff,
 } from '@dwp-frontend/shared-utils/api/work-hub-calendar-api';
+import { hasWorkCalendarDocumentHandoff } from '@dwp-frontend/shared-utils/api/work-calendar-document-handoff';
 
 import { useWorkHubOperationOwner } from '../../components/use-work-hub-operation-owner';
 import {
   authorizedWorkCalendarEventHandoff,
   clearCalendarWorkHandoffRecovery,
+  consumeAuthorizedWorkCalendarDocumentHandoff,
   hasWorkCalendarEventHandoff,
   isCurrentWorkCalendarHandoffOwner,
   readCalendarWorkHandoffRecovery,
   type CalendarWorkHandoffRecovery,
   type CalendarWorkHandoffReturnTarget,
 } from './calendar-work-handoff';
+
+type DocumentWorkHandoffState =
+  | Readonly<{ status: 'ABSENT' | 'PENDING' | 'REJECTED'; handoff: null }>
+  | Readonly<{ status: 'AUTHORIZED'; handoff: WorkCalendarEventHandoff }>;
 
 type CalendarCreateState = Readonly<{
   start: string;
@@ -67,8 +73,16 @@ export function useCalendarCreateHandoff({
   const [workRecovery, setWorkRecovery] = useState<CalendarWorkHandoffRecovery | null>(null);
   const [workOwnerBinding, setWorkOwnerBinding] = useState<{
     owner: string;
-    fingerprint: string;
+    fingerprint: string | null;
+    settled: boolean;
   } | null>(null);
+  const [documentWorkHandoff, setDocumentWorkHandoff] = useState<DocumentWorkHandoffState>(() =>
+    hasWorkCalendarDocumentHandoff()
+      ? { status: 'PENDING', handoff: null }
+      : { status: 'ABSENT', handoff: null }
+  );
+  const documentWorkHandoffResolvedRef = useRef(false);
+  const documentWorkHandoffHandledRef = useRef(false);
   useEffect(() => {
     let active = true;
     if (!workOperationOwner) {
@@ -76,13 +90,18 @@ export function useCalendarCreateHandoff({
       return;
     }
     const submittedOwner = workOperationOwner;
-    setWorkOwnerBinding((current) => (current?.owner === submittedOwner ? current : null));
+    setWorkOwnerBinding((current) =>
+      current?.owner === submittedOwner
+        ? current
+        : { owner: submittedOwner, fingerprint: null, settled: false }
+    );
     void workCalendarOwnerFingerprint(submittedOwner)
       .then((fingerprint) => {
-        if (active) setWorkOwnerBinding({ owner: submittedOwner, fingerprint });
+        if (active) setWorkOwnerBinding({ owner: submittedOwner, fingerprint, settled: true });
       })
       .catch(() => {
-        if (active) setWorkOwnerBinding(null);
+        if (active)
+          setWorkOwnerBinding({ owner: submittedOwner, fingerprint: null, settled: true });
       });
     return () => {
       active = false;
@@ -90,6 +109,10 @@ export function useCalendarCreateHandoff({
   }, [workOperationOwner]);
   const workOwnerFingerprint =
     workOwnerBinding?.owner === workOperationOwner ? workOwnerBinding.fingerprint : null;
+  const workOwnerFingerprintPending = Boolean(
+    workOperationOwner &&
+    (workOwnerBinding?.owner !== workOperationOwner || !workOwnerBinding.settled)
+  );
   const workOwnerFingerprintRef = useRef(workOwnerFingerprint);
   workOwnerFingerprintRef.current = workOwnerFingerprint;
   const activeWorkHandoff = isCurrentWorkCalendarHandoffOwner(
@@ -110,7 +133,38 @@ export function useCalendarCreateHandoff({
     () => authorizedWorkCalendarEventHandoff(location.state, permissions, workOwnerFingerprint),
     [location.state, permissions, workOwnerFingerprint]
   );
-  const workHandoffRequested = hasWorkCalendarEventHandoff(location.state);
+  const routeWorkHandoffRequested = hasWorkCalendarEventHandoff(location.state);
+  const documentWorkHandoffRequested =
+    documentWorkHandoff.status !== 'ABSENT' && !documentWorkHandoffHandledRef.current;
+  const workHandoffRequested = routeWorkHandoffRequested || documentWorkHandoffRequested;
+  useEffect(() => {
+    if (
+      documentWorkHandoff.status !== 'PENDING' ||
+      documentWorkHandoffResolvedRef.current ||
+      !permissionsLoaded
+    ) {
+      return;
+    }
+    // A present owner without a fingerprint is still being hashed. Once auth and permissions are
+    // settled, a missing owner is definitive and consumes the envelope as an authorization denial.
+    if (workOwnerFingerprintPending) return;
+    documentWorkHandoffResolvedRef.current = true;
+    const handoff = consumeAuthorizedWorkCalendarDocumentHandoff(
+      permissions,
+      workOwnerFingerprint,
+      Date.now()
+    );
+    setDocumentWorkHandoff(
+      handoff ? { status: 'AUTHORIZED', handoff } : { status: 'REJECTED', handoff: null }
+    );
+  }, [
+    documentWorkHandoff.status,
+    permissions,
+    permissionsLoaded,
+    workOperationOwner,
+    workOwnerFingerprint,
+    workOwnerFingerprintPending,
+  ]);
   const retainedAuthorizedHandoff = useMemo(
     () =>
       retainedWorkHandoff
@@ -124,7 +178,11 @@ export function useCalendarCreateHandoff({
     [permissions, retainedWorkHandoff, workOwnerFingerprint]
   );
   const handoffReturnTarget = useMemo((): CalendarWorkHandoffReturnTarget | null => {
-    const handoff = activeWorkHandoff ?? routeWorkHandoff ?? retainedAuthorizedHandoff;
+    const handoff =
+      activeWorkHandoff ??
+      routeWorkHandoff ??
+      documentWorkHandoff.handoff ??
+      retainedAuthorizedHandoff;
     if (!handoff || Date.parse(handoff.expiresAt) <= Date.now()) return null;
     return {
       path: handoff.returnTo,
@@ -132,12 +190,12 @@ export function useCalendarCreateHandoff({
       ownerFingerprint: handoff.ownerFingerprint,
       expiresAt: handoff.expiresAt,
     };
-  }, [activeWorkHandoff, retainedAuthorizedHandoff, routeWorkHandoff]);
+  }, [activeWorkHandoff, documentWorkHandoff.handoff, retainedAuthorizedHandoff, routeWorkHandoff]);
   useEffect(() => {
     if (!permissionsLoaded) return;
     // A present owner without a fingerprint is still being hashed. A missing owner after auth
     // settled is definitive and must flow through the reader so it destroys the old receipt.
-    if (workOperationOwner && !workOwnerFingerprint) return;
+    if (workOwnerFingerprintPending) return;
     const recovered = readCalendarWorkHandoffRecovery(
       permissions,
       workOwnerFingerprint,
@@ -167,7 +225,7 @@ export function useCalendarCreateHandoff({
             workHandoff: recovered.handoff,
           }
     );
-  }, [permissions, permissionsLoaded, workOperationOwner, workOwnerFingerprint]);
+  }, [permissions, permissionsLoaded, workOwnerFingerprint, workOwnerFingerprintPending]);
   useEffect(() => {
     if (createState?.workHandoff && !activeWorkHandoff) {
       clearCalendarWorkHandoffRecovery(createState.workHandoff.handoffId);
@@ -208,9 +266,20 @@ export function useCalendarCreateHandoff({
     const requestedType = query.get('create');
     if (!requestedType && !dwaionHandoff && !workHandoffRequested) return;
     if (canCreateGranted && !scheduleWritable) return;
-    if (workHandoffRequested && workOperationOwner && !workOwnerFingerprint) return;
-    const currentWorkHandoff = workHandoffRequested
-      ? authorizedWorkCalendarEventHandoff(location.state, permissions, workOwnerFingerprint)
+    if (workHandoffRequested && workOwnerFingerprintPending) return;
+    if (documentWorkHandoff.status === 'PENDING') return;
+    const requestedWorkHandoffState = routeWorkHandoffRequested
+      ? location.state
+      : documentWorkHandoff.handoff
+        ? { workCalendarEventHandoff: documentWorkHandoff.handoff }
+        : null;
+    const currentWorkHandoff = requestedWorkHandoffState
+      ? authorizedWorkCalendarEventHandoff(
+          requestedWorkHandoffState,
+          permissions,
+          workOwnerFingerprint,
+          Date.now()
+        )
       : null;
     if (canCreate && (!workHandoffRequested || currentWorkHandoff)) {
       if (currentWorkHandoff) setRetainedWorkHandoff(currentWorkHandoff);
@@ -236,6 +305,7 @@ export function useCalendarCreateHandoff({
         workHandoff: currentWorkHandoff ?? undefined,
       });
     }
+    if (documentWorkHandoffRequested) documentWorkHandoffHandledRef.current = true;
     query.delete('create');
     const search = query.toString();
     navigate(
@@ -247,15 +317,20 @@ export function useCalendarCreateHandoff({
     canCreateGranted,
     dwaionHandoff,
     dwaionProposalBinding,
+    documentWorkHandoff.handoff,
+    documentWorkHandoff.status,
+    documentWorkHandoffRequested,
     location.pathname,
     location.search,
     location.state,
     navigate,
     permissions,
+    routeWorkHandoffRequested,
     scheduleWritable,
     workHandoffRequested,
     workOperationOwner,
     workOwnerFingerprint,
+    workOwnerFingerprintPending,
   ]);
   const isAuthorized = useCallback(
     (handoff: WorkCalendarEventHandoff) => {

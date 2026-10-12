@@ -546,17 +546,10 @@ describe('calendar API boundary', () => {
     vi.stubGlobal('fetch', fetchMock);
 
     await expect(
-      respondToCalendarEvent(
-        'event-1',
-        'ACCEPTED',
-        8,
-        'dc12dd3d-8339-4a13-80d2-ae67d3c3bf16'
-      )
+      respondToCalendarEvent('event-1', 'ACCEPTED', 8, 'dc12dd3d-8339-4a13-80d2-ae67d3c3bf16')
     ).resolves.toEqual(event);
 
-    expect(fetchMock.mock.calls[1]?.[0]).toBe(
-      '/api/platform/v1/calendar/events/event-1/response'
-    );
+    expect(fetchMock.mock.calls[1]?.[0]).toBe('/api/platform/v1/calendar/events/event-1/response');
     expect(JSON.parse(String((fetchMock.mock.calls[1]?.[1] as RequestInit).body))).toEqual({
       response: 'ACCEPTED',
       expectedVersion: 8,

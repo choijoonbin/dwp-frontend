@@ -1,4 +1,5 @@
-import { getApprovalRequests, getApprovalTasks } from '@dwp-frontend/shared-utils/api/approval-api';
+import { getApprovalTasks } from '@dwp-frontend/shared-utils/api/approval-task-read-api';
+import { getWorkHubApprovalRequests } from '@dwp-frontend/shared-utils/api/work-hub-approval-read-api';
 import { getServiceMyRequests } from '@dwp-frontend/shared-utils/api/service-center-api';
 import { getPersonalWorkTasks } from '@dwp-frontend/shared-utils/api/personal-work-api';
 import { getWorkspaceWorkQueue } from '@dwp-frontend/shared-utils/api/workspace-api';
@@ -91,7 +92,7 @@ export const workHubSourceReaders: WorkHubSourceReaders = {
     };
   },
   'approval-needs-info': async () => {
-    const items = await getApprovalRequests('NEEDS_INFO');
+    const items = await getWorkHubApprovalRequests('NEEDS_INFO');
     return { items: items.map(approvalRequestToHub), hasMore: items.length >= 50 };
   },
   services: async () => {

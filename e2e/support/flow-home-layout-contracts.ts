@@ -132,7 +132,8 @@ export async function expectNoHorizontalDocumentOverflow(page: Page, flowHome: L
 
 export async function expectFiveColumnDockAlignment(
   groupLists: Locator,
-  itemAttribute: 'data-flow-dock-item' | 'data-launchpad-item'
+  itemAttribute: 'data-flow-dock-item' | 'data-launchpad-item',
+  expectedColumns = 5
 ) {
   const groups = await groupLists.evaluateAll(
     (lists, attribute) =>
@@ -160,22 +161,25 @@ export async function expectFiveColumnDockAlignment(
       }),
     itemAttribute
   );
-  const baselineGroup = groups.find((group) => group.items.length >= 5);
-  expect(baselineGroup, 'A complete first row establishes all five column positions').toBeDefined();
-  if (!baselineGroup) throw new Error('A complete five-item Dock row is required.');
-  const baseline = baselineGroup.items.slice(0, 5).map((item) => item.left);
+  const baselineGroup = groups.find((group) => group.items.length >= expectedColumns);
+  expect(
+    baselineGroup,
+    `A complete first row establishes all ${expectedColumns} column positions`
+  ).toBeDefined();
+  if (!baselineGroup) throw new Error(`A complete ${expectedColumns}-item Dock row is required.`);
+  const baseline = baselineGroup.items.slice(0, expectedColumns).map((item) => item.left);
   const columnPitch = baseline[1]! - baseline[0]!;
   expect(columnPitch).toBeGreaterThan(0);
   for (const [index, left] of baseline.entries()) {
     expect(Math.abs(left - baseline[0]! - columnPitch * index)).toBeLessThanOrEqual(1);
   }
   for (const group of groups) {
-    expect(group.columns, group.id ?? 'Dock group').toHaveLength(5);
+    expect(group.columns, group.id ?? 'Dock group').toHaveLength(expectedColumns);
     expect(group.flow).toBe('row');
     expect(group.items.length).toBeLessThanOrEqual(10);
     expect(flowDockRowSizes(group.items)).toEqual(
-      Array.from({ length: Math.ceil(group.items.length / 5) }, (_, row) =>
-        Math.min(5, group.items.length - row * 5)
+      Array.from({ length: Math.ceil(group.items.length / expectedColumns) }, (_, row) =>
+        Math.min(expectedColumns, group.items.length - row * expectedColumns)
       )
     );
     for (const [index, item] of group.items.entries()) {
@@ -183,12 +187,12 @@ export async function expectFiveColumnDockAlignment(
         'auto'
       );
       expect(
-        Math.abs(item.left - baseline[index % 5]!),
-        `${group.id}/${item.id} must align with first-row column ${(index % 5) + 1}`
+        Math.abs(item.left - baseline[index % expectedColumns]!),
+        `${group.id}/${item.id} must align with first-row column ${(index % expectedColumns) + 1}`
       ).toBeLessThanOrEqual(1);
-      expect(Math.abs(item.top - group.items[Math.floor(index / 5) * 5]!.top)).toBeLessThanOrEqual(
-        1
-      );
+      expect(
+        Math.abs(item.top - group.items[Math.floor(index / expectedColumns) * expectedColumns]!.top)
+      ).toBeLessThanOrEqual(1);
     }
   }
 }

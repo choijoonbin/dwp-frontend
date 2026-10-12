@@ -6,9 +6,16 @@ import process from 'node:process';
 
 const root = process.cwd();
 const featureRoot = path.join(root, 'apps/dwp/src/features');
+const componentRoot = path.join(root, 'apps/dwp/src/components');
 const sourceExtensions = new Set(['.ts', '.tsx', '.js', '.jsx', '.mjs']);
 const importPattern =
   /(?:import|export)\s+(?:type\s+)?(?:[^'";]+?\s+from\s+)?['"]([^'"]+)['"]|import\(\s*['"]([^'"]+)['"]\s*\)/g;
+const reexportPattern =
+  /(?:^|\n)\s*export\s+(?:type\s+)?(?:\*|\{[^}]*\})\s+from\s+['"]([^'"]+)['"]/g;
+const allowedComponentFeatureBridges = new Set([
+  'apps/dwp/src/components/allowed-product-surface-context.tsx:shell',
+  'apps/dwp/src/components/product-surface-context.ts:shell',
+]);
 
 function walk(directory) {
   if (!fs.existsSync(directory)) return [];
@@ -32,7 +39,36 @@ function importedFeature(sourceFile, specifier) {
   return featureNameFor(target);
 }
 
+function resolveSourceFile(sourceFile, specifier) {
+  if (!specifier.startsWith('.')) return undefined;
+  const target = path.normalize(path.join(path.dirname(sourceFile), specifier));
+  const candidates = [
+    target,
+    ...[...sourceExtensions].map((extension) => `${target}${extension}`),
+    ...[...sourceExtensions].map((extension) => path.join(target, `index${extension}`)),
+  ];
+  return candidates.find(
+    (candidate) => fs.existsSync(candidate) && fs.statSync(candidate).isFile()
+  );
+}
+
+function importedComponent(sourceFile, specifier) {
+  const target = resolveSourceFile(sourceFile, specifier);
+  if (!target || !target.startsWith(`${componentRoot}${path.sep}`)) return undefined;
+  return target;
+}
+
+function componentReexportedFeatures(componentFile) {
+  const source = fs.readFileSync(componentFile, 'utf8');
+  return [...source.matchAll(reexportPattern)].flatMap((match) => {
+    const specifier = match[1];
+    const feature = importedFeature(componentFile, specifier);
+    return feature ? [{ feature, specifier }] : [];
+  });
+}
+
 const violations = [];
+const transitiveViolations = [];
 
 for (const sourceFile of walk(featureRoot)) {
   const fromFeature = featureNameFor(sourceFile);
@@ -50,22 +86,45 @@ for (const sourceFile of walk(featureRoot)) {
         specifier,
       });
     }
+    const componentFile = importedComponent(sourceFile, specifier);
+    if (!componentFile) continue;
+    for (const reexport of componentReexportedFeatures(componentFile)) {
+      const component = path.relative(root, componentFile);
+      if (
+        reexport.feature !== fromFeature &&
+        !allowedComponentFeatureBridges.has(`${component}:${reexport.feature}`)
+      ) {
+        transitiveViolations.push({
+          file: path.relative(root, sourceFile),
+          fromFeature,
+          toFeature: reexport.feature,
+          specifier,
+          component,
+          reexportSpecifier: reexport.specifier,
+        });
+      }
+    }
   }
 }
 
-if (violations.length > 0) {
+if (violations.length > 0 || transitiveViolations.length > 0) {
   console.error('Feature boundary violations found.');
   console.error(
-    'Guarded product features must use libs/shared-* or apps/dwp/src/components for shared contracts.'
+    'Guarded product features must use neutral shared contracts, not sibling implementations or component re-export bridges.'
   );
   for (const violation of violations) {
     console.error(
       `- ${violation.file}: ${violation.fromFeature} -> ${violation.toFeature} (${violation.specifier})`
     );
   }
+  for (const violation of transitiveViolations) {
+    console.error(
+      `- ${violation.file}: ${violation.fromFeature} -> ${violation.toFeature} via ${violation.component} (${violation.specifier} -> ${violation.reexportSpecifier})`
+    );
+  }
   process.exit(1);
 }
 
 console.log(
-  'PASS feature boundaries: product features do not import sibling feature implementations.'
+  'PASS feature boundaries: product features do not import sibling implementations directly or through component re-export bridges.'
 );

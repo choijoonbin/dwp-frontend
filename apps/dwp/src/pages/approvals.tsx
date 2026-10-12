@@ -58,7 +58,17 @@ export default function ApprovalsPage({ governed = false }: { governed?: boolean
   if (page.view === 'inbox') content = <ApprovalInbox view="INBOX" />;
   else if (page.view === 'completed') content = <ApprovalInbox view="COMPLETED" />;
   else if (page.view === 'delegations') content = <ApprovalDelegations />;
-  else if (isApprovalAdminView(page.view)) content = <ApprovalAdmin view={page.view} />;
+  else if (isApprovalAdminView(page.view))
+    content = (
+      <ApprovalAdmin
+        view={page.view}
+        routeHeader={
+          isApprovalAdminV2View(page.view) ? (
+            <ApprovalPageHeader view={page.view} icon={page.icon} />
+          ) : undefined
+        }
+      />
+    );
   else
     content = (
       <ApprovalRequests

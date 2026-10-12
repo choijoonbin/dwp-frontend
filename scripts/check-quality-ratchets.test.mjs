@@ -693,6 +693,23 @@ test('i18n scanner catches JSX templates and callable Intl formatters', () => {
   assert.match(result.stderr, /constructing Intl directly/);
 });
 
+test('i18n scanner parses generic arrow functions in .ts files as TypeScript', () => {
+  const directory = i18nFixture();
+  const relative = 'apps/dwp/src/example.ts';
+  writeFileSync(
+    join(directory, relative),
+    'export const identity = <TResult>(value: TResult): TResult => value;\n'
+  );
+  writeFileSync(
+    join(directory, 'scripts/i18n-source-debt-baseline.json'),
+    `${JSON.stringify({ version: 1, files: {} }, null, 2)}\n`
+  );
+
+  const result = run(i18nChecker, directory);
+
+  assert.equal(result.status, 0, result.stderr);
+});
+
 test('relative production import cycles fail closed', () => {
   const directory = fixture();
   writeFileSync(join(directory, 'apps/dwp/src/alpha.ts'), "export { beta } from './beta';\n");

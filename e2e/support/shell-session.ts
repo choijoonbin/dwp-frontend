@@ -25,6 +25,7 @@ import {
   ROOM_BOOKING_EVENT_FIXTURE,
 } from './product-area-fixtures';
 import { resolveMenuRouteProductFixture } from './menu-route-product-fixtures';
+import { MENU_ROUTE_ADMIN_VIEW_PERMISSION_PAIRS } from './menu-route-control-fixtures';
 import { resolveApprovalShellFixture } from './approval-shell-fixtures';
 import {
   PRODUCTIVITY_RUNS,
@@ -164,9 +165,8 @@ export const FULL_PRODUCT_PERMISSIONS = [
     ['ADMIN.SERVICE_OPERATIONS', 'VIEW'],
     ['ADMIN.SERVICE_OPERATIONS', 'UPDATE'],
     ['ADMIN.SERVICE_OPERATIONS', 'MANAGE'],
-    ['ADMIN.IDENTITY_DIRECTORY', 'VIEW'],
+    ...MENU_ROUTE_ADMIN_VIEW_PERMISSION_PAIRS,
     ['ADMIN.IDENTITY_DIRECTORY', 'MANAGE'],
-    ['ADMIN.APP_GOVERNANCE', 'VIEW'],
     ['ADMIN.APP_GOVERNANCE', 'MANAGE'],
     ['ADMIN.APP_ACCESS_REQUESTS', 'VIEW'],
     ['ADMIN.APP_ACCESS_REQUESTS', 'MANAGE'],
@@ -4109,7 +4109,7 @@ export async function mockShellSession(
       });
     }
 
-    const menuRouteFixture = resolveMenuRouteProductFixture(request.method(), path);
+    const menuRouteFixture = resolveMenuRouteProductFixture(request, path);
     if (menuRouteFixture) return fulfillSuccess(route, menuRouteFixture.data);
 
     return route.fulfill({

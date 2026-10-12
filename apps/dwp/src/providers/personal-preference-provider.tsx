@@ -1,5 +1,7 @@
 import {
   createContext,
+  lazy,
+  Suspense,
   useCallback,
   useContext,
   useEffect,
@@ -40,9 +42,13 @@ import {
   type PersonalPreferenceConflict,
   type PersonalPreferenceConflictChoice,
 } from './personal-preference-conflict';
-import { PersonalPreferenceConflictDialog } from './personal-preference-conflict-dialog';
-
 import type { UserAppearancePreference } from '@dwp-frontend/design-system/appearance';
+
+const PersonalPreferenceConflictDialog = lazy(() =>
+  import('./personal-preference-conflict-dialog').then((module) => ({
+    default: module.PersonalPreferenceConflictDialog,
+  }))
+);
 
 export type PersonalPreferenceSaveState = 'idle' | 'saving' | 'saved' | 'conflict' | 'error';
 
@@ -703,14 +709,18 @@ export function PersonalPreferenceProvider({ children }: { children: React.React
   return (
     <PersonalPreferenceContext.Provider value={value}>
       {children}
-      <PersonalPreferenceConflictDialog
-        conflict={conflictReview}
-        choices={conflictChoices}
-        onChoice={(path, choice) =>
-          setConflictChoices((current) => ({ ...current, [path]: choice }))
-        }
-        onResolve={resolveConflict}
-      />
+      {conflictReview ? (
+        <Suspense fallback={null}>
+          <PersonalPreferenceConflictDialog
+            conflict={conflictReview}
+            choices={conflictChoices}
+            onChoice={(path, choice) =>
+              setConflictChoices((current) => ({ ...current, [path]: choice }))
+            }
+            onResolve={resolveConflict}
+          />
+        </Suspense>
+      ) : null}
     </PersonalPreferenceContext.Provider>
   );
 }

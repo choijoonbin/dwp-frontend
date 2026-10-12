@@ -3,6 +3,7 @@ import { AuthGuard } from '@dwp-frontend/shared-utils/auth/auth-guard';
 import { Outlet, type RouteObject } from 'react-router-dom';
 
 import { CALENDAR_PRODUCT_MANIFEST } from '../features/calendar/calendar-product-manifest';
+import { CalendarWorkHandoffSessionGuard } from '../components/calendar-work-handoff-session-guard';
 import { CalendarLayout } from '../layouts/calendar-layout';
 import {
   authenticationFallback,
@@ -37,11 +38,14 @@ export const calendarRoutes: RouteObject[] = [
   {
     path: 'calendar',
     element: (
-      <AuthGuard fallback={authenticationFallback}>
-        <WorkspaceRouteGuard>
-          <Outlet />
-        </WorkspaceRouteGuard>
-      </AuthGuard>
+      <>
+        <CalendarWorkHandoffSessionGuard />
+        <AuthGuard fallback={authenticationFallback}>
+          <WorkspaceRouteGuard>
+            <Outlet />
+          </WorkspaceRouteGuard>
+        </AuthGuard>
+      </>
     ),
     children: buildTwoSurfaceProductChildren({
       manifest: CALENDAR_PRODUCT_MANIFEST,

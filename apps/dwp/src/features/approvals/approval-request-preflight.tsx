@@ -212,12 +212,14 @@ export function ApprovalRequestPreflight({
               </Typography>
             </Stack>
           )}
-          {(serverPreflight?.checks ??
+          {(
+            serverPreflight?.checks ??
             ['identity', 'policy', 'evidence', 'concurrency'].map((code) => ({
               code,
               status: 'PENDING' as const,
               detail: '',
-            }))).map((check) => (
+            }))
+          ).map((check) => (
             <Stack key={check.code} direction="row" gap={1} alignItems="flex-start">
               <Box
                 sx={{

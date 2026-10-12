@@ -20,6 +20,7 @@ export default [
       '**/test-results/**',
       '**/test-results-*/**',
       '**/artifacts/**',
+      'docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/**',
       'public/assets/meeting-background/mediapipe-0.10.14/vision_wasm_nosimd_internal.js',
     ],
   },

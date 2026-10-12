@@ -317,6 +317,17 @@ export function WorkplaceRelocateBookingDialog({
     },
   });
 
+  useEffect(() => {
+    if (
+      open &&
+      booking &&
+      !mutation.isPending &&
+      !isBookingCurrent(identityKey, booking.bookingId, booking.version)
+    ) {
+      onClose();
+    }
+  }, [booking, identityKey, isBookingCurrent, mutation.isPending, onClose, open]);
+
   const recheck = async () => {
     if (!booking || recheckingScope === scopeKey) return;
     const issuedScope = scopeKey;

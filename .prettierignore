@@ -15,3 +15,18 @@ libs/api-contracts/openapi/gateway-public.json
 libs/api-contracts/src/gateway-public.ts
 libs/api-contracts/openapi/agent-public.json
 libs/api-contracts/src/agent-public.ts
+# Byte-preserved recovery source; recovery:evidence:check validates its manifest, sizes, and SHA-256 digests.
+docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/
+# Byte-preserved lineage and recovery authorities; recovery:evidence:check pins exact bytes.
+docs/03-architecture/hris/ADR-001-lineage-v35-successor-and-migration-lease.md
+docs/06-delivery/hris/2026-10-06-g1-integration-work-packet.md
+docs/06-delivery/hris/2026-10-06-integration-roadmap.md
+docs/06-delivery/hris/2026-10-06-source-and-lineage-provenance.md
+docs/06-delivery/hris/2026-10-07-g3-integration-roadmap-status.md
+docs/06-delivery/hris/2026-10-07-g4-integration-roadmap-status.md
+docs/06-delivery/hris/2026-10-07-integration-roadmap-status.md
+docs/06-delivery/hris/development-agent-work-packet-template.md
+docs/06-delivery/hris/recovery/README.md
+docs/06-delivery/hris/recovery/audit/hris-porting-blueprint-2026-09-09/RECOVERY_REPORT.md
+docs/06-delivery/hris/recovery/exact-supplements/2026-10-06/README.md
+docs/06-delivery/hris/recovery/hris-scoped-authoring-control-2026-09-16/RECOVERY_INVENTORY.md

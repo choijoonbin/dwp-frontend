@@ -570,7 +570,7 @@ export async function mockHcmProductSurfaceAuthority(
       'hcm.management',
       'management',
       { key: 'scope:hcm:management', kind: 'RESOURCE_SET' },
-      [],
+      ['hcm.management-system-access.v1'],
       [
         'hcm.org-design.read',
         'hcm.reference.read',

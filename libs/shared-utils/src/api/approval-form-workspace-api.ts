@@ -172,10 +172,7 @@ export async function getApprovalFormWorkspacePublishReview(
     getApprovalFormPublishReviewRequest(formId, contextScopeKey, signal),
   ]);
   if (reviewRequest === null) invalidApprovalFormWorkspace();
-  return readApprovalFormWorkspaceReview(
-    { ...review, reviewRequest },
-    formId
-  );
+  return readApprovalFormWorkspaceReview({ ...review, reviewRequest }, formId);
 }
 
 export async function searchApprovalFormPublishReviewCandidates(

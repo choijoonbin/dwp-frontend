@@ -8,7 +8,7 @@ import type { ApiResponse } from '../types';
 import type { ApprovalMutationExecution } from './approval-governed-mutation';
 
 type Schemas = GatewayComponents['schemas'];
-type Method = 'POST' | 'PUT';
+type Method = 'DELETE' | 'POST' | 'PUT';
 
 export const APPROVAL_ADMIN_V2_UNSUPPORTED_MUTATION_API_FUNCTIONS = [
   'cloneApprovalFormStudioDraft',
@@ -20,6 +20,19 @@ export const APPROVAL_ADMIN_V2_UNSUPPORTED_MUTATION_API_FUNCTIONS = [
   'saveApprovalRoutingResolver',
   'recordApprovalRoutingResolverObservation',
   'recordApprovalRoutingGroupUsage',
+  'addApprovalFormStudioField',
+  'deleteApprovalFormStudioField',
+  'cloneApprovalFormStudioField',
+  'updateApprovalFormStudioFieldProperties',
+  'reorderApprovalFormStudioSectionFields',
+  'createApprovalAutomationDelegation',
+  'updateApprovalAutomationDelegation',
+  'revokeApprovalAutomationDelegation',
+  'cancelScheduledApprovalAutomationDelegation',
+  'simulateApprovalAutomationPolicy',
+  'importApprovalTemplatePackage',
+  'saveApprovalWorkflowStudioCanvas',
+  'dryRunApprovalWorkflowStudio',
 ] as const;
 
 function invalid(): never {
@@ -89,9 +102,11 @@ async function approvalAdminV2CanonicalMutation<TBody extends object>(
   };
   const payload = structuredClone(body);
   const response =
-    method === 'PUT'
-      ? await axiosInstance.put<ApiResponse<unknown>, TBody>(path, payload, config)
-      : await axiosInstance.post<ApiResponse<unknown>, TBody>(path, payload, config);
+    method === 'DELETE'
+      ? await axiosInstance.deleteWithBody<ApiResponse<unknown>, TBody>(path, payload, config)
+      : method === 'PUT'
+        ? await axiosInstance.put<ApiResponse<unknown>, TBody>(path, payload, config)
+        : await axiosInstance.post<ApiResponse<unknown>, TBody>(path, payload, config);
   return adminV2Record(response.data.data, 'approvalAdminV2Mutation');
 }
 
@@ -104,6 +119,97 @@ export function archiveApprovalFormStudioDraft(
   return approvalAdminV2CanonicalMutation(
     'POST',
     APPROVAL_ADMIN_V2_ENDPOINTS.formStudio.archive(identifier(formId, 'formId')),
+    body,
+    expectedObjectVersion,
+    execution
+  );
+}
+
+export function addApprovalFormStudioField(
+  formId: string,
+  body: Schemas['approval_AddFieldRequest'],
+  expectedObjectVersion: number,
+  execution: ApprovalMutationExecution
+) {
+  return approvalAdminV2CanonicalMutation(
+    'POST',
+    APPROVAL_ADMIN_V2_ENDPOINTS.formStudio.addField(identifier(formId, 'formId')),
+    body,
+    expectedObjectVersion,
+    execution
+  );
+}
+
+export function deleteApprovalFormStudioField(
+  formId: string,
+  fieldKey: string,
+  body: Schemas['approval_DeleteFieldRequest'],
+  expectedObjectVersion: number,
+  execution: ApprovalMutationExecution
+) {
+  return approvalAdminV2CanonicalMutation(
+    'DELETE',
+    APPROVAL_ADMIN_V2_ENDPOINTS.formStudio.field(
+      identifier(formId, 'formId'),
+      identifier(fieldKey, 'fieldKey')
+    ),
+    body,
+    expectedObjectVersion,
+    execution
+  );
+}
+
+export function cloneApprovalFormStudioField(
+  formId: string,
+  fieldKey: string,
+  body: Schemas['approval_CloneFieldRequest'],
+  expectedObjectVersion: number,
+  execution: ApprovalMutationExecution
+) {
+  return approvalAdminV2CanonicalMutation(
+    'POST',
+    APPROVAL_ADMIN_V2_ENDPOINTS.formStudio.cloneField(
+      identifier(formId, 'formId'),
+      identifier(fieldKey, 'fieldKey')
+    ),
+    body,
+    expectedObjectVersion,
+    execution
+  );
+}
+
+export function updateApprovalFormStudioFieldProperties(
+  formId: string,
+  fieldKey: string,
+  body: Schemas['approval_UpdateFieldPropertiesRequest'],
+  expectedObjectVersion: number,
+  execution: ApprovalMutationExecution
+) {
+  return approvalAdminV2CanonicalMutation(
+    'PUT',
+    APPROVAL_ADMIN_V2_ENDPOINTS.formStudio.fieldProperties(
+      identifier(formId, 'formId'),
+      identifier(fieldKey, 'fieldKey')
+    ),
+    body,
+    expectedObjectVersion,
+    execution
+  );
+}
+
+export function reorderApprovalFormStudioSectionFields(
+  formId: string,
+  sectionKey: string,
+  body: Schemas['approval_ReorderFieldsRequest'],
+  expectedObjectVersion: number,
+  execution: ApprovalMutationExecution
+) {
+  return approvalAdminV2CanonicalMutation(
+    'PUT',
+    APPROVAL_ADMIN_V2_ENDPOINTS.formStudio.fieldOrder(
+      identifier(formId, 'formId'),
+      identifier(sectionKey, 'sectionKey')
+    ),
     body,
     expectedObjectVersion,
     execution
@@ -193,6 +299,84 @@ export function reviewApprovalAutomationDelegation(
   );
 }
 
+export function createApprovalAutomationDelegation(
+  body: Schemas['approval_DelegationDraft'],
+  expectedObjectVersion: number,
+  execution: ApprovalMutationExecution
+) {
+  return approvalAdminV2CanonicalMutation(
+    'POST',
+    APPROVAL_ADMIN_V2_ENDPOINTS.policies.delegations,
+    body,
+    expectedObjectVersion,
+    execution
+  );
+}
+
+export function updateApprovalAutomationDelegation(
+  delegationId: string,
+  body: Schemas['approval_DelegationDraft'],
+  expectedObjectVersion: number,
+  execution: ApprovalMutationExecution
+) {
+  const targetId = identifier(delegationId, 'delegationId');
+  assertBodyIdentifier(body, 'delegationId', targetId);
+  return approvalAdminV2CanonicalMutation(
+    'PUT',
+    APPROVAL_ADMIN_V2_ENDPOINTS.policies.delegation(targetId),
+    body,
+    expectedObjectVersion,
+    execution
+  );
+}
+
+export function revokeApprovalAutomationDelegation(
+  delegationId: string,
+  body: Schemas['approval_DelegationStateCommand'],
+  expectedObjectVersion: number,
+  execution: ApprovalMutationExecution
+) {
+  return approvalAdminV2CanonicalMutation(
+    'POST',
+    APPROVAL_ADMIN_V2_ENDPOINTS.policies.delegationRevoke(identifier(delegationId, 'delegationId')),
+    body,
+    expectedObjectVersion,
+    execution
+  );
+}
+
+export function cancelScheduledApprovalAutomationDelegation(
+  delegationId: string,
+  body: Schemas['approval_DelegationStateCommand'],
+  expectedObjectVersion: number,
+  execution: ApprovalMutationExecution
+) {
+  return approvalAdminV2CanonicalMutation(
+    'POST',
+    APPROVAL_ADMIN_V2_ENDPOINTS.policies.delegationScheduledCancel(
+      identifier(delegationId, 'delegationId')
+    ),
+    body,
+    expectedObjectVersion,
+    execution
+  );
+}
+
+export function simulateApprovalAutomationPolicy(
+  policyId: string,
+  body: Schemas['approval_SimulationCommand'],
+  expectedObjectVersion: number,
+  execution: ApprovalMutationExecution
+) {
+  return approvalAdminV2CanonicalMutation(
+    'POST',
+    APPROVAL_ADMIN_V2_ENDPOINTS.policies.simulation(identifier(policyId, 'policyId')),
+    body,
+    expectedObjectVersion,
+    execution
+  );
+}
+
 export function saveApprovalRoutingResolver(
   resolverId: string,
   body: Schemas['approval_ResolverDraft'],
@@ -251,6 +435,50 @@ export function cloneApprovalTemplateDraft(
   return approvalAdminV2CanonicalMutation(
     'POST',
     APPROVAL_ADMIN_V2_ENDPOINTS.templates.cloneDraft(identifier(templateId, 'templateId')),
+    body,
+    expectedObjectVersion,
+    execution
+  );
+}
+
+export function importApprovalTemplatePackage(
+  body: Schemas['approval_ImportPackageRequest'],
+  expectedObjectVersion: number,
+  execution: ApprovalMutationExecution
+) {
+  return approvalAdminV2CanonicalMutation(
+    'POST',
+    APPROVAL_ADMIN_V2_ENDPOINTS.templates.importPackage,
+    body,
+    expectedObjectVersion,
+    execution
+  );
+}
+
+export function saveApprovalWorkflowStudioCanvas(
+  workflowId: string,
+  body: Schemas['approval_CanvasSave'],
+  expectedObjectVersion: number,
+  execution: ApprovalMutationExecution
+) {
+  return approvalAdminV2CanonicalMutation(
+    'PUT',
+    APPROVAL_ADMIN_V2_ENDPOINTS.workflows.canvas(identifier(workflowId, 'workflowId')),
+    body,
+    expectedObjectVersion,
+    execution
+  );
+}
+
+export function dryRunApprovalWorkflowStudio(
+  workflowId: string,
+  body: Schemas['approval_CanvasDryRun'],
+  expectedObjectVersion: number,
+  execution: ApprovalMutationExecution
+) {
+  return approvalAdminV2CanonicalMutation(
+    'POST',
+    APPROVAL_ADMIN_V2_ENDPOINTS.workflows.dryRun(identifier(workflowId, 'workflowId')),
     body,
     expectedObjectVersion,
     execution

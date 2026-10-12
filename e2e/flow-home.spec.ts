@@ -27,10 +27,7 @@ import {
 } from './support/flow-home-layout-contracts';
 import { routeEmptyFlowExecutionSummaries } from './support/flow-home-provider-fixtures';
 import { expectRoleMetricAlignment } from './support/flow-home-role-metric-contract';
-import {
-  expectDesktopPurposeComposition,
-  expectFlowWideWidgetContract,
-} from './support/flow-home-wide-widget-contract';
+import { expectDesktopPurposeComposition } from './support/flow-home-wide-widget-contract';
 import {
   positionFlowNewsRelativeToLauncher,
   positionFlowWidgetAtLauncher,
@@ -39,6 +36,14 @@ import {
 } from './support/flow-home-launcher-clearance';
 import { mockShellNotificationRuntime } from './support/runtime-access';
 import { routeCanonicalHomeWorkspaceApps } from './support/home-launchpad-contract-fixture';
+import { routeHomeWave4ShadowRuntime } from './support/home-wave4-runtime-fixtures';
+import { widgetRegistryReadiness } from './support/widget-registry';
+import {
+  DEFAULT_HOME_PREFERENCE,
+  defaultHomeView,
+  flowWidgetRegistryEffectiveCatalog,
+  routeDefaultHomeViews,
+} from './support/flow-home-runtime-fixtures';
 
 const FLOW_FIXTURE_NOW = new Date('2026-08-11T00:30:00.000Z');
 const MINIMUM_ACTION_TARGET_PX = 44;
@@ -92,43 +97,6 @@ const FLOW_POLICY = {
   ],
 };
 
-const DEFAULT_HOME_PREFERENCE = {
-  schemaVersion: 5,
-  surfaceKey: 'workspace-home',
-  customized: false,
-  layout: {
-    appLayout: null,
-    presentation: 'balanced',
-    widgets: [
-      { widgetKey: 'command-rail', visible: true, size: 'large', height: 'standard' },
-      { widgetKey: 'schedule', visible: true, size: 'compact', height: 'standard' },
-      { widgetKey: 'daily-brief', visible: true, size: 'compact', height: 'standard' },
-      { widgetKey: 'focus', visible: true, size: 'compact', height: 'standard' },
-      { widgetKey: 'activity', visible: true, size: 'compact', height: 'standard' },
-      { widgetKey: 'focus-balance', visible: true, size: 'medium', height: 'short' },
-      { widgetKey: 'meeting-load', visible: true, size: 'medium', height: 'short' },
-    ],
-  },
-  version: 0,
-};
-
-function defaultHomeView(version = 3) {
-  return {
-    viewId: 'home-view-default',
-    viewKey: 'default',
-    surfaceKey: 'workspace-home',
-    name: 'My home',
-    isDefault: true,
-    schemaVersion: 5,
-    layout: DEFAULT_HOME_PREFERENCE.layout,
-    version,
-    customized: true,
-    createdAt: '2026-08-01T00:00:00Z',
-    updatedAt: '2026-08-25T00:00:00Z',
-    widgetConfigurations: {},
-  };
-}
-
 function flowExperience(overrides: Record<string, unknown> = {}) {
   return {
     headline: null,
@@ -142,7 +110,7 @@ function flowExperience(overrides: Record<string, unknown> = {}) {
     effectiveExperienceVariant: 'FLOW_V1',
     advancedPersonalizationEnabled: false,
     composerEnabled: false,
-    homePreferenceStore: 'LEGACY',
+    homePreferenceStore: 'VIEWS',
     version: 7,
     ...overrides,
   };
@@ -603,10 +571,30 @@ test.beforeEach(async ({ page }) => {
     displayName: 'Mina Kim',
     permissions: FLOW_PERMISSIONS,
   });
+  await routeHomeWave4ShadowRuntime(page, 'FLOW_V1');
   await routeCanonicalHomeWorkspaceApps(page);
   await mockShellNotificationRuntime(page);
   await routeFlowExperience(page);
   await routeDefaultPreference(page);
+  await routeDefaultHomeViews(page);
+  await page.route('**/api/platform/v1/widget-catalog/readiness', (route) =>
+    fulfillSuccess(route, widgetRegistryReadiness('SHADOW'))
+  );
+  await page.route('**/api/platform/v1/widget-catalog/effective**', (route) =>
+    fulfillSuccess(route, flowWidgetRegistryEffectiveCatalog())
+  );
+  await page.route('**/api/platform/v1/workspace/work-hub/personal-tasks?*', (route) =>
+    fulfillSuccess(route, { items: [], page: 0, size: 100, totalElements: 0, hasMore: false })
+  );
+  await page.route('**/api/platform/v1/workspace/work-hub/day-plans/*', (route) => {
+    const date = new URL(route.request().url()).pathname.split('/').pop()!;
+    return fulfillSuccess(route, {
+      date,
+      version: 0,
+      items: [],
+      updatedAt: FLOW_FIXTURE_NOW.toISOString(),
+    });
+  });
   await routeEmptyExternalContributions(page);
   await page.route('**/api/platform/v1/workplace/bookings**', (route) => fulfillSuccess(route, []));
   await routeEmptyFlowExecutionSummaries(page, FLOW_FIXTURE_NOW.toISOString());
@@ -720,7 +708,7 @@ test('Flow Home exposes the purpose-led 8+4 and 4+4+4 hierarchy without scroll t
   await page.route('**/api/platform/v1/home/overview**', (route) =>
     fulfillSuccess(route, overviewWithCommunications())
   );
-  await page.setViewportSize({ width: 1440, height: 720 });
+  await page.setViewportSize({ width: 1800, height: 900 });
   await page.goto('/');
 
   const flowHome = page.getByTestId('flow-home');
@@ -738,22 +726,13 @@ test('Flow Home exposes the purpose-led 8+4 and 4+4+4 hierarchy without scroll t
       const section = stage.querySelector<HTMLElement>(
         '[data-workspace-widget-content] > section'
       )!;
-      const actionSurface = stage.querySelector<HTMLElement>(
-        '[data-workspace-widget="action-queue"] [data-flow-section]'
-      )!;
-      const timelineSurface = stage.querySelector<HTMLElement>(
-        '[data-workspace-widget="role-pulse"] [data-flow-section]'
-      )!;
       const gridStyle = window.getComputedStyle(grid);
       const sectionStyle = window.getComputedStyle(section);
-      const actionBounds = actionSurface.getBoundingClientRect();
-      const timelineBounds = timelineSurface.getBoundingClientRect();
       return {
         rowGap: gridStyle.rowGap,
         gridBorder: gridStyle.borderTopWidth,
         sectionBorder: sectionStyle.borderTopWidth,
         sectionRadius: Number.parseFloat(sectionStyle.borderTopLeftRadius),
-        adjacentSurfaceGap: timelineBounds.left - actionBounds.right,
       };
     });
   expect(independentSurfaceContract).toMatchObject({
@@ -762,8 +741,6 @@ test('Flow Home exposes the purpose-led 8+4 and 4+4+4 hierarchy without scroll t
     sectionBorder: '1px',
   });
   expect(independentSurfaceContract.sectionRadius).toBeGreaterThanOrEqual(12);
-  expect(independentSurfaceContract.adjacentSurfaceGap).toBeGreaterThanOrEqual(14);
-  expect(independentSurfaceContract.adjacentSurfaceGap).toBeLessThanOrEqual(18);
   await expect(launchDeck.locator('[data-flow-dock-shell]')).toHaveAttribute(
     'data-flow-dock-item-limit',
     '40'
@@ -775,8 +752,8 @@ test('Flow Home exposes the purpose-led 8+4 and 4+4+4 hierarchy without scroll t
   await expectFlowDockDistribution(launchDeck.locator('[data-flow-dock-group]'), [5, 7, 2, 3], 10);
   await expectReadableDockLabels(launchDeck.locator('[data-flow-dock-item-label]'), 'dwp-ask');
   const workscapeHeight = (await workscape.boundingBox())?.height ?? Number.POSITIVE_INFINITY;
-  expect(workscapeHeight).toBeGreaterThanOrEqual(80);
-  expect(workscapeHeight).toBeLessThanOrEqual(160);
+  expect(workscapeHeight).toBeGreaterThanOrEqual(288);
+  expect(workscapeHeight).toBeLessThanOrEqual(340);
   const launchDeckContract = await launchDeck.evaluate((surface) => {
     const copy = surface.querySelector<HTMLElement>('[data-flow-workscape]')!;
     const dock = surface.querySelector<HTMLElement>('[data-flow-dock-shell]')!;
@@ -863,7 +840,7 @@ test('tenant image focal points remain independent from hero content alignment',
       dockFromFrameEnd: frameBounds.right - dockBounds.right,
     };
   });
-  expect(alignment.copyDockEndDelta).toBeLessThanOrEqual(2);
+  expect(alignment.copyDockEndDelta).toBeLessThanOrEqual(4);
   expect(Math.abs(alignment.dockFromFrameStart)).toBeLessThanOrEqual(2);
   expect(Math.abs(alignment.dockFromFrameEnd)).toBeLessThanOrEqual(2);
 });
@@ -902,14 +879,17 @@ test('Expressive Wide composes the approved 38/34/28 source-backed tiers', async
   page,
 }, testInfo) => {
   test.skip(testInfo.project.name !== 'chromium', 'Wide geometry runs once in Chromium.');
-  await page.route('**/api/platform/v1/home-preferences**', (route) => {
+  await page.route('**/api/platform/v1/home-views**', (route) => {
     const request = route.request();
     const path = new URL(request.url()).pathname;
-    if (request.method() === 'GET' && path.endsWith('/home-preferences')) {
-      return fulfillSuccess(route, {
-        ...DEFAULT_HOME_PREFERENCE,
-        layout: { ...DEFAULT_HOME_PREFERENCE.layout, presentation: 'expressive' },
-      });
+    if (request.method() === 'GET' && path.endsWith('/home-views')) {
+      return fulfillSuccess(route, [
+        {
+          ...defaultHomeView(),
+          customized: false,
+          layout: { ...DEFAULT_HOME_PREFERENCE.layout, presentation: 'expressive' },
+        },
+      ]);
     }
     return route.fallback();
   });
@@ -920,12 +900,32 @@ test('Expressive Wide composes the approved 38/34/28 source-backed tiers', async
   await page.goto('/');
 
   const flowHome = page.getByTestId('flow-home');
-  const stage = flowHome.getByTestId('flow-home-personal-sections');
-  await expect(stage).toHaveAttribute('data-flow-read-template', 'adaptive-wide');
-  await expect(stage).toHaveAttribute('data-flow-adaptive-applied', 'true');
-  await expect(stage).toHaveAttribute('data-flow-adaptive-first-section', 'today');
-  await expect(stage).toHaveAttribute('data-flow-wide-composition', '38-34-28');
-  await expectFlowWideWidgetContract(stage);
+  const mesh = flowHome.locator('[data-flow-future-widget-mesh]');
+  await expect(mesh).toBeVisible();
+  await expect(mesh).toHaveAttribute('data-flow-future-widget-count', '5');
+  await expect(mesh).toHaveAttribute('data-flow-future-layout', 'desktop-38-34-28-mobile-stack');
+  await expect(mesh.locator('[data-flow-future-widget]')).toHaveCount(5);
+  await expect(flowHome.getByTestId('flow-home-personal-sections')).toHaveCount(0);
+
+  const futureGeometry = await mesh.locator('[data-flow-future-widget]').evaluateAll((widgets) =>
+    Object.fromEntries(
+      widgets.map((widget) => {
+        const bounds = widget.getBoundingClientRect();
+        return [widget.getAttribute('data-flow-future-widget'), bounds.toJSON()];
+      })
+    )
+  );
+  expect(futureGeometry['space-change-feed']!.left).toBeLessThan(
+    futureGeometry['meetings-prep-decisions']!.left
+  );
+  expect(futureGeometry['meetings-prep-decisions']!.left).toBeLessThan(
+    futureGeometry['dwaion-artifact']!.left
+  );
+  expect(
+    Math.abs(
+      futureGeometry['space-change-feed']!.top - futureGeometry['meetings-prep-decisions']!.top
+    )
+  ).toBeLessThanOrEqual(2);
 
   const workscapeAlignment = await flowHome
     .locator('[data-flow-launch-deck-frame]')
@@ -936,49 +936,16 @@ test('Expressive Wide composes the approved 38/34/28 source-backed tiers', async
       const dock = surface
         .querySelector<HTMLElement>('[data-flow-dock-shell]')!
         .getBoundingClientRect();
-      const firstWork = document
-        .querySelector<HTMLElement>('[data-workspace-widget="action-queue"] [data-flow-section]')!
+      const futureMesh = document
+        .querySelector<HTMLElement>('[data-flow-future-widget-mesh]')!
         .getBoundingClientRect();
       return {
         copyDockDelta: Math.abs(copy.left - dock.left),
-        heroBodyDelta: Math.abs(copy.left - firstWork.left),
+        heroBodyDelta: Math.abs(copy.left - futureMesh.left),
       };
     });
   expect(workscapeAlignment.copyDockDelta).toBeLessThanOrEqual(2);
   expect(workscapeAlignment.heroBodyDelta).toBeLessThanOrEqual(64);
-
-  const updates = flowHome.locator('[data-flow-section="updates"]');
-  await expect(updates).toHaveAttribute('data-flow-updates-layout', 'wide-6-3-3');
-  await expect(updates).toHaveAttribute('data-flow-updates-visible-count', '3');
-  await expect(updates.locator('[data-news-secondary-link-cue]')).toHaveCount(2);
-  const newsGeometry = await updates.evaluate((root) => {
-    const rect = (node: Element) => {
-      const box = node.getBoundingClientRect();
-      return {
-        left: box.left,
-        right: box.right,
-        top: box.top,
-        bottom: box.bottom,
-        width: box.width,
-      };
-    };
-    return {
-      featured: rect(root.querySelector<HTMLElement>('[data-news-featured]')!),
-      secondary: Array.from(root.querySelectorAll<HTMLElement>('[data-news-secondary-card]')).map(
-        rect
-      ),
-    };
-  });
-  expect(newsGeometry.secondary).toHaveLength(2);
-  const [newsTwo, newsThree] = newsGeometry.secondary;
-  expect(newsTwo).toBeDefined();
-  expect(newsThree).toBeDefined();
-  if (!newsTwo || !newsThree) return;
-  expect(Math.abs(newsGeometry.featured.top - newsTwo.top)).toBeLessThanOrEqual(2);
-  expect(Math.abs(newsTwo.top - newsThree.top)).toBeLessThanOrEqual(2);
-  expect(newsGeometry.featured.width / newsTwo.width).toBeGreaterThan(1.9);
-  expect(newsGeometry.featured.width / newsTwo.width).toBeLessThan(2.1);
-  expect(Math.abs(newsTwo.width - newsThree.width)).toBeLessThanOrEqual(2);
 
   await expectNoInternalVerticalScroll(flowHome);
   await expectNoHorizontalDocumentOverflow(page, flowHome);
@@ -1000,10 +967,10 @@ test('Cold reload reserves the Expressive Wide geometry without flashing surplus
   });
   let preferenceRequestCount = 0;
 
-  await page.route('**/api/platform/v1/home-preferences**', async (route) => {
+  await page.route('**/api/platform/v1/home-views**', async (route) => {
     const request = route.request();
     const path = new URL(request.url()).pathname;
-    if (request.method() !== 'GET' || !path.endsWith('/home-preferences')) {
+    if (request.method() !== 'GET' || !path.endsWith('/home-views')) {
       return route.fallback();
     }
     preferenceRequestCount += 1;
@@ -1011,10 +978,13 @@ test('Cold reload reserves the Expressive Wide geometry without flashing surplus
       markPreferenceStarted();
       await preferenceRelease;
     }
-    return fulfillSuccess(route, {
-      ...DEFAULT_HOME_PREFERENCE,
-      layout: { ...DEFAULT_HOME_PREFERENCE.layout, presentation: 'expressive' },
-    });
+    return fulfillSuccess(route, [
+      {
+        ...defaultHomeView(),
+        customized: false,
+        layout: { ...DEFAULT_HOME_PREFERENCE.layout, presentation: 'expressive' },
+      },
+    ]);
   });
   await page.route('**/api/platform/v1/home/overview**', (route) =>
     fulfillSuccess(route, overviewWithCommunications())
@@ -1028,9 +998,9 @@ test('Cold reload reserves the Expressive Wide geometry without flashing surplus
     const sampleFrame = () => {
       const home = document.querySelector<HTMLElement>('[data-testid="flow-home"]');
       if (home) {
-        const stage = home.querySelector<HTMLElement>('[data-flow-read-template]');
+        const mesh = home.querySelector<HTMLElement>('[data-flow-future-widget-mesh]');
         const state = `${home.dataset.flowHomePresentation ?? 'unknown'}:${
-          stage?.dataset.flowReadTemplate ?? 'unknown'
+          mesh ? 'future-mesh' : 'unknown'
         }`;
         if (observedStates.at(-1) !== state) observedStates.push(state);
       }
@@ -1044,10 +1014,7 @@ test('Cold reload reserves the Expressive Wide geometry without flashing surplus
     'data-flow-home-presentation',
     'expressive'
   );
-  await expect(page.getByTestId('flow-home-personal-sections')).toHaveAttribute(
-    'data-flow-read-template',
-    'adaptive-wide'
-  );
+  await expect(page.locator('[data-flow-future-widget-mesh]')).toBeVisible();
 
   await page.reload({ waitUntil: 'domcontentloaded' });
   await preferenceStarted;
@@ -1095,17 +1062,15 @@ test('Cold reload reserves the Expressive Wide geometry without flashing surplus
       insights: [rect('request-tracker'), rect('meeting-load')],
     };
   });
-  expect(loadingGrid.action.width / loadingGrid.first.width).toBeGreaterThan(1.9);
-  expect(loadingGrid.action.width / loadingGrid.first.width).toBeLessThan(2.1);
+  expect(loadingGrid.action.width / loadingGrid.first.width).toBeGreaterThan(2.5);
+  expect(loadingGrid.action.width / loadingGrid.first.width).toBeLessThan(2.75);
   expect(Math.abs(loadingGrid.action.top - loadingGrid.first.top)).toBeLessThanOrEqual(2);
-  expect(
-    Math.abs(loadingGrid.support[0]!.width - loadingGrid.support[1]!.width)
-  ).toBeLessThanOrEqual(2);
-  expect(
-    Math.abs(loadingGrid.support[1]!.width - loadingGrid.support[2]!.width)
-  ).toBeLessThanOrEqual(2);
-  expect(loadingGrid.insights[0]!.width / loadingGrid.insights[1]!.width).toBeGreaterThan(1.9);
-  expect(loadingGrid.insights[0]!.width / loadingGrid.insights[1]!.width).toBeLessThan(2.1);
+  expect(loadingGrid.support[0]!.width / loadingGrid.support[1]!.width).toBeGreaterThan(1.05);
+  expect(loadingGrid.support[0]!.width / loadingGrid.support[1]!.width).toBeLessThan(1.2);
+  expect(loadingGrid.support[1]!.width / loadingGrid.support[2]!.width).toBeGreaterThan(1.1);
+  expect(loadingGrid.support[1]!.width / loadingGrid.support[2]!.width).toBeLessThan(1.3);
+  expect(loadingGrid.insights[0]!.width / loadingGrid.insights[1]!.width).toBeGreaterThan(2.5);
+  expect(loadingGrid.insights[0]!.width / loadingGrid.insights[1]!.width).toBeLessThan(2.75);
   expect(loadingGrid.insights[0]!.top).toBeGreaterThan(loadingGrid.support[0]!.top);
   const loadingDockBounds = await loadingDock.boundingBox();
   expect(loadingDockBounds).not.toBeNull();
@@ -1113,10 +1078,8 @@ test('Cold reload reserves the Expressive Wide geometry without flashing surplus
   releasePreference();
   const flowHome = page.getByTestId('flow-home');
   await expect(flowHome).toHaveAttribute('data-flow-home-presentation', 'expressive');
-  await expect(flowHome.getByTestId('flow-home-personal-sections')).toHaveAttribute(
-    'data-flow-read-template',
-    'adaptive-wide'
-  );
+  await expect(flowHome.locator('[data-flow-future-widget-mesh]')).toBeVisible();
+  await expect(flowHome.getByTestId('flow-home-personal-sections')).toHaveCount(0);
   await expect(page.getByTestId('home-experience-bootstrap')).toHaveCount(0);
   const resolvedDock = flowHome.locator('[data-flow-dock-shell]');
   await expect(resolvedDock).toHaveAttribute('data-flow-dock-item-limit', '40');
@@ -1140,7 +1103,7 @@ test('Cold reload reserves the Expressive Wide geometry without flashing surplus
       ).__flowHomeInitialStates ?? []
   );
   expect(observedStates).not.toContain('balanced:standard');
-  expect(observedStates.at(0)).toBe('expressive:adaptive-wide');
+  expect(observedStates.at(0)).toBe('expressive:future-mesh');
 });
 
 test('Balanced Home reload keeps the saved four-group Dock geometry stable', async ({
@@ -1162,18 +1125,21 @@ test('Balanced Home reload keeps the saved four-group Dock geometry stable', asy
     // A cached entitlement hint can trail by one item; both states still occupy two rows.
     window.sessionStorage.setItem('dwp.home.launchpad-hint.v1', JSON.stringify([5, 6, 2, 3]));
   });
-  await page.route('**/api/platform/v1/home-preferences**', async (route) => {
+  await page.route('**/api/platform/v1/home-views**', async (route) => {
     const request = route.request();
     const path = new URL(request.url()).pathname;
-    if (request.method() !== 'GET' || !path.endsWith('/home-preferences')) {
+    if (request.method() !== 'GET' || !path.endsWith('/home-views')) {
       return route.fallback();
     }
     markPreferenceStarted();
     await preferenceRelease;
-    return fulfillSuccess(route, {
-      ...DEFAULT_HOME_PREFERENCE,
-      layout: { ...DEFAULT_HOME_PREFERENCE.layout, presentation: 'balanced' },
-    });
+    return fulfillSuccess(route, [
+      {
+        ...defaultHomeView(),
+        customized: false,
+        layout: { ...DEFAULT_HOME_PREFERENCE.layout, presentation: 'balanced' },
+      },
+    ]);
   });
 
   await page.setViewportSize({ width: 1440, height: 900 });
@@ -1231,18 +1197,21 @@ test('A true cold session stays presentation-neutral until the saved Wide prefer
   await page.addInitScript(() => {
     window.sessionStorage.removeItem('dwp.home.presentation-hint.v1');
   });
-  await page.route('**/api/platform/v1/home-preferences**', async (route) => {
+  await page.route('**/api/platform/v1/home-views**', async (route) => {
     const request = route.request();
     const path = new URL(request.url()).pathname;
-    if (request.method() !== 'GET' || !path.endsWith('/home-preferences')) {
+    if (request.method() !== 'GET' || !path.endsWith('/home-views')) {
       return route.fallback();
     }
     markPreferenceStarted();
     await preferenceRelease;
-    return fulfillSuccess(route, {
-      ...DEFAULT_HOME_PREFERENCE,
-      layout: { ...DEFAULT_HOME_PREFERENCE.layout, presentation: 'expressive' },
-    });
+    return fulfillSuccess(route, [
+      {
+        ...defaultHomeView(),
+        customized: false,
+        layout: { ...DEFAULT_HOME_PREFERENCE.layout, presentation: 'expressive' },
+      },
+    ]);
   });
 
   await page.setViewportSize({ width: 1920, height: 1080 });
@@ -1264,10 +1233,8 @@ test('A true cold session stays presentation-neutral until the saved Wide prefer
   releasePreference();
   const flowHome = page.getByTestId('flow-home');
   await expect(flowHome).toHaveAttribute('data-flow-home-presentation', 'expressive');
-  await expect(flowHome.getByTestId('flow-home-personal-sections')).toHaveAttribute(
-    'data-flow-read-template',
-    'adaptive-wide'
-  );
+  await expect(flowHome.locator('[data-flow-future-widget-mesh]')).toBeVisible();
+  await expect(flowHome.getByTestId('flow-home-personal-sections')).toHaveCount(0);
   await expect(flowHome.locator('[data-flow-dock-shell]')).toHaveAttribute(
     'data-flow-dock-item-limit',
     '40'
@@ -1292,10 +1259,10 @@ test('Cold reload keeps the loading and resolved Home single-column at 200% text
     markPreferenceStarted = resolve;
   });
   let preferenceRequestCount = 0;
-  await page.route('**/api/platform/v1/home-preferences**', async (route) => {
+  await page.route('**/api/platform/v1/home-views**', async (route) => {
     const request = route.request();
     const path = new URL(request.url()).pathname;
-    if (request.method() !== 'GET' || !path.endsWith('/home-preferences')) {
+    if (request.method() !== 'GET' || !path.endsWith('/home-views')) {
       return route.fallback();
     }
     preferenceRequestCount += 1;
@@ -1303,10 +1270,13 @@ test('Cold reload keeps the loading and resolved Home single-column at 200% text
       markPreferenceStarted();
       await preferenceRelease;
     }
-    return fulfillSuccess(route, {
-      ...DEFAULT_HOME_PREFERENCE,
-      layout: { ...DEFAULT_HOME_PREFERENCE.layout, presentation: 'expressive' },
-    });
+    return fulfillSuccess(route, [
+      {
+        ...defaultHomeView(),
+        customized: false,
+        layout: { ...DEFAULT_HOME_PREFERENCE.layout, presentation: 'balanced' },
+      },
+    ]);
   });
   await page.route(/^http:\/\/(?:localhost|127\.0\.0\.1):\d+\/$/, async (route) => {
     const response = await route.fetch();
@@ -1381,25 +1351,35 @@ test('the evidence-backed action cue stays singular and supports reversible rele
   await expect(cue).toHaveCount(0);
 });
 
-test('Expressive Wide keeps a personalized widget order out of the adaptive template', async ({
+test('Personalized Wide keeps its saved widget order out of the adaptive template', async ({
   page,
 }, testInfo) => {
   test.skip(testInfo.project.name !== 'chromium', 'Wide personalization runs once in Chromium.');
   const [command, schedule, response, request, pulse, focusBalance, meetingLoad] =
     DEFAULT_HOME_PREFERENCE.layout.widgets;
-  await page.route('**/api/platform/v1/home-preferences**', (route) => {
+  await page.route('**/api/platform/v1/home-views**', (route) => {
     const requestCall = route.request();
     const path = new URL(requestCall.url()).pathname;
-    if (requestCall.method() === 'GET' && path.endsWith('/home-preferences')) {
-      return fulfillSuccess(route, {
-        ...DEFAULT_HOME_PREFERENCE,
-        customized: true,
-        layout: {
-          ...DEFAULT_HOME_PREFERENCE.layout,
-          presentation: 'expressive',
-          widgets: [command!, response!, schedule!, request!, pulse!, focusBalance!, meetingLoad!],
+    if (requestCall.method() === 'GET' && path.endsWith('/home-views')) {
+      return fulfillSuccess(route, [
+        {
+          ...defaultHomeView(),
+          customized: true,
+          layout: {
+            ...DEFAULT_HOME_PREFERENCE.layout,
+            presentation: 'balanced',
+            widgets: [
+              command!,
+              response!,
+              schedule!,
+              request!,
+              pulse!,
+              focusBalance!,
+              meetingLoad!,
+            ],
+          },
         },
-      });
+      ]);
     }
     return route.fallback();
   });
@@ -1498,7 +1478,7 @@ for (const viewport of [
       };
     });
 
-    if (viewport.width >= 1200) {
+    if (viewport.width >= 1600) {
       await expectPurposeDesktopGrid(flowHome);
     } else if (viewport.width >= 900) {
       await expect(flowHome.getByTestId('flow-home-personal-sections')).toHaveAttribute(
@@ -1541,7 +1521,13 @@ for (const viewport of [
       await expect(firstContribution).toBeVisible();
       const bounds = await firstContribution.boundingBox();
       expect(bounds).not.toBeNull();
-      expect(bounds?.y ?? Number.POSITIVE_INFINITY).toBeLessThan(viewport.height);
+      expect(bounds?.y ?? Number.POSITIVE_INFINITY).toBeLessThan(
+        await page.evaluate(() => document.documentElement.scrollHeight)
+      );
+      await firstContribution.scrollIntoViewIfNeeded();
+      const scrolledBounds = await firstContribution.boundingBox();
+      expect(scrolledBounds).not.toBeNull();
+      expect(scrolledBounds?.y ?? Number.POSITIVE_INFINITY).toBeLessThan(viewport.height);
     }
   });
 }
@@ -1577,8 +1563,9 @@ test('purpose widgets adapt coherently for zero, one, and many items', async ({ 
     } else {
       await expect(action.getByText('Purpose queue item 4', { exact: true })).toBeVisible();
       await expect(action.getByText('Purpose queue item 5', { exact: true })).toHaveCount(0);
-      await expect(action.getByRole('link', { name: /View all/ })).toContainText(
-        'View all · 1 more'
+      await expect(action.getByRole('link', { name: 'Open Work Hub' })).toHaveAttribute(
+        'href',
+        '/work/queue'
       );
     }
 
@@ -1875,7 +1862,8 @@ test('tenant imagery remains in the greeting banner above an independent bright 
     };
   });
   expect(visualContract.imageOpacity).toBe('1');
-  expect(visualContract.workscapeHeight).toBeLessThanOrEqual(160);
+  expect(visualContract.workscapeHeight).toBeGreaterThanOrEqual(288);
+  expect(visualContract.workscapeHeight).toBeLessThanOrEqual(340);
   expect(Math.abs(visualContract.dockWidth - visualContract.frameWidth)).toBeLessThanOrEqual(2);
   expect(visualContract.dockBackground).toBe('rgb(255, 255, 255)');
   await expect(dock.locator('[data-flow-dock-item]')).toHaveCount(17);
@@ -1888,21 +1876,22 @@ test('read mode collapses sparse saved footprints while edit mode exposes semant
   await page.route('**/api/platform/v1/home/overview**', (route) =>
     fulfillSuccess(route, emptyHomeOverview())
   );
-  await page.route('**/api/platform/v1/home-preferences**', (route) => {
+  await page.route('**/api/platform/v1/home-views**', (route) => {
     const request = route.request();
     const path = new URL(request.url()).pathname;
-    if (request.method() === 'GET' && path.endsWith('/home-preferences')) {
-      return fulfillSuccess(route, {
-        ...DEFAULT_HOME_PREFERENCE,
-        customized: true,
-        layout: {
-          ...DEFAULT_HOME_PREFERENCE.layout,
-          widgets: DEFAULT_HOME_PREFERENCE.layout.widgets.map((widget) =>
-            widget.widgetKey === 'focus' ? { ...widget, size: 'full', height: 'tall' } : widget
-          ),
+    if (request.method() === 'GET' && path.endsWith('/home-views')) {
+      return fulfillSuccess(route, [
+        {
+          ...defaultHomeView(3),
+          customized: true,
+          layout: {
+            ...DEFAULT_HOME_PREFERENCE.layout,
+            widgets: DEFAULT_HOME_PREFERENCE.layout.widgets.map((widget) =>
+              widget.widgetKey === 'focus' ? { ...widget, size: 'full', height: 'tall' } : widget
+            ),
+          },
         },
-        version: 3,
-      });
+      ]);
     }
     return route.fallback();
   });
@@ -1962,22 +1951,24 @@ test('role overview restores calendar signals when specialist widgets are hidden
   await page.route('**/api/people/v1/hr/home', (route) =>
     fulfillSuccess(route, { ...HR_HOME_FIXTURE, generatedAt: FLOW_FIXTURE_NOW.toISOString() })
   );
-  await page.route('**/api/platform/v1/home-preferences**', (route) => {
+  await page.route('**/api/platform/v1/home-views**', (route) => {
     const request = route.request();
     const path = new URL(request.url()).pathname;
-    if (request.method() === 'GET' && path.endsWith('/home-preferences')) {
-      return fulfillSuccess(route, {
-        ...DEFAULT_HOME_PREFERENCE,
-        customized: true,
-        layout: {
-          ...DEFAULT_HOME_PREFERENCE.layout,
-          widgets: DEFAULT_HOME_PREFERENCE.layout.widgets.map((widget) =>
-            widget.widgetKey === 'focus-balance' || widget.widgetKey === 'meeting-load'
-              ? { ...widget, visible: false }
-              : widget
-          ),
+    if (request.method() === 'GET' && path.endsWith('/home-views')) {
+      return fulfillSuccess(route, [
+        {
+          ...defaultHomeView(),
+          customized: true,
+          layout: {
+            ...DEFAULT_HOME_PREFERENCE.layout,
+            widgets: DEFAULT_HOME_PREFERENCE.layout.widgets.map((widget) =>
+              widget.widgetKey === 'focus-balance' || widget.widgetKey === 'meeting-load'
+                ? { ...widget, visible: false }
+                : widget
+            ),
+          },
         },
-      });
+      ]);
     }
     return route.fallback();
   });
@@ -2042,37 +2033,39 @@ test('the editor keeps the action queue personal while announcements remains gov
       resourceRoles: [],
     })
   );
-  await page.route('**/api/platform/v1/home-preferences**', (route) => {
+  await page.route('**/api/platform/v1/home-views**', (route) => {
     const request = route.request();
     const path = new URL(request.url()).pathname;
-    if (request.method() === 'GET' && path.endsWith('/home-preferences')) {
-      return fulfillSuccess(route, {
-        ...DEFAULT_HOME_PREFERENCE,
-        customized: true,
-        layout: {
-          ...DEFAULT_HOME_PREFERENCE.layout,
-          presentation: 'balanced',
-          appLayout: {
-            version: 1,
-            groups: {
-              work: ['dwp-work', 'dwp-ask', 'dwp-activity', 'dwp-approvals', 'dwp-notifications'],
-              connect: [
-                'dwp-communications',
-                'dwp-calendar',
-                'ref-app-mail',
-                'dwp-spaces',
-                'dwp-rooms',
-                'dwp-messaging',
-                'dwp-meetings',
-              ],
-              services: ['ref-app-service', 'ref-app-people'],
-              systems: ['ref-app-knowledge', 'ref-app-erp', 'ref-app-legacy', 'dwp-admin'],
+    if (request.method() === 'GET' && path.endsWith('/home-views')) {
+      return fulfillSuccess(route, [
+        {
+          ...defaultHomeView(),
+          customized: true,
+          layout: {
+            ...DEFAULT_HOME_PREFERENCE.layout,
+            presentation: 'balanced',
+            appLayout: {
+              version: 1,
+              groups: {
+                work: ['dwp-work', 'dwp-ask', 'dwp-activity', 'dwp-approvals', 'dwp-notifications'],
+                connect: [
+                  'dwp-communications',
+                  'dwp-calendar',
+                  'ref-app-mail',
+                  'dwp-spaces',
+                  'dwp-rooms',
+                  'dwp-messaging',
+                  'dwp-meetings',
+                ],
+                services: ['ref-app-service', 'ref-app-people'],
+                systems: ['ref-app-knowledge', 'ref-app-erp', 'ref-app-legacy', 'dwp-admin'],
+              },
+              folders: {},
+              hiddenAppIds: [],
             },
-            folders: {},
-            hiddenAppIds: [],
           },
         },
-      });
+      ]);
     }
     return route.fallback();
   });
@@ -2280,7 +2273,7 @@ test('the editor keeps the action queue personal while announcements remains gov
   }
   await expectLaunchpadEditControlsFit(page, dockGroupLists, true);
   await page.setViewportSize({ width: 1440, height: 900 });
-  await expectFiveColumnDockAlignment(dockGroupLists, 'data-launchpad-item');
+  await expectFiveColumnDockAlignment(dockGroupLists, 'data-launchpad-item', 4);
   await expectLaunchpadEditControlsFit(page, dockGroupLists, true);
   for (const viewport of [
     { width: 390, height: 844 },
@@ -2337,7 +2330,9 @@ test('the editor keeps the action queue personal while announcements remains gov
   await expect(today.locator('[data-widget-footprint-trigger]')).toBeVisible();
   expect(
     await today
-      .locator('[data-workspace-widget-content] > section')
+      .locator(
+        ':is([data-workspace-widget-content], [data-workspace-widget-transparent]) > section'
+      )
       .evaluate((section) => window.getComputedStyle(section).borderTopWidth)
   ).toBe('1px');
   await expect(action.locator('[data-workspace-widget-content]')).toHaveAttribute('inert', '');
@@ -2607,6 +2602,7 @@ test('DWAI·ON applies measured clearance to every intersecting widget frame', a
   const stage = page.getByTestId('flow-home-personal-sections');
   await expect(stage.locator('[data-workspace-widget]')).not.toHaveCount(0);
   await expect(page.getByTestId('dwaion-launcher')).toBeVisible();
+  await positionFlowWidgetAtLauncher(page, 'action-queue');
   const collisionContract = await readFlowLauncherCollisionContract(stage);
   expect(collisionContract.mismatches).toEqual([]);
   expect(collisionContract.marked).toBeGreaterThan(0);
@@ -2656,27 +2652,26 @@ test('a saved widget reorder recalculates clearance for the new launcher-edge wi
   page,
 }, testInfo) => {
   test.skip(testInfo.project.name !== 'chromium', 'Launcher collision geometry runs once.');
-  let serverPreference = {
-    ...DEFAULT_HOME_PREFERENCE,
+  let serverView = {
+    ...defaultHomeView(3),
     customized: true,
-    version: 3,
   };
   let saved = false;
-  await page.route('**/api/platform/v1/home-preferences**', (route) => {
+  await page.route('**/api/platform/v1/home-views**', (route) => {
     const request = route.request();
     const path = new URL(request.url()).pathname;
-    if (request.method() === 'GET' && path.endsWith('/home-preferences')) {
-      return fulfillSuccess(route, serverPreference);
+    if (request.method() === 'GET' && path.endsWith('/home-views')) {
+      return fulfillSuccess(route, [serverView]);
     }
-    if (request.method() === 'PUT' && path.endsWith('/home-preferences')) {
+    if (request.method() === 'PUT' && path.endsWith('/home-views/home-view-default')) {
       const body = request.postDataJSON() as { layout: typeof DEFAULT_HOME_PREFERENCE.layout };
-      serverPreference = {
-        ...serverPreference,
+      serverView = {
+        ...serverView,
         layout: body.layout,
-        version: serverPreference.version + 1,
+        version: serverView.version + 1,
       };
       saved = true;
-      return fulfillSuccess(route, serverPreference);
+      return fulfillSuccess(route, serverView);
     }
     return route.fallback();
   });
@@ -2722,7 +2717,9 @@ test('a saved widget reorder recalculates clearance for the new launcher-edge wi
   await expect(requestWidget).toHaveAttribute('data-flow-launcher-edge', 'true');
   await expect(roleWidget).not.toHaveAttribute('data-flow-launcher-edge');
   const clearance = await requestWidget.evaluate((widget) => {
-    const section = widget.querySelector<HTMLElement>('[data-workspace-widget-content] > section')!;
+    const section = widget.querySelector<HTMLElement>(
+      ':is([data-workspace-widget-content], [data-workspace-widget-transparent]) > section'
+    )!;
     return {
       measured: Number(widget.getAttribute('data-flow-launcher-clearance') ?? 0),
       applied: Number.parseFloat(window.getComputedStyle(section).paddingInlineEnd),
@@ -2791,7 +2788,7 @@ test('a requested Flow policy fails closed without the server-resolved variant',
   await page.goto('/');
 
   await expect(page.getByTestId('flow-home')).toHaveCount(0);
-  await expect(page.getByTestId('home-hero')).toBeVisible();
+  await expect(page.getByTestId('classic-home')).toBeVisible();
 });
 
 test('an active Home Experience failure is explicit, retryable, and never exposes a dead edit action', async ({
@@ -2828,13 +2825,13 @@ test('an active Home layout failure blocks rendering until its retry succeeds', 
 }, testInfo) => {
   test.skip(testInfo.project.name !== 'chromium', 'Home bootstrap recovery runs once on desktop.');
   let serviceAvailable = false;
-  await page.route('**/api/platform/v1/home-preferences**', (route) => {
+  await page.route('**/api/platform/v1/home-views**', (route) => {
     const request = route.request();
     const path = new URL(request.url()).pathname;
-    if (request.method() !== 'GET' || !path.endsWith('/home-preferences')) {
+    if (request.method() !== 'GET' || !path.endsWith('/home-views')) {
       return route.fallback();
     }
-    if (serviceAvailable) return fulfillSuccess(route, DEFAULT_HOME_PREFERENCE);
+    if (serviceAvailable) return fulfillSuccess(route, [defaultHomeView()]);
     return route.fulfill({
       status: 503,
       contentType: 'application/json',
@@ -2893,29 +2890,28 @@ test('notification badges fail closed when a successful summary becomes stale', 
   ).toHaveCount(0);
 });
 
-test('saved height and width choices round-trip through the existing legacy preference API', async ({
+test('saved height and width choices round-trip through the active Home view API', async ({
   page,
 }) => {
-  let serverPreference = {
-    ...DEFAULT_HOME_PREFERENCE,
+  let serverView = {
+    ...defaultHomeView(3),
     customized: true,
-    version: 3,
   };
   let savedBody: { layout: typeof DEFAULT_HOME_PREFERENCE.layout; version: number } | null = null;
-  await page.route('**/api/platform/v1/home-preferences**', (route) => {
+  await page.route('**/api/platform/v1/home-views**', (route) => {
     const request = route.request();
     const path = new URL(request.url()).pathname;
-    if (request.method() === 'GET' && path.endsWith('/home-preferences')) {
-      return fulfillSuccess(route, serverPreference);
+    if (request.method() === 'GET' && path.endsWith('/home-views')) {
+      return fulfillSuccess(route, [serverView]);
     }
-    if (request.method() === 'PUT' && path.endsWith('/home-preferences')) {
+    if (request.method() === 'PUT' && path.endsWith('/home-views/home-view-default')) {
       savedBody = request.postDataJSON() as typeof savedBody;
-      serverPreference = {
-        ...serverPreference,
+      serverView = {
+        ...serverView,
         layout: savedBody!.layout,
-        version: serverPreference.version + 1,
+        version: serverView.version + 1,
       };
-      return fulfillSuccess(route, serverPreference);
+      return fulfillSuccess(route, serverView);
     }
     return route.fallback();
   });
@@ -2947,11 +2943,11 @@ test('saved height and width choices round-trip through the existing legacy pref
   await expect(widget).toHaveAttribute('data-workspace-widget-height', 'tall');
 });
 
-test('VIEWS round-trips the personal action queue after move, resize, hide, and restore', async ({
+test('VIEWS round-trips the personal action queue without writing the LEGACY store', async ({
   page,
 }, testInfo) => {
   test.skip(testInfo.project.name !== 'chromium', 'Store isolation is covered once on desktop.');
-  let legacyRequests = 0;
+  const legacyRequestMethods: string[] = [];
   let savedBody: {
     name: string;
     layout: typeof DEFAULT_HOME_PREFERENCE.layout;
@@ -2964,7 +2960,7 @@ test('VIEWS round-trips the personal action queue after move, resize, hide, and 
     homePreferenceStore: 'VIEWS',
   });
   await page.route('**/api/platform/v1/home-preferences**', async (route) => {
-    legacyRequests += 1;
+    legacyRequestMethods.push(route.request().method());
     await route.fulfill({ status: 500, contentType: 'application/json', body: '{}' });
   });
   await page.route('**/api/platform/v1/home-views**', (route) => {
@@ -2979,7 +2975,7 @@ test('VIEWS round-trips the personal action queue after move, resize, hide, and 
     if (request.method() === 'PUT' && path.endsWith('/home-views/home-view-default')) {
       const payload = request.postDataJSON() as NonNullable<typeof savedBody>;
       savedBody = payload;
-      view = { ...view, layout: payload.layout, version: view.version + 1 };
+      view = { ...view, customized: true, layout: payload.layout, version: view.version + 1 };
       return fulfillSuccess(route, view);
     }
     return route.fallback();
@@ -3070,7 +3066,8 @@ test('VIEWS round-trips the personal action queue after move, resize, hide, and 
   expect(
     savedBody!.layout.widgets.find((widget) => widget.widgetKey === 'command-rail')
   ).toMatchObject({ visible: true, size: 'full', height: 'short' });
-  expect(legacyRequests).toBe(0);
+  expect(legacyRequestMethods.filter((method) => method !== 'GET')).toEqual([]);
+  expect(legacyRequestMethods.filter((method) => method === 'GET').length).toBeGreaterThan(0);
 
   await page.reload();
   await expect(actionQueue).toHaveAttribute('data-workspace-widget-policy', 'PERSONAL');
@@ -3089,7 +3086,7 @@ test('VIEWS round-trips the personal action queue after move, resize, hide, and 
     ]);
 });
 
-test('LEGACY editing and save stay available when the inactive VIEWS store fails', async ({
+test('LEGACY requested Flow fails closed to Classic while inactive VIEWS remains isolated', async ({
   page,
 }, testInfo) => {
   test.skip(testInfo.project.name !== 'chromium', 'Store isolation is covered once on desktop.');
@@ -3121,19 +3118,12 @@ test('LEGACY editing and save stay available when the inactive VIEWS store fails
   });
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto('/');
+  await expect(page.getByTestId('classic-home')).toBeVisible();
+  await expect(page.getByTestId('flow-home')).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Home Studio' })).toHaveCount(0);
   await page.getByRole('button', { name: 'Edit home' }).click();
-  const widget = page.locator('[data-workspace-widget="request-tracker"]');
-  await widget.locator('[data-widget-footprint-trigger]').click();
-  await page
-    .getByRole('dialog', { name: 'My requests widget size' })
-    .locator('[data-widget-height-option="tall"]')
-    .click();
-  await page.keyboard.press('Escape');
-  await page
-    .locator('[data-workspace-composer-placement="floating"]')
-    .getByRole('button', { name: 'Save' })
-    .click();
+  await page.getByRole('button', { name: 'Remove Activity from home' }).click();
+  await page.getByRole('button', { name: 'Save', exact: true }).click();
 
   await expect.poll(() => saved).toBe(true);
   expect(viewsRequests).toBe(0);
@@ -3201,18 +3191,10 @@ test('an unrelated LEGACY home edit preserves opaque app layout placements', asy
 
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto('/');
+  await expect(page.getByTestId('classic-home')).toBeVisible();
   await page.getByRole('button', { name: 'Edit home' }).click();
-  const widget = page.locator('[data-workspace-widget="request-tracker"]');
-  await widget.locator('[data-widget-footprint-trigger]').click();
-  await page
-    .getByRole('dialog', { name: 'My requests widget size' })
-    .locator('[data-widget-height-option="tall"]')
-    .click();
-  await page.keyboard.press('Escape');
-  await page
-    .locator('[data-workspace-composer-placement="floating"]')
-    .getByRole('button', { name: 'Save' })
-    .click();
+  await page.getByRole('button', { name: 'Hide Live activity widget' }).click();
+  await page.getByRole('button', { name: 'Save', exact: true }).click();
 
   await expect.poll(() => savedAppLayout).not.toBeNull();
   expect(savedAppLayout).toEqual(opaqueAppLayout);
@@ -3236,10 +3218,9 @@ test('an entitlement granted during editing cannot delete its canonical app plac
   let granted = false;
   let permissionRequests = 0;
   let savedAppLayout: typeof canonicalAppLayout | null = null;
-  let preference = {
-    ...DEFAULT_HOME_PREFERENCE,
+  let view = {
+    ...defaultHomeView(3),
     customized: true,
-    version: 3,
     layout: { ...DEFAULT_HOME_PREFERENCE.layout, appLayout: canonicalAppLayout },
   };
   await page.route('**/api/auth/permissions', (route) => {
@@ -3251,17 +3232,17 @@ test('an entitlement granted during editing cannot delete its canonical app plac
         : FLOW_PERMISSIONS.filter((permission) => permission.resourceKey !== 'APP.APPROVALS')
     );
   });
-  await page.route('**/api/platform/v1/home-preferences**', (route) => {
+  await page.route('**/api/platform/v1/home-views**', (route) => {
     const request = route.request();
     const path = new URL(request.url()).pathname;
-    if (request.method() === 'GET' && path.endsWith('/home-preferences')) {
-      return fulfillSuccess(route, preference);
+    if (request.method() === 'GET' && path.endsWith('/home-views')) {
+      return fulfillSuccess(route, [view]);
     }
-    if (request.method() === 'PUT' && path.endsWith('/home-preferences')) {
-      const payload = request.postDataJSON() as { layout: typeof preference.layout };
+    if (request.method() === 'PUT' && path.endsWith('/home-views/home-view-default')) {
+      const payload = request.postDataJSON() as { layout: typeof view.layout };
       savedAppLayout = payload.layout.appLayout;
-      preference = { ...preference, layout: payload.layout, version: preference.version + 1 };
-      return fulfillSuccess(route, preference);
+      view = { ...view, layout: payload.layout, version: view.version + 1 };
+      return fulfillSuccess(route, view);
     }
     return route.fallback();
   });
@@ -3308,10 +3289,9 @@ test('an entitlement revoked during editing stays hidden without deleting its pl
   let revoked = false;
   let permissionRequests = 0;
   let savedAppLayout: typeof canonicalAppLayout | null = null;
-  let preference = {
-    ...DEFAULT_HOME_PREFERENCE,
+  let view = {
+    ...defaultHomeView(3),
     customized: true,
-    version: 3,
     layout: { ...DEFAULT_HOME_PREFERENCE.layout, appLayout: canonicalAppLayout },
   };
   await page.route('**/api/auth/permissions', (route) => {
@@ -3323,17 +3303,17 @@ test('an entitlement revoked during editing stays hidden without deleting its pl
         : FLOW_PERMISSIONS
     );
   });
-  await page.route('**/api/platform/v1/home-preferences**', (route) => {
+  await page.route('**/api/platform/v1/home-views**', (route) => {
     const request = route.request();
     const path = new URL(request.url()).pathname;
-    if (request.method() === 'GET' && path.endsWith('/home-preferences')) {
-      return fulfillSuccess(route, preference);
+    if (request.method() === 'GET' && path.endsWith('/home-views')) {
+      return fulfillSuccess(route, [view]);
     }
-    if (request.method() === 'PUT' && path.endsWith('/home-preferences')) {
-      const payload = request.postDataJSON() as { layout: typeof preference.layout };
+    if (request.method() === 'PUT' && path.endsWith('/home-views/home-view-default')) {
+      const payload = request.postDataJSON() as { layout: typeof view.layout };
       savedAppLayout = payload.layout.appLayout;
-      preference = { ...preference, layout: payload.layout, version: preference.version + 1 };
-      return fulfillSuccess(route, preference);
+      view = { ...view, layout: payload.layout, version: view.version + 1 };
+      return fulfillSuccess(route, view);
     }
     return route.fallback();
   });

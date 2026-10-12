@@ -11,6 +11,7 @@ from typing import Any
 
 
 HRIS_ROOT = Path(__file__).resolve().parents[1]
+REPOSITORY_ROOT = Path(__file__).resolve().parents[4]
 RAW_ROOT = HRIS_ROOT / "recovery" / "hris-porting-blueprint-2026-09-09"
 SUPPLEMENT_ROOT = (
     HRIS_ROOT
@@ -74,6 +75,57 @@ EXPECTED_ACCEPTED = {
     ),
 }
 
+EXPECTED_BYTE_PRESERVED_DOCUMENTS = {
+    "docs/03-architecture/hris/ADR-001-lineage-v35-successor-and-migration-lease.md": (
+        "82b5c23b68f85a9baa4f639364db6cdeaa1df44fdc328842d98fd95c1b70868f",
+        9759,
+    ),
+    "docs/06-delivery/hris/2026-10-06-g1-integration-work-packet.md": (
+        "a907bf143f64ac4cfe297b61da740a56c5e34d403583be45bdb3a4b9db5dea6e",
+        6250,
+    ),
+    "docs/06-delivery/hris/2026-10-06-integration-roadmap.md": (
+        "ac1abe594d7fa509e0d299024c6d330ab377dd58885b58ab267449fd15c5344e",
+        11234,
+    ),
+    "docs/06-delivery/hris/2026-10-06-source-and-lineage-provenance.md": (
+        "feb8fe194095cddabcb2ab6bc90c6cc0f3580705b3777f47652a2a8704b143ca",
+        10443,
+    ),
+    "docs/06-delivery/hris/2026-10-07-g3-integration-roadmap-status.md": (
+        "8547033f08438581a03b3d23c00a986e111b02f5bc633c9ca00cc79d56593321",
+        5276,
+    ),
+    "docs/06-delivery/hris/2026-10-07-g4-integration-roadmap-status.md": (
+        "167c86f81786b3268f0c39f232a4ddba313e99ea7be9217e069a91977b373550",
+        3315,
+    ),
+    "docs/06-delivery/hris/2026-10-07-integration-roadmap-status.md": (
+        "25835cfd900c269086457cd1eb4c911ed20000a5b106aa0e0d05768b4337dc10",
+        2547,
+    ),
+    "docs/06-delivery/hris/development-agent-work-packet-template.md": (
+        "e5564d310b6b2d3ef84b0a6d7b53fc9a6d2a2fd084770df7f10abb4bae9a83f7",
+        6143,
+    ),
+    "docs/06-delivery/hris/recovery/README.md": (
+        "e4cfd4e01a449736974dd5b0b75a5de2b5ea2a86b08defa4100e6e1fa659c2b3",
+        5892,
+    ),
+    "docs/06-delivery/hris/recovery/audit/hris-porting-blueprint-2026-09-09/RECOVERY_REPORT.md": (
+        "65d39972fed5c44dea2007c1d3c3b470887e68e496dd9283015a62397f7e250d",
+        4396,
+    ),
+    "docs/06-delivery/hris/recovery/exact-supplements/2026-10-06/README.md": (
+        "309623fcbb7c143bcb962b073b53a9869caf99069f953fdb48bc59e34e4f5ffa",
+        3418,
+    ),
+    "docs/06-delivery/hris/recovery/hris-scoped-authoring-control-2026-09-16/RECOVERY_INVENTORY.md": (
+        "8d6ffe9a61cf7847ad115b771d248b8a56b10503f89d690727f663390a974cb6",
+        4784,
+    ),
+}
+
 
 def sha256(path: Path) -> str:
     digest = hashlib.sha256()
@@ -100,6 +152,26 @@ def require(condition: bool, message: str, failures: list[str]) -> None:
 def main() -> int:
     failures: list[str] = []
     checks: dict[str, Any] = {}
+
+    preserved_document_checks: dict[str, Any] = {}
+    for relative, (expected_sha, expected_bytes) in EXPECTED_BYTE_PRESERVED_DOCUMENTS.items():
+        path = REPOSITORY_ROOT / relative
+        require(path.is_file(), f"missing byte-preserved document: {relative}", failures)
+        if not path.is_file():
+            continue
+        actual_sha = sha256(path)
+        actual_bytes = path.stat().st_size
+        require(actual_sha == expected_sha, f"byte-preserved document sha mismatch: {relative}", failures)
+        require(
+            actual_bytes == expected_bytes,
+            f"byte-preserved document byte count mismatch: {relative}",
+            failures,
+        )
+        preserved_document_checks[relative] = {
+            "sha256": actual_sha,
+            "bytes": actual_bytes,
+        }
+    checks["bytePreservedDocuments"] = preserved_document_checks
 
     for relative, (expected_sha, expected_bytes) in EXPECTED.items():
         path = SUPPLEMENT_ROOT / relative

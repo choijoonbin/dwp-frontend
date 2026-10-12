@@ -32,7 +32,7 @@ import {
   PageCanvas,
   SelectField,
 } from '@dwp-frontend/design-system';
-import { formatDate, resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
+import { resolveSupportedLocale } from '@dwp-frontend/shared-i18n';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Divider from '@mui/material/Divider';
@@ -54,6 +54,9 @@ import { WorkplaceMobileReservationInspector } from './workplace-mobile-reservat
 import { WorkplaceReservationDetailTabContent } from './workplace-reservation-detail-tab-content';
 import { resolveReservationSourceState } from './workplace-reservation-source-status';
 import { WorkplaceReservationSourceSummary } from './workplace-reservation-source-summary';
+import { WorkplaceReservationPermissionNotices } from './workplace-reservation-permission-notices';
+import { WorkplaceReservationsNextAction } from './workplace-reservations-next-action';
+import { useWorkplaceReservationConfirmationValidity } from './use-workplace-reservation-confirmation-validity';
 import {
   WORKPLACE_RESERVATION_AUTHORITIES,
   WORKPLACE_RESERVATION_PERIODS,
@@ -98,6 +101,7 @@ export function WorkplaceUnifiedReservations() {
   const activeIdentityRef = useRef(identityKey);
   const inspectorOpenerRef = useRef<HTMLElement | null>(null);
   const timelineHeadingRef = useRef<HTMLHeadingElement | null>(null);
+  const detailHeadingRef = useRef<HTMLHeadingElement | null>(null);
   activeIdentityRef.current = identityKey;
   const [searchParams, setSearchParams] = useSearchParams();
   const parsedUrl = useMemo(() => parseWorkplaceReservationsUrl(searchParams), [searchParams]);
@@ -109,7 +113,7 @@ export function WorkplaceUnifiedReservations() {
   const [editingEvent, setEditingEvent] = useState<CalendarEvent | null>(null);
   const initialDetailTab = readWorkplaceReservationDetailTab(searchParams);
   const [detailTab, setDetailTab] = useState(initialDetailTab);
-  const { nowInstant, readNow } = useWorkplaceDecisionClock(identityKey);
+  const { advance, nowInstant, readNow } = useWorkplaceDecisionClock(identityKey);
 
   useEffect(() => setDetailTab(initialDetailTab), [initialDetailTab]);
 
@@ -372,6 +376,34 @@ export function WorkplaceUnifiedReservations() {
     });
   };
 
+  useWorkplaceReservationConfirmationValidity({
+    advance,
+    calendarEvents,
+    calendarPending: calendarMutation.isPending,
+    calendarState,
+    canUpdateRoomBooking: capabilities.canUpdateRoomBooking,
+    canUpdateWorkplaceBooking: capabilities.canUpdateWorkplaceBooking,
+    confirmation,
+    nowInstant,
+    onInvalid: () => {
+      setConfirmation(null);
+      window.requestAnimationFrame(() => {
+        const fallback = document.querySelector<HTMLElement>(
+          '[data-testid="workplace-reservations-filters"] input'
+        );
+        const targets = mobileInspector
+          ? [detailHeadingRef.current, timelineHeadingRef.current, fallback]
+          : [timelineHeadingRef.current, fallback];
+        targets
+          .find((target) => target?.isConnected && target.getClientRects().length > 0)
+          ?.focus();
+      });
+    },
+    workplaceBookings,
+    workplacePending: workplaceMutation.isPending,
+    workplaceState,
+  });
+
   const openItem = (item: WorkplaceUnifiedReservation) => {
     inspectorOpenerRef.current =
       document.activeElement instanceof HTMLElement ? document.activeElement : null;
@@ -393,6 +425,13 @@ export function WorkplaceUnifiedReservations() {
         title={t('workplace.reservations.title')}
         description={t('workplace.reservations.description')}
       />
+      <WorkplaceReservationPermissionNotices
+        loaded={capabilities.isLoaded}
+        canViewWorkplace={capabilities.canViewWorkplace}
+        canUpdateWorkplaceBooking={capabilities.canUpdateWorkplaceBooking}
+        canViewRooms={capabilities.canViewRooms}
+        canUpdateRoomBooking={capabilities.canUpdateRoomBooking}
+      />
 
       {urlWasNormalized && (
         <Box role="status" sx={{ mb: 2 }}>
@@ -402,50 +441,14 @@ export function WorkplaceUnifiedReservations() {
         </Box>
       )}
 
-      {urgentBooking && (
-        <Box
-          data-testid="workplace-reservations-next-action"
-          sx={(theme) => ({
-            ...workplaceMemberCard(theme),
-            p: { xs: 2, md: 2.5 },
-            mb: 2,
-            borderColor: 'error.light',
-          })}
-        >
-          <Stack direction={{ xs: 'column', md: 'row' }} gap={2} justifyContent="space-between">
-            <Box minWidth={0}>
-              <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap">
-                <Chip size="small" color="error" label={t('workplace.reservations.checkInDue')} />
-                <Typography component="h2" variant="h6">
-                  {urgentBooking.resourceName}
-                </Typography>
-              </Stack>
-              <Typography variant="body2" color="text.secondary" sx={{ mt: 0.75 }}>
-                {formatDate(
-                  urgentBooking.checkInClosesAt,
-                  { dateStyle: 'medium', timeStyle: 'short' },
-                  locale
-                )}{' '}
-                · {urgentBooking.siteName} · {urgentBooking.floorName}
-              </Typography>
-            </Box>
-            <ActionButton
-              intent="primary"
-              startIcon={<CheckCircle2 size={17} />}
-              loading={workplaceMutation.isPending}
-              onClick={() =>
-                dispatchWorkplaceCommand({
-                  booking: urgentBooking,
-                  action: 'check-in',
-                  commandIdentity: identityKey,
-                })
-              }
-            >
-              {t('workplace.reservations.actions.checkIn')}
-            </ActionButton>
-          </Stack>
-        </Box>
-      )}
+      <WorkplaceReservationsNextAction
+        booking={urgentBooking}
+        busy={workplaceMutation.isPending}
+        locale={locale}
+        onCheckIn={(booking) =>
+          dispatchWorkplaceCommand({ booking, action: 'check-in', commandIdentity: identityKey })
+        }
+      />
 
       <WorkplaceReservationSourceSummary
         workplace={{
@@ -708,7 +711,7 @@ export function WorkplaceUnifiedReservations() {
                   <Typography variant="overline" color="primary.main">
                     {t('workplace.reservations.detail.title')}
                   </Typography>
-                  <Typography component="h2" variant="h6">
+                  <Typography component="h2" variant="h6" ref={detailHeadingRef} tabIndex={-1}>
                     {selectedItem.title}
                   </Typography>
                 </Box>
@@ -930,7 +933,7 @@ export function WorkplaceUnifiedReservations() {
         onClose={() => setRelocating(null)}
         onDenied={() => {
           setRelocating(null);
-          toast.error(t('permissions.workplaceUpdateReadOnly'));
+          toast.error(t('workplace.my.relocate.accessDenied'));
         }}
       />
       <ConfirmDialog

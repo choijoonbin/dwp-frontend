@@ -80,4 +80,26 @@ describe('independent product artifact policy', () => {
       )
     ).toThrow(/invalid product identity/u);
   });
+
+  it('keeps the canonical legacy Mail route namespace narrow', () => {
+    const mailRoute = {
+      routeContractKey: 'route.admin.mail.connection-diagnostics.action',
+      routeKind: 'ACTION' as const,
+      subjectType: 'PRODUCT' as const,
+      productId: 'mail',
+      surfaceId: 'mail.management',
+    };
+    expect(
+      projectProductAuthorizationRoutes([mailRoute], {
+        productIds: ['mail'],
+        includeGovernedContextRoutes: false,
+      })
+    ).toEqual([mailRoute]);
+    expect(() =>
+      projectProductAuthorizationRoutes(
+        [{ ...mailRoute, productId: 'services', surfaceId: 'services.management' }],
+        { productIds: ['services'], includeGovernedContextRoutes: false }
+      )
+    ).toThrow(/invalid product identity/u);
+  });
 });

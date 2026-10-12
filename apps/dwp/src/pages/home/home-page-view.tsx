@@ -1,4 +1,4 @@
-import { Suspense } from 'react';
+import { Suspense, useId } from 'react';
 import { HOME_WIDGET_LIBRARY_ENABLED } from '@dwp-frontend/shared-utils';
 import Box from '@mui/material/Box';
 
@@ -125,6 +125,7 @@ export function HomePageView({
   widgetShadowObservation,
   workspaceUpdatedAt,
 }: HomePageViewProps) {
+  const galleryTriggerId = useId();
   const AdaptiveHome = activeHomeMode === 'MZ_V1' ? MzHome : FlowHome;
   return (
     <Box
@@ -302,7 +303,10 @@ export function HomePageView({
         catalogEnabled={HOME_WIDGET_LIBRARY_ENABLED}
         flow={editorFlowHomeEnabled}
         busy={customizationBusy}
-        onClose={() => setGalleryOpen(false)}
+        onClose={() => {
+          setGalleryOpen(false);
+          window.setTimeout(() => document.getElementById(galleryTriggerId)?.focus(), 0);
+        }}
         onAddApp={(app) => setDraftAppLayout((current) => placeLaunchpadApp(current, app))}
         onAddWidget={(widgetKey) =>
           setDraftWidgets((current) =>
@@ -317,6 +321,7 @@ export function HomePageView({
           widePresentation
           presentation={draftPresentation}
           busy={customizationBusy}
+          addControlId={galleryTriggerId}
           addLabel={t(
             HOME_WIDGET_LIBRARY_ENABLED ? 'editor.addItems' : 'editor.restoreHiddenItems'
           )}

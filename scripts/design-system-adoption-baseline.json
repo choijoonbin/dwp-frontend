@@ -2,8 +2,8 @@
   "version": 2,
   "files": {
     "apps/dwp/src/components/account-menu.tsx": {
-      "RawRadius": 5,
-      "RawTypography": 6,
+      "RawRadius": 6,
+      "RawTypography": 7,
       "IconButton": 1
     },
     "apps/dwp/src/components/app-management-request-dialog.tsx": {
@@ -51,6 +51,10 @@
       "RawRadius": 2,
       "RawTypography": 3
     },
+    "apps/dwp/src/components/mail-proposal-owner-handoff.tsx": {
+      "Alert": 4,
+      "RawTypography": 1
+    },
     "apps/dwp/src/components/notification-arrival-host.tsx": {
       "RawMotion": 1,
       "RawRadius": 2
@@ -71,7 +75,7 @@
     },
     "apps/dwp/src/components/product-surface-header-controls.tsx": {
       "RawRadius": 1,
-      "RawTypography": 2
+      "RawTypography": 1
     },
     "apps/dwp/src/components/product-surface-high-risk-command-dialog.tsx": {
       "Alert": 2,
@@ -142,10 +146,13 @@
       "Alert": 2,
       "CircularProgress": 1
     },
+    "apps/dwp/src/features/admin/access-assignment-row.tsx": {
+      "RawTypography": 1
+    },
     "apps/dwp/src/features/admin/access-manager.tsx": {
-      "RawTypography": 7,
+      "RawTypography": 6,
       "RawRadius": 2,
-      "IconButton": 2,
+      "IconButton": 3,
       "TextField": 1
     },
     "apps/dwp/src/features/admin/access-review-campaign-dialog.tsx": {
@@ -168,6 +175,9 @@
       "IconButton": 2,
       "RawTypography": 4
     },
+    "apps/dwp/src/features/admin/app-access-request-manager.tsx": {
+      "Alert": 1
+    },
     "apps/dwp/src/features/admin/app-admin-preset-manager.tsx": {
       "Alert": 2,
       "RawRadius": 3,
@@ -177,12 +187,22 @@
       "Alert": 3,
       "RawRadius": 3
     },
+    "apps/dwp/src/features/admin/app-preset-assignment-progress.tsx": {
+      "RawRadius": 2,
+      "Alert": 1
+    },
+    "apps/dwp/src/features/admin/application-lifecycle-catalog.tsx": {
+      "RawRadius": 4,
+      "Alert": 3
+    },
     "apps/dwp/src/features/admin/audit-event-correlations.tsx": {
-      "RawTypography": 4
+      "RawTypography": 1
+    },
+    "apps/dwp/src/features/admin/audit-evidence-summary.tsx": {
+      "RawRadius": 1,
+      "RawTypography": 2
     },
     "apps/dwp/src/features/admin/audit-explorer-overlays.tsx": {
-      "RawRadius": 2,
-      "RawTypography": 3,
       "Button": 7,
       "IconButton": 2,
       "Dialog": 3,
@@ -198,7 +218,8 @@
       "Button": 2
     },
     "apps/dwp/src/features/admin/audit-governance.tsx": {
-      "RawTypography": 3
+      "RawTypography": 3,
+      "Alert": 2
     },
     "apps/dwp/src/features/admin/audit-investigation-action-rails.tsx": {
       "RawRadius": 2,
@@ -230,36 +251,47 @@
       "IconButton": 1,
       "Button": 3
     },
+    "apps/dwp/src/features/admin/audit-policy-revision-evidence.tsx": {
+      "RawRadius": 4,
+      "RawTypography": 7,
+      "Alert": 1
+    },
     "apps/dwp/src/features/admin/audit-ui.tsx": {
       "RawRadius": 1,
       "RawTypography": 1
     },
     "apps/dwp/src/features/admin/catalog-assurance-workspace.tsx": {
-      "Alert": 2,
+      "Alert": 4,
       "RawTypography": 1
     },
     "apps/dwp/src/features/admin/catalog-explorer.tsx": {
-      "RawTypography": 3,
-      "Alert": 3,
-      "RawRadius": 1,
+      "RawTypography": 2,
+      "Alert": 4,
       "Skeleton": 2,
       "HardcodedColor": 1
     },
     "apps/dwp/src/features/admin/catalog-graph.tsx": {
-      "HardcodedColor": 17,
+      "HardcodedColor": 14,
       "RawShadow": 1,
       "RawRadius": 3,
       "RawTypography": 2
     },
+    "apps/dwp/src/features/admin/catalog-inventory-panel.tsx": {
+      "RawTypography": 1,
+      "RawRadius": 1
+    },
     "apps/dwp/src/features/admin/catalog-metric.tsx": {
       "RawTypography": 2
+    },
+    "apps/dwp/src/features/admin/catalog-presentation.ts": {
+      "HardcodedColor": 4
     },
     "apps/dwp/src/features/admin/home-app-layout-manager.tsx": {
       "Alert": 1,
       "RawRadius": 2
     },
     "apps/dwp/src/features/admin/home-composition-manager.tsx": {
-      "Alert": 2
+      "Alert": 5
     },
     "apps/dwp/src/features/admin/home-experience-manager.tsx": {
       "Alert": 4,
@@ -276,14 +308,15 @@
       "RawTypography": 15
     },
     "apps/dwp/src/features/admin/home-experience-revision-history.tsx": {
-      "Alert": 3
+      "Alert": 4
     },
     "apps/dwp/src/features/admin/home-widget-manager.tsx": {
-      "Alert": 1
+      "Alert": 2
     },
     "apps/dwp/src/features/admin/identity-provisioning-manager.tsx": {
       "RawTypography": 5,
-      "RawRadius": 1
+      "RawRadius": 1,
+      "Alert": 1
     },
     "apps/dwp/src/features/admin/localization-studio-components.tsx": {
       "RawRadius": 1
@@ -323,6 +356,13 @@
     "apps/dwp/src/features/admin/productivity-connector-manager.tsx": {
       "RawTypography": 2,
       "RawRadius": 2
+    },
+    "apps/dwp/src/features/admin/productivity-evidence-state.tsx": {
+      "Alert": 3
+    },
+    "apps/dwp/src/features/admin/recovery-account-verification-dialog.tsx": {
+      "Alert": 1,
+      "NativeDateTimeInput": 1
     },
     "apps/dwp/src/features/admin/reference-data-activity.tsx": {
       "RawRadius": 1,
@@ -389,7 +429,7 @@
       "RawTypography": 2
     },
     "apps/dwp/src/features/admin/saved-view-custody-manager.tsx": {
-      "Alert": 5,
+      "Alert": 6,
       "RawTypography": 3,
       "RawRadius": 2
     },
@@ -420,11 +460,59 @@
       "RawTypography": 5,
       "RawRadius": 1
     },
+    "apps/dwp/src/features/admin/tenant-access-projection-inspector.tsx": {
+      "Skeleton": 2,
+      "RawTypography": 1
+    },
+    "apps/dwp/src/features/admin/tenant-app-adoption-panel.tsx": {
+      "Alert": 6,
+      "RawRadius": 2,
+      "RawTypography": 2
+    },
+    "apps/dwp/src/features/admin/tenant-app-capability-matrix.tsx": {
+      "Alert": 4,
+      "RawRadius": 2,
+      "RawTypography": 2
+    },
+    "apps/dwp/src/features/admin/tenant-auth-policy-workflow.tsx": {
+      "Skeleton": 2,
+      "RawRadius": 1
+    },
     "apps/dwp/src/features/admin/tenant-branding-manager.tsx": {
       "HardcodedColor": 7,
-      "Alert": 2,
+      "Alert": 5,
       "RawRadius": 7,
       "RawTypography": 2
+    },
+    "apps/dwp/src/features/admin/tenant-governance-evidence.tsx": {
+      "Alert": 3,
+      "RawRadius": 3,
+      "RawTypography": 1
+    },
+    "apps/dwp/src/features/admin/tenant-home-template-history.tsx": {
+      "Alert": 1
+    },
+    "apps/dwp/src/features/admin/tenant-owner-projection-evidence.tsx": {
+      "Skeleton": 1,
+      "Alert": 4,
+      "RawRadius": 1
+    },
+    "apps/dwp/src/features/admin/tenant-setting-owner-registry-panel.tsx": {
+      "Skeleton": 4,
+      "Alert": 5,
+      "RawRadius": 2,
+      "TextField": 4
+    },
+    "apps/dwp/src/features/admin/tenant-settings-overview.tsx": {
+      "Alert": 2,
+      "Skeleton": 2,
+      "RawRadius": 3,
+      "RawTypography": 3
+    },
+    "apps/dwp/src/features/admin/tenant-sso-test-login.tsx": {
+      "Skeleton": 2,
+      "Alert": 2,
+      "RawRadius": 1
     },
     "apps/dwp/src/features/admin/workforce-access-dialogs.tsx": {
       "Alert": 5,
@@ -438,6 +526,12 @@
     "apps/dwp/src/features/admin/workforce-access-overview.tsx": {
       "RawRadius": 6,
       "RawTypography": 4
+    },
+    "apps/dwp/src/features/approvals/admin-v2/approval-admin-v2-action-deck.tsx": {
+      "RawRadius": 1
+    },
+    "apps/dwp/src/features/approvals/admin-v2/template-library-workspace.tsx": {
+      "RawRadius": 1
     },
     "apps/dwp/src/features/approvals/approval-home.tsx": {
       "Skeleton": 3,
@@ -481,10 +575,10 @@
       "Skeleton": 2
     },
     "apps/dwp/src/features/calendar/calendar-availability.tsx": {
+      "RawTypography": 9,
       "RawRadius": 6,
-      "Alert": 3,
-      "Skeleton": 2,
-      "RawTypography": 5
+      "Alert": 4,
+      "Skeleton": 2
     },
     "apps/dwp/src/features/calendar/calendar-components.tsx": {
       "HardcodedColor": 10,
@@ -492,9 +586,19 @@
       "RawTypography": 15,
       "Alert": 1
     },
+    "apps/dwp/src/features/calendar/calendar-delegation-dialog.tsx": {
+      "Alert": 2,
+      "RawTypography": 1,
+      "TextField": 2,
+      "NativeDateTimeInput": 2
+    },
+    "apps/dwp/src/features/calendar/calendar-event-dialog-details.tsx": {
+      "RawRadius": 2,
+      "RawTypography": 1
+    },
     "apps/dwp/src/features/calendar/calendar-event-dialog.tsx": {
       "RawTypography": 2,
-      "RawRadius": 3
+      "RawRadius": 1
     },
     "apps/dwp/src/features/calendar/calendar-experience.tsx": {
       "RawTypography": 14,
@@ -507,16 +611,17 @@
       "Skeleton": 6
     },
     "apps/dwp/src/features/calendar/calendar-insights.tsx": {
+      "RawTypography": 9,
       "Skeleton": 2,
-      "RawRadius": 2
+      "RawRadius": 6
     },
     "apps/dwp/src/features/calendar/calendar-interactive-grid.tsx": {
       "RawTypography": 8,
       "RawRadius": 3
     },
     "apps/dwp/src/features/calendar/calendar-invitations.tsx": {
+      "RawRadius": 2,
       "RawTypography": 2,
-      "RawRadius": 1,
       "Alert": 1,
       "Skeleton": 1
     },
@@ -527,8 +632,17 @@
     "apps/dwp/src/features/calendar/calendar-scheduling-assistant.tsx": {
       "RawRadius": 2,
       "RawTypography": 2,
-      "Alert": 6,
+      "Alert": 7,
       "CircularProgress": 2
+    },
+    "apps/dwp/src/features/calendar/calendar-settings.tsx": {
+      "RawRadius": 6,
+      "HardcodedColor": 1,
+      "Skeleton": 5,
+      "Alert": 5,
+      "RawTypography": 7,
+      "TextField": 2,
+      "NativeDateTimeInput": 2
     },
     "apps/dwp/src/features/calendar/calendar-share-dialog.tsx": {
       "RawTypography": 7,
@@ -543,12 +657,13 @@
       "Skeleton": 1
     },
     "apps/dwp/src/features/calendar/calendar-trash.tsx": {
-      "Alert": 1,
-      "Skeleton": 1,
-      "RawRadius": 2,
-      "RawTypography": 3
+      "Alert": 2,
+      "RawTypography": 5,
+      "RawRadius": 3,
+      "Skeleton": 1
     },
     "apps/dwp/src/features/communications/announcement-dialog.tsx": {
+      "Alert": 1,
       "RawRadius": 1
     },
     "apps/dwp/src/features/communications/announcement-manager.tsx": {
@@ -569,6 +684,105 @@
       "RawRadius": 1,
       "RawTypography": 1
     },
+    "apps/dwp/src/features/dwaion/admin-advancement/dwaion-admin-advancement-ui.tsx": {
+      "RawRadius": 1
+    },
+    "apps/dwp/src/features/dwaion/admin-advancement/dwaion-connector-operations-panel.tsx": {
+      "RawRadius": 1,
+      "RawTypography": 1
+    },
+    "apps/dwp/src/features/dwaion/admin-advancement/dwaion-evaluation-operations-panel.tsx": {
+      "RawRadius": 3
+    },
+    "apps/dwp/src/features/dwaion/admin-advancement/dwaion-governed-command-dialog.tsx": {
+      "Dialog": 1,
+      "DialogTitle": 1,
+      "DialogContent": 1,
+      "Alert": 4,
+      "DialogActions": 1
+    },
+    "apps/dwp/src/features/dwaion/admin-advancement/dwaion-governed-command-presentation.tsx": {
+      "RawRadius": 1,
+      "RawTypography": 1,
+      "LinearProgress": 1,
+      "Alert": 1
+    },
+    "apps/dwp/src/features/dwaion/admin-advancement/dwaion-incident-workbench-panel.tsx": {
+      "RawTypography": 3,
+      "RawRadius": 1
+    },
+    "apps/dwp/src/features/dwaion/admin-advancement/dwaion-model-routing-registry.tsx": {
+      "RawTypography": 3,
+      "RawRadius": 1
+    },
+    "apps/dwp/src/features/dwaion/admin-advancement/dwaion-outcomes-operations-panel.tsx": {
+      "RawRadius": 3,
+      "LinearProgress": 1
+    },
+    "apps/dwp/src/features/dwaion/admin-advancement/dwaion-pending-approval-panel.tsx": {
+      "CircularProgress": 1
+    },
+    "apps/dwp/src/features/dwaion/admin-advancement/dwaion-token-budget-activation.tsx": {
+      "Alert": 1,
+      "RawTypography": 1
+    },
+    "apps/dwp/src/features/dwaion/artifact-studio/dwaion-artifact-collaboration-recovery.tsx": {
+      "TextField": 1,
+      "RawRadius": 1
+    },
+    "apps/dwp/src/features/dwaion/artifact-studio/dwaion-artifact-collaboration-views.tsx": {
+      "Alert": 3,
+      "RawRadius": 4,
+      "RawTypography": 1
+    },
+    "apps/dwp/src/features/dwaion/artifact-studio/dwaion-artifact-collaboration.tsx": {
+      "RawRadius": 1,
+      "RawTypography": 1,
+      "Alert": 2,
+      "TextField": 3,
+      "NativeDateTimeInput": 1
+    },
+    "apps/dwp/src/features/dwaion/artifact-studio/dwaion-artifact-conversation-rail.tsx": {
+      "TextField": 1
+    },
+    "apps/dwp/src/features/dwaion/artifact-studio/dwaion-artifact-editor.tsx": {
+      "NativeDateTimeInput": 1,
+      "RawRadius": 2
+    },
+    "apps/dwp/src/features/dwaion/artifact-studio/dwaion-artifact-export-status.tsx": {
+      "RawRadius": 1
+    },
+    "apps/dwp/src/features/dwaion/artifact-studio/dwaion-artifact-inline-comments.tsx": {
+      "RawRadius": 1,
+      "Alert": 3,
+      "TextField": 3,
+      "RawTypography": 2
+    },
+    "apps/dwp/src/features/dwaion/deep-research/dwaion-deep-research-planner.tsx": {
+      "RawRadius": 2
+    },
+    "apps/dwp/src/features/dwaion/deep-research/dwaion-deep-research-run.tsx": {
+      "LinearProgress": 1,
+      "RawRadius": 3,
+      "Dialog": 1,
+      "DialogTitle": 1,
+      "DialogContent": 1
+    },
+    "apps/dwp/src/features/dwaion/deep-research/dwaion-deep-research-workspace.tsx": {
+      "CircularProgress": 1
+    },
+    "apps/dwp/src/features/dwaion/deep-research/dwaion-research-delivery-dialog.tsx": {
+      "Dialog": 1,
+      "DialogTitle": 1,
+      "DialogContent": 1,
+      "TextField": 7,
+      "NativeDateTimeInput": 1,
+      "DialogActions": 1
+    },
+    "apps/dwp/src/features/dwaion/deep-research/dwaion-research-report.tsx": {
+      "RawTypography": 5,
+      "RawRadius": 2
+    },
     "apps/dwp/src/features/dwaion/dwaion-actions.tsx": {
       "Alert": 2,
       "Skeleton": 1
@@ -584,6 +798,9 @@
       "Skeleton": 1,
       "RawTypography": 1
     },
+    "apps/dwp/src/features/dwaion/dwaion-admin-models-routing.tsx": {
+      "RawRadius": 1
+    },
     "apps/dwp/src/features/dwaion/dwaion-admin-safety.tsx": {
       "Alert": 2
     },
@@ -593,6 +810,13 @@
     "apps/dwp/src/features/dwaion/dwaion-agents.tsx": {
       "Alert": 1,
       "Skeleton": 1
+    },
+    "apps/dwp/src/features/dwaion/dwaion-ai-runtime-control.tsx": {
+      "LinearProgress": 1,
+      "RawRadius": 1
+    },
+    "apps/dwp/src/features/dwaion/dwaion-capability-actions.tsx": {
+      "RawRadius": 1
     },
     "apps/dwp/src/features/dwaion/dwaion-conversation-transcript.tsx": {
       "RawRadius": 1,
@@ -609,6 +833,9 @@
       "Alert": 3,
       "RawTypography": 2
     },
+    "apps/dwp/src/features/dwaion/dwaion-proposal-action-review.tsx": {
+      "RawRadius": 10
+    },
     "apps/dwp/src/features/dwaion/dwaion-proposal-list.tsx": {
       "RawMotion": 1
     },
@@ -621,10 +848,64 @@
       "CircularProgress": 1
     },
     "apps/dwp/src/features/dwaion/dwaion-workspace-start.tsx": {
+      "RawRadius": 1,
       "Skeleton": 1
     },
     "apps/dwp/src/features/dwaion/dwaion-workspace.tsx": {
+      "Alert": 1,
+      "RawRadius": 1
+    },
+    "apps/dwp/src/features/dwaion/personal-controls/dwaion-deletion-history.tsx": {
+      "RawRadius": 4,
+      "Alert": 3
+    },
+    "apps/dwp/src/features/dwaion/personal-controls/dwaion-memory-controls.tsx": {
+      "NativeDateTimeInput": 1
+    },
+    "apps/dwp/src/features/dwaion/personal-controls/dwaion-memory-detail.tsx": {
+      "RawRadius": 3,
+      "RawTypography": 2
+    },
+    "apps/dwp/src/features/dwaion/personal-controls/dwaion-memory-evidence.tsx": {
+      "RawRadius": 2,
+      "RawTypography": 1
+    },
+    "apps/dwp/src/features/dwaion/routines/dwaion-routine-approval-queue.tsx": {
+      "RawRadius": 2,
+      "CircularProgress": 2,
       "Alert": 1
+    },
+    "apps/dwp/src/features/dwaion/routines/dwaion-routine-conflict-workbench.tsx": {
+      "RawRadius": 9,
+      "CircularProgress": 1,
+      "Alert": 2,
+      "RawTypography": 1
+    },
+    "apps/dwp/src/features/dwaion/routines/dwaion-routine-dry-run-inspection.tsx": {
+      "RawRadius": 4
+    },
+    "apps/dwp/src/features/dwaion/routines/dwaion-routine-editor-dialog.tsx": {
+      "RawRadius": 2
+    },
+    "apps/dwp/src/features/dwaion/routines/dwaion-routine-evidence-panel.tsx": {
+      "RawRadius": 3
+    },
+    "apps/dwp/src/features/dwaion/routines/dwaion-routine-execution-panel.tsx": {
+      "HardcodedColor": 3,
+      "RawRadius": 3
+    },
+    "apps/dwp/src/features/dwaion/routines/dwaion-routine-run-workbench.tsx": {
+      "RawRadius": 6
+    },
+    "apps/dwp/src/features/dwaion/secure-attachments/dwaion-secure-attachment-evidence-dialog.tsx": {
+      "Dialog": 1,
+      "DialogTitle": 1,
+      "DialogContent": 1,
+      "Alert": 1,
+      "DialogActions": 1
+    },
+    "apps/dwp/src/features/dwaion/secure-attachments/dwaion-secure-attachment-tray.tsx": {
+      "LinearProgress": 1
     },
     "apps/dwp/src/features/hcm/hcm-home-visuals.tsx": {
       "HardcodedColor": 10,
@@ -637,7 +918,6 @@
       "RawRadius": 1
     },
     "apps/dwp/src/features/hcm/hcm-home.tsx": {
-      "Skeleton": 3,
       "RawTypography": 10,
       "RawRadius": 1,
       "RawMotion": 3
@@ -651,10 +931,9 @@
       "RawTypography": 2
     },
     "apps/dwp/src/features/hcm/hr-benefits-pay-talent.tsx": {
-      "RawTypography": 12,
-      "HardcodedColor": 4,
-      "RawRadius": 2,
-      "LinearProgress": 1
+      "RawTypography": 3,
+      "HardcodedColor": 1,
+      "RawRadius": 1
     },
     "apps/dwp/src/features/hcm/hr-domain-components.tsx": {
       "RawTypography": 4,
@@ -673,21 +952,16 @@
       "RawTypography": 2
     },
     "apps/dwp/src/features/hcm/hr-team-absence-workspace.tsx": {
-      "Alert": 1,
       "RawTypography": 2
     },
-    "apps/dwp/src/features/hcm/hr-team-time-workspace.tsx": {
+    "apps/dwp/src/features/hcm/hr-team-scope-context.tsx": {
       "Alert": 1
-    },
-    "apps/dwp/src/features/hcm/hr-time-workspace.tsx": {
-      "RawTypography": 3,
-      "HardcodedColor": 2
     },
     "apps/dwp/src/features/hcm/my-hr-profile.tsx": {
       "RawTypography": 3
     },
     "apps/dwp/src/features/hcm/my-team.tsx": {
-      "RawTypography": 2
+      "RawTypography": 3
     },
     "apps/dwp/src/features/home-personalization/home-appearance-section.tsx": {
       "RawRadius": 8,
@@ -698,7 +972,7 @@
     },
     "apps/dwp/src/features/home-personalization/home-studio-sections.tsx": {
       "RawTypography": 1,
-      "Alert": 2
+      "Alert": 4
     },
     "apps/dwp/src/features/home/announcements-widget.tsx": {
       "HardcodedColor": 7,
@@ -735,8 +1009,8 @@
     "apps/dwp/src/features/home/app-launchpad-styles.ts": {
       "RawRadius": 3,
       "RawMotion": 1,
-      "HardcodedColor": 14,
-      "RawShadow": 4
+      "HardcodedColor": 6,
+      "RawShadow": 2
     },
     "apps/dwp/src/features/home/app-launchpad.tsx": {
       "HardcodedColor": 20,
@@ -798,11 +1072,11 @@
       "RawTypography": 9
     },
     "apps/dwp/src/features/home/flow-home/next-actions.tsx": {
-      "RawRadius": 3,
-      "RawTypography": 7
+      "RawRadius": 1,
+      "RawTypography": 2
     },
     "apps/dwp/src/features/home/home-day-rail.tsx": {
-      "RawTypography": 13
+      "RawTypography": 12
     },
     "apps/dwp/src/features/home/home-item-gallery.tsx": {
       "HardcodedColor": 2,
@@ -816,71 +1090,222 @@
       "HardcodedColor": 1,
       "RawRadius": 1
     },
-    "apps/dwp/src/features/mail/mail-accounts.tsx": {
+    "apps/dwp/src/features/home/mz-home/mz-ai-stage.tsx": {
+      "RawShadow": 1,
+      "HardcodedColor": 2,
+      "TextField": 1,
       "Alert": 2,
-      "Skeleton": 1,
+      "RawRadius": 1
+    },
+    "apps/dwp/src/features/home/mz-home/mz-compact-launcher.tsx": {
+      "HardcodedColor": 10,
+      "RawRadius": 1,
+      "RawTypography": 1
+    },
+    "apps/dwp/src/features/home/mz-home/mz-grounded-workspace.tsx": {
+      "Alert": 3,
+      "RawRadius": 5,
+      "RawTypography": 5
+    },
+    "apps/dwp/src/features/home/mz-home/mz-home.tsx": {
+      "RawRadius": 1,
+      "HardcodedColor": 3
+    },
+    "apps/dwp/src/features/home/mz-home/mz-relevant-context.tsx": {
       "RawRadius": 2,
-      "RawTypography": 2
+      "RawTypography": 3
+    },
+    "apps/dwp/src/features/hris/employment/assignment-proposal-workspace.tsx": {
+      "Alert": 5,
+      "RawTypography": 4
+    },
+    "apps/dwp/src/features/mail/mail-address-book-dialogs.tsx": {
+      "Alert": 4,
+      "RawTypography": 1
+    },
+    "apps/dwp/src/features/mail/mail-address-book.tsx": {
+      "Alert": 1
+    },
+    "apps/dwp/src/features/mail/mail-admin-operations-a02.tsx": {
+      "Dialog": 1,
+      "DialogTitle": 1,
+      "DialogContent": 1,
+      "TextField": 1,
+      "DialogActions": 1
+    },
+    "apps/dwp/src/features/mail/mail-admin-operations-a03.tsx": {
+      "Dialog": 2,
+      "DialogTitle": 2,
+      "DialogContent": 2,
+      "TextField": 2,
+      "NativeDateTimeInput": 1,
+      "DialogActions": 2
+    },
+    "apps/dwp/src/features/mail/mail-admin-operations-a05.tsx": {
+      "Dialog": 2,
+      "DialogTitle": 2,
+      "DialogContent": 2,
+      "DialogActions": 2,
+      "TextField": 2,
+      "NativeDateTimeInput": 1
+    },
+    "apps/dwp/src/features/mail/mail-admin-operations-a06.tsx": {
+      "TextField": 4,
+      "NativeDateTimeInput": 2,
+      "Dialog": 2,
+      "DialogTitle": 2,
+      "DialogContent": 2,
+      "DialogActions": 2
+    },
+    "apps/dwp/src/features/mail/mail-admin-operations-workspace.tsx": {
+      "Alert": 2,
+      "Skeleton": 2
+    },
+    "apps/dwp/src/features/mail/mail-admin-retention-hold-editor.tsx": {
+      "Dialog": 1,
+      "DialogTitle": 1,
+      "DialogContent": 1,
+      "TextField": 4,
+      "NativeDateTimeInput": 1,
+      "DialogActions": 1
+    },
+    "apps/dwp/src/features/mail/mail-admin-writing-assets-workspace.tsx": {
+      "Alert": 7,
+      "Skeleton": 2,
+      "RawTypography": 5
     },
     "apps/dwp/src/features/mail/mail-admin.tsx": {
       "Alert": 3,
       "Skeleton": 2,
-      "RawRadius": 7,
-      "HardcodedColor": 9,
-      "RawTypography": 9
+      "RawRadius": 4,
+      "RawTypography": 6
     },
     "apps/dwp/src/features/mail/mail-command-palette.tsx": {
       "RawRadius": 2,
       "RawTypography": 1
     },
     "apps/dwp/src/features/mail/mail-compose-dialog.tsx": {
-      "Alert": 2
+      "Alert": 6
+    },
+    "apps/dwp/src/features/mail/mail-compose-options.tsx": {
+      "Alert": 5,
+      "RawTypography": 3,
+      "NativeDateTimeInput": 1
+    },
+    "apps/dwp/src/features/mail/mail-delivery-operations-workspace.tsx": {
+      "Skeleton": 2,
+      "Alert": 4,
+      "RawTypography": 5,
+      "NativeDateTimeInput": 1
+    },
+    "apps/dwp/src/features/mail/mail-draft-conflict-review.tsx": {
+      "Alert": 1,
+      "RawTypography": 5
     },
     "apps/dwp/src/features/mail/mail-draft-editor.tsx": {
       "RawTypography": 2,
-      "Alert": 1
+      "Alert": 5
     },
     "apps/dwp/src/features/mail/mail-draft-save-status.tsx": {
       "LinearProgress": 1,
       "Alert": 1
     },
-    "apps/dwp/src/features/mail/mail-home.tsx": {
+    "apps/dwp/src/features/mail/mail-follow-up-tracker.tsx": {
+      "RawTypography": 2,
+      "Alert": 3,
+      "Skeleton": 2,
+      "NativeDateTimeInput": 1
+    },
+    "apps/dwp/src/features/mail/mail-group-receipt-dialog.tsx": {
       "Alert": 1,
+      "RawTypography": 1
+    },
+    "apps/dwp/src/features/mail/mail-home.tsx": {
+      "Alert": 2,
       "Skeleton": 3
     },
     "apps/dwp/src/features/mail/mail-inbox.tsx": {
+      "Alert": 3,
       "RawRadius": 1,
-      "LinearProgress": 1,
-      "Alert": 2
+      "LinearProgress": 1
     },
     "apps/dwp/src/features/mail/mail-lifecycle-undo.tsx": {
       "Alert": 1
+    },
+    "apps/dwp/src/features/mail/mail-message-body-field.tsx": {
+      "RawRadius": 2
+    },
+    "apps/dwp/src/features/mail/mail-message-presentation.ts": {
+      "HardcodedColor": 1
+    },
+    "apps/dwp/src/features/mail/mail-mobile-navigation.tsx": {
+      "RawTypography": 2
     },
     "apps/dwp/src/features/mail/mail-organization-dialogs.tsx": {
       "RawTypography": 3,
       "HardcodedColor": 7
     },
     "apps/dwp/src/features/mail/mail-organization.tsx": {
-      "Alert": 1,
+      "Alert": 2,
       "Skeleton": 2,
       "RawRadius": 2,
-      "RawTypography": 5
+      "RawTypography": 8
+    },
+    "apps/dwp/src/features/mail/mail-preferences-workspace.tsx": {
+      "Alert": 4,
+      "Skeleton": 1,
+      "RawRadius": 1,
+      "RawTypography": 12
+    },
+    "apps/dwp/src/features/mail/mail-proposal-handoff-status.tsx": {
+      "Alert": 3,
+      "RawTypography": 1
+    },
+    "apps/dwp/src/features/mail/mail-proposal-workspace-controls.tsx": {
+      "NativeDateTimeInput": 2,
+      "Alert": 1
+    },
+    "apps/dwp/src/features/mail/mail-recipient-picker.tsx": {
+      "Skeleton": 2,
+      "Alert": 1,
+      "RawTypography": 4
     },
     "apps/dwp/src/features/mail/mail-rule-backfill-panel.tsx": {
       "RawRadius": 1,
       "RawTypography": 2,
-      "Alert": 5
+      "Alert": 7
+    },
+    "apps/dwp/src/features/mail/mail-search-controls.tsx": {
+      "NativeDateTimeInput": 2
+    },
+    "apps/dwp/src/features/mail/mail-secondary-workspace.tsx": {
+      "Alert": 4,
+      "Skeleton": 2
     },
     "apps/dwp/src/features/mail/mail-snooze-dialog.tsx": {
       "Alert": 1
     },
     "apps/dwp/src/features/mail/mail-thread-detail.tsx": {
-      "Alert": 2,
-      "RawTypography": 10,
-      "RawRadius": 2
+      "Alert": 7,
+      "RawTypography": 6,
+      "RawRadius": 1
+    },
+    "apps/dwp/src/features/mail/mail-thread-lifecycle-actions.tsx": {
+      "RawTypography": 1,
+      "Alert": 1
+    },
+    "apps/dwp/src/features/mail/mail-thread-message-card.tsx": {
+      "RawRadius": 1,
+      "RawTypography": 4,
+      "Alert": 1
+    },
+    "apps/dwp/src/features/mail/mail-writing-assets-workspace.tsx": {
+      "Alert": 5,
+      "Skeleton": 2,
+      "RawTypography": 3
     },
     "apps/dwp/src/features/meetings/live-video-meeting-room.css": {
-      "HardcodedColor": 43,
+      "HardcodedColor": 37,
       "RawMotion": 2,
       "RawRadius": 3,
       "RawTypography": 9,
@@ -1062,10 +1487,10 @@
       "RawTypography": 1
     },
     "apps/dwp/src/features/messaging/messaging-message-row.tsx": {
+      "RawShadow": 2,
       "RawMotion": 1,
       "RawTypography": 4,
-      "RawRadius": 2,
-      "RawShadow": 2
+      "RawRadius": 2
     },
     "apps/dwp/src/features/messaging/messaging-people.tsx": {
       "RawRadius": 1,
@@ -1191,7 +1616,7 @@
     "apps/dwp/src/features/people/organization/organization-scenario-drawer.tsx": {
       "RawTypography": 6,
       "IconButton": 3,
-      "Alert": 3,
+      "Alert": 4,
       "TextField": 6,
       "NativeDateTimeInput": 2,
       "Button": 6,
@@ -1203,24 +1628,37 @@
       "RawTypography": 1
     },
     "apps/dwp/src/features/people/organization/organization-scenario-position-editor.tsx": {
+      "Alert": 2,
       "Button": 3,
       "TextField": 10,
-      "NativeDateTimeInput": 1,
-      "Alert": 1
+      "NativeDateTimeInput": 1
     },
     "apps/dwp/src/features/people/organization/organization-scenario-support.tsx": {
       "RawRadius": 1,
       "CircularProgress": 1
     },
+    "apps/dwp/src/features/provider/provider-artifact-governance-details.tsx": {
+      "RawTypography": 7,
+      "Alert": 1
+    },
+    "apps/dwp/src/features/provider/provider-artifact-governance-dialogs.tsx": {
+      "Alert": 15,
+      "RawRadius": 1
+    },
+    "apps/dwp/src/features/provider/provider-artifact-governance.tsx": {
+      "Alert": 10,
+      "RawRadius": 2,
+      "RawTypography": 2
+    },
     "apps/dwp/src/features/provider/provider-audit.tsx": {
       "Dialog": 1,
       "DialogTitle": 1,
       "DialogContent": 1,
-      "RawTypography": 2,
+      "Alert": 2,
       "DialogActions": 1,
       "Button": 1,
+      "RawTypography": 1,
       "IconButton": 1,
-      "Alert": 1,
       "TextField": 4
     },
     "apps/dwp/src/features/provider/provider-code-contracts.tsx": {
@@ -1234,7 +1672,7 @@
     },
     "apps/dwp/src/features/provider/provider-commercial.tsx": {
       "RawTypography": 4,
-      "Alert": 1,
+      "Alert": 3,
       "LinearProgress": 1,
       "RawRadius": 1
     },
@@ -1253,16 +1691,29 @@
       "Alert": 3,
       "RawTypography": 2
     },
+    "apps/dwp/src/features/provider/provider-data-policy-partial-warnings.tsx": {
+      "Alert": 2
+    },
+    "apps/dwp/src/features/provider/provider-data-policy-rule-summary.tsx": {
+      "Alert": 1,
+      "RawRadius": 1,
+      "RawTypography": 1
+    },
     "apps/dwp/src/features/provider/provider-data-policy-studio.tsx": {
       "Alert": 8,
       "RawTypography": 2
     },
+    "apps/dwp/src/features/provider/provider-feature-rollout-dialogs.tsx": {
+      "Alert": 6,
+      "RawRadius": 1,
+      "RawTypography": 1
+    },
     "apps/dwp/src/features/provider/provider-feature-rollout-evaluation-preview.tsx": {
-      "Alert": 2
+      "Alert": 6
     },
     "apps/dwp/src/features/provider/provider-feature-rollouts.tsx": {
       "Alert": 7,
-      "RawTypography": 3,
+      "RawTypography": 2,
       "LinearProgress": 1,
       "RawRadius": 1
     },
@@ -1278,6 +1729,7 @@
     "apps/dwp/src/features/provider/provider-health.tsx": {
       "RawRadius": 5,
       "Button": 1,
+      "Alert": 1,
       "RawTypography": 7
     },
     "apps/dwp/src/features/provider/provider-onboarding-dialog.tsx": {
@@ -1294,7 +1746,7 @@
       "Dialog": 1,
       "DialogTitle": 1,
       "DialogContent": 1,
-      "Alert": 3,
+      "Alert": 5,
       "RawTypography": 5,
       "RawRadius": 1,
       "TextField": 1,
@@ -1309,19 +1761,28 @@
       "TextField": 1,
       "DialogActions": 1,
       "Button": 3,
-      "RawRadius": 4
+      "RawRadius": 4,
+      "Alert": 1
+    },
+    "apps/dwp/src/features/provider/provider-overview-presenters.tsx": {
+      "RawTypography": 2,
+      "RawRadius": 1
     },
     "apps/dwp/src/features/provider/provider-overview.tsx": {
-      "RawTypography": 12,
-      "RawRadius": 7,
+      "RawRadius": 5,
       "Button": 1,
+      "RawTypography": 9,
       "Skeleton": 3
+    },
+    "apps/dwp/src/features/provider/provider-recent-activity.tsx": {
+      "RawRadius": 1,
+      "RawTypography": 1
     },
     "apps/dwp/src/features/provider/provider-reliability.tsx": {
       "Dialog": 1,
       "DialogTitle": 1,
       "DialogContent": 1,
-      "Alert": 1,
+      "Alert": 3,
       "TextField": 11,
       "NativeDateTimeInput": 3,
       "DialogActions": 1,
@@ -1329,13 +1790,30 @@
       "RawTypography": 4,
       "RawRadius": 1
     },
-    "apps/dwp/src/features/provider/provider-support-post-review-evidence.tsx": {
-      "CircularProgress": 1,
-      "Alert": 4,
+    "apps/dwp/src/features/provider/provider-resource-change-governance.tsx": {
+      "Alert": 7,
+      "RawRadius": 1,
       "RawTypography": 1
     },
-    "apps/dwp/src/features/provider/provider-support.tsx": {
+    "apps/dwp/src/features/provider/provider-resource-governance.tsx": {
+      "Alert": 12,
+      "NativeDateTimeInput": 3,
+      "RawTypography": 3,
+      "RawRadius": 1
+    },
+    "apps/dwp/src/features/provider/provider-resource-ledger-dialog.tsx": {
+      "Alert": 2
+    },
+    "apps/dwp/src/features/provider/provider-support-post-review-evidence.tsx": {
+      "CircularProgress": 1,
       "Alert": 5,
+      "RawTypography": 1
+    },
+    "apps/dwp/src/features/provider/provider-support-request-evidence.tsx": {
+      "Alert": 1
+    },
+    "apps/dwp/src/features/provider/provider-support.tsx": {
+      "Alert": 7,
       "RawTypography": 2
     },
     "apps/dwp/src/features/provider/provider-tenant-columns.tsx": {
@@ -1350,7 +1828,7 @@
       "Button": 13,
       "Alert": 5,
       "RawRadius": 1,
-      "RawTypography": 3
+      "RawTypography": 2
     },
     "apps/dwp/src/features/provider/provider-tenant-diagnosis-boundary.tsx": {
       "Alert": 2
@@ -1364,6 +1842,13 @@
       "Alert": 2,
       "HardcodedColor": 2,
       "RawTypography": 2
+    },
+    "apps/dwp/src/features/provider/provider-tenant-lifecycle-governance.tsx": {
+      "Alert": 11,
+      "RawTypography": 1
+    },
+    "apps/dwp/src/features/provider/provider-tenant-support-history.tsx": {
+      "RawTypography": 1
     },
     "apps/dwp/src/features/provider/provider-tenants.tsx": {
       "RawRadius": 1,
@@ -1388,6 +1873,19 @@
       "Alert": 1,
       "RawTypography": 2,
       "RawRadius": 1
+    },
+    "apps/dwp/src/features/rooms/workplace-access-pass.tsx": {
+      "RawRadius": 6,
+      "HardcodedColor": 29,
+      "RawShadow": 1,
+      "RawTypography": 9,
+      "LinearProgress": 1,
+      "IconButton": 1,
+      "Dialog": 2,
+      "DialogTitle": 2,
+      "DialogContent": 2,
+      "TextField": 1,
+      "DialogActions": 2
     },
     "apps/dwp/src/features/rooms/workplace-admin-governance-floor-plans.tsx": {
       "Alert": 4,
@@ -1415,6 +1913,15 @@
     "apps/dwp/src/features/rooms/workplace-admin-policy.tsx": {
       "Skeleton": 1
     },
+    "apps/dwp/src/features/rooms/workplace-assistant-request-form.tsx": {
+      "NativeDateTimeInput": 2
+    },
+    "apps/dwp/src/features/rooms/workplace-exception-console.tsx": {
+      "RawTypography": 5,
+      "CircularProgress": 1,
+      "TextField": 2,
+      "Alert": 9
+    },
     "apps/dwp/src/features/rooms/workplace-explore.tsx": {
       "Skeleton": 1,
       "CircularProgress": 1
@@ -1430,12 +1937,81 @@
     "apps/dwp/src/features/rooms/workplace-legal-hold-control.tsx": {
       "Alert": 1
     },
+    "apps/dwp/src/features/rooms/workplace-navigation-device-operations.tsx": {
+      "RawTypography": 7
+    },
+    "apps/dwp/src/features/rooms/workplace-navigation-device-surfaces.tsx": {
+      "RawTypography": 10,
+      "HardcodedColor": 6,
+      "RawRadius": 3
+    },
+    "apps/dwp/src/features/rooms/workplace-navigation-device-ui.ts": {
+      "HardcodedColor": 7
+    },
+    "apps/dwp/src/features/rooms/workplace-navigation-device-workflows.tsx": {
+      "RawTypography": 2
+    },
+    "apps/dwp/src/features/rooms/workplace-navigation-wayfinding.tsx": {
+      "RawTypography": 12,
+      "RawRadius": 5,
+      "HardcodedColor": 4
+    },
     "apps/dwp/src/features/rooms/workplace-operation-json-details.tsx": {
       "RawTypography": 2
     },
     "apps/dwp/src/features/rooms/workplace-relocate-booking-dialog.tsx": {
       "Skeleton": 1,
       "Alert": 2
+    },
+    "apps/dwp/src/features/rooms/workplace-reservation-resource-commands.tsx": {
+      "RawRadius": 1,
+      "TextField": 2
+    },
+    "apps/dwp/src/features/rooms/workplace-resource-closure-execution.tsx": {
+      "RawRadius": 8,
+      "RawTypography": 8,
+      "Alert": 1,
+      "TextField": 1
+    },
+    "apps/dwp/src/features/rooms/workplace-resource-qr-print.tsx": {
+      "Dialog": 1,
+      "DialogTitle": 1,
+      "DialogContent": 1,
+      "DialogActions": 1
+    },
+    "apps/dwp/src/features/rooms/workplace-service-capacity-timeline.tsx": {
+      "LinearProgress": 1
+    },
+    "apps/dwp/src/features/rooms/workplace-service-order-details.tsx": {
+      "HardcodedColor": 3
+    },
+    "apps/dwp/src/features/rooms/workplace-service-sensitive-actions.tsx": {
+      "RawTypography": 1
+    },
+    "apps/dwp/src/features/rooms/workplace-space-planning-board-report.tsx": {
+      "RawRadius": 2,
+      "RawTypography": 3
+    },
+    "apps/dwp/src/features/rooms/workplace-space-planning-editor.tsx": {
+      "RawTypography": 3,
+      "NativeDateTimeInput": 2
+    },
+    "apps/dwp/src/features/rooms/workplace-space-planning-impact.tsx": {
+      "RawTypography": 6,
+      "RawRadius": 1
+    },
+    "apps/dwp/src/features/rooms/workplace-space-planning-overview.tsx": {
+      "RawTypography": 9,
+      "RawRadius": 5,
+      "LinearProgress": 1
+    },
+    "apps/dwp/src/features/rooms/workplace-space-planning-scenario-list.tsx": {
+      "RawTypography": 2,
+      "RawRadius": 1
+    },
+    "apps/dwp/src/features/rooms/workplace-space-planning-scope.tsx": {
+      "RawTypography": 1,
+      "NativeDateTimeInput": 2
     },
     "apps/dwp/src/features/search/global-search-dialog.tsx": {
       "Dialog": 1,
@@ -1531,6 +2107,9 @@
       "RawTypography": 2,
       "RawRadius": 1
     },
+    "apps/dwp/src/features/workforce/hris-operations-dialogs.tsx": {
+      "Alert": 1
+    },
     "apps/dwp/src/features/workforce/hris-operations-secondary-views.tsx": {
       "RawTypography": 2
     },
@@ -1571,6 +2150,26 @@
       "RawTypography": 2,
       "RawRadius": 1
     },
+    "apps/dwp/src/pages/account/managed-effective-settings.tsx": {
+      "Skeleton": 3,
+      "Alert": 4,
+      "RawRadius": 2,
+      "RawTypography": 1
+    },
+    "apps/dwp/src/pages/account/profile-connected-apps.tsx": {
+      "Alert": 5,
+      "CircularProgress": 1,
+      "RawRadius": 2,
+      "Dialog": 1,
+      "DialogTitle": 1,
+      "DialogContent": 1,
+      "DialogActions": 1
+    },
+    "apps/dwp/src/pages/account/profile-privacy-controls.tsx": {
+      "Alert": 6,
+      "RawRadius": 1,
+      "CircularProgress": 1
+    },
     "apps/dwp/src/pages/account/profile.tsx": {
       "RawRadius": 2,
       "RawTypography": 1,
@@ -1591,6 +2190,11 @@
     "apps/dwp/src/pages/account/settings-components.tsx": {
       "RawRadius": 4,
       "RawTypography": 1
+    },
+    "apps/dwp/src/pages/account/settings-home.tsx": {
+      "RawRadius": 2,
+      "RawTypography": 2,
+      "IconButton": 1
     },
     "apps/dwp/src/pages/account/settings.tsx": {
       "Alert": 3,
@@ -1651,6 +2255,13 @@
     },
     "apps/dwp/src/pages/status-page.tsx": {
       "Button": 1
+    },
+    "apps/dwp/src/providers/personal-preference-conflict-dialog.tsx": {
+      "Dialog": 1,
+      "DialogTitle": 1,
+      "DialogContent": 1,
+      "RawRadius": 1,
+      "DialogActions": 1
     },
     "apps/dwp/src/routes/components/error-boundary.tsx": {
       "Alert": 1

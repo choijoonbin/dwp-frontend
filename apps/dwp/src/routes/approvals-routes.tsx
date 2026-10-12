@@ -6,7 +6,7 @@ import { APPROVAL_PRODUCT_MANIFEST } from '../features/approvals/approval-produc
 import { APPROVAL_NAVIGATION } from '../features/approvals/approval-navigation';
 import { ApprovalLayout } from '../layouts/approval-layout';
 import { LegacyProductFirstAllowedIndex } from './legacy-product-first-allowed-index';
-import { productPageRelativePattern } from './product-page-route-contracts';
+import { officialProductPageRelativePattern } from './official-product-page-route-contracts';
 import {
   authenticationFallback,
   ProductAnyRouteGuard,
@@ -116,7 +116,7 @@ function approvalPageRoute(
   basePath: '/approvals' | '/approvals/admin'
 ): RouteObject {
   return {
-    path: productPageRelativePattern(routeContractKey, basePath),
+    path: officialProductPageRelativePattern(routeContractKey, basePath),
     handle: { routeContractKey },
     element: (
       <ProductCanaryRouteBoundary

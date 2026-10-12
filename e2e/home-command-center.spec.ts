@@ -673,16 +673,13 @@ test('legacy governed policy cannot hide member-owned workspace tools', async ({
       version: 3,
     })
   );
-
   await page.goto('/');
-
   await expect(page.getByRole('region', { name: 'Work tools' })).toBeVisible();
   const workspace = page.getByTestId('home-workspace-grid');
   await expect(page.getByRole('button', { name: 'Edit home' })).toBeVisible();
   await expect(workspace.locator('[data-workspace-widget-policy="GOVERNED"]')).toHaveCount(1);
   await expect(workspace.locator('[data-workspace-widget-policy="PERSONAL"]')).toHaveCount(5);
 });
-
 test('tenant policy disables personal editing even when the edit URL is requested directly', async ({
   page,
 }) => {
@@ -718,9 +715,7 @@ test('tenant policy disables personal editing even when the edit URL is requeste
       version: 4,
     })
   );
-
   await page.goto('/?edit=home');
-
   await expect(page.getByRole('button', { name: 'Edit home' })).toHaveCount(0);
   await expect(page.locator('[data-workspace-composer-placement="floating"]')).toHaveCount(0);
   await expect(page).toHaveURL('/');
@@ -733,16 +728,13 @@ test('home work-tool groups and app columns adapt for tablet width', async ({ pa
   await mockUnreadAppBadge(page, 'approvals', 3);
   await page.setViewportSize({ width: 963, height: 900 });
   await page.goto('/');
-
   const launchpad = page.getByRole('region', { name: 'Work tools' });
   const groupCards = launchpad.locator('section[aria-labelledby^="app-group-"]');
   await expect(groupCards).toHaveCount(4);
-
   const cardRows = await groupCards.evaluateAll((cards) =>
     cards.map((card) => Math.round(card.getBoundingClientRect().top))
   );
   expect(new Set(cardRows).size).toBe(2);
-
   const compactGrid = launchpad.getByRole('list', { name: 'Start work apps' });
   await expect
     .poll(() =>
@@ -751,26 +743,22 @@ test('home work-tool groups and app columns adapt for tablet width', async ({ pa
       )
     )
     .toBe(4);
-
   const reservedGridHeights = await launchpad
     .getByRole('list')
     .evaluateAll((lists) => lists.map((list) => Math.round(list.getBoundingClientRect().height)));
   expect(new Set(reservedGridHeights)).toEqual(new Set([184]));
-
   const surface = await launchpad.evaluate((node) => {
     const style = window.getComputedStyle(node);
     return { borderWidth: style.borderWidth, backgroundColor: style.backgroundColor };
   });
   expect(surface.borderWidth).toBe('0px');
   expect(surface.backgroundColor).toBe('rgba(0, 0, 0, 0)');
-
   const firstCardSurface = await groupCards.first().evaluate((node) => {
     const style = window.getComputedStyle(node);
     return { borderRadius: style.borderRadius, backgroundColor: style.backgroundColor };
   });
   expect(firstCardSurface.borderRadius).toBe('8px');
   expect(firstCardSurface.backgroundColor).toMatch(/rgba\(.+, 0\.2\)$/);
-
   const badge = launchpad.locator('[data-launchpad-badge]').first();
   await expect(badge).toBeVisible();
   const badgeClip = await badge.evaluate((badge) => {
@@ -781,12 +769,10 @@ test('home work-tool groups and app columns adapt for tablet width', async ({ pa
   expect(badgeClip).not.toBeNull();
   expect(badgeClip ?? 1).toBeLessThanOrEqual(0);
 });
-
 test('home exposes every core section across mobile and tablet widths', async ({ page }) => {
   for (const width of [320, 768, 1024]) {
     await page.setViewportSize({ width, height: width === 320 ? 720 : 900 });
     await page.goto('/');
-
     for (const heading of [
       'Command rail',
       'Fresh from the newsroom',
@@ -797,7 +783,6 @@ test('home exposes every core section across mobile and tablet widths', async ({
     ]) {
       await expect(page.getByRole('heading', { name: heading, exact: true })).toBeVisible();
     }
-
     const launchpad = page.getByRole('region', { name: 'Work tools' });
     await expect(launchpad).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Work tools' })).toHaveCount(0);
@@ -813,12 +798,10 @@ test('home exposes every core section across mobile and tablet widths', async ({
     await expect(
       page.locator('[data-testid="home-workspace-grid"] [data-workspace-widget-policy="PERSONAL"]')
     ).toHaveCount(5);
-
     const groupRows = await groupCards.evaluateAll((cards) =>
       cards.map((card) => Math.round(card.getBoundingClientRect().top))
     );
     expect(new Set(groupRows).size).toBe(width < 600 ? 4 : 2);
-
     if (width === 320) {
       const mobileAppGrid = launchpad.getByRole('list', { name: 'Start work apps' });
       const mobileLayout = await mobileAppGrid.evaluate((node) => ({
@@ -828,7 +811,6 @@ test('home exposes every core section across mobile and tablet widths', async ({
       expect(mobileLayout.columns).toBe(4);
       expect(mobileLayout.groupHeight).toBeLessThanOrEqual(200);
     }
-
     const overflow = await page.evaluate(() => {
       const viewport = document.documentElement.clientWidth;
       const interactiveOverflow = Array.from(

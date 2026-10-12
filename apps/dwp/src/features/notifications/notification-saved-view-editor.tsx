@@ -484,9 +484,7 @@ function includedTypeLabel(
   type: NotificationIncludedType,
   t: (key: string, options?: Record<string, unknown>) => string
 ): string {
-  return type === 'ASSIGNED'
-    ? t('reason.ROLE')
-    : t(`reason.${type}`, { defaultValue: type });
+  return type === 'ASSIGNED' ? t('reason.ROLE') : t(`reason.${type}`, { defaultValue: type });
 }
 
 function contextId(context: NotificationContextOption): string {

@@ -16,6 +16,7 @@ import {
   APPROVAL_SIGNATURE_FIXTURES,
 } from './product-area-fixtures';
 import { approvalTaskSearchPage, approvalRequestSearchPage } from './approval-search-fixtures';
+import { canonicalData } from './approval-admin-v2-fixture-data';
 
 const APPROVAL_DOCUMENT_POLICY_FIXTURE = {
   policyId: '11111111-1111-4111-8111-111111111111',
@@ -202,5 +203,14 @@ export function resolveApprovalShellFixture(url: URL): unknown {
   if (path === '/api/approvals/v1/admin/attachments/policy') {
     return APPROVAL_ATTACHMENT_POLICY_FIXTURE;
   }
-  return undefined;
+  return canonicalData(path, 'GET', null, {
+    activationReady: false,
+    empty: true,
+    routingDraft: false,
+    mismatchIncidentDetail: false,
+    mismatchAuditDetail: false,
+    driftAuditPreflightRequestBinding: false,
+    multipleSelections: false,
+    requests: [],
+  });
 }

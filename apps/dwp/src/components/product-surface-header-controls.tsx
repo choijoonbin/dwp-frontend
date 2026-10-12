@@ -1,22 +1,24 @@
-import { useId, useState } from 'react';
+import { lazy, Suspense, useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, BriefcaseBusiness, ChevronDown, Layers3, Settings2 } from 'lucide-react';
+import { ArrowLeft, ChevronDown, Layers3, Settings2 } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import { ActionButton } from '@dwp-frontend/design-system/components/actions/action-button';
 
 import Box from '@mui/material/Box';
-import MenuItem from '@mui/material/MenuItem';
-import MenuList from '@mui/material/MenuList';
-import Popover from '@mui/material/Popover';
 import Stack from '@mui/material/Stack';
 import Tooltip from '@mui/material/Tooltip';
-import Typography from '@mui/material/Typography';
 
 import { useProductSurfaceTelemetry } from '../observability/product-surface-telemetry-context';
 import {
   resolveProductSurfaceHeaderControlModel,
   type ProductSurfaceNavigationEntry,
 } from './product-surface-header-control-model';
+
+const ProductSurfaceAreaMenu = lazy(() =>
+  import('./product-surface-area-menu').then((module) => ({
+    default: module.ProductSurfaceAreaMenu,
+  }))
+);
 
 export type ProductSurfaceHeaderControlsProps = {
   variant: 'desktop' | 'compact';
@@ -86,7 +88,6 @@ function ProductSurfaceAreaDisclosure({
   compact: boolean;
 }) {
   const { t } = useTranslation('common');
-  const telemetry = useProductSurfaceTelemetry();
   const menuId = useId();
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
   const currentLabel = resolveLabel?.(current.labelKey) ?? current.labelKey;
@@ -139,63 +140,21 @@ function ProductSurfaceAreaDisclosure({
           </Box>
         </ActionButton>
       </Tooltip>
-      <Popover
-        anchorEl={anchor}
-        open={Boolean(anchor)}
-        onClose={() => setAnchor(null)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-        transformOrigin={{ vertical: 'top', horizontal: 'left' }}
-        slotProps={{
-          paper: { sx: { maxWidth: 'calc(100vw - 24px)', mt: 0.5 } },
-        }}
-      >
-        <MenuList
-          id={menuId}
-          autoFocusItem={Boolean(anchor)}
-          aria-label={areaLabel}
-          data-testid={
-            compact ? 'product-surface-mobile-disclosure' : 'product-surface-desktop-disclosure'
-          }
-          sx={{ minWidth: compact ? 220 : 240 }}
-        >
-          {entries.map((entry) => {
-            const Icon = entry.plane === 'management' ? Settings2 : BriefcaseBusiness;
-            const selected = entry.surfaceId === currentSurfaceId;
-            const entryLabel = resolveLabel?.(entry.labelKey) ?? entry.labelKey;
-            return (
-              <MenuItem
-                key={entry.surfaceId}
-                component={NavLink}
-                to={entry.path}
-                selected={selected}
-                aria-current={selected ? 'page' : undefined}
-                onClick={() => {
-                  if (!selected) {
-                    telemetry.beginSurfaceSwitch(
-                      entry.productId,
-                      currentSurfaceId,
-                      entry.surfaceId
-                    );
-                  }
-                  setAnchor(null);
-                  onNavigate?.();
-                }}
-                sx={{ minHeight: 44, gap: 1, px: 1.5 }}
-              >
-                <Icon size={16} strokeWidth={1.8} aria-hidden="true" />
-                <Typography
-                  component="span"
-                  variant="body2"
-                  fontWeight={selected ? 750 : 600}
-                  noWrap
-                >
-                  {entryLabel}
-                </Typography>
-              </MenuItem>
-            );
-          })}
-        </MenuList>
-      </Popover>
+      {anchor ? (
+        <Suspense fallback={null}>
+          <ProductSurfaceAreaMenu
+            anchor={anchor}
+            menuId={menuId}
+            areaLabel={areaLabel}
+            currentSurfaceId={currentSurfaceId}
+            entries={entries}
+            resolveLabel={resolveLabel}
+            compact={compact}
+            onClose={() => setAnchor(null)}
+            onNavigate={onNavigate}
+          />
+        </Suspense>
+      ) : null}
     </>
   );
 }

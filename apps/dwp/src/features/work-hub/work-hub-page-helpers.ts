@@ -81,8 +81,8 @@ export function selectedWorkFromRequest(
   );
 }
 
-export function workHubCalendarRoute(date: string, returnTo: string) {
-  return `/calendar/schedule?date=${date}&returnTo=${encodeURIComponent(returnTo)}`;
+export function workHubCalendarRoute(date: string) {
+  return `/calendar/schedule?date=${date}`;
 }
 
 export function workHubCalendarComposerRoute(
@@ -98,8 +98,8 @@ export function workHubCalendarComposerRoute(
     throw new Error('A valid Calendar schedule date is required.');
   const search = new URLSearchParams({ date: scheduleDate, create: 'focus' });
   return {
-    // Work identity and its return target stay in validated router state. They must not
-    // leak into the Calendar address, logs, copied links, or referrer headers.
+    // Work identity and its return target are persisted in the validated tab-local document
+    // handoff. They must not leak into the Calendar address, logs, copied links, or referrers.
     to: `/calendar/schedule?${search.toString()}`,
     state: createWorkScheduleHandoffState(item, draft, returnTo, ownerFingerprint, now),
   } as const;

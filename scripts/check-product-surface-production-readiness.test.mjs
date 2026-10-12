@@ -9,6 +9,9 @@ import { fileURLToPath } from 'node:url';
 import {
   cleanupReadinessFixtures,
   createReadinessFixtureDirectory,
+  makeInternalClosureComplete,
+  makeInternalClosurePartial,
+  makeManifestInternalPending,
   run,
 } from './check-product-surface-production-readiness.test-support.mjs';
 
@@ -56,13 +59,6 @@ const provenanceKindByEvidenceType = new Map([
   ['USABILITY_STUDY', 'INDEPENDENT_REVIEW_ATTESTATION'],
   ['PENETRATION_TEST', 'INDEPENDENT_REVIEW_ATTESTATION'],
 ]);
-const attackVectorIds = [
-  'CROSS_TENANT',
-  'SCOPE_ESCAPE',
-  'STALE_AUTHORITY_REVISION',
-  'CONFUSED_DEPUTY',
-  'INTERNAL_HEADER_SPOOF',
-];
 const closureReference = 'architecture/product-surface-internal-closure.v1.generated.json';
 const productExternalBlockers = (productId) => [
   `EXTERNAL_${productId.toUpperCase()}_PRODUCT_SECURITY_OWNER_APPROVAL`,
@@ -471,103 +467,6 @@ function buildArtifactArchive(value, record, entryBytes) {
   writeRepositoryFile(archiveRoot, record.evidencePath, entryBytes);
   execFileSync('zip', ['-q', '-r', archivePath, record.evidencePath], { cwd: archiveRoot });
   return archivePath;
-}
-
-function recalculateClosure(value) {
-  const closure = value.closure;
-  const exactProducts = closure.products.filter(
-    ({ contractStatus }) => contractStatus === 'EXACT'
-  ).length;
-  const qualifiedAttackCells = closure.products.reduce(
-    (total, product) => total + product.qualifiedAttackIds.length,
-    0
-  );
-  const productBlockers = closure.products.filter(({ blocker }) => blocker !== null).length;
-  const internallyClosedProducts = closure.products.filter(
-    (product) =>
-      product.contractStatus === 'EXACT' &&
-      product.missingAttackIds.length === 0 &&
-      product.blocker === null
-  ).length;
-  const totalAttackCells = closure.products.length * closure.attackVectors.length;
-  const completionState =
-    exactProducts === closure.products.length &&
-    qualifiedAttackCells === totalAttackCells &&
-    productBlockers === 0
-      ? 'COMPLETE'
-      : 'PARTIAL';
-  closure.summary = {
-    productCount: closure.products.length,
-    exactProducts,
-    internallyClosedProducts,
-    totalAttackCells,
-    qualifiedAttackCells,
-    missingAttackCells: totalAttackCells - qualifiedAttackCells,
-    productBlockers,
-    completionState,
-  };
-  const projection = {
-    schemaVersion: 1,
-    matrixId: closure.generatedFrom.negativeMatrix.matrixId,
-    completionState,
-    rolloutInventory: {
-      reference:
-        'contracts/product-authorization/product-surface-rollout-inventory.v1.generated.json',
-      checksum: closure.generatedFrom.rolloutInventory.checksum,
-    },
-    exactContract: {
-      reference: `contracts/product-authorization/${closure.generatedFrom.authorizationBundle.artifact}`,
-      checksum: closure.generatedFrom.authorizationBundle.checksum,
-      products: closure.products.map(({ productId }) => productId),
-    },
-    attackVectors: closure.attackVectors,
-    products: closure.products.map((product) => ({
-      productId: product.productId,
-      contractStatus: product.contractStatus,
-      ownerService: product.ownerService,
-      attackEvidence: product.attackEvidence,
-      missingAttackIds: product.missingAttackIds,
-      blocker: product.blocker,
-    })),
-  };
-  closure.generatedFrom.negativeMatrix.projectionChecksum = canonicalChecksum(projection);
-}
-
-function makeInternalClosureComplete(value) {
-  for (const product of value.closure.products) {
-    for (const attackId of attackVectorIds) {
-      if (product.attackEvidence[attackId].length === 0) {
-        product.attackEvidence[attackId] = [
-          `tests/test_product_surface_pep.py#test_${product.productId}_${attackId.toLowerCase()}`,
-        ];
-      }
-    }
-    product.qualifiedAttackIds = [...attackVectorIds];
-    product.missingAttackIds = [];
-    product.blocker = null;
-  }
-  recalculateClosure(value);
-}
-
-function makeInternalClosurePartial(value) {
-  const product = value.closure.products.find(({ productId }) => productId === 'dwaion');
-  product.attackEvidence = Object.fromEntries(attackVectorIds.map((attackId) => [attackId, []]));
-  product.qualifiedAttackIds = [];
-  product.missingAttackIds = [...attackVectorIds];
-  product.blocker = 'MISSING_DWAION_AGENT_RUNTIME_PEP_MATRIX';
-  recalculateClosure(value);
-}
-
-function makeManifestInternalPending(value) {
-  for (const product of value.manifest.products) {
-    product.state = 'PENDING_INTERNAL';
-    product.blockers = ['INTERNAL_TEST_CLOSURE_PENDING'];
-  }
-  for (const id of ['X-01', 'X-03']) {
-    const item = value.manifest.exitCriteria.find((candidate) => candidate.id === id);
-    item.state = 'PENDING_INTERNAL';
-    item.blockers = ['INTERNAL_TEST_CLOSURE_PENDING'];
-  }
 }
 
 function handoffInternalClosureToExternalEvidence(value) {
