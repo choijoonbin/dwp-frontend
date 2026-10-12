@@ -1,0 +1,134 @@
+{
+  "schema": "dwp.hris.g7-sys-hrm-integration-authorization-receipt.v3",
+  "receiptId": "HRIS-G7-SYS-HRM-INTEGRATION-AUTHORIZATION-SYS-HRM-R3-20261012-R1",
+  "runId": "sys-hrm-r3-20261012-r1",
+  "status": "PASS_INTEGRATION_AUTHORIZATION_PENDING_CARRIER",
+  "issuedAt": "2026-10-12T13:01:37Z",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "admission": {
+    "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r3-result-acceptance/runs/sys-hrm-r3-20261012-r1/result-admission.v3.json",
+    "gitBlobSha1": "7a7d3ef09fd106f8bdb0066bd8b580a9c3c86fdb",
+    "sha256": "dfa0a5175079a5fb679886f47473d6321b9647e23bb7b7bd68b367da136a868f",
+    "bytes": 39555,
+    "carrierCommit": "6efc4175275b68e3f22468c627744c90c8af43f2",
+    "carrierTree": "8dd0a45c40304d1df324557833614a19ea9656c9",
+    "receiptId": "HRIS-G7-SYS-HRM-RESULT-ADMISSION-SYS-HRM-R3-20261012-R1"
+  },
+  "authorizedResults": [
+    {
+      "module": "SYS",
+      "sliceId": "BASE-TFR-SYS-007",
+      "tokenId": "G7-START-SYS-BASE-TFR-SYS-007-R2",
+      "repo": "frontend",
+      "commit": "717204888f8d14a9a320165f9939c1c142b4cc0a",
+      "tree": "94162788c785f7ef570e03dec7281fd807a18723",
+      "changedFilesSha256": "0ee392584fc14193cb9d117c8cd9d428d009894e588f41b429450a6affcf6e3d"
+    },
+    {
+      "module": "SYS",
+      "sliceId": "BASE-TFR-SYS-007",
+      "tokenId": "G7-START-SYS-BASE-TFR-SYS-007-R2",
+      "repo": "backend",
+      "commit": "124269a8497eafa074199171cafc35adbef615ad",
+      "tree": "48685e63ac34d375f711b410105179f8f9613f6f",
+      "changedFilesSha256": "3924bd6ef580aeca293961934af1bde676331679b16c2b5f840d30d138e5fad8"
+    },
+    {
+      "module": "HRM",
+      "sliceId": "BASE-TFR-HRM-010",
+      "tokenId": "G7-START-HRM-BASE-TFR-HRM-010-R2",
+      "repo": "frontend",
+      "commit": "9a68bea3f01e1ff49ba7e314896da0feb3e3263c",
+      "tree": "61a329b99a2961889f43eb2767109cf7956e4953",
+      "changedFilesSha256": "44f577e5ea3827c76d2ada50f3fa7e932f628c9f359225c682a87c7a34d11f4f"
+    },
+    {
+      "module": "HRM",
+      "sliceId": "BASE-TFR-HRM-010",
+      "tokenId": "G7-START-HRM-BASE-TFR-HRM-010-R2",
+      "repo": "backend",
+      "commit": "30bbcbeebb455e2f5a738c80ce1c8b0ef1575e89",
+      "tree": "43a2428a073586d6b40bb3685f6e73cb0ca6a660",
+      "changedFilesSha256": "6dd9d3dc2a7bf2d7c2dc3e3d40aa3e6660b3670e1479f62abeb2b179998eec2b"
+    }
+  ],
+  "expectedUnionSha256": "cf52666e154a2ea51476b6edafa907949c086e158729244e32ed22af171df2ce",
+  "preIntegration": {
+    "frontend": {
+      "rule": "AUTHORIZATION_CARRIER_COMMIT_EXACT",
+      "branch": "codex/hris-g1-integration-frontend-20261006",
+      "upstream": "origin/codex/hris-g1-integration-frontend-20261006"
+    },
+    "backend": {
+      "commit": "f3380042bd0c05d6f8946b25f4065b97e7a37d15",
+      "tree": "9198c5c9c72c32fb96f392836c4ca8e30ad9e8f1",
+      "branch": "codex/hris-g1-integration-backend-20261006",
+      "upstream": "origin/codex/hris-g1-integration-backend-20261006",
+      "clean": true,
+      "upstreamMatched": true,
+      "stateSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "sharedVerificationPlan": {
+    "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r3-result-acceptance/runs/sys-hrm-r3-20261012-r1/shared-verification-plan.v3.json",
+    "gitBlobSha1": "7c997a1b2a1329d5ded3d97c4e4c8d9cc84625c6",
+    "sha256": "c7bf4d7d4a42cdad531d030f96d9abd57ae72e934ed40b8c95aaeaa843fdf225",
+    "bytes": 3605,
+    "carrierCommit": "83de865d4d4ab1f3020e65ee3b089d53d1de2820",
+    "carrierTree": "529f6ac3b77a29020c7406e6c462f7a71c46ac23",
+    "planId": "HRIS-G7-SYS-HRM-SHARED-PLAN-SYS-HRM-R3-20261012-R1",
+    "authorityStatus": "CONTROL_PROPOSAL_NOT_PREDECESSOR_AUTHORITY",
+    "closedSet": [
+      "CONTROL_AUTHORIZATION_CHECK",
+      "CONTROL_BACKEND_OPENAPI_CHECK",
+      "CONTROL_FRONTEND_OPENAPI_CHECK",
+      "CONTROL_SHARED_ROUTE_ACCESS",
+      "CONTROL_FRONTEND_TYPECHECK",
+      "CONTROL_FRONTEND_ARCHITECTURE",
+      "CONTROL_RESPONSIVE_ACCESSIBILITY_PLAYWRIGHT"
+    ],
+    "requiredCategories": [
+      "CONTRACT_AUTHORIZATION_SYNC",
+      "SHARED_ROUTE_ACCESS",
+      "TYPECHECK_ARCHITECTURE",
+      "RESPONSIVE_ACCESSIBILITY"
+    ]
+  },
+  "sharedTestSource": {
+    "path": "e2e/hris-sys-hrm-responsive-accessibility.spec.ts",
+    "gitBlobSha1": "0f2c774c72e3f1ac42ab43bd267a67ec735b1942",
+    "sha256": "9190b562141d6d8ad797c929ef964e4bafc284b7c2fad9f9b2cbb36e87b9c262",
+    "bytes": 4001,
+    "templateId": "G7-SYS-HRM-RESPONSIVE-ACCESSIBILITY-V2",
+    "carrierCommit": "2f199f377590e147e018745ebf5ee260fd2589de",
+    "carrierTree": "1f38f169f2be37e7cc7ab38b0d3e8b7f763cc11f",
+    "toolingCarrierCommit": "39c04e8dab680a4e9af19e4f7687870374c5a96b",
+    "toolingCarrierTree": "10e839d9ffad040a1d56a107a245f77771b4f1ee",
+    "branch": "codex/hris-g1-integration-frontend-20261006",
+    "upstream": "origin/codex/hris-g1-integration-frontend-20261006",
+    "carrierPushed": true,
+    "soleAddedPath": true,
+    "sourceCarrierGate": {
+      "status": "REQUIRED_BEFORE_INPUT_CARRIER",
+      "requireCurrentHead": true,
+      "requireClean": true,
+      "requireExactUpstreamHead": true
+    },
+    "inputCarrierDirectChild": true
+  },
+  "authority": {
+    "beforeCarrier": {
+      "integrationMergeAuthorized": false
+    },
+    "effectiveAfterCarrier": {
+      "integrationMergeAuthorized": true,
+      "exactResultsOnly": true,
+      "frontendPreIntegrationRule": "AUTHORIZATION_CARRIER_COMMIT_EXACT",
+      "backendPreIntegrationCommit": "f3380042bd0c05d6f8946b25f4065b97e7a37d15"
+    },
+    "customerDataAuthorized": false,
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "sealedPayloadSha256": "794b0f6e2765b884db6e0d93cc8d04055beead25b653d052a9d782bbb592bebb"
+}
