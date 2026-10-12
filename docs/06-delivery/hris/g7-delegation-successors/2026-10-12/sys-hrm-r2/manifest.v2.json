@@ -1,0 +1,124 @@
+{
+  "schema": "dwp.hris.g7-sys-hrm-successor-manifest.v2",
+  "manifestId": "HRIS-G7-SYS-HRM-SUCCESSOR-MANIFEST-20261012-R2",
+  "issuedAt": "2026-10-12T09:32:01Z",
+  "predecessorPins": {
+    "manifest": {
+      "path": "docs/06-delivery/hris/g7-delegation/2026-10-12/manifest.v1.json",
+      "sha256": "711cd8e282ed70be7fc8471adde26e96602ab697abf7b8eba568db568f220c07"
+    },
+    "promotionReceipt": {
+      "path": "docs/06-delivery/hris/2026-10-12-g7-evidence-promotion-and-delegation-receipt.json",
+      "sha256": "80bc8a7da69e3bb3fc733be28a02d8db4f5c2f5652bc3fb80659ae37437bf93b"
+    },
+    "migrationLeaseRegister": {
+      "path": "docs/06-delivery/hris/g7-delegation/2026-10-12/migration-leases.v1.json",
+      "sha256": "4df1f5375fd82549ee022f935184044074d7306b848d97238033296a83ab54b5"
+    }
+  },
+  "controlBootstrapReceipt": {
+    "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r2/control-bootstrap-completion.v2.json",
+    "bytes": 22134,
+    "sha256": "4269308dbe733f42857d27124a1257fe9a3005927c43106a0b26b7b840a857ab"
+  },
+  "executionBasePins": {
+    "frontend": {
+      "commit": "407dcdfdc4af642838a62a4ac64e06baf50d546b",
+      "tree": "50f417758e5df7a289a0e2ac4e4761e48ae7a4e4",
+      "stateSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "branch": "codex/hris-g1-integration-frontend-20261006",
+      "upstream": "origin/codex/hris-g1-integration-frontend-20261006",
+      "clean": true,
+      "upstreamMatched": true
+    },
+    "backend": {
+      "commit": "f3380042bd0c05d6f8946b25f4065b97e7a37d15",
+      "tree": "9198c5c9c72c32fb96f392836c4ca8e30ad9e8f1",
+      "stateSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "branch": "codex/hris-g1-integration-backend-20261006",
+      "upstream": "origin/codex/hris-g1-integration-backend-20261006",
+      "clean": true,
+      "upstreamMatched": true
+    }
+  },
+  "activeTokenClosedSetAfterPromotion": [
+    "G7-START-SYS-BASE-TFR-SYS-007-R2",
+    "G7-START-HRM-BASE-TFR-HRM-010-R2"
+  ],
+  "artifacts": [
+    {
+      "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r2/migration-leases.delta.v2.json",
+      "bytes": 2647,
+      "sha256": "fbcde611d4ffbce9fb1c20dcad82489996cd500636c0fcef89ef7e549f79d9a1"
+    },
+    {
+      "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r2/registers/module-worktrees.active.v2.csv",
+      "bytes": 1740,
+      "sha256": "3f7bf4596bc4d3db901dd978c0fa70f084b8edd42849d362d17e84a5ead9f469"
+    },
+    {
+      "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r2/state/delegation-after-sys-hrm-promotion.v2.json",
+      "bytes": 3375,
+      "sha256": "3ac2334f10932fc62eb96261566c49b3659566141a5b85ddf86f65dccd3e5290"
+    },
+    {
+      "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r2/tokens/hrm-010.start-token.v2.json",
+      "bytes": 6562,
+      "sha256": "9972d971aaf603dc6a0052f703b631ac110f371d2a17449e01ce987dc46a3337"
+    },
+    {
+      "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r2/tokens/sys-007.start-token.v2.json",
+      "bytes": 6655,
+      "sha256": "5e49ccf55b26df2f6ee6ffbea080afbb8e0a1c5f29fecefa23f266d229ae170c"
+    }
+  ],
+  "toolPins": [
+    {
+      "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r2/contracts/g7-control-bootstrap-completion.schema.v2.json",
+      "bytes": 5673,
+      "sha256": "3b076170668b3075ae914fd3bdf41630b432d266c026bf33203ec4872f2714e8"
+    },
+    {
+      "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r2/contracts/g7-start-token.schema.v2.json",
+      "bytes": 7820,
+      "sha256": "268aa271d2210088a4110b710a61ab91f8dbd270904a681ed623c328c8b757dd"
+    },
+    {
+      "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r2/contracts/g7-migration-lease-delta.schema.v2.json",
+      "bytes": 4170,
+      "sha256": "c1bffc02f79ce806db76c33d68f41c5ca6c10ac7bd4bcea96280f89ac3b9031c"
+    },
+    {
+      "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r2/contracts/g7-successor-state.schema.v2.json",
+      "bytes": 4901,
+      "sha256": "cd56dcf158d4d4eff29645cb65dd9e06dd73c77b1db41bc82dc09300b6721a8a"
+    },
+    {
+      "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r2/contracts/g7-successor-manifest.schema.v2.json",
+      "bytes": 1608,
+      "sha256": "895315176814df5a6cef63bd231db6029cc94f09db5396fcc1aba26325292507"
+    },
+    {
+      "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r2/contracts/g7-promotion-receipt.schema.v2.json",
+      "bytes": 4252,
+      "sha256": "bd5d347240b4233b8face0ed4ce051fe163331ca4953e75b721e9c4275d99c12"
+    },
+    {
+      "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r2/materialize_g7_sys_hrm_successor.py",
+      "bytes": 70024,
+      "sha256": "1afadaff7822f8b77f1d90e1e95d75d58c2e12e5b52aee59da2be1f267d48c4a"
+    },
+    {
+      "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r2/validate_g7_sys_hrm_successor.py",
+      "bytes": 80659,
+      "sha256": "f55892b0f302cb1e5b417de6d975a3a8413c74b09c2975a2e3b7b4e0937f31c5"
+    },
+    {
+      "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r2/test_g7_sys_hrm_successor.py",
+      "bytes": 29500,
+      "sha256": "685ea8ba64a27a55f92e9fad66774c246e9432ab2015064f467aff0fb5920815"
+    }
+  ],
+  "artifactCount": 5,
+  "sealedPayloadSha256": "338bac09df1f5fc40efcbbb33e5f18195ea4db55ccd8373e184e689d1c64795e"
+}

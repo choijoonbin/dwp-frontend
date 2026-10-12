@@ -1,0 +1,90 @@
+{
+  "schema": "dwp.hris.g7-sys-hrm-successor-state.v2",
+  "stateId": "HRIS-G7-SYS-HRM-DELEGATION-STATE-20261012-R2",
+  "state": "BUNDLE_SEALED_PENDING_PROMOTION_RECEIPT",
+  "issuedAt": "2026-10-12T09:32:01Z",
+  "activationReceiptId": "HRIS-G7-SYS-HRM-PROMOTION-20261012-R2",
+  "predecessor": {
+    "manifest": {
+      "path": "docs/06-delivery/hris/g7-delegation/2026-10-12/manifest.v1.json",
+      "sha256": "711cd8e282ed70be7fc8471adde26e96602ab697abf7b8eba568db568f220c07"
+    },
+    "promotionReceipt": {
+      "path": "docs/06-delivery/hris/2026-10-12-g7-evidence-promotion-and-delegation-receipt.json",
+      "sha256": "80bc8a7da69e3bb3fc733be28a02d8db4f5c2f5652bc3fb80659ae37437bf93b"
+    }
+  },
+  "effectiveDelegations": [
+    {
+      "module": "SYS",
+      "sliceId": "BASE-TFR-SYS-007",
+      "packetId": "G7-PACKET-SYS-BASE-TFR-SYS-007-R1",
+      "predecessorPacketSha256": "13c9e32ddd24b20805060e9b1e1ebdf1549d0619fc7c9b32f4543e72556bfd4e",
+      "effectivePacketStateAfterPromotion": "PACKET_AUTHORIZED_DOMAIN_AUTHORING",
+      "tokenId": "G7-START-SYS-BASE-TFR-SYS-007-R2",
+      "migrationAuthorityMode": "ADMITTED_EXACT_LEASE",
+      "migrationAuthority": {
+        "leaseId": "G7-LEASE-SYS-PLATFORM-V325-R2"
+      },
+      "authority": "DOMAIN_AUTHORING_ONLY"
+    },
+    {
+      "module": "HRM",
+      "sliceId": "BASE-TFR-HRM-010",
+      "packetId": "G7-PACKET-HRM-BASE-TFR-HRM-010-R1",
+      "predecessorPacketSha256": "95c151eb2b277518d31cc9733175c7f2e05fc0c73da37fa9f861d58eef9b8a65",
+      "effectivePacketStateAfterPromotion": "PACKET_AUTHORIZED_DOMAIN_AUTHORING",
+      "tokenId": "G7-START-HRM-BASE-TFR-HRM-010-R2",
+      "migrationAuthorityMode": "CONTROL_BOOTSTRAP_READ_ONLY_PIN",
+      "migrationAuthority": {
+        "mode": "CONTROL_BOOTSTRAP_READ_ONLY_PIN",
+        "exactRelativePath": "dwp-people-server/src/main/resources/db/migration/V54__create_employee_change_request_lifecycle.sql",
+        "sha256": "f701bfaff260331c83dc60bcd5b7c7fb2f9c58b11e888705c4c999a48d0ecac9",
+        "frozenBackendCommit": "f3380042bd0c05d6f8946b25f4065b97e7a37d15",
+        "state": "CONTROL_BOOTSTRAP_CONSUMED_READ_ONLY",
+        "migrationEditAuthorized": false
+      },
+      "authority": "DOMAIN_AUTHORING_ONLY"
+    }
+  ],
+  "closedPredecessorTokens": [
+    {
+      "tokenId": "G7-START-PER-BASE-TFR-PER-006-R1",
+      "state": "RESULT_INTEGRATED_CLOSED"
+    },
+    {
+      "tokenId": "G7-START-TIM-BASE-TFR-TIM-006-R1",
+      "state": "RESULT_INTEGRATED_CLOSED"
+    }
+  ],
+  "activeTokenClosedSetAfterPromotion": [
+    "G7-START-SYS-BASE-TFR-SYS-007-R2",
+    "G7-START-HRM-BASE-TFR-HRM-010-R2"
+  ],
+  "withheld": [
+    {
+      "module": "PAY",
+      "state": "WITHHELD_PRODUCER_AND_NAMED_TESTS_REQUIRED"
+    },
+    {
+      "module": "AGENT",
+      "state": "NO_CANONICAL_SLICE_NO_PACKET"
+    }
+  ],
+  "authority": {
+    "moduleParallelDevelopmentAuthorizedAfterPromotion": true,
+    "authorizedModulesAfterPromotion": [
+      "SYS",
+      "HRM"
+    ],
+    "migrationAdmissionAuthorized": [
+      "G7-LEASE-SYS-PLATFORM-V325-R2"
+    ],
+    "sharedControlPathChangeAuthorizedForModules": false,
+    "integrationMergeAuthorized": false,
+    "customerDataAuthorized": false,
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "sealedPayloadSha256": "b03905687b91bad6ab5646017fbfabe141bc1d3d3efad1c39c5a21fbb5778949"
+}

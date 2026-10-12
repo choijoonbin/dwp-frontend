@@ -1,0 +1,131 @@
+{
+  "schema": "dwp.hris.g7-module-start-token.v2",
+  "tokenId": "G7-START-SYS-BASE-TFR-SYS-007-R2",
+  "packetId": "G7-PACKET-SYS-BASE-TFR-SYS-007-R1",
+  "packetPath": "docs/06-delivery/hris/g7-delegation/2026-10-12/packets/sys-007.v1.json",
+  "packetFileSha256": "13c9e32ddd24b20805060e9b1e1ebdf1549d0619fc7c9b32f4543e72556bfd4e",
+  "sliceId": "BASE-TFR-SYS-007",
+  "module": "SYS",
+  "sessionId": "HRIS-SYS",
+  "issuedAt": "2026-10-12T09:32:01Z",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "expiresAt": "2026-10-19T09:32:01Z",
+  "activationReceiptId": "HRIS-G7-SYS-HRM-PROMOTION-20261012-R2",
+  "state": "ISSUED_PENDING_PROMOTION_RECEIPT",
+  "predecessorAuthority": {
+    "receiptId": "HRIS-G7-EVIDENCE-PROMOTION-DELEGATION-20261012-R1",
+    "receiptSha256": "80bc8a7da69e3bb3fc733be28a02d8db4f5c2f5652bc3fb80659ae37437bf93b",
+    "packetLifecycleState": "PACKET_PREPARED_START_WITHHELD",
+    "effectiveLifecycleStateAfterPromotion": "PACKET_AUTHORIZED_DOMAIN_AUTHORING",
+    "overriddenFields": [
+      "lifecycleState",
+      "startTokenId",
+      "basePins.frontend",
+      "basePins.backend",
+      "migrationLease",
+      "authority.sourceChangeAuthorized",
+      "authority.domainAuthoringOnly",
+      "authority.commitAndPushTokenBranchesAuthorized"
+    ]
+  },
+  "executionBasePins": {
+    "frontend": {
+      "commit": "407dcdfdc4af642838a62a4ac64e06baf50d546b",
+      "tree": "50f417758e5df7a289a0e2ac4e4761e48ae7a4e4",
+      "stateSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "branch": "codex/hris-g1-integration-frontend-20261006",
+      "upstream": "origin/codex/hris-g1-integration-frontend-20261006",
+      "clean": true,
+      "upstreamMatched": true
+    },
+    "backend": {
+      "commit": "f3380042bd0c05d6f8946b25f4065b97e7a37d15",
+      "tree": "9198c5c9c72c32fb96f392836c4ca8e30ad9e8f1",
+      "stateSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "branch": "codex/hris-g1-integration-backend-20261006",
+      "upstream": "origin/codex/hris-g1-integration-backend-20261006",
+      "clean": true,
+      "upstreamMatched": true
+    }
+  },
+  "worktreeBindings": [
+    {
+      "module": "SYS",
+      "slice_id": "BASE-TFR-SYS-007",
+      "token_id": "G7-START-SYS-BASE-TFR-SYS-007-R2",
+      "repo": "frontend",
+      "absolute_path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/g7-20261012-r2/sys-007/frontend",
+      "branch": "codex/hris-g7-sys-007-frontend-20261012-r2",
+      "upstream": "origin/codex/hris-g7-sys-007-frontend-20261012-r2",
+      "head": "407dcdfdc4af642838a62a4ac64e06baf50d546b",
+      "tree": "50f417758e5df7a289a0e2ac4e4761e48ae7a4e4",
+      "state_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "clean": "true",
+      "ahead": "0",
+      "behind": "0",
+      "state": "CREATED_PUSHED_CLEAN"
+    },
+    {
+      "module": "SYS",
+      "slice_id": "BASE-TFR-SYS-007",
+      "token_id": "G7-START-SYS-BASE-TFR-SYS-007-R2",
+      "repo": "backend",
+      "absolute_path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/g7-20261012-r2/sys-007/backend",
+      "branch": "codex/hris-g7-sys-007-backend-20261012-r2",
+      "upstream": "origin/codex/hris-g7-sys-007-backend-20261012-r2",
+      "head": "f3380042bd0c05d6f8946b25f4065b97e7a37d15",
+      "tree": "9198c5c9c72c32fb96f392836c4ca8e30ad9e8f1",
+      "state_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "clean": "true",
+      "ahead": "0",
+      "behind": "0",
+      "state": "CREATED_PUSHED_CLEAN"
+    }
+  ],
+  "effectiveAllowedPaths": [
+    "backend:dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/**",
+    "backend:dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/**",
+    "frontend:apps/dwp/src/features/hris/administration/reference-configuration/**",
+    "backend:dwp-platform-server/src/main/resources/db/migration/V325__create_hris_reference_configuration_lifecycle.sql"
+  ],
+  "protectedPaths": [
+    "backend:dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/HrisConfigurationProjectionController.java",
+    "backend:dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/HrisConfigurationProjectionDtos.java",
+    "backend:dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/HrisConfigurationProjectionService.java",
+    "backend:dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/HrisConfigurationProjectionControllerContractTest.java",
+    "backend:dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/HrisConfigurationProjectionServiceTest.java",
+    "backend:dwp-platform-server/src/main/java/com/dwp/services/platform/reference/**",
+    "backend:dwp-people-server/src/main/java/com/dwp/services/people/workforce/WorkforceReference*",
+    "frontend:apps/dwp/src/features/workforce/workforce-reference-data.tsx",
+    "frontend:apps/dwp/src/features/admin/reference-data-*.ts*",
+    "frontend:apps/dwp/src/features/hris/administration/system-access/**"
+  ],
+  "pathPolicySha256": "c8b56ea099ba546c434fc8d3f6bf2fe8a84f5bddc37d76dd2b372ac3c3fdda74",
+  "dependencyPinsSha256": "9630aa6033139fb3982cc30fdb8294a7e7a7669531dbbb41130265972a04c233",
+  "controlBootstrapReceiptSha256": "4269308dbe733f42857d27124a1257fe9a3005927c43106a0b26b7b840a857ab",
+  "permittedAction": "START_DOMAIN_MODULE_IMPLEMENTATION",
+  "invalidationConditions": [
+    "promotion receipt does not list this exact token in the active closed set",
+    "packet, token, Control receipt, worktree, migration authority, or execution base pin changes",
+    "worktree is dirty, unpublished, ahead/behind, or on another branch",
+    "an effective allowed-path or common-Control boundary is crossed",
+    "the pinned migration boundary changes",
+    "token expires or is revoked"
+  ],
+  "authority": {
+    "domainAuthoringOnly": true,
+    "exactWorktreesOnly": true,
+    "exactAllowedPathsOnly": true,
+    "migrationAuthorityMode": "ADMITTED_EXACT_LEASE",
+    "migrationEditAuthorized": true,
+    "commitAndPushTokenBranchesAuthorized": true,
+    "sharedControlPathChangeAuthorized": false,
+    "integrationMergeAuthorized": false,
+    "customerDataAuthorized": false,
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "migrationLeaseSha256": "482d0905c788078e3d883d256d334d7d7c5ae7fe74fe97da96533e0dd6e8a072",
+  "migrationLeaseId": "G7-LEASE-SYS-PLATFORM-V325-R2",
+  "sealedPayloadSha256": "e8faa777e1b3cf15b61ca7dfd5f55bae97b7d7de1add445fe370ca84d6bfb4b3"
+}

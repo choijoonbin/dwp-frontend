@@ -1,0 +1,58 @@
+{
+  "schema": "dwp.hris.g7-migration-lease-delta.v2",
+  "issuedAt": "2026-10-12T09:32:01Z",
+  "predecessorRegister": {
+    "path": "docs/06-delivery/hris/g7-delegation/2026-10-12/migration-leases.v1.json",
+    "sha256": "4df1f5375fd82549ee022f935184044074d7306b848d97238033296a83ab54b5"
+  },
+  "leases": [
+    {
+      "leaseId": "G7-LEASE-SYS-PLATFORM-V325-R2",
+      "supersedesLeaseId": "G7-LEASE-SYS-PLATFORM-V325-R1",
+      "supersededLeaseDigestSha256": "f79ea16e8fa389bc44eec07e975a9351b44d5df6d30434bfec85ce6aa5206cc8",
+      "module": "SYS",
+      "sliceId": "BASE-TFR-SYS-007",
+      "stream": "PLATFORM_MAIN",
+      "streamRoot": "dwp-platform-server/src/main/resources/db/migration",
+      "frozenBackendCommit": "f3380042bd0c05d6f8946b25f4065b97e7a37d15",
+      "frozenHighWater": 324,
+      "version": 325,
+      "exactRelativePath": "dwp-platform-server/src/main/resources/db/migration/V325__create_hris_reference_configuration_lifecycle.sql",
+      "schemaEffect": [
+        "reference configuration lifecycle set and version records",
+        "evaluation evidence and immutable command receipts",
+        "outbox and audit controls; no duplicate raw reference-data store"
+      ],
+      "status": "ADMITTED_DOMAIN_AUTHORING",
+      "ownerTokenId": "G7-START-SYS-BASE-TFR-SYS-007-R2",
+      "reservedForPacketId": "G7-PACKET-SYS-BASE-TFR-SYS-007-R1",
+      "issuedAt": "2026-10-12T09:32:01Z",
+      "expiresAt": "2026-10-19T09:32:01Z",
+      "invalidationConditions": [
+        "final Control backend commit or migration high-water changes",
+        "another migration claims the exact version or path",
+        "the R2 token expires, is revoked, or changes scope"
+      ],
+      "migrationAdmissionAuthorized": true,
+      "sealedPayloadSha256": "482d0905c788078e3d883d256d334d7d7c5ae7fe74fe97da96533e0dd6e8a072"
+    }
+  ],
+  "closedPredecessorLeases": [
+    {
+      "leaseId": "G7-LEASE-SYS-PLATFORM-V325-R1",
+      "state": "SUPERSEDED_UNCONSUMED",
+      "successorLeaseId": "G7-LEASE-SYS-PLATFORM-V325-R2"
+    },
+    {
+      "leaseId": "G7-LEASE-HRM-PEOPLE-V54-R1",
+      "state": "CONSUMED_BY_CONTROL_BOOTSTRAP",
+      "consumedByBackendCommit": "f3380042bd0c05d6f8946b25f4065b97e7a37d15",
+      "exactRelativePath": "dwp-people-server/src/main/resources/db/migration/V54__create_employee_change_request_lifecycle.sql",
+      "migrationSha256": "f701bfaff260331c83dc60bcd5b7c7fb2f9c58b11e888705c4c999a48d0ecac9",
+      "successorLeaseId": null
+    }
+  ],
+  "historicalRangesAreAuthority": false,
+  "openEndedVersionsAllowed": false,
+  "sealedPayloadSha256": "f343feafa6978501923c2ceaf5a53a00594dbefe80abfe7dbf063afef8c15b31"
+}

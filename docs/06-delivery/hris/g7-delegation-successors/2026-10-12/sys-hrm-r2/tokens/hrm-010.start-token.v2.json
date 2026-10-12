@@ -1,0 +1,135 @@
+{
+  "schema": "dwp.hris.g7-module-start-token.v2",
+  "tokenId": "G7-START-HRM-BASE-TFR-HRM-010-R2",
+  "packetId": "G7-PACKET-HRM-BASE-TFR-HRM-010-R1",
+  "packetPath": "docs/06-delivery/hris/g7-delegation/2026-10-12/packets/hrm-010.v1.json",
+  "packetFileSha256": "95c151eb2b277518d31cc9733175c7f2e05fc0c73da37fa9f861d58eef9b8a65",
+  "sliceId": "BASE-TFR-HRM-010",
+  "module": "HRM",
+  "sessionId": "HRIS-HRM",
+  "issuedAt": "2026-10-12T09:32:01Z",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "expiresAt": "2026-10-19T09:32:01Z",
+  "activationReceiptId": "HRIS-G7-SYS-HRM-PROMOTION-20261012-R2",
+  "state": "ISSUED_PENDING_PROMOTION_RECEIPT",
+  "predecessorAuthority": {
+    "receiptId": "HRIS-G7-EVIDENCE-PROMOTION-DELEGATION-20261012-R1",
+    "receiptSha256": "80bc8a7da69e3bb3fc733be28a02d8db4f5c2f5652bc3fb80659ae37437bf93b",
+    "packetLifecycleState": "PACKET_PREPARED_START_WITHHELD",
+    "effectiveLifecycleStateAfterPromotion": "PACKET_AUTHORIZED_DOMAIN_AUTHORING",
+    "overriddenFields": [
+      "lifecycleState",
+      "startTokenId",
+      "basePins.frontend",
+      "basePins.backend",
+      "migrationLease",
+      "authority.sourceChangeAuthorized",
+      "authority.domainAuthoringOnly",
+      "authority.commitAndPushTokenBranchesAuthorized"
+    ]
+  },
+  "executionBasePins": {
+    "frontend": {
+      "commit": "407dcdfdc4af642838a62a4ac64e06baf50d546b",
+      "tree": "50f417758e5df7a289a0e2ac4e4761e48ae7a4e4",
+      "stateSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "branch": "codex/hris-g1-integration-frontend-20261006",
+      "upstream": "origin/codex/hris-g1-integration-frontend-20261006",
+      "clean": true,
+      "upstreamMatched": true
+    },
+    "backend": {
+      "commit": "f3380042bd0c05d6f8946b25f4065b97e7a37d15",
+      "tree": "9198c5c9c72c32fb96f392836c4ca8e30ad9e8f1",
+      "stateSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "branch": "codex/hris-g1-integration-backend-20261006",
+      "upstream": "origin/codex/hris-g1-integration-backend-20261006",
+      "clean": true,
+      "upstreamMatched": true
+    }
+  },
+  "worktreeBindings": [
+    {
+      "module": "HRM",
+      "slice_id": "BASE-TFR-HRM-010",
+      "token_id": "G7-START-HRM-BASE-TFR-HRM-010-R2",
+      "repo": "frontend",
+      "absolute_path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/g7-20261012-r2/hrm-010/frontend",
+      "branch": "codex/hris-g7-hrm-010-frontend-20261012-r2",
+      "upstream": "origin/codex/hris-g7-hrm-010-frontend-20261012-r2",
+      "head": "407dcdfdc4af642838a62a4ac64e06baf50d546b",
+      "tree": "50f417758e5df7a289a0e2ac4e4761e48ae7a4e4",
+      "state_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "clean": "true",
+      "ahead": "0",
+      "behind": "0",
+      "state": "CREATED_PUSHED_CLEAN"
+    },
+    {
+      "module": "HRM",
+      "slice_id": "BASE-TFR-HRM-010",
+      "token_id": "G7-START-HRM-BASE-TFR-HRM-010-R2",
+      "repo": "backend",
+      "absolute_path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/g7-20261012-r2/hrm-010/backend",
+      "branch": "codex/hris-g7-hrm-010-backend-20261012-r2",
+      "upstream": "origin/codex/hris-g7-hrm-010-backend-20261012-r2",
+      "head": "f3380042bd0c05d6f8946b25f4065b97e7a37d15",
+      "tree": "9198c5c9c72c32fb96f392836c4ca8e30ad9e8f1",
+      "state_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "clean": "true",
+      "ahead": "0",
+      "behind": "0",
+      "state": "CREATED_PUSHED_CLEAN"
+    }
+  ],
+  "effectiveAllowedPaths": [
+    "backend:dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/employeechange/**",
+    "backend:dwp-people-server/src/test/java/com/dwp/services/people/hris/employeeservice/employeechange/**",
+    "frontend:apps/dwp/src/features/hris/employee-services/employee-change/**"
+  ],
+  "protectedPaths": [
+    "backend:dwp-people-server/src/main/java/com/dwp/services/people/hr/assignment/**",
+    "backend:dwp-people-server/src/main/resources/db/migration/V53__create_assignment_change_proposals.sql",
+    "backend:dwp-people-server/src/main/java/com/dwp/services/people/hris/people/**",
+    "frontend:apps/dwp/src/features/hris/employment/assignment-proposal-*.ts*",
+    "frontend:libs/shared-utils/src/api/assignment-proposal-api.ts",
+    "frontend:apps/dwp/src/features/hris/people/**",
+    "backend:dwp-people-server/src/main/java/com/dwp/services/people/security/PeopleSecurityFilter.java",
+    "backend:dwp-people-server/src/test/java/com/dwp/services/people/security/PeopleSecurityFilterTest.java",
+    "backend:dwp-people-server/src/main/resources/db/migration/V54__create_employee_change_request_lifecycle.sql"
+  ],
+  "pathPolicySha256": "1b9eef240654dcb21663615bbcf57a1285feaec6d47128be55d8a5b1173a2380",
+  "dependencyPinsSha256": "c985183adb748fca02559695cf293fd4da96602099523da3d871d115612ecfb9",
+  "controlBootstrapReceiptSha256": "4269308dbe733f42857d27124a1257fe9a3005927c43106a0b26b7b840a857ab",
+  "permittedAction": "START_DOMAIN_MODULE_IMPLEMENTATION",
+  "invalidationConditions": [
+    "promotion receipt does not list this exact token in the active closed set",
+    "packet, token, Control receipt, worktree, migration authority, or execution base pin changes",
+    "worktree is dirty, unpublished, ahead/behind, or on another branch",
+    "an effective allowed-path or common-Control boundary is crossed",
+    "the pinned migration boundary changes",
+    "token expires or is revoked"
+  ],
+  "authority": {
+    "domainAuthoringOnly": true,
+    "exactWorktreesOnly": true,
+    "exactAllowedPathsOnly": true,
+    "migrationAuthorityMode": "CONTROL_BOOTSTRAP_READ_ONLY_PIN",
+    "migrationEditAuthorized": false,
+    "commitAndPushTokenBranchesAuthorized": true,
+    "sharedControlPathChangeAuthorized": false,
+    "integrationMergeAuthorized": false,
+    "customerDataAuthorized": false,
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "controlOwnedMigrationPrerequisite": {
+    "mode": "CONTROL_BOOTSTRAP_READ_ONLY_PIN",
+    "exactRelativePath": "dwp-people-server/src/main/resources/db/migration/V54__create_employee_change_request_lifecycle.sql",
+    "sha256": "f701bfaff260331c83dc60bcd5b7c7fb2f9c58b11e888705c4c999a48d0ecac9",
+    "frozenBackendCommit": "f3380042bd0c05d6f8946b25f4065b97e7a37d15",
+    "state": "CONTROL_BOOTSTRAP_CONSUMED_READ_ONLY",
+    "migrationEditAuthorized": false
+  },
+  "sealedPayloadSha256": "fd55fbb0a265b4b7d6ce932721f351bbbdcf0a3ca5b6ef2490d25fd5994af076"
+}
