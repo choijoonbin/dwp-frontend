@@ -1,0 +1,14 @@
+G7 SYS_FRONTEND_TARGETED sanitized result evidence
+command=yarn vitest run apps/dwp/src/features/hris/administration/reference-configuration
+resultCommit=bb551d5607a4bff3e2b51be9e1af5483470b1647
+resultTree=8a163975fcc900141ef9e3c1aafeae7403355a87
+executionBinding=POST_COMMIT_EXACT_RESULT
+executedAt=2026-10-12T13:43:11Z
+completedAt=2026-10-12T13:43:33Z
+source=direct Control Vitest 4.1.10 targeted-run summary
+testFiles=5
+tests=18
+passed=18
+failed=0
+status=PASS
+redaction=SANITIZED_NO_SECRET_OR_CUSTOMER_DATA
