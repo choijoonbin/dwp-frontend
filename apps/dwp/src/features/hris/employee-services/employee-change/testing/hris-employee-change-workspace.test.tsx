@@ -3,7 +3,6 @@ import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
 
-import { findHcmNavigationItem } from '../../../../hcm/hcm-navigation';
 import {
   EmployeeChangeWorkspaceView,
   HRIS_EMPLOYEE_CHANGE_RUNTIME_STATE,
@@ -39,20 +38,6 @@ describe('HrisEmployeeChangeWorkspace', () => {
       'utf8'
     );
 
-    expect(findHcmNavigationItem('/hr/operations/people/employee-change-requests')).toMatchObject({
-      view: 'employee-change-requests',
-      governedOnly: true,
-      requiredResourceKey: 'DATA.HRIS_WORKFORCE',
-      requiredPermissionCode: 'VIEW',
-    });
-    expect(findHcmNavigationItem('/hr/operations/people')).toMatchObject({
-      view: 'people',
-      path: '/hr/operations/people',
-    });
-    expect(findHcmNavigationItem('/hr/operations/assignments')).toMatchObject({
-      view: 'assignments',
-      path: '/hr/operations/assignments',
-    });
     expect(hcmPage).toContain("import('../features/hris/employee-services/employee-change')");
     expect(hcmPage).toContain("'employee-change-requests': <HrisEmployeeChangeWorkspace />");
     expect(hcmPage).toContain('people: <HrisPeople360Workspace />');

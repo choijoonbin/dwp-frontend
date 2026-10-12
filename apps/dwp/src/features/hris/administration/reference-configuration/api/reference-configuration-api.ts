@@ -178,7 +178,6 @@ export async function readReferenceConfigurationWorkbench(
     {
       ...scoped,
       headers: {
-        ...scoped.headers,
         'X-Correlation-ID': query.correlationId,
         'X-Purpose-Code': 'HRIS_SYSTEM_ADMIN',
       },
@@ -201,7 +200,7 @@ export async function readReferenceConfigurationVersion(
     versionPath(configurationId, version),
     {
       ...scoped,
-      headers: { ...scoped.headers, 'X-Purpose-Code': 'HRIS_SYSTEM_ADMIN' },
+      headers: { 'X-Purpose-Code': 'HRIS_SYSTEM_ADMIN' },
     }
   );
   return response.data.data;

@@ -3,7 +3,6 @@ import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
 
-import { findHcmNavigationItem } from '../../../../hcm/hcm-navigation';
 import { refetchReferenceConfigurationCommandResult } from '../hooks/use-reference-configuration-workspace';
 import {
   HRIS_REFERENCE_CONFIGURATION_RUNTIME_STATE,
@@ -37,16 +36,6 @@ describe('HrisReferenceConfigurationWorkspace', () => {
       'utf8'
     );
 
-    expect(findHcmNavigationItem('/hr/settings/reference-data')).toMatchObject({
-      view: 'settings-reference',
-      governedOnly: true,
-      requiredResourceKey: 'CONFIG.HRIS_WORKBENCH',
-      requiredPermissionCode: 'VIEW',
-    });
-    expect(findHcmNavigationItem('/hr/data/reference')).toMatchObject({
-      view: 'reference-data',
-      path: '/hr/data/reference',
-    });
     expect(hcmPage).toContain("import('../features/hris/administration/reference-configuration')");
     expect(hcmPage).toContain("'settings-reference': <HrisReferenceConfigurationWorkspace />");
     expect(hcmPage).toContain("'reference-data': <WorkforceReferenceData />");

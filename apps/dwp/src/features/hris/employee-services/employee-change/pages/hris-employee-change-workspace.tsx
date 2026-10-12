@@ -346,7 +346,7 @@ export function EmployeeChangeWorkspaceView({
           <Typography>Loading employee-change requests…</Typography>
         </Stack>
       )}
-      {error && (
+      {Boolean(error) && (
         <InlineFeedback severity="error" title="Employee-change requests are unavailable">
           The governed workbench could not be loaded. No cached protected data is shown.
         </InlineFeedback>

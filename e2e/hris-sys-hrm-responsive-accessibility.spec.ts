@@ -21,7 +21,7 @@ const journeys = [
     path: '/hr/operations/people/employee-change-requests',
     workspace: 'hris-employee-change-workspace',
     apiPattern: '**/api/people/v1/hris/workbench/operations/employee/change/requests**',
-    activeMarker: 'Employee-change requests',
+    activeMarker: 'Employee change requests',
   },
 ] as const;
 

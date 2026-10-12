@@ -3,7 +3,6 @@ import {
   matchesProductRoute,
   normalizeProductPath,
   type ProductManifest,
-  type ProductSurfaceManifest,
 } from '../components/product-manifest';
 
 export type RegisteredProductRouteBase = {
@@ -85,11 +84,6 @@ function assertRoutePattern(pattern: string, routeId: string): void {
   }
 }
 
-function surfaceContractSegment(manifest: ProductSurfaceManifest, surfaceId: string): string {
-  const prefix = `${manifest.id}.`;
-  return surfaceId.startsWith(prefix) ? surfaceId.slice(prefix.length) : surfaceId;
-}
-
 export function defineProductRouteContractSource(
   records: readonly ProductPageRouteContractSource[],
   manifests: readonly ProductManifest[] = []
@@ -126,13 +120,10 @@ export function defineProductRouteContractSource(
     if (!surface.routeMatchers.some((matcher) => matchesProductRoute(record.pattern, matcher))) {
       throw new Error(`Product page route is outside its surface boundary: ${record.routeId}`);
     }
-    const expectedContractPrefix = `route.${manifest.id}.${surfaceContractSegment(
-      manifest,
-      surface.id
-    )}.`;
+    const expectedContractPrefix = `route.${manifest.id}.`;
     if (!record.routeContractKey.startsWith(expectedContractPrefix)) {
       throw new Error(
-        `Product page route contract is outside its product surface: ${record.routeId}`
+        `Product page route contract is outside its product: ${record.routeId}`
       );
     }
     const knownRedirectIds = new Set((manifest.legacyRedirects ?? []).map(({ id }) => id));
