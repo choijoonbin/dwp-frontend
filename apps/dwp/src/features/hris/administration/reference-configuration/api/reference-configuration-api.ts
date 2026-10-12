@@ -60,11 +60,23 @@ export const REFERENCE_CONFIGURATION_OPERATION_BINDINGS = [
 export type ReferenceConfigurationWorkbenchQuery = Readonly<{
   limit?: number;
   cursor?: string;
-  policyVersion?: string;
-  referenceData?: string;
-  effectiveStatus?: string;
+  asOf?: string;
+  policyVersion?: Readonly<{
+    policyKeys?: readonly string[];
+    minimumRevision?: number;
+  }>;
+  referenceData?: Readonly<{
+    publicIds?: readonly string[];
+    codes?: readonly string[];
+  }>;
+  effectiveStatus?: Readonly<{
+    codes?: readonly string[];
+    minimumRevision?: number;
+  }>;
   effectiveOn?: string;
   sort?: readonly string[];
+  fields?: readonly ('POLICY_VERSION' | 'REFERENCE_DATA' | 'EFFECTIVE_STATUS')[];
+  freshness?: 'FRESH_ONLY' | 'ALLOW_STALE';
   locale?: string;
   timeZone?: string;
   correlationId: string;
@@ -145,16 +157,31 @@ export async function readReferenceConfigurationWorkbench(
     timeZone: query.timeZone ?? 'UTC',
   });
   addQueryValue(search, 'cursor', query.cursor);
-  addQueryValue(search, 'policyVersion', query.policyVersion);
-  addQueryValue(search, 'referenceData', query.referenceData);
-  addQueryValue(search, 'effectiveStatus', query.effectiveStatus);
+  addQueryValue(search, 'asOf', query.asOf);
+  addQueryValues(search, 'policyVersion.policyKeys', query.policyVersion?.policyKeys);
+  addQueryNumber(search, 'policyVersion.minimumRevision', query.policyVersion?.minimumRevision);
+  addQueryValues(search, 'referenceData.publicIds', query.referenceData?.publicIds);
+  addQueryValues(search, 'referenceData.codes', query.referenceData?.codes);
+  addQueryValues(search, 'effectiveStatus.codes', query.effectiveStatus?.codes);
+  addQueryNumber(search, 'effectiveStatus.minimumRevision', query.effectiveStatus?.minimumRevision);
   addQueryValue(search, 'effectiveOn', query.effectiveOn);
+  addQueryValues(
+    search,
+    'fields',
+    query.fields ?? ['POLICY_VERSION', 'REFERENCE_DATA', 'EFFECTIVE_STATUS']
+  );
+  addQueryValue(search, 'freshness', query.freshness ?? 'FRESH_ONLY');
   for (const sort of query.sort ?? ['itemPublicId:ASC']) search.append('sort', sort);
+  const scoped = productSurfaceReadScopeConfig(contextScopeKey, signal);
   const response = await axiosInstance.get<ApiResponse<unknown>>(
     `${REFERENCE_CONFIGURATION_WORKBENCH_PATH}?${search.toString()}`,
     {
-      ...productSurfaceReadScopeConfig(contextScopeKey, signal),
-      headers: { 'X-Correlation-ID': query.correlationId },
+      ...scoped,
+      headers: {
+        ...scoped.headers,
+        'X-Correlation-ID': query.correlationId,
+        'X-Purpose-Code': 'HRIS_SYSTEM_ADMIN',
+      },
     }
   );
   if (!isReferenceConfigurationWorkbench(response.data.data)) {
@@ -169,9 +196,13 @@ export async function readReferenceConfigurationVersion(
   contextScopeKey?: string,
   signal?: AbortSignal
 ): Promise<ReferenceConfigurationVersion> {
+  const scoped = productSurfaceReadScopeConfig(contextScopeKey, signal);
   const response = await axiosInstance.get<ApiResponse<ReferenceConfigurationVersion>>(
     versionPath(configurationId, version),
-    productSurfaceReadScopeConfig(contextScopeKey, signal)
+    {
+      ...scoped,
+      headers: { ...scoped.headers, 'X-Purpose-Code': 'HRIS_SYSTEM_ADMIN' },
+    }
   );
   return response.data.data;
 }
@@ -345,7 +376,7 @@ async function mutate<T extends object>(
       ...governed.headers,
       'Idempotency-Key': authority.idempotencyKey,
       'X-Correlation-ID': authority.correlationId,
-      'X-Purpose-Code': 'HRIS_CONFIGURATION',
+      'X-Purpose-Code': 'HRIS_SYSTEM_ADMIN',
       ...(requireObjectVersion
         ? { 'X-DWP-Expected-Object-Version': String(authority.expectedObjectVersion) }
         : {}),
@@ -388,4 +419,12 @@ function isUuid(value: string) {
 
 function addQueryValue(search: URLSearchParams, key: string, value?: string) {
   if (value !== undefined) search.set(key, value);
+}
+
+function addQueryValues(search: URLSearchParams, key: string, values?: readonly string[]) {
+  if (values?.length) search.set(key, values.join(','));
+}
+
+function addQueryNumber(search: URLSearchParams, key: string, value?: number) {
+  if (value !== undefined) search.set(key, String(value));
 }

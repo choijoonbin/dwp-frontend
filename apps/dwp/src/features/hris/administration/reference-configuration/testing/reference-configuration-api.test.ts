@@ -47,7 +47,12 @@ describe('reference-configuration API', () => {
       readReferenceConfigurationWorkbench(
         {
           limit: 25,
-          effectiveStatus: 'DRAFT',
+          asOf: '2026-10-12T00:00:00Z',
+          policyVersion: { policyKeys: ['employment-status'], minimumRevision: 3 },
+          referenceData: { publicIds: [CONFIGURATION_ID], codes: ['SYS'] },
+          effectiveStatus: { codes: ['DRAFT'], minimumRevision: 4 },
+          fields: ['POLICY_VERSION', 'REFERENCE_DATA'],
+          freshness: 'ALLOW_STALE',
           sort: ['referenceData:ASC'],
           locale: 'ko-KR',
           timeZone: 'Asia/Seoul',
@@ -61,7 +66,15 @@ describe('reference-configuration API', () => {
     expect(requested.pathname).toBe('/api/platform/v1/hris/workbench/settings-reference');
     expect(Object.fromEntries(requested.searchParams)).toMatchObject({
       limit: '25',
-      effectiveStatus: 'DRAFT',
+      asOf: '2026-10-12T00:00:00Z',
+      'policyVersion.policyKeys': 'employment-status',
+      'policyVersion.minimumRevision': '3',
+      'referenceData.publicIds': CONFIGURATION_ID,
+      'referenceData.codes': 'SYS',
+      'effectiveStatus.codes': 'DRAFT',
+      'effectiveStatus.minimumRevision': '4',
+      fields: 'POLICY_VERSION,REFERENCE_DATA',
+      freshness: 'ALLOW_STALE',
       locale: 'ko-KR',
       timeZone: 'Asia/Seoul',
       sort: 'referenceData:ASC',
@@ -70,7 +83,10 @@ describe('reference-configuration API', () => {
       expect.objectContaining({
         contextScopeKey: 'tenant:42/configuration',
         signal,
-        headers: { 'X-Correlation-ID': CORRELATION_ID },
+        headers: {
+          'X-Correlation-ID': CORRELATION_ID,
+          'X-Purpose-Code': 'HRIS_SYSTEM_ADMIN',
+        },
       })
     );
   });
@@ -103,6 +119,7 @@ describe('reference-configuration API', () => {
     expect(runtime.post.mock.calls[0][2].headers).toMatchObject({
       'Idempotency-Key': IDEMPOTENCY_KEY,
       'X-Correlation-ID': CORRELATION_ID,
+      'X-Purpose-Code': 'HRIS_SYSTEM_ADMIN',
       'X-DWP-Expected-Object-Version': '7',
     });
     expect(runtime.post.mock.calls[1][2].headers).toMatchObject({
@@ -110,6 +127,7 @@ describe('reference-configuration API', () => {
       'X-DWP-Expected-Object-Version': '7',
       'X-DWP-Expected-Decision-Revision': 'decision-9',
       'X-DWP-Step-Up-Challenge': 'signed-step-up',
+      'X-Purpose-Code': 'HRIS_SYSTEM_ADMIN',
     });
   });
 
@@ -163,7 +181,7 @@ function receipt(commandType: string) {
     subjectPrincipalPublicId: '60000000-0000-4000-8000-000000000001',
     populationScopeDigest: 'c'.repeat(64),
     fieldPolicyRevision: 9,
-    purposeCode: 'HRIS_CONFIGURATION',
+    purposeCode: 'HRIS_SYSTEM_ADMIN',
     authorizationRevision: 9,
     status: 'SUCCEEDED',
     correlationId: CORRELATION_ID,
