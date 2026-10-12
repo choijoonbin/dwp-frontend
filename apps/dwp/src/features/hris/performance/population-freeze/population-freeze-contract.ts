@@ -3,7 +3,7 @@ import { Temporal } from 'temporal-polyfill';
 export const PERFORMANCE_POPULATION_FREEZE_ROUTE_CONTRACT =
   'route.hcm.operations.performance-population-freeze.action' as const;
 export const PERFORMANCE_POPULATION_FREEZE_CAPABILITY =
-  'hcm.operations.performance.update' as const;
+  'hcm.operations.performance.freeze' as const;
 
 export type FreezePerformancePopulationCommand = Readonly<{
   commandId: string;

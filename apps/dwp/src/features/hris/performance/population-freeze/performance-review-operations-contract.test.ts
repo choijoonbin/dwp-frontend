@@ -98,6 +98,20 @@ describe('IAQ-021 performance review-operations projection', () => {
     expect(Object.isFrozen(projection.items[0]?.availableActions)).toBe(true);
   });
 
+  it('preserves an exact zero aggregate revision instead of fabricating a positive revision', () => {
+    const candidate = source();
+    candidate.items[0]!.fieldGroups.REVIEW_ASSIGNMENT.value.revision = 0;
+    candidate.items[0]!.fieldGroups.WORK_QUEUE.value.revision = 0;
+    candidate.items[0]!.fieldGroups.DUE_STATUS.value.revision = 0;
+
+    const item = parsePerformanceReviewOperationsProjection(candidate).items[0]!;
+
+    expect(item.fieldGroups.REVIEW_ASSIGNMENT?.decision).toBe('VIEW');
+    if (item.fieldGroups.REVIEW_ASSIGNMENT?.decision === 'VIEW') {
+      expect(item.fieldGroups.REVIEW_ASSIGNMENT.value.revision).toBe(0);
+    }
+  });
+
   it('enforces VIEW, MASK, and OMIT counts against the serialized field groups', () => {
     const candidate = source();
     candidate.items[0]!.fieldGroups = {

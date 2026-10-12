@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { HttpError, HttpTransportError } from '@dwp-frontend/shared-utils';
 
 import { useProductSurfaceRequestScope } from '../../../../components/use-product-surface-request-scope';
 import { newPerformanceCommandId } from '../model/performance-cycle-command';
@@ -19,7 +20,11 @@ import type {
 } from './performance-review-operations-contract';
 
 export type PerformanceReviewOperationsCommandExecutors = Readonly<{
-  previewPopulation?: (cycleId: string, asOf: string) => Promise<PerformancePopulationPreview>;
+  previewPopulation?: (
+    cycleId: string,
+    expectedCycleRevision: number,
+    asOf: string
+  ) => Promise<PerformancePopulationPreview>;
   freezePopulation?: (
     cycleId: string,
     command: FreezePerformancePopulationCommand
@@ -31,7 +36,7 @@ export type PerformanceReviewOperationsRuntimeOptions = Readonly<{
   locale: string;
   timeZone: string;
   dataSource?: PerformanceReviewOperationsDataSource;
-  commandExecutors?: PerformanceReviewOperationsCommandExecutors;
+  commandExecutors: PerformanceReviewOperationsCommandExecutors;
   focusResourcePublicId?: string | null;
   onFocusResourcePublicIdChange?: (resourcePublicId: string | null) => void;
 }>;
@@ -74,6 +79,21 @@ function hasAction(item: PerformanceReviewOperationItem | null, actionKey: strin
   return Boolean(item?.availableActions.some((action) => action.actionKey === actionKey));
 }
 
+function cycleRevision(item: PerformanceReviewOperationItem): number | null {
+  const assignment = item.fieldGroups.REVIEW_ASSIGNMENT;
+  return assignment?.decision === 'VIEW' ? assignment.value.revision : null;
+}
+
+export function isAmbiguousPerformancePopulationFreezeFailure(error: unknown): boolean {
+  if (error instanceof HttpTransportError) {
+    return error.reason === 'NETWORK' || error.reason === 'TIMEOUT';
+  }
+  return (
+    error instanceof HttpError &&
+    (error.status === 408 || error.status === 429 || error.status >= 500)
+  );
+}
+
 export function useHrisPerformanceReviewOperationsRequestScope() {
   return useProductSurfaceRequestScope({
     productKey: 'hcm',
@@ -98,13 +118,17 @@ export function usePerformanceReviewOperationsRuntime({
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
   const [preview, setPreview] = useState<PerformancePopulationPreview | null>(null);
   const [previewCycleId, setPreviewCycleId] = useState<string | null>(null);
+  const [previewRefreshCorrelationId, setPreviewRefreshCorrelationId] = useState<string | null>(
+    null
+  );
   const [freezeResult, setFreezeResult] = useState<PerformancePopulationFreezeResult | null>(null);
   const [receipt, setReceipt] = useState<PerformancePopulationFreezeReceipt | null>(null);
   const [pendingFreeze, setPendingFreeze] = useState<PendingFreeze | null>(null);
   const [commandError, setCommandError] = useState<Error | null>(null);
   const [commandBusy, setCommandBusy] = useState(false);
   const cursor = cursorHistory[pageIndex] ?? null;
-  const governedFocus = normalizePerformanceReviewOperationsFocus(focusResourcePublicId);
+  const requestedFocus = normalizePerformanceReviewOperationsFocus(focusResourcePublicId);
+  const governedFocus = pendingFreeze?.cycleId ?? requestedFocus;
   const previousScopeIdentity = useRef(scopeIdentity);
   const queryContextIdentity = JSON.stringify([locale, timeZone, governedFocus]);
   const previousQueryContextIdentity = useRef(queryContextIdentity);
@@ -119,6 +143,7 @@ export function usePerformanceReviewOperationsRuntime({
     setSelectedItemId(null);
     setPreview(null);
     setPreviewCycleId(null);
+    setPreviewRefreshCorrelationId(null);
     setFreezeResult(null);
     setReceipt(null);
     setPendingFreeze(null);
@@ -132,13 +157,20 @@ export function usePerformanceReviewOperationsRuntime({
     setPageIndex(0);
     setAnchorAsOf(null);
     setCorrelationId(newPerformanceCommandId());
-    setSelectedItemId(null);
-    setPreview(null);
-    setPreviewCycleId(null);
-    setFreezeResult(null);
-    setReceipt(null);
-    setCommandError(null);
-  }, [queryContextIdentity]);
+    if (!pendingFreeze) {
+      setSelectedItemId(null);
+      setPreview(null);
+      setPreviewCycleId(null);
+      setPreviewRefreshCorrelationId(null);
+      setFreezeResult(null);
+      setReceipt(null);
+    }
+  }, [pendingFreeze, queryContextIdentity]);
+
+  useEffect(() => {
+    if (!pendingFreeze || requestedFocus === pendingFreeze.cycleId) return;
+    onFocusResourcePublicIdChange?.(pendingFreeze.cycleId);
+  }, [onFocusResourcePublicIdChange, pendingFreeze, requestedFocus]);
 
   const request = useMemo<PerformanceReviewOperationsQuery>(
     () => ({
@@ -183,6 +215,13 @@ export function usePerformanceReviewOperationsRuntime({
     items[0] ??
     null;
   const selectedCycleId = selectedItem?.deepLink.resourcePublicId ?? null;
+  const previewConfirmedByProjection = Boolean(
+    preview &&
+    previewCycleId === selectedCycleId &&
+    previewRefreshCorrelationId &&
+    projection?.queryState.correlationId === previewRefreshCorrelationId &&
+    hasAction(selectedItem, 'hris.action.per.freeze-population')
+  );
 
   useEffect(() => {
     if (!selectedItem) {
@@ -198,6 +237,7 @@ export function usePerformanceReviewOperationsRuntime({
     if (preview && previewCycleId !== selectedCycleId) {
       setPreview(null);
       setPreviewCycleId(null);
+      setPreviewRefreshCorrelationId(null);
       setFreezeResult(null);
       setReceipt(null);
       setCommandError(null);
@@ -213,6 +253,7 @@ export function usePerformanceReviewOperationsRuntime({
     setSelectedItemId(itemPublicId);
     setPreview(null);
     setPreviewCycleId(null);
+    setPreviewRefreshCorrelationId(null);
     setFreezeResult(null);
     setReceipt(null);
     setCommandError(null);
@@ -226,16 +267,19 @@ export function usePerformanceReviewOperationsRuntime({
     setCorrelationId(newPerformanceCommandId());
     setPreview(null);
     setPreviewCycleId(null);
+    setPreviewRefreshCorrelationId(null);
     setFreezeResult(null);
     setReceipt(null);
     setCommandError(null);
   };
 
   const refreshAfterCommand = () => {
+    const nextCorrelationId = newPerformanceCommandId();
     setCursorHistory([null]);
     setPageIndex(0);
     setAnchorAsOf(null);
-    setCorrelationId(newPerformanceCommandId());
+    setCorrelationId(nextCorrelationId);
+    return nextCorrelationId;
   };
 
   const nextPage = () => {
@@ -248,6 +292,7 @@ export function usePerformanceReviewOperationsRuntime({
     setSelectedItemId(null);
     setPreview(null);
     setPreviewCycleId(null);
+    setPreviewRefreshCorrelationId(null);
     setFreezeResult(null);
     setReceipt(null);
   };
@@ -258,13 +303,16 @@ export function usePerformanceReviewOperationsRuntime({
     setSelectedItemId(null);
     setPreview(null);
     setPreviewCycleId(null);
+    setPreviewRefreshCorrelationId(null);
     setFreezeResult(null);
     setReceipt(null);
   };
 
   const previewSelected = async () => {
+    const expectedCycleRevision = selectedItem ? cycleRevision(selectedItem) : null;
     if (
       !selectedItem ||
+      expectedCycleRevision === null ||
       !commandExecutors?.previewPopulation ||
       !hasAction(selectedItem, 'hris.action.per.preview-population') ||
       pendingFreeze ||
@@ -279,10 +327,12 @@ export function usePerformanceReviewOperationsRuntime({
     try {
       const result = await commandExecutors.previewPopulation(
         selectedItem.deepLink.resourcePublicId,
+        expectedCycleRevision,
         new Date().toISOString()
       );
       setPreview(result);
       setPreviewCycleId(selectedItem.deepLink.resourcePublicId);
+      setPreviewRefreshCorrelationId(refreshAfterCommand());
     } catch (error) {
       setCommandError(error instanceof Error ? error : new Error('Preview failed.'));
     } finally {
@@ -295,6 +345,7 @@ export function usePerformanceReviewOperationsRuntime({
       !selectedItem ||
       !preview ||
       previewCycleId !== selectedItem.deepLink.resourcePublicId ||
+      !previewConfirmedByProjection ||
       !commandExecutors?.freezePopulation ||
       !hasAction(selectedItem, 'hris.action.per.freeze-population') ||
       reason.trim().length < 10 ||
@@ -334,6 +385,9 @@ export function usePerformanceReviewOperationsRuntime({
         );
       }
     } catch (error) {
+      if (!isAmbiguousPerformancePopulationFreezeFailure(error)) {
+        setPendingFreeze(null);
+      }
       setCommandError(error instanceof Error ? error : new Error('Freeze failed.'));
     } finally {
       setCommandBusy(false);
@@ -361,6 +415,9 @@ export function usePerformanceReviewOperationsRuntime({
         );
       }
     } catch (error) {
+      if (!isAmbiguousPerformancePopulationFreezeFailure(error)) {
+        setPendingFreeze(null);
+      }
       setCommandError(error instanceof Error ? error : new Error('Reconciliation failed.'));
     } finally {
       setCommandBusy(false);
@@ -373,6 +430,7 @@ export function usePerformanceReviewOperationsRuntime({
     selectedItem,
     selectedItemId,
     preview,
+    previewConfirmedByProjection,
     freezeResult,
     receipt,
     commandError,

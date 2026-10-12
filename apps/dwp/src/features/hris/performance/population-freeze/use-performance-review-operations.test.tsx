@@ -2,6 +2,7 @@
 import { act, createElement } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { HttpError, HttpTransportError } from '@dwp-frontend/shared-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { usePerformanceReviewOperationsRuntime } from './use-performance-review-operations';
@@ -176,7 +177,7 @@ function Harness({
   onFocusResourcePublicIdChange,
 }: {
   dataSource: PerformanceReviewOperationsDataSource;
-  commandExecutors?: PerformanceReviewOperationsCommandExecutors;
+  commandExecutors: PerformanceReviewOperationsCommandExecutors;
   focusResourcePublicId?: string;
   onFocusResourcePublicIdChange?: (resourcePublicId: string | null) => void;
 }) {
@@ -194,7 +195,7 @@ function Harness({
 
 async function renderHarness(
   dataSource: PerformanceReviewOperationsDataSource,
-  commandExecutors?: PerformanceReviewOperationsCommandExecutors,
+  commandExecutors: PerformanceReviewOperationsCommandExecutors = {},
   focusResourcePublicId?: string,
   onFocusResourcePublicIdChange?: (resourcePublicId: string | null) => void
 ) {
@@ -235,7 +236,7 @@ describe('performance review-operations runtime', () => {
 
   it('restores controlled deep-link focus as an owner query filter', async () => {
     const query = vi.fn(async (request: PerformanceReviewOperationsQuery) => projection(request));
-    await renderHarness({ query }, undefined, ID.cycle);
+    await renderHarness({ query }, {}, ID.cycle);
 
     expect(query).toHaveBeenCalledTimes(1);
     expect(query.mock.calls[0]?.[0].filter.reviewAssignment?.publicIds).toEqual([ID.cycle]);
@@ -268,7 +269,7 @@ describe('performance review-operations runtime', () => {
     });
     const previewPopulation = vi.fn().mockResolvedValue(preview);
     const freezePopulation = vi.fn();
-    await renderHarness({ query }, { previewPopulation, freezePopulation });
+    await renderHarness({ query }, { previewPopulation, freezePopulation }, ID.cycle);
 
     await act(async () => latest.previewSelected());
     await act(async () => latest.freezeSelected('Reviewed exact population evidence.'));
@@ -324,13 +325,16 @@ describe('performance review-operations runtime', () => {
     const previewPopulation = vi.fn().mockResolvedValue(preview);
     const freezePopulation = vi
       .fn()
-      .mockRejectedValueOnce(new Error('Connection closed after request write.'))
+      .mockRejectedValueOnce(new HttpTransportError('NETWORK'))
       .mockImplementationOnce(
         async (_cycleId: string, command: FreezePerformancePopulationCommand) => succeeded(command)
       );
-    await renderHarness({ query }, { previewPopulation, freezePopulation });
+    await renderHarness({ query }, { previewPopulation, freezePopulation }, ID.cycle);
 
     await act(async () => latest.previewSelected());
+    await act(async () => {
+      await vi.waitFor(() => expect(latest.previewConfirmedByProjection).toBe(true));
+    });
     await act(async () => latest.freezeSelected('Reviewed exact population evidence.'));
     expect(latest.freezeRetryPending).toBe(true);
     expect(freezePopulation).toHaveBeenCalledTimes(1);
@@ -345,5 +349,139 @@ describe('performance review-operations runtime', () => {
     expect(second[1]).toEqual(first[1]);
     expect(latest.receipt?.state).toBe('SUCCEEDED');
     expect(latest.freezeRetryPending).toBe(false);
+  });
+
+  it.each([
+    ['cancel', new HttpTransportError('ABORT')],
+    ['validation', new HttpError('Invalid population.', 422)],
+    ['conflict', new HttpError('Preview changed.', 409)],
+  ])('unlocks a deterministic %s failure without retaining replay state', async (_label, error) => {
+    const query = vi.fn(async (request: PerformanceReviewOperationsQuery) => projection(request));
+    const previewPopulation = vi.fn().mockResolvedValue(preview);
+    const freezePopulation = vi.fn().mockRejectedValue(error);
+    await renderHarness({ query }, { previewPopulation, freezePopulation }, ID.cycle);
+
+    await act(async () => latest.previewSelected());
+    await act(async () => {
+      await vi.waitFor(() => expect(latest.previewConfirmedByProjection).toBe(true));
+    });
+    await act(async () => latest.freezeSelected('Reviewed exact population evidence.'));
+
+    expect(latest.freezeRetryPending).toBe(false);
+    expect(latest.commandError).toBe(error);
+  });
+
+  it.each([
+    ['timeout', new HttpTransportError('TIMEOUT')],
+    ['request timeout', new HttpError('Timed out.', 408)],
+    ['rate limited', new HttpError('Try later.', 429)],
+    ['server error', new HttpError('Unavailable.', 503)],
+  ])('retains the exact command after an ambiguous %s failure', async (_label, error) => {
+    const query = vi.fn(async (request: PerformanceReviewOperationsQuery) => projection(request));
+    const previewPopulation = vi.fn().mockResolvedValue(preview);
+    const freezePopulation = vi.fn().mockRejectedValue(error);
+    await renderHarness({ query }, { previewPopulation, freezePopulation }, ID.cycle);
+
+    await act(async () => latest.previewSelected());
+    await act(async () => {
+      await vi.waitFor(() => expect(latest.previewConfirmedByProjection).toBe(true));
+    });
+    await act(async () => latest.freezeSelected('Reviewed exact population evidence.'));
+
+    expect(latest.freezeRetryPending).toBe(true);
+  });
+
+  it('preserves preview evidence but waits for the refreshed IAQ action before enabling freeze', async () => {
+    let releaseRefresh: ((value: PerformanceReviewOperationsProjection) => void) | undefined;
+    const query = vi.fn((request: PerformanceReviewOperationsQuery) => {
+      if (query.mock.calls.length === 1) {
+        const firstPage = projection(request);
+        return Promise.resolve({
+          ...firstPage,
+          queryState: { ...firstPage.queryState, nextCursor: 'a'.repeat(32) },
+        });
+      }
+      if (query.mock.calls.length === 2) return Promise.resolve(projection(request));
+      return new Promise<PerformanceReviewOperationsProjection>((resolve) => {
+        releaseRefresh = resolve;
+      });
+    });
+    const previewPopulation = vi.fn().mockResolvedValue(preview);
+    const freezePopulation = vi.fn();
+    await renderHarness({ query }, { previewPopulation, freezePopulation });
+
+    act(() => latest.nextPage());
+    await act(async () => {
+      await vi.waitFor(() => expect(latest.pageIndex).toBe(1));
+    });
+    await act(async () => latest.previewSelected());
+    expect(latest.preview).toEqual(preview);
+    expect(latest.previewConfirmedByProjection).toBe(false);
+    await act(async () => latest.freezeSelected('Reviewed exact population evidence.'));
+    expect(freezePopulation).not.toHaveBeenCalled();
+
+    const refreshRequest = query.mock.calls[2]?.[0];
+    expect(refreshRequest?.cursor).toBeNull();
+    expect(latest.pageIndex).toBe(0);
+    await act(async () => releaseRefresh?.(projection(refreshRequest!)));
+    await act(async () => {
+      await vi.waitFor(() => expect(latest.previewConfirmedByProjection).toBe(true));
+    });
+    expect(latest.preview).toEqual(preview);
+  });
+
+  it('retains exact replay state for a nonterminal command receipt', async () => {
+    const query = vi.fn(async (request: PerformanceReviewOperationsQuery) => projection(request));
+    const previewPopulation = vi.fn().mockResolvedValue(preview);
+    const freezePopulation = vi.fn(
+      async (_cycleId: string, command: FreezePerformancePopulationCommand) => ({
+        freeze: null,
+        receipt: {
+          receiptId: command.commandId,
+          commandType: 'FREEZE_POPULATION' as const,
+          originatingAction: 'performance.population.freeze' as const,
+          aggregateId: ID.cycle,
+          expectedAggregateVersion: command.expectedCycleRevision,
+          appliedAggregateVersion: null,
+          state: 'ACCEPTED' as const,
+          resultRef: null,
+          errorCode: null,
+          acceptedAt: '2027-04-01T00:00:00Z',
+          completedAt: null,
+        },
+      })
+    );
+    await renderHarness({ query }, { previewPopulation, freezePopulation }, ID.cycle);
+
+    await act(async () => latest.previewSelected());
+    await act(async () => {
+      await vi.waitFor(() => expect(latest.previewConfirmedByProjection).toBe(true));
+    });
+    await act(async () => latest.freezeSelected('Reviewed exact population evidence.'));
+
+    expect(latest.receipt?.state).toBe('ACCEPTED');
+    expect(latest.freezeRetryPending).toBe(true);
+  });
+
+  it('pins the pending recovery cycle in the query and controlled URL callback', async () => {
+    const otherCycle = '88888888-8888-4888-8888-888888888888';
+    const query = vi.fn(async (request: PerformanceReviewOperationsQuery) => projection(request));
+    const previewPopulation = vi.fn().mockResolvedValue(preview);
+    const freezePopulation = vi.fn().mockRejectedValue(new HttpTransportError('NETWORK'));
+    const onFocus = vi.fn();
+    await renderHarness({ query }, { previewPopulation, freezePopulation }, ID.cycle, onFocus);
+    await act(async () => latest.previewSelected());
+    await act(async () => {
+      await vi.waitFor(() => expect(latest.previewConfirmedByProjection).toBe(true));
+    });
+    await act(async () => latest.freezeSelected('Reviewed exact population evidence.'));
+    expect(latest.freezeRetryPending).toBe(true);
+
+    await renderHarness({ query }, { previewPopulation, freezePopulation }, otherCycle, onFocus);
+    await act(async () => {
+      await vi.waitFor(() => expect(onFocus).toHaveBeenCalledWith(ID.cycle));
+    });
+    expect(query.mock.calls.at(-1)?.[0].filter.reviewAssignment?.publicIds).toEqual([ID.cycle]);
+    expect(latest.selectedItem?.deepLink.resourcePublicId).toBe(ID.cycle);
   });
 });

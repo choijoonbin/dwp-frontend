@@ -96,6 +96,7 @@ function render(overrides: Record<string, unknown> = {}) {
       projection,
       selectedItem: projection.items[0]!,
       preview: null,
+      previewConfirmedByProjection: false,
       freezeResult: null,
       receipt: null,
       commandError: null,

@@ -52,6 +52,7 @@ export type PerformanceReviewOperationsWorkspaceViewProps = Readonly<{
   projection: PerformanceReviewOperationsProjection | undefined;
   selectedItem: PerformanceReviewOperationItem | null;
   preview: PerformancePopulationPreview | null;
+  previewConfirmedByProjection: boolean;
   freezeResult: PerformancePopulationFreezeResult | null;
   receipt: PerformancePopulationFreezeReceipt | null;
   commandError: Error | null;
@@ -76,7 +77,7 @@ export type PerformanceReviewOperationsWorkspaceViewProps = Readonly<{
 
 export type HrisPerformanceReviewOperationsWorkspaceProps = Readonly<{
   dataSource?: PerformanceReviewOperationsDataSource;
-  commandExecutors?: PerformanceReviewOperationsCommandExecutors;
+  commandExecutors: PerformanceReviewOperationsCommandExecutors;
   focusResourcePublicId?: string | null;
   onFocusResourcePublicIdChange?: (resourcePublicId: string | null) => void;
 }>;
@@ -193,6 +194,7 @@ function OperationDetail({
   timeZone,
   item,
   preview,
+  previewConfirmedByProjection,
   commandBusy,
   previewExecutorConnected,
   freezeExecutorConnected,
@@ -205,6 +207,7 @@ function OperationDetail({
   timeZone: string;
   item: PerformanceReviewOperationItem;
   preview: PerformancePopulationPreview | null;
+  previewConfirmedByProjection: boolean;
   commandBusy: boolean;
   previewExecutorConnected: boolean;
   freezeExecutorConnected: boolean;
@@ -271,7 +274,13 @@ function OperationDetail({
         {hasAction(item, 'hris.action.per.freeze-population') && (
           <ActionButton
             intent="primary"
-            disabled={!freezeExecutorConnected || !preview || commandBusy || freezeRetryPending}
+            disabled={
+              !freezeExecutorConnected ||
+              !preview ||
+              !previewConfirmedByProjection ||
+              commandBusy ||
+              freezeRetryPending
+            }
             startIcon={<Snowflake size={16} aria-hidden="true" />}
             onClick={onOpenFreeze}
           >
@@ -319,6 +328,7 @@ export function PerformanceReviewOperationsWorkspaceView({
   projection,
   selectedItem,
   preview,
+  previewConfirmedByProjection,
   freezeResult,
   receipt,
   commandError,
@@ -484,6 +494,7 @@ export function PerformanceReviewOperationsWorkspaceView({
               timeZone={timeZone}
               item={selectedItem}
               preview={preview}
+              previewConfirmedByProjection={previewConfirmedByProjection}
               commandBusy={commandBusy}
               previewExecutorConnected={previewExecutorConnected}
               freezeExecutorConnected={freezeExecutorConnected}
