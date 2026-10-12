@@ -19,6 +19,7 @@ import {
   assertReferenceConfigurationReceipt,
   referenceConfigurationActions,
   referenceConfigurationCommandType,
+  referenceConfigurationOriginatingAction,
 } from '../model/reference-configuration-model';
 
 import type {
@@ -43,7 +44,7 @@ export type ReferenceConfigurationStudioProps = Readonly<{
   onSelect(configurationId: string, version: number): void;
   onRefresh(): void;
   commandOwner?: ReferenceConfigurationCommandOwner;
-  onCommandCommitted?(receipt: ReferenceConfigurationCommandReceipt): void;
+  onCommandCommitted?(receipt: ReferenceConfigurationCommandReceipt): void | Promise<void>;
 }>;
 
 const STATES = [
@@ -80,7 +81,7 @@ export function ReferenceConfigurationStudio({
     setCommandAction(undefined);
     setReceipt(undefined);
     setCommandError(undefined);
-  }, [detail?.configurationId, detail?.version, detail?.aggregateVersion]);
+  }, [detail?.configurationId, detail?.version]);
 
   async function executeAction(action: ReferenceConfigurationLifecycleAction) {
     if (!commandOwner || !detail || commandState === 'RUNNING') return;
@@ -97,12 +98,16 @@ export function ReferenceConfigurationStudio({
       });
       const verified = assertReferenceConfigurationReceipt(candidate, {
         commandType: referenceConfigurationCommandType(action),
-        resultRefPrefix: `${detail.configurationId}/${detail.version}`,
+        originatingAction: referenceConfigurationOriginatingAction(action),
+        resultRefPrefix:
+          action === 'ROLLBACK'
+            ? `${detail.configurationId}/`
+            : `${detail.configurationId}/${detail.version}`,
       });
       const immutable = Object.freeze({ ...verified });
+      await onCommandCommitted?.(immutable);
       setReceipt(immutable);
       setCommandState('SUCCEEDED');
-      onCommandCommitted?.(immutable);
     } catch (error) {
       setCommandError(commandErrorMessage(error));
       setCommandState(isStaleCommandError(error) ? 'STALE' : 'ERROR');

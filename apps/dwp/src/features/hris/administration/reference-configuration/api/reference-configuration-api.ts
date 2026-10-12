@@ -217,6 +217,7 @@ export async function createReferenceConfigurationVersion(
     body,
     authority,
     'CREATE_VERSION',
+    'configuration.version.create',
     `${configurationId}/`,
     false,
     false
@@ -349,7 +350,8 @@ async function versionMutation<T extends object>(
     body,
     authority,
     commandType,
-    `${configurationId}/${version}`,
+    `configuration.version.${action}`,
+    action === 'rollback' ? `${configurationId}/` : `${configurationId}/${version}`,
     true,
     highRisk
   );
@@ -360,6 +362,7 @@ async function mutate<T extends object>(
   body: T,
   authority: ReferenceConfigurationCommandAuthority,
   commandType: string,
+  originatingAction: string,
   resultRefPrefix: string,
   requireObjectVersion: boolean,
   highRisk: boolean
@@ -382,7 +385,11 @@ async function mutate<T extends object>(
         : {}),
     },
   });
-  return assertReferenceConfigurationReceipt(response.data.data, { commandType, resultRefPrefix });
+  return assertReferenceConfigurationReceipt(response.data.data, {
+    commandType,
+    originatingAction,
+    resultRefPrefix,
+  });
 }
 
 function validateAuthority(

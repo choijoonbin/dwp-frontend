@@ -130,6 +130,29 @@ describe('ReferenceConfigurationStudio command-owner boundary', () => {
     expect(host.textContent).not.toContain('Immutable receipt');
   });
 
+  it.each(['FAILED', 'RESULT_UNKNOWN'] as const)(
+    'does not render %s owner receipts as successful',
+    async (status) => {
+      const owner = {
+        execute: vi.fn(async () => ({ ...receipt('VALIDATE', 2), status })),
+      };
+      const onCommitted = vi.fn();
+      await renderStudio({
+        lifecycle: 'DRAFT',
+        action: 'VALIDATE',
+        aggregateVersion: 1,
+        commandOwner: owner,
+        onCommitted,
+      });
+      await act(async () =>
+        fireEvent.click(getByRole(host, 'button', { name: 'VALIDATE reference configuration' }))
+      );
+      await waitFor(() => expect(host.textContent).toContain('VALIDATE failed'));
+      expect(host.textContent).not.toContain('Immutable receipt');
+      expect(onCommitted).not.toHaveBeenCalled();
+    }
+  );
+
   async function renderStudio(input: {
     lifecycle: ReferenceConfigurationLifecycle;
     action: ReferenceConfigurationLifecycleAction;
@@ -172,7 +195,7 @@ function receipt(action: ReferenceConfigurationLifecycleAction, aggregateVersion
     requestDigest: 'b'.repeat(64),
     createdAt: '2026-10-12T12:00:00Z',
     aggregateVersion,
-    resultRef: `${CONFIGURATION_ID}/3`,
+    resultRef: `${CONFIGURATION_ID}/${action === 'ROLLBACK' ? 99 : 3}`,
   };
 }
 

@@ -61,11 +61,57 @@ describe('reference-configuration model', () => {
           requestDigest: 'a'.repeat(64),
           aggregateVersion: 1,
         },
-        { commandType: 'PUBLISH_VERSION', resultRefPrefix: 'expected/1' }
+        {
+          commandType: 'PUBLISH_VERSION',
+          originatingAction: 'configuration.version.publish',
+          resultRefPrefix: 'expected/1',
+        }
+      )
+    ).toThrow('identity does not match');
+  });
+
+  it('accepts only successful receipts with the exact purpose and originating action', () => {
+    const expected = {
+      commandType: 'PUBLISH_VERSION',
+      originatingAction: 'configuration.version.publish',
+      resultRefPrefix: '10000000-0000-4000-8000-000000000001/1',
+    };
+    expect(assertReferenceConfigurationReceipt(receipt(), expected).status).toBe('SUCCEEDED');
+    for (const status of ['FAILED', 'RESULT_UNKNOWN'] as const) {
+      expect(() => assertReferenceConfigurationReceipt({ ...receipt(), status }, expected)).toThrow(
+        'identity does not match'
+      );
+    }
+    expect(() =>
+      assertReferenceConfigurationReceipt({ ...receipt(), purposeCode: 'OTHER' }, expected)
+    ).toThrow('identity does not match');
+    expect(() =>
+      assertReferenceConfigurationReceipt(
+        { ...receipt(), originatingAction: 'configuration.version.rollback' },
+        expected
       )
     ).toThrow('identity does not match');
   });
 });
+
+function receipt() {
+  return {
+    receiptId: '50000000-0000-4000-8000-000000000001',
+    commandType: 'PUBLISH_VERSION',
+    originatingAction: 'configuration.version.publish',
+    subjectPrincipalPublicId: '60000000-0000-4000-8000-000000000001',
+    populationScopeDigest: 'a'.repeat(64),
+    fieldPolicyRevision: 7,
+    purposeCode: 'HRIS_SYSTEM_ADMIN',
+    authorizationRevision: 9,
+    status: 'SUCCEEDED',
+    correlationId: '30000000-0000-4000-8000-000000000001',
+    requestDigest: 'b'.repeat(64),
+    createdAt: '2026-10-12T12:00:00Z',
+    aggregateVersion: 8,
+    resultRef: '10000000-0000-4000-8000-000000000001/1',
+  };
+}
 
 function workbench(state: 'COMPLETE' | 'EMPTY' | 'PARTIAL' | 'UNAVAILABLE', items: unknown[]) {
   return {

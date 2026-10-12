@@ -56,7 +56,7 @@ function ActiveReferenceConfigurationWorkspace({
         onSelect={workspace.select}
         onRefresh={() => void workspace.refresh()}
         commandOwner={commandOwner}
-        onCommandCommitted={() => void workspace.refresh()}
+        onCommandCommitted={(receipt) => workspace.refreshAfterCommand(receipt)}
       />
     </Stack>
   );
