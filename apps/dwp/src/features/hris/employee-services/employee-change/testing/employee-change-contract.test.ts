@@ -44,6 +44,69 @@ describe('employee-change generated contract adapter', () => {
     expect(() => parseEmployeeChangeProjection(substituted)).toThrow(
       'Employee-change projection is invalid.'
     );
+
+    const actionStateDrift = employeeChangeProjection();
+    actionStateDrift.items[0]!.statusCode = 'SUBMITTED';
+    expect(() => parseEmployeeChangeProjection(actionStateDrift)).toThrow(
+      'Employee-change projection is invalid.'
+    );
+  });
+
+  it('accepts only runtime-consistent COMPLETE, EMPTY, PARTIAL and UNAVAILABLE states', () => {
+    const empty = employeeChangeProjection();
+    empty.items = [];
+    empty.queryState.state = 'EMPTY';
+    empty.queryState.fieldDecisionSummary = { viewCount: 0, maskedCount: 0, omittedCount: 0 };
+    expect(parseEmployeeChangeProjection(empty).queryState.state).toBe('EMPTY');
+
+    const partial = employeeChangeProjection();
+    partial.queryState.state = 'PARTIAL';
+    partial.queryState.freshness = 'STALE';
+    partial.queryState.partialFailures = [
+      {
+        componentKey: 'employee-change.request',
+        errorCode: 'INVALID_REQUEST_REVISION',
+        correlationId: CORRELATION_ID,
+        retryable: false,
+      },
+    ];
+    expect(parseEmployeeChangeProjection(partial).queryState.state).toBe('PARTIAL');
+
+    const unavailable = employeeChangeProjection();
+    unavailable.items = [];
+    unavailable.queryState.state = 'UNAVAILABLE';
+    unavailable.queryState.freshness = 'UNAVAILABLE';
+    unavailable.queryState.fieldDecisionSummary = {
+      viewCount: 0,
+      maskedCount: 0,
+      omittedCount: 0,
+    };
+    unavailable.queryState.partialFailures = [
+      {
+        componentKey: 'employee-change.repository',
+        errorCode: 'EMPLOYEE_CHANGE_QUERY_UNAVAILABLE',
+        correlationId: CORRELATION_ID,
+        retryable: true,
+      },
+    ];
+    expect(parseEmployeeChangeProjection(unavailable).queryState.state).toBe('UNAVAILABLE');
+
+    const falseComplete = employeeChangeProjection();
+    falseComplete.items = [];
+    falseComplete.queryState.fieldDecisionSummary = {
+      viewCount: 0,
+      maskedCount: 0,
+      omittedCount: 0,
+    };
+    expect(() => parseEmployeeChangeProjection(falseComplete)).toThrow(
+      'Employee-change projection is invalid.'
+    );
+
+    const falseEmpty = employeeChangeProjection();
+    falseEmpty.queryState.state = 'EMPTY';
+    expect(() => parseEmployeeChangeProjection(falseEmpty)).toThrow(
+      'Employee-change projection is invalid.'
+    );
   });
 
   it('accepts only the exact immutable command receipt', () => {
