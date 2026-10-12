@@ -1,0 +1,366 @@
+{
+  "config": {
+    "configFile": "/Users/a10697/Work/DWP/.codex-worktrees/hris/g1-integration-20261006/frontend/playwright.config.ts",
+    "rootDir": "/Users/a10697/Work/DWP/.codex-worktrees/hris/g1-integration-20261006/frontend/e2e",
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/a10697/Work/DWP/.codex-worktrees/hris/g1-integration-20261006/frontend/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/Users/a10697/Work/DWP/.codex-worktrees/hris/g1-integration-20261006/frontend/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/a10697/Work/DWP/.codex-worktrees/hris/g1-integration-20261006/frontend/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "mobile",
+        "name": "mobile",
+        "testDir": "/Users/a10697/Work/DWP/.codex-worktrees/hris/g1-integration-20261006/frontend/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "runAgents": "none",
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.58.0",
+    "workers": 1,
+    "webServer": {
+      "command": "VITE_HOME_PERSONALIZATION_V2_ENABLED=true VITE_HOME_WIDGET_LIBRARY_ENABLED=true VITE_WEB_VITALS_ENDPOINT=/api/platform/v1/observability/web-vitals corepack yarn dev --mode test --host 127.0.0.1",
+      "url": "http://127.0.0.1:4200",
+      "reuseExistingServer": false,
+      "timeout": 120000
+    }
+  },
+  "suites": [
+    {
+      "title": "hris-sys-hrm-responsive-accessibility.spec.ts",
+      "file": "hris-sys-hrm-responsive-accessibility.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "SYS reference configuration integrated runtime is responsive and accessible",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "g7-frontend-source-commit",
+                  "description": "83b4e500be99f6bffd30f3b985faf67b67a349e2"
+                },
+                {
+                  "type": "g7-frontend-source-tree",
+                  "description": "fd2697c4b4ede110a2315d376791d0c7e2b9bfc1"
+                },
+                {
+                  "type": "g7-backend-source-commit",
+                  "description": "deb39a02634826d40ae5de5e30f54223c31b5851"
+                },
+                {
+                  "type": "g7-backend-source-tree",
+                  "description": "79d31fe261be481a3427c2a12a456a785b7eafaa"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3064,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-12T14:39:30.699Z",
+                  "annotations": [
+                    {
+                      "type": "g7-frontend-source-commit",
+                      "description": "83b4e500be99f6bffd30f3b985faf67b67a349e2"
+                    },
+                    {
+                      "type": "g7-frontend-source-tree",
+                      "description": "fd2697c4b4ede110a2315d376791d0c7e2b9bfc1"
+                    },
+                    {
+                      "type": "g7-backend-source-commit",
+                      "description": "deb39a02634826d40ae5de5e30f54223c31b5851"
+                    },
+                    {
+                      "type": "g7-backend-source-tree",
+                      "description": "79d31fe261be481a3427c2a12a456a785b7eafaa"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "679e1d8d691f2e7564e9-886b546d6806f9b68392",
+          "file": "hris-sys-hrm-responsive-accessibility.spec.ts",
+          "line": 46,
+          "column": 3
+        },
+        {
+          "title": "HRM employee change integrated runtime is responsive and accessible",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "g7-frontend-source-commit",
+                  "description": "83b4e500be99f6bffd30f3b985faf67b67a349e2"
+                },
+                {
+                  "type": "g7-frontend-source-tree",
+                  "description": "fd2697c4b4ede110a2315d376791d0c7e2b9bfc1"
+                },
+                {
+                  "type": "g7-backend-source-commit",
+                  "description": "deb39a02634826d40ae5de5e30f54223c31b5851"
+                },
+                {
+                  "type": "g7-backend-source-tree",
+                  "description": "79d31fe261be481a3427c2a12a456a785b7eafaa"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2699,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-12T14:39:34.207Z",
+                  "annotations": [
+                    {
+                      "type": "g7-frontend-source-commit",
+                      "description": "83b4e500be99f6bffd30f3b985faf67b67a349e2"
+                    },
+                    {
+                      "type": "g7-frontend-source-tree",
+                      "description": "fd2697c4b4ede110a2315d376791d0c7e2b9bfc1"
+                    },
+                    {
+                      "type": "g7-backend-source-commit",
+                      "description": "deb39a02634826d40ae5de5e30f54223c31b5851"
+                    },
+                    {
+                      "type": "g7-backend-source-tree",
+                      "description": "79d31fe261be481a3427c2a12a456a785b7eafaa"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "679e1d8d691f2e7564e9-66937b668d4bd840aa52",
+          "file": "hris-sys-hrm-responsive-accessibility.spec.ts",
+          "line": 46,
+          "column": 3
+        },
+        {
+          "title": "SYS reference configuration integrated runtime is responsive and accessible",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "g7-frontend-source-commit",
+                  "description": "83b4e500be99f6bffd30f3b985faf67b67a349e2"
+                },
+                {
+                  "type": "g7-frontend-source-tree",
+                  "description": "fd2697c4b4ede110a2315d376791d0c7e2b9bfc1"
+                },
+                {
+                  "type": "g7-backend-source-commit",
+                  "description": "deb39a02634826d40ae5de5e30f54223c31b5851"
+                },
+                {
+                  "type": "g7-backend-source-tree",
+                  "description": "79d31fe261be481a3427c2a12a456a785b7eafaa"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3019,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-12T14:39:37.478Z",
+                  "annotations": [
+                    {
+                      "type": "g7-frontend-source-commit",
+                      "description": "83b4e500be99f6bffd30f3b985faf67b67a349e2"
+                    },
+                    {
+                      "type": "g7-frontend-source-tree",
+                      "description": "fd2697c4b4ede110a2315d376791d0c7e2b9bfc1"
+                    },
+                    {
+                      "type": "g7-backend-source-commit",
+                      "description": "deb39a02634826d40ae5de5e30f54223c31b5851"
+                    },
+                    {
+                      "type": "g7-backend-source-tree",
+                      "description": "79d31fe261be481a3427c2a12a456a785b7eafaa"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "679e1d8d691f2e7564e9-69cbb0425f60c6427799",
+          "file": "hris-sys-hrm-responsive-accessibility.spec.ts",
+          "line": 46,
+          "column": 3
+        },
+        {
+          "title": "HRM employee change integrated runtime is responsive and accessible",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [
+                {
+                  "type": "g7-frontend-source-commit",
+                  "description": "83b4e500be99f6bffd30f3b985faf67b67a349e2"
+                },
+                {
+                  "type": "g7-frontend-source-tree",
+                  "description": "fd2697c4b4ede110a2315d376791d0c7e2b9bfc1"
+                },
+                {
+                  "type": "g7-backend-source-commit",
+                  "description": "deb39a02634826d40ae5de5e30f54223c31b5851"
+                },
+                {
+                  "type": "g7-backend-source-tree",
+                  "description": "79d31fe261be481a3427c2a12a456a785b7eafaa"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2513,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-12T14:39:40.723Z",
+                  "annotations": [
+                    {
+                      "type": "g7-frontend-source-commit",
+                      "description": "83b4e500be99f6bffd30f3b985faf67b67a349e2"
+                    },
+                    {
+                      "type": "g7-frontend-source-tree",
+                      "description": "fd2697c4b4ede110a2315d376791d0c7e2b9bfc1"
+                    },
+                    {
+                      "type": "g7-backend-source-commit",
+                      "description": "deb39a02634826d40ae5de5e30f54223c31b5851"
+                    },
+                    {
+                      "type": "g7-backend-source-tree",
+                      "description": "79d31fe261be481a3427c2a12a456a785b7eafaa"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "679e1d8d691f2e7564e9-68955f6971b0516f429a",
+          "file": "hris-sys-hrm-responsive-accessibility.spec.ts",
+          "line": 46,
+          "column": 3
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-12T14:39:28.223Z",
+    "duration": 15062.274000000001,
+    "expected": 4,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

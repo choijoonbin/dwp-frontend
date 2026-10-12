@@ -1,0 +1,2 @@
+PASS generated Gateway API types match the approved OpenAPI snapshot.
+PASS generated Agent API types match the approved OpenAPI snapshot.

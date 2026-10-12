@@ -1,0 +1,607 @@
+{
+  "schema": "dwp.hris.g7-sys-hrm-shared-verification-evidence-input.v3",
+  "evidenceId": "HRIS-G7-SYS-HRM-SHARED-RUNNER-SYS-HRM-R3-20261012-R3",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "authorityStatus": "CONTROL_AUTHORED_POST_INTEGRATION_EVIDENCE",
+  "plan": {
+    "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r3-result-acceptance/runs/sys-hrm-r3-20261012-r3/shared-verification-plan.v3.json",
+    "gitBlobSha1": "ed1e55cec9de808829a01e35c78aecffd14129a6",
+    "sha256": "a0c7ad4023effbdf3cacb17b772c8aea87ca3876da24ec86d8e1ea8aa7086096",
+    "bytes": 3605
+  },
+  "sourcePins": {
+    "frontend": {
+      "commit": "83b4e500be99f6bffd30f3b985faf67b67a349e2",
+      "tree": "fd2697c4b4ede110a2315d376791d0c7e2b9bfc1"
+    },
+    "backend": {
+      "commit": "deb39a02634826d40ae5de5e30f54223c31b5851",
+      "tree": "79d31fe261be481a3427c2a12a456a785b7eafaa"
+    }
+  },
+  "runner": {
+    "implementation": {
+      "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r3-result-acceptance/materialize_g7_sys_hrm_result_acceptance.py",
+      "gitBlobSha1": "9bb136e163bacc88f830dc0560ae3b975671fe71",
+      "sha256": "44387a29941b953068443c5ed850de60dfcfdf877c8ca18ba61a708e72c7429a",
+      "bytes": 136096
+    },
+    "executionMode": "DIRECT_EXACT_ARGV_NO_SHELL",
+    "argvDispatch": "DIRECT_LIST_NO_SHELL",
+    "environmentDispatch": "INHERITED_PLUS_EXACT_SOURCE_PINS",
+    "sourceEnvironment": {
+      "G7_FRONTEND_SOURCE_COMMIT": "83b4e500be99f6bffd30f3b985faf67b67a349e2",
+      "G7_FRONTEND_SOURCE_TREE": "fd2697c4b4ede110a2315d376791d0c7e2b9bfc1",
+      "G7_BACKEND_SOURCE_COMMIT": "deb39a02634826d40ae5de5e30f54223c31b5851",
+      "G7_BACKEND_SOURCE_TREE": "79d31fe261be481a3427c2a12a456a785b7eafaa"
+    },
+    "commandCount": 7,
+    "genesisSha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "finalRecordSha256": "b7f7aa8d9cf8448c5e3567faa834e6c32ee6bfd35a7fe1c3b3b109feb887ffed"
+  },
+  "singleBatch": true,
+  "closedSet": [
+    "CONTROL_AUTHORIZATION_CHECK",
+    "CONTROL_BACKEND_OPENAPI_CHECK",
+    "CONTROL_FRONTEND_OPENAPI_CHECK",
+    "CONTROL_SHARED_ROUTE_ACCESS",
+    "CONTROL_FRONTEND_TYPECHECK",
+    "CONTROL_FRONTEND_ARCHITECTURE",
+    "CONTROL_RESPONSIVE_ACCESSIBILITY_PLAYWRIGHT"
+  ],
+  "results": [
+    {
+      "recordIndex": 1,
+      "commandId": "CONTROL_AUTHORIZATION_CHECK",
+      "category": "CONTRACT_AUTHORIZATION_SYNC",
+      "repo": "frontend",
+      "cwd": "frontend",
+      "argv": [
+        "corepack",
+        "yarn",
+        "authorization:check"
+      ],
+      "executionMode": "DIRECT_EXACT_ARGV_NO_SHELL",
+      "startedAt": "2026-10-12T14:38:10Z",
+      "completedAt": "2026-10-12T14:38:12Z",
+      "elapsedMs": 1631,
+      "sourcePins": {
+        "frontend": {
+          "commit": "83b4e500be99f6bffd30f3b985faf67b67a349e2",
+          "tree": "fd2697c4b4ede110a2315d376791d0c7e2b9bfc1"
+        },
+        "backend": {
+          "commit": "deb39a02634826d40ae5de5e30f54223c31b5851",
+          "tree": "79d31fe261be481a3427c2a12a456a785b7eafaa"
+        }
+      },
+      "status": "PASS",
+      "exitCode": 0,
+      "stdout": {
+        "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r3-result-acceptance/runs/sys-hrm-r3-20261012-r3/shared-runner/01-control-authorization-check.stdout",
+        "gitBlobSha1": "5a0d6c988fc2739689758f4adb5738702dcda12f",
+        "sha256": "048508cf3dac98a6a53ae223b514899638510df971baa2b3af76dcea353afc76",
+        "bytes": 134,
+        "redactionStatus": "SANITIZED_NO_SECRET_OR_CUSTOMER_DATA"
+      },
+      "stderr": {
+        "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r3-result-acceptance/runs/sys-hrm-r3-20261012-r3/shared-runner/01-control-authorization-check.stderr",
+        "gitBlobSha1": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "redactionStatus": "SANITIZED_NO_SECRET_OR_CUSTOMER_DATA"
+      },
+      "structuredResult": {
+        "proofKind": "AUTHORIZATION_GENERATION_AND_SYNC_EXIT_ZERO",
+        "sourcePins": {
+          "frontend": {
+            "commit": "83b4e500be99f6bffd30f3b985faf67b67a349e2",
+            "tree": "fd2697c4b4ede110a2315d376791d0c7e2b9bfc1"
+          },
+          "backend": {
+            "commit": "deb39a02634826d40ae5de5e30f54223c31b5851",
+            "tree": "79d31fe261be481a3427c2a12a456a785b7eafaa"
+          }
+        },
+        "exitCode": 0,
+        "stdoutSha256": "048508cf3dac98a6a53ae223b514899638510df971baa2b3af76dcea353afc76",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "report": {
+          "format": "AUTHORIZATION_CHECK_STDOUT_V1",
+          "markers": [
+            "PRODUCT_SURFACE_AUTHORIZATION"
+          ],
+          "stderrEmpty": true
+        }
+      },
+      "previousRecordSha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "recordSha256": "d2c73d6d504013ccff04f67d3f84f4593b1582c6cf7ea77f8a71d7692b2c6b89"
+    },
+    {
+      "recordIndex": 2,
+      "commandId": "CONTROL_BACKEND_OPENAPI_CHECK",
+      "category": "CONTRACT_AUTHORIZATION_SYNC",
+      "repo": "backend",
+      "cwd": "backend",
+      "argv": [
+        "python3",
+        "scripts/export-openapi-contracts.py",
+        "--check",
+        "--approved-snapshots"
+      ],
+      "executionMode": "DIRECT_EXACT_ARGV_NO_SHELL",
+      "startedAt": "2026-10-12T14:38:12Z",
+      "completedAt": "2026-10-12T14:38:13Z",
+      "elapsedMs": 623,
+      "sourcePins": {
+        "frontend": {
+          "commit": "83b4e500be99f6bffd30f3b985faf67b67a349e2",
+          "tree": "fd2697c4b4ede110a2315d376791d0c7e2b9bfc1"
+        },
+        "backend": {
+          "commit": "deb39a02634826d40ae5de5e30f54223c31b5851",
+          "tree": "79d31fe261be481a3427c2a12a456a785b7eafaa"
+        }
+      },
+      "status": "PASS",
+      "exitCode": 0,
+      "stdout": {
+        "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r3-result-acceptance/runs/sys-hrm-r3-20261012-r3/shared-runner/02-control-backend-openapi-check.stdout",
+        "gitBlobSha1": "fe1b7e506886d1cd123d986646464a7520fb108b",
+        "sha256": "3959f15f8a91dd4d9775f258da8c966513e83e95b307784665f0abf1a1ab09cd",
+        "bytes": 68,
+        "redactionStatus": "SANITIZED_NO_SECRET_OR_CUSTOMER_DATA"
+      },
+      "stderr": {
+        "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r3-result-acceptance/runs/sys-hrm-r3-20261012-r3/shared-runner/02-control-backend-openapi-check.stderr",
+        "gitBlobSha1": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "redactionStatus": "SANITIZED_NO_SECRET_OR_CUSTOMER_DATA"
+      },
+      "structuredResult": {
+        "proofKind": "BACKEND_OPENAPI_APPROVED_SNAPSHOTS_EXIT_ZERO",
+        "sourcePins": {
+          "frontend": {
+            "commit": "83b4e500be99f6bffd30f3b985faf67b67a349e2",
+            "tree": "fd2697c4b4ede110a2315d376791d0c7e2b9bfc1"
+          },
+          "backend": {
+            "commit": "deb39a02634826d40ae5de5e30f54223c31b5851",
+            "tree": "79d31fe261be481a3427c2a12a456a785b7eafaa"
+          }
+        },
+        "exitCode": 0,
+        "stdoutSha256": "3959f15f8a91dd4d9775f258da8c966513e83e95b307784665f0abf1a1ab09cd",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "report": {
+          "format": "BACKEND_OPENAPI_CHECK_STDOUT_V1",
+          "markers": [
+            "BACKEND_APPROVED_SNAPSHOTS"
+          ],
+          "stderrEmpty": true
+        }
+      },
+      "previousRecordSha256": "d2c73d6d504013ccff04f67d3f84f4593b1582c6cf7ea77f8a71d7692b2c6b89",
+      "recordSha256": "22a4512d8d1afa7669e2a2f51a249fc4e0808f83f8074edd3e84eb85c3f82de1"
+    },
+    {
+      "recordIndex": 3,
+      "commandId": "CONTROL_FRONTEND_OPENAPI_CHECK",
+      "category": "CONTRACT_AUTHORIZATION_SYNC",
+      "repo": "frontend",
+      "cwd": "frontend",
+      "argv": [
+        "corepack",
+        "yarn",
+        "openapi:check"
+      ],
+      "executionMode": "DIRECT_EXACT_ARGV_NO_SHELL",
+      "startedAt": "2026-10-12T14:38:13Z",
+      "completedAt": "2026-10-12T14:38:16Z",
+      "elapsedMs": 2362,
+      "sourcePins": {
+        "frontend": {
+          "commit": "83b4e500be99f6bffd30f3b985faf67b67a349e2",
+          "tree": "fd2697c4b4ede110a2315d376791d0c7e2b9bfc1"
+        },
+        "backend": {
+          "commit": "deb39a02634826d40ae5de5e30f54223c31b5851",
+          "tree": "79d31fe261be481a3427c2a12a456a785b7eafaa"
+        }
+      },
+      "status": "PASS",
+      "exitCode": 0,
+      "stdout": {
+        "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r3-result-acceptance/runs/sys-hrm-r3-20261012-r3/shared-runner/03-control-frontend-openapi-check.stdout",
+        "gitBlobSha1": "1b674218a5803b22a89494f80fdc5b15596e2a9d",
+        "sha256": "e59bb2451a48d534b596f430a8532b72fceab70899688f5250cb87ef3a83a864",
+        "bytes": 138,
+        "redactionStatus": "SANITIZED_NO_SECRET_OR_CUSTOMER_DATA"
+      },
+      "stderr": {
+        "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r3-result-acceptance/runs/sys-hrm-r3-20261012-r3/shared-runner/03-control-frontend-openapi-check.stderr",
+        "gitBlobSha1": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "redactionStatus": "SANITIZED_NO_SECRET_OR_CUSTOMER_DATA"
+      },
+      "structuredResult": {
+        "proofKind": "FRONTEND_OPENAPI_SYNC_EXIT_ZERO",
+        "sourcePins": {
+          "frontend": {
+            "commit": "83b4e500be99f6bffd30f3b985faf67b67a349e2",
+            "tree": "fd2697c4b4ede110a2315d376791d0c7e2b9bfc1"
+          },
+          "backend": {
+            "commit": "deb39a02634826d40ae5de5e30f54223c31b5851",
+            "tree": "79d31fe261be481a3427c2a12a456a785b7eafaa"
+          }
+        },
+        "exitCode": 0,
+        "stdoutSha256": "e59bb2451a48d534b596f430a8532b72fceab70899688f5250cb87ef3a83a864",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "report": {
+          "format": "FRONTEND_OPENAPI_CHECK_STDOUT_V1",
+          "markers": [
+            "GATEWAY_TYPES",
+            "AGENT_TYPES"
+          ],
+          "stderrEmpty": true
+        }
+      },
+      "previousRecordSha256": "22a4512d8d1afa7669e2a2f51a249fc4e0808f83f8074edd3e84eb85c3f82de1",
+      "recordSha256": "0d65ccbaca085ec9bb2ef7c62ba4a0ad333a1525c72863b8945fd29d948ede4a"
+    },
+    {
+      "recordIndex": 4,
+      "commandId": "CONTROL_SHARED_ROUTE_ACCESS",
+      "category": "SHARED_ROUTE_ACCESS",
+      "repo": "frontend",
+      "cwd": "frontend",
+      "argv": [
+        "corepack",
+        "yarn",
+        "vitest",
+        "run",
+        "apps/dwp/src/routes/product-route-contracts.generated.test.ts",
+        "apps/dwp/src/features/hris/shell/testing/hris-shell-navigation-contract.test.ts",
+        "apps/dwp/src/features/hris/administration/reference-configuration/testing/hris-reference-configuration-workspace.test.tsx",
+        "apps/dwp/src/features/hris/employee-services/employee-change/testing/hris-employee-change-workspace.test.tsx",
+        "--reporter=json"
+      ],
+      "executionMode": "DIRECT_EXACT_ARGV_NO_SHELL",
+      "startedAt": "2026-10-12T14:38:16Z",
+      "completedAt": "2026-10-12T14:38:19Z",
+      "elapsedMs": 2514,
+      "sourcePins": {
+        "frontend": {
+          "commit": "83b4e500be99f6bffd30f3b985faf67b67a349e2",
+          "tree": "fd2697c4b4ede110a2315d376791d0c7e2b9bfc1"
+        },
+        "backend": {
+          "commit": "deb39a02634826d40ae5de5e30f54223c31b5851",
+          "tree": "79d31fe261be481a3427c2a12a456a785b7eafaa"
+        }
+      },
+      "status": "PASS",
+      "exitCode": 0,
+      "stdout": {
+        "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r3-result-acceptance/runs/sys-hrm-r3-20261012-r3/shared-runner/04-control-shared-route-access.stdout",
+        "gitBlobSha1": "f89b59dc109f3e29d238518e31789aef3d040c38",
+        "sha256": "1e3aa59ba17a06fe7bc909dc9cb73a2fdd6c5550f44fb86ba836d72d7d7b89d3",
+        "bytes": 9772,
+        "redactionStatus": "SANITIZED_NO_SECRET_OR_CUSTOMER_DATA"
+      },
+      "stderr": {
+        "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r3-result-acceptance/runs/sys-hrm-r3-20261012-r3/shared-runner/04-control-shared-route-access.stderr",
+        "gitBlobSha1": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "redactionStatus": "SANITIZED_NO_SECRET_OR_CUSTOMER_DATA"
+      },
+      "structuredResult": {
+        "proofKind": "VITEST_EXACT_FOUR_ROUTE_ACCESS_TARGETS_EXIT_ZERO",
+        "sourcePins": {
+          "frontend": {
+            "commit": "83b4e500be99f6bffd30f3b985faf67b67a349e2",
+            "tree": "fd2697c4b4ede110a2315d376791d0c7e2b9bfc1"
+          },
+          "backend": {
+            "commit": "deb39a02634826d40ae5de5e30f54223c31b5851",
+            "tree": "79d31fe261be481a3427c2a12a456a785b7eafaa"
+          }
+        },
+        "exitCode": 0,
+        "stdoutSha256": "1e3aa59ba17a06fe7bc909dc9cb73a2fdd6c5550f44fb86ba836d72d7d7b89d3",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "report": {
+          "format": "VITEST_JSON_REPORT_V1",
+          "requestedFiles": [
+            "apps/dwp/src/routes/product-route-contracts.generated.test.ts",
+            "apps/dwp/src/features/hris/shell/testing/hris-shell-navigation-contract.test.ts",
+            "apps/dwp/src/features/hris/administration/reference-configuration/testing/hris-reference-configuration-workspace.test.tsx",
+            "apps/dwp/src/features/hris/employee-services/employee-change/testing/hris-employee-change-workspace.test.tsx"
+          ],
+          "fileCount": 4,
+          "totalTests": 22,
+          "passedTests": 22,
+          "failedTests": 0,
+          "pendingTests": 0,
+          "todoTests": 0,
+          "stderrEmpty": true
+        }
+      },
+      "previousRecordSha256": "0d65ccbaca085ec9bb2ef7c62ba4a0ad333a1525c72863b8945fd29d948ede4a",
+      "recordSha256": "682cb931599ec0200f9eb7ea562a13423f78d0271410ab932f744550593a44fb"
+    },
+    {
+      "recordIndex": 5,
+      "commandId": "CONTROL_FRONTEND_TYPECHECK",
+      "category": "TYPECHECK_ARCHITECTURE",
+      "repo": "frontend",
+      "cwd": "frontend",
+      "argv": [
+        "corepack",
+        "yarn",
+        "typecheck"
+      ],
+      "executionMode": "DIRECT_EXACT_ARGV_NO_SHELL",
+      "startedAt": "2026-10-12T14:38:19Z",
+      "completedAt": "2026-10-12T14:38:27Z",
+      "elapsedMs": 8257,
+      "sourcePins": {
+        "frontend": {
+          "commit": "83b4e500be99f6bffd30f3b985faf67b67a349e2",
+          "tree": "fd2697c4b4ede110a2315d376791d0c7e2b9bfc1"
+        },
+        "backend": {
+          "commit": "deb39a02634826d40ae5de5e30f54223c31b5851",
+          "tree": "79d31fe261be481a3427c2a12a456a785b7eafaa"
+        }
+      },
+      "status": "PASS",
+      "exitCode": 0,
+      "stdout": {
+        "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r3-result-acceptance/runs/sys-hrm-r3-20261012-r3/shared-runner/05-control-frontend-typecheck.stdout",
+        "gitBlobSha1": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "redactionStatus": "SANITIZED_NO_SECRET_OR_CUSTOMER_DATA"
+      },
+      "stderr": {
+        "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r3-result-acceptance/runs/sys-hrm-r3-20261012-r3/shared-runner/05-control-frontend-typecheck.stderr",
+        "gitBlobSha1": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "redactionStatus": "SANITIZED_NO_SECRET_OR_CUSTOMER_DATA"
+      },
+      "structuredResult": {
+        "proofKind": "TYPESCRIPT_NO_EMIT_EXIT_ZERO",
+        "sourcePins": {
+          "frontend": {
+            "commit": "83b4e500be99f6bffd30f3b985faf67b67a349e2",
+            "tree": "fd2697c4b4ede110a2315d376791d0c7e2b9bfc1"
+          },
+          "backend": {
+            "commit": "deb39a02634826d40ae5de5e30f54223c31b5851",
+            "tree": "79d31fe261be481a3427c2a12a456a785b7eafaa"
+          }
+        },
+        "exitCode": 0,
+        "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "report": {
+          "format": "TSC_NO_EMIT_SILENT_V1",
+          "canonicalScript": "node --max-old-space-size=8192 ./node_modules/typescript/bin/tsc --noEmit",
+          "stdoutEmpty": true,
+          "stderrEmpty": true
+        }
+      },
+      "previousRecordSha256": "682cb931599ec0200f9eb7ea562a13423f78d0271410ab932f744550593a44fb",
+      "recordSha256": "94f0472891b5938b02d33757d128f60f4bb471dd85a36187561cae45f3b01aaf"
+    },
+    {
+      "recordIndex": 6,
+      "commandId": "CONTROL_FRONTEND_ARCHITECTURE",
+      "category": "TYPECHECK_ARCHITECTURE",
+      "repo": "frontend",
+      "cwd": "frontend",
+      "argv": [
+        "corepack",
+        "yarn",
+        "architecture:check"
+      ],
+      "executionMode": "DIRECT_EXACT_ARGV_NO_SHELL",
+      "startedAt": "2026-10-12T14:38:28Z",
+      "completedAt": "2026-10-12T14:39:26Z",
+      "elapsedMs": 58587,
+      "sourcePins": {
+        "frontend": {
+          "commit": "83b4e500be99f6bffd30f3b985faf67b67a349e2",
+          "tree": "fd2697c4b4ede110a2315d376791d0c7e2b9bfc1"
+        },
+        "backend": {
+          "commit": "deb39a02634826d40ae5de5e30f54223c31b5851",
+          "tree": "79d31fe261be481a3427c2a12a456a785b7eafaa"
+        }
+      },
+      "status": "PASS",
+      "exitCode": 0,
+      "stdout": {
+        "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r3-result-acceptance/runs/sys-hrm-r3-20261012-r3/shared-runner/06-control-frontend-architecture.stdout",
+        "gitBlobSha1": "d0aa3bdca0263f9bad7af34551cb8778c42ce58a",
+        "sha256": "7a895edd0864f6cef362c707b9b8b044e149af06e99ae15c7d59ef6a89cc3f64",
+        "bytes": 2209,
+        "redactionStatus": "SANITIZED_NO_SECRET_OR_CUSTOMER_DATA"
+      },
+      "stderr": {
+        "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r3-result-acceptance/runs/sys-hrm-r3-20261012-r3/shared-runner/06-control-frontend-architecture.stderr",
+        "gitBlobSha1": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "redactionStatus": "SANITIZED_NO_SECRET_OR_CUSTOMER_DATA"
+      },
+      "structuredResult": {
+        "proofKind": "ARCHITECTURE_CLOSED_SCRIPT_EXIT_ZERO",
+        "sourcePins": {
+          "frontend": {
+            "commit": "83b4e500be99f6bffd30f3b985faf67b67a349e2",
+            "tree": "fd2697c4b4ede110a2315d376791d0c7e2b9bfc1"
+          },
+          "backend": {
+            "commit": "deb39a02634826d40ae5de5e30f54223c31b5851",
+            "tree": "79d31fe261be481a3427c2a12a456a785b7eafaa"
+          }
+        },
+        "exitCode": 0,
+        "stdoutSha256": "7a895edd0864f6cef362c707b9b8b044e149af06e99ae15c7d59ef6a89cc3f64",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "report": {
+          "format": "ARCHITECTURE_CLOSED_MARKERS_V1",
+          "markers": [
+            "APPROVAL_STITCH_SOURCE",
+            "APPROVAL_STITCH_EXTENSION",
+            "APPROVAL_TRACEABILITY",
+            "PRODUCT_AUTHORIZATION",
+            "PRODUCT_INTERNAL_CLOSURE",
+            "AUTHORIZATION_FIXTURES",
+            "APP_ARCHITECTURE",
+            "ROUTE_COMPOSITION",
+            "FEATURE_BOUNDARIES",
+            "API_BOUNDARIES",
+            "RELATIVE_IMPORT_CYCLES",
+            "PRODUCTION_REACHABILITY",
+            "INTERNAL_EXPORTS",
+            "SOURCE_SIZE",
+            "MAINTENANCE_SOURCE_SIZE",
+            "READINESS_HEADER",
+            "READINESS_MANIFEST",
+            "READINESS_STATUS",
+            "READINESS_COMPLETE",
+            "READINESS_EXACT_PRODUCTS",
+            "READINESS_INTERNAL_CLOSURE",
+            "READINESS_PEP",
+            "READINESS_RELEASE_CLOSURE",
+            "READINESS_INTERNAL_PENDING",
+            "READINESS_INCOMPLETE",
+            "READINESS_MODE"
+          ],
+          "markerCount": 26,
+          "stderrEmpty": true
+        }
+      },
+      "previousRecordSha256": "94f0472891b5938b02d33757d128f60f4bb471dd85a36187561cae45f3b01aaf",
+      "recordSha256": "37c0d2bc5a3ed9ffc5afc261c2724f0d056ac9b537ce85c1f4da1fddde97cd77"
+    },
+    {
+      "recordIndex": 7,
+      "commandId": "CONTROL_RESPONSIVE_ACCESSIBILITY_PLAYWRIGHT",
+      "category": "RESPONSIVE_ACCESSIBILITY",
+      "repo": "frontend",
+      "cwd": "frontend",
+      "argv": [
+        "env",
+        "E2E_BASE_URL=http://127.0.0.1:4200",
+        "E2E_REUSE_EXISTING_SERVER=false",
+        "VITE_HRIS_REFERENCE_CONFIGURATION_ENABLED=true",
+        "VITE_HRIS_EMPLOYEE_CHANGE_ENABLED=true",
+        "corepack",
+        "yarn",
+        "playwright",
+        "test",
+        "e2e/hris-sys-hrm-responsive-accessibility.spec.ts",
+        "--project=chromium",
+        "--project=mobile",
+        "--workers=1",
+        "--reporter=json"
+      ],
+      "executionMode": "DIRECT_EXACT_ARGV_NO_SHELL",
+      "startedAt": "2026-10-12T14:39:27Z",
+      "completedAt": "2026-10-12T14:39:43Z",
+      "elapsedMs": 15909,
+      "sourcePins": {
+        "frontend": {
+          "commit": "83b4e500be99f6bffd30f3b985faf67b67a349e2",
+          "tree": "fd2697c4b4ede110a2315d376791d0c7e2b9bfc1"
+        },
+        "backend": {
+          "commit": "deb39a02634826d40ae5de5e30f54223c31b5851",
+          "tree": "79d31fe261be481a3427c2a12a456a785b7eafaa"
+        }
+      },
+      "status": "PASS",
+      "exitCode": 0,
+      "stdout": {
+        "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r3-result-acceptance/runs/sys-hrm-r3-20261012-r3/shared-runner/07-control-responsive-accessibility-playwright.stdout",
+        "gitBlobSha1": "b2251a54781f3ff5512d6ea582e1246a8d209478",
+        "sha256": "5d5f28a855ab2d25a1bcf3df14498c2eb4d04fc3e4d5296d80f57b3aa116f7d3",
+        "bytes": 12768,
+        "redactionStatus": "SANITIZED_NO_SECRET_OR_CUSTOMER_DATA"
+      },
+      "stderr": {
+        "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r3-result-acceptance/runs/sys-hrm-r3-20261012-r3/shared-runner/07-control-responsive-accessibility-playwright.stderr",
+        "gitBlobSha1": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0,
+        "redactionStatus": "SANITIZED_NO_SECRET_OR_CUSTOMER_DATA"
+      },
+      "structuredResult": {
+        "proofKind": "PLAYWRIGHT_EXACT_INTEGRATED_JOURNEYS_EXIT_ZERO",
+        "sourcePins": {
+          "frontend": {
+            "commit": "83b4e500be99f6bffd30f3b985faf67b67a349e2",
+            "tree": "fd2697c4b4ede110a2315d376791d0c7e2b9bfc1"
+          },
+          "backend": {
+            "commit": "deb39a02634826d40ae5de5e30f54223c31b5851",
+            "tree": "79d31fe261be481a3427c2a12a456a785b7eafaa"
+          }
+        },
+        "exitCode": 0,
+        "stdoutSha256": "5d5f28a855ab2d25a1bcf3df14498c2eb4d04fc3e4d5296d80f57b3aa116f7d3",
+        "stderrSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "report": {
+          "format": "PLAYWRIGHT_JSON_REPORT_V1",
+          "specPath": "e2e/hris-sys-hrm-responsive-accessibility.spec.ts",
+          "workers": 1,
+          "sourcePins": {
+            "frontend": {
+              "commit": "83b4e500be99f6bffd30f3b985faf67b67a349e2",
+              "tree": "fd2697c4b4ede110a2315d376791d0c7e2b9bfc1"
+            },
+            "backend": {
+              "commit": "deb39a02634826d40ae5de5e30f54223c31b5851",
+              "tree": "79d31fe261be481a3427c2a12a456a785b7eafaa"
+            }
+          },
+          "projects": [
+            {
+              "name": "chromium",
+              "expected": 2,
+              "passed": 2
+            },
+            {
+              "name": "mobile",
+              "expected": 2,
+              "passed": 2
+            }
+          ],
+          "total": {
+            "expected": 4,
+            "passed": 4,
+            "unexpected": 0,
+            "flaky": 0,
+            "skipped": 0
+          },
+          "stderrEmpty": true
+        }
+      },
+      "previousRecordSha256": "37c0d2bc5a3ed9ffc5afc261c2724f0d056ac9b537ce85c1f4da1fddde97cd77",
+      "recordSha256": "b7f7aa8d9cf8448c5e3567faa834e6c32ee6bfd35a7fe1c3b3b109feb887ffed"
+    }
+  ],
+  "startedAt": "2026-10-12T14:38:10Z",
+  "completedAt": "2026-10-12T14:39:43Z",
+  "sealedPayloadSha256": "4bdda2746841e986708a042dccbff760cf303e7b3f5224780256624ead50592f"
+}
