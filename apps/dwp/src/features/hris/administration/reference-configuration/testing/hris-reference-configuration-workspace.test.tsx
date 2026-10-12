@@ -4,6 +4,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
 
 import { findHcmNavigationItem } from '../../../../hcm/hcm-navigation';
+import { refetchReferenceConfigurationCommandResult } from '../hooks/use-reference-configuration-workspace';
 import {
   HRIS_REFERENCE_CONFIGURATION_RUNTIME_STATE,
   HrisReferenceConfigurationWorkspace,
@@ -52,7 +53,26 @@ describe('HrisReferenceConfigurationWorkspace', () => {
     expect(workspace).not.toContain('features/workforce');
     expect(workspace).not.toContain('WorkforceReferenceData');
     expect(workspace).toContain('commandOwner={commandOwner}');
+    expect(workspace).toContain('workspace.refreshAfterCommand(receipt)');
     expect(workspace).not.toContain('productSurfaceHighRiskMutationConfig');
     expect(workspace).not.toContain('preparedAction');
+  });
+
+  it('refetches both workbench and immutable detail before command success is accepted', async () => {
+    const workbench = vi.fn(async () => ({ isError: false }));
+    const detail = vi.fn(async () => ({ isError: false }));
+
+    await expect(
+      refetchReferenceConfigurationCommandResult(workbench, detail)
+    ).resolves.toBeUndefined();
+    expect(workbench).toHaveBeenCalledTimes(1);
+    expect(detail).toHaveBeenCalledTimes(1);
+
+    await expect(
+      refetchReferenceConfigurationCommandResult(
+        async () => ({ isError: false }),
+        async () => ({ isError: true, error: new Error('stale CAS detail') })
+      )
+    ).rejects.toThrow('stale CAS detail');
   });
 });

@@ -93,8 +93,12 @@ describe('reference-configuration API', () => {
 
   it('sends CAS for author transitions and complete step-up evidence for publish', async () => {
     runtime.post
-      .mockResolvedValueOnce({ data: { data: receipt('VALIDATE_VERSION') } })
-      .mockResolvedValueOnce({ data: { data: receipt('PUBLISH_VERSION') } });
+      .mockResolvedValueOnce({
+        data: { data: receipt('VALIDATE_VERSION', 'configuration.version.validate') },
+      })
+      .mockResolvedValueOnce({
+        data: { data: receipt('PUBLISH_VERSION', 'configuration.version.publish') },
+      });
     const authorAuthority = commandAuthority(false);
     const publisherAuthority = commandAuthority(true);
 
@@ -173,11 +177,11 @@ function commandAuthority(highRisk: boolean) {
   };
 }
 
-function receipt(commandType: string) {
+function receipt(commandType: string, originatingAction: string) {
   return {
     receiptId: '50000000-0000-4000-8000-000000000001',
     commandType,
-    originatingAction: 'configuration.version.command',
+    originatingAction,
     subjectPrincipalPublicId: '60000000-0000-4000-8000-000000000001',
     populationScopeDigest: 'c'.repeat(64),
     fieldPolicyRevision: 9,
