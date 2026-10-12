@@ -5,9 +5,12 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { findHcmNavigationItem } from '../../../../hcm/hcm-navigation';
 import {
+  EmployeeChangeWorkspaceView,
   HRIS_EMPLOYEE_CHANGE_RUNTIME_STATE,
   HrisEmployeeChangeWorkspace,
 } from '../pages/hris-employee-change-workspace';
+import { parseEmployeeChangeProjection } from '../model/employee-change-contract';
+import { employeeChangeProjection } from './employee-change-fixtures.test-support';
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
@@ -58,7 +61,45 @@ describe('HrisEmployeeChangeWorkspace', () => {
     );
     expect(workspace).not.toContain('features/hris/people');
     expect(workspace).not.toContain('AssignmentProposal');
-    expect(workspace).not.toMatch(/\bfetch\s*\(/);
-    expect(workspace).not.toMatch(/\b(useQuery|useMutation|httpClient|apiClient|axios)\b/);
+    expect(workspace).toContain('useEmployeeChangeWorkspace');
+    expect(workspace).toContain('data-runtime-state="OFF"');
+  });
+
+  it('renders the enabled projection and only the lifecycle actions granted by IAQ-009', () => {
+    const projection = parseEmployeeChangeProjection(employeeChangeProjection());
+    const html = renderToStaticMarkup(
+      createElement(EmployeeChangeWorkspaceView, {
+        copy: {
+          title: 'Employee-change requests',
+          description: 'Governed employee changes',
+          unavailableTitle: 'Unavailable',
+          unavailableDescription: 'Unavailable',
+        },
+        projection,
+        selectedItem: projection.items[0]!,
+        receipt: null,
+        loading: false,
+        fetching: false,
+        error: null,
+        commandError: null,
+        commandBusy: false,
+        pageIndex: 0,
+        canNext: false,
+        canPrevious: false,
+        applyConnected: false,
+        onSelect: vi.fn(),
+        onRefresh: vi.fn(),
+        onNext: vi.fn(),
+        onPrevious: vi.fn(),
+        onCreate: vi.fn().mockResolvedValue(null),
+        onSubmit: vi.fn().mockResolvedValue(null),
+        onApply: vi.fn().mockResolvedValue(null),
+      })
+    );
+
+    expect(html).toContain('data-runtime-state="ON"');
+    expect(html).toContain('Kim Minsoo · PROFILE_UPDATE');
+    expect(html).toContain('Submit for approval');
+    expect(html).not.toContain('Apply approved change');
   });
 });
