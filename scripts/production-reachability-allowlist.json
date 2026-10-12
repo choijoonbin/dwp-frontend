@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "maximumEntries": 16,
+  "maximumEntries": 18,
   "entries": [
     {
       "path": "apps/dwp/src/features/hris/shell/components/hris-product-map-group.tsx",
@@ -97,6 +97,18 @@
       "owner": "Frontend Architecture",
       "reason": "Verification-only menu projection consumed by route and menu contract tests.",
       "removalCondition": "Remove when menu verification reads the generated product manifests directly."
+    },
+    {
+      "path": "apps/dwp/src/routes/draft-product-page-route-contracts.ts",
+      "owner": "Frontend Architecture",
+      "reason": "Verification-only draft route projection consumed by generated product route contract tests.",
+      "removalCondition": "Remove when production routing consumes the projection or verification reads generated route data directly."
+    },
+    {
+      "path": "apps/dwp/src/routes/product-page-route-contracts.ts",
+      "owner": "Frontend Architecture",
+      "reason": "Verification-only registered route projection consumed by generated product route contract tests.",
+      "removalCondition": "Remove when production routing consumes the projection or verification reads generated route data directly."
     }
   ]
 }
