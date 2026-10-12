@@ -124,14 +124,18 @@ function queryParams(request: EmployeeChangeQuery): URLSearchParams {
   if (employment?.from) params.set('filter[employment][from]', employment.from);
   if (employment?.to) params.set('filter[employment][to]', employment.to);
   if (request.filter.effectiveOn) params.set('filter[effectiveOn]', request.filter.effectiveOn);
+  if (![...params.keys()].some((key) => key.startsWith('filter['))) {
+    params.set('filter', '{}');
+  }
   return params;
 }
 
 function commandHeaders(
   command: Pick<EmployeeChangeCreateCommand, 'idempotencyKey' | 'correlationId' | 'purposeCode'>,
-  expectedVersion: number
+  expectedVersion: number,
+  allowZeroVersion: boolean
 ): Record<string, string> {
-  if (!Number.isSafeInteger(expectedVersion) || expectedVersion < 1) {
+  if (!Number.isSafeInteger(expectedVersion) || expectedVersion < (allowZeroVersion ? 0 : 1)) {
     throw new Error('Employee-change optimistic version is invalid.');
   }
   if (!/^[A-Za-z0-9._:-]{16,128}$/u.test(command.idempotencyKey)) {
@@ -169,10 +173,27 @@ function mutationConfig(
     ...governed,
     headers: {
       ...governed.headers,
-      ...commandHeaders(command, expectedVersion),
+      ...commandHeaders(command, expectedVersion, 'expectedTargetVersion' in command),
     },
     csrfReplay: 'NEVER' as const,
   };
+}
+
+function parseBoundReceipt(
+  value: unknown,
+  command: EmployeeChangeCreateCommand | EmployeeChangeLifecycleCommand,
+  commandType: string,
+  originatingAction: string
+): EmployeeChangeCommandReceipt {
+  const receipt = parseEmployeeChangeCommandReceipt(value);
+  if (
+    receipt.correlationId !== command.correlationId ||
+    receipt.commandType !== commandType ||
+    receipt.originatingAction !== originatingAction
+  ) {
+    throw new Error('Employee-change receipt does not match the submitted command.');
+  }
+  return receipt;
 }
 
 export async function queryEmployeeChangeWorkbench(
@@ -196,7 +217,12 @@ export async function createEmployeeChangeRequest(
     command.request,
     mutationConfig(authority, command, command.expectedTargetVersion, false)
   );
-  return parseEmployeeChangeCommandReceipt(response.data);
+  return parseBoundReceipt(
+    response.data,
+    command,
+    'EMPLOYEE_CHANGE_CREATE',
+    'CREATE_EMPLOYEE_CHANGE_REQUEST'
+  );
 }
 
 export async function submitEmployeeChangeRequest(
@@ -208,7 +234,12 @@ export async function submitEmployeeChangeRequest(
     {},
     mutationConfig(authority, command, command.expectedRequestVersion, false)
   );
-  return parseEmployeeChangeCommandReceipt(response.data);
+  return parseBoundReceipt(
+    response.data,
+    command,
+    'EMPLOYEE_CHANGE_SUBMIT',
+    'SUBMIT_EMPLOYEE_CHANGE_REQUEST'
+  );
 }
 
 export async function applyEmployeeChangeRequest(
@@ -220,7 +251,12 @@ export async function applyEmployeeChangeRequest(
     {},
     mutationConfig(authority, command, command.expectedRequestVersion, true)
   );
-  return parseEmployeeChangeCommandReceipt(response.data);
+  return parseBoundReceipt(
+    response.data,
+    command,
+    'EMPLOYEE_CHANGE_APPLY',
+    'APPLY_EMPLOYEE_CHANGE_REQUEST'
+  );
 }
 
 export const employeeChangeDataSource: EmployeeChangeDataSource = Object.freeze({

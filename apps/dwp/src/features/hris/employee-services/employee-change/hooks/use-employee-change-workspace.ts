@@ -40,6 +40,45 @@ export type EmployeeChangeCreateDraft = Readonly<{
   expectedTargetVersion: number;
 }>;
 
+type EmployeeChangeCommandKind = 'create' | 'submit' | 'apply';
+type PendingEmployeeChangeCommand = EmployeeChangeCreateCommand | EmployeeChangeLifecycleCommand;
+
+/** Keeps an ambiguous command's exact identity stable until its receipt is recovered. */
+export class EmployeeChangePendingCommandLedger {
+  private readonly pending = new Map<
+    EmployeeChangeCommandKind,
+    Readonly<{ signature: string; command: PendingEmployeeChangeCommand }>
+  >();
+
+  getOrCreate<TCommand extends PendingEmployeeChangeCommand>(
+    kind: EmployeeChangeCommandKind,
+    signature: string,
+    factory: () => TCommand
+  ): TCommand {
+    const current = this.pending.get(kind);
+    if (current?.signature === signature) return current.command as TCommand;
+    const command = factory();
+    this.pending.set(kind, { signature, command });
+    return command;
+  }
+
+  complete(kind: EmployeeChangeCommandKind, signature: string): void {
+    if (this.pending.get(kind)?.signature === signature) this.pending.delete(kind);
+  }
+
+  recordReceipt(
+    kind: EmployeeChangeCommandKind,
+    signature: string,
+    status: EmployeeChangeCommandReceipt['status']
+  ): void {
+    if (['SUCCEEDED', 'REJECTED', 'FAILED'].includes(status)) this.complete(kind, signature);
+  }
+
+  clear(): void {
+    this.pending.clear();
+  }
+}
+
 function newCommandId(): string {
   if (!globalThis.crypto?.randomUUID) {
     throw new Error('Secure employee-change command identity generation is unavailable.');
@@ -77,6 +116,10 @@ export function useEmployeeChangeWorkspace({
   const [receipt, setReceipt] = useState<EmployeeChangeCommandReceipt | null>(null);
   const [commandError, setCommandError] = useState<Error | null>(null);
   const [commandBusy, setCommandBusy] = useState(false);
+  const pendingCommands = useRef<EmployeeChangePendingCommandLedger | null>(null);
+  if (pendingCommands.current === null) {
+    pendingCommands.current = new EmployeeChangePendingCommandLedger();
+  }
   const scopeIdentity = JSON.stringify(requestScope.cacheKey);
   const previousScopeIdentity = useRef(scopeIdentity);
   const cursor = cursorHistory[pageIndex] ?? null;
@@ -91,6 +134,7 @@ export function useEmployeeChangeWorkspace({
     setSelectedId(null);
     setReceipt(null);
     setCommandError(null);
+    pendingCommands.current?.clear();
   }, [idFactory, scopeIdentity]);
 
   const resetProjection = useCallback(() => {
@@ -144,13 +188,21 @@ export function useEmployeeChangeWorkspace({
 
   const items = query.data?.items ?? [];
   const selectedItem = items.find((item) => item.itemPublicId === selectedId) ?? items[0] ?? null;
+  const canCreate = items.some((item) =>
+    hasEmployeeChangeAction(item, 'hris.action.hrm.create-employee-change-request')
+  );
 
   const runCommand = useCallback(
-    async (operation: () => Promise<EmployeeChangeCommandReceipt>) => {
+    async (
+      kind: EmployeeChangeCommandKind,
+      signature: string,
+      operation: () => Promise<EmployeeChangeCommandReceipt>
+    ) => {
       setCommandBusy(true);
       setCommandError(null);
       try {
         const nextReceipt = await operation();
+        pendingCommands.current?.recordReceipt(kind, signature, nextReceipt.status);
         setReceipt(nextReceipt);
         resetProjection();
         return nextReceipt;
@@ -168,12 +220,18 @@ export function useEmployeeChangeWorkspace({
 
   const create = useCallback(
     async (draft: EmployeeChangeCreateDraft) => {
-      const command: EmployeeChangeCreateCommand = {
-        ...draft,
-        idempotencyKey: idFactory(),
-        correlationId: idFactory(),
-      };
-      return runCommand(() => createDispatch((authority) => dataSource.create(command, authority)));
+      const signature = JSON.stringify({
+        expectedTargetVersion: draft.expectedTargetVersion,
+        request: draft.request,
+      });
+      const command = pendingCommands.current!.getOrCreate<EmployeeChangeCreateCommand>(
+        'create',
+        signature,
+        () => ({ ...draft, idempotencyKey: idFactory(), correlationId: idFactory() })
+      );
+      return runCommand('create', signature, () =>
+        createDispatch((authority) => dataSource.create(command, authority))
+      );
     },
     [createDispatch, dataSource, idFactory, runCommand]
   );
@@ -187,13 +245,23 @@ export function useEmployeeChangeWorkspace({
     ) {
       return null;
     }
-    const command: EmployeeChangeLifecycleCommand = {
+    const signature = JSON.stringify({
       requestPublicId: selectedItem.deepLink.resourcePublicId,
       expectedRequestVersion: version,
-      idempotencyKey: idFactory(),
-      correlationId: idFactory(),
-    };
-    return runCommand(() => submitDispatch((authority) => dataSource.submit(command, authority)));
+    });
+    const command = pendingCommands.current!.getOrCreate<EmployeeChangeLifecycleCommand>(
+      'submit',
+      signature,
+      () => ({
+        requestPublicId: selectedItem.deepLink.resourcePublicId,
+        expectedRequestVersion: version,
+        idempotencyKey: idFactory(),
+        correlationId: idFactory(),
+      })
+    );
+    return runCommand('submit', signature, () =>
+      submitDispatch((authority) => dataSource.submit(command, authority))
+    );
   }, [dataSource, idFactory, runCommand, selectedItem, submitDispatch]);
 
   const apply = useCallback(async () => {
@@ -207,14 +275,25 @@ export function useEmployeeChangeWorkspace({
     ) {
       return null;
     }
-    const command: EmployeeChangeLifecycleCommand = {
+    const signature = JSON.stringify({
       requestPublicId: selectedItem.deepLink.resourcePublicId,
       expectedRequestVersion: version,
-      idempotencyKey: idFactory(),
-      correlationId: idFactory(),
       purposeCode: 'HR_LIFECYCLE',
-    };
-    return runCommand(() => executor((authority) => dataSource.apply(command, authority), command));
+    });
+    const command = pendingCommands.current!.getOrCreate<EmployeeChangeLifecycleCommand>(
+      'apply',
+      signature,
+      () => ({
+        requestPublicId: selectedItem.deepLink.resourcePublicId,
+        expectedRequestVersion: version,
+        idempotencyKey: idFactory(),
+        correlationId: idFactory(),
+        purposeCode: 'HR_LIFECYCLE',
+      })
+    );
+    return runCommand('apply', signature, () =>
+      executor((authority) => dataSource.apply(command, authority), command)
+    );
   }, [commandOwner?.apply?.execute, dataSource, idFactory, runCommand, selectedItem]);
 
   return {
@@ -228,6 +307,7 @@ export function useEmployeeChangeWorkspace({
     pageIndex,
     canPrevious: pageIndex > 0,
     canNext: Boolean(query.data?.queryState.nextCursor),
+    canCreate,
     applyConnected: Boolean(commandOwner?.apply),
     select: setSelectedId,
     refresh: () => {

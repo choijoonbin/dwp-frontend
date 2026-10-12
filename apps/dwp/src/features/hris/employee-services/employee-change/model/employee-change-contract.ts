@@ -186,7 +186,7 @@ function validateItems(value: unknown): Readonly<{ view: number; mask: number; o
     ]);
     const itemPublicId = uuid(item.itemPublicId);
     text(item.title, 512);
-    text(item.statusCode, 64, CODE);
+    const statusCode = text(item.statusCode, 64, CODE);
     if (
       !item.fieldGroups ||
       typeof item.fieldGroups !== 'object' ||
@@ -228,6 +228,16 @@ function validateItems(value: unknown): Readonly<{ view: number; mask: number; o
     actions.forEach(action);
     const actionKeys = actions.map((candidate) => (candidate as Record<string, unknown>).actionKey);
     if (new Set(actionKeys).size !== actionKeys.length) invalid('projection');
+    if (
+      (actionKeys.includes('hris.action.hrm.submit-employee-change-request') &&
+        statusCode !== 'DRAFT') ||
+      (actionKeys.includes('hris.action.hrm.apply-employee-change-request') &&
+        statusCode !== 'APPROVED') ||
+      (actionKeys.includes('hris.action.hrm.submit-employee-change-request') &&
+        actionKeys.includes('hris.action.hrm.apply-employee-change-request'))
+    ) {
+      invalid('projection');
+    }
   }
   return { view, mask, omit };
 }
@@ -291,7 +301,11 @@ export function parseEmployeeChangeProjection(value: unknown): EmployeeChangePro
   if (
     (['EMPTY', 'UNAVAILABLE'].includes(String(state.state)) && items.length !== 0) ||
     (state.state === 'PARTIAL' && failures.length === 0) ||
-    (state.state === 'COMPLETE' && failures.length !== 0) ||
+    (state.state === 'PARTIAL' && state.freshness !== 'STALE') ||
+    (state.state === 'COMPLETE' &&
+      (failures.length !== 0 || items.length === 0 || state.freshness !== 'CURRENT')) ||
+    (state.state === 'EMPTY' &&
+      (failures.length !== 0 || state.freshness !== 'CURRENT' || state.nextCursor !== null)) ||
     (state.state === 'UNAVAILABLE' &&
       (state.freshness !== 'UNAVAILABLE' || state.nextCursor !== null))
   ) {
