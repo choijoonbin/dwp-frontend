@@ -1,0 +1,103 @@
+{
+  "schema": "dwp.hris.g7-sys-hrm-shared-verification-plan.v3",
+  "planId": "HRIS-G7-SYS-HRM-SHARED-PLAN-SYS-HRM-R3-20261012-R1",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "authorityStatus": "CONTROL_PROPOSAL_NOT_PREDECESSOR_AUTHORITY",
+  "basis": [
+    "docs/06-delivery/hris/g7-delegation/2026-10-12/packets/sys-007.v1.json#/verificationBindings/controlOnlyAfterModuleResult",
+    "docs/06-delivery/hris/g7-delegation/2026-10-12/packets/hrm-010.v1.json#/verificationBindings/controlOnlyAfterModuleResult"
+  ],
+  "requiredCategories": [
+    "CONTRACT_AUTHORIZATION_SYNC",
+    "SHARED_ROUTE_ACCESS",
+    "TYPECHECK_ARCHITECTURE",
+    "RESPONSIVE_ACCESSIBILITY"
+  ],
+  "closedSet": [
+    "CONTROL_AUTHORIZATION_CHECK",
+    "CONTROL_BACKEND_OPENAPI_CHECK",
+    "CONTROL_FRONTEND_OPENAPI_CHECK",
+    "CONTROL_SHARED_ROUTE_ACCESS",
+    "CONTROL_FRONTEND_TYPECHECK",
+    "CONTROL_FRONTEND_ARCHITECTURE",
+    "CONTROL_RESPONSIVE_ACCESSIBILITY_PLAYWRIGHT"
+  ],
+  "commands": [
+    {
+      "commandId": "CONTROL_AUTHORIZATION_CHECK",
+      "category": "CONTRACT_AUTHORIZATION_SYNC",
+      "repo": "frontend",
+      "cwd": "frontend",
+      "argv": ["corepack", "yarn", "authorization:check"]
+    },
+    {
+      "commandId": "CONTROL_BACKEND_OPENAPI_CHECK",
+      "category": "CONTRACT_AUTHORIZATION_SYNC",
+      "repo": "backend",
+      "cwd": "backend",
+      "argv": ["python3", "scripts/export-openapi-contracts.py", "--check", "--approved-snapshots"]
+    },
+    {
+      "commandId": "CONTROL_FRONTEND_OPENAPI_CHECK",
+      "category": "CONTRACT_AUTHORIZATION_SYNC",
+      "repo": "frontend",
+      "cwd": "frontend",
+      "argv": ["corepack", "yarn", "openapi:check"]
+    },
+    {
+      "commandId": "CONTROL_SHARED_ROUTE_ACCESS",
+      "category": "SHARED_ROUTE_ACCESS",
+      "repo": "frontend",
+      "cwd": "frontend",
+      "argv": [
+        "corepack",
+        "yarn",
+        "vitest",
+        "run",
+        "apps/dwp/src/routes/product-route-contracts.generated.test.ts",
+        "apps/dwp/src/features/hris/shell/testing/hris-shell-navigation-contract.test.ts",
+        "apps/dwp/src/features/hris/administration/reference-configuration/testing/hris-reference-configuration-workspace.test.tsx",
+        "apps/dwp/src/features/hris/employee-services/employee-change/testing/hris-employee-change-workspace.test.tsx",
+        "--reporter=json"
+      ]
+    },
+    {
+      "commandId": "CONTROL_FRONTEND_TYPECHECK",
+      "category": "TYPECHECK_ARCHITECTURE",
+      "repo": "frontend",
+      "cwd": "frontend",
+      "argv": ["corepack", "yarn", "typecheck"]
+    },
+    {
+      "commandId": "CONTROL_FRONTEND_ARCHITECTURE",
+      "category": "TYPECHECK_ARCHITECTURE",
+      "repo": "frontend",
+      "cwd": "frontend",
+      "argv": ["corepack", "yarn", "architecture:check"]
+    },
+    {
+      "commandId": "CONTROL_RESPONSIVE_ACCESSIBILITY_PLAYWRIGHT",
+      "category": "RESPONSIVE_ACCESSIBILITY",
+      "repo": "frontend",
+      "cwd": "frontend",
+      "argv": [
+        "env",
+        "E2E_BASE_URL=http://127.0.0.1:4200",
+        "E2E_REUSE_EXISTING_SERVER=false",
+        "VITE_HRIS_REFERENCE_CONFIGURATION_ENABLED=true",
+        "VITE_HRIS_EMPLOYEE_CHANGE_ENABLED=true",
+        "corepack",
+        "yarn",
+        "playwright",
+        "test",
+        "e2e/hris-sys-hrm-responsive-accessibility.spec.ts",
+        "--project=chromium",
+        "--project=mobile",
+        "--workers=1",
+        "--reporter=json"
+      ]
+    }
+  ],
+  "rerunPolicy": "ONE_SHARED_BATCH_NO_PER_FIX_FULL_RERUN",
+  "sealedPayloadSha256": "dc93be441bfd1857ef818deaba5d49fc3d0183b627d8c3773283c1596c770851"
+}

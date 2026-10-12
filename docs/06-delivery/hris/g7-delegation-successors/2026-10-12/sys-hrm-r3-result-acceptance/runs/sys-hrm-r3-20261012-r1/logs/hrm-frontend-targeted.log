@@ -1,0 +1,13 @@
+G7 HRM_FRONTEND_TARGETED sanitized result evidence
+command=yarn vitest run apps/dwp/src/features/hris/employee-services/employee-change
+resultCommit=9a68bea3f01e1ff49ba7e314896da0feb3e3263c
+resultTree=61a329b99a2961889f43eb2767109cf7956e4953
+executionBinding=PRE_COMMIT_FINAL_TREE
+executedAt=2026-10-12T11:17:56Z
+source=preserved Vitest 4.1.10 result cache and final targeted-run summary
+testFiles=4
+tests=16
+passed=16
+failed=0
+status=PASS
+redaction=SANITIZED_NO_SECRET_OR_CUSTOMER_DATA

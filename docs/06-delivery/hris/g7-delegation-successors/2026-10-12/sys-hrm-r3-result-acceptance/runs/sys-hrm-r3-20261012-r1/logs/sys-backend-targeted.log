@@ -1,0 +1,16 @@
+G7 SYS_BACKEND_TARGETED sanitized result evidence
+command=./gradlew :dwp-platform-server:test --tests *ReferenceConfiguration* --tests *SysIaEntryQueryContractTest -PhrisSlice=BASE-TFR-SYS-007 --no-daemon
+resultCommit=124269a8497eafa074199171cafc35adbef615ad
+resultTree=48685e63ac34d375f711b410105179f8f9613f6f
+executionBinding=PRE_COMMIT_FINAL_TREE
+executedAt=2026-10-12T11:37:57Z
+source=preserved Gradle JUnit XML in the final module worktree
+suites=4
+tests=26
+passed=26
+failures=0
+errors=0
+skipped=0
+postgresTests=4
+status=PASS
+redaction=SANITIZED_NO_SECRET_OR_CUSTOMER_DATA
