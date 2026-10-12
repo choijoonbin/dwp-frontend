@@ -1,5 +1,97 @@
 {
   "version": 1,
-  "maximumEntries": 0,
-  "entries": []
+  "maximumEntries": 13,
+  "entries": [
+    {
+      "path": "apps/dwp/src/features/hris/administration/reference-configuration/api/reference-configuration-api.ts",
+      "name": "approveReferenceConfigurationVersion",
+      "owner": "SYS Reference Configuration",
+      "reason": "Governed lifecycle command client retained as part of the complete generated-operation binding before its UI action is activated.",
+      "removalCondition": "Remove when the approved action is wired into the reference-configuration workspace or the operation is retired."
+    },
+    {
+      "path": "apps/dwp/src/features/hris/administration/reference-configuration/api/reference-configuration-api.ts",
+      "name": "createReferenceConfigurationVersion",
+      "owner": "SYS Reference Configuration",
+      "reason": "Governed lifecycle command client retained as part of the complete generated-operation binding before its UI action is activated.",
+      "removalCondition": "Remove when the create action is wired into the reference-configuration workspace or the operation is retired."
+    },
+    {
+      "path": "apps/dwp/src/features/hris/administration/reference-configuration/api/reference-configuration-api.ts",
+      "name": "ReferenceConfigurationGeneratedContracts",
+      "owner": "SYS Reference Configuration",
+      "reason": "Compile-time inventory pins every generated OpenAPI operation while staged lifecycle actions remain disabled.",
+      "removalCondition": "Remove when a production contract adapter consumes this inventory or generation provides an equivalent compile-time assertion."
+    },
+    {
+      "path": "apps/dwp/src/features/hris/administration/reference-configuration/api/reference-configuration-api.ts",
+      "name": "retireReferenceConfigurationVersion",
+      "owner": "SYS Reference Configuration",
+      "reason": "Governed lifecycle command client retained as part of the complete generated-operation binding before its UI action is activated.",
+      "removalCondition": "Remove when the retire action is wired into the reference-configuration workspace or the operation is retired."
+    },
+    {
+      "path": "apps/dwp/src/features/hris/administration/reference-configuration/api/reference-configuration-api.ts",
+      "name": "rollbackReferenceConfigurationVersion",
+      "owner": "SYS Reference Configuration",
+      "reason": "Governed lifecycle command client retained as part of the complete generated-operation binding before its UI action is activated.",
+      "removalCondition": "Remove when the rollback action is wired into the reference-configuration workspace or the operation is retired."
+    },
+    {
+      "path": "apps/dwp/src/features/hris/administration/reference-configuration/api/reference-configuration-api.ts",
+      "name": "scheduleReferenceConfigurationVersion",
+      "owner": "SYS Reference Configuration",
+      "reason": "Governed lifecycle command client retained as part of the complete generated-operation binding before its UI action is activated.",
+      "removalCondition": "Remove when the schedule action is wired into the reference-configuration workspace or the operation is retired."
+    },
+    {
+      "path": "apps/dwp/src/features/hris/administration/reference-configuration/api/reference-configuration-api.ts",
+      "name": "simulateReferenceConfigurationVersion",
+      "owner": "SYS Reference Configuration",
+      "reason": "Governed lifecycle command client retained as part of the complete generated-operation binding before its UI action is activated.",
+      "removalCondition": "Remove when the simulation action is wired into the reference-configuration workspace or the operation is retired."
+    },
+    {
+      "path": "apps/dwp/src/features/hris/administration/reference-configuration/api/reference-configuration-api.ts",
+      "name": "submitReferenceConfigurationVersion",
+      "owner": "SYS Reference Configuration",
+      "reason": "Governed lifecycle command client retained as part of the complete generated-operation binding before its UI action is activated.",
+      "removalCondition": "Remove when the submit action is wired into the reference-configuration workspace or the operation is retired."
+    },
+    {
+      "path": "apps/dwp/src/features/hris/administration/reference-configuration/model/reference-configuration-model.ts",
+      "name": "REFERENCE_CONFIGURATION_RUNTIME_FLAG",
+      "owner": "SYS Reference Configuration",
+      "reason": "The exported flag name is the stable activation contract while runtime gating remains owned by the shared shell.",
+      "removalCondition": "Remove when the shared activation registry imports this constant directly or the feature flag is retired."
+    },
+    {
+      "path": "apps/dwp/src/features/hris/performance/population-freeze/performance-review-operations-contract.ts",
+      "name": "PERFORMANCE_REVIEW_OPERATIONS_CAPABILITY",
+      "owner": "PER Performance Operations",
+      "reason": "Public capability metadata is retained for the next governed shell activation step.",
+      "removalCondition": "Remove when the shell authorization registry consumes the constant or the route is retired."
+    },
+    {
+      "path": "apps/dwp/src/features/hris/performance/population-freeze/performance-review-operations-contract.ts",
+      "name": "PERFORMANCE_REVIEW_OPERATIONS_ROUTE_CONTRACT",
+      "owner": "PER Performance Operations",
+      "reason": "Public route-contract metadata is retained for the next governed shell activation step.",
+      "removalCondition": "Remove when the generated route registry consumes the constant or the route is retired."
+    },
+    {
+      "path": "apps/dwp/src/features/hris/performance/population-freeze/population-freeze-api.ts",
+      "name": "performancePopulationFreezeDataSource",
+      "owner": "PER Performance Operations",
+      "reason": "Default governed data-source adapter remains available for the pending population-freeze workspace activation.",
+      "removalCondition": "Remove when the production workspace consumes the adapter or dependency injection replaces it."
+    },
+    {
+      "path": "apps/dwp/src/features/hris/performance/population-freeze/population-freeze-contract.ts",
+      "name": "PERFORMANCE_POPULATION_FREEZE_ROUTE_CONTRACT",
+      "owner": "PER Performance Operations",
+      "reason": "Public route-contract metadata is retained for the next governed population-freeze activation step.",
+      "removalCondition": "Remove when the generated route registry consumes the constant or the route is retired."
+    }
+  ]
 }

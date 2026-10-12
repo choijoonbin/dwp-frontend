@@ -197,4 +197,24 @@ describe('product route contract source', () => {
       )
     ).toThrow(/duplicated/u);
   });
+
+  it('accepts a product-owned domain namespace while rejecting a foreign product contract', () => {
+    expect(
+      defineProductRouteContractSource(
+        [
+          {
+            ...source[1],
+            routeContractKey: 'route.example.configuration.policy-detail.page',
+          },
+        ],
+        [manifest]
+      )
+    ).toHaveLength(1);
+    expect(() =>
+      defineProductRouteContractSource(
+        [{ ...source[1], routeContractKey: 'route.foreign.admin.policy-detail.page' }],
+        [manifest]
+      )
+    ).toThrow(/outside its product/u);
+  });
 });
