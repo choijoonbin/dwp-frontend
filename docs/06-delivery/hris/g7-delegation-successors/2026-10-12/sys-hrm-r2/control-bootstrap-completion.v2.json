@@ -1,0 +1,496 @@
+{
+  "schema": "dwp.hris.g7-control-bootstrap-completion.v2",
+  "receiptId": "HRIS-G7-SYS-HRM-CONTROL-BOOTSTRAP-20261012-R2",
+  "status": "PASS_SYS_HRM_CONTROL_BOOTSTRAP",
+  "issuedAt": "2026-10-12T09:32:01Z",
+  "expiresAt": "2026-10-19T09:32:01Z",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "frontendPin": {
+    "commit": "407dcdfdc4af642838a62a4ac64e06baf50d546b",
+    "tree": "50f417758e5df7a289a0e2ac4e4761e48ae7a4e4",
+    "stateSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "branch": "codex/hris-g1-integration-frontend-20261006",
+    "upstream": "origin/codex/hris-g1-integration-frontend-20261006",
+    "clean": true,
+    "upstreamMatched": true
+  },
+  "backendPin": {
+    "commit": "f3380042bd0c05d6f8946b25f4065b97e7a37d15",
+    "tree": "9198c5c9c72c32fb96f392836c4ca8e30ad9e8f1",
+    "stateSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "branch": "codex/hris-g1-integration-backend-20261006",
+    "upstream": "origin/codex/hris-g1-integration-backend-20261006",
+    "clean": true,
+    "upstreamMatched": true
+  },
+  "requestResults": [
+    {
+      "requestId": "G7-CR-SYS-007-AUTH-PEP-R1",
+      "module": "SYS",
+      "status": "PASS",
+      "evidence": {
+        "schema": "dwp.hris.g7-control-request-evidence.v1",
+        "artifacts": [
+          {
+            "repo": "backend",
+            "path": "contracts/product-authorization/product-surfaces-v1.bundle-v37.json",
+            "gitBlobSha1": "8a46c9d6ce28f9d5b77a66ab8064cf9258c37290",
+            "byteLength": 2297255,
+            "contentSha256": "1d3f5bbdcac508e30882ff510764dcc74f46adc15bb468c46025eb3f604e5b8c"
+          },
+          {
+            "repo": "backend",
+            "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/security/HcmPlatformPepRegistry.java",
+            "gitBlobSha1": "f7cb0ef79f6d11e45e133ced399b16293e6dce41",
+            "byteLength": 17446,
+            "contentSha256": "783852d3fe1cc33f4bd990d218f31e42c34f31fa666d00973bb3a70538c79921"
+          },
+          {
+            "repo": "backend",
+            "path": "dwp-platform-server/src/main/resources/product-authorization/hcm-platform-pep-v37.generated.json",
+            "gitBlobSha1": "2ccc7a9b65b4e2a2437968c43eb8a9f926e1fbdf",
+            "byteLength": 56301,
+            "contentSha256": "20a59fdb7106e231924603a0623be04ceb0d87ca60a1c4bc1c3494369fa719b7"
+          },
+          {
+            "repo": "backend",
+            "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/security/HcmPlatformPepSecurityContractTest.java",
+            "gitBlobSha1": "1fc0b4a68c5897b8b035464017a27e154b4bcaf6",
+            "byteLength": 8449,
+            "contentSha256": "dc2bf0d95e51efc8ec263c2b9612cadefaa87f37263e4d54e67d7d13525b466a"
+          }
+        ]
+      },
+      "evidenceSha256": "232bb80a3d7d51b43bc95de6aac36342e11422d82935cd34bf942ddbd029abf0"
+    },
+    {
+      "requestId": "G7-CR-SYS-007-CONTRACT-GATEWAY-R1",
+      "module": "SYS",
+      "status": "PASS",
+      "evidence": {
+        "schema": "dwp.hris.g7-control-request-evidence.v1",
+        "artifacts": [
+          {
+            "repo": "backend",
+            "path": "contracts/openapi/gateway-public.json",
+            "gitBlobSha1": "157dbc1636a428288339c0f82a089443098cce43",
+            "byteLength": 6804508,
+            "contentSha256": "9d788107956401a3c319f81ed2ca4fe4b1b2ac1e8c23aec9ce2f0a71d55d330a"
+          },
+          {
+            "repo": "backend",
+            "path": "contracts/openapi/platform.json",
+            "gitBlobSha1": "a71e0bdc5e63a617d3c97a26b9aea8609a918d12",
+            "byteLength": 2215232,
+            "contentSha256": "592eefdefc7aca5b153df96ac08e24e7af5a228d17ef5ca651fed70c15f45bad"
+          },
+          {
+            "repo": "backend",
+            "path": "scripts/tests/test_export_openapi_contracts.py",
+            "gitBlobSha1": "14d770cd11aac53e702a70117117203a1efce66a",
+            "byteLength": 106368,
+            "contentSha256": "5eef625fbfa514265f4fb3e8854dea4ea829bac03df0488301fba024039ebb78"
+          },
+          {
+            "repo": "frontend",
+            "path": "libs/api-contracts/openapi/gateway-public.json",
+            "gitBlobSha1": "157dbc1636a428288339c0f82a089443098cce43",
+            "byteLength": 6804508,
+            "contentSha256": "9d788107956401a3c319f81ed2ca4fe4b1b2ac1e8c23aec9ce2f0a71d55d330a"
+          },
+          {
+            "repo": "frontend",
+            "path": "libs/api-contracts/src/gateway-public.ts",
+            "gitBlobSha1": "e5d11815f64a092e213e5d3b9dc5c98497d165cd",
+            "byteLength": 4561953,
+            "contentSha256": "502bbaa5620f92cc0d2c94db4296273056859e46a62cbe69db7d211ac131651c"
+          }
+        ]
+      },
+      "evidenceSha256": "f6a3cff001302d3fff1b9ccdbe9f7e8730bab37332bb68f797cdd988bb95327c"
+    },
+    {
+      "requestId": "G7-CR-SYS-007-SHELL-ROUTE-R1",
+      "module": "SYS",
+      "status": "PASS",
+      "evidence": {
+        "schema": "dwp.hris.g7-control-request-evidence.v1",
+        "artifacts": [
+          {
+            "repo": "frontend",
+            "path": "apps/dwp/src/features/hcm/hcm-navigation.ts",
+            "gitBlobSha1": "3f427c27f119390c931dbb2df888f83e834c9dbc",
+            "byteLength": 15733,
+            "contentSha256": "79b7e413e04ec2b721166796ecf43b2dbcb47b32ac317d25c062c84c3a1dc883"
+          },
+          {
+            "repo": "frontend",
+            "path": "apps/dwp/src/features/hris/administration/reference-configuration/testing/hris-reference-configuration-workspace.test.tsx",
+            "gitBlobSha1": "0540d96ec127b3ad4c9a2a6fa47aaeb8258c1d64",
+            "byteLength": 2415,
+            "contentSha256": "e10866b4c9a4f5c4d832f738577486b8b943a2753ff5bc3d30f1ac3be2dd3cbf"
+          },
+          {
+            "repo": "frontend",
+            "path": "apps/dwp/src/features/hris/shell/model/catalog/settings.ts",
+            "gitBlobSha1": "0e4de2dc904ec917af7483d0aadd74c94ceaf134",
+            "byteLength": 4116,
+            "contentSha256": "b4ae90d66eef4650c578071df31abb961670a527225e7884b5a56495c9510052"
+          },
+          {
+            "repo": "frontend",
+            "path": "apps/dwp/src/features/hris/shell/testing/hris-shell-navigation-contract.test.ts",
+            "gitBlobSha1": "0bafdd069203aef7cc5fd4c60f7d991d4d8ebf83",
+            "byteLength": 5343,
+            "contentSha256": "594195fb6f87e18d624a30b27de54db790923551b520dacfb7e777a652494b1c"
+          },
+          {
+            "repo": "frontend",
+            "path": "apps/dwp/src/pages/hcm.tsx",
+            "gitBlobSha1": "d48073321e9b0612122e975f1410fb3b162f7d73",
+            "byteLength": 9816,
+            "contentSha256": "f6634ae7ea92164b2ef7d55bcf67483d92048783828fbd5c24af538f7856f896"
+          }
+        ]
+      },
+      "evidenceSha256": "d0c7718fa942e8fcd77a823101846a11c105dbb012ee96ab39992b70893d0db8"
+    },
+    {
+      "requestId": "G7-CR-SYS-007-SECURITY-BRIDGE-R1",
+      "module": "SYS",
+      "status": "PASS",
+      "evidence": {
+        "schema": "dwp.hris.g7-control-request-evidence.v1",
+        "artifacts": [
+          {
+            "repo": "backend",
+            "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/security/HcmPlatformPepRegistry.java",
+            "gitBlobSha1": "f7cb0ef79f6d11e45e133ced399b16293e6dce41",
+            "byteLength": 17446,
+            "contentSha256": "783852d3fe1cc33f4bd990d218f31e42c34f31fa666d00973bb3a70538c79921"
+          },
+          {
+            "repo": "backend",
+            "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/security/PlatformSecurityFilter.java",
+            "gitBlobSha1": "fc9004149f7e0638ce0efbf5d3add9d34f55a6ea",
+            "byteLength": 28835,
+            "contentSha256": "2aec1d5b8bf60b7581a37b9d84c5e50c0987244e6d35fb22e8309068a5ea0e8a"
+          },
+          {
+            "repo": "backend",
+            "path": "dwp-platform-server/src/main/resources/product-authorization/hcm-platform-pep-v37.generated.json",
+            "gitBlobSha1": "2ccc7a9b65b4e2a2437968c43eb8a9f926e1fbdf",
+            "byteLength": 56301,
+            "contentSha256": "20a59fdb7106e231924603a0623be04ceb0d87ca60a1c4bc1c3494369fa719b7"
+          },
+          {
+            "repo": "backend",
+            "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/security/HcmPlatformPepSecurityContractTest.java",
+            "gitBlobSha1": "1fc0b4a68c5897b8b035464017a27e154b4bcaf6",
+            "byteLength": 8449,
+            "contentSha256": "dc2bf0d95e51efc8ec263c2b9612cadefaa87f37263e4d54e67d7d13525b466a"
+          }
+        ]
+      },
+      "evidenceSha256": "dc450658795fadd28f50cee7bb45c99c3431a85ecfdcdfb724a2df536a2bd2ee"
+    },
+    {
+      "requestId": "G7-CR-HRM-010-EVENT-CONTRACT-R1",
+      "module": "HRM",
+      "status": "PASS",
+      "evidence": {
+        "schema": "dwp.hris.g7-control-request-evidence.v1",
+        "artifacts": [
+          {
+            "repo": "backend",
+            "path": "contracts/asyncapi/domain-events.yaml",
+            "gitBlobSha1": "1b93e79015588923c86e0b3045d9b19235c28341",
+            "byteLength": 10507,
+            "contentSha256": "72da50cbe12e5da70bef61376cc6daa5f9ace57afb9b2d4c4444ed25ef8b9c00"
+          },
+          {
+            "repo": "backend",
+            "path": "contracts/hris/canonical/schemas/cross-module-canonical-schemas.v1.json",
+            "gitBlobSha1": "73da0363f8695d68c258cdacb8b557395b5623ef",
+            "byteLength": 30400,
+            "contentSha256": "8109568c1cfafa5021b5e831ac17c5dbbfeaaf2b3a7472fc4ff488eacb0bc866"
+          },
+          {
+            "repo": "backend",
+            "path": "dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/Xcon022EmployeeChangeAppliedV1.java",
+            "gitBlobSha1": "fb7fe93f587f4326adca5f6b70410401d058e579",
+            "byteLength": 19872,
+            "contentSha256": "1f9ef300b6443a0e009f278f4c22ccaddd9c5813d07c86329e856162d37143fe"
+          },
+          {
+            "repo": "backend",
+            "path": "dwp-platform-contracts/src/test/java/com/dwp/platform/contract/Xcon022EmployeeChangeAppliedAsyncApiContractTest.java",
+            "gitBlobSha1": "7e89c4c7d8b01a4be4a0609ebd3a11efe99b07a6",
+            "byteLength": 5955,
+            "contentSha256": "21ae1f42f4920358fa529cdd5f2416495ac93060581fac5177821dd9b21a202f"
+          }
+        ]
+      },
+      "evidenceSha256": "da059f1816024636dc3a06b98f2c9192e6f2dcc10794c96ff6ccff3c366bd7dc"
+    },
+    {
+      "requestId": "G7-CR-HRM-010-AUTH-PEP-R1",
+      "module": "HRM",
+      "status": "PASS",
+      "evidence": {
+        "schema": "dwp.hris.g7-control-request-evidence.v1",
+        "artifacts": [
+          {
+            "repo": "backend",
+            "path": "contracts/product-authorization/product-surfaces-v1.bundle-v37.json",
+            "gitBlobSha1": "8a46c9d6ce28f9d5b77a66ab8064cf9258c37290",
+            "byteLength": 2297255,
+            "contentSha256": "1d3f5bbdcac508e30882ff510764dcc74f46adc15bb468c46025eb3f604e5b8c"
+          },
+          {
+            "repo": "backend",
+            "path": "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmV3PepRegistry.java",
+            "gitBlobSha1": "7a9dd67ac6d59eea6d7cc5e66c953b7d205e8c99",
+            "byteLength": 30565,
+            "contentSha256": "c0542ca3ac1e688c27dfd030e057452bce38e443ef782d9fd7314a1d974a975c"
+          },
+          {
+            "repo": "backend",
+            "path": "dwp-people-server/src/main/resources/product-authorization/hcm-people-pep-v37.generated.json",
+            "gitBlobSha1": "504393224ccb62ce51c3efad5f55b18148ec7327",
+            "byteLength": 226251,
+            "contentSha256": "5c95a54d3b9f4314982ce0d3eeda5fdcf10c475cc22231476ebca86998dafdc1"
+          },
+          {
+            "repo": "backend",
+            "path": "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmV3PepRegistryTest.java",
+            "gitBlobSha1": "db17688625966c9e3429531bf60baa6b16000a39",
+            "byteLength": 16327,
+            "contentSha256": "c927d2abfb431ad11c960e29b066a1ab9c111a5a3ccd5de087c7119fc85d5f27"
+          }
+        ]
+      },
+      "evidenceSha256": "152507f92c0e3ba532efa88de17243f625870e3bc55546e19dcc9c9e05c0aa00"
+    },
+    {
+      "requestId": "G7-CR-HRM-010-CONTRACT-GATEWAY-R1",
+      "module": "HRM",
+      "status": "PASS",
+      "evidence": {
+        "schema": "dwp.hris.g7-control-request-evidence.v1",
+        "artifacts": [
+          {
+            "repo": "backend",
+            "path": "contracts/openapi/gateway-public.json",
+            "gitBlobSha1": "157dbc1636a428288339c0f82a089443098cce43",
+            "byteLength": 6804508,
+            "contentSha256": "9d788107956401a3c319f81ed2ca4fe4b1b2ac1e8c23aec9ce2f0a71d55d330a"
+          },
+          {
+            "repo": "backend",
+            "path": "contracts/openapi/hris-wave1-design-time.json",
+            "gitBlobSha1": "ef0424e0cd3814eeff7ae265b3d6a6a39323d938",
+            "byteLength": 123888,
+            "contentSha256": "f41d6194ca448adcb35812c213e6ec032184b56ac3b90bd27698ad1412608419"
+          },
+          {
+            "repo": "backend",
+            "path": "contracts/openapi/people.json",
+            "gitBlobSha1": "f1ec8078d520de42cd4a428ac51cd7227631284c",
+            "byteLength": 390501,
+            "contentSha256": "cc4cc34acffa3b69b043e183a10bde31a6a57a26cdb784d8eeefb60a03b48623"
+          },
+          {
+            "repo": "backend",
+            "path": "scripts/tests/test_export_openapi_contracts.py",
+            "gitBlobSha1": "14d770cd11aac53e702a70117117203a1efce66a",
+            "byteLength": 106368,
+            "contentSha256": "5eef625fbfa514265f4fb3e8854dea4ea829bac03df0488301fba024039ebb78"
+          },
+          {
+            "repo": "frontend",
+            "path": "libs/api-contracts/openapi/gateway-public.json",
+            "gitBlobSha1": "157dbc1636a428288339c0f82a089443098cce43",
+            "byteLength": 6804508,
+            "contentSha256": "9d788107956401a3c319f81ed2ca4fe4b1b2ac1e8c23aec9ce2f0a71d55d330a"
+          },
+          {
+            "repo": "frontend",
+            "path": "libs/api-contracts/src/gateway-public.ts",
+            "gitBlobSha1": "e5d11815f64a092e213e5d3b9dc5c98497d165cd",
+            "byteLength": 4561953,
+            "contentSha256": "502bbaa5620f92cc0d2c94db4296273056859e46a62cbe69db7d211ac131651c"
+          }
+        ]
+      },
+      "evidenceSha256": "8e1ac57c2645ea4c7169d0bd1f53133499a40678c5b1c1ebcf070b9da3d87a91"
+    },
+    {
+      "requestId": "G7-CR-HRM-010-SHELL-ROUTE-R1",
+      "module": "HRM",
+      "status": "PASS",
+      "evidence": {
+        "schema": "dwp.hris.g7-control-request-evidence.v1",
+        "artifacts": [
+          {
+            "repo": "frontend",
+            "path": "apps/dwp/src/features/hcm/hcm-navigation.ts",
+            "gitBlobSha1": "3f427c27f119390c931dbb2df888f83e834c9dbc",
+            "byteLength": 15733,
+            "contentSha256": "79b7e413e04ec2b721166796ecf43b2dbcb47b32ac317d25c062c84c3a1dc883"
+          },
+          {
+            "repo": "frontend",
+            "path": "apps/dwp/src/features/hris/shell/model/catalog/hr-operations.ts",
+            "gitBlobSha1": "55a9092b9b604e7dbeff7a2146bd8ecc253b1f6d",
+            "byteLength": 4221,
+            "contentSha256": "4ee472e44322f5b2eeb5e673c7e8dfd1fded512dd266e7b156bd58d91e5214bf"
+          },
+          {
+            "repo": "frontend",
+            "path": "apps/dwp/src/features/hris/shell/testing/hris-shell-navigation-contract.test.ts",
+            "gitBlobSha1": "0bafdd069203aef7cc5fd4c60f7d991d4d8ebf83",
+            "byteLength": 5343,
+            "contentSha256": "594195fb6f87e18d624a30b27de54db790923551b520dacfb7e777a652494b1c"
+          },
+          {
+            "repo": "frontend",
+            "path": "apps/dwp/src/pages/hcm.tsx",
+            "gitBlobSha1": "d48073321e9b0612122e975f1410fb3b162f7d73",
+            "byteLength": 9816,
+            "contentSha256": "f6634ae7ea92164b2ef7d55bcf67483d92048783828fbd5c24af538f7856f896"
+          }
+        ]
+      },
+      "evidenceSha256": "69039fc5d1660763a4cf5c5e016fa7cbcc88d5690c2681e2767d801fd924b5f8"
+    },
+    {
+      "requestId": "G7-CR-HRM-010-APPROVAL-CALLBACK-R1",
+      "module": "HRM",
+      "status": "PASS",
+      "evidence": {
+        "schema": "dwp.hris.g7-control-request-evidence.v1",
+        "artifacts": [
+          {
+            "repo": "backend",
+            "path": "contracts/in-process/hris/approval-employee-change-bridge.v2.json",
+            "gitBlobSha1": "9ac127051e778258c388ff8f755867c20ae813ff",
+            "byteLength": 8616,
+            "contentSha256": "4b17485c4bb52b9e57235f20a5a603f427a33a7929d77e96c057c523c78f8ee1"
+          },
+          {
+            "repo": "backend",
+            "path": "dwp-people-server/src/main/java/com/dwp/services/people/security/HrisEmployeeChangeSecurityBridge.java",
+            "gitBlobSha1": "ca041258a9b89a18cc9b06f2f4b7ad99a54ead53",
+            "byteLength": 5423,
+            "contentSha256": "6c6462cd714dafbfbe77f68b1af22cce2dc5642d3478b7a2472e5ad757a037bc"
+          },
+          {
+            "repo": "backend",
+            "path": "dwp-people-server/src/test/java/com/dwp/services/people/security/HrisEmployeeChangeSecurityBridgeTest.java",
+            "gitBlobSha1": "a80e6098b4b87d6679f8cdf3535aa5754794f4fa",
+            "byteLength": 13989,
+            "contentSha256": "3efa50cfda3871cfab6717db172f2ac2e2d305e332eed183530c84f45a7a52b2"
+          },
+          {
+            "repo": "backend",
+            "path": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/approval/v2/HrisWorkloadProofV2.java",
+            "gitBlobSha1": "92964911dabaf8fc18ea58c9dadfd943ea2393d2",
+            "byteLength": 18248,
+            "contentSha256": "4186e26f591541fbd5622eea7c59d60a7350a373eb879e4013549f3b8084663c"
+          },
+          {
+            "repo": "backend",
+            "path": "dwp-platform-contracts/src/test/java/com/dwp/platform/contract/HrisApprovalBridgeV2Test.java",
+            "gitBlobSha1": "a895289fafa5dbb14c039a4453b3249fe74034e6",
+            "byteLength": 17754,
+            "contentSha256": "e6d7c9a9426ff273b2f3a92200ee75fac293e1343d8bd8a9689be1d8bd45d9f9"
+          }
+        ]
+      },
+      "evidenceSha256": "536e29c66213a3fe9f9f57225e1a87646da7036f0c5e90ea15899201f189dd49"
+    },
+    {
+      "requestId": "G7-CR-HRM-010-APPROVAL-CASE-HANDOFF-R1",
+      "module": "HRM",
+      "status": "PASS",
+      "evidence": {
+        "schema": "dwp.hris.g7-control-request-evidence.v1",
+        "artifacts": [
+          {
+            "repo": "backend",
+            "path": "contracts/in-process/hris/approval-employee-change-bridge.v2.json",
+            "gitBlobSha1": "9ac127051e778258c388ff8f755867c20ae813ff",
+            "byteLength": 8616,
+            "contentSha256": "4b17485c4bb52b9e57235f20a5a603f427a33a7929d77e96c057c523c78f8ee1"
+          },
+          {
+            "repo": "backend",
+            "path": "dwp-approval-server/src/test/java/com/dwp/services/approval/hrisbridge/HrisApprovalDecisionRelayTest.java",
+            "gitBlobSha1": "0f8dd5e98aea0f84244b11a6792c17617f620da0",
+            "byteLength": 680,
+            "contentSha256": "7ccddc25f4a5b19a197f989505cbd036290e2c9d2a65648b33159f1812da9ba6"
+          },
+          {
+            "repo": "backend",
+            "path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/employeechange/approvalbridge/EmployeeChangeApprovalRequestOutbox.java",
+            "gitBlobSha1": "886d5c6246cc1e48f8fffb29f4d6892cac674f0c",
+            "byteLength": 9667,
+            "contentSha256": "c546662cf2e5dbe07c9637c557df4670e40507bcb89ef8394b6f06c318196fec"
+          },
+          {
+            "repo": "backend",
+            "path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/employeechange/approvalbridge/EmployeeChangeApprovalRequestRelay.java",
+            "gitBlobSha1": "eeefe2a917c6d4ac65bd4e3b74439bbd53d3e828",
+            "byteLength": 19884,
+            "contentSha256": "f8a9c9436a15c6710ea75ae1f073aaa930fabf6f18dfbb694cddef4232625f01"
+          },
+          {
+            "repo": "backend",
+            "path": "dwp-people-server/src/test/java/com/dwp/services/people/hris/employeeservice/employeechange/approvalbridge/EmployeeChangeApprovalRequestRelayPostgresTest.java",
+            "gitBlobSha1": "0e2a07952c441b27a63ad5c4b25fd911264bde95",
+            "byteLength": 17213,
+            "contentSha256": "999871c10f130aa7b33a0adb93dbd823b940701210eff196d09809dd5fb1b78b"
+          }
+        ]
+      },
+      "evidenceSha256": "89aa846a032f4a7b0efc1f6278c91318b127bd112340485359fd548ba6ff3403"
+    }
+  ],
+  "verification": [
+    {
+      "checkId": "CONTROL_RESULT_ANCESTORS",
+      "result": "PASS",
+      "algorithm": "SHA-256/CANONICAL-JSON",
+      "evidenceSha256": "fd89b777f404acc46d799d867bd5124aa68c83e21a60e0e72e4192f689c6a3bf"
+    },
+    {
+      "checkId": "CENTRAL_REPOSITORIES_CLEAN_PUSHED",
+      "result": "PASS",
+      "algorithm": "SHA-256/CANONICAL-JSON",
+      "evidenceSha256": "e56aa337a930743dda108730b07ae0075de7b2c6363b497bfcf8453c4c52646b"
+    },
+    {
+      "checkId": "CONTROL_REQUEST_EVIDENCE_CLOSED_SET",
+      "result": "PASS",
+      "algorithm": "SHA-256/CANONICAL-JSON",
+      "evidenceSha256": "a969ec17e9e14e9440f54e12ecb4df3882f3d8ea0c503cd8d9cd1c3363e66c5a"
+    },
+    {
+      "checkId": "PREDECESSOR_AUTHORITY_PINS_UNCHANGED",
+      "result": "PASS",
+      "algorithm": "SHA-256/CANONICAL-JSON",
+      "evidenceSha256": "c6121f820ca1ec44a43549ac2a9f7b2cc9f8ed11c3f083f377376472312509cb"
+    }
+  ],
+  "authority": {
+    "controlBootstrapComplete": true,
+    "moduleSourceChangeAuthorized": false,
+    "sharedControlPathChangeAuthorizedForModules": false,
+    "integrationMergeAuthorized": false,
+    "customerDataAuthorized": false,
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "sealedPayloadSha256": "2a716ac86a7e7ef0e4f50cee771fdc4fdb33c104d5ca2612a2f905a8618738ea"
+}
