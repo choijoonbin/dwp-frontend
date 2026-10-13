@@ -1,0 +1,47 @@
+{
+  "artifactSeals": {
+    "contractReseal": "1d4cb56349f8741026fdbddd6987946c063ca7fc178c9ee4df42467c300e8888",
+    "migrationLeaseDelta": "58e275104f62d0709b6902ab831425f06a0095c1ce04690483074ab13a4ff1a8",
+    "packet": "81304f434a3170c1be0b5b93184fa84bda23d5676b67430440dfd53667a6bc76"
+  },
+  "authorities": {
+    "activationAuthority": false,
+    "integrationAuthority": false,
+    "migrationAdmissionAuthority": false,
+    "payConsumptionAuthority": false,
+    "promotionAuthority": false,
+    "releaseAuthority": false,
+    "sourceChangeAuthority": false,
+    "startTokenAuthority": false,
+    "worktreeRegistrationAuthority": false
+  },
+  "controlGates": {
+    "canonicalContractConflictResealed": true,
+    "integrationAllowed": false,
+    "migrationOnlyReserved": true,
+    "moduleWorktreesCreated": false,
+    "packetPrepared": true,
+    "payAllowed": false,
+    "predecessorClosureVerified": true,
+    "releaseAllowed": false,
+    "sourceChangesAllowed": false,
+    "startIssued": false,
+    "typedArtifactBootstrapAllocated": false,
+    "workforceSnapshotCompensationProjectionAllocated": false
+  },
+  "counts": {
+    "events": 8,
+    "moduleOwnedTables": 6,
+    "namedCommands": 3,
+    "operations": 12,
+    "sharedFoundationTables": 1,
+    "totalNewTables": 7
+  },
+  "moduleId": "MOD-PER-COMPPLAN",
+  "nextRequiredAuthority": "CONTROL_TYPED_ARTIFACT_AND_WORKFORCE_COMPENSATION_PROJECTION_REGISTRATION_TEST_AND_GRANT_THEN_APPEND_ONLY_START_TOKEN_AND_WORKTREE_BINDING_AFTER_CARRIER_VALIDATION_AND_V4_VACANCY_RECHECK",
+  "preparedAt": "2026-10-12T23:41:00+09:00",
+  "schemaVersion": "HRIS-G7-MOD-PER-COMPPLAN-PREPARATION-STATE-V1",
+  "sealedPayloadSha256": "fea63d7d528f79cf6405888a33d5089117fd1cff0131c153261843691f0687c5",
+  "state": "PACKET_PREPARED_START_WITHHELD",
+  "stateId": "HRIS-G7-STATE-MOD-PER-COMPPLAN-R1-PREPARATION"
+}

@@ -1,0 +1,121 @@
+{
+  "artifactPins": [
+    {
+      "bytes": 340932,
+      "gitBlobSha1": "9b62f594e5459aa3669f7d2ff3052780cd25ea61",
+      "gitMode": "100644",
+      "path": "contract-reseal-authority.v1.json",
+      "sha256": "14c5827bb0448d1766106365f53cdcc24e13beb6d0041ba61dca02e3552a7f87"
+    },
+    {
+      "bytes": 1562,
+      "gitBlobSha1": "2197b72277d5ab7c7418ffb0f7885040b0a9b3cc",
+      "gitMode": "100644",
+      "path": "migration-leases.delta.v1.json",
+      "sha256": "b3a8fb64b6c23ff1e8cdf865413ab1509d992218c528e4421d1b6e94841a46f9"
+    },
+    {
+      "bytes": 33756,
+      "gitBlobSha1": "46a6585776bb066b5f5c4f4a402166c0254e9669",
+      "gitMode": "100644",
+      "path": "packet.v1.json",
+      "sha256": "8ba8b7e079194c710addb7b7df76ba90933d04ee4c8694ec0c6c529163ee5c75"
+    },
+    {
+      "bytes": 1844,
+      "gitBlobSha1": "0f0afd22e2a9f9d5f0730004b2770f9e793cdcd6",
+      "gitMode": "100644",
+      "path": "state/preparation.v1.json",
+      "sha256": "b131dc5acc3d7430d2865d19410d343c4f50599b35e7f68d73d843e58726abce"
+    }
+  ],
+  "authorities": {
+    "activationAuthority": false,
+    "integrationAuthority": false,
+    "migrationAdmissionAuthority": false,
+    "payConsumptionAuthority": false,
+    "promotionAuthority": false,
+    "releaseAuthority": false,
+    "sourceChangeAuthority": false,
+    "startTokenAuthority": false,
+    "worktreeRegistrationAuthority": false
+  },
+  "counts": {
+    "artifacts": 5,
+    "events": 8,
+    "moduleOwnedTables": 6,
+    "operations": 12,
+    "sharedFoundationTables": 1,
+    "tools": 5,
+    "totalNewTables": 7
+  },
+  "exactCarrierInventory": [
+    "README.md",
+    "contract-reseal-authority.v1.json",
+    "contracts/mod-per-compplan-preparation.schema.v1.json",
+    "manifest.v1.json",
+    "materialize_g7_mod_per_compplan_preparation.py",
+    "migration-leases.delta.v1.json",
+    "packet.v1.json",
+    "state/preparation.v1.json",
+    "test_g7_mod_per_compplan_preparation.py",
+    "validate_g7_mod_per_compplan_preparation.py"
+  ],
+  "manifestId": "HRIS-G7-MANIFEST-MOD-PER-COMPPLAN-R1-PREPARATION",
+  "moduleId": "MOD-PER-COMPPLAN",
+  "predecessor": {
+    "commit": "259fae159d35586da2fa79a1fd2947a2e0fb39fd",
+    "tree": "7c43a34966557eeb0e2af4982c507f690aabb136"
+  },
+  "preparedAt": "2026-10-12T23:41:00+09:00",
+  "repositoryPins": {
+    "agent": {
+      "commit": "1d46fc4ab49c604efb7464574c49d13ee453e059",
+      "tree": "0b9a8dbfd828478ee825452e5aca8688c83e37ab"
+    },
+    "backend": {
+      "commit": "deb39a02634826d40ae5de5e30f54223c31b5851",
+      "tree": "79d31fe261be481a3427c2a12a456a785b7eafaa"
+    }
+  },
+  "schemaVersion": "HRIS-G7-MOD-PER-COMPPLAN-PREPARATION-MANIFEST-V1",
+  "sealedPayloadSha256": "991beec965a2b15d7107b75557f635302ae63bb8a384e2ddf4bd04f5da22233a",
+  "state": "PACKET_PREPARED_START_WITHHELD",
+  "toolPins": [
+    {
+      "bytes": 6979,
+      "gitBlobSha1": "8c1d64ed08edc2ff56925882c65c784710bae841",
+      "gitMode": "100644",
+      "path": "README.md",
+      "sha256": "525c1f9a468736625bc862d7a4776b1aaeb65f6b27126935d759a34d6c21975b"
+    },
+    {
+      "bytes": 67517,
+      "gitBlobSha1": "034ebf60bde1704ee546eecad0dbcc16421c13e2",
+      "gitMode": "100644",
+      "path": "contracts/mod-per-compplan-preparation.schema.v1.json",
+      "sha256": "d575bcfb830a01155e36e604c9c4a0b622660c1d088361bdfd5d46e20bc745d5"
+    },
+    {
+      "bytes": 146627,
+      "gitBlobSha1": "67b412da4e0385ad4d3e55d8023f74e1395cb400",
+      "gitMode": "100644",
+      "path": "materialize_g7_mod_per_compplan_preparation.py",
+      "sha256": "a38738d2951dd84583e5448116352977cfa5a4122f3fe210d6473a5fba3b3558"
+    },
+    {
+      "bytes": 160963,
+      "gitBlobSha1": "453722af4371254a612dccc7939a056ac8ebe6c3",
+      "gitMode": "100644",
+      "path": "validate_g7_mod_per_compplan_preparation.py",
+      "sha256": "908c22962641057261a3c06d23c08b4e9212ee60412fc2e9e7e0ea01e52739b2"
+    },
+    {
+      "bytes": 33613,
+      "gitBlobSha1": "a5a00a8cf6ac64ceba314815852a8f3a0eb7c519",
+      "gitMode": "100644",
+      "path": "test_g7_mod_per_compplan_preparation.py",
+      "sha256": "2a45e203890daa0be138bab0094883b97bb9b33c778fa9c908a061da4cff7fa2"
+    }
+  ]
+}

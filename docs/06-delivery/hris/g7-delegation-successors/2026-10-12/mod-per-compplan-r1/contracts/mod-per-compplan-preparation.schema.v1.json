@@ -1,0 +1,1126 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:dwp:hris:g7:mod-per-compplan:preparation:v1",
+  "title": "MOD-PER-COMPPLAN R1 preparation artifact composite",
+  "oneOf": [
+    { "$ref": "#/$defs/contractReseal" },
+    { "$ref": "#/$defs/packet" },
+    { "$ref": "#/$defs/leaseDelta" },
+    { "$ref": "#/$defs/preparationState" },
+    { "$ref": "#/$defs/manifest" }
+  ],
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "gitObject": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "authorities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sourceChangeAuthority",
+        "startTokenAuthority",
+        "migrationAdmissionAuthority",
+        "worktreeRegistrationAuthority",
+        "activationAuthority",
+        "integrationAuthority",
+        "promotionAuthority",
+        "releaseAuthority",
+        "payConsumptionAuthority"
+      ],
+      "properties": {
+        "sourceChangeAuthority": { "const": false },
+        "startTokenAuthority": { "const": false },
+        "migrationAdmissionAuthority": { "const": false },
+        "worktreeRegistrationAuthority": { "const": false },
+        "activationAuthority": { "const": false },
+        "integrationAuthority": { "const": false },
+        "promotionAuthority": { "const": false },
+        "releaseAuthority": { "const": false },
+        "payConsumptionAuthority": { "const": false }
+      }
+    },
+    "sourcePin": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sourceId", "repo", "path", "gitBlobSha1", "bytes", "sha256", "selectors"],
+      "properties": {
+        "sourceId": { "type": "string", "minLength": 1 },
+        "repo": { "enum": ["frontend", "backend"] },
+        "path": { "type": "string", "minLength": 1 },
+        "gitBlobSha1": { "$ref": "#/$defs/gitObject" },
+        "bytes": { "type": "integer", "minimum": 1 },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "selectors": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/sourceSelector" } }
+      }
+    },
+    "sourceSelector": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["selector", "selectorSha256"],
+      "properties": {
+        "selector": { "type": "string", "minLength": 1 },
+        "selectorSha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "operation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["operationId", "method", "path", "mode", "authorizationAction", "authorizationBindingId", "authorizationCapability", "idempotencyKey", "expectedVersion", "readTables", "writeTables", "sharedFoundationEffect"],
+      "properties": {
+        "operationId": { "type": "string", "pattern": "^modern\\.compplan\\." },
+        "method": { "enum": ["GET", "POST"] },
+        "path": { "type": "string", "pattern": "^/api/people/v1/hris/performance/compensation-planning/" },
+        "mode": { "enum": ["QUERY", "COMMAND"] },
+        "authorizationAction": { "enum": ["VIEW", "UPDATE", "APPROVE"] },
+        "authorizationBindingId": { "enum": ["MOD-AUTH-025", "MOD-AUTH-026", "MOD-AUTH-027"] },
+        "authorizationCapability": {
+          "enum": ["hcm.compensation.plan.view", "hcm.compensation.plan.propose", "hcm.compensation.plan.approve"]
+        },
+        "idempotencyKey": { "enum": ["READ_SAFE", "REQUIRED"] },
+        "expectedVersion": { "enum": ["NOT_APPLICABLE", "REQUIRED"] },
+        "readTables": { "$ref": "#/$defs/tableNames" },
+        "writeTables": { "$ref": "#/$defs/tableNames" },
+        "sharedFoundationEffect": { "$ref": "#/$defs/sharedFoundationEffect" }
+      }
+    },
+    "sharedFoundationEffect": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["readTables", "writeTables", "typedSchemasRead", "typedSchemasAppended", "ownerPort", "readCondition", "transactionRule"],
+      "properties": {
+        "readTables": { "type": "array", "maxItems": 1, "uniqueItems": true, "items": { "const": "prf_per_artifact_versions" } },
+        "writeTables": { "type": "array", "maxItems": 1, "uniqueItems": true, "items": { "const": "prf_per_artifact_versions" } },
+        "typedSchemasRead": { "$ref": "#/$defs/typedSchemaNames" },
+        "typedSchemasAppended": { "$ref": "#/$defs/typedSchemaNames" },
+        "ownerPort": { "enum": ["NONE", "PerTypedArtifactQueryPort.v1"] },
+        "readCondition": { "enum": ["NONE", "COMMAND_GUARD_EVALUATION", "AUTHORIZED_DETAIL_PROJECTION_REQUESTED_AND_OWNER_PEP_ALLOWS_FIELDS"] },
+        "transactionRule": { "enum": ["NONE", "ARTIFACT_APPEND_AND_DOMAIN_REFERENCE_WRITE_SAME_OWNER_TRANSACTION", "AUTHORIZED_OWNER_PORT_STRICT_DECODE_ONLY_REFERENCED_CONTENT"] }
+      }
+    },
+    "typedSchemaNames": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "enum": ["CompensationGuidelinesContent.v1", "CompensationPopulationContent.v1", "CompensationProposalContent.v1"] }
+    },
+    "tableNames": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "prf_cmp_cycles",
+          "prf_cmp_budget_ledger",
+          "prf_cmp_proposals",
+          "prf_cmp_proposal_revisions",
+          "prf_cmp_approved_snapshots",
+          "prf_cmp_approved_snapshot_lines"
+        ]
+      }
+    },
+    "event": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["eventName", "producerOperationId", "topic", "requiredFields", "allowedConsumerSessions", "aggregateEntityType", "aggregateIdSource", "aggregateVersionSource", "transitionFieldSources", "refetchPolicy", "latestOrHistoricalAggregateFallbackAllowed", "payloadCompleteness", "outboxWrite", "brokerPublish"],
+      "properties": {
+        "eventName": { "type": "string", "pattern": "\\.v2$" },
+        "producerOperationId": { "type": "string", "pattern": "^modern\\.compplan\\." },
+        "topic": { "type": "string", "pattern": "^dwp\\.hris\\.modern\\..+\\.v2$" },
+        "requiredFields": { "type": "array", "minItems": 6, "maxItems": 16, "uniqueItems": true, "items": { "type": "string" } },
+        "allowedConsumerSessions": { "type": "array", "minItems": 1, "maxItems": 1, "items": { "enum": ["HRIS-PER", "HRIS-PAY"] } },
+        "aggregateEntityType": { "enum": ["table:prf_cmp_cycles", "table:prf_cmp_proposals"] },
+        "aggregateIdSource": { "enum": ["prf_cmp_cycles.public_id", "prf_cmp_proposals.public_id"] },
+        "aggregateVersionSource": { "type": "string", "minLength": 1 },
+        "transitionFieldSources": {
+          "type": "object", "additionalProperties": false,
+          "required": ["fromState", "toState", "occurredAt", "correlationId"],
+          "properties": {
+            "fromState": { "type": "string", "minLength": 1 },
+            "toState": { "type": "string", "minLength": 1 },
+            "occurredAt": { "type": "string", "minLength": 1 },
+            "correlationId": { "type": "string", "minLength": 1 }
+          }
+        },
+        "refetchPolicy": { "enum": ["PAYLOAD_COMPLETE_NO_REFETCH", "SVC-PEP-PER-001_IMMUTABLE_XCON_020_SNAPSHOT_REFETCH"] },
+        "latestOrHistoricalAggregateFallbackAllowed": { "const": false },
+        "payloadCompleteness": { "enum": ["EXACT_SIX_FIELD_TRANSITION_FACT_IS_COMPLETE", "XCON_021_NOTIFICATION_PLUS_IMMUTABLE_XCON_020_REFETCH"] },
+        "outboxWrite": { "const": "SAME_TRANSACTION_AFTER_DOMAIN_AND_CLOSED_RECEIPT" },
+        "brokerPublish": { "const": "AFTER_COMMIT_ONLY" }
+      }
+    },
+    "table": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["table", "columns"],
+      "properties": {
+        "table": { "type": "string", "pattern": "^prf_cmp_" },
+        "columns": { "type": "array", "minItems": 10, "uniqueItems": true, "items": { "type": "string" } }
+      }
+    },
+    "filePin": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "gitMode", "gitBlobSha1", "bytes", "sha256"],
+      "properties": {
+        "path": { "type": "string", "minLength": 1 },
+        "gitMode": { "const": "100644" },
+        "gitBlobSha1": { "$ref": "#/$defs/gitObject" },
+        "bytes": { "type": "integer", "minimum": 1 },
+        "sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "repositoryPin": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["branch", "upstream", "commit", "tree"],
+      "properties": {
+        "branch": { "type": "string", "minLength": 1 },
+        "upstream": { "type": "string", "minLength": 1 },
+        "commit": { "$ref": "#/$defs/gitObject" },
+        "tree": { "$ref": "#/$defs/gitObject" }
+      }
+    },
+    "agentPin": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["branch", "upstream", "commit", "tree", "validationMode"],
+      "properties": {
+        "branch": { "const": "dwp-dev" },
+        "upstream": { "const": "origin/dwp-dev" },
+        "commit": { "$ref": "#/$defs/gitObject" },
+        "tree": { "$ref": "#/$defs/gitObject" },
+        "validationMode": { "const": "STATIC_PIN_NO_LOCAL_CHECKOUT" }
+      }
+    },
+    "contractReseal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "authorityId", "moduleId", "preparedAt", "predecessor", "sourcePins", "ownership", "crossModuleContracts", "physicalContract", "lineage", "uiWorkContract", "resealDecision", "authorities", "sealedPayloadSha256"],
+      "properties": {
+        "schemaVersion": { "const": "HRIS-G7-MOD-PER-COMPPLAN-CONTRACT-RESEAL-V1" },
+        "authorityId": { "const": "HRIS-G7-MOD-PER-COMPPLAN-R1-CONTRACT-RESEAL" },
+        "moduleId": { "const": "MOD-PER-COMPPLAN" },
+        "preparedAt": { "const": "2026-10-12T23:41:00+09:00" },
+        "predecessor": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["closureCarrierCommit", "closureCarrierTree", "closureReceiptPath", "closureReceiptSha256", "closureReceiptId", "closureReceiptSealedPayloadSha256"],
+          "properties": {
+            "closureCarrierCommit": { "$ref": "#/$defs/gitObject" },
+            "closureCarrierTree": { "$ref": "#/$defs/gitObject" },
+            "closureReceiptPath": { "type": "string", "minLength": 1 },
+            "closureReceiptSha256": { "$ref": "#/$defs/sha256" },
+            "closureReceiptId": { "type": "string", "minLength": 1 },
+            "closureReceiptSealedPayloadSha256": { "$ref": "#/$defs/sha256" }
+          }
+        },
+        "sourcePins": { "type": "array", "minItems": 42, "maxItems": 42, "uniqueItems": true, "items": { "$ref": "#/$defs/sourcePin" } },
+        "ownership": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["ownerSession", "capabilityId", "operationCount", "operations", "eventCount", "events", "supersededEventClauses", "normativeWireContractSelector", "normativeWireContracts", "stateTransitionContracts", "lifecycleReachability", "supersededWireSchemas", "commandSemantics"],
+          "properties": {
+            "ownerSession": { "const": "HRIS-PER" },
+            "capabilityId": { "const": "HRIS.MODERN.COMPENSATION_PLANNING" },
+            "operationCount": { "const": 12 },
+            "operations": { "type": "array", "minItems": 12, "maxItems": 12, "items": { "$ref": "#/$defs/operation" } },
+            "eventCount": { "const": 8 },
+            "events": { "type": "array", "minItems": 8, "maxItems": 8, "items": { "$ref": "#/$defs/event" } },
+            "supersededEventClauses": { "type": "array", "minItems": 1, "maxItems": 1, "items": {} },
+            "normativeWireContractSelector": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["sourceId", "selector", "selectorSha256", "authorityBoundary"],
+              "properties": {
+                "sourceId": { "const": "g3ExactSchemas" },
+                "selector": { "const": "#/operationBindings[primarySliceId=MOD-PER-COMPPLAN]" },
+                "selectorSha256": { "$ref": "#/$defs/sha256" },
+                "authorityBoundary": { "const": "PUBLIC_IDENTITY_METHOD_PATH_MODE_AUTH_IDEMPOTENCY_ERROR_WITH_EXPLICIT_RESEALED_REQUEST_RESPONSE_OVERRIDES_TABLE_SELECTORS_EXCLUDED" }
+              }
+            },
+            "normativeWireContracts": { "type": "array", "minItems": 12, "maxItems": 12, "items": {} },
+            "stateTransitionContracts": { "type": "array", "minItems": 8, "maxItems": 8, "items": {} },
+            "lifecycleReachability": {},
+            "supersededWireSchemas": { "type": "array", "minItems": 10, "maxItems": 10, "items": {} },
+            "commandSemantics": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["allCommandHeaders", "versionedCommandHeaders", "ifMatchNotApplicableOperations", "canonicalRequestDigestIncludes", "canonicalRequestDigestExcludes", "sameKeySameDigest", "sameKeyDifferentDigest", "writeRule"],
+              "properties": {
+                "allCommandHeaders": { "const": ["Idempotency-Key", "X-Correlation-ID"] },
+                "versionedCommandHeaders": { "const": ["If-Match"] },
+                "ifMatchNotApplicableOperations": { "const": ["modern.compplan.cycle.create"] },
+                "canonicalRequestDigestIncludes": { "type": "array", "minItems": 6, "maxItems": 6, "items": { "type": "string" } },
+                "canonicalRequestDigestExcludes": { "type": "array", "minItems": 4, "maxItems": 4, "items": { "type": "string" } },
+                "sameKeySameDigest": { "const": "REPLAY_CLOSED_RECEIPT" },
+                "sameKeyDifferentDigest": { "const": "REJECT_IDEMPOTENCY_KEY_REUSE" },
+                "writeRule": { "const": "IDEMPOTENCY_RECEIPT_CAS_AND_OUTBOX_REQUIRED" }
+              }
+            }
+          }
+        },
+        "crossModuleContracts": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["xcon020", "xcon021", "servicePep", "workforceSnapshotCompensationProjection"],
+          "properties": {
+            "xcon020": { "$ref": "#/$defs/xcon020" },
+            "xcon021": { "$ref": "#/$defs/xcon021" },
+            "servicePep": { "$ref": "#/$defs/servicePep" },
+            "workforceSnapshotCompensationProjection": { "$ref": "#/$defs/workforceSnapshotCompensationProjection" }
+          }
+        },
+        "physicalContract": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["tables", "moduleOwnedCompensationTables", "controlAllocatedSharedFoundationTables", "totalNewTablesInV4", "columnSummaryRole", "normativeTableSpecifications", "v4DdlContract", "sharedBootstrapAllocation", "forbiddenTables", "sharedInfrastructureRule", "typedArtifactRule"],
+          "properties": {
+            "tables": { "type": "array", "minItems": 6, "maxItems": 6, "items": { "$ref": "#/$defs/table" } },
+            "moduleOwnedCompensationTables": { "type": "array", "minItems": 6, "maxItems": 6, "uniqueItems": true, "items": { "type": "string" } },
+            "controlAllocatedSharedFoundationTables": { "const": ["prf_per_artifact_versions"] },
+            "totalNewTablesInV4": { "const": 7 },
+            "columnSummaryRole": { "const": "READABILITY_ONLY_NORMATIVE_SELECTOR_CONTROLS" },
+            "normativeTableSpecifications": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["sourceId", "selector", "selectorSha256", "tableCount", "authority", "specifications"],
+              "properties": {
+                "sourceId": { "const": "perRemediation" },
+                "selector": { "type": "string" },
+                "selectorSha256": { "$ref": "#/$defs/sha256" },
+                "tableCount": { "const": 6 },
+                "authority": { "type": "string" },
+                "specifications": { "type": "array", "minItems": 6, "maxItems": 6, "items": {} }
+              }
+            },
+            "v4DdlContract": { "$ref": "#/$defs/v4DdlContract" },
+            "sharedBootstrapAllocation": { "$ref": "#/$defs/sharedBootstrapAllocation" },
+            "forbiddenTables": { "type": "array", "minItems": 3, "maxItems": 3, "uniqueItems": true, "items": { "type": "string" } },
+            "sharedInfrastructureRule": { "const": "USE_EXISTING_CONTROL_RECEIPT_OUTBOX_AND_AUDIT_TABLES_ONLY" },
+            "typedArtifactRule": { "const": "CONTROL_APPROVED_BOOTSTRAP_REQUIRED_BEFORE_START_TOKEN" }
+          }
+        },
+        "lineage": { "$ref": "#/$defs/lineage" },
+        "uiWorkContract": { "$ref": "#/$defs/uiWorkContract" },
+        "resealDecision": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["incompleteGeneratedCompensationPayloadsAreAuthority", "canonicalXcon020And021OverrideGeneratedPayloads", "g3CompplanTableAndReadWriteSelectorsAreAuthority", "g3PublicIdentityMethodPathAuthorizationAreAuthority", "g3ExactIdempotencyAndErrorSchemasAreAuthority", "g3RequestAndResponseBodiesAreAuthority", "reconciledWireOverridesAreAuthority", "g3ExactOperationTableAndEventPayloadPortionsAreAuthority", "semanticRemediationSixTableClosureIsAuthority", "reconciledSixTableOperationSelectorsOverrideConflictingInputs", "operationSelectorProvenance", "historicalV22ReservationIsRuntimeAuthority", "historicalHrisCompplanRootIsRuntimeAuthority", "currentHrCompplanRootIsRuntimeAuthority", "hrisContractsXconExceptionsAreExactFilesOnly", "payIsSoleCrossModuleConsumer", "ownerRefetchRequired"],
+          "properties": {
+            "incompleteGeneratedCompensationPayloadsAreAuthority": { "const": false },
+            "canonicalXcon020And021OverrideGeneratedPayloads": { "const": true },
+            "g3CompplanTableAndReadWriteSelectorsAreAuthority": { "const": false },
+            "g3PublicIdentityMethodPathAuthorizationAreAuthority": { "const": true },
+            "g3ExactIdempotencyAndErrorSchemasAreAuthority": { "const": true },
+            "g3RequestAndResponseBodiesAreAuthority": { "const": false },
+            "reconciledWireOverridesAreAuthority": { "const": true },
+            "g3ExactOperationTableAndEventPayloadPortionsAreAuthority": { "const": false },
+            "semanticRemediationSixTableClosureIsAuthority": { "const": true },
+            "reconciledSixTableOperationSelectorsOverrideConflictingInputs": { "const": true },
+            "operationSelectorProvenance": { "const": "G3_PUBLIC_SURFACE + SEMANTIC_REMEDIATION_SIX_TABLE_CLOSURE + REQUIRED_AGGREGATE_TOUCHES" },
+            "historicalV22ReservationIsRuntimeAuthority": { "const": false },
+            "historicalHrisCompplanRootIsRuntimeAuthority": { "const": false },
+            "currentHrCompplanRootIsRuntimeAuthority": { "const": true },
+            "hrisContractsXconExceptionsAreExactFilesOnly": { "const": true },
+            "payIsSoleCrossModuleConsumer": { "const": true },
+            "ownerRefetchRequired": { "const": true }
+          }
+        },
+        "authorities": { "$ref": "#/$defs/authorities" },
+        "sealedPayloadSha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "xcon020": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contractId", "schemaPointer", "normalizedSchemaSha256", "requiredFieldsSha256", "nestedFieldsSha256", "bindingSha256", "headerFields", "lineFields", "lineCardinality", "digestContract", "invariants"],
+      "properties": {
+        "contractId": { "const": "XCON-020" },
+        "schemaPointer": { "const": "#/$defs/XCON_020" },
+        "normalizedSchemaSha256": { "$ref": "#/$defs/sha256" },
+        "requiredFieldsSha256": { "$ref": "#/$defs/sha256" },
+        "nestedFieldsSha256": { "$ref": "#/$defs/sha256" },
+        "bindingSha256": { "$ref": "#/$defs/sha256" },
+        "headerFields": { "type": "array", "minItems": 11, "maxItems": 11, "uniqueItems": true, "items": { "type": "string" } },
+        "lineFields": { "type": "array", "minItems": 10, "maxItems": 10, "uniqueItems": true, "items": { "type": "string" } },
+        "lineCardinality": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["minimum", "maximum"],
+          "properties": { "minimum": { "const": 1 }, "maximum": { "const": 100000 } }
+        },
+        "digestContract": { "$ref": "#/$defs/xcon020DigestContract" },
+        "invariants": { "type": "array", "minItems": 5, "maxItems": 5, "items": { "type": "string" } }
+      }
+    },
+    "xcon020DigestContract": {
+      "type": "object", "additionalProperties": false,
+      "required": ["algorithm", "output", "encoding", "canonicalJson", "scalarLexicalRules", "lineDigest", "payloadDigest", "lineMaterialization", "knownAnswerVectors"],
+      "properties": {
+        "algorithm": { "const": "SHA-256" },
+        "output": { "const": "64 lowercase hexadecimal characters" },
+        "encoding": { "const": "UTF-8" },
+        "canonicalJson": { "const": "RFC8785_JCS" },
+        "scalarLexicalRules": {
+          "type": "object", "additionalProperties": false,
+          "required": ["uuid", "date", "nullableDate", "integer", "money", "componentCode"],
+          "properties": {
+            "uuid": { "type": "string" }, "date": { "const": "YYYY-MM-DD" },
+            "nullableDate": { "const": "JSON null" }, "integer": { "const": "JSON integer" },
+            "money": { "type": "string" }, "componentCode": { "const": "Unicode NFC before UTF-8 encoding" }
+          }
+        },
+        "lineDigest": {
+          "type": "object", "additionalProperties": false,
+          "required": ["preimageMemberOrder", "excludedMembers", "additionalProperties"],
+          "properties": {
+            "preimageMemberOrder": { "const": ["approvedAmount", "assignmentId", "componentCode", "currency", "effectiveFrom", "effectiveTo", "lineId", "lineSequence", "workerId"] },
+            "excludedMembers": { "const": ["lineDigest"] },
+            "additionalProperties": { "const": false }
+          }
+        },
+        "payloadDigest": {
+          "type": "object", "additionalProperties": false,
+          "required": ["preimageMemberOrder", "excludedMembers", "linesRule", "additionalProperties"],
+          "properties": {
+            "preimageMemberOrder": { "const": ["approvalReceiptId", "cycleId", "effectiveFrom", "effectiveTo", "lineCount", "lines", "planId", "snapshotId", "snapshotRevision", "sourceVersion"] },
+            "excludedMembers": { "const": ["payloadDigest"] },
+            "linesRule": { "const": "include each complete ordered line including its already-validated lineDigest" },
+            "additionalProperties": { "const": false }
+          }
+        },
+        "lineMaterialization": {
+          "type": "object", "additionalProperties": false,
+          "required": ["proposalToLineCardinality", "totalOrderKey", "lineSequence", "overlapCollision", "lineId", "replay"],
+          "properties": {
+            "proposalToLineCardinality": { "const": "exactly 1:1" },
+            "totalOrderKey": { "type": "array", "minItems": 5, "maxItems": 5, "items": { "type": "string" } },
+            "lineSequence": { "const": "1-based contiguous position in totalOrderKey" },
+            "overlapCollision": { "type": "string" },
+            "lineId": { "type": "string" },
+            "replay": { "type": "string" }
+          }
+        },
+        "knownAnswerVectors": {
+          "type": "array", "minItems": 2, "maxItems": 2,
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["vectorId", "lineVectors", "payloadPreimageUtf8", "expectedPayloadSha256"],
+            "properties": {
+              "vectorId": { "enum": ["ONE_LINE_NULL_EFFECTIVE_TO", "TWO_LINES_NON_NULL_MIXED_DECIMALS"] },
+              "lineVectors": {
+                "type": "array", "minItems": 1, "maxItems": 2,
+                "items": {
+                  "type": "object", "additionalProperties": false,
+                  "required": ["preimageUtf8", "expectedSha256"],
+                  "properties": { "preimageUtf8": { "type": "string" }, "expectedSha256": { "$ref": "#/$defs/sha256" } }
+                }
+              },
+              "payloadPreimageUtf8": { "type": "string" },
+              "expectedPayloadSha256": { "$ref": "#/$defs/sha256" }
+            }
+          }
+        }
+      }
+    },
+    "xcon021": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contractId", "schemaPointer", "normalizedSchemaSha256", "requiredFieldsSha256", "bindingSha256", "requiredFields", "publicationRule", "allowedConsumerSessions", "forbiddenEvents", "dualPublishAllowed"],
+      "properties": {
+        "contractId": { "const": "XCON-021" },
+        "schemaPointer": { "const": "#/$defs/XCON_021" },
+        "normalizedSchemaSha256": { "$ref": "#/$defs/sha256" },
+        "requiredFieldsSha256": { "$ref": "#/$defs/sha256" },
+        "bindingSha256": { "$ref": "#/$defs/sha256" },
+        "requiredFields": { "type": "array", "minItems": 16, "maxItems": 16, "uniqueItems": true, "items": { "type": "string" } },
+        "publicationRule": { "const": "AFTER_IMMUTABLE_HEADER_AND_ALL_ORDERED_LINES_COMMIT_ONLY" },
+        "allowedConsumerSessions": { "const": ["HRIS-PAY"] },
+        "forbiddenEvents": { "const": ["CompensationPlanApproved.v1"] },
+        "dualPublishAllowed": { "const": false }
+      }
+    },
+    "servicePep": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contractId", "operationId", "method", "path", "ownerService", "consumerService", "authentication", "tenantControls", "purposeCode", "transportControls", "fieldProjection", "auditEnvelope", "replayControls", "implementationState"],
+      "properties": {
+        "contractId": { "const": "SVC-PEP-PER-001" },
+        "operationId": { "const": "getApprovedCompensationPlanSnapshot" },
+        "method": { "const": "GET" },
+        "path": { "const": "/internal/hris-performance/v1/approved-compensation-plan-snapshots/{snapshotId}" },
+        "ownerService": { "const": "dwp-people-server" },
+        "consumerService": { "const": "dwp-payroll-server" },
+        "authentication": { "type": "string" },
+        "tenantControls": { "type": "string" },
+        "purposeCode": { "const": "HRIS_APPROVED_COMPENSATION_PLAN_SNAPSHOT_REFETCH" },
+        "transportControls": { "type": "string" },
+        "fieldProjection": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["headerFields", "lineFields"],
+          "properties": {
+            "headerFields": { "type": "array", "minItems": 11, "maxItems": 11, "items": { "type": "string" } },
+            "lineFields": { "type": "array", "minItems": 10, "maxItems": 10, "items": { "type": "string" } }
+          }
+        },
+        "auditEnvelope": { "type": "string" },
+        "replayControls": { "type": "string" },
+        "implementationState": { "const": "G3_BINDING_SPECIFIED_NOT_IMPLEMENTED" }
+      }
+    },
+    "workforceSnapshotCompensationProjection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contractId", "amendmentId", "allocationState", "controlRequestId", "compatibility", "pinnedCurrentAbi", "activeVariant", "reconciliation", "moduleMayImplement", "grantRequiredBeforeStartToken"],
+      "properties": {
+        "contractId": { "const": "WorkforceSnapshotQueryPort.v1" },
+        "amendmentId": { "const": "WorkforceSnapshotQueryPort.v1::COMPENSATION_POPULATION_V1-R1" },
+        "allocationState": { "const": "CONTROL_PRE_START_ALLOCATION_REQUIRED" },
+        "controlRequestId": { "const": "G7-CR-MOD-PER-COMPPLAN-WORKFORCE-SNAPSHOT-COMPENSATION-R1" },
+        "compatibility": {
+          "type": "object", "additionalProperties": false,
+          "required": ["strategy", "existingMethodPreserved", "existingPurposePreserved", "existingProjectionPreserved", "newMethod", "existingBootstrapBehaviorMayChange"],
+          "properties": {
+            "strategy": { "const": "ADDITIVE_CLOSED_OVERLOAD" },
+            "existingMethodPreserved": { "const": "query(WorkforceSnapshotQuery)->WorkforceSnapshotPage" },
+            "existingPurposePreserved": { "const": "HRIS_WORKFORCE_SNAPSHOT_BOOTSTRAP" },
+            "existingProjectionPreserved": { "const": "PERFORMANCE_V1" },
+            "newMethod": { "const": "queryCompensationPopulation(CompensationPopulationSnapshotQuery)->CompensationPopulationSnapshotPage" },
+            "existingBootstrapBehaviorMayChange": { "const": false }
+          }
+        },
+        "pinnedCurrentAbi": {
+          "type": "object", "additionalProperties": false,
+          "required": ["schemaSourceId", "schemaPath", "mainPath", "testPath", "currentVariantSelectors"],
+          "properties": {
+            "schemaSourceId": { "const": "workforceSnapshotSchema" },
+            "schemaPath": { "const": "contracts/in-process/hris/workforce-snapshot-query-port.v1.schema.json" },
+            "mainPath": { "const": "dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/workforce/v1/**" },
+            "testPath": { "const": "dwp-people-server/src/test/java/com/dwp/services/people/hris/contracts/workforce/v1/**" },
+            "currentVariantSelectors": { "type": "array", "minItems": 3, "maxItems": 3, "items": { "$ref": "#/$defs/sourceSelector" } }
+          }
+        },
+        "activeVariant": {
+          "type": "object", "additionalProperties": false,
+          "required": ["purposeCode", "projection", "transport", "requestSchema", "ownerVerifiedRequest", "resultPageSchema"],
+          "properties": {
+            "purposeCode": { "const": "HRIS_PER_COMPENSATION_POPULATION" },
+            "projection": { "const": "COMPENSATION_POPULATION_V1" },
+            "transport": { "const": "IN_PROCESS_OWNER_PORT_ONLY_NO_SELF_HTTP_NO_BROWSER_ROUTE" },
+            "requestSchema": {
+              "type": "object", "additionalProperties": false,
+              "required": ["schemaId", "kind", "additionalProperties", "fields"],
+              "properties": {
+                "schemaId": { "const": "CompensationPopulationSnapshotQuery.v1" },
+                "kind": { "const": "OBJECT" },
+                "additionalProperties": { "const": false },
+                "fields": { "type": "array", "minItems": 7, "maxItems": 7, "items": {} }
+              }
+            },
+            "ownerVerifiedRequest": {
+              "type": "object", "additionalProperties": false,
+              "required": ["consumerSuppliedTenantOrCallerAllowed", "resolvedFields", "mustBindFromConsumerQuery", "authorization"],
+              "properties": {
+                "consumerSuppliedTenantOrCallerAllowed": { "const": false },
+                "resolvedFields": { "type": "array", "minItems": 5, "maxItems": 5, "items": {} },
+                "mustBindFromConsumerQuery": { "const": ["snapshotPublicId", "ownerRevision", "asOf", "projection", "purposeCode", "limit", "cursorTokenDigest"] },
+                "authorization": { "const": "OWNER_REVALIDATES_TENANT_CALLER_PURPOSE_TARGET_POPULATION_AND_FIELD_POLICY_EVERY_PAGE; UNAVAILABLE_OR_DENIED_FAILS_CLOSED" }
+              }
+            },
+            "resultPageSchema": {
+              "type": "object", "additionalProperties": false,
+              "required": ["schemaId", "kind", "additionalProperties", "headerFields", "fields", "lineSchema", "ordering", "cursorBinding", "pageDigestRule"],
+              "properties": {
+                "schemaId": { "const": "CompensationPopulationSnapshotPage.v1" },
+                "kind": { "const": "OBJECT" },
+                "additionalProperties": { "const": false },
+                "headerFields": { "type": "array", "minItems": 6, "maxItems": 6, "items": {} },
+                "fields": { "type": "array", "minItems": 9, "maxItems": 9, "items": {} },
+                "lineSchema": {},
+                "ordering": { "const": ["assignmentPublicId:ASC", "workerPublicId:ASC"] },
+                "cursorBinding": { "const": ["tenantId", "callerModule", "snapshotPublicId", "ownerRevision", "asOf", "projection", "purposeCode", "fullPopulationDigest", "lastEmittedAssignmentPublicId", "lastEmittedWorkerPublicId"] },
+                "pageDigestRule": { "const": "SHA256_CANONICAL_PAGE_HEADER_PLUS_ORDERED_LINES_PLUS_NEXT_CURSOR" }
+              }
+            }
+          }
+        },
+        "reconciliation": {
+          "type": "object", "additionalProperties": false,
+          "required": ["populationContentSchema", "sourceReferenceSchema", "fieldMappings", "fullPopulationDigestRule", "completionRule", "exactMatchRule", "failClosed"],
+          "properties": {
+            "populationContentSchema": {},
+            "sourceReferenceSchema": {},
+            "fieldMappings": {
+              "type": "object", "additionalProperties": false,
+              "required": ["CompensationPopulationContent.v1.asOf", "CompensationPopulationContent.v1.hrmOwnerRevision", "CompensationPopulationContent.v1.lines", "HRMSourceSnapshotRef.v1.snapshotPublicId", "HRMSourceSnapshotRef.v1.ownerRevision", "HRMSourceSnapshotRef.v1.projectionSchemaId", "HRMSourceSnapshotRef.v1.asOf", "HRMSourceSnapshotRef.v1.sha256", "HRMSourceSnapshotRef.v1.purposeCode"],
+              "properties": {
+                "CompensationPopulationContent.v1.asOf": { "const": "result.asOf" },
+                "CompensationPopulationContent.v1.hrmOwnerRevision": { "const": "result.ownerRevision" },
+                "CompensationPopulationContent.v1.lines": { "const": "exact concatenation of every result page lines in canonical order" },
+                "HRMSourceSnapshotRef.v1.snapshotPublicId": { "const": "result.snapshotPublicId" },
+                "HRMSourceSnapshotRef.v1.ownerRevision": { "const": "result.ownerRevision" },
+                "HRMSourceSnapshotRef.v1.projectionSchemaId": { "const": "CompensationPopulationContent.v1" },
+                "HRMSourceSnapshotRef.v1.asOf": { "const": "result.asOf" },
+                "HRMSourceSnapshotRef.v1.sha256": { "const": "result.fullPopulationDigest" },
+                "HRMSourceSnapshotRef.v1.purposeCode": { "const": "result.purposeCode" }
+              }
+            },
+            "fullPopulationDigestRule": { "const": "SHA256_OF_CANONICAL_COMPENSATION_POPULATION_CONTENT_V1_BYTES" },
+            "completionRule": { "const": "BEGIN_WITH_NULL_CURSOR_AND_FOLLOW_EVERY_AUTHENTICATED_CURSOR_UNTIL_NEXT_CURSOR_NULL; 1_TO_100000_TOTAL_LINES" },
+            "exactMatchRule": { "const": "CALLER_SUPPLIED_POPULATION_CONTENT_AND_SOURCE_REF_MUST_BYTE_FIELD_RECONCILE_WITH_COMPLETE_OWNER_RESULT" },
+            "failClosed": { "type": "array", "minItems": 8, "maxItems": 8, "items": { "type": "string" } }
+          }
+        },
+        "moduleMayImplement": { "const": false },
+        "grantRequiredBeforeStartToken": { "const": true }
+      }
+    },
+    "lineage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["identityInvariantScope", "identityInvariant", "proposalEventIdentityInvariant", "sourceVersion", "approvalRevision", "aggregateVersion", "snapshotMapping", "transition", "xcon020HeaderFieldMappings", "xcon020LineFieldMappings", "xcon021FieldMappings"],
+      "properties": {
+        "identityInvariantScope": { "const": "modern.compplan.snapshot.publish plus XCON-020 and XCON-021 only" },
+        "identityInvariant": { "const": "for the publish contract only: planId == cycleId == aggregateId == prf_cmp_cycles.public_id" },
+        "proposalEventIdentityInvariant": { "const": "CompensationProposalDrafted.v2 and CompensationProposalSubmitted.v2 aggregateId == prf_cmp_proposals.public_id; never cycleId" },
+        "sourceVersion": { "type": "string" },
+        "approvalRevision": { "const": "the validated plan.approve prf_command_receipts.applied_aggregate_version selected by same-tenant command_receipt_id; captured in the first publish closed receipt and same-transaction XCON-021 outbox, then replayed without requery; independent from sourceVersion" },
+        "aggregateVersion": { "type": "string" },
+        "snapshotMapping": { "type": "string" },
+        "transition": { "type": "string" },
+        "xcon020HeaderFieldMappings": { "$ref": "#/$defs/xcon020HeaderMappings" },
+        "xcon020LineFieldMappings": { "$ref": "#/$defs/xcon020LineMappings" },
+        "xcon021FieldMappings": { "$ref": "#/$defs/xcon021Mappings" }
+      }
+    },
+    "uiWorkContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["route", "menuNode", "primaryUser", "operationalQuestion", "primaryAction", "pageArchetype", "authorizationCapabilities", "journey", "materialStates", "forbiddenR1Actions", "sourceSelectors", "shellRegistration"],
+      "properties": {
+        "route": { "const": "/hr/operations/performance/compensation-planning" },
+        "menuNode": { "const": "hcm.operations.compensation-planning" },
+        "primaryUser": { "type": "string", "minLength": 1 },
+        "operationalQuestion": { "type": "string", "minLength": 1 },
+        "primaryAction": { "type": "string", "minLength": 1 },
+        "pageArchetype": { "const": "studio" },
+        "authorizationCapabilities": { "const": ["hcm.compensation.plan.view", "hcm.compensation.plan.propose", "hcm.compensation.plan.approve"] },
+        "journey": { "type": "array", "minItems": 5, "maxItems": 5, "items": { "type": "string" } },
+        "materialStates": { "type": "array", "minItems": 12, "maxItems": 12, "uniqueItems": true, "items": { "type": "string" } },
+        "forbiddenR1Actions": { "const": ["select or submit EXCEPTION_APPROVAL budget mode", "enter or display an exception approval receipt"] },
+        "sourceSelectors": {
+          "type": "array", "minItems": 3, "maxItems": 3,
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["sourceId", "selector", "selectorSha256"],
+            "properties": {
+              "sourceId": { "enum": ["compplanMenuNode", "compplanIaAccess", "compplanWorkbench"] },
+              "selector": { "type": "string", "minLength": 1 },
+              "selectorSha256": { "$ref": "#/$defs/sha256" }
+            }
+          }
+        },
+        "shellRegistration": { "const": "CENTRAL_CONTROL_REQUEST_ONLY_AFTER_PUSHED_MODULE_RESULT" }
+      }
+    },
+    "xcon020HeaderMappings": {
+      "type": "object", "additionalProperties": false,
+      "required": ["approvalReceiptId", "cycleId", "effectiveFrom", "effectiveTo", "lineCount", "lines", "payloadDigest", "planId", "snapshotId", "snapshotRevision", "sourceVersion"],
+      "properties": {
+        "approvalReceiptId": {"type":"string"}, "cycleId": {"type":"string"},
+        "effectiveFrom": {"type":"string"}, "effectiveTo": {"type":"string"},
+        "lineCount": {"type":"string"}, "lines": {"type":"string"},
+        "payloadDigest": {"type":"string"}, "planId": {"type":"string"},
+        "snapshotId": {"type":"string"}, "snapshotRevision": {"type":"string"},
+        "sourceVersion": {"type":"string"}
+      }
+    },
+    "xcon020LineMappings": {
+      "type": "object", "additionalProperties": false,
+      "required": ["approvedAmount", "assignmentId", "componentCode", "currency", "effectiveFrom", "effectiveTo", "lineDigest", "lineId", "lineSequence", "workerId"],
+      "properties": {
+        "approvedAmount": {"type":"string"}, "assignmentId": {"type":"string"},
+        "componentCode": {"type":"string"}, "currency": {"type":"string"},
+        "effectiveFrom": {"type":"string"}, "effectiveTo": {"type":"string"},
+        "lineDigest": {"type":"string"}, "lineId": {"type":"string"},
+        "lineSequence": {"type":"string"}, "workerId": {"type":"string"}
+      }
+    },
+    "xcon021Mappings": {
+      "type": "object", "additionalProperties": false,
+      "required": ["aggregateId", "aggregateVersion", "approvalReceiptId", "approvalRevision", "correlationId", "cycleId", "effectiveDate", "fromState", "lineCount", "occurredAt", "payloadDigest", "planId", "snapshotId", "snapshotRevision", "sourceVersion", "toState"],
+      "properties": {
+        "aggregateId": {"type":"string"}, "aggregateVersion": {"type":"string"},
+        "approvalReceiptId": {"type":"string"}, "approvalRevision": {"type":"string"},
+        "correlationId": {"type":"string"}, "cycleId": {"type":"string"},
+        "effectiveDate": {"type":"string"}, "fromState": {"type":"string"},
+        "lineCount": {"type":"string"}, "occurredAt": {"type":"string"},
+        "payloadDigest": {"type":"string"}, "planId": {"type":"string"},
+        "snapshotId": {"type":"string"}, "snapshotRevision": {"type":"string"},
+        "sourceVersion": {"type":"string"}, "toState": {"type":"string"}
+      }
+    },
+    "v4DdlContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["exactPath", "moduleOwnedTableClosedSet", "sharedFoundationTableClosedSet", "allV4NewTableClosedSet", "columnAndTypeAuthority", "primaryAndUniqueKeys", "foreignKeys", "rowSecurity", "immutability", "checks", "logicalUniquenessAndLinks", "grants", "upgradeAcceptance"],
+      "properties": {
+        "exactPath": { "type": "string", "pattern": "/V4__per_modern_compensation_planning\\.sql$" },
+        "moduleOwnedTableClosedSet": { "type": "array", "minItems": 6, "maxItems": 6, "uniqueItems": true, "items": { "type": "string" } },
+        "sharedFoundationTableClosedSet": { "const": ["prf_per_artifact_versions"] },
+        "allV4NewTableClosedSet": { "type": "array", "minItems": 7, "maxItems": 7, "uniqueItems": true, "items": { "type": "string" } },
+        "columnAndTypeAuthority": { "const": "normativeTableSpecifications.specifications" },
+        "primaryAndUniqueKeys": { "type": "string" },
+        "foreignKeys": { "type": "string" },
+        "rowSecurity": {
+          "type": "object", "additionalProperties": false,
+          "required": ["enabled", "forced", "tenantPredicate", "applicationRoleBypassRls"],
+          "properties": {
+            "enabled": { "const": true }, "forced": { "const": true },
+            "tenantPredicate": { "type": "string" }, "applicationRoleBypassRls": { "const": false }
+          }
+        },
+        "immutability": {
+          "type": "object", "additionalProperties": false,
+          "required": ["appendOnlyTables", "versionedCasTables", "approvedSnapshotMutationAllowed"],
+          "properties": {
+            "appendOnlyTables": { "type": "array", "minItems": 4, "maxItems": 4, "items": { "type": "string" } },
+            "versionedCasTables": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "string" } },
+            "approvedSnapshotMutationAllowed": { "const": false }
+          }
+        },
+        "checks": { "type": "array", "minItems": 10, "maxItems": 10, "items": { "type": "string" } },
+        "logicalUniquenessAndLinks": { "type": "array", "minItems": 6, "maxItems": 6, "items": { "type": "string" } },
+        "grants": { "type": "string" },
+        "upgradeAcceptance": { "type": "array", "minItems": 6, "maxItems": 6, "items": { "type": "string" } }
+      }
+    },
+    "sharedBootstrapAllocation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["allocationState", "controlRequestId", "tableCount", "table", "refetchContract", "activeArtifactRegistry", "activeContentSchemas", "activeSchemaIds", "security", "frontendDirectTypedArtifactEndpointAllowed", "moduleLocalOwnerPortOnly", "r1BudgetModePolicy"],
+      "properties": {
+        "allocationState": { "const": "CONTROL_PRE_START_ALLOCATION_REQUIRED" },
+        "controlRequestId": { "const": "G7-CR-MOD-PER-COMPPLAN-TYPED-ARTIFACT-BOOTSTRAP-R1" },
+        "tableCount": { "const": 1 },
+        "table": {},
+        "refetchContract": {},
+        "activeArtifactRegistry": { "type": "array", "minItems": 3, "maxItems": 3, "items": {} },
+        "activeContentSchemas": { "type": "array", "minItems": 3, "maxItems": 3, "items": {} },
+        "activeSchemaIds": { "const": ["CompensationGuidelinesContent.v1", "CompensationPopulationContent.v1", "CompensationProposalContent.v1"] },
+        "security": {
+          "type": "object", "additionalProperties": false,
+          "required": ["encryptedContentRequired", "canonicalDigestRequired", "appendOnly", "rowSecurityEnabledAndForced", "unknownTypeSchemaFieldDigestOrOwnerFailsOpaque"],
+          "properties": {
+            "encryptedContentRequired": { "const": true },
+            "canonicalDigestRequired": { "const": true },
+            "appendOnly": { "const": true },
+            "rowSecurityEnabledAndForced": { "const": true },
+            "unknownTypeSchemaFieldDigestOrOwnerFailsOpaque": { "const": true }
+          }
+        },
+        "frontendDirectTypedArtifactEndpointAllowed": { "const": false },
+        "moduleLocalOwnerPortOnly": { "const": true },
+        "r1BudgetModePolicy": {
+          "type": "object", "additionalProperties": false,
+          "required": ["activeModes", "withheldModes", "withheldState", "validation", "proposalRevisionExceptionApprovalReceiptRule", "proposalSubmitExceptionPathAllowed", "futureActivationRule"],
+          "properties": {
+            "activeModes": { "const": ["HARD_CAP"] },
+            "withheldModes": { "const": ["EXCEPTION_APPROVAL"] },
+            "withheldState": { "const": "R1_WITHHELD_NOT_IMPLEMENTED" },
+            "validation": { "type": "string", "minLength": 1 },
+            "proposalRevisionExceptionApprovalReceiptRule": { "type": "string", "minLength": 1 },
+            "proposalSubmitExceptionPathAllowed": { "const": false },
+            "futureActivationRule": { "const": "REQUIRES_VERSIONED_WIRE_AND_VERIFICATION_DEPENDENCY_BEFORE_ANY_USE" }
+          }
+        }
+      }
+    },
+    "packet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "packetId", "moduleId", "preparedAt", "state", "contractReseal", "repositoryPins", "dependencyContract", "implementationPaths", "uiWorkContract", "pathPolicy", "migration", "verification", "centralControlRequests", "activationSequence", "stopConditions", "deliverables", "payHandoff", "authorities", "sealedPayloadSha256"],
+      "properties": {
+        "schemaVersion": { "const": "HRIS-G7-MOD-PER-COMPPLAN-PACKET-V1" },
+        "packetId": { "const": "HRIS-G7-PACKET-MOD-PER-COMPPLAN-R1-PREPARED" },
+        "moduleId": { "const": "MOD-PER-COMPPLAN" },
+        "preparedAt": { "const": "2026-10-12T23:41:00+09:00" },
+        "state": { "const": "PACKET_PREPARED_START_WITHHELD" },
+        "contractReseal": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["authorityId", "path", "sealedPayloadSha256"],
+          "properties": {
+            "authorityId": { "type": "string" },
+            "path": { "type": "string" },
+            "sealedPayloadSha256": { "$ref": "#/$defs/sha256" }
+          }
+        },
+        "repositoryPins": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["frontend", "backend", "agent"],
+          "properties": {
+            "frontend": { "$ref": "#/$defs/repositoryPin" },
+            "backend": { "$ref": "#/$defs/repositoryPin" },
+            "agent": { "$ref": "#/$defs/agentPin" }
+          }
+        },
+        "dependencyContract": { "$ref": "#/$defs/dependencyContract" },
+        "implementationPaths": { "$ref": "#/$defs/implementationPaths" },
+        "uiWorkContract": { "$ref": "#/$defs/uiWorkContract" },
+        "pathPolicy": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["allowedPaths", "protectedPaths", "commonControlOnlyPaths", "existingBridgeFilesAllocatedToModule", "sharedBootstrapAllocation", "controlAllocatedSharedAbiAmendment", "enforcement", "outsideAllowedPathAction", "pathPolicySha256"],
+          "properties": {
+            "allowedPaths": { "type": "array", "minItems": 8, "maxItems": 8, "uniqueItems": true, "items": { "$ref": "#/$defs/pathSelector" } },
+            "protectedPaths": { "type": "array", "minItems": 13, "maxItems": 13, "uniqueItems": true, "items": { "$ref": "#/$defs/pathSelector" } },
+            "commonControlOnlyPaths": { "type": "array", "minItems": 50, "uniqueItems": true, "items": { "$ref": "#/$defs/pathSelector" } },
+            "existingBridgeFilesAllocatedToModule": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "$ref": "#/$defs/pathSelector" } },
+            "sharedBootstrapAllocation": {
+              "type": "object", "additionalProperties": false,
+              "required": ["controlRequestId", "state", "paths", "table", "grantRequiredBeforeStartToken"],
+              "properties": {
+                "controlRequestId": { "const": "G7-CR-MOD-PER-COMPPLAN-TYPED-ARTIFACT-BOOTSTRAP-R1" },
+                "state": { "const": "PRE_START_ALLOCATION_NOT_REGISTERED" },
+                "paths": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "string" } },
+                "table": { "const": "prf_per_artifact_versions" },
+                "grantRequiredBeforeStartToken": { "const": true }
+              }
+            },
+            "controlAllocatedSharedAbiAmendment": {
+              "type": "object", "additionalProperties": false,
+              "required": ["controlRequestId", "state", "schemaPath", "mainPath", "testPath", "additiveMethod", "purposeCode", "projection", "moduleMayImplement", "grantRequiredBeforeStartToken"],
+              "properties": {
+                "controlRequestId": { "const": "G7-CR-MOD-PER-COMPPLAN-WORKFORCE-SNAPSHOT-COMPENSATION-R1" },
+                "state": { "const": "PRE_START_ALLOCATION_NOT_REGISTERED" },
+                "schemaPath": { "const": "contracts/in-process/hris/workforce-snapshot-query-port.v1.schema.json" },
+                "mainPath": { "const": "dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/workforce/v1/**" },
+                "testPath": { "const": "dwp-people-server/src/test/java/com/dwp/services/people/hris/contracts/workforce/v1/**" },
+                "additiveMethod": { "const": "queryCompensationPopulation" },
+                "purposeCode": { "const": "HRIS_PER_COMPENSATION_POPULATION" },
+                "projection": { "const": "COMPENSATION_POPULATION_V1" },
+                "moduleMayImplement": { "const": false },
+                "grantRequiredBeforeStartToken": { "const": true }
+              }
+            },
+            "enforcement": { "const": "DENY_ALL_OUTSIDE_ALLOWLIST" },
+            "outsideAllowedPathAction": { "const": "STOP_AND_RAISE_CONTROL_REQUEST" },
+            "pathPolicySha256": { "$ref": "#/$defs/sha256" }
+          }
+        },
+        "migration": { "$ref": "#/$defs/migration" },
+        "verification": { "$ref": "#/$defs/verification" },
+        "centralControlRequests": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["registrationState", "startTokenGate", "processingRule", "moduleMayImplement", "preparedControlRequests"],
+          "properties": {
+            "registrationState": { "const": "PREPARED_NOT_REGISTERED" },
+            "startTokenGate": { "const": "ALL_CONTROL_REQUESTS_REGISTERED_AND_BOTH_PRE_START_ALLOCATIONS_GRANTED_BEFORE_START_TOKEN" },
+            "processingRule": { "const": "ALL_REQUESTS_REGISTERED_BEFORE_START_TOKEN; TYPED_ARTIFACT_AND_WORKFORCE_COMPENSATION_PROJECTION_GRANTED_PRE_START; OTHER_FULFILLMENT_AFTER_PUSHED_MODULE_RESULT" },
+            "moduleMayImplement": { "const": false },
+            "preparedControlRequests": { "type": "array", "minItems": 7, "maxItems": 7, "items": { "$ref": "#/$defs/controlRequest" } }
+          }
+        },
+        "activationSequence": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["preparationCarrier", "preWorktreeV4VacancyCheck", "frontendWorktreeBase", "backendWorktreeBase", "preActivationBundleV4VacancyRecheck", "typedArtifactBootstrapRegistrationAndGrantRequired", "workforceSnapshotCompensationProjectionRegistrationAndGrantRequired", "startTokenInitialState", "sourceEditsBeforePromotionReceiptAllowed"],
+          "properties": {
+            "preparationCarrier": { "const": "REQUIRE_VALIDATOR_PASS_CLEAN_AND_PUSHED" },
+            "preWorktreeV4VacancyCheck": { "const": true },
+            "frontendWorktreeBase": { "const": "PREPARATION_CARRIER_COMMIT" },
+            "backendWorktreeBase": { "$ref": "#/$defs/gitObject" },
+            "preActivationBundleV4VacancyRecheck": { "const": true },
+            "typedArtifactBootstrapRegistrationAndGrantRequired": { "const": true },
+            "workforceSnapshotCompensationProjectionRegistrationAndGrantRequired": { "const": true },
+            "startTokenInitialState": { "const": "ISSUED_PENDING_PROMOTION_RECEIPT" },
+            "sourceEditsBeforePromotionReceiptAllowed": { "const": false }
+          }
+        },
+        "stopConditions": { "type": "array", "minItems": 8, "maxItems": 8, "items": { "type": "string" } },
+        "deliverables": { "type": "array", "minItems": 7, "maxItems": 7, "items": { "type": "string" } },
+        "payHandoff": { "$ref": "#/$defs/payHandoff" },
+        "authorities": { "$ref": "#/$defs/authorities" },
+        "sealedPayloadSha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "implementationPaths": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["backendRuntime", "backendTests", "typedArtifactRuntime", "typedArtifactTests", "providerTestsExact", "frontendFeature", "migrationExact"],
+      "properties": {
+        "backendRuntime": { "type": "string" },
+        "backendTests": { "type": "string" },
+        "typedArtifactRuntime": { "type": "string" },
+        "typedArtifactTests": { "type": "string" },
+        "providerTestsExact": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "string" } },
+        "frontendFeature": { "type": "string" },
+        "migrationExact": { "type": "string" }
+      }
+    },
+    "dependencyContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dependencies", "dependencyPinsSha256", "readyDependencySource", "producerObligation"],
+      "properties": {
+        "dependencies": { "type": "array", "minItems": 5, "maxItems": 5, "items": { "$ref": "#/$defs/dependency" } },
+        "dependencyPinsSha256": { "$ref": "#/$defs/sha256" },
+        "readyDependencySource": { "const": "per006PredecessorPacket#/dependencies" },
+        "producerObligation": { "type": "string" }
+      }
+    },
+    "dependency": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dependencyId", "state", "authoritySha256", "resultPin", "payStatus"],
+      "properties": {
+        "dependencyId": { "enum": ["DEP-001", "DEP-002", "DEP-003", "DEP-016", "DEP-019"] },
+        "state": { "enum": ["READY_AT_FROZEN_BASE", "PRODUCER_OBLIGATION_TO_SATISFY_BY_RESULT"] },
+        "authoritySha256": { "$ref": "#/$defs/sha256" },
+        "resultPin": { "type": "string", "minLength": 1 },
+        "payStatus": { "enum": ["NOT_APPLICABLE", "WITHHELD"] }
+      }
+    },
+    "migration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["location", "schema", "historyTable", "baselineVersion", "outOfOrder", "currentHighWater", "reservedPath", "moduleOwnedTableCount", "sharedFoundationTableCount", "totalNewTableCount", "status", "admission"],
+      "properties": {
+        "location": { "const": "classpath:db/performance-migration" },
+        "schema": { "const": "hris_performance" },
+        "historyTable": { "const": "flyway_performance_schema_history" },
+        "baselineVersion": { "const": "0" },
+        "outOfOrder": { "const": false },
+        "currentHighWater": { "const": "V3" },
+        "reservedPath": { "type": "string", "pattern": "/V4__per_modern_compensation_planning\\.sql$" },
+        "moduleOwnedTableCount": { "const": 6 },
+        "sharedFoundationTableCount": { "const": 1 },
+        "totalNewTableCount": { "const": 7 },
+        "status": { "const": "RESERVED_CONTROL_ONLY" },
+        "admission": { "const": false }
+      }
+    },
+    "verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["backendTests", "providerTestsExact", "platformTestsExact", "frontendTestsExact", "acceptanceInvariants", "namedCommands", "executionPolicy"],
+      "properties": {
+        "backendTests": { "type": "array", "minItems": 5, "maxItems": 5, "items": { "type": "string" } },
+        "providerTestsExact": { "type": "array", "minItems": 2, "maxItems": 2, "items": { "type": "string" } },
+        "platformTestsExact": { "type": "array", "minItems": 1, "maxItems": 1, "items": { "type": "string" } },
+        "frontendTestsExact": { "type": "array", "minItems": 4, "maxItems": 4, "items": { "type": "string" } },
+        "acceptanceInvariants": { "type": "array", "minItems": 12, "maxItems": 12, "items": { "type": "string" } },
+        "namedCommands": { "type": "array", "minItems": 3, "maxItems": 3, "items": { "$ref": "#/$defs/command" } },
+        "executionPolicy": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["order", "failureHandling", "broadSuitePerFixAllowed"],
+          "properties": {
+            "order": { "const": "CHANGED_CLUSTER_FIRST_THEN_ONE_CLOSED_MODULE_BATCH" },
+            "failureHandling": { "const": "COLLECT_ALL_FAILURES_BEFORE_REPAIR" },
+            "broadSuitePerFixAllowed": { "const": false }
+          }
+        }
+      }
+    },
+    "command": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["commandId", "cwd", "argv"],
+      "properties": {
+        "commandId": { "type": "string" },
+        "cwd": { "enum": ["frontend", "backend"] },
+        "argv": { "type": "array", "minItems": 4, "items": { "type": "string" } }
+      }
+    },
+    "pathSelector": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repo", "selector", "kind"],
+      "properties": {
+        "repo": { "enum": ["frontend", "backend"] },
+        "selector": { "type": "string", "minLength": 1 },
+        "kind": { "enum": ["EXACT_FILE", "PREFIX_GLOB", "PATTERN_GLOB"] }
+      }
+    },
+    "controlRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["requestId", "category", "scope", "owner", "registrationPhase", "fulfillmentPhase", "grantRequiredBeforeStartToken", "moduleMayImplement"],
+      "properties": {
+        "requestId": { "type": "string", "pattern": "^G7-CR-MOD-PER-COMPPLAN-" },
+        "category": { "enum": ["AUTH-PEP", "CONTRACT-GATEWAY", "SHELL-ROUTE", "SVC-PEP-SECURITY", "INTEGRATION-VERIFY", "TYPED-ARTIFACT-BOOTSTRAP", "WORKFORCE-SNAPSHOT-COMPENSATION-PROJECTION"] },
+        "scope": { "type": "string", "minLength": 1 },
+        "owner": { "const": "CENTRAL_CONTROL" },
+        "registrationPhase": { "const": "BEFORE_START_TOKEN" },
+        "fulfillmentPhase": { "enum": ["AFTER_PUSHED_MODULE_RESULT", "PRE_START_ALLOCATION"] },
+        "grantRequiredBeforeStartToken": { "type": "boolean" },
+        "moduleMayImplement": { "const": false }
+      }
+    },
+    "payHandoff": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["consumerSession", "status", "event", "refetchContract", "requiresPushedProducerResult", "requiresControlAdmission"],
+      "properties": {
+        "consumerSession": { "const": "HRIS-PAY" },
+        "status": { "const": "WITHHELD" },
+        "event": { "const": "ApprovedCompensationPlanSnapshotPublished.v2" },
+        "refetchContract": { "const": "SVC-PEP-PER-001" },
+        "requiresPushedProducerResult": { "const": true },
+        "requiresControlAdmission": { "const": true }
+      }
+    },
+    "leaseDelta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "leaseDeltaId", "moduleId", "preparedAt", "repository", "migrationRoot", "currentHighWater", "reservedVersion", "exactPath", "status", "admission", "ownerStartTokenIssued", "vacancyMustBeRecheckedAtTokenIssue", "leaseExpiresAt", "historicalLineage", "protectedPredecessors", "moduleOwnedTableCount", "sharedFoundationTableCount", "totalNewTableCount", "authorities", "sealedPayloadSha256"],
+      "properties": {
+        "schemaVersion": { "const": "HRIS-G7-MOD-PER-COMPPLAN-MIGRATION-LEASE-DELTA-V1" },
+        "leaseDeltaId": { "type": "string" },
+        "moduleId": { "const": "MOD-PER-COMPPLAN" },
+        "preparedAt": { "const": "2026-10-12T23:41:00+09:00" },
+        "repository": { "const": "backend" },
+        "migrationRoot": { "type": "string" },
+        "currentHighWater": { "const": "V3" },
+        "reservedVersion": { "const": "V4" },
+        "exactPath": { "type": "string", "pattern": "/V4__per_modern_compensation_planning\\.sql$" },
+        "status": { "const": "RESERVED_CONTROL_ONLY" },
+        "admission": { "const": false },
+        "ownerStartTokenIssued": { "const": false },
+        "vacancyMustBeRecheckedAtTokenIssue": { "const": true },
+        "leaseExpiresAt": { "const": "2026-10-19T23:41:00+09:00" },
+        "historicalLineage": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["previousTentativePath", "authority", "runtimePathExists"],
+          "properties": {
+            "previousTentativePath": { "type": "string", "pattern": "/V22__per_modern_compensation_planning\\.sql$" },
+            "authority": { "const": "SUPERSEDED_NON_RUNTIME_PLANNING_REFERENCE" },
+            "runtimePathExists": { "const": false }
+          }
+        },
+        "protectedPredecessors": { "const": ["V1", "V2", "V3"] },
+        "moduleOwnedTableCount": { "const": 6 },
+        "sharedFoundationTableCount": { "const": 1 },
+        "totalNewTableCount": { "const": 7 },
+        "authorities": { "$ref": "#/$defs/authorities" },
+        "sealedPayloadSha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "preparationState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "stateId", "moduleId", "preparedAt", "state", "artifactSeals", "counts", "controlGates", "nextRequiredAuthority", "authorities", "sealedPayloadSha256"],
+      "properties": {
+        "schemaVersion": { "const": "HRIS-G7-MOD-PER-COMPPLAN-PREPARATION-STATE-V1" },
+        "stateId": { "type": "string" },
+        "moduleId": { "const": "MOD-PER-COMPPLAN" },
+        "preparedAt": { "const": "2026-10-12T23:41:00+09:00" },
+        "state": { "const": "PACKET_PREPARED_START_WITHHELD" },
+        "artifactSeals": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["contractReseal", "packet", "migrationLeaseDelta"],
+          "properties": {
+            "contractReseal": { "$ref": "#/$defs/sha256" },
+            "packet": { "$ref": "#/$defs/sha256" },
+            "migrationLeaseDelta": { "$ref": "#/$defs/sha256" }
+          }
+        },
+        "counts": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["operations", "events", "moduleOwnedTables", "sharedFoundationTables", "totalNewTables", "namedCommands"],
+          "properties": {
+            "operations": { "const": 12 }, "events": { "const": 8 },
+            "moduleOwnedTables": { "const": 6 },
+            "sharedFoundationTables": { "const": 1 },
+            "totalNewTables": { "const": 7 }, "namedCommands": { "const": 3 }
+          }
+        },
+        "controlGates": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["predecessorClosureVerified", "canonicalContractConflictResealed", "packetPrepared", "migrationOnlyReserved", "typedArtifactBootstrapAllocated", "workforceSnapshotCompensationProjectionAllocated", "moduleWorktreesCreated", "startIssued", "sourceChangesAllowed", "integrationAllowed", "releaseAllowed", "payAllowed"],
+          "properties": {
+            "predecessorClosureVerified": { "const": true },
+            "canonicalContractConflictResealed": { "const": true },
+            "packetPrepared": { "const": true },
+            "migrationOnlyReserved": { "const": true },
+            "typedArtifactBootstrapAllocated": { "const": false },
+            "workforceSnapshotCompensationProjectionAllocated": { "const": false },
+            "moduleWorktreesCreated": { "const": false },
+            "startIssued": { "const": false },
+            "sourceChangesAllowed": { "const": false },
+            "integrationAllowed": { "const": false },
+            "releaseAllowed": { "const": false },
+            "payAllowed": { "const": false }
+          }
+        },
+        "nextRequiredAuthority": { "type": "string" },
+        "authorities": { "$ref": "#/$defs/authorities" },
+        "sealedPayloadSha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "manifest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "manifestId", "moduleId", "preparedAt", "state", "predecessor", "repositoryPins", "artifactPins", "toolPins", "exactCarrierInventory", "counts", "authorities", "sealedPayloadSha256"],
+      "properties": {
+        "schemaVersion": { "const": "HRIS-G7-MOD-PER-COMPPLAN-PREPARATION-MANIFEST-V1" },
+        "manifestId": { "type": "string" },
+        "moduleId": { "const": "MOD-PER-COMPPLAN" },
+        "preparedAt": { "const": "2026-10-12T23:41:00+09:00" },
+        "state": { "const": "PACKET_PREPARED_START_WITHHELD" },
+        "predecessor": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["commit", "tree"],
+          "properties": { "commit": { "$ref": "#/$defs/gitObject" }, "tree": { "$ref": "#/$defs/gitObject" } }
+        },
+        "repositoryPins": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["backend", "agent"],
+          "properties": {
+            "backend": {
+              "type": "object", "additionalProperties": false,
+              "required": ["commit", "tree"],
+              "properties": { "commit": { "$ref": "#/$defs/gitObject" }, "tree": { "$ref": "#/$defs/gitObject" } }
+            },
+            "agent": {
+              "type": "object", "additionalProperties": false,
+              "required": ["commit", "tree"],
+              "properties": { "commit": { "$ref": "#/$defs/gitObject" }, "tree": { "$ref": "#/$defs/gitObject" } }
+            }
+          }
+        },
+        "artifactPins": { "type": "array", "minItems": 4, "maxItems": 4, "items": { "$ref": "#/$defs/filePin" } },
+        "toolPins": { "type": "array", "minItems": 5, "maxItems": 5, "items": { "$ref": "#/$defs/filePin" } },
+        "exactCarrierInventory": { "type": "array", "minItems": 10, "maxItems": 10, "uniqueItems": true, "items": { "type": "string" } },
+        "counts": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["tools", "artifacts", "operations", "events", "moduleOwnedTables", "sharedFoundationTables", "totalNewTables"],
+          "properties": {
+            "tools": { "const": 5 }, "artifacts": { "const": 5 },
+            "operations": { "const": 12 }, "events": { "const": 8 },
+            "moduleOwnedTables": { "const": 6 },
+            "sharedFoundationTables": { "const": 1 },
+            "totalNewTables": { "const": 7 }
+          }
+        },
+        "authorities": { "$ref": "#/$defs/authorities" },
+        "sealedPayloadSha256": { "$ref": "#/$defs/sha256" }
+      }
+    }
+  }
+}
