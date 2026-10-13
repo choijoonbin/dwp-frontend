@@ -1,0 +1,355 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dwp.local/hris/wave3-migration-lease-admission.schema.v1.json",
+  "title": "HRIS Wave3 exact migration lease admission",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "leaseId",
+    "issuedAt",
+    "expiresAt",
+    "module",
+    "moduleId",
+    "sliceId",
+    "packetId",
+    "ownerTokenId",
+    "predecessorReservation",
+    "repository",
+    "executionBasePin",
+    "stream",
+    "schemaName",
+    "historyTable",
+    "location",
+    "observedVersions",
+    "currentHighWater",
+    "outOfOrder",
+    "version",
+    "exactRelativePath",
+    "worktreeBinding",
+    "tableAllocation",
+    "status",
+    "migrationAdmissionAuthorized",
+    "effectiveAfterPromotionOnly",
+    "upgradePath",
+    "rollbackStrategy",
+    "invalidationConditions",
+    "sealedPayloadSha256"
+  ],
+  "properties": {
+    "schema": {
+      "const": "dwp.hris.wave3-migration-lease-admission.v1",
+      "type": "string"
+    },
+    "leaseId": {
+      "const": "HRIS-WAVE3-LEASE-MOD-PER-COMPPLAN-PERFORMANCE-V17-R3",
+      "type": "string"
+    },
+    "issuedAt": {
+      "type": "string"
+    },
+    "expiresAt": {
+      "type": "string"
+    },
+    "module": {
+      "const": "PER",
+      "type": "string"
+    },
+    "moduleId": {
+      "const": "MOD-PER-COMPPLAN",
+      "type": "string"
+    },
+    "sliceId": {
+      "const": "MOD-PER-COMPPLAN",
+      "type": "string"
+    },
+    "packetId": {
+      "const": "HRIS-WAVE3-PACKET-MOD-PER-COMPPLAN-R2-PHASE-A",
+      "type": "string"
+    },
+    "ownerTokenId": {
+      "const": "HRIS-WAVE3-START-MOD-PER-COMPPLAN-R2",
+      "type": "string"
+    },
+    "predecessorReservation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "bytes",
+        "sha256",
+        "leaseId",
+        "status",
+        "sealedPayloadSha256",
+        "disposition"
+      ],
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "bytes": {
+          "type": "integer"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "leaseId": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "sealedPayloadSha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "disposition": {
+          "type": "string"
+        }
+      }
+    },
+    "repository": {
+      "const": "backend",
+      "type": "string"
+    },
+    "executionBasePin": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "repository",
+        "branch",
+        "upstream",
+        "commit",
+        "tree",
+        "cleanVerificationCheckout",
+        "upstreamMatched"
+      ],
+      "properties": {
+        "repository": {
+          "type": "string"
+        },
+        "branch": {
+          "type": "string"
+        },
+        "upstream": {
+          "type": "string"
+        },
+        "commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "tree": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "cleanVerificationCheckout": {
+          "type": "boolean"
+        },
+        "upstreamMatched": {
+          "type": "boolean"
+        }
+      }
+    },
+    "stream": {
+      "const": "PERFORMANCE",
+      "type": "string"
+    },
+    "schemaName": {
+      "const": "hris_performance",
+      "type": "string"
+    },
+    "historyTable": {
+      "const": "flyway_performance_schema_history",
+      "type": "string"
+    },
+    "location": {
+      "const": "classpath:db/performance-migration",
+      "type": "string"
+    },
+    "observedVersions": {
+      "const": [
+        "V1",
+        "V2",
+        "V3",
+        "V16"
+      ],
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "uniqueItems": true,
+      "items": {
+        "type": "string"
+      }
+    },
+    "currentHighWater": {
+      "const": "V16",
+      "type": "string"
+    },
+    "outOfOrder": {
+      "const": false,
+      "type": "boolean"
+    },
+    "version": {
+      "const": "V17",
+      "type": "string"
+    },
+    "exactRelativePath": {
+      "const": "dwp-people-server/src/main/resources/db/performance-migration/V17__per_modern_compensation_planning.sql",
+      "type": "string"
+    },
+    "worktreeBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "module",
+        "slice_id",
+        "token_id",
+        "repo",
+        "absolute_path",
+        "branch",
+        "upstream",
+        "head",
+        "tree",
+        "state_sha256",
+        "clean",
+        "ahead",
+        "behind",
+        "state"
+      ],
+      "properties": {
+        "module": {
+          "type": "string"
+        },
+        "slice_id": {
+          "type": "string"
+        },
+        "token_id": {
+          "type": "string"
+        },
+        "repo": {
+          "type": "string"
+        },
+        "absolute_path": {
+          "type": "string"
+        },
+        "branch": {
+          "type": "string"
+        },
+        "upstream": {
+          "type": "string"
+        },
+        "head": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "tree": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "state_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "clean": {
+          "type": "string"
+        },
+        "ahead": {
+          "type": "string"
+        },
+        "behind": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        }
+      }
+    },
+    "tableAllocation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "domainTables",
+        "domainTableCount",
+        "sharedFoundationTables",
+        "sharedFoundationTableCount",
+        "totalTableCount",
+        "typedArtifactBootstrapState",
+        "implementationState"
+      ],
+      "properties": {
+        "domainTables": {
+          "type": "array",
+          "minItems": 6,
+          "maxItems": 6,
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
+        },
+        "domainTableCount": {
+          "type": "integer"
+        },
+        "sharedFoundationTables": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
+        },
+        "sharedFoundationTableCount": {
+          "type": "integer"
+        },
+        "totalTableCount": {
+          "type": "integer"
+        },
+        "typedArtifactBootstrapState": {
+          "type": "string"
+        },
+        "implementationState": {
+          "type": "string"
+        }
+      }
+    },
+    "status": {
+      "const": "ADMITTED_DOMAIN_AUTHORING",
+      "type": "string"
+    },
+    "migrationAdmissionAuthorized": {
+      "const": true,
+      "type": "boolean"
+    },
+    "effectiveAfterPromotionOnly": {
+      "const": true,
+      "type": "boolean"
+    },
+    "upgradePath": {
+      "type": "string"
+    },
+    "rollbackStrategy": {
+      "type": "string"
+    },
+    "invalidationConditions": {
+      "type": "array",
+      "minItems": 5,
+      "uniqueItems": true,
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 5,
+      "const": [
+        "promotion receipt does not list the exact owner token in the active closed set",
+        "backend dwp-dev commit or tree changes",
+        "the Performance migration high-water changes",
+        "V17 or the exact path is claimed by another migration",
+        "the owner token expires, is revoked, or changes scope"
+      ]
+    },
+    "sealedPayloadSha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

@@ -1,0 +1,146 @@
+{
+  "schema": "dwp.hris.wave3-mod-per-compplan-base-repin-revalidation.v1",
+  "evidenceId": "HRIS-WAVE3-MOD-PER-COMPPLAN-BASE-REPIN-20261013-R2",
+  "issuedAt": "2026-10-13T16:30:00+09:00",
+  "reason": "BACKEND_DWP_DEV_BASE_ADVANCED_AFTER_R1_PROMOTION",
+  "decision": "REISSUE_SCOPED_AUTHORITY_WITHOUT_RERUNNING_UNAFFECTED_TARGETED_TESTS",
+  "predecessorR1": {
+    "bundle": {
+      "commit": "eceef645b6363e7ece301c85ff05f209f275c9a5",
+      "tree": "e27b1787a73b6d4a8cf61cf6d5b690fcda167834",
+      "path": "docs/06-delivery/hris/wave3-delegation-successors/2026-10-13/mod-per-compplan-r1/manifest.v1.json",
+      "bytes": 8441,
+      "sha256": "9f7d1d208a778c09cd89d9e848b8fe116e22df62ebf2d8e8f8a62b438d525188",
+      "sealedPayloadSha256": "3fa373094957967122b8974102ce339552267ec622f953c9471590e85fef1f09"
+    },
+    "promotion": {
+      "commit": "a3a0a75451a7ed14b1f5135f1f56b6271dee41fd",
+      "tree": "906cc25aaf2b3deb28d95d59621d55c6abdadaac",
+      "path": "docs/06-delivery/hris/2026-10-13-wave3-mod-per-compplan-promotion-receipt.v1.json",
+      "bytes": 10650,
+      "sha256": "eee01dfab9ce31fc77f66cf06c4588aaacb64e29a56b7064cda5bed41da8bca3",
+      "sealedPayloadSha256": "9457b16b1dc1b28084c2b9676de0b30a66cf6a74c8b4d025b41c3387d8b2cd8a"
+    },
+    "token": {
+      "tokenId": "HRIS-WAVE3-START-MOD-PER-COMPPLAN-R1",
+      "disposition": "INVALIDATED_BACKEND_BASE_PIN_DRIFT",
+      "path": "docs/06-delivery/hris/wave3-delegation-successors/2026-10-13/mod-per-compplan-r1/tokens/mod-per-compplan.start-token.v1.json",
+      "bytes": 25530,
+      "sha256": "47bc2f328eb13514ef7382d04682561e871fa1453311a8fc5a6561d90e0a59e3",
+      "sealedPayloadSha256": "d1a2a7c6b1891a2c1fac20039dadbdcf14beb9580c5447676df409ff2ba8eaa8"
+    },
+    "lease": {
+      "leaseId": "HRIS-WAVE3-LEASE-MOD-PER-COMPPLAN-PERFORMANCE-V17-R2",
+      "disposition": "SUPERSEDED_AFTER_BACKEND_BASE_PIN_DRIFT",
+      "path": "docs/06-delivery/hris/wave3-delegation-successors/2026-10-13/mod-per-compplan-r1/migration-lease-admission.v1.json",
+      "bytes": 3679,
+      "sha256": "c2d2aa7d42b2364ce633a901c7d0b6dae6d4d8d5f3836e26422fcfd48305461f",
+      "sealedPayloadSha256": "1b63581e42e5258c9c0c0900b4f9624be80db1e4e7f2b353e3533afc1fe5265a"
+    },
+    "targetedTestExecutionReceipt": {
+      "disposition": "PRESERVED_SEALED_NOT_RERUN",
+      "path": "docs/06-delivery/hris/wave3-2026-10-13/workforce-compensation-targeted-test-execution-receipt.v1.json",
+      "bytes": 2978,
+      "sha256": "adbc2b920ac9f6284492212af559b2966a1ec7c402ed96f7dbcea459eb108569",
+      "receiptId": "HRIS-WAVE3-WORKFORCE-COMPENSATION-TARGETED-TEST-EXECUTION-R1",
+      "sealedPayloadSha256": "11fd3f37dcb37f3a39adbf82dafff05c978e2b1acfb84d067cdfb179f55c37d7",
+      "backendCommit": "3565c3e61b6c37a6b8088cc5250791fce32a0d9f",
+      "backendTree": "af973ef11d003edcf266673330300c612ffe247b",
+      "totals": {
+        "tests": 24,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    }
+  },
+  "replacementR2": {
+    "frontend": {
+      "repository": "repo://dwp-frontend",
+      "branch": "dwp-dev",
+      "upstream": "origin/dwp-dev",
+      "commit": "a3a0a75451a7ed14b1f5135f1f56b6271dee41fd",
+      "tree": "906cc25aaf2b3deb28d95d59621d55c6abdadaac",
+      "clean": true,
+      "upstreamMatched": true
+    },
+    "backend": {
+      "repository": "repo://dwp-backend",
+      "branch": "dwp-dev",
+      "upstream": "origin/dwp-dev",
+      "commit": "8577ef532243c63b34877444738a4edde8b4c0e5",
+      "tree": "fd3ac7eff67aa6a2a1c41a52da1fe9dab6e9576b",
+      "cleanVerificationCheckout": true,
+      "upstreamMatched": true
+    },
+    "agent": {
+      "repository": "repo://dwp_agent",
+      "branch": "dwp-dev",
+      "upstream": "origin/dwp-dev",
+      "commit": "1d46fc4ab49c604efb7464574c49d13ee453e059",
+      "tree": "0b9a8dbfd828478ee825452e5aca8688c83e37ab",
+      "clean": true,
+      "upstreamMatched": true,
+      "hrisModuleSliceAuthority": false
+    },
+    "tokenId": "HRIS-WAVE3-START-MOD-PER-COMPPLAN-R2",
+    "leaseId": "HRIS-WAVE3-LEASE-MOD-PER-COMPPLAN-PERFORMANCE-V17-R3",
+    "promotionId": "HRIS-WAVE3-MOD-PER-COMPPLAN-PROMOTION-20261013-R2"
+  },
+  "backendBaseDrift": {
+    "historicalCommit": "3565c3e61b6c37a6b8088cc5250791fce32a0d9f",
+    "historicalTree": "af973ef11d003edcf266673330300c612ffe247b",
+    "replacementCommit": "8577ef532243c63b34877444738a4edde8b4c0e5",
+    "replacementTree": "fd3ac7eff67aa6a2a1c41a52da1fe9dab6e9576b",
+    "directChild": true,
+    "commitDistance": 1,
+    "changedPaths": [
+      {
+        "status": "M",
+        "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/ReferenceConfigurationService.java"
+      }
+    ],
+    "relevantSubtrees": [
+      {
+        "path": "dwp-people-server",
+        "historicalTree": "dd36373cbee687fc6da4505b318aa20a00a4a831",
+        "replacementTree": "dd36373cbee687fc6da4505b318aa20a00a4a831",
+        "identical": true
+      },
+      {
+        "path": "dwp-platform-contracts",
+        "historicalTree": "494dd9a7cf4d36583cd6bb6877536a0c2a8d2589",
+        "replacementTree": "494dd9a7cf4d36583cd6bb6877536a0c2a8d2589",
+        "identical": true
+      },
+      {
+        "path": "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance",
+        "historicalTree": "f00010cfddf0250a99ee7f36693dd46862165d07",
+        "replacementTree": "f00010cfddf0250a99ee7f36693dd46862165d07",
+        "identical": true
+      },
+      {
+        "path": "dwp-people-server/src/test/java/com/dwp/services/people/hr/performance",
+        "historicalTree": "f3bf7850f8ee556dc1aa7e8f387654ce3f9b0325",
+        "replacementTree": "f3bf7850f8ee556dc1aa7e8f387654ce3f9b0325",
+        "identical": true
+      },
+      {
+        "path": "dwp-people-server/src/main/resources/db/performance-migration",
+        "historicalTree": "4b742dbf16c3b44f7aa873c31af74010947c6672",
+        "replacementTree": "4b742dbf16c3b44f7aa873c31af74010947c6672",
+        "identical": true
+      }
+    ],
+    "impact": "NO_COMPPLAN_RELEVANT_SOURCE_OR_MIGRATION_IMPACT"
+  },
+  "authority": {
+    "activeTokenClosedSetAfterPromotion": [
+      "HRIS-WAVE3-START-MOD-PER-COMPPLAN-R2"
+    ],
+    "predecessorTokenEffective": false,
+    "predecessorLeaseEffective": false,
+    "historicalEvidenceRetained": true
+  },
+  "sealedPayloadSha256": "50a7d024ea9c03f5a6724e6895ccec90fdbc5648b9197abe8d8411d608a6abff"
+}

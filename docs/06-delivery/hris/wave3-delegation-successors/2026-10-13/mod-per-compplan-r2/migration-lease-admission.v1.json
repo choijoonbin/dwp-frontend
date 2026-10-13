@@ -1,0 +1,91 @@
+{
+  "schema": "dwp.hris.wave3-migration-lease-admission.v1",
+  "leaseId": "HRIS-WAVE3-LEASE-MOD-PER-COMPPLAN-PERFORMANCE-V17-R3",
+  "issuedAt": "2026-10-13T16:30:00+09:00",
+  "expiresAt": "2026-10-20T14:30:00+09:00",
+  "module": "PER",
+  "moduleId": "MOD-PER-COMPPLAN",
+  "sliceId": "MOD-PER-COMPPLAN",
+  "packetId": "HRIS-WAVE3-PACKET-MOD-PER-COMPPLAN-R2-PHASE-A",
+  "ownerTokenId": "HRIS-WAVE3-START-MOD-PER-COMPPLAN-R2",
+  "predecessorReservation": {
+    "path": "docs/06-delivery/hris/wave3-2026-10-13/mod-per-compplan/migration-lease.v1.json",
+    "bytes": 2223,
+    "sha256": "34022eec7fcf1866da0a941bdec9d4e7cea31106a2b8b64fb04fad810605868a",
+    "leaseId": "HRIS-WAVE3-LEASE-MOD-PER-COMPPLAN-PERFORMANCE-V17-R1",
+    "status": "RESERVED_PHASE_A_PRESTART_GRANTED_PENDING_CARRIER_AND_START_TOKEN",
+    "sealedPayloadSha256": "1439168c05c813e17d72e3889b0e1da314ac1029fd5fd12f060b84868bbc5689",
+    "disposition": "SUPERSEDED_AFTER_BACKEND_BASE_PIN_DRIFT_BY_R3_ADMISSION"
+  },
+  "repository": "backend",
+  "executionBasePin": {
+    "repository": "repo://dwp-backend",
+    "branch": "dwp-dev",
+    "upstream": "origin/dwp-dev",
+    "commit": "8577ef532243c63b34877444738a4edde8b4c0e5",
+    "tree": "fd3ac7eff67aa6a2a1c41a52da1fe9dab6e9576b",
+    "cleanVerificationCheckout": true,
+    "upstreamMatched": true
+  },
+  "stream": "PERFORMANCE",
+  "schemaName": "hris_performance",
+  "historyTable": "flyway_performance_schema_history",
+  "location": "classpath:db/performance-migration",
+  "observedVersions": [
+    "V1",
+    "V2",
+    "V3",
+    "V16"
+  ],
+  "currentHighWater": "V16",
+  "outOfOrder": false,
+  "version": "V17",
+  "exactRelativePath": "dwp-people-server/src/main/resources/db/performance-migration/V17__per_modern_compensation_planning.sql",
+  "worktreeBinding": {
+    "module": "PER",
+    "slice_id": "MOD-PER-COMPPLAN",
+    "token_id": "HRIS-WAVE3-START-MOD-PER-COMPPLAN-R2",
+    "repo": "backend",
+    "absolute_path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave3-20261013-r2/mod-per-compplan/backend",
+    "branch": "codex/hris-wave3-per-compplan-backend-20261013-r2",
+    "upstream": "origin/codex/hris-wave3-per-compplan-backend-20261013-r2",
+    "head": "8577ef532243c63b34877444738a4edde8b4c0e5",
+    "tree": "fd3ac7eff67aa6a2a1c41a52da1fe9dab6e9576b",
+    "state_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "clean": "true",
+    "ahead": "0",
+    "behind": "0",
+    "state": "CREATED_PUSHED_CLEAN"
+  },
+  "tableAllocation": {
+    "domainTables": [
+      "prf_cmp_cycles",
+      "prf_cmp_budget_ledger",
+      "prf_cmp_proposals",
+      "prf_cmp_proposal_revisions",
+      "prf_cmp_approved_snapshots",
+      "prf_cmp_approved_snapshot_lines"
+    ],
+    "domainTableCount": 6,
+    "sharedFoundationTables": [
+      "prf_per_artifact_versions"
+    ],
+    "sharedFoundationTableCount": 1,
+    "totalTableCount": 7,
+    "typedArtifactBootstrapState": "ALLOCATED_REGISTERED_GRANTED",
+    "implementationState": "AUTHORIZED_AFTER_PROMOTION_ONLY"
+  },
+  "status": "ADMITTED_DOMAIN_AUTHORING",
+  "migrationAdmissionAuthorized": true,
+  "effectiveAfterPromotionOnly": true,
+  "upgradePath": "EMPTY_OR_V16_TO_V17",
+  "rollbackStrategy": "FORWARD_FIX_ONLY_AFTER_PROMOTION; UNUSED_ADMISSION_EXPIRES_WITHOUT_FILE",
+  "invalidationConditions": [
+    "promotion receipt does not list the exact owner token in the active closed set",
+    "backend dwp-dev commit or tree changes",
+    "the Performance migration high-water changes",
+    "V17 or the exact path is claimed by another migration",
+    "the owner token expires, is revoked, or changes scope"
+  ],
+  "sealedPayloadSha256": "cf79bdd973db1ca320bae7f06588f1b9e6c4be5a52f8bd74e95ec0917eb5b837"
+}

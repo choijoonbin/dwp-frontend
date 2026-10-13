@@ -1,0 +1,555 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dwp.local/hris/wave3-activation-manifest.schema.v1.json",
+  "title": "HRIS Wave3 MOD-PER-COMPPLAN activation manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "manifestId",
+    "issuedAt",
+    "state",
+    "predecessorPins",
+    "executionBasePins",
+    "activeTokenClosedSetAfterPromotion",
+    "artifacts",
+    "artifactCount",
+    "toolPins",
+    "toolCount",
+    "startTokenCount",
+    "worktreeBindingCount",
+    "migrationAdmissionCount",
+    "promotionReceiptCount",
+    "productionAuthorization",
+    "sealedPayloadSha256"
+  ],
+  "properties": {
+    "schema": {
+      "const": "dwp.hris.wave3-mod-per-compplan-activation-manifest.v1",
+      "type": "string"
+    },
+    "manifestId": {
+      "const": "HRIS-WAVE3-MOD-PER-COMPPLAN-ACTIVATION-MANIFEST-20261013-R2",
+      "type": "string"
+    },
+    "issuedAt": {
+      "type": "string"
+    },
+    "state": {
+      "const": "BUNDLE_SEALED_PENDING_PROMOTION_RECEIPT",
+      "type": "string"
+    },
+    "predecessorPins": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "phaseACarrier",
+        "phaseAManifest",
+        "packet",
+        "preStartControlGrant",
+        "touchPolicy",
+        "migrationReservation",
+        "targetedTestExecutionReceipt",
+        "authorityRefresh",
+        "controlRequests"
+      ],
+      "properties": {
+        "phaseACarrier": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "commit",
+            "tree",
+            "parent",
+            "branch",
+            "upstream"
+          ],
+          "properties": {
+            "commit": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "tree": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "parent": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "branch": {
+              "type": "string"
+            },
+            "upstream": {
+              "type": "string"
+            }
+          }
+        },
+        "phaseAManifest": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "path",
+            "bytes",
+            "sha256",
+            "sealedPayloadSha256"
+          ],
+          "properties": {
+            "path": {
+              "type": "string"
+            },
+            "bytes": {
+              "type": "integer"
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "sealedPayloadSha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        "packet": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "path",
+            "bytes",
+            "sha256",
+            "packetId",
+            "sealedPayloadSha256"
+          ],
+          "properties": {
+            "path": {
+              "type": "string"
+            },
+            "bytes": {
+              "type": "integer"
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "packetId": {
+              "type": "string"
+            },
+            "sealedPayloadSha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        "preStartControlGrant": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "path",
+            "bytes",
+            "sha256",
+            "receiptId",
+            "sealedPayloadSha256"
+          ],
+          "properties": {
+            "path": {
+              "type": "string"
+            },
+            "bytes": {
+              "type": "integer"
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "receiptId": {
+              "type": "string"
+            },
+            "sealedPayloadSha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        "touchPolicy": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "path",
+            "bytes",
+            "sha256",
+            "manifestId",
+            "touchPolicyDigest",
+            "sealedPayloadSha256"
+          ],
+          "properties": {
+            "path": {
+              "type": "string"
+            },
+            "bytes": {
+              "type": "integer"
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "manifestId": {
+              "type": "string"
+            },
+            "touchPolicyDigest": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "sealedPayloadSha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        "migrationReservation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "path",
+            "bytes",
+            "sha256",
+            "leaseId",
+            "sealedPayloadSha256"
+          ],
+          "properties": {
+            "path": {
+              "type": "string"
+            },
+            "bytes": {
+              "type": "integer"
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "leaseId": {
+              "type": "string"
+            },
+            "sealedPayloadSha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        "targetedTestExecutionReceipt": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "path",
+            "bytes",
+            "sha256",
+            "receiptId",
+            "sealedPayloadSha256"
+          ],
+          "properties": {
+            "path": {
+              "type": "string"
+            },
+            "bytes": {
+              "type": "integer"
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "receiptId": {
+              "type": "string"
+            },
+            "sealedPayloadSha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        "authorityRefresh": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "path",
+            "bytes",
+            "sha256",
+            "sealedPayloadSha256"
+          ],
+          "properties": {
+            "path": {
+              "type": "string"
+            },
+            "bytes": {
+              "type": "integer"
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "sealedPayloadSha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        "controlRequests": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "path",
+            "bytes",
+            "sha256",
+            "registerId",
+            "sealedPayloadSha256"
+          ],
+          "properties": {
+            "path": {
+              "type": "string"
+            },
+            "bytes": {
+              "type": "integer"
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "registerId": {
+              "type": "string"
+            },
+            "sealedPayloadSha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        }
+      }
+    },
+    "executionBasePins": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "frontend",
+        "backend",
+        "agent"
+      ],
+      "properties": {
+        "frontend": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "repository",
+            "branch",
+            "upstream",
+            "commit",
+            "tree",
+            "clean",
+            "upstreamMatched"
+          ],
+          "properties": {
+            "repository": {
+              "type": "string"
+            },
+            "branch": {
+              "type": "string"
+            },
+            "upstream": {
+              "type": "string"
+            },
+            "commit": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "tree": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "clean": {
+              "type": "boolean"
+            },
+            "upstreamMatched": {
+              "type": "boolean"
+            }
+          }
+        },
+        "backend": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "repository",
+            "branch",
+            "upstream",
+            "commit",
+            "tree",
+            "cleanVerificationCheckout",
+            "upstreamMatched"
+          ],
+          "properties": {
+            "repository": {
+              "type": "string"
+            },
+            "branch": {
+              "type": "string"
+            },
+            "upstream": {
+              "type": "string"
+            },
+            "commit": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "tree": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "cleanVerificationCheckout": {
+              "type": "boolean"
+            },
+            "upstreamMatched": {
+              "type": "boolean"
+            }
+          }
+        },
+        "agent": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "repository",
+            "branch",
+            "upstream",
+            "commit",
+            "tree",
+            "clean",
+            "upstreamMatched",
+            "hrisModuleSliceAuthority"
+          ],
+          "properties": {
+            "repository": {
+              "type": "string"
+            },
+            "branch": {
+              "type": "string"
+            },
+            "upstream": {
+              "type": "string"
+            },
+            "commit": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "tree": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "clean": {
+              "type": "boolean"
+            },
+            "upstreamMatched": {
+              "type": "boolean"
+            },
+            "hrisModuleSliceAuthority": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    },
+    "activeTokenClosedSetAfterPromotion": {
+      "const": [
+        "HRIS-WAVE3-START-MOD-PER-COMPPLAN-R2"
+      ],
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string"
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "bytes",
+          "sha256"
+        ],
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "bytes": {
+            "type": "integer"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      },
+      "uniqueItems": true
+    },
+    "artifactCount": {
+      "const": 5,
+      "type": "integer"
+    },
+    "toolPins": {
+      "type": "array",
+      "minItems": 9,
+      "maxItems": 9,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "bytes",
+          "sha256"
+        ],
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "bytes": {
+            "type": "integer"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      },
+      "uniqueItems": true
+    },
+    "toolCount": {
+      "const": 9,
+      "type": "integer"
+    },
+    "startTokenCount": {
+      "const": 1,
+      "type": "integer"
+    },
+    "worktreeBindingCount": {
+      "const": 2,
+      "type": "integer"
+    },
+    "migrationAdmissionCount": {
+      "const": 1,
+      "type": "integer"
+    },
+    "promotionReceiptCount": {
+      "const": 0,
+      "type": "integer"
+    },
+    "productionAuthorization": {
+      "const": false,
+      "type": "boolean"
+    },
+    "sealedPayloadSha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

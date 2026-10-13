@@ -1,0 +1,695 @@
+{
+  "schema": "dwp.hris.wave3-module-start-token.v1",
+  "tokenId": "HRIS-WAVE3-START-MOD-PER-COMPPLAN-R2",
+  "packetId": "HRIS-WAVE3-PACKET-MOD-PER-COMPPLAN-R2-PHASE-A",
+  "packetPath": "docs/06-delivery/hris/wave3-2026-10-13/mod-per-compplan/packet.v2.json",
+  "packetFileSha256": "f87751ba8760de6b19b950953ec0cc4b97d2dab99f96b0b1e25fefeb1ea7cc51",
+  "module": "PER",
+  "moduleId": "MOD-PER-COMPPLAN",
+  "sliceId": "MOD-PER-COMPPLAN",
+  "sessionId": "HRIS-PER",
+  "issuedAt": "2026-10-13T16:30:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "expiresAt": "2026-10-20T14:30:00+09:00",
+  "activationReceiptId": "HRIS-WAVE3-MOD-PER-COMPPLAN-PROMOTION-20261013-R2",
+  "state": "ISSUED_PENDING_PROMOTION_RECEIPT",
+  "predecessorAuthority": {
+    "phaseACarrier": {
+      "commit": "1f187a7903d2792b696a6f8ca2b207ebb79b33e1",
+      "tree": "17da7a80fed75c137ca76ea23081dae05155b19b",
+      "parent": "388ad0fb2e50689cdc2a00186ffc6ca07f237e57",
+      "branch": "dwp-dev",
+      "upstream": "origin/dwp-dev"
+    },
+    "phaseAManifest": {
+      "path": "docs/06-delivery/hris/wave3-2026-10-13/manifest.v1.json",
+      "bytes": 5089,
+      "sha256": "dd370dacbce5240f87ddcf77fa1fd21d478faa1a8fd372acd6ff73c5ceda6a82",
+      "sealedPayloadSha256": "ae119946a79349c7d2390b1d7b9a706f9e25440b4815958e5a0cf12a9496ced7"
+    },
+    "packetLifecycleState": "PACKET_PREPARED_START_WITHHELD",
+    "effectiveLifecycleStateAfterPromotion": "PACKET_AUTHORIZED_DOMAIN_AUTHORING",
+    "overriddenFields": [
+      "lifecycleState",
+      "startTokenId",
+      "worktreeBindings",
+      "migrationLease",
+      "authority.sourceChangeAuthority",
+      "authority.startTokenAuthority",
+      "authority.worktreeRegistrationAuthority",
+      "authority.migrationAdmissionAuthority"
+    ]
+  },
+  "executionBasePins": {
+    "frontend": {
+      "repository": "repo://dwp-frontend",
+      "branch": "dwp-dev",
+      "upstream": "origin/dwp-dev",
+      "commit": "a3a0a75451a7ed14b1f5135f1f56b6271dee41fd",
+      "tree": "906cc25aaf2b3deb28d95d59621d55c6abdadaac",
+      "clean": true,
+      "upstreamMatched": true
+    },
+    "backend": {
+      "repository": "repo://dwp-backend",
+      "branch": "dwp-dev",
+      "upstream": "origin/dwp-dev",
+      "commit": "8577ef532243c63b34877444738a4edde8b4c0e5",
+      "tree": "fd3ac7eff67aa6a2a1c41a52da1fe9dab6e9576b",
+      "cleanVerificationCheckout": true,
+      "upstreamMatched": true
+    },
+    "agent": {
+      "repository": "repo://dwp_agent",
+      "branch": "dwp-dev",
+      "upstream": "origin/dwp-dev",
+      "commit": "1d46fc4ab49c604efb7464574c49d13ee453e059",
+      "tree": "0b9a8dbfd828478ee825452e5aca8688c83e37ab",
+      "clean": true,
+      "upstreamMatched": true,
+      "hrisModuleSliceAuthority": false
+    }
+  },
+  "worktreeBindings": [
+    {
+      "module": "PER",
+      "slice_id": "MOD-PER-COMPPLAN",
+      "token_id": "HRIS-WAVE3-START-MOD-PER-COMPPLAN-R2",
+      "repo": "frontend",
+      "absolute_path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave3-20261013-r2/mod-per-compplan/frontend",
+      "branch": "codex/hris-wave3-per-compplan-frontend-20261013-r2",
+      "upstream": "origin/codex/hris-wave3-per-compplan-frontend-20261013-r2",
+      "head": "a3a0a75451a7ed14b1f5135f1f56b6271dee41fd",
+      "tree": "906cc25aaf2b3deb28d95d59621d55c6abdadaac",
+      "state_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "clean": "true",
+      "ahead": "0",
+      "behind": "0",
+      "state": "CREATED_PUSHED_CLEAN"
+    },
+    {
+      "module": "PER",
+      "slice_id": "MOD-PER-COMPPLAN",
+      "token_id": "HRIS-WAVE3-START-MOD-PER-COMPPLAN-R2",
+      "repo": "backend",
+      "absolute_path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave3-20261013-r2/mod-per-compplan/backend",
+      "branch": "codex/hris-wave3-per-compplan-backend-20261013-r2",
+      "upstream": "origin/codex/hris-wave3-per-compplan-backend-20261013-r2",
+      "head": "8577ef532243c63b34877444738a4edde8b4c0e5",
+      "tree": "fd3ac7eff67aa6a2a1c41a52da1fe9dab6e9576b",
+      "state_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "clean": "true",
+      "ahead": "0",
+      "behind": "0",
+      "state": "CREATED_PUSHED_CLEAN"
+    }
+  ],
+  "pathPolicy": {
+    "path": "docs/06-delivery/hris/wave3-2026-10-13/mod-per-compplan/touch-manifest.v1.json",
+    "bytes": 14782,
+    "sha256": "2b80e40e9460462e19007b6adb96d85bfc05bd56c173898024b78f8e4bb4eda3",
+    "manifestId": "HRIS-WAVE3-TOUCH-MOD-PER-COMPPLAN-R2",
+    "touchPolicyDigest": "1f742788b8c231d495de7cc84103f91d53a28481c0850499783322241ece140a",
+    "sealedPayloadSha256": "da59b212c28661570697d5ccf192f51b79fd0b1be083cc47da3870b97b42c67f",
+    "allowedPathCount": 8,
+    "protectedPathCount": 68,
+    "allowedPathsSha256": "491b1ab54a53daa2fd34a356f89eaa74c2438364bb1cc7d14f19c426028a4de3",
+    "protectedPathsSha256": "b2cdd49b6627fb4dd75843740431390947e8dd5206dc954220b1c3ae91d14c89"
+  },
+  "effectiveAllowedPaths": [
+    {
+      "repo": "frontend",
+      "kind": "PREFIX_GLOB",
+      "selector": "apps/dwp/src/features/hris/performance/compensation-planning/**"
+    },
+    {
+      "repo": "backend",
+      "kind": "PREFIX_GLOB",
+      "selector": "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/compensationplanning/**"
+    },
+    {
+      "repo": "backend",
+      "kind": "PREFIX_GLOB",
+      "selector": "dwp-people-server/src/test/java/com/dwp/services/people/hr/performance/compensationplanning/**"
+    },
+    {
+      "repo": "backend",
+      "kind": "PREFIX_GLOB",
+      "selector": "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/typedartifact/**"
+    },
+    {
+      "repo": "backend",
+      "kind": "PREFIX_GLOB",
+      "selector": "dwp-people-server/src/test/java/com/dwp/services/people/hr/performance/typedartifact/**"
+    },
+    {
+      "repo": "backend",
+      "kind": "EXACT_FILE",
+      "selector": "dwp-people-server/src/test/java/com/dwp/services/people/hris/performance/contracts/xcon/Xcon020ApprovedCompensationPlanSnapshotV1ProviderContractTest.java"
+    },
+    {
+      "repo": "backend",
+      "kind": "EXACT_FILE",
+      "selector": "dwp-people-server/src/test/java/com/dwp/services/people/hris/performance/contracts/xcon/Xcon021ApprovedCompensationPlanSnapshotPublishedV2ProviderContractTest.java"
+    },
+    {
+      "repo": "backend",
+      "kind": "EXACT_FILE",
+      "selector": "dwp-people-server/src/main/resources/db/performance-migration/V17__per_modern_compensation_planning.sql"
+    }
+  ],
+  "protectedPaths": [
+    {
+      "kind": "PREFIX_GLOB",
+      "repo": "backend",
+      "selector": "contracts/hris/**"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "backend",
+      "selector": "contracts/in-process/hris/workforce-snapshot-query-port.v1.schema.json"
+    },
+    {
+      "kind": "PREFIX_GLOB",
+      "repo": "backend",
+      "selector": "contracts/openapi/**"
+    },
+    {
+      "kind": "PREFIX_GLOB",
+      "repo": "backend",
+      "selector": "contracts/asyncapi/**"
+    },
+    {
+      "kind": "PREFIX_GLOB",
+      "repo": "backend",
+      "selector": "contracts/product-authorization/**"
+    },
+    {
+      "kind": "PREFIX_GLOB",
+      "repo": "backend",
+      "selector": "dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/**"
+    },
+    {
+      "kind": "PREFIX_GLOB",
+      "repo": "backend",
+      "selector": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/generated/**"
+    },
+    {
+      "kind": "PREFIX_GLOB",
+      "repo": "backend",
+      "selector": "dwp-people-server/src/main/resources/pep/**"
+    },
+    {
+      "kind": "PREFIX_GLOB",
+      "repo": "backend",
+      "selector": "dwp-people-server/src/main/resources/security/**"
+    },
+    {
+      "kind": "PREFIX_GLOB",
+      "repo": "backend",
+      "selector": "dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/workforce/v1/**"
+    },
+    {
+      "kind": "PREFIX_GLOB",
+      "repo": "backend",
+      "selector": "dwp-people-server/src/test/java/com/dwp/services/people/hris/contracts/workforce/v1/**"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "backend",
+      "selector": "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmV3PepRegistry.java"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "backend",
+      "selector": "dwp-people-server/src/main/java/com/dwp/services/people/security/HrisEmployeeChangeSecurityBridge.java"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "backend",
+      "selector": "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmV3PepRegistryTest.java"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "backend",
+      "selector": "dwp-people-server/src/test/java/com/dwp/services/people/security/HrisEmployeeChangeSecurityBridgeTest.java"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "backend",
+      "selector": "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmOwnerPepExecutionTest.java"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "backend",
+      "selector": "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmPepBindingConstraintsTest.java"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "backend",
+      "selector": "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmProductSurfacePepFilterTest.java"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "backend",
+      "selector": "scripts/generate-hris-contracts.py"
+    },
+    {
+      "kind": "PREFIX_GLOB",
+      "repo": "backend",
+      "selector": "dwp-approval-server/src/main/resources/product-authorization/**"
+    },
+    {
+      "kind": "PREFIX_GLOB",
+      "repo": "backend",
+      "selector": "dwp-auth-server/src/main/resources/product-authorization/**"
+    },
+    {
+      "kind": "PREFIX_GLOB",
+      "repo": "backend",
+      "selector": "dwp-meeting-server/src/main/resources/product-authorization/**"
+    },
+    {
+      "kind": "PREFIX_GLOB",
+      "repo": "backend",
+      "selector": "dwp-people-server/src/main/resources/product-authorization/**"
+    },
+    {
+      "kind": "PREFIX_GLOB",
+      "repo": "backend",
+      "selector": "dwp-platform-server/src/main/resources/product-authorization/**"
+    },
+    {
+      "kind": "PREFIX_GLOB",
+      "repo": "backend",
+      "selector": "dwp-space-server/src/main/resources/product-authorization/**"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "backend",
+      "selector": "scripts/export-openapi-contracts.py"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "backend",
+      "selector": "scripts/generate-product-authorization-contracts.py"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "backend",
+      "selector": "scripts/generate-product-authorization-fixtures.py"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "backend",
+      "selector": "scripts/generate-approval-document-projection-contracts.py"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "backend",
+      "selector": "scripts/generate-approval-extension-projection-contracts.py"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "backend",
+      "selector": "scripts/generate-approval-recovery11-projection-contracts.py"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "backend",
+      "selector": "scripts/generate-approval-release10-projection-contracts.py"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "backend",
+      "selector": "scripts/generate-approval-work-projection-contracts.py"
+    },
+    {
+      "kind": "PREFIX_GLOB",
+      "repo": "backend",
+      "selector": "dwp-gateway/**"
+    },
+    {
+      "kind": "PREFIX_GLOB",
+      "repo": "backend",
+      "selector": "dwp-migration-control/**"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "backend",
+      "selector": "build.gradle.kts"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "backend",
+      "selector": "settings.gradle.kts"
+    },
+    {
+      "kind": "PREFIX_GLOB",
+      "repo": "backend",
+      "selector": "gradle/**"
+    },
+    {
+      "kind": "PREFIX_GLOB",
+      "repo": "backend",
+      "selector": ".github/workflows/**"
+    },
+    {
+      "kind": "PREFIX_GLOB",
+      "repo": "frontend",
+      "selector": "apps/dwp/src/routes/**"
+    },
+    {
+      "kind": "PATTERN_GLOB",
+      "repo": "frontend",
+      "selector": "apps/dwp/src/features/hcm/hcm-navigation*.ts*"
+    },
+    {
+      "kind": "PATTERN_GLOB",
+      "repo": "frontend",
+      "selector": "apps/dwp/src/features/hcm/hcm-product-manifest*.ts*"
+    },
+    {
+      "kind": "PREFIX_GLOB",
+      "repo": "frontend",
+      "selector": "apps/dwp/src/features/hris/shell/**"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "frontend",
+      "selector": "apps/dwp/src/pages/hcm.tsx"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "frontend",
+      "selector": "apps/dwp/src/routes/product-surface-authorization.generated.ts"
+    },
+    {
+      "kind": "PREFIX_GLOB",
+      "repo": "frontend",
+      "selector": "architecture/**"
+    },
+    {
+      "kind": "PREFIX_GLOB",
+      "repo": "frontend",
+      "selector": "libs/api-contracts/**"
+    },
+    {
+      "kind": "PREFIX_GLOB",
+      "repo": "frontend",
+      "selector": "libs/shared-utils/src/auth/**"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "frontend",
+      "selector": "libs/shared-utils/src/test-utils/pilot-authorization-fixtures.generated.ts"
+    },
+    {
+      "kind": "PREFIX_GLOB",
+      "repo": "frontend",
+      "selector": "libs/shared-i18n/**"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "frontend",
+      "selector": "scripts/sync-openapi-contract.mjs"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "frontend",
+      "selector": "scripts/sync-agent-openapi-contract.mjs"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "frontend",
+      "selector": "scripts/sync-product-surface-authorization.mjs"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "frontend",
+      "selector": "scripts/sync-product-authorization-fixtures.mjs"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "frontend",
+      "selector": "scripts/sync-product-surface-internal-closure.mjs"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "frontend",
+      "selector": "scripts/generate-route-composition.mjs"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "frontend",
+      "selector": "scripts/product-authorization-fixture-versions.mjs"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "frontend",
+      "selector": "scripts/check-official-backend-contracts.mjs"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "frontend",
+      "selector": "scripts/check-official-backend-contracts.test.mjs"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "frontend",
+      "selector": "scripts/check-product-surface-production-readiness.mjs"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "frontend",
+      "selector": "scripts/check-product-surface-production-readiness.test.mjs"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "frontend",
+      "selector": "scripts/product-surface-readiness-authorization.mjs"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "frontend",
+      "selector": "scripts/sync-product-surface-internal-closure.test.mjs"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "frontend",
+      "selector": "deploy/nginx/dwp-product-routes.conf"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "frontend",
+      "selector": "package.json"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "frontend",
+      "selector": "yarn.lock"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "frontend",
+      "selector": "nx.json"
+    },
+    {
+      "kind": "PATTERN_GLOB",
+      "repo": "frontend",
+      "selector": "tsconfig*.json"
+    }
+  ],
+  "dependencyBinding": {
+    "phaseACarrier": {
+      "commit": "1f187a7903d2792b696a6f8ca2b207ebb79b33e1",
+      "tree": "17da7a80fed75c137ca76ea23081dae05155b19b",
+      "parent": "388ad0fb2e50689cdc2a00186ffc6ca07f237e57",
+      "branch": "dwp-dev",
+      "upstream": "origin/dwp-dev"
+    },
+    "phaseAManifestSha256": "dd370dacbce5240f87ddcf77fa1fd21d478faa1a8fd372acd6ff73c5ceda6a82",
+    "packetFileSha256": "f87751ba8760de6b19b950953ec0cc4b97d2dab99f96b0b1e25fefeb1ea7cc51",
+    "packetSealedPayloadSha256": "6c00ef9d5f5c7b8d06c659e237a6dc2dbdd9b5704223f6dd2611986149353283",
+    "preStartControlGrantFileSha256": "60a460dcc8d4b8134e59a77fd574410299d0a0b2e67f84959a9dd7de9da47c23",
+    "preStartControlGrantSealedPayloadSha256": "434334f825716925fb834aec047e65d1de2cddb6c51f4c8f482562feec7d016c",
+    "targetedTestReceiptFileSha256": "adbc2b920ac9f6284492212af559b2966a1ec7c402ed96f7dbcea459eb108569",
+    "targetedTestReceiptSealedPayloadSha256": "11fd3f37dcb37f3a39adbf82dafff05c978e2b1acfb84d067cdfb179f55c37d7",
+    "dependencies": [
+      "DEP-001",
+      "DEP-002",
+      "DEP-003",
+      "DEP-016",
+      "DEP-019"
+    ],
+    "producerResultPins": {
+      "DEP-019": "SELF_PRODUCER_OBLIGATION_RESULT_ABSENT",
+      "payConsumer": "BASE-TFR-PAY-016_REMAINS_WITHHELD"
+    },
+    "contractPins": {
+      "authorizationVersion": 38,
+      "authorizationSha256": "a41145d6a2faefd2e6030a2ca9a070769019d4db5513ea214bf542dda31c374a",
+      "authorizationBundleFileSha256": "de449058055b5ae9500489735910fdcf593b34a9ab05e927663a7fd74d740667",
+      "gatewayOpenApiSha256": "453f3620dca02a5ce82df273be986633fb5d694084ca080859bb47472027d234",
+      "predecessorContractReseal": {
+        "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/mod-per-compplan-r1/contract-reseal-authority.v1.json",
+        "bytes": 340932,
+        "sha256": "14c5827bb0448d1766106365f53cdcc24e13beb6d0041ba61dca02e3552a7f87"
+      },
+      "predecessorPacket": {
+        "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/mod-per-compplan-r1/packet.v1.json",
+        "bytes": 33756,
+        "sha256": "8ba8b7e079194c710addb7b7df76ba90933d04ee4c8694ec0c6c529163ee5c75"
+      },
+      "predecessorDisposition": "PREPARED_STALE_REISSUE_REQUIRED"
+    }
+  },
+  "dependencyPinsSha256": "27a1a2024a83b73476cfb9724ec0f5f17b0efe326dadfb5783e621384846ee85",
+  "controlObligations": {
+    "path": "docs/06-delivery/hris/wave3-2026-10-13/control-requests.v1.json",
+    "bytes": 4797,
+    "sha256": "0da7d28e69e087bc4815086a7365bc37763bf96d2653b4ecb8e5b38cedff106c",
+    "registerId": "HRIS-WAVE3-CONTROL-REQUESTS-20261013-R1",
+    "sealedPayloadSha256": "7d5a3712cdb782b2a28810da02fa9227252762287f29210ed1de799b0410cb26",
+    "preStart": [
+      {
+        "requestId": "W3-CR-MOD-PER-COMPPLAN-TYPED_ARTIFACT_BOOTSTRAP-R1",
+        "moduleId": "MOD-PER-COMPPLAN",
+        "category": "TYPED_ARTIFACT_BOOTSTRAP",
+        "owner": "CENTRAL_CONTROL",
+        "phase": "PRE_START",
+        "requiredBeforeStartToken": true,
+        "moduleMayImplement": false,
+        "registrationState": "REGISTERED_PHASE_A",
+        "fulfillmentState": "ALLOCATED_REGISTERED_GRANTED",
+        "scope": "exclusively allocate typedartifact main/test roots and prf_per_artifact_versions as the single V17 shared foundation table; module implementation remains token-gated"
+      },
+      {
+        "requestId": "W3-CR-MOD-PER-COMPPLAN-WORKFORCE_SNAPSHOT_COMPENSATION_PROJECTION-R1",
+        "moduleId": "MOD-PER-COMPPLAN",
+        "category": "WORKFORCE_SNAPSHOT_COMPENSATION_PROJECTION",
+        "owner": "CENTRAL_CONTROL",
+        "phase": "PRE_START",
+        "requiredBeforeStartToken": true,
+        "moduleMayImplement": false,
+        "registrationState": "REGISTERED_PHASE_A",
+        "fulfillmentState": "IMPLEMENTED_TESTED_REGISTERED_GRANTED",
+        "scope": "pin verified queryCompensationPopulation with HRIS_PER_COMPENSATION_POPULATION and COMPENSATION_POPULATION_V1 without changing PERFORMANCE_V1",
+        "fulfillmentQualification": "CONTRACT_ABI_IMPLEMENTED_TESTED_REGISTERED_GRANTED; owner runtime provider wiring intentionally fail-closed and remains post-result Central integration"
+      }
+    ],
+    "afterPushedModuleResult": [
+      {
+        "requestId": "W3-CR-MOD-PER-COMPPLAN-AUTH_PEP-R1",
+        "moduleId": "MOD-PER-COMPPLAN",
+        "category": "AUTH_PEP",
+        "owner": "CENTRAL_CONTROL",
+        "phase": "AFTER_PUSHED_MODULE_RESULT",
+        "requiredBeforeStartToken": false,
+        "moduleMayImplement": false,
+        "registrationState": "REGISTERED_PHASE_A",
+        "fulfillmentState": "REGISTERED_WITH_FULFILLMENT_AFTER_RESULT",
+        "scope": "register MOD-AUTH-025/026/027 and deny-precedence bindings"
+      },
+      {
+        "requestId": "W3-CR-MOD-PER-COMPPLAN-CONTRACT_GATEWAY-R1",
+        "moduleId": "MOD-PER-COMPPLAN",
+        "category": "CONTRACT_GATEWAY",
+        "owner": "CENTRAL_CONTROL",
+        "phase": "AFTER_PUSHED_MODULE_RESULT",
+        "requiredBeforeStartToken": false,
+        "moduleMayImplement": false,
+        "registrationState": "REGISTERED_PHASE_A",
+        "fulfillmentState": "REGISTERED_WITH_FULFILLMENT_AFTER_RESULT",
+        "scope": "publish OpenAPI, AsyncAPI, XCON-020/021 and generated Gateway contracts"
+      },
+      {
+        "requestId": "W3-CR-MOD-PER-COMPPLAN-SHELL_ROUTE-R1",
+        "moduleId": "MOD-PER-COMPPLAN",
+        "category": "SHELL_ROUTE",
+        "owner": "CENTRAL_CONTROL",
+        "phase": "AFTER_PUSHED_MODULE_RESULT",
+        "requiredBeforeStartToken": false,
+        "moduleMayImplement": false,
+        "registrationState": "REGISTERED_PHASE_A",
+        "fulfillmentState": "REGISTERED_WITH_FULFILLMENT_AFTER_RESULT",
+        "scope": "register route, navigation, product manifest, shell permission and page host"
+      },
+      {
+        "requestId": "W3-CR-MOD-PER-COMPPLAN-SVC_PEP_SECURITY-R1",
+        "moduleId": "MOD-PER-COMPPLAN",
+        "category": "SVC_PEP_SECURITY",
+        "owner": "CENTRAL_CONTROL",
+        "phase": "AFTER_PUSHED_MODULE_RESULT",
+        "requiredBeforeStartToken": false,
+        "moduleMayImplement": false,
+        "registrationState": "REGISTERED_PHASE_A",
+        "fulfillmentState": "REGISTERED_WITH_FULFILLMENT_AFTER_RESULT",
+        "scope": "register SVC-PEP-PER-001 workload, tenant, purpose, projection, replay and negative-security bindings"
+      },
+      {
+        "requestId": "W3-CR-MOD-PER-COMPPLAN-INTEGRATION_VERIFY-R1",
+        "moduleId": "MOD-PER-COMPPLAN",
+        "category": "INTEGRATION_VERIFY",
+        "owner": "CENTRAL_CONTROL",
+        "phase": "AFTER_PUSHED_MODULE_RESULT",
+        "requiredBeforeStartToken": false,
+        "moduleMayImplement": false,
+        "registrationState": "REGISTERED_PHASE_A",
+        "fulfillmentState": "REGISTERED_WITH_FULFILLMENT_AFTER_RESULT",
+        "scope": "wire and test HRM owner runtime compensation projection before central integration acceptance; then run the single central contract, route, authorization, sync and PAY-withheld verification batch"
+      }
+    ]
+  },
+  "preStartControlGrant": {
+    "path": "docs/06-delivery/hris/wave3-2026-10-13/mod-per-compplan/prestart-control-grant-receipt.v1.json",
+    "bytes": 9575,
+    "sha256": "60a460dcc8d4b8134e59a77fd574410299d0a0b2e67f84959a9dd7de9da47c23",
+    "receiptId": "HRIS-WAVE3-PRESTART-CONTROL-GRANT-MOD-PER-COMPPLAN-R1",
+    "sealedPayloadSha256": "434334f825716925fb834aec047e65d1de2cddb6c51f4c8f482562feec7d016c",
+    "status": "PASS_TWO_PRESTART_CONDITIONS_FULFILLED",
+    "conditionStates": {
+      "TYPED_ARTIFACT_BOOTSTRAP": "ALLOCATED_REGISTERED_GRANTED",
+      "WORKFORCE_SNAPSHOT_COMPENSATION_PROJECTION": "IMPLEMENTED_TESTED_REGISTERED_GRANTED"
+    },
+    "revalidatedAtPhaseACarrier": true
+  },
+  "migrationLease": {
+    "leaseId": "HRIS-WAVE3-LEASE-MOD-PER-COMPPLAN-PERFORMANCE-V17-R3",
+    "path": "docs/06-delivery/hris/wave3-delegation-successors/2026-10-13/mod-per-compplan-r2/migration-lease-admission.v1.json",
+    "bytes": 3704,
+    "sha256": "c7b3efe6b5115a581b0b4e479d314ce1c80a39e79b4ee0aa298d83fa9f9a4315",
+    "sealedPayloadSha256": "cf79bdd973db1ca320bae7f06588f1b9e6c4be5a52f8bd74e95ec0917eb5b837",
+    "exactRelativePath": "dwp-people-server/src/main/resources/db/performance-migration/V17__per_modern_compensation_planning.sql",
+    "status": "ADMITTED_DOMAIN_AUTHORING",
+    "effectiveAfterPromotionOnly": true
+  },
+  "permittedAction": "START_DOMAIN_MODULE_IMPLEMENTATION_AFTER_PROMOTION",
+  "invalidationConditions": [
+    "promotion receipt does not list this exact token in the active closed set",
+    "Phase A carrier, packet, grant, touch policy, or test receipt pin changes",
+    "token, worktree, dependency, or migration lease digest changes",
+    "a worktree is dirty, unpublished, ahead, behind, or on another branch",
+    "an allowed-path or inherited common-Control boundary is crossed",
+    "the Performance migration boundary changes or V17 is occupied",
+    "the token expires or is revoked"
+  ],
+  "authority": {
+    "domainAuthoringOnly": true,
+    "sourceChangeAuthorized": true,
+    "effectiveAfterPromotionOnly": true,
+    "currentlyEffective": false,
+    "exactWorktreesOnly": true,
+    "exactAllowedPathsOnly": true,
+    "migrationAuthorityMode": "ADMITTED_EXACT_LEASE",
+    "migrationEditAuthorized": true,
+    "commitAndPushTokenBranchesAuthorized": true,
+    "sharedControlPathChangeAuthorized": false,
+    "integrationMergeAuthorized": false,
+    "payConsumptionAuthorized": false,
+    "customerDataAuthorized": false,
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "sealedPayloadSha256": "355f169b75a46609c6d22d08e959bbabf3a3d40ad06d0f3a04682f8496482caa"
+}
