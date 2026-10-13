@@ -122,7 +122,25 @@
         "STALE_OWNER_VERSION",
         "TENANT_AND_PERMISSION_DENIAL",
         "IDEMPOTENT_COMMAND_AND_OUTBOX_RECOVERY"
-      ]
+      ],
+      "completion": {
+        "state": "READY_FOR_CONTROL_INTEGRATION",
+        "frontendCommit": "ec3b67116e24f9e5215a705092cf3bc1b31e2010",
+        "backendCommit": "e166ce6df462da02a4d0eb56f271cea59586b73d",
+        "validation": [
+          "FE_G3_SLICE_6_OF_6_PASS",
+          "BE_G3_SLICE_2_OF_2_PASS",
+          "FE_BOUNDED_MODULE_15_OF_15_PASS",
+          "BE_BOUNDED_MODULE_9_OF_9_PASS",
+          "POST_WIRE_FE_14_OF_14_PASS",
+          "POST_WIRE_BE_13_OF_13_PASS",
+          "MIGRATION_CLEAN_UPGRADE_PASS",
+          "WORKER_OUTBOX_RECOVERY_2_OF_2_PASS"
+        ],
+        "remoteVerified": true,
+        "worktreesClean": true,
+        "blockers": []
+      }
     },
     {
       "module": "TIM",
@@ -160,7 +178,23 @@
         "GOLDEN_MINUTE_TOTALS",
         "DETERMINISTIC_REPLAY",
         "TENANT_PERMISSION_AND_IDEMPOTENCY"
-      ]
+      ],
+      "completion": {
+        "state": "READY_FOR_CONTROL_INTEGRATION",
+        "frontendCommit": "1d4f130354a1ff125c8ce70363c2d6adb4df7332",
+        "backendCommit": "bfd273378008c827d84b5c61b12ba53322d3f641",
+        "validation": [
+          "FE_SLICE_7_OF_7_PASS",
+          "FE_TIME_MODULE_105_OF_105_PASS",
+          "BE_SLICE_CONTRACT_PASS",
+          "BE_POSTGRES_MIGRATION_AND_IAQ_REGRESSION_PASS",
+          "BE_DWP_TIME_SERVER_TEST_PASS",
+          "DIFF_CHECK_PASS"
+        ],
+        "remoteVerified": true,
+        "worktreesClean": true,
+        "blockers": []
+      }
     },
     {
       "module": "PAY",
@@ -211,7 +245,20 @@
         "CURRENCY_UNIT_AND_ROUNDING",
         "TIMEOUT_AND_SANDBOX_SAFETY",
         "PUBLISH_IDEMPOTENCY_AND_TENANT_ISOLATION"
-      ]
+      ],
+      "completion": {
+        "state": "READY_FOR_CONTROL_INTEGRATION",
+        "frontendCommit": "054675cb136c4480a52ea78fdcb4254a769c17a2",
+        "backendCommit": "aae18ae06dfea22dd62a07fcb4bd85f81b361b86",
+        "validation": [
+          "PAY_006_CONTRACT_AND_GOLDEN_CASE_PASS",
+          "MIGRATION_VALIDATION_PASS",
+          "BOUNDED_FRONTEND_AND_BACKEND_MODULE_BATCH_PASS"
+        ],
+        "remoteVerified": true,
+        "worktreesClean": true,
+        "blockers": []
+      }
     },
     {
       "module": "PER",
@@ -253,7 +300,25 @@
         "PREVIEW_HASH_MISMATCH",
         "HRM_PER_SNAPSHOT_CONTRACT",
         "NO_CROSS_CONTEXT_WRITE"
-      ]
+      ],
+      "completion": {
+        "state": "READY_FOR_CONTROL_INTEGRATION_WITH_DECLARED_BASELINE_DRIFT",
+        "frontendCommit": "NOT_TOUCHED_AT_c2f26f7c270558e490f40c0f0df70e4426edd4b7",
+        "backendCommit": "48c33e85e40c7ac027175aa59a6077d33cb0e160",
+        "validation": [
+          "SEALED_SLICE_PASS",
+          "POSTGRES_RECOVERY_AND_RLS_PASS",
+          "NEW_STARTUP_REGRESSION_2_OF_2_PASS_AFTER_FIX",
+          "DIFF_CHECK_PASS"
+        ],
+        "declaredBaselineDrift": [
+          "FOUR_EXISTING_TESTS_EXPECT_MIGRATION_53_WHILE_BASE_PIN_HAS_54",
+          "ONE_EXISTING_TEST_EXPECTS_OPENAPI_94_WHILE_BASE_PIN_HAS_100"
+        ],
+        "remoteVerified": true,
+        "worktreesClean": true,
+        "blockers": []
+      }
     }
   ],
   "sysSupport": {
