@@ -1,0 +1,382 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dwp.local/hris/wave3-activation-state.schema.v1.json",
+  "title": "HRIS Wave3 pre-promotion activation state",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "stateId",
+    "issuedAt",
+    "state",
+    "activationReceiptId",
+    "predecessor",
+    "effectiveDelegationAfterPromotion",
+    "currentActiveTokenClosedSet",
+    "activeTokenClosedSetAfterPromotion",
+    "worktreeRegister",
+    "authority",
+    "sealedPayloadSha256"
+  ],
+  "properties": {
+    "schema": {
+      "const": "dwp.hris.wave3-mod-per-compplan-activation-state.v1",
+      "type": "string"
+    },
+    "stateId": {
+      "const": "HRIS-WAVE3-MOD-PER-COMPPLAN-ACTIVATION-STATE-20261013-R1",
+      "type": "string"
+    },
+    "issuedAt": {
+      "type": "string"
+    },
+    "state": {
+      "const": "BUNDLE_SEALED_PENDING_PROMOTION_RECEIPT",
+      "type": "string"
+    },
+    "activationReceiptId": {
+      "const": "HRIS-WAVE3-MOD-PER-COMPPLAN-PROMOTION-20261013-R1",
+      "type": "string"
+    },
+    "predecessor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "phaseACarrier",
+        "phaseAManifest"
+      ],
+      "properties": {
+        "phaseACarrier": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "commit",
+            "tree",
+            "parent",
+            "branch",
+            "upstream"
+          ],
+          "properties": {
+            "commit": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "tree": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "parent": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "branch": {
+              "type": "string"
+            },
+            "upstream": {
+              "type": "string"
+            }
+          }
+        },
+        "phaseAManifest": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "path",
+            "bytes",
+            "sha256",
+            "sealedPayloadSha256"
+          ],
+          "properties": {
+            "path": {
+              "type": "string"
+            },
+            "bytes": {
+              "type": "integer"
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "sealedPayloadSha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        }
+      }
+    },
+    "effectiveDelegationAfterPromotion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "module",
+        "moduleId",
+        "sliceId",
+        "sessionId",
+        "packetId",
+        "effectivePacketState",
+        "tokenId",
+        "tokenPath",
+        "tokenSha256",
+        "tokenSealedPayloadSha256",
+        "migrationAuthorityMode",
+        "migrationLeaseId",
+        "migrationLeasePath",
+        "migrationLeaseSha256",
+        "migrationLeaseSeal",
+        "authority"
+      ],
+      "properties": {
+        "module": {
+          "type": "string"
+        },
+        "moduleId": {
+          "type": "string"
+        },
+        "sliceId": {
+          "type": "string"
+        },
+        "sessionId": {
+          "type": "string"
+        },
+        "packetId": {
+          "type": "string"
+        },
+        "effectivePacketState": {
+          "type": "string"
+        },
+        "tokenId": {
+          "type": "string"
+        },
+        "tokenPath": {
+          "type": "string"
+        },
+        "tokenSha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "tokenSealedPayloadSha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "migrationAuthorityMode": {
+          "type": "string"
+        },
+        "migrationLeaseId": {
+          "type": "string"
+        },
+        "migrationLeasePath": {
+          "type": "string"
+        },
+        "migrationLeaseSha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "migrationLeaseSeal": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "authority": {
+          "type": "string"
+        }
+      }
+    },
+    "currentActiveTokenClosedSet": {
+      "const": [],
+      "type": "array",
+      "minItems": 0,
+      "maxItems": 0,
+      "uniqueItems": true,
+      "items": false
+    },
+    "activeTokenClosedSetAfterPromotion": {
+      "const": [
+        "HRIS-WAVE3-START-MOD-PER-COMPPLAN-R1"
+      ],
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string"
+      }
+    },
+    "worktreeRegister": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "bytes",
+        "sha256",
+        "rows",
+        "bindings"
+      ],
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "bytes": {
+          "type": "integer"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "rows": {
+          "type": "integer"
+        },
+        "bindings": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "module",
+              "slice_id",
+              "token_id",
+              "repo",
+              "absolute_path",
+              "branch",
+              "upstream",
+              "head",
+              "tree",
+              "state_sha256",
+              "clean",
+              "ahead",
+              "behind",
+              "state"
+            ],
+            "properties": {
+              "module": {
+                "type": "string"
+              },
+              "slice_id": {
+                "type": "string"
+              },
+              "token_id": {
+                "type": "string"
+              },
+              "repo": {
+                "type": "string"
+              },
+              "absolute_path": {
+                "type": "string"
+              },
+              "branch": {
+                "type": "string"
+              },
+              "upstream": {
+                "type": "string"
+              },
+              "head": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{40}$"
+              },
+              "tree": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{40}$"
+              },
+              "state_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "clean": {
+                "type": "string"
+              },
+              "ahead": {
+                "type": "string"
+              },
+              "behind": {
+                "type": "string"
+              },
+              "state": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "promotionReceiptIssued",
+        "currentModuleAuthoringAuthorized",
+        "moduleAuthoringAuthorizedAfterPromotion",
+        "authorizedModulesAfterPromotion",
+        "authorizedSlicesAfterPromotion",
+        "migrationAdmissionAuthorizedAfterPromotion",
+        "sharedControlPathChangeAuthorizedForModule",
+        "integrationMergeAuthorized",
+        "payConsumptionAuthorized",
+        "customerDataAuthorized",
+        "customerActivationAuthorized",
+        "productionReleaseAuthorized"
+      ],
+      "properties": {
+        "promotionReceiptIssued": {
+          "type": "boolean"
+        },
+        "currentModuleAuthoringAuthorized": {
+          "type": "boolean"
+        },
+        "moduleAuthoringAuthorizedAfterPromotion": {
+          "type": "boolean"
+        },
+        "authorizedModulesAfterPromotion": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
+        },
+        "authorizedSlicesAfterPromotion": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
+        },
+        "migrationAdmissionAuthorizedAfterPromotion": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
+        },
+        "sharedControlPathChangeAuthorizedForModule": {
+          "type": "boolean"
+        },
+        "integrationMergeAuthorized": {
+          "type": "boolean"
+        },
+        "payConsumptionAuthorized": {
+          "type": "boolean"
+        },
+        "customerDataAuthorized": {
+          "type": "boolean"
+        },
+        "customerActivationAuthorized": {
+          "type": "boolean"
+        },
+        "productionReleaseAuthorized": {
+          "type": "boolean"
+        }
+      }
+    },
+    "sealedPayloadSha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

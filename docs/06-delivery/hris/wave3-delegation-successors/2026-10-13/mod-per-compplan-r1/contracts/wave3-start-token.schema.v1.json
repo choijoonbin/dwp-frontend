@@ -1,0 +1,1053 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dwp.local/hris/wave3-start-token.schema.v1.json",
+  "title": "HRIS Wave3 module start token",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "tokenId",
+    "packetId",
+    "packetPath",
+    "packetFileSha256",
+    "module",
+    "moduleId",
+    "sliceId",
+    "sessionId",
+    "issuedAt",
+    "issuedBy",
+    "expiresAt",
+    "activationReceiptId",
+    "state",
+    "predecessorAuthority",
+    "executionBasePins",
+    "worktreeBindings",
+    "pathPolicy",
+    "effectiveAllowedPaths",
+    "protectedPaths",
+    "dependencyBinding",
+    "dependencyPinsSha256",
+    "controlObligations",
+    "preStartControlGrant",
+    "migrationLease",
+    "permittedAction",
+    "invalidationConditions",
+    "authority",
+    "sealedPayloadSha256"
+  ],
+  "properties": {
+    "schema": {
+      "const": "dwp.hris.wave3-module-start-token.v1",
+      "type": "string"
+    },
+    "tokenId": {
+      "const": "HRIS-WAVE3-START-MOD-PER-COMPPLAN-R1",
+      "type": "string"
+    },
+    "packetId": {
+      "const": "HRIS-WAVE3-PACKET-MOD-PER-COMPPLAN-R2-PHASE-A",
+      "type": "string"
+    },
+    "packetPath": {
+      "type": "string"
+    },
+    "packetFileSha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "module": {
+      "const": "PER",
+      "type": "string"
+    },
+    "moduleId": {
+      "const": "MOD-PER-COMPPLAN",
+      "type": "string"
+    },
+    "sliceId": {
+      "const": "MOD-PER-COMPPLAN",
+      "type": "string"
+    },
+    "sessionId": {
+      "const": "HRIS-PER",
+      "type": "string"
+    },
+    "issuedAt": {
+      "type": "string"
+    },
+    "issuedBy": {
+      "const": "SYS_COMMON_INTEGRATION_CONTROL",
+      "type": "string"
+    },
+    "expiresAt": {
+      "type": "string"
+    },
+    "activationReceiptId": {
+      "const": "HRIS-WAVE3-MOD-PER-COMPPLAN-PROMOTION-20261013-R1",
+      "type": "string"
+    },
+    "state": {
+      "const": "ISSUED_PENDING_PROMOTION_RECEIPT",
+      "type": "string"
+    },
+    "predecessorAuthority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "phaseACarrier",
+        "phaseAManifest",
+        "packetLifecycleState",
+        "effectiveLifecycleStateAfterPromotion",
+        "overriddenFields"
+      ],
+      "properties": {
+        "phaseACarrier": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "commit",
+            "tree",
+            "parent",
+            "branch",
+            "upstream"
+          ],
+          "properties": {
+            "commit": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "tree": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "parent": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "branch": {
+              "type": "string"
+            },
+            "upstream": {
+              "type": "string"
+            }
+          }
+        },
+        "phaseAManifest": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "path",
+            "bytes",
+            "sha256",
+            "sealedPayloadSha256"
+          ],
+          "properties": {
+            "path": {
+              "type": "string"
+            },
+            "bytes": {
+              "type": "integer"
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "sealedPayloadSha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        "packetLifecycleState": {
+          "type": "string"
+        },
+        "effectiveLifecycleStateAfterPromotion": {
+          "type": "string"
+        },
+        "overriddenFields": {
+          "type": "array",
+          "minItems": 8,
+          "maxItems": 8,
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "executionBasePins": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "frontend",
+        "backend",
+        "agent"
+      ],
+      "properties": {
+        "frontend": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "repository",
+            "branch",
+            "upstream",
+            "commit",
+            "tree",
+            "clean",
+            "upstreamMatched"
+          ],
+          "properties": {
+            "repository": {
+              "type": "string"
+            },
+            "branch": {
+              "type": "string"
+            },
+            "upstream": {
+              "type": "string"
+            },
+            "commit": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "tree": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "clean": {
+              "type": "boolean"
+            },
+            "upstreamMatched": {
+              "type": "boolean"
+            }
+          }
+        },
+        "backend": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "repository",
+            "branch",
+            "upstream",
+            "commit",
+            "tree",
+            "cleanVerificationCheckout",
+            "upstreamMatched"
+          ],
+          "properties": {
+            "repository": {
+              "type": "string"
+            },
+            "branch": {
+              "type": "string"
+            },
+            "upstream": {
+              "type": "string"
+            },
+            "commit": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "tree": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "cleanVerificationCheckout": {
+              "type": "boolean"
+            },
+            "upstreamMatched": {
+              "type": "boolean"
+            }
+          }
+        },
+        "agent": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "repository",
+            "branch",
+            "upstream",
+            "commit",
+            "tree",
+            "clean",
+            "upstreamMatched",
+            "hrisModuleSliceAuthority"
+          ],
+          "properties": {
+            "repository": {
+              "type": "string"
+            },
+            "branch": {
+              "type": "string"
+            },
+            "upstream": {
+              "type": "string"
+            },
+            "commit": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "tree": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "clean": {
+              "type": "boolean"
+            },
+            "upstreamMatched": {
+              "type": "boolean"
+            },
+            "hrisModuleSliceAuthority": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    },
+    "worktreeBindings": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "module",
+          "slice_id",
+          "token_id",
+          "repo",
+          "absolute_path",
+          "branch",
+          "upstream",
+          "head",
+          "tree",
+          "state_sha256",
+          "clean",
+          "ahead",
+          "behind",
+          "state"
+        ],
+        "properties": {
+          "module": {
+            "type": "string"
+          },
+          "slice_id": {
+            "type": "string"
+          },
+          "token_id": {
+            "type": "string"
+          },
+          "repo": {
+            "type": "string"
+          },
+          "absolute_path": {
+            "type": "string"
+          },
+          "branch": {
+            "type": "string"
+          },
+          "upstream": {
+            "type": "string"
+          },
+          "head": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{40}$"
+          },
+          "tree": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{40}$"
+          },
+          "state_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "clean": {
+            "type": "string"
+          },
+          "ahead": {
+            "type": "string"
+          },
+          "behind": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          }
+        }
+      },
+      "uniqueItems": true
+    },
+    "pathPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "bytes",
+        "sha256",
+        "manifestId",
+        "touchPolicyDigest",
+        "sealedPayloadSha256",
+        "allowedPathCount",
+        "protectedPathCount",
+        "allowedPathsSha256",
+        "protectedPathsSha256"
+      ],
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "bytes": {
+          "type": "integer"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "manifestId": {
+          "type": "string"
+        },
+        "touchPolicyDigest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "sealedPayloadSha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "allowedPathCount": {
+          "type": "integer"
+        },
+        "protectedPathCount": {
+          "type": "integer"
+        },
+        "allowedPathsSha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "protectedPathsSha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "effectiveAllowedPaths": {
+      "type": "array",
+      "minItems": 8,
+      "maxItems": 8,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "repo",
+          "kind",
+          "selector"
+        ],
+        "properties": {
+          "repo": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "selector": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "protectedPaths": {
+      "type": "array",
+      "minItems": 68,
+      "maxItems": 68,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "kind",
+          "repo",
+          "selector"
+        ],
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "repo": {
+            "type": "string"
+          },
+          "selector": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "dependencyBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "phaseACarrier",
+        "phaseAManifestSha256",
+        "packetFileSha256",
+        "packetSealedPayloadSha256",
+        "preStartControlGrantFileSha256",
+        "preStartControlGrantSealedPayloadSha256",
+        "targetedTestReceiptFileSha256",
+        "targetedTestReceiptSealedPayloadSha256",
+        "dependencies",
+        "producerResultPins",
+        "contractPins"
+      ],
+      "properties": {
+        "phaseACarrier": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "commit",
+            "tree",
+            "parent",
+            "branch",
+            "upstream"
+          ],
+          "properties": {
+            "commit": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "tree": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "parent": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "branch": {
+              "type": "string"
+            },
+            "upstream": {
+              "type": "string"
+            }
+          }
+        },
+        "phaseAManifestSha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "packetFileSha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "packetSealedPayloadSha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "preStartControlGrantFileSha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "preStartControlGrantSealedPayloadSha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "targetedTestReceiptFileSha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "targetedTestReceiptSealedPayloadSha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "dependencies": {
+          "type": "array",
+          "minItems": 5,
+          "maxItems": 5,
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
+        },
+        "producerResultPins": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "DEP-019",
+            "payConsumer"
+          ],
+          "properties": {
+            "DEP-019": {
+              "type": "string"
+            },
+            "payConsumer": {
+              "type": "string"
+            }
+          }
+        },
+        "contractPins": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "authorizationVersion",
+            "authorizationSha256",
+            "authorizationBundleFileSha256",
+            "gatewayOpenApiSha256",
+            "predecessorContractReseal",
+            "predecessorPacket",
+            "predecessorDisposition"
+          ],
+          "properties": {
+            "authorizationVersion": {
+              "type": "integer"
+            },
+            "authorizationSha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "authorizationBundleFileSha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "gatewayOpenApiSha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "predecessorContractReseal": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "path",
+                "bytes",
+                "sha256"
+              ],
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "bytes": {
+                  "type": "integer"
+                },
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                }
+              }
+            },
+            "predecessorPacket": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "path",
+                "bytes",
+                "sha256"
+              ],
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "bytes": {
+                  "type": "integer"
+                },
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                }
+              }
+            },
+            "predecessorDisposition": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "dependencyPinsSha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "controlObligations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "bytes",
+        "sha256",
+        "registerId",
+        "sealedPayloadSha256",
+        "preStart",
+        "afterPushedModuleResult"
+      ],
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "bytes": {
+          "type": "integer"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "registerId": {
+          "type": "string"
+        },
+        "sealedPayloadSha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "preStart": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "uniqueItems": true,
+          "prefixItems": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "requestId",
+                "moduleId",
+                "category",
+                "owner",
+                "phase",
+                "requiredBeforeStartToken",
+                "moduleMayImplement",
+                "registrationState",
+                "fulfillmentState",
+                "scope"
+              ],
+              "properties": {
+                "requestId": {
+                  "type": "string"
+                },
+                "moduleId": {
+                  "type": "string"
+                },
+                "category": {
+                  "type": "string"
+                },
+                "owner": {
+                  "type": "string"
+                },
+                "phase": {
+                  "type": "string"
+                },
+                "requiredBeforeStartToken": {
+                  "type": "boolean"
+                },
+                "moduleMayImplement": {
+                  "type": "boolean"
+                },
+                "registrationState": {
+                  "type": "string"
+                },
+                "fulfillmentState": {
+                  "type": "string"
+                },
+                "scope": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "requestId",
+                "moduleId",
+                "category",
+                "owner",
+                "phase",
+                "requiredBeforeStartToken",
+                "moduleMayImplement",
+                "registrationState",
+                "fulfillmentState",
+                "scope",
+                "fulfillmentQualification"
+              ],
+              "properties": {
+                "requestId": {
+                  "type": "string"
+                },
+                "moduleId": {
+                  "type": "string"
+                },
+                "category": {
+                  "type": "string"
+                },
+                "owner": {
+                  "type": "string"
+                },
+                "phase": {
+                  "type": "string"
+                },
+                "requiredBeforeStartToken": {
+                  "type": "boolean"
+                },
+                "moduleMayImplement": {
+                  "type": "boolean"
+                },
+                "registrationState": {
+                  "type": "string"
+                },
+                "fulfillmentState": {
+                  "type": "string"
+                },
+                "scope": {
+                  "type": "string"
+                },
+                "fulfillmentQualification": {
+                  "type": "string"
+                }
+              }
+            }
+          ],
+          "items": false
+        },
+        "afterPushedModuleResult": {
+          "type": "array",
+          "minItems": 5,
+          "maxItems": 5,
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "requestId",
+              "moduleId",
+              "category",
+              "owner",
+              "phase",
+              "requiredBeforeStartToken",
+              "moduleMayImplement",
+              "registrationState",
+              "fulfillmentState",
+              "scope"
+            ],
+            "properties": {
+              "requestId": {
+                "type": "string"
+              },
+              "moduleId": {
+                "type": "string"
+              },
+              "category": {
+                "type": "string"
+              },
+              "owner": {
+                "type": "string"
+              },
+              "phase": {
+                "type": "string"
+              },
+              "requiredBeforeStartToken": {
+                "type": "boolean"
+              },
+              "moduleMayImplement": {
+                "type": "boolean"
+              },
+              "registrationState": {
+                "type": "string"
+              },
+              "fulfillmentState": {
+                "type": "string"
+              },
+              "scope": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "preStartControlGrant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "bytes",
+        "sha256",
+        "receiptId",
+        "sealedPayloadSha256",
+        "status",
+        "conditionStates",
+        "revalidatedAtPhaseACarrier"
+      ],
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "bytes": {
+          "type": "integer"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "receiptId": {
+          "type": "string"
+        },
+        "sealedPayloadSha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "status": {
+          "type": "string"
+        },
+        "conditionStates": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "TYPED_ARTIFACT_BOOTSTRAP",
+            "WORKFORCE_SNAPSHOT_COMPENSATION_PROJECTION"
+          ],
+          "properties": {
+            "TYPED_ARTIFACT_BOOTSTRAP": {
+              "type": "string"
+            },
+            "WORKFORCE_SNAPSHOT_COMPENSATION_PROJECTION": {
+              "type": "string"
+            }
+          }
+        },
+        "revalidatedAtPhaseACarrier": {
+          "type": "boolean"
+        }
+      }
+    },
+    "migrationLease": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "leaseId",
+        "path",
+        "bytes",
+        "sha256",
+        "sealedPayloadSha256",
+        "exactRelativePath",
+        "status",
+        "effectiveAfterPromotionOnly"
+      ],
+      "properties": {
+        "leaseId": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "bytes": {
+          "type": "integer"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "sealedPayloadSha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "exactRelativePath": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "effectiveAfterPromotionOnly": {
+          "type": "boolean"
+        }
+      }
+    },
+    "permittedAction": {
+      "const": "START_DOMAIN_MODULE_IMPLEMENTATION_AFTER_PROMOTION",
+      "type": "string"
+    },
+    "invalidationConditions": {
+      "type": "array",
+      "minItems": 7,
+      "uniqueItems": true,
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 7,
+      "const": [
+        "promotion receipt does not list this exact token in the active closed set",
+        "Phase A carrier, packet, grant, touch policy, or test receipt pin changes",
+        "token, worktree, dependency, or migration lease digest changes",
+        "a worktree is dirty, unpublished, ahead, behind, or on another branch",
+        "an allowed-path or inherited common-Control boundary is crossed",
+        "the Performance migration boundary changes or V17 is occupied",
+        "the token expires or is revoked"
+      ]
+    },
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "domainAuthoringOnly",
+        "sourceChangeAuthorized",
+        "effectiveAfterPromotionOnly",
+        "currentlyEffective",
+        "exactWorktreesOnly",
+        "exactAllowedPathsOnly",
+        "migrationAuthorityMode",
+        "migrationEditAuthorized",
+        "commitAndPushTokenBranchesAuthorized",
+        "sharedControlPathChangeAuthorized",
+        "integrationMergeAuthorized",
+        "payConsumptionAuthorized",
+        "customerDataAuthorized",
+        "customerActivationAuthorized",
+        "productionReleaseAuthorized"
+      ],
+      "properties": {
+        "domainAuthoringOnly": {
+          "type": "boolean"
+        },
+        "sourceChangeAuthorized": {
+          "type": "boolean"
+        },
+        "effectiveAfterPromotionOnly": {
+          "type": "boolean"
+        },
+        "currentlyEffective": {
+          "type": "boolean"
+        },
+        "exactWorktreesOnly": {
+          "type": "boolean"
+        },
+        "exactAllowedPathsOnly": {
+          "type": "boolean"
+        },
+        "migrationAuthorityMode": {
+          "type": "string"
+        },
+        "migrationEditAuthorized": {
+          "type": "boolean"
+        },
+        "commitAndPushTokenBranchesAuthorized": {
+          "type": "boolean"
+        },
+        "sharedControlPathChangeAuthorized": {
+          "type": "boolean"
+        },
+        "integrationMergeAuthorized": {
+          "type": "boolean"
+        },
+        "payConsumptionAuthorized": {
+          "type": "boolean"
+        },
+        "customerDataAuthorized": {
+          "type": "boolean"
+        },
+        "customerActivationAuthorized": {
+          "type": "boolean"
+        },
+        "productionReleaseAuthorized": {
+          "type": "boolean"
+        }
+      }
+    },
+    "sealedPayloadSha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

@@ -1,0 +1,180 @@
+{
+  "schema": "dwp.hris.wave3-mod-per-compplan-activation-manifest.v1",
+  "manifestId": "HRIS-WAVE3-MOD-PER-COMPPLAN-ACTIVATION-MANIFEST-20261013-R1",
+  "issuedAt": "2026-10-13T14:30:00+09:00",
+  "state": "BUNDLE_SEALED_PENDING_PROMOTION_RECEIPT",
+  "predecessorPins": {
+    "phaseACarrier": {
+      "commit": "1f187a7903d2792b696a6f8ca2b207ebb79b33e1",
+      "tree": "17da7a80fed75c137ca76ea23081dae05155b19b",
+      "parent": "388ad0fb2e50689cdc2a00186ffc6ca07f237e57",
+      "branch": "dwp-dev",
+      "upstream": "origin/dwp-dev"
+    },
+    "phaseAManifest": {
+      "path": "docs/06-delivery/hris/wave3-2026-10-13/manifest.v1.json",
+      "bytes": 5089,
+      "sha256": "dd370dacbce5240f87ddcf77fa1fd21d478faa1a8fd372acd6ff73c5ceda6a82",
+      "sealedPayloadSha256": "ae119946a79349c7d2390b1d7b9a706f9e25440b4815958e5a0cf12a9496ced7"
+    },
+    "packet": {
+      "path": "docs/06-delivery/hris/wave3-2026-10-13/mod-per-compplan/packet.v2.json",
+      "bytes": 17379,
+      "sha256": "f87751ba8760de6b19b950953ec0cc4b97d2dab99f96b0b1e25fefeb1ea7cc51",
+      "packetId": "HRIS-WAVE3-PACKET-MOD-PER-COMPPLAN-R2-PHASE-A",
+      "sealedPayloadSha256": "6c00ef9d5f5c7b8d06c659e237a6dc2dbdd9b5704223f6dd2611986149353283"
+    },
+    "preStartControlGrant": {
+      "path": "docs/06-delivery/hris/wave3-2026-10-13/mod-per-compplan/prestart-control-grant-receipt.v1.json",
+      "bytes": 9575,
+      "sha256": "60a460dcc8d4b8134e59a77fd574410299d0a0b2e67f84959a9dd7de9da47c23",
+      "receiptId": "HRIS-WAVE3-PRESTART-CONTROL-GRANT-MOD-PER-COMPPLAN-R1",
+      "sealedPayloadSha256": "434334f825716925fb834aec047e65d1de2cddb6c51f4c8f482562feec7d016c"
+    },
+    "touchPolicy": {
+      "path": "docs/06-delivery/hris/wave3-2026-10-13/mod-per-compplan/touch-manifest.v1.json",
+      "bytes": 14782,
+      "sha256": "2b80e40e9460462e19007b6adb96d85bfc05bd56c173898024b78f8e4bb4eda3",
+      "manifestId": "HRIS-WAVE3-TOUCH-MOD-PER-COMPPLAN-R2",
+      "touchPolicyDigest": "1f742788b8c231d495de7cc84103f91d53a28481c0850499783322241ece140a",
+      "sealedPayloadSha256": "da59b212c28661570697d5ccf192f51b79fd0b1be083cc47da3870b97b42c67f"
+    },
+    "migrationReservation": {
+      "path": "docs/06-delivery/hris/wave3-2026-10-13/mod-per-compplan/migration-lease.v1.json",
+      "bytes": 2223,
+      "sha256": "34022eec7fcf1866da0a941bdec9d4e7cea31106a2b8b64fb04fad810605868a",
+      "leaseId": "HRIS-WAVE3-LEASE-MOD-PER-COMPPLAN-PERFORMANCE-V17-R1",
+      "sealedPayloadSha256": "1439168c05c813e17d72e3889b0e1da314ac1029fd5fd12f060b84868bbc5689"
+    },
+    "targetedTestExecutionReceipt": {
+      "path": "docs/06-delivery/hris/wave3-2026-10-13/workforce-compensation-targeted-test-execution-receipt.v1.json",
+      "bytes": 2978,
+      "sha256": "adbc2b920ac9f6284492212af559b2966a1ec7c402ed96f7dbcea459eb108569",
+      "receiptId": "HRIS-WAVE3-WORKFORCE-COMPENSATION-TARGETED-TEST-EXECUTION-R1",
+      "sealedPayloadSha256": "11fd3f37dcb37f3a39adbf82dafff05c978e2b1acfb84d067cdfb179f55c37d7"
+    },
+    "authorityRefresh": {
+      "path": "docs/06-delivery/hris/wave3-2026-10-13/authority-refresh.v1.json",
+      "bytes": 6108,
+      "sha256": "71677e4242c881d092bb329fe6e87c1357a8cef32ab818aa631f94f1b4dc8f30",
+      "sealedPayloadSha256": "2f294eef78f203ffd278e01a995ec02cbaa07f45e058a5b5ecfb2e3b297918b2"
+    },
+    "controlRequests": {
+      "path": "docs/06-delivery/hris/wave3-2026-10-13/control-requests.v1.json",
+      "bytes": 4797,
+      "sha256": "0da7d28e69e087bc4815086a7365bc37763bf96d2653b4ecb8e5b38cedff106c",
+      "registerId": "HRIS-WAVE3-CONTROL-REQUESTS-20261013-R1",
+      "sealedPayloadSha256": "7d5a3712cdb782b2a28810da02fa9227252762287f29210ed1de799b0410cb26"
+    }
+  },
+  "executionBasePins": {
+    "frontend": {
+      "repository": "repo://dwp-frontend",
+      "branch": "dwp-dev",
+      "upstream": "origin/dwp-dev",
+      "commit": "1f187a7903d2792b696a6f8ca2b207ebb79b33e1",
+      "tree": "17da7a80fed75c137ca76ea23081dae05155b19b",
+      "clean": true,
+      "upstreamMatched": true
+    },
+    "backend": {
+      "repository": "repo://dwp-backend",
+      "branch": "dwp-dev",
+      "upstream": "origin/dwp-dev",
+      "commit": "3565c3e61b6c37a6b8088cc5250791fce32a0d9f",
+      "tree": "af973ef11d003edcf266673330300c612ffe247b",
+      "cleanVerificationCheckout": true,
+      "upstreamMatched": true
+    },
+    "agent": {
+      "repository": "repo://dwp_agent",
+      "branch": "dwp-dev",
+      "upstream": "origin/dwp-dev",
+      "commit": "1d46fc4ab49c604efb7464574c49d13ee453e059",
+      "tree": "0b9a8dbfd828478ee825452e5aca8688c83e37ab",
+      "clean": true,
+      "upstreamMatched": true,
+      "hrisModuleSliceAuthority": false
+    }
+  },
+  "activeTokenClosedSetAfterPromotion": [
+    "HRIS-WAVE3-START-MOD-PER-COMPPLAN-R1"
+  ],
+  "artifacts": [
+    {
+      "path": "docs/06-delivery/hris/wave3-delegation-successors/2026-10-13/mod-per-compplan-r1/migration-lease-admission.v1.json",
+      "bytes": 3679,
+      "sha256": "c2d2aa7d42b2364ce633a901c7d0b6dae6d4d8d5f3836e26422fcfd48305461f"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave3-delegation-successors/2026-10-13/mod-per-compplan-r1/registers/module-worktrees.active.v1.csv",
+      "bytes": 982,
+      "sha256": "c9ff0e3358dae9797504450518bf7e4dab080b78b077e23b7436147b5bdac0b3"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave3-delegation-successors/2026-10-13/mod-per-compplan-r1/state/activation-pending-promotion.v1.json",
+      "bytes": 4817,
+      "sha256": "538fa0b45e60a60b702706414127eb851409a3347cb589b37c47976c96a087e7"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave3-delegation-successors/2026-10-13/mod-per-compplan-r1/tokens/mod-per-compplan.start-token.v1.json",
+      "bytes": 25530,
+      "sha256": "47bc2f328eb13514ef7382d04682561e871fa1453311a8fc5a6561d90e0a59e3"
+    }
+  ],
+  "artifactCount": 4,
+  "toolPins": [
+    {
+      "path": "docs/06-delivery/hris/wave3-delegation-successors/2026-10-13/mod-per-compplan-r1/README.md",
+      "bytes": 4310,
+      "sha256": "f7662e57389a1c35f8a1448eee7ec49212b0e4e54900cecf7cb09d08cf928f0f"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave3-delegation-successors/2026-10-13/mod-per-compplan-r1/materialize_wave3_mod_per_compplan_activation.py",
+      "bytes": 55824,
+      "sha256": "ae12fffca3677894d5346dc00753d6d8b76cc24449458321397525507f2c52b2"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave3-delegation-successors/2026-10-13/mod-per-compplan-r1/validate_wave3_mod_per_compplan_activation.py",
+      "bytes": 44597,
+      "sha256": "a33f11ae38651b51b1a55696c233a7885e78ec1928ecc6cee344aae74d184e69"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave3-delegation-successors/2026-10-13/mod-per-compplan-r1/test_wave3_mod_per_compplan_activation.py",
+      "bytes": 9924,
+      "sha256": "901658050af5d147f8ec9ec76539243c8fcf94960b60d0f52bc2c95c45ecfd2a"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave3-delegation-successors/2026-10-13/mod-per-compplan-r1/contracts/wave3-activation-manifest.schema.v1.json",
+      "bytes": 13453,
+      "sha256": "ad5e692d27ad6a65fe9877b39095a31012955c407e09bb9693d225b200a8c7a2"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave3-delegation-successors/2026-10-13/mod-per-compplan-r1/contracts/wave3-activation-state.schema.v1.json",
+      "bytes": 9493,
+      "sha256": "999ccb391e9e19d26102fa7be3bd6dd70e338cf43af11c0375600c969846eca9"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave3-delegation-successors/2026-10-13/mod-per-compplan-r1/contracts/wave3-migration-lease-admission.schema.v1.json",
+      "bytes": 7932,
+      "sha256": "8c3da2e7f9f0a03ac61e31e8299388a0d1939ea49696faeb7a282c18bc95dfa4"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave3-delegation-successors/2026-10-13/mod-per-compplan-r1/contracts/wave3-promotion-receipt.schema.v1.json",
+      "bytes": 16816,
+      "sha256": "a1c04e227be927223a443de447aa5f031d0ed2f4437563671886673d7b143866"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave3-delegation-successors/2026-10-13/mod-per-compplan-r1/contracts/wave3-start-token.schema.v1.json",
+      "bytes": 26567,
+      "sha256": "5e8624c9bb6c7030efc96a9b392961de6a45376fca36f0ae844bcebf83827d42"
+    }
+  ],
+  "toolCount": 9,
+  "startTokenCount": 1,
+  "worktreeBindingCount": 2,
+  "migrationAdmissionCount": 1,
+  "promotionReceiptCount": 0,
+  "productionAuthorization": false,
+  "sealedPayloadSha256": "3fa373094957967122b8974102ce339552267ec622f953c9471590e85fef1f09"
+}

@@ -1,0 +1,628 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://dwp.local/hris/wave3-promotion-receipt.schema.v1.json",
+  "title": "HRIS Wave3 MOD-PER-COMPPLAN promotion receipt",
+  "description": "Reserved for Phase C. The receipt is forbidden from the Phase B carrier and must pin the immutable Phase B commit and tree.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "receiptId",
+    "issuedAt",
+    "issuedBy",
+    "status",
+    "decision",
+    "predecessor",
+    "bundleCommit",
+    "delegation",
+    "activeTokenClosedSet",
+    "authority",
+    "sealedPayloadSha256"
+  ],
+  "properties": {
+    "schema": {
+      "const": "dwp.hris.wave3-mod-per-compplan-promotion-receipt.v1",
+      "type": "string"
+    },
+    "receiptId": {
+      "const": "HRIS-WAVE3-MOD-PER-COMPPLAN-PROMOTION-20261013-R1",
+      "type": "string"
+    },
+    "issuedAt": {
+      "type": "string"
+    },
+    "issuedBy": {
+      "const": "SYS_COMMON_INTEGRATION_CONTROL",
+      "type": "string"
+    },
+    "status": {
+      "const": "PASS_SCOPED_DELEGATION",
+      "type": "string"
+    },
+    "decision": {
+      "const": "MOD_PER_COMPPLAN_DOMAIN_AUTHORING_AUTHORIZED",
+      "type": "string"
+    },
+    "predecessor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "phaseACarrier",
+        "phaseAManifest",
+        "activationState"
+      ],
+      "properties": {
+        "phaseACarrier": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "commit",
+            "tree",
+            "parent",
+            "branch",
+            "upstream"
+          ],
+          "properties": {
+            "commit": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "tree": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "parent": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "branch": {
+              "type": "string"
+            },
+            "upstream": {
+              "type": "string"
+            }
+          }
+        },
+        "phaseAManifest": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "path",
+            "bytes",
+            "sha256",
+            "sealedPayloadSha256"
+          ],
+          "properties": {
+            "path": {
+              "type": "string"
+            },
+            "bytes": {
+              "type": "integer"
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "sealedPayloadSha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        },
+        "activationState": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "path",
+            "bytes",
+            "sha256",
+            "sealedPayloadSha256"
+          ],
+          "properties": {
+            "path": {
+              "type": "string"
+            },
+            "bytes": {
+              "type": "integer"
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "sealedPayloadSha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            }
+          }
+        }
+      }
+    },
+    "bundleCommit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "commit",
+        "tree",
+        "manifestPath",
+        "manifestSha256",
+        "selfReferenceRule"
+      ],
+      "properties": {
+        "commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "tree": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "manifestPath": {
+          "type": "string"
+        },
+        "manifestSha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "selfReferenceRule": {
+          "type": "string"
+        }
+      }
+    },
+    "delegation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "module",
+        "moduleId",
+        "sliceId",
+        "sessionId",
+        "packetId",
+        "packetPath",
+        "packetSha256",
+        "packetSealedPayloadSha256",
+        "tokenId",
+        "tokenPath",
+        "tokenSha256",
+        "tokenSealedPayloadSha256",
+        "migrationAuthorityMode",
+        "migrationLeaseId",
+        "migrationLeasePath",
+        "migrationLeaseSha256",
+        "migrationLeaseSealedPayloadSha256",
+        "migrationExactRelativePath",
+        "worktrees",
+        "effectivePacketState",
+        "authority",
+        "controlObligations"
+      ],
+      "properties": {
+        "module": {
+          "type": "string"
+        },
+        "moduleId": {
+          "type": "string"
+        },
+        "sliceId": {
+          "type": "string"
+        },
+        "sessionId": {
+          "type": "string"
+        },
+        "packetId": {
+          "type": "string"
+        },
+        "packetPath": {
+          "type": "string"
+        },
+        "packetSha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "packetSealedPayloadSha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "tokenId": {
+          "type": "string"
+        },
+        "tokenPath": {
+          "type": "string"
+        },
+        "tokenSha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "tokenSealedPayloadSha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "migrationAuthorityMode": {
+          "type": "string"
+        },
+        "migrationLeaseId": {
+          "type": "string"
+        },
+        "migrationLeasePath": {
+          "type": "string"
+        },
+        "migrationLeaseSha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "migrationLeaseSealedPayloadSha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "migrationExactRelativePath": {
+          "type": "string"
+        },
+        "worktrees": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "module",
+              "slice_id",
+              "token_id",
+              "repo",
+              "absolute_path",
+              "branch",
+              "upstream",
+              "head",
+              "tree",
+              "state_sha256",
+              "clean",
+              "ahead",
+              "behind",
+              "state"
+            ],
+            "properties": {
+              "module": {
+                "type": "string"
+              },
+              "slice_id": {
+                "type": "string"
+              },
+              "token_id": {
+                "type": "string"
+              },
+              "repo": {
+                "type": "string"
+              },
+              "absolute_path": {
+                "type": "string"
+              },
+              "branch": {
+                "type": "string"
+              },
+              "upstream": {
+                "type": "string"
+              },
+              "head": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{40}$"
+              },
+              "tree": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{40}$"
+              },
+              "state_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "clean": {
+                "type": "string"
+              },
+              "ahead": {
+                "type": "string"
+              },
+              "behind": {
+                "type": "string"
+              },
+              "state": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "effectivePacketState": {
+          "type": "string"
+        },
+        "authority": {
+          "type": "string"
+        },
+        "controlObligations": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "path",
+            "bytes",
+            "sha256",
+            "registerId",
+            "sealedPayloadSha256",
+            "preStart",
+            "afterPushedModuleResult"
+          ],
+          "properties": {
+            "path": {
+              "type": "string"
+            },
+            "bytes": {
+              "type": "integer"
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "registerId": {
+              "type": "string"
+            },
+            "sealedPayloadSha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "preStart": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "uniqueItems": true,
+              "prefixItems": [
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "requestId",
+                    "moduleId",
+                    "category",
+                    "owner",
+                    "phase",
+                    "requiredBeforeStartToken",
+                    "moduleMayImplement",
+                    "registrationState",
+                    "fulfillmentState",
+                    "scope"
+                  ],
+                  "properties": {
+                    "requestId": {
+                      "type": "string"
+                    },
+                    "moduleId": {
+                      "type": "string"
+                    },
+                    "category": {
+                      "type": "string"
+                    },
+                    "owner": {
+                      "type": "string"
+                    },
+                    "phase": {
+                      "type": "string"
+                    },
+                    "requiredBeforeStartToken": {
+                      "type": "boolean"
+                    },
+                    "moduleMayImplement": {
+                      "type": "boolean"
+                    },
+                    "registrationState": {
+                      "type": "string"
+                    },
+                    "fulfillmentState": {
+                      "type": "string"
+                    },
+                    "scope": {
+                      "type": "string"
+                    }
+                  }
+                },
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "requestId",
+                    "moduleId",
+                    "category",
+                    "owner",
+                    "phase",
+                    "requiredBeforeStartToken",
+                    "moduleMayImplement",
+                    "registrationState",
+                    "fulfillmentState",
+                    "scope",
+                    "fulfillmentQualification"
+                  ],
+                  "properties": {
+                    "requestId": {
+                      "type": "string"
+                    },
+                    "moduleId": {
+                      "type": "string"
+                    },
+                    "category": {
+                      "type": "string"
+                    },
+                    "owner": {
+                      "type": "string"
+                    },
+                    "phase": {
+                      "type": "string"
+                    },
+                    "requiredBeforeStartToken": {
+                      "type": "boolean"
+                    },
+                    "moduleMayImplement": {
+                      "type": "boolean"
+                    },
+                    "registrationState": {
+                      "type": "string"
+                    },
+                    "fulfillmentState": {
+                      "type": "string"
+                    },
+                    "scope": {
+                      "type": "string"
+                    },
+                    "fulfillmentQualification": {
+                      "type": "string"
+                    }
+                  }
+                }
+              ],
+              "items": false
+            },
+            "afterPushedModuleResult": {
+              "type": "array",
+              "minItems": 5,
+              "maxItems": 5,
+              "uniqueItems": true,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "requestId",
+                  "moduleId",
+                  "category",
+                  "owner",
+                  "phase",
+                  "requiredBeforeStartToken",
+                  "moduleMayImplement",
+                  "registrationState",
+                  "fulfillmentState",
+                  "scope"
+                ],
+                "properties": {
+                  "requestId": {
+                    "type": "string"
+                  },
+                  "moduleId": {
+                    "type": "string"
+                  },
+                  "category": {
+                    "type": "string"
+                  },
+                  "owner": {
+                    "type": "string"
+                  },
+                  "phase": {
+                    "type": "string"
+                  },
+                  "requiredBeforeStartToken": {
+                    "type": "boolean"
+                  },
+                  "moduleMayImplement": {
+                    "type": "boolean"
+                  },
+                  "registrationState": {
+                    "type": "string"
+                  },
+                  "fulfillmentState": {
+                    "type": "string"
+                  },
+                  "scope": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "activeTokenClosedSet": {
+      "const": [
+        "HRIS-WAVE3-START-MOD-PER-COMPPLAN-R1"
+      ],
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string"
+      }
+    },
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "moduleParallelDevelopmentAuthorized",
+        "authorizedModules",
+        "authorizedSlices",
+        "startTokensIssued",
+        "migrationAdmissionAuthorized",
+        "sharedControlPathChangeAuthorizedForModule",
+        "integrationMergeAuthorized",
+        "payConsumptionAuthorized",
+        "customerDataAuthorized",
+        "customerActivationAuthorized",
+        "productionReleaseAuthorized"
+      ],
+      "properties": {
+        "moduleParallelDevelopmentAuthorized": {
+          "type": "boolean"
+        },
+        "authorizedModules": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
+        },
+        "authorizedSlices": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
+        },
+        "startTokensIssued": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
+        },
+        "migrationAdmissionAuthorized": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
+        },
+        "sharedControlPathChangeAuthorizedForModule": {
+          "type": "boolean"
+        },
+        "integrationMergeAuthorized": {
+          "type": "boolean"
+        },
+        "payConsumptionAuthorized": {
+          "type": "boolean"
+        },
+        "customerDataAuthorized": {
+          "type": "boolean"
+        },
+        "customerActivationAuthorized": {
+          "type": "boolean"
+        },
+        "productionReleaseAuthorized": {
+          "type": "boolean"
+        }
+      }
+    },
+    "sealedPayloadSha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}
