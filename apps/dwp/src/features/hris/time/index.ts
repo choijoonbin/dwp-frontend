@@ -94,3 +94,5 @@ export {
   resolveWorkPlanOperationsEffectiveOn,
   workPlanOperationsToday,
 } from './model/hris-time-work-plan-operations-scope';
+
+export * from './interpretation';
