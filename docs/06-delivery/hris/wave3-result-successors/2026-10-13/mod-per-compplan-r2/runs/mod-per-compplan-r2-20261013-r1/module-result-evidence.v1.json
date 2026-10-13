@@ -1,0 +1,347 @@
+{
+  "schema": "dwp.hris.wave3-mod-per-compplan-module-result-evidence.v1",
+  "evidenceId": "HRIS-WAVE3-MOD-PER-COMPPLAN-R2-MODULE-RESULT-20261013-R1",
+  "runId": "mod-per-compplan-r2-20261013-r1",
+  "status": "PASS_MODULE_RESULT_RECORDED_CENTRAL_INTEGRATION_PENDING",
+  "issuedAt": "2026-10-13T08:49:33Z",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "predecessor": {
+    "centralEvidenceBase": {
+      "branch": "dwp-dev",
+      "upstream": "origin/dwp-dev",
+      "commit": "33e181329f4d643d85d1095432a49df104e06751",
+      "tree": "bd8956abf98a55b2ccb6049271af9f74e0360fd5",
+      "clean": true,
+      "upstreamMatched": true
+    },
+    "promotion": {
+      "path": "docs/06-delivery/hris/2026-10-13-wave3-mod-per-compplan-promotion-receipt.v2.json",
+      "carrierCommit": "6a491a4436c19205845f78100dbdba90acd6cf31",
+      "carrierTree": "90849c0d644fff4cfc519163ab164a7343af3444",
+      "sha256": "ede1e4a4613cfc0bfe12b2783b663a133477b9ee4c79eac4af34861f82226728",
+      "bytes": 10656,
+      "decision": "MOD_PER_COMPPLAN_DOMAIN_AUTHORING_AUTHORIZED",
+      "integrationMergeAuthorized": false
+    },
+    "packet": {
+      "path": "docs/06-delivery/hris/wave3-2026-10-13/mod-per-compplan/packet.v2.json",
+      "packetId": "HRIS-WAVE3-PACKET-MOD-PER-COMPPLAN-R2-PHASE-A",
+      "sha256": "f87751ba8760de6b19b950953ec0cc4b97d2dab99f96b0b1e25fefeb1ea7cc51",
+      "bytes": 17379
+    },
+    "touchManifest": {
+      "path": "docs/06-delivery/hris/wave3-2026-10-13/mod-per-compplan/touch-manifest.v1.json",
+      "manifestId": "HRIS-WAVE3-TOUCH-MOD-PER-COMPPLAN-R2",
+      "sha256": "2b80e40e9460462e19007b6adb96d85bfc05bd56c173898024b78f8e4bb4eda3",
+      "bytes": 14782
+    },
+    "startToken": {
+      "path": "docs/06-delivery/hris/wave3-delegation-successors/2026-10-13/mod-per-compplan-r2/tokens/mod-per-compplan.start-token.v1.json",
+      "tokenId": "HRIS-WAVE3-START-MOD-PER-COMPPLAN-R2",
+      "sha256": "4dd079268c32a0b442bcd8aaedd6738e90d7bad4375e6216e95099d746c9c345",
+      "bytes": 25536
+    },
+    "migrationLease": {
+      "path": "docs/06-delivery/hris/wave3-delegation-successors/2026-10-13/mod-per-compplan-r2/migration-lease-admission.v1.json",
+      "leaseId": "HRIS-WAVE3-LEASE-MOD-PER-COMPPLAN-PERFORMANCE-V17-R3",
+      "sha256": "c7b3efe6b5115a581b0b4e479d314ce1c80a39e79b4ee0aa298d83fa9f9a4315",
+      "bytes": 3704
+    }
+  },
+  "moduleResult": {
+    "module": "PER",
+    "moduleId": "MOD-PER-COMPPLAN",
+    "sessionId": "HRIS-PER",
+    "frontend": {
+      "branch": "codex/hris-wave3-per-compplan-frontend-20261013-r2",
+      "upstream": "origin/codex/hris-wave3-per-compplan-frontend-20261013-r2",
+      "baseCommit": "a3a0a75451a7ed14b1f5135f1f56b6271dee41fd",
+      "baseTree": "906cc25aaf2b3deb28d95d59621d55c6abdadaac",
+      "resultCommit": "e1011bb43e73b16efbee71c937b60603aa4bf80f",
+      "resultTree": "a9cecebcddede0644b6a276a7be5017ae66237d4",
+      "lineage": [
+        "0bdc839587c0798fba6f78a756358cf1c9dd4cca",
+        "d597c14e32838cd9fcdc180aca4d4cdb88fbc770",
+        "e1011bb43e73b16efbee71c937b60603aa4bf80f"
+      ],
+      "clean": true,
+      "upstreamAhead": 0,
+      "upstreamBehind": 0,
+      "changedFileCount": 13,
+      "changedFileManifestSha256": "7b14c89baec876b779535e405c4de7c3c8df26f9343535ea2d06518e6e648a6a",
+      "changedFiles": [
+        "apps/dwp/src/features/hris/performance/compensation-planning/__tests__/compensation-planning-api.test.ts",
+        "apps/dwp/src/features/hris/performance/compensation-planning/__tests__/compensation-planning-command-runtime.test.tsx",
+        "apps/dwp/src/features/hris/performance/compensation-planning/__tests__/compensation-planning-contract.test.ts",
+        "apps/dwp/src/features/hris/performance/compensation-planning/__tests__/compensation-planning-workspace.test.tsx",
+        "apps/dwp/src/features/hris/performance/compensation-planning/compensation-planning-api.ts",
+        "apps/dwp/src/features/hris/performance/compensation-planning/compensation-planning-command-runtime.tsx",
+        "apps/dwp/src/features/hris/performance/compensation-planning/compensation-planning-command.ts",
+        "apps/dwp/src/features/hris/performance/compensation-planning/compensation-planning-contract.ts",
+        "apps/dwp/src/features/hris/performance/compensation-planning/compensation-planning-copy.ts",
+        "apps/dwp/src/features/hris/performance/compensation-planning/compensation-planning-workspace.css",
+        "apps/dwp/src/features/hris/performance/compensation-planning/compensation-planning-workspace.tsx",
+        "apps/dwp/src/features/hris/performance/compensation-planning/index.ts",
+        "apps/dwp/src/features/hris/performance/compensation-planning/use-compensation-planning-workspace.ts"
+      ],
+      "touchPolicyCompliant": true
+    },
+    "backend": {
+      "branch": "codex/hris-wave3-per-compplan-backend-20261013-r2",
+      "upstream": "origin/codex/hris-wave3-per-compplan-backend-20261013-r2",
+      "baseCommit": "8577ef532243c63b34877444738a4edde8b4c0e5",
+      "baseTree": "fd3ac7eff67aa6a2a1c41a52da1fe9dab6e9576b",
+      "resultCommit": "58208f4f869bcb8ad5999cca1840dd2e821b650c",
+      "resultTree": "e21318baa41dbbb52ddf6356930657f93729f8dc",
+      "lineage": [
+        "9444e5991cf3fd5499bb1a070b3b1ca9ed4308bc",
+        "58208f4f869bcb8ad5999cca1840dd2e821b650c"
+      ],
+      "clean": true,
+      "upstreamAhead": 0,
+      "upstreamBehind": 0,
+      "changedFileCount": 25,
+      "changedFileManifestSha256": "360699e1357ae9ba774730743c4a8597aabc95bf1c87b5daac089982b39cb20b",
+      "changedFiles": [
+        "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/compensationplanning/ApprovedCompensationPlanSnapshotProvider.java",
+        "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/compensationplanning/CompensationPlanningAuthorityPort.java",
+        "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/compensationplanning/CompensationPlanningAuthorization.java",
+        "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/compensationplanning/CompensationPlanningCanonicalizer.java",
+        "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/compensationplanning/CompensationPlanningController.java",
+        "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/compensationplanning/CompensationPlanningDtos.java",
+        "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/compensationplanning/CompensationPlanningRepository.java",
+        "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/compensationplanning/CompensationPlanningService.java",
+        "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/compensationplanning/CompensationPopulationMaterializer.java",
+        "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/typedartifact/CompensationArtifactContents.java",
+        "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/typedartifact/PerArtifactType.java",
+        "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/typedartifact/PerTypedArtifactCanonicalizer.java",
+        "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/typedartifact/PerTypedArtifactProtector.java",
+        "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/typedartifact/PerTypedArtifactQueryPort.java",
+        "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/typedartifact/PerTypedArtifactRepository.java",
+        "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/typedartifact/PerTypedArtifactService.java",
+        "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/typedartifact/PostedMoney.java",
+        "dwp-people-server/src/main/resources/db/performance-migration/V17__per_modern_compensation_planning.sql",
+        "dwp-people-server/src/test/java/com/dwp/services/people/hr/performance/compensationplanning/ApprovedCompensationPlanSnapshotProviderContractTest.java",
+        "dwp-people-server/src/test/java/com/dwp/services/people/hr/performance/compensationplanning/ApprovedCompensationPlanSnapshotPublicationPostgresTest.java",
+        "dwp-people-server/src/test/java/com/dwp/services/people/hr/performance/compensationplanning/CompensationPlanningAuthorizationTest.java",
+        "dwp-people-server/src/test/java/com/dwp/services/people/hr/performance/compensationplanning/CompensationPlanningBudgetInvariantPostgresTest.java",
+        "dwp-people-server/src/test/java/com/dwp/services/people/hr/performance/compensationplanning/CompensationPlanningMigrationContractTest.java",
+        "dwp-people-server/src/test/java/com/dwp/services/people/hris/performance/contracts/xcon/Xcon020ApprovedCompensationPlanSnapshotV1ProviderContractTest.java",
+        "dwp-people-server/src/test/java/com/dwp/services/people/hris/performance/contracts/xcon/Xcon021ApprovedCompensationPlanSnapshotPublishedV2ProviderContractTest.java"
+      ],
+      "touchPolicyCompliant": true
+    },
+    "migration": {
+      "status": "USED_EXACT_V17",
+      "leaseId": "HRIS-WAVE3-LEASE-MOD-PER-COMPPLAN-PERFORMANCE-V17-R3",
+      "path": "dwp-people-server/src/main/resources/db/performance-migration/V17__per_modern_compensation_planning.sql",
+      "gitBlobSha1": "fbe12ea1504bd6ea88a7532fe9f92a3c37906569",
+      "sha256": "593e54e076c5607e07a35eae1d069862257b9dce6fbb6a54dbe09198810ea15a",
+      "bytes": 35370,
+      "tableCount": 7,
+      "existingMigrationModified": false
+    }
+  },
+  "verificationResults": [
+    {
+      "commandId": "PER_COMPPLAN_BACKEND_CLOSED",
+      "status": "PASS",
+      "exitCode": 0,
+      "executionBinding": "PRE_COMMIT_FINAL_TREE",
+      "testedTree": "e21318baa41dbbb52ddf6356930657f93729f8dc",
+      "suiteCount": 7,
+      "testCount": 31,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "evidence": {
+        "path": "docs/06-delivery/hris/wave3-result-successors/2026-10-13/mod-per-compplan-r2/runs/mod-per-compplan-r2-20261013-r1/logs/backend-targeted-summary.log",
+        "sha256": "9ed97a72035d6d620807bc5cc989bfcdbe01c1ba078e403b001806063c1fb4a8",
+        "bytes": 1527
+      }
+    },
+    {
+      "commandId": "PER_COMPPLAN_PLATFORM_XCON021_CLOSED",
+      "status": "PASS",
+      "exitCode": 0,
+      "executionBinding": "UNCHANGED_PLATFORM_CONTRACT_RESULT",
+      "suiteCount": 1,
+      "testCount": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "evidence": {
+        "path": "docs/06-delivery/hris/wave3-result-successors/2026-10-13/mod-per-compplan-r2/runs/mod-per-compplan-r2-20261013-r1/logs/platform-xcon021-targeted-summary.log",
+        "sha256": "87504b5a7c4761824b05070d9664c63d21e773e9e9b0bda3b5bb25ddd1a6baf8",
+        "bytes": 439
+      }
+    },
+    {
+      "commandId": "PER_COMPPLAN_FRONTEND_CLOSED",
+      "status": "PASS",
+      "exitCode": 0,
+      "executionBinding": "POST_COMMIT_EXACT_RESULT",
+      "testedTree": "a9cecebcddede0644b6a276a7be5017ae66237d4",
+      "testFileCount": 4,
+      "testCount": 27,
+      "failures": 0,
+      "evidence": {
+        "path": "docs/06-delivery/hris/wave3-result-successors/2026-10-13/mod-per-compplan-r2/runs/mod-per-compplan-r2-20261013-r1/logs/frontend-targeted.log",
+        "sha256": "91835d5cbdd84aa3af4f3bf768ac12f2bac4690611149e6544aca0c4d02882d8",
+        "bytes": 1004
+      }
+    }
+  ],
+  "visualEvidence": {
+    "status": "PASS_LOCAL_HASH_PINNED_CENTRAL_RECATURE_REQUIRED",
+    "source": "SYNTHETIC_FIXTURES_NO_CUSTOMER_DATA",
+    "committed": false,
+    "localDirectory": "/Users/a10697/Work/DWP/output/mod-per-compplan-r2-visual",
+    "captures": [
+      {
+        "file": "1440-light-keyboard.png",
+        "width": 1440,
+        "height": 1000,
+        "bytes": 136713,
+        "sha256": "05ce376af849fd681ac170f81aa00f01919a8dbba124e753f4390befb7a64e41",
+        "checks": ["KEYBOARD_FOCUS", "NO_HORIZONTAL_OVERFLOW", "NORMAL_WORDS_NOT_SPLIT"]
+      },
+      {
+        "file": "1280-dark-200-approve.png",
+        "width": 1280,
+        "height": 1440,
+        "bytes": 148616,
+        "sha256": "129d9bd4b4138d38bcab027d6c5689cab1cce05d36d9c9e387949275e4f552db",
+        "checks": ["DARK_THEME", "ZOOM_200_PERCENT", "HIGH_RISK_APPROVAL"]
+      },
+      {
+        "file": "390-ko-reduced-publish.png",
+        "width": 390,
+        "height": 844,
+        "bytes": 45528,
+        "sha256": "7c0cb4879098e594b360a4e554b9c50ff9fe3eb8ebba12e379f34bbe2a7d7335",
+        "checks": ["KOREAN_COPY", "REDUCED_MOTION", "HIGH_RISK_PUBLICATION", "NO_HORIZONTAL_OVERFLOW"]
+      },
+      {
+        "file": "320-forced-colors-partial.png",
+        "width": 320,
+        "height": 2412,
+        "bytes": 112954,
+        "sha256": "bb59f3d338d17c0492e9e7024b021da1215ed30fa82f3612a1b614bb8a150b79",
+        "checks": ["FORCED_COLORS", "PARTIAL_API_FAILURE", "NO_HORIZONTAL_OVERFLOW"]
+      }
+    ]
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "AC-01",
+      "moduleDisposition": "MODULE_PASS",
+      "centralRemainder": []
+    },
+    {
+      "id": "AC-02",
+      "moduleDisposition": "MODULE_PASS_WITH_CENTRAL_BINDING_PENDING",
+      "centralRemainder": ["AUTH_PEP"]
+    },
+    {
+      "id": "AC-03",
+      "moduleDisposition": "MODULE_PROVIDER_PASS_CENTRAL_INTEGRATION_PENDING",
+      "centralRemainder": ["HRM_OWNER_RUNTIME_PROJECTION", "PAY_CONSUMPTION_WITHHELD"]
+    },
+    {
+      "id": "AC-04",
+      "moduleDisposition": "MODULE_PASS",
+      "centralRemainder": []
+    },
+    {
+      "id": "AC-05",
+      "moduleDisposition": "MODULE_PASS",
+      "centralRemainder": []
+    },
+    {
+      "id": "AC-06",
+      "moduleDisposition": "MODULE_PASS_WITH_CENTRAL_BINDING_PENDING",
+      "centralRemainder": ["CONTRACT_GATEWAY"]
+    },
+    {
+      "id": "AC-07",
+      "moduleDisposition": "MODULE_GUARDS_PASS_CENTRAL_INTEGRATION_PENDING",
+      "centralRemainder": ["SVC_PEP_SECURITY"]
+    },
+    {
+      "id": "AC-08",
+      "moduleDisposition": "MODULE_PASS",
+      "centralRemainder": []
+    },
+    {
+      "id": "AC-09",
+      "moduleDisposition": "MODULE_REPLAY_PASS_CENTRAL_INTEGRATION_PENDING",
+      "centralRemainder": ["DELIVERY_WORKER_CRASH_RESTART"]
+    },
+    {
+      "id": "AC-10",
+      "moduleDisposition": "MODULE_PASS",
+      "centralRemainder": []
+    },
+    {
+      "id": "AC-11",
+      "moduleDisposition": "MODULE_PASS",
+      "centralRemainder": []
+    },
+    {
+      "id": "AC-12",
+      "moduleDisposition": "MODULE_PASS",
+      "centralRemainder": []
+    }
+  ],
+  "centralIntegrationObligations": [
+    {
+      "requestId": "W3-CR-MOD-PER-COMPPLAN-WORKFORCE_SNAPSHOT_COMPENSATION_PROJECTION-R1",
+      "category": "WORKFORCE_SNAPSHOT_COMPENSATION_PROJECTION",
+      "status": "ABI_GRANTED_RUNTIME_PROVIDER_WIRING_PENDING"
+    },
+    {
+      "requestId": "W3-CR-MOD-PER-COMPPLAN-AUTH_PEP-R1",
+      "category": "AUTH_PEP",
+      "status": "PENDING_CENTRAL_FULFILLMENT"
+    },
+    {
+      "requestId": "W3-CR-MOD-PER-COMPPLAN-CONTRACT_GATEWAY-R1",
+      "category": "CONTRACT_GATEWAY",
+      "status": "PENDING_CENTRAL_FULFILLMENT"
+    },
+    {
+      "requestId": "W3-CR-MOD-PER-COMPPLAN-SHELL_ROUTE-R1",
+      "category": "SHELL_ROUTE",
+      "status": "PENDING_CENTRAL_FULFILLMENT"
+    },
+    {
+      "requestId": "W3-CR-MOD-PER-COMPPLAN-SVC_PEP_SECURITY-R1",
+      "category": "SVC_PEP_SECURITY",
+      "status": "PENDING_CENTRAL_FULFILLMENT"
+    },
+    {
+      "requestId": "W3-CR-MOD-PER-COMPPLAN-INTEGRATION_VERIFY-R1",
+      "category": "INTEGRATION_VERIFY",
+      "status": "PENDING_CENTRAL_FULFILLMENT",
+      "requirements": [
+        "AUTHORITATIVE_BUDGET_AGGREGATE_PROJECTION",
+        "DELIVERY_WORKER_CRASH_RESTART",
+        "ONE_CENTRAL_CONTRACT_ROUTE_AUTH_SYNC_PAY_WITHHELD_BATCH",
+        "COMMITTED_VISUAL_RECATURE"
+      ]
+    }
+  ],
+  "expectedUnionSha256": "1cc7c055549daaefa287362fbd9f9d940857b7d79cb6d40ad7d4e323ed78944b",
+  "authority": {
+    "moduleResultRecorded": true,
+    "resultAdmissionAuthorized": false,
+    "integrationMergeAuthorized": false,
+    "sharedControlPathChangeAuthorizedForModule": false,
+    "payConsumptionAuthorized": false,
+    "customerDataAuthorized": false,
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "sealedPayloadSha256": "3932a05d7b84449aa178374bfafeee24cd10dd7eb10f171339ffa9ebcd00439b"
+}
