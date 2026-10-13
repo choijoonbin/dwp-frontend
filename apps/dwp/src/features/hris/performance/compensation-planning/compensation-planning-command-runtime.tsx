@@ -1,0 +1,56 @@
+import { CompensationPlanningWorkspace } from './compensation-planning-workspace';
+import {
+  useCompensationPlanningRequestScope,
+  useCompensationPlanningRuntime,
+} from './use-compensation-planning-workspace';
+
+import type { CompensationPlanningDataSource } from './compensation-planning-api';
+import type {
+  CompensationPlanningCommandExecutors,
+  CompensationPlanningCommandIntents,
+} from './use-compensation-planning-workspace';
+
+export type HrisCompensationPlanningOperationsRuntimeProps = Readonly<{
+  dataSource?: CompensationPlanningDataSource;
+  commandExecutors?: CompensationPlanningCommandExecutors;
+  commandIntents?: CompensationPlanningCommandIntents;
+}>;
+
+/**
+ * Owner runtime. Until Central registers the sealed action and HIGH-risk
+ * descriptors, omitted executors leave every mutation visibly fail-closed.
+ */
+export function HrisCompensationPlanningOperationsRuntime({
+  dataSource,
+  commandExecutors,
+  commandIntents,
+}: HrisCompensationPlanningOperationsRuntimeProps) {
+  const requestScope = useCompensationPlanningRequestScope();
+  const runtime = useCompensationPlanningRuntime({
+    requestScope,
+    dataSource,
+    commandExecutors,
+    commandIntents,
+  });
+  return (
+    <CompensationPlanningWorkspace
+      status={runtime.status}
+      cycles={runtime.cycles}
+      selectedCycleId={runtime.selectedCycleId}
+      cycleDetail={runtime.cycleDetail}
+      proposals={runtime.proposals}
+      proposalDetail={runtime.proposalDetail}
+      selectedProposalId={runtime.selectedProposalId}
+      actions={runtime.actions}
+      pendingCommand={runtime.pendingCommand}
+      lastResult={runtime.lastResult}
+      errorMessage={runtime.errorMessage}
+      onSelectCycle={runtime.selectCycle}
+      onSelectProposal={runtime.selectProposal}
+      onRefresh={runtime.refresh}
+      onRetryPending={runtime.retryPending}
+    />
+  );
+}
+
+export default HrisCompensationPlanningOperationsRuntime;
