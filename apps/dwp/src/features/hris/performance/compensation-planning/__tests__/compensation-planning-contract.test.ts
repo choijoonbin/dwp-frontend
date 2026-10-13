@@ -3,10 +3,18 @@ import { describe, expect, it } from 'vitest';
 import {
   parseCompensationCycleCollection,
   parseCompensationCycleDetail,
+  parseApproveCompensationPlanBody,
+  parseCancelCompensationCycleBody,
+  parseCompensationBudgetBody,
   parseCompensationProposalCollection,
   parseCompensationRichCommandResult,
   parseCompensationSnapshotPublished,
+  parseCreateCompensationCycleBody,
   parsePerformanceCommandReceipt,
+  parsePublishCompensationSnapshotBody,
+  parseReviseCompensationCycleBody,
+  parseSubmitCompensationProposalBody,
+  parseUpsertCompensationProposalBody,
 } from '../compensation-planning-contract';
 
 const ID = {
@@ -226,7 +234,15 @@ describe('sealed compensation-planning contracts', () => {
             population: {
               asOf: NOW,
               hrmOwnerRevision: 12,
-              lines: [],
+              lines: [{
+                workerPublicId: ID.worker,
+                assignmentPublicId: ID.assignment,
+                organizationPublicId: ID.organization,
+                gradePublicId: null,
+                jobProfilePublicId: null,
+                assignmentOwnerRevision: 3,
+                eligibleComponentCodes: ['BASE'],
+              }],
             },
             budgetEntries: [],
           },
@@ -271,5 +287,67 @@ describe('sealed compensation-planning contracts', () => {
         publishedAt: NOW,
       })
     ).toThrow();
+  });
+
+  it('validates every outgoing closed command body and rejects money at its exact field', () => {
+    const guidelines = {
+      components: [{
+        componentCode: 'BASE', currency: 'USD', minimumAmount: '0', maximumAmount: '100',
+        exceptionPolicyCode: 'NONE', roundingPolicyVersionPublicId: ID.policy,
+      }],
+      budgetMode: 'HARD_CAP', effectiveFrom: '2027-01-01', effectiveTo: null,
+    } as const;
+    const population = {
+      asOf: NOW, hrmOwnerRevision: 12,
+      lines: [{
+        workerPublicId: ID.worker, assignmentPublicId: ID.assignment,
+        organizationPublicId: ID.organization, gradePublicId: null, jobProfilePublicId: null,
+        assignmentOwnerRevision: 3, eligibleComponentCodes: ['BASE'],
+      }],
+    } as const;
+    const sourceRef = {
+      snapshotPublicId: ID.child,
+      ownerRevision: 12,
+      projectionSchemaId: 'CompensationPopulationContent.v1',
+      asOf: NOW,
+      sha256: HASH,
+      purposeCode: 'HRIS_PER_COMPENSATION_POPULATION',
+    } as const;
+    const common = {
+      guidelines, population, populationSourceRef: sourceRef,
+      effectiveFrom: '2027-01-01', effectiveTo: null,
+    };
+    expect(parseCreateCompensationCycleBody({ ...common, cycleCode: 'FY27' }).cycleCode)
+      .toBe('FY27');
+    expect(parseReviseCompensationCycleBody(common).guidelines.budgetMode).toBe('HARD_CAP');
+    expect(parseCompensationBudgetBody({
+      organizationPublicId: ID.organization, amount: '10.25', currency: 'USD',
+      ledgerEntryType: 'ALLOCATE', reversesEntryPublicId: null,
+    }).amount).toBe('10.25');
+    const content = {
+      cyclePublicId: ID.cycle, workerPublicId: ID.worker, assignmentPublicId: ID.assignment,
+      componentCode: 'BASE', currency: 'USD', amount: '10.25',
+      effectiveFrom: '2027-01-01', effectiveTo: null,
+      exceptionReasonCode: null, supersedesProposalPublicId: null,
+    } as const;
+    expect(parseUpsertCompensationProposalBody({ content }).content.amount).toBe('10.25');
+    expect(parseSubmitCompensationProposalBody({ submissionDigest: HASH, effectiveDate: null }))
+      .toEqual({ submissionDigest: HASH, effectiveDate: null });
+    expect(parseApproveCompensationPlanBody({ decision: 'APPROVE', reasonCode: 'ANNUAL_REVIEW' }))
+      .toEqual({ decision: 'APPROVE', reasonCode: 'ANNUAL_REVIEW' });
+    expect(parsePublishCompensationSnapshotBody({ approvalReceiptId: ID.receipt }))
+      .toEqual({ approvalReceiptId: ID.receipt });
+    expect(parseCancelCompensationCycleBody({})).toEqual({});
+
+    expect(() => parseCompensationBudgetBody({
+      organizationPublicId: ID.organization, amount: '1.20', currency: 'USD',
+      ledgerEntryType: 'ALLOCATE', reversesEntryPublicId: null,
+    })).toThrow();
+    expect(() => parseUpsertCompensationProposalBody({
+      content: { ...content, amount: '1.20' },
+    })).toThrow();
+    expect(() => parseApproveCompensationPlanBody({
+      decision: 'APPROVE', reasonCode: 'ANNUAL_REVIEW', unexpected: true,
+    })).toThrow();
   });
 });

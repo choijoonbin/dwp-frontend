@@ -20,6 +20,33 @@ const ID = {
 } as const;
 const HASH = 'a'.repeat(64);
 const NOW = '2026-10-13T08:00:00Z';
+const validRevise = Object.freeze({
+  guidelines: {
+    components: [{
+      componentCode: 'BASE', currency: 'USD', minimumAmount: '0', maximumAmount: '100',
+      exceptionPolicyCode: 'NONE',
+      roundingPolicyVersionPublicId: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+    }],
+    budgetMode: 'HARD_CAP' as const, effectiveFrom: '2027-01-01', effectiveTo: null,
+  },
+  population: {
+    asOf: NOW, hrmOwnerRevision: 1,
+    lines: [{
+      workerPublicId: '55555555-5555-4555-8555-555555555555',
+      assignmentPublicId: '66666666-6666-4666-8666-666666666666',
+      organizationPublicId: '77777777-7777-4777-8777-777777777777',
+      gradePublicId: null, jobProfilePublicId: null, assignmentOwnerRevision: 1,
+      eligibleComponentCodes: ['BASE'],
+    }],
+  },
+  populationSourceRef: {
+    snapshotPublicId: '88888888-8888-4888-8888-888888888888', ownerRevision: 1,
+    projectionSchemaId: 'CompensationPopulationContent.v1' as const,
+    asOf: NOW, sha256: HASH,
+    purposeCode: 'HRIS_PER_COMPENSATION_POPULATION' as const,
+  },
+  effectiveFrom: '2027-01-01', effectiveTo: null,
+});
 const cycle = {
   cycleId: ID.cycle,
   aggregateVersion: 4,
@@ -74,7 +101,7 @@ const pending: PendingCompensationCommand = Object.freeze({
     correlationId: ID.correlation,
     idempotencyKey: 'idem-1',
     expectedVersion: 4,
-    body: Object.freeze({}),
+    body: validRevise,
   }),
 });
 
@@ -102,6 +129,7 @@ async function render(props: Parameters<typeof Harness>[0]) {
 describe('compensation command runtime', () => {
   beforeEach(() => {
     (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
+    window.history.replaceState({}, '', '/');
     mount = document.createElement('div');
     document.body.append(mount);
     root = createRoot(mount);
@@ -147,7 +175,9 @@ describe('compensation command runtime', () => {
       await vi.waitFor(() => expect(latest.actions.canRevise).toBe(true));
     });
 
-    await act(async () => latest.actions.onRevise?.());
+    await act(async () => {
+      await Promise.resolve(latest.actions.onRevise?.(validRevise)).catch(() => undefined);
+    });
     await act(async () => {
       await vi.waitFor(() => expect(latest.status).toBe('RESULT_UNKNOWN'));
     });
@@ -173,7 +203,9 @@ describe('compensation command runtime', () => {
     await act(async () => {
       await vi.waitFor(() => expect(latest.actions.canRevise).toBe(true));
     });
-    await act(async () => latest.actions.onRevise?.());
+    await act(async () => {
+      await Promise.resolve(latest.actions.onRevise?.(validRevise)).catch(() => undefined);
+    });
     await act(async () => {
       await vi.waitFor(() => expect(latest.status).toBe('DENIED'));
     });
@@ -196,5 +228,145 @@ describe('compensation command runtime', () => {
         }
       )
     ).toThrow('governed target');
+  });
+
+  it('denies cycle ID or version mismatches before commands can unlock', async () => {
+    window.history.replaceState({}, '', `/?cycle=${ID.cycle}`);
+    const mismatched: CompensationPlanningDataSource = {
+      ...source(),
+      cycle: vi.fn().mockResolvedValue({
+        item: { ...cycle, cycleId: ID.otherCycle, aggregateVersion: 99 },
+        referenceEffectiveAt: NOW, freshnessWatermark: NOW, fieldPolicyRevision: 1,
+      }),
+    };
+    await act(async () => {
+      root.render(createElement(
+        QueryClientProvider,
+        { client },
+        createElement(Harness, { requestScope: scope(), dataSource: mismatched })
+      ));
+    });
+    await act(async () => {
+      await vi.waitFor(() => expect(mismatched.cycle).toHaveBeenCalledTimes(1));
+      await vi.waitFor(() => expect(latest.errorMessage).toContain('not bound'));
+    });
+    expect(latest.status).toBe('ERROR');
+    expect(latest.cycleDetail).toBeNull();
+    expect(latest.actions.canRevise).toBe(false);
+    expect(latest.errorMessage).toContain('not bound');
+  });
+
+  it('keeps the cycle visible and localizes proposal failures with retry', async () => {
+    const partial: CompensationPlanningDataSource = {
+      ...source(),
+      proposals: vi.fn().mockRejectedValue(new Error('proposal service unavailable')),
+    };
+    await render({ requestScope: scope(), dataSource: partial });
+    await act(async () => {
+      await vi.waitFor(() => expect(latest.proposalsError).toContain('unavailable'));
+    });
+    expect(latest.status).toBe('READY');
+    expect(latest.cycleDetail?.item.cycleId).toBe(ID.cycle);
+    expect(latest.cycles).toHaveLength(1);
+    expect(latest.actions.canRevise).toBe(false);
+    expect(latest.retryProposals).toEqual(expect.any(Function));
+  });
+
+  it('refreshes with a new correlation without discarding the last successful projection', async () => {
+    const data = source();
+    const cycles = vi.mocked(data.cycles);
+    await render({ requestScope: scope(), dataSource: data });
+    const firstCorrelationId = cycles.mock.calls[0]?.[1].correlationId;
+    expect(latest.cycles).toHaveLength(1);
+
+    await act(async () => {
+      latest.refresh();
+      await vi.waitFor(() => expect(cycles).toHaveBeenCalledTimes(2));
+    });
+
+    expect(cycles.mock.calls[1]?.[1].correlationId).not.toBe(firstCorrelationId);
+    expect(latest.cycles).toHaveLength(1);
+  });
+
+  it('rejects a proposal freshness advance that is not anchored to the selected cycle', async () => {
+    const proposalId = '99999999-9999-4999-8999-999999999999';
+    const later = '2026-10-13T08:00:01Z';
+    const summary = {
+      proposalId, aggregateVersion: 2, cycleId: ID.cycle,
+      workerId: '55555555-5555-4555-8555-555555555555',
+      assignmentId: '66666666-6666-4666-8666-666666666666',
+      componentCode: 'BASE', currency: 'USD', effectiveFrom: '2027-01-01',
+      effectiveTo: null, currentRevision: 1, status: 'DRAFT' as const,
+      contentDigest: HASH, amountMasked: true,
+    };
+    const revised = {
+      ...summary,
+      aggregateVersion: 3,
+      currentRevision: 2,
+      contentDigest: 'b'.repeat(64),
+    };
+    const data: CompensationPlanningDataSource = {
+      ...source(),
+      proposals: vi.fn()
+        .mockResolvedValueOnce({
+          items: [summary], nextCursor: null, hasMore: false,
+          referenceEffectiveAt: NOW, freshnessWatermark: NOW, fieldPolicyRevision: 1,
+        })
+        .mockResolvedValueOnce({
+          items: [revised], nextCursor: null, hasMore: false,
+          referenceEffectiveAt: NOW, freshnessWatermark: later, fieldPolicyRevision: 1,
+        }),
+      proposal: vi.fn().mockResolvedValue({
+        item: { ...summary, amountMasked: false, amount: '99' },
+        referenceEffectiveAt: NOW, freshnessWatermark: NOW, fieldPolicyRevision: 1,
+      }),
+    };
+    const proposals = vi.mocked(data.proposals);
+    const proposal = vi.mocked(data.proposal);
+    window.history.replaceState({}, '', `/?cycle=${ID.cycle}&proposal=${proposalId}`);
+    await render({ requestScope: scope(), dataSource: data });
+    await act(async () => {
+      await vi.waitFor(() => expect(latest.proposalDetail?.item.amount).toBe('99'));
+    });
+
+    await act(async () => {
+      latest.retryProposals();
+      await vi.waitFor(() => expect(proposals).toHaveBeenCalledTimes(2));
+      await vi.waitFor(() => expect(latest.proposalsError).toContain('not bound'));
+    });
+    expect(proposal).toHaveBeenCalledTimes(1);
+    expect(latest.actions.canSubmitProposal).toBe(false);
+  });
+
+  it('denies proposal cycle, policy, or freshness mismatches without rendering detail', async () => {
+    const proposalId = '99999999-9999-4999-8999-999999999999';
+    const summary = {
+      proposalId, aggregateVersion: 2, cycleId: ID.cycle,
+      workerId: '55555555-5555-4555-8555-555555555555',
+      assignmentId: '66666666-6666-4666-8666-666666666666',
+      componentCode: 'BASE', currency: 'USD', effectiveFrom: '2027-01-01',
+      effectiveTo: null, currentRevision: 1, status: 'DRAFT' as const,
+      contentDigest: HASH, amountMasked: true,
+    };
+    const mismatched: CompensationPlanningDataSource = {
+      ...source(),
+      proposals: vi.fn().mockResolvedValue({
+        items: [summary], nextCursor: null, hasMore: false,
+        referenceEffectiveAt: NOW, freshnessWatermark: NOW, fieldPolicyRevision: 1,
+      }),
+      proposal: vi.fn().mockResolvedValue({
+        item: { ...summary, cycleId: ID.otherCycle, amountMasked: false, amount: '99' },
+        referenceEffectiveAt: NOW,
+        freshnessWatermark: '2026-10-13T08:00:01Z',
+        fieldPolicyRevision: 2,
+      }),
+    };
+    await render({ requestScope: scope(), dataSource: mismatched });
+    await act(async () => latest.selectProposal(proposalId));
+    await act(async () => {
+      await vi.waitFor(() => expect(latest.proposalDetailError).toContain('not bound'));
+    });
+    expect(latest.proposalDetail).toBeNull();
+    expect(latest.actions.canSubmitProposal).toBe(false);
   });
 });

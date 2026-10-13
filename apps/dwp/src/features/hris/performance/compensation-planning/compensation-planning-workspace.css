@@ -1,305 +1,35 @@
-.compplan-shell {
-  --cp-ink: #17202f;
-  --cp-muted: #667085;
-  --cp-line: #d8dee8;
-  --cp-panel: #ffffff;
-  --cp-wash: #f5f7fb;
-  --cp-accent: #315efb;
-  --cp-accent-soft: #e9efff;
-  --cp-danger: #b42318;
-  color: var(--cp-ink);
-  background: linear-gradient(145deg, #f9fbff 0%, #f4f6fb 58%, #eef2f9 100%);
-  min-height: 100%;
-  padding: clamp(20px, 3vw, 40px);
-}
-
-.compplan-header,
-.compplan-toolbar,
-.compplan-panel-header,
-.compplan-cycle-row,
-.compplan-metric-row,
-.compplan-actions {
-  display: flex;
-  align-items: center;
-}
-
-.compplan-header {
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 24px;
-  margin-bottom: 24px;
-}
-
-.compplan-eyebrow {
-  color: var(--cp-accent);
-  font-size: 0.75rem;
-  font-weight: 800;
-  letter-spacing: 0.09em;
-  margin: 0 0 8px;
-  text-transform: uppercase;
-}
-
-.compplan-header h1 {
-  font-size: clamp(1.75rem, 3vw, 2.6rem);
-  letter-spacing: -0.035em;
-  line-height: 1.08;
-  margin: 0;
-}
-
-.compplan-subtitle {
-  color: var(--cp-muted);
-  line-height: 1.55;
-  margin: 10px 0 0;
-  max-width: 720px;
-}
-
-.compplan-toolbar,
-.compplan-actions {
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.compplan-button {
-  align-items: center;
-  background: var(--cp-panel);
-  border: 1px solid var(--cp-line);
-  border-radius: 12px;
-  color: var(--cp-ink);
-  cursor: pointer;
-  display: inline-flex;
-  font: inherit;
-  font-weight: 700;
-  justify-content: center;
-  min-height: 48px;
-  padding: 0 16px;
-}
-
-.compplan-button[data-tone='primary'] {
-  background: var(--cp-accent);
-  border-color: var(--cp-accent);
-  color: #fff;
-}
-
-.compplan-button[data-tone='danger'] {
-  color: var(--cp-danger);
-}
-
-.compplan-button:disabled {
-  cursor: not-allowed;
-  opacity: 0.48;
-}
-
-.compplan-button:focus-visible,
-.compplan-cycle-row:focus-visible {
-  outline: 3px solid rgba(49, 94, 251, 0.35);
-  outline-offset: 2px;
-}
-
-.compplan-layout {
-  display: grid;
-  gap: 18px;
-  grid-template-columns: minmax(250px, 0.78fr) minmax(0, 1.55fr) minmax(250px, 0.82fr);
-}
-
-.compplan-panel {
-  background: rgba(255, 255, 255, 0.94);
-  border: 1px solid rgba(216, 222, 232, 0.92);
-  border-radius: 18px;
-  box-shadow: 0 10px 34px rgba(33, 43, 70, 0.07);
-  min-width: 0;
-  overflow: hidden;
-}
-
-.compplan-panel-header {
-  border-bottom: 1px solid var(--cp-line);
-  justify-content: space-between;
-  min-height: 68px;
-  padding: 0 18px;
-}
-
-.compplan-panel-header h2,
-.compplan-panel-header h3 {
-  font-size: 1rem;
-  margin: 0;
-}
-
-.compplan-list {
-  list-style: none;
-  margin: 0;
-  padding: 8px;
-}
-
-.compplan-cycle-row {
-  background: transparent;
-  border: 0;
-  border-radius: 12px;
-  cursor: pointer;
-  justify-content: space-between;
-  min-height: 64px;
-  padding: 10px 12px;
-  text-align: left;
-  width: 100%;
-}
-
-.compplan-cycle-row:hover,
-.compplan-cycle-row[aria-current='true'] {
-  background: var(--cp-accent-soft);
-}
-
-.compplan-cycle-row strong,
-.compplan-cycle-row small {
-  display: block;
+.compplan-semantic-panel,
+.compplan-semantic-panel * {
   overflow-wrap: anywhere;
 }
 
-.compplan-cycle-row small,
-.compplan-meta,
-.compplan-table td {
-  color: var(--cp-muted);
+.compplan-semantic-panel h1,
+.compplan-semantic-panel h2,
+.compplan-semantic-panel h3 {
+  word-break: keep-all;
 }
 
-.compplan-badge {
-  background: #eef1f6;
-  border-radius: 999px;
-  color: #344054;
-  display: inline-flex;
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.035em;
-  padding: 5px 9px;
-  white-space: nowrap;
+.compplan-semantic-panel :is(button, [role='button']) {
+  overflow-wrap: normal;
+  word-break: keep-all;
 }
 
-.compplan-badge[data-status='APPROVED'],
-.compplan-badge[data-status='PUBLISHED'] {
-  background: #e7f8ef;
-  color: #087443;
-}
-
-.compplan-badge[data-status='PROPOSAL_REVIEW'] {
-  background: #fff2d8;
-  color: #8a4b08;
-}
-
-.compplan-body {
-  padding: 20px;
-}
-
-.compplan-metric-row {
-  align-items: stretch;
-  display: grid;
-  gap: 10px;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  margin-bottom: 18px;
-}
-
-.compplan-metric {
-  background: var(--cp-wash);
-  border-radius: 12px;
-  padding: 14px;
-}
-
-.compplan-metric dt {
-  color: var(--cp-muted);
-  font-size: 0.75rem;
-  font-weight: 700;
-}
-
-.compplan-metric dd {
-  font-size: 1.05rem;
-  font-weight: 800;
-  margin: 6px 0 0;
-  overflow-wrap: anywhere;
-}
-
-.compplan-table-wrap {
-  overflow-x: auto;
-}
-
-.compplan-table {
-  border-collapse: collapse;
-  font-size: 0.86rem;
-  width: 100%;
-}
-
-.compplan-table th,
-.compplan-table td {
-  border-bottom: 1px solid var(--cp-line);
-  overflow-wrap: anywhere;
-  padding: 12px 10px;
-  text-align: left;
-  vertical-align: top;
-}
-
-.compplan-table th {
-  color: #475467;
-  font-size: 0.72rem;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.compplan-state {
-  padding: 44px 22px;
-  text-align: center;
-}
-
-.compplan-state h2 {
-  margin: 0 0 8px;
-}
-
-.compplan-state p,
-.compplan-callout p {
-  color: var(--cp-muted);
-  line-height: 1.55;
-  margin: 0;
-}
-
-.compplan-callout {
-  background: #fff8e8;
-  border: 1px solid #f0d79c;
-  border-radius: 12px;
-  margin: 16px 0;
-  padding: 14px;
-}
-
-.compplan-callout[data-tone='danger'] {
-  background: #fff0ee;
-  border-color: #f2b8b2;
-}
-
-.compplan-section + .compplan-section {
-  border-top: 1px solid var(--cp-line);
-  margin-top: 22px;
-  padding-top: 20px;
-}
-
-.compplan-section h3 {
-  font-size: 0.92rem;
-  margin: 0 0 12px;
-}
-
-@media (max-width: 1080px) {
-  .compplan-layout {
-    grid-template-columns: minmax(220px, 0.72fr) minmax(0, 1.4fr);
+@media (forced-colors: active) {
+  .compplan-semantic-panel {
+    border: 1px solid CanvasText;
   }
 
-  .compplan-actions-panel {
-    grid-column: 1 / -1;
+  .compplan-semantic-panel :focus-visible {
+    outline: 2px solid Highlight;
+    outline-offset: 2px;
   }
 }
 
-@media (max-width: 720px) {
-  .compplan-shell {
-    padding: 16px;
-  }
-
-  .compplan-header {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .compplan-layout,
-  .compplan-metric-row {
-    grid-template-columns: 1fr;
+@media (prefers-reduced-motion: reduce) {
+  .compplan-semantic-panel,
+  .compplan-semantic-panel * {
+    animation-duration: 0s !important;
+    transition-duration: 0s !important;
+    scroll-behavior: auto !important;
   }
 }

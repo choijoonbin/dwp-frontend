@@ -49,6 +49,47 @@ const ID = {
 } as const;
 const HASH = 'a'.repeat(64);
 const NOW = '2026-10-13T08:00:00Z';
+const WORKER = '66666666-6666-4666-8666-666666666666';
+const ASSIGNMENT = '77777777-7777-4777-8777-777777777777';
+const ORGANIZATION = '99999999-9999-4999-8999-999999999999';
+const POLICY = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
+const guidelines = {
+  components: [{
+    componentCode: 'BASE', currency: 'USD', minimumAmount: '0', maximumAmount: '100',
+    exceptionPolicyCode: 'NONE', roundingPolicyVersionPublicId: POLICY,
+  }],
+  budgetMode: 'HARD_CAP' as const, effectiveFrom: '2027-01-01', effectiveTo: null,
+};
+const population = {
+  asOf: NOW, hrmOwnerRevision: 1,
+  lines: [{
+    workerPublicId: WORKER, assignmentPublicId: ASSIGNMENT,
+    organizationPublicId: ORGANIZATION, gradePublicId: null, jobProfilePublicId: null,
+    assignmentOwnerRevision: 1, eligibleComponentCodes: ['BASE'],
+  }],
+};
+const sourceRef = {
+  snapshotPublicId: ID.snapshot, ownerRevision: 1,
+  projectionSchemaId: 'CompensationPopulationContent.v1' as const,
+  asOf: NOW, sha256: HASH,
+  purposeCode: 'HRIS_PER_COMPENSATION_POPULATION' as const,
+};
+const createBody = {
+  cycleCode: 'FY27', guidelines, population, effectiveFrom: '2027-01-01',
+  effectiveTo: null, populationSourceRef: sourceRef,
+};
+const reviseBody = {
+  guidelines, population, effectiveFrom: '2027-01-01', effectiveTo: null,
+  populationSourceRef: sourceRef,
+};
+const proposalBody = {
+  content: {
+    cyclePublicId: ID.cycle, workerPublicId: WORKER, assignmentPublicId: ASSIGNMENT,
+    componentCode: 'BASE', currency: 'USD', amount: '10.25',
+    effectiveFrom: '2027-01-01', effectiveTo: null,
+    exceptionReasonCode: null, supersedesProposalPublicId: null,
+  },
+};
 const authority = {
   mode: 'SECURE',
   rolloutState: '111',
@@ -78,8 +119,8 @@ const proposal = {
   proposalId: ID.proposal,
   aggregateVersion: 2,
   cycleId: ID.cycle,
-  workerId: '66666666-6666-4666-8666-666666666666',
-  assignmentId: '77777777-7777-4777-8777-777777777777',
+  workerId: WORKER,
+  assignmentId: ASSIGNMENT,
   componentCode: 'BASE',
   currency: 'USD',
   effectiveFrom: '2027-01-01',
@@ -165,29 +206,41 @@ describe('compensation-planning API', () => {
 
   it('keeps command metadata in headers and applies HIGH proof only to approve/publish', async () => {
     transport.post.mockImplementation((_path, _body) => response(receipt));
-    const body = {} as never;
     const createEnvelope = {
       correlationId: ID.correlation,
       idempotencyKey: 'idem-1',
-      body,
+      body: createBody,
     };
-    const envelope = { ...createEnvelope, expectedVersion: 4 };
 
     await createCompensationCycle(createEnvelope, authority);
     transport.post.mockImplementationOnce((_path, _body) => response(rich));
-    await reviseCompensationCycle(ID.cycle, envelope, authority);
-    await allocateCompensationBudget(ID.cycle, envelope, authority);
+    await reviseCompensationCycle(ID.cycle, {
+      ...createEnvelope, expectedVersion: 4, body: reviseBody,
+    }, authority);
+    await allocateCompensationBudget(ID.cycle, {
+      ...createEnvelope, expectedVersion: 4,
+      body: { organizationPublicId: ORGANIZATION, amount: '10.25', currency: 'USD',
+        ledgerEntryType: 'ALLOCATE' as const, reversesEntryPublicId: null },
+    }, authority);
     transport.post.mockImplementationOnce((_path, _body) => response({
       ...rich,
       aggregatePublicId: ID.proposal,
     }));
-    await upsertCompensationProposal(ID.cycle, ID.proposal, envelope, authority);
+    await upsertCompensationProposal(ID.cycle, ID.proposal, {
+      ...createEnvelope, expectedVersion: 4, body: proposalBody,
+    }, authority);
     transport.post.mockImplementationOnce((_path, _body) => response({
       ...receipt,
       aggregateId: ID.proposal,
     }));
-    await submitCompensationProposal(ID.cycle, ID.proposal, envelope, authority);
-    await approveCompensationPlan(ID.cycle, envelope, authority);
+    await submitCompensationProposal(ID.cycle, ID.proposal, {
+      ...createEnvelope, expectedVersion: 4,
+      body: { submissionDigest: HASH, effectiveDate: '2027-01-01' },
+    }, authority);
+    await approveCompensationPlan(ID.cycle, {
+      ...createEnvelope, expectedVersion: 4,
+      body: { decision: 'APPROVE', reasonCode: 'ANNUAL_REVIEW' },
+    }, authority);
     transport.post.mockImplementationOnce((_path, _body) => response({
       approvalReceiptId: ID.receipt,
       cycleId: ID.cycle,
@@ -200,9 +253,14 @@ describe('compensation-planning API', () => {
       correlationId: ID.correlation,
       publishedAt: NOW,
     }));
-    await publishCompensationSnapshot(ID.cycle, envelope, authority);
+    await publishCompensationSnapshot(ID.cycle, {
+      ...createEnvelope, expectedVersion: 4,
+      body: { approvalReceiptId: ID.receipt },
+    }, authority);
     transport.post.mockImplementationOnce((_path, _body) => response(rich));
-    await cancelCompensationCycle(ID.cycle, envelope, authority);
+    await cancelCompensationCycle(ID.cycle, {
+      ...createEnvelope, expectedVersion: 4, body: {},
+    }, authority);
 
     expect(transport.governed).toHaveBeenCalledTimes(6);
     expect(transport.highRisk).toHaveBeenCalledTimes(2);
@@ -213,16 +271,32 @@ describe('compensation-planning API', () => {
         'Idempotency-Key': 'idem-1',
         'If-Match': '4',
       });
-      expect(call[1]).toBe(body);
+      expect(Object.isFrozen(call[1])).toBe(true);
     }
     expect(transport.post.mock.calls.map(([path]) => path)).toHaveLength(8);
+  });
+
+  it('rejects noncanonical outgoing money before transport', async () => {
+    await expect(allocateCompensationBudget(ID.cycle, {
+      correlationId: ID.correlation,
+      idempotencyKey: 'idem-1',
+      expectedVersion: 4,
+      body: {
+        organizationPublicId: ORGANIZATION,
+        amount: '1.20',
+        currency: 'USD',
+        ledgerEntryType: 'ALLOCATE',
+        reversesEntryPublicId: null,
+      },
+    }, authority)).rejects.toThrow('contract payload');
+    expect(transport.post).not.toHaveBeenCalled();
   });
 
   it('rejects missing versions and mismatched sealed authority before transport', async () => {
     expect(() =>
       reviseCompensationCycle(
         ID.cycle,
-        { correlationId: ID.correlation, idempotencyKey: 'idem-1', body: {} as never },
+        { correlationId: ID.correlation, idempotencyKey: 'idem-1', body: reviseBody },
         authority
       )
     ).toThrow('If-Match');
@@ -230,7 +304,7 @@ describe('compensation-planning API', () => {
       reviseCompensationCycle(
         ID.cycle,
         { correlationId: ID.correlation, idempotencyKey: 'different', expectedVersion: 4,
-          body: {} as never },
+          body: reviseBody },
         authority
       )
     ).rejects.toThrow('authority');

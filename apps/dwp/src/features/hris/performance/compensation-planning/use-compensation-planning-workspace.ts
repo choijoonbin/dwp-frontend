@@ -7,6 +7,7 @@ import { compensationPlanningDataSource } from './compensation-planning-api';
 import {
   isAmbiguousCompensationCommandFailure,
   isResultUnknown,
+  validatePendingCompensationCommand,
   verifyCompensationCommandResult,
 } from './compensation-planning-command';
 
@@ -21,9 +22,16 @@ import type {
 } from './compensation-planning-command';
 import type {
   CompensationCommandResult,
+  ApproveCompensationPlanBody,
+  CompensationBudgetBody,
   CompensationCycleCollection,
+  CreateCompensationCycleBody,
+  PublishCompensationSnapshotBody,
   CompensationProposalCollection,
   CompensationProposalDetail,
+  ReviseCompensationCycleBody,
+  SubmitCompensationProposalBody,
+  UpsertCompensationProposalBody,
 } from './compensation-planning-contract';
 import type {
   CompensationPlanningWorkspaceActions,
@@ -39,20 +47,44 @@ export type CompensationPlanningCommandExecutors = Readonly<
 >;
 
 export type CompensationPlanningCommandIntents = Readonly<{
-  create?: () => PendingCompensationCommand;
-  revise?: (cycleId: string, version: number) => PendingCompensationCommand;
-  allocate?: (cycleId: string, version: number) => PendingCompensationCommand;
-  draftProposal?: (cycleId: string, version: number) => PendingCompensationCommand;
+  create?: (body: CreateCompensationCycleBody) => PendingCompensationCommand;
+  revise?: (
+    cycleId: string,
+    version: number,
+    body: ReviseCompensationCycleBody
+  ) => PendingCompensationCommand;
+  allocate?: (
+    cycleId: string,
+    version: number,
+    body: CompensationBudgetBody
+  ) => PendingCompensationCommand;
+  draftProposal?: (
+    cycleId: string,
+    version: number,
+    proposalId: string,
+    body: UpsertCompensationProposalBody
+  ) => PendingCompensationCommand;
   submitProposal?: (
     cycleId: string,
     proposalId: string,
     version: number,
-    contentDigest: string,
-    effectiveFrom: string
+    body: SubmitCompensationProposalBody
   ) => PendingCompensationCommand;
-  approve?: (cycleId: string, version: number) => PendingCompensationCommand;
-  publish?: (cycleId: string, version: number) => PendingCompensationCommand;
-  cancel?: (cycleId: string, version: number) => PendingCompensationCommand;
+  approve?: (
+    cycleId: string,
+    version: number,
+    body: ApproveCompensationPlanBody
+  ) => PendingCompensationCommand;
+  publish?: (
+    cycleId: string,
+    version: number,
+    body: PublishCompensationSnapshotBody
+  ) => PendingCompensationCommand;
+  cancel?: (
+    cycleId: string,
+    version: number,
+    body: Record<string, never>
+  ) => PendingCompensationCommand;
 }>;
 
 export type CompensationPlanningRuntimeOptions = Readonly<{
@@ -68,6 +100,22 @@ export function useCompensationPlanningRequestScope() {
 
 function readKey(scope: ProductSurfaceRequestScope, kind: string, ...parts: unknown[]) {
   return ['hris', 'performance', 'compensation-planning', kind, ...parts, ...scope.cacheKey] as const;
+}
+
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
+
+function urlValue(name: string, uuidOnly = false): string | null {
+  if (typeof window === 'undefined') return null;
+  const value = new URLSearchParams(window.location.search).get(name);
+  return value && (!uuidOnly || UUID.test(value)) ? value : null;
+}
+
+function replaceUrlValue(name: string, value: string | null) {
+  if (typeof window === 'undefined') return;
+  const url = new URL(window.location.href);
+  if (value) url.searchParams.set(name, value);
+  else url.searchParams.delete(name);
+  window.history.replaceState(window.history.state, '', `${url.pathname}${url.search}${url.hash}`);
 }
 
 function errorCode(error: unknown): string | null {
@@ -174,28 +222,20 @@ export function useCompensationPlanningRuntime({
   const latestScopeIdentityRef = useRef(scopeIdentity);
   latestScopeIdentityRef.current = scopeIdentity;
   const scopeCurrent = scopeRef.current === scopeIdentity;
-  const transitionCorrelationRef = useRef({
-    scopeIdentity,
-    correlationId: crypto.randomUUID(),
-  });
-  if (transitionCorrelationRef.current.scopeIdentity !== scopeIdentity) {
-    transitionCorrelationRef.current = {
-      scopeIdentity,
-      correlationId: crypto.randomUUID(),
-    };
-  }
-  const [selectedCycleId, setSelectedCycleId] = useState<string | null>(null);
-  const [selectedProposalId, setSelectedProposalId] = useState<string | null>(null);
-  const [correlationId, setCorrelationId] = useState(() => crypto.randomUUID());
+  const [selectedCycleId, setSelectedCycleId] = useState<string | null>(() =>
+    urlValue('cycle', true)
+  );
+  const [selectedProposalId, setSelectedProposalId] = useState<string | null>(() =>
+    urlValue('proposal', true)
+  );
+  const [filter, setFilter] = useState(() => urlValue('q') ?? '');
+  const correlationRef = useRef(crypto.randomUUID());
   const [pendingCommand, setPendingCommand] = useState<PendingCompensationCommand | null>(null);
   const [lastResult, setLastResult] = useState<CompensationCommandResult | null>(null);
   const [commandError, setCommandError] = useState<unknown>(null);
   const [commandBusy, setCommandBusy] = useState(false);
 
   const activeCycleId = scopeCurrent ? selectedCycleId : null;
-  const activeCorrelationId = scopeCurrent
-    ? correlationId
-    : transitionCorrelationRef.current.correlationId;
   const activePending = scopeCurrent ? pendingCommand : null;
   const activeResult = scopeCurrent ? lastResult : null;
 
@@ -204,7 +244,7 @@ export function useCompensationPlanningRuntime({
     scopeRef.current = scopeIdentity;
     setSelectedCycleId(null);
     setSelectedProposalId(null);
-    setCorrelationId(crypto.randomUUID());
+    correlationRef.current = crypto.randomUUID();
     setPendingCommand(null);
     setLastResult(null);
     setCommandError(null);
@@ -213,16 +253,19 @@ export function useCompensationPlanningRuntime({
   }, [queryClient, scopeIdentity]);
 
   const cyclesQuery = useQuery({
-    queryKey: readKey(requestScope, 'cycles-v1', 'current', 'first', activeCorrelationId),
+    queryKey: readKey(requestScope, 'cycles-v2', 'current', 'first'),
     queryFn: ({ signal }) =>
       readAllCycles(dataSource, {
-        correlationId: activeCorrelationId,
+        correlationId: correlationRef.current,
         contextScopeKey: requestScope.contextScopeKey,
         signal,
       }),
     enabled: requestScope.ready && scopeCurrent,
     meta: requestScope.queryMeta,
   });
+  const selectedCycleSummary = cyclesQuery.data?.items.find(
+    (item) => item.cycleId === activeCycleId
+  );
 
   const cycleQuery = useQuery({
     queryKey: readKey(
@@ -230,15 +273,28 @@ export function useCompensationPlanningRuntime({
       'cycle-v1',
       activeCycleId ?? 'none',
       cyclesQuery.data?.asOf ?? 'current',
-      activeCorrelationId
+      cyclesQuery.data?.scopeRevision ?? 'scope',
+      cyclesQuery.data?.fieldPolicyRevision ?? 'policy',
+      selectedCycleSummary?.aggregateVersion ?? 'version'
     ),
-    queryFn: ({ signal }) =>
-      dataSource.cycle(activeCycleId!, {
-        correlationId: activeCorrelationId,
+    queryFn: async ({ signal }) => {
+      if (!selectedCycleSummary) throw new Error('Selected compensation cycle is stale.');
+      const detail = await dataSource.cycle(activeCycleId!, {
+        correlationId: correlationRef.current,
         contextScopeKey: requestScope.contextScopeKey,
         signal,
-      }),
-    enabled: requestScope.ready && scopeCurrent && activeCycleId !== null,
+      });
+      if (
+        detail.item.cycleId !== activeCycleId ||
+        detail.item.aggregateVersion !== selectedCycleSummary.aggregateVersion ||
+        detail.fieldPolicyRevision !== cyclesQuery.data?.fieldPolicyRevision
+      ) {
+        throw new Error('Compensation cycle detail is not bound to the selected projection.');
+      }
+      return detail;
+    },
+    enabled:
+      requestScope.ready && scopeCurrent && activeCycleId !== null && cyclesQuery.isSuccess,
     meta: requestScope.queryMeta,
   });
 
@@ -248,39 +304,82 @@ export function useCompensationPlanningRuntime({
       'proposals-v1',
       activeCycleId ?? 'none',
       cycleQuery.data?.referenceEffectiveAt ?? 'current',
-      'first',
-      activeCorrelationId
+      cycleQuery.data?.freshnessWatermark ?? 'freshness',
+      cycleQuery.data?.fieldPolicyRevision ?? 'policy',
+      cycleQuery.data?.item.aggregateVersion ?? 'version',
+      'first'
     ),
-    queryFn: ({ signal }) =>
-      readAllProposals(
+    queryFn: async ({ signal }) => {
+      const collection = await readAllProposals(
         dataSource,
         activeCycleId!,
         cycleQuery.data!.referenceEffectiveAt,
         {
-          correlationId: activeCorrelationId,
+          correlationId: correlationRef.current,
           contextScopeKey: requestScope.contextScopeKey,
           signal,
         }
-      ),
+      );
+      const cycle = cycleQuery.data!;
+      if (
+        collection.referenceEffectiveAt !== cycle.referenceEffectiveAt ||
+        collection.freshnessWatermark !== cycle.freshnessWatermark ||
+        collection.fieldPolicyRevision !== cycle.fieldPolicyRevision ||
+        collection.items.some((item) => item.cycleId !== activeCycleId)
+      ) {
+        throw new Error('Compensation proposal list is not bound to the selected cycle.');
+      }
+      return collection;
+    },
     enabled:
       requestScope.ready && scopeCurrent && activeCycleId !== null && cycleQuery.isSuccess,
     meta: requestScope.queryMeta,
   });
+  const selectedProposalSummary = proposalsQuery.data?.items.find(
+    (item) => item.proposalId === selectedProposalId
+  );
 
   const proposalQuery = useQuery<CompensationProposalDetail>({
     queryKey: readKey(
       requestScope,
       'proposal-v1',
       selectedProposalId ?? 'none',
-      cycleQuery.data?.referenceEffectiveAt ?? 'current',
-      activeCorrelationId
+      proposalsQuery.data?.referenceEffectiveAt ?? 'current',
+      proposalsQuery.data?.freshnessWatermark ?? 'freshness',
+      proposalsQuery.data?.fieldPolicyRevision ?? 'policy',
+      selectedProposalSummary?.aggregateVersion ?? 'version',
+      selectedProposalSummary?.currentRevision ?? 'revision',
+      selectedProposalSummary?.contentDigest ?? 'digest'
     ),
-    queryFn: ({ signal }) =>
-      dataSource.proposal(selectedProposalId!, {
-        correlationId: activeCorrelationId,
+    queryFn: async ({ signal }) => {
+      if (!selectedProposalSummary) throw new Error('Selected compensation proposal is stale.');
+      const detail = await dataSource.proposal(selectedProposalId!, {
+        correlationId: correlationRef.current,
         contextScopeKey: requestScope.contextScopeKey,
         signal,
-      }),
+      });
+      const item = detail.item;
+      const summaryMatches =
+        item.proposalId === selectedProposalId &&
+        item.cycleId === activeCycleId &&
+        item.aggregateVersion === selectedProposalSummary.aggregateVersion &&
+        item.currentRevision === selectedProposalSummary.currentRevision &&
+        item.contentDigest === selectedProposalSummary.contentDigest &&
+        item.workerId === selectedProposalSummary.workerId &&
+        item.assignmentId === selectedProposalSummary.assignmentId &&
+        item.componentCode === selectedProposalSummary.componentCode &&
+        item.currency === selectedProposalSummary.currency &&
+        item.status === selectedProposalSummary.status;
+      if (
+        !summaryMatches ||
+        detail.referenceEffectiveAt !== proposalsQuery.data?.referenceEffectiveAt ||
+        detail.freshnessWatermark !== proposalsQuery.data?.freshnessWatermark ||
+        detail.fieldPolicyRevision !== proposalsQuery.data?.fieldPolicyRevision
+      ) {
+        throw new Error('Compensation proposal detail is not bound to the selected projection.');
+      }
+      return detail;
+    },
     enabled:
       requestScope.ready &&
       scopeCurrent &&
@@ -301,25 +400,29 @@ export function useCompensationPlanningRuntime({
     if (!authorityDenied) return;
     setSelectedCycleId(null);
     setSelectedProposalId(null);
+    replaceUrlValue('cycle', null);
+    replaceUrlValue('proposal', null);
     setPendingCommand(null);
     setLastResult(null);
     queryClient.removeQueries({ queryKey: ['hris', 'performance', 'compensation-planning'] });
   }, [authorityDenied, queryClient]);
 
   useEffect(() => {
-    setSelectedProposalId(null);
-  }, [activeCycleId]);
-
-  useEffect(() => {
     if (
       authorityDenied ||
       !scopeCurrent ||
-      selectedCycleId !== null ||
       !cyclesQuery.data?.items.length
     ) {
       return;
     }
-    setSelectedCycleId(cyclesQuery.data.items[0].cycleId);
+    if (selectedCycleId && cyclesQuery.data.items.some((item) => item.cycleId === selectedCycleId)) {
+      return;
+    }
+    const cycleId = cyclesQuery.data.items[0].cycleId;
+    setSelectedProposalId(null);
+    setSelectedCycleId(cycleId);
+    replaceUrlValue('proposal', null);
+    replaceUrlValue('cycle', cycleId);
   }, [authorityDenied, cyclesQuery.data?.items, scopeCurrent, selectedCycleId]);
 
   const execute = useCallback(
@@ -336,6 +439,7 @@ export function useCompensationPlanningRuntime({
       setCommandError(null);
       const startingScopeIdentity = scopeIdentity;
       try {
+        validatePendingCompensationCommand(pending);
         const result = verifyCompensationCommandResult(pending, await executor(pending));
         if (latestScopeIdentityRef.current !== startingScopeIdentity) {
           throw new Error('Compensation authority changed while the command was running.');
@@ -381,9 +485,9 @@ export function useCompensationPlanningRuntime({
   );
 
   const runIntent = useCallback(
-    (intent: (() => PendingCompensationCommand) | undefined) => {
-      if (!intent || commandBusy || activePending) return;
-      void execute(intent()).catch(() => undefined);
+    async (intent: (() => PendingCompensationCommand) | undefined) => {
+      if (!intent || commandBusy || activePending) return undefined;
+      return execute(intent());
     },
     [activePending, commandBusy, execute]
   );
@@ -393,14 +497,12 @@ export function useCompensationPlanningRuntime({
     (command: CompensationCommandName) => Boolean(commandExecutors[command]),
     [commandExecutors]
   );
-  const readError =
-    cyclesQuery.error ?? cycleQuery.error ?? proposalsQuery.error ?? proposalQuery.error;
+  const readError = cyclesQuery.error ?? cycleQuery.error;
   const unlocked =
     requestScope.ready &&
     scopeCurrent &&
     !authorityDenied &&
     !readError &&
-    !commandError &&
     !commandBusy &&
     !activePending;
   const actions: CompensationPlanningWorkspaceActions = useMemo(
@@ -450,26 +552,32 @@ export function useCompensationPlanningRuntime({
         Boolean(selected && ['DRAFT', 'OPEN', 'PROPOSAL_REVIEW'].includes(selected.status)) &&
         executorReady('CANCEL_CYCLE') &&
         Boolean(commandIntents.cancel),
-      onCreate: () => runIntent(commandIntents.create),
-      onRevise: () =>
+      onCreate: (body) =>
+        runIntent(commandIntents.create ? () => commandIntents.create!(body) : undefined),
+      onRevise: (body) =>
         runIntent(
           selected && commandIntents.revise
-            ? () => commandIntents.revise!(selected.cycleId, selected.aggregateVersion)
+            ? () => commandIntents.revise!(selected.cycleId, selected.aggregateVersion, body)
             : undefined
         ),
-      onAllocate: () =>
+      onAllocate: (body) =>
         runIntent(
           selected && commandIntents.allocate
-            ? () => commandIntents.allocate!(selected.cycleId, selected.aggregateVersion)
+            ? () => commandIntents.allocate!(selected.cycleId, selected.aggregateVersion, body)
             : undefined
         ),
-      onDraftProposal: () =>
+      onDraftProposal: (proposalId, body) =>
         runIntent(
           selected && commandIntents.draftProposal
-            ? () => commandIntents.draftProposal!(selected.cycleId, selected.aggregateVersion)
+            ? () => commandIntents.draftProposal!(
+                selected.cycleId,
+                selected.aggregateVersion,
+                proposalId,
+                body
+              )
             : undefined
         ),
-      onSubmitProposal: (proposal) =>
+      onSubmitProposal: (proposal, body) =>
         runIntent(
           commandIntents.submitProposal
             ? () =>
@@ -477,27 +585,26 @@ export function useCompensationPlanningRuntime({
                   proposal.cycleId,
                   proposal.proposalId,
                   proposal.aggregateVersion,
-                  proposal.contentDigest,
-                  proposal.effectiveFrom
+                  body
                 )
             : undefined
         ),
-      onApprove: () =>
+      onApprove: (body) =>
         runIntent(
           selected && commandIntents.approve
-            ? () => commandIntents.approve!(selected.cycleId, selected.aggregateVersion)
+            ? () => commandIntents.approve!(selected.cycleId, selected.aggregateVersion, body)
             : undefined
         ),
-      onPublish: () =>
+      onPublish: (body) =>
         runIntent(
           selected && commandIntents.publish
-            ? () => commandIntents.publish!(selected.cycleId, selected.aggregateVersion)
+            ? () => commandIntents.publish!(selected.cycleId, selected.aggregateVersion, body)
             : undefined
         ),
       onCancel: () =>
         runIntent(
           selected && commandIntents.cancel
-            ? () => commandIntents.cancel!(selected.cycleId, selected.aggregateVersion)
+            ? () => commandIntents.cancel!(selected.cycleId, selected.aggregateVersion, {})
             : undefined
         ),
     }),
@@ -518,8 +625,7 @@ export function useCompensationPlanningRuntime({
   else if (
     !requestScope.ready ||
     cyclesQuery.isPending ||
-    (activeCycleId !== null && cycleQuery.isPending) ||
-    (cycleQuery.isSuccess && proposalsQuery.isPending)
+    (activeCycleId !== null && cycleQuery.isPending)
   ) {
     status = 'LOADING';
   }
@@ -527,7 +633,7 @@ export function useCompensationPlanningRuntime({
   else if (stepUpRequired(commandError)) status = 'STEP_UP_REQUIRED';
   else if (commandError instanceof HttpError && [409, 412].includes(commandError.status)) {
     status = 'STALE_VERSION';
-  } else if (queryError || commandError) status = 'ERROR';
+  } else if (queryError) status = 'ERROR';
   else if ((cyclesQuery.data?.items.length ?? 0) === 0) status = 'EMPTY';
 
   return {
@@ -539,6 +645,7 @@ export function useCompensationPlanningRuntime({
     proposalDetail: authorityDenied ? null : proposalQuery.data ?? null,
     selectedProposalId: authorityDenied ? null : selectedProposalId,
     actions,
+    commandBusy,
     pendingCommand: activePending,
     lastResult: activeResult,
     errorMessage:
@@ -547,18 +654,46 @@ export function useCompensationPlanningRuntime({
         : commandError instanceof Error
           ? commandError.message
           : null,
+    proposalsError:
+      proposalsQuery.error instanceof Error ? proposalsQuery.error.message : null,
+    proposalDetailError:
+      proposalQuery.error instanceof Error ? proposalQuery.error.message : null,
+    proposalLoading: proposalsQuery.isPending || proposalsQuery.isFetching,
+    lastRefreshedAt: Math.max(
+      cyclesQuery.dataUpdatedAt,
+      cycleQuery.dataUpdatedAt,
+      proposalsQuery.dataUpdatedAt,
+      proposalQuery.dataUpdatedAt
+    ),
+    freshnessWatermark:
+      proposalQuery.data?.freshnessWatermark ??
+      proposalsQuery.data?.freshnessWatermark ??
+      cycleQuery.data?.freshnessWatermark ??
+      null,
+    filter,
+    setFilter: (value: string) => {
+      setFilter(value);
+      replaceUrlValue('q', value.trim() ? value : null);
+    },
     selectCycle: (cycleId: string) => {
       setSelectedProposalId(null);
       setSelectedCycleId(cycleId);
+      replaceUrlValue('proposal', null);
+      replaceUrlValue('cycle', cycleId);
     },
-    selectProposal: setSelectedProposalId,
+    selectProposal: (proposalId: string) => {
+      setSelectedProposalId(proposalId);
+      replaceUrlValue('proposal', proposalId);
+    },
     refresh: () => {
       if (!denied(commandError)) setCommandError(null);
-      setCorrelationId(crypto.randomUUID());
+      correlationRef.current = crypto.randomUUID();
       void queryClient.invalidateQueries({
         queryKey: ['hris', 'performance', 'compensation-planning'],
       });
     },
+    retryProposals: () => void proposalsQuery.refetch(),
+    retryProposalDetail: () => void proposalQuery.refetch(),
     retryPending: activePending ? () => void execute(activePending).catch(() => undefined) : undefined,
   } as const;
 }

@@ -444,6 +444,136 @@ function proposalContent(value: unknown): CompensationProposalContent {
   });
 }
 
+function populationSourceRef(value: unknown): HrmSourceSnapshotRef {
+  const source = record(value, [
+    'snapshotPublicId',
+    'ownerRevision',
+    'projectionSchemaId',
+    'asOf',
+    'sha256',
+    'purposeCode',
+  ]);
+  if (
+    source.projectionSchemaId !== 'CompensationPopulationContent.v1' ||
+    source.purposeCode !== 'HRIS_PER_COMPENSATION_POPULATION'
+  ) {
+    return invalid();
+  }
+  return Object.freeze({
+    snapshotPublicId: uuid(source.snapshotPublicId),
+    ownerRevision: integer(source.ownerRevision, 1),
+    projectionSchemaId: 'CompensationPopulationContent.v1',
+    asOf: instant(source.asOf),
+    sha256: digest(source.sha256),
+    purposeCode: 'HRIS_PER_COMPENSATION_POPULATION',
+  });
+}
+
+export function parseCreateCompensationCycleBody(
+  value: unknown
+): CreateCompensationCycleBody {
+  const source = record(value, [
+    'cycleCode',
+    'guidelines',
+    'population',
+    'effectiveFrom',
+    'effectiveTo',
+    'populationSourceRef',
+  ]);
+  return Object.freeze({
+    cycleCode: text(source.cycleCode, 40, CODE),
+    guidelines: guidelines(source.guidelines),
+    population: population(source.population),
+    effectiveFrom: date(source.effectiveFrom),
+    effectiveTo: nullableDate(source.effectiveTo),
+    populationSourceRef: populationSourceRef(source.populationSourceRef),
+  });
+}
+
+export function parseReviseCompensationCycleBody(
+  value: unknown
+): ReviseCompensationCycleBody {
+  const source = record(value, [
+    'guidelines',
+    'population',
+    'populationSourceRef',
+    'effectiveFrom',
+    'effectiveTo',
+  ]);
+  return Object.freeze({
+    guidelines: guidelines(source.guidelines),
+    population: population(source.population),
+    populationSourceRef: populationSourceRef(source.populationSourceRef),
+    effectiveFrom: date(source.effectiveFrom),
+    effectiveTo: nullableDate(source.effectiveTo),
+  });
+}
+
+export function parseCompensationBudgetBody(value: unknown): CompensationBudgetBody {
+  const source = record(
+    value,
+    ['organizationPublicId', 'amount', 'currency', 'ledgerEntryType'],
+    ['reversesEntryPublicId']
+  );
+  const ledgerEntryType = values(source.ledgerEntryType, ['ALLOCATE', 'REVERSE'] as const);
+  const reversesEntryPublicId =
+    source.reversesEntryPublicId === undefined || source.reversesEntryPublicId === null
+      ? null
+      : uuid(source.reversesEntryPublicId);
+  if ((ledgerEntryType === 'REVERSE') !== (reversesEntryPublicId !== null)) return invalid();
+  return Object.freeze({
+    organizationPublicId: uuid(source.organizationPublicId),
+    amount: money(source.amount),
+    currency: text(source.currency, 3, CURRENCY),
+    ledgerEntryType,
+    reversesEntryPublicId,
+  });
+}
+
+export function parseUpsertCompensationProposalBody(
+  value: unknown
+): UpsertCompensationProposalBody {
+  const source = record(value, ['content']);
+  return Object.freeze({ content: proposalContent(source.content) });
+}
+
+export function parseSubmitCompensationProposalBody(
+  value: unknown
+): SubmitCompensationProposalBody {
+  const source = record(value, ['submissionDigest'], ['effectiveDate']);
+  return Object.freeze({
+    submissionDigest: digest(source.submissionDigest),
+    ...(source.effectiveDate === undefined
+      ? {}
+      : { effectiveDate: source.effectiveDate === null ? null : date(source.effectiveDate) }),
+  });
+}
+
+export function parseApproveCompensationPlanBody(
+  value: unknown
+): ApproveCompensationPlanBody {
+  const source = record(value, ['decision', 'reasonCode']);
+  if (source.decision !== 'APPROVE') return invalid();
+  return Object.freeze({
+    decision: 'APPROVE',
+    reasonCode: text(source.reasonCode, 80, CODE),
+  });
+}
+
+export function parsePublishCompensationSnapshotBody(
+  value: unknown
+): PublishCompensationSnapshotBody {
+  const source = record(value, ['approvalReceiptId']);
+  return Object.freeze({ approvalReceiptId: uuid(source.approvalReceiptId) });
+}
+
+export function parseCancelCompensationCycleBody(
+  value: unknown
+): Record<string, never> {
+  record(value, []);
+  return Object.freeze({});
+}
+
 function budgetEntry(value: unknown): CompensationBudgetEntry {
   const source = record(value, [
     'entryId',

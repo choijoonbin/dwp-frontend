@@ -42,12 +42,24 @@ export function HrisCompensationPlanningOperationsRuntime({
       proposalDetail={runtime.proposalDetail}
       selectedProposalId={runtime.selectedProposalId}
       actions={runtime.actions}
+      commandBusy={runtime.commandBusy}
       pendingCommand={runtime.pendingCommand}
       lastResult={runtime.lastResult}
       errorMessage={runtime.errorMessage}
+      proposalsError={runtime.proposalsError}
+      proposalDetailError={runtime.proposalDetailError}
+      proposalLoading={runtime.proposalLoading}
+      freshnessWatermark={runtime.freshnessWatermark}
+      lastRefreshedAt={runtime.lastRefreshedAt}
+      actorId={requestScope.queryMeta.actorId}
+      locale={typeof navigator === 'undefined' ? 'en' : navigator.language}
+      filter={runtime.filter}
+      onFilterChange={runtime.setFilter}
       onSelectCycle={runtime.selectCycle}
       onSelectProposal={runtime.selectProposal}
       onRefresh={runtime.refresh}
+      onRetryProposals={runtime.retryProposals}
+      onRetryProposalDetail={runtime.retryProposalDetail}
       onRetryPending={runtime.retryPending}
     />
   );

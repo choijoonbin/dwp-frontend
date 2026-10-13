@@ -9,11 +9,19 @@ import {
   COMPENSATION_PLANNING_BASE_PATH,
   parseCompensationCycleCollection,
   parseCompensationCycleDetail,
+  parseApproveCompensationPlanBody,
+  parseCancelCompensationCycleBody,
+  parseCompensationBudgetBody,
   parseCompensationProposalCollection,
   parseCompensationProposalDetail,
   parseCompensationRichCommandResult,
   parseCompensationSnapshotPublished,
+  parseCreateCompensationCycleBody,
   parsePerformanceCommandReceipt,
+  parsePublishCompensationSnapshotBody,
+  parseReviseCompensationCycleBody,
+  parseSubmitCompensationProposalBody,
+  parseUpsertCompensationProposalBody,
 } from './compensation-planning-contract';
 
 import type {
@@ -193,11 +201,13 @@ async function post<TBody, TResult>(
   envelope: CompensationCommandEnvelope<TBody>,
   authority: ProductSurfaceGovernedMutationAuthority,
   parser: (value: unknown) => TResult,
+  bodyParser: (value: unknown) => TBody,
   highRisk = false
 ): Promise<TResult> {
+  const canonicalBody = bodyParser(envelope.body);
   const response = await axiosInstance.post<ApiResponse<unknown>>(
     path,
-    envelope.body,
+    canonicalBody,
     commandConfig(envelope, authority, highRisk)
   );
   return parser(response.data.data);
@@ -214,7 +224,8 @@ export function createCompensationCycle(
     `${COMPENSATION_PLANNING_BASE_PATH}/cycles`,
     envelope,
     authority,
-    parsePerformanceCommandReceipt
+    parsePerformanceCommandReceipt,
+    parseCreateCompensationCycleBody
   );
 }
 
@@ -227,7 +238,8 @@ export function reviseCompensationCycle(
     `${COMPENSATION_PLANNING_BASE_PATH}/cycles/${encodeURIComponent(cycleId)}/revisions`,
     requireVersion(envelope),
     authority,
-    parseCompensationRichCommandResult
+    parseCompensationRichCommandResult,
+    parseReviseCompensationCycleBody
   );
 }
 
@@ -242,7 +254,8 @@ export function allocateCompensationBudget(
     )}/budget-allocations`,
     requireVersion(envelope),
     authority,
-    parsePerformanceCommandReceipt
+    parsePerformanceCommandReceipt,
+    parseCompensationBudgetBody
   );
 }
 
@@ -258,7 +271,8 @@ export function upsertCompensationProposal(
     )}/proposals/${encodeURIComponent(proposalId)}`,
     requireVersion(envelope),
     authority,
-    parseCompensationRichCommandResult
+    parseCompensationRichCommandResult,
+    parseUpsertCompensationProposalBody
   );
 }
 
@@ -274,7 +288,8 @@ export function submitCompensationProposal(
     )}/proposals/${encodeURIComponent(proposalId)}/submit`,
     requireVersion(envelope),
     authority,
-    parsePerformanceCommandReceipt
+    parsePerformanceCommandReceipt,
+    parseSubmitCompensationProposalBody
   );
 }
 
@@ -288,6 +303,7 @@ export function approveCompensationPlan(
     requireVersion(envelope),
     authority,
     parsePerformanceCommandReceipt,
+    parseApproveCompensationPlanBody,
     true
   );
 }
@@ -304,6 +320,7 @@ export function publishCompensationSnapshot(
     requireVersion(envelope),
     authority,
     parseCompensationSnapshotPublished,
+    parsePublishCompensationSnapshotBody,
     true
   );
 }
@@ -313,14 +330,12 @@ export function cancelCompensationCycle(
   envelope: CompensationCommandEnvelope<Record<string, never>>,
   authority: ProductSurfaceGovernedMutationAuthority
 ): Promise<CompensationRichCommandResult> {
-  if (Object.keys(envelope.body).length !== 0) {
-    throw new Error('Cycle cancellation has an empty closed body.');
-  }
   return post(
     `${COMPENSATION_PLANNING_BASE_PATH}/cycles/${encodeURIComponent(cycleId)}/cancel`,
     requireVersion(envelope),
     authority,
-    parseCompensationRichCommandResult
+    parseCompensationRichCommandResult,
+    parseCancelCompensationCycleBody
   );
 }
 
