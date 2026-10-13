@@ -22,6 +22,11 @@
       "remoteVerified": true
     }
   },
+  "contractPins": {
+    "authorizationVersion": 37,
+    "authorizationSha256": "1f23280116bc5b29f1a7ea6cc4ccbd2092a91673979d6bb46164a0dbb95ae10c",
+    "gatewayOpenApiSha256": "9d788107956401a3c319f81ed2ca4fe4b1b2ac1e8c23aec9ce2f0a71d55d330a"
+  },
   "globalRules": {
     "previousTokensAreAuthority": false,
     "reusePreviousModuleWorktrees": false,
@@ -75,22 +80,41 @@
         "worktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave2-20261013/hrm-008/frontend",
         "branch": "codex/hris-wave2-hrm-008-frontend-20261013",
         "allowedPaths": [
-          "apps/dwp/src/features/hris/employment/**"
+          "apps/dwp/src/features/hris/employment/assignment-proposal-model.ts",
+          "apps/dwp/src/features/hris/employment/assignment-proposal-model.test.ts",
+          "apps/dwp/src/features/hris/employment/assignment-proposal-workspace.tsx",
+          "apps/dwp/src/features/hris/people/**"
         ]
       },
       "backend": {
         "worktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave2-20261013/hrm-008/backend",
         "branch": "codex/hris-wave2-hrm-008-backend-20261013",
         "allowedPaths": [
-          "dwp-people-server/src/main/java/com/dwp/services/people/hr/assignment/**",
-          "dwp-people-server/src/test/java/com/dwp/services/people/hr/assignment/**",
+          "dwp-people-server/src/main/java/com/dwp/services/people/hr/assignment/AssignmentProposalAuthority.java",
+          "dwp-people-server/src/main/java/com/dwp/services/people/hr/assignment/AssignmentProposalCanonicalizer.java",
+          "dwp-people-server/src/main/java/com/dwp/services/people/hr/assignment/AssignmentProposalController.java",
+          "dwp-people-server/src/main/java/com/dwp/services/people/hr/assignment/AssignmentProposalDtos.java",
+          "dwp-people-server/src/main/java/com/dwp/services/people/hr/assignment/AssignmentProposalRepository.java",
+          "dwp-people-server/src/main/java/com/dwp/services/people/hr/assignment/AssignmentProposalService.java",
+          "dwp-people-server/src/main/java/com/dwp/services/people/hr/assignment/AssignmentProposalSql.java",
+          "dwp-people-server/src/main/java/com/dwp/services/people/hr/assignment/AssignmentProposalValidator.java",
+          "dwp-people-server/src/test/java/com/dwp/services/people/hr/assignment/AssignmentProposalAuthorityTest.java",
+          "dwp-people-server/src/test/java/com/dwp/services/people/hr/assignment/AssignmentProposalCanonicalizerTest.java",
+          "dwp-people-server/src/test/java/com/dwp/services/people/hr/assignment/AssignmentProposalMigrationContractTest.java",
+          "dwp-people-server/src/test/java/com/dwp/services/people/hr/assignment/AssignmentProposalOpenApiSliceTest.java",
+          "dwp-people-server/src/test/java/com/dwp/services/people/hr/assignment/AssignmentProposalPostgresTest.java",
+          "dwp-people-server/src/test/java/com/dwp/services/people/hr/assignment/AssignmentProposalRepositoryTest.java",
+          "dwp-people-server/src/test/java/com/dwp/services/people/hr/assignment/AssignmentProposalServiceTest.java",
+          "dwp-people-server/src/test/java/com/dwp/services/people/hr/assignment/AssignmentProposalValidatorTest.java",
+          "dwp-people-server/src/main/java/com/dwp/services/people/hris/employment/**",
+          "dwp-people-server/src/test/java/com/dwp/services/people/hris/employment/**",
           "dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/workforce/**",
           "dwp-people-server/src/test/java/com/dwp/services/people/hris/contracts/**",
-          "dwp-people-server/src/main/resources/db/migration/V55__hrm_*.sql"
+          "dwp-people-server/src/main/resources/db/migration/V55__hrm_base_tfr_hrm_008.sql"
         ],
         "migrationLease": "V55_CREATE_ONLY_IF_SCHEMA_CHANGE_IS_REQUIRED"
       },
-      "touchManifestAmendment": "The existing employment and assignment overlap paths above are explicitly approved for this slice. Do not create a duplicate canonical implementation tree.",
+      "touchManifestAmendment": "Only the named legacy assignment-proposal files are exception-allocated. Put the new ledger and publisher boundary under the canonical hris/employment allocation, connect the existing proposal as an adapter, and do not create a second proposal implementation.",
       "goldenCases": [
         "HRM-P-HIRE",
         "HRM-P-CONCURRENT",
@@ -125,7 +149,7 @@
         "allowedPaths": [
           "dwp-time-server/src/main/java/com/dwp/services/time/**",
           "dwp-time-server/src/test/java/com/dwp/services/time/**",
-          "dwp-time-server/src/main/resources/db/migration/V10__tim_*.sql"
+          "dwp-time-server/src/main/resources/db/migration/V10__tim_base_tfr_tim_010.sql"
         ],
         "migrationLease": "V10_CREATE_ONLY_IF_SCHEMA_CHANGE_IS_REQUIRED"
       },
@@ -149,7 +173,7 @@
       "startToken": "W2-20261013-PAY-006-START-R1",
       "orderOverride": {
         "authorized": true,
-        "reason": "PAY-006 is an independent payroll-configuration slice and does not consume MOD-PER-COMPPLAN or PAY-016. Its typed formula lifecycle can be completed against the already integrated PAY foundation and synthetic fixtures.",
+        "reason": "PAY-006 is an independent PAYROLL_STATUTORY configuration slice and does not require DEP-019, MOD-PER-COMPPLAN or PAY-016. Its typed formula lifecycle can be completed against the already integrated PAY foundation and synthetic fixtures.",
         "doesNotAuthorize": ["PAY-016", "PAY_RUN_CALCULATION", "PRODUCTION_ACTIVATION"]
       },
       "goal": "Implement governed payroll element and typed-formula configuration with versioned publication.",
@@ -176,7 +200,7 @@
         "allowedPaths": [
           "dwp-payroll-server/src/main/java/com/dwp/services/payroll/**",
           "dwp-payroll-server/src/test/java/com/dwp/services/payroll/**",
-          "dwp-payroll-server/src/main/resources/db/migration/V6__pay_*.sql"
+          "dwp-payroll-server/src/main/resources/db/migration/V6__pay_base_tfr_pay_006.sql"
         ],
         "migrationLease": "V6_CREATE_ONLY_IF_SCHEMA_CHANGE_IS_REQUIRED"
       },
@@ -214,9 +238,9 @@
         "allowedPaths": [
           "dwp-people-server/src/main/java/com/dwp/services/people/hris/performance/**",
           "dwp-people-server/src/test/java/com/dwp/services/people/hris/performance/**",
-          "dwp-people-server/src/main/resources/db/performance-migration/V4__per_*.sql"
+          "dwp-people-server/src/main/resources/db/performance-migration/V16__per_base_tfr_per_016.sql"
         ],
-        "migrationLease": "V4_CREATE_ONLY_IF_SCHEMA_CHANGE_IS_REQUIRED"
+        "migrationLease": "V16_CREATE_ONLY_IF_SCHEMA_CHANGE_IS_REQUIRED"
       },
       "goldenCases": [
         "PER-P-FREEZE",
