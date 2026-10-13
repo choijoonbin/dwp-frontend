@@ -1,0 +1,156 @@
+{
+  "schema": "dwp.hris.wave2-shared-wiring-receipt.v1",
+  "receiptId": "HRIS-WAVE2-SHARED-WIRING-20261013-R1",
+  "issuedAt": "2026-10-13T13:14:39+09:00",
+  "issuedBy": "HRIS-INTEGRATION-CONTROL",
+  "status": "PASS",
+  "decision": "WAVE2_SHARED_WIRING_COMPLETE",
+  "productionAuthorization": false,
+  "sourcePins": {
+    "frontend": {
+      "repository": "https://github.com/choijoonbin/dwp-frontend.git",
+      "branch": "codex/hris-g1-integration-frontend-20261006",
+      "commit": "89af12036735f30f99b77022431d1b4432045c60",
+      "tree": "3060e2ce35eb9bcbb99baa5ba6064a3aeb104708",
+      "remoteVerified": true
+    },
+    "backend": {
+      "repository": "https://github.com/choijoonbin/dwp-backend.git",
+      "branch": "codex/hris-g1-integration-backend-20261006",
+      "commit": "acda9f55f6e0a337fc6db3f1eee54a9f0439da55",
+      "tree": "12b181c021c1dc4812af19ff3acfa73f56fa9417",
+      "remoteVerified": true
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "1d46fc4ab49c604efb7464574c49d13ee453e059",
+      "touched": false,
+      "remoteVerified": true
+    }
+  },
+  "contractPins": {
+    "authorizationVersion": 38,
+    "authorizationSha256": "a41145d6a2faefd2e6030a2ca9a070769019d4db5513ea214bf542dda31c374a",
+    "authorizationBundleFileSha256": "de449058055b5ae9500489735910fdcf593b34a9ab05e927663a7fd74d740667",
+    "gatewayOpenApiSha256": "453f3620dca02a5ce82df273be986633fb5d694084ca080859bb47472027d234",
+    "timeOwnerOpenApiSha256": "c95dbaa59201392e36b94aaba47755a09160619aede48036e9d74951194a910c",
+    "counts": {
+      "capabilities": 242,
+      "accessPolicies": 24,
+      "entitlementExpressions": 17,
+      "predicatePolicies": 59,
+      "routes": 991
+    }
+  },
+  "integratedScope": {
+    "ownerRoutes": {
+      "HRM": 8,
+      "TIM": 3,
+      "PAY": 6,
+      "total": 17
+    },
+    "canonicalPages": [
+      "/hr/me/employment-documents",
+      "/hr/operations/people/employment-assignments",
+      "/hr/operations/time/interpretation",
+      "/hr/settings/payroll"
+    ],
+    "security": [
+      "Gateway-owned purpose projection; client-supplied purpose is not trusted",
+      "TIM X-Correlation-ID header, correlationId query and verified authority correlation must match",
+      "HRM and PAY ambiguous high-risk outcomes preserve the exact dispatched command identity",
+      "Owner unavailability and authority mismatch fail closed"
+    ],
+    "homeProductIdentity": {
+      "locale": "ko",
+      "expectedAccessibleName": "HRIS 열기",
+      "forbiddenLegacyAccessibleName": "인사 열기"
+    }
+  },
+  "validation": {
+    "backend": [
+      {
+        "gate": "TIM_CORRELATION_CONTRACT",
+        "result": "PASS",
+        "evidence": "Matching header/query succeeds; mismatch fails with 503 before repository or service dispatch."
+      },
+      {
+        "gate": "TIME_AND_GATEWAY_OPENAPI",
+        "result": "PASS",
+        "evidence": "Both contracts expose one required UUID X-Correlation-ID header and one required UUID correlationId query."
+      },
+      {
+        "gate": "APPROVED_OPENAPI_SNAPSHOTS",
+        "result": "PASS",
+        "evidence": "12 services and 1703 paths checked."
+      },
+      {
+        "gate": "TARGETED_AUTH_GATEWAY_OWNER_AND_GENERATOR_TESTS",
+        "result": "PASS"
+      },
+      {
+        "gate": "DIFF_CHECK",
+        "result": "PASS"
+      }
+    ],
+    "frontend": [
+      {
+        "gate": "AUTHORIZATION_FIXTURE_AND_OPENAPI_GENERATION_CHECKS",
+        "result": "PASS",
+        "evidence": "Three official backend synchronization checks passed for v38."
+      },
+      {
+        "gate": "BOUNDED_VITEST",
+        "result": "PASS",
+        "evidence": "Final effective result 112/112; 109 unchanged cases passed initially and all corrected areas passed in the 44/44 targeted retry."
+      },
+      {
+        "gate": "TYPECHECK",
+        "result": "PASS"
+      },
+      {
+        "gate": "ARCHITECTURE_CHECK",
+        "result": "PASS",
+        "evidence": "Product, API, feature, cycle, reachability, export and source-size boundaries passed."
+      },
+      {
+        "gate": "WAVE2_CHROMIUM_E2E",
+        "result": "PASS",
+        "evidence": "All 5 scenarios passed after one targeted home-fixture retry; four canonical pages and the Korean HRIS home identity were verified."
+      },
+      {
+        "gate": "DIFF_CHECK",
+        "result": "PASS"
+      }
+    ],
+    "independentReview": {
+      "backend": "PASS_NO_P0_P1",
+      "frontend": "PASS_NO_P0_P1"
+    }
+  },
+  "knownNonWave2Blockers": [
+    {
+      "id": "LEGACY_SERVICE_BOUNDARY_CLIENTS",
+      "scope": "backend repository-wide service-boundary check",
+      "detail": "EmployeeChangeApprovalRequestRelay.java and HrisApprovalDecisionRelay.java are pre-existing unregistered HTTP clients.",
+      "wave2Impact": "NONE"
+    },
+    {
+      "id": "PRODUCTION_RELEASE_APPROVAL",
+      "scope": "product-surface production readiness",
+      "detail": "Release-approved product closure remains 0/12; this receipt does not activate production.",
+      "wave2Impact": "NONE"
+    }
+  ],
+  "nextGate": {
+    "id": "WAVE3_AUTHORITY_PACKET_REFRESH",
+    "status": "READY",
+    "requiredActions": [
+      "Pin this frontend/backend/auth/OpenAPI receipt in the current integration overlay.",
+      "Update the 102-row delivery overlay with G7 and Wave2 completion evidence.",
+      "Run one narrow overlap audit and issue fresh module packets, touch manifests, migration leases, worktrees and start tokens.",
+      "Do not reuse Wave2 module tokens or worktrees."
+    ]
+  }
+}
