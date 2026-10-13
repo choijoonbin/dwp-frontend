@@ -5,7 +5,7 @@
   "decision": {
     "objective": "Resume SKKF source-backed vertical-slice delivery without repeating global recovery gates.",
     "compensationPlanning": "DEFERRED_G3D_PRESERVE_EXISTING_PREPARATION",
-    "moduleIntegrationState": "READY_FOR_CONTROL_INTEGRATION_ONLY",
+    "moduleIntegrationState": "CONTROL_INTEGRATION_VALIDATED",
     "productionAuthorization": false
   },
   "basePins": {
@@ -315,12 +315,62 @@
           "FOUR_EXISTING_TESTS_EXPECT_MIGRATION_53_WHILE_BASE_PIN_HAS_54",
           "ONE_EXISTING_TEST_EXPECTS_OPENAPI_94_WHILE_BASE_PIN_HAS_100"
         ],
+        "baselineDriftResolution": [
+          "CONTROL_INTEGRATION_ALIGNED_PUBLIC_MIGRATION_EXPECTATIONS_TO_V55",
+          "CONTROL_INTEGRATION_ALIGNED_AUTHORIZATION_BINDINGS_TO_100_AND_DISTINCT_OPERATIONS_TO_88"
+        ],
         "remoteVerified": true,
         "worktreesClean": true,
         "blockers": []
       }
     }
   ],
+  "controlIntegration": {
+    "state": "CONTROL_INTEGRATED_AND_VALIDATED",
+    "completedAt": "2026-10-13T11:27:39+09:00",
+    "frontendSourceCommit": "a1c621984886f99049af5be82340dafeac025679",
+    "backendCommit": "5b35f8a49e5f4743cd00571ed9bd134e15fff94d",
+    "frontendOrder": ["HRM", "TIM", "PAY"],
+    "backendOrder": ["HRM", "PER", "TIM", "PAY"],
+    "integratedModuleCommits": {
+      "HRM": {
+        "frontend": "ec3b67116e24f9e5215a705092cf3bc1b31e2010",
+        "backend": "e166ce6df462da02a4d0eb56f271cea59586b73d"
+      },
+      "TIM": {
+        "frontend": "1d4f130354a1ff125c8ce70363c2d6adb4df7332",
+        "backend": "bfd273378008c827d84b5c61b12ba53322d3f641"
+      },
+      "PAY": {
+        "frontend": "054675cb136c4480a52ea78fdcb4254a769c17a2",
+        "backend": "aae18ae06dfea22dd62a07fcb4bd85f81b361b86"
+      },
+      "PER": {
+        "frontend": "NOT_TOUCHED",
+        "backend": "48c33e85e40c7ac027175aa59a6077d33cb0e160"
+      }
+    },
+    "baselineReconciliation": {
+      "peopleMigrationVersion": "55",
+      "peopleAppliedMigrationCount": 55,
+      "authorizationBindingCount": 100,
+      "distinctAuthorizationOperationCount": 88
+    },
+    "validation": [
+      "FRONTEND_3_SLICE_FILES_16_OF_16_PASS",
+      "FRONTEND_TYPECHECK_PASS",
+      "BACKEND_PEOPLE_CHANGED_PACKAGES_AND_BASELINE_CONTRACTS_PASS",
+      "BACKEND_TIME_INTERPRETATION_PACKAGE_PASS",
+      "BACKEND_PAYROLL_CONFIGURATION_PACKAGE_PASS",
+      "GIT_DIFF_CHECK_PASS"
+    ],
+    "intentionallyDeferred": [
+      "SHARED_ROUTE_NAVIGATION_AND_PRODUCT_MANIFEST_INTEGRATION",
+      "PLAYWRIGHT_UNTIL_SHARED_ROUTES_EXIST",
+      "REPOSITORY_WIDE_PROMOTION_GATES"
+    ],
+    "blockers": []
+  },
   "sysSupport": {
     "session": "HRIS-SYS",
     "state": "SHARED_CONTRACT_SUPPORT_NO_CODE",
