@@ -37,6 +37,7 @@ import {
 } from '../../../components/product-surface-high-risk-command';
 import { useProductSurfaceCapabilityAccess } from '../../../components/product-surface-capability-access';
 import { useProductSurfaceGovernedMutation } from '../../../components/use-product-surface-governed-mutation';
+import { EmploymentEventWorkspace } from '../people/components/employment-event-workspace';
 import type { AssignmentProposalWorkspacePortProps } from '../../../components/assignment-proposal-port';
 import {
   ASSIGNMENT_PROPOSAL_ROUTE_BINDINGS,
@@ -51,6 +52,7 @@ import {
   assignmentProposalFailureKind,
   assignmentProposalHasCompletedValidation,
   buildCreateAssignmentProposalRequest,
+  employmentEventCreateReference,
   resolveAssignmentProposalSelection,
 } from './assignment-proposal-model';
 
@@ -66,6 +68,7 @@ const CAPABILITIES = {
   validate: 'hcm.operations.assignment-proposal.validate',
   submit: 'hcm.operations.assignment-proposal.submit',
   cancel: 'hcm.operations.assignment-proposal.cancel',
+  employmentCreate: 'hcm.operations.assignment-event.create',
 } as const;
 
 const MOBILE_TOAST_FOOTER_OFFSET = '128px';
@@ -104,7 +107,21 @@ function isWorkforceKeyChange(changeType: AssignmentChangeType): boolean {
   );
 }
 
-export function AssignmentProposalWorkspace({
+export function AssignmentProposalWorkspace(props: AssignmentProposalWorkspacePortProps) {
+  const selection = resolveAssignmentProposalSelection(props.proposalReference);
+  return selection?.kind === 'employment-create' ? (
+    <EmploymentEventWorkspace
+      key={props.proposalReference}
+      selection={selection}
+      requestScope={props.requestScope}
+      onClose={props.onClose}
+    />
+  ) : (
+    <LegacyAssignmentProposalWorkspace {...props} />
+  );
+}
+
+function LegacyAssignmentProposalWorkspace({
   proposalReference,
   requestScope,
   onProposalReferenceChange,
@@ -475,6 +492,25 @@ export function AssignmentProposalWorkspace({
                     .filter(Boolean)
                     .join(' · ')}
                 </Typography>
+                {isCreate && can(CAPABILITIES.employmentCreate) ? (
+                  <ActionButton
+                    intent="secondary"
+                    size="small"
+                    onClick={() =>
+                      onProposalReferenceChange(
+                        employmentEventCreateReference(
+                          'CONCURRENT_EMPLOYMENT',
+                          assignment.data.workerId,
+                          assignment.data.workerVersion
+                        )
+                      )
+                    }
+                  >
+                    {t('assignments.employmentEvent.concurrentAction', {
+                      defaultValue: 'Create concurrent employment',
+                    })}
+                  </ActionButton>
+                ) : null}
               </Stack>
             ) : null}
 
