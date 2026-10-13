@@ -372,6 +372,7 @@
         "workbench-settings": { "label": "설정" },
         "home": { "label": "HRIS 홈" },
         "me": { "label": "나의 인사정보" },
+        "employment-documents": { "label": "고용 및 문서" },
         "time": { "label": "나의 근태" },
         "absence": { "label": "휴가" },
         "benefits": { "label": "복리후생" },
@@ -386,9 +387,11 @@
         "operations": { "label": "운영 현황" },
         "people": { "label": "인력 정보" },
         "employee-change-requests": { "label": "직원변경 요청" },
+        "employment-assignments": { "label": "고용관계·배치" },
         "assignments": { "label": "발령 현황" },
         "time-operations": { "label": "근태 운영" },
         "time-clock-ingestion": { "label": "타각 수집" },
+        "time-interpretation": { "label": "근태 해석" },
         "time-exceptions": { "label": "근태 예외" },
         "absence-operations": { "label": "휴가 운영" },
         "benefits-operations": { "label": "복리후생 운영" },
@@ -398,6 +401,7 @@
         "organization-design": { "label": "조직 설계" },
         "system-access": { "label": "시스템 접근 및 구성" },
         "settings-reference": { "label": "HRIS 기준정보 구성" },
+        "settings-payroll": { "label": "급여 구성" },
         "reference-data": { "label": "인력 기준정보" },
         "data-operations": { "label": "연계 및 정합성" },
         "exports": { "label": "통제형 반출" }
@@ -414,6 +418,11 @@
         "eyebrow": "HRIS / 내 HR",
         "title": "나의 인사정보",
         "description": "현재 근로관계, 발령 및 조직 정보를 확인합니다."
+      },
+      "employment-documents": {
+        "eyebrow": "HRIS / 내 HR",
+        "title": "고용 및 문서",
+        "description": "셀프서비스 범위에서 현재 고용관계, 배치, 계약 및 문서 메타데이터를 확인합니다."
       },
       "time": {
         "eyebrow": "HRIS / 내 HR",
@@ -490,6 +499,11 @@
         "boundaryTitle": "직원변경 요청 전용 업무 영역입니다",
         "boundaryDescription": "People 360은 /hr/operations/people, 발령 제안은 /hr/operations/assignments에서 계속 제공됩니다. 이 수명주기에는 두 화면을 재사용하지 않습니다."
       },
+      "employment-assignments": {
+        "eyebrow": "HRIS / HR 운영",
+        "title": "고용관계·배치",
+        "description": "유효일 기준 고용관계와 배치를 검토하고 배치 이벤트의 검증·제출·게시를 통제합니다."
+      },
       "assignments": {
         "eyebrow": "HRIS / HR 운영",
         "title": "발령 현황",
@@ -504,6 +518,11 @@
         "eyebrow": "HRIS / 근태 운영",
         "title": "타각 수집",
         "description": "수신된 타각, 원천 근거, 격리 상태와 통제된 정정을 검토합니다."
+      },
+      "time-interpretation": {
+        "eyebrow": "HRIS / 근태 운영",
+        "title": "근태 해석",
+        "description": "규칙 버전이 적용된 근태 결과와 추적 근거를 검토하고 명시한 작업자·기간의 해석을 실행합니다."
       },
       "time-exceptions": {
         "eyebrow": "HRIS / 근태 운영",
@@ -554,6 +573,11 @@
         "runtimeState": "기능 상태: 꺼짐",
         "boundaryTitle": "인력 기준정보와 분리된 영역입니다",
         "boundaryDescription": "이 작업공간은 버전 기반 HRIS 구성을 위한 전용 영역입니다. 인력 기준정보는 /hr/data/reference 경로에서만 계속 제공됩니다."
+      },
+      "settings-payroll": {
+        "eyebrow": "HRIS / 설정",
+        "title": "급여 구성",
+        "description": "급여 항목과 타입이 지정된 수식을 검토·검증·시험실행하고 단계 상승 확인으로 정확한 버전을 게시합니다."
       },
       "reference-data": {
         "eyebrow": "HRIS / 설정",

@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { HttpError } from '@dwp-frontend/shared-utils';
+import { HttpError, HttpTransportError } from '@dwp-frontend/shared-utils';
 import { resetCsrfToken } from '@dwp-frontend/shared-utils/axios-instance';
 
 import {
@@ -81,30 +81,10 @@ const legalEmployerRef = ownerRef(
   'a'
 );
 const assignmentDraft = {
-  organizationRef: ownerRef(
-    'HRM.Organization.v1',
-    '10000000-0000-4000-8000-000000000003',
-    4,
-    'b'
-  ),
-  positionRef: ownerRef(
-    'HRM.Position.v1',
-    '10000000-0000-4000-8000-000000000004',
-    2,
-    'c'
-  ),
-  jobRef: ownerRef(
-    'HRM.Job.v1',
-    '10000000-0000-4000-8000-000000000005',
-    3,
-    'd'
-  ),
-  workLocationRef: ownerRef(
-    'HRM.WorkLocation.v1',
-    '10000000-0000-4000-8000-000000000006',
-    5,
-    'e'
-  ),
+  organizationRef: ownerRef('HRM.Organization.v1', '10000000-0000-4000-8000-000000000003', 4, 'b'),
+  positionRef: ownerRef('HRM.Position.v1', '10000000-0000-4000-8000-000000000004', 2, 'c'),
+  jobRef: ownerRef('HRM.Job.v1', '10000000-0000-4000-8000-000000000005', 3, 'd'),
+  workLocationRef: ownerRef('HRM.WorkLocation.v1', '10000000-0000-4000-8000-000000000006', 5, 'e'),
   validFrom: '2026-10-01',
   validToExclusive: null,
   primary: true,
@@ -365,18 +345,8 @@ describe('effective-dated employment event model', () => {
         1,
         'b'
       ),
-      positionRef: ownerRef(
-        'HRM.Position.v1',
-        '10000000-0000-4000-8000-000000000014',
-        1,
-        'c'
-      ),
-      jobRef: ownerRef(
-        'HRM.Job.v1',
-        '10000000-0000-4000-8000-000000000015',
-        1,
-        'd'
-      ),
+      positionRef: ownerRef('HRM.Position.v1', '10000000-0000-4000-8000-000000000014', 1, 'c'),
+      jobRef: ownerRef('HRM.Job.v1', '10000000-0000-4000-8000-000000000015', 1, 'd'),
       workLocationRef: ownerRef(
         'HRM.WorkLocation.v1',
         '10000000-0000-4000-8000-000000000016',
@@ -438,20 +408,15 @@ describe('effective-dated employment event model', () => {
     });
     expect(
       resolveAssignmentProposalSelection(
-        employmentEventCreateReference(
-          'HIRE',
-          '10000000-0000-4000-8000-000000000001',
-          1
-        )
+        employmentEventCreateReference('HIRE', '10000000-0000-4000-8000-000000000001', 1)
       )
     ).toBeNull();
   });
 
   it('maps overlap, stale owner, denial and result-unknown problems to safe UI states', () => {
     expect(
-      employmentEventFailure(
-        new HttpError('Overlap', 409, { code: 'PRIMARY_ASSIGNMENT_OVERLAP' })
-      ).kind
+      employmentEventFailure(new HttpError('Overlap', 409, { code: 'PRIMARY_ASSIGNMENT_OVERLAP' }))
+        .kind
     ).toBe('PRIMARY_OVERLAP');
     expect(
       employmentEventFailure(
@@ -475,10 +440,20 @@ describe('effective-dated employment event model', () => {
       retryable: true,
     });
     expect(
-      employmentEventFailure(
-        new HttpError('Reused', 409, { code: 'IDEMPOTENCY_KEY_REUSED' })
-      ).kind
+      employmentEventFailure(new HttpError('Reused', 409, { code: 'IDEMPOTENCY_KEY_REUSED' })).kind
     ).toBe('IDEMPOTENCY_CONFLICT');
+    expect(employmentEventFailure(new HttpTransportError('NETWORK'), false).kind).toBe(
+      'UNAVAILABLE'
+    );
+    expect(employmentEventFailure(new HttpTransportError('NETWORK'), true).kind).toBe(
+      'RESULT_UNKNOWN'
+    );
+    expect(employmentEventFailure(new HttpError('Unavailable', 503), false).kind).toBe(
+      'UNAVAILABLE'
+    );
+    expect(employmentEventFailure(new HttpError('Unavailable', 503), true).kind).toBe(
+      'RESULT_UNKNOWN'
+    );
   });
 
   it('parses durable receipts and never treats pending or unknown outcomes as success', () => {
@@ -519,7 +494,10 @@ describe('effective-dated employment event model', () => {
       });
       if (url.includes('/command-receipts/')) {
         return jsonResponse(
-          receipt({ commandType: 'EMPLOYMENT_EVENT_PUBLISH' }),
+          receipt({
+            commandType: 'HRM_ASSIGNMENT_EVENT_PUBLISH',
+            originatingAction: 'PUBLISH_ASSIGNMENT_EVENT',
+          }),
           responseHeaders(0, false)
         );
       }
@@ -545,7 +523,10 @@ describe('effective-dated employment event model', () => {
       if (url.endsWith(`/${EVENT_ID}/publish?contextScopeKey=scope%3Atenant%2Fhrm`)) {
         published = true;
         return jsonResponse(
-          receipt({ commandType: 'EMPLOYMENT_EVENT_PUBLISH' }),
+          receipt({
+            commandType: 'HRM_ASSIGNMENT_EVENT_PUBLISH',
+            originatingAction: 'PUBLISH_ASSIGNMENT_EVENT',
+          }),
           responseHeaders(4, false),
           202
         );
@@ -574,13 +555,13 @@ describe('effective-dated employment event model', () => {
     });
     await expect(
       validateEmploymentEvent(
-      {
-        eventPublicId: EVENT_ID,
-        expectedVersion: 0,
-        idempotencyKey: validateKey,
-        correlationId: CORRELATION_ID,
-      },
-      authority(validateKey)
+        {
+          eventPublicId: EVENT_ID,
+          expectedVersion: 0,
+          idempotencyKey: validateKey,
+          correlationId: CORRELATION_ID,
+        },
+        authority(validateKey)
       )
     ).resolves.toMatchObject({
       eventPublicId: EVENT_ID,
@@ -589,13 +570,13 @@ describe('effective-dated employment event model', () => {
     });
     await expect(
       submitEmploymentEvent(
-      {
-        eventPublicId: EVENT_ID,
-        expectedVersion: 1,
-        idempotencyKey: submitKey,
-        correlationId: CORRELATION_ID,
-      },
-      authority(submitKey)
+        {
+          eventPublicId: EVENT_ID,
+          expectedVersion: 1,
+          idempotencyKey: submitKey,
+          correlationId: CORRELATION_ID,
+        },
+        authority(submitKey)
       )
     ).resolves.toMatchObject({
       eventPublicId: EVENT_ID,
@@ -613,9 +594,10 @@ describe('effective-dated employment event model', () => {
         publishAuthority(publishKey)
       )
     ).toThrow('Only an approved employment event at version 3 can be published.');
-    await expect(
-      getEmploymentEvent(EVENT_ID, 'scope:tenant/hrm')
-    ).resolves.toMatchObject({ lifecycleState: 'APPROVED', version: 3 });
+    await expect(getEmploymentEvent(EVENT_ID, 'scope:tenant/hrm')).resolves.toMatchObject({
+      lifecycleState: 'APPROVED',
+      version: 3,
+    });
     await expect(
       publishEmploymentEvent(
         {
@@ -640,7 +622,8 @@ describe('effective-dated employment event model', () => {
 
     const commands = fetchMock.mock.calls.filter(
       ([url, init]) =>
-        !String(url).includes('/api/auth/csrf') && (init as RequestInit | undefined)?.method === 'POST'
+        !String(url).includes('/api/auth/csrf') &&
+        (init as RequestInit | undefined)?.method === 'POST'
     );
     expect(commands.map(([url]) => String(url).split('?')[0])).toEqual([
       '/api/people/v1/hris/assignment-events',
@@ -653,7 +636,7 @@ describe('effective-dated employment event model', () => {
       const headers = new Headers((init as RequestInit).headers);
       expect(headers.get('If-Match')).toBe(`"v:${expectedVersions[index]}"`);
       expect(headers.get('X-Correlation-ID')).toBe(CORRELATION_ID);
-      expect(headers.get('X-Purpose-Code')).toBe('HR_LIFECYCLE');
+      expect(headers.has('X-Purpose-Code')).toBe(false);
       expect(headers.get('Idempotency-Key')).toBeTruthy();
     });
     const publishHeaders = new Headers((commands.at(-1)![1] as RequestInit).headers);

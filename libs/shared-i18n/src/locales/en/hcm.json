@@ -372,6 +372,7 @@
         "workbench-settings": { "label": "Settings" },
         "home": { "label": "HRIS home" },
         "me": { "label": "My HR profile" },
+        "employment-documents": { "label": "Employment & documents" },
         "time": { "label": "My time" },
         "absence": { "label": "Time off" },
         "benefits": { "label": "Benefits" },
@@ -386,9 +387,11 @@
         "operations": { "label": "Operations overview" },
         "people": { "label": "Workforce people" },
         "employee-change-requests": { "label": "Employee change requests" },
+        "employment-assignments": { "label": "Employment & assignments" },
         "assignments": { "label": "Assignments" },
         "time-operations": { "label": "Time operations" },
         "time-clock-ingestion": { "label": "Clock ingestion" },
+        "time-interpretation": { "label": "Time interpretation" },
         "time-exceptions": { "label": "Time exceptions" },
         "absence-operations": { "label": "Absence operations" },
         "benefits-operations": { "label": "Benefits operations" },
@@ -398,6 +401,7 @@
         "organization-design": { "label": "Organization design" },
         "system-access": { "label": "System access & configuration" },
         "settings-reference": { "label": "HRIS reference configuration" },
+        "settings-payroll": { "label": "Payroll configuration" },
         "reference-data": { "label": "Workforce reference data" },
         "data-operations": { "label": "Integrations & reconciliation" },
         "exports": { "label": "Governed exports" }
@@ -414,6 +418,11 @@
         "eyebrow": "HRIS / My HR",
         "title": "My HR profile",
         "description": "Review your current work relationships, assignments, and organization details."
+      },
+      "employment-documents": {
+        "eyebrow": "HRIS / My HR",
+        "title": "Employment & documents",
+        "description": "Review your current employment, assignment, contract, and document metadata within the self-service boundary."
       },
       "time": {
         "eyebrow": "HRIS / My HR",
@@ -490,6 +499,11 @@
         "boundaryTitle": "Dedicated employee-change request family",
         "boundaryDescription": "People 360 remains at /hr/operations/people and assignment proposals remain at /hr/operations/assignments. Neither surface is reused for this lifecycle."
       },
+      "employment-assignments": {
+        "eyebrow": "HRIS / HR operations",
+        "title": "Employment & assignments",
+        "description": "Review effective-dated employment and assignments, then govern assignment-event validation, submission, and publication."
+      },
       "assignments": {
         "eyebrow": "HRIS / HR operations",
         "title": "Assignment register",
@@ -504,6 +518,11 @@
         "eyebrow": "HRIS / Time operations",
         "title": "Clock ingestion",
         "description": "Review received clock events, source evidence, quarantine state, and governed corrections."
+      },
+      "time-interpretation": {
+        "eyebrow": "HRIS / Time operations",
+        "title": "Time interpretation",
+        "description": "Review rule-versioned time outcomes and trace evidence, and run interpretation for an explicit worker period."
       },
       "time-exceptions": {
         "eyebrow": "HRIS / Time operations",
@@ -554,6 +573,11 @@
         "runtimeState": "Feature state: OFF",
         "boundaryTitle": "Separate from workforce reference data",
         "boundaryDescription": "This workspace is reserved for versioned HRIS configuration. Workforce reference data remains available only at /hr/data/reference."
+      },
+      "settings-payroll": {
+        "eyebrow": "HRIS / Settings",
+        "title": "Payroll configuration",
+        "description": "Review payroll elements and typed formulas, validate and simulate them, and publish an exact version with step-up verification."
       },
       "reference-data": {
         "eyebrow": "HRIS / Settings",

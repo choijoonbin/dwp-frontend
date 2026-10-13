@@ -37,10 +37,14 @@ type RegistryBundle = {
 };
 
 const HCM_DATA_ROUTE_KEYS = [
+  'route.hcm.configuration.configuration-version.data',
+  'route.hcm.configuration.configurations.data',
   'route.hcm.management.controlled-export-preview.data',
   'route.hcm.management.integration-code-sets.data',
   'route.hcm.management.org-code-sets.data',
+  'route.hcm.operations.assignment-command-receipt.data',
   'route.hcm.operations.assignment-detail.data',
+  'route.hcm.operations.assignment-event-detail.data',
   'route.hcm.operations.assignment-proposal-detail.data',
   'route.hcm.operations.assignment-timeline.data',
   'route.hcm.operations.payroll-foundation-configuration.data',
@@ -53,6 +57,7 @@ const HCM_DATA_ROUTE_KEYS = [
   'route.hcm.operations.performance-cycle-detail.data',
   'route.hcm.operations.performance-cycles-list.data',
   'route.hcm.operations.person-detail.data',
+  'route.hcm.operations.time-interpretation-trace.data',
   'route.hcm.operations.work-plan-receipt.data',
   'route.hcm.operations.work-plans-list.data',
   'route.hcm.personal.configuration-projection.data',
@@ -64,6 +69,20 @@ const HCM_DATA_ROUTE_KEYS = [
 ] as const;
 
 const HCM_ACTION_ROUTE_KEYS = [
+  'route.hcm.configuration.configuration-version-approve.action',
+  'route.hcm.configuration.configuration-version-create.action',
+  'route.hcm.configuration.configuration-version-publish.action',
+  'route.hcm.configuration.configuration-version-retire.action',
+  'route.hcm.configuration.configuration-version-rollback.action',
+  'route.hcm.configuration.configuration-version-schedule.action',
+  'route.hcm.configuration.configuration-version-simulate.action',
+  'route.hcm.configuration.configuration-version-submit.action',
+  'route.hcm.configuration.configuration-version-validate.action',
+  'route.hcm.configuration.payroll-element-version-create.action',
+  'route.hcm.configuration.payroll-formula-publish.action',
+  'route.hcm.configuration.payroll-formula-simulate.action',
+  'route.hcm.configuration.payroll-formula-validate.action',
+  'route.hcm.configuration.payroll-formula-version-create.action',
   'route.hcm.management.controlled-export-cancel.action',
   'route.hcm.management.controlled-export-create.action',
   'route.hcm.management.controlled-export-retry.action',
@@ -77,10 +96,17 @@ const HCM_ACTION_ROUTE_KEYS = [
   'route.hcm.management.org-update.action',
   'route.hcm.management.reference-update.action',
   'route.hcm.operations.absence-approve.action',
+  'route.hcm.operations.assignment-event-create.action',
+  'route.hcm.operations.assignment-event-publish.action',
+  'route.hcm.operations.assignment-event-submit.action',
+  'route.hcm.operations.assignment-event-validate.action',
   'route.hcm.operations.assignment-proposal-cancel.action',
   'route.hcm.operations.assignment-proposal-create.action',
   'route.hcm.operations.assignment-proposal-submit.action',
   'route.hcm.operations.assignment-proposal-validate.action',
+  'route.hcm.operations.employee-change-request-apply.action',
+  'route.hcm.operations.employee-change-request-create.action',
+  'route.hcm.operations.employee-change-request-submit.action',
   'route.hcm.operations.payroll-foundation-create.action',
   'route.hcm.operations.payroll-foundation-publish.action',
   'route.hcm.operations.payroll-foundation-reconcile.action',
@@ -92,7 +118,10 @@ const HCM_ACTION_ROUTE_KEYS = [
   'route.hcm.operations.performance-cycle-publish.action',
   'route.hcm.operations.performance-cycle-update.action',
   'route.hcm.operations.performance-cycle-validate.action',
+  'route.hcm.operations.performance-population-freeze.action',
   'route.hcm.operations.time-approve.action',
+  'route.hcm.operations.time-clock-event-void.action',
+  'route.hcm.operations.time-interpretation-run.action',
   'route.hcm.operations.work-plan-apply-approval.action',
   'route.hcm.operations.work-plan-create.action',
   'route.hcm.operations.work-plan-publish.action',
@@ -103,6 +132,7 @@ const HCM_ACTION_ROUTE_KEYS = [
   'route.hcm.personal.absence-withdraw.action',
   'route.hcm.personal.home-preference-update.action',
   'route.hcm.personal.talent-goal-update.action',
+  'route.hcm.personal.time-clock-event-record.action',
   'route.hcm.personal.time-entry-update.action',
   'route.hcm.personal.time-submit.action',
   'route.hcm.team.absence-decision.action',
@@ -192,10 +222,10 @@ describe('HCM W1b product manifest', () => {
         ])
       )
     ).toEqual({
-      'hcm.personal': 10,
+      'hcm.personal': 11,
       'hcm.team': 3,
-      'hcm.operations': 8,
-      'hcm.management': 5,
+      'hcm.operations': 14,
+      'hcm.management': 7,
     });
     expect(HCM_PRODUCT_MANIFEST.surfaces.map((surface) => surface.supportedScopeKinds)).toEqual([
       ['SELF'],
@@ -205,12 +235,12 @@ describe('HCM W1b product manifest', () => {
     ]);
   });
 
-  it('binds all 26 menu items to official PAGE records and exact latest access profiles', () => {
+  it('binds all 35 menu items to official PAGE records and exact latest access profiles', () => {
     const routerRecords = PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.filter(
       (route) => route.productId === 'hcm'
     );
     const registryRecords = registryRoutes().filter((route) => route.subject?.productKey === 'hcm');
-    expect(routerRecords).toHaveLength(26);
+    expect(routerRecords).toHaveLength(35);
 
     for (const surface of HCM_PRODUCT_MANIFEST.surfaces) {
       for (const item of surface.navigation.flatMap((group) => group.items)) {
@@ -246,10 +276,10 @@ describe('HCM W1b product manifest', () => {
       ])
     );
     expect(bySurfaceAndKind).toEqual({
-      'hcm.personal': { PAGE: 10, DATA: 5, ACTION: 6 },
+      'hcm.personal': { PAGE: 11, DATA: 5, ACTION: 7 },
       'hcm.team': { PAGE: 3, DATA: 1, ACTION: 2 },
-      'hcm.operations': { PAGE: 8, DATA: 15, ACTION: 23 },
-      'hcm.management': { PAGE: 5, DATA: 3, ACTION: 12 },
+      'hcm.operations': { PAGE: 14, DATA: 18, ACTION: 33 },
+      'hcm.management': { PAGE: 7, DATA: 5, ACTION: 26 },
     });
     expect(
       records

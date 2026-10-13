@@ -38,18 +38,25 @@ export const HRIS_HR_OPERATIONS_CATALOG: readonly HrisCatalogNode[] = Object.fre
     legacyPaths: ['/hr/directory', '/hr/operations/people'],
     href: '/hr/operations/people',
   }),
-  planned(
-    'hr-employment-assignments',
-    'HR_OPERATIONS',
-    'OPERATIONS',
-    'HRM',
-    operator,
-    '고용관계·배치',
-    'Employment & assignments',
-    '입사, 재고용, 겸직, 주·부배치, 계약과 종료',
-    'Hire, rehire, concurrent jobs, primary and secondary assignments, contracts, and end',
-    ['/hr/operations/assignments']
-  ),
+  node({
+    id: 'hr-employment-assignments',
+    inventoryGroup: 'HR_OPERATIONS',
+    surface: 'OPERATIONS',
+    module: 'HRM',
+    personas: operator,
+    lifecycle: 'PILOT',
+    label: { ko: '고용관계·배치', en: 'Employment & assignments' },
+    capability: {
+      ko: '입사, 재고용, 겸직, 주·부배치, 계약과 종료',
+      en: 'Hire, rehire, concurrent jobs, primary and secondary assignments, contracts, and end',
+    },
+    coverageNote: {
+      ko: '유효일 기준 고용·배치 목록과 상세를 조회하고 배치 이벤트를 생성·검증·제출·게시합니다. 계약 문서 작성과 보상 변경은 포함하지 않습니다.',
+      en: 'Provides effective-dated employment and assignment review plus create, validate, submit, and publish for assignment events. Contract authoring and compensation changes are excluded.',
+    },
+    legacyPaths: ['/hr/operations/assignments', '/hr/operations/people/employment-assignments'],
+    href: '/hr/operations/people/employment-assignments',
+  }),
   planned(
     'hr-appointments',
     'HR_OPERATIONS',

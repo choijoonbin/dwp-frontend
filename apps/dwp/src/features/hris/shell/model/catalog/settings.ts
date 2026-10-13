@@ -1,5 +1,6 @@
 import {
   HRIS_SETTINGS_PERSONAS as settings,
+  hrisCatalogNode as node,
   plannedHrisCatalogNode as planned,
 } from '../hris-product-map-contract';
 
@@ -62,17 +63,25 @@ export const HRIS_SETTINGS_CATALOG: readonly HrisCatalogNode[] = Object.freeze([
     '유형, 자격, 발생·소멸·이월, 사용순서, 증빙과 한도',
     'Types, eligibility, accrual, expiry, carryover, consumption order, evidence, and limits'
   ),
-  planned(
-    'settings-payroll',
-    'SETTINGS',
-    'SETTINGS',
-    'PAY',
-    settings,
-    '급여',
-    'Payroll',
-    '급여그룹, 기간, 항목·분류, 산식, 잔액, 반올림과 소급',
-    'Payroll groups, periods, items, classifications, formulas, balances, rounding, and retro'
-  ),
+  node({
+    id: 'settings-payroll',
+    inventoryGroup: 'SETTINGS',
+    surface: 'SETTINGS',
+    module: 'PAY',
+    personas: settings,
+    lifecycle: 'PILOT',
+    label: { ko: '급여', en: 'Payroll' },
+    capability: {
+      ko: '급여그룹, 기간, 항목·분류, 산식, 잔액, 반올림과 소급',
+      en: 'Payroll groups, periods, items, classifications, formulas, balances, rounding, and retro',
+    },
+    coverageNote: {
+      ko: '급여 항목·수식의 유효 버전을 조회하고 검증·시험실행·단계 상승이 필요한 게시를 제공합니다. 항목·수식 작성, 급여 계산, 법정 처리와 소급 실행은 포함하지 않습니다.',
+      en: 'Provides effective payroll element and formula review, validation, controlled simulation, and step-up publication. Element or formula authoring, payroll calculation, statutory processing, and retro runs are excluded.',
+    },
+    legacyPaths: ['/hr/settings/payroll'],
+    href: '/hr/settings/payroll',
+  }),
   planned(
     'settings-statutory',
     'SETTINGS',

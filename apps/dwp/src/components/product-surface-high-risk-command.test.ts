@@ -11,6 +11,7 @@ import {
   payrollFoundationPublishCommand,
   payrollFoundationReverseCommand,
 } from '../features/hris/payroll/hooks/use-payroll-foundation-command-executors';
+import { payrollFormulaPublishCommand } from '../features/hris/integration/hris-payroll-configuration-workspace';
 import { performanceCyclePublishCommand } from '../features/hris/performance/hooks/use-performance-cycle-command-executors';
 
 const authority = {
@@ -50,6 +51,17 @@ describe('Shared product-surface HIGH command contract', () => {
     expect(issuer.request).not.toHaveProperty('contextKey');
     expect(issuer.request.contextScopeKey).toBe('population-team-a');
     expect(issuer.expectedDecisionRevision).toBe('revision-1');
+
+    expect(
+      buildApprovalHighRiskActionEvaluationRequest('HCM_EMPLOYMENT_EVENT_PUBLISH', {
+        contextKey: authority.contextKey,
+        contextScopeKey: authority.contextScopeKey,
+      })
+    ).toEqual({
+      subject: { type: 'PRODUCT', productKey: 'hcm', surfaceKey: 'hcm.operations' },
+      routeContractKey: 'route.hcm.operations.assignment-event-publish.action',
+      contextScopeKey: 'population-team-a',
+    });
   });
 
   it('rotates the export replay key in both proof material and the actual create command', () => {
@@ -171,6 +183,25 @@ describe('Shared product-surface HIGH command contract', () => {
         publishCommandId: '55555555-5555-4555-8555-555555555555',
       },
       idempotencyKey: '66666666-6666-4666-8666-666666666666',
+    });
+
+    expect(
+      payrollFormulaPublishCommand({
+        kind: 'PUBLISH',
+        formulaId: '88888888-8888-4888-8888-888888888888',
+        expectedVersion: 4,
+        idempotencyKey: '99999999-9999-4999-8999-999999999999',
+        correlationId: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+        request: { expectedVersion: 4 },
+      })
+    ).toMatchObject({
+      operation: 'HCM_PAYROLL_FORMULA_PUBLISH',
+      commandPath: '/api/payroll/v1/formulas/88888888-8888-4888-8888-888888888888/publish',
+      targetType: 'PAYROLL_FORMULA',
+      targetId: '88888888-8888-4888-8888-888888888888',
+      expectedObjectVersion: 4,
+      payload: { expectedVersion: 4 },
+      idempotencyKey: '99999999-9999-4999-8999-999999999999',
     });
   });
 });

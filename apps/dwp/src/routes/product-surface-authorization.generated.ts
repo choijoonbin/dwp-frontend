@@ -14,9 +14,9 @@ export type ProductAuthorizationRouteProjection = Readonly<{
 
 export const PRODUCT_AUTHORIZATION_REGISTRY_REVISION = {
   bundleKey: 'product-surfaces',
-  version: 37,
-  checksum: '1f23280116bc5b29f1a7ea6cc4ccbd2092a91673979d6bb46164a0dbb95ae10c',
-  indexChecksum: '7e65a5dba6dbb9d6d5f18370c01d9f79891c41075dfe4cc0fd40157718608d38',
+  version: 38,
+  checksum: 'a41145d6a2faefd2e6030a2ca9a070769019d4db5513ea214bf542dda31c374a',
+  indexChecksum: 'ccce2d9ce8481836dd12bc19d2ee44860e18982a3dda0e75459ccec29f3cbb61',
 } as const;
 
 export const PRODUCT_SURFACE_ROLLOUT_INVENTORY_REVISION = {
@@ -7721,6 +7721,102 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
     ],
   },
   {
+    routeContractKey: 'route.hcm.configuration.payroll-element-version-create.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.management',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/payroll/v1/elements/versions',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.configuration.payroll-formula-publish.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.management',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/payroll/v1/formulas/{formulaId}/publish',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.configuration.payroll-formula-simulate.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.management',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/payroll/v1/formulas/{formulaId}/simulations',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.configuration.payroll-formula-validate.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.management',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/payroll/v1/formulas/{formulaId}/validations',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.configuration.payroll-formula-version-create.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.management',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/payroll/v1/formulas/versions',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.configuration.payroll.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'hcm.management',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.management',
+    routeId: 'hcm.configuration.payroll',
+    pattern: '/hr/settings/payroll',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/payroll/v1/workbench/settings-payroll',
+      },
+    ],
+  },
+  {
     routeContractKey: 'route.hcm.configuration.settings-reference.page',
     routeKind: 'PAGE',
     navigationContextId: 'hcm.management',
@@ -8193,6 +8289,22 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
     ],
   },
   {
+    routeContractKey: 'route.hcm.operations.assignment-command-receipt.data',
+    routeKind: 'DATA',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/people/v1/hris/command-receipts/{receiptId}',
+      },
+    ],
+  },
+  {
     routeContractKey: 'route.hcm.operations.assignment-detail.data',
     routeKind: 'DATA',
     navigationContextId: 'hcm.operations',
@@ -8205,6 +8317,86 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
       {
         method: 'GET',
         path: '/api/people/v1/workforce/assignments/{assignmentId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.assignment-event-create.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/people/v1/hris/assignment-events',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.assignment-event-detail.data',
+    routeKind: 'DATA',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/people/v1/hris/assignment-events/{eventPublicId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.assignment-event-publish.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/people/v1/hris/assignment-events/{eventPublicId}/publish',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.assignment-event-submit.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/people/v1/hris/assignment-events/{eventPublicId}/submit',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.assignment-event-validate.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/people/v1/hris/assignment-events/{eventPublicId}/validate',
       },
     ],
   },
@@ -8397,6 +8589,22 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
       {
         method: 'GET',
         path: '/api/people/v1/hris/workbench/operations/employee/change/requests',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.employment-assignments.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: 'hcm.operations.employment-assignments',
+    pattern: '/hr/operations/people/employment-assignments',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/people/v1/hris/workbench/operations/employment/assignments',
       },
     ],
   },
@@ -8901,6 +9109,54 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
     ],
   },
   {
+    routeContractKey: 'route.hcm.operations.time-interpretation-run.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/time/v1/interpretation-runs',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.time-interpretation-trace.data',
+    routeKind: 'DATA',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/time/v1/interpretation-runs/{runId}/trace',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.time-interpretation.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: 'hcm.operations.time-interpretation',
+    pattern: '/hr/operations/time/interpretation',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/time/v1/hris/workbench/time-interpretation',
+      },
+    ],
+  },
+  {
     routeContractKey: 'route.hcm.operations.time.page',
     routeKind: 'PAGE',
     navigationContextId: 'hcm.operations',
@@ -9157,6 +9413,22 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
       {
         method: 'GET',
         path: '/api/people/v1/org-chart',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.personal.employment-documents.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'hcm.personal',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.personal',
+    routeId: 'hcm.personal.employment-documents',
+    pattern: '/hr/me/employment-documents',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/people/v1/hris/workbench/self-service/employment-documents',
       },
     ],
   },

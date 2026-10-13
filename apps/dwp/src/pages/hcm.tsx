@@ -93,6 +93,16 @@ const HrisClockIngestionOperationsWorkspace = lazy(() =>
     })
   )
 );
+const HrisTimeInterpretationOperationsWorkspace = lazy(() =>
+  import('../features/hris/time').then((module) => ({
+    default: module.HrisTimeInterpretationOperationsWorkspace,
+  }))
+);
+const HrisPayrollConfigurationWorkspace = lazy(() =>
+  import('../features/hris/integration/hris-payroll-configuration-workspace').then((module) => ({
+    default: module.HrisPayrollConfigurationWorkspace,
+  }))
+);
 const HrTeamTimeWorkspace = lazy(() =>
   import('../features/hcm/hr-team-time-workspace').then((module) => ({
     default: module.HrTeamTimeWorkspace,
@@ -126,6 +136,16 @@ const PeopleDirectory = lazy(() =>
 const HrisPeople360Workspace = lazy(() =>
   import('../features/hris/people').then((module) => ({
     default: module.HrisPeople360Workspace,
+  }))
+);
+const HrisEmploymentDocumentsWorkspace = lazy(() =>
+  import('../features/hris/people').then((module) => ({
+    default: module.HrisEmploymentDocumentsWorkspace,
+  }))
+);
+const HrisEmploymentAssignmentsWorkspace = lazy(() =>
+  import('../features/hris/people').then((module) => ({
+    default: module.HrisEmploymentAssignmentsWorkspace,
   }))
 );
 const HrisEmployeeChangeWorkspace = lazy(() =>
@@ -201,6 +221,7 @@ function HcmPageContent({ page }: { page: HcmNavigationItem }) {
 
   const contentByView: Partial<Record<HcmView, ReactNode>> = {
     me: <MyHrProfile />,
+    'employment-documents': <HrisEmploymentDocumentsWorkspace />,
     time: <HrisTimeWorkspace />,
     absence: <HrAbsenceWorkspace />,
     benefits: <HrBenefitsWorkspace />,
@@ -215,9 +236,11 @@ function HcmPageContent({ page }: { page: HcmNavigationItem }) {
     operations: <HrOperationsOverview />,
     people: <HrisPeople360Workspace />,
     'employee-change-requests': <HrisEmployeeChangeWorkspace />,
+    'employment-assignments': <HrisEmploymentAssignmentsWorkspace />,
     assignments: <AssignmentRegister assignmentProposal={assignmentProposalPort} />,
     'time-operations': <HrisTimeOperationsWorkspace />,
     'time-clock-ingestion': <HrisClockIngestionOperationsWorkspace entryMode="CLOCK_INGESTION" />,
+    'time-interpretation': <HrisTimeInterpretationOperationsWorkspace />,
     'time-exceptions': <HrisClockIngestionOperationsWorkspace entryMode="TIME_EXCEPTIONS" />,
     'absence-operations': <HrDomainOperations domain="ABSENCE" />,
     'benefits-operations': <HrDomainOperations domain="BENEFITS" />,
@@ -229,6 +252,7 @@ function HcmPageContent({ page }: { page: HcmNavigationItem }) {
     'performance-review-operations': <HrisPerformanceReviewOperationsPopulationFreezeRuntime />,
     'organization-design': <OrganizationExplorer experience="workforce" />,
     'settings-reference': <HrisReferenceConfigurationWorkspace />,
+    'settings-payroll': <HrisPayrollConfigurationWorkspace />,
     'reference-data': <WorkforceReferenceData />,
     'data-operations': <WorkforceDataOperations />,
     exports: <WorkforceExportCenter />,

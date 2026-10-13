@@ -10,6 +10,7 @@ import {
   TimeInterpretationWorkbenchRuntime,
   assertTimeInterpretationReplayInvariant,
   assertTimeInterpretationTraceDeterminism,
+  buildTimeInterpretationRunRequest,
   createTimeInterpretationDataSource,
   parseTimeInterpretationReceipt,
   parseTimeInterpretationTrace,
@@ -203,6 +204,31 @@ function buttonByText(container: ParentNode, label: string): HTMLButtonElement {
 }
 
 describe('[SLICE:BASE-TFR-TIM-010] deterministic time interpretation', () => {
+  it('prepares only a closed worker population and civil-date period for the production adapter', () => {
+    expect(
+      buildTimeInterpretationRunRequest(
+        {
+          workerIds: `${workerId}\n30000000-0000-4000-8000-000000000013`,
+          periodStart: '2026-10-01',
+          periodEnd: '2026-10-02',
+        },
+        '2026-10-01T12:00:00Z'
+      )
+    ).toEqual({
+      workerIds: [workerId, '30000000-0000-4000-8000-000000000013'],
+      periodStart: '2026-10-01',
+      periodEnd: '2026-10-02',
+      asOf: '2026-10-01T12:00:00Z',
+    });
+    expect(() =>
+      buildTimeInterpretationRunRequest({
+        workerIds: `${workerId},${workerId}`,
+        periodStart: '2026-10-02',
+        periodEnd: '2026-10-01',
+      })
+    ).toThrow('Invalid TIM interpretation run request.');
+  });
+
   let host: HTMLDivElement;
   let root: Root;
 
@@ -391,7 +417,11 @@ describe('[SLICE:BASE-TFR-TIM-010] deterministic time interpretation', () => {
     expect(get).toHaveBeenNthCalledWith(
       1,
       expect.stringContaining('/api/time/v1/hris/workbench/time-interpretation?'),
-      { contextScopeKey: scope.contextScopeKey, signal }
+      {
+        contextScopeKey: scope.contextScopeKey,
+        signal,
+        headers: { 'X-Correlation-ID': scope.correlationId },
+      }
     );
 
     await expect(
@@ -423,6 +453,7 @@ describe('[SLICE:BASE-TFR-TIM-010] deterministic time interpretation', () => {
     expect(get).toHaveBeenNthCalledWith(2, `/api/time/v1/interpretation-runs/${runId}/trace`, {
       contextScopeKey: scope.contextScopeKey,
       signal,
+      headers: { 'X-Correlation-ID': scope.correlationId },
     });
     expect(TIME_INTERPRETATION_API_CONTRACTS.map((entry) => entry.bindingId)).toEqual([
       'IAQ-041',
@@ -430,7 +461,9 @@ describe('[SLICE:BASE-TFR-TIM-010] deterministic time interpretation', () => {
       'PEP-TIM-010',
     ]);
     expect(TIME_INTERPRETATION_AUTHORIZATION_CONTRACT).toMatchObject({
-      version: 37,
+      version: 38,
+      sha256: 'a41145d6a2faefd2e6030a2ca9a070769019d4db5513ea214bf542dda31c374a',
+      gatewayOpenApiSha256: '453f3620dca02a5ce82df273be986633fb5d694084ca080859bb47472027d234',
       readCapabilities: ['hcm.operations.time.view'],
       runCapabilities: ['hcm.operations.time.update', 'hcm.personal.time.submit'],
       traceCapabilities: ['hcm.operations.time.update', 'hcm.personal.time.view'],
@@ -614,4 +647,67 @@ describe('[SLICE:BASE-TFR-TIM-010] deterministic time interpretation', () => {
     expect(run.mock.calls[1]?.[2]).toMatchObject({ idempotencyKey });
     expect(host.textContent).toContain('Interpretation command accepted');
   });
+
+  it.each(['REJECTED', 'FAILED'] as const)(
+    'keeps a sealed %s receipt terminal and never exposes it as success or exact retry',
+    async (status) => {
+      const workbench = parseTimeInterpretationWorkbench(projectionSource());
+      const trace = parseTimeInterpretationTrace(traceSource());
+      const run = vi
+        .fn<TimeInterpretationDataSource['run']>()
+        .mockResolvedValue(parseTimeInterpretationReceipt(receiptSource(status)));
+      const dataSource: TimeInterpretationDataSource = {
+        read: vi.fn(() => Promise.resolve(workbench)),
+        trace: vi.fn(() => Promise.resolve(trace)),
+        run,
+      };
+      const ownerBinding: TimeInterpretationOwnerBinding = {
+        page: { contractId: 'IAQ-041', read: dataSource.read },
+        trace: { contractId: 'PEP-TIM-010', read: dataSource.trace },
+        run: {
+          contractId: 'PEP-TIM-009',
+          actionKey: 'hris.action.tim.interpretation.run',
+          execute: (execute) =>
+            execute({
+              mode: 'SECURE',
+              rolloutState: '111',
+              expectedDecisionRevision: scope.decisionRevision,
+              contextKey: 'hcm.operations.time.interpretation',
+              contextScopeKey: scope.contextScopeKey,
+            }),
+        },
+      };
+
+      await act(async () => {
+        root.render(
+          createElement(TimeInterpretationWorkbenchRuntime, {
+            scope,
+            ownerBinding,
+            runRequest,
+            dataSource,
+            idFactory: () => idempotencyKey,
+          })
+        );
+        await Promise.resolve();
+        await Promise.resolve();
+        await Promise.resolve();
+      });
+
+      await act(async () => {
+        buttonByText(host, 'Run exact interpretation').click();
+        await Promise.resolve();
+        await Promise.resolve();
+      });
+
+      expect(run).toHaveBeenCalledTimes(1);
+      expect(host.textContent).toContain(`Interpretation command failed: ${status}`);
+      expect(host.textContent).toContain(
+        'The TIM owner returned a sealed terminal failure receipt.'
+      );
+      expect(host.textContent).toContain('30000000-0000-4000-8000-000000000020');
+      expect(host.textContent).not.toContain('Interpretation command accepted');
+      expect(host.textContent).not.toContain('Retry exact command');
+      expect(buttonByText(host, 'Run exact interpretation').disabled).toBe(false);
+    }
+  );
 });

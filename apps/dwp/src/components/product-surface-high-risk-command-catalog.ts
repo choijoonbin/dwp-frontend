@@ -33,11 +33,13 @@ export type ProductSurfaceHighRiskOperation =
   | 'HCM_INTEGRATION_RETRY'
   | 'HCM_INTEGRATION_RECONCILE'
   | 'HCM_ASSIGNMENT_PROPOSAL_SUBMIT'
+  | 'HCM_EMPLOYMENT_EVENT_PUBLISH'
   | 'HCM_PERFORMANCE_CYCLE_PUBLISH'
   | 'HCM_PERFORMANCE_POPULATION_FREEZE'
   | 'HCM_TIME_CLOCK_EVENT_VOID'
   | 'HCM_PAYROLL_FOUNDATION_PUBLISH'
   | 'HCM_PAYROLL_FOUNDATION_REVERSE'
+  | 'HCM_PAYROLL_FORMULA_PUBLISH'
   | 'DWAION_EMERGENCY_RECOVERY'
   | ApprovalRelease15HighRiskOperation;
 
@@ -235,6 +237,12 @@ export const PRODUCT_SURFACE_HIGH_RISK_COMMAND_CATALOG: readonly ProductSurfaceH
       routeContractKey: 'route.hcm.operations.assignment-proposal-submit.action',
     },
     {
+      operation: 'HCM_EMPLOYMENT_EVENT_PUBLISH',
+      productKey: 'hcm',
+      surfaceKey: 'hcm.operations',
+      routeContractKey: 'route.hcm.operations.assignment-event-publish.action',
+    },
+    {
       operation: 'HCM_PERFORMANCE_CYCLE_PUBLISH',
       productKey: 'hcm',
       surfaceKey: 'hcm.operations',
@@ -263,6 +271,12 @@ export const PRODUCT_SURFACE_HIGH_RISK_COMMAND_CATALOG: readonly ProductSurfaceH
       productKey: 'hcm',
       surfaceKey: 'hcm.operations',
       routeContractKey: 'route.hcm.operations.payroll-foundation-reverse.action',
+    },
+    {
+      operation: 'HCM_PAYROLL_FORMULA_PUBLISH',
+      productKey: 'hcm',
+      surfaceKey: 'hcm.management',
+      routeContractKey: 'route.hcm.configuration.payroll-formula-publish.action',
     },
     {
       operation: 'DWAION_EMERGENCY_RECOVERY',

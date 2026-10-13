@@ -20,6 +20,11 @@ export {
   type HrisTimeWorkPlanOperationsOwnerBinding,
 } from './pages/hris-time-operations-workspace';
 export {
+  HrisTimeInterpretationOperationsWorkspace,
+  HRIS_TIME_INTERPRETATION_RUN_ACTION_CONTRACT,
+  buildTimeInterpretationRunRequest,
+} from './pages/hris-time-interpretation-operations-workspace';
+export {
   createHrisTimeWorkPlanDataSource,
   hrisTimeWorkPlanHttpClient,
   type HrisTimeWorkPlanGovernedAuthority,

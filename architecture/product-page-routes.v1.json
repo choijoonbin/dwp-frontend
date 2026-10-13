@@ -360,6 +360,13 @@
       "surfaceId": "dwaion.work"
     },
     {
+      "routeContractKey": "route.hcm.configuration.payroll.page",
+      "routeId": "hcm.configuration.payroll",
+      "pattern": "/hr/settings/payroll",
+      "productId": "hcm",
+      "surfaceId": "hcm.management"
+    },
+    {
       "routeContractKey": "route.hcm.configuration.settings-reference.page",
       "routeId": "hcm.management.settings-reference",
       "pattern": "/hr/settings/reference-data",
@@ -430,6 +437,13 @@
       "surfaceId": "hcm.operations"
     },
     {
+      "routeContractKey": "route.hcm.operations.employment-assignments.page",
+      "routeId": "hcm.operations.employment-assignments",
+      "pattern": "/hr/operations/people/employment-assignments",
+      "productId": "hcm",
+      "surfaceId": "hcm.operations"
+    },
+    {
       "routeContractKey": "route.hcm.operations.overview.page",
       "routeId": "hcm.operations.overview",
       "pattern": "/hr/operations",
@@ -479,6 +493,13 @@
       "surfaceId": "hcm.operations"
     },
     {
+      "routeContractKey": "route.hcm.operations.time-interpretation.page",
+      "routeId": "hcm.operations.time-interpretation",
+      "pattern": "/hr/operations/time/interpretation",
+      "productId": "hcm",
+      "surfaceId": "hcm.operations"
+    },
+    {
       "routeContractKey": "route.hcm.operations.time.page",
       "routeId": "hcm.operations.time",
       "pattern": "/hr/operations/time",
@@ -503,6 +524,13 @@
       "routeContractKey": "route.hcm.personal.directory.page",
       "routeId": "hcm.personal.directory",
       "pattern": "/hr/directory",
+      "productId": "hcm",
+      "surfaceId": "hcm.personal"
+    },
+    {
+      "routeContractKey": "route.hcm.personal.employment-documents.page",
+      "routeId": "hcm.personal.employment-documents",
+      "pattern": "/hr/me/employment-documents",
       "productId": "hcm",
       "surfaceId": "hcm.personal"
     },

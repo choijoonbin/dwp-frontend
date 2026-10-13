@@ -4,6 +4,8 @@ import { isHrWorkItem, selectCurrentPerson } from './hcm-experience-model';
 import {
   findHcmNavigationItem,
   HCM_MANAGEMENT_NAVIGATION,
+  HCM_OPERATIONS_NAVIGATION,
+  HCM_PERSONAL_NAVIGATION,
   mapLegacyHrPath,
   visibleHcmNavigation,
 } from './hcm-navigation';
@@ -124,6 +126,12 @@ describe('HR product navigation', () => {
   });
 
   it('keeps successor module pages governed-only and bound to their exact PAGE capability', () => {
+    expect(findHcmNavigationItem('/hr/me/employment-documents')).toMatchObject({
+      view: 'employment-documents',
+      governedOnly: true,
+      requiredResourceKey: 'DATA.HRIS_WORKFORCE',
+      requiredPermissionCode: 'VIEW',
+    });
     expect(findHcmNavigationItem('/hr/operations/time/clock-ingestion')).toMatchObject({
       view: 'time-clock-ingestion',
       governedOnly: true,
@@ -132,6 +140,12 @@ describe('HR product navigation', () => {
     });
     expect(findHcmNavigationItem('/hr/operations/time/exceptions')).toMatchObject({
       view: 'time-exceptions',
+      governedOnly: true,
+      requiredResourceKey: 'DATA.HR_TIME',
+      requiredPermissionCode: 'VIEW',
+    });
+    expect(findHcmNavigationItem('/hr/operations/time/interpretation')).toMatchObject({
+      view: 'time-interpretation',
       governedOnly: true,
       requiredResourceKey: 'DATA.HR_TIME',
       requiredPermissionCode: 'VIEW',
@@ -148,11 +162,56 @@ describe('HR product navigation', () => {
       requiredResourceKey: 'DATA.HRIS_WORKFORCE',
       requiredPermissionCode: 'VIEW',
     });
+    expect(findHcmNavigationItem('/hr/operations/people/employment-assignments')).toMatchObject({
+      view: 'employment-assignments',
+      governedOnly: true,
+      requiredResourceKey: 'DATA.HRIS_WORKFORCE',
+      requiredPermissionCode: 'VIEW',
+    });
     expect(findHcmNavigationItem('/hr/settings/reference-data')).toMatchObject({
       view: 'settings-reference',
       governedOnly: true,
       requiredResourceKey: 'CONFIG.HRIS_WORKBENCH',
       requiredPermissionCode: 'VIEW',
+    });
+    expect(findHcmNavigationItem('/hr/settings/payroll')).toMatchObject({
+      view: 'settings-payroll',
+      governedOnly: true,
+      requiredResourceKey: 'CONFIG.HRIS_WORKBENCH',
+      requiredPermissionCode: 'VIEW',
+    });
+  });
+
+  it('projects each canonical PAGE through its exact capability contract', () => {
+    const item = (groups: typeof HCM_PERSONAL_NAVIGATION, view: string) =>
+      groups.flatMap((group) => group.items).find((candidate) => candidate.view === view);
+
+    expect(item(HCM_PERSONAL_NAVIGATION, 'employment-documents')).toMatchObject({
+      path: '/hr/me/employment-documents',
+      taskKind: 'work',
+      access: { type: 'capability', capabilityContractKey: 'hcm.personal.profile.view' },
+    });
+    expect(item(HCM_OPERATIONS_NAVIGATION, 'employment-assignments')).toMatchObject({
+      path: '/hr/operations/people/employment-assignments',
+      taskKind: 'operations',
+      access: { type: 'capability', capabilityContractKey: 'hcm.operations.people.view' },
+    });
+    expect(item(HCM_OPERATIONS_NAVIGATION, 'time-interpretation')).toMatchObject({
+      path: '/hr/operations/time/interpretation',
+      taskKind: 'operations',
+      access: { type: 'capability', capabilityContractKey: 'hcm.operations.time.view' },
+    });
+    expect(item(HCM_MANAGEMENT_NAVIGATION, 'settings-payroll')).toMatchObject({
+      path: '/hr/settings/payroll',
+      taskKind: 'administration',
+      access: {
+        type: 'capability',
+        capabilityContractKey: 'hcm.configuration.workbench.view',
+      },
+    });
+    expect(findHcmNavigationItem('/hr/operations/assignments')).toMatchObject({
+      view: 'assignments',
+      path: '/hr/operations/assignments',
     });
   });
 });

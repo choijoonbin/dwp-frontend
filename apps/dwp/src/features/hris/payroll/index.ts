@@ -140,3 +140,26 @@ export {
   selectSuccessfulPayrollFormulaReceipt,
   type PayrollFormulaReceiptExpectation,
 } from './model/payroll-element-formula-wire';
+export {
+  PayrollConfigurationWorkbenchRuntime,
+  PayrollConfigurationWorkbenchView,
+  payrollConfigurationWorkbenchCopy,
+  type PayrollConfigurationWorkbenchCopy,
+  type PayrollConfigurationWorkbenchRuntimeProps,
+  type PayrollConfigurationWorkbenchViewProps,
+} from './pages/payroll-configuration-workbench';
+export {
+  payrollFormulaId,
+  payrollFormulaVersion,
+  usePayrollConfigurationWorkbench,
+  type PayrollConfigurationCommandFeedback,
+  type PayrollConfigurationOwnerBinding,
+  type PayrollConfigurationRuntimeState,
+  type PayrollConfigurationScope,
+  type PayrollConfigurationWorkbenchController,
+  type PayrollFormulaCommandBinding,
+  type PayrollFormulaCommandExecutor,
+  type PayrollFormulaCommandKind,
+  type PayrollSimulationDraft,
+  type UsePayrollConfigurationWorkbenchOptions,
+} from './hooks/use-payroll-configuration-workbench';

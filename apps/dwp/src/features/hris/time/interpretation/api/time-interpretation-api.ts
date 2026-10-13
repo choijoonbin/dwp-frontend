@@ -31,9 +31,9 @@ export const TIME_INTERPRETATION_API_CONTRACTS = Object.freeze([
 ] as const);
 
 export const TIME_INTERPRETATION_AUTHORIZATION_CONTRACT = Object.freeze({
-  version: 37,
-  sha256: '1f23280116bc5b29f1a7ea6cc4ccbd2092a91673979d6bb46164a0dbb95ae10c',
-  gatewayOpenApiSha256: '9d788107956401a3c319f81ed2ca4fe4b1b2ac1e8c23aec9ce2f0a71d55d330a',
+  version: 38,
+  sha256: 'a41145d6a2faefd2e6030a2ca9a070769019d4db5513ea214bf542dda31c374a',
+  gatewayOpenApiSha256: '453f3620dca02a5ce82df273be986633fb5d694084ca080859bb47472027d234',
   readCapabilities: Object.freeze(['hcm.operations.time.view'] as const),
   runCapabilities: Object.freeze([
     'hcm.operations.time.update',
@@ -119,10 +119,10 @@ export class TimeInterpretationCommandOutcomeUnknownError extends Error {
 
 export const timeInterpretationHttpClient: TimeInterpretationHttpClient = Object.freeze({
   get: (url, config) =>
-    axiosInstance.get<ApiResponse<unknown>>(
-      url,
-      productSurfaceReadScopeConfig(config.contextScopeKey, config.signal)
-    ),
+    axiosInstance.get<ApiResponse<unknown>>(url, {
+      ...productSurfaceReadScopeConfig(config.contextScopeKey, config.signal),
+      ...(config.headers ? { headers: config.headers } : {}),
+    }),
   post: (url, body, config) =>
     axiosInstance.post<ApiResponse<unknown>, unknown>(url, body, {
       contextScopeKey: config.contextScopeKey,
@@ -277,6 +277,7 @@ export function createTimeInterpretationDataSource(
       const response = await client.get(pageUrl(scope, page), {
         contextScopeKey: scope.contextScopeKey,
         signal,
+        headers: { 'X-Correlation-ID': scope.correlationId },
       });
       return parseTimeInterpretationWorkbench(unwrap(response));
     },
@@ -290,6 +291,7 @@ export function createTimeInterpretationDataSource(
         {
           contextScopeKey: scope.contextScopeKey,
           signal,
+          headers: { 'X-Correlation-ID': scope.correlationId },
         }
       );
       const trace = parseTimeInterpretationTrace(unwrap(response));

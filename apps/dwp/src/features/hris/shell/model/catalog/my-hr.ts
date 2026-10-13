@@ -38,18 +38,25 @@ export const HRIS_MY_HR_CATALOG: readonly HrisCatalogNode[] = Object.freeze([
     'Identity, contacts, family, experience, qualifications, accounts, and privacy consent',
     ['/hr/me']
   ),
-  planned(
-    'my-employment-documents',
-    'MY_HR',
-    'MY_HR',
-    'HRM',
-    employee,
-    '고용 및 문서',
-    'Employment & documents',
-    '고용관계, 배치, 계약서, 발령이력, 서약과 전자문서',
-    'Work relationships, assignments, contracts, appointments, pledges, and documents',
-    ['/hr/me']
-  ),
+  node({
+    id: 'my-employment-documents',
+    inventoryGroup: 'MY_HR',
+    surface: 'MY_HR',
+    module: 'HRM',
+    personas: employee,
+    lifecycle: 'PILOT',
+    label: { ko: '고용 및 문서', en: 'Employment & documents' },
+    capability: {
+      ko: '고용관계, 배치, 계약서, 발령이력, 서약과 전자문서',
+      en: 'Work relationships, assignments, contracts, appointments, pledges, and documents',
+    },
+    coverageNote: {
+      ko: '현재 직원의 고용관계·배치 식별자와 계약·문서 메타데이터를 권한에 맞게 조회합니다. 문서 본문, 다운로드, 편집과 전자서명은 포함하지 않습니다.',
+      en: 'Provides authority-aware self-service review of employment and assignment identifiers plus contract and document metadata. Document bodies, downloads, editing, and e-signature are excluded.',
+    },
+    legacyPaths: ['/hr/me', '/hr/me/employment-documents'],
+    href: '/hr/me/employment-documents',
+  }),
   node({
     id: 'my-time',
     inventoryGroup: 'MY_HR',

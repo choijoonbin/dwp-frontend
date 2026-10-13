@@ -37,7 +37,10 @@ import {
 } from '../../../components/product-surface-high-risk-command';
 import { useProductSurfaceCapabilityAccess } from '../../../components/product-surface-capability-access';
 import { useProductSurfaceGovernedMutation } from '../../../components/use-product-surface-governed-mutation';
-import { EmploymentEventWorkspace } from '../people/components/employment-event-workspace';
+import {
+  EmploymentEventWorkspace,
+  type EmploymentEventPublish,
+} from '../people/components/employment-event-workspace';
 import type { AssignmentProposalWorkspacePortProps } from '../../../components/assignment-proposal-port';
 import {
   ASSIGNMENT_PROPOSAL_ROUTE_BINDINGS,
@@ -107,7 +110,10 @@ function isWorkforceKeyChange(changeType: AssignmentChangeType): boolean {
   );
 }
 
-export function AssignmentProposalWorkspace(props: AssignmentProposalWorkspacePortProps) {
+export type AssignmentProposalWorkspaceProps = AssignmentProposalWorkspacePortProps &
+  Readonly<{ employmentEventPublish?: EmploymentEventPublish }>;
+
+export function AssignmentProposalWorkspace(props: AssignmentProposalWorkspaceProps) {
   const selection = resolveAssignmentProposalSelection(props.proposalReference);
   return selection?.kind === 'employment-create' ? (
     <EmploymentEventWorkspace
@@ -115,6 +121,7 @@ export function AssignmentProposalWorkspace(props: AssignmentProposalWorkspacePo
       selection={selection}
       requestScope={props.requestScope}
       onClose={props.onClose}
+      publishEvent={props.employmentEventPublish}
     />
   ) : (
     <LegacyAssignmentProposalWorkspace {...props} />

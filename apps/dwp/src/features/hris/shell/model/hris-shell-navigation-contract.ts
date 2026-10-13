@@ -44,6 +44,7 @@ export const HRIS_SHELL_ENTRIES: readonly HrisShellEntry[] = [
     groupId: 'workbenches',
     candidates: [
       '/hr/me',
+      '/hr/me/employment-documents',
       '/hr/time',
       '/hr/absence',
       '/hr/pay',
@@ -67,6 +68,7 @@ export const HRIS_SHELL_ENTRIES: readonly HrisShellEntry[] = [
       '/hr/operations',
       '/hr/operations/people',
       '/hr/operations/people/employee-change-requests',
+      '/hr/operations/people/employment-assignments',
       '/hr/operations/assignments',
       '/hr/design/organization',
     ],
@@ -78,6 +80,7 @@ export const HRIS_SHELL_ENTRIES: readonly HrisShellEntry[] = [
     candidates: [
       '/hr/operations/time',
       '/hr/operations/time/clock-ingestion',
+      '/hr/operations/time/interpretation',
       '/hr/operations/time/exceptions',
       '/hr/operations/absence',
     ],
@@ -101,6 +104,7 @@ export const HRIS_SHELL_ENTRIES: readonly HrisShellEntry[] = [
     candidates: [
       '/hr/manage/system',
       '/hr/settings/reference-data',
+      '/hr/settings/payroll',
       '/hr/data/reference',
       '/hr/data/integrations',
       '/hr/data/exports',

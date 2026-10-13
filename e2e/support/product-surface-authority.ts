@@ -511,7 +511,7 @@ function hcmContext(
   } as const;
 }
 
-const HCM_ASSIGNMENT_ACTION_CAPABILITY = {
+const HCM_ACTION_CAPABILITY = {
   'route.hcm.operations.assignment-proposal-create.action':
     'hcm.operations.assignment-proposal.create',
   'route.hcm.operations.assignment-proposal-validate.action':
@@ -520,6 +520,26 @@ const HCM_ASSIGNMENT_ACTION_CAPABILITY = {
     'hcm.operations.assignment-proposal.submit',
   'route.hcm.operations.assignment-proposal-cancel.action':
     'hcm.operations.assignment-proposal.cancel',
+  'route.hcm.operations.assignment-event-create.action':
+    'hcm.operations.assignment.manage',
+  'route.hcm.operations.assignment-event-validate.action':
+    'hcm.operations.assignment.manage',
+  'route.hcm.operations.assignment-event-submit.action':
+    'hcm.operations.assignment.manage',
+  'route.hcm.operations.assignment-event-publish.action':
+    'hcm.operations.people-change.approve',
+  'route.hcm.operations.time-interpretation-run.action':
+    'hcm.operations.time.update',
+  'route.hcm.configuration.payroll-element-version-create.action':
+    'hcm.operations.payroll-inputs.update',
+  'route.hcm.configuration.payroll-formula-version-create.action':
+    'hcm.operations.payroll-inputs.update',
+  'route.hcm.configuration.payroll-formula-validate.action':
+    'hcm.operations.payroll-inputs.update',
+  'route.hcm.configuration.payroll-formula-simulate.action':
+    'hcm.operations.payroll-inputs.update',
+  'route.hcm.configuration.payroll-formula-publish.action':
+    'hcm.configuration.policy.publish',
 } as const;
 
 /** Server-authoritative HCM fixture used by the four-surface browser acceptance suite. */
@@ -539,7 +559,7 @@ export async function mockHcmProductSurfaceAuthority(
         'hcm.personal-services-access.v1',
         'hcm.directory-access.v1',
       ],
-      []
+      ['hcm.personal.profile.view']
     ),
     hcmContext(
       'hcm.team',
@@ -555,7 +575,15 @@ export async function mockHcmProductSurfaceAuthority(
       ['hcm.operations-access.v1'],
       [
         'hcm.operations.workforce.read',
+        'hcm.operations.people.view',
+        'hcm.operations.assignment.manage',
+        'hcm.operations.people-change.approve',
+        'hcm.command-receipt.view',
         'hcm.operations.time.read',
+        'hcm.operations.time.view',
+        'hcm.operations.time.update',
+        'hcm.personal.time.view',
+        'hcm.personal.time.submit',
         'hcm.operations.absence.read',
         'hcm.operations.benefits.read',
         'hcm.operations.pay.read',
@@ -572,6 +600,9 @@ export async function mockHcmProductSurfaceAuthority(
       { key: 'scope:hcm:management', kind: 'RESOURCE_SET' },
       ['hcm.management-system-access.v1'],
       [
+        'hcm.configuration.workbench.view',
+        'hcm.configuration.policy.publish',
+        'hcm.operations.payroll-inputs.update',
         'hcm.org-design.read',
         'hcm.reference.read',
         'hcm.integration.read',
@@ -638,8 +669,8 @@ export async function mockHcmProductSurfaceAuthority(
       context.scopes.find((candidate) => candidate.key === body.contextScopeKey) ??
       context.scopes[0];
     const actionCapability =
-      HCM_ASSIGNMENT_ACTION_CAPABILITY[
-        routeContractKey as keyof typeof HCM_ASSIGNMENT_ACTION_CAPABILITY
+      HCM_ACTION_CAPABILITY[
+        routeContractKey as keyof typeof HCM_ACTION_CAPABILITY
       ];
     const evaluatedContext = actionCapability
       ? {

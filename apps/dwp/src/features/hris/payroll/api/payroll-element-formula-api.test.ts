@@ -168,7 +168,6 @@ describe('PAY-006 owner API', () => {
         signal,
         headers: {
           'X-Correlation-ID': PAY006_IDS.correlation,
-          'X-Purpose-Code': 'PAYROLL_CONFIGURATION',
         },
       })
     );
@@ -214,7 +213,7 @@ describe('PAY-006 owner API', () => {
       const headers = new Headers(config.headers);
       expect(headers.get('Idempotency-Key')).toBe(PAY006_IDS.command);
       expect(headers.get('X-Correlation-ID')).toBe(PAY006_IDS.correlation);
-      expect(headers.get('X-Purpose-Code')).toBe('PAYROLL_CONFIGURATION');
+      expect(headers.has('X-Purpose-Code')).toBe(false);
       expect(headers.has('X-DWP-Tenant-ID')).toBe(false);
       expect(headers.has('X-DWP-User-ID')).toBe(false);
       expect(JSON.stringify(body)).not.toContain('tenantId');

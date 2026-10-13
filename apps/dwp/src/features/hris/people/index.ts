@@ -1,5 +1,32 @@
 export { HrisPeople360Workspace, People360Runtime } from './pages/people-360-workspace';
 export {
+  EmploymentDocumentsRuntime,
+  HrisEmploymentDocumentsWorkspace,
+} from './pages/employment-documents-workspace';
+export type { EmploymentDocumentsReader } from './pages/employment-documents-workspace';
+export {
+  EmploymentAssignmentsRuntime,
+  HrisEmploymentAssignmentsWorkspace,
+  employmentAssignmentsScopeIsReady,
+} from './pages/employment-assignments-workspace';
+export type {
+  EmploymentAssignmentProposalRenderer,
+  EmploymentAssignmentsReader,
+} from './pages/employment-assignments-workspace';
+export {
+  EMPLOYMENT_ASSIGNMENTS_CAPABILITIES,
+  EMPLOYMENT_ASSIGNMENTS_PRODUCTION_CONTRACT,
+  EMPLOYMENT_ASSIGNMENTS_STALE_AFTER_MS,
+  EMPLOYMENT_ASSIGNMENTS_SURFACE,
+  employmentAssignmentsSnapshotIsStale,
+} from './model/employment-assignments-production';
+export {
+  EMPLOYMENT_EVENT_PUBLISH_OPERATION,
+  employmentEventPublishCommand,
+  employmentEventPublishExecutionCommand,
+  useEmploymentEventPublish,
+} from './hooks/use-employment-event-publish';
+export {
   getPeople360,
   getSelfPeople360,
   getTeamPeople360,

@@ -14,7 +14,7 @@ describe('HRIS target product map catalog', () => {
     const semanticJson = JSON.stringify(HRIS_PRODUCT_MAP_CATALOG);
 
     expect(createHash('sha256').update(semanticJson).digest('hex')).toBe(
-      '6b6c93f1881d925dae981adf7c85242612fa78e226cdadc68e64084ac3779f94'
+      'efeee48bf7813f377d7eb288e31823116ab01d8b589f1dbb7ada63535b360790'
     );
     expect(Object.isFrozen(HRIS_PRODUCT_MAP_CATALOG)).toBe(true);
     expect(HRIS_PRODUCT_MAP_CATALOG.every((item) => Object.isFrozen(item))).toBe(true);
@@ -39,22 +39,51 @@ describe('HRIS target product map catalog', () => {
     const pilot = HRIS_PRODUCT_MAP_CATALOG.filter((item) => item.lifecycle === 'PILOT');
     expect(pilot.map(({ module, href }) => [module, href])).toEqual([
       ['SYS', '/hr/home'],
+      ['HRM', '/hr/me/employment-documents'],
       ['TIM', '/hr/time'],
       ['PAY', '/hr/pay'],
       ['PER', '/hr/talent'],
       ['HRM', '/hr/operations/people'],
+      ['HRM', '/hr/operations/people/employment-assignments'],
       ['TIM', '/hr/operations/time/clock-ingestion'],
+      ['TIM', '/hr/operations/time/interpretation'],
       ['TIM', '/hr/operations/time/exceptions'],
       ['PER', '/hr/operations/performance/review-operations'],
+      ['PAY', '/hr/settings/payroll'],
     ]);
     expect(new Set(pilot.map((item) => item.module))).toEqual(
       new Set(['SYS', 'HRM', 'TIM', 'PAY', 'PER'])
     );
   });
 
+  it('promotes only the four delivered Wave 2 nodes with honest bounded coverage', () => {
+    const promoted = [
+      ['my-employment-documents', '/hr/me/employment-documents'],
+      ['hr-employment-assignments', '/hr/operations/people/employment-assignments'],
+      ['time-interpretation', '/hr/operations/time/interpretation'],
+      ['settings-payroll', '/hr/settings/payroll'],
+    ] as const;
+
+    for (const [id, href] of promoted) {
+      expect(HRIS_PRODUCT_MAP_CATALOG.find((item) => item.id === id)).toMatchObject({
+        lifecycle: 'PILOT',
+        availability: 'CURRENT_RUNTIME',
+        authorization: 'RUNTIME_POLICY_REQUIRED',
+        href,
+        coverageNote: {
+          ko: expect.any(String),
+          en: expect.any(String),
+        },
+      });
+    }
+    expect(
+      HRIS_PRODUCT_MAP_CATALOG.find((item) => item.id === 'hr-employment-assignments')?.legacyPaths
+    ).toEqual(['/hr/operations/assignments', '/hr/operations/people/employment-assignments']);
+  });
+
   it('never turns planned, evidence-blocked, or external work into a blank route', () => {
     const future = HRIS_PRODUCT_MAP_CATALOG.filter((item) => item.lifecycle !== 'PILOT');
-    expect(future).toHaveLength(68);
+    expect(future).toHaveLength(64);
     expect(future.every((item) => item.href === undefined)).toBe(true);
     expect(HRIS_PRODUCT_MAP_CATALOG.find((item) => item.id === 'pay-year-end-tax')).toMatchObject({
       lifecycle: 'BLOCKED_EVIDENCE',

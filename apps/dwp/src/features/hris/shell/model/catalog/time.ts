@@ -49,17 +49,25 @@ export const HRIS_TIME_CATALOG: readonly HrisCatalogNode[] = Object.freeze([
     legacyPaths: ['/hr/operations/time/clock-ingestion'],
     href: '/hr/operations/time/clock-ingestion',
   }),
-  planned(
-    'time-interpretation',
-    'TIME',
-    'OPERATIONS',
-    'TIM',
-    operator,
-    '근태 해석',
-    'Time interpretation',
-    '규칙 버전, 지각·조퇴·결근·연장·휴일과 추적',
-    'Rule versions, attendance outcomes, overtime, holidays, and trace'
-  ),
+  node({
+    id: 'time-interpretation',
+    inventoryGroup: 'TIME',
+    surface: 'OPERATIONS',
+    module: 'TIM',
+    personas: operator,
+    lifecycle: 'PILOT',
+    label: { ko: '근태 해석', en: 'Time interpretation' },
+    capability: {
+      ko: '규칙 버전, 지각·조퇴·결근·연장·휴일과 추적',
+      en: 'Rule versions, attendance outcomes, overtime, holidays, and trace',
+    },
+    coverageNote: {
+      ko: '권한이 적용된 해석 결과·규칙 버전·추적 근거를 조회하고 선택한 작업자와 기간에 대해 통제된 재해석을 실행합니다. 근태 승인, 원천 타각 수정과 마감은 포함하지 않습니다.',
+      en: 'Provides authority-aware interpretation results, rule versions, trace evidence, and a governed rerun for an explicit worker population and period. Time approval, source-clock correction, and close are excluded.',
+    },
+    legacyPaths: ['/hr/operations/time/interpretation'],
+    href: '/hr/operations/time/interpretation',
+  }),
   node({
     id: 'time-exceptions',
     inventoryGroup: 'TIME',

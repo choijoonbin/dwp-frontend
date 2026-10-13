@@ -8,6 +8,7 @@ import {
   buildConcurrentEmploymentEventCommand,
   buildHireEmploymentEventCommand,
   employmentEventFailure,
+  employmentEventPublishProjection,
   employmentEventReceiptDisposition,
   parseEmploymentEventCommandReceipt,
   publishEmploymentEvent,
@@ -78,17 +79,23 @@ function receipt(status: EmploymentEventCommandReceipt['status']): EmploymentEve
   };
 }
 
+function publishReceipt(
+  status: EmploymentEventCommandReceipt['status']
+): EmploymentEventCommandReceipt {
+  return {
+    ...receipt(status),
+    commandType: 'HRM_ASSIGNMENT_EVENT_PUBLISH',
+    originatingAction: 'PUBLISH_ASSIGNMENT_EVENT',
+  };
+}
+
 describe('[SLICE:BASE-TFR-HRM-008] effective-dated employment and assignment lifecycle', () => {
   it('keeps HRM-P-HIRE as the closed EmploymentEventCommand fixture shape', () => {
     const command = buildHireEmploymentEventCommand({
       idempotencyKey: 'hire-tenant-100-0001',
       effectiveAt: '2026-10-01T00:00:00Z',
       personPublicId: SUBJECT_ID,
-      legalEmployerRef: ownerRef(
-        'HRM.LegalEmployer.v1',
-        '10000000-0000-4000-8000-000000000002',
-        7
-      ),
+      legalEmployerRef: ownerRef('HRM.LegalEmployer.v1', '10000000-0000-4000-8000-000000000002', 7),
       employmentType: 'EMPLOYEE',
       relationshipStart: '2026-10-01',
       assignment: assignment('2026-10-01', null, true, '1.0'),
@@ -123,11 +130,7 @@ describe('[SLICE:BASE-TFR-HRM-008] effective-dated employment and assignment lif
       effectiveAt: '2026-11-01T00:00:00Z',
       workerPublicId: WORKER_ID,
       expectedWorkerVersion: 8,
-      legalEmployerRef: ownerRef(
-        'HRM.LegalEmployer.v1',
-        '10000000-0000-4000-8000-000000000012',
-        2
-      ),
+      legalEmployerRef: ownerRef('HRM.LegalEmployer.v1', '10000000-0000-4000-8000-000000000012', 2),
       relationshipStart: '2026-11-01',
       assignment: assignment('2026-11-01', '2027-05-01', false, '0.4', 12),
     });
@@ -205,9 +208,8 @@ describe('[SLICE:BASE-TFR-HRM-008] effective-dated employment and assignment lif
 
   it('fails closed for overlap, stale owner, tenant/permission denial and key mismatch', () => {
     expect(
-      employmentEventFailure(
-        new HttpError('Overlap', 409, { code: 'PRIMARY_ASSIGNMENT_OVERLAP' })
-      ).kind
+      employmentEventFailure(new HttpError('Overlap', 409, { code: 'PRIMARY_ASSIGNMENT_OVERLAP' }))
+        .kind
     ).toBe('PRIMARY_OVERLAP');
     expect(
       employmentEventFailure(
@@ -218,16 +220,13 @@ describe('[SLICE:BASE-TFR-HRM-008] effective-dated employment and assignment lif
       expect(employmentEventFailure(new HttpError('Not disclosed', status)).kind).toBe('DENIED');
     }
     expect(
-      employmentEventFailure(
-        new HttpError('Mismatch', 409, { code: 'IDEMPOTENCY_KEY_REUSED' })
-      ).kind
+      employmentEventFailure(new HttpError('Mismatch', 409, { code: 'IDEMPOTENCY_KEY_REUSED' }))
+        .kind
     ).toBe('IDEMPOTENCY_CONFLICT');
   });
 
   it('uses the shared receipt wire and recovers uncertain commands by receipt identity', () => {
-    expect(parseEmploymentEventCommandReceipt(receipt('SUCCEEDED'))).toEqual(
-      receipt('SUCCEEDED')
-    );
+    expect(parseEmploymentEventCommandReceipt(receipt('SUCCEEDED'))).toEqual(receipt('SUCCEEDED'));
     expect(employmentEventReceiptDisposition(receipt('ACCEPTED'))).toBe('PENDING');
     expect(employmentEventReceiptDisposition(receipt('RUNNING'))).toBe('PENDING');
     expect(employmentEventReceiptDisposition(receipt('SUCCEEDED'))).toBe('SUCCEEDED');
@@ -248,5 +247,24 @@ describe('[SLICE:BASE-TFR-HRM-008] effective-dated employment and assignment lif
       correlationId: CORRELATION_ID,
       retryable: true,
     });
+  });
+
+  it('does not confirm publication until the command receipt succeeds', () => {
+    for (const status of ['ACCEPTED', 'RUNNING', 'RESULT_UNKNOWN', 'REJECTED', 'FAILED'] as const) {
+      expect(employmentEventPublishProjection(publishReceipt(status))).toEqual({
+        lifecycleState: 'APPROVED',
+        version: 3,
+      });
+    }
+    expect(employmentEventPublishProjection(publishReceipt('SUCCEEDED'))).toEqual({
+      lifecycleState: 'PUBLISHED',
+      version: 4,
+    });
+    expect(() =>
+      employmentEventPublishProjection({
+        ...publishReceipt('SUCCEEDED'),
+        originatingAction: 'CREATE_ASSIGNMENT_EVENT',
+      })
+    ).toThrow('Employment event publish receipt does not match the command.');
   });
 });

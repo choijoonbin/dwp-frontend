@@ -89,6 +89,8 @@ export type TimeInterpretationCopy = Readonly<{
   commandAcceptedDescription: string;
   resultUnknownTitle: string;
   resultUnknownDescription: string;
+  commandTerminalFailureTitle: string;
+  commandTerminalFailureDescription: string;
   commandRejectedTitle: string;
   commandRejectedDescription: string;
   masked: string;
@@ -129,6 +131,8 @@ export const timeInterpretationCopy: TimeInterpretationCopy = Object.freeze({
   resultUnknownTitle: 'Interpretation outcome is unknown',
   resultUnknownDescription:
     'Do not submit a new command. Retry with the preserved idempotency key.',
+  commandTerminalFailureTitle: 'Interpretation command failed',
+  commandTerminalFailureDescription: 'The TIM owner returned a sealed terminal failure receipt.',
   commandRejectedTitle: 'Interpretation command rejected',
   commandRejectedDescription: 'The owner rejected the request before a safe receipt was recorded.',
   masked: 'Masked by field policy',
@@ -146,6 +150,7 @@ type RuntimeState =
 type CommandFeedback =
   | Readonly<{ kind: 'ACCEPTED'; receipt: TimeInterpretationReceipt }>
   | Readonly<{ kind: 'RESULT_UNKNOWN' }>
+  | Readonly<{ kind: 'TERMINAL_FAILURE'; receipt: TimeInterpretationReceipt }>
   | Readonly<{ kind: 'REJECTED' }>;
 
 type PendingCommand = Readonly<{
@@ -434,6 +439,14 @@ export function TimeInterpretationWorkbenchView({
           </Stack>
         </InlineFeedback>
       )}
+      {feedback?.kind === 'TERMINAL_FAILURE' && (
+        <InlineFeedback
+          severity="error"
+          title={`${copy.commandTerminalFailureTitle}: ${feedback.receipt.status}`}
+        >
+          {copy.commandTerminalFailureDescription} {feedback.receipt.receiptId}
+        </InlineFeedback>
+      )}
       {feedback?.kind === 'REJECTED' && (
         <InlineFeedback severity="error" title={copy.commandRejectedTitle}>
           {copy.commandRejectedDescription}
@@ -673,6 +686,9 @@ export function TimeInterpretationWorkbenchRuntime({
           const pending = { ...command, observedReceipt: receipt };
           pendingRef.current = pending;
           setFeedback({ kind: 'RESULT_UNKNOWN' });
+        } else if (receipt.status === 'REJECTED' || receipt.status === 'FAILED') {
+          pendingRef.current = null;
+          setFeedback({ kind: 'TERMINAL_FAILURE', receipt });
         } else {
           pendingRef.current = null;
           setFeedback({ kind: 'ACCEPTED', receipt });

@@ -25,6 +25,7 @@ export function ProductAreaPageHeader({
     (area === 'hcm' &&
       ![
         'me',
+        'employment-documents',
         'time',
         'absence',
         'benefits',

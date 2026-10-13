@@ -55,6 +55,27 @@ describe('canonical HRIS shell navigation projection', () => {
     ]);
   });
 
+  it('keeps the four canonical PAGEs inside the existing workbench owners', () => {
+    const projected = projectHrisShellNavigation(
+      new Set([
+        '/hr/me/employment-documents',
+        '/hr/operations/people/employment-assignments',
+        '/hr/operations/time/interpretation',
+        '/hr/settings/payroll',
+      ])
+    ).flatMap((group) => group.items);
+
+    expect(projected.map(({ view, path }) => ({ view, path }))).toEqual([
+      { view: 'workbench-my-hr', path: '/hr/me/employment-documents' },
+      {
+        view: 'workbench-hr-operations',
+        path: '/hr/operations/people/employment-assignments',
+      },
+      { view: 'workbench-time', path: '/hr/operations/time/interpretation' },
+      { view: 'workbench-settings', path: '/hr/settings/payroll' },
+    ]);
+  });
+
   it('assigns every compatibility PAGE to at most one shell entry', () => {
     const candidates = HRIS_SHELL_ENTRIES.flatMap((entry) => entry.candidates);
     expect(new Set(candidates).size).toBe(candidates.length);
@@ -81,6 +102,13 @@ describe('canonical HRIS shell navigation projection', () => {
     expect(resolveHrisShellSelectedView('/hr/operations/time/clock-ingestion')).toBe(
       'workbench-time'
     );
+    expect(resolveHrisShellSelectedView('/hr/me/employment-documents')).toBe('workbench-my-hr');
+    expect(resolveHrisShellSelectedView('/hr/operations/people/employment-assignments')).toBe(
+      'workbench-hr-operations'
+    );
+    expect(resolveHrisShellSelectedView('/hr/operations/time/interpretation')).toBe(
+      'workbench-time'
+    );
     expect(resolveHrisShellSelectedView('/hr/operations/time/exceptions')).toBe('workbench-time');
     expect(resolveHrisShellSelectedView('/hr/operations/performance/review-operations')).toBe(
       'workbench-performance'
@@ -89,6 +117,7 @@ describe('canonical HRIS shell navigation projection', () => {
       'workbench-hr-operations'
     );
     expect(resolveHrisShellSelectedView('/hr/settings/reference-data')).toBe('workbench-settings');
+    expect(resolveHrisShellSelectedView('/hr/settings/payroll')).toBe('workbench-settings');
     expect(selectedVisibleViews('/hr/operations/time', allCandidates)).toEqual(['workbench-time']);
     expect(selectedVisibleViews('/hr/operations/pay', allCandidates)).toEqual([
       'workbench-payroll',

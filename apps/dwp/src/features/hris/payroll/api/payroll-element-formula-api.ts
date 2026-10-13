@@ -173,7 +173,6 @@ export async function readPayrollConfigurationWorkbench(
       ...scoped,
       headers: {
         'X-Correlation-ID': query.correlationId,
-        'X-Purpose-Code': PAYROLL_CONFIGURATION_PURPOSE,
       },
     }
   );
@@ -275,7 +274,6 @@ async function mutate<T extends object>(
       ...governed.headers,
       'Idempotency-Key': authority.idempotencyKey,
       'X-Correlation-ID': authority.correlationId,
-      'X-Purpose-Code': PAYROLL_CONFIGURATION_PURPOSE,
       ...(expectedVersion !== undefined
         ? { 'X-DWP-Expected-Object-Version': String(expectedVersion) }
         : {}),

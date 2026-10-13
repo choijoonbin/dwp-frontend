@@ -1,11 +1,21 @@
 import {
   ASSIGNMENT_CHANGE_TYPES,
   HttpError,
+  HttpTransportError,
   axiosInstance,
   productSurfaceGovernedMutationConfig,
   productSurfaceHighRiskMutationConfig,
 } from '@dwp-frontend/shared-utils';
 import { productSurfaceReadScopeConfig } from '@dwp-frontend/shared-utils/api/product-surface-read-scope';
+
+import {
+  ASSIGNMENT_PROPOSAL_ROUTE_BINDINGS,
+  EMPLOYMENT_EVENT_API_CONTRACTS,
+  EMPLOYMENT_EVENT_BASE_PATH,
+  EMPLOYMENT_EVENT_PURPOSE,
+  EMPLOYMENT_EVENT_RECEIPT_PATH,
+  EMPLOYMENT_EVENT_ROUTE_BINDINGS,
+} from './assignment-proposal-contracts';
 
 import type {
   AssignmentChangeType,
@@ -15,83 +25,14 @@ import type {
   ProductSurfaceGovernedMutationAuthority,
 } from '@dwp-frontend/shared-utils';
 
-export const ASSIGNMENT_PROPOSAL_ROUTE_BINDINGS = {
-  create: {
-    productKey: 'hcm',
-    surfaceKey: 'hcm.operations',
-    routeContractKey: 'route.hcm.operations.assignment-proposal-create.action',
-    taskKind: 'OPERATIONS',
-  },
-  validate: {
-    productKey: 'hcm',
-    surfaceKey: 'hcm.operations',
-    routeContractKey: 'route.hcm.operations.assignment-proposal-validate.action',
-    taskKind: 'OPERATIONS',
-  },
-  cancel: {
-    productKey: 'hcm',
-    surfaceKey: 'hcm.operations',
-    routeContractKey: 'route.hcm.operations.assignment-proposal-cancel.action',
-    taskKind: 'OPERATIONS',
-  },
-} as const;
-
-export const EMPLOYMENT_EVENT_ROUTE_BINDINGS = {
-  create: {
-    productKey: 'hcm',
-    surfaceKey: 'hcm.operations',
-    routeContractKey: 'route.hcm.operations.assignment-event-create.action',
-    taskKind: 'OPERATIONS',
-  },
-  validate: {
-    productKey: 'hcm',
-    surfaceKey: 'hcm.operations',
-    routeContractKey: 'route.hcm.operations.assignment-event-validate.action',
-    taskKind: 'OPERATIONS',
-  },
-  submit: {
-    productKey: 'hcm',
-    surfaceKey: 'hcm.operations',
-    routeContractKey: 'route.hcm.operations.assignment-event-submit.action',
-    taskKind: 'OPERATIONS',
-  },
-  publish: {
-    productKey: 'hcm',
-    surfaceKey: 'hcm.operations',
-    routeContractKey: 'route.hcm.operations.assignment-event-publish.action',
-    taskKind: 'OPERATIONS',
-  },
-} as const;
-
-export const EMPLOYMENT_EVENT_BASE_PATH = '/api/people/v1/hris/assignment-events' as const;
-export const EMPLOYMENT_EVENT_RECEIPT_PATH = '/api/people/v1/hris/command-receipts' as const;
-export const EMPLOYMENT_EVENT_PURPOSE = 'HR_LIFECYCLE' as const;
-export const EMPLOYMENT_EVENT_API_CONTRACTS = [
-  {
-    bindingId: 'PEP-HRM-006',
-    routeContractKey: EMPLOYMENT_EVENT_ROUTE_BINDINGS.create.routeContractKey,
-    method: 'POST',
-    path: EMPLOYMENT_EVENT_BASE_PATH,
-  },
-  {
-    bindingId: 'PEP-HRM-007',
-    routeContractKey: EMPLOYMENT_EVENT_ROUTE_BINDINGS.validate.routeContractKey,
-    method: 'POST',
-    path: `${EMPLOYMENT_EVENT_BASE_PATH}/{eventPublicId}/validate`,
-  },
-  {
-    bindingId: 'PEP-HRM-008',
-    routeContractKey: EMPLOYMENT_EVENT_ROUTE_BINDINGS.submit.routeContractKey,
-    method: 'POST',
-    path: `${EMPLOYMENT_EVENT_BASE_PATH}/{eventPublicId}/submit`,
-  },
-  {
-    bindingId: 'PEP-HRM-009',
-    routeContractKey: EMPLOYMENT_EVENT_ROUTE_BINDINGS.publish.routeContractKey,
-    method: 'POST',
-    path: `${EMPLOYMENT_EVENT_BASE_PATH}/{eventPublicId}/publish`,
-  },
-] as const;
+export {
+  ASSIGNMENT_PROPOSAL_ROUTE_BINDINGS,
+  EMPLOYMENT_EVENT_API_CONTRACTS,
+  EMPLOYMENT_EVENT_BASE_PATH,
+  EMPLOYMENT_EVENT_PURPOSE,
+  EMPLOYMENT_EVENT_RECEIPT_PATH,
+  EMPLOYMENT_EVENT_ROUTE_BINDINGS,
+};
 
 export type EmploymentEventType = 'HIRE' | 'CONCURRENT_EMPLOYMENT';
 export type EmploymentType = 'EMPLOYEE' | 'CONTINGENT' | 'INTERN' | 'APPRENTICE';
@@ -156,17 +97,10 @@ export type ConcurrentEmploymentEventCommand = Readonly<{
   }>;
 }>;
 
-export type EmploymentEventCommand =
-  | HireEmploymentEventCommand
-  | ConcurrentEmploymentEventCommand;
+export type EmploymentEventCommand = HireEmploymentEventCommand | ConcurrentEmploymentEventCommand;
 
 export type EmploymentEventCommandReceiptStatus =
-  | 'ACCEPTED'
-  | 'RUNNING'
-  | 'SUCCEEDED'
-  | 'REJECTED'
-  | 'FAILED'
-  | 'RESULT_UNKNOWN';
+  'ACCEPTED' | 'RUNNING' | 'SUCCEEDED' | 'REJECTED' | 'FAILED' | 'RESULT_UNKNOWN';
 
 export type EmploymentEventCommandReceipt = Readonly<{
   receiptId: string;
@@ -274,8 +208,7 @@ function nonBlank(value: string | null | undefined): value is string {
   return Boolean(value?.trim());
 }
 
-const UUID_PATTERN =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu;
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu;
 const SHA256_PATTERN = /^[a-f0-9]{64}$/u;
 const IDEMPOTENCY_KEY_PATTERN = /^[A-Za-z0-9._:-]{16,128}$/u;
 const FTE_PATTERN = /^(?:0(?:\.\d{1,12})?|1(?:\.0{1,12})?)$/u;
@@ -429,7 +362,10 @@ export function buildConcurrentEmploymentEventCommand(
   }) as ConcurrentEmploymentEventCommand;
 }
 
-export function employmentEventFailure(error: unknown): EmploymentEventFailure {
+export function employmentEventFailure(
+  error: unknown,
+  ownerDispatchStarted = false
+): EmploymentEventFailure {
   const details = error instanceof HttpError ? record(error.details) : null;
   const codeValue = details?.code ?? details?.errorCode;
   const code = typeof codeValue === 'string' ? codeValue.trim().toUpperCase() : null;
@@ -438,20 +374,34 @@ export function employmentEventFailure(error: unknown): EmploymentEventFailure {
     : null;
   const receiptId = validUuid(details?.receiptId) ? details.receiptId : null;
   const correlationId = validUuid(details?.correlationId) ? details.correlationId : null;
+  const hasReceiptIdentity = receiptId !== null && correlationId !== null;
   const retryable = details?.retryable === true;
   let kind: EmploymentEventFailureKind = 'UNAVAILABLE';
-  if (error instanceof HttpError) {
+  if (error instanceof HttpTransportError) {
+    kind = ownerDispatchStarted ? 'RESULT_UNKNOWN' : 'UNAVAILABLE';
+  } else if (error instanceof HttpError) {
     if (error.status === 401 || error.status === 403 || error.status === 404) kind = 'DENIED';
     else if (code === 'PRIMARY_ASSIGNMENT_OVERLAP') kind = 'PRIMARY_OVERLAP';
     else if (code === 'STALE_OWNER_VERSION' || code === 'OBJECT_VERSION_CONFLICT') {
       kind = 'STALE_VERSION';
     } else if (code === 'IDEMPOTENCY_CONFLICT' || code === 'IDEMPOTENCY_KEY_REUSED') {
       kind = 'IDEMPOTENCY_CONFLICT';
-    }
-    else if (error.status >= 500 && receiptId) kind = 'RESULT_UNKNOWN';
-    else if (error.status === 400 || error.status === 409 || error.status === 422) kind = 'INVALID';
+    } else if (error.status === 408 || error.status === 429 || error.status >= 500) {
+      kind = ownerDispatchStarted || hasReceiptIdentity ? 'RESULT_UNKNOWN' : 'UNAVAILABLE';
+    } else if (error.status === 400 || error.status === 409 || error.status === 422)
+      kind = 'INVALID';
+  } else if (ownerDispatchStarted) {
+    // A malformed or truncated success response is also ambiguous once the owner request began.
+    kind = 'RESULT_UNKNOWN';
   }
-  return { kind, code, currentVersion, receiptId, correlationId, retryable };
+  return {
+    kind,
+    code,
+    currentVersion,
+    receiptId,
+    correlationId,
+    retryable: retryable || kind === 'RESULT_UNKNOWN',
+  };
 }
 
 export function employmentEventReceiptDisposition(
@@ -461,6 +411,20 @@ export function employmentEventReceiptDisposition(
   if (receipt.status === 'SUCCEEDED') return 'SUCCEEDED';
   if (receipt.status === 'RESULT_UNKNOWN') return 'RESULT_UNKNOWN';
   return 'REJECTED';
+}
+
+export function employmentEventPublishProjection(
+  receipt: Pick<EmploymentEventCommandReceipt, 'status' | 'commandType' | 'originatingAction'>
+): Pick<EmploymentEventCommandResult, 'lifecycleState' | 'version'> {
+  if (
+    receipt.commandType !== 'HRM_ASSIGNMENT_EVENT_PUBLISH' ||
+    receipt.originatingAction !== 'PUBLISH_ASSIGNMENT_EVENT'
+  ) {
+    throw new Error('Employment event publish receipt does not match the command.');
+  }
+  return employmentEventReceiptDisposition(receipt) === 'SUCCEEDED'
+    ? { lifecycleState: 'PUBLISHED', version: 4 }
+    : { lifecycleState: 'APPROVED', version: 3 };
 }
 
 export function assignmentProposalCreateReference(assignmentId: string): string {
@@ -666,9 +630,7 @@ function requiredText(source: Record<string, unknown>, field: string): string {
   return value;
 }
 
-export function parseEmploymentEventCommandReceipt(
-  value: unknown
-): EmploymentEventCommandReceipt {
+export function parseEmploymentEventCommandReceipt(value: unknown): EmploymentEventCommandReceipt {
   const source = record(value);
   if (!source) throw new Error('Employment event command receipt is invalid.');
   const receiptId = requiredText(source, 'receiptId');
@@ -751,13 +713,15 @@ function commandHeaders(
     'Idempotency-Key': idempotencyKey,
     'If-Match': `"v:${expectedVersion}"`,
     'X-Correlation-ID': correlationId,
-    'X-Purpose-Code': EMPLOYMENT_EVENT_PURPOSE,
   };
 }
 
 function employmentEventMutationConfig(
   authority: ProductSurfaceGovernedMutationAuthority,
-  command: Pick<EmploymentEventLifecycleCommand, 'expectedVersion' | 'idempotencyKey' | 'correlationId'>,
+  command: Pick<
+    EmploymentEventLifecycleCommand,
+    'expectedVersion' | 'idempotencyKey' | 'correlationId'
+  >,
   highRisk = false
 ) {
   if (
@@ -798,6 +762,25 @@ function commandResult(
     throw new Error('Employment event command result does not match the request.');
   }
   return { receipt, eventPublicId, lifecycleState, version };
+}
+
+function publishCommandResult(
+  value: unknown,
+  headers: Headers | undefined,
+  correlationId: string,
+  eventPublicId: string
+): EmploymentEventCommandResult {
+  const receipt = parseEmploymentEventCommandReceipt(value);
+  const projection = employmentEventPublishProjection(receipt);
+  const wireVersion = responseVersion(headers);
+  if (
+    receipt.correlationId !== correlationId ||
+    !validUuid(eventPublicId) ||
+    (projection.lifecycleState === 'PUBLISHED' && wireVersion !== projection.version)
+  ) {
+    throw new Error('Employment event command result does not match the request.');
+  }
+  return { receipt, eventPublicId, ...projection };
 }
 
 export async function createEmploymentEvent(
@@ -885,13 +868,21 @@ async function executeEmploymentEventLifecycle(
     {},
     employmentEventMutationConfig(authority, command, highRisk)
   );
+  if (action === 'publish') {
+    return publishCommandResult(
+      response.data,
+      response.headers,
+      command.correlationId,
+      command.eventPublicId
+    );
+  }
   return commandResult(
     response.data,
     response.headers,
     command.correlationId,
     command.eventPublicId,
-    action === 'submit' ? 'PENDING_APPROVAL' : 'PUBLISHED',
-    action === 'submit' ? 2 : 4
+    'PENDING_APPROVAL',
+    2
   );
 }
 

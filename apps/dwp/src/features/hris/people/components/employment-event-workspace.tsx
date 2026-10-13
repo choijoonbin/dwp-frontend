@@ -33,10 +33,12 @@ import {
 import type { AssignmentProposalWorkspacePortProps } from '../../../../components/assignment-proposal-port';
 import type {
   AssignmentProposalSelection,
+  EmploymentEventCommand,
   EmploymentEventCommandResult,
   EmploymentEventFailure,
   EmploymentEventImpact,
   EmploymentEventLifecycle,
+  EmploymentEventLifecycleCommand,
   EmploymentEventCommandReceiptStatus,
   EmploymentType,
   EmploymentOwnerRef,
@@ -59,14 +61,33 @@ type Stage = Readonly<{
   receiptId: string | null;
   receiptStatus: EmploymentEventCommandReceiptStatus | null;
 }>;
+export type EmploymentEventPublishCommand = Readonly<{
+  eventPublicId: string;
+  expectedVersion: 3;
+  idempotencyKey: string;
+  correlationId: string;
+}>;
+type PendingEmploymentEventCommand =
+  | Readonly<{
+      kind: 'CREATE';
+      command: EmploymentEventCommand;
+      correlationId: string;
+    }>
+  | Readonly<{
+      kind: 'VALIDATE';
+      command: EmploymentEventLifecycleCommand;
+    }>
+  | Readonly<{
+      kind: 'SUBMIT';
+      command: EmploymentEventLifecycleCommand;
+    }>
+  | Readonly<{
+      kind: 'PUBLISH';
+      command: EmploymentEventPublishCommand;
+    }>;
 
 export type EmploymentEventPublish = (
-  command: Readonly<{
-    eventPublicId: string;
-    expectedVersion: 3;
-    idempotencyKey: string;
-    correlationId: string;
-  }>
+  command: EmploymentEventPublishCommand
 ) => Promise<EmploymentEventCommandResult>;
 
 export type EmploymentEventWorkspaceProps = Pick<
@@ -98,8 +119,10 @@ function ownerRef(draft: OwnerDraft, schemaId: string): EmploymentOwnerRef {
   };
 }
 
-function ownerDraft(ref: EmploymentOwnerRef): OwnerDraft {
-  return { publicId: ref.publicId, revision: String(ref.revision), contentHash: ref.contentHash };
+function ownerDraft(ref: EmploymentOwnerRef | null): OwnerDraft {
+  return ref
+    ? { publicId: ref.publicId, revision: String(ref.revision), contentHash: ref.contentHash }
+    : { publicId: '', revision: '', contentHash: '' };
 }
 
 function failureMessage(failure: EmploymentEventFailure): string {
@@ -116,7 +139,7 @@ function failureMessage(failure: EmploymentEventFailure): string {
     return 'That command key belongs to different request bytes. The command was not submitted again.';
   }
   if (failure.kind === 'RESULT_UNKNOWN') {
-    return 'The result is unknown. Do not submit a duplicate command; reconcile the original receipt.';
+    return 'The result is unknown. Reconcile the receipt or retry only the exact preserved command.';
   }
   return failure.kind === 'INVALID'
     ? 'The event did not pass the effective-date or employment rules.'
@@ -132,6 +155,13 @@ export function employmentEventActionLabel(
   if (lifecycleState === 'VALIDATED') return 'Submit for approval';
   if (lifecycleState === 'APPROVED' && publishAvailable) return 'Publish';
   return 'Refresh status';
+}
+
+export function retainEmploymentEventCommandForExactRetry<T>(
+  command: T,
+  failure: Pick<EmploymentEventFailure, 'kind'>
+): T | null {
+  return failure.kind === 'RESULT_UNKNOWN' ? command : null;
 }
 
 export function EmploymentEventWorkspace({
@@ -150,6 +180,7 @@ export function EmploymentEventWorkspace({
   const [stage, setStage] = useState<Stage | null>(null);
   const [impact, setImpact] = useState<EmploymentEventImpact | null>(null);
   const [failure, setFailure] = useState<EmploymentEventFailure | null>(null);
+  const [pendingCommand, setPendingCommand] = useState<PendingEmploymentEventCommand | null>(null);
   const [busy, setBusy] = useState(false);
   const createDispatch = useProductSurfaceGovernedMutation(EMPLOYMENT_EVENT_ROUTE_BINDINGS.create);
   const validateDispatch = useProductSurfaceGovernedMutation(
@@ -212,6 +243,7 @@ export function EmploymentEventWorkspace({
     [fte, owners, relationshipStart]
   );
   const locked =
+    Boolean(pendingCommand) ||
     failure?.kind === 'DENIED' ||
     failure?.kind === 'IDEMPOTENCY_CONFLICT' ||
     failure?.kind === 'RESULT_UNKNOWN' ||
@@ -233,7 +265,7 @@ export function EmploymentEventWorkspace({
 
   const updateOwner = (field: OwnerField, key: keyof OwnerDraft, value: string) => {
     setOwners((current) => ({ ...current, [field]: { ...current[field], [key]: value } }));
-    setFailure(null);
+    if (!pendingCommand) setFailure(null);
   };
   const saveResult = (result: EmploymentEventCommandResult) => {
     setStage({
@@ -247,10 +279,7 @@ export function EmploymentEventWorkspace({
   };
   const refresh = async () => {
     if (!stage) return;
-    const result = await getEmploymentEvent(
-      stage.eventPublicId,
-      requestScope.contextScopeKey
-    );
+    const result = await getEmploymentEvent(stage.eventPublicId, requestScope.contextScopeKey);
     setStage({ ...stage, lifecycleState: result.lifecycleState, version: result.version });
     setFailure(null);
   };
@@ -280,9 +309,78 @@ export function EmploymentEventWorkspace({
       } else {
         setStage({ ...stage, receiptId, receiptStatus: receipt.status });
       }
+      if (disposition === 'SUCCEEDED' || disposition === 'REJECTED') {
+        setPendingCommand(null);
+      }
       setFailure(null);
     } catch (error) {
       setFailure(employmentEventFailure(error));
+    } finally {
+      setBusy(false);
+    }
+  };
+  const executePendingCommand = async (pending: PendingEmploymentEventCommand) => {
+    setPendingCommand(pending);
+    setFailure(null);
+    let ownerDispatchStarted = false;
+    try {
+      if (pending.kind === 'CREATE') {
+        const result = await createDispatch((authority) => {
+          ownerDispatchStarted = true;
+          return createEmploymentEvent(pending.command, pending.correlationId, authority);
+        });
+        saveResult(result);
+        const disposition = employmentEventReceiptDisposition(result.receipt);
+        if (disposition !== 'PENDING' && disposition !== 'RESULT_UNKNOWN') {
+          setPendingCommand(null);
+        }
+        return;
+      }
+      if (pending.kind === 'VALIDATE') {
+        const result = await validateDispatch((authority) => {
+          ownerDispatchStarted = true;
+          return validateEmploymentEvent(pending.command, authority);
+        });
+        setImpact(result.impact);
+        setStage((current) =>
+          current ? { ...current, lifecycleState: 'VALIDATED', version: 1 } : current
+        );
+        setPendingCommand(null);
+        return;
+      }
+      if (pending.kind === 'SUBMIT') {
+        const result = await submitDispatch((authority) => {
+          ownerDispatchStarted = true;
+          return submitEmploymentEvent(pending.command, authority);
+        });
+        saveResult(result);
+        const disposition = employmentEventReceiptDisposition(result.receipt);
+        if (disposition !== 'PENDING' && disposition !== 'RESULT_UNKNOWN') {
+          setPendingCommand(null);
+        }
+        return;
+      }
+      if (!publishEvent) {
+        throw new Error('Employment event publishing is unavailable.');
+      }
+      ownerDispatchStarted = true;
+      const result = await publishEvent(pending.command);
+      saveResult(result);
+      const disposition = employmentEventReceiptDisposition(result.receipt);
+      if (disposition !== 'PENDING' && disposition !== 'RESULT_UNKNOWN') {
+        setPendingCommand(null);
+      }
+    } catch (error) {
+      const nextFailure = employmentEventFailure(error, ownerDispatchStarted);
+      setFailure(nextFailure);
+      setPendingCommand(retainEmploymentEventCommandForExactRetry(pending, nextFailure));
+    }
+  };
+  const retryPendingCommand = async () => {
+    if (!pendingCommand || busy) return;
+    setBusy(true);
+    try {
+      await executePendingCommand(pendingCommand);
     } finally {
       setBusy(false);
     }
@@ -333,48 +431,37 @@ export function EmploymentEventWorkspace({
                 workerPublicId: selection.subjectPublicId,
                 expectedWorkerVersion: selection.expectedVersion,
               });
-        saveResult(
-          await createDispatch((authority) =>
-            createEmploymentEvent(command, correlationId, authority)
-          )
-        );
+        await executePendingCommand({ kind: 'CREATE', command, correlationId });
       } else if (stage.lifecycleState === 'DRAFT') {
-        const result = await validateDispatch((authority) =>
-          validateEmploymentEvent(
-            {
-              eventPublicId: stage.eventPublicId,
-              expectedVersion: 0,
-              idempotencyKey: crypto.randomUUID(),
-              correlationId: crypto.randomUUID(),
-            },
-            authority
-          )
-        );
-        setImpact(result.impact);
-        setStage({ ...stage, lifecycleState: 'VALIDATED', version: 1 });
+        await executePendingCommand({
+          kind: 'VALIDATE',
+          command: {
+            eventPublicId: stage.eventPublicId,
+            expectedVersion: 0,
+            idempotencyKey: crypto.randomUUID(),
+            correlationId: crypto.randomUUID(),
+          },
+        });
       } else if (stage.lifecycleState === 'VALIDATED') {
-        saveResult(
-          await submitDispatch((authority) =>
-            submitEmploymentEvent(
-              {
-                eventPublicId: stage.eventPublicId,
-                expectedVersion: 1,
-                idempotencyKey: crypto.randomUUID(),
-                correlationId: crypto.randomUUID(),
-              },
-              authority
-            )
-          )
-        );
+        await executePendingCommand({
+          kind: 'SUBMIT',
+          command: {
+            eventPublicId: stage.eventPublicId,
+            expectedVersion: 1,
+            idempotencyKey: crypto.randomUUID(),
+            correlationId: crypto.randomUUID(),
+          },
+        });
       } else if (stage.lifecycleState === 'APPROVED' && publishEvent) {
-        saveResult(
-          await publishEvent({
+        await executePendingCommand({
+          kind: 'PUBLISH',
+          command: {
             eventPublicId: stage.eventPublicId,
             expectedVersion: 3,
             idempotencyKey: crypto.randomUUID(),
             correlationId: crypto.randomUUID(),
-          })
-        );
+          },
+        });
       } else {
         await refresh();
       }
@@ -390,7 +477,8 @@ export function EmploymentEventWorkspace({
       open
       title={t('assignments.employmentEvent.title', { defaultValue: 'Employment lifecycle event' })}
       description={t('assignments.employmentEvent.description', {
-        defaultValue: 'Create an effective-dated assignment, validate it, and submit it for approval.',
+        defaultValue:
+          'Create an effective-dated assignment, validate it, and submit it for approval.',
       })}
       cancelLabel={t('common.actions.close')}
       submitLabel={
@@ -399,10 +487,11 @@ export function EmploymentEventWorkspace({
           : employmentEventActionLabel(stage?.lifecycleState ?? null, Boolean(publishEvent))
       }
       submittingLabel="Working…"
-      onClose={onClose}
+      onClose={pendingCommand ? () => undefined : onClose}
       onSubmit={run}
       busy={busy}
       submitDisabled={primaryDisabled}
+      showCancel={!pendingCommand}
       showSubmit={stage?.lifecycleState !== 'PUBLISHED'}
       maxWidth="md"
       desktopMaxWidth={760}
@@ -412,7 +501,9 @@ export function EmploymentEventWorkspace({
         <Stack direction="row" gap={1} flexWrap="wrap">
           <Chip label={selection.eventType} size="small" />
           <Chip label={`owner v${selection.expectedVersion}`} size="small" variant="outlined" />
-          {stage ? <Chip label={`${stage.lifecycleState} · v${stage.version}`} size="small" /> : null}
+          {stage ? (
+            <Chip label={`${stage.lifecycleState} · v${stage.version}`} size="small" />
+          ) : null}
         </Stack>
         <Typography variant="body2" sx={{ overflowWrap: 'anywhere' }}>
           Subject: {selection.subjectPublicId}
@@ -422,10 +513,25 @@ export function EmploymentEventWorkspace({
           <Alert
             severity={failure.kind === 'DENIED' ? 'warning' : 'error'}
             action={
-              failure.receiptId ? (
-                <ActionButton intent="quiet" size="small" onClick={() => void reconcile()}>
-                  Reconcile receipt
-                </ActionButton>
+              failure.receiptId || (failure.kind === 'RESULT_UNKNOWN' && pendingCommand) ? (
+                <Stack direction={{ xs: 'column', sm: 'row' }} gap={0.5}>
+                  {failure.receiptId && stage ? (
+                    <ActionButton intent="quiet" size="small" onClick={() => void reconcile()}>
+                      Reconcile receipt
+                    </ActionButton>
+                  ) : null}
+                  {failure.kind === 'RESULT_UNKNOWN' && pendingCommand ? (
+                    <ActionButton
+                      intent="quiet"
+                      size="small"
+                      loading={busy}
+                      loadingLabel="Retrying exact command…"
+                      onClick={() => void retryPendingCommand()}
+                    >
+                      Retry exact command
+                    </ActionButton>
+                  ) : null}
+                </Stack>
               ) : undefined
             }
           >
@@ -447,7 +553,9 @@ export function EmploymentEventWorkspace({
           </Alert>
         ) : null}
         {receiptDisposition === 'REJECTED' ? (
-          <Alert severity="error">The command receipt was rejected. No later action is enabled.</Alert>
+          <Alert severity="error">
+            The command receipt was rejected. No later action is enabled.
+          </Alert>
         ) : null}
         {stage?.lifecycleState === 'PENDING_APPROVAL' ? (
           <Alert severity="info">
@@ -456,11 +564,14 @@ export function EmploymentEventWorkspace({
         ) : null}
         {stage?.lifecycleState === 'APPROVED' && !publishEvent ? (
           <Alert severity="warning">
-            Approval is complete. Publishing remains unavailable until a current step-up authority is supplied.
+            Approval is complete. Publishing remains unavailable until a current step-up authority
+            is supplied.
           </Alert>
         ) : null}
         {stage?.lifecycleState === 'PUBLISHED' ? (
-          <Alert severity="success">The employment event was published to the assignment ledger.</Alert>
+          <Alert severity="success">
+            The employment event was published to the assignment ledger.
+          </Alert>
         ) : null}
 
         {!stage && selection.eventType === 'CONCURRENT_EMPLOYMENT' ? (
@@ -476,7 +587,8 @@ export function EmploymentEventWorkspace({
             </Alert>
           ) : workbenchStale ? (
             <Alert severity="warning">
-              The worker is now version {sourceAssignment.workerVersion}. Reopen the event from the current workbench row.
+              The worker is now version {sourceAssignment.workerVersion}. Reopen the event from the
+              current workbench row.
             </Alert>
           ) : null
         ) : null}
