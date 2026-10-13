@@ -147,6 +147,11 @@
       "sourceRowCount": 63,
       "startState": "START_AUTHORIZED",
       "startToken": "W2-20261013-PAY-006-START-R1",
+      "orderOverride": {
+        "authorized": true,
+        "reason": "PAY-006 is an independent payroll-configuration slice and does not consume MOD-PER-COMPPLAN or PAY-016. Its typed formula lifecycle can be completed against the already integrated PAY foundation and synthetic fixtures.",
+        "doesNotAuthorize": ["PAY-016", "PAY_RUN_CALCULATION", "PRODUCTION_ACTIVATION"]
+      },
       "goal": "Implement governed payroll element and typed-formula configuration with versioned publication.",
       "dependencies": ["DEP-001", "DEP-002", "DEP-003", "DEP-004", "DEP-016"],
       "contracts": [
