@@ -220,9 +220,14 @@
       "sourceFamily": "TFR-PER-016",
       "sourceFamilySha256": "3c3ca65f37cbe69a58be6ee42c97e3e979b976d0b878c5f0499dbe6d8ff88b84",
       "sourceRowCount": 6,
-      "startState": "WORKTREE_PREPARED_START_QUEUED",
-      "startToken": null,
-      "startCondition": "CONTROL_ACCEPTS_THE_FIRST_HRM_TIM_OR_PAY_COMPLETION_RECEIPT",
+      "startState": "START_AUTHORIZED",
+      "startToken": "W2-20261013-PER-016-START-R1",
+      "startCondition": "FULFILLED_BY_PAY_006_READY_FOR_CONTROL_INTEGRATION_RECEIPT",
+      "hrmProviderPin": {
+        "backendCommit": "deb39a02634826d40ae5de5e30f54223c31b5851",
+        "contract": "SVC-PEP-HRM-002_AND_XCON_001_003_004_005_006",
+        "mode": "TYPED_IN_PROCESS_PORT_WITH_SYNTHETIC_CONTRACT_FIXTURES"
+      },
       "goal": "Consume the canonical HRM workforce snapshot into a revision-bound PER projection without cross-context writes.",
       "dependencies": ["DEP-001", "DEP-002", "DEP-003", "DEP-007", "DEP-016"],
       "contracts": ["SVC-PEP-HRM-002", "XCON-001", "XCON-003", "XCON-004", "XCON-005", "XCON-006"],
