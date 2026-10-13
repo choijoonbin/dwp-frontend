@@ -1,0 +1,231 @@
+{
+  "schema": "dwp.hris.control.wave2-start-manifest.v1",
+  "issuedAt": "2026-10-13T10:20:39+09:00",
+  "issuedBy": "HRIS-INTEGRATION-CONTROL",
+  "decision": {
+    "objective": "Resume SKKF source-backed vertical-slice delivery without repeating global recovery gates.",
+    "compensationPlanning": "DEFERRED_G3D_PRESERVE_EXISTING_PREPARATION",
+    "moduleIntegrationState": "READY_FOR_CONTROL_INTEGRATION_ONLY",
+    "productionAuthorization": false
+  },
+  "basePins": {
+    "frontend": {
+      "repository": "https://github.com/choijoonbin/dwp-frontend.git",
+      "branch": "codex/hris-g1-integration-frontend-20261006",
+      "commit": "c2f26f7c270558e490f40c0f0df70e4426edd4b7",
+      "remoteVerified": true
+    },
+    "backend": {
+      "repository": "https://github.com/choijoonbin/dwp-backend.git",
+      "branch": "codex/hris-g1-integration-backend-20261006",
+      "commit": "deb39a02634826d40ae5de5e30f54223c31b5851",
+      "remoteVerified": true
+    }
+  },
+  "globalRules": {
+    "previousTokensAreAuthority": false,
+    "reusePreviousModuleWorktrees": false,
+    "editExistingMigrations": false,
+    "editControlEvidenceFromModuleBranches": false,
+    "editSharedRoutesNavigationProductManifestsOrGateway": false,
+    "sharedChangeHandling": "REPORT_MINIMUM_REQUIRED_AMENDMENT_TO_CONTROL",
+    "validationLadder": [
+      "RUN_DIRECTLY_CHANGED_TESTS_DURING_DEVELOPMENT",
+      "RERUN_ONLY_FAILING_TESTS_AFTER_A_FIX",
+      "RUN_SLICE_CONTRACT_TEST_ONCE_BEFORE_HANDOFF",
+      "RUN_MIGRATION_OR_WORKER_RECOVERY_TESTS_ONLY_WHEN_TOUCHED",
+      "RUN_MODULE_BATCH_ONCE_BEFORE_HANDOFF",
+      "DO_NOT_RUN_REPOSITORY_WIDE_GRADLE_VITEST_PLAYWRIGHT_OR_G0_G7"
+    ],
+    "completionReceipt": [
+      "CHANGED_FILES",
+      "CONTRACT_AND_GOLDEN_CASE_COVERAGE",
+      "TEST_COMMANDS_AND_RESULTS",
+      "FRONTEND_AND_BACKEND_COMMIT_SHA_OR_NOT_TOUCHED",
+      "PUSHED_REMOTE_BRANCHES",
+      "CLEAN_WORKTREES",
+      "KNOWN_BLOCKERS"
+    ]
+  },
+  "assignments": [
+    {
+      "module": "HRM",
+      "session": "HRIS-HRM",
+      "sliceId": "BASE-TFR-HRM-008",
+      "sourceFamily": "TFR-HRM-008",
+      "sourceFamilySha256": "83ca1a8dd958a525eb9f19432a728c8355a64d45106373b96544eeda8dc4489f",
+      "sourceRowCount": 18,
+      "startState": "START_AUTHORIZED",
+      "startToken": "W2-20261013-HRM-008-START-R1",
+      "goal": "Complete the effective-dated employment and assignment lifecycle by extending the existing assignment-proposal implementation rather than duplicating it.",
+      "dependencies": ["DEP-001", "DEP-002", "DEP-003", "DEP-007", "DEP-016"],
+      "contracts": [
+        "PEP-HRM-006",
+        "PEP-HRM-007",
+        "PEP-HRM-008",
+        "PEP-HRM-009",
+        "SVC-PEP-HRM-004",
+        "XCON-001",
+        "XCON-003",
+        "XCON-004",
+        "XCON-005",
+        "XCON-016"
+      ],
+      "frontend": {
+        "worktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave2-20261013/hrm-008/frontend",
+        "branch": "codex/hris-wave2-hrm-008-frontend-20261013",
+        "allowedPaths": [
+          "apps/dwp/src/features/hris/employment/**"
+        ]
+      },
+      "backend": {
+        "worktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave2-20261013/hrm-008/backend",
+        "branch": "codex/hris-wave2-hrm-008-backend-20261013",
+        "allowedPaths": [
+          "dwp-people-server/src/main/java/com/dwp/services/people/hr/assignment/**",
+          "dwp-people-server/src/test/java/com/dwp/services/people/hr/assignment/**",
+          "dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/workforce/**",
+          "dwp-people-server/src/test/java/com/dwp/services/people/hris/contracts/**",
+          "dwp-people-server/src/main/resources/db/migration/V55__hrm_*.sql"
+        ],
+        "migrationLease": "V55_CREATE_ONLY_IF_SCHEMA_CHANGE_IS_REQUIRED"
+      },
+      "touchManifestAmendment": "The existing employment and assignment overlap paths above are explicitly approved for this slice. Do not create a duplicate canonical implementation tree.",
+      "goldenCases": [
+        "HRM-P-HIRE",
+        "HRM-P-CONCURRENT",
+        "PRIMARY_ASSIGNMENT_OVERLAP",
+        "STALE_OWNER_VERSION",
+        "TENANT_AND_PERMISSION_DENIAL",
+        "IDEMPOTENT_COMMAND_AND_OUTBOX_RECOVERY"
+      ]
+    },
+    {
+      "module": "TIM",
+      "session": "HRIS-TIM",
+      "sliceId": "BASE-TFR-TIM-010",
+      "sourceFamily": "TFR-TIM-010",
+      "sourceFamilySha256": "4a266ae738ed05a82fb9f8ba8bd6160c38b060c92508faac03b62369da1c39c8",
+      "sourceRowCount": 26,
+      "startState": "START_AUTHORIZED",
+      "startToken": "W2-20261013-TIM-010-START-R1",
+      "goal": "Implement deterministic time interpretation from clock input and typed rule versions, including replay and reversal safety.",
+      "dependencies": ["DEP-001", "DEP-002", "DEP-003", "DEP-016"],
+      "contracts": ["PEP-TIM-009", "PEP-TIM-010", "EVT-TIM:TimeInterpreted", "IAQ-041"],
+      "frontend": {
+        "worktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave2-20261013/tim-010/frontend",
+        "branch": "codex/hris-wave2-tim-010-frontend-20261013",
+        "allowedPaths": [
+          "apps/dwp/src/features/hris/time/**"
+        ]
+      },
+      "backend": {
+        "worktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave2-20261013/tim-010/backend",
+        "branch": "codex/hris-wave2-tim-010-backend-20261013",
+        "allowedPaths": [
+          "dwp-time-server/src/main/java/com/dwp/services/time/**",
+          "dwp-time-server/src/test/java/com/dwp/services/time/**",
+          "dwp-time-server/src/main/resources/db/migration/V10__tim_*.sql"
+        ],
+        "migrationLease": "V10_CREATE_ONLY_IF_SCHEMA_CHANGE_IS_REQUIRED"
+      },
+      "goldenCases": [
+        "TIM-P-RULE",
+        "UNKNOWN_OPERATOR_SCHEMA_REJECTION",
+        "CYCLIC_AST_CYCLE",
+        "GOLDEN_MINUTE_TOTALS",
+        "DETERMINISTIC_REPLAY",
+        "TENANT_PERMISSION_AND_IDEMPOTENCY"
+      ]
+    },
+    {
+      "module": "PAY",
+      "session": "HRIS-PAY",
+      "sliceId": "BASE-TFR-PAY-006",
+      "sourceFamily": "TFR-PAY-006",
+      "sourceFamilySha256": "1becffe45dd5701bfda428c64e2c4d718209bf4b9f859b622799f75901017dba",
+      "sourceRowCount": 63,
+      "startState": "START_AUTHORIZED",
+      "startToken": "W2-20261013-PAY-006-START-R1",
+      "goal": "Implement governed payroll element and typed-formula configuration with versioned publication.",
+      "dependencies": ["DEP-001", "DEP-002", "DEP-003", "DEP-004", "DEP-016"],
+      "contracts": [
+        "PEP-PAY-004",
+        "PEP-PAY-005",
+        "PEP-PAY-006",
+        "PEP-PAY-007",
+        "PEP-PAY-008",
+        "EVT-PAY:PayrollConfigurationPublished",
+        "IAQ-055"
+      ],
+      "frontend": {
+        "worktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave2-20261013/pay-006/frontend",
+        "branch": "codex/hris-wave2-pay-006-frontend-20261013",
+        "allowedPaths": [
+          "apps/dwp/src/features/hris/payroll/**"
+        ]
+      },
+      "backend": {
+        "worktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave2-20261013/pay-006/backend",
+        "branch": "codex/hris-wave2-pay-006-backend-20261013",
+        "allowedPaths": [
+          "dwp-payroll-server/src/main/java/com/dwp/services/payroll/**",
+          "dwp-payroll-server/src/test/java/com/dwp/services/payroll/**",
+          "dwp-payroll-server/src/main/resources/db/migration/V6__pay_*.sql"
+        ],
+        "migrationLease": "V6_CREATE_ONLY_IF_SCHEMA_CHANGE_IS_REQUIRED"
+      },
+      "goldenCases": [
+        "PAY-P-FORMULA",
+        "STRING_FORMULA_REJECTION",
+        "CYCLIC_FORMULA_CYCLE",
+        "CURRENCY_UNIT_AND_ROUNDING",
+        "TIMEOUT_AND_SANDBOX_SAFETY",
+        "PUBLISH_IDEMPOTENCY_AND_TENANT_ISOLATION"
+      ]
+    },
+    {
+      "module": "PER",
+      "session": "HRIS-PER",
+      "sliceId": "BASE-TFR-PER-016",
+      "sourceFamily": "TFR-PER-016",
+      "sourceFamilySha256": "3c3ca65f37cbe69a58be6ee42c97e3e979b976d0b878c5f0499dbe6d8ff88b84",
+      "sourceRowCount": 6,
+      "startState": "WORKTREE_PREPARED_START_QUEUED",
+      "startToken": null,
+      "startCondition": "CONTROL_ACCEPTS_THE_FIRST_HRM_TIM_OR_PAY_COMPLETION_RECEIPT",
+      "goal": "Consume the canonical HRM workforce snapshot into a revision-bound PER projection without cross-context writes.",
+      "dependencies": ["DEP-001", "DEP-002", "DEP-003", "DEP-007", "DEP-016"],
+      "contracts": ["SVC-PEP-HRM-002", "XCON-001", "XCON-003", "XCON-004", "XCON-005", "XCON-006"],
+      "frontend": {
+        "worktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave2-20261013/per-016/frontend",
+        "branch": "codex/hris-wave2-per-016-frontend-20261013",
+        "allowedPaths": [],
+        "policy": "NON_UI_SUPPORTING_SLICE_FRONTEND_NOT_TOUCHED_UNLESS_A_SEALED_CONTRACT_TEST_REQUIRES_IT"
+      },
+      "backend": {
+        "worktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave2-20261013/per-016/backend",
+        "branch": "codex/hris-wave2-per-016-backend-20261013",
+        "allowedPaths": [
+          "dwp-people-server/src/main/java/com/dwp/services/people/hris/performance/**",
+          "dwp-people-server/src/test/java/com/dwp/services/people/hris/performance/**",
+          "dwp-people-server/src/main/resources/db/performance-migration/V4__per_*.sql"
+        ],
+        "migrationLease": "V4_CREATE_ONLY_IF_SCHEMA_CHANGE_IS_REQUIRED"
+      },
+      "goldenCases": [
+        "PER-P-FREEZE",
+        "STALE_WORKFORCE_SNAPSHOT",
+        "PREVIEW_HASH_MISMATCH",
+        "HRM_PER_SNAPSHOT_CONTRACT",
+        "NO_CROSS_CONTEXT_WRITE"
+      ]
+    }
+  ],
+  "sysSupport": {
+    "session": "HRIS-SYS",
+    "state": "SHARED_CONTRACT_SUPPORT_NO_CODE",
+    "token": "W2-20261013-SYS-SUPPORT-R1",
+    "rule": "Verify owner, version and compatibility only for an explicit module blocker. Do not edit code or shared control files without a separate slice token."
+  }
+}
