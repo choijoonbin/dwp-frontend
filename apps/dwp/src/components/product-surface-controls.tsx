@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect, useId, useRef, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Clock3, Eye, ShieldAlert } from 'lucide-react';
+import { ChevronDown, Clock3, Eye, ShieldAlert } from 'lucide-react';
 import { formatDate } from '@dwp-frontend/shared-i18n';
 import { useProductSurfaceTelemetry } from '../observability/product-surface-telemetry-context';
 
@@ -408,42 +408,112 @@ export function ProductSurfaceContextBar({
       >
         {scopes.length > 1 && runtime.onScopeChange ? (
           <>
-            <Box sx={{ display: mobileRail ? 'none' : { xs: 'none', lg: 'block' } }}>
-              <Box
-                component="select"
-                aria-label={scopeLabel}
-                value={decision.scope.key}
-                onChange={(event) => runtime.onScopeChange?.(event.target.value)}
-                sx={{
-                  minWidth: 168,
-                  maxWidth: 220,
-                  minHeight: 40,
-                  px: 1.25,
+            <Box
+              component="label"
+              data-testid="product-surface-multi-scope"
+              sx={{
+                display: mobileRail ? 'none' : { xs: 'none', lg: 'inline-flex' },
+                alignItems: 'center',
+                gap: 0.5,
+                minWidth: 0,
+                minHeight: 40,
+                px: 1,
+                borderRadius: 1,
+                color: 'text.secondary',
+                typography: 'caption',
+                fontWeight: 650,
+                cursor: 'pointer',
+                transition: (theme) =>
+                  theme.transitions.create(['color', 'background-color'], {
+                    duration: theme.transitions.duration.shortest,
+                  }),
+                '&:hover, &:focus-within': {
                   color: 'text.primary',
-                  bgcolor: 'background.paper',
-                  border: 1,
-                  borderColor: 'divider',
-                  borderRadius: 1,
-                  font: 'inherit',
-                  '&:focus-visible': {
-                    outline: '2px solid',
-                    outlineColor: 'primary.main',
-                    outlineOffset: 2,
-                  },
-                  '@media (pointer: coarse)': { minHeight: 44, height: 44 },
+                  bgcolor: 'action.hover',
+                },
+                '@media (forced-colors: active)': {
+                  border: '1px solid transparent',
+                },
+                '@media (prefers-reduced-motion: reduce)': {
+                  transition: 'none',
+                },
+              }}
+            >
+              <Box component="span" sx={{ flex: '0 0 auto' }}>
+                {scopeLabel}:
+              </Box>
+              <Box
+                component="span"
+                sx={{
+                  position: 'relative',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  width: 'clamp(7rem, 12vw, 11rem)',
+                  minWidth: 0,
                 }}
               >
-                {scopes.map((scope) => (
-                  <option
-                    key={scope.key}
-                    value={scope.key}
-                    disabled={
-                      scope.validUntil ? Date.parse(scope.validUntil) <= runtime.serverNowMs : false
-                    }
-                  >
-                    {scope.displayName}
-                  </option>
-                ))}
+                <Box
+                  component="select"
+                  aria-label={scopeLabel}
+                  title={decision.scope.displayName}
+                  value={decision.scope.key}
+                  onChange={(event) => runtime.onScopeChange?.(event.target.value)}
+                  sx={{
+                    width: 1,
+                    minWidth: 0,
+                    minHeight: 40,
+                    pl: 0,
+                    pr: 2.25,
+                    overflow: 'hidden',
+                    border: 0,
+                    borderRadius: 0.5,
+                    outline: 0,
+                    appearance: 'none',
+                    color: 'text.primary',
+                    bgcolor: 'transparent',
+                    typography: 'caption',
+                    fontWeight: 700,
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                    cursor: 'pointer',
+                    '&:focus-visible': {
+                      outline: '2px solid',
+                      outlineColor: 'primary.main',
+                      outlineOffset: 2,
+                    },
+                    '@media (pointer: coarse)': { minHeight: 44, height: 44 },
+                    '@media (forced-colors: active)': {
+                      color: 'ButtonText',
+                      bgcolor: 'ButtonFace',
+                    },
+                  }}
+                >
+                  {scopes.map((scope) => (
+                    <option
+                      key={scope.key}
+                      value={scope.key}
+                      disabled={
+                        scope.validUntil
+                          ? Date.parse(scope.validUntil) <= runtime.serverNowMs
+                          : false
+                      }
+                    >
+                      {scope.displayName}
+                    </option>
+                  ))}
+                </Box>
+                <Box
+                  component={ChevronDown}
+                  size={15}
+                  strokeWidth={1.8}
+                  aria-hidden="true"
+                  sx={{
+                    position: 'absolute',
+                    right: 0.25,
+                    flex: '0 0 auto',
+                    pointerEvents: 'none',
+                  }}
+                />
               </Box>
             </Box>
             <Box
