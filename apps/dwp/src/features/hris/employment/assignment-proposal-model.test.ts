@@ -508,7 +508,7 @@ describe('effective-dated employment event model', () => {
     const submitKey = 'submit-tenant-100-001';
     const publishKey = 'publish-tenant-100-01';
     let published = false;
-    const fetchMock = vi.fn(async (input: string | URL | Request) => {
+    const fetchMock = vi.fn(async (input: string | URL | Request, _init?: RequestInit) => {
       const url = String(input);
       if (url.includes('/api/auth/csrf')) {
         return jsonResponse({ token: 'csrf-token', headerName: 'X-XSRF-TOKEN' }, {}, 200, true);

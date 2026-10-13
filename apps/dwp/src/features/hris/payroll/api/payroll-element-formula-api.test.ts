@@ -27,12 +27,13 @@ import {
 } from '../testing/payroll-element-formula-fixtures.test-support';
 
 const scope = 'tenant:42/payroll-configuration';
+type SecureAuthority = Extract<ProductSurfaceGovernedMutationAuthority, { mode: 'SECURE' }>;
 
 function commandAuthority(
   expectedObjectVersion: number | undefined,
-  overrides: Partial<ProductSurfaceGovernedMutationAuthority> = {}
+  overrides: Partial<SecureAuthority> = {}
 ) {
-  const governance: ProductSurfaceGovernedMutationAuthority = {
+  const governance: SecureAuthority = {
     mode: 'SECURE',
     rolloutState: '111',
     expectedDecisionRevision: 'decision-11',
