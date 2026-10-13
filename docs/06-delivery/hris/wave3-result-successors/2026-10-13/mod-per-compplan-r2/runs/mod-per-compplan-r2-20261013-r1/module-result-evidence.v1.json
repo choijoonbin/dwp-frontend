@@ -155,7 +155,7 @@
       "errors": 0,
       "skipped": 0,
       "evidence": {
-        "path": "docs/06-delivery/hris/wave3-result-successors/2026-10-13/mod-per-compplan-r2/runs/mod-per-compplan-r2-20261013-r1/logs/backend-targeted-summary.log",
+        "path": "docs/06-delivery/hris/wave3-result-successors/2026-10-13/mod-per-compplan-r2/runs/mod-per-compplan-r2-20261013-r1/logs/backend-targeted-summary.txt",
         "sha256": "9ed97a72035d6d620807bc5cc989bfcdbe01c1ba078e403b001806063c1fb4a8",
         "bytes": 1527
       }
@@ -171,7 +171,7 @@
       "errors": 0,
       "skipped": 0,
       "evidence": {
-        "path": "docs/06-delivery/hris/wave3-result-successors/2026-10-13/mod-per-compplan-r2/runs/mod-per-compplan-r2-20261013-r1/logs/platform-xcon021-targeted-summary.log",
+        "path": "docs/06-delivery/hris/wave3-result-successors/2026-10-13/mod-per-compplan-r2/runs/mod-per-compplan-r2-20261013-r1/logs/platform-xcon021-targeted-summary.txt",
         "sha256": "87504b5a7c4761824b05070d9664c63d21e773e9e9b0bda3b5bb25ddd1a6baf8",
         "bytes": 439
       }
@@ -186,7 +186,7 @@
       "testCount": 27,
       "failures": 0,
       "evidence": {
-        "path": "docs/06-delivery/hris/wave3-result-successors/2026-10-13/mod-per-compplan-r2/runs/mod-per-compplan-r2-20261013-r1/logs/frontend-targeted.log",
+        "path": "docs/06-delivery/hris/wave3-result-successors/2026-10-13/mod-per-compplan-r2/runs/mod-per-compplan-r2-20261013-r1/logs/frontend-targeted.txt",
         "sha256": "91835d5cbdd84aa3af4f3bf768ac12f2bac4690611149e6544aca0c4d02882d8",
         "bytes": 1004
       }
@@ -343,5 +343,5 @@
     "customerActivationAuthorized": false,
     "productionReleaseAuthorized": false
   },
-  "sealedPayloadSha256": "3932a05d7b84449aa178374bfafeee24cd10dd7eb10f171339ffa9ebcd00439b"
+  "sealedPayloadSha256": "37efca152e3d4aef8798bbc2c4c27b7cbcf4aa75ecb36297944f82595fb689c1"
 }

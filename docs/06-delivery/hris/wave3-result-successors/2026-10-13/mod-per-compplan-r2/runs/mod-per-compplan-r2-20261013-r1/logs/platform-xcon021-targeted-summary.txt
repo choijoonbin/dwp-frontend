@@ -1,0 +1,13 @@
+commandId=PER_COMPPLAN_PLATFORM_XCON021_CLOSED
+executedAt=2026-10-13T16:45:59+09:00
+executionBinding=UNCHANGED_PLATFORM_CONTRACT_RESULT
+exitCode=0
+suites=1
+tests=2
+failures=0
+errors=0
+skipped=0
+suite=Xcon021CompensationSnapshotPublicationV2Test tests=2 sha256=e75ef12e52352d1a2c8527281842017a67cb7dde8ba40df46d1c5d8e390926b1
+platformSourceChangedByModule=false
+redactionStatus=SANITIZED_SUMMARY_WITH_XML_DIGEST_NO_SECRET_OR_CUSTOMER_DATA
+

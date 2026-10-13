@@ -1,0 +1,19 @@
+commandId=PER_COMPPLAN_FRONTEND_CLOSED
+executedAt=2026-10-13T17:47:13+09:00
+executionBinding=POST_COMMIT_EXACT_RESULT
+resultCommit=e1011bb43e73b16efbee71c937b60603aa4bf80f
+resultTree=a9cecebcddede0644b6a276a7be5017ae66237d4
+argv=yarn vitest run apps/dwp/src/features/hris/performance/compensation-planning/__tests__/compensation-planning-contract.test.ts apps/dwp/src/features/hris/performance/compensation-planning/__tests__/compensation-planning-api.test.ts apps/dwp/src/features/hris/performance/compensation-planning/__tests__/compensation-planning-workspace.test.tsx apps/dwp/src/features/hris/performance/compensation-planning/__tests__/compensation-planning-command-runtime.test.tsx
+exitCode=0
+runner=vitest-4.1.10
+testFilesPassed=4
+testFilesFailed=0
+testsPassed=27
+testsFailed=0
+durationSeconds=2.24
+postExecutionHead=e1011bb43e73b16efbee71c937b60603aa4bf80f
+postExecutionClean=true
+postExecutionUpstreamAhead=0
+postExecutionUpstreamBehind=0
+redactionStatus=SANITIZED_NO_SECRET_OR_CUSTOMER_DATA
+
