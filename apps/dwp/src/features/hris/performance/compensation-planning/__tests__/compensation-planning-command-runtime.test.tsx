@@ -47,6 +47,11 @@ const validRevise = Object.freeze({
   },
   effectiveFrom: '2027-01-01', effectiveTo: null,
 });
+const authoringContext = Object.freeze({
+  guidelines: validRevise.guidelines,
+  population: validRevise.population,
+  populationSourceRef: validRevise.populationSourceRef,
+});
 const cycle = {
   cycleId: ID.cycle,
   aggregateVersion: 4,
@@ -143,12 +148,22 @@ describe('compensation command runtime', () => {
     vi.restoreAllMocks();
   });
 
-  it('fails closed when Central has not injected command registrations', async () => {
-    await render({ requestScope: scope(), dataSource: source() });
+  it('fails closed when Central has not injected command registrations or authoring context', async () => {
+    const executor = vi.fn();
+    await render({
+      requestScope: scope(),
+      dataSource: source(),
+      commandExecutors: { REVISE_CYCLE: executor },
+      commandIntents: { revise: () => pending },
+    });
     expect(latest.actions.canCreate).toBe(false);
     expect(latest.actions.canRevise).toBe(false);
     expect(latest.actions.canApprove).toBe(false);
     expect(latest.actions.canPublish).toBe(false);
+    await act(async () => {
+      await latest.actions.onRevise?.(validRevise);
+    });
+    expect(executor).not.toHaveBeenCalled();
   });
 
   it('replays the exact immutable envelope after an ambiguous result', async () => {
@@ -170,6 +185,7 @@ describe('compensation command runtime', () => {
       dataSource: source(),
       commandExecutors: { REVISE_CYCLE: executor },
       commandIntents: { revise: () => pending },
+      cycleAuthoringContext: authoringContext,
     });
     await act(async () => {
       await vi.waitFor(() => expect(latest.actions.canRevise).toBe(true));
@@ -199,6 +215,7 @@ describe('compensation command runtime', () => {
       dataSource: source(),
       commandExecutors: { REVISE_CYCLE: deniedExecutor },
       commandIntents: { revise: () => pending },
+      cycleAuthoringContext: authoringContext,
     });
     await act(async () => {
       await vi.waitFor(() => expect(latest.actions.canRevise).toBe(true));

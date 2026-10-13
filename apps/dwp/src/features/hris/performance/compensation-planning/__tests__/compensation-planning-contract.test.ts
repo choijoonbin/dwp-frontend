@@ -6,6 +6,7 @@ import {
   parseApproveCompensationPlanBody,
   parseCancelCompensationCycleBody,
   parseCompensationBudgetBody,
+  parseCompensationCycleAuthoringContext,
   parseCompensationProposalCollection,
   parseCompensationRichCommandResult,
   parseCompensationSnapshotPublished,
@@ -317,6 +318,24 @@ describe('sealed compensation-planning contracts', () => {
       guidelines, population, populationSourceRef: sourceRef,
       effectiveFrom: '2027-01-01', effectiveTo: null,
     };
+    const authoringContext = parseCompensationCycleAuthoringContext({
+      guidelines,
+      population,
+      populationSourceRef: sourceRef,
+    });
+    expect(Object.isFrozen(authoringContext)).toBe(true);
+    expect(authoringContext.populationSourceRef).toEqual(sourceRef);
+    expect(() => parseCompensationCycleAuthoringContext({
+      guidelines,
+      population,
+      populationSourceRef: sourceRef,
+      fabricatedFallback: true,
+    })).toThrow();
+    expect(() => parseCompensationCycleAuthoringContext({
+      guidelines,
+      population,
+      populationSourceRef: { ...sourceRef, ownerRevision: 13 },
+    })).toThrow();
     expect(parseCreateCompensationCycleBody({ ...common, cycleCode: 'FY27' }).cycleCode)
       .toBe('FY27');
     expect(parseReviseCompensationCycleBody(common).guidelines.budgetMode).toBe('HARD_CAP');

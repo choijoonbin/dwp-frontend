@@ -26,15 +26,17 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
 import { getCompensationPlanningCopy } from './compensation-planning-copy';
+import { parseCompensationCycleAuthoringContext } from './compensation-planning-contract';
+
+import type { CompensationPlanningCopy } from './compensation-planning-copy';
 
 import type {
   ApproveCompensationPlanBody,
   CompensationBudgetBody,
   CompensationCommandResult,
   CompensationCycle,
+  CompensationCycleAuthoringContext,
   CompensationCycleDetail,
-  CompensationGuidelines,
-  CompensationPopulation,
   CompensationProposal,
   CompensationProposalCollection,
   CompensationProposalDetail,
@@ -89,6 +91,7 @@ export type CompensationPlanningWorkspaceProps = Readonly<{
   proposalDetail?: CompensationProposalDetail | null;
   selectedProposalId?: string | null;
   actions: CompensationPlanningWorkspaceActions;
+  cycleAuthoringContext?: CompensationCycleAuthoringContext | null;
   pendingCommand?: PendingCompensationCommand | null;
   lastResult?: CompensationCommandResult | null;
   commandBusy?: boolean;
@@ -134,12 +137,8 @@ const stateCopy: Record<CompensationPlanningWorkspaceStatus, readonly [string, s
   ERROR: ['Compensation planning is unavailable', 'Refresh this governed projection or use the correlation reference with support.'],
 };
 
-function newId() {
-  return globalThis.crypto?.randomUUID() ?? '00000000-0000-4000-8000-000000000001';
-}
-
-function canonicalInstant() {
-  return new Date().toISOString();
+function newProposalId() {
+  return globalThis.crypto?.randomUUID() ?? '';
 }
 
 function StatePanel({
@@ -168,13 +167,26 @@ function StatePanel({
   );
 }
 
-function StatusChip({ status }: { status: string }) {
+function statusLabel(status: string, copy: CompensationPlanningCopy) {
+  return ({
+    DRAFT: copy.statusDraft,
+    OPEN: copy.statusOpen,
+    PROPOSAL_REVIEW: copy.statusProposalReview,
+    APPROVED: copy.statusApproved,
+    PUBLISHED: copy.statusPublished,
+    CANCELLED: copy.statusCancelled,
+    SUBMITTED: copy.statusSubmitted,
+    FROZEN: copy.statusFrozen,
+  } as Record<string, string>)[status] ?? status.replaceAll('_', ' ');
+}
+
+function StatusChip({ status, copy }: { status: string; copy: CompensationPlanningCopy }) {
   const color = status === 'APPROVED' || status === 'PUBLISHED'
     ? 'success'
     : status === 'PROPOSAL_REVIEW'
       ? 'warning'
       : 'default';
-  return <Chip size="small" color={color} label={status.replaceAll('_', ' ')} />;
+  return <Chip size="small" color={color} label={statusLabel(status, copy)} />;
 }
 
 function decimalUnits(value: string): bigint {
@@ -252,14 +264,6 @@ function field(
   );
 }
 
-function jsonValue<T>(value: string, label: string): T {
-  try {
-    return JSON.parse(value) as T;
-  } catch {
-    throw new Error(`${label} must be valid JSON.`);
-  }
-}
-
 export function CompensationPlanningWorkspace({
   status,
   cycles,
@@ -269,6 +273,7 @@ export function CompensationPlanningWorkspace({
   proposalDetail,
   selectedProposalId,
   actions,
+  cycleAuthoringContext: providedCycleAuthoringContext,
   pendingCommand,
   lastResult,
   commandBusy = false,
@@ -290,6 +295,14 @@ export function CompensationPlanningWorkspace({
   onRetryPending,
 }: CompensationPlanningWorkspaceProps) {
   const copy = getCompensationPlanningCopy(locale);
+  const cycleAuthoringContext = useMemo(() => {
+    if (!providedCycleAuthoringContext) return null;
+    try {
+      return parseCompensationCycleAuthoringContext(providedCycleAuthoringContext);
+    } catch {
+      return null;
+    }
+  }, [providedCycleAuthoringContext]);
   const selected = cycleDetail?.item ?? cycles.find((item) => item.cycleId === selectedCycleId);
   const [dialog, setDialog] = useState<DialogState | null>(null);
   const [fields, setFields] = useState<Fields>({});
@@ -314,45 +327,44 @@ export function CompensationPlanningWorkspace({
   const approvalReady = Boolean(
     proposals && proposals.items.length > 0 && submittedCount === proposals.items.length && !proposalsError
   );
+  const authoringAssignments = cycleAuthoringContext?.population.lines.length ?? 0;
+  const authoringComponentLinks = cycleAuthoringContext?.population.lines.reduce(
+    (count, line) => count + line.eligibleComponentCodes.length,
+    0
+  ) ?? 0;
+  const selectedAuthoringGuideline = cycleAuthoringContext?.guidelines.components.find(
+    (item) => item.componentCode === fields.guidelineComponentCode
+  );
   const blocking = status !== 'READY' && status !== 'EMPTY';
 
   const openDialog = (kind: DialogKind, proposal?: CompensationProposal) => {
+    if ((kind === 'CREATE' || kind === 'REVISE') && !cycleAuthoringContext) return;
     const firstPopulation = selected?.population?.lines[0];
     const firstGuideline = selected?.guidelines?.components[0];
-    const now = freshnessWatermark ?? canonicalInstant();
-    const defaultGuidelines: CompensationGuidelines = selected?.guidelines ?? {
-      components: [{
-        componentCode: 'BASE', currency: 'USD', minimumAmount: '1', maximumAmount: '999999.9999',
-        exceptionPolicyCode: 'NONE', roundingPolicyVersionPublicId: newId(),
-      }],
-      budgetMode: 'HARD_CAP', effectiveFrom: selected?.effectiveFrom ?? '2027-01-01', effectiveTo: null,
-    };
-    const defaultPopulation: CompensationPopulation = selected?.population ?? {
-      asOf: now, hrmOwnerRevision: 1,
-      lines: [{
-        workerPublicId: newId(), assignmentPublicId: newId(), organizationPublicId: newId(),
-        gradePublicId: null, jobProfilePublicId: null, assignmentOwnerRevision: 1,
-        eligibleComponentCodes: ['BASE'],
-      }],
-    };
+    const authoringGuideline = cycleAuthoringContext?.guidelines.components[0];
+    const authoringEffectiveFrom = kind === 'REVISE'
+      ? selected?.effectiveFrom ?? cycleAuthoringContext?.guidelines.effectiveFrom ?? ''
+      : cycleAuthoringContext?.guidelines.effectiveFrom ?? '';
+    const authoringEffectiveTo = kind === 'REVISE'
+      ? selected?.effectiveTo ?? cycleAuthoringContext?.guidelines.effectiveTo ?? ''
+      : cycleAuthoringContext?.guidelines.effectiveTo ?? '';
     setFields({
-      cycleCode: selected?.cycleCode ?? '',
-      effectiveFrom: selected?.effectiveFrom ?? '2027-01-01',
-      effectiveTo: selected?.effectiveTo ?? '',
-      guidelines: JSON.stringify(defaultGuidelines, null, 2),
-      population: JSON.stringify(defaultPopulation, null, 2),
-      snapshotPublicId: newId(), ownerRevision: String(defaultPopulation.hrmOwnerRevision),
-      sourceAsOf: defaultPopulation.asOf, sourceSha: '0'.repeat(64),
+      cycleCode: kind === 'REVISE' ? selected?.cycleCode ?? '' : '',
+      effectiveFrom: authoringEffectiveFrom,
+      effectiveTo: authoringEffectiveTo ?? '',
+      guidelineComponentCode: authoringGuideline?.componentCode ?? '',
+      guidelineMinimumAmount: authoringGuideline?.minimumAmount ?? '',
+      guidelineMaximumAmount: authoringGuideline?.maximumAmount ?? '',
       ledgerEntryType: 'ALLOCATE', organizationPublicId: firstPopulation?.organizationPublicId ?? '',
-      currency: firstGuideline?.currency ?? 'USD', amount: '', reversesEntryPublicId: '',
-      proposalId: proposal?.proposalId ?? newId(),
+      currency: firstGuideline?.currency ?? '', amount: '', reversesEntryPublicId: '',
+      proposalId: proposal?.proposalId ?? newProposalId(),
       workerPublicId: proposal?.workerId ?? firstPopulation?.workerPublicId ?? '',
       assignmentPublicId: proposal?.assignmentId ?? firstPopulation?.assignmentPublicId ?? '',
-      componentCode: proposal?.componentCode ?? firstGuideline?.componentCode ?? 'BASE',
-      proposalCurrency: proposal?.currency ?? firstGuideline?.currency ?? 'USD',
+      componentCode: proposal?.componentCode ?? firstGuideline?.componentCode ?? '',
+      proposalCurrency: proposal?.currency ?? firstGuideline?.currency ?? '',
       proposalAmount: proposal && proposalDetail?.item.proposalId === proposal.proposalId
         ? proposalDetail.item.amount ?? '' : '',
-      proposalFrom: proposal?.effectiveFrom ?? selected?.effectiveFrom ?? '2027-01-01',
+      proposalFrom: proposal?.effectiveFrom ?? selected?.effectiveFrom ?? '',
       proposalTo: proposal?.effectiveTo ?? '', supersedesProposalPublicId: '',
       submissionDigest: proposal?.contentDigest ?? '',
       submissionDate: proposal?.effectiveFrom ?? '', reasonCode: '', approvalReceiptId: '',
@@ -367,19 +379,34 @@ export function CompensationPlanningWorkspace({
     setFormError(null);
     try {
       if (dialog.kind === 'CREATE' || dialog.kind === 'REVISE') {
+        if (!cycleAuthoringContext) {
+          throw new Error(copy.authoringContextRequiredTitle);
+        }
+        const editedComponent = cycleAuthoringContext.guidelines.components.find(
+          (item) => item.componentCode === fields.guidelineComponentCode
+        );
+        if (!editedComponent) {
+          throw new Error(copy.authoringContextRequiredTitle);
+        }
         const common = {
-          guidelines: jsonValue<CompensationGuidelines>(fields.guidelines, 'Guidelines'),
-          population: jsonValue<CompensationPopulation>(fields.population, 'Population'),
+          guidelines: Object.freeze({
+            components: Object.freeze(cycleAuthoringContext.guidelines.components.map((item) =>
+              item.componentCode === editedComponent.componentCode
+                ? Object.freeze({
+                    ...item,
+                    minimumAmount: fields.guidelineMinimumAmount,
+                    maximumAmount: fields.guidelineMaximumAmount,
+                  })
+                : item
+            )),
+            budgetMode: 'HARD_CAP' as const,
+            effectiveFrom: fields.effectiveFrom,
+            effectiveTo: fields.effectiveTo || null,
+          }),
+          population: cycleAuthoringContext.population,
           effectiveFrom: fields.effectiveFrom,
           effectiveTo: fields.effectiveTo || null,
-          populationSourceRef: {
-            snapshotPublicId: fields.snapshotPublicId,
-            ownerRevision: Number(fields.ownerRevision),
-            projectionSchemaId: 'CompensationPopulationContent.v1' as const,
-            asOf: fields.sourceAsOf,
-            sha256: fields.sourceSha,
-            purposeCode: 'HRIS_PER_COMPENSATION_POPULATION' as const,
-          },
+          populationSourceRef: cycleAuthoringContext.populationSourceRef,
         };
         if (dialog.kind === 'CREATE') await actions.onCreate?.({ ...common, cycleCode: fields.cycleCode });
         else await actions.onRevise?.(common);
@@ -432,8 +459,12 @@ export function CompensationPlanningWorkspace({
   }[dialog.kind] : '';
   const highRisk = dialog?.kind === 'APPROVE' || dialog?.kind === 'PUBLISH';
   const requiredMissing = Boolean(
-    (dialog?.kind === 'CREATE' && (!fields.cycleCode || !fields.effectiveFrom || !fields.guidelines || !fields.population)) ||
-    (dialog?.kind === 'REVISE' && (!fields.effectiveFrom || !fields.guidelines || !fields.population)) ||
+    (dialog?.kind === 'CREATE' && (!cycleAuthoringContext || !fields.cycleCode ||
+      !fields.effectiveFrom || !fields.guidelineComponentCode ||
+      !fields.guidelineMinimumAmount || !fields.guidelineMaximumAmount)) ||
+    (dialog?.kind === 'REVISE' && (!cycleAuthoringContext || !fields.effectiveFrom ||
+      !fields.guidelineComponentCode || !fields.guidelineMinimumAmount ||
+      !fields.guidelineMaximumAmount)) ||
     (dialog?.kind === 'BUDGET' && (!fields.organizationPublicId || !fields.currency || !fields.amount ||
       (fields.ledgerEntryType === 'REVERSE' && !fields.reversesEntryPublicId))) ||
     (dialog?.kind === 'PROPOSAL' && (!fields.proposalId || !fields.workerPublicId ||
@@ -458,38 +489,44 @@ export function CompensationPlanningWorkspace({
       <Stack gap={2.5}>
         <Stack direction={{ xs: 'column', md: 'row' }} justifyContent="space-between" gap={2}>
           <Box sx={{ minWidth: 0 }}>
-            <Typography variant="overline" color="primary.main">Performance · Compensation</Typography>
-            <Typography component="h1" variant="h4" sx={{ overflowWrap: 'anywhere' }}>{copy.title}</Typography>
+            <Typography variant="overline" color="primary.main">{copy.eyebrow}</Typography>
+            <Typography component="h1" variant="h4" sx={{ wordBreak: 'keep-all' }}>{copy.title}</Typography>
             <Typography color="text.secondary" sx={{ mt: 0.75, maxWidth: 760 }}>{copy.subtitle}</Typography>
           </Box>
           <Stack direction="row" flexWrap="wrap" gap={1} alignItems="center">
             <ActionButton intent="secondary" onClick={onRefresh}>{copy.refresh}</ActionButton>
-            <ActionButton intent="primary" disabled={!actions.canCreate || !actions.onCreate} onClick={() => openDialog('CREATE')}>
+            <ActionButton intent="primary" disabled={!cycleAuthoringContext || !actions.canCreate || !actions.onCreate} onClick={() => openDialog('CREATE')}>
               {copy.newCycle}
             </ActionButton>
           </Stack>
         </Stack>
 
         <OperationalContextBar
-          label="Compensation planning context"
+          label={copy.contextLabel}
           items={[
-            { label: 'Cycle', value: selected ? `${selected.cycleCode} · v${selected.aggregateVersion}` : 'None selected' },
-            { label: 'Checker', value: actorId || 'Current governed actor' },
-            { label: 'Field policy', value: cycleDetail ? `r${cycleDetail.fieldPolicyRevision}` : '—' },
+            { label: copy.cycleLabel, value: selected ? `${selected.cycleCode} · v${selected.aggregateVersion}` : copy.noneSelected },
+            { label: copy.checkerLabel, value: actorId || copy.currentActor },
+            { label: copy.fieldPolicyLabel, value: cycleDetail ? `r${cycleDetail.fieldPolicyRevision}` : '—' },
           ]}
           status={
             <LiveStatus
               state={proposalsError || proposalDetailError ? 'degraded' : proposalLoading ? 'syncing' : 'live'}
-              label={proposalsError || proposalDetailError ? 'Partial data unavailable' : proposalLoading ? 'Refreshing' : 'Current'}
+              label={proposalsError || proposalDetailError ? copy.partialDataUnavailable : proposalLoading ? copy.refreshing : copy.current}
               detail={freshnessWatermark
-                ? `Server ${freshnessWatermark}`
-                : lastRefreshedAt ? `Refreshed ${new Date(lastRefreshedAt).toLocaleString(locale)}` : 'Awaiting server watermark'}
+                ? `${copy.serverPrefix} ${freshnessWatermark}`
+                : lastRefreshedAt ? `${copy.refreshedPrefix} ${new Date(lastRefreshedAt).toLocaleString(locale)}` : copy.awaitingWatermark}
               refreshLabel={copy.refresh}
               onRefresh={onRefresh}
               refreshing={proposalLoading}
             />
           }
         />
+
+        {!cycleAuthoringContext ? (
+          <InlineFeedback severity="warning" title={copy.authoringContextRequiredTitle}>
+            {copy.authoringContextRequiredBody}
+          </InlineFeedback>
+        ) : null}
 
         {blocking ? (
           <StatePanel status={status} errorMessage={errorMessage} onRefresh={onRefresh} onRetryPending={onRetryPending} />
@@ -524,7 +561,7 @@ export function CompensationPlanningWorkspace({
                           <strong>{cycle.cycleCode}</strong><br />
                           <Typography component="span" variant="caption" color="text.secondary">{cycle.effectiveFrom} · v{cycle.aggregateVersion}</Typography>
                         </Box>
-                        <StatusChip status={cycle.status} />
+                        <StatusChip status={cycle.status} copy={copy} />
                       </ActionButton>
                     </Box>
                   ))}
@@ -533,41 +570,48 @@ export function CompensationPlanningWorkspace({
 
               <Paper variant="outlined" className="compplan-semantic-panel" sx={{ minWidth: 0, p: 2 }}>
                 <Stack direction="row" justifyContent="space-between" gap={1} alignItems="center">
-                  <Typography component="h2" variant="h6">Plan readiness</Typography>
-                  {selected ? <StatusChip status={selected.status} /> : null}
+                  <Typography component="h2" variant="h6">{copy.planReadiness}</Typography>
+                  {selected ? <StatusChip status={selected.status} copy={copy} /> : null}
                 </Stack>
                 {!selected ? (
-                  <Typography color="text.secondary" sx={{ py: 4 }}>Select a cycle to inspect its readiness.</Typography>
+                  <Typography color="text.secondary" sx={{ py: 4 }}>{copy.selectCyclePrompt}</Typography>
                 ) : (
                   <Stack gap={2} sx={{ mt: 2 }}>
                     <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(3,minmax(0,1fr))' }, gap: 1 }}>
                       {[
-                        ['Eligible assignments', String(eligibleAssignments)],
-                        ['Eligible component links', String(eligibleComponents)],
-                        ['Exceptions', '0 · HARD_CAP'],
-                        ['Submitted', `${submittedCount}/${proposals?.items.length ?? '—'}`],
-                        ['Approval readiness', approvalReady ? 'Ready for server revalidation' : 'Not ready'],
-                        ['Maker/checker', 'Server lineage enforced'],
+                        [copy.eligibleAssignments, String(eligibleAssignments)],
+                        [copy.eligibleComponentLinks, String(eligibleComponents)],
+                        [copy.exceptions, '0 · HARD_CAP'],
+                        [copy.submitted, `${submittedCount}/${proposals?.items.length ?? '—'}`],
+                        [copy.approvalReadiness, approvalReady ? copy.serverRevalidationRequired : copy.notReady],
+                        [copy.makerChecker, copy.serverLineageEnforced],
                       ].map(([label, value]) => (
                         <Paper key={label} variant="outlined" sx={{ p: 1.5, bgcolor: 'action.hover' }}>
                           <Typography variant="caption" color="text.secondary">{label}</Typography>
-                          <Typography fontWeight={700} sx={{ overflowWrap: 'anywhere' }}>{value}</Typography>
+                          <Typography
+                            fontWeight={700}
+                            className={value.includes('SERVER_REVALIDATION_REQUIRED')
+                              ? 'compplan-machine-status'
+                              : undefined}
+                          >
+                            {value}
+                          </Typography>
                         </Paper>
                       ))}
                     </Box>
 
                     <Box>
-                      <Typography component="h3" variant="subtitle1">Budget buckets</Typography>
+                      <Typography component="h3" variant="subtitle1">{copy.budgetBuckets}</Typography>
                       {selected.budgetMasked ? (
                         <Typography color="text.secondary">{copy.restricted}</Typography>
                       ) : budgets.length ? (
                         <>
                           <TableContainer sx={{ display: { xs: 'none', md: 'block' } }}>
-                            <Table size="small" aria-label="Budget totals used and remaining">
-                              <TableHead><TableRow><TableCell>Organization / currency</TableCell><TableCell>Total</TableCell><TableCell>Used</TableCell><TableCell>Remaining</TableCell></TableRow></TableHead>
+                            <Table size="small" aria-label={`${copy.budgetBuckets}: ${copy.used}, ${copy.remaining}`}>
+                              <TableHead><TableRow><TableCell>{copy.organizationCurrency}</TableCell><TableCell>{copy.total}</TableCell><TableCell>{copy.used}</TableCell><TableCell>{copy.remaining}</TableCell></TableRow></TableHead>
                               <TableBody>{budgets.map((row) => (
                                 <TableRow key={`${row.organization}:${row.currency}`}>
-                                  <TableCell sx={{ overflowWrap: 'anywhere' }}>{row.organization}<br />{row.currency}</TableCell>
+                                  <TableCell><span className="compplan-identifier">{row.organization}</span><br />{row.currency}</TableCell>
                                   <TableCell>{row.allocated}</TableCell><TableCell>{copy.restricted}</TableCell><TableCell>{copy.notProjected}</TableCell>
                                 </TableRow>
                               ))}</TableBody>
@@ -576,18 +620,18 @@ export function CompensationPlanningWorkspace({
                           <Stack gap={1} sx={{ display: { xs: 'flex', md: 'none' }, mt: 1 }}>
                             {budgets.map((row) => (
                               <Paper key={`${row.organization}:${row.currency}`} variant="outlined" sx={{ p: 1.5 }}>
-                                <Typography variant="caption" color="text.secondary">Organization / currency</Typography>
-                                <Typography variant="body2" fontWeight={700} sx={{ overflowWrap: 'anywhere' }}>{row.organization} · {row.currency}</Typography>
+                                <Typography variant="caption" color="text.secondary">{copy.organizationCurrency}</Typography>
+                                <Typography variant="body2" fontWeight={700}><span className="compplan-identifier">{row.organization}</span> · {row.currency}</Typography>
                                 <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3,minmax(0,1fr))', gap: 1, mt: 1 }}>
-                                  <Box><Typography variant="caption" color="text.secondary">Total</Typography><Typography variant="body2">{row.allocated}</Typography></Box>
-                                  <Box><Typography variant="caption" color="text.secondary">Used</Typography><Typography variant="body2">{copy.restricted}</Typography></Box>
-                                  <Box><Typography variant="caption" color="text.secondary">Remaining</Typography><Typography variant="body2">{copy.notProjected}</Typography></Box>
+                                  <Box><Typography variant="caption" color="text.secondary">{copy.total}</Typography><Typography variant="body2">{row.allocated}</Typography></Box>
+                                  <Box><Typography variant="caption" color="text.secondary">{copy.used}</Typography><Typography variant="body2">{copy.restricted}</Typography></Box>
+                                  <Box><Typography variant="caption" color="text.secondary">{copy.remaining}</Typography><Typography variant="body2">{copy.notProjected}</Typography></Box>
                                 </Box>
                               </Paper>
                             ))}
                           </Stack>
                         </>
-                      ) : <Typography color="text.secondary">No visible ledger entries.</Typography>}
+                      ) : <Typography color="text.secondary">{copy.noLedgerEntries}</Typography>}
                     </Box>
 
                     <Divider />
@@ -598,33 +642,33 @@ export function CompensationPlanningWorkspace({
                     {proposalsError ? (
                       <InlineFeedback
                         severity="error"
-                        title="Proposal panel unavailable"
+                        title={copy.proposalPanelUnavailable}
                         action={onRetryProposals ? <ActionButton size="small" intent="secondary" onClick={onRetryProposals}>{copy.retry}</ActionButton> : undefined}
                       >
-                        {proposalsError}. Cycle and budget context remain available.
+                        {proposalsError}. {copy.proposalPanelContext}
                       </InlineFeedback>
                     ) : proposalLoading && !proposals ? (
-                      <Typography color="text.secondary">Loading proposals…</Typography>
+                      <Typography color="text.secondary">{copy.loadingProposals}</Typography>
                     ) : visibleProposals.length === 0 ? (
-                      <Typography color="text.secondary">No proposals in this cycle.</Typography>
+                      <Typography color="text.secondary">{copy.noProposals}</Typography>
                     ) : (
                       <>
                         <TableContainer sx={{ display: { xs: 'none', md: 'block' } }}>
-                          <Table size="small" aria-label="Compensation proposals">
-                            <TableHead><TableRow><TableCell>Component</TableCell><TableCell>Worker / assignment</TableCell><TableCell>Amount</TableCell><TableCell>Status</TableCell><TableCell>Action</TableCell></TableRow></TableHead>
+                          <Table size="small" aria-label={copy.proposals}>
+                            <TableHead><TableRow><TableCell sx={{ whiteSpace: 'nowrap', wordBreak: 'keep-all' }}>{copy.component}</TableCell><TableCell>{copy.workerAssignment}</TableCell><TableCell>{copy.amount}</TableCell><TableCell>{copy.status}</TableCell><TableCell>{copy.action}</TableCell></TableRow></TableHead>
                             <TableBody>{visibleProposals.map((proposal) => {
                               const detail = proposalDetail?.item.proposalId === proposal.proposalId ? proposalDetail.item : null;
                               return (
                                 <TableRow key={proposal.proposalId} selected={proposal.proposalId === selectedProposalId}>
                                   <TableCell>{proposal.componentCode}</TableCell>
-                                  <TableCell sx={{ overflowWrap: 'anywhere' }}>{proposal.workerId}<br />{proposal.assignmentId}</TableCell>
+                                  <TableCell><span className="compplan-identifier">{proposal.workerId}</span><br /><span className="compplan-identifier">{proposal.assignmentId}</span></TableCell>
                                   <TableCell>{detail?.amountMasked ? copy.restricted : detail?.amount ? `${detail.amount} ${detail.currency}` : (
-                                    <ActionButton size="small" intent="quiet" onClick={() => onSelectProposal?.(proposal.proposalId)}>View amount</ActionButton>
+                                    <ActionButton size="small" intent="quiet" onClick={() => onSelectProposal?.(proposal.proposalId)}>{copy.viewAmount}</ActionButton>
                                   )}</TableCell>
-                                  <TableCell><StatusChip status={proposal.status} /></TableCell>
+                                  <TableCell><StatusChip status={proposal.status} copy={copy} /></TableCell>
                                   <TableCell>
                                     <Stack direction="row" flexWrap="wrap" gap={0.5}>
-                                      <ActionButton size="small" intent="quiet" disabled={!actions.canDraftProposal} onClick={() => openDialog('PROPOSAL', proposal)}>Edit</ActionButton>
+                                      <ActionButton size="small" intent="quiet" disabled={!actions.canDraftProposal} onClick={() => openDialog('PROPOSAL', proposal)}>{copy.edit}</ActionButton>
                                       <ActionButton size="small" intent="secondary" disabled={!actions.canSubmitProposal || proposal.status !== 'DRAFT'} onClick={() => openDialog('SUBMIT', proposal)}>{copy.submit}</ActionButton>
                                     </Stack>
                                   </TableCell>
@@ -640,16 +684,16 @@ export function CompensationPlanningWorkspace({
                               <Paper key={proposal.proposalId} variant="outlined" sx={{ p: 1.5, bgcolor: proposal.proposalId === selectedProposalId ? 'action.selected' : 'background.paper' }}>
                                 <Stack direction="row" justifyContent="space-between" gap={1} alignItems="center">
                                   <Typography fontWeight={700}>{proposal.componentCode}</Typography>
-                                  <StatusChip status={proposal.status} />
+                                  <StatusChip status={proposal.status} copy={copy} />
                                 </Stack>
-                                <Typography variant="caption" color="text.secondary">Worker / assignment</Typography>
-                                <Typography variant="body2" sx={{ overflowWrap: 'anywhere' }}>{proposal.workerId}<br />{proposal.assignmentId}</Typography>
+                                <Typography variant="caption" color="text.secondary">{copy.workerAssignment}</Typography>
+                                <Typography variant="body2"><span className="compplan-identifier">{proposal.workerId}</span><br /><span className="compplan-identifier">{proposal.assignmentId}</span></Typography>
                                 <Typography variant="body2" sx={{ mt: 1 }}>
-                                  Amount: {detail?.amountMasked ? copy.restricted : detail?.amount ? `${detail.amount} ${detail.currency}` : copy.restricted}
+                                  {copy.amount}: {detail?.amountMasked ? copy.restricted : detail?.amount ? `${detail.amount} ${detail.currency}` : copy.restricted}
                                 </Typography>
                                 <Stack direction="row" flexWrap="wrap" gap={0.5} sx={{ mt: 1 }}>
-                                  <ActionButton size="small" intent="quiet" onClick={() => onSelectProposal?.(proposal.proposalId)}>View amount</ActionButton>
-                                  <ActionButton size="small" intent="quiet" disabled={!actions.canDraftProposal} onClick={() => openDialog('PROPOSAL', proposal)}>Edit</ActionButton>
+                                  <ActionButton size="small" intent="quiet" onClick={() => onSelectProposal?.(proposal.proposalId)}>{copy.viewAmount}</ActionButton>
+                                  <ActionButton size="small" intent="quiet" disabled={!actions.canDraftProposal} onClick={() => openDialog('PROPOSAL', proposal)}>{copy.edit}</ActionButton>
                                   <ActionButton size="small" intent="secondary" disabled={!actions.canSubmitProposal || proposal.status !== 'DRAFT'} onClick={() => openDialog('SUBMIT', proposal)}>{copy.submit}</ActionButton>
                                 </Stack>
                               </Paper>
@@ -659,8 +703,8 @@ export function CompensationPlanningWorkspace({
                       </>
                     )}
                     {proposalDetailError ? (
-                      <InlineFeedback severity="error" title="Proposal detail unavailable" action={onRetryProposalDetail ? <ActionButton size="small" intent="secondary" onClick={onRetryProposalDetail}>{copy.retry}</ActionButton> : undefined}>
-                        {proposalDetailError}. No stale or mismatched amount is rendered.
+                      <InlineFeedback severity="error" title={copy.proposalDetailUnavailable} action={onRetryProposalDetail ? <ActionButton size="small" intent="secondary" onClick={onRetryProposalDetail}>{copy.retry}</ActionButton> : undefined}>
+                        {proposalDetailError}. {copy.staleAmountHidden}
                       </InlineFeedback>
                     ) : null}
                   </Stack>
@@ -670,15 +714,15 @@ export function CompensationPlanningWorkspace({
               <Paper variant="outlined" className="compplan-semantic-panel" sx={{ minWidth: 0, p: 2 }}>
                 <Typography component="h2" variant="h6">{copy.actions}</Typography>
                 <Stack gap={1} sx={{ mt: 2, '& button': { minHeight: 44, whiteSpace: 'normal' } }}>
-                  <ActionButton disabled={!actions.canRevise} onClick={() => openDialog('REVISE')}>{copy.revise}</ActionButton>
+                  <ActionButton disabled={!cycleAuthoringContext || !actions.canRevise} onClick={() => openDialog('REVISE')}>{copy.revise}</ActionButton>
                   <ActionButton disabled={!actions.canAllocate} onClick={() => openDialog('BUDGET')}>{copy.budget}</ActionButton>
                   <ActionButton disabled={!actions.canDraftProposal} onClick={() => openDialog('PROPOSAL')}>{copy.proposal}</ActionButton>
                   <ActionButton intent="primary" disabled={!actions.canApprove} onClick={() => openDialog('APPROVE')}>{copy.approve}</ActionButton>
                   <ActionButton intent="primary" disabled={!actions.canPublish} onClick={() => openDialog('PUBLISH')}>{copy.publish}</ActionButton>
                   <ActionButton intent="danger" disabled={!actions.canCancel} onClick={() => openDialog('CANCEL')}>{copy.cancelCycle}</ActionButton>
                 </Stack>
-                <InlineFeedback severity="info" title="Hard-cap policy" sx={{ mt: 2 }}>
-                  Approval performs a fresh population, identity, guideline, and organization/currency budget check.
+                <InlineFeedback severity="info" title={copy.hardCapPolicy} sx={{ mt: 2 }}>
+                  {copy.hardCapDescription}
                 </InlineFeedback>
               </Paper>
             </Box>
@@ -689,10 +733,10 @@ export function CompensationPlanningWorkspace({
       <FormDialog
         open={Boolean(dialog)}
         title={dialogTitle}
-        description={highRisk ? 'Review impact, checker identity, reason, and immutable evidence before continuing.' : undefined}
+        description={highRisk ? copy.highRiskDescription : undefined}
         cancelLabel={copy.close}
         submitLabel={copy.confirm}
-        submittingLabel="Recording governed command"
+        submittingLabel={copy.recordingCommand}
         busy={commandBusy}
         submitDisabled={submitDisabled}
         submitIntent={dialog?.kind === 'CANCEL' ? 'danger' : 'primary'}
@@ -702,86 +746,124 @@ export function CompensationPlanningWorkspace({
         mobileFullScreen
       >
         <Stack gap={2}>
-          {formError ? <InlineFeedback severity="error" title="Command not submitted">{formError}</InlineFeedback> : null}
+          {formError ? <InlineFeedback severity="error" title={copy.commandNotSubmitted}>{formError}</InlineFeedback> : null}
           {dialog?.kind === 'CREATE' || dialog?.kind === 'REVISE' ? (
             <>
-              {dialog.kind === 'CREATE' ? field(fields, setFields, 'cycleCode', 'Cycle code', { required: true }) : null}
+              {dialog.kind === 'CREATE' ? field(fields, setFields, 'cycleCode', copy.cycleCode, { required: true }) : null}
               <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 1.5 }}>
-                {field(fields, setFields, 'effectiveFrom', 'Effective from', { required: true, type: 'date', InputLabelProps: { shrink: true } })}
-                {field(fields, setFields, 'effectiveTo', 'Effective to', { type: 'date', InputLabelProps: { shrink: true } })}
+                {field(fields, setFields, 'effectiveFrom', copy.effectiveFrom, { required: true, type: 'date', InputLabelProps: { shrink: true } })}
+                {field(fields, setFields, 'effectiveTo', copy.effectiveTo, { type: 'date', InputLabelProps: { shrink: true } })}
               </Box>
-              <TextField label="Budget mode" value="HARD_CAP" disabled fullWidth />
-              {field(fields, setFields, 'guidelines', 'Guideline rows (closed JSON)', { required: true, multiline: true, minRows: 6 })}
-              {field(fields, setFields, 'population', 'Frozen population rows (closed JSON)', { required: true, multiline: true, minRows: 7 })}
-              <Typography variant="subtitle2">HRM population source</Typography>
+              <TextField label={copy.budgetMode} value="HARD_CAP" disabled fullWidth />
+              <TextField
+                select
+                required
+                label={copy.guidelineComponent}
+                value={fields.guidelineComponentCode ?? ''}
+                onChange={(event) => {
+                  const component = cycleAuthoringContext?.guidelines.components.find(
+                    (item) => item.componentCode === event.target.value
+                  );
+                  setFields((current) => ({
+                    ...current,
+                    guidelineComponentCode: event.target.value,
+                    guidelineMinimumAmount: component?.minimumAmount ?? '',
+                    guidelineMaximumAmount: component?.maximumAmount ?? '',
+                  }));
+                }}
+                fullWidth
+              >
+                {(cycleAuthoringContext?.guidelines.components ?? []).map((item) => (
+                  <MenuItem key={item.componentCode} value={item.componentCode}>
+                    {item.componentCode} · {item.currency}
+                  </MenuItem>
+                ))}
+              </TextField>
               <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 1.5 }}>
-                {field(fields, setFields, 'snapshotPublicId', 'Snapshot public ID', { required: true })}
-                {field(fields, setFields, 'ownerRevision', 'Owner revision', { required: true, type: 'number' })}
-                {field(fields, setFields, 'sourceAsOf', 'Source as-of instant', { required: true })}
-                {field(fields, setFields, 'sourceSha', 'Source SHA-256', { required: true })}
+                {field(fields, setFields, 'guidelineMinimumAmount', copy.minimumAmount, { required: true })}
+                {field(fields, setFields, 'guidelineMaximumAmount', copy.maximumAmount, { required: true })}
               </Box>
+              {selectedAuthoringGuideline ? (
+                <Paper variant="outlined" sx={{ p: 1.5, bgcolor: 'action.hover' }}>
+                  <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(3,minmax(0,1fr))' }, gap: 1 }}>
+                    <Box><Typography variant="caption" color="text.secondary">{copy.currency}</Typography><Typography>{selectedAuthoringGuideline.currency}</Typography></Box>
+                    <Box><Typography variant="caption" color="text.secondary">{copy.exceptionPolicy}</Typography><Typography>{selectedAuthoringGuideline.exceptionPolicyCode}</Typography></Box>
+                    <Box><Typography variant="caption" color="text.secondary">{copy.roundingPolicy}</Typography><Typography className="compplan-identifier">{selectedAuthoringGuideline.roundingPolicyVersionPublicId}</Typography></Box>
+                  </Box>
+                </Paper>
+              ) : null}
+              <Paper variant="outlined" sx={{ p: 1.5 }}>
+                <Typography component="h3" variant="subtitle2">{copy.authoritativePopulationSource}</Typography>
+                <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 1, mt: 1 }}>
+                  <Box><Typography variant="caption" color="text.secondary">{copy.snapshotId}</Typography><Typography className="compplan-identifier">{cycleAuthoringContext?.populationSourceRef.snapshotPublicId}</Typography></Box>
+                  <Box><Typography variant="caption" color="text.secondary">{copy.ownerRevision}</Typography><Typography>{cycleAuthoringContext?.populationSourceRef.ownerRevision}</Typography></Box>
+                  <Box><Typography variant="caption" color="text.secondary">{copy.sourceAsOf}</Typography><Typography className="compplan-identifier">{cycleAuthoringContext?.populationSourceRef.asOf}</Typography></Box>
+                  <Box><Typography variant="caption" color="text.secondary">{copy.sourceDigest}</Typography><Typography className="compplan-identifier">{cycleAuthoringContext?.populationSourceRef.sha256}</Typography></Box>
+                  <Box><Typography variant="caption" color="text.secondary">{copy.eligiblePopulationSummary}</Typography><Typography>{authoringAssignments} / {authoringComponentLinks}</Typography></Box>
+                </Box>
+              </Paper>
             </>
           ) : null}
           {dialog?.kind === 'BUDGET' ? (
             <>
-              <TextField select label="Ledger operation" value={fields.ledgerEntryType ?? 'ALLOCATE'} onChange={(event) => setFields((current) => ({ ...current, ledgerEntryType: event.target.value }))} fullWidth>
+              <TextField select label={copy.ledgerOperation} value={fields.ledgerEntryType ?? 'ALLOCATE'} onChange={(event) => setFields((current) => ({ ...current, ledgerEntryType: event.target.value }))} fullWidth>
                 <MenuItem value="ALLOCATE">ALLOCATE</MenuItem><MenuItem value="REVERSE">REVERSE</MenuItem>
               </TextField>
-              {field(fields, setFields, 'organizationPublicId', 'Organization public ID', { required: true })}
+              {field(fields, setFields, 'organizationPublicId', copy.organizationId, { required: true })}
               <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 1.5 }}>
-                {field(fields, setFields, 'currency', 'Currency', { required: true })}
-                {field(fields, setFields, 'amount', 'Canonical amount', { required: true, helperText: 'p19/s4 string; no trailing zeros' })}
+                {field(fields, setFields, 'currency', copy.currency, { required: true })}
+                {field(fields, setFields, 'amount', copy.canonicalAmount, { required: true, helperText: copy.canonicalAmountHelp })}
               </Box>
-              {fields.ledgerEntryType === 'REVERSE' ? field(fields, setFields, 'reversesEntryPublicId', 'Source ledger entry ID', { required: true }) : null}
+              {fields.ledgerEntryType === 'REVERSE' ? field(fields, setFields, 'reversesEntryPublicId', copy.reverseSourceEntryId, { required: true }) : null}
             </>
           ) : null}
           {dialog?.kind === 'PROPOSAL' ? (
             <>
-              {field(fields, setFields, 'proposalId', 'Proposal public ID', { required: true, disabled: Boolean(dialog.proposal) })}
-              {field(fields, setFields, 'workerPublicId', 'Worker public ID', { required: true })}
-              {field(fields, setFields, 'assignmentPublicId', 'Assignment public ID', { required: true })}
+              {field(fields, setFields, 'proposalId', copy.proposalId, { required: true, disabled: Boolean(dialog.proposal) })}
+              {field(fields, setFields, 'workerPublicId', copy.workerId, { required: true })}
+              {field(fields, setFields, 'assignmentPublicId', copy.assignmentId, { required: true })}
               <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(3,1fr)' }, gap: 1.5 }}>
-                {field(fields, setFields, 'componentCode', 'Component', { required: true })}
-                {field(fields, setFields, 'proposalCurrency', 'Currency', { required: true })}
-                {field(fields, setFields, 'proposalAmount', 'Canonical amount', { required: true })}
+                {field(fields, setFields, 'componentCode', copy.component, { required: true })}
+                {field(fields, setFields, 'proposalCurrency', copy.currency, { required: true })}
+                {field(fields, setFields, 'proposalAmount', copy.canonicalAmount, { required: true })}
               </Box>
               <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 1.5 }}>
-                {field(fields, setFields, 'proposalFrom', 'Effective from', { required: true, type: 'date', InputLabelProps: { shrink: true } })}
-                {field(fields, setFields, 'proposalTo', 'Effective to', { type: 'date', InputLabelProps: { shrink: true } })}
+                {field(fields, setFields, 'proposalFrom', copy.effectiveFrom, { required: true, type: 'date', InputLabelProps: { shrink: true } })}
+                {field(fields, setFields, 'proposalTo', copy.effectiveTo, { type: 'date', InputLabelProps: { shrink: true } })}
               </Box>
-              {field(fields, setFields, 'supersedesProposalPublicId', 'Supersedes proposal ID (optional)')}
+              {field(fields, setFields, 'supersedesProposalPublicId', copy.supersedesProposalId)}
             </>
           ) : null}
           {dialog?.kind === 'SUBMIT' ? (
             <>
-              <InlineFeedback severity="info" title="Bound proposal">
-                {dialog.proposal?.proposalId} · v{dialog.proposal?.aggregateVersion}<br />Digest {dialog.proposal?.contentDigest}
+              <InlineFeedback severity="info" title={copy.boundProposal}>
+                <span className="compplan-identifier">{dialog.proposal?.proposalId}</span> · v{dialog.proposal?.aggregateVersion}<br />{copy.sourceDigest} <span className="compplan-identifier">{dialog.proposal?.contentDigest}</span>
               </InlineFeedback>
-              {field(fields, setFields, 'submissionDigest', 'Submission digest', { required: true, disabled: true })}
-              {field(fields, setFields, 'submissionDate', 'Effective date', { type: 'date', InputLabelProps: { shrink: true } })}
+              {field(fields, setFields, 'submissionDigest', copy.submissionDigest, { required: true, disabled: true })}
+              {field(fields, setFields, 'submissionDate', copy.effectiveDate, { type: 'date', InputLabelProps: { shrink: true } })}
             </>
           ) : null}
           {dialog?.kind === 'APPROVE' || dialog?.kind === 'PUBLISH' ? (
             <>
-              <InlineFeedback severity={approvalReady || dialog.kind === 'PUBLISH' ? 'warning' : 'error'} title="Impact preview">
-                Cycle {selected?.cycleCode} · source v{selected?.aggregateVersion}; {submittedCount} submitted proposals.
-                Amounts and scope are revalidated by the server before any receipt, transition, or outbox write.
+              <InlineFeedback severity={approvalReady || dialog.kind === 'PUBLISH' ? 'warning' : 'error'} title={copy.impactPreview}>
+                {copy.cycleLabel} {selected?.cycleCode} · {copy.sourceVersion} v{selected?.aggregateVersion}; {submittedCount} {copy.submittedProposalsSuffix}.{' '}
+                {copy.impactRevalidation}
               </InlineFeedback>
               <Paper variant="outlined" sx={{ p: 1.5, bgcolor: 'action.hover' }}>
-                <Typography variant="caption" color="text.secondary">Maker/checker context</Typography>
-                <Typography variant="body2" sx={{ overflowWrap: 'anywhere' }}>Checker: {actorId || 'current governed actor'}</Typography>
-                <Typography variant="body2">All successful maker-side cycle/proposal receipts are included in server lineage. A maker cannot approve or publish.</Typography>
+                <Typography variant="caption" color="text.secondary">{copy.makerCheckerContext}</Typography>
+                <Typography variant="body2">{copy.checkerLabel}: <span className="compplan-identifier">{actorId || copy.currentActor}</span></Typography>
+                <Typography variant="body2">{copy.lineageDescription}</Typography>
               </Paper>
               {dialog.kind === 'APPROVE'
-                ? field(fields, setFields, 'reasonCode', 'Approval reason code', { required: true, helperText: 'Uppercase governed code, for example ANNUAL_REVIEW' })
-                : field(fields, setFields, 'approvalReceiptId', 'Approval receipt ID', { required: true })}
+                ? field(fields, setFields, 'reasonCode', copy.approvalReasonCode, { required: true, helperText: copy.approvalReasonHelp })
+                : field(fields, setFields, 'approvalReceiptId', copy.approvalReceiptId, { required: true })}
               <FormControlLabel control={<Checkbox checked={confirmed} onChange={(event) => setConfirmed(event.target.checked)} />} label={copy.immutable} sx={{ alignItems: 'flex-start' }} />
             </>
           ) : null}
           {dialog?.kind === 'CANCEL' ? (
             <>
-              <InlineFeedback severity="warning" title="Cycle impact">The selected cycle is cancelled with an immutable empty command body.</InlineFeedback>
-              <FormControlLabel control={<Checkbox checked={confirmed} onChange={(event) => setConfirmed(event.target.checked)} />} label="I confirm cancellation of this cycle." />
+              <InlineFeedback severity="warning" title={copy.cycleImpact}>{copy.cancelDescription}</InlineFeedback>
+              <FormControlLabel control={<Checkbox checked={confirmed} onChange={(event) => setConfirmed(event.target.checked)} />} label={copy.cancelConfirmation} />
             </>
           ) : null}
         </Stack>

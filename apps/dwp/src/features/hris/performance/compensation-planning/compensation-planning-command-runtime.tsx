@@ -5,6 +5,7 @@ import {
 } from './use-compensation-planning-workspace';
 
 import type { CompensationPlanningDataSource } from './compensation-planning-api';
+import type { CompensationCycleAuthoringContext } from './compensation-planning-contract';
 import type {
   CompensationPlanningCommandExecutors,
   CompensationPlanningCommandIntents,
@@ -14,6 +15,7 @@ export type HrisCompensationPlanningOperationsRuntimeProps = Readonly<{
   dataSource?: CompensationPlanningDataSource;
   commandExecutors?: CompensationPlanningCommandExecutors;
   commandIntents?: CompensationPlanningCommandIntents;
+  cycleAuthoringContext?: CompensationCycleAuthoringContext | null;
 }>;
 
 /**
@@ -24,6 +26,7 @@ export function HrisCompensationPlanningOperationsRuntime({
   dataSource,
   commandExecutors,
   commandIntents,
+  cycleAuthoringContext,
 }: HrisCompensationPlanningOperationsRuntimeProps) {
   const requestScope = useCompensationPlanningRequestScope();
   const runtime = useCompensationPlanningRuntime({
@@ -31,6 +34,7 @@ export function HrisCompensationPlanningOperationsRuntime({
     dataSource,
     commandExecutors,
     commandIntents,
+    cycleAuthoringContext,
   });
   return (
     <CompensationPlanningWorkspace
@@ -42,6 +46,7 @@ export function HrisCompensationPlanningOperationsRuntime({
       proposalDetail={runtime.proposalDetail}
       selectedProposalId={runtime.selectedProposalId}
       actions={runtime.actions}
+      cycleAuthoringContext={runtime.cycleAuthoringContext}
       commandBusy={runtime.commandBusy}
       pendingCommand={runtime.pendingCommand}
       lastResult={runtime.lastResult}

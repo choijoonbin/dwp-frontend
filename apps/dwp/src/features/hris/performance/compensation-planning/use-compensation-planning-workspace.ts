@@ -4,6 +4,7 @@ import { HttpError } from '@dwp-frontend/shared-utils';
 
 import { useProductSurfaceRequestScope } from '../../../../components/use-product-surface-request-scope';
 import { compensationPlanningDataSource } from './compensation-planning-api';
+import { parseCompensationCycleAuthoringContext } from './compensation-planning-contract';
 import {
   isAmbiguousCompensationCommandFailure,
   isResultUnknown,
@@ -24,7 +25,9 @@ import type {
   CompensationCommandResult,
   ApproveCompensationPlanBody,
   CompensationBudgetBody,
+  CompensationCycleAuthoringContext,
   CompensationCycleCollection,
+  CompensationGuidelines,
   CreateCompensationCycleBody,
   PublishCompensationSnapshotBody,
   CompensationProposalCollection,
@@ -92,6 +95,7 @@ export type CompensationPlanningRuntimeOptions = Readonly<{
   dataSource?: CompensationPlanningDataSource;
   commandExecutors?: CompensationPlanningCommandExecutors;
   commandIntents?: CompensationPlanningCommandIntents;
+  cycleAuthoringContext?: CompensationCycleAuthoringContext | null;
 }>;
 
 export function useCompensationPlanningRequestScope() {
@@ -135,6 +139,34 @@ function denied(error: unknown): boolean {
     error instanceof HttpError &&
     (error.status === 401 || (error.status === 403 && !stepUpRequired(error)))
   );
+}
+
+function bindAuthoringGuidelines(
+  context: CompensationCycleAuthoringContext,
+  candidate: CompensationGuidelines,
+  effectiveFrom: string,
+  effectiveTo: string | null
+): CompensationGuidelines {
+  if (candidate.components.length !== context.guidelines.components.length) {
+    throw new Error('Compensation guideline choices are not bound to Central authoring context.');
+  }
+  const requested = new Map(candidate.components.map((item) => [item.componentCode, item]));
+  return Object.freeze({
+    components: Object.freeze(context.guidelines.components.map((trusted) => {
+      const editable = requested.get(trusted.componentCode);
+      if (!editable) {
+        throw new Error('Compensation guideline choices are not bound to Central authoring context.');
+      }
+      return Object.freeze({
+        ...trusted,
+        minimumAmount: editable.minimumAmount,
+        maximumAmount: editable.maximumAmount,
+      });
+    })),
+    budgetMode: 'HARD_CAP',
+    effectiveFrom,
+    effectiveTo,
+  });
 }
 
 async function readAllCycles(
@@ -215,8 +247,17 @@ export function useCompensationPlanningRuntime({
   dataSource = compensationPlanningDataSource,
   commandExecutors = {},
   commandIntents = {},
+  cycleAuthoringContext,
 }: CompensationPlanningRuntimeOptions) {
   const queryClient = useQueryClient();
+  const verifiedAuthoringContext = useMemo(() => {
+    if (!cycleAuthoringContext) return null;
+    try {
+      return parseCompensationCycleAuthoringContext(cycleAuthoringContext);
+    } catch {
+      return null;
+    }
+  }, [cycleAuthoringContext]);
   const scopeIdentity = JSON.stringify(requestScope.cacheKey);
   const scopeRef = useRef(scopeIdentity);
   const latestScopeIdentityRef = useRef(scopeIdentity);
@@ -507,9 +548,14 @@ export function useCompensationPlanningRuntime({
     !activePending;
   const actions: CompensationPlanningWorkspaceActions = useMemo(
     () => ({
-      canCreate: unlocked && executorReady('CREATE_CYCLE') && Boolean(commandIntents.create),
+      canCreate:
+        unlocked &&
+        Boolean(verifiedAuthoringContext) &&
+        executorReady('CREATE_CYCLE') &&
+        Boolean(commandIntents.create),
       canRevise:
         unlocked &&
+        Boolean(verifiedAuthoringContext) &&
         cycleQuery.isSuccess &&
         Boolean(selected && ['DRAFT', 'OPEN'].includes(selected.status)) &&
         executorReady('REVISE_CYCLE') &&
@@ -553,11 +599,35 @@ export function useCompensationPlanningRuntime({
         executorReady('CANCEL_CYCLE') &&
         Boolean(commandIntents.cancel),
       onCreate: (body) =>
-        runIntent(commandIntents.create ? () => commandIntents.create!(body) : undefined),
+        runIntent(verifiedAuthoringContext && commandIntents.create ? () =>
+          commandIntents.create!({
+            cycleCode: body.cycleCode,
+            effectiveFrom: body.effectiveFrom,
+            effectiveTo: body.effectiveTo,
+            guidelines: bindAuthoringGuidelines(
+              verifiedAuthoringContext,
+              body.guidelines,
+              body.effectiveFrom,
+              body.effectiveTo
+            ),
+            population: verifiedAuthoringContext.population,
+            populationSourceRef: verifiedAuthoringContext.populationSourceRef,
+          }) : undefined),
       onRevise: (body) =>
         runIntent(
-          selected && commandIntents.revise
-            ? () => commandIntents.revise!(selected.cycleId, selected.aggregateVersion, body)
+          selected && verifiedAuthoringContext && commandIntents.revise
+            ? () => commandIntents.revise!(selected.cycleId, selected.aggregateVersion, {
+                effectiveFrom: body.effectiveFrom,
+                effectiveTo: body.effectiveTo,
+                guidelines: bindAuthoringGuidelines(
+                  verifiedAuthoringContext,
+                  body.guidelines,
+                  body.effectiveFrom,
+                  body.effectiveTo
+                ),
+                population: verifiedAuthoringContext.population,
+                populationSourceRef: verifiedAuthoringContext.populationSourceRef,
+              })
             : undefined
         ),
       onAllocate: (body) =>
@@ -616,6 +686,7 @@ export function useCompensationPlanningRuntime({
       runIntent,
       selected,
       unlocked,
+      verifiedAuthoringContext,
     ]
   );
 
@@ -645,6 +716,7 @@ export function useCompensationPlanningRuntime({
     proposalDetail: authorityDenied ? null : proposalQuery.data ?? null,
     selectedProposalId: authorityDenied ? null : selectedProposalId,
     actions,
+    cycleAuthoringContext: verifiedAuthoringContext,
     commandBusy,
     pendingCommand: activePending,
     lastResult: activeResult,

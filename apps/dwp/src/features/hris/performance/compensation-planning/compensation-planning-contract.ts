@@ -206,6 +206,13 @@ export type HrmSourceSnapshotRef = Readonly<{
   purposeCode: 'HRIS_PER_COMPENSATION_POPULATION';
 }>;
 
+/** Central-projected authoring evidence. UI code must never fabricate these values. */
+export type CompensationCycleAuthoringContext = Readonly<{
+  guidelines: CompensationGuidelines;
+  population: CompensationPopulation;
+  populationSourceRef: HrmSourceSnapshotRef;
+}>;
+
 export type CreateCompensationCycleBody = Readonly<{
   cycleCode: string;
   guidelines: CompensationGuidelines;
@@ -466,6 +473,32 @@ function populationSourceRef(value: unknown): HrmSourceSnapshotRef {
     asOf: instant(source.asOf),
     sha256: digest(source.sha256),
     purposeCode: 'HRIS_PER_COMPENSATION_POPULATION',
+  });
+}
+
+export function parseCompensationCycleAuthoringContext(
+  value: unknown
+): CompensationCycleAuthoringContext {
+  const source = record(value, ['guidelines', 'population', 'populationSourceRef']);
+  const parsedGuidelines = guidelines(source.guidelines);
+  const parsedPopulation = population(source.population);
+  const parsedSourceRef = populationSourceRef(source.populationSourceRef);
+  const componentCodes = parsedGuidelines.components.map((item) => item.componentCode);
+  const availableComponents = new Set(componentCodes);
+  if (
+    componentCodes.length !== availableComponents.size ||
+    parsedPopulation.asOf !== parsedSourceRef.asOf ||
+    parsedPopulation.hrmOwnerRevision !== parsedSourceRef.ownerRevision ||
+    parsedPopulation.lines.some((line) =>
+      line.eligibleComponentCodes.some((code) => !availableComponents.has(code))
+    )
+  ) {
+    return invalid();
+  }
+  return Object.freeze({
+    guidelines: parsedGuidelines,
+    population: parsedPopulation,
+    populationSourceRef: parsedSourceRef,
   });
 }
 
