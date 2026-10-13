@@ -1,0 +1,75 @@
+{
+  "schema": "dwp.hris.wave3-targeted-test-execution-receipt.v1",
+  "receiptId": "HRIS-WAVE3-WORKFORCE-COMPENSATION-TARGETED-TEST-EXECUTION-R1",
+  "issuedAt": "2026-10-13T14:30:00+09:00",
+  "scope": "WORKFORCE_SNAPSHOT_COMPENSATION_CONTRACT_ABI",
+  "backendPin": {
+    "repository": "repo://dwp-backend",
+    "branch": "dwp-dev",
+    "checkoutMode": "DETACHED_AT_ORIGIN_DWP_DEV",
+    "commit": "3565c3e61b6c37a6b8088cc5250791fce32a0d9f",
+    "tree": "af973ef11d003edcf266673330300c612ffe247b",
+    "upstream": "origin/dwp-dev",
+    "upstreamCommit": "3565c3e61b6c37a6b8088cc5250791fce32a0d9f",
+    "upstreamMatches": true,
+    "cleanAtMaterialization": true
+  },
+  "execution": {
+    "cwd": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave3-20261013/control-backend-pin",
+    "argv": [
+      "./gradlew",
+      ":dwp-people-server:test",
+      "--tests",
+      "com.dwp.services.people.hris.contracts.workforce.v1.CompensationPopulationContractTest",
+      "--tests",
+      "com.dwp.services.people.hris.contracts.workforce.v1.WorkforceSnapshotContractTest",
+      "--tests",
+      "com.dwp.services.people.hris.contracts.workforce.v1.WorkforceSnapshotPaginationContractTest",
+      "--no-daemon"
+    ],
+    "targetedTestClassCount": 3,
+    "broadTestExecution": false,
+    "processOutcome": "BUILD_SUCCESSFUL"
+  },
+  "reports": [
+    {
+      "path": "dwp-people-server/build/test-results/test/TEST-com.dwp.services.people.hris.contracts.workforce.v1.CompensationPopulationContractTest.xml",
+      "className": "com.dwp.services.people.hris.contracts.workforce.v1.CompensationPopulationContractTest",
+      "bytes": 2346,
+      "sha256": "dcd66dd972d9bf8aa6603241cbc573c4ce888f32ae815ddc3b6006301a427fa1",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "path": "dwp-people-server/build/test-results/test/TEST-com.dwp.services.people.hris.contracts.workforce.v1.WorkforceSnapshotContractTest.xml",
+      "className": "com.dwp.services.people.hris.contracts.workforce.v1.WorkforceSnapshotContractTest",
+      "bytes": 2225,
+      "sha256": "740fff035c246defb9621a41d349d5059edba7e5399ccd3a1162aae523d5ef6f",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "path": "dwp-people-server/build/test-results/test/TEST-com.dwp.services.people.hris.contracts.workforce.v1.WorkforceSnapshotPaginationContractTest.xml",
+      "className": "com.dwp.services.people.hris.contracts.workforce.v1.WorkforceSnapshotPaginationContractTest",
+      "bytes": 1139,
+      "sha256": "f68e47dd8d50bef5296c3259cf5030131a434e0c70a1dd59c8fe69fe11fc663d",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "reportCount": 3,
+  "totals": {
+    "tests": 24,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "result": "PASS_24_TESTS_ZERO_FAILURES_ERRORS_SKIPPED",
+  "sealedPayloadSha256": "11fd3f37dcb37f3a39adbf82dafff05c978e2b1acfb84d067cdfb179f55c37d7"
+}

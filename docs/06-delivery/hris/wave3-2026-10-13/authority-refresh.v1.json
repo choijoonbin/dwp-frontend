@@ -1,0 +1,134 @@
+{
+  "schema": "dwp.hris.wave3-authority-refresh.v1",
+  "authorityId": "HRIS-WAVE3-AUTHORITY-REFRESH-20261013-R1",
+  "issuedAt": "2026-10-13T14:30:00+09:00",
+  "status": "PASS_PHASE_A_PRESTART_FULFILLED_PENDING_CARRIER",
+  "sourcePins": {
+    "frontend": {
+      "repository": "repo://dwp-frontend",
+      "branch": "dwp-dev",
+      "checkoutMode": "DWP_DEV_BRANCH",
+      "commit": "388ad0fb2e50689cdc2a00186ffc6ca07f237e57",
+      "tree": "dc0d60f706d17a69cbf0c5cd53fed81afa9fad1a",
+      "upstream": "origin/dwp-dev",
+      "upstreamCommit": "388ad0fb2e50689cdc2a00186ffc6ca07f237e57",
+      "upstreamMatches": true,
+      "cleanAtMaterialization": false
+    },
+    "backend": {
+      "repository": "repo://dwp-backend",
+      "branch": "dwp-dev",
+      "checkoutMode": "DETACHED_AT_ORIGIN_DWP_DEV",
+      "commit": "3565c3e61b6c37a6b8088cc5250791fce32a0d9f",
+      "tree": "af973ef11d003edcf266673330300c612ffe247b",
+      "upstream": "origin/dwp-dev",
+      "upstreamCommit": "3565c3e61b6c37a6b8088cc5250791fce32a0d9f",
+      "upstreamMatches": true,
+      "cleanAtMaterialization": true
+    },
+    "agent": {
+      "repository": "repo://dwp_agent",
+      "branch": "dwp-dev",
+      "checkoutMode": "DWP_DEV_BRANCH",
+      "commit": "1d46fc4ab49c604efb7464574c49d13ee453e059",
+      "tree": "0b9a8dbfd828478ee825452e5aca8688c83e37ab",
+      "upstream": "origin/dwp-dev",
+      "upstreamCommit": "1d46fc4ab49c604efb7464574c49d13ee453e059",
+      "upstreamMatches": true,
+      "cleanAtMaterialization": true
+    }
+  },
+  "contractPins": {
+    "authorizationVersion": 38,
+    "authorizationSha256": "a41145d6a2faefd2e6030a2ca9a070769019d4db5513ea214bf542dda31c374a",
+    "authorizationBundleFileSha256": "de449058055b5ae9500489735910fdcf593b34a9ab05e927663a7fd74d740667",
+    "gatewayOpenApiSha256": "453f3620dca02a5ce82df273be986633fb5d694084ca080859bb47472027d234",
+    "counts": {
+      "capabilities": 242,
+      "accessPolicies": 24,
+      "entitlementExpressions": 17,
+      "predicatePolicies": 59,
+      "routes": 991
+    }
+  },
+  "predecessorEvidence": {
+    "currentSliceStatusV1": {
+      "path": "docs/06-delivery/hris/current-slice-integration-status.v1.csv",
+      "bytes": 126216,
+      "sha256": "603f81f13f5168825468c18d9f5a04e4ca389288a121fe1ad33c21b2ff6812de"
+    },
+    "currentSliceStatusEvidenceV1": {
+      "path": "docs/06-delivery/hris/current-slice-integration-status.v1.evidence.json",
+      "bytes": 28108,
+      "sha256": "d17ed348749715c660fae624e05e1df7dbee6adf6c4679c73b7c9883eab25047"
+    },
+    "wave2Start": {
+      "path": "docs/06-delivery/hris/wave2-2026-10-13/start-manifest.v1.json",
+      "bytes": 17502,
+      "sha256": "80474ad8d1fa08992b8fbe87bb930d2df95712ca241e9eff261e5daa22f39bb3"
+    },
+    "wave2SharedWiring": {
+      "path": "docs/06-delivery/hris/wave2-2026-10-13/shared-wiring-receipt.v1.json",
+      "bytes": 5556,
+      "sha256": "2689d1d652b7808a6b689797e1ecf423f7ca0658f5b73b2a22beb82b19e2987a"
+    },
+    "g7PerTimPromotion": {
+      "path": "docs/06-delivery/hris/2026-10-12-g7-evidence-promotion-and-delegation-receipt.json",
+      "bytes": 17736,
+      "sha256": "80bc8a7da69e3bb3fc733be28a02d8db4f5c2f5652bc3fb80659ae37437bf93b"
+    },
+    "g7SysHrmPromotion": {
+      "path": "docs/06-delivery/hris/2026-10-12-g7-sys-hrm-promotion-receipt.v2.json",
+      "bytes": 7392,
+      "sha256": "d09e250da60b797404109dca5342db7cb6806144b51e3f5c92cd2ebc9925d275"
+    },
+    "g7SysHrmIntegrationAuthorization": {
+      "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r3-result-acceptance/runs/sys-hrm-r3-20261012-r3/integration-authorization.v3.json",
+      "bytes": 6681,
+      "sha256": "779aa122d0fc40df4cdd8588b4b55fc6dadf70aca7065c953f04900b6141d1a5"
+    },
+    "g7SysHrmClosure": {
+      "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r3-result-acceptance/runs/sys-hrm-r3-20261012-r3/integrated-closure.v3.json",
+      "bytes": 30941,
+      "sha256": "0a6cbc3a4e0ac756e632333e1c9b6b9131139b7f914725f8716933439f79d3e1"
+    },
+    "g7Overlay": {
+      "path": "docs/06-delivery/hris/g7-delegation/2026-10-12/successor-slice-overlay.v1.csv",
+      "bytes": 140896,
+      "sha256": "dc0249b33af6194ff832d8f4e8348b519a489130cde8b0a01b364ebf8ea2f147"
+    },
+    "g7RoadmapStatus": {
+      "path": "docs/06-delivery/hris/2026-10-12-g7-integration-roadmap-status.md",
+      "bytes": 3122,
+      "sha256": "792a75c669d9354cc41fd211166dd59aa6484aec856320e1a193d4a9773ddabd"
+    },
+    "developmentAgentPacketTemplate": {
+      "path": "docs/06-delivery/hris/development-agent-work-packet-template.md",
+      "bytes": 6143,
+      "sha256": "e5564d310b6b2d3ef84b0a6d7b53fc9a6d2a2fd084770df7f10abb4bae9a83f7"
+    }
+  },
+  "overlayEvidenceSeal": "0a8d79404dabcdaafe5fadc86c759ef492934ef70a4ea2b8591854d8ba910b32",
+  "overlapAuditSeal": "7142f19423dc91c676d8c1fdfe51636a2b2686f4a781bf082abb07eebedf68cb",
+  "preStartControlGrantSeal": "434334f825716925fb834aec047e65d1de2cddb6c51f4c8f482562feec7d016c",
+  "decision": {
+    "phase": "A_AUTHORITY_REFRESH_ONLY",
+    "completedRows": 13,
+    "retiredRows": 2,
+    "remainingActiveRows": 87,
+    "preparedModule": "MOD-PER-COMPPLAN",
+    "predecessorPacketDisposition": "PREPARED_STALE_REISSUE_REQUIRED",
+    "typedArtifactBootstrapState": "ALLOCATED_REGISTERED_GRANTED",
+    "workforceCompensationProjectionState": "IMPLEMENTED_TESTED_REGISTERED_GRANTED",
+    "workforceCompensationProjectionQualification": "CONTRACT_ABI_IMPLEMENTED_TESTED_REGISTERED_GRANTED; owner runtime provider wiring intentionally fail-closed and remains post-result Central integration",
+    "bothPreStartConditionsFulfilled": true,
+    "startTokenIssued": false,
+    "worktreeRegistered": false,
+    "promotionReceiptIssued": false,
+    "sourceChangeAuthorized": false,
+    "migrationAdmissionAuthorized": false,
+    "productionAuthorization": false
+  },
+  "carrierRule": "A_LATER_COMMITTED_AND_PUSHED_DWP_DEV_CARRIER_MUST_BE_REPINNED_BEFORE_ANY_TOKEN_WORKTREE_OR_SOURCE_CHANGE_AUTHORITY",
+  "sealedPayloadSha256": "2f294eef78f203ffd278e01a995ec02cbaa07f45e058a5b5ecfb2e3b297918b2"
+}

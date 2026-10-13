@@ -1,0 +1,65 @@
+{
+  "schema": "dwp.hris.wave3-jit-migration-lease.v1",
+  "leaseId": "HRIS-WAVE3-LEASE-MOD-PER-COMPPLAN-PERFORMANCE-V17-R1",
+  "issuedAt": "2026-10-13T14:30:00+09:00",
+  "expiresAt": "2026-10-20T14:30:00+09:00",
+  "moduleId": "MOD-PER-COMPPLAN",
+  "packetId": "HRIS-WAVE3-PACKET-MOD-PER-COMPPLAN-R2-PHASE-A",
+  "repository": "backend",
+  "baseCommit": "3565c3e61b6c37a6b8088cc5250791fce32a0d9f",
+  "stream": "PERFORMANCE",
+  "schemaName": "hris_performance",
+  "historyTable": "flyway_performance_schema_history",
+  "location": "classpath:db/performance-migration",
+  "observedVersions": [
+    "V1",
+    "V2",
+    "V3",
+    "V16"
+  ],
+  "currentHighWater": "V16",
+  "outOfOrder": false,
+  "reservedVersion": "V17",
+  "exactPath": "dwp-people-server/src/main/resources/db/performance-migration/V17__per_modern_compensation_planning.sql",
+  "status": "RESERVED_PHASE_A_PRESTART_GRANTED_PENDING_CARRIER_AND_START_TOKEN",
+  "admission": false,
+  "ownerStartTokenIssued": false,
+  "tableAllocation": {
+    "domainTables": [
+      "prf_cmp_cycles",
+      "prf_cmp_budget_ledger",
+      "prf_cmp_proposals",
+      "prf_cmp_proposal_revisions",
+      "prf_cmp_approved_snapshots",
+      "prf_cmp_approved_snapshot_lines"
+    ],
+    "domainTableCount": 6,
+    "sharedFoundationTables": [
+      "prf_per_artifact_versions"
+    ],
+    "sharedFoundationTableCount": 1,
+    "totalTableCount": 7,
+    "typedArtifactBootstrapState": "ALLOCATED_REGISTERED_GRANTED",
+    "implementationState": "NOT_STARTED_TOKEN_WITHHELD"
+  },
+  "protectedPredecessors": [
+    "V1",
+    "V2",
+    "V3",
+    "V16"
+  ],
+  "supersededReservation": {
+    "lease": "HRIS-G7-MIGRATION-LEASE-DELTA-MOD-PER-COMPPLAN-R1-PREP",
+    "version": "V4",
+    "reason": "PERFORMANCE_STREAM_ADVANCED_TO_V16_AND_OUT_OF_ORDER_IS_DISABLED"
+  },
+  "upgradePath": "EMPTY_OR_V16_TO_V17_AFTER_LATER_ADMISSION",
+  "rollbackStrategy": "FORWARD_FIX_ONLY_AFTER_ADMISSION; UNUSED_V17_RESERVATION_EXPIRES_WITHOUT_FILE",
+  "invalidationConditions": [
+    "BACKEND_DWP_DEV_PIN_CHANGES_BEFORE_TOKEN",
+    "V17_PATH_BECOMES_OCCUPIED",
+    "PERFORMANCE_HIGH_WATER_CHANGES",
+    "LEASE_EXPIRES"
+  ],
+  "sealedPayloadSha256": "1439168c05c813e17d72e3889b0e1da314ac1029fd5fd12f060b84868bbc5689"
+}

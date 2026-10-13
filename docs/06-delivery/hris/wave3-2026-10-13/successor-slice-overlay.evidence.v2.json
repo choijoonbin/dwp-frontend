@@ -1,0 +1,95 @@
+{
+  "schema": "dwp.hris.wave3-successor-slice-overlay-evidence.v2",
+  "issuedAt": "2026-10-13T14:30:00+09:00",
+  "predecessor": {
+    "path": "docs/06-delivery/hris/g7-delegation/2026-10-12/successor-slice-overlay.v1.csv",
+    "bytes": 140896,
+    "sha256": "dc0249b33af6194ff832d8f4e8348b519a489130cde8b0a01b364ebf8ea2f147"
+  },
+  "predecessorEvidence": {
+    "path": "docs/06-delivery/hris/g7-delegation/2026-10-12/successor-slice-overlay.evidence.v1.json",
+    "bytes": 1830,
+    "sha256": "a0bd4ed203bdfbf9c867c576a4370799ed2bc98e9e09a611342c1ba0774b19d2"
+  },
+  "g7LineageSources": {
+    "perTimPromotion": {
+      "path": "docs/06-delivery/hris/2026-10-12-g7-evidence-promotion-and-delegation-receipt.json",
+      "bytes": 17736,
+      "sha256": "80bc8a7da69e3bb3fc733be28a02d8db4f5c2f5652bc3fb80659ae37437bf93b"
+    },
+    "sysHrmPromotion": {
+      "path": "docs/06-delivery/hris/2026-10-12-g7-sys-hrm-promotion-receipt.v2.json",
+      "bytes": 7392,
+      "sha256": "d09e250da60b797404109dca5342db7cb6806144b51e3f5c92cd2ebc9925d275"
+    },
+    "sysHrmIntegrationAuthorization": {
+      "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r3-result-acceptance/runs/sys-hrm-r3-20261012-r3/integration-authorization.v3.json",
+      "bytes": 6681,
+      "sha256": "779aa122d0fc40df4cdd8588b4b55fc6dadf70aca7065c953f04900b6141d1a5"
+    },
+    "sysHrmIntegratedClosure": {
+      "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r3-result-acceptance/runs/sys-hrm-r3-20261012-r3/integrated-closure.v3.json",
+      "bytes": 30941,
+      "sha256": "0a6cbc3a4e0ac756e632333e1c9b6b9131139b7f914725f8716933439f79d3e1"
+    }
+  },
+  "successor": {
+    "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+    "bytes": 160160,
+    "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+    "rows": 102,
+    "uniqueSliceIds": 102,
+    "sourceColumnCount": 42,
+    "wave3ColumnCount": 13,
+    "totalColumnCount": 55,
+    "orderedSliceIdSha256": "d864a1ab4efc46d843128c79a5064f40dcb31402171c2a570efbe0053170e589",
+    "sortedSliceIdSetSha256": "37dcf16325e2ff03b8200b6c6db5f6ff625c4febea244348048a6e3c2bccd4b3",
+    "classificationCounts": {
+      "CANDIDATE_AFTER_PHASE_A": 2,
+      "CANDIDATE_EXISTING_IMPLEMENTATION_AUDIT_REQUIRED": 1,
+      "INTEGRATED_COMPLETE_CARRIED_FORWARD": 5,
+      "INTEGRATED_COMPLETE_G7": 4,
+      "INTEGRATED_COMPLETE_WAVE2": 4,
+      "PREPARED_STALE_REISSUE_REQUIRED": 1,
+      "QUEUED_AFTER_MOD_PER_COMPPLAN": 1,
+      "QUEUED_AFTER_PAY011": 1,
+      "QUEUED_NOT_SELECTED": 79,
+      "RETIRED_UNCHANGED": 2,
+      "WITHHELD_COMPPLAN_AND_PAY016_RESULTS_REQUIRED": 1,
+      "WITHHELD_MOD_PER_COMPPLAN_RESULT_REQUIRED": 1
+    }
+  },
+  "transitionRule": "ALL_42_PREDECESSOR_COLUMNS_AND_ROW_ORDER_ARE_PRESERVED_EXACTLY_AFTER_CSV_PARSING;_ONLY_13_WAVE3_COLUMNS_ARE_APPENDED",
+  "completionLedger": {
+    "completedCount": 13,
+    "retiredCount": 2,
+    "remainingActiveCount": 87,
+    "g5G6Completed": [
+      "BASE-TFR-HRM-004",
+      "BASE-TFR-PAY-007",
+      "BASE-TFR-PER-005",
+      "BASE-TFR-SYS-004",
+      "BASE-TFR-TIM-016"
+    ],
+    "g7Completed": [
+      "BASE-TFR-HRM-010",
+      "BASE-TFR-PER-006",
+      "BASE-TFR-SYS-007",
+      "BASE-TFR-TIM-006"
+    ],
+    "wave2Completed": [
+      "BASE-TFR-HRM-008",
+      "BASE-TFR-PAY-006",
+      "BASE-TFR-PER-016",
+      "BASE-TFR-TIM-010"
+    ]
+  },
+  "invariants": {
+    "duplicateSliceIds": [],
+    "missingSliceIds": [],
+    "newSliceIds": [],
+    "predecessorColumnsPreserved": true,
+    "productionAuthorization": false
+  },
+  "sealedPayloadSha256": "0a8d79404dabcdaafe5fadc86c759ef492934ef70a4ea2b8591854d8ba910b32"
+}

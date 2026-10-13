@@ -1,0 +1,100 @@
+{
+  "schema": "dwp.hris.wave3-control-request-register.v1",
+  "registerId": "HRIS-WAVE3-CONTROL-REQUESTS-20261013-R1",
+  "issuedAt": "2026-10-13T14:30:00+09:00",
+  "packetId": "HRIS-WAVE3-PACKET-MOD-PER-COMPPLAN-R2-PHASE-A",
+  "registrationState": "REGISTERED_PHASE_A_TWO_PRESTART_CONDITIONS_FULFILLED",
+  "requests": [
+    {
+      "requestId": "W3-CR-MOD-PER-COMPPLAN-TYPED_ARTIFACT_BOOTSTRAP-R1",
+      "moduleId": "MOD-PER-COMPPLAN",
+      "category": "TYPED_ARTIFACT_BOOTSTRAP",
+      "owner": "CENTRAL_CONTROL",
+      "phase": "PRE_START",
+      "requiredBeforeStartToken": true,
+      "moduleMayImplement": false,
+      "registrationState": "REGISTERED_PHASE_A",
+      "fulfillmentState": "ALLOCATED_REGISTERED_GRANTED",
+      "scope": "exclusively allocate typedartifact main/test roots and prf_per_artifact_versions as the single V17 shared foundation table; module implementation remains token-gated"
+    },
+    {
+      "requestId": "W3-CR-MOD-PER-COMPPLAN-WORKFORCE_SNAPSHOT_COMPENSATION_PROJECTION-R1",
+      "moduleId": "MOD-PER-COMPPLAN",
+      "category": "WORKFORCE_SNAPSHOT_COMPENSATION_PROJECTION",
+      "owner": "CENTRAL_CONTROL",
+      "phase": "PRE_START",
+      "requiredBeforeStartToken": true,
+      "moduleMayImplement": false,
+      "registrationState": "REGISTERED_PHASE_A",
+      "fulfillmentState": "IMPLEMENTED_TESTED_REGISTERED_GRANTED",
+      "scope": "pin verified queryCompensationPopulation with HRIS_PER_COMPENSATION_POPULATION and COMPENSATION_POPULATION_V1 without changing PERFORMANCE_V1",
+      "fulfillmentQualification": "CONTRACT_ABI_IMPLEMENTED_TESTED_REGISTERED_GRANTED; owner runtime provider wiring intentionally fail-closed and remains post-result Central integration"
+    },
+    {
+      "requestId": "W3-CR-MOD-PER-COMPPLAN-AUTH_PEP-R1",
+      "moduleId": "MOD-PER-COMPPLAN",
+      "category": "AUTH_PEP",
+      "owner": "CENTRAL_CONTROL",
+      "phase": "AFTER_PUSHED_MODULE_RESULT",
+      "requiredBeforeStartToken": false,
+      "moduleMayImplement": false,
+      "registrationState": "REGISTERED_PHASE_A",
+      "fulfillmentState": "REGISTERED_WITH_FULFILLMENT_AFTER_RESULT",
+      "scope": "register MOD-AUTH-025/026/027 and deny-precedence bindings"
+    },
+    {
+      "requestId": "W3-CR-MOD-PER-COMPPLAN-CONTRACT_GATEWAY-R1",
+      "moduleId": "MOD-PER-COMPPLAN",
+      "category": "CONTRACT_GATEWAY",
+      "owner": "CENTRAL_CONTROL",
+      "phase": "AFTER_PUSHED_MODULE_RESULT",
+      "requiredBeforeStartToken": false,
+      "moduleMayImplement": false,
+      "registrationState": "REGISTERED_PHASE_A",
+      "fulfillmentState": "REGISTERED_WITH_FULFILLMENT_AFTER_RESULT",
+      "scope": "publish OpenAPI, AsyncAPI, XCON-020/021 and generated Gateway contracts"
+    },
+    {
+      "requestId": "W3-CR-MOD-PER-COMPPLAN-SHELL_ROUTE-R1",
+      "moduleId": "MOD-PER-COMPPLAN",
+      "category": "SHELL_ROUTE",
+      "owner": "CENTRAL_CONTROL",
+      "phase": "AFTER_PUSHED_MODULE_RESULT",
+      "requiredBeforeStartToken": false,
+      "moduleMayImplement": false,
+      "registrationState": "REGISTERED_PHASE_A",
+      "fulfillmentState": "REGISTERED_WITH_FULFILLMENT_AFTER_RESULT",
+      "scope": "register route, navigation, product manifest, shell permission and page host"
+    },
+    {
+      "requestId": "W3-CR-MOD-PER-COMPPLAN-SVC_PEP_SECURITY-R1",
+      "moduleId": "MOD-PER-COMPPLAN",
+      "category": "SVC_PEP_SECURITY",
+      "owner": "CENTRAL_CONTROL",
+      "phase": "AFTER_PUSHED_MODULE_RESULT",
+      "requiredBeforeStartToken": false,
+      "moduleMayImplement": false,
+      "registrationState": "REGISTERED_PHASE_A",
+      "fulfillmentState": "REGISTERED_WITH_FULFILLMENT_AFTER_RESULT",
+      "scope": "register SVC-PEP-PER-001 workload, tenant, purpose, projection, replay and negative-security bindings"
+    },
+    {
+      "requestId": "W3-CR-MOD-PER-COMPPLAN-INTEGRATION_VERIFY-R1",
+      "moduleId": "MOD-PER-COMPPLAN",
+      "category": "INTEGRATION_VERIFY",
+      "owner": "CENTRAL_CONTROL",
+      "phase": "AFTER_PUSHED_MODULE_RESULT",
+      "requiredBeforeStartToken": false,
+      "moduleMayImplement": false,
+      "registrationState": "REGISTERED_PHASE_A",
+      "fulfillmentState": "REGISTERED_WITH_FULFILLMENT_AFTER_RESULT",
+      "scope": "wire and test HRM owner runtime compensation projection before central integration acceptance; then run the single central contract, route, authorization, sync and PAY-withheld verification batch"
+    }
+  ],
+  "preStartRequestIds": [
+    "W3-CR-MOD-PER-COMPPLAN-TYPED_ARTIFACT_BOOTSTRAP-R1",
+    "W3-CR-MOD-PER-COMPPLAN-WORKFORCE_SNAPSHOT_COMPENSATION_PROJECTION-R1"
+  ],
+  "startTokenGate": "PHASE_A_CARRIER_PUSHED_REPINNED_AND_BOTH_FULFILLED_PRESTART_GRANTS_REVALIDATED",
+  "sealedPayloadSha256": "7d5a3712cdb782b2a28810da02fa9227252762287f29210ed1de799b0410cb26"
+}

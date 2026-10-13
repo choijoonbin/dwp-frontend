@@ -1,0 +1,429 @@
+{
+  "schema": "dwp.hris.wave3-module-work-packet.v1",
+  "packetId": "HRIS-WAVE3-PACKET-MOD-PER-COMPPLAN-R2-PHASE-A",
+  "revision": 2,
+  "issuedAt": "2026-10-13T14:30:00+09:00",
+  "expiresAt": "2026-10-20T14:30:00+09:00",
+  "module": "PER",
+  "moduleId": "MOD-PER-COMPPLAN",
+  "sessionId": "HRIS-PER",
+  "ownership": {
+    "ownerAgent": "HRIS-PER",
+    "reviewer": "HRIS-INTEGRATION-CONTROL",
+    "singleWriter": "HRIS-PER"
+  },
+  "slice": {
+    "sliceId": "MOD-PER-COMPPLAN",
+    "sourceKind": "MODERN_CAPABILITY"
+  },
+  "lifecycleState": "PACKET_PREPARED_START_WITHHELD",
+  "startTokenId": null,
+  "worktreeBindings": [],
+  "basePins": {
+    "frontend": {
+      "repository": "repo://dwp-frontend",
+      "branch": "dwp-dev",
+      "checkoutMode": "DWP_DEV_BRANCH",
+      "commit": "388ad0fb2e50689cdc2a00186ffc6ca07f237e57",
+      "tree": "dc0d60f706d17a69cbf0c5cd53fed81afa9fad1a",
+      "upstream": "origin/dwp-dev",
+      "upstreamCommit": "388ad0fb2e50689cdc2a00186ffc6ca07f237e57",
+      "upstreamMatches": true,
+      "cleanAtMaterialization": false
+    },
+    "backend": {
+      "repository": "repo://dwp-backend",
+      "branch": "dwp-dev",
+      "checkoutMode": "DETACHED_AT_ORIGIN_DWP_DEV",
+      "commit": "3565c3e61b6c37a6b8088cc5250791fce32a0d9f",
+      "tree": "af973ef11d003edcf266673330300c612ffe247b",
+      "upstream": "origin/dwp-dev",
+      "upstreamCommit": "3565c3e61b6c37a6b8088cc5250791fce32a0d9f",
+      "upstreamMatches": true,
+      "cleanAtMaterialization": true
+    },
+    "agent": {
+      "repository": "repo://dwp_agent",
+      "branch": "dwp-dev",
+      "checkoutMode": "DWP_DEV_BRANCH",
+      "commit": "1d46fc4ab49c604efb7464574c49d13ee453e059",
+      "tree": "0b9a8dbfd828478ee825452e5aca8688c83e37ab",
+      "upstream": "origin/dwp-dev",
+      "upstreamCommit": "1d46fc4ab49c604efb7464574c49d13ee453e059",
+      "upstreamMatches": true,
+      "cleanAtMaterialization": true
+    }
+  },
+  "contractPins": {
+    "authorizationVersion": 38,
+    "authorizationSha256": "a41145d6a2faefd2e6030a2ca9a070769019d4db5513ea214bf542dda31c374a",
+    "authorizationBundleFileSha256": "de449058055b5ae9500489735910fdcf593b34a9ab05e927663a7fd74d740667",
+    "gatewayOpenApiSha256": "453f3620dca02a5ce82df273be986633fb5d694084ca080859bb47472027d234",
+    "predecessorContractReseal": {
+      "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/mod-per-compplan-r1/contract-reseal-authority.v1.json",
+      "bytes": 340932,
+      "sha256": "14c5827bb0448d1766106365f53cdcc24e13beb6d0041ba61dca02e3552a7f87"
+    },
+    "predecessorPacket": {
+      "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/mod-per-compplan-r1/packet.v1.json",
+      "bytes": 33756,
+      "sha256": "8ba8b7e079194c710addb7b7df76ba90933d04ee4c8694ec0c6c529163ee5c75"
+    },
+    "predecessorDisposition": "PREPARED_STALE_REISSUE_REQUIRED"
+  },
+  "dependencies": [
+    "DEP-001",
+    "DEP-002",
+    "DEP-003",
+    "DEP-016",
+    "DEP-019"
+  ],
+  "producerResultPins": {
+    "DEP-019": "SELF_PRODUCER_OBLIGATION_RESULT_ABSENT",
+    "payConsumer": "BASE-TFR-PAY-016_REMAINS_WITHHELD"
+  },
+  "userOutcome": {
+    "primaryUser": "compensation planning operations lead",
+    "operationalQuestion": "Are budgets, eligible proposals, maker-checker approval, and the payroll-ready immutable snapshot complete and safe to publish?",
+    "primaryAction": "create or revise a cycle, allocate or reverse budget, draft and submit proposals, approve, and publish the immutable snapshot",
+    "pageArchetype": "studio",
+    "route": "/hr/operations/performance/compensation-planning"
+  },
+  "uiWorkContract": {
+    "authorizationCapabilities": [
+      "hcm.compensation.plan.view",
+      "hcm.compensation.plan.propose",
+      "hcm.compensation.plan.approve"
+    ],
+    "forbiddenR1Actions": [
+      "select or submit EXCEPTION_APPROVAL budget mode",
+      "enter or display an exception approval receipt"
+    ],
+    "journey": [
+      "create typed guideline and population cycle in DRAFT",
+      "first budget allocation opens the cycle; later allocations or reversals preserve OPEN",
+      "draft typed proposals and submit them into PROPOSAL_REVIEW",
+      "independent approver records approval after budget and eligibility guards",
+      "publish one immutable XCON-020 snapshot and XCON-021 event after atomic commit"
+    ],
+    "materialStates": [
+      "LOADING",
+      "EMPTY",
+      "DRAFT",
+      "OPEN",
+      "PROPOSAL_REVIEW",
+      "APPROVED",
+      "PUBLISHED",
+      "CANCELLED",
+      "DENIED",
+      "STEP_UP_REQUIRED",
+      "STALE_VERSION",
+      "RESULT_UNKNOWN"
+    ],
+    "menuNode": "hcm.operations.compensation-planning",
+    "operationalQuestion": "Are budgets, eligible proposals, maker-checker approval, and the payroll-ready immutable snapshot complete and safe to publish?",
+    "pageArchetype": "studio",
+    "primaryAction": "create or revise a cycle, allocate or reverse budget, draft and submit proposals, approve, and publish the immutable snapshot",
+    "primaryUser": "compensation planning operations lead",
+    "route": "/hr/operations/performance/compensation-planning",
+    "shellRegistration": "CENTRAL_CONTROL_REQUEST_ONLY_AFTER_PUSHED_MODULE_RESULT",
+    "sourceSelectors": [
+      {
+        "selector": "csv:menu_node_key=hcm.operations.compensation-planning",
+        "selectorSha256": "e0fae6263933ddbaef852bf60fae7334c9948db18ef3ffaa18c6fc14f0493680",
+        "sourceId": "compplanMenuNode"
+      },
+      {
+        "selector": "csv:ia_node_id=MODERN:hcm.operations.compensation-planning",
+        "selectorSha256": "441700b9c4c9e4bf6f666aedad87c898ea8bc530b4d41986640c00ca383fb4e0",
+        "sourceId": "compplanIaAccess"
+      },
+      {
+        "selector": "csv:task_group_id=PERF-07",
+        "selectorSha256": "241fd002c33ca56abc4d42f8f0cde8c9b5ad7355f00f7144740e841db29c55c6",
+        "sourceId": "compplanWorkbench"
+      }
+    ]
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "AC-01",
+      "criterion": "AT-001 currency rounding and append-only budget ledger totals",
+      "verificationCommandIds": [
+        "PER_COMPPLAN_BACKEND_CLOSED",
+        "PER_COMPPLAN_PLATFORM_XCON021_CLOSED",
+        "PER_COMPPLAN_FRONTEND_CLOSED"
+      ]
+    },
+    {
+      "id": "AC-02",
+      "criterion": "AT-002 maker cannot approve or publish; cross-tenant and field-purpose denials",
+      "verificationCommandIds": [
+        "PER_COMPPLAN_BACKEND_CLOSED",
+        "PER_COMPPLAN_PLATFORM_XCON021_CLOSED",
+        "PER_COMPPLAN_FRONTEND_CLOSED"
+      ]
+    },
+    {
+      "id": "AC-03",
+      "criterion": "AT-003 PAY receives exact immutable approved revision and digest",
+      "verificationCommandIds": [
+        "PER_COMPPLAN_BACKEND_CLOSED",
+        "PER_COMPPLAN_PLATFORM_XCON021_CLOSED",
+        "PER_COMPPLAN_FRONTEND_CLOSED"
+      ]
+    },
+    {
+      "id": "AC-04",
+      "criterion": "idempotency and optimistic CAS",
+      "verificationCommandIds": [
+        "PER_COMPPLAN_BACKEND_CLOSED",
+        "PER_COMPPLAN_PLATFORM_XCON021_CLOSED",
+        "PER_COMPPLAN_FRONTEND_CLOSED"
+      ]
+    },
+    {
+      "id": "AC-05",
+      "criterion": "atomic snapshot header, ordered lines, receipt, and outbox",
+      "verificationCommandIds": [
+        "PER_COMPPLAN_BACKEND_CLOSED",
+        "PER_COMPPLAN_PLATFORM_XCON021_CLOSED",
+        "PER_COMPPLAN_FRONTEND_CLOSED"
+      ]
+    },
+    {
+      "id": "AC-06",
+      "criterion": "XCON-021 exact 16 fields after commit only; no v1 or dual publish",
+      "verificationCommandIds": [
+        "PER_COMPPLAN_BACKEND_CLOSED",
+        "PER_COMPPLAN_PLATFORM_XCON021_CLOSED",
+        "PER_COMPPLAN_FRONTEND_CLOSED"
+      ]
+    },
+    {
+      "id": "AC-07",
+      "criterion": "SVC-PEP mTLS, audience, tenant, and purpose rejection cases",
+      "verificationCommandIds": [
+        "PER_COMPPLAN_BACKEND_CLOSED",
+        "PER_COMPPLAN_PLATFORM_XCON021_CLOSED",
+        "PER_COMPPLAN_FRONTEND_CLOSED"
+      ]
+    },
+    {
+      "id": "AC-08",
+      "criterion": "line count, contiguous order, unique line id, and canonical digest",
+      "verificationCommandIds": [
+        "PER_COMPPLAN_BACKEND_CLOSED",
+        "PER_COMPPLAN_PLATFORM_XCON021_CLOSED",
+        "PER_COMPPLAN_FRONTEND_CLOSED"
+      ]
+    },
+    {
+      "id": "AC-09",
+      "criterion": "worker crash and replay safety",
+      "verificationCommandIds": [
+        "PER_COMPPLAN_BACKEND_CLOSED",
+        "PER_COMPPLAN_PLATFORM_XCON021_CLOSED",
+        "PER_COMPPLAN_FRONTEND_CLOSED"
+      ]
+    },
+    {
+      "id": "AC-10",
+      "criterion": "clean empty-schema or V16-to-V17 upgrade, RLS, and append-only enforcement",
+      "verificationCommandIds": [
+        "PER_COMPPLAN_BACKEND_CLOSED",
+        "PER_COMPPLAN_PLATFORM_XCON021_CLOSED",
+        "PER_COMPPLAN_FRONTEND_CLOSED"
+      ]
+    },
+    {
+      "id": "AC-11",
+      "criterion": "HARD_CAP-only enforcement rejects EXCEPTION_APPROVAL and keeps exception approval receipt NULL",
+      "verificationCommandIds": [
+        "PER_COMPPLAN_BACKEND_CLOSED",
+        "PER_COMPPLAN_PLATFORM_XCON021_CLOSED",
+        "PER_COMPPLAN_FRONTEND_CLOSED"
+      ]
+    },
+    {
+      "id": "AC-12",
+      "criterion": "budget reverse hostile cases and approve zero/overflow/collision/invalid-line cases fail closed before transition",
+      "verificationCommandIds": [
+        "PER_COMPPLAN_BACKEND_CLOSED",
+        "PER_COMPPLAN_PLATFORM_XCON021_CLOSED",
+        "PER_COMPPLAN_FRONTEND_CLOSED"
+      ]
+    }
+  ],
+  "scope": {
+    "included": [
+      "governed compensation cycles and HARD_CAP budgets",
+      "typed guideline and population artifacts through module-owned projections",
+      "maker-checker proposal approval",
+      "immutable XCON-020 snapshot and post-commit XCON-021 v2 publication"
+    ],
+    "excluded": [
+      "EXCEPTION_APPROVAL",
+      "PAY consumer implementation",
+      "shared route, authorization, Gateway or generated-contract edits by the module",
+      "customer activation and production release"
+    ]
+  },
+  "pathPolicy": {
+    "manifestId": "HRIS-WAVE3-TOUCH-MOD-PER-COMPPLAN-R2",
+    "touchPolicyDigest": "1f742788b8c231d495de7cc84103f91d53a28481c0850499783322241ece140a",
+    "manifestSealedPayloadSha256": "da59b212c28661570697d5ccf192f51b79fd0b1be083cc47da3870b97b42c67f"
+  },
+  "migrationLease": {
+    "leaseId": "HRIS-WAVE3-LEASE-MOD-PER-COMPPLAN-PERFORMANCE-V17-R1",
+    "reservedVersion": "V17",
+    "exactPath": "dwp-people-server/src/main/resources/db/performance-migration/V17__per_modern_compensation_planning.sql",
+    "status": "RESERVED_PHASE_A_PRESTART_GRANTED_PENDING_CARRIER_AND_START_TOKEN",
+    "admission": false,
+    "sealedPayloadSha256": "1439168c05c813e17d72e3889b0e1da314ac1029fd5fd12f060b84868bbc5689"
+  },
+  "controlRequests": {
+    "registerId": "HRIS-WAVE3-CONTROL-REQUESTS-20261013-R1",
+    "preStartRequestIds": [
+      "W3-CR-MOD-PER-COMPPLAN-TYPED_ARTIFACT_BOOTSTRAP-R1",
+      "W3-CR-MOD-PER-COMPPLAN-WORKFORCE_SNAPSHOT_COMPENSATION_PROJECTION-R1"
+    ],
+    "startTokenGate": "PHASE_A_CARRIER_PUSHED_REPINNED_AND_BOTH_FULFILLED_PRESTART_GRANTS_REVALIDATED",
+    "sealedPayloadSha256": "7d5a3712cdb782b2a28810da02fa9227252762287f29210ed1de799b0410cb26"
+  },
+  "preStartControlGrant": {
+    "receiptId": "HRIS-WAVE3-PRESTART-CONTROL-GRANT-MOD-PER-COMPPLAN-R1",
+    "status": "PASS_TWO_PRESTART_CONDITIONS_FULFILLED",
+    "conditionStates": {
+      "TYPED_ARTIFACT_BOOTSTRAP": "ALLOCATED_REGISTERED_GRANTED",
+      "WORKFORCE_SNAPSHOT_COMPENSATION_PROJECTION": "IMPLEMENTED_TESTED_REGISTERED_GRANTED"
+    },
+    "sealedPayloadSha256": "434334f825716925fb834aec047e65d1de2cddb6c51f4c8f482562feec7d016c"
+  },
+  "runtimeSecurityRollout": {
+    "systemOfRecord": "dwp-people-server/HRIS Performance",
+    "tenantBoundary": "OWNER_AND_REPOSITORY_TENANT_ENFORCED_FAIL_CLOSED",
+    "authorization": "VIEW_PROPOSE_APPROVE_WITH_SOD_STEP_UP_AND_DENY_PRECEDENCE",
+    "idempotencyVersionAudit": "REQUIRED_FOR_ALL_COMMANDS_WITH_APPEND_ONLY_RECEIPTS_AND_OUTBOX",
+    "featureFlag": "OFF_UNTIL_SEPARATE_ACTIVATION",
+    "productionAuthorization": false
+  },
+  "verificationBindings": {
+    "semanticSource": {
+      "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/mod-per-compplan-r1/packet.v1.json",
+      "bytes": 33756,
+      "sha256": "8ba8b7e079194c710addb7b7df76ba90933d04ee4c8694ec0c6c529163ee5c75"
+    },
+    "executionPolicy": {
+      "broadSuitePerFixAllowed": false,
+      "failureHandling": "COLLECT_ALL_FAILURES_BEFORE_REPAIR",
+      "order": "CHANGED_CLUSTER_FIRST_THEN_ONE_CLOSED_MODULE_BATCH"
+    },
+    "backendTestsExact": [
+      "CompensationPlanningMigrationContractTest",
+      "CompensationPlanningBudgetInvariantPostgresTest",
+      "CompensationPlanningAuthorizationTest",
+      "ApprovedCompensationPlanSnapshotProviderContractTest",
+      "ApprovedCompensationPlanSnapshotPublicationPostgresTest"
+    ],
+    "frontendTestsExact": [
+      "apps/dwp/src/features/hris/performance/compensation-planning/__tests__/compensation-planning-contract.test.ts",
+      "apps/dwp/src/features/hris/performance/compensation-planning/__tests__/compensation-planning-api.test.ts",
+      "apps/dwp/src/features/hris/performance/compensation-planning/__tests__/compensation-planning-workspace.test.tsx",
+      "apps/dwp/src/features/hris/performance/compensation-planning/__tests__/compensation-planning-command-runtime.test.tsx"
+    ],
+    "platformTestsExact": [
+      "dwp-platform-contracts/src/test/java/com/dwp/platform/contract/Xcon021CompensationSnapshotPublicationV2Test.java"
+    ],
+    "providerTestsExact": [
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/performance/contracts/xcon/Xcon020ApprovedCompensationPlanSnapshotV1ProviderContractTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/performance/contracts/xcon/Xcon021ApprovedCompensationPlanSnapshotPublishedV2ProviderContractTest.java"
+    ],
+    "namedCommands": [
+      {
+        "argv": [
+          "./gradlew",
+          ":dwp-people-server:test",
+          "--tests",
+          "*CompensationPlanningMigrationContractTest",
+          "--tests",
+          "*CompensationPlanningBudgetInvariantPostgresTest",
+          "--tests",
+          "*CompensationPlanningAuthorizationTest",
+          "--tests",
+          "*ApprovedCompensationPlanSnapshotProviderContractTest",
+          "--tests",
+          "*ApprovedCompensationPlanSnapshotPublicationPostgresTest",
+          "--tests",
+          "*Xcon020ApprovedCompensationPlanSnapshotV1ProviderContractTest",
+          "--tests",
+          "*Xcon021ApprovedCompensationPlanSnapshotPublishedV2ProviderContractTest",
+          "-PhrisSlice=MOD-PER-COMPPLAN",
+          "--no-daemon"
+        ],
+        "commandId": "PER_COMPPLAN_BACKEND_CLOSED",
+        "cwd": "backend"
+      },
+      {
+        "argv": [
+          "./gradlew",
+          ":dwp-platform-contracts:test",
+          "--tests",
+          "*Xcon021CompensationSnapshotPublicationV2Test",
+          "--no-daemon"
+        ],
+        "commandId": "PER_COMPPLAN_PLATFORM_XCON021_CLOSED",
+        "cwd": "backend"
+      },
+      {
+        "argv": [
+          "yarn",
+          "vitest",
+          "run",
+          "apps/dwp/src/features/hris/performance/compensation-planning/__tests__/compensation-planning-contract.test.ts",
+          "apps/dwp/src/features/hris/performance/compensation-planning/__tests__/compensation-planning-api.test.ts",
+          "apps/dwp/src/features/hris/performance/compensation-planning/__tests__/compensation-planning-workspace.test.tsx",
+          "apps/dwp/src/features/hris/performance/compensation-planning/__tests__/compensation-planning-command-runtime.test.tsx"
+        ],
+        "commandId": "PER_COMPPLAN_FRONTEND_CLOSED",
+        "cwd": "frontend"
+      }
+    ],
+    "phaseAApplicationTestsRequired": false
+  },
+  "deliverables": [
+    "separate frontend and backend result commits on fresh token-bound branches",
+    "exact changed-file manifests proving touch-policy compliance",
+    "named targeted command results and evidence locators",
+    "V17 lease used-or-unused status with clean-upgrade evidence",
+    "central control request handoff without module edits to shared paths",
+    "wire and test HRM owner runtime compensation projection before central integration acceptance"
+  ],
+  "releaseConditions": [
+    "COMMIT_AND_PUSH_THIS_PHASE_A_BUNDLE_ON_DWP_DEV",
+    "REPIN_THE_PHASE_A_CARRIER",
+    "REVALIDATE_BOTH_FULFILLED_PRESTART_CONTROL_GRANTS_AT_THE_CARRIER_PIN",
+    "RECHECK_BACKEND_DWP_DEV_AND_V17_VACANCY",
+    "CREATE_FRESH_FRONTEND_AND_BACKEND_WORKTREES_FROM_CURRENT_DWP_DEV",
+    "ISSUE_A_NEW_START_TOKEN_AND_LATER_PROMOTION_RECEIPT"
+  ],
+  "stopConditions": [
+    "ANY_BASE_PIN_OR_UPSTREAM_DIVERGES",
+    "V17_BECOMES_OCCUPIED_OR_HIGH_WATER_CHANGES",
+    "A_MODULE_EDIT_TO_A_COMMON_CONTROL_PATH_IS_REQUIRED",
+    "EITHER_FULFILLED_PRESTART_CONTROL_GRANT_NO_LONGER_REVALIDATES",
+    "TENANT_SOR_CONTRACT_LINEAGE_OR_ROLLBACK_IS_AMBIGUOUS"
+  ],
+  "authority": {
+    "sourceChangeAuthority": false,
+    "startTokenAuthority": false,
+    "worktreeRegistrationAuthority": false,
+    "migrationAdmissionAuthority": false,
+    "integrationAuthority": false,
+    "activationAuthority": false,
+    "promotionAuthority": false,
+    "productionReleaseAuthority": false,
+    "payConsumptionAuthority": false
+  },
+  "sealedPayloadSha256": "6c00ef9d5f5c7b8d06c659e237a6dc2dbdd9b5704223f6dd2611986149353283"
+}

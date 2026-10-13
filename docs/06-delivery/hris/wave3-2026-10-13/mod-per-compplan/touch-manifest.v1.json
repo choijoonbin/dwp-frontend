@@ -1,0 +1,480 @@
+{
+  "schema": "dwp.hris.wave3-independent-touch-manifest.v1",
+  "manifestId": "HRIS-WAVE3-TOUCH-MOD-PER-COMPPLAN-R2",
+  "issuedAt": "2026-10-13T14:30:00+09:00",
+  "moduleId": "MOD-PER-COMPPLAN",
+  "packetId": "HRIS-WAVE3-PACKET-MOD-PER-COMPPLAN-R2-PHASE-A",
+  "independentFromPredecessorPacket": true,
+  "basePins": {
+    "frontend": {
+      "repository": "repo://dwp-frontend",
+      "branch": "dwp-dev",
+      "checkoutMode": "DWP_DEV_BRANCH",
+      "commit": "388ad0fb2e50689cdc2a00186ffc6ca07f237e57",
+      "tree": "dc0d60f706d17a69cbf0c5cd53fed81afa9fad1a",
+      "upstream": "origin/dwp-dev",
+      "upstreamCommit": "388ad0fb2e50689cdc2a00186ffc6ca07f237e57",
+      "upstreamMatches": true,
+      "cleanAtMaterialization": false
+    },
+    "backend": {
+      "repository": "repo://dwp-backend",
+      "branch": "dwp-dev",
+      "checkoutMode": "DETACHED_AT_ORIGIN_DWP_DEV",
+      "commit": "3565c3e61b6c37a6b8088cc5250791fce32a0d9f",
+      "tree": "af973ef11d003edcf266673330300c612ffe247b",
+      "upstream": "origin/dwp-dev",
+      "upstreamCommit": "3565c3e61b6c37a6b8088cc5250791fce32a0d9f",
+      "upstreamMatches": true,
+      "cleanAtMaterialization": true
+    },
+    "agent": {
+      "repository": "repo://dwp_agent",
+      "branch": "dwp-dev",
+      "checkoutMode": "DWP_DEV_BRANCH",
+      "commit": "1d46fc4ab49c604efb7464574c49d13ee453e059",
+      "tree": "0b9a8dbfd828478ee825452e5aca8688c83e37ab",
+      "upstream": "origin/dwp-dev",
+      "upstreamCommit": "1d46fc4ab49c604efb7464574c49d13ee453e059",
+      "upstreamMatches": true,
+      "cleanAtMaterialization": true
+    }
+  },
+  "allowedPaths": [
+    {
+      "repo": "frontend",
+      "kind": "PREFIX_GLOB",
+      "selector": "apps/dwp/src/features/hris/performance/compensation-planning/**"
+    },
+    {
+      "repo": "backend",
+      "kind": "PREFIX_GLOB",
+      "selector": "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/compensationplanning/**"
+    },
+    {
+      "repo": "backend",
+      "kind": "PREFIX_GLOB",
+      "selector": "dwp-people-server/src/test/java/com/dwp/services/people/hr/performance/compensationplanning/**"
+    },
+    {
+      "repo": "backend",
+      "kind": "PREFIX_GLOB",
+      "selector": "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/typedartifact/**"
+    },
+    {
+      "repo": "backend",
+      "kind": "PREFIX_GLOB",
+      "selector": "dwp-people-server/src/test/java/com/dwp/services/people/hr/performance/typedartifact/**"
+    },
+    {
+      "repo": "backend",
+      "kind": "EXACT_FILE",
+      "selector": "dwp-people-server/src/test/java/com/dwp/services/people/hris/performance/contracts/xcon/Xcon020ApprovedCompensationPlanSnapshotV1ProviderContractTest.java"
+    },
+    {
+      "repo": "backend",
+      "kind": "EXACT_FILE",
+      "selector": "dwp-people-server/src/test/java/com/dwp/services/people/hris/performance/contracts/xcon/Xcon021ApprovedCompensationPlanSnapshotPublishedV2ProviderContractTest.java"
+    },
+    {
+      "repo": "backend",
+      "kind": "EXACT_FILE",
+      "selector": "dwp-people-server/src/main/resources/db/performance-migration/V17__per_modern_compensation_planning.sql"
+    }
+  ],
+  "commonControlOnlyPaths": [
+    {
+      "kind": "PREFIX_GLOB",
+      "repo": "backend",
+      "selector": "contracts/hris/**"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "backend",
+      "selector": "contracts/in-process/hris/workforce-snapshot-query-port.v1.schema.json"
+    },
+    {
+      "kind": "PREFIX_GLOB",
+      "repo": "backend",
+      "selector": "contracts/openapi/**"
+    },
+    {
+      "kind": "PREFIX_GLOB",
+      "repo": "backend",
+      "selector": "contracts/asyncapi/**"
+    },
+    {
+      "kind": "PREFIX_GLOB",
+      "repo": "backend",
+      "selector": "contracts/product-authorization/**"
+    },
+    {
+      "kind": "PREFIX_GLOB",
+      "repo": "backend",
+      "selector": "dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/**"
+    },
+    {
+      "kind": "PREFIX_GLOB",
+      "repo": "backend",
+      "selector": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/generated/**"
+    },
+    {
+      "kind": "PREFIX_GLOB",
+      "repo": "backend",
+      "selector": "dwp-people-server/src/main/resources/pep/**"
+    },
+    {
+      "kind": "PREFIX_GLOB",
+      "repo": "backend",
+      "selector": "dwp-people-server/src/main/resources/security/**"
+    },
+    {
+      "kind": "PREFIX_GLOB",
+      "repo": "backend",
+      "selector": "dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/workforce/v1/**"
+    },
+    {
+      "kind": "PREFIX_GLOB",
+      "repo": "backend",
+      "selector": "dwp-people-server/src/test/java/com/dwp/services/people/hris/contracts/workforce/v1/**"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "backend",
+      "selector": "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmV3PepRegistry.java"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "backend",
+      "selector": "dwp-people-server/src/main/java/com/dwp/services/people/security/HrisEmployeeChangeSecurityBridge.java"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "backend",
+      "selector": "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmV3PepRegistryTest.java"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "backend",
+      "selector": "dwp-people-server/src/test/java/com/dwp/services/people/security/HrisEmployeeChangeSecurityBridgeTest.java"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "backend",
+      "selector": "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmOwnerPepExecutionTest.java"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "backend",
+      "selector": "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmPepBindingConstraintsTest.java"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "backend",
+      "selector": "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmProductSurfacePepFilterTest.java"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "backend",
+      "selector": "scripts/generate-hris-contracts.py"
+    },
+    {
+      "kind": "PREFIX_GLOB",
+      "repo": "backend",
+      "selector": "dwp-approval-server/src/main/resources/product-authorization/**"
+    },
+    {
+      "kind": "PREFIX_GLOB",
+      "repo": "backend",
+      "selector": "dwp-auth-server/src/main/resources/product-authorization/**"
+    },
+    {
+      "kind": "PREFIX_GLOB",
+      "repo": "backend",
+      "selector": "dwp-meeting-server/src/main/resources/product-authorization/**"
+    },
+    {
+      "kind": "PREFIX_GLOB",
+      "repo": "backend",
+      "selector": "dwp-people-server/src/main/resources/product-authorization/**"
+    },
+    {
+      "kind": "PREFIX_GLOB",
+      "repo": "backend",
+      "selector": "dwp-platform-server/src/main/resources/product-authorization/**"
+    },
+    {
+      "kind": "PREFIX_GLOB",
+      "repo": "backend",
+      "selector": "dwp-space-server/src/main/resources/product-authorization/**"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "backend",
+      "selector": "scripts/export-openapi-contracts.py"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "backend",
+      "selector": "scripts/generate-product-authorization-contracts.py"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "backend",
+      "selector": "scripts/generate-product-authorization-fixtures.py"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "backend",
+      "selector": "scripts/generate-approval-document-projection-contracts.py"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "backend",
+      "selector": "scripts/generate-approval-extension-projection-contracts.py"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "backend",
+      "selector": "scripts/generate-approval-recovery11-projection-contracts.py"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "backend",
+      "selector": "scripts/generate-approval-release10-projection-contracts.py"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "backend",
+      "selector": "scripts/generate-approval-work-projection-contracts.py"
+    },
+    {
+      "kind": "PREFIX_GLOB",
+      "repo": "backend",
+      "selector": "dwp-gateway/**"
+    },
+    {
+      "kind": "PREFIX_GLOB",
+      "repo": "backend",
+      "selector": "dwp-migration-control/**"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "backend",
+      "selector": "build.gradle.kts"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "backend",
+      "selector": "settings.gradle.kts"
+    },
+    {
+      "kind": "PREFIX_GLOB",
+      "repo": "backend",
+      "selector": "gradle/**"
+    },
+    {
+      "kind": "PREFIX_GLOB",
+      "repo": "backend",
+      "selector": ".github/workflows/**"
+    },
+    {
+      "kind": "PREFIX_GLOB",
+      "repo": "frontend",
+      "selector": "apps/dwp/src/routes/**"
+    },
+    {
+      "kind": "PATTERN_GLOB",
+      "repo": "frontend",
+      "selector": "apps/dwp/src/features/hcm/hcm-navigation*.ts*"
+    },
+    {
+      "kind": "PATTERN_GLOB",
+      "repo": "frontend",
+      "selector": "apps/dwp/src/features/hcm/hcm-product-manifest*.ts*"
+    },
+    {
+      "kind": "PREFIX_GLOB",
+      "repo": "frontend",
+      "selector": "apps/dwp/src/features/hris/shell/**"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "frontend",
+      "selector": "apps/dwp/src/pages/hcm.tsx"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "frontend",
+      "selector": "apps/dwp/src/routes/product-surface-authorization.generated.ts"
+    },
+    {
+      "kind": "PREFIX_GLOB",
+      "repo": "frontend",
+      "selector": "architecture/**"
+    },
+    {
+      "kind": "PREFIX_GLOB",
+      "repo": "frontend",
+      "selector": "libs/api-contracts/**"
+    },
+    {
+      "kind": "PREFIX_GLOB",
+      "repo": "frontend",
+      "selector": "libs/shared-utils/src/auth/**"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "frontend",
+      "selector": "libs/shared-utils/src/test-utils/pilot-authorization-fixtures.generated.ts"
+    },
+    {
+      "kind": "PREFIX_GLOB",
+      "repo": "frontend",
+      "selector": "libs/shared-i18n/**"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "frontend",
+      "selector": "scripts/sync-openapi-contract.mjs"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "frontend",
+      "selector": "scripts/sync-agent-openapi-contract.mjs"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "frontend",
+      "selector": "scripts/sync-product-surface-authorization.mjs"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "frontend",
+      "selector": "scripts/sync-product-authorization-fixtures.mjs"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "frontend",
+      "selector": "scripts/sync-product-surface-internal-closure.mjs"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "frontend",
+      "selector": "scripts/generate-route-composition.mjs"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "frontend",
+      "selector": "scripts/product-authorization-fixture-versions.mjs"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "frontend",
+      "selector": "scripts/check-official-backend-contracts.mjs"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "frontend",
+      "selector": "scripts/check-official-backend-contracts.test.mjs"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "frontend",
+      "selector": "scripts/check-product-surface-production-readiness.mjs"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "frontend",
+      "selector": "scripts/check-product-surface-production-readiness.test.mjs"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "frontend",
+      "selector": "scripts/product-surface-readiness-authorization.mjs"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "frontend",
+      "selector": "scripts/sync-product-surface-internal-closure.test.mjs"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "frontend",
+      "selector": "deploy/nginx/dwp-product-routes.conf"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "frontend",
+      "selector": "package.json"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "frontend",
+      "selector": "yarn.lock"
+    },
+    {
+      "kind": "EXACT_FILE",
+      "repo": "frontend",
+      "selector": "nx.json"
+    },
+    {
+      "kind": "PATTERN_GLOB",
+      "repo": "frontend",
+      "selector": "tsconfig*.json"
+    }
+  ],
+  "predecessorCommonControlOnlyPathCount": 68,
+  "predecessorCommonControlOnlyPathsSha256": "b2cdd49b6627fb4dd75843740431390947e8dd5206dc954220b1c3ae91d14c89",
+  "wave3AdditionalCommonControlOnlyPaths": [],
+  "commonControlOnlyPathCount": 68,
+  "commonControlOnlyPathInheritance": "EXACT_PREDECESSOR_CLOSED_SET_PLUS_WAVE3_UNION",
+  "rules": [
+    "ONLY_LISTED_MODULE_PATHS_MAY_BE_EDITED_AFTER_A_LATER_START_TOKEN",
+    "COMMON_CONTROL_PATHS_REQUIRE_A_SEPARATE_CONTROL_CHANGE",
+    "NO_EXISTING_MIGRATION_MAY_BE_EDITED",
+    "NO_TOKEN_WORKTREE_PROMOTION_OR_RELEASE_AUTHORITY_IN_PHASE_A",
+    "PREDECESSOR_COMMON_CONTROL_CLOSED_SET_IS_PRESERVED_EXACTLY_AND_ONLY_UNION_EXTENDED"
+  ],
+  "touchPolicyDigest": "1f742788b8c231d495de7cc84103f91d53a28481c0850499783322241ece140a",
+  "typedArtifactBootstrapAllocation": {
+    "state": "ALLOCATED_REGISTERED_GRANTED",
+    "allocationOwner": "CENTRAL_CONTROL",
+    "exclusivePacketOwner": "HRIS-WAVE3-PACKET-MOD-PER-COMPPLAN-R2-PHASE-A",
+    "sourcePathAllocations": [
+      {
+        "repo": "backend",
+        "kind": "PREFIX_GLOB",
+        "selector": "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/typedartifact/**"
+      },
+      {
+        "repo": "backend",
+        "kind": "PREFIX_GLOB",
+        "selector": "dwp-people-server/src/test/java/com/dwp/services/people/hr/performance/typedartifact/**"
+      }
+    ],
+    "migrationAllocation": {
+      "leaseId": "HRIS-WAVE3-LEASE-MOD-PER-COMPPLAN-PERFORMANCE-V17-R1",
+      "file": "dwp-people-server/src/main/resources/db/performance-migration/V17__per_modern_compensation_planning.sql",
+      "sharedFoundationTables": [
+        "prf_per_artifact_versions"
+      ],
+      "sharedFoundationTableCount": 1,
+      "domainTables": [
+        "prf_cmp_cycles",
+        "prf_cmp_budget_ledger",
+        "prf_cmp_proposals",
+        "prf_cmp_proposal_revisions",
+        "prf_cmp_approved_snapshots",
+        "prf_cmp_approved_snapshot_lines"
+      ],
+      "domainTableCount": 6,
+      "totalTableCount": 7
+    },
+    "implementationTiming": "MODULE_IMPLEMENTS_ONLY_AFTER_FRESH_PHASE_B_START_TOKEN"
+  },
+  "controlAllocationAuthority": true,
+  "moduleMayEditCommonControlPaths": false,
+  "sourceChangeAuthority": false,
+  "sealedPayloadSha256": "da59b212c28661570697d5ccf192f51b79fd0b1be083cc47da3870b97b42c67f"
+}

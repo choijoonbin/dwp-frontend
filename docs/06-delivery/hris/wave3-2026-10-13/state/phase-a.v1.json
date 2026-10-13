@@ -1,0 +1,80 @@
+{
+  "schema": "dwp.hris.wave3-phase-a-state.v1",
+  "stateId": "HRIS-WAVE3-PHASE-A-STATE-20261013-R1",
+  "asOf": "2026-10-13T14:30:00+09:00",
+  "state": "AUTHORITY_REFRESH_PRESTART_FULFILLED_PENDING_CARRIER",
+  "basePins": {
+    "frontend": {
+      "repository": "repo://dwp-frontend",
+      "branch": "dwp-dev",
+      "checkoutMode": "DWP_DEV_BRANCH",
+      "commit": "388ad0fb2e50689cdc2a00186ffc6ca07f237e57",
+      "tree": "dc0d60f706d17a69cbf0c5cd53fed81afa9fad1a",
+      "upstream": "origin/dwp-dev",
+      "upstreamCommit": "388ad0fb2e50689cdc2a00186ffc6ca07f237e57",
+      "upstreamMatches": true,
+      "cleanAtMaterialization": false
+    },
+    "backend": {
+      "repository": "repo://dwp-backend",
+      "branch": "dwp-dev",
+      "checkoutMode": "DETACHED_AT_ORIGIN_DWP_DEV",
+      "commit": "3565c3e61b6c37a6b8088cc5250791fce32a0d9f",
+      "tree": "af973ef11d003edcf266673330300c612ffe247b",
+      "upstream": "origin/dwp-dev",
+      "upstreamCommit": "3565c3e61b6c37a6b8088cc5250791fce32a0d9f",
+      "upstreamMatches": true,
+      "cleanAtMaterialization": true
+    },
+    "agent": {
+      "repository": "repo://dwp_agent",
+      "branch": "dwp-dev",
+      "checkoutMode": "DWP_DEV_BRANCH",
+      "commit": "1d46fc4ab49c604efb7464574c49d13ee453e059",
+      "tree": "0b9a8dbfd828478ee825452e5aca8688c83e37ab",
+      "upstream": "origin/dwp-dev",
+      "upstreamCommit": "1d46fc4ab49c604efb7464574c49d13ee453e059",
+      "upstreamMatches": true,
+      "cleanAtMaterialization": true
+    }
+  },
+  "authorityRefreshSeal": "2f294eef78f203ffd278e01a995ec02cbaa07f45e058a5b5ecfb2e3b297918b2",
+  "preStartControlGrant": {
+    "receiptId": "HRIS-WAVE3-PRESTART-CONTROL-GRANT-MOD-PER-COMPPLAN-R1",
+    "status": "PASS_TWO_PRESTART_CONDITIONS_FULFILLED",
+    "sealedPayloadSha256": "434334f825716925fb834aec047e65d1de2cddb6c51f4c8f482562feec7d016c"
+  },
+  "preparedPacket": {
+    "packetId": "HRIS-WAVE3-PACKET-MOD-PER-COMPPLAN-R2-PHASE-A",
+    "moduleId": "MOD-PER-COMPPLAN",
+    "state": "PACKET_PREPARED_START_WITHHELD",
+    "sealedPayloadSha256": "6c00ef9d5f5c7b8d06c659e237a6dc2dbdd9b5704223f6dd2611986149353283"
+  },
+  "migrationReservation": {
+    "leaseId": "HRIS-WAVE3-LEASE-MOD-PER-COMPPLAN-PERFORMANCE-V17-R1",
+    "version": "V17",
+    "status": "RESERVED_PHASE_A_PRESTART_GRANTED_PENDING_CARRIER_AND_START_TOKEN",
+    "admission": false
+  },
+  "controlGates": {
+    "phaseACarrierCommittedAndPushed": false,
+    "phaseACarrierRepinned": false,
+    "typedArtifactBootstrapFulfilled": true,
+    "workforceCompensationProjectionFulfilled": true,
+    "v17VacancyRechecked": false,
+    "freshWorktreesRegistered": false,
+    "startTokenIssued": false,
+    "promotionReceiptIssued": false,
+    "sourceChangesAllowed": false,
+    "productionReleaseAllowed": false
+  },
+  "preStartRequestIds": [
+    "W3-CR-MOD-PER-COMPPLAN-TYPED_ARTIFACT_BOOTSTRAP-R1",
+    "W3-CR-MOD-PER-COMPPLAN-WORKFORCE_SNAPSHOT_COMPENSATION_PROJECTION-R1"
+  ],
+  "activeTokens": [],
+  "activeWorktrees": [],
+  "promotionReceipts": [],
+  "nextRequiredAuthority": "CARRIER_COMMIT_PUSH_REPIN_AND_PRESTART_REVALIDATION_THEN_FRESH_WORKTREE_TOKEN_AND_SEPARATE_PROMOTION",
+  "sealedPayloadSha256": "efb8eb3213d47e6d582c2585b7eef58801bf44a5600ce9b7139a68b20df021cc"
+}

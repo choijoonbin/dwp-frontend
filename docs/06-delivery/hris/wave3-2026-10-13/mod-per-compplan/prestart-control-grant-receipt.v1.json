@@ -1,0 +1,225 @@
+{
+  "schema": "dwp.hris.wave3-prestart-control-grant-receipt.v1",
+  "receiptId": "HRIS-WAVE3-PRESTART-CONTROL-GRANT-MOD-PER-COMPPLAN-R1",
+  "issuedAt": "2026-10-13T14:30:00+09:00",
+  "packetId": "HRIS-WAVE3-PACKET-MOD-PER-COMPPLAN-R2-PHASE-A",
+  "moduleId": "MOD-PER-COMPPLAN",
+  "status": "PASS_TWO_PRESTART_CONDITIONS_FULFILLED",
+  "basePins": {
+    "frontend": {
+      "repository": "repo://dwp-frontend",
+      "branch": "dwp-dev",
+      "checkoutMode": "DWP_DEV_BRANCH",
+      "commit": "388ad0fb2e50689cdc2a00186ffc6ca07f237e57",
+      "tree": "dc0d60f706d17a69cbf0c5cd53fed81afa9fad1a",
+      "upstream": "origin/dwp-dev",
+      "upstreamCommit": "388ad0fb2e50689cdc2a00186ffc6ca07f237e57",
+      "upstreamMatches": true,
+      "cleanAtMaterialization": false
+    },
+    "backend": {
+      "repository": "repo://dwp-backend",
+      "branch": "dwp-dev",
+      "checkoutMode": "DETACHED_AT_ORIGIN_DWP_DEV",
+      "commit": "3565c3e61b6c37a6b8088cc5250791fce32a0d9f",
+      "tree": "af973ef11d003edcf266673330300c612ffe247b",
+      "upstream": "origin/dwp-dev",
+      "upstreamCommit": "3565c3e61b6c37a6b8088cc5250791fce32a0d9f",
+      "upstreamMatches": true,
+      "cleanAtMaterialization": true
+    },
+    "agent": {
+      "repository": "repo://dwp_agent",
+      "branch": "dwp-dev",
+      "checkoutMode": "DWP_DEV_BRANCH",
+      "commit": "1d46fc4ab49c604efb7464574c49d13ee453e059",
+      "tree": "0b9a8dbfd828478ee825452e5aca8688c83e37ab",
+      "upstream": "origin/dwp-dev",
+      "upstreamCommit": "1d46fc4ab49c604efb7464574c49d13ee453e059",
+      "upstreamMatches": true,
+      "cleanAtMaterialization": true
+    }
+  },
+  "conditions": [
+    {
+      "category": "TYPED_ARTIFACT_BOOTSTRAP",
+      "requestId": "W3-CR-MOD-PER-COMPPLAN-TYPED_ARTIFACT_BOOTSTRAP-R1",
+      "state": "ALLOCATED_REGISTERED_GRANTED",
+      "touchManifestId": "HRIS-WAVE3-TOUCH-MOD-PER-COMPPLAN-R2",
+      "touchManifestSeal": "da59b212c28661570697d5ccf192f51b79fd0b1be083cc47da3870b97b42c67f",
+      "migrationLeaseId": "HRIS-WAVE3-LEASE-MOD-PER-COMPPLAN-PERFORMANCE-V17-R1",
+      "migrationLeaseSeal": "1439168c05c813e17d72e3889b0e1da314ac1029fd5fd12f060b84868bbc5689",
+      "exclusiveSourcePaths": [
+        {
+          "repo": "backend",
+          "kind": "PREFIX_GLOB",
+          "selector": "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/typedartifact/**"
+        },
+        {
+          "repo": "backend",
+          "kind": "PREFIX_GLOB",
+          "selector": "dwp-people-server/src/test/java/com/dwp/services/people/hr/performance/typedartifact/**"
+        }
+      ],
+      "sharedFoundationTables": [
+        "prf_per_artifact_versions"
+      ],
+      "domainTables": [
+        "prf_cmp_cycles",
+        "prf_cmp_budget_ledger",
+        "prf_cmp_proposals",
+        "prf_cmp_proposal_revisions",
+        "prf_cmp_approved_snapshots",
+        "prf_cmp_approved_snapshot_lines"
+      ],
+      "domainTableCount": 6,
+      "sharedFoundationTableCount": 1,
+      "implementationState": "NOT_STARTED_TOKEN_WITHHELD"
+    },
+    {
+      "category": "WORKFORCE_SNAPSHOT_COMPENSATION_PROJECTION",
+      "requestId": "W3-CR-MOD-PER-COMPPLAN-WORKFORCE_SNAPSHOT_COMPENSATION_PROJECTION-R1",
+      "state": "IMPLEMENTED_TESTED_REGISTERED_GRANTED",
+      "fulfillmentQualification": "CONTRACT_ABI_IMPLEMENTED_TESTED_REGISTERED_GRANTED; owner runtime provider wiring intentionally fail-closed and remains post-result Central integration",
+      "requiredMarkers": [
+        "COMPENSATION_POPULATION_V1",
+        "HRIS_PER_COMPENSATION_POPULATION",
+        "queryCompensationPopulation"
+      ],
+      "observedMarkers": [
+        "COMPENSATION_POPULATION_V1",
+        "HRIS_PER_COMPENSATION_POPULATION",
+        "queryCompensationPopulation"
+      ],
+      "evidenceFiles": [
+        {
+          "path": "contracts/in-process/hris/workforce-snapshot-query-port.v1.schema.json",
+          "bytes": 15330,
+          "sha256": "02c1485291354cea6864dba17a0f528848563a251e1ca668f3bd310cb4a5b7f3",
+          "markers": [
+            "COMPENSATION_POPULATION_V1",
+            "HRIS_PER_COMPENSATION_POPULATION",
+            "queryCompensationPopulation"
+          ]
+        },
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/workforce/v1/CompensationPopulationSnapshotPage.java",
+          "bytes": 11158,
+          "sha256": "88d33fb6e176d27d3eeb163c1be9e73bd06ee7923a931d6eec2aeb8b3e489761",
+          "markers": [
+            "COMPENSATION_POPULATION_V1",
+            "HRIS_PER_COMPENSATION_POPULATION"
+          ]
+        },
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/workforce/v1/CompensationPopulationSnapshotQuery.java",
+          "bytes": 1771,
+          "sha256": "f3655d28505780332dbc2e488349f409d5efb8b484fd5b40e41b5f3edb25a537",
+          "markers": [
+            "COMPENSATION_POPULATION_V1",
+            "HRIS_PER_COMPENSATION_POPULATION"
+          ]
+        },
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/workforce/v1/GuardedWorkforceSnapshotQueryPort.java",
+          "bytes": 2602,
+          "sha256": "220b3c317c8c85d89b63738d44a8bd858170fcc5b0a73fd0cffe0c71eb8c57ab",
+          "markers": [
+            "queryCompensationPopulation"
+          ]
+        },
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/workforce/v1/VerifiedCompensationPopulationCursor.java",
+          "bytes": 3792,
+          "sha256": "e9eba2e54ca6bbd95450170c485732b93395066071cba623d8a8db284646e206",
+          "markers": [
+            "COMPENSATION_POPULATION_V1",
+            "HRIS_PER_COMPENSATION_POPULATION"
+          ]
+        },
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/workforce/v1/VerifiedCompensationPopulationRequest.java",
+          "bytes": 3803,
+          "sha256": "e37cc80e944bcf45c61c1f147b38abd7e5cf55e73e183d7a6755318cb1e5f478",
+          "markers": [
+            "COMPENSATION_POPULATION_V1",
+            "HRIS_PER_COMPENSATION_POPULATION"
+          ]
+        },
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/workforce/v1/WorkforceSnapshotProjection.java",
+          "bytes": 231,
+          "sha256": "c74140c42564e59c2fc8c42e8ac06664f7e8718c33d40b09053c4523b1df1209",
+          "markers": [
+            "COMPENSATION_POPULATION_V1"
+          ]
+        },
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/workforce/v1/WorkforceSnapshotProvider.java",
+          "bytes": 701,
+          "sha256": "b520fc561abb10547ec6e8aa535c8186c7727ea6df55a0f56c85f9bb19626f72",
+          "markers": [
+            "queryCompensationPopulation"
+          ]
+        },
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/workforce/v1/WorkforceSnapshotQueryPort.java",
+          "bytes": 1048,
+          "sha256": "e27dff1c02ccb0daaf096544529610f2a4d342670994da0da5ab81a03a3dd591",
+          "markers": [
+            "queryCompensationPopulation"
+          ]
+        },
+        {
+          "path": "dwp-people-server/src/test/java/com/dwp/services/people/hris/contracts/workforce/v1/CompensationPopulationContractTest.java",
+          "bytes": 26323,
+          "sha256": "711c4226c6baed3e6ba2936130acf4ee30cef31ccd000721909cccdbc6ec3d86",
+          "markers": [
+            "COMPENSATION_POPULATION_V1",
+            "HRIS_PER_COMPENSATION_POPULATION",
+            "queryCompensationPopulation"
+          ]
+        }
+      ],
+      "legacyPerformanceV1Preserved": true,
+      "legacyCompatibilityEvidenceFiles": [
+        {
+          "path": "contracts/in-process/hris/workforce-snapshot-query-port.v1.schema.json",
+          "bytes": 15330,
+          "sha256": "02c1485291354cea6864dba17a0f528848563a251e1ca668f3bd310cb4a5b7f3"
+        },
+        {
+          "path": "dwp-people-server/src/test/java/com/dwp/services/people/hris/contracts/workforce/v1/WorkforceSnapshotContractTest.java",
+          "bytes": 36115,
+          "sha256": "fcb75621c464aad48050ac5b7e95f1e8033302d6a3e93d73c635f8690f9610d6"
+        }
+      ],
+      "targetedTestExecutionReceiptId": "HRIS-WAVE3-WORKFORCE-COMPENSATION-TARGETED-TEST-EXECUTION-R1",
+      "targetedTestExecutionReceiptSeal": "11fd3f37dcb37f3a39adbf82dafff05c978e2b1acfb84d067cdfb179f55c37d7",
+      "targetedTestResult": "PASS_24_TESTS_ZERO_FAILURES_ERRORS_SKIPPED",
+      "targetedTestTotals": {
+        "tests": 24,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "backendCommit": "3565c3e61b6c37a6b8088cc5250791fce32a0d9f",
+      "backendTree": "af973ef11d003edcf266673330300c612ffe247b"
+    }
+  ],
+  "requestRegisterId": "HRIS-WAVE3-CONTROL-REQUESTS-20261013-R1",
+  "requestRegisterSeal": "7d5a3712cdb782b2a28810da02fa9227252762287f29210ed1de799b0410cb26",
+  "controlAuthority": {
+    "typedArtifactPathAllocationGranted": true,
+    "sharedFoundationTableAllocationGranted": true,
+    "workforceProjectionAcceptanceGranted": true,
+    "sourceChangeAuthority": false,
+    "startTokenAuthority": false,
+    "worktreeRegistrationAuthority": false,
+    "migrationAdmissionAuthority": false,
+    "promotionAuthority": false,
+    "productionReleaseAuthority": false
+  },
+  "phaseBTokenGate": "WITHHELD_UNTIL_PHASE_A_CARRIER_IS_COMMITTED_PUSHED_REPINNED_AND_BOTH_CONDITIONS_REVALIDATE",
+  "sealedPayloadSha256": "434334f825716925fb834aec047e65d1de2cddb6c51f4c8f482562feec7d016c"
+}
