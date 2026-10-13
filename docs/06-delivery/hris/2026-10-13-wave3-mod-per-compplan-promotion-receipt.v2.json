@@ -1,0 +1,213 @@
+{
+  "schema": "dwp.hris.wave3-mod-per-compplan-promotion-receipt.v1",
+  "receiptId": "HRIS-WAVE3-MOD-PER-COMPPLAN-PROMOTION-20261013-R2",
+  "issuedAt": "2026-10-13T16:30:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "status": "PASS_SCOPED_DELEGATION",
+  "decision": "MOD_PER_COMPPLAN_DOMAIN_AUTHORING_AUTHORIZED",
+  "predecessor": {
+    "phaseACarrier": {
+      "commit": "1f187a7903d2792b696a6f8ca2b207ebb79b33e1",
+      "tree": "17da7a80fed75c137ca76ea23081dae05155b19b",
+      "parent": "388ad0fb2e50689cdc2a00186ffc6ca07f237e57",
+      "branch": "dwp-dev",
+      "upstream": "origin/dwp-dev"
+    },
+    "phaseAManifest": {
+      "path": "docs/06-delivery/hris/wave3-2026-10-13/manifest.v1.json",
+      "bytes": 5089,
+      "sha256": "dd370dacbce5240f87ddcf77fa1fd21d478faa1a8fd372acd6ff73c5ceda6a82",
+      "sealedPayloadSha256": "ae119946a79349c7d2390b1d7b9a706f9e25440b4815958e5a0cf12a9496ced7"
+    },
+    "activationState": {
+      "path": "docs/06-delivery/hris/wave3-delegation-successors/2026-10-13/mod-per-compplan-r2/state/activation-pending-promotion.v1.json",
+      "bytes": 4823,
+      "sha256": "b1e07f477855ca8d0953c57148c6b52cd58d2bdbb3517415e568a76cc7180b7e",
+      "sealedPayloadSha256": "094133f23274e883540d7fa6f92405d53f6dea744936725e1b6973f000a53aa2"
+    }
+  },
+  "bundleCommit": {
+    "commit": "373dbc23f971677da1069ed92829591999ace552",
+    "tree": "6ff21564030ea0ef2666493348e82bfb38cf1c26",
+    "manifestPath": "docs/06-delivery/hris/wave3-delegation-successors/2026-10-13/mod-per-compplan-r2/manifest.v1.json",
+    "manifestSha256": "58e145cca6cc720d392f27863144a788863ef1816fa7801a805eb9b33cbe6fb6",
+    "selfReferenceRule": "The promotion receipt is carried by a later direct-child commit and pins the immutable Wave3 MOD-PER-COMPPLAN Phase B bundle commit."
+  },
+  "delegation": {
+    "module": "PER",
+    "moduleId": "MOD-PER-COMPPLAN",
+    "sliceId": "MOD-PER-COMPPLAN",
+    "sessionId": "HRIS-PER",
+    "packetId": "HRIS-WAVE3-PACKET-MOD-PER-COMPPLAN-R2-PHASE-A",
+    "packetPath": "docs/06-delivery/hris/wave3-2026-10-13/mod-per-compplan/packet.v2.json",
+    "packetSha256": "f87751ba8760de6b19b950953ec0cc4b97d2dab99f96b0b1e25fefeb1ea7cc51",
+    "packetSealedPayloadSha256": "6c00ef9d5f5c7b8d06c659e237a6dc2dbdd9b5704223f6dd2611986149353283",
+    "tokenId": "HRIS-WAVE3-START-MOD-PER-COMPPLAN-R2",
+    "tokenPath": "docs/06-delivery/hris/wave3-delegation-successors/2026-10-13/mod-per-compplan-r2/tokens/mod-per-compplan.start-token.v1.json",
+    "tokenSha256": "4dd079268c32a0b442bcd8aaedd6738e90d7bad4375e6216e95099d746c9c345",
+    "tokenSealedPayloadSha256": "355f169b75a46609c6d22d08e959bbabf3a3d40ad06d0f3a04682f8496482caa",
+    "migrationAuthorityMode": "ADMITTED_EXACT_LEASE",
+    "migrationLeaseId": "HRIS-WAVE3-LEASE-MOD-PER-COMPPLAN-PERFORMANCE-V17-R3",
+    "migrationLeasePath": "docs/06-delivery/hris/wave3-delegation-successors/2026-10-13/mod-per-compplan-r2/migration-lease-admission.v1.json",
+    "migrationLeaseSha256": "c7b3efe6b5115a581b0b4e479d314ce1c80a39e79b4ee0aa298d83fa9f9a4315",
+    "migrationLeaseSealedPayloadSha256": "cf79bdd973db1ca320bae7f06588f1b9e6c4be5a52f8bd74e95ec0917eb5b837",
+    "migrationExactRelativePath": "dwp-people-server/src/main/resources/db/performance-migration/V17__per_modern_compensation_planning.sql",
+    "worktrees": [
+      {
+        "module": "PER",
+        "slice_id": "MOD-PER-COMPPLAN",
+        "token_id": "HRIS-WAVE3-START-MOD-PER-COMPPLAN-R2",
+        "repo": "frontend",
+        "absolute_path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave3-20261013-r2/mod-per-compplan/frontend",
+        "branch": "codex/hris-wave3-per-compplan-frontend-20261013-r2",
+        "upstream": "origin/codex/hris-wave3-per-compplan-frontend-20261013-r2",
+        "head": "a3a0a75451a7ed14b1f5135f1f56b6271dee41fd",
+        "tree": "906cc25aaf2b3deb28d95d59621d55c6abdadaac",
+        "state_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "clean": "true",
+        "ahead": "0",
+        "behind": "0",
+        "state": "CREATED_PUSHED_CLEAN"
+      },
+      {
+        "module": "PER",
+        "slice_id": "MOD-PER-COMPPLAN",
+        "token_id": "HRIS-WAVE3-START-MOD-PER-COMPPLAN-R2",
+        "repo": "backend",
+        "absolute_path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave3-20261013-r2/mod-per-compplan/backend",
+        "branch": "codex/hris-wave3-per-compplan-backend-20261013-r2",
+        "upstream": "origin/codex/hris-wave3-per-compplan-backend-20261013-r2",
+        "head": "8577ef532243c63b34877444738a4edde8b4c0e5",
+        "tree": "fd3ac7eff67aa6a2a1c41a52da1fe9dab6e9576b",
+        "state_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "clean": "true",
+        "ahead": "0",
+        "behind": "0",
+        "state": "CREATED_PUSHED_CLEAN"
+      }
+    ],
+    "effectivePacketState": "PACKET_AUTHORIZED_DOMAIN_AUTHORING",
+    "authority": "DOMAIN_AUTHORING_ONLY",
+    "controlObligations": {
+      "path": "docs/06-delivery/hris/wave3-2026-10-13/control-requests.v1.json",
+      "bytes": 4797,
+      "sha256": "0da7d28e69e087bc4815086a7365bc37763bf96d2653b4ecb8e5b38cedff106c",
+      "registerId": "HRIS-WAVE3-CONTROL-REQUESTS-20261013-R1",
+      "sealedPayloadSha256": "7d5a3712cdb782b2a28810da02fa9227252762287f29210ed1de799b0410cb26",
+      "preStart": [
+        {
+          "requestId": "W3-CR-MOD-PER-COMPPLAN-TYPED_ARTIFACT_BOOTSTRAP-R1",
+          "moduleId": "MOD-PER-COMPPLAN",
+          "category": "TYPED_ARTIFACT_BOOTSTRAP",
+          "owner": "CENTRAL_CONTROL",
+          "phase": "PRE_START",
+          "requiredBeforeStartToken": true,
+          "moduleMayImplement": false,
+          "registrationState": "REGISTERED_PHASE_A",
+          "fulfillmentState": "ALLOCATED_REGISTERED_GRANTED",
+          "scope": "exclusively allocate typedartifact main/test roots and prf_per_artifact_versions as the single V17 shared foundation table; module implementation remains token-gated"
+        },
+        {
+          "requestId": "W3-CR-MOD-PER-COMPPLAN-WORKFORCE_SNAPSHOT_COMPENSATION_PROJECTION-R1",
+          "moduleId": "MOD-PER-COMPPLAN",
+          "category": "WORKFORCE_SNAPSHOT_COMPENSATION_PROJECTION",
+          "owner": "CENTRAL_CONTROL",
+          "phase": "PRE_START",
+          "requiredBeforeStartToken": true,
+          "moduleMayImplement": false,
+          "registrationState": "REGISTERED_PHASE_A",
+          "fulfillmentState": "IMPLEMENTED_TESTED_REGISTERED_GRANTED",
+          "scope": "pin verified queryCompensationPopulation with HRIS_PER_COMPENSATION_POPULATION and COMPENSATION_POPULATION_V1 without changing PERFORMANCE_V1",
+          "fulfillmentQualification": "CONTRACT_ABI_IMPLEMENTED_TESTED_REGISTERED_GRANTED; owner runtime provider wiring intentionally fail-closed and remains post-result Central integration"
+        }
+      ],
+      "afterPushedModuleResult": [
+        {
+          "requestId": "W3-CR-MOD-PER-COMPPLAN-AUTH_PEP-R1",
+          "moduleId": "MOD-PER-COMPPLAN",
+          "category": "AUTH_PEP",
+          "owner": "CENTRAL_CONTROL",
+          "phase": "AFTER_PUSHED_MODULE_RESULT",
+          "requiredBeforeStartToken": false,
+          "moduleMayImplement": false,
+          "registrationState": "REGISTERED_PHASE_A",
+          "fulfillmentState": "REGISTERED_WITH_FULFILLMENT_AFTER_RESULT",
+          "scope": "register MOD-AUTH-025/026/027 and deny-precedence bindings"
+        },
+        {
+          "requestId": "W3-CR-MOD-PER-COMPPLAN-CONTRACT_GATEWAY-R1",
+          "moduleId": "MOD-PER-COMPPLAN",
+          "category": "CONTRACT_GATEWAY",
+          "owner": "CENTRAL_CONTROL",
+          "phase": "AFTER_PUSHED_MODULE_RESULT",
+          "requiredBeforeStartToken": false,
+          "moduleMayImplement": false,
+          "registrationState": "REGISTERED_PHASE_A",
+          "fulfillmentState": "REGISTERED_WITH_FULFILLMENT_AFTER_RESULT",
+          "scope": "publish OpenAPI, AsyncAPI, XCON-020/021 and generated Gateway contracts"
+        },
+        {
+          "requestId": "W3-CR-MOD-PER-COMPPLAN-SHELL_ROUTE-R1",
+          "moduleId": "MOD-PER-COMPPLAN",
+          "category": "SHELL_ROUTE",
+          "owner": "CENTRAL_CONTROL",
+          "phase": "AFTER_PUSHED_MODULE_RESULT",
+          "requiredBeforeStartToken": false,
+          "moduleMayImplement": false,
+          "registrationState": "REGISTERED_PHASE_A",
+          "fulfillmentState": "REGISTERED_WITH_FULFILLMENT_AFTER_RESULT",
+          "scope": "register route, navigation, product manifest, shell permission and page host"
+        },
+        {
+          "requestId": "W3-CR-MOD-PER-COMPPLAN-SVC_PEP_SECURITY-R1",
+          "moduleId": "MOD-PER-COMPPLAN",
+          "category": "SVC_PEP_SECURITY",
+          "owner": "CENTRAL_CONTROL",
+          "phase": "AFTER_PUSHED_MODULE_RESULT",
+          "requiredBeforeStartToken": false,
+          "moduleMayImplement": false,
+          "registrationState": "REGISTERED_PHASE_A",
+          "fulfillmentState": "REGISTERED_WITH_FULFILLMENT_AFTER_RESULT",
+          "scope": "register SVC-PEP-PER-001 workload, tenant, purpose, projection, replay and negative-security bindings"
+        },
+        {
+          "requestId": "W3-CR-MOD-PER-COMPPLAN-INTEGRATION_VERIFY-R1",
+          "moduleId": "MOD-PER-COMPPLAN",
+          "category": "INTEGRATION_VERIFY",
+          "owner": "CENTRAL_CONTROL",
+          "phase": "AFTER_PUSHED_MODULE_RESULT",
+          "requiredBeforeStartToken": false,
+          "moduleMayImplement": false,
+          "registrationState": "REGISTERED_PHASE_A",
+          "fulfillmentState": "REGISTERED_WITH_FULFILLMENT_AFTER_RESULT",
+          "scope": "wire and test HRM owner runtime compensation projection before central integration acceptance; then run the single central contract, route, authorization, sync and PAY-withheld verification batch"
+        }
+      ]
+    }
+  },
+  "activeTokenClosedSet": [
+    "HRIS-WAVE3-START-MOD-PER-COMPPLAN-R2"
+  ],
+  "authority": {
+    "moduleParallelDevelopmentAuthorized": true,
+    "authorizedModules": [
+      "PER"
+    ],
+    "authorizedSlices": [
+      "MOD-PER-COMPPLAN"
+    ],
+    "startTokensIssued": [
+      "HRIS-WAVE3-START-MOD-PER-COMPPLAN-R2"
+    ],
+    "migrationAdmissionAuthorized": [
+      "HRIS-WAVE3-LEASE-MOD-PER-COMPPLAN-PERFORMANCE-V17-R3"
+    ],
+    "sharedControlPathChangeAuthorizedForModule": false,
+    "integrationMergeAuthorized": false,
+    "payConsumptionAuthorized": false,
+    "customerDataAuthorized": false,
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "sealedPayloadSha256": "4abb05adfdf99e3e96e814726a8836a87456b4cba385ed351589475d391d92df"
+}
