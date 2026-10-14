@@ -86,11 +86,21 @@ describe('generated product route authorization contracts', () => {
       'spaces',
       'workplace',
     ]);
-    expect(router).toHaveLength(124);
+    expect(router).toHaveLength(132);
     expect(registry).toEqual(router);
     expect(() =>
       buildProductPageRouteContractSource([HCM_PRODUCT_MANIFEST], PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE)
     ).not.toThrow();
+    expect(() =>
+      buildProductPageRouteContractSource(
+        [HCM_PRODUCT_MANIFEST],
+        PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.map((route) =>
+          route.routeContractKey === 'route.hcm.audit.evidence.page'
+            ? { ...route, routeId: 'hcm.audit.hris-alias' }
+            : route
+        )
+      )
+    ).toThrow(/outside its surface boundary/u);
   });
 
   it('never turns DATA or ACTION registry records into browser routes', () => {
@@ -115,8 +125,8 @@ describe('generated product route authorization contracts', () => {
     );
     expect(nonPages.every((route) => route.routeId === null && route.pattern === null)).toBe(true);
     expect(DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(71);
-    expect(ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(195);
-    expect(REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG).toHaveLength(195);
+    expect(ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(203);
+    expect(REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG).toHaveLength(203);
     expect(REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG.every((route) => route.routeKind === 'PAGE')).toBe(
       true
     );

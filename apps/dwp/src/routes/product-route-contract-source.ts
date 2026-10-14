@@ -60,6 +60,18 @@ export type ResolvedProductLegacyRoute = {
 const ROUTE_ID_PATTERN = /^[a-z0-9]+(?:[.-][a-z0-9]+)*$/u;
 const ROUTE_CONTRACT_PATTERN = /^route\.[a-z0-9]+(?:[.-][a-z0-9]+)*\.page$/u;
 
+function isExactSharedShellProductPageRoute(record: ProductPageRouteContractSource): boolean {
+  // This HCM evidence view is mounted by the shared administration shell. Keep the exception
+  // closed over every identity field so it cannot broaden HCM ownership beyond this one route.
+  return (
+    record.routeContractKey === 'route.hcm.audit.evidence.page' &&
+    record.routeId === 'hcm.audit.hris' &&
+    record.pattern === '/admin/governance/audit-overview' &&
+    record.productId === 'hcm' &&
+    record.surfaceId === 'hcm.management'
+  );
+}
+
 function assertRoutePattern(pattern: string, routeId: string): void {
   if (
     !pattern.startsWith('/') ||
@@ -117,7 +129,10 @@ export function defineProductRouteContractSource(
     const surface = manifest.surfaces.find((candidate) => candidate.id === record.surfaceId);
     if (!surface)
       throw new Error(`Product page route references an unknown surface: ${record.routeId}`);
-    if (!surface.routeMatchers.some((matcher) => matchesProductRoute(record.pattern, matcher))) {
+    if (
+      !surface.routeMatchers.some((matcher) => matchesProductRoute(record.pattern, matcher)) &&
+      !isExactSharedShellProductPageRoute(record)
+    ) {
       throw new Error(`Product page route is outside its surface boundary: ${record.routeId}`);
     }
     const expectedContractPrefix = `route.${manifest.id}.`;
