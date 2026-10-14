@@ -1,4 +1,5 @@
 export { HrisProductMap } from './components/hris-product-map';
+export { HRIS_RUNTIME_NAVIGATION_MANIFEST } from './model/hris-runtime-navigation-manifest';
 export {
   countHrisCatalogByInventoryGroup,
   filterHrisCatalog,
@@ -20,3 +21,8 @@ export type {
   HrisPersona,
   HrisWorkSurface,
 } from './model/hris-product-map-catalog';
+export type {
+  HrisRuntimeCatalogProjection,
+  HrisRuntimeNavigationManifest,
+  HrisRuntimeNavigationNode,
+} from './model/hris-runtime-navigation-manifest';

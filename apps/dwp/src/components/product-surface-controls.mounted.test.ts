@@ -175,7 +175,9 @@ describe('mounted management scope control', () => {
     expect(selector?.getAttribute('aria-label')).toBe('Management scope');
     expect(selector?.getAttribute('title')).toBe('TENANT');
     expect(selector?.value).toBe('tenant');
-    expect(selector?.querySelector('option[value="expired"]')?.disabled).toBe(true);
+    expect(selector?.querySelector<HTMLOptionElement>('option[value="expired"]')?.disabled).toBe(
+      true
+    );
 
     act(() => {
       if (!selector) throw new Error('Expected management scope selector.');

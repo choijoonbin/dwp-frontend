@@ -30,15 +30,14 @@ export type PendingCompensationCommand<T = unknown> = Readonly<{
   envelope: CompensationCommandEnvelope<T>;
 }>;
 
-export function newCompensationCommandId(): string {
-  return globalThis.crypto.randomUUID();
-}
-
 export function isAmbiguousCompensationCommandFailure(error: unknown): boolean {
   if (error instanceof HttpTransportError) {
     return error.reason === 'NETWORK' || error.reason === 'TIMEOUT';
   }
-  return error instanceof HttpError && (error.status === 408 || error.status === 429 || error.status >= 500);
+  return (
+    error instanceof HttpError &&
+    (error.status === 408 || error.status === 429 || error.status >= 500)
+  );
 }
 
 export function commandResultCorrelationId(result: CompensationCommandResult): string {
@@ -112,12 +111,5 @@ export function validatePendingCompensationCommand(
       parseCancelCompensationCycleBody(pending.envelope.body);
       break;
   }
-  return pending;
-}
-
-/** Keeps the exact object identity needed for safe ambiguous-result replay. */
-export function retainPendingCompensationCommand<T>(
-  pending: PendingCompensationCommand<T>
-): PendingCompensationCommand<T> {
   return pending;
 }

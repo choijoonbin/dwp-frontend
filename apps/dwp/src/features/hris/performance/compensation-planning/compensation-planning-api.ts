@@ -45,21 +45,6 @@ import type {
   UpsertCompensationProposalBody,
 } from './compensation-planning-contract';
 
-export const COMPENSATION_PLANNING_API_OPERATIONS = Object.freeze({
-  queryCycles: 'modern.compplan.cycles.query',
-  queryCycle: 'modern.compplan.cycle.query',
-  createCycle: 'modern.compplan.cycle.create',
-  reviseCycle: 'modern.compplan.cycle.revise',
-  allocateBudget: 'modern.compplan.budget.allocate',
-  upsertProposal: 'modern.compplan.proposal.upsert',
-  submitProposal: 'modern.compplan.proposal.submit',
-  queryProposals: 'modern.compplan.proposals.query',
-  queryProposal: 'modern.compplan.proposal.query',
-  approvePlan: 'modern.compplan.plan.approve',
-  publishSnapshot: 'modern.compplan.snapshot.publish',
-  cancelCycle: 'modern.compplan.cycle.cancel',
-} as const);
-
 export type CompensationReadContext = Readonly<{
   correlationId: string;
   contextScopeKey?: string;
@@ -108,7 +93,10 @@ function readConfig(context: CompensationReadContext) {
   };
 }
 
-function queryString(query: CompensationCollectionQuery, anchorKey: 'asOf' | 'referenceEffectiveAt') {
+function queryString(
+  query: CompensationCollectionQuery,
+  anchorKey: 'asOf' | 'referenceEffectiveAt'
+) {
   const params = new URLSearchParams();
   const anchor = anchorKey === 'asOf' ? query.asOf : query.referenceEffectiveAt;
   if (anchor) params.set(anchorKey, anchor);
@@ -249,9 +237,7 @@ export function allocateCompensationBudget(
   authority: ProductSurfaceGovernedMutationAuthority
 ): Promise<PerformanceCommandReceipt> {
   return post(
-    `${COMPENSATION_PLANNING_BASE_PATH}/cycles/${encodeURIComponent(
-      cycleId
-    )}/budget-allocations`,
+    `${COMPENSATION_PLANNING_BASE_PATH}/cycles/${encodeURIComponent(cycleId)}/budget-allocations`,
     requireVersion(envelope),
     authority,
     parsePerformanceCommandReceipt,
@@ -314,9 +300,7 @@ export function publishCompensationSnapshot(
   authority: ProductSurfaceGovernedMutationAuthority
 ): Promise<CompensationSnapshotPublished> {
   return post(
-    `${COMPENSATION_PLANNING_BASE_PATH}/cycles/${encodeURIComponent(
-      cycleId
-    )}/approved-snapshots`,
+    `${COMPENSATION_PLANNING_BASE_PATH}/cycles/${encodeURIComponent(cycleId)}/approved-snapshots`,
     requireVersion(envelope),
     authority,
     parseCompensationSnapshotPublished,

@@ -1,7 +1,55 @@
 {
   "version": 1,
-  "maximumEntries": 18,
+  "maximumEntries": 28,
   "entries": [
+    {
+      "path": "apps/dwp/src/features/hris/performance/compensation-planning/compensation-planning-api.ts",
+      "owner": "HRIS-PER / HRIS Integration Control",
+      "reason": "MOD-PER-COMPPLAN is implemented and verified in isolation but must remain unreachable until its official PAGE authorization, route registration, renderer, and shell ownership are activated atomically.",
+      "removalCondition": "Remove when MOD-PER-COMPPLAN is connected to the server-authorized PAGE projection and its production route renderer in the central activation change."
+    },
+    {
+      "path": "apps/dwp/src/features/hris/performance/compensation-planning/compensation-planning-command-runtime.tsx",
+      "owner": "HRIS-PER / HRIS Integration Control",
+      "reason": "MOD-PER-COMPPLAN is implemented and verified in isolation but must remain unreachable until its official PAGE authorization, route registration, renderer, and shell ownership are activated atomically.",
+      "removalCondition": "Remove when MOD-PER-COMPPLAN is connected to the server-authorized PAGE projection and its production route renderer in the central activation change."
+    },
+    {
+      "path": "apps/dwp/src/features/hris/performance/compensation-planning/compensation-planning-command.ts",
+      "owner": "HRIS-PER / HRIS Integration Control",
+      "reason": "MOD-PER-COMPPLAN is implemented and verified in isolation but must remain unreachable until its official PAGE authorization, route registration, renderer, and shell ownership are activated atomically.",
+      "removalCondition": "Remove when MOD-PER-COMPPLAN is connected to the server-authorized PAGE projection and its production route renderer in the central activation change."
+    },
+    {
+      "path": "apps/dwp/src/features/hris/performance/compensation-planning/compensation-planning-contract.ts",
+      "owner": "HRIS-PER / HRIS Integration Control",
+      "reason": "MOD-PER-COMPPLAN is implemented and verified in isolation but must remain unreachable until its official PAGE authorization, route registration, renderer, and shell ownership are activated atomically.",
+      "removalCondition": "Remove when MOD-PER-COMPPLAN is connected to the server-authorized PAGE projection and its production route renderer in the central activation change."
+    },
+    {
+      "path": "apps/dwp/src/features/hris/performance/compensation-planning/compensation-planning-copy.ts",
+      "owner": "HRIS-PER / HRIS Integration Control",
+      "reason": "MOD-PER-COMPPLAN is implemented and verified in isolation but must remain unreachable until its official PAGE authorization, route registration, renderer, and shell ownership are activated atomically.",
+      "removalCondition": "Remove when MOD-PER-COMPPLAN is connected to the server-authorized PAGE projection and its production route renderer in the central activation change."
+    },
+    {
+      "path": "apps/dwp/src/features/hris/performance/compensation-planning/compensation-planning-workspace.tsx",
+      "owner": "HRIS-PER / HRIS Integration Control",
+      "reason": "MOD-PER-COMPPLAN is implemented and verified in isolation but must remain unreachable until its official PAGE authorization, route registration, renderer, and shell ownership are activated atomically.",
+      "removalCondition": "Remove when MOD-PER-COMPPLAN is connected to the server-authorized PAGE projection and its production route renderer in the central activation change."
+    },
+    {
+      "path": "apps/dwp/src/features/hris/performance/compensation-planning/index.ts",
+      "owner": "HRIS-PER / HRIS Integration Control",
+      "reason": "MOD-PER-COMPPLAN is implemented and verified in isolation but must remain unreachable until its official PAGE authorization, route registration, renderer, and shell ownership are activated atomically.",
+      "removalCondition": "Remove when MOD-PER-COMPPLAN is connected to the server-authorized PAGE projection and its production route renderer in the central activation change."
+    },
+    {
+      "path": "apps/dwp/src/features/hris/performance/compensation-planning/use-compensation-planning-workspace.ts",
+      "owner": "HRIS-PER / HRIS Integration Control",
+      "reason": "MOD-PER-COMPPLAN is implemented and verified in isolation but must remain unreachable until its official PAGE authorization, route registration, renderer, and shell ownership are activated atomically.",
+      "removalCondition": "Remove when MOD-PER-COMPPLAN is connected to the server-authorized PAGE projection and its production route renderer in the central activation change."
+    },
     {
       "path": "apps/dwp/src/features/hris/shell/components/hris-product-map-group.tsx",
       "owner": "HRIS Integration Control",
@@ -85,6 +133,18 @@
       "owner": "HRIS Integration Control",
       "reason": "Phase 1 review catalog intentionally remains outside the home dashboard after the approved home-versus-explorer separation.",
       "removalCondition": "Remove when the governed HRIS work explorer route is added with its product-surface authorization contract."
+    },
+    {
+      "path": "apps/dwp/src/features/hris/shell/model/hris-information-architecture.generated.ts",
+      "owner": "HRIS Integration Control",
+      "reason": "The generated 98-node IA topology is a governed input for the future HRIS work explorer and does not activate navigation by itself.",
+      "removalCondition": "Remove when the governed HRIS work explorer consumes the runtime navigation manifest in production."
+    },
+    {
+      "path": "apps/dwp/src/features/hris/shell/model/hris-runtime-navigation-manifest.ts",
+      "owner": "HRIS Integration Control",
+      "reason": "The runtime navigation manifest joins the historical IA topology with the current 76-node catalog while the explorer remains outside production routing.",
+      "removalCondition": "Remove when the governed HRIS work explorer consumes the runtime navigation manifest in production."
     },
     {
       "path": "apps/dwp/src/features/hris/administration/index.ts",

@@ -1,15 +1,7 @@
 import { Temporal } from 'temporal-polyfill';
 
-export const COMPENSATION_PLANNING_ROUTE =
-  '/hr/operations/performance/compensation-planning' as const;
 export const COMPENSATION_PLANNING_BASE_PATH =
   '/api/people/v1/hris/performance/compensation-planning' as const;
-
-export const COMPENSATION_PLANNING_CAPABILITIES = Object.freeze({
-  view: 'hcm.compensation.plan.view',
-  propose: 'hcm.compensation.plan.propose',
-  approve: 'hcm.compensation.plan.approve',
-} as const);
 
 export const COMPENSATION_CYCLE_STATUSES = [
   'DRAFT',
@@ -193,9 +185,7 @@ export type CompensationSnapshotPublished = Readonly<{
 }>;
 
 export type CompensationCommandResult =
-  | PerformanceCommandReceipt
-  | CompensationRichCommandResult
-  | CompensationSnapshotPublished;
+  PerformanceCommandReceipt | CompensationRichCommandResult | CompensationSnapshotPublished;
 
 export type HrmSourceSnapshotRef = Readonly<{
   snapshotPublicId: string;
@@ -402,8 +392,7 @@ function populationLine(value: unknown): CompensationPopulationLine {
     assignmentPublicId: uuid(source.assignmentPublicId),
     organizationPublicId: uuid(source.organizationPublicId),
     gradePublicId: source.gradePublicId === null ? null : uuid(source.gradePublicId),
-    jobProfilePublicId:
-      source.jobProfilePublicId === null ? null : uuid(source.jobProfilePublicId),
+    jobProfilePublicId: source.jobProfilePublicId === null ? null : uuid(source.jobProfilePublicId),
     assignmentOwnerRevision: integer(source.assignmentOwnerRevision, 1),
     eligibleComponentCodes: Object.freeze(components),
   });
@@ -445,9 +434,7 @@ function proposalContent(value: unknown): CompensationProposalContent {
     effectiveTo: nullableDate(source.effectiveTo),
     exceptionReasonCode: null,
     supersedesProposalPublicId:
-      source.supersedesProposalPublicId === null
-        ? null
-        : uuid(source.supersedesProposalPublicId),
+      source.supersedesProposalPublicId === null ? null : uuid(source.supersedesProposalPublicId),
   });
 }
 
@@ -502,9 +489,7 @@ export function parseCompensationCycleAuthoringContext(
   });
 }
 
-export function parseCreateCompensationCycleBody(
-  value: unknown
-): CreateCompensationCycleBody {
+export function parseCreateCompensationCycleBody(value: unknown): CreateCompensationCycleBody {
   const source = record(value, [
     'cycleCode',
     'guidelines',
@@ -523,9 +508,7 @@ export function parseCreateCompensationCycleBody(
   });
 }
 
-export function parseReviseCompensationCycleBody(
-  value: unknown
-): ReviseCompensationCycleBody {
+export function parseReviseCompensationCycleBody(value: unknown): ReviseCompensationCycleBody {
   const source = record(value, [
     'guidelines',
     'population',
@@ -582,9 +565,7 @@ export function parseSubmitCompensationProposalBody(
   });
 }
 
-export function parseApproveCompensationPlanBody(
-  value: unknown
-): ApproveCompensationPlanBody {
+export function parseApproveCompensationPlanBody(value: unknown): ApproveCompensationPlanBody {
   const source = record(value, ['decision', 'reasonCode']);
   if (source.decision !== 'APPROVE') return invalid();
   return Object.freeze({
@@ -600,9 +581,7 @@ export function parsePublishCompensationSnapshotBody(
   return Object.freeze({ approvalReceiptId: uuid(source.approvalReceiptId) });
 }
 
-export function parseCancelCompensationCycleBody(
-  value: unknown
-): Record<string, never> {
+export function parseCancelCompensationCycleBody(value: unknown): Record<string, never> {
   record(value, []);
   return Object.freeze({});
 }
@@ -688,7 +667,8 @@ function proposal(value: unknown, detail: boolean): CompensationProposal {
     detail ? ['amount', 'content'] : []
   );
   const amountMasked = bool(source.amountMasked);
-  if (amountMasked && (source.amount !== undefined || source.content !== undefined)) return invalid();
+  if (amountMasked && (source.amount !== undefined || source.content !== undefined))
+    return invalid();
   return Object.freeze({
     proposalId: uuid(source.proposalId),
     aggregateVersion: integer(source.aggregateVersion, 1),
@@ -821,9 +801,7 @@ function typedChild(value: unknown): CompensationTypedChild {
   });
 }
 
-export function parseCompensationRichCommandResult(
-  value: unknown
-): CompensationRichCommandResult {
+export function parseCompensationRichCommandResult(value: unknown): CompensationRichCommandResult {
   const source = record(value, [
     'commandReceiptId',
     'status',
@@ -850,9 +828,7 @@ export function parseCompensationRichCommandResult(
   });
 }
 
-export function parseCompensationSnapshotPublished(
-  value: unknown
-): CompensationSnapshotPublished {
+export function parseCompensationSnapshotPublished(value: unknown): CompensationSnapshotPublished {
   const source = record(value, [
     'approvalReceiptId',
     'cycleId',
