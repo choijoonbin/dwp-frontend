@@ -1,0 +1,149 @@
+{
+  "schema": "dwp.hris.wave5-module-result-evidence.v1",
+  "evidenceId": "HRIS-WAVE5-BASE-TFR-PER-013-MODULE-RESULT-R1",
+  "sliceId": "BASE-TFR-PER-013",
+  "moduleSession": "HRIS-PER",
+  "status": "PASS_MODULE_RESULT_RECORDED_CONTROL_INTEGRATION_PENDING",
+  "issuedAt": "2026-10-14T18:44:49+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "predecessorAuthority": {
+    "startToken": {
+      "path": "docs/06-delivery/hris/wave5-2026-10-14/per-013-r1/start-token-issued.v1.json",
+      "tokenId": "HRIS-WAVE5-START-BASE-TFR-PER-013-R1",
+      "sha256": "efd069735ce01690a19d448aaa87c6e573df5ccf4439a2be18158d1c912230cf",
+      "bytes": 7044
+    },
+    "issuedManifest": {
+      "path": "docs/06-delivery/hris/wave5-2026-10-14/per-013-r1/issued-manifest.v1.json",
+      "manifestId": "HRIS-WAVE5-BASE-TFR-PER-013-START-AUTHORITY-ISSUED-R1",
+      "sha256": "f8eff7006106908a3ec3c30f5489b14e14020a9f006e85c079087d95ceef8dd2",
+      "bytes": 3004
+    },
+    "mergeToDwpDevAuthorized": false,
+    "featureEnablementAuthorized": false
+  },
+  "centralEvidenceBase": {
+    "backend": {
+      "branch": "dwp-dev",
+      "commit": "831fceab0d609e72d3ec88db8bbf25058467b2b4",
+      "tree": "e0f6bbe07a1fcc67efa7812752e976686dc3675c"
+    },
+    "frontendAtDispatch": {
+      "branch": "dwp-dev",
+      "commit": "c6cfd882a7957359cc41bfbe3542094d59a6cf43",
+      "tree": "3e1e725ea31b4f0ebaf03e8702fd9547c879d4dc"
+    }
+  },
+  "moduleResult": {
+    "backend": {
+      "branch": "codex/hris-wave5-per-013-backend-20261014-r1",
+      "upstream": "origin/codex/hris-wave5-per-013-backend-20261014-r1",
+      "baseCommit": "831fceab0d609e72d3ec88db8bbf25058467b2b4",
+      "resultCommit": "13bb8f39fccc2a3f2750db2a53300d40beefa632",
+      "resultTree": "9444e740ccb76153c645818a557cb6b406b9c7d0",
+      "clean": true,
+      "upstreamAhead": 0,
+      "upstreamBehind": 0,
+      "remoteExact": true,
+      "changedFileCount": 23,
+      "changedFileManifestSha256": "8cb66433c48bc8d6511e91623933c4d627f1db077496cba8513b66a7ae518c39",
+      "touchPolicyCompliant": true
+    },
+    "frontend": {
+      "branch": "codex/hris-wave5-per-013-frontend-20261014-r1",
+      "upstream": "origin/codex/hris-wave5-per-013-frontend-20261014-r1",
+      "baseCommit": "c6cfd882a7957359cc41bfbe3542094d59a6cf43",
+      "resultCommit": "5252c4c9eb34d632a9e49d532508d18394cb7543",
+      "resultTree": "09b95082a5b7616a99466250aa1a4d75175a37e4",
+      "clean": true,
+      "upstreamAhead": 0,
+      "upstreamBehind": 0,
+      "remoteExact": true,
+      "changedFileCount": 15,
+      "changedFileManifestSha256": "1a21f649682797242829f944ec9e118d0111de6b4890f11b2c7a3a3bac6a5f36",
+      "touchPolicyCompliant": true
+    },
+    "migration": {
+      "stream": "PEOPLE_PERFORMANCE",
+      "version": "V18",
+      "path": "dwp-people-server/src/main/resources/db/performance-migration/V18__per_base_tfr_per_013.sql",
+      "gitBlobSha1": "9c59cf074f9751a540b9dac1ebfa61406cba3216",
+      "sha256": "f543b7a77f75e624edce1cb19d13c9d3c5fece0c2bab640ddb7a5e472bad7375",
+      "bytes": 8647,
+      "cleanAndV17ToV18UpgradePassed": true,
+      "protectedV17Modified": false
+    }
+  },
+  "verificationResults": [
+    {
+      "commandId": "PER_013_BACKEND_CHANGED_CLUSTER",
+      "status": "PASS",
+      "testedCommit": "13bb8f39fccc2a3f2750db2a53300d40beefa632",
+      "testCount": 46,
+      "failures": 0,
+      "coverage": [
+        "authority-and-service-controller",
+        "sealed-contract-canonical-proxy",
+        "postgres-v18-clean-upgrade-rls-startup"
+      ]
+    },
+    {
+      "commandId": "PER_013_FRONTEND_CHANGED_CLUSTER",
+      "status": "PASS",
+      "testedCommit": "5252c4c9eb34d632a9e49d532508d18394cb7543",
+      "testFileCount": 5,
+      "testCount": 45,
+      "failures": 0,
+      "eslint": "PASS",
+      "prettier": "PASS"
+    },
+    {
+      "commandId": "PER_013_BROWSER_ACCESSIBILITY_MATRIX",
+      "status": "PASS",
+      "browser": "Chromium",
+      "viewportAndThemeCaseCount": 5,
+      "axeViolations": 0,
+      "horizontalOverflowFailures": 0
+    },
+    {
+      "commandId": "PER_013_SCOPE_AND_GIT_INTEGRITY",
+      "status": "PASS",
+      "diffCheck": "PASS",
+      "controlOrProtectedPathChanges": 0,
+      "routeOrShellActivationChanges": 0
+    }
+  ],
+  "baselineDiagnostics": {
+    "fullFrontendTypecheck": "NOT_A_MODULE_GATE",
+    "preExistingUnrelatedErrorCount": 2,
+    "errorsInPer013ChangedPaths": 0
+  },
+  "acceptanceCriteria": [
+    {"id": "PER-CONTRACT-REVIEW", "status": "PASS"},
+    {"id": "PER-GOLDEN-REVIEW-001", "status": "PASS"},
+    {"id": "AUTHZ-NO-REVIEW-OUTSIDE-ASSIGNMENT", "status": "PASS"},
+    {"id": "PER-IAQ-022-SEPARATION", "status": "PASS"},
+    {"id": "PER-REVIEW-IDEMPOTENCY-CAS", "status": "PASS"},
+    {"id": "PER-REVIEW-EVENT-EXACTLY-ONCE", "status": "PASS"},
+    {"id": "PER-V18-CLEAN-UPGRADE", "status": "PASS"},
+    {"id": "PER-FE-REVIEW-LOADING-EMPTY-DENIED-PARTIAL-RECOVERY-A11Y", "status": "PASS"}
+  ],
+  "independentFinalAudit": {
+    "status": "READY",
+    "remainingP0": 0,
+    "remainingP1": 0,
+    "safeForCentralAcceptanceReview": true
+  },
+  "authority": {
+    "moduleResultRecorded": true,
+    "resultAdmissionAuthorized": false,
+    "integrationMergeAuthorized": false,
+    "routeOrMenuActivationAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "policyActivationAuthorized": false,
+    "customerDataAuthorized": false,
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "CENTRAL_RESULT_ACCEPTANCE_AND_CONTROLLED_INTEGRATION_REVIEW"
+}

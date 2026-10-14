@@ -1,0 +1,173 @@
+{
+  "schema": "dwp.hris.wave5-module-result-evidence.v1",
+  "evidenceId": "HRIS-WAVE5-BASE-TFR-TIM-017-MODULE-RESULT-R1",
+  "sliceId": "BASE-TFR-TIM-017",
+  "moduleSession": "HRIS-TIM",
+  "status": "PASS_MODULE_RESULT_RECORDED_CONTROL_INTEGRATION_PENDING",
+  "issuedAt": "2026-10-14T18:52:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "predecessorAuthority": {
+    "startToken": {
+      "path": "docs/06-delivery/hris/wave5-2026-10-14/tim-017-r1/start-token-issued-replacement.v2.json",
+      "tokenId": "HRIS-WAVE5-START-BASE-TFR-TIM-017-R2",
+      "sha256": "f5d6ed32ac08f9ff9be1dba714409f7a35b496e50650691fda480928faf3e943",
+      "bytes": 7765
+    },
+    "issuedManifest": {
+      "path": "docs/06-delivery/hris/wave5-2026-10-14/tim-017-r1/issued-manifest-replacement.v2.json",
+      "manifestId": "HRIS-WAVE5-BASE-TFR-TIM-017-START-AUTHORITY-ISSUED-R2",
+      "sha256": "4c59a38dd065cc5f0c8967480e0619427d87b8062b3f3f7edff3e6e8f2709d86",
+      "bytes": 4249
+    },
+    "replacementReason": "CORRECT_TIME_OPENAPI_PIN_WITHOUT_CHANGING_PER_AUTHORITY",
+    "mergeToDwpDevAuthorized": false,
+    "featureEnablementAuthorized": false
+  },
+  "centralEvidenceBase": {
+    "backend": {
+      "branch": "dwp-dev",
+      "commit": "831fceab0d609e72d3ec88db8bbf25058467b2b4",
+      "tree": "e0f6bbe07a1fcc67efa7812752e976686dc3675c"
+    },
+    "frontendAtDispatch": {
+      "branch": "dwp-dev",
+      "commit": "c6cfd882a7957359cc41bfbe3542094d59a6cf43",
+      "tree": "3e1e725ea31b4f0ebaf03e8702fd9547c879d4dc"
+    }
+  },
+  "moduleResult": {
+    "backend": {
+      "branch": "codex/hris-wave5-tim-017-backend-20261014-r1",
+      "upstream": "origin/codex/hris-wave5-tim-017-backend-20261014-r1",
+      "baseCommit": "831fceab0d609e72d3ec88db8bbf25058467b2b4",
+      "implementationCommit": "c4d4a667b39639aac99653af6a718fa7d55ae233",
+      "boundaryNullCorrectionCommit": "dd85e031d2f123252dda20e51ff7756ed809719e",
+      "resultCommit": "d7a8696c6a4d9e4c74ad1346530151743c1a2f09",
+      "resultTree": "bfe8324c0e61d9d87b13994edfda8747ea5bb8a2",
+      "clean": true,
+      "upstreamAhead": 0,
+      "upstreamBehind": 0,
+      "remoteExact": true,
+      "changedFileCount": 25,
+      "changedFileManifestSha256": "2dd106577f1191e1720bb3db7a3c3713e54c861593640979a97f58f1f9b0a2dd",
+      "touchPolicyCompliant": true
+    },
+    "frontend": {
+      "branch": "codex/hris-wave5-tim-017-frontend-20261014-r1",
+      "upstream": "origin/codex/hris-wave5-tim-017-frontend-20261014-r1",
+      "baseCommit": "c6cfd882a7957359cc41bfbe3542094d59a6cf43",
+      "resultCommit": "300fa11e2f286959b033edb2d5bacfafece9f4a4",
+      "resultTree": "d7df393968631078e454c7313b26f3d3a6983b87",
+      "clean": true,
+      "upstreamAhead": 0,
+      "upstreamBehind": 0,
+      "remoteExact": true,
+      "changedFileCount": 9,
+      "changedFileManifestSha256": "23408a1825c84f357b6e0c8b0718bff8edb4742e674ddf17bb4ad40d67a20226",
+      "touchPolicyCompliant": true,
+      "correctedTimeOpenApiPin": "6702161141add3acde02896bb6844e5e40c6c6c0dc4b93eab859e77e9446f0e5",
+      "correctedPinOccurrenceCount": 2
+    },
+    "migration": {
+      "stream": "TIME_MAIN",
+      "version": "V11",
+      "path": "dwp-time-server/src/main/resources/db/migration/V11__tim_base_tfr_tim_017.sql",
+      "gitBlobSha1": "1e6e63f3364a95e021f181edcf1d1d3f84aaf305",
+      "sha256": "2c40ad38aac29df600a15fac361d82d8f114cc60f72dd41a8174e6945b119e93",
+      "bytes": 34854,
+      "migrationIntegrationPassed": true,
+      "protectedPriorMigrationsModified": false
+    }
+  },
+  "verificationResults": [
+    {
+      "commandId": "TIM_017_BACKEND_MODULE_SUITE",
+      "status": "PASS",
+      "testedCommit": "c4d4a667b39639aac99653af6a718fa7d55ae233",
+      "command": ":dwp-time-server:test",
+      "build": "SUCCESSFUL",
+      "failures": 0
+    },
+    {
+      "commandId": "TIM_017_BACKEND_FINAL_BOUNDARY_DELTA",
+      "status": "PASS",
+      "testedCommit": "d7a8696c6a4d9e4c74ad1346530151743c1a2f09",
+      "testClass": "TimecardOwnerBoundaryContractTest",
+      "testCount": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "checks": [
+        "explicit-null-rejected",
+        "wrong-scalar-and-container-types-rejected-before-binding",
+        "optional-omission-preserved",
+        "repository-no-mutation-on-rejection"
+      ]
+    },
+    {
+      "commandId": "TIM_017_FRONTEND_TIME_CLUSTER",
+      "status": "PASS",
+      "testedCommit": "300fa11e2f286959b033edb2d5bacfafece9f4a4",
+      "testFileCount": 14,
+      "testCount": 123,
+      "failures": 0
+    },
+    {
+      "commandId": "TIM_017_EXACT_SLICE",
+      "status": "PASS",
+      "testedCommit": "300fa11e2f286959b033edb2d5bacfafece9f4a4",
+      "testCount": 15,
+      "failures": 0
+    },
+    {
+      "commandId": "TIM_017_CONTRACT_MIGRATION_AND_SCOPE",
+      "status": "PASS",
+      "asyncApiContract": "PASS",
+      "migrationIntegration": "PASS",
+      "changedFileEslint": "PASS",
+      "diffCheck": "PASS",
+      "controlOrProtectedPathChanges": 0,
+      "routeOrShellActivationChanges": 0
+    }
+  ],
+  "baselineDiagnostics": {
+    "fullFrontendTypecheck": "NOT_A_MODULE_GATE",
+    "preExistingUnrelatedErrorCount": 2,
+    "unrelatedAreas": [
+      "compensation-planning",
+      "hcm-audit-evidence-api.test.ts"
+    ],
+    "errorsInTim017ChangedPaths": 0
+  },
+  "acceptanceCriteria": [
+    {"id": "TIM-CONTRACT-TIMECARD", "status": "PASS"},
+    {"id": "TIM-GOLDEN-TIMECARD-001", "status": "PASS"},
+    {"id": "AUTHZ-TIMECARD-TENANT-POPULATION-FIELD-PURPOSE", "status": "PASS"},
+    {"id": "TIM-TIMECARD-STATE-PRECEDENCE", "status": "PASS"},
+    {"id": "TIM-NO-SELF-APPROVAL-NO-OWN-CHANGE", "status": "PASS"},
+    {"id": "TIM-IDEMPOTENCY-CAS-RECEIPT", "status": "PASS"},
+    {"id": "TIM-EVENT-V1-ONLY-EXACTLY-ONCE", "status": "PASS"},
+    {"id": "TIM-V11-V10-LEDGER-FORWARD-ALTERATION", "status": "PASS"},
+    {"id": "TIM-PUBLISHER-ACL-LEAST-PRIVILEGE", "status": "PASS"},
+    {"id": "TIM-NO-DUAL-READ-WRITE", "status": "PASS"},
+    {"id": "TIM-FE-TIMECARD-FAILURE-RECOVERY-A11Y", "status": "PASS"}
+  ],
+  "independentFinalAudit": {
+    "status": "READY",
+    "remainingP0": 0,
+    "remainingP1": 0,
+    "safeForCentralAcceptanceReview": true
+  },
+  "authority": {
+    "moduleResultRecorded": true,
+    "resultAdmissionAuthorized": false,
+    "integrationMergeAuthorized": false,
+    "routeOrMenuActivationAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "policyActivationAuthorized": false,
+    "customerDataAuthorized": false,
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "CENTRAL_RESULT_ACCEPTANCE_AND_CONTROLLED_INTEGRATION_REVIEW"
+}
