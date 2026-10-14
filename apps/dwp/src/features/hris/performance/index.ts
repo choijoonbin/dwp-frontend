@@ -80,3 +80,50 @@ export type {
   PerformancePopulationPreview,
   PerformancePopulationPreviewMember,
 } from './model/performance-cycle-contract';
+
+// BASE-TFR-PER-013 assigned-review module exports. Runtime route activation remains control-owned.
+export { HrisPerformanceReviewWorkspace } from './pages/hris-performance-review-workspace';
+export type { HrisPerformanceReviewWorkspaceProps } from './pages/hris-performance-review-workspace';
+export {
+  useHrisPerformanceReviewRequestScope,
+  usePerformanceReviewRuntime,
+} from './hooks/use-performance-review';
+export type {
+  PerformanceReviewCommandDescriptor,
+  PerformanceReviewCommandExecutor,
+  PerformanceReviewFailure,
+  PerformanceReviewRuntime,
+  PerformanceReviewRuntimeOptions,
+} from './hooks/use-performance-review';
+export {
+  readAssignedPerformanceReview,
+  saveAssignedPerformanceReviewDraft,
+  submitAssignedPerformanceReview,
+  PERFORMANCE_REVIEW_API_CONTRACTS,
+} from './api/performance-review-api';
+export type {
+  PerformanceReviewDataSource,
+  PerformanceReviewMutationExecution,
+} from './api/performance-review-api';
+export {
+  PERFORMANCE_REVIEW_DEFAULT_ENABLED,
+  parseAssignedPerformanceReview,
+  parsePerformanceReviewSnapshot,
+  parsePerformanceReviewSubmission,
+} from './model/performance-review-contract';
+export {
+  buildPerformanceReviewDraftCommand,
+  setPerformanceReviewAnswer,
+  validatePerformanceReviewAnswers,
+} from './model/performance-review-draft';
+export type {
+  AssignedPerformanceReview,
+  PerformanceReviewAnswer,
+  PerformanceReviewDraftCommand,
+  PerformanceReviewForm,
+  PerformanceReviewFormItem,
+  PerformanceReviewSnapshot,
+  PerformanceReviewSubmission,
+  PerformanceReviewValidation,
+  SubmitPerformanceReviewCommand,
+} from './model/performance-review-types';
