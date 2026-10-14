@@ -1,0 +1,81 @@
+{
+  "schema": "dwp.hris.migration-lease.v1",
+  "leaseId": "HRIS-WAVE5-LEASE-BASE-TFR-PER-013-PEOPLE-PERFORMANCE-V18-R1",
+  "issuedAt": "2026-10-14T16:56:17+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-PER",
+  "sliceId": "BASE-TFR-PER-013",
+  "state": "RESERVED_PENDING_FINAL_PIN_AND_WORKTREE",
+  "authoringAllowed": false,
+  "repository": "dwp-backend",
+  "stream": "PEOPLE_PERFORMANCE",
+  "databaseOwner": "dwp-people-server",
+  "schemaOwner": "hris_performance",
+  "baseCommit": "831fceab0d609e72d3ec88db8bbf25058467b2b4",
+  "migrationDirectoryTreeManifestSha256": "8248918fe94294b76aac1d2e798ab04eeeeaf06bc691c41e3fa48ea5d78cf838",
+  "observedVersions": [
+    "V1",
+    "V2",
+    "V3",
+    "V16",
+    "V17"
+  ],
+  "observedHighWater": "V17",
+  "reservedVersion": "V18",
+  "exactPath": "dwp-people-server/src/main/resources/db/performance-migration/V18__per_base_tfr_per_013.sql",
+  "exactPathAbsentAtReservation": true,
+  "predecessors": [
+    {
+      "version": "V16",
+      "path": "dwp-people-server/src/main/resources/db/performance-migration/V16__per_base_tfr_per_016.sql",
+      "role": "performance workforce projection predecessor"
+    },
+    {
+      "version": "V17",
+      "path": "dwp-people-server/src/main/resources/db/performance-migration/V17__per_modern_compensation_planning.sql",
+      "sha256": "593e54e076c5607e07a35eae1d069862257b9dce6fbb6a54dbe09198810ea15a",
+      "role": "immutable compensation-planning predecessor"
+    }
+  ],
+  "schemaEffect": {
+    "requiredCharacteristics": [
+      "tenant-scoped public identity and repository isolation",
+      "assigned-review, ordered form snapshot, typed draft answers and immutable submission facts",
+      "unique tenant-scoped assignment and idempotency constraints",
+      "expected-version fencing and append-only audit/outbox facts",
+      "no cross-service database foreign key",
+      "no mutation or reinterpretation of V17 compensation-planning rows"
+    ],
+    "seeds": "NONE",
+    "backfill": "NONE_FOR_NEW_TABLES; upgrade preserves V1-V17 bytes and data"
+  },
+  "upgradePath": {
+    "clean": "EMPTY_DATABASE_TO_V18",
+    "incremental": "V17_TO_V18",
+    "requiredEvidence": [
+      "Flyway version and checksum inventory",
+      "clean schema contract",
+      "V17 fixture upgrade preserving compensation-planning data",
+      "tenant-isolation and duplicate-key negatives",
+      "immutability and stale-version negatives"
+    ]
+  },
+  "rollbackStrategy": "FORWARD_FIX_ONLY; feature remains OFF; never delete or mutate V18 after integration",
+  "activationGate": "CLEAN_PINNED_WORKTREE_AND_START_TOKEN_ISSUED",
+  "expiryConditions": [
+    "V18 appears on dwp-dev before activation",
+    "PEOPLE_PERFORMANCE high-water changes from V17",
+    "backend base commit or migration directory manifest changes",
+    "the exact path or module branch changes"
+  ],
+  "authority": {
+    "versionReserved": true,
+    "migrationCreationAuthorized": false,
+    "existingMigrationEditAuthorized": false,
+    "migrationExecutionAuthorized": false,
+    "integrationAuthorized": false,
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextTransition": "RESERVED_PENDING_FINAL_PIN_AND_WORKTREE_TO_ACTIVE_AUTHORING_ONLY_AFTER_COLLISION_RECHECK_AND_WORKTREE_PINNING"
+}

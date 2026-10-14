@@ -1,0 +1,295 @@
+{
+  "schema": "dwp.hris.module-work-packet.v1",
+  "packetId": "HRIS-WAVE5-WORK-BASE-TFR-PER-013-R1",
+  "issuedAt": "2026-10-14T16:56:17+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "lifecycleState": "APPROVED_PENDING_START_TOKEN",
+  "sliceId": "BASE-TFR-PER-013",
+  "sourceRef": "TFR-PER-013",
+  "sourceFamilySha256": "e3059c698654bf061da72729e99a66a5b3fb9c66668d9ffe13ffb1e15150799b",
+  "sourceRowCount": 26,
+  "capability": "PER-REVIEW-001",
+  "moduleLane": "HRIS-PER",
+  "ownerAgent": "HRIS-PER",
+  "reviewer": "SYS_COMMON_INTEGRATION_CONTROL",
+  "singleWriterRequired": true,
+  "baseObservation": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "831fceab0d609e72d3ec88db8bbf25058467b2b4",
+      "tree": "e0f6bbe07a1fcc67efa7812752e976686dc3675c",
+      "upstream": "origin/dwp-dev",
+      "upstreamMatched": true,
+      "clean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "2d542571e76766785562f1b271048686522eb455",
+      "tree": "f6dcc2983eac69596f3c65a97ab649be3875c2e0",
+      "upstream": "origin/dwp-dev",
+      "upstreamMatched": true,
+      "cleanAtAudit": true,
+      "note": "Preparation evidence advances the frontend head. The issued token binds the pushed preparation commit, not this observation."
+    }
+  },
+  "authoritativeBindings": [
+    {
+      "path": "../module-dispatch-r1/per-base-tfr-per-013-preflight.v1.json",
+      "sha256": "108d2464f143fb4f3aeb0610dd09eda84298cdc336147e0c9e2122fed889e5bc"
+    },
+    {
+      "path": "../per-tim-control-r1/sealed-contract-decisions.v1.json",
+      "sha256": "0e02af36ced57cec49995b7f804f66444f20e91992a309bc3b293c6f7d3b48cd"
+    },
+    {
+      "path": "../per-tim-control-r1/control-bridge-implementation-plan.v1.json",
+      "sha256": "17f6dd131318b19cdfa6b9cfee97eda6427cc518bae3f239dfcce8b045a01419"
+    },
+    {
+      "path": "../per-tim-control-r1/control-bridge-integration-receipt.v1.json",
+      "sha256": "ca6c60d21701eb8ece24263c58aacd768e16066e97ecf24a3147851d8e04ec1d"
+    },
+    {
+      "path": "../per-tim-control-r1/transport-openapi-correction-receipt.v1.json",
+      "sha256": "9f0aa71cc24beaaed626ecbd1d726f3da4ee77cac3eb0741de74b89a4cff989f"
+    }
+  ],
+  "dependencyPins": {
+    "requiredDependencies": [
+      "DEP-001",
+      "DEP-002",
+      "DEP-003",
+      "DEP-016"
+    ],
+    "authorization": {
+      "version": 42,
+      "registryChecksum": "f73f9a64816ac8f5567a2a7c292821f4a40e6d675915ebc3c3ac8aad7d1fd983",
+      "state": "INTEGRATED_DRAFT_DEFAULT_OFF"
+    },
+    "transport": {
+      "backendCommit": "831fceab0d609e72d3ec88db8bbf25058467b2b4",
+      "peopleOpenApiSha256": "4f8b31b2b0e3d2227bf6c02f9bf18092121323292160408601cabbd70c579ce8",
+      "gatewayOpenApiSha256": "50a57ad5aa93178f47d724ca3dfa08a64985de93a099071db66220dfe686c2a2",
+      "state": "SEALED"
+    },
+    "event": {
+      "path": "contracts/asyncapi/domain-events.yaml",
+      "sha256": "10109906ce46afa412e55536b3aedfee536be66c019196c3a54889a91038c73d",
+      "message": "PerformanceReviewSubmitted.v1",
+      "state": "SEALED"
+    }
+  },
+  "userOutcome": {
+    "primaryUsers": [
+      "employee review participant",
+      "assigned reviewer",
+      "performance operator"
+    ],
+    "operationalQuestion": "Can an authorized participant load the exact assigned review, save a typed draft safely, and submit one immutable review result without disclosing another assignment?",
+    "primaryAction": "open an assigned review, complete typed form answers, save with concurrency protection, and submit once",
+    "pageArchetype": "assigned-review workspace with form navigation, draft status, validation summary and guarded submit",
+    "boundedOutcome": "review assignment, draft and immutable submission are governed by exact tenant, assignment, purpose, population and field projection evidence"
+  },
+  "contracts": {
+    "operations": [
+      {
+        "id": "PEP-PER-012",
+        "operationId": "getAssignedReview",
+        "method": "GET",
+        "publicPath": "/api/people/v1/hris/performance/reviews/{reviewId}",
+        "ownerPath": "/v1/hris/performance/reviews/{reviewId}"
+      },
+      {
+        "id": "PEP-PER-013",
+        "operationId": "saveReviewDraft",
+        "method": "PATCH",
+        "mediaType": "application/merge-patch+json",
+        "publicPath": "/api/people/v1/hris/performance/reviews/{reviewId}",
+        "ownerPath": "/v1/hris/performance/reviews/{reviewId}"
+      },
+      {
+        "id": "PEP-PER-014",
+        "operationId": "submitReview",
+        "method": "POST",
+        "publicPath": "/api/people/v1/hris/performance/reviews/{reviewId}/submit",
+        "ownerPath": "/v1/hris/performance/reviews/{reviewId}/submit"
+      },
+      {
+        "id": "IAQ-022",
+        "operationId": "getPerformanceMultiraterSurveyWorkbench",
+        "method": "GET",
+        "publicPath": "/api/people/v1/hris/performance/workbench/multirater-surveys",
+        "ownerPath": "/v1/hris/performance/workbench/multirater-surveys",
+        "rule": "Entry-query actions are cycle operations only and must not impersonate assigned-review actions."
+      }
+    ],
+    "event": {
+      "message": "PerformanceReviewSubmitted.v1",
+      "state": "SEALED_MINIMIZED_IMMUTABLE_EXACTLY_ONCE"
+    },
+    "transport": {
+      "peopleSchemaGraphSha256": "d9b2d974df45983aea1919e75e38ee063c08a9a835716743bc493a8b02b39bc0",
+      "gatewayOpenApiSha256": "50a57ad5aa93178f47d724ca3dfa08a64985de93a099071db66220dfe686c2a2",
+      "errorSchema": "HrisProblemDetailsV1",
+      "etagRequired": [
+        "GET assigned review",
+        "PATCH review draft"
+      ]
+    }
+  },
+  "scope": {
+    "included": [
+      "assigned-review domain, application service, repository, controller and owner PEP integration",
+      "typed form, rubric, answer, draft and immutable submission handling",
+      "tenant and assignment isolation, purpose/population/field projection enforcement",
+      "idempotent draft and submit commands with expected-version CAS",
+      "PerformanceReviewSubmitted.v1 transactional outbox publication",
+      "V18 clean and V17-to-V18 upgrade migration",
+      "accessible assigned-review frontend states and targeted recovery behavior"
+    ],
+    "excluded": [
+      "IAQ-022 cycle creation or validation implementation beyond consuming its sealed discovery boundary",
+      "compensation planning behavior or V17 mutation",
+      "goal, calibration, talent, learning or payroll features",
+      "Authorization/OpenAPI/Gateway/generated-contract edits",
+      "menu, route or HRIS shell redesign",
+      "feature enablement, customer data, policy activation or production release"
+    ]
+  },
+  "touchManifest": {
+    "moduleAllowedBackend": [
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/performance/review/**",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/performance/review/**",
+      "dwp-people-server/src/main/resources/db/performance-migration/V18__per_base_tfr_per_013.sql",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hr/performance/compensationplanning/CompensationPlanningMigrationContractTest.java (test-only V18 compatibility assertions)"
+    ],
+    "moduleAllowedFrontend": [
+      "apps/dwp/src/features/hris/performance/api/performance-review-*.ts",
+      "apps/dwp/src/features/hris/performance/components/performance-review-*.tsx",
+      "apps/dwp/src/features/hris/performance/hooks/use-performance-review*.ts",
+      "apps/dwp/src/features/hris/performance/model/performance-review-*.ts",
+      "apps/dwp/src/features/hris/performance/pages/*performance-review*.tsx",
+      "apps/dwp/src/features/hris/performance/__tests__/g3-slices/base-tfr-per-013.slice.test.tsx",
+      "apps/dwp/src/features/hris/performance/index.ts (PER-013 exports only)"
+    ],
+    "controlOnly": [
+      "contracts/product-authorization/**",
+      "contracts/openapi/**",
+      "contracts/asyncapi/**",
+      "dwp-auth-server/**",
+      "dwp-gateway/**",
+      "dwp-platform-contracts/**",
+      "scripts/export-openapi-contracts.py",
+      "scripts/generate-product-authorization-*.py",
+      "apps/dwp/src/routes/**",
+      "apps/dwp/src/features/hris/shell/**",
+      "architecture/**",
+      "libs/api-contracts/**",
+      "docs/06-delivery/hris/**"
+    ],
+    "protected": [
+      "dwp-people-server/src/main/resources/db/performance-migration/V1__per_create_evaluation_cycle_foundation.sql",
+      "dwp-people-server/src/main/resources/db/performance-migration/V2__per_create_population_freeze.sql",
+      "dwp-people-server/src/main/resources/db/performance-migration/V3__per_harden_review_operation_capture.sql",
+      "dwp-people-server/src/main/resources/db/performance-migration/V16__per_base_tfr_per_016.sql",
+      "dwp-people-server/src/main/resources/db/performance-migration/V17__per_modern_compensation_planning.sql",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/compensationplanning/**",
+      "docs/06-delivery/hris/recovery/**"
+    ],
+    "outsideAllowedPathAction": "STOP_AND_RAISE_CONTROL_CHANGE_REQUEST"
+  },
+  "runtimeSecurityRollout": {
+    "systemOfRecord": "dwp-people-server",
+    "tenantContext": "trusted Gateway/owner context plus repository isolation; request body and browser-supplied trusted headers are never authoritative",
+    "population": "SELF or TARGET_POPULATION only when the current assignment authorizes the actor",
+    "fieldProjection": "PERFORMANCE_ASSIGNED and PERFORMANCE_REVIEW_PRIVATE according to the v42 owner decision",
+    "purpose": "PERFORMANCE_REVIEW",
+    "idempotency": "same key and canonical request digest returns the original result; mismatched reuse fails with no side effect",
+    "optimisticConcurrency": "draft and submit require If-Match/expected version and stale commands fail without side effects",
+    "featureFlag": "module-owned PER-013 flag if one is needed",
+    "featureDefault": "OFF",
+    "activation": "not authorized by this packet"
+  },
+  "implementationOrdering": {
+    "beforeStartToken": "Pin the corrected v42 authorization/OpenAPI/Gateway/AsyncAPI control bridge, reserve V18, and materialize clean dedicated worktrees.",
+    "afterStartToken": "Implement the People assigned-review owner slice and PER frontend only within the sealed touch manifest, then commit and push module branches without merging dwp-dev.",
+    "antiCircularityRule": "PER runtime implementation and its acceptance tests are module deliverables and are not prerequisites for issuing the token that authorizes them."
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "PER-CONTRACT-REVIEW",
+      "criterion": "Owner and browser operations consume and produce the sealed review form, rubric, typed-answer, ETag, merge-patch and Problem Details contracts without local shadow DTO drift."
+    },
+    {
+      "id": "PER-GOLDEN-REVIEW-001",
+      "criterion": "The canonical synthetic assigned-review fixture loads, saves and submits with stable hashes, order and decimal representation."
+    },
+    {
+      "id": "AUTHZ-NO-REVIEW-OUTSIDE-ASSIGNMENT",
+      "criterion": "Wrong tenant, actor, assignment, purpose, population or field projection is denied before disclosure and cross-scope reads remain opaque."
+    },
+    {
+      "id": "PER-IAQ-022-SEPARATION",
+      "criterion": "IAQ-022 exposes only cycle operations and neither routes nor labels it as an assigned-review mutation surface."
+    },
+    {
+      "id": "PER-REVIEW-IDEMPOTENCY-CAS",
+      "criterion": "Exact retry is stable; mismatched idempotency reuse and stale CAS create no draft, submission, receipt or outbox side effect."
+    },
+    {
+      "id": "PER-REVIEW-EVENT-EXACTLY-ONCE",
+      "criterion": "A successful submit atomically records one immutable submission and one minimized PerformanceReviewSubmitted.v1 outbox fact."
+    },
+    {
+      "id": "PER-V18-CLEAN-UPGRADE",
+      "criterion": "V18 passes clean migration and V17-to-V18 upgrade while preserving compensation-planning V17 data and checksum assumptions."
+    },
+    {
+      "id": "PER-FE-REVIEW-LOADING-EMPTY-DENIED-PARTIAL-RECOVERY-A11Y",
+      "criterion": "The UI proves loading, empty, denied, partial failure, retry/recovery, keyboard, focus, accessible naming, high contrast, reduced motion and 200-percent zoom behavior."
+    }
+  ],
+  "verificationPlan": {
+    "policy": "CHANGED_CLUSTER_FIRST_THEN_SLICE_CONTRACT_AND_ONE_MODULE_BATCH; do not rerun broad repository suites after each finding.",
+    "backend": [
+      "review transport/schema and golden-fixture tests",
+      "owner PEP tenant/assignment/purpose/population/field negative tests",
+      "draft/submit idempotency, CAS and atomic outbox tests",
+      "V18 clean and V17 upgrade migration tests plus compensation compatibility assertion"
+    ],
+    "frontend": [
+      "directly changed API/model/hook/component tests",
+      "one PER-013 slice test covering all sealed UI states and accessibility"
+    ],
+    "final": [
+      "changed-path manifest",
+      "git diff --check",
+      "clean module branches pushed without merging dwp-dev"
+    ]
+  },
+  "deliverables": [
+    "backend and frontend module branch commits and upstream push evidence",
+    "all eight acceptance results with exact test commands",
+    "V18 clean and V17-to-V18 upgrade evidence",
+    "authorization, tenant isolation, idempotency, CAS and exactly-once event evidence",
+    "frontend failure/recovery/accessibility evidence",
+    "changed-path manifest proving control-only and protected paths were not edited"
+  ],
+  "startAuthority": {
+    "tokenPrepared": true,
+    "tokenIssued": false,
+    "moduleImplementationAuthorized": false,
+    "migrationAuthoringAuthorized": false,
+    "mergeToDwpDevAuthorized": false,
+    "featureEnablementAuthorized": false
+  },
+  "stopConditions": [
+    "V18 appears or the PEOPLE_PERFORMANCE high-water changes before activation.",
+    "Any required v42 route, transport schema, event or checksum drifts from the pinned control bridge.",
+    "Implementation requires a control-only, protected, generated, shell, route or other-module path.",
+    "A targeted test disproves a sealed assignment, typed-answer, idempotency, CAS or event invariant.",
+    "Feature activation, customer data, external integration or production release is attempted."
+  ]
+}

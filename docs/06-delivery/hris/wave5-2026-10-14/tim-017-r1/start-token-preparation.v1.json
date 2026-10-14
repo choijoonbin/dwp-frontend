@@ -1,0 +1,112 @@
+{
+  "schema": "dwp.hris.module-start-token-preparation.v1",
+  "preparationId": "HRIS-WAVE5-START-PREP-BASE-TFR-TIM-017-R1",
+  "tokenIdCandidate": "HRIS-WAVE5-START-BASE-TFR-TIM-017-R1",
+  "preparedAt": "2026-10-14T16:56:17+09:00",
+  "preparedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-TIM",
+  "sliceId": "BASE-TFR-TIM-017",
+  "state": "WITHHELD_PENDING_WORKTREE_MATERIALIZATION",
+  "workPacketRef": "work-packet.v1.json",
+  "migrationLeaseRef": "migration-lease.v1.json",
+  "controlBridgeIntegrationReceiptRef": "../per-tim-control-r1/control-bridge-integration-receipt.v1.json",
+  "transportOpenApiCorrectionReceiptRef": "../per-tim-control-r1/transport-openapi-correction-receipt.v1.json",
+  "observedBases": {
+    "backend": "dwp-dev@831fceab0d609e72d3ec88db8bbf25058467b2b4",
+    "frontend": "dwp-dev@2d542571e76766785562f1b271048686522eb455"
+  },
+  "bindingRule": "The issued token must pin backend 831fceab and the pushed frontend preparation commit, then materialize clean dedicated worktrees with upstream-tracked module branches.",
+  "dedicatedWorktreeRequirements": [
+    {
+      "repository": "dwp-backend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave5-20261014/tim-017-r1/backend",
+      "branch": "codex/hris-wave5-tim-017-backend-20261014-r1",
+      "requiredBase": "dwp-dev@831fceab0d609e72d3ec88db8bbf25058467b2b4",
+      "requiredState": "MATERIALIZED_CLEAN_UPSTREAM_PINNED",
+      "reuseForbidden": [
+        "/Users/a10697/Work/DWP/dwp-backend",
+        "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave5-20261014/tim-017/backend"
+      ]
+    },
+    {
+      "repository": "dwp-frontend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave5-20261014/tim-017-r1/frontend",
+      "branch": "codex/hris-wave5-tim-017-frontend-20261014-r1",
+      "requiredBase": "POST_PREPARATION_ORIGIN_DWP_DEV_EXACT_HEAD",
+      "requiredState": "MATERIALIZED_CLEAN_UPSTREAM_PINNED",
+      "reuseForbidden": [
+        "/Users/a10697/Work/DWP/dwp-frontend",
+        "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave5-20261014/tim-017/frontend"
+      ]
+    }
+  ],
+  "tokenIssueGates": [
+    {
+      "id": "TIM017-START-GATE-01",
+      "state": "READY",
+      "requirement": "Authorization v42, the five TIM operations, exact timecard transport and TimecardDecisionRecorded.v1 are integrated, corrected and pushed."
+    },
+    {
+      "id": "TIM017-START-GATE-02",
+      "state": "OPEN",
+      "requirement": "Commit and push the preparation evidence and bind its exact frontend commit."
+    },
+    {
+      "id": "TIM017-START-GATE-03",
+      "state": "OPEN",
+      "requirement": "Recheck V10 high-water and V11 absence, then activate the exact lease."
+    },
+    {
+      "id": "TIM017-START-GATE-04",
+      "state": "OPEN",
+      "requirement": "Materialize fresh R1 backend/frontend worktrees, push upstream branches, and prove clean 0/0 state."
+    },
+    {
+      "id": "TIM017-START-GATE-05",
+      "state": "OPEN",
+      "requirement": "Seal pins, trees, raw artifact hashes, lease, touch boundary, eleven acceptance IDs and invalidation rules into one issued token."
+    }
+  ],
+  "requiredIssuedTokenFields": [
+    "tokenId",
+    "issuedAtAndIssuer",
+    "backendCommitAndTree",
+    "frontendCommitAndTree",
+    "authorizationVersionAndRegistryChecksum",
+    "timeAndGatewayOpenApiDigests",
+    "workPacketAndCentralReceiptDigests",
+    "V11LeaseAndExactPath",
+    "worktreePathsBranchesTreesCleanDigestsAndUpstreams",
+    "touchBoundaryAndNoDualWriteRule",
+    "elevenAcceptanceIds",
+    "targetedVerification",
+    "expiryAndInvalidationConditions"
+  ],
+  "permittedActionAfterIssue": "IMPLEMENT_ONLY_BASE_TFR_TIM_017_WITHIN_THE_SEALED_TOUCH_MANIFEST_AND_ACTIVE_V11_LEASE",
+  "postTokenModuleObligations": [
+    "implement the Time canonical timecard owner domain and TIM frontend in the issued worktrees",
+    "consume the generated v42 Time PEP and corrected timecard transport without editing control artifacts",
+    "preserve legacy caller selection and prove no dual read/write",
+    "prove all eleven acceptance IDs with changed-cluster-first tests",
+    "commit and push both module branches and return exact result evidence without merging dwp-dev"
+  ],
+  "invalidationConditions": [
+    "either worktree base, branch, tree, upstream or clean digest drifts before authoring",
+    "V11 collides or the TIME_MAIN high-water changes",
+    "v42 authorization, TIM route, OpenAPI or event pins drift",
+    "the module edits a control-only, protected, generated, shared-utils, HCM, recovery or unrelated path",
+    "dual read/write is introduced, feature default changes from OFF or customer/production activation is attempted"
+  ],
+  "authority": {
+    "tokenPrepared": true,
+    "tokenIssued": false,
+    "moduleSourceChangeAuthorized": false,
+    "migrationAuthoringAuthorized": false,
+    "integrationAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "customerDataAuthorized": false,
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "PUSH_PREPARATION_THEN_MATERIALIZE_FRESH_R1_WORKTREES_ACTIVATE_V11_AND_ISSUE_THE_TIM017_TOKEN"
+}

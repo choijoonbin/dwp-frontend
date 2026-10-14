@@ -1,0 +1,111 @@
+{
+  "schema": "dwp.hris.module-start-token-preparation.v1",
+  "preparationId": "HRIS-WAVE5-START-PREP-BASE-TFR-PER-013-R1",
+  "tokenIdCandidate": "HRIS-WAVE5-START-BASE-TFR-PER-013-R1",
+  "preparedAt": "2026-10-14T16:56:17+09:00",
+  "preparedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-PER",
+  "sliceId": "BASE-TFR-PER-013",
+  "state": "WITHHELD_PENDING_WORKTREE_MATERIALIZATION",
+  "workPacketRef": "work-packet.v1.json",
+  "migrationLeaseRef": "migration-lease.v1.json",
+  "controlBridgeIntegrationReceiptRef": "../per-tim-control-r1/control-bridge-integration-receipt.v1.json",
+  "transportOpenApiCorrectionReceiptRef": "../per-tim-control-r1/transport-openapi-correction-receipt.v1.json",
+  "observedBases": {
+    "backend": "dwp-dev@831fceab0d609e72d3ec88db8bbf25058467b2b4",
+    "frontend": "dwp-dev@2d542571e76766785562f1b271048686522eb455"
+  },
+  "bindingRule": "The issued token must pin backend 831fceab and the pushed frontend preparation commit, then materialize clean dedicated worktrees with upstream-tracked module branches.",
+  "dedicatedWorktreeRequirements": [
+    {
+      "repository": "dwp-backend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave5-20261014/per-013-r1/backend",
+      "branch": "codex/hris-wave5-per-013-backend-20261014-r1",
+      "requiredBase": "dwp-dev@831fceab0d609e72d3ec88db8bbf25058467b2b4",
+      "requiredState": "MATERIALIZED_CLEAN_UPSTREAM_PINNED",
+      "reuseForbidden": [
+        "/Users/a10697/Work/DWP/dwp-backend",
+        "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave5-20261014/per-013/backend"
+      ]
+    },
+    {
+      "repository": "dwp-frontend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave5-20261014/per-013-r1/frontend",
+      "branch": "codex/hris-wave5-per-013-frontend-20261014-r1",
+      "requiredBase": "POST_PREPARATION_ORIGIN_DWP_DEV_EXACT_HEAD",
+      "requiredState": "MATERIALIZED_CLEAN_UPSTREAM_PINNED",
+      "reuseForbidden": [
+        "/Users/a10697/Work/DWP/dwp-frontend",
+        "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave5-20261014/per-013/frontend"
+      ]
+    }
+  ],
+  "tokenIssueGates": [
+    {
+      "id": "PER013-START-GATE-01",
+      "state": "READY",
+      "requirement": "Authorization v42, the four PER operations, exact review transport and PerformanceReviewSubmitted.v1 are integrated, corrected and pushed."
+    },
+    {
+      "id": "PER013-START-GATE-02",
+      "state": "OPEN",
+      "requirement": "Commit and push the preparation evidence and bind its exact frontend commit."
+    },
+    {
+      "id": "PER013-START-GATE-03",
+      "state": "OPEN",
+      "requirement": "Recheck V17 high-water and V18 absence, then activate the exact lease."
+    },
+    {
+      "id": "PER013-START-GATE-04",
+      "state": "OPEN",
+      "requirement": "Materialize fresh R1 backend/frontend worktrees, push upstream branches, and prove clean 0/0 state."
+    },
+    {
+      "id": "PER013-START-GATE-05",
+      "state": "OPEN",
+      "requirement": "Seal pins, trees, raw artifact hashes, lease, touch boundary, eight acceptance IDs and invalidation rules into one issued token."
+    }
+  ],
+  "requiredIssuedTokenFields": [
+    "tokenId",
+    "issuedAtAndIssuer",
+    "backendCommitAndTree",
+    "frontendCommitAndTree",
+    "authorizationVersionAndRegistryChecksum",
+    "peopleAndGatewayOpenApiDigests",
+    "workPacketAndCentralReceiptDigests",
+    "V18LeaseAndExactPath",
+    "worktreePathsBranchesTreesCleanDigestsAndUpstreams",
+    "touchBoundary",
+    "eightAcceptanceIds",
+    "targetedVerification",
+    "expiryAndInvalidationConditions"
+  ],
+  "permittedActionAfterIssue": "IMPLEMENT_ONLY_BASE_TFR_PER_013_WITHIN_THE_SEALED_TOUCH_MANIFEST_AND_ACTIVE_V18_LEASE",
+  "postTokenModuleObligations": [
+    "implement the People assigned-review owner domain and PER frontend in the issued worktrees",
+    "consume the generated v42 People PEP and corrected typed transport without editing control artifacts",
+    "prove all eight acceptance IDs with changed-cluster-first tests",
+    "commit and push both module branches and return exact result evidence without merging dwp-dev"
+  ],
+  "invalidationConditions": [
+    "either worktree base, branch, tree, upstream or clean digest drifts before authoring",
+    "V18 collides or the PEOPLE_PERFORMANCE high-water changes",
+    "v42 authorization, PER route, OpenAPI or event pins drift",
+    "the module edits a control-only, protected, generated, recovery or unrelated path",
+    "feature default changes from OFF or customer/production activation is attempted"
+  ],
+  "authority": {
+    "tokenPrepared": true,
+    "tokenIssued": false,
+    "moduleSourceChangeAuthorized": false,
+    "migrationAuthoringAuthorized": false,
+    "integrationAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "customerDataAuthorized": false,
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "PUSH_PREPARATION_THEN_MATERIALIZE_FRESH_R1_WORKTREES_ACTIVATE_V18_AND_ISSUE_THE_PER013_TOKEN"
+}

@@ -1,0 +1,81 @@
+{
+  "schema": "dwp.hris.migration-lease.v1",
+  "leaseId": "HRIS-WAVE5-LEASE-BASE-TFR-TIM-017-TIME-MAIN-V11-R1",
+  "issuedAt": "2026-10-14T16:56:17+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-TIM",
+  "sliceId": "BASE-TFR-TIM-017",
+  "state": "RESERVED_PENDING_FINAL_PIN_AND_WORKTREE",
+  "authoringAllowed": false,
+  "repository": "dwp-backend",
+  "stream": "TIME_MAIN",
+  "databaseOwner": "dwp-time-server",
+  "schemaOwner": "public",
+  "baseCommit": "831fceab0d609e72d3ec88db8bbf25058467b2b4",
+  "migrationDirectoryTreeManifestSha256": "0064433f8a9f1a0b51e052637aa1660b192e55b2f97a27b69cb44e63b5297a22",
+  "observedVersions": [
+    "V1",
+    "V2",
+    "V3",
+    "V4",
+    "V5",
+    "V6",
+    "V7",
+    "V8",
+    "V9",
+    "V10"
+  ],
+  "observedHighWater": "V10",
+  "reservedVersion": "V11",
+  "exactPath": "dwp-time-server/src/main/resources/db/migration/V11__tim_base_tfr_tim_017.sql",
+  "exactPathAbsentAtReservation": true,
+  "predecessors": [
+    {
+      "version": "V10",
+      "path": "dwp-time-server/src/main/resources/db/migration/V10__tim_base_tfr_tim_010.sql",
+      "sha256": "0839820323c472c1118cb8369baac94e6077db3f85717fc2f934b0b25bdb80ba",
+      "role": "immutable Time ledger/outbox predecessor"
+    }
+  ],
+  "schemaEffect": {
+    "requiredCharacteristics": [
+      "tenant-scoped public identity and repository isolation",
+      "canonical timecard aggregate with append-only correction and transition ledger",
+      "unique tenant-scoped idempotency, receipt and outbox constraints",
+      "expected-version fencing and immutable decision evidence",
+      "publisher ACL limited to the exact V11 objects",
+      "no cross-service database foreign key and no legacy dual writer"
+    ],
+    "seeds": "NONE",
+    "backfill": "FORWARD_LEDGER_ALTERATION_ONLY; preserve V1-V10 bytes and data"
+  },
+  "upgradePath": {
+    "clean": "EMPTY_DATABASE_TO_V11",
+    "incremental": "V10_TO_V11",
+    "requiredEvidence": [
+      "Flyway version and checksum inventory",
+      "clean schema contract",
+      "V10 fixture upgrade preserving ledger/outbox data",
+      "tenant-isolation and duplicate-key negatives",
+      "immutability, stale-version and publisher ACL negatives"
+    ]
+  },
+  "rollbackStrategy": "FORWARD_FIX_ONLY; feature remains OFF; never delete or mutate V11 after integration",
+  "activationGate": "CLEAN_PINNED_WORKTREE_AND_START_TOKEN_ISSUED",
+  "expiryConditions": [
+    "V11 appears on dwp-dev before activation",
+    "TIME_MAIN high-water changes from V10",
+    "backend base commit or migration directory manifest changes",
+    "the exact path or module branch changes"
+  ],
+  "authority": {
+    "versionReserved": true,
+    "migrationCreationAuthorized": false,
+    "existingMigrationEditAuthorized": false,
+    "migrationExecutionAuthorized": false,
+    "integrationAuthorized": false,
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextTransition": "RESERVED_PENDING_FINAL_PIN_AND_WORKTREE_TO_ACTIVE_AUTHORING_ONLY_AFTER_COLLISION_RECHECK_AND_WORKTREE_PINNING"
+}

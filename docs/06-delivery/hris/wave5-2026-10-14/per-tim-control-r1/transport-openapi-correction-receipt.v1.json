@@ -1,0 +1,130 @@
+{
+  "schema": "dwp.hris.wave5.transport-openapi-correction-receipt.v1",
+  "receiptId": "HRIS-WAVE5-PER-TIM-TRANSPORT-OPENAPI-CORRECTION-R1",
+  "recordedAt": "2026-10-14T16:56:17+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "INTEGRATED_TO_DWP_DEV_DRAFT_NOT_ACTIVATED",
+  "additiveCorrectionTo": {
+    "path": "control-bridge-integration-receipt.v1.json",
+    "sha256": "ca6c60d21701eb8ece24263c58aacd768e16066e97ecf24a3147851d8e04ec1d",
+    "rule": "This receipt is append-only. It narrows and corrects the PER/TIM transport authoring base without rewriting the original bridge receipt."
+  },
+  "reason": {
+    "finding": "The integrated v42 control topology was sound, but the generated PER/TIM transport shapes were not yet sufficient to issue implementation Start Tokens.",
+    "blockingDefects": [
+      "PER review operation IDs, draft media type, form/rubric/typed-answer graph, response ETags, IAQ-022 actions and typed error bodies diverged from the sealed module contract.",
+      "TIM TimecardV1 omitted LOCKED and SUPERSEDED and the timecard GET response omitted the required ETag.",
+      "The exporter did not fail closed on success response status/media/schema-ref or PER problem-response projection drift."
+    ]
+  },
+  "integratedPins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "831fceab0d609e72d3ec88db8bbf25058467b2b4",
+      "tree": "e0f6bbe07a1fcc67efa7812752e976686dc3675c",
+      "upstream": "origin/dwp-dev",
+      "upstreamMatched": true,
+      "clean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "2d542571e76766785562f1b271048686522eb455",
+      "tree": "f6dcc2983eac69596f3c65a97ab649be3875c2e0",
+      "upstream": "origin/dwp-dev",
+      "upstreamMatched": true,
+      "clean": true
+    }
+  },
+  "sealedCorrections": {
+    "performanceReview": [
+      "Stable owner operation IDs are getAssignedReview, saveReviewDraft and submitReview; historical captured IDs are accepted only as one-time exporter aliases and are absent from generated contracts.",
+      "PATCH consumes application/merge-patch+json and GET/PATCH expose an exact ETag contract.",
+      "ReviewFormV1 uses a bounded string schemaVersion, ordered closed item graph, typed answer constraints and canonical decimal strings with at most six fractional digits.",
+      "ReviewAnswerV1 is a discriminator-bound union of TEXT, DECIMAL, RATING and CHOICE answers; CHOICE is single-select for this slice.",
+      "PER GET/PATCH/POST success responses and all required 403/404/409/422 errors have exact status, media and schema references in source, People owner and Gateway projections.",
+      "IAQ-022 exposes only create-cycle, update-cycle-draft and validate-cycle actions and remains separate from assigned-review identity."
+    ],
+    "timecard": [
+      "TimecardV1 state precedence is exactly OPEN, SUBMITTED, APPROVED, REJECTED, CORRECTION_REQUIRED, LOCKED, CLOSED, SUPERSEDED.",
+      "Timecard GET exposes the exact ETag contract.",
+      "All five Time routes have an exact single success status, application/json media and Time owner/Gateway response schema reference."
+    ],
+    "exporterGuards": [
+      "The approved design-time revision WAVE5-PER-TIM-TRANSPORT-R1 is the only new snapshot replacement authority.",
+      "PER and TIM schema graphs are hash-sealed and must be byte-semantically identical across design source, owner output and normalized Gateway output.",
+      "Hostile mutations prove that a wrong success schema ref or wrong problem media fails closed."
+    ]
+  },
+  "artifactDigests": {
+    "backend": [
+      {
+        "path": "contracts/openapi/hris-wave1-design-time.json",
+        "sha256": "3d3e9c52cf0971129d8a1802a123a81da6e303dee3679f4fda5b3399ef10e4cb"
+      },
+      {
+        "path": "contracts/openapi/people.json",
+        "sha256": "4f8b31b2b0e3d2227bf6c02f9bf18092121323292160408601cabbd70c579ce8"
+      },
+      {
+        "path": "contracts/openapi/time.json",
+        "sha256": "6702161141add3acde02896bb6844e5e40c6c0dc4b93eab859e77e9446f0e5"
+      },
+      {
+        "path": "contracts/openapi/gateway-public.json",
+        "sha256": "50a57ad5aa93178f47d724ca3dfa08a64985de93a099071db66220dfe686c2a2"
+      },
+      {
+        "path": "scripts/export-openapi-contracts.py",
+        "sha256": "1e5090f19d71f1e375a402f057fb02c50b60841383eedf102e113e815f812b99"
+      },
+      {
+        "path": "scripts/tests/test_export_openapi_contracts.py",
+        "sha256": "7240480242d8cc71c606ffdb94d5b06d7afbcf6b6abc19cb0f742a712fa5e8a5"
+      }
+    ],
+    "frontend": [
+      {
+        "path": "libs/api-contracts/openapi/gateway-public.json",
+        "sha256": "50a57ad5aa93178f47d724ca3dfa08a64985de93a099071db66220dfe686c2a2"
+      },
+      {
+        "path": "libs/api-contracts/src/gateway-public.ts",
+        "sha256": "2b7e562ddd057df818a9f881e5a1475669cdc70c4ef20f75d12a821d7cd93af5"
+      }
+    ],
+    "schemaGraphSha256": {
+      "peopleReview": "d9b2d974df45983aea1919e75e38ee063c08a9a835716743bc493a8b02b39bc0",
+      "timeTimecard": "96f3a6b0d7c6e7f228442f956daab0cfa44ce78dd65c8b477192ec77d0145db4"
+    }
+  },
+  "validation": {
+    "policy": "CHANGED_CLUSTER_FIRST; no broad repository suite was repeated.",
+    "results": [
+      "Wave5 PER/TIM boundary hostile test PASS",
+      "Four directly dependent OpenAPI inventory/capture tests PASS",
+      "OpenAPI approved-snapshot check PASS for 12 services and 1736 public Gateway paths",
+      "Frontend Gateway snapshot/type synchronization check PASS",
+      "git diff --check PASS in both repositories",
+      "Independent transport review READY/APPROVE with no remaining P0/P1"
+    ]
+  },
+  "authorizationV42": {
+    "status": "DRAFT",
+    "registryChecksum": "f73f9a64816ac8f5567a2a7c292821f4a40e6d675915ebc3c3ac8aad7d1fd983",
+    "changedByThisCorrection": false,
+    "automaticImport": false,
+    "automaticApproval": false,
+    "automaticActivation": false
+  },
+  "dispatchEffect": {
+    "oldPreCorrectionPinsAuthoritative": false,
+    "oldPerTimWorktreesAuthoritative": false,
+    "requiredFreshIdentities": [
+      "PER-013-R1",
+      "TIM-017-R1"
+    ],
+    "nextAction": "Prepare and issue separate PER-013-R1 and TIM-017-R1 Start Tokens from the corrected pushed pins; keep migrations, worktrees and acceptance evidence isolated."
+  }
+}
