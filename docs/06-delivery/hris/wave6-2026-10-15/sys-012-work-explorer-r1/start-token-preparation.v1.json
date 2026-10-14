@@ -1,0 +1,171 @@
+{
+  "schema": "dwp.hris.module-start-token-preparation.v1",
+  "preparationId": "HRIS-WAVE6-START-PREP-BASE-TFR-SYS-012-EXPLORER-R1",
+  "preparedAt": "2026-10-15T04:51:34+09:00",
+  "preparedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-SYS",
+  "sliceId": "BASE-TFR-SYS-012",
+  "scope": "WORK_EXPLORER_RUNTIME_AND_USER_JOURNEY",
+  "state": "READY_TO_MATERIALIZE_WORKTREES_AFTER_PREPARATION_CARRIER_PUSH_TOKEN_WITHHELD",
+  "preparedArtifacts": {
+    "workPacket": {
+      "path": "work-packet.v1.json",
+      "packetId": "HRIS-WAVE6-WORK-BASE-TFR-SYS-012-EXPLORER-R1",
+      "sha256": "c8f8117514343c02b35d6ae8a4b324b69c764614c13d26bf66708423c1f460c7",
+      "bytes": 18639
+    },
+    "resultContract": {
+      "path": "module-result-contract.v1.json",
+      "contractId": "HRIS-WAVE6-RESULT-CONTRACT-BASE-TFR-SYS-012-EXPLORER-R1",
+      "sha256": "dc92ffee4b817d9c0e9270b43058a1a0fe74abe50784699485fbc7f1280f1384",
+      "bytes": 7707
+    }
+  },
+  "closedPrerequisites": [
+    {
+      "id": "SYS012_SEMANTIC_SEAL",
+      "path": "../sys-012-work-explorer-control-r1/work-explorer-semantics-seal.v1.json",
+      "sealId": "HRIS-WAVE6-SYS-012-WORK-EXPLORER-SEMANTICS-R1",
+      "sha256": "7aa1889d9102bedc4e7447d34b5c4f6ab71de3b52a43919e4869598f0a44384e",
+      "bytes": 19137,
+      "state": "CENTRAL_SEMANTICS_SEALED_MODULE_IMPLEMENTATION_WITHHELD"
+    },
+    {
+      "id": "SYS012_TRANSPORT_AMENDMENT",
+      "path": "../sys-012-work-explorer-control-r1/work-explorer-transport-amendment.v1.json",
+      "sha256": "6be0a0486b53fa5e536c490858494e43b8ff2556409c8f7269643fdaaba5d9d9",
+      "bytes": 10900
+    },
+    {
+      "id": "SYS012_CENTRAL_CARRIER",
+      "path": "../sys-012-work-explorer-control-r1/central-contract-carrier-integration-receipt.v1.json",
+      "receiptId": "HRIS-WAVE6-SYS-012-CENTRAL-CONTRACT-CARRIER-INTEGRATED-R1",
+      "sha256": "830f9d8c1c2c64e4a31e3f4469e8d4fc2b419500a5636dd65ca69aa2e7c87473",
+      "bytes": 7033,
+      "state": "CENTRAL_BACKEND_AND_FRONTEND_CONTRACT_CARRIERS_INTEGRATED_AND_INDEPENDENTLY_AUDITED_DRAFT_DEFAULT_OFF"
+    },
+    {
+      "id": "SYS012_INDEPENDENT_CARRIER_AUDIT",
+      "path": "../sys-012-work-explorer-control-r1/central-contract-carrier-independent-audit.v1.json",
+      "auditId": "HRIS-WAVE6-SYS-012-CENTRAL-CONTRACT-CARRIER-INDEPENDENT-AUDIT-R1",
+      "sha256": "9a27e39824dd879dfa4d19a1bff38c33f2fe976fec198a95da3a9695ecdb06cb",
+      "bytes": 5397,
+      "state": "PASS_NO_BLOCKING_DEFECTS"
+    },
+    {
+      "id": "SYS012_DISPATCH_GATE_R2",
+      "path": "../sys-012-work-explorer-control-r1/readiness-and-dispatch-gate-successor.v2.json",
+      "gateId": "HRIS-WAVE6-SYS-012-CONTROL-GATE-R2",
+      "sha256": "764443b73bfb46f1dd1d9d212466c8bdf040a16e2b88b75cdfa54ad265491c97",
+      "bytes": 6004,
+      "state": "CENTRAL_CARRIERS_AUDITED_PREPARATION_CARRIER_READY_WORKTREE_MATERIALIZATION_ONLY"
+    }
+  ],
+  "observedCentralPins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "3b2da20b592de5b5cff8f2483b83900f2dad054e",
+      "tree": "36c16b205aeab8b0ed52130e41196bb3cba024b5",
+      "upstream": "origin/dwp-dev",
+      "cleanAndRemoteExact": true,
+      "moduleBasePolicy": "Use this exact pin unless a later approved central carrier changes it before materialization. Any change requires preparation reissue."
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "ecdad2d4a93f47ea90956e8b47bf69fd7f8fea5a",
+      "tree": "e7ba56afa0085c120e5ca479bbf06985604fe36e",
+      "upstream": "origin/dwp-dev",
+      "cleanAndRemoteExact": true,
+      "state": "OBSERVATION_BEFORE_THIS_PREPARATION_EVIDENCE_CARRIER"
+    }
+  },
+  "centralContractPins": {
+    "authorizationVersion": 43,
+    "authorizationChecksum": "2222319502c362caf247a7a47fdacfc63c774dbf156f6272cafae797627e2400",
+    "authorizationState": "DRAFT",
+    "defaultEnabled": false,
+    "backendPlatformOpenApiSha256": "602416316d6fd44f3b4a3d392d59afbef16f244ccf8e55648665fc2818143110",
+    "backendGatewayOpenApiSha256": "3205d3bfc0bbdb2923c57c4e40ebecdeaa41a3b32ed51e4aa8e84a6e97a61671",
+    "frontendGatewayOpenApiSha256": "3205d3bfc0bbdb2923c57c4e40ebecdeaa41a3b32ed51e4aa8e84a6e97a61671",
+    "platformPepV43Sha256": "378f87ebe4810ed22c8018cc7aefa4841e8e212d821a549c9c3f74a2ad34cab1",
+    "authV252Sha256": "51267daa4d42e0ec775592d66c0b6c03297bfe4d51ec34cb9dc050f5332433cf"
+  },
+  "basePinPolicy": {
+    "backend": "Materialize from the exact clean pushed backend dwp-dev commit recorded after the independent frontend audit; it must still equal 3b2da20b592de5b5cff8f2483b83900f2dad054e unless control explicitly reissues this preparation.",
+    "frontend": "Commit and push this preparation carrier, then use that exact clean pushed frontend dwp-dev commit and tree as the frontend module worktree base.",
+    "tokenRule": "Issue the token only after the independent frontend audit is PASS, both dedicated worktrees match the recorded exact bases, both are clean and remote-exact, and V327 remains absent immediately before authoring lease activation."
+  },
+  "plannedWorktrees": [
+    {
+      "repository": "dwp-backend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave6-20261015/sys-012-work-explorer-r1/backend",
+      "branch": "codex/hris-wave6-sys-012-explorer-backend-20261015-r1",
+      "sourceBranch": "dwp-dev",
+      "requiredState": "MATERIALIZED_PUSHED_CLEAN_REMOTE_EXACT"
+    },
+    {
+      "repository": "dwp-frontend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave6-20261015/sys-012-work-explorer-r1/frontend",
+      "branch": "codex/hris-wave6-sys-012-explorer-frontend-20261015-r1",
+      "sourceBranch": "dwp-dev",
+      "requiredState": "MATERIALIZED_PUSHED_CLEAN_REMOTE_EXACT"
+    }
+  ],
+  "migrationLeasePreparation": {
+    "leaseRef": "../sys-012-work-explorer-control-r1/migration-lease.v1.json",
+    "leaseId": "HRIS-WAVE6-SYS-012-MIGRATION-LEASE-R1",
+    "stream": "PLATFORM",
+    "version": "V327",
+    "path": "dwp-platform-server/src/main/resources/db/migration/V327__create_hris_work_explorer.sql",
+    "observedHighWater": "V326",
+    "filePresentAtPreparation": false,
+    "activationState": "NOT_ACTIVE",
+    "activationRule": "Recheck the exact path and stream immediately before creating migration-lease-activation.v1.json. No second Platform migration is permitted."
+  },
+  "dispatchMessageRequirements": [
+    "Send work only to the existing HRIS-SYS module session after token issuance.",
+    "Include token and issued-manifest paths, IDs, SHA-256 values and byte counts.",
+    "Include both absolute worktree paths, branches, exact base commits and trees, upstreams and clean-state hashes.",
+    "Include V327 activation ID and exact migration path.",
+    "Include exact writable, read-only, control-only and protected path boundaries.",
+    "Include all twelve acceptance IDs, M1/M2 commands, viewport matrix and smallest-failed-test rerun policy.",
+    "Require clean pushed backend and frontend module commits and prohibit direct dwp-dev merge.",
+    "Require the sealed result contract and DRAFT/default-OFF nonclaim.",
+    "Require immediate stop for base drift, V327 conflict, central contract drift, owner-service source need or any outside-boundary path."
+  ],
+  "startGates": {
+    "semanticSealClosed": true,
+    "centralBackendCarrierIntegrated": true,
+    "centralFrontendCarrierIntegrated": true,
+    "v43DraftDefaultOff": true,
+    "v327ReservedAndAbsent": true,
+    "exactBackendAndFrontendBoundariesSealed": true,
+    "twelveAcceptanceCriteriaSealed": true,
+    "resultContractSealed": true,
+    "independentFrontendFinalAuditPass": true,
+    "frontendPreparationCarrierPushed": false,
+    "backendWorktreeMaterializedClean": false,
+    "frontendWorktreeMaterializedClean": false,
+    "v327AuthoringLeaseActivated": false,
+    "startTokenIssued": false
+  },
+  "authority": {
+    "preparationRecorded": true,
+    "worktreeMaterializationAuthorized": true,
+    "moduleImplementationAuthorized": false,
+    "migrationAuthoringAuthorized": false,
+    "moduleBranchCommitAuthorized": false,
+    "moduleBranchPushAuthorized": false,
+    "mergeToDwpDevAuthorized": false,
+    "routeOrMenuActivationAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "policyActivationAuthorized": false,
+    "customerDataAuthorized": false,
+    "externalConnectorAuthorized": false,
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "CONTROL_COMMITS_AND_PUSHES_THIS_PREPARATION_CARRIER_THEN_MATERIALIZES_ONLY_THE_TWO_EXACT_CLEAN_WORKTREES; DO_NOT_ACTIVATE_V327_OR_ISSUE_THE_START_TOKEN YET"
+}

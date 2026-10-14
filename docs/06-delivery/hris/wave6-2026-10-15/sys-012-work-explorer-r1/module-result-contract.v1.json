@@ -1,0 +1,181 @@
+{
+  "schema": "dwp.hris.module-result-contract.v1",
+  "contractId": "HRIS-WAVE6-RESULT-CONTRACT-BASE-TFR-SYS-012-EXPLORER-R1",
+  "preparedAt": "2026-10-15T04:51:34+09:00",
+  "preparedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-SYS",
+  "sliceId": "BASE-TFR-SYS-012",
+  "state": "SEALED_RESULT_REQUIREMENTS_START_TOKEN_NOT_YET_ISSUED",
+  "requiredResultState": "MODULE_RUNTIME_AND_USER_JOURNEY_COMPLETE_CONTROL_INTEGRATION_PENDING_DEFAULT_OFF",
+  "resultArtifact": {
+    "path": "module-result-evidence.v1.json",
+    "schema": "dwp.hris.wave6-module-result-evidence.v1",
+    "evidenceId": "HRIS-WAVE6-BASE-TFR-SYS-012-EXPLORER-MODULE-RESULT-R1",
+    "writer": "SYS_COMMON_INTEGRATION_CONTROL_AFTER_MODULE_RETURN",
+    "moduleRule": "The module returns evidence to control and does not edit delivery evidence in its source worktrees."
+  },
+  "requiredPins": {
+    "startAuthority": [
+      "start-token-issued.v1.json path, tokenId, sha256 and bytes",
+      "issued-manifest.v1.json path, manifestId, sha256 and bytes",
+      "migration-lease-activation.v1.json path, activationId, sha256 and bytes"
+    ],
+    "repositories": [
+      "repository, exact base branch/commit/tree and origin ref",
+      "module branch, upstream, result commit/tree and ordered result lineage",
+      "clean porcelain sha256, ahead/behind 0/0 and remoteExact true"
+    ],
+    "contracts": [
+      "authorization v43 checksum 2222319502c362caf247a7a47fdacfc63c774dbf156f6272cafae797627e2400",
+      "Platform and Gateway OpenAPI raw-byte sha256 values from the start token",
+      "semantic seal and transport amendment raw-byte sha256 values"
+    ]
+  },
+  "changedContentEvidence": {
+    "requiredPerRepository": [
+      "changed file count",
+      "sorted changed-path manifest and SHA256_OF_SORTED_PATH_LF",
+      "sorted name-status manifest and SHA256_OF_SORTED_NAME_STATUS_LF",
+      "binary-safe base-to-result diff SHA-256",
+      "SHA256_OF_SORTED_PATH_TAB_FILE_SHA256_TAB_BYTES_LF content manifest",
+      "touch-manifest compliance boolean and explicit outside-boundary file count"
+    ],
+    "protectedPathAssertions": [
+      "authorization, OpenAPI, generated PEP, generated route registry and Auth/Gateway changes equal zero",
+      "owner-service source changes equal zero",
+      "existing migration modifications equal zero",
+      "HrisProductMap and HRIS shell source changes equal zero",
+      "recovery and central control evidence changes equal zero"
+    ]
+  },
+  "acceptanceResults": {
+    "requiredIds": [
+      "SYS012-AC-01",
+      "SYS012-AC-02",
+      "SYS012-AC-03",
+      "SYS012-AC-04",
+      "SYS012-AC-05",
+      "SYS012-AC-06",
+      "SYS012-AC-07",
+      "SYS012-AC-08",
+      "SYS012-AC-09",
+      "SYS012-AC-10",
+      "SYS012-AC-11",
+      "SYS012-AC-12"
+    ],
+    "requiredFields": [
+      "id",
+      "status",
+      "evidenceRefs",
+      "notes"
+    ],
+    "passRule": "All twelve criteria must be PASS or an explicitly named PASS_AFTER_TARGETED_CORRECTION with the initial failing method and smallest rerun evidence. BLOCKED, SKIPPED or inferred coverage is not acceptance."
+  },
+  "testEvidence": {
+    "requiredPerCommand": [
+      "commandId and exact command",
+      "startedAt and completedAt",
+      "exitCode and status",
+      "test file count, test count, pass/fail/skip counts when emitted",
+      "log path, raw-byte SHA-256 and bytes",
+      "initial run or smallest failed-command rerun classification"
+    ],
+    "requiredStages": [
+      "M1_SYS_MODULE_BACKEND",
+      "M2_SYS_MODULE_FRONTEND",
+      "CHANGED_PATH_STATIC_CHECKS",
+      "SCOPE_AND_GIT_INTEGRITY"
+    ],
+    "rerunPolicy": "Each full targeted stage runs at most once. After a fix, rerun only the failed command or smallest owning test and derive final acceptance from unaffected initial passes plus corrected method passes.",
+    "broadSuite": "NOT_AUTHORIZED_OR_REQUIRED"
+  },
+  "migrationEvidence": {
+    "required": [
+      "V327 exact path and raw-byte SHA-256",
+      "clean migration result",
+      "V326-to-V327 upgrade result",
+      "existing migration checksum preservation",
+      "exact four table definitions",
+      "tenant/principal keys and RLS enabled plus forced assertions",
+      "no cross-service foreign key and no source payload assertion"
+    ],
+    "runtimeDatabaseRule": "If the required PostgreSQL migration checks cannot execute, report BLOCKED rather than PASS."
+  },
+  "securityAndBehaviorEvidence": {
+    "required": [
+      "98-node canonical count, 76+22 split and 98 unique route and label keys",
+      "authorized-subset response and current route/scope/field-policy reauthorization",
+      "tenant and principal isolation plus opaque receipt denial",
+      "generic /admin denial and absence of the five undeployed external targets",
+      "favorites and recents limits, CAS, idempotency, LRU, TTL and purge",
+      "shared receipt replay, digest mismatch and RESULT_UNKNOWN reconciliation",
+      "typed owner-evidence happy, missing, stale, mismatch, timeout and unavailable paths",
+      "PARTIAL projection on provider failure and no false empty success",
+      "minimized projection proving forbidden payload and sensitive fields are absent"
+    ]
+  },
+  "visualEvidence": {
+    "requiredViewports": [
+      "1440x900",
+      "1280x800",
+      "390x844",
+      "320x640",
+      "1280x800 at browser 200% zoom"
+    ],
+    "requiredModes": [
+      "light",
+      "dark",
+      "high contrast",
+      "reduced motion",
+      "keyboard-only with visible focus",
+      "long Korean labels",
+      "long English labels",
+      "partial API failure"
+    ],
+    "requiredJourneys": [
+      "exact-authorized Home secondary action to /hr/explore",
+      "search and URL-restored query state",
+      "favorite replace with success and 409 stale preference",
+      "recent record and exact destination open",
+      "in-progress item and RESULT_UNKNOWN receipt reconciliation",
+      "loading, authorized-empty, search-empty, 403, stale, partial and retryable-error states"
+    ],
+    "requiredPerCapture": [
+      "journey and state",
+      "viewport and zoom",
+      "theme and accessibility mode",
+      "screenshot path, raw-byte SHA-256 and bytes",
+      "overflow, overlap, clipping, focus visibility and first-viewport review result"
+    ]
+  },
+  "independentReview": {
+    "required": true,
+    "requiredFields": [
+      "reviewer identity",
+      "reviewed backend and frontend result commits",
+      "P0 count",
+      "P1 count",
+      "remaining findings",
+      "safeForCentralAcceptanceReview"
+    ],
+    "admissionRule": "P0 and P1 must both be zero before central result admission."
+  },
+  "completionBoundary": {
+    "requiredModuleBranchesCommittedAndPushed": true,
+    "mergeToDwpDevAuthorized": false,
+    "centralResultAdmissionAuthorized": false,
+    "routeOrMenuActivationAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "bundleApprovalAuthorized": false,
+    "tenantActivationAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "requiredNonclaim": "The module result is implementation evidence only; Work Explorer remains DRAFT/default OFF and central review and controlled dwp-dev integration are pending."
+  },
+  "failureRules": [
+    "Do not report PASS when required PostgreSQL, browser or accessibility evidence is unavailable.",
+    "Do not replace missing provider evidence with fixtures outside tests or with a false empty projection.",
+    "Do not absorb a central contract or owner-service change into the module result; stop and request an amendment.",
+    "Do not run or repeat a repository-wide suite to compensate for missing targeted evidence."
+  ]
+}

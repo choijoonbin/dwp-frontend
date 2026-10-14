@@ -1,0 +1,133 @@
+{
+  "schema": "dwp.hris.sys012.readiness-and-dispatch-gate.v2",
+  "gateId": "HRIS-WAVE6-SYS-012-CONTROL-GATE-R2",
+  "preparedAt": "2026-10-15T04:51:34+09:00",
+  "sliceId": "BASE-TFR-SYS-012",
+  "supersedes": {
+    "path": "readiness-and-dispatch-gate.v1.json",
+    "gateId": "HRIS-WAVE6-SYS-012-CONTROL-GATE-R1",
+    "sha256": "902f153bc8e15e1f5c605b1aa90734dbcf7a4ddb0910727af4219fc2074db80d",
+    "bytes": 2416,
+    "preserveBytes": true
+  },
+  "state": "CENTRAL_CARRIERS_AUDITED_PREPARATION_CARRIER_READY_WORKTREE_MATERIALIZATION_ONLY",
+  "pins": {
+    "backend": {
+      "branch": "dwp-dev",
+      "commit": "3b2da20b592de5b5cff8f2483b83900f2dad054e",
+      "tree": "36c16b205aeab8b0ed52130e41196bb3cba024b5",
+      "upstream": "origin/dwp-dev",
+      "cleanAndRemoteExact": true
+    },
+    "frontend": {
+      "branch": "dwp-dev",
+      "commit": "ecdad2d4a93f47ea90956e8b47bf69fd7f8fea5a",
+      "tree": "e7ba56afa0085c120e5ca479bbf06985604fe36e",
+      "upstream": "origin/dwp-dev",
+      "cleanAndRemoteExactBeforeThisEvidenceCarrier": true
+    }
+  },
+  "evidence": {
+    "semanticSeal": {
+      "path": "work-explorer-semantics-seal.v1.json",
+      "sealId": "HRIS-WAVE6-SYS-012-WORK-EXPLORER-SEMANTICS-R1",
+      "sha256": "7aa1889d9102bedc4e7447d34b5c4f6ab71de3b52a43919e4869598f0a44384e",
+      "bytes": 19137
+    },
+    "transportAmendment": {
+      "path": "work-explorer-transport-amendment.v1.json",
+      "sha256": "6be0a0486b53fa5e536c490858494e43b8ff2556409c8f7269643fdaaba5d9d9",
+      "bytes": 10900
+    },
+    "migrationLease": {
+      "path": "migration-lease.v1.json",
+      "leaseId": "HRIS-WAVE6-SYS-012-MIGRATION-LEASE-R1",
+      "sha256": "815942d803150aed9a62fd773ccd5e0dea4ca463b0601c63573b17169133ec1a",
+      "bytes": 1389
+    },
+    "centralCarrierReceipt": {
+      "path": "central-contract-carrier-integration-receipt.v1.json",
+      "receiptId": "HRIS-WAVE6-SYS-012-CENTRAL-CONTRACT-CARRIER-INTEGRATED-R1",
+      "sha256": "830f9d8c1c2c64e4a31e3f4469e8d4fc2b419500a5636dd65ca69aa2e7c87473",
+      "bytes": 7033
+    },
+    "independentCarrierAudit": {
+      "path": "central-contract-carrier-independent-audit.v1.json",
+      "auditId": "HRIS-WAVE6-SYS-012-CENTRAL-CONTRACT-CARRIER-INDEPENDENT-AUDIT-R1",
+      "sha256": "9a27e39824dd879dfa4d19a1bff38c33f2fe976fec198a95da3a9695ecdb06cb",
+      "bytes": 5397,
+      "result": "PASS_NO_BLOCKING_DEFECTS"
+    }
+  },
+  "checks": [
+    {
+      "gate": "SOURCE_SEMANTICS_AND_TRANSPORT",
+      "status": "PASS",
+      "evidence": "The immutable R1 semantic seal, closed transport amendment, 98-node identity and literal DWP Control target rules remain byte-pinned."
+    },
+    {
+      "gate": "BACKEND_CENTRAL_CARRIER",
+      "status": "PASS",
+      "evidence": "The clean pushed backend pin contains v43 DRAFT, Auth V252, exact Platform PEP projection and SYS-API-027/038/039/040."
+    },
+    {
+      "gate": "FRONTEND_CENTRAL_CARRIER",
+      "status": "PASS",
+      "evidence": "The clean pushed frontend pin contains synchronized v43 artifacts, exact PAGE metadata, hcm.utility and a fail-closed withheld /hr/explore module boundary."
+    },
+    {
+      "gate": "MIGRATION_LEASE",
+      "status": "PASS_RESERVED_NOT_ACTIVE",
+      "evidence": "Platform V327 remains absent at the pinned backend commit and is reserved exclusively for HRIS-SYS; authoring is not activated by this gate."
+    },
+    {
+      "gate": "MODULE_PACKET_PREPARATION",
+      "status": "PREPARED_NOT_YET_PUSHED",
+      "evidence": "The bounded work packet, result contract and start-token preparation record are complete in this preparation carrier; no worktree or token exists yet."
+    },
+    {
+      "gate": "INDEPENDENT_FRONTEND_FINAL_AUDIT",
+      "status": "PASS",
+      "evidence": "The independent audit re-reviewed backend typed owner evidence and receipt anyOf plus frontend v43 parity, route/menu and fail-closed runtime boundaries with zero P0 and zero P1 findings."
+    },
+    {
+      "gate": "WORKTREE_MATERIALIZATION",
+      "status": "AUTHORIZED_AFTER_THIS_CARRIER_IS_PUSHED",
+      "evidence": "Control may materialize only the two planned clean module worktrees from the exact pushed bases after this preparation carrier is committed and pushed."
+    },
+    {
+      "gate": "HRIS_SYS_MODULE_DISPATCH",
+      "status": "BLOCKED",
+      "evidence": "Dispatch still requires two exact clean worktrees, a separately activated V327 authoring lease, start-token-issued.v1.json and issued-manifest.v1.json."
+    },
+    {
+      "gate": "PRODUCTION_ACTIVATION",
+      "status": "NOT_AUTHORIZED",
+      "evidence": "v43 remains DRAFT and Work Explorer remains default OFF; no tenant, customer or production activation is authorized."
+    }
+  ],
+  "dispatchPreconditions": [
+    "this preparation evidence carrier is committed and pushed on clean frontend dwp-dev",
+    "backend and frontend module worktrees are created from exact recorded origin/dwp-dev commits and are clean and remote-exact",
+    "V327 remains absent immediately before activation and the exact lease is activated for authoring only",
+    "start-token-issued.v1.json and issued-manifest.v1.json are created after worktree materialization"
+  ],
+  "authority": {
+    "centralCarrierIntegrated": true,
+    "modulePacketPreparationComplete": true,
+    "independentCarrierAuditPassed": true,
+    "worktreeMaterializationAuthorized": true,
+    "migrationAuthoringAuthorized": false,
+    "moduleImplementationAuthorized": false,
+    "moduleBranchCommitAuthorized": false,
+    "moduleBranchPushAuthorized": false,
+    "mergeToDwpDevAuthorized": false,
+    "routeOrMenuActivationAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "policyActivationAuthorized": false,
+    "customerDataAuthorized": false,
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "COMMIT_AND_PUSH_THIS_PREPARATION_CARRIER_THEN_MATERIALIZE_ONLY_THE_TWO_EXACT_CLEAN_WORKTREES; DO_NOT_ACTIVATE_V327_OR_ISSUE_THE_START_TOKEN_IN_THIS STEP"
+}

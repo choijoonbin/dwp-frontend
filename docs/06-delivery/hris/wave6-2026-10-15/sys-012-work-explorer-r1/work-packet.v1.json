@@ -1,0 +1,372 @@
+{
+  "schema": "dwp.hris.module-work-packet.v1",
+  "packetId": "HRIS-WAVE6-WORK-BASE-TFR-SYS-012-EXPLORER-R1",
+  "preparedAt": "2026-10-15T04:51:34+09:00",
+  "preparedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-SYS",
+  "sliceId": "BASE-TFR-SYS-012",
+  "sourceRef": "TFR-SYS-012",
+  "capability": "DWP.HRIS.WORK_EXPLORER",
+  "boundedContext": "HRIS_PLATFORM_EXPLORER",
+  "increment": "WORK_EXPLORER_RUNTIME_AND_USER_JOURNEY",
+  "state": "PREPARED_WORKTREE_MATERIALIZATION_ONLY_START_TOKEN_NOT_YET_ISSUED",
+  "predecessors": {
+    "semanticSeal": {
+      "path": "../sys-012-work-explorer-control-r1/work-explorer-semantics-seal.v1.json",
+      "sealId": "HRIS-WAVE6-SYS-012-WORK-EXPLORER-SEMANTICS-R1",
+      "sha256": "7aa1889d9102bedc4e7447d34b5c4f6ab71de3b52a43919e4869598f0a44384e",
+      "bytes": 19137
+    },
+    "transportAmendment": {
+      "path": "../sys-012-work-explorer-control-r1/work-explorer-transport-amendment.v1.json",
+      "sha256": "6be0a0486b53fa5e536c490858494e43b8ff2556409c8f7269643fdaaba5d9d9",
+      "bytes": 10900
+    },
+    "migrationLease": {
+      "path": "../sys-012-work-explorer-control-r1/migration-lease.v1.json",
+      "leaseId": "HRIS-WAVE6-SYS-012-MIGRATION-LEASE-R1",
+      "sha256": "815942d803150aed9a62fd773ccd5e0dea4ca463b0601c63573b17169133ec1a",
+      "bytes": 1389
+    },
+    "centralCarrierReceipt": {
+      "path": "../sys-012-work-explorer-control-r1/central-contract-carrier-integration-receipt.v1.json",
+      "receiptId": "HRIS-WAVE6-SYS-012-CENTRAL-CONTRACT-CARRIER-INTEGRATED-R1",
+      "sha256": "830f9d8c1c2c64e4a31e3f4469e8d4fc2b419500a5636dd65ca69aa2e7c87473",
+      "bytes": 7033
+    },
+    "independentCarrierAudit": {
+      "path": "../sys-012-work-explorer-control-r1/central-contract-carrier-independent-audit.v1.json",
+      "auditId": "HRIS-WAVE6-SYS-012-CENTRAL-CONTRACT-CARRIER-INDEPENDENT-AUDIT-R1",
+      "sha256": "9a27e39824dd879dfa4d19a1bff38c33f2fe976fec198a95da3a9695ecdb06cb",
+      "bytes": 5397,
+      "result": "PASS_NO_BLOCKING_DEFECTS"
+    },
+    "dispatchGate": {
+      "path": "../sys-012-work-explorer-control-r1/readiness-and-dispatch-gate-successor.v2.json",
+      "gateId": "HRIS-WAVE6-SYS-012-CONTROL-GATE-R2",
+      "sha256": "764443b73bfb46f1dd1d9d212466c8bdf040a16e2b88b75cdfa54ad265491c97",
+      "bytes": 6004,
+      "state": "CENTRAL_CARRIERS_AUDITED_PREPARATION_CARRIER_READY_WORKTREE_MATERIALIZATION_ONLY"
+    }
+  },
+  "centralCarrierPins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "3b2da20b592de5b5cff8f2483b83900f2dad054e",
+      "tree": "36c16b205aeab8b0ed52130e41196bb3cba024b5",
+      "upstream": "origin/dwp-dev",
+      "cleanAndRemoteExact": true
+    },
+    "frontendBeforePreparationCarrier": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "ecdad2d4a93f47ea90956e8b47bf69fd7f8fea5a",
+      "tree": "e7ba56afa0085c120e5ca479bbf06985604fe36e",
+      "upstream": "origin/dwp-dev",
+      "cleanAndRemoteExact": true
+    },
+    "authorization": {
+      "version": 43,
+      "checksum": "2222319502c362caf247a7a47fdacfc63c774dbf156f6272cafae797627e2400",
+      "bundleStatus": "DRAFT",
+      "defaultEnabled": false
+    }
+  },
+  "dependencyContract": {
+    "required": [
+      "APP.HCM",
+      "hcm.app.shell.view",
+      "HRIS_DUTY_APP_SHELL_READER",
+      "SYS-API-027",
+      "SYS-API-038",
+      "SYS-API-039",
+      "SYS-API-040",
+      "XCON-012",
+      "XCON-013",
+      "XCON-014",
+      "XCON-015"
+    ],
+    "centralContracts": [
+      "product-surface-authorization-v43",
+      "hcm-platform-pep-v43",
+      "work-explorer-transport-amendment.v1"
+    ],
+    "reuseRule": "Consume the pushed v43 authorization, generated PEP and OpenAPI contracts unchanged. Use the canonical shared HRIS command receipt model and typed owner-evidence providers; do not create a local authorization model, a static role menu or cross-service database access."
+  },
+  "scope": {
+    "included": [
+      "Platform Work Explorer controller, application service, repository and closed transport adapters for SYS-API-027/038/039/040",
+      "canonical 98-node catalog identity adapter with current route, entitlement, scope, field-policy, tenant-configuration, country-pack and deployment reauthorization",
+      "typed HrisExplorerOwnerEvidenceProvider hook and XCON-012 through XCON-015 provider composition without owner-service database joins",
+      "tenant and principal isolated preferences, ordered favorites, recents and shared command receipts",
+      "V327 clean and V326-to-V327 upgrade migration with forced tenant RLS",
+      "search-first /hr/explore frontend, favorites, recents, in-progress work and one exact-authorized Home secondary action",
+      "98 stable route labels in explicit Korean and English",
+      "material loading, empty, denied, conflict, stale, partial, result-unknown and retryable states",
+      "targeted backend, frontend and browser acceptance evidence"
+    ],
+    "excluded": [
+      "authorization bundle, Auth V252, Gateway binding, central OpenAPI, generated PEP or generated route registry changes",
+      "owner-service domain implementation in People, Time, Payroll, Approval or other services",
+      "HrisProductMap reuse or an eighth HRIS sidebar workbench",
+      "generic /admin authorization or emission of unavailable DWP Control targets",
+      "cross-service database query, cross-database foreign key or source payload persistence",
+      "bundle approval, assignment, tenant activation, customer data, external connector execution or production release"
+    ],
+    "completionClaim": "MODULE_RUNTIME_AND_USER_JOURNEY_COMPLETE_CONTROL_INTEGRATION_PENDING_DEFAULT_OFF",
+    "activationNonclaim": "Successful module implementation does not approve or activate v43, enable a tenant, or authorize production release."
+  },
+  "touchManifest": {
+    "moduleAllowedBackend": [
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/**",
+      "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/**",
+      "dwp-platform-server/src/main/resources/db/migration/V327__create_hris_work_explorer.sql",
+      "dwp-platform-server/src/main/resources/application.yml (dwp.hris.explorer default-OFF and bounded provider settings only)"
+    ],
+    "moduleAllowedFrontend": [
+      "apps/dwp/src/features/hris/explorer/**",
+      "apps/dwp/src/routes/hcm-routes.tsx (replace only the sealed withheld /hr/explore module boundary)",
+      "apps/dwp/src/routes/hcm-explorer-route.test.tsx",
+      "apps/dwp/src/features/hcm/hcm-home.tsx (one exact-authorized secondary Work Explorer action only)",
+      "apps/dwp/src/features/hcm/hcm-home*.test.tsx (Work Explorer action assertions only)",
+      "libs/shared-i18n/src/locales/ko/hcm.json (98 explicit explorer route labels and Explorer copy only)",
+      "libs/shared-i18n/src/locales/en/hcm.json (98 explicit explorer route labels and Explorer copy only)",
+      "e2e/hris-phase-one.spec.ts (Work Explorer journey only)"
+    ],
+    "readOnlyVerificationPaths": [
+      "apps/dwp/src/features/hris/shell/model/hris-information-architecture.generated.ts",
+      "apps/dwp/src/features/hris/shell/model/hris-runtime-navigation-manifest.ts",
+      "apps/dwp/src/features/hris/shell/components/hris-product-map.tsx",
+      "apps/dwp/src/features/hcm/hcm-product-manifest.ts",
+      "apps/dwp/src/routes/product-surface-authorization.generated.ts",
+      "architecture/product-page-routes.v1.json",
+      "architecture/product-surface-authorization.v1.json",
+      "libs/api-contracts/openapi/gateway-public.json"
+    ],
+    "controlOnly": [
+      "contracts/product-authorization/**",
+      "contracts/openapi/**",
+      "dwp-auth-server/**",
+      "dwp-gateway/**",
+      "dwp-platform-server/src/main/resources/product-authorization/**",
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/security/**",
+      "scripts/generate-product-authorization-*.py",
+      "scripts/export-openapi-contracts.py",
+      "architecture/**",
+      "apps/dwp/src/routes/product-surface-authorization.generated.ts",
+      "apps/dwp/src/components/product-entry-point-catalog.ts",
+      "apps/dwp/src/features/hcm/hcm-product-manifest.ts"
+    ],
+    "protected": [
+      "all existing numbered migrations",
+      "all People, Time, Payroll, Approval and other owner-service source",
+      "apps/dwp/src/features/hris/shell/**",
+      "docs/06-delivery/hris/recovery/**",
+      "docs/06-delivery/hris/wave6-2026-10-15/sys-012-work-explorer-control-r1/**"
+    ],
+    "outsideAllowedPathAction": "STOP_AND_RAISE_EXACT_CONTROL_AMENDMENT"
+  },
+  "runtimeContract": {
+    "page": {
+      "path": "/hr/explore",
+      "routeContractKey": "route.hcm.utility.explorer.page",
+      "surfaceKey": "hcm.utility",
+      "kind": "UTILITY_NOT_SIDEBAR"
+    },
+    "apis": [
+      "GET /v1/hris/explorer",
+      "PUT /v1/hris/explorer/preferences",
+      "POST /v1/hris/explorer/recents",
+      "GET /v1/admin/hris/command-receipts/{receiptId}"
+    ],
+    "catalog": {
+      "canonicalCount": 98,
+      "composition": {
+        "BASE76": 76,
+        "MODERN22": 22
+      },
+      "responseRule": "The canonical identity registry contains exactly 98 nodes; each response is the current authorized and deployed subset after server-side eligibility intersection.",
+      "routeKeyRule": "hris.explorer.<sourceNodeKey with dots replaced by hyphens>",
+      "labelKeyRule": "hris.explorer.routes.<sourceNodeKey with dots replaced by hyphens>",
+      "labelRule": "All 98 keys require explicit ko and en values; collision or absence fails closed."
+    },
+    "typedOwnerEvidence": {
+      "hook": "HrisExplorerOwnerEvidenceProvider",
+      "sources": [
+        "COMMAND_RECEIPT",
+        "WORKFLOW_CASE",
+        "APPROVAL_CASE",
+        "SERVICE_REQUEST",
+        "OPERATION_EXCEPTION"
+      ],
+      "rule": "Each provider returns authorization-filtered typed metadata plus verified owner scope and source revision evidence. Missing, stale, mismatched or failed evidence cannot become an authorized item and degrades the projection to PARTIAL.",
+      "allowedProjectionFields": [
+        "activityId",
+        "sourceKind",
+        "module",
+        "state",
+        "sourceRevision",
+        "updatedAt",
+        "target"
+      ],
+      "forbidden": [
+        "requestPayload",
+        "responsePayload",
+        "caseBody",
+        "workerIdentifier",
+        "sensitiveTitle",
+        "sourcePayloadRef"
+      ]
+    },
+    "persistence": {
+      "migration": "V327__create_hris_work_explorer.sql",
+      "tables": [
+        "sys_hris_explorer_preferences",
+        "sys_hris_explorer_favorites",
+        "sys_hris_explorer_recents",
+        "sys_hris_command_receipts"
+      ],
+      "isolation": "Verified tenant and authenticated principal on every operation with RLS enabled and forced.",
+      "cleanup": "READ_AND_WRITE_THROUGH_PURGE"
+    },
+    "activation": {
+      "authorizationBundle": "DRAFT",
+      "runtimeDefault": "OFF",
+      "tenantEnabled": false,
+      "productionClaim": false
+    }
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "SYS012-AC-01",
+      "criterion": "SYS-API-027/038/039/040 implement the exact pushed paths, query/header requirements, statuses, closed schemas and dual receipt-profile union without local shadow DTO drift."
+    },
+    {
+      "id": "SYS012-AC-02",
+      "criterion": "The canonical registry is exactly 76 BASE76 plus 22 MODERN22 nodes with 98 unique stable route keys and 98 explicit ko/en label pairs; collisions or missing labels fail closed."
+    },
+    {
+      "id": "SYS012-AC-03",
+      "criterion": "Every response node is reauthorized against the deployed exact PAGE route, APP.HCM, shell-reader duty, tenant configuration, country pack, owner scope and current field policy; raw IA lifecycle and client role lists never grant access."
+    },
+    {
+      "id": "SYS012-AC-04",
+      "criterion": "HRIS_INTERNAL targets satisfy the exact allowed HCM PAGE decision and DWP_CONTROL targets use only literal sealed paths; generic /admin authorization and the five undeployed external targets are absent."
+    },
+    {
+      "id": "SYS012-AC-05",
+      "criterion": "Tenant and principal are server-bound, all four tables enforce enabled and forced RLS, and cross-tenant or out-of-origin receipt access is opaque without data disclosure."
+    },
+    {
+      "id": "SYS012-AC-06",
+      "criterion": "Preferences preserve at most 20 unique ordered favorites, require If-Match CAS and Idempotency-Key, replay exact requests, reject digest reuse and purge retired or denied keys in the same transaction."
+    },
+    {
+      "id": "SYS012-AC-07",
+      "criterion": "Recents preserve at most 20 unique authorized keys using server-time LRU and 30-day TTL, replay exact idempotent requests and purge expired, unknown or denied keys."
+    },
+    {
+      "id": "SYS012-AC-08",
+      "criterion": "Explorer commands use the shared sys_hris_command_receipts store; exact replay is stable, mismatched reuse has no side effect, and RESULT_UNKNOWN is reconciled only through the exact originating-context receipt route."
+    },
+    {
+      "id": "SYS012-AC-09",
+      "criterion": "Typed owner-evidence providers expose only minimized fields, reject missing/stale/mismatched scope evidence, never query another service database, and return PARTIAL rather than a false empty success when any registered provider fails."
+    },
+    {
+      "id": "SYS012-AC-10",
+      "criterion": "Work Explorer mounts only at the governed hcm.utility /hr/explore route and one exact-authorized Home secondary action; seven workbenches remain unchanged and HrisProductMap is not mounted or reused."
+    },
+    {
+      "id": "SYS012-AC-11",
+      "criterion": "The search-first UI preserves useful query/filter/selection state in the URL and proves loading, success, authorized-empty, search-empty, 403, 409, stale, partial, result-unknown and retryable states with keyboard, visible focus, long ko/en labels, light/dark, high contrast and reduced motion."
+    },
+    {
+      "id": "SYS012-AC-12",
+      "criterion": "V327 passes clean and V326-to-V327 upgrade with historical checksums unchanged; targeted responsive and 200-percent zoom evidence passes; only allowed paths change; v43 and runtime remain DRAFT/default OFF with no activation claim."
+    }
+  ],
+  "verificationPlan": {
+    "policy": "RUN_EACH_TARGETED_STAGE_ONCE; COLLECT_ALL_FAILURES; AFTER_A_FIX_RERUN_ONLY_THE_FAILED_COMMAND_OR_SMALLEST_OWNING_TEST; NO_REPOSITORY_WIDE_SUITE",
+    "backend": [
+      "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.hrisconfiguration.explorer.*' --tests '*HcmPlatformPepSecurityContractTest' --no-daemon --max-workers=1"
+    ],
+    "backendAssertions": [
+      "98-node canonical identity and authorized-subset projection",
+      "tenant/principal isolation and forced RLS",
+      "route reauthorization and read/write-through purge",
+      "favorites/recents limits, CAS, idempotency and shared receipt replay",
+      "typed owner-evidence minimization and PARTIAL failure semantics",
+      "V327 clean and V326-to-V327 upgrade"
+    ],
+    "frontend": [
+      "pnpm exec vitest run apps/dwp/src/features/hris/explorer apps/dwp/src/routes/hcm-explorer-route.test.tsx",
+      "pnpm exec eslint apps/dwp/src/features/hris/explorer apps/dwp/src/routes/hcm-routes.tsx apps/dwp/src/features/hcm/hcm-home.tsx",
+      "pnpm exec playwright test e2e/hris-phase-one.spec.ts --grep 'Work Explorer'"
+    ],
+    "viewports": [
+      "1440x900",
+      "1280x800",
+      "390x844",
+      "320x640",
+      "1280x800 at browser 200% zoom"
+    ],
+    "visualAndAccessibility": [
+      "light and dark",
+      "high contrast",
+      "reduced motion",
+      "keyboard-only and visible focus",
+      "long Korean and English labels",
+      "partial provider failure",
+      "no clipped controls, page-level horizontal scroll, overlap or false blank canvas"
+    ],
+    "staticChecks": [
+      "Prettier check only changed frontend files",
+      "git diff --check in both worktrees",
+      "exact changed-path allowlist comparison in both worktrees"
+    ],
+    "fullPromotionGate": "NOT_AUTHORIZED_IN_MODULE_WORKTREES"
+  },
+  "plannedWorktrees": {
+    "backend": {
+      "repository": "dwp-backend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave6-20261015/sys-012-work-explorer-r1/backend",
+      "branch": "codex/hris-wave6-sys-012-explorer-backend-20261015-r1",
+      "source": "exact pushed backend dwp-dev pin recorded at materialization"
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave6-20261015/sys-012-work-explorer-r1/frontend",
+      "branch": "codex/hris-wave6-sys-012-explorer-frontend-20261015-r1",
+      "source": "exact pushed preparation carrier commit, not the pre-preparation frontend pin"
+    }
+  },
+  "invalidationConditions": [
+    "the central carrier commits, v43 checksum, exact four route records, OpenAPI or sealed predecessor bytes change",
+    "V327 exists from another owner before lease activation or another Platform migration takes V327",
+    "either worktree base, branch, tree, clean state, upstream or remote exactness differs from the issued token",
+    "a path outside the exact writable manifests must change",
+    "an owner-service source change, additional migration, additional route, new capability, new predicate or central generated-contract change is required",
+    "a runtime path uses client roles, IA lifecycle, a generic path prefix or cross-service database data as authorization",
+    "bundle approval, feature enablement, tenant assignment, customer data or production release is attempted"
+  ],
+  "authority": {
+    "packetPrepared": true,
+    "startTokenIssued": false,
+    "worktreeMaterializationAuthorized": true,
+    "moduleImplementationAuthorized": false,
+    "migrationAuthoringAuthorized": false,
+    "moduleBranchCommitAuthorized": false,
+    "moduleBranchPushAuthorized": false,
+    "mergeToDwpDevAuthorized": false,
+    "routeOrMenuActivationAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "policyActivationAuthorized": false,
+    "customerDataAuthorized": false,
+    "externalConnectorAuthorized": false,
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "COMMIT_AND_PUSH_THIS_PREPARATION_CARRIER_THEN_MATERIALIZE_ONLY_THE_TWO_PLANNED_CLEAN_WORKTREES; V327_ACTIVATION_AND_START_TOKEN_REMAIN_SEPARATE_WITHHELD_ACTIONS"
+}

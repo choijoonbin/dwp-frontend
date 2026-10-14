@@ -1,0 +1,188 @@
+{
+  "schema": "dwp.hris.sys012.central-contract-carrier-integration-receipt.v1",
+  "receiptId": "HRIS-WAVE6-SYS-012-CENTRAL-CONTRACT-CARRIER-INTEGRATED-R1",
+  "completedAt": "2026-10-15T04:51:34+09:00",
+  "sliceId": "BASE-TFR-SYS-012",
+  "state": "CENTRAL_BACKEND_AND_FRONTEND_CONTRACT_CARRIERS_INTEGRATED_AND_INDEPENDENTLY_AUDITED_DRAFT_DEFAULT_OFF",
+  "repositories": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "upstream": "origin/dwp-dev",
+      "commit": "3b2da20b592de5b5cff8f2483b83900f2dad054e",
+      "tree": "36c16b205aeab8b0ed52130e41196bb3cba024b5",
+      "lineage": [
+        "1ed365aec0d03c96f93194f522b4610b5fa48085",
+        "3b2da20b592de5b5cff8f2483b83900f2dad054e"
+      ],
+      "headMatchesUpstream": true,
+      "porcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "upstream": "origin/dwp-dev",
+      "commit": "ecdad2d4a93f47ea90956e8b47bf69fd7f8fea5a",
+      "tree": "e7ba56afa0085c120e5ca479bbf06985604fe36e",
+      "lineage": [
+        "4503c6db1d076b95061a3a9f0a809f86494b14ec",
+        "ecdad2d4a93f47ea90956e8b47bf69fd7f8fea5a"
+      ],
+      "headMatchesUpstream": true,
+      "porcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "authorization": {
+    "version": 43,
+    "bundleStatus": "DRAFT",
+    "defaultEnabled": false,
+    "checksum": "2222319502c362caf247a7a47fdacfc63c774dbf156f6272cafae797627e2400",
+    "counts": {
+      "capabilities": 256,
+      "accessPolicies": 24,
+      "entitlementExpressions": 17,
+      "predicatePolicies": 71,
+      "routes": 1032,
+      "routeKinds": {
+        "PAGE": 133,
+        "DATA": 309,
+        "ACTION": 590
+      }
+    },
+    "platformOwnerProjection": {
+      "routes": 34,
+      "serviceBindings": 35,
+      "gatewayBindings": 36,
+      "capabilities": 18,
+      "accessPolicies": 4,
+      "entitlementExpressions": 3,
+      "predicatePolicies": 7,
+      "routeKinds": {
+        "PAGE": 6,
+        "DATA": 9,
+        "ACTION": 19
+      }
+    }
+  },
+  "artifacts": [
+    {
+      "repository": "dwp-backend",
+      "path": "contracts/product-authorization/product-surfaces-v1.bundle-v43.json",
+      "sha256": "43e78121675791410a39c59808d047a3334e8b01679de2d7c2b73954585681a7",
+      "bytes": 2449531
+    },
+    {
+      "repository": "dwp-backend",
+      "path": "contracts/product-authorization/product-surfaces-v1.index.json",
+      "sha256": "91cf7202eea0a8d2c4407bb461b3e659af29fa1d9057889653dc16e68643d639",
+      "bytes": 20241
+    },
+    {
+      "repository": "dwp-backend",
+      "path": "contracts/openapi/platform.json",
+      "sha256": "602416316d6fd44f3b4a3d392d59afbef16f244ccf8e55648665fc2818143110",
+      "bytes": 2261449
+    },
+    {
+      "repository": "dwp-backend",
+      "path": "contracts/openapi/gateway-public.json",
+      "sha256": "3205d3bfc0bbdb2923c57c4e40ebecdeaa41a3b32ed51e4aa8e84a6e97a61671",
+      "bytes": 7069331
+    },
+    {
+      "repository": "dwp-backend",
+      "path": "dwp-platform-server/src/main/resources/product-authorization/hcm-platform-pep-v43.generated.json",
+      "sha256": "378f87ebe4810ed22c8018cc7aefa4841e8e212d821a549c9c3f74a2ad34cab1",
+      "bytes": 104042
+    },
+    {
+      "repository": "dwp-backend",
+      "path": "dwp-auth-server/src/main/resources/db/migration/V252__authorize_hris_work_explorer.sql",
+      "sha256": "51267daa4d42e0ec775592d66c0b6c03297bfe4d51ec34cb9dc050f5332433cf",
+      "bytes": 3749
+    },
+    {
+      "repository": "dwp-frontend",
+      "path": "architecture/product-surface-authorization.v1.json",
+      "sha256": "426f56a65a8cad0e48d2e9aebe25271a204da59aa4ae495138d5d5a438638cc2",
+      "bytes": 74688634
+    },
+    {
+      "repository": "dwp-frontend",
+      "path": "architecture/product-page-routes.v1.json",
+      "sha256": "f1f68923db3cbd2009effd055d0c29375b5d27ce9172aacc5e0358b8c22e06b3",
+      "bytes": 36418
+    },
+    {
+      "repository": "dwp-frontend",
+      "path": "libs/api-contracts/openapi/gateway-public.json",
+      "sha256": "3205d3bfc0bbdb2923c57c4e40ebecdeaa41a3b32ed51e4aa8e84a6e97a61671",
+      "bytes": 7069331
+    },
+    {
+      "repository": "dwp-frontend",
+      "path": "libs/api-contracts/openapi/agent-public.json",
+      "sha256": "06d0a6e7eb30805a051f56f13dd1357cbc983a965d00ba8a0d577da5e6dd240f",
+      "bytes": 1320532
+    }
+  ],
+  "closedContract": {
+    "surfaceKey": "hcm.utility",
+    "browserPath": "/hr/explore",
+    "capabilityContractKey": "hcm.app.shell.view",
+    "requiredResponsibilityCode": "HRIS_DUTY_APP_SHELL_READER",
+    "routeContractKeys": [
+      "route.hcm.utility.explorer.page",
+      "route.hcm.utility.explorer-command-receipt.data",
+      "route.hcm.utility.explorer-preferences-update.action",
+      "route.hcm.utility.explorer-recent-create.action"
+    ],
+    "openApiContractIds": [
+      "SYS-API-027",
+      "SYS-API-038",
+      "SYS-API-039",
+      "SYS-API-040"
+    ],
+    "receiptProfiles": [
+      "explorer-originating-receipt-reader",
+      "platform-originating-command-receipt-reader"
+    ]
+  },
+  "independentAudit": {
+    "path": "central-contract-carrier-independent-audit.v1.json",
+    "auditId": "HRIS-WAVE6-SYS-012-CENTRAL-CONTRACT-CARRIER-INDEPENDENT-AUDIT-R1",
+    "sha256": "9a27e39824dd879dfa4d19a1bff38c33f2fe976fec198a95da3a9695ecdb06cb",
+    "bytes": 5397,
+    "result": "PASS_NO_BLOCKING_DEFECTS",
+    "p0": 0,
+    "p1": 0
+  },
+  "targetedCarrierValidation": [
+    {
+      "stage": "C1_CONTRACT_GENERATION",
+      "status": "PASS_AT_CARRIER_COMPLETION",
+      "evidence": "The pushed backend pin contains the exact v43 checksum and counts, the exact four route records, both receipt profiles, the v43 Platform owner projection, and SYS-API-027/038/039/040. No standalone log artifact is pinned by this receipt."
+    },
+    {
+      "stage": "C2_AUTH_GATEWAY_PLATFORM_PEP",
+      "status": "PASS_AT_CARRIER_COMPLETION",
+      "evidence": "The pushed backend pin contains the bounded Auth V252, Gateway fixture pin and fail-closed Platform PEP contract. No standalone log artifact is pinned by this receipt."
+    },
+    {
+      "stage": "C3_FRONTEND_CENTRAL_SYNC",
+      "status": "PASS_AT_CARRIER_COMPLETION",
+      "evidence": "The pushed frontend pin contains v43 authorization and fixture sync, exact PAGE metadata, hcm.utility, the withheld /hr/explore boundary and matching Gateway contract. The independent final carrier audit passed with no P0 or P1 finding."
+    }
+  ],
+  "moduleBoundary": {
+    "runtimeImplementationIncluded": false,
+    "v327Included": false,
+    "worktreeCreated": false,
+    "worktreeMaterializationAuthorizedAfterPreparationCarrierPush": true,
+    "startTokenIssued": false,
+    "bundleActivationAuthorized": false,
+    "tenantActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "result": "PASS_CENTRAL_CARRIERS_INTEGRATED_AND_AUDITED_WORKTREE_PREPARATION_ALLOWED_TOKEN_AND_MODULE_DISPATCH_WITHHELD"
+}

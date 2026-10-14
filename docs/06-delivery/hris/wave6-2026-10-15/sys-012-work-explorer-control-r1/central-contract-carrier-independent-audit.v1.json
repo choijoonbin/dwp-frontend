@@ -1,0 +1,120 @@
+{
+  "schema": "dwp.hris.sys012.central-contract-carrier-independent-audit.v1",
+  "auditId": "HRIS-WAVE6-SYS-012-CENTRAL-CONTRACT-CARRIER-INDEPENDENT-AUDIT-R1",
+  "completedAt": "2026-10-15T04:57:56+09:00",
+  "sliceId": "BASE-TFR-SYS-012",
+  "scope": "Final pushed SYS-012 backend and frontend central contract carriers; no module runtime, V327, activation or production claim",
+  "result": "PASS_NO_BLOCKING_DEFECTS",
+  "reviewedPins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "3b2da20b592de5b5cff8f2483b83900f2dad054e",
+      "tree": "36c16b205aeab8b0ed52130e41196bb3cba024b5",
+      "upstream": "origin/dwp-dev",
+      "remoteExact": true
+    },
+    "frontendLineage": [
+      {
+        "repository": "dwp-frontend",
+        "branch": "dwp-dev",
+        "commit": "4503c6db1d076b95061a3a9f0a809f86494b14ec",
+        "tree": "42b577cc5ed5506544b11aca0a899390710cbdc7",
+        "purpose": "v43 authorization, OpenAPI, hcm.utility, exact route metadata and fail-closed runtime boundary carrier"
+      },
+      {
+        "repository": "dwp-frontend",
+        "branch": "dwp-dev",
+        "commit": "ecdad2d4a93f47ea90956e8b47bf69fd7f8fea5a",
+        "tree": "e7ba56afa0085c120e5ca479bbf06985604fe36e",
+        "purpose": "explorer receipt union parity correction",
+        "upstream": "origin/dwp-dev",
+        "remoteExact": true
+      }
+    ],
+    "authoritativeAgentOpenApi": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "path": "contracts/openapi/agent-public.json",
+      "sha256": "06d0a6e7eb30805a051f56f13dd1357cbc983a965d00ba8a0d577da5e6dd240f",
+      "bytes": 1320532
+    }
+  },
+  "checks": [
+    {
+      "area": "BACKEND_TYPED_OWNER_EVIDENCE",
+      "status": "PASS",
+      "evidence": "The final backend carrier preserves the closed typed owner-evidence boundary, rejects incomplete evidence, carries current authorization context, and does not authorize cross-service database inference."
+    },
+    {
+      "area": "BACKEND_RECEIPT_ANY_OF",
+      "status": "PASS",
+      "evidence": "SYS-API-038 exposes the intended closed anyOf union for HrisExplorerReceiptV1 and HrisCommandReceiptV1 while retaining the two exact originating-context access profiles and opaque denial semantics."
+    },
+    {
+      "area": "FRONTEND_V43_AND_GENERATED_PARITY",
+      "status": "PASS",
+      "evidence": "The frontend v43 authorization snapshot, fixtures and Gateway OpenAPI match the final central contract identities and checksum."
+    },
+    {
+      "area": "FRONTEND_ROUTE_AND_MENU_BOUNDARY",
+      "status": "PASS",
+      "evidence": "hcm.utility owns only exact /hr/explore, remains outside the seven workbench menus, and the local HCM router does not absorb shared /admin routes."
+    },
+    {
+      "area": "FRONTEND_RUNTIME_BOUNDARY",
+      "status": "PASS",
+      "evidence": "The final carrier exposes a fail-closed withheld Work Explorer module boundary and does not mount HrisProductMap, a placeholder success surface or an unauthorized fallback."
+    },
+    {
+      "area": "FRONTEND_AUTHORITATIVE_AGENT_OPENAPI_SYNC",
+      "status": "PASS",
+      "evidence": "dwp-frontend/libs/api-contracts/openapi/agent-public.json is byte-equal to dwp_agent/contracts/openapi/agent-public.json at authoritative dwp_agent commit 9beb5439cad065e7d919a98c9f9becb44481508a."
+    },
+    {
+      "area": "SYS012_GATEWAY_AND_OPENAPI_PARITY",
+      "status": "PASS",
+      "evidence": "The final frontend Gateway OpenAPI SHA-256 3205d3bfc0bbdb2923c57c4e40ebecdeaa41a3b32ed51e4aa8e84a6e97a61671 is byte-equal to the authoritative backend Gateway artifact and contains the sealed SYS-012 operations."
+    }
+  ],
+  "nonBlockingDebt": [
+    {
+      "id": "UNRELATED-BACKEND-AGENT-OPENAPI-MIRROR-LAG",
+      "severity": "NON_BLOCKING_OUTSIDE_SYS012",
+      "finding": "dwp-backend/contracts/openapi/agent-public.json is an older mirror and is not byte-equal to the authoritative dwp_agent artifact.",
+      "backendMirror": {
+        "path": "dwp-backend/contracts/openapi/agent-public.json",
+        "sha256": "b8b4b93449714f765385ac55bec7d221cd1e9d07e898b2d400ca4ea04f3ec9c1",
+        "bytes": 1313454
+      },
+      "authoritativeArtifact": {
+        "repository": "dwp_agent",
+        "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+        "path": "contracts/openapi/agent-public.json",
+        "sha256": "06d0a6e7eb30805a051f56f13dd1357cbc983a965d00ba8a0d577da5e6dd240f",
+        "bytes": 1320532
+      },
+      "disposition": "Track as separate repository mirror debt. It does not affect the authoritative frontend sync, SYS-012 Gateway/OpenAPI parity, Work Explorer module base or dispatch preparation."
+    }
+  ],
+  "findingSummary": {
+    "p0": 0,
+    "p1": 0,
+    "blocking": 0,
+    "nonBlockingDebt": 1
+  },
+  "dispatchDecision": {
+    "centralCarrierAccepted": true,
+    "preparationCarrierMayBeCommittedAndPushed": true,
+    "worktreeMaterializationMayBeAuthorizedAfterPreparationCarrierPush": true,
+    "migrationLeaseActivationAuthorized": false,
+    "startTokenIssued": false,
+    "moduleImplementationAuthorized": false,
+    "mergeToDwpDevAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  }
+}
