@@ -152,10 +152,11 @@ function exact(value: unknown, path: string, keys: readonly string[]) {
 }
 
 function text(value: unknown, path: string, maximum: number, pattern?: RegExp, minimum = 1) {
+  const length = typeof value === 'string' ? Array.from(value).length : -1;
   if (
     typeof value !== 'string' ||
-    value.length < minimum ||
-    value.length > maximum ||
+    length < minimum ||
+    length > maximum ||
     (pattern && !pattern.test(value))
   ) {
     invalid(path);

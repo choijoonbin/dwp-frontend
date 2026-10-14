@@ -128,6 +128,15 @@ describe('PAY-011 closed transport model', () => {
     ).toThrow(/command/);
   });
 
+  it('applies action-command length limits in Unicode code points', () => {
+    expect(validatePayrollActionCommand({ reasonCode: '💰'.repeat(64) }).reasonCode).toHaveLength(
+      128
+    );
+    expect(() => validatePayrollActionCommand({ reasonCode: '💰'.repeat(65) })).toThrow(
+      /command\.reasonCode/
+    );
+  });
+
   it('orders exceptions first and exposes only valid state transitions', () => {
     const ready = selectPayrollCalculationRun(run());
     const failed = selectPayrollCalculationRun(
