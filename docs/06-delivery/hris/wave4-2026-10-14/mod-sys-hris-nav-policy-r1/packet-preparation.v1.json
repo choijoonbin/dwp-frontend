@@ -1,0 +1,218 @@
+{
+  "schema": "dwp.hris.module-work-packet-preparation.v1",
+  "preparationId": "HRIS-WAVE4-PREP-MOD-SYS-HRIS-NAV-POLICY-R1",
+  "issuedAt": "2026-10-14T12:49:29+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "lifecycleState": "PACKET_PREPARED_START_WITHHELD",
+  "capabilityId": "MOD-SYS-HRIS-NAV-POLICY-R1",
+  "authoritativeSlice": {
+    "sliceId": "BASE-TFR-SYS-012",
+    "sourceRef": "TFR-SYS-012",
+    "sourceFamilySha256": "b9eaff79e11eb4a6439f999addb6ce4c2ff22a2913b8230af976a475189818e6",
+    "capability": "HRIS_SHELL_EXPERIENCE",
+    "decision": "IMPLEMENT_AS_BOUNDED_INCREMENT_OF_EXISTING_SLICE_NOT_AS_A_NEW_SLICE_ID"
+  },
+  "owners": {
+    "moduleSession": "HRIS-SYS",
+    "moduleOwner": "HRIS-SYS",
+    "controlOwner": "SYS_COMMON_INTEGRATION_CONTROL",
+    "reviewer": "SYS_COMMON_INTEGRATION_CONTROL",
+    "singleWriterRequired": true
+  },
+  "basePins": {
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "1367f6c930588a27b9df56baf758dccc3d442cad",
+      "tree": "67b26b77fcbd82901bc5473ef7a0ead1e407ad3e",
+      "upstream": "origin/dwp-dev",
+      "upstreamMatched": true,
+      "clean": true
+    },
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "ac89415028e3cf91a93345af0f1ecc2bd1e0322e",
+      "tree": "d4ed240e5dc3d366acdf4864bc6d55f67e92ae8f",
+      "upstream": "origin/dwp-dev",
+      "upstreamMatched": true,
+      "clean": true
+    }
+  },
+  "sourcePins": {
+    "shellNavigationRegisterSha256": "f85ee40a66ce4100c5578fd3ca96bc89b652b0762e19d74cc7aeb76338009000",
+    "workbenchTaskGroupRegisterSha256": "f0b1ebb316e4d5944aac90002e144f25d8c1318216b6733e674cdc8c5042872b",
+    "authorizationVersion": 39,
+    "authorizationChecksum": "86e796c95e45c02892d4c4ae76e7a5b36114ab09554ffc1be3a450066fe8e34c",
+    "compplanProducerReceipt": "HRIS-WAVE3-MOD-PER-COMPPLAN-CENTRAL-INTEGRATION-20261014-R2"
+  },
+  "userOutcome": {
+    "primaryUser": "HRIS configuration administrator",
+    "operationalQuestion": "Which canonical HRIS menus are available, ordered and defaulted for this tenant and legal entity without changing authorization?",
+    "primaryAction": "draft, validate, preview, approve, publish or restore a governed navigation-policy revision",
+    "outcome": "the shell and deep-link guard consume one immutable effective policy revision while route and owner authorization remain independent"
+  },
+  "scope": {
+    "firstWorkbench": "HRIS-WB-HR-OPERATIONS",
+    "canonicalGroupIds": [
+      "HROPS-01",
+      "HROPS-02",
+      "HROPS-03",
+      "HROPS-04",
+      "HROPS-05",
+      "HROPS-06",
+      "HROPS-07"
+    ],
+    "canonicalMemberNodeCount": 17,
+    "totalPolicySurfaceCountIncludingWorkbenchEntry": 18,
+    "effectiveMenuFormula": "CANONICAL_DEPLOYED_IA_INTERSECT_INSTALLED_CONFIGURATION_ELIGIBILITY_INTERSECT_TENANT_BASELINE_INTERSECT_LEGAL_ENTITY_RESTRICTIVE_OVERLAY_INTERSECT_EXACT_PAGE_CAPABILITY",
+    "included": [
+      "tenant node visibility order grouping and default within the canonical allowlist",
+      "legal-entity restrictive overlay that may only remove or reorder tenant-enabled nodes",
+      "immutable policy revision lifecycle and effective projection",
+      "shared effective revision for sidebar landing fallback and direct deep-link denial",
+      "OFF SHADOW ENFORCED rollout with enrolled-tenant fail-closed behavior"
+    ],
+    "excluded": [
+      "inventing new IA nodes routes capabilities or owner permissions",
+      "modifying HRM PER PAY or TIM page implementations",
+      "customer activation production release or automatic feature enablement",
+      "reuse of the generic two-level app-launcher navigation model as the HRIS policy system"
+    ]
+  },
+  "invariants": [
+    "VISIBLE_TRUE_NEVER_GRANTS_AUTHORITY",
+    "LEGAL_ENTITY_CANNOT_REENABLE_TENANT_DISABLED_OR_CAPABILITY_SUPPRESSED_NODE",
+    "MENU_LANDING_AND_DEEP_LINK_USE_THE_SAME_EFFECTIVE_REVISION",
+    "OWNER_API_AUTHORIZATION_REMAINS_INDEPENDENT_AND_MANDATORY",
+    "TRUST_ONLY_SERVER_VERIFIED_TENANT_AND_LEGAL_ENTITY_CONTEXT",
+    "PUBLISHED_REVISIONS_ARE_IMMUTABLE",
+    "ROLLBACK_PUBLISHES_A_NEW_REVISION_PINNED_TO_A_PRIOR_DIGEST",
+    "AUTHOR_CANNOT_APPROVE_OR_PUBLISH_THE_SAME_REVISION",
+    "APPROVE_PUBLISH_AND_ROLLBACK_REQUIRE_STEP_UP",
+    "EXPECTED_VERSION_CAS_AND_IDEMPOTENCY_DIGEST_MISMATCH_FAIL_CLOSED",
+    "RECEIPT_AUDIT_AND_OUTBOX_ARE_TRANSACTIONAL",
+    "MISSING_OR_STALE_POLICY_FAILS_CLOSED_ONLY_FOR_ENROLLED_ENFORCED_TENANTS"
+  ],
+  "ownerBoundaries": {
+    "platform": "system of record for navigation policy metadata immutable revisions and effective projection",
+    "recoveredIa": "canonical node workbench task-group and route allowlist",
+    "auth": "grants duties exact PAGE authority and trusted scope context",
+    "people": "legal-entity identity and owner-verified context binding",
+    "moduleOwners": "business pages commands and domain data",
+    "browser": "never authoritative for tenant legal entity capability or permission"
+  },
+  "touchManifest": {
+    "moduleAllowedPaths": [
+      "backend:dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/navigationpolicy/**",
+      "backend:dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/navigationpolicy/**",
+      "backend:dwp-platform-server/src/main/resources/db/migration/V326__create_hris_navigation_policy_lifecycle.sql",
+      "frontend:apps/dwp/src/features/hris/administration/navigation-policy/**"
+    ],
+    "controlOnlyPaths": [
+      "backend:dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/HrisConfigurationProjectionController.java",
+      "backend:dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/HrisConfigurationProjectionDtos.java",
+      "backend:dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/HrisConfigurationProjectionService.java",
+      "backend:contracts/openapi/**",
+      "backend:contracts/product-authorization/**",
+      "backend:dwp-gateway/**",
+      "backend:dwp-auth-server/**",
+      "backend:dwp-people-server/**",
+      "frontend:apps/dwp/src/features/hris/shell/**",
+      "frontend:apps/dwp/src/layouts/**",
+      "frontend:apps/dwp/src/routes/**",
+      "frontend:apps/dwp/src/routes/product-surface-authorization.generated.ts",
+      "frontend:libs/shared-i18n/**",
+      "frontend:e2e/**"
+    ],
+    "protectedGeneratedOrRecoveryPaths": [
+      "frontend:apps/dwp/src/features/hris/shell/model/hris-information-architecture.generated.ts",
+      "frontend:docs/06-delivery/hris/recovery/**",
+      "backend:**/product-surfaces-v1.generated.json"
+    ],
+    "outsideAllowedPathAction": "STOP_AND_RAISE_CONTROL_REQUEST"
+  },
+  "migrationLease": {
+    "required": true,
+    "leaseIdCandidate": "HRIS-WAVE4-LEASE-MOD-SYS-HRIS-NAV-POLICY-PLATFORM-V326-R1",
+    "stream": "PLATFORM_MAIN",
+    "baseHighWater": "V325",
+    "reservedVersion": "V326",
+    "exactPath": "dwp-platform-server/src/main/resources/db/migration/V326__create_hris_navigation_policy_lifecycle.sql",
+    "schemaEffect": "tenant and legal-entity policy heads immutable revisions node deltas command receipts audit and outbox with tenant RLS",
+    "upgradePath": "CLEAN_INSTALL_AND_V325_TO_V326",
+    "rollbackStrategy": "FORWARD_FIX_ONLY",
+    "status": "RESERVED_CONTROL_ONLY_NOT_ADMITTED",
+    "conditionalAuthLease": "V249_ONLY_IF_TRUSTED_SCOPE_CONTEXT_REQUIRES_AUTH_SCHEMA_CHANGE"
+  },
+  "preStartGates": [
+    {
+      "id": "GATE-IDENTITY",
+      "state": "READY",
+      "requirement": "Control approves capabilityId as a bounded increment of BASE-TFR-SYS-012"
+    },
+    {
+      "id": "GATE-OPERATIONS-PEP",
+      "state": "OPEN",
+      "requirement": "allocate exact admin and runtime API operations PAGE PEP and action keys"
+    },
+    {
+      "id": "GATE-LEGAL-ENTITY-CONTEXT",
+      "state": "OPEN",
+      "requirement": "bind opaque trusted contextScopeKey to People-owned legal-employer public identity and reject stale or mismatched scope"
+    },
+    {
+      "id": "GATE-COMMON-BRIDGE",
+      "state": "OPEN",
+      "requirement": "land and pin authorization OpenAPI Gateway shell and deep-link control changes"
+    },
+    {
+      "id": "GATE-MIGRATION",
+      "state": "OPEN",
+      "requirement": "validate high-water and admit exact V326 lease"
+    },
+    {
+      "id": "GATE-WORKTREE-TOKEN",
+      "state": "OPEN",
+      "requirement": "bind clean pushed dwp-dev-based SYS worktrees to a sealed packet touch manifest and start token"
+    }
+  ],
+  "acceptanceCriteria": [
+    {"id": "AC-01", "criterion": "Effective nodes equal the exact five-way intersection and are revision pinned."},
+    {"id": "AC-02", "criterion": "Tenant policy cannot add a noncanonical node or grant PAGE authority."},
+    {"id": "AC-03", "criterion": "A legal-entity overlay is a restrictive subset and cannot re-enable an upstream denial."},
+    {"id": "AC-04", "criterion": "Cross-tenant stale or mismatched legal-entity context fails closed without disclosing policy data."},
+    {"id": "AC-05", "criterion": "Sidebar selection landing fallback and direct deep link use the same effective revision."},
+    {"id": "AC-06", "criterion": "Published revisions are immutable and restore produces a new revision tied to the prior digest."},
+    {"id": "AC-07", "criterion": "Author cannot approve or publish; approve publish and restore require step-up."},
+    {"id": "AC-08", "criterion": "CAS and idempotency return the original receipt for the same digest and reject mismatches."},
+    {"id": "AC-09", "criterion": "Receipt audit and outbox are atomic and crash replay cannot duplicate effective publication."},
+    {"id": "AC-10", "criterion": "OFF and SHADOW do not enforce; ENFORCED enrolled tenants fail closed for missing or stale policy."},
+    {"id": "AC-11", "criterion": "Seven HR Operations groups and seventeen member nodes validate against installed canonical IA ownership."},
+    {"id": "AC-12", "criterion": "Authoring loading empty denied partial failure responsive keyboard and 200-percent zoom states are accessible and leak no unauthorized data."}
+  ],
+  "verificationBindings": {
+    "policy": "CHANGED_CLUSTER_FIRST_COLLECT_FAILURES_THEN_ONE_MODULE_BATCH_NO_FULL_SUITE_PER_FIX",
+    "moduleCommands": [
+      "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.hrisconfiguration.navigationpolicy.*' --no-daemon",
+      "yarn vitest run apps/dwp/src/features/hris/administration/navigation-policy apps/dwp/src/features/hris/shell/testing",
+      "yarn eslint <changed-navigation-policy-files>"
+    ],
+    "controlCommandsAfterModuleResult": [
+      "python3 scripts/export-openapi-contracts.py --check --service platform",
+      "yarn openapi:check",
+      "yarn release:contracts:check",
+      "focused route authorization and deep-link tests",
+      "one HR Operations navigation-policy Playwright journey"
+    ],
+    "fullPromotionGate": "ONLY_AFTER_A_FROZEN_INTEGRATION_COMBINATION"
+  },
+  "startToken": {
+    "issued": false,
+    "reason": "OPEN_PRESTART_GATES",
+    "moduleImplementationAuthorized": false,
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "SYS_COMMON_INTEGRATION_CONTROL_ALLOCATES_OPERATIONS_PEP_SCOPE_RESOLUTION_AND_ADMITS_V326_BEFORE_HRIS_SYS_WORKTREE_DISPATCH"
+}

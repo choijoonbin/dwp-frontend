@@ -1,0 +1,92 @@
+{
+  "schema": "dwp.hris.execution-roadmap-successor.v1",
+  "roadmapId": "HRIS-EXECUTION-ROADMAP-20261014-R1",
+  "issuedAt": "2026-10-14T12:49:29+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "supersedesOnly": {
+    "receipt": "HRIS-WAVE3-MOD-PER-COMPPLAN-CENTRAL-INTEGRATION-20261014-R2",
+    "field": "nextOrder",
+    "reason": "remove a circular PAY consumer precondition and make packet preparation parallel while retaining NAV product priority"
+  },
+  "completedMilestone": {
+    "id": "MOD-PER-COMPPLAN-PRODUCER-CENTRAL-INTEGRATION",
+    "backendCommit": "ac89415028e3cf91a93345af0f1ecc2bd1e0322e",
+    "frontendCodeCommit": "f2dba698002ebec08ce67a2bb8b3094ccb8fe769",
+    "receiptCommit": "1367f6c930588a27b9df56baf758dccc3d442cad",
+    "status": "PRODUCER_AND_CONTROL_PLANE_CLOSED_CONSUMER_ACCEPTANCE_OPEN"
+  },
+  "reclassifications": [
+    {
+      "sliceId": "BASE-TFR-PAY-016",
+      "previous": "DEPENDENCY_BLOCKED_ON_MOD_PER_COMPPLAN",
+      "current": "CONTROL_PACKET_ELIGIBLE_START_WITHHELD_PENDING_FRESH_PACKET",
+      "producerPin": "dwp-backend@ac89415028e3cf91a93345af0f1ecc2bd1e0322e",
+      "implementationState": "NOT_STARTED_G3",
+      "decision": "PAY_CONSUMER_AND_BROKER_E2E_IS_THE_SLICE_ACCEPTANCE_OUTPUT_NOT_A_START_PRECONDITION",
+      "targetedEvidence": "PayIaEntryQueryContractTest 11 of 11 pass"
+    },
+    {
+      "sliceId": "BASE-TFR-PAY-011",
+      "current": "HELD_PENDING_BASE_TFR_PAY_016_RESULT",
+      "decision": "DO_NOT_RELEASE_CALCULATION_SLICE_BEFORE_THE_INPUT_CONSUMER_RESULT_IS_PINNED"
+    },
+    {
+      "sliceId": "BASE-TFR-SYS-012",
+      "capabilityId": "MOD-SYS-HRIS-NAV-POLICY-R1",
+      "current": "PACKET_PREPARED_START_WITHHELD",
+      "preparationArtifact": "docs/06-delivery/hris/wave4-2026-10-14/mod-sys-hris-nav-policy-r1/packet-preparation.v1.json"
+    }
+  ],
+  "executionPolicy": {
+    "packetPreparationParallelism": true,
+    "moduleImplementationParallelism": true,
+    "productPriorityWhenOnlyOneLaneIsAvailable": "MOD-SYS-HRIS-NAV-POLICY-R1",
+    "activationPolicy": "KEEP_ALL_NEW_FEATURES_OFF_UNTIL_SEPARATE_ACCEPTANCE"
+  },
+  "nextOrder": [
+    {
+      "order": 1,
+      "state": "DONE_BY_THIS_SUCCESSOR",
+      "work": "RECLASSIFY_BASE_TFR_PAY_016_AND_PIN_THE_COMPPLAN_PRODUCER_RESULT"
+    },
+    {
+      "order": 2,
+      "state": "IN_PROGRESS_CONTROL_PREPARATION",
+      "work": "PREPARE_AND_VALIDATE_NAV_POLICY_AND_PAY_016_CONTROL_BUNDLES_IN_PARALLEL",
+      "owners": ["SYS_COMMON_INTEGRATION_CONTROL"]
+    },
+    {
+      "order": 3,
+      "state": "START_WITHHELD_PENDING_VALID_PACKETS_TOKENS_AND_WORKTREES",
+      "work": "DISPATCH_HRIS_SYS_NAV_POLICY_AND_HRIS_PAY_PAY_016_IN_PARALLEL",
+      "owners": ["HRIS-SYS", "HRIS-PAY"]
+    },
+    {
+      "order": 4,
+      "state": "PENDING_MODULE_RESULTS",
+      "work": "INTEGRATE_PAY_CONSUMER_AND_BROKER_END_TO_END_AND_CLOSE_COMPPLAN_AC_03"
+    },
+    {
+      "order": 5,
+      "state": "PENDING_TRANSPORT_IMPLEMENTATION",
+      "work": "ADD_SVC_PER_RATE_CONCURRENCY_ADMISSION_AND_FULL_ATOMIC_BOUNDED_STREAMING_THEN_CLOSE_PRODUCTION_AC_07"
+    },
+    {
+      "order": 6,
+      "state": "PENDING_PAY_016_RESULT",
+      "work": "RELEASE_BASE_TFR_PAY_011_CALCULATION_PACKET"
+    },
+    {
+      "order": 7,
+      "state": "PENDING_NAV_AND_PAY_FOUNDATION",
+      "work": "TENANT_COMPENSATION_CONFIGURATION_AUTHORING_BOOTSTRAP_AND_ACTIVATION_ACCEPTANCE"
+    }
+  ],
+  "explicitNonClaims": [
+    "PAY_CONSUMER_IMPLEMENTATION_IS_NOT_COMPLETE",
+    "BROKER_END_TO_END_IS_NOT_COMPLETE",
+    "NAV_POLICY_START_TOKEN_IS_NOT_ISSUED",
+    "SVC_PER_OWNER_REFETCH_REMAINS_DEFAULT_OFF",
+    "CUSTOMER_ACTIVATION_AND_PRODUCTION_RELEASE_ARE_NOT_AUTHORIZED"
+  ]
+}
