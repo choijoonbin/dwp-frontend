@@ -1,0 +1,46 @@
+.compplan-semantic-panel {
+  min-width: 0;
+}
+
+.compplan-semantic-panel h1,
+.compplan-semantic-panel h2,
+.compplan-semantic-panel h3,
+.compplan-semantic-panel th {
+  overflow-wrap: normal;
+  word-break: keep-all;
+}
+
+.compplan-semantic-panel :is(button, [role='button']) {
+  overflow-wrap: normal;
+  word-break: keep-all;
+}
+
+.compplan-identifier {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.compplan-machine-status {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+@media (forced-colors: active) {
+  .compplan-semantic-panel {
+    border: 1px solid CanvasText;
+  }
+
+  .compplan-semantic-panel :focus-visible {
+    outline: 2px solid Highlight;
+    outline-offset: 2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .compplan-semantic-panel,
+  .compplan-semantic-panel * {
+    animation-duration: 0s !important;
+    transition-duration: 0s !important;
+    scroll-behavior: auto !important;
+  }
+}
