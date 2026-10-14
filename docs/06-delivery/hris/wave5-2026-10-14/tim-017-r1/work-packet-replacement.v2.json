@@ -1,0 +1,109 @@
+{
+  "schema": "dwp.hris.module-work-packet-replacement.v2",
+  "packetId": "HRIS-WAVE5-WORK-BASE-TFR-TIM-017-R2",
+  "issuedAt": "2026-10-14T17:57:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "lifecycleState": "APPROVED_PENDING_REPLACEMENT_START_TOKEN",
+  "moduleSession": "HRIS-TIM",
+  "sliceId": "BASE-TFR-TIM-017",
+  "capability": "TIM-TIMECARD",
+  "replacementOf": {
+    "path": "work-packet.v1.json",
+    "sha256": "33c8d26f996eb0ac3d1bb73662303cd4aa75435085a11c18e858cafd43ce3a8d",
+    "rule": "All fields are inherited byte-semantically except the explicitly corrected Time OpenAPI digest and the resume authority described by this packet."
+  },
+  "supersedingCorrection": {
+    "path": "../per-tim-control-r1/tim-017-time-openapi-pin-correction-receipt.v2.json",
+    "sha256": "01c025e522e0e9b889fc0920151659467f0caedd587ad1cab53d43e5d9ec32d7"
+  },
+  "effectivePins": {
+    "backendCommit": "831fceab0d609e72d3ec88db8bbf25058467b2b4",
+    "backendTree": "e0f6bbe07a1fcc67efa7812752e976686dc3675c",
+    "frontendCommit": "c6cfd882a7957359cc41bfbe3542094d59a6cf43",
+    "frontendTree": "3e1e725ea31b4f0ebaf03e8702fd9547c879d4dc",
+    "authorizationVersion": 42,
+    "authorizationRegistryChecksum": "f73f9a64816ac8f5567a2a7c292821f4a40e6d675915ebc3c3ac8aad7d1fd983",
+    "timeOpenApiSha256": "6702161141add3acde02896bb6844e5e40c6c6c0dc4b93eab859e77e9446f0e5",
+    "gatewayOpenApiSha256": "50a57ad5aa93178f47d724ca3dfa08a64985de93a099071db66220dfe686c2a2",
+    "timecardSchemaGraphSha256": "96f3a6b0d7c6e7f228442f956daab0cfa44ce78dd65c8b477192ec77d0145db4",
+    "asyncApiSha256": "10109906ce46afa412e55536b3aedfee536be66c019196c3a54889a91038c73d",
+    "migrationLease": "TIME_MAIN:V11:dwp-time-server/src/main/resources/db/migration/V11__tim_base_tfr_tim_017.sql"
+  },
+  "preservedImplementationCheckpoint": {
+    "rule": "The existing R1 worktrees and their staged in-scope implementation are preserved. They must not be reset, rebased, recreated or cleaned. The replacement token authorizes correction of the two embedded pins and continuation within the original touch manifest.",
+    "digestCommands": {
+      "porcelain": "git status --porcelain=v1 | shasum -a 256",
+      "changedPaths": "git status --porcelain=v1 | sed -E 's/^.. //' | sort | shasum -a 256",
+      "stagedBinaryDiff": "git diff --cached --binary | shasum -a 256",
+      "unstagedBinaryDiff": "git diff --binary | shasum -a 256"
+    },
+    "backend": {
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave5-20261014/tim-017-r1/backend",
+      "branch": "codex/hris-wave5-tim-017-backend-20261014-r1",
+      "head": "831fceab0d609e72d3ec88db8bbf25058467b2b4",
+      "upstream": "origin/codex/hris-wave5-tim-017-backend-20261014-r1",
+      "aheadBehind": "0/0",
+      "porcelainSha256AtPause": "0a7929dccbdfabcd79d8f1a906337890417c425d24dffa6615c81c3a66a533f9",
+      "changedPathsSha256AtPause": "2dd106577f1191e1720bb3db7a3c3713e54c861593640979a97f58f1f9b0a2dd",
+      "stagedBinaryDiffSha256AtPause": "78a45c6397ca44629b9741ccec678726352901f28c8a1d19176d8593cce2ebba",
+      "unstagedBinaryDiffSha256AtPause": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "frontend": {
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave5-20261014/tim-017-r1/frontend",
+      "branch": "codex/hris-wave5-tim-017-frontend-20261014-r1",
+      "head": "c6cfd882a7957359cc41bfbe3542094d59a6cf43",
+      "upstream": "origin/codex/hris-wave5-tim-017-frontend-20261014-r1",
+      "aheadBehind": "0/0",
+      "porcelainSha256AtPause": "3cfd2eeea8d32957d49ec2dbbe0e7a744e312314f1eedf3c8bedd67c2c7c19b3",
+      "changedPathsSha256AtPause": "23408a1825c84f357b6e0c8b0718bff8edb4742e674ddf17bb4ad40d67a20226",
+      "stagedBinaryDiffSha256AtPause": "d985f5b8145f075518e220c9d32c625f6c9f9baedb22fc19676145e0c6af1df2",
+      "unstagedBinaryDiffSha256AtPause": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "touchBoundary": {
+    "source": "work-packet.v1.json#/touchManifest",
+    "inheritedWithoutExpansion": true,
+    "additionalAuthorizedEdits": [
+      "apps/dwp/src/features/hris/time/api/timecard-api.ts: replace only the embedded 62-character Time OpenAPI pin with the corrected 64-character pin",
+      "apps/dwp/src/features/hris/time/__tests__/g3-slices/base-tfr-tim-017.slice.test.tsx: replace only the matching embedded pin and keep the hostile assertion"
+    ],
+    "controlOwnedPathsRemainForbidden": true,
+    "protectedPredecessorPathsRemainReadOnly": true,
+    "legacyCallerCutoverForbidden": true,
+    "dualReadWriteForbidden": true
+  },
+  "acceptanceCriteria": [
+    "TIM-CONTRACT-TIMECARD",
+    "TIM-GOLDEN-TIMECARD-001",
+    "AUTHZ-TIMECARD-TENANT-POPULATION-FIELD-PURPOSE",
+    "TIM-TIMECARD-STATE-PRECEDENCE",
+    "TIM-NO-SELF-APPROVAL-NO-OWN-CHANGE",
+    "TIM-IDEMPOTENCY-CAS-RECEIPT",
+    "TIM-EVENT-V1-ONLY-EXACTLY-ONCE",
+    "TIM-V11-V10-LEDGER-FORWARD-ALTERATION",
+    "TIM-PUBLISHER-ACL-LEAST-PRIVILEGE",
+    "TIM-NO-DUAL-READ-WRITE",
+    "TIM-FE-TIMECARD-FAILURE-RECOVERY-A11Y"
+  ],
+  "verification": {
+    "source": "work-packet.v1.json#/verificationPlan",
+    "policy": "RESUME_CHANGED_CLUSTER_ONLY_THEN_ONE_TIM017_SLICE_AND_ONE_MODULE_BATCH; DO_NOT_REPEAT_FULL_REPOSITORY_SUITES",
+    "additionalChecks": [
+      "Both embedded Time OpenAPI pins equal the corrected 64-character digest.",
+      "No original control artifact is modified.",
+      "Changed paths remain inside the inherited touch manifest."
+    ]
+  },
+  "authority": {
+    "replacementTokenPrepared": false,
+    "moduleImplementationResumeAuthorized": false,
+    "migrationAuthoringResumeAuthorized": false,
+    "moduleBranchCommitAndPushAuthorized": false,
+    "mergeToDwpDevAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "policyActivationAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "ISSUE_REPLACEMENT_PREPARATION_AND_START_TOKEN_WITH_THE_CORRECTED_PIN_AND_PRESERVED_WORKTREE_CHECKPOINT"
+}

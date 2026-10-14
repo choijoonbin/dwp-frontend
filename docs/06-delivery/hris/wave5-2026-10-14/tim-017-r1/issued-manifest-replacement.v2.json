@@ -1,0 +1,89 @@
+{
+  "schema": "dwp.hris.module-start-authority-issued-manifest-replacement.v2",
+  "manifestId": "HRIS-WAVE5-BASE-TFR-TIM-017-START-AUTHORITY-ISSUED-R2",
+  "issuedAt": "2026-10-14T17:59:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-TIM",
+  "sliceId": "BASE-TFR-TIM-017",
+  "state": "REPLACEMENT_START_TOKEN_ISSUED_IMPLEMENTATION_RESUME_PENDING",
+  "supersededManifest": {
+    "path": "issued-manifest.v1.json",
+    "sha256": "c8334b9b8b57de22712bc1168ed9d00b26106be01d22f8d4ae3a4cc830c693df",
+    "rule": "Historical evidence is preserved, but its R1 Start Token is revoked because the Time OpenAPI documentary pin was truncated."
+  },
+  "sealedArtifacts": [
+    {
+      "path": "../per-tim-control-r1/transport-openapi-correction-receipt.v1.json",
+      "sha256": "9f0aa71cc24beaaed626ecbd1d726f3da4ee77cac3eb0741de74b89a4cff989f",
+      "state": "HISTORICAL_WITH_SUPERSEDED_TIM_PIN_ONLY"
+    },
+    {
+      "path": "../per-tim-control-r1/tim-017-time-openapi-pin-correction-receipt.v2.json",
+      "sha256": "01c025e522e0e9b889fc0920151659467f0caedd587ad1cab53d43e5d9ec32d7",
+      "state": "AUTHORITATIVE_TIM_PIN_CORRECTION"
+    },
+    {
+      "path": "work-packet.v1.json",
+      "sha256": "33c8d26f996eb0ac3d1bb73662303cd4aa75435085a11c18e858cafd43ce3a8d",
+      "state": "HISTORICAL_INHERITED_EXCEPT_CORRECTED_PIN"
+    },
+    {
+      "path": "work-packet-replacement.v2.json",
+      "sha256": "80e35fd6faf516976d92ca74f0bf90e564129b981b619191c9a1ff93082c1d83",
+      "state": "EFFECTIVE_WORK_PACKET_DELTA"
+    },
+    {
+      "path": "start-token-preparation-replacement.v2.json",
+      "sha256": "c3b9e89b62fad93db9fac58494762c63c690756af4b8b55b79a38075afa10a5f",
+      "state": "EFFECTIVE_REPLACEMENT_PREPARATION"
+    },
+    {
+      "path": "start-token-issued-replacement.v2.json",
+      "sha256": "f5d6ed32ac08f9ff9be1dba714409f7a35b496e50650691fda480928faf3e943",
+      "state": "EFFECTIVE_REPLACEMENT_START_TOKEN"
+    },
+    {
+      "path": "migration-lease.v1.json",
+      "sha256": "c0a52216a55a6078bf54a51696b35566af85ff880d99f849992795f37d145194",
+      "state": "UNCHANGED"
+    },
+    {
+      "path": "migration-lease-activation.v1.json",
+      "sha256": "00681979e9aca2e7c5839a75f6d77ce36254144e5a15a0db04dffe0c88c9f5ff",
+      "state": "ACTIVE_AUTHORING_ONLY_UNCHANGED"
+    }
+  ],
+  "effectiveResultPins": {
+    "backend": "dwp-backend@831fceab0d609e72d3ec88db8bbf25058467b2b4",
+    "frontend": "dwp-frontend@c6cfd882a7957359cc41bfbe3542094d59a6cf43",
+    "authorization": "product-surfaces-v1.bundle-v42@f73f9a64816ac8f5567a2a7c292821f4a40e6d675915ebc3c3ac8aad7d1fd983",
+    "timeOpenApi": "contracts/openapi/time.json@6702161141add3acde02896bb6844e5e40c6c6c0dc4b93eab859e77e9446f0e5",
+    "transportSchemaGraph": "time-timecard@96f3a6b0d7c6e7f228442f956daab0cfa44ce78dd65c8b477192ec77d0145db4",
+    "migrationLease": "TIME_MAIN:V11:dwp-time-server/src/main/resources/db/migration/V11__tim_base_tfr_tim_017.sql"
+  },
+  "preservedImplementation": {
+    "backendCheckpointPorcelainSha256": "0a7929dccbdfabcd79d8f1a906337890417c425d24dffa6615c81c3a66a533f9",
+    "frontendCheckpointPorcelainSha256": "3cfd2eeea8d32957d49ec2dbbe0e7a744e312314f1eedf3c8bedd67c2c7c19b3",
+    "allChangedPathsInsideOriginalTouchManifest": true,
+    "worktreeRecreationRequired": false,
+    "centralDocumentCherryPickIntoModuleWorktreeForbidden": true
+  },
+  "closedReplacementGates": [
+    "ACTUAL_TIME_OPENAPI_BLOB_HASH_VERIFIED_AT_PINNED_BACKEND_COMMIT",
+    "TIM_ONLY_APPEND_ONLY_CORRECTION_RECORDED_WITHOUT_REISSUING_PER",
+    "ORIGINAL_R1_ARTIFACTS_PRESERVED_AND_R1_TOKEN_REVOKED",
+    "PRESERVED_R1_IMPLEMENTATION_PATHS_AND_BASES_AUDITED",
+    "CORRECTED_PIN_TOUCH_BOUNDARY_ACCEPTANCE_AND_NO_MERGE_RULE_RESEALED"
+  ],
+  "authority": {
+    "moduleImplementationResumeAuthorized": true,
+    "moduleBranchCommitAndPushAuthorized": true,
+    "mergeToDwpDevAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "policyActivationAuthorized": false,
+    "customerDataAuthorized": false,
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "HRIS_TIM_CORRECTS_THE_TWO_EMBEDDED_PINS_RESUMES_TARGETED_VERIFICATION_COMMITS_AND_PUSHES_BOTH_MODULE_BRANCHES"
+}

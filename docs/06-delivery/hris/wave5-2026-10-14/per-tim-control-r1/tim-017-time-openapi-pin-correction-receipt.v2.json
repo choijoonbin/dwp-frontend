@@ -1,0 +1,88 @@
+{
+  "schema": "dwp.hris.wave5.transport-openapi-pin-correction-receipt.v2",
+  "receiptId": "HRIS-WAVE5-TIM017-TIME-OPENAPI-PIN-CORRECTION-R2",
+  "recordedAt": "2026-10-14T17:56:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "SUPERSEDING_TIM017_PIN_ONLY",
+  "finding": {
+    "severity": "P0_START_AUTHORITY_INVALIDATION",
+    "description": "The R1 control chain copied a 62-character transcription of the Time OpenAPI SHA-256. The sealed OpenAPI bytes and implementation are unchanged; only the documentary digest was truncated.",
+    "incorrectSha256": "6702161141add3acde02896bb6844e5e40c6c0dc4b93eab859e77e9446f0e5",
+    "incorrectLength": 62,
+    "correctSha256": "6702161141add3acde02896bb6844e5e40c6c6c0dc4b93eab859e77e9446f0e5",
+    "correctLength": 64
+  },
+  "supersedesOnly": [
+    {
+      "path": "transport-openapi-correction-receipt.v1.json",
+      "artifactSha256": "9f0aa71cc24beaaed626ecbd1d726f3da4ee77cac3eb0741de74b89a4cff989f",
+      "jsonPointer": "/artifactDigests/backend/2/sha256"
+    },
+    {
+      "path": "../tim-017-r1/work-packet.v1.json",
+      "artifactSha256": "33c8d26f996eb0ac3d1bb73662303cd4aa75435085a11c18e858cafd43ce3a8d",
+      "jsonPointer": "/dependencyPins/transport/timeOpenApiSha256"
+    },
+    {
+      "path": "../tim-017-r1/start-token-issued.v1.json",
+      "artifactSha256": "71322b4bd47c8cd4a85b8fe74fb0259cdc84b40db8907d74e2d5bc2bf3764c53",
+      "jsonPointer": "/transportPins/timeOpenApiSha256"
+    }
+  ],
+  "authoritativeArtifact": {
+    "repository": "dwp-backend",
+    "branch": "dwp-dev",
+    "commit": "831fceab0d609e72d3ec88db8bbf25058467b2b4",
+    "tree": "e0f6bbe07a1fcc67efa7812752e976686dc3675c",
+    "path": "contracts/openapi/time.json",
+    "sha256": "6702161141add3acde02896bb6844e5e40c6c6c0dc4b93eab859e77e9446f0e5"
+  },
+  "validation": {
+    "commands": [
+      "git show 831fceab0d609e72d3ec88db8bbf25058467b2b4:contracts/openapi/time.json | shasum -a 256",
+      "shasum -a 256 contracts/openapi/time.json"
+    ],
+    "results": [
+      "Base-commit blob and dwp-dev working-tree file both hash to the same 64-character value.",
+      "No OpenAPI, Gateway, generated contract, authorization, AsyncAPI, migration lease, base commit or implementation byte changed."
+    ]
+  },
+  "per013Continuity": {
+    "selectionRule": "This supersession applies only to transport-openapi-correction-receipt.v1.json#/artifactDigests/backend/2/sha256. The malformed TIM digest does not supersede or invalidate the independent People, Gateway, review-schema or event pins consumed by PER-013.",
+    "startToken": {
+      "path": "../per-013-r1/start-token-issued.v1.json",
+      "sha256": "efd069735ce01690a19d448aaa87c6e573df5ccf4439a2be18158d1c912230cf"
+    },
+    "issuedManifest": {
+      "path": "../per-013-r1/issued-manifest.v1.json",
+      "sha256": "f8eff7006106908a3ec3c30f5489b14e14020a9f006e85c079087d95ceef8dd2"
+    },
+    "independentPins": {
+      "peopleOpenApiSha256": "4f8b31b2b0e3d2227bf6c02f9bf18092121323292160408601cabbd70c579ce8",
+      "gatewayOpenApiSha256": "50a57ad5aa93178f47d724ca3dfa08a64985de93a099071db66220dfe686c2a2",
+      "peopleReviewSchemaGraphSha256": "d9b2d974df45983aea1919e75e38ee063c08a9a835716743bc493a8b02b39bc0",
+      "asyncApiSha256": "10109906ce46afa412e55536b3aedfee536be66c019196c3a54889a91038c73d"
+    },
+    "reissueRequired": false
+  },
+  "scope": {
+    "affectedModule": "HRIS-TIM",
+    "affectedSlice": "BASE-TFR-TIM-017",
+    "per013Unaffected": true,
+    "originalArtifactsImmutable": true,
+    "replacementChainRequired": true,
+    "implementationWorktreesPreserved": true
+  },
+  "authority": {
+    "correctedPinAuthoritative": true,
+    "originalTim017StartTokenRevoked": true,
+    "replacementTim017StartTokenRequired": true,
+    "moduleImplementationResumeAuthorized": false,
+    "mergeToDwpDevAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "policyActivationAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "ISSUE_TIM017_REPLACEMENT_WORK_PACKET_PREPARATION_START_TOKEN_AND_MANIFEST_WITH_THE_CORRECT_64_CHARACTER_PIN"
+}

@@ -1,0 +1,89 @@
+{
+  "schema": "dwp.hris.module-start-token-preparation-replacement.v2",
+  "preparationId": "HRIS-WAVE5-START-PREP-BASE-TFR-TIM-017-R2",
+  "tokenIdCandidate": "HRIS-WAVE5-START-BASE-TFR-TIM-017-R2",
+  "preparedAt": "2026-10-14T17:58:00+09:00",
+  "preparedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-TIM",
+  "sliceId": "BASE-TFR-TIM-017",
+  "state": "READY_TO_ISSUE_REPLACEMENT_TOKEN",
+  "revokedAuthority": {
+    "startToken": {
+      "path": "start-token-issued.v1.json",
+      "sha256": "71322b4bd47c8cd4a85b8fe74fb0259cdc84b40db8907d74e2d5bc2bf3764c53"
+    },
+    "issuedManifest": {
+      "path": "issued-manifest.v1.json",
+      "sha256": "c8334b9b8b57de22712bc1168ed9d00b26106be01d22f8d4ae3a4cc830c693df"
+    },
+    "reason": "The Time OpenAPI SHA-256 pin is a 62-character transcription and cannot authorize commit or push."
+  },
+  "replacementEvidence": {
+    "pinCorrectionReceipt": {
+      "path": "../per-tim-control-r1/tim-017-time-openapi-pin-correction-receipt.v2.json",
+      "sha256": "01c025e522e0e9b889fc0920151659467f0caedd587ad1cab53d43e5d9ec32d7"
+    },
+    "workPacket": {
+      "path": "work-packet-replacement.v2.json",
+      "sha256": "80e35fd6faf516976d92ca74f0bf90e564129b981b619191c9a1ff93082c1d83"
+    },
+    "migrationLease": {
+      "path": "migration-lease.v1.json",
+      "sha256": "c0a52216a55a6078bf54a51696b35566af85ff880d99f849992795f37d145194"
+    },
+    "migrationLeaseActivation": {
+      "path": "migration-lease-activation.v1.json",
+      "sha256": "00681979e9aca2e7c5839a75f6d77ce36254144e5a15a0db04dffe0c88c9f5ff",
+      "state": "ACTIVE_AUTHORING_ONLY"
+    }
+  },
+  "correctedTransportPin": {
+    "path": "dwp-backend@831fceab0d609e72d3ec88db8bbf25058467b2b4:contracts/openapi/time.json",
+    "sha256": "6702161141add3acde02896bb6844e5e40c6c6c0dc4b93eab859e77e9446f0e5",
+    "length": 64
+  },
+  "resumeTarget": {
+    "backendWorktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave5-20261014/tim-017-r1/backend",
+    "frontendWorktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave5-20261014/tim-017-r1/frontend",
+    "preserveStagedImplementation": true,
+    "resetRebaseRecreateOrCleanForbidden": true,
+    "requiredPinCorrections": [
+      "apps/dwp/src/features/hris/time/api/timecard-api.ts",
+      "apps/dwp/src/features/hris/time/__tests__/g3-slices/base-tfr-tim-017.slice.test.tsx"
+    ]
+  },
+  "issueGates": [
+    {
+      "id": "TIM017-R2-GATE-01",
+      "state": "READY",
+      "requirement": "The actual Time OpenAPI bytes are unchanged and the corrected 64-character digest is independently verified at the pinned backend commit."
+    },
+    {
+      "id": "TIM017-R2-GATE-02",
+      "state": "READY",
+      "requirement": "The original control artifacts remain immutable and the correction is append-only and TIM-only."
+    },
+    {
+      "id": "TIM017-R2-GATE-03",
+      "state": "READY",
+      "requirement": "Both implementation worktrees retain the issued base heads, branches and upstream 0/0 state; all staged paths remain in the original touch manifest."
+    },
+    {
+      "id": "TIM017-R2-GATE-04",
+      "state": "READY",
+      "requirement": "Authorization v42, Gateway, AsyncAPI, V11 lease, eleven acceptance IDs, feature OFF state and no-merge boundary remain unchanged."
+    }
+  ],
+  "permittedActionAfterIssue": "CORRECT_TWO_EMBEDDED_TIM_OPENAPI_PINS_RESUME_AND_FINALIZE_BASE_TFR_TIM_017_ONLY",
+  "authority": {
+    "replacementTokenPrepared": true,
+    "replacementTokenIssued": false,
+    "moduleImplementationResumeAuthorized": false,
+    "moduleBranchCommitAndPushAuthorized": false,
+    "mergeToDwpDevAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "ISSUE_HRIS_WAVE5_START_BASE_TFR_TIM_017_R2"
+}
