@@ -1,0 +1,69 @@
+{
+  "schema": "dwp.hris.module-start-token-amendment.v3",
+  "tokenAmendmentId": "HRIS-WAVE6-START-BASE-TFR-SYS-012-EXPLORER-R3",
+  "issuedAt": "2026-10-15T06:16:38+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-SYS",
+  "sliceId": "BASE-TFR-SYS-012",
+  "state": "ISSUED_MINIMAL_PLATFORM_PEP_SUCCESSOR_ONLY",
+  "amendsToken": "HRIS-WAVE6-START-BASE-TFR-SYS-012-EXPLORER-R2",
+  "reason": "The concrete R2 runtime wiring exposed a mutually exclusive authority-context check: the Explorer boundary admits only opaque psc-* context while the central HCM PEP admits only the legacy hcm.utility surface literal.",
+  "controlAmendment": {
+    "path": "../sys-012-work-explorer-control-r1/platform-pep-opaque-context-amendment.v1.json",
+    "amendmentId": "HRIS-WAVE6-SYS-012-PLATFORM-PEP-OPAQUE-CONTEXT-R3",
+    "sha256": "d9e02255c3679a8bbc1f7f7b95af542b607452f7483010147c5f161f45e08a47",
+    "bytes": 7482
+  },
+  "predecessorAuthority": {
+    "r2Token": "start-token-amendment.v2.json",
+    "r2TokenSha256": "443f8d4b9ce48b1cf137fe971ae01322d775c954e167417bd8093567d5e0cc75",
+    "r2Control": "../sys-012-work-explorer-control-r1/runtime-authority-receipt-successor-amendment.v1.json",
+    "r2ControlSha256": "f7674934f4a75c6a02053987db031ec91aca9f6289de0fd9a75dcdd9d7d84cb0",
+    "rule": "R1 and R2 remain binding. R3 changes only the exact Platform Security authority-context boundary and its tests."
+  },
+  "worktreeReuse": {
+    "backend": {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave6-20261015/sys-012-work-explorer-r1/backend",
+      "branch": "codex/hris-wave6-sys-012-explorer-backend-20261015-r1",
+      "baseCommit": "3b2da20b592de5b5cff8f2483b83900f2dad054e",
+      "rule": "Continue the current uncommitted implementation. Do not create another worktree, migration or replacement branch."
+    },
+    "frontend": {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave6-20261015/sys-012-work-explorer-r1/frontend",
+      "branch": "codex/hris-wave6-sys-012-explorer-frontend-20261015-r1",
+      "baseCommit": "4f740a572afb8feeef3e31cb8ed258c0c8145cf2",
+      "rule": "No new frontend protected-path authority is granted by R3; finish only the existing R1/R2 frontend scope."
+    }
+  },
+  "authorizedSuccessorWork": [
+    "In HcmPlatformPepRegistry only, replace the Explorer authority-context hcm.utility literal comparison with psc-<64 lowercase hex> validation and exact trusted-owner equality.",
+    "In HcmPlatformPepSecurityContractTest only, replace unrealistic positive fixtures and prove literal, malformed, missing and mismatch denial plus Explorer-origin receipt equality.",
+    "Preserve the existing zero-authorized-descendant PAGE denial.",
+    "Within the already-authorized Explorer service/test paths, add a defense-in-depth forbidden guard for a resolved authority snapshot with no authorized route.",
+    "Keep every remaining R2 implementation, verification and result-evidence obligation unchanged."
+  ],
+  "verificationPolicy": {
+    "backendM1StateAtIssue": "NOT_RUN",
+    "backendRule": "Run the single R2 M1 command once only after R2 and R3 static blockers are closed; R3 does not authorize an extra aggregate run.",
+    "frontendRule": "Do not rerun aggregate M2 or any already-successful frontend owner scope; continue only the smallest unresolved owner tests.",
+    "forbidden": "No repository-wide suite, C1/C3 regeneration gate, generated security carrier update or repeated successful stage."
+  },
+  "completionGate": [
+    "A realistic opaque-context positive path crosses both the owner boundary and Platform HCM PEP.",
+    "Legacy hcm.utility cannot be used as authority context and malformed or mismatched opaque context fails closed.",
+    "Explorer-origin receipt retains request-owner-sealed context equality.",
+    "Zero authorized descendant PAGE remains denied and a direct empty-authority service invocation also fails forbidden.",
+    "Only the two R3 Platform Security files and prior R1/R2 paths are changed.",
+    "Both module branches are committed, pushed, clean and upstream exact only after the single targeted verification policy is satisfied."
+  ],
+  "authority": {
+    "moduleImplementationAuthorized": true,
+    "exactPlatformSecurityScopeAuthorized": true,
+    "generatedSecurityCarrierEditAuthorized": false,
+    "platformSecurityFilterEditAuthorized": false,
+    "moduleBranchCommitAuthorized": true,
+    "moduleBranchPushAuthorized": true,
+    "mergeToDwpDevAuthorized": false,
+    "runtimeActivationAuthorized": false
+  }
+}

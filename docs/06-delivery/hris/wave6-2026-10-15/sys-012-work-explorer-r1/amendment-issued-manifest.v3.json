@@ -1,0 +1,48 @@
+{
+  "schema": "dwp.hris.module-start-authority-amendment-issued-manifest.v3",
+  "manifestId": "HRIS-WAVE6-SYS-012-R3-AMENDMENT-ISSUED-MANIFEST",
+  "issuedAt": "2026-10-15T06:16:38+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-SYS",
+  "sliceId": "BASE-TFR-SYS-012",
+  "state": "R3_MINIMAL_PLATFORM_PEP_CONTROL_AND_TOKEN_PINNED",
+  "artifacts": [
+    {
+      "path": "../sys-012-work-explorer-control-r1/platform-pep-opaque-context-amendment.v1.json",
+      "id": "HRIS-WAVE6-SYS-012-PLATFORM-PEP-OPAQUE-CONTEXT-R3",
+      "sha256": "d9e02255c3679a8bbc1f7f7b95af542b607452f7483010147c5f161f45e08a47",
+      "bytes": 7482
+    },
+    {
+      "path": "start-token-amendment.v3.json",
+      "id": "HRIS-WAVE6-START-BASE-TFR-SYS-012-EXPLORER-R3",
+      "sha256": "f376e5a8d522761085e137d20da4eab307f8ad132aeef3f89b7b741a0f787f5a",
+      "bytes": 4554
+    }
+  ],
+  "issuancePreconditions": {
+    "frontendControlBranch": "dwp-dev",
+    "frontendControlBaseCommit": "076c8a9f921f7791007ccf84ca2f79bd7e2b39c4",
+    "backendModuleBranch": "codex/hris-wave6-sys-012-explorer-backend-20261015-r1",
+    "backendModuleBaseCommit": "3b2da20b592de5b5cff8f2483b83900f2dad054e",
+    "backendM1State": "NOT_RUN",
+    "r2ConsumedAndRawBytesVerifiedByModule": true,
+    "provenBlockingConflict": "No authority context can simultaneously satisfy the owner filter psc-* rule and the Platform HCM PEP hcm.utility literal rule.",
+    "secondMigrationAuthorized": false
+  },
+  "integrityRules": [
+    "Resolve both R3 artifact paths relative to this manifest and verify raw bytes before consuming R3 authority.",
+    "R1 and R2 remain binding; only the exact R3 supersession clauses replace their protected-path restrictions.",
+    "Any byte change to either R3 artifact invalidates this manifest.",
+    "The module must report the two exact Platform Security diffs separately from the R1/R2 implementation paths.",
+    "M1 remains unused until every R2/R3 static blocker closes; R3 does not authorize a second M1 or aggregate M2 run."
+  ],
+  "authority": {
+    "consumeR3Amendment": true,
+    "continueExistingWorktrees": true,
+    "editOnlyTwoNewPlatformSecurityPaths": true,
+    "commitAndPushModuleBranchesAfterTargetedVerification": true,
+    "mergeToDwpDev": false,
+    "activation": false
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "schema": "dwp.hris.sys012-control-amendment.v1",
+  "amendmentId": "HRIS-WAVE6-SYS-012-PLATFORM-PEP-OPAQUE-CONTEXT-R3",
+  "issuedAt": "2026-10-15T06:16:38+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "sliceId": "BASE-TFR-SYS-012",
+  "state": "ISSUED_MINIMAL_PLATFORM_PEP_SUCCESSOR",
+  "reason": "Independent runtime review proved that the Explorer owner filter and Auth bridge admit only an opaque psc-<64 lowercase hex> context while the central Platform HCM PEP still compares the same evidence to the legacy hcm.utility surface literal. The contradictory checks make every otherwise-authorized Explorer page, command and Explorer-origin receipt request fail with 403 before the controller.",
+  "supersedesOnly": [
+    "runtime-authority-receipt-successor-amendment.v1.json#/expandedTouchBoundary/stillForbidden only to permit the exact two Platform Security files listed here",
+    "work-packet.v1.json and start-token-issued.v1.json protected central PEP edit prohibition only for the exact opaque-context compatibility correction listed here",
+    "module-result-contract.v1.json protected-path zero-change assertion only for the exact two Platform Security files listed here"
+  ],
+  "provenRuntimeConflict": {
+    "ownerBoundary": "HrisExplorerOwnerEvidenceFilter requires origin/current contextKey to match ^psc-[a-f0-9]{64}$.",
+    "authBridge": "AuthHrisExplorerAuthorityEvidenceQuery returns the same opaque current contextKey as trusted owner evidence.",
+    "centralPepBeforeR3": "HcmPlatformPepRegistry requires evidence.contextKey to equal the legacy surface literal hcm.utility.",
+    "effect": "PlatformSecurityFilter invokes the registry after the owner filter, so psc-* passes the owner boundary and fails the PEP, while hcm.utility fails the owner boundary. No value can satisfy both checks.",
+    "classification": "Availability and contract correctness defect; do not weaken tenant, actor, subject, route, scope, purpose, revision, expiry or descendant authorization checks."
+  },
+  "correctedSemantics": {
+    "surfaceIdentity": "The deployed Explorer navigation/surface identity remains hcm.utility wherever the route registry or UI surface contract uses it. Do not rename or regenerate that carrier.",
+    "authorityContext": "The authority contextKey carried by owner evidence and sealed Explorer-origin receipts is a distinct opaque security context and must match ^psc-[a-f0-9]{64}$.",
+    "pageRule": "For Explorer page, preferences and recents requests, require the request evidence contextKey to have the opaque format and exactly equal the trusted owner evidence contextKey.",
+    "receiptRule": "For Explorer-origin receipt reads, preserve request contextKey == trusted owner contextKey == immutable sealed receipt contextKey in addition to every existing receipt seal check.",
+    "denyRule": "Reject hcm.utility used as an authority context, malformed or uppercase opaque context, absent context, and request/owner/receipt mismatch.",
+    "descendantRule": "Preserve the existing central PEP denial when allowedDescendantPageRouteKeys contains no authorized deployed descendant PAGE. Do not convert an unauthorized empty set into a successful empty projection.",
+    "defenseInDepth": "Within the already-authorized Explorer service scope, reject an authority snapshot whose resolved authorized route map is empty. A legitimate search result or terminal cursor page may still be empty after a non-empty authorized route map is established."
+  },
+  "expandedTouchBoundary": {
+    "backend": [
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/security/HcmPlatformPepRegistry.java (replace only the Explorer authority-context literal comparison with opaque-format and exact trusted-owner equality; preserve every other PEP rule)",
+      "dwp-platform-server/src/test/java/com/dwp/services/platform/security/HcmPlatformPepSecurityContractTest.java (use realistic opaque Explorer context fixtures and add only positive/negative assertions for format, equality, receipt equality and zero-descendant denial)"
+    ],
+    "alreadyAuthorizedR2Defense": [
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerService.java",
+      "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerServiceSecurityTest.java"
+    ],
+    "stillForbidden": [
+      "PlatformSecurityFilter changes",
+      "Auth server source changes",
+      "generated PEP, generated route registry or generated authorization carrier changes",
+      "surface or navigationContextId hcm.utility changes",
+      "OpenAPI changes beyond the SYS-API-038 COMMAND_STATUS delta already authorized by R2",
+      "Gateway source changes",
+      "People, Time, Payroll, Approval or integration owner-service source changes",
+      "a second migration, historical receipt backfill, runtime activation or default-ON changes",
+      "any relaxation of exact tenant, actor, subject, route, scope, population digest, field revision, purpose, authorization revision or expiry checks"
+    ]
+  },
+  "targetedVerificationSuccessor": {
+    "policy": "Do not run an additional aggregate stage. Add the R3 assertions to the existing not-yet-used M1 and, after any failure, rerun only the smallest owning test.",
+    "backendM1Unchanged": "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.hrisconfiguration.explorer.*' --tests '*HcmPlatformPepSecurityContractTest' --tests '*ReferenceConfigurationCanonicalReceiptBridgeTest' --tests '*NavigationPolicyCanonicalReceiptBridgeTest' --no-daemon --max-workers=1",
+    "required": [
+      "realistic psc-<64 lowercase hex> Explorer page authority passes when all other trusted evidence matches",
+      "legacy hcm.utility, malformed, uppercase, absent and request/owner mismatch contexts fail closed",
+      "Explorer-origin receipt requires request, owner and sealed receipt context equality",
+      "zero authorized descendant PAGE still fails closed through the full filter/PEP path",
+      "direct Explorer service invocation with no authorized route fails forbidden while an authorized search with zero matches remains a valid empty result",
+      "changed-path audit shows only the two newly authorized Platform Security files plus the existing R2 allowlist"
+    ],
+    "forbidden": [
+      "repository-wide Gradle test",
+      "C1 or C3 full regeneration gate",
+      "a second aggregate M2 execution",
+      "repeating any already-successful frontend owner scope"
+    ]
+  },
+  "resultEvidenceSuccessor": {
+    "security": "Report exact diffs for the two R3 Platform Security files and prove all non-Explorer PEP branches are byte-identical.",
+    "generated": "Generated PEP, generated route registry and generated authorization carrier change count remains zero.",
+    "runtime": "Report one positive opaque-context path and the literal, malformed, mismatch, receipt-mismatch and zero-descendant negative paths.",
+    "inheritance": "All R1 and R2 evidence requirements remain binding except the exact supersession clauses in this R3 amendment."
+  },
+  "authority": {
+    "editExactPlatformSecurityImplementation": true,
+    "editExactPlatformSecurityContractTest": true,
+    "addExplorerServiceDefenseWithinR2": true,
+    "generatedSecurityCarrierEditAuthorized": false,
+    "platformSecurityFilterEditAuthorized": false,
+    "mergeToDwpDevAuthorized": false,
+    "runtimeActivationAuthorized": false
+  }
+}
