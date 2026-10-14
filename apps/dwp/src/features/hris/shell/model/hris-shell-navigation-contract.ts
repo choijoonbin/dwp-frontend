@@ -109,6 +109,7 @@ export const HRIS_SHELL_ENTRIES: readonly HrisShellEntry[] = [
       '/hr/manage/system',
       '/hr/settings/reference-data',
       '/hr/settings/payroll',
+      '/hr/settings/navigation-policy',
       '/hr/data/reference',
       '/hr/data/integrations',
       '/hr/data/exports',

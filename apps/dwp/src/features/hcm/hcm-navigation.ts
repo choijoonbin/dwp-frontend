@@ -72,6 +72,7 @@ export type HcmView =
   | 'system-access'
   | 'settings-reference'
   | 'settings-payroll'
+  | 'settings-navigation-policy'
   | 'exports';
 
 export type HcmNavigationItem = ProductNavigationItem & {
@@ -390,6 +391,16 @@ export const HCM_NAVIGATION: readonly HcmNavigationGroup[] = [
       },
       {
         section: 'foundation',
+        view: 'settings-navigation-policy',
+        path: '/hr/settings/navigation-policy',
+        icon: Settings2,
+        audience: 'operator',
+        governedOnly: true,
+        requiredResourceKey: 'CONFIG.HRIS_NAVIGATION_POLICY',
+        requiredPermissionCode: 'VIEW',
+      },
+      {
+        section: 'foundation',
         view: 'reference-data',
         path: '/hr/data/reference',
         icon: BookKey,
@@ -522,6 +533,10 @@ export const HCM_MANAGEMENT_NAVIGATION = projectProductSurfaceNavigation(HCM_NAV
   'settings-payroll': {
     taskKind: 'administration',
     access: capability('hcm.configuration.workbench.view'),
+  },
+  'settings-navigation-policy': {
+    taskKind: 'administration',
+    access: capability('hcm.configuration.navigation-policy.view'),
   },
   'organization-design': {
     taskKind: 'administration',

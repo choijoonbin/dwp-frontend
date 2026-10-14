@@ -367,6 +367,13 @@
       "surfaceId": "hcm.management"
     },
     {
+      "routeContractKey": "route.hcm.configuration.navigation-policy-workspace.page",
+      "routeId": "hcm.configuration.navigation-policy",
+      "pattern": "/hr/settings/navigation-policy",
+      "productId": "hcm",
+      "surfaceId": "hcm.management"
+    },
+    {
       "routeContractKey": "route.hcm.configuration.settings-reference.page",
       "routeId": "hcm.management.settings-reference",
       "pattern": "/hr/settings/reference-data",

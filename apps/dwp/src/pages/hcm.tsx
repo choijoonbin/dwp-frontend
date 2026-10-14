@@ -205,6 +205,11 @@ const HrisSystemWorkspace = lazy(() =>
     default: module.HrisSystemWorkspace,
   }))
 );
+const HrisNavigationPolicyCommandRuntime = lazy(() =>
+  import('../features/hris/administration/navigation-policy').then((module) => ({
+    default: module.HrisNavigationPolicyCommandRuntime,
+  }))
+);
 function HcmPageContent({ page }: { page: HcmNavigationItem }) {
   if (page.view === 'home') {
     return (
@@ -259,6 +264,7 @@ function HcmPageContent({ page }: { page: HcmNavigationItem }) {
     'organization-design': <OrganizationExplorer experience="workforce" />,
     'settings-reference': <HrisReferenceConfigurationWorkspace />,
     'settings-payroll': <HrisPayrollConfigurationWorkspace />,
+    'settings-navigation-policy': <HrisNavigationPolicyCommandRuntime />,
     'reference-data': <WorkforceReferenceData />,
     'data-operations': <WorkforceDataOperations />,
     exports: <WorkforceExportCenter />,

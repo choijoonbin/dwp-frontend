@@ -50,6 +50,7 @@ export type ApprovalHighRiskCommandDescriptor = Readonly<{
     | 'COMPENSATION_CYCLE'
     | 'PAYROLL_CONFIGURATION'
     | 'PAYROLL_FORMULA'
+    | 'HRIS_NAVIGATION_POLICY_REVISION'
     | 'DWAI_ON_CONTROL_PLANE';
   targetId: string;
   expectedObjectVersion: number;

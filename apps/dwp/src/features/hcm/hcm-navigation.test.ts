@@ -188,6 +188,12 @@ describe('HR product navigation', () => {
       requiredResourceKey: 'CONFIG.HRIS_WORKBENCH',
       requiredPermissionCode: 'VIEW',
     });
+    expect(findHcmNavigationItem('/hr/settings/navigation-policy')).toMatchObject({
+      view: 'settings-navigation-policy',
+      governedOnly: true,
+      requiredResourceKey: 'CONFIG.HRIS_NAVIGATION_POLICY',
+      requiredPermissionCode: 'VIEW',
+    });
   });
 
   it('projects each canonical PAGE through its exact capability contract', () => {
@@ -220,6 +226,14 @@ describe('HR product navigation', () => {
       access: {
         type: 'capability',
         capabilityContractKey: 'hcm.configuration.workbench.view',
+      },
+    });
+    expect(item(HCM_MANAGEMENT_NAVIGATION, 'settings-navigation-policy')).toMatchObject({
+      path: '/hr/settings/navigation-policy',
+      taskKind: 'administration',
+      access: {
+        type: 'capability',
+        capabilityContractKey: 'hcm.configuration.navigation-policy.view',
       },
     });
     expect(findHcmNavigationItem('/hr/operations/assignments')).toMatchObject({

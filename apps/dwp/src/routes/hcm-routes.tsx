@@ -14,6 +14,11 @@ import {
 import { HCM_PRODUCT_MANIFEST } from '../features/hcm/hcm-product-manifest';
 import { canAccessLegacyHcmSurface, useHcmAccess } from '../features/hcm/hcm-surface-access';
 import { HRIS_SHELL_NAVIGATION_PROJECTION } from '../features/hris/shell/model/hris-shell-navigation-contract';
+import {
+  HrisNavigationPolicyDeepLinkGuard,
+  HrisNavigationPolicyRuntimeProvider,
+  useHrisNavigationPolicyShellProjection,
+} from '../features/hris/shell/navigation-policy';
 import { useOptionalAllowedProductSurface } from '../components/allowed-product-surface-context';
 import { ProductSurfaceAccessState } from '../components/product-surface-access-state';
 import { ProductAreaNavigationItemAccessGuard } from '../layouts/product-area-navigation-access-guard';
@@ -193,6 +198,13 @@ function HcmLegacyManagementIndex() {
 
 function hcmSurfaceShell(surfaceId: string) {
   const legacy = legacyShellForSurface(surfaceId);
+  if (surfaceId === 'hcm.operations') {
+    return (
+      <HrisNavigationPolicyRuntimeProvider>
+        <HcmOperationsConfiguredSurfaceShell legacy={legacy} />
+      </HrisNavigationPolicyRuntimeProvider>
+    );
+  }
   return (
     <ConfiguredProductSurfaceShell
       manifest={HCM_PRODUCT_MANIFEST}
@@ -201,6 +213,20 @@ function hcmSurfaceShell(surfaceId: string) {
       translationNamespace="hcm"
       legacy={legacy}
       shellNavigationProjection={HRIS_SHELL_NAVIGATION_PROJECTION}
+    />
+  );
+}
+
+function HcmOperationsConfiguredSurfaceShell({ legacy }: { legacy: React.ReactNode }) {
+  const shellNavigationProjection = useHrisNavigationPolicyShellProjection();
+  return (
+    <ConfiguredProductSurfaceShell
+      manifest={HCM_PRODUCT_MANIFEST}
+      surfaceId="hcm.operations"
+      areaKey="hcm"
+      translationNamespace="hcm"
+      legacy={legacy}
+      shellNavigationProjection={shellNavigationProjection}
     />
   );
 }
@@ -243,7 +269,7 @@ function hcmGovernedPage(routeContractKey: string) {
       routeContractKey={route.routeContractKey}
       legacy={legacyPage}
     >
-      {hcmPage}
+      <HrisNavigationPolicyDeepLinkGuard>{hcmPage}</HrisNavigationPolicyDeepLinkGuard>
     </ProductCanaryRouteBoundary>
   );
 }

@@ -403,6 +403,7 @@
         "system-access": { "label": "시스템 접근 및 구성" },
         "settings-reference": { "label": "HRIS 기준정보 구성" },
         "settings-payroll": { "label": "급여 구성" },
+        "settings-navigation-policy": { "label": "메뉴 정책" },
         "reference-data": { "label": "인력 기준정보" },
         "data-operations": { "label": "연계 및 정합성" },
         "exports": { "label": "통제형 반출" }
@@ -584,6 +585,11 @@
         "eyebrow": "HRIS / 설정",
         "title": "급여 구성",
         "description": "급여 항목과 타입이 지정된 수식을 검토·검증·시험실행하고 단계 상승 확인으로 정확한 버전을 게시합니다."
+      },
+      "settings-navigation-policy": {
+        "eyebrow": "HRIS / 설정",
+        "title": "메뉴 정책",
+        "description": "테넌트 기준선과 법인별 제한 오버레이를 승인된 버전으로 구성합니다."
       },
       "reference-data": {
         "eyebrow": "HRIS / 설정",

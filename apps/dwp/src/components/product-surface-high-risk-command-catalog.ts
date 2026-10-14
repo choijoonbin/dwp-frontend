@@ -42,6 +42,9 @@ export type ProductSurfaceHighRiskOperation =
   | 'HCM_PAYROLL_FOUNDATION_PUBLISH'
   | 'HCM_PAYROLL_FOUNDATION_REVERSE'
   | 'HCM_PAYROLL_FORMULA_PUBLISH'
+  | 'HCM_NAVIGATION_POLICY_APPROVE'
+  | 'HCM_NAVIGATION_POLICY_PUBLISH'
+  | 'HCM_NAVIGATION_POLICY_RESTORE'
   | 'DWAION_EMERGENCY_RECOVERY'
   | ApprovalRelease15HighRiskOperation;
 
@@ -291,6 +294,24 @@ export const PRODUCT_SURFACE_HIGH_RISK_COMMAND_CATALOG: readonly ProductSurfaceH
       productKey: 'hcm',
       surfaceKey: 'hcm.management',
       routeContractKey: 'route.hcm.configuration.payroll-formula-publish.action',
+    },
+    {
+      operation: 'HCM_NAVIGATION_POLICY_APPROVE',
+      productKey: 'hcm',
+      surfaceKey: 'hcm.management',
+      routeContractKey: 'route.hcm.configuration.navigation-policy-revision-approve.action',
+    },
+    {
+      operation: 'HCM_NAVIGATION_POLICY_PUBLISH',
+      productKey: 'hcm',
+      surfaceKey: 'hcm.management',
+      routeContractKey: 'route.hcm.configuration.navigation-policy-revision-publish.action',
+    },
+    {
+      operation: 'HCM_NAVIGATION_POLICY_RESTORE',
+      productKey: 'hcm',
+      surfaceKey: 'hcm.management',
+      routeContractKey: 'route.hcm.configuration.navigation-policy-revision-restore.action',
     },
     {
       operation: 'DWAION_EMERGENCY_RECOVERY',

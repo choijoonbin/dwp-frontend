@@ -403,6 +403,7 @@
         "system-access": { "label": "System access & configuration" },
         "settings-reference": { "label": "HRIS reference configuration" },
         "settings-payroll": { "label": "Payroll configuration" },
+        "settings-navigation-policy": { "label": "Navigation policy" },
         "reference-data": { "label": "Workforce reference data" },
         "data-operations": { "label": "Integrations & reconciliation" },
         "exports": { "label": "Governed exports" }
@@ -584,6 +585,11 @@
         "eyebrow": "HRIS / Settings",
         "title": "Payroll configuration",
         "description": "Review payroll elements and typed formulas, validate and simulate them, and publish an exact version with step-up verification."
+      },
+      "settings-navigation-policy": {
+        "eyebrow": "HRIS / Settings",
+        "title": "Navigation policy",
+        "description": "Configure tenant and legal-entity HR Operations navigation through restrictive, approved revisions."
       },
       "reference-data": {
         "eyebrow": "HRIS / Settings",
