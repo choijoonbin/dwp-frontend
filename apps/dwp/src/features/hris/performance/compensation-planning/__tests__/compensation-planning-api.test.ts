@@ -24,6 +24,8 @@ vi.mock('@dwp-frontend/shared-utils', async (importOriginal) => ({
 }));
 
 import {
+  COMPENSATION_PLANNING_PROJECTION_VERSION,
+  COMPENSATION_PLANNING_PROJECTION_VERSION_HEADER,
   allocateCompensationBudget,
   approveCompensationPlan,
   cancelCompensationCycle,
@@ -201,6 +203,20 @@ describe('compensation-planning API', () => {
         signal,
         headers: { 'X-Correlation-ID': ID.correlation },
       });
+    }
+    expect(transport.get.mock.calls[1][1].headers).toEqual({
+      'X-Correlation-ID': ID.correlation,
+      [COMPENSATION_PLANNING_PROJECTION_VERSION_HEADER]:
+        COMPENSATION_PLANNING_PROJECTION_VERSION,
+    });
+    for (const [, config] of [
+      transport.get.mock.calls[0],
+      transport.get.mock.calls[2],
+      transport.get.mock.calls[3],
+    ]) {
+      expect(config.headers).not.toHaveProperty(
+        COMPENSATION_PLANNING_PROJECTION_VERSION_HEADER
+      );
     }
   });
 

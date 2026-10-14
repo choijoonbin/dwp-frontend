@@ -193,37 +193,6 @@ function StatusChip({ status, copy }: { status: string; copy: CompensationPlanni
   return <Chip size="small" color={color} label={statusLabel(status, copy)} />;
 }
 
-function decimalUnits(value: string): bigint {
-  const [whole, fraction = ''] = value.split('.');
-  return BigInt(whole) * 10_000n + BigInt((fraction + '0000').slice(0, 4));
-}
-
-function moneyText(units: bigint): string {
-  const sign = units < 0n ? '-' : '';
-  const absolute = units < 0n ? -units : units;
-  const whole = absolute / 10_000n;
-  const fraction = String(absolute % 10_000n).padStart(4, '0').replace(/0+$/, '');
-  return `${sign}${whole}${fraction ? `.${fraction}` : ''}`;
-}
-
-function budgetRows(cycle: CompensationCycle | undefined) {
-  if (!cycle?.budgetEntries) return [];
-  const totals = new Map<string, bigint>();
-  for (const entry of cycle.budgetEntries) {
-    const key = `${entry.organizationPublicId}:${entry.currency}`;
-    const amount = decimalUnits(entry.amount) * (entry.entryType === 'REVERSE' ? -1n : 1n);
-    totals.set(key, (totals.get(key) ?? 0n) + amount);
-  }
-  return [...totals].map(([key, units]) => {
-    const split = key.lastIndexOf(':');
-    return {
-      organization: key.slice(0, split),
-      currency: key.slice(split + 1),
-      allocated: moneyText(units),
-    };
-  });
-}
-
 function ResultEvidence({ result }: { result: CompensationCommandResult }) {
   const receipt = 'receiptId' in result
     ? result.receiptId
@@ -321,7 +290,7 @@ export function CompensationPlanningWorkspace({
     !filterValue || `${item.componentCode} ${item.workerId} ${item.assignmentId} ${item.status}`
       .toLowerCase().includes(filterValue)
   );
-  const budgets = useMemo(() => budgetRows(selected), [selected]);
+  const budgets = selected?.budgetAggregates ?? [];
   const population = selected?.population;
   const eligibleAssignments = population?.lines.length ?? 0;
   const eligibleComponents = population?.lines.reduce(
@@ -615,28 +584,35 @@ export function CompensationPlanningWorkspace({
                       <Typography component="h3" variant="subtitle1">{copy.budgetBuckets}</Typography>
                       {selected.budgetMasked ? (
                         <Typography color="text.secondary">{copy.restricted}</Typography>
+                      ) : selected.budgetAggregates === undefined ? (
+                        <InlineFeedback
+                          severity="warning"
+                          title={copy.budgetProjectionUnavailableTitle}
+                        >
+                          {copy.budgetProjectionUnavailableBody}
+                        </InlineFeedback>
                       ) : budgets.length ? (
                         <>
                           <TableContainer sx={{ display: { xs: 'none', md: 'block' } }}>
                             <Table size="small" aria-label={`${copy.budgetBuckets}: ${copy.used}, ${copy.remaining}`}>
                               <TableHead><TableRow><TableCell>{copy.organizationCurrency}</TableCell><TableCell>{copy.total}</TableCell><TableCell>{copy.used}</TableCell><TableCell>{copy.remaining}</TableCell></TableRow></TableHead>
                               <TableBody>{budgets.map((row) => (
-                                <TableRow key={`${row.organization}:${row.currency}`}>
-                                  <TableCell><span className="compplan-identifier">{row.organization}</span><br />{row.currency}</TableCell>
-                                  <TableCell>{row.allocated}</TableCell><TableCell>{copy.restricted}</TableCell><TableCell>{copy.notProjected}</TableCell>
+                                <TableRow key={`${row.organizationPublicId}:${row.currency}`}>
+                                  <TableCell><span className="compplan-identifier">{row.organizationPublicId}</span><br />{row.currency}</TableCell>
+                                  <TableCell>{row.allocatedAmount}</TableCell><TableCell>{row.committedAmount}</TableCell><TableCell>{row.remainingAmount}</TableCell>
                                 </TableRow>
                               ))}</TableBody>
                             </Table>
                           </TableContainer>
                           <Stack gap={1} sx={{ display: { xs: 'flex', md: 'none' }, mt: 1 }}>
                             {budgets.map((row) => (
-                              <Paper key={`${row.organization}:${row.currency}`} variant="outlined" sx={{ p: 1.5 }}>
+                              <Paper key={`${row.organizationPublicId}:${row.currency}`} variant="outlined" sx={{ p: 1.5 }}>
                                 <Typography variant="caption" color="text.secondary">{copy.organizationCurrency}</Typography>
-                                <Typography variant="body2" fontWeight={700}><span className="compplan-identifier">{row.organization}</span> · {row.currency}</Typography>
-                                <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3,minmax(0,1fr))', gap: 1, mt: 1 }}>
-                                  <Box><Typography variant="caption" color="text.secondary">{copy.total}</Typography><Typography variant="body2">{row.allocated}</Typography></Box>
-                                  <Box><Typography variant="caption" color="text.secondary">{copy.used}</Typography><Typography variant="body2">{copy.restricted}</Typography></Box>
-                                  <Box><Typography variant="caption" color="text.secondary">{copy.remaining}</Typography><Typography variant="body2">{copy.notProjected}</Typography></Box>
+                                <Typography variant="body2" fontWeight={700}><span className="compplan-identifier">{row.organizationPublicId}</span> · {row.currency}</Typography>
+                                <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(3,minmax(0,1fr))' }, gap: 1, mt: 1 }}>
+                                  <Box><Typography variant="caption" color="text.secondary">{copy.total}</Typography><Typography variant="body2">{row.allocatedAmount}</Typography></Box>
+                                  <Box><Typography variant="caption" color="text.secondary">{copy.used}</Typography><Typography variant="body2">{row.committedAmount}</Typography></Box>
+                                  <Box><Typography variant="caption" color="text.secondary">{copy.remaining}</Typography><Typography variant="body2">{row.remainingAmount}</Typography></Box>
                                 </Box>
                               </Paper>
                             ))}

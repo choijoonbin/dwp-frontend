@@ -164,10 +164,26 @@ const correlationHeader = (correlationId: string) => ({
   'X-Correlation-ID': correlationId,
 });
 
+export const COMPENSATION_PLANNING_PROJECTION_VERSION_HEADER =
+  'X-HRIS-Compplan-Projection-Version';
+export const COMPENSATION_PLANNING_PROJECTION_VERSION = '5';
+
 function readConfig(context: CompensationReadContext) {
   return {
     ...(productSurfaceReadScopeConfig(context.contextScopeKey, context.signal) ?? {}),
     headers: correlationHeader(context.correlationId),
+  };
+}
+
+function cycleDetailReadConfig(context: CompensationReadContext) {
+  const config = readConfig(context);
+  return {
+    ...config,
+    headers: {
+      ...config.headers,
+      [COMPENSATION_PLANNING_PROJECTION_VERSION_HEADER]:
+        COMPENSATION_PLANNING_PROJECTION_VERSION,
+    },
   };
 }
 
@@ -201,7 +217,7 @@ export async function queryCompensationCycle(
 ): Promise<CompensationCycleDetail> {
   const response = await axiosInstance.get<ApiResponse<unknown>>(
     `${COMPENSATION_PLANNING_BASE_PATH}/cycles/${encodeURIComponent(cycleId)}`,
-    readConfig(context)
+    cycleDetailReadConfig(context)
   );
   return parseCompensationCycleDetail(response.data.data);
 }

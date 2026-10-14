@@ -85,6 +85,14 @@ export type CompensationBudgetEntry = Readonly<{
   createdAt: string;
 }>;
 
+export type CompensationBudgetAggregate = Readonly<{
+  organizationPublicId: string;
+  currency: string;
+  allocatedAmount: PostedMoney;
+  committedAmount: PostedMoney;
+  remainingAmount: PostedMoney;
+}>;
+
 export type CompensationCycle = Readonly<{
   cycleId: string;
   aggregateVersion: number;
@@ -96,6 +104,7 @@ export type CompensationCycle = Readonly<{
   guidelines?: CompensationGuidelines;
   population?: CompensationPopulation;
   budgetEntries?: readonly CompensationBudgetEntry[];
+  budgetAggregates?: readonly CompensationBudgetAggregate[];
 }>;
 
 export type CompensationProposal = Readonly<{
@@ -619,6 +628,23 @@ function budgetEntry(value: unknown): CompensationBudgetEntry {
   });
 }
 
+function budgetAggregate(value: unknown): CompensationBudgetAggregate {
+  const source = record(value, [
+    'organizationPublicId',
+    'currency',
+    'allocatedAmount',
+    'committedAmount',
+    'remainingAmount',
+  ]);
+  return Object.freeze({
+    organizationPublicId: uuid(source.organizationPublicId),
+    currency: text(source.currency, 3, CURRENCY),
+    allocatedAmount: money(source.allocatedAmount),
+    committedAmount: money(source.committedAmount),
+    remainingAmount: money(source.remainingAmount),
+  });
+}
+
 function cycle(value: unknown, detail: boolean): CompensationCycle {
   const required = [
     'cycleId',
@@ -632,10 +658,24 @@ function cycle(value: unknown, detail: boolean): CompensationCycle {
   const source = record(
     value,
     required,
-    detail ? ['guidelines', 'population', 'budgetEntries'] : []
+    detail ? ['guidelines', 'population', 'budgetEntries', 'budgetAggregates'] : []
   );
   const budgetMasked = bool(source.budgetMasked);
-  if (budgetMasked && source.budgetEntries !== undefined) return invalid();
+  if (budgetMasked &&
+    (source.budgetEntries !== undefined || source.budgetAggregates !== undefined)) {
+    return invalid();
+  }
+  const budgetAggregates = source.budgetAggregates === undefined
+    ? undefined
+    : array(source.budgetAggregates).map(budgetAggregate);
+  for (let index = 1; index < (budgetAggregates?.length ?? 0); index += 1) {
+    const previous = budgetAggregates?.[index - 1];
+    const aggregate = budgetAggregates?.[index];
+    if (!previous || !aggregate) return invalid();
+    const previousKey = `${previous.organizationPublicId}:${previous.currency}`;
+    const key = `${aggregate.organizationPublicId}:${aggregate.currency}`;
+    if (key <= previousKey) invalid();
+  }
   return Object.freeze({
     cycleId: uuid(source.cycleId),
     aggregateVersion: integer(source.aggregateVersion, 1),
@@ -649,6 +689,9 @@ function cycle(value: unknown, detail: boolean): CompensationCycle {
     ...(source.budgetEntries === undefined
       ? {}
       : { budgetEntries: Object.freeze(array(source.budgetEntries).map(budgetEntry)) }),
+    ...(budgetAggregates === undefined
+      ? {}
+      : { budgetAggregates: Object.freeze(budgetAggregates) }),
   });
 }
 

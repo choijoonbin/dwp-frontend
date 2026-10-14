@@ -118,12 +118,34 @@ describe('sealed compensation-planning contracts', () => {
           ],
         },
         budgetEntries: [],
+        budgetAggregates: [
+          {
+            organizationPublicId: ID.organization,
+            currency: 'USD',
+            allocatedAmount: '1000',
+            committedAmount: '250',
+            remainingAmount: '750',
+          },
+        ],
       },
       referenceEffectiveAt: NOW,
       freshnessWatermark: NOW,
       fieldPolicyRevision: 8,
     });
     expect(detail.item.guidelines?.budgetMode).toBe('HARD_CAP');
+    expect(detail.item.budgetAggregates?.[0].remainingAmount).toBe('750');
+
+    const priorServerDetail = parseCompensationCycleDetail({
+      item: {
+        ...cycle,
+        budgetMasked: false,
+        budgetEntries: [],
+      },
+      referenceEffectiveAt: NOW,
+      freshnessWatermark: NOW,
+      fieldPolicyRevision: 8,
+    });
+    expect(priorServerDetail.item.budgetAggregates).toBeUndefined();
 
     expect(() =>
       parseCompensationCycleCollection({
@@ -132,6 +154,70 @@ describe('sealed compensation-planning contracts', () => {
         hasMore: false,
         asOf: NOW,
         scopeRevision: 7,
+        fieldPolicyRevision: 8,
+      })
+    ).toThrow();
+    expect(() =>
+      parseCompensationCycleDetail({
+        item: {
+          ...cycle,
+          budgetMasked: true,
+          budgetAggregates: [{
+            organizationPublicId: ID.organization,
+            currency: 'USD',
+            allocatedAmount: '1',
+            committedAmount: '0',
+            remainingAmount: '1',
+          }],
+        },
+        referenceEffectiveAt: NOW,
+        freshnessWatermark: NOW,
+        fieldPolicyRevision: 8,
+      })
+    ).toThrow();
+    expect(() =>
+      parseCompensationCycleDetail({
+        item: {
+          ...cycle,
+          budgetMasked: false,
+          budgetAggregates: [{
+            organizationPublicId: ID.organization,
+            currency: 'USD',
+            allocatedAmount: '1',
+            committedAmount: '0',
+            remainingAmount: '1',
+            clientCalculated: false,
+          }],
+        },
+        referenceEffectiveAt: NOW,
+        freshnessWatermark: NOW,
+        fieldPolicyRevision: 8,
+      })
+    ).toThrow();
+    expect(() =>
+      parseCompensationCycleDetail({
+        item: {
+          ...cycle,
+          budgetMasked: false,
+          budgetAggregates: [
+            {
+              organizationPublicId: ID.organization,
+              currency: 'USD',
+              allocatedAmount: '1',
+              committedAmount: '0',
+              remainingAmount: '1',
+            },
+            {
+              organizationPublicId: ID.organization,
+              currency: 'KRW',
+              allocatedAmount: '1',
+              committedAmount: '0',
+              remainingAmount: '1',
+            },
+          ],
+        },
+        referenceEffectiveAt: NOW,
+        freshnessWatermark: NOW,
         fieldPolicyRevision: 8,
       })
     ).toThrow();
@@ -257,6 +343,15 @@ describe('sealed compensation-planning contracts', () => {
               }],
             },
             budgetEntries: [],
+            budgetAggregates: [
+              {
+                organizationPublicId: ID.organization,
+                currency: 'USD',
+                allocatedAmount: '100',
+                committedAmount: '25',
+                remainingAmount: '75',
+              },
+            ],
           },
           referenceEffectiveAt: NOW,
           freshnessWatermark: NOW,

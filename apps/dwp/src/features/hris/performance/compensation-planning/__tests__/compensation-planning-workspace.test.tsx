@@ -264,6 +264,85 @@ describe('compensation-planning workspace', () => {
     expect(detailHtml).toContain('1250.25 USD');
   });
 
+  it('renders only the server-projected allocation, commitment, and remainder', () => {
+    const projected = {
+      ...cycle,
+      budgetMasked: false,
+      budgetEntries: [{
+        entryId: '88888888-8888-4888-8888-888888888888',
+        entrySequence: 1,
+        organizationPublicId: ID.organization,
+        currency: 'USD',
+        amount: '111',
+        entryType: 'ALLOCATE' as const,
+        sourceEntryPublicId: null,
+        createdAt: NOW,
+      }],
+      budgetAggregates: [{
+        organizationPublicId: ID.organization,
+        currency: 'USD',
+        allocatedAmount: '900',
+        committedAmount: '125',
+        remainingAmount: '775',
+      }],
+    };
+    const html = renderToStaticMarkup(
+      <CompensationPlanningWorkspace
+        status="READY"
+        cycles={[cycle]}
+        selectedCycleId={ID.cycle}
+        cycleDetail={{ item: projected, referenceEffectiveAt: NOW,
+          freshnessWatermark: NOW, fieldPolicyRevision: 4 }}
+        proposals={null}
+        actions={actions}
+        onSelectCycle={vi.fn()}
+        onRefresh={vi.fn()}
+      />
+    );
+
+    expect(html).toContain('900');
+    expect(html).toContain('125');
+    expect(html).toContain('775');
+    expect(html).toContain('Committed');
+    expect(html).not.toContain('>111<');
+    expect(html).not.toContain('Not projected');
+  });
+
+  it('supports a frontend-first rollout without deriving aggregates from the prior server ledger', () => {
+    const priorServerCycle = {
+      ...cycle,
+      budgetMasked: false,
+      budgetEntries: [{
+        entryId: '88888888-8888-4888-8888-888888888888',
+        entrySequence: 1,
+        organizationPublicId: ID.organization,
+        currency: 'USD',
+        amount: '987654.321',
+        entryType: 'ALLOCATE' as const,
+        sourceEntryPublicId: null,
+        createdAt: NOW,
+      }],
+    };
+    const html = renderToStaticMarkup(
+      <CompensationPlanningWorkspace
+        status="READY"
+        cycles={[cycle]}
+        selectedCycleId={ID.cycle}
+        cycleDetail={{ item: priorServerCycle, referenceEffectiveAt: NOW,
+          freshnessWatermark: NOW, fieldPolicyRevision: 4 }}
+        proposals={null}
+        actions={actions}
+        onSelectCycle={vi.fn()}
+        onRefresh={vi.fn()}
+      />
+    );
+
+    expect(html).toContain('Authoritative budget projection temporarily unavailable');
+    expect(html).toContain('not estimated in the browser');
+    expect(html).not.toContain('987654.321');
+    expect(html).not.toContain('No visible ledger entries.');
+  });
+
   it.each([
     ['DENIED', 'Access unavailable'],
     ['STEP_UP_REQUIRED', 'Verification required'],
