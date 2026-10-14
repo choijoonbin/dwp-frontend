@@ -5,6 +5,9 @@ import {
 
 import type { HrisCatalogNode } from '../hris-product-map-contract';
 
+export const HRIS_GOVERNANCE_AUDIT_OVERVIEW_HREF =
+  '/admin/governance/audit-overview?product=HCM&tab=overview';
+
 export const HRIS_DWP_CONTROL_CATALOG: readonly HrisCatalogNode[] = Object.freeze([
   node({
     id: 'dwp-experience',
@@ -79,6 +82,7 @@ export const HRIS_DWP_CONTROL_CATALOG: readonly HrisCatalogNode[] = Object.freez
     externalTarget: 'DWP_GOVERNANCE',
     availability: 'LEGACY_PARTIAL',
     authorization: 'CENTRAL_POLICY',
+    href: HRIS_GOVERNANCE_AUDIT_OVERVIEW_HREF,
     label: { ko: 'Governance · HRIS 감사', en: 'Governance · HRIS audit' },
     capability: {
       ko: '감사 묶음, 민감 반출, 보존과 법적 보존',

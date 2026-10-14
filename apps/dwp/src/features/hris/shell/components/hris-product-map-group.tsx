@@ -7,6 +7,7 @@ import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
+import { HRIS_GOVERNANCE_AUDIT_OVERVIEW_HREF } from '../model/catalog/dwp-control';
 import { HRIS_INVENTORY_GROUP_LABELS } from '../model/hris-product-map-catalog';
 
 import type {
@@ -36,6 +37,24 @@ const availabilityColor = {
   ROADMAP: 'default',
   DWP_CONTROL_PLANE: 'info',
 } satisfies Record<HrisAvailability, 'success' | 'default' | 'info'>;
+
+function resolveCatalogOpenPath(
+  item: ReturnType<typeof filterHrisCatalog>[number]
+): string | undefined {
+  if (item.lifecycle === 'PILOT') {
+    return item.href;
+  }
+  if (
+    item.id === 'dwp-governance' &&
+    item.lifecycle === 'EXTERNAL' &&
+    item.externalTarget === 'DWP_GOVERNANCE' &&
+    item.authorization === 'CENTRAL_POLICY' &&
+    item.href === HRIS_GOVERNANCE_AUDIT_OVERVIEW_HREF
+  ) {
+    return item.href;
+  }
+  return undefined;
+}
 
 export function CatalogGroup({
   group,
@@ -69,9 +88,8 @@ export function CatalogGroup({
       <Box component="ul" sx={{ p: 0, m: 0, listStyle: 'none' }}>
         {items.map((item) => {
           const Icon = lifecycleIcon[item.lifecycle];
-          const openAllowed = Boolean(
-            item.lifecycle === 'PILOT' && item.href && canOpenPath(item.href)
-          );
+          const openPath = resolveCatalogOpenPath(item);
+          const openAllowed = Boolean(openPath && canOpenPath(openPath));
           return (
             <Box
               component="li"
@@ -79,13 +97,7 @@ export function CatalogGroup({
               data-catalog-id={item.id}
               data-lifecycle={item.lifecycle}
               data-external-target={item.externalTarget}
-              data-open-state={
-                item.lifecycle === 'PILOT' && item.href
-                  ? openAllowed
-                    ? 'allowed'
-                    : 'denied'
-                  : 'inert'
-              }
+              data-open-state={openPath ? (openAllowed ? 'allowed' : 'denied') : 'inert'}
               sx={{
                 display: 'grid',
                 gridTemplateColumns: { xs: '1fr', sm: 'minmax(0, 1fr) auto' },
@@ -128,18 +140,18 @@ export function CatalogGroup({
                   </Typography>
                 )}
               </Box>
-              {item.lifecycle === 'PILOT' && item.href && openAllowed ? (
+              {openPath && openAllowed ? (
                 <ActionButton
                   intent="secondary"
                   size="small"
                   endIcon={<ArrowUpRight size={15} aria-hidden="true" />}
-                  onClick={() => onOpen(item.href!)}
+                  onClick={() => onOpen(openPath)}
                   aria-label={`${item.label[locale]} · ${t('productMap.open')}`}
                   sx={{ justifySelf: { sm: 'end' } }}
                 >
                   {t('productMap.open')}
                 </ActionButton>
-              ) : item.lifecycle === 'PILOT' && item.href ? (
+              ) : openPath ? (
                 <Chip
                   size="small"
                   variant="outlined"

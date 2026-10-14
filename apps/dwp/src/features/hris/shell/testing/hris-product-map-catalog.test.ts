@@ -9,12 +9,14 @@ import {
   HRIS_RETAINED_OUTSIDE_TARGET,
 } from '../index';
 
+const HCM_AUDIT_OVERVIEW_HREF = '/admin/governance/audit-overview?product=HCM&tab=overview';
+
 describe('HRIS target product map catalog', () => {
   it('preserves the exact 76-node semantic contract and immutable boundary', () => {
     const semanticJson = JSON.stringify(HRIS_PRODUCT_MAP_CATALOG);
 
     expect(createHash('sha256').update(semanticJson).digest('hex')).toBe(
-      'efeee48bf7813f377d7eb288e31823116ab01d8b589f1dbb7ada63535b360790'
+      'beec4808ea853830be012778ddf67758ac04459071fd6dbd50213e1d85dc0ff2'
     );
     expect(Object.isFrozen(HRIS_PRODUCT_MAP_CATALOG)).toBe(true);
     expect(HRIS_PRODUCT_MAP_CATALOG.every((item) => Object.isFrozen(item))).toBe(true);
@@ -81,10 +83,18 @@ describe('HRIS target product map catalog', () => {
     ).toEqual(['/hr/operations/assignments', '/hr/operations/people/employment-assignments']);
   });
 
-  it('never turns planned, evidence-blocked, or external work into a blank route', () => {
+  it('keeps non-pilot work inert except for the exact governed HCM audit handoff', () => {
     const future = HRIS_PRODUCT_MAP_CATALOG.filter((item) => item.lifecycle !== 'PILOT');
     expect(future).toHaveLength(64);
-    expect(future.every((item) => item.href === undefined)).toBe(true);
+    expect(future.filter((item) => item.href !== undefined)).toEqual([
+      expect.objectContaining({
+        id: 'dwp-governance',
+        lifecycle: 'EXTERNAL',
+        externalTarget: 'DWP_GOVERNANCE',
+        authorization: 'CENTRAL_POLICY',
+        href: HCM_AUDIT_OVERVIEW_HREF,
+      }),
+    ]);
     expect(HRIS_PRODUCT_MAP_CATALOG.find((item) => item.id === 'pay-year-end-tax')).toMatchObject({
       lifecycle: 'BLOCKED_EVIDENCE',
       authorization: 'NOT_EVALUATED',
@@ -94,13 +104,9 @@ describe('HRIS target product map catalog', () => {
     );
   });
 
-  it('assigns every external setting to an explicit non-URL DWP control owner', () => {
-    expect(
-      HRIS_PRODUCT_MAP_CATALOG.filter((item) => item.lifecycle === 'EXTERNAL').map((item) => [
-        item.id,
-        item.externalTarget,
-      ])
-    ).toEqual([
+  it('assigns every external setting to its DWP owner and only governance to an href', () => {
+    const external = HRIS_PRODUCT_MAP_CATALOG.filter((item) => item.lifecycle === 'EXTERNAL');
+    expect(external.map((item) => [item.id, item.externalTarget])).toEqual([
       ['dwp-experience', 'DWP_EXPERIENCE'],
       ['dwp-identity', 'DWP_IDENTITY'],
       ['dwp-platform', 'DWP_PLATFORM'],
@@ -108,6 +114,14 @@ describe('HRIS target product map catalog', () => {
       ['dwp-governance', 'DWP_GOVERNANCE'],
       ['dwp-extensibility', 'DWP_EXTENSIBILITY'],
     ]);
+    expect(
+      external.filter((item) => item.href !== undefined).map((item) => [item.id, item.href])
+    ).toEqual([['dwp-governance', HCM_AUDIT_OVERVIEW_HREF]]);
+    expect(
+      external
+        .filter((item) => item.id !== 'dwp-governance')
+        .every((item) => item.href === undefined)
+    ).toBe(true);
     expect(
       HRIS_PRODUCT_MAP_CATALOG.filter((item) => item.lifecycle !== 'EXTERNAL').every(
         (item) => item.externalTarget === undefined
@@ -163,8 +177,12 @@ describe('HRIS target product map catalog', () => {
     );
     const mapped = HRIS_PRODUCT_MAP_CATALOG.flatMap((item) => item.legacyPaths);
     const retained = HRIS_RETAINED_OUTSIDE_TARGET.map((item) => item.path);
+    const deliveredModern = [
+      '/hr/operations/performance/compensation-planning',
+      '/hr/settings/navigation-policy',
+    ];
 
-    expect(new Set([...mapped, ...retained])).toEqual(new Set(governed));
+    expect(new Set([...mapped, ...retained, ...deliveredModern])).toEqual(new Set(governed));
     expect(HRIS_RETAINED_OUTSIDE_TARGET.map((item) => [item.path, item.sourceModule])).toEqual([
       ['/hr/data/reference', 'LEGACY_WORKFORCE_REFERENCE'],
       ['/hr/benefits', 'BENSK'],
@@ -172,7 +190,11 @@ describe('HRIS target product map catalog', () => {
     ]);
     expect(
       HRIS_PRODUCT_MAP_CATALOG.filter((item) => item.availability === 'LEGACY_PARTIAL').every(
-        (item) => Boolean(item.coverageNote) && item.href === undefined
+        (item) =>
+          Boolean(item.coverageNote) &&
+          (item.id === 'dwp-governance'
+            ? item.href === HCM_AUDIT_OVERVIEW_HREF
+            : item.href === undefined)
       )
     ).toBe(true);
   });
@@ -192,10 +214,10 @@ describe('HRIS target product map catalog', () => {
       ['/hr/team', 2],
     ]);
     expect(
-      HRIS_PRODUCT_MAP_CATALOG.filter((item) => item.lifecycle !== 'PILOT').every(
-        (item) => item.href === undefined
-      )
-    ).toBe(true);
+      HRIS_PRODUCT_MAP_CATALOG.filter(
+        (item) => item.lifecycle !== 'PILOT' && item.href !== undefined
+      ).map((item) => [item.id, item.href])
+    ).toEqual([['dwp-governance', HCM_AUDIT_OVERVIEW_HREF]]);
   });
 
   it('projects work surfaces by module and persona without changing the catalog', () => {
