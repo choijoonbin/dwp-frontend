@@ -1,0 +1,83 @@
+{
+  "schema": "dwp.hris.module-start-token-amendment.v4",
+  "tokenAmendmentId": "HRIS-WAVE6-START-BASE-TFR-SYS-012-EXPLORER-R4",
+  "issuedAt": "2026-10-15T06:36:22+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-SYS",
+  "sliceId": "BASE-TFR-SYS-012",
+  "state": "ISSUED_BOUNDED_AUTH_PEOPLE_PARITY_ONLY",
+  "amendsToken": "HRIS-WAVE6-START-BASE-TFR-SYS-012-EXPLORER-R3",
+  "reason": "Explorer requires the same current Auth and People eligibility intersection that Gateway uses. People rejects hcm.utility, and Auth also sends the owner-bound ORIGINATING_COMMAND_SCOPE receipt profile to generic People eligibility even though only the sealed owner receipt can resolve it. Platform cannot prove Gateway hcm-scope, psr or canonical population evidence from Auth alone.",
+  "controlAmendment": {
+    "path": "../sys-012-work-explorer-control-r1/people-authority-parity-successor-amendment.v1.json",
+    "amendmentId": "HRIS-WAVE6-SYS-012-PEOPLE-AUTHORITY-PARITY-R4",
+    "sha256": "967cedb7798a916809c45725d0a64352d1101d5155bfb1db64250ec2d9d5f46b",
+    "bytes": 20428
+  },
+  "predecessorAuthority": {
+    "r3Token": "start-token-amendment.v3.json",
+    "r3TokenSha256": "f376e5a8d522761085e137d20da4eab307f8ad132aeef3f89b7b741a0f787f5a",
+    "r3Control": "../sys-012-work-explorer-control-r1/platform-pep-opaque-context-amendment.v1.json",
+    "r3ControlSha256": "d9e02255c3679a8bbc1f7f7b95af542b607452f7483010147c5f161f45e08a47",
+    "rule": "R1, R2 and R3 remain binding. R4 changes only the exact People authority audience/utility SELF boundary, Platform parity semantics, canonical population seal and exporter-test closure."
+  },
+  "worktreeReuse": {
+    "backend": {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave6-20261015/sys-012-work-explorer-r1/backend",
+      "branch": "codex/hris-wave6-sys-012-explorer-backend-20261015-r1",
+      "baseCommit": "3b2da20b592de5b5cff8f2483b83900f2dad054e",
+      "rule": "Continue the same uncommitted implementation. Do not create another worktree, branch, migration or replacement adapter."
+    },
+    "frontend": {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave6-20261015/sys-012-work-explorer-r1/frontend",
+      "branch": "codex/hris-wave6-sys-012-explorer-frontend-20261015-r1",
+      "baseCommit": "4f740a572afb8feeef3e31cb8ed258c0c8145cf2",
+      "rule": "R4 grants no new frontend path authority. Finish only unresolved R1/R2 frontend acceptance gaps with smallest owner verification."
+    }
+  },
+  "authorizedSuccessorWork": [
+    "Add hcm.utility exact SELF eligibility to the existing People HCM adapter without accepting personal or other surface selectors.",
+    "Permit exactly dwp-gateway and dwp-platform-server on the existing People eligibility endpoint with exact token and identity header validation.",
+    "Skip generic People eligibility only for route.hcm.utility.explorer-command-receipt.data when its selected platform-origin grant is hcm.command-receipt.view with ORIGINATING_COMMAND_SCOPE; preserve prior eligibility behavior for every other route.",
+    "Within the existing Explorer package/config scope, compose current Auth and People evidence, reproduce Gateway scope intersection and decision-revision semantics, and fail closed on drift or unavailability.",
+    "Track current request-route and per-origin-route psr separately for receipt reconciliation.",
+    "Derive a distinct internal canonical shared-receipt authority digest server-side from the trusted current hcm-scope while preserving the public/legacy receipt digest, replay behavior and historical rows.",
+    "Retain the existing SYS-012 exporter unit-test purpose assertions in the exact authorized test method."
+  ],
+  "verificationPolicy": {
+    "peopleP1StateAtIssue": "NOT_RUN",
+    "peopleP1": "./gradlew :dwp-people-server:test --tests '*HcmProductSurfaceEligibilityAdapterTest' --tests '*PeopleSecurityFilterTest' --no-daemon --max-workers=1",
+    "authA1StateAtIssue": "NOT_RUN",
+    "authA1": "./gradlew :dwp-auth-server:test --tests '*ProductAuthorizationHcmAuthorityAdapterTest' --no-daemon --max-workers=1",
+    "backendM1StateAtIssue": "NOT_RUN",
+    "backendM1": "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.hrisconfiguration.explorer.*' --tests '*HcmPlatformPepSecurityContractTest' --tests '*ReferenceConfigurationCanonicalReceiptBridgeTest' --tests '*NavigationPolicyCanonicalReceiptBridgeTest' --no-daemon --max-workers=1",
+    "backendRule": "Run A1, P1 and M1 once each only after every R2/R3/R4 static blocker is closed. After a failure, rerun only the smallest owning test.",
+    "frontendRule": "Do not rerun aggregate M2 or an already-successful frontend owner scope.",
+    "forbidden": "No repository-wide suite, C1/C3 regeneration gate, second A1/P1/M1 aggregate, generated security carrier update or repeated successful stage."
+  },
+  "completionGate": [
+    "Gateway can authorize a valid hcm.utility SELF Explorer request through current People evidence.",
+    "Command-only packages can reach the owner PEP for the exact utility Explorer platform-origin receipt profile, but no receipt data is returned until the current sealed origin is re-proven.",
+    "Platform independently reproduces the current People-derived hcm-scope and psr for ordinary Explorer and explorer-origin routes; for the exact platform-origin receipt exception it instead validates the forwarded Auth source scope and People-free receipt-route psr, then separately proves the stored origin through Auth and People.",
+    "Descendant routes are evaluated on their own surfaces and unavailable owner evidence remains explicit PARTIAL or fail-closed as specified.",
+    "Preferences, recents, reference and navigation receipts compare the immutable origin psr to the current exact origin-route psr.",
+    "The new internal canonical authority digest is server-derived from trusted hcm-scope and cannot be changed by a forged browser digest header; the public receipt digest remains producer-compatible.",
+    "Legacy rows/replay remain unchanged and no historical backfill or second migration exists.",
+    "A1, P1, M1 and the remaining exact contract checks pass, then both module branches are committed, pushed, clean and upstream exact."
+  ],
+  "authority": {
+    "moduleImplementationAuthorized": true,
+    "exactPeopleFourFileScopeAuthorized": true,
+    "exactAuthTwoFileScopeAuthorized": true,
+    "platformAuthPeopleCompositionAuthorizedWithinExplorer": true,
+    "canonicalDigestDerivationAuthorizedWithinR2Producers": true,
+    "exactExporterUnitTestEditAuthorized": true,
+    "gatewayEditAuthorized": false,
+    "authEditAuthorizedOutsideExactR4Files": false,
+    "newEndpointAuthorized": false,
+    "moduleBranchCommitAuthorized": true,
+    "moduleBranchPushAuthorized": true,
+    "mergeToDwpDevAuthorized": false,
+    "runtimeActivationAuthorized": false
+  }
+}

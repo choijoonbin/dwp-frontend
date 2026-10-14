@@ -1,0 +1,51 @@
+{
+  "schema": "dwp.hris.module-start-authority-amendment-issued-manifest.v4",
+  "manifestId": "HRIS-WAVE6-SYS-012-R4-AMENDMENT-ISSUED-MANIFEST",
+  "issuedAt": "2026-10-15T06:36:22+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-SYS",
+  "sliceId": "BASE-TFR-SYS-012",
+  "state": "R4_AUTH_PEOPLE_PARITY_CONTROL_AND_TOKEN_PINNED",
+  "artifacts": [
+    {
+      "path": "../sys-012-work-explorer-control-r1/people-authority-parity-successor-amendment.v1.json",
+      "id": "HRIS-WAVE6-SYS-012-PEOPLE-AUTHORITY-PARITY-R4",
+      "sha256": "967cedb7798a916809c45725d0a64352d1101d5155bfb1db64250ec2d9d5f46b",
+      "bytes": 20428
+    },
+    {
+      "path": "start-token-amendment.v4.json",
+      "id": "HRIS-WAVE6-START-BASE-TFR-SYS-012-EXPLORER-R4",
+      "sha256": "eecfbcb1c5098520d8adca1ad1f34d16df247138a17768b585b5dadbe98660f7",
+      "bytes": 6909
+    }
+  ],
+  "issuancePreconditions": {
+    "frontendControlBranch": "dwp-dev",
+    "frontendControlBaseCommit": "b968a06aa939b74b46907b4cfd2a01f997d216d2",
+    "backendModuleBranch": "codex/hris-wave6-sys-012-explorer-backend-20261015-r1",
+    "backendModuleBaseCommit": "3b2da20b592de5b5cff8f2483b83900f2dad054e",
+    "authA1State": "NOT_RUN",
+    "peopleP1State": "NOT_RUN",
+    "backendM1State": "NOT_RUN",
+    "r2AndR3ConsumedAndRawBytesVerifiedByModule": true,
+    "provenBlockingChain": "Explorer utility SELF is rejected by People, and only route.hcm.utility.explorer-command-receipt.data with its selected platform-origin hcm.command-receipt.view ORIGINATING_COMMAND_SCOPE profile is incorrectly sent to generic People eligibility; Platform Auth-only evaluation also cannot reproduce current hcm-scope, psr or canonical origin seals.",
+    "secondMigrationAuthorized": false
+  },
+  "integrityRules": [
+    "Resolve both R4 artifact paths relative to this manifest and verify raw bytes before consuming R4 authority.",
+    "R1, R2 and R3 remain binding; only the exact R4 supersession clauses replace their protected-path restrictions.",
+    "Any byte change to either R4 artifact invalidates this manifest.",
+    "The module must report exact Auth and People protected-path diffs separately from the R1/R2/R3 paths.",
+    "A1, P1 and M1 remain unused until every static blocker closes; each aggregate may run once only and R4 does not authorize aggregate M2."
+  ],
+  "authority": {
+    "consumeR4Amendment": true,
+    "continueExistingWorktrees": true,
+    "editOnlyExactR4AuthPeopleAndExporterTestPaths": true,
+    "completePlatformParityWithinExistingExplorerAndProducerScope": true,
+    "commitAndPushModuleBranchesAfterTargetedVerification": true,
+    "mergeToDwpDev": false,
+    "activation": false
+  }
+}

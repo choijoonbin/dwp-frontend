@@ -1,0 +1,161 @@
+{
+  "schema": "dwp.hris.sys012-control-amendment.v1",
+  "amendmentId": "HRIS-WAVE6-SYS-012-PEOPLE-AUTHORITY-PARITY-R4",
+  "issuedAt": "2026-10-15T06:36:22+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "sliceId": "BASE-TFR-SYS-012",
+  "state": "ISSUED_BOUNDED_AUTH_PEOPLE_PARITY_SUCCESSOR",
+  "reason": "The Explorer page/preferences/recents and explorer-origin receipt profile use PERMISSION_AND_RELATIONSHIP with SELF, but People rejects hcm.utility. The platform-origin receipt profile uses hcm.command-receipt.view with ORIGINATING_COMMAND_SCOPE, which Auth generically classifies as People TARGET_POPULATION even though only the owner service can bind it to the immutable receipt origin. Gateway therefore rejects both valid profiles before Platform, and an Auth-only Platform recheck cannot prove the People-derived origin scope, decision revision or population seal.",
+  "supersedesOnly": [
+    "runtime-authority-receipt-successor-amendment.v1.json#/expandedTouchBoundary/stillForbidden People owner-service source changes only for the four exact People files listed here",
+    "runtime-authority-receipt-successor-amendment.v1.json#/expandedTouchBoundary/stillForbidden Auth source changes only for the exact ProductAuthorizationPeopleEligibility implementation and HCM authority test listed here",
+    "platform-pep-opaque-context-amendment.v1.json#/expandedTouchBoundary/stillForbidden Auth server and People owner-service source changes only for the exact two Auth files and four People files listed here",
+    "start-token-amendment.v2.json#/authority/ownerServiceSourceEditAuthorized false and #/authorizedSuccessorWork owner-service no-change obligation only for the exact four People files listed here",
+    "runtime-authority-receipt-successor-amendment.v1.json#/resultEvidenceSuccessor/producerSources People and Auth zero-change assertion only for the exact two Auth files and four People files listed here",
+    "work-packet.v1.json#/touchManifest/controlOnly and outsideAllowedPathAction only for the two exact Auth files and the one exact exporter unit-test file listed here",
+    "work-packet.v1.json#/touchManifest/protected owner-service restriction only for the four exact People files listed here",
+    "work-packet.v1.json#/invalidationConditions items 4 and 5 only for the two exact Auth files, four exact People files and one exact exporter unit-test file listed here",
+    "work-packet.v1.json#/authority moduleImplementationAuthorized, moduleBranchCommitAuthorized and moduleBranchPushAuthorized false values only for this exact bounded R4 delta; merge and activation authority remain false",
+    "start-token-issued.v1.json#/touchBoundary/forbidden central authorization, Auth and owner-service restrictions only for the two exact Auth files and four exact People files listed here; its outsideBoundaryAction is likewise superseded only for those files and the one exact exporter unit-test file",
+    "start-token-issued.v1.json#/authority authorizationOrOpenApiEditAuthorized and ownerServiceSourceEditAuthorized false values only for the exact two Auth files, four People files and exporter-test assertion listed here; central contract, Gateway, generated and activation authority remain false",
+    "start-token-issued.v1.json#/invalidationConditions items 4 and 5 only for the two exact Auth files, four exact People files and one exact exporter unit-test file listed here",
+    "module-result-contract.v1.json#/changedContentEvidence/protectedPathAssertions authorization/Auth and owner-service zero-change assertions only for the exact two Auth files and four People files listed here, and its protected-path manifest boundary only for the one exact exporter unit-test file listed here",
+    "runtime-authority-receipt-successor-amendment.v1.json canonical receipt population digest semantics only to require server derivation from the trusted current People-intersected scope"
+  ],
+  "provenRuntimeChain": [
+    "V43 binds hcm.app.shell.view to hcm.utility Explorer routes with PERMISSION_AND_RELATIONSHIP and SELF.",
+    "Auth marks HCM SELF, TARGET_POPULATION and RESOURCE_SET authority as requiring People eligibility and emits a surface-bound source scope-[32].",
+    "Gateway calls People and intersects Auth grants/scopes with current People eligible scopes before it emits hcm-scope-[40] and psr-[64].",
+    "People currently owns only hcm.personal, hcm.team, hcm.operations and hcm.management, so hcm.utility returns SURFACE_DENIED and Gateway returns 403.",
+    "For route.hcm.utility.explorer-command-receipt.data only, the selected platform-origin hcm.command-receipt.view grant uses ORIGINATING_COMMAND_SCOPE. Auth materializes that unknown resolver as TARGET_POPULATION and therefore requests People evidence that cannot be soundly produced without the receipt origin seal; command-only packages fail before the Platform owner PEP.",
+    "The R2 Platform adapter cannot compare a Gateway hcm-scope against direct Auth scope-[32], and it cannot prove stored current population or origin decision evidence without the same People intersection."
+  ],
+  "correctedSemantics": {
+    "peopleUtilityEligibility": {
+      "surface": "hcm.utility",
+      "allowedPopulation": "SELF only",
+      "sourceRule": "Accept only the Auth-signed utility-surface ProductSurfaceScopeKey for source SELF and kind SELF. Do not alias or accept an hcm.personal source key.",
+      "derivationRule": "Derive the current hcm-scope with the existing HcmEligibilityScopeKey contract from tenant, actor, hcm.utility, source scope, current actor relationship revision and current population revision.",
+      "denyRule": "Cross-surface, cross-tenant, cross-actor, unknown kind/source, absent actor and unknown surface remain denied. No target-population or resource-set expansion is authorized for hcm.utility."
+    },
+    "peopleEndpointAudience": {
+      "path": "/internal/people/v1/product-surface-eligibility/evaluate",
+      "allowedServiceIdentities": [
+        "dwp-gateway",
+        "dwp-platform-server"
+      ],
+      "rule": "For this POST path only, require exactly one canonical service-token, service-identity, tenant, actor and subject-person header. Duplicate, comma-joined, blank, padded, CR/LF, malformed identity values or other service identities fail unauthorized. All other People endpoint audiences remain unchanged.",
+      "scope": "Read-only current eligibility evaluation; no generic Platform access to People data is authorized."
+    },
+    "originatingCommandScope": {
+      "coarseGatewayRule": "Only for route.hcm.utility.explorer-command-receipt.data when the selected platform-origin profile grant is hcm.command-receipt.view with ORIGINATING_COMMAND_SCOPE, Auth must not request generic People eligibility for the synthetic receipt-read scope.",
+      "nonExpansionRule": "The exception grants no target population. Auth permission/package/route checks and Gateway route enforcement remain required, and the owner service must return opaque denial unless tenant, actor, subject and every sealed origin field are currently re-proven.",
+      "platformRule": "For SYS-API-038 platform-origin receipts, Platform re-evaluates the stored exact management origin route through Auth and People and compares current origin scope, population digest, field/auth revisions and origin psr. The coarse receipt-read scope is never accepted as origin proof.",
+      "receiptRouteProof": "Platform validates the exact current receipt DATA route result and its selected hcm.command-receipt.view grant plus the forwarded receipt-route psr. It must not look for that capability on the hcm.utility surface entry, because the capability is declared on hcm.operations.",
+      "preservationRule": "All other command receipt routes and regular HCM SELF, TARGET_POPULATION and RESOURCE_SET routes, including the Explorer shell profile, retain their pre-R4 People eligibility behavior. Provider support semantics are unchanged."
+    },
+    "platformCurrentAuthority": {
+      "composition": "Within the R2 Explorer package, evaluate Auth first and call People when Auth requires product eligibility. Candidate scopes are the exact Auth source keys and kinds. Rebind grants by EligibleScope.sourceScopeKey, discard unmatched grants, normalize read-only constraints and require a closed non-empty grant/scope result exactly as Gateway does. The exact owner-bound command-receipt exception remains a coarse receipt-route grant; its stored origin route is always re-evaluated through People.",
+      "identity": "The People call binds exact current tenant, actor and Identity-verified subject person UUID and uses service identity dwp-platform-server. Provider-support mode remains forbidden for Explorer.",
+      "selection": "For ordinary current utility Explorer SELF requests and explorer-origin receipt requests, pass and require the forwarded derived hcm-scope. For the exact route.hcm.utility.explorer-command-receipt.data selected platform-origin exception, require the forwarded canonical Auth source scope-[32] and do not require a derived hcm-scope for the coarse receipt route; separately re-evaluate the stored management origin through Auth and People and require its derived hcm-scope. For every other descendant route, evaluate its own surface with null selection; never reuse the utility or origin scope across surfaces.",
+      "freshness": "For People-intersected routes use the earliest of forwarded request revalidation, Auth revalidation/valid-until, People revalidation and selected scope expiry. For the exact People-free platform-origin receipt route, use forwarded and Auth freshness only for the coarse route, then apply independent Auth, People and scope freshness to the stored origin proof. Missing, expired, malformed, timeout, non-2xx or unavailable required evidence fails closed.",
+      "decisionRevision": "Reproduce the Gateway ProductSurfaceContextAggregationSupport v1 product-evaluation psr material byte-for-byte from tenant, actor, access mode, Auth/policy/People relationship/People population/support revisions, PRODUCT/hcm/surface, exact route and routeGrantRef. Ordinary Explorer and explorer-origin routes use current People revisions. The exact People-free platform-origin receipt route reproduces its receipt-route psr with People relationship, population and support revisions null and compares it with the forwarded receipt-route psr; the stored management origin has a separate People-intersected psr. Never echo a forwarded revision as proof.",
+      "originRevision": "Compute and retain a per-origin-route current psr. Explorer preferences/recents and Platform reference/navigation receipts compare their immutable origin revision to the current exact origin-route psr, not to the receipt-read route psr.",
+      "parityRule": "Golden fixtures must prove Gateway and Platform decision-revision parity. No Gateway production change is authorized.",
+      "entitlementRevision": "Derive the positive entitlementRevision with numericRevision('entitlement', current Auth authRevision).",
+      "projectionRevision": "Derive the positive projectionRevision from a deterministic canonical sorted fingerprint of every deployed V43 Explorer tuple: explorer route key, surface key, route contract key, capability mode and ordered capability keys. A route projection change must change this revision; a hard-coded arbitrary constant is forbidden."
+    },
+    "canonicalPopulationAuthorityDigest": {
+      "algorithm": "lowercaseHex(SHA-256(UTF-8('population-scope:' + canonicalDerivedHcmScopeKey)))",
+      "precondition": "The selected derived key must satisfy HcmEligibilityScopeKey.isCanonical.",
+      "storageRule": "Amend the still-uncommitted V327 with a distinct immutable internal authority_population_scope_digest. Keep population_scope_digest as the public receipt value so the canonical SYS-API-038 response for the shared receipt ID preserves the producer's existing public result semantics.",
+      "producerRule": "For each new V327 canonical reference-configuration or navigation-policy receipt, derive authority_population_scope_digest server-side from the trusted Gateway hcm-scope. Do not copy X-DWP-Population-Scope-Digest into this internal authority field. The existing public population digest may be copied only as non-authoritative result data.",
+      "verificationRule": "Current receipt authority re-evaluates Auth and People, derives the current hcm-scope and authority digest, and compares the result only to the immutable internal authority_population_scope_digest.",
+      "legacyRule": "V325/V326 tables, historical rows, legacy queries, public digest/result semantics and legacy replay remain unchanged. Exact legacy replay never inserts or backfills a canonical row. Historical rows have no internal authority digest and remain unavailable through SYS-API-038."
+    },
+    "receiptLifecycleRule": "HrisExplorerOwnerEvidenceAdapter must preserve request-route current psr validation separately from per-origin-route psr validation. A receipt-query route psr can never substitute for a preferences or recents origin psr because route and routeGrantRef are revision inputs."
+  },
+  "expandedTouchBoundary": {
+    "backendNewPeopleProduction": [
+      "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmProductSurfaceEligibilityAdapter.java (hcm.utility exact SELF ownership only)",
+      "dwp-people-server/src/main/java/com/dwp/services/people/security/PeopleSecurityFilter.java (exact Platform audience on the existing eligibility endpoint only)"
+    ],
+    "backendNewPeopleTests": [
+      "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmProductSurfaceEligibilityAdapterTest.java (utility SELF positive and cross-surface/unknown negative assertions only)",
+      "dwp-people-server/src/test/java/com/dwp/services/people/security/PeopleSecurityFilterTest.java (exact Gateway/Platform audience and malformed-header denial assertions only)"
+    ],
+    "backendNewAuthScope": [
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationPeopleEligibility.java (skip generic People eligibility only for route.hcm.utility.explorer-command-receipt.data when its selected platform-origin grant is hcm.command-receipt.view with ORIGINATING_COMMAND_SCOPE)",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationHcmAuthorityAdapterTest.java (V43 receipt exception positives and regular HCM People eligibility preservation negatives only)"
+    ],
+    "existingR2PlatformScope": [
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/**",
+      "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/**",
+      "dwp-platform-server/src/main/resources/application.yml (Explorer People URL, token and bounded timeout only)",
+      "the exact R2 referenceconfiguration and navigationpolicy canonical dual-write production/test paths",
+      "dwp-platform-server/src/main/resources/db/migration/V327__create_hris_work_explorer.sql"
+    ],
+    "exporterTestClosure": [
+      "scripts/tests/test_export_openapi_contracts.py (the existing SYS-012 test method purpose-parity assertions only)"
+    ],
+    "stillForbidden": [
+      "Gateway production or test changes",
+      "Auth production or test changes outside the two exact R4 Auth files",
+      "product authorization contract, generated bundle or route/profile changes",
+      "People controller, DTO, repository, population service or any People domain source outside the four exact files",
+      "a new authority endpoint or public transport contract",
+      "generated PEP, route registry or TypeScript changes",
+      "a second migration, historical V325/V326 backfill or inferred historical authority",
+      "browser-supplied population digest as canonical proof",
+      "runtime activation, bundle activation or default-ON changes",
+      "any relaxation of tenant, actor, subject, route, surface, scope, purpose, revision, expiry or descendant checks"
+    ]
+  },
+  "targetedVerificationSuccessor": {
+    "policy": "Run each not-yet-used backend stage exactly once after all static R4 blockers close. After a failure, rerun only the smallest owning test; never repeat a successful aggregate stage.",
+    "peopleP1": "./gradlew :dwp-people-server:test --tests '*HcmProductSurfaceEligibilityAdapterTest' --tests '*PeopleSecurityFilterTest' --no-daemon --max-workers=1",
+    "authA1": "./gradlew :dwp-auth-server:test --tests '*ProductAuthorizationHcmAuthorityAdapterTest' --no-daemon --max-workers=1",
+    "backendM1Unchanged": "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.hrisconfiguration.explorer.*' --tests '*HcmPlatformPepSecurityContractTest' --tests '*ReferenceConfigurationCanonicalReceiptBridgeTest' --tests '*NavigationPolicyCanonicalReceiptBridgeTest' --no-daemon --max-workers=1",
+    "openApiSnapshotCheckUnchanged": "python3 scripts/export-openapi-contracts.py --check --approved-snapshots",
+    "openApiUnitTestUnchanged": "python3 -m unittest scripts.tests.test_export_openapi_contracts.ExportOpenApiContractsTest.test_sys012_v43_exports_exact_work_explorer_carrier",
+    "required": [
+      "People utility SELF positive and personal-source replay, wrong source/kind, unknown surface and missing actor denial",
+      "eligibility endpoint exact Gateway and Platform audience positives plus missing, other, duplicate, comma, padded and CR/LF header negatives",
+      "only the V43 utility Explorer receipt route's platform-origin hcm.command-receipt.view ORIGINATING_COMMAND_SCOPE profile skips generic People eligibility; other receipt routes, Explorer shell and ordinary HCM scopes preserve prior eligibility behavior",
+      "a command-only platform receipt package reaches the Platform owner PEP but cannot receive data until the sealed origin is currently re-proven",
+      "concrete Platform Auth-to-People happy path, source-key intersection, selected current utility scope and descendant own-surface evaluation",
+      "Gateway/Platform golden decision-revision parity and mismatch denial",
+      "preferences, recents, reference and navigation per-origin current psr comparison",
+      "internal canonical authority digest derived from trusted hcm-scope despite a forged legacy digest header while the public receipt digest remains producer-compatible",
+      "exact legacy replay produces no canonical insert and historical rows remain unavailable through SYS-API-038",
+      "changed-path audit proves the R1/R2/R3/R4 union and all forbidden path counts are zero"
+    ],
+    "forbidden": [
+      "repository-wide Gradle test",
+      "C1 or C3 full regeneration gate",
+      "a second A1, P1 or M1 aggregate run",
+      "a second aggregate M2 execution",
+      "repeating an already-successful frontend owner scope"
+    ]
+  },
+  "resultEvidenceSuccessor": {
+    "auth": "Report the exact Auth implementation/test diffs, A1 first command/output/exit and proof that only route.hcm.utility.explorer-command-receipt.data with its selected platform-origin hcm.command-receipt.view ORIGINATING_COMMAND_SCOPE profile bypasses generic People eligibility.",
+    "people": "Report exact diffs for the two People production and two People test files, P1 first command/output/exit and any smallest failed-owner reruns.",
+    "platform": "Report concrete Auth-to-People transport configuration, parity fixtures, per-origin revision evidence, canonical digest forged-header evidence and the single M1 result.",
+    "openApi": "Report the existing R2 SYS-API-038 purpose delta and the exact one-method exporter unit-test assertion; unrelated contract/test churn remains zero.",
+    "inheritance": "All R1, R2 and R3 result evidence remains binding except the exact R4 supersession clauses."
+  },
+  "authority": {
+    "editExactPeopleEligibilityAdapterAndTest": true,
+    "editExactPeopleSecurityFilterAndTest": true,
+    "editExactAuthOriginatingReceiptEligibilityAndTest": true,
+    "composeAuthAndPeopleWithinExplorerScope": true,
+    "deriveCanonicalPopulationDigestWithinR2ProducerScope": true,
+    "editExactSys012ExporterUnitTest": true,
+    "gatewayEditAuthorized": false,
+    "authEditAuthorizedOutsideExactR4Files": false,
+    "newEndpointAuthorized": false,
+    "mergeToDwpDevAuthorized": false,
+    "runtimeActivationAuthorized": false
+  }
+}
