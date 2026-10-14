@@ -1,0 +1,3804 @@
+{
+  "schema": "dwp.hris.wave6-module-result-evidence.v1",
+  "evidenceId": "HRIS-WAVE6-BASE-TFR-SYS-012-EXPLORER-MODULE-RESULT-R1",
+  "sliceId": "BASE-TFR-SYS-012",
+  "moduleSession": "HRIS-SYS",
+  "status": "MODULE_RUNTIME_AND_USER_JOURNEY_COMPLETE_CONTROL_INTEGRATION_PENDING_DEFAULT_OFF",
+  "issuedAt": "2026-10-15T08:47:01+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "predecessorAuthority": {
+    "startToken": {
+      "path": "docs/06-delivery/hris/wave6-2026-10-15/sys-012-work-explorer-r1/start-token-issued.v1.json",
+      "tokenId": "HRIS-WAVE6-START-BASE-TFR-SYS-012-EXPLORER-R1",
+      "sha256": "8477d781701d01d69d6000d5daa129beac56aa9eecd17f676c9e7a6452abfc3f",
+      "bytes": 13134
+    },
+    "issuedManifest": {
+      "path": "docs/06-delivery/hris/wave6-2026-10-15/sys-012-work-explorer-r1/issued-manifest.v1.json",
+      "manifestId": "HRIS-WAVE6-BASE-TFR-SYS-012-EXPLORER-START-AUTHORITY-ISSUED-R1",
+      "sha256": "c0f985772e9773cf4b2a92c66a6ae1816dc25f50fd323e9042947f758d2f5c20",
+      "bytes": 6496
+    },
+    "migrationLeaseActivation": {
+      "path": "docs/06-delivery/hris/wave6-2026-10-15/sys-012-work-explorer-r1/migration-lease-activation.v1.json",
+      "activationId": "HRIS-WAVE6-ACTIVATE-BASE-TFR-SYS-012-PLATFORM-V327-R1",
+      "sha256": "3af4bc8cad8d374eff9d355c70a500455516ce34eeb89430942926515a65f2b0",
+      "bytes": 3705
+    }
+  },
+  "amendmentAuthority": [
+    {
+      "revision": "R2",
+      "token": {
+        "path": "docs/06-delivery/hris/wave6-2026-10-15/sys-012-work-explorer-r1/start-token-amendment.v2.json",
+        "tokenAmendmentId": "HRIS-WAVE6-START-BASE-TFR-SYS-012-EXPLORER-R2",
+        "sha256": "443f8d4b9ce48b1cf137fe971ae01322d775c954e167417bd8093567d5e0cc75",
+        "bytes": 5167
+      },
+      "manifest": {
+        "path": "docs/06-delivery/hris/wave6-2026-10-15/sys-012-work-explorer-r1/amendment-issued-manifest.v2.json",
+        "manifestId": "HRIS-WAVE6-SYS-012-R2-AMENDMENT-ISSUED-MANIFEST",
+        "sha256": "dc42f7b9e353854ae46afd1dadd81745a25aab241d3dbb5e162f1630faa7328e",
+        "bytes": 2201
+      },
+      "control": {
+        "path": "docs/06-delivery/hris/wave6-2026-10-15/sys-012-work-explorer-control-r1/runtime-authority-receipt-successor-amendment.v1.json",
+        "amendmentId": "HRIS-WAVE6-SYS-012-RUNTIME-AUTHORITY-RECEIPT-R2",
+        "sha256": "f7674934f4a75c6a02053987db031ec91aca9f6289de0fd9a75dcdd9d7d84cb0",
+        "bytes": 15199
+      }
+    },
+    {
+      "revision": "R3",
+      "token": {
+        "path": "docs/06-delivery/hris/wave6-2026-10-15/sys-012-work-explorer-r1/start-token-amendment.v3.json",
+        "tokenAmendmentId": "HRIS-WAVE6-START-BASE-TFR-SYS-012-EXPLORER-R3",
+        "sha256": "f376e5a8d522761085e137d20da4eab307f8ad132aeef3f89b7b741a0f787f5a",
+        "bytes": 4554
+      },
+      "manifest": {
+        "path": "docs/06-delivery/hris/wave6-2026-10-15/sys-012-work-explorer-r1/amendment-issued-manifest.v3.json",
+        "manifestId": "HRIS-WAVE6-SYS-012-R3-AMENDMENT-ISSUED-MANIFEST",
+        "sha256": "52ae970e12c40abe983b82784106896e6a8d48266d952448723b0b1d10050770",
+        "bytes": 2310
+      },
+      "control": {
+        "path": "docs/06-delivery/hris/wave6-2026-10-15/sys-012-work-explorer-control-r1/platform-pep-opaque-context-amendment.v1.json",
+        "amendmentId": "HRIS-WAVE6-SYS-012-PLATFORM-PEP-OPAQUE-CONTEXT-R3",
+        "sha256": "d9e02255c3679a8bbc1f7f7b95af542b607452f7483010147c5f161f45e08a47",
+        "bytes": 7482
+      }
+    },
+    {
+      "revision": "R4",
+      "token": {
+        "path": "docs/06-delivery/hris/wave6-2026-10-15/sys-012-work-explorer-r1/start-token-amendment.v4.json",
+        "tokenAmendmentId": "HRIS-WAVE6-START-BASE-TFR-SYS-012-EXPLORER-R4",
+        "sha256": "eecfbcb1c5098520d8adca1ad1f34d16df247138a17768b585b5dadbe98660f7",
+        "bytes": 6909
+      },
+      "manifest": {
+        "path": "docs/06-delivery/hris/wave6-2026-10-15/sys-012-work-explorer-r1/amendment-issued-manifest.v4.json",
+        "manifestId": "HRIS-WAVE6-SYS-012-R4-AMENDMENT-ISSUED-MANIFEST",
+        "sha256": "ed720b978c1c4bc324debc19814417565436c4a8eda10eed390d88ee0c48a447",
+        "bytes": 2699
+      },
+      "control": {
+        "path": "docs/06-delivery/hris/wave6-2026-10-15/sys-012-work-explorer-control-r1/people-authority-parity-successor-amendment.v1.json",
+        "amendmentId": "HRIS-WAVE6-SYS-012-PEOPLE-AUTHORITY-PARITY-R4",
+        "sha256": "967cedb7798a916809c45725d0a64352d1101d5155bfb1db64250ec2d9d5f46b",
+        "bytes": 20428
+      }
+    },
+    {
+      "revision": "R5",
+      "token": {
+        "path": "docs/06-delivery/hris/wave6-2026-10-15/sys-012-work-explorer-r1/start-token-amendment.v5.json",
+        "tokenAmendmentId": "HRIS-WAVE6-START-BASE-TFR-SYS-012-EXPLORER-R5",
+        "sha256": "a104322282b11fee80906ceda5ecff2a98ef9fc16f9fec73dc26413dc011e6d4",
+        "bytes": 8099
+      },
+      "manifest": {
+        "path": "docs/06-delivery/hris/wave6-2026-10-15/sys-012-work-explorer-r1/amendment-issued-manifest.v5.json",
+        "manifestId": "HRIS-WAVE6-SYS-012-R5-AMENDMENT-ISSUED-MANIFEST",
+        "sha256": "a1cf481966362e8fcd96af57c77af8498a82f8ca8e438f8998514f26eb995a10",
+        "bytes": 3444
+      },
+      "control": {
+        "path": "docs/06-delivery/hris/wave6-2026-10-15/sys-012-work-explorer-control-r1/receipt-profile-selection-successor-amendment.v1.json",
+        "amendmentId": "HRIS-WAVE6-SYS-012-RECEIPT-PROFILE-SELECTION-R5",
+        "sha256": "9b4d0752e85fae9e870fb1d22f89afc0abf35b5515c1718b10691980292d3166",
+        "bytes": 24047
+      }
+    }
+  ],
+  "contractPins": {
+    "workPacket": {
+      "path": "docs/06-delivery/hris/wave6-2026-10-15/sys-012-work-explorer-r1/work-packet.v1.json",
+      "packetId": "HRIS-WAVE6-WORK-BASE-TFR-SYS-012-EXPLORER-R1",
+      "sha256": "c8f8117514343c02b35d6ae8a4b324b69c764614c13d26bf66708423c1f460c7",
+      "bytes": 18639
+    },
+    "resultContract": {
+      "path": "docs/06-delivery/hris/wave6-2026-10-15/sys-012-work-explorer-r1/module-result-contract.v1.json",
+      "contractId": "HRIS-WAVE6-RESULT-CONTRACT-BASE-TFR-SYS-012-EXPLORER-R1",
+      "sha256": "dc92ffee4b817d9c0e9270b43058a1a0fe74abe50784699485fbc7f1280f1384",
+      "bytes": 7707
+    },
+    "semanticSeal": {
+      "path": "docs/06-delivery/hris/wave6-2026-10-15/sys-012-work-explorer-control-r1/work-explorer-semantics-seal.v1.json",
+      "sha256": "7aa1889d9102bedc4e7447d34b5c4f6ab71de3b52a43919e4869598f0a44384e",
+      "bytes": 19137
+    },
+    "transportAmendment": {
+      "path": "docs/06-delivery/hris/wave6-2026-10-15/sys-012-work-explorer-control-r1/work-explorer-transport-amendment.v1.json",
+      "sha256": "6be0a0486b53fa5e536c490858494e43b8ff2556409c8f7269643fdaaba5d9d9",
+      "bytes": 10900
+    },
+    "authorization": {
+      "version": 43,
+      "checksum": "2222319502c362caf247a7a47fdacfc63c774dbf156f6272cafae797627e2400",
+      "state": "DRAFT"
+    },
+    "openApi": {
+      "r1PlatformSha256": "602416316d6fd44f3b4a3d392d59afbef16f244ccf8e55648665fc2818143110",
+      "r1GatewaySha256": "3205d3bfc0bbdb2923c57c4e40ebecdeaa41a3b32ed51e4aa8e84a6e97a61671",
+      "r2ResultDesignTimeSha256": "09d1971ee1b4069c474f259485a33ba2285686d7ebe5133371e414c3cb03281a",
+      "r2ResultPlatformSha256": "6f5a9ef38b9b68a11a604bc0db09d86bbf936199ff818bdfe7b7bb0b6c007a67",
+      "r2ResultBackendGatewaySha256": "bcc41751c61c1bfc661df4efb4707aee564468ce40123732035e49ee9d2316c3",
+      "r2ResultFrontendGatewaySha256": "bcc41751c61c1bfc661df4efb4707aee564468ce40123732035e49ee9d2316c3",
+      "backendAndFrontendGatewayRawBytesEqual": true
+    }
+  },
+  "moduleResult": {
+    "backend": {
+      "repository": "dwp-backend",
+      "baseBranch": "dwp-dev",
+      "baseOriginRef": "origin/dwp-dev",
+      "baseCommit": "3b2da20b592de5b5cff8f2483b83900f2dad054e",
+      "baseTree": "36c16b205aeab8b0ed52130e41196bb3cba024b5",
+      "moduleBranch": "codex/hris-wave6-sys-012-explorer-backend-20261015-r1",
+      "upstream": "origin/codex/hris-wave6-sys-012-explorer-backend-20261015-r1",
+      "resultLineage": [
+        "6e1ea3cd14224988936fee8af908b706b7aedbc9"
+      ],
+      "resultCommit": "6e1ea3cd14224988936fee8af908b706b7aedbc9",
+      "resultTree": "b2e1a43aad573d63238dbed1a800b6425aa9e3d0",
+      "porcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "upstreamAhead": 0,
+      "upstreamBehind": 0,
+      "remoteExact": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "baseBranch": "dwp-dev",
+      "baseOriginRef": "origin/dwp-dev",
+      "baseCommit": "4f740a572afb8feeef3e31cb8ed258c0c8145cf2",
+      "baseTree": "474e40c18f544f67450c023fef4ace6375218d56",
+      "moduleBranch": "codex/hris-wave6-sys-012-explorer-frontend-20261015-r1",
+      "upstream": "origin/codex/hris-wave6-sys-012-explorer-frontend-20261015-r1",
+      "resultLineage": [
+        "640d1aca79514bd365c366ab9393df6b9d614155"
+      ],
+      "resultCommit": "640d1aca79514bd365c366ab9393df6b9d614155",
+      "resultTree": "d0f9ff47564994ee7384fbf5a072e9148b5ca5a9",
+      "porcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "upstreamAhead": 0,
+      "upstreamBehind": 0,
+      "remoteExact": true
+    }
+  },
+  "changedContentEvidence": {
+    "backend": {
+      "repository": "dwp-backend",
+      "changedFileCount": 71,
+      "sortedChangedPaths": [
+        "contracts/openapi/gateway-public.json",
+        "contracts/openapi/hris-wave1-design-time.json",
+        "contracts/openapi/platform.json",
+        "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationAuthorityAdapter.java",
+        "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationPeopleEligibility.java",
+        "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationHcmAuthorityAdapterTest.java",
+        "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmProductSurfaceEligibilityAdapter.java",
+        "dwp-people-server/src/main/java/com/dwp/services/people/security/PeopleSecurityFilter.java",
+        "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmProductSurfaceEligibilityAdapterTest.java",
+        "dwp-people-server/src/test/java/com/dwp/services/people/security/PeopleSecurityFilterTest.java",
+        "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/AuthHrisExplorerAuthorityEvidenceQuery.java",
+        "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerAuthorityEvidenceQuery.java",
+        "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerAuthoritySeals.java",
+        "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerAuthoritySource.java",
+        "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerCatalog.java",
+        "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerCommandReceiptOwnerEvidenceProvider.java",
+        "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerController.java",
+        "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerDtos.java",
+        "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerOwnerEvidenceAdapter.java",
+        "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerOwnerEvidenceFilter.java",
+        "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerOwnerEvidenceProvider.java",
+        "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerOwnerProviderConfiguration.java",
+        "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerProviderCoordinator.java",
+        "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerProviderEvidenceException.java",
+        "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerReceiptAuthoritySource.java",
+        "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerRepository.java",
+        "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerRuntimeControls.java",
+        "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerService.java",
+        "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerV43RouteAdapter.java",
+        "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerXconOwnerEvidenceQuery.java",
+        "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisPlatformReceiptAuthorityAdapter.java",
+        "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisPlatformReceiptAuthoritySource.java",
+        "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/JdbcHrisExplorerRepository.java",
+        "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/QueryBackedHrisExplorerAuthoritySource.java",
+        "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/navigationpolicy/JdbcNavigationPolicyRepository.java",
+        "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/navigationpolicy/NavigationPolicyController.java",
+        "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/navigationpolicy/NavigationPolicyRepository.java",
+        "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/navigationpolicy/NavigationPolicyService.java",
+        "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/JdbcReferenceConfigurationRepository.java",
+        "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/ReferenceConfigurationController.java",
+        "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/ReferenceConfigurationRepository.java",
+        "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/ReferenceConfigurationService.java",
+        "dwp-platform-server/src/main/java/com/dwp/services/platform/security/HcmPlatformPepRegistry.java",
+        "dwp-platform-server/src/main/resources/application.yml",
+        "dwp-platform-server/src/main/resources/db/migration/V327__create_hris_work_explorer.sql",
+        "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/AuthHrisExplorerAuthorityEvidenceQueryTest.java",
+        "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerCatalogTest.java",
+        "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerCommandJsonBoundaryTest.java",
+        "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerCommandReceiptOwnerEvidenceProviderTest.java",
+        "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerOwnerEvidenceFilterTest.java",
+        "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerProviderCoordinatorTest.java",
+        "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerReceiptControllerTest.java",
+        "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerRuntimeControlsTest.java",
+        "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerServiceProjectionTest.java",
+        "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerServiceSecurityTest.java",
+        "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerTestFixtures.java",
+        "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisPlatformReceiptAuthorityAdapterTest.java",
+        "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/WorkExplorerMigrationContractTest.java",
+        "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/WorkExplorerMigrationPostgresTest.java",
+        "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/navigationpolicy/NavigationPolicyCanonicalReceiptBridgeTest.java",
+        "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/navigationpolicy/NavigationPolicyControllerTest.java",
+        "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/navigationpolicy/NavigationPolicyPostgresTest.java",
+        "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/navigationpolicy/NavigationPolicyServiceTest.java",
+        "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/ReferenceConfigurationCanonicalReceiptBridgeTest.java",
+        "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/ReferenceConfigurationPostgresTest.java",
+        "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/ReferenceConfigurationServiceTest.java",
+        "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/ReferenceConfigurationTestRepository.java",
+        "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/SysIaEntryQueryContractTest.java",
+        "dwp-platform-server/src/test/java/com/dwp/services/platform/security/HcmPlatformPepSecurityContractTest.java",
+        "scripts/export-openapi-contracts.py",
+        "scripts/tests/test_export_openapi_contracts.py"
+      ],
+      "sortedChangedPathManifest": {
+        "algorithm": "SHA256_OF_SORTED_PATH_LF",
+        "sha256": "9accde93bf25b24d0ef42f8eb8c6012cd9e8e58f84bce313e570a39c984be3d4"
+      },
+      "sortedNameStatus": [
+        {
+          "status": "A",
+          "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/AuthHrisExplorerAuthorityEvidenceQuery.java"
+        },
+        {
+          "status": "A",
+          "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerAuthorityEvidenceQuery.java"
+        },
+        {
+          "status": "A",
+          "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerAuthoritySeals.java"
+        },
+        {
+          "status": "A",
+          "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerAuthoritySource.java"
+        },
+        {
+          "status": "A",
+          "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerCatalog.java"
+        },
+        {
+          "status": "A",
+          "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerCommandReceiptOwnerEvidenceProvider.java"
+        },
+        {
+          "status": "A",
+          "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerController.java"
+        },
+        {
+          "status": "A",
+          "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerDtos.java"
+        },
+        {
+          "status": "A",
+          "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerOwnerEvidenceAdapter.java"
+        },
+        {
+          "status": "A",
+          "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerOwnerEvidenceFilter.java"
+        },
+        {
+          "status": "A",
+          "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerOwnerEvidenceProvider.java"
+        },
+        {
+          "status": "A",
+          "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerOwnerProviderConfiguration.java"
+        },
+        {
+          "status": "A",
+          "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerProviderCoordinator.java"
+        },
+        {
+          "status": "A",
+          "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerProviderEvidenceException.java"
+        },
+        {
+          "status": "A",
+          "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerReceiptAuthoritySource.java"
+        },
+        {
+          "status": "A",
+          "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerRepository.java"
+        },
+        {
+          "status": "A",
+          "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerRuntimeControls.java"
+        },
+        {
+          "status": "A",
+          "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerService.java"
+        },
+        {
+          "status": "A",
+          "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerV43RouteAdapter.java"
+        },
+        {
+          "status": "A",
+          "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerXconOwnerEvidenceQuery.java"
+        },
+        {
+          "status": "A",
+          "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisPlatformReceiptAuthorityAdapter.java"
+        },
+        {
+          "status": "A",
+          "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisPlatformReceiptAuthoritySource.java"
+        },
+        {
+          "status": "A",
+          "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/JdbcHrisExplorerRepository.java"
+        },
+        {
+          "status": "A",
+          "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/QueryBackedHrisExplorerAuthoritySource.java"
+        },
+        {
+          "status": "A",
+          "path": "dwp-platform-server/src/main/resources/db/migration/V327__create_hris_work_explorer.sql"
+        },
+        {
+          "status": "A",
+          "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/AuthHrisExplorerAuthorityEvidenceQueryTest.java"
+        },
+        {
+          "status": "A",
+          "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerCatalogTest.java"
+        },
+        {
+          "status": "A",
+          "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerCommandJsonBoundaryTest.java"
+        },
+        {
+          "status": "A",
+          "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerCommandReceiptOwnerEvidenceProviderTest.java"
+        },
+        {
+          "status": "A",
+          "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerOwnerEvidenceFilterTest.java"
+        },
+        {
+          "status": "A",
+          "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerProviderCoordinatorTest.java"
+        },
+        {
+          "status": "A",
+          "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerReceiptControllerTest.java"
+        },
+        {
+          "status": "A",
+          "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerRuntimeControlsTest.java"
+        },
+        {
+          "status": "A",
+          "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerServiceProjectionTest.java"
+        },
+        {
+          "status": "A",
+          "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerServiceSecurityTest.java"
+        },
+        {
+          "status": "A",
+          "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerTestFixtures.java"
+        },
+        {
+          "status": "A",
+          "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisPlatformReceiptAuthorityAdapterTest.java"
+        },
+        {
+          "status": "A",
+          "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/WorkExplorerMigrationContractTest.java"
+        },
+        {
+          "status": "A",
+          "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/WorkExplorerMigrationPostgresTest.java"
+        },
+        {
+          "status": "A",
+          "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/navigationpolicy/NavigationPolicyCanonicalReceiptBridgeTest.java"
+        },
+        {
+          "status": "A",
+          "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/ReferenceConfigurationCanonicalReceiptBridgeTest.java"
+        },
+        {
+          "status": "M",
+          "path": "contracts/openapi/gateway-public.json"
+        },
+        {
+          "status": "M",
+          "path": "contracts/openapi/hris-wave1-design-time.json"
+        },
+        {
+          "status": "M",
+          "path": "contracts/openapi/platform.json"
+        },
+        {
+          "status": "M",
+          "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationAuthorityAdapter.java"
+        },
+        {
+          "status": "M",
+          "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationPeopleEligibility.java"
+        },
+        {
+          "status": "M",
+          "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationHcmAuthorityAdapterTest.java"
+        },
+        {
+          "status": "M",
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmProductSurfaceEligibilityAdapter.java"
+        },
+        {
+          "status": "M",
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/security/PeopleSecurityFilter.java"
+        },
+        {
+          "status": "M",
+          "path": "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmProductSurfaceEligibilityAdapterTest.java"
+        },
+        {
+          "status": "M",
+          "path": "dwp-people-server/src/test/java/com/dwp/services/people/security/PeopleSecurityFilterTest.java"
+        },
+        {
+          "status": "M",
+          "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/navigationpolicy/JdbcNavigationPolicyRepository.java"
+        },
+        {
+          "status": "M",
+          "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/navigationpolicy/NavigationPolicyController.java"
+        },
+        {
+          "status": "M",
+          "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/navigationpolicy/NavigationPolicyRepository.java"
+        },
+        {
+          "status": "M",
+          "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/navigationpolicy/NavigationPolicyService.java"
+        },
+        {
+          "status": "M",
+          "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/JdbcReferenceConfigurationRepository.java"
+        },
+        {
+          "status": "M",
+          "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/ReferenceConfigurationController.java"
+        },
+        {
+          "status": "M",
+          "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/ReferenceConfigurationRepository.java"
+        },
+        {
+          "status": "M",
+          "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/ReferenceConfigurationService.java"
+        },
+        {
+          "status": "M",
+          "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/security/HcmPlatformPepRegistry.java"
+        },
+        {
+          "status": "M",
+          "path": "dwp-platform-server/src/main/resources/application.yml"
+        },
+        {
+          "status": "M",
+          "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/navigationpolicy/NavigationPolicyControllerTest.java"
+        },
+        {
+          "status": "M",
+          "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/navigationpolicy/NavigationPolicyPostgresTest.java"
+        },
+        {
+          "status": "M",
+          "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/navigationpolicy/NavigationPolicyServiceTest.java"
+        },
+        {
+          "status": "M",
+          "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/ReferenceConfigurationPostgresTest.java"
+        },
+        {
+          "status": "M",
+          "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/ReferenceConfigurationServiceTest.java"
+        },
+        {
+          "status": "M",
+          "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/ReferenceConfigurationTestRepository.java"
+        },
+        {
+          "status": "M",
+          "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/SysIaEntryQueryContractTest.java"
+        },
+        {
+          "status": "M",
+          "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/security/HcmPlatformPepSecurityContractTest.java"
+        },
+        {
+          "status": "M",
+          "path": "scripts/export-openapi-contracts.py"
+        },
+        {
+          "status": "M",
+          "path": "scripts/tests/test_export_openapi_contracts.py"
+        }
+      ],
+      "sortedNameStatusManifest": {
+        "algorithm": "SHA256_OF_SORTED_NAME_STATUS_LF",
+        "sha256": "65cd987cb78c4bb0cf4fedf709d13a1f7aae27dd4de98089b7728fe4b9c60e74"
+      },
+      "binarySafeBaseToResultDiff": {
+        "algorithm": "SHA256_OF_GIT_DIFF_BINARY",
+        "sha256": "4ab2df77ac7753c9b5357b5d64f3f84beaf18900db26596c3bdd50f5ba7a4891"
+      },
+      "contentManifest": {
+        "algorithm": "SHA256_OF_SORTED_PATH_TAB_FILE_SHA256_TAB_BYTES_LF",
+        "sha256": "74bc91330ded262e0053d9ae058bde6b726329b948db6e901beccb323bb9600b",
+        "entries": [
+          {
+            "path": "contracts/openapi/gateway-public.json",
+            "sha256": "bcc41751c61c1bfc661df4efb4707aee564468ce40123732035e49ee9d2316c3",
+            "bytes": 7069327
+          },
+          {
+            "path": "contracts/openapi/hris-wave1-design-time.json",
+            "sha256": "09d1971ee1b4069c474f259485a33ba2285686d7ebe5133371e414c3cb03281a",
+            "bytes": 184806
+          },
+          {
+            "path": "contracts/openapi/platform.json",
+            "sha256": "6f5a9ef38b9b68a11a604bc0db09d86bbf936199ff818bdfe7b7bb0b6c007a67",
+            "bytes": 2261445
+          },
+          {
+            "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationAuthorityAdapter.java",
+            "sha256": "dd064e9a01b0cf5af6f7bbdabaf7cd4e9c0b1ed7a536216b74a83b86a5851b6e",
+            "bytes": 47278
+          },
+          {
+            "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationPeopleEligibility.java",
+            "sha256": "d7de0cd48c557109d2e6bc9960fddb7201ab762f4ef58e8efafabeb558eedda9",
+            "bytes": 5353
+          },
+          {
+            "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationHcmAuthorityAdapterTest.java",
+            "sha256": "ab20ec5fb2e06016b1727ab43a722c38b5d379392a871ce4673394e293d59306",
+            "bytes": 24679
+          },
+          {
+            "path": "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmProductSurfaceEligibilityAdapter.java",
+            "sha256": "35ec8a7c255f85a0676ba961cf898a15e45c17c034c94d4330abf1163e56ec85",
+            "bytes": 17233
+          },
+          {
+            "path": "dwp-people-server/src/main/java/com/dwp/services/people/security/PeopleSecurityFilter.java",
+            "sha256": "4f34df5214216b0e36222f37e2188a9fa817c6de8b3bab7ef4521d953ae06747",
+            "bytes": 16222
+          },
+          {
+            "path": "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmProductSurfaceEligibilityAdapterTest.java",
+            "sha256": "cbbc82f09dba2f6507a03fafeac7d4e872fcb307486f86c513ddd49879e647ff",
+            "bytes": 19310
+          },
+          {
+            "path": "dwp-people-server/src/test/java/com/dwp/services/people/security/PeopleSecurityFilterTest.java",
+            "sha256": "9401803de1fb8eea950bd6391b62d2d801b119e57000217ce5eec4b5b610781e",
+            "bytes": 14713
+          },
+          {
+            "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/AuthHrisExplorerAuthorityEvidenceQuery.java",
+            "sha256": "53c773ef987fff51cf08e352a31e2da5c523a6e2ed8d632b691091f59267800a",
+            "bytes": 58644
+          },
+          {
+            "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerAuthorityEvidenceQuery.java",
+            "sha256": "9fe40febc29bc94087aa047866f6d8687cd2770aaa3c184cc59abd1fb8b7d2a3",
+            "bytes": 459
+          },
+          {
+            "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerAuthoritySeals.java",
+            "sha256": "50d3cc0f43fed0970c9153ada91e0b0f0d006f18734d2dc9ee0b21ace32b68b8",
+            "bytes": 3166
+          },
+          {
+            "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerAuthoritySource.java",
+            "sha256": "7a5f779ecb4c24aa0577db064c349df587188124693c99a43c43d220e08b0794",
+            "bytes": 1695
+          },
+          {
+            "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerCatalog.java",
+            "sha256": "1d14713f6daaac2b559233df9a330849677d0470fb18ce129752583df8281073",
+            "bytes": 12069
+          },
+          {
+            "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerCommandReceiptOwnerEvidenceProvider.java",
+            "sha256": "617d21ad9ddf96bc2893a8c38450325e2eb7dd14e3ca03eaa12e315cdd89fe03",
+            "bytes": 3899
+          },
+          {
+            "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerController.java",
+            "sha256": "0b4362b1642ff58ad3e119a5d9c55c1bbf5a308568396e2fbc39fad2be9e3e81",
+            "bytes": 8132
+          },
+          {
+            "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerDtos.java",
+            "sha256": "4bebcbd12d62ad3e76c42d6e08da115937182d043f608a33dbb0dac8ecc59982",
+            "bytes": 5817
+          },
+          {
+            "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerOwnerEvidenceAdapter.java",
+            "sha256": "400c2ffdb4320886833a3cd126ad249ece8e9734113461b3cd77147039f4a84d",
+            "bytes": 11383
+          },
+          {
+            "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerOwnerEvidenceFilter.java",
+            "sha256": "86158621f4a75d95bb651599715d43351ad6b2d7dc7a1bb2b1f6d8c27ed8379e",
+            "bytes": 12650
+          },
+          {
+            "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerOwnerEvidenceProvider.java",
+            "sha256": "f6bb251bb5a24d0813422c34d62e8a2819af772c5a4c36e8a01dee100df27031",
+            "bytes": 1819
+          },
+          {
+            "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerOwnerProviderConfiguration.java",
+            "sha256": "09d8577b727bf9cd81a518e90ca395d882b2313ae052222c4c7ca296052be237",
+            "bytes": 2555
+          },
+          {
+            "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerProviderCoordinator.java",
+            "sha256": "4c1dc967b4c13ae91db2d555efdb0b9dd36f472cad16b2eaaaf45efd61029de9",
+            "bytes": 9628
+          },
+          {
+            "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerProviderEvidenceException.java",
+            "sha256": "73f915562fa4720f9ad2423092c95594c661a6757595dc5bfa447aa0a9fa2154",
+            "bytes": 529
+          },
+          {
+            "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerReceiptAuthoritySource.java",
+            "sha256": "125d4c962c4b9b73b5dd498704eb57f5853044bd1e36992778fe7e137ade4fdc",
+            "bytes": 1205
+          },
+          {
+            "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerRepository.java",
+            "sha256": "55e660363e63817b345501b99d7868aca615d6f2c8390b32c6a0329d9ead744c",
+            "bytes": 3535
+          },
+          {
+            "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerRuntimeControls.java",
+            "sha256": "750566ae9f4be3133dccbcded8bac44f5b679ddf0725c9671b56f53fda539dea",
+            "bytes": 1902
+          },
+          {
+            "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerService.java",
+            "sha256": "9cc709f374f54da72c78ceeb8025abb9be49777ce84007354e93b6db998cef96",
+            "bytes": 17507
+          },
+          {
+            "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerV43RouteAdapter.java",
+            "sha256": "794012edfa150b5dde30d43d560d573fd8b66085603521592ccb5db2c1f00c4c",
+            "bytes": 4197
+          },
+          {
+            "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerXconOwnerEvidenceQuery.java",
+            "sha256": "b0d1f5f31ffbf9d5f25297a0756f273356fdd87b05fa5e645793eeecc3cc17f0",
+            "bytes": 369
+          },
+          {
+            "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisPlatformReceiptAuthorityAdapter.java",
+            "sha256": "8248394d8ea880f7f4bd40de0a5730346683dd4e42b089940cb0f1d526d09bc2",
+            "bytes": 10200
+          },
+          {
+            "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisPlatformReceiptAuthoritySource.java",
+            "sha256": "4f04b31543fddcaf2351b2ba6810db2251c28048fa6378710b17df08d5fedc02",
+            "bytes": 2329
+          },
+          {
+            "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/JdbcHrisExplorerRepository.java",
+            "sha256": "d7d9377a88d846d2b5e19ad4be94f22366401adb5861d7daa5f5dd1372427d8d",
+            "bytes": 28888
+          },
+          {
+            "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/QueryBackedHrisExplorerAuthoritySource.java",
+            "sha256": "b4c2bb6d04b8ca541b110a4ddab188bba9c665edb9ae4fdb760bc6d71065367d",
+            "bytes": 966
+          },
+          {
+            "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/navigationpolicy/JdbcNavigationPolicyRepository.java",
+            "sha256": "ac2725632e5cd1f28b33d2ad736d56faceebc1719397ea880b7d64967fadaeb4",
+            "bytes": 23964
+          },
+          {
+            "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/navigationpolicy/NavigationPolicyController.java",
+            "sha256": "ac1312d44a982b4f9a52bcf4ffd8fe3a5b344b39ca0692b1dcb9cc0c78cd0648",
+            "bytes": 11575
+          },
+          {
+            "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/navigationpolicy/NavigationPolicyRepository.java",
+            "sha256": "26751b79dcc3ca0d5e5083aa986191c8d2d8683e378a69c69430d8f6d6dff8b5",
+            "bytes": 3640
+          },
+          {
+            "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/navigationpolicy/NavigationPolicyService.java",
+            "sha256": "be1dc538c0b745921e8d2c5405fe01ed45f8ea57242dc563e9bd3af78a18ce9a",
+            "bytes": 39487
+          },
+          {
+            "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/JdbcReferenceConfigurationRepository.java",
+            "sha256": "95e487b638d039f8659bb25ffb4fda1a635769e4af231f1c0a0544bc81f21546",
+            "bytes": 43318
+          },
+          {
+            "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/ReferenceConfigurationController.java",
+            "sha256": "912e59aa01ec1794b9abe900784ecd0fd99b241f654ab168daff9488850a478b",
+            "bytes": 16943
+          },
+          {
+            "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/ReferenceConfigurationRepository.java",
+            "sha256": "3a98607fc136400a4ae154f75013590389af8016c4d65bac80e884cb01cae08e",
+            "bytes": 7065
+          },
+          {
+            "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/ReferenceConfigurationService.java",
+            "sha256": "6493dad9bc33c457343f7b938e2dc11a739249f67346564c413ff7b5177c9211",
+            "bytes": 73293
+          },
+          {
+            "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/security/HcmPlatformPepRegistry.java",
+            "sha256": "9dafb645c29f9d5317c98889b076ccd028b672a910786b0d980d64204e166ce5",
+            "bytes": 37041
+          },
+          {
+            "path": "dwp-platform-server/src/main/resources/application.yml",
+            "sha256": "bfc301549755bb14b3e440ca668674aff469374c2a6f5fa7dfacbc4b3ea095e5",
+            "bytes": 19657
+          },
+          {
+            "path": "dwp-platform-server/src/main/resources/db/migration/V327__create_hris_work_explorer.sql",
+            "sha256": "8586a323808e902533e073c83bc6fb83f456173a9f626801bfbe611f19e7d9d7",
+            "bytes": 12932
+          },
+          {
+            "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/AuthHrisExplorerAuthorityEvidenceQueryTest.java",
+            "sha256": "eda4d072b526b8b8ab8710254730e87c625f5ecd5b4b8d23c44f58b1e5233068",
+            "bytes": 45642
+          },
+          {
+            "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerCatalogTest.java",
+            "sha256": "259b5fd81eba092f0a16318de6f7c9da599f8392af0957ff0493783ab3deb776",
+            "bytes": 4500
+          },
+          {
+            "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerCommandJsonBoundaryTest.java",
+            "sha256": "c993866efb03b8f586aded10598c35d44a8e75b348699544d4f0d4a9b5cdd144",
+            "bytes": 2203
+          },
+          {
+            "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerCommandReceiptOwnerEvidenceProviderTest.java",
+            "sha256": "cf9d66769b5864fae4bf5efb5915f8ed5d24688d8e645b058eea5a9c34f1f292",
+            "bytes": 6011
+          },
+          {
+            "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerOwnerEvidenceFilterTest.java",
+            "sha256": "b8919d5194c56267bd5c32cd89130e9c243f04dd78900770fb7c2c7b6edb3207",
+            "bytes": 15498
+          },
+          {
+            "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerProviderCoordinatorTest.java",
+            "sha256": "3268a6d2f0c7ee6bcf25a0fd06bc9b61a2cc28bfa0f1a610c05a7989c90d37d3",
+            "bytes": 19005
+          },
+          {
+            "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerReceiptControllerTest.java",
+            "sha256": "9eb2bf9899db96c831c87ec229ead07ef8714932b6822319f6417c1a3db76322",
+            "bytes": 4751
+          },
+          {
+            "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerRuntimeControlsTest.java",
+            "sha256": "df9be55750b3783a57d3b5d9b4bcf13de5fb9f4539cb2f0d4bcbafa6daddd38c",
+            "bytes": 1322
+          },
+          {
+            "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerServiceProjectionTest.java",
+            "sha256": "6177fdb38e7da8aea009e0884345bec51dd12195eb56af61de8af66e534536fc",
+            "bytes": 3778
+          },
+          {
+            "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerServiceSecurityTest.java",
+            "sha256": "834b3065fcef1e034b5c93df9f1b5a9042f641035ef643b8cd1739770bf8679c",
+            "bytes": 11578
+          },
+          {
+            "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerTestFixtures.java",
+            "sha256": "d84360cb75547dc99be7b21e0f76e69889be2ce2257c6e0f41ccc07bf6a838f1",
+            "bytes": 1648
+          },
+          {
+            "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisPlatformReceiptAuthorityAdapterTest.java",
+            "sha256": "da646bebb1bf8f0fc21a842ca5287bc32e73cea7c24be56cbad3202b82afa15d",
+            "bytes": 23759
+          },
+          {
+            "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/WorkExplorerMigrationContractTest.java",
+            "sha256": "3b3cdc4940e38ebabca481c39dcec2077bfd2116ece2ccb56ba0372bd0d45177",
+            "bytes": 6679
+          },
+          {
+            "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/WorkExplorerMigrationPostgresTest.java",
+            "sha256": "d46048e7a13109b9aee35594a0aa0c09cbedc97b833c1e021451785429655533",
+            "bytes": 55652
+          },
+          {
+            "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/navigationpolicy/NavigationPolicyCanonicalReceiptBridgeTest.java",
+            "sha256": "8f897b04d88013f7243ca16a3b8441e14d08d0c6eb6489c948af92ad6f3b80e7",
+            "bytes": 11885
+          },
+          {
+            "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/navigationpolicy/NavigationPolicyControllerTest.java",
+            "sha256": "a653a849bf4208600d02642f1c4488e7e1dc4b0ac80f3d9b6201ec8f527c0f90",
+            "bytes": 9894
+          },
+          {
+            "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/navigationpolicy/NavigationPolicyPostgresTest.java",
+            "sha256": "ee754fc947ae9ef0e654330737073d074039b94fdc6d3114a441eeefe90928a0",
+            "bytes": 15785
+          },
+          {
+            "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/navigationpolicy/NavigationPolicyServiceTest.java",
+            "sha256": "5390fa3f51468903887fee75c169b8549f1bf852024186c5a806172c4a89d495",
+            "bytes": 13857
+          },
+          {
+            "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/ReferenceConfigurationCanonicalReceiptBridgeTest.java",
+            "sha256": "8c77b68f247076bab8688439a8b4d2931c22106215f775231e02214a13ee510e",
+            "bytes": 8733
+          },
+          {
+            "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/ReferenceConfigurationPostgresTest.java",
+            "sha256": "8d77f0f33241445013d1e75e8c74681dbde7167df6536e00bbb081290a686354",
+            "bytes": 20252
+          },
+          {
+            "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/ReferenceConfigurationServiceTest.java",
+            "sha256": "53ce04cc6a600ceebe269477b2b0e7df9e328dd253bcf9603e02aa05a2408d67",
+            "bytes": 22272
+          },
+          {
+            "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/ReferenceConfigurationTestRepository.java",
+            "sha256": "61cc97b2c7539ea0678e1c4917ab3140e5d8f449744962bc439e9b24e3d3a641",
+            "bytes": 22117
+          },
+          {
+            "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/SysIaEntryQueryContractTest.java",
+            "sha256": "651f88d1f9b5aa928c9dc507af5fe6b53f5c031fee4a54ecbbdc84cc34bcb9c1",
+            "bytes": 21106
+          },
+          {
+            "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/security/HcmPlatformPepSecurityContractTest.java",
+            "sha256": "e828f4184ee819dc55a8bf4aa373706af86903a9bafbf4f0e66a3fdc412c162f",
+            "bytes": 32321
+          },
+          {
+            "path": "scripts/export-openapi-contracts.py",
+            "sha256": "39be88172922ff8daf9249e3f8c72f621746553a02c15744bce105181cff22d5",
+            "bytes": 173686
+          },
+          {
+            "path": "scripts/tests/test_export_openapi_contracts.py",
+            "sha256": "ddfee5c9e7f0652768f69dffa6b963c0f30b14c66c99c00bad904aa4bb12ff8a",
+            "bytes": 135948
+          }
+        ]
+      },
+      "touchManifestCompliant": true,
+      "outsideBoundaryFileCount": 0,
+      "baseCommit": "3b2da20b592de5b5cff8f2483b83900f2dad054e",
+      "resultCommit": "6e1ea3cd14224988936fee8af908b706b7aedbc9"
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "changedFileCount": 20,
+      "sortedChangedPaths": [
+        "apps/dwp/src/features/hcm/hcm-home-explorer.test.tsx",
+        "apps/dwp/src/features/hcm/hcm-home.tsx",
+        "apps/dwp/src/features/hris/explorer/index.ts",
+        "apps/dwp/src/features/hris/explorer/work-explorer-access.test.ts",
+        "apps/dwp/src/features/hris/explorer/work-explorer-access.ts",
+        "apps/dwp/src/features/hris/explorer/work-explorer-api.test.ts",
+        "apps/dwp/src/features/hris/explorer/work-explorer-api.ts",
+        "apps/dwp/src/features/hris/explorer/work-explorer-contract.test.ts",
+        "apps/dwp/src/features/hris/explorer/work-explorer-contract.ts",
+        "apps/dwp/src/features/hris/explorer/work-explorer-labels.test.ts",
+        "apps/dwp/src/features/hris/explorer/work-explorer-query-state.test.ts",
+        "apps/dwp/src/features/hris/explorer/work-explorer-query-state.ts",
+        "apps/dwp/src/features/hris/explorer/work-explorer.css",
+        "apps/dwp/src/features/hris/explorer/work-explorer.tsx",
+        "apps/dwp/src/routes/hcm-explorer-route.test.tsx",
+        "apps/dwp/src/routes/hcm-routes.tsx",
+        "e2e/hris-phase-one.spec.ts",
+        "libs/api-contracts/openapi/gateway-public.json",
+        "libs/shared-i18n/src/locales/en/hcm.json",
+        "libs/shared-i18n/src/locales/ko/hcm.json"
+      ],
+      "sortedChangedPathManifest": {
+        "algorithm": "SHA256_OF_SORTED_PATH_LF",
+        "sha256": "d8ef399e775a77742a8e63939f9b69c6285762db501ceb7ddb0a4ce456c8e225"
+      },
+      "sortedNameStatus": [
+        {
+          "status": "A",
+          "path": "apps/dwp/src/features/hcm/hcm-home-explorer.test.tsx"
+        },
+        {
+          "status": "A",
+          "path": "apps/dwp/src/features/hris/explorer/index.ts"
+        },
+        {
+          "status": "A",
+          "path": "apps/dwp/src/features/hris/explorer/work-explorer-access.test.ts"
+        },
+        {
+          "status": "A",
+          "path": "apps/dwp/src/features/hris/explorer/work-explorer-access.ts"
+        },
+        {
+          "status": "A",
+          "path": "apps/dwp/src/features/hris/explorer/work-explorer-api.test.ts"
+        },
+        {
+          "status": "A",
+          "path": "apps/dwp/src/features/hris/explorer/work-explorer-api.ts"
+        },
+        {
+          "status": "A",
+          "path": "apps/dwp/src/features/hris/explorer/work-explorer-contract.test.ts"
+        },
+        {
+          "status": "A",
+          "path": "apps/dwp/src/features/hris/explorer/work-explorer-contract.ts"
+        },
+        {
+          "status": "A",
+          "path": "apps/dwp/src/features/hris/explorer/work-explorer-labels.test.ts"
+        },
+        {
+          "status": "A",
+          "path": "apps/dwp/src/features/hris/explorer/work-explorer-query-state.test.ts"
+        },
+        {
+          "status": "A",
+          "path": "apps/dwp/src/features/hris/explorer/work-explorer-query-state.ts"
+        },
+        {
+          "status": "A",
+          "path": "apps/dwp/src/features/hris/explorer/work-explorer.css"
+        },
+        {
+          "status": "A",
+          "path": "apps/dwp/src/features/hris/explorer/work-explorer.tsx"
+        },
+        {
+          "status": "A",
+          "path": "apps/dwp/src/routes/hcm-explorer-route.test.tsx"
+        },
+        {
+          "status": "M",
+          "path": "apps/dwp/src/features/hcm/hcm-home.tsx"
+        },
+        {
+          "status": "M",
+          "path": "apps/dwp/src/routes/hcm-routes.tsx"
+        },
+        {
+          "status": "M",
+          "path": "e2e/hris-phase-one.spec.ts"
+        },
+        {
+          "status": "M",
+          "path": "libs/api-contracts/openapi/gateway-public.json"
+        },
+        {
+          "status": "M",
+          "path": "libs/shared-i18n/src/locales/en/hcm.json"
+        },
+        {
+          "status": "M",
+          "path": "libs/shared-i18n/src/locales/ko/hcm.json"
+        }
+      ],
+      "sortedNameStatusManifest": {
+        "algorithm": "SHA256_OF_SORTED_NAME_STATUS_LF",
+        "sha256": "578132edaaf283dfd46c0bcc1659716694940cdd0ac701c00711ae6f42836502"
+      },
+      "binarySafeBaseToResultDiff": {
+        "algorithm": "SHA256_OF_GIT_DIFF_BINARY",
+        "sha256": "0bebddaadf1dc04e6b80ab32f5782a407523605c0813b7b74e19c1447559dcfe"
+      },
+      "contentManifest": {
+        "algorithm": "SHA256_OF_SORTED_PATH_TAB_FILE_SHA256_TAB_BYTES_LF",
+        "sha256": "b70cf86824faa216fe0469535fc484ba957517d2d000eac3be9cc62aad5056ac",
+        "entries": [
+          {
+            "path": "apps/dwp/src/features/hcm/hcm-home-explorer.test.tsx",
+            "sha256": "34bc67a49de4291583e22972c96227ef3d42d372c0cc6bf85f802d10dd14be71",
+            "bytes": 3886
+          },
+          {
+            "path": "apps/dwp/src/features/hcm/hcm-home.tsx",
+            "sha256": "dfbc377f8afd85c03c2f0c687042ccbe1c677a840195067be1a4de28fdf6c151",
+            "bytes": 28822
+          },
+          {
+            "path": "apps/dwp/src/features/hris/explorer/index.ts",
+            "sha256": "b46d7dee8990bb17f38e5407d43347e0139c568b585e8f673922df1944bd0d0c",
+            "bytes": 211
+          },
+          {
+            "path": "apps/dwp/src/features/hris/explorer/work-explorer-access.test.ts",
+            "sha256": "56017c8971bea861917fa4f94d5c928d6fc4c0e2b480085fd7a003a43cbecdfd",
+            "bytes": 5550
+          },
+          {
+            "path": "apps/dwp/src/features/hris/explorer/work-explorer-access.ts",
+            "sha256": "375f9eb91fd9ee8847449aa543d03e74c4f38c3e557b5729da1b015f6398a905",
+            "bytes": 1743
+          },
+          {
+            "path": "apps/dwp/src/features/hris/explorer/work-explorer-api.test.ts",
+            "sha256": "720294463c4af32ecbaf98b865ffa6c957e4a2d95d3bf404f93780f7c424cbd7",
+            "bytes": 7654
+          },
+          {
+            "path": "apps/dwp/src/features/hris/explorer/work-explorer-api.ts",
+            "sha256": "106d69d0e0d2d4674731aa12b625ac1c65ba86ed8e418d58e7c2dfb00cb112c8",
+            "bytes": 6281
+          },
+          {
+            "path": "apps/dwp/src/features/hris/explorer/work-explorer-contract.test.ts",
+            "sha256": "6ecc37a817e22d38e66a424bbfe799be9d55e68ff7f3b0956d50ad44a11c3334",
+            "bytes": 12128
+          },
+          {
+            "path": "apps/dwp/src/features/hris/explorer/work-explorer-contract.ts",
+            "sha256": "ac9b16517558abdbd3e292ca21aaa4ccb358c9a8d123ce1e7d2db71dbce0b311",
+            "bytes": 20496
+          },
+          {
+            "path": "apps/dwp/src/features/hris/explorer/work-explorer-labels.test.ts",
+            "sha256": "f8db5db7d1bf7fbe823ba3ad9571bb15af6cc461e804e2b34b407ca5a0cef8db",
+            "bytes": 2385
+          },
+          {
+            "path": "apps/dwp/src/features/hris/explorer/work-explorer-query-state.test.ts",
+            "sha256": "58e4cb18c704957cc84d4e7933bd84d396d9c9a0bf4d33ed6cd468ad5aa68910",
+            "bytes": 1870
+          },
+          {
+            "path": "apps/dwp/src/features/hris/explorer/work-explorer-query-state.ts",
+            "sha256": "12f7ab07d7070b4cde7b3628489ac2ad047209328f40d5c5bb6b2e238dcebbb1",
+            "bytes": 2091
+          },
+          {
+            "path": "apps/dwp/src/features/hris/explorer/work-explorer.css",
+            "sha256": "d6f38bec9f187c47baa437f52f30ca844aac007e4e82cac4f233e5b713571f8f",
+            "bytes": 3221
+          },
+          {
+            "path": "apps/dwp/src/features/hris/explorer/work-explorer.tsx",
+            "sha256": "1ee7c6e1251795d89511ffe131016afa5a469de1346f512eceb711111b069be7",
+            "bytes": 36250
+          },
+          {
+            "path": "apps/dwp/src/routes/hcm-explorer-route.test.tsx",
+            "sha256": "d203d8256c8d8ffc916b11fb18f644ce98b40c72d22b951a7f01533406139dfe",
+            "bytes": 3729
+          },
+          {
+            "path": "apps/dwp/src/routes/hcm-routes.tsx",
+            "sha256": "4311b6737e12b98e6019424a3c51d7e898a1707f1e233d35c7b3ae9107b5a791",
+            "bytes": 14946
+          },
+          {
+            "path": "e2e/hris-phase-one.spec.ts",
+            "sha256": "93a52a90718a9fc3917433b14c7d8ae2b651407342d4228e46dfec9f0132d56d",
+            "bytes": 51145
+          },
+          {
+            "path": "libs/api-contracts/openapi/gateway-public.json",
+            "sha256": "bcc41751c61c1bfc661df4efb4707aee564468ce40123732035e49ee9d2316c3",
+            "bytes": 7069327
+          },
+          {
+            "path": "libs/shared-i18n/src/locales/en/hcm.json",
+            "sha256": "6732867b60e5123a22d27f65232da6b7384d8c234d0a2501f5ff7b553970b538",
+            "bytes": 73337
+          },
+          {
+            "path": "libs/shared-i18n/src/locales/ko/hcm.json",
+            "sha256": "9d96f03d855a62778ec457b2a8ec721db90d5bde55d2edd14659a5d2e749994c",
+            "bytes": 78490
+          }
+        ]
+      },
+      "touchManifestCompliant": true,
+      "outsideBoundaryFileCount": 0,
+      "baseCommit": "4f740a572afb8feeef3e31cb8ed258c0c8145cf2",
+      "resultCommit": "640d1aca79514bd365c366ab9393df6b9d614155"
+    },
+    "protectedPathAssertions": {
+      "approvedAmendmentExceptions": {
+        "r2SysApi038PurposeOnlyOpenApiDelta": true,
+        "r3ExactPlatformPepOpaqueContextFiles": true,
+        "r4ExactAuthPeopleParityFiles": true,
+        "r5ExactAuthSelectorSelfProjectionAndAuthoritySealFiles": true
+      },
+      "unrelatedOpenApiChanges": 0,
+      "unapprovedAuthChanges": 0,
+      "unapprovedOwnerServiceChanges": 0,
+      "gatewayProductionOrTestChanges": 0,
+      "generatedPepChanges": 0,
+      "generatedRouteRegistryOrTypescriptChanges": 0,
+      "existingMigrationModifications": 0,
+      "v328OrSecondMigrationCount": 0,
+      "hrisShellOrHrisProductMapChanges": 0,
+      "recoveryOrCentralControlEvidenceChanges": 0
+    }
+  },
+  "acceptanceResults": [
+    {
+      "id": "SYS012-AC-01",
+      "status": "PASS",
+      "evidenceRefs": [
+        ".codex-evidence/sys-012-backend-20261015/openapi-approved-snapshots.log",
+        ".codex-evidence/sys-012-backend-20261015/openapi-sys012-carrier.log",
+        ".codex-evidence/sys-012-frontend-20261015/logs/r2-dual-receipt-api-vitest-20261014T213505Z.log",
+        "backend:HrisExplorerController.java",
+        "backend:HrisExplorerDtos.java"
+      ],
+      "notes": "SYS-API-027/038/039/040 exact paths, headers, statuses, closed schemas and dual receipt profiles pass. Approved OpenAPI snapshots cover 12 services and 1,740 Gateway paths; frontend API is 7/7."
+    },
+    {
+      "id": "SYS012-AC-02",
+      "status": "PASS",
+      "evidenceRefs": [
+        ".codex-evidence/sys-012-backend-20261015/M1-unexecuted-HrisExplorerCatalogTest.log",
+        ".codex-evidence/sys-012-frontend-20261015/logs/r2-dual-receipt-vitest-owner-targeted-20261015T213405Z.log",
+        "frontend:work-explorer-labels.test.ts"
+      ],
+      "notes": "Canonical catalog is 76 BASE76 plus 22 MODERN22 with 98 unique route keys and explicit ko/en labels; missing or colliding labels fail closed."
+    },
+    {
+      "id": "SYS012-AC-03",
+      "status": "PASS_AFTER_TARGETED_CORRECTION",
+      "evidenceRefs": [
+        ".codex-evidence/sys-012-backend-20261015/P1-people.log",
+        ".codex-evidence/sys-012-backend-20261015/P1-repair-eligibility.log",
+        ".codex-evidence/sys-012-backend-20261015/P1-repair-filter.log",
+        ".codex-evidence/sys-012-backend-20261015/M1-repair-auth-query.log",
+        ".codex-evidence/sys-012-backend-20261015/M1-repair-auth-json.log",
+        ".codex-evidence/sys-012-backend-20261015/M1-repair-identity-json.log",
+        ".codex-evidence/sys-012-backend-20261015/M1-repair-people-json.log",
+        ".codex-evidence/sys-012-backend-20261015/M1-repair-platform-phase1.log",
+        ".codex-evidence/sys-012-backend-20261015/M1-unexecuted-HcmPlatformPepSecurityContractTest.log"
+      ],
+      "notes": "Initial People methods and four Auth-query methods failed; each smallest owning method passed after correction. Current PAGE, APP.HCM, shell duty, tenant, country, scope and field-policy reauthorization is server-derived; client role lists never grant."
+    },
+    {
+      "id": "SYS012-AC-04",
+      "status": "PASS",
+      "evidenceRefs": [
+        ".codex-evidence/sys-012-backend-20261015/M1-unexecuted-HrisExplorerCatalogTest.log",
+        ".codex-evidence/sys-012-backend-20261015/M1-unexecuted-HrisExplorerProviderCoordinatorTest.log",
+        ".codex-evidence/sys-012-backend-20261015/M1-unexecuted-HcmPlatformPepSecurityContractTest.log"
+      ],
+      "notes": "Exact HCM PAGE decisions and literal sealed DWP_CONTROL targets pass; generic /admin and five undeployed external targets are absent."
+    },
+    {
+      "id": "SYS012-AC-05",
+      "status": "PASS_AFTER_TARGETED_CORRECTION",
+      "evidenceRefs": [
+        ".codex-evidence/sys-012-backend-20261015/M1-unexecuted-work-explorer-postgres.log",
+        ".codex-evidence/sys-012-backend-20261015/M1-repair-postgres-clean-migration.log",
+        ".codex-evidence/sys-012-backend-20261015/M1-repair-postgres-jdbcRepositoryExecutesUuidCasReplayAndActiveReceiptQueryOnPostgres.log",
+        ".codex-evidence/sys-012-backend-20261015/M1-repair-postgres-activeReceiptLimitIsAppliedAfterCurrentRouteAuthorizationFilter.log",
+        ".codex-evidence/sys-012-backend-20261015/M1-unexecuted-WorkExplorerMigrationContractTest.log"
+      ],
+      "notes": "The initial PostgreSQL class failed through the V327 migration. Six smallest failed methods then passed on real PostgreSQL; all four tables force tenant/principal RLS and receipt denial remains opaque."
+    },
+    {
+      "id": "SYS012-AC-06",
+      "status": "PASS_AFTER_TARGETED_CORRECTION",
+      "evidenceRefs": [
+        ".codex-evidence/sys-012-backend-20261015/M1-unexecuted-work-explorer-postgres.log",
+        ".codex-evidence/sys-012-backend-20261015/M1-repair-postgres-jdbcRepositoryExecutesUuidCasReplayAndActiveReceiptQueryOnPostgres.log",
+        ".codex-evidence/sys-012-backend-20261015/M1-repair-postgres-idempotencyReuseAcrossOriginContextOrDecisionConflictsWithoutSideEffects.log",
+        ".codex-evidence/sys-012-backend-20261015/M1-unexecuted-HrisExplorerServiceSecurityTest.log",
+        ".codex-evidence/sys-012-frontend-20261015/logs/r2-dual-receipt-vitest-owner-targeted-20261015T213405Z.log"
+      ],
+      "notes": "Favorite bounds, If-Match CAS, exact idempotency replay, digest-conflict rejection and denied/retired purge pass after the migration-dependent smallest method corrections."
+    },
+    {
+      "id": "SYS012-AC-07",
+      "status": "PASS_AFTER_TARGETED_CORRECTION",
+      "evidenceRefs": [
+        ".codex-evidence/sys-012-backend-20261015/M1-unexecuted-work-explorer-postgres.log",
+        ".codex-evidence/sys-012-backend-20261015/M1-repair-postgres-concurrentDistinctIdempotencyKeysSerializePrincipalRecentTrim.log",
+        ".codex-evidence/sys-012-backend-20261015/M1-repair-postgres-jdbcRepositoryExecutesUuidCasReplayAndActiveReceiptQueryOnPostgres.log",
+        ".codex-evidence/sys-012-frontend-20261015/logs/r2-dual-receipt-vitest-owner-targeted-20261015T213405Z.log"
+      ],
+      "notes": "Recents preserve at most 20 unique authorized keys with server-time LRU, 30-day TTL, replay and purge; the migration-dependent concurrent trim failure passed its smallest rerun."
+    },
+    {
+      "id": "SYS012-AC-08",
+      "status": "PASS_AFTER_TARGETED_CORRECTION",
+      "evidenceRefs": [
+        ".codex-evidence/sys-012-backend-20261015/M1-repair-auth-query.log",
+        ".codex-evidence/sys-012-backend-20261015/M1-repair-platform-phase1.log",
+        ".codex-evidence/sys-012-backend-20261015/M1-repair-postgres-idempotencyReuseAcrossOriginContextOrDecisionConflictsWithoutSideEffects.log",
+        ".codex-evidence/sys-012-backend-20261015/M1-repair-postgres-activeReceiptLimitIsAppliedAfterCurrentRouteAuthorizationFilter.log",
+        ".codex-evidence/sys-012-backend-20261015/M1-unexecuted-HrisExplorerReceiptControllerTest.log",
+        ".codex-evidence/sys-012-backend-20261015/M1-unexecuted-HrisPlatformReceiptAuthorityAdapterTest.log",
+        ".codex-evidence/sys-012-frontend-20261015/logs/r2-dual-receipt-api-vitest-20261014T213505Z.log",
+        ".codex-evidence/sys-012-frontend-20261015/logs/r2-final-p1-playwright-states-two-projects-targeted-20261015T212523Z.log"
+      ],
+      "notes": "Shared receipts, stable exact replay, no-side-effect digest conflict and exact-origin RESULT_UNKNOWN reconciliation pass after phase-one and migration-dependent smallest corrections."
+    },
+    {
+      "id": "SYS012-AC-09",
+      "status": "PASS",
+      "evidenceRefs": [
+        ".codex-evidence/sys-012-backend-20261015/M1-unexecuted-HrisExplorerProviderCoordinatorTest.log",
+        ".codex-evidence/sys-012-backend-20261015/M1-unexecuted-HrisExplorerCommandReceiptOwnerEvidenceProviderTest.log",
+        ".codex-evidence/sys-012-backend-20261015/M1-unexecuted-HrisExplorerRuntimeControlsTest.log"
+      ],
+      "notes": "Minimized typed evidence and XCON-012 through XCON-015 composition cover happy, missing, stale, mismatch, timeout and unavailable paths; provider failure returns PARTIAL and never false empty."
+    },
+    {
+      "id": "SYS012-AC-10",
+      "status": "PASS_AFTER_TARGETED_CORRECTION",
+      "evidenceRefs": [
+        ".codex-evidence/sys-012-frontend-20261015/logs/m2-01-vitest-20261015T204350Z.log",
+        ".codex-evidence/sys-012-frontend-20261015/logs/m2-01a-vitest-route-targeted-20261015T204416Z.log",
+        ".codex-evidence/sys-012-frontend-20261015/logs/m2-01c-vitest-home-targeted-20261015T210010Z.log",
+        ".codex-evidence/sys-012-frontend-20261015/logs/r2-dual-receipt-playwright-home-two-projects-20261014T213431Z.log"
+      ],
+      "notes": "Only governed hcm.utility /hr/explore and one exact-authorized Home secondary action are mounted; seven workbenches remain unchanged and HrisProductMap is absent."
+    },
+    {
+      "id": "SYS012-AC-11",
+      "status": "PASS_AFTER_TARGETED_CORRECTION",
+      "evidenceRefs": [
+        ".codex-evidence/sys-012-frontend-20261015/logs/m2-01-vitest-20261015T204350Z.log",
+        ".codex-evidence/sys-012-frontend-20261015/logs/r2-final-p1-playwright-home-two-projects-targeted-20261015T212351Z.log",
+        ".codex-evidence/sys-012-frontend-20261015/logs/r2-dual-receipt-playwright-home-two-projects-20261014T213431Z.log",
+        ".codex-evidence/sys-012-frontend-20261015/logs/r2-final-p1-playwright-states-two-projects-targeted-20261015T212523Z.log",
+        ".codex-evidence/sys-012-frontend-20261015/logs/r2-final-p1-playwright-visual-two-projects-targeted-20261015T212539Z.log",
+        ".codex-evidence/sys-012-frontend-20261015/logs/r2-final-p1-playwright-visual-chromium-rerun2-20261015T212702Z.log",
+        ".codex-evidence/sys-012-frontend-20261015/logs/m2-03j-playwright-native-zoom-targeted-20261015T205830Z.log",
+        "#/visualEvidence/captures"
+      ],
+      "notes": "The initial Explorer Vitest scope passed the query-state owner tests while the separate route test was the only failure. URL restoration, all material states, keyboard/focus, responsive themes, forced colors, reduced motion and long ko/en labels pass in the pinned browser evidence. Nonblocking P2: labels are materially long but literal longest locale strings are not independently proven."
+    },
+    {
+      "id": "SYS012-AC-12",
+      "status": "PASS_AFTER_TARGETED_CORRECTION",
+      "evidenceRefs": [
+        ".codex-evidence/sys-012-backend-20261015/M1-unexecuted-work-explorer-postgres.log",
+        ".codex-evidence/sys-012-backend-20261015/M1-repair-postgres-clean-migration.log",
+        ".codex-evidence/sys-012-backend-20261015/M1-repair-postgres-v326ToV327IsForwardOnlyAndPreservesHistoricalChecksums.log",
+        ".codex-evidence/sys-012-frontend-20261015/logs/m2-03j-playwright-native-zoom-targeted-20261015T205830Z.log",
+        ".codex-evidence/sys-012-frontend-20261015/logs/r2-dual-receipt-final-prettier-check-20261014T213526Z.log",
+        ".codex-evidence/sys-012-frontend-20261015/logs/r2-dual-receipt-final-allowlist-hashes-20261014T213542Z.log"
+      ],
+      "notes": "V327 clean and V326-to-V327 upgrade pass after smallest PostgreSQL method corrections, prior checksums remain intact, responsive/200% zoom and path integrity pass, and v43/runtime remain DRAFT/default OFF."
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "id": "SYS012-AC-01",
+      "status": "PASS",
+      "resultRef": "#/acceptanceResults/0"
+    },
+    {
+      "id": "SYS012-AC-02",
+      "status": "PASS",
+      "resultRef": "#/acceptanceResults/1"
+    },
+    {
+      "id": "SYS012-AC-03",
+      "status": "PASS_AFTER_TARGETED_CORRECTION",
+      "resultRef": "#/acceptanceResults/2"
+    },
+    {
+      "id": "SYS012-AC-04",
+      "status": "PASS",
+      "resultRef": "#/acceptanceResults/3"
+    },
+    {
+      "id": "SYS012-AC-05",
+      "status": "PASS_AFTER_TARGETED_CORRECTION",
+      "resultRef": "#/acceptanceResults/4"
+    },
+    {
+      "id": "SYS012-AC-06",
+      "status": "PASS_AFTER_TARGETED_CORRECTION",
+      "resultRef": "#/acceptanceResults/5"
+    },
+    {
+      "id": "SYS012-AC-07",
+      "status": "PASS_AFTER_TARGETED_CORRECTION",
+      "resultRef": "#/acceptanceResults/6"
+    },
+    {
+      "id": "SYS012-AC-08",
+      "status": "PASS_AFTER_TARGETED_CORRECTION",
+      "resultRef": "#/acceptanceResults/7"
+    },
+    {
+      "id": "SYS012-AC-09",
+      "status": "PASS",
+      "resultRef": "#/acceptanceResults/8"
+    },
+    {
+      "id": "SYS012-AC-10",
+      "status": "PASS_AFTER_TARGETED_CORRECTION",
+      "resultRef": "#/acceptanceResults/9"
+    },
+    {
+      "id": "SYS012-AC-11",
+      "status": "PASS_AFTER_TARGETED_CORRECTION",
+      "resultRef": "#/acceptanceResults/10"
+    },
+    {
+      "id": "SYS012-AC-12",
+      "status": "PASS_AFTER_TARGETED_CORRECTION",
+      "resultRef": "#/acceptanceResults/11"
+    }
+  ],
+  "testEvidence": {
+    "policy": "RUN_EACH_TARGETED_STAGE_ONCE_AFTER_FIX_RERUN_ONLY_FAILED_COMMAND_OR_SMALLEST_OWNER_NO_REPOSITORY_WIDE_SUITE",
+    "provenancePolicy": {
+      "LOG_EMBEDDED_UTC": "The command label and timestamps are embedded in the pinned raw log.",
+      "LOG_EMBEDDED_START_PLUS_EVIDENCE_FILE_MTIME": "The command and startedAt are embedded in the pinned raw log; completedAt is the evidence file modification time because the wrapper terminated before emitting finished_at.",
+      "MODULE_SESSION_EVIDENCE_FILE_BIRTH_AND_MTIME": "The exact command is recovered from the module-session command execution; startedAt and completedAt are the pinned evidence file APFS birth and modification times because the raw log does not embed them.",
+      "nonclaim": "No command or timestamp recovered from module-session execution or filesystem metadata is represented as log-embedded."
+    },
+    "broadSuite": "NOT_RUN_NOT_AUTHORIZED_OR_REQUIRED",
+    "backendUniqueTestInventoryCount": 88,
+    "backendUniqueTestInventoryCoverage": "PASS_BY_INITIAL_UNAFFECTED_RESULTS_PLUS_SMALLEST_CORRECTIONS_AND_OWNER_CLASS_COVERAGE",
+    "frontendFinalOwnerScope": {
+      "testFiles": 3,
+      "tests": 40,
+      "passed": 40,
+      "failed": 0,
+      "skipped": 0
+    },
+    "frontendApiScope": {
+      "testFiles": 1,
+      "tests": 7,
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0
+    },
+    "commands": [
+      {
+        "commandId": "A1_AUTH",
+        "stage": "M1_SYS_MODULE_BACKEND",
+        "exactCommand": "./gradlew :dwp-auth-server:test --tests '*ProductAuthorizationHcmAuthorityAdapterTest' --no-daemon --max-workers=1",
+        "startedAt": "2026-10-15T07:54:24+0900",
+        "completedAt": "2026-10-15T07:54:45+0900",
+        "exitCode": 0,
+        "status": "PASS",
+        "classification": "INITIAL_TARGETED_STAGE",
+        "log": {
+          "path": ".codex-evidence/sys-012-backend-20261015/A1-auth.log",
+          "sha256": "26771b97bed8b96cf6d14b94f0550bd860916e42ef46ad2eafe0e876b4383037",
+          "bytes": 18668
+        },
+        "timestampSource": "MODULE_SESSION_EVIDENCE_FILE_BIRTH_AND_MTIME"
+      },
+      {
+        "commandId": "P1_PEOPLE_INITIAL",
+        "stage": "M1_SYS_MODULE_BACKEND",
+        "exactCommand": "./gradlew :dwp-people-server:test --tests '*HcmProductSurfaceEligibilityAdapterTest' --tests '*PeopleSecurityFilterTest' --no-daemon --max-workers=1",
+        "startedAt": "2026-10-15T07:54:54+0900",
+        "completedAt": "2026-10-15T07:55:07+0900",
+        "exitCode": 1,
+        "status": "FAIL_RETAINED_INITIAL",
+        "classification": "INITIAL_TARGETED_STAGE",
+        "testCount": 22,
+        "passed": 20,
+        "failed": 2,
+        "skipped": 0,
+        "log": {
+          "path": ".codex-evidence/sys-012-backend-20261015/P1-people.log",
+          "sha256": "ace5e311a3c11a1dfd7d867a2229f0ec62019910a197dcad291095b170a2f363",
+          "bytes": 7590
+        },
+        "timestampSource": "MODULE_SESSION_EVIDENCE_FILE_BIRTH_AND_MTIME"
+      },
+      {
+        "commandId": "P1_REPAIR_ELIGIBILITY",
+        "stage": "M1_SYS_MODULE_BACKEND",
+        "exactCommand": "./gradlew :dwp-people-server:test --tests 'com.dwp.services.people.security.HcmProductSurfaceEligibilityAdapterTest.rejectsPersonalReplayWrongUtilitySourceKindAndUnknownSurface' --no-daemon --max-workers=1",
+        "startedAt": "2026-10-15T07:56:33+0900",
+        "completedAt": "2026-10-15T07:56:44+0900",
+        "exitCode": 0,
+        "status": "PASS_AFTER_TARGETED_CORRECTION",
+        "classification": "SMALLEST_OWNING_TEST",
+        "log": {
+          "path": ".codex-evidence/sys-012-backend-20261015/P1-repair-eligibility.log",
+          "sha256": "c6accc6153e255946812886848bb1c218ada717ea476dcaa266ea5b4083cb2af",
+          "bytes": 5320
+        },
+        "timestampSource": "MODULE_SESSION_EVIDENCE_FILE_BIRTH_AND_MTIME"
+      },
+      {
+        "commandId": "P1_REPAIR_FILTER",
+        "stage": "M1_SYS_MODULE_BACKEND",
+        "exactCommand": "./gradlew :dwp-people-server:test --tests 'com.dwp.services.people.security.PeopleSecurityFilterTest.protectsProductEligibilityAsAnInternalServiceContract' --no-daemon --max-workers=1",
+        "startedAt": "2026-10-15T07:56:48+0900",
+        "completedAt": "2026-10-15T07:56:56+0900",
+        "exitCode": 0,
+        "status": "PASS_AFTER_TARGETED_CORRECTION",
+        "classification": "SMALLEST_OWNING_TEST",
+        "log": {
+          "path": ".codex-evidence/sys-012-backend-20261015/P1-repair-filter.log",
+          "sha256": "5ff336d707909df05aae8bc29131c6d2b1e37d0312665be36aed4df11e4fde97",
+          "bytes": 1588
+        },
+        "timestampSource": "MODULE_SESSION_EVIDENCE_FILE_BIRTH_AND_MTIME"
+      },
+      {
+        "commandId": "M1_PLATFORM_INITIAL",
+        "stage": "M1_SYS_MODULE_BACKEND",
+        "exactCommand": "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.hrisconfiguration.explorer.*' --tests '*HcmPlatformPepSecurityContractTest' --tests '*ReferenceConfigurationCanonicalReceiptBridgeTest' --tests '*NavigationPolicyCanonicalReceiptBridgeTest' --no-daemon --max-workers=1",
+        "startedAt": "2026-10-15T07:57:09+0900",
+        "completedAt": "2026-10-15T07:57:23+0900",
+        "exitCode": 1,
+        "status": "FAIL_RETAINED_INITIAL_COMPILE",
+        "classification": "INITIAL_TARGETED_STAGE",
+        "testCount": 0,
+        "passed": 0,
+        "failed": 0,
+        "skipped": 0,
+        "log": {
+          "path": ".codex-evidence/sys-012-backend-20261015/M1-platform.log",
+          "sha256": "0f626b7bf108a6b689c845b6c8b041309ff4965d266825bef2c8e19c8220c9a7",
+          "bytes": 19260
+        },
+        "timestampSource": "MODULE_SESSION_EVIDENCE_FILE_BIRTH_AND_MTIME"
+      },
+      {
+        "commandId": "M1_AUTH_QUERY_CLASS_AFTER_COMPILE_FIX",
+        "stage": "M1_SYS_MODULE_BACKEND",
+        "exactCommand": "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.hrisconfiguration.explorer.AuthHrisExplorerAuthorityEvidenceQueryTest' --no-daemon --max-workers=1",
+        "startedAt": "2026-10-15T07:58:24+0900",
+        "completedAt": "2026-10-15T07:58:38+0900",
+        "exitCode": 1,
+        "status": "FAIL_RETAINED_FOUR_METHODS",
+        "classification": "SMALLEST_OWNING_CLASS_AFTER_COMPILE_FIX",
+        "testCount": 14,
+        "passed": 10,
+        "failed": 4,
+        "skipped": 0,
+        "log": {
+          "path": ".codex-evidence/sys-012-backend-20261015/M1-repair-auth-query.log",
+          "sha256": "f62aa2f6a7ff9cfaed2c45fa2997e18a66f42b0fa2c48469fcf4adb780a46fc3",
+          "bytes": 11113
+        },
+        "timestampSource": "MODULE_SESSION_EVIDENCE_FILE_BIRTH_AND_MTIME"
+      },
+      {
+        "commandId": "M1_REPAIR_IDENTITY_JSON",
+        "stage": "M1_SYS_MODULE_BACKEND",
+        "exactCommand": "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.hrisconfiguration.explorer.AuthHrisExplorerAuthorityEvidenceQueryTest.identitySuccessorRejectsUnknownDuplicateAndTrailingJson' --no-daemon --max-workers=1",
+        "startedAt": "2026-10-15T07:59:56+0900",
+        "completedAt": "2026-10-15T08:00:10+0900",
+        "exitCode": 0,
+        "status": "PASS_AFTER_TARGETED_CORRECTION",
+        "classification": "SMALLEST_OWNING_TEST",
+        "log": {
+          "path": ".codex-evidence/sys-012-backend-20261015/M1-repair-identity-json.log",
+          "sha256": "f2d9c902371bcfaf435a37aac8c0fc1f03d5554d879671888e2713b34b75e1c3",
+          "bytes": 9903
+        },
+        "timestampSource": "MODULE_SESSION_EVIDENCE_FILE_BIRTH_AND_MTIME"
+      },
+      {
+        "commandId": "M1_REPAIR_AUTH_JSON",
+        "stage": "M1_SYS_MODULE_BACKEND",
+        "exactCommand": "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.hrisconfiguration.explorer.AuthHrisExplorerAuthorityEvidenceQueryTest.authSuccessorRejectsUnknownDuplicateAndTrailingJson' --no-daemon --max-workers=1",
+        "startedAt": "2026-10-15T08:00:15+0900",
+        "completedAt": "2026-10-15T08:00:23+0900",
+        "exitCode": 0,
+        "status": "PASS_AFTER_TARGETED_CORRECTION",
+        "classification": "SMALLEST_OWNING_TEST",
+        "log": {
+          "path": ".codex-evidence/sys-012-backend-20261015/M1-repair-auth-json.log",
+          "sha256": "efed329054dcc93fbeb6588f4e13e56ec4777396bfc77ed9ff499fad77e613bd",
+          "bytes": 1602
+        },
+        "timestampSource": "MODULE_SESSION_EVIDENCE_FILE_BIRTH_AND_MTIME"
+      },
+      {
+        "commandId": "M1_REPAIR_PEOPLE_JSON",
+        "stage": "M1_SYS_MODULE_BACKEND",
+        "exactCommand": "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.hrisconfiguration.explorer.AuthHrisExplorerAuthorityEvidenceQueryTest.peopleSuccessorRejectsUnknownDuplicateAndTrailingJson' --no-daemon --max-workers=1",
+        "startedAt": "2026-10-15T08:00:27+0900",
+        "completedAt": "2026-10-15T08:00:36+0900",
+        "exitCode": 0,
+        "status": "PASS_AFTER_TARGETED_CORRECTION",
+        "classification": "SMALLEST_OWNING_TEST",
+        "log": {
+          "path": ".codex-evidence/sys-012-backend-20261015/M1-repair-people-json.log",
+          "sha256": "efed329054dcc93fbeb6588f4e13e56ec4777396bfc77ed9ff499fad77e613bd",
+          "bytes": 1602
+        },
+        "timestampSource": "MODULE_SESSION_EVIDENCE_FILE_BIRTH_AND_MTIME"
+      },
+      {
+        "commandId": "M1_REPAIR_PLATFORM_PHASE_ONE",
+        "stage": "M1_SYS_MODULE_BACKEND",
+        "exactCommand": "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.hrisconfiguration.explorer.AuthHrisExplorerAuthorityEvidenceQueryTest.platformReceiptPhaseOneRebindsTheExactCanonicalSelectorWithoutPeople' --no-daemon --max-workers=1",
+        "startedAt": "2026-10-15T08:01:40+0900",
+        "completedAt": "2026-10-15T08:01:48+0900",
+        "exitCode": 0,
+        "status": "PASS_AFTER_TARGETED_CORRECTION",
+        "classification": "SMALLEST_OWNING_TEST",
+        "log": {
+          "path": ".codex-evidence/sys-012-backend-20261015/M1-repair-platform-phase1.log",
+          "sha256": "efed329054dcc93fbeb6588f4e13e56ec4777396bfc77ed9ff499fad77e613bd",
+          "bytes": 1602
+        },
+        "timestampSource": "MODULE_SESSION_EVIDENCE_FILE_BIRTH_AND_MTIME"
+      },
+      {
+        "commandId": "M1_CLASS_HRIS_EXPLORER_CATALOG",
+        "stage": "M1_SYS_MODULE_BACKEND",
+        "exactCommand": "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.hrisconfiguration.explorer.HrisExplorerCatalogTest' --no-daemon --max-workers=1",
+        "startedAt": "2026-10-15T08:06:05+0900",
+        "completedAt": "2026-10-15T08:06:13+0900",
+        "exitCode": 0,
+        "status": "PASS",
+        "classification": "UNEXECUTED_CLASS_COVERAGE_AFTER_INITIAL_COMPILE_FAILURE",
+        "log": {
+          "path": ".codex-evidence/sys-012-backend-20261015/M1-unexecuted-HrisExplorerCatalogTest.log",
+          "sha256": "efed329054dcc93fbeb6588f4e13e56ec4777396bfc77ed9ff499fad77e613bd",
+          "bytes": 1602
+        },
+        "timestampSource": "MODULE_SESSION_EVIDENCE_FILE_BIRTH_AND_MTIME"
+      },
+      {
+        "commandId": "M1_CLASS_HRIS_EXPLORER_COMMAND_JSON_BOUNDARY",
+        "stage": "M1_SYS_MODULE_BACKEND",
+        "exactCommand": "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.hrisconfiguration.explorer.HrisExplorerCommandJsonBoundaryTest' --no-daemon --max-workers=1",
+        "startedAt": "2026-10-15T08:06:13+0900",
+        "completedAt": "2026-10-15T08:06:22+0900",
+        "exitCode": 0,
+        "status": "PASS",
+        "classification": "UNEXECUTED_CLASS_COVERAGE_AFTER_INITIAL_COMPILE_FAILURE",
+        "log": {
+          "path": ".codex-evidence/sys-012-backend-20261015/M1-unexecuted-HrisExplorerCommandJsonBoundaryTest.log",
+          "sha256": "80f64af443c612fbad9c83d0c0ddf095d3af8133c18048db52e20db26401fec2",
+          "bytes": 1732
+        },
+        "timestampSource": "MODULE_SESSION_EVIDENCE_FILE_BIRTH_AND_MTIME"
+      },
+      {
+        "commandId": "M1_CLASS_HRIS_EXPLORER_COMMAND_RECEIPT_OWNER_EVIDENCE_PROVIDER",
+        "stage": "M1_SYS_MODULE_BACKEND",
+        "exactCommand": "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.hrisconfiguration.explorer.HrisExplorerCommandReceiptOwnerEvidenceProviderTest' --no-daemon --max-workers=1",
+        "startedAt": "2026-10-15T08:06:22+0900",
+        "completedAt": "2026-10-15T08:06:31+0900",
+        "exitCode": 0,
+        "status": "PASS",
+        "classification": "UNEXECUTED_CLASS_COVERAGE_AFTER_INITIAL_COMPILE_FAILURE",
+        "log": {
+          "path": ".codex-evidence/sys-012-backend-20261015/M1-unexecuted-HrisExplorerCommandReceiptOwnerEvidenceProviderTest.log",
+          "sha256": "80f64af443c612fbad9c83d0c0ddf095d3af8133c18048db52e20db26401fec2",
+          "bytes": 1732
+        },
+        "timestampSource": "MODULE_SESSION_EVIDENCE_FILE_BIRTH_AND_MTIME"
+      },
+      {
+        "commandId": "M1_CLASS_HRIS_EXPLORER_OWNER_EVIDENCE_FILTER",
+        "stage": "M1_SYS_MODULE_BACKEND",
+        "exactCommand": "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.hrisconfiguration.explorer.HrisExplorerOwnerEvidenceFilterTest' --no-daemon --max-workers=1",
+        "startedAt": "2026-10-15T08:06:31+0900",
+        "completedAt": "2026-10-15T08:06:39+0900",
+        "exitCode": 0,
+        "status": "PASS",
+        "classification": "UNEXECUTED_CLASS_COVERAGE_AFTER_INITIAL_COMPILE_FAILURE",
+        "log": {
+          "path": ".codex-evidence/sys-012-backend-20261015/M1-unexecuted-HrisExplorerOwnerEvidenceFilterTest.log",
+          "sha256": "80f64af443c612fbad9c83d0c0ddf095d3af8133c18048db52e20db26401fec2",
+          "bytes": 1732
+        },
+        "timestampSource": "MODULE_SESSION_EVIDENCE_FILE_BIRTH_AND_MTIME"
+      },
+      {
+        "commandId": "M1_CLASS_HRIS_EXPLORER_PROVIDER_COORDINATOR",
+        "stage": "M1_SYS_MODULE_BACKEND",
+        "exactCommand": "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.hrisconfiguration.explorer.HrisExplorerProviderCoordinatorTest' --no-daemon --max-workers=1",
+        "startedAt": "2026-10-15T08:06:39+0900",
+        "completedAt": "2026-10-15T08:06:48+0900",
+        "exitCode": 0,
+        "status": "PASS",
+        "classification": "UNEXECUTED_CLASS_COVERAGE_AFTER_INITIAL_COMPILE_FAILURE",
+        "log": {
+          "path": ".codex-evidence/sys-012-backend-20261015/M1-unexecuted-HrisExplorerProviderCoordinatorTest.log",
+          "sha256": "efed329054dcc93fbeb6588f4e13e56ec4777396bfc77ed9ff499fad77e613bd",
+          "bytes": 1602
+        },
+        "timestampSource": "MODULE_SESSION_EVIDENCE_FILE_BIRTH_AND_MTIME"
+      },
+      {
+        "commandId": "M1_CLASS_HRIS_EXPLORER_RECEIPT_CONTROLLER",
+        "stage": "M1_SYS_MODULE_BACKEND",
+        "exactCommand": "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.hrisconfiguration.explorer.HrisExplorerReceiptControllerTest' --no-daemon --max-workers=1",
+        "startedAt": "2026-10-15T08:06:48+0900",
+        "completedAt": "2026-10-15T08:06:56+0900",
+        "exitCode": 0,
+        "status": "PASS",
+        "classification": "UNEXECUTED_CLASS_COVERAGE_AFTER_INITIAL_COMPILE_FAILURE",
+        "log": {
+          "path": ".codex-evidence/sys-012-backend-20261015/M1-unexecuted-HrisExplorerReceiptControllerTest.log",
+          "sha256": "80f64af443c612fbad9c83d0c0ddf095d3af8133c18048db52e20db26401fec2",
+          "bytes": 1732
+        },
+        "timestampSource": "MODULE_SESSION_EVIDENCE_FILE_BIRTH_AND_MTIME"
+      },
+      {
+        "commandId": "M1_CLASS_HRIS_EXPLORER_RUNTIME_CONTROLS",
+        "stage": "M1_SYS_MODULE_BACKEND",
+        "exactCommand": "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.hrisconfiguration.explorer.HrisExplorerRuntimeControlsTest' --no-daemon --max-workers=1",
+        "startedAt": "2026-10-15T08:06:56+0900",
+        "completedAt": "2026-10-15T08:07:05+0900",
+        "exitCode": 0,
+        "status": "PASS",
+        "classification": "UNEXECUTED_CLASS_COVERAGE_AFTER_INITIAL_COMPILE_FAILURE",
+        "log": {
+          "path": ".codex-evidence/sys-012-backend-20261015/M1-unexecuted-HrisExplorerRuntimeControlsTest.log",
+          "sha256": "efed329054dcc93fbeb6588f4e13e56ec4777396bfc77ed9ff499fad77e613bd",
+          "bytes": 1602
+        },
+        "timestampSource": "MODULE_SESSION_EVIDENCE_FILE_BIRTH_AND_MTIME"
+      },
+      {
+        "commandId": "M1_CLASS_HRIS_EXPLORER_SERVICE_PROJECTION",
+        "stage": "M1_SYS_MODULE_BACKEND",
+        "exactCommand": "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.hrisconfiguration.explorer.HrisExplorerServiceProjectionTest' --no-daemon --max-workers=1",
+        "startedAt": "2026-10-15T08:07:11+0900",
+        "completedAt": "2026-10-15T08:07:19+0900",
+        "exitCode": 0,
+        "status": "PASS",
+        "classification": "UNEXECUTED_CLASS_COVERAGE_AFTER_INITIAL_COMPILE_FAILURE",
+        "log": {
+          "path": ".codex-evidence/sys-012-backend-20261015/M1-unexecuted-HrisExplorerServiceProjectionTest.log",
+          "sha256": "80f64af443c612fbad9c83d0c0ddf095d3af8133c18048db52e20db26401fec2",
+          "bytes": 1732
+        },
+        "timestampSource": "MODULE_SESSION_EVIDENCE_FILE_BIRTH_AND_MTIME"
+      },
+      {
+        "commandId": "M1_CLASS_HRIS_EXPLORER_SERVICE_SECURITY",
+        "stage": "M1_SYS_MODULE_BACKEND",
+        "exactCommand": "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.hrisconfiguration.explorer.HrisExplorerServiceSecurityTest' --no-daemon --max-workers=1",
+        "startedAt": "2026-10-15T08:07:19+0900",
+        "completedAt": "2026-10-15T08:07:33+0900",
+        "exitCode": 0,
+        "status": "PASS",
+        "classification": "UNEXECUTED_CLASS_COVERAGE_AFTER_INITIAL_COMPILE_FAILURE",
+        "log": {
+          "path": ".codex-evidence/sys-012-backend-20261015/M1-unexecuted-HrisExplorerServiceSecurityTest.log",
+          "sha256": "44a6442334997474b2b91813cce83152d901307ae81eb004a121f84b11f6d64c",
+          "bytes": 10033
+        },
+        "timestampSource": "MODULE_SESSION_EVIDENCE_FILE_BIRTH_AND_MTIME"
+      },
+      {
+        "commandId": "M1_CLASS_HRIS_PLATFORM_RECEIPT_AUTHORITY_ADAPTER",
+        "stage": "M1_SYS_MODULE_BACKEND",
+        "exactCommand": "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.hrisconfiguration.explorer.HrisPlatformReceiptAuthorityAdapterTest' --no-daemon --max-workers=1",
+        "startedAt": "2026-10-15T08:07:33+0900",
+        "completedAt": "2026-10-15T08:07:42+0900",
+        "exitCode": 0,
+        "status": "PASS",
+        "classification": "UNEXECUTED_CLASS_COVERAGE_AFTER_INITIAL_COMPILE_FAILURE",
+        "log": {
+          "path": ".codex-evidence/sys-012-backend-20261015/M1-unexecuted-HrisPlatformReceiptAuthorityAdapterTest.log",
+          "sha256": "80f64af443c612fbad9c83d0c0ddf095d3af8133c18048db52e20db26401fec2",
+          "bytes": 1732
+        },
+        "timestampSource": "MODULE_SESSION_EVIDENCE_FILE_BIRTH_AND_MTIME"
+      },
+      {
+        "commandId": "M1_CLASS_WORK_EXPLORER_MIGRATION_CONTRACT",
+        "stage": "M1_SYS_MODULE_BACKEND",
+        "exactCommand": "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.hrisconfiguration.explorer.WorkExplorerMigrationContractTest' --no-daemon --max-workers=1",
+        "startedAt": "2026-10-15T08:07:42+0900",
+        "completedAt": "2026-10-15T08:07:50+0900",
+        "exitCode": 0,
+        "status": "PASS",
+        "classification": "UNEXECUTED_CLASS_COVERAGE_AFTER_INITIAL_COMPILE_FAILURE",
+        "log": {
+          "path": ".codex-evidence/sys-012-backend-20261015/M1-unexecuted-WorkExplorerMigrationContractTest.log",
+          "sha256": "efed329054dcc93fbeb6588f4e13e56ec4777396bfc77ed9ff499fad77e613bd",
+          "bytes": 1602
+        },
+        "timestampSource": "MODULE_SESSION_EVIDENCE_FILE_BIRTH_AND_MTIME"
+      },
+      {
+        "commandId": "M1_CLASS_HCM_PLATFORM_PEP_SECURITY_CONTRACT",
+        "stage": "M1_SYS_MODULE_BACKEND",
+        "exactCommand": "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.security.HcmPlatformPepSecurityContractTest' --no-daemon --max-workers=1",
+        "startedAt": "2026-10-15T08:07:50+0900",
+        "completedAt": "2026-10-15T08:07:59+0900",
+        "exitCode": 0,
+        "status": "PASS",
+        "classification": "UNEXECUTED_CLASS_COVERAGE_AFTER_INITIAL_COMPILE_FAILURE",
+        "log": {
+          "path": ".codex-evidence/sys-012-backend-20261015/M1-unexecuted-HcmPlatformPepSecurityContractTest.log",
+          "sha256": "efed329054dcc93fbeb6588f4e13e56ec4777396bfc77ed9ff499fad77e613bd",
+          "bytes": 1602
+        },
+        "timestampSource": "MODULE_SESSION_EVIDENCE_FILE_BIRTH_AND_MTIME"
+      },
+      {
+        "commandId": "M1_CLASS_REFERENCE_CONFIGURATION_CANONICAL_RECEIPT_BRIDGE",
+        "stage": "M1_SYS_MODULE_BACKEND",
+        "exactCommand": "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.hrisconfiguration.referenceconfiguration.ReferenceConfigurationCanonicalReceiptBridgeTest' --no-daemon --max-workers=1",
+        "startedAt": "2026-10-15T08:07:59+0900",
+        "completedAt": "2026-10-15T08:08:07+0900",
+        "exitCode": 0,
+        "status": "PASS",
+        "classification": "UNEXECUTED_CLASS_COVERAGE_AFTER_INITIAL_COMPILE_FAILURE",
+        "log": {
+          "path": ".codex-evidence/sys-012-backend-20261015/M1-unexecuted-ReferenceConfigurationCanonicalReceiptBridgeTest.log",
+          "sha256": "efed329054dcc93fbeb6588f4e13e56ec4777396bfc77ed9ff499fad77e613bd",
+          "bytes": 1602
+        },
+        "timestampSource": "MODULE_SESSION_EVIDENCE_FILE_BIRTH_AND_MTIME"
+      },
+      {
+        "commandId": "M1_CLASS_NAVIGATION_POLICY_CANONICAL_RECEIPT_BRIDGE",
+        "stage": "M1_SYS_MODULE_BACKEND",
+        "exactCommand": "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.hrisconfiguration.navigationpolicy.NavigationPolicyCanonicalReceiptBridgeTest' --no-daemon --max-workers=1",
+        "startedAt": "2026-10-15T08:08:07+0900",
+        "completedAt": "2026-10-15T08:08:16+0900",
+        "exitCode": 0,
+        "status": "PASS",
+        "classification": "UNEXECUTED_CLASS_COVERAGE_AFTER_INITIAL_COMPILE_FAILURE",
+        "log": {
+          "path": ".codex-evidence/sys-012-backend-20261015/M1-unexecuted-NavigationPolicyCanonicalReceiptBridgeTest.log",
+          "sha256": "80f64af443c612fbad9c83d0c0ddf095d3af8133c18048db52e20db26401fec2",
+          "bytes": 1732
+        },
+        "timestampSource": "MODULE_SESSION_EVIDENCE_FILE_BIRTH_AND_MTIME"
+      },
+      {
+        "commandId": "M1_POSTGRES_CLASS_INITIAL",
+        "stage": "M1_SYS_MODULE_BACKEND",
+        "exactCommand": "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.hrisconfiguration.explorer.WorkExplorerMigrationPostgresTest' --no-daemon --max-workers=1",
+        "startedAt": "2026-10-15T08:04:30+0900",
+        "completedAt": "2026-10-15T08:04:54+0900",
+        "exitCode": 1,
+        "status": "FAIL_RETAINED_INITIAL",
+        "classification": "SMALLEST_OWNING_CLASS",
+        "testCount": 7,
+        "passed": 1,
+        "failed": 6,
+        "skipped": 0,
+        "log": {
+          "path": ".codex-evidence/sys-012-backend-20261015/M1-unexecuted-work-explorer-postgres.log",
+          "sha256": "e040dea809392ed1d8d15741a28956629b495d54e3023540aa31ec0e514c7ce5",
+          "bytes": 4730
+        },
+        "timestampSource": "MODULE_SESSION_EVIDENCE_FILE_BIRTH_AND_MTIME"
+      },
+      {
+        "commandId": "M1_POSTGRES_REPAIR_CLEAN_MIGRATION_THROUGH_V327CREATES_BOUNDED_PRINCIPAL_PRIVATE_STATE",
+        "stage": "M1_SYS_MODULE_BACKEND",
+        "exactCommand": "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.hrisconfiguration.explorer.WorkExplorerMigrationPostgresTest.cleanMigrationThroughV327CreatesBoundedPrincipalPrivateState' --no-daemon --max-workers=1",
+        "startedAt": "2026-10-15T08:08:23+0900",
+        "completedAt": "2026-10-15T08:08:37+0900",
+        "exitCode": 0,
+        "status": "PASS_AFTER_TARGETED_CORRECTION",
+        "classification": "SMALLEST_OWNING_POSTGRES_METHOD",
+        "testCount": 1,
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0,
+        "log": {
+          "path": ".codex-evidence/sys-012-backend-20261015/M1-repair-postgres-clean-migration.log",
+          "sha256": "5d155307f8ddc41e6d60d5c051fd5da81c85b6719d80b893659398da7974c430",
+          "bytes": 1603
+        },
+        "timestampSource": "MODULE_SESSION_EVIDENCE_FILE_BIRTH_AND_MTIME"
+      },
+      {
+        "commandId": "M1_POSTGRES_REPAIR_V326TO_V327IS_FORWARD_ONLY_AND_PRESERVES_HISTORICAL_CHECKSUMS",
+        "stage": "M1_SYS_MODULE_BACKEND",
+        "exactCommand": "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.hrisconfiguration.explorer.WorkExplorerMigrationPostgresTest.v326ToV327IsForwardOnlyAndPreservesHistoricalChecksums' --no-daemon --max-workers=1",
+        "startedAt": "2026-10-15T08:08:48+0900",
+        "completedAt": "2026-10-15T08:09:01+0900",
+        "exitCode": 0,
+        "status": "PASS_AFTER_TARGETED_CORRECTION",
+        "classification": "SMALLEST_OWNING_POSTGRES_METHOD",
+        "testCount": 1,
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0,
+        "log": {
+          "path": ".codex-evidence/sys-012-backend-20261015/M1-repair-postgres-v326ToV327IsForwardOnlyAndPreservesHistoricalChecksums.log",
+          "sha256": "5d155307f8ddc41e6d60d5c051fd5da81c85b6719d80b893659398da7974c430",
+          "bytes": 1603
+        },
+        "timestampSource": "MODULE_SESSION_EVIDENCE_FILE_BIRTH_AND_MTIME"
+      },
+      {
+        "commandId": "M1_POSTGRES_REPAIR_JDBC_REPOSITORY_EXECUTES_UUID_CAS_REPLAY_AND_ACTIVE_RECEIPT_QUERY_ON_POSTGRES",
+        "stage": "M1_SYS_MODULE_BACKEND",
+        "exactCommand": "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.hrisconfiguration.explorer.WorkExplorerMigrationPostgresTest.jdbcRepositoryExecutesUuidCasReplayAndActiveReceiptQueryOnPostgres' --no-daemon --max-workers=1",
+        "startedAt": "2026-10-15T08:09:01+0900",
+        "completedAt": "2026-10-15T08:09:14+0900",
+        "exitCode": 0,
+        "status": "PASS_AFTER_TARGETED_CORRECTION",
+        "classification": "SMALLEST_OWNING_POSTGRES_METHOD",
+        "testCount": 1,
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0,
+        "log": {
+          "path": ".codex-evidence/sys-012-backend-20261015/M1-repair-postgres-jdbcRepositoryExecutesUuidCasReplayAndActiveReceiptQueryOnPostgres.log",
+          "sha256": "5d155307f8ddc41e6d60d5c051fd5da81c85b6719d80b893659398da7974c430",
+          "bytes": 1603
+        },
+        "timestampSource": "MODULE_SESSION_EVIDENCE_FILE_BIRTH_AND_MTIME"
+      },
+      {
+        "commandId": "M1_POSTGRES_REPAIR_IDEMPOTENCY_REUSE_ACROSS_ORIGIN_CONTEXT_OR_DECISION_CONFLICTS_WITHOUT_SIDE_EFFECTS",
+        "stage": "M1_SYS_MODULE_BACKEND",
+        "exactCommand": "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.hrisconfiguration.explorer.WorkExplorerMigrationPostgresTest.idempotencyReuseAcrossOriginContextOrDecisionConflictsWithoutSideEffects' --no-daemon --max-workers=1",
+        "startedAt": "2026-10-15T08:09:15+0900",
+        "completedAt": "2026-10-15T08:09:28+0900",
+        "exitCode": 0,
+        "status": "PASS_AFTER_TARGETED_CORRECTION",
+        "classification": "SMALLEST_OWNING_POSTGRES_METHOD",
+        "testCount": 1,
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0,
+        "log": {
+          "path": ".codex-evidence/sys-012-backend-20261015/M1-repair-postgres-idempotencyReuseAcrossOriginContextOrDecisionConflictsWithoutSideEffects.log",
+          "sha256": "5d155307f8ddc41e6d60d5c051fd5da81c85b6719d80b893659398da7974c430",
+          "bytes": 1603
+        },
+        "timestampSource": "MODULE_SESSION_EVIDENCE_FILE_BIRTH_AND_MTIME"
+      },
+      {
+        "commandId": "M1_POSTGRES_REPAIR_ACTIVE_RECEIPT_LIMIT_IS_APPLIED_AFTER_CURRENT_ROUTE_AUTHORIZATION_FILTER",
+        "stage": "M1_SYS_MODULE_BACKEND",
+        "exactCommand": "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.hrisconfiguration.explorer.WorkExplorerMigrationPostgresTest.activeReceiptLimitIsAppliedAfterCurrentRouteAuthorizationFilter' --no-daemon --max-workers=1",
+        "startedAt": "2026-10-15T08:09:28+0900",
+        "completedAt": "2026-10-15T08:09:41+0900",
+        "exitCode": 0,
+        "status": "PASS_AFTER_TARGETED_CORRECTION",
+        "classification": "SMALLEST_OWNING_POSTGRES_METHOD",
+        "testCount": 1,
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0,
+        "log": {
+          "path": ".codex-evidence/sys-012-backend-20261015/M1-repair-postgres-activeReceiptLimitIsAppliedAfterCurrentRouteAuthorizationFilter.log",
+          "sha256": "5d155307f8ddc41e6d60d5c051fd5da81c85b6719d80b893659398da7974c430",
+          "bytes": 1603
+        },
+        "timestampSource": "MODULE_SESSION_EVIDENCE_FILE_BIRTH_AND_MTIME"
+      },
+      {
+        "commandId": "M1_POSTGRES_REPAIR_CONCURRENT_DISTINCT_IDEMPOTENCY_KEYS_SERIALIZE_PRINCIPAL_RECENT_TRIM",
+        "stage": "M1_SYS_MODULE_BACKEND",
+        "exactCommand": "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.hrisconfiguration.explorer.WorkExplorerMigrationPostgresTest.concurrentDistinctIdempotencyKeysSerializePrincipalRecentTrim' --no-daemon --max-workers=1",
+        "startedAt": "2026-10-15T08:09:41+0900",
+        "completedAt": "2026-10-15T08:09:55+0900",
+        "exitCode": 0,
+        "status": "PASS_AFTER_TARGETED_CORRECTION",
+        "classification": "SMALLEST_OWNING_POSTGRES_METHOD",
+        "testCount": 1,
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0,
+        "log": {
+          "path": ".codex-evidence/sys-012-backend-20261015/M1-repair-postgres-concurrentDistinctIdempotencyKeysSerializePrincipalRecentTrim.log",
+          "sha256": "5d155307f8ddc41e6d60d5c051fd5da81c85b6719d80b893659398da7974c430",
+          "bytes": 1603
+        },
+        "timestampSource": "MODULE_SESSION_EVIDENCE_FILE_BIRTH_AND_MTIME"
+      },
+      {
+        "commandId": "OPENAPI_APPROVED_SNAPSHOTS",
+        "stage": "CHANGED_PATH_STATIC_CHECKS",
+        "exactCommand": "python3 scripts/export-openapi-contracts.py --check --approved-snapshots",
+        "startedAt": "2026-10-15T08:10:02+0900",
+        "completedAt": "2026-10-15T08:10:03+0900",
+        "exitCode": 0,
+        "status": "PASS",
+        "classification": "STATIC_CONTRACT_CHECK",
+        "serviceCount": 12,
+        "gatewayPathCount": 1740,
+        "log": {
+          "path": ".codex-evidence/sys-012-backend-20261015/openapi-approved-snapshots.log",
+          "sha256": "10316aeb4ee85a81c40f3a2749c61de2f0493926e8a3759956e312df5bb6a391",
+          "bytes": 68
+        },
+        "timestampSource": "MODULE_SESSION_EVIDENCE_FILE_BIRTH_AND_MTIME"
+      },
+      {
+        "commandId": "OPENAPI_SYS012_CARRIER",
+        "stage": "CHANGED_PATH_STATIC_CHECKS",
+        "exactCommand": "python3 -m unittest scripts.tests.test_export_openapi_contracts.ExportOpenApiContractsTest.test_sys012_v43_exports_exact_work_explorer_carrier",
+        "startedAt": "2026-10-15T08:10:03+0900",
+        "completedAt": "2026-10-15T08:10:03+0900",
+        "exitCode": 0,
+        "status": "PASS",
+        "classification": "STATIC_CONTRACT_CHECK",
+        "testCount": 1,
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0,
+        "log": {
+          "path": ".codex-evidence/sys-012-backend-20261015/openapi-sys012-carrier.log",
+          "sha256": "44efdb55319316a02621ac46c521057868fb1ef563f0d88443875850359ee53f",
+          "bytes": 98
+        },
+        "timestampSource": "MODULE_SESSION_EVIDENCE_FILE_BIRTH_AND_MTIME"
+      },
+      {
+        "commandId": "M2_VITEST_INITIAL",
+        "stage": "M2_SYS_MODULE_FRONTEND",
+        "exactCommand": "pnpm exec vitest run apps/dwp/src/features/hris/explorer apps/dwp/src/routes/hcm-explorer-route.test.tsx",
+        "startedAt": "2026-10-14T20:43:50Z",
+        "completedAt": "2026-10-14T20:43:53Z",
+        "exitCode": 1,
+        "status": "FAIL_RETAINED_INITIAL",
+        "classification": "INITIAL_TARGETED_STAGE",
+        "testFileCount": 6,
+        "testCount": 26,
+        "passed": 25,
+        "failed": 1,
+        "skipped": 0,
+        "log": {
+          "path": ".codex-evidence/sys-012-frontend-20261015/logs/m2-01-vitest-20261015T204350Z.log",
+          "sha256": "91b7cf52bbe77bc42c2e03d8829b22e194a2560ee1102be26c2ba2b1396e8391",
+          "bytes": 1288
+        },
+        "timestampSource": "LOG_EMBEDDED_START_PLUS_EVIDENCE_FILE_MTIME",
+        "exitCodeSource": "TEST_OUTPUT_ONE_FAILURE_PLUS_WRAPPER_FAILURE"
+      },
+      {
+        "commandId": "M2_VITEST_ROUTE_REPAIR",
+        "stage": "M2_SYS_MODULE_FRONTEND",
+        "exactCommand": "pnpm exec vitest run apps/dwp/src/routes/hcm-explorer-route.test.tsx",
+        "startedAt": "2026-10-14T20:44:16Z",
+        "completedAt": "2026-10-14T20:44:18Z",
+        "exitCode": 0,
+        "status": "PASS_AFTER_TARGETED_CORRECTION",
+        "classification": "SMALLEST_OWNING_TEST_FILE",
+        "testFileCount": 1,
+        "testCount": 3,
+        "passed": 3,
+        "failed": 0,
+        "skipped": 0,
+        "log": {
+          "path": ".codex-evidence/sys-012-frontend-20261015/logs/m2-01a-vitest-route-targeted-20261015T204416Z.log",
+          "sha256": "ef4018486d17f910aea10c814bfd811ab7b2b8c0898d1858c0925b7b29916007",
+          "bytes": 528
+        },
+        "timestampSource": "LOG_EMBEDDED_UTC"
+      },
+      {
+        "commandId": "M2_VITEST_RECEIPT_CONTRACT",
+        "stage": "M2_SYS_MODULE_FRONTEND",
+        "exactCommand": "pnpm exec vitest run apps/dwp/src/features/hris/explorer/work-explorer-contract.test.ts",
+        "startedAt": "2026-10-14T20:48:08Z",
+        "completedAt": "2026-10-14T20:48:09Z",
+        "exitCode": 0,
+        "status": "PASS",
+        "classification": "SMALLEST_OWNING_TEST_FILE",
+        "testFileCount": 1,
+        "testCount": 9,
+        "passed": 9,
+        "failed": 0,
+        "skipped": 0,
+        "log": {
+          "path": ".codex-evidence/sys-012-frontend-20261015/logs/m2-01b-vitest-receipt-targeted-20261015T204808Z.log",
+          "sha256": "fabb0e67ecc90e00390a8c1140c533f8d520d6385a60c8f4955384ff4373f404",
+          "bytes": 545
+        },
+        "timestampSource": "LOG_EMBEDDED_UTC"
+      },
+      {
+        "commandId": "M2_VITEST_HOME",
+        "stage": "M2_SYS_MODULE_FRONTEND",
+        "exactCommand": "SYS012_FRONTEND_ROOT=\"$PWD\" SYS012_BUNDLED_NODE=/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node PATH=/Users/a10697/Work/DWP/.codex-evidence/sys-012-frontend-20261015/bin:/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin:$PATH pnpm exec vitest run apps/dwp/src/features/hcm/hcm-home-explorer.test.tsx",
+        "executionSource": "MODULE_SESSION_COMMAND_EXECUTION",
+        "executionId": "exec-d67141c8-4cfe-4b04-9077-bcb32296e002",
+        "startedAt": "2026-10-15T05:55:35+0900",
+        "completedAt": "2026-10-15T05:55:36+0900",
+        "exitCode": 0,
+        "status": "PASS",
+        "classification": "FIRST_RUN_TARGETED_TEST_FILE",
+        "testFileCount": 1,
+        "testCount": 6,
+        "passed": 6,
+        "failed": 0,
+        "skipped": 0,
+        "log": {
+          "path": ".codex-evidence/sys-012-frontend-20261015/logs/m2-01c-vitest-home-targeted-20261015T210010Z.log",
+          "sha256": "0ecb9fe49cb09d7d511383269c926b2d654f891c8c5adbd596e5d6e66fb6540b",
+          "bytes": 274
+        },
+        "timestampSource": "MODULE_SESSION_EVIDENCE_FILE_BIRTH_AND_MTIME"
+      },
+      {
+        "commandId": "M2_VITEST_ACCESS_PRE_PENDING",
+        "stage": "M2_SYS_MODULE_FRONTEND",
+        "exactCommand": "SYS012_FRONTEND_ROOT=\"$PWD\" SYS012_BUNDLED_NODE=/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node PATH=/Users/a10697/Work/DWP/.codex-evidence/sys-012-frontend-20261015/bin:/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin:$PATH pnpm exec vitest run apps/dwp/src/features/hris/explorer/work-explorer-access.test.ts",
+        "executionSource": "MODULE_SESSION_COMMAND_EXECUTION",
+        "executionId": "exec-1a7a6380-abb2-4d2b-908a-cc5deada5287",
+        "startedAt": "2026-10-15T05:58:01+0900",
+        "completedAt": "2026-10-15T05:58:02+0900",
+        "exitCode": 0,
+        "status": "PASS",
+        "classification": "SMALLEST_OWNING_TEST_FILE",
+        "testFileCount": 1,
+        "testCount": 7,
+        "passed": 7,
+        "failed": 0,
+        "skipped": 0,
+        "log": {
+          "path": ".codex-evidence/sys-012-frontend-20261015/logs/m2-01d-vitest-query-meta-targeted-20261015T210340Z.log",
+          "sha256": "d845c912223208a3db32712897fc91e28ea604ad78417bf5c82a043258ce79e2",
+          "bytes": 274
+        },
+        "timestampSource": "MODULE_SESSION_EVIDENCE_FILE_BIRTH_AND_MTIME"
+      },
+      {
+        "commandId": "M2_ESLINT_INITIAL",
+        "stage": "M2_SYS_MODULE_FRONTEND",
+        "exactCommand": "pnpm exec eslint apps/dwp/src/features/hris/explorer apps/dwp/src/routes/hcm-routes.tsx apps/dwp/src/features/hcm/hcm-home.tsx",
+        "startedAt": "2026-10-14T20:44:23Z",
+        "completedAt": "2026-10-14T20:44:24Z",
+        "exitCode": 1,
+        "status": "FAIL_RETAINED_INITIAL",
+        "classification": "INITIAL_TARGETED_STAGE",
+        "errorCount": 4,
+        "warningCount": 1,
+        "log": {
+          "path": ".codex-evidence/sys-012-frontend-20261015/logs/m2-02-eslint-20261015T204423Z.log",
+          "sha256": "a67f43b48aed5f3ee8f683b2a9369b800f542064145ed93f75c264cd3bd41749",
+          "bytes": 1329
+        },
+        "timestampSource": "LOG_EMBEDDED_UTC"
+      },
+      {
+        "commandId": "M2_ESLINT_REPAIR",
+        "stage": "M2_SYS_MODULE_FRONTEND",
+        "exactCommand": "pnpm exec eslint apps/dwp/src/features/hris/explorer/work-explorer-query-state.ts apps/dwp/src/features/hris/explorer/work-explorer.tsx",
+        "startedAt": "2026-10-14T20:44:38Z",
+        "completedAt": "2026-10-14T20:44:39Z",
+        "exitCode": 0,
+        "status": "PASS_AFTER_TARGETED_CORRECTION",
+        "classification": "SMALLEST_OWNING_FILES",
+        "log": {
+          "path": ".codex-evidence/sys-012-frontend-20261015/logs/m2-02a-eslint-targeted-20261015T204438Z.log",
+          "sha256": "04346fb0f2b963030991b67ca2528692d091a44db55ff2202f32901a9ddf7937",
+          "bytes": 319
+        },
+        "timestampSource": "LOG_EMBEDDED_UTC"
+      },
+      {
+        "commandId": "M2_PLAYWRIGHT_INITIAL",
+        "stage": "M2_SYS_MODULE_FRONTEND",
+        "exactCommand": "pnpm exec playwright test e2e/hris-phase-one.spec.ts --grep 'Work Explorer'",
+        "startedAt": "2026-10-14T20:44:49Z",
+        "completedAt": "2026-10-14T20:44:51Z",
+        "exitCode": 1,
+        "status": "FAIL_RETAINED_INITIAL_WEBSERVER",
+        "classification": "INITIAL_TARGETED_STAGE",
+        "testCount": 0,
+        "passed": 0,
+        "failed": 0,
+        "skipped": 0,
+        "log": {
+          "path": ".codex-evidence/sys-012-frontend-20261015/logs/m2-03-playwright-20261015T204449Z.log",
+          "sha256": "535b17a61507f24a21a1617e09d6bcf2bb0418ae1f38dd8dc667c0657e3958ca",
+          "bytes": 1069
+        },
+        "timestampSource": "LOG_EMBEDDED_UTC"
+      },
+      {
+        "commandId": "M2_PLAYWRIGHT_NATIVE_ZOOM",
+        "stage": "M2_SYS_MODULE_FRONTEND",
+        "exactCommand": "SYS012_FRONTEND_ROOT=\"$PWD\" SYS012_BUNDLED_NODE=/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node E2E_REUSE_EXISTING_SERVER=true PLAYWRIGHT_OUTPUT_DIR=/Users/a10697/Work/DWP/.codex-evidence/sys-012-frontend-20261015/playwright/results-04-native-zoom HRIS_PHASE_ONE_EVIDENCE_DIR=/Users/a10697/Work/DWP/.codex-evidence/sys-012-frontend-20261015/screenshots E2E_TIMEZONE_ID=Asia/Seoul PATH=/Users/a10697/Work/DWP/.codex-evidence/sys-012-frontend-20261015/bin:/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin:$PATH pnpm exec playwright test e2e/hris-phase-one.spec.ts --grep 'native browser 200 percent zoom'",
+        "executionSource": "MODULE_SESSION_COMMAND_EXECUTION",
+        "executionId": "exec-c83c8922-1eae-446b-bf83-cb7f37a637a7",
+        "startedAt": "2026-10-15T05:54:57+0900",
+        "completedAt": "2026-10-15T05:55:04+0900",
+        "exitCode": 0,
+        "status": "PASS",
+        "classification": "TARGETED_BROWSER_COMMAND",
+        "testCount": 2,
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0,
+        "log": {
+          "path": ".codex-evidence/sys-012-frontend-20261015/logs/m2-03j-playwright-native-zoom-targeted-20261015T205830Z.log",
+          "sha256": "9f8bcf2a501e6dc4583e9d545725426bd3f5493338d042cb503f9a7e846e6f9c",
+          "bytes": 1014
+        },
+        "timestampSource": "MODULE_SESSION_EVIDENCE_FILE_BIRTH_AND_MTIME"
+      },
+      {
+        "commandId": "M2_VITEST_FINAL_OWNER",
+        "stage": "M2_SYS_MODULE_FRONTEND",
+        "exactCommand": "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node node_modules/vitest/vitest.mjs run apps/dwp/src/features/hris/explorer/work-explorer-contract.test.ts apps/dwp/src/features/hris/explorer/work-explorer-api.test.ts apps/dwp/src/features/hris/explorer/work-explorer-access.test.ts",
+        "executionSource": "MODULE_SESSION_COMMAND_EXECUTION",
+        "executionId": "exec-e274fc91-3214-4722-8fe5-3dec60a54e45",
+        "startedAt": "2026-10-14T21:34:05Z",
+        "completedAt": "2026-10-14T21:34:07Z",
+        "exitCode": 0,
+        "status": "PASS",
+        "classification": "FINAL_OWNER_SCOPE",
+        "testFileCount": 3,
+        "testCount": 40,
+        "passed": 40,
+        "failed": 0,
+        "skipped": 0,
+        "log": {
+          "path": ".codex-evidence/sys-012-frontend-20261015/logs/r2-dual-receipt-vitest-owner-targeted-20261015T213405Z.log",
+          "sha256": "ac1db142d7796f838efcbd060dc5bed16d6c555a3c7f0e1c41481952f5608926",
+          "bytes": 474
+        },
+        "timestampSource": "LOG_EMBEDDED_UTC"
+      },
+      {
+        "commandId": "M2_VITEST_FINAL_API",
+        "stage": "M2_SYS_MODULE_FRONTEND",
+        "exactCommand": "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node node_modules/vitest/vitest.mjs run apps/dwp/src/features/hris/explorer/work-explorer-api.test.ts",
+        "executionSource": "MODULE_SESSION_COMMAND_EXECUTION",
+        "executionId": "exec-0a2c29dc-34a1-47bc-8d3f-ecaeaf0bb68c",
+        "startedAt": "2026-10-14T21:35:05Z",
+        "completedAt": "2026-10-14T21:35:07Z",
+        "exitCode": 0,
+        "status": "PASS",
+        "classification": "FINAL_API_SCOPE",
+        "testFileCount": 1,
+        "testCount": 7,
+        "passed": 7,
+        "failed": 0,
+        "skipped": 0,
+        "log": {
+          "path": ".codex-evidence/sys-012-frontend-20261015/logs/r2-dual-receipt-api-vitest-20261014T213505Z.log",
+          "sha256": "27ad4cbde24208f42c48366b80b83bff6eb7a2e274050df587f02c38df26cac3",
+          "bytes": 411
+        },
+        "timestampSource": "LOG_EMBEDDED_UTC"
+      },
+      {
+        "commandId": "M2_PLAYWRIGHT_HOME_INITIAL",
+        "stage": "M2_SYS_MODULE_FRONTEND",
+        "exactCommand": "pnpm exec playwright test e2e/hris-phase-one.spec.ts --grep 'Work Explorer opens from'",
+        "startedAt": "2026-10-14T21:23:51Z",
+        "completedAt": "2026-10-14T21:24:01Z",
+        "exitCode": 1,
+        "status": "FAIL_RETAINED_INITIAL",
+        "classification": "TARGETED_BROWSER_COMMAND",
+        "testCount": 2,
+        "passed": 0,
+        "failed": 2,
+        "skipped": 0,
+        "log": {
+          "path": ".codex-evidence/sys-012-frontend-20261015/logs/r2-final-p1-playwright-home-two-projects-targeted-20261015T212351Z.log",
+          "sha256": "9cbd00758d854995029bfb182826c144a082271765a2238b7bb8475075d81da5",
+          "bytes": 5827
+        },
+        "timestampSource": "LOG_EMBEDDED_UTC"
+      },
+      {
+        "commandId": "M2_PLAYWRIGHT_HOME_FINAL",
+        "stage": "M2_SYS_MODULE_FRONTEND",
+        "exactCommand": "E2E_BASE_URL=http://127.0.0.1:4200 E2E_REUSE_EXISTING_SERVER=true PLAYWRIGHT_OUTPUT_DIR=/Users/a10697/Work/DWP/.codex-evidence/sys-012-frontend-20261015/playwright/results-16-dual-receipt-home-two-projects PLAYWRIGHT_HTML_OUTPUT_DIR=/Users/a10697/Work/DWP/.codex-evidence/sys-012-frontend-20261015/playwright/report-16-dual-receipt-home-two-projects /Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node node_modules/@playwright/test/cli.js test e2e/hris-phase-one.spec.ts --grep 'Work Explorer opens from'",
+        "executionSource": "MODULE_SESSION_COMMAND_EXECUTION",
+        "executionId": "exec-588c17a4-9ee7-416f-8ddc-5f86a1ca8c9a",
+        "startedAt": "2026-10-14T21:34:31Z",
+        "completedAt": "2026-10-14T21:34:44Z",
+        "exitCode": 0,
+        "status": "PASS_AFTER_TARGETED_CORRECTION",
+        "classification": "SMALLEST_OWNING_BROWSER_COMMAND",
+        "testCount": 2,
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0,
+        "log": {
+          "path": ".codex-evidence/sys-012-frontend-20261015/logs/r2-dual-receipt-playwright-home-two-projects-20261014T213431Z.log",
+          "sha256": "b0b6b036e39267ab4a714a42d2a9b3964b8c42a09febcb07ef9b4ba2508f4bda",
+          "bytes": 1379
+        },
+        "timestampSource": "LOG_EMBEDDED_UTC"
+      },
+      {
+        "commandId": "M2_PLAYWRIGHT_STATES_FINAL",
+        "stage": "M2_SYS_MODULE_FRONTEND",
+        "exactCommand": "pnpm exec playwright test e2e/hris-phase-one.spec.ts --grep 'Work Explorer keeps authorized'",
+        "startedAt": "2026-10-14T21:25:23Z",
+        "completedAt": "2026-10-14T21:25:34Z",
+        "exitCode": 0,
+        "status": "PASS",
+        "classification": "TARGETED_BROWSER_COMMAND",
+        "testCount": 2,
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0,
+        "log": {
+          "path": ".codex-evidence/sys-012-frontend-20261015/logs/r2-final-p1-playwright-states-two-projects-targeted-20261015T212523Z.log",
+          "sha256": "277fe240c474886f8188969786dea2c9b347dccb555085a424a858383de7d13b",
+          "bytes": 1248
+        },
+        "timestampSource": "LOG_EMBEDDED_UTC"
+      },
+      {
+        "commandId": "M2_PLAYWRIGHT_VISUAL_INITIAL",
+        "stage": "M2_SYS_MODULE_FRONTEND",
+        "exactCommand": "pnpm exec playwright test e2e/hris-phase-one.spec.ts --grep 'Work Explorer visual matrix'",
+        "startedAt": "2026-10-14T21:25:39Z",
+        "completedAt": "2026-10-14T21:25:48Z",
+        "exitCode": 1,
+        "status": "FAIL_RETAINED_CHROMIUM_MOBILE_PASS",
+        "classification": "TARGETED_BROWSER_COMMAND",
+        "testCount": 2,
+        "passed": 1,
+        "failed": 1,
+        "skipped": 0,
+        "log": {
+          "path": ".codex-evidence/sys-012-frontend-20261015/logs/r2-final-p1-playwright-visual-two-projects-targeted-20261015T212539Z.log",
+          "sha256": "1d8645b4a91498538e22883fd1560a0f502ed076eeedc0fe6a0155f3e78ad01a",
+          "bytes": 3422
+        },
+        "timestampSource": "LOG_EMBEDDED_UTC"
+      },
+      {
+        "commandId": "M2_PLAYWRIGHT_VISUAL_CHROMIUM_FINAL",
+        "stage": "M2_SYS_MODULE_FRONTEND",
+        "exactCommand": "pnpm exec playwright test e2e/hris-phase-one.spec.ts --project=chromium --grep 'Work Explorer visual matrix'",
+        "startedAt": "2026-10-14T21:27:02Z",
+        "completedAt": "2026-10-14T21:27:06Z",
+        "exitCode": 0,
+        "status": "PASS_AFTER_TARGETED_CORRECTION",
+        "classification": "SMALLEST_OWNING_BROWSER_COMMAND",
+        "testCount": 1,
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0,
+        "log": {
+          "path": ".codex-evidence/sys-012-frontend-20261015/logs/r2-final-p1-playwright-visual-chromium-rerun2-20261015T212702Z.log",
+          "sha256": "8a17a643b3372cdbcc15055736d3a7a6a9387c5e0b9e60a4c362ad65f80d6e3f",
+          "bytes": 757
+        },
+        "timestampSource": "LOG_EMBEDDED_UTC"
+      },
+      {
+        "commandId": "M2_PENDING_COMMAND_ACCESS_FINAL",
+        "stage": "M2_SYS_MODULE_FRONTEND",
+        "exactCommand": "pnpm exec vitest run apps/dwp/src/features/hris/explorer/work-explorer-access.test.ts",
+        "startedAt": "2026-10-14T21:12:05Z",
+        "completedAt": "2026-10-14T21:12:06Z",
+        "exitCode": 0,
+        "status": "PASS",
+        "classification": "SMALLEST_OWNING_TEST_FILE",
+        "testFileCount": 1,
+        "testCount": 9,
+        "passed": 9,
+        "failed": 0,
+        "skipped": 0,
+        "log": {
+          "path": ".codex-evidence/sys-012-frontend-20261015/logs/r2-pending-command-vitest-access-targeted-20261015T214600Z.log",
+          "sha256": "217560fd28f96e140cf6f53f5936d21ea6b77ca514f28bffeb4c249f976dd1d7",
+          "bytes": 445
+        },
+        "timestampSource": "LOG_EMBEDDED_UTC"
+      },
+      {
+        "commandId": "M2_PENDING_COMMAND_STATES_FINAL",
+        "stage": "M2_SYS_MODULE_FRONTEND",
+        "exactCommand": "pnpm exec playwright test e2e/hris-phase-one.spec.ts --grep 'Work Explorer keeps authorized'",
+        "startedAt": "2026-10-14T21:12:28Z",
+        "completedAt": "2026-10-14T21:12:39Z",
+        "exitCode": 0,
+        "status": "PASS",
+        "classification": "SMALLEST_OWNING_BROWSER_COMMAND",
+        "testCount": 2,
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0,
+        "log": {
+          "path": ".codex-evidence/sys-012-frontend-20261015/logs/r2-pending-command-playwright-states-two-projects-targeted-20261015T214800Z.log",
+          "sha256": "807b6372dd73683911e4c6eb1674b7669c5850d7b87c39053030d47c72f712ea",
+          "bytes": 1248
+        },
+        "timestampSource": "LOG_EMBEDDED_UTC"
+      },
+      {
+        "commandId": "M2_PENDING_COMMAND_ESLINT",
+        "stage": "M2_SYS_MODULE_FRONTEND",
+        "exactCommand": "pnpm exec eslint work-explorer.tsx work-explorer-access.test.ts e2e/hris-phase-one.spec.ts",
+        "startedAt": "2026-10-14T21:12:13Z",
+        "completedAt": "2026-10-14T21:12:14Z",
+        "exitCode": 0,
+        "status": "PASS",
+        "classification": "SMALLEST_OWNING_FILES",
+        "log": {
+          "path": ".codex-evidence/sys-012-frontend-20261015/logs/r2-pending-command-eslint-targeted-20261015T214700Z.log",
+          "sha256": "0c7d4bbd908f618d874af647b2f706d6047dec9de413eb9e204a19e647a1c29a",
+          "bytes": 176
+        },
+        "timestampSource": "LOG_EMBEDDED_UTC"
+      },
+      {
+        "commandId": "M2_API_ESLINT_FINAL",
+        "stage": "M2_SYS_MODULE_FRONTEND",
+        "exactCommand": "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node node_modules/eslint/bin/eslint.js apps/dwp/src/features/hris/explorer/work-explorer-api.test.ts",
+        "executionSource": "MODULE_SESSION_COMMAND_EXECUTION",
+        "executionId": "exec-0a2c29dc-34a1-47bc-8d3f-ecaeaf0bb68c",
+        "startedAt": "2026-10-14T21:35:07Z",
+        "completedAt": "2026-10-14T21:35:08Z",
+        "exitCode": 0,
+        "status": "PASS",
+        "classification": "FINAL_API_SCOPE",
+        "log": {
+          "path": ".codex-evidence/sys-012-frontend-20261015/logs/r2-dual-receipt-api-eslint-20261014T213505Z.log",
+          "sha256": "0ce9c1c0fce4dbcc7fafd94727691b4a7ae5a9fb86dc4001078236b4d17952c8",
+          "bytes": 131
+        },
+        "timestampSource": "LOG_EMBEDDED_UTC"
+      },
+      {
+        "commandId": "STATIC_SYS_API_038_DELTA",
+        "stage": "CHANGED_PATH_STATIC_CHECKS",
+        "exactCommand": "set -o pipefail\nlog_file=/Users/a10697/Work/DWP/.codex-evidence/sys-012-frontend-20261015/logs/r2-sys-api-038-frontend-json-delta-check-20261015T214900Z.log\n{\n  echo 'command=verify frontend SYS-API-038 JSON purpose-only delta and unchanged TypeScript mirror'\n  echo \"started_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)\"\n  numstat=$(git diff --numstat -- libs/api-contracts/openapi/gateway-public.json)\n  echo \"json_numstat=$numstat\"\n  test \"$numstat\" = $'1\\t1\\tlibs/api-contracts/openapi/gateway-public.json'\n  /Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node - <<'NODE'\nconst fs = require('fs');\nconst api = JSON.parse(fs.readFileSync('libs/api-contracts/openapi/gateway-public.json', 'utf8'));\nconst operation = api.paths['/api/platform/v1/admin/hris/command-receipts/{receiptId}'].get;\nconst originPurpose = api.components.schemas.platform_HrisExplorerReceiptV1.properties.purposeCode.const;\nif (operation['x-dwp-contract-id'] !== 'SYS-API-038') throw new Error('contract id drift');\nif (operation['x-dwp-purpose-code'] !== 'COMMAND_STATUS') throw new Error('request purpose drift');\nif (originPurpose !== 'HRIS_APP_DISCOVERY') throw new Error('origin purpose drift');\nconsole.log(JSON.stringify({ contractId: operation['x-dwp-contract-id'], requestPurpose: operation['x-dwp-purpose-code'], explorerOriginPurpose: originPurpose }));\nNODE\n  git diff --quiet -- libs/api-contracts/src/gateway-public.ts\n  echo 'typescript_mirror_diff_count=0'\n  cmd_rc=$?\n  echo \"exit_code=$cmd_rc\"\n  echo \"finished_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)\"\n  exit \"$cmd_rc\"\n} 2>&1 | tee \"$log_file\"",
+        "executionSource": "MODULE_SESSION_COMMAND_EXECUTION",
+        "executionId": "exec-6b6e51ab-b7d8-495a-8397-ee5413336e2e",
+        "startedAt": "2026-10-14T21:12:53Z",
+        "completedAt": "2026-10-14T21:12:53Z",
+        "exitCode": 0,
+        "status": "PASS",
+        "classification": "STATIC_CONTRACT_CHECK",
+        "jsonAddedLines": 1,
+        "jsonRemovedLines": 1,
+        "typescriptMirrorDiffCount": 0,
+        "log": {
+          "path": ".codex-evidence/sys-012-frontend-20261015/logs/r2-sys-api-038-frontend-json-delta-check-20261015T214900Z.log",
+          "sha256": "8e29f6546bb23d7cda7e80bb36d72e6a4f868914524bad5caa379e0e4e924cf2",
+          "bytes": 372
+        },
+        "timestampSource": "LOG_EMBEDDED_UTC"
+      },
+      {
+        "commandId": "STATIC_PRETTIER_FINAL",
+        "stage": "CHANGED_PATH_STATIC_CHECKS",
+        "exactCommand": "/Users/a10697/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node node_modules/prettier/bin/prettier.cjs --check apps/dwp/src/features/hcm/hcm-home-explorer.test.tsx apps/dwp/src/features/hcm/hcm-home.tsx apps/dwp/src/features/hris/explorer/index.ts apps/dwp/src/features/hris/explorer/work-explorer-access.test.ts apps/dwp/src/features/hris/explorer/work-explorer-access.ts apps/dwp/src/features/hris/explorer/work-explorer-api.test.ts apps/dwp/src/features/hris/explorer/work-explorer-api.ts apps/dwp/src/features/hris/explorer/work-explorer-contract.test.ts apps/dwp/src/features/hris/explorer/work-explorer-contract.ts apps/dwp/src/features/hris/explorer/work-explorer-labels.test.ts apps/dwp/src/features/hris/explorer/work-explorer-query-state.test.ts apps/dwp/src/features/hris/explorer/work-explorer-query-state.ts apps/dwp/src/features/hris/explorer/work-explorer.css apps/dwp/src/features/hris/explorer/work-explorer.tsx apps/dwp/src/routes/hcm-explorer-route.test.tsx apps/dwp/src/routes/hcm-routes.tsx e2e/hris-phase-one.spec.ts libs/api-contracts/openapi/gateway-public.json libs/shared-i18n/src/locales/en/hcm.json libs/shared-i18n/src/locales/ko/hcm.json",
+        "executionSource": "MODULE_SESSION_COMMAND_EXECUTION",
+        "executionId": "exec-4d6e4d85-d65f-4cbf-93cd-199903e0b4ce",
+        "startedAt": "2026-10-14T21:35:26Z",
+        "completedAt": "2026-10-14T21:35:27Z",
+        "exitCode": 0,
+        "status": "PASS",
+        "classification": "CHANGED_PATH_STATIC_CHECK",
+        "log": {
+          "path": ".codex-evidence/sys-012-frontend-20261015/logs/r2-dual-receipt-final-prettier-check-20261014T213526Z.log",
+          "sha256": "bf3d774daf2bdc3199705beaf09dbda8d5b47fcb656500b1e86709210a054f6d",
+          "bytes": 220
+        },
+        "timestampSource": "LOG_EMBEDDED_UTC"
+      },
+      {
+        "commandId": "STATIC_GIT_DIFF_CHECK",
+        "stage": "CHANGED_PATH_STATIC_CHECKS",
+        "exactCommand": "git diff --check",
+        "startedAt": "2026-10-14T21:13:20Z",
+        "completedAt": "2026-10-14T21:13:20Z",
+        "exitCode": 0,
+        "status": "PASS",
+        "classification": "CHANGED_PATH_STATIC_CHECK",
+        "log": {
+          "path": ".codex-evidence/sys-012-frontend-20261015/logs/final-r2-git-diff-check-20261015T215200Z.log",
+          "sha256": "65d4956eef0f39092fcec27d6b6b778621fe2a4c44b864714a43ff39a9bbae57",
+          "bytes": 102
+        },
+        "timestampSource": "LOG_EMBEDDED_UTC"
+      },
+      {
+        "commandId": "STATIC_ALLOWLIST_FINAL",
+        "stage": "SCOPE_AND_GIT_INTEGRITY",
+        "exactCommand": "evidence_stamp=$(date -u +%Y%m%dT%H%M%SZ)\nevidence_log=/Users/a10697/Work/DWP/.codex-evidence/sys-012-frontend-20261015/logs/r2-dual-receipt-final-allowlist-hashes-${evidence_stamp}.log\nstarted_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)\nexpected_paths=$(printf '%s\\n' \\\n  apps/dwp/src/features/hcm/hcm-home-explorer.test.tsx \\\n  apps/dwp/src/features/hcm/hcm-home.tsx \\\n  apps/dwp/src/features/hris/explorer/index.ts \\\n  apps/dwp/src/features/hris/explorer/work-explorer-access.test.ts \\\n  apps/dwp/src/features/hris/explorer/work-explorer-access.ts \\\n  apps/dwp/src/features/hris/explorer/work-explorer-api.test.ts \\\n  apps/dwp/src/features/hris/explorer/work-explorer-api.ts \\\n  apps/dwp/src/features/hris/explorer/work-explorer-contract.test.ts \\\n  apps/dwp/src/features/hris/explorer/work-explorer-contract.ts \\\n  apps/dwp/src/features/hris/explorer/work-explorer-labels.test.ts \\\n  apps/dwp/src/features/hris/explorer/work-explorer-query-state.test.ts \\\n  apps/dwp/src/features/hris/explorer/work-explorer-query-state.ts \\\n  apps/dwp/src/features/hris/explorer/work-explorer.css \\\n  apps/dwp/src/features/hris/explorer/work-explorer.tsx \\\n  apps/dwp/src/routes/hcm-explorer-route.test.tsx \\\n  apps/dwp/src/routes/hcm-routes.tsx \\\n  e2e/hris-phase-one.spec.ts \\\n  libs/api-contracts/openapi/gateway-public.json \\\n  libs/shared-i18n/src/locales/en/hcm.json \\\n  libs/shared-i18n/src/locales/ko/hcm.json | LC_ALL=C sort)\nactual_paths=$({ git diff --name-only; git ls-files --others --exclude-standard; } | LC_ALL=C sort -u)\n{\n  echo \"command=git diff --check + exact 20-path allowlist + generated mirror/content hashes\"\n  echo \"started_at=$started_at\"\n  git diff --check\n  diff_rc=$?\n  echo \"diff_check_exit=$diff_rc\"\n  actual_count=$(printf '%s\\n' \"$actual_paths\" | sed '/^$/d' | wc -l | tr -d ' ')\n  echo \"changed_path_count=$actual_count\"\n  if [ \"$actual_paths\" = \"$expected_paths\" ]; then\n    echo \"allowlist=PASS\"\n    allow_rc=0\n  else\n    echo \"allowlist=FAIL\"\n    echo \"actual_paths:\"\n    printf '%s\\n' \"$actual_paths\"\n    allow_rc=1\n  fi\n  git diff --quiet -- libs/api-contracts/src/gateway-public.ts\n  ts_rc=$?\n  echo \"generated_ts_diff_exit=$ts_rc\"\n  echo \"gateway_json_numstat=$(git diff --numstat -- libs/api-contracts/openapi/gateway-public.json)\"\n  echo \"gateway_json_delta:\"\n  git diff -U0 -- libs/api-contracts/openapi/gateway-public.json | rg '^[+-].*x-dwp-purpose-code' || true\n  echo \"content_hashes:\"\n  while IFS= read -r changed_path; do\n    [ -n \"$changed_path\" ] || continue\n    content_hash=$(shasum -a 256 \"$changed_path\" | awk '{print $1}')\n    content_bytes=$(stat -f %z \"$changed_path\")\n    echo \"$content_hash $content_bytes $changed_path\"\n  done <<EOF\n$actual_paths\nEOF\n  echo \"branch=$(git branch --show-current)\"\n  echo \"head=$(git rev-parse HEAD)\"\n  echo \"upstream=$(git rev-parse --abbrev-ref --symbolic-full-name '@{upstream}')\"\n  echo \"ahead_behind=$(git rev-list --left-right --count '@{upstream}...HEAD')\"\n  final_rc=$diff_rc\n  if [ \"$allow_rc\" -ne 0 ]; then final_rc=$allow_rc; fi\n  if [ \"$ts_rc\" -ne 0 ]; then final_rc=$ts_rc; fi\n  echo \"exit_code=$final_rc\"\n  echo \"finished_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)\"\n} >\"$evidence_log\" 2>&1\nrc=$?\necho \"$evidence_log\"\ncat \"$evidence_log\"\nexit $rc",
+        "executionSource": "MODULE_SESSION_COMMAND_EXECUTION",
+        "executionId": "exec-9b57e74f-e312-47de-a6c9-20ebfb734b23",
+        "startedAt": "2026-10-14T21:35:42Z",
+        "completedAt": "2026-10-14T21:35:43Z",
+        "exitCode": 0,
+        "status": "PASS",
+        "classification": "SCOPE_AND_GIT_INTEGRITY",
+        "changedPathCount": 20,
+        "generatedTypescriptChangeCount": 0,
+        "contentHashesMatchResultCommit": true,
+        "gitDiffCheck": "PASS",
+        "log": {
+          "path": ".codex-evidence/sys-012-frontend-20261015/logs/r2-dual-receipt-final-allowlist-hashes-20261014T213542Z.log",
+          "sha256": "51643cfeb5648fd9c270e1e04c83b03db9d60d016bddb671295871619dc5a9f4",
+          "bytes": 3115
+        },
+        "timestampSource": "LOG_EMBEDDED_UTC"
+      }
+    ]
+  },
+  "verificationResults": [
+    {
+      "stage": "M1_SYS_MODULE_BACKEND",
+      "status": "PASS_AFTER_TARGETED_CORRECTION",
+      "initialAggregateRerun": false,
+      "uniqueTestInventoryCount": 88,
+      "postgresMethods": 7,
+      "postgresSkipped": 0
+    },
+    {
+      "stage": "M2_SYS_MODULE_FRONTEND",
+      "status": "PASS_AFTER_TARGETED_CORRECTION",
+      "initialAggregateRerun": false,
+      "finalVitest": "40/40",
+      "finalApi": "7/7",
+      "finalHomePlaywright": "2/2",
+      "finalStatesPlaywright": "2/2",
+      "nativeZoomPlaywright": "2/2"
+    },
+    {
+      "stage": "CHANGED_PATH_STATIC_CHECKS",
+      "status": "PASS",
+      "openApiApprovedServices": 12,
+      "gatewayPaths": 1740,
+      "prettier": "PASS",
+      "gitDiffCheck": "PASS"
+    },
+    {
+      "stage": "SCOPE_AND_GIT_INTEGRITY",
+      "status": "PASS",
+      "backendChangedPaths": 71,
+      "frontendChangedPaths": 20,
+      "worktreesCleanRemoteExact": true
+    }
+  ],
+  "migrationEvidence": {
+    "stream": "PLATFORM",
+    "version": "V327",
+    "leaseId": "HRIS-WAVE6-SYS-012-MIGRATION-LEASE-R1",
+    "path": "dwp-platform-server/src/main/resources/db/migration/V327__create_hris_work_explorer.sql",
+    "gitBlobSha1": "c24631b31cdadd56af37b310a123def08ed0c9a2",
+    "sha256": "8586a323808e902533e073c83bc6fb83f456173a9f626801bfbe611f19e7d9d7",
+    "bytes": 12932,
+    "cleanMigrationPassed": true,
+    "v326ToV327UpgradePassed": true,
+    "historicalMigrationChecksumsPreserved": true,
+    "existingMigrationModified": false,
+    "secondMigrationCreated": false,
+    "tables": [
+      "sys_hris_explorer_preferences",
+      "sys_hris_explorer_favorites",
+      "sys_hris_explorer_recents",
+      "sys_hris_command_receipts"
+    ],
+    "rlsEnabledAndForcedOnEveryTable": true,
+    "tenantAndPrincipalBound": true,
+    "crossServiceForeignKeys": false,
+    "sourcePayloadPersistence": false,
+    "realPostgresqlMethodCount": 7,
+    "skipped": 0,
+    "evidenceRefs": [
+      ".codex-evidence/sys-012-backend-20261015/M1-unexecuted-work-explorer-postgres.log",
+      ".codex-evidence/sys-012-backend-20261015/M1-repair-postgres-clean-migration.log",
+      ".codex-evidence/sys-012-backend-20261015/M1-repair-postgres-v326ToV327IsForwardOnlyAndPreservesHistoricalChecksums.log",
+      ".codex-evidence/sys-012-backend-20261015/M1-repair-postgres-jdbcRepositoryExecutesUuidCasReplayAndActiveReceiptQueryOnPostgres.log",
+      ".codex-evidence/sys-012-backend-20261015/M1-repair-postgres-idempotencyReuseAcrossOriginContextOrDecisionConflictsWithoutSideEffects.log",
+      ".codex-evidence/sys-012-backend-20261015/M1-repair-postgres-activeReceiptLimitIsAppliedAfterCurrentRouteAuthorizationFilter.log",
+      ".codex-evidence/sys-012-backend-20261015/M1-repair-postgres-concurrentDistinctIdempotencyKeysSerializePrincipalRecentTrim.log",
+      ".codex-evidence/sys-012-backend-20261015/M1-unexecuted-WorkExplorerMigrationContractTest.log"
+    ]
+  },
+  "securityAndBehaviorEvidence": {
+    "canonicalNodeCount": 98,
+    "base76Count": 76,
+    "modern22Count": 22,
+    "uniqueRouteKeyCount": 98,
+    "uniqueLabelKeyCount": 98,
+    "authorizedSubsetAndCurrentReauthorization": true,
+    "tenantAndPrincipalIsolation": true,
+    "opaqueReceiptDenial": true,
+    "genericAdminDenied": true,
+    "undeployedExternalTargetCount": 0,
+    "favoriteLimit": 20,
+    "recentLimit": 20,
+    "casIdempotencyLruTtlPurge": true,
+    "sharedReceiptReplayDigestMismatchAndResultUnknown": true,
+    "typedOwnerEvidenceStates": [
+      "HAPPY",
+      "MISSING",
+      "STALE",
+      "MISMATCH",
+      "TIMEOUT",
+      "UNAVAILABLE"
+    ],
+    "providerFailureProjection": "PARTIAL",
+    "falseEmptySuccess": false,
+    "minimizedProjectionForbiddenPayloadAbsent": true,
+    "crossServiceDatabaseRead": false
+  },
+  "visualEvidence": {
+    "evidenceRoot": "/Users/a10697/Work/DWP/.codex-evidence/sys-012-frontend-20261015",
+    "selectionRule": "Only PNG files from the five pinned successful sources; failed-run screenshots and all other evidence PNGs are excluded.",
+    "sources": [
+      {
+        "path": "playwright/results-16-dual-receipt-home-two-projects",
+        "count": 8,
+        "bytes": 2572543,
+        "manifestSha256": "bdf240742b7c53d38bbed98f5a9a2650bbcba832910d46a43b882c2332e43f7f"
+      },
+      {
+        "path": "playwright/results-12-final-p1-states-two-projects",
+        "count": 24,
+        "bytes": 5426677,
+        "manifestSha256": "a322cbfe468953493cc67513af9cb8c0817e0b1e5f558a0b3205e26bce6ba823"
+      },
+      {
+        "path": "playwright/results-15-final-p1-visual-chromium-rerun2",
+        "count": 5,
+        "bytes": 468938,
+        "manifestSha256": "ba81ae3994fce8a7192d1795a7df51c7d0a0c32f8e7bd91b168a9ba4a70ad2f8"
+      },
+      {
+        "path": "playwright/results-13-final-p1-visual-two-projects/hris-phase-one-Work-Explor-ef9ce-st-motion-and-Korean-labels-mobile",
+        "count": 5,
+        "bytes": 2380310,
+        "manifestSha256": "9e3de8a57d0c1e0419ab979e2a4fc51ae1bfe3effb027782204177574dc8b779"
+      },
+      {
+        "path": "playwright/results-04-native-zoom",
+        "count": 2,
+        "bytes": 141827,
+        "manifestSha256": "ec064e48e47d123a7fb410c9521e74bddb8cbf8d812b1132fa5c765d2d280919"
+      }
+    ],
+    "captureCount": 44,
+    "totalPngBytes": 10990295,
+    "manifestAlgorithm": "SHA256_OF_ROOT_RELATIVE_PATH_TAB_RAW_SHA256_TAB_BYTES_LF",
+    "manifestTextBytes": 10203,
+    "manifestSha256": "9f56ca19b0df93718f16f85261cf30fc04ff5af17f7728f12baf94fab3cbb139",
+    "moduleReportedCanonicalManifest": {
+      "algorithm": "SHA256_OF_RAW_SHA256_SPACE_BYTES_SPACE_ABSOLUTE_PATH_LF_SORTED_BY_ABSOLUTE_PATH",
+      "textBytes": 13063,
+      "sha256": "4cddb29b5e81770d63d1a101011cf04af99b7e60db09b04e90bc9b709d2a929b",
+      "provenance": "MODULE_SESSION_COMMAND_EXECUTION_RECOMPUTED_BY_CENTRAL_CONTROL"
+    },
+    "requiredViewports": [
+      "1440x900",
+      "1280x800",
+      "390x844",
+      "320x640",
+      "1280x800 at browser 200% zoom"
+    ],
+    "requiredModes": [
+      "light",
+      "dark",
+      "high contrast",
+      "reduced motion",
+      "keyboard-only with visible focus",
+      "long Korean labels",
+      "long English labels",
+      "partial API failure"
+    ],
+    "captures": [
+      {
+        "captureId": "SYS012-VIS-01",
+        "journey": "NATIVE_BROWSER_200_PERCENT_ZOOM",
+        "state": "1280x800-browser-zoom200",
+        "project": "chromium",
+        "viewport": "1280x800",
+        "zoom": "200%",
+        "theme": "light",
+        "accessibilityModes": [
+          "reduced-motion"
+        ],
+        "screenshot": {
+          "path": "playwright/results-04-native-zoom/hris-phase-one-Work-Explor-a3c0c-ve-browser-200-percent-zoom-chromium/work-explorer-1280x800-browser-zoom200.png",
+          "sha256": "5f3d640da8db1ffec99ff4d6b6d08757679b69bc1606d49ed1837996d2472a0d",
+          "bytes": 70905,
+          "pixelDimensions": "1280x800"
+        },
+        "review": {
+          "overflow": "PASS",
+          "overlap": "PASS",
+          "clipping": "PASS",
+          "focusVisibility": "NOT_APPLICABLE",
+          "firstViewport": "PASS"
+        }
+      },
+      {
+        "captureId": "SYS012-VIS-02",
+        "journey": "NATIVE_BROWSER_200_PERCENT_ZOOM",
+        "state": "1280x800-browser-zoom200",
+        "project": "mobile",
+        "viewport": "1280x800",
+        "zoom": "200%",
+        "theme": "light",
+        "accessibilityModes": [
+          "reduced-motion"
+        ],
+        "screenshot": {
+          "path": "playwright/results-04-native-zoom/hris-phase-one-Work-Explor-a3c0c-ve-browser-200-percent-zoom-mobile/work-explorer-1280x800-browser-zoom200.png",
+          "sha256": "57dff2ad3417a4328ea72bb1df3601525d7beb93825a9d6a26cfef02f484d1a0",
+          "bytes": 70922,
+          "pixelDimensions": "1280x800"
+        },
+        "review": {
+          "overflow": "PASS",
+          "overlap": "PASS",
+          "clipping": "PASS",
+          "focusVisibility": "NOT_APPLICABLE",
+          "firstViewport": "PASS"
+        }
+      },
+      {
+        "captureId": "SYS012-VIS-03",
+        "journey": "MATERIAL_STATES_AND_URL",
+        "state": "320x640-longest-authorized-english-focus",
+        "project": "chromium",
+        "viewport": "320x640",
+        "zoom": "100%",
+        "theme": "light",
+        "accessibilityModes": [
+          "keyboard-only",
+          "visible-focus",
+          "long-English-label"
+        ],
+        "screenshot": {
+          "path": "playwright/results-12-final-p1-states-two-projects/hris-phase-one-Work-Explor-1d20d-d-command-recovery-explicit-chromium/work-explorer-320x640-longest-authorized-english-focus.png",
+          "sha256": "2aa6d79ee9f0a67c5708cde47bc0cc385e3753765b47090821e679c77220960c",
+          "bytes": 79498,
+          "pixelDimensions": "320x1379"
+        },
+        "review": {
+          "overflow": "PASS",
+          "overlap": "PASS",
+          "clipping": "PASS",
+          "focusVisibility": "PASS",
+          "firstViewport": "PASS"
+        }
+      },
+      {
+        "captureId": "SYS012-VIS-04",
+        "journey": "MATERIAL_STATES_AND_URL",
+        "state": "authorized-empty",
+        "project": "chromium",
+        "viewport": "1280x720",
+        "zoom": "100%",
+        "theme": "light",
+        "accessibilityModes": [
+          "standard"
+        ],
+        "screenshot": {
+          "path": "playwright/results-12-final-p1-states-two-projects/hris-phase-one-Work-Explor-1d20d-d-command-recovery-explicit-chromium/work-explorer-authorized-empty.png",
+          "sha256": "72efc1f8df667acba6c3988cf6d28f3325a9f08537b229cc1ebc36eb2ec07905",
+          "bytes": 48851,
+          "pixelDimensions": "1280x720"
+        },
+        "review": {
+          "overflow": "PASS",
+          "overlap": "PASS",
+          "clipping": "PASS",
+          "focusVisibility": "NOT_APPLICABLE",
+          "firstViewport": "PASS"
+        }
+      },
+      {
+        "captureId": "SYS012-VIS-05",
+        "journey": "MATERIAL_STATES_AND_URL",
+        "state": "denied",
+        "project": "chromium",
+        "viewport": "1280x720",
+        "zoom": "100%",
+        "theme": "light",
+        "accessibilityModes": [
+          "standard"
+        ],
+        "screenshot": {
+          "path": "playwright/results-12-final-p1-states-two-projects/hris-phase-one-Work-Explor-1d20d-d-command-recovery-explicit-chromium/work-explorer-denied.png",
+          "sha256": "45dded0a3ef222473bfbe27807faeec5de9ae725761df8d50308438b817d14d8",
+          "bytes": 48099,
+          "pixelDimensions": "1280x720"
+        },
+        "review": {
+          "overflow": "PASS",
+          "overlap": "PASS",
+          "clipping": "PASS",
+          "focusVisibility": "NOT_APPLICABLE",
+          "firstViewport": "PASS"
+        }
+      },
+      {
+        "captureId": "SYS012-VIS-06",
+        "journey": "MATERIAL_STATES_AND_URL",
+        "state": "initial-retryable-error",
+        "project": "chromium",
+        "viewport": "1280x720",
+        "zoom": "100%",
+        "theme": "light",
+        "accessibilityModes": [
+          "standard"
+        ],
+        "screenshot": {
+          "path": "playwright/results-12-final-p1-states-two-projects/hris-phase-one-Work-Explor-1d20d-d-command-recovery-explicit-chromium/work-explorer-initial-retryable-error.png",
+          "sha256": "132d310c964be40c7e1ccff6f118438914211832f977a05999fb19c1db82ee1d",
+          "bytes": 48923,
+          "pixelDimensions": "1280x720"
+        },
+        "review": {
+          "overflow": "PASS",
+          "overlap": "PASS",
+          "clipping": "PASS",
+          "focusVisibility": "NOT_APPLICABLE",
+          "firstViewport": "PASS"
+        }
+      },
+      {
+        "captureId": "SYS012-VIS-07",
+        "journey": "MATERIAL_STATES_AND_URL",
+        "state": "loading",
+        "project": "chromium",
+        "viewport": "1280x720",
+        "zoom": "100%",
+        "theme": "light",
+        "accessibilityModes": [
+          "standard"
+        ],
+        "screenshot": {
+          "path": "playwright/results-12-final-p1-states-two-projects/hris-phase-one-Work-Explor-1d20d-d-command-recovery-explicit-chromium/work-explorer-loading.png",
+          "sha256": "eb2679edb0b718295f29820c09c0f474a26c6e5e7628f5177761b8ea4ca5c845",
+          "bytes": 39988,
+          "pixelDimensions": "1280x720"
+        },
+        "review": {
+          "overflow": "PASS",
+          "overlap": "PASS",
+          "clipping": "PASS",
+          "focusVisibility": "NOT_APPLICABLE",
+          "firstViewport": "PASS"
+        }
+      },
+      {
+        "captureId": "SYS012-VIS-08",
+        "journey": "MATERIAL_STATES_AND_URL",
+        "state": "long-english-keyboard-focus",
+        "project": "chromium",
+        "viewport": "1280x720",
+        "zoom": "100%",
+        "theme": "light",
+        "accessibilityModes": [
+          "keyboard-only",
+          "visible-focus",
+          "long-English-label"
+        ],
+        "screenshot": {
+          "path": "playwright/results-12-final-p1-states-two-projects/hris-phase-one-Work-Explor-1d20d-d-command-recovery-explicit-chromium/work-explorer-long-english-keyboard-focus.png",
+          "sha256": "d3e2eb311e5b791bf9281e39b5c2c2eac2da90f137d445fdede61fd5e2be442b",
+          "bytes": 81887,
+          "pixelDimensions": "1280x785"
+        },
+        "review": {
+          "overflow": "PASS",
+          "overlap": "PASS",
+          "clipping": "PASS",
+          "focusVisibility": "PASS",
+          "firstViewport": "PASS"
+        }
+      },
+      {
+        "captureId": "SYS012-VIS-09",
+        "journey": "MATERIAL_STATES_AND_URL",
+        "state": "partial-recovered",
+        "project": "chromium",
+        "viewport": "1280x720",
+        "zoom": "100%",
+        "theme": "light",
+        "accessibilityModes": [
+          "standard"
+        ],
+        "screenshot": {
+          "path": "playwright/results-12-final-p1-states-two-projects/hris-phase-one-Work-Explor-1d20d-d-command-recovery-explicit-chromium/work-explorer-partial-recovered.png",
+          "sha256": "e024dc1e5ab502e7c9b723b7b05421ba989f5e8d140d1e98a1ae11627079d89b",
+          "bytes": 123422,
+          "pixelDimensions": "1280x978"
+        },
+        "review": {
+          "overflow": "PASS",
+          "overlap": "PASS",
+          "clipping": "PASS",
+          "focusVisibility": "NOT_APPLICABLE",
+          "firstViewport": "PASS"
+        }
+      },
+      {
+        "captureId": "SYS012-VIS-10",
+        "journey": "MATERIAL_STATES_AND_URL",
+        "state": "preference-conflict",
+        "project": "chromium",
+        "viewport": "1280x720",
+        "zoom": "100%",
+        "theme": "light",
+        "accessibilityModes": [
+          "standard"
+        ],
+        "screenshot": {
+          "path": "playwright/results-12-final-p1-states-two-projects/hris-phase-one-Work-Explor-1d20d-d-command-recovery-explicit-chromium/work-explorer-preference-conflict.png",
+          "sha256": "ce346f4d85224f26611f7b5100f7ba5ba6c68e960302b1bdc5a96b8f08334013",
+          "bytes": 142249,
+          "pixelDimensions": "1280x1073"
+        },
+        "review": {
+          "overflow": "PASS",
+          "overlap": "PASS",
+          "clipping": "PASS",
+          "focusVisibility": "NOT_APPLICABLE",
+          "firstViewport": "PASS"
+        }
+      },
+      {
+        "captureId": "SYS012-VIS-11",
+        "journey": "MATERIAL_STATES_AND_URL",
+        "state": "result-unknown",
+        "project": "chromium",
+        "viewport": "1280x720",
+        "zoom": "100%",
+        "theme": "light",
+        "accessibilityModes": [
+          "standard"
+        ],
+        "screenshot": {
+          "path": "playwright/results-12-final-p1-states-two-projects/hris-phase-one-Work-Explor-1d20d-d-command-recovery-explicit-chromium/work-explorer-result-unknown.png",
+          "sha256": "ee94376daff3b4499647706fb44656aba83109e2a804578687bf8607a96151f3",
+          "bytes": 139673,
+          "pixelDimensions": "1280x1073"
+        },
+        "review": {
+          "overflow": "PASS",
+          "overlap": "PASS",
+          "clipping": "PASS",
+          "focusVisibility": "NOT_APPLICABLE",
+          "firstViewport": "PASS"
+        }
+      },
+      {
+        "captureId": "SYS012-VIS-12",
+        "journey": "MATERIAL_STATES_AND_URL",
+        "state": "search-empty",
+        "project": "chromium",
+        "viewport": "1280x720",
+        "zoom": "100%",
+        "theme": "light",
+        "accessibilityModes": [
+          "standard"
+        ],
+        "screenshot": {
+          "path": "playwright/results-12-final-p1-states-two-projects/hris-phase-one-Work-Explor-1d20d-d-command-recovery-explicit-chromium/work-explorer-search-empty.png",
+          "sha256": "cd84ee56b729d0b335ce0178fab1a68d35963753b8c442e219d2e2fe567e5db2",
+          "bytes": 80017,
+          "pixelDimensions": "1280x720"
+        },
+        "review": {
+          "overflow": "PASS",
+          "overlap": "PASS",
+          "clipping": "PASS",
+          "focusVisibility": "NOT_APPLICABLE",
+          "firstViewport": "PASS"
+        }
+      },
+      {
+        "captureId": "SYS012-VIS-13",
+        "journey": "MATERIAL_STATES_AND_URL",
+        "state": "stale-client-refresh-error",
+        "project": "chromium",
+        "viewport": "1280x720",
+        "zoom": "100%",
+        "theme": "light",
+        "accessibilityModes": [
+          "standard"
+        ],
+        "screenshot": {
+          "path": "playwright/results-12-final-p1-states-two-projects/hris-phase-one-Work-Explor-1d20d-d-command-recovery-explicit-chromium/work-explorer-stale-client-refresh-error.png",
+          "sha256": "183c324ff6ec9480474a035cdccf51dc005389c5656d539adaf78e5397cbe60d",
+          "bytes": 135718,
+          "pixelDimensions": "1280x1073"
+        },
+        "review": {
+          "overflow": "PASS",
+          "overlap": "PASS",
+          "clipping": "PASS",
+          "focusVisibility": "NOT_APPLICABLE",
+          "firstViewport": "PASS"
+        }
+      },
+      {
+        "captureId": "SYS012-VIS-14",
+        "journey": "MATERIAL_STATES_AND_URL",
+        "state": "url-state-restored",
+        "project": "chromium",
+        "viewport": "1280x720",
+        "zoom": "100%",
+        "theme": "light",
+        "accessibilityModes": [
+          "standard"
+        ],
+        "screenshot": {
+          "path": "playwright/results-12-final-p1-states-two-projects/hris-phase-one-Work-Explor-1d20d-d-command-recovery-explicit-chromium/work-explorer-url-state-restored.png",
+          "sha256": "d686719d28cf7c72ced9612cce5eab194cff47b87d482fcbbd9411807d6feae4",
+          "bytes": 80024,
+          "pixelDimensions": "1280x785"
+        },
+        "review": {
+          "overflow": "PASS",
+          "overlap": "PASS",
+          "clipping": "PASS",
+          "focusVisibility": "NOT_APPLICABLE",
+          "firstViewport": "PASS"
+        }
+      },
+      {
+        "captureId": "SYS012-VIS-15",
+        "journey": "MATERIAL_STATES_AND_URL",
+        "state": "320x640-longest-authorized-english-focus",
+        "project": "mobile",
+        "viewport": "320x640",
+        "zoom": "100%",
+        "theme": "light",
+        "accessibilityModes": [
+          "keyboard-only",
+          "visible-focus",
+          "long-English-label"
+        ],
+        "screenshot": {
+          "path": "playwright/results-12-final-p1-states-two-projects/hris-phase-one-Work-Explor-1d20d-d-command-recovery-explicit-mobile/work-explorer-320x640-longest-authorized-english-focus.png",
+          "sha256": "f65e53ce523a1b7b23d77e18f4ebbeddc7171f17ecb5ee3f43fa9fe14a6c26ab",
+          "bytes": 340256,
+          "pixelDimensions": "960x4119"
+        },
+        "review": {
+          "overflow": "PASS",
+          "overlap": "PASS",
+          "clipping": "PASS",
+          "focusVisibility": "PASS",
+          "firstViewport": "PASS"
+        }
+      },
+      {
+        "captureId": "SYS012-VIS-16",
+        "journey": "MATERIAL_STATES_AND_URL",
+        "state": "authorized-empty",
+        "project": "mobile",
+        "viewport": "390x664",
+        "zoom": "100%",
+        "theme": "light",
+        "accessibilityModes": [
+          "standard"
+        ],
+        "screenshot": {
+          "path": "playwright/results-12-final-p1-states-two-projects/hris-phase-one-Work-Explor-1d20d-d-command-recovery-explicit-mobile/work-explorer-authorized-empty.png",
+          "sha256": "37d485e7b6d6150aa2e5411fe8c0e5f67cc9cc038a71837ce56ff2cce7e383d5",
+          "bytes": 160751,
+          "pixelDimensions": "1170x1992"
+        },
+        "review": {
+          "overflow": "PASS",
+          "overlap": "PASS",
+          "clipping": "PASS",
+          "focusVisibility": "NOT_APPLICABLE",
+          "firstViewport": "PASS"
+        }
+      },
+      {
+        "captureId": "SYS012-VIS-17",
+        "journey": "MATERIAL_STATES_AND_URL",
+        "state": "denied",
+        "project": "mobile",
+        "viewport": "390x664",
+        "zoom": "100%",
+        "theme": "light",
+        "accessibilityModes": [
+          "standard"
+        ],
+        "screenshot": {
+          "path": "playwright/results-12-final-p1-states-two-projects/hris-phase-one-Work-Explor-1d20d-d-command-recovery-explicit-mobile/work-explorer-denied.png",
+          "sha256": "f362fec35be457c80951b50acd76fb2e13d7b66577fa7192677ba170bb47e4ad",
+          "bytes": 159617,
+          "pixelDimensions": "1170x1992"
+        },
+        "review": {
+          "overflow": "PASS",
+          "overlap": "PASS",
+          "clipping": "PASS",
+          "focusVisibility": "NOT_APPLICABLE",
+          "firstViewport": "PASS"
+        }
+      },
+      {
+        "captureId": "SYS012-VIS-18",
+        "journey": "MATERIAL_STATES_AND_URL",
+        "state": "initial-retryable-error",
+        "project": "mobile",
+        "viewport": "390x664",
+        "zoom": "100%",
+        "theme": "light",
+        "accessibilityModes": [
+          "standard"
+        ],
+        "screenshot": {
+          "path": "playwright/results-12-final-p1-states-two-projects/hris-phase-one-Work-Explor-1d20d-d-command-recovery-explicit-mobile/work-explorer-initial-retryable-error.png",
+          "sha256": "1fed67f1e646769e7ffa2eaf435c681be30fd0da30c9a30b7b572c180d3165e8",
+          "bytes": 161358,
+          "pixelDimensions": "1170x1992"
+        },
+        "review": {
+          "overflow": "PASS",
+          "overlap": "PASS",
+          "clipping": "PASS",
+          "focusVisibility": "NOT_APPLICABLE",
+          "firstViewport": "PASS"
+        }
+      },
+      {
+        "captureId": "SYS012-VIS-19",
+        "journey": "MATERIAL_STATES_AND_URL",
+        "state": "loading",
+        "project": "mobile",
+        "viewport": "390x664",
+        "zoom": "100%",
+        "theme": "light",
+        "accessibilityModes": [
+          "standard"
+        ],
+        "screenshot": {
+          "path": "playwright/results-12-final-p1-states-two-projects/hris-phase-one-Work-Explor-1d20d-d-command-recovery-explicit-mobile/work-explorer-loading.png",
+          "sha256": "fc1a84c95e5e000ac9499f9c6c5e6386f49ce17cd3f87045532e2d6bd5599439",
+          "bytes": 195841,
+          "pixelDimensions": "1170x4557"
+        },
+        "review": {
+          "overflow": "PASS",
+          "overlap": "PASS",
+          "clipping": "PASS",
+          "focusVisibility": "NOT_APPLICABLE",
+          "firstViewport": "PASS"
+        }
+      },
+      {
+        "captureId": "SYS012-VIS-20",
+        "journey": "MATERIAL_STATES_AND_URL",
+        "state": "long-english-keyboard-focus",
+        "project": "mobile",
+        "viewport": "390x664",
+        "zoom": "100%",
+        "theme": "light",
+        "accessibilityModes": [
+          "keyboard-only",
+          "visible-focus",
+          "long-English-label"
+        ],
+        "screenshot": {
+          "path": "playwright/results-12-final-p1-states-two-projects/hris-phase-one-Work-Explor-1d20d-d-command-recovery-explicit-mobile/work-explorer-long-english-keyboard-focus.png",
+          "sha256": "87c69859d41ad7b252700732f3a73b2f4382dabb5b3b3bd25492337f5e22cd40",
+          "bytes": 314295,
+          "pixelDimensions": "1170x3672"
+        },
+        "review": {
+          "overflow": "PASS",
+          "overlap": "PASS",
+          "clipping": "PASS",
+          "focusVisibility": "PASS",
+          "firstViewport": "PASS"
+        }
+      },
+      {
+        "captureId": "SYS012-VIS-21",
+        "journey": "MATERIAL_STATES_AND_URL",
+        "state": "partial-recovered",
+        "project": "mobile",
+        "viewport": "390x664",
+        "zoom": "100%",
+        "theme": "light",
+        "accessibilityModes": [
+          "standard"
+        ],
+        "screenshot": {
+          "path": "playwright/results-12-final-p1-states-two-projects/hris-phase-one-Work-Explor-1d20d-d-command-recovery-explicit-mobile/work-explorer-partial-recovered.png",
+          "sha256": "304a60c4817b213b60be684b90608d42f7dc47555120071dd56909272d252681",
+          "bytes": 571242,
+          "pixelDimensions": "1170x7044"
+        },
+        "review": {
+          "overflow": "PASS",
+          "overlap": "PASS",
+          "clipping": "PASS",
+          "focusVisibility": "NOT_APPLICABLE",
+          "firstViewport": "PASS"
+        }
+      },
+      {
+        "captureId": "SYS012-VIS-22",
+        "journey": "MATERIAL_STATES_AND_URL",
+        "state": "preference-conflict",
+        "project": "mobile",
+        "viewport": "390x664",
+        "zoom": "100%",
+        "theme": "light",
+        "accessibilityModes": [
+          "standard"
+        ],
+        "screenshot": {
+          "path": "playwright/results-12-final-p1-states-two-projects/hris-phase-one-Work-Explor-1d20d-d-command-recovery-explicit-mobile/work-explorer-preference-conflict.png",
+          "sha256": "c9caa9546aa1f55c6e17e217d4681c4e1e774df84e86ead225fd3841711b727e",
+          "bytes": 624997,
+          "pixelDimensions": "1170x7392"
+        },
+        "review": {
+          "overflow": "PASS",
+          "overlap": "PASS",
+          "clipping": "PASS",
+          "focusVisibility": "NOT_APPLICABLE",
+          "firstViewport": "PASS"
+        }
+      },
+      {
+        "captureId": "SYS012-VIS-23",
+        "journey": "MATERIAL_STATES_AND_URL",
+        "state": "result-unknown",
+        "project": "mobile",
+        "viewport": "390x664",
+        "zoom": "100%",
+        "theme": "light",
+        "accessibilityModes": [
+          "standard"
+        ],
+        "screenshot": {
+          "path": "playwright/results-12-final-p1-states-two-projects/hris-phase-one-Work-Explor-1d20d-d-command-recovery-explicit-mobile/work-explorer-result-unknown.png",
+          "sha256": "d02284bfce5134295c4aeb42baa5d0346e50bc142ad0c6ec2811668ab3ef095b",
+          "bytes": 611879,
+          "pixelDimensions": "1170x7455"
+        },
+        "review": {
+          "overflow": "PASS",
+          "overlap": "PASS",
+          "clipping": "PASS",
+          "focusVisibility": "NOT_APPLICABLE",
+          "firstViewport": "PASS"
+        }
+      },
+      {
+        "captureId": "SYS012-VIS-24",
+        "journey": "MATERIAL_STATES_AND_URL",
+        "state": "search-empty",
+        "project": "mobile",
+        "viewport": "390x664",
+        "zoom": "100%",
+        "theme": "light",
+        "accessibilityModes": [
+          "standard"
+        ],
+        "screenshot": {
+          "path": "playwright/results-12-final-p1-states-two-projects/hris-phase-one-Work-Explor-1d20d-d-command-recovery-explicit-mobile/work-explorer-search-empty.png",
+          "sha256": "b833ed8b15d4c4574992a859dadce0c5b4dda900eab0314ac8f185bcf39e05e9",
+          "bytes": 299597,
+          "pixelDimensions": "1170x3357"
+        },
+        "review": {
+          "overflow": "PASS",
+          "overlap": "PASS",
+          "clipping": "PASS",
+          "focusVisibility": "NOT_APPLICABLE",
+          "firstViewport": "PASS"
+        }
+      },
+      {
+        "captureId": "SYS012-VIS-25",
+        "journey": "MATERIAL_STATES_AND_URL",
+        "state": "stale-client-refresh-error",
+        "project": "mobile",
+        "viewport": "390x664",
+        "zoom": "100%",
+        "theme": "light",
+        "accessibilityModes": [
+          "standard"
+        ],
+        "screenshot": {
+          "path": "playwright/results-12-final-p1-states-two-projects/hris-phase-one-Work-Explor-1d20d-d-command-recovery-explicit-mobile/work-explorer-stale-client-refresh-error.png",
+          "sha256": "69d59028615c09a93152712fbb51a3cde97521d195985c39962a7881b778f685",
+          "bytes": 627145,
+          "pixelDimensions": "1170x7518"
+        },
+        "review": {
+          "overflow": "PASS",
+          "overlap": "PASS",
+          "clipping": "PASS",
+          "focusVisibility": "NOT_APPLICABLE",
+          "firstViewport": "PASS"
+        }
+      },
+      {
+        "captureId": "SYS012-VIS-26",
+        "journey": "MATERIAL_STATES_AND_URL",
+        "state": "url-state-restored",
+        "project": "mobile",
+        "viewport": "390x664",
+        "zoom": "100%",
+        "theme": "light",
+        "accessibilityModes": [
+          "standard"
+        ],
+        "screenshot": {
+          "path": "playwright/results-12-final-p1-states-two-projects/hris-phase-one-Work-Explor-1d20d-d-command-recovery-explicit-mobile/work-explorer-url-state-restored.png",
+          "sha256": "c9c5b6feac98f9ae2a684bde686c7bd44c6151d05fc41cde0b598bcb66c46b80",
+          "bytes": 311350,
+          "pixelDimensions": "1170x3672"
+        },
+        "review": {
+          "overflow": "PASS",
+          "overlap": "PASS",
+          "clipping": "PASS",
+          "focusVisibility": "NOT_APPLICABLE",
+          "firstViewport": "PASS"
+        }
+      },
+      {
+        "captureId": "SYS012-VIS-27",
+        "journey": "RESPONSIVE_THEME_ACCESSIBILITY_MATRIX",
+        "state": "1280x800-dark",
+        "project": "mobile",
+        "viewport": "1280x800",
+        "zoom": "100%",
+        "theme": "dark",
+        "accessibilityModes": [
+          "standard"
+        ],
+        "screenshot": {
+          "path": "playwright/results-13-final-p1-visual-two-projects/hris-phase-one-Work-Explor-ef9ce-st-motion-and-Korean-labels-mobile/work-explorer-1280x800-dark.png",
+          "sha256": "441536234fe2099bb422047b576a697e9e449886f854f368670ce184de69d64d",
+          "bytes": 557276,
+          "pixelDimensions": "3840x2994"
+        },
+        "review": {
+          "overflow": "PASS",
+          "overlap": "PASS",
+          "clipping": "PASS",
+          "focusVisibility": "NOT_APPLICABLE",
+          "firstViewport": "PASS"
+        }
+      },
+      {
+        "captureId": "SYS012-VIS-28",
+        "journey": "RESPONSIVE_THEME_ACCESSIBILITY_MATRIX",
+        "state": "1440x900-light",
+        "project": "mobile",
+        "viewport": "1440x900",
+        "zoom": "100%",
+        "theme": "light",
+        "accessibilityModes": [
+          "standard"
+        ],
+        "screenshot": {
+          "path": "playwright/results-13-final-p1-visual-two-projects/hris-phase-one-Work-Explor-ef9ce-st-motion-and-Korean-labels-mobile/work-explorer-1440x900-light.png",
+          "sha256": "70bfa097d1215a102a633091d26f270b6c08327b0fe7c1bb364b1faca0fe9b27",
+          "bytes": 591116,
+          "pixelDimensions": "4320x2994"
+        },
+        "review": {
+          "overflow": "PASS",
+          "overlap": "PASS",
+          "clipping": "PASS",
+          "focusVisibility": "NOT_APPLICABLE",
+          "firstViewport": "PASS"
+        }
+      },
+      {
+        "captureId": "SYS012-VIS-29",
+        "journey": "RESPONSIVE_THEME_ACCESSIBILITY_MATRIX",
+        "state": "320x640-longest-authorized-korean-label",
+        "project": "mobile",
+        "viewport": "320x640",
+        "zoom": "100%",
+        "theme": "light",
+        "accessibilityModes": [
+          "keyboard-only",
+          "visible-focus",
+          "long-Korean-label"
+        ],
+        "screenshot": {
+          "path": "playwright/results-13-final-p1-visual-two-projects/hris-phase-one-Work-Explor-ef9ce-st-motion-and-Korean-labels-mobile/work-explorer-320x640-longest-authorized-korean-label.png",
+          "sha256": "dd6f4df38d1ea8382ce007cca89d7e0d739d1d75aaface680b230d62b9d708b4",
+          "bytes": 291484,
+          "pixelDimensions": "960x3735"
+        },
+        "review": {
+          "overflow": "PASS",
+          "overlap": "PASS",
+          "clipping": "PASS",
+          "focusVisibility": "PASS",
+          "firstViewport": "PASS"
+        }
+      },
+      {
+        "captureId": "SYS012-VIS-30",
+        "journey": "RESPONSIVE_THEME_ACCESSIBILITY_MATRIX",
+        "state": "320x640-reduced-motion",
+        "project": "mobile",
+        "viewport": "320x640",
+        "zoom": "100%",
+        "theme": "light",
+        "accessibilityModes": [
+          "reduced-motion"
+        ],
+        "screenshot": {
+          "path": "playwright/results-13-final-p1-visual-two-projects/hris-phase-one-Work-Explor-ef9ce-st-motion-and-Korean-labels-mobile/work-explorer-320x640-reduced-motion.png",
+          "sha256": "b515c8e87239065a5858add8ea43c3160286ee10e8e86033d1fddde13f447d00",
+          "bytes": 450562,
+          "pixelDimensions": "960x6795"
+        },
+        "review": {
+          "overflow": "PASS",
+          "overlap": "PASS",
+          "clipping": "PASS",
+          "focusVisibility": "NOT_APPLICABLE",
+          "firstViewport": "PASS"
+        }
+      },
+      {
+        "captureId": "SYS012-VIS-31",
+        "journey": "RESPONSIVE_THEME_ACCESSIBILITY_MATRIX",
+        "state": "390x844-forced-colors",
+        "project": "mobile",
+        "viewport": "390x844",
+        "zoom": "100%",
+        "theme": "light",
+        "accessibilityModes": [
+          "high-contrast"
+        ],
+        "screenshot": {
+          "path": "playwright/results-13-final-p1-visual-two-projects/hris-phase-one-Work-Explor-ef9ce-st-motion-and-Korean-labels-mobile/work-explorer-390x844-forced-colors.png",
+          "sha256": "40ef181432839a213f14e7e1997195dd92bb801532d7ded507e54345cf970623",
+          "bytes": 489872,
+          "pixelDimensions": "1170x6660"
+        },
+        "review": {
+          "overflow": "PASS",
+          "overlap": "PASS",
+          "clipping": "PASS",
+          "focusVisibility": "NOT_APPLICABLE",
+          "firstViewport": "PASS"
+        }
+      },
+      {
+        "captureId": "SYS012-VIS-32",
+        "journey": "RESPONSIVE_THEME_ACCESSIBILITY_MATRIX",
+        "state": "1280x800-dark",
+        "project": "chromium",
+        "viewport": "1280x800",
+        "zoom": "100%",
+        "theme": "dark",
+        "accessibilityModes": [
+          "standard"
+        ],
+        "screenshot": {
+          "path": "playwright/results-15-final-p1-visual-chromium-rerun2/hris-phase-one-Work-Explor-ef9ce-st-motion-and-Korean-labels-chromium/work-explorer-1280x800-dark.png",
+          "sha256": "4c50be90a79c00387373032865d0563dbf922cfea21fe9a30ca0e76ae4b04b35",
+          "bytes": 106563,
+          "pixelDimensions": "1280x978"
+        },
+        "review": {
+          "overflow": "PASS",
+          "overlap": "PASS",
+          "clipping": "PASS",
+          "focusVisibility": "NOT_APPLICABLE",
+          "firstViewport": "PASS"
+        }
+      },
+      {
+        "captureId": "SYS012-VIS-33",
+        "journey": "RESPONSIVE_THEME_ACCESSIBILITY_MATRIX",
+        "state": "1440x900-light",
+        "project": "chromium",
+        "viewport": "1440x900",
+        "zoom": "100%",
+        "theme": "light",
+        "accessibilityModes": [
+          "standard"
+        ],
+        "screenshot": {
+          "path": "playwright/results-15-final-p1-visual-chromium-rerun2/hris-phase-one-Work-Explor-ef9ce-st-motion-and-Korean-labels-chromium/work-explorer-1440x900-light.png",
+          "sha256": "a8799dcc50100c2b655925184cbbd9d3041076ef8ccd5f0b56e0e11fb9e63bdf",
+          "bytes": 102010,
+          "pixelDimensions": "1440x978"
+        },
+        "review": {
+          "overflow": "PASS",
+          "overlap": "PASS",
+          "clipping": "PASS",
+          "focusVisibility": "NOT_APPLICABLE",
+          "firstViewport": "PASS"
+        }
+      },
+      {
+        "captureId": "SYS012-VIS-34",
+        "journey": "RESPONSIVE_THEME_ACCESSIBILITY_MATRIX",
+        "state": "320x640-longest-authorized-korean-label",
+        "project": "chromium",
+        "viewport": "320x640",
+        "zoom": "100%",
+        "theme": "light",
+        "accessibilityModes": [
+          "keyboard-only",
+          "visible-focus",
+          "long-Korean-label"
+        ],
+        "screenshot": {
+          "path": "playwright/results-15-final-p1-visual-chromium-rerun2/hris-phase-one-Work-Explor-ef9ce-st-motion-and-Korean-labels-chromium/work-explorer-320x640-longest-authorized-korean-label.png",
+          "sha256": "1371166c6cbc72d25b2bf0aeede2fc481599adce922eb89be07703df4465aa8c",
+          "bytes": 68123,
+          "pixelDimensions": "320x1251"
+        },
+        "review": {
+          "overflow": "PASS",
+          "overlap": "PASS",
+          "clipping": "PASS",
+          "focusVisibility": "PASS",
+          "firstViewport": "PASS"
+        }
+      },
+      {
+        "captureId": "SYS012-VIS-35",
+        "journey": "RESPONSIVE_THEME_ACCESSIBILITY_MATRIX",
+        "state": "320x640-reduced-motion",
+        "project": "chromium",
+        "viewport": "320x640",
+        "zoom": "100%",
+        "theme": "light",
+        "accessibilityModes": [
+          "reduced-motion"
+        ],
+        "screenshot": {
+          "path": "playwright/results-15-final-p1-visual-chromium-rerun2/hris-phase-one-Work-Explor-ef9ce-st-motion-and-Korean-labels-chromium/work-explorer-320x640-reduced-motion.png",
+          "sha256": "5b5a5de24cbe356669c962fb279d3516fb36c310234e3165a5866b05c3805c27",
+          "bytes": 100110,
+          "pixelDimensions": "320x2273"
+        },
+        "review": {
+          "overflow": "PASS",
+          "overlap": "PASS",
+          "clipping": "PASS",
+          "focusVisibility": "NOT_APPLICABLE",
+          "firstViewport": "PASS"
+        }
+      },
+      {
+        "captureId": "SYS012-VIS-36",
+        "journey": "RESPONSIVE_THEME_ACCESSIBILITY_MATRIX",
+        "state": "390x844-forced-colors",
+        "project": "chromium",
+        "viewport": "390x844",
+        "zoom": "100%",
+        "theme": "light",
+        "accessibilityModes": [
+          "high-contrast"
+        ],
+        "screenshot": {
+          "path": "playwright/results-15-final-p1-visual-chromium-rerun2/hris-phase-one-Work-Explor-ef9ce-st-motion-and-Korean-labels-chromium/work-explorer-390x844-forced-colors.png",
+          "sha256": "79038c193b8a011ce2f886d1cefcbb6d40827e5317598be04a644c34b2880479",
+          "bytes": 92132,
+          "pixelDimensions": "390x2228"
+        },
+        "review": {
+          "overflow": "PASS",
+          "overlap": "PASS",
+          "clipping": "PASS",
+          "focusVisibility": "NOT_APPLICABLE",
+          "firstViewport": "PASS"
+        }
+      },
+      {
+        "captureId": "SYS012-VIS-37",
+        "journey": "HOME_SECONDARY_ACTION_RECENT_AND_RECEIPT",
+        "state": "fresh-home-success",
+        "project": "chromium",
+        "viewport": "1280x720",
+        "zoom": "100%",
+        "theme": "light",
+        "accessibilityModes": [
+          "standard"
+        ],
+        "screenshot": {
+          "path": "playwright/results-16-dual-receipt-home-two-projects/hris-phase-one-Work-Explor-3cdcf-nciles-a-recent-destination-chromium/work-explorer-fresh-home-success.png",
+          "sha256": "c3c9d9498ac6889d3043410cc2854d98c797a79b88d0fb89392d6f920ea126e4",
+          "bytes": 104092,
+          "pixelDimensions": "320x2159"
+        },
+        "review": {
+          "overflow": "PASS",
+          "overlap": "PASS",
+          "clipping": "PASS",
+          "focusVisibility": "NOT_APPLICABLE",
+          "firstViewport": "PASS"
+        }
+      },
+      {
+        "captureId": "SYS012-VIS-38",
+        "journey": "HOME_SECONDARY_ACTION_RECENT_AND_RECEIPT",
+        "state": "home-320x640-three-actions",
+        "project": "chromium",
+        "viewport": "320x640",
+        "zoom": "100%",
+        "theme": "light",
+        "accessibilityModes": [
+          "standard"
+        ],
+        "screenshot": {
+          "path": "playwright/results-16-dual-receipt-home-two-projects/hris-phase-one-Work-Explor-3cdcf-nciles-a-recent-destination-chromium/work-explorer-home-320x640-three-actions.png",
+          "sha256": "02e8c6d70f4e8fc70fe58d125cc6d78712ab584231e1c64d14ade0fed9e0c922",
+          "bytes": 139993,
+          "pixelDimensions": "320x2042"
+        },
+        "review": {
+          "overflow": "PASS",
+          "overlap": "PASS",
+          "clipping": "PASS",
+          "focusVisibility": "NOT_APPLICABLE",
+          "firstViewport": "PASS"
+        }
+      },
+      {
+        "captureId": "SYS012-VIS-39",
+        "journey": "HOME_SECONDARY_ACTION_RECENT_AND_RECEIPT",
+        "state": "home-recent-result-unknown",
+        "project": "chromium",
+        "viewport": "1280x720",
+        "zoom": "100%",
+        "theme": "light",
+        "accessibilityModes": [
+          "standard"
+        ],
+        "screenshot": {
+          "path": "playwright/results-16-dual-receipt-home-two-projects/hris-phase-one-Work-Explor-3cdcf-nciles-a-recent-destination-chromium/work-explorer-home-recent-result-unknown.png",
+          "sha256": "ba981c3ee0e07c1cd6e58c3adeed605b278deacdfa7a52737148195b7ac5fa4e",
+          "bytes": 117329,
+          "pixelDimensions": "320x2395"
+        },
+        "review": {
+          "overflow": "PASS",
+          "overlap": "PASS",
+          "clipping": "PASS",
+          "focusVisibility": "NOT_APPLICABLE",
+          "firstViewport": "PASS"
+        }
+      },
+      {
+        "captureId": "SYS012-VIS-40",
+        "journey": "HOME_SECONDARY_ACTION_RECENT_AND_RECEIPT",
+        "state": "reloaded-command-receipt-result-unknown",
+        "project": "chromium",
+        "viewport": "1280x720",
+        "zoom": "100%",
+        "theme": "light",
+        "accessibilityModes": [
+          "standard"
+        ],
+        "screenshot": {
+          "path": "playwright/results-16-dual-receipt-home-two-projects/hris-phase-one-Work-Explor-3cdcf-nciles-a-recent-destination-chromium/work-explorer-reloaded-command-receipt-result-unknown.png",
+          "sha256": "c2ed74d8dda808243d5201bc7a97653906e6994c4f58915a3e1159f484e1c2f8",
+          "bytes": 116778,
+          "pixelDimensions": "320x2395"
+        },
+        "review": {
+          "overflow": "PASS",
+          "overlap": "PASS",
+          "clipping": "PASS",
+          "focusVisibility": "NOT_APPLICABLE",
+          "firstViewport": "PASS"
+        }
+      },
+      {
+        "captureId": "SYS012-VIS-41",
+        "journey": "HOME_SECONDARY_ACTION_RECENT_AND_RECEIPT",
+        "state": "fresh-home-success",
+        "project": "mobile",
+        "viewport": "390x664",
+        "zoom": "100%",
+        "theme": "light",
+        "accessibilityModes": [
+          "standard"
+        ],
+        "screenshot": {
+          "path": "playwright/results-16-dual-receipt-home-two-projects/hris-phase-one-Work-Explor-3cdcf-nciles-a-recent-destination-mobile/work-explorer-fresh-home-success.png",
+          "sha256": "87a80b981ce0ae53fe971ace16c8c4b8acacdc34592de4f7863a70df37e7cd42",
+          "bytes": 481373,
+          "pixelDimensions": "960x6459"
+        },
+        "review": {
+          "overflow": "PASS",
+          "overlap": "PASS",
+          "clipping": "PASS",
+          "focusVisibility": "NOT_APPLICABLE",
+          "firstViewport": "PASS"
+        }
+      },
+      {
+        "captureId": "SYS012-VIS-42",
+        "journey": "HOME_SECONDARY_ACTION_RECENT_AND_RECEIPT",
+        "state": "home-320x640-three-actions",
+        "project": "mobile",
+        "viewport": "320x640",
+        "zoom": "100%",
+        "theme": "light",
+        "accessibilityModes": [
+          "standard"
+        ],
+        "screenshot": {
+          "path": "playwright/results-16-dual-receipt-home-two-projects/hris-phase-one-Work-Explor-3cdcf-nciles-a-recent-destination-mobile/work-explorer-home-320x640-three-actions.png",
+          "sha256": "871b900295a4258297628613659fc49645958c19b1ce42067904751cf7b6231d",
+          "bytes": 547382,
+          "pixelDimensions": "960x6063"
+        },
+        "review": {
+          "overflow": "PASS",
+          "overlap": "PASS",
+          "clipping": "PASS",
+          "focusVisibility": "NOT_APPLICABLE",
+          "firstViewport": "PASS"
+        }
+      },
+      {
+        "captureId": "SYS012-VIS-43",
+        "journey": "HOME_SECONDARY_ACTION_RECENT_AND_RECEIPT",
+        "state": "home-recent-result-unknown",
+        "project": "mobile",
+        "viewport": "390x664",
+        "zoom": "100%",
+        "theme": "light",
+        "accessibilityModes": [
+          "standard"
+        ],
+        "screenshot": {
+          "path": "playwright/results-16-dual-receipt-home-two-projects/hris-phase-one-Work-Explor-3cdcf-nciles-a-recent-destination-mobile/work-explorer-home-recent-result-unknown.png",
+          "sha256": "6b0506db12dedbe96703767bb82365172a08836c4edfcce584a102ae7bfd1c31",
+          "bytes": 533176,
+          "pixelDimensions": "960x7158"
+        },
+        "review": {
+          "overflow": "PASS",
+          "overlap": "PASS",
+          "clipping": "PASS",
+          "focusVisibility": "NOT_APPLICABLE",
+          "firstViewport": "PASS"
+        }
+      },
+      {
+        "captureId": "SYS012-VIS-44",
+        "journey": "HOME_SECONDARY_ACTION_RECENT_AND_RECEIPT",
+        "state": "reloaded-command-receipt-result-unknown",
+        "project": "mobile",
+        "viewport": "390x664",
+        "zoom": "100%",
+        "theme": "light",
+        "accessibilityModes": [
+          "standard"
+        ],
+        "screenshot": {
+          "path": "playwright/results-16-dual-receipt-home-two-projects/hris-phase-one-Work-Explor-3cdcf-nciles-a-recent-destination-mobile/work-explorer-reloaded-command-receipt-result-unknown.png",
+          "sha256": "72d51a01872364f24172684a98a8bac8b33a06fbe8d1a69aefb98d87bb013f8a",
+          "bytes": 532420,
+          "pixelDimensions": "960x7158"
+        },
+        "review": {
+          "overflow": "PASS",
+          "overlap": "PASS",
+          "clipping": "PASS",
+          "focusVisibility": "NOT_APPLICABLE",
+          "firstViewport": "PASS"
+        }
+      }
+    ]
+  },
+  "independentFinalAudit": {
+    "status": "READY_NO_P0_P1",
+    "reviewerIdentity": "/root/final_crossrepo_audit",
+    "reviewerThreadId": "01a13cae-45c3-7a83-8e0e-dd44b74dfa42",
+    "executionBinding": "PRE_COMMIT_EXACT_STAGED_TREE_PLUS_POST_COMMIT_TREE_IDENTITY",
+    "reviewedBackendResultCommit": "6e1ea3cd14224988936fee8af908b706b7aedbc9",
+    "reviewedBackendTree": "b2e1a43aad573d63238dbed1a800b6425aa9e3d0",
+    "reviewedFrontendResultCommit": "640d1aca79514bd365c366ab9393df6b9d614155",
+    "reviewedFrontendTree": "d0f9ff47564994ee7384fbf5a072e9148b5ca5a9",
+    "remainingP0": 0,
+    "remainingP1": 0,
+    "remainingP2": 1,
+    "remainingFindings": [
+      {
+        "priority": "P2",
+        "finding": "The 320px evidence uses materially long labels but does not independently prove they are the literal longest locale strings.",
+        "blocking": false
+      }
+    ],
+    "safeForCentralAcceptanceReview": true
+  },
+  "completionBoundary": {
+    "state": "MODULE_RUNTIME_AND_USER_JOURNEY_COMPLETE_CONTROL_INTEGRATION_PENDING_DEFAULT_OFF",
+    "moduleBranchesCommittedAndPushed": true,
+    "mergedToDwpDev": false,
+    "routeOrMenuActivated": false,
+    "featureEnabled": false,
+    "authorizationState": "DRAFT",
+    "runtimeDefault": "OFF",
+    "bundleApproved": false,
+    "tenantActivated": false,
+    "customerDataUsed": false,
+    "productionReleased": false,
+    "nonclaim": "The module result is implementation evidence only; Work Explorer remains DRAFT/default OFF and central review and controlled dwp-dev integration are pending."
+  },
+  "authority": {
+    "moduleResultRecorded": true,
+    "centralResultAdmissionAuthorized": false,
+    "integrationMergeAuthorized": false,
+    "routeOrMenuActivationAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "bundleApprovalAuthorized": false,
+    "tenantActivationAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "CENTRAL_RESULT_ACCEPTANCE_AND_CONTROLLED_DWP_DEV_INTEGRATION_REVIEW"
+}
