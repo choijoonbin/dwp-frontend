@@ -1,0 +1,236 @@
+{
+  "schema": "dwp.hris.wave5-module-result-evidence.v1",
+  "evidenceId": "HRIS-WAVE5-BASE-TFR-PAY-011-MODULE-RESULT-R1",
+  "sliceId": "BASE-TFR-PAY-011",
+  "moduleSession": "HRIS-PAY",
+  "status": "PASS_MODULE_RESULT_RECORDED_CONTROL_INTEGRATION_PENDING_DEFAULT_OFF",
+  "issuedAt": "2026-10-15T02:54:23+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "predecessorAuthority": {
+    "startToken": {
+      "path": "docs/06-delivery/hris/wave5-2026-10-14/base-tfr-pay-011-r1/start-token-issued.v1.json",
+      "tokenId": "HRIS-WAVE5-START-BASE-TFR-PAY-011-R1",
+      "sha256": "67331c5b98056fdcd081ca25af1a36acc47ff4bd5bc90c586ff0c559ab7636c1",
+      "bytes": 6069
+    },
+    "issuedManifest": {
+      "path": "docs/06-delivery/hris/wave5-2026-10-14/base-tfr-pay-011-r1/issued-manifest.v1.json",
+      "manifestId": "HRIS-WAVE5-BASE-TFR-PAY-011-START-AUTHORITY-ISSUED-R1",
+      "sha256": "1d493a002c29f809c4d78c68f2331df353731471352cd575e604fd6bd7470a30",
+      "bytes": 2756
+    },
+    "migrationLeaseActivation": {
+      "path": "docs/06-delivery/hris/wave5-2026-10-14/base-tfr-pay-011-r1/migration-lease-activation.v1.json",
+      "activationId": "HRIS-WAVE5-ACTIVATE-BASE-TFR-PAY-011-PAYROLL-V50-R1",
+      "sha256": "eb8ce23c5722a8b65564dfeb3b2b5d5ff23a62639227aa17e54a70467dfc03a2",
+      "bytes": 1841
+    },
+    "commonBridgeResult": {
+      "path": "docs/06-delivery/hris/wave5-2026-10-14/base-tfr-pay-011-r1/common-bridge-result.v1.json",
+      "resultId": "HRIS-WAVE5-PAY-011-COMMON-BRIDGE-RESULT-R1",
+      "sha256": "787a25bbe52218d8daf4a070f38ee5d13c7e94cb18361406f03edfbc9ff225fd",
+      "bytes": 4717
+    },
+    "mergeToDwpDevAuthorized": false,
+    "featureEnablementAuthorized": false
+  },
+  "centralEvidenceBase": {
+    "backendAtRecording": {
+      "branch": "dwp-dev",
+      "commit": "3e0c8d6e1bc0fbb0563a05023e619714dae54326",
+      "tree": "f9dd961039fee6e88b3f1ab48f049f7b847888ce"
+    },
+    "frontendAtRecording": {
+      "branch": "dwp-dev",
+      "commit": "0cd1d700592e06ba2036f3497e6571ad065542aa",
+      "tree": "842cf6d7576451140f7329701e805c0934403ae2"
+    }
+  },
+  "moduleResult": {
+    "backend": {
+      "branch": "codex/hris-wave5-pay-011-backend-20261014",
+      "upstream": "origin/codex/hris-wave5-pay-011-backend-20261014",
+      "baseCommit": "357bd2b9e1c8a4d233c285d96911b5077cb444cf",
+      "baseTree": "c1a8192b603b1c4037bea8e22a1a8a176f116b43",
+      "resultLineage": [
+        "e4e692c4fdd1b0b60110cad806f352ab1b5aef92"
+      ],
+      "resultCommit": "e4e692c4fdd1b0b60110cad806f352ab1b5aef92",
+      "resultTree": "1f3390fd1ee50e5be53f443ed4ceaeed05f0d90a",
+      "clean": true,
+      "upstreamAhead": 0,
+      "upstreamBehind": 0,
+      "remoteExact": true,
+      "changedFileCount": 38,
+      "changedFileManifestSha256": "1e183c27720f880558efdf2dc0ade22fa583120fbd83d706873045cd1aa4b48f",
+      "changedNameStatusManifestSha256": "91ad8ce845b7df92d5414c173a5f19603506e5a228671457bca6988835782bda",
+      "contentManifestSha256": "55dee803691b7012d61192e9360a80004dd2d376efcae5da2d79644989c69a74",
+      "touchPolicyCompliant": true
+    },
+    "frontend": {
+      "branch": "codex/hris-wave5-pay-011-frontend-20261014",
+      "upstream": "origin/codex/hris-wave5-pay-011-frontend-20261014",
+      "baseCommit": "8df52380c32dea3ee45d4e3ae3f976269475cedf",
+      "baseTree": "4549f6f29735c0143b131bd5d53ceb382a13b0d9",
+      "resultLineage": [
+        "10f54c23a11f4177c9fe2c3cc04781b0d64923cd",
+        "89139607e16cf72faa0d7116a8d3dd4a89bd9263",
+        "8eeebfab9d2274364dd61628fbddb88a548ad27f"
+      ],
+      "resultCommit": "8eeebfab9d2274364dd61628fbddb88a548ad27f",
+      "resultTree": "339ad62f7c2f3e47f0c6be0c51a93743476b7973",
+      "clean": true,
+      "upstreamAhead": 0,
+      "upstreamBehind": 0,
+      "remoteExact": true,
+      "changedFileCount": 13,
+      "changedFileManifestSha256": "a5d3df6fa3e52236fc9aaebee6fa49ec892b7a2b9a39c90498514b9d771dfae8",
+      "contentManifestSha256": "c301444c33086c41e9122c696c1067d04e37ffdf36488bf8f2f6afe9bc8e7a53",
+      "touchPolicyCompliant": true
+    },
+    "migration": {
+      "stream": "PAYROLL_MAIN",
+      "version": "V50",
+      "path": "dwp-payroll-server/src/main/resources/db/migration/V50__pay_base_tfr_pay_011_calculation.sql",
+      "gitBlobSha1": "5a9c978f6f332f913ccc8d0bde477dc25831a130",
+      "sha256": "809bb5e9d14611ff3e083d048b2b4ef28057096a6219edccc1377f5dd43d87b5",
+      "bytes": 95699,
+      "cleanAndV49ToV50UpgradePassed": true,
+      "protectedV49Modified": false,
+      "existingMigrationManifestSha256": "1580533b6f518989a5f3deeaf9e0b6cce7e94d4e52efd80e592f79bde179e2f8"
+    }
+  },
+  "controlCompatibility": {
+    "authorizationV41CorePinsUnchanged": true,
+    "currentAuthorizationProjectionVersion": 42,
+    "fivePayrollOperationRoutesPreserved": true,
+    "fivePathGatewaySubtreeSha256": "253793278773ee47541c944c25d1a658d0bcad54997c7108387263bcc4bbc171",
+    "currentDwpDevV50Collision": false,
+    "protectedPay016AndXconContractsUnchanged": true
+  },
+  "verificationResults": [
+    {
+      "commandId": "PAY_011_BACKEND_CHANGED_CLUSTER",
+      "status": "PASS_AFTER_TARGETED_REPAIR",
+      "testedCommit": "e4e692c4fdd1b0b60110cad806f352ab1b5aef92",
+      "initialTestCount": 51,
+      "initialFailureCount": 2,
+      "failedMethodsRepairedAndRerun": 2,
+      "failedMethodRerunFailures": 0,
+      "fullGateRepeated": false
+    },
+    {
+      "commandId": "PAY_011_BACKEND_SLICE",
+      "status": "PASS",
+      "testCount": 10,
+      "failures": 0
+    },
+    {
+      "commandId": "PAY_011_REAL_POSTGRESQL_V50_CLEAN_AND_UPGRADE",
+      "status": "PASS",
+      "testCount": 15,
+      "failures": 0
+    },
+    {
+      "commandId": "PAY_011_WORKER_RECOVERY",
+      "status": "PASS",
+      "testCount": 8,
+      "failures": 0
+    },
+    {
+      "commandId": "PAYROLL_MODULE_BATCH",
+      "status": "PASS_AFTER_TARGETED_WIRING_REPAIR",
+      "initialTestCount": 165,
+      "initialFailureCount": 1,
+      "failedMethodRerunFailures": 0,
+      "fullGateRepeated": false
+    },
+    {
+      "commandId": "PAY_011_FRONTEND_MODULE_AND_CHANGED_CLUSTER",
+      "status": "PASS_AFTER_TARGETED_P1_REPAIR",
+      "testedCommit": "8eeebfab9d2274364dd61628fbddb88a548ad27f",
+      "preRepairFocusedTestCount": 30,
+      "preRepairSliceTestCount": 6,
+      "preRepairModuleTestFileCount": 17,
+      "preRepairModuleTestCount": 169,
+      "postRepairNewRegressionTestsPassed": 5,
+      "postRepairAffectedRegressionTestsPassed": 2,
+      "postRepairFailures": 0,
+      "eslint": "PASS",
+      "prettier": "PASS",
+      "fullSliceOrModuleGateRepeated": false
+    },
+    {
+      "commandId": "PAY_011_BROWSER_ACCESSIBILITY_MATRIX",
+      "status": "PASS",
+      "evidenceSha256": "13fc60f7d4a6453e1ff94b8095f4e5566dc52ec2db817130fe0f136f6296371e",
+      "viewportAndZoomCaseCount": 5,
+      "horizontalOverflowFailures": 0,
+      "keyboardFocus": "PASS",
+      "keyboardDialog": "PASS",
+      "forcedColors": "PASS",
+      "reducedMotion": "PASS",
+      "zoom200Percent": "PASS"
+    },
+    {
+      "commandId": "PAY_011_SCOPE_AND_GIT_INTEGRITY",
+      "status": "PASS",
+      "diffCheck": "PASS",
+      "controlOrProtectedPathChanges": 0,
+      "routeMenuOrShellActivationChanges": 0,
+      "centralCurrentPathOverlap": {
+        "backend": 0,
+        "frontend": 0
+      },
+      "predictedMergeConflict": false
+    }
+  ],
+  "baselineDiagnostics": {
+    "fullFrontendTypecheck": "NOT_A_MODULE_GATE",
+    "packetTargetTsconfigPresent": false,
+    "preExistingUnrelatedErrorCount": 1,
+    "errorsInPay011ChangedPaths": 0
+  },
+  "acceptanceCriteria": [
+    {"id": "PAY011-AC-01", "status": "PASS"},
+    {"id": "PAY011-AC-02", "status": "PASS"},
+    {"id": "PAY011-AC-03", "status": "PASS_AFTER_FRONTEND_P1_CORRECTION"},
+    {"id": "PAY011-AC-04", "status": "PASS"},
+    {"id": "PAY011-AC-05", "status": "PASS"},
+    {"id": "PAY011-AC-06", "status": "PASS"},
+    {"id": "PAY011-AC-07", "status": "PASS_AFTER_FRONTEND_P1_CORRECTION"},
+    {"id": "PAY011-AC-08", "status": "PASS_AFTER_FRONTEND_P1_CORRECTION"},
+    {"id": "PAY011-AC-09", "status": "PASS"},
+    {"id": "PAY011-AC-10", "status": "PASS"},
+    {"id": "PAY011-AC-11", "status": "PASS"},
+    {"id": "PAY011-AC-12", "status": "PASS"}
+  ],
+  "independentFinalAudit": {
+    "backend": "READY_NO_P0_P1",
+    "frontend": "READY_AFTER_TARGETED_CORRECTION_NO_P0_P1",
+    "controlChain": "READY_FOR_RESULT_RECORDING_AND_DEFAULT_OFF_INTEGRATION",
+    "remainingP0": 0,
+    "remainingP1": 0,
+    "safeForCentralAcceptanceReview": true
+  },
+  "activationBlockersPreserved": [
+    "REAL_FIELD_PROJECTION_PAY_GROUP_NAMED_POPULATION_AND_SEMANTIC_MAPPING_ADAPTERS",
+    "INITIAL_PAYROLL_RUN_PRODUCER_AND_RECEIPT_ORIGIN_POPULATION_TUPLES",
+    "BEARER_VERSUS_COOKIE_TRANSPORT_AND_SUBJECT_VERSUS_ACTOR_IDENTITY_DECISIONS",
+    "MONOTONIC_REVISION_AND_HEADER_CONTRACT_RECONCILIATION",
+    "BARE_DTO_VERSUS_API_RESPONSE_ENVELOPE_DECISION",
+    "RUN_LIST_AND_ATTEMPT_DETAIL_APIS"
+  ],
+  "authority": {
+    "moduleResultRecorded": true,
+    "resultAdmissionAuthorized": false,
+    "integrationMergeAuthorized": false,
+    "routeOrMenuActivationAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "policyActivationAuthorized": false,
+    "customerDataAuthorized": false,
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "CENTRAL_RESULT_ACCEPTANCE_AND_CONTROLLED_DEFAULT_OFF_INTEGRATION_REVIEW"
+}
