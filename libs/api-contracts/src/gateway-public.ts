@@ -15086,6 +15086,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/platform/v1/admin/hris/command-receipts/{receiptId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_getHrisCommandReceipt"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/platform/v1/admin/hris/configurations": {
         parameters: {
             query?: never;
@@ -21562,6 +21578,54 @@ export interface paths {
         get: operations["platform_hrisConfigurationProjection"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/hris/explorer": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["platform_getHrisWorkExplorer"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/hris/explorer/preferences": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["platform_replaceHrisExplorerPreferences"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/platform/v1/hris/explorer/recents": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["platform_recordHrisExplorerRecent"];
         delete?: never;
         options?: never;
         head?: never;
@@ -60581,6 +60645,12 @@ export interface components {
             /** Format: int64 */
             version: number;
         };
+        platform_CapabilityExpressionAuthorization: {
+            capabilityKeys: string[];
+            /** @enum {string} */
+            capabilityMode: "ANY" | "ALL";
+            routeContractKey: string;
+        };
         platform_CapacityBucket: {
             /** Format: int32 */
             availableQuantity?: number;
@@ -61977,6 +62047,7 @@ export interface components {
             /** Format: int32 */
             roomCapacity?: number;
         };
+        platform_Cursor: string;
         platform_CustodyCandidate: {
             displayName?: string;
             eligibilityStatus?: string;
@@ -62489,6 +62560,7 @@ export interface components {
             /** Format: int64 */
             reordered?: number;
         };
+        platform_Digest: string;
         platform_DispatchSummary: {
             /** Format: int32 */
             attemptCount?: number;
@@ -62558,6 +62630,12 @@ export interface components {
             toName?: string;
             /** Format: int64 */
             version: number;
+        };
+        platform_DwpControlTarget: {
+            /** @constant */
+            kind: "DWP_CONTROL";
+            /** @enum {string} */
+            path: "/admin/experience/branding?product=HCM" | "/admin/identity/app-governance?product=HCM" | "/admin/platform/catalog?product=HCM" | "/admin/integrations/productivity?product=HCM" | "/admin/governance/audit-overview?product=HCM" | "/admin/platform/registry?namespace=hris-extension";
         };
         platform_EffectiveCatalogResponse: {
             bindingCatalogRevision?: string;
@@ -63128,6 +63206,72 @@ export interface components {
             /** Format: int64 */
             unknown?: number;
         };
+        platform_ExplorerActivityProjectionV2: {
+            activityId: components["schemas"]["platform_Uuid"];
+            /** @enum {string} */
+            module: "HRM" | "PER" | "TIM" | "PAY" | "SYS";
+            /** @enum {string} */
+            sourceKind: "COMMAND_RECEIPT" | "WORKFLOW_CASE" | "APPROVAL_CASE" | "SERVICE_REQUEST" | "OPERATION_EXCEPTION";
+            sourceRevision: components["schemas"]["platform_PositiveRevision"];
+            /** @enum {string} */
+            state: "PENDING" | "IN_PROGRESS" | "WAITING_FOR_ME" | "RESULT_UNKNOWN" | "FAILED";
+            target: components["schemas"]["platform_ExplorerTargetV2"];
+            updatedAt: components["schemas"]["platform_Instant"];
+        };
+        platform_ExplorerAuthorizationV2: components["schemas"]["platform_SingleCapabilityAuthorization"] | components["schemas"]["platform_CapabilityExpressionAuthorization"];
+        platform_ExplorerDegradedSourceV1: {
+            /** @enum {string} */
+            module: "HRM" | "PER" | "TIM" | "PAY" | "SYS";
+            /** @enum {string} */
+            reason: "TIMEOUT" | "UNAVAILABLE" | "STALE";
+            retryable: boolean;
+            /** @enum {string} */
+            sourceKind: "CATALOG" | "COMMAND_RECEIPT" | "WORKFLOW_CASE" | "APPROVAL_CASE" | "SERVICE_REQUEST" | "OPERATION_EXCEPTION";
+        };
+        platform_ExplorerFavoriteProjectionV2: components["schemas"]["platform_ExplorerRouteIdentityV2"] & {
+            position: number;
+        };
+        platform_ExplorerPolicyV1: {
+            /** @constant */
+            cleanupMode: "READ_AND_WRITE_THROUGH_PURGE";
+            /** @constant */
+            entitlementRefilter: true;
+            /** @constant */
+            maxFavorites: 20;
+            /** @constant */
+            maxInProgress: 20;
+            /** @constant */
+            maxRecents: 20;
+            /** @constant */
+            recentTtlDays: 30;
+        };
+        platform_ExplorerPreferenceCommand: {
+            orderedFavoriteRouteKeys: string[];
+        };
+        platform_ExplorerProjectionStatusV1: {
+            degradedSources: components["schemas"]["platform_ExplorerDegradedSourceV1"][];
+            /** @enum {string} */
+            state: "FRESH" | "STALE" | "PARTIAL";
+        };
+        platform_ExplorerRecentCommand: {
+            routeKey: string;
+        };
+        platform_ExplorerRecentProjectionV2: components["schemas"]["platform_ExplorerRouteIdentityV2"] & {
+            expiresAt: components["schemas"]["platform_Instant"];
+            lastVisitedAt: components["schemas"]["platform_Instant"];
+        };
+        platform_ExplorerRouteIdentityV2: {
+            authorization: components["schemas"]["platform_ExplorerAuthorizationV2"];
+            labelKey: string;
+            /** @enum {string} */
+            module: "HRM" | "PER" | "TIM" | "PAY" | "SYS";
+            routeKey: string;
+            target: components["schemas"]["platform_ExplorerTargetV2"];
+            /** @enum {string} */
+            workbench: "MY_HR" | "TEAM" | "HR_OPERATIONS" | "TIME" | "PAYROLL" | "PERFORMANCE" | "SETTINGS";
+        };
+        platform_ExplorerRouteProjectionV2: components["schemas"]["platform_ExplorerRouteIdentityV2"];
+        platform_ExplorerTargetV2: components["schemas"]["platform_HrisInternalTarget"] | components["schemas"]["platform_DwpControlTarget"];
         platform_ExportCommandResult: {
             export?: components["schemas"]["platform_GuardedExport"];
             receipt?: components["schemas"]["platform_CommandReceipt"];
@@ -64301,6 +64445,69 @@ export interface components {
             resolvedHostMode?: string;
             surfaceKey?: string;
         };
+        platform_HrisCommandReceiptV1: {
+            aggregateVersion?: number;
+            authorizationRevision: number;
+            commandType: string;
+            correlationId: components["schemas"]["platform_Uuid"];
+            createdAt: components["schemas"]["platform_Instant"];
+            fieldPolicyRevision: number;
+            originatingAction: string;
+            populationScopeDigest: components["schemas"]["platform_Digest"];
+            purposeCode: string;
+            receiptId: components["schemas"]["platform_Uuid"];
+            requestDigest: components["schemas"]["platform_Digest"];
+            resultRef?: string;
+            /** @enum {string} */
+            status: "ACCEPTED" | "RUNNING" | "SUCCEEDED" | "REJECTED" | "FAILED" | "RESULT_UNKNOWN";
+            subjectPrincipalPublicId: components["schemas"]["platform_Uuid"];
+        };
+        platform_HrisExplorerQuery: {
+            asOf: components["schemas"]["platform_Instant"];
+            cursor?: components["schemas"]["platform_Cursor"];
+            filter?: string;
+            /** @enum {string} */
+            freshness: "FRESH_ONLY" | "ALLOW_STALE";
+            limit?: number;
+        };
+        platform_HrisExplorerReceiptV1: {
+            aggregateVersion?: number;
+            authorizationRevision: components["schemas"]["platform_PositiveRevision"];
+            /** @enum {string} */
+            commandType: "EXPLORER_PREFERENCES_REPLACE" | "EXPLORER_RECENT_RECORD";
+            correlationId: components["schemas"]["platform_Uuid"];
+            createdAt: components["schemas"]["platform_Instant"];
+            fieldPolicyRevision: components["schemas"]["platform_PositiveRevision"];
+            /** @enum {string} */
+            originatingAction: "EXPLORER_PREFERENCES_REPLACE" | "EXPLORER_RECENT_RECORD";
+            populationScopeDigest: components["schemas"]["platform_Digest"];
+            /** @constant */
+            purposeCode: "HRIS_APP_DISCOVERY";
+            receiptId: components["schemas"]["platform_Uuid"];
+            requestDigest: components["schemas"]["platform_Digest"];
+            resultRef?: string;
+            /** @enum {string} */
+            status: "ACCEPTED" | "RUNNING" | "SUCCEEDED" | "REJECTED" | "FAILED" | "RESULT_UNKNOWN";
+            subjectPrincipalPublicId: components["schemas"]["platform_Uuid"];
+        };
+        platform_HrisExplorerResponseV2: {
+            asOf: components["schemas"]["platform_Instant"];
+            entitlementRevision: components["schemas"]["platform_PositiveRevision"];
+            favoritePreferenceRevision: components["schemas"]["platform_PositiveRevision"];
+            favorites: components["schemas"]["platform_ExplorerFavoriteProjectionV2"][];
+            inProgress: components["schemas"]["platform_ExplorerActivityProjectionV2"][];
+            nextCursor: components["schemas"]["platform_Cursor"] | null;
+            policy: components["schemas"]["platform_ExplorerPolicyV1"];
+            projectionRevision: components["schemas"]["platform_PositiveRevision"];
+            projectionStatus: components["schemas"]["platform_ExplorerProjectionStatusV1"];
+            recents: components["schemas"]["platform_ExplorerRecentProjectionV2"][];
+            routes: components["schemas"]["platform_ExplorerRouteProjectionV2"][];
+        };
+        platform_HrisInternalTarget: {
+            /** @constant */
+            kind: "HRIS_INTERNAL";
+            path: string;
+        };
         platform_ImpactAnalysis: {
             blocked?: boolean;
             compatibilityState?: string;
@@ -64498,6 +64705,8 @@ export interface components {
             /** Format: uuid */
             serviceOrderLineId?: string;
         };
+        /** Format: date-time */
+        platform_Instant: string;
         platform_IntegrityCheckpoint: {
             /** Format: date */
             checkpointDate?: string;
@@ -65919,6 +66128,7 @@ export interface components {
             incidentCaseId?: string;
             reason?: string;
         };
+        platform_PositiveRevision: number;
         platform_PostIncidentReport: {
             /** Format: date-time */
             generatedAt?: string;
@@ -68451,6 +68661,12 @@ export interface components {
             /** Format: int64 */
             version?: number;
         };
+        platform_SingleCapabilityAuthorization: {
+            capabilityKeys: string[];
+            /** @constant */
+            capabilityMode: "SINGLE";
+            routeContractKey: string;
+        };
         platform_SiteAccessDecision: {
             allowed?: boolean;
             availableFloors?: components["schemas"]["platform_AccessRuleFloorOption"][];
@@ -69198,6 +69414,8 @@ export interface components {
             /** Format: int64 */
             version: number;
         };
+        /** Format: uuid */
+        platform_Uuid: string;
         platform_ValidateRequest: {
             /** Format: int64 */
             expectedVersion: number;
@@ -107877,6 +108095,38 @@ export interface operations {
             };
         };
     };
+    platform_getHrisCommandReceipt: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path: {
+                receiptId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Originating-context command receipt */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_HrisExplorerReceiptV1"] | components["schemas"]["platform_HrisCommandReceiptV1"];
+                };
+            };
+            /** @description Receipt absent or outside the sealed originating-command context */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     platform_hrisReferenceConfigurations: {
         parameters: {
             query?: {
@@ -122115,6 +122365,97 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    platform_getHrisWorkExplorer: {
+        parameters: {
+            query: {
+                cursor?: components["schemas"]["platform_Cursor"];
+                asOf: string;
+                filter?: string;
+                freshness: "FRESH_ONLY" | "ALLOW_STALE";
+                limit?: number;
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Entitlement-filtered HRIS work explorer */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_HrisExplorerResponseV2"];
+                };
+            };
+        };
+    };
+    platform_replaceHrisExplorerPreferences: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header: {
+                "Idempotency-Key": string;
+                "If-Match": string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_ExplorerPreferenceCommand"];
+            };
+        };
+        responses: {
+            /** @description Explorer preference replacement accepted */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_HrisExplorerReceiptV1"];
+                };
+            };
+        };
+    };
+    platform_recordHrisExplorerRecent: {
+        parameters: {
+            query?: {
+                /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
+                contextScopeKey?: string;
+            };
+            header: {
+                "Idempotency-Key": string;
+                /** @description Required and fail-closed for product-authorization rollout states 110/111; optional for backward-compatible baseline/shadow states 000/100. */
+                "X-DWP-Expected-Decision-Revision"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["platform_ExplorerRecentCommand"];
+            };
+        };
+        responses: {
+            /** @description Explorer recent route accepted */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["platform_HrisExplorerReceiptV1"];
+                };
             };
         };
     };

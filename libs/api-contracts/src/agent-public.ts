@@ -34,6 +34,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/operational-health": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Operational Health */
+        get: operations["operational_health_operational_health_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/readyz": {
         parameters: {
             query?: never;
@@ -6920,6 +6937,22 @@ export interface components {
          * @enum {string}
          */
         MemoryState: "ACTIVE" | "DISABLED" | "EXPIRED" | "DELETED";
+        /** ModelProviderOperationalHealth */
+        ModelProviderOperationalHealth: {
+            /** Configured */
+            configured: boolean;
+            /** Lastobservedat */
+            lastObservedAt?: string | null;
+            /** Provider */
+            provider: string;
+            /** Safeerrorcode */
+            safeErrorCode?: string | null;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "AVAILABLE" | "CONFIGURED" | "INVALID_CONFIGURATION" | "NOT_CONFIGURED" | "UNAVAILABLE";
+        };
         /** ModelRoutePolicy */
         ModelRoutePolicy: {
             /** Availabilityobservedat */
@@ -7214,6 +7247,35 @@ export interface components {
          * @enum {string}
          */
         OperationalHealth: "HEALTHY" | "DEGRADED" | "FAILED" | "UNKNOWN";
+        /** OperationalHealthComponents */
+        OperationalHealthComponents: {
+            /** Database */
+            database: string;
+            modelProvider: components["schemas"]["ModelProviderOperationalHealth"];
+            sources: components["schemas"]["SourcesOperationalHealth"];
+        };
+        /** OperationalHealthEnvelope */
+        OperationalHealthEnvelope: {
+            components: components["schemas"]["OperationalHealthComponents"];
+            /** Degradationreasons */
+            degradationReasons: string[];
+            /** Degraded */
+            degraded: boolean;
+            /** Service */
+            service: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "ok" | "unavailable";
+            /** Version */
+            version: string;
+        };
+        /** OperationalHealthError */
+        OperationalHealthError: {
+            /** Detail */
+            detail: string;
+        };
         /** OutcomeCohort */
         OutcomeCohort: {
             /** Cohortkey */
@@ -9955,6 +10017,30 @@ export interface components {
          * @enum {string}
          */
         SourceAccessMode: "SOURCE_PERMISSIONS" | "TENANT_ALLOWLIST" | "BLOCKED";
+        /** SourceOperationalHealth */
+        SourceOperationalHealth: {
+            /** Lastobservedat */
+            lastObservedAt: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "SUCCESS" | "UNAVAILABLE" | "NOT_CONFIGURED";
+        };
+        /** SourcesOperationalHealth */
+        SourcesOperationalHealth: {
+            /** Recent */
+            recent: {
+                [key: string]: components["schemas"]["SourceOperationalHealth"];
+            };
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "UNKNOWN" | "HEALTHY" | "DEGRADED";
+            /** Windowseconds */
+            windowSeconds: number;
+        };
         /** StartResearchRunRequest */
         StartResearchRunRequest: {
             /**
@@ -11356,6 +11442,47 @@ export interface operations {
                     "application/json": {
                         [key: string]: string;
                     };
+                };
+            };
+        };
+    };
+    operational_health_operational_health_get: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-DWP-Tenant-ID": string;
+                "X-DWP-Permissions"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OperationalHealthEnvelope"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Runtime dependency unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OperationalHealthEnvelope"] | components["schemas"]["OperationalHealthError"];
                 };
             };
         };

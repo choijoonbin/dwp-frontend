@@ -308,6 +308,22 @@ function hcmChildren(surfaceId: string, parent: string, indexRouteKey?: string):
   ];
 }
 
+const HRIS_WORK_EXPLORER_PAGE_ROUTE = 'route.hcm.utility.explorer.page';
+
+function HcmWorkExplorerModuleBoundary() {
+  const withheld = <ProductSurfaceAccessState decision={{ state: 'route-denied' }} />;
+  return (
+    <ProductCanaryRouteBoundary
+      productId="hcm"
+      surfaceId="hcm.utility"
+      routeContractKey={HRIS_WORK_EXPLORER_PAGE_ROUTE}
+      legacy={withheld}
+    >
+      {withheld}
+    </ProductCanaryRouteBoundary>
+  );
+}
+
 function hcmSurfaceRoutes(): RouteObject[] {
   const managementCandidates = hcmPageRoutes.filter(
     (route) => route.surfaceId === 'hcm.management'
@@ -324,6 +340,11 @@ function hcmSurfaceRoutes(): RouteObject[] {
     {
       index: true,
       element: <ProductCanaryRoot manifest={HCM_PRODUCT_MANIFEST} legacyPath="/hr/home" />,
+    },
+    {
+      path: 'explore',
+      handle: { routeContractKey: HRIS_WORK_EXPLORER_PAGE_ROUTE },
+      element: <HcmWorkExplorerModuleBoundary />,
     },
     {
       path: 'manage',

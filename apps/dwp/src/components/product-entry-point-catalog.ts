@@ -136,6 +136,14 @@ export const GOVERNED_PRODUCT_ENTRY_CATALOG: readonly ProductEntryManifest[] = [
         supportedScopeKinds: ['TEAM', 'ORG_UNIT', 'TARGET_POPULATION'],
       },
       {
+        id: 'hcm.utility',
+        plane: 'work',
+        labelKey: 'navigation.groups.hcm.utility',
+        taskKinds: ['work'],
+        indexPath: '/hr/explore',
+        supportedScopeKinds: ['SELF'],
+      },
+      {
         id: 'hcm.operations',
         plane: 'management',
         labelKey: 'navigation.groups.hcm.operate',

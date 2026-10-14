@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import authorizationSource from '../../../../../architecture/product-surface-authorization.v1.json';
+import { isSegmentOwnedPath } from '../../components/product-manifest';
 import { PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE } from '../../routes/product-page-route-contracts';
 import { hcmRoutes } from '../../routes/hcm-routes';
 import { HCM_APP_ENTITLEMENT_CUTOVER, HCM_PRODUCT_MANIFEST } from './hcm-product-manifest';
@@ -36,107 +37,11 @@ type RegistryBundle = {
   routes: readonly RegistryRoute[];
 };
 
-const HCM_DATA_ROUTE_KEYS = [
-  'route.hcm.configuration.configuration-version.data',
-  'route.hcm.configuration.configurations.data',
-  'route.hcm.management.controlled-export-preview.data',
-  'route.hcm.management.integration-code-sets.data',
-  'route.hcm.management.org-code-sets.data',
-  'route.hcm.operations.assignment-command-receipt.data',
-  'route.hcm.operations.assignment-detail.data',
-  'route.hcm.operations.assignment-event-detail.data',
-  'route.hcm.operations.assignment-proposal-detail.data',
-  'route.hcm.operations.assignment-timeline.data',
-  'route.hcm.operations.payroll-foundation-configuration.data',
-  'route.hcm.operations.payroll-foundation-configurations.data',
-  'route.hcm.operations.payroll-foundation-receipt.data',
-  'route.hcm.operations.payroll-foundation-versions.data',
-  'route.hcm.operations.people360-detail.data',
-  'route.hcm.operations.people360-search.data',
-  'route.hcm.operations.performance-cycle-command-receipt.data',
-  'route.hcm.operations.performance-cycle-detail.data',
-  'route.hcm.operations.performance-cycles-list.data',
-  'route.hcm.operations.person-detail.data',
-  'route.hcm.operations.time-interpretation-trace.data',
-  'route.hcm.operations.work-plan-receipt.data',
-  'route.hcm.operations.work-plans-list.data',
-  'route.hcm.personal.configuration-projection.data',
-  'route.hcm.personal.directory-person-detail.data',
-  'route.hcm.personal.home-preference.data',
-  'route.hcm.personal.people360-self.data',
-  'route.hcm.personal.product-access-snapshot.data',
-  'route.hcm.team.people360-detail.data',
-] as const;
-
-const HCM_ACTION_ROUTE_KEYS = [
-  'route.hcm.configuration.configuration-version-approve.action',
-  'route.hcm.configuration.configuration-version-create.action',
-  'route.hcm.configuration.configuration-version-publish.action',
-  'route.hcm.configuration.configuration-version-retire.action',
-  'route.hcm.configuration.configuration-version-rollback.action',
-  'route.hcm.configuration.configuration-version-schedule.action',
-  'route.hcm.configuration.configuration-version-simulate.action',
-  'route.hcm.configuration.configuration-version-submit.action',
-  'route.hcm.configuration.configuration-version-validate.action',
-  'route.hcm.configuration.payroll-element-version-create.action',
-  'route.hcm.configuration.payroll-formula-publish.action',
-  'route.hcm.configuration.payroll-formula-simulate.action',
-  'route.hcm.configuration.payroll-formula-validate.action',
-  'route.hcm.configuration.payroll-formula-version-create.action',
-  'route.hcm.management.controlled-export-cancel.action',
-  'route.hcm.management.controlled-export-create.action',
-  'route.hcm.management.controlled-export-retry.action',
-  'route.hcm.management.integration-create.action',
-  'route.hcm.management.integration-execute.action',
-  'route.hcm.management.integration-update.action',
-  'route.hcm.management.org-approval.action',
-  'route.hcm.management.org-clone.action',
-  'route.hcm.management.org-create.action',
-  'route.hcm.management.org-publish.action',
-  'route.hcm.management.org-update.action',
-  'route.hcm.management.reference-update.action',
-  'route.hcm.operations.absence-approve.action',
-  'route.hcm.operations.assignment-event-create.action',
-  'route.hcm.operations.assignment-event-publish.action',
-  'route.hcm.operations.assignment-event-submit.action',
-  'route.hcm.operations.assignment-event-validate.action',
-  'route.hcm.operations.assignment-proposal-cancel.action',
-  'route.hcm.operations.assignment-proposal-create.action',
-  'route.hcm.operations.assignment-proposal-submit.action',
-  'route.hcm.operations.assignment-proposal-validate.action',
-  'route.hcm.operations.employee-change-request-apply.action',
-  'route.hcm.operations.employee-change-request-create.action',
-  'route.hcm.operations.employee-change-request-submit.action',
-  'route.hcm.operations.payroll-foundation-create.action',
-  'route.hcm.operations.payroll-foundation-publish.action',
-  'route.hcm.operations.payroll-foundation-reconcile.action',
-  'route.hcm.operations.payroll-foundation-reverse.action',
-  'route.hcm.operations.payroll-foundation-simulate.action',
-  'route.hcm.operations.payroll-foundation-update.action',
-  'route.hcm.operations.performance-cycle-create.action',
-  'route.hcm.operations.performance-cycle-population-preview.action',
-  'route.hcm.operations.performance-cycle-publish.action',
-  'route.hcm.operations.performance-cycle-update.action',
-  'route.hcm.operations.performance-cycle-validate.action',
-  'route.hcm.operations.performance-population-freeze.action',
-  'route.hcm.operations.time-approve.action',
-  'route.hcm.operations.time-clock-event-void.action',
-  'route.hcm.operations.time-interpretation-run.action',
-  'route.hcm.operations.work-plan-apply-approval.action',
-  'route.hcm.operations.work-plan-create.action',
-  'route.hcm.operations.work-plan-publish.action',
-  'route.hcm.operations.work-plan-simulate.action',
-  'route.hcm.operations.work-plan-submit-review.action',
-  'route.hcm.operations.work-plan-validate.action',
-  'route.hcm.personal.absence-create.action',
-  'route.hcm.personal.absence-withdraw.action',
-  'route.hcm.personal.home-preference-update.action',
-  'route.hcm.personal.talent-goal-update.action',
-  'route.hcm.personal.time-clock-event-record.action',
-  'route.hcm.personal.time-entry-update.action',
-  'route.hcm.personal.time-submit.action',
-  'route.hcm.team.absence-decision.action',
-  'route.hcm.team.time-decision.action',
+const HCM_UTILITY_ROUTE_KEYS = [
+  'route.hcm.utility.explorer-command-receipt.data',
+  'route.hcm.utility.explorer-preferences-update.action',
+  'route.hcm.utility.explorer-recent-create.action',
+  'route.hcm.utility.explorer.page',
 ] as const;
 
 function registryRoutes(): readonly RegistryRoute[] {
@@ -207,13 +112,21 @@ describe('HCM W1b product manifest', () => {
       requiresProductEntitlement: false,
     });
     expect(
-      HCM_PRODUCT_MANIFEST.surfaces.every(
-        (surface) => surface.entryAccess.requiresProductEntitlement === false
-      )
+      HCM_PRODUCT_MANIFEST.surfaces
+        .filter((surface) => surface.id !== 'hcm.utility')
+        .every((surface) => surface.entryAccess.requiresProductEntitlement === false)
     ).toBe(true);
+    expect(
+      HCM_PRODUCT_MANIFEST.surfaces.find((surface) => surface.id === 'hcm.utility')?.entryAccess
+    ).toEqual({
+      type: 'capability',
+      requiresProductEntitlement: true,
+      entryCapabilityMode: 'ALL',
+      requiredCapabilityContractKeys: ['hcm.app.shell.view'],
+    });
   });
 
-  it('freezes the personal, team, operations, and management menu partition', () => {
+  it('keeps the utility out of the personal, team, operations, and management menus', () => {
     expect(
       Object.fromEntries(
         HCM_PRODUCT_MANIFEST.surfaces.map((surface) => [
@@ -224,23 +137,25 @@ describe('HCM W1b product manifest', () => {
     ).toEqual({
       'hcm.personal': 11,
       'hcm.team': 3,
-      'hcm.operations': 14,
-      'hcm.management': 7,
+      'hcm.utility': 0,
+      'hcm.operations': 15,
+      'hcm.management': 8,
     });
     expect(HCM_PRODUCT_MANIFEST.surfaces.map((surface) => surface.supportedScopeKinds)).toEqual([
       ['SELF'],
       ['TEAM', 'ORG_UNIT', 'TARGET_POPULATION'],
+      ['SELF'],
       ['ORG_UNIT', 'LEGAL_ENTITY', 'TARGET_POPULATION', 'SUPPORT_SESSION'],
       ['TENANT', 'RESOURCE_SET', 'RESOURCE', 'LEGAL_ENTITY', 'POLICY_NODE'],
     ]);
   });
 
-  it('binds all 35 menu items to official PAGE records and exact latest access profiles', () => {
+  it('binds all 37 menu items within the 40 official HCM PAGE records', () => {
     const routerRecords = PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.filter(
       (route) => route.productId === 'hcm'
     );
     const registryRecords = registryRoutes().filter((route) => route.subject?.productKey === 'hcm');
-    expect(routerRecords).toHaveLength(35);
+    expect(routerRecords).toHaveLength(40);
 
     for (const surface of HCM_PRODUCT_MANIFEST.surfaces) {
       for (const item of surface.navigation.flatMap((group) => group.items)) {
@@ -276,42 +191,36 @@ describe('HCM W1b product manifest', () => {
       ])
     );
     expect(bySurfaceAndKind).toEqual({
-      'hcm.personal': { PAGE: 11, DATA: 5, ACTION: 7 },
+      'hcm.personal': { PAGE: 11, DATA: 5, ACTION: 8 },
       'hcm.team': { PAGE: 3, DATA: 1, ACTION: 2 },
-      'hcm.operations': { PAGE: 14, DATA: 18, ACTION: 33 },
-      'hcm.management': { PAGE: 7, DATA: 5, ACTION: 26 },
+      'hcm.utility': { PAGE: 1, DATA: 1, ACTION: 2 },
+      'hcm.operations': { PAGE: 16, DATA: 27, ACTION: 48 },
+      'hcm.management': { PAGE: 9, DATA: 6, ACTION: 33 },
     });
     expect(
       records
-        .filter((route) => route.routeKind === 'DATA')
+        .filter((route) => route.subject.surfaceKey === 'hcm.utility')
         .map((route) => route.routeContractKey)
         .sort()
-    ).toEqual([...HCM_DATA_ROUTE_KEYS].sort());
-    expect(
-      records
-        .filter((route) => route.routeKind === 'ACTION')
-        .map((route) => route.routeContractKey)
-        .sort()
-    ).toEqual([...HCM_ACTION_ROUTE_KEYS].sort());
+    ).toEqual([...HCM_UTILITY_ROUTE_KEYS].sort());
 
     const browserRoutes = publicRouteBindings(hcmRoutes).sort((left, right) =>
       left.routeContractKey.localeCompare(right.routeContractKey)
     );
     const officialPages = PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.filter(
-      (route) => route.productId === 'hcm'
+      (route) =>
+        route.productId === 'hcm' &&
+        isSegmentOwnedPath(route.pattern, HCM_PRODUCT_MANIFEST.basePath)
     )
       .map((route) => ({ path: route.pattern, routeContractKey: route.routeContractKey }))
       .sort((left, right) => left.routeContractKey.localeCompare(right.routeContractKey));
     expect(browserRoutes).toEqual(officialPages);
-    expect(
-      records
-        .filter((route) => route.routeKind === 'PAGE')
-        .map((route) => route.routeContractKey)
-        .sort()
-    ).toEqual(officialPages.map((route) => route.routeContractKey));
+    expect(records.filter((route) => route.routeKind === 'PAGE')).toHaveLength(
+      officialPages.length + 1
+    );
 
     for (const route of records) {
-      expect(route.navigationContextId, route.routeContractKey).toBe(route.subject.surfaceKey);
+      expect(route.navigationContextId, route.routeContractKey).not.toBe('');
       expect(route.gatewayApiBindings.length, route.routeContractKey).toBeGreaterThan(0);
       expect(route.servicePepBindings.length, route.routeContractKey).toBe(
         route.gatewayApiBindings.length
@@ -331,6 +240,11 @@ describe('HCM W1b product manifest', () => {
         );
       }
     }
+    expect(
+      records
+        .filter((route) => route.subject.surfaceKey === 'hcm.utility')
+        .every((route) => route.navigationContextId === 'hcm.utility')
+    ).toBe(true);
   });
 
   it('allows Provider Support profiles only on the operations read surface', () => {

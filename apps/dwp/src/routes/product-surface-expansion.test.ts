@@ -40,7 +40,7 @@ const EXPECTED_MENU_COUNTS: Readonly<Record<string, number>> = {
   calendar: 11,
   communications: 6,
   dwaion: 19,
-  hcm: 26,
+  hcm: 37,
   mail: 24,
   meetings: 10,
   messaging: 8,
@@ -107,7 +107,7 @@ function routeBySurfaceId(
 }
 
 describe('all-product surface expansion', () => {
-  it('registers all 12 business apps and exactly the governed 178 menu rows', () => {
+  it('registers all 12 business apps and exactly the governed 189 menu rows', () => {
     expect(GOVERNED_PRODUCT_MANIFESTS.map((manifest) => manifest.id).sort()).toEqual(
       Object.keys(EXPECTED_MENU_COUNTS).sort()
     );
@@ -122,7 +122,7 @@ describe('all-product surface expansion', () => {
         manifest.surfaces.length
       );
     }
-    expect(Object.values(EXPECTED_MENU_COUNTS).reduce((sum, count) => sum + count, 0)).toBe(178);
+    expect(Object.values(EXPECTED_MENU_COUNTS).reduce((sum, count) => sum + count, 0)).toBe(189);
   });
 
   it('binds promoted Workplace menus to their explicit PAGE authority source', () => {
@@ -464,7 +464,7 @@ describe('all-product surface expansion', () => {
     ]);
     expect(
       PRODUCT_MENU_ROUTES.filter((menu) => menu.productSurfaceId).map((menu) => menu.path)
-    ).toHaveLength(178);
+    ).toHaveLength(189);
 
     const spacesWorkShell = spacesRoutes[0]?.children?.find(
       (route) => !route.index && route.path === undefined
@@ -526,10 +526,11 @@ describe('all-product surface expansion', () => {
     });
   });
 
-  it('binds HCM personal, team, operations, and management as sibling route surfaces', () => {
+  it('binds the exact HCM utility beside the existing route surfaces', () => {
     const children = hcmRoutes[0]?.children ?? [];
     expect(children.map((route) => route.path ?? 'pathless')).toEqual([
       'pathless',
+      'explore',
       'manage',
       'settings',
       'design',
@@ -547,6 +548,15 @@ describe('all-product surface expansion', () => {
         .map((route) => route.routeContractKey)
         .sort()
     );
+    expect(
+      HCM_PRODUCT_MANIFEST.surfaces
+        .find((surface) => surface.id === 'hcm.utility')
+        ?.navigation.flatMap((group) => group.items)
+    ).toEqual([]);
+    expect(routeByContractKey(hcmRoutes, 'route.hcm.utility.explorer.page')).toMatchObject({
+      path: 'explore',
+      handle: { routeContractKey: 'route.hcm.utility.explorer.page' },
+    });
   });
 
   it('keeps the HCM audit PAGE official without mounting it in the local HR router or menu', () => {

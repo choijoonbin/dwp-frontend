@@ -14,9 +14,9 @@ export type ProductAuthorizationRouteProjection = Readonly<{
 
 export const PRODUCT_AUTHORIZATION_REGISTRY_REVISION = {
   bundleKey: 'product-surfaces',
-  version: 42,
-  checksum: 'f73f9a64816ac8f5567a2a7c292821f4a40e6d675915ebc3c3ac8aad7d1fd983',
-  indexChecksum: '215ab6f4783f5be91af30911e881d86a5b8b64fbc7f1e8aeb2761b6d04035b3a',
+  version: 43,
+  checksum: '2222319502c362caf247a7a47fdacfc63c774dbf156f6272cafae797627e2400',
+  indexChecksum: 'ec02b0d686273117a99829907931db433c04129b676e0ae41fa14161e98fc9aa',
 } as const;
 
 export const PRODUCT_SURFACE_ROLLOUT_INVENTORY_REVISION = {
@@ -10361,6 +10361,70 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
       {
         method: 'GET',
         path: '/api/time/v1/timecards/{timecardId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.utility.explorer-command-receipt.data',
+    routeKind: 'DATA',
+    navigationContextId: 'hcm.utility',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.utility',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/hris/command-receipts/{receiptId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.utility.explorer-preferences-update.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.utility',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.utility',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'PUT',
+        path: '/api/platform/v1/hris/explorer/preferences',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.utility.explorer-recent-create.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.utility',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.utility',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/hris/explorer/recents',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.utility.explorer.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'hcm.utility',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.utility',
+    routeId: 'hcm.utility.explorer',
+    pattern: '/hr/explore',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/hris/explorer',
       },
     ],
   },

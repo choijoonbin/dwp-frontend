@@ -633,6 +633,13 @@
       "surfaceId": "hcm.team"
     },
     {
+      "routeContractKey": "route.hcm.utility.explorer.page",
+      "routeId": "hcm.utility.explorer",
+      "pattern": "/hr/explore",
+      "productId": "hcm",
+      "surfaceId": "hcm.utility"
+    },
+    {
       "routeContractKey": "route.mail.work.home.page",
       "routeId": "mail.work.home",
       "pattern": "/mail/home",

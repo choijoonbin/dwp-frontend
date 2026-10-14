@@ -69,6 +69,23 @@ export const HCM_PRODUCT_MANIFEST = defineProductManifest({
       shellProfile: 'product-work',
     },
     {
+      id: 'hcm.utility',
+      plane: 'work',
+      labelKey: 'navigation.groups.hcm.utility',
+      taskKinds: ['work'],
+      routeMatchers: [{ kind: 'exact', path: '/hr/explore' }],
+      indexPath: '/hr/explore',
+      navigation: [],
+      entryAccess: {
+        type: 'capability',
+        requiresProductEntitlement: true,
+        entryCapabilityMode: 'ALL',
+        requiredCapabilityContractKeys: ['hcm.app.shell.view'],
+      },
+      supportedScopeKinds: ['SELF'],
+      shellProfile: 'product-work',
+    },
+    {
       id: 'hcm.operations',
       plane: 'management',
       labelKey: 'navigation.groups.hcm.operate',
