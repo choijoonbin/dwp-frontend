@@ -1,0 +1,88 @@
+{
+  "schema": "dwp.hris.module-start-token-amendment.v5",
+  "tokenAmendmentId": "HRIS-WAVE6-START-BASE-TFR-SYS-012-EXPLORER-R5",
+  "issuedAt": "2026-10-15T07:17:20+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-SYS",
+  "sliceId": "BASE-TFR-SYS-012",
+  "state": "ISSUED_BOUNDED_RECEIPT_PROFILE_AND_AUTHORITY_SEAL_SUCCESSOR",
+  "amendsToken": "HRIS-WAVE6-START-BASE-TFR-SYS-012-EXPLORER-R4",
+  "reason": "A dual-qualified CONFIG_AUTHOR is selected into the higher Explorer receipt profile before Platform can inspect the sealed receipt family; the utility shell responsibility currently projects the wrong scope kind for R4 People proof; and exact 63-bit authority revisions cannot be reused as JavaScript-safe public receipt numbers. R5 adds one tightly bounded Auth selector/SELF-projection path, a two-phase owner proof and distinct internal authority seals without a public carrier or Gateway/generated-contract change.",
+  "controlAmendment": {
+    "path": "../sys-012-work-explorer-control-r1/receipt-profile-selection-successor-amendment.v1.json",
+    "amendmentId": "HRIS-WAVE6-SYS-012-RECEIPT-PROFILE-SELECTION-R5",
+    "sha256": "9b4d0752e85fae9e870fb1d22f89afc0abf35b5515c1718b10691980292d3166",
+    "bytes": 24047
+  },
+  "predecessorAuthority": {
+    "r4Token": "start-token-amendment.v4.json",
+    "r4TokenSha256": "eecfbcb1c5098520d8adca1ad1f34d16df247138a17768b585b5dadbe98660f7",
+    "r4Control": "../sys-012-work-explorer-control-r1/people-authority-parity-successor-amendment.v1.json",
+    "r4ControlSha256": "967cedb7798a916809c45725d0a64352d1101d5155bfb1db64250ec2d9d5f46b",
+    "rule": "R1 through R4 remain binding. R5 changes only the exact Auth receipt-profile selector, exact utility-shell SELF projection, dual-qualified Platform receipt proof and public-versus-authority revision split described in the pinned control."
+  },
+  "worktreeReuse": {
+    "backend": {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave6-20261015/sys-012-work-explorer-r1/backend",
+      "branch": "codex/hris-wave6-sys-012-explorer-backend-20261015-r1",
+      "baseCommit": "3b2da20b592de5b5cff8f2483b83900f2dad054e",
+      "rule": "Continue the existing uncommitted R1-R4 implementation; do not reset, recreate or merge dwp-dev."
+    },
+    "frontend": {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave6-20261015/sys-012-work-explorer-r1/frontend",
+      "branch": "codex/hris-wave6-sys-012-explorer-frontend-20261015-r1",
+      "baseCommit": "4f740a572afb8feeef3e31cb8ed258c0c8145cf2",
+      "rule": "R5 grants no frontend source authority and requires no public receipt carrier."
+    }
+  },
+  "authorizedSuccessorWork": [
+    "Add exact source-scope profile selection for route.hcm.utility.explorer-command-receipt.data in ProductAuthorizationAuthorityAdapter only.",
+    "In that same Auth file, keep REQUIRED responsibility qualification and expiry metadata but project exact SELF scope and rebind every grant scopeKeys list only for hcm.utility hcm.app.shell.view; preserve every unrelated responsibility-backed capability.",
+    "Preserve ordinary Explorer/hcm-scope precedence and every unrelated route.",
+    "Implement the command-only and dual-qualified two-phase Platform receipt proof within the existing Explorer package.",
+    "Keep request-route Explorer psr, internal Platform receipt-route psr and stored origin-route psr distinct.",
+    "Within the existing V327 and canonical receipt producer scope, enforce public revisions at 1..9007199254740991 using the exact low-53-bit non-zero projection, and add separate immutable exact positive 63-bit authority revision columns used exclusively for authority comparison.",
+    "Keep Explorer AuthoritySnapshot/CommandContext as exact internal evidence, derive the safe pair only at public receipt/canonical persistence boundaries, map repository authority/activity reads to the internal columns, and bind command/idempotency material, owner-provider filtering and current-authority checks to the exact pair; never to the public projection alone.",
+    "For each new reference receipt, make immediate response, exact legacy replay and canonical read expose the same safe public pair while the canonical row alone retains the exact internal pair; leave historical V325/V326 replay untouched.",
+    "Add only the exact R5 assertions to the existing R4 Auth and Platform tests."
+  ],
+  "verificationPolicy": {
+    "authA1StateAtIssue": "NOT_RUN",
+    "authA1": "./gradlew :dwp-auth-server:test --tests '*ProductAuthorizationHcmAuthorityAdapterTest' --no-daemon --max-workers=1",
+    "peopleP1StateAtIssue": "NOT_RUN",
+    "peopleP1": "./gradlew :dwp-people-server:test --tests '*HcmProductSurfaceEligibilityAdapterTest' --tests '*PeopleSecurityFilterTest' --no-daemon --max-workers=1",
+    "backendM1StateAtIssue": "NOT_RUN",
+    "backendM1": "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.hrisconfiguration.explorer.*' --tests '*HcmPlatformPepSecurityContractTest' --tests '*ReferenceConfigurationCanonicalReceiptBridgeTest' --tests '*NavigationPolicyCanonicalReceiptBridgeTest' --no-daemon --max-workers=1",
+    "backendRule": "Run A1, P1 and M1 once each only after every R2/R3/R4/R5 static blocker is closed. After a failure, rerun only the smallest owning test.",
+    "frontendRule": "Do not add or test a profile carrier and do not rerun aggregate M2 or an already-successful frontend owner scope.",
+    "forbidden": "No repository-wide suite, C1/C3 regeneration gate, second A1/P1/M1 aggregate, generated security carrier update or repeated successful stage."
+  },
+  "completionGate": [
+    "Command-only Platform receipt callers validate the forwarded canonical Auth source scope and People-free receipt-route psr before any row read.",
+    "Dual-qualified CONFIG_AUTHOR callers validate the forwarded Explorer People proof, then an exact internal Platform profile selection and People-free psr before Platform receipt data.",
+    "Explorer-origin and Platform-origin receipt families cannot be confused or downgraded; all denied and unknown subject-bound lookups use the same opaque 404 status/body without claiming constant-time behavior.",
+    "The utility shell responsibility remains mandatory with responsibility metadata/expiry intact, but its exact hcm.utility scope and every grant scopeKeys list are SELF-bound; an unrelated responsibility-backed capability still projects RESOURCE_SET.",
+    "Public receipt revisions remain positive JavaScript-safe values while distinct immutable internal revisions retain exact Gateway 63-bit parity and alone participate in current-authority checks.",
+    "V327 enforces the exact public-to-internal projection relationship and immutability for all four columns; low-53 collisions cannot collide in command digest, activity filtering or authority validation.",
+    "New reference receipt immediate response, legacy replay and canonical read agree on the public pair; historical replay remains unchanged.",
+    "Stored reference/navigation origin authority is independently re-proven through Auth and People with every immutable seal intact.",
+    "No Gateway, frontend carrier, product contract, generated artifact, new endpoint or second migration changes exist.",
+    "A1, P1, M1 and remaining exact contract checks pass, then both module branches are committed, pushed, clean and upstream exact."
+  ],
+  "authority": {
+    "moduleImplementationAuthorized": true,
+    "exactAdditionalAuthSelectorFileAuthorized": true,
+    "exactUtilityShellSelfProjectionInSameAuthFileAuthorized": true,
+    "existingR4AuthTestExtensionAuthorized": true,
+    "twoPhasePlatformReceiptProofAuthorized": true,
+    "existingV327AndProducerAuthorityRevisionSplitAuthorized": true,
+    "frontendEditAuthorizedByR5": false,
+    "gatewayEditAuthorized": false,
+    "contractOrGeneratedEditAuthorized": false,
+    "newEndpointAuthorized": false,
+    "moduleBranchCommitAuthorized": true,
+    "moduleBranchPushAuthorized": true,
+    "mergeToDwpDevAuthorized": false,
+    "runtimeActivationAuthorized": false
+  }
+}

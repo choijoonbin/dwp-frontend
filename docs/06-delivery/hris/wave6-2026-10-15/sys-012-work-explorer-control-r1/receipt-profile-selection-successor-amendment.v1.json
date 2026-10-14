@@ -1,0 +1,168 @@
+{
+  "schema": "dwp.hris.sys012.receipt-profile-selection-successor-amendment.v1",
+  "amendmentId": "HRIS-WAVE6-SYS-012-RECEIPT-PROFILE-SELECTION-R5",
+  "issuedAt": "2026-10-15T07:17:20+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "sliceId": "BASE-TFR-SYS-012",
+  "state": "ISSUED_BOUNDED_RECEIPT_PROFILE_SELECTION_SUCCESSOR",
+  "reason": "The v43 receipt route intentionally carries Explorer-origin and Platform-origin profiles, but HRIS_CONFIG_AUTHOR qualifies for both. Auth evaluates the higher-precedence Explorer profile before the owner service can inspect the sealed receipt family, so a dual-qualified actor receives an Explorer route proof and cannot satisfy R4's forwarded Platform source-scope requirement. Static review also proved that the utility shell capability currently projects a matched responsibility as RESOURCE_SET although the R4 People contract requires SELF/SELF, and that Gateway-parity 63-bit authority revisions cannot be exposed through the JavaScript-safe public receipt fields. R5 closes these three coupled blockers without adding a public selector or widening People.",
+  "predecessorPins": {
+    "r4Control": {
+      "path": "people-authority-parity-successor-amendment.v1.json",
+      "sha256": "967cedb7798a916809c45725d0a64352d1101d5155bfb1db64250ec2d9d5f46b",
+      "bytes": 20428
+    },
+    "r4Token": {
+      "path": "../sys-012-work-explorer-r1/start-token-amendment.v4.json",
+      "sha256": "eecfbcb1c5098520d8adca1ad1f34d16df247138a17768b585b5dadbe98660f7",
+      "bytes": 6909
+    },
+    "r4Manifest": {
+      "path": "../sys-012-work-explorer-r1/amendment-issued-manifest.v4.json",
+      "sha256": "ed720b978c1c4bc324debc19814417565436c4a8eda10eed390d88ee0c48a447",
+      "bytes": 2699
+    },
+    "frontendControlBaseCommit": "7adc0d3bd849d8f094e8734d4eb82464053fd2c7"
+  },
+  "provenBlockingChain": [
+    "route.hcm.utility.explorer-command-receipt.data has Explorer-origin precedence 350 and Platform-origin precedence 300.",
+    "HRIS_CONFIG_AUTHOR belongs to both the Explorer package set and the Platform receipt package set and may hold both required capabilities.",
+    "Auth and Gateway do not possess the owner receipt predicate evidence when they choose the route profile, so the higher-precedence Explorer profile wins for the overlapping actor.",
+    "The browser possesses only the current People-derived hcm-scope selected for the Explorer page; the activity projection deliberately exposes no authority selector or source payload.",
+    "A new public profile carrier alone would not solve the precedence conflict and would broaden Gateway, generated-contract and browser trust boundaries.",
+    "Platform can safely close the gap with the existing contextScopeKey contract: validate the forwarded coarse route first, inspect only the sealed receipt family internally, derive the exact canonical Auth source scope for ORIGINATING_COMMAND_SCOPE, and request exact lower-profile selection server-side before any Platform receipt is returned.",
+    "For hcm.utility hcm.app.shell.view, Auth currently validates the REQUIRED responsibility and then emits RESOURCE_SET scopes; R4 People intentionally accepts only exact SELF/SELF utility scope, so the Explorer proof is otherwise impossible.",
+    "Gateway derives field-policy and authorization authority revisions as positive 63-bit values, while the existing public receipt contract is parsed as JavaScript safe integers. Reusing one column for both authority and public transport either weakens Gateway parity or breaks the browser contract."
+  ],
+  "supersedesOnly": [
+    "people-authority-parity-successor-amendment.v1.json#/expandedTouchBoundary/stillForbidden Auth source outside the two R4 files only for dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationAuthorityAdapter.java and only for the exact receipt-route selector and exact hcm.utility shell SELF projection described here",
+    "people-authority-parity-successor-amendment.v1.json#/correctedSemantics/platformCurrentAuthority selection, freshness and decisionRevision only to permit the dual-qualified two-phase branch described here; the command-only forwarded People-free branch remains unchanged",
+    "people-authority-parity-successor-amendment.v1.json#/resultEvidenceSuccessor/auth only to add the exact selector diff and dual-qualified proof",
+    "start-token-amendment.v4.json#/authority/exactAuthTwoFileScopeAuthorized and the R4 manifest exact-R4-file boundary only to add the one exact Auth production file listed here",
+    "people-authority-parity-successor-amendment.v1.json#/authority/authEditAuthorizedOutsideExactR4Files:false only for the one exact additional Auth production file and two behaviors listed here",
+    "start-token-amendment.v4.json#/authority/authEditAuthorizedOutsideExactR4Files:false only for the one exact additional Auth production file and two behaviors listed here",
+    "platform-pep-opaque-context-amendment.v1.json#/expandedTouchBoundary/stillForbidden Auth server source changes only for the one exact Auth production file listed here",
+    "runtime-authority-receipt-successor-amendment.v1.json#/expandedTouchBoundary/stillForbidden Auth source changes and #/resultEvidenceSuccessor/producerSources Auth zero-change assertion only for the one exact Auth production file listed here",
+    "work-packet.v1.json#/touchManifest/controlOnly, outsideAllowedPathAction and #/invalidationConditions items 4 and 5 only for the one exact Auth production file listed here",
+    "start-token-issued.v1.json#/touchBoundary/forbidden, outsideBoundaryAction, #/authority/authorizationOrOpenApiEditAuthorized and #/invalidationConditions items 4 and 5 only for the one exact Auth production file listed here",
+    "module-result-contract.v1.json#/changedContentEvidence/protectedPathAssertions authorization/Auth zero-change assertion only for the one exact Auth production file listed here",
+    "people-authority-parity-successor-amendment.v1.json authority revision storage semantics only to split each existing public JavaScript-safe revision from its immutable Gateway-parity authority revision within the still-unreleased V327 schema and already-authorized receipt producers; the public DTO and response shape remain unchanged",
+    "start-token-amendment.v4.json and amendment-issued-manifest.v4.json exact V327/producer/Explorer path authority only for the same public-versus-authority revision split described here"
+  ],
+  "correctedSemantics": {
+    "hcmUtilityShellSelfProjection": {
+      "exactBoundary": "Only when product=hcm, surface=hcm.utility and the evaluated capability is hcm.app.shell.view with scopeResolver SELF, Auth must continue to require and validate the configured responsibility, preserve its responsibility metadata and validTo freshness, but project exactly one SELF scope and bind every returned grant scopeKeys list to that same SELF key.",
+      "implementationConstraint": "ProductAuthorizationAuthoritySupport.capabilityGrants currently rebuilds RESOURCE_SET keys when roles are present. Close the exception inside ProductAuthorizationAuthorityAdapter by exact post-evaluation scope-and-grant rebinding or an equivalently local branch; no edit outside the one authorized Auth production file is permitted.",
+      "noExpansion": "The responsibility remains qualification evidence, not a population grant. No other product, surface, capability, resolver or responsibility-backed route changes, and People remains exact SELF/SELF with no RESOURCE_SET fallback."
+    },
+    "authExactReceiptProfileSelector": {
+      "route": "route.hcm.utility.explorer-command-receipt.data",
+      "selectorContract": "Only for a direct evaluation of the exact receipt route, a canonical source scope matching ^scope-[a-f0-9]{32}$ may select the access profile whose evaluated single scope has that exact key. An allowed higher-precedence profile with a different source scope is skipped; if no allowed profile matches, return SCOPE_INVALID.",
+      "platformScopeMaterial": "Use the existing ProductSurfaceScopeKey contract with the current tenant, actor, product hcm, surface hcm.utility, source ORIGINATING_COMMAND_SCOPE and kind TARGET_POPULATION. Platform derives the selector server-side; no browser profile label is trusted.",
+      "preservationRule": "An absent selector or a People-derived hcm-scope preserves existing precedence and People eligibility. No other route gains profile selection and no profile key, capability, scope resolver, package, predicate or generated carrier changes."
+    },
+    "twoPhasePlatformReceiptAuthority": {
+      "phaseOne": "Before loading a receipt, validate the forwarded route evidence. A command-only request must carry the exact canonical Platform Auth source scope and matching People-free receipt-route psr. A dual-qualified Work Explorer request may instead carry a fully revalidated Explorer People-derived hcm-scope and matching Explorer receipt-route psr.",
+      "familyRead": "Only after phase one succeeds may Platform perform the tenant-and-subject-bound immutable canonical-row lookup needed to distinguish an Explorer-origin receipt from a Platform-origin receipt. This internal classification is never returned or accepted as authority; unknown IDs and every post-lookup denial return the same HTTP status and response body. R5 does not claim constant-time or equal downstream-call counts.",
+      "phaseTwo": "For a Platform-origin row reached through the dual-qualified Explorer branch, Platform derives the canonical ORIGINATING_COMMAND_SCOPE selector and calls Auth for the exact receipt route without replaying the forwarded Explorer contextKey. Auth must derive and return the current Platform-profile contextKey from the selected scope. Platform requires one allowed hcm.command-receipt.view grant, one exact matching TARGET_POPULATION source scope, requiresProductEligibility=false, the returned canonical contextKey, current freshness and a People-null Platform receipt-route psr computed with Gateway parity. The internal Platform context and psr are retained separately and are not compared to the forwarded Explorer context or psr.",
+      "originProof": "After phase two, re-evaluate the stored exact management origin through Auth and People, require its derived hcm-scope, authority digest, field/auth revisions, origin purpose, current origin psr and expiry, and compare every immutable seal exactly as R4 requires.",
+      "pepRule": "The existing Platform owner PEP must still select platform-originating-command-receipt-reader from trusted Gateway permissions, roles and the typed verified receipt attribute before the controller returns the Platform projection. Shell authority alone never returns a Platform receipt."
+    },
+    "publicAndAuthorityRevisionSplit": {
+      "schema": "Amend the still-unreleased V327 sys_hris_command_receipts table with authority_field_policy_revision and authority_authorization_revision BIGINT NOT NULL columns. Add both authority columns to the >0 revision check and immutable seal trigger. At the database boundary enforce each existing public revision column BETWEEN 1 AND 9007199254740991 and equal to the low-53-bit non-zero projection of its paired authority column. No V328 or backfill is permitted.",
+      "publicProjection": "Existing field_policy_revision and authorization_revision remain the public receipt values. For a trusted positive Gateway revision g, project p = g & 9007199254740991 and use 1 only when p is zero; do not rehash g. This is identical to the existing source-hash low-53-bit projection. Fixed vectors are field 4663670355146917040 -> 6948340445824176 and authorization 1991387878219104048 -> 796842921344816. The existing public DTO, JSON names, OpenAPI and frontend parser remain unchanged.",
+      "authoritySeal": "The two new authority columns store the exact positive 63-bit Gateway-parity revisions from trusted authority evidence. All current-authority comparisons use only the authority columns. Public projected revisions are display/reconciliation data and must never authorize access.",
+      "producerRule": "Explorer, reference-configuration and navigation-policy canonical receipt writers must persist both pairs atomically: JavaScript-safe values in the existing public columns and exact Gateway-parity values in the new authority columns. Existing internal authority carriers such as AuthoritySnapshot and Explorer CommandContext may retain the exact pair only; derive the public pair only at public receipt/canonical persistence boundaries. Canonical producer records keep both pairs distinct, and repository ReceiptAuthority/ReceiptActivityRow reads map authority checks to the new internal columns. Activity/provider and current-authority comparisons use the internal pair.",
+      "responseConsistencyRule": "For a newly written reference-configuration receipt, the immediate public CommandReceipt and its exact legacy replay must use the same JavaScript-safe projected values as the canonical SYS-API-038 read for that receipt ID. The exact Gateway revisions remain only in the new canonical authority columns and authority-bound digests. Navigation has no public revision fields but its canonical public pair follows the same projection rule.",
+      "digestRule": "Idempotency, request and authorization-context material must continue to bind the exact internal authority revisions, not only their public low-53-bit projections. Explorer commandDigest and any owner-provider query that currently binds the shared revision pair must include/compare the distinct exact pair so a low-53 collision cannot replay or authorize a command.",
+      "compatibilityRule": "Historical V325/V326 rows and replay are not rewritten or backfilled. Newly written legacy reference receipts receive the corrected safe public projection so their immediate response, exact replay and canonical read agree. No bigint is serialized as a new string field and no Gateway, public DTO, OpenAPI or frontend change is authorized."
+    },
+    "privacyAndFailure": {
+      "opaqueRule": "Unknown ID, Explorer-only caller, command capability loss, selector mismatch, profile drift, package drift, People/Auth unavailability, psr mismatch, origin mismatch and expired evidence all return the same opaque HTTP 404 status and response body for receipt data after a tenant-and-subject-bound lookup. No constant-time guarantee or equal downstream-call-count claim is made.",
+      "noFallbackRule": "A failed exact Platform selector cannot fall back to Explorer authority, and an Explorer-origin receipt cannot be reclassified as Platform-origin.",
+      "noClientAuthority": "No new query parameter, header, profile key, role assertion or scope is accepted from the browser as owner proof."
+    }
+  },
+  "expandedTouchBoundary": {
+    "backendAdditionalAuthProduction": [
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationAuthorityAdapter.java (exact receipt-route canonical source-scope profile selection plus exact hcm.utility hcm.app.shell.view SELF projection only)"
+    ],
+    "backendExistingAuthTest": [
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationHcmAuthorityAdapterTest.java (command-only, overlap, forged selector, utility shell SELF scope/grant, responsibility metadata/validTo preservation, unrelated responsibility-backed RESOURCE_SET preservation and unrelated-route preservation assertions only)"
+    ],
+    "existingR4PlatformScope": [
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/**",
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/ReferenceConfigurationService.java only for the already-authorized canonical receipt bridge and public/authority revision split",
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/ReferenceConfigurationRepository.java only for the already-authorized canonical receipt record and public/authority revision split",
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/JdbcReferenceConfigurationRepository.java only for the already-authorized canonical writer and public/authority revision split",
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/navigationpolicy/NavigationPolicyService.java only for the already-authorized canonical receipt bridge and public/authority revision split",
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/navigationpolicy/NavigationPolicyRepository.java only for the already-authorized canonical receipt record and public/authority revision split",
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/navigationpolicy/JdbcNavigationPolicyRepository.java only for the already-authorized canonical writer and public/authority revision split",
+      "dwp-platform-server/src/main/resources/db/migration/V327__create_hris_work_explorer.sql only for the two new authority revision columns, positive checks and immutable trigger",
+      "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/**",
+      "dwp-platform-server/src/test/java/com/dwp/services/platform/security/HcmPlatformPepSecurityContractTest.java",
+      "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/ReferenceConfigurationCanonicalReceiptBridgeTest.java only for public/internal revision split and immediate/legacy/canonical consistency assertions",
+      "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/navigationpolicy/NavigationPolicyCanonicalReceiptBridgeTest.java only for public/internal revision split assertions"
+    ],
+    "stillForbidden": [
+      "Gateway production or test changes",
+      "frontend production, test, generated route or API-contract changes for receipt profile selection",
+      "product authorization contract, profile, predicate, package, capability, generated bundle, generated PEP or route registry changes",
+      "Auth DTO, controller, transport or source changes outside the exact additional Auth file and already-authorized R4 Auth test",
+      "People changes beyond the already-authorized R4 four files",
+      "a new endpoint, query parameter, header or public profile carrier",
+      "OpenAPI or exporter changes beyond the already-authorized R2/R4 delta",
+      "V327 changes unrelated to the existing R4 authority digest or the exact R5 authority revision split, a V328 migration, backfill or runtime activation",
+      "accepting the internally loaded receipt family, a browser value or a forwarded Explorer psr as Platform-profile authority"
+    ]
+  },
+  "targetedVerificationSuccessor": {
+    "policy": "Close all R5 static blockers before using the still-unused one-shot stages. Run A1, P1 and M1 at most once each; after a failure run only the smallest owning test and never repeat a successful aggregate.",
+    "authA1Unchanged": "./gradlew :dwp-auth-server:test --tests '*ProductAuthorizationHcmAuthorityAdapterTest' --no-daemon --max-workers=1",
+    "peopleP1Unchanged": "./gradlew :dwp-people-server:test --tests '*HcmProductSurfaceEligibilityAdapterTest' --tests '*PeopleSecurityFilterTest' --no-daemon --max-workers=1",
+    "backendM1Unchanged": "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.hrisconfiguration.explorer.*' --tests '*HcmPlatformPepSecurityContractTest' --tests '*ReferenceConfigurationCanonicalReceiptBridgeTest' --tests '*NavigationPolicyCanonicalReceiptBridgeTest' --no-daemon --max-workers=1",
+    "required": [
+      "Auth exact receipt route selects the Platform profile only when the supplied canonical source scope equals the evaluated hcm.command-receipt.view scope",
+      "Auth still requires the configured hcm.app.shell.view responsibility, preserves responsibility metadata/expiry, emits exactly one SELF/SELF utility shell scope and rebinds every grant scopeKeys list to it; another responsibility-backed capability remains RESOURCE_SET",
+      "an overlapping CONFIG_AUTHOR with the canonical Platform selector skips the higher Explorer profile, while absent/hcm-scope selection preserves Explorer precedence",
+      "forged, malformed, other-actor, other-tenant and unrelated-route scope selectors fail closed and no other dual-profile route changes behavior",
+      "command-only forwarded Platform proof is validated before any receipt read",
+      "dual-qualified forwarded Explorer proof permits only internal family classification, then requires a separate current exact Platform profile proof with a newly derived Platform contextKey before data",
+      "Explorer-only access to a Platform receipt, Platform-only access to an Explorer receipt, all seal mismatches and unavailable second-phase authority return opaque 404",
+      "newly dual-written reference and navigation receipts succeed for command-only and dual-qualified callers only after current stored-origin Auth-to-People re-proof",
+      "hard-coded Gateway-parity vectors prove exact 63-bit authority revisions are stored and compared in the new internal columns while every public receipt revision remains positive and at most 9007199254740991",
+      "V327 rejects a public revision that is safe but not the exact low-53-bit non-zero projection of its paired authority revision, and the immutable trigger covers all four revision columns",
+      "a hard-coded pair of distinct exact authority revisions with the same public low-53 projection cannot collide in Explorer idempotency material, owner-provider matching or current-authority validation",
+      "a newly written reference receipt returns, legacy-replays and canonical-reads one identical JavaScript-safe public revision pair while retaining the exact internal authority pair; historical replay remains unchanged",
+      "forged or stale internal authority revisions deny opaquely even when public projected revisions match; changing public projected revisions never grants access; both internal columns are immutable",
+      "changed-path audit proves the R1 through R5 union and every forbidden path count is zero"
+    ],
+    "forbidden": [
+      "repository-wide Gradle test",
+      "C1 or C3 full regeneration gate",
+      "a second A1, P1 or M1 aggregate run",
+      "a second aggregate M2 execution",
+      "repeating an already-successful frontend owner scope"
+    ]
+  },
+  "resultEvidenceSuccessor": {
+    "auth": "Report the exact ProductAuthorizationAuthorityAdapter selector and utility SELF-projection diff, the existing R4 Auth diff, A1 first command/output/exit, canonical selector vectors, responsibility-retention proof and unrelated-route preservation.",
+    "platform": "Report phase-one forwarded proof, subject-bound sealed family classification, phase-two exact Platform profile proof, separate request/internal/origin psr values, exact 63-bit internal versus JavaScript-safe public revision fixtures and identical-status/body opaque denials.",
+    "paths": "Report the exact R1/R2/R3/R4/R5 path union and zero Gateway, frontend-carrier, generated-contract, second-migration and activation changes.",
+    "inheritance": "All R1 through R4 evidence remains binding except the exact R5 supersession clauses."
+  },
+  "authority": {
+    "editExactAdditionalAuthSelectorFile": true,
+    "editExactUtilityShellSelfProjectionInSameAuthFile": true,
+    "extendExistingR4AuthTest": true,
+    "implementTwoPhaseReceiptProofWithinExplorerScope": true,
+    "splitPublicAndAuthorityRevisionsWithinExistingV327AndProducerScope": true,
+    "gatewayEditAuthorized": false,
+    "frontendCarrierEditAuthorized": false,
+    "contractOrGeneratedEditAuthorized": false,
+    "newEndpointAuthorized": false,
+    "secondMigrationAuthorized": false,
+    "mergeToDwpDevAuthorized": false,
+    "runtimeActivationAuthorized": false
+  }
+}

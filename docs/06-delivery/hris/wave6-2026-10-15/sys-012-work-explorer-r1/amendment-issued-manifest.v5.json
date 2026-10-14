@@ -1,0 +1,55 @@
+{
+  "schema": "dwp.hris.module-start-authority-amendment-issued-manifest.v5",
+  "manifestId": "HRIS-WAVE6-SYS-012-R5-AMENDMENT-ISSUED-MANIFEST",
+  "issuedAt": "2026-10-15T07:17:20+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-SYS",
+  "sliceId": "BASE-TFR-SYS-012",
+  "state": "R5_RECEIPT_PROFILE_AND_AUTHORITY_SEAL_CONTROL_AND_TOKEN_PINNED",
+  "artifacts": [
+    {
+      "path": "../sys-012-work-explorer-control-r1/receipt-profile-selection-successor-amendment.v1.json",
+      "id": "HRIS-WAVE6-SYS-012-RECEIPT-PROFILE-SELECTION-R5",
+      "sha256": "9b4d0752e85fae9e870fb1d22f89afc0abf35b5515c1718b10691980292d3166",
+      "bytes": 24047
+    },
+    {
+      "path": "start-token-amendment.v5.json",
+      "id": "HRIS-WAVE6-START-BASE-TFR-SYS-012-EXPLORER-R5",
+      "sha256": "a104322282b11fee80906ceda5ecff2a98ef9fc16f9fec73dc26413dc011e6d4",
+      "bytes": 8099
+    }
+  ],
+  "issuancePreconditions": {
+    "frontendControlBranch": "dwp-dev",
+    "frontendControlBaseCommit": "7adc0d3bd849d8f094e8734d4eb82464053fd2c7",
+    "backendModuleBranch": "codex/hris-wave6-sys-012-explorer-backend-20261015-r1",
+    "backendModuleBaseCommit": "3b2da20b592de5b5cff8f2483b83900f2dad054e",
+    "authA1State": "NOT_RUN",
+    "peopleP1State": "NOT_RUN",
+    "backendM1State": "NOT_RUN",
+    "r4ConsumedAndRawBytesVerifiedByModule": true,
+    "provenBlockingChain": "The dual-qualified CONFIG_AUTHOR is selected into the higher Explorer receipt profile before owner receipt-family evidence exists; the utility shell responsibility projects RESOURCE_SET where R4 requires SELF; and public JavaScript-safe revisions must not be conflated with exact 63-bit authority seals. The pinned R5 control closes all three blockers.",
+    "publicCarrierRequired": false
+  },
+  "integrityRules": [
+    "Resolve both R5 artifact paths relative to this manifest and verify raw bytes before consuming R5 authority.",
+    "R1 through R4 remain binding; only the exact R5 supersession clauses replace their restrictions.",
+    "Any byte change to either R5 artifact invalidates this manifest.",
+    "The module must report the one additional Auth production diff, including both exact R5 behaviors, separately from R4 Auth/People and prior paths.",
+    "The module must prove the two new V327 authority revision columns are positive and immutable, all four columns satisfy the exact low-53 projection relationship, exact Gateway-parity revisions bind command/idempotency and are compared only internally including activity filtering, and existing public revision fields remain JavaScript-safe without a DTO or contract change.",
+    "New reference receipt immediate response, legacy replay and canonical read must expose one identical safe public pair while historical V325/V326 replay remains unchanged.",
+    "A1, P1 and M1 remain unused until every static blocker closes; each aggregate may run once only and R5 does not authorize aggregate M2."
+  ],
+  "authority": {
+    "consumeR5Amendment": true,
+    "continueExistingWorktrees": true,
+    "editOnlyExactAdditionalAuthFileAndExistingR4Test": true,
+    "editExactUtilityShellSelfProjectionInSameAuthFile": true,
+    "completeTwoPhaseReceiptProofWithinExistingExplorerScope": true,
+    "splitPublicAndAuthorityRevisionsWithinExistingV327AndProducerScope": true,
+    "commitAndPushModuleBranchesAfterTargetedVerification": true,
+    "mergeToDwpDev": false,
+    "activation": false
+  }
+}
