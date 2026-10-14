@@ -36,6 +36,8 @@ export type ProductSurfaceHighRiskOperation =
   | 'HCM_EMPLOYMENT_EVENT_PUBLISH'
   | 'HCM_PERFORMANCE_CYCLE_PUBLISH'
   | 'HCM_PERFORMANCE_POPULATION_FREEZE'
+  | 'HCM_COMPENSATION_PLAN_APPROVE'
+  | 'HCM_COMPENSATION_SNAPSHOT_PUBLISH'
   | 'HCM_TIME_CLOCK_EVENT_VOID'
   | 'HCM_PAYROLL_FOUNDATION_PUBLISH'
   | 'HCM_PAYROLL_FOUNDATION_REVERSE'
@@ -253,6 +255,18 @@ export const PRODUCT_SURFACE_HIGH_RISK_COMMAND_CATALOG: readonly ProductSurfaceH
       productKey: 'hcm',
       surfaceKey: 'hcm.operations',
       routeContractKey: 'route.hcm.operations.performance-population-freeze.action',
+    },
+    {
+      operation: 'HCM_COMPENSATION_PLAN_APPROVE',
+      productKey: 'hcm',
+      surfaceKey: 'hcm.operations',
+      routeContractKey: 'route.hcm.operations.compensation-plan-approve.action',
+    },
+    {
+      operation: 'HCM_COMPENSATION_SNAPSHOT_PUBLISH',
+      productKey: 'hcm',
+      surfaceKey: 'hcm.operations',
+      routeContractKey: 'route.hcm.operations.compensation-snapshot-publish.action',
     },
     {
       operation: 'HCM_TIME_CLOCK_EVENT_VOID',

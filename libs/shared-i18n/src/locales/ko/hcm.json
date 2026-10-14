@@ -398,6 +398,7 @@
         "pay-operations": { "label": "급여 운영" },
         "talent-operations": { "label": "인재 운영" },
         "performance-review-operations": { "label": "평가 운영" },
+        "compensation-planning": { "label": "보상 계획" },
         "organization-design": { "label": "조직 설계" },
         "system-access": { "label": "시스템 접근 및 구성" },
         "settings-reference": { "label": "HRIS 기준정보 구성" },
@@ -553,6 +554,11 @@
         "eyebrow": "HRIS / 성과 운영",
         "title": "평가 운영",
         "description": "권한이 적용된 평가 대상을 미리 보고 불변 주기 스냅샷과 근거를 동결합니다."
+      },
+      "compensation-planning": {
+        "eyebrow": "HRIS / 성과 운영",
+        "title": "보상 계획",
+        "description": "예산, 대상 제안, 독립 승인과 급여 연계를 위한 불변 증빙을 통제합니다."
       },
       "organization-design": {
         "eyebrow": "HRIS / 조직 설계",

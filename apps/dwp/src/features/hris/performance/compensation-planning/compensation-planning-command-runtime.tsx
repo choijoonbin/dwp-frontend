@@ -1,3 +1,5 @@
+import { ProductSurfaceHighRiskCommandDialog } from '../../../../components/product-surface-high-risk-command';
+import { useCompensationPlanningCommandRuntime } from './compensation-planning-command-bindings';
 import { CompensationPlanningWorkspace } from './compensation-planning-workspace';
 import {
   useCompensationPlanningRequestScope,
@@ -18,11 +20,7 @@ export type HrisCompensationPlanningOperationsRuntimeProps = Readonly<{
   cycleAuthoringContext?: CompensationCycleAuthoringContext | null;
 }>;
 
-/**
- * Owner runtime. Until Central registers the sealed action and HIGH-risk
- * descriptors, omitted executors leave every mutation visibly fail-closed.
- */
-export function HrisCompensationPlanningOperationsRuntime({
+function CompensationPlanningRuntimeView({
   dataSource,
   commandExecutors,
   commandIntents,
@@ -66,6 +64,45 @@ export function HrisCompensationPlanningOperationsRuntime({
       onRetryProposals={runtime.retryProposals}
       onRetryProposalDetail={runtime.retryProposalDetail}
       onRetryPending={runtime.retryPending}
+      showPageHeader={false}
+    />
+  );
+}
+
+function GovernedCompensationPlanningRuntime({
+  dataSource,
+  cycleAuthoringContext,
+}: Pick<HrisCompensationPlanningOperationsRuntimeProps, 'dataSource' | 'cycleAuthoringContext'>) {
+  const commands = useCompensationPlanningCommandRuntime();
+  return (
+    <>
+      <CompensationPlanningRuntimeView
+        dataSource={dataSource}
+        commandExecutors={commands.commandExecutors}
+        commandIntents={commands.commandIntents}
+        cycleAuthoringContext={cycleAuthoringContext}
+      />
+      <ProductSurfaceHighRiskCommandDialog controller={commands.approveController} />
+      <ProductSurfaceHighRiskCommandDialog controller={commands.publishController} />
+    </>
+  );
+}
+
+/**
+ * Production mounts resolve all commands through Central's exact ACTION registry. Supplying either
+ * injectable command seam selects the isolated runtime and never mixes test authority with
+ * production authority.
+ */
+export function HrisCompensationPlanningOperationsRuntime(
+  props: HrisCompensationPlanningOperationsRuntimeProps
+) {
+  if (props.commandExecutors !== undefined || props.commandIntents !== undefined) {
+    return <CompensationPlanningRuntimeView {...props} />;
+  }
+  return (
+    <GovernedCompensationPlanningRuntime
+      dataSource={props.dataSource}
+      cycleAuthoringContext={props.cycleAuthoringContext}
     />
   );
 }

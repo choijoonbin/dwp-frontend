@@ -430,6 +430,13 @@
       "surfaceId": "hcm.operations"
     },
     {
+      "routeContractKey": "route.hcm.operations.compensation-planning.page",
+      "routeId": "hcm.operations.compensation-planning",
+      "pattern": "/hr/operations/performance/compensation-planning",
+      "productId": "hcm",
+      "surfaceId": "hcm.operations"
+    },
+    {
       "routeContractKey": "route.hcm.operations.employee-change-requests.page",
       "routeId": "hcm.operations.employee-change-requests",
       "pattern": "/hr/operations/people/employee-change-requests",

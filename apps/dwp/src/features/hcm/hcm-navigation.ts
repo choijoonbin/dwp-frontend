@@ -65,6 +65,7 @@ export type HcmView =
   | 'pay-operations'
   | 'talent-operations'
   | 'performance-review-operations'
+  | 'compensation-planning'
   | 'organization-design'
   | 'reference-data'
   | 'data-operations'
@@ -292,6 +293,16 @@ export const HCM_NAVIGATION: readonly HcmNavigationGroup[] = [
       },
       {
         section: 'operate',
+        view: 'compensation-planning',
+        path: '/hr/operations/performance/compensation-planning',
+        icon: ReceiptText,
+        audience: 'talent-admin',
+        governedOnly: true,
+        requiredResourceKey: 'DATA.HRIS_COMPENSATION_PLAN',
+        requiredPermissionCode: 'VIEW',
+      },
+      {
+        section: 'operate',
         view: 'people',
         path: '/hr/operations/people',
         icon: BriefcaseBusiness,
@@ -482,6 +493,10 @@ export const HCM_OPERATIONS_NAVIGATION = projectProductSurfaceNavigation(HCM_NAV
   'performance-review-operations': {
     taskKind: 'operations',
     access: capability('hcm.operations.performance.view'),
+  },
+  'compensation-planning': {
+    taskKind: 'operations',
+    access: capability('hcm.compensation.plan.view'),
   },
   people: { taskKind: 'operations', access: capability('hcm.operations.workforce.read') },
   'employee-change-requests': {

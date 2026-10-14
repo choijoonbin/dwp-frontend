@@ -9,8 +9,14 @@ import {
   approvalSignatureRouteInstalled,
 } from './approval-signature-source-model';
 import { APPROVAL_SIGNATURE_BINDINGS } from '@dwp-frontend/shared-utils/api/approval-signature-contract';
-import { PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS } from '../../routes/product-surface-authorization.generated';
+import {
+  PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS,
+  type ProductAuthorizationRouteProjection,
+} from '../../routes/product-surface-authorization.generated';
 import type { ApprovalSignatureGatewayRouteStatus } from './approval-signature-gateway-contract';
+
+const productAuthorizationRouteProjections: readonly ProductAuthorizationRouteProjection[] =
+  PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS;
 
 describe('signature source10 UI selection (not live Auth activation)', () => {
   it('requires official public availability plus one exact work projection', () => {
@@ -26,13 +32,13 @@ describe('signature source10 UI selection (not live Auth activation)', () => {
       ];
       expect(approvalSignatureRouteInstalled(leaf)).toBe(true);
       expect(
-        approvalSignatureRouteInstalled(leaf, PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS, official)
+        approvalSignatureRouteInstalled(leaf, productAuthorizationRouteProjections, official)
       ).toBe(true);
       expect(
-        approvalSignatureRouteInstalled(leaf, PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS, unavailable)
+        approvalSignatureRouteInstalled(leaf, productAuthorizationRouteProjections, unavailable)
       ).toBe(false);
       expect(approvalSignatureRouteInstalled(leaf, [])).toBe(false);
-      const route = PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS.find(
+      const route = productAuthorizationRouteProjections.find(
         (value) => value.routeContractKey === `route.approvals.work.${leaf}`
       )!;
       expect(approvalSignatureRouteInstalled(leaf, [route, route], official)).toBe(false);

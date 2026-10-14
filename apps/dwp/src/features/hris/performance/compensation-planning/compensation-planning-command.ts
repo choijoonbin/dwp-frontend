@@ -27,6 +27,8 @@ export type CompensationCommandName =
 export type PendingCompensationCommand<T = unknown> = Readonly<{
   command: CompensationCommandName;
   targetId: string;
+  /** Route parent retained for proposal commands whose governed target is the proposal. */
+  cycleId?: string;
   envelope: CompensationCommandEnvelope<T>;
 }>;
 

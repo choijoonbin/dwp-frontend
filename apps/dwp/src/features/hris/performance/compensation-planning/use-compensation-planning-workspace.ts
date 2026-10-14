@@ -641,7 +641,9 @@ export function useCompensationPlanningRuntime({
           selected && commandIntents.draftProposal
             ? () => commandIntents.draftProposal!(
                 selected.cycleId,
-                selected.aggregateVersion,
+                proposalsQuery.data?.items.find(
+                  (proposal) => proposal.proposalId === proposalId
+                )?.aggregateVersion ?? 0,
                 proposalId,
                 body
               )
@@ -682,6 +684,7 @@ export function useCompensationPlanningRuntime({
       commandIntents,
       cycleQuery.isSuccess,
       executorReady,
+      proposalsQuery.data?.items,
       proposalsQuery.isSuccess,
       runIntent,
       selected,

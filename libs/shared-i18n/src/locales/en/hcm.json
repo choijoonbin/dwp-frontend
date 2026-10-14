@@ -398,6 +398,7 @@
         "pay-operations": { "label": "Pay operations" },
         "talent-operations": { "label": "Talent operations" },
         "performance-review-operations": { "label": "Performance review operations" },
+        "compensation-planning": { "label": "Compensation planning" },
         "organization-design": { "label": "Organization design" },
         "system-access": { "label": "System access & configuration" },
         "settings-reference": { "label": "HRIS reference configuration" },
@@ -553,6 +554,11 @@
         "eyebrow": "HRIS / Performance operations",
         "title": "Performance review operations",
         "description": "Preview the authorized review population and freeze an immutable cycle snapshot with retained evidence."
+      },
+      "compensation-planning": {
+        "eyebrow": "HRIS / Performance operations",
+        "title": "Compensation planning",
+        "description": "Control budgets, eligible proposals, independent approval, and immutable payroll-ready evidence."
       },
       "organization-design": {
         "eyebrow": "HRIS / Organization design",

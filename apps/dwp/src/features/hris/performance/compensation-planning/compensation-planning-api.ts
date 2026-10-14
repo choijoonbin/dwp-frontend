@@ -65,6 +65,84 @@ export type CompensationCollectionQuery = Readonly<{
   limit?: number;
 }>;
 
+export const COMPENSATION_PLANNING_READ_API_CONTRACTS = [
+  {
+    apiFunction: 'queryCompensationCycles',
+    routeContractKey: 'route.hcm.operations.compensation-planning.page',
+    method: 'GET',
+    path: `${COMPENSATION_PLANNING_BASE_PATH}/cycles`,
+  },
+  {
+    apiFunction: 'queryCompensationCycle',
+    routeContractKey: 'route.hcm.operations.compensation-cycle-detail.data',
+    method: 'GET',
+    path: `${COMPENSATION_PLANNING_BASE_PATH}/cycles/{cycleId}`,
+  },
+  {
+    apiFunction: 'queryCompensationProposals',
+    routeContractKey: 'route.hcm.operations.compensation-proposals.data',
+    method: 'GET',
+    path: `${COMPENSATION_PLANNING_BASE_PATH}/cycles/{cycleId}/proposals`,
+  },
+  {
+    apiFunction: 'queryCompensationProposal',
+    routeContractKey: 'route.hcm.operations.compensation-proposal-detail.data',
+    method: 'GET',
+    path: `${COMPENSATION_PLANNING_BASE_PATH}/proposals/{proposalId}`,
+  },
+] as const;
+
+export const COMPENSATION_PLANNING_MUTATION_API_CONTRACTS = [
+  {
+    apiFunction: 'createCompensationCycle',
+    routeContractKey: 'route.hcm.operations.compensation-cycle-create.action',
+    method: 'POST',
+    path: `${COMPENSATION_PLANNING_BASE_PATH}/cycles`,
+  },
+  {
+    apiFunction: 'reviseCompensationCycle',
+    routeContractKey: 'route.hcm.operations.compensation-cycle-revise.action',
+    method: 'POST',
+    path: `${COMPENSATION_PLANNING_BASE_PATH}/cycles/{cycleId}/revisions`,
+  },
+  {
+    apiFunction: 'allocateCompensationBudget',
+    routeContractKey: 'route.hcm.operations.compensation-budget-allocate.action',
+    method: 'POST',
+    path: `${COMPENSATION_PLANNING_BASE_PATH}/cycles/{cycleId}/budget-allocations`,
+  },
+  {
+    apiFunction: 'upsertCompensationProposal',
+    routeContractKey: 'route.hcm.operations.compensation-proposal-upsert.action',
+    method: 'POST',
+    path: `${COMPENSATION_PLANNING_BASE_PATH}/cycles/{cycleId}/proposals/{proposalId}`,
+  },
+  {
+    apiFunction: 'submitCompensationProposal',
+    routeContractKey: 'route.hcm.operations.compensation-proposal-submit.action',
+    method: 'POST',
+    path: `${COMPENSATION_PLANNING_BASE_PATH}/cycles/{cycleId}/proposals/{proposalId}/submit`,
+  },
+  {
+    apiFunction: 'approveCompensationPlan',
+    routeContractKey: 'route.hcm.operations.compensation-plan-approve.action',
+    method: 'POST',
+    path: `${COMPENSATION_PLANNING_BASE_PATH}/cycles/{cycleId}/approve`,
+  },
+  {
+    apiFunction: 'publishCompensationSnapshot',
+    routeContractKey: 'route.hcm.operations.compensation-snapshot-publish.action',
+    method: 'POST',
+    path: `${COMPENSATION_PLANNING_BASE_PATH}/cycles/{cycleId}/approved-snapshots`,
+  },
+  {
+    apiFunction: 'cancelCompensationCycle',
+    routeContractKey: 'route.hcm.operations.compensation-cycle-cancel.action',
+    method: 'POST',
+    path: `${COMPENSATION_PLANNING_BASE_PATH}/cycles/{cycleId}/cancel`,
+  },
+] as const;
+
 export type CompensationPlanningDataSource = Readonly<{
   cycles: (
     query: CompensationCollectionQuery,

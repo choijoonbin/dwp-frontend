@@ -26,7 +26,10 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
 import { getCompensationPlanningCopy } from './compensation-planning-copy';
-import { parseCompensationCycleAuthoringContext } from './compensation-planning-contract';
+import {
+  COMPENSATION_PLANNING_ROUTE,
+  parseCompensationCycleAuthoringContext,
+} from './compensation-planning-contract';
 
 import type { CompensationPlanningCopy } from './compensation-planning-copy';
 
@@ -103,6 +106,7 @@ export type CompensationPlanningWorkspaceProps = Readonly<{
   lastRefreshedAt?: number;
   actorId?: string | null;
   locale?: string;
+  showPageHeader?: boolean;
   filter?: string;
   onFilterChange?: (value: string) => void;
   onSelectCycle: (cycleId: string) => void;
@@ -285,6 +289,7 @@ export function CompensationPlanningWorkspace({
   lastRefreshedAt = 0,
   actorId,
   locale = 'en',
+  showPageHeader = true,
   filter = '',
   onFilterChange,
   onSelectCycle,
@@ -483,16 +488,22 @@ export function CompensationPlanningWorkspace({
   return (
     <Box
       component="main"
-      data-route="/hr/operations/performance/compensation-planning"
+      data-route={COMPENSATION_PLANNING_ROUTE}
       sx={{ minHeight: 1, bgcolor: 'background.default', color: 'text.primary', p: { xs: 2, md: 3 } }}
     >
       <Stack gap={2.5}>
-        <Stack direction={{ xs: 'column', md: 'row' }} justifyContent="space-between" gap={2}>
-          <Box sx={{ minWidth: 0 }}>
-            <Typography variant="overline" color="primary.main">{copy.eyebrow}</Typography>
-            <Typography component="h1" variant="h4" sx={{ wordBreak: 'keep-all' }}>{copy.title}</Typography>
-            <Typography color="text.secondary" sx={{ mt: 0.75, maxWidth: 760 }}>{copy.subtitle}</Typography>
-          </Box>
+        <Stack
+          direction={{ xs: 'column', md: 'row' }}
+          justifyContent={showPageHeader ? 'space-between' : 'flex-end'}
+          gap={2}
+        >
+          {showPageHeader ? (
+            <Box sx={{ minWidth: 0 }}>
+              <Typography variant="overline" color="primary.main">{copy.eyebrow}</Typography>
+              <Typography component="h1" variant="h4" sx={{ wordBreak: 'keep-all' }}>{copy.title}</Typography>
+              <Typography color="text.secondary" sx={{ mt: 0.75, maxWidth: 760 }}>{copy.subtitle}</Typography>
+            </Box>
+          ) : null}
           <Stack direction="row" flexWrap="wrap" gap={1} alignItems="center">
             <ActionButton intent="secondary" onClick={onRefresh}>{copy.refresh}</ActionButton>
             <ActionButton intent="primary" disabled={!cycleAuthoringContext || !actions.canCreate || !actions.onCreate} onClick={() => openDialog('CREATE')}>

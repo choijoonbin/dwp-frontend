@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  COMPENSATION_PLANNING_PAGE_ROUTE_CONTRACT,
+  COMPENSATION_PLANNING_ROUTE,
+  COMPENSATION_PLANNING_VIEW_CAPABILITY,
   parseCompensationCycleCollection,
   parseCompensationCycleDetail,
   parseApproveCompensationPlanBody,
@@ -60,6 +63,14 @@ const proposal = {
 } as const;
 
 describe('sealed compensation-planning contracts', () => {
+  it('pins the canonical governed PAGE route and view capability', () => {
+    expect(COMPENSATION_PLANNING_ROUTE).toBe('/hr/operations/performance/compensation-planning');
+    expect(COMPENSATION_PLANNING_PAGE_ROUTE_CONTRACT).toBe(
+      'route.hcm.operations.compensation-planning.page'
+    );
+    expect(COMPENSATION_PLANNING_VIEW_CAPABILITY).toBe('hcm.compensation.plan.view');
+  });
+
   it('accepts only the exact list/detail projections and cursor invariant', () => {
     const collection = parseCompensationCycleCollection({
       items: [cycle],

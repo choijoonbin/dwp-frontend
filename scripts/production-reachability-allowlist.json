@@ -1,55 +1,7 @@
 {
   "version": 1,
-  "maximumEntries": 28,
+  "maximumEntries": 20,
   "entries": [
-    {
-      "path": "apps/dwp/src/features/hris/performance/compensation-planning/compensation-planning-api.ts",
-      "owner": "HRIS-PER / HRIS Integration Control",
-      "reason": "MOD-PER-COMPPLAN is implemented and verified in isolation but must remain unreachable until its official PAGE authorization, route registration, renderer, and shell ownership are activated atomically.",
-      "removalCondition": "Remove when MOD-PER-COMPPLAN is connected to the server-authorized PAGE projection and its production route renderer in the central activation change."
-    },
-    {
-      "path": "apps/dwp/src/features/hris/performance/compensation-planning/compensation-planning-command-runtime.tsx",
-      "owner": "HRIS-PER / HRIS Integration Control",
-      "reason": "MOD-PER-COMPPLAN is implemented and verified in isolation but must remain unreachable until its official PAGE authorization, route registration, renderer, and shell ownership are activated atomically.",
-      "removalCondition": "Remove when MOD-PER-COMPPLAN is connected to the server-authorized PAGE projection and its production route renderer in the central activation change."
-    },
-    {
-      "path": "apps/dwp/src/features/hris/performance/compensation-planning/compensation-planning-command.ts",
-      "owner": "HRIS-PER / HRIS Integration Control",
-      "reason": "MOD-PER-COMPPLAN is implemented and verified in isolation but must remain unreachable until its official PAGE authorization, route registration, renderer, and shell ownership are activated atomically.",
-      "removalCondition": "Remove when MOD-PER-COMPPLAN is connected to the server-authorized PAGE projection and its production route renderer in the central activation change."
-    },
-    {
-      "path": "apps/dwp/src/features/hris/performance/compensation-planning/compensation-planning-contract.ts",
-      "owner": "HRIS-PER / HRIS Integration Control",
-      "reason": "MOD-PER-COMPPLAN is implemented and verified in isolation but must remain unreachable until its official PAGE authorization, route registration, renderer, and shell ownership are activated atomically.",
-      "removalCondition": "Remove when MOD-PER-COMPPLAN is connected to the server-authorized PAGE projection and its production route renderer in the central activation change."
-    },
-    {
-      "path": "apps/dwp/src/features/hris/performance/compensation-planning/compensation-planning-copy.ts",
-      "owner": "HRIS-PER / HRIS Integration Control",
-      "reason": "MOD-PER-COMPPLAN is implemented and verified in isolation but must remain unreachable until its official PAGE authorization, route registration, renderer, and shell ownership are activated atomically.",
-      "removalCondition": "Remove when MOD-PER-COMPPLAN is connected to the server-authorized PAGE projection and its production route renderer in the central activation change."
-    },
-    {
-      "path": "apps/dwp/src/features/hris/performance/compensation-planning/compensation-planning-workspace.tsx",
-      "owner": "HRIS-PER / HRIS Integration Control",
-      "reason": "MOD-PER-COMPPLAN is implemented and verified in isolation but must remain unreachable until its official PAGE authorization, route registration, renderer, and shell ownership are activated atomically.",
-      "removalCondition": "Remove when MOD-PER-COMPPLAN is connected to the server-authorized PAGE projection and its production route renderer in the central activation change."
-    },
-    {
-      "path": "apps/dwp/src/features/hris/performance/compensation-planning/index.ts",
-      "owner": "HRIS-PER / HRIS Integration Control",
-      "reason": "MOD-PER-COMPPLAN is implemented and verified in isolation but must remain unreachable until its official PAGE authorization, route registration, renderer, and shell ownership are activated atomically.",
-      "removalCondition": "Remove when MOD-PER-COMPPLAN is connected to the server-authorized PAGE projection and its production route renderer in the central activation change."
-    },
-    {
-      "path": "apps/dwp/src/features/hris/performance/compensation-planning/use-compensation-planning-workspace.ts",
-      "owner": "HRIS-PER / HRIS Integration Control",
-      "reason": "MOD-PER-COMPPLAN is implemented and verified in isolation but must remain unreachable until its official PAGE authorization, route registration, renderer, and shell ownership are activated atomically.",
-      "removalCondition": "Remove when MOD-PER-COMPPLAN is connected to the server-authorized PAGE projection and its production route renderer in the central activation change."
-    },
     {
       "path": "apps/dwp/src/features/hris/shell/components/hris-product-map-group.tsx",
       "owner": "HRIS Integration Control",

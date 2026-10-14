@@ -18,6 +18,8 @@ import type { ApprovalSignatureGatewayRouteStatus } from './approval-signature-g
 const targetId = '11111111-1111-4111-8111-111111111111';
 const draftId = '22222222-2222-4222-8222-222222222222';
 const sha = 'a'.repeat(64);
+const productAuthorizationRouteProjections: readonly ProductAuthorizationRouteProjection[] =
+  PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS;
 
 describe('APR-16 signature native route and HIGH command bindings', () => {
   it.each(Object.keys(APPROVAL_SIGNATURE_NATIVE_ROUTES))(
@@ -35,14 +37,14 @@ describe('APR-16 signature native route and HIGH command bindings', () => {
       expect(
         approvalSignatureNativeRouteInstalled(
           routeLeaf,
-          PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS,
+          productAuthorizationRouteProjections,
           official
         )
       ).toBe(true);
       expect(
         approvalSignatureNativeRouteInstalled(
           routeLeaf,
-          PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS,
+          productAuthorizationRouteProjections,
           unavailable
         )
       ).toBe(false);
@@ -52,10 +54,10 @@ describe('APR-16 signature native route and HIGH command bindings', () => {
   it('fails closed on a missing, duplicate, or path-drifted projection', () => {
     const leaf = 'external-signature-context.data' as const;
     const routeKey = 'route.approvals.work.external-signature-context.data';
-    const route = PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS.find(
+    const route = productAuthorizationRouteProjections.find(
       (candidate) => candidate.routeContractKey === routeKey
     )!;
-    const without = PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS.filter(
+    const without = productAuthorizationRouteProjections.filter(
       (candidate) => candidate.routeContractKey !== routeKey
     );
     const drifted: ProductAuthorizationRouteProjection = {

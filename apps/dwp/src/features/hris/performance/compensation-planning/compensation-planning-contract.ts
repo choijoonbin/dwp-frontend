@@ -1,5 +1,11 @@
 import { Temporal } from 'temporal-polyfill';
 
+export const COMPENSATION_PLANNING_ROUTE =
+  '/hr/operations/performance/compensation-planning' as const;
+export const COMPENSATION_PLANNING_PAGE_ROUTE_CONTRACT =
+  'route.hcm.operations.compensation-planning.page' as const;
+export const COMPENSATION_PLANNING_VIEW_CAPABILITY = 'hcm.compensation.plan.view' as const;
+
 export const COMPENSATION_PLANNING_BASE_PATH =
   '/api/people/v1/hris/performance/compensation-planning' as const;
 

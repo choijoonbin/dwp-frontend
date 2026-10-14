@@ -66,6 +66,11 @@ const HrisPerformanceReviewOperationsPopulationFreezeRuntime = lazy(() =>
     default: module.HrisPerformanceReviewOperationsPopulationFreezeRuntime,
   }))
 );
+const HrisCompensationPlanningOperationsRuntime = lazy(() =>
+  import('../features/hris/performance/compensation-planning').then((module) => ({
+    default: module.HrisCompensationPlanningOperationsRuntime,
+  }))
+);
 const HrDomainOperations = lazy(() =>
   import('../features/hcm/hr-domain-operations').then((module) => ({
     default: module.HrDomainOperations,
@@ -250,6 +255,7 @@ function HcmPageContent({ page }: { page: HcmNavigationItem }) {
     'pay-operations': <HrisPayrollFoundationOperationsWorkspace />,
     'talent-operations': <HrisPerformanceCycleOperationsWorkspace />,
     'performance-review-operations': <HrisPerformanceReviewOperationsPopulationFreezeRuntime />,
+    'compensation-planning': <HrisCompensationPlanningOperationsRuntime />,
     'organization-design': <OrganizationExplorer experience="workforce" />,
     'settings-reference': <HrisReferenceConfigurationWorkspace />,
     'settings-payroll': <HrisPayrollConfigurationWorkspace />,

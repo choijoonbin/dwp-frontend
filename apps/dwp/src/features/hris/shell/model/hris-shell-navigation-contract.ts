@@ -95,7 +95,11 @@ export const HRIS_SHELL_ENTRIES: readonly HrisShellEntry[] = [
   {
     view: 'workbench-performance',
     groupId: 'workbenches',
-    candidates: ['/hr/operations/talent', '/hr/operations/performance/review-operations'],
+    candidates: [
+      '/hr/operations/talent',
+      '/hr/operations/performance/review-operations',
+      '/hr/operations/performance/compensation-planning',
+    ],
     icon: Sparkles,
   },
   {

@@ -55,6 +55,20 @@ describe('canonical HRIS shell navigation projection', () => {
     ]);
   });
 
+  it('opens the performance workbench from compensation planning when it is the only authorized PAGE', () => {
+    const projected = projectHrisShellNavigation(
+      new Set(['/hr/operations/performance/compensation-planning'])
+    ).flatMap((group) => group.items);
+
+    expect(projected).toEqual([
+      expect.objectContaining({
+        view: 'workbench-performance',
+        path: '/hr/operations/performance/compensation-planning',
+        activePathPrefixes: ['/hr/operations/performance/compensation-planning'],
+      }),
+    ]);
+  });
+
   it('keeps the four canonical PAGEs inside the existing workbench owners', () => {
     const projected = projectHrisShellNavigation(
       new Set([
@@ -113,6 +127,9 @@ describe('canonical HRIS shell navigation projection', () => {
     expect(resolveHrisShellSelectedView('/hr/operations/performance/review-operations')).toBe(
       'workbench-performance'
     );
+    expect(resolveHrisShellSelectedView('/hr/operations/performance/compensation-planning')).toBe(
+      'workbench-performance'
+    );
     expect(resolveHrisShellSelectedView('/hr/operations/people/employee-change-requests')).toBe(
       'workbench-hr-operations'
     );
@@ -134,6 +151,9 @@ describe('canonical HRIS shell navigation projection', () => {
     expect(canonicalOwner).toBe('workbench-time');
     expect(visibleViews).not.toContain(canonicalOwner);
     expect(selectedVisibleViews('/hr/operations/time', ['/hr/operations'])).toEqual([]);
+    expect(
+      selectedVisibleViews('/hr/operations/performance/compensation-planning', ['/hr/operations'])
+    ).toEqual([]);
   });
 
   it('fully excludes BENSK routes from projection and active-state ownership', () => {

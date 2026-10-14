@@ -14,9 +14,9 @@ export type ProductAuthorizationRouteProjection = Readonly<{
 
 export const PRODUCT_AUTHORIZATION_REGISTRY_REVISION = {
   bundleKey: 'product-surfaces',
-  version: 38,
-  checksum: 'a41145d6a2faefd2e6030a2ca9a070769019d4db5513ea214bf542dda31c374a',
-  indexChecksum: 'ccce2d9ce8481836dd12bc19d2ee44860e18982a3dda0e75459ccec29f3cbb61',
+  version: 39,
+  checksum: '86e796c95e45c02892d4c4ae76e7a5b36114ab09554ffc1be3a450066fe8e34c',
+  indexChecksum: 'aabb3ccc3ae806fa785bb69947c4524c5744a0453fee0fd29b3641e0e967854b',
 } as const;
 
 export const PRODUCT_SURFACE_ROLLOUT_INVENTORY_REVISION = {
@@ -8525,6 +8525,198 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
       {
         method: 'GET',
         path: '/api/people/v1/hr/operations/{domain}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.compensation-budget-allocate.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/people/v1/hris/performance/compensation-planning/cycles/{cycleId}/budget-allocations',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.compensation-cycle-cancel.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/people/v1/hris/performance/compensation-planning/cycles/{cycleId}/cancel',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.compensation-cycle-create.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/people/v1/hris/performance/compensation-planning/cycles',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.compensation-cycle-detail.data',
+    routeKind: 'DATA',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/people/v1/hris/performance/compensation-planning/cycles/{cycleId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.compensation-cycle-revise.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/people/v1/hris/performance/compensation-planning/cycles/{cycleId}/revisions',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.compensation-plan-approve.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/people/v1/hris/performance/compensation-planning/cycles/{cycleId}/approve',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.compensation-planning.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: 'hcm.operations.compensation-planning',
+    pattern: '/hr/operations/performance/compensation-planning',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/people/v1/hris/performance/compensation-planning/cycles',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.compensation-proposal-detail.data',
+    routeKind: 'DATA',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/people/v1/hris/performance/compensation-planning/proposals/{proposalId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.compensation-proposal-submit.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/people/v1/hris/performance/compensation-planning/cycles/{cycleId}/proposals/{proposalId}/submit',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.compensation-proposal-upsert.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/people/v1/hris/performance/compensation-planning/cycles/{cycleId}/proposals/{proposalId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.compensation-proposals.data',
+    routeKind: 'DATA',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/people/v1/hris/performance/compensation-planning/cycles/{cycleId}/proposals',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.compensation-snapshot-publish.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/people/v1/hris/performance/compensation-planning/cycles/{cycleId}/approved-snapshots',
       },
     ],
   },

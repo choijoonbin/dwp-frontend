@@ -305,6 +305,96 @@ describe('compensation command runtime', () => {
     expect(latest.cycles).toHaveLength(1);
   });
 
+  it('uses the existing proposal aggregate version for an upsert instead of the cycle version', async () => {
+    const proposalId = '99999999-9999-4999-8999-999999999999';
+    const proposalBody = {
+      content: {
+        cyclePublicId: ID.cycle,
+        workerPublicId: '55555555-5555-4555-8555-555555555555',
+        assignmentPublicId: '66666666-6666-4666-8666-666666666666',
+        componentCode: 'BASE',
+        currency: 'USD',
+        amount: '99',
+        effectiveFrom: '2027-01-01',
+        effectiveTo: null,
+        exceptionReasonCode: null,
+        supersedesProposalPublicId: null,
+      },
+    };
+    const proposalSummary = {
+      proposalId,
+      aggregateVersion: 6,
+      cycleId: ID.cycle,
+      workerId: proposalBody.content.workerPublicId,
+      assignmentId: proposalBody.content.assignmentPublicId,
+      componentCode: 'BASE',
+      currency: 'USD',
+      effectiveFrom: '2027-01-01',
+      effectiveTo: null,
+      currentRevision: 1,
+      status: 'DRAFT' as const,
+      contentDigest: HASH,
+      amountMasked: true,
+    };
+    const data: CompensationPlanningDataSource = {
+      ...source(),
+      proposals: vi.fn().mockResolvedValue({
+        items: [proposalSummary],
+        nextCursor: null,
+        hasMore: false,
+        referenceEffectiveAt: NOW,
+        freshnessWatermark: NOW,
+        fieldPolicyRevision: 1,
+      }),
+    };
+    const upsertPending: PendingCompensationCommand = Object.freeze({
+      command: 'UPSERT_PROPOSAL',
+      targetId: proposalId,
+      cycleId: ID.cycle,
+      envelope: Object.freeze({
+        correlationId: ID.correlation,
+        idempotencyKey: 'proposal-upsert-1',
+        expectedVersion: proposalSummary.aggregateVersion,
+        body: proposalBody,
+      }),
+    });
+    const draftProposal = vi.fn(() => upsertPending);
+    const executor = vi.fn(async (candidate: PendingCompensationCommand) => ({
+      commandReceiptId: ID.receipt,
+      status: 'COMPLETED' as const,
+      correlationId: candidate.envelope.correlationId,
+      completedAt: NOW,
+      resultDigest: HASH,
+      aggregatePublicId: proposalId,
+      aggregateVersion: proposalSummary.aggregateVersion + 1,
+      childResults: [],
+    }));
+    window.history.replaceState({}, '', `/?cycle=${ID.cycle}`);
+    await render({
+      requestScope: scope(),
+      dataSource: data,
+      commandExecutors: { UPSERT_PROPOSAL: executor },
+      commandIntents: { draftProposal },
+    });
+    await act(async () => {
+      await vi.waitFor(() => expect(latest.proposals?.items).toHaveLength(1));
+      await vi.waitFor(() => expect(latest.actions.canDraftProposal).toBe(true));
+    });
+
+    await act(async () => {
+      await latest.actions.onDraftProposal?.(proposalId, proposalBody);
+    });
+
+    expect(draftProposal).toHaveBeenCalledWith(
+      ID.cycle,
+      proposalSummary.aggregateVersion,
+      proposalId,
+      proposalBody
+    );
+    expect(draftProposal.mock.calls[0]?.[1]).not.toBe(cycle.aggregateVersion);
+    expect(executor).toHaveBeenCalledWith(upsertPending);
+  });
+
   it('rejects a proposal freshness advance that is not anchored to the selected cycle', async () => {
     const proposalId = '99999999-9999-4999-8999-999999999999';
     const later = '2026-10-13T08:00:01Z';

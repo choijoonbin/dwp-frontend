@@ -156,6 +156,14 @@ describe('HR product navigation', () => {
       requiredResourceKey: 'DATA.HR_TALENT',
       requiredPermissionCode: 'VIEW',
     });
+    expect(findHcmNavigationItem('/hr/operations/performance/compensation-planning')).toMatchObject(
+      {
+        view: 'compensation-planning',
+        governedOnly: true,
+        requiredResourceKey: 'DATA.HRIS_COMPENSATION_PLAN',
+        requiredPermissionCode: 'VIEW',
+      }
+    );
     expect(findHcmNavigationItem('/hr/operations/people/employee-change-requests')).toMatchObject({
       view: 'employee-change-requests',
       governedOnly: true,
@@ -200,6 +208,11 @@ describe('HR product navigation', () => {
       path: '/hr/operations/time/interpretation',
       taskKind: 'operations',
       access: { type: 'capability', capabilityContractKey: 'hcm.operations.time.view' },
+    });
+    expect(item(HCM_OPERATIONS_NAVIGATION, 'compensation-planning')).toMatchObject({
+      path: '/hr/operations/performance/compensation-planning',
+      taskKind: 'operations',
+      access: { type: 'capability', capabilityContractKey: 'hcm.compensation.plan.view' },
     });
     expect(item(HCM_MANAGEMENT_NAVIGATION, 'settings-payroll')).toMatchObject({
       path: '/hr/settings/payroll',

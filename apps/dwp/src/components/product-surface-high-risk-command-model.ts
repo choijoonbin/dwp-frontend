@@ -47,6 +47,7 @@ export type ApprovalHighRiskCommandDescriptor = Readonly<{
     | 'EMPLOYMENT_EVENT'
     | 'CLOCK_EVENT'
     | 'PERFORMANCE_CYCLE'
+    | 'COMPENSATION_CYCLE'
     | 'PAYROLL_CONFIGURATION'
     | 'PAYROLL_FORMULA'
     | 'DWAI_ON_CONTROL_PLANE';

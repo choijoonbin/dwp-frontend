@@ -19,10 +19,14 @@ import { APPROVAL_GOVERNED_MUTATION_API_CONTRACTS } from '@dwp-frontend/shared-u
 import { PAYROLL_FOUNDATION_MUTATION_API_CONTRACTS } from '../features/hris/payroll/api/payroll-foundation-api';
 import { PERFORMANCE_CYCLE_MUTATION_API_CONTRACTS } from '../features/hris/performance/api/performance-cycle-api';
 import { PERFORMANCE_POPULATION_FREEZE_API_CONTRACT } from '../features/hris/performance/population-freeze/population-freeze-api';
+import { COMPENSATION_PLANNING_MUTATION_API_CONTRACTS } from '../features/hris/performance/compensation-planning/compensation-planning-api';
 import { HRIS_TIME_WORK_PLAN_MUTATION_API_CONTRACTS } from '../features/hris/time/api/hris-time-work-plan-api';
 import { CLOCK_COMMAND_MUTATION_API_CONTRACTS } from '../features/hris/time/clock-ingestion/api/clock-ingestion-api';
 
-import { PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS } from './product-surface-authorization.generated';
+import {
+  PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS,
+  type ProductAuthorizationRouteProjection,
+} from './product-surface-authorization.generated';
 
 type ComparableContract = Readonly<{
   routeContractKey: string;
@@ -30,7 +34,15 @@ type ComparableContract = Readonly<{
   path: string;
 }>;
 
-const IMPLEMENTED_ACTION_CONTRACTS = [
+const productAuthorizationRouteProjections: readonly ProductAuthorizationRouteProjection[] =
+  PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS;
+
+const IMPLEMENTED_ACTION_CONTRACTS: readonly Readonly<{
+  apiFunction: string;
+  routeContractKey: string;
+  method: string;
+  path: string;
+}>[] = [
   ...APPROVAL_GOVERNED_MUTATION_API_CONTRACTS,
   APPROVAL_HOME_PREFERENCE_MUTATION_API_CONTRACT,
   ...COMMUNICATIONS_MANAGEMENT_MUTATION_API_CONTRACTS,
@@ -45,10 +57,11 @@ const IMPLEMENTED_ACTION_CONTRACTS = [
   HCM_HOME_PREFERENCE_MUTATION_API_CONTRACT,
   ...PERFORMANCE_CYCLE_MUTATION_API_CONTRACTS,
   PERFORMANCE_POPULATION_FREEZE_API_CONTRACT,
+  ...COMPENSATION_PLANNING_MUTATION_API_CONTRACTS,
   ...PAYROLL_FOUNDATION_MUTATION_API_CONTRACTS,
   ...HRIS_TIME_WORK_PLAN_MUTATION_API_CONTRACTS,
   ...CLOCK_COMMAND_MUTATION_API_CONTRACTS,
-] as const;
+];
 
 function comparable(values: readonly ComparableContract[]) {
   return values
@@ -162,6 +175,14 @@ const HRIS_EXECUTION_CHAINS: Readonly<Record<string, readonly string[]>> = {
   previewPerformancePopulation: ['commandConfig'],
   publishPerformanceCycle: ['commandConfig'],
   freezePerformancePopulation: ['mutationConfig'],
+  createCompensationCycle: ['post', 'commandConfig'],
+  reviseCompensationCycle: ['post', 'commandConfig'],
+  allocateCompensationBudget: ['post', 'commandConfig'],
+  upsertCompensationProposal: ['post', 'commandConfig'],
+  submitCompensationProposal: ['post', 'commandConfig'],
+  approveCompensationPlan: ['post', 'commandConfig'],
+  publishCompensationSnapshot: ['post', 'commandConfig'],
+  cancelCompensationCycle: ['post', 'commandConfig'],
   createPayrollFoundation: ['commandScope'],
   updatePayrollFoundation: ['commandScope'],
   simulatePayrollFoundation: ['postVersionCommand', 'commandScope'],
@@ -323,7 +344,7 @@ function approvalExecutionBody(source: ts.SourceFile, apiFunction: string) {
 
 describe('Generated product ACTION mutation closure', () => {
   it('maps every generated production ACTION binding with no missing or extra API boundary', () => {
-    const canonical = PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS.filter(
+    const canonical = productAuthorizationRouteProjections.filter(
       (route) =>
         route.routeKind === 'ACTION' &&
         route.subjectType === 'PRODUCT' &&
@@ -395,6 +416,10 @@ describe('Generated product ACTION mutation closure', () => {
       path.resolve(
         process.cwd(),
         'apps/dwp/src/features/hris/performance/population-freeze/population-freeze-api.ts'
+      ),
+      path.resolve(
+        process.cwd(),
+        'apps/dwp/src/features/hris/performance/compensation-planning/compensation-planning-api.ts'
       ),
       path.resolve(
         process.cwd(),
