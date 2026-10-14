@@ -12933,13 +12933,13 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["people_getAssignedPerformanceReview"];
+        get: operations["people_getAssignedReview"];
         put?: never;
         post?: never;
         delete?: never;
         options?: never;
         head?: never;
-        patch: operations["people_updateAssignedPerformanceReviewDraft"];
+        patch: operations["people_saveReviewDraft"];
         trace?: never;
     };
     "/api/people/v1/hris/performance/reviews/{reviewId}/submit": {
@@ -12951,7 +12951,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["people_submitAssignedPerformanceReview"];
+        post: operations["people_submitReview"];
         delete?: never;
         options?: never;
         head?: never;
@@ -52229,6 +52229,15 @@ export interface components {
             /** Format: int64 */
             version?: number;
         };
+        people_ChoiceReviewAnswerV1: {
+            itemKey: string;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            kind: "CHOICE";
+            optionKey: string;
+        };
         people_CloneScenarioRequest: {
             description?: string;
             /** Format: date */
@@ -52643,6 +52652,15 @@ export interface components {
             reason: string;
             /** Format: int64 */
             version: number;
+        };
+        people_DecimalReviewAnswerV1: {
+            decimalValue: components["schemas"]["people_ReviewCanonicalDecimal6V1"];
+            itemKey: string;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            kind: "DECIMAL";
         };
         people_DecisionCheck: {
             checkCode?: string;
@@ -53174,7 +53192,7 @@ export interface components {
             type: string;
         };
         people_Iaq022PerformanceMultiraterSurveyPageV1: {
-            availableActions: ("hris.action.performance.create-multirater-cycle" | "hris.action.performance.update-multirater-cycle" | "hris.action.performance.validate-multirater-cycle")[];
+            availableActions: ("hris.action.per.create-cycle" | "hris.action.per.update-cycle-draft" | "hris.action.per.validate-cycle")[];
             items: {
                 /** Format: uuid */
                 cycleId: string;
@@ -54063,6 +54081,15 @@ export interface components {
             scopeDecisionRevision?: string;
             state?: string;
         };
+        people_RatingReviewAnswerV1: {
+            itemKey: string;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            kind: "RATING";
+            ratingValue: components["schemas"]["people_ReviewCanonicalDecimal6V1"];
+        };
         people_ReconciliationIssue: {
             /** Format: uuid */
             connectorInstanceId?: string;
@@ -54179,37 +54206,58 @@ export interface components {
             lifecycleState: string;
             resolutionNote: string;
         };
-        people_ReviewAnswerV1: {
-            /** @enum {unknown} */
-            answerType: "TEXT" | "DECIMAL" | "RATING" | "CHOICE";
-            itemKey: string;
-            value: string | number | string[];
+        people_ReviewAnswerConstraintsV1: components["schemas"]["people_ReviewSectionAnswerConstraintsV1"] | components["schemas"]["people_ReviewTextAnswerConstraintsV1"] | components["schemas"]["people_ReviewDecimalAnswerConstraintsV1"] | components["schemas"]["people_ReviewRatingAnswerConstraintsV1"] | components["schemas"]["people_ReviewChoiceAnswerConstraintsV1"];
+        people_ReviewAnswerV1: components["schemas"]["people_TextReviewAnswerV1"] | components["schemas"]["people_DecimalReviewAnswerV1"] | components["schemas"]["people_RatingReviewAnswerV1"] | components["schemas"]["people_ChoiceReviewAnswerV1"];
+        people_ReviewCanonicalDecimal6V1: string;
+        people_ReviewChoiceAnswerConstraintsV1: {
+            /** @constant */
+            maximumSelections: 1;
+            minimumSelections: number;
+            options: components["schemas"]["people_ReviewChoiceOptionV1"][];
+        };
+        people_ReviewChoiceOptionV1: {
+            label: string;
+            optionKey: string;
+        };
+        people_ReviewDecimalAnswerConstraintsV1: {
+            maximum: components["schemas"]["people_ReviewCanonicalDecimal6V1"] | null;
+            minimum: components["schemas"]["people_ReviewCanonicalDecimal6V1"] | null;
+            scale: number;
         };
         people_ReviewDraftCommandV1: {
             answers: components["schemas"]["people_ReviewAnswerV1"][];
         };
         people_ReviewFormItemV1: {
+            answerConstraints: components["schemas"]["people_ReviewAnswerConstraintsV1"];
+            helpText: string | null;
             itemKey: string;
-            prompt: string;
-            required: boolean;
-            rubricScaleKey: string | null;
             /** @enum {unknown} */
-            type: "TEXT" | "DECIMAL" | "RATING" | "CHOICE";
-        };
+            kind: "SECTION" | "TEXT" | "DECIMAL" | "RATING" | "CHOICE";
+            label: string;
+            parentItemKey: string | null;
+            required: boolean;
+            sequence: number;
+            weight: components["schemas"]["people_ReviewCanonicalDecimal6V1"] | null;
+        } & (unknown & unknown & unknown & unknown & unknown);
         people_ReviewFormV1: {
             items: components["schemas"]["people_ReviewFormItemV1"][];
             rubricScales: components["schemas"]["people_ReviewRubricScaleV1"][];
-            schemaVersion: number;
+            schemaVersion: string;
+        };
+        people_ReviewRatingAnswerConstraintsV1: {
+            scaleKey: string;
         };
         people_ReviewRubricLevelV1: {
             label: string;
-            score: number;
-            value: string;
+            levelKey: string;
+            numericValue: components["schemas"]["people_ReviewCanonicalDecimal6V1"];
+            sequence: number;
         };
         people_ReviewRubricScaleV1: {
             levels: components["schemas"]["people_ReviewRubricLevelV1"][];
-            rubricScaleKey: string;
+            scaleKey: string;
         };
+        people_ReviewSectionAnswerConstraintsV1: Record<string, never>;
         people_ReviewSubmissionV1: {
             contentHash: string;
             /** @constant */
@@ -54219,6 +54267,10 @@ export interface components {
             submissionNo: number;
             /** Format: date-time */
             submittedAt: string;
+        };
+        people_ReviewTextAnswerConstraintsV1: {
+            maxLength: number;
+            multiline: boolean;
         };
         people_RevokePolicyRequest: {
             reason: string;
@@ -54386,6 +54438,15 @@ export interface components {
             members?: components["schemas"]["people_TeamMember"][];
             /** Format: int32 */
             timePendingCount?: number;
+        };
+        people_TextReviewAnswerV1: {
+            itemKey: string;
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            kind: "TEXT";
+            textValue: string;
         };
         people_TimeCard: {
             dataOrigin?: string;
@@ -75354,7 +75415,7 @@ export interface components {
             /** Format: date */
             periodStart: string;
             /** @enum {unknown} */
-            state: "OPEN" | "SUBMITTED" | "APPROVED" | "REJECTED" | "CORRECTION_REQUIRED" | "CLOSED";
+            state: "OPEN" | "SUBMITTED" | "APPROVED" | "REJECTED" | "CORRECTION_REQUIRED" | "LOCKED" | "CLOSED" | "SUPERSEDED";
             /** Format: uuid */
             timecardId: string;
             totalMinutes: number;
@@ -103499,7 +103560,7 @@ export interface operations {
             };
         };
     };
-    people_getAssignedPerformanceReview: {
+    people_getAssignedReview: {
         parameters: {
             query?: {
                 /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
@@ -103516,15 +103577,35 @@ export interface operations {
             /** @description Assigned review projection */
             200: {
                 headers: {
+                    /** @description Entity version for conditional follow-up requests. */
+                    ETag?: string;
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": components["schemas"]["people_AssignedReviewV1"];
                 };
             };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["people_HrisProblemDetailsV1"];
+                };
+            };
+            /** @description Review absent or outside the assigned scope */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["people_HrisProblemDetailsV1"];
+                };
+            };
         };
     };
-    people_updateAssignedPerformanceReviewDraft: {
+    people_saveReviewDraft: {
         parameters: {
             query?: {
                 /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
@@ -103542,22 +103623,42 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["people_ReviewDraftCommandV1"];
+                "application/merge-patch+json": components["schemas"]["people_ReviewDraftCommandV1"];
             };
         };
         responses: {
             /** @description Updated review draft */
             200: {
                 headers: {
+                    /** @description Entity version for conditional follow-up requests. */
+                    ETag?: string;
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": components["schemas"]["people_AssignedReviewV1"];
                 };
             };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["people_HrisProblemDetailsV1"];
+                };
+            };
+            /** @description Version or draft conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["people_HrisProblemDetailsV1"];
+                };
+            };
         };
     };
-    people_submitAssignedPerformanceReview: {
+    people_submitReview: {
         parameters: {
             query?: {
                 /** @description Opaque management scope returned by the product authority contract. Send exactly one value when more than one scope is available; omit it only when authority has one unambiguous scope. Blank, duplicate, malformed, oversized, revoked, or stale values fail closed. The Gateway consumes this parameter and forwards only its server-verified X-DWP-Context-Scope-Key evidence. */
@@ -103586,6 +103687,33 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["people_ReviewSubmissionV1"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["people_HrisProblemDetailsV1"];
+                };
+            };
+            /** @description Version or draft conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["people_HrisProblemDetailsV1"];
+                };
+            };
+            /** @description Review rule violation */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["people_HrisProblemDetailsV1"];
                 };
             };
         };
@@ -134358,6 +134486,8 @@ export interface operations {
             /** @description Timecard projection */
             200: {
                 headers: {
+                    /** @description Entity version for conditional follow-up requests. */
+                    ETag?: string;
                     [name: string]: unknown;
                 };
                 content: {
