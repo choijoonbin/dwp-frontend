@@ -1298,16 +1298,12 @@ test('personal home launcher can create, rename, persist, and reset folders', as
     await page.mouse.move(sourceX, sourceY);
     await page.mouse.down();
     await page.mouse.move(sourceX + 16, sourceY, { steps: 4 });
-    await expect(page.locator('[data-launchpad-item="dwp-work"]')).toHaveAttribute(
-      'data-launchpad-drop-preview',
-      'true'
-    );
     await page.mouse.move(
       (askTargetBounds?.x ?? 0) + (askTargetBounds?.width ?? 0) / 2,
       (askTargetBounds?.y ?? 0) + (askTargetBounds?.height ?? 0) / 2,
       { steps: 12 }
     );
-    await page.waitForTimeout(300);
+    await expect(launchpad).toHaveAttribute('data-launchpad-folder-ready', 'dwp-ask');
     await page.mouse.up();
     const createDialog = page.getByRole('dialog', { name: 'Create folder' });
     await expect(createDialog.getByRole('textbox', { name: 'Folder name' })).toHaveValue(
@@ -1321,12 +1317,15 @@ test('personal home launcher can create, rename, persist, and reset folders', as
   ).toBeVisible();
   await createStartWorkFolder();
 
-  await page.getByRole('button', { name: 'Open folder Start work folder' }).click();
-  const folderDialog = page.getByRole('dialog', { name: 'Start work folder' });
-  await expect(folderDialog.getByRole('button', { name: 'Open Work' })).toBeVisible();
-  await expect(folderDialog.getByRole('button', { name: 'Open DWAI·ON Workspace' })).toBeVisible();
-  await folderDialog.getByRole('button', { name: 'Rename Start work folder' }).click();
+  await page.getByRole('button', { name: 'Open folder Start work folder' }).press('Enter');
+  const editingFolderDialog = page.getByRole('dialog', { name: 'Start work folder' });
+  await expect(editingFolderDialog.getByRole('button', { name: 'Open Work' })).toBeVisible();
+  await expect(editingFolderDialog).toContainText('DWAI·ON Workspace');
+  await page.keyboard.press('Escape');
+  await page.getByRole('button', { name: 'More actions for Start work folder' }).click();
+  await page.getByRole('menuitem', { name: 'Rename folder' }).click();
   const renameDialog = page.getByRole('dialog', { name: 'Rename folder' });
+  await expect(renameDialog).toBeVisible();
   await renameDialog.getByRole('textbox', { name: 'Folder name' }).fill('Priority tools');
   await renameDialog.getByRole('button', { name: 'Save' }).click();
   await expect(page.getByRole('button', { name: 'Open folder Priority tools' })).toBeVisible();
@@ -1367,7 +1366,7 @@ test('personal home launcher can create, rename, persist, and reset folders', as
   await createStartWorkFolder();
   await expect(page.getByRole('button', { name: 'Open folder Start work folder' })).toBeVisible();
   await expect(
-    page.getByText('Work was placed with DWAI·ON Workspace.', { exact: true })
+    page.getByText('Created Start work folder with Work and DWAI·ON Workspace.', { exact: true })
   ).toBeVisible();
   await page.getByRole('button', { name: 'Save', exact: true }).click();
   await page.getByRole('button', { name: 'Open folder Start work folder' }).click();
@@ -1448,6 +1447,7 @@ test('cross-group app drag commits the blank slot shown in the preview', async (
     await expect(
       page.locator('[data-launchpad-item="ref-app-service"][data-launchpad-drop-preview="true"]')
     ).toHaveAttribute('data-launchpad-group-id', 'work');
+    await expect(page.locator('[data-launchpad-reorder-indicator="true"]')).toBeVisible();
     await expect
       .poll(() =>
         destinationApps
@@ -1458,7 +1458,6 @@ test('cross-group app drag commits the blank slot shown in the preview', async (
   } finally {
     await page.mouse.up();
   }
-
   await expect
     .poll(() =>
       destinationApps
@@ -1466,6 +1465,7 @@ test('cross-group app drag commits the blank slot shown in the preview', async (
         .evaluateAll((items) => items.map((item) => item.getAttribute('data-launchpad-item')))
     )
     .toEqual([...initialDestinationItems, 'ref-app-service']);
+  await expect(page.getByText('Services was placed with Start work.')).toBeVisible();
   await expect(page.getByRole('dialog', { name: 'Create folder' })).toHaveCount(0);
 });
 

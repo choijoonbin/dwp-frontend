@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { DragOverlay, useDroppable } from '@dnd-kit/core';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Folder, LockKeyhole, Minus } from 'lucide-react';
+import { Folder, FolderPlus, LockKeyhole, Minus, MoreHorizontal } from 'lucide-react';
 import Box from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
 import ButtonBase from '@mui/material/ButtonBase';
@@ -71,6 +71,149 @@ const launchpadRemoveControlSx = {
   '@media (prefers-reduced-motion: reduce)': { transition: 'none' },
 } as const;
 
+const launchpadMoreControlSx = {
+  position: 'absolute',
+  top: -7,
+  right: -4,
+  zIndex: 5,
+  width: 28,
+  height: 28,
+  p: 0,
+  display: 'grid',
+  placeItems: 'center',
+  borderRadius: '50%',
+  border: 1,
+  borderColor: 'divider',
+  color: 'text.secondary',
+  bgcolor: 'background.paper',
+  boxShadow: '0 3px 10px rgba(15,23,42,0.14)',
+  cursor: 'pointer',
+  transition: 'color 120ms ease, background-color 120ms ease, transform 120ms ease',
+  '&:hover': {
+    color: 'primary.main',
+    bgcolor: 'action.hover',
+    transform: 'scale(1.06)',
+  },
+  '&:active': { transform: 'scale(0.94)' },
+  '&:disabled': { opacity: 0.48, cursor: 'default', transform: 'none' },
+  '&:focus-visible': {
+    outline: '2px solid var(--dwp-focus-ring, currentColor)',
+    outlineOffset: 2,
+  },
+  '@media (forced-colors: active)': {
+    borderColor: 'ButtonText',
+    color: 'ButtonText',
+    boxShadow: 'none',
+  },
+  '@media (prefers-reduced-motion: reduce)': { transition: 'none' },
+} as const;
+
+type LaunchpadMoreActionsProps = {
+  itemId: string;
+  itemName: string;
+  disabled: boolean;
+  onOpenContextMenu?: (itemId: string, anchor: LaunchpadContextMenuAnchor) => void;
+};
+
+function LaunchpadMoreActions({
+  itemId,
+  itemName,
+  disabled,
+  onOpenContextMenu,
+}: LaunchpadMoreActionsProps) {
+  const { t } = useTranslation('home');
+  if (!onOpenContextMenu) return null;
+
+  const label = t('launchpad.contextMenu.moreActions', { item: itemName });
+  return (
+    <Tooltip title={label}>
+      <Box
+        component="button"
+        type="button"
+        disabled={disabled}
+        aria-label={label}
+        data-launchpad-more-actions={itemId}
+        onPointerDown={(event) => event.stopPropagation()}
+        onClick={(event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          const bounds = event.currentTarget.getBoundingClientRect();
+          onOpenContextMenu(itemId, { top: bounds.bottom + 4, left: bounds.right });
+        }}
+        sx={launchpadMoreControlSx}
+      >
+        <MoreHorizontal size={16} aria-hidden="true" />
+      </Box>
+    </Tooltip>
+  );
+}
+
+function FolderDropFeedback({
+  state,
+  targetKind,
+}: {
+  state: 'candidate' | 'ready';
+  targetKind: 'app' | 'folder';
+}) {
+  const { t } = useTranslation('home');
+  const ready = state === 'ready';
+  const label = t(
+    targetKind === 'folder'
+      ? ready
+        ? 'launchpad.drag.addToFolderReady'
+        : 'launchpad.drag.addToFolderCandidate'
+      : ready
+        ? 'launchpad.drag.folderReady'
+        : 'launchpad.drag.folderCandidate'
+  );
+
+  return (
+    <Box
+      component="span"
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
+      data-launchpad-folder-feedback={state}
+      sx={{
+        position: 'absolute',
+        left: '50%',
+        top: 'calc(100% - 9px)',
+        zIndex: 6,
+        minWidth: 'max-content',
+        maxWidth: 156,
+        minHeight: 24,
+        px: 0.75,
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 0.5,
+        border: 1,
+        borderStyle: ready ? 'solid' : 'dashed',
+        borderColor: ready ? 'primary.main' : 'divider',
+        borderRadius: 999,
+        color: ready ? 'primary.main' : 'text.secondary',
+        bgcolor: 'background.paper',
+        boxShadow: ready ? '0 6px 18px rgba(15,23,42,0.20)' : '0 4px 12px rgba(15,23,42,0.12)',
+        fontSize: 10,
+        fontWeight: 800,
+        lineHeight: 1.2,
+        whiteSpace: 'nowrap',
+        transform: 'translateX(-50%)',
+        pointerEvents: 'none',
+        '@media (forced-colors: active)': {
+          borderColor: ready ? 'Highlight' : 'CanvasText',
+          color: ready ? 'Highlight' : 'CanvasText',
+          bgcolor: 'Canvas',
+          boxShadow: 'none',
+        },
+      }}
+    >
+      <FolderPlus size={13} aria-hidden="true" />
+      {label}
+    </Box>
+  );
+}
+
 type SortableItemShellProps = {
   itemId: string;
   groupId: HomeAppGroupId;
@@ -78,11 +221,12 @@ type SortableItemShellProps = {
   canReceiveApp: boolean;
   dragDisabled: boolean;
   previewSlot: boolean;
+  folderDropReady?: boolean;
   detachedOrigin?: boolean;
   label: string;
   children: (props: {
     targetRef: (element: HTMLElement | null) => void;
-    targetActive: boolean;
+    folderDropState: 'idle' | 'candidate' | 'ready';
     activatorRef: (element: HTMLElement | null) => void;
     activatorAttributes: ReturnType<typeof useSortable>['attributes'];
     activatorListeners: ReturnType<typeof useSortable>['listeners'];
@@ -96,10 +240,12 @@ function SortableItemShell({
   canReceiveApp,
   dragDisabled,
   previewSlot,
+  folderDropReady = false,
   detachedOrigin = false,
   label,
   children,
 }: SortableItemShellProps) {
+  const { t } = useTranslation('home');
   const {
     attributes,
     listeners,
@@ -123,6 +269,7 @@ function SortableItemShell({
       data-launchpad-drag-origin={detachedOrigin ? itemId : undefined}
       data-launchpad-group-id={groupId}
       data-launchpad-drop-preview={previewSlot ? 'true' : undefined}
+      data-launchpad-reorder-indicator={previewSlot ? 'true' : undefined}
       aria-label={label}
       sx={{
         position: detachedOrigin ? 'absolute' : 'relative',
@@ -142,16 +289,71 @@ function SortableItemShell({
           borderStyle: 'dashed',
           boxShadow: '0 0 0 3px rgba(78,165,255,0.18), inset 0 1px 0 rgba(255,255,255,0.30)',
         },
+        '&[data-launchpad-reorder-indicator="true"]::before': {
+          content: '""',
+          position: 'absolute',
+          top: 4,
+          bottom: 18,
+          left: -4,
+          width: 4,
+          borderRadius: 999,
+          bgcolor: 'primary.main',
+          boxShadow: '0 0 0 3px rgba(78,165,255,0.18)',
+          pointerEvents: 'none',
+        },
+        '@media (forced-colors: active)': {
+          '&[data-launchpad-reorder-indicator="true"]::before': {
+            bgcolor: 'Highlight',
+            boxShadow: 'none',
+          },
+        },
         '@media (prefers-reduced-motion: reduce)': { transition: 'none' },
       }}
     >
       {children({
         targetRef: target.setNodeRef,
-        targetActive: target.isOver,
+        folderDropState: target.isOver ? (folderDropReady ? 'ready' : 'candidate') : 'idle',
         activatorRef: setActivatorNodeRef,
         activatorAttributes: attributes,
         activatorListeners: listeners,
       })}
+      {previewSlot && (
+        <Box
+          component="span"
+          role="status"
+          aria-live="polite"
+          data-launchpad-reorder-feedback
+          sx={{
+            position: 'absolute',
+            left: '50%',
+            bottom: -4,
+            zIndex: 6,
+            minWidth: 'max-content',
+            px: 0.75,
+            py: 0.25,
+            borderRadius: 999,
+            color: 'primary.main',
+            bgcolor: 'background.paper',
+            border: 1,
+            borderColor: 'primary.main',
+            boxShadow: '0 4px 12px rgba(15,23,42,0.12)',
+            fontSize: 10,
+            fontWeight: 800,
+            lineHeight: 1.2,
+            whiteSpace: 'nowrap',
+            transform: 'translateX(-50%)',
+            pointerEvents: 'none',
+            '@media (forced-colors: active)': {
+              color: 'Highlight',
+              bgcolor: 'Canvas',
+              borderColor: 'Highlight',
+              boxShadow: 'none',
+            },
+          }}
+        >
+          {t('launchpad.drag.reorderReady')}
+        </Box>
+      )}
     </Box>
   );
 }
@@ -167,6 +369,7 @@ type AppTileProps = {
   activeIsApp: boolean;
   dragDisabled: boolean;
   previewSlot: boolean;
+  folderDropReady?: boolean;
   detachedOrigin?: boolean;
   suppressLaunch: MutableRefObject<boolean>;
   onLaunch: (app: HomeAppDefinition) => void;
@@ -186,6 +389,7 @@ export function AppTile({
   activeIsApp,
   dragDisabled,
   previewSlot,
+  folderDropReady = false,
   detachedOrigin = false,
   suppressLaunch,
   onLaunch,
@@ -203,10 +407,11 @@ export function AppTile({
       canReceiveApp={activeIsApp}
       dragDisabled={dragDisabled || disabled}
       previewSlot={previewSlot}
+      folderDropReady={folderDropReady}
       detachedOrigin={detachedOrigin}
       label={app.name}
     >
-      {({ targetRef, targetActive, activatorRef, activatorAttributes, activatorListeners }) => (
+      {({ targetRef, folderDropState, activatorRef, activatorAttributes, activatorListeners }) => (
         <>
           <ButtonBase
             component="button"
@@ -257,8 +462,9 @@ export function AppTile({
             <Box
               ref={targetRef}
               data-folder-target={app.id}
+              data-launchpad-folder-drop={folderDropState === 'idle' ? undefined : folderDropState}
               data-launchpad-edit-frame
-              sx={launchpadInteractionFrameSx(editing)}
+              sx={launchpadInteractionFrameSx(editing, folderDropState)}
             >
               <Box data-launchpad-glyph sx={{ position: 'relative', width: 52, height: 52 }}>
                 <AppGlyph app={app} variant={immersive ? 'glass' : 'soft'} />
@@ -318,19 +524,8 @@ export function AppTile({
                   </Box>
                 )}
               </Box>
-              {targetActive && (
-                <Box
-                  aria-hidden="true"
-                  sx={{
-                    position: 'absolute',
-                    inset: 0,
-                    border: 2,
-                    borderColor: 'primary.main',
-                    borderRadius: 1,
-                    bgcolor: 'action.selected',
-                    pointerEvents: 'none',
-                  }}
-                />
+              {folderDropState !== 'idle' && (
+                <FolderDropFeedback state={folderDropState} targetKind="app" />
               )}
             </Box>
             <Typography
@@ -366,6 +561,14 @@ export function AppTile({
             <AppManagementAction app={app} variant="overlay" onManage={onManage} />
           )}
           {editing && (
+            <LaunchpadMoreActions
+              itemId={app.id}
+              itemName={app.name}
+              disabled={dragDisabled}
+              onOpenContextMenu={onOpenContextMenu}
+            />
+          )}
+          {editing && (
             <Tooltip title={t('launchpad.removeApp')}>
               <Box
                 component="button"
@@ -398,6 +601,7 @@ type FolderTileProps = {
   activeIsApp: boolean;
   dragDisabled: boolean;
   previewSlot: boolean;
+  folderDropReady?: boolean;
   detachedOrigin?: boolean;
   suppressLaunch: MutableRefObject<boolean>;
   onOpen: (folderId: string) => void;
@@ -414,6 +618,7 @@ export function FolderTile({
   activeIsApp,
   dragDisabled,
   previewSlot,
+  folderDropReady = false,
   detachedOrigin = false,
   suppressLaunch,
   onOpen,
@@ -433,15 +638,15 @@ export function FolderTile({
       canReceiveApp={activeIsApp}
       dragDisabled={dragDisabled}
       previewSlot={previewSlot}
+      folderDropReady={folderDropReady}
       detachedOrigin={detachedOrigin}
       label={folder.name}
     >
-      {({ targetRef, targetActive, activatorRef, activatorAttributes, activatorListeners }) => (
+      {({ targetRef, folderDropState, activatorRef, activatorListeners }) => (
         <>
           <ButtonBase
             ref={activatorRef}
             disableRipple
-            {...(editing ? activatorAttributes : {})}
             {...(activatorListeners as DOMAttributes<HTMLButtonElement>)}
             onKeyDown={(event) => {
               if (onOpenContextMenu && isLaunchpadContextMenuKeyboardEvent(event)) {
@@ -449,13 +654,6 @@ export function FolderTile({
                 event.stopPropagation();
                 const bounds = event.currentTarget.getBoundingClientRect();
                 onOpenContextMenu(folder.id, { top: bounds.bottom, left: bounds.left });
-                return;
-              }
-              if (editing) {
-                (
-                  activatorListeners?.onKeyDown as
-                    KeyboardEventHandler<HTMLButtonElement> | undefined
-                )?.(event);
               }
             }}
             onContextMenu={(event) => {
@@ -474,8 +672,9 @@ export function FolderTile({
             <Box
               ref={targetRef}
               data-folder-target={folder.id}
+              data-launchpad-folder-drop={folderDropState === 'idle' ? undefined : folderDropState}
               data-launchpad-edit-frame
-              sx={launchpadInteractionFrameSx(editing)}
+              sx={launchpadInteractionFrameSx(editing, folderDropState)}
             >
               <Box
                 data-launchpad-glyph
@@ -488,9 +687,9 @@ export function FolderTile({
                   gridTemplateColumns: 'repeat(2, 1fr)',
                   gap: 0.5,
                   border: 1,
-                  borderColor: targetActive ? 'primary.main' : 'divider',
+                  borderColor: folderDropState !== 'idle' ? 'primary.main' : 'divider',
                   borderRadius: 1,
-                  bgcolor: targetActive ? 'action.selected' : 'action.hover',
+                  bgcolor: folderDropState !== 'idle' ? 'action.selected' : 'action.hover',
                   boxShadow: '0 7px 18px rgba(15,23,42,0.10)',
                 }}
               >
@@ -498,6 +697,9 @@ export function FolderTile({
                   <AppGlyph key={app.id} app={app} size={20} />
                 ))}
               </Box>
+              {folderDropState !== 'idle' && (
+                <FolderDropFeedback state={folderDropState} targetKind="folder" />
+              )}
             </Box>
             <Typography
               component="span"
@@ -517,6 +719,14 @@ export function FolderTile({
               {folder.name}
             </Typography>
           </ButtonBase>
+          {editing && (
+            <LaunchpadMoreActions
+              itemId={folder.id}
+              itemName={folder.name}
+              disabled={dragDisabled}
+              onOpenContextMenu={onOpenContextMenu}
+            />
+          )}
           {editing && (
             <Tooltip title={t('launchpad.folder.ungroup')}>
               <Box

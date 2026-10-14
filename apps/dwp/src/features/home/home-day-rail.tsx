@@ -19,6 +19,7 @@ import { formatDate } from '@dwp-frontend/shared-i18n';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
+import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { alpha } from '@mui/material/styles';
 
@@ -473,22 +474,22 @@ export function HomeDayRail({
               </Stack>
               <Stack direction="row" alignItems="center" gap={0.25}>
                 {onStartEditing && (
-                  <ActionButton
-                    data-home-edit-trigger
-                    data-home-action-policy="PERSONAL"
-                    intent="quiet"
-                    aria-label={t('launchpad.editHome')}
-                    onClick={onStartEditing}
-                    disabled={personalizationBusy}
-                    sx={{
-                      minWidth: 40,
-                      minHeight: 40,
-                      px: 0.75,
-                      display: { xs: 'none', md: 'inline-flex' },
-                    }}
-                  >
-                    <Settings2 size={17} aria-hidden="true" />
-                  </ActionButton>
+                  <Tooltip title={t('launchpad.editHome')}>
+                    <Box component="span" sx={{ display: { xs: 'none', md: 'inline-flex' } }}>
+                      <ActionButton
+                        data-home-edit-trigger
+                        data-home-action-policy="PERSONAL"
+                        intent="quiet"
+                        startIcon={<Settings2 size={17} aria-hidden="true" />}
+                        aria-label={t('launchpad.editHome')}
+                        onClick={onStartEditing}
+                        disabled={personalizationBusy}
+                        sx={{ minHeight: 40, px: 1 }}
+                      >
+                        {t('launchpad.editHome')}
+                      </ActionButton>
+                    </Box>
+                  </Tooltip>
                 )}
                 {onOpenStudio && (
                   <ActionButton

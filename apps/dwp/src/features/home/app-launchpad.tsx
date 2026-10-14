@@ -11,6 +11,7 @@ import {
 import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import { visuallyHidden } from '@mui/utils';
 import {
   addAppToLaunchpadFolder,
   createLaunchpadFolder,
@@ -29,7 +30,9 @@ import {
 import {
   createLaunchpadCollisionDetection,
   groupIdFromTarget,
+  hasLaunchpadDragMovement,
   isLaunchpadOriginTarget,
+  shouldRetainCrossGroupPreview,
   targetItemId,
 } from './app-launchpad-dnd';
 import {
@@ -37,7 +40,7 @@ import {
   launchpadMouseActivationConstraint,
   launchpadTouchActivationConstraint,
 } from './app-launchpad-long-press';
-import { LAUNCHPAD_TILE_HEIGHT } from './app-launchpad-styles';
+import { LAUNCHPAD_GROUP_MIN_HEIGHT } from './app-launchpad-styles';
 import { FlowAppDockList } from './flow-home/flow-app-dock-list';
 import { AppLaunchpadGroupList } from './app-launchpad-group-list';
 import { AppLaunchpadFolderDialog } from './app-launchpad-folder-dialog';
@@ -66,14 +69,6 @@ import type {
   LaunchpadFolderCreationRequest,
 } from './app-launchpad-context-menu';
 
-const LAUNCHPAD_VISIBLE_ROWS = 3;
-const LAUNCHPAD_ROW_GAP = 2;
-const LAUNCHPAD_GRID_TOP_INSET = 8;
-const LAUNCHPAD_GRID_HEIGHT =
-  LAUNCHPAD_GRID_TOP_INSET +
-  LAUNCHPAD_TILE_HEIGHT * LAUNCHPAD_VISIBLE_ROWS +
-  LAUNCHPAD_ROW_GAP * (LAUNCHPAD_VISIBLE_ROWS - 1);
-const LAUNCHPAD_GROUP_MIN_HEIGHT = LAUNCHPAD_GRID_HEIGHT + 82;
 const FOLDER_POINTER_ACTION_DELAY_MS = 75;
 const FOLDER_HOVER_ACTIVATION_MS = 240;
 
@@ -130,10 +125,13 @@ export function AppLaunchpad({
   const [dragPreview, setDragPreview] = useState<DragPreview>(null);
   const [pendingFolderCreation, setPendingFolderCreation] = useState<PendingFolderCreation>(null);
   const [folderPointerActionReady, setFolderPointerActionReady] = useState(false);
+  const [folderCandidateTargetId, setFolderCandidateTargetId] = useState<string | null>(null);
+  const [folderReadyTargetId, setFolderReadyTargetId] = useState<string | null>(null);
   const [openFolderId, setOpenFolderId] = useState<string | null>(null);
   const [renameFolderId, setRenameFolderId] = useState<string | null>(null);
   const [contextMenu, setContextMenu] = useState<LaunchpadContextMenuRequest>(null);
   const [folderName, setFolderName] = useState('');
+  const [folderCreationAnnouncement, setFolderCreationAnnouncement] = useState('');
   const suppressLaunch = useRef(false);
   const launchSuppressionTimer = useRef<number | null>(null);
   const folderPointerActionTimer = useRef<number | null>(null);
@@ -142,7 +140,7 @@ export function AppLaunchpad({
   const folderIntentTargetRef = useRef<string | null>(null);
   const dragPreviewRef = useRef<DragPreview>(null);
   const lastItemCollisionRef = useRef<ReturnType<CollisionDetection>>([]);
-  const enteredEditingFromLongPressRef = useRef(false);
+  const dragAnnouncementTargetRef = useRef<string | null>(null);
   const keyboardDraggingRef = useRef(false);
   const keyboardHorizontalDirectionRef = useRef<-1 | 0 | 1>(0);
 
@@ -245,21 +243,28 @@ export function AppLaunchpad({
     onLayoutChange(nextLayout);
     if (restoreFocus && itemId) restoreTileFocus(itemId);
   };
-
   const itemName = (itemId: string): string =>
     appById.get(itemId)?.name ?? layout.folders[itemId]?.name ?? t('launchpad.fallbackApp');
-
+  const launchpadGroupName = (groupId: HomeAppGroupId): string =>
+    groupById.get(groupId)?.name ?? t('launchpad.fallbackApp');
+  const previewTargetName = (preview: NonNullable<DragPreview>): string =>
+    preview.targetItemId
+      ? itemName(preview.targetItemId)
+      : launchpadGroupName(preview.targetGroupId);
+  const commitDragLayout = (nextLayout: LaunchpadLayout, targetName: string) => {
+    if (nextLayout === layout) return;
+    dragAnnouncementTargetRef.current = targetName;
+    onLayoutChange(nextLayout);
+  };
   const dropTargetName = (droppableId: string): string => {
     const folderTarget = targetItemId(droppableId);
     if (folderTarget) return itemName(folderTarget);
     const groupTarget = groupIdFromTarget(droppableId);
-    return groupTarget
-      ? (groupById.get(groupTarget)?.name ?? t('launchpad.fallbackApp'))
-      : itemName(droppableId);
+    return groupTarget ? launchpadGroupName(groupTarget) : itemName(droppableId);
   };
-
   const releaseLaunchSuppression = () => {
     suppressLaunch.current = true;
+    dragAnnouncementTargetRef.current = null;
     if (launchSuppressionTimer.current !== null) {
       window.clearTimeout(launchSuppressionTimer.current);
     }
@@ -281,15 +286,19 @@ export function AppLaunchpad({
     }
     folderHoverTargetRef.current = null;
     folderIntentTargetRef.current = null;
+    setFolderCandidateTargetId(null);
+    setFolderReadyTargetId(null);
   };
 
   const scheduleFolderHoverIntent = (targetId: string) => {
     if (folderHoverTargetRef.current === targetId) return;
     clearFolderHoverIntent();
     folderHoverTargetRef.current = targetId;
+    setFolderCandidateTargetId(targetId);
     folderHoverTimer.current = window.setTimeout(() => {
       if (folderHoverTargetRef.current === targetId) {
         folderIntentTargetRef.current = targetId;
+        setFolderReadyTargetId(targetId);
         updateDragPreview(null);
       }
       folderHoverTimer.current = null;
@@ -297,6 +306,7 @@ export function AppLaunchpad({
   };
 
   const prepareFolderCreation = (creation: NonNullable<PendingFolderCreation>, name: string) => {
+    setFolderCreationAnnouncement('');
     setFolderName(name);
     setFolderPointerActionReady(false);
     setPendingFolderCreation(creation);
@@ -325,7 +335,7 @@ export function AppLaunchpad({
       launchSuppressionTimer.current = null;
     }
     suppressLaunch.current = true;
-    enteredEditingFromLongPressRef.current = !editing;
+    dragAnnouncementTargetRef.current = null;
     if (!editing) onStartEditing?.();
     keyboardDraggingRef.current = activatorEvent instanceof KeyboardEvent;
     keyboardHorizontalDirectionRef.current = 0;
@@ -338,6 +348,16 @@ export function AppLaunchpad({
 
   const handleDragOver = ({ active, over, delta }: DragOverEvent) => {
     if (keyboardDraggingRef.current) return;
+
+    // A delayed sensor activates after a hold even when the pointer never
+    // leaves the original tile. Since the origin droppable is intentionally
+    // excluded from collision detection, that stationary hold can otherwise
+    // look like a drop on the broad group target and move the item to the end.
+    if (!hasLaunchpadDragMovement(delta)) {
+      clearFolderHoverIntent();
+      updateDragPreview(null);
+      return;
+    }
 
     const draggedId = String(active.id);
     const overId = over ? String(over.id) : null;
@@ -357,20 +377,27 @@ export function AppLaunchpad({
 
     const sourceGroupId = findGroupId(draggedId);
     const directTargetGroupId = groupIdFromTarget(overId);
+    const folderTarget = targetItemId(overId);
+    const nextTargetGroupId = directTargetGroupId ?? findGroupId(folderTarget ?? overId);
     const currentPreview = dragPreviewRef.current;
     if (
-      currentPreview?.targetItemId === null &&
-      currentPreview.targetGroupId !== sourceGroupId &&
-      !directTargetGroupId &&
-      Math.abs(currentPreview.delta.x - delta.x) < 0.5 &&
-      Math.abs(currentPreview.delta.y - delta.y) < 0.5
+      currentPreview &&
+      shouldRetainCrossGroupPreview({
+        sourceGroupId,
+        previewTargetGroupId: currentPreview.targetGroupId,
+        nextTargetGroupId,
+        previewDelta: currentPreview.delta,
+        nextDelta: delta,
+      })
     ) {
       return;
     }
 
-    const folderTarget = targetItemId(overId);
     if (folderTarget) {
-      if (currentPreview?.targetItemId === null) updateDragPreview(null);
+      // The tile center is an explicit folder affordance, not an invisible
+      // reorder zone. Remove any prior insertion preview while the user waits
+      // for the folder-ready state so the displayed intent stays truthful.
+      if (currentPreview) updateDragPreview(null);
       scheduleFolderHoverIntent(folderTarget);
       return;
     }
@@ -405,16 +432,16 @@ export function AppLaunchpad({
     });
   };
 
-  const handleDragEnd = ({ active, over }: DragEndEvent) => {
+  const handleDragEnd = ({ active, over, delta }: DragEndEvent) => {
+    dragAnnouncementTargetRef.current = null;
     const draggedId = String(active.id);
     const overId = over ? String(over.id) : null;
     const sourceGroupId = findGroupId(draggedId);
     const keyboardDirection = keyboardHorizontalDirectionRef.current;
     const wasKeyboardDragging = keyboardDraggingRef.current;
     const completedPreview = dragPreviewRef.current;
+    const completedFolderCandidate = folderHoverTargetRef.current;
     const completedFolderIntent = folderIntentTargetRef.current;
-    const enteredEditingFromLongPress = enteredEditingFromLongPressRef.current;
-    enteredEditingFromLongPressRef.current = false;
     keyboardDraggingRef.current = false;
     keyboardHorizontalDirectionRef.current = 0;
     clearFolderHoverIntent();
@@ -423,7 +450,6 @@ export function AppLaunchpad({
     setKeyboardDragging(false);
     releaseLaunchSuppression();
     lastItemCollisionRef.current = [];
-    if (enteredEditingFromLongPress) return;
     if (!sourceGroupId) return;
 
     if (wasKeyboardDragging && keyboardDirection !== 0) {
@@ -431,17 +457,20 @@ export function AppLaunchpad({
       const activeIndex = sourceItems.indexOf(draggedId);
       const targetId = sourceItems[activeIndex + keyboardDirection];
       if (targetId) {
-        onLayoutChange(
-          moveLaunchpadItemToGroup(layout, sourceGroupId, sourceGroupId, draggedId, targetId)
+        commitDragLayout(
+          moveLaunchpadItemToGroup(layout, sourceGroupId, sourceGroupId, draggedId, targetId),
+          itemName(targetId)
         );
       }
       return;
     }
 
+    if (!hasLaunchpadDragMovement(delta)) return;
+
     if (!overId) return;
     if (isLaunchpadOriginTarget(draggedId, overId)) {
       if (completedPreview && completedPreview.targetGroupId !== sourceGroupId) {
-        onLayoutChange(completedPreview.layout);
+        commitDragLayout(completedPreview.layout, previewTargetName(completedPreview));
       }
       return;
     }
@@ -451,11 +480,12 @@ export function AppLaunchpad({
     const directTargetGroupId = groupIdFromTarget(overId);
     if (directTargetGroupId) {
       if (completedPreview?.targetGroupId === directTargetGroupId) {
-        onLayoutChange(completedPreview.layout);
+        commitDragLayout(completedPreview.layout, previewTargetName(completedPreview));
         return;
       }
-      onLayoutChange(
-        moveLaunchpadItemToGroup(layout, sourceGroupId, directTargetGroupId, draggedId)
+      commitDragLayout(
+        moveLaunchpadItemToGroup(layout, sourceGroupId, directTargetGroupId, draggedId),
+        launchpadGroupName(directTargetGroupId)
       );
       return;
     }
@@ -465,13 +495,15 @@ export function AppLaunchpad({
       if (!targetGroupId) return;
       const targetFolder = layout.folders[folderTarget];
       if (appById.has(draggedId) && targetFolder) {
-        onLayoutChange(addAppToLaunchpadFolder(layout, draggedId, folderTarget));
+        commitDragLayout(
+          addAppToLaunchpadFolder(layout, draggedId, folderTarget),
+          itemName(folderTarget)
+        );
         return;
       }
 
       const targetApp = appById.get(folderTarget);
       if (appById.has(draggedId) && targetApp) {
-        const groupName = groupById.get(targetGroupId)?.name ?? t('launchpad.fallbackApp');
         prepareFolderCreation(
           {
             groupId: targetGroupId,
@@ -479,40 +511,50 @@ export function AppLaunchpad({
             secondAppId: folderTarget,
             folderId: `folder-${crypto.randomUUID()}`,
           },
-          t('launchpad.groupFolder', { group: groupName })
+          t('launchpad.groupFolder', { group: launchpadGroupName(targetGroupId) })
         );
         return;
       }
 
-      onLayoutChange(
-        moveLaunchpadItemToGroup(layout, sourceGroupId, targetGroupId, draggedId, folderTarget)
+      commitDragLayout(
+        moveLaunchpadItemToGroup(layout, sourceGroupId, targetGroupId, draggedId, folderTarget),
+        itemName(folderTarget)
       );
       return;
     }
 
     if (completedPreview?.targetItemId === null) {
-      onLayoutChange(completedPreview.layout);
+      commitDragLayout(completedPreview.layout, previewTargetName(completedPreview));
       return;
     }
 
     if (folderTarget) {
       const targetGroupId = findGroupId(folderTarget);
       if (!targetGroupId) return;
-      onLayoutChange(
-        moveLaunchpadItemToGroup(layout, sourceGroupId, targetGroupId, draggedId, folderTarget)
-      );
+      // Releasing an announced folder candidate before it is ready cancels
+      // that intent. Reordering remains available through the insertion/group
+      // targets, so the same tile-center gesture never changes meaning based
+      // on an invisible timer. A transformed collision that was never a
+      // folder candidate still commits the visible insertion preview.
+      if (
+        completedFolderCandidate !== folderTarget &&
+        completedPreview?.targetGroupId === targetGroupId
+      ) {
+        commitDragLayout(completedPreview.layout, previewTargetName(completedPreview));
+      }
       return;
     }
 
     if (completedPreview) {
-      onLayoutChange(completedPreview.layout);
+      commitDragLayout(completedPreview.layout, previewTargetName(completedPreview));
       return;
     }
 
     const targetGroupId = findGroupId(overId);
     if (!targetGroupId) return;
-    onLayoutChange(
-      moveLaunchpadItemToGroup(layout, sourceGroupId, targetGroupId, draggedId, overId)
+    commitDragLayout(
+      moveLaunchpadItemToGroup(layout, sourceGroupId, targetGroupId, draggedId, overId),
+      itemName(overId)
     );
   };
 
@@ -526,7 +568,17 @@ export function AppLaunchpad({
       pendingFolderCreation.folderId,
       folderName
     );
+    const createdFolder = nextLayout.folders[pendingFolderCreation.folderId];
     onLayoutChange(nextLayout);
+    if (createdFolder && nextLayout !== layout) {
+      setFolderCreationAnnouncement(
+        t('launchpad.folder.created', {
+          folder: createdFolder.name,
+          firstItem: itemName(pendingFolderCreation.firstAppId),
+          secondItem: itemName(pendingFolderCreation.secondAppId),
+        })
+      );
+    }
     closeFolderCreation();
   };
 
@@ -548,6 +600,8 @@ export function AppLaunchpad({
       aria-label={flow ? undefined : resolvedTitle}
       data-launchpad-surface={immersive ? 'immersive' : flow ? 'flow-dock' : 'page'}
       data-launchpad-editing={editing ? 'true' : 'false'}
+      data-launchpad-folder-candidate={folderCandidateTargetId ?? undefined}
+      data-launchpad-folder-ready={folderReadyTargetId ?? undefined}
       sx={
         immersive
           ? {
@@ -574,6 +628,9 @@ export function AppLaunchpad({
               }
       }
     >
+      <Box sx={visuallyHidden} role="status" aria-live="polite" aria-atomic="true">
+        {folderCreationAnnouncement}
+      </Box>
       <DndContext
         sensors={sensors}
         collisionDetection={detectLaunchpadCollision}
@@ -582,9 +639,9 @@ export function AppLaunchpad({
         onDragCancel={() => {
           keyboardDraggingRef.current = false;
           keyboardHorizontalDirectionRef.current = 0;
+          dragAnnouncementTargetRef.current = null;
           clearFolderHoverIntent();
           lastItemCollisionRef.current = [];
-          enteredEditingFromLongPressRef.current = false;
           updateDragPreview(null);
           setActiveId(null);
           setKeyboardDragging(false);
@@ -602,11 +659,11 @@ export function AppLaunchpad({
               over
                 ? t('launchpad.drag.over', { item: dropTargetName(String(over.id)) })
                 : t('launchpad.drag.notOver'),
-            onDragEnd: ({ active, over }) =>
-              over
+            onDragEnd: ({ active }) =>
+              dragAnnouncementTargetRef.current
                 ? t('launchpad.drag.placed', {
                     item: itemName(String(active.id)),
-                    target: dropTargetName(String(over.id)),
+                    target: dragAnnouncementTargetRef.current,
                   })
                 : t('launchpad.drag.returned', { item: itemName(String(active.id)) }),
             onDragCancel: ({ active }) =>
@@ -833,6 +890,7 @@ export function AppLaunchpad({
                             previewSlot={
                               activeId === itemId && dragPreview?.targetGroupId === group.id
                             }
+                            folderDropReady={folderReadyTargetId === itemId}
                             detachedOrigin={Boolean(
                               crossGroupPreview &&
                               activeSourceGroupId === group.id &&
@@ -867,6 +925,7 @@ export function AppLaunchpad({
                           previewSlot={
                             activeId === itemId && dragPreview?.targetGroupId === group.id
                           }
+                          folderDropReady={folderReadyTargetId === itemId}
                           detachedOrigin={Boolean(
                             crossGroupPreview &&
                             activeSourceGroupId === group.id &&

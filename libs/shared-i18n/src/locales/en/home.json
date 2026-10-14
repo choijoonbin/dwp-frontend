@@ -1081,6 +1081,11 @@
       "instructions": "Press space to pick up an app. Use arrow keys to move it, then press space to drop.",
       "pickedUp": "Picked up {{item}}.",
       "over": "Over {{item}}.",
+      "reorderReady": "Drop here",
+      "folderCandidate": "Hold to create folder",
+      "folderReady": "Release to create folder",
+      "addToFolderCandidate": "Hold to add to folder",
+      "addToFolderReady": "Release to add to folder",
       "notOver": "Not over a drop target.",
       "placed": "{{item}} was placed with {{target}}.",
       "returned": "{{item}} was returned to its original position.",
@@ -1088,6 +1093,7 @@
     },
     "contextMenu": {
       "label": "Edit actions for {{item}}",
+      "moreActions": "More actions for {{item}}",
       "moveEarlier": "Move earlier",
       "moveLater": "Move later",
       "moveToGroup": "Move to {{group}}",
@@ -1098,6 +1104,7 @@
     },
     "folder": {
       "create": "Create folder",
+      "created": "Created {{folder}} with {{firstItem}} and {{secondItem}}.",
       "rename": "Rename folder",
       "renameLabel": "Rename {{folder}}",
       "name": "Folder name",

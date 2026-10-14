@@ -7,6 +7,50 @@ type LaunchpadCollisionResult = ReturnType<CollisionDetection>;
 
 const FOLDER_TARGET_PREFIX = 'folder-target::';
 const GROUP_TARGET_PREFIX = 'group-target::';
+const STATIONARY_POINTER_EPSILON = 0.5;
+// Match the long-press sensor tolerance: movement below this distance is hand
+// jitter, while reaching it is an intentional drag in both normal and edit modes.
+const DRAG_MOVEMENT_THRESHOLD = 10;
+
+type LaunchpadPreviewStabilityInput = {
+  sourceGroupId: HomeAppGroupId | null;
+  previewTargetGroupId: HomeAppGroupId;
+  nextTargetGroupId: HomeAppGroupId | null;
+  previewDelta: Readonly<{ x: number; y: number }>;
+  nextDelta: Readonly<{ x: number; y: number }>;
+};
+
+/**
+ * Rendering a cross-group preview moves the destination tiles underneath a
+ * stationary pointer. dnd-kit can consequently report the containing group
+ * (or a newly shifted item) on the next frame even though the user did not
+ * change their target. Keep the visible preview authoritative until the
+ * pointer actually moves or enters another group.
+ */
+export function shouldRetainCrossGroupPreview({
+  sourceGroupId,
+  previewTargetGroupId,
+  nextTargetGroupId,
+  previewDelta,
+  nextDelta,
+}: LaunchpadPreviewStabilityInput): boolean {
+  if (
+    !sourceGroupId ||
+    previewTargetGroupId === sourceGroupId ||
+    nextTargetGroupId !== previewTargetGroupId
+  ) {
+    return false;
+  }
+
+  return (
+    Math.abs(previewDelta.x - nextDelta.x) < STATIONARY_POINTER_EPSILON &&
+    Math.abs(previewDelta.y - nextDelta.y) < STATIONARY_POINTER_EPSILON
+  );
+}
+
+export function hasLaunchpadDragMovement(delta: Readonly<{ x: number; y: number }>): boolean {
+  return Math.hypot(delta.x, delta.y) >= DRAG_MOVEMENT_THRESHOLD;
+}
 
 export function folderTargetId(itemId: string): string {
   return `${FOLDER_TARGET_PREFIX}${itemId}`;

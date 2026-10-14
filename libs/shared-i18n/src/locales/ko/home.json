@@ -1074,6 +1074,11 @@
       "instructions": "스페이스 키로 앱을 선택하고 방향키로 이동한 다음 스페이스 키를 눌러 놓으세요.",
       "pickedUp": "{{item}} 항목을 선택했습니다.",
       "over": "{{item}} 위에 있습니다.",
+      "reorderReady": "여기에 놓기",
+      "folderCandidate": "잠시 유지해 폴더 만들기",
+      "folderReady": "놓아서 폴더 만들기",
+      "addToFolderCandidate": "잠시 유지해 폴더에 추가",
+      "addToFolderReady": "놓아서 폴더에 추가",
       "notOver": "놓을 수 있는 대상 위가 아닙니다.",
       "placed": "{{item}} 항목을 {{target}} 위치에 놓았습니다.",
       "returned": "{{item}} 항목을 원래 위치로 되돌렸습니다.",
@@ -1081,6 +1086,7 @@
     },
     "contextMenu": {
       "label": "{{item}} 편집 동작",
+      "moreActions": "{{item}} 더보기",
       "moveEarlier": "앞으로 이동",
       "moveLater": "뒤로 이동",
       "moveToGroup": "{{group}} 그룹으로 이동",
@@ -1091,6 +1097,7 @@
     },
     "folder": {
       "create": "폴더 만들기",
+      "created": "{{firstItem}} 및 {{secondItem}} 항목으로 {{folder}} 폴더를 만들었습니다.",
       "rename": "폴더 이름 변경",
       "renameLabel": "{{folder}} 이름 변경",
       "name": "폴더 이름",

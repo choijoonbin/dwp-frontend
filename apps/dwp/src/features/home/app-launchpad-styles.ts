@@ -16,12 +16,21 @@ import {
 export const LAUNCHPAD_TILE_WIDTH = HOME_LAUNCHPAD_TILE_WIDTH;
 export const LAUNCHPAD_TILE_HEIGHT = HOME_LAUNCHPAD_TILE_HEIGHT;
 export const LAUNCHPAD_TILE_HEIGHT_CSS = `var(--launchpad-tile-height, ${LAUNCHPAD_TILE_HEIGHT}px)`;
+export const LAUNCHPAD_GROUP_MIN_HEIGHT = 8 + LAUNCHPAD_TILE_HEIGHT * 3 + 2 * (3 - 1) + 82;
+
+export type LaunchpadFolderDropState = 'idle' | 'candidate' | 'ready';
 
 export function launchpadLabelFontSize(label: string) {
   return label.length > 6 ? '0.5625rem' : '0.6875rem';
 }
 
-export function launchpadInteractionFrameSx(editing: boolean): SxProps<Theme> {
+export function launchpadInteractionFrameSx(
+  editing: boolean,
+  folderDropState: LaunchpadFolderDropState = 'idle'
+): SxProps<Theme> {
+  const folderDropActive = folderDropState !== 'idle';
+  const folderDropReady = folderDropState === 'ready';
+
   return {
     position: 'relative',
     isolation: 'isolate',
@@ -31,17 +40,38 @@ export function launchpadInteractionFrameSx(editing: boolean): SxProps<Theme> {
     boxSizing: 'border-box',
     display: 'grid',
     placeItems: 'center',
-    border: editing ? 1 : 0,
-    borderColor: 'transparent',
+    border: editing || folderDropActive ? (folderDropReady ? 2 : 1) : 0,
+    borderStyle: folderDropActive && !folderDropReady ? 'dashed' : 'solid',
+    borderColor: folderDropActive
+      ? folderDropReady
+        ? 'primary.main'
+        : 'primary.light'
+      : 'transparent',
     borderRadius: 1,
+    bgcolor: folderDropActive ? 'action.selected' : 'transparent',
+    boxShadow: folderDropReady
+      ? (theme) => `0 0 0 4px ${alpha(theme.palette.primary.main, 0.2)}`
+      : 'none',
+    transform: folderDropReady ? 'scale(1.04)' : 'none',
     transition: (theme) =>
-      theme.transitions.create(['background-color', 'border-color', 'box-shadow'], {
+      theme.transitions.create(['background-color', 'border-color', 'box-shadow', 'transform'], {
         duration: theme.transitions.duration.shorter,
       }),
     '& > [data-launchpad-glyph]': {
       position: 'relative',
       zIndex: 1,
     },
+    '@media (forced-colors: active)': folderDropActive
+      ? {
+          borderColor: folderDropReady ? 'Highlight' : 'CanvasText',
+          outline: folderDropReady ? '2px solid Highlight' : '1px dashed CanvasText',
+          outlineOffset: 2,
+          bgcolor: 'Canvas',
+          boxShadow: 'none',
+        }
+      : undefined,
+    'html[data-motion="reduced"] &': { transform: 'none', transition: 'none' },
+    '@media (prefers-reduced-motion: reduce)': { transform: 'none', transition: 'none' },
   };
 }
 
@@ -100,7 +130,7 @@ export function launchpadTileSx(
       boxShadow: 'none',
       transform: 'none',
     },
-    '&:hover [data-launchpad-edit-frame]': editing
+    '&:hover [data-launchpad-edit-frame]:not([data-launchpad-folder-drop])': editing
       ? {
           bgcolor: 'rgba(255,255,255,0.08)',
           borderColor: 'rgba(255,255,255,0.88)',
@@ -123,13 +153,14 @@ export function launchpadTileSx(
       borderColor: 'transparent',
       boxShadow: 'none',
     },
-    '&:focus-visible [data-launchpad-edit-frame], &:active [data-launchpad-edit-frame]': editing
-      ? {
-          bgcolor: 'rgba(255,255,255,0.10)',
-          borderColor: '#FFFFFF',
-          boxShadow: '0 0 0 2px rgba(141,184,255,0.30), 0 8px 18px rgba(0,7,24,0.22)',
-        }
-      : undefined,
+    '&:focus-visible [data-launchpad-edit-frame]:not([data-launchpad-folder-drop]), &:active [data-launchpad-edit-frame]:not([data-launchpad-folder-drop])':
+      editing
+        ? {
+            bgcolor: 'rgba(255,255,255,0.10)',
+            borderColor: '#FFFFFF',
+            boxShadow: '0 0 0 2px rgba(141,184,255,0.30), 0 8px 18px rgba(0,7,24,0.22)',
+          }
+        : undefined,
     '&:focus-visible [data-launchpad-glyph]':
       !editing && !disabled
         ? {

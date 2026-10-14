@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Folder } from 'lucide-react';
 
 import Box from '@mui/material/Box';
@@ -31,6 +32,8 @@ export function AppLaunchpadCrossGroupPreview({
   app,
   immersive,
 }: AppLaunchpadCrossGroupPreviewProps) {
+  const { t } = useTranslation('home');
+
   return (
     <Box
       component="li"
@@ -38,7 +41,9 @@ export function AppLaunchpadCrossGroupPreview({
       data-launchpad-item={itemId}
       data-launchpad-group-id={groupId}
       data-launchpad-drop-preview="true"
+      data-launchpad-reorder-indicator="true"
       sx={{
+        position: 'relative',
         width: `var(--launchpad-tile-width, ${LAUNCHPAD_TILE_WIDTH}px)`,
         minWidth: `var(--launchpad-tile-width, ${LAUNCHPAD_TILE_WIDTH}px)`,
         height: LAUNCHPAD_TILE_HEIGHT_CSS,
@@ -50,6 +55,20 @@ export function AppLaunchpadCrossGroupPreview({
         color: 'inherit',
         opacity: 0.68,
         pointerEvents: 'none',
+        '&::before': {
+          content: '""',
+          position: 'absolute',
+          top: 4,
+          bottom: 18,
+          left: -4,
+          width: 4,
+          borderRadius: 999,
+          bgcolor: 'primary.main',
+          boxShadow: '0 0 0 3px rgba(78,165,255,0.18)',
+        },
+        '@media (forced-colors: active)': {
+          '&::before': { bgcolor: 'Highlight', boxShadow: 'none' },
+        },
       }}
     >
       <Box
@@ -85,6 +104,38 @@ export function AppLaunchpadCrossGroupPreview({
       >
         {label}
       </Typography>
+      <Box
+        component="span"
+        data-launchpad-reorder-feedback
+        sx={{
+          position: 'absolute',
+          left: '50%',
+          bottom: -4,
+          zIndex: 1,
+          minWidth: 'max-content',
+          px: 0.75,
+          py: 0.25,
+          border: 1,
+          borderColor: 'primary.main',
+          borderRadius: 999,
+          color: 'primary.main',
+          bgcolor: 'background.paper',
+          boxShadow: '0 4px 12px rgba(15,23,42,0.12)',
+          fontSize: 10,
+          fontWeight: 800,
+          lineHeight: 1.2,
+          whiteSpace: 'nowrap',
+          transform: 'translateX(-50%)',
+          '@media (forced-colors: active)': {
+            color: 'Highlight',
+            bgcolor: 'Canvas',
+            borderColor: 'Highlight',
+            boxShadow: 'none',
+          },
+        }}
+      >
+        {t('launchpad.drag.reorderReady')}
+      </Box>
     </Box>
   );
 }

@@ -36,6 +36,27 @@ describe('launchpad hover treatment', () => {
 
     expect(disabledTile['&:hover [data-launchpad-glyph]']).toBeUndefined();
     expect(editingTile['&:hover [data-launchpad-glyph]']).toBeUndefined();
-    expect(editingTile['&:hover [data-launchpad-edit-frame]']).toBeDefined();
+    expect(
+      editingTile['&:hover [data-launchpad-edit-frame]:not([data-launchpad-folder-drop])']
+    ).toBeDefined();
+  });
+
+  it('visually distinguishes a folder candidate from a ready folder drop target', () => {
+    const candidate = asStyleRecord(launchpadInteractionFrameSx(true, 'candidate'));
+    const ready = asStyleRecord(launchpadInteractionFrameSx(true, 'ready'));
+
+    expect(candidate).toMatchObject({
+      border: 1,
+      borderStyle: 'dashed',
+      borderColor: 'primary.light',
+      transform: 'none',
+    });
+    expect(ready).toMatchObject({
+      border: 2,
+      borderStyle: 'solid',
+      borderColor: 'primary.main',
+      transform: 'scale(1.04)',
+    });
+    expect(ready.boxShadow).toEqual(expect.any(Function));
   });
 });
