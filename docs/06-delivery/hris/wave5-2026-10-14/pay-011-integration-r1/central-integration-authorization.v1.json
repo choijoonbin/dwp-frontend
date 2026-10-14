@@ -1,0 +1,157 @@
+{
+  "schema": "dwp.hris.wave5-pay-011-central-integration-authorization.v1",
+  "receiptId": "HRIS-WAVE5-PAY-011-CENTRAL-INTEGRATION-AUTHORIZATION-R1",
+  "runId": "pay-011-integration-20261015-r1",
+  "status": "PASS_INTEGRATION_AUTHORIZATION_PENDING_CARRIER_DEFAULT_OFF",
+  "issuedAt": "2026-10-15T03:04:07+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "admission": {
+    "path": "docs/06-delivery/hris/wave5-2026-10-14/pay-011-integration-r1/central-result-admission.v1.json",
+    "receiptId": "HRIS-WAVE5-PAY-011-CENTRAL-RESULT-ADMISSION-R1",
+    "gitBlobSha1": "53e085adac3a0e8ddd152ab739dc5e0baa708c5b",
+    "sha256": "3e783ea9e90607f466c60edb89e40cf0b22c2f252e51793fa9ea3f80252653af",
+    "bytes": 4694,
+    "carrierCommit": "17d12f5e9f93953787b2ae7722c60fb67c91cdec",
+    "carrierTree": "d8a9978fd245d47c0a917167e4df17042603b3fa",
+    "carrierPushedAndRemoteExact": true
+  },
+  "authorizedResults": [
+    {
+      "order": 1,
+      "module": "PAY",
+      "sliceId": "BASE-TFR-PAY-011",
+      "repository": "dwp-backend",
+      "branch": "codex/hris-wave5-pay-011-backend-20261014",
+      "baseCommit": "357bd2b9e1c8a4d233c285d96911b5077cb444cf",
+      "commit": "e4e692c4fdd1b0b60110cad806f352ab1b5aef92",
+      "tree": "1f3390fd1ee50e5be53f443ed4ceaeed05f0d90a",
+      "requiredLineage": [
+        "e4e692c4fdd1b0b60110cad806f352ab1b5aef92"
+      ],
+      "changedFileCount": 38,
+      "changedFileManifestSha256": "1e183c27720f880558efdf2dc0ade22fa583120fbd83d706873045cd1aa4b48f"
+    },
+    {
+      "order": 2,
+      "module": "PAY",
+      "sliceId": "BASE-TFR-PAY-011",
+      "repository": "dwp-frontend",
+      "branch": "codex/hris-wave5-pay-011-frontend-20261014",
+      "baseCommit": "8df52380c32dea3ee45d4e3ae3f976269475cedf",
+      "commit": "8eeebfab9d2274364dd61628fbddb88a548ad27f",
+      "tree": "339ad62f7c2f3e47f0c6be0c51a93743476b7973",
+      "requiredLineage": [
+        "10f54c23a11f4177c9fe2c3cc04781b0d64923cd",
+        "89139607e16cf72faa0d7116a8d3dd4a89bd9263",
+        "8eeebfab9d2274364dd61628fbddb88a548ad27f"
+      ],
+      "changedFileCount": 13,
+      "changedFileManifestSha256": "a5d3df6fa3e52236fc9aaebee6fa49ec892b7a2b9a39c90498514b9d771dfae8"
+    }
+  ],
+  "preIntegration": {
+    "backend": {
+      "branch": "dwp-dev",
+      "upstream": "origin/dwp-dev",
+      "commit": "3e0c8d6e1bc0fbb0563a05023e619714dae54326",
+      "tree": "f9dd961039fee6e88b3f1ab48f049f7b847888ce",
+      "clean": true,
+      "upstreamAhead": 0,
+      "upstreamBehind": 0
+    },
+    "frontend": {
+      "branch": "dwp-dev",
+      "upstream": "origin/dwp-dev",
+      "requiredParentCommit": "17d12f5e9f93953787b2ae7722c60fb67c91cdec",
+      "rule": "AUTHORIZATION_CARRIER_COMMIT_EXACT_AFTER_PUSH",
+      "requireClean": true,
+      "requireUpstreamExact": true
+    }
+  },
+  "mergePlan": {
+    "strategy": "NO_FF_EXACT_RESULT_COMMITS_NO_SQUASH_NO_REBASE",
+    "stopOnConflict": true,
+    "manualCodeResolutionAuthorized": false,
+    "currentCentralPathIntersectionCount": {
+      "backend": 0,
+      "frontend": 0
+    },
+    "predictedMergeConflict": false,
+    "backendOrder": [
+      "e4e692c4fdd1b0b60110cad806f352ab1b5aef92"
+    ],
+    "frontendOrder": [
+      "8eeebfab9d2274364dd61628fbddb88a548ad27f"
+    ],
+    "migrationStreams": [
+      {
+        "stream": "PAYROLL_MAIN",
+        "version": "V50",
+        "priorVersion": "V49_UNCHANGED"
+      }
+    ]
+  },
+  "expectedUnion": {
+    "algorithm": "SHA256_SORTED_REPOSITORY_TAB_RELATIVE_PATH_LF",
+    "backendUniquePathCount": 38,
+    "backendSha256": "1e183c27720f880558efdf2dc0ade22fa583120fbd83d706873045cd1aa4b48f",
+    "frontendUniquePathCount": 13,
+    "frontendSha256": "a5d3df6fa3e52236fc9aaebee6fa49ec892b7a2b9a39c90498514b9d771dfae8",
+    "combinedUniquePathCount": 51,
+    "combinedSha256": "943c2ae8a7171601218014ff6e21a450ae8f90dbd6c16ec2825434fe938ee1ef"
+  },
+  "postMergeVerification": {
+    "policy": "ONE_CHANGED_CLUSTER_INTEGRATION_GATE_NO_FULL_REPOSITORY_RERUN",
+    "backend": [
+      "PAYROLL_CALCULATION_AND_SECURITY_CHANGED_CLUSTER",
+      "PAYROLL_APPLICATION_CONTEXT_DEFAULT_OFF"
+    ],
+    "frontend": [
+      "PAY_011_EXACT_FOUR_TEST_FILES",
+      "PAY_011_THIRTEEN_CHANGED_PATH_ESLINT",
+      "PAY_011_THIRTEEN_CHANGED_PATH_PRETTIER"
+    ],
+    "integrity": [
+      "EXPECTED_UNION_PATHS_AND_EXACT_BLOBS",
+      "GIT_DIFF_CHECK",
+      "V49_UNCHANGED_AND_V50_EXACT",
+      "FIVE_PAYROLL_OPERATION_ROUTE_SEMANTICS_PRESERVED",
+      "FEATURE_ROUTE_MENU_POLICY_CUSTOMER_AND_PRODUCTION_ACTIVATION_REMAIN_OFF"
+    ]
+  },
+  "activationBlockersPreserved": [
+    "REAL_FIELD_PROJECTION_PAY_GROUP_NAMED_POPULATION_AND_SEMANTIC_MAPPING_ADAPTERS",
+    "INITIAL_PAYROLL_RUN_PRODUCER_AND_RECEIPT_ORIGIN_POPULATION_TUPLES",
+    "TRANSPORT_IDENTITY_REVISION_HEADER_AND_RESPONSE_ENVELOPE_DECISIONS",
+    "RUN_LIST_AND_ATTEMPT_DETAIL_APIS"
+  ],
+  "invalidationConditions": [
+    "ANY_AUTHORIZED_RESULT_COMMIT_TREE_OR_LINEAGE_MISMATCH",
+    "ANY_MODULE_REMOTE_TIP_MISMATCH",
+    "ANY_UNEXPECTED_CHANGED_PATH_OR_CONTENT",
+    "ANY_MERGE_CONFLICT_REQUIRING_MANUAL_CODE_RESOLUTION",
+    "ANY_PRE_INTEGRATION_BRANCH_DIRTY_OR_UPSTREAM_DIVERGENCE",
+    "ANY_FEATURE_ROUTE_MENU_POLICY_CUSTOMER_OR_PRODUCTION_ACTIVATION",
+    "ANY_REQUIRED_TARGETED_GATE_FAILURE"
+  ],
+  "authority": {
+    "beforeCarrier": {
+      "integrationMergeAuthorized": false
+    },
+    "effectiveAfterCarrier": {
+      "integrationMergeAuthorized": true,
+      "exactResultsOnly": true,
+      "noManualCodeResolution": true,
+      "frontendPreIntegrationRule": "AUTHORIZATION_CARRIER_COMMIT_EXACT",
+      "backendPreIntegrationCommit": "3e0c8d6e1bc0fbb0563a05023e619714dae54326"
+    },
+    "sharedControlPathChangeAuthorizedForModules": false,
+    "routeOrMenuActivationAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "policyActivationAuthorized": false,
+    "customerDataAuthorized": false,
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "COMMIT_AND_PUSH_THIS_AUTHORIZATION_AS_A_SINGLE_DWP_DEV_CARRIER_THEN_MERGE_ONLY_THE_TWO_AUTHORIZED_RESULT_COMMITS"
+}
