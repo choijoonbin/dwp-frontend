@@ -1,0 +1,91 @@
+{
+  "schema": "dwp.hris.wave5-sys-001-nav-adapter-central-result-admission.v1",
+  "receiptId": "HRIS-WAVE5-SYS-001-NAV-ADAPTER-CENTRAL-RESULT-ADMISSION-R1",
+  "runId": "sys-001-nav-adapter-integration-20261015-r1",
+  "status": "PASS_RESULT_ADMITTED_PENDING_CARRIER_MOUNT_PENDING",
+  "issuedAt": "2026-10-15T03:31:52+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "predecessor": {
+    "resultEvidenceCarrier": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "5ccee7b00eaaee7ab2b51e481aee75f038ad5e7f",
+      "tree": "2e341b662cc0de4d4240567d12677b3617f665b1",
+      "upstream": "origin/dwp-dev",
+      "clean": true,
+      "upstreamAhead": 0,
+      "upstreamBehind": 0
+    },
+    "integrationMergeAuthorized": false
+  },
+  "moduleResult": {
+    "module": "SYS",
+    "sliceId": "BASE-TFR-SYS-001",
+    "scope": "NAVIGATION_ADAPTER_CODE_ONLY",
+    "resultEvidence": {
+      "path": "docs/06-delivery/hris/wave5-2026-10-14/sys-001-nav-adapter-r1/module-result-evidence.v1.json",
+      "evidenceId": "HRIS-WAVE5-BASE-TFR-SYS-001-NAV-ADAPTER-MODULE-RESULT-R1",
+      "gitBlobSha1": "53a9bfe9a9ec7aa47d209c3ee3fd8331befa6ea2",
+      "sha256": "9d6be8f2b0474e125d685c57220ffdf90d8faa322c6b3a91b8d66f00af0174df",
+      "bytes": 7085
+    },
+    "frontend": {
+      "branch": "codex/hris-wave5-sys-001-nav-adapter-frontend-20261015-r1",
+      "baseCommit": "3534bbbf0fc830afb1d4e99f5037d1f43cef6bf9",
+      "resultLineage": [
+        "0c83828a30283a0a188ce95652ff105efca2656b"
+      ],
+      "resultCommit": "0c83828a30283a0a188ce95652ff105efca2656b",
+      "resultTree": "88111a373af20fdbd8f4f7bba724ff05eaf71696",
+      "changedFileCount": 4,
+      "changedFileManifestSha256": "d03c3d282cda8643fc642bf1bb3bcbc5107b4fc0b8db953d2f5bcb348c8f56a0",
+      "contentManifestSha256": "6871e644ff48327d1f0230779f4384e86beafaa47b6ad8812ddc1673ea6c9f57",
+      "cleanAndRemoteExact": true
+    },
+    "acceptance": {
+      "passed": 7,
+      "total": 7,
+      "independentCodeAudit": "READY_NO_P0_P1",
+      "independentControlAudit": "READY_FOR_MODULE_RESULT_RECORDING"
+    }
+  },
+  "expectedUnion": {
+    "algorithm": "SHA256_SORTED_RELATIVE_PATH_LF",
+    "frontendUniquePathCount": 4,
+    "frontendSha256": "d03c3d282cda8643fc642bf1bb3bcbc5107b4fc0b8db953d2f5bcb348c8f56a0"
+  },
+  "admissionChecks": {
+    "resultEvidenceJsonValid": true,
+    "startAuthorityChainValid": true,
+    "worktreeCleanAndRemoteExact": true,
+    "touchBoundaryCompliant": true,
+    "moduleAcceptanceClosed": true,
+    "remainingP0": 0,
+    "remainingP1": 0,
+    "currentCentralPathOverlap": 0,
+    "predictedMergeConflict": false,
+    "backendChangeRequired": false,
+    "migrationLeaseRequired": false,
+    "routeOrMenuActivationAbsent": true
+  },
+  "completionBoundary": {
+    "admittedResultState": "ADAPTER_CODE_COMPLETE_WORK_EXPLORER_MOUNT_PENDING",
+    "userVisibleEndToEndComplete": false,
+    "finalBaseTfrSys001Closed": false,
+    "homeMountComplete": false,
+    "browserHandoffEvidence": "DEFERRED"
+  },
+  "authority": {
+    "resultAdmittedAfterCarrier": true,
+    "integrationMergeAuthorized": false,
+    "backendChangeAuthorized": false,
+    "sharedControlPathChangeAuthorizedForModule": false,
+    "routeOrMenuActivationAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "policyActivationAuthorized": false,
+    "customerDataAuthorized": false,
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "COMMIT_AND_PUSH_THIS_ADMISSION_AS_A_SINGLE_DWP_DEV_CARRIER_THEN_ISSUE_EXACT_FRONTEND_RESULT_INTEGRATION_AUTHORIZATION"
+}
