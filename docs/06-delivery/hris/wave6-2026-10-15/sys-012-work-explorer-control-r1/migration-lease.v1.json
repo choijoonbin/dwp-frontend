@@ -1,0 +1,32 @@
+{
+  "schema": "dwp.hris.migration-lease.v1",
+  "leaseId": "HRIS-WAVE6-SYS-012-MIGRATION-LEASE-R1",
+  "issuedAt": "2026-10-15T03:53:35+09:00",
+  "sliceId": "BASE-TFR-SYS-012",
+  "integrationTarget": "dwp-dev",
+  "backendPin": "67287b33be62c338d7ea6183e22ff3372e0c45c1",
+  "observedHighWater": {"platform": 326, "auth": 251},
+  "leases": [
+    {
+      "stream": "AUTH",
+      "version": 252,
+      "path": "dwp-auth-server/src/main/resources/db/migration/V252__authorize_hris_work_explorer.sql",
+      "owner": "CENTRAL_CONTROL",
+      "purpose": "Create DATA.HRIS_APP_SHELL:VIEW exact grants and declare the inactive v43 DRAFT seed only"
+    },
+    {
+      "stream": "PLATFORM",
+      "version": 327,
+      "path": "dwp-platform-server/src/main/resources/db/migration/V327__create_hris_work_explorer.sql",
+      "owner": "HRIS-SYS",
+      "purpose": "Create the three explorer preference tables and the canonical shared HRIS command receipt table with forced tenant RLS"
+    }
+  ],
+  "rules": [
+    "The lease is invalid if either numbered file exists from another owner before its first edit.",
+    "No historical G2 migration range may be reused.",
+    "V252 never imports, approves, activates or assigns v43.",
+    "V327 creates no cross-service foreign keys and stores no source payload.",
+    "Any additional schema need requires a new lease; no opportunistic table is allowed."
+  ]
+}

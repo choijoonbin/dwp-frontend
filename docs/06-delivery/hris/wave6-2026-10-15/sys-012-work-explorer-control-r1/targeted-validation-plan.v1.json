@@ -1,0 +1,50 @@
+{
+  "schema": "dwp.hris.sys012.targeted-validation-plan.v1",
+  "planId": "HRIS-WAVE6-SYS-012-TARGETED-VALIDATION-R1",
+  "preparedAt": "2026-10-15T03:53:35+09:00",
+  "policy": "Run each stage once. On failure, fix and rerun only the failed command or its smallest owning test. A broader suite requires recorded evidence that the affected boundary cannot be isolated.",
+  "stages": [
+    {
+      "id": "C1_CONTRACT_GENERATION",
+      "commands": [
+        "python3 -m unittest scripts.tests.test_product_authorization_v43",
+        "python3 -m unittest scripts.tests.test_export_openapi_contracts"
+      ],
+      "assertions": ["v43 exact counts and immutable v42 lineage", "four exact explorer routes", "exact hcm.app.shell.view to HRIS_DUTY_APP_SHELL_READER generator mapping and negative rejection", "SYS-API-027/038/039/040 typed target, command and receipt OpenAPI parity"]
+    },
+    {
+      "id": "C2_AUTH_GATEWAY_PLATFORM_PEP",
+      "commands": [
+        "./gradlew :dwp-auth-server:test --tests '*HrisExplorerAuthorizationMigrationContractTest' --tests '*ProductAuthorizationReleaseLineageTest' --tests '*ProductAuthorizationContractReleaseLineageTest' --tests '*ProductAuthorizationSeedLoaderTest' :dwp-gateway:test --tests '*ProductSurfaceDecisionContextFilterTest' :dwp-platform-server:test --tests '*HcmPlatformPepSecurityContractTest' --no-daemon --max-workers=1"
+      ],
+      "assertions": ["APP.HCM plus shell duty intersection", "exact GET explorer, GET receipt, PUT preferences and POST recents bindings", "existing configuration/integration receipt-reader profile preserved", "explorer receipt subject/origin mismatch denied", "generic /admin denial", "DRAFT only"]
+    },
+    {
+      "id": "C3_FRONTEND_CENTRAL_SYNC",
+      "commands": [
+        "pnpm authorization:check",
+        "pnpm fixtures:check",
+        "pnpm openapi:check",
+        "pnpm exec vitest run apps/dwp/src/features/hcm/hcm-product-manifest.test.ts apps/dwp/src/routes/product-surface-expansion.test.ts"
+      ],
+      "assertions": ["hcm.utility exact matcher", "manual PAGE metadata parity", "no sidebar item", "shared admin route remains outside local HCM router"]
+    },
+    {
+      "id": "M1_SYS_MODULE_BACKEND",
+      "commands": [
+        "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.hrisconfiguration.explorer.*' --tests '*HcmPlatformPepSecurityContractTest' --no-daemon --max-workers=1"
+      ],
+      "assertions": ["98-node catalog integrity", "tenant/principal isolation", "route reauthorization and purge", "favorites/recents limits", "activity minimization", "idempotency/CAS/receipt replay"]
+    },
+    {
+      "id": "M2_SYS_MODULE_FRONTEND",
+      "commands": [
+        "pnpm exec vitest run apps/dwp/src/features/hris/explorer apps/dwp/src/routes/hcm-explorer-route.test.tsx",
+        "pnpm exec eslint apps/dwp/src/features/hris/explorer apps/dwp/src/routes/hcm-routes.tsx apps/dwp/src/features/hcm/hcm-home.tsx",
+        "pnpm exec playwright test e2e/hris-phase-one.spec.ts --grep 'Work Explorer'"
+      ],
+      "viewports": ["1440x900", "1280x800", "390x844", "320x640", "1280x800 at browser 200% zoom"],
+      "assertions": ["all material states", "keyboard and visible focus", "200-percent zoom without clipped controls or horizontal page scroll", "search-first grouping", "no Home product map", "URL-preserved query state"]
+    }
+  ]
+}

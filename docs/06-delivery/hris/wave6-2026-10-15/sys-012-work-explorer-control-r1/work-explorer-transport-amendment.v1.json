@@ -1,0 +1,235 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "dwp.hris.sys012.work-explorer-transport-amendment.v1",
+  "title": "HRIS Work Explorer transport successor",
+  "description": "Closed successor for the Explorer portions of recovered G2. The recovered source remains immutable.",
+  "$defs": {
+    "Instant": {"type": "string", "format": "date-time"},
+    "Uuid": {"type": "string", "format": "uuid"},
+    "PositiveRevision": {"type": "integer", "minimum": 1},
+    "Digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "Cursor": {"type": "string", "minLength": 1, "maxLength": 2048},
+    "HrisInternalTarget": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kind": {"const": "HRIS_INTERNAL"},
+        "path": {"type": "string", "pattern": "^/hr(?:/|$)", "maxLength": 300}
+      },
+      "required": ["kind", "path"]
+    },
+    "DwpControlTarget": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kind": {"const": "DWP_CONTROL"},
+        "path": {
+          "type": "string",
+          "enum": [
+            "/admin/experience/branding?product=HCM",
+            "/admin/identity/app-governance?product=HCM",
+            "/admin/platform/catalog?product=HCM",
+            "/admin/integrations/productivity?product=HCM",
+            "/admin/governance/audit-overview?product=HCM",
+            "/admin/platform/registry?namespace=hris-extension"
+          ]
+        }
+      },
+      "required": ["kind", "path"]
+    },
+    "ExplorerTargetV2": {
+      "oneOf": [
+        {"$ref": "#/$defs/HrisInternalTarget"},
+        {"$ref": "#/$defs/DwpControlTarget"}
+      ]
+    },
+    "SingleCapabilityAuthorization": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "routeContractKey": {"type": "string", "pattern": "^route\\.[a-z0-9.-]{3,154}$"},
+        "capabilityMode": {"const": "SINGLE"},
+        "capabilityKeys": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^[a-z][a-z0-9.-]{2,159}$"}
+        }
+      },
+      "required": ["routeContractKey", "capabilityMode", "capabilityKeys"]
+    },
+    "CapabilityExpressionAuthorization": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "routeContractKey": {"type": "string", "pattern": "^route\\.[a-z0-9.-]{3,154}$"},
+        "capabilityMode": {"type": "string", "enum": ["ANY", "ALL"]},
+        "capabilityKeys": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 16,
+          "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^[a-z][a-z0-9.-]{2,159}$"}
+        }
+      },
+      "required": ["routeContractKey", "capabilityMode", "capabilityKeys"]
+    },
+    "ExplorerAuthorizationV2": {
+      "oneOf": [
+        {"$ref": "#/$defs/SingleCapabilityAuthorization"},
+        {"$ref": "#/$defs/CapabilityExpressionAuthorization"}
+      ]
+    },
+    "ExplorerRouteIdentityV2": {
+      "type": "object",
+      "properties": {
+        "routeKey": {"type": "string", "pattern": "^[a-z][a-z0-9.-]{2,95}$"},
+        "target": {"$ref": "#/$defs/ExplorerTargetV2"},
+        "labelKey": {"type": "string", "pattern": "^hris\\.[a-z0-9.-]{3,120}$"},
+        "module": {"type": "string", "enum": ["HRM", "PER", "TIM", "PAY", "SYS"]},
+        "workbench": {"type": "string", "enum": ["MY_HR", "TEAM", "HR_OPERATIONS", "TIME", "PAYROLL", "PERFORMANCE", "SETTINGS"]},
+        "authorization": {"$ref": "#/$defs/ExplorerAuthorizationV2"}
+      },
+      "required": ["routeKey", "target", "labelKey", "module", "workbench", "authorization"]
+    },
+    "ExplorerRouteProjectionV2": {
+      "allOf": [{"$ref": "#/$defs/ExplorerRouteIdentityV2"}],
+      "unevaluatedProperties": false
+    },
+    "ExplorerFavoriteProjectionV2": {
+      "allOf": [
+        {"$ref": "#/$defs/ExplorerRouteIdentityV2"},
+        {
+          "type": "object",
+          "properties": {"position": {"type": "integer", "minimum": 1, "maximum": 20}},
+          "required": ["position"]
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "ExplorerRecentProjectionV2": {
+      "allOf": [
+        {"$ref": "#/$defs/ExplorerRouteIdentityV2"},
+        {
+          "type": "object",
+          "properties": {
+            "lastVisitedAt": {"$ref": "#/$defs/Instant"},
+            "expiresAt": {"$ref": "#/$defs/Instant"}
+          },
+          "required": ["lastVisitedAt", "expiresAt"]
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "ExplorerActivityProjectionV2": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "activityId": {"$ref": "#/$defs/Uuid"},
+        "sourceKind": {"type": "string", "enum": ["COMMAND_RECEIPT", "WORKFLOW_CASE", "APPROVAL_CASE", "SERVICE_REQUEST", "OPERATION_EXCEPTION"]},
+        "module": {"type": "string", "enum": ["HRM", "PER", "TIM", "PAY", "SYS"]},
+        "state": {"type": "string", "enum": ["PENDING", "IN_PROGRESS", "WAITING_FOR_ME", "RESULT_UNKNOWN", "FAILED"]},
+        "sourceRevision": {"$ref": "#/$defs/PositiveRevision"},
+        "updatedAt": {"$ref": "#/$defs/Instant"},
+        "target": {"$ref": "#/$defs/ExplorerTargetV2"}
+      },
+      "required": ["activityId", "sourceKind", "module", "state", "sourceRevision", "updatedAt", "target"]
+    },
+    "ExplorerDegradedSourceV1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "module": {"type": "string", "enum": ["HRM", "PER", "TIM", "PAY", "SYS"]},
+        "sourceKind": {"type": "string", "enum": ["CATALOG", "COMMAND_RECEIPT", "WORKFLOW_CASE", "APPROVAL_CASE", "SERVICE_REQUEST", "OPERATION_EXCEPTION"]},
+        "reason": {"type": "string", "enum": ["TIMEOUT", "UNAVAILABLE", "STALE"]},
+        "retryable": {"type": "boolean"}
+      },
+      "required": ["module", "sourceKind", "reason", "retryable"]
+    },
+    "ExplorerProjectionStatusV1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "state": {"type": "string", "enum": ["FRESH", "STALE", "PARTIAL"]},
+        "degradedSources": {"type": "array", "maxItems": 20, "items": {"$ref": "#/$defs/ExplorerDegradedSourceV1"}}
+      },
+      "required": ["state", "degradedSources"]
+    },
+    "ExplorerPolicyV1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "maxFavorites": {"const": 20},
+        "maxRecents": {"const": 20},
+        "recentTtlDays": {"const": 30},
+        "maxInProgress": {"const": 20},
+        "entitlementRefilter": {"const": true},
+        "cleanupMode": {"const": "READ_AND_WRITE_THROUGH_PURGE"}
+      },
+      "required": ["maxFavorites", "maxRecents", "recentTtlDays", "maxInProgress", "entitlementRefilter", "cleanupMode"]
+    },
+    "HrisExplorerResponseV2": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "asOf": {"$ref": "#/$defs/Instant"},
+        "projectionRevision": {"$ref": "#/$defs/PositiveRevision"},
+        "entitlementRevision": {"$ref": "#/$defs/PositiveRevision"},
+        "favoritePreferenceRevision": {"$ref": "#/$defs/PositiveRevision"},
+        "routes": {"type": "array", "maxItems": 100, "items": {"$ref": "#/$defs/ExplorerRouteProjectionV2"}},
+        "favorites": {"type": "array", "maxItems": 20, "items": {"$ref": "#/$defs/ExplorerFavoriteProjectionV2"}},
+        "recents": {"type": "array", "maxItems": 20, "items": {"$ref": "#/$defs/ExplorerRecentProjectionV2"}},
+        "inProgress": {"type": "array", "maxItems": 20, "items": {"$ref": "#/$defs/ExplorerActivityProjectionV2"}},
+        "nextCursor": {"oneOf": [{"$ref": "#/$defs/Cursor"}, {"type": "null"}]},
+        "projectionStatus": {"$ref": "#/$defs/ExplorerProjectionStatusV1"},
+        "policy": {"$ref": "#/$defs/ExplorerPolicyV1"}
+      },
+      "required": ["asOf", "projectionRevision", "entitlementRevision", "favoritePreferenceRevision", "routes", "favorites", "recents", "inProgress", "nextCursor", "projectionStatus", "policy"]
+    },
+    "Receipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "receiptId": {"$ref": "#/$defs/Uuid"},
+        "commandType": {"type": "string", "minLength": 1},
+        "originatingAction": {"type": "string", "minLength": 1, "maxLength": 128},
+        "subjectPrincipalPublicId": {"$ref": "#/$defs/Uuid"},
+        "populationScopeDigest": {"$ref": "#/$defs/Digest"},
+        "fieldPolicyRevision": {"type": "integer", "minimum": 1},
+        "purposeCode": {"type": "string", "minLength": 3, "maxLength": 64},
+        "authorizationRevision": {"type": "integer", "minimum": 1},
+        "status": {"type": "string", "enum": ["ACCEPTED", "RUNNING", "SUCCEEDED", "REJECTED", "FAILED", "RESULT_UNKNOWN"]},
+        "correlationId": {"$ref": "#/$defs/Uuid"},
+        "requestDigest": {"$ref": "#/$defs/Digest"},
+        "createdAt": {"$ref": "#/$defs/Instant"},
+        "aggregateVersion": {"type": "integer", "minimum": 0},
+        "resultRef": {"type": "string", "minLength": 1}
+      },
+      "required": ["receiptId", "commandType", "originatingAction", "subjectPrincipalPublicId", "populationScopeDigest", "fieldPolicyRevision", "purposeCode", "authorizationRevision", "status", "correlationId", "requestDigest", "createdAt"]
+    },
+    "HrisCommandReceiptV1": {"$ref": "#/$defs/Receipt"},
+    "HrisExplorerReceiptV1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "receiptId": {"$ref": "#/$defs/Uuid"},
+        "commandType": {"type": "string", "enum": ["EXPLORER_PREFERENCES_REPLACE", "EXPLORER_RECENT_RECORD"]},
+        "originatingAction": {"type": "string", "enum": ["EXPLORER_PREFERENCES_REPLACE", "EXPLORER_RECENT_RECORD"]},
+        "subjectPrincipalPublicId": {"$ref": "#/$defs/Uuid"},
+        "populationScopeDigest": {"$ref": "#/$defs/Digest"},
+        "fieldPolicyRevision": {"$ref": "#/$defs/PositiveRevision"},
+        "purposeCode": {"const": "HRIS_APP_DISCOVERY"},
+        "authorizationRevision": {"$ref": "#/$defs/PositiveRevision"},
+        "status": {"type": "string", "enum": ["ACCEPTED", "RUNNING", "SUCCEEDED", "REJECTED", "FAILED", "RESULT_UNKNOWN"]},
+        "correlationId": {"$ref": "#/$defs/Uuid"},
+        "requestDigest": {"$ref": "#/$defs/Digest"},
+        "createdAt": {"$ref": "#/$defs/Instant"},
+        "aggregateVersion": {"type": "integer", "minimum": 0},
+        "resultRef": {"type": "string", "minLength": 1, "maxLength": 500}
+      },
+      "required": ["receiptId", "commandType", "originatingAction", "subjectPrincipalPublicId", "populationScopeDigest", "fieldPolicyRevision", "purposeCode", "authorizationRevision", "status", "correlationId", "requestDigest", "createdAt"]
+    }
+  },
+  "allOf": [{"$ref": "#/$defs/HrisExplorerResponseV2"}]
+}

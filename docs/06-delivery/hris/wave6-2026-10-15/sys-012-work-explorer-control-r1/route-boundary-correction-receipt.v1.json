@@ -1,0 +1,21 @@
+{
+  "schema": "dwp.hris.sys012.route-boundary-correction-receipt.v1",
+  "receiptId": "HRIS-WAVE6-SYS-012-HCM-ROUTE-BOUNDARY-R1",
+  "completedAt": "2026-10-15T03:49:00+09:00",
+  "repository": "dwp-frontend",
+  "branch": "dwp-dev",
+  "commit": "51dab0a71edea9eb953326dd62faf8366fb939aa",
+  "pushed": true,
+  "change": "Official HCM PAGE metadata keeps the shared /admin governance route, while the local HCM router consumes only segment-owned /hr PAGE routes. Governed pages without a legacy navigation item fail closed instead of throwing during route construction.",
+  "files": [
+    "apps/dwp/src/routes/hcm-routes.tsx",
+    "apps/dwp/src/routes/product-surface-expansion.test.ts"
+  ],
+  "verification": {
+    "targetedTests": {"passed": 3, "failed": 0},
+    "eslint": "PASS",
+    "prettier": "PASS",
+    "diffCheck": "PASS"
+  },
+  "whyRequired": "The future hcm.utility explorer route and the existing shared HCM audit route must coexist without importing a cross-shell /admin PAGE into the local /hr router."
+}

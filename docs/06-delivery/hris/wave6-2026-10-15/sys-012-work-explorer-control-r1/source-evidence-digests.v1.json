@@ -1,0 +1,20 @@
+{
+  "schema": "dwp.hris.sys012.source-evidence-digests.v1",
+  "preparedAt": "2026-10-15T03:53:35+09:00",
+  "sliceId": "BASE-TFR-SYS-012",
+  "algorithm": "SHA-256",
+  "sources": [
+    {"path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/hris-shell-navigation-register.csv", "sha256": "f85ee40a66ce4100c5578fd3ca96bc89b652b0762e19d74cc7aeb76338009000"},
+    {"path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/hris-information-architecture-register.csv", "sha256": "ab506a2bb2f80c8ab81a4b9d575374d6bda83b312d11dce07495d4812bdf4686"},
+    {"path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/api-pep-binding-register.csv", "sha256": "0e38d724516a8b271069241ffa0fb6400984dc703758767de53cbaffb4f93da3"},
+    {"path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-evidence/sys/g2-contract-catalog.csv", "sha256": "1251cd627675b07563c340c8a87ed50723ebc6bfe4dd447f34dc41f113891206"},
+    {"path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-evidence/sys/g2-transport-schemas.v1.json", "sha256": "7067a7adad828d4918220fcde54fc0fa9a2add5db1d5745e0a4acb0a50698cf7"},
+    {"path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-evidence/sys/g2-platform-physical-schema.sql", "sha256": "5bd0fe6877ea0fb5a545f701dba7847c173a52dbe415a2b642d2a6a138594aa8"},
+    {"path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-evidence/sys/g2-implementation-contract.v2.md", "sha256": "fd4c05cc6dd836441e9a0786484103deafa0a7375d3c1b8124d16dabafd149a7"},
+    {"path": "apps/dwp/src/features/hris/shell/model/hris-information-architecture.generated.ts", "sha256": "584cc32f845720ad06fb1bdcea7c967026c0e3a648f70e0215fd8a95a6b055bd"},
+    {"path": "apps/dwp/src/features/hris/shell/model/hris-runtime-navigation-manifest.ts", "sha256": "4603212b33009e69c503f2733cdf0d3b052dbce42bcd35cfa41267351499d583"},
+    {"path": "backend:contracts/product-authorization/product-surfaces-v1.bundle-v42.json", "sha256": "4bc0690f65b426eedf8d2861fb0d645508cff8edbfbfb0d11c0587c225bb25a8"},
+    {"path": "backend:contracts/product-authorization/product-surfaces-v1.index.json", "sha256": "4e24ad31cc72e2d3efd8aacffac40f7aaa8f57e61468b5daf7500779faa58c2f"}
+  ],
+  "rule": "A digest change invalidates this seal and requires targeted semantic review; recovered evidence is never rewritten to hide drift."
+}

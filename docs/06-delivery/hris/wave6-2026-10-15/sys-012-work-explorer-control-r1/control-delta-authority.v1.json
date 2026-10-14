@@ -1,0 +1,67 @@
+{
+  "schema": "dwp.hris.sys012.control-delta-authority.v1",
+  "authorityId": "HRIS-WAVE6-SYS-012-CENTRAL-DELTA-R1",
+  "preparedAt": "2026-10-15T03:53:35+09:00",
+  "sliceId": "BASE-TFR-SYS-012",
+  "state": "CENTRAL_CONTRACT_CARRIER_AUTHORIZED_MODULE_FEATURE_WITHHELD",
+  "pins": {
+    "frontend": {"branch": "dwp-dev", "head": "51dab0a71edea9eb953326dd62faf8366fb939aa", "origin": "51dab0a71edea9eb953326dd62faf8366fb939aa", "clean": true},
+    "backend": {"branch": "dwp-dev", "head": "67287b33be62c338d7ea6183e22ff3372e0c45c1", "origin": "67287b33be62c338d7ea6183e22ff3372e0c45c1", "clean": true}
+  },
+  "authorizedCentralDelta": {
+    "bundle": {
+      "previousImmutableVersion": 42,
+      "candidateVersion": 43,
+      "status": "DRAFT",
+      "delta": {"capabilities": 1, "accessPolicies": 0, "entitlementExpressions": 0, "predicatePolicies": 2, "routes": 4, "routeKinds": {"PAGE": 1, "DATA": 1, "ACTION": 2}},
+      "expectedTotals": {"capabilities": 256, "accessPolicies": 24, "entitlementExpressions": 17, "predicatePolicies": 71, "routes": 1032, "routeKinds": {"PAGE": 133, "DATA": 309, "ACTION": 590}},
+      "checksum": "COMPUTE_FROM_CANONICAL_GENERATOR",
+      "appendOnly": true
+    },
+    "platformOwnerProjection": {
+      "candidateFile": "dwp-platform-server/src/main/resources/product-authorization/hcm-platform-pep-v43.generated.json",
+      "expected": {"routes": 34, "serviceBindings": 35, "gatewayBindings": 36, "routeKinds": {"PAGE": 6, "DATA": 9, "ACTION": 19}, "capabilities": 18, "accessPolicies": 4, "entitlementExpressions": 3, "predicatePolicies": 7}
+    },
+    "backendCanonicalSources": [
+      "contracts/product-authorization/product-surfaces-v1.yaml",
+      "scripts/generate-product-authorization-contracts.py (including the exact hcm.app.shell.view to HRIS_DUTY_APP_SHELL_READER responsibility mapping)",
+      "scripts/export-openapi-contracts.py"
+    ],
+    "frontendCentralSources": [
+      "scripts/product-authorization-fixture-versions.mjs",
+      "architecture/product-page-routes.v1.json",
+      "apps/dwp/src/features/hcm/hcm-product-manifest.ts",
+      "apps/dwp/src/routes/hcm-routes.tsx"
+    ],
+    "generatedDescendants": [
+      "Backend v43 immutable bundle/index/current artifacts and Auth/Platform generated resources",
+      "Backend Platform and Gateway OpenAPI artifacts",
+      "Frontend authorization snapshots/generated route registry/fixtures/OpenAPI snapshots"
+    ]
+  },
+  "notAuthorizedInCentralCarrier": [
+    "Explorer controller, service, repository or UI feature implementation",
+    "HrisProductMap reuse as Work Explorer",
+    "Tenant activation, bundle approval or assignment",
+    "Generic /admin path authorization",
+    "Changes to immutable v42 bytes or checksum",
+    "Broad test-suite execution"
+  ],
+  "stopConditions": [
+    "Backend or frontend dwp-dev pin changes before the first carrier edit",
+    "Migration V252 or V327 appears from another owner",
+    "Generated v43 totals differ from the exact expected totals",
+    "Immutable v42 bytes or checksum change",
+    "A fifth route, second new capability or third new predicate is required",
+    "The six DWP Control paths cannot be represented as literal typed targets",
+    "Any runtime path treats IA lifecycle or client role lists as authorization"
+  ],
+  "exitCriteria": [
+    "v43 append-only lineage and exact counts/checksum pass",
+    "Platform owner descriptor contains only the exact four explorer bindings, including the originating-context receipt DATA route",
+    "OpenAPI contains SYS-API-027/038/039/040 with the sealed typed-target, command and originating-context receipt contracts",
+    "Frontend generated snapshots and manual PAGE metadata agree with the same route identity",
+    "Central backend and frontend commits are pushed to clean dwp-dev",
+    "A fresh module work packet pins those commits and only then issues the HRIS-SYS start token"
+  ]
+}

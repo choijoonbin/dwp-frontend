@@ -1,0 +1,20 @@
+{
+  "schema": "dwp.hris.sys012.semantic-seal-validation-receipt.v1",
+  "receiptId": "HRIS-WAVE6-SYS-012-SEMANTIC-SEAL-VALIDATION-R1",
+  "completedAt": "2026-10-15T04:12:06+09:00",
+  "result": "PASS",
+  "scope": "Central semantic seal only; no runtime implementation or production activation claim",
+  "checks": [
+    {"check": "JSON_PARSE", "result": "PASS", "evidence": "All eight pre-receipt JSON artifacts parse with jq."},
+    {"check": "SOURCE_DIGESTS", "result": "PASS", "evidence": "All eleven pinned SHA-256 values match source bytes."},
+    {"check": "IA_CATALOG_IDENTITY", "result": "PASS", "evidence": "98 nodes = 76 BASE76 + 22 MODERN22; 98 stable route keys and 98 label keys are unique and pattern-valid."},
+    {"check": "DWP_CONTROL_TARGETS", "result": "PASS", "evidence": "Exactly six literal /admin targets match the canonical IA rows; no prefix authorization exists."},
+    {"check": "RECEIPT_SCHEMA_ALIAS", "result": "PASS", "evidence": "The successor Receipt definition is structurally identical to recovered G2 $defs.Receipt and HrisCommandReceiptV1 is a direct $ref alias."},
+    {"check": "V43_ARITHMETIC_AND_NORMALIZATION", "result": "PASS", "evidence": "Independent in-memory normalization with the sealed exact responsibility mapping yields 256 capabilities, 24 policies, 17 expressions, 71 predicates and 1032 routes with PAGE133/DATA309/ACTION590."},
+    {"check": "PLATFORM_OWNER_PROJECTION", "result": "PASS", "evidence": "Expected closure is 34 routes, 35 service bindings, 36 gateway bindings, 18 capabilities, 4 policies, 3 expressions and 7 predicates."},
+    {"check": "RECEIPT_PROFILE_PRESERVATION", "result": "PASS", "evidence": "The SYS-API-038 route preserves the configuration/integration originating-command profile and adds a narrower explorer-originating profile."},
+    {"check": "INDEPENDENT_SEAL_REVIEW", "result": "PASS", "evidence": "Dedicated read-only audit returned PASS after all P0/P1 findings were corrected."},
+    {"check": "DIFF_CHECK", "result": "PASS", "evidence": "git diff --check reports no whitespace errors."}
+  ],
+  "nextAuthorizedAction": "Commit and push this semantic seal, then implement the bounded backend v43/OpenAPI/Auth central carrier."
+}

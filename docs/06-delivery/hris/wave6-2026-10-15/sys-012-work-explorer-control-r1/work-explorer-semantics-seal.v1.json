@@ -1,0 +1,304 @@
+{
+  "schema": "dwp.hris.sys012.work-explorer-semantics-seal.v1",
+  "sealId": "HRIS-WAVE6-SYS-012-WORK-EXPLORER-SEMANTICS-R1",
+  "preparedAt": "2026-10-15T03:53:35+09:00",
+  "sliceId": "BASE-TFR-SYS-012",
+  "sourceRef": "TFR-SYS-012",
+  "moduleSession": "HRIS-SYS",
+  "state": "CENTRAL_SEMANTICS_SEALED_MODULE_IMPLEMENTATION_WITHHELD",
+  "productDefinition": {
+    "primaryUser": "Any authenticated tenant user holding APP.HCM and an active HRIS access package with HRIS_DUTY_APP_SHELL_READER",
+    "primaryQuestion": "Which HRIS work can I open now, and which authorized work should I resume?",
+    "primaryAction": "Search an authorized HRIS destination, open it, or resume an authorized in-progress item",
+    "archetype": "SEARCH_FIRST_CATALOG_WORKSPACE_WITH_FAVORITES_RECENTS_AND_IN_PROGRESS",
+    "notArchetypes": [
+      "STATIC_PRODUCT_MAP",
+      "HOME_DASHBOARD",
+      "SECOND_SIDEBAR",
+      "CLIENT_SIDE_ROLE_FILTERED_MENU"
+    ]
+  },
+  "navigation": {
+    "navigationIdentity": "HRIS-NAV-EXPLORE",
+    "browserPath": "/hr/explore",
+    "kind": "UTILITY_NOT_SIDEBAR",
+    "owner": "HRIS-SYS",
+    "ownerService": "dwp-platform-server",
+    "productEntitlement": "APP.HCM",
+    "visibility": "ANY_AUTHORIZED_DESCENDANT",
+    "fallback": "EXACT_ROUTE",
+    "sidebarWorkbenchCount": 7,
+    "sidebarRule": "The existing seven workbenches remain unchanged. Explorer is reachable from an exact-authorized utility action and is never added as an eighth workbench.",
+    "homeRule": "Home may expose one secondary Work Explorer action only after the exact explorer PAGE route is allowed. The 76-node HrisProductMap is not mounted on Home or Explorer."
+  },
+  "centralAuthorization": {
+    "surfaceKey": "hcm.utility",
+    "surfaceDecision": "A dedicated product-wide utility surface is used because hcm.personal, hcm.team, hcm.operations and hcm.management are persona/workbench ownership boundaries and none represents ANY_AUTHORIZED_DESCENDANT.",
+    "navigationContextId": "hcm.utility",
+    "page": {
+      "routeContractKey": "route.hcm.utility.explorer.page",
+      "uiRouteId": "hcm.utility.explorer",
+      "uiRoutePattern": "/hr/explore",
+      "gatewayBinding": "GET /api/platform/v1/hris/explorer",
+      "serviceBinding": "GET /v1/hris/explorer"
+    },
+    "commands": [
+      {
+        "routeContractKey": "route.hcm.utility.explorer-preferences-update.action",
+        "gatewayBinding": "PUT /api/platform/v1/hris/explorer/preferences",
+        "serviceBinding": "PUT /v1/hris/explorer/preferences",
+        "headers": ["Idempotency-Key", "If-Match"]
+      },
+      {
+        "routeContractKey": "route.hcm.utility.explorer-recent-create.action",
+        "gatewayBinding": "POST /api/platform/v1/hris/explorer/recents",
+        "serviceBinding": "POST /v1/hris/explorer/recents",
+        "headers": ["Idempotency-Key"]
+      }
+    ],
+    "receiptQuery": {
+      "contractId": "SYS-API-038",
+      "routeContractKey": "route.hcm.utility.explorer-command-receipt.data",
+      "gatewayBinding": "GET /api/platform/v1/admin/hris/command-receipts/{receiptId}",
+      "serviceBinding": "GET /v1/admin/hris/command-receipts/{receiptId}",
+      "profileKey": "explorer-originating-receipt-reader",
+      "rule": "This additional exact profile admits only an explorer receipt whose sealed subject is the authenticated principal and whose originatingAction is EXPLORER_PREFERENCES_REPLACE or EXPLORER_RECENT_RECORD. It does not grant access to configuration, integration or any other HRIS command receipt."
+    },
+    "capability": {
+      "contractKey": "hcm.app.shell.view",
+      "mappingVersion": 1,
+      "productKey": "hcm",
+      "surfaceKey": "hcm.utility",
+      "resourceKey": "DATA.HRIS_APP_SHELL",
+      "action": "VIEW",
+      "resolvedCapabilityCode": "DATA.HRIS_APP_SHELL:VIEW",
+      "responsibilityRequirement": "REQUIRED",
+      "requiredResponsibilityCode": "HRIS_DUTY_APP_SHELL_READER",
+      "authorityMode": "PERMISSION_AND_RELATIONSHIP",
+      "scopeResolver": "SELF",
+      "requiresProductEntitlement": true,
+      "riskTier": "LOW",
+      "activationPolicy": null,
+      "sodPolicyId": null,
+      "sunsetAt": null,
+      "legacySource": null,
+      "owner": "Platform + HCM + Security",
+      "policyVersion": 1,
+      "lifecycleState": "ACTIVE"
+    },
+    "predicates": [
+      {
+        "predicatePolicyKey": "predicate.hcm-explorer-authority.v1",
+        "ownerServiceKey": "platform",
+        "targetBindingKinds": ["SELF", "OBJECT"],
+        "inputEvidenceSchemaKey": "HcmExplorerAuthorityEvidenceV1",
+        "parameterSchemaKey": "predicate.hcm-explorer-authority.v1.parameters.v1",
+        "parameterSchema": {"type": "object", "additionalProperties": false, "properties": {}},
+        "owner": "Platform + HCM + Security",
+        "policyVersion": 1,
+        "lifecycleState": "ACTIVE",
+        "meaning": "Require verified tenant and principal, APP.HCM, the exact shell-reader package/duty relation, current authorization and field-policy revisions, and at least one currently allowed descendant PAGE route. For explorer receipt reads also prove the sealed explorer originating action, subject and request context."
+      },
+      {
+        "predicatePolicyKey": "predicate.hcm-platform-command-receipt-authority.v1",
+        "ownerServiceKey": "platform",
+        "targetBindingKinds": ["OBJECT", "TARGET_POPULATION"],
+        "inputEvidenceSchemaKey": "HcmPlatformCommandReceiptAuthorityEvidenceV1",
+        "parameterSchemaKey": "predicate.hcm-platform-command-receipt-authority.v1.parameters.v1",
+        "parameterSchema": {"type": "object", "additionalProperties": false, "properties": {}},
+        "owner": "Platform + HCM + Security",
+        "policyVersion": 1,
+        "lifecycleState": "ACTIVE",
+        "meaning": "Preserve PEP-SYS-040 for configuration and integration readers by proving the sealed originating command action, subject, population, field, purpose and current more-restrictive authorization context."
+      }
+    ],
+    "generatorResponsibilityMapping": {
+      "contractKey": "hcm.app.shell.view",
+      "allowedRequiredResponsibilityCode": "HRIS_DUTY_APP_SHELL_READER",
+      "rule": "The generator's closed required-responsibility mapping must add this exact pair with a dedicated negative test; it must not allow arbitrary HRIS_DUTY_* values."
+    },
+    "packageDutyBindings": [
+      "HRIS_EMPLOYEE>HRIS_DUTY_APP_SHELL_READER",
+      "HRIS_LINE_MANAGER>HRIS_DUTY_APP_SHELL_READER",
+      "HRIS_HR_BUSINESS_PARTNER>HRIS_DUTY_APP_SHELL_READER",
+      "HRIS_CONFIG_AUTHOR>HRIS_DUTY_APP_SHELL_READER",
+      "HRIS_AUDITOR>HRIS_DUTY_APP_SHELL_READER"
+    ],
+    "pepSuccessorAmendment": {
+      "amends": ["PEP-SYS-029", "PEP-SYS-041", "PEP-SYS-042", "PEP-SYS-040"],
+      "reason": "The recovered PEP explorer rows list only HRIS_EMPLOYEE while HRIS-NAV-EXPLORE, the IA home row and the atomic duty matrix define the product-wide utility for five HRIS packages. This successor explicitly resolves that conflict in favor of the five-package shell-reader matrix.",
+      "queryAndCommandPackages": [
+        "HRIS_EMPLOYEE",
+        "HRIS_LINE_MANAGER",
+        "HRIS_HR_BUSINESS_PARTNER",
+        "HRIS_CONFIG_AUTHOR",
+        "HRIS_AUDITOR"
+      ],
+      "receiptProfiles": {
+        "preserved": "platform-originating-command-receipt-reader for HRIS_CONFIG_AUTHOR, HRIS_CONFIG_PUBLISHER, HRIS_INTEGRATION_AUTHOR and HRIS_INTEGRATION_EXECUTOR with hcm.command-receipt.view",
+        "added": "explorer-originating-receipt-reader for the five shell-reader packages with hcm.app.shell.view"
+      }
+    },
+    "purposeCode": "HRIS_APP_DISCOVERY",
+    "fieldGroups": ["NAVIGATION_METADATA", "WIDGET_METADATA"]
+  },
+  "productAuthorizationRoutes": [
+    {
+      "routeContractKey": "route.hcm.utility.explorer.page",
+      "navigationContextId": "hcm.utility",
+      "subject": {"type": "PRODUCT", "productKey": "hcm", "surfaceKey": "hcm.utility"},
+      "routeKind": "PAGE",
+      "sideEffectFree": true,
+      "uiRouteId": "hcm.utility.explorer",
+      "uiRoutePattern": "/hr/explore",
+      "accessProfiles": [{"profileKey": "explorer-reader", "precedence": 300, "activeAccessModes": ["NORMAL", "ELEVATED"], "requiredAccess": {"type": "CAPABILITY", "capabilityContractKey": "hcm.app.shell.view"}, "targetBindingKinds": ["SELF"], "predicatePolicyKeys": ["predicate.hcm-explorer-authority.v1"], "projectionPolicyKey": "route.hcm.utility.explorer.page.authorized-catalog.projection.v1", "responseSchemaKey": "HrisExplorerResponseV2", "readOnly": true}],
+      "gatewayApiBindings": [{"bindingKey": "route.hcm.utility.explorer.page.binding.01", "method": "GET", "path": "/api/platform/v1/hris/explorer", "pathParameterConstraints": {}}],
+      "servicePepBindings": [{"bindingKey": "route.hcm.utility.explorer.page.binding.01", "method": "GET", "path": "/v1/hris/explorer", "pathParameterConstraints": {}, "serviceKey": "platform"}],
+      "owner": "Platform + HCM + Security",
+      "policyVersion": 1,
+      "lifecycleState": "ACTIVE"
+    },
+    {
+      "routeContractKey": "route.hcm.utility.explorer-preferences-update.action",
+      "navigationContextId": "hcm.utility",
+      "subject": {"type": "PRODUCT", "productKey": "hcm", "surfaceKey": "hcm.utility"},
+      "routeKind": "ACTION",
+      "sideEffectFree": null,
+      "uiRouteId": null,
+      "uiRoutePattern": null,
+      "accessProfiles": [{"profileKey": "explorer-preference-writer", "precedence": 300, "activeAccessModes": ["NORMAL", "ELEVATED"], "requiredAccess": {"type": "CAPABILITY", "capabilityContractKey": "hcm.app.shell.view"}, "targetBindingKinds": ["SELF"], "predicatePolicyKeys": ["predicate.hcm-explorer-authority.v1"], "readOnly": false}],
+      "gatewayApiBindings": [{"bindingKey": "route.hcm.utility.explorer-preferences-update.action.binding.01", "method": "PUT", "path": "/api/platform/v1/hris/explorer/preferences", "pathParameterConstraints": {}}],
+      "servicePepBindings": [{"bindingKey": "route.hcm.utility.explorer-preferences-update.action.binding.01", "method": "PUT", "path": "/v1/hris/explorer/preferences", "pathParameterConstraints": {}, "serviceKey": "platform"}],
+      "owner": "Platform + HCM + Security",
+      "policyVersion": 1,
+      "lifecycleState": "ACTIVE"
+    },
+    {
+      "routeContractKey": "route.hcm.utility.explorer-recent-create.action",
+      "navigationContextId": "hcm.utility",
+      "subject": {"type": "PRODUCT", "productKey": "hcm", "surfaceKey": "hcm.utility"},
+      "routeKind": "ACTION",
+      "sideEffectFree": null,
+      "uiRouteId": null,
+      "uiRoutePattern": null,
+      "accessProfiles": [{"profileKey": "explorer-recent-writer", "precedence": 300, "activeAccessModes": ["NORMAL", "ELEVATED"], "requiredAccess": {"type": "CAPABILITY", "capabilityContractKey": "hcm.app.shell.view"}, "targetBindingKinds": ["SELF"], "predicatePolicyKeys": ["predicate.hcm-explorer-authority.v1"], "readOnly": false}],
+      "gatewayApiBindings": [{"bindingKey": "route.hcm.utility.explorer-recent-create.action.binding.01", "method": "POST", "path": "/api/platform/v1/hris/explorer/recents", "pathParameterConstraints": {}}],
+      "servicePepBindings": [{"bindingKey": "route.hcm.utility.explorer-recent-create.action.binding.01", "method": "POST", "path": "/v1/hris/explorer/recents", "pathParameterConstraints": {}, "serviceKey": "platform"}],
+      "owner": "Platform + HCM + Security",
+      "policyVersion": 1,
+      "lifecycleState": "ACTIVE"
+    },
+    {
+      "routeContractKey": "route.hcm.utility.explorer-command-receipt.data",
+      "navigationContextId": "hcm.utility",
+      "subject": {"type": "PRODUCT", "productKey": "hcm", "surfaceKey": "hcm.utility"},
+      "routeKind": "DATA",
+      "sideEffectFree": true,
+      "uiRouteId": null,
+      "uiRoutePattern": null,
+      "accessProfiles": [
+        {"profileKey": "explorer-originating-receipt-reader", "precedence": 350, "activeAccessModes": ["NORMAL", "ELEVATED"], "requiredAccess": {"type": "CAPABILITY", "capabilityContractKey": "hcm.app.shell.view"}, "targetBindingKinds": ["SELF", "OBJECT"], "predicatePolicyKeys": ["predicate.hcm-explorer-authority.v1"], "projectionPolicyKey": "route.hcm.utility.explorer-command-receipt.data.explorer-originating-context.projection.v1", "responseSchemaKey": "HrisExplorerReceiptV1", "readOnly": true},
+        {"profileKey": "platform-originating-command-receipt-reader", "precedence": 300, "activeAccessModes": ["NORMAL", "ELEVATED"], "requiredAccess": {"type": "CAPABILITY", "capabilityContractKey": "hcm.command-receipt.view"}, "targetBindingKinds": ["OBJECT", "TARGET_POPULATION"], "predicatePolicyKeys": ["predicate.hcm-platform-command-receipt-authority.v1"], "projectionPolicyKey": "route.hcm.utility.explorer-command-receipt.data.platform-originating-context.projection.v1", "responseSchemaKey": "HrisCommandReceiptV1", "readOnly": true}
+      ],
+      "gatewayApiBindings": [{"bindingKey": "route.hcm.utility.explorer-command-receipt.data.binding.01", "method": "GET", "path": "/api/platform/v1/admin/hris/command-receipts/{receiptId}", "pathParameterConstraints": {}}],
+      "servicePepBindings": [{"bindingKey": "route.hcm.utility.explorer-command-receipt.data.binding.01", "method": "GET", "path": "/v1/admin/hris/command-receipts/{receiptId}", "pathParameterConstraints": {}, "serviceKey": "platform"}],
+      "owner": "Platform + HCM + Security",
+      "policyVersion": 1,
+      "lifecycleState": "ACTIVE"
+    }
+  ],
+  "catalog": {
+    "cardinality": 98,
+    "composition": {"BASE76": 76, "MODERN22": 22},
+    "workbenches": ["MY_HR", "TEAM", "HR_OPERATIONS", "TIME", "PAYROLL", "PERFORMANCE", "SETTINGS"],
+    "source": "coding-readiness/hris-information-architecture-register.csv plus its generated 98-node frontend projection",
+    "stableRouteKeyRule": "hris.explorer.<sourceNodeKey with every dot replaced by hyphen>",
+    "labelKeyRule": "hris.explorer.routes.<sourceNodeKey with every dot replaced by hyphen>",
+    "labelRule": "Every one of the 98 stable label keys must have explicit ko and en values. Missing labels fail generation; source keys are never shown to users.",
+    "authorizationProjection": {
+      "shape": "authorization.routeContractKey + authorization.capabilityMode + authorization.capabilityKeys",
+      "capabilityModes": ["SINGLE", "ANY", "ALL"],
+      "rule": "The response carries the exact current product-authorization PAGE decision that admitted the node. Raw IA capability references and client-side role lists are never treated as runtime authority.",
+      "eligibilityIntersection": [
+        "INSTALLED_OWNER_CAPABILITY",
+        "TENANT_CONFIGURATION",
+        "COUNTRY_PACK",
+        "DEPLOYED_EXACT_PAGE_ROUTE",
+        "CURRENT_PRODUCT_ROUTE_DECISION",
+        "CURRENT_OWNER_SCOPE_DECISION",
+        "CURRENT_FIELD_POLICY"
+      ],
+      "unmappedOrUnavailableRule": "Omit the node. A planned or historical IA lifecycle value never activates it."
+    }
+  },
+  "targets": {
+    "kinds": ["HRIS_INTERNAL", "DWP_CONTROL"],
+    "internalRule": "HRIS_INTERNAL targets must match ^/hr(?:/|$) and must resolve to an exact allowed HCM PAGE route.",
+    "dwpControlRule": "DWP_CONTROL is limited to the six literal targets below and is emitted only when that exact shared PAGE route is deployed and allowed. No prefix or generic /admin allowlist exists.",
+    "dwpControlExactTargets": [
+      "/admin/experience/branding?product=HCM",
+      "/admin/identity/app-governance?product=HCM",
+      "/admin/platform/catalog?product=HCM",
+      "/admin/integrations/productivity?product=HCM",
+      "/admin/governance/audit-overview?product=HCM",
+      "/admin/platform/registry?namespace=hris-extension"
+    ],
+    "currentOperationalExternalTarget": "/admin/governance/audit-overview?product=HCM",
+    "currentOperationalExternalRouteContractKey": "route.hcm.audit.evidence.page",
+    "inactiveExternalRule": "The other five targets remain absent until their own exact shared PAGE contracts are delivered."
+  },
+  "transportAmendment": {
+    "supersedesOnly": "The Explorer projection portions of the recovered G2 schema; the recovered evidence file remains immutable.",
+    "closedSchema": "work-explorer-transport-amendment.v1.json",
+    "projectionRule": "ExplorerRouteProjection, ExplorerFavoriteProjection and ExplorerRecentProjection all reuse the same closed ExplorerRouteIdentityV2 target and authorization schema; no projection retains the old /hr-only path or scalar capabilityKey.",
+    "responseChanges": [
+      "Add nullable nextCursor so limit and cursor form a complete keyset contract.",
+      "Add projectionStatus FRESH|STALE|PARTIAL and closed degradedSource summaries.",
+      "Never serialize tenant identity, role lists, source payloads, worker identifiers or case bodies."
+    ],
+    "writeContract": {
+      "favorites": "At most 20 unique ordered authorized route keys, CAS by If-Match, idempotent by Idempotency-Key.",
+      "recents": "At most 20 unique authorized route keys, server-timed LRU, 30-day TTL, idempotent by Idempotency-Key.",
+      "receiptStore": "Use the G2 canonical shared sys_hris_command_receipts table; do not introduce an explorer-only receipt store.",
+      "receiptReconciliation": "Use the exact explorer-originating profile on SYS-API-038 for RESULT_UNKNOWN and terminal receipt reads; do not infer success from a retry."
+    }
+  },
+  "activityProjection": {
+    "maxItems": 20,
+    "sources": ["COMMAND_RECEIPT", "WORKFLOW_CASE", "APPROVAL_CASE", "SERVICE_REQUEST", "OPERATION_EXCEPTION"],
+    "providerRule": "Owner modules expose authorization-filtered typed metadata through XCON-012..015 adapters. Platform composes providers and does not query another service database.",
+    "allowedFields": ["activityId", "sourceKind", "module", "state", "sourceRevision", "updatedAt", "deepLink"],
+    "forbiddenFields": ["requestPayload", "responsePayload", "caseBody", "workerIdentifier", "sensitiveTitle", "sourcePayloadRef"],
+    "emptyRule": "An empty list is valid only when all registered providers returned successfully and no authorized active item exists; missing or failed providers must produce PARTIAL status, not a false empty success."
+  },
+  "persistence": {
+    "tables": [
+      "sys_hris_explorer_preferences",
+      "sys_hris_explorer_favorites",
+      "sys_hris_explorer_recents",
+      "sys_hris_command_receipts"
+    ],
+    "isolation": "Verified tenant and authenticated principal are server-bound on every read and write; RLS is enabled and forced.",
+    "cleanup": "READ_AND_WRITE_THROUGH_PURGE of retired, denied, expired or unknown route keys in the same transaction.",
+    "crossDatabaseRule": "No service-to-service database query or foreign key is allowed."
+  },
+  "stateContract": [
+    "loading",
+    "success",
+    "empty-authorized-catalog",
+    "empty-search",
+    "403",
+    "409-stale-preference",
+    "stale",
+    "partial",
+    "result-unknown",
+    "retryable-error"
+  ],
+  "activation": {
+    "bundleStatus": "DRAFT",
+    "defaultEnabled": false,
+    "productionClaim": false,
+    "g6Claim": false,
+    "rule": "Implementation and tests do not authorize bundle activation or tenant rollout."
+  }
+}
