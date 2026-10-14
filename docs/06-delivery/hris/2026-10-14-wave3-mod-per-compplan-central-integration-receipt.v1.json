@@ -1,0 +1,298 @@
+{
+  "schema": "dwp.hris.wave3-mod-per-compplan-central-integration-receipt.v1",
+  "receiptId": "HRIS-WAVE3-MOD-PER-COMPPLAN-CENTRAL-INTEGRATION-20261014-R1",
+  "issuedAt": "2026-10-14T10:54:01+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "status": "PASS_CONTROL_PLANE_INTEGRATION_CENTRAL_ACCEPTANCE_OPEN",
+  "decision": "RECORD_DWP_DEV_CONTROL_PLANE_INTEGRATION_KEEP_CENTRAL_ACCEPTANCE_OPEN",
+  "scope": {
+    "module": "PER",
+    "moduleId": "MOD-PER-COMPPLAN",
+    "centralResponsibilities": [
+      "AUTH_PEP",
+      "CONTRACT_GATEWAY",
+      "SHELL_ROUTE",
+      "SVC_PEP_SECURITY",
+      "WORKFORCE_SNAPSHOT_COMPENSATION_PROJECTION",
+      "TARGETED_INTEGRATION_VERIFICATION"
+    ]
+  },
+  "sourcePins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "a46a214b172c69eebcfddfde7a9fc74150aad804",
+      "upstream": "origin/dwp-dev",
+      "upstreamMatchedAtVerification": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "ad9c33b6eb15f98864f2fe0ef8482177b3a4020e",
+      "upstream": "origin/dwp-dev",
+      "upstreamMatchedAtVerification": true
+    },
+    "workforceOperationsFaultRemediation": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "a0b6d790",
+      "cause": "POSTGRESQL_RESERVED_ALIAS_WINDOW",
+      "disposition": "FIXED_PUSHED_TARGETED_VERIFIED"
+    }
+  },
+  "integrationResult": {
+    "authorization": {
+      "bundleKey": "product-surfaces",
+      "version": 39,
+      "checksum": "86e796c95e45c02892d4c4ae76e7a5b36114ab09554ffc1be3a450066fe8e34c",
+      "fixtureChecksum": "0269799dd5ad54de3dbf4c6b76f3ba43b5c1b29273eeddec2c9c8571027e418b",
+      "counts": {
+        "capabilities": 245,
+        "accessPolicies": 24,
+        "entitlementExpressions": 17,
+        "predicates": 60,
+        "routes": 1003
+      },
+      "immutableHistory": "V1_THROUGH_V38_BYTE_IDENTICAL",
+      "packagedLifecycle": "DRAFT_NO_AUTOMATIC_PRODUCTION_ACTIVATION",
+      "localRuntime": {
+        "status": "ACTIVE",
+        "revision": 3,
+        "activatedBy": "local-core006-bundle-activator",
+        "activatedAt": "2026-10-14T01:48:46.068032Z"
+      }
+    },
+    "surfaceBindings": {
+      "page": 1,
+      "dataGet": 3,
+      "action": 8,
+      "operations": 12,
+      "uniquePaths": 11,
+      "ordinaryCommands": 6,
+      "highRiskCommands": [
+        "APPROVE",
+        "PUBLISH"
+      ],
+      "highRiskControl": "STEP_UP_AND_MAKER_CHECKER"
+    },
+    "domainControls": [
+      "BUDGET_LEDGER",
+      "PROPOSAL_AGGREGATE_VERSION_CAS",
+      "MAKER_CHECKER_APPROVAL",
+      "IMMUTABLE_APPROVED_SNAPSHOT",
+      "TYPED_ARTIFACT",
+      "TENANT_AND_SCOPE_AWARE_AUTHORIZATION",
+      "DENY_PRECEDENCE"
+    ],
+    "ownerProjection": "HRM_WORKFORCE_COMPENSATION_PROJECTION_WIRED",
+    "tenantCompensationConfiguration": {
+      "port": "HrisCompensationComponentEligibilitySource",
+      "sourceAvailable": false,
+      "fallback": "FAIL_CLOSED",
+      "syntheticDefaultComponent": false
+    }
+  },
+  "centralAcceptance": {
+    "closed": false,
+    "fulfilledByThisIntegration": [
+      "AUTH_PEP",
+      "CONTRACT_GATEWAY",
+      "SHELL_ROUTE",
+      "SVC_PEP_SECURITY",
+      "HRM_OWNER_RUNTIME_PROJECTION"
+    ],
+    "openRequirements": [
+      {
+        "acceptanceCriterion": "AC-03",
+        "requirement": "PAY_CONSUMPTION_WITHHELD_AND_EXACT_IMMUTABLE_REVISION_HANDOFF_VERIFICATION"
+      },
+      {
+        "acceptanceCriterion": "AC-09",
+        "requirement": "DELIVERY_WORKER_CRASH_RESTART_AND_REPLAY_EVIDENCE"
+      },
+      {
+        "acceptanceCriterion": "INTEGRATION_VERIFY",
+        "requirement": "AUTHORITATIVE_BUDGET_AGGREGATE_PROJECTION_EVIDENCE"
+      },
+      {
+        "acceptanceCriterion": "INTEGRATION_VERIFY",
+        "requirement": "ONE_CENTRAL_CONTRACT_ROUTE_AUTH_SYNC_PAY_WITHHELD_BATCH"
+      },
+      {
+        "acceptanceCriterion": "INTEGRATION_VERIFY",
+        "requirement": "COMMITTED_VISUAL_RECAPTURE"
+      }
+    ],
+    "treatment": "NO_IMPLICIT_CLOSURE_FROM_COMPONENT_LEVEL_TARGETED_TESTS"
+  },
+  "databaseVerification": {
+    "auth": [
+      {
+        "version": "247",
+        "description": "authorize compensation planning",
+        "script": "V247__authorize_compensation_planning.sql",
+        "success": true
+      },
+      {
+        "version": "248",
+        "description": "declare compensation planning v39 authorization seed",
+        "script": "V248__declare_compensation_planning_v39_authorization_seed.sql",
+        "success": true
+      }
+    ],
+    "peoplePerformance": [
+      {
+        "version": "17",
+        "description": "per modern compensation planning",
+        "script": "V17__per_modern_compensation_planning.sql",
+        "success": true,
+        "tablesPresent": [
+          "prf_cmp_cycles",
+          "prf_cmp_budget_ledger",
+          "prf_cmp_proposals",
+          "prf_cmp_proposal_revisions",
+          "prf_cmp_approved_snapshots",
+          "prf_cmp_approved_snapshot_lines"
+        ]
+      }
+    ]
+  },
+  "targetedVerification": {
+    "policy": "NO_REDUNDANT_FULL_REGRESSION",
+    "backend": [
+      "PRODUCT_AUTHORIZATION_GENERATOR_CHECK_PASS",
+      "PILOT_FIXTURE_GENERATOR_CHECK_PASS_71_TESTS_46_NEGATIVE_41_MUTATION_CONTROLS",
+      "AUTH_TARGETED_SEED_LINEAGE_MIGRATION_FIXTURE_TESTS_PASS",
+      "GATEWAY_12_ROUTE_PURPOSE_SPOOF_TESTS_PASS",
+      "PEOPLE_COMPENSATION_AUTHORITY_AND_HCM_V3_REGISTRY_TESTS_PASS",
+      "PEOPLE_AND_GATEWAY_OPENAPI_COMPENSATION_OPERATION_CHECKS_PASS",
+      "GIT_DIFF_CHECK_PASS"
+    ],
+    "frontend": [
+      "TYPECHECK_PASS_BEFORE_CHECKSUM_ONLY_RESYNC",
+      "AUTHORIZATION_AND_FIXTURE_CHECKS_PASS",
+      "COMPENSATION_COMMAND_BINDING_AND_RUNTIME_14_TESTS_PASS_AFTER_RESYNC",
+      "PROPOSAL_AGGREGATE_VERSION_REGRESSION_TEST_PASS",
+      "TARGETED_ESLINT_SOURCE_SIZE_REACHABILITY_DIFF_CHECKS_PASS"
+    ]
+  },
+  "localRuntime": {
+    "verifiedAt": "2026-10-14T10:54:00+09:00",
+    "services": [
+      {
+        "name": "auth",
+        "port": 8001,
+        "supervisorPid": 93912,
+        "readinessHttp": 200,
+        "readinessStatus": "UP"
+      },
+      {
+        "name": "people",
+        "port": 8003,
+        "supervisorPid": 93913,
+        "readinessHttp": 200,
+        "readinessStatus": "UP"
+      },
+      {
+        "name": "gateway",
+        "port": 8080,
+        "supervisorPid": 94061,
+        "readinessHttp": 200,
+        "readinessStatus": "UP"
+      },
+      {
+        "name": "frontend",
+        "port": 4200,
+        "supervisorPid": 94270,
+        "rootHttp": 200,
+        "status": "UP"
+      }
+    ],
+    "accessUrl": "http://localhost:4200",
+    "diagnosticNote": {
+      "authAggregateHealthHttp": 503,
+      "authAggregateHealthStatus": "DOWN",
+      "authLivenessHttp": 200,
+      "authReadinessHttp": 200,
+      "scopeDisposition": "CAUSE_UNDETERMINED_READINESS_STILL_UP_FOLLOW_UP_REQUIRED",
+      "followUpRequired": true
+    }
+  },
+  "enterpriseMenuPolicyAssessment": {
+    "status": "PARTIAL_FOUNDATION_NOT_TENANT_CONFIGURABLE_HRIS_MENU",
+    "implemented": [
+      "CANONICAL_HRIS_WORKBENCH_AND_ROUTE_CATALOG",
+      "PAGE_CAPABILITY_SCOPE_AUTHORIZATION_INTERSECTION",
+      "FIRST_ALLOWED_ROUTE_DEFAULT",
+      "GENERIC_TENANT_NAVIGATION_STUDIO_GROUP_AND_APP_TREE"
+    ],
+    "notImplemented": [
+      "TENANT_HRIS_NODE_VISIBILITY_POLICY",
+      "TENANT_HRIS_DISPLAY_ORDER_POLICY",
+      "TENANT_HRIS_CANONICAL_GROUP_POLICY",
+      "TENANT_HRIS_DEFAULT_NODE_POLICY",
+      "LEGAL_ENTITY_RESTRICTIVE_OVERLAY",
+      "PUBLISHED_IMMUTABLE_HRIS_MENU_POLICY_REVISION",
+      "HRIS_SHELL_RUNTIME_POLICY_CONSUMPTION"
+    ],
+    "decision": "DO_NOT_REPRESENT_CURRENT_MENU_AS_ENTERPRISE_TENANT_CONFIGURABLE",
+    "nextVerticalSlice": {
+      "candidateId": "MOD-SYS-HRIS-NAV-POLICY-R1",
+      "firstScope": "HRIS-WB-HR-OPERATIONS",
+      "policyHierarchy": [
+        "TENANT_BASELINE",
+        "LEGAL_ENTITY_RESTRICTIVE_OVERLAY"
+      ],
+      "effectiveMenuFormula": "CANONICAL_ALLOWLIST_INTERSECT_INSTALLED_CONFIG_ELIGIBILITY_INTERSECT_TENANT_POLICY_INTERSECT_LEGAL_ENTITY_RESTRICTIVE_OVERLAY_INTERSECT_EXACT_PAGE_CAPABILITY_DECISION",
+      "mandatoryInvariants": [
+        "VISIBLE_TRUE_NEVER_GRANTS_AUTHORITY",
+        "LEGAL_ENTITY_CANNOT_REENABLE_TENANT_DISABLED_NODE",
+        "DEEP_LINK_USES_THE_SAME_DENY_ONLY_POLICY",
+        "MISSING_OR_STALE_POLICY_FAILS_CLOSED_FOR_ENROLLED_TENANT",
+        "TRUST_ONLY_SERVER_TENANT_AND_LEGAL_ENTITY_CONTEXT",
+        "DRAFT_VALIDATE_APPROVE_PUBLISH_ROLLBACK_WITH_CAS_IDEMPOTENCY_STEP_UP_AUDIT_OUTBOX",
+        "NO_SELF_PUBLISH",
+        "FEATURE_FLAG_DEFAULT_OFF_AND_SHADOW_BEFORE_ENFORCEMENT"
+      ]
+    }
+  },
+  "knownPreExistingVerificationDebt": [
+    {
+      "id": "PRODUCT_ACTION_CLOSURE",
+      "actual": 228,
+      "canonical": 250,
+      "missing": 22,
+      "introducedByCompplan": 0
+    },
+    {
+      "id": "PAGE_FIXED_BASELINE",
+      "actual": 129,
+      "staleBaseline": 124,
+      "introducedByCompplan": 1,
+      "disposition": "DO_NOT_HIDE_BY_CHANGING_ONLY_THE_NUMBER"
+    }
+  ],
+  "activationAuthority": {
+    "dwpDevControlPlaneChangesCommitted": true,
+    "centralIntegrationAcceptanceClosed": false,
+    "localControlPlaneActivated": true,
+    "localCompensationAuthoringUsable": false,
+    "customerDataAuthorized": false,
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "productionAuthoringBlockedBy": [
+      "TENANT_OWNED_COMPENSATION_COMPONENT_GUIDELINE_ROUNDING_SOURCE_ABSENT",
+      "PRODUCTION_AUTHORING_CONTEXT_NOT_BOOTSTRAPPED",
+      "AC_03_PAY_HANDOFF_VERIFICATION_OPEN",
+      "AC_09_DELIVERY_CRASH_RESTART_EVIDENCE_OPEN",
+      "CENTRAL_INTEGRATION_BATCH_OPEN",
+      "COMMITTED_VISUAL_RECAPTURE_OPEN"
+    ]
+  },
+  "nextOrder": [
+    "MOD_PER_COMPPLAN_CENTRAL_ACCEPTANCE_CLOSURE",
+    "MOD_SYS_HRIS_NAV_POLICY_R1_TENANT_AND_LEGAL_ENTITY_MENU_POLICY",
+    "TENANT_COMPENSATION_COMPONENT_GUIDELINE_ROUNDING_CONFIGURATION",
+    "PRODUCTION_AUTHORING_BOOTSTRAP_AND_ACTIVATION_ACCEPTANCE"
+  ]
+}
