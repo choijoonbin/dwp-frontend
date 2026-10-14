@@ -1,0 +1,161 @@
+{
+  "schema": "dwp.hris.module-preflight-packet.v1",
+  "packetId": "HRIS-WAVE5-PREFLIGHT-BASE-TFR-HRM-001-R1",
+  "preparedAt": "2026-10-14T13:48:09+09:00",
+  "moduleSession": "HRIS-HRM",
+  "sliceId": "BASE-TFR-HRM-001",
+  "sourceRef": "TFR-HRM-001",
+  "state": "READ_ONLY_CONFORMANCE_AUDIT_START_TOKEN_WITHHELD",
+  "authority": {
+    "readOnlyPreflightAuthorized": true,
+    "conformanceAuditAuthorized": true,
+    "implementationAuthorized": false,
+    "migrationAuthorized": false,
+    "worktreeAuthorized": false,
+    "commitOrPushAuthorized": false,
+    "startTokenIssued": false
+  },
+  "pinPolicy": {
+    "observedBackend": "dwp-dev@c857fe8fdc3234f2e9c4b017bdecf71bb3ea2aa7",
+    "observedFrontend": "dwp-dev@eedb0b517157f053ba3c52d94c517931d53083bd",
+    "state": "OBSERVATION_ONLY",
+    "finalRule": "Conformance must be repeated against the final clean pushed post-PAY-bridge pins; the observed pins never authorize authoring."
+  },
+  "selection": {
+    "sourceFamilySha256": "32a61311affd13c7dcde712fd1bf793c77a5ee3c2b35dd0619476f35854c285d",
+    "sourceRowCount": 34,
+    "auditFinding": "BASE-TFR-HRM-001 may already be semantically covered by the completed BASE-TFR-HRM-010 approval bridge, so a conformance decision must precede all code work.",
+    "duplicateAvoidance": [
+      "BASE-TFR-HRM-008 is integrated and must not be reopened.",
+      "BASE-TFR-HRM-010 is the completed overlap reference; do not clone, rename or reimplement it as HRM-001."
+    ]
+  },
+  "purpose": {
+    "capability": "settings-workflow",
+    "boundedContext": "DWP_APPROVAL",
+    "outcome": "Consolidate source-shaped workflow screens into the shared versioned Approval policy and decision contract with owner-side state guards.",
+    "ia": "NON_UI_SUPPORTING_SLICE"
+  },
+  "contracts": {
+    "primary": [
+      {
+        "id": "PLAT-003",
+        "kind": "SHARED_APPROVAL_BINDING",
+        "service": "dwp-approval-server",
+        "publicPath": "/api/approvals/v1/**",
+        "ownerPath": "/v1/**",
+        "state": "BASELINE_REUSE_VALIDATED_HRIS_ADAPTER_NOT_STARTED",
+        "requiredFields": [
+          "requestId",
+          "workflowVersion",
+          "subjectRef",
+          "requesterRef",
+          "state",
+          "decision",
+          "decisionActorRef",
+          "decisionAt",
+          "correlationId"
+        ],
+        "ownerRule": "HRIS stores only the approval request reference and immutable decision receipt; it must not create private approval tables or bypass the shared decision state."
+      }
+    ],
+    "ownerSideControls": [
+      "workflow-version pinning",
+      "delegation validation",
+      "maker-checker separation",
+      "no-self-approval",
+      "callback idempotency and replay fencing"
+    ]
+  },
+  "dependencies": {
+    "required": [
+      "DEP-001",
+      "DEP-002",
+      "DEP-003",
+      "DEP-014",
+      "DEP-016"
+    ],
+    "overlapReference": "BASE-TFR-HRM-010",
+    "featureDefault": "OFF"
+  },
+  "boundaries": {
+    "preflightAllowedReads": [
+      "backend:dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/employeechange/approvalbridge/**",
+      "backend:dwp-people-server/src/test/java/com/dwp/services/people/hris/employeeservice/employeechange/approvalbridge/**",
+      "backend:dwp-people-server/src/test/java/com/dwp/services/people/hris/approval/**",
+      "backend:dwp-approval-server/**",
+      "backend:contracts/openapi/approval.json",
+      "frontend:apps/dwp/src/features/hris/people/**",
+      "frontend:docs/06-delivery/hris/recovery/**"
+    ],
+    "writablePathsUnderThisPacket": [],
+    "possibleDeltaAfterSeparateStartToken": "Only paths proven missing by the conformance matrix may be allocated; no provisional wildcard is granted.",
+    "controlOwnedUntilExplicitReallocation": [
+      "backend:dwp-approval-server/**",
+      "backend:contracts/openapi/approval.json",
+      "backend:contracts/product-authorization/**",
+      "backend:dwp-auth-server/**",
+      "backend:dwp-gateway/**",
+      "backend:dwp-platform-contracts/**",
+      "frontend:apps/dwp/src/routes/**",
+      "frontend:apps/dwp/src/features/hris/shell/**",
+      "frontend:architecture/**",
+      "frontend:docs/06-delivery/hris/recovery/**"
+    ],
+    "outsideBoundaryAction": "STOP_AND_REPORT_THE_EXACT_UNCOVERED_CONTRACT_OR_PATH"
+  },
+  "migrationDecision": {
+    "required": false,
+    "decision": "NONE_CONFORMANCE_FIRST",
+    "leaseState": "NOT_APPLICABLE",
+    "authoringAllowed": false,
+    "rule": "Do not create a migration. If a later audit proves a schema delta, Control must issue a new exact lease and Start Token."
+  },
+  "conformanceMatrix": [
+    {
+      "id": "HRM001-CONF-01",
+      "check": "The owner persists the PLAT-003 request reference and immutable decision receipt without a private approval engine."
+    },
+    {
+      "id": "HRM001-CONF-02",
+      "check": "workflowVersion and subjectRef are immutable and bound to the callback and correlationId."
+    },
+    {
+      "id": "HRM001-CONF-03",
+      "check": "Delegated approver scope is validated and maker, checker and subject cannot violate no-self-approval rules."
+    },
+    {
+      "id": "HRM001-CONF-04",
+      "check": "Exact callback replay returns the recorded outcome while mismatched replay or stale state fails without side effects."
+    },
+    {
+      "id": "HRM001-CONF-05",
+      "check": "Wrong tenant, purpose, resource, population or field policy is denied before HR data disclosure."
+    },
+    {
+      "id": "HRM001-CONF-06",
+      "check": "Targeted HRM-010 tests and evidence cover the full HRM-001 contract rather than only a similarly named UI flow."
+    }
+  ],
+  "acceptanceSummary": [
+    "Produce a contract-by-contract PASS, FAIL or NOT_APPLICABLE matrix with file and test evidence for every conformance item.",
+    "A complete PASS closes BASE-TFR-HRM-001 as CONFORMANCE_CLOSE_NO_CODE and advances HRIS-HRM to BASE-TFR-HRM-002.",
+    "Any FAIL must identify the smallest exact owner-side delta; it does not grant authority to fix the delta.",
+    "No full repository test is required for preflight; run only existing targeted tests needed to prove or refute a matrix row."
+  ],
+  "startTokenGates": [
+    "Pin clean pushed post-PAY-bridge dwp-dev heads once.",
+    "Complete the six-row conformance matrix against BASE-TFR-HRM-010.",
+    "If all rows pass, issue a no-code closure receipt instead of a Start Token and select HRM-002.",
+    "If any row fails, seal only the proven delta, exact writable paths, targeted tests and any newly required lease in a separate Start Token."
+  ],
+  "dispatchInstruction": {
+    "action": "READ_ONLY_CONFORMANCE_AUDIT",
+    "message": "Compare BASE-TFR-HRM-001 PLAT-003 requirements with the completed BASE-TFR-HRM-010 approval bridge and return the six-row evidence matrix. Do not edit any file, create a migration, branch or worktree, run broad suites, commit, push, merge, or implement a perceived gap. A gap becomes writable only through a separately issued Wave5 Start Token.",
+    "requiredReport": [
+      "six-row PASS/FAIL/NOT_APPLICABLE matrix with exact evidence",
+      "CONFORMANCE_CLOSE_NO_CODE or DELTA_TOKEN_REQUIRED",
+      "if delta exists, smallest exact path and targeted-test proposal only"
+    ]
+  }
+}

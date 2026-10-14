@@ -1,0 +1,183 @@
+{
+  "schema": "dwp.hris.module-preflight-packet.v1",
+  "packetId": "HRIS-WAVE5-PREFLIGHT-BASE-TFR-PER-013-R1",
+  "preparedAt": "2026-10-14T13:48:09+09:00",
+  "moduleSession": "HRIS-PER",
+  "sliceId": "BASE-TFR-PER-013",
+  "sourceRef": "TFR-PER-013",
+  "state": "PREFLIGHT_ONLY_START_TOKEN_WITHHELD",
+  "authority": {
+    "readOnlyPreflightAuthorized": true,
+    "implementationAuthorized": false,
+    "migrationAuthorized": false,
+    "worktreeAuthorized": false,
+    "commitOrPushAuthorized": false,
+    "startTokenIssued": false
+  },
+  "pinPolicy": {
+    "observedBackend": "dwp-dev@c857fe8fdc3234f2e9c4b017bdecf71bb3ea2aa7",
+    "observedFrontend": "dwp-dev@eedb0b517157f053ba3c52d94c517931d53083bd",
+    "state": "OBSERVATION_ONLY",
+    "finalRule": "Use only the separately issued Start Token pins after PAY-011 common-bridge integration; do not create a branch or worktree from the observed pins."
+  },
+  "selection": {
+    "sourceFamilySha256": "e3059c698654bf061da72729e99a66a5b3fb9c66668d9ffe13ffb1e15150799b",
+    "sourceRowCount": 26,
+    "auditFinding": "The canonical assigned-review backend slice is not implemented at the observed pins.",
+    "duplicateAvoidance": [
+      "BASE-TFR-PER-006 is a completed G7 slice and must not be reopened.",
+      "BASE-TFR-PER-016 and MOD-PER-COMPPLAN are integrated and must not be reused as PER-013 worktrees or identities."
+    ]
+  },
+  "purpose": {
+    "capability": "PER-REVIEW-001",
+    "boundedContext": "PERFORMANCE",
+    "outcome": "Consolidate review screens into an assigned-review view, draft save, and guarded submit with protected evidence.",
+    "primaryIaNode": "BASE:performance-multirater-surveys",
+    "relatedIaNodes": [
+      "BASE:my-goals-performance",
+      "BASE:performance-review-operations",
+      "BASE:team-performance"
+    ]
+  },
+  "contracts": {
+    "primary": [
+      {
+        "id": "PEP-PER-012",
+        "operation": "getAssignedReview",
+        "method": "GET",
+        "publicPath": "/api/people/v1/hris/performance/reviews/{reviewId}",
+        "ownerPath": "/v1/hris/performance/reviews/{reviewId}"
+      },
+      {
+        "id": "PEP-PER-013",
+        "operation": "saveReviewDraft",
+        "method": "PATCH",
+        "publicPath": "/api/people/v1/hris/performance/reviews/{reviewId}",
+        "ownerPath": "/v1/hris/performance/reviews/{reviewId}"
+      },
+      {
+        "id": "PEP-PER-014",
+        "operation": "submitReview",
+        "method": "POST",
+        "publicPath": "/api/people/v1/hris/performance/reviews/{reviewId}/submit",
+        "ownerPath": "/v1/hris/performance/reviews/{reviewId}/submit"
+      },
+      {
+        "id": "IAQ-022",
+        "operation": "performance-multirater-surveys entry query",
+        "method": "GET",
+        "publicPath": "/api/people/v1/hris/performance/workbench/multirater-surveys",
+        "ownerPath": "/v1/hris/performance/workbench/multirater-surveys"
+      },
+      {
+        "id": "EVT-PER:PerformanceReviewSubmitted.v1",
+        "kind": "BASE_EVENT",
+        "role": "immutable minimized review-submission evidence"
+      }
+    ],
+    "authorization": {
+      "appEntitlement": "APP.HCM:VIEW",
+      "capabilities": [
+        "hcm.team.performance.review",
+        "per.review.self.submit"
+      ],
+      "resource": "DATA.HRIS_PERFORMANCE_REVIEW:UPDATE",
+      "populations": [
+        "ASSIGNED_REVIEW_POPULATION",
+        "SELF"
+      ],
+      "fieldGroups": [
+        "PERFORMANCE_ASSIGNED",
+        "PERFORMANCE_REVIEW_PRIVATE"
+      ],
+      "purpose": "PERFORMANCE_REVIEW",
+      "requiredLayers": [
+        "GATEWAY_APP_ENTITLEMENT",
+        "OWNER_API_OPERATION",
+        "RESOURCE_POPULATION",
+        "REPOSITORY_TENANT_PREDICATE",
+        "FIELD_PROJECTION",
+        "PURPOSE_POLICY",
+        "AUDIT_DECISION"
+      ]
+    }
+  },
+  "dependencies": {
+    "required": [
+      "DEP-001",
+      "DEP-002",
+      "DEP-003",
+      "DEP-016"
+    ],
+    "controlBundle": "REQUIRED_NOT_YET_SEALED",
+    "featureDefault": "OFF"
+  },
+  "boundaries": {
+    "preflightAllowedReads": [
+      "backend:dwp-people-server/src/main/java/com/dwp/services/people/hris/performance/**",
+      "backend:dwp-people-server/src/test/java/com/dwp/services/people/hris/performance/**",
+      "backend:dwp-people-server/src/main/resources/db/performance-migration/**",
+      "frontend:apps/dwp/src/features/hris/performance/**",
+      "frontend:docs/06-delivery/hris/recovery/**"
+    ],
+    "provisionalModuleOwnedAfterStartTokenOnly": [
+      "backend:dwp-people-server/src/main/java/com/dwp/services/people/hris/performance/review/**",
+      "backend:dwp-people-server/src/test/java/com/dwp/services/people/hris/performance/review/**",
+      "backend:dwp-people-server/src/main/resources/db/performance-migration/V18__per_base_tfr_per_013.sql",
+      "frontend:apps/dwp/src/features/hris/performance/api/performance-review-*.ts",
+      "frontend:apps/dwp/src/features/hris/performance/components/performance-review-*.tsx",
+      "frontend:apps/dwp/src/features/hris/performance/model/performance-review-*.ts",
+      "frontend:apps/dwp/src/features/hris/performance/pages/*performance-review*.tsx",
+      "frontend:apps/dwp/src/features/hris/performance/__tests__/g3-slices/base-tfr-per-013.slice.test.tsx"
+    ],
+    "controlOwnedUntilExplicitReallocation": [
+      "backend:contracts/product-authorization/**",
+      "backend:contracts/openapi/**",
+      "backend:dwp-auth-server/**",
+      "backend:dwp-gateway/**",
+      "backend:dwp-platform-contracts/**",
+      "frontend:apps/dwp/src/routes/**",
+      "frontend:apps/dwp/src/features/hris/shell/**",
+      "frontend:architecture/**",
+      "frontend:docs/06-delivery/hris/recovery/**"
+    ],
+    "outsideBoundaryAction": "STOP_AND_REQUEST_CONTROL_REALLOCATION"
+  },
+  "migrationDecision": {
+    "required": true,
+    "stream": "PEOPLE_PERFORMANCE",
+    "observedHighWater": "V17",
+    "candidateVersion": "V18",
+    "candidatePath": "dwp-people-server/src/main/resources/db/performance-migration/V18__per_base_tfr_per_013.sql",
+    "leaseState": "NOT_ISSUED",
+    "authoringAllowed": false,
+    "rule": "Recheck the post-bridge dwp-dev stream and seal an exact V18 lease in the separate Start Token before creating the file."
+  },
+  "acceptanceSummary": [
+    "PER-CONTRACT-REVIEW and PER-GOLDEN-REVIEW-001 pass against the exact route and event contracts.",
+    "AUTHZ-NO-REVIEW-OUTSIDE-ASSIGNMENT denies wrong tenant, unassigned review, wrong purpose and disallowed field projection without disclosure.",
+    "Draft save and submit use expected-version CAS and idempotent receipts; stale or mismatched replay has no side effect.",
+    "PerformanceReviewSubmitted.v1 is minimized, immutable and emitted exactly once with the durable state change.",
+    "Targeted backend, migration and frontend slice tests cover loading, empty, denied, partial failure, accessibility and recovery while the feature remains OFF."
+  ],
+  "startTokenGates": [
+    "Pin clean pushed post-PAY-bridge dwp-dev heads once.",
+    "Seal Authorization, OpenAPI, Gateway and owner-operation control bindings for PEP-PER-012, PEP-PER-013, PEP-PER-014 and IAQ-022.",
+    "Confirm the canonical PerformanceReviewSubmitted.v1 payload and ownership digest.",
+    "Issue a collision-free V18 migration lease.",
+    "Materialize new dedicated PER backend and frontend worktrees from the issued pins.",
+    "Issue a separate Start Token that seals exact paths, worktrees, checks and acceptance IDs."
+  ],
+  "dispatchInstruction": {
+    "action": "READ_ONLY_PREFLIGHT",
+    "message": "Review this packet and the current code only. Report path collisions, missing contracts, dependency drift and a proposed targeted test list. Do not edit source or documentation, create a migration, branch or worktree, run broad suites, commit, push, merge, or begin implementation until a separately issued Wave5 Start Token is received.",
+    "requiredReport": [
+      "current implementation-gap confirmation",
+      "candidate touch-path collision list",
+      "V18 high-water confirmation at final pins",
+      "targeted changed-cluster verification list",
+      "READY_FOR_START_TOKEN or BLOCKED_WITH_EXACT_EVIDENCE"
+    ]
+  }
+}

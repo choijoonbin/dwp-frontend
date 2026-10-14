@@ -1,0 +1,116 @@
+{
+  "schema": "dwp.hris.module-start-token-preparation.v1",
+  "preparationId": "HRIS-WAVE5-START-PREP-BASE-TFR-PAY-011-R1",
+  "tokenIdCandidate": "HRIS-WAVE5-START-BASE-TFR-PAY-011-R1",
+  "preparedAt": "2026-10-14T13:43:16+09:00",
+  "preparedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-PAY",
+  "sliceId": "BASE-TFR-PAY-011",
+  "state": "WITHHELD_COMMON_BRIDGE_NOT_INTEGRATED",
+  "workPacketRef": "work-packet.v1.json",
+  "migrationLeaseRef": "migration-lease.v1.json",
+  "commonBridgeAllocationRef": "common-bridge-allocation.v1.json",
+  "observedBases": {
+    "backend": "dwp-dev@c857fe8fdc3234f2e9c4b017bdecf71bb3ea2aa7",
+    "frontend": "dwp-dev@eedb0b517157f053ba3c52d94c517931d53083bd"
+  },
+  "bindingRule": "The issued token must pin the clean pushed post-bridge dwp-dev commits in both repositories. Observed preparation commits are evidence, not authoring bases.",
+  "dedicatedWorktreeRequirements": [
+    {
+      "repository": "dwp-backend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave5-20261014/pay-011/backend",
+      "branch": "codex/hris-wave5-pay-011-backend-20261014",
+      "requiredBase": "POST_BRIDGE_ORIGIN_DWP_DEV_EXACT_HEAD",
+      "requiredState": "MATERIALIZED_CLEAN_UPSTREAM_PINNED",
+      "reuseForbidden": [
+        "/Users/a10697/Work/DWP/dwp-backend",
+        "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave4-20261014/pay-016/backend"
+      ]
+    },
+    {
+      "repository": "dwp-frontend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave5-20261014/pay-011/frontend",
+      "branch": "codex/hris-wave5-pay-011-frontend-20261014",
+      "requiredBase": "POST_BRIDGE_ORIGIN_DWP_DEV_EXACT_HEAD",
+      "requiredState": "MATERIALIZED_CLEAN_UPSTREAM_PINNED",
+      "reuseForbidden": [
+        "/Users/a10697/Work/DWP/dwp-frontend"
+      ]
+    }
+  ],
+  "tokenIssueGates": [
+    {
+      "id": "PAY011-START-GATE-01",
+      "state": "READY",
+      "requirement": "MOD-PER-COMPPLAN producer and BASE-TFR-PAY-016 consumer result commits and exact XCON-020/XCON-021 bytes remain pinned."
+    },
+    {
+      "id": "PAY011-START-GATE-02",
+      "state": "OPEN",
+      "requirement": "Authorization v41 and V250, all five exact Payroll OpenAPI and Gateway routes, and the generated Payroll PEP projection with exact capability, action, population, field, purpose, step-up and SoD contract allocation are integrated and pushed to dwp-dev. Payroll owner runtime enforcement is not a pre-token gate."
+    },
+    {
+      "id": "PAY011-START-GATE-03",
+      "state": "OPEN",
+      "requirement": "Recheck the Payroll migration directory at the post-bridge backend commit, confirm V49 high-water and activate the exact V50 lease without collision."
+    },
+    {
+      "id": "PAY011-START-GATE-04",
+      "state": "OPEN",
+      "requirement": "Materialize dedicated backend and frontend worktrees from exact origin/dwp-dev heads; require empty porcelain, exact branch and matching base tree."
+    },
+    {
+      "id": "PAY011-START-GATE-05",
+      "state": "OPEN",
+      "requirement": "Seal post-bridge commits, Authorization successor checksum, work-packet hashes, V50 lease, touch manifest, worktree paths and clean-state digests into one issued token."
+    }
+  ],
+  "requiredIssuedTokenFields": [
+    "tokenId",
+    "issuedAt",
+    "issuer",
+    "moduleSession",
+    "sliceId",
+    "backendCommitAndTree",
+    "frontendCommitAndTree",
+    "authorizationVersionAndChecksum",
+    "payrollAndGatewayOpenApiDigests",
+    "workPacketDigest",
+    "commonBridgeResultDigest",
+    "migrationLeaseIdAndExactV50Path",
+    "backendWorktreePathBranchAndCleanDigest",
+    "frontendWorktreePathBranchAndCleanDigest",
+    "allowedAndControlOnlyPaths",
+    "acceptanceCriteriaIds",
+    "targetedVerification",
+    "expiryAndInvalidationConditions"
+  ],
+  "permittedActionAfterIssue": "IMPLEMENT_ONLY_BASE_TFR_PAY_011_WITHIN_THE_SEALED_TOUCH_MANIFEST_AND_V50_LEASE",
+  "postTokenModuleObligations": [
+    "implement dwp-payroll-server calculation and security owner runtime within the work-packet paths",
+    "consume the generated Payroll PEP projection and enforce tenant, population, field, purpose and action decisions",
+    "verify approve and finalize step-up evidence and maker-checker SoD in the Payroll owner runtime",
+    "prove the Payroll PEP, receipt authorization and PAY011-AC-01 through PAY011-AC-12 module tests"
+  ],
+  "invalidationConditions": [
+    "either repository worktree base, branch, tree, upstream or clean digest drifts",
+    "common bridge successor checksum or route set drifts",
+    "V50 collision or migration high-water drift",
+    "PAY-016 contract bytes or dependency commits drift",
+    "module touches a Control-only, protected, generated, recovery or unrelated path",
+    "feature default changes from OFF",
+    "customer data, external connector or production activation is attempted"
+  ],
+  "authority": {
+    "tokenPrepared": true,
+    "tokenIssued": false,
+    "moduleSourceChangeAuthorized": false,
+    "migrationAuthoringAuthorized": false,
+    "integrationAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "customerDataAuthorized": false,
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "SYS_COMMON_INTEGRATION_CONTROL_COMPLETES_AND_PINS_THE_COMMON_BRIDGE_THEN_MATERIALIZES_BOTH_WORKTREES_AND_ISSUES_THE_TOKEN"
+}

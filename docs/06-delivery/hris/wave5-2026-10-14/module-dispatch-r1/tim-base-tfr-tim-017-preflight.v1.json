@@ -1,0 +1,214 @@
+{
+  "schema": "dwp.hris.module-preflight-packet.v1",
+  "packetId": "HRIS-WAVE5-PREFLIGHT-BASE-TFR-TIM-017-R1",
+  "preparedAt": "2026-10-14T13:48:09+09:00",
+  "moduleSession": "HRIS-TIM",
+  "sliceId": "BASE-TFR-TIM-017",
+  "sourceRef": "TFR-TIM-017",
+  "state": "PREFLIGHT_ONLY_EVENT_RESEAL_AND_START_TOKEN_WITHHELD",
+  "authority": {
+    "readOnlyPreflightAuthorized": true,
+    "implementationAuthorized": false,
+    "migrationAuthorized": false,
+    "worktreeAuthorized": false,
+    "commitOrPushAuthorized": false,
+    "startTokenIssued": false
+  },
+  "pinPolicy": {
+    "observedBackend": "dwp-dev@c857fe8fdc3234f2e9c4b017bdecf71bb3ea2aa7",
+    "observedFrontend": "dwp-dev@eedb0b517157f053ba3c52d94c517931d53083bd",
+    "state": "OBSERVATION_ONLY",
+    "finalRule": "Use only separately issued Start Token pins after PAY-011 common-bridge integration; do not create a branch or worktree from the observed pins."
+  },
+  "selection": {
+    "sourceFamilySha256": "7851b0dca7f57684b0088506a23c37cd41417f0c3aaad4debce9499cd66673c0",
+    "sourceRowCount": 42,
+    "auditFinding": "The canonical timecard backend is missing. Existing hris-time-model.ts and hris-time-workspace.tsx provide only partial legacy UI overlap and do not prove owner API, state, authorization or event conformance.",
+    "duplicateAvoidance": [
+      "BASE-TFR-TIM-006 is a completed G7 slice and must not be reopened.",
+      "BASE-TFR-TIM-010 is integrated and must not be reused as the TIM-017 implementation identity.",
+      "Legacy UI overlap must be adapted or replaced once; parallel dual read/write paths are forbidden."
+    ]
+  },
+  "purpose": {
+    "capability": "TIM-TIMECARD",
+    "boundedContext": "TIME_LEAVE",
+    "outcome": "Consolidate timecard screens into query, correction, submit and decision commands with an immutable decision event.",
+    "primaryIaNode": "BASE:my-time",
+    "relatedIaNodes": [
+      "BASE:team-time",
+      "BASE:time-command-center",
+      "BASE:time-exceptions"
+    ]
+  },
+  "contracts": {
+    "primary": [
+      {
+        "id": "PEP-TIM-011",
+        "operation": "timecard.query",
+        "method": "GET",
+        "publicPath": "/api/time/v1/timecards/{timecardId}",
+        "ownerPath": "/v1/timecards/{timecardId}"
+      },
+      {
+        "id": "PEP-TIM-012",
+        "operation": "timecard.correct",
+        "method": "POST",
+        "publicPath": "/api/time/v1/timecards/{timecardId}/corrections",
+        "ownerPath": "/v1/timecards/{timecardId}/corrections"
+      },
+      {
+        "id": "PEP-TIM-013",
+        "operation": "timecard.submit",
+        "method": "POST",
+        "publicPath": "/api/time/v1/timecards/{timecardId}/submit",
+        "ownerPath": "/v1/timecards/{timecardId}/submit"
+      },
+      {
+        "id": "PEP-TIM-014",
+        "operation": "timecard.decide",
+        "method": "POST",
+        "publicPath": "/api/time/v1/timecards/{timecardId}/decisions",
+        "ownerPath": "/v1/timecards/{timecardId}/decisions"
+      },
+      {
+        "id": "PEP-TIM-028",
+        "operation": "command.receipt.query",
+        "method": "GET",
+        "publicPath": "/api/time/v1/command-receipts/{receiptId}",
+        "ownerPath": "/v1/command-receipts/{receiptId}"
+      },
+      {
+        "id": "EVT-TIM:TimecardDecisionRecorded.v1",
+        "kind": "BASE_EVENT",
+        "recoveredAlias": "EVT-TIM:TimecardDecisionRecorded",
+        "state": "CANONICAL_V1_RESEAL_REQUIRED_BEFORE_START_TOKEN",
+        "role": "immutable minimized timecard decision evidence"
+      }
+    ],
+    "authorization": {
+      "appEntitlement": "APP.HCM:VIEW",
+      "capabilities": [
+        "hcm.operations.time.approve",
+        "hcm.operations.time.update",
+        "hcm.personal.time.submit",
+        "hcm.personal.time.view",
+        "hcm.team.time.approve",
+        "hcm.command-receipt.view"
+      ],
+      "resources": [
+        "DATA.HR_TIME",
+        "DATA.HRIS_COMMAND_RECEIPT"
+      ],
+      "purposes": [
+        "TIME_TIMECARD",
+        "COMMAND_STATUS"
+      ],
+      "requiredLayers": [
+        "GATEWAY_APP_ENTITLEMENT",
+        "OWNER_API_OPERATION",
+        "RESOURCE_POPULATION",
+        "REPOSITORY_TENANT_PREDICATE",
+        "FIELD_PROJECTION",
+        "PURPOSE_POLICY",
+        "AUDIT_DECISION"
+      ]
+    }
+  },
+  "dependencies": {
+    "required": [
+      "DEP-001",
+      "DEP-002",
+      "DEP-003",
+      "DEP-016"
+    ],
+    "preflightPrerequisites": [
+      "DEP-009",
+      "DEP-012"
+    ],
+    "eventReseal": "REQUIRED_NOT_YET_SEALED",
+    "controlBundle": "REQUIRED_NOT_YET_SEALED",
+    "featureDefault": "OFF"
+  },
+  "boundaries": {
+    "preflightAllowedReads": [
+      "backend:dwp-time-server/src/main/java/com/dwp/services/time/**",
+      "backend:dwp-time-server/src/test/java/com/dwp/services/time/**",
+      "backend:dwp-time-server/src/main/resources/db/migration/**",
+      "frontend:apps/dwp/src/features/hris/time/**",
+      "frontend:docs/06-delivery/hris/recovery/**"
+    ],
+    "legacyOverlapEvidenceOnly": [
+      "frontend:apps/dwp/src/features/hris/time/model/hris-time-model.ts",
+      "frontend:apps/dwp/src/features/hris/time/pages/hris-time-workspace.tsx"
+    ],
+    "provisionalModuleOwnedAfterStartTokenOnly": [
+      "backend:dwp-time-server/src/main/java/com/dwp/services/time/timecard/**",
+      "backend:dwp-time-server/src/test/java/com/dwp/services/time/timecard/**",
+      "backend:dwp-time-server/src/main/resources/db/migration/V11__tim_base_tfr_tim_017.sql",
+      "frontend:apps/dwp/src/features/hris/time/api/timecard-*.ts",
+      "frontend:apps/dwp/src/features/hris/time/components/timecard-*.tsx",
+      "frontend:apps/dwp/src/features/hris/time/hooks/use-timecard*.ts",
+      "frontend:apps/dwp/src/features/hris/time/model/timecard-*.ts",
+      "frontend:apps/dwp/src/features/hris/time/pages/*timecard*.tsx",
+      "frontend:apps/dwp/src/features/hris/time/__tests__/g3-slices/base-tfr-tim-017.slice.test.tsx"
+    ],
+    "controlOwnedUntilExplicitReallocation": [
+      "backend:contracts/product-authorization/**",
+      "backend:contracts/openapi/**",
+      "backend:dwp-auth-server/**",
+      "backend:dwp-gateway/**",
+      "backend:dwp-platform-contracts/**",
+      "frontend:apps/dwp/src/routes/**",
+      "frontend:apps/dwp/src/features/hris/shell/**",
+      "frontend:architecture/**",
+      "frontend:docs/06-delivery/hris/recovery/**"
+    ],
+    "forbiddenArchitecture": [
+      "parallel legacy and canonical timecard writers",
+      "dual event versions emitted for one decision",
+      "request-supplied tenant authority",
+      "cross-service database foreign keys"
+    ],
+    "outsideBoundaryAction": "STOP_AND_REQUEST_CONTROL_REALLOCATION"
+  },
+  "migrationDecision": {
+    "required": true,
+    "stream": "TIME_MAIN",
+    "observedHighWater": "V10",
+    "candidateVersion": "V11",
+    "candidatePath": "dwp-time-server/src/main/resources/db/migration/V11__tim_base_tfr_tim_017.sql",
+    "leaseState": "NOT_ISSUED",
+    "authoringAllowed": false,
+    "rule": "Recheck the post-bridge dwp-dev stream and seal an exact V11 lease in the separate Start Token before creating the file."
+  },
+  "acceptanceSummary": [
+    "Query, correct, submit and decide obey the canonical state machine and expected-version CAS; stale commands have no side effects.",
+    "Wrong tenant, purpose, subject, population, field group, closed period or approval scope is denied without disclosing a timecard.",
+    "A maker cannot self-approve; delegated and direct-report scopes are re-evaluated at decision time.",
+    "Exact command replay returns the original receipt; mismatched replay fails closed and creates no duplicate correction, decision or event.",
+    "TimecardDecisionRecorded.v1 is immutable, minimized and emitted exactly once; the unsuffixed recovery alias is not a second runtime event.",
+    "The command-receipt query re-evaluates originating scope and returns an opaque result outside that scope.",
+    "Targeted backend, V11 migration and frontend tests cover failure, recovery, accessibility and partial legacy-UI transition with no dual read/write."
+  ],
+  "startTokenGates": [
+    "Pin clean pushed post-PAY-bridge dwp-dev heads once.",
+    "Reseal EVT-TIM:TimecardDecisionRecorded.v1 as the sole canonical runtime identity and map the recovered alias as history only.",
+    "Seal Authorization, OpenAPI, Gateway and owner-operation bindings for the five PEPs.",
+    "Issue a collision-free V11 migration lease.",
+    "Materialize new dedicated TIM backend and frontend worktrees from the issued pins.",
+    "Issue a separate Start Token sealing exact paths, no-dual-write rule, worktrees, checks and acceptance IDs."
+  ],
+  "dispatchInstruction": {
+    "action": "READ_ONLY_PREFLIGHT",
+    "message": "Review this packet, verify the canonical backend gap and classify the two legacy UI files as reusable, replaceable or unrelated. Report event-name, path and migration collisions only. Do not edit source or documentation, create a migration, branch or worktree, run broad suites, commit, push, merge, implement, or introduce dual read/write before a separately issued Wave5 Start Token.",
+    "requiredReport": [
+      "canonical backend gap confirmation",
+      "legacy UI overlap disposition without edits",
+      "TimecardDecisionRecorded.v1 reseal dependencies",
+      "V11 high-water confirmation at final pins",
+      "targeted changed-cluster verification list",
+      "READY_FOR_START_TOKEN or BLOCKED_WITH_EXACT_EVIDENCE"
+    ]
+  }
+}

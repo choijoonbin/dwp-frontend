@@ -1,0 +1,313 @@
+{
+  "schema": "dwp.hris.module-work-packet.v1",
+  "packetId": "HRIS-WAVE5-WORK-BASE-TFR-PAY-011-R1",
+  "issuedAt": "2026-10-14T13:43:16+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "lifecycleState": "APPROVED_PENDING_COMMON_BRIDGE_AND_START_TOKEN",
+  "sliceId": "BASE-TFR-PAY-011",
+  "sourceRef": "TFR-PAY-011",
+  "sourceFamilySha256": "f5d8baa4e3184a35f7586b7d73372cc9d8fffa080dcad1f5ad889b4cbc40f628",
+  "sourceRowCount": 12,
+  "capability": "PAY_CALCULATION",
+  "moduleLane": "HRIS-PAY",
+  "ownerAgent": "HRIS-PAY",
+  "reviewer": "SYS_COMMON_INTEGRATION_CONTROL",
+  "singleWriterRequired": true,
+  "baseObservation": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "c857fe8fdc3234f2e9c4b017bdecf71bb3ea2aa7",
+      "tree": "59b496dc87b57f42e175908a66b0964c3e5b1e26",
+      "upstream": "origin/dwp-dev",
+      "upstreamMatched": true,
+      "clean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "eedb0b517157f053ba3c52d94c517931d53083bd",
+      "tree": "8f721b404eb91a204b9c03d69e4188a89d5a7816",
+      "upstream": "origin/dwp-dev",
+      "upstreamMatched": true,
+      "cleanAtAudit": true,
+      "note": "Documentation created by this preparation will advance the frontend head; the Start Token must bind the post-bridge pushed dwp-dev commit, not this observation."
+    }
+  },
+  "authoritativeBindings": [
+    {
+      "path": "docs/06-delivery/hris/recovery/exact-supplements/2026-10-06/hris-porting-blueprint-2026-09-09/coding-readiness/target-family-resolution-register.csv",
+      "sha256": "3e3618ff3ac150da8c9c7cbd3b1018e30e69652f28f3dbd8c87edb7df6a83819"
+    },
+    {
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/g3-slice-code-go-register.csv",
+      "sha256": "fb646668329e93ca0b83b74e2a3e43619954cec1cb2f6770029677edbc8d5725"
+    },
+    {
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-evidence/pay/g2-api-event-contracts.json",
+      "sha256": "040e64703871582aaff04f102495592f405a603f690ed4f8a20029981eee3a21"
+    },
+    {
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-evidence/pay/g2-transport-schemas.v1.json",
+      "sha256": "d88d7b37ebda7d9abb6eb9e8aa0032bf0344a6dccc65d7d3d8b88abb06d037fd"
+    },
+    {
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-evidence/pay/g2-physical-schema.sql",
+      "sha256": "23662d7daa89f0a6e5b4eaa754a96184d0a5fc688b4a6bc790e62fbaf428b3f0"
+    },
+    {
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-evidence/pay/g2-runtime-controls.md",
+      "sha256": "89f1440778d1aedd46a3839138a2f0920605e4d7326441e5771f875b29fad551"
+    }
+  ],
+  "dependencyPins": {
+    "requiredDependencies": [
+      "DEP-001",
+      "DEP-002",
+      "DEP-003",
+      "DEP-016"
+    ],
+    "compensationPlanProducer": {
+      "sliceId": "MOD-PER-COMPPLAN",
+      "backendCommit": "ac89415028e3cf91a93345af0f1ecc2bd1e0322e",
+      "state": "SATISFIED"
+    },
+    "typedInputConsumer": {
+      "sliceId": "BASE-TFR-PAY-016",
+      "backendCommit": "c857fe8fdc3234f2e9c4b017bdecf71bb3ea2aa7",
+      "xcon020Path": "dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/Xcon020ApprovedCompensationPlanSnapshotV1.java",
+      "xcon020Sha256": "ac0806b33b674d6abf93d12d33749bafc969cbe6a1f7e8a5c8dd4fd10542a1f4",
+      "xcon021Path": "dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/Xcon021ApprovedCompensationPlanSnapshotPublishedV2.java",
+      "xcon021Sha256": "24db6f02e0be9ea6f24b8d39e87d99cb22b948a076743b33aefd0a2bd228dfe1",
+      "inputContractPath": "dwp-payroll-server/src/main/java/com/dwp/services/payroll/input/compensationplan/CompensationPlanInputContracts.java",
+      "inputContractSha256": "9513c9784f73d2efc0b56605ebfc0a30e2de5e847d423cd852c6cdfcd38a9be3",
+      "ownerPortPath": "dwp-payroll-server/src/main/java/com/dwp/services/payroll/input/compensationplan/CompensationPlanSnapshotOwnerPort.java",
+      "ownerPortSha256": "bd02e858e5e79d812f2e9be6d4a5fe92ef9c5c7d750133e46dda73b6bac3021f",
+      "migrationPath": "dwp-payroll-server/src/main/resources/db/migration/V49__pay_modern_compensation_plan_input.sql",
+      "migrationSha256": "23364b89f7328f3e6a98b25faacf4e7cbe4c94cd039c1767860a55cf8996aab2",
+      "state": "SATISFIED"
+    },
+    "commonBridge": {
+      "allocationRef": "common-bridge-allocation.v1.json",
+      "state": "REQUIRED_BEFORE_START_TOKEN"
+    }
+  },
+  "userOutcome": {
+    "primaryUsers": [
+      "payroll run operator",
+      "payroll controller",
+      "payroll release officer"
+    ],
+    "operationalQuestion": "Can this exact frozen payroll input be calculated, reviewed, approved, and finalized deterministically without duplicate or unverifiable monetary facts?",
+    "primaryAction": "start or retry a versioned calculation attempt, inspect its status and evidence, then perform segregated approval and finalization",
+    "pageArchetype": "command center with run list, exception-first status, selected-run inspector, and governed high-risk actions",
+    "boundedOutcome": "calculation variants consolidate into versioned run attempts with deterministic inputs and minimized PayrollCalculated, PayrollRunApproved, and PayrollFinalized events"
+  },
+  "scope": {
+    "included": [
+      "PEP-PAY-012 deterministic calculation attempt command",
+      "PEP-PAY-013 run and attempt status query with field projection",
+      "PEP-PAY-017 maker-checker approval with step-up",
+      "PEP-PAY-018 finalization with step-up and independent release officer",
+      "PEP-PAY-033 originating-scope command receipt query",
+      "immutable input snapshot binding to PAY-016 materialized compensation input rows",
+      "versioned attempt lease, checkpoint, crash recovery, timeout and RESULT_UNKNOWN reconciliation",
+      "append-only worker results, result lines, calculation trace, receipts, audit and outbox",
+      "Payroll command-center and calculation operator journey under the existing canonical IA nodes"
+    ],
+    "excluded": [
+      "payroll population preparation and general worker-input collection outside the already pinned PAY-016 compensation input",
+      "retro, off-cycle, correction and reversal processing owned by BASE-TFR-PAY-010",
+      "validation, reconciliation, reporting and export owned by BASE-TFR-PAY-012",
+      "payment, banking, GL posting, tax filing, insurance, retirement, year-end and country-pack activation",
+      "mutation or reinterpretation of V49 PAY-016 source rows",
+      "customer data, customer policy, external provider calls, production enablement or release"
+    ],
+    "canonicalEvents": {
+      "PayrollCalculated.v1": [
+        "runId",
+        "attemptNo",
+        "workerCount",
+        "resultDigest",
+        "controlTotals"
+      ],
+      "PayrollRunApproved.v1": [
+        "runId",
+        "runRevision",
+        "approvalCaseId",
+        "decisionDigest"
+      ],
+      "PayrollFinalized.v1": [
+        "runId",
+        "runRevision",
+        "resultDigest",
+        "auditBundleDigest"
+      ]
+    }
+  },
+  "touchManifest": {
+    "moduleAllowedBackend": [
+      "dwp-payroll-server/src/main/java/com/dwp/services/payroll/calculation/**",
+      "dwp-payroll-server/src/main/java/com/dwp/services/payroll/security/**",
+      "dwp-payroll-server/src/test/java/com/dwp/services/payroll/calculation/**",
+      "dwp-payroll-server/src/test/java/com/dwp/services/payroll/security/**",
+      "dwp-payroll-server/src/main/resources/db/migration/V50__pay_base_tfr_pay_011_calculation.sql",
+      "dwp-payroll-server/src/main/resources/application.yml (PAY-011 feature flag and bounded worker settings only)"
+    ],
+    "moduleAllowedFrontend": [
+      "apps/dwp/src/features/hris/payroll/api/payroll-calculation-api.ts",
+      "apps/dwp/src/features/hris/payroll/api/payroll-calculation-api.test.ts",
+      "apps/dwp/src/features/hris/payroll/components/payroll-calculation-*.tsx",
+      "apps/dwp/src/features/hris/payroll/hooks/use-payroll-calculation*.ts",
+      "apps/dwp/src/features/hris/payroll/model/payroll-calculation-*.ts",
+      "apps/dwp/src/features/hris/payroll/pages/hris-payroll-calculation-command-center.tsx",
+      "apps/dwp/src/features/hris/payroll/testing/payroll-calculation-*.test.tsx",
+      "apps/dwp/src/features/hris/payroll/__tests__/g3-slices/base-tfr-pay-011.slice.test.tsx",
+      "apps/dwp/src/features/hris/payroll/index.ts (PAY-011 exports only)"
+    ],
+    "controlOnly": [
+      "contracts/product-authorization/**",
+      "contracts/openapi/**",
+      "dwp-auth-server/**",
+      "dwp-gateway/**",
+      "dwp-platform-server/**",
+      "dwp-people-server/**",
+      "dwp-platform-contracts/**",
+      "scripts/generate-product-authorization-*.py",
+      "scripts/export-openapi-contracts.py",
+      "apps/dwp/src/routes/**",
+      "apps/dwp/src/features/hris/shell/**",
+      "architecture/**",
+      "libs/shared-i18n/**"
+    ],
+    "protected": [
+      "dwp-payroll-server/src/main/resources/db/migration/V1__pay_create_payroll_foundation.sql",
+      "dwp-payroll-server/src/main/resources/db/migration/V6__pay_base_tfr_pay_006.sql",
+      "dwp-payroll-server/src/main/resources/db/migration/V49__pay_modern_compensation_plan_input.sql",
+      "dwp-payroll-server/src/main/java/com/dwp/services/payroll/input/compensationplan/**",
+      "docs/06-delivery/hris/recovery/**"
+    ],
+    "outsideAllowedPathAction": "STOP_AND_RAISE_CONTROL_CHANGE_REQUEST"
+  },
+  "runtimeSecurityRollout": {
+    "systemOfRecord": "dwp-payroll-server",
+    "tenantContext": "trusted Gateway context plus repository RLS; request body and browser headers are never authoritative",
+    "population": "exact legal entity and pay group; query may additionally use named population; the most restrictive decision wins",
+    "fieldProjection": "PAY_INPUT, PAY_RESULT, PAY_RESULT_MASKED, TAX_LIMITED, BANK_PAYMENT, PAY_STATEMENT, or COMMAND_RECEIPT only as allocated per operation",
+    "segregationOfDuties": [
+      "RUN_MAKER_NE_APPROVER",
+      "RUN_MAKER_NE_FINALIZER"
+    ],
+    "stepUp": "cryptographic one-time evidence bound to the exact public method and path for approve and finalize only",
+    "idempotency": "tenant, subject, originating action, and idempotency key bind an immutable request digest; exact replay returns the original receipt and mismatch fails closed",
+    "optimisticConcurrency": "every command requires expectedVersion and stale CAS fails without side effects",
+    "featureFlag": "dwp.hris.payroll.calculation.enabled",
+    "featureDefault": "OFF",
+    "activation": "not authorized by this packet",
+    "recovery": "lease expiry and durable checkpoints permit one fenced worker to resume or reconcile; duplicate facts and duplicate minimized events are forbidden"
+  },
+  "implementationOrdering": {
+    "beforeStartToken": "SYS_COMMON_INTEGRATION_CONTROL integrates Authorization v41 and V250, Payroll and Gateway OpenAPI routes, Gateway route authority, and the generated Payroll PEP projection with allocated step-up and SoD metadata.",
+    "afterStartToken": "HRIS-PAY implements dwp-payroll-server calculation and security owner runtime, including exact PEP consumption, step-up verification, SoD enforcement and command-receipt re-authorization, then proves PAY011-AC-01 through PAY011-AC-12.",
+    "antiCircularityRule": "Payroll owner runtime implementation and its acceptance tests are module deliverables and must never be required to issue the Start Token that authorizes those source changes."
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "PAY011-AC-01",
+      "criterion": "Calculation accepts only an immutable frozen snapshot whose PAY-016 source rows, snapshot revision, payload digest, formula-set digest, and target population digest are pinned before attempt creation."
+    },
+    {
+      "id": "PAY011-AC-02",
+      "criterion": "The same canonical input and engine version produce byte-equivalent monetary results, trace digests, control totals, and resultDigest across replay."
+    },
+    {
+      "id": "PAY011-AC-03",
+      "criterion": "An exact idempotent retry returns the original command receipt; reuse with a different canonical request digest fails closed and creates no attempt or outbox event."
+    },
+    {
+      "id": "PAY011-AC-04",
+      "criterion": "expectedVersion CAS fences calculate, approve, and finalize so stale commands have no side effects."
+    },
+    {
+      "id": "PAY011-AC-05",
+      "criterion": "Wrong tenant, legal entity, pay group, named population, purpose, capability, action, or field projection is denied before domain data is disclosed; cross-scope reads are opaque."
+    },
+    {
+      "id": "PAY011-AC-06",
+      "criterion": "A calculation command creates one monotonically numbered attempt and follows READY to CALCULATING to VALIDATED, FAILED, or RESULT_UNKNOWN with an immutable status history."
+    },
+    {
+      "id": "PAY011-AC-07",
+      "criterion": "Worker crash, expired lease, checkpoint retry, and broker or database uncertainty recover without duplicate worker results, result lines, traces, receipts, or PayrollCalculated events."
+    },
+    {
+      "id": "PAY011-AC-08",
+      "criterion": "RESULT_UNKNOWN is never silently treated as success or rerun; reconciliation proves the durable outcome or creates a forward recovery attempt linked to its predecessor."
+    },
+    {
+      "id": "PAY011-AC-09",
+      "criterion": "Successful result facts and calculation traces are append-only; correction supersedes through a new run or attempt and never rewrites finalized monetary facts."
+    },
+    {
+      "id": "PAY011-AC-10",
+      "criterion": "Approval and finalization require exact capability, fresh path-bound step-up, expectedVersion, and maker-checker separation; each writes an atomic receipt, audit record, and minimized event."
+    },
+    {
+      "id": "PAY011-AC-11",
+      "criterion": "Command receipt query re-evaluates current entitlement, originating action, subject, population, field policy, and purpose, and returns opaque 404 for cross-tenant or out-of-scope receipts."
+    },
+    {
+      "id": "PAY011-AC-12",
+      "criterion": "V50 passes clean and V49-to-V50 upgrade checks with forced tenant RLS and immutable facts; the command-center journey covers loading, empty, denied, partial failure, stale, retry, keyboard, responsive, high-contrast, reduced-motion, and 200-percent zoom states while the feature remains OFF."
+    }
+  ],
+  "verificationPlan": {
+    "policy": "VERIFY_CHANGED_CLUSTER_FIRST; COLLECT_ALL_FAILURES_PER_GATE; DO_NOT_REPEAT_FULL_SUITE_PER_FIX",
+    "backendTargets": [
+      "./gradlew :dwp-payroll-server:test --tests 'com.dwp.services.payroll.calculation.*' --tests 'com.dwp.services.payroll.security.*' --no-daemon",
+      "./gradlew :dwp-payroll-server:test --tests '*PayrollG3SliceContractTest' -PhrisSlice=BASE-TFR-PAY-011 --no-daemon",
+      "./gradlew :dwp-payroll-server:test --tests '*PayrollMigrationCleanUpgradeTest' -PhrisSlice=BASE-TFR-PAY-011 --no-daemon",
+      "./gradlew :dwp-payroll-server:test --tests '*PayrollWorkerRecoveryTest' -PhrisSlice=BASE-TFR-PAY-011 --no-daemon"
+    ],
+    "frontendTargets": [
+      "yarn vitest run apps/dwp/src/features/hris/payroll/__tests__/g3-slices/base-tfr-pay-011.slice.test.tsx apps/dwp/src/features/hris/payroll/testing/payroll-calculation-*.test.tsx apps/dwp/src/features/hris/payroll/api/payroll-calculation-api.test.ts",
+      "yarn eslint <changed-payroll-calculation-files>",
+      "yarn tsc -p apps/dwp/tsconfig.app.json --noEmit"
+    ],
+    "controlTargetsAfterBridge": [
+      "python3 scripts/generate-product-authorization-contracts.py --check",
+      "python3 scripts/generate-product-authorization-fixtures.py --check",
+      "python3 scripts/export-openapi-contracts.py --check --service payroll",
+      "focused Authorization, Gateway, route and generated Payroll PEP projection contract tests, including allocated step-up and SoD metadata"
+    ],
+    "databaseRuntime": "PostgreSQL clean and V49-to-V50 upgrade tests are required before result acceptance; if Docker is unavailable, report BLOCKED rather than PASS.",
+    "fullPromotionGate": "ONLY_ONCE_AFTER_A_FROZEN_BACKEND_FRONTEND_CONTROL_COMBINATION"
+  },
+  "deliverables": [
+    "backend calculation, security, persistence, worker and recovery implementation",
+    "V50 migration and clean-upgrade evidence",
+    "frontend payroll calculation command center and material states",
+    "immutable receipts, audit and minimized outbox event evidence",
+    "targeted test and accessibility evidence",
+    "module result receipt with exact commits and unused or used lease disposition"
+  ],
+  "startAuthority": {
+    "packetApproved": true,
+    "migrationLeaseReserved": true,
+    "commonBridgeIntegrated": false,
+    "payrollOwnerRuntimeImplemented": false,
+    "worktreesMaterialized": false,
+    "startTokenIssued": false,
+    "sourceChangesAllowed": false,
+    "customerActivationAllowed": false,
+    "productionReleaseAllowed": false
+  },
+  "stopConditions": [
+    "common bridge is not integrated and pinned",
+    "post-bridge dwp-dev base or clean worktree binding drifts",
+    "V50 exists or the Payroll migration high-water changes before token issue",
+    "PAY-016 contract bytes or producer and consumer commits drift",
+    "an allowed-path exception or shared contract edit is required without a Control change request",
+    "customer policy, customer data, external connector, country pack, or production activation becomes necessary"
+  ]
+}

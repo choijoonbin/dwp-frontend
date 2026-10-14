@@ -1,0 +1,172 @@
+{
+  "schema": "dwp.hris.module-preflight-packet.v1",
+  "packetId": "HRIS-WAVE5-PREFLIGHT-BASE-TFR-SYS-001-R1",
+  "preparedAt": "2026-10-14T13:48:09+09:00",
+  "moduleSession": "HRIS-SYS",
+  "sliceId": "BASE-TFR-SYS-001",
+  "sourceRef": "TFR-SYS-001",
+  "state": "PREFLIGHT_ONLY_HCM_SEMANTICS_PATH_SPLIT_SEAL_PENDING",
+  "authority": {
+    "readOnlyPreflightAuthorized": true,
+    "implementationAuthorized": false,
+    "migrationAuthorized": false,
+    "worktreeAuthorized": false,
+    "commitOrPushAuthorized": false,
+    "startTokenIssued": false
+  },
+  "pinPolicy": {
+    "observedBackend": "dwp-dev@c857fe8fdc3234f2e9c4b017bdecf71bb3ea2aa7",
+    "observedFrontend": "dwp-dev@eedb0b517157f053ba3c52d94c517931d53083bd",
+    "state": "OBSERVATION_ONLY",
+    "finalRule": "Use the final clean pushed post-PAY-bridge pins only after Control seals the HCM semantic/path split; do not create a branch or worktree from the observed pins."
+  },
+  "selection": {
+    "sourceFamilySha256": "a0dae833740f05696a27d3eea8c3212c8547ed475e8e4c7e87bffa93c71d060c",
+    "sourceRowCount": 16,
+    "auditFinding": "The canonical shared audit query and immutable event envelope are reusable. The remaining uncertainty is the product=HCM UX semantic/path split, not a new HRIS audit store.",
+    "duplicateAvoidance": [
+      "BASE-TFR-SYS-007 is a completed G7 slice and must not be reopened.",
+      "BASE-TFR-SYS-012 is delivered in Wave4 and must not be reused as SYS-001.",
+      "Do not duplicate dwp-platform-server audit-control persistence, query, receipt or authorization logic in an HRIS-local service."
+    ]
+  },
+  "purpose": {
+    "capability": "DWP.GOVERNANCE.AUDIT_EVIDENCE",
+    "boundedContext": "DWP_AUDIT_GOVERNANCE",
+    "outcome": "Resolve HRIS audit source screens to the existing canonical audit event query and immutable minimized evidence contract.",
+    "iaNode": "BASE:dwp-governance",
+    "canonicalUxEntry": "/admin/governance/audit-overview?product=HCM",
+    "canonicalDeepLink": "/admin/governance/audit-overview?product=HCM&tab=overview&focus={resourcePublicId}"
+  },
+  "contracts": {
+    "primary": [
+      {
+        "id": "PLAT-005",
+        "kind": "AUDIT_EVENT_BINDING",
+        "contracts": [
+          "AuditEvent.v1",
+          "AuditEventEnvelope.v1"
+        ],
+        "ownerServices": [
+          "dwp-core",
+          "dwp-platform-server"
+        ],
+        "ownerPath": "/internal/audit/events",
+        "ownerRule": "Sensitive reads, exports, commands, decisions, denials, configuration publishes and privileged support actions record one minimized local-transaction audit event."
+      },
+      {
+        "id": "SHARED-API-009",
+        "kind": "AUDIT_EVIDENCE_QUERY",
+        "ownerService": "dwp-platform-server",
+        "method": "GET",
+        "publicPath": "/api/platform/v1/admin/audit-control/events",
+        "ownerPath": "/v1/admin/audit-control/events"
+      }
+    ],
+    "relatedReuse": [
+      {
+        "id": "SHARED-API-003",
+        "kind": "DATA_GOVERNANCE_CATALOG_QUERY",
+        "method": "GET",
+        "publicPath": "/api/provider/v1/admin/data-governance"
+      },
+      {
+        "id": "SHARED-API-004",
+        "kind": "DATA_POLICY_VERSION_DRAFT_COMMAND",
+        "method": "POST",
+        "publicPath": "/api/provider/v1/admin/data-governance/policies"
+      }
+    ],
+    "authorization": {
+      "appEntitlement": "APP.HCM:VIEW",
+      "permissions": [
+        "ADMIN.AUDIT_VIEW:VIEW",
+        "DATA_GOVERNANCE_READ"
+      ],
+      "personas": [
+        "HRIS_CONFIG_AUTHOR>HRIS_DUTY_CONFIGURATION_WORKBENCH_READER",
+        "HRIS_AUDITOR>HRIS_DUTY_AUDITOR"
+      ],
+      "segregationOfDuties": "SOD_HRIS_AUDIT_INDEPENDENCE",
+      "rule": "The product=HCM query is UX context only and never substitutes for server-enforced tenant, duty, population, field, purpose or SoD decisions."
+    }
+  },
+  "dependencies": {
+    "required": [
+      "DEP-001",
+      "DEP-002",
+      "DEP-003",
+      "DEP-016"
+    ],
+    "sharedAuditRuntime": "REUSE_REQUIRED",
+    "hcmSemanticPathSplitSeal": "REQUIRED_NOT_YET_SEALED",
+    "featureDefault": "OFF"
+  },
+  "boundaries": {
+    "preflightAllowedReads": [
+      "backend:dwp-platform-server/src/main/java/com/dwp/services/platform/audit/**",
+      "backend:dwp-platform-server/src/main/java/com/dwp/services/platform/auditcontrol/**",
+      "backend:dwp-platform-server/src/test/java/com/dwp/services/platform/auditcontrol/**",
+      "backend:dwp-core/src/main/java/com/dwp/core/audit/**",
+      "backend:dwp-audit/src/main/java/com/dwp/audit/**",
+      "backend:contracts/openapi/gateway-public.json",
+      "frontend:apps/dwp/src/features/hris/shell/model/catalog/dwp-control.ts",
+      "frontend:docs/06-delivery/hris/recovery/**"
+    ],
+    "writablePathsUnderThisPacket": [],
+    "possibleChangeAfterSeparateAuthority": "Control first decides whether existing shared routes close the slice with no code or allocates the smallest exact HCM entry-link/projection delta.",
+    "controlOwnedUntilExplicitReallocation": [
+      "backend:dwp-platform-server/**",
+      "backend:dwp-core/**",
+      "backend:dwp-audit/**",
+      "backend:dwp-provider-server/**",
+      "backend:contracts/openapi/**",
+      "backend:contracts/product-authorization/**",
+      "backend:dwp-auth-server/**",
+      "backend:dwp-gateway/**",
+      "backend:dwp-platform-contracts/**",
+      "frontend:apps/dwp/src/routes/**",
+      "frontend:apps/dwp/src/features/hris/shell/**",
+      "frontend:architecture/**",
+      "frontend:docs/06-delivery/hris/recovery/**"
+    ],
+    "forbiddenArchitecture": [
+      "HRIS-local audit-event database or duplicate query API",
+      "authorization inferred from product=HCM query text",
+      "mutable audit evidence",
+      "client-supplied tenant authority"
+    ],
+    "outsideBoundaryAction": "STOP_AND_REQUEST_CONTROL_SEAL_OR_REALLOCATION"
+  },
+  "migrationDecision": {
+    "required": false,
+    "decision": "NONE_REUSE_SHARED_AUDIT",
+    "leaseState": "NOT_APPLICABLE",
+    "authoringAllowed": false,
+    "rule": "Do not create a Platform or HRIS migration for this preflight. Any later proven schema need requires a new exact lease and Start Token."
+  },
+  "acceptanceSummary": [
+    "DEC-SYS-009 and SYS-GOLDEN-AUDIT prove that the HCM entry resolves to SHARED-API-009 and PLAT-005 without a duplicate audit store.",
+    "Tenant-negative, purpose-negative and field-projection checks fail closed without revealing audit evidence.",
+    "SoD-negative proves independent HRIS auditor access and prevents configuration authors from gaining audit authority through the HCM context parameter.",
+    "Receipt replay and pagination/filter replay remain stable, scoped and immutable.",
+    "The canonical path split preserves the shared governance application while visibly retaining product=HCM context and a safe return path to HRIS.",
+    "A complete existing implementation may close as CONFORMANCE_CLOSE_NO_CODE; otherwise only the sealed exact UX or projection delta is eligible for a token."
+  ],
+  "startTokenGates": [
+    "Pin clean pushed post-PAY-bridge dwp-dev heads once.",
+    "Seal the shared governance route, product=HCM meaning, focus deep link, return path and authorization non-reliance rule.",
+    "Prove whether current shared audit runtime and frontend entry already satisfy every acceptance item.",
+    "If complete, issue a no-code closure receipt; if incomplete, allocate exact writable paths and targeted tests in a separate Start Token."
+  ],
+  "dispatchInstruction": {
+    "action": "READ_ONLY_PREFLIGHT",
+    "message": "Audit the shared PLAT-005 and SHARED-API-009 implementation plus the HRIS dwp-governance entry. Decide whether product=HCM semantics and the shared path already close SYS-001 or identify the smallest exact gap. Do not edit source or documentation, create a migration, branch or worktree, run broad suites, commit, push, merge, or build a new HRIS audit surface before separate Control authority.",
+    "requiredReport": [
+      "shared-runtime reuse evidence",
+      "product=HCM semantic/path-split conformance result",
+      "CONFORMANCE_CLOSE_NO_CODE or EXACT_DELTA_TOKEN_REQUIRED",
+      "if delta exists, smallest exact path and targeted-test proposal only"
+    ]
+  }
+}

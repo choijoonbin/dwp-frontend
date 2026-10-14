@@ -1,0 +1,94 @@
+{
+  "schema": "dwp.hris.migration-lease.v1",
+  "leaseId": "HRIS-WAVE5-LEASE-BASE-TFR-PAY-011-PAYROLL-V50-R1",
+  "issuedAt": "2026-10-14T13:43:16+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-PAY",
+  "sliceId": "BASE-TFR-PAY-011",
+  "state": "RESERVED_PENDING_BRIDGE",
+  "authoringAllowed": false,
+  "repository": "dwp-backend",
+  "stream": "PAYROLL_MAIN",
+  "databaseOwner": "dwp-payroll-server",
+  "schemaOwner": "hris_payroll",
+  "baseCommit": "c857fe8fdc3234f2e9c4b017bdecf71bb3ea2aa7",
+  "migrationDirectoryTreeManifestSha256": "cda02b79240f782011f8dad3569216d8df0a45db765366e6e424d52259e314f4",
+  "observedHighWater": "V49",
+  "reservedVersion": "V50",
+  "exactPath": "dwp-payroll-server/src/main/resources/db/migration/V50__pay_base_tfr_pay_011_calculation.sql",
+  "historicalTentativePathDisposition": {
+    "path": "dwp-payroll-server/src/main/resources/db/migration/V11__pay_base_tfr_pay_011.sql",
+    "state": "FORBIDDEN_STALE_TENTATIVE_NAME",
+    "reason": "V49 is already the immutable Payroll high-water; a lower historical filename cannot be introduced."
+  },
+  "predecessors": [
+    {
+      "version": "V6",
+      "path": "dwp-payroll-server/src/main/resources/db/migration/V6__pay_base_tfr_pay_006.sql",
+      "role": "versioned element and formula configuration"
+    },
+    {
+      "version": "V49",
+      "path": "dwp-payroll-server/src/main/resources/db/migration/V49__pay_modern_compensation_plan_input.sql",
+      "sha256": "23364b89f7328f3e6a98b25faacf4e7cbe4c94cd039c1767860a55cf8996aab2",
+      "role": "immutable approved compensation-plan input"
+    }
+  ],
+  "schemaEffect": {
+    "canonicalOwnedTables": [
+      "pay_input_snapshots",
+      "pay_input_snapshot_compensation_refs",
+      "pay_payroll_runs",
+      "pay_payroll_run_workers",
+      "pay_payroll_run_attempts",
+      "pay_worker_results",
+      "pay_result_lines",
+      "pay_calculation_trace_nodes",
+      "pay_command_receipts",
+      "pay_outbox_events"
+    ],
+    "requiredCharacteristics": [
+      "tenant-scoped UUID public identity and non-exposed internal identity",
+      "FORCE ROW LEVEL SECURITY using trusted Payroll tenant context",
+      "immutable frozen input, successful monetary facts, traces, originating receipt context, audit and published outbox payload",
+      "unique tenant-scoped idempotency, attempt number, result identity and outbox event constraints",
+      "worker lease and checkpoint fields sufficient for fenced crash recovery",
+      "opaque PAY-016 compensation input references with local tenant-scoped foreign keys only",
+      "no People, Performance, Time or Platform database foreign key"
+    ],
+    "seeds": "NONE",
+    "backfill": "NONE_FOR_NEW_TABLES; upgrade must preserve V1 through V49 bytes and data"
+  },
+  "upgradePath": {
+    "clean": "EMPTY_DATABASE_TO_V50",
+    "incremental": "V49_TO_V50",
+    "requiredEvidence": [
+      "Flyway version and checksum inventory",
+      "clean schema contract",
+      "V49 fixture upgrade preserving PAY-016 input rows",
+      "forced RLS positive and cross-tenant negative",
+      "immutability and duplicate-key negative",
+      "runtime role is NOSUPERUSER and NOBYPASSRLS"
+    ]
+  },
+  "rollbackStrategy": "FORWARD_FIX_ONLY; feature remains OFF; never delete or mutate V50 after integration",
+  "activationGate": "COMMON_BRIDGE_INTEGRATED_AND_START_TOKEN_ISSUED",
+  "expiryConditions": [
+    "V50 path appears on dwp-dev before this lease is activated",
+    "Payroll migration high-water changes from V49",
+    "backend base commit changes without re-audit",
+    "PAY-016 V49 checksum changes",
+    "common bridge allocation is revised or rejected",
+    "Start Token is not bound to a clean post-bridge dwp-dev worktree"
+  ],
+  "authority": {
+    "versionReserved": true,
+    "migrationCreationAuthorized": false,
+    "existingMigrationEditAuthorized": false,
+    "migrationExecutionAuthorized": false,
+    "integrationAuthorized": false,
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextTransition": "RESERVED_PENDING_BRIDGE_TO_ACTIVE_ONLY_WHEN_THE_COMMON_BRIDGE_RESULT_AND_CLEAN_WORKTREE_ARE_PINNED_IN_THE_START_TOKEN"
+}

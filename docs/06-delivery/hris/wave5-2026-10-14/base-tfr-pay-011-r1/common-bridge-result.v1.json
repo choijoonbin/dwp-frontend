@@ -1,0 +1,130 @@
+{
+  "schema": "dwp.hris.common-bridge-result.v1",
+  "resultId": "HRIS-WAVE5-PAY-011-COMMON-BRIDGE-RESULT-R1",
+  "integratedAt": "2026-10-14T13:56:17+09:00",
+  "integratedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-PAY",
+  "sliceId": "BASE-TFR-PAY-011",
+  "state": "INTEGRATED_AND_PUSHED_DEFAULT_OFF",
+  "repositoryResult": {
+    "repository": "dwp-backend",
+    "branch": "dwp-dev",
+    "commit": "357bd2b9e1c8a4d233c285d96911b5077cb444cf",
+    "tree": "c1a8192b603b1c4037bea8e22a1a8a176f116b43",
+    "upstream": "origin/dwp-dev",
+    "upstreamMatched": true
+  },
+  "contracts": {
+    "authorizationVersion": 41,
+    "authorizationChecksum": "026157acf598ebabf156b40e3c084c40d52346ebfd2019e2476f30ecdd2b8d93",
+    "authorizationBundleSha256": "e0af60bff61b272200575b70b87c558125a4a98d12ca6c60ff00e7ad73326414",
+    "authorizationState": "DRAFT",
+    "authMigration": "dwp-auth-server/src/main/resources/db/migration/V250__authorize_payroll_run_operations.sql",
+    "authMigrationSha256": "6dab70c384249b4f3b6006ec84e45d93bf1159efd8a69bb1939e9a7608ef41b7",
+    "payrollOpenApiSha256": "aa457eac37c13c573fbe9a8c8e4766b39c2ec8799d414d9eac61a8e4a52081fc",
+    "gatewayOpenApiSha256": "c972c27e68ed3cf509b70e00e69cf399fbd106f4880f726ec621f220e34ccca6",
+    "payrollPepProjectionSha256": "ded5d6345842aea3509157403149d33281254c896f3aacad88d7af1d5b8d1ca7"
+  },
+  "operationPeps": [
+    {
+      "id": "PEP-PAY-012",
+      "method": "POST",
+      "publicPath": "/api/payroll/v1/runs/{runId}/attempts",
+      "ownerPath": "/v1/runs/{runId}/attempts",
+      "purpose": "PAYROLL_PROCESSING",
+      "stepUp": "NOT_REQUIRED"
+    },
+    {
+      "id": "PEP-PAY-013",
+      "method": "GET",
+      "publicPath": "/api/payroll/v1/runs/{runId}",
+      "ownerPath": "/v1/runs/{runId}",
+      "purpose": "PAYROLL_PROCESSING",
+      "stepUp": "NOT_REQUIRED"
+    },
+    {
+      "id": "PEP-PAY-017",
+      "method": "POST",
+      "publicPath": "/api/payroll/v1/runs/{runId}/approvals",
+      "ownerPath": "/v1/runs/{runId}/approvals",
+      "purpose": "PAYROLL_PROCESSING",
+      "stepUp": "REQUIRED",
+      "segregationOfDuties": "RUN_MAKER_NE_APPROVER"
+    },
+    {
+      "id": "PEP-PAY-018",
+      "method": "POST",
+      "publicPath": "/api/payroll/v1/runs/{runId}/finalize",
+      "ownerPath": "/v1/runs/{runId}/finalize",
+      "purpose": "PAYROLL_PROCESSING",
+      "stepUp": "REQUIRED",
+      "segregationOfDuties": "RUN_MAKER_NE_FINALIZER"
+    },
+    {
+      "id": "PEP-PAY-033",
+      "method": "GET",
+      "publicPath": "/api/payroll/v1/command-receipts/{receiptId}",
+      "ownerPath": "/v1/command-receipts/{receiptId}",
+      "purpose": "COMMAND_STATUS",
+      "stepUp": "NOT_REQUIRED",
+      "outOfScopeRead": "OPAQUE_404"
+    }
+  ],
+  "trustedGatewayContext": {
+    "state": "SEALED",
+    "behavior": "Strip browser-supplied route, context, scope, subject, purpose, population and field or authorization revision evidence; inject only the trusted decision result.",
+    "requiredOwnerEvidence": [
+      "route contract key",
+      "context and scope key",
+      "subject principal",
+      "field-policy revision",
+      "authorization revision",
+      "population kind",
+      "purpose"
+    ],
+    "missingPopulationDisposition": "FAIL_CLOSED_AUTHORITY_RESOLUTION_UNAVAILABLE"
+  },
+  "verification": [
+    {
+      "gate": "AUTHORIZATION_GENERATOR_CHECK",
+      "result": "PASS",
+      "detail": "v41; 1017 routes"
+    },
+    {
+      "gate": "OPENAPI_APPROVED_SNAPSHOT_CHECK",
+      "result": "PASS",
+      "detail": "12 services; 1728 public paths"
+    },
+    {
+      "gate": "PYTHON_TARGETED_CONTRACT_TESTS",
+      "result": "PASS",
+      "detail": "v41 and OpenAPI tests; latest-alias regression test included"
+    },
+    {
+      "gate": "AUTH_V250_AND_GATEWAY_TARGETED_TESTS",
+      "result": "PASS",
+      "detail": "migration, route catalog, trusted context injection and step-up forwarding"
+    },
+    {
+      "gate": "FIXTURE_CHECK",
+      "result": "PASS",
+      "detail": "71 tests; 46 negative cases; 41 mutation controls"
+    },
+    {
+      "gate": "INDEPENDENT_SECURITY_REVIEW",
+      "result": "PASS_AFTER_P1_CORRECTION",
+      "detail": "trusted PAY purpose, subject, revisions and population injection added; no remaining findings"
+    }
+  ],
+  "invariants": {
+    "v40AuthorizationBytesUnchanged": true,
+    "v38PayrollProjectionBytesUnchanged": true,
+    "ownerRuntimeImplemented": false,
+    "payrollV50Implemented": false,
+    "featureDefault": "OFF",
+    "policyActivationAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "RECHECK_V50_COLLISION_MATERIALIZE_DEDICATED_PAY_WORKTREES_AND_ISSUE_THE_EXACT_START_TOKEN"
+}

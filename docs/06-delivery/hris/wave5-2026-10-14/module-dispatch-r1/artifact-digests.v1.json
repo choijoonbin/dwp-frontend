@@ -1,0 +1,29 @@
+{
+  "schema": "dwp.hris.artifact-digest-manifest.v1",
+  "manifestId": "HRIS-WAVE5-NON-PAY-MODULE-DISPATCH-DIGESTS-R1",
+  "generatedAt": "2026-10-14T13:48:09+09:00",
+  "algorithm": "SHA-256",
+  "selfHashExcluded": true,
+  "artifacts": [
+    {
+      "path": "readiness-dispatch-manifest.v1.json",
+      "sha256": "22d709ba46acede994dbdd089c063ad6646ef811f5beb4af0532b2216db9c6f8"
+    },
+    {
+      "path": "per-base-tfr-per-013-preflight.v1.json",
+      "sha256": "108d2464f143fb4f3aeb0610dd09eda84298cdc336147e0c9e2122fed889e5bc"
+    },
+    {
+      "path": "hrm-base-tfr-hrm-001-preflight.v1.json",
+      "sha256": "10536fc5bcc75c378d975df69d96fada449927f07fd150aa324f513b55be49ca"
+    },
+    {
+      "path": "tim-base-tfr-tim-017-preflight.v1.json",
+      "sha256": "bedd9e328d56fe3d5156fb54b43096ed67be8c85b81e4155e22e6f14ed617181"
+    },
+    {
+      "path": "sys-base-tfr-sys-001-preflight.v1.json",
+      "sha256": "572f348a02a8fa1bb36a0cf135c0bce24c6c4426b674ab8c77149e00ce97937d"
+    }
+  ]
+}

@@ -1,0 +1,286 @@
+{
+  "schema": "dwp.hris.common-control-allocation.v1",
+  "allocationId": "HRIS-WAVE5-CONTROL-BASE-TFR-PAY-011-BRIDGE-R1",
+  "issuedAt": "2026-10-14T13:43:16+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-PAY",
+  "sliceId": "BASE-TFR-PAY-011",
+  "state": "ALLOCATED_IMPLEMENTATION_REQUIRED",
+  "blockingStartToken": true,
+  "finding": "The recovered PAY-011 PEP bindings are specified, but Authorization v40, the exported Payroll and Gateway OpenAPI contracts, and the Gateway route catalog do not yet expose the five required Payroll run operations.",
+  "authoritativeInputs": [
+    {
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/api-pep-binding-register.csv",
+      "sha256": "0e38d724516a8b271069241ffa0fb6400984dc703758767de53cbaffb4f93da3"
+    },
+    {
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/transport-schema-resolution-register.csv",
+      "sha256": "86e76b0fe8b36102f35b2e82b7d8ffc3fc250455dde6d2d7747ac3f1a6cc877e"
+    },
+    {
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-evidence/pay/g2-api-event-contracts.json",
+      "sha256": "040e64703871582aaff04f102495592f405a603f690ed4f8a20029981eee3a21"
+    },
+    {
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-evidence/pay/g2-transport-schemas.v1.json",
+      "sha256": "d88d7b37ebda7d9abb6eb9e8aa0032bf0344a6dccc65d7d3d8b88abb06d037fd"
+    }
+  ],
+  "observedControlBaseline": {
+    "backendCommit": "c857fe8fdc3234f2e9c4b017bdecf71bb3ea2aa7",
+    "authorizationVersion": 40,
+    "authorizationSemanticChecksum": "4dca145cbc9169c2d1fde71771b83a1a0635679a7190a39d0a21b4e76bbb9329",
+    "authorizationArtifactSha256": "83ae84bc59861a167177419a7f2e72c10c3c1f771729982dfecf6bc768b63e31",
+    "payrollOpenApiSha256": "4262e985626b9cacd5115111d54231378e0a04c10d4eb6587d6e2df5430b0eaf",
+    "gatewayOpenApiSha256": "dbffc27b6a707bba00f0afb5e4929753cc2d9935253860e4e6a35334b5419dcf",
+    "confirmedGap": {
+      "missingPayrollRoutes": [
+        "PEP-PAY-012",
+        "PEP-PAY-013",
+        "PEP-PAY-017",
+        "PEP-PAY-018",
+        "PEP-PAY-033"
+      ],
+      "missingCapabilityKeys": [
+        "hcm.operations.payroll-run.execute",
+        "hcm.operations.payroll-support.view",
+        "hcm.operations.payroll.approve",
+        "hcm.operations.payroll.release"
+      ],
+      "existingReusableCapabilityKeys": [
+        "hcm.command-receipt.view"
+      ]
+    }
+  },
+  "operations": [
+    {
+      "bindingId": "PEP-PAY-012",
+      "operationId": "run.calculate",
+      "method": "POST",
+      "publicPath": "/api/payroll/v1/runs/{runId}/attempts",
+      "servicePath": "/v1/runs/{runId}/attempts",
+      "ownerService": "dwp-payroll-server",
+      "authorizationAlias": "PAY_RUN_CALCULATE",
+      "capabilities": [
+        "hcm.operations.payroll-run.execute"
+      ],
+      "resourceActions": [
+        "ACTION.HRIS_PAYROLL_RUN:EXECUTE"
+      ],
+      "authorizationProfiles": [
+        "HRIS_PAYROLL_RUN_OPERATOR>HRIS_DUTY_PAYROLL_RUN_OPERATOR"
+      ],
+      "populationTypes": [
+        "LEGAL_ENTITY",
+        "PAY_GROUP"
+      ],
+      "fieldGroups": [
+        "PAY_INPUT",
+        "PAY_RESULT"
+      ],
+      "purpose": "PAYROLL_PROCESSING",
+      "stepUp": "NOT_REQUIRED",
+      "ownerContract": "idempotent command with expectedVersion; READY to CALCULATING to VALIDATED, FAILED, or RESULT_UNKNOWN"
+    },
+    {
+      "bindingId": "PEP-PAY-013",
+      "operationId": "run.query",
+      "method": "GET",
+      "publicPath": "/api/payroll/v1/runs/{runId}",
+      "servicePath": "/v1/runs/{runId}",
+      "ownerService": "dwp-payroll-server",
+      "authorizationAlias": "PAY_RUN_VIEW",
+      "capabilities": [
+        "hcm.operations.payroll-run.execute",
+        "hcm.operations.payroll-support.view"
+      ],
+      "resourceActions": [
+        "ACTION.HRIS_PAYROLL_RUN:EXECUTE",
+        "DATA.HRIS_PAYROLL_STATUS:VIEW"
+      ],
+      "authorizationProfiles": [
+        "HRIS_PAYROLL_SUPPORT_VIEWER>HRIS_DUTY_PAYROLL_SUPPORT_VIEWER",
+        "HRIS_PAYROLL_RUN_OPERATOR>HRIS_DUTY_PAYROLL_RUN_OPERATOR"
+      ],
+      "populationTypes": [
+        "LEGAL_ENTITY",
+        "NAMED_POPULATION",
+        "PAY_GROUP"
+      ],
+      "fieldGroups": [
+        "PAY_INPUT",
+        "PAY_RESULT",
+        "PAY_RESULT_MASKED"
+      ],
+      "purpose": "PAYROLL_PROCESSING",
+      "stepUp": "NOT_REQUIRED",
+      "ownerContract": "current field projection and the most restrictive population decision win"
+    },
+    {
+      "bindingId": "PEP-PAY-017",
+      "operationId": "run.approve",
+      "method": "POST",
+      "publicPath": "/api/payroll/v1/runs/{runId}/approvals",
+      "servicePath": "/v1/runs/{runId}/approvals",
+      "ownerService": "dwp-payroll-server",
+      "authorizationAlias": "PAY_RUN_APPROVE",
+      "capabilities": [
+        "hcm.operations.payroll.approve"
+      ],
+      "resourceActions": [
+        "ACTION.HRIS_PAYROLL_APPROVE:APPROVE"
+      ],
+      "authorizationProfiles": [
+        "HRIS_PAYROLL_CONTROLLER>HRIS_DUTY_PAYROLL_APPROVER"
+      ],
+      "populationTypes": [
+        "LEGAL_ENTITY",
+        "PAY_GROUP"
+      ],
+      "fieldGroups": [
+        "PAY_RESULT",
+        "TAX_LIMITED"
+      ],
+      "purpose": "PAYROLL_PROCESSING",
+      "stepUp": "REQUIRED",
+      "segregationOfDuties": "RUN_MAKER_NE_APPROVER",
+      "ownerContract": "idempotent expectedVersion command; VALIDATED to APPROVED"
+    },
+    {
+      "bindingId": "PEP-PAY-018",
+      "operationId": "run.finalize",
+      "method": "POST",
+      "publicPath": "/api/payroll/v1/runs/{runId}/finalize",
+      "servicePath": "/v1/runs/{runId}/finalize",
+      "ownerService": "dwp-payroll-server",
+      "authorizationAlias": "PAY_RUN_FINALIZE",
+      "capabilities": [
+        "hcm.operations.payroll.release"
+      ],
+      "resourceActions": [
+        "ACTION.HRIS_PAYROLL_RELEASE:EXECUTE"
+      ],
+      "authorizationProfiles": [
+        "HRIS_PAYROLL_RELEASE_OFFICER>HRIS_DUTY_PAYROLL_RELEASER"
+      ],
+      "populationTypes": [
+        "LEGAL_ENTITY",
+        "PAY_GROUP"
+      ],
+      "fieldGroups": [
+        "BANK_PAYMENT",
+        "PAY_RESULT",
+        "PAY_STATEMENT"
+      ],
+      "purpose": "PAYROLL_PROCESSING",
+      "stepUp": "REQUIRED",
+      "segregationOfDuties": "RUN_MAKER_NE_FINALIZER",
+      "ownerContract": "idempotent expectedVersion command; APPROVED to FINALIZED"
+    },
+    {
+      "bindingId": "PEP-PAY-033",
+      "operationId": "command.receipt.query",
+      "method": "GET",
+      "publicPath": "/api/payroll/v1/command-receipts/{receiptId}",
+      "servicePath": "/v1/command-receipts/{receiptId}",
+      "ownerService": "dwp-payroll-server",
+      "authorizationAlias": "PAY_COMMAND_RECEIPT_READ",
+      "capabilities": [
+        "hcm.command-receipt.view"
+      ],
+      "resourceActions": [
+        "DATA.HRIS_COMMAND_RECEIPT:VIEW"
+      ],
+      "authorizationProfiles": [
+        "HRIS_DUTY_COMMAND_RECEIPT_READER"
+      ],
+      "populationTypes": [
+        "ORIGINATING_COMMAND_SCOPE"
+      ],
+      "fieldGroups": [
+        "COMMAND_RECEIPT"
+      ],
+      "purpose": "COMMAND_STATUS",
+      "stepUp": "NOT_REQUIRED",
+      "ownerContract": "re-evaluate current app entitlement, originating action, subject, population scope, field policy, and purpose; use opaque 404 for cross-tenant or out-of-scope lookup"
+    }
+  ],
+  "pepLayersRequiredForEveryOperation": [
+    "GATEWAY_APP_ENTITLEMENT",
+    "OWNER_API_OPERATION",
+    "RESOURCE_POPULATION",
+    "REPOSITORY_TENANT_PREDICATE",
+    "FIELD_PROJECTION",
+    "PURPOSE_POLICY",
+    "AUDIT_DECISION"
+  ],
+  "controlTouchBoundary": {
+    "authorizationSource": [
+      "backend:contracts/product-authorization/product-surfaces-v1.yaml"
+    ],
+    "authorizationGenerated": [
+      "backend:contracts/product-authorization/product-surfaces-v1.json",
+      "backend:contracts/product-authorization/product-surfaces-v1.bundle-v41.json",
+      "backend:contracts/product-authorization/product-surfaces-v1.index.json",
+      "backend:contracts/product-authorization/pilot-fixtures.v1.generated.json",
+      "backend:dwp-auth-server/src/main/resources/product-authorization/**"
+    ],
+    "authorizationMigration": [
+      "backend:dwp-auth-server/src/main/resources/db/migration/V250__authorize_payroll_run_operations.sql"
+    ],
+    "openApi": [
+      "backend:contracts/openapi/payroll.json",
+      "backend:contracts/openapi/gateway-public.json",
+      "backend:scripts/export-openapi-contracts.py",
+      "backend:scripts/tests/test_export_openapi_contracts.py"
+    ],
+    "gateway": [
+      "backend:dwp-gateway/src/main/java/com/dwp/gateway/productsurface/**",
+      "backend:dwp-gateway/src/main/java/com/dwp/gateway/filter/ProductSurfaceDecisionContextFilter.java",
+      "backend:dwp-gateway/src/test/java/com/dwp/gateway/productsurface/**",
+      "backend:dwp-gateway/src/test/java/com/dwp/gateway/ProductSurfaceDecisionContextFilterTest.java"
+    ],
+    "frontendGeneratedProjection": [
+      "frontend:apps/dwp/src/routes/product-surface-authorization.generated.ts",
+      "frontend:architecture/dwp-authorization-matrix-v1.generated.json",
+      "frontend:architecture/dwp-product-route-catalog-v1.generated.json"
+    ]
+  },
+  "moduleOwnerPepBoundary": {
+    "implementationPhase": "AFTER_START_TOKEN",
+    "blocksTokenIssue": false,
+    "owner": "HRIS-PAY",
+    "paths": [
+      "backend:dwp-payroll-server/src/main/java/com/dwp/services/payroll/security/**",
+      "backend:dwp-payroll-server/src/test/java/com/dwp/services/payroll/security/**"
+    ],
+    "rule": "Control allocates the exact generated route authority, capability, step-up and SoD contract before token issue; the Payroll owner runtime consumes and enforces that contract as PAY-011 module implementation after token issue."
+  },
+  "successorAllocation": {
+    "authorizationVersion": 41,
+    "authMigrationVersion": "V250",
+    "rule": "Generate one semantic successor after all five route authorities and four missing capability keys are present; do not edit v40 bytes.",
+    "stepUpBinding": "PEP-PAY-017 and PEP-PAY-018 only",
+    "defaultRollout": "OFF"
+  },
+  "controlVerificationRequiredBeforeToken": [
+    "authorization generator and generated-byte check",
+    "exact five-route Payroll OpenAPI and Gateway export check",
+    "Gateway strips browser-supplied purpose, population, subject, and step-up evidence before trusted injection",
+    "generated Payroll route projection allocates the exact capability, action, population, field and purpose contract for all five operations",
+    "generated route authority marks only approve and finalize as step-up required and carries the allocated maker-checker SoD contract"
+  ],
+  "moduleVerificationRequiredAfterToken": [
+    "Payroll owner PEP denies missing, stale, cross-tenant, wrong-purpose, wrong-population, wrong-field, and wrong-action evidence",
+    "Payroll owner runtime verifies one-time cryptographic step-up bound to the exact public method and path for approve and finalize",
+    "Payroll command receipt runtime returns opaque 404 and re-evaluates the originating command authority"
+  ],
+  "completionGate": "CONTROL_OWNED_AUTHORIZATION_V41_V250_OPENAPI_GATEWAY_AND_GENERATED_PAYROLL_PEP_PROJECTION_CHANGES_COMMITTED_AND_PUSHED_TO_DWP_DEV_WITH_SUCCESSOR_CHECKSUM_AND_TARGETED_CONTROL_TEST_EVIDENCE; PAYROLL_OWNER_RUNTIME_IS_EXPLICITLY_NOT_A_PRETOKEN_GATE",
+  "authority": {
+    "controlImplementationAllocated": true,
+    "moduleImplementationAuthorized": false,
+    "startTokenAuthorized": false,
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  }
+}

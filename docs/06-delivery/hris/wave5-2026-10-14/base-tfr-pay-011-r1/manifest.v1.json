@@ -1,0 +1,48 @@
+{
+  "schema": "dwp.hris.module-start-authority-manifest.v1",
+  "manifestId": "HRIS-WAVE5-BASE-TFR-PAY-011-START-AUTHORITY-R1",
+  "generatedAt": "2026-10-14T13:43:16+09:00",
+  "moduleSession": "HRIS-PAY",
+  "sliceId": "BASE-TFR-PAY-011",
+  "state": "PACKET_AND_LEASE_PREPARED_START_WITHHELD",
+  "documents": [
+    {
+      "path": "common-bridge-allocation.v1.json",
+      "sha256": "f88227d355622e0c80b3f7d38fe8a69e7ba0eccf45a55b21af4f9d08c92f2a1a",
+      "state": "ALLOCATED_IMPLEMENTATION_REQUIRED"
+    },
+    {
+      "path": "migration-lease.v1.json",
+      "sha256": "e0771948c9e663085d2fd4cdbdb27738d734c76e2aaba00487c3e6b13556df36",
+      "state": "RESERVED_PENDING_BRIDGE"
+    },
+    {
+      "path": "start-token-preparation.v1.json",
+      "sha256": "99d25fe2d8759716a7670f8dae955aedc4bde5e026129b66b3a1a7b44055100d",
+      "state": "WITHHELD_COMMON_BRIDGE_NOT_INTEGRATED"
+    },
+    {
+      "path": "work-packet.v1.json",
+      "sha256": "c1e45e0af270f8ff67f873898db64ab834d58fc32d4e9a2845456af743428efe",
+      "state": "APPROVED_PENDING_COMMON_BRIDGE_AND_START_TOKEN"
+    }
+  ],
+  "priorReleaseAuthority": {
+    "path": "docs/06-delivery/hris/wave4-2026-10-14/base-tfr-pay-011-release-packet.v1.json",
+    "packetId": "HRIS-WAVE4-RELEASE-BASE-TFR-PAY-011-R1",
+    "state": "START_READY_BUT_PREAUTHORING_REQUIREMENTS_REMAINED"
+  },
+  "auditDecision": {
+    "dependencyHold": "RELEASED",
+    "exactWorkPacket": "PREPARED",
+    "migrationHighWater": "V49",
+    "v50Lease": "RESERVED_PENDING_BRIDGE",
+    "commonBridge": "MISSING_AND_EXACTLY_ALLOCATED",
+    "payrollOwnerRuntime": "POST_TOKEN_MODULE_IMPLEMENTATION_NOT_A_START_GATE",
+    "worktrees": "REQUIRED_NOT_MATERIALIZED",
+    "startToken": "WITHHELD",
+    "implementation": "NOT_STARTED",
+    "activation": "NOT_AUTHORIZED"
+  },
+  "nextAction": "IMPLEMENT_AND_INTEGRATE_THE_EXACT_FIVE_OPERATION_COMMON_BRIDGE; THEN_RECHECK_V50_MATERIALIZE_CLEAN_POST_BRIDGE_WORKTREES_AND_ISSUE_THE_START_TOKEN"
+}

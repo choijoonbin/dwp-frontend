@@ -1,0 +1,175 @@
+{
+  "schema": "dwp.hris.module-dispatch-readiness-manifest.v1",
+  "manifestId": "HRIS-WAVE5-NON-PAY-MODULE-DISPATCH-R1",
+  "generatedAt": "2026-10-14T13:48:09+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "PREFLIGHT_PACKETS_SEALED_START_TOKENS_NOT_ISSUED",
+  "purpose": "Select one non-duplicate successor slice for each non-PAY module and permit read-only module preflight without granting implementation authority.",
+  "authority": {
+    "preflightAuthorized": true,
+    "sourceChangeAuthorized": false,
+    "migrationAuthoringAuthorized": false,
+    "worktreeMaterializationAuthorized": false,
+    "startTokenIssued": false,
+    "integrationAuthorized": false,
+    "activationAuthorized": false
+  },
+  "observedPins": {
+    "pinAuthority": "OBSERVATION_ONLY_SUPERSEDABLE",
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "c857fe8fdc3234f2e9c4b017bdecf71bb3ea2aa7",
+      "tree": "59b496dc87b57f42e175908a66b0964c3e5b1e26"
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "eedb0b517157f053ba3c52d94c517931d53083bd",
+      "tree": "8f721b404eb91a204b9c03d69e4188a89d5a7816"
+    },
+    "bindingRule": "Final dispatch pins must be the clean pushed origin/dwp-dev heads after PAY-011 common-bridge integration; these observations never authorize authoring."
+  },
+  "authoritativeInputs": [
+    {
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/g3-slice-code-go-register.csv",
+      "sha256": "fb646668329e93ca0b83b74e2a3e43619954cec1cb2f6770029677edbc8d5725"
+    },
+    {
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/target-family-resolution-register.csv",
+      "sha256": "a8746b9b89bf6bebd0a5b6fe4d8f9e985e223dcd6d395f5ef03b6f3f98d16189"
+    },
+    {
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/api-pep-binding-register.csv",
+      "sha256": "0e38d724516a8b271069241ffa0fb6400984dc703758767de53cbaffb4f93da3"
+    },
+    {
+      "path": "docs/06-delivery/hris/current-slice-integration-status.v1.csv",
+      "sha256": "603f81f13f5168825468c18d9f5a04e4ca389288a121fe1ad33c21b2ff6812de"
+    }
+  ],
+  "duplicateAvoidance": {
+    "rule": "Do not reopen a completed slice merely because an older recovery register still says NOT_STARTED_G3.",
+    "skippedCompletedSlices": [
+      {
+        "sliceId": "BASE-TFR-PER-016",
+        "module": "HRIS-PER",
+        "disposition": "SKIPPED_ALREADY_INTEGRATED"
+      },
+      {
+        "sliceId": "BASE-TFR-HRM-008",
+        "module": "HRIS-HRM",
+        "disposition": "SKIPPED_ALREADY_INTEGRATED"
+      },
+      {
+        "sliceId": "BASE-TFR-TIM-010",
+        "module": "HRIS-TIM",
+        "disposition": "SKIPPED_ALREADY_INTEGRATED"
+      },
+      {
+        "sliceId": "BASE-TFR-PER-006",
+        "module": "HRIS-PER",
+        "delivery": "G7",
+        "disposition": "SKIPPED_ALREADY_DELIVERED"
+      },
+      {
+        "sliceId": "BASE-TFR-HRM-010",
+        "module": "HRIS-HRM",
+        "delivery": "G7",
+        "disposition": "SKIPPED_AS_IMPLEMENTED_OVERLAP_REFERENCE"
+      },
+      {
+        "sliceId": "BASE-TFR-TIM-006",
+        "module": "HRIS-TIM",
+        "delivery": "G7",
+        "disposition": "SKIPPED_ALREADY_DELIVERED"
+      },
+      {
+        "sliceId": "BASE-TFR-SYS-007",
+        "module": "HRIS-SYS",
+        "delivery": "G7",
+        "disposition": "SKIPPED_ALREADY_DELIVERED"
+      },
+      {
+        "sliceId": "BASE-TFR-SYS-012",
+        "module": "HRIS-SYS",
+        "delivery": "WAVE4",
+        "disposition": "SKIPPED_ALREADY_DELIVERED"
+      },
+      {
+        "sliceId": "MOD-PER-COMPPLAN",
+        "module": "HRIS-PER",
+        "delivery": "WAVE4",
+        "disposition": "SKIPPED_ALREADY_DELIVERED"
+      }
+    ]
+  },
+  "selections": [
+    {
+      "module": "HRIS-PER",
+      "sliceId": "BASE-TFR-PER-013",
+      "packet": "per-base-tfr-per-013-preflight.v1.json",
+      "decision": "SELECTED_ACTUAL_MISSING_IMPLEMENTATION",
+      "nextAuthority": "CONTROL_BUNDLE_THEN_SEPARATE_START_TOKEN",
+      "migration": "V18_REQUIRED_LEASE_NOT_ISSUED"
+    },
+    {
+      "module": "HRIS-HRM",
+      "sliceId": "BASE-TFR-HRM-001",
+      "packet": "hrm-base-tfr-hrm-001-preflight.v1.json",
+      "decision": "SELECTED_CONFORMANCE_FIRST_DUE_HRM_010_OVERLAP",
+      "nextAuthority": "READ_ONLY_CONFORMANCE_RESULT_ONLY",
+      "migration": "NONE_UNLESS_PROVEN_DELTA"
+    },
+    {
+      "module": "HRIS-TIM",
+      "sliceId": "BASE-TFR-TIM-017",
+      "packet": "tim-base-tfr-tim-017-preflight.v1.json",
+      "decision": "SELECTED_CANONICAL_BACKEND_MISSING_LEGACY_UI_PARTIAL",
+      "nextAuthority": "EVENT_RESEAL_AND_CONTROL_BUNDLE_THEN_SEPARATE_START_TOKEN",
+      "migration": "V11_REQUIRED_LEASE_NOT_ISSUED"
+    },
+    {
+      "module": "HRIS-SYS",
+      "sliceId": "BASE-TFR-SYS-001",
+      "packet": "sys-base-tfr-sys-001-preflight.v1.json",
+      "decision": "SELECTED_SHARED_AUDIT_REUSE_WITH_UNSEALED_HCM_SEMANTICS_PATH_SPLIT",
+      "nextAuthority": "CONTROL_SEAL_THEN_SEPARATE_START_TOKEN_OR_NO_CODE_CLOSE",
+      "migration": "NONE"
+    }
+  ],
+  "safeDispatchOrder": [
+    {
+      "order": 1,
+      "action": "FREEZE_FINAL_PINS_ONCE",
+      "condition": "PAY-011 common bridge is integrated and both pushed origin/dwp-dev heads are clean and exact."
+    },
+    {
+      "order": 2,
+      "action": "DISPATCH_FOUR_READ_ONLY_PREFLIGHTS_IN_PARALLEL",
+      "condition": "Each module receives only its packet; no branch, worktree, migration, source edit, commit or push."
+    },
+    {
+      "order": 3,
+      "action": "ISSUE_PER_AND_TIM_TOKENS_AND_NEW_WORKTREES_IN_PARALLEL",
+      "condition": "PER control bundle is sealed; TIM TimecardDecisionRecorded.v1 and its control bundle are sealed; V18 and V11 leases are collision-free."
+    },
+    {
+      "order": 4,
+      "action": "RESOLVE_SYS_CONTROL_SEAL",
+      "condition": "The shared audit route and the product=HCM UX semantic/path split are sealed without duplicating the audit store."
+    },
+    {
+      "order": 5,
+      "action": "RESOLVE_HRM_CONFORMANCE",
+      "condition": "If HRM-010 fully satisfies PLAT-003, close BASE-TFR-HRM-001 as CONFORMANCE_CLOSE_NO_CODE and advance to HRM-002; otherwise issue a token only for the proven delta."
+    }
+  ],
+  "globalGuardrails": [
+    "A recovered G3 code-go token is historical evidence and is not a current Wave5 Start Token.",
+    "No module may implement, create a migration, create or reuse a worktree, commit, push, merge, or enable a feature from these packets.",
+    "Cross-cutting authorization, OpenAPI, Gateway, generated projection, shell navigation, shared audit and platform-contract changes remain Control-owned unless an issued Start Token explicitly reallocates an exact path.",
+    "All features remain default OFF; customer data, external connectors, production activation and release are outside this authority.",
+    "Validate the changed cluster first and collect all failures per gate; do not run a full repository suite after each local correction."
+  ]
+}
