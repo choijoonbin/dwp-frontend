@@ -1,6 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ArrowDown, CheckCircle2, LayoutDashboard, RefreshCw, ShieldAlert } from 'lucide-react';
+import {
+  ArrowDown,
+  CheckCircle2,
+  Compass,
+  LayoutDashboard,
+  RefreshCw,
+  ShieldAlert,
+} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
@@ -59,6 +66,7 @@ import {
   PRODUCT_PAGE_SHORTCUT_TARGETS,
   useProductPageShortcutAccess,
 } from '../../components/product-page-shortcut-access';
+import { useWorkExplorerShortcutAccess } from '../hris/explorer/work-explorer-access';
 
 import type {
   HomePresentation,
@@ -89,6 +97,7 @@ export function HcmHome({
   const employeeServicesShortcut = useProductPageShortcutAccess(
     PRODUCT_PAGE_SHORTCUT_TARGETS.hcmEmployeeServices
   );
+  const workExplorerShortcut = useWorkExplorerShortcutAccess();
   const [homeMode, setHomeMode] = useState<HcmHomeMode>('personal');
   const [editorOpen, setEditorOpen] = useState(false);
   const [galleryOpen, setGalleryOpen] = useState(false);
@@ -574,7 +583,24 @@ export function HcmHome({
             {[businessTitle, organizationName].filter(Boolean).join(' · ')}
           </Typography>
         </Box>
-        <Stack direction="row" alignItems="center" justifyContent="flex-end" gap={0.8}>
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent={{ xs: 'flex-start', lg: 'flex-end' }}
+          flexWrap="wrap"
+          gap={0.8}
+          minWidth={0}
+        >
+          {workExplorerShortcut.disclosed && (
+            <ActionButton
+              intent="secondary"
+              size="small"
+              startIcon={<Compass size={16} aria-hidden="true" />}
+              onClick={() => navigate(workExplorerShortcut.href)}
+            >
+              {t('hris.explorer.homeAction')}
+            </ActionButton>
+          )}
           {resolvedIsManager && (
             <ToggleButtonGroup
               exclusive

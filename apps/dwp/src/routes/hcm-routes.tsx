@@ -45,6 +45,7 @@ import type { HcmNavigationItem } from '../features/hcm/hcm-navigation';
 import type { HcmLegacySurfaceId } from '../features/hcm/hcm-surface-access';
 
 const HcmPage = lazy(() => import('../pages/hcm'));
+const HrisWorkExplorer = lazy(() => import('../features/hris/explorer'));
 const HcmLayout = lazy(() =>
   import('../layouts/hcm-layout').then((module) => ({ default: module.HcmLayout }))
 );
@@ -319,7 +320,9 @@ function HcmWorkExplorerModuleBoundary() {
       routeContractKey={HRIS_WORK_EXPLORER_PAGE_ROUTE}
       legacy={withheld}
     >
-      {withheld}
+      <Suspense fallback={routeFallback}>
+        <HrisWorkExplorer />
+      </Suspense>
     </ProductCanaryRouteBoundary>
   );
 }
