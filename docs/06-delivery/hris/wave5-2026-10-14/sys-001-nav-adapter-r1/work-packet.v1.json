@@ -1,0 +1,167 @@
+{
+  "schema": "dwp.hris.module-work-packet.v1",
+  "packetId": "HRIS-WAVE5-WORK-BASE-TFR-SYS-001-NAV-ADAPTER-R1",
+  "preparedAt": "2026-10-15T03:10:23+09:00",
+  "preparedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-SYS",
+  "sliceId": "BASE-TFR-SYS-001",
+  "sourceRef": "TFR-SYS-001",
+  "capability": "DWP.GOVERNANCE.AUDIT_EVIDENCE",
+  "boundedContext": "DWP_AUDIT_GOVERNANCE",
+  "increment": "NAVIGATION_ADAPTER_CODE_ONLY",
+  "state": "PREPARED_START_TOKEN_NOT_YET_ISSUED",
+  "predecessors": {
+    "modulePreflight": {
+      "path": "docs/06-delivery/hris/wave5-2026-10-14/module-dispatch-r1/sys-base-tfr-sys-001-preflight.v1.json",
+      "sha256": "572f348a02a8fa1bb36a0cf135c0bce24c6c4426b674ab8c77149e00ce97937d"
+    },
+    "readinessAndDispatchGate": {
+      "path": "docs/06-delivery/hris/wave5-2026-10-14/sys-001-control-r1/readiness-and-dispatch-gate.v1.json",
+      "sha256": "d245e38bd90156dda936a1427f2c7efe2bde50611fffdbc883d2333887288642"
+    },
+    "centralRuntimeIntegrationReceipt": {
+      "path": "docs/06-delivery/hris/wave5-2026-10-14/sys-001-control-r1/central-runtime-integration-receipt.v1.json",
+      "receiptId": "HRIS-WAVE5-SYS-001-CENTRAL-RUNTIME-INTEGRATED-R1",
+      "sha256": "33fcb0c681189dc23f2da62eb8f9c43ed18796401743f9ff1725ec3d43ad3fe1",
+      "state": "CENTRAL_RUNTIME_COMPLETE_NAVIGATION_ADAPTER_PENDING"
+    },
+    "runtimeCompatibilityAmendment": {
+      "path": "docs/06-delivery/hris/wave5-2026-10-14/sys-001-control-r1/runtime-compatibility-amendment.v1.json",
+      "amendmentId": "HRIS-WAVE5-SYS-001-RUNTIME-COMPATIBILITY-R1",
+      "sha256": "a97e966f1d6e0957d3fec0ef90dc36541d05e3b8ba484aaddf4a0d67accf1be1"
+    },
+    "pay011Integration": {
+      "path": "docs/06-delivery/hris/wave5-2026-10-14/pay-011-integration-r1/central-integration-result.v1.json",
+      "receiptId": "HRIS-WAVE5-PAY-011-CENTRAL-INTEGRATION-RESULT-R1",
+      "sha256": "4d53174298fb4c055df1ef71851483a86bdf0be64e2c0538b359ccfcbf18793e",
+      "state": "PASS_RESULT_INTEGRATED_CLOSED_DEFAULT_OFF"
+    }
+  },
+  "dependencyContract": {
+    "required": [
+      "DEP-001",
+      "DEP-002",
+      "DEP-003",
+      "DEP-016"
+    ],
+    "sharedContracts": [
+      "PLAT-005",
+      "SHARED-API-009"
+    ],
+    "reuseRule": "Use the already-integrated shared governance audit runtime; do not create HRIS-local audit persistence, API, policy, or projection."
+  },
+  "scope": {
+    "repository": "dwp-frontend",
+    "backendWorktreeRequired": false,
+    "migrationLeaseRequired": false,
+    "purpose": "Expose one exact, centrally authorized HCM audit handoff from the existing HRIS product-map contract while preserving every other external node as inert.",
+    "completionClaim": "ADAPTER_CODE_COMPLETE_WORK_EXPLORER_MOUNT_PENDING",
+    "mountNonclaim": "HrisProductMap has no production mount. This packet does not authorize a Home mount, a new route, or a user-visible end-to-end completion claim."
+  },
+  "touchManifest": {
+    "writablePaths": [
+      "apps/dwp/src/features/hris/shell/model/catalog/dwp-control.ts",
+      "apps/dwp/src/features/hris/shell/components/hris-product-map-group.tsx",
+      "apps/dwp/src/features/hris/shell/testing/hris-product-map-catalog.test.ts",
+      "apps/dwp/src/features/hris/shell/testing/hris-product-map.test.tsx"
+    ],
+    "readOnlyVerificationPaths": [
+      "apps/dwp/src/features/hris/shell/testing/hris-runtime-navigation-manifest.test.ts",
+      "apps/dwp/src/features/hris/shell/testing/hris-home-mount-contract.test.ts",
+      "apps/dwp/src/features/hris/shell/components/hris-product-map.tsx",
+      "apps/dwp/src/routes/product-surface-authorization.generated.ts"
+    ],
+    "forbidden": [
+      "all backend source and configuration",
+      "authorization bundles and generated authorization projections",
+      "OpenAPI and typed API contracts",
+      "audit DTO, repository, service, store, and migration files",
+      "routes, layouts, navigation manifests, and i18n resources",
+      "new /hr audit page or Home product-map mount",
+      "generic PILOT relabeling of DWP control nodes",
+      "recovery or other control evidence outside this packet"
+    ],
+    "outsideBoundaryAction": "STOP_AND_REQUEST_AN_EXACT_CONTROL_AMENDMENT"
+  },
+  "behaviorContract": {
+    "catalogNode": "dwp-governance",
+    "preservedLifecycle": "EXTERNAL",
+    "preservedExternalTarget": "DWP_GOVERNANCE",
+    "preservedAuthorization": "CENTRAL_POLICY",
+    "exactHref": "/admin/governance/audit-overview?product=HCM&tab=overview",
+    "allowedAction": "Render Open only for this exact EXTERNAL plus CENTRAL_POLICY node when canOpenPath(exactHref) returns true, and call onOpen with the unchanged exactHref.",
+    "deniedAction": "When canOpenPath(exactHref) is false, keep the node visible, locked, and non-actionable.",
+    "otherExternalNodes": "The other five EXTERNAL nodes remain inert and href-free.",
+    "catalogInvariant": "Preserve 76 unique nodes and update the reviewed semantic hash only for the exact dwp-governance href delta.",
+    "returnJourney": "The already-integrated central HCM view keeps its fixed Back to HRIS target /hr/home. This packet records that prerequisite but cannot execute a real handoff journey before a separately authorized Work Explorer mount exists."
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "SYS001-NAV-AC-01",
+      "criterion": "dwp-governance remains EXTERNAL with externalTarget DWP_GOVERNANCE and authorization CENTRAL_POLICY; no generic PILOT relabel occurs."
+    },
+    {
+      "id": "SYS001-NAV-AC-02",
+      "criterion": "Only dwp-governance receives the exact href /admin/governance/audit-overview?product=HCM&tab=overview."
+    },
+    {
+      "id": "SYS001-NAV-AC-03",
+      "criterion": "The exact governed external item exposes Open only when canOpenPath authorizes the exact href and onOpen receives that unchanged href."
+    },
+    {
+      "id": "SYS001-NAV-AC-04",
+      "criterion": "A denied exact href leaves the same item visible, locked, and non-actionable without leaking a fallback destination."
+    },
+    {
+      "id": "SYS001-NAV-AC-05",
+      "criterion": "The other five EXTERNAL nodes stay inert; the catalog remains 76 unique nodes and its semantic hash changes only for the reviewed href delta."
+    },
+    {
+      "id": "SYS001-NAV-AC-06",
+      "criterion": "The central HCM prerequisite retains the compiled Back to HRIS path /hr/home, while this result explicitly reports the real Work Explorer mount and browser handoff as pending."
+    },
+    {
+      "id": "SYS001-NAV-AC-07",
+      "criterion": "The result changes exactly the four writable files and changes no backend, route, layout, i18n, generated, authorization, OpenAPI, audit-runtime, migration, activation, or recovery path."
+    }
+  ],
+  "verificationPlan": {
+    "policy": "VERIFY_CHANGED_CLUSTER_ONCE; COLLECT_FAILURES; RERUN_ONLY_FAILED_METHODS_AFTER_A_FIX; DO_NOT_RUN_REPOSITORY_WIDE_SUITES",
+    "targetedVitest": [
+      "apps/dwp/src/features/hris/shell/testing/hris-product-map-catalog.test.ts",
+      "apps/dwp/src/features/hris/shell/testing/hris-product-map.test.tsx",
+      "apps/dwp/src/features/hris/shell/testing/hris-runtime-navigation-manifest.test.ts",
+      "apps/dwp/src/features/hris/shell/testing/hris-home-mount-contract.test.ts"
+    ],
+    "staticChecks": [
+      "ESLint only the four writable files",
+      "Prettier check only the four writable files",
+      "git diff --check",
+      "exact four-file changed-path manifest"
+    ],
+    "visualRule": "No production page is mounted under this authority. Preserve the existing responsive and semantic component contract and defer browser handoff evidence to the separately sealed Work Explorer mount slice.",
+    "broadSuite": "NOT_AUTHORIZED_OR_REQUIRED"
+  },
+  "invalidationConditions": [
+    "the issued frontend base, branch, tree, clean state, or upstream exactness changes before implementation begins",
+    "the central SYS-001 runtime receipt or compatibility amendment bytes change",
+    "the exact href, dwp-governance identity, lifecycle, target, or authorization contract changes",
+    "a source path outside the four-file writable allowlist changes",
+    "a route, Home mount, backend, authorization, OpenAPI, audit runtime, migration, feature, policy, customer, or production activation is attempted"
+  ],
+  "authority": {
+    "packetPrepared": true,
+    "startTokenIssued": false,
+    "moduleImplementationAuthorized": false,
+    "moduleBranchCommitAuthorized": false,
+    "moduleBranchPushAuthorized": false,
+    "mergeToDwpDevAuthorized": false,
+    "routeOrMenuActivationAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "policyActivationAuthorized": false,
+    "customerDataAuthorized": false,
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "COMMIT_AND_PUSH_THIS_PREPARATION_CARRIER_MATERIALIZE_ONE_FRONTEND_WORKTREE_THEN_ISSUE_A_SEPARATE_EXACT_START_TOKEN"
+}

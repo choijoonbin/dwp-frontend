@@ -1,0 +1,100 @@
+{
+  "schema": "dwp.hris.module-start-token-preparation.v1",
+  "preparationId": "HRIS-WAVE5-START-PREP-BASE-TFR-SYS-001-NAV-ADAPTER-R1",
+  "preparedAt": "2026-10-15T03:10:23+09:00",
+  "preparedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-SYS",
+  "sliceId": "BASE-TFR-SYS-001",
+  "scope": "NAVIGATION_ADAPTER_CODE_ONLY",
+  "state": "READY_TO_MATERIALIZE_FRONTEND_WORKTREE_TOKEN_NOT_ISSUED",
+  "workPacket": {
+    "path": "docs/06-delivery/hris/wave5-2026-10-14/sys-001-nav-adapter-r1/work-packet.v1.json",
+    "packetId": "HRIS-WAVE5-WORK-BASE-TFR-SYS-001-NAV-ADAPTER-R1",
+    "sha256": "65e28d7a6b4bd2ad4c63b80a73c2e25bdab7f7a7c14027380e05c7b511087f99",
+    "bytes": 8946
+  },
+  "closedPrerequisites": [
+    {
+      "id": "SYS001_CENTRAL_RUNTIME",
+      "path": "docs/06-delivery/hris/wave5-2026-10-14/sys-001-control-r1/central-runtime-integration-receipt.v1.json",
+      "sha256": "33fcb0c681189dc23f2da62eb8f9c43ed18796401743f9ff1725ec3d43ad3fe1",
+      "state": "CENTRAL_RUNTIME_COMPLETE_NAVIGATION_ADAPTER_PENDING"
+    },
+    {
+      "id": "SYS001_RUNTIME_COMPATIBILITY",
+      "path": "docs/06-delivery/hris/wave5-2026-10-14/sys-001-control-r1/runtime-compatibility-amendment.v1.json",
+      "sha256": "a97e966f1d6e0957d3fec0ef90dc36541d05e3b8ba484aaddf4a0d67accf1be1"
+    },
+    {
+      "id": "PAY011_SEQUENCE_GATE",
+      "path": "docs/06-delivery/hris/wave5-2026-10-14/pay-011-integration-r1/central-integration-result.v1.json",
+      "receiptId": "HRIS-WAVE5-PAY-011-CENTRAL-INTEGRATION-RESULT-R1",
+      "sha256": "4d53174298fb4c055df1ef71851483a86bdf0be64e2c0538b359ccfcbf18793e",
+      "state": "PASS_RESULT_INTEGRATED_CLOSED_DEFAULT_OFF"
+    }
+  ],
+  "observedCentralPins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "67287b33be62c338d7ea6183e22ff3372e0c45c1",
+      "tree": "2be6408b53a95d0ddda4d40aa97205addb5658e2",
+      "upstream": "origin/dwp-dev",
+      "cleanAndRemoteExact": true,
+      "moduleWorktreeRequired": false
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "6d76079c21a7af983a474da7818600ca5a8c7adb",
+      "tree": "7a08653cd20f22a6a3d26b0126796fe3d59a4cc5",
+      "upstream": "origin/dwp-dev",
+      "cleanAndRemoteExact": true,
+      "state": "OBSERVATION_BEFORE_PREPARATION_CARRIER"
+    }
+  },
+  "basePinPolicy": {
+    "frontend": "Use the clean pushed preparation carrier commit created from this work packet and preparation record as the exact module worktree base.",
+    "backend": "Record the current clean pushed pin as a sequencing dependency only; do not materialize a backend worktree.",
+    "tokenRule": "Issue the token only after the dedicated frontend worktree matches the preparation carrier commit/tree and is clean."
+  },
+  "plannedWorktree": {
+    "repository": "dwp-frontend",
+    "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave5-20261015/sys-001-nav-adapter-r1/frontend",
+    "branch": "codex/hris-wave5-sys-001-nav-adapter-frontend-20261015-r1",
+    "sourceBranch": "dwp-dev"
+  },
+  "mountDecision": {
+    "decision": "ADAPTER_CODE_ONLY_WORK_EXPLORER_MOUNT_DEFERRED",
+    "evidence": "HrisProductMap is exported and covered by component tests but is not mounted by production source; hris-home-mount-contract.test.ts explicitly keeps it off /hr/home.",
+    "effect": "This token may prove the adapter code contract only. It cannot claim a user-visible browser handoff or final BASE-TFR-SYS-001 closure.",
+    "requiredFollowUp": "Control must separately identify and seal an exact governed Work Explorer mount before any user-visible completion claim."
+  },
+  "startGates": {
+    "centralRuntimeIntegrated": true,
+    "compatibilityAmendmentConsumed": true,
+    "pay011SequenceClosed": true,
+    "exactFourPathBoundarySealed": true,
+    "backendWorktreeUnnecessary": true,
+    "migrationLeaseUnnecessary": true,
+    "mountNonclaimSealed": true,
+    "frontendPreparationCarrierPushed": false,
+    "frontendWorktreeMaterializedClean": false,
+    "startTokenIssued": false
+  },
+  "authority": {
+    "preparationRecorded": true,
+    "controlWorktreeMaterializationAuthorizedAfterCarrier": true,
+    "moduleImplementationAuthorized": false,
+    "moduleBranchCommitAuthorized": false,
+    "moduleBranchPushAuthorized": false,
+    "mergeToDwpDevAuthorized": false,
+    "routeOrMenuActivationAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "policyActivationAuthorized": false,
+    "customerDataAuthorized": false,
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "COMMIT_AND_PUSH_THE_PREPARATION_CARRIER_THEN_MATERIALIZE_AND_VERIFY_THE_SINGLE_FRONTEND_WORKTREE"
+}
