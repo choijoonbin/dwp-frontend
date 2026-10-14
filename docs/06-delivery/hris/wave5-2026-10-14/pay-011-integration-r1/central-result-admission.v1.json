@@ -1,0 +1,119 @@
+{
+  "schema": "dwp.hris.wave5-pay-011-central-result-admission.v1",
+  "receiptId": "HRIS-WAVE5-PAY-011-CENTRAL-RESULT-ADMISSION-R1",
+  "runId": "pay-011-integration-20261015-r1",
+  "status": "PASS_RESULT_ADMITTED_PENDING_CARRIER_DEFAULT_OFF",
+  "issuedAt": "2026-10-15T03:01:21+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "predecessor": {
+    "resultEvidenceCarrier": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "1737520b2f27a1e1cf6f98b319ed0abfd54ca712",
+      "tree": "6c8ec7a14dc9b387d04990b53ea611407f130a2a",
+      "upstream": "origin/dwp-dev",
+      "clean": true,
+      "upstreamAhead": 0,
+      "upstreamBehind": 0
+    },
+    "integrationMergeAuthorized": false
+  },
+  "moduleResult": {
+    "module": "PAY",
+    "sliceId": "BASE-TFR-PAY-011",
+    "resultEvidence": {
+      "path": "docs/06-delivery/hris/wave5-2026-10-14/base-tfr-pay-011-r1/module-result-evidence.v1.json",
+      "evidenceId": "HRIS-WAVE5-BASE-TFR-PAY-011-MODULE-RESULT-R1",
+      "gitBlobSha1": "8c4e902ca1a2d887d5722fee3dbb116cca672e04",
+      "sha256": "b070284e3543406ac1c84a94f91e46cc877d271c75600c1b0c5b61eb7510ad83",
+      "bytes": 9429
+    },
+    "backend": {
+      "branch": "codex/hris-wave5-pay-011-backend-20261014",
+      "baseCommit": "357bd2b9e1c8a4d233c285d96911b5077cb444cf",
+      "resultLineage": [
+        "e4e692c4fdd1b0b60110cad806f352ab1b5aef92"
+      ],
+      "resultCommit": "e4e692c4fdd1b0b60110cad806f352ab1b5aef92",
+      "resultTree": "1f3390fd1ee50e5be53f443ed4ceaeed05f0d90a",
+      "changedFileCount": 38,
+      "changedFileManifestSha256": "1e183c27720f880558efdf2dc0ade22fa583120fbd83d706873045cd1aa4b48f",
+      "cleanAndRemoteExact": true
+    },
+    "frontend": {
+      "branch": "codex/hris-wave5-pay-011-frontend-20261014",
+      "baseCommit": "8df52380c32dea3ee45d4e3ae3f976269475cedf",
+      "resultLineage": [
+        "10f54c23a11f4177c9fe2c3cc04781b0d64923cd",
+        "89139607e16cf72faa0d7116a8d3dd4a89bd9263",
+        "8eeebfab9d2274364dd61628fbddb88a548ad27f"
+      ],
+      "resultCommit": "8eeebfab9d2274364dd61628fbddb88a548ad27f",
+      "resultTree": "339ad62f7c2f3e47f0c6be0c51a93743476b7973",
+      "changedFileCount": 13,
+      "changedFileManifestSha256": "a5d3df6fa3e52236fc9aaebee6fa49ec892b7a2b9a39c90498514b9d771dfae8",
+      "cleanAndRemoteExact": true
+    },
+    "migration": {
+      "stream": "PAYROLL_MAIN",
+      "version": "V50",
+      "path": "dwp-payroll-server/src/main/resources/db/migration/V50__pay_base_tfr_pay_011_calculation.sql",
+      "sha256": "809bb5e9d14611ff3e083d048b2b4ef28057096a6219edccc1377f5dd43d87b5",
+      "cleanAndUpgradePassed": true
+    },
+    "acceptance": {
+      "passed": 12,
+      "total": 12,
+      "backendIndependentAudit": "READY_NO_P0_P1",
+      "frontendIndependentAudit": "READY_AFTER_TARGETED_CORRECTION_NO_P0_P1"
+    }
+  },
+  "expectedUnion": {
+    "algorithm": "SHA256_SORTED_REPOSITORY_TAB_RELATIVE_PATH_LF",
+    "backend": {
+      "uniquePathCount": 38,
+      "sha256": "1e183c27720f880558efdf2dc0ade22fa583120fbd83d706873045cd1aa4b48f"
+    },
+    "frontend": {
+      "uniquePathCount": 13,
+      "sha256": "a5d3df6fa3e52236fc9aaebee6fa49ec892b7a2b9a39c90498514b9d771dfae8"
+    },
+    "combinedUniquePathCount": 51,
+    "combinedSha256": "943c2ae8a7171601218014ff6e21a450ae8f90dbd6c16ec2825434fe938ee1ef"
+  },
+  "admissionChecks": {
+    "resultEvidenceJsonValid": true,
+    "startAuthorityChainValid": true,
+    "worktreesCleanAndRemoteExact": true,
+    "touchBoundariesCompliant": true,
+    "migrationLeaseUsedExactly": true,
+    "moduleAcceptanceClosed": true,
+    "postAuditFrontendP1Closed": true,
+    "remainingP0": 0,
+    "remainingP1": 0,
+    "currentCentralPathOverlap": {
+      "backend": 0,
+      "frontend": 0
+    },
+    "predictedMergeConflict": false,
+    "featureDefaultsRemainOff": true
+  },
+  "activationBlockersPreserved": [
+    "REAL_FIELD_PROJECTION_PAY_GROUP_NAMED_POPULATION_AND_SEMANTIC_MAPPING_ADAPTERS",
+    "INITIAL_PAYROLL_RUN_PRODUCER_AND_RECEIPT_ORIGIN_POPULATION_TUPLES",
+    "TRANSPORT_IDENTITY_REVISION_HEADER_AND_RESPONSE_ENVELOPE_DECISIONS",
+    "RUN_LIST_AND_ATTEMPT_DETAIL_APIS"
+  ],
+  "authority": {
+    "resultsAdmittedAfterCarrier": true,
+    "integrationMergeAuthorized": false,
+    "sharedControlPathChangeAuthorizedForModules": false,
+    "routeOrMenuActivationAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "policyActivationAuthorized": false,
+    "customerDataAuthorized": false,
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "COMMIT_AND_PUSH_THIS_ADMISSION_AS_A_SINGLE_DWP_DEV_CARRIER_THEN_ISSUE_EXACT_RESULT_INTEGRATION_AUTHORIZATION"
+}
