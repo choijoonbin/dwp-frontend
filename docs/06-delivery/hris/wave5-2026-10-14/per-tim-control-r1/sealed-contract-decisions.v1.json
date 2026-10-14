@@ -160,7 +160,7 @@
       "X-Purpose-Code"
     ],
     "stepUpRule": "No route in PER-013 or TIM-017 receives stepUpCommandBindings. Atomic duties mark step_up_required=N. SYS-001 retains STEPUP-MGMT-HIGH-V1 on its capability but its two ELEVATED-only GET projections have no command binding under the exact allowlisted read exception below. This does not remove the Gateway expected-decision-revision check or owner If-Match CAS.",
-    "timeOperatorCompatibility": "The TIM correction operator profile must use CAPABILITY_EXPRESSION/ANY with the single hcm.operations.time.update key, matching the existing non-step-up Time interpretation pattern; it must not silently introduce a step-up binding contrary to the duty matrix."
+    "timeOperatorCompatibility": "Every new TIM profile that represents the non-step-up HRIS_DUTY_TIME_OPERATOR through hcm.operations.time.update (the timecard GET and correction POST) must use CAPABILITY_EXPRESSION/ANY with that single key, matching the existing non-step-up Time interpretation pattern; it must not silently introduce a step-up binding contrary to the duty matrix."
   },
   "sysSharedV42Participant": {
     "sliceId": "TFR-SYS-001",
@@ -603,7 +603,7 @@
         "ownerPath": "/v1/timecards/{timecardId}",
         "ownerServiceKey": "time",
         "accessProfiles": [
-          {"profile": "time-operator", "precedence": 400, "capability": "hcm.operations.time.update", "targets": ["OBJECT", "TARGET_POPULATION"]},
+          {"profile": "time-operator", "precedence": 400, "capabilityExpressionAny": ["hcm.operations.time.update"], "targets": ["OBJECT", "TARGET_POPULATION"]},
           {"profile": "manager-approver", "precedence": 300, "capability": "hcm.team.time.approve", "targets": ["OBJECT", "TARGET_POPULATION"]},
           {"profile": "self-reader", "precedence": 200, "capability": "hcm.personal.time.view", "targets": ["SELF", "OBJECT"]}
         ],

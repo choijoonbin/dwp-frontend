@@ -7,7 +7,7 @@
   "artifacts": [
     {
       "path": "sealed-contract-decisions.v1.json",
-      "sha256": "61974850e2b8613070796e3d1bf98b2cb93266ad2e1de6be47b44c0ca9a608d9",
+      "sha256": "0e02af36ced57cec49995b7f804f66444f20e91992a309bc3b293c6f7d3b48cd",
       "role": "exact shared SYS/PER/TIM v42 semantic, authorization, transport, event, migration, ACL, and cutover decisions"
     },
     {
