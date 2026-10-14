@@ -1,0 +1,51 @@
+{
+  "schema": "dwp.hris.migration-lease-activation.v1",
+  "activationId": "HRIS-WAVE5-ACTIVATE-BASE-TFR-TIM-017-TIME-MAIN-V11-R1",
+  "activatedAt": "2026-10-14T17:07:32+09:00",
+  "activatedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "leaseId": "HRIS-WAVE5-LEASE-BASE-TFR-TIM-017-TIME-MAIN-V11-R1",
+  "leasePreparationRef": "migration-lease.v1.json",
+  "leasePreparationSha256": "c0a52216a55a6078bf54a51696b35566af85ff880d99f849992795f37d145194",
+  "moduleSession": "HRIS-TIM",
+  "sliceId": "BASE-TFR-TIM-017",
+  "state": "ACTIVE_AUTHORING_ONLY",
+  "stream": "TIME_MAIN",
+  "verifiedHighWater": "V10",
+  "reservedVersion": "V11",
+  "exactPath": "dwp-time-server/src/main/resources/db/migration/V11__tim_base_tfr_tim_017.sql",
+  "collisionCheck": {
+    "backendCommit": "831fceab0d609e72d3ec88db8bbf25058467b2b4",
+    "migrationDirectoryTreeManifestSha256": "0064433f8a9f1a0b51e052637aa1660b192e55b2f97a27b69cb44e63b5297a22",
+    "worktreePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave5-20261014/tim-017-r1/backend",
+    "observedMigrations": [
+      "V1",
+      "V2",
+      "V3",
+      "V4",
+      "V5",
+      "V6",
+      "V7",
+      "V8",
+      "V9",
+      "V10"
+    ],
+    "exactV11PathAbsent": true,
+    "result": "PASS"
+  },
+  "authority": {
+    "migrationCreationAuthorized": true,
+    "exactPathOnly": true,
+    "cleanAndUpgradeTestExecutionAuthorized": true,
+    "existingMigrationEditAuthorized": false,
+    "secondTimeMigrationAuthorized": false,
+    "dwpDevIntegrationAuthorized": false,
+    "customerDatabaseExecutionAuthorized": false,
+    "productionExecutionAuthorized": false
+  },
+  "invalidationConditions": [
+    "another V11 migration appears in an integration candidate",
+    "TIME_MAIN high-water advances beyond V10 before result acceptance",
+    "the exact path, worktree branch, backend base commit or migration-directory manifest changes",
+    "V10 bytes change or the module edits an existing Time migration"
+  ]
+}

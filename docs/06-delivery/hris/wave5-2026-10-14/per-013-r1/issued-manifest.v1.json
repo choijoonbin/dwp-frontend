@@ -1,0 +1,68 @@
+{
+  "schema": "dwp.hris.module-start-authority-issued-manifest.v1",
+  "manifestId": "HRIS-WAVE5-BASE-TFR-PER-013-START-AUTHORITY-ISSUED-R1",
+  "issuedAt": "2026-10-14T17:07:32+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-PER",
+  "sliceId": "BASE-TFR-PER-013",
+  "state": "START_TOKEN_ISSUED_IMPLEMENTATION_NOT_YET_STARTED",
+  "preparationManifest": {
+    "path": "start-token-preparation.v1.json",
+    "sha256": "27ce9a5b322c19cf41d8b4ec9305c10557109c53f620f8b492ec2b94213f14a3",
+    "state": "HISTORICAL_PRE_ISSUE_PREPARATION"
+  },
+  "sealedArtifacts": [
+    {
+      "path": "../per-tim-control-r1/control-bridge-integration-receipt.v1.json",
+      "sha256": "ca6c60d21701eb8ece24263c58aacd768e16066e97ecf24a3147851d8e04ec1d"
+    },
+    {
+      "path": "../per-tim-control-r1/transport-openapi-correction-receipt.v1.json",
+      "sha256": "9f0aa71cc24beaaed626ecbd1d726f3da4ee77cac3eb0741de74b89a4cff989f"
+    },
+    {
+      "path": "work-packet.v1.json",
+      "sha256": "e5d1f30f245708b5c76fc494818b8989edbf9949b2faf2df65af9ebc77b1493f"
+    },
+    {
+      "path": "migration-lease.v1.json",
+      "sha256": "32322cc780f3de25a88eb568a2f5b6c389ad21f5ed4ee2f097c80f9d42c11c21"
+    },
+    {
+      "path": "migration-lease-activation.v1.json",
+      "sha256": "bd30f16f39c68585a87e97e767d5c49e3bedaf1bc785e0bc917670f8e5667674"
+    },
+    {
+      "path": "start-token-preparation.v1.json",
+      "sha256": "27ce9a5b322c19cf41d8b4ec9305c10557109c53f620f8b492ec2b94213f14a3"
+    },
+    {
+      "path": "start-token-issued.v1.json",
+      "sha256": "efd069735ce01690a19d448aaa87c6e573df5ccf4439a2be18158d1c912230cf"
+    }
+  ],
+  "resultPins": {
+    "backend": "dwp-backend@831fceab0d609e72d3ec88db8bbf25058467b2b4",
+    "frontend": "dwp-frontend@c6cfd882a7957359cc41bfbe3542094d59a6cf43",
+    "authorization": "product-surfaces-v1.bundle-v42@f73f9a64816ac8f5567a2a7c292821f4a40e6d675915ebc3c3ac8aad7d1fd983",
+    "transport": "people-review@d9b2d974df45983aea1919e75e38ee063c08a9a835716743bc493a8b02b39bc0",
+    "migrationLease": "PEOPLE_PERFORMANCE:V18:dwp-people-server/src/main/resources/db/performance-migration/V18__per_base_tfr_per_013.sql"
+  },
+  "closedStartGates": [
+    "V42_PER_CONTROL_AND_PERFORMANCE_REVIEW_EVENT_INTEGRATED_DRAFT_OFF",
+    "CORRECTED_TYPED_REVIEW_TRANSPORT_INTEGRATED_AND_PUSHED",
+    "V18_COLLISION_CHECK_PASSED_AND_LEASE_ACTIVATED",
+    "DEDICATED_PER_BACKEND_AND_FRONTEND_BRANCHES_PUSHED_CLEAN_ZERO_ZERO",
+    "WORK_PACKET_TOUCH_BOUNDARY_AND_EIGHT_ACCEPTANCE_CRITERIA_SEALED"
+  ],
+  "authority": {
+    "moduleImplementationAuthorized": true,
+    "moduleBranchCommitAndPushAuthorized": true,
+    "mergeToDwpDevAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "customerDataAuthorized": false,
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "HRIS_PER_IMPLEMENTS_BASE_TFR_PER_013_IN_THE_ISSUED_WORKTREES_AND_RETURNS_MODULE_BRANCH_COMMITS_AND_EIGHT_ACCEPTANCE_RESULTS"
+}

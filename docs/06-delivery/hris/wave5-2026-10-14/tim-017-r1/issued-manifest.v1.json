@@ -1,0 +1,68 @@
+{
+  "schema": "dwp.hris.module-start-authority-issued-manifest.v1",
+  "manifestId": "HRIS-WAVE5-BASE-TFR-TIM-017-START-AUTHORITY-ISSUED-R1",
+  "issuedAt": "2026-10-14T17:07:32+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-TIM",
+  "sliceId": "BASE-TFR-TIM-017",
+  "state": "START_TOKEN_ISSUED_IMPLEMENTATION_NOT_YET_STARTED",
+  "preparationManifest": {
+    "path": "start-token-preparation.v1.json",
+    "sha256": "66418c1425561fd89ebe553dce38878b210b334cca211a6d50762b33947d6cb7",
+    "state": "HISTORICAL_PRE_ISSUE_PREPARATION"
+  },
+  "sealedArtifacts": [
+    {
+      "path": "../per-tim-control-r1/control-bridge-integration-receipt.v1.json",
+      "sha256": "ca6c60d21701eb8ece24263c58aacd768e16066e97ecf24a3147851d8e04ec1d"
+    },
+    {
+      "path": "../per-tim-control-r1/transport-openapi-correction-receipt.v1.json",
+      "sha256": "9f0aa71cc24beaaed626ecbd1d726f3da4ee77cac3eb0741de74b89a4cff989f"
+    },
+    {
+      "path": "work-packet.v1.json",
+      "sha256": "33c8d26f996eb0ac3d1bb73662303cd4aa75435085a11c18e858cafd43ce3a8d"
+    },
+    {
+      "path": "migration-lease.v1.json",
+      "sha256": "c0a52216a55a6078bf54a51696b35566af85ff880d99f849992795f37d145194"
+    },
+    {
+      "path": "migration-lease-activation.v1.json",
+      "sha256": "00681979e9aca2e7c5839a75f6d77ce36254144e5a15a0db04dffe0c88c9f5ff"
+    },
+    {
+      "path": "start-token-preparation.v1.json",
+      "sha256": "66418c1425561fd89ebe553dce38878b210b334cca211a6d50762b33947d6cb7"
+    },
+    {
+      "path": "start-token-issued.v1.json",
+      "sha256": "71322b4bd47c8cd4a85b8fe74fb0259cdc84b40db8907d74e2d5bc2bf3764c53"
+    }
+  ],
+  "resultPins": {
+    "backend": "dwp-backend@831fceab0d609e72d3ec88db8bbf25058467b2b4",
+    "frontend": "dwp-frontend@c6cfd882a7957359cc41bfbe3542094d59a6cf43",
+    "authorization": "product-surfaces-v1.bundle-v42@f73f9a64816ac8f5567a2a7c292821f4a40e6d675915ebc3c3ac8aad7d1fd983",
+    "transport": "time-timecard@96f3a6b0d7c6e7f228442f956daab0cfa44ce78dd65c8b477192ec77d0145db4",
+    "migrationLease": "TIME_MAIN:V11:dwp-time-server/src/main/resources/db/migration/V11__tim_base_tfr_tim_017.sql"
+  },
+  "closedStartGates": [
+    "V42_TIM_CONTROL_AND_TIMECARD_DECISION_EVENT_INTEGRATED_DRAFT_OFF",
+    "CORRECTED_EIGHT_STATE_TIMECARD_TRANSPORT_INTEGRATED_AND_PUSHED",
+    "V11_COLLISION_CHECK_PASSED_AND_LEASE_ACTIVATED",
+    "DEDICATED_TIM_BACKEND_AND_FRONTEND_BRANCHES_PUSHED_CLEAN_ZERO_ZERO",
+    "WORK_PACKET_TOUCH_BOUNDARY_NO_DUAL_WRITE_AND_ELEVEN_ACCEPTANCE_CRITERIA_SEALED"
+  ],
+  "authority": {
+    "moduleImplementationAuthorized": true,
+    "moduleBranchCommitAndPushAuthorized": true,
+    "mergeToDwpDevAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "customerDataAuthorized": false,
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "HRIS_TIM_IMPLEMENTS_BASE_TFR_TIM_017_IN_THE_ISSUED_WORKTREES_AND_RETURNS_MODULE_BRANCH_COMMITS_AND_ELEVEN_ACCEPTANCE_RESULTS"
+}

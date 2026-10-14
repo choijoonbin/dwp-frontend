@@ -1,0 +1,160 @@
+{
+  "schema": "dwp.hris.module-start-token.v1",
+  "tokenId": "HRIS-WAVE5-START-BASE-TFR-PER-013-R1",
+  "issuedAt": "2026-10-14T17:07:32+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-PER",
+  "sliceId": "BASE-TFR-PER-013",
+  "sourceRef": "TFR-PER-013",
+  "capability": "PER-REVIEW-001",
+  "state": "ISSUED_IMPLEMENTATION_ONLY",
+  "permittedAction": "IMPLEMENT_ONLY_BASE_TFR_PER_013_WITHIN_THE_SEALED_TOUCH_MANIFEST_AND_ACTIVE_V18_LEASE",
+  "preparationEvidence": {
+    "workPacket": {
+      "path": "work-packet.v1.json",
+      "sha256": "e5d1f30f245708b5c76fc494818b8989edbf9949b2faf2df65af9ebc77b1493f"
+    },
+    "migrationLease": {
+      "path": "migration-lease.v1.json",
+      "sha256": "32322cc780f3de25a88eb568a2f5b6c389ad21f5ed4ee2f097c80f9d42c11c21"
+    },
+    "migrationLeaseActivation": {
+      "path": "migration-lease-activation.v1.json",
+      "sha256": "bd30f16f39c68585a87e97e767d5c49e3bedaf1bc785e0bc917670f8e5667674",
+      "state": "ACTIVE_AUTHORING_ONLY"
+    },
+    "startPreparation": {
+      "path": "start-token-preparation.v1.json",
+      "sha256": "27ce9a5b322c19cf41d8b4ec9305c10557109c53f620f8b492ec2b94213f14a3"
+    },
+    "controlBridgeIntegration": {
+      "path": "../per-tim-control-r1/control-bridge-integration-receipt.v1.json",
+      "sha256": "ca6c60d21701eb8ece24263c58aacd768e16066e97ecf24a3147851d8e04ec1d"
+    },
+    "transportOpenApiCorrection": {
+      "path": "../per-tim-control-r1/transport-openapi-correction-receipt.v1.json",
+      "sha256": "9f0aa71cc24beaaed626ecbd1d726f3da4ee77cac3eb0741de74b89a4cff989f"
+    }
+  },
+  "basePins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "831fceab0d609e72d3ec88db8bbf25058467b2b4",
+      "tree": "e0f6bbe07a1fcc67efa7812752e976686dc3675c",
+      "upstream": "origin/dwp-dev",
+      "upstreamMatchedAtMaterialization": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "c6cfd882a7957359cc41bfbe3542094d59a6cf43",
+      "tree": "3e1e725ea31b4f0ebaf03e8702fd9547c879d4dc",
+      "upstream": "origin/dwp-dev",
+      "upstreamMatchedAtMaterialization": true
+    }
+  },
+  "commonControl": {
+    "authorizationVersion": 42,
+    "authorizationRegistryChecksum": "f73f9a64816ac8f5567a2a7c292821f4a40e6d675915ebc3c3ac8aad7d1fd983",
+    "authMigrationVersion": "V251",
+    "operationPeps": [
+      "PEP-PER-012",
+      "PEP-PER-013",
+      "PEP-PER-014",
+      "IAQ-022"
+    ],
+    "state": "INTEGRATED_DRAFT_DEFAULT_OFF",
+    "moduleRule": "Consume the generated People v42 PEP and corrected transport contracts; do not edit Authorization, OpenAPI, AsyncAPI, Gateway or generated control artifacts."
+  },
+  "transportPins": {
+    "peopleOpenApiSha256": "4f8b31b2b0e3d2227bf6c02f9bf18092121323292160408601cabbd70c579ce8",
+    "gatewayOpenApiSha256": "50a57ad5aa93178f47d724ca3dfa08a64985de93a099071db66220dfe686c2a2",
+    "peopleReviewSchemaGraphSha256": "d9b2d974df45983aea1919e75e38ee063c08a9a835716743bc493a8b02b39bc0",
+    "asyncApiSha256": "10109906ce46afa412e55536b3aedfee536be66c019196c3a54889a91038c73d"
+  },
+  "migrationLease": {
+    "activationRef": "migration-lease-activation.v1.json",
+    "stream": "PEOPLE_PERFORMANCE",
+    "version": "V18",
+    "path": "dwp-people-server/src/main/resources/db/performance-migration/V18__per_base_tfr_per_013.sql",
+    "state": "ACTIVE_AUTHORING_ONLY"
+  },
+  "worktrees": [
+    {
+      "repository": "dwp-backend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave5-20261014/per-013-r1/backend",
+      "branch": "codex/hris-wave5-per-013-backend-20261014-r1",
+      "head": "831fceab0d609e72d3ec88db8bbf25058467b2b4",
+      "tree": "e0f6bbe07a1fcc67efa7812752e976686dc3675c",
+      "upstream": "origin/codex/hris-wave5-per-013-backend-20261014-r1",
+      "aheadBehind": "0/0",
+      "porcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "state": "MATERIALIZED_PUSHED_CLEAN"
+    },
+    {
+      "repository": "dwp-frontend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave5-20261014/per-013-r1/frontend",
+      "branch": "codex/hris-wave5-per-013-frontend-20261014-r1",
+      "head": "c6cfd882a7957359cc41bfbe3542094d59a6cf43",
+      "tree": "3e1e725ea31b4f0ebaf03e8702fd9547c879d4dc",
+      "upstream": "origin/codex/hris-wave5-per-013-frontend-20261014-r1",
+      "aheadBehind": "0/0",
+      "porcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "state": "MATERIALIZED_PUSHED_CLEAN"
+    }
+  ],
+  "touchBoundary": {
+    "source": "work-packet.v1.json#/touchManifest",
+    "outsideBoundaryAction": "STOP_AND_RAISE_CONTROL_CHANGE_REQUEST",
+    "controlOwnedPathsRemainForbidden": true,
+    "protectedPredecessorPathsRemainReadOnly": true
+  },
+  "acceptanceCriteria": [
+    "PER-CONTRACT-REVIEW",
+    "PER-GOLDEN-REVIEW-001",
+    "AUTHZ-NO-REVIEW-OUTSIDE-ASSIGNMENT",
+    "PER-IAQ-022-SEPARATION",
+    "PER-REVIEW-IDEMPOTENCY-CAS",
+    "PER-REVIEW-EVENT-EXACTLY-ONCE",
+    "PER-V18-CLEAN-UPGRADE",
+    "PER-FE-REVIEW-LOADING-EMPTY-DENIED-PARTIAL-RECOVERY-A11Y"
+  ],
+  "verification": {
+    "source": "work-packet.v1.json#/verificationPlan",
+    "policy": "CHANGED_CLUSTER_FIRST_THEN_SLICE_CONTRACT_AND_ONE_MODULE_BATCH; DO_NOT_REPEAT_FULL_REPOSITORY_SUITES_PER_FIX",
+    "databaseRule": "Clean V18 and V17-to-V18 upgrade evidence is mandatory; unavailable infrastructure must be reported as BLOCKED, never PASS."
+  },
+  "requiredResult": [
+    "backend and frontend module branch commits and upstream push evidence",
+    "all eight acceptance results",
+    "V18 clean and V17-to-V18 upgrade evidence",
+    "tenant/assignment isolation, typed transport, idempotency, CAS and exactly-once event evidence",
+    "frontend loading/empty/denied/partial/recovery/accessibility evidence",
+    "changed-path manifest proving control-only and protected paths were not modified"
+  ],
+  "authority": {
+    "moduleImplementationAuthorized": true,
+    "migrationAuthoringAuthorized": true,
+    "moduleBranchCommitAuthorized": true,
+    "moduleBranchPushAuthorized": true,
+    "mergeToDwpDevAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "policyActivationAuthorized": false,
+    "customerDataAuthorized": false,
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "expiry": {
+    "expiresAt": null,
+    "policy": "VALID_UNTIL_AN_INVALIDATION_CONDITION_OCCURS_OR_CONTROL_EXPLICITLY_REVOKES_THE_TOKEN"
+  },
+  "invalidationConditions": [
+    "either worktree base, branch, tree, upstream or pre-authoring clean state changes",
+    "V18 collides or PEOPLE_PERFORMANCE high-water changes",
+    "v42 authorization checksum, PER routes, corrected transport or event bytes drift",
+    "the module edits a control-only, protected, generated, recovery or unrelated path",
+    "the feature default changes from OFF",
+    "customer data, external connector, policy activation or production activation is attempted"
+  ]
+}

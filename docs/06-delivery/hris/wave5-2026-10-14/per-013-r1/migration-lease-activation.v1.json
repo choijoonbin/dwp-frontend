@@ -1,0 +1,46 @@
+{
+  "schema": "dwp.hris.migration-lease-activation.v1",
+  "activationId": "HRIS-WAVE5-ACTIVATE-BASE-TFR-PER-013-PEOPLE-PERFORMANCE-V18-R1",
+  "activatedAt": "2026-10-14T17:07:32+09:00",
+  "activatedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "leaseId": "HRIS-WAVE5-LEASE-BASE-TFR-PER-013-PEOPLE-PERFORMANCE-V18-R1",
+  "leasePreparationRef": "migration-lease.v1.json",
+  "leasePreparationSha256": "32322cc780f3de25a88eb568a2f5b6c389ad21f5ed4ee2f097c80f9d42c11c21",
+  "moduleSession": "HRIS-PER",
+  "sliceId": "BASE-TFR-PER-013",
+  "state": "ACTIVE_AUTHORING_ONLY",
+  "stream": "PEOPLE_PERFORMANCE",
+  "verifiedHighWater": "V17",
+  "reservedVersion": "V18",
+  "exactPath": "dwp-people-server/src/main/resources/db/performance-migration/V18__per_base_tfr_per_013.sql",
+  "collisionCheck": {
+    "backendCommit": "831fceab0d609e72d3ec88db8bbf25058467b2b4",
+    "migrationDirectoryTreeManifestSha256": "8248918fe94294b76aac1d2e798ab04eeeeaf06bc691c41e3fa48ea5d78cf838",
+    "worktreePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave5-20261014/per-013-r1/backend",
+    "observedMigrations": [
+      "V1",
+      "V2",
+      "V3",
+      "V16",
+      "V17"
+    ],
+    "exactV18PathAbsent": true,
+    "result": "PASS"
+  },
+  "authority": {
+    "migrationCreationAuthorized": true,
+    "exactPathOnly": true,
+    "cleanAndUpgradeTestExecutionAuthorized": true,
+    "existingMigrationEditAuthorized": false,
+    "secondPerformanceMigrationAuthorized": false,
+    "dwpDevIntegrationAuthorized": false,
+    "customerDatabaseExecutionAuthorized": false,
+    "productionExecutionAuthorized": false
+  },
+  "invalidationConditions": [
+    "another V18 migration appears in an integration candidate",
+    "PEOPLE_PERFORMANCE high-water advances beyond V17 before result acceptance",
+    "the exact path, worktree branch, backend base commit or migration-directory manifest changes",
+    "V17 bytes change or the module edits an existing Performance migration"
+  ]
+}

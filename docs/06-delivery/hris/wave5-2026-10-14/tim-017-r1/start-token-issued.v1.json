@@ -1,0 +1,167 @@
+{
+  "schema": "dwp.hris.module-start-token.v1",
+  "tokenId": "HRIS-WAVE5-START-BASE-TFR-TIM-017-R1",
+  "issuedAt": "2026-10-14T17:07:32+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-TIM",
+  "sliceId": "BASE-TFR-TIM-017",
+  "sourceRef": "TFR-TIM-017",
+  "capability": "TIM-TIMECARD",
+  "state": "ISSUED_IMPLEMENTATION_ONLY",
+  "permittedAction": "IMPLEMENT_ONLY_BASE_TFR_TIM_017_WITHIN_THE_SEALED_TOUCH_MANIFEST_AND_ACTIVE_V11_LEASE",
+  "preparationEvidence": {
+    "workPacket": {
+      "path": "work-packet.v1.json",
+      "sha256": "33c8d26f996eb0ac3d1bb73662303cd4aa75435085a11c18e858cafd43ce3a8d"
+    },
+    "migrationLease": {
+      "path": "migration-lease.v1.json",
+      "sha256": "c0a52216a55a6078bf54a51696b35566af85ff880d99f849992795f37d145194"
+    },
+    "migrationLeaseActivation": {
+      "path": "migration-lease-activation.v1.json",
+      "sha256": "00681979e9aca2e7c5839a75f6d77ce36254144e5a15a0db04dffe0c88c9f5ff",
+      "state": "ACTIVE_AUTHORING_ONLY"
+    },
+    "startPreparation": {
+      "path": "start-token-preparation.v1.json",
+      "sha256": "66418c1425561fd89ebe553dce38878b210b334cca211a6d50762b33947d6cb7"
+    },
+    "controlBridgeIntegration": {
+      "path": "../per-tim-control-r1/control-bridge-integration-receipt.v1.json",
+      "sha256": "ca6c60d21701eb8ece24263c58aacd768e16066e97ecf24a3147851d8e04ec1d"
+    },
+    "transportOpenApiCorrection": {
+      "path": "../per-tim-control-r1/transport-openapi-correction-receipt.v1.json",
+      "sha256": "9f0aa71cc24beaaed626ecbd1d726f3da4ee77cac3eb0741de74b89a4cff989f"
+    }
+  },
+  "basePins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "831fceab0d609e72d3ec88db8bbf25058467b2b4",
+      "tree": "e0f6bbe07a1fcc67efa7812752e976686dc3675c",
+      "upstream": "origin/dwp-dev",
+      "upstreamMatchedAtMaterialization": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "c6cfd882a7957359cc41bfbe3542094d59a6cf43",
+      "tree": "3e1e725ea31b4f0ebaf03e8702fd9547c879d4dc",
+      "upstream": "origin/dwp-dev",
+      "upstreamMatchedAtMaterialization": true
+    }
+  },
+  "commonControl": {
+    "authorizationVersion": 42,
+    "authorizationRegistryChecksum": "f73f9a64816ac8f5567a2a7c292821f4a40e6d675915ebc3c3ac8aad7d1fd983",
+    "authMigrationVersion": "V251",
+    "operationPeps": [
+      "PEP-TIM-011",
+      "PEP-TIM-012",
+      "PEP-TIM-013",
+      "PEP-TIM-014",
+      "PEP-TIM-028"
+    ],
+    "state": "INTEGRATED_DRAFT_DEFAULT_OFF",
+    "moduleRule": "Consume the generated Time v42 PEP and corrected transport contracts; do not edit Authorization, OpenAPI, AsyncAPI, Gateway or generated control artifacts."
+  },
+  "transportPins": {
+    "timeOpenApiSha256": "6702161141add3acde02896bb6844e5e40c6c0dc4b93eab859e77e9446f0e5",
+    "gatewayOpenApiSha256": "50a57ad5aa93178f47d724ca3dfa08a64985de93a099071db66220dfe686c2a2",
+    "timecardSchemaGraphSha256": "96f3a6b0d7c6e7f228442f956daab0cfa44ce78dd65c8b477192ec77d0145db4",
+    "asyncApiSha256": "10109906ce46afa412e55536b3aedfee536be66c019196c3a54889a91038c73d"
+  },
+  "migrationLease": {
+    "activationRef": "migration-lease-activation.v1.json",
+    "stream": "TIME_MAIN",
+    "version": "V11",
+    "path": "dwp-time-server/src/main/resources/db/migration/V11__tim_base_tfr_tim_017.sql",
+    "state": "ACTIVE_AUTHORING_ONLY"
+  },
+  "worktrees": [
+    {
+      "repository": "dwp-backend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave5-20261014/tim-017-r1/backend",
+      "branch": "codex/hris-wave5-tim-017-backend-20261014-r1",
+      "head": "831fceab0d609e72d3ec88db8bbf25058467b2b4",
+      "tree": "e0f6bbe07a1fcc67efa7812752e976686dc3675c",
+      "upstream": "origin/codex/hris-wave5-tim-017-backend-20261014-r1",
+      "aheadBehind": "0/0",
+      "porcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "state": "MATERIALIZED_PUSHED_CLEAN"
+    },
+    {
+      "repository": "dwp-frontend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave5-20261014/tim-017-r1/frontend",
+      "branch": "codex/hris-wave5-tim-017-frontend-20261014-r1",
+      "head": "c6cfd882a7957359cc41bfbe3542094d59a6cf43",
+      "tree": "3e1e725ea31b4f0ebaf03e8702fd9547c879d4dc",
+      "upstream": "origin/codex/hris-wave5-tim-017-frontend-20261014-r1",
+      "aheadBehind": "0/0",
+      "porcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "state": "MATERIALIZED_PUSHED_CLEAN"
+    }
+  ],
+  "touchBoundary": {
+    "source": "work-packet.v1.json#/touchManifest",
+    "outsideBoundaryAction": "STOP_AND_RAISE_CONTROL_CHANGE_REQUEST",
+    "controlOwnedPathsRemainForbidden": true,
+    "protectedPredecessorPathsRemainReadOnly": true,
+    "legacyCallerCutoverForbidden": true,
+    "dualReadWriteForbidden": true
+  },
+  "acceptanceCriteria": [
+    "TIM-CONTRACT-TIMECARD",
+    "TIM-GOLDEN-TIMECARD-001",
+    "AUTHZ-TIMECARD-TENANT-POPULATION-FIELD-PURPOSE",
+    "TIM-TIMECARD-STATE-PRECEDENCE",
+    "TIM-NO-SELF-APPROVAL-NO-OWN-CHANGE",
+    "TIM-IDEMPOTENCY-CAS-RECEIPT",
+    "TIM-EVENT-V1-ONLY-EXACTLY-ONCE",
+    "TIM-V11-V10-LEDGER-FORWARD-ALTERATION",
+    "TIM-PUBLISHER-ACL-LEAST-PRIVILEGE",
+    "TIM-NO-DUAL-READ-WRITE",
+    "TIM-FE-TIMECARD-FAILURE-RECOVERY-A11Y"
+  ],
+  "verification": {
+    "source": "work-packet.v1.json#/verificationPlan",
+    "policy": "CHANGED_CLUSTER_FIRST_THEN_SLICE_CONTRACT_AND_ONE_MODULE_BATCH; DO_NOT_REPEAT_FULL_REPOSITORY_SUITES_PER_FIX",
+    "databaseRule": "Clean V11 and V10-to-V11 upgrade evidence is mandatory; unavailable infrastructure must be reported as BLOCKED, never PASS."
+  },
+  "requiredResult": [
+    "backend and frontend module branch commits and upstream push evidence",
+    "all eleven acceptance results",
+    "V11 clean and V10-to-V11 upgrade evidence",
+    "tenant isolation, maker-checker, idempotency, CAS, receipt and exactly-once event evidence",
+    "publisher ACL and no-dual-read/write evidence",
+    "frontend failure/recovery/accessibility evidence",
+    "changed-path manifest proving control-only and protected paths were not modified"
+  ],
+  "authority": {
+    "moduleImplementationAuthorized": true,
+    "migrationAuthoringAuthorized": true,
+    "moduleBranchCommitAuthorized": true,
+    "moduleBranchPushAuthorized": true,
+    "mergeToDwpDevAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "policyActivationAuthorized": false,
+    "customerDataAuthorized": false,
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "expiry": {
+    "expiresAt": null,
+    "policy": "VALID_UNTIL_AN_INVALIDATION_CONDITION_OCCURS_OR_CONTROL_EXPLICITLY_REVOKES_THE_TOKEN"
+  },
+  "invalidationConditions": [
+    "either worktree base, branch, tree, upstream or pre-authoring clean state changes",
+    "V11 collides or TIME_MAIN high-water changes",
+    "v42 authorization checksum, TIM routes, corrected transport or event bytes drift",
+    "the module edits a control-only, protected, generated, shared-utils, HCM, recovery or unrelated path",
+    "dual read/write is introduced or the feature default changes from OFF",
+    "customer data, external connector, policy activation or production activation is attempted"
+  ]
+}
