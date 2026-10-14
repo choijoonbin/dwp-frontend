@@ -2397,6 +2397,106 @@
     "loading": "감사 증적 불러오는 중",
     "loadError": "감사 증적을 불러오지 못했습니다.",
     "updated": "{{time}} 업데이트",
+    "hcmEvidence": {
+      "title": "HRIS 감사 증적",
+      "context": "HCM",
+      "description": "승인된 범위 안에서 개인정보를 최소화한 불변 HRIS 통제 증적을 검토합니다.",
+      "backToHris": "HRIS로 돌아가기",
+      "refresh": "증적 새로고침",
+      "loading": "HRIS 감사 증적 불러오는 중",
+      "retry": "다시 시도",
+      "listTitle": "불변 증적",
+      "listLabel": "HRIS 감사 증적",
+      "snapshotAt": "{{time}} 스냅샷",
+      "loadMore": "이전 증적 더 보기",
+      "loadingMore": "이전 증적 불러오는 중",
+      "detailLoading": "증적 상세 불러오는 중",
+      "detailTitle": "증적 상세",
+      "closeDetail": "닫기",
+      "unavailable": "기록 없음",
+      "aggregateValue": "{{type}} · v{{revision}}",
+      "filters": {
+        "label": "HRIS 증적 필터",
+        "window": "조회 기간",
+        "category": "범주",
+        "severity": "심각도",
+        "outcome": "결과",
+        "sourceService": "수집 서비스",
+        "query": "증적 검색",
+        "reset": "초기화",
+        "apply": "필터 적용"
+      },
+      "empty": {
+        "title": "이 스냅샷에 증적이 없습니다",
+        "description": "허용된 필터나 조회 기간을 변경하세요. 숨겨진 신원 및 대상 필드는 검색할 수 없습니다."
+      },
+      "selectEvidence": {
+        "title": "검토할 증적을 선택하세요",
+        "description": "상세 화면에는 승인된 HRIS 감사 프로젝션만 표시됩니다."
+      },
+      "errors": {
+        "invalidContext": "HRIS 감사 컨텍스트가 올바르지 않습니다. HRIS로 돌아가 통제된 감사 링크를 다시 여세요.",
+        "invalidFocus": "요청한 증적 참조가 올바르지 않아 상세 조회를 전송하지 않았습니다.",
+        "denied": "현재 통제된 HRIS 감사 범위에서는 이 증적에 접근할 수 없습니다.",
+        "notFound": "현재 테넌트 및 HRIS 감사 범위에서 이 증적을 확인할 수 없습니다.",
+        "unavailable": "HRIS 감사 증적을 일시적으로 불러올 수 없습니다. 범용 감사 데이터로 대체하지 않았습니다."
+      },
+      "category": {
+        "ALL": "전체 범주",
+        "ADMIN_CHANGE": "HRIS 변경",
+        "POLICY_DENIED": "정책 거부"
+      },
+      "severity": {
+        "ALL": "전체 심각도",
+        "INFO": "정보",
+        "HIGH": "높음",
+        "CRITICAL": "치명적"
+      },
+      "outcome": {
+        "ALL": "전체 결과",
+        "SUCCESS": "성공",
+        "DENIED": "거부",
+        "FAILED": "실패"
+      },
+      "classification": {
+        "INTERNAL": "내부",
+        "CONFIDENTIAL": "기밀",
+        "RESTRICTED": "제한"
+      },
+      "retention": {
+        "STANDARD": "표준 보존",
+        "EXTENDED": "연장 보존",
+        "LEGAL_HOLD": "법적 보존"
+      },
+      "actorType": {
+        "USER": "사용자",
+        "SERVICE": "서비스",
+        "SYSTEM": "시스템",
+        "AGENT": "에이전트"
+      },
+      "fields": {
+        "occurredAt": "발생 일시",
+        "eventId": "증적 ID",
+        "category": "범주",
+        "severity": "심각도",
+        "actorType": "수행자 유형",
+        "source": "출처",
+        "aggregate": "집계 유형 및 리비전",
+        "effectiveCapability": "적용 권한",
+        "purposeCode": "목적",
+        "authorizationDecisionRef": "권한 결정",
+        "scopeRevision": "범위 리비전",
+        "fieldPolicyRevision": "필드 정책 리비전",
+        "approvalReceiptId": "승인 영수증",
+        "reasonCode": "사유 코드",
+        "causationId": "원인 ID",
+        "correlationId": "상관관계 ID",
+        "beforeDigest": "변경 전 다이제스트",
+        "afterDigest": "변경 후 다이제스트",
+        "evidenceDigest": "증적 다이제스트",
+        "recordHash": "레코드 해시"
+      }
+    },
     "evidenceModes": {
       "label": "증적 탐색 방식",
       "correlations": {

@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Activity,
   AlertTriangle,
@@ -44,6 +44,12 @@ import {
   auditSourceServiceLabelKey,
 } from './audit-runtime-presentation';
 import { useSystemCodeOptions } from '../../components/use-system-code-options';
+import {
+  GENERIC_AUDIT_QUERY_KEY,
+  HcmAuditEvidenceOverview,
+  InvalidHcmAuditEvidenceContext,
+  resolveAuditOverviewProfile,
+} from './hcm-audit-evidence-overview';
 
 import type { AuditOverview as AuditOverviewData, AuditWindow } from '@dwp-frontend/shared-utils';
 
@@ -202,13 +208,13 @@ function DimensionBars({
   );
 }
 
-export function AuditOverview() {
+function GenericAuditOverview() {
   const { t } = useTranslation('admin');
   const navigate = useNavigate();
   const [window, setWindow] = useState<AuditWindow>('D7');
   const windows = useSystemCodeOptions('PLATFORM.AUDIT.WINDOW', WINDOW_FALLBACK);
   const query = useQuery({
-    queryKey: ['audit-control', 'overview', window],
+    queryKey: [...GENERIC_AUDIT_QUERY_KEY, 'overview', window],
     queryFn: () => getAuditOverview(window),
     refetchInterval: 60_000,
   });
@@ -584,4 +590,13 @@ export function AuditOverview() {
       </Box>
     </Box>
   );
+}
+
+export function AuditOverview() {
+  const [searchParams] = useSearchParams();
+  const location = useLocation();
+  const profile = resolveAuditOverviewProfile(searchParams, location.search);
+  if (profile === 'HCM') return <HcmAuditEvidenceOverview />;
+  if (profile === 'INVALID') return <InvalidHcmAuditEvidenceContext />;
+  return <GenericAuditOverview />;
 }
