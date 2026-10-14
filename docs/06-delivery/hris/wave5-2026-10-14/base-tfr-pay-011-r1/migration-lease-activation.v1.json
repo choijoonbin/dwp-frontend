@@ -1,0 +1,48 @@
+{
+  "schema": "dwp.hris.migration-lease-activation.v1",
+  "activationId": "HRIS-WAVE5-ACTIVATE-BASE-TFR-PAY-011-PAYROLL-V50-R1",
+  "activatedAt": "2026-10-14T13:57:12+09:00",
+  "activatedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "leaseId": "HRIS-WAVE5-LEASE-BASE-TFR-PAY-011-PAYROLL-V50-R1",
+  "leasePreparationRef": "migration-lease.v1.json",
+  "leasePreparationSha256": "e0771948c9e663085d2fd4cdbdb27738d734c76e2aaba00487c3e6b13556df36",
+  "moduleSession": "HRIS-PAY",
+  "sliceId": "BASE-TFR-PAY-011",
+  "state": "ACTIVE_AUTHORING_ONLY",
+  "stream": "PAYROLL_MAIN",
+  "verifiedHighWater": "V49",
+  "reservedVersion": "V50",
+  "exactPath": "dwp-payroll-server/src/main/resources/db/migration/V50__pay_base_tfr_pay_011_calculation.sql",
+  "collisionCheck": {
+    "backendCommit": "357bd2b9e1c8a4d233c285d96911b5077cb444cf",
+    "worktreePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave5-20261014/pay-011/backend",
+    "observedMigrations": [
+      "V1",
+      "V2",
+      "V3",
+      "V4",
+      "V5",
+      "V6",
+      "V49"
+    ],
+    "exactV50PathAbsent": true,
+    "result": "PASS"
+  },
+  "authority": {
+    "migrationCreationAuthorized": true,
+    "exactPathOnly": true,
+    "cleanAndUpgradeTestExecutionAuthorized": true,
+    "existingMigrationEditAuthorized": false,
+    "secondPayrollMigrationAuthorized": false,
+    "dwpDevIntegrationAuthorized": false,
+    "customerDatabaseExecutionAuthorized": false,
+    "productionExecutionAuthorized": false
+  },
+  "invalidationConditions": [
+    "another V50 migration appears in any integration candidate",
+    "Payroll high-water advances beyond V49 before module result acceptance",
+    "the exact path, worktree branch or backend base commit changes",
+    "V49 bytes or PAY-016 compensation-input contract bytes change",
+    "the module edits an existing Payroll migration"
+  ]
+}

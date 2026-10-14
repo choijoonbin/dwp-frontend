@@ -1,0 +1,149 @@
+{
+  "schema": "dwp.hris.module-start-token.v1",
+  "tokenId": "HRIS-WAVE5-START-BASE-TFR-PAY-011-R1",
+  "issuedAt": "2026-10-14T13:57:12+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-PAY",
+  "sliceId": "BASE-TFR-PAY-011",
+  "sourceRef": "TFR-PAY-011",
+  "capability": "PAY_CALCULATION",
+  "state": "ISSUED_IMPLEMENTATION_ONLY",
+  "permittedAction": "IMPLEMENT_BASE_TFR_PAY_011_ONLY_WITHIN_THE_SEALED_TOUCH_MANIFEST_AND_ACTIVE_V50_LEASE",
+  "preparationEvidence": {
+    "workPacket": {
+      "path": "work-packet.v1.json",
+      "sha256": "c1e45e0af270f8ff67f873898db64ab834d58fc32d4e9a2845456af743428efe"
+    },
+    "commonBridgeAllocation": {
+      "path": "common-bridge-allocation.v1.json",
+      "sha256": "f88227d355622e0c80b3f7d38fe8a69e7ba0eccf45a55b21af4f9d08c92f2a1a"
+    },
+    "commonBridgeResult": {
+      "path": "common-bridge-result.v1.json",
+      "sha256": "787a25bbe52218d8daf4a070f38ee5d13c7e94cb18361406f03edfbc9ff225fd"
+    },
+    "startPreparation": {
+      "path": "start-token-preparation.v1.json",
+      "sha256": "99d25fe2d8759716a7670f8dae955aedc4bde5e026129b66b3a1a7b44055100d"
+    }
+  },
+  "basePins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "357bd2b9e1c8a4d233c285d96911b5077cb444cf",
+      "tree": "c1a8192b603b1c4037bea8e22a1a8a176f116b43",
+      "upstream": "origin/dwp-dev",
+      "upstreamMatchedAtMaterialization": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "8df52380c32dea3ee45d4e3ae3f976269475cedf",
+      "tree": "4549f6f29735c0143b131bd5d53ceb382a13b0d9",
+      "upstream": "origin/dwp-dev",
+      "upstreamMatchedAtMaterialization": true
+    }
+  },
+  "commonControl": {
+    "authorizationVersion": 41,
+    "authorizationChecksum": "026157acf598ebabf156b40e3c084c40d52346ebfd2019e2476f30ecdd2b8d93",
+    "authMigrationVersion": "V250",
+    "operationPeps": [
+      "PEP-PAY-012",
+      "PEP-PAY-013",
+      "PEP-PAY-017",
+      "PEP-PAY-018",
+      "PEP-PAY-033"
+    ],
+    "state": "INTEGRATED_DRAFT_DEFAULT_OFF",
+    "moduleRule": "Consume the generated Payroll PEP projection; do not edit Authorization, OpenAPI, Gateway or generated control artifacts."
+  },
+  "migrationLease": {
+    "activationRef": "migration-lease-activation.v1.json",
+    "stream": "PAYROLL_MAIN",
+    "version": "V50",
+    "path": "dwp-payroll-server/src/main/resources/db/migration/V50__pay_base_tfr_pay_011_calculation.sql",
+    "state": "ACTIVE_AUTHORING_ONLY"
+  },
+  "worktrees": [
+    {
+      "repository": "dwp-backend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave5-20261014/pay-011/backend",
+      "branch": "codex/hris-wave5-pay-011-backend-20261014",
+      "head": "357bd2b9e1c8a4d233c285d96911b5077cb444cf",
+      "tree": "c1a8192b603b1c4037bea8e22a1a8a176f116b43",
+      "porcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "state": "MATERIALIZED_CLEAN"
+    },
+    {
+      "repository": "dwp-frontend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave5-20261014/pay-011/frontend",
+      "branch": "codex/hris-wave5-pay-011-frontend-20261014",
+      "head": "8df52380c32dea3ee45d4e3ae3f976269475cedf",
+      "tree": "4549f6f29735c0143b131bd5d53ceb382a13b0d9",
+      "porcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "state": "MATERIALIZED_CLEAN"
+    }
+  ],
+  "touchBoundary": {
+    "source": "work-packet.v1.json#/touchManifest",
+    "outsideBoundaryAction": "STOP_AND_RAISE_CONTROL_CHANGE_REQUEST",
+    "controlOwnedPathsRemainForbidden": true,
+    "protectedPredecessorPathsRemainReadOnly": true
+  },
+  "acceptanceCriteria": [
+    "PAY011-AC-01",
+    "PAY011-AC-02",
+    "PAY011-AC-03",
+    "PAY011-AC-04",
+    "PAY011-AC-05",
+    "PAY011-AC-06",
+    "PAY011-AC-07",
+    "PAY011-AC-08",
+    "PAY011-AC-09",
+    "PAY011-AC-10",
+    "PAY011-AC-11",
+    "PAY011-AC-12"
+  ],
+  "verification": {
+    "source": "work-packet.v1.json#/verificationPlan",
+    "policy": "CHANGED_CLUSTER_FIRST_THEN_SLICE_CONTRACT_AND_ONE_MODULE_BATCH; DO_NOT_REPEAT_FULL_REPOSITORY_SUITES_PER_FIX",
+    "databaseRule": "A real PostgreSQL clean and V49-to-V50 upgrade check is mandatory before result acceptance; unavailable infrastructure must be reported as BLOCKED, never PASS."
+  },
+  "requiredResult": [
+    "backend and frontend module branch commits",
+    "all 12 acceptance results",
+    "V50 clean and V49-to-V50 upgrade evidence",
+    "authorization, tenant isolation, step-up, SoD, idempotency, CAS and immutable snapshot evidence",
+    "worker crash, checkpoint and RESULT_UNKNOWN recovery evidence",
+    "responsive, keyboard, high-contrast, reduced-motion and 200-percent zoom evidence",
+    "changed-path manifest proving control-only and protected paths were not modified"
+  ],
+  "authority": {
+    "moduleImplementationAuthorized": true,
+    "migrationAuthoringAuthorized": true,
+    "moduleBranchCommitAuthorized": true,
+    "moduleBranchPushAuthorized": true,
+    "mergeToDwpDevAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "policyActivationAuthorized": false,
+    "customerDataAuthorized": false,
+    "externalConnectorAuthorized": false,
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "expiry": {
+    "expiresAt": null,
+    "policy": "VALID_UNTIL_AN_INVALIDATION_CONDITION_OCCURS_OR_CONTROL_EXPLICITLY_REVOKES_THE_TOKEN"
+  },
+  "invalidationConditions": [
+    "either worktree base, branch, tree or clean state changes before authoring begins",
+    "the V50 path collides or Payroll high-water changes",
+    "Authorization v41 checksum, the five PEP routes, trusted Gateway context or V250 changes",
+    "PAY-016 input or MOD-PER-COMPPLAN producer contract bytes drift",
+    "the module edits a control-only, protected, generated, recovery or unrelated path",
+    "the feature default changes from OFF",
+    "customer data, an external connector or production activation is attempted"
+  ]
+}

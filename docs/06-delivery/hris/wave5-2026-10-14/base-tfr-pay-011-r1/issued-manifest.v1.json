@@ -1,0 +1,67 @@
+{
+  "schema": "dwp.hris.module-start-authority-issued-manifest.v1",
+  "manifestId": "HRIS-WAVE5-BASE-TFR-PAY-011-START-AUTHORITY-ISSUED-R1",
+  "issuedAt": "2026-10-14T13:57:12+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-PAY",
+  "sliceId": "BASE-TFR-PAY-011",
+  "state": "START_TOKEN_ISSUED_IMPLEMENTATION_NOT_YET_STARTED",
+  "preparationManifest": {
+    "path": "manifest.v1.json",
+    "state": "HISTORICAL_PRE_BRIDGE_PREPARATION"
+  },
+  "sealedArtifacts": [
+    {
+      "path": "common-bridge-allocation.v1.json",
+      "sha256": "f88227d355622e0c80b3f7d38fe8a69e7ba0eccf45a55b21af4f9d08c92f2a1a"
+    },
+    {
+      "path": "common-bridge-result.v1.json",
+      "sha256": "787a25bbe52218d8daf4a070f38ee5d13c7e94cb18361406f03edfbc9ff225fd"
+    },
+    {
+      "path": "migration-lease.v1.json",
+      "sha256": "e0771948c9e663085d2fd4cdbdb27738d734c76e2aaba00487c3e6b13556df36"
+    },
+    {
+      "path": "migration-lease-activation.v1.json",
+      "sha256": "eb8ce23c5722a8b65564dfeb3b2b5d5ff23a62639227aa17e54a70467dfc03a2"
+    },
+    {
+      "path": "start-token-preparation.v1.json",
+      "sha256": "99d25fe2d8759716a7670f8dae955aedc4bde5e026129b66b3a1a7b44055100d"
+    },
+    {
+      "path": "start-token-issued.v1.json",
+      "sha256": "67331c5b98056fdcd081ca25af1a36acc47ff4bd5bc90c586ff0c559ab7636c1"
+    },
+    {
+      "path": "work-packet.v1.json",
+      "sha256": "c1e45e0af270f8ff67f873898db64ab834d58fc32d4e9a2845456af743428efe"
+    }
+  ],
+  "resultPins": {
+    "backend": "dwp-backend@357bd2b9e1c8a4d233c285d96911b5077cb444cf",
+    "frontend": "dwp-frontend@8df52380c32dea3ee45d4e3ae3f976269475cedf",
+    "authorization": "product-surfaces-v1.bundle-v41@026157acf598ebabf156b40e3c084c40d52346ebfd2019e2476f30ecdd2b8d93",
+    "migrationLease": "PAYROLL_MAIN:V50:dwp-payroll-server/src/main/resources/db/migration/V50__pay_base_tfr_pay_011_calculation.sql"
+  },
+  "closedStartGates": [
+    "PRODUCER_AND_PAY_016_RESULTS_PINNED",
+    "FIVE_OPERATION_COMMON_BRIDGE_INTEGRATED_AND_PUSHED",
+    "TRUSTED_GATEWAY_OWNER_CONTEXT_AND_STEP_UP_BOUNDARY_VERIFIED",
+    "V50_COLLISION_CHECK_PASSED_AND_LEASE_ACTIVATED",
+    "DEDICATED_BACKEND_AND_FRONTEND_WORKTREES_MATERIALIZED_CLEAN",
+    "WORK_PACKET_TOUCH_BOUNDARY_AND_TWELVE_ACCEPTANCE_CRITERIA_SEALED"
+  ],
+  "authority": {
+    "moduleImplementationAuthorized": true,
+    "moduleBranchCommitAndPushAuthorized": true,
+    "mergeToDwpDevAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "customerDataAuthorized": false,
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "HRIS_PAY_IMPLEMENTS_BASE_TFR_PAY_011_IN_THE_ISSUED_WORKTREES_AND_RETURNS_MODULE_BRANCH_COMMITS_AND_ACCEPTANCE_EVIDENCE"
+}
