@@ -140,6 +140,16 @@ const POSTED_AMOUNT = /^-?(?:0|[1-9][0-9]{0,14})(?:\.[0-9]{1,4})?$/u;
 const CURRENCY = /^[A-Z]{3}$/u;
 const RFC3339_INSTANT = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/u;
 
+export const PAYROLL_ACTION_COMMENT_MAX_CODE_POINTS = 1_000;
+
+export function payrollActionCommentCodePointCount(value: string) {
+  return Array.from(value).length;
+}
+
+export function normalizePayrollActionComment(value: string) {
+  return Array.from(value).slice(0, PAYROLL_ACTION_COMMENT_MAX_CODE_POINTS).join('');
+}
+
 function invalid(path: string): never {
   throw new Error(`Invalid PAY-011 transport source: ${path}`);
 }
@@ -152,7 +162,7 @@ function exact(value: unknown, path: string, keys: readonly string[]) {
 }
 
 function text(value: unknown, path: string, maximum: number, pattern?: RegExp, minimum = 1) {
-  const length = typeof value === 'string' ? Array.from(value).length : -1;
+  const length = typeof value === 'string' ? payrollActionCommentCodePointCount(value) : -1;
   if (
     typeof value !== 'string' ||
     length < minimum ||
@@ -300,7 +310,15 @@ export function validatePayrollActionCommand(value: PayrollActionCommand): Payro
       ? { approvalReceiptId: uuid(source.approvalReceiptId, 'command.approvalReceiptId') }
       : {}),
     ...(source.comment !== undefined
-      ? { comment: text(source.comment, 'command.comment', 1000, undefined, 0) }
+      ? {
+          comment: text(
+            source.comment,
+            'command.comment',
+            PAYROLL_ACTION_COMMENT_MAX_CODE_POINTS,
+            undefined,
+            0
+          ),
+        }
       : {}),
   });
   return result;

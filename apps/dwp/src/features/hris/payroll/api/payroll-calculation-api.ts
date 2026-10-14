@@ -41,6 +41,13 @@ export type PayrollCalculationCommandAuthority = Readonly<{
   expectedObjectVersion: number;
 }>;
 
+export class PayrollCalculationCommandOutcomeUnknownError extends Error {
+  constructor(cause: unknown) {
+    super('The Payroll owner returned an unverifiable command receipt.', { cause });
+    this.name = 'PayrollCalculationCommandOutcomeUnknownError';
+  }
+}
+
 export type PayrollCalculationDataSource = Readonly<{
   run: (runId: string, scope: PayrollCalculationReadScope) => Promise<PayrollCalculationRun>;
   calculate: (
@@ -140,10 +147,14 @@ async function mutate(
       csrfReplay: 'NEVER',
     }
   );
-  return selectPayrollCalculationReceipt(response.data.data, {
-    kind,
-    correlationId: authority.correlationId,
-  });
+  try {
+    return selectPayrollCalculationReceipt(response.data.data, {
+      kind,
+      correlationId: authority.correlationId,
+    });
+  } catch (error) {
+    throw new PayrollCalculationCommandOutcomeUnknownError(error);
+  }
 }
 
 function readConfig(scope: PayrollCalculationReadScope) {

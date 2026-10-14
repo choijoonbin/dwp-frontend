@@ -7,6 +7,11 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { useState } from 'react';
 
+import {
+  normalizePayrollActionComment,
+  PAYROLL_ACTION_COMMENT_MAX_CODE_POINTS,
+  payrollActionCommentCodePointCount,
+} from '../model/payroll-calculation-contract';
 import type {
   PayrollCalculationCommandKind,
   PayrollCalculationRun,
@@ -51,6 +56,7 @@ export function PayrollCalculationRunInspector({
 }: PayrollCalculationRunInspectorProps) {
   const [comment, setComment] = useState('');
   const [review, setReview] = useState<PayrollCalculationCommandKind | null>(null);
+  const commentCodePointCount = payrollActionCommentCodePointCount(comment);
   const reviewTitle =
     review === 'CALCULATE'
       ? copy.reviewCalculateTitle
@@ -115,10 +121,10 @@ export function PayrollCalculationRunInspector({
             <TextField
               label={copy.comment}
               value={comment}
-              onChange={(event) => setComment(event.target.value.slice(0, 1000))}
+              onChange={(event) => setComment(normalizePayrollActionComment(event.target.value))}
+              helperText={`${commentCodePointCount}/${PAYROLL_ACTION_COMMENT_MAX_CODE_POINTS}`}
               multiline
               minRows={2}
-              inputProps={{ maxLength: 1000 }}
               disabled={busy}
               fullWidth
             />

@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { HttpError, HttpTransportError } from '@dwp-frontend/shared-utils';
 
-import { payrollCalculationDataSource } from '../api/payroll-calculation-api';
+import {
+  PayrollCalculationCommandOutcomeUnknownError,
+  payrollCalculationDataSource,
+} from '../api/payroll-calculation-api';
 import {
   isPayrollReceiptPending,
   orderPayrollRunsExceptionFirst,
@@ -195,6 +198,7 @@ function denied(error: unknown) {
 
 function uncertain(error: unknown) {
   return (
+    error instanceof PayrollCalculationCommandOutcomeUnknownError ||
     error instanceof HttpTransportError ||
     (error instanceof HttpError &&
       (error.status === 408 || error.status === 429 || error.status >= 500))

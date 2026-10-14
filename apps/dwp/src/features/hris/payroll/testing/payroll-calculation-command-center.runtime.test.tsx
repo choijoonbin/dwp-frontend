@@ -1,10 +1,12 @@
 // @vitest-environment jsdom
+import { fireEvent } from '@testing-library/dom';
 import { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { flushSync } from 'react-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { HttpError, HttpTransportError } from '@dwp-frontend/shared-utils';
 
+import { PayrollCalculationCommandOutcomeUnknownError } from '../api/payroll-calculation-api';
 import { PayrollCalculationCommandCenterView } from '../pages/hris-payroll-calculation-command-center';
 import { usePayrollCalculationCommandCenter } from '../hooks/use-payroll-calculation-command-center';
 import {
@@ -469,6 +471,62 @@ describe('[SLICE:BASE-TFR-PAY-011] payroll calculation command center', () => {
       expectedVersion: observed[0]!.expectedVersion,
     });
     expect(observed[1]!.request).toBe(observed[0]!.request);
+  });
+
+  it('preserves exact command identity when the first dispatched receipt cannot be verified', async () => {
+    const observed: PayrollCalculationCommandBinding[] = [];
+    const calculate = vi
+      .fn()
+      .mockRejectedValueOnce(
+        new PayrollCalculationCommandOutcomeUnknownError(
+          new Error('Invalid PAY-011 transport source: receipt.binding')
+        )
+      )
+      .mockImplementation((_runId, _request, authority) =>
+        Promise.resolve(receipt('CALCULATE', authority.correlationId))
+      );
+    const dataSource = source({ calculate });
+    await renderRuntime(dataSource, owner(dataSource, observed));
+
+    await act(async () => button('Calculate run').click());
+    await act(async () => button('Confirm controlled action').click());
+    await settle();
+
+    expect(host.textContent).toContain('Command outcome needs reconciliation');
+    expect(button('Calculate run').disabled).toBe(true);
+    expect(button('Retry exact command').disabled).toBe(false);
+
+    await act(async () => button('Retry exact command').click());
+    await settle();
+    expect(observed).toHaveLength(2);
+    expect(observed[1]).toMatchObject({
+      runId: observed[0]!.runId,
+      idempotencyKey: observed[0]!.idempotencyKey,
+      correlationId: observed[0]!.correlationId,
+      expectedVersion: observed[0]!.expectedVersion,
+    });
+    expect(observed[1]!.request).toBe(observed[0]!.request);
+  });
+
+  it('truncates operator comments at 1000 Unicode code points without splitting astral text', async () => {
+    const observed: PayrollCalculationCommandBinding[] = [];
+    const dataSource = source();
+    await renderRuntime(dataSource, owner(dataSource, observed));
+    const comment = host.querySelector('textarea');
+    if (!(comment instanceof HTMLTextAreaElement)) throw new Error('Missing comment input.');
+    const boundary = '💰'.repeat(1_000);
+
+    await act(async () => fireEvent.change(comment, { target: { value: `${boundary}💰` } }));
+
+    expect(comment.value).toBe(boundary);
+    expect(Array.from(comment.value)).toHaveLength(1_000);
+    expect(comment.value).toHaveLength(2_000);
+    expect(comment.hasAttribute('maxlength')).toBe(false);
+
+    await act(async () => button('Calculate run').click());
+    await act(async () => button('Confirm controlled action').click());
+    await settle();
+    expect(observed[0]!.request.comment).toBe(boundary);
   });
 
   it('requires exact high-risk owner bindings for approval and finalization', async () => {

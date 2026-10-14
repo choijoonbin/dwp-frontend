@@ -1,8 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  normalizePayrollActionComment,
+  PAYROLL_ACTION_COMMENT_MAX_CODE_POINTS,
   PAYROLL_CALCULATION_OPERATION_BINDINGS,
   orderPayrollRunsExceptionFirst,
+  payrollActionCommentCodePointCount,
   payrollRunCommandAvailability,
   selectPayrollCalculationReceipt,
   selectPayrollCalculationRun,
@@ -135,6 +138,14 @@ describe('PAY-011 closed transport model', () => {
     expect(() => validatePayrollActionCommand({ reasonCode: '💰'.repeat(65) })).toThrow(
       /command\.reasonCode/
     );
+
+    const comment = '💰'.repeat(PAYROLL_ACTION_COMMENT_MAX_CODE_POINTS);
+    expect(payrollActionCommentCodePointCount(comment)).toBe(1_000);
+    expect(normalizePayrollActionComment(`${comment}💰`)).toBe(comment);
+    expect(validatePayrollActionCommand({ reasonCode: 'COMMENT', comment }).comment).toBe(comment);
+    expect(() =>
+      validatePayrollActionCommand({ reasonCode: 'COMMENT', comment: `${comment}💰` })
+    ).toThrow(/command\.comment/);
   });
 
   it('orders exceptions first and exposes only valid state transitions', () => {

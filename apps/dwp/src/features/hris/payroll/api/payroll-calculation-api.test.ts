@@ -9,6 +9,7 @@ vi.mock('@dwp-frontend/shared-utils/axios-instance', () => ({
 }));
 
 import {
+  PayrollCalculationCommandOutcomeUnknownError,
   approvePayrollRun,
   calculatePayrollRun,
   finalizePayrollRun,
@@ -185,7 +186,16 @@ describe('PAY-011 owner API', () => {
     transport.post.mockResolvedValueOnce({ data: { data: receiptWire('approvals') } });
     await expect(
       calculatePayrollRun(ids.run, { reasonCode: 'PAYROLL_CALCULATION' }, authority(false))
-    ).rejects.toThrow(/receipt\.expectation/);
+    ).rejects.toBeInstanceOf(PayrollCalculationCommandOutcomeUnknownError);
+  });
+
+  it('marks an unverifiable first command response unknown only after transport dispatch', async () => {
+    transport.post.mockResolvedValueOnce({ data: { data: receiptWire('approvals') } });
+
+    await expect(
+      calculatePayrollRun(ids.run, { reasonCode: 'PAYROLL_CALCULATION' }, authority(false))
+    ).rejects.toBeInstanceOf(PayrollCalculationCommandOutcomeUnknownError);
+    expect(transport.post).toHaveBeenCalledTimes(1);
   });
 
   it('rejects mismatched command authority before transport', async () => {

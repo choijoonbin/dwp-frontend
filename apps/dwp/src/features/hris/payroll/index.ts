@@ -169,6 +169,7 @@ export {
   PAYROLL_COMMAND_RECEIPT_PATH,
   PAYROLL_FINALIZE_PATH,
   PAYROLL_RUN_PATH,
+  PayrollCalculationCommandOutcomeUnknownError,
   approvePayrollRun,
   calculatePayrollRun,
   finalizePayrollRun,
