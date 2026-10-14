@@ -1,0 +1,250 @@
+{
+  "schema": "dwp.hris.wave3-mod-per-compplan-central-integration-receipt.v2",
+  "receiptId": "HRIS-WAVE3-MOD-PER-COMPPLAN-CENTRAL-INTEGRATION-20261014-R2",
+  "issuedAt": "2026-10-14T12:40:20+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "status": "PASS_PRODUCER_CENTRAL_INTEGRATION_PAY_CONSUMER_WITHHELD",
+  "decision": "CLOSE_COMPPLAN_PRODUCER_AND_CENTRAL_CONTROL_PLANE_KEEP_CROSS_MODULE_CONSUMER_ACCEPTANCE_OPEN",
+  "supersedes": "HRIS-WAVE3-MOD-PER-COMPPLAN-CENTRAL-INTEGRATION-20261014-R1",
+  "scope": {
+    "module": "PER",
+    "moduleId": "MOD-PER-COMPPLAN",
+    "closed": [
+      "AUTHORITATIVE_BUDGET_PROJECTION",
+      "AUTH_PEP_AND_FIELD_MASKING",
+      "GATEWAY_AND_OPENAPI_EXACTNESS",
+      "DURABLE_EVENT_HANDOFF_QUARANTINE_AND_AUDITED_REPLAY",
+      "HRM_WORKFORCE_COMPENSATION_PROJECTION",
+      "SHELL_USER_EXPERIENCE_AND_VISUAL_ACCEPTANCE",
+      "ROLLING_DEPLOYMENT_CAPABILITY_GATE"
+    ],
+    "withheld": [
+      "PAY_CONSUMER_AND_BROKER_END_TO_END_ACCEPTANCE",
+      "SVC_PER_OWNER_REFETCH_PRODUCTION_ACTIVATION"
+    ]
+  },
+  "sourcePins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "ac89415028e3cf91a93345af0f1ecc2bd1e0322e",
+      "upstream": "origin/dwp-dev",
+      "upstreamMatchedAtVerification": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "f2dba698002ebec08ce67a2bb8b3094ccb8fe769",
+      "upstream": "origin/dwp-dev",
+      "upstreamMatchedAtVerification": true
+    }
+  },
+  "integrationResult": {
+    "budgetProjection": {
+      "authority": "SERVER_REPOSITORY_AGGREGATE",
+      "isolation": "REPEATABLE_READ_WATERMARK",
+      "browserRecalculation": false,
+      "maskedDataTreatment": "FAIL_CLOSED",
+      "oldServerTreatment": "OMIT_AGGREGATES_AND_SHOW_EXPLICIT_COMPATIBILITY_WARNING"
+    },
+    "rollingCompatibility": {
+      "requestHeader": "X-HRIS-Compplan-Projection-Version",
+      "supportedVersion": "5",
+      "appliesTo": "CYCLE_DETAIL_ONLY",
+      "oldFrontendNewBackend": "SAFE_NEW_FIELD_OMITTED_WITHOUT_CAPABILITY",
+      "newFrontendOldBackend": "SAFE_MISSING_FIELD_HANDLED_WITHOUT_BROWSER_RECOMPUTE",
+      "unsupportedVersion": "FAIL_CLOSED"
+    },
+    "eventHandoff": {
+      "publication": "DURABLE_SHARED_OUTBOX",
+      "ownedDescriptors": 8,
+      "unsupportedOwnedDescriptor": "CLAIM_AND_QUARANTINE",
+      "predecessorSafety": "INVALID_PREDECESSOR_QUARANTINED_AND_SUCCESSOR_FENCED",
+      "quarantineAudit": "STATE_AND_DURABLE_AUDIT_ATOMIC",
+      "replayAuthorization": "TENANT_ADMIN_OR_PLATFORM_ADMIN_AND_EXACT_COMPENSATION_UPDATE_GRANT",
+      "replayDomainFence": "EXACT_COMPENSATION_EVENT_AND_AGGREGATE_DESCRIPTOR_PAIRS",
+      "replayAudit": "SHARED_REPLAY_AUDIT_AND_BUSINESS_AUDIT_ATOMIC"
+    },
+    "typedArtifacts": {
+      "lookup": "BATCH_SINGLE_ARRAY_BIND",
+      "bindCeilingRegression": "POSTGRESQL_65536_UUIDS_PASS",
+      "maximumRequestedArtifacts": 100000
+    },
+    "openApi": {
+      "publicOperations": 12,
+      "exactPropertiesRequiredAndNullability": true,
+      "internalOwnerRefetchExposed": false,
+      "peopleAndGatewaySnapshotsSynchronized": true
+    },
+    "ownerRefetch": {
+      "endpointVisibility": "INTERNAL_HIDDEN",
+      "transportContract": [
+        "TLS_1_3_MTLS",
+        "EXACT_PAY_SPIFFE",
+        "RS256_WORKLOAD_JWT",
+        "EXACT_AUDIENCE_SUBJECT_TENANT_PURPOSE_AND_GRANT",
+        "EXACT_IMMUTABLE_REVISION_AND_DIGEST"
+      ],
+      "featureDefault": false,
+      "productionReady": false,
+      "remaining": [
+        "WORKLOAD_AND_TENANT_RATE_AND_CONCURRENCY_ADMISSION",
+        "FULL_ATOMIC_BOUNDED_STREAMING"
+      ]
+    }
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "AC-01",
+      "criterion": "currency rounding and append-only budget ledger totals",
+      "disposition": "PASS"
+    },
+    {
+      "id": "AC-02",
+      "criterion": "maker cannot approve or publish; cross-tenant and field-purpose denials",
+      "disposition": "PASS"
+    },
+    {
+      "id": "AC-03",
+      "criterion": "PAY receives exact immutable approved revision and digest",
+      "disposition": "PRODUCER_HANDOFF_PASS_PAY_CONSUMER_AND_BROKER_E2E_WITHHELD"
+    },
+    {
+      "id": "AC-04",
+      "criterion": "idempotency and optimistic CAS",
+      "disposition": "PASS"
+    },
+    {
+      "id": "AC-05",
+      "criterion": "atomic snapshot header, ordered lines, receipt, and outbox",
+      "disposition": "PASS"
+    },
+    {
+      "id": "AC-06",
+      "criterion": "XCON-021 exact 16 fields after commit only; no v1 or dual publish",
+      "disposition": "PASS"
+    },
+    {
+      "id": "AC-07",
+      "criterion": "SVC-PEP mTLS, audience, tenant, and purpose rejection cases",
+      "disposition": "PASS_DEFAULT_OFF_PRODUCTION_TRANSPORT_HARDENING_WITHHELD"
+    },
+    {
+      "id": "AC-08",
+      "criterion": "line count, contiguous order, unique line id, and canonical digest",
+      "disposition": "PASS"
+    },
+    {
+      "id": "AC-09",
+      "criterion": "worker crash and replay safety",
+      "disposition": "PASS"
+    },
+    {
+      "id": "AC-10",
+      "criterion": "clean empty-schema or V16-to-V17 upgrade, RLS, and append-only enforcement",
+      "disposition": "PASS"
+    },
+    {
+      "id": "AC-11",
+      "criterion": "HARD_CAP-only enforcement rejects EXCEPTION_APPROVAL and keeps exception approval receipt NULL",
+      "disposition": "PASS"
+    },
+    {
+      "id": "AC-12",
+      "criterion": "budget reverse hostile cases and approve zero/overflow/collision/invalid-line cases fail closed before transition",
+      "disposition": "PASS"
+    }
+  ],
+  "targetedVerification": {
+    "policy": "TARGET_CHANGED_SURFACES_FIRST_NO_REDUNDANT_FULL_REGRESSION",
+    "backend": [
+      "PEOPLE_15_TARGET_CLASSES_71_TESTS_PASS",
+      "PLATFORM_XCON021_CONTRACT_TEST_PASS",
+      "OPENAPI_VALIDATOR_HOSTILE_MUTATION_TESTS_PASS",
+      "OPENAPI_EXPORT_CHECK_12_SERVICES_1714_GATEWAY_PATHS_PASS",
+      "GIT_DIFF_CHECK_PASS"
+    ],
+    "frontend": [
+      "COMPPLAN_4_VITEST_FILES_31_TESTS_PASS",
+      "TARGETED_ESLINT_PASS",
+      "PLAYWRIGHT_5_OF_5_PASS",
+      "AXE_SERIOUS_AND_CRITICAL_ZERO",
+      "NO_HORIZONTAL_OVERFLOW_AT_1440_1280_ZOOM_200_390_AND_320",
+      "COMMITTED_VISUAL_SNAPSHOTS_4",
+      "GIT_DIFF_CHECK_PASS"
+    ]
+  },
+  "localRuntime": {
+    "verifiedAt": "2026-10-14T12:40:20+09:00",
+    "frontend": {
+      "url": "http://localhost:4200",
+      "http": 200,
+      "status": "UP"
+    },
+    "people": {
+      "url": "http://localhost:8003/actuator/health",
+      "http": 200,
+      "status": "UP"
+    }
+  },
+  "centralAcceptance": {
+    "producerAndControlPlaneClosed": true,
+    "crossModuleConsumerClosed": false,
+    "remaining": [
+      {
+        "acceptanceCriterion": "AC-03",
+        "owner": "HRIS-PAY_AND_SYS_COMMON_INTEGRATION_CONTROL",
+        "requirement": "PAY_CONSUMER_AND_BROKER_EXACT_REVISION_DIGEST_END_TO_END"
+      },
+      {
+        "acceptanceCriterion": "AC-07_PRODUCTION_TRANSPORT",
+        "owner": "HRIS-PER_AND_SYS_COMMON_INTEGRATION_CONTROL",
+        "requirement": "RATE_LIMITED_CONCURRENCY_ADMISSION_AND_FULL_ATOMIC_BOUNDED_STREAMING_BEFORE_FEATURE_ENABLEMENT"
+      }
+    ]
+  },
+  "activationAuthority": {
+    "dwpDevChangesCommittedAndPushed": true,
+    "localCompensationWorkspaceVerifiable": true,
+    "ownerRefetchFeatureEnabled": false,
+    "customerDataAuthorized": false,
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextOrder": [
+    {
+      "order": 1,
+      "work": "ISSUE_AND_VALIDATE_MOD_SYS_HRIS_NAV_POLICY_R1_CONTROL_PACKET",
+      "owner": "SYS_COMMON_INTEGRATION_CONTROL",
+      "requiredArtifacts": [
+        "WORK_PACKET",
+        "TOUCH_MANIFEST",
+        "MIGRATION_LEASE_OR_EXPLICIT_NONE",
+        "START_TOKEN",
+        "ACCEPTANCE_AND_TARGETED_TEST_BINDINGS"
+      ]
+    },
+    {
+      "order": 2,
+      "work": "IMPLEMENT_MOD_SYS_HRIS_NAV_POLICY_R1",
+      "owner": "HRIS-SYS",
+      "firstWorkbench": "HRIS-WB-HR-OPERATIONS"
+    },
+    {
+      "order": 3,
+      "work": "RECLASSIFY_BASE_TFR_PAY_016_FROM_COMPPLAN_PRODUCER_RESULT",
+      "owner": "SYS_COMMON_INTEGRATION_CONTROL_AND_HRIS_PAY",
+      "parallelismDecisionRequired": "NAV_PRIORITY_VERSUS_PAY_CONSUMER_DEPENDENCY"
+    },
+    {
+      "order": 4,
+      "work": "TENANT_COMPENSATION_COMPONENT_GUIDELINE_ROUNDING_CONFIGURATION",
+      "owner": "HRIS_PER_AND_HRIS_SYS"
+    },
+    {
+      "order": 5,
+      "work": "PRODUCTION_AUTHORING_BOOTSTRAP_AND_ACTIVATION_ACCEPTANCE",
+      "owner": "SYS_COMMON_INTEGRATION_CONTROL"
+    }
+  ]
+}
