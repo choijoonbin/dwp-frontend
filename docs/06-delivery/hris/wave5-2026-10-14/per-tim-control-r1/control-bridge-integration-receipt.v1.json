@@ -1,0 +1,101 @@
+{
+  "schema": "dwp.hris.wave5.control-bridge-integration-receipt.v1",
+  "receiptId": "HRIS-WAVE5-SHARED-V42-CONTROL-BRIDGE-INTEGRATED-R1",
+  "recordedAt": "2026-10-14T15:54:19+09:00",
+  "scope": [
+    "SYS-001-SHARED-V42-PARTICIPANT",
+    "BASE-TFR-PER-013",
+    "BASE-TFR-TIM-017"
+  ],
+  "state": "INTEGRATED_TO_DWP_DEV_DRAFT_NOT_ACTIVATED",
+  "sourcePreparation": {
+    "manifest": "manifest.v1.json",
+    "sealedDecisions": "sealed-contract-decisions.v1.json",
+    "implementationPlan": "control-bridge-implementation-plan.v1.json"
+  },
+  "integratedPins": {
+    "backend": {
+      "branch": "dwp-dev",
+      "commit": "c9a112bf13cc3c240cf48bc51c6001e5601b847e",
+      "originMatched": true,
+      "controlBranchCommit": "7c26212c74214be2ab61b8709cb7a01325927c85",
+      "sysRuntimeCommit": "e1ae82ae8ed6f2f83d68977ca0db8a95b1ad2a20"
+    },
+    "frontend": {
+      "branch": "dwp-dev",
+      "commit": "0eb4f09420bd1b3ab7496737e37fded247dd76c5",
+      "originMatched": true,
+      "controlSyncBranchCommit": "ac06a851547d276925700bf317b1bcdd9f17ee64",
+      "sysUiBranchCommit": "85035dd54bc609e1ec2541998bb2f0503ab60c50"
+    }
+  },
+  "authorizationV42": {
+    "status": "DRAFT",
+    "automaticImport": false,
+    "automaticApproval": false,
+    "automaticActivation": false,
+    "registryChecksum": "f73f9a64816ac8f5567a2a7c292821f4a40e6d675915ebc3c3ac8aad7d1fd983",
+    "fixtureChecksum": "68386c1c7e83c501a63edd3b765dd707dd59b87680de2d3498e3c19db1abaf90",
+    "counts": {
+      "capabilities": 255,
+      "accessPolicies": 24,
+      "entitlementExpressions": 17,
+      "predicatePolicies": 69,
+      "routes": 1028,
+      "pageRoutes": 132,
+      "dataRoutes": 308,
+      "actionRoutes": 588
+    },
+    "ownerProjectionChecksums": {
+      "people": "6980f6efc2faaa3b2f07e2ee13549806ed502f92d1a9643652e7b861d8191967",
+      "time": "a9d0e5b8a52499c9efcf3ec1ed0ae7cf2a9406cfc90db4bd1d531ded489684d5",
+      "platform": "1467b3c665a9c0dd2934c10046f80a5d1a15e624780b5f3a4551525b94799c2a"
+    },
+    "allocation": {
+      "sysRoutes": 2,
+      "perRoutes": 4,
+      "timRoutes": 5
+    }
+  },
+  "migrationControl": {
+    "authMigration": "V251__authorize_performance_review_and_timecard_contracts.sql",
+    "purpose": "Create DATA.HRIS_PERFORMANCE_REVIEW grants and declare the inactive v42 DRAFT seed only.",
+    "sysPlatformOrAuditMigrationAdded": false,
+    "performanceNextLease": "V18",
+    "timeNextLease": "V11"
+  },
+  "validation": {
+    "targetedOnly": true,
+    "broadSuitesRun": false,
+    "results": [
+      "Auth, Gateway and People v42 targeted tests PASS",
+      "v42 generator and five Python contract tests PASS",
+      "OpenAPI export/check PASS for 12 services and 1736 paths",
+      "AsyncAPI exact two-event contract PASS",
+      "registry and fixture checks PASS",
+      "combined dwp-dev HcmPlatformPepSecurityContractTest PASS",
+      "frontend official backend contract check PASS",
+      "frontend contract script tests 26/26 PASS",
+      "frontend generated route contract tests 7/7 PASS",
+      "independent backend and frontend reviews report no remaining P0/P1/P2"
+    ]
+  },
+  "frontendSynchronization": {
+    "authorizationVersions": "v1-v42",
+    "gatewayOpenApiByteIdentical": true,
+    "v1ThroughV41CanonicalBytesUnchanged": true,
+    "v34InternalClosureUnchanged": true,
+    "newPageRoutes": [
+      "route.hcm.operations.performance-multirater-surveys.page",
+      "route.hcm.audit.evidence.page"
+    ],
+    "sharedAdminRouteRule": "The HCM audit PAGE is admitted only when routeContractKey, routeId, pattern, productId and surfaceId all exactly match the sealed record. It does not widen the general HCM route matcher."
+  },
+  "dispatchDecision": {
+    "per013StartTokenMayNowBePrepared": true,
+    "tim017StartTokenMayNowBePrepared": true,
+    "tokensIssuedByThisReceipt": false,
+    "moduleWorkStartedByThisReceipt": false,
+    "nextAction": "Prepare separate PER-013 and TIM-017 Start Tokens from these clean pushed pins; do not combine their migrations, worktrees or acceptance evidence."
+  }
+}

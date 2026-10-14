@@ -1,0 +1,70 @@
+{
+  "schema": "dwp.hris.hrm001.no-code-closure-receipt.v1",
+  "receiptId": "HRIS-WAVE5-HRM-001-NO-CODE-CLOSURE-R1",
+  "recordedAt": "2026-10-14T15:54:19+09:00",
+  "moduleSession": "HRIS-HRM",
+  "sliceId": "BASE-TFR-HRM-001",
+  "sourceRef": "TFR-HRM-001",
+  "sharedContract": "PLAT-003",
+  "state": "CONFORMANCE_CLOSE_NO_CODE",
+  "finalCodePins": {
+    "backend": "dwp-dev@c9a112bf13cc3c240cf48bc51c6001e5601b847e",
+    "frontend": "dwp-dev@0eb4f09420bd1b3ab7496737e37fded247dd76c5",
+    "bothOriginMatchedBeforeReceipt": true
+  },
+  "decision": {
+    "productionDeltaRequired": false,
+    "testSourceDeltaRequired": false,
+    "frontendDeltaRequired": false,
+    "migrationRequired": false,
+    "startTokenIssued": false,
+    "worktreeCreatedForHrm001": false,
+    "reason": "The integrated HRM-010 owner/Approval bridge and direct HrisApprovalBridgeV2 evidence fully satisfy the non-UI PLAT-003 support slice. A new HRM-001 wrapper would duplicate evidence and invent callback claims."
+  },
+  "finalRelevantPathAudit": {
+    "unchanged": [
+      "HrisWorkloadProofV2 and direct HrisApprovalBridgeV2 contract",
+      "employee-change approval request, callback and immutable receipt implementation",
+      "Approval HRIS bridge and quorum implementation"
+    ],
+    "changedSinceAcceptedHrm010": [
+      "dwp-people-server/src/main/java/com/dwp/services/people/hr/HcmPopulationScopeService.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmProductSurfaceEligibilityAdapter.java"
+    ],
+    "changedPathFinding": "The v42 delta is additive for hcm.operations SELF and ASSIGNED_REVIEW_POPULATION. The existing hcm.personal SELF default, hcm.team and HRM employee-change population/field-policy enforcement remain unchanged.",
+    "effectOnHrm001": "NONE"
+  },
+  "targetedVerification": {
+    "broadSuitesRun": false,
+    "commands": [
+      "./gradlew :dwp-platform-contracts:test --tests 'com.dwp.platform.contract.HrisApprovalBridgeV2Test' --no-daemon",
+      "./gradlew :dwp-people-server:test --tests 'com.dwp.services.people.security.HcmOwnerPepExecutionTest' --tests 'com.dwp.services.people.security.HcmProductSurfaceEligibilityAdapterTest' --tests 'com.dwp.services.people.security.HrisEmployeeChangeSecurityBridgeTest' --tests 'com.dwp.services.people.hris.employeeservice.employeechange.EmployeeChangeServiceTest' --no-daemon",
+      "./gradlew :dwp-approval-server:test --tests 'com.dwp.services.approval.domain.ApprovalWorkflowQuorumEvaluatorTest' --no-daemon"
+    ],
+    "selectedClasses": 6,
+    "tests": 66,
+    "passed": 66,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "acceptedPostgresqlEvidence": {
+      "source": "BASE-TFR-HRM-010 integrated targeted evidence",
+      "tests": 59,
+      "passed": 59,
+      "postgresSuites": 3,
+      "skipped": 0,
+      "reuseBasis": "No employee-change or Approval production path covered by the PostgreSQL evidence changed."
+    }
+  },
+  "duplicatePrevention": {
+    "doNotReimplement": "BASE-TFR-HRM-010",
+    "sharedApprovalOwner": "dwp-approval-server",
+    "privateApprovalArtifactsForbidden": true,
+    "hrm001WrapperTestForbidden": true
+  },
+  "nextSlice": {
+    "selected": "BASE-TFR-HRM-002",
+    "implementationAuthorizedByThisReceipt": false,
+    "nextAction": "Prepare HRM-002 independently; do not create an HRM-001 Start Token, branch, worktree or migration."
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "schema": "dwp.hris.sys001.runtime-compatibility-amendment.v1",
+  "amendmentId": "HRIS-WAVE5-SYS-001-RUNTIME-COMPATIBILITY-R1",
+  "recordedAt": "2026-10-14T15:54:19+09:00",
+  "appliesTo": "hcm-audit-semantics-seal.v1.json",
+  "mode": "ADDITIVE_DO_NOT_REWRITE_SEAL",
+  "reason": "Implementation proof exposed two existing PLAT-005 runtime facts that the preparation documents did not make explicit.",
+  "facts": [
+    {
+      "id": "SYS001-COMPAT-01",
+      "fact": "HrisAuditOutboxEventV1 outcome is an operation result, while sys_audit_events.policy_decision accepts ALLOW, DENY or NOT_APPLICABLE.",
+      "resolution": "The adapter maps DENIED to DENY and SUCCESS or FAILED to ALLOW. FAILED remains an allowed operation whose execution failed; it is not a denied authorization decision.",
+      "repositoryRule": "Canonical HCM evidence requires DENIED+DENY or SUCCESS/FAILED+ALLOW and rejects NULL or mismatched policy_decision."
+    },
+    {
+      "id": "SYS001-COMPAT-02",
+      "fact": "AuditRiskEngine may promote a privileged denied HRIS event from HIGH to CRITICAL before durable ingestion.",
+      "resolution": "The closed HCM projection accepts CRITICAL only for denied canonical evidence. The frontend typed parser and filter accept CRITICAL; LOW and MEDIUM remain fail-closed.",
+      "schemaChangeRequired": false
+    }
+  ],
+  "nonChanges": [
+    "No change to HrisAuditOutboxEventV1 wire fields.",
+    "No new audit table, ingestion path, migration or HRIS-local store.",
+    "No weakening of tenant, purpose, field-policy, SoD or ELEVATED authority checks."
+  ],
+  "proof": {
+    "providerContractTests": "PASS",
+    "postgresEndToEnd": "HrisAuditOutboxEventV1 -> adapter -> risk engine -> sys_audit_events -> HCM repository PASS",
+    "frontendCriticalAndLowMediumBoundary": "PASS",
+    "independentReview": "APPROVE_NO_P0_P1"
+  }
+}

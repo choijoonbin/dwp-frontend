@@ -1,0 +1,63 @@
+{
+  "schema": "dwp.hris.sys001.central-runtime-integration-receipt.v1",
+  "receiptId": "HRIS-WAVE5-SYS-001-CENTRAL-RUNTIME-INTEGRATED-R1",
+  "recordedAt": "2026-10-14T15:54:19+09:00",
+  "sliceId": "BASE-TFR-SYS-001",
+  "state": "CENTRAL_RUNTIME_COMPLETE_NAVIGATION_ADAPTER_PENDING",
+  "integratedPins": {
+    "backend": "dwp-dev@c9a112bf13cc3c240cf48bc51c6001e5601b847e",
+    "frontend": "dwp-dev@0eb4f09420bd1b3ab7496737e37fded247dd76c5"
+  },
+  "delivered": [
+    "Exact v42 capability, predicate and two PAGE/DATA route bindings",
+    "Gateway fixed product=HCM purpose, population and trusted revision projection",
+    "Platform fail-closed HCM list/detail security policy",
+    "Read-only tenant-qualified canonical query over existing sys_audit_events",
+    "Signed tenant/route/context/scope/subject/revision/filter-bound keyset cursor",
+    "Closed minimized HCM evidence DTO and conditional OpenAPI oneOf",
+    "Shared Admin typed client and fail-closed HCM evidence UI",
+    "Generic audit cache isolation and no-store behavior"
+  ],
+  "securityClosure": {
+    "authorityIntersection": [
+      "TENANT identity plane",
+      "APP.HCM:VIEW",
+      "ADMIN.AUDIT_VIEW:VIEW",
+      "HRIS_AUDITOR",
+      "HRIS_DUTY_AUDITOR@RS_HCM_CONFIG",
+      "HRIS_AUDIT_EVIDENCE purpose",
+      "current subject, field-policy and authorization revisions",
+      "ELEVATED access mode",
+      "28-package SoD independence"
+    ],
+    "normalMode": "Only a fully eligible request may receive STEP_UP_REQUIRED; NORMAL is never forwarded to the repository.",
+    "genericFence": "HRIS_AUDITOR or HRIS_DUTY_AUDITOR on any resource set cannot use generic audit-control read or write routes.",
+    "errorCaching": "HCM projection 400/401/403/404/503 responses are private no-store and the UI purges generic and HCM query families.",
+    "duplicateStoreCreated": false,
+    "sysMigrationCreated": false,
+    "writeApiCreated": false
+  },
+  "validation": {
+    "backendNonDatabaseTargeted": "PASS",
+    "backendPostgresql": "3/3 PASS, skipped=0",
+    "genericControllerInventory": "31/31 fenced",
+    "sodInventory": "28/28 denied",
+    "frontendUnit": "25/25 PASS after final boundary fixes",
+    "frontendChromiumE2e": "3/3 PASS",
+    "integratedRegistryTest": "HcmPlatformPepSecurityContractTest PASS on combined dwp-dev",
+    "independentReviews": "backend and frontend APPROVE_NO_P0_P1"
+  },
+  "activation": {
+    "authorizationBundle": "v42 DRAFT",
+    "activated": false,
+    "assignmentFallbackCreated": false,
+    "behaviorUntilSeparateActivationAndAssignment": "Fail closed; no generic auditor fallback."
+  },
+  "remainingModuleStep": {
+    "moduleSession": "HRIS-SYS",
+    "scope": "NAVIGATION_ADAPTER_ONLY",
+    "startTokenIssued": false,
+    "requiredHref": "/admin/governance/audit-overview?product=HCM&tab=overview",
+    "rule": "Issue a separate exact-path token before changing the HRIS product-map handoff. Backend, OpenAPI, authorization, audit store and migration files remain forbidden."
+  }
+}
