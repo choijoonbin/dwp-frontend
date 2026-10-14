@@ -1,0 +1,79 @@
+{
+  "schema": "dwp.hris.module-start-authority-issued-manifest.v1",
+  "manifestId": "HRIS-WAVE5-BASE-TFR-SYS-001-NAV-ADAPTER-START-AUTHORITY-ISSUED-R1",
+  "issuedAt": "2026-10-15T03:13:50+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-SYS",
+  "sliceId": "BASE-TFR-SYS-001",
+  "scope": "NAVIGATION_ADAPTER_CODE_ONLY",
+  "state": "START_TOKEN_ISSUED_IMPLEMENTATION_ONLY_WORK_EXPLORER_MOUNT_PENDING",
+  "sealedArtifacts": [
+    {
+      "path": "work-packet.v1.json",
+      "sha256": "65e28d7a6b4bd2ad4c63b80a73c2e25bdab7f7a7c14027380e05c7b511087f99",
+      "bytes": 8946
+    },
+    {
+      "path": "start-token-preparation.v1.json",
+      "sha256": "cbbc96527965e6a817701988acf729e0f22a10631aed2528641a88c328052694",
+      "bytes": 4732
+    },
+    {
+      "path": "start-token-issued.v1.json",
+      "sha256": "48af629c639073acf8f968f577daccab7117c0c748c1599f1061ac4dcd2ac057",
+      "bytes": 6479
+    },
+    {
+      "path": "../sys-001-control-r1/central-runtime-integration-receipt.v1.json",
+      "sha256": "33fcb0c681189dc23f2da62eb8f9c43ed18796401743f9ff1725ec3d43ad3fe1"
+    },
+    {
+      "path": "../sys-001-control-r1/runtime-compatibility-amendment.v1.json",
+      "sha256": "a97e966f1d6e0957d3fec0ef90dc36541d05e3b8ba484aaddf4a0d67accf1be1"
+    },
+    {
+      "path": "../pay-011-integration-r1/central-integration-result.v1.json",
+      "sha256": "4d53174298fb4c055df1ef71851483a86bdf0be64e2c0538b359ccfcbf18793e"
+    }
+  ],
+  "resultPins": {
+    "backendSequencingOnly": "dwp-backend@67287b33be62c338d7ea6183e22ff3372e0c45c1",
+    "frontendBase": "dwp-frontend@3534bbbf0fc830afb1d4e99f5037d1f43cef6bf9",
+    "frontendBranch": "codex/hris-wave5-sys-001-nav-adapter-frontend-20261015-r1@3534bbbf0fc830afb1d4e99f5037d1f43cef6bf9",
+    "authorization": "product-surface-authorization-v42@f73f9a64816ac8f5567a2a7c292821f4a40e6d675915ebc3c3ac8aad7d1fd983",
+    "exactHref": "/admin/governance/audit-overview?product=HCM&tab=overview"
+  },
+  "closedStartGates": [
+    "SYS001_CENTRAL_RUNTIME_INTEGRATED_DEFAULT_OFF",
+    "RUNTIME_COMPATIBILITY_AMENDMENT_CONSUMED",
+    "PAY011_SEQUENCE_GATE_CLOSED",
+    "EXACT_FOUR_FILE_FRONTEND_TOUCH_BOUNDARY_SEALED",
+    "NO_BACKEND_WORKTREE_AND_NO_MIGRATION_LEASE_REQUIRED",
+    "DEDICATED_FRONTEND_WORKTREE_MATERIALIZED_CLEAN_AND_REMOTE_EXACT",
+    "WORK_EXPLORER_MOUNT_DEFERRED_NONCLAIM_SEALED",
+    "SEVEN_ACCEPTANCE_CRITERIA_AND_TARGETED_VALIDATION_PLAN_SEALED"
+  ],
+  "completionBoundary": {
+    "permittedResult": "ADAPTER_CODE_COMPLETE_WORK_EXPLORER_MOUNT_PENDING",
+    "forbiddenClaims": [
+      "USER_VISIBLE_HANDOFF_COMPLETE",
+      "FINAL_BASE_TFR_SYS_001_CLOSED",
+      "HRIS_HOME_MOUNT_COMPLETE",
+      "ROUTE_OR_MENU_ACTIVATED"
+    ]
+  },
+  "authority": {
+    "moduleImplementationAuthorized": true,
+    "moduleBranchCommitAndPushAuthorized": true,
+    "backendChangeAuthorized": false,
+    "migrationAuthorized": false,
+    "mergeToDwpDevAuthorized": false,
+    "routeOrMenuActivationAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "policyActivationAuthorized": false,
+    "customerDataAuthorized": false,
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "HRIS_SYS_IMPLEMENTS_THE_EXACT_FOUR_FILE_NAVIGATION_ADAPTER_AND_RETURNS_A_CLEAN_PUSHED_MODULE_RESULT_WITH_MOUNT_PENDING_NONCLAIM"
+}

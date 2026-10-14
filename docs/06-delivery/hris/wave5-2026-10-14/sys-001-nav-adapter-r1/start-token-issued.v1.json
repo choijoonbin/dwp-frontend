@@ -1,0 +1,142 @@
+{
+  "schema": "dwp.hris.module-start-token.v1",
+  "tokenId": "HRIS-WAVE5-START-BASE-TFR-SYS-001-NAV-ADAPTER-R1",
+  "issuedAt": "2026-10-15T03:13:50+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-SYS",
+  "sliceId": "BASE-TFR-SYS-001",
+  "sourceRef": "TFR-SYS-001",
+  "capability": "DWP.GOVERNANCE.AUDIT_EVIDENCE",
+  "scope": "NAVIGATION_ADAPTER_CODE_ONLY",
+  "state": "ISSUED_IMPLEMENTATION_ONLY",
+  "permittedAction": "IMPLEMENT_THE_EXACT_SYS_001_NAVIGATION_ADAPTER_CODE_CONTRACT_ONLY_WITHIN_THE_FOUR_FILE_TOUCH_MANIFEST",
+  "preparationEvidence": {
+    "workPacket": {
+      "path": "docs/06-delivery/hris/wave5-2026-10-14/sys-001-nav-adapter-r1/work-packet.v1.json",
+      "packetId": "HRIS-WAVE5-WORK-BASE-TFR-SYS-001-NAV-ADAPTER-R1",
+      "sha256": "65e28d7a6b4bd2ad4c63b80a73c2e25bdab7f7a7c14027380e05c7b511087f99",
+      "bytes": 8946
+    },
+    "startPreparation": {
+      "path": "docs/06-delivery/hris/wave5-2026-10-14/sys-001-nav-adapter-r1/start-token-preparation.v1.json",
+      "preparationId": "HRIS-WAVE5-START-PREP-BASE-TFR-SYS-001-NAV-ADAPTER-R1",
+      "sha256": "cbbc96527965e6a817701988acf729e0f22a10631aed2528641a88c328052694",
+      "bytes": 4732
+    },
+    "centralRuntimeIntegrationReceipt": {
+      "path": "docs/06-delivery/hris/wave5-2026-10-14/sys-001-control-r1/central-runtime-integration-receipt.v1.json",
+      "receiptId": "HRIS-WAVE5-SYS-001-CENTRAL-RUNTIME-INTEGRATED-R1",
+      "sha256": "33fcb0c681189dc23f2da62eb8f9c43ed18796401743f9ff1725ec3d43ad3fe1"
+    },
+    "runtimeCompatibilityAmendment": {
+      "path": "docs/06-delivery/hris/wave5-2026-10-14/sys-001-control-r1/runtime-compatibility-amendment.v1.json",
+      "amendmentId": "HRIS-WAVE5-SYS-001-RUNTIME-COMPATIBILITY-R1",
+      "sha256": "a97e966f1d6e0957d3fec0ef90dc36541d05e3b8ba484aaddf4a0d67accf1be1"
+    }
+  },
+  "basePins": {
+    "backendSequencingOnly": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "67287b33be62c338d7ea6183e22ff3372e0c45c1",
+      "tree": "2be6408b53a95d0ddda4d40aa97205addb5658e2",
+      "upstream": "origin/dwp-dev",
+      "moduleWorktreeRequired": false
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "3534bbbf0fc830afb1d4e99f5037d1f43cef6bf9",
+      "tree": "633db1c80cc158cd46ba852ea033fed332c992e1",
+      "upstream": "origin/dwp-dev",
+      "upstreamMatchedAtMaterialization": true
+    }
+  },
+  "centralControl": {
+    "authorizationVersion": 42,
+    "authorizationChecksum": "f73f9a64816ac8f5567a2a7c292821f4a40e6d675915ebc3c3ac8aad7d1fd983",
+    "authorizationState": "DRAFT",
+    "centralRuntimeState": "CENTRAL_RUNTIME_COMPLETE_NAVIGATION_ADAPTER_PENDING",
+    "exactHref": "/admin/governance/audit-overview?product=HCM&tab=overview",
+    "moduleRule": "Consume the central route decision through canOpenPath; do not edit routes, authorization, generated projections, OpenAPI, or the audit runtime."
+  },
+  "worktree": {
+    "repository": "dwp-frontend",
+    "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave5-20261015/sys-001-nav-adapter-r1/frontend",
+    "branch": "codex/hris-wave5-sys-001-nav-adapter-frontend-20261015-r1",
+    "upstream": "origin/codex/hris-wave5-sys-001-nav-adapter-frontend-20261015-r1",
+    "head": "3534bbbf0fc830afb1d4e99f5037d1f43cef6bf9",
+    "tree": "633db1c80cc158cd46ba852ea033fed332c992e1",
+    "porcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "upstreamAhead": 0,
+    "upstreamBehind": 0,
+    "remoteExact": true,
+    "state": "MATERIALIZED_CLEAN"
+  },
+  "touchBoundary": {
+    "source": "work-packet.v1.json#/touchManifest",
+    "writablePathCount": 4,
+    "outsideBoundaryAction": "STOP_AND_RAISE_CONTROL_CHANGE_REQUEST",
+    "backendPathsForbidden": true,
+    "routeLayoutI18nAndGeneratedPathsForbidden": true,
+    "homeMountForbidden": true
+  },
+  "acceptanceCriteria": [
+    "SYS001-NAV-AC-01",
+    "SYS001-NAV-AC-02",
+    "SYS001-NAV-AC-03",
+    "SYS001-NAV-AC-04",
+    "SYS001-NAV-AC-05",
+    "SYS001-NAV-AC-06",
+    "SYS001-NAV-AC-07"
+  ],
+  "verification": {
+    "source": "work-packet.v1.json#/verificationPlan",
+    "policy": "ONE_TARGETED_CHANGED_CLUSTER; RERUN_ONLY_FAILED_METHODS_AFTER_FIX; NO_REPOSITORY_WIDE_SUITE",
+    "targetedTestFileCount": 4,
+    "changedPathLintAndFormatOnly": true,
+    "browserHandoffEvidence": "DEFERRED_UNTIL_SEPARATELY_AUTHORIZED_WORK_EXPLORER_MOUNT"
+  },
+  "completionBoundary": {
+    "requiredResultState": "ADAPTER_CODE_COMPLETE_WORK_EXPLORER_MOUNT_PENDING",
+    "userVisibleEndToEndClaimAuthorized": false,
+    "finalBaseTfrSys001ClosureAuthorized": false,
+    "homeMountAuthorized": false,
+    "newRouteAuthorized": false
+  },
+  "requiredResult": [
+    "one clean pushed frontend module result commit",
+    "all seven adapter acceptance results",
+    "exact four-file changed-path and content manifest",
+    "targeted four-file Vitest evidence plus changed-path ESLint, Prettier, and diff-check",
+    "explicit activation false and Work Explorer mount pending nonclaim"
+  ],
+  "authority": {
+    "moduleImplementationAuthorized": true,
+    "navigationAdapterCodeAuthorized": true,
+    "moduleBranchCommitAuthorized": true,
+    "moduleBranchPushAuthorized": true,
+    "backendChangeAuthorized": false,
+    "migrationAuthoringAuthorized": false,
+    "mergeToDwpDevAuthorized": false,
+    "routeOrMenuActivationAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "policyActivationAuthorized": false,
+    "customerDataAuthorized": false,
+    "externalConnectorAuthorized": false,
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "expiry": {
+    "expiresAt": null,
+    "policy": "VALID_UNTIL_AN_INVALIDATION_CONDITION_OCCURS_OR_CONTROL_EXPLICITLY_REVOKES_THE_TOKEN"
+  },
+  "invalidationConditions": [
+    "the frontend worktree base, branch, tree, clean state, upstream, or remote exactness changes before implementation begins",
+    "the central SYS-001 runtime receipt, compatibility amendment, v42 checksum, or exact href changes",
+    "the module edits a path outside the exact four-file writable manifest",
+    "dwp-governance is relabeled from EXTERNAL, DWP_GOVERNANCE, or CENTRAL_POLICY",
+    "any other EXTERNAL node receives an href or actionable behavior",
+    "a production mount, route, backend, migration, authorization, OpenAPI, generated, feature, policy, customer, or production activation is attempted"
+  ]
+}
