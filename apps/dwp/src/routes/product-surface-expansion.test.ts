@@ -1,7 +1,10 @@
-import { isValidElement } from 'react';
+import { isValidElement, type ReactNode } from 'react';
 import { describe, expect, it } from 'vitest';
 
+import { isSegmentOwnedPath } from '../components/product-manifest';
 import { GOVERNED_PRODUCT_MANIFESTS } from '../components/product-manifest-registry';
+import { ProductSurfaceAccessState } from '../components/product-surface-access-state';
+import { HCM_PRODUCT_MANIFEST } from '../features/hcm/hcm-product-manifest';
 import { buildGovernedProductEntryCatalog } from '../features/shell/product-entry-point-registry';
 import {
   resolveCanaryProductFlags,
@@ -528,6 +531,7 @@ describe('all-product surface expansion', () => {
     expect(children.map((route) => route.path ?? 'pathless')).toEqual([
       'pathless',
       'manage',
+      'settings',
       'design',
       'data',
       'operations',
@@ -535,9 +539,55 @@ describe('all-product surface expansion', () => {
       'pathless',
     ]);
     expect(routeContractKeys(hcmRoutes).sort()).toEqual(
-      PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.filter((route) => route.productId === 'hcm')
+      PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.filter(
+        (route) =>
+          route.productId === 'hcm' &&
+          isSegmentOwnedPath(route.pattern, HCM_PRODUCT_MANIFEST.basePath)
+      )
         .map((route) => route.routeContractKey)
         .sort()
     );
+  });
+
+  it('keeps the HCM audit PAGE official without mounting it in the local HR router or menu', () => {
+    const auditPages = PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.filter(
+      (route) => route.routeContractKey === 'route.hcm.audit.evidence.page'
+    );
+    const localRouteKeys = routeContractKeys(hcmRoutes);
+    const localNavigationPaths = HCM_PRODUCT_MANIFEST.surfaces.flatMap((surface) =>
+      surface.navigation.flatMap((group) => group.items.map((item) => item.path))
+    );
+
+    expect(auditPages).toEqual([
+      expect.objectContaining({
+        productId: 'hcm',
+        surfaceId: 'hcm.management',
+        pattern: '/admin/governance/audit-overview',
+      }),
+    ]);
+    expect(localRouteKeys).not.toContain('route.hcm.audit.evidence.page');
+    expect(localNavigationPaths).not.toContain('/admin/governance/audit-overview');
+  });
+
+  it('mounts governed-only HCM PAGEs with a denied legacy fallback and no invented menu item', () => {
+    const routeContractKey = 'route.hcm.operations.performance-multirater-surveys.page';
+    const governedOnlyRoute = routeByContractKey(hcmRoutes, routeContractKey);
+    const localNavigationPaths = HCM_PRODUCT_MANIFEST.surfaces.flatMap((surface) =>
+      surface.navigation.flatMap((group) => group.items.map((item) => item.path))
+    );
+
+    expect(governedOnlyRoute).toBeDefined();
+    expect(isValidElement(governedOnlyRoute?.element)).toBe(true);
+    if (!isValidElement<{ legacy?: ReactNode }>(governedOnlyRoute?.element)) return;
+
+    expect(governedOnlyRoute.element.type).toBe(ProductCanaryRouteBoundary);
+    expect(isValidElement(governedOnlyRoute.element.props.legacy)).toBe(true);
+    if (isValidElement<{ decision: { state: string } }>(governedOnlyRoute.element.props.legacy)) {
+      expect(governedOnlyRoute.element.props.legacy.type).toBe(ProductSurfaceAccessState);
+      expect(governedOnlyRoute.element.props.legacy.props.decision).toEqual({
+        state: 'route-denied',
+      });
+    }
+    expect(localNavigationPaths).not.toContain('/hr/operations/performance/multirater-surveys');
   });
 });

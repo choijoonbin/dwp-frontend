@@ -20,6 +20,7 @@ import {
   useHrisNavigationPolicyShellProjection,
 } from '../features/hris/shell/navigation-policy';
 import { useOptionalAllowedProductSurface } from '../components/allowed-product-surface-context';
+import { isSegmentOwnedPath } from '../components/product-manifest';
 import { ProductSurfaceAccessState } from '../components/product-surface-access-state';
 import { ProductAreaNavigationItemAccessGuard } from '../layouts/product-area-navigation-access-guard';
 import { ConfiguredProductSurfaceShell } from './configured-product-surface-shell';
@@ -173,15 +174,15 @@ function legacyShellForSurface(surfaceId: string) {
 }
 
 const hcmPageRoutes = OFFICIAL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.filter(
-  (route) => route.productId === 'hcm'
+  (route) =>
+    route.productId === 'hcm' && isSegmentOwnedPath(route.pattern, HCM_PRODUCT_MANIFEST.basePath)
 );
 
 const hcmManagementLegacyItems = hcmPageRoutes
   .filter((route) => route.surfaceId === 'hcm.management')
-  .map((route) => {
+  .flatMap((route) => {
     const item = findHcmNavigationItem(route.pattern);
-    if (!item) throw new Error(`Missing HCM management navigation item: ${route.pattern}`);
-    return item;
+    return item ? [item] : [];
   });
 
 function HcmLegacyManagementIndex() {
@@ -258,9 +259,10 @@ function hcmGovernedPage(routeContractKey: string) {
   const route = hcmPageRoutes.find((candidate) => candidate.routeContractKey === routeContractKey);
   if (!route) throw new Error(`Unknown HCM route contract: ${routeContractKey}`);
   const navigationItem = findHcmNavigationItem(route.pattern);
-  if (!navigationItem) throw new Error(`Missing HCM navigation item: ${route.pattern}`);
-  const legacyPage = (
+  const legacyPage = navigationItem ? (
     <HcmLegacyPageAccessGuard item={navigationItem}>{hcmPage}</HcmLegacyPageAccessGuard>
+  ) : (
+    <ProductSurfaceAccessState decision={{ state: 'route-denied' }} />
   );
   return (
     <ProductCanaryRouteBoundary
