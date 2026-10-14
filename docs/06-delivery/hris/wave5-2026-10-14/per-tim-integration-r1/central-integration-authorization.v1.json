@@ -1,0 +1,170 @@
+{
+  "schema": "dwp.hris.wave5-per-tim-central-integration-authorization.v1",
+  "receiptId": "HRIS-WAVE5-PER-TIM-CENTRAL-INTEGRATION-AUTHORIZATION-R1",
+  "runId": "per-tim-integration-20261015-r1",
+  "status": "PASS_INTEGRATION_AUTHORIZATION_PENDING_CARRIER",
+  "issuedAt": "2026-10-15T02:29:32+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "admission": {
+    "path": "docs/06-delivery/hris/wave5-2026-10-14/per-tim-integration-r1/central-result-admission.v1.json",
+    "receiptId": "HRIS-WAVE5-PER-TIM-CENTRAL-RESULT-ADMISSION-R1",
+    "gitBlobSha1": "af5fb8f49f0fe2d2da6f69efe2e078095abb6c6c",
+    "sha256": "2fe20788430240d7c15f09617a081bef91c929376b893984ff4e6010434c6b07",
+    "bytes": 5432,
+    "carrierCommit": "67ee587f810e6948e7b647e4d49794f993f19d6c",
+    "carrierTree": "a695709f459960fcef406ee0a0b8894ef93b4f4e",
+    "carrierPushedAndRemoteExact": true
+  },
+  "authorizedResults": [
+    {
+      "order": 1,
+      "module": "PER",
+      "sliceId": "BASE-TFR-PER-013",
+      "repository": "dwp-backend",
+      "commit": "13bb8f39fccc2a3f2750db2a53300d40beefa632",
+      "tree": "9444e740ccb76153c645818a557cb6b406b9c7d0",
+      "changedFileCount": 23,
+      "changedFileManifestSha256": "8cb66433c48bc8d6511e91623933c4d627f1db077496cba8513b66a7ae518c39"
+    },
+    {
+      "order": 2,
+      "module": "TIM",
+      "sliceId": "BASE-TFR-TIM-017",
+      "repository": "dwp-backend",
+      "commit": "d7a8696c6a4d9e4c74ad1346530151743c1a2f09",
+      "tree": "bfe8324c0e61d9d87b13994edfda8747ea5bb8a2",
+      "requiredLineage": [
+        "c4d4a667b39639aac99653af6a718fa7d55ae233",
+        "dd85e031d2f123252dda20e51ff7756ed809719e",
+        "d7a8696c6a4d9e4c74ad1346530151743c1a2f09"
+      ],
+      "changedFileCount": 25,
+      "changedFileManifestSha256": "2dd106577f1191e1720bb3db7a3c3713e54c861593640979a97f58f1f9b0a2dd"
+    },
+    {
+      "order": 3,
+      "module": "PER",
+      "sliceId": "BASE-TFR-PER-013",
+      "repository": "dwp-frontend",
+      "commit": "5252c4c9eb34d632a9e49d532508d18394cb7543",
+      "tree": "09b95082a5b7616a99466250aa1a4d75175a37e4",
+      "changedFileCount": 15,
+      "changedFileManifestSha256": "1a21f649682797242829f944ec9e118d0111de6b4890f11b2c7a3a3bac6a5f36"
+    },
+    {
+      "order": 4,
+      "module": "TIM",
+      "sliceId": "BASE-TFR-TIM-017",
+      "repository": "dwp-frontend",
+      "commit": "300fa11e2f286959b033edb2d5bacfafece9f4a4",
+      "tree": "d7df393968631078e454c7313b26f3d3a6983b87",
+      "changedFileCount": 9,
+      "changedFileManifestSha256": "23408a1825c84f357b6e0c8b0718bff8edb4742e674ddf17bb4ad40d67a20226"
+    }
+  ],
+  "preIntegration": {
+    "backend": {
+      "branch": "dwp-dev",
+      "upstream": "origin/dwp-dev",
+      "commit": "831fceab0d609e72d3ec88db8bbf25058467b2b4",
+      "tree": "e0f6bbe07a1fcc67efa7812752e976686dc3675c",
+      "clean": true,
+      "upstreamAhead": 0,
+      "upstreamBehind": 0
+    },
+    "frontend": {
+      "branch": "dwp-dev",
+      "upstream": "origin/dwp-dev",
+      "requiredParentCommit": "67ee587f810e6948e7b647e4d49794f993f19d6c",
+      "rule": "AUTHORIZATION_CARRIER_COMMIT_EXACT_AFTER_PUSH",
+      "requireClean": true,
+      "requireUpstreamExact": true
+    }
+  },
+  "mergePlan": {
+    "strategy": "NO_FF_EXACT_RESULT_COMMITS_NO_SQUASH_NO_REBASE",
+    "stopOnConflict": true,
+    "modulePathIntersectionCount": {
+      "backend": 0,
+      "frontend": 0
+    },
+    "predictedMergeConflict": false,
+    "backendOrder": [
+      "13bb8f39fccc2a3f2750db2a53300d40beefa632",
+      "d7a8696c6a4d9e4c74ad1346530151743c1a2f09"
+    ],
+    "frontendOrder": [
+      "5252c4c9eb34d632a9e49d532508d18394cb7543",
+      "300fa11e2f286959b033edb2d5bacfafece9f4a4"
+    ],
+    "migrationStreams": [
+      {
+        "stream": "PEOPLE_PERFORMANCE",
+        "version": "V18",
+        "priorVersion": "V17_UNCHANGED"
+      },
+      {
+        "stream": "TIME_MAIN",
+        "version": "V11",
+        "priorVersion": "V10_UNCHANGED"
+      }
+    ]
+  },
+  "expectedUnion": {
+    "algorithm": "SHA256_SORTED_REPOSITORY_TAB_RELATIVE_PATH_LF",
+    "backendUniquePathCount": 48,
+    "backendSha256": "c87faad09dbcdd0b68918d8f8d6a438f4f3883ba5b92b1989a150c3dfb7ae2f1",
+    "frontendUniquePathCount": 24,
+    "frontendSha256": "4ad5a346703f65aa77154c4f40bb28f25b24876e6ea75180d954b67d8b0081c8",
+    "combinedUniquePathCount": 72,
+    "combinedSha256": "4bf63acd0a514348d9cb8a10d5e5012316fc51370da8a9d84f51782c93456526"
+  },
+  "postMergeVerification": {
+    "policy": "ONE_CHANGED_CLUSTER_INTEGRATION_GATE_NO_FULL_REPOSITORY_RERUN",
+    "backend": [
+      "PEOPLE_PERFORMANCE_REVIEW_CLUSTER_PLUS_COMPENSATION_MIGRATION_COMPATIBILITY",
+      "TIME_TIMECARD_CLUSTER_PLUS_TIME_MIGRATION_CONFIGURATION"
+    ],
+    "frontend": [
+      "PER_013_FIVE_TARGET_FILES_PLUS_TIM_017_EXACT_SLICE",
+      "CHANGED_PATH_ESLINT",
+      "CHANGED_PATH_PRETTIER"
+    ],
+    "integrity": [
+      "EXPECTED_UNION_PATHS_AND_EXACT_BLOBS",
+      "GIT_DIFF_CHECK",
+      "V17_AND_V10_UNCHANGED",
+      "CORRECT_TIME_OPENAPI_PIN_EXACTLY_TWO_OCCURRENCES",
+      "FEATURES_AND_ROUTE_MENU_ACTIVATION_REMAIN_OFF"
+    ]
+  },
+  "invalidationConditions": [
+    "ANY_AUTHORIZED_RESULT_COMMIT_OR_TREE_MISMATCH",
+    "ANY_MODULE_REMOTE_TIP_MISMATCH",
+    "ANY_UNEXPECTED_CHANGED_PATH_OR_CONTENT",
+    "ANY_MERGE_CONFLICT_REQUIRING_MANUAL_CODE_RESOLUTION",
+    "ANY_PRE_INTEGRATION_BRANCH_DIRTY_OR_UPSTREAM_DIVERGENCE",
+    "ANY_FEATURE_ROUTE_MENU_POLICY_OR_CUSTOMER_ACTIVATION",
+    "ANY_REQUIRED_TARGETED_GATE_FAILURE"
+  ],
+  "authority": {
+    "beforeCarrier": {
+      "integrationMergeAuthorized": false
+    },
+    "effectiveAfterCarrier": {
+      "integrationMergeAuthorized": true,
+      "exactResultsOnly": true,
+      "noManualCodeResolution": true,
+      "frontendPreIntegrationRule": "AUTHORIZATION_CARRIER_COMMIT_EXACT",
+      "backendPreIntegrationCommit": "831fceab0d609e72d3ec88db8bbf25058467b2b4"
+    },
+    "sharedControlPathChangeAuthorizedForModules": false,
+    "routeOrMenuActivationAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "policyActivationAuthorized": false,
+    "customerDataAuthorized": false,
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "COMMIT_AND_PUSH_THIS_AUTHORIZATION_AS_A_SINGLE_DWP_DEV_CARRIER_THEN_MERGE_ONLY_THE_FOUR_AUTHORIZED_RESULT_COMMITS"
+}
