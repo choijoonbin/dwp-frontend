@@ -2495,6 +2495,106 @@
     "loading": "Loading audit evidence",
     "loadError": "Audit evidence could not be loaded.",
     "updated": "Updated {{time}}",
+    "hcmEvidence": {
+      "title": "HRIS audit evidence",
+      "context": "HCM",
+      "description": "Review privacy-minimized, immutable HRIS control evidence within the authorized scope.",
+      "backToHris": "Back to HRIS",
+      "refresh": "Refresh evidence",
+      "loading": "Loading HRIS audit evidence",
+      "retry": "Try again",
+      "listTitle": "Immutable evidence",
+      "listLabel": "HRIS audit evidence",
+      "snapshotAt": "Snapshot {{time}}",
+      "loadMore": "Load earlier evidence",
+      "loadingMore": "Loading earlier evidence",
+      "detailLoading": "Loading evidence detail",
+      "detailTitle": "Evidence detail",
+      "closeDetail": "Close",
+      "unavailable": "Not recorded",
+      "aggregateValue": "{{type}} · v{{revision}}",
+      "filters": {
+        "label": "HRIS evidence filters",
+        "window": "Time window",
+        "category": "Category",
+        "severity": "Severity",
+        "outcome": "Outcome",
+        "sourceService": "Source service",
+        "query": "Evidence search",
+        "reset": "Reset",
+        "apply": "Apply filters"
+      },
+      "empty": {
+        "title": "No evidence in this snapshot",
+        "description": "Change the allowed filters or time window. Hidden identity and target fields cannot be searched."
+      },
+      "selectEvidence": {
+        "title": "Select evidence to inspect",
+        "description": "The detail view contains only the approved HRIS audit projection."
+      },
+      "errors": {
+        "invalidContext": "The HRIS audit context is invalid. Return to HRIS and open the governed audit link again.",
+        "invalidFocus": "The requested evidence reference is invalid. No detail request was sent.",
+        "denied": "Your current governed HRIS audit scope does not allow this evidence.",
+        "notFound": "This evidence is unavailable in the current tenant and HRIS audit scope.",
+        "unavailable": "HRIS audit evidence is temporarily unavailable. No generic audit data was substituted."
+      },
+      "category": {
+        "ALL": "All categories",
+        "ADMIN_CHANGE": "HRIS change",
+        "POLICY_DENIED": "Policy denied"
+      },
+      "severity": {
+        "ALL": "All severities",
+        "INFO": "Information",
+        "HIGH": "High",
+        "CRITICAL": "Critical"
+      },
+      "outcome": {
+        "ALL": "All outcomes",
+        "SUCCESS": "Succeeded",
+        "DENIED": "Denied",
+        "FAILED": "Failed"
+      },
+      "classification": {
+        "INTERNAL": "Internal",
+        "CONFIDENTIAL": "Confidential",
+        "RESTRICTED": "Restricted"
+      },
+      "retention": {
+        "STANDARD": "Standard retention",
+        "EXTENDED": "Extended retention",
+        "LEGAL_HOLD": "Legal hold"
+      },
+      "actorType": {
+        "USER": "User",
+        "SERVICE": "Service",
+        "SYSTEM": "System",
+        "AGENT": "Agent"
+      },
+      "fields": {
+        "occurredAt": "Occurred at",
+        "eventId": "Evidence ID",
+        "category": "Category",
+        "severity": "Severity",
+        "actorType": "Actor type",
+        "source": "Source",
+        "aggregate": "Aggregate and revision",
+        "effectiveCapability": "Effective capability",
+        "purposeCode": "Purpose",
+        "authorizationDecisionRef": "Authorization decision",
+        "scopeRevision": "Scope revision",
+        "fieldPolicyRevision": "Field-policy revision",
+        "approvalReceiptId": "Approval receipt",
+        "reasonCode": "Reason code",
+        "causationId": "Causation ID",
+        "correlationId": "Correlation ID",
+        "beforeDigest": "Before digest",
+        "afterDigest": "After digest",
+        "evidenceDigest": "Evidence digest",
+        "recordHash": "Record hash"
+      }
+    },
     "evidenceModes": {
       "label": "Evidence exploration mode",
       "correlations": {
