@@ -1,0 +1,83 @@
+{
+  "schema": "dwp.hris.migration-lease-activation.v1",
+  "activationId": "HRIS-WAVE6-ACTIVATE-BASE-TFR-SYS-012-PLATFORM-V327-R1",
+  "leaseId": "HRIS-WAVE6-SYS-012-MIGRATION-LEASE-R1",
+  "activatedAt": "2026-10-15T05:02:04+09:00",
+  "activatedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-SYS",
+  "sliceId": "BASE-TFR-SYS-012",
+  "state": "ACTIVE_AUTHORING_ONLY",
+  "leaseEvidence": {
+    "path": "../sys-012-work-explorer-control-r1/migration-lease.v1.json",
+    "sha256": "815942d803150aed9a62fd773ccd5e0dea4ca463b0601c63573b17169133ec1a",
+    "bytes": 1389,
+    "stream": "PLATFORM",
+    "version": "V327",
+    "exactPath": "dwp-platform-server/src/main/resources/db/migration/V327__create_hris_work_explorer.sql"
+  },
+  "preActivationObservation": {
+    "centralBackend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "3b2da20b592de5b5cff8f2483b83900f2dad054e",
+      "tree": "36c16b205aeab8b0ed52130e41196bb3cba024b5",
+      "upstream": "origin/dwp-dev",
+      "cleanAndRemoteExact": true
+    },
+    "platformHighWater": "V326",
+    "exactV327PathPresent": false,
+    "observedAt": "2026-10-15T05:02:04+09:00"
+  },
+  "backendWorktree": {
+    "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave6-20261015/sys-012-work-explorer-r1/backend",
+    "branch": "codex/hris-wave6-sys-012-explorer-backend-20261015-r1",
+    "upstream": "origin/codex/hris-wave6-sys-012-explorer-backend-20261015-r1",
+    "head": "3b2da20b592de5b5cff8f2483b83900f2dad054e",
+    "tree": "36c16b205aeab8b0ed52130e41196bb3cba024b5",
+    "upstreamHead": "3b2da20b592de5b5cff8f2483b83900f2dad054e",
+    "upstreamAhead": 0,
+    "upstreamBehind": 0,
+    "porcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "state": "MATERIALIZED_PUSHED_CLEAN_REMOTE_EXACT"
+  },
+  "schemaContract": {
+    "tables": [
+      "sys_hris_explorer_preferences",
+      "sys_hris_explorer_favorites",
+      "sys_hris_explorer_recents",
+      "sys_hris_command_receipts"
+    ],
+    "tenantIsolation": "RLS_ENABLED_AND_FORCED",
+    "principalBinding": "SERVER_VERIFIED_TENANT_AND_AUTHENTICATED_PRINCIPAL",
+    "crossServiceForeignKeys": false,
+    "sourcePayloadPersistence": false,
+    "receiptRule": "Use the shared canonical sys_hris_command_receipts table; no explorer-only receipt table is authorized."
+  },
+  "verificationRequired": [
+    "PostgreSQL clean migration through V327",
+    "PostgreSQL V326-to-V327 upgrade",
+    "historical migration checksum preservation",
+    "forced RLS and cross-tenant denial",
+    "exact four-table schema and no cross-service foreign key",
+    "report BLOCKED rather than PASS if PostgreSQL execution is unavailable"
+  ],
+  "authority": {
+    "migrationCreationAuthorized": true,
+    "exactPathOnly": true,
+    "cleanAndUpgradeTestExecutionAuthorized": true,
+    "existingMigrationEditAuthorized": false,
+    "secondPlatformMigrationAuthorized": false,
+    "centralBackendChangeAuthorized": false,
+    "dwpDevIntegrationAuthorized": false,
+    "customerDatabaseExecutionAuthorized": false,
+    "tenantActivationAuthorized": false,
+    "productionExecutionAuthorized": false
+  },
+  "invalidationConditions": [
+    "V327 exists from any other owner before the first module edit",
+    "the backend worktree branch, head, tree, upstream, ahead/behind or clean state differs from this activation",
+    "a table, index, policy or schema change outside the sealed four-table contract is required",
+    "an existing migration must be modified or a second Platform migration is required",
+    "cross-service foreign keys, source payload persistence, customer database execution or production activation is attempted"
+  ]
+}

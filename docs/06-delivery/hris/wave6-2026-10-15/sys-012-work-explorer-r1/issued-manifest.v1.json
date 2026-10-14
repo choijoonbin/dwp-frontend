@@ -1,0 +1,140 @@
+{
+  "schema": "dwp.hris.module-start-authority-issued-manifest.v1",
+  "manifestId": "HRIS-WAVE6-BASE-TFR-SYS-012-EXPLORER-START-AUTHORITY-ISSUED-R1",
+  "issuedAt": "2026-10-15T05:02:04+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-SYS",
+  "sliceId": "BASE-TFR-SYS-012",
+  "scope": "WORK_EXPLORER_RUNTIME_AND_USER_JOURNEY",
+  "state": "START_TOKEN_ISSUED_IMPLEMENTATION_ONLY_DRAFT_DEFAULT_OFF",
+  "sealedArtifacts": [
+    {
+      "path": "work-packet.v1.json",
+      "sha256": "c8f8117514343c02b35d6ae8a4b324b69c764614c13d26bf66708423c1f460c7",
+      "bytes": 18639
+    },
+    {
+      "path": "module-result-contract.v1.json",
+      "sha256": "dc92ffee4b817d9c0e9270b43058a1a0fe74abe50784699485fbc7f1280f1384",
+      "bytes": 7707
+    },
+    {
+      "path": "start-token-preparation.v1.json",
+      "sha256": "95ce5c0bccf8e1c8de02c8a8d26ee9709d416b261ac0649a546c3633b563dee4",
+      "bytes": 8701
+    },
+    {
+      "path": "migration-lease-activation.v1.json",
+      "sha256": "3af4bc8cad8d374eff9d355c70a500455516ce34eeb89430942926515a65f2b0",
+      "bytes": 3705
+    },
+    {
+      "path": "start-token-issued.v1.json",
+      "sha256": "8477d781701d01d69d6000d5daa129beac56aa9eecd17f676c9e7a6452abfc3f",
+      "bytes": 13134
+    },
+    {
+      "path": "../sys-012-work-explorer-control-r1/work-explorer-semantics-seal.v1.json",
+      "sha256": "7aa1889d9102bedc4e7447d34b5c4f6ab71de3b52a43919e4869598f0a44384e",
+      "bytes": 19137
+    },
+    {
+      "path": "../sys-012-work-explorer-control-r1/work-explorer-transport-amendment.v1.json",
+      "sha256": "6be0a0486b53fa5e536c490858494e43b8ff2556409c8f7269643fdaaba5d9d9",
+      "bytes": 10900
+    },
+    {
+      "path": "../sys-012-work-explorer-control-r1/migration-lease.v1.json",
+      "sha256": "815942d803150aed9a62fd773ccd5e0dea4ca463b0601c63573b17169133ec1a",
+      "bytes": 1389
+    },
+    {
+      "path": "../sys-012-work-explorer-control-r1/central-contract-carrier-integration-receipt.v1.json",
+      "sha256": "830f9d8c1c2c64e4a31e3f4469e8d4fc2b419500a5636dd65ca69aa2e7c87473",
+      "bytes": 7033
+    },
+    {
+      "path": "../sys-012-work-explorer-control-r1/central-contract-carrier-independent-audit.v1.json",
+      "sha256": "9a27e39824dd879dfa4d19a1bff38c33f2fe976fec198a95da3a9695ecdb06cb",
+      "bytes": 5397
+    },
+    {
+      "path": "../sys-012-work-explorer-control-r1/readiness-and-dispatch-gate-successor.v2.json",
+      "sha256": "764443b73bfb46f1dd1d9d212466c8bdf040a16e2b88b75cdfa54ad265491c97",
+      "bytes": 6004
+    }
+  ],
+  "resultPins": {
+    "backendBase": "dwp-backend@3b2da20b592de5b5cff8f2483b83900f2dad054e",
+    "frontendBase": "dwp-frontend@4f740a572afb8feeef3e31cb8ed258c0c8145cf2",
+    "backendModuleBranch": "codex/hris-wave6-sys-012-explorer-backend-20261015-r1@3b2da20b592de5b5cff8f2483b83900f2dad054e",
+    "frontendModuleBranch": "codex/hris-wave6-sys-012-explorer-frontend-20261015-r1@4f740a572afb8feeef3e31cb8ed258c0c8145cf2",
+    "authorization": "product-surface-authorization-v43@2222319502c362caf247a7a47fdacfc63c774dbf156f6272cafae797627e2400",
+    "platformOpenApiSha256": "602416316d6fd44f3b4a3d392d59afbef16f244ccf8e55648665fc2818143110",
+    "gatewayOpenApiSha256": "3205d3bfc0bbdb2923c57c4e40ebecdeaa41a3b32ed51e4aa8e84a6e97a61671",
+    "exactBrowserPath": "/hr/explore",
+    "migration": "PLATFORM:V327:dwp-platform-server/src/main/resources/db/migration/V327__create_hris_work_explorer.sql"
+  },
+  "worktreeIntegrity": {
+    "backend": {
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave6-20261015/sys-012-work-explorer-r1/backend",
+      "branch": "codex/hris-wave6-sys-012-explorer-backend-20261015-r1",
+      "upstream": "origin/codex/hris-wave6-sys-012-explorer-backend-20261015-r1",
+      "head": "3b2da20b592de5b5cff8f2483b83900f2dad054e",
+      "tree": "36c16b205aeab8b0ed52130e41196bb3cba024b5",
+      "aheadBehind": "0/0",
+      "porcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "frontend": {
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave6-20261015/sys-012-work-explorer-r1/frontend",
+      "branch": "codex/hris-wave6-sys-012-explorer-frontend-20261015-r1",
+      "upstream": "origin/codex/hris-wave6-sys-012-explorer-frontend-20261015-r1",
+      "head": "4f740a572afb8feeef3e31cb8ed258c0c8145cf2",
+      "tree": "474e40c18f544f67450c023fef4ace6375218d56",
+      "aheadBehind": "0/0",
+      "porcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "closedStartGates": [
+    "SYS012_SEMANTICS_AND_TRANSPORT_SEALED",
+    "BACKEND_AND_FRONTEND_CENTRAL_CARRIERS_PUSHED_CLEAN",
+    "INDEPENDENT_CARRIER_AUDIT_PASS_P0_ZERO_P1_ZERO",
+    "V43_DRAFT_DEFAULT_OFF_AND_EXACT_FOUR_ROUTES_PINNED",
+    "TWO_MODULE_WORKTREES_MATERIALIZED_PUSHED_CLEAN_REMOTE_EXACT",
+    "PLATFORM_V327_ABSENT_AT_ACTIVATION_WITH_HIGH_WATER_V326",
+    "PLATFORM_V327_AUTHORING_ONLY_LEASE_ACTIVE",
+    "EXACT_BACKEND_AND_FRONTEND_TOUCH_BOUNDARIES_SEALED",
+    "TYPED_OWNER_EVIDENCE_HOOK_AND_NO_CROSS_SERVICE_DATABASE_RULE_SEALED",
+    "TWELVE_ACCEPTANCE_CRITERIA_RESULT_CONTRACT_AND_TARGETED_VALIDATION_SEALED"
+  ],
+  "completionBoundary": {
+    "permittedResult": "MODULE_RUNTIME_AND_USER_JOURNEY_COMPLETE_CONTROL_INTEGRATION_PENDING_DEFAULT_OFF",
+    "forbiddenClaims": [
+      "DIRECT_DWP_DEV_MERGE_AUTHORIZED",
+      "CENTRAL_RESULT_ADMITTED",
+      "AUTHORIZATION_OR_OPENAPI_EDIT_COMPLETE",
+      "BUNDLE_APPROVED_OR_ASSIGNED",
+      "FEATURE_OR_POLICY_ACTIVATED",
+      "TENANT_OR_CUSTOMER_ENABLED",
+      "PRODUCTION_RELEASED"
+    ]
+  },
+  "authority": {
+    "moduleImplementationAuthorized": true,
+    "exactV327MigrationAuthoringAuthorized": true,
+    "moduleBranchCommitAndPushAuthorized": true,
+    "mergeToDwpDevAuthorized": false,
+    "centralContractEditAuthorized": false,
+    "authorizationOrOpenApiEditAuthorized": false,
+    "ownerServiceSourceEditAuthorized": false,
+    "secondMigrationAuthorized": false,
+    "routeOrMenuActivationAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "policyActivationAuthorized": false,
+    "customerDataAuthorized": false,
+    "externalConnectorAuthorized": false,
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "HRIS_SYS_IMPLEMENTS_THE_EXACT_SYS_012_RUNTIME_AND_FRONTEND_JOURNEY_IN_THE_TWO_ISSUED_WORKTREES_COMMITS_AND_PUSHES_BOTH_MODULE_BRANCHES_AND_RETURNS_THE_SEALED_RESULT_CONTRACT_EVIDENCE"
+}
