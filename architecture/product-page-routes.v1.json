@@ -360,6 +360,13 @@
       "surfaceId": "dwaion.work"
     },
     {
+      "routeContractKey": "route.hcm.audit.evidence.page",
+      "routeId": "hcm.audit.hris",
+      "pattern": "/admin/governance/audit-overview",
+      "productId": "hcm",
+      "surfaceId": "hcm.management"
+    },
+    {
       "routeContractKey": "route.hcm.configuration.payroll.page",
       "routeId": "hcm.configuration.payroll",
       "pattern": "/hr/settings/payroll",
@@ -475,6 +482,13 @@
       "routeContractKey": "route.hcm.operations.people.page",
       "routeId": "hcm.operations.people",
       "pattern": "/hr/operations/people",
+      "productId": "hcm",
+      "surfaceId": "hcm.operations"
+    },
+    {
+      "routeContractKey": "route.hcm.operations.performance-multirater-surveys.page",
+      "routeId": "hcm.operations.performance-multirater-surveys",
+      "pattern": "/hr/operations/performance/multirater-surveys",
       "productId": "hcm",
       "surfaceId": "hcm.operations"
     },
