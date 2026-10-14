@@ -1,0 +1,204 @@
+{
+  "schema": "dwp.hris.sys001.source-evidence-digests.v1",
+  "evidenceId": "HRIS-WAVE5-SYS-001-SOURCE-EVIDENCE-R1",
+  "preparedAt": "2026-10-14T14:25:52+09:00",
+  "sliceId": "BASE-TFR-SYS-001",
+  "hashAlgorithm": "SHA-256",
+  "state": "READ_ONLY_EVIDENCE_CAPTURED",
+  "repositoryPins": {
+    "dwp-backend": "357bd2b9e1c8a4d233c285d96911b5077cb444cf",
+    "dwp-frontend": "20fe240b59e5e93516e7d033a59564013d86b7c9"
+  },
+  "rules": [
+    "Hashes identify the exact bytes reviewed; they are not release approval, activation evidence, or a Start Token.",
+    "All backend/frontend source paths in this evidence set were read-only during preparation.",
+    "Only JSON preparation documents under sys-001-control-r1 were created."
+  ],
+  "authoritativePlanningEvidence": [
+    {
+      "path": "dwp-frontend/docs/06-delivery/hris/wave5-2026-10-14/module-dispatch-r1/sys-base-tfr-sys-001-preflight.v1.json",
+      "sha256": "572f348a02a8fa1bb36a0cf135c0bce24c6c4426b674ab8c77149e00ce97937d",
+      "usedFor": "No-code-versus-exact-delta gate, PLAT-005/SHARED-API-009 reuse, no migration, canonical HCM entry/focus paths."
+    },
+    {
+      "path": "dwp-frontend/docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/g3-slice-code-go-register.csv",
+      "sha256": "fb646668329e93ca0b83b74e2a3e43619954cec1cb2f6770029677edbc8d5725",
+      "usedFor": "BASE-TFR-SYS-001 bounded context, dependencies, contracts, permissions, and acceptance references."
+    },
+    {
+      "path": "dwp-frontend/docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/target-family-resolution-register.csv",
+      "sha256": "a8746b9b89bf6bebd0a5b6fe4d8f9e985e223dcd6d395f5ef03b6f3f98d16189",
+      "usedFor": "TFR-SYS-001 resolution to existing canonical audit query and immutable minimized evidence."
+    },
+    {
+      "path": "dwp-frontend/docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/platform-integration-binding-register.csv",
+      "sha256": "f7454ca7cd0c089e7fb609c452ba56b67f565850943d23a298a44409981c20a5",
+      "usedFor": "PLAT-005 canonical AuditEvent binding and owner/store reuse."
+    },
+    {
+      "path": "dwp-frontend/docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/shared-contract-catalog.csv",
+      "sha256": "34ffec83a60a7cb369406807bb856755e7bb34cf2be5dacb67dac1b0f3a07118",
+      "usedFor": "SHARED-API-009 exact public and owner paths."
+    },
+    {
+      "path": "dwp-frontend/docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/ia-node-access-contract-register.csv",
+      "sha256": "3fc33ce63642c337c9cf8dc6cfbd3b9287d9b1202c5b709e137744c7b28494bf",
+      "usedFor": "BASE:dwp-governance query/action split and server-enforced package/duty/population/field/purpose/SoD rule."
+    },
+    {
+      "path": "dwp-frontend/docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/ia-shared-authorization-exception-register.csv",
+      "sha256": "80aa6a5da61d0f9716e375c8dbb1b66b7a22394af602ba233f78b1b8ea27c4b8",
+      "usedFor": "IAEXT-006 exact APP.HCM, HRIS_AUDITOR, HRIS_DUTY_AUDITOR, ADMIN.AUDIT_VIEW, and SoD intersection."
+    },
+    {
+      "path": "dwp-frontend/docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/hris-permission-group-matrix.csv",
+      "sha256": "9daf98e2b6c3eadec2a7e782516046f074cb0775c03bdc7fbd75c08adce33578",
+      "usedFor": "HRIS_AUDITOR package, APP.HCM entitlement, allowed audit field groups, scope types, and SoD."
+    },
+    {
+      "path": "dwp-frontend/docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/hris-atomic-duty-matrix.csv",
+      "sha256": "cdb96241579a0c81320b3fc60b3032e0ba641d25dda304eaadbde6f61325b6fc",
+      "usedFor": "HRIS_DUTY_AUDITOR capability/resource/action, HIGH risk, step-up, field groups, and dwp-audit ownership intent."
+    },
+    {
+      "path": "dwp-frontend/docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/hris-sod-rule-matrix.csv",
+      "sha256": "c6354906f94a0f0b1b54ba45580c760547bbf9fd95901dcfe71dcce22669e5bb",
+      "usedFor": "Complete SOD_HRIS_AUDIT_INDEPENDENCE conflicting package set and blocking semantics."
+    },
+    {
+      "path": "dwp-frontend/docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/platform-dependency-canonical-schemas.v1.json",
+      "sha256": "5778f82aa3b76511a19dc3df47f4fb1d2f51502d96906197abbe143359eddfd4",
+      "usedFor": "Closed HrisAuditOutboxEvent.v1 schema and no-raw-state privacy invariant."
+    }
+  ],
+  "authorizationRuntimeEvidence": [
+    {
+      "path": "dwp-backend/contracts/product-authorization/product-surfaces-v1.bundle-v41.json",
+      "sha256": "e0af60bff61b272200575b70b87c558125a4a98d12ca6c60ff00e7ad73326414",
+      "embeddedChecksum": "026157acf598ebabf156b40e3c084c40d52346ebfd2019e2476f30ecdd2b8d93",
+      "facts": "Current immutable DRAFT v41 contains 252 capabilities, 24 policies, 17 expressions, 64 predicates, and 1017 routes; no hcm.audit.evidence.view."
+    },
+    {
+      "path": "dwp-backend/contracts/product-authorization/product-surfaces-v1.index.json",
+      "sha256": "b7d9db7468e5ef56a2ebe3f35995e363106fc1614817060006af20aa0a891653",
+      "facts": "Latest immutable index entry is v41 and the index has 41 contiguous versions."
+    },
+    {
+      "path": "dwp-backend/contracts/product-authorization/product-surfaces-v1.yaml",
+      "sha256": "7caa743c59ba3689dd97fb783528eb7afaa01abe07a2e4ce34e6bb460005aa67",
+      "facts": "Canonical authorization generator source lacks the SYS-001 HCM audit capability/routes."
+    },
+  {
+    "path": "dwp-backend/scripts/generate-product-authorization-contracts.py",
+    "sha256": "014af05c09f770f42fa1699ac1d83d4255db663cf4812cc9c732695e94ce890c",
+    "facts": "Current route validation requires command/object-version stepUpCommandBindings for every direct HIGH/CRITICAL STEPUP capability except two unrelated legacy exceptions. It has no safe model for an ELEVATED-only read-only PAGE/DATA GET, so SYS-001 requires a two-route allowlisted validation branch rather than clearing activationPolicy or using a capability expression."
+  },
+    {
+      "path": "dwp-backend/dwp-auth-server/src/main/java/com/dwp/services/auth/config/ProductAuthorizationSeedLoader.java",
+      "sha256": "ce2913b229c34647cdf506d07d81688678ce3c32277e11f92ccbed0158f2b54e",
+      "facts": "Existing loader imports indexed versions as DRAFT only and never approves, activates, or rolls back."
+    },
+    {
+      "path": "dwp-backend/dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationReleaseLineage.java",
+      "sha256": "239b39a6e308717755d4670074ae7f2348b17fc3bcb4337135b80e9ed6df2dd2",
+      "facts": "Current Java lineage seals only v1-v40 and requires latestVersion=40, which conflicts with the checked-in v41 index."
+    },
+    {
+      "path": "dwp-backend/dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationAuthorityAdapter.java",
+      "sha256": "85a46bc95bc7012dd014c1b4d058d43a53a27b14951cf9fa9ee2eb29a16fc023",
+      "facts": "Capability evaluation supports entitlement, permission, responsibility, step-up, and SoD hooks but has no HCM auditor package policy."
+    },
+    {
+      "path": "dwp-backend/dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationAuthoritySupport.java",
+      "sha256": "3e882ed8d4441da81adbc357c11c33d3c4a39ce04ff80c75ad3836a8d7054fc2",
+      "facts": "Static SoD recognizes only three Approvals capability cases and has no SOD_HRIS_AUDIT_INDEPENDENCE implementation."
+    },
+    {
+      "path": "dwp-backend/dwp-gateway/src/main/java/com/dwp/gateway/filter/ProductSurfaceDecisionContextFilter.java",
+      "sha256": "219640994df77fca827fe255581f1ac0142a29a42c0ccdf318f63227fc2510d3",
+      "facts": "The Gateway strips/rebuilds trusted decision headers and supports fixed query constraints, but its server purpose map has no HCM audit route."
+    },
+    {
+      "path": "dwp-backend/dwp-platform-server/src/main/resources/product-authorization/hcm-platform-pep-v40.generated.json",
+      "sha256": "d6477b011e73dbb63845aa0234f259b7ecc112ecaec8f46a4f4390beea85e378",
+      "facts": "Latest Platform-owned HCM PEP projection predates v41 and contains no audit-control binding."
+    },
+    {
+      "path": "dwp-backend/dwp-platform-server/src/main/java/com/dwp/services/platform/security/HcmPlatformPepRegistry.java",
+      "sha256": "709bbc9a1241e7ed5b24cb031c1a9d336b338ba3195ed3359f1bdc8f9672e243",
+      "facts": "Registry loads the v40 Platform HCM projection and has no SYS-001 audit bindings."
+    },
+    {
+      "path": "dwp-backend/dwp-platform-server/src/main/java/com/dwp/services/platform/security/PlatformSecurityFilter.java",
+      "sha256": "2aec1d5b8bf60b7581a37b9d84c5e50c0987244e6d35fb22e8309068a5ea0e8a",
+      "facts": "Current shared audit family enforcement does not implement the exact HCM package/duty/purpose/field/SoD profile or generic bypass fence."
+    },
+    {
+      "path": "dwp-backend/dwp-platform-server/src/main/java/com/dwp/services/platform/security/PlatformSecurityHeaders.java",
+      "sha256": "ec8dfe695d230df2652ccd9a780f0ca183a7f301e17155b4ef90ba48b50c357d",
+      "facts": "Header catalog lacks the purpose, field-policy revision, authorization revision, active-mode, and subject constants needed by the HCM owner PEP."
+    }
+  ],
+  "auditRuntimeEvidence": [
+    {
+      "path": "dwp-backend/dwp-platform-server/src/main/java/com/dwp/services/platform/auditcontrol/AdminAuditControlController.java",
+      "sha256": "69e67df70901c9c38b5f87570c87ee384d48d8abef7415a46cefc35f0ef0b927",
+      "facts": "Current overview/list/detail accept no product profile and expose the generic audit-control service."
+    },
+    {
+      "path": "dwp-backend/dwp-platform-server/src/main/java/com/dwp/services/platform/auditcontrol/AuditAccessGuard.java",
+      "sha256": "969f610d9cc0b4425b199ada9952d5c0a7644679fe2382be6ff51377b65c2c52",
+      "facts": "View access checks generic ADMIN.AUDIT_VIEW only."
+    },
+    {
+      "path": "dwp-backend/dwp-platform-server/src/main/java/com/dwp/services/platform/auditcontrol/AuditControlDtos.java",
+      "sha256": "f47211c35bb833cb626d3ede410cf95a81a706ac4fefd82d4aa724a2f5bd366a",
+      "facts": "Generic Event/EventPage include sensitive actor/target/raw metadata and total counts and are unsuitable for HCM serialization."
+    },
+    {
+      "path": "dwp-backend/dwp-platform-server/src/main/java/com/dwp/services/platform/auditcontrol/AuditControlEventRepository.java",
+      "sha256": "05e949f3dce22c585afa27d49125b65f35640af237e94422825f4a726537a47e",
+      "facts": "Generic repository is tenant-qualified but uses full Event mapping, counts, and offset paging and has no canonical HRIS fingerprint."
+    },
+    {
+      "path": "dwp-backend/dwp-core/src/main/java/com/dwp/core/audit/hriscontracts/HrisAuditOutboxEventAdapter.java",
+      "sha256": "c1728fa3a54010cb01333fab2038de6a0d871bdafe123a8468ed86375cd987db",
+      "facts": "Existing adapter writes bounded canonical evidence to AuditEvent with empty before/after state and an allowlisted metadata map; it is reused unchanged."
+    },
+    {
+      "path": "dwp-backend/contracts/openapi/gateway-public.json",
+      "sha256": "c972c27e68ed3cf509b70e00e69cf399fbd106f4880f726ec621f220e34ccca6",
+      "facts": "Current shared audit paths expose only the generic response contract and no conditional closed HCM schemas."
+    }
+  ],
+  "frontendEvidence": [
+    {
+      "path": "dwp-frontend/apps/dwp/src/features/hris/shell/model/catalog/dwp-control.ts",
+      "sha256": "bf27bfdfe86a10f2c5899d5c750ffa7a7b7e364101e61590eae8dac69b509612",
+      "facts": "dwp-governance is an EXTERNAL/CENTRAL_POLICY catalog entry with no href and is currently inert."
+    },
+    {
+      "path": "dwp-frontend/apps/dwp/src/features/admin/audit-overview.tsx",
+      "sha256": "80579e13e70e96bf1b62cc9596207dd9de09c1d9a4ecf274b14f667586353700",
+      "facts": "The shared overview ignores product and renders generic metrics, including top-actor and investigation navigation."
+    },
+    {
+      "path": "dwp-frontend/libs/shared-utils/src/api/audit-control-api.ts",
+      "sha256": "8fbe6600abec328e0f5ea39388185e264e1b4a92a43f5487eb14023dfdca05c6",
+      "facts": "The current client exposes the full generic AuditEvent/AuditEventPage types and has no HCM typed projection."
+    },
+    {
+      "path": "dwp-frontend/architecture/product-surface-authorization.v1.json",
+      "sha256": "43dd6f933aa0194fe8a9db1c8abe6cfdc8e0de87ef8670d4a0e4cc14d666cb70",
+      "facts": "Frontend authorization snapshot is not yet synchronized to a SYS-001 HCM audit route."
+    }
+  ],
+  "conclusion": {
+    "conformanceCloseNoCode": false,
+    "exactDeltaTokenRequired": true,
+    "newStoreRequired": false,
+    "newCrudRequired": false,
+    "newMigrationRequired": false,
+    "centralCodeRequiredBeforeSysToken": true
+  }
+}

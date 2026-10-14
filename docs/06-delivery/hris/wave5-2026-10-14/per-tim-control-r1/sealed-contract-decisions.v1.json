@@ -1,0 +1,874 @@
+{
+  "schema": "dwp.hris.per-tim-control-bridge.sealed-contract-decisions.v1",
+  "artifactId": "HRIS-WAVE5-SHARED-V42-PER-TIM-CONTROL-BRIDGE-DECISIONS-R1",
+  "preparedAt": "2026-10-14T14:26:24+09:00",
+  "authority": {
+    "kind": "CENTRAL_CONTROL_IMPLEMENTATION_AUTHORIZED",
+    "startTokensIssued": false,
+    "implementationAuthorized": true,
+    "implementationScope": "Only the shared v42 registry/generator/fixtures/OpenAPI/AsyncAPI/Gateway/Auth V251 and v41 lineage catch-up plus the People central owner-registry/scope bridge. No SYS Platform owner Java/audit feature, PER/TIM runtime/migration/UI, feature activation, commit, or push is authorized by this artifact.",
+    "migrationLeasesIssued": false,
+    "featureActivationAuthorized": false
+  },
+  "baseline": {
+    "backend": {
+      "branch": "dwp-dev",
+      "head": "357bd2b9e1c8a4d233c285d96911b5077cb444cf",
+      "originHead": "357bd2b9e1c8a4d233c285d96911b5077cb444cf",
+      "cleanAtInspection": true
+    },
+    "frontend": {
+      "branch": "dwp-dev",
+      "head": "20fe240b59e5e93516e7d033a59564013d86b7c9",
+      "originHead": "20fe240b59e5e93516e7d033a59564013d86b7c9",
+      "cleanAtInspection": true,
+      "note": "An unrelated HRM preparation directory appeared after inspection and is outside this artifact boundary."
+    },
+    "authorizationBundleHighWater": 41,
+    "authFlywayHighWater": 250,
+    "peoplePerformanceFlywayHighWater": 17,
+    "timeFlywayHighWater": 10
+  },
+  "precedence": [
+    "Accepted exact supplements dated 2026-10-06 override the unrepaired recovery copies for IA entry-query contracts.",
+    "module-exact-business-start-canonical.v1 overrides an older G2 transport enum when they disagree about aggregate states.",
+    "api-pep-binding-register.csv fixes PEP method, browser path, owner path, capability, resource, action, population, field group, purpose, and PEP layers.",
+    "hris-atomic-duty-matrix.csv fixes step-up and dynamic SoD expectations.",
+    "Current dwp-dev code fixes generator mechanics, generated artifact lineage, runtime guards, and currently occupied migration versions.",
+    "This preparation artifact resolves missing transport details but does not authorize implementation or supersede a later signed Start Token."
+  ],
+  "combinedControlBridge": {
+    "verdict": "SOUND_AS_ONE_APPEND_ONLY_CONTROL_AND_GENERATOR_CYCLE",
+    "authorizationVersion": 42,
+    "versioningDecision": {
+      "participants": ["SYS-001", "BASE-TFR-PER-013", "BASE-TFR-TIM-017"],
+      "generatorOwnerCount": 1,
+      "rule": "SYS, PER, and TIM must land through one shared authorization v42 source edit, one generator write pass, one fixture pass, and one OpenAPI/Gateway integration commit. No participant may publish a competing v42, defer its already-sealed delta into a second v42, or force an avoidable v43 rewrite.",
+      "collisionResult": "NO_CAPABILITY_PREDICATE_ROUTE_KEY_OR_METHOD_PATH_COLLISION"
+    },
+    "expectedDeltaFromV41": {
+      "capabilities": 3,
+      "accessPolicies": 0,
+      "entitlementExpressions": 0,
+      "predicatePolicies": 5,
+      "routes": 11,
+      "routeKinds": {
+        "PAGE": 2,
+        "DATA": 4,
+        "ACTION": 5
+      }
+    },
+    "expectedV42Totals": {
+      "capabilities": 255,
+      "accessPolicies": 24,
+      "entitlementExpressions": 17,
+      "predicatePolicies": 69,
+      "routes": 1028,
+      "routeKinds": {
+        "PAGE": 132,
+        "DATA": 308,
+        "ACTION": 588
+      }
+    },
+    "expectedOwnerProjectionTotals": {
+      "hcm-people-pep-v42": {
+        "routes": 97,
+        "bindings": 124,
+        "routeKinds": {
+          "PAGE": 30,
+          "DATA": 19,
+          "ACTION": 48
+        },
+        "capabilities": 51,
+        "accessPolicies": 5,
+        "entitlementExpressions": 3,
+        "predicatePolicies": 17
+      },
+      "hcm-time-pep-v42": {
+        "routes": 20,
+        "bindings": 20,
+        "routeKinds": {
+          "PAGE": 3,
+          "DATA": 5,
+          "ACTION": 12
+        },
+        "capabilities": 13,
+        "accessPolicies": 0,
+        "entitlementExpressions": 0,
+        "predicatePolicies": 6
+      },
+      "hcm-platform-pep-v42": {
+        "routes": 30,
+        "bindings": 31,
+        "routeKinds": {
+          "PAGE": 5,
+          "DATA": 8,
+          "ACTION": 17
+        },
+        "capabilities": 16,
+        "accessPolicies": 4,
+        "entitlementExpressions": 3,
+        "predicatePolicies": 5
+      }
+    },
+    "authRuntimeLineageCatchup": {
+      "finding": "The generated Auth seed index and latest alias already point to v41, but ProductAuthorizationReleaseLineage and its loader/lineage tests remain pinned to v40. A v42 bridge that leaves this split would not be executable by the Auth seed validator.",
+      "required": [
+        "Seal the existing immutable v41 checksum/counts in ProductAuthorizationReleaseLineage before appending v42.",
+        "Seal the generated v42 checksum/counts and make the Auth seed index validator require the contiguous v1-v42 lineage.",
+        "Advance only tests that claim to verify the latest alias/index; preserve byte-exact v39-v41 historical bundle assertions.",
+        "Keep v41 payroll, v40 platform, v39 People, and v38 Time historical owner projections immutable while adding People, Time, and Platform v42 projections."
+      ]
+    },
+    "whyCombinedIsSafe": [
+      "All eleven public bindings are new exact method/path pairs and belong to the same HCM product registry lineage.",
+      "People, Time, and Platform owner descriptors are independent generated projections from the same immutable v42 bundle.",
+      "The Gateway purpose and population forwarding change is shared infrastructure and is smaller and safer as one atomic change.",
+      "The OpenAPI exporter already composes People, Time, Platform, and Gateway contracts in one deterministic pass.",
+      "Neither module migration nor module runtime implementation is part of this control bridge."
+    ],
+    "mustRemainSeparate": [
+      "PER V18 and TIM V11 authoring and execution",
+      "People and Time runtime controllers, repositories, owner PEPs, outbox writers, and frontend screens",
+      "TIM publisher ACL source change, because its steady-state required privilege becomes valid only in the same module commit as V11",
+      "Legacy Time API cutover and feature activation",
+      "SYS-001 feature implementation and activation outside the exact shared control artifacts",
+      "Start Token issuance"
+    ]
+  },
+  "sharedGatewayRules": {
+    "requiredTrustedHeaders": [
+      "X-DWP-Route-Contract-Key",
+      "X-DWP-Current-Decision-Revision",
+      "X-DWP-Context-Key",
+      "X-DWP-Context-Scope-Key",
+      "X-DWP-Active-Access-Mode",
+      "X-DWP-Subject-Principal-Public-ID",
+      "X-DWP-Field-Policy-Revision",
+      "X-DWP-Authorization-Revision",
+      "X-DWP-Population-Kind",
+      "X-Purpose-Code"
+    ],
+    "stateChangingPublicRoutesRequire": [
+      "X-DWP-Expected-Decision-Revision equal to the current resolved decision revision",
+      "Idempotency-Key at the owner API",
+      "If-Match at the owner API",
+      "trusted tenant and actor identity from verified request context only"
+    ],
+    "clientHeadersStrippedAndReplaced": [
+      "all X-DWP trusted decision/identity/field/population headers",
+      "X-Purpose-Code"
+    ],
+    "stepUpRule": "No route in PER-013 or TIM-017 receives stepUpCommandBindings. Atomic duties mark step_up_required=N. SYS-001 retains STEPUP-MGMT-HIGH-V1 on its capability but its two ELEVATED-only GET projections have no command binding under the exact allowlisted read exception below. This does not remove the Gateway expected-decision-revision check or owner If-Match CAS.",
+    "timeOperatorCompatibility": "The TIM correction operator profile must use CAPABILITY_EXPRESSION/ANY with the single hcm.operations.time.update key, matching the existing non-step-up Time interpretation pattern; it must not silently introduce a step-up binding contrary to the duty matrix."
+  },
+  "sysSharedV42Participant": {
+    "sliceId": "TFR-SYS-001",
+    "moduleSession": "HRIS-SYS",
+    "sourceSeal": "docs/06-delivery/hris/wave5-2026-10-14/sys-001-control-r1/hcm-audit-semantics-seal.v1.json",
+    "scopeRule": "SYS-001 contributes only its sealed authorization, OpenAPI, Gateway, Platform owner-PEP, closed projection, and targeted test delta to the shared v42 cycle. Its feature implementation and activation remain independently controlled.",
+    "newCapabilities": [
+      {
+        "contractKey": "hcm.audit.evidence.view",
+        "resolvedCapabilityCode": "ADMIN.AUDIT_VIEW:VIEW",
+        "productKey": "hcm",
+        "surfaceKey": "hcm.audit",
+        "resourceKey": "APP.HCM",
+        "action": "VIEW",
+        "authorityMode": "PERMISSION_AND_RELATIONSHIP",
+        "responsibilityRequirement": "HRIS_DUTY_AUDITOR",
+        "scopeResolver": "AUTHORIZED_PACKAGE_SCOPE_AT_RS_HCM_CONFIG",
+        "riskTier": "HIGH",
+        "activationPolicy": "STEPUP-MGMT-HIGH-V1",
+        "sodPolicyId": "SOD_HRIS_AUDIT_INDEPENDENCE"
+      }
+    ],
+    "newPredicates": [
+      {
+        "predicatePolicyKey": "predicate.hcm-audit-evidence-authority.v1",
+        "ownerServiceKey": "platform",
+        "targetBindingKinds": ["CONFIG_SCOPE"],
+        "inputEvidenceSchemaKey": "HcmAuditEvidenceAuthorityV1",
+        "rule": "Require TENANT identity provenance, ELEVATED active access, APP.HCM:VIEW, ADMIN.AUDIT_VIEW:VIEW, HRIS_AUDITOR, exact HRIS_DUTY_AUDITOR responsibility at APP.HCM/RS_HCM_CONFIG, current field and authorization revisions, fixed product=HCM binding, HRIS_AUDIT_EVIDENCE purpose, and a passing SOD_HRIS_AUDIT_INDEPENDENCE decision; deny provider, delegated, support, cross-tenant, or ambiguous-scope evidence."
+      }
+    ],
+    "routes": [
+      {
+        "routeContractKey": "route.hcm.audit.evidence.page",
+        "routeKind": "PAGE",
+        "method": "GET",
+        "browserPath": "/api/platform/v1/admin/audit-control/events",
+        "ownerPath": "/v1/admin/audit-control/events",
+        "ownerServiceKey": "platform",
+        "fixedQuery": {"product": "HCM"},
+        "bindingKey": "route.hcm.audit.evidence.page.binding.01",
+        "accessProfile": {
+          "profileKey": "hcm-audit-evidence-reader",
+          "precedence": 300,
+          "activeAccessModes": ["ELEVATED"],
+          "requiredAccess": {"type": "CAPABILITY", "capabilityContractKey": "hcm.audit.evidence.view"},
+          "targetBindingKinds": ["CONFIG_SCOPE"],
+          "predicatePolicyKeys": ["predicate.hcm-audit-evidence-authority.v1"],
+          "projectionPolicyKey": "route.hcm.audit.evidence.page.hcm-evidence-minimized.projection.v1",
+          "responseSchemaKey": "HcmAuditEvidencePageV1",
+          "readOnly": true
+        },
+        "population": "AUTHORIZED_PACKAGE_SCOPE",
+        "fieldGroups": ["AUDIT_PROJECTION", "MASKED_SENSITIVE"],
+        "purpose": "HRIS_AUDIT_EVIDENCE",
+        "stepUpCommandBindings": "ABSENT"
+      },
+      {
+        "routeContractKey": "route.hcm.audit.evidence-detail.data",
+        "routeKind": "DATA",
+        "method": "GET",
+        "browserPath": "/api/platform/v1/admin/audit-control/events/{eventId}",
+        "ownerPath": "/v1/admin/audit-control/events/{eventId}",
+        "ownerServiceKey": "platform",
+        "fixedQuery": {"product": "HCM"},
+        "bindingKey": "route.hcm.audit.evidence-detail.data.binding.01",
+        "accessProfile": {
+          "profileKey": "hcm-audit-evidence-reader",
+          "precedence": 300,
+          "activeAccessModes": ["ELEVATED"],
+          "requiredAccess": {"type": "CAPABILITY", "capabilityContractKey": "hcm.audit.evidence.view"},
+          "targetBindingKinds": ["CONFIG_SCOPE"],
+          "predicatePolicyKeys": ["predicate.hcm-audit-evidence-authority.v1"],
+          "projectionPolicyKey": "route.hcm.audit.evidence-detail.data.hcm-evidence-minimized.projection.v1",
+          "responseSchemaKey": "HcmAuditEvidenceV1",
+          "readOnly": true
+        },
+        "population": "AUTHORIZED_PACKAGE_SCOPE",
+        "fieldGroups": ["AUDIT_PROJECTION", "MASKED_SENSITIVE"],
+        "purpose": "HRIS_AUDIT_EVIDENCE",
+        "stepUpCommandBindings": "ABSENT"
+      }
+    ],
+    "readTimeStepUpGeneratorRule": {
+      "decision": "NARROW_ALLOWLISTED_ELEVATED_READ_EXCEPTION",
+      "exactRouteKeys": ["route.hcm.audit.evidence.page", "route.hcm.audit.evidence-detail.data"],
+      "allRequiredConditions": [
+        "route kind is PAGE or DATA",
+        "every gateway and service binding method is GET",
+        "the single direct capability is HIGH or CRITICAL and retains a STEPUP activation policy",
+        "the access profile is ELEVATED-only and readOnly=true",
+        "a closed projectionPolicyKey and responseSchemaKey are present"
+      ],
+      "effect": "Permit stepUpCommandBindings to be absent only for the two exact SYS read routes. NORMAL access may receive the existing elevation challenge but can never receive evidence. Every other step-up route retains the command-binding requirement."
+    },
+    "authChallengeOnlyRule": {
+      "exactRouteKeys": ["route.hcm.audit.evidence.page", "route.hcm.audit.evidence-detail.data"],
+      "normalMode": "The Auth authority adapter may evaluate the sole ELEVATED read profile only as a challenge candidate after full entitlement, permission, package, responsibility, product-root scope, predicate, and 28-conflict SoD checks. Its only non-denial result is STEP_UP_REQUIRED; it must never return ALLOWED or produce owner-forwarding evidence.",
+      "elevatedMode": "The same exact profile is evaluated normally and may be allowed only after every sealed authority condition passes.",
+      "nearMisses": "A different route key, route kind, method, access-mode set, capability, activation policy, predicate, target binding, projection, response schema, query constraint, purpose, field group, or readOnly value uses the existing default evaluation and topology rules."
+    }
+  },
+  "authMigrationV251": {
+    "candidatePath": "dwp-auth-server/src/main/resources/db/migration/V251__authorize_performance_review_and_timecard_contracts.sql",
+    "newResourceTemplate": {
+      "resourceKey": "DATA.HRIS_PERFORMANCE_REVIEW",
+      "resourceType": "DATA",
+      "displayName": "HRIS performance assigned review",
+      "requiredEntitlement": "core.people"
+    },
+    "exactActiveRolePermissionTemplates": [
+      "WORKSPACE_MEMBER|DATA.HRIS_PERFORMANCE_REVIEW|UPDATE",
+      "TALENT_ADMIN|DATA.HRIS_PERFORMANCE_REVIEW|UPDATE",
+      "HR_ADMIN|DATA.HRIS_PERFORMANCE_REVIEW|UPDATE"
+    ],
+    "tenantMaterialization": [
+      "instantiate the active resource for every existing tenant",
+      "materialize only the three exact ALLOW grants above for active matching roles",
+      "bump access_revision and version for affected role members"
+    ],
+    "timeDisposition": "Create no new Time resource or broad role grant. The five TIM routes reuse DATA.HR_TIME and DATA.HRIS_COMMAND_RECEIPT capabilities already registered by V50/V250, and remain feature-OFF behind the sealed relationship/population predicates.",
+    "seedDeclaration": {
+      "bundleKey": "product-surfaces",
+      "version": 42,
+      "checksum": "GENERATED_ONCE_THEN_SEALED",
+      "authSeedArtifact": "product-surfaces-v1.bundle-v42.generated.json",
+      "intendedBundleStatus": "DRAFT",
+      "automaticImportEnabled": false
+    },
+    "forbidden": [
+      "granting VIEW, CREATE, APPROVE, MANAGE, or wildcard authority on DATA.HRIS_PERFORMANCE_REVIEW",
+      "granting the review resource to any role other than the three exact roles above",
+      "approving, activating, assigning, or automatically importing v42",
+      "adding a Time permission expansion under this bridge"
+    ]
+  },
+  "per": {
+    "sliceId": "BASE-TFR-PER-013",
+    "moduleSession": "HRIS-PER",
+    "featureDefault": "OFF",
+    "newCapabilities": [
+      {
+        "contractKey": "hcm.team.performance.review",
+        "resolvedCapabilityCode": "DATA.HRIS_PERFORMANCE_REVIEW:UPDATE",
+        "productKey": "hcm",
+        "surfaceKey": "hcm.team",
+        "resourceKey": "DATA.HRIS_PERFORMANCE_REVIEW",
+        "action": "UPDATE",
+        "authorityMode": "PERMISSION_AND_RELATIONSHIP",
+        "responsibilityRequirement": "NOT_REQUIRED",
+        "scopeResolver": "ASSIGNED_REVIEW_POPULATION",
+        "riskTier": "HIGH",
+        "activationPolicy": null,
+        "sodPolicyId": "NO_REVIEW_OUTSIDE_ASSIGNMENT"
+      },
+      {
+        "contractKey": "per.review.self.submit",
+        "resolvedCapabilityCode": "DATA.HRIS_PERFORMANCE_REVIEW:UPDATE",
+        "productKey": "hcm",
+        "surfaceKey": "hcm.personal",
+        "resourceKey": "DATA.HRIS_PERFORMANCE_REVIEW",
+        "action": "UPDATE",
+        "authorityMode": "PERMISSION_AND_RELATIONSHIP",
+        "responsibilityRequirement": "NOT_REQUIRED",
+        "scopeResolver": "SELF",
+        "riskTier": "HIGH",
+        "activationPolicy": null,
+        "sodPolicyId": "NO_REVIEW_OUTSIDE_ASSIGNMENT"
+      }
+    ],
+    "newPredicates": [
+      {
+        "predicatePolicyKey": "predicate.hcm-performance-review-assignment.v1",
+        "ownerServiceKey": "people",
+        "targetBindingKinds": ["SELF", "OBJECT", "TARGET_POPULATION"],
+        "inputEvidenceSchemaKey": "HcmPerformanceReviewAssignmentEvidenceV1",
+        "rule": "The trusted actor must be the active reviewer on the review's current reviewer_assignment_id; SELF additionally requires the review participant worker to equal the actor. Reassigned, declined, completed, cancelled, cross-tenant, or purpose-mismatched assignments deny opaquely."
+      }
+    ],
+    "routes": [
+      {
+        "contractId": "PEP-PER-012",
+        "routeContractKey": "route.hcm.performance.assigned-review.data",
+        "routeKind": "DATA",
+        "method": "GET",
+        "browserPath": "/api/people/v1/hris/performance/reviews/{reviewId}",
+        "ownerPath": "/v1/hris/performance/reviews/{reviewId}",
+        "ownerServiceKey": "people",
+        "accessProfiles": [
+          {"profile": "assigned-reviewer", "precedence": 300, "capability": "hcm.team.performance.review", "targets": ["OBJECT", "TARGET_POPULATION"]},
+          {"profile": "self-reviewer", "precedence": 200, "capability": "per.review.self.submit", "targets": ["SELF", "OBJECT"]}
+        ],
+        "predicatePolicyKeys": ["predicate.hcm-performance-review-assignment.v1"],
+        "resource": "DATA.HRIS_PERFORMANCE_REVIEW",
+        "action": "UPDATE",
+        "populations": ["ASSIGNED_REVIEW_POPULATION", "SELF"],
+        "fieldGroups": ["PERFORMANCE_ASSIGNED", "PERFORMANCE_REVIEW_PRIVATE"],
+        "purpose": "PERFORMANCE_REVIEW",
+        "stepUpRequired": false,
+        "dynamicSod": ["NO_REVIEW_OUTSIDE_ASSIGNMENT"],
+        "ownerResponse": "AssignedReviewV1"
+      },
+      {
+        "contractId": "PEP-PER-013",
+        "routeContractKey": "route.hcm.performance.assigned-review-draft-update.action",
+        "routeKind": "ACTION",
+        "method": "PATCH",
+        "browserPath": "/api/people/v1/hris/performance/reviews/{reviewId}",
+        "ownerPath": "/v1/hris/performance/reviews/{reviewId}",
+        "ownerServiceKey": "people",
+        "accessProfiles": [
+          {"profile": "assigned-reviewer", "precedence": 300, "capability": "hcm.team.performance.review", "targets": ["OBJECT", "TARGET_POPULATION"]},
+          {"profile": "self-reviewer", "precedence": 200, "capability": "per.review.self.submit", "targets": ["SELF", "OBJECT"]}
+        ],
+        "predicatePolicyKeys": ["predicate.hcm-performance-review-assignment.v1"],
+        "resource": "DATA.HRIS_PERFORMANCE_REVIEW",
+        "action": "UPDATE",
+        "populations": ["ASSIGNED_REVIEW_POPULATION", "SELF"],
+        "fieldGroups": ["PERFORMANCE_ASSIGNED", "PERFORMANCE_REVIEW_PRIVATE"],
+        "purpose": "PERFORMANCE_REVIEW",
+        "stepUpRequired": false,
+        "dynamicSod": ["NO_REVIEW_OUTSIDE_ASSIGNMENT"],
+        "requiredCommandControls": ["Idempotency-Key", "If-Match", "X-DWP-Expected-Decision-Revision"],
+        "request": "ReviewDraftCommandV1",
+        "response": "AssignedReviewV1"
+      },
+      {
+        "contractId": "PEP-PER-014",
+        "routeContractKey": "route.hcm.performance.assigned-review-submit.action",
+        "routeKind": "ACTION",
+        "method": "POST",
+        "browserPath": "/api/people/v1/hris/performance/reviews/{reviewId}/submit",
+        "ownerPath": "/v1/hris/performance/reviews/{reviewId}/submit",
+        "ownerServiceKey": "people",
+        "accessProfiles": [
+          {"profile": "assigned-reviewer", "precedence": 300, "capability": "hcm.team.performance.review", "targets": ["OBJECT", "TARGET_POPULATION"]},
+          {"profile": "self-reviewer", "precedence": 200, "capability": "per.review.self.submit", "targets": ["SELF", "OBJECT"]}
+        ],
+        "predicatePolicyKeys": ["predicate.hcm-performance-review-assignment.v1"],
+        "resource": "DATA.HRIS_PERFORMANCE_REVIEW",
+        "action": "UPDATE",
+        "populations": ["ASSIGNED_REVIEW_POPULATION", "SELF"],
+        "fieldGroups": ["PERFORMANCE_ASSIGNED", "PERFORMANCE_REVIEW_PRIVATE"],
+        "purpose": "PERFORMANCE_REVIEW",
+        "stepUpRequired": false,
+        "dynamicSod": ["NO_REVIEW_OUTSIDE_ASSIGNMENT"],
+        "requiredCommandControls": ["Idempotency-Key", "If-Match", "X-DWP-Expected-Decision-Revision"],
+        "request": "SubmitReviewCommandV1",
+        "response": "ReviewSubmissionV1"
+      },
+      {
+        "contractId": "IAQ-022",
+        "routeContractKey": "route.hcm.operations.performance-multirater-surveys.page",
+        "routeKind": "PAGE",
+        "method": "GET",
+        "browserPath": "/api/people/v1/hris/performance/workbench/multirater-surveys",
+        "ownerPath": "/v1/hris/performance/workbench/multirater-surveys",
+        "ownerServiceKey": "people",
+        "accessProfiles": [
+          {"profile": "performance-operator-reader", "precedence": 300, "capability": "hcm.operations.performance.view", "targets": ["TARGET_POPULATION"]}
+        ],
+        "predicatePolicyKeys": ["predicate.hcm-domain-target-population.v1"],
+        "resource": "DATA.HR_TALENT",
+        "action": "VIEW",
+        "populations": ["ORG_TREE", "NAMED_POPULATION", "AUTHORIZED_PACKAGE_SCOPE"],
+        "fieldGroups": ["RATER_ASSIGNMENT", "SURVEY_STATUS", "CONFIDENTIALITY_MODE"],
+        "purpose": "PERFORMANCE_OPERATIONS",
+        "stepUpRequired": false,
+        "dynamicSod": [],
+        "allowedFilters": ["raterAssignment", "surveyStatus", "confidentialityMode", "effectiveOn"],
+        "allowedSorts": ["raterAssignment:ASC", "surveyStatus:ASC", "confidentialityMode:ASC", "raterAssignment:DESC", "surveyStatus:DESC", "confidentialityMode:DESC", "itemPublicId:ASC", "itemPublicId:DESC"],
+        "defaultSort": "itemPublicId:ASC",
+        "maxPageSize": 100,
+        "actionKeys": ["hris.action.per.create-cycle", "hris.action.per.update-cycle-draft", "hris.action.per.validate-cycle"]
+      }
+    ],
+    "iaq022Separation": {
+      "decision": "SEPARATE_OPERATOR_QUERY_NOT_ASSIGNED_REVIEW_IDENTITY",
+      "mustDo": [
+        "Implement IAQ-022 as the operator multirater survey workbench defined by its accepted projection schema.",
+        "Keep its three action keys limited to cycle create, cycle draft update, and cycle validate.",
+        "Audit and authorize it with PERFORMANCE_OPERATIONS, independently of review draft/submit."
+      ],
+      "mustNotDo": [
+        "Do not use an IAQ-022 itemPublicId as reviewId.",
+        "Do not expose save-review-draft or submit-review actions from IAQ-022.",
+        "Do not infer assigned-review membership from survey or rater-assignment rows."
+      ],
+      "assignedReviewIdentitySources": [
+        "PEP-PER-001 personal performance dashboard action descriptor when that entry query is implemented",
+        "IAQ-038 team-performance action descriptor when that entry query is implemented",
+        "a test-only sealed fixture for PER-013 while the feature remains OFF"
+      ],
+      "activationConsequence": "PER-013 may be implemented and tested behind OFF using a sealed reviewId fixture, but user-facing activation is blocked until at least one authoritative self/assigned-review discovery source is implemented and verified. A URL reviewId is only an object locator and never authorization evidence."
+    },
+    "transportAmendment": {
+      "AssignedReviewV1": {
+        "additionalProperties": false,
+        "required": ["reviewId", "participantId", "reviewerAssignmentId", "reviewerType", "stageKey", "state", "templateVersionId", "templateContentHash", "aggregateVersion", "writable", "draftContentHash", "form", "answers"],
+        "properties": {
+          "reviewId": "uuid",
+          "participantId": "uuid",
+          "reviewerAssignmentId": "uuid",
+          "reviewerType": "SELF|MANAGER|SECOND_MANAGER|THIRD_MANAGER|PEER|DIRECT_REPORT|EXTERNAL|REFEREE",
+          "stageKey": "nonblank string max 80",
+          "state": "NOT_STARTED|IN_PROGRESS|SUBMITTED|RETURNED|COMPLETED|CANCELLED",
+          "dueAt": "nullable date-time",
+          "templateVersionId": "uuid",
+          "templateContentHash": "lowercase sha256",
+          "aggregateVersion": "integer >= 0; emitted as ETag",
+          "writable": "boolean derived after current assignment/state/purpose re-evaluation",
+          "draftContentHash": "lowercase sha256, including the deterministic empty draft",
+          "form": "ReviewFormV1",
+          "answers": "0..500 ReviewAnswerV1 values, unique by itemKey"
+        }
+      },
+      "ReviewFormV1": {
+        "additionalProperties": false,
+        "required": ["schemaVersion", "items", "rubricScales"],
+        "properties": {
+          "schemaVersion": "nonblank string max 30",
+          "items": "ordered ReviewFormItemV1 array; sequence is contiguous from one within the published template projection",
+          "rubricScales": "ordered ReviewRubricScaleV1 array"
+        },
+        "itemFields": ["itemKey", "parentItemKey", "kind", "sequence", "required", "weight", "label", "helpText", "answerConstraints"],
+        "itemKinds": ["SECTION", "TEXT", "DECIMAL", "RATING", "CHOICE"],
+        "answerConstraintDiscriminants": {
+          "SECTION": "no answer accepted",
+          "TEXT": ["maxLength", "multiline"],
+          "DECIMAL": ["minimum", "maximum", "scale"],
+          "RATING": ["scaleKey"],
+          "CHOICE": ["minimumSelections", "maximumSelections", "ordered optionKey/label list"]
+        },
+        "rubricLevelFields": ["levelKey", "sequence", "numericValue", "label"],
+        "labelRule": "Resolve label and helpText for the requested locale at the owner; do not expose unrestricted i18n JSON.",
+        "visibilityRule": "visibility_policy and scoring_policy remain owner evidence and hash inputs; only field-policy-permitted form elements are serialized."
+      },
+      "ReviewDraftCommandV1": {
+        "additionalProperties": false,
+        "required": ["answers"],
+        "answers": "1..500 typed TEXT|DECIMAL|RATING|CHOICE answers, unique by itemKey; decimal/rating values are canonical decimal strings with at most six fractional digits"
+      },
+      "SubmitReviewCommandV1": {
+        "additionalProperties": false,
+        "required": ["draftContentHash"],
+        "properties": {"draftContentHash": "lowercase sha256", "acknowledgement": "optional const true"}
+      },
+      "ReviewSubmissionV1": {
+        "additionalProperties": false,
+        "required": ["submissionId", "submissionNo", "state", "contentHash", "submittedAt"],
+        "properties": {"submissionId": "uuid", "submissionNo": "integer >= 1", "state": "SUBMITTED", "contentHash": "lowercase sha256", "submittedAt": "date-time"}
+      }
+    },
+    "hashContract": {
+      "canonicalEncoding": "UTF-8 JSON, object keys sorted lexicographically at every depth, arrays in the sealed order below, no insignificant whitespace, UUID and enum text preserved, decimals serialized as canonical strings, null serialized only where the schema permits it",
+      "templateContentHash": {
+        "algorithm": "SHA-256 lowercase hex",
+        "input": ["templateVersionId", "schemaVersion", "responseSchema", "visibilityPolicy", "scoringPolicy", "items ordered by sequence then itemKey", "rubric levels ordered by scaleKey then sequence then levelKey"],
+        "immutability": "The hash is copied from the immutable published template version and persisted on every draft snapshot and final submission."
+      },
+      "draftContentHash": {
+        "algorithm": "SHA-256 lowercase hex",
+        "canonicalObjectKeys": ["answers", "reviewId", "reviewerAssignmentId", "templateContentHash", "templateVersionId"],
+        "answerOrder": "itemKey ascending; duplicate itemKey is invalid",
+        "excluded": ["aggregateVersion", "ETag", "actor", "timestamps", "locale labels"],
+        "emptyDraft": "answers=[] is hashed and returned on the initial GET",
+        "saveRule": "PATCH recomputes and returns the persisted draftContentHash after CAS.",
+        "submitRule": "Submit requires body draftContentHash equal to the latest persisted draft hash and If-Match equal to aggregateVersion; either mismatch is 409 with no state, receipt, submission, or outbox side effect."
+      }
+    },
+    "event": {
+      "canonicalIdentity": "PerformanceReviewSubmitted.v1",
+      "historyAliases": [],
+      "channel": "dwp.domain-events.v1",
+      "source": "dwp-people-server",
+      "schemaVersion": 1,
+      "aggregateType": "PERFORMANCE_REVIEW",
+      "aggregateId": "reviewId",
+      "aggregateSequence": "post-commit review aggregateVersion",
+      "partitionKey": "tenantId:reviewId",
+      "dataAdditionalProperties": false,
+      "dataRequired": ["reviewId", "participantId", "reviewerAssignmentId", "submissionId", "templateVersionId", "contentHash"],
+      "dataTypes": {"reviewId": "uuid", "participantId": "uuid", "reviewerAssignmentId": "uuid", "submissionId": "uuid", "templateVersionId": "uuid", "contentHash": "lowercase sha256"},
+      "forbiddenData": ["answers", "free text", "scores", "labels", "reviewer identity beyond reviewerAssignmentId"],
+      "deliveryRule": "One stable event UUID is inserted in the same transaction as the immutable submission. Exact idempotent replay returns the original result and emits no second event."
+    },
+    "compatibilityOnlyReallocations": [
+      {
+        "path": "dwp-people-server/src/test/java/com/dwp/services/people/hr/performance/compensationplanning/CompensationPlanningMigrationContractTest.java",
+        "disposition": "REALLOCATE_TO_PER_TOKEN_TEST_ONLY",
+        "exactChange": "Change the V16-to-unrestricted assertion into a V16-to-V17 targeted Flyway migration. It must prove exactly one V17 migration without observing future V18. Do not alter compensation-planning production code or V17."
+      },
+      {
+        "path": "dwp-people-server/src/test/java/com/dwp/services/people/hris/performance/workforce/PerformanceWorkforceProjectionArchitectureTest.java",
+        "disposition": "REGRESSION_ONLY_NO_EDIT_EXPECTED",
+        "exactChange": "None. New review code must stay within the sealed workforce consumer surface. Request a narrow control reallocation only if a legitimate new import is rejected; never weaken the whole-tree scan."
+      },
+      {
+        "path": "apps/dwp/src/features/hris/performance/index.ts",
+        "disposition": "REALLOCATE_TO_PER_TOKEN_EXPORT_ONLY",
+        "exactChange": "Export the new review runtime entry point. No route or shell activation is included."
+      }
+    ]
+  },
+  "tim": {
+    "sliceId": "BASE-TFR-TIM-017",
+    "moduleSession": "HRIS-TIM",
+    "featureDefault": "OFF",
+    "newCapabilities": [],
+    "newPredicates": [
+      {
+        "predicatePolicyKey": "predicate.hcm-timecard-authority.v1",
+        "ownerServiceKey": "time",
+        "targetBindingKinds": ["SELF", "OBJECT", "TARGET_POPULATION"],
+        "inputEvidenceSchemaKey": "HcmTimecardAuthorityEvidenceV1",
+        "rule": "Resolve the current tenant-owned timecard, worker, subject, direct-report/delegation or operator population, field policy, purpose, period state, and authorization revision at request time."
+      },
+      {
+        "predicatePolicyKey": "predicate.hcm-timecard-decision-sod.v1",
+        "ownerServiceKey": "time",
+        "targetBindingKinds": ["OBJECT", "TARGET_POPULATION"],
+        "inputEvidenceSchemaKey": "HcmTimecardDecisionSodEvidenceV1",
+        "rule": "Deny when actor equals the timecard worker, the submitter, or the maker of the latest effective correction; re-evaluate current direct-report or approved-delegation/operator scope on every decision."
+      },
+      {
+        "predicatePolicyKey": "predicate.hcm-time-command-receipt-authority.v1",
+        "ownerServiceKey": "time",
+        "targetBindingKinds": ["OBJECT", "TARGET_POPULATION"],
+        "inputEvidenceSchemaKey": "HcmTimeCommandReceiptAuthorityEvidenceV1",
+        "rule": "Re-evaluate the sealed originating action, subject, population digest, field-policy revision, purpose, and authorization revision; the more restrictive of originating and current policy wins and mismatch is opaque 404."
+      }
+    ],
+    "routes": [
+      {
+        "contractId": "PEP-TIM-011",
+        "routeContractKey": "route.hcm.time.timecard.data",
+        "routeKind": "DATA",
+        "method": "GET",
+        "browserPath": "/api/time/v1/timecards/{timecardId}",
+        "ownerPath": "/v1/timecards/{timecardId}",
+        "ownerServiceKey": "time",
+        "accessProfiles": [
+          {"profile": "time-operator", "precedence": 400, "capability": "hcm.operations.time.update", "targets": ["OBJECT", "TARGET_POPULATION"]},
+          {"profile": "manager-approver", "precedence": 300, "capability": "hcm.team.time.approve", "targets": ["OBJECT", "TARGET_POPULATION"]},
+          {"profile": "self-reader", "precedence": 200, "capability": "hcm.personal.time.view", "targets": ["SELF", "OBJECT"]}
+        ],
+        "predicatePolicyKeys": ["predicate.hcm-timecard-authority.v1"],
+        "resource": "DATA.HR_TIME",
+        "actions": ["APPROVE", "UPDATE", "VIEW"],
+        "populations": ["APPROVED_DELEGATION", "DIRECT_REPORTS", "LEGAL_ENTITY", "ORG_TREE", "ORG_UNIT", "SELF", "TIME_GROUP"],
+        "fieldGroups": ["LIMITED_PROFILE", "SELF_TIME", "TIME_DETAIL"],
+        "purpose": "TIME_TIMECARD",
+        "stepUpRequired": false,
+        "dynamicSod": [],
+        "response": "TimecardV1"
+      },
+      {
+        "contractId": "PEP-TIM-012",
+        "routeContractKey": "route.hcm.time.timecard-correction.action",
+        "routeKind": "ACTION",
+        "method": "POST",
+        "browserPath": "/api/time/v1/timecards/{timecardId}/corrections",
+        "ownerPath": "/v1/timecards/{timecardId}/corrections",
+        "ownerServiceKey": "time",
+        "accessProfiles": [
+          {"profile": "time-operator", "precedence": 300, "capabilityExpressionAny": ["hcm.operations.time.update"], "targets": ["OBJECT", "TARGET_POPULATION"]},
+          {"profile": "self-submitter", "precedence": 200, "capability": "hcm.personal.time.submit", "targets": ["SELF", "OBJECT"]}
+        ],
+        "predicatePolicyKeys": ["predicate.hcm-timecard-authority.v1"],
+        "resource": "DATA.HR_TIME",
+        "actions": ["CREATE", "UPDATE"],
+        "populations": ["LEGAL_ENTITY", "ORG_TREE", "ORG_UNIT", "SELF", "TIME_GROUP"],
+        "fieldGroups": ["LIMITED_PROFILE", "SELF_TIME", "TIME_DETAIL"],
+        "purpose": "TIME_TIMECARD",
+        "stepUpRequired": false,
+        "dynamicSod": [],
+        "requiredCommandControls": ["Idempotency-Key", "If-Match", "X-DWP-Expected-Decision-Revision"],
+        "request": "TimecardCorrectionCommandV1",
+        "response": "TimeCommandReceiptV1"
+      },
+      {
+        "contractId": "PEP-TIM-013",
+        "routeContractKey": "route.hcm.time.timecard-submit.action",
+        "routeKind": "ACTION",
+        "method": "POST",
+        "browserPath": "/api/time/v1/timecards/{timecardId}/submit",
+        "ownerPath": "/v1/timecards/{timecardId}/submit",
+        "ownerServiceKey": "time",
+        "accessProfiles": [
+          {"profile": "self-submitter", "precedence": 300, "capability": "hcm.personal.time.submit", "targets": ["SELF", "OBJECT"]}
+        ],
+        "predicatePolicyKeys": ["predicate.hcm-timecard-authority.v1"],
+        "resource": "DATA.HR_TIME",
+        "actions": ["CREATE"],
+        "populations": ["SELF"],
+        "fieldGroups": ["SELF_TIME"],
+        "purpose": "TIME_TIMECARD",
+        "stepUpRequired": false,
+        "dynamicSod": [],
+        "requiredCommandControls": ["Idempotency-Key", "If-Match", "X-DWP-Expected-Decision-Revision"],
+        "request": "TimecardSubmitCommandV1",
+        "response": "TimeCommandReceiptV1"
+      },
+      {
+        "contractId": "PEP-TIM-014",
+        "routeContractKey": "route.hcm.time.timecard-decision.action",
+        "routeKind": "ACTION",
+        "method": "POST",
+        "browserPath": "/api/time/v1/timecards/{timecardId}/decisions",
+        "ownerPath": "/v1/timecards/{timecardId}/decisions",
+        "ownerServiceKey": "time",
+        "accessProfiles": [
+          {"profile": "time-approver", "precedence": 300, "capability": "hcm.operations.time.approve", "targets": ["OBJECT", "TARGET_POPULATION"]},
+          {"profile": "manager-approver", "precedence": 200, "capability": "hcm.team.time.approve", "targets": ["OBJECT", "TARGET_POPULATION"]}
+        ],
+        "predicatePolicyKeys": ["predicate.hcm-timecard-authority.v1", "predicate.hcm-timecard-decision-sod.v1"],
+        "resource": "DATA.HR_TIME",
+        "actions": ["APPROVE"],
+        "populations": ["APPROVED_DELEGATION", "DIRECT_REPORTS", "LEGAL_ENTITY", "ORG_TREE", "ORG_UNIT", "TIME_GROUP"],
+        "fieldGroups": ["LIMITED_PROFILE", "TIME_DETAIL"],
+        "purpose": "TIME_TIMECARD",
+        "stepUpRequired": false,
+        "dynamicSod": ["NO_SELF_APPROVAL", "NO_APPROVE_OWN_CHANGE", "SUBMITTER_NE_DECIDER"],
+        "requiredCommandControls": ["Idempotency-Key", "If-Match", "X-DWP-Expected-Decision-Revision"],
+        "request": "TimecardDecisionCommandV1",
+        "response": "TimeCommandReceiptV1"
+      },
+      {
+        "contractId": "PEP-TIM-028",
+        "routeContractKey": "route.hcm.time.command-receipt.data",
+        "routeKind": "DATA",
+        "method": "GET",
+        "browserPath": "/api/time/v1/command-receipts/{receiptId}",
+        "ownerPath": "/v1/command-receipts/{receiptId}",
+        "ownerServiceKey": "time",
+        "accessProfiles": [
+          {"profile": "originating-command", "precedence": 300, "capability": "hcm.command-receipt.view", "targets": ["OBJECT", "TARGET_POPULATION"]}
+        ],
+        "predicatePolicyKeys": ["predicate.hcm-time-command-receipt-authority.v1"],
+        "resource": "DATA.HRIS_COMMAND_RECEIPT",
+        "actions": ["VIEW"],
+        "populations": ["ORIGINATING_COMMAND_SCOPE"],
+        "fieldGroups": ["COMMAND_RECEIPT"],
+        "purpose": "COMMAND_STATUS",
+        "stepUpRequired": false,
+        "dynamicSod": [],
+        "response": "TimeCommandReceiptV1"
+      }
+    ],
+    "stateMachinePrecedence": {
+      "authoritativeSource": "module-exact-business-start-canonical.v1.json#/modules/HRIS-TIM/aggregates/Timecard",
+      "supersededTransportDetail": "The older G2 TimecardResponse five-state enum and two-outcome decision transition are incomplete.",
+      "states": ["OPEN", "SUBMITTED", "APPROVED", "REJECTED", "CORRECTION_REQUIRED", "LOCKED", "CLOSED", "SUPERSEDED"],
+      "terminalStates": ["CLOSED", "SUPERSEDED"],
+      "transitions": [
+        "materialize: absent -> OPEN",
+        "correct: OPEN|REJECTED|CORRECTION_REQUIRED -> OPEN",
+        "submit: OPEN -> SUBMITTED",
+        "decision APPROVE: SUBMITTED -> APPROVED",
+        "decision REJECT: SUBMITTED -> REJECTED",
+        "decision REQUIRE_CORRECTION: SUBMITTED -> CORRECTION_REQUIRED",
+        "lock: APPROVED -> LOCKED",
+        "close: LOCKED -> CLOSED",
+        "reopen: CLOSED -> SUPERSEDED and materializes a new OPEN successor"
+      ],
+      "forbidden": [
+        "editing a CLOSED timecard",
+        "moving CLOSED back to OPEN in place",
+        "decision from any state other than SUBMITTED",
+        "submit from REJECTED or CORRECTION_REQUIRED without a new correction returning the aggregate to OPEN"
+      ]
+    },
+    "transportAmendment": {
+      "TimecardV1": {
+        "additionalProperties": false,
+        "required": ["timecardId", "workerId", "periodStart", "periodEnd", "state", "totalMinutes", "ledgerRevision", "version"],
+        "properties": {
+          "timecardId": "uuid",
+          "workerId": "uuid",
+          "periodStart": "date",
+          "periodEnd": "date",
+          "state": "OPEN|SUBMITTED|APPROVED|REJECTED|CORRECTION_REQUIRED|LOCKED|CLOSED|SUPERSEDED",
+          "totalMinutes": "integer >= 0",
+          "ledgerRevision": "integer >= 1",
+          "version": "integer >= 0; emitted as ETag"
+        }
+      },
+      "TimecardCorrectionCommandV1": {
+        "additionalProperties": false,
+        "required": ["reasonCode", "entries"],
+        "entries": "1..100 rows of workDate, payCode, minutes where minutes is -1440..1440 and nonzero",
+        "result": "Append correction ledger facts; never mutate or replace a prior ledger row."
+      },
+      "TimecardSubmitCommandV1": {
+        "additionalProperties": false,
+        "required": [],
+        "note": "A reasonCode may be accepted only if retained as a bounded code; no free text is required."
+      },
+      "TimecardDecisionCommandV1": {
+        "additionalProperties": false,
+        "required": ["decision", "reasonCode"],
+        "decisionEnum": ["APPROVE", "REJECT", "REQUIRE_CORRECTION"],
+        "reasonCode": "nonblank bounded code max 64",
+        "comment": "optional max 1000; stored as restricted audit evidence and excluded from the domain event"
+      },
+      "TimeCommandReceiptV1": {
+        "statusEnum": ["ACCEPTED", "RUNNING", "SUCCEEDED", "REJECTED", "FAILED", "RESULT_UNKNOWN"],
+        "authorization": "Lookup re-evaluates current authority against the sealed originating context and never broadens access."
+      }
+    },
+    "event": {
+      "canonicalIdentity": "TimecardDecisionRecorded.v1",
+      "historyAliases": ["TimecardDecisionRecorded"],
+      "historyAliasRuntimeDisposition": "NEVER_EMIT_NEVER_REGISTER_AS_A_SECOND_MESSAGE",
+      "channel": "dwp.domain-events.v1",
+      "source": "dwp-time-server",
+      "schemaVersion": 1,
+      "aggregateType": "TIMECARD",
+      "aggregateId": "timecardId",
+      "aggregateSequence": "post-decision timecard version",
+      "partitionKey": "tenantId:timecardId",
+      "dataAdditionalProperties": false,
+      "dataRequired": ["timecardId", "workerId", "status", "ledgerRevision", "decisionAt"],
+      "dataTypes": {"timecardId": "uuid", "workerId": "uuid", "status": "APPROVED|REJECTED|CORRECTION_REQUIRED", "ledgerRevision": "integer >= 1", "decisionAt": "date-time"},
+      "forbiddenData": ["comment", "reason text", "actor profile", "tenant supplied by request", "full timecard lines"],
+      "deliveryRule": "One stable event UUID is inserted with the decision. Exact command replay returns the original receipt and emits no second event."
+    },
+    "v10LedgerAmendmentInsideV11": {
+      "rule": "V10 is immutable migration history. V11 alters the resulting schema forward; V10 is never edited or copied.",
+      "table": "tme_time_ledger_entries",
+      "requiredAlterations": [
+        "ALTER interpretation_attempt_public_id to nullable; retain its tenant-scoped foreign key for non-null values.",
+        "Replace the source_type check with INTERPRETATION|MANUAL_CORRECTION|REVERSAL.",
+        "Replace the source/reversal consistency check with the three exact source profiles below.",
+        "Replace the reversal quantity rule and add a trigger that proves a reversal quantity is the exact negation of the referenced effective entry and cannot reverse an already reversed row.",
+        "Keep all ledger rows append-only and keep tenant+worker+ledger_revision unique."
+      ],
+      "sourceProfiles": {
+        "INTERPRETATION": "interpretation_attempt_public_id is non-null; reverses_entry_public_id and reason_code are null; source_public_id is the interpretation attempt public ID; quantity is >= 0.",
+        "MANUAL_CORRECTION": "interpretation_attempt_public_id and reverses_entry_public_id are null; reason_code is a bounded nonblank correction code; source_public_id is correctionId; quantity is nonzero.",
+        "REVERSAL": "reverses_entry_public_id is non-null; reason_code is CLOCK_INPUT_REINTERPRETED or TIMECARD_CORRECTION; source_public_id is the initiating interpretation attempt or correctionId; quantity exactly negates the referenced entry."
+      },
+      "digestRules": {
+        "manualCorrectionInputDigest": "canonical request digest",
+        "manualCorrectionRuleDigest": "sealed correction-policy digest",
+        "reversalInputDigest": "digest of initiating command plus referenced ledger public ID",
+        "reversalRuleDigest": "same correction/reinterpretation policy digest used to authorize the reversal"
+      }
+    },
+    "v11Scope": {
+      "candidatePath": "dwp-time-server/src/main/resources/db/migration/V11__tim_base_tfr_tim_017.sql",
+      "leaseState": "CANDIDATE_NOT_ISSUED",
+      "tables": [
+        "tme_timecards",
+        "tme_timecard_versions",
+        "tme_timecard_lines",
+        "tme_timecard_decisions",
+        "tme_timecard_command_receipts",
+        "tme_timecard_outbox_events",
+        "tme_time_ledger_revision_counters"
+      ],
+      "mustInclude": [
+        "tenant-scoped identity and foreign keys",
+        "RLS enable+force and trusted tenant policies on every new tenant table",
+        "aggregate version CAS and legal transition guards",
+        "idempotency scope tenant+subject+originatingAction+Idempotency-Key with request-digest mismatch rejection",
+        "append-only timecard versions, lines, decisions, receipts, and event evidence",
+        "one monotonic ledger revision allocator per tenant+worker",
+        "the V10 ledger forward alterations above",
+        "runtime role least privileges and publisher role least privileges"
+      ],
+      "mustNotInclude": ["cross-service foreign keys", "request tenant override", "mutable replacement ledger", "a second unsuffixed decision event", "legacy People API writes"]
+    },
+    "publisherAcl": {
+      "moduleOwnedCompatibilityPaths": [
+        "dwp-time-server/src/main/java/com/dwp/services/time/TimeDatabaseMigrationConfiguration.java",
+        "dwp-time-server/src/test/java/com/dwp/services/time/TimeDatabaseMigrationConfigurationTest.java"
+      ],
+      "exactAdditionalPrivileges": [
+        "RELATION public.tme_timecard_outbox_events SELECT",
+        "COLUMN public.tme_timecard_outbox_events.published_at UPDATE",
+        "COLUMN public.tme_timecard_outbox_events.publish_attempts UPDATE"
+      ],
+      "forbiddenPrivileges": ["INSERT", "DELETE", "TRUNCATE", "UPDATE payload", "UPDATE payload_digest", "UPDATE event_id", "UPDATE aggregate identity or sequence"],
+      "deliveryGuard": "published_at is write-once and publish_attempts is monotonic; every other update and every delete is rejected.",
+      "timing": "Change these two source files in the TIM module commit that creates V11. Do not land the steady-state required ACL before the table exists."
+    },
+    "legacyCutover": {
+      "currentSelection": "LEGACY_PHASE1",
+      "moduleImplementationMode": "BUILD_CANONICAL_PATH_BEHIND_OFF_WITHOUT_SWITCHING_EXISTING_CALLERS",
+      "activationBlockedBy": ["PEP-TIM-001 canonical self-time summary/composition", "verified discovery/action descriptors for each activated self/team/operator entry surface", "central G3-CTL-FE-HRIS-API-TRANSITION cutover token"],
+      "transitions": [
+        {"id": "API-SOR-READ-002", "flag": "hris.api.sor.tim.time", "legacy": "GET /api/people/v1/hr/time via libs/shared-utils/src/api/hr-api.ts#getHrTime and apps/dwp/src/features/hris/time/api/hris-time-api.ts", "canonical": "PEP-TIM-001 plus PEP-TIM-011 composition", "moduleTokenDisposition": "LEAVE_LEGACY_ACTIVE"},
+        {"id": "API-SOR-READ-005", "flag": "hris.api.sor.tim.team-time", "legacy": "GET /api/people/v1/hr/team/time via libs/shared-utils/src/api/hr-api.ts#getHrTeamTime and the HCM team-time workspace", "canonical": "PEP-TIM-002 plus PEP-TIM-011 composition", "moduleTokenDisposition": "LEAVE_LEGACY_ACTIVE"},
+        {"id": "API-SOR-READ-010", "flag": "hris.api.sor.tim.operations", "legacy": "GET /api/people/v1/hr/operations/TIME via libs/shared-utils/src/api/hr-api.ts#getHrDomainOperations and HCM domain operations", "canonical": "PEP-TIM-001 plus PEP-TIM-011 composition", "moduleTokenDisposition": "LEAVE_LEGACY_ACTIVE"},
+        {"id": "API-SOR-MUT-001", "flag": "hris.api.sor.tim.time", "legacy": "PUT /api/people/v1/hr/time/{cardId}/entries/{workDate} via saveHrTimeEntry", "canonical": "POST /api/time/v1/timecards/{timecardId}/corrections", "moduleTokenDisposition": "NEW_CANONICAL_ADAPTER_ONLY_NO_CALLER_SWITCH"},
+        {"id": "API-SOR-MUT-002", "flag": "hris.api.sor.tim.time", "legacy": "POST /api/people/v1/hr/time/{cardId}/submit via submitHrTimeCard", "canonical": "POST /api/time/v1/timecards/{timecardId}/submit", "moduleTokenDisposition": "NEW_CANONICAL_ADAPTER_ONLY_NO_CALLER_SWITCH"},
+        {"id": "API-SOR-MUT-005", "flag": "hris.api.sor.tim.operations", "legacy": "POST /api/people/v1/hr/time/{cardId}/decision via decideHrRequest:time", "canonical": "POST /api/time/v1/timecards/{timecardId}/decisions", "moduleTokenDisposition": "NEW_CANONICAL_ADAPTER_ONLY_NO_CALLER_SWITCH"},
+        {"id": "API-SOR-MUT-007", "flag": "hris.api.sor.tim.team-time", "legacy": "POST /api/people/v1/hr/team/time/{cardId}/decision via decideHrTeamRequest:time", "canonical": "POST /api/time/v1/timecards/{timecardId}/decisions", "moduleTokenDisposition": "NEW_CANONICAL_ADAPTER_ONLY_NO_CALLER_SWITCH"}
+      ],
+      "atomicSwitchRule": "A later central cutover changes exactly one flag family from legacy to canonical after every dependency is verified. No request performs both calls, no error falls back to the other owner, and legacy write helpers are retired only after the canonical selection is proven."
+    }
+  },
+  "verdict": {
+    "centralBridge": "IMPLEMENTABLE",
+    "perStartTokenNow": "NOT_ISSUED_CONTROL_BRIDGE_NOT_IMPLEMENTED",
+    "timStartTokenNow": "NOT_ISSUED_CONTROL_BRIDGE_NOT_IMPLEMENTED",
+    "openSemanticDecisions": [],
+    "remainingMechanicalWork": ["implement the one shared SYS/PER/TIM v42/OpenAPI/Gateway/AsyncAPI/Auth and People owner-registry bridge in the dedicated worktree", "run its targeted gates", "report the uncommitted diff for independent review", "only after later authorization merge and pin clean pushed dwp-dev heads", "recheck and issue V18/V11 leases", "issue separate PER and TIM Start Tokens"]
+  }
+}

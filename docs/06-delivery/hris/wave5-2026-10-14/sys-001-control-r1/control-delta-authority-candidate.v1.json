@@ -1,0 +1,671 @@
+{
+  "schema": "dwp.hris.sys001.control-delta-authority-candidate.v1",
+  "candidateId": "HRIS-WAVE5-SYS-001-CONTROL-DELTA-R1",
+  "preparedAt": "2026-10-14T14:25:52+09:00",
+  "sliceId": "BASE-TFR-SYS-001",
+  "moduleSession": "HRIS-SYS",
+  "state": "IMPLEMENTABLE_PREPARATION_ONLY_TOKEN_WITHHELD",
+  "verdict": "CENTRAL_CONTROL_DELTA_REQUIRED_BEFORE_SYS_MODULE_ADAPTER",
+  "authority": {
+    "implementationAuthorized": false,
+    "worktreeAuthorized": false,
+    "migrationAuthorized": false,
+    "commitOrPushAuthorized": false,
+    "startTokenIssued": false,
+    "candidateWritablePathsAreAuthority": false
+  },
+  "observedPins": {
+    "backend": {
+      "branch": "dwp-dev",
+      "head": "357bd2b9e1c8a4d233c285d96911b5077cb444cf",
+      "origin": "357bd2b9e1c8a4d233c285d96911b5077cb444cf",
+      "sourceTreeState": "CLEAN_AT_INSPECTION"
+    },
+    "frontend": {
+      "branch": "dwp-dev",
+      "head": "20fe240b59e5e93516e7d033a59564013d86b7c9",
+      "origin": "20fe240b59e5e93516e7d033a59564013d86b7c9",
+      "sourceTreeState": "SOURCE_CLEAN_WITH_UNRELATED_UNTRACKED_PREPARATION_DOCS"
+    },
+    "rule": "Pins are evidence for this preparation review only. A later token must pin fresh clean pushed heads once and must not silently inherit these values."
+  },
+  "whyCodeIsRequired": [
+    {
+      "gap": "AUTHORITY_INTERSECTION",
+      "current": "AuditAccessGuard checks only ADMIN.AUDIT_VIEW:VIEW for the generic audit endpoints.",
+      "required": "The HCM profile must require APP.HCM:VIEW, ADMIN.AUDIT_VIEW:VIEW, HRIS_AUDITOR, HRIS_DUTY_AUDITOR, step-up, server purpose, current field-policy and authorization revisions, selected scope, and SOD_HRIS_AUDIT_INDEPENDENCE as an AND intersection."
+    },
+    {
+      "gap": "RESPONSE_MINIMIZATION",
+      "current": "AuditControlDtos.Event exposes actor identity, roles, target identity, source instance, raw before/after state, changed fields, arbitrary metadata, counts, and offset pagination.",
+      "required": "product=HCM must serialize only HcmAuditEvidenceV1 and HcmAuditEvidencePageV1 with a closed field allowlist and signed snapshot keyset pagination."
+    },
+    {
+      "gap": "QUERY_SEMANTICS",
+      "current": "AuditCriteria and AuditControlEventRepository have no product, canonical HRIS envelope, purpose, field-policy, or HCM cursor semantics.",
+      "required": "The shared sys_audit_events store needs a separate read-only repository projection with verified tenant, exact canonical HRIS fingerprint, snapshot, keyset, and allowlisted-filter predicates."
+    },
+    {
+      "gap": "BYPASS_PREVENTION",
+      "current": "An identity that has the generic permission can omit product=HCM and reach the generic Event DTO and other audit-control operations.",
+      "required": "Verified HRIS_AUDITOR or HRIS_DUTY_AUDITOR evidence must claim the audit-control family and permit only the exact HCM list/detail GET bindings; all generic and mutation paths fail closed."
+    },
+    {
+      "gap": "SHARED_UI_MODE",
+      "current": "AuditOverview ignores product and renders generic overview metrics, top actors, investigations, and generic API calls.",
+      "required": "The shared administration route must render a distinct HCM evidence mode, keep a safe HRIS return action, and never fall back to the generic view after an HCM error."
+    }
+  ],
+  "existingRegistryPrecondition": {
+    "state": "BLOCKING_CENTRAL_LINEAGE_DRIFT_MUST_BE_FIXED_IN_THE_SAME_OR_PRIOR_CONTROL_DELTA",
+    "evidence": [
+      "The immutable contract and Auth seed indexes currently declare latestVersion=41 with 252 capabilities, 24 access policies, 17 entitlement expressions, 64 predicates, and 1017 routes.",
+      "ProductAuthorizationReleaseLineage currently seals only versions 1 through 40 and rejects an index whose latest version is not 40.",
+      "ProductAuthorizationSeedLoaderTest, ProductAuthorizationContractReleaseLineageTest, and both PilotAuthorizationFixtureAdapterTest copies still assert version 40.",
+      "The v41 Python contract test exists, so this is a Java runtime/test lineage lag rather than permission to mutate v41."
+    ],
+    "requiredAction": "Seal immutable v41 checksum/count/contiguous-index support in the existing Java lineage and tests before appending v42. Never rewrite v41 bytes or checksum.",
+    "stopRule": "If any v41 artifact checksum differs from its current immutable index entry, stop; do not generate v42."
+  },
+  "sharedGenerationCoordination": {
+    "decision": "ONE_COMBINED_SYS_PER_TIM_V42_GENERATOR_OWNER_AND_CONTROL_CYCLE",
+    "standaloneSysDelta": {
+      "capabilities": 1,
+      "accessPolicies": 0,
+      "entitlementExpressions": 0,
+      "predicatePolicies": 1,
+      "routes": 2,
+      "routeKinds": {
+        "PAGE": 1,
+        "DATA": 1,
+        "ACTION": 0
+      }
+    },
+    "partnerPerTimDelta": {
+      "capabilities": 2,
+      "accessPolicies": 0,
+      "entitlementExpressions": 0,
+      "predicatePolicies": 4,
+      "routes": 9,
+      "routeKinds": {
+        "PAGE": 1,
+        "DATA": 3,
+        "ACTION": 5
+      }
+    },
+    "combinedDeltaFromV41": {
+      "capabilities": 3,
+      "accessPolicies": 0,
+      "entitlementExpressions": 0,
+      "predicatePolicies": 5,
+      "routes": 11,
+      "routeKinds": {
+        "PAGE": 2,
+        "DATA": 4,
+        "ACTION": 5
+      }
+    },
+    "combinedV42Totals": {
+      "capabilities": 255,
+      "accessPolicies": 24,
+      "entitlementExpressions": 17,
+      "predicatePolicies": 69,
+      "routes": 1028,
+      "routeKinds": {
+        "PAGE": 132,
+        "DATA": 308,
+        "ACTION": 588
+      }
+    },
+    "expectedPlatformOwnerProjectionV42": {
+      "projectionFile": "dwp-platform-server/src/main/resources/product-authorization/hcm-platform-pep-v42.generated.json",
+      "ownerServiceKey": "platform",
+      "sourceRegistryRouteCount": 1028,
+      "projectedRouteContractCount": 30,
+      "bindingPairCount": 31,
+      "routeKindCounts": {
+        "PAGE": 5,
+        "DATA": 8,
+        "ACTION": 17
+      },
+      "capabilities": 16,
+      "accessPolicies": 4,
+      "entitlementExpressions": 3,
+      "predicatePolicies": 5,
+      "derivation": "Immutable Platform v40 owner projection 28 routes/29 bindings/PAGE4/DATA7/ACTION17/capabilities15/policies4/expressions3/predicates4 plus the two SYS Platform routes, one capability, and one predicate. The nine PER/TIM routes are owned by People or Time and do not change this Platform projection."
+    },
+    "collisionResult": "The two SYS Platform GET bindings do not collide with the nine PER/People and TIM/Time method-path pairs or with existing v41 bindings.",
+    "ownershipRule": "One Control-owned edit of the canonical source, one generator write pass, one v42 checksum, one contiguous Auth lineage update, and one targeted validation receipt. SYS must not create an independent v42 or force an immediate v43.",
+    "migrationBoundary": "The combined cycle contains the PER/TIM-owned Auth V251 resource/grant and DRAFT bundle declaration. SYS contributes no SYS-specific seed, schema, table, index, store, or migration."
+  },
+  "authorizationCandidate": {
+    "bundle": {
+      "bundleKey": "product-surfaces",
+      "candidateVersion": 42,
+      "previousImmutableVersion": 41,
+      "status": "DRAFT",
+      "appendOnly": true,
+      "expectedCounts": {
+        "capabilities": 255,
+        "accessPolicies": 24,
+        "entitlementExpressions": 17,
+        "predicatePolicies": 69,
+        "routes": 1028,
+        "routeKinds": {
+          "PAGE": 132,
+          "DATA": 308,
+          "ACTION": 588
+        }
+      },
+      "checksum": "COMPUTE_FROM_CANONICAL_GENERATOR_DO_NOT_PREDECLARE",
+      "stopRule": "Any generated count other than the combined append-only delta of three capabilities, five predicates, two PAGE routes, four DATA routes, and five ACTION routes requires a new Control review. The SYS allocation inside that delta remains exactly one capability, one predicate, one PAGE route, and one DATA route."
+    },
+    "capability": {
+      "contractKey": "hcm.audit.evidence.view",
+      "productKey": "hcm",
+      "surfaceKey": "hcm.management",
+      "resourceKey": "ADMIN.AUDIT_VIEW",
+      "resolvedCapabilityCode": "ADMIN.AUDIT_VIEW:VIEW",
+      "action": "VIEW",
+      "authorityMode": "PERMISSION_AND_RELATIONSHIP",
+      "requiresProductEntitlement": true,
+      "responsibilityRequirement": "REQUIRED",
+      "requiredResponsibilityCode": "HRIS_DUTY_AUDITOR",
+      "scopeResolver": "APP_RESOURCE_SET:RS_HCM_CONFIG",
+      "sodPolicyId": "SOD_HRIS_AUDIT_INDEPENDENCE",
+      "activationPolicy": "STEPUP-MGMT-HIGH-V1",
+      "riskTier": "HIGH",
+      "routeContractKeys": [
+        "route.hcm.audit.evidence.page",
+        "route.hcm.audit.evidence-detail.data"
+      ],
+      "owner": "Platform + HCM + Security",
+      "notes": [
+        "RS_HCM_CONFIG is reused only as the existing physical APP.HCM product-root assignment set. Its name does not grant configuration capability.",
+        "The exact HRIS_AUDITOR package role is an additional server check and is not inferred from APP.HCM or ADMIN.AUDIT_VIEW.",
+        "NORMAL mode produces the existing step-up challenge; only a current ELEVATED decision can read evidence.",
+        "activationPolicy remains STEPUP-MGMT-HIGH-V1. It is not cleared and the route does not use CAPABILITY_EXPRESSION to evade step-up validation."
+      ]
+    },
+    "predicate": {
+      "predicatePolicyKey": "predicate.hcm-audit-evidence-authority.v1",
+      "ownerServiceKey": "platform",
+      "inputEvidenceSchemaKey": "HcmAuditEvidenceAuthorityV1",
+      "parameterSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {}
+      },
+      "targetBindingKinds": [
+        "CONFIG_SCOPE"
+      ],
+      "routeContractKeys": [
+        "route.hcm.audit.evidence.page",
+        "route.hcm.audit.evidence-detail.data"
+      ],
+      "meaning": "Owner PEP proves the exact HCM query profile, trusted identity/revision headers, package and duty evidence, elevated mode, purpose, field policy, SoD clearance, and minimized response binding."
+    },
+    "routes": [
+      {
+        "routeContractKey": "route.hcm.audit.evidence.page",
+        "subject": {
+          "type": "PRODUCT",
+          "productKey": "hcm",
+          "surfaceKey": "hcm.management"
+        },
+        "routeKind": "PAGE",
+        "sideEffectFree": null,
+        "navigationContextId": "hcm.management",
+        "uiRouteId": "hcm.audit.hris",
+        "uiRoutePattern": "/admin/governance/audit-overview",
+        "accessProfiles": [
+          {
+            "profileKey": "hcm-audit-evidence-reader",
+            "precedence": 300,
+            "activeAccessModes": [
+              "ELEVATED"
+            ],
+            "requiredAccess": {
+              "type": "CAPABILITY",
+              "capabilityContractKey": "hcm.audit.evidence.view"
+            },
+            "targetBindingKinds": [
+              "CONFIG_SCOPE"
+            ],
+            "predicatePolicyKeys": [
+              "predicate.hcm-audit-evidence-authority.v1"
+            ],
+            "readOnly": true,
+            "responseProjectionBindings": [
+              {
+                "apiBindingKey": "route.hcm.audit.evidence.page.binding.01",
+                "projectionPolicyKey": "route.hcm.audit.evidence.page.hcm-evidence-minimized.projection.v1",
+                "responseSchemaKey": "HcmAuditEvidencePageV1"
+              }
+            ]
+          }
+        ],
+        "gatewayApiBindings": [
+          {
+            "bindingKey": "route.hcm.audit.evidence.page.binding.01",
+            "method": "GET",
+            "path": "/api/platform/v1/admin/audit-control/events",
+            "pathParameterConstraints": {},
+            "queryParameterConstraints": {
+              "product": {
+                "kind": "FIXED",
+                "value": "HCM"
+              }
+            }
+          }
+        ],
+        "servicePepBindings": [
+          {
+            "bindingKey": "route.hcm.audit.evidence.page.binding.01",
+            "serviceKey": "platform",
+            "method": "GET",
+            "path": "/v1/admin/audit-control/events",
+            "pathParameterConstraints": {},
+            "queryParameterConstraints": {
+              "product": {
+                "kind": "FIXED",
+                "value": "HCM"
+              }
+            }
+          }
+        ],
+        "owner": "Platform + HCM + Security",
+        "policyVersion": 1,
+        "lifecycleState": "ACTIVE"
+      },
+      {
+        "routeContractKey": "route.hcm.audit.evidence-detail.data",
+        "subject": {
+          "type": "PRODUCT",
+          "productKey": "hcm",
+          "surfaceKey": "hcm.management"
+        },
+        "routeKind": "DATA",
+        "sideEffectFree": null,
+        "navigationContextId": "hcm.management",
+        "uiRouteId": null,
+        "uiRoutePattern": null,
+        "accessProfiles": [
+          {
+            "profileKey": "hcm-audit-evidence-reader",
+            "precedence": 300,
+            "activeAccessModes": [
+              "ELEVATED"
+            ],
+            "requiredAccess": {
+              "type": "CAPABILITY",
+              "capabilityContractKey": "hcm.audit.evidence.view"
+            },
+            "targetBindingKinds": [
+              "CONFIG_SCOPE"
+            ],
+            "predicatePolicyKeys": [
+              "predicate.hcm-audit-evidence-authority.v1"
+            ],
+            "readOnly": true,
+            "responseProjectionBindings": [
+              {
+                "apiBindingKey": "route.hcm.audit.evidence-detail.data.binding.01",
+                "projectionPolicyKey": "route.hcm.audit.evidence-detail.data.hcm-evidence-minimized.projection.v1",
+                "responseSchemaKey": "HcmAuditEvidenceV1"
+              }
+            ]
+          }
+        ],
+        "gatewayApiBindings": [
+          {
+            "bindingKey": "route.hcm.audit.evidence-detail.data.binding.01",
+            "method": "GET",
+            "path": "/api/platform/v1/admin/audit-control/events/{eventId}",
+            "pathParameterConstraints": {},
+            "queryParameterConstraints": {
+              "product": {
+                "kind": "FIXED",
+                "value": "HCM"
+              }
+            }
+          }
+        ],
+        "servicePepBindings": [
+          {
+            "bindingKey": "route.hcm.audit.evidence-detail.data.binding.01",
+            "serviceKey": "platform",
+            "method": "GET",
+            "path": "/v1/admin/audit-control/events/{eventId}",
+            "pathParameterConstraints": {},
+            "queryParameterConstraints": {
+              "product": {
+                "kind": "FIXED",
+                "value": "HCM"
+              }
+            }
+          }
+        ],
+        "owner": "Platform + HCM + Security",
+        "policyVersion": 1,
+        "lifecycleState": "ACTIVE"
+      }
+    ],
+    "routeRuntimeContext": {
+      "populations": [
+        "AUTHORIZED_PACKAGE_SCOPE"
+      ],
+      "fieldGroups": [
+        "AUDIT_PROJECTION",
+        "MASKED_SENSITIVE"
+      ],
+      "purpose": "HRIS_AUDIT_EVIDENCE",
+      "clientSelectablePopulationOrFields": false
+    },
+    "readTimeStepUpGeneratorException": {
+      "allowlistedRouteKeys": [
+        "route.hcm.audit.evidence.page",
+        "route.hcm.audit.evidence-detail.data"
+      ],
+      "activationPolicyRequired": "STEPUP-MGMT-HIGH-V1",
+      "profileModeRequired": [
+        "ELEVATED"
+      ],
+      "bindingMethodsRequired": [
+        "GET"
+      ],
+      "routeKindsAllowed": [
+        "PAGE",
+        "DATA"
+      ],
+      "readOnlyRequired": true,
+      "closedProjectionRequired": true,
+      "stepUpCommandBindings": "FORBIDDEN_FOR_THESE_READ_ONLY_GETS",
+      "normalModeBehavior": "Existing challenge flow may issue a current elevation decision; no evidence or repository access occurs in NORMAL.",
+      "nonExpansionRule": "Do not make this a general exception. ACTION routes and every non-allowlisted STEPUP capability continue to require the existing exact target/object-version command bindings."
+    },
+    "runtimePackageAndSodPolicy": {
+      "requiredPackage": "HRIS_AUDITOR",
+      "requiredDuty": "HRIS_DUTY_AUDITOR",
+      "dutyResource": "APP.HCM",
+      "dutyResourceSet": "RS_HCM_CONFIG",
+      "sodRule": "SOD_HRIS_AUDIT_INDEPENDENCE",
+      "sodEvaluation": "A verified HRIS_AUDITOR is denied when any conflicting package from the sealed semantics document is present in the same tenant. This tenant-wide v1 treatment is conservatively fail-closed because product access package evidence is not owner-scope-qualified in the current identity header.",
+      "noAssignmentFallback": "No legacy AUDITOR, TENANT_ADMIN, ADMIN, DATA_GOVERNANCE_READ, or configuration responsibility is accepted as a substitute."
+    }
+  },
+  "centralControlDelta": [
+    {
+      "order": 1,
+      "area": "IMMUTABLE_PRODUCT_AUTHORIZATION_REGISTRY",
+      "owner": "Control/Auth/Gateway/Platform",
+      "action": "MODIFY_AND_GENERATE_AFTER_TOKEN",
+      "sourceFiles": [
+        "dwp-backend/contracts/product-authorization/product-surfaces-v1.yaml",
+        "dwp-backend/scripts/generate-product-authorization-contracts.py",
+        "dwp-backend/scripts/export-openapi-contracts.py",
+        "dwp-backend/dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationReleaseLineage.java",
+        "dwp-backend/dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationAuthorityAdapter.java",
+        "dwp-backend/dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationAuthoritySupport.java",
+        "dwp-backend/dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationGateTopologyValidator.java"
+      ],
+      "newSourceFiles": [
+        "dwp-backend/dwp-auth-server/src/main/java/com/dwp/services/auth/service/HcmAuditAuthorityPolicy.java",
+        "dwp-backend/scripts/tests/test_product_authorization_v42.py"
+      ],
+      "generatedFiles": [
+        "dwp-backend/contracts/product-authorization/product-surfaces-v1.bundle-v42.json",
+        "dwp-backend/contracts/product-authorization/product-surfaces-v1.json",
+        "dwp-backend/contracts/product-authorization/product-surfaces-v1.index.json",
+        "dwp-backend/contracts/product-authorization/product-surface-rollout-inventory.v1.generated.json",
+        "dwp-backend/contracts/product-authorization/pilot-fixtures.v1.generated.json",
+        "dwp-backend/dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v42.generated.json",
+        "dwp-backend/dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.generated.json",
+        "dwp-backend/dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.index.generated.json",
+        "dwp-backend/dwp-gateway/src/main/resources/product-authorization/product-surface-rollout-inventory.v1.generated.json",
+        "dwp-backend/dwp-platform-server/src/main/resources/product-authorization/hcm-platform-pep-v42.generated.json"
+      ],
+      "testsToModify": [
+        "dwp-backend/scripts/tests/test_product_authorization_v21.py",
+        "dwp-backend/dwp-auth-server/src/test/java/com/dwp/services/auth/config/ProductAuthorizationSeedLoaderTest.java",
+        "dwp-backend/dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationContractReleaseLineageTest.java",
+        "dwp-backend/dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationAuthorityAdapterTest.java",
+        "dwp-backend/dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationAuthoritySupportTest.java",
+        "dwp-backend/dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationContractValidatorTest.java",
+        "dwp-backend/dwp-auth-server/src/test/java/com/dwp/services/auth/service/HcmAuditAuthorityPolicyTest.java",
+        "dwp-backend/dwp-auth-server/src/test/java/com/dwp/services/auth/support/PilotAuthorizationFixtureAdapterTest.java",
+        "dwp-backend/dwp-gateway/src/test/java/com/dwp/gateway/support/PilotAuthorizationFixtureAdapterTest.java"
+      ],
+      "invariants": [
+        "v1 through v41 bytes and checksums remain unchanged.",
+        "v42 is DRAFT and has no active pointer in source.",
+        "HcmAuditAuthorityPolicy is the only special policy hook; it checks the exact capability key and cannot affect another product route.",
+        "A v42 route decision is impossible without the fixed product=HCM binding.",
+        "The combined v42 generator includes SYS, PER, and TIM exactly once; there is no competing SYS-only v42 output.",
+        "The two read-only SYS routes are ELEVATED-only and carry no stepUpCommandBindings; generator tests prove the exception cannot apply to any ACTION or other route key."
+      ],
+      "generatorCompatibilityRule": {
+        "currentBlocker": "The current generator requires stepUpCommandBindings for every direct HIGH/CRITICAL STEPUP capability, but that command/object-version structure is invalid for read-only PAGE/DATA GET evidence queries.",
+        "requiredChange": "Add one exact route-key allowlist branch for the two SYS HCM audit routes. It accepts absent stepUpCommandBindings only after proving PAGE or DATA, all public and owner bindings GET, one ELEVATED-only readOnly direct-capability profile, STEPUP-MGMT-HIGH-V1 on hcm.audit.evidence.view, CONFIG_SCOPE predicate coverage, and complete closed response projections.",
+        "negativeProof": "test_product_authorization_v42.py mutates route key, method, route kind, mode, readOnly, access union, projection, target, predicate, capability risk/activation, and command-binding presence independently; every mutation must fail generation.",
+        "nonChange": "Do not clear activationPolicy, do not use CAPABILITY_EXPRESSION, and do not weaken the existing validation for ACTION or any non-allowlisted route."
+      },
+      "normalModeChallengeRuntimeRule": {
+        "currentBlocker": "ProductAuthorizationAuthorityAdapter filters route profiles by activeAccessModes before capability evaluation. With the sealed ELEVATED-only profile, an unmodified NORMAL evaluation would return ROUTE_DENIED instead of the required step-up challenge.",
+        "requiredChange": "For only the two HcmAuditAuthorityPolicy-recognized route keys, a NORMAL direct-route evaluation may evaluate the sole ELEVATED read profile as challenge-only. It must first evaluate the full entitlement, permission, package, duty, scope, predicate, and SoD intersection; if those pass, the non-null STEPUP-MGMT-HIGH-V1 activation returns STEP_UP_REQUIRED. It can never return ALLOWED in NORMAL and can never reach an owner service.",
+        "negativeProof": "Authority adapter/support tests prove missing or conflicting authority remains the typed denial, eligible NORMAL returns only STEP_UP_REQUIRED, ELEVATED may be ALLOWED, and changing route key/profile count/mode/access type/capability/activation/readOnly/target/predicate disables the challenge-only branch.",
+        "nonExpansionRule": "No generic route-profile fallback is added. Provider support and every route outside the exact two-key HCM policy retain current selection behavior."
+      }
+    },
+    {
+      "order": 2,
+      "area": "GATEWAY_TRUSTED_CONTEXT",
+      "owner": "Control/Gateway",
+      "action": "MODIFY_AFTER_TOKEN",
+      "sourceFiles": [
+        "dwp-backend/dwp-gateway/src/main/java/com/dwp/gateway/filter/ProductSurfaceDecisionContextFilter.java"
+      ],
+      "testFiles": [
+        "dwp-backend/dwp-gateway/src/test/java/com/dwp/gateway/ProductSurfaceDecisionContextFilterTest.java",
+        "dwp-backend/dwp-gateway/src/test/java/com/dwp/gateway/productsurface/GeneratedProductRouteCatalogTest.java"
+      ],
+      "exactDelta": [
+        "Add both HCM audit route keys to the server-owned purpose map with HRIS_AUDIT_EVIDENCE.",
+        "Continue stripping browser-supplied route, purpose, subject, context, scope, field-policy, and authorization revision headers before evaluation.",
+        "Emit trusted purpose and current positive field-policy/authorization revisions only after an allowed v42 exact route decision.",
+        "Treat duplicate, wrong-case, encoded-ambiguous, missing, or non-HCM product values as no HCM route match.",
+        "In NORMAL mode return the existing step-up-required outcome without forwarding to Platform; forward the HCM bindings only for a current ELEVATED decision."
+      ]
+    },
+    {
+      "order": 3,
+      "area": "PLATFORM_OWNER_PEP_AND_GENERIC_BYPASS_FENCE",
+      "owner": "Control/Platform",
+      "action": "MODIFY_AND_ADD_AFTER_TOKEN",
+      "sourceFiles": [
+        "dwp-backend/dwp-platform-server/src/main/java/com/dwp/services/platform/security/PlatformSecurityHeaders.java",
+        "dwp-backend/dwp-platform-server/src/main/java/com/dwp/services/platform/security/HcmPlatformPepRegistry.java",
+        "dwp-backend/dwp-platform-server/src/main/java/com/dwp/services/platform/security/PlatformSecurityFilter.java",
+        "dwp-backend/dwp-platform-server/src/main/java/com/dwp/services/platform/security/PlatformProductAuthorizationSupport.java"
+      ],
+      "newSourceFiles": [
+        "dwp-backend/dwp-platform-server/src/main/java/com/dwp/services/platform/security/HcmAuditEvidenceSecurityPolicy.java"
+      ],
+      "testFiles": [
+        "dwp-backend/dwp-platform-server/src/test/java/com/dwp/services/platform/security/HcmPlatformPepSecurityContractTest.java",
+        "dwp-backend/dwp-platform-server/src/test/java/com/dwp/services/platform/security/PlatformSecurityFilterTest.java",
+        "dwp-backend/dwp-platform-server/src/test/java/com/dwp/services/platform/security/HcmAuditEvidenceSecurityPolicyTest.java"
+      ],
+      "exactDelta": [
+        "Load the v42 Platform HCM PEP projection and recognize only its two audit bindings.",
+        "Require exact route key, method, path, product=HCM, APP.HCM:VIEW, ADMIN.AUDIT_VIEW:VIEW, HRIS_AUDITOR, HRIS_DUTY_AUDITOR@RS_HCM_CONFIG, ELEVATED mode, HRIS_AUDIT_EVIDENCE, current decision/revalidate/context/scope/subject/field/auth revisions, and no conflicting package.",
+        "If verified HRIS_AUDITOR or HRIS_DUTY_AUDITOR evidence is present, deny every generic audit-control route and every audit-control write route unless the request is one of the two exact HCM GET bindings.",
+        "A product parameter on any other audit-control operation is denied before controller/repository access.",
+        "A generic non-HRIS audit administrator with no product parameter retains existing behavior."
+      ]
+    },
+    {
+      "order": 4,
+      "area": "CLOSED_HCM_AUDIT_QUERY_PROFILE",
+      "owner": "Control/Platform",
+      "action": "ADD_AND_NARROW_EXISTING_MAPPING_AFTER_TOKEN",
+      "sourceFilesToModify": [
+        "dwp-backend/dwp-platform-server/src/main/java/com/dwp/services/platform/auditcontrol/AdminAuditControlController.java"
+      ],
+      "newSourceFiles": [
+        "dwp-backend/dwp-platform-server/src/main/java/com/dwp/services/platform/auditcontrol/HcmAuditEvidenceController.java",
+        "dwp-backend/dwp-platform-server/src/main/java/com/dwp/services/platform/auditcontrol/HcmAuditEvidenceCriteria.java",
+        "dwp-backend/dwp-platform-server/src/main/java/com/dwp/services/platform/auditcontrol/HcmAuditEvidenceCursorCodec.java",
+        "dwp-backend/dwp-platform-server/src/main/java/com/dwp/services/platform/auditcontrol/HcmAuditEvidenceDtos.java",
+        "dwp-backend/dwp-platform-server/src/main/java/com/dwp/services/platform/auditcontrol/HcmAuditEvidenceRepository.java",
+        "dwp-backend/dwp-platform-server/src/main/java/com/dwp/services/platform/auditcontrol/HcmAuditEvidenceService.java"
+      ],
+      "existingFilesExplicitlyReusedUnchanged": [
+        "dwp-backend/dwp-platform-server/src/main/java/com/dwp/services/platform/auditcontrol/AuditAccessGuard.java",
+        "dwp-backend/dwp-platform-server/src/main/java/com/dwp/services/platform/auditcontrol/AuditControlDtos.java",
+        "dwp-backend/dwp-platform-server/src/main/java/com/dwp/services/platform/auditcontrol/AuditControlEventRepository.java",
+        "dwp-backend/dwp-core/src/main/java/com/dwp/core/audit/hriscontracts/HrisAuditOutboxEventAdapter.java"
+      ],
+      "newTestFiles": [
+        "dwp-backend/dwp-platform-server/src/test/java/com/dwp/services/platform/auditcontrol/HcmAuditEvidenceControllerTest.java",
+        "dwp-backend/dwp-platform-server/src/test/java/com/dwp/services/platform/auditcontrol/HcmAuditEvidenceCursorCodecTest.java",
+        "dwp-backend/dwp-platform-server/src/test/java/com/dwp/services/platform/auditcontrol/HcmAuditEvidenceRepositoryPostgresTest.java",
+        "dwp-backend/dwp-platform-server/src/test/java/com/dwp/services/platform/auditcontrol/HcmAuditEvidenceServiceTest.java"
+      ],
+      "mappingRule": "The runtime may use Spring request-condition split mappings, but OpenAPI must expose one GET operation per shared path with an explicit product query and a closed conditional oneOf response. The HCM controller is never allowed to shadow a productless generic mapping.",
+      "repositoryRule": "Use direct dedicated SQL projection from existing sys_audit_events; never deserialize AuditControlDtos.Event and then redact it.",
+      "transactionRule": "Read-only transaction only; no insert, update, delete, saved search, export, finding, case, retention, or legal-hold call is reachable from this profile.",
+      "paginationRule": "Use occurred_at DESC,event_id DESC keyset pagination with occurred_at and ingested_at snapshot fences and an HMAC cursor domain-separated from API history while reusing the existing secret property.",
+      "tenantRule": "List and detail SQL each bind verified tenant and the canonical HRIS fingerprint in the same statement; detail returns indistinguishable 404 for foreign-tenant, malformed-profile, and non-HCM rows."
+    },
+    {
+      "order": 5,
+      "area": "OPENAPI_AND_TYPED_CLIENT",
+      "owner": "Control/Platform/Frontend",
+      "action": "MODIFY_GENERATED_CONTRACT_AND_ADD_CLIENT_AFTER_TOKEN",
+      "backendFiles": [
+        "dwp-backend/contracts/openapi/gateway-public.json",
+        "dwp-backend/dwp-platform-server/src/test/java/com/dwp/services/platform/config/PlatformOpenApiSnapshotExportTest.java",
+        "dwp-backend/scripts/tests/test_export_openapi_contracts.py"
+      ],
+      "frontendGeneratedFiles": [
+        "dwp-frontend/libs/api-contracts/openapi/gateway-public.json",
+        "dwp-frontend/libs/api-contracts/src/gateway-public.ts"
+      ],
+      "frontendSourceFiles": [
+        "dwp-frontend/libs/shared-utils/src/api/hcm-audit-evidence-api.ts",
+        "dwp-frontend/libs/shared-utils/src/api/hcm-audit-evidence-api.test.ts",
+        "dwp-frontend/libs/shared-utils/src/index.ts"
+      ],
+      "contractRules": [
+        "HcmAuditEvidenceV1 and HcmAuditEvidencePageV1 set additionalProperties=false.",
+        "HCM client functions always send exactly product=HCM and never accept a tenant, purpose, scope, fields, sort, page offset, or arbitrary query map.",
+        "The client rejects a response containing any field outside the closed schema instead of dropping it silently.",
+        "The generic AuditEvent and AuditEventPage types remain unchanged for non-HCM administrators."
+      ]
+    },
+    {
+      "order": 6,
+      "area": "SHARED_ADMIN_HCM_PRESENTATION",
+      "owner": "Control/Frontend",
+      "action": "MODIFY_AND_ADD_AFTER_TOKEN",
+      "sourceFiles": [
+        "dwp-frontend/apps/dwp/src/features/admin/audit-overview.tsx",
+        "dwp-frontend/apps/dwp/src/features/admin/hcm-audit-evidence-overview.tsx",
+        "dwp-frontend/apps/dwp/src/features/admin/hcm-audit-evidence-overview.test.tsx",
+        "dwp-frontend/libs/shared-i18n/src/locales/ko/admin.json",
+        "dwp-frontend/libs/shared-i18n/src/locales/en/admin.json"
+      ],
+      "e2eFiles": [
+        "dwp-frontend/e2e/hris-sys-001-hcm-audit-evidence.spec.ts",
+        "dwp-frontend/e2e/support/hris-sys-001-hcm-audit-fixtures.ts"
+      ],
+      "exactDelta": [
+        "Parse product with getAll and enter HCM mode only for one exact case-sensitive HCM value.",
+        "Render the HCM title/context badge, fixed Back to HRIS action, allowlisted filters, snapshot freshness, minimized list, and minimized focus detail.",
+        "Do not render or prefetch generic overview, actor metrics, investigations, cases, findings, saved searches, exports, policy, or integrity controls in HCM mode.",
+        "A HCM 401/403/404/503 keeps the shell and clears evidence; it never invokes the generic query as fallback.",
+        "Use /hr/home as a compiled return constant and ignore all browser-supplied return targets."
+      ]
+    },
+    {
+      "order": 7,
+      "area": "FRONTEND_AUTHORIZATION_SNAPSHOT_SYNC",
+      "owner": "Control/Frontend",
+      "action": "GENERATE_AFTER_BACKEND_V42_IS_SEALED",
+      "files": [
+        "dwp-frontend/architecture/product-surface-authorization.v1.json",
+        "dwp-frontend/architecture/product-surface-internal-closure.v1.generated.json",
+        "dwp-frontend/architecture/pilot-fixtures.v1.generated.json",
+        "dwp-frontend/scripts/product-authorization-fixture-versions.mjs",
+        "dwp-frontend/apps/dwp/src/routes/product-surface-authorization.generated.ts",
+        "dwp-frontend/libs/shared-utils/src/test-utils/pilot-authorization-fixtures.generated.ts"
+      ],
+      "rule": "Use repository sync generators only. Do not hand-edit generated TypeScript or fixture artifacts."
+    }
+  ],
+  "noMigrationAndActivationPlan": {
+    "sysSpecificDatabaseMigration": "FORBIDDEN_AND_NOT_REQUIRED",
+    "sysSpecificResourceOrPermissionSeed": "NONE",
+    "combinedCycleMigration": "PER_TIM_OWNED_AUTH_V251_ALLOWED_EXACTLY_ONCE_FOR_DATA_HRIS_PERFORMANCE_REVIEW_GRANTS_AND_V42_DRAFT_DECLARATION",
+    "reusedResources": [
+      "APP.HCM",
+      "ADMIN.AUDIT_VIEW:VIEW",
+      "RS_HCM_CONFIG",
+      "existing product-authorization registry tables",
+      "existing app-governance responsibility assignment runtime",
+      "existing sys_audit_events"
+    ],
+    "draftImport": "The one combined SYS+PER+TIM implementation may reference the generated v42 checksum in the already allocated PER/TIM Auth V251 and import it as DRAFT with automatic_import_enabled=FALSE. SYS must not add a second declaration or any SYS-specific seed/migration.",
+    "activation": "No source change activates v42. Provider approval and Platform CAS activation remain separate operational gates, and the feature remains OFF/fail-closed until exact live assignment evidence exists.",
+    "absenceOfAssignment": "If HRIS_AUDITOR or HRIS_DUTY_AUDITOR@RS_HCM_CONFIG is absent, the expected result is 403; no seed or broad role fallback is created by SYS-001."
+  },
+  "moduleAdapterAfterCentralMerge": {
+    "owner": "HRIS-SYS",
+    "state": "DEFERRED_UNTIL_CENTRAL_V42_RUNTIME_AND_UI_GREEN",
+    "allowedPurpose": "Expose the already-authorized shared-governance handoff from the HRIS product map. It owns no audit data, policy, authorization, or response projection.",
+    "sourceFiles": [
+      "dwp-frontend/apps/dwp/src/features/hris/shell/model/catalog/dwp-control.ts",
+      "dwp-frontend/apps/dwp/src/features/hris/shell/components/hris-product-map-group.tsx"
+    ],
+    "testFiles": [
+      "dwp-frontend/apps/dwp/src/features/hris/shell/testing/hris-product-map-catalog.test.ts",
+      "dwp-frontend/apps/dwp/src/features/hris/shell/testing/hris-product-map.test.tsx"
+    ],
+    "exactDelta": [
+      "Keep dwp-governance lifecycle=EXTERNAL, externalTarget=DWP_GOVERNANCE, and authorization=CENTRAL_POLICY.",
+      "Add exact href=/admin/governance/audit-overview?product=HCM&tab=overview.",
+      "Permit an EXTERNAL central-policy item with an exact href to render Open only when canOpenPath returns true; other EXTERNAL items remain inert.",
+      "Do not relabel the shared governance application as an HRIS PILOT or duplicate its view under /hr."
+    ],
+    "acceptance": "The handoff opens the shared HCM mode, a denied route remains visibly locked, and the safe return goes to /hr/home."
+  },
+  "explicitlyOutsideDelta": [
+    "new HRIS or Platform audit database/table/index/partition migration",
+    "new CRUD resource family",
+    "audit ingestion or HrisAuditOutboxEventV1 schema change",
+    "generic audit Event DTO redaction retrofit",
+    "saved search, export, finding, case, retention, legal hold, or policy feature",
+    "actor, target, aggregate reference, session, network, trace, raw state, or arbitrary metadata exposure",
+    "legal-entity or named-population selection inferred from aggregateRef, actorRef, or targetRef",
+    "automatic DRAFT approval or activation",
+    "module worktree or module Start Token before central closure evidence"
+  ],
+  "implementationSequence": [
+    "1. Re-pin clean pushed heads and verify v41 immutable bytes plus the observed Java lineage lag.",
+    "2. Correct only the v41 lineage consumers, then prove the current repository is internally consistent before authoring the one combined SYS+PER+TIM v42.",
+    "3. Implement closed Platform DTO/repository/service and export the conditional OpenAPI schemas.",
+    "4. Append all three allocated capabilities, all five predicates, and all eleven routes once; generate the one combined v42 using the sealed OpenAPI schema hashes and implement Auth, Gateway, owner PEP enforcement, and the exact PER/TIM Auth V251 declaration.",
+    "5. Implement typed frontend client and HCM shared-admin presentation; sync v42 frontend authorization artifacts.",
+    "6. Run only the targeted validation plan and record immutable evidence.",
+    "7. Merge the central delta to dwp-dev, then issue a separate narrow HRIS-SYS adapter token against the new pushed pins.",
+    "8. Implement and validate the two-file HRIS handoff adapter; then produce the BASE-TFR-SYS-001 closure receipt."
+  ],
+  "tokenDecision": {
+    "centralImplementationToken": "NOT_ISSUED",
+    "sysModuleAdapterToken": "NOT_ISSUED",
+    "readyToDraftCentralToken": true,
+    "readyToDraftModuleToken": false,
+    "reason": "The delta is bounded and implementable, but source changes were not authorized by this preparation assignment and the central prerequisite must land before module work."
+  }
+}

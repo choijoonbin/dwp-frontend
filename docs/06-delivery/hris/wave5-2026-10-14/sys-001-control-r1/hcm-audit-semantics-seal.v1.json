@@ -1,0 +1,421 @@
+{
+  "schema": "dwp.hris.sys001.hcm-audit-semantics-seal.v1",
+  "sealId": "HRIS-WAVE5-SYS-001-HCM-AUDIT-SEMANTICS-R1",
+  "preparedAt": "2026-10-14T14:25:52+09:00",
+  "moduleSession": "HRIS-SYS",
+  "sliceId": "BASE-TFR-SYS-001",
+  "sourceRef": "TFR-SYS-001",
+  "state": "SEALED_PREPARATION_ONLY_IMPLEMENTATION_NOT_AUTHORIZED",
+  "authority": {
+    "implementationAuthorized": false,
+    "worktreeAuthorized": false,
+    "migrationAuthorized": false,
+    "commitOrPushAuthorized": false,
+    "startTokenIssued": false,
+    "decision": "CENTRAL_CONTROL_DELTA_REQUIRED_BEFORE_SYS_TOKEN"
+  },
+  "reuseDecision": {
+    "auditEventWriteBinding": "PLAT-005_REUSE_UNCHANGED",
+    "auditEvidenceQuery": "SHARED-API-009_REUSE_WITH_CLOSED_HCM_VIEW_PROFILE",
+    "store": "EXISTING_SYS_AUDIT_EVENTS_ONLY",
+    "newStoreAllowed": false,
+    "newCrudAllowed": false,
+    "newMigrationAllowed": false,
+    "canonicalAdapter": "dwp-core/src/main/java/com/dwp/core/audit/hriscontracts/HrisAuditOutboxEventAdapter.java",
+    "rule": "SYS-001 adds a read-only, fail-closed projection over the existing immutable audit event store. It does not create an HRIS audit database, duplicate event ingestion, or an HRIS-local audit API."
+  },
+  "uxContext": {
+    "canonicalEntry": "/admin/governance/audit-overview?product=HCM&tab=overview",
+    "canonicalFocus": "/admin/governance/audit-overview?product=HCM&tab=overview&focus={eventId}",
+    "safeReturnPath": "/hr/home",
+    "returnPathRule": "The return target is a compiled allowlisted constant. No returnTo, redirect, callback, or browser-supplied path is accepted.",
+    "productParameter": {
+      "exactName": "product",
+      "exactValue": "HCM",
+      "occurrences": 1,
+      "caseSensitive": true,
+      "meaning": [
+        "Select the HCM-branded shared-governance presentation.",
+        "Select the closed HCM audit-evidence repository predicate and minimized DTO.",
+        "Preserve HRIS navigation context and the fixed safe return action."
+      ],
+      "neverMeans": [
+        "tenant identity",
+        "APP.HCM entitlement",
+        "permission or capability grant",
+        "HRIS_AUDITOR package membership",
+        "HRIS_DUTY_AUDITOR responsibility",
+        "purpose authorization",
+        "population or resource-set selection",
+        "field-policy authorization",
+        "SoD clearance"
+      ],
+      "malformedPolicy": "Missing product for an HRIS auditor, duplicate product, lowercase hcm, any non-HCM value, encoded ambiguity, or product on a non-HCM audit-control operation fails closed before repository access."
+    },
+    "tabParameter": {
+      "allowed": [
+        "overview"
+      ],
+      "default": "overview",
+      "rule": "An unsupported or duplicate tab is canonicalized to overview without selecting another audit-control capability."
+    },
+    "focusParameter": {
+      "type": "UUID",
+      "meaning": "An event identifier for the same tenant and same closed HCM evidence profile only.",
+      "rule": "Malformed focus is rejected locally. Missing, foreign-tenant, or non-HCM evidence returns the same not-found presentation and never falls back to the generic Event DTO."
+    }
+  },
+  "routeSplit": {
+    "profileRouteKeys": [
+      "route.hcm.audit.evidence.page",
+      "route.hcm.audit.evidence-detail.data"
+    ],
+    "list": {
+      "contract": "SHARED-API-009",
+      "method": "GET",
+      "publicPath": "/api/platform/v1/admin/audit-control/events",
+      "ownerPath": "/v1/admin/audit-control/events",
+      "queryConstraint": {
+        "product": {
+          "kind": "FIXED",
+          "value": "HCM"
+        }
+      },
+      "routeContractKey": "route.hcm.audit.evidence.page"
+    },
+    "detail": {
+      "method": "GET",
+      "publicPath": "/api/platform/v1/admin/audit-control/events/{eventId}",
+      "ownerPath": "/v1/admin/audit-control/events/{eventId}",
+      "pathParameter": "eventId:UUID",
+      "queryConstraint": {
+        "product": {
+          "kind": "FIXED",
+          "value": "HCM"
+        }
+      },
+      "routeContractKey": "route.hcm.audit.evidence-detail.data"
+    },
+    "genericProfile": {
+      "rule": "The existing generic audit overview, event list, and event detail mappings explicitly require the product parameter to be absent.",
+      "hrisAuditorBypassRule": "Any verified identity carrying HRIS_AUDITOR or HRIS_DUTY_AUDITOR is denied on every generic audit-control path and every write path. Removing product=HCM cannot expose the generic Event DTO, saved searches, cases, findings, exports, policy, or integrity controls.",
+      "nonHcmAdministratorCompatibility": "A non-HRIS generic audit administrator with the existing exact permissions and no product parameter keeps the current API behavior."
+    }
+  },
+  "authorizationProfile": {
+    "profileKey": "hcm-audit-evidence-reader",
+    "capabilityContractKey": "hcm.audit.evidence.view",
+    "resolvedCapabilityCode": "ADMIN.AUDIT_VIEW:VIEW",
+    "logicalResource": "AUDIT.HRIS",
+    "physicalScopeAnchor": {
+      "resource": "APP.HCM",
+      "resourceSetKey": "RS_HCM_CONFIG",
+      "explanation": "RS_HCM_CONFIG is the existing physical HCM product-root resource set created by the canonical APP_HRIS rename. SYS-001 reuses that stable product-root assignment boundary; its historical name does not grant configuration authority and no new resource set or seed migration is introduced."
+    },
+    "allOf": [
+      "Verified positive X-DWP-Tenant-ID and X-DWP-User-ID from the gateway identity plane.",
+      "Identity plane is TENANT and active access mode is ELEVATED. NORMAL may receive the existing step-up challenge but can never receive evidence.",
+      "No provider identity, provider-tenant evidence, delegated actor tenant, or support session is present.",
+      "APP.HCM:VIEW is present as a verified entitlement.",
+      "ADMIN.AUDIT_VIEW:VIEW is present as a verified permission.",
+      "HRIS_AUDITOR is present as the verified product access package role.",
+      "HRIS_DUTY_AUDITOR is the exact verified responsibility on APP.HCM in RS_HCM_CONFIG.",
+      "The product authorization decision grants hcm.audit.evidence.view for the exact route key and selected scope.",
+      "The route key is one of route.hcm.audit.evidence.page or route.hcm.audit.evidence-detail.data and was produced by the fixed product=HCM query binding.",
+      "X-Purpose-Code is server-rebuilt as HRIS_AUDIT_EVIDENCE.",
+      "Current decision revision, revalidate-at, context key, scope key, subject principal public ID, field-policy revision, and authorization revision are present and valid.",
+      "SOD_HRIS_AUDIT_INDEPENDENCE evaluates with no conflicting package in the same tenant product-root scope.",
+      "The service PEP recognizes the same v42 route binding and the closed response profile."
+    ],
+    "purpose": {
+      "exactCode": "HRIS_AUDIT_EVIDENCE",
+      "source": "SERVER_ROUTE_CONSTANT",
+      "browserHeaderAccepted": false,
+      "rule": "The gateway strips browser-supplied purpose and rebuilds it only after an allowed exact route evaluation."
+    },
+    "stepUp": {
+      "riskTier": "HIGH",
+      "activationPolicy": "STEPUP-MGMT-HIGH-V1",
+      "authorizedRouteModes": [
+        "ELEVATED"
+      ],
+      "normalModeResult": "STEP_UP_REQUIRED_WITHOUT_REPOSITORY_ACCESS",
+      "commandBinding": "ABSENT_FOR_READ_ONLY_GET",
+      "generatorRule": "The generator may omit stepUpCommandBindings only for the two explicitly allowlisted SYS-001 PAGE/DATA routes when every binding is GET, the sole profile is ELEVATED-only and readOnly, requiredAccess is the direct hcm.audit.evidence.view capability, and the response projection is closed. Every ACTION or other STEPUP capability keeps the existing exact command/object-version binding rule."
+    },
+    "fieldPolicy": {
+      "requiredRevision": "POSITIVE_CURRENT_TRUSTED_REVISION",
+      "allowedGroups": [
+        "AUDIT_PROJECTION",
+        "MASKED_SENSITIVE"
+      ],
+      "clientSelectable": false,
+      "implementation": "The HCM DTO is a compiled closed allowlist. A trusted positive current field-policy revision is mandatory, but no client field list can widen the projection."
+    },
+    "scope": {
+      "supportedForSys001": "AUTHORIZED_PACKAGE_SCOPE_AT_EXISTING_HCM_PRODUCT_ROOT",
+      "routePopulationKinds": [
+        "AUTHORIZED_PACKAGE_SCOPE"
+      ],
+      "tenantBound": true,
+      "legalEntityOrNamedPopulationSelection": "NOT_EXPOSED_IN_SYS001_V1",
+      "rule": "The existing audit envelope does not carry an independently resolvable legal-entity or named-population key. SYS-001 must not infer one from actorRef, aggregateRef, or targetRef. If authorization produces no single eligible HCM product-root scope, the request fails closed. A future narrower population view requires a separately versioned canonical evidence contract and authority allocation."
+    },
+    "segregationOfDuties": {
+      "ruleId": "SOD_HRIS_AUDIT_INDEPENDENCE",
+      "mode": "STATIC_PACKAGE_SET",
+      "effect": "BLOCK",
+      "overlap": "TENANT_OR_OVERLAPPING_OWNER_SCOPE",
+      "auditorPackage": "HRIS_AUDITOR",
+      "conflictingPackages": [
+        "HRIS_LINE_MANAGER",
+        "HRIS_HR_BUSINESS_PARTNER",
+        "HRIS_HR_LIFECYCLE_APPROVER",
+        "HRIS_HR_SENSITIVE_DATA_READER",
+        "HRIS_HR_COMPENSATION_READER",
+        "HRIS_WORKFORCE_EXPORT_OPERATOR",
+        "HRIS_TIMEKEEPER",
+        "HRIS_TIME_APPROVER",
+        "HRIS_TIME_CONTROLLER",
+        "HRIS_LEAVE_ADMINISTRATOR",
+        "HRIS_LEAVE_APPROVER",
+        "HRIS_LEAVE_BALANCE_ADJUSTER",
+        "HRIS_LEAVE_ADJUSTMENT_APPROVER",
+        "HRIS_PAYROLL_SPECIALIST",
+        "HRIS_PAYROLL_RUN_OPERATOR",
+        "HRIS_PAYROLL_VALIDATOR",
+        "HRIS_PAYROLL_CONTROLLER",
+        "HRIS_PAYROLL_RELEASE_OFFICER",
+        "HRIS_PAYROLL_ACCOUNTING",
+        "HRIS_BANK_TAX_MAINTAINER",
+        "HRIS_STATUTORY_OPERATOR",
+        "HRIS_PERFORMANCE_OPERATOR",
+        "HRIS_PERFORMANCE_CALIBRATOR",
+        "HRIS_PERFORMANCE_RESULT_PUBLISHER",
+        "HRIS_CONFIG_AUTHOR",
+        "HRIS_CONFIG_PUBLISHER",
+        "HRIS_INTEGRATION_AUTHOR",
+        "HRIS_INTEGRATION_EXECUTOR"
+      ],
+      "configurationAuthorRule": "DATA_GOVERNANCE_READ or HRIS_CONFIG_AUTHOR does not grant audit evidence. A configuration author who also carries HRIS_AUDITOR is blocked by SoD rather than receiving a union of permissions."
+    },
+    "failClosed": {
+      "repositoryAccessBeforeProfilePass": false,
+      "responseCache": "PRIVATE_NO_STORE",
+      "outcomes": {
+        "missingIdentity": "401_WITHOUT_ROWS_OR_COUNTS",
+        "missingOrConflictingAuthority": "403_WITHOUT_ROWS_OR_COUNTS",
+        "staleOrUnavailableAuthority": "503_WITHOUT_ROWS_OR_COUNTS",
+        "malformedProductFilterCursorOrFocus": "400_WITHOUT_ROWS_OR_COUNTS",
+        "foreignTenantOrOutOfProfileEvent": "404_WITHOUT_EXISTENCE_DISCLOSURE"
+      }
+    }
+  },
+  "canonicalEvidenceSelection": {
+    "table": "sys_audit_events",
+    "mandatoryTenantPredicate": "tenant_id = :verifiedTenantId",
+    "mandatorySnapshotPredicates": [
+      "occurred_at <= :snapshotAt",
+      "ingested_at <= :snapshotAt"
+    ],
+    "canonicalFingerprint": {
+      "sourceModule": "matches ^hris\\.[a-z0-9._-]+$",
+      "emptyRawState": [
+        "before_state is the empty JSON object",
+        "after_state is the empty JSON object",
+        "changed_fields is empty"
+      ],
+      "requiredMetadataKeys": [
+        "aggregateRef",
+        "aggregateRevision",
+        "effectiveCapability",
+        "purposeCode",
+        "scopeRevision",
+        "fieldPolicyRevision",
+        "evidenceDigest",
+        "classification",
+        "causationId"
+      ],
+      "allowedOptionalMetadataKeys": [
+        "delegationRef",
+        "supportSessionRef",
+        "stepUpReceiptRef",
+        "beforeDigest",
+        "afterDigest"
+      ],
+      "extraMetadataKeysAllowed": false,
+      "validation": [
+        "aggregateRevision, scopeRevision, and fieldPolicyRevision are positive integers.",
+        "evidenceDigest and any beforeDigest or afterDigest are lowercase 64-character SHA-256 values.",
+        "classification is INTERNAL, CONFIDENTIAL, or RESTRICTED.",
+        "causationId and correlation_id are UUID values.",
+        "policy_id, source_service, source_module, target_type, target_id, actor_type, and actor_id are present.",
+        "DENIED or FAILED evidence has a nonblank canonical reason/error code."
+      ],
+      "rule": "Rows that do not match the exact bounded HrisAuditOutboxEventV1 adapter fingerprint are excluded; source_module alone is never sufficient."
+    },
+    "filters": {
+      "allowed": [
+        "window:H24|D7|D30|D90",
+        "category:ALL|ADMIN_CHANGE|POLICY_DENIED",
+        "severity:ALL|INFO|HIGH",
+        "outcome:ALL|SUCCESS|DENIED|FAILED",
+        "sourceService:exact normalized registered service",
+        "query:action|sourceService|sourceModule|effectiveCapability|purposeCode|reasonCode only",
+        "size:10..100",
+        "cursor:server-signed opaque token"
+      ],
+      "denied": [
+        "actor filter",
+        "actor, target, aggregate, display-name, principal, role, session, network, trace, raw state, or arbitrary metadata search",
+        "offset page",
+        "sort selection",
+        "field selection",
+        "client tenant",
+        "client purpose",
+        "client scope revision or field-policy revision"
+      ],
+      "oracleRule": "A filter over an omitted field is rejected rather than used as a hidden-field existence oracle."
+    }
+  },
+  "minimizedResponse": {
+    "listSchema": "HcmAuditEvidencePageV1",
+    "detailSchema": "HcmAuditEvidenceV1",
+    "pageFields": [
+      "items",
+      "size",
+      "snapshotAt",
+      "nextCursor"
+    ],
+    "eventFields": [
+      "eventId",
+      "occurredAt",
+      "category",
+      "action",
+      "outcome",
+      "severity",
+      "actorType",
+      "sourceService",
+      "sourceModule",
+      "aggregateType",
+      "aggregateRevision",
+      "effectiveCapability",
+      "purposeCode",
+      "authorizationDecisionRef",
+      "scopeRevision",
+      "fieldPolicyRevision",
+      "approvalReceiptId",
+      "reasonCode",
+      "beforeDigest",
+      "afterDigest",
+      "evidenceDigest",
+      "classification",
+      "retentionClass",
+      "causationId",
+      "correlationId",
+      "recordHash"
+    ],
+    "nullableFields": [
+      "approvalReceiptId",
+      "reasonCode",
+      "beforeDigest",
+      "afterDigest"
+    ],
+    "explicitlyOmitted": [
+      "tenantId",
+      "ingestedAt",
+      "riskScore",
+      "actorId or actorRef",
+      "actorPrincipal",
+      "actorDisplayName",
+      "actorRoles",
+      "sourceInstance",
+      "environment",
+      "aggregateRef",
+      "targetId or targetRef",
+      "targetDisplayName",
+      "traceId",
+      "sessionIdHash",
+      "clientAddressHash",
+      "authenticationMethod",
+      "delegationRef",
+      "supportSessionRef",
+      "stepUpReceiptRef",
+      "beforeState",
+      "afterState",
+      "changedFields",
+      "arbitrary metadata",
+      "totalElements",
+      "totalPages",
+      "top actors or actor counts"
+    ],
+    "additionalProperties": false,
+    "rule": "The generic AuditControlDtos.Event type is never serialized for product=HCM."
+  },
+  "paginationReplay": {
+    "ordering": [
+      "occurred_at DESC",
+      "event_id DESC"
+    ],
+    "mechanism": "KEYSET_NOT_OFFSET",
+    "cursorVersion": "hcm-audit-v1",
+    "cursorSignature": "HMAC_SHA256_WITH_DISTINCT_HCM_AUDIT_DOMAIN_SEPARATOR",
+    "secretReuse": "dwp.platform.api-history.cursor-secret",
+    "cursorTtl": "PT15M",
+    "boundClaims": [
+      "verified tenant ID",
+      "exact route key",
+      "trusted context key",
+      "trusted scope key",
+      "field-policy revision",
+      "authorization revision",
+      "filter digest",
+      "snapshotAt",
+      "last occurredAt",
+      "last eventId",
+      "expiry"
+    ],
+    "rule": "A continuation cursor replays the same frozen snapshot. A signature, tenant, authority, scope, policy, filter, route, or expiry mismatch is rejected before SQL. Counts are not returned."
+  },
+  "tenantIsolation": {
+    "list": "Every list query includes the verified tenant predicate before the canonical HCM predicate and keyset predicates.",
+    "detail": "Detail lookup includes verified tenant, event UUID, and the same canonical HCM predicate in one SQL statement.",
+    "cursor": "Tenant ID is signed into the cursor and checked before repository access.",
+    "notFound": "Cross-tenant and non-HCM identifiers have an indistinguishable 404 response.",
+    "clientTenantAccepted": false
+  },
+  "frontendPresentation": {
+    "sharedApplication": "DWP administration audit governance",
+    "hcmMode": "A distinct HCM evidence component replaces generic overview metrics and generic AuditExplorer when product=HCM.",
+    "visibleContext": [
+      "HRIS audit label",
+      "HCM context badge",
+      "fixed Back to HRIS action",
+      "window and allowlisted evidence filters",
+      "snapshot freshness",
+      "minimized immutable evidence list",
+      "focus detail using the same minimized DTO"
+    ],
+    "neverRender": [
+      "generic top-actor metrics",
+      "generic event payload metadata",
+      "raw before or after state",
+      "actor principal or display name",
+      "target display name",
+      "generic correlations, findings, cases, exports, retention, legal-hold, or policy commands"
+    ],
+    "errorBehavior": "403, 404, and 503 states retain the shared shell but clear evidence data and provide no generic fallback."
+  },
+  "invariants": [
+    "product=HCM is UX context and a closed projection discriminator only; it is never authority.",
+    "APP.HCM:VIEW, ADMIN.AUDIT_VIEW:VIEW, HRIS_AUDITOR, HRIS_DUTY_AUDITOR, server purpose, current field policy, current scope, current revisions, and SoD pass form an AND intersection.",
+    "NORMAL mode may obtain a step-up challenge but only a current ELEVATED decision may read HCM evidence; product=HCM never performs the elevation.",
+    "A data-governance configuration reader is not an HRIS auditor.",
+    "An HRIS auditor cannot remove product=HCM to reach generic audit data or any audit-control mutation.",
+    "Only existing PLAT-005 canonical events and SHARED-API-009 paths are reused.",
+    "No new store, CRUD family, migration, export, case, finding, saved-search, policy, or retention feature is added.",
+    "No raw or arbitrary audit metadata crosses the HCM response boundary.",
+    "Tenant, authority, scope, policy, and filter context are bound into every continuation cursor.",
+    "The feature remains fail closed until live HRIS_AUDITOR and HRIS_DUTY_AUDITOR assignment evidence exists through the existing governance runtime."
+  ]
+}

@@ -1,0 +1,155 @@
+{
+  "schema": "dwp.hris.sys001.readiness-and-dispatch-gate.v1",
+  "gateId": "HRIS-WAVE5-SYS-001-CONTROL-DISPATCH-R1",
+  "preparedAt": "2026-10-14T14:25:52+09:00",
+  "sliceId": "BASE-TFR-SYS-001",
+  "state": "CONTROL_PLAN_COMPLETE_CENTRAL_IMPLEMENTATION_NOT_AUTHORIZED_SYS_MODULE_BLOCKED",
+  "decision": {
+    "conformanceCloseNoCode": false,
+    "centralExactDeltaRequired": true,
+    "centralImplementationPlanIsBounded": true,
+    "centralImplementationTokenIssued": false,
+    "sysModuleTokenIssued": false,
+    "sysModuleMayStart": false,
+    "sysSpecificMigrationRequired": false,
+    "combinedCycleAuthV251Required": true
+  },
+  "preparationArtifacts": [
+    "docs/06-delivery/hris/wave5-2026-10-14/sys-001-control-r1/hcm-audit-semantics-seal.v1.json",
+    "docs/06-delivery/hris/wave5-2026-10-14/sys-001-control-r1/control-delta-authority-candidate.v1.json",
+    "docs/06-delivery/hris/wave5-2026-10-14/sys-001-control-r1/targeted-validation-plan.v1.json",
+    "docs/06-delivery/hris/wave5-2026-10-14/sys-001-control-r1/source-evidence-digests.v1.json"
+  ],
+  "gateChecks": [
+    {
+      "gate": "G1_PREFLIGHT_SOURCE_BOUND",
+      "status": "PASS",
+      "evidence": "BASE-TFR-SYS-001/TFR-SYS-001, PLAT-005, SHARED-API-009, IAEXT-006, package, duty, field, purpose, and SoD source bytes are pinned by digest."
+    },
+    {
+      "gate": "G2_HCM_SEMANTICS_SEALED",
+      "status": "PASS",
+      "evidence": "product=HCM is sealed as UX/profile context only; exact authority intersection, closed DTO, tenant isolation, cursor replay, and generic bypass behavior are explicit."
+    },
+    {
+      "gate": "G3_CURRENT_RUNTIME_CONFORMANCE",
+      "status": "FAIL_WITH_BOUNDED_DELTA",
+      "evidence": "Current generic guard/DTO/repository/UI do not satisfy the HCM authority and minimization profile."
+    },
+    {
+      "gate": "G4_REUSE_AND_NO_DUPLICATE_ARCHITECTURE",
+      "status": "PASS",
+      "evidence": "Plan reuses PLAT-005, SHARED-API-009, HrisAuditOutboxEventAdapter, sys_audit_events, APP.HCM, ADMIN.AUDIT_VIEW, and the existing authorization registry."
+    },
+    {
+      "gate": "G5_NO_MIGRATION",
+      "status": "PASS",
+      "evidence": "SYS adds no schema/store/resource seed or migration. The one combined SYS+PER+TIM v42 cycle may contain only the separately sealed PER/TIM Auth V251 for DATA.HRIS_PERFORMANCE_REVIEW grants and the inactive DRAFT bundle declaration; this does not authorize a SYS, Platform, or Audit migration."
+    },
+    {
+      "gate": "G6_EXACT_CENTRAL_DELTA_BOUNDED",
+      "status": "PASS",
+      "evidence": "Auth, Gateway, Platform audit projection, OpenAPI, shared Admin UI, and generated frontend snapshots have exact files, behavior, and targeted tests. SYS is allocated exactly +1 capability/+1 predicate/+2 routes inside the single combined v42 total 255/24/17/69/1028; an independent SYS v42 or immediate v43 is forbidden."
+    },
+    {
+      "gate": "G7_EXISTING_V41_LINEAGE_CONSISTENCY",
+      "status": "OPEN_IMPLEMENTATION_PRECONDITION",
+      "evidence": "Checked-in v41 index conflicts with Java v40-only release lineage/tests. The central token must correct consumers without changing v41 bytes before v42 authoring."
+    },
+    {
+      "gate": "G8_CENTRAL_SOURCE_IMPLEMENTED_AND_VALIDATED",
+      "status": "NOT_STARTED_NO_AUTHORITY",
+      "evidence": "No source edit or source test execution was authorized in this preparation."
+    },
+    {
+      "gate": "G9_CENTRAL_MERGED_TO_CLEAN_DWP_DEV",
+      "status": "NOT_READY",
+      "evidence": "No central implementation commit exists."
+    },
+    {
+      "gate": "G10_SYS_ADAPTER_DISPATCH",
+      "status": "BLOCKED_BY_G8_G9",
+      "evidence": "The module adapter must not point users at an unsealed generic audit response or claim central governance ownership."
+    }
+  ],
+  "nextAuthorizedActionRecommendation": {
+    "action": "CONTROL_MAY_ISSUE_ONE_COMBINED_SYS_PER_TIM_CENTRAL_IMPLEMENTATION_TOKEN",
+    "tokenIssuedHere": false,
+    "requiredTokenProperties": [
+      "Pin fresh clean pushed dwp-dev backend/frontend commits once.",
+      "Use the centralControlDelta file list as an explicit allowlist; generated descendants may change only through named generators.",
+      "Include v41 lineage consumer repair as the first checkpoint and forbid v41 artifact mutation.",
+      "Use one canonical source edit, one generator owner, one v42 checksum, and totals 255 capabilities/24 policies/17 expressions/69 predicates/1028 routes with PAGE132/DATA308/ACTION588.",
+      "Allow only the exact PER/TIM-owned Auth V251 already sealed for DATA.HRIS_PERFORMANCE_REVIEW grants and the inactive v42 DRAFT declaration; forbid every SYS-specific, Platform, or Audit migration, new table/store/CRUD family, and audit-ingestion schema change.",
+      "Keep hcm.audit.evidence.view at STEPUP-MGMT-HIGH-V1, make both SYS routes ELEVATED-only, and allow absent stepUpCommandBindings only through the two-route read-only GET generator exception with exhaustive negative tests.",
+      "Require the staged targeted-validation plan and prohibit broad suite repetition without recorded escalation evidence.",
+      "End after central commit/push/integration evidence; do not perform the HRIS-SYS adapter in the same token."
+    ],
+    "whyNotNoCode": "The current full Event DTO and generic permission-only route create a material confidentiality and authorization gap for HRIS audit evidence.",
+    "whyNotModuleFirst": "The module owns only a navigation handoff. It cannot safely compensate for missing central Auth/Gateway/Platform projection enforcement."
+  },
+  "centralExitCriteria": [
+    "Immutable v41 Java lineage and all consumers agree with the existing v41 index without changing v41 artifacts.",
+    "The one combined SYS+PER+TIM v42 is a strict append-only DRAFT with totals 255/24/17/69/1028 and PAGE132/DATA308/ACTION588; SYS allocation is exactly +1 capability/+1 predicate/+2 routes and no competing bundle exists.",
+    "Platform v42 owner projection is exactly 30 routes/31 bindings/PAGE5/DATA8/ACTION17/16 capabilities/4 policies/3 expressions/5 predicates.",
+    "Auth proves APP.HCM + permission + HRIS_AUDITOR + HRIS_DUTY_AUDITOR + current ELEVATED decision + SoD as an AND decision; NORMAL only receives the step-up challenge and never evidence.",
+    "Gateway produces HRIS_AUDIT_EVIDENCE and trusted revisions only for exact fixed product=HCM bindings.",
+    "Platform denies generic audit bypass for HRIS auditor evidence before repository access.",
+    "HCM list/detail use the existing store with tenant-qualified canonical fingerprint SQL and a minimized closed DTO.",
+    "The existing governance assignment runtime is proven able to emit exact HRIS_AUDITOR plus HRIS_DUTY_AUDITOR@APP.HCM/RS_HCM_CONFIG evidence, or the feature remains explicitly unavailable/403 with no substitute role or seed.",
+    "PostgreSQL tenant/fingerprint/replay tests pass with zero skips.",
+    "Shared Admin HCM mode and typed client pass targeted unit, typecheck, and one exact browser scenario without generic fallback.",
+    "No SYS-specific, Platform, or Audit migration or SYS write path changed; only the exact PER/TIM Auth V251 is present, and all source/generator diffs are inside the combined central token.",
+    "Central commits are pushed and integrated into clean dwp-dev; DRAFT import/approval/activation state is explicitly recorded rather than inferred."
+  ],
+  "futureSysModuleTokenCandidate": {
+    "issuanceCondition": "All central exit criteria pass on pushed integrated dwp-dev and Control records the new backend/frontend pins.",
+    "moduleSession": "HRIS-SYS",
+    "scope": "NAVIGATION_ADAPTER_ONLY",
+    "candidateWritablePaths": [
+      "dwp-frontend/apps/dwp/src/features/hris/shell/model/catalog/dwp-control.ts",
+      "dwp-frontend/apps/dwp/src/features/hris/shell/components/hris-product-map-group.tsx",
+      "dwp-frontend/apps/dwp/src/features/hris/shell/testing/hris-product-map-catalog.test.ts",
+      "dwp-frontend/apps/dwp/src/features/hris/shell/testing/hris-product-map.test.tsx"
+    ],
+    "forbidden": [
+      "backend source",
+      "authorization bundle",
+      "audit DTO/repository/service",
+      "OpenAPI",
+      "migration",
+      "new /hr audit page",
+      "generic PILOT relabeling of the central governance app"
+    ],
+    "requiredBehavior": [
+      "Keep the dwp-governance node EXTERNAL and CENTRAL_POLICY.",
+      "Add only the exact shared href /admin/governance/audit-overview?product=HCM&tab=overview.",
+      "Open only when canOpenPath authorizes the path; otherwise render the locked state.",
+      "Prove Back to HRIS returns to /hr/home through the central HCM view."
+    ],
+    "tokenIssuedHere": false
+  },
+  "finalSliceClosureCriteria": [
+    "Central and module commits are both present on the same clean pushed dwp-dev line.",
+    "The canonical HRIS product-map handoff reaches the closed HCM shared-governance mode.",
+    "DEC-SYS-009, SYS-GOLDEN-AUDIT, tenant-negative, purpose-negative, field-negative, SoD-negative, generic-bypass-negative, and receipt-replay evidence are attached.",
+    "No duplicate audit store/API or migration exists.",
+    "A final BASE-TFR-SYS-001 receipt records source pins, v42 checksum/status, exact test commands/results, changed paths, and activation state."
+  ],
+  "stopConditions": [
+    "v41 immutable checksum drift",
+    "a second independent SYS v42, competing generator owner, or immediate v43 is proposed instead of the combined cycle",
+    "the combined v42 does not equal 255/24/17/69/1028 or PAGE132/DATA308/ACTION588",
+    "the Platform v42 owner descriptor does not equal 30 routes/31 bindings/PAGE5/DATA8/ACTION17/16 capabilities/4 policies/3 expressions/5 predicates",
+    "either SYS route can return evidence in NORMAL mode or the read-time step-up exception applies outside the two sealed read-only GET route keys",
+    "a required legal-entity or named-population filter cannot be proven without interpreting opaque refs",
+    "the HCM response cannot be represented as a closed OpenAPI schema on SHARED-API-009",
+    "generic HRIS auditor bypass cannot be blocked before repository access",
+    "any proposed SYS-specific, Platform, or Audit schema/store/migration/new CRUD family, or any migration other than the exact PER/TIM Auth V251 in the combined cycle",
+    "any need to change HrisAuditOutboxEventV1 or its adapter",
+    "any source change outside the token allowlist",
+    "PostgreSQL tenant/replay tests skipped or unavailable",
+    "request to activate a DRAFT without separate approval/CAS evidence"
+  ],
+  "operatorSummary": "Preparation is complete enough for Control to issue a bounded central implementation token. It is not authorization to implement, and HRIS-SYS module work remains blocked until the central delta is merged and proven."
+}

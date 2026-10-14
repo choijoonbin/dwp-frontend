@@ -1,0 +1,137 @@
+{
+  "schema": "dwp.hris.hrm001.conformance-findings.v2",
+  "findingId": "HRIS-WAVE5-HRM-001-CONFORMANCE-R2",
+  "preparedAt": "2026-10-14T14:32:00+09:00",
+  "moduleSession": "HRIS-HRM",
+  "sliceId": "BASE-TFR-HRM-001",
+  "sourceRef": "TFR-HRM-001",
+  "sharedContract": "PLAT-003",
+  "purpose": "Decide whether the integrated BASE-TFR-HRM-010 approval bridge already closes the non-UI PLAT-003 support slice without cloning the approval engine or inventing a test-only substitute.",
+  "auditBasis": {
+    "preflightPacket": "../module-dispatch-r1/hrm-base-tfr-hrm-001-preflight.v1.json",
+    "moduleThreadId": "01a0f53e-9a75-7421-969f-473b0cfb9439",
+    "moduleVerdict": "DELTA_TOKEN_REQUIRED",
+    "independentReview": "The first test-only candidate was rejected because population and field-policy authority are not callback-proof claims, an existing direct V2 test was omitted, and the proposed cross-package wrapper could not exercise the actual package-private owner adapter.",
+    "integratedHrm010BackendCommit": "30bbcbeebb455e2f5a738c80ce1c8b0ef1575e89",
+    "integratedHrm010Evidence": "../../g7-delegation-successors/2026-10-12/sys-hrm-r3-result-acceptance/runs/sys-hrm-r3-20261012-r3/module-test-evidence.v3.json",
+    "integratedHrm010Execution": {
+      "commandId": "HRM_BACKEND_TARGETED",
+      "suites": 15,
+      "tests": 59,
+      "passed": 59,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "postgresSuites": 3
+    },
+    "recheckedBackendPin": "357bd2b9e1c8a4d233c285d96911b5077cb444cf",
+    "recheckedFrontendPin": "20fe240b59e5e93516e7d033a59564013d86b7c9",
+    "pinMeaning": "Observation only. Final no-code closure remains withheld until the final clean pushed dwp-dev pins are recorded and the relevant HRM paths are confirmed unchanged."
+  },
+  "decision": {
+    "state": "NO_CODE_CLOSURE_CANDIDATE_FINAL_PIN_RECHECK_REQUIRED",
+    "productionDeltaRequired": false,
+    "testSourceDeltaRequired": false,
+    "migrationRequired": false,
+    "frontendDeltaRequired": false,
+    "sharedApprovalDeltaRequired": false,
+    "startTokenRequired": false,
+    "reason": "Existing V2 contract, owner adapter, Approval quorum and zero-skipped PostgreSQL evidence cover PLAT-003. The rejected candidate attempted to turn owner population and field-policy evidence into new callback claims, which would change the contract rather than prove it."
+  },
+  "scopeClarification": {
+    "approvalBridgeBoundary": [
+      "The service-to-service proof binds issuer, audience, caller subject, binding id, purpose, method, exact path, tenant and request-body hash.",
+      "Create authority pins requester person, workflow version and form version before the Approval request is accepted.",
+      "The terminal callback binds the frozen decision, policy revision, original correlation and payload digest; the owner returns a command receipt bound to correlation and command digest.",
+      "CommandReceiptV1 does not carry requesterRef or workflowVersion, so those values are not described as receipt fields."
+    ],
+    "ownerDataBoundary": [
+      "Population and field-policy checks belong to the originating public HRM owner PEP and employee-change command, before HR data disclosure or approval submission.",
+      "Their accepted digest and revision are frozen in the owner request and copied into immutable owner audit/receipt state.",
+      "They are not HrisWorkloadProofV2 callback claims and must not be re-evaluated by a synthetic wrapper test or silently added to PLAT-003.",
+      "A future requirement for current-authority re-evaluation at callback time is a separate production contract change and requires a new exact control authority."
+    ]
+  },
+  "duplicatePrevention": {
+    "hrm010": "BASE-TFR-HRM-010 is the integrated overlap implementation and must not be copied, renamed, cherry-picked or reimplemented as HRM-001.",
+    "approvalOwnership": "dwp-approval-server remains the sole shared approval engine. HRM retains only its request binding and immutable owner-side decision receipt.",
+    "privateApprovalArtifactsForbidden": true,
+    "redundantWrapperTestForbidden": "Do not add an HRM001-named wrapper that merely repeats HrisApprovalBridgeV2Test or cannot call the actual package-private owner adapter."
+  },
+  "matrix": [
+    {
+      "id": "HRM001-CONF-01",
+      "status": "PASS_EXISTING_EVIDENCE",
+      "finding": "The People owner stores the shared V2 request binding and immutable callback receipt while Approval owns workflow execution.",
+      "evidence": [
+        "backend:dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/employeechange/approvalbridge/EmployeeChangeApprovalRequestOutbox.java",
+        "backend:dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/employeechange/approvalbridge/EmployeeChangeApprovalCallbackLedger.java",
+        "backend:dwp-approval-server/src/main/java/com/dwp/services/approval/hrisbridge/HrisApprovalBridgeService.java"
+      ]
+    },
+    {
+      "id": "HRM001-CONF-02",
+      "status": "PASS_EXISTING_EVIDENCE",
+      "finding": "Requester identity, workflow and form versions are pinned in create authority; subject revision and payload are frozen in the request binding; correlation and command digest are bound to the callback receipt.",
+      "evidence": [
+        "backend:dwp-platform-contracts/src/test/java/com/dwp/platform/contract/HrisApprovalBridgeV2Test.java#bindsRequesterAndPinnedWorkflowAuthorityWithoutCurrentVersionFallback",
+        "backend:dwp-platform-contracts/src/test/java/com/dwp/platform/contract/HrisApprovalBridgeV2Test.java#derivesCallbackFromFrozenVoteAndReturnsStrictDigestBoundReceipt",
+        "backend:dwp-people-server/src/test/java/com/dwp/services/people/hris/employeeservice/employeechange/approvalbridge/EmployeeChangeApprovalRequestRelayPostgresTest.java#preservesRequestBytesRotatesProofAndAcceptsOnlyStrictReceipt"
+      ]
+    },
+    {
+      "id": "HRM001-CONF-03",
+      "status": "PASS_EXISTING_EVIDENCE",
+      "finding": "Approval enforces exact workflow/tenant/role/party delegation plus maker-checker and requester/subject no-self rules; the owner rejects a no-self or stale callback atomically.",
+      "evidence": [
+        "backend:dwp-approval-server/src/test/java/com/dwp/services/approval/domain/ApprovalWorkflowQuorumEvaluatorTest.java#requesterUserAndPersonAreBlockedIncludingDelegatedVotes",
+        "backend:dwp-approval-server/src/test/java/com/dwp/services/approval/domain/ApprovalWorkflowQuorumEvaluatorTest.java#delegationIsHalfOpenAndBoundToExactWorkflowTenantRoleAndParties",
+        "backend:dwp-people-server/src/test/java/com/dwp/services/people/hris/employeeservice/employeechange/approvalbridge/EmployeeChangeApprovalCallbackPostgresTest.java#rollsBackDomainLedgerAndReceiptForNoSelfOrStaleTarget"
+      ]
+    },
+    {
+      "id": "HRM001-CONF-04",
+      "status": "PASS_EXISTING_EVIDENCE",
+      "finding": "An exact callback replays its durable byte-identical outcome while changed input, a stale target or split ownership is rejected without partial effects.",
+      "evidence": [
+        "backend:dwp-people-server/src/test/java/com/dwp/services/people/hris/employeeservice/employeechange/approvalbridge/EmployeeChangeApprovalCallbackPostgresTest.java#appliesOnceAndReplaysByteIdenticalReceiptWithFreshProof",
+        "backend:dwp-people-server/src/test/java/com/dwp/services/people/hris/employeeservice/employeechange/approvalbridge/EmployeeChangeApprovalCallbackPostgresTest.java#rollsBackDomainLedgerAndReceiptForNoSelfOrStaleTarget",
+        "backend:dwp-approval-server/src/test/java/com/dwp/services/approval/hrisbridge/HrisApprovalBindingLedgerPostgresTest.java#allThreeAliasesReplayExactBytesAndRejectDigestChangeOrSplitOwnership"
+      ]
+    },
+    {
+      "id": "HRM001-CONF-05",
+      "status": "PASS_SPLIT_BOUNDARY_WITH_EXPLICIT_NOT_APPLICABLE_COMPONENTS",
+      "finding": "Tenant, purpose, method, exact resource path, caller and request body are fail-closed PLAT-003 workload-proof claims. Population and field-policy are enforced at the originating public owner PEP before disclosure and are not callback-proof claims; re-evaluating them inside PLAT-003 is explicitly not applicable to this non-UI support slice.",
+      "bridgeEvidence": [
+        "backend:dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/approval/v2/HrisWorkloadProofV2.java",
+        "backend:dwp-platform-contracts/src/test/java/com/dwp/platform/contract/HrisApprovalBridgeV2Test.java#rejectsAliasCollisionBrowserTenantHeadersAndDerivedAuthMismatch",
+        "backend:dwp-people-server/src/test/java/com/dwp/services/people/hris/employeeservice/employeechange/approvalbridge/EmployeeChangeApprovalCallbackPostgresTest.java#rechecksTenantAuthorityInsideTheMutationTransaction",
+        "backend:dwp-people-server/src/test/java/com/dwp/services/people/hris/employeeservice/employeechange/approvalbridge/EmployeeChangeApprovalCallbackPostgresTest.java#signedTenantCannotBorrowAnotherTenantRequest"
+      ],
+      "ownerPepEvidence": [
+        "backend:dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/employeechange/EmployeeChangeService.java",
+        "backend:dwp-people-server/src/test/java/com/dwp/services/people/security/HcmOwnerPepExecutionTest.java#crossTenantOpaqueScopeNeverReachesThePublicHcmController",
+        "backend:dwp-people-server/src/test/java/com/dwp/services/people/security/HcmOwnerPepExecutionTest.java#staleAuthorityRevisionNeverReachesThePublicHcmAction",
+        "backend:dwp-people-server/src/test/java/com/dwp/services/people/security/HcmProductSurfaceEligibilityAdapterTest.java#invalidatesAPreviouslySelectedDerivedScopeAfterPopulationChange",
+        "backend:dwp-people-server/src/test/java/com/dwp/services/people/security/HcmProductSurfaceEligibilityAdapterTest.java#failsClosedWhenNoLiveTargetPopulationExists"
+      ]
+    },
+    {
+      "id": "HRM001-CONF-06",
+      "status": "PASS_EXISTING_DIRECT_V2_AND_POSTGRES_EVIDENCE",
+      "finding": "The contract module directly tests HrisApprovalBridgeV2, and the integrated People/Approval adapters were executed in the HRM-010 targeted run with 59/59 tests, zero skipped and three PostgreSQL suites.",
+      "evidence": [
+        "backend:dwp-platform-contracts/src/test/java/com/dwp/platform/contract/HrisApprovalBridgeV2Test.java",
+        "frontend:docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r3-result-acceptance/runs/sys-hrm-r3-20261012-r3/module-test-evidence.v3.json#results/2",
+        "frontend:docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r3-result-acceptance/runs/sys-hrm-r3-20261012-r3/logs/hrm-backend-targeted.log"
+      ]
+    }
+  ],
+  "outcome": {
+    "current": "NO_CODE_CLOSURE_WITHHELD_FINAL_PIN_RECHECK",
+    "successfulClosure": "CONFORMANCE_CLOSE_NO_CODE",
+    "nextSliceAfterClosure": "BASE-TFR-HRM-002",
+    "productionFailureOutcome": "STOP_AND_REQUEST_SEPARATE_EXACT_SOURCE_DELTA_AUTHORITY"
+  }
+}

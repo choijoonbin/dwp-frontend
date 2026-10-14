@@ -1,0 +1,341 @@
+{
+  "schema": "dwp.hris.sys001.targeted-validation-plan.v1",
+  "planId": "HRIS-WAVE5-SYS-001-TARGETED-VALIDATION-R1",
+  "preparedAt": "2026-10-14T14:25:52+09:00",
+  "sliceId": "BASE-TFR-SYS-001",
+  "state": "PREPARED_NOT_EXECUTED_SOURCE_IMPLEMENTATION_ABSENT",
+  "principle": "Validate the changed boundary from smallest deterministic checks outward. Do not rerun all backend or frontend suites after each finding. A single broader bounded check is allowed only after all local checks are green or when a proven shared-generator impact requires it.",
+  "authority": {
+    "testsExecutedByThisPreparation": false,
+    "implementationAuthorized": false,
+    "startTokenIssued": false
+  },
+  "acceptanceMatrix": [
+    {
+      "id": "SYS001-AC-01",
+      "mapsTo": [
+        "DEC-SYS-009",
+        "product-context-negative"
+      ],
+      "condition": "product=HCM is exactly one case-sensitive UX/profile selector and is never accepted as authority.",
+      "proof": "Gateway catalog and controller tests cover missing, duplicate, lower-case, unknown, encoded-ambiguous, and browser-header-spoof cases; each fails before repository access."
+    },
+    {
+      "id": "SYS001-AC-02",
+      "mapsTo": [
+        "authorization-negative"
+      ],
+      "condition": "APP.HCM:VIEW and ADMIN.AUDIT_VIEW:VIEW are both required.",
+      "proof": "Auth adapter tests remove each permission independently and assert APP_DENIED or SURFACE_DENIED with no route grant."
+    },
+    {
+      "id": "SYS001-AC-03",
+      "mapsTo": [
+        "authorization-negative"
+      ],
+      "condition": "HRIS_AUDITOR package and HRIS_DUTY_AUDITOR responsibility on APP.HCM/RS_HCM_CONFIG are both required; generic AUDITOR, ADMIN, TENANT_ADMIN, and configuration duties do not substitute.",
+      "proof": "Auth authority and owner PEP tests vary package, responsibility code, resource, and resource-set independently."
+    },
+    {
+      "id": "SYS001-AC-04",
+      "mapsTo": [
+        "step-up-negative"
+      ],
+      "condition": "The HIGH-risk atomic duty challenges in NORMAL mode and reads only in a current ELEVATED context.",
+      "proof": "The route profile contains activeAccessModes=[ELEVATED] only. Auth and Gateway tests assert STEP_UP_REQUIRED without owner forwarding in NORMAL, and Platform permits repository access only for the matching current elevated decision revision."
+    },
+    {
+      "id": "SYS001-AC-05",
+      "mapsTo": [
+        "purpose-negative",
+        "field-projection-negative"
+      ],
+      "condition": "Server-built HRIS_AUDIT_EVIDENCE purpose plus positive current field-policy and authorization revisions are mandatory.",
+      "proof": "Gateway strips spoofed values; Platform tests omit, stale, alter, or duplicate each trusted header and assert no repository invocation."
+    },
+    {
+      "id": "SYS001-AC-06",
+      "mapsTo": [
+        "SoD-negative"
+      ],
+      "condition": "SOD_HRIS_AUDIT_INDEPENDENCE blocks each of the 28 sealed conflicting packages in the same tenant.",
+      "proof": "Parameterized Auth and Platform tests iterate the complete sealed package set, plus one unrelated role that must not conflict."
+    },
+    {
+      "id": "SYS001-AC-07",
+      "mapsTo": [
+        "tenant-negative"
+      ],
+      "condition": "List, detail, and cursor replay never cross the verified tenant boundary.",
+      "proof": "PostgreSQL tests seed tenants A/B, use the same target shapes, verify tenant-qualified SQL, indistinguishable detail 404, and cross-tenant cursor rejection before SQL."
+    },
+    {
+      "id": "SYS001-AC-08",
+      "mapsTo": [
+        "SYS-GOLDEN-AUDIT"
+      ],
+      "condition": "Only rows matching the exact HrisAuditOutboxEventV1 adapter fingerprint are selectable.",
+      "proof": "PostgreSQL tests admit one canonical row and exclude rows with only hris sourceModule, nonempty raw state, extra metadata, missing required keys, wrong types, invalid digests, or invalid UUIDs."
+    },
+    {
+      "id": "SYS001-AC-09",
+      "mapsTo": [
+        "SYS-GOLDEN-AUDIT",
+        "field-projection-negative"
+      ],
+      "condition": "The response contains exactly the sealed minimized fields and never generic Event fields, tenant, counts, raw state, actor identity, target/aggregate refs, or arbitrary metadata.",
+      "proof": "Jackson/OpenAPI contract tests assert exact property sets and additionalProperties=false; frontend client rejects an injected extra property."
+    },
+    {
+      "id": "SYS001-AC-10",
+      "mapsTo": [
+        "receipt-replay",
+        "pagination-filter-replay"
+      ],
+      "condition": "Continuation is immutable snapshot keyset replay bound to tenant, route, context, scope, policy revisions, filter digest, position, and expiry.",
+      "proof": "Cursor and PostgreSQL tests cover equal timestamps, inserts between pages, filter mutation, route/scope/revision mutation, expiry, signature corruption, and duplicate-free stable ordering."
+    },
+    {
+      "id": "SYS001-AC-11",
+      "mapsTo": [
+        "authorization-negative",
+        "generic-bypass-negative"
+      ],
+      "condition": "An HRIS auditor cannot remove product=HCM to reach the generic Event DTO, generic overview, saved searches, findings, cases, export, policy, integrity, or any mutation.",
+      "proof": "Platform filter parameterized tests enumerate every AdminAuditControlController path and permit only the two exact HCM GET routes."
+    },
+    {
+      "id": "SYS001-AC-12",
+      "mapsTo": [
+        "backward-compatibility"
+      ],
+      "condition": "A non-HRIS administrator with the existing generic permissions and no product parameter retains the current audit-control behavior.",
+      "proof": "Existing AuditAccessGuard and AuditControlService tests remain green and a focused controller regression proves productless mapping compatibility."
+    },
+    {
+      "id": "SYS001-AC-13",
+      "mapsTo": [
+        "DEC-SYS-009"
+      ],
+      "condition": "PLAT-005 ingestion, SHARED-API-009 paths, sys_audit_events, and immutable event hashes are reused without a new store, CRUD family, or migration.",
+      "proof": "Source-diff assertion plus migration inventory comparison shows zero new migration and zero schema/write statement in the HCM package."
+    },
+    {
+      "id": "SYS001-AC-14",
+      "mapsTo": [
+        "shared-governance-path-split"
+      ],
+      "condition": "The shared admin route visibly enters HCM evidence mode and uses a fixed /hr/home return; it never renders or fetches generic actor metrics or investigation controls.",
+      "proof": "Mounted component tests and one exact Playwright scenario inspect requests, visible controls, error states, focus deep link, and safe return."
+    },
+    {
+      "id": "SYS001-AC-15",
+      "mapsTo": [
+        "registry-lineage"
+      ],
+      "condition": "v42 is a strict append-only DRAFT successor to immutable v41, and all owner/gateway bindings and schema hashes match generated artifacts.",
+      "proof": "The single combined SYS+PER+TIM generator check, v41 regression, v42 exact allocation test, Auth lineage test, Gateway catalog test, Platform PEP registry test, and frontend sync checks all agree on one checksum and totals 255/24/17/69/1028 with PAGE132/DATA308/ACTION588; the SYS allocation remains +1 capability/+1 predicate/+2 routes."
+    },
+    {
+      "id": "SYS001-AC-16",
+      "mapsTo": [
+        "feature-default-off",
+        "deployment-fail-closed"
+      ],
+      "condition": "A DRAFT or inactive v42, unavailable authority, absent assignment, stale revision, or missing cursor secret exposes no HCM evidence.",
+      "proof": "Auth/Platform startup and request tests assert no implicit activation, 403 for absent assignment, 503 for unavailable/stale authority, and startup/request failure for missing production cursor secret."
+    }
+  ],
+  "targetedTestInventory": {
+    "backendPython": [
+      "dwp-backend/scripts/tests/test_product_authorization_v41.py",
+      "dwp-backend/scripts/tests/test_product_authorization_v42.py",
+      "dwp-backend/scripts/tests/test_export_openapi_contracts.py"
+    ],
+    "auth": [
+      "com.dwp.services.auth.config.ProductAuthorizationSeedLoaderTest",
+      "com.dwp.services.auth.service.ProductAuthorizationContractReleaseLineageTest",
+      "com.dwp.services.auth.service.ProductAuthorizationAuthorityAdapterTest",
+      "com.dwp.services.auth.service.ProductAuthorizationAuthoritySupportTest",
+      "com.dwp.services.auth.service.ProductAuthorizationContractValidatorTest",
+      "com.dwp.services.auth.service.HcmAuditAuthorityPolicyTest",
+      "com.dwp.services.auth.support.PilotAuthorizationFixtureAdapterTest"
+    ],
+    "gateway": [
+      "com.dwp.gateway.ProductSurfaceDecisionContextFilterTest",
+      "com.dwp.gateway.productsurface.GeneratedProductRouteCatalogTest",
+      "com.dwp.gateway.support.PilotAuthorizationFixtureAdapterTest"
+    ],
+    "platform": [
+      "com.dwp.services.platform.security.HcmPlatformPepSecurityContractTest",
+      "com.dwp.services.platform.security.PlatformSecurityFilterTest",
+      "com.dwp.services.platform.security.HcmAuditEvidenceSecurityPolicyTest",
+      "com.dwp.services.platform.auditcontrol.HcmAuditEvidenceControllerTest",
+      "com.dwp.services.platform.auditcontrol.HcmAuditEvidenceCursorCodecTest",
+      "com.dwp.services.platform.auditcontrol.HcmAuditEvidenceServiceTest",
+      "com.dwp.services.platform.auditcontrol.HcmAuditEvidenceRepositoryPostgresTest",
+      "com.dwp.services.platform.auditcontrol.AuditAccessGuardTest",
+      "com.dwp.services.platform.auditcontrol.AuditControlServiceTest",
+      "com.dwp.services.platform.config.PlatformOpenApiSnapshotExportTest"
+    ],
+    "frontendUnit": [
+      "dwp-frontend/libs/shared-utils/src/api/hcm-audit-evidence-api.test.ts",
+      "dwp-frontend/apps/dwp/src/features/admin/hcm-audit-evidence-overview.test.tsx",
+      "dwp-frontend/apps/dwp/src/features/hris/shell/testing/hris-product-map-catalog.test.ts",
+      "dwp-frontend/apps/dwp/src/features/hris/shell/testing/hris-product-map.test.tsx"
+    ],
+    "frontendE2e": [
+      "dwp-frontend/e2e/hris-sys-001-hcm-audit-evidence.spec.ts"
+    ]
+  },
+  "executionStages": [
+    {
+      "stage": 0,
+      "name": "PIN_AND_DIFF_GUARD",
+      "when": "Before implementation and once again before evidence capture",
+      "commands": [
+        "git -C dwp-backend status --short --branch",
+        "git -C dwp-frontend status --short --branch",
+        "git -C dwp-backend rev-parse HEAD origin/dwp-dev",
+        "git -C dwp-frontend rev-parse HEAD origin/dwp-dev"
+      ],
+      "pass": "The authorized worktree/pins match the token and unrelated user changes are identified, preserved, and excluded."
+    },
+    {
+      "stage": 1,
+      "name": "V41_PRECONDITION_ONLY",
+      "when": "Before authoring v42",
+      "commands": [
+        "python3 scripts/tests/test_product_authorization_v41.py",
+        "./gradlew :dwp-auth-server:test --tests 'com.dwp.services.auth.config.ProductAuthorizationSeedLoaderTest' --tests 'com.dwp.services.auth.service.ProductAuthorizationContractReleaseLineageTest' --tests 'com.dwp.services.auth.support.PilotAuthorizationFixtureAdapterTest'",
+        "./gradlew :dwp-gateway:test --tests 'com.dwp.gateway.support.PilotAuthorizationFixtureAdapterTest'"
+      ],
+      "workingDirectory": "dwp-backend",
+      "pass": "All consumers agree on immutable v41. No v41 artifact changed.",
+      "onFailure": "Fix only the reported v41 lineage consumer and rerun this stage; do not run later stages or a full suite."
+    },
+    {
+      "stage": 2,
+      "name": "REGISTRY_GENERATION_AND_AUTH",
+      "commands": [
+        "./scripts/generate-product-authorization-contracts.py --check",
+        "python3 scripts/tests/test_product_authorization_v42.py",
+        "./gradlew :dwp-auth-server:test --tests 'com.dwp.services.auth.service.ProductAuthorizationAuthorityAdapterTest' --tests 'com.dwp.services.auth.service.ProductAuthorizationAuthoritySupportTest' --tests 'com.dwp.services.auth.service.ProductAuthorizationContractValidatorTest' --tests 'com.dwp.services.auth.service.HcmAuditAuthorityPolicyTest' --tests 'com.dwp.services.auth.service.ProductAuthorizationContractReleaseLineageTest' --tests 'com.dwp.services.auth.config.ProductAuthorizationSeedLoaderTest'"
+      ],
+      "workingDirectory": "dwp-backend",
+      "pass": "Exact v42 counts/checksum/lineage and every package/duty/SoD/step-up negative are green.",
+      "combinedCycleAssertions": [
+        "One v42 contains the SYS +1 capability/+1 predicate/+2 routes and the PER/TIM +2 capabilities/+4 predicates/+9 routes exactly once.",
+        "Combined totals are 255 capabilities, 24 policies, 17 expressions, 69 predicates, and 1028 routes; route kinds are PAGE132, DATA308, ACTION588.",
+        "Platform v42 owner projection is exactly 30 routes, 31 bindings, PAGE5/DATA8/ACTION17, 16 capabilities, 4 policies, 3 expressions, and 5 predicates.",
+        "The two SYS routes remain direct CAPABILITY, ELEVATED-only, readOnly GET with absent stepUpCommandBindings and closed projections.",
+        "The route-key-scoped read-time step-up exception rejects every non-allowlisted route and every ACTION/method/mode/readOnly/projection relaxation."
+      ],
+      "onFailure": "Rerun only the failing generator or test class after its local fix."
+    },
+    {
+      "stage": 3,
+      "name": "GATEWAY_EXACT_ROUTE_CONTEXT",
+      "commands": [
+        "./gradlew :dwp-gateway:test --tests 'com.dwp.gateway.ProductSurfaceDecisionContextFilterTest' --tests 'com.dwp.gateway.productsurface.GeneratedProductRouteCatalogTest' --tests 'com.dwp.gateway.support.PilotAuthorizationFixtureAdapterTest'"
+      ],
+      "workingDirectory": "dwp-backend",
+      "pass": "Only the two exact product=HCM bindings receive trusted route/purpose/revision evidence; all spoof and query-ambiguity cases fail closed."
+    },
+    {
+      "stage": 4,
+      "name": "PLATFORM_POLICY_AND_SERVICE_UNIT",
+      "commands": [
+        "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.security.HcmPlatformPepSecurityContractTest' --tests 'com.dwp.services.platform.security.HcmAuditEvidenceSecurityPolicyTest' --tests 'com.dwp.services.platform.security.PlatformSecurityFilterTest' --tests 'com.dwp.services.platform.auditcontrol.HcmAuditEvidenceControllerTest' --tests 'com.dwp.services.platform.auditcontrol.HcmAuditEvidenceCursorCodecTest' --tests 'com.dwp.services.platform.auditcontrol.HcmAuditEvidenceServiceTest' --tests 'com.dwp.services.platform.auditcontrol.AuditAccessGuardTest' --tests 'com.dwp.services.platform.auditcontrol.AuditControlServiceTest'"
+      ],
+      "workingDirectory": "dwp-backend",
+      "pass": "Authority is checked before repository access, generic bypass is closed, cursor claims are sealed, and generic compatibility remains green."
+    },
+    {
+      "stage": 5,
+      "name": "POSTGRES_TENANT_AND_REPLAY",
+      "commands": [
+        "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.auditcontrol.HcmAuditEvidenceRepositoryPostgresTest'"
+      ],
+      "workingDirectory": "dwp-backend",
+      "pass": "Zero skipped tests; tenant isolation, canonical fingerprint, stable keyset snapshot, and minimized row mapping pass against PostgreSQL.",
+      "onFailure": "A missing container/runtime is a blocker, not a skip and not permission to replace SQL evidence with mocks."
+    },
+    {
+      "stage": 6,
+      "name": "OPENAPI_EXPORT_AND_CONTRACT",
+      "commands": [
+        "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.config.PlatformOpenApiSnapshotExportTest'",
+        "python3 scripts/export-openapi-contracts.py --check --approved-snapshots",
+        "python3 scripts/tests/test_export_openapi_contracts.py"
+      ],
+      "workingDirectory": "dwp-backend",
+      "pass": "Shared paths have one operation each, product is exact, HCM schemas are closed, and generic schemas are unchanged."
+    },
+    {
+      "stage": 7,
+      "name": "FRONTEND_SYNC_AND_TARGETED_UNIT",
+      "commands": [
+        "pnpm exec node scripts/sync-openapi-contract.mjs --check",
+        "pnpm exec node scripts/sync-product-surface-authorization.mjs --check",
+        "pnpm exec node scripts/sync-product-surface-internal-closure.mjs --check",
+        "pnpm exec node scripts/sync-product-authorization-fixtures.mjs --check",
+        "pnpm exec vitest run libs/shared-utils/src/api/hcm-audit-evidence-api.test.ts apps/dwp/src/features/admin/hcm-audit-evidence-overview.test.tsx apps/dwp/src/features/hris/shell/testing/hris-product-map-catalog.test.ts apps/dwp/src/features/hris/shell/testing/hris-product-map.test.tsx"
+      ],
+      "workingDirectory": "dwp-frontend",
+      "pass": "Generated contracts are synchronized and the HCM mode, exact client, denial state, and module handoff tests pass."
+    },
+    {
+      "stage": 8,
+      "name": "ONE_BOUNDED_STATIC_CHECK_AFTER_TARGETS_GREEN",
+      "commands": [
+        "pnpm typecheck"
+      ],
+      "workingDirectory": "dwp-frontend",
+      "pass": "The repository TypeScript graph accepts the new generated contract and presentation.",
+      "rule": "Run once after stages 1 through 7 are green, not after every edit."
+    },
+    {
+      "stage": 9,
+      "name": "ONE_EXACT_BROWSER_SCENARIO",
+      "commands": [
+        "pnpm exec playwright test e2e/hris-sys-001-hcm-audit-evidence.spec.ts --project=chromium"
+      ],
+      "workingDirectory": "dwp-frontend",
+      "pass": "Canonical HRIS handoff, HCM list/focus, safe return, and fail-closed errors work without generic requests.",
+      "rule": "No whole Playwright suite and no unrelated visual baseline regeneration."
+    },
+    {
+      "stage": 10,
+      "name": "FINAL_DIFF_AND_ARCHITECTURE_ASSERTIONS",
+      "commands": [
+        "git -C dwp-backend diff --check",
+        "git -C dwp-frontend diff --check",
+        "git -C dwp-backend diff --name-only -- dwp-auth-server/src/main/resources/db/migration dwp-platform-server/src/main/resources/db/migration dwp-audit/src/main/resources/db/migration",
+        "git -C dwp-backend diff --name-only",
+        "git -C dwp-frontend diff --name-only"
+      ],
+      "pass": "The combined cycle contains only the exact PER/TIM-owned Auth V251 plus no Platform, Audit, or SYS-specific migration; every changed path is in the token; no generated drift, debug fixture, secret, snapshot churn, or unrelated edit is present."
+    }
+  ],
+  "selectiveRerunPolicy": {
+    "localFailure": "Fix and rerun only the failing test file/class plus the immediately owning generator check.",
+    "sharedContractFailure": "Rerun the affected producer and one direct consumer; do not fan out until both are green.",
+    "postgresFailure": "Rerun only HcmAuditEvidenceRepositoryPostgresTest after the SQL/fixture fix.",
+    "frontendFailure": "Rerun the failing Vitest file. Run typecheck only after all targeted unit files pass.",
+    "fullSuiteEscalation": "A full backend/frontend suite is not part of SYS-001 evidence. Request explicit Control approval only if targeted evidence proves a cross-cutting failure outside the bounded file list."
+  },
+  "evidenceRequiredForCentralClosure": [
+    "fresh backend/frontend pins and clean authorized path diff",
+    "v41 lineage precondition receipt",
+    "v42 version, checksum, exact counts, and DRAFT state",
+    "parameterized package/duty/SoD/step-up negative results",
+    "PostgreSQL tenant/fingerprint/replay result with zero skips",
+    "OpenAPI schema property-set and additionalProperties proof",
+    "frontend request log proving no generic fallback",
+    "one exact Playwright receipt",
+    "zero SYS-specific/Platform/Audit migration and zero SYS write path; the combined cycle may contain only the separately sealed PER/TIM Auth V251",
+    "owner approvals and separate activation state evidence"
+  ],
+  "closureRule": "Central closure authorizes only a later HRIS-SYS handoff token. BASE-TFR-SYS-001 is not complete until that adapter is merged, the canonical path is exercised on integrated dwp-dev, and a final no-duplicate-store closure receipt is recorded."
+}

@@ -1,0 +1,556 @@
+{
+  "schema": "dwp.hris.per-tim-control-bridge.implementation-plan.v1",
+  "artifactId": "HRIS-WAVE5-SHARED-V42-PER-TIM-CONTROL-BRIDGE-PLAN-R1",
+  "preparedAt": "2026-10-14T14:26:24+09:00",
+  "decisionArtifact": "sealed-contract-decisions.v1.json",
+  "state": "CENTRAL_BRIDGE_IMPLEMENTATION_AUTHORIZED_NO_START_TOKEN",
+  "objective": "Land one append-only SYS/PER/TIM shared authorization v42 control bridge, verify only its changed clusters, and then issue independent PER-013 and TIM-017 module Start Tokens from clean pushed dwp-dev pins. SYS-001 shares the control version but retains its own feature authority.",
+  "observedModulePreflightResults": {
+    "SYS": {
+      "result": "SEALED_SHARED_VERSION_PARTICIPANT",
+      "resolvedByThisPlan": [
+        "The HCM audit list/detail routes, fixed product=HCM constraint, closed projections, capability, predicate, purpose, population, field groups, responsibility, SoD, and ELEVATED-only read-time step-up contract are exact.",
+        "The generator exception is restricted to two named GET read projections and does not weaken command-route step-up requirements.",
+        "Platform v42 owner projection and runtime registry/filter advancement are allocated to the one central bridge."
+      ],
+      "remainingAfterPlan": "SYS implementation remains separately authorized; no competing v42 is permitted."
+    },
+    "PER": {
+      "result": "BLOCKED_WITH_EXACT_EVIDENCE",
+      "resolvedByThisPlan": [
+        "IAQ-022 is separated from assigned-review identity.",
+        "AssignedReviewV1 now includes the authoritative published form, ordered rubric, assignment identity, template hash, and draft hash.",
+        "PerformanceReviewSubmitted.v1 envelope and minimized payload are fixed.",
+        "V18 compatibility collisions and frontend index allocation are identified."
+      ],
+      "remainingAfterPlan": "Mechanical central bridge implementation and targeted proof only."
+    },
+    "TIM": {
+      "result": "BLOCKED_WITH_EXACT_EVIDENCE",
+      "resolvedByThisPlan": [
+        "The eight-state canonical Timecard machine takes precedence over the older five-state transport schema.",
+        "The decision command adds REQUIRE_CORRECTION and the sole event identity is TimecardDecisionRecorded.v1.",
+        "V10 forward alteration, V11 new scope, publisher ACL, and legacy no-dual-write boundaries are fixed.",
+        "V11 compatibility source allocation is identified."
+      ],
+      "remainingAfterPlan": "Mechanical central bridge implementation and targeted proof only."
+    }
+  },
+  "cycleOrder": [
+    {
+      "order": 1,
+      "name": "FINAL_PIN_AND_COLLISION_CHECK",
+      "actions": [
+        "Fetch without merging and confirm backend dwp-dev equals origin/dwp-dev.",
+        "Confirm product authorization high-water remains v41 and Auth Flyway high-water remains V250.",
+        "Confirm no capability, predicate, route-key, or public method/path collision for all eleven SYS/PER/TIM bindings.",
+        "Confirm no V251 Auth migration exists."
+      ],
+      "failure": "Stop; regenerate this preparation from the new heads."
+    },
+    {
+      "order": 2,
+      "name": "ONE_AUTHORIZATION_V42_SOURCE_EDIT",
+      "actions": [
+        "Append wave 42 with exactly three capabilities, five predicates, and eleven routes from the decision artifact.",
+        "Do not mutate v1-v41 wave entries.",
+        "Add the exact two-route ELEVATED read-only SYS step-up exception; every other step-up route still requires its existing command binding.",
+        "Update generator lineage to include v42 and add People/Time/Platform v42 owner descriptors while preserving People v39, Time v38, Platform v40, and Payroll v41 as explicit legacy outputs.",
+        "Set deterministic global and owner-projection counts to the sealed totals: global 255/24/17/69/1028 and kinds 132/308/588; People 97/124/51/5/3/17; Time 20/20/13/0/0/6; Platform 30/31/16/4/3/5."
+      ]
+    },
+    {
+      "order": 3,
+      "name": "ONE_GENERATOR_AND_FIXTURE_PASS",
+      "actions": [
+        "Run the authorization generator once in write mode.",
+        "Record the generated v42 checksum.",
+        "Insert that checksum and generated seed filename into Auth V251 and seal the immutable v41/v42 checksums and counts in the Auth runtime lineage validator.",
+        "Append 42 to the fixture generator release versions without changing the 41 negative-control case count; regenerate the fixture, update its schema checksum/enum/latest bounds and negative-matrix checksum, and refresh only the four checksum-pinned Auth/Gateway fixture adapters and tests.",
+        "Advance the Auth seed loader/lineage tests and only the latest-alias Python assertions to v42; repair the v11 immutable-checksum map coverage and preserve every historical snapshot checksum.",
+        "Run authorization and fixture generator check modes once after the migration and pinned checksum adapters are patched."
+      ]
+    },
+    {
+      "order": 4,
+      "name": "OPENAPI_AND_ASYNCAPI_BRIDGE",
+      "actions": [
+        "Add the sealed SYS/PER/TIM operations and closed schemas to the HRIS design-time overlay.",
+        "Point the exporter at authorization v42 and add exact operation maps and validators for the eleven route contracts.",
+        "Repair the existing Wave1 payroll expected-inventory fixture to include the five already-present PAY-011 overlay operations; do not alter their contracts.",
+        "Add exactly two AsyncAPI messages and schemas: PerformanceReviewSubmitted.v1 and TimecardDecisionRecorded.v1.",
+        "Run the OpenAPI exporter with --approved-snapshots --write once and --approved-snapshots --check once."
+      ]
+    },
+    {
+      "order": 5,
+      "name": "GATEWAY_TRUST_CONTEXT_BRIDGE",
+      "actions": [
+        "Add the eleven exact route purpose entries and population-kind forwarding decisions.",
+        "For the two SYS reads, enforce fixed product=HCM, ELEVATED-only access, closed projection, CONFIG_SCOPE, and absence of command step-up bindings.",
+        "Preserve generic state-changing expected-decision-revision enforcement.",
+        "Add targeted tests for purpose/population forwarding, forged-header replacement, fixed-query drift, missing current authority, PER/TIM no-step-up, and SYS ELEVATED-read behavior."
+      ]
+    },
+    {
+      "order": 6,
+      "name": "PEOPLE_OWNER_REGISTRY_AND_SCOPE_BRIDGE",
+      "actions": [
+        "Advance HcmV3PepRegistry from its People v39 descriptor to People v42 and add only the exact performance-review route claims.",
+        "Teach HcmScopeSelectionValidator the exact three dual-profile assigned-review routes: SELF requires self scope, assigned-reviewer requires trusted assigned-review population, and the owner assignment predicate remains the final object check.",
+        "Generate and validate Platform v42 as a central artifact, but leave HcmPlatformPepRegistry, PlatformSecurityFilter, audit repositories/controllers, and closed DTO runtime implementation to the separately authorized SYS-001 feature slice.",
+        "Prove the People owner registry rejects method, route, purpose, population, projection, and profile drift."
+      ]
+    },
+    {
+      "order": 7,
+      "name": "AUTH_RUNTIME_AND_V251_DRAFT_SEED_DECLARATION",
+      "actions": [
+        "For exactly the two SYS audit route keys, permit NORMAL evaluation of the sole ELEVATED read profile only far enough to run full HCM package/duty/scope/predicate/SoD checks and return STEP_UP_REQUIRED; never return ALLOWED or forward to the owner in NORMAL mode.",
+        "Mirror the generator's exact two-route read-only STEPUP/no-command-binding exception in the Auth topology validator; all other topology rules remain unchanged.",
+        "Create DATA.HRIS_PERFORMANCE_REVIEW as an exact DATA resource template.",
+        "Grant UPDATE to WORKSPACE_MEMBER, TALENT_ADMIN, and HR_ADMIN; the owner assignment predicate remains mandatory and prevents permission-only access.",
+        "Instantiate the resource and template grants for existing tenants and bump affected access revisions.",
+        "Declare product-surfaces v42 as DRAFT with automatic_import_enabled=FALSE.",
+        "Do not approve, activate, or assign the bundle."
+      ]
+    },
+    {
+      "order": 8,
+      "name": "TARGETED_CONTROL_VERIFICATION",
+      "actions": [
+        "Run only the named generator, fixture, exporter, Auth, Gateway, People-owner, Platform-owner, and platform-contract gates.",
+        "Inspect git diff and generated-file closure once.",
+        "Verify both rollout-inventory files are byte-identical; they are derived only from rolloutProducts and are not generated change targets.",
+        "Do not run all backend or frontend suites unless one of the targeted gates exposes a cross-cluster reason."
+      ]
+    },
+    {
+      "order": 9,
+      "name": "REPORT_AND_HOLD_FOR_INDEPENDENT_REVIEW",
+      "actions": [
+        "Report the exact implementation diff, generated checksum, and targeted gate results from the dedicated control-v42 worktree.",
+        "Do not commit, push, merge, edit main dwp-dev, issue leases, or issue Start Tokens until independent review explicitly authorizes integration.",
+        "After that later authorization, integrate as one commit, recheck clean backend/frontend dwp-dev pins and migration high-water once, and only then prepare separate PER and TIM Start Tokens."
+      ]
+    }
+  ],
+  "centralFiles": {
+    "handEdited": [
+      {
+        "path": "contracts/product-authorization/product-surfaces-v1.yaml",
+        "change": "append one shared SYS/PER/TIM authorization wave 42 only: 3 capabilities, 5 predicates, 11 routes, and the exact two-key ELEVATED read-only step-up exception"
+      },
+      {
+        "path": "scripts/generate-product-authorization-contracts.py",
+        "change": "extend immutable lineage range to 42, enforce global and owner totals, preserve all historical descriptors, produce People/Time/Platform v42 projections, and allow the SYS read exception only when every sealed condition holds"
+      },
+      {
+        "path": "scripts/tests/test_product_authorization_v42.py",
+        "change": "new exact combined-v42 keys, counts, owner totals, fixed-query, PER/TIM no-step-up, SYS elevated-read exception, and collision regression"
+      },
+      {
+        "path": "scripts/tests/test_product_authorization_v11.py",
+        "change": "minimal compatibility repair so the immutable checksum map covers every historical snapshot the test iterates; no historical checksum changes"
+      },
+      {
+        "path": "scripts/tests/test_product_authorization_v21.py",
+        "change": "advance the generic latest alias/index assertion from v41 to v42"
+      },
+      {
+        "path": "scripts/tests/test_product_authorization_v39.py",
+        "change": "remove the stale latest-v40 assumption while preserving the immutable v39 seed and People v39 projection assertions"
+      },
+      {
+        "path": "scripts/tests/test_product_authorization_v40.py",
+        "change": "convert the stale latest-v40 alias assertion into immutable v40 bundle/platform-projection evidence"
+      },
+      {
+        "path": "scripts/tests/test_product_authorization_v41.py",
+        "change": "preserve immutable v41 payroll evidence while moving latest alias/index assertions to the v42 regression"
+      },
+      {
+        "path": "contracts/product-authorization/README.md",
+        "change": "document the single shared SYS/PER/TIM v42, 11-route delta, read-step-up rule, and immutable historical owner projections"
+      },
+      {
+        "path": "scripts/generate-product-authorization-fixtures.py",
+        "change": "append registry version 42 while keeping EXPECTED_GENERATOR_NEGATIVE_CONTROLS=41 as the unchanged mutation-case count"
+      },
+      {
+        "path": "contracts/product-authorization/pilot-fixtures.v1.schema.json",
+        "change": "advance latest/min/max/enum/checksum constraints to the regenerated v42 fixture"
+      },
+      {
+        "path": "contracts/product-authorization/authorization-negative-matrix.v1.json",
+        "change": "replace only the fixture checksum reference that is already stale at the v41 baseline"
+      },
+      {
+        "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/support/PilotAuthorizationFixtureAdapter.java",
+        "change": "refresh the pinned generated-fixture checksum"
+      },
+      {
+        "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/support/PilotAuthorizationFixtureAdapterTest.java",
+        "change": "assert the v42 fixture checksum/version without changing case cardinalities"
+      },
+      {
+        "path": "dwp-gateway/src/test/java/com/dwp/gateway/support/PilotAuthorizationFixtureAdapter.java",
+        "change": "refresh the pinned generated-fixture checksum"
+      },
+      {
+        "path": "dwp-gateway/src/test/java/com/dwp/gateway/support/PilotAuthorizationFixtureAdapterTest.java",
+        "change": "assert the v42 fixture checksum/version without changing case cardinalities"
+      },
+      {
+        "path": "contracts/openapi/hris-wave1-design-time.json",
+        "change": "add sealed SYS/PER/TIM operations and closed transport amendments with runtime defaults OFF"
+      },
+      {
+        "path": "scripts/export-openapi-contracts.py",
+        "change": "consume authorization v42 and add exact SYS audit, PER review/IAQ-022, and TIM timecard operation maps and validators"
+      },
+      {
+        "path": "scripts/tests/test_export_openapi_contracts.py",
+        "change": "assert eleven owner/public mappings and amended schemas; repair only the expected inventory for the five already-present PAY-011 overlay operations"
+      },
+      {
+        "path": "contracts/asyncapi/domain-events.yaml",
+        "change": "add the two canonical v1 messages/envelopes/data schemas; do not add the TIM unsuffixed alias"
+      },
+      {
+        "path": "dwp-platform-contracts/src/test/java/com/dwp/platform/contract/HrisPerTimWave5AsyncApiContractTest.java",
+        "change": "new minimized payload/envelope/alias-negative contract test"
+      },
+      {
+        "path": "dwp-gateway/src/main/java/com/dwp/gateway/filter/ProductSurfaceDecisionContextFilter.java",
+        "change": "add eleven purpose/population mappings and enforce the two SYS fixed-product/ELEVATED closed-read contexts"
+      },
+      {
+        "path": "dwp-gateway/src/test/java/com/dwp/gateway/ProductSurfaceDecisionContextFilterTest.java",
+        "change": "trusted forwarding/failure tests for representative SYS/PER/TIM reads and commands, including forged purpose/population and NORMAL-mode SYS denial"
+      },
+      {
+        "path": "dwp-gateway/src/test/java/com/dwp/gateway/productsurface/GeneratedProductRouteCatalogTest.java",
+        "change": "assert exact governance of all eleven v42 public bindings plus method and fixed-query drift rejection"
+      },
+      {
+        "path": "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmV3PepRegistry.java",
+        "change": "load/validate People v42, close counts to 97 routes/124 bindings/51 capabilities/5 policies/3 expressions/17 predicates, and claim only exact review routes in addition to existing families"
+      },
+      {
+        "path": "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmScopeSelectionValidator.java",
+        "change": "recognize only the three exact dual-profile review route keys; require self scope for self and trusted assigned-review population for assigned reviewer before the owner predicate performs object assignment"
+      },
+      {
+        "path": "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmV3PepRegistryTest.java",
+        "change": "assert People v42 envelope, counts, exact routes, assignment predicate, and drift rejection"
+      },
+      {
+        "path": "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmProductSurfacePepFilterTest.java",
+        "change": "targeted trusted self/assigned selection and opaque denial tests for the three review routes"
+      },
+      {
+        "path": "dwp-auth-server/src/main/resources/db/migration/V251__authorize_performance_review_and_timecard_contracts.sql",
+        "change": "seed the exact review resource/grants and declare the generated v42 DRAFT seed"
+      },
+      {
+        "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationAuthorityAdapter.java",
+        "change": "for only the two SYS route keys, evaluate the sole ELEVATED profile under NORMAL as challenge-only after full authority checks; STEP_UP_REQUIRED is the only possible non-denial outcome"
+      },
+      {
+        "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationAuthoritySupport.java",
+        "change": "delegate the exact HCM auditor package, duty, scope, predicate, and 28-conflict SoD evaluation"
+      },
+      {
+        "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationGateTopologyValidator.java",
+        "change": "mirror the generator's exact two-route PAGE/DATA GET ELEVATED read-only STEPUP/no-command-binding exception"
+      },
+      {
+        "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/HcmAuditAuthorityPolicy.java",
+        "change": "new package-private exact SYS audit authority helper; non-HCM routes are unaffected"
+      },
+      {
+        "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationAuthorityAdapterTest.java",
+        "change": "prove exact NORMAL challenge-only behavior, ELEVATED allow behavior, and no owner-forwarding on challenge"
+      },
+      {
+        "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationAuthoritySupportTest.java",
+        "change": "prove exact delegation and fail-closed authority evidence"
+      },
+      {
+        "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationContractValidatorTest.java",
+        "change": "prove the two-route topology exception and reject every near-miss mutation"
+      },
+      {
+        "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/service/HcmAuditAuthorityPolicyTest.java",
+        "change": "new truth table for exact role, duty, product-root scope, 28 conflicting packages, and non-HCM no-effect"
+      },
+      {
+        "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationReleaseLineage.java",
+        "change": "close the existing generated-v41/runtime-v40 split and seal contiguous immutable v1-v42 checksums, counts, and latest index"
+      },
+      {
+        "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationContractReleaseLineageTest.java",
+        "change": "prove strict v40-to-v41-to-v42 append-only lineage and exact v42 totals"
+      },
+      {
+        "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/config/ProductAuthorizationSeedLoaderTest.java",
+        "change": "prove v1-v42 DRAFT import, v42 alias, and no approve/activate/rollback side effects"
+      },
+      {
+        "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/repository/PerTimWave5AuthorizationMigrationContractTest.java",
+        "change": "assert exact grants, checksum, DRAFT/FALSE, and no activation"
+      }
+    ],
+    "generatedChanged": [
+      "contracts/product-authorization/product-surfaces-v1.bundle-v42.json",
+      "contracts/product-authorization/product-surfaces-v1.json",
+      "contracts/product-authorization/product-surfaces-v1.index.json",
+      "contracts/product-authorization/pilot-fixtures.v1.generated.json",
+      "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v42.generated.json",
+      "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.generated.json",
+      "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.index.generated.json",
+      "dwp-people-server/src/main/resources/product-authorization/hcm-people-pep-v42.generated.json",
+      "dwp-time-server/src/main/resources/product-authorization/hcm-time-pep-v42.generated.json",
+      "dwp-platform-server/src/main/resources/product-authorization/hcm-platform-pep-v42.generated.json",
+      "contracts/openapi/people.json",
+      "contracts/openapi/time.json",
+      "contracts/openapi/platform.json",
+      "contracts/openapi/gateway-public.json"
+    ],
+    "verifiedUnchanged": [
+      "contracts/product-authorization/product-surface-rollout-inventory.v1.generated.json",
+      "dwp-gateway/src/main/resources/product-authorization/product-surface-rollout-inventory.v1.generated.json",
+      "all v1-v41 authorization bundles and Auth copies",
+      "hcm-people-pep-v39.generated.json, hcm-time-pep-v38.generated.json, hcm-platform-pep-v40.generated.json, and payroll v41 owner projection"
+    ],
+    "explicitlyNotCentral": [
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/security/HcmPlatformPepRegistry.java",
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/security/PlatformSecurityFilter.java",
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/security/HcmAuditEvidenceAuthorityPolicy.java",
+      "dwp-platform-server/src/test/java/com/dwp/services/platform/security/HcmPlatformPepSecurityContractTest.java",
+      "dwp-platform-server/src/test/java/com/dwp/services/platform/security/PlatformSecurityFilterTest.java",
+      "dwp-platform-server/src/test/java/com/dwp/services/platform/security/HcmAuditEvidenceAuthorityPolicyTest.java",
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/auditcontrol/HcmAuditEvidence* controller/service/repository/DTO implementation",
+      "dwp-platform-server/src/test/java/com/dwp/services/platform/auditcontrol/HcmAuditEvidence* feature tests",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/performance/review/**",
+      "dwp-time-server/src/main/java/com/dwp/services/time/timecard/**",
+      "dwp-people-server/src/main/resources/db/performance-migration/V18__per_base_tfr_per_013.sql",
+      "dwp-time-server/src/main/resources/db/migration/V11__tim_base_tfr_tim_017.sql",
+      "dwp-time-server/src/main/java/com/dwp/services/time/TimeDatabaseMigrationConfiguration.java",
+      "all new PER/TIM feature UI files",
+      "legacy Time caller cutover files"
+    ]
+  },
+  "centralAcceptanceGates": [
+    {
+      "id": "CTL-SYS-PERTIM-AUTH-GEN",
+      "commands": [
+        "python3 scripts/generate-product-authorization-contracts.py",
+        "python3 scripts/generate-product-authorization-contracts.py --check",
+        "python3 -m unittest scripts/tests/test_product_authorization_v11.py scripts/tests/test_product_authorization_v21.py scripts/tests/test_product_authorization_v39.py scripts/tests/test_product_authorization_v40.py scripts/tests/test_product_authorization_v41.py scripts/tests/test_product_authorization_v42.py"
+      ],
+      "pass": "v1-v41 checksums unchanged; combined v42 totals are 255/24/17/69/1028 with kinds 132/308/588 and exactly 11 new routes; historical People v39, Time v38, Platform v40 and Payroll v41 descriptors remain immutable; People/Time/Platform v42 projections equal every sealed total."
+    },
+    {
+      "id": "CTL-SYS-PERTIM-FIXTURES",
+      "commands": [
+        "python3 scripts/generate-product-authorization-fixtures.py",
+        "python3 scripts/generate-product-authorization-fixtures.py --check",
+        "python3 -m unittest scripts/tests/test_product_authorization_fixture_schema.py scripts/tests/test_authorization_negative_matrix.py",
+        "./gradlew :dwp-auth-server:test --tests 'com.dwp.services.auth.support.PilotAuthorizationFixtureAdapterTest'",
+        "./gradlew :dwp-gateway:test --tests 'com.dwp.gateway.support.PilotAuthorizationFixtureAdapterTest'"
+      ],
+      "pass": "The v42 fixture and schema checksums agree in all five pinned locations; test/negative/mutation cardinalities stay 71/46/41; the pre-existing v41 negative-matrix checksum drift is closed."
+    },
+    {
+      "id": "CTL-SYS-PERTIM-OPENAPI",
+      "commands": [
+        "python3 scripts/export-openapi-contracts.py --approved-snapshots --write",
+        "python3 scripts/export-openapi-contracts.py --approved-snapshots --check",
+        "python3 -m unittest scripts/tests/test_export_openapi_contracts.py"
+      ],
+      "pass": "Platform, People, Time, and Gateway expose exactly the 11 sealed owner/public operations; fixed product=HCM and closed schemas do not drift; the existing PAY-011 five-operation inventory debt is repaired without changing its API."
+    },
+    {
+      "id": "CTL-SYS-PERTIM-GATEWAY",
+      "commands": [
+        "./gradlew :dwp-gateway:test --tests 'com.dwp.gateway.ProductSurfaceDecisionContextFilterTest' --tests 'com.dwp.gateway.productsurface.GeneratedProductRouteCatalogTest'"
+      ],
+      "pass": "All 11 method/path pairs are governed; trusted purpose/population is forwarded and spoofed context is replaced; PER/TIM have no step-up binding; SYS requires fixed product=HCM plus ELEVATED read-only projection and has no command binding."
+    },
+    {
+      "id": "CTL-SYS-PERTIM-OWNER-PEP",
+      "commands": [
+        "./gradlew :dwp-people-server:test --tests 'com.dwp.services.people.security.HcmV3PepRegistryTest' --tests 'com.dwp.services.people.security.HcmProductSurfacePepFilterTest'"
+      ],
+      "pass": "People loads only its v42 descriptor, enforces exact route/method/profile/purpose/population/projection closure, and fails closed for wrong self/assignment. Platform v42 is generator-validated only; SYS owner runtime remains outside this bridge."
+    },
+    {
+      "id": "CTL-PERTIM-AUTH-MIGRATION",
+      "commands": [
+        "./gradlew :dwp-auth-server:test --tests 'com.dwp.services.auth.repository.PerTimWave5AuthorizationMigrationContractTest' --tests 'com.dwp.services.auth.service.ProductAuthorizationContractReleaseLineageTest' --tests 'com.dwp.services.auth.config.ProductAuthorizationSeedLoaderTest' --tests 'com.dwp.services.auth.service.ProductAuthorizationAuthorityAdapterTest' --tests 'com.dwp.services.auth.service.ProductAuthorizationAuthoritySupportTest' --tests 'com.dwp.services.auth.service.ProductAuthorizationContractValidatorTest' --tests 'com.dwp.services.auth.service.HcmAuditAuthorityPolicyTest'"
+      ],
+      "pass": "V251 references the generated v42 checksum and stays DRAFT/nonautomatic/nonactive with only exact review grants; Auth validates/imports contiguous v1-v42 without activation; NORMAL SYS access can only deny or challenge after full authority checks, while ELEVATED exact access may proceed."
+    },
+    {
+      "id": "CTL-PERTIM-ASYNCAPI",
+      "commands": [
+        "./gradlew :dwp-platform-contracts:test --tests 'com.dwp.platform.contract.HrisPerTimWave5AsyncApiContractTest'"
+      ],
+      "pass": "Both canonical message names, exact envelopes and minimized closed data schemas pass; TimecardDecisionRecorded without .v1 is absent."
+    },
+    {
+      "id": "CTL-SYS-PERTIM-DIFF-CLOSURE",
+      "commands": [
+        "git diff --check",
+        "git status --short"
+      ],
+      "pass": "Only the listed central hand-edited/generated files are present; both rollout inventories are byte-identical; no SYS/PER/TIM feature implementation or module migration leaked into the bridge."
+    }
+  ],
+  "baselineDebtClosure": {
+    "mustNotBeMisreportedAsNewRegression": [
+      "authorization-negative-matrix fixture checksum is already stale after v41",
+      "v21/v39/v40/v41 tests contain obsolete latest-version assertions",
+      "v11 history test iterates releases beyond its checksum map",
+      "OpenAPI exporter test expected inventory omits five already-present PAY-011 overlay operations"
+    ],
+    "requiredDisposition": "Repair each item minimally in the named files during the shared bridge and show the focused before/after gate. Do not weaken historical checksum or operation assertions and do not claim broad green based on exclusions."
+  },
+  "migrationLeaseCandidates": [
+    {
+      "leaseId": "MIG-PER-PERFORMANCE-V18-BASE-TFR-PER-013",
+      "stream": "PEOPLE_PERFORMANCE",
+      "version": "V18",
+      "path": "dwp-people-server/src/main/resources/db/performance-migration/V18__per_base_tfr_per_013.sql",
+      "state": "CANDIDATE_NOT_ISSUED",
+      "issueCondition": "Post-control-bridge pushed dwp-dev still has V17 as high-water and no competing V18."
+    },
+    {
+      "leaseId": "MIG-TIM-MAIN-V11-BASE-TFR-TIM-017",
+      "stream": "TIME_MAIN",
+      "version": "V11",
+      "path": "dwp-time-server/src/main/resources/db/migration/V11__tim_base_tfr_tim_017.sql",
+      "state": "CANDIDATE_NOT_ISSUED",
+      "issueCondition": "Post-control-bridge pushed dwp-dev still has V10 as high-water and no competing V11."
+    }
+  ],
+  "perStartTokenPreparation": {
+    "state": "READY_TO_ISSUE_ONLY_AFTER_CENTRAL_GATES_AND_PIN_REFRESH",
+    "moduleOwnedPaths": [
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/performance/review/**",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/performance/review/**",
+      "dwp-people-server/src/main/resources/db/performance-migration/V18__per_base_tfr_per_013.sql",
+      "apps/dwp/src/features/hris/performance/api/performance-review-*.ts",
+      "apps/dwp/src/features/hris/performance/components/performance-review-*.tsx",
+      "apps/dwp/src/features/hris/performance/hooks/use-performance-review*.ts",
+      "apps/dwp/src/features/hris/performance/model/performance-review-*.ts",
+      "apps/dwp/src/features/hris/performance/pages/*performance-review*.tsx",
+      "apps/dwp/src/features/hris/performance/__tests__/g3-slices/base-tfr-per-013.slice.test.tsx"
+    ],
+    "compatibilityPaths": [
+      "dwp-people-server/src/test/java/com/dwp/services/people/hr/performance/compensationplanning/CompensationPlanningMigrationContractTest.java",
+      "apps/dwp/src/features/hris/performance/index.ts"
+    ],
+    "regressionOnlyNoEdit": [
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/performance/workforce/PerformanceWorkforceProjectionArchitectureTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hr/performance/PerformanceMigrationCleanUpgradeTest.java"
+    ],
+    "acceptanceIds": [
+      "PER-CONTRACT-REVIEW",
+      "PER-GOLDEN-REVIEW-001",
+      "AUTHZ-NO-REVIEW-OUTSIDE-ASSIGNMENT",
+      "PER-IAQ-022-SEPARATION",
+      "PER-REVIEW-IDEMPOTENCY-CAS",
+      "PER-REVIEW-EVENT-EXACTLY-ONCE",
+      "PER-V18-CLEAN-UPGRADE",
+      "PER-FE-REVIEW-LOADING-EMPTY-DENIED-PARTIAL-RECOVERY-A11Y"
+    ],
+    "targetedChecks": [
+      "Review transport/schema contract tests including form, rubric, hashes and ETag",
+      "Owner PEP negative tests for tenant, assignment, purpose, population and field projection",
+      "Draft save/submit stale CAS, exact replay and mismatched replay tests",
+      "PerformanceReviewSubmitted.v1 outbox and AsyncAPI owner tests",
+      "V18 migration contract plus V17-targeted compensation compatibility test",
+      "IAQ-022 query invariant/action allowlist tests",
+      "single Vitest slice plus directly changed API/hook/component tests"
+    ],
+    "activation": "OFF; blocked until an authoritative assigned-review discovery entry source is runtime-verified."
+  },
+  "timStartTokenPreparation": {
+    "state": "READY_TO_ISSUE_ONLY_AFTER_CENTRAL_GATES_AND_PIN_REFRESH",
+    "moduleOwnedPaths": [
+      "dwp-time-server/src/main/java/com/dwp/services/time/timecard/**",
+      "dwp-time-server/src/test/java/com/dwp/services/time/timecard/**",
+      "dwp-time-server/src/main/resources/db/migration/V11__tim_base_tfr_tim_017.sql",
+      "dwp-time-server/src/main/java/com/dwp/services/time/TimeDatabaseMigrationConfiguration.java",
+      "dwp-time-server/src/test/java/com/dwp/services/time/TimeDatabaseMigrationConfigurationTest.java",
+      "apps/dwp/src/features/hris/time/api/timecard-*.ts",
+      "apps/dwp/src/features/hris/time/components/timecard-*.tsx",
+      "apps/dwp/src/features/hris/time/hooks/use-timecard*.ts",
+      "apps/dwp/src/features/hris/time/model/timecard-*.ts",
+      "apps/dwp/src/features/hris/time/pages/*timecard*.tsx",
+      "apps/dwp/src/features/hris/time/__tests__/g3-slices/base-tfr-tim-017.slice.test.tsx",
+      "apps/dwp/src/features/hris/time/index.ts"
+    ],
+    "controlOwnedFutureCutoverPaths": [
+      "libs/shared-utils/src/api/hr-api.ts",
+      "apps/dwp/src/features/hris/time/api/hris-time-api.ts",
+      "apps/dwp/src/features/hcm/hr-team-time-workspace.tsx",
+      "apps/dwp/src/features/hcm/hr-domain-operations.tsx",
+      "apps/dwp/src/features/hcm/hr-domain-components.tsx",
+      "apps/dwp/src/routes/**",
+      "apps/dwp/src/features/hris/shell/**"
+    ],
+    "acceptanceIds": [
+      "TIM-CONTRACT-TIMECARD",
+      "TIM-GOLDEN-TIMECARD-001",
+      "AUTHZ-TIMECARD-TENANT-POPULATION-FIELD-PURPOSE",
+      "TIM-TIMECARD-STATE-PRECEDENCE",
+      "TIM-NO-SELF-APPROVAL-NO-OWN-CHANGE",
+      "TIM-IDEMPOTENCY-CAS-RECEIPT",
+      "TIM-EVENT-V1-ONLY-EXACTLY-ONCE",
+      "TIM-V11-V10-LEDGER-FORWARD-ALTERATION",
+      "TIM-PUBLISHER-ACL-LEAST-PRIVILEGE",
+      "TIM-NO-DUAL-READ-WRITE",
+      "TIM-FE-TIMECARD-FAILURE-RECOVERY-A11Y"
+    ],
+    "targetedChecks": [
+      "Timecard transport and eight-state transition tests",
+      "Owner PEP negative tests for tenant, purpose, subject, population, field group, closed period and approval scope",
+      "maker-checker tests against worker, submitter and latest correction maker",
+      "exact/mismatched replay and stale CAS tests",
+      "TimecardDecisionRecorded.v1 outbox and AsyncAPI owner tests with unsuffixed negative assertion",
+      "V11 migration and V10-to-V11 ledger alteration integration tests",
+      "publisher ACL exact-set test",
+      "single Vitest slice plus directly changed canonical adapter/hook/component tests"
+    ],
+    "activation": "OFF; existing legacy callers stay selected and no shared-utils/HCM caller is switched by this token."
+  },
+  "startTokenGates": [
+    "All eight central acceptance gates pass at one backend commit.",
+    "The central commit is pushed to origin/dwp-dev and local dwp-dev equals origin/dwp-dev.",
+    "Frontend dwp-dev is clean and pinned once after any preparation evidence integration.",
+    "V18 and V11 are rechecked collision-free and converted from candidates to explicit token leases.",
+    "Each token names its own backend and frontend worktree and forbids edits outside its module and compatibility allocation.",
+    "Each token keeps the feature OFF and repeats the no broad-suite rule.",
+    "No Start Token is inferred from this artifact."
+  ],
+  "stopConditions": [
+    "A v42 authorization wave, V251 Auth migration, PER V18, or TIM V11 appears before implementation starts.",
+    "SYS, PER, or TIM attempts a separate competing v42 or an avoidable second v43 control rewrite.",
+    "Any of the eleven method/path pairs or exact route keys is already governed by another contract.",
+    "The generator changes a v1-v41 checksum.",
+    "The OpenAPI exporter cannot produce identical owner/public operation identity for a sealed route.",
+    "A proposed module change requires routes, shell, shared-utils cutover, or another module's production package.",
+    "A targeted test proves that one of the sealed semantic decisions conflicts with executable current code."
+  ],
+  "finalVerdict": {
+    "status": "IMPLEMENTABLE",
+    "combinedCentralCycle": true,
+    "combinedVersionParticipants": ["SYS-001", "BASE-TFR-PER-013", "BASE-TFR-TIM-017"],
+    "startTokensIssued": false,
+    "nextAuthorizedAction": "Implement exactly one shared v42 central control bridge in the dedicated backend worktree, verify the eight targeted gates, and report for independent review without commit, push, merge, lease, or Start Token."
+  }
+}

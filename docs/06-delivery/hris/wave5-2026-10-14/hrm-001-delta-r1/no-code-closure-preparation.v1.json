@@ -1,0 +1,85 @@
+{
+  "schema": "dwp.hris.hrm001.no-code-closure-preparation.v1",
+  "preparationId": "HRIS-WAVE5-HRM-001-NO-CODE-CLOSE-PREP-R1",
+  "preparedAt": "2026-10-14T14:32:00+09:00",
+  "moduleSession": "HRIS-HRM",
+  "sliceId": "BASE-TFR-HRM-001",
+  "state": "PREPARED_NO_CODE_CLOSURE_WITHHELD_FINAL_PIN_RECHECK",
+  "authority": {
+    "startTokenRequired": false,
+    "startTokenIssued": false,
+    "implementationAuthorized": false,
+    "worktreeAuthorized": false,
+    "commitOrPushAuthorized": false,
+    "migrationAuthorized": false,
+    "productionCodeAuthorized": false,
+    "testSourceAuthorized": false
+  },
+  "rejectedCandidate": {
+    "kind": "TEST_EVIDENCE_DELTA_ONLY",
+    "reason": "A new wrapper test would not prove current population or field-policy authority, would duplicate existing direct V2 coverage, and could not exercise the package-private People owner adapter plus Approval quorum from one package.",
+    "forbiddenPath": "dwp-people-server/src/test/java/com/dwp/services/people/hris/approval/Hrm001Plat003ConformancePostgresTest.java"
+  },
+  "finalPinPolicy": {
+    "backendObservation": "dwp-dev@357bd2b9e1c8a4d233c285d96911b5077cb444cf",
+    "frontendObservation": "dwp-dev@20fe240b59e5e93516e7d033a59564013d86b7c9",
+    "pinStatus": "OBSERVATION_ONLY",
+    "finalRule": "After concurrent Wave5 integration settles, fetch once and record clean pushed dwp-dev heads. Compare the HRM-010/V2 relevant paths with their integrated evidence pins; any relevant production drift withholds no-code closure."
+  },
+  "targetedFinalVerification": {
+    "commands": [
+      "./gradlew :dwp-platform-contracts:test --tests 'com.dwp.platform.contract.HrisApprovalBridgeV2Test' --no-daemon",
+      "./gradlew :dwp-people-server:test --tests 'com.dwp.services.people.security.HcmOwnerPepExecutionTest' --tests 'com.dwp.services.people.security.HcmProductSurfaceEligibilityAdapterTest' --tests 'com.dwp.services.people.security.HrisEmployeeChangeSecurityBridgeTest' --tests 'com.dwp.services.people.hris.employeeservice.employeechange.EmployeeChangeServiceTest' --no-daemon",
+      "./gradlew :dwp-approval-server:test --tests 'com.dwp.services.approval.domain.ApprovalWorkflowQuorumEvaluatorTest' --no-daemon",
+      "git diff --check"
+    ],
+    "databaseExecutionPolicy": "Do not rerun PostgreSQL suites while Docker is unavailable and then treat disabledWithoutDocker skips as a pass. Reuse the immutable HRM-010 zero-skipped evidence only if all relevant production paths are unchanged. If a relevant path changed or a PostgreSQL rerun becomes necessary, Docker readiness and JUnit XML skipped=0 are mandatory gates.",
+    "prohibitedVerification": [
+      "full repository test suite",
+      "unrelated frontend suite",
+      "a PostgreSQL command that can silently pass with skipped tests",
+      "a new HRM001 wrapper test"
+    ]
+  },
+  "gatesBeforeClosure": [
+    {
+      "id": "HRM001-CLOSE-GATE-01",
+      "state": "PASS",
+      "check": "The six-row conformance matrix uses direct V2, owner PEP, Approval quorum and zero-skipped HRM-010 evidence without inventing callback claims."
+    },
+    {
+      "id": "HRM001-CLOSE-GATE-02",
+      "state": "PASS",
+      "check": "No production, test-source, frontend, shared Approval or migration delta remains."
+    },
+    {
+      "id": "HRM001-CLOSE-GATE-03",
+      "state": "WITHHELD",
+      "check": "Final clean pushed dwp-dev backend and frontend SHAs have not yet been pinned after concurrent Wave5 work."
+    },
+    {
+      "id": "HRM001-CLOSE-GATE-04",
+      "state": "WITHHELD",
+      "check": "The final-pin relevant-path diff and the three narrow non-Docker verification commands have not yet been recorded."
+    },
+    {
+      "id": "HRM001-CLOSE-GATE-05",
+      "state": "WITHHELD",
+      "check": "Control has not yet issued the no-code closure receipt and selected BASE-TFR-HRM-002."
+    }
+  ],
+  "closureProcedure": [
+    "Commit and push the corrected Control documents to frontend dwp-dev.",
+    "Wait for concurrent dwp-dev integration activity to settle, then fetch and verify both default checkouts are clean and equal origin/dwp-dev.",
+    "Record the final pins and prove relevant HRM-010/V2 paths are unchanged from the accepted implementation/evidence.",
+    "Run only the three narrow non-Docker commands and verify their selected tests executed.",
+    "Issue a no-code closure receipt; do not create a Start Token, worktree, branch or migration.",
+    "Notify HRIS-HRM that BASE-TFR-HRM-001 closed by conformance and select BASE-TFR-HRM-002."
+  ],
+  "failurePolicy": {
+    "relevantPathChanged": "Withhold closure and audit only the changed path against the six-row matrix.",
+    "targetedTestFailure": "Withhold closure and report the exact failing invariant; do not authorize a source edit automatically.",
+    "postgresRerunNeededWhileDockerUnavailable": "Withhold closure until Docker is ready; a skipped suite is not evidence.",
+    "newProductionRequirement": "Prepare a separate exact source-delta authority and keep this no-code preparation closed."
+  }
+}

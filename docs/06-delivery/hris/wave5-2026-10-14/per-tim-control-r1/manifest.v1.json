@@ -1,0 +1,108 @@
+{
+  "schema": "dwp.hris.per-tim-control-bridge.preparation-manifest.v1",
+  "manifestId": "HRIS-WAVE5-SHARED-V42-PER-TIM-CONTROL-BRIDGE-MANIFEST-R1",
+  "preparedAt": "2026-10-14T14:26:24+09:00",
+  "scope": ["SYS-001-SHARED-V42-PARTICIPANT", "BASE-TFR-PER-013", "BASE-TFR-TIM-017"],
+  "authority": "CENTRAL_BRIDGE_IMPLEMENTATION_AUTHORIZED_NO_START_TOKEN",
+  "artifacts": [
+    {
+      "path": "sealed-contract-decisions.v1.json",
+      "sha256": "61974850e2b8613070796e3d1bf98b2cb93266ad2e1de6be47b44c0ca9a608d9",
+      "role": "exact shared SYS/PER/TIM v42 semantic, authorization, transport, event, migration, ACL, and cutover decisions"
+    },
+    {
+      "path": "control-bridge-implementation-plan.v1.json",
+      "sha256": "17f6dd131318b19cdfa6b9cfee97eda6427cc518bae3f239dfcce8b045a01419",
+      "role": "one-owner shared v42 central implementation plan, exact touch paths, targeted gates, module allocations, and lease candidates"
+    }
+  ],
+  "sourceEvidence": [
+    {
+      "path": "../sys-001-control-r1/hcm-audit-semantics-seal.v1.json",
+      "sha256": "71eb7e12190fad4ce616c7e5a59b1e11bb07516b3144c0387553ea45b7bcb6c2"
+    },
+    {
+      "path": "../module-dispatch-r1/per-base-tfr-per-013-preflight.v1.json",
+      "sha256": "108d2464f143fb4f3aeb0610dd09eda84298cdc336147e0c9e2122fed889e5bc"
+    },
+    {
+      "path": "../module-dispatch-r1/tim-base-tfr-tim-017-preflight.v1.json",
+      "sha256": "bedd9e328d56fe3d5156fb54b43096ed67be8c85b81e4155e22e6f14ed617181"
+    },
+    {
+      "path": "../../recovery/hris-porting-blueprint-2026-09-09/coding-readiness/api-pep-binding-register.csv",
+      "sha256": "0e38d724516a8b271069241ffa0fb6400984dc703758767de53cbaffb4f93da3"
+    },
+    {
+      "path": "../../recovery/exact-supplements/2026-10-06/accepted-successors/hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-api-contract-register.csv",
+      "sha256": "5f47efd33a1d5aa3d11a4d9fd5716cd4e35650e9fec0868ecb77c8c90a4cd988"
+    },
+    {
+      "path": "../../recovery/exact-supplements/2026-10-06/hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-projection-schemas.v1.json",
+      "sha256": "b185accd712216c39bf8a66f70cbbf0092a27a8c2c5e3d7457ecd4d511afa048"
+    },
+    {
+      "path": "../../recovery/exact-supplements/2026-10-06/hris-porting-blueprint-2026-09-09/hris-atomic-duty-matrix.csv",
+      "sha256": "bc6a387b648be7ead865691653f647bd67f694b2bf3868e5d5eaad5dfab16caa"
+    },
+    {
+      "path": "../../recovery/hris-porting-blueprint-2026-09-09/coding-readiness/module-exact-business-start-canonical.v1.json",
+      "sha256": "483ae9f1aefaa59ed2758a0d0fb0e0280b7e961fb0e1340a60e75d1bbec81b36"
+    },
+    {
+      "path": "../../recovery/hris-porting-blueprint-2026-09-09/session-evidence/per/g2-readiness/api-event-contracts.yaml",
+      "sha256": "559c345053d205902613f502be18dcbc22577e9286686827ad6383a5d2211f5a"
+    },
+    {
+      "path": "../../recovery/hris-porting-blueprint-2026-09-09/session-evidence/tim/g2-api-event-contracts.json",
+      "sha256": "1251365481d7063bf3fcf0e3e5bfaeca148554da354ac60fe29d2e67d1c1cb7f"
+    },
+    {
+      "path": "../../recovery/hris-porting-blueprint-2026-09-09/session-evidence/tim/g2-transport-schemas.v1.json",
+      "sha256": "1fb8e961f4283940a356cf20b77fe19a58231c8aaabb4af142e163f55f741dcc"
+    },
+    {
+      "path": "../../recovery/hris-porting-blueprint-2026-09-09/coding-readiness/hris-api-sor-transition-register.csv",
+      "sha256": "cf12fa5c42e2a1653633ec5e401379491891d8b216c611b84e687e03ae24c962"
+    }
+  ],
+  "codeInspection": {
+    "backend": "dwp-dev@357bd2b9e1c8a4d233c285d96911b5077cb444cf",
+    "frontend": "dwp-dev@20fe240b59e5e93516e7d033a59564013d86b7c9",
+    "inspected": [
+      "authorization generator/source/generated v41 lineage",
+      "authorization fixture generator/schema/negative-matrix and checksum-pinned Auth/Gateway adapters",
+      "OpenAPI overlay/exporter/generated service composition",
+      "Gateway generated route catalog and trusted decision-context filter",
+      "Auth authority adapter/topology/lineage and V246-V250 migration pattern",
+      "People v39 and Platform v40 owner runtime registries plus their generated projection closures",
+      "PER V1-V3/V16/V17 migrations and compatibility tests",
+      "TIM V10 ledger/outbox migration and publisher ACL guard",
+      "current SYS/PER/TIM feature boundaries and legacy caller paths"
+    ],
+    "backendModified": false,
+    "worktreesCreated": false,
+    "commitsCreated": false,
+    "pushesPerformed": false
+  },
+  "validation": {
+    "jsonParsing": "PASS_THREE_FILES_JQ",
+    "crossArtifactInvariants": "PASS",
+    "invariants": [
+      "SYS routes=2, PER routes=4, TIM routes=5, and combined authorization delta routes=11",
+      "v42 global totals=255 capabilities/24 policies/17 expressions/69 predicates/1028 routes with PAGE/DATA/ACTION=132/308/588",
+      "People/Time/Platform v42 owner totals equal the sealed projection counts and Time capabilities=13",
+      "one shared v42 generator owner exists; no competing participant version is allowed",
+      "SYS NORMAL evaluation is deny-or-challenge only and ELEVATED is required before owner forwarding",
+      "TIM canonical state count=8",
+      "TIM event identity is TimecardDecisionRecorded.v1 and the unsuffixed alias is non-runtime",
+      "IAQ-022 is explicitly not assigned-review identity",
+      "central verdict is IMPLEMENTABLE",
+      "Start Tokens remain unissued"
+    ],
+    "broadSuitesRun": false,
+    "reasonBroadSuitesNotRun": "Preparation artifacts changed no runtime or build source. JSON parsing and cross-artifact invariants are the proportional checks."
+  },
+  "verdict": "IMPLEMENTABLE",
+  "nextState": "CENTRAL_BRIDGE_IMPLEMENTATION_REQUIRED_BEFORE_START_TOKENS"
+}
