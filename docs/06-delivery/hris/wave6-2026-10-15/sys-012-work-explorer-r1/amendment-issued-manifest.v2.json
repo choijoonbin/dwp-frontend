@@ -1,0 +1,48 @@
+{
+  "schema": "dwp.hris.module-start-authority-amendment-issued-manifest.v2",
+  "manifestId": "HRIS-WAVE6-SYS-012-R2-AMENDMENT-ISSUED-MANIFEST",
+  "issuedAt": "2026-10-15T05:55:53+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-SYS",
+  "sliceId": "BASE-TFR-SYS-012",
+  "state": "R2_CONTROL_AND_TOKEN_PINNED_FOR_MODULE_CONSUMPTION",
+  "artifacts": [
+    {
+      "path": "../sys-012-work-explorer-control-r1/runtime-authority-receipt-successor-amendment.v1.json",
+      "id": "HRIS-WAVE6-SYS-012-RUNTIME-AUTHORITY-RECEIPT-R2",
+      "sha256": "f7674934f4a75c6a02053987db031ec91aca9f6289de0fd9a75dcdd9d7d84cb0",
+      "bytes": 15199
+    },
+    {
+      "path": "start-token-amendment.v2.json",
+      "id": "HRIS-WAVE6-START-BASE-TFR-SYS-012-EXPLORER-R2",
+      "sha256": "443f8d4b9ce48b1cf137fe971ae01322d775c954e167417bd8093567d5e0cc75",
+      "bytes": 5167
+    }
+  ],
+  "issuancePreconditions": {
+    "frontendControlBranch": "dwp-dev",
+    "frontendControlBaseCommit": "36b4444c8c5a376a21f969ac1bbc255416eb06b7",
+    "backendModuleBranch": "codex/hris-wave6-sys-012-explorer-backend-20261015-r1",
+    "backendModuleBaseCommit": "3b2da20b592de5b5cff8f2483b83900f2dad054e",
+    "backendUpstreamAheadBehind": "0/0 before module edits",
+    "v327InBackendHead": false,
+    "v327InBackendUpstream": false,
+    "v327WorktreeStateAtAmendment": "UNTRACKED_UNCOMMITTED",
+    "secondMigrationAuthorized": false
+  },
+  "integrityRules": [
+    "Resolve both artifact paths relative to this manifest and verify raw bytes before consuming R2 authority.",
+    "The R1 packet remains immutable; only exact R2 supersession clauses replace R1 restrictions.",
+    "Any byte change to either R2 artifact invalidates this manifest.",
+    "The module must report baseline pins plus the authorized R2 delta rather than claiming protected-path zero for the expressly amended files.",
+    "M1 remains unused until all R2 static blockers close; aggregate M2 must not be rerun."
+  ],
+  "authority": {
+    "consumeR2Amendment": true,
+    "continueExistingWorktrees": true,
+    "commitAndPushModuleBranchesAfterTargetedVerification": true,
+    "mergeToDwpDev": false,
+    "activation": false
+  }
+}

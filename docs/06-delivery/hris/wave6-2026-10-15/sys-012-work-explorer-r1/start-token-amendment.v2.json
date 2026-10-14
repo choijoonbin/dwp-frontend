@@ -1,0 +1,76 @@
+{
+  "schema": "dwp.hris.module-start-token-amendment.v2",
+  "tokenAmendmentId": "HRIS-WAVE6-START-BASE-TFR-SYS-012-EXPLORER-R2",
+  "issuedAt": "2026-10-15T05:55:53+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-SYS",
+  "sliceId": "BASE-TFR-SYS-012",
+  "state": "ISSUED_BOUNDED_SUCCESSOR_IMPLEMENTATION_ONLY",
+  "amendsToken": "HRIS-WAVE6-START-BASE-TFR-SYS-012-EXPLORER-R1",
+  "reason": "Runtime boundary audit found concrete authority adapters absent, the preserved platform receipt producer disconnected, the receipt request purpose conflated with origin purpose, and recents aggregate concurrency incomplete.",
+  "controlAmendment": {
+    "path": "../sys-012-work-explorer-control-r1/runtime-authority-receipt-successor-amendment.v1.json",
+    "amendmentId": "HRIS-WAVE6-SYS-012-RUNTIME-AUTHORITY-RECEIPT-R2",
+    "sha256": "f7674934f4a75c6a02053987db031ec91aca9f6289de0fd9a75dcdd9d7d84cb0",
+    "bytes": 15199
+  },
+  "preservedEvidence": {
+    "workPacket": "work-packet.v1.json",
+    "resultContract": "module-result-contract.v1.json",
+    "originalToken": "start-token-issued.v1.json",
+    "migrationLeaseActivation": "migration-lease-activation.v1.json",
+    "rule": "All original evidence remains binding except the exact clauses superseded by the R2 control amendment."
+  },
+  "worktreeReuse": {
+    "backend": {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave6-20261015/sys-012-work-explorer-r1/backend",
+      "branch": "codex/hris-wave6-sys-012-explorer-backend-20261015-r1",
+      "baseCommit": "3b2da20b592de5b5cff8f2483b83900f2dad054e",
+      "rule": "Continue the current uncommitted implementation; do not create a replacement worktree or commit V327 before consuming this amendment."
+    },
+    "frontend": {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave6-20261015/sys-012-work-explorer-r1/frontend",
+      "branch": "codex/hris-wave6-sys-012-explorer-frontend-20261015-r1",
+      "baseCommit": "4f740a572afb8feeef3e31cb8ed258c0c8145cf2",
+      "rule": "Continue the current implementation and add only the generated SYS-API-038 purpose mirror authorized by the amendment."
+    }
+  },
+  "authorizedSuccessorWork": [
+    "Bind a concrete server-side Explorer authority adapter with tenant, actor and subject identity and exact deployed PAGE route reauthorization.",
+    "Amend uncommitted V327 with immutable origin route, context, scope and decision seals; no V328 is authorized.",
+    "Atomically dual-write new successful reference-configuration and navigation-policy receipts to the canonical shared store while preserving V325/V326 behavior and replay.",
+    "Bind a concrete current-authority adapter for the platform-origin SYS-API-038 profile and return opaque 404 for absent, historical-only, changed or unprovable authority.",
+    "Correct the SYS-API-038 request purpose to COMMAND_STATUS without changing the immutable origin purpose stored in each receipt.",
+    "Serialize recents on one tenant-principal aggregate and prove the 20-row bound under different idempotency keys.",
+    "Keep missing XCON-012 through XCON-015 owners as explicit PARTIAL and do not modify owner services.",
+    "Prove the stale client presentation without admitting stale server authority."
+  ],
+  "verificationPolicy": {
+    "backendM1StateAtIssue": "NOT_RUN",
+    "backendRule": "Run the amended M1 once only after all R2 static blockers are closed.",
+    "frontendM2StateAtIssue": "OBSERVED_BY_MODULE_SESSION_WITH_LOCAL_FAILURES_NOT_YET_PINNED_IN_RESULT_EVIDENCE",
+    "frontendRule": "Do not rerun the entire M2 aggregate. Pin the exact first command, output and exit result in final module evidence, rerun only the smallest failed Vitest, ESLint or Playwright owner scope, and report both the initial and final local results.",
+    "forbidden": "No repository-wide suite and no repeated successful stage."
+  },
+  "completionGate": [
+    "No zero-implementation ObjectProvider authority port remains for an enabled runtime path.",
+    "No synthetic legacy receipt, inferred historical backfill or direct V325/V326 UNION is used.",
+    "New reference and navigation commands produce exactly one canonical sealed receipt in the same transaction.",
+    "SYS-API-038 source design-time JSON, backend Platform/Gateway JSON and frontend Gateway OpenAPI JSON carry request purpose COMMAND_STATUS; the TypeScript mirror remains byte-identical because it does not emit the vendor extension.",
+    "Explorer, platform receipt and recents concurrency successor tests pass.",
+    "Both module branches are committed, pushed, clean and upstream exact.",
+    "Runtime and authorization remain default OFF and DRAFT."
+  ],
+  "authority": {
+    "moduleImplementationAuthorized": true,
+    "expandedPlatformOwnedProducerScopeAuthorized": true,
+    "generatedSysApi038PurposeCorrectionAuthorized": true,
+    "amendedV327AuthoringAuthorized": true,
+    "secondMigrationAuthorized": false,
+    "ownerServiceSourceEditAuthorized": false,
+    "moduleBranchCommitAuthorized": true,
+    "moduleBranchPushAuthorized": true,
+    "mergeToDwpDevAuthorized": false,
+    "runtimeActivationAuthorized": false
+  }
+}

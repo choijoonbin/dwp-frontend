@@ -1,0 +1,173 @@
+{
+  "schema": "dwp.hris.sys012.runtime-authority-receipt-successor-amendment.v1",
+  "amendmentId": "HRIS-WAVE6-SYS-012-RUNTIME-AUTHORITY-RECEIPT-R2",
+  "issuedAt": "2026-10-15T05:55:53+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "sliceId": "BASE-TFR-SYS-012",
+  "state": "ISSUED_BOUNDED_SUCCESSOR",
+  "reason": "Independent runtime review proved that the issued packet could pass synthetic tests while every enabled Explorer request returned 503 and the preserved platform-origin receipt profile returned opaque 404. Existing V325/V326 receipts also do not contain the sealed context required for a safe read-side union.",
+  "supersedesOnly": [
+    "work-explorer-semantics-seal.v1.json#/centralAuthorization/receiptQuery purpose interpretation",
+    "work-packet.v1.json#/touchManifest backend restriction for the exact producer and generated transport files listed here",
+    "work-packet.v1.json#/touchManifest/controlOnly for the exact exporter and OpenAPI files listed here",
+    "work-packet.v1.json#/invalidationConditions items 1, 4 and 5 only for the exact R2 delta listed here",
+    "start-token-issued.v1.json#/centralControl/moduleRule for the exact SYS-API-038 purpose correction listed here",
+    "start-token-issued.v1.json#/touchBoundary/forbidden central OpenAPI/generated prohibition only for the exact SYS-API-038 mirrors listed here",
+    "start-token-issued.v1.json#/touchBoundary/forbidden owner-service-source rule only for the two Platform-owned legacy producer packages listed here",
+    "start-token-issued.v1.json#/authority/centralContractEditAuthorized and authorizationOrOpenApiEditAuthorized only for the exact SYS-API-038 purpose delta listed here",
+    "start-token-issued.v1.json#/authority/ownerServiceSourceEditAuthorized only for the two Platform-owned producer packages listed here",
+    "start-token-issued.v1.json#/invalidationConditions items 2, 4 and 5 only for the exact R2 delta listed here",
+    "module-result-contract.v1.json#/changedContentEvidence/protectedPathAssertions authorization/OpenAPI/generated assertion only for the exact SYS-API-038 purpose mirrors listed here",
+    "module-result-contract.v1.json#/changedContentEvidence/protectedPathAssertions owner-service assertion only for the two Platform-owned producer packages listed here",
+    "module-result-contract.v1.json original OpenAPI pin assertions only to permit baseline-pin plus authorized-delta successor evidence"
+  ],
+  "findings": [
+    {
+      "id": "SYS012-RUNTIME-001",
+      "severity": "BLOCKING",
+      "finding": "No runtime HrisExplorerAuthorityEvidenceQuery implementation exists, so the enabled Explorer surface fails closed with 503 for every request."
+    },
+    {
+      "id": "SYS012-RUNTIME-002",
+      "severity": "BLOCKING",
+      "finding": "No runtime HrisPlatformReceiptAuthoritySource implementation exists, so the preserved platform-origin SYS-API-038 profile is never readable."
+    },
+    {
+      "id": "SYS012-RUNTIME-003",
+      "severity": "BLOCKING",
+      "finding": "Reference configuration and navigation policy commands still write only their V325/V326 legacy receipt tables; a safe UNION is impossible because those rows do not seal all current route, subject, population, field, purpose and authorization context."
+    },
+    {
+      "id": "SYS012-RUNTIME-004",
+      "severity": "BLOCKING",
+      "finding": "SYS-API-038 transport purpose was incorrectly fixed to HRIS_APP_DISCOVERY even though COMMAND_STATUS is the read purpose and the sealed originating command purpose varies by producer."
+    },
+    {
+      "id": "SYS012-RUNTIME-005",
+      "severity": "BLOCKING",
+      "finding": "Recent-item writes with different idempotency keys were not serialized on one tenant-principal aggregate and could exceed the maximum of 20 rows."
+    }
+  ],
+  "correctedSemantics": {
+    "transportPurpose": {
+      "contractId": "SYS-API-038",
+      "requestPurposeCode": "COMMAND_STATUS",
+      "rule": "The receipt read request purpose is COMMAND_STATUS. It is not copied into the immutable receipt origin purpose."
+    },
+    "originPurpose": {
+      "explorer": "HRIS_APP_DISCOVERY",
+      "referenceConfiguration": "HRIS_SYSTEM_ADMIN",
+      "navigationPolicy": "HRIS_SYSTEM_ADMIN",
+      "integration": "Preserve the profile but return opaque 404 until a real integration producer writes a canonical sealed receipt; synthetic rows and inferred backfill are forbidden."
+    },
+    "canonicalReceiptSeal": {
+      "requiredAdditionalInternalFields": [
+        "originRouteContractKey",
+        "originContextKey",
+        "originContextScopeKey",
+        "originDecisionRevision"
+      ],
+      "publicSchemaRule": "The fields are internal authorization evidence and do not expand HrisCommandReceiptV1 or HrisExplorerReceiptV1.",
+      "immutabilityRule": "All original and successor seal fields are immutable after insert.",
+      "backfillRule": "Do not synthesize or infer missing origin context for V325/V326 historical rows. Historical rows remain available only through their existing owner-local behavior and are not exposed through SYS-API-038."
+    },
+    "producerRule": {
+      "referenceConfiguration": "Within the existing successful command transaction, preserve the V325 receipt and atomically insert one canonical sealed receipt with the same public receipt ID and result semantics.",
+      "navigationPolicy": "Within the existing successful command transaction, preserve the V326 receipt and atomically insert one canonical sealed receipt with the same public receipt ID and result semantics.",
+      "replayRule": "An exact legacy idempotent replay returns the existing response and must not attempt a second canonical insert; digest mismatch remains side-effect free.",
+      "rollbackRule": "If either legacy or canonical insert fails, the command transaction rolls back."
+    },
+    "currentAuthorityRule": {
+      "explorer": "Use a concrete server-side Explorer authority adapter. It must bind tenant, actor and subject, call trusted current product authorization for exact deployed PAGE routes, validate current context/scope/field/purpose/revisions and expiry, and never accept browser role or route lists as authority.",
+      "platformReceipt": "Use a concrete server-side current-authority adapter. It must re-evaluate the exact SYS-API-038 route and verify the sealed subject, origin route, context, scope, population digest, field revision, origin purpose and authorization revision. A changed context that cannot be proven equal or more restrictive fails closed with opaque 404.",
+      "actorRule": "Both authority ports include the authenticated actor ID; subject public ID alone is insufficient for Auth evaluation.",
+      "headerRule": "Gateway/service headers are inputs only after constant-time service identity verification and exact single-value validation; the adapters still perform server-side current-authority resolution."
+    },
+    "stalePresentationRule": {
+      "serverAuthority": "Expired or stale route, scope, field or owner evidence is never admitted, including ALLOW_STALE.",
+      "providerFailure": "Missing, stale, mismatched, timed-out or unavailable owner provider evidence is omitted and produces PARTIAL.",
+      "uiState": "The required stale UI state means a previously successful response is visibly retained while a refresh/revalidation failed or expired; it does not authorize stale server data and need not make ProjectionState.STALE reachable from expired authority."
+    },
+    "recentsConcurrencyRule": "All recent-item mutations for one tenant-principal are serialized on one aggregate lock before upsert and trim, independent of Idempotency-Key."
+  },
+  "migrationLeaseSuccessor": {
+    "stream": "PLATFORM",
+    "version": "V327",
+    "path": "dwp-platform-server/src/main/resources/db/migration/V327__create_hris_work_explorer.sql",
+    "state": "ACTIVE_AUTHORING_ONLY_AMENDED",
+    "secondMigrationAuthorized": false,
+    "reason": "V327 is still uncommitted and unapplied; amend it in place before the first module result commit. If V327 is committed or applied before this amendment is consumed, stop and request a V328 lease."
+  },
+  "expandedTouchBoundary": {
+    "backend": [
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/**",
+      "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/**",
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/ReferenceConfigurationController.java (sealed origin route/context/scope forwarding only; routes, headers, responses and authorization behavior otherwise unchanged)",
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/ReferenceConfigurationService.java (canonical dual-write orchestration inside the existing successful transaction only; legacy replay and unrelated commands unchanged)",
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/ReferenceConfigurationRepository.java (canonical receipt port addition only)",
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/JdbcReferenceConfigurationRepository.java (one canonical insert paired with the existing legacy receipt only; legacy persistence and queries unchanged)",
+      "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/** (canonical dual-write assertions only)",
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/navigationpolicy/NavigationPolicyController.java (sealed origin route/context/scope/owner revision forwarding only; routes, headers, responses and authorization behavior otherwise unchanged)",
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/navigationpolicy/NavigationPolicyService.java (canonical dual-write orchestration inside the existing successful transaction only; legacy replay and unrelated commands unchanged)",
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/navigationpolicy/NavigationPolicyRepository.java (canonical receipt port addition only)",
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/navigationpolicy/JdbcNavigationPolicyRepository.java (one canonical insert paired with the existing legacy receipt only; legacy persistence and queries unchanged)",
+      "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/navigationpolicy/** (canonical dual-write assertions only)",
+      "dwp-platform-server/src/main/resources/db/migration/V327__create_hris_work_explorer.sql",
+      "dwp-platform-server/src/main/resources/application.yml (Explorer Auth/provider settings only)",
+      "contracts/openapi/hris-wave1-design-time.json (SYS-API-038 request purpose only)",
+      "scripts/export-openapi-contracts.py (SYS-012 per-route purpose validation only)",
+      "contracts/openapi/platform.json and contracts/openapi/gateway-public.json (generated SYS-API-038 mirrors only)"
+    ],
+    "frontend": [
+      "libs/api-contracts/openapi/gateway-public.json (generated SYS-API-038 mirror only)",
+      "existing issued Work Explorer frontend paths"
+    ],
+    "stillForbidden": [
+      "Auth server source changes",
+      "People, Time, Payroll, Approval or integration owner-service source changes",
+      "a second migration",
+      "historical V325/V326 row backfill or inferred authority",
+      "cross-service database access",
+      "runtime activation, bundle activation or default-ON changes",
+      "unrelated generated contract churn",
+      "manual or semantic changes to libs/api-contracts/src/gateway-public.ts; normal regeneration must remain byte-identical because vendor extensions are not emitted into the TypeScript mirror"
+    ]
+  },
+  "targetedVerificationSuccessor": {
+    "policy": "Do not rerun a successful broad stage. Add the successor assertions to M1; after a failure rerun only the smallest owning test or command.",
+    "required": [
+      "enabled Explorer happy path with a concrete authority adapter plus missing/stale/mismatched negative paths",
+      "platform-origin SYS-API-038 happy path for a newly dual-written reference receipt and navigation receipt plus opaque subject/scope/purpose denial",
+      "legacy replay produces exactly one canonical receipt and digest mismatch produces no write",
+      "different-idempotency-key concurrent recents remain at 20 rows",
+      "V327 clean install and V326-to-amended-V327 upgrade with all four tables forced RLS and seal trigger coverage",
+      "SYS-API-038 COMMAND_STATUS source/Platform/Gateway/frontend generated parity",
+      "changed-path audit proving this successor allowlist and default-OFF/DRAFT preservation"
+    ],
+    "backendM1": "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.hrisconfiguration.explorer.*' --tests '*HcmPlatformPepSecurityContractTest' --tests '*ReferenceConfigurationCanonicalReceiptBridgeTest' --tests '*NavigationPolicyCanonicalReceiptBridgeTest' --no-daemon --max-workers=1",
+    "openApiSnapshotCheck": "python3 scripts/export-openapi-contracts.py --check --approved-snapshots",
+    "openApiUnitTest": "python3 -m unittest scripts.tests.test_export_openapi_contracts.ExportOpenApiContractsTest.test_sys012_v43_exports_exact_work_explorer_carrier",
+    "excludedBroadStages": [
+      "repository-wide Gradle test",
+      "C1 or C3 full regeneration gate",
+      "a second aggregate M2 execution"
+    ]
+  },
+  "resultEvidenceSuccessor": {
+    "openApi": "Report original R1 source/Platform/Gateway/frontend hashes as baseline, the exact authorized SYS-API-038 purpose-only delta, and the four R2 result hashes. Unrelated OpenAPI change count must remain zero.",
+    "generated": "Generated PEP, generated route registry and generated TypeScript change count remains zero. Only the authorized source design-time, backend Platform/Gateway OpenAPI and frontend Gateway OpenAPI JSON mirrors may change; normal TypeScript regeneration must be byte-identical.",
+    "producerSources": "Report the exact eight authorized Platform-owned reference/navigation production paths and their content-restriction compliance. People, Time, Payroll, Approval, Auth, Gateway and integration source change count remains zero.",
+    "migrations": "Existing committed migration modification count remains zero. The only authored migration is still the first uncommitted V327 lease; V328 count remains zero.",
+    "control": "Central R2 artifacts are committed on frontend dwp-dev by control before module result commits and are not module-branch implementation changes."
+  },
+  "authority": {
+    "amendV327BeforeFirstCommit": true,
+    "implementConcreteExplorerAuthorityAdapter": true,
+    "implementConcretePlatformReceiptAuthorityAdapter": true,
+    "addPlatformOwnedReferenceAndNavigationDualWrite": true,
+    "correctSysApi038RequestPurpose": true,
+    "commitAndPushModuleBranches": true,
+    "mergeToDwpDev": false,
+    "activateRuntimeOrBundle": false
+  }
+}
