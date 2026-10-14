@@ -1,0 +1,106 @@
+{
+  "schema": "dwp.hris.wave4-central-allocation-start-token-worktree-manifest.v1",
+  "manifestId": "HRIS-WAVE4-CENTRAL-ALLOCATION-START-TOKEN-WORKTREE-20261014-R1",
+  "issuedAt": "2026-10-14T13:38:31+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "ISSUED_IMPLEMENTATION_ONLY",
+  "supersedesPreparationState": "PACKET_PREPARED_START_WITHHELD",
+  "roadmapRef": "docs/06-delivery/hris/2026-10-14-hris-roadmap-successor.v1.json",
+  "preparationRef": "docs/06-delivery/hris/wave4-2026-10-14/mod-sys-hris-nav-policy-r1/packet-preparation.v1.json",
+  "basePins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "ac89415028e3cf91a93345af0f1ecc2bd1e0322e",
+      "upstream": "origin/dwp-dev",
+      "upstreamMatchedAtAllocation": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "34edacaf5ddaf0a57c16821c3cef086b690c380b",
+      "upstream": "origin/dwp-dev",
+      "upstreamMatchedAtAllocation": true
+    }
+  },
+  "closedPreStartGates": [
+    "EXACT_NAV_ADMIN_AND_RUNTIME_OPERATION_PEP_ALLOCATED",
+    "LEGAL_ENTITY_CONTEXT_BOUND_TO_PEOPLE_OWNER_VERIFICATION",
+    "AUTHORIZATION_OPENAPI_GATEWAY_AND_SHELL_COMMON_BRIDGE_ALLOCATED",
+    "PLATFORM_V326_AND_PAYROLL_V49_EXACT_MIGRATION_PATHS_ADMITTED",
+    "DEDICATED_DWP_DEV_BASED_WORKTREES_BOUND_TO_TOKENS"
+  ],
+  "allocations": [
+    {
+      "tokenId": "HRIS-WAVE4-START-MOD-SYS-HRIS-NAV-POLICY-R1",
+      "moduleSession": "HRIS-SYS",
+      "sliceId": "BASE-TFR-SYS-012",
+      "capabilityId": "MOD-SYS-HRIS-NAV-POLICY-R1",
+      "state": "ISSUED",
+      "permittedAction": "IMPLEMENT_BOUNDED_NAVIGATION_POLICY_INCREMENT",
+      "migrationLease": {
+        "stream": "PLATFORM_MAIN",
+        "version": "V326",
+        "path": "dwp-platform-server/src/main/resources/db/migration/V326__create_hris_navigation_policy_lifecycle.sql"
+      },
+      "worktrees": [
+        {
+          "repository": "dwp-backend",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave4-20261014/sys-nav-policy/backend",
+          "branch": "codex/hris-wave4-sys-nav-policy-backend-20261014",
+          "materializedHead": "ac89415028e3cf91a93345af0f1ecc2bd1e0322e",
+          "integrationTarget": "dwp-dev@c857fe8fdc3234f2e9c4b017bdecf71bb3ea2aa7"
+        },
+        {
+          "repository": "dwp-frontend",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave4-20261014/sys-nav-policy/frontend",
+          "branch": "codex/hris-wave4-sys-nav-policy-frontend-20261014",
+          "materializedHead": "34edacaf5ddaf0a57c16821c3cef086b690c380b",
+          "integrationTarget": "dwp-dev@2eadf94edbece0c46373820b581f6bb063426bc5"
+        }
+      ]
+    },
+    {
+      "tokenId": "HRIS-WAVE4-START-BASE-TFR-PAY-016-R1",
+      "moduleSession": "HRIS-PAY",
+      "sliceId": "BASE-TFR-PAY-016",
+      "capabilityId": "COMPPLAN_TYPED_INPUT_CONSUMER",
+      "state": "ISSUED",
+      "permittedAction": "IMPLEMENT_PAY_COMPENSATION_PLAN_INPUT_CONSUMER_AND_BROKER_RELIABILITY",
+      "producerPin": "dwp-backend@ac89415028e3cf91a93345af0f1ecc2bd1e0322e",
+      "migrationLease": {
+        "stream": "PAYROLL_MAIN",
+        "version": "V49",
+        "path": "dwp-payroll-server/src/main/resources/db/migration/V49__pay_modern_compensation_plan_input.sql"
+      },
+      "worktrees": [
+        {
+          "repository": "dwp-backend",
+          "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave4-20261014/pay-016/backend",
+          "branch": "codex/hris-wave4-pay-016-backend-20261014",
+          "materializedHead": "ac89415028e3cf91a93345af0f1ecc2bd1e0322e",
+          "integrationTarget": "dwp-dev@c857fe8fdc3234f2e9c4b017bdecf71bb3ea2aa7"
+        }
+      ],
+      "frontendWorktree": "NOT_REQUIRED_BACKEND_CONSUMER_SLICE"
+    }
+  ],
+  "integrationPins": {
+    "backend": "c857fe8fdc3234f2e9c4b017bdecf71bb3ea2aa7",
+    "frontend": "2eadf94edbece0c46373820b581f6bb063426bc5"
+  },
+  "authority": {
+    "moduleImplementationAuthorized": true,
+    "integrationToDwpDevAuthorized": true,
+    "featureEnablementAuthorized": false,
+    "customerDataAuthorized": false,
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "invalidationConditions": [
+    "BASE_PIN_OR_TOUCH_BOUNDARY_CHANGES_WITHOUT_CONTROL_REVIEW",
+    "MIGRATION_VERSION_OR_PATH_CHANGES",
+    "SERVER_VERIFIED_SCOPE_OR_EXACT_OPERATION_PEP_IS_BYPASSED",
+    "ROLLOUT_DEFAULT_IS_CHANGED_FROM_OFF_WITHOUT_SEPARATE_ACCEPTANCE"
+  ]
+}

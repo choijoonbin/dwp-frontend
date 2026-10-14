@@ -1,0 +1,52 @@
+{
+  "schema": "dwp.hris.wave4-module-release-packet.v1",
+  "packetId": "HRIS-WAVE4-RELEASE-BASE-TFR-PAY-011-R1",
+  "issuedAt": "2026-10-14T13:38:31+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-PAY",
+  "sliceId": "BASE-TFR-PAY-011",
+  "sourceRef": "TFR-PAY-011",
+  "capability": "PAY_CALCULATION",
+  "releaseState": "START_READY",
+  "implementationState": "NOT_IMPLEMENTED",
+  "activationState": "NOT_ACTIVATED",
+  "startReadyMeaning": "THE_PAY_016_DEPENDENCY_HOLD_IS_REMOVED; A DEDICATED_WORK_PACKET_MIGRATION_LEASE_WORKTREE_AND_START_TOKEN_REMAIN_MANDATORY_BEFORE_AUTHORING",
+  "dependencyGate": {
+    "rule": "PRODUCER_AND_TYPED_CONSUMER_RESULT_COMMITS_PINNED_BEFORE_CALCULATION",
+    "producerSlice": "MOD-PER-COMPPLAN",
+    "typedConsumerSlice": "BASE-TFR-PAY-016",
+    "producerResult": "dwp-backend@ac89415028e3cf91a93345af0f1ecc2bd1e0322e",
+    "consumerResult": "dwp-backend@c857fe8fdc3234f2e9c4b017bdecf71bb3ea2aa7",
+    "state": "SATISFIED"
+  },
+  "integrationPins": {
+    "backend": "c857fe8fdc3234f2e9c4b017bdecf71bb3ea2aa7",
+    "frontend": "2eadf94edbece0c46373820b581f6bb063426bc5"
+  },
+  "boundedOutcome": "CONSOLIDATE_CALCULATION_VARIANTS_INTO_VERSIONED_RUN_ATTEMPTS_WITH_DETERMINISTIC_INPUTS_AND_A_MINIMIZED_CALCULATED_EVENT",
+  "preAuthoringRequirements": [
+    "ISSUE_AN_EXACT_PAYROLL_MIGRATION_LEASE_AT_THE_CURRENT_HIGH_WATER; DO_NOT_REUSE_THE_HISTORICAL_TENTATIVE_V11_FILENAME",
+    "SEAL_ALLOWED_PATHS_AND_COMMON_CONTROL_BOUNDARIES",
+    "BIND_A_CLEAN_DWP_DEV_BASED_HRIS_PAY_WORKTREE",
+    "PIN_THE_FINAL_PAY_016_INPUT_SCHEMA_REVISION_DIGEST_AND_OWNER_REFETCH_CONTRACT",
+    "DEFINE_AUTHORIZATION_NEGATIVE_TENANT_ISOLATION_IDEMPOTENCY_CAS_FORWARD_CORRECTION_TELEMETRY_AND_WORKER_RECOVERY_ACCEPTANCE",
+    "ISSUE_A_SEPARATE_IMPLEMENTATION_START_TOKEN"
+  ],
+  "targetedVerificationRequired": [
+    "PAYROLL_G3_SLICE_CONTRACT_FOR_BASE_TFR_PAY_011",
+    "PAYROLL_MIGRATION_CLEAN_AND_UPGRADE_PATH",
+    "PAYROLL_WORKER_CRASH_AND_RECOVERY",
+    "DETERMINISTIC_REPLAY_AGAINST_PINNED_PAY_016_INPUT"
+  ],
+  "authority": {
+    "dependencyHoldReleased": true,
+    "packetPreparationAuthorized": true,
+    "implementationStartAuthorized": false,
+    "schemaChangeAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "customerDataAuthorized": false,
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "SYS_COMMON_INTEGRATION_CONTROL_ISSUES_THE_DEDICATED_PAY_011_WORK_PACKET_LEASE_WORKTREE_AND_START_TOKEN_TO_HRIS_PAY"
+}

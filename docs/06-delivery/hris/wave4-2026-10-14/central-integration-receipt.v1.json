@@ -1,0 +1,176 @@
+{
+  "schema": "dwp.hris.wave4-central-integration-receipt.v1",
+  "receiptId": "HRIS-WAVE4-CENTRAL-INTEGRATION-20261014-R1",
+  "issuedAt": "2026-10-14T13:38:31+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "status": "PASS_CODE_AND_TARGETED_ACCEPTANCE_WITH_POSTGRES_RUNTIME_LIMITATIONS_DEFAULT_OFF",
+  "decision": "INTEGRATE_NAV_POLICY_PAY_016_AND_COMPPLAN_TRANSPORT_HARDENING_THEN_RELEASE_PAY_011_START_ELIGIBILITY",
+  "sourcePins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "c857fe8fdc3234f2e9c4b017bdecf71bb3ea2aa7",
+      "upstream": "origin/dwp-dev"
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "2eadf94edbece0c46373820b581f6bb063426bc5",
+      "upstream": "origin/dwp-dev"
+    }
+  },
+  "requestedSequence": [
+    {
+      "order": 1,
+      "work": "CONFIRM_NAV_OPERATION_PEP_LEGAL_ENTITY_SCOPE_AND_PLATFORM_V326",
+      "disposition": "PASS_CODE_CONTRACT_DB_RUNTIME_BLOCKED"
+    },
+    {
+      "order": 2,
+      "work": "INTEGRATE_AUTHORIZATION_OPENAPI_GATEWAY_AND_SHELL_COMMON_BRIDGE",
+      "disposition": "PASS_CODE_AND_TARGETED_ACCEPTANCE"
+    },
+    {
+      "order": 3,
+      "work": "ISSUE_START_TOKENS_AND_BIND_DEDICATED_WORKTREES",
+      "disposition": "PASS",
+      "evidence": "central-allocation-start-token-worktree-manifest.v1.json"
+    },
+    {
+      "order": 4,
+      "work": "IMPLEMENT_HRIS_SYS_NAV_POLICY_AND_HRIS_PAY_BASE_TFR_PAY_016_IN_PARALLEL",
+      "disposition": "PASS"
+    },
+    {
+      "order": 5,
+      "work": "COMPLETE_PAY_CONSUMER_BROKER_ACCEPTANCE_AND_CLOSE_COMPPLAN_AC_03",
+      "disposition": "PASS_CODE_AND_TARGETED_BROKER_CONTRACT"
+    },
+    {
+      "order": 6,
+      "work": "ADD_OWNER_REFETCH_ADMISSION_AND_FULL_RESPONSE_BOUNDED_ATOMIC_SPOOL_THEN_RELEASE_PAY_011",
+      "disposition": "PASS_RELEASE_PACKET_ISSUED",
+      "evidence": "base-tfr-pay-011-release-packet.v1.json"
+    }
+  ],
+  "integrationResults": {
+    "navigationPolicy": {
+      "sliceId": "BASE-TFR-SYS-012",
+      "capabilityId": "MOD-SYS-HRIS-NAV-POLICY-R1",
+      "state": "IMPLEMENTED_AND_INTEGRATED_DEFAULT_OFF_DB_RUNTIME_UNVERIFIED",
+      "firstWorkbench": "HRIS-WB-HR-OPERATIONS",
+      "canonicalGroups": 7,
+      "canonicalMemberNodes": 17,
+      "lifecycle": [
+        "DRAFT",
+        "VALIDATE",
+        "SUBMIT",
+        "APPROVE",
+        "PUBLISH",
+        "RESTORE_AS_NEW_REVISION"
+      ],
+      "controls": [
+        "EXACT_OPERATION_PEP",
+        "SERVER_VERIFIED_LEGAL_ENTITY_OWNER_CONTEXT",
+        "CRYPTOGRAPHIC_STEP_UP_AND_REPLAY_FENCE",
+        "MAKER_CHECKER",
+        "CAS_AND_IDEMPOTENCY",
+        "IMMUTABLE_REVISION_RECEIPT_AUDIT_AND_OUTBOX",
+        "SIDEBAR_LANDING_AND_DEEP_LINK_SHARE_ONE_EFFECTIVE_REVISION"
+      ],
+      "rollout": "OFF_BY_DEFAULT",
+      "databaseRuntimeVerification": "NOT_EXECUTED_DOCKER_RUNTIME_UNAVAILABLE"
+    },
+    "pay016": {
+      "sliceId": "BASE-TFR-PAY-016",
+      "state": "IMPLEMENTED_AND_INTEGRATED_DEFAULT_OFF_DB_RUNTIME_UNVERIFIED",
+      "eventContract": "XCON-021_V2_ONLY",
+      "ownerPort": "XCON-020_EXACT_IMMUTABLE_SNAPSHOT_REFETCH",
+      "controls": [
+        "CANONICAL_DIGEST_AND_REVISION_VERIFICATION",
+        "TENANT_RLS",
+        "IMMUTABLE_INBOX_INPUT_RECEIPT_AND_OUTBOX",
+        "EVENT_ID_REUSE_AND_PREDECESSOR_FENCING",
+        "EXACTLY_ONCE_ACCEPTANCE",
+        "BOUNDED_RETRY_AND_DLT",
+        "QUARANTINE_AND_AUDITED_REPLAY",
+        "TLS_1_3_MTLS_AND_30_SECOND_RS256_WORKLOAD_JWT"
+      ],
+      "consumerRollout": "OFF_BY_DEFAULT",
+      "databaseRuntimeVerification": "NOT_EXECUTED_DOCKER_RUNTIME_UNAVAILABLE"
+    },
+    "compplanAcceptance": {
+      "acceptanceCriterion": "MOD-PER-COMPPLAN_AC_03",
+      "previous": "PRODUCER_HANDOFF_PASS_PAY_CONSUMER_AND_BROKER_E2E_WITHHELD",
+      "current": "CLOSED_CODE_AND_TARGETED_BROKER_CONTRACT",
+      "basis": "PAY_CONSUMER_ACCEPTS_ONLY_THE_EXACT_IMMUTABLE_APPROVED_REVISION_AND_DIGEST_WITH_DURABLE_DEDUPLICATION_RETRY_DLT_AND_AUDITED_REPLAY",
+      "externalManagedBrokerConnectivity": "NOT_EXECUTED_AND_NOT_CLAIMED",
+      "externalKafkaAclProvisioning": "NOT_PERFORMED_AND_NOT_CLAIMED"
+    },
+    "svcPerOwnerRefetch": {
+      "state": "ENGINEERING_HARDENING_COMPLETE_DEFAULT_OFF",
+      "admission": "TENANT_FIXED_WINDOW_RATE_LIMIT_AND_FAIR_CONCURRENCY_LEASE",
+      "responsePreparation": "FULL_RESPONSE_SERIALIZED_TO_A_BOUNDED_TEMPORARY_SPOOL_BEFORE_HTTP_RESPONSE_COMMIT",
+      "bound": "CONFIGURABLE_DEFAULT_64_MIB",
+      "cleanup": "SPOOL_REMOVED_AFTER_STREAM_COMPLETION_OR_FAILURE",
+      "implementationNonClaim": "NOT_JDBC_CURSOR_STREAMING_AND_NOT_CLAIMED_AS_SUCH",
+      "rollout": "OFF_BY_DEFAULT"
+    }
+  },
+  "targetedVerification": {
+    "policy": "CHANGED_CLUSTER_FIRST_NO_REPEATED_FULL_SUITE",
+    "passed": [
+      "PAY_016_CONSUMER_COMPILE_AND_TARGETED_DOMAIN_TESTS",
+      "PAY_OWNER_REFETCH_SIGNATURE_EXACT_CLAIMS_STATUS_MAPPING_AND_NO_GRANT_TESTS",
+      "PAY_BROKER_CONSUMER_RETRY_DLT_AND_FEATURE_DEFAULT_TESTS",
+      "SVC_PER_INGRESS_ADMISSION_AND_RESPONSE_SPOOL_TESTS",
+      "NAV_POLICY_BACKEND_DOMAIN_AND_CONTROL_BRIDGE_TARGETED_TESTS",
+      "NAV_POLICY_FRONTEND_STUDIO_SHELL_AND_ROUTE_TARGETED_TESTS",
+      "TARGETED_LINT_CONTRACT_AND_DIFF_CHECKS"
+    ],
+    "executedTargetedCommands": [
+      {
+        "command": "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.hrisconfiguration.navigationpolicy.NavigationPolicyStepUpEvidenceVerifierTest' --no-daemon",
+        "result": "PASS"
+      },
+      {
+        "command": "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.hrisconfiguration.navigationpolicy.NavigationPolicyServiceTest' --tests 'com.dwp.services.platform.hrisconfiguration.navigationpolicy.NavigationPolicyMigrationContractTest' --no-daemon",
+        "result": "PASS"
+      },
+      {
+        "command": "./gradlew :dwp-payroll-server:test --tests 'com.dwp.services.payroll.input.compensationplan.CompensationPlanInputCanonicalizerTest' --no-daemon",
+        "result": "PASS"
+      },
+      {
+        "command": "./gradlew :dwp-payroll-server:test --tests 'com.dwp.services.payroll.input.compensationplan.CompensationPlanInputMigrationContractTest' --no-daemon",
+        "result": "PASS"
+      }
+    ],
+    "environmentBlocked": [
+      {
+        "surface": "NAVIGATION_POLICY_V326_POSTGRESQL_RUNTIME_CASES",
+        "reason": "DOCKER_RUNTIME_UNAVAILABLE",
+        "disposition": "BLOCKED_ENVIRONMENT_NOT_A_CODE_FAILURE",
+        "retryPolicy": "NOT_RERUN_TO_AVOID_REDUNDANT_ENVIRONMENT_FAILURE",
+        "availableEvidence": "SOURCE_CONTRACT_REVIEW_MOCK_DOMAIN_AND_TEST_COMPILATION_PASS"
+      },
+      {
+        "surface": "PAYROLL_V49_POSTGRESQL_RUNTIME_MIGRATION_CASES",
+        "reason": "DOCKER_RUNTIME_UNAVAILABLE",
+        "disposition": "BLOCKED_ENVIRONMENT_NOT_A_CODE_FAILURE",
+        "retryPolicy": "NOT_RERUN_TO_AVOID_REDUNDANT_ENVIRONMENT_FAILURE",
+        "availableEvidence": "SOURCE_CONTRACT_REVIEW_AND_TEST_COMPILATION_PASS"
+      }
+    ],
+    "fullSuite": "NOT_RUN_NOT_REQUIRED_FOR_CHANGED_CLUSTER_ACCEPTANCE"
+  },
+  "releaseBoundaries": {
+    "productionFeaturesEnabled": false,
+    "customerDataAuthorized": false,
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "externalKafkaAclProvisioned": false,
+    "externalManagedBrokerAcceptanceClaimed": false
+  },
+  "nextState": "BASE_TFR_PAY_011_START_READY_NOT_IMPLEMENTED_NOT_ACTIVATED"
+}
