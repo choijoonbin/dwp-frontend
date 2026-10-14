@@ -1,0 +1,175 @@
+{
+  "schema": "dwp.hris.wave5-module-result-evidence.v1",
+  "evidenceId": "HRIS-WAVE5-BASE-TFR-SYS-001-NAV-ADAPTER-MODULE-RESULT-R1",
+  "sliceId": "BASE-TFR-SYS-001",
+  "moduleSession": "HRIS-SYS",
+  "scope": "NAVIGATION_ADAPTER_CODE_ONLY",
+  "status": "ADAPTER_CODE_COMPLETE_WORK_EXPLORER_MOUNT_PENDING_CONTROL_INTEGRATION_PENDING",
+  "issuedAt": "2026-10-15T03:30:12+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "predecessorAuthority": {
+    "startToken": {
+      "path": "docs/06-delivery/hris/wave5-2026-10-14/sys-001-nav-adapter-r1/start-token-issued.v1.json",
+      "tokenId": "HRIS-WAVE5-START-BASE-TFR-SYS-001-NAV-ADAPTER-R1",
+      "sha256": "48af629c639073acf8f968f577daccab7117c0c748c1599f1061ac4dcd2ac057",
+      "bytes": 6479
+    },
+    "issuedManifest": {
+      "path": "docs/06-delivery/hris/wave5-2026-10-14/sys-001-nav-adapter-r1/issued-manifest.v1.json",
+      "manifestId": "HRIS-WAVE5-BASE-TFR-SYS-001-NAV-ADAPTER-START-AUTHORITY-ISSUED-R1",
+      "sha256": "42ed5c5f69b76a7286993d2650dc3bb3f301499591961f757637435ddf95fe9b",
+      "bytes": 3351
+    },
+    "mergeToDwpDevAuthorized": false,
+    "routeOrMenuActivationAuthorized": false,
+    "finalBaseTfrSys001ClosureAuthorized": false
+  },
+  "centralEvidenceBase": {
+    "backendSequencingOnly": {
+      "branch": "dwp-dev",
+      "commit": "67287b33be62c338d7ea6183e22ff3372e0c45c1",
+      "tree": "2be6408b53a95d0ddda4d40aa97205addb5658e2"
+    },
+    "frontendAtRecording": {
+      "branch": "dwp-dev",
+      "commit": "3c11b3dec63e36a5d26c5e12112b238ff946a9a1",
+      "tree": "831cbbc9455f6184a1945a7fca46b97ef6a818be"
+    }
+  },
+  "moduleResult": {
+    "frontend": {
+      "branch": "codex/hris-wave5-sys-001-nav-adapter-frontend-20261015-r1",
+      "upstream": "origin/codex/hris-wave5-sys-001-nav-adapter-frontend-20261015-r1",
+      "baseCommit": "3534bbbf0fc830afb1d4e99f5037d1f43cef6bf9",
+      "baseTree": "633db1c80cc158cd46ba852ea033fed332c992e1",
+      "resultLineage": [
+        "0c83828a30283a0a188ce95652ff105efca2656b"
+      ],
+      "resultCommit": "0c83828a30283a0a188ce95652ff105efca2656b",
+      "resultTree": "88111a373af20fdbd8f4f7bba724ff05eaf71696",
+      "clean": true,
+      "upstreamAhead": 0,
+      "upstreamBehind": 0,
+      "remoteExact": true,
+      "changedFileCount": 4,
+      "changedFileManifestSha256": "d03c3d282cda8643fc642bf1bb3bcbc5107b4fc0b8db953d2f5bcb348c8f56a0",
+      "changedNameStatusManifestSha256": "b8ac5fa2e9a373bbc033f4ad076f4eb74521a098cdd950588c4f3f3487fcfce6",
+      "diffSha256": "5b99517fddebfa7fd754a54a91f8b2f59f387334e2d9da427c1aded4e361c224",
+      "touchPolicyCompliant": true
+    },
+    "contentManifest": {
+      "algorithm": "SHA256_OF_SORTED_PATH_TAB_FILE_SHA256_TAB_BYTES_LF",
+      "sha256": "6871e644ff48327d1f0230779f4384e86beafaa47b6ad8812ddc1673ea6c9f57",
+      "files": [
+        {
+          "path": "apps/dwp/src/features/hris/shell/components/hris-product-map-group.tsx",
+          "sha256": "d53360a1f1177fd3a486c610070522a4271f9d60e5c1f0f26c8519536f081df1",
+          "bytes": 6240
+        },
+        {
+          "path": "apps/dwp/src/features/hris/shell/model/catalog/dwp-control.ts",
+          "sha256": "d5ec29c2ce6f593e0a5bdd06043b6d07c7909d30ae0c57decc131e58b784bb0b",
+          "bytes": 4176
+        },
+        {
+          "path": "apps/dwp/src/features/hris/shell/testing/hris-product-map-catalog.test.ts",
+          "sha256": "b5415a44d6c82f68a201464cde73f556ee9bf662a6d9ae0c9e357664c8e600c4",
+          "bytes": 8850
+        },
+        {
+          "path": "apps/dwp/src/features/hris/shell/testing/hris-product-map.test.tsx",
+          "sha256": "ca9ca6edf0e4b5cff01f65f5a7ead1faf6094e050f7e08c23477cdfa24d44987",
+          "bytes": 5878
+        }
+      ]
+    }
+  },
+  "behaviorResult": {
+    "catalogNode": "dwp-governance",
+    "lifecycle": "EXTERNAL",
+    "externalTarget": "DWP_GOVERNANCE",
+    "authorization": "CENTRAL_POLICY",
+    "exactHref": "/admin/governance/audit-overview?product=HCM&tab=overview",
+    "allowedBehavior": "canOpenPath exact href true exposes Open and onOpen receives the unchanged href",
+    "deniedBehavior": "node remains visible, locked, and non-actionable",
+    "otherExternalNodeCount": 5,
+    "otherExternalNodesInert": true,
+    "catalogNodeCount": 76,
+    "catalogUniqueNodeCount": 76,
+    "catalogSemanticSha256": "beec4808ea853830be012778ddf67758ac04459071fd6dbd50213e1d85dc0ff2",
+    "safeReturnPathUnchanged": "/hr/home"
+  },
+  "verificationResults": [
+    {
+      "commandId": "SYS_001_NAV_TARGETED_FOUR_FILE_VITEST_INITIAL",
+      "status": "REPAIRED_BY_FAILED_METHOD_ONLY_POLICY",
+      "testFileCount": 4,
+      "testCount": 29,
+      "passed": 26,
+      "failed": 3,
+      "failureClass": "EXPECTED_CONTRACT_VALUES_UPDATED_FOR_THE_SEALED_ADAPTER_AND_CURRENT_DELIVERED_ROUTE_BASELINE"
+    },
+    {
+      "commandId": "SYS_001_NAV_FAILED_METHOD_RERUN",
+      "status": "PASS",
+      "testCount": 3,
+      "failures": 0,
+      "fullGateRepeated": false,
+      "finalAcceptanceDerivation": "26_UNAFFECTED_INITIAL_PASSES_PLUS_3_CORRECTED_FAILED_METHOD_PASSES"
+    },
+    {
+      "commandId": "SYS_001_NAV_CHANGED_PATH_STATIC_CHECKS",
+      "status": "PASS",
+      "changedPathEslint": "PASS",
+      "changedPathPrettier": "PASS",
+      "gitDiffCheck": "PASS"
+    },
+    {
+      "commandId": "SYS_001_NAV_SCOPE_AND_GIT_INTEGRITY",
+      "status": "PASS",
+      "controlOrProtectedPathChanges": 0,
+      "backendChanges": 0,
+      "routeLayoutI18nOrGeneratedChanges": 0,
+      "homeMountChanges": 0,
+      "centralCurrentPathOverlap": 0,
+      "predictedMergeConflict": false
+    }
+  ],
+  "acceptanceCriteria": [
+    {"id": "SYS001-NAV-AC-01", "status": "PASS"},
+    {"id": "SYS001-NAV-AC-02", "status": "PASS"},
+    {"id": "SYS001-NAV-AC-03", "status": "PASS"},
+    {"id": "SYS001-NAV-AC-04", "status": "PASS"},
+    {"id": "SYS001-NAV-AC-05", "status": "PASS"},
+    {"id": "SYS001-NAV-AC-06", "status": "PASS_WITH_WORK_EXPLORER_MOUNT_PENDING_NONCLAIM"},
+    {"id": "SYS001-NAV-AC-07", "status": "PASS"}
+  ],
+  "independentFinalAudit": {
+    "codeAndAcceptance": "READY_NO_P0_P1",
+    "controlChain": "READY_FOR_MODULE_RESULT_RECORDING",
+    "remainingP0": 0,
+    "remainingP1": 0,
+    "safeForCentralAcceptanceReview": true
+  },
+  "completionBoundary": {
+    "state": "ADAPTER_CODE_COMPLETE_WORK_EXPLORER_MOUNT_PENDING",
+    "browserHandoffEvidence": "NOT_RUN_NOT_AUTHORIZED_WITHOUT_PRODUCTION_MOUNT",
+    "userVisibleEndToEndComplete": false,
+    "finalBaseTfrSys001Closed": false,
+    "homeMountComplete": false,
+    "routeOrMenuActivated": false
+  },
+  "authority": {
+    "moduleResultRecorded": true,
+    "resultAdmissionAuthorized": false,
+    "integrationMergeAuthorized": false,
+    "backendChangeAuthorized": false,
+    "routeOrMenuActivationAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "policyActivationAuthorized": false,
+    "customerDataAuthorized": false,
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "CENTRAL_RESULT_ACCEPTANCE_AND_CONTROLLED_FRONTEND_ONLY_INTEGRATION_REVIEW"
+}
