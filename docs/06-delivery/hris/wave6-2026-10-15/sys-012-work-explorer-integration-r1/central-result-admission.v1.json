@@ -1,0 +1,169 @@
+{
+  "schema": "dwp.hris.wave6-sys-012-work-explorer-central-result-admission.v1",
+  "receiptId": "HRIS-WAVE6-SYS-012-WORK-EXPLORER-CENTRAL-RESULT-ADMISSION-R1",
+  "runId": "sys-012-work-explorer-integration-20261015-r1",
+  "status": "PASS_RESULT_ADMITTED_PENDING_INTEGRATION_AUTHORIZATION_DEFAULT_OFF",
+  "issuedAt": "2026-10-15T08:53:34+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "predecessor": {
+    "resultEvidenceCarrier": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "d122954b7237e1cbe2d5ce13d0c94a0a4a3faab7",
+      "tree": "e2c492dc70d972bc948f700195f01f5883604725",
+      "upstream": "origin/dwp-dev",
+      "clean": true,
+      "upstreamAhead": 0,
+      "upstreamBehind": 0,
+      "remoteExact": true
+    },
+    "integrationMergeAuthorized": false
+  },
+  "moduleResult": {
+    "module": "SYS",
+    "sliceId": "BASE-TFR-SYS-012",
+    "scope": "WORK_EXPLORER_RUNTIME_AND_USER_JOURNEY_DEFAULT_OFF",
+    "resultEvidence": {
+      "path": "docs/06-delivery/hris/wave6-2026-10-15/sys-012-work-explorer-r1/module-result-evidence.v1.json",
+      "evidenceId": "HRIS-WAVE6-BASE-TFR-SYS-012-EXPLORER-MODULE-RESULT-R1",
+      "gitBlobSha1": "d43d5431b9ff58724f49a0a73e0a9145229c086b",
+      "sha256": "d719b30a603778324b14bdaffc7835623a12fe9f2a1e294c6fc4b6b1a44b6d11",
+      "bytes": 183532
+    },
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "codex/hris-wave6-sys-012-explorer-backend-20261015-r1",
+      "upstream": "origin/codex/hris-wave6-sys-012-explorer-backend-20261015-r1",
+      "baseCommit": "3b2da20b592de5b5cff8f2483b83900f2dad054e",
+      "baseTree": "36c16b205aeab8b0ed52130e41196bb3cba024b5",
+      "resultLineage": [
+        "6e1ea3cd14224988936fee8af908b706b7aedbc9"
+      ],
+      "resultCommit": "6e1ea3cd14224988936fee8af908b706b7aedbc9",
+      "resultTree": "b2e1a43aad573d63238dbed1a800b6425aa9e3d0",
+      "changedFileCount": 71,
+      "sortedPathManifestSha256": "9accde93bf25b24d0ef42f8eb8c6012cd9e8e58f84bce313e570a39c984be3d4",
+      "sortedNameStatusSha256": "65cd987cb78c4bb0cf4fedf709d13a1f7aae27dd4de98089b7728fe4b9c60e74",
+      "binaryDiffSha256": "4ab2df77ac7753c9b5357b5d64f3f84beaf18900db26596c3bdd50f5ba7a4891",
+      "contentManifestSha256": "74bc91330ded262e0053d9ae058bde6b726329b948db6e901beccb323bb9600b",
+      "cleanAndRemoteExact": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "codex/hris-wave6-sys-012-explorer-frontend-20261015-r1",
+      "upstream": "origin/codex/hris-wave6-sys-012-explorer-frontend-20261015-r1",
+      "baseCommit": "4f740a572afb8feeef3e31cb8ed258c0c8145cf2",
+      "baseTree": "474e40c18f544f67450c023fef4ace6375218d56",
+      "resultLineage": [
+        "640d1aca79514bd365c366ab9393df6b9d614155"
+      ],
+      "resultCommit": "640d1aca79514bd365c366ab9393df6b9d614155",
+      "resultTree": "d0f9ff47564994ee7384fbf5a072e9148b5ca5a9",
+      "changedFileCount": 20,
+      "sortedPathManifestSha256": "d8ef399e775a77742a8e63939f9b69c6285762db501ceb7ddb0a4ce456c8e225",
+      "sortedNameStatusSha256": "578132edaaf283dfd46c0bcc1659716694940cdd0ac701c00711ae6f42836502",
+      "binaryDiffSha256": "0bebddaadf1dc04e6b80ab32f5782a407523605c0813b7b74e19c1447559dcfe",
+      "contentManifestSha256": "b70cf86824faa216fe0469535fc484ba957517d2d000eac3be9cc62aad5056ac",
+      "cleanAndRemoteExact": true
+    },
+    "acceptance": {
+      "passed": 12,
+      "total": 12,
+      "independentModuleAudit": "READY_NO_P0_P1",
+      "centralResultAudit": "PASS_CONTRACT_PROVENANCE_AND_INTEGRATION_SAFETY",
+      "remainingP0": 0,
+      "remainingP1": 0,
+      "remainingP2": 1,
+      "p2Blocking": false
+    },
+    "evidenceInventory": {
+      "commandLogCount": 57,
+      "visualCaptureCount": 44,
+      "visualBytes": 10990295,
+      "visualPortableManifestSha256": "9f56ca19b0df93718f16f85261cf30fc04ff5af17f7728f12baf94fab3cbb139",
+      "visualModuleCanonicalManifestSha256": "4cddb29b5e81770d63d1a101011cf04af99b7e60db09b04e90bc9b709d2a929b"
+    }
+  },
+  "migration": {
+    "stream": "PLATFORM",
+    "version": "V327",
+    "leaseId": "HRIS-WAVE6-SYS-012-MIGRATION-LEASE-R1",
+    "path": "dwp-platform-server/src/main/resources/db/migration/V327__create_hris_work_explorer.sql",
+    "gitBlobSha1": "c24631b31cdadd56af37b310a123def08ed0c9a2",
+    "sha256": "8586a323808e902533e073c83bc6fb83f456173a9f626801bfbe611f19e7d9d7",
+    "bytes": 12932,
+    "priorVersion": "V326_UNCHANGED",
+    "nextVersion": "V328_OR_SECOND_MIGRATION_ABSENT",
+    "cleanAndUpgradePassed": true,
+    "realPostgresqlMethodCount": 7,
+    "skipped": 0
+  },
+  "expectedUnion": {
+    "pathAlgorithm": "SHA256_OF_SORTED_REPOSITORY_TAB_RELATIVE_PATH_LF",
+    "contentAlgorithm": "SHA256_OF_SORTED_REPOSITORY_TAB_PATH_TAB_FILE_SHA256_TAB_BYTES_LF",
+    "backend": {
+      "uniquePathCount": 71,
+      "pathSha256": "9accde93bf25b24d0ef42f8eb8c6012cd9e8e58f84bce313e570a39c984be3d4",
+      "contentSha256": "74bc91330ded262e0053d9ae058bde6b726329b948db6e901beccb323bb9600b"
+    },
+    "frontend": {
+      "uniquePathCount": 20,
+      "pathSha256": "d8ef399e775a77742a8e63939f9b69c6285762db501ceb7ddb0a4ce456c8e225",
+      "contentSha256": "b70cf86824faa216fe0469535fc484ba957517d2d000eac3be9cc62aad5056ac"
+    },
+    "combinedUniquePathCount": 91,
+    "combinedPathSha256": "30747fb34c47d55d92ce32173d6d7363e860480ee74a7d98b539a2c18b2613ad",
+    "combinedContentSha256": "04634d408c38c77a4dc1c54ad423d9a803ee741d0fbdc74a525e381cd8fc8f9c"
+  },
+  "admissionChecks": {
+    "resultEvidenceJsonValid": true,
+    "resultContractValid": true,
+    "startAndAmendmentAuthorityChainValid": true,
+    "pinnedAuthorityArtifactCount": 19,
+    "moduleBranchesCleanAndRemoteExact": true,
+    "touchBoundariesCompliant": true,
+    "migrationLeaseUsedExactly": true,
+    "moduleAcceptanceClosed": true,
+    "commandProvenanceExact": true,
+    "visualEvidenceClosed": true,
+    "remainingP0": 0,
+    "remainingP1": 0,
+    "currentCentralPathOverlap": {
+      "backend": 0,
+      "frontend": 0
+    },
+    "predictedMergeConflict": false,
+    "backendAndFrontendGatewayRawBytesEqual": true,
+    "gatewaySha256": "bcc41751c61c1bfc661df4efb4707aee564468ce40123732035e49ee9d2316c3",
+    "runtimeDefaultOff": true,
+    "authorizationState": "DRAFT",
+    "sidebarOrProductMapActivationAbsent": true,
+    "tenantCustomerOrProductionActivationAbsent": true
+  },
+  "completionBoundary": {
+    "state": "MODULE_RUNTIME_AND_USER_JOURNEY_COMPLETE_RESULT_ADMITTED_INTEGRATION_AUTHORIZATION_PENDING_DEFAULT_OFF",
+    "moduleBranchesCommittedAndPushed": true,
+    "resultEvidenceCommittedAndPushed": true,
+    "mergedToDwpDev": false,
+    "runtimeDefault": "OFF",
+    "authorizationState": "DRAFT",
+    "routeOrMenuActivated": false,
+    "featureEnabled": false,
+    "bundleApproved": false,
+    "tenantActivated": false,
+    "customerDataUsed": false,
+    "productionReleased": false
+  },
+  "authority": {
+    "resultsAdmittedAfterCarrier": true,
+    "integrationMergeAuthorized": false,
+    "manualConflictResolutionAuthorized": false,
+    "routeOrMenuActivationAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "bundleApprovalAuthorized": false,
+    "tenantActivationAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "COMMIT_AND_PUSH_THIS_ADMISSION_AS_A_SINGLE_DWP_DEV_CARRIER_THEN_ISSUE_EXACT_TWO_REPOSITORY_INTEGRATION_AUTHORIZATION"
+}
