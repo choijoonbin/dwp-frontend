@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActionButton, InlineFeedback } from '@dwp-frontend/design-system';
 
@@ -6,6 +6,7 @@ import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import CircularProgress from '@mui/material/CircularProgress';
 import Divider from '@mui/material/Divider';
+import Link from '@mui/material/Link';
 import MenuItem from '@mui/material/MenuItem';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
@@ -14,11 +15,14 @@ import Typography from '@mui/material/Typography';
 
 import { useEmployeeChangeWorkspace } from '../hooks/use-employee-change-workspace';
 import {
+  employeeChangeReceiptDeepLink,
   employeeChangeItemVersion,
   hasEmployeeChangeAction,
 } from '../model/employee-change-contract';
 
 import type { EmployeeChangeDataSource } from '../api/employee-change-api';
+import type { HrisCommandReceiptReader } from '../../../people/command-receipts/api/command-receipt-api';
+import type { CommandReceiptRecoveryPhase } from '../../../people/command-receipts/hooks/use-command-receipt-recovery';
 import type {
   EmployeeChangeCommandOwner,
   EmployeeChangeCreateDraft,
@@ -45,11 +49,16 @@ export type EmployeeChangeWorkspaceViewProps = Readonly<{
   projection?: EmployeeChangeProjection;
   selectedItem: EmployeeChangeItem | null;
   receipt: EmployeeChangeCommandReceipt | null;
+  receiptRecoveryPhase: CommandReceiptRecoveryPhase;
+  receiptRecoveryAttempt: number;
+  receiptRecoveryMaximumAttempts: number;
+  receiptRecoveryCanRecover: boolean;
   loading: boolean;
   fetching: boolean;
   error: unknown;
   commandError: Error | null;
   commandBusy: boolean;
+  commandLockedByReceipt: boolean;
   pageIndex: number;
   canNext: boolean;
   canPrevious: boolean;
@@ -62,6 +71,7 @@ export type EmployeeChangeWorkspaceViewProps = Readonly<{
   onCreate: (draft: EmployeeChangeCreateDraft) => Promise<unknown>;
   onSubmit: () => Promise<unknown>;
   onApply: () => Promise<unknown>;
+  onRecoverReceipt: () => void;
 }>;
 
 function DisabledWorkspace({ copy }: Readonly<{ copy: Copy }>) {
@@ -100,6 +110,84 @@ function fieldText(item: EmployeeChangeItem, key: keyof EmployeeChangeItem['fiel
   return field.value.effectiveTo
     ? `${field.value.effectiveFrom} – ${field.value.effectiveTo}`
     : `Effective ${field.value.effectiveFrom}`;
+}
+
+function receiptStatusCopy(
+  receipt: EmployeeChangeCommandReceipt | null,
+  phase: CommandReceiptRecoveryPhase,
+  attempt: number,
+  maximumAttempts: number
+): Readonly<{
+  severity: 'info' | 'success' | 'warning' | 'error';
+  title: string;
+  description: string;
+}> | null {
+  if (phase === 'IDLE') return null;
+  if (phase === 'DENIED') {
+    return {
+      severity: 'error',
+      title: 'Receipt is no longer available',
+      description:
+        'The receipt is absent or outside the current tenant, population, purpose, or permission scope. No cached result is shown.',
+    };
+  }
+  if (phase === 'ERROR') {
+    return {
+      severity: 'error',
+      title: 'Receipt recovery is unavailable',
+      description:
+        'The latest authorized result could not be confirmed. No cached result is shown. Try recovery again.',
+    };
+  }
+  if (!receipt) {
+    return {
+      severity: 'info',
+      title: 'Checking command receipt',
+      description: `Recovery attempt ${attempt} of ${maximumAttempts} is in progress.`,
+    };
+  }
+  if (phase === 'RECOVERY_REQUIRED') {
+    return {
+      severity: 'warning',
+      title: 'Command still needs recovery',
+      description: `The outcome is not terminal after ${maximumAttempts} bounded checks. Recover this receipt before submitting another command.`,
+    };
+  }
+  const statusCopy = {
+    ACCEPTED: {
+      severity: 'info',
+      title: 'Command accepted',
+      description: 'The command is queued. Its receipt is being checked automatically.',
+    },
+    RUNNING: {
+      severity: 'info',
+      title: 'Command is running',
+      description: 'Processing is in progress. Its receipt is being checked automatically.',
+    },
+    SUCCEEDED: {
+      severity: 'success',
+      title: 'Command completed',
+      description: 'The authorized command result is complete.',
+    },
+    REJECTED: {
+      severity: 'warning',
+      title: 'Command rejected',
+      description: 'The request was not accepted by the current governed policy.',
+    },
+    FAILED: {
+      severity: 'error',
+      title: 'Command failed',
+      description:
+        'The command reached a terminal failure. Review the request before trying again.',
+    },
+    RESULT_UNKNOWN: {
+      severity: 'warning',
+      title: 'Command result is unknown',
+      description:
+        'Do not resubmit the command. The preserved receipt is being checked for its authoritative outcome.',
+    },
+  } as const;
+  return statusCopy[receipt.status];
 }
 
 function CreateRequestForm({
@@ -275,11 +363,16 @@ export function EmployeeChangeWorkspaceView({
   projection,
   selectedItem,
   receipt,
+  receiptRecoveryPhase,
+  receiptRecoveryAttempt,
+  receiptRecoveryMaximumAttempts,
+  receiptRecoveryCanRecover,
   loading,
   fetching,
   error,
   commandError,
   commandBusy,
+  commandLockedByReceipt,
   pageIndex,
   canNext,
   canPrevious,
@@ -292,15 +385,30 @@ export function EmployeeChangeWorkspaceView({
   onCreate,
   onSubmit,
   onApply,
+  onRecoverReceipt,
 }: EmployeeChangeWorkspaceViewProps) {
   const [creating, setCreating] = useState(false);
+  const receiptStatusRef = useRef<HTMLDivElement | null>(null);
+  const receiptAnnouncementKey = `${receiptRecoveryPhase}:${receipt?.receiptId ?? 'none'}:${receipt?.status ?? 'none'}`;
+  const previousReceiptAnnouncementKey = useRef(receiptAnnouncementKey);
   const state = projection?.queryState.state;
-  const receiptSeverity =
-    receipt?.status === 'SUCCEEDED'
-      ? ('success' as const)
-      : receipt && ['ACCEPTED', 'RUNNING', 'RESULT_UNKNOWN'].includes(receipt.status)
-        ? ('warning' as const)
-        : ('error' as const);
+  const receiptCopy = receiptStatusCopy(
+    receipt,
+    receiptRecoveryPhase,
+    receiptRecoveryAttempt,
+    receiptRecoveryMaximumAttempts
+  );
+  const receiptDeepLink = receipt ? employeeChangeReceiptDeepLink(receipt) : null;
+
+  useEffect(() => {
+    if (
+      receiptRecoveryPhase !== 'IDLE' &&
+      previousReceiptAnnouncementKey.current !== receiptAnnouncementKey
+    ) {
+      receiptStatusRef.current?.focus();
+    }
+    previousReceiptAnnouncementKey.current = receiptAnnouncementKey;
+  }, [receiptAnnouncementKey, receiptRecoveryPhase]);
   return (
     <Stack
       gap={2}
@@ -323,7 +431,7 @@ export function EmployeeChangeWorkspaceView({
             {canCreate && (
               <ActionButton
                 intent="primary"
-                disabled={commandBusy}
+                disabled={commandBusy || commandLockedByReceipt}
                 onClick={() => setCreating(true)}
               >
                 New request
@@ -335,7 +443,7 @@ export function EmployeeChangeWorkspaceView({
 
       {creating && canCreate && (
         <CreateRequestForm
-          busy={commandBusy}
+          busy={commandBusy || commandLockedByReceipt}
           onCancel={() => setCreating(false)}
           onCreate={onCreate}
         />
@@ -371,13 +479,42 @@ export function EmployeeChangeWorkspaceView({
           {commandError.message}
         </InlineFeedback>
       )}
-      {receipt && (
-        <InlineFeedback
-          severity={receiptSeverity}
-          title={`Command ${receipt.status.toLowerCase().replaceAll('_', ' ')}`}
+      {receiptCopy && (
+        <Box
+          ref={receiptStatusRef}
+          role={
+            receiptRecoveryPhase === 'DENIED' || receiptRecoveryPhase === 'ERROR'
+              ? 'alert'
+              : 'status'
+          }
+          aria-live={
+            receiptRecoveryPhase === 'DENIED' || receiptRecoveryPhase === 'ERROR'
+              ? 'assertive'
+              : 'polite'
+          }
+          aria-atomic="true"
+          tabIndex={-1}
+          data-testid="employee-change-receipt-status"
         >
-          Receipt {receipt.receiptId} is bound to correlation {receipt.correlationId}.
-        </InlineFeedback>
+          <InlineFeedback severity={receiptCopy.severity} title={receiptCopy.title}>
+            <Stack gap={1} alignItems="flex-start">
+              <Typography component="span" variant="body2">
+                {receiptCopy.description}
+              </Typography>
+              {receipt && (
+                <Typography component="span" variant="caption">
+                  Receipt {receipt.receiptId} · correlation {receipt.correlationId}
+                </Typography>
+              )}
+              {receiptDeepLink && <Link href={receiptDeepLink}>Open employee-change requests</Link>}
+              {receiptRecoveryCanRecover && (
+                <ActionButton intent="secondary" onClick={onRecoverReceipt}>
+                  Recover receipt
+                </ActionButton>
+              )}
+            </Stack>
+          </InlineFeedback>
+        </Box>
       )}
 
       {!loading && !error && projection && projection.items.length === 0 && (
@@ -474,6 +611,7 @@ export function EmployeeChangeWorkspaceView({
                   <ActionButton
                     intent="primary"
                     loading={commandBusy}
+                    disabled={commandLockedByReceipt}
                     onClick={() => void onSubmit()}
                   >
                     Submit for approval
@@ -486,7 +624,7 @@ export function EmployeeChangeWorkspaceView({
                   <ActionButton
                     intent="primary"
                     loading={commandBusy}
-                    disabled={!applyConnected}
+                    disabled={!applyConnected || commandLockedByReceipt}
                     onClick={() => void onApply()}
                   >
                     Apply approved change
@@ -534,10 +672,12 @@ function EnabledWorkspace({
   copy,
   dataSource,
   commandOwner,
+  receiptReader,
 }: Readonly<{
   copy: Copy;
   dataSource?: EmployeeChangeDataSource;
   commandOwner?: EmployeeChangeCommandOwner;
+  receiptReader?: HrisCommandReceiptReader;
 }>) {
   const { i18n } = useTranslation('hcm');
   const locale = i18n.resolvedLanguage || i18n.language || 'en-US';
@@ -548,6 +688,7 @@ function EnabledWorkspace({
     timeZone,
     dataSource,
     commandOwner,
+    receiptReader,
   });
   return (
     <EmployeeChangeWorkspaceView
@@ -555,11 +696,16 @@ function EnabledWorkspace({
       projection={runtime.projection}
       selectedItem={runtime.selectedItem}
       receipt={runtime.receipt}
+      receiptRecoveryPhase={runtime.receiptRecovery.phase}
+      receiptRecoveryAttempt={runtime.receiptRecovery.attempt}
+      receiptRecoveryMaximumAttempts={runtime.receiptRecovery.maximumAttempts}
+      receiptRecoveryCanRecover={runtime.receiptRecovery.canRecover}
       loading={runtime.query.isLoading}
       fetching={runtime.query.isFetching}
       error={runtime.query.error}
       commandError={runtime.commandError}
       commandBusy={runtime.commandBusy}
+      commandLockedByReceipt={runtime.commandLockedByReceipt}
       pageIndex={runtime.pageIndex}
       canNext={runtime.canNext}
       canPrevious={runtime.canPrevious}
@@ -572,6 +718,7 @@ function EnabledWorkspace({
       onCreate={runtime.create}
       onSubmit={runtime.submit}
       onApply={runtime.apply}
+      onRecoverReceipt={runtime.receiptRecovery.recover}
     />
   );
 }
@@ -580,6 +727,7 @@ export type HrisEmployeeChangeWorkspaceProps = Readonly<{
   enabled?: boolean;
   dataSource?: EmployeeChangeDataSource;
   commandOwner?: EmployeeChangeCommandOwner;
+  receiptReader?: HrisCommandReceiptReader;
 }>;
 
 /** Default-off owner workspace for IAQ-009 and the HRM-010 lifecycle. */
@@ -587,6 +735,7 @@ export function HrisEmployeeChangeWorkspace({
   enabled = HRIS_EMPLOYEE_CHANGE_RUNTIME_STATE === 'ON',
   dataSource,
   commandOwner,
+  receiptReader,
 }: HrisEmployeeChangeWorkspaceProps = {}) {
   const { t } = useTranslation('hcm');
   const copy = useMemo<Copy>(
@@ -608,7 +757,12 @@ export function HrisEmployeeChangeWorkspace({
     [t]
   );
   return enabled ? (
-    <EnabledWorkspace copy={copy} dataSource={dataSource} commandOwner={commandOwner} />
+    <EnabledWorkspace
+      copy={copy}
+      dataSource={dataSource}
+      commandOwner={commandOwner}
+      receiptReader={receiptReader}
+    />
   ) : (
     <DisabledWorkspace copy={copy} />
   );
