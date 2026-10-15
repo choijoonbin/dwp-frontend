@@ -1,0 +1,222 @@
+{
+  "schema": "dwp.hris.plat004-runtime-onboarding-result.v1",
+  "resultId": "HRIS-WAVE6-PLAT-004-HRM-002-RUNTIME-ONBOARDING-RESULT-R1",
+  "issuedAt": "2026-10-15T20:55:56+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "status": "PASS_DEFAULT_OFF_EXACT_ONBOARDING_COMPLETE",
+  "decision": "PLAT004_RUNTIME_ONBOARDING is complete for the exact HRM-002 EmployeeChangeAppliedNotificationRequested.v1 source-event pair, the HCM notification catalog and its static in-app templates. This result does not authorize or claim People relay, typed runtime bridge, tenant, customer or production activation.",
+  "evidenceNaming": "The predecessor did not seal a result filename or schema identifier; this result uses the established wave result naming pattern without changing predecessor artifacts.",
+  "control": {
+    "workPacket": "runtime-onboarding-work-packet.v1.json",
+    "controlCarrierCommit": "9988d05e",
+    "correctionAmendment": "runtime-onboarding-correction-amendment.v1.json",
+    "correctionAmendmentCommit": "17677b7b"
+  },
+  "repositories": {
+    "backend": {
+      "branch": "dwp-dev",
+      "baseCommit": "a0b2db53d3fd382fa6ba56b53c2d2621bf4287ed",
+      "implementationCommits": [
+        "11017e5f634ab94221d59c3d0d920526c6981604",
+        "51573d67baad0cb18ad7204f652e6705595d4b51"
+      ],
+      "finalCommit": "51573d67baad0cb18ad7204f652e6705595d4b51",
+      "finalTree": "11ae0b23819eb970f7cc82d163a22013d22ea375",
+      "upstream": "origin/dwp-dev",
+      "ahead": 0,
+      "behind": 0,
+      "clean": true
+    },
+    "frontendControlCarrier": {
+      "branch": "dwp-dev",
+      "commitBeforeThisResult": "17677b7bfdf0c7a432b7051f2267fe3bd0afc123",
+      "treeBeforeThisResult": "aa9790eb718566a2c22275c2071f009b84e618c9",
+      "upstream": "origin/dwp-dev",
+      "ahead": 0,
+      "behind": 0,
+      "cleanBeforeThisResult": true
+    }
+  },
+  "changedBackendPaths": [
+    "dwp-notification-server/src/main/java/com/dwp/services/notification/domain/DirectNotificationMaterializer.java",
+    "dwp-notification-server/src/main/java/com/dwp/services/notification/integration/NotificationDomainEventTranslator.java",
+    "dwp-notification-server/src/main/resources/application.yml",
+    "dwp-notification-server/src/main/resources/db/migration/V35__register_hcm_employee_change_applied_notification.sql",
+    "dwp-notification-server/src/test/java/com/dwp/services/notification/config/NotificationRuntimeConfigurationInvariantTest.java",
+    "dwp-notification-server/src/test/java/com/dwp/services/notification/domain/DirectNotificationMaterializerTest.java",
+    "dwp-notification-server/src/test/java/com/dwp/services/notification/hriscontracts/HrisNotificationIntentV1ProviderContractTest.java",
+    "dwp-notification-server/src/test/java/com/dwp/services/notification/hriscontracts/HrisNotificationReceiptV1ProviderContractTest.java",
+    "dwp-notification-server/src/test/java/com/dwp/services/notification/integration/NotificationDomainEventTranslatorTest.java",
+    "dwp-notification-server/src/test/java/com/dwp/services/notification/integration/NotificationStructuredContextMaterializationPostgresIntegrationTest.java",
+    "dwp-notification-server/src/test/java/com/dwp/services/notification/migration/NotificationMigrationInvariantTest.java"
+  ],
+  "migrationIntegrity": {
+    "existingMigrationsV1ThroughV34Changed": false,
+    "v34": {
+      "path": "dwp-notification-server/src/main/resources/db/migration/V34__register_mail_notification_contracts.sql",
+      "sha256": "4aeed99d6c407da61ab2aed9da7fa823767f117b351b5e1d62826e6903057ffb",
+      "bytes": 8906,
+      "matchesLease": true
+    },
+    "v35": {
+      "path": "dwp-notification-server/src/main/resources/db/migration/V35__register_hcm_employee_change_applied_notification.sql",
+      "sha256": "4f196c163b3224e2504986b9d0e720026e34898250220014e35b56ce3bf783a2",
+      "bytes": 10190,
+      "cleanDisposablePostgresMigration": "PASS"
+    }
+  },
+  "verification": [
+    {
+      "name": "authorized contract cluster before independent correction review",
+      "command": "./gradlew :dwp-notification-server:test --tests '*NotificationRuntimeConfigurationInvariantTest' --tests '*NotificationDomainEventTranslatorTest' --tests '*HrisNotificationIntentV1ProviderContractTest' --tests '*HrisNotificationReceiptV1ProviderContractTest' --tests '*NotificationMigrationInvariantTest' --no-daemon --max-workers=1",
+      "tests": 45,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "result": "PASS"
+    },
+    {
+      "name": "correction-only unit and invariant cluster",
+      "command": "./gradlew :dwp-notification-server:test --tests '*NotificationDomainEventTranslatorTest' --tests '*DirectNotificationMaterializerTest' --tests '*NotificationRuntimeConfigurationInvariantTest' --tests '*NotificationMigrationInvariantTest' --no-daemon --max-workers=1",
+      "tests": 55,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "result": "PASS"
+    },
+    {
+      "name": "final locale fail-closed target",
+      "command": "./gradlew :dwp-notification-server:test --tests '*NotificationDomainEventTranslatorTest' --no-daemon --max-workers=1",
+      "tests": 18,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "result": "PASS"
+    },
+    {
+      "name": "V1-through-V35 and exact HCM PostgreSQL materialization target",
+      "command": "DWP_NOTIFICATION_CONTEXT_TEST_DB_URL=<disposable> ./gradlew :dwp-notification-server:test --tests '*NotificationStructuredContextMaterializationPostgresIntegrationTest.hcmEmployeeChangeAppliedMaterializesThroughExactSourceEventAndEntitlement' --no-daemon --max-workers=1",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "result": "PASS_AFTER_SMALLEST_TEST_QUERY_FIX",
+      "firstAttempt": "The product path materialized successfully, but the new assertion selected reason_code from ntf_notifications where that column does not exist.",
+      "fix": "Join ntf_user_notifications and assert its persisted reason_code; no production behavior changed for this retry.",
+      "disposableDatabaseRemoved": true
+    }
+  ],
+  "independentReviewCorrections": [
+    {
+      "id": "PLAT004-CORR-01",
+      "status": "PASS",
+      "evidence": "Reserved HRIS data and intent field allowlists reject message content, personal data, destinations, provider fields and every unknown field."
+    },
+    {
+      "id": "PLAT004-CORR-02",
+      "status": "PASS",
+      "evidence": "The exact HRIS event requires one intent and rejects notificationTargetChanges and non-singleton intents."
+    },
+    {
+      "id": "PLAT004-CORR-03",
+      "status": "PASS",
+      "evidence": "EMPLOYEE_CHANGE_APPLIED survives canonicalization and is asserted from the persisted recipient projection."
+    },
+    {
+      "id": "PLAT004-CORR-04",
+      "status": "PASS",
+      "evidence": "Source, producer service and event set use one atomic optional onboarding property; the legacy producer-source override remains unchanged and overlap fails closed."
+    },
+    {
+      "id": "PLAT004-CORR-05",
+      "status": "PASS",
+      "evidence": "The V35 post-insert guard verifies every sealed contract-payload field plus templates and routing policy."
+    },
+    {
+      "id": "PLAT004-CORR-06",
+      "status": "PASS",
+      "evidence": "The exact HRIS locale is required, untrimmed and constrained to the People producer BCP47 pattern; missing, URL and padded values fail closed."
+    }
+  ],
+  "acceptance": [
+    {
+      "id": "PLAT004-HRM002-AC-01",
+      "status": "PASS",
+      "evidence": "One exact reserved source-event pair, one singleton intent and one sealed HCM type are enforced."
+    },
+    {
+      "id": "PLAT004-HRM002-AC-02",
+      "status": "PASS",
+      "evidence": "Atomic exact onboarding rejects every other HRIS event, wildcard, malformed, duplicate, conflicting and unreserved binding."
+    },
+    {
+      "id": "PLAT004-HRM002-AC-03",
+      "status": "PASS",
+      "evidence": "The provider contract preserves the deterministic direct recipient and the PostgreSQL target proves active APP.HCM:VIEW admission."
+    },
+    {
+      "id": "PLAT004-HRM002-AC-04",
+      "status": "PASS",
+      "evidence": "Raw data, intent keys, variables, locale and static templates are privacy-minimized and fail closed."
+    },
+    {
+      "id": "PLAT004-HRM002-AC-05",
+      "status": "PASS",
+      "evidence": "V35 registers the exact HCM type, entitlement, ko-KR/en-US static templates, model digest and canonical HRIS route."
+    },
+    {
+      "id": "PLAT004-HRM002-AC-06",
+      "status": "PASS",
+      "evidence": "The exact PDX-012 intent pins and PDX-013 in-app receipt binding pass without claiming a runtime typed bridge."
+    },
+    {
+      "id": "PLAT004-HRM002-AC-07",
+      "status": "PASS_BY_PINNED_MODULE_EVIDENCE_AND_NO_CENTRAL_REGRESSION",
+      "evidence": "The accepted HRM-002 module result proves atomic local handoff/idempotency; this central delta adds no People or direct-provider write path.",
+      "moduleEvidence": {
+        "path": "../hrm-002-experience-control-r1/module-result-evidence.v1.json",
+        "sha256": "3ed46032c2da8aaca1cca718982dfad05f6c95eda40c5fefcc02336f77861c15"
+      }
+    },
+    {
+      "id": "PLAT004-HRM002-AC-08",
+      "status": "PASS",
+      "evidence": "Notification domain events, People experience and People relay remain default OFF; no tenant/customer/production activation was performed."
+    }
+  ],
+  "activationBoundary": {
+    "notificationDomainEventsDefault": "OFF",
+    "peopleExperienceDefault": "OFF",
+    "peopleRelayDefault": "OFF",
+    "typedRuntimeBridge": "DEFERRED_TO_SEPARATELY_AUTHORIZED_SYS_API_026_OR_SYS_API_033_WORK",
+    "routeOrMenuActivationPerformed": false,
+    "tenantActivationPerformed": false,
+    "customerDataUsed": false,
+    "productionReleasePerformed": false
+  },
+  "nextSequence": [
+    {
+      "order": 1,
+      "gate": "SYS009_OWNER_DELTA",
+      "action": "PREPARE_TOKEN_IMPLEMENT_AND_INTEGRATE_SYS_API_033_034_AND_SYS_EVT_008",
+      "owner": "HRIS-SYS"
+    },
+    {
+      "order": 1,
+      "gate": "HOME_PRODUCERS",
+      "action": "PREPARE_TOKEN_IMPLEMENT_AND_INTEGRATE_HRM_003_PER_007_TIM_018_PAY_015",
+      "parallelWith": "SYS009_OWNER_DELTA"
+    },
+    {
+      "order": 2,
+      "gate": "SYS012_HOME_RESIDUAL",
+      "action": "IMPLEMENT_SYS_API_026_HOME_COMPOSITION_RESIDUAL_WITHOUT_REOPENING_WORK_EXPLORER"
+    },
+    {
+      "order": 3,
+      "gate": "HRM002_FINAL_ACCEPTANCE",
+      "action": "RUN_ONLY_DEFINED_HRM_002_ACCEPTANCE_AND_INTEGRATION_EVIDENCE"
+    }
+  ],
+  "nextAction": "SEAL_THE_EXACT_SYS009_OWNER_DELTA_CONTROL_PACKET_AND_PREPARE_THE_HOME_PRODUCER_PACKETS_IN_PARALLEL; KEEP_PLAT_004_RUNTIME, PEOPLE_RELAY, SYS_API_026_033, TENANT_AND_PRODUCTION_ACTIVATION_DEFAULT_OFF"
+}
