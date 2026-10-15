@@ -3,13 +3,17 @@ import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
 
+import { parseAuthorizedEmployeeChangeResultLocation } from '../../../people/command-receipts/api/command-receipt-api';
 import {
   EmployeeChangeWorkspaceView,
   HRIS_EMPLOYEE_CHANGE_RUNTIME_STATE,
   HrisEmployeeChangeWorkspace,
 } from '../pages/hris-employee-change-workspace';
 import { parseEmployeeChangeProjection } from '../model/employee-change-contract';
-import { employeeChangeProjection } from './employee-change-fixtures.test-support';
+import {
+  employeeChangeProjection,
+  employeeChangeReceipt,
+} from './employee-change-fixtures.test-support';
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
@@ -63,11 +67,17 @@ describe('HrisEmployeeChangeWorkspace', () => {
         projection,
         selectedItem: projection.items[0]!,
         receipt: null,
+        receiptResultLocation: null,
+        receiptRecoveryPhase: 'IDLE',
+        receiptRecoveryAttempt: 0,
+        receiptRecoveryMaximumAttempts: 5,
+        receiptRecoveryCanRecover: false,
         loading: false,
         fetching: false,
         error: null,
         commandError: null,
         commandBusy: false,
+        commandLockedByReceipt: false,
         pageIndex: 0,
         canNext: false,
         canPrevious: false,
@@ -80,6 +90,7 @@ describe('HrisEmployeeChangeWorkspace', () => {
         onCreate: vi.fn().mockResolvedValue(null),
         onSubmit: vi.fn().mockResolvedValue(null),
         onApply: vi.fn().mockResolvedValue(null),
+        onRecoverReceipt: vi.fn(),
       })
     );
 
@@ -102,11 +113,17 @@ describe('HrisEmployeeChangeWorkspace', () => {
         projection,
         selectedItem: projection.items[0]!,
         receipt: null,
+        receiptResultLocation: null,
+        receiptRecoveryPhase: 'IDLE',
+        receiptRecoveryAttempt: 0,
+        receiptRecoveryMaximumAttempts: 5,
+        receiptRecoveryCanRecover: false,
         loading: false,
         fetching: false,
         error: null,
         commandError: null,
         commandBusy: false,
+        commandLockedByReceipt: false,
         pageIndex: 0,
         canNext: false,
         canPrevious: false,
@@ -119,9 +136,77 @@ describe('HrisEmployeeChangeWorkspace', () => {
         onCreate: vi.fn().mockResolvedValue(null),
         onSubmit: vi.fn().mockResolvedValue(null),
         onApply: vi.fn().mockResolvedValue(null),
+        onRecoverReceipt: vi.fn(),
       })
     );
 
     expect(html).not.toContain('New request');
+  });
+
+  it.each([
+    ['ACCEPTED', 'Command accepted'],
+    ['RUNNING', 'Command is running'],
+    ['SUCCEEDED', 'Command completed'],
+    ['REJECTED', 'Command rejected'],
+    ['FAILED', 'Command failed'],
+    ['RESULT_UNKNOWN', 'Command result is unknown'],
+  ] as const)('renders the %s receipt state with an accessible status', (status, title) => {
+    const projection = parseEmployeeChangeProjection(employeeChangeProjection());
+    const receipt = { ...employeeChangeReceipt(), status };
+    const html = renderToStaticMarkup(
+      createElement(EmployeeChangeWorkspaceView, {
+        copy: {
+          title: 'Employee-change requests',
+          description: 'Governed employee changes',
+          unavailableTitle: 'Unavailable',
+          unavailableDescription: 'Unavailable',
+        },
+        projection,
+        selectedItem: projection.items[0]!,
+        receipt,
+        receiptResultLocation:
+          status === 'SUCCEEDED'
+            ? parseAuthorizedEmployeeChangeResultLocation(
+                '/hr/operations/people/employee-change-requests?requestPublicId=10000000-0000-4000-8000-000000000001',
+                receipt
+              )
+            : null,
+        receiptRecoveryPhase: ['SUCCEEDED', 'REJECTED', 'FAILED'].includes(status)
+          ? 'SETTLED'
+          : 'POLLING',
+        receiptRecoveryAttempt: 1,
+        receiptRecoveryMaximumAttempts: 5,
+        receiptRecoveryCanRecover: false,
+        loading: false,
+        fetching: false,
+        error: null,
+        commandError: null,
+        commandBusy: false,
+        commandLockedByReceipt: false,
+        pageIndex: 0,
+        canNext: false,
+        canPrevious: false,
+        canCreate: false,
+        applyConnected: false,
+        onSelect: vi.fn(),
+        onRefresh: vi.fn(),
+        onNext: vi.fn(),
+        onPrevious: vi.fn(),
+        onCreate: vi.fn().mockResolvedValue(null),
+        onSubmit: vi.fn().mockResolvedValue(null),
+        onApply: vi.fn().mockResolvedValue(null),
+        onRecoverReceipt: vi.fn(),
+      })
+    );
+
+    expect(html).toContain(title);
+    expect(html).toContain('role="status"');
+    expect(html).toContain('aria-live="polite"');
+    expect(html).toContain('tabindex="-1"');
+    expect(
+      html.includes(
+        'href="/hr/operations/people/employee-change-requests?requestPublicId=10000000-0000-4000-8000-000000000001"'
+      )
+    ).toBe(status === 'SUCCEEDED');
   });
 });

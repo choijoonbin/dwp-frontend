@@ -1,4 +1,7 @@
 import type { components } from '@dwp-frontend/api-contracts';
+import { parseHrisCommandReceipt } from '../../../people/command-receipts/model/command-receipt';
+
+import type { HrisCommandReceipt } from '../../../people/command-receipts/model/command-receipt';
 
 type GatewaySchemas = components['schemas'];
 
@@ -6,7 +9,7 @@ export type EmployeeChangeCreateRequest = GatewaySchemas['people_EmployeeChangeR
 export type EmployeeChangeProjection =
   GatewaySchemas['people_Iaq009EmployeeChangeRequestProjectionV1'];
 export type EmployeeChangeQuery = GatewaySchemas['people_Iaq009EmployeeChangeRequestQueryV1'];
-export type EmployeeChangeCommandReceipt = GatewaySchemas['people_CommandReceiptV1'];
+export type EmployeeChangeCommandReceipt = HrisCommandReceipt;
 export type EmployeeChangeItem = EmployeeChangeProjection['items'][number];
 export type EmployeeChangeAction = EmployeeChangeItem['availableActions'][number];
 
@@ -25,8 +28,6 @@ const CODE = /^[A-Z][A-Z0-9_]{1,63}$/u;
 const PUBLIC_ID = /^[A-Za-z0-9._:-]{1,128}$/u;
 const DISPLAY_KEY = /^[a-z][a-z0-9._-]{1,127}$/u;
 const COMPONENT_KEY = /^[a-z][a-z0-9._-]{0,127}$/u;
-const COMMAND_CODE = /^[A-Z][A-Z0-9._-]{0,127}$/u;
-const DIGEST = /^[0-9a-f]{64}$/u;
 const CURSOR = /^[A-Za-z0-9_-]{16,1024}$/u;
 const DATE = /^\d{4}-\d{2}-\d{2}$/u;
 
@@ -326,45 +327,7 @@ export function parseEmployeeChangeProjection(value: unknown): EmployeeChangePro
   return Object.freeze(source) as unknown as EmployeeChangeProjection;
 }
 
-export function parseEmployeeChangeCommandReceipt(value: unknown): EmployeeChangeCommandReceipt {
-  const source = exactRecord(
-    value,
-    [
-      'receiptId',
-      'commandType',
-      'originatingAction',
-      'subjectPrincipalPublicId',
-      'populationScopeDigest',
-      'fieldPolicyRevision',
-      'purposeCode',
-      'authorizationRevision',
-      'status',
-      'correlationId',
-      'requestDigest',
-      'createdAt',
-    ],
-    'receipt'
-  );
-  uuid(source.receiptId, 'receipt');
-  text(source.commandType, 128, COMMAND_CODE, 'receipt');
-  text(source.originatingAction, 128, COMMAND_CODE, 'receipt');
-  uuid(source.subjectPrincipalPublicId, 'receipt');
-  text(source.populationScopeDigest, 64, DIGEST, 'receipt');
-  positiveInteger(source.fieldPolicyRevision, 'receipt');
-  text(source.purposeCode, 128, COMMAND_CODE, 'receipt');
-  positiveInteger(source.authorizationRevision, 'receipt');
-  if (
-    !['ACCEPTED', 'RUNNING', 'SUCCEEDED', 'REJECTED', 'FAILED', 'RESULT_UNKNOWN'].includes(
-      String(source.status)
-    )
-  ) {
-    invalid('receipt');
-  }
-  uuid(source.correlationId, 'receipt');
-  text(source.requestDigest, 64, DIGEST, 'receipt');
-  instant(source.createdAt, 'receipt');
-  return Object.freeze(source) as unknown as EmployeeChangeCommandReceipt;
-}
+export const parseEmployeeChangeCommandReceipt = parseHrisCommandReceipt;
 
 export function employeeChangeItemVersion(item: EmployeeChangeItem): number | null {
   const status = item.fieldGroups.APPROVAL_STATUS;

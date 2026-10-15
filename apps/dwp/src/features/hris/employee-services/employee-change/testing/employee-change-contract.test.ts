@@ -116,6 +116,6 @@ describe('employee-change generated contract adapter', () => {
     });
     expect(() =>
       parseEmployeeChangeCommandReceipt({ ...employeeChangeReceipt(), requestDigest: 'raw' })
-    ).toThrow('Employee-change receipt is invalid.');
+    ).toThrow('HRIS command receipt is invalid.');
   });
 });
