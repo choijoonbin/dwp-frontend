@@ -1,0 +1,1043 @@
+{
+  "schema": "dwp.hris.wave6-module-result-evidence.v1",
+  "evidenceId": "HRIS-WAVE6-BASE-TFR-HRM-002-MODULE-RESULT-R1",
+  "issuedAt": "2026-10-15T13:59:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-HRM",
+  "sliceId": "BASE-TFR-HRM-002",
+  "status": "MODULE_OWNER_DELTA_COMPLETE_CENTRAL_RELATED_CONTRACT_ACCEPTANCE_PENDING_DEFAULT_OFF",
+  "predecessorAuthority": {
+    "startToken": {
+      "path": "docs/06-delivery/hris/wave6-2026-10-15/hrm-002-experience-control-r1/start-token-issued.v1.json",
+      "tokenId": "HRIS-WAVE6-START-BASE-TFR-HRM-002-R1",
+      "sha256": "b3892b6e23f1743bc18b960b2fbfd5be3fe73a6de858a5aa55ea2f9d67550e9e",
+      "bytes": 11446
+    },
+    "migrationLeaseActivation": {
+      "path": "docs/06-delivery/hris/wave6-2026-10-15/hrm-002-experience-control-r1/migration-lease-activation.v1.json",
+      "activationId": "HRIS-WAVE6-ACTIVATE-BASE-TFR-HRM-002-PEOPLE-V56-R1",
+      "sha256": "29ef49f637de13f4b855d9734f3bb0a496f3f024fa0dc4ed7a4d1c6fab09b299",
+      "bytes": 3683
+    }
+  },
+  "amendmentAuthority": [
+    {
+      "revision": "R2",
+      "control": {
+        "path": "docs/06-delivery/hris/wave6-2026-10-15/hrm-002-experience-control-r1/origin-authority-bridge-successor-amendment.v1.json",
+        "amendmentId": "HRIS-WAVE6-HRM-002-ORIGIN-AUTHORITY-BRIDGE-R2",
+        "sha256": "f6eba096cc3b4dc9b9c0a15b4d7241b8ea3889db72474bd36830d6dd6c69fe97",
+        "bytes": 19414
+      },
+      "token": {
+        "path": "docs/06-delivery/hris/wave6-2026-10-15/hrm-002-experience-control-r1/start-token-amendment.v2.json",
+        "tokenAmendmentId": "HRIS-WAVE6-START-BASE-TFR-HRM-002-R2",
+        "sha256": "017b1c8a8d5569aa9478ff3943177f01ebc9bbcb2f13665f15e884e36ecf1f68",
+        "bytes": 4688
+      },
+      "manifest": {
+        "path": "docs/06-delivery/hris/wave6-2026-10-15/hrm-002-experience-control-r1/amendment-issued-manifest.v2.json",
+        "manifestId": "HRIS-WAVE6-HRM-002-R2-AMENDMENT-ISSUED-MANIFEST",
+        "sha256": "0c4ba7645f4c5f33ecbab71bdc21452ec2806ac744423845996587972531b568",
+        "bytes": 2811
+      }
+    },
+    {
+      "revision": "R3",
+      "control": {
+        "path": "docs/06-delivery/hris/wave6-2026-10-15/hrm-002-experience-control-r1/origin-authority-hardening-successor-amendment.v1.json",
+        "amendmentId": "HRIS-WAVE6-HRM-002-ORIGIN-AUTHORITY-HARDENING-R3",
+        "sha256": "ab34fd98d35dbbf1ff4efcaa63f763e46f9c7db16bc1e3658f2f12dad5aefba6",
+        "bytes": 12312
+      },
+      "token": {
+        "path": "docs/06-delivery/hris/wave6-2026-10-15/hrm-002-experience-control-r1/start-token-amendment.v3.json",
+        "tokenAmendmentId": "HRIS-WAVE6-START-BASE-TFR-HRM-002-R3",
+        "sha256": "361b08e75ade8ca7f379806f8d352c4d138c0ffef0f576c843aa0bd9adb11eef",
+        "bytes": 4047
+      },
+      "manifest": {
+        "path": "docs/06-delivery/hris/wave6-2026-10-15/hrm-002-experience-control-r1/amendment-issued-manifest.v3.json",
+        "manifestId": "HRIS-WAVE6-HRM-002-R3-AMENDMENT-ISSUED-MANIFEST",
+        "sha256": "99166f426414a559ad7bfdfa768622057cd8115298568f442c8053068cdd666c",
+        "bytes": 2463
+      }
+    },
+    {
+      "revision": "R4",
+      "centralControl": {
+        "commit": "7000ae930dffb1e72ad9797361498fe65b8639b1",
+        "tree": "ffbf3b7eb5c7614e48170099bbfc4659ee950a1b"
+      },
+      "control": {
+        "path": "docs/06-delivery/hris/wave6-2026-10-15/hrm-002-experience-control-r1/recipient-authority-successor-amendment.v1.json",
+        "amendmentId": "HRIS-WAVE6-HRM-002-RECIPIENT-AUTHORITY-R4",
+        "sha256": "df111b62ed21db646cb4c06a5f24f06fcb1bbb064ddc9ed42a7be110ecb1082d",
+        "bytes": 13919
+      },
+      "token": {
+        "path": "docs/06-delivery/hris/wave6-2026-10-15/hrm-002-experience-control-r1/start-token-amendment.v4.json",
+        "tokenAmendmentId": "HRIS-WAVE6-START-BASE-TFR-HRM-002-R4",
+        "sha256": "cd1688d9c5a2b566ec428fc35c8629dd988afb631ff53cc1e963859c4b4271aa",
+        "bytes": 4912
+      },
+      "manifest": {
+        "path": "docs/06-delivery/hris/wave6-2026-10-15/hrm-002-experience-control-r1/amendment-issued-manifest.v4.json",
+        "manifestId": "HRIS-WAVE6-HRM-002-R4-AMENDMENT-ISSUED-MANIFEST",
+        "sha256": "6d1d60ef942b190b725f64c1cad713c97593a9c2c14fb30d7d021081caf39dac",
+        "bytes": 2989
+      }
+    }
+  ],
+  "contractPins": {
+    "workPacket": {
+      "path": "docs/06-delivery/hris/wave6-2026-10-15/hrm-002-experience-control-r1/work-packet.v1.json",
+      "packetId": "HRIS-WAVE6-WORK-BASE-TFR-HRM-002-R1",
+      "sha256": "57aaf7d03eccb184a934c34d5be99f3af3df1a76462bd52780081f7287642654",
+      "bytes": 10297
+    },
+    "resultContract": {
+      "path": "docs/06-delivery/hris/wave6-2026-10-15/hrm-002-experience-control-r1/module-result-contract.v1.json",
+      "contractId": "HRIS-WAVE6-RESULT-CONTRACT-BASE-TFR-HRM-002-R1",
+      "sha256": "5ea1f66a07546cbd243322abda920dfa37f174c6e76b836c97bd4a0ae3e00b31",
+      "bytes": 3532
+    },
+    "centralCarriers": [
+      {
+        "path": "contracts/openapi/people.json",
+        "sha256": "4f8b31b2b0e3d2227bf6c02f9bf18092121323292160408601cabbd70c579ce8"
+      },
+      {
+        "path": "contracts/openapi/gateway-public.json",
+        "sha256": "bcc41751c61c1bfc661df4efb4707aee564468ce40123732035e49ee9d2316c3"
+      },
+      {
+        "path": "contracts/product-authorization/product-surfaces-v1.bundle-v43.json",
+        "sha256": "43e78121675791410a39c59808d047a3334e8b01679de2d7c2b73954585681a7"
+      },
+      {
+        "path": "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v43.generated.json",
+        "sha256": "43e78121675791410a39c59808d047a3334e8b01679de2d7c2b73954585681a7"
+      },
+      {
+        "path": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/command/v1/CommandReceiptV1.java",
+        "sha256": "905b75295533e5df5824411316b3bbc75ee3387d4bc2f04d084713eb37d82733"
+      },
+      {
+        "path": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/generated/HrisNotificationIntentV1.java",
+        "sha256": "86f61e966ed8bbac8ffdc4088869e863e573c786e1c360ec6ee554657329ad07"
+      },
+      {
+        "path": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/generated/HrisNotificationReceiptV1.java",
+        "sha256": "052170635e85321f9c40736d8fd990a4d75a4d588fe545e626460b584f7ac20d"
+      }
+    ],
+    "r4AuthInternalContract": {
+      "path": "contracts/openapi/auth.json",
+      "sha256": "5bb2001518d89abccc327442c68ffe55c284f5f9e96c7b3350375f58139cc25b",
+      "bytes": 481736,
+      "addedPath": "/internal/auth/v1/hris-recipient-authority/resolve",
+      "addedSchemas": [
+        "HrisRecipientAuthorityResolveRequest",
+        "HrisRecipientAuthorityResolveResponse"
+      ],
+      "requiredHeaders": [
+        "X-DWP-Hris-Recipient-Authority-Token",
+        "X-DWP-Service-Identity"
+      ],
+      "tokenMaxLength": 2048,
+      "notFoundSchema": "ApiResponseVoid",
+      "existingPathSchemaOrMetadataChanges": 0,
+      "nonAuthOpenApiSnapshotChanges": 0,
+      "gatewayPublicChanges": 0
+    },
+    "authorization": {
+      "version": 43,
+      "state": "DRAFT",
+      "changed": false
+    }
+  },
+  "moduleResult": {
+    "backend": {
+      "repository": "dwp-backend",
+      "baseBranch": "dwp-dev",
+      "baseOriginRef": "origin/dwp-dev",
+      "baseCommit": "9c9e33c29a63e2638213d424e74c8fabed2e7a4b",
+      "baseTree": "b2e1a43aad573d63238dbed1a800b6425aa9e3d0",
+      "moduleBranch": "codex/hris-wave6-hrm-002-backend-20261015-r1",
+      "upstream": "origin/codex/hris-wave6-hrm-002-backend-20261015-r1",
+      "resultLineage": [
+        "b8889331cc0638de28cbe9e47a065bfb8a84ac63",
+        "ff4f632591c1e833ddc45a1e83f023bfc7f8f4af",
+        "eb93acb4b076228e95466fae2222c4cf45a7198a",
+        "382b010bac1dad7ff079858a47b89b9a95f5d96f"
+      ],
+      "resultCommit": "382b010bac1dad7ff079858a47b89b9a95f5d96f",
+      "resultTree": "e4948ec16b774f9bf61f552a323c0bb4d8759fce",
+      "porcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "upstreamAhead": 0,
+      "upstreamBehind": 0,
+      "remoteExact": true,
+      "state": "COMMITTED_PUSHED_CLEAN_REMOTE_EXACT"
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "baseBranch": "dwp-dev",
+      "baseOriginRef": "origin/dwp-dev",
+      "baseCommit": "bc91cceea76b8b0e336931430fe8f220cea39c78",
+      "baseTree": "312f4f9cae1ffe22180df62b07e4e724fcca0ea5",
+      "moduleBranch": "codex/hris-wave6-hrm-002-frontend-20261015-r1",
+      "upstream": "origin/codex/hris-wave6-hrm-002-frontend-20261015-r1",
+      "resultLineage": [
+        "cf43b024856484bebf2f02d50d61a6a4376126d2",
+        "af1eee09efa45e09eea080963f30eb8265d299f4"
+      ],
+      "resultCommit": "af1eee09efa45e09eea080963f30eb8265d299f4",
+      "resultTree": "3c7b5819b4f578d40b67f7484bbfac099dfdfe20",
+      "porcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "upstreamAhead": 0,
+      "upstreamBehind": 0,
+      "remoteExact": true,
+      "r2r3State": "ACCEPTED_NO_RERUN_BYTE_AND_TREE_UNCHANGED"
+    }
+  },
+  "changedContentEvidence": {
+    "backend": {
+      "comparison": "9c9e33c29a63e2638213d424e74c8fabed2e7a4b..382b010bac1dad7ff079858a47b89b9a95f5d96f",
+      "changedFileCount": 50,
+      "r1ChangedFileCount": 21,
+      "r2r3ChangedFileCount": 24,
+      "r1R2R3OverlapCount": 6,
+      "r4ExactChangedFileCount": 14,
+      "r4OverlapWithR1R2R3Count": 3,
+      "sortedPathManifestSha256": "95f603b481f8d1bba2cb41d417c52c6452d9ac08de3f2c9c237a89d92175377f",
+      "sortedNameStatusManifestSha256": "654b364861a6d0648fec080393f9d6ebae737350c456de16b35392644aef08f5",
+      "sortedContentManifestSha256": "8407bcb72a0f1e3595b2ad64dc74c815be510caa9de16bc3e865c26f36f2c552",
+      "contentManifestFormat": "sorted lowercase SHA-256, byte count and repository-relative path",
+      "r2r3ExactSortedPathManifestSha256": "0476ee10b0632d31b5ca6086b0bbaa87720cb7e118fc0a977629d2dfab56910d",
+      "r2r3ExactChangedFileCount": 24,
+      "r4ExactSortedPathManifestSha256": "9a92210a80dd018186b31c52c63af7e2bff96c7038246168f7da056353f2d965",
+      "r4ExactSortedNameStatusManifestSha256": "549f7937097dadd73e2b861f18bb5c8d3d8d0530a572d8dbb2b475d5e6b5305c",
+      "r4ExactSortedContentManifestSha256": "1b8f92d92658df61cacb5b8ea25aa13455f5a4f4f4992ce3b9355a63902bff42",
+      "outsideAuthorizedUnionCount": 0,
+      "forbiddenPathChangeCount": 0,
+      "changedPaths": [
+        "contracts/openapi/auth.json",
+        "dwp-auth-server/src/main/java/com/dwp/services/auth/config/HrisRecipientAuthoritySecurityConfig.java",
+        "dwp-auth-server/src/main/java/com/dwp/services/auth/config/ProductSurfaceInternalSecurityConfig.java",
+        "dwp-auth-server/src/main/java/com/dwp/services/auth/controller/HrisRecipientAuthorityController.java",
+        "dwp-auth-server/src/main/java/com/dwp/services/auth/controller/ProductSurfaceAuthorityController.java",
+        "dwp-auth-server/src/main/java/com/dwp/services/auth/dto/HrisRecipientAuthorityDtos.java",
+        "dwp-auth-server/src/main/java/com/dwp/services/auth/repository/HrisRecipientAuthorityRepository.java",
+        "dwp-auth-server/src/main/java/com/dwp/services/auth/service/HrisRecipientAuthorityService.java",
+        "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationAuthorityAdapter.java",
+        "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationPeopleEligibility.java",
+        "dwp-auth-server/src/main/resources/application.yml",
+        "dwp-auth-server/src/test/java/com/dwp/services/auth/config/HrisRecipientAuthoritySecurityConfigTest.java",
+        "dwp-auth-server/src/test/java/com/dwp/services/auth/config/ProductSurfaceInternalSecurityConfigTest.java",
+        "dwp-auth-server/src/test/java/com/dwp/services/auth/controller/AuthOpenApiSchemaOwnershipContractTest.java",
+        "dwp-auth-server/src/test/java/com/dwp/services/auth/controller/HrisRecipientAuthorityControllerTest.java",
+        "dwp-auth-server/src/test/java/com/dwp/services/auth/controller/ProductSurfaceAuthorityControllerTest.java",
+        "dwp-auth-server/src/test/java/com/dwp/services/auth/service/HrisRecipientAuthorityServiceTest.java",
+        "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationHcmAuthorityAdapterTest.java",
+        "dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/employeechange/EmployeeChangeService.java",
+        "dwp-people-server/src/main/java/com/dwp/services/people/hris/employment/EmploymentEventController.java",
+        "dwp-people-server/src/main/java/com/dwp/services/people/hris/experience/AuthHrisExperienceOriginReceiptAuthoritySource.java",
+        "dwp-people-server/src/main/java/com/dwp/services/people/hris/experience/HrisExperienceCommandReceiptRepository.java",
+        "dwp-people-server/src/main/java/com/dwp/services/people/hris/experience/HrisExperienceCommandReceiptService.java",
+        "dwp-people-server/src/main/java/com/dwp/services/people/hris/experience/HrisExperienceDigests.java",
+        "dwp-people-server/src/main/java/com/dwp/services/people/hris/experience/HrisExperienceNotificationHandoff.java",
+        "dwp-people-server/src/main/java/com/dwp/services/people/hris/experience/HrisExperienceNotificationRepository.java",
+        "dwp-people-server/src/main/java/com/dwp/services/people/hris/experience/HrisExperienceOriginReceiptAuthoritySource.java",
+        "dwp-people-server/src/main/java/com/dwp/services/people/hris/experience/HrisExperienceReceiptAuthority.java",
+        "dwp-people-server/src/main/java/com/dwp/services/people/hris/experience/HrisExperienceRecipientAuthority.java",
+        "dwp-people-server/src/main/java/com/dwp/services/people/hris/experience/HrisNotificationReceiptInbox.java",
+        "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmPepContext.java",
+        "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmProductSurfaceEligibilityAdapter.java",
+        "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmProductSurfacePepFilter.java",
+        "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmScopeSelectionValidator.java",
+        "dwp-people-server/src/main/resources/application.yml",
+        "dwp-people-server/src/main/resources/db/migration/V56__hrm_base_tfr_hrm_002.sql",
+        "dwp-people-server/src/test/java/com/dwp/services/people/hris/employeeservice/employeechange/EmployeeChangeServiceTest.java",
+        "dwp-people-server/src/test/java/com/dwp/services/people/hris/employment/EmploymentEventControllerTest.java",
+        "dwp-people-server/src/test/java/com/dwp/services/people/hris/employment/HrmG3SliceContractTest.java",
+        "dwp-people-server/src/test/java/com/dwp/services/people/hris/experience/AuthHrisExperienceOriginReceiptAuthoritySourceTest.java",
+        "dwp-people-server/src/test/java/com/dwp/services/people/hris/experience/AuthHrisExperienceRecipientAuthorityTest.java",
+        "dwp-people-server/src/test/java/com/dwp/services/people/hris/experience/HrisExperienceCommandReceiptServiceTest.java",
+        "dwp-people-server/src/test/java/com/dwp/services/people/hris/experience/HrisExperienceNotificationHandoffTest.java",
+        "dwp-people-server/src/test/java/com/dwp/services/people/hris/experience/HrisExperienceReceiptAuthorityTest.java",
+        "dwp-people-server/src/test/java/com/dwp/services/people/hris/experience/HrisNotificationReceiptInboxTest.java",
+        "dwp-people-server/src/test/java/com/dwp/services/people/hris/experience/Hrm002MigrationContractTest.java",
+        "dwp-people-server/src/test/java/com/dwp/services/people/hris/experience/Hrm002MigrationPostgresTest.java",
+        "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmOwnerPepExecutionTest.java",
+        "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmProductSurfaceEligibilityAdapterTest.java",
+        "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmProductSurfacePepFilterTest.java"
+      ]
+    },
+    "frontend": {
+      "comparison": "bc91cceea76b8b0e336931430fe8f220cea39c78..af1eee09efa45e09eea080963f30eb8265d299f4",
+      "changedFileCount": 11,
+      "sortedPathManifestSha256": "7f44bd074e7accff87730a9a54ffc367e79835e781a1bccc50486b51bb598704",
+      "sortedNameStatusManifestSha256": "00a3065d10a43672e78b4ccfdf9ea7bc390b9dd642dc641aaa51c224ccbbd2bf",
+      "sortedContentManifestSha256": "9b70f04325ad32ceb6ad6798b8587525740ad736fb848e1ec442700db9d6e135",
+      "contentManifestFormat": "sorted lowercase SHA-256, byte count and repository-relative path",
+      "outsideAuthorizedUnionCount": 0,
+      "r2r3ChangedFileCount": 0,
+      "changedPaths": [
+        "apps/dwp/src/features/hris/employee-services/employee-change/hooks/use-employee-change-workspace.ts",
+        "apps/dwp/src/features/hris/employee-services/employee-change/model/employee-change-contract.ts",
+        "apps/dwp/src/features/hris/employee-services/employee-change/pages/hris-employee-change-workspace.tsx",
+        "apps/dwp/src/features/hris/employee-services/employee-change/testing/employee-change-contract.test.ts",
+        "apps/dwp/src/features/hris/employee-services/employee-change/testing/hris-employee-change-workspace.test.tsx",
+        "apps/dwp/src/features/hris/people/__tests__/g3-slices/base-tfr-hrm-002.slice.test.tsx",
+        "apps/dwp/src/features/hris/people/command-receipts/api/command-receipt-api.ts",
+        "apps/dwp/src/features/hris/people/command-receipts/hooks/use-command-receipt-recovery.ts",
+        "apps/dwp/src/features/hris/people/command-receipts/model/command-receipt.ts",
+        "apps/dwp/src/features/hris/people/command-receipts/testing/command-receipt-api.test.ts",
+        "apps/dwp/src/features/hris/people/command-receipts/testing/use-command-receipt-recovery.test.tsx"
+      ],
+      "shellSidebarRouteRegistryOrProductMapChanges": 0
+    },
+    "centralCarrierChanges": 0,
+    "authInternalContractChanges": 1,
+    "nonAuthOpenApiSnapshotChanges": 0,
+    "generatedCarrierChanges": 0,
+    "gatewayChanges": 0,
+    "notificationServerChanges": 0,
+    "secondMigrationCreated": false,
+    "touchPolicy": "PASS_EXACT_R1_PLUS_R2_R3_PLUS_R4_AUTHORIZED_UNION"
+  },
+  "testEvidence": {
+    "policy": "RUN_EACH_CHANGED_CLUSTER_ONCE; AFTER_A_FIX_RERUN_ONLY_THE_FAILED_COMMAND_OR_SMALLEST_OWNING_TEST; NO_REPOSITORY_WIDE_SUITE",
+    "r2r3AggregateRunCount": {
+      "authA1": 1,
+      "peopleP1": 1,
+      "peopleAggregateRerun": 0,
+      "smallestFailedTargetRerun": 1,
+      "frontendRerun": 0,
+      "migrationRerun": 0
+    },
+    "r4RunCount": {
+      "authOpenApiExport": 2,
+      "authA2": 1,
+      "peopleP2": 1,
+      "ownershipSmallestCorrectionRerun": 1,
+      "authA2AggregateRerun": 0,
+      "peopleP2AggregateRerun": 0,
+      "r1R3FrontendOrMigrationRerun": 0,
+      "repositoryWideSuite": 0
+    },
+    "executions": [
+      {
+        "id": "R1-BACKEND-FINAL-ACCEPTANCE",
+        "phase": "R1",
+        "state": "ACCEPTED_NO_RERUN_R2_R3",
+        "command": "./gradlew :dwp-people-server:test --tests 'com.dwp.services.people.hris.experience.HrisExperienceCommandReceiptServiceTest' --tests 'com.dwp.services.people.hris.experience.HrisExperienceReceiptAuthorityTest' --tests 'com.dwp.services.people.hris.experience.HrisNotificationReceiptInboxTest' --tests 'com.dwp.services.people.hris.experience.Hrm002MigrationPostgresTest' --tests 'com.dwp.services.people.hris.employment.EmploymentEventControllerTest.receiptProjectionCarriesOnlyTheAuthorizedResultLocation' --tests 'com.dwp.services.people.hris.employment.EmploymentEventControllerTest.defaultOffPreservesTheExistingAssignmentReceiptReader' --tests 'com.dwp.services.people.hris.employment.EmploymentEventServiceTest.receiptDisclosesOnlyASealedOriginatingCommandForTheCurrentSubject' --no-daemon --max-workers=1",
+        "selectedTestCount": 25,
+        "passed": 25,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "build": "SUCCESSFUL",
+        "executionThreadId": "01a13d09-f446-7fc2-8b9e-1ce58c28ca5c",
+        "executedAt": "2026-10-15T10:45:30+09:00"
+      },
+      {
+        "id": "R1-NOTIFICATION-AND-MIGRATION-CONTRACT",
+        "phase": "R1",
+        "state": "ACCEPTED_NO_RERUN_R2_R3",
+        "command": "./gradlew :dwp-people-server:test --tests 'com.dwp.services.people.hris.experience.HrisExperienceNotificationHandoffTest' --tests 'com.dwp.services.people.hris.experience.Hrm002MigrationContractTest' --no-daemon --max-workers=1",
+        "selectedTestCount": 6,
+        "passed": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "build": "SUCCESSFUL",
+        "executionThreadId": "01a13d09-f446-7fc2-8b9e-1ce58c28ca5c",
+        "executedAt": "2026-10-15T10:18:12+09:00"
+      },
+      {
+        "id": "R1-POSTGRES-FINAL",
+        "phase": "R1",
+        "state": "ACCEPTED_NO_RERUN_R2_R3",
+        "command": "./gradlew :dwp-people-server:test --tests '*Hrm002MigrationPostgresTest' --no-daemon --max-workers=1",
+        "selectedTestCount": 1,
+        "passed": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "build": "SUCCESSFUL",
+        "executionThreadId": "01a13d09-f446-7fc2-8b9e-1ce58c28ca5c",
+        "executedAt": "2026-10-15T10:41:13+09:00",
+        "correctionHistory": "An earlier single PostgreSQL method exposed fixture/SQL defects; each correction was verified with that same one-method target. No repository-wide suite was run."
+      },
+      {
+        "id": "R1-FRONTEND-FINAL",
+        "phase": "R1",
+        "state": "ACCEPTED_NO_RERUN_R2_R3",
+        "command": "/Users/a10697/Work/DWP/dwp-frontend/node_modules/.bin/vitest run apps/dwp/src/features/hris/people/command-receipts/testing/command-receipt-api.test.ts apps/dwp/src/features/hris/people/command-receipts/testing/use-command-receipt-recovery.test.tsx apps/dwp/src/features/hris/employee-services/employee-change/testing/employee-change-contract.test.ts apps/dwp/src/features/hris/employee-services/employee-change/testing/hris-employee-change-workspace.test.tsx apps/dwp/src/features/hris/people/__tests__/g3-slices/base-tfr-hrm-002.slice.test.tsx",
+        "selectedTestFileCount": 5,
+        "selectedTestCount": 51,
+        "passed": 51,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "build": "SUCCESSFUL",
+        "executionThreadId": "01a13d0a-0fa8-7943-8ac3-4acdfbaf08f0",
+        "executedAt": "2026-10-15T10:07:31+09:00"
+      },
+      {
+        "id": "R1-FRONTEND-LINT-FINAL",
+        "phase": "R1",
+        "state": "ACCEPTED_NO_RERUN_R2_R3",
+        "command": "/Users/a10697/Work/DWP/dwp-frontend/node_modules/.bin/eslint apps/dwp/src/features/hris/people/command-receipts apps/dwp/src/features/hris/employee-services/employee-change/model/employee-change-contract.ts apps/dwp/src/features/hris/employee-services/employee-change/pages/hris-employee-change-workspace.tsx apps/dwp/src/features/hris/employee-services/employee-change/testing/employee-change-contract.test.ts apps/dwp/src/features/hris/employee-services/employee-change/testing/hris-employee-change-workspace.test.tsx apps/dwp/src/features/hris/people/__tests__/g3-slices/base-tfr-hrm-002.slice.test.tsx",
+        "selectedTestCount": 0,
+        "passed": 1,
+        "failures": 0,
+        "errors": 0,
+        "warnings": 0,
+        "skipped": 0,
+        "build": "SUCCESSFUL"
+      },
+      {
+        "id": "R3-AUTH-A1",
+        "phase": "R2_R3",
+        "command": "./gradlew :dwp-auth-server:test --tests '*ProductSurfaceInternalSecurityConfigTest' --tests '*ProductSurfaceAuthorityControllerTest' --tests '*ProductAuthorizationHcmAuthorityAdapterTest' --no-daemon --max-workers=1",
+        "selectedTestCount": 20,
+        "classCounts": {
+          "ProductSurfaceInternalSecurityConfigTest": 8,
+          "ProductSurfaceAuthorityControllerTest": 4,
+          "ProductAuthorizationHcmAuthorityAdapterTest": 8
+        },
+        "passed": 20,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "build": "SUCCESSFUL"
+      },
+      {
+        "id": "R3-PEOPLE-P1-INITIAL",
+        "phase": "R2_R3",
+        "command": "./gradlew :dwp-people-server:test --tests '*HcmProductSurfacePepFilterTest' --tests '*HcmProductSurfaceEligibilityAdapterTest' --tests '*HcmOwnerPepExecutionTest' --tests '*EmployeeChangeServiceTest' --tests '*AuthHrisExperienceOriginReceiptAuthoritySourceTest' --tests '*HrisExperienceReceiptAuthorityTest' --tests '*HrisExperienceCommandReceiptServiceTest' --no-daemon --max-workers=1",
+        "selectedTestCount": 70,
+        "classCounts": {
+          "HcmProductSurfacePepFilterTest": 10,
+          "HcmProductSurfaceEligibilityAdapterTest": 13,
+          "HcmOwnerPepExecutionTest": 11,
+          "EmployeeChangeServiceTest": 11,
+          "AuthHrisExperienceOriginReceiptAuthoritySourceTest": 9,
+          "HrisExperienceReceiptAuthorityTest": 4,
+          "HrisExperienceCommandReceiptServiceTest": 12
+        },
+        "passed": 69,
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0,
+        "failure": "HrisExperienceReceiptAuthorityTest.admitsExactCurrentOriginAndRejectsRevisionDrift used a stale positive fixture context digest; production authority correctly rejected it."
+      },
+      {
+        "id": "R3-PEOPLE-P1-SMALLEST-RERUN",
+        "phase": "R2_R3",
+        "command": "./gradlew :dwp-people-server:test --tests '*HrisExperienceReceiptAuthorityTest' --no-daemon --max-workers=1",
+        "selectedTestCount": 4,
+        "passed": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "build": "SUCCESSFUL",
+        "correctionScope": "Two default digest literals in the owning test fixture only",
+        "aggregateRerunPerformed": false,
+        "logicalFinalP1": {
+          "selectedTestCount": 70,
+          "passed": 70,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      },
+      {
+        "id": "R4-AUTH-OPENAPI-INITIAL",
+        "phase": "R4",
+        "command": "DWP_EXPORT_AUTH_OPENAPI=true ./gradlew :dwp-auth-server:test --tests '*AuthOpenApiSnapshotExportTest' --no-daemon --max-workers=1",
+        "selectedTestCount": 1,
+        "passed": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "build": "SUCCESSFUL",
+        "state": "BUILD_SUCCESS_SEMANTIC_REVIEW_REJECTED",
+        "correctionHistory": "Semantic review found two missing required headers and a 404 response incorrectly bound to the success schema. Only the owning OpenAPI annotation and ownership assertions were corrected."
+      },
+      {
+        "id": "R4-AUTH-A2",
+        "phase": "R4",
+        "command": "./gradlew :dwp-auth-server:test --tests '*HrisRecipientAuthoritySecurityConfigTest' --tests '*HrisRecipientAuthorityControllerTest' --tests '*HrisRecipientAuthorityServiceTest' --tests '*AuthOpenApiSchemaOwnershipContractTest' --no-daemon --max-workers=1",
+        "selectedTestCount": 13,
+        "classCounts": {
+          "HrisRecipientAuthoritySecurityConfigTest": 4,
+          "HrisRecipientAuthorityControllerTest": 2,
+          "HrisRecipientAuthorityServiceTest": 3,
+          "AuthOpenApiSchemaOwnershipContractTest": 4
+        },
+        "passed": 13,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "build": "SUCCESSFUL",
+        "aggregateRerunPerformed": false
+      },
+      {
+        "id": "R4-PEOPLE-P2",
+        "phase": "R4",
+        "command": "./gradlew :dwp-people-server:test --tests '*AuthHrisExperienceRecipientAuthorityTest' --tests '*HrisExperienceNotificationHandoffTest' --no-daemon --max-workers=1",
+        "selectedTestCount": 11,
+        "classCounts": {
+          "AuthHrisExperienceRecipientAuthorityTest": 7,
+          "HrisExperienceNotificationHandoffTest": 4
+        },
+        "passed": 11,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "build": "SUCCESSFUL",
+        "aggregateRerunPerformed": false
+      },
+      {
+        "id": "R4-AUTH-OPENAPI-CORRECTED",
+        "phase": "R4",
+        "command": "DWP_EXPORT_AUTH_OPENAPI=true ./gradlew :dwp-auth-server:test --tests '*AuthOpenApiSnapshotExportTest' --no-daemon --max-workers=1",
+        "selectedTestCount": 1,
+        "passed": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "build": "SUCCESSFUL",
+        "semanticReview": "PASS_ADDED_ONE_INTERNAL_PATH_TWO_OWNER_SCHEMAS_EXISTING_DOCUMENT_UNCHANGED_NON_AUTH_SNAPSHOTS_IDENTICAL"
+      },
+      {
+        "id": "R4-AUTH-OPENAPI-OWNERSHIP-SMALLEST-RERUN",
+        "phase": "R4",
+        "command": "./gradlew :dwp-auth-server:test --tests '*AuthOpenApiSchemaOwnershipContractTest' --no-daemon --max-workers=1",
+        "selectedTestCount": 4,
+        "passed": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "build": "SUCCESSFUL",
+        "correctionScope": "Required dedicated headers and the 404 ApiResponseVoid schema assertions",
+        "aggregateRerunPerformed": false
+      }
+    ],
+    "prohibitedBroadRunsPerformedInR2R3": false,
+    "repositoryWideSuitePerformedInR2R3": false,
+    "prohibitedBroadRunsPerformedInR4": false,
+    "repositoryWideSuitePerformedInR4": false
+  },
+  "acceptanceCriteria": [
+    {"id": "HRM002-AC-01-CENTRAL-CARRIERS-UNCHANGED", "status": "PASS", "resultRef": "#/acceptanceResults/0"},
+    {"id": "HRM002-AC-02-SEALED-ORIGINATING-COMMAND-REGISTRY", "status": "PASS_AFTER_TARGETED_CORRECTION", "resultRef": "#/acceptanceResults/1"},
+    {"id": "HRM002-AC-03-TENANT-POPULATION-OPAQUE-DENIAL", "status": "PASS", "resultRef": "#/acceptanceResults/2"},
+    {"id": "HRM002-AC-04-CURRENT-AUTHORITY-AND-PURPOSE-REEVALUATION", "status": "PASS_AFTER_TARGETED_CORRECTION", "resultRef": "#/acceptanceResults/3"},
+    {"id": "HRM002-AC-05-SAFE-RESULT-AND-DEEP-LINK-PROJECTION", "status": "PASS_AFTER_TARGETED_CORRECTION", "resultRef": "#/acceptanceResults/4"},
+    {"id": "HRM002-AC-06-V54-COMMAND-LEDGER-REUSE", "status": "PASS", "resultRef": "#/acceptanceResults/5"},
+    {"id": "HRM002-AC-07-EXACT-NOTIFICATION-DECISION-TABLE", "status": "PASS", "resultRef": "#/acceptanceResults/6"},
+    {"id": "HRM002-AC-08-ATOMIC-IDEMPOTENT-PRIVACY-MINIMIZED-INTENT", "status": "PASS_AFTER_R4_PRODUCTION_ADAPTER_CLOSURE", "resultRef": "#/acceptanceResults/7"},
+    {"id": "HRM002-AC-09-PDX013-ORDERING-IDEMPOTENCY-AND-TERMINAL-IMMUTABILITY", "status": "PASS_AFTER_TARGETED_CORRECTION", "resultRef": "#/acceptanceResults/8"},
+    {"id": "HRM002-AC-10-RECEIPT-RECOVERY-TERMINAL-AND-RESULT-UNKNOWN-UX", "status": "PASS_AFTER_TARGETED_CORRECTION", "resultRef": "#/acceptanceResults/9"},
+    {"id": "HRM002-AC-11-KEYBOARD-FOCUS-A11Y-AND-SHELL-REGRESSION", "status": "PASS_AFTER_TARGETED_CORRECTION", "resultRef": "#/acceptanceResults/10"},
+    {"id": "HRM002-AC-12-V56-DEFAULT-OFF-AND-PATH-INTEGRITY", "status": "PASS_AFTER_TARGETED_CORRECTION", "resultRef": "#/acceptanceResults/11"}
+  ],
+  "acceptanceResults": [
+    {
+      "id": "HRM002-AC-01-CENTRAL-CARRIERS-UNCHANGED",
+      "status": "PASS",
+      "command": "shasum -a 256 contracts/openapi/people.json contracts/openapi/gateway-public.json contracts/product-authorization/product-surfaces-v1.bundle-v43.json dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v43.generated.json dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/command/v1/CommandReceiptV1.java dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/generated/HrisNotificationIntentV1.java dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/generated/HrisNotificationReceiptV1.java",
+      "selectedTestCount": 7,
+      "passed": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "evidencePath": "#/contractPins/centralCarriers",
+      "notes": "The pinned non-Auth OpenAPI, authorization, CommandReceiptV1 and PDX-012/PDX-013 carriers remain byte-identical. R4 changes only the separately authorized Auth internal path and its two owner schemas."
+    },
+    {
+      "id": "HRM002-AC-02-SEALED-ORIGINATING-COMMAND-REGISTRY",
+      "status": "PASS_AFTER_TARGETED_CORRECTION",
+      "command": "R1-BACKEND-FINAL-ACCEPTANCE plus R3-PEOPLE-P1-INITIAL/SMALLEST-RERUN",
+      "selectedTestCount": 95,
+      "passed": 95,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "evidenceRefs": ["#/testEvidence/executions/0", "#/testEvidence/executions/6", "#/testEvidence/executions/7", "#/securityAndBehaviorEvidence/receiptAuthority"],
+      "notes": "Seven action tuples and eleven purpose profiles are independently sealed; stored receipt fields are comparison inputs only."
+    },
+    {
+      "id": "HRM002-AC-03-TENANT-POPULATION-OPAQUE-DENIAL",
+      "status": "PASS",
+      "command": "R3-PEOPLE-P1-INITIAL with smallest failed fixture rerun",
+      "selectedTestCount": 70,
+      "passed": 70,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "evidenceRefs": ["#/testEvidence/executions/6", "#/testEvidence/executions/7", "#/securityAndBehaviorEvidence/opaqueDenials"],
+      "notes": "Cross-tenant, population drift, ambiguity, stale evidence and absent receipts return the same opaque not-found result."
+    },
+    {
+      "id": "HRM002-AC-04-CURRENT-AUTHORITY-AND-PURPOSE-REEVALUATION",
+      "status": "PASS_AFTER_TARGETED_CORRECTION",
+      "command": "R3-AUTH-A1 plus R3-PEOPLE-P1-INITIAL/SMALLEST-RERUN",
+      "selectedTestCount": 90,
+      "passed": 90,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "evidenceRefs": ["#/testEvidence/executions/5", "#/testEvidence/executions/6", "#/testEvidence/executions/7", "#/securityAndBehaviorEvidence/r3Hardening"],
+      "notes": "Current Auth grant closure and live People scope are re-evaluated in the trusted current access mode; one stale test fixture digest was corrected and only its four-test owner class was rerun."
+    },
+    {
+      "id": "HRM002-AC-05-SAFE-RESULT-AND-DEEP-LINK-PROJECTION",
+      "status": "PASS_AFTER_TARGETED_CORRECTION",
+      "command": "R1-BACKEND-FINAL-ACCEPTANCE",
+      "selectedTestCount": 25,
+      "passed": 25,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "evidencePath": "#/testEvidence/executions/0",
+      "notes": "Only CommandReceiptV1 safe fields and the authorized literal result location are projected; raw result JSON is unavailable."
+    },
+    {
+      "id": "HRM002-AC-06-V54-COMMAND-LEDGER-REUSE",
+      "status": "PASS",
+      "command": "R1-BACKEND-FINAL-ACCEPTANCE",
+      "selectedTestCount": 25,
+      "passed": 25,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "evidenceRefs": ["#/testEvidence/executions/0", "#/migrationEvidence"],
+      "notes": "The existing V54 command receipt ledger is reused; V56 adds only notification handoff and receipt evidence structures."
+    },
+    {
+      "id": "HRM002-AC-07-EXACT-NOTIFICATION-DECISION-TABLE",
+      "status": "PASS",
+      "command": "R1-NOTIFICATION-AND-MIGRATION-CONTRACT",
+      "selectedTestCount": 6,
+      "passed": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "evidenceRefs": ["#/testEvidence/executions/1", "#/notificationEvidence"],
+      "notes": "EmployeeChangeApplied.v1 has one exact inactive proposed source/event pair and no wildcard onboarding."
+    },
+    {
+      "id": "HRM002-AC-08-ATOMIC-IDEMPOTENT-PRIVACY-MINIMIZED-INTENT",
+      "status": "PASS_AFTER_R4_PRODUCTION_ADAPTER_CLOSURE",
+      "command": "R1-NOTIFICATION-AND-MIGRATION-CONTRACT plus R4-AUTH-A2 plus R4-PEOPLE-P2 with corrected OpenAPI ownership verification",
+      "selectedTestCount": 30,
+      "passed": 30,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "evidenceRefs": ["#/testEvidence/executions/1", "#/testEvidence/executions/9", "#/testEvidence/executions/10", "#/testEvidence/executions/11", "#/testEvidence/executions/12", "#/securityAndBehaviorEvidence/r4RecipientAuthority", "#/notificationEvidence"],
+      "notes": "The production People adapter now resolves an exact active non-actor recipient through the dedicated Auth authority and reaches READY_LOCAL_ONLY; absent, stale, malformed or unavailable authority still produces an audited omission. Canonical PDX-012 bytes and atomic idempotent handoff remain covered."
+    },
+    {
+      "id": "HRM002-AC-09-PDX013-ORDERING-IDEMPOTENCY-AND-TERMINAL-IMMUTABILITY",
+      "status": "PASS_AFTER_TARGETED_CORRECTION",
+      "command": "R1-BACKEND-FINAL-ACCEPTANCE plus R1-POSTGRES-FINAL",
+      "selectedTestCount": 25,
+      "passed": 25,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "evidenceRefs": ["#/testEvidence/executions/0", "#/testEvidence/executions/2", "#/migrationEvidence"],
+      "notes": "PDX-013 duplicate, digest conflict, sequence ordering, retryable failure and terminal append-only behavior pass on PostgreSQL."
+    },
+    {
+      "id": "HRM002-AC-10-RECEIPT-RECOVERY-TERMINAL-AND-RESULT-UNKNOWN-UX",
+      "status": "PASS_AFTER_TARGETED_CORRECTION",
+      "command": "R1-FRONTEND-FINAL",
+      "selectedTestCount": 51,
+      "passed": 51,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "evidenceRefs": ["#/testEvidence/executions/3", "#/frontendEvidence"],
+      "notes": "ACCEPTED, RUNNING, SUCCEEDED, REJECTED, FAILED and RESULT_UNKNOWN recovery plus bounded polling and stale-result suppression pass."
+    },
+    {
+      "id": "HRM002-AC-11-KEYBOARD-FOCUS-A11Y-AND-SHELL-REGRESSION",
+      "status": "PASS_AFTER_TARGETED_CORRECTION",
+      "command": "R1-FRONTEND-FINAL plus R1-FRONTEND-LINT-FINAL",
+      "selectedTestCount": 51,
+      "passed": 51,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "evidenceRefs": ["#/testEvidence/executions/3", "#/testEvidence/executions/4", "#/frontendEvidence"],
+      "notes": "Keyboard/focus/live-status behavior is tested and no shell, sidebar, route registry or product-map file changed."
+    },
+    {
+      "id": "HRM002-AC-12-V56-DEFAULT-OFF-AND-PATH-INTEGRITY",
+      "status": "PASS_AFTER_TARGETED_CORRECTION",
+      "command": "R1-POSTGRES-FINAL plus git diff --check and exact changed-path allowlist",
+      "selectedTestCount": 1,
+      "passed": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "evidenceRefs": ["#/testEvidence/executions/2", "#/migrationEvidence", "#/changedContentEvidence"],
+      "notes": "V56 remains byte-identical and is the sole new migration. R4 changes exactly 14 allowlisted paths, leaves the accepted frontend byte-identical, changes no forbidden path and keeps all new runtime behavior default OFF."
+    }
+  ],
+  "migrationEvidence": {
+    "stream": "PEOPLE_HR",
+    "version": "V56",
+    "path": "dwp-people-server/src/main/resources/db/migration/V56__hrm_base_tfr_hrm_002.sql",
+    "sha256": "051259b27c28410b4e99ccac5fdb413027d000fd5152fd3f9b638df70fc862d9",
+    "bytes": 16725,
+    "gitBlobPrefix": "47b7b498",
+    "leaseActivationRef": "#/predecessorAuthority/migrationLeaseActivation",
+    "cleanV56": "PASS",
+    "v55ToV56Upgrade": "PASS",
+    "postgresSelectedTestCount": 1,
+    "postgresPassed": 1,
+    "postgresFailed": 0,
+    "postgresSkipped": 0,
+    "forcedRls": "PASS",
+    "tenantIsolation": "PASS",
+    "terminalImmutability": "PASS",
+    "orderingConflict": "PASS",
+    "duplicateAndReplay": "PASS",
+    "v1ThroughV55ChecksumPreservation": "PASS",
+    "historicalMigrationChangedCount": 0,
+    "v54CommandReceiptLedgerReused": true,
+    "secondMigrationCreated": false,
+    "r2r3State": "ACCEPTED_NO_RERUN_BYTE_IDENTICAL"
+  },
+  "securityAndBehaviorEvidence": {
+    "receiptAuthority": {
+      "sealedActionTupleCount": 7,
+      "sealedPurposeProfileCount": 11,
+      "commandTypes": [
+        "HRM_ASSIGNMENT_EVENT_CREATE",
+        "HRM_ASSIGNMENT_EVENT_VALIDATE",
+        "HRM_ASSIGNMENT_EVENT_SUBMIT",
+        "HRM_ASSIGNMENT_EVENT_PUBLISH",
+        "EMPLOYEE_CHANGE_CREATE",
+        "EMPLOYEE_CHANGE_SUBMIT",
+        "EMPLOYEE_CHANGE_APPLY"
+      ],
+      "assignmentPositive": "PASS",
+      "employeeChangeSelfPositive": "PASS",
+      "employeeChangeTeamPositive": "PASS",
+      "employeeChangeHrOperationsPositive": "PASS",
+      "neutralReceiptEntryGrantDoesNotGrantData": true,
+      "originalActionAuthAndPeopleProofRequired": true,
+      "gatewayDecisionRevisionRecomputed": true,
+      "v54AuthorizationAndContextEvidenceRecomputed": true,
+      "rawResultJsonAvailable": false,
+      "safeResultProjectionOnly": true,
+      "authorizedLiteralDeepLinkOnly": true
+    },
+    "opaqueDenials": {
+      "httpStatus": 404,
+      "sameSurfaceForAbsentAndUnauthorized": true,
+      "covered": [
+        "cross-tenant",
+        "actor drift",
+        "subject drift",
+        "population drift",
+        "capability drift",
+        "purpose drift",
+        "field-policy drift",
+        "authorization revision drift",
+        "context digest drift",
+        "decision revision drift",
+        "zero or multiple live scopes",
+        "absent receipt",
+        "stale evidence",
+        "timeout",
+        "redirect",
+        "malformed or non-strict JSON",
+        "unknown or duplicate JSON fields",
+        "transport failure"
+      ]
+    },
+    "r3Hardening": {
+      "mediumRisk": {
+        "requiredDecision": "ALLOWED",
+        "requiredGrantState": "ACTIVE"
+      },
+      "highRiskNormalMode": {
+        "requiredDecision": "STEP_UP_REQUIRED",
+        "requiredGrantState": "ELIGIBLE",
+        "requiredAssurance": "NONBLANK_EXACT_CONFIGURED_VALUE",
+        "activationPolicy": "STEPUP-MGMT-HIGH-V1"
+      },
+      "highRiskElevatedMode": {
+        "requiredDecision": "ALLOWED",
+        "requiredGrantState": "ACTIVE",
+        "requiredAssurance": null,
+        "activationPolicy": null
+      },
+      "singleCurrentAccessModeEvaluation": true,
+      "crossModeFallback": false,
+      "dedicatedCredentialHeader": "X-DWP-Hris-Origin-Authority-Token",
+      "callerIdentity": "dwp-people-server",
+      "exactEndpoint": "POST /internal/auth/v1/product-surface-authority/evaluate",
+      "requestBodyConfinedToSevenHrisOriginRoutes": true,
+      "wrongCallerMethodPathTenantActorSelectorContextSupportOrMixedCredentialDenied": true,
+      "gatewayPlatformMeetingCredentialsUnchangedAndNonInterchangeable": true,
+      "strictJson": true,
+      "redirectsFollowed": false,
+      "timeoutFailClosed": true,
+      "experienceEnabledDefault": false,
+      "requiredAssuranceDefault": "BLANK_FAIL_CLOSED"
+    },
+    "r4RecipientAuthority": {
+      "exactEndpoint": "POST /internal/auth/v1/hris-recipient-authority/resolve",
+      "dedicatedCredentialHeader": "X-DWP-Hris-Recipient-Authority-Token",
+      "serviceIdentityHeader": "X-DWP-Service-Identity",
+      "callerIdentity": "dwp-people-server",
+      "purpose": "HCM.EMPLOYEE_CHANGE_APPLIED_NOTIFICATION",
+      "tokenMaximumLength": 2048,
+      "activeTenantRequired": true,
+      "activeUserRequired": true,
+      "identityPlane": "TENANT",
+      "singleSqlQuery": true,
+      "queryLimit": 2,
+      "exactlyOneBindingRequired": true,
+      "strictRequestJson": true,
+      "strictResponseJson": true,
+      "exactRequestFieldCount": 4,
+      "exactResponseFieldCount": 7,
+      "maximumLeaseSeconds": 30,
+      "maximumFutureSkewSeconds": 5,
+      "opaqueAbsenceStatus": 404,
+      "cacheControl": "no-store",
+      "credentialIsolation": "PASS",
+      "productionPeopleAdapter": "PASS",
+      "productionPositiveHandoffState": "READY_LOCAL_ONLY",
+      "malformedStaleUnavailableResult": "AUDITED_OMISSION",
+      "experienceEnabledDefault": false
+    }
+  },
+  "notificationEvidence": {
+    "originBusinessFact": "EmployeeChangeApplied.v1",
+    "proposedSource": "urn:dwp:people:hrm:dwp-experience",
+    "proposedEventType": "EmployeeChangeAppliedNotificationRequested.v1",
+    "sourceEventPairExact": true,
+    "sourceOnlyOrWildcardOnboardingForbidden": true,
+    "typeKey": "HCM.EMPLOYEE_CHANGE_APPLIED",
+    "producerAppKey": "hcm",
+    "purposeCode": "EMPLOYEE_SELF_SERVICE",
+    "templateKey": "hcm.employee-change.applied",
+    "templateVersion": 1,
+    "templateModelDigest": "24b7eff4c70309f32c86911c7e52acf05ee0b38d368630272422e963109dd784",
+    "templateVariables": ["effectiveDate", "requestReference", "targetType"],
+    "classification": "INTERNAL",
+    "actionRequired": false,
+    "recipientRule": "Target subject active tenant-bound DWP user only",
+    "applyingActorExcluded": true,
+    "broadcastFallback": false,
+    "noEligibleRecipient": "AUDITED_OMISSION",
+    "recipientAuthority": "PASS",
+    "productionRecipientAuthorityAvailable": true,
+    "positivePathTestDoubleOnly": false,
+    "productionPositiveHandoffState": "READY_LOCAL_ONLY",
+    "recipientAuthorityPurpose": "HCM.EMPLOYEE_CHANGE_APPLIED_NOTIFICATION",
+    "pdx012CanonicalBytes": "PASS",
+    "privacyMinimization": "PASS",
+    "idempotency": "PASS",
+    "atomicHandoff": "PASS_PRODUCTION_ADAPTER",
+    "pdx013Ordering": "PASS",
+    "pdx013Duplicate": "PASS",
+    "pdx013Conflict": "PASS",
+    "pdx013TerminalImmutability": "PASS",
+    "pdx013Replay": "PASS",
+    "notificationRuntimeOnboarding": "CENTRAL_PENDING",
+    "templateRegistration": "CENTRAL_PENDING",
+    "runtimeOnboardingComplete": false
+  },
+  "frontendEvidence": {
+    "state": "ACCEPTED_NO_RERUN_R2_R3",
+    "receiptStatesCovered": ["ACCEPTED", "RUNNING", "SUCCEEDED", "REJECTED", "FAILED", "RESULT_UNKNOWN"],
+    "scopeChangeCancellation": "PASS",
+    "unmountCancellation": "PASS",
+    "retryBackoffBounds": "PASS",
+    "staleProtectedResultSuppression": "PASS",
+    "authorizedDeepLinkOnly": "PASS",
+    "loadingState": "PASS",
+    "errorState": "PASS",
+    "deniedState": "PASS",
+    "recoveryState": "PASS",
+    "keyboard": "PASS",
+    "focus": "PASS",
+    "accessibleLiveStatus": "PASS",
+    "mandatoryAccessibilitySkipped": 0,
+    "shellSidebarRouteRegistryOrProductMapChanges": 0,
+    "r2r3SourceChanges": 0,
+    "r2r3TestReruns": 0
+  },
+  "visualEvidence": {
+    "browserRunRequired": false,
+    "reason": "The issued browser command was conditional on adding a dedicated Playwright journey; no new journey was added. Keyboard, focus and accessible live-status acceptance is covered by the accepted 51-test frontend target.",
+    "mandatoryAccessibilitySkipped": 0
+  },
+  "verificationResults": [
+    {
+      "stage": "R1_HRM_MODULE_BACKEND_AND_POSTGRES",
+      "status": "PASS_AFTER_TARGETED_CORRECTION",
+      "finalBackendSelectedTests": 25,
+      "finalPostgresSelectedTests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "stage": "R1_HRM_MODULE_FRONTEND",
+      "status": "PASS_AFTER_TARGETED_CORRECTION",
+      "finalVitest": "51/51",
+      "finalEslintErrors": 0,
+      "finalEslintWarnings": 0,
+      "skipped": 0
+    },
+    {
+      "stage": "R2_R3_AUTH_A1",
+      "status": "PASS",
+      "selectedTests": 20,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "stage": "R2_R3_PEOPLE_P1",
+      "status": "PASS_AFTER_TARGETED_FIXTURE_CORRECTION",
+      "logicalFinalTests": 70,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "aggregateRerun": false
+    },
+    {
+      "stage": "R4_AUTH_OPENAPI_CORRECTED_EXPORT",
+      "status": "PASS_AFTER_TARGETED_CONTRACT_CORRECTION",
+      "correctedExportTests": 1,
+      "initialBuildPassedButSemanticReviewRejected": true,
+      "addedInternalPaths": 1,
+      "addedOwnerSchemas": 2,
+      "existingDocumentChanges": 0,
+      "nonAuthSnapshotChanges": 0,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "stage": "R4_AUTH_A2",
+      "status": "PASS",
+      "selectedTests": 13,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "aggregateRerun": false
+    },
+    {
+      "stage": "R4_PEOPLE_P2",
+      "status": "PASS",
+      "selectedTests": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "aggregateRerun": false
+    },
+    {
+      "stage": "R4_AUTH_OPENAPI_OWNERSHIP_SMALLEST_RERUN",
+      "status": "PASS",
+      "selectedTests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "aggregateRerun": false
+    },
+    {
+      "stage": "CHANGED_PATH_STATIC_CHECKS",
+      "status": "PASS",
+      "gitDiffCheck": "PASS",
+      "backendChangedPaths": 50,
+      "r2r3ExactChangedPaths": 24,
+      "r4ExactChangedPaths": 14,
+      "frontendChangedPaths": 11,
+      "forbiddenChanges": 0,
+      "v56ByteIdenticalInR2R3": true,
+      "v56ByteIdenticalInR4": true,
+      "frontendByteIdenticalInR2R3": true,
+      "frontendByteIdenticalInR4": true,
+      "runtimeDefaultOff": true
+    },
+    {
+      "stage": "SCOPE_AND_GIT_INTEGRITY",
+      "status": "PASS",
+      "moduleWorktreesClean": true,
+      "moduleBranchesRemoteExact": true,
+      "upstreamAheadBehind": "0/0"
+    }
+  ],
+  "independentFinalAudit": {
+    "status": "READY_NO_P0_P1",
+    "reviewerIdentity": "/root/hrm002_r4_combined_review",
+    "reviewerThreadId": null,
+    "reviewerBinding": "COLLABORATION_TASK_IDENTITY; THREAD_UUID_NOT_EXPOSED",
+    "executionBinding": "POST_COMMIT_EXACT_TREE_AND_REMOTE_STATE",
+    "reviewedBackendResultCommit": "382b010bac1dad7ff079858a47b89b9a95f5d96f",
+    "reviewedBackendTree": "e4948ec16b774f9bf61f552a323c0bb4d8759fce",
+    "reviewedFrontendResultCommit": "af1eee09efa45e09eea080963f30eb8265d299f4",
+    "reviewedFrontendTree": "3c7b5819b4f578d40b67f7484bbfac099dfdfe20",
+    "reviewedR2R3ChangedPathCount": 24,
+    "reviewedR4ChangedPathCount": 14,
+    "reviewedBackendChangedPathCount": 50,
+    "forbiddenPathChangeCount": 0,
+    "v56ByteIdentical": true,
+    "frontendByteIdentical": true,
+    "postCommitExactTreeAndRemoteBinding": "PASS",
+    "moduleWorktreeClean": true,
+    "upstreamAheadBehind": "0/0",
+    "remoteExact": true,
+    "remainingP0": 0,
+    "remainingP1": 0,
+    "remainingP2": 0,
+    "safeForCentralAcceptanceReview": true
+  },
+  "completionBoundary": {
+    "state": "MODULE_OWNER_DELTA_COMPLETE_CENTRAL_RELATED_CONTRACT_ACCEPTANCE_PENDING_DEFAULT_OFF",
+    "moduleBranchesCommittedAndPushed": true,
+    "mergedToDwpDev": false,
+    "routeOrMenuActivated": false,
+    "featureEnabled": false,
+    "authorizationState": "DRAFT",
+    "runtimeDefault": "OFF",
+    "bundleApproved": false,
+    "tenantActivated": false,
+    "customerDataUsed": false,
+    "productionReleased": false,
+    "notificationRuntimeOnboardingComplete": false,
+    "sysApi026Or033Complete": false,
+    "nonclaim": "This is module-result evidence only. Backend and frontend result commits are not merged to dwp-dev; central result admission, controlled integration, PLAT-004 source-event onboarding, template registration, feature activation and tenant or production release remain pending."
+  },
+  "authority": {
+    "moduleResultRecorded": true,
+    "centralResultAdmissionAuthorized": false,
+    "integrationMergeAuthorized": false,
+    "routeOrMenuActivationAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "notificationRuntimeOnboardingAuthorized": false,
+    "bundleApprovalAuthorized": false,
+    "tenantActivationAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "CENTRAL_RESULT_ACCEPTANCE_AND_CONTROLLED_DWP_DEV_INTEGRATION_REVIEW"
+}
