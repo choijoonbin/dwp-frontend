@@ -1,0 +1,97 @@
+{
+  "schema": "dwp.hris.module-start-token-preparation.v1",
+  "preparationId": "HRIS-WAVE6-START-PREP-BASE-TFR-HRM-002-R1",
+  "tokenIdCandidate": "HRIS-WAVE6-START-BASE-TFR-HRM-002-R1",
+  "preparedAt": "2026-10-15T09:41:00+09:00",
+  "preparedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-HRM",
+  "sliceId": "BASE-TFR-HRM-002",
+  "state": "READY_TO_COMMIT_PREPARATION_THEN_MATERIALIZE_WORKTREES_TOKEN_WITHHELD",
+  "preparedArtifacts": {
+    "workPacket": {
+      "path": "work-packet.v1.json",
+      "packetId": "HRIS-WAVE6-WORK-BASE-TFR-HRM-002-R1",
+      "sha256": "57aaf7d03eccb184a934c34d5be99f3af3df1a76462bd52780081f7287642654",
+      "bytes": 10297
+    },
+    "resultContract": {
+      "path": "module-result-contract.v1.json",
+      "contractId": "HRIS-WAVE6-RESULT-CONTRACT-BASE-TFR-HRM-002-R1",
+      "sha256": "5ea1f66a07546cbd243322abda920dfa37f174c6e76b836c97bd4a0ae3e00b31",
+      "bytes": 3532
+    },
+    "migrationLease": {
+      "path": "migration-lease.v1.json",
+      "leaseId": "HRIS-WAVE6-HRM-002-PEOPLE-V56-R1",
+      "sha256": "6229a804d529f63b229f6deb402c60f0ef71c34fb398ba59a6543254c9f72d47",
+      "bytes": 2507,
+      "state": "PREPARED_NOT_ACTIVE"
+    }
+  },
+  "observedBases": {
+    "backend": {
+      "commit": "9c9e33c29a63e2638213d424e74c8fabed2e7a4b",
+      "tree": "b2e1a43aad573d63238dbed1a800b6425aa9e3d0",
+      "upstream": "origin/dwp-dev",
+      "remoteExactAndClean": true
+    },
+    "frontend": {
+      "commit": "eae525d7c1bf86b2c5b4b80571620b61cf5c9962",
+      "tree": "bea04c8c390d8981e0972ea9a522b77f75dd435e",
+      "upstream": "origin/dwp-dev",
+      "remoteExactAndCleanBeforeThisPreparation": true
+    }
+  },
+  "plannedWorktrees": [
+    {
+      "repository": "dwp-backend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave6-20261015/hrm-002-r1/backend",
+      "branch": "codex/hris-wave6-hrm-002-backend-20261015-r1",
+      "requiredBase": "dwp-dev@9c9e33c29a63e2638213d424e74c8fabed2e7a4b",
+      "requiredState": "MATERIALIZED_PUSHED_CLEAN_REMOTE_EXACT"
+    },
+    {
+      "repository": "dwp-frontend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave6-20261015/hrm-002-r1/frontend",
+      "branch": "codex/hris-wave6-hrm-002-frontend-20261015-r1",
+      "requiredBase": "POST_PREPARATION_ORIGIN_DWP_DEV_EXACT_HEAD",
+      "requiredState": "MATERIALIZED_PUSHED_CLEAN_REMOTE_EXACT"
+    }
+  ],
+  "startGates": {
+    "authoritativeDependenciesReady": true,
+    "inactivePlat004ContractSealed": true,
+    "pepHrm014AndOpenApiAlreadyIntegrated": true,
+    "workPacketAndResultContractSealed": true,
+    "v56PreparedAndAbsent": true,
+    "preparationCarrierPushed": false,
+    "backendWorktreeMaterializedClean": false,
+    "frontendWorktreeMaterializedClean": false,
+    "v56LeaseActivated": false,
+    "issuedTokenPinsAllArtifactsAndWorktrees": false
+  },
+  "tokenIssueRule": "After this preparation is independently audited, commit and push it to frontend dwp-dev; recheck both origin/dwp-dev bases and V56 absence; materialize only the two planned worktrees; activate the exact V56 lease; then issue a token that pins every artifact hash, base, worktree and acceptance ID.",
+  "dispatchRequirements": [
+    "Dispatch only to the HRIS-HRM module implementation agent after token issuance.",
+    "Provide both absolute worktree paths, branches, exact heads, trees, upstreams and clean-state hashes.",
+    "Provide the V56 activation artifact and exact create-only migration path.",
+    "Provide writable, read-only and stop boundaries from work-packet.v1.json.",
+    "Require HRM002-AC-01 through HRM002-AC-12 and module-result-contract.v1.json.",
+    "Require changed-cluster-first verification and prohibit full repository suites after each correction.",
+    "Require clean pushed module commits; prohibit direct dwp-dev merge and Notification runtime activation."
+  ],
+  "authority": {
+    "preparationRecorded": true,
+    "worktreeMaterializationAuthorizedAfterCarrierPush": true,
+    "moduleImplementationAuthorized": false,
+    "migrationAuthoringAuthorized": false,
+    "moduleBranchCommitAuthorized": false,
+    "moduleBranchPushAuthorized": false,
+    "mergeToDwpDevAuthorized": false,
+    "notificationRuntimeOnboardingAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantOrCustomerActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "INDEPENDENTLY_AUDIT_THEN_COMMIT_AND_PUSH_THIS_PREPARATION_CARRIER; MATERIALIZE_ONLY_THE_TWO_EXACT_WORKTREES_AND_ACTIVATE_V56; DO_NOT_START_MODULE_IMPLEMENTATION_BEFORE_THE_ISSUED_TOKEN"
+}

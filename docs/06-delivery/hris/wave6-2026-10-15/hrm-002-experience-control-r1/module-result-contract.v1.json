@@ -1,0 +1,70 @@
+{
+  "schema": "dwp.hris.module-result-contract.v1",
+  "contractId": "HRIS-WAVE6-RESULT-CONTRACT-BASE-TFR-HRM-002-R1",
+  "preparedAt": "2026-10-15T09:41:00+09:00",
+  "state": "SEALED_PRE_TOKEN",
+  "moduleSession": "HRIS-HRM",
+  "sliceId": "BASE-TFR-HRM-002",
+  "requiredResultState": "MODULE_OWNER_DELTA_COMPLETE_CENTRAL_RELATED_CONTRACT_ACCEPTANCE_PENDING_DEFAULT_OFF",
+  "requiredEvidence": {
+    "git": [
+      "backend and frontend exact base commits, result commits, trees, branch upstreams and 0/0 clean state",
+      "changed-path and content manifests with no path outside the work-packet touch manifest",
+      "proof that central carrier and historical migration hashes are unchanged"
+    ],
+    "acceptance": [
+      "one result for every HRM002-AC-01 through HRM002-AC-12 with command, selected test count, pass/fail/skip and evidence path",
+      "zero remaining P0 or P1 defects and no skipped mandatory PostgreSQL or accessibility case",
+      "smallest-failed-target rerun history only when a correction was required"
+    ],
+    "migration": [
+      "V56 exact file SHA-256 and bytes",
+      "clean V56 and V55-to-V56 PostgreSQL evidence",
+      "forced RLS, tenant isolation, immutable terminal evidence, ordering conflict and replay results",
+      "V1 through V55 checksums unchanged"
+    ],
+    "receiptAuthority": [
+      "sealed command-family registry and exact origin adapter mapping",
+      "assignment and employee-change positive cases",
+      "cross-tenant, population drift, capability drift, purpose drift, field-policy drift and absent receipt opaque denials",
+      "safe result/deep-link projection with raw result JSON unavailable"
+    ],
+    "notification": [
+      "completed decision-table row for EmployeeChangeApplied.v1",
+      "exact proposed source-event pair and PDX-012 canonical bytes",
+      "recipient, exclusion, privacy, idempotency and atomic handoff evidence",
+      "PDX-013 ordering, duplicate, conflict, terminal and replay evidence",
+      "explicit statement that Notification runtime onboarding and template registration remain Central-pending"
+    ],
+    "frontend": [
+      "receipt recovery and polling for ACCEPTED, RUNNING, SUCCEEDED, REJECTED, FAILED and RESULT_UNKNOWN",
+      "scope change and unmount cancellation, retry/backoff bounds and no stale protected result",
+      "authorized deep link only, loading/error/denied/recovery states, keyboard/focus and accessible live status",
+      "no shell, sidebar, route registry or product-map edit"
+    ]
+  },
+  "resultArtifactRequirements": {
+    "format": "JSON",
+    "mustPin": [
+      "issued token and work packet hashes",
+      "worktree bases and result commits",
+      "V56 lease activation and migration evidence",
+      "all twelve acceptance IDs",
+      "changed-path and central-carrier hash manifests",
+      "default-OFF and no-activation nonclaims"
+    ],
+    "forbiddenClaims": [
+      "central integration complete",
+      "PLAT-004 runtime source onboarding complete",
+      "SYS-API-026 or SYS-API-033 complete",
+      "tenant, customer or production activation complete"
+    ]
+  },
+  "centralAdmissionGate": [
+    "verify exact branch lineage and authorized path union without rerunning accepted module suites",
+    "verify all twelve acceptance results and mandatory database evidence",
+    "review and separately authorize the exact PLAT-004 source-event pair and template package",
+    "merge only conflict-free exact result commits to dwp-dev",
+    "keep all new runtime paths default OFF"
+  ]
+}
