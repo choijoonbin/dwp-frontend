@@ -1,0 +1,57 @@
+{
+  "schema": "dwp.hris.module-start-authority-amendment-issued-manifest.v4",
+  "manifestId": "HRIS-WAVE6-HRM-002-R4-AMENDMENT-ISSUED-MANIFEST",
+  "issuedAt": "2026-10-15T13:35:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-HRM",
+  "sliceId": "BASE-TFR-HRM-002",
+  "state": "R4_PRODUCTION_RECIPIENT_AUTHORITY_READY_FOR_CENTRAL_COMMIT",
+  "artifacts": [
+    {
+      "path": "recipient-authority-successor-amendment.v1.json",
+      "id": "HRIS-WAVE6-HRM-002-RECIPIENT-AUTHORITY-R4",
+      "sha256": "df111b62ed21db646cb4c06a5f24f06fcb1bbb064ddc9ed42a7be110ecb1082d",
+      "bytes": 13919
+    },
+    {
+      "path": "start-token-amendment.v4.json",
+      "id": "HRIS-WAVE6-START-BASE-TFR-HRM-002-R4",
+      "sha256": "cd1688d9c5a2b566ec428fc35c8629dd988afb631ff53cc1e963859c4b4271aa",
+      "bytes": 4912
+    }
+  ],
+  "issuancePreconditions": {
+    "frontendControlBranch": "dwp-dev",
+    "frontendControlBaseCommit": "6f1ea93159fba6ccff49e7465c02a17fe80b23f4",
+    "frontendControlBaseTree": "6a38eaeae1d5d36bc7b0b76a56543d25179c8578",
+    "backendModuleBranch": "codex/hris-wave6-hrm-002-backend-20261015-r1",
+    "backendModuleContinuationCommit": "eb93acb4b076228e95466fae2222c4cf45a7198a",
+    "backendModuleContinuationTree": "f6dc2a97252d8ee408b0454a7b8c0926dec7c91e",
+    "backendCleanAndPushedAtIssue": true,
+    "authA2State": "NOT_RUN",
+    "peopleP2State": "NOT_RUN",
+    "priorAggregateRerunState": "FORBIDDEN_ALREADY_ACCEPTED",
+    "frontendRerunState": "FORBIDDEN_ALREADY_ACCEPTED",
+    "migrationRerunState": "FORBIDDEN_ALREADY_ACCEPTED"
+  },
+  "integrityRules": [
+    "Resolve both R4 paths relative to this manifest and verify raw SHA-256 and byte counts before consuming R4 authority.",
+    "Verify the three pinned R3 predecessor artifacts and the exact backend/frontend continuation commits before applying this successor.",
+    "R4 is a delta: the combined R1/R2/R3/R4 restrictions apply and any unlisted edit invalidates the module result.",
+    "Auth OpenAPI export, A2 and People P2 remain unused until static implementation closes; each targeted command runs once and accepted suites do not rerun.",
+    "Any byte change to either R4 artifact invalidates this manifest."
+  ],
+  "consumptionGate": {
+    "stateRequiredBeforeBackendEdit": "COMMITTED_PUSHED_CENTRAL_DWP_DEV",
+    "rule": "Commit and push only the three R4 issuance artifacts first. Then verify origin/dwp-dev contains that exact commit, the control hashes are unchanged and the central checkout has no uncommitted control changes. The separately withheld draft module-result-evidence is not part of issuance and must not be committed before R4 completion.",
+    "backendEditAuthorizedBeforeGate": false
+  },
+  "authority": {
+    "consumeR4Amendment": true,
+    "continueExistingBackendWorktree": true,
+    "editOnlyExactR4Paths": true,
+    "commitAndPushBackendModuleBranchAfterTargetedVerification": true,
+    "mergeToDwpDev": false,
+    "activation": false
+  }
+}

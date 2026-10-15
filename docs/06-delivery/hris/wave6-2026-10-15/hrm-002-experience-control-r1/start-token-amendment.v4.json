@@ -1,0 +1,81 @@
+{
+  "schema": "dwp.hris.module-start-token-amendment.v4",
+  "tokenAmendmentId": "HRIS-WAVE6-START-BASE-TFR-HRM-002-R4",
+  "issuedAt": "2026-10-15T13:35:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-HRM",
+  "sliceId": "BASE-TFR-HRM-002",
+  "state": "ISSUED_PRODUCTION_RECIPIENT_AUTHORITY_CLOSURE",
+  "amendsToken": "HRIS-WAVE6-START-BASE-TFR-HRM-002-R3",
+  "reason": "R4 resolves the final P1 found during result-evidence review: the production recipient port is fail-closed but permanently empty, so the positive PDX-012 path is not production-reachable.",
+  "controlAmendment": {
+    "path": "recipient-authority-successor-amendment.v1.json",
+    "amendmentId": "HRIS-WAVE6-HRM-002-RECIPIENT-AUTHORITY-R4",
+    "sha256": "df111b62ed21db646cb4c06a5f24f06fcb1bbb064ddc9ed42a7be110ecb1082d",
+    "bytes": 13919
+  },
+  "predecessorAuthority": {
+    "token": "start-token-amendment.v3.json",
+    "tokenSha256": "361b08e75ade8ca7f379806f8d352c4d138c0ffef0f576c843aa0bd9adb11eef",
+    "manifest": "amendment-issued-manifest.v3.json",
+    "manifestSha256": "99166f426414a559ad7bfdfa768622057cd8115298568f442c8053068cdd666c",
+    "rule": "R1 through R3 remain binding except for the exact new R4 writable paths and production recipient adapter replacement."
+  },
+  "worktreeReuse": {
+    "backend": {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave6-20261015/hrm-002-r1/backend",
+      "branch": "codex/hris-wave6-hrm-002-backend-20261015-r1",
+      "continuationCommit": "eb93acb4b076228e95466fae2222c4cf45a7198a",
+      "continuationTree": "f6dc2a97252d8ee408b0454a7b8c0926dec7c91e",
+      "preImplementationState": "CLEAN_PUSHED_R3_RESULT"
+    },
+    "frontend": {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave6-20261015/hrm-002-r1/frontend",
+      "branch": "codex/hris-wave6-hrm-002-frontend-20261015-r1",
+      "acceptedCommit": "af1eee09efa45e09eea080963f30eb8265d299f4",
+      "acceptedTree": "3c7b5819b4f578d40b67f7484bbfac099dfdfe20",
+      "rule": "Accepted and read-only; do not edit or rerun."
+    }
+  },
+  "authorizedSuccessorWork": [
+    "Add the exact purpose-bound Auth recipient authority endpoint, repository, service, DTO and dedicated security chain listed by R4.",
+    "Add the dedicated Auth and People configuration properties with blank defaults and one shared deployment secret environment variable.",
+    "Replace the always-empty People implementation with the strict production Auth adapter while retaining all existing active-subject, actor-exclusion, omission and default-OFF behavior.",
+    "Add only the exact R4 tests and run Auth A2 and People P2 once after static closure.",
+    "Commit and push only the backend module branch after independent P0/P1 review and update the module result evidence only after the production positive path is proven."
+  ],
+  "consumptionPrecondition": {
+    "requiredState": "R4_CONTROL_COMMITTED_PUSHED_ON_CENTRAL_DWP_DEV",
+    "requiredChecks": [
+      "the central frontend dwp-dev commit contains exactly the three R4 control artifacts from this issuance step",
+      "central frontend is clean except any explicitly withheld draft result evidence, upstream is 0/0 and the commit is present on origin/dwp-dev",
+      "the raw control, token and manifest hashes and byte counts still equal their issued values"
+    ],
+    "rule": "No backend source edit or test may consume this token while the R4 artifacts are untracked, uncommitted or unpushed."
+  },
+  "verificationPolicy": {
+    "authA2StateAtIssue": "NOT_RUN",
+    "peopleP2StateAtIssue": "NOT_RUN",
+    "r3A1P1State": "ACCEPTED_NO_RERUN",
+    "frontendState": "ACCEPTED_NO_RERUN",
+    "migrationState": "ACCEPTED_NO_RERUN",
+    "rule": "No repository-wide suite, wildcard package test, prior aggregate rerun, frontend rerun, migration rerun or generated-carrier regeneration. The one explicit exception is the control-required Auth-only OpenAPI export that updates contracts/openapi/auth.json while proving every other snapshot byte-identical."
+  },
+  "completionGate": [
+    "R4 control and token raw hashes and bytes are verified before the first backend edit.",
+    "Only exact R4 paths change after the pinned backend continuation commit.",
+    "Dedicated credential isolation, active tenant/user/TENANT-plane resolution, strict short-lived evidence, production positive handoff and every fail-closed case pass in A2/P2.",
+    "The backend module branch is committed, pushed, clean and upstream 0/0 with independent P0=0/P1=0; no central merge or activation is claimed."
+  ],
+  "authority": {
+    "consumeR4Amendment": true,
+    "continueExistingBackendWorktree": true,
+    "editOnlyExactR4Paths": true,
+    "commitAndPushBackendModuleBranch": true,
+    "editOrRerunFrontendModule": false,
+    "rerunR3Aggregates": false,
+    "rerunMigration": false,
+    "mergeToDwpDev": false,
+    "runtimeActivation": false
+  }
+}

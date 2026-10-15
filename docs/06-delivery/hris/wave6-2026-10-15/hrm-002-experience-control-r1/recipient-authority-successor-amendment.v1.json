@@ -1,0 +1,233 @@
+{
+  "schema": "dwp.hris.hrm002.recipient-authority-successor-amendment.v1",
+  "amendmentId": "HRIS-WAVE6-HRM-002-RECIPIENT-AUTHORITY-R4",
+  "issuedAt": "2026-10-15T13:35:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-HRM",
+  "sliceId": "BASE-TFR-HRM-002",
+  "state": "ISSUED_BOUNDED_PRODUCTION_RECIPIENT_AUTHORITY",
+  "reason": "Final module-result review proved that the production HrisExperienceRecipientAuthority always returns empty. The positive PDX-012 path is therefore reachable only with a test double, which conflicts with HRM002-AC-08 and the sealed People-owned recipient rule. R4 closes that exact production gap without weakening the result contract or transferring identity resolution to Central.",
+  "predecessorPins": {
+    "workPacket": {
+      "path": "work-packet.v1.json",
+      "sha256": "57aaf7d03eccb184a934c34d5be99f3af3df1a76462bd52780081f7287642654",
+      "bytes": 10297
+    },
+    "resultContract": {
+      "path": "module-result-contract.v1.json",
+      "sha256": "5ea1f66a07546cbd243322abda920dfa37f174c6e76b836c97bd4a0ae3e00b31",
+      "bytes": 3532
+    },
+    "r3Control": {
+      "path": "origin-authority-hardening-successor-amendment.v1.json",
+      "sha256": "ab34fd98d35dbbf1ff4efcaa63f763e46f9c7db16bc1e3658f2f12dad5aefba6",
+      "bytes": 12312
+    },
+    "r3Token": {
+      "path": "start-token-amendment.v3.json",
+      "sha256": "361b08e75ade8ca7f379806f8d352c4d138c0ffef0f576c843aa0bd9adb11eef",
+      "bytes": 4047
+    },
+    "r3Manifest": {
+      "path": "amendment-issued-manifest.v3.json",
+      "sha256": "99166f426414a559ad7bfdfa768622057cd8115298568f442c8053068cdd666c",
+      "bytes": 2463
+    },
+    "backendResultCommit": "eb93acb4b076228e95466fae2222c4cf45a7198a",
+    "backendResultTree": "f6dc2a97252d8ee408b0454a7b8c0926dec7c91e",
+    "frontendResultCommit": "af1eee09efa45e09eea080963f30eb8265d299f4",
+    "frontendResultTree": "3c7b5819b4f578d40b67f7484bbfac099dfdfe20",
+    "centralControlBaseCommit": "6f1ea93159fba6ccff49e7465c02a17fe80b23f4",
+    "centralControlBaseTree": "6a38eaeae1d5d36bc7b0b76a56543d25179c8578"
+  },
+  "provenGap": {
+    "productionImplementation": "NoVerifiedHrisExperienceRecipientAuthority",
+    "literalBehavior": "Optional.empty for every tenant and person",
+    "impact": "HrisExperienceNotificationHandoff always records NO_AUTHORITATIVE_USER_MAPPING and cannot reach READY_LOCAL_ONLY in production wiring",
+    "testBoundary": "The accepted positive handoff test uses a mock HrisExperienceRecipientAuthority and does not prove production identity authority",
+    "severity": "P1_MODULE_COMPLETION_BLOCKER"
+  },
+  "supersession": [
+    "R1 through R3 remain binding except that the exact Auth and People paths listed here become writable solely for the recipient-authority purpose.",
+    "The prior always-empty production recipient implementation must be replaced by the exact fail-closed Auth adapter defined here.",
+    "No Notification runtime onboarding, template registration, generated carrier, migration, frontend application, route, menu, Gateway or product-authorization edit is authorized; the exact internal Auth OpenAPI route and two owner-qualified schemas are the sole contract exception.",
+    "The backend module branch may continue from the pinned R3 result commit; merge to dwp-dev and runtime activation remain forbidden pending Central result admission."
+  ],
+  "authorityContract": {
+    "endpoint": {
+      "method": "POST",
+      "path": "/internal/auth/v1/hris-recipient-authority/resolve",
+      "contentType": "application/json",
+      "caller": "dwp-people-server"
+    },
+    "credential": {
+      "header": "X-DWP-Hris-Recipient-Authority-Token",
+      "serviceIdentityHeader": "X-DWP-Service-Identity",
+      "serviceIdentity": "dwp-people-server",
+      "authProperty": "dwp.auth.hris-recipient-authority-token",
+      "peopleProperty": "dwp.hris.experience.recipient-authority.token",
+      "environmentVariable": "DWP_HRIS_RECIPIENT_AUTHORITY_TOKEN",
+      "peopleAuthUrlProperty": "dwp.hris.experience.recipient-authority.auth-url",
+      "peopleAuthUrlEnvironmentVariable": "DWP_HRIS_RECIPIENT_AUTHORITY_URL",
+      "peopleAuthUrlDefault": "SERVICE_AUTH_URL then http://localhost:8001",
+      "peopleTimeoutProperty": "dwp.hris.experience.recipient-authority.timeout",
+      "peopleTimeoutEnvironmentVariable": "DWP_HRIS_RECIPIENT_AUTHORITY_TIMEOUT",
+      "peopleTimeoutDefault": "PT2S",
+      "peopleTimeoutMaximum": "PT5S",
+      "rule": "This secret is dedicated and non-interchangeable. Identity-sync, HRIS-origin, product-surface, meeting, Gateway, Platform and generic service credentials cannot authenticate this endpoint. Duplicate, mixed, blank, non-trim-stable, wrong-path or wrong-method credentials deny."
+    },
+    "request": {
+      "exactFields": [
+        "requestId",
+        "tenantId",
+        "personPublicId",
+        "purpose"
+      ],
+      "purpose": "HCM.EMPLOYEE_CHANGE_APPLIED_NOTIFICATION",
+      "rules": [
+        "requestId and personPublicId are canonical UUIDs and tenantId is a positive bigint",
+        "unknown, duplicate, missing, null or scalar-coerced fields are rejected",
+        "the purpose must equal the single sealed literal; this endpoint is not a general identity directory"
+      ]
+    },
+    "response": {
+      "requestSchema": "HrisRecipientAuthorityResolveRequest",
+      "responseSchema": "HrisRecipientAuthorityResolveResponse",
+      "exactFields": [
+        "requestId",
+        "tenantId",
+        "personPublicId",
+        "userId",
+        "evidenceRevision",
+        "capturedAt",
+        "validUntil"
+      ],
+      "privacyRule": "Echo the exact requestId and return only the identifiers and short-lived revision required by PDX-012 recipient construction; never return name, email, roles, groups, permissions or HR attributes. The controller sets Cache-Control: no-store.",
+      "absenceRule": "No row, inactive tenant, inactive user, non-TENANT plane, null binding, ambiguity or invalid native row produces HTTP 404 with the same standard ApiResponse NOT_FOUND envelope and the fixed message 'Recipient authority is unavailable.'."
+    }
+  },
+  "authoritativeQuery": {
+    "owner": "dwp-auth-server",
+    "source": "com_tenants joined to com_users",
+    "cardinality": "exactly one row",
+    "predicates": [
+      "tenant.tenant_id equals request tenantId",
+      "tenant.status equals ACTIVE",
+      "user.tenant_id equals tenant.tenant_id",
+      "user.person_public_id equals request personPublicId",
+      "user.status equals ACTIVE",
+      "user.identity_plane equals TENANT"
+    ],
+    "defensiveInputs": [
+      "tenant public id",
+      "tenant status and row version",
+      "user id and principal public id",
+      "person public id",
+      "user status and identity plane",
+      "user row version and access revision"
+    ],
+    "uniquenessBasis": "The existing tenant/person partial unique index bounds the production mapping to at most one user; no migration is required."
+  },
+  "evidenceContract": {
+    "domainSeparator": "dwp:hris-recipient-authority:v1",
+    "canonicalMaterialOrder": [
+      "domainSeparator",
+      "tenantId",
+      "tenantPublicId",
+      "tenantStatus",
+      "tenantVersion",
+      "userId",
+      "principalPublicId",
+      "personPublicId",
+      "userStatus",
+      "identityPlane",
+      "userRowVersion",
+      "accessRevision"
+    ],
+    "evidenceRevision": "lowercase SHA-256 of UTF-8 newline-joined canonical material",
+    "lease": "capturedAt is the Auth UTC observation instant; validUntil is after capturedAt and the lease duration is no greater than 30 seconds",
+    "peopleValidation": [
+      "strictly parse the exact response shape without unknown, duplicate, trailing or coerced values and require the exact requestId echo",
+      "require exact request tenant and person echo, positive userId and lowercase 64-hex evidenceRevision",
+      "require capturedAt no more than five seconds ahead of the People UTC clock, validUntil after capturedAt, the People current UTC instant and the business event instant, and a lease duration no greater than 30 seconds",
+      "blank token, non-2xx, timeout, malformed body, mismatch or stale lease returns Optional.empty and preserves audited omission",
+      "the current active People subject check and applying-actor exclusion remain mandatory intersections"
+    ]
+  },
+  "exactTouchBoundary": {
+    "authProduction": [
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/config/HrisRecipientAuthoritySecurityConfig.java",
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/controller/HrisRecipientAuthorityController.java",
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/dto/HrisRecipientAuthorityDtos.java",
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/repository/HrisRecipientAuthorityRepository.java",
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/service/HrisRecipientAuthorityService.java",
+      "dwp-auth-server/src/main/resources/application.yml"
+    ],
+    "authTests": [
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/config/HrisRecipientAuthoritySecurityConfigTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/controller/HrisRecipientAuthorityControllerTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/HrisRecipientAuthorityServiceTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/controller/AuthOpenApiSchemaOwnershipContractTest.java"
+    ],
+    "authInternalContract": [
+      "contracts/openapi/auth.json"
+    ],
+    "peopleProduction": [
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/experience/HrisExperienceRecipientAuthority.java",
+      "dwp-people-server/src/main/resources/application.yml"
+    ],
+    "peopleTests": [
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/experience/AuthHrisExperienceRecipientAuthorityTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/experience/HrisExperienceNotificationHandoffTest.java"
+    ],
+    "stillForbidden": [
+      "dwp-gateway/**",
+      "dwp-platform-contracts/**",
+      "contracts/openapi/** except the exact internal Auth route and its HrisRecipientAuthority request/response schemas in contracts/openapi/auth.json",
+      "contracts/asyncapi/**",
+      "contracts/product-authorization/**",
+      "generated authorization or carrier artifacts",
+      "dwp-notification-server/**",
+      "all migration files including V56",
+      "frontend application source or accepted frontend module worktree",
+      "runtime, tenant, customer or production activation",
+      "merge to dwp-dev before Central result admission"
+    ]
+  },
+  "targetedVerification": {
+    "policy": "Complete static implementation first, then run each changed owner cluster once. On failure rerun only the smallest owning class after correction. Do not rerun R1 frontend, PostgreSQL migration, R3 A1/P1, repository-wide or generated-contract suites.",
+    "authOpenApiExport": "DWP_EXPORT_AUTH_OPENAPI=true ./gradlew :dwp-auth-server:test --tests '*AuthOpenApiSnapshotExportTest' --no-daemon --max-workers=1",
+    "authA2": "./gradlew :dwp-auth-server:test --tests '*HrisRecipientAuthoritySecurityConfigTest' --tests '*HrisRecipientAuthorityControllerTest' --tests '*HrisRecipientAuthorityServiceTest' --tests '*AuthOpenApiSchemaOwnershipContractTest' --no-daemon --max-workers=1",
+    "peopleP2": "./gradlew :dwp-people-server:test --tests '*AuthHrisExperienceRecipientAuthorityTest' --tests '*HrisExperienceNotificationHandoffTest' --no-daemon --max-workers=1",
+    "static": [
+      "git diff --check",
+      "exact R4 changed-path allowlist",
+      "strict request and response field-shape inspection",
+      "gateway-public OpenAPI and every non-auth OpenAPI snapshot remain byte-identical",
+      "auth.json semantic delta is limited to the one exact internal path and the two exact HrisRecipientAuthority owner schemas; any unrelated path, component or metadata change invalidates R4",
+      "R1 through R3 accepted commits, frontend bytes and V56 hash preservation",
+      "dwp.hris.experience.enabled remains default OFF"
+    ]
+  },
+  "completionGate": [
+    "The dedicated credential is accepted only for one People identity, one POST path and one exact purpose; cross-token, duplicate, mixed, wrong-path and wrong-method cases deny before controller entry.",
+    "An active tenant plus active TENANT-plane exact person binding returns one privacy-minimized, short-lived result and all other states deny opaquely.",
+    "The production People bean reaches READY_LOCAL_ONLY for a valid non-actor mapping and preserves audited omission for absent, stale, malformed or unavailable authority.",
+    "Strict JSON, requestId echo, tenant/person mismatch, stale lease, actor exclusion, no-store and blank-token cases pass in the exact targeted tests.",
+    "Auth A2 and People P2 pass once, changed paths equal this R4 allowlist, V56 and accepted frontend bytes remain unchanged, and independent review reports P0=0/P1=0.",
+    "The backend module branch is committed, pushed, clean and upstream 0/0 before module-result evidence is finalized."
+  ],
+  "authority": {
+    "consumeR4Amendment": true,
+    "continueExistingBackendWorktree": true,
+    "editOnlyExactR4Paths": true,
+    "commitAndPushBackendModuleBranchAfterTargetedVerification": true,
+    "weakenRecipientRequirement": false,
+    "transferIdentityResolutionToCentral": false,
+    "editOrRerunFrontendModule": false,
+    "rerunMigration": false,
+    "mergeToDwpDev": false,
+    "activation": false,
+    "consumptionPrecondition": "The three exact R4 artifacts must first be committed and pushed on central frontend dwp-dev, with a clean 0/0 upstream state and the manifest hashes reverified. No backend edit is authorized from untracked or unpushed control files."
+  }
+}
