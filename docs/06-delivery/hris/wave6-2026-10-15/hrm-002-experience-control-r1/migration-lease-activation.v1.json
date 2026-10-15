@@ -1,0 +1,83 @@
+{
+  "schema": "dwp.hris.migration-lease-activation.v1",
+  "activationId": "HRIS-WAVE6-ACTIVATE-BASE-TFR-HRM-002-PEOPLE-V56-R1",
+  "leaseId": "HRIS-WAVE6-HRM-002-PEOPLE-V56-R1",
+  "activatedAt": "2026-10-15T09:47:17+09:00",
+  "activatedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-HRM",
+  "sliceId": "BASE-TFR-HRM-002",
+  "state": "ACTIVE_AUTHORING_ONLY",
+  "leaseEvidence": {
+    "path": "migration-lease.v1.json",
+    "sha256": "6229a804d529f63b229f6deb402c60f0ef71c34fb398ba59a6543254c9f72d47",
+    "bytes": 2507,
+    "stream": "PEOPLE_HR",
+    "version": "V56",
+    "exactPath": "dwp-people-server/src/main/resources/db/migration/V56__hrm_base_tfr_hrm_002.sql"
+  },
+  "preActivationObservation": {
+    "centralBackend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "9c9e33c29a63e2638213d424e74c8fabed2e7a4b",
+      "tree": "b2e1a43aad573d63238dbed1a800b6425aa9e3d0",
+      "upstream": "origin/dwp-dev",
+      "cleanAndRemoteExact": true
+    },
+    "peopleHrHighWater": {
+      "version": "V55",
+      "path": "dwp-people-server/src/main/resources/db/migration/V55__hrm_base_tfr_hrm_008.sql",
+      "sha256": "d9915f1e3457fdcb6a4bfbb9bf458e9e753c34dc6a9e9add62f82f6f71a5beec",
+      "bytes": 11895
+    },
+    "exactV56PathPresent": false,
+    "observedAt": "2026-10-15T09:47:17+09:00"
+  },
+  "backendWorktree": {
+    "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave6-20261015/hrm-002-r1/backend",
+    "branch": "codex/hris-wave6-hrm-002-backend-20261015-r1",
+    "upstream": "origin/codex/hris-wave6-hrm-002-backend-20261015-r1",
+    "head": "9c9e33c29a63e2638213d424e74c8fabed2e7a4b",
+    "tree": "b2e1a43aad573d63238dbed1a800b6425aa9e3d0",
+    "upstreamHead": "9c9e33c29a63e2638213d424e74c8fabed2e7a4b",
+    "upstreamAhead": 0,
+    "upstreamBehind": 0,
+    "porcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "state": "MATERIALIZED_PUSHED_CLEAN_REMOTE_EXACT"
+  },
+  "schemaContract": {
+    "purpose": "Tenant-scoped durable EmployeeChangeApplied handoff and append-only ordered PDX-013 receipt inbox only.",
+    "reuse": "Reuse the V54 ppl_command_receipts ledger for command receipt projections; do not duplicate it.",
+    "tenantIsolation": "RLS_ENABLED_AND_FORCED",
+    "terminalEvidence": "IMMUTABLE",
+    "crossServiceForeignKeys": false,
+    "sensitivePayloadPersistence": false
+  },
+  "verificationRequired": [
+    "PostgreSQL clean migration through V56",
+    "PostgreSQL V55-to-V56 upgrade",
+    "V1 through V55 checksum preservation",
+    "forced RLS and cross-tenant denial",
+    "PDX-013 duplicate, sequence conflict, ordering and terminal immutability",
+    "report BLOCKED rather than PASS if PostgreSQL execution is unavailable"
+  ],
+  "authority": {
+    "migrationCreationAuthorized": true,
+    "exactPathOnly": true,
+    "cleanAndUpgradeTestExecutionAuthorized": true,
+    "existingMigrationEditAuthorized": false,
+    "secondPeopleHrMigrationAuthorized": false,
+    "centralBackendChangeAuthorized": false,
+    "dwpDevIntegrationAuthorized": false,
+    "notificationRuntimeOnboardingAuthorized": false,
+    "tenantActivationAuthorized": false,
+    "productionExecutionAuthorized": false
+  },
+  "invalidationConditions": [
+    "V56 exists from any other owner before the first module edit",
+    "the backend worktree branch, head, tree, upstream, ahead/behind or clean state differs from this activation",
+    "V54 or V55 bytes drift",
+    "an existing migration, second People HR migration or cross-service schema dependency is required",
+    "Notification runtime onboarding, customer database execution or production activation is attempted"
+  ]
+}

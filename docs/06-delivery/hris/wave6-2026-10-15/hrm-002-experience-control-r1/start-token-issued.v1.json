@@ -1,0 +1,212 @@
+{
+  "schema": "dwp.hris.module-start-token.v1",
+  "tokenId": "HRIS-WAVE6-START-BASE-TFR-HRM-002-R1",
+  "issuedAt": "2026-10-15T09:47:17+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-HRM",
+  "sliceId": "BASE-TFR-HRM-002",
+  "sourceRef": "TFR-HRM-002",
+  "capability": "DWP.HRIS.EMPLOYEE_EXPERIENCE_COMMAND_RECEIPT",
+  "scope": "HRM002_COMMAND_RECEIPT_NOTIFICATION_HANDOFF_AND_USER_RECOVERY",
+  "state": "ISSUED_IMPLEMENTATION_ONLY",
+  "permittedAction": "IMPLEMENT_THE_EXACT_HRM_002_PEOPLE_RECEIPT_AUTHORITY_NOTIFICATION_HANDOFF_PDX013_INBOX_V56_AND_EMPLOYEE_CHANGE_RECOVERY_UX_ONLY_WITHIN_THE_SEALED_TOUCH_MANIFEST",
+  "preparationEvidence": {
+    "workPacket": {
+      "path": "work-packet.v1.json",
+      "packetId": "HRIS-WAVE6-WORK-BASE-TFR-HRM-002-R1",
+      "sha256": "57aaf7d03eccb184a934c34d5be99f3af3df1a76462bd52780081f7287642654",
+      "bytes": 10297
+    },
+    "resultContract": {
+      "path": "module-result-contract.v1.json",
+      "contractId": "HRIS-WAVE6-RESULT-CONTRACT-BASE-TFR-HRM-002-R1",
+      "sha256": "5ea1f66a07546cbd243322abda920dfa37f174c6e76b836c97bd4a0ae3e00b31",
+      "bytes": 3532
+    },
+    "startPreparation": {
+      "path": "start-token-preparation.v1.json",
+      "preparationId": "HRIS-WAVE6-START-PREP-BASE-TFR-HRM-002-R1",
+      "sha256": "3a0a4a66f2b348869a25ee270eba74f3d8f9a659128a0fbe31802638ed3395db",
+      "bytes": 4605
+    },
+    "migrationLease": {
+      "path": "migration-lease.v1.json",
+      "leaseId": "HRIS-WAVE6-HRM-002-PEOPLE-V56-R1",
+      "sha256": "6229a804d529f63b229f6deb402c60f0ef71c34fb398ba59a6543254c9f72d47",
+      "bytes": 2507
+    },
+    "migrationLeaseActivation": {
+      "path": "migration-lease-activation.v1.json",
+      "activationId": "HRIS-WAVE6-ACTIVATE-BASE-TFR-HRM-002-PEOPLE-V56-R1",
+      "sha256": "29ef49f637de13f4b855d9734f3bb0a496f3f024fa0dc4ed7a4d1c6fab09b299",
+      "bytes": 3683,
+      "state": "ACTIVE_AUTHORING_ONLY"
+    }
+  },
+  "basePins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "9c9e33c29a63e2638213d424e74c8fabed2e7a4b",
+      "tree": "b2e1a43aad573d63238dbed1a800b6425aa9e3d0",
+      "upstream": "origin/dwp-dev",
+      "upstreamMatchedAtMaterialization": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "bc91cceea76b8b0e336931430fe8f220cea39c78",
+      "tree": "312f4f9cae1ffe22180df62b07e4e724fcca0ea5",
+      "upstream": "origin/dwp-dev",
+      "upstreamMatchedAtMaterialization": true
+    }
+  },
+  "worktrees": [
+    {
+      "repository": "dwp-backend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave6-20261015/hrm-002-r1/backend",
+      "branch": "codex/hris-wave6-hrm-002-backend-20261015-r1",
+      "upstream": "origin/codex/hris-wave6-hrm-002-backend-20261015-r1",
+      "head": "9c9e33c29a63e2638213d424e74c8fabed2e7a4b",
+      "tree": "b2e1a43aad573d63238dbed1a800b6425aa9e3d0",
+      "upstreamHead": "9c9e33c29a63e2638213d424e74c8fabed2e7a4b",
+      "upstreamAhead": 0,
+      "upstreamBehind": 0,
+      "porcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "state": "MATERIALIZED_PUSHED_CLEAN_REMOTE_EXACT"
+    },
+    {
+      "repository": "dwp-frontend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave6-20261015/hrm-002-r1/frontend",
+      "branch": "codex/hris-wave6-hrm-002-frontend-20261015-r1",
+      "upstream": "origin/codex/hris-wave6-hrm-002-frontend-20261015-r1",
+      "head": "bc91cceea76b8b0e336931430fe8f220cea39c78",
+      "tree": "312f4f9cae1ffe22180df62b07e4e724fcca0ea5",
+      "upstreamHead": "bc91cceea76b8b0e336931430fe8f220cea39c78",
+      "upstreamAhead": 0,
+      "upstreamBehind": 0,
+      "porcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "state": "MATERIALIZED_PUSHED_CLEAN_REMOTE_EXACT"
+    }
+  ],
+  "centralCarrierPins": {
+    "authorizationVersion": 43,
+    "authorizationState": "DRAFT",
+    "peopleOpenApiSha256": "4f8b31b2b0e3d2227bf6c02f9bf18092121323292160408601cabbd70c579ce8",
+    "gatewayOpenApiSha256": "bcc41751c61c1bfc661df4efb4707aee564468ce40123732035e49ee9d2316c3",
+    "authorizationBundleV43Sha256": "43e78121675791410a39c59808d047a3334e8b01679de2d7c2b73954585681a7",
+    "commandReceiptV1Sha256": "905b75295533e5df5824411316b3bbc75ee3387d4bc2f04d084713eb37d82733",
+    "notificationIntentPdx012Sha256": "86f61e966ed8bbac8ffdc4088869e863e573c786e1c360ec6ee554657329ad07",
+    "notificationReceiptPdx013Sha256": "052170635e85321f9c40736d8fd990a4d75a4d588fe545e626460b584f7ac20d",
+    "rule": "Consume unchanged; stop and request an exact Central amendment if any edit is required."
+  },
+  "implementationContract": {
+    "commandReceiptRoute": "/api/people/v1/hris/command-receipts/{receiptId}",
+    "receiptFamilies": [
+      "HRM-008 assignment command receipts",
+      "HRM-010 employee-change command receipts"
+    ],
+    "originatingCommandRule": "Use a sealed server-side command-family registry and re-evaluate current tenant, population, purpose, field policy and source revision on every read; unauthorized and absent receipts are opaque 404.",
+    "resultProjectionRule": "Expose only the existing CommandReceiptV1 safe projection and authorized literal deep link; never return raw result JSON.",
+    "notificationOrigin": "EmployeeChangeApplied.v1",
+    "proposedNotificationEventType": "EmployeeChangeAppliedNotificationRequested.v1",
+    "reservedNotificationSource": "urn:dwp:people:hrm:dwp-experience",
+    "notificationTypeKey": "HCM.EMPLOYEE_CHANGE_APPLIED",
+    "templateKey": "hcm.employee-change.applied",
+    "templateVersion": 1,
+    "notificationRuntimeOnboarding": "CENTRAL_WITHHELD_UNTIL_MODULE_RESULT_AND_EXACT_SOURCE_EVENT_PAIR_AUDIT",
+    "sourceOnlyOrWildcardOnboardingForbidden": true
+  },
+  "migrationLease": {
+    "activationRef": "migration-lease-activation.v1.json",
+    "activationId": "HRIS-WAVE6-ACTIVATE-BASE-TFR-HRM-002-PEOPLE-V56-R1",
+    "stream": "PEOPLE_HR",
+    "version": "V56",
+    "path": "dwp-people-server/src/main/resources/db/migration/V56__hrm_base_tfr_hrm_002.sql",
+    "state": "ACTIVE_AUTHORING_ONLY",
+    "secondMigrationAuthorized": false
+  },
+  "touchBoundary": {
+    "source": "work-packet.v1.json#/touchManifest",
+    "allowedBackendAndFrontend": "Only the exact paths and parenthetical edit purposes listed in the sealed touch manifest.",
+    "readOnly": "Central contracts, OpenAPI, AsyncAPI, authorization, Auth, Notification, generated artifacts, shell/sidebar/product-map/routes and People migrations V1 through V55.",
+    "outsideBoundaryAction": "STOP_AND_REQUEST_AN_EXACT_CONTROL_AMENDMENT"
+  },
+  "acceptanceCriteria": [
+    "HRM002-AC-01-CENTRAL-CARRIERS-UNCHANGED",
+    "HRM002-AC-02-SEALED-ORIGINATING-COMMAND-REGISTRY",
+    "HRM002-AC-03-TENANT-POPULATION-OPAQUE-DENIAL",
+    "HRM002-AC-04-CURRENT-AUTHORITY-AND-PURPOSE-REEVALUATION",
+    "HRM002-AC-05-SAFE-RESULT-AND-DEEP-LINK-PROJECTION",
+    "HRM002-AC-06-V54-COMMAND-LEDGER-REUSE",
+    "HRM002-AC-07-EXACT-NOTIFICATION-DECISION-TABLE",
+    "HRM002-AC-08-ATOMIC-IDEMPOTENT-PRIVACY-MINIMIZED-INTENT",
+    "HRM002-AC-09-PDX013-ORDERING-IDEMPOTENCY-AND-TERMINAL-IMMUTABILITY",
+    "HRM002-AC-10-RECEIPT-RECOVERY-TERMINAL-AND-RESULT-UNKNOWN-UX",
+    "HRM002-AC-11-KEYBOARD-FOCUS-A11Y-AND-SHELL-REGRESSION",
+    "HRM002-AC-12-V56-DEFAULT-OFF-AND-PATH-INTEGRITY"
+  ],
+  "verification": {
+    "resultContract": "module-result-contract.v1.json",
+    "policy": "RUN_EACH_CHANGED_CLUSTER_ONCE; AFTER_A_FIX_RERUN_ONLY_THE_FAILED_COMMAND_OR_SMALLEST_OWNING_TEST; NO_REPOSITORY_WIDE_SUITE",
+    "backend": [
+      "./gradlew :dwp-people-server:test --tests 'com.dwp.services.people.hris.experience.*' --tests 'com.dwp.services.people.hris.employment.*Receipt*' --tests 'com.dwp.services.people.hris.employeeservice.employeechange.*Hrm002*' --no-daemon --max-workers=1",
+      "./gradlew :dwp-people-server:test --tests '*Hrm002MigrationPostgresTest' --no-daemon --max-workers=1"
+    ],
+    "frontend": [
+      "pnpm exec vitest run apps/dwp/src/features/hris/people/command-receipts apps/dwp/src/features/hris/employee-services/employee-change apps/dwp/src/features/hris/people/__tests__/g3-slices/base-tfr-hrm-002.slice.test.tsx",
+      "pnpm exec eslint apps/dwp/src/features/hris/people/command-receipts apps/dwp/src/features/hris/employee-services/employee-change apps/dwp/src/features/hris/people/__tests__/g3-slices/base-tfr-hrm-002.slice.test.tsx"
+    ],
+    "browser": "pnpm exec playwright test e2e/hris-phase-one.spec.ts --grep 'HRM-002 receipt recovery' ONLY_IF_THAT_EXACT_JOURNEY_IS_ADDED"
+  },
+  "requiredResult": [
+    "clean pushed backend and frontend module result commits with exact base and result lineage",
+    "one evidence result for every HRM002-AC-01 through HRM002-AC-12",
+    "V56 clean and V55-to-V56 PostgreSQL evidence with forced RLS and V1 through V55 checksum preservation",
+    "generic receipt authority evidence for assignment and employee-change plus current-policy opaque denials",
+    "exact notification decision table, PDX-012 intent and PDX-013 ordering/idempotency/terminal evidence",
+    "receipt recovery, terminal and RESULT_UNKNOWN UX plus keyboard/focus/accessibility evidence",
+    "changed-path and carrier-hash manifests",
+    "explicit default-OFF and Central-pending runtime onboarding nonclaims"
+  ],
+  "authority": {
+    "moduleImplementationAuthorized": true,
+    "receiptAuthorityImplementationAuthorized": true,
+    "notificationIntentHandoffImplementationAuthorized": true,
+    "pdx013ReceiptInboxImplementationAuthorized": true,
+    "migrationAuthoringAuthorized": true,
+    "moduleBranchCommitAuthorized": true,
+    "moduleBranchPushAuthorized": true,
+    "mergeToDwpDevAuthorized": false,
+    "centralContractEditAuthorized": false,
+    "authorizationOpenApiOrAsyncApiEditAuthorized": false,
+    "notificationServerEditAuthorized": false,
+    "notificationRuntimeOnboardingAuthorized": false,
+    "secondMigrationAuthorized": false,
+    "routeMenuOrShellEditAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantOrCustomerActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "completionBoundary": {
+    "requiredResultState": "MODULE_OWNER_DELTA_COMPLETE_CENTRAL_RELATED_CONTRACT_ACCEPTANCE_PENDING_DEFAULT_OFF",
+    "directDwpDevMergeAuthorized": false,
+    "centralResultAdmissionAuthorized": false,
+    "plat004RuntimeOnboardingCompleteClaimAuthorized": false,
+    "userVisibleTenantActivationAuthorized": false,
+    "productionCompletionClaimAuthorized": false
+  },
+  "expiry": {
+    "expiresAt": null,
+    "policy": "VALID_UNTIL_AN_INVALIDATION_CONDITION_OCCURS_OR_CONTROL_EXPLICITLY_REVOKES_THE_TOKEN"
+  },
+  "invalidationConditions": [
+    "either worktree path, branch, head, tree, upstream, ahead/behind or clean state differs before the first module edit",
+    "a pinned preparation or central carrier hash changes",
+    "V56 exists from another owner, V54 or V55 drifts, or a second migration is required",
+    "a path outside the sealed touch manifest must change",
+    "a Central, Auth, Notification, OpenAPI, AsyncAPI, generated, route, menu, shell or product-map edit is required",
+    "notification source/event/template runtime onboarding is attempted before Central result audit",
+    "feature, policy, tenant, customer or production activation is attempted"
+  ]
+}
