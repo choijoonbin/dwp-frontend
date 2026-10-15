@@ -4,12 +4,18 @@ import { createRoot, type Root } from 'react-dom/client';
 import { HttpError } from '@dwp-frontend/shared-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { parseAuthorizedEmployeeChangeResultLocation } from '../api/command-receipt-api';
 import { useCommandReceiptRecovery } from '../hooks/use-command-receipt-recovery';
 
-import type { HrisCommandReceiptReader } from '../api/command-receipt-api';
+import type {
+  HrisCommandReceiptReader,
+  HrisCommandReceiptReadResult,
+} from '../api/command-receipt-api';
 import type { HrisCommandReceipt } from '../model/command-receipt';
 
 const RECEIPT_ID = '10000000-0000-4000-8000-000000000001';
+const RESULT_LOCATION =
+  '/hr/operations/people/employee-change-requests?requestPublicId=123e4567-e89b-42d3-a456-426614174000';
 
 function receipt(status: HrisCommandReceipt['status']): HrisCommandReceipt {
   return {
@@ -25,6 +31,19 @@ function receipt(status: HrisCommandReceipt['status']): HrisCommandReceipt {
     correlationId: '10000000-0000-4000-8000-000000000003',
     requestDigest: 'b'.repeat(64),
     createdAt: '2026-10-15T01:00:00Z',
+  };
+}
+
+function result(
+  status: HrisCommandReceipt['status'],
+  withLocation = false
+): HrisCommandReceiptReadResult {
+  const nextReceipt = receipt(status);
+  return {
+    receipt: nextReceipt,
+    resultLocation: withLocation
+      ? parseAuthorizedEmployeeChangeResultLocation(RESULT_LOCATION, nextReceipt)
+      : null,
   };
 }
 
@@ -58,7 +77,8 @@ function Harness({
   return (
     <div>
       <output data-testid="state">
-        {recovery.phase}|{recovery.receipt?.status ?? 'none'}|{recovery.attempt}
+        {recovery.phase}|{recovery.receipt?.status ?? 'none'}|{recovery.attempt}|
+        {recovery.resultLocation ?? 'none'}
       </output>
       <button type="button" disabled={!recovery.canRecover} onClick={recovery.recover}>
         Recover
@@ -106,34 +126,53 @@ describe('useCommandReceiptRecovery', () => {
   it('polls ACCEPTED and RUNNING with bounded backoff until a terminal receipt', async () => {
     const reader = vi
       .fn<HrisCommandReceiptReader>()
-      .mockResolvedValueOnce(receipt('RUNNING'))
-      .mockResolvedValueOnce(receipt('SUCCEEDED'));
+      .mockResolvedValueOnce(result('RUNNING'))
+      .mockResolvedValueOnce(result('SUCCEEDED', true));
     await render(receipt('ACCEPTED'), 'scope-a', reader);
 
     await act(async () => vi.runAllTimersAsync());
 
-    expect(host.querySelector('output')?.textContent).toBe('SETTLED|SUCCEEDED|2');
+    expect(host.querySelector('output')?.textContent).toBe(
+      `SETTLED|SUCCEEDED|2|${RESULT_LOCATION}`
+    );
     expect(reader).toHaveBeenCalledTimes(2);
     expect(reader.mock.calls.every((call) => call[1] === 'opaque:scope-a')).toBe(true);
     expect(reader.mock.calls.every((call) => call[2] instanceof AbortSignal)).toBe(true);
   });
 
+  it('re-reads a terminal command seed before exposing the authorized result Location', async () => {
+    const reader = vi.fn<HrisCommandReceiptReader>().mockResolvedValue(result('SUCCEEDED', true));
+    await render(receipt('SUCCEEDED'), 'scope-a', reader);
+
+    expect(host.querySelector('output')?.textContent).toBe('LOADING|SUCCEEDED|0|none');
+    await act(async () => vi.runAllTimersAsync());
+
+    expect(reader).toHaveBeenCalledTimes(1);
+    expect(host.querySelector('output')?.textContent).toBe(
+      `SETTLED|SUCCEEDED|1|${RESULT_LOCATION}`
+    );
+  });
+
   it('bounds RESULT_UNKNOWN recovery and starts a new cycle only from the keyboard button', async () => {
-    const reader = vi.fn<HrisCommandReceiptReader>().mockResolvedValue(receipt('RESULT_UNKNOWN'));
+    const reader = vi.fn<HrisCommandReceiptReader>().mockResolvedValue(result('RESULT_UNKNOWN'));
     await render(receipt('RESULT_UNKNOWN'), 'scope-a', reader, 2);
     await act(async () => vi.runAllTimersAsync());
 
-    expect(host.querySelector('output')?.textContent).toBe('RECOVERY_REQUIRED|RESULT_UNKNOWN|2');
+    expect(host.querySelector('output')?.textContent).toBe(
+      'RECOVERY_REQUIRED|RESULT_UNKNOWN|2|none'
+    );
     expect(reader).toHaveBeenCalledTimes(2);
 
-    reader.mockReset().mockResolvedValue(receipt('SUCCEEDED'));
+    reader.mockReset().mockResolvedValue(result('SUCCEEDED', true));
     const button = host.querySelector('button')!;
     button.focus();
     await act(async () => button.click());
     await act(async () => vi.runAllTimersAsync());
 
     expect(document.activeElement).toBe(button);
-    expect(host.querySelector('output')?.textContent).toBe('SETTLED|SUCCEEDED|1');
+    expect(host.querySelector('output')?.textContent).toBe(
+      `SETTLED|SUCCEEDED|1|${RESULT_LOCATION}`
+    );
     expect(reader).toHaveBeenCalledTimes(1);
   });
 
@@ -144,13 +183,13 @@ describe('useCommandReceiptRecovery', () => {
     await render(receipt('RUNNING'), 'scope-a', reader);
     await act(async () => vi.runAllTimersAsync());
 
-    expect(host.querySelector('output')?.textContent).toBe('DENIED|none|1');
+    expect(host.querySelector('output')?.textContent).toBe('DENIED|none|1|none');
     expect(host.textContent).not.toContain(RECEIPT_ID);
     expect(reader).toHaveBeenCalledTimes(1);
   });
 
   it('aborts the in-flight request and suppresses its late result after a scope change', async () => {
-    const pending = deferred<HrisCommandReceipt>();
+    const pending = deferred<HrisCommandReceiptReadResult>();
     const reader = vi.fn<HrisCommandReceiptReader>().mockReturnValue(pending.promise);
     await render(receipt('RUNNING'), 'scope-a', reader);
     await act(async () => vi.runOnlyPendingTimersAsync());
@@ -158,15 +197,15 @@ describe('useCommandReceiptRecovery', () => {
 
     await render(null, 'scope-b', reader);
     expect(signal.aborted).toBe(true);
-    expect(host.querySelector('output')?.textContent).toBe('IDLE|none|0');
+    expect(host.querySelector('output')?.textContent).toBe('IDLE|none|0|none');
 
-    pending.resolve(receipt('SUCCEEDED'));
+    pending.resolve(result('SUCCEEDED', true));
     await act(async () => Promise.resolve());
-    expect(host.querySelector('output')?.textContent).toBe('IDLE|none|0');
+    expect(host.querySelector('output')?.textContent).toBe('IDLE|none|0|none');
   });
 
   it('aborts the active receipt read on unmount', async () => {
-    const pending = deferred<HrisCommandReceipt>();
+    const pending = deferred<HrisCommandReceiptReadResult>();
     const reader = vi.fn<HrisCommandReceiptReader>().mockReturnValue(pending.promise);
     await render(receipt('RUNNING'), 'scope-a', reader);
     await act(async () => vi.runOnlyPendingTimersAsync());

@@ -329,25 +329,6 @@ export function parseEmployeeChangeProjection(value: unknown): EmployeeChangePro
 
 export const parseEmployeeChangeCommandReceipt = parseHrisCommandReceipt;
 
-const EMPLOYEE_CHANGE_RECEIPT_BINDINGS = Object.freeze({
-  EMPLOYEE_CHANGE_CREATE: 'CREATE_EMPLOYEE_CHANGE_REQUEST',
-  EMPLOYEE_CHANGE_SUBMIT: 'SUBMIT_EMPLOYEE_CHANGE_REQUEST',
-  EMPLOYEE_CHANGE_APPLY: 'APPLY_EMPLOYEE_CHANGE_REQUEST',
-});
-
-/** Returns only the sealed literal owner route after a successful, recognized command. */
-export function employeeChangeReceiptDeepLink(
-  receipt: EmployeeChangeCommandReceipt
-): typeof EMPLOYEE_CHANGE_ROUTE | null {
-  const expectedAction =
-    EMPLOYEE_CHANGE_RECEIPT_BINDINGS[
-      receipt.commandType as keyof typeof EMPLOYEE_CHANGE_RECEIPT_BINDINGS
-    ];
-  return receipt.status === 'SUCCEEDED' && expectedAction === receipt.originatingAction
-    ? EMPLOYEE_CHANGE_ROUTE
-    : null;
-}
-
 export function employeeChangeItemVersion(item: EmployeeChangeItem): number | null {
   const status = item.fieldGroups.APPROVAL_STATUS;
   return status?.decision === 'VIEW' ? status.value.revision : null;

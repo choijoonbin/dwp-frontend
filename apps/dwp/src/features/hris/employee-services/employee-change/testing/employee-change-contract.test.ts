@@ -3,7 +3,6 @@ import { describe, expect, it } from 'vitest';
 import {
   employeeChangeItemVersion,
   hasEmployeeChangeAction,
-  employeeChangeReceiptDeepLink,
   parseEmployeeChangeCommandReceipt,
   parseEmployeeChangeProjection,
 } from '../model/employee-change-contract';
@@ -118,19 +117,5 @@ describe('employee-change generated contract adapter', () => {
     expect(() =>
       parseEmployeeChangeCommandReceipt({ ...employeeChangeReceipt(), requestDigest: 'raw' })
     ).toThrow('HRIS command receipt is invalid.');
-  });
-
-  it('derives only the fixed owner route for a successful recognized receipt', () => {
-    const succeeded = parseEmployeeChangeCommandReceipt(employeeChangeReceipt());
-    expect(employeeChangeReceiptDeepLink(succeeded)).toBe(
-      '/hr/operations/people/employee-change-requests'
-    );
-    expect(employeeChangeReceiptDeepLink({ ...succeeded, status: 'RUNNING' })).toBeNull();
-    expect(
-      employeeChangeReceiptDeepLink({
-        ...succeeded,
-        originatingAction: 'UNRECOGNIZED_EMPLOYEE_CHANGE_ACTION',
-      })
-    ).toBeNull();
   });
 });

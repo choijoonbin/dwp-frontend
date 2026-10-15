@@ -7,7 +7,10 @@ import {
   hrisCommandReceiptIsTerminal,
 } from '../model/command-receipt';
 
-import type { HrisCommandReceiptReader } from '../api/command-receipt-api';
+import type {
+  AuthorizedEmployeeChangeResultLocation,
+  HrisCommandReceiptReader,
+} from '../api/command-receipt-api';
 import type { HrisCommandReceipt } from '../model/command-receipt';
 
 export type CommandReceiptRecoveryPhase =
@@ -26,13 +29,21 @@ export const DEFAULT_COMMAND_RECEIPT_RECOVERY_POLICY: CommandReceiptRecoveryPoli
 type RecoverySnapshot = Readonly<{
   scopeIdentity: string;
   receipt: HrisCommandReceipt | null;
+  resultLocation: AuthorizedEmployeeChangeResultLocation | null;
   phase: CommandReceiptRecoveryPhase;
   attempt: number;
   error: Error | null;
 }>;
 
 function idleSnapshot(scopeIdentity: string): RecoverySnapshot {
-  return { scopeIdentity, receipt: null, phase: 'IDLE', attempt: 0, error: null };
+  return {
+    scopeIdentity,
+    receipt: null,
+    resultLocation: null,
+    phase: 'IDLE',
+    attempt: 0,
+    error: null,
+  };
 }
 
 function denied(error: unknown): boolean {
@@ -88,17 +99,6 @@ export function useCommandReceiptRecovery({
       setSnapshot(idleSnapshot(scopeIdentity));
       return () => controller.abort();
     }
-    if (hrisCommandReceiptIsTerminal(seedReceipt)) {
-      setSnapshot({
-        scopeIdentity,
-        receipt: seedReceipt,
-        phase: 'SETTLED',
-        attempt: 0,
-        error: null,
-      });
-      return () => controller.abort();
-    }
-
     const schedule = (delay: number, operation: () => void) => {
       timer = setTimeout(operation, Math.max(0, delay));
     };
@@ -107,18 +107,20 @@ export function useCommandReceiptRecovery({
       setSnapshot({
         scopeIdentity,
         receipt: attempt === 1 ? seedReceipt : null,
+        resultLocation: null,
         phase: attempt === 1 ? 'LOADING' : 'POLLING',
         attempt,
         error: null,
       });
       try {
-        const nextReceipt = await reader(seedReceipt.receiptId, contextScopeKey, controller.signal);
+        const result = await reader(seedReceipt.receiptId, contextScopeKey, controller.signal);
         if (!active()) return;
-        assertSameHrisCommandReceipt(seedReceipt, nextReceipt);
-        if (hrisCommandReceiptIsTerminal(nextReceipt)) {
+        assertSameHrisCommandReceipt(seedReceipt, result.receipt);
+        if (hrisCommandReceiptIsTerminal(result.receipt)) {
           setSnapshot({
             scopeIdentity,
-            receipt: nextReceipt,
+            receipt: result.receipt,
+            resultLocation: result.resultLocation,
             phase: 'SETTLED',
             attempt,
             error: null,
@@ -128,7 +130,8 @@ export function useCommandReceiptRecovery({
         if (attempt >= policy.maximumAttempts) {
           setSnapshot({
             scopeIdentity,
-            receipt: nextReceipt,
+            receipt: result.receipt,
+            resultLocation: null,
             phase: 'RECOVERY_REQUIRED',
             attempt,
             error: null,
@@ -137,7 +140,8 @@ export function useCommandReceiptRecovery({
         }
         setSnapshot({
           scopeIdentity,
-          receipt: nextReceipt,
+          receipt: result.receipt,
+          resultLocation: null,
           phase: 'POLLING',
           attempt,
           error: null,
@@ -151,6 +155,7 @@ export function useCommandReceiptRecovery({
           setSnapshot({
             scopeIdentity,
             receipt: null,
+            resultLocation: null,
             phase: 'DENIED',
             attempt,
             error: null,
@@ -161,6 +166,7 @@ export function useCommandReceiptRecovery({
           setSnapshot({
             scopeIdentity,
             receipt: null,
+            resultLocation: null,
             phase: 'ERROR',
             attempt,
             error: errorValue(error),
@@ -170,6 +176,7 @@ export function useCommandReceiptRecovery({
         setSnapshot({
           scopeIdentity,
           receipt: null,
+          resultLocation: null,
           phase: 'POLLING',
           attempt,
           error: null,
@@ -204,9 +211,8 @@ export function useCommandReceiptRecovery({
       ? {
           scopeIdentity,
           receipt: seedReceipt,
-          phase: hrisCommandReceiptIsTerminal(seedReceipt)
-            ? ('SETTLED' as const)
-            : ('LOADING' as const),
+          resultLocation: null,
+          phase: 'LOADING' as const,
           attempt: 0,
           error: null,
         }

@@ -15,13 +15,15 @@ import Typography from '@mui/material/Typography';
 
 import { useEmployeeChangeWorkspace } from '../hooks/use-employee-change-workspace';
 import {
-  employeeChangeReceiptDeepLink,
   employeeChangeItemVersion,
   hasEmployeeChangeAction,
 } from '../model/employee-change-contract';
 
 import type { EmployeeChangeDataSource } from '../api/employee-change-api';
-import type { HrisCommandReceiptReader } from '../../../people/command-receipts/api/command-receipt-api';
+import type {
+  AuthorizedEmployeeChangeResultLocation,
+  HrisCommandReceiptReader,
+} from '../../../people/command-receipts/api/command-receipt-api';
 import type { CommandReceiptRecoveryPhase } from '../../../people/command-receipts/hooks/use-command-receipt-recovery';
 import type {
   EmployeeChangeCommandOwner,
@@ -49,6 +51,7 @@ export type EmployeeChangeWorkspaceViewProps = Readonly<{
   projection?: EmployeeChangeProjection;
   selectedItem: EmployeeChangeItem | null;
   receipt: EmployeeChangeCommandReceipt | null;
+  receiptResultLocation: AuthorizedEmployeeChangeResultLocation | null;
   receiptRecoveryPhase: CommandReceiptRecoveryPhase;
   receiptRecoveryAttempt: number;
   receiptRecoveryMaximumAttempts: number;
@@ -139,7 +142,7 @@ function receiptStatusCopy(
         'The latest authorized result could not be confirmed. No cached result is shown. Try recovery again.',
     };
   }
-  if (!receipt) {
+  if (phase === 'LOADING' || !receipt) {
     return {
       severity: 'info',
       title: 'Checking command receipt',
@@ -363,6 +366,7 @@ export function EmployeeChangeWorkspaceView({
   projection,
   selectedItem,
   receipt,
+  receiptResultLocation,
   receiptRecoveryPhase,
   receiptRecoveryAttempt,
   receiptRecoveryMaximumAttempts,
@@ -398,7 +402,7 @@ export function EmployeeChangeWorkspaceView({
     receiptRecoveryAttempt,
     receiptRecoveryMaximumAttempts
   );
-  const receiptDeepLink = receipt ? employeeChangeReceiptDeepLink(receipt) : null;
+  const receiptDeepLink = receipt?.status === 'SUCCEEDED' ? receiptResultLocation : null;
 
   useEffect(() => {
     if (
@@ -696,6 +700,7 @@ function EnabledWorkspace({
       projection={runtime.projection}
       selectedItem={runtime.selectedItem}
       receipt={runtime.receipt}
+      receiptResultLocation={runtime.receiptRecovery.resultLocation}
       receiptRecoveryPhase={runtime.receiptRecovery.phase}
       receiptRecoveryAttempt={runtime.receiptRecovery.attempt}
       receiptRecoveryMaximumAttempts={runtime.receiptRecovery.maximumAttempts}

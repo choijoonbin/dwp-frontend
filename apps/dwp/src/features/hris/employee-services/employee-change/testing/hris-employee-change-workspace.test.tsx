@@ -3,6 +3,7 @@ import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
 
+import { parseAuthorizedEmployeeChangeResultLocation } from '../../../people/command-receipts/api/command-receipt-api';
 import {
   EmployeeChangeWorkspaceView,
   HRIS_EMPLOYEE_CHANGE_RUNTIME_STATE,
@@ -66,6 +67,7 @@ describe('HrisEmployeeChangeWorkspace', () => {
         projection,
         selectedItem: projection.items[0]!,
         receipt: null,
+        receiptResultLocation: null,
         receiptRecoveryPhase: 'IDLE',
         receiptRecoveryAttempt: 0,
         receiptRecoveryMaximumAttempts: 5,
@@ -111,6 +113,7 @@ describe('HrisEmployeeChangeWorkspace', () => {
         projection,
         selectedItem: projection.items[0]!,
         receipt: null,
+        receiptResultLocation: null,
         receiptRecoveryPhase: 'IDLE',
         receiptRecoveryAttempt: 0,
         receiptRecoveryMaximumAttempts: 5,
@@ -161,6 +164,13 @@ describe('HrisEmployeeChangeWorkspace', () => {
         projection,
         selectedItem: projection.items[0]!,
         receipt,
+        receiptResultLocation:
+          status === 'SUCCEEDED'
+            ? parseAuthorizedEmployeeChangeResultLocation(
+                '/hr/operations/people/employee-change-requests?requestPublicId=10000000-0000-4000-8000-000000000001',
+                receipt
+              )
+            : null,
         receiptRecoveryPhase: ['SUCCEEDED', 'REJECTED', 'FAILED'].includes(status)
           ? 'SETTLED'
           : 'POLLING',
@@ -193,8 +203,10 @@ describe('HrisEmployeeChangeWorkspace', () => {
     expect(html).toContain('role="status"');
     expect(html).toContain('aria-live="polite"');
     expect(html).toContain('tabindex="-1"');
-    expect(html.includes('href="/hr/operations/people/employee-change-requests"')).toBe(
-      status === 'SUCCEEDED'
-    );
+    expect(
+      html.includes(
+        'href="/hr/operations/people/employee-change-requests?requestPublicId=10000000-0000-4000-8000-000000000001"'
+      )
+    ).toBe(status === 'SUCCEEDED');
   });
 });

@@ -12,7 +12,10 @@ import {
   employeeChangeProjection,
   employeeChangeReceipt,
 } from '../../../employee-services/employee-change/testing/employee-change-fixtures.test-support';
-import { HRIS_COMMAND_RECEIPT_API_CONTRACT } from '../../command-receipts/api/command-receipt-api';
+import {
+  HRIS_COMMAND_RECEIPT_API_CONTRACT,
+  parseAuthorizedEmployeeChangeResultLocation,
+} from '../../command-receipts/api/command-receipt-api';
 import { DEFAULT_COMMAND_RECEIPT_RECOVERY_POLICY } from '../../command-receipts/hooks/use-command-receipt-recovery';
 
 import type { EmployeeChangeWorkspaceViewProps } from '../../../employee-services/employee-change/pages/hris-employee-change-workspace';
@@ -33,6 +36,7 @@ function viewProps(
     projection,
     selectedItem: projection.items[0]!,
     receipt: null,
+    receiptResultLocation: null,
     receiptRecoveryPhase: 'IDLE',
     receiptRecoveryAttempt: 0,
     receiptRecoveryMaximumAttempts: 5,
@@ -96,9 +100,14 @@ describe('BASE-TFR-HRM-002 frontend acceptance slice', () => {
   it('moves focus to terminal live status and exposes only the fixed authorized route', async () => {
     await render(viewProps());
     const succeeded = { ...employeeChangeReceipt(), status: 'SUCCEEDED' } as HrisCommandReceipt;
+    const resultLocation = parseAuthorizedEmployeeChangeResultLocation(
+      '/hr/operations/people/employee-change-requests?requestPublicId=10000000-0000-4000-8000-000000000001',
+      succeeded
+    );
     await render(
       viewProps({
         receipt: succeeded,
+        receiptResultLocation: resultLocation,
         receiptRecoveryPhase: 'SETTLED',
       })
     );
@@ -109,8 +118,21 @@ describe('BASE-TFR-HRM-002 frontend acceptance slice', () => {
     expect(status?.getAttribute('aria-live')).toBe('polite');
     expect(status?.getAttribute('tabindex')).toBe('-1');
     expect(host.querySelector('a')?.getAttribute('href')).toBe(
-      '/hr/operations/people/employee-change-requests'
+      '/hr/operations/people/employee-change-requests?requestPublicId=10000000-0000-4000-8000-000000000001'
     );
+  });
+
+  it('never derives a result link from a successful receipt without verified Location', async () => {
+    await render(
+      viewProps({
+        receipt: { ...employeeChangeReceipt(), status: 'SUCCEEDED' } as HrisCommandReceipt,
+        receiptResultLocation: null,
+        receiptRecoveryPhase: 'SETTLED',
+      })
+    );
+
+    expect(host.textContent).toContain('Command completed');
+    expect(host.querySelector('a')).toBeNull();
   });
 
   it('clears stale receipt details and links for opaque denial', async () => {
