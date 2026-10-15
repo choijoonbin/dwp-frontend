@@ -1,0 +1,80 @@
+{
+  "schema": "dwp.hris.plat004-runtime-onboarding-correction-amendment.v1",
+  "amendmentId": "HRIS-WAVE6-PLAT-004-HRM-002-RUNTIME-ONBOARDING-CORRECTION-A1",
+  "issuedAt": "2026-10-15T20:46:30+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "ISSUED_BLOCKING_CORRECTION_AUTHORIZED_DEFAULT_OFF",
+  "amends": {
+    "path": "runtime-onboarding-work-packet.v1.json",
+    "commit": "9988d05e",
+    "preservedUnchanged": true
+  },
+  "reason": "Pre-commit independent review found four fail-closed gaps and one migration verification gap that the original targeted tests did not exercise. The runtime onboarding result must not be issued until every correction below passes its smallest targeted test.",
+  "blockingFindings": [
+    {
+      "id": "PLAT004-CORR-01",
+      "severity": "HIGH",
+      "finding": "Unknown top-level data and notification-intent fields could carry rendered content, personal data, destinations or provider secrets while being ignored by the generic translator.",
+      "requiredCorrection": "For the reserved HRIS source-event pair, allow only notificationIntents at data level and only the eleven source-contract intent keys; reject every unknown field before projection."
+    },
+    {
+      "id": "PLAT004-CORR-02",
+      "severity": "HIGH",
+      "finding": "The reserved HRIS source-event pair could carry notificationTargetChanges and mutate HCM notification lifecycle state without an authorized decision-table row.",
+      "requiredCorrection": "Require exactly one HRM-002 notification intent and forbid notificationTargetChanges for the reserved HRIS source-event pair."
+    },
+    {
+      "id": "PLAT004-CORR-03",
+      "severity": "HIGH",
+      "finding": "Direct materialization canonicalized the sealed EMPLOYEE_CHANGE_APPLIED reason code to DIRECT.",
+      "requiredCorrection": "Add only EMPLOYEE_CHANGE_APPLIED to the canonical persisted reason set and prove the exact reason in the disposable PostgreSQL materialization target."
+    },
+    {
+      "id": "PLAT004-CORR-04",
+      "severity": "HIGH",
+      "finding": "Independent producer-source and exact-event environment overrides could leave the default exact HRIS event bound to a missing source and prevent startup.",
+      "requiredCorrection": "Express the HRIS source, producer service and exact event set as one atomic optional binding while preserving the legacy producer-source property unchanged. Reject wildcard, duplicate, malformed, conflicting and unknown bindings."
+    },
+    {
+      "id": "PLAT004-CORR-05",
+      "severity": "MEDIUM",
+      "finding": "The V35 post-insert guard did not compare every sealed contract-payload field after ON CONFLICT DO NOTHING.",
+      "requiredCorrection": "Extend the V35 fail-closed guard and invariant test to cover the complete sealed payload without changing V1 through V34."
+    }
+  ],
+  "additionalAllowedBackendPaths": [
+    "dwp-notification-server/src/main/java/com/dwp/services/notification/domain/DirectNotificationMaterializer.java",
+    "dwp-notification-server/src/test/java/com/dwp/services/notification/domain/DirectNotificationMaterializerTest.java"
+  ],
+  "existingAllowedPathsUsedForCorrections": [
+    "dwp-notification-server/src/main/resources/application.yml",
+    "dwp-notification-server/src/main/java/com/dwp/services/notification/integration/NotificationDomainEventTranslator.java",
+    "dwp-notification-server/src/main/resources/db/migration/V35__register_hcm_employee_change_applied_notification.sql",
+    "dwp-notification-server/src/test/java/com/dwp/services/notification/config/NotificationRuntimeConfigurationInvariantTest.java",
+    "dwp-notification-server/src/test/java/com/dwp/services/notification/integration/NotificationDomainEventTranslatorTest.java",
+    "dwp-notification-server/src/test/java/com/dwp/services/notification/integration/NotificationStructuredContextMaterializationPostgresIntegrationTest.java",
+    "dwp-notification-server/src/test/java/com/dwp/services/notification/migration/NotificationMigrationInvariantTest.java"
+  ],
+  "verification": {
+    "policy": "RUN_ONLY_NEW_OR_CHANGED_CORRECTION_TARGETS; DO_NOT_REPEAT_THE_ALREADY_PASSING_UNRELATED_CLUSTER",
+    "unitTargets": [
+      "NotificationDomainEventTranslatorTest",
+      "DirectNotificationMaterializerTest",
+      "NotificationRuntimeConfigurationInvariantTest",
+      "NotificationMigrationInvariantTest"
+    ],
+    "postgresTarget": "NotificationStructuredContextMaterializationPostgresIntegrationTest.hcmEmployeeChangeAppliedMaterializesThroughExactSourceEventAndEntitlement",
+    "mandatorySkipped": 0,
+    "repositoryWideSuite": "NOT_REQUIRED"
+  },
+  "unchangedBoundaries": {
+    "notificationDomainEventsDefault": "OFF",
+    "peopleExperienceDefault": "OFF",
+    "peopleRelayDefault": "OFF",
+    "typedRuntimeBridge": "NOT_AUTHORIZED",
+    "tenantCustomerOrProductionActivation": "NOT_AUTHORIZED",
+    "peopleAuthGatewayOrFrontendRuntimeEdit": "NOT_AUTHORIZED",
+    "existingMigrationEdit": "NOT_AUTHORIZED"
+  },
+  "completionRule": "All five corrections, their negative evidence, V34 byte identity and one clean V1-through-V35 disposable PostgreSQL materialization must pass before the PLAT004_RUNTIME_ONBOARDING result is committed."
+}
