@@ -1,0 +1,201 @@
+{
+  "schema": "dwp.hris.wave6-hrm-002-experience-central-integration-result.v1",
+  "receiptId": "HRIS-WAVE6-HRM-002-EXPERIENCE-CENTRAL-INTEGRATION-RESULT-R1",
+  "runId": "hrm-002-experience-integration-20261015-r1",
+  "status": "PASS_EXACT_RESULTS_INTEGRATED_CLOSED_DEFAULT_OFF",
+  "issuedAt": "2026-10-15T18:21:30+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "decision": "INTEGRATE_EXACT_HRM_002_RESULTS_WITHOUT_NOTIFICATION_ONBOARDING_TEMPLATE_BUNDLE_FEATURE_MENU_TENANT_CUSTOMER_OR_PRODUCTION_ACTIVATION",
+  "authorization": {
+    "path": "docs/06-delivery/hris/wave6-2026-10-15/hrm-002-experience-integration-r1/central-integration-authorization.v1.json",
+    "receiptId": "HRIS-WAVE6-HRM-002-EXPERIENCE-CENTRAL-INTEGRATION-AUTHORIZATION-R1",
+    "gitBlobSha1": "b2729ba833914199462f2da7b39f5070a9aaab90",
+    "sha256": "83ab8580e3323f02e3a2bc8b8a47ca01bfc0188a25cde0e8dac146b50491ee8b",
+    "bytes": 9182,
+    "carrierCommit": "40ddfd343b616e7b343fbdabed39314f7b4c8edc",
+    "carrierTree": "ebfd8669f077ec468dfe2b27d5501b6b670c7f8f",
+    "carrierPushedAndRemoteExactBeforeMerge": true
+  },
+  "integrationResult": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "upstream": "origin/dwp-dev",
+      "preIntegrationCommit": "9c9e33c29a63e2638213d424e74c8fabed2e7a4b",
+      "authorizedResultCommit": "382b010bac1dad7ff079858a47b89b9a95f5d96f",
+      "mergeCommit": "92979d3537cd6984be43afdb58cb14b9e1c4b24e",
+      "mergeParents": [
+        "9c9e33c29a63e2638213d424e74c8fabed2e7a4b",
+        "382b010bac1dad7ff079858a47b89b9a95f5d96f"
+      ],
+      "postIntegrationCommit": "92979d3537cd6984be43afdb58cb14b9e1c4b24e",
+      "postIntegrationTree": "e4948ec16b774f9bf61f552a323c0bb4d8759fce",
+      "clean": true,
+      "upstreamAhead": 0,
+      "upstreamBehind": 0,
+      "remoteExact": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "upstream": "origin/dwp-dev",
+      "preIntegrationCommit": "40ddfd343b616e7b343fbdabed39314f7b4c8edc",
+      "authorizedResultCommit": "af1eee09efa45e09eea080963f30eb8265d299f4",
+      "mergeCommit": "88a3b333022a431f87e756a0cc1614c25f94fd3e",
+      "mergeParents": [
+        "40ddfd343b616e7b343fbdabed39314f7b4c8edc",
+        "af1eee09efa45e09eea080963f30eb8265d299f4"
+      ],
+      "postIntegrationCommit": "88a3b333022a431f87e756a0cc1614c25f94fd3e",
+      "postIntegrationTree": "083b4e62533570d0873dd9db15f7e8d4eef66b03",
+      "clean": true,
+      "upstreamAhead": 0,
+      "upstreamBehind": 0,
+      "remoteExactBeforeResultCarrier": true
+    }
+  },
+  "unionIntegrity": {
+    "pathAlgorithm": "SHA256_OF_SORTED_REPOSITORY_TAB_RELATIVE_PATH_LF",
+    "contentAlgorithm": "SHA256_OF_SORTED_REPOSITORY_TAB_PATH_TAB_FILE_SHA256_TAB_BYTES_LF",
+    "backend": {
+      "expectedUniquePathCount": 50,
+      "actualUniquePathCount": 50,
+      "expectedPathSha256": "52d996db20608fa72dfeff708037bbf22998d63bdf3a62f07482ef288548fdc6",
+      "actualPathSha256": "52d996db20608fa72dfeff708037bbf22998d63bdf3a62f07482ef288548fdc6",
+      "contentManifestSha256": "447f57872b91c0b45b3675e1d5a6f479e432bc567f0a4ec91d0bd3d935bbc3aa"
+    },
+    "frontend": {
+      "expectedUniquePathCount": 11,
+      "actualUniquePathCount": 11,
+      "expectedPathSha256": "185e162cd98966d801a3c56506bb7ac778037c2331283c3e6db0b39730e1021a",
+      "actualPathSha256": "185e162cd98966d801a3c56506bb7ac778037c2331283c3e6db0b39730e1021a",
+      "contentManifestSha256": "9d01be1b9f2eaeaa05c3513f689300405197d3260d5cb6b68a6d332f2bb14eb2"
+    },
+    "combinedUniquePathCount": 61,
+    "combinedPathSha256": "f665d73d0c5f28cc7909b71d316274f15f9a5e3d7e8db42070eb7b31a5069070",
+    "combinedContentSha256": "a2275adbe64749a1634466a648ea1a97ad1987e0bb28d45ab329fe898509beaa",
+    "allAuthorizedResultBlobsExactAtIntegratedHeads": true,
+    "unexpectedIntegratedCodePaths": 0,
+    "manualConflictResolutions": 0,
+    "backendGitDiffCheck": "PASS",
+    "frontendGitDiffCheck": "PASS"
+  },
+  "migrationIntegrity": {
+    "peopleHr": {
+      "newVersion": "V56",
+      "newPath": "dwp-people-server/src/main/resources/db/migration/V56__hrm_base_tfr_hrm_002.sql",
+      "gitBlobSha1": "47b7b498ab47b4e084c56ac5c5b35085c9df9a0f",
+      "sha256": "051259b27c28410b4e99ccac5fdb413027d000fd5152fd3f9b638df70fc862d9",
+      "bytes": 16725,
+      "priorVersion": "V55",
+      "priorAndEarlierMigrationsUnchanged": true,
+      "v57OrSecondHrm002MigrationAbsent": true,
+      "cleanAndV55ToV56UpgradePreviouslyPassed": true,
+      "realPostgresqlMethods": 1,
+      "skipped": 0
+    },
+    "streamCollision": false
+  },
+  "authContractIntegrity": {
+    "path": "contracts/openapi/auth.json",
+    "gitBlobSha1": "1f625b99459c368a231aa5ebce9aede4cf9a26e1",
+    "sha256": "5bb2001518d89abccc327442c68ffe55c284f5f9e96c7b3350375f58139cc25b",
+    "bytes": 481736,
+    "recipientAuthorityPathCount": 1,
+    "ownerSchemaCount": 2,
+    "requiredHeaderCount": 2,
+    "notFoundSchema": "ApiResponseVoid",
+    "existingPathSchemaOrMetadataChanges": 0,
+    "nonAuthOpenApiSnapshotChanges": 0
+  },
+  "integrationVerification": {
+    "policy": "EXACT_RESULT_BLOB_AND_ACTIVATION_INTEGRATION_GATE_NO_BEHAVIOR_SUITE_RERUN",
+    "backend": {
+      "mergeParentsExact": true,
+      "firstParentPathManifestExact": true,
+      "authorizedBlobCount": 50,
+      "authorizedBlobsExact": true,
+      "v56Exact": true,
+      "priorMigrationsUnchanged": true,
+      "secondMigrationAbsent": true,
+      "authInternalContractExact": true,
+      "experienceDefaultOff": true,
+      "relayDefaultOff": true,
+      "gitDiffCheck": "PASS"
+    },
+    "frontend": {
+      "mergeParentsExact": true,
+      "firstParentPathManifestExact": true,
+      "authorizedBlobCount": 11,
+      "authorizedBlobsExact": true,
+      "generatedCarriersUnchanged": true,
+      "sidebarRouteRegistryAndHrisProductMapUnchanged": true,
+      "gitDiffCheck": "PASS"
+    },
+    "crossRepository": {
+      "gatewayRawBytesEqual": true,
+      "backendGatewayPath": "contracts/openapi/gateway-public.json",
+      "frontendGatewayPath": "libs/api-contracts/openapi/gateway-public.json",
+      "gatewaySha256": "bcc41751c61c1bfc661df4efb4707aee564468ce40123732035e49ee9d2316c3",
+      "expected61PathAndContentUnionExact": true
+    },
+    "moduleTargetedEvidenceReusedAgainstExactBlobs": true,
+    "behaviorSuiteRerun": "NOT_RUN_NOT_REQUIRED_FOR_CONFLICT_FREE_EXACT_RESULT_INTEGRATION",
+    "fullRepositorySuites": "NOT_RUN_NOT_REQUIRED"
+  },
+  "contractAndActivationIntegrity": {
+    "authorizationProjectionVersion": 43,
+    "authorizationState": "DRAFT",
+    "experienceDefaultOff": true,
+    "relayDefaultOff": true,
+    "productionRecipientAuthorityIntegrated": true,
+    "productionPositiveHandoffState": "READY_LOCAL_ONLY",
+    "notificationRuntimeOnboardingComplete": false,
+    "templateRegistrationComplete": false,
+    "plat004SourceEventOnboardingComplete": false,
+    "sysApi026Or033Complete": false,
+    "sidebarRouteRegistryOrProductMapActivationIntegrated": false,
+    "bundleApprovalPerformed": false,
+    "featureEnablementPerformed": false,
+    "tenantActivationPerformed": false,
+    "customerDataUsed": false,
+    "productionReleasePerformed": false
+  },
+  "acceptanceClosure": {
+    "sliceId": "BASE-TFR-HRM-002",
+    "moduleAcceptancePassed": 12,
+    "moduleAcceptanceTotal": 12,
+    "remainingP0": 0,
+    "remainingP1": 0,
+    "remainingP2": 0,
+    "centralIntegration": "PASS_DEFAULT_OFF"
+  },
+  "completionBoundary": {
+    "state": "MODULE_OWNER_DELTA_INTEGRATED_CLOSED_DEFAULT_OFF",
+    "runtimeDefault": "OFF",
+    "authorizationState": "DRAFT",
+    "notificationRuntimeOnboardingComplete": false,
+    "templateRegistrationComplete": false,
+    "routeOrMenuActivated": false,
+    "featureEnabled": false,
+    "bundleApproved": false,
+    "tenantActivated": false,
+    "customerDataUsed": false,
+    "productionReleased": false,
+    "nonclaim": "HRM-002 exact backend and frontend code is integrated on dwp-dev, but notification runtime onboarding, template registration, PLAT-004, SYS-API-026/033, bundle approval, feature enablement, tenant activation and production release remain pending."
+  },
+  "authority": {
+    "resultIntegratedAndRecorded": true,
+    "integrationMergeAuthorityConsumed": true,
+    "integrationMergeAuthorized": false,
+    "manualConflictResolutionAuthorized": false,
+    "notificationRuntimeOnboardingAuthorized": false,
+    "routeOrMenuActivationAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "bundleApprovalAuthorized": false,
+    "tenantActivationAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "ISSUE_CENTRAL_PLAT_004_EXACT_SOURCE_EVENT_ONBOARDING_AND_NOTIFICATION_TEMPLATE_REGISTRATION_WORK_PACKET_WITH_HRIS_EXPERIENCE_AND_RELAY_REMAINING_DEFAULT_OFF"
+}
