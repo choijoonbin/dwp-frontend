@@ -1,0 +1,226 @@
+{
+  "schema": "dwp.hris.wave6-hrm-002-experience-central-result-admission.v1",
+  "receiptId": "HRIS-WAVE6-HRM-002-EXPERIENCE-CENTRAL-RESULT-ADMISSION-R1",
+  "runId": "hrm-002-experience-integration-20261015-r1",
+  "status": "PASS_RESULT_ADMITTED_PENDING_INTEGRATION_AUTHORIZATION_DEFAULT_OFF",
+  "issuedAt": "2026-10-15T14:08:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "predecessor": {
+    "resultEvidenceCarrier": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "f539764a4ed7d9efe7f4b56842ec8b6307d5955e",
+      "tree": "7960e36be42dc5374bd768a92c23193c9482a0eb",
+      "upstream": "origin/dwp-dev",
+      "clean": true,
+      "upstreamAhead": 0,
+      "upstreamBehind": 0,
+      "remoteExact": true
+    },
+    "integrationMergeAuthorized": false
+  },
+  "authorityChain": {
+    "r1StartToken": {
+      "path": "docs/06-delivery/hris/wave6-2026-10-15/hrm-002-experience-control-r1/start-token-issued.v1.json",
+      "sha256": "b3892b6e23f1743bc18b960b2fbfd5be3fe73a6de858a5aa55ea2f9d67550e9e",
+      "bytes": 11446
+    },
+    "r4RecipientAuthority": {
+      "control": {
+        "path": "docs/06-delivery/hris/wave6-2026-10-15/hrm-002-experience-control-r1/recipient-authority-successor-amendment.v1.json",
+        "sha256": "df111b62ed21db646cb4c06a5f24f06fcb1bbb064ddc9ed42a7be110ecb1082d",
+        "bytes": 13919
+      },
+      "token": {
+        "path": "docs/06-delivery/hris/wave6-2026-10-15/hrm-002-experience-control-r1/start-token-amendment.v4.json",
+        "sha256": "cd1688d9c5a2b566ec428fc35c8629dd988afb631ff53cc1e963859c4b4271aa",
+        "bytes": 4912
+      },
+      "manifest": {
+        "path": "docs/06-delivery/hris/wave6-2026-10-15/hrm-002-experience-control-r1/amendment-issued-manifest.v4.json",
+        "sha256": "6d1d60ef942b190b725f64c1cad713c97593a9c2c14fb30d7d021081caf39dac",
+        "bytes": 2989
+      },
+      "carrierCommit": "7000ae930dffb1e72ad9797361498fe65b8639b1",
+      "carrierTree": "ffbf3b7eb5c7614e48170099bbfc4659ee950a1b"
+    },
+    "r1ThroughR4Valid": true
+  },
+  "moduleResult": {
+    "module": "HRM",
+    "sliceId": "BASE-TFR-HRM-002",
+    "scope": "EMPLOYEE_CHANGE_RECEIPT_RECOVERY_AND_NOTIFICATION_HANDOFF_DEFAULT_OFF",
+    "resultEvidence": {
+      "path": "docs/06-delivery/hris/wave6-2026-10-15/hrm-002-experience-control-r1/module-result-evidence.v1.json",
+      "evidenceId": "HRIS-WAVE6-BASE-TFR-HRM-002-MODULE-RESULT-R1",
+      "gitBlobSha1": "994d2a983c7ccd80e017b4af3189122d83037084",
+      "sha256": "3ed46032c2da8aaca1cca718982dfad05f6c95eda40c5fefcc02336f77861c15",
+      "bytes": 51348
+    },
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "codex/hris-wave6-hrm-002-backend-20261015-r1",
+      "upstream": "origin/codex/hris-wave6-hrm-002-backend-20261015-r1",
+      "baseCommit": "9c9e33c29a63e2638213d424e74c8fabed2e7a4b",
+      "baseTree": "b2e1a43aad573d63238dbed1a800b6425aa9e3d0",
+      "resultLineage": [
+        "b8889331cc0638de28cbe9e47a065bfb8a84ac63",
+        "ff4f632591c1e833ddc45a1e83f023bfc7f8f4af",
+        "eb93acb4b076228e95466fae2222c4cf45a7198a",
+        "382b010bac1dad7ff079858a47b89b9a95f5d96f"
+      ],
+      "resultCommit": "382b010bac1dad7ff079858a47b89b9a95f5d96f",
+      "resultTree": "e4948ec16b774f9bf61f552a323c0bb4d8759fce",
+      "changedFileCount": 50,
+      "sortedPathManifestSha256": "95f603b481f8d1bba2cb41d417c52c6452d9ac08de3f2c9c237a89d92175377f",
+      "sortedNameStatusSha256": "654b364861a6d0648fec080393f9d6ebae737350c456de16b35392644aef08f5",
+      "binaryDiffSha256": "abd06770d0efeef9103d1e6a8b22f46659f18f4551c5e2f0704838960a58bcc3",
+      "contentManifestSha256": "8407bcb72a0f1e3595b2ad64dc74c815be510caa9de16bc3e865c26f36f2c552",
+      "cleanAndRemoteExact": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "codex/hris-wave6-hrm-002-frontend-20261015-r1",
+      "upstream": "origin/codex/hris-wave6-hrm-002-frontend-20261015-r1",
+      "baseCommit": "bc91cceea76b8b0e336931430fe8f220cea39c78",
+      "baseTree": "312f4f9cae1ffe22180df62b07e4e724fcca0ea5",
+      "resultLineage": [
+        "cf43b024856484bebf2f02d50d61a6a4376126d2",
+        "af1eee09efa45e09eea080963f30eb8265d299f4"
+      ],
+      "resultCommit": "af1eee09efa45e09eea080963f30eb8265d299f4",
+      "resultTree": "3c7b5819b4f578d40b67f7484bbfac099dfdfe20",
+      "changedFileCount": 11,
+      "sortedPathManifestSha256": "7f44bd074e7accff87730a9a54ffc367e79835e781a1bccc50486b51bb598704",
+      "sortedNameStatusSha256": "00a3065d10a43672e78b4ccfdf9ea7bc390b9dd642dc641aaa51c224ccbbd2bf",
+      "binaryDiffSha256": "94b70b247f4a145946d69dd72ee651fda8b87e802c9ae126fd1edbdc41803f33",
+      "contentManifestSha256": "9b70f04325ad32ceb6ad6798b8587525740ad736fb848e1ec442700db9d6e135",
+      "cleanAndRemoteExact": true
+    },
+    "acceptance": {
+      "passed": 12,
+      "total": 12,
+      "independentModuleAudit": "READY_NO_P0_P1",
+      "r4IndependentAudit": "READY_NO_P0_P1_P2",
+      "centralResultAudit": "PASS_CONTRACT_PROVENANCE_AND_INTEGRATION_SAFETY",
+      "remainingP0": 0,
+      "remainingP1": 0,
+      "remainingP2": 0
+    }
+  },
+  "migration": {
+    "stream": "PEOPLE_HR",
+    "version": "V56",
+    "leaseId": "HRIS-WAVE6-HRM-002-PEOPLE-V56-R1",
+    "activationId": "HRIS-WAVE6-ACTIVATE-BASE-TFR-HRM-002-PEOPLE-V56-R1",
+    "path": "dwp-people-server/src/main/resources/db/migration/V56__hrm_base_tfr_hrm_002.sql",
+    "sha256": "051259b27c28410b4e99ccac5fdb413027d000fd5152fd3f9b638df70fc862d9",
+    "bytes": 16725,
+    "priorVersion": "V55_AND_EARLIER_UNCHANGED",
+    "nextVersion": "V57_OR_SECOND_HRM_002_MIGRATION_ABSENT",
+    "cleanAndUpgradePassed": true,
+    "realPostgresqlMethodCount": 1,
+    "skipped": 0
+  },
+  "authInternalContract": {
+    "path": "contracts/openapi/auth.json",
+    "sha256": "5bb2001518d89abccc327442c68ffe55c284f5f9e96c7b3350375f58139cc25b",
+    "bytes": 481736,
+    "addedPath": "/internal/auth/v1/hris-recipient-authority/resolve",
+    "addedSchemas": [
+      "HrisRecipientAuthorityResolveRequest",
+      "HrisRecipientAuthorityResolveResponse"
+    ],
+    "requiredHeaderCount": 2,
+    "notFoundSchema": "ApiResponseVoid",
+    "existingPathSchemaOrMetadataChanges": 0,
+    "nonAuthOpenApiSnapshotChanges": 0,
+    "gatewayPublicChanges": 0
+  },
+  "notificationBoundary": {
+    "productionRecipientAuthority": "PASS",
+    "productionPositiveHandoffState": "READY_LOCAL_ONLY",
+    "auditedOmission": "PASS",
+    "runtimeOnboarding": "CENTRAL_PENDING",
+    "templateRegistration": "CENTRAL_PENDING",
+    "plat004SourceEventOnboardingComplete": false,
+    "sysApi026Or033Complete": false
+  },
+  "expectedUnion": {
+    "pathAlgorithm": "SHA256_OF_SORTED_REPOSITORY_TAB_RELATIVE_PATH_LF",
+    "contentAlgorithm": "SHA256_OF_SORTED_REPOSITORY_TAB_PATH_TAB_FILE_SHA256_TAB_BYTES_LF",
+    "backend": {
+      "uniquePathCount": 50,
+      "pathSha256": "52d996db20608fa72dfeff708037bbf22998d63bdf3a62f07482ef288548fdc6",
+      "contentSha256": "447f57872b91c0b45b3675e1d5a6f479e432bc567f0a4ec91d0bd3d935bbc3aa"
+    },
+    "frontend": {
+      "uniquePathCount": 11,
+      "pathSha256": "185e162cd98966d801a3c56506bb7ac778037c2331283c3e6db0b39730e1021a",
+      "contentSha256": "9d01be1b9f2eaeaa05c3513f689300405197d3260d5cb6b68a6d332f2bb14eb2"
+    },
+    "combinedUniquePathCount": 61,
+    "combinedPathSha256": "f665d73d0c5f28cc7909b71d316274f15f9a5e3d7e8db42070eb7b31a5069070",
+    "combinedContentSha256": "a2275adbe64749a1634466a648ea1a97ad1987e0bb28d45ab329fe898509beaa"
+  },
+  "admissionChecks": {
+    "resultEvidenceJsonValid": true,
+    "resultContractValid": true,
+    "r1ThroughR4AuthorityChainValid": true,
+    "moduleBranchesCleanAndRemoteExact": true,
+    "touchBoundariesCompliant": true,
+    "migrationLeaseUsedExactly": true,
+    "moduleAcceptanceClosed": true,
+    "commandAndTestProvenanceExact": true,
+    "productionRecipientAuthorityClosed": true,
+    "remainingP0": 0,
+    "remainingP1": 0,
+    "remainingP2": 0,
+    "currentCentralChangedPathCountSinceModuleBase": {
+      "backend": 0,
+      "frontend": 12
+    },
+    "currentCentralPathOverlap": {
+      "backend": 0,
+      "frontend": 0
+    },
+    "predictedMergeConflict": false,
+    "authInternalOpenApiDeltaExact": true,
+    "nonAuthOpenApiAndGatewayUnchanged": true,
+    "v56ExactAndNoSecondMigration": true,
+    "runtimeDefaultOff": true,
+    "authorizationState": "DRAFT",
+    "sidebarRouteRegistryOrProductMapActivationAbsent": true,
+    "tenantCustomerOrProductionActivationAbsent": true
+  },
+  "completionBoundary": {
+    "state": "MODULE_OWNER_DELTA_COMPLETE_RESULT_ADMITTED_INTEGRATION_AUTHORIZATION_PENDING_DEFAULT_OFF",
+    "moduleBranchesCommittedAndPushed": true,
+    "resultEvidenceCommittedAndPushed": true,
+    "mergedToDwpDev": false,
+    "runtimeDefault": "OFF",
+    "authorizationState": "DRAFT",
+    "notificationRuntimeOnboardingComplete": false,
+    "templateRegistrationComplete": false,
+    "routeOrMenuActivated": false,
+    "featureEnabled": false,
+    "bundleApproved": false,
+    "tenantActivated": false,
+    "customerDataUsed": false,
+    "productionReleased": false,
+    "nonclaim": "HRM-002 module results are admitted only. The result commits are not yet merged to dwp-dev; notification runtime onboarding, template registration, PLAT-004, SYS-API-026/033, feature activation and tenant or production release remain pending."
+  },
+  "authority": {
+    "resultsAdmittedAfterCarrier": true,
+    "integrationMergeAuthorized": false,
+    "manualConflictResolutionAuthorized": false,
+    "notificationRuntimeOnboardingAuthorized": false,
+    "routeOrMenuActivationAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "bundleApprovalAuthorized": false,
+    "tenantActivationAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "COMMIT_AND_PUSH_THIS_ADMISSION_AS_A_SINGLE_DWP_DEV_CARRIER_THEN_ISSUE_EXACT_TWO_REPOSITORY_INTEGRATION_AUTHORIZATION"
+}
