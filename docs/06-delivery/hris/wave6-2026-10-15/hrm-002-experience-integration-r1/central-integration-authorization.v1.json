@@ -1,0 +1,202 @@
+{
+  "schema": "dwp.hris.wave6-hrm-002-experience-central-integration-authorization.v1",
+  "receiptId": "HRIS-WAVE6-HRM-002-EXPERIENCE-CENTRAL-INTEGRATION-AUTHORIZATION-R1",
+  "runId": "hrm-002-experience-integration-20261015-r1",
+  "status": "PASS_TWO_REPOSITORY_INTEGRATION_AUTHORIZATION_PENDING_CARRIER_DEFAULT_OFF",
+  "issuedAt": "2026-10-15T18:15:30+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "admission": {
+    "path": "docs/06-delivery/hris/wave6-2026-10-15/hrm-002-experience-integration-r1/central-result-admission.v1.json",
+    "receiptId": "HRIS-WAVE6-HRM-002-EXPERIENCE-CENTRAL-RESULT-ADMISSION-R1",
+    "gitBlobSha1": "c8e2eb725895a3851b3a5b7a6013e049a4daa5a6",
+    "sha256": "25b1815c161e8b201716a11b7ecf55cd25f7479f44c5c97351b9bb1607cc8a4f",
+    "bytes": 9954,
+    "carrierCommit": "7fcc949cc5fb6e17dcfa3ad79f3847ec0585a68d",
+    "carrierTree": "0fd802f269fad40beb176408dfe7d1ab7ef33cb6",
+    "carrierPushedAndRemoteExact": true
+  },
+  "authorizedResults": [
+    {
+      "order": 1,
+      "module": "HRM",
+      "sliceId": "BASE-TFR-HRM-002",
+      "repository": "dwp-backend",
+      "branch": "codex/hris-wave6-hrm-002-backend-20261015-r1",
+      "upstream": "origin/codex/hris-wave6-hrm-002-backend-20261015-r1",
+      "baseCommit": "9c9e33c29a63e2638213d424e74c8fabed2e7a4b",
+      "baseTree": "b2e1a43aad573d63238dbed1a800b6425aa9e3d0",
+      "commit": "382b010bac1dad7ff079858a47b89b9a95f5d96f",
+      "tree": "e4948ec16b774f9bf61f552a323c0bb4d8759fce",
+      "requiredLineage": [
+        "b8889331cc0638de28cbe9e47a065bfb8a84ac63",
+        "ff4f632591c1e833ddc45a1e83f023bfc7f8f4af",
+        "eb93acb4b076228e95466fae2222c4cf45a7198a",
+        "382b010bac1dad7ff079858a47b89b9a95f5d96f"
+      ],
+      "changedFileCount": 50,
+      "sortedPathManifestSha256": "95f603b481f8d1bba2cb41d417c52c6452d9ac08de3f2c9c237a89d92175377f",
+      "sortedNameStatusSha256": "654b364861a6d0648fec080393f9d6ebae737350c456de16b35392644aef08f5",
+      "binaryDiffSha256": "abd06770d0efeef9103d1e6a8b22f46659f18f4551c5e2f0704838960a58bcc3",
+      "contentManifestSha256": "8407bcb72a0f1e3595b2ad64dc74c815be510caa9de16bc3e865c26f36f2c552"
+    },
+    {
+      "order": 2,
+      "module": "HRM",
+      "sliceId": "BASE-TFR-HRM-002",
+      "repository": "dwp-frontend",
+      "branch": "codex/hris-wave6-hrm-002-frontend-20261015-r1",
+      "upstream": "origin/codex/hris-wave6-hrm-002-frontend-20261015-r1",
+      "baseCommit": "bc91cceea76b8b0e336931430fe8f220cea39c78",
+      "baseTree": "312f4f9cae1ffe22180df62b07e4e724fcca0ea5",
+      "commit": "af1eee09efa45e09eea080963f30eb8265d299f4",
+      "tree": "3c7b5819b4f578d40b67f7484bbfac099dfdfe20",
+      "requiredLineage": [
+        "cf43b024856484bebf2f02d50d61a6a4376126d2",
+        "af1eee09efa45e09eea080963f30eb8265d299f4"
+      ],
+      "changedFileCount": 11,
+      "sortedPathManifestSha256": "7f44bd074e7accff87730a9a54ffc367e79835e781a1bccc50486b51bb598704",
+      "sortedNameStatusSha256": "00a3065d10a43672e78b4ccfdf9ea7bc390b9dd642dc641aaa51c224ccbbd2bf",
+      "binaryDiffSha256": "94b70b247f4a145946d69dd72ee651fda8b87e802c9ae126fd1edbdc41803f33",
+      "contentManifestSha256": "9b70f04325ad32ceb6ad6798b8587525740ad736fb848e1ec442700db9d6e135"
+    }
+  ],
+  "preIntegration": {
+    "backend": {
+      "branch": "dwp-dev",
+      "upstream": "origin/dwp-dev",
+      "commit": "9c9e33c29a63e2638213d424e74c8fabed2e7a4b",
+      "tree": "b2e1a43aad573d63238dbed1a800b6425aa9e3d0",
+      "clean": true,
+      "upstreamAhead": 0,
+      "upstreamBehind": 0,
+      "requiredPreMergeCommit": "9c9e33c29a63e2638213d424e74c8fabed2e7a4b"
+    },
+    "frontend": {
+      "branch": "dwp-dev",
+      "upstream": "origin/dwp-dev",
+      "authorizationCreationBaseCommit": "7fcc949cc5fb6e17dcfa3ad79f3847ec0585a68d",
+      "authorizationCreationBaseTree": "0fd802f269fad40beb176408dfe7d1ab7ef33cb6",
+      "requiredPreMergeRule": "HEAD_AND_ORIGIN_EQUAL_PUSHED_AUTHORIZATION_CARRIER",
+      "requireClean": true,
+      "requireUpstreamExact": true
+    }
+  },
+  "mergePlan": {
+    "strategy": "NO_FF_EXACT_RESULT_COMMITS_NO_SQUASH_NO_REBASE",
+    "repositoryOrder": [
+      "dwp-backend",
+      "dwp-frontend"
+    ],
+    "stopOnConflict": true,
+    "manualCodeResolutionAuthorized": false,
+    "currentCentralChangedPathCountSinceModuleBase": {
+      "backend": 0,
+      "frontend": 13
+    },
+    "currentCentralPathIntersectionCount": {
+      "backend": 0,
+      "frontend": 0
+    },
+    "predictedMergeConflict": false,
+    "backendOrder": [
+      "382b010bac1dad7ff079858a47b89b9a95f5d96f"
+    ],
+    "frontendOrder": [
+      "af1eee09efa45e09eea080963f30eb8265d299f4"
+    ],
+    "migrationStreams": [
+      {
+        "stream": "PEOPLE_HR",
+        "version": "V56",
+        "priorVersion": "V55_AND_EARLIER_UNCHANGED",
+        "nextVersion": "V57_OR_SECOND_HRM_002_MIGRATION_ABSENT"
+      }
+    ]
+  },
+  "expectedUnion": {
+    "pathAlgorithm": "SHA256_OF_SORTED_REPOSITORY_TAB_RELATIVE_PATH_LF",
+    "contentAlgorithm": "SHA256_OF_SORTED_REPOSITORY_TAB_PATH_TAB_FILE_SHA256_TAB_BYTES_LF",
+    "backendUniquePathCount": 50,
+    "backendPathSha256": "52d996db20608fa72dfeff708037bbf22998d63bdf3a62f07482ef288548fdc6",
+    "backendContentSha256": "447f57872b91c0b45b3675e1d5a6f479e432bc567f0a4ec91d0bd3d935bbc3aa",
+    "frontendUniquePathCount": 11,
+    "frontendPathSha256": "185e162cd98966d801a3c56506bb7ac778037c2331283c3e6db0b39730e1021a",
+    "frontendContentSha256": "9d01be1b9f2eaeaa05c3513f689300405197d3260d5cb6b68a6d332f2bb14eb2",
+    "combinedUniquePathCount": 61,
+    "combinedPathSha256": "f665d73d0c5f28cc7909b71d316274f15f9a5e3d7e8db42070eb7b31a5069070",
+    "combinedContentSha256": "a2275adbe64749a1634466a648ea1a97ad1987e0bb28d45ab329fe898509beaa"
+  },
+  "postMergeVerification": {
+    "policy": "EXACT_RESULT_BLOB_AND_ACTIVATION_INTEGRATION_GATE_NO_BEHAVIOR_SUITE_RERUN",
+    "behaviorSuiteRerun": "NOT_REQUIRED_FOR_CONFLICT_FREE_EXACT_RESULT_INTEGRATION",
+    "backend": [
+      "FIRST_PARENT_DELTA_EQUALS_EXACT_50_AUTHORIZED_PATHS",
+      "ALL_50_RESULT_BLOBS_EQUAL_AUTHORIZED_RESULT_COMMIT",
+      "MERGE_PARENTS_EQUAL_PREINTEGRATION_AND_EXACT_RESULT",
+      "GIT_DIFF_CHECK",
+      "V56_EXACT_V55_AND_EARLIER_UNCHANGED_V57_OR_SECOND_MIGRATION_ABSENT",
+      "AUTH_INTERNAL_OPENAPI_ONE_PATH_TWO_SCHEMAS_TWO_HEADERS_AND_404_EXACT",
+      "DWP_HRIS_EXPERIENCE_AND_RELAY_ENABLED_DEFAULT_FALSE"
+    ],
+    "frontend": [
+      "FIRST_PARENT_DELTA_EQUALS_EXACT_11_AUTHORIZED_PATHS",
+      "ALL_11_RESULT_BLOBS_EQUAL_AUTHORIZED_RESULT_COMMIT",
+      "MERGE_PARENTS_EQUAL_AUTHORIZATION_CARRIER_AND_EXACT_RESULT",
+      "GIT_DIFF_CHECK",
+      "GENERATED_CARRIERS_UNCHANGED",
+      "SIDEBAR_ROUTE_REGISTRY_AND_HRIS_PRODUCT_MAP_ACTIVATION_ABSENT"
+    ],
+    "crossRepository": [
+      "BACKEND_AND_FRONTEND_GATEWAY_RAW_BYTES_EQUAL",
+      "EXPECTED_61_PATH_AND_CONTENT_UNION_EXACT",
+      "AUTHORIZATION_REMAINS_DRAFT",
+      "NOTIFICATION_ONBOARDING_AND_TEMPLATE_REGISTRATION_REMAIN_PENDING",
+      "ROUTE_MENU_FEATURE_TENANT_CUSTOMER_AND_PRODUCTION_ACTIVATION_REMAIN_UNAUTHORIZED"
+    ]
+  },
+  "invalidationConditions": [
+    "ADMISSION_OR_AUTHORIZATION_CARRIER_NOT_REMOTE_EXACT",
+    "AUTHORIZED_RESULT_COMMIT_TREE_LINEAGE_OR_REMOTE_TIP_MISMATCH",
+    "PRE_INTEGRATION_BRANCH_DIRTY_OR_UPSTREAM_DIVERGED",
+    "BASE_ANCESTRY_OR_EXPECTED_PATH_CONTENT_MANIFEST_MISMATCH",
+    "CURRENT_CENTRAL_AND_MODULE_PATH_INTERSECTION_APPEARS",
+    "MERGE_CONFLICT_OR_MANUAL_CODE_RESOLUTION_REQUIRED",
+    "NO_FF_MERGE_PARENTS_DIFFER_FROM_AUTHORIZED_COMMITS",
+    "UNAUTHORIZED_PATH_OR_BLOB_ENTERS_THE_MERGE",
+    "V56_DRIFT_PRIOR_MIGRATION_CHANGE_OR_SECOND_HRM_002_MIGRATION_APPEARS",
+    "AUTH_INTERNAL_OPENAPI_DELTA_OR_NON_AUTH_SNAPSHOT_DRIFTS",
+    "DWP_HRIS_EXPERIENCE_OR_RELAY_DEFAULT_IS_NOT_FALSE",
+    "BACKEND_AND_FRONTEND_GATEWAY_BYTES_DIFFER",
+    "SIDEBAR_ROUTE_PRODUCT_MAP_NOTIFICATION_FEATURE_TENANT_CUSTOMER_OR_PRODUCTION_ACTIVATION_IS_ATTEMPTED"
+  ],
+  "completionBoundary": {
+    "authorizedIntegrationState": "MODULE_OWNER_DELTA_COMPLETE_EXACT_RESULT_INTEGRATION_AUTHORIZED_AFTER_CARRIER_DEFAULT_OFF",
+    "runtimeDefault": "OFF",
+    "authorizationState": "DRAFT",
+    "notificationRuntimeOnboardingComplete": false,
+    "templateRegistrationComplete": false,
+    "userVisibleTenantActivationComplete": false,
+    "productionReleaseComplete": false
+  },
+  "authority": {
+    "beforeCarrier": {
+      "integrationMergeAuthorized": false
+    },
+    "effectiveAfterCarrier": {
+      "integrationMergeAuthorized": true,
+      "exactResultsOnly": true,
+      "noManualCodeResolution": true,
+      "backendPreIntegrationCommit": "9c9e33c29a63e2638213d424e74c8fabed2e7a4b",
+      "frontendPreIntegrationRule": "HEAD_AND_ORIGIN_EQUAL_PUSHED_AUTHORIZATION_CARRIER"
+    },
+    "notificationRuntimeOnboardingAuthorized": false,
+    "routeOrMenuActivationAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "bundleApprovalAuthorized": false,
+    "tenantActivationAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "COMMIT_AND_PUSH_THIS_AUTHORIZATION_AS_A_SINGLE_DWP_DEV_CARRIER_THEN_MERGE_ONLY_THE_TWO_AUTHORIZED_RESULT_COMMITS"
+}
