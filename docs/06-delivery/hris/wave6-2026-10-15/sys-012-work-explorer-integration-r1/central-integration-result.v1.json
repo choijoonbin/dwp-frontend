@@ -1,0 +1,180 @@
+{
+  "schema": "dwp.hris.wave6-sys-012-work-explorer-central-integration-result.v1",
+  "receiptId": "HRIS-WAVE6-SYS-012-WORK-EXPLORER-CENTRAL-INTEGRATION-RESULT-R1",
+  "runId": "sys-012-work-explorer-integration-20261015-r1",
+  "status": "PASS_EXACT_RESULTS_INTEGRATED_CLOSED_DEFAULT_OFF",
+  "issuedAt": "2026-10-15T09:02:46+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "decision": "INTEGRATE_EXACT_SYS_012_WORK_EXPLORER_RESULTS_WITHOUT_BUNDLE_FEATURE_MENU_TENANT_CUSTOMER_OR_PRODUCTION_ACTIVATION",
+  "authorization": {
+    "path": "docs/06-delivery/hris/wave6-2026-10-15/sys-012-work-explorer-integration-r1/central-integration-authorization.v1.json",
+    "receiptId": "HRIS-WAVE6-SYS-012-WORK-EXPLORER-CENTRAL-INTEGRATION-AUTHORIZATION-R1",
+    "gitBlobSha1": "401f598950f09468255a3dc4debcd31cfe0ee186",
+    "sha256": "be4158a2bc6ab8e1f3a022ee6a3fafa9bd86ac5acc53d1de7afc0a07b328e4e8",
+    "bytes": 8507,
+    "carrierCommit": "c7171d360549c0ebce15794f32fcb19f8da0370e",
+    "carrierTree": "e2c31692bdc4c5ddbbf71e0cc96e7346e8b2bf2c",
+    "carrierPushedAndRemoteExactBeforeMerge": true
+  },
+  "integrationResult": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "upstream": "origin/dwp-dev",
+      "preIntegrationCommit": "3b2da20b592de5b5cff8f2483b83900f2dad054e",
+      "authorizedResultCommit": "6e1ea3cd14224988936fee8af908b706b7aedbc9",
+      "mergeCommit": "9c9e33c29a63e2638213d424e74c8fabed2e7a4b",
+      "mergeParents": [
+        "3b2da20b592de5b5cff8f2483b83900f2dad054e",
+        "6e1ea3cd14224988936fee8af908b706b7aedbc9"
+      ],
+      "postIntegrationCommit": "9c9e33c29a63e2638213d424e74c8fabed2e7a4b",
+      "postIntegrationTree": "b2e1a43aad573d63238dbed1a800b6425aa9e3d0",
+      "clean": true,
+      "upstreamAhead": 0,
+      "upstreamBehind": 0,
+      "remoteExact": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "upstream": "origin/dwp-dev",
+      "preIntegrationCommit": "c7171d360549c0ebce15794f32fcb19f8da0370e",
+      "authorizedResultCommit": "640d1aca79514bd365c366ab9393df6b9d614155",
+      "mergeCommit": "2d0cd58b9ce6b05fc6d364461d9e0172b016a787",
+      "mergeParents": [
+        "c7171d360549c0ebce15794f32fcb19f8da0370e",
+        "640d1aca79514bd365c366ab9393df6b9d614155"
+      ],
+      "postIntegrationCommit": "2d0cd58b9ce6b05fc6d364461d9e0172b016a787",
+      "postIntegrationTree": "cbcaabfaf6c288e2eb02f7d3aee7dbfca8165f30",
+      "clean": true,
+      "upstreamAhead": 0,
+      "upstreamBehind": 0,
+      "remoteExact": true
+    }
+  },
+  "unionIntegrity": {
+    "pathAlgorithm": "SHA256_OF_SORTED_REPOSITORY_TAB_RELATIVE_PATH_LF",
+    "contentAlgorithm": "SHA256_OF_SORTED_REPOSITORY_TAB_PATH_TAB_FILE_SHA256_TAB_BYTES_LF",
+    "backend": {
+      "expectedUniquePathCount": 71,
+      "actualUniquePathCount": 71,
+      "expectedPathSha256": "9accde93bf25b24d0ef42f8eb8c6012cd9e8e58f84bce313e570a39c984be3d4",
+      "actualPathSha256": "9accde93bf25b24d0ef42f8eb8c6012cd9e8e58f84bce313e570a39c984be3d4",
+      "contentManifestSha256": "74bc91330ded262e0053d9ae058bde6b726329b948db6e901beccb323bb9600b"
+    },
+    "frontend": {
+      "expectedUniquePathCount": 20,
+      "actualUniquePathCount": 20,
+      "expectedPathSha256": "d8ef399e775a77742a8e63939f9b69c6285762db501ceb7ddb0a4ce456c8e225",
+      "actualPathSha256": "d8ef399e775a77742a8e63939f9b69c6285762db501ceb7ddb0a4ce456c8e225",
+      "contentManifestSha256": "b70cf86824faa216fe0469535fc484ba957517d2d000eac3be9cc62aad5056ac"
+    },
+    "combinedUniquePathCount": 91,
+    "combinedPathSha256": "30747fb34c47d55d92ce32173d6d7363e860480ee74a7d98b539a2c18b2613ad",
+    "combinedContentSha256": "04634d408c38c77a4dc1c54ad423d9a803ee741d0fbdc74a525e381cd8fc8f9c",
+    "allAuthorizedResultBlobsExactAtIntegratedHeads": true,
+    "unexpectedIntegratedCodePaths": 0,
+    "manualConflictResolutions": 0,
+    "backendGitDiffCheck": "PASS",
+    "frontendGitDiffCheck": "PASS"
+  },
+  "migrationIntegrity": {
+    "platform": {
+      "newVersion": "V327",
+      "newPath": "dwp-platform-server/src/main/resources/db/migration/V327__create_hris_work_explorer.sql",
+      "gitBlobSha1": "c24631b31cdadd56af37b310a123def08ed0c9a2",
+      "sha256": "8586a323808e902533e073c83bc6fb83f456173a9f626801bfbe611f19e7d9d7",
+      "bytes": 12932,
+      "priorVersion": "V326",
+      "priorAndEarlierMigrationsUnchanged": true,
+      "v328OrSecondMigrationAbsent": true,
+      "cleanAndV326ToV327UpgradePreviouslyPassed": true,
+      "realPostgresqlMethods": 7,
+      "skipped": 0
+    },
+    "streamCollision": false
+  },
+  "integrationVerification": {
+    "policy": "EXACT_RESULT_BLOB_AND_ACTIVATION_INTEGRATION_GATE_NO_BEHAVIOR_SUITE_RERUN",
+    "backend": {
+      "mergeParentsExact": true,
+      "firstParentPathManifestExact": true,
+      "authorizedBlobCount": 71,
+      "authorizedBlobsExact": true,
+      "v327Exact": true,
+      "priorMigrationsUnchanged": true,
+      "defaultOff": true,
+      "gitDiffCheck": "PASS"
+    },
+    "frontend": {
+      "mergeParentsExact": true,
+      "firstParentPathManifestExact": true,
+      "authorizedBlobCount": 20,
+      "authorizedBlobsExact": true,
+      "generatedTypescriptMirrorUnchanged": true,
+      "sidebarAndHrisProductMapUnchanged": true,
+      "gitDiffCheck": "PASS"
+    },
+    "crossRepository": {
+      "gatewayRawBytesEqual": true,
+      "gatewaySha256": "bcc41751c61c1bfc661df4efb4707aee564468ce40123732035e49ee9d2316c3",
+      "expected91PathAndContentUnionExact": true
+    },
+    "moduleTargetedEvidenceReusedAgainstExactBlobs": true,
+    "behaviorSuiteRerun": "NOT_RUN_NOT_REQUIRED_FOR_CONFLICT_FREE_EXACT_RESULT_INTEGRATION",
+    "fullRepositorySuites": "NOT_RUN_NOT_REQUIRED"
+  },
+  "contractAndActivationIntegrity": {
+    "authorizationProjectionVersion": 43,
+    "authorizationState": "DRAFT",
+    "workExplorerFeatureDefaultOff": true,
+    "runtimeEntryPointsConditionalOnExplicitEnablement": true,
+    "authorizedHomeActionAndRouteCodeIntegrated": true,
+    "sidebarOrHrisProductMapActivationIntegrated": false,
+    "generatedRouteRegistryOrTypescriptChangesIntegrated": false,
+    "approvedR3PlatformPepOpaqueContextChangeIntegrated": true,
+    "unapprovedPepChangesIntegrated": false,
+    "bundleApprovalPerformed": false,
+    "featureEnablementPerformed": false,
+    "tenantActivationPerformed": false,
+    "customerDataUsed": false,
+    "productionReleasePerformed": false
+  },
+  "acceptanceClosure": {
+    "sliceId": "BASE-TFR-SYS-012",
+    "moduleAcceptancePassed": 12,
+    "moduleAcceptanceTotal": 12,
+    "remainingP0": 0,
+    "remainingP1": 0,
+    "remainingP2": 1,
+    "p2Blocking": false,
+    "centralIntegration": "PASS_DEFAULT_OFF"
+  },
+  "completionBoundary": {
+    "state": "MODULE_RUNTIME_AND_USER_JOURNEY_INTEGRATED_CLOSED_DEFAULT_OFF",
+    "runtimeDefault": "OFF",
+    "authorizationState": "DRAFT",
+    "routeOrMenuActivated": false,
+    "featureEnabled": false,
+    "bundleApproved": false,
+    "tenantActivated": false,
+    "customerDataUsed": false,
+    "productionReleased": false,
+    "nonclaim": "SYS-012 code is integrated on both dwp-dev branches, but v43 remains DRAFT, Work Explorer remains default OFF, and no tenant, customer or production activation is authorized."
+  },
+  "authority": {
+    "resultIntegratedAndRecorded": true,
+    "integrationMergeAuthorityConsumed": true,
+    "integrationMergeAuthorized": false,
+    "manualConflictResolutionAuthorized": false,
+    "routeOrMenuActivationAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "bundleApprovalAuthorized": false,
+    "tenantActivationAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "SELECT_AND_SEAL_THE_NEXT_UNBLOCKED_HRIS_MODULE_SLICE_FROM_THE_WAVE6_ROADMAP_WITH_SYS_012_REMAINING_DEFAULT_OFF"
+}
