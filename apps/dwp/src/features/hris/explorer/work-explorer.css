@@ -1,0 +1,165 @@
+.work-explorer {
+  min-width: 0;
+}
+
+.work-explorer-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 16px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid;
+  border-color: var(--mui-palette-divider);
+}
+
+.work-explorer-search {
+  position: sticky;
+  z-index: 2;
+  top: 0;
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) minmax(160px, 0.28fr) minmax(140px, 0.22fr);
+  gap: 12px;
+  margin-block: 20px;
+  padding: 12px;
+  border: 1px solid var(--mui-palette-divider);
+  border-radius: 12px;
+  background: var(--mui-palette-background-paper);
+}
+
+.work-explorer-search .MuiInputBase-root {
+  gap: 8px;
+}
+
+.work-explorer-resume-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.work-explorer-compact-list,
+.work-explorer-activity-list {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.work-explorer-compact-list .MuiButton-root {
+  width: 100%;
+  min-width: 0;
+  justify-content: space-between;
+  border: 1px solid var(--mui-palette-divider);
+  text-align: start;
+}
+
+.work-explorer-compact-label {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.work-explorer-activity-list > li {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 12px;
+}
+
+.work-explorer-card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.work-explorer-card {
+  display: flex;
+  min-width: 0;
+  min-height: 176px;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+}
+
+.work-explorer-card:hover,
+.work-explorer-card:focus-within {
+  border-color: var(--mui-palette-primary-main);
+  box-shadow: 0 8px 22px rgb(15 23 42 / 10%);
+  transform: translateY(-1px);
+}
+
+.work-explorer-card[data-selected='true'] {
+  border-color: var(--mui-palette-primary-main);
+  box-shadow: inset 3px 0 0 var(--mui-palette-primary-main);
+}
+
+.work-explorer-label,
+.work-explorer-target {
+  overflow-wrap: anywhere;
+}
+
+.work-explorer-state-panel {
+  overflow: hidden;
+}
+
+@media (max-width: 899px) {
+  .work-explorer-search {
+    position: static;
+    grid-template-columns: minmax(0, 1fr) minmax(150px, 0.38fr);
+  }
+
+  .work-explorer-search > :first-child {
+    grid-column: 1 / -1;
+  }
+
+  .work-explorer-resume-grid,
+  .work-explorer-card-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 599px) {
+  .work-explorer-header,
+  .work-explorer-search,
+  .work-explorer-resume-grid,
+  .work-explorer-card-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .work-explorer-header {
+    align-items: start;
+  }
+
+  .work-explorer-search > :first-child {
+    grid-column: auto;
+  }
+
+  .work-explorer-card {
+    min-height: 164px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .work-explorer-card {
+    transition: none;
+  }
+
+  .work-explorer-card:hover,
+  .work-explorer-card:focus-within {
+    transform: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .work-explorer-card:hover,
+  .work-explorer-card:focus-within,
+  .work-explorer-search {
+    border-color: Highlight;
+  }
+}
