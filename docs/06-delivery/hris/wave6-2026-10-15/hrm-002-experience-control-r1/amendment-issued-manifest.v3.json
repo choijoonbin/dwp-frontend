@@ -1,0 +1,52 @@
+{
+  "schema": "dwp.hris.module-start-authority-amendment-issued-manifest.v3",
+  "manifestId": "HRIS-WAVE6-HRM-002-R3-AMENDMENT-ISSUED-MANIFEST",
+  "issuedAt": "2026-10-15T12:19:10+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-HRM",
+  "sliceId": "BASE-TFR-HRM-002",
+  "state": "R3_PRE_IMPLEMENTATION_HARDENING_CONTROL_AND_TOKEN_PINNED",
+  "artifacts": [
+    {
+      "path": "origin-authority-hardening-successor-amendment.v1.json",
+      "id": "HRIS-WAVE6-HRM-002-ORIGIN-AUTHORITY-HARDENING-R3",
+      "sha256": "ab34fd98d35dbbf1ff4efcaa63f763e46f9c7db16bc1e3658f2f12dad5aefba6",
+      "bytes": 12312
+    },
+    {
+      "path": "start-token-amendment.v3.json",
+      "id": "HRIS-WAVE6-START-BASE-TFR-HRM-002-R3",
+      "sha256": "361b08e75ade8ca7f379806f8d352c4d138c0ffef0f576c843aa0bd9adb11eef",
+      "bytes": 4047
+    }
+  ],
+  "issuancePreconditions": {
+    "frontendControlBranch": "dwp-dev",
+    "frontendControlBaseCommit": "828b8096e3aa496416bd597da2908f6ac79e4745",
+    "frontendControlBaseTree": "4eaac599facbf909f2b1a94bcf29e5b71a1c8936",
+    "backendModuleBranch": "codex/hris-wave6-hrm-002-backend-20261015-r1",
+    "backendModuleContinuationCommit": "ff4f632591c1e833ddc45a1e83f023bfc7f8f4af",
+    "backendModuleContinuationTree": "ca96d2ec90e19898ac68e2df04e9215dd5b8291b",
+    "backendChangedFilesAfterR2Issue": 0,
+    "backendTestsAfterR2Issue": 0,
+    "authA1State": "NOT_RUN",
+    "peopleP1State": "NOT_RUN",
+    "frontendRerunState": "FORBIDDEN_ALREADY_ACCEPTED",
+    "migrationRerunState": "FORBIDDEN_ALREADY_ACCEPTED"
+  },
+  "integrityRules": [
+    "Resolve both R3 paths relative to this manifest and verify raw SHA-256 and byte counts before consuming R3 authority.",
+    "Verify all three pinned R2 predecessor artifacts and the frontend control base commit/tree before applying this successor.",
+    "R3 is a delta: the exact combined R1/R2/R3 restrictions apply and any unlisted edit invalidates the module result.",
+    "A1 and P1 remain unused until static implementation closes; each aggregate runs once and accepted frontend or migration stages do not rerun.",
+    "Any byte change to either R3 artifact invalidates this manifest."
+  ],
+  "authority": {
+    "consumeR3Amendment": true,
+    "continueExistingBackendWorktree": true,
+    "editOnlyCombinedR2R3Paths": true,
+    "commitAndPushBackendModuleBranchAfterTargetedVerification": true,
+    "mergeToDwpDev": false,
+    "activation": false
+  }
+}

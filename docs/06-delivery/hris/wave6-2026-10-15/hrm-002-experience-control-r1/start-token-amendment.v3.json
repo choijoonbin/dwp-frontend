@@ -1,0 +1,70 @@
+{
+  "schema": "dwp.hris.module-start-token-amendment.v3",
+  "tokenAmendmentId": "HRIS-WAVE6-START-BASE-TFR-HRM-002-R3",
+  "issuedAt": "2026-10-15T12:19:10+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-HRM",
+  "sliceId": "BASE-TFR-HRM-002",
+  "state": "ISSUED_PRE_IMPLEMENTATION_ORIGIN_AUTHORITY_HARDENING",
+  "amendsToken": "HRIS-WAVE6-START-BASE-TFR-HRM-002-R2",
+  "reason": "R3 corrects two independently proven R2 gaps before any backend implementation or test: sealed high-risk receipt evidence must accept its mode-exact STEP_UP_REQUIRED eligibility form, and the dedicated People credential must be body-confined to the seven HRIS origin routes.",
+  "controlAmendment": {
+    "path": "origin-authority-hardening-successor-amendment.v1.json",
+    "amendmentId": "HRIS-WAVE6-HRM-002-ORIGIN-AUTHORITY-HARDENING-R3",
+    "sha256": "ab34fd98d35dbbf1ff4efcaa63f763e46f9c7db16bc1e3658f2f12dad5aefba6",
+    "bytes": 12312
+  },
+  "predecessorAuthority": {
+    "token": "start-token-amendment.v2.json",
+    "tokenSha256": "017b1c8a8d5569aa9478ff3943177f01ebc9bbcb2f13665f15e884e36ecf1f68",
+    "manifest": "amendment-issued-manifest.v2.json",
+    "manifestSha256": "0c4ba7645f4c5f33ecbab71bdc21452ec2806ac744423845996587972531b568",
+    "rule": "R1 and R2 remain binding except for the exact high-risk decision, Auth controller touch and authenticated People request-body guard clauses replaced or added by the pinned R3 control."
+  },
+  "worktreeReuse": {
+    "backend": {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave6-20261015/hrm-002-r1/backend",
+      "branch": "codex/hris-wave6-hrm-002-backend-20261015-r1",
+      "continuationCommit": "ff4f632591c1e833ddc45a1e83f023bfc7f8f4af",
+      "continuationTree": "ca96d2ec90e19898ac68e2df04e9215dd5b8291b",
+      "preImplementationState": "CLEAN_ZERO_R2_CODE_CHANGES_ZERO_R2_TEST_RUNS"
+    },
+    "frontend": {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave6-20261015/hrm-002-r1/frontend",
+      "branch": "codex/hris-wave6-hrm-002-frontend-20261015-r1",
+      "acceptedCommit": "af1eee09efa45e09eea080963f30eb8265d299f4",
+      "acceptedTree": "3c7b5819b4f578d40b67f7484bbfac099dfdfe20",
+      "rule": "Accepted and read-only; do not edit or rerun."
+    }
+  },
+  "authorizedSuccessorWork": [
+    "Implement the combined R2 bridge with the R3 mode-exact high-risk decision matrix.",
+    "Set a trusted authenticated-caller attribute in the existing Auth filter and add the exact People-only body guard in ProductSurfaceAuthorityController.",
+    "Add the required-assurance People setting with blank default and fail-closed behavior when the feature is enabled without it.",
+    "Add only the R3 controller test plus the exact R2 tests, then run the updated A1 and unchanged exact P1 once after static closure.",
+    "Commit and push only the backend module branch after independent P0/P1 review and completion evidence."
+  ],
+  "verificationPolicy": {
+    "authA1StateAtIssue": "NOT_RUN",
+    "peopleP1StateAtIssue": "NOT_RUN",
+    "frontendState": "ACCEPTED_NO_RERUN",
+    "migrationState": "ACCEPTED_NO_RERUN",
+    "rule": "No repository-wide suite, wildcard package test, frontend rerun, migration rerun or generated-carrier regeneration."
+  },
+  "completionGate": [
+    "R3 control and token raw hashes and bytes are verified before the first backend edit.",
+    "The combined R2/R3 exact boundary is respected and all other files remain unchanged.",
+    "High-risk and caller-body-guard positives and negatives pass in the exact targeted clusters.",
+    "The backend module branch is committed, pushed, clean and upstream 0/0 with independent P0=0/P1=0 review; no central merge or activation is claimed."
+  ],
+  "authority": {
+    "consumeR3Amendment": true,
+    "continueExistingBackendWorktree": true,
+    "editOnlyCombinedR2R3Paths": true,
+    "commitAndPushBackendModuleBranch": true,
+    "editOrRerunFrontendModule": false,
+    "rerunMigration": false,
+    "mergeToDwpDev": false,
+    "runtimeActivation": false
+  }
+}

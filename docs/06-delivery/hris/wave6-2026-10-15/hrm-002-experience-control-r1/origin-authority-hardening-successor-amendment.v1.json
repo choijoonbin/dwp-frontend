@@ -1,0 +1,175 @@
+{
+  "schema": "dwp.hris.hrm002.origin-authority-hardening-successor-amendment.v1",
+  "amendmentId": "HRIS-WAVE6-HRM-002-ORIGIN-AUTHORITY-HARDENING-R3",
+  "issuedAt": "2026-10-15T12:19:10+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-HRM",
+  "sliceId": "BASE-TFR-HRM-002",
+  "state": "ISSUED_BOUNDED_HIGH_RISK_AND_CALLER_GUARD_CORRECTION",
+  "reason": "Pre-implementation independent review proved two R2 defects while the backend module branch was still clean: NORMAL high-risk publish/apply authority is represented by a sealed STEP_UP_REQUIRED eligibility package rather than ALLOWED, and the dedicated People credential must be body-confined so it cannot become a general product-authority oracle. No R2 backend source or test had been edited or run when this correction was raised.",
+  "predecessorPins": {
+    "r2Control": {
+      "path": "origin-authority-bridge-successor-amendment.v1.json",
+      "sha256": "f6eba096cc3b4dc9b9c0a15b4d7241b8ea3889db72474bd36830d6dd6c69fe97",
+      "bytes": 19414
+    },
+    "r2Token": {
+      "path": "start-token-amendment.v2.json",
+      "sha256": "017b1c8a8d5569aa9478ff3943177f01ebc9bbcb2f13665f15e884e36ecf1f68",
+      "bytes": 4688
+    },
+    "r2Manifest": {
+      "path": "amendment-issued-manifest.v2.json",
+      "sha256": "0c4ba7645f4c5f33ecbab71bdc21452ec2806ac744423845996587972531b568",
+      "bytes": 2811
+    },
+    "frontendControlCommit": "828b8096e3aa496416bd597da2908f6ac79e4745",
+    "frontendControlTree": "4eaac599facbf909f2b1a94bcf29e5b71a1c8936",
+    "backendModuleContinuationCommit": "ff4f632591c1e833ddc45a1e83f023bfc7f8f4af",
+    "backendModuleContinuationTree": "ca96d2ec90e19898ac68e2df04e9215dd5b8291b"
+  },
+  "provenPreImplementationState": {
+    "backendChangedFiles": 0,
+    "backendTestsRunAfterR2Issue": 0,
+    "backendCommitsAfterR2Issue": 0,
+    "rule": "R3 corrects authority before implementation; it does not invalidate or repeat an implemented or tested delta."
+  },
+  "supersession": [
+    "R2 originEvidenceRecalculation.authDecision ALLOWED-only text is replaced by decisionByRiskAndMode below.",
+    "R2 exactTouchBoundary is extended only by ProductSurfaceAuthorityController.java and ProductSurfaceAuthorityControllerTest.java.",
+    "R2 dedicatedCredentialContract is strengthened by the authenticated-caller requestBodyGuard below.",
+    "R2 Auth A1 adds one exact controller guard test class; R2 People P1 remains unchanged.",
+    "Every other R1 and R2 restriction, exact seven-tuple registry, hash rule, default-OFF rule and no-merge/no-activation rule remains binding."
+  ],
+  "decisionByRiskAndMode": {
+    "mediumTuples": {
+      "actions": [
+        "CREATE_ASSIGNMENT_EVENT",
+        "VALIDATE_ASSIGNMENT_EVENT",
+        "SUBMIT_ASSIGNMENT_EVENT",
+        "CREATE_EMPLOYEE_CHANGE_REQUEST",
+        "SUBMIT_EMPLOYEE_CHANGE_REQUEST"
+      ],
+      "acceptedDecision": "ALLOWED",
+      "acceptedGrantActivationState": "ACTIVE",
+      "rule": "Require exactly one sealed capability grant, exactly one selected source scope, exact routeGrantRef, exact readOnly=false and complete revisions. revalidateAt is mandatory and future; result, scope and grant validUntil values are nullable but must be future when present, and effective freshness is the earliest value that exists. STEP_UP_REQUIRED or any other decision denies."
+    },
+    "highRiskTuples": {
+      "actions": [
+        "PUBLISH_ASSIGNMENT_EVENT",
+        "APPLY_EMPLOYEE_CHANGE_REQUEST"
+      ],
+      "activationPolicy": "STEPUP-MGMT-HIGH-V1",
+      "normalMode": {
+        "acceptedDecision": "STEP_UP_REQUIRED",
+        "reasonCode": "STEP_UP_REQUIRED",
+        "acceptedGrantActivationState": "ELIGIBLE",
+        "requiredAssurance": "Must exactly equal the nonblank dwp.hris.experience.origin-authority.required-assurance setting.",
+        "requestPolicyRef": "STEPUP-MGMT-HIGH-V1"
+      },
+      "elevatedMode": {
+        "acceptedDecision": "ALLOWED",
+        "acceptedGrantActivationState": "ACTIVE",
+        "requiredAssurance": null,
+        "requestPolicyRef": null
+      },
+      "sharedRule": "Require exactly one sealed capability grant, exactly one selected source scope, exact routeGrantRef, exact method/readOnly and complete revisions. revalidateAt is mandatory and future; result, scope and grant validUntil values are nullable but must be future when present, and effective freshness is the earliest value that exists. The STEP_UP_REQUIRED observation is receipt-read evidence of current eligibility only; it must never be relabeled ALLOWED, reused as a mutation permit or accepted for a medium tuple."
+    },
+    "accessModeRule": "Evaluate exactly once with the current HcmPepContext.activeAccessMode. NORMAL and ELEVATED are the only accepted modes; no retry, fallback, mode substitution or PROVIDER_SUPPORT is allowed.",
+    "historicModeBinding": "The existing Gateway creates ordinary high-risk command authority in NORMAL mode, forwards the exact STEP_UP_REQUIRED decision/context/scope to People, and People verifies the signed step-up challenge separately without converting HcmPepContext to ELEVATED. The V54 publish/apply receipt therefore stores the NORMAL decision and context evidence. Do not synthesize ELEVATED historical evidence or re-evaluate a second mode.",
+    "revisionRule": "For either accepted high-risk form, reproduce the Gateway product evaluation revision from the exact returned Auth revisions, current mode, route and routeGrantRef, then apply the existing family-specific V54 authorization/context algorithms from R2. Stored values remain comparison-only."
+  },
+  "requiredAssuranceConfiguration": {
+    "peopleProperty": "dwp.hris.experience.origin-authority.required-assurance",
+    "environmentVariable": "DWP_HRIS_ORIGIN_AUTHORITY_REQUIRED_ASSURANCE",
+    "default": "",
+    "rule": "Feature default remains OFF. When enabled, a blank setting makes high-risk origin proof unavailable and therefore opaque 404; it never weakens comparison."
+  },
+  "requestBodyGuard": {
+    "authenticatedCallerSource": "ProductSurfaceInternalSecurityConfig must place its successfully authenticated exact service identity in a request attribute. ProductSurfaceAuthorityController may apply the People guard only from that trusted attribute, never from an unverified body or raw caller assertion.",
+    "peopleCallerIdentity": "dwp-people-server",
+    "allowedBody": {
+      "productKey": "hcm",
+      "surfaceKey": "hcm.operations",
+      "activeAccessModes": ["NORMAL", "ELEVATED"],
+      "routeContractKeys": [
+        "route.hcm.operations.assignment-event-create.action",
+        "route.hcm.operations.assignment-event-validate.action",
+        "route.hcm.operations.assignment-event-submit.action",
+        "route.hcm.operations.assignment-event-publish.action",
+        "route.hcm.operations.employee-change-request-create.action",
+        "route.hcm.operations.employee-change-request-submit.action",
+        "route.hcm.operations.employee-change-request-apply.action"
+      ],
+      "contextKey": null,
+      "contextScopeKey": "An exact ProductSurfaceScopeKey.key(tenantId, actorId, 'hcm', 'hcm.operations', source, kind) value from routeAllowedSelectors; arbitrary nonblank or merely well-formed values are denied before authority evaluation.",
+      "supportSessionRef": null,
+      "supportRevision": null,
+      "supportScopes": []
+    },
+    "routeAllowedSelectors": {
+      "route.hcm.operations.assignment-event-create.action": [{"source": "WORKFORCE_TARGET_POPULATION", "kind": "TARGET_POPULATION"}],
+      "route.hcm.operations.assignment-event-validate.action": [{"source": "WORKFORCE_TARGET_POPULATION", "kind": "TARGET_POPULATION"}],
+      "route.hcm.operations.assignment-event-submit.action": [{"source": "WORKFORCE_TARGET_POPULATION", "kind": "TARGET_POPULATION"}],
+      "route.hcm.operations.assignment-event-publish.action": [{"source": "WORKFORCE_TARGET_POPULATION", "kind": "TARGET_POPULATION"}],
+      "route.hcm.operations.employee-change-request-create.action": [
+        {"source": "WORKFORCE_TARGET_POPULATION", "kind": "TARGET_POPULATION"},
+        {"source": "DIRECT_REPORT_OR_APPROVED_DELEGATION+TARGET_POPULATION", "kind": "TARGET_POPULATION"},
+        {"source": "SELF", "kind": "SELF"}
+      ],
+      "route.hcm.operations.employee-change-request-submit.action": [
+        {"source": "WORKFORCE_TARGET_POPULATION", "kind": "TARGET_POPULATION"},
+        {"source": "DIRECT_REPORT_OR_APPROVED_DELEGATION+TARGET_POPULATION", "kind": "TARGET_POPULATION"},
+        {"source": "SELF", "kind": "SELF"}
+      ],
+      "route.hcm.operations.employee-change-request-apply.action": [{"source": "WORKFORCE_TARGET_POPULATION", "kind": "TARGET_POPULATION"}]
+    },
+    "selectorConstructionRule": "The controller recomputes every candidate from the validated body tenantId and actorId plus the fixed product, surface, source and kind. It accepts an exact equality with one route candidate only; a selector for another tenant, actor, route profile, product or surface is denied.",
+    "deny": [
+      "Any other product, surface, access mode, route, supplied context key, blank, non-trim-stable, merely well-formed or recomputation-mismatched scope selector, support field or support scope.",
+      "Any request that bypasses the authenticated People caller attribute or mixes dedicated People and existing credential headers.",
+      "Any People request whose returned route, capability, scope, routeGrantRef or freshness does not close exactly against the independent R2 registry."
+    ],
+    "existingCallerRule": "Gateway, Platform and Meeting behavior and bodies remain unchanged; only the authenticated dwp-people-server branch receives this additional body guard."
+  },
+  "exactTouchExtension": {
+    "authProduction": [
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/controller/ProductSurfaceAuthorityController.java"
+    ],
+    "authTests": [
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/controller/ProductSurfaceAuthorityControllerTest.java"
+    ],
+    "peopleConfigurationAlreadyAuthorizedByR2": [
+      "dwp-people-server/src/main/resources/application.yml"
+    ],
+    "stillForbidden": [
+      "all other files outside the combined exact R2 plus R3 boundaries",
+      "all migration files including V56",
+      "Gateway, generated contract, OpenAPI, AsyncAPI, frontend application and Notification edits",
+      "runtime activation and merge to dwp-dev"
+    ]
+  },
+  "targetedVerification": {
+    "authA1": "./gradlew :dwp-auth-server:test --tests '*ProductSurfaceInternalSecurityConfigTest' --tests '*ProductSurfaceAuthorityControllerTest' --tests '*ProductAuthorizationHcmAuthorityAdapterTest' --no-daemon --max-workers=1",
+    "peopleP1": "Use the exact unchanged R2 People P1 command; no wildcard, migration, Postgres, frontend or repository-wide test is authorized.",
+    "policy": "Run A1 and P1 once only after the combined static implementation is complete. After a failure rerun only the smallest owning class, then one final aggregate for the changed cluster only if the fix crosses that cluster."
+  },
+  "completionGate": [
+    "High-risk NORMAL and ELEVATED positive cases close under their exact sealed decision and activation state, while medium STEP_UP and every cross-mode substitution deny opaquely.",
+    "The dedicated People credential cannot evaluate any non-HCM product/surface, non-origin route, provider-support request, supplied context, missing or arbitrary selector, another tenant/actor selector or support-bearing request.",
+    "Wrong caller attribute and all cross-token, mixed-header, wrong-path and wrong-method cases deny without changing Gateway, Platform or Meeting behavior.",
+    "The exact A1 and P1 clusters pass, changed paths equal the combined R2/R3 allowlist, V56 and accepted frontend bytes remain unchanged, and independent review reports P0=0/P1=0."
+  ],
+  "authority": {
+    "consumeR3Correction": true,
+    "extendAuthControllerTouch": true,
+    "acceptSealedHighRiskStepUpEligibilityForReceiptReadOnly": true,
+    "generalStepUpAuthorization": false,
+    "generalProductAuthorityOracle": false,
+    "gatewayOrGeneratedEdit": false,
+    "secondMigration": false,
+    "frontendApplicationEditOrRerun": false,
+    "mergeToDwpDev": false,
+    "activation": false
+  }
+}
