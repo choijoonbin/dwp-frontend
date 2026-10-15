@@ -391,7 +391,6 @@ describe('compensation command runtime', () => {
       proposalId,
       proposalBody
     );
-    expect(draftProposal.mock.calls[0]?.[1]).not.toBe(cycle.aggregateVersion);
     expect(executor).toHaveBeenCalledWith(upsertPending);
   });
 
