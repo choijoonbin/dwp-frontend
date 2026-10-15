@@ -1,0 +1,53 @@
+{
+  "schema": "dwp.hris.module-start-authority-amendment-issued-manifest.v2",
+  "manifestId": "HRIS-WAVE6-HRM-002-R2-AMENDMENT-ISSUED-MANIFEST",
+  "issuedAt": "2026-10-15T12:05:34+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-HRM",
+  "sliceId": "BASE-TFR-HRM-002",
+  "state": "R2_ORIGIN_AUTHORITY_BRIDGE_CONTROL_AND_TOKEN_PINNED",
+  "artifacts": [
+    {
+      "path": "origin-authority-bridge-successor-amendment.v1.json",
+      "id": "HRIS-WAVE6-HRM-002-ORIGIN-AUTHORITY-BRIDGE-R2",
+      "sha256": "f6eba096cc3b4dc9b9c0a15b4d7241b8ea3889db72474bd36830d6dd6c69fe97",
+      "bytes": 19414
+    },
+    {
+      "path": "start-token-amendment.v2.json",
+      "id": "HRIS-WAVE6-START-BASE-TFR-HRM-002-R2",
+      "sha256": "017b1c8a8d5569aa9478ff3943177f01ebc9bbcb2f13665f15e884e36ecf1f68",
+      "bytes": 4688
+    }
+  ],
+  "issuancePreconditions": {
+    "frontendControlBranch": "dwp-dev",
+    "frontendControlBaseCommit": "30858238f62e1d4c44b6374f625c7d53e958c368",
+    "frontendControlBaseTree": "45f1b5c94e59e2e85cf4b67b5b2fd7bd4ec1dc88",
+    "backendModuleBranch": "codex/hris-wave6-hrm-002-backend-20261015-r1",
+    "backendModuleContinuationCommit": "ff4f632591c1e833ddc45a1e83f023bfc7f8f4af",
+    "backendModuleContinuationTree": "ca96d2ec90e19898ac68e2df04e9215dd5b8291b",
+    "frontendModuleCommit": "af1eee09efa45e09eea080963f30eb8265d299f4",
+    "frontendModuleTree": "3c7b5819b4f578d40b67f7484bbfac099dfdfe20",
+    "authA1State": "NOT_RUN",
+    "peopleP1State": "NOT_RUN",
+    "frontendRerunState": "FORBIDDEN_ALREADY_ACCEPTED",
+    "migrationRerunState": "FORBIDDEN_ALREADY_ACCEPTED",
+    "provenBlockingChain": "R1 has zero production HrisExperienceOriginReceiptAuthoritySource beans. The GET receipt route proves only neutral entry permission, while the immutable V54 receipt requires a fresh exact origin action profile, People population, field, purpose, authorization and context proof."
+  },
+  "integrityRules": [
+    "Resolve both R2 artifact paths relative to this manifest and verify raw SHA-256 and byte counts before consuming R2 authority.",
+    "R1 remains binding; only the exact R2 supersession clauses replace protected-path restrictions.",
+    "Any byte change to either R2 artifact invalidates this manifest.",
+    "The module result must report Auth protected-path and People protected-path diffs separately from the original R1 paths.",
+    "A1 and P1 remain unused until static implementation closes; each aggregate may run once and no accepted frontend or migration stage may rerun."
+  ],
+  "authority": {
+    "consumeR2Amendment": true,
+    "continueExistingBackendWorktree": true,
+    "editOnlyExactR2Paths": true,
+    "commitAndPushBackendModuleBranchAfterTargetedVerification": true,
+    "mergeToDwpDev": false,
+    "activation": false
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "schema": "dwp.hris.module-start-token-amendment.v2",
+  "tokenAmendmentId": "HRIS-WAVE6-START-BASE-TFR-HRM-002-R2",
+  "issuedAt": "2026-10-15T12:05:34+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-HRM",
+  "sliceId": "BASE-TFR-HRM-002",
+  "state": "ISSUED_BOUNDED_ORIGIN_AUTHORITY_BRIDGE_ONLY",
+  "amendsToken": "HRIS-WAVE6-START-BASE-TFR-HRM-002-R1",
+  "reason": "R1 correctly fails closed because the production origin-authority source is absent. R2 authorizes only the exact Auth and People bridge needed to close HRM002-AC-04 without reopening accepted frontend, migration, central carrier, Gateway or Notification work.",
+  "controlAmendment": {
+    "path": "origin-authority-bridge-successor-amendment.v1.json",
+    "amendmentId": "HRIS-WAVE6-HRM-002-ORIGIN-AUTHORITY-BRIDGE-R2",
+    "sha256": "f6eba096cc3b4dc9b9c0a15b4d7241b8ea3889db72474bd36830d6dd6c69fe97",
+    "bytes": 19414
+  },
+  "predecessorAuthority": {
+    "token": "start-token-issued.v1.json",
+    "tokenSha256": "b3892b6e23f1743bc18b960b2fbfd5be3fe73a6de858a5aa55ea2f9d67550e9e",
+    "workPacket": "work-packet.v1.json",
+    "workPacketSha256": "57aaf7d03eccb184a934c34d5be99f3af3df1a76462bd52780081f7287642654",
+    "rule": "R1 remains binding. R2 supersedes only the exact protected-path restrictions and behaviors named by the pinned control amendment."
+  },
+  "worktreeReuse": {
+    "backend": {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave6-20261015/hrm-002-r1/backend",
+      "branch": "codex/hris-wave6-hrm-002-backend-20261015-r1",
+      "continuationCommit": "ff4f632591c1e833ddc45a1e83f023bfc7f8f4af",
+      "continuationTree": "ca96d2ec90e19898ac68e2df04e9215dd5b8291b",
+      "rule": "Continue the same clean pushed backend worktree. Do not create a replacement branch, second migration or unrelated central delta."
+    },
+    "frontend": {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave6-20261015/hrm-002-r1/frontend",
+      "branch": "codex/hris-wave6-hrm-002-frontend-20261015-r1",
+      "acceptedCommit": "af1eee09efa45e09eea080963f30eb8265d299f4",
+      "acceptedTree": "3c7b5819b4f578d40b67f7484bbfac099dfdfe20",
+      "rule": "Frontend is read-only in R2. Do not rerun its accepted tests or alter its result commit."
+    }
+  },
+  "authorizedSuccessorWork": [
+    "Implement the dedicated dwp-people-server credential on the exact Auth product-surface evaluate POST path.",
+    "Add exact source-scope selection for the overlapping employee-change origin profiles and neutral handling for the exact operations receipt-entry grant.",
+    "Preserve the trusted access mode in the People request PEP context and close the cross-surface TEAM eligibility mapping.",
+    "Implement one production origin-authority source in the existing HRM-002 experience package and bind it to the sealed seven action tuples.",
+    "Recompute Gateway-parity decision revision and immutable V54 context evidence, then deny opaquely on every mismatch or unavailable dependency.",
+    "Run only A1 and P1 from the control amendment, perform static allowlist checks, commit and push the backend module branch, and complete result evidence only after independent review."
+  ],
+  "verificationPolicy": {
+    "authA1StateAtIssue": "NOT_RUN",
+    "peopleP1StateAtIssue": "NOT_RUN",
+    "frontendState": "ACCEPTED_NO_RERUN",
+    "migrationState": "ACCEPTED_NO_RERUN",
+    "rule": "Run A1 and P1 once after all R2 static implementation is complete. After a failure rerun only the smallest owning test. No repository-wide suite, frontend rerun, migration rerun or generated-carrier regeneration."
+  },
+  "completionGate": [
+    "The control amendment bytes and token amendment bytes are verified before the first R2 code edit.",
+    "Only the exact R2 paths plus the existing R1 experience package and application setting path change.",
+    "Positive assignment and employee-change origin proofs pass for the sealed purposes; all specified drift and transport negatives remain opaque.",
+    "A1 and P1 pass with zero failures, errors or skips in mandatory cases.",
+    "The backend branch is committed, pushed, clean and upstream 0/0, then independent static review reports zero P0 or P1 defects.",
+    "No dwp-dev merge, feature activation, Notification onboarding, central carrier update or production claim is made."
+  ],
+  "authority": {
+    "consumeR2Amendment": true,
+    "continueExistingBackendWorktree": true,
+    "editOnlyExactR2Paths": true,
+    "commitAndPushBackendModuleBranch": true,
+    "editFrontendModuleBranch": false,
+    "rerunAcceptedFrontendOrMigrationSuites": false,
+    "mergeToDwpDev": false,
+    "runtimeActivation": false
+  }
+}

@@ -1,0 +1,266 @@
+{
+  "schema": "dwp.hris.hrm002.origin-authority-bridge-successor-amendment.v1",
+  "amendmentId": "HRIS-WAVE6-HRM-002-ORIGIN-AUTHORITY-BRIDGE-R2",
+  "issuedAt": "2026-10-15T12:05:34+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-HRM",
+  "sliceId": "BASE-TFR-HRM-002",
+  "state": "ISSUED_BOUNDED_CENTRAL_ORIGIN_AUTHORITY_BRIDGE",
+  "reason": "The R1 module delta is complete and fail-closed, but HRM002-AC-04 cannot prove any positive receipt path because no production HrisExperienceOriginReceiptAuthoritySource exists. The receipt GET route carries a neutral ORIGINATING_COMMAND_SCOPE and cannot substitute for the original SELF, TEAM or HR_OPERATIONS action authority. A bounded Auth-to-People bridge is therefore required before module result acceptance.",
+  "predecessorPins": {
+    "workPacket": {
+      "path": "work-packet.v1.json",
+      "sha256": "57aaf7d03eccb184a934c34d5be99f3af3df1a76462bd52780081f7287642654",
+      "bytes": 10297
+    },
+    "startToken": {
+      "path": "start-token-issued.v1.json",
+      "sha256": "b3892b6e23f1743bc18b960b2fbfd5be3fe73a6de858a5aa55ea2f9d67550e9e",
+      "bytes": 11446
+    },
+    "resultContract": {
+      "path": "module-result-contract.v1.json",
+      "sha256": "5ea1f66a07546cbd243322abda920dfa37f174c6e76b836c97bd4a0ae3e00b31",
+      "bytes": 3532
+    },
+    "readinessGate": {
+      "path": "readiness-and-dependency-gate.v1.json",
+      "sha256": "efcad492e438c1e97768b551c8ab0b5e67961138008cf1a59956bc6fe93648c1",
+      "bytes": 13936
+    },
+    "backendResultCommit": "ff4f632591c1e833ddc45a1e83f023bfc7f8f4af",
+    "backendResultTree": "ca96d2ec90e19898ac68e2df04e9215dd5b8291b",
+    "frontendResultCommit": "af1eee09efa45e09eea080963f30eb8265d299f4",
+    "frontendResultTree": "3c7b5819b4f578d40b67f7484bbfac099dfdfe20"
+  },
+  "supersession": [
+    "work-packet.v1.json#/touchManifest/readOnly central authorization and Auth restrictions only for the exact Auth and People files listed in this amendment",
+    "start-token-issued.v1.json#/touchBoundary/readOnly and outsideBoundaryAction only for the exact files and purposes listed in this amendment",
+    "start-token-issued.v1.json#/authority/centralContractEditAuthorized remains false; this amendment authorizes no generated carrier, OpenAPI, AsyncAPI, Gateway or product-authorization bundle edit",
+    "start-token-issued.v1.json#/invalidationConditions items concerning Auth and authorization source edits only for this exact bounded bridge",
+    "All R1 feature, activation, migration, Notification, route, menu, shell, product-map and dwp-dev merge restrictions remain binding"
+  ],
+  "authorizedBehavior": [
+    "Authenticate dwp-people-server with a dedicated non-interchangeable secret on only POST /internal/auth/v1/product-surface-authority/evaluate; Gateway, Platform and Meeting credentials remain unchanged and cannot be reused by People.",
+    "Use the existing contextScopeKey request field as an exact opaque source-scope selector for the multi-profile employee-change create and submit routes so precedence cannot substitute HR_OPERATIONS for TEAM or SELF authority.",
+    "Treat only the exact hcm.command-receipt.view ORIGINATING_COMMAND_SCOPE grant on route.hcm.operations.assignment-command-receipt.data as a neutral receipt-entry grant that does not enter generic People eligibility; every stored receipt must still re-prove its original action through Auth and People before projection.",
+    "Preserve and use only the trusted activeAccessMode already present in HcmPepContext for the receipt request; never retry, downgrade, upgrade or guess an alternate mode.",
+    "Permit the existing People eligibility owner to materialize the TEAM resolver when it is selected by the cross-surface hcm.operations employee-change route; no inference from object identifiers, URL values or roles is allowed.",
+    "Validate employee-change SELF, TEAM and HR_OPERATIONS profiles against their exact hcm.operations source scope and allow the exact receipt route to defer only its neutral coarse scope until the sealed row is classified; all other generated route scope validation remains unchanged.",
+    "Align the existing employee-change SELF and TEAM mutation scope checks with the hcm.operations route subject used by the sealed authorization bundle; no capability, purpose or target predicate is widened.",
+    "Register exactly one feature-gated production HrisExperienceOriginReceiptAuthoritySource that calls current Auth with the sealed action route and exact source-scope selector, intersects the returned source scope with live People eligibility, reproduces the Gateway product evaluation revision, and recomputes the immutable V54 authorization and context evidence.",
+    "For SELF, TEAM and HR_OPERATIONS or HR_LIFECYCLE, compare the current population, field policy, purpose, authorization revision, context digest, subject and target evidence before returning a receipt; any absence, ambiguity, drift, timeout or malformed response remains opaque 404.",
+    "Keep dwp.hris.experience.enabled default OFF and add only bounded Auth URL, dedicated token and timeout settings beneath that feature."
+  ],
+  "exactTouchBoundary": {
+    "authProduction": [
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/config/ProductSurfaceInternalSecurityConfig.java",
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationAuthorityAdapter.java",
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationPeopleEligibility.java",
+      "dwp-auth-server/src/main/resources/application.yml"
+    ],
+    "authTests": [
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/config/ProductSurfaceInternalSecurityConfigTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationHcmAuthorityAdapterTest.java"
+    ],
+    "peopleProduction": [
+      "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmPepContext.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmProductSurfacePepFilter.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmProductSurfaceEligibilityAdapter.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmScopeSelectionValidator.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/experience/**",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/employeechange/EmployeeChangeService.java",
+      "dwp-people-server/src/main/resources/application.yml"
+    ],
+    "peopleTests": [
+      "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmProductSurfacePepFilterTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmProductSurfaceEligibilityAdapterTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmOwnerPepExecutionTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/experience/**",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/employeeservice/employeechange/EmployeeChangeServiceTest.java"
+    ],
+    "stillForbidden": [
+      "dwp-gateway/**",
+      "dwp-platform-contracts/**",
+      "contracts/openapi/**",
+      "contracts/asyncapi/**",
+      "contracts/product-authorization/**",
+      "generated authorization, OpenAPI or route artifacts",
+      "dwp-notification-server/**",
+      "all migration files, including the already committed V56 whose exact bytes and hash must remain unchanged; no second migration",
+      "frontend application source",
+      "runtime, tenant, customer or production activation",
+      "merge to dwp-dev before Central result admission"
+    ]
+  },
+  "dedicatedCredentialContract": {
+    "header": "X-DWP-Hris-Origin-Authority-Token",
+    "authProperty": "dwp.auth.hris-origin-authority-token",
+    "environmentVariable": "DWP_HRIS_ORIGIN_AUTHORITY_TOKEN",
+    "peopleProperty": "dwp.hris.experience.origin-authority.token",
+    "callerIdentity": "dwp-people-server",
+    "exactEndpoint": {
+      "method": "POST",
+      "path": "/internal/auth/v1/product-surface-authority/evaluate"
+    },
+    "failClosedRules": [
+      "The People credential is a separate non-interchangeable secret; Product-Surface, Meeting, Gateway and Platform tokens cannot authenticate this caller.",
+      "A dwp-people-server request is accepted only when the dedicated header is the single credential header and the existing Product-Surface and Meeting token headers are absent.",
+      "A Gateway or Platform request is accepted only under its existing credential and only when the new dedicated People header is absent.",
+      "Wrong method, wrong path, duplicate credential header, blank token, missing token, mixed token or ambiguous caller identity is denied."
+    ]
+  },
+  "sealedOriginProfiles": [
+    {
+      "commandType": "HRM_ASSIGNMENT_EVENT_CREATE",
+      "action": "CREATE_ASSIGNMENT_EVENT",
+      "targetType": "EMPLOYMENT_EVENT",
+      "allowedPurposes": ["HR_LIFECYCLE"],
+      "routeContractKey": "route.hcm.operations.assignment-event-create.action",
+      "method": "POST",
+      "readOnly": false,
+      "profilesByPurpose": {
+        "HR_LIFECYCLE": {"profile": "full-management", "capability": "hcm.operations.assignment.manage", "scopeSource": "WORKFORCE_TARGET_POPULATION", "scopeKind": "TARGET_POPULATION", "activationPolicy": null, "riskTier": "MEDIUM"}
+      }
+    },
+    {
+      "commandType": "HRM_ASSIGNMENT_EVENT_VALIDATE",
+      "action": "VALIDATE_ASSIGNMENT_EVENT",
+      "targetType": "EMPLOYMENT_EVENT",
+      "allowedPurposes": ["HR_LIFECYCLE"],
+      "routeContractKey": "route.hcm.operations.assignment-event-validate.action",
+      "method": "POST",
+      "readOnly": false,
+      "profilesByPurpose": {
+        "HR_LIFECYCLE": {"profile": "full-management", "capability": "hcm.operations.assignment.manage", "scopeSource": "WORKFORCE_TARGET_POPULATION", "scopeKind": "TARGET_POPULATION", "activationPolicy": null, "riskTier": "MEDIUM"}
+      }
+    },
+    {
+      "commandType": "HRM_ASSIGNMENT_EVENT_SUBMIT",
+      "action": "SUBMIT_ASSIGNMENT_EVENT",
+      "targetType": "EMPLOYMENT_EVENT",
+      "allowedPurposes": ["HR_LIFECYCLE"],
+      "routeContractKey": "route.hcm.operations.assignment-event-submit.action",
+      "method": "POST",
+      "readOnly": false,
+      "profilesByPurpose": {
+        "HR_LIFECYCLE": {"profile": "full-management", "capability": "hcm.operations.assignment.manage", "scopeSource": "WORKFORCE_TARGET_POPULATION", "scopeKind": "TARGET_POPULATION", "activationPolicy": null, "riskTier": "MEDIUM"}
+      }
+    },
+    {
+      "commandType": "HRM_ASSIGNMENT_EVENT_PUBLISH",
+      "action": "PUBLISH_ASSIGNMENT_EVENT",
+      "targetType": "EMPLOYMENT_EVENT",
+      "allowedPurposes": ["HR_LIFECYCLE"],
+      "routeContractKey": "route.hcm.operations.assignment-event-publish.action",
+      "method": "POST",
+      "readOnly": false,
+      "profilesByPurpose": {
+        "HR_LIFECYCLE": {"profile": "full-management", "capability": "hcm.operations.people-change.approve", "scopeSource": "WORKFORCE_TARGET_POPULATION", "scopeKind": "TARGET_POPULATION", "activationPolicy": "STEPUP-MGMT-HIGH-V1", "riskTier": "HIGH"}
+      }
+    },
+    {
+      "commandType": "EMPLOYEE_CHANGE_CREATE",
+      "action": "CREATE_EMPLOYEE_CHANGE_REQUEST",
+      "targetType": "EMPLOYEE_CHANGE_REQUEST",
+      "allowedPurposes": ["EMPLOYEE_SELF_SERVICE", "TEAM_MANAGEMENT", "HR_OPERATIONS"],
+      "routeContractKey": "route.hcm.operations.employee-change-request-create.action",
+      "method": "POST",
+      "readOnly": false,
+      "profilesByPurpose": {
+        "HR_OPERATIONS": {"profile": "full-management", "capability": "hcm.operations.people.update", "scopeSource": "WORKFORCE_TARGET_POPULATION", "scopeKind": "TARGET_POPULATION", "activationPolicy": null, "riskTier": "MEDIUM"},
+        "TEAM_MANAGEMENT": {"profile": "team-management", "capability": "hcm.team.people-change.request", "scopeSource": "DIRECT_REPORT_OR_APPROVED_DELEGATION+TARGET_POPULATION", "scopeKind": "TARGET_POPULATION", "activationPolicy": null, "riskTier": "MEDIUM"},
+        "EMPLOYEE_SELF_SERVICE": {"profile": "self-service", "capability": "hcm.personal.profile.update", "scopeSource": "SELF", "scopeKind": "SELF", "activationPolicy": null, "riskTier": "MEDIUM"}
+      }
+    },
+    {
+      "commandType": "EMPLOYEE_CHANGE_SUBMIT",
+      "action": "SUBMIT_EMPLOYEE_CHANGE_REQUEST",
+      "targetType": "EMPLOYEE_CHANGE_REQUEST",
+      "allowedPurposes": ["EMPLOYEE_SELF_SERVICE", "TEAM_MANAGEMENT", "HR_OPERATIONS"],
+      "routeContractKey": "route.hcm.operations.employee-change-request-submit.action",
+      "method": "POST",
+      "readOnly": false,
+      "profilesByPurpose": {
+        "HR_OPERATIONS": {"profile": "full-management", "capability": "hcm.operations.people.update", "scopeSource": "WORKFORCE_TARGET_POPULATION", "scopeKind": "TARGET_POPULATION", "activationPolicy": null, "riskTier": "MEDIUM"},
+        "TEAM_MANAGEMENT": {"profile": "team-management", "capability": "hcm.team.people-change.request", "scopeSource": "DIRECT_REPORT_OR_APPROVED_DELEGATION+TARGET_POPULATION", "scopeKind": "TARGET_POPULATION", "activationPolicy": null, "riskTier": "MEDIUM"},
+        "EMPLOYEE_SELF_SERVICE": {"profile": "self-service", "capability": "hcm.personal.profile.update", "scopeSource": "SELF", "scopeKind": "SELF", "activationPolicy": null, "riskTier": "MEDIUM"}
+      }
+    },
+    {
+      "commandType": "EMPLOYEE_CHANGE_APPLY",
+      "action": "APPLY_EMPLOYEE_CHANGE_REQUEST",
+      "targetType": "EMPLOYEE_CHANGE_REQUEST",
+      "allowedPurposes": ["HR_LIFECYCLE"],
+      "routeContractKey": "route.hcm.operations.employee-change-request-apply.action",
+      "method": "POST",
+      "readOnly": false,
+      "profilesByPurpose": {
+        "HR_LIFECYCLE": {"profile": "full-management", "capability": "hcm.operations.people-change.approve", "scopeSource": "WORKFORCE_TARGET_POPULATION", "scopeKind": "TARGET_POPULATION", "activationPolicy": "STEPUP-MGMT-HIGH-V1", "riskTier": "HIGH"}
+      }
+    }
+  ],
+  "originEvidenceRecalculation": {
+    "selectionAuthority": "Select only from this amendment's independent seven-tuple registry using commandType, action, targetType and purpose. Receipt row expected fields and stored revisions are comparison inputs only and never select or grant authority.",
+    "accessMode": "Use only HcmPepContext.activeAccessMode from the current trusted GET request. No NORMAL/ELEVATED fallback or second evaluation is permitted.",
+    "authDecision": [
+      "Require exactly ALLOWED, exactly the sealed capability and routeGrantRef, the exact selected source scope, fresh revalidateAt and complete source revisions.",
+      "STEP_UP_REQUIRED, DENIED, missing or multiple grants, a substituted profile, stale evidence, malformed content or transport failure denies opaquely."
+    ],
+    "peopleIntersection": "Resolve the same single source through the live People owner and require exactly one derived scope with current relationship and target-population revisions and freshness; zero or multiple results deny.",
+    "gatewayParity": {
+      "compositeMaterialOrder": ["tenantId", "actorUserId", "activeAccessMode", "authRevision", "policyRevision", "productRelationshipRevision", "targetPopulationRevision", "supportRevision-or-empty"],
+      "compositeRevision": "psr- + lowercase SHA-256 of newline-joined compositeMaterialOrder values",
+      "productEvaluationMaterialOrder": ["dwp:product-surface-evaluation-revision:v1", "compositeRevision", "PRODUCT", "hcm", "hcm.operations", "originRouteContractKey", "routeGrantRef"],
+      "decisionRevision": "psr- + lowercase SHA-256 of newline-joined productEvaluationMaterialOrder values"
+    },
+    "authorizationRevision": {
+      "assignment": "HrisExperienceDigests.assignmentRevision(decisionRevision)",
+      "employeeChange": "HrisExperienceDigests.employeeChangeRevision(decisionRevision)",
+      "rule": "Only after recomputation compare the numeric value with the stored V54 authorization_revision; never echo or hash the stored numeric value."
+    },
+    "contextDigest": {
+      "assignmentCanonicalMapKeys": ["routeContractKey", "capabilityContractKey", "decisionRevision", "contextKey", "scopeKey", "purposeCode"],
+      "employeeChangeCanonicalMapKeys": ["tenantId", "userId", "personPublicId", "subjectPublicId", "routeContractKey", "capabilityContractKey", "decisionRevision", "contextKey", "scopeKey", "purposeCode"],
+      "rule": "Recompute with the existing family canonicalizer semantics and require an exact match to the stored V54 context_digest."
+    }
+  },
+  "targetedVerification": {
+    "policy": "Run each changed owner cluster once after static closure. After a failure rerun only the smallest owning test. Do not rerun any already accepted frontend, migration or repository-wide suite.",
+    "authA1": "./gradlew :dwp-auth-server:test --tests '*ProductSurfaceInternalSecurityConfigTest' --tests '*ProductAuthorizationHcmAuthorityAdapterTest' --no-daemon --max-workers=1",
+    "peopleP1": "./gradlew :dwp-people-server:test --tests '*HcmProductSurfacePepFilterTest' --tests '*HcmProductSurfaceEligibilityAdapterTest' --tests '*HcmOwnerPepExecutionTest' --tests '*EmployeeChangeServiceTest' --tests '*AuthHrisExperienceOriginReceiptAuthoritySourceTest' --tests '*HrisExperienceReceiptAuthorityTest' --tests '*HrisExperienceCommandReceiptServiceTest' --no-daemon --max-workers=1",
+    "static": [
+      "git diff --check",
+      "exact changed-path allowlist",
+      "R1 frontend commit and V56 hash preservation",
+      "default-OFF configuration assertion"
+    ],
+    "excluded": [
+      "repository-wide Gradle test",
+      "frontend Vitest or ESLint rerun",
+      "PostgreSQL migration rerun",
+      "OpenAPI or generated-carrier regeneration"
+    ]
+  },
+  "completionGate": [
+    "Dedicated People credential is accepted only on the exact Auth POST route and every cross-token, wrong-path, wrong-method and ambiguous-header case is rejected.",
+    "All seven sealed action tuples resolve only their expected profile and capability, including SELF, TEAM and HR_OPERATIONS precedence overlap.",
+    "The neutral receipt-entry grant cannot return data without a separately successful original-action Auth and People proof.",
+    "Current Gateway-parity decision revision and the V54 population, field, purpose, authorization and context evidence all match for positive assignment and employee-change cases.",
+    "Capability, population, field, purpose, context, actor, tenant or revision drift and Auth timeout or malformed response produce opaque 404.",
+    "A1 and P1 pass once, no P0 or P1 remains, the backend branch is committed and pushed clean at 0/0, and the module result evidence is then completed without claiming activation or Central integration."
+  ],
+  "authority": {
+    "boundedAuthSourceEditAuthorized": true,
+    "boundedPeopleSecurityEditAuthorized": true,
+    "productionOriginAuthoritySourceAuthorized": true,
+    "moduleBranchCommitAuthorized": true,
+    "moduleBranchPushAuthorized": true,
+    "centralCarrierOrGeneratedEditAuthorized": false,
+    "gatewayEditAuthorized": false,
+    "secondMigrationAuthorized": false,
+    "frontendRerunAuthorized": false,
+    "mergeToDwpDevAuthorized": false,
+    "activationAuthorized": false
+  }
+}
