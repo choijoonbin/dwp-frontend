@@ -1,0 +1,277 @@
+{
+  "schema": "dwp.hris.wave6.hrm002-readiness-dependency-gate.v1",
+  "gateId": "HRIS-WAVE6-HRM-002-READINESS-DEPENDENCY-GATE-R1",
+  "evaluatedAt": "2026-10-15T09:35:21+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "slice": {
+    "moduleSession": "HRIS-HRM",
+    "sliceId": "BASE-TFR-HRM-002",
+    "sourceRef": "TFR-HRM-002",
+    "sourceFamily": "dwp-experience",
+    "sourceFamilySha256": "ccb4d0f8c3ae4e7af17aaf892453d05ee089df060d3e204ed89f3430c36bfeb6",
+    "sourceRowCount": 10,
+    "classification": "DWP_EXPERIENCE_NON_UI_SUPPORTING_SLICE"
+  },
+  "decision": {
+    "state": "READY_FOR_EXACT_PACKET_PREPARATION_INACTIVE_PLAT_004_CONTRACT_SEALED",
+    "noCodeCloseEligible": false,
+    "implementationAuthorized": false,
+    "startTokenIssued": false,
+    "worktreeAuthorized": false,
+    "migrationLeaseIssued": false,
+    "reason": "All authoritative dependency IDs are READY and the inactive PLAT-004 contract boundary is sealed by this carrier. HRM-002 now requires its exact current packet and token. PEP-HRM-014, the exact notification decision table and People emission are post-token owner deltas; runtime source and event-type onboarding follows that decision table, while SYS-API-026 and SYS-API-033 are final-acceptance dependencies rather than pre-start blockers."
+  },
+  "currentPins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "9c9e33c29a63e2638213d424e74c8fabed2e7a4b",
+      "tree": "b2e1a43aad573d63238dbed1a800b6425aa9e3d0",
+      "upstream": "origin/dwp-dev",
+      "upstreamMatched": true,
+      "clean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "10beb4010067ca9bc469ea4f0e604738d0c1d03d",
+      "tree": "13e8ff8a6ed6cde6795bd98fd1bc27c7497a6b6a",
+      "upstream": "origin/dwp-dev",
+      "upstreamMatched": true,
+      "cleanBeforeThisCarrier": true
+    }
+  },
+  "selectionAuthority": [
+    {
+      "path": "docs/06-delivery/hris/wave6-2026-10-15/sys-012-work-explorer-integration-r1/central-integration-result.v1.json",
+      "sha256": "54ef4a7383e34f30803add14d18b8fd9c27c36e17c9a420d81e4b80099fcb507",
+      "decision": "SELECT_AND_SEAL_THE_NEXT_UNBLOCKED_HRIS_MODULE_SLICE"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave5-2026-10-14/hrm-001-delta-r1/no-code-closure-receipt.v1.json",
+      "sha256": "c1a1629988e2638dffd2f9d204137517f3df7b4977e2ec966af97180c56192bc",
+      "decision": "BASE-TFR-HRM-002_SELECTED_IMPLEMENTATION_NOT_AUTHORIZED"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave5-2026-10-14/module-dispatch-r1/readiness-dispatch-manifest.v1.json",
+      "sha256": "22d709ba46acede994dbdd089c063ad6646ef811f5beb4af0532b2216db9c6f8",
+      "decision": "ADVANCE_TO_HRM_002_AFTER_HRM_001_CONFORMANCE_CLOSE"
+    }
+  ],
+  "authoritativeInputs": [
+    {
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/module-dependency-register.csv",
+      "sha256": "b8f1a11d1a32cf6f5a9a99ff73066b7e65787319ac18cf0d2b4891d22587c348"
+    },
+    {
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/g3-slice-code-go-register.csv",
+      "sha256": "fb646668329e93ca0b83b74e2a3e43619954cec1cb2f6770029677edbc8d5725"
+    },
+    {
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/target-family-resolution-register.csv",
+      "sha256": "a8746b9b89bf6bebd0a5b6fe4d8f9e985e223dcd6d395f5ef03b6f3f98d16189"
+    },
+    {
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/api-pep-binding-register.csv",
+      "sha256": "0e38d724516a8b271069241ffa0fb6400984dc703758767de53cbaffb4f93da3"
+    },
+    {
+      "path": "docs/06-delivery/hris/g3-successors/2026-10-07/g3-contract-primary-ownership-register.csv",
+      "sha256": "2ef33aaf3534859b92a5d68267ddadf3aab1fe94c8dab4fe321992740b3c3629"
+    },
+    {
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/platform-integration-binding-register.csv",
+      "sha256": "f7454ca7cd0c089e7fb609c452ba56b67f565850943d23a298a44409981c20a5"
+    },
+    {
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/cross-cutting-ownership-register.csv",
+      "sha256": "c40c4e12cd986aed272c6bb7ce85e9858e8aa3e7d86c9b65d024de4a3fc33efc"
+    }
+  ],
+  "recoveredContract": {
+    "objective": "Connect shell tasks, notifications and governed object references through exact Home, Explorer, Approval, Notification, controlled-transfer and originating-command receipt contracts.",
+    "primaryOwnerContract": "PEP-HRM-014",
+    "relatedContracts": [
+      "SYS-API-026",
+      "SYS-API-027",
+      "PLAT-003",
+      "PLAT-004",
+      "SYS-API-033"
+    ],
+    "dependencies": [
+      "DEP-001",
+      "DEP-002",
+      "DEP-003",
+      "DEP-014",
+      "DEP-015",
+      "DEP-016"
+    ],
+    "dependencyRegisterState": "ALL_AUTHORITATIVE_DEPENDENCY_IDS_READY_RELATED_CONTRACTS_ARE_POST_TOKEN_ACCEPTANCE_DEPENDENCIES",
+    "relatedContractPolicy": "related_contract_refs do not become pre-start blockers unless a separately pinned authority explicitly promotes them; absent related runtimes hold final acceptance only."
+  },
+  "contractConformance": [
+    {
+      "contract": "PEP-HRM-014",
+      "owner": "HRIS-HRM/BASE-TFR-HRM-002",
+      "state": "OWNER_DELTA_REQUIRED_POST_TOKEN",
+      "finding": "The exact route and capability exist, but the runtime is bound to four HRM-008 assignment-event commands and does not provide a generic originating-command authority registry across admitted People command families.",
+      "reuse": "CommandReceiptV1, ppl_command_receipts, exact route, generated People PEP and current gateway contract",
+      "requiredDelta": "Generic owner registry, originating capability/action/population/purpose/field-policy revalidation, current-versus-originating restriction and conditional result projection semantics.",
+      "blockingStage": "FINAL_ACCEPTANCE_NOT_START",
+      "releaseCondition": "Implement and prove the generic originating-command authority registry under the issued BASE-TFR-HRM-002 token.",
+      "migrationDecision": "NO_NEW_MIGRATION_EXPECTED_REUSE_V54_TABLE_RECONFIRM_AT_TOKEN"
+    },
+    {
+      "contract": "SYS-API-026",
+      "owner": "HRIS-SYS/BASE-TFR-SYS-012",
+      "state": "MISSING_RUNTIME_POST_TOKEN_ACCEPTANCE_DEPENDENCY",
+      "finding": "The exact /api/platform/v1/hris/home contract, closed schema, exact PEP and Gateway projection are absent. Existing /v2/home infrastructure is reusable but is not the sealed contract.",
+      "blockingStage": "FINAL_ACCEPTANCE_NOT_START",
+      "releaseCondition": "Integrate HRM-003, PER-007, TIM-018 and PAY-015 producer results, then issue a separate SYS-012 HOME_COMPOSITION residual packet that excludes the closed Work Explorer increment."
+    },
+    {
+      "contract": "SYS-API-027",
+      "owner": "HRIS-SYS/BASE-TFR-SYS-012",
+      "state": "SATISFIED_REUSE_INTEGRATED_DEFAULT_OFF",
+      "finding": "The bounded SYS-012 Work Explorer result is integrated with its exact runtime, contract and evidence.",
+      "revalidationPolicy": "DO_NOT_RERUN_SYS_012_SUITES_UNLESS_ITS_PATHS_CHANGE"
+    },
+    {
+      "contract": "PLAT-003",
+      "owner": "DWP_APPROVAL_SHARED_PLATFORM",
+      "state": "SATISFIED_REUSE",
+      "finding": "HRM-010 and the HRM-001 no-code closure pin the shared approval bridge and immutable decision receipt evidence.",
+      "revalidationPolicy": "DO_NOT_DUPLICATE_OR_RERUN_UNLESS_APPROVAL_PATHS_CHANGE"
+    },
+    {
+      "contract": "PLAT-004",
+      "owner": "INACTIVE_CONTRACT_SEAL_AND_RUNTIME_ONBOARDING: ARCHITECTURE_INTEGRATION_CONTROL_AND_DWP_NOTIFICATION; DECISION_TABLE_AND_PEOPLE_NOTIFICATION_INTENT_EMISSION: HRIS-HRM/BASE-TFR-HRM-002",
+      "state": "INACTIVE_CONTRACT_SEAL_REQUIRED_PRE_TOKEN_RUNTIME_ONBOARDING_REQUIRES_POST_TOKEN_PRODUCER_DECISION",
+      "finding": "The Notification translator and typed carriers exist, but People emits no canonical notificationIntents and no exact People HRIS business-fact event type exists. Source-only allowlisting would over-broaden future trust because the current translator does not bind an allowlisted source to exact event types.",
+      "startReleaseCondition": "Seal only the inactive source identity, privacy, recipient, entitlement and default-off constraints plus the post-token decision-table obligations; do not add the source to the live producer allowlist.",
+      "acceptanceReleaseCondition": "Under the HRM-002 token, HRIS-HRM seals the exact business-fact event type, typeKey, recipients, template and receipt semantics and emits the minimal notificationIntents; Central then onboards the exact source-and-event-type pair and proves receipt and fail-closed behavior."
+    },
+    {
+      "contract": "SYS-API-033",
+      "owner": "HRIS-SYS/BASE-TFR-SYS-009",
+      "state": "MISSING_RUNTIME_POST_TOKEN_ACCEPTANCE_DEPENDENCY",
+      "finding": "The controlled-transfer read runtime, exact PEP, OpenAPI and migration evidence are absent.",
+      "blockingStage": "FINAL_ACCEPTANCE_NOT_START",
+      "releaseCondition": "Issue a fresh BASE-TFR-SYS-009 packet, exact result contract, current migration decision or JIT lease, token and dedicated worktrees."
+    }
+  ],
+  "targetedAudit": {
+    "testsOrBuildsExecuted": false,
+    "repositoryWideRevalidationExecuted": false,
+    "method": "CURRENT_PIN_SOURCE_CONTRACT_AND_OWNERSHIP_INSPECTION_ONLY",
+    "reusedEvidence": [
+      "SYS-012 Work Explorer 12 of 12 acceptance results",
+      "HRM-001 PLAT-003 conformance closure",
+      "HRM-010 approval bridge integration evidence"
+    ],
+    "historicalTestWarning": "The recovered HRM-002 commands and frontend test path are not current executable closure evidence; current HrmG3SliceContractTest, HrmMigrationCleanUpgradeTest and HrmWorkerRecoveryTest are HRM-008/V55 tests and do not become HRM-002 evidence through -PhrisSlice."
+  },
+  "plat004InactiveContractEvidence": {
+    "path": "../plat-004-people-hris-notification-control-r1/readiness-decision.v1.json",
+    "decisionId": "HRIS-WAVE6-PLAT-004-PEOPLE-HRIS-READINESS-R1",
+    "state": "PASS_INACTIVE_CONTRACT_SEALED_HRM_002_PACKET_PREPARATION_UNBLOCKED_RUNTIME_ONBOARDING_WITHHELD"
+  },
+  "prerequisiteDag": [
+    {
+      "id": "PLAT004_INACTIVE_CONTRACT_SEAL",
+      "phase": "START_PREPARATION",
+      "lane": "CENTRAL_CONTROL",
+      "dependsOn": [],
+      "state": "DONE_BY_THIS_CARRIER",
+      "satisfies": "HRM_002_START_TOKEN_INACTIVE_PLAT004_CONTRACT_GATE",
+      "work": "SEAL_INACTIVE_PLAT_004_SOURCE_CONSTRAINTS_AND_POST_TOKEN_DECISION_TABLE_OBLIGATIONS_WITHOUT_RUNTIME_ALLOWLIST_ACTIVATION"
+    },
+    {
+      "id": "HRM002_CONTROL_BUNDLE",
+      "phase": "START_PREPARATION",
+      "lane": "CENTRAL_CONTROL",
+      "dependsOn": [],
+      "blocks": "HRM_002_START_TOKEN",
+      "work": "PREPARE_EXACT_HRM_002_PACKET_RESULT_CONTRACT_MIGRATION_DECISION_TOKEN_AND_WORKTREES"
+    },
+    {
+      "id": "HRM002_START_TOKEN",
+      "phase": "START_AUTHORIZATION",
+      "lane": "CENTRAL_CONTROL",
+      "dependsOn": [
+        "PLAT004_INACTIVE_CONTRACT_SEAL",
+        "HRM002_CONTROL_BUNDLE"
+      ],
+      "work": "ISSUE_EXACT_HRM_002_TOKEN_IF_START_GATES_PASS"
+    },
+    {
+      "id": "HRM002_OWNER_DELTA",
+      "phase": "POST_TOKEN_IMPLEMENTATION",
+      "lane": "HRIS_HRM",
+      "dependsOn": [
+        "HRM002_START_TOKEN"
+      ],
+      "work": "IMPLEMENT_PEP_HRM_014_AND_PEOPLE_NOTIFICATION_INTENT_EMISSION"
+    },
+    {
+      "id": "PLAT004_RUNTIME_ONBOARDING",
+      "phase": "POST_TOKEN_ACCEPTANCE_DEPENDENCY",
+      "lane": "CENTRAL_CONTROL",
+      "dependsOn": [
+        "HRM002_OWNER_DELTA"
+      ],
+      "work": "ONBOARD_ONLY_THE_SEALED_PEOPLE_HRIS_SOURCE_AND_EXACT_EVENT_TYPE_THEN_PROVE_FAIL_CLOSED_TRANSLATION_AND_RECEIPT_SEMANTICS"
+    },
+    {
+      "id": "SYS009_OWNER_DELTA",
+      "phase": "POST_TOKEN_ACCEPTANCE_DEPENDENCY",
+      "lane": "HRIS_SYS",
+      "dependsOn": [],
+      "work": "PREPARE_TOKEN_IMPLEMENT_AND_INTEGRATE_SYS_API_033_034_AND_SYS_EVT_008"
+    },
+    {
+      "id": "HOME_PRODUCERS",
+      "phase": "POST_TOKEN_ACCEPTANCE_DEPENDENCY",
+      "lane": "MODULES",
+      "dependsOn": [],
+      "work": "PREPARE_TOKEN_IMPLEMENT_AND_INTEGRATE_HRM_003_PER_007_TIM_018_PAY_015"
+    },
+    {
+      "id": "SYS012_HOME_RESIDUAL",
+      "phase": "POST_TOKEN_ACCEPTANCE_DEPENDENCY",
+      "lane": "HRIS_SYS",
+      "dependsOn": [
+        "HOME_PRODUCERS"
+      ],
+      "work": "IMPLEMENT_SYS_API_026_HOME_COMPOSITION_RESIDUAL_WITHOUT_REOPENING_WORK_EXPLORER"
+    },
+    {
+      "id": "HRM002_FINAL_ACCEPTANCE",
+      "phase": "FINAL_ACCEPTANCE",
+      "lane": "CENTRAL_CONTROL",
+      "dependsOn": [
+        "HRM002_OWNER_DELTA",
+        "PLAT004_RUNTIME_ONBOARDING",
+        "SYS009_OWNER_DELTA",
+        "SYS012_HOME_RESIDUAL"
+      ],
+      "work": "RUN_ONLY_DEFINED_HRM_002_ACCEPTANCE_AND_INTEGRATION_EVIDENCE"
+    }
+  ],
+  "efficiencyPolicy": {
+    "validateChangedClusterFirst": true,
+    "rerunOnlyFailedTargetedStageAfterFix": true,
+    "reuseUnaffectedAcceptedEvidence": true,
+    "fullRepositorySuiteAfterEachCorrection": false,
+    "fullOverlayRegenerationRequired": false
+  },
+  "explicitNonClaims": [
+    "HRM_002_IMPLEMENTATION_IS_NOT_AUTHORIZED",
+    "HRM_002_NO_CODE_CLOSE_IS_NOT_CLAIMED",
+    "SYS_API_026_AND_SYS_API_033_ARE_NOT_IMPLEMENTED",
+    "PEOPLE_NOTIFICATION_INTENT_PRODUCTION_IS_NOT_IMPLEMENTED",
+    "RELATED_CONTRACT_RUNTIME_COMPLETION_IS_NOT_A_PRE_START_REQUIREMENT_WITHOUT_SEPARATE_PINNED_AUTHORITY",
+    "NO_WORKTREE_TOKEN_MIGRATION_LEASE_FEATURE_ACTIVATION_CUSTOMER_DATA_OR_PRODUCTION_RELEASE_IS_AUTHORIZED"
+  ],
+  "nextAction": "PREPARE_THE_EXACT_BASE_TFR_HRM_002_WORK_PACKET_RESULT_CONTRACT_MIGRATION_DECISION_AND_START_TOKEN_PREPARATION; DO_NOT_ACTIVATE_A_NOTIFICATION_SOURCE_BEFORE_THE_POST_TOKEN_PRODUCER_DECISION_TABLE"
+}

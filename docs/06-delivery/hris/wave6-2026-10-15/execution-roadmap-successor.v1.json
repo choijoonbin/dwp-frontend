@@ -1,0 +1,151 @@
+{
+  "schema": "dwp.hris.wave6-execution-roadmap-successor.v1",
+  "roadmapId": "HRIS-WAVE6-EXECUTION-ROADMAP-SUCCESSOR-20261015-R1",
+  "issuedAt": "2026-10-15T09:35:21+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "supersedesOnly": {
+    "receipt": "HRIS-WAVE6-SYS-012-WORK-EXPLORER-CENTRAL-INTEGRATION-RESULT-R1",
+    "field": "nextAction",
+    "reason": "materialize the next exact dependency-aware sequence after the bounded Work Explorer result"
+  },
+  "completedMilestone": {
+    "sliceId": "BASE-TFR-SYS-012",
+    "increment": "WORK_EXPLORER_SYS_API_027_038_039_040",
+    "backendCommit": "9c9e33c29a63e2638213d424e74c8fabed2e7a4b",
+    "frontendCodeCommit": "2d0cd58b9ce6b05fc6d364461d9e0172b016a787",
+    "frontendClosureCommit": "10beb4010067ca9bc469ea4f0e604738d0c1d03d",
+    "state": "INTEGRATED_CLOSED_DEFAULT_OFF",
+    "nonclaim": "SYS-API-026 Home composition was not in the bounded Work Explorer increment."
+  },
+  "selection": {
+    "requestedNextSlice": "BASE-TFR-HRM-002",
+    "gate": "docs/06-delivery/hris/wave6-2026-10-15/hrm-002-experience-control-r1/readiness-and-dependency-gate.v1.json",
+    "state": "READY_FOR_EXACT_PACKET_PREPARATION_INACTIVE_PLAT_004_CONTRACT_SEALED",
+    "nextUnblockedModuleSlice": "BASE-TFR-HRM-002",
+    "nextControlDelta": "NONE_INACTIVE_PLAT_004_CONTRACT_SEALED_RUNTIME_ONBOARDING_POST_TOKEN",
+    "postTokenAcceptanceDependencySlices": [
+      "BASE-TFR-SYS-009",
+      "BASE-TFR-HRM-003",
+      "BASE-TFR-PER-007",
+      "BASE-TFR-TIM-018",
+      "BASE-TFR-PAY-015",
+      "BASE-TFR-SYS-012_HOME_COMPOSITION_RESIDUAL"
+    ]
+  },
+  "executionOrder": [
+    {
+      "order": 1,
+      "work": "PIN_CORRECTED_HRM_002_START_READINESS_AND_POST_TOKEN_ACCEPTANCE_MODEL",
+      "state": "DONE_BY_THIS_SUCCESSOR"
+    },
+    {
+      "order": 2,
+      "parallelGroup": "START_PREPARATION",
+      "work": "SEAL_PLAT_004_INACTIVE_SOURCE_CONSTRAINTS_AND_POST_TOKEN_DECISION_TABLE_OBLIGATIONS_WITHOUT_RUNTIME_ALLOWLIST_ACTIVATION",
+      "owner": "SYS_COMMON_INTEGRATION_CONTROL",
+      "state": "DONE_BY_THIS_CARRIER"
+    },
+    {
+      "order": 2,
+      "parallelGroup": "START_PREPARATION",
+      "work": "PREPARE_PACKET_RESULT_CONTRACT_MIGRATION_DECISION_TOKEN_AND_WORKTREES_FOR_BASE_TFR_HRM_002",
+      "owner": "SYS_COMMON_INTEGRATION_CONTROL",
+      "state": "NEXT_MODULE_PREPARATION"
+    },
+    {
+      "order": 2,
+      "parallelGroup": "ACCEPTANCE_BRANCH_PREPARATION",
+      "work": "PREPARE_BASE_TFR_SYS_009_AND_HOME_PRODUCER_PACKETS",
+      "owner": "SYS_COMMON_INTEGRATION_CONTROL",
+      "state": "PARALLEL_PREPARATION_ALLOWED_NOT_HRM_002_START_BLOCKING"
+    },
+    {
+      "order": 3,
+      "work": "ISSUE_BASE_TFR_HRM_002_TOKEN_AFTER_INACTIVE_PLAT_004_CONTRACT_SEAL_AND_EXACT_PACKET_PASS",
+      "owner": "SYS_COMMON_INTEGRATION_CONTROL",
+      "state": "START_WITHHELD_PENDING_EXACT_HRM_002_PACKET_GATE"
+    },
+    {
+      "order": 4,
+      "parallelGroup": "IMPLEMENTATION",
+      "work": "IMPLEMENT_PEP_HRM_014_EXACT_NOTIFICATION_DECISION_TABLE_AND_PEOPLE_NOTIFICATION_INTENTS",
+      "owner": "HRIS-HRM",
+      "state": "WITHHELD_PENDING_HRM_002_TOKEN"
+    },
+    {
+      "order": 4,
+      "parallelGroup": "IMPLEMENTATION",
+      "work": "IMPLEMENT_SYS_API_033_034_AND_SYS_EVT_008",
+      "owner": "HRIS-SYS",
+      "state": "WITHHELD_PENDING_OWN_PACKET_AND_TOKEN"
+    },
+    {
+      "order": 4,
+      "parallelGroup": "IMPLEMENTATION",
+      "work": "IMPLEMENT_HRM_003_PER_007_TIM_018_PAY_015_HOME_PRODUCERS",
+      "owners": [
+        "HRIS-HRM",
+        "HRIS-PER",
+        "HRIS-TIM",
+        "HRIS-PAY"
+      ],
+      "state": "WITHHELD_PENDING_OWN_PACKETS_AND_TOKENS"
+    },
+    {
+      "order": 5,
+      "parallelGroup": "POST_TOKEN_ACCEPTANCE",
+      "work": "ONBOARD_THE_SEALED_PLAT_004_PEOPLE_HRIS_SOURCE_AND_EXACT_EVENT_TYPE_AND_PROVE_FAIL_CLOSED_TRANSLATION",
+      "owner": "SYS_COMMON_INTEGRATION_CONTROL",
+      "state": "WITHHELD_PENDING_HRM_002_PRODUCER_DECISION_TABLE"
+    },
+    {
+      "order": 5,
+      "parallelGroup": "POST_TOKEN_ACCEPTANCE",
+      "work": "IMPLEMENT_SYS_012_HOME_COMPOSITION_RESIDUAL_FOR_SYS_API_026",
+      "owner": "HRIS-SYS",
+      "state": "WITHHELD_PENDING_FOUR_PRODUCER_RESULTS"
+    },
+    {
+      "order": 6,
+      "work": "INTEGRATE_AND_CLOSE_BASE_TFR_HRM_002_AFTER_OWNER_DELTA_AND_RELATED_ACCEPTANCE_BRANCHES_PASS",
+      "owner": "SYS_COMMON_INTEGRATION_CONTROL",
+      "state": "FINAL_ACCEPTANCE_WITHHELD"
+    }
+  ],
+  "parallelism": {
+    "permittedAfterOrder1": [
+      "BASE_TFR_HRM_002_CONTROL_BUNDLE_PREPARATION",
+      "BASE_TFR_SYS_009_CONTROL_PREPARATION",
+      "HOME_PRODUCER_PACKET_PREPARATION"
+    ],
+    "permittedAfterHrm002Token": [
+      "BASE_TFR_HRM_002_OWNER_IMPLEMENTATION",
+      "BASE_TFR_SYS_009_OWNER_IMPLEMENTATION_IF_OWN_TOKEN_ISSUED",
+      "HOME_PRODUCER_IMPLEMENTATION_IF_OWN_TOKENS_ISSUED"
+    ],
+    "evidenceIsolationRequired": true,
+    "moduleWorktreeIsolationRequired": true,
+    "integrationTarget": "dwp-dev",
+    "moduleResultsMustBeMergedBeforeDependentPins": true
+  },
+  "doNotReopen": [
+    "SYS_012_WORK_EXPLORER_SYS_API_027_038_039_040",
+    "SYS_012_V327",
+    "SYS_001_NAVIGATION_ADAPTER",
+    "HRM_001_PLAT_003_NO_CODE_CLOSURE"
+  ],
+  "validationPolicy": {
+    "changedClusterFirst": true,
+    "failedTargetOnlyAfterCorrection": true,
+    "oneModuleBatchBeforeHandoff": true,
+    "repositoryWideSuitePerCorrection": false,
+    "reuseUnaffectedEvidence": true
+  },
+  "activationPolicy": {
+    "allNewFeaturesDefaultOff": true,
+    "tenantActivationAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "PREPARE_THE_EXACT_BASE_TFR_HRM_002_WORK_PACKET_RESULT_CONTRACT_MIGRATION_DECISION_AND_START_TOKEN_PREPARATION; DO_NOT_ACTIVATE_A_NOTIFICATION_SOURCE_BEFORE_THE_POST_TOKEN_PRODUCER_DECISION_TABLE"
+}

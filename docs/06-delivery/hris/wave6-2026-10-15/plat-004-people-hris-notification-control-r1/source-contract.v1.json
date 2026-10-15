@@ -1,0 +1,88 @@
+{
+  "schema": "dwp.hris.plat004-people-source-contract.v1",
+  "contractId": "HRIS-WAVE6-PLAT-004-PEOPLE-HRIS-SOURCE-CONTRACT-R1",
+  "issuedAt": "2026-10-15T09:32:17+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "SEALED_INACTIVE_NO_RUNTIME_ONBOARDING",
+  "binding": {
+    "contract": "PLAT-004",
+    "producerSlice": "BASE-TFR-HRM-002",
+    "producerService": "dwp-people-server",
+    "ownerApp": "hcm",
+    "requiredEntitlement": "APP.HCM:VIEW",
+    "reservedSource": "urn:dwp:people:hrm:dwp-experience",
+    "sourceState": "RESERVED_NOT_PRESENT_IN_NOTIFICATION_PRODUCER_SOURCES",
+    "eventTypeState": "UNSEALED_REQUIRES_POST_TOKEN_BUSINESS_FACT_DECISION",
+    "activationKey": "EXACT_SOURCE_AND_EXACT_EVENT_TYPE_PAIR",
+    "sourceOnlyActivationForbidden": true
+  },
+  "canonicalEnvelope": {
+    "schema": "DomainEventEnvelope.v1",
+    "dataMember": "notificationIntents",
+    "allowedIntentKeys": [
+      "typeKey",
+      "recipientUserIds",
+      "threadKey",
+      "locale",
+      "reasonCode",
+      "actorReference",
+      "subjectReference",
+      "targetReference",
+      "dueAt",
+      "actionRequired",
+      "variables"
+    ],
+    "recipientMode": "DIRECT_ONLY",
+    "recipientMinimum": 1,
+    "recipientMaximum": 100,
+    "excludedRecipientsAppliedBeforeMinimumCheck": true
+  },
+  "privacyAndSafety": {
+    "allowed": [
+      "opaque tenant-bound public references",
+      "allowlisted non-sensitive variables required by an approved template",
+      "purpose and reason codes from the sealed decision table",
+      "locale, dueAt and actionRequired when the sealed row requires them"
+    ],
+    "forbidden": [
+      "message body or rendered content",
+      "personal identifiers or sensitive HR data",
+      "email address, phone number or raw recipient channel",
+      "provider credentials, provider routing or delivery secrets",
+      "arbitrary URL, file path or object bytes",
+      "notification database writes from People",
+      "reuse of the Performance compensation-planning source"
+    ],
+    "missingOrUnknownSourceBehavior": "FAIL_CLOSED_WHEN_NOTIFICATION_HINTS_ARE_PRESENT",
+    "missingExactEventTypeBindingBehavior": "DO_NOT_ONBOARD_SOURCE",
+    "transportDefault": "OFF"
+  },
+  "currentRuntimeFacts": {
+    "peopleProducerAllowedByService": true,
+    "peopleAppBindingExists": true,
+    "hcmEntitlementBindingExists": true,
+    "exactPeopleHrisSourceAllowlisted": false,
+    "exactHrm002EventTypeExists": false,
+    "peopleNotificationIntentsEmissionExists": false,
+    "typedHrisIntentAndReceiptCarriersExist": true,
+    "typedCarrierToGenericTranslatorBridgeExists": false,
+    "genericTranslatorSourceToExactEventTypeBindingExists": false
+  },
+  "activationGate": {
+    "requiredBeforeRuntimeOnboarding": [
+      "HRM-002 module result contains the exact business-fact event type and schema",
+      "notification decision-table rows are complete and accepted",
+      "typeKey and template package are registered under owner app hcm",
+      "recipient derivation and actor/self exclusion are proven",
+      "source plus exact event-type binding fails closed for every unlisted pair",
+      "typed receipt strategy is selected and tested",
+      "all runtime changes remain default OFF"
+    ],
+    "notAuthorizedByThisContract": [
+      "Notification application.yml producer-sources change",
+      "notification type or template migration",
+      "People producer source edit",
+      "feature, tenant, customer or production activation"
+    ]
+  }
+}

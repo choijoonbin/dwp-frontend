@@ -1,0 +1,34 @@
+{
+  "schema": "dwp.hris.plat004-control-touch-manifest.v1",
+  "manifestId": "HRIS-WAVE6-PLAT-004-PEOPLE-HRIS-TOUCH-MANIFEST-R1",
+  "state": "CURRENT_PACKET_DOCS_ONLY_FUTURE_RUNTIME_PATHS_CONDITIONAL",
+  "currentWritablePaths": [
+    "docs/06-delivery/hris/wave6-2026-10-15/plat-004-people-hris-notification-control-r1/**"
+  ],
+  "futureCentralRuntimePathsAfterDecisionTableAcceptance": [
+    "dwp-notification-server/src/main/resources/application.yml (one exact source plus exact event-type binding only)",
+    "dwp-notification-server/src/test/java/com/dwp/services/notification/config/NotificationRuntimeConfigurationInvariantTest.java",
+    "dwp-notification-server/src/test/java/com/dwp/services/notification/integration/NotificationDomainEventTranslatorTest.java",
+    "dwp-notification-server/src/main/java/com/dwp/services/notification/integration/NotificationDomainEventTranslator.java (only if exact source-event binding cannot be expressed safely in configuration)",
+    "dwp-notification-server/src/main/java/com/dwp/services/notification/hriscontracts/HrisNotificationContractAdapter.java or one separately allocated bridge (only if the typed receipt strategy selects it)",
+    "dwp-notification-server/src/test/java/com/dwp/services/notification/hriscontracts/HrisNotificationIntentV1ProviderContractTest.java",
+    "dwp-notification-server/src/test/java/com/dwp/services/notification/hriscontracts/HrisNotificationReceiptV1ProviderContractTest.java",
+    "one fresh leased dwp-notification-server migration for the exact approved hcm type/template package, only if registration requires schema data"
+  ],
+  "futureModuleOwnedPaths": [
+    "dwp-people-server HRM-002 package paths allocated by the issued work packet",
+    "dwp-people-server HRM-002 targeted tests allocated by the issued work packet",
+    "no frontend runtime path for this central notification contract"
+  ],
+  "forbiddenNow": [
+    "adding urn:dwp:people:hrm:dwp-experience to the live Notification producer-sources allowlist",
+    "reusing urn:dwp:people:performance:compensation-planning",
+    "inventing a generic HRM event type or wildcard event pattern",
+    "adding a notification type or template migration without a sealed decision-table row and JIT lease",
+    "editing HRIS module source from this central packet",
+    "direct Notification database writes from People",
+    "frontend, shell, menu, route, tenant or production activation",
+    "existing numbered migration modification"
+  ],
+  "outsideBoundaryAction": "STOP_AND_RAISE_AN_EXACT_CONTROL_AMENDMENT"
+}

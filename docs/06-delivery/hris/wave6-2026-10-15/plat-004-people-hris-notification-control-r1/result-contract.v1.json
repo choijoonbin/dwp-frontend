@@ -1,0 +1,55 @@
+{
+  "schema": "dwp.hris.plat004-control-result-contract.v1",
+  "contractId": "HRIS-WAVE6-PLAT-004-PEOPLE-HRIS-RESULT-CONTRACT-R1",
+  "state": "SEALED_FOR_POST_TOKEN_RESULT",
+  "requiredAcceptance": [
+    {
+      "id": "PLAT004-HRM002-AC-01",
+      "requirement": "Every emitted notification intent maps to one complete decision-table row and one exact event type."
+    },
+    {
+      "id": "PLAT004-HRM002-AC-02",
+      "requirement": "The reserved source is accepted only for the sealed exact event-type set; every other source-event pair fails closed."
+    },
+    {
+      "id": "PLAT004-HRM002-AC-03",
+      "requirement": "Recipients are deterministically derived, actor/self exclusions are applied, and the final direct-recipient set contains 1 through 100 active authorized users."
+    },
+    {
+      "id": "PLAT004-HRM002-AC-04",
+      "requirement": "Envelope hints contain no rendered body, sensitive HR value, raw destination, provider data, secret, arbitrary URL, file path or object bytes."
+    },
+    {
+      "id": "PLAT004-HRM002-AC-05",
+      "requirement": "typeKey, owner app hcm, APP.HCM:VIEW entitlement, template version/model digest, locale and variable allowlist are exact and registered."
+    },
+    {
+      "id": "PLAT004-HRM002-AC-06",
+      "requirement": "The selected typed receipt strategy preserves tenant, producer event and intent identity and rejects mismatched or replay-conflicting evidence."
+    },
+    {
+      "id": "PLAT004-HRM002-AC-07",
+      "requirement": "People persists the business fact and outbox handoff atomically; retries are idempotent and do not send directly to a channel provider."
+    },
+    {
+      "id": "PLAT004-HRM002-AC-08",
+      "requirement": "Transport, feature, tenant and customer activation remain OFF; missing configuration, template or authority returns a bounded failure and never a false success."
+    }
+  ],
+  "targetedVerification": {
+    "policy": "RUN_THE_CHANGED_CLUSTER_ONCE_AND_RERUN_ONLY_THE_SMALLEST_FAILED_TARGET_AFTER_A_FIX",
+    "notification": "./gradlew :dwp-notification-server:test --tests '*NotificationRuntimeConfigurationInvariantTest' --tests '*NotificationDomainEventTranslatorTest' --tests '*HrisNotificationIntentV1ProviderContractTest' --tests '*HrisNotificationReceiptV1ProviderContractTest' --no-daemon --max-workers=1",
+    "migration": "RUN_ONE_EXACT_MIGRATION_AND_MATERIALIZATION_TEST_ONLY_IF_A_FRESH_LEASED_MIGRATION_IS_ACTUALLY_TOUCHED",
+    "people": "DEFINED_BY_THE_HRM_002_WORK_PACKET_AGAINST_THE_EXACT_PRODUCER_PACKAGE",
+    "repositoryWideSuite": "NOT_REQUIRED_PER_CORRECTION"
+  },
+  "requiredEvidence": [
+    "completed decision table with exact schema and template pins",
+    "changed-path manifest proving central and module ownership separation",
+    "eight acceptance results with command, test count and zero skipped mandatory cases",
+    "source-event allowlist negative evidence",
+    "privacy and recipient negative evidence",
+    "receipt binding, idempotency and fail-closed evidence",
+    "default-OFF and no-activation nonclaim"
+  ]
+}

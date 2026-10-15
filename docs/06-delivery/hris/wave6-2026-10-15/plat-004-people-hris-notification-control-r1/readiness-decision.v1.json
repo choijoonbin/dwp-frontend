@@ -1,0 +1,64 @@
+{
+  "schema": "dwp.hris.plat004-control-readiness-decision.v1",
+  "decisionId": "HRIS-WAVE6-PLAT-004-PEOPLE-HRIS-READINESS-R1",
+  "issuedAt": "2026-10-15T09:32:17+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "PASS_INACTIVE_CONTRACT_SEALED_HRM_002_PACKET_PREPARATION_UNBLOCKED_RUNTIME_ONBOARDING_WITHHELD",
+  "decision": "Seal a reserved inactive People HRIS source boundary and the post-token producer decision-table obligations. Do not add a live Notification source or claim typed receipt closure until HRM-002 supplies an exact business-fact event contract.",
+  "authoritativeInput": {
+    "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/platform-integration-binding-register.csv",
+    "sha256": "f7454ca7cd0c089e7fb609c452ba56b67f565850943d23a298a44409981c20a5",
+    "contract": "PLAT-004"
+  },
+  "artifacts": [
+    {
+      "path": "source-contract.v1.json",
+      "sha256": "80a3b8131ee084b7c5b0c13137ba63f0891e734dfca19489c519f74addf3d2ee",
+      "bytes": 3504
+    },
+    {
+      "path": "notification-decision-table.v1.json",
+      "sha256": "d63599178a63f06c8ed42e36e900d24378825c3bf6ebf1fe4d4e79502b963af4",
+      "bytes": 1730
+    },
+    {
+      "path": "touch-manifest.v1.json",
+      "sha256": "a3eaf0ff43c10872b6edfa0c302b9af64b5fb069c0c21eb8275fe3aaa34311e3",
+      "bytes": 2558
+    },
+    {
+      "path": "result-contract.v1.json",
+      "sha256": "84bd48e5004177ea6983aee0eed3c3b1f62650998acf85313ed9b19277377c82",
+      "bytes": 3054
+    }
+  ],
+  "targetedCurrentRuntimeAudit": {
+    "testsOrBuildsExecuted": false,
+    "repositoryWideValidationExecuted": false,
+    "facts": [
+      "dwp-people-server is already an allowed producer service and is bound to hcm|people",
+      "hcm is already bound to APP.HCM:VIEW",
+      "no exact People HRIS source is present in domain-events.producer-sources",
+      "the translator validates source ownership only when notification hints are present and has no exact event-type allowlist",
+      "People emits no HRM-002 notificationIntents",
+      "the compensation-planning source belongs to MOD-PER-COMPPLAN and is not reusable for HRM-002",
+      "typed HRIS intent and receipt carriers exist but are not a complete generic-translator receipt bridge"
+    ]
+  },
+  "startBoundary": {
+    "hrm002ControlBundlePreparationAuthorized": true,
+    "hrm002TokenIssuedByThisDecision": false,
+    "runtimeSourceOnboardingAuthorized": false,
+    "notificationMigrationAuthorized": false,
+    "peopleSourceEditAuthorized": false,
+    "featureOrTenantActivationAuthorized": false
+  },
+  "releaseSequence": [
+    "prepare the exact HRM-002 work packet, result contract and migration decision",
+    "issue the HRM-002 token only after its remaining exact start gates pass",
+    "HRIS-HRM implements PEP-HRM-014 and returns the completed notification business-fact decision table plus minimal intent emission",
+    "Central onboards only the accepted source-event pairs and any approved hcm type/template package",
+    "run the PLAT-004 result contract and related HRM-002 final acceptance evidence"
+  ],
+  "nextAction": "PREPARE_THE_EXACT_BASE_TFR_HRM_002_CONTROL_BUNDLE_WITH_THIS_INACTIVE_CONTRACT_PINNED; DO_NOT_EDIT_NOTIFICATION_RUNTIME_YET"
+}
