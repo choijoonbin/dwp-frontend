@@ -1,0 +1,80 @@
+{
+  "schema": "dwp.hris.plat004-notification-decision-table.v2",
+  "tableId": "HRIS-WAVE6-PLAT-004-HRM-002-NOTIFICATION-DECISION-TABLE-R2",
+  "issuedAt": "2026-10-15T19:10:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "ACCEPTED_FOR_DEFAULT_OFF_CENTRAL_ONBOARDING",
+  "predecessor": {
+    "path": "notification-decision-table.v1.json",
+    "sha256": "d63599178a63f06c8ed42e36e900d24378825c3bf6ebf1fe4d4e79502b963af4",
+    "bytes": 1730,
+    "preservedUnchanged": true
+  },
+  "moduleEvidence": {
+    "path": "../hrm-002-experience-control-r1/module-result-evidence.v1.json",
+    "sha256": "3ed46032c2da8aaca1cca718982dfad05f6c95eda40c5fefcc02336f77861c15",
+    "bytes": 51348,
+    "acceptance": [
+      "HRM002-AC-07-EXACT-NOTIFICATION-DECISION-TABLE",
+      "HRM002-AC-08-ATOMIC-IDEMPOTENT-PRIVACY-MINIMIZED-INTENT",
+      "HRM002-AC-09-PDX013-ORDERING-IDEMPOTENCY-AND-TERMINAL-IMMUTABILITY"
+    ]
+  },
+  "rowPolicy": {
+    "oneRowPerBusinessFactAndRecipientPolicy": true,
+    "wildcardEventTypeForbidden": true,
+    "wildcardTypeKeyForbidden": true,
+    "sourceFamilyNameIsNotAnEventFact": true,
+    "noRowBehavior": "NO_NOTIFICATION_INTENT_EMISSION",
+    "exactSourceEventPairRequired": true
+  },
+  "rows": [
+    {
+      "businessFact": "EmployeeChangeApplied.v1",
+      "eventType": "EmployeeChangeAppliedNotificationRequested.v1",
+      "eventSchemaRef": "contracts/hris/canonical/schemas/platform-dependency-canonical-schemas.v1.json#/$defs/PDX_012",
+      "aggregateType": "EMPLOYEE_CHANGE_REQUEST",
+      "triggerState": "EMPLOYEE_CHANGE_APPLIED",
+      "cancelOrSupersedeRule": "TERMINAL_APPLIED_FACT_NO_CANCEL_OR_SUPERSEDE",
+      "typeKey": "HCM.EMPLOYEE_CHANGE_APPLIED",
+      "recipientDerivation": "EXACT_ACTIVE_TENANT_BOUND_USER_FOR_TARGET_SUBJECT",
+      "excludedRecipientRule": "EXCLUDE_APPLYING_ACTOR_BEFORE_MINIMUM_RECIPIENT_CHECK",
+      "inactiveOrPermissionLossRule": "PEOPLE_AUDITED_OMISSION_BEFORE_HANDOFF_AND_NOTIFICATION_RECHECK_ACTIVE_APP_HCM_VIEW_FAIL_CLOSED",
+      "purposeCode": "EMPLOYEE_SELF_SERVICE",
+      "reasonCode": "EMPLOYEE_CHANGE_APPLIED",
+      "actionRequired": false,
+      "dueAtRule": "NULL",
+      "threadKeyRule": "hris:employee-change:{requestPublicId}",
+      "localeRule": "ACTIVE_SUBJECT_PREFERRED_BCP47_OR_KO_KR_FALLBACK",
+      "variableAllowlist": [
+        "effectiveDate",
+        "requestReference",
+        "targetType"
+      ],
+      "classification": "INTERNAL",
+      "templateKey": "hcm.employee-change.applied",
+      "templateVersion": 1,
+      "templateModelDigest": "24b7eff4c70309f32c86911c7e52acf05ee0b38d368630272422e963109dd784",
+      "receiptStrategy": "PDX_013_BOUND_TO_EXACT_PDX_012_INTENT_TENANT_SOURCE_EVENT_CORRELATION_TEMPLATE_AND_RECIPIENT",
+      "idempotencyRule": "ONE_INTENT_PER_TENANT_AND_SOURCE_EVENT_WITH_KEY_HRM002_SOURCE_EVENT_ID"
+    }
+  ],
+  "privacyResolution": {
+    "pdx012CarriesRawTemplateVariables": false,
+    "currentTemplateRequiresVariables": false,
+    "registeredVariableAllowlist": [
+      "effectiveDate",
+      "requestReference",
+      "targetType"
+    ],
+    "currentRequiredVariables": [],
+    "rule": "The allowlist is registered as contract metadata, but the v1 in-app templates are static and must materialize without raw HR values. Any future variable resolver or interpolated template requires a separately reviewed successor amendment."
+  },
+  "activationBoundary": {
+    "notificationDomainEventConsumerDefault": "OFF",
+    "peopleExperienceDefault": "OFF",
+    "peopleRelayDefault": "OFF",
+    "typedBridgeRuntime": "DEFERRED_TO_SYS_API_026_OR_SYS_API_033_SUCCESSOR",
+    "tenantCustomerOrProductionActivationAuthorized": false
+  }
+}

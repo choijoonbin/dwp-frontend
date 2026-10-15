@@ -1,0 +1,43 @@
+{
+  "schema": "dwp.hris.migration-lease.v1",
+  "leaseId": "HRIS-WAVE6-PLAT-004-NOTIFICATION-V35-R1",
+  "issuedAt": "2026-10-15T19:10:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "ACTIVE_AUTHORING_ON_DWP_DEV",
+  "repository": "dwp-backend",
+  "stream": "DWP_NOTIFICATION",
+  "owner": "SYS_COMMON_INTEGRATION_CONTROL/PLAT-004-HRM-002",
+  "observedBase": {
+    "branch": "dwp-dev",
+    "commit": "a0b2db53d3fd382fa6ba56b53c2d2621bf4287ed",
+    "tree": "0b783b774816b625579f6c6ef90ad10eb3d58136",
+    "upstream": "origin/dwp-dev",
+    "cleanAndRemoteExact": true,
+    "highWaterVersion": "V34",
+    "highWaterPath": "dwp-notification-server/src/main/resources/db/migration/V34__register_mail_notification_contracts.sql",
+    "highWaterSha256": "4aeed99d6c407da61ab2aed9da7fa823767f117b351b5e1d62826e6903057ffb",
+    "highWaterBytes": 8906,
+    "allocatedPathAbsent": true
+  },
+  "allocation": {
+    "version": "V35",
+    "path": "dwp-notification-server/src/main/resources/db/migration/V35__register_hcm_employee_change_applied_notification.sql",
+    "createOnly": true,
+    "secondMigrationAuthorized": false,
+    "existingMigrationModificationAuthorized": false
+  },
+  "purpose": "Register exactly one HCM employee-change-applied notification type, its sealed static ko-KR/en-US in-app templates and one HCM app routing policy while every transport and HRIS runtime activation remains default OFF.",
+  "requiredVerification": [
+    "V35 static invariant test",
+    "clean migration through V35 against a disposable PostgreSQL database when available",
+    "one HCM source-event materialization method when the disposable PostgreSQL gate is available",
+    "V1 through V34 remain byte-identical"
+  ],
+  "invalidationConditions": [
+    "Notification high-water is no longer V34 before V35 is authored",
+    "the allocated V35 path exists from another owner",
+    "any migration V1 through V34 changes",
+    "a second Notification migration is required",
+    "transport, tenant, customer or production activation is attempted"
+  ]
+}

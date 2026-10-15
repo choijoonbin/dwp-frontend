@@ -1,0 +1,83 @@
+{
+  "schema": "dwp.hris.plat004-notification-template-package.v1",
+  "packageId": "HRIS-WAVE6-PLAT-004-HRM-002-TEMPLATE-PACKAGE-R1",
+  "issuedAt": "2026-10-15T19:10:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "SEALED_FOR_DEFAULT_OFF_REGISTRATION",
+  "type": {
+    "typeKey": "HCM.EMPLOYEE_CHANGE_APPLIED",
+    "ownerAppKey": "hcm",
+    "ownerTeam": "People Platform",
+    "sourceEventType": "EmployeeChangeAppliedNotificationRequested.v1",
+    "schemaVersion": 1,
+    "priority": "NORMAL",
+    "urgency": "INFORMATIONAL",
+    "classification": "INTERNAL",
+    "audienceMode": "DIRECT",
+    "interruptionLevel": "PASSIVE",
+    "userConfigurable": true,
+    "previewPolicy": "TITLE_ONLY",
+    "requiredVariables": [],
+    "variableAllowlist": [
+      "effectiveDate",
+      "requestReference",
+      "targetType"
+    ],
+    "dedupeStrategy": "SOURCE_EVENT_RECIPIENT",
+    "retentionPolicy": "TENANT_DEFAULT_LEGAL_HOLD_AWARE",
+    "templateKey": "hcm.employee-change.applied",
+    "templateVersion": 1,
+    "templateModelDigest": "24b7eff4c70309f32c86911c7e52acf05ee0b38d368630272422e963109dd784"
+  },
+  "templates": [
+    {
+      "channel": "IN_APP",
+      "locale": "ko-KR",
+      "version": 1,
+      "title": "인사정보 변경이 반영되었습니다",
+      "preview": "요청한 인사정보 변경이 반영되었습니다.",
+      "body": "직원변경 요청 화면에서 반영 결과를 확인하세요.",
+      "action": {
+        "label": "변경 결과 확인",
+        "route": "/hr/operations/people/employee-change-requests"
+      },
+      "checksum": "08454d6cb4a2f8806fef3af419b0889f011ed47f74c62f6af34e1908f1be0d71"
+    },
+    {
+      "channel": "IN_APP",
+      "locale": "en-US",
+      "version": 1,
+      "title": "Employee information updated",
+      "preview": "The requested employee information change has been applied.",
+      "body": "Open employee change requests to review the result.",
+      "action": {
+        "label": "Review change result",
+        "route": "/hr/operations/people/employee-change-requests"
+      },
+      "checksum": "1aae47c07c46152908708c68cd8c9f3557465a7d0807919411bcb6a56a67ce88"
+    }
+  ],
+  "routingPolicy": {
+    "scopeType": "APP",
+    "scopeKey": "hcm",
+    "version": 1,
+    "state": "PUBLISHED",
+    "mandatory": false,
+    "quietHoursBypass": false,
+    "digestMode": "IMMEDIATE",
+    "channel": "IN_APP",
+    "enabled": true,
+    "defaultMode": "IMMEDIATE",
+    "userOverridable": true,
+    "maxPerWindow": 30,
+    "providerRouteKey": "in-app-interactive"
+  },
+  "privacy": {
+    "containsPersonalIdentifier": false,
+    "containsSensitiveHrValue": false,
+    "containsRawDestination": false,
+    "containsArbitraryUrl": false,
+    "interpolatedVariables": [],
+    "routeIsCanonicalRegisteredHrisRoute": true
+  }
+}

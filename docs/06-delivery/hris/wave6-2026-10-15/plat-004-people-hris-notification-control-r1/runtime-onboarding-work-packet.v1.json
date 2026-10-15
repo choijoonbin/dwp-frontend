@@ -1,0 +1,113 @@
+{
+  "schema": "dwp.hris.plat004-runtime-onboarding-work-packet.v1",
+  "packetId": "HRIS-WAVE6-PLAT-004-HRM-002-RUNTIME-ONBOARDING-R1",
+  "issuedAt": "2026-10-15T19:10:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "ISSUED_IMPLEMENTATION_AUTHORIZED_DEFAULT_OFF",
+  "objective": "Onboard only the exact HRM-002 People source-event pair and register its sealed HCM in-app type/template package without enabling the domain-event consumer, People experience, People relay, tenant, customer or production runtime.",
+  "predecessorEvidence": [
+    {
+      "path": "source-contract.v1.json",
+      "sha256": "80a3b8131ee084b7c5b0c13137ba63f0891e734dfca19489c519f74addf3d2ee",
+      "bytes": 3504
+    },
+    {
+      "path": "result-contract.v1.json",
+      "sha256": "84bd48e5004177ea6983aee0eed3c3b1f62650998acf85313ed9b19277377c82",
+      "bytes": 3054
+    },
+    {
+      "path": "../hrm-002-experience-integration-r1/central-integration-result.v1.json",
+      "sha256": "60ed600b9160586d59df0c6986a663f105acc8e5b440389a346075ec7444e8b2",
+      "bytes": 8834
+    }
+  ],
+  "authorityInputs": [
+    "notification-decision-table-successor.v2.json",
+    "template-package.v1.json",
+    "migration-lease.v1.json"
+  ],
+  "basePins": {
+    "backend": {
+      "branch": "dwp-dev",
+      "commit": "a0b2db53d3fd382fa6ba56b53c2d2621bf4287ed",
+      "tree": "0b783b774816b625579f6c6ef90ad10eb3d58136",
+      "upstream": "origin/dwp-dev",
+      "cleanAndRemoteExact": true
+    },
+    "frontendControlCarrier": {
+      "branch": "dwp-dev",
+      "commit": "3fab70cec4a3a03a665529d5292c2f8e343a2d29",
+      "tree": "126349eade15564b563e208fb1868da2675b24e1",
+      "upstream": "origin/dwp-dev",
+      "cleanAndRemoteExact": true
+    }
+  },
+  "exactBinding": {
+    "source": "urn:dwp:people:hrm:dwp-experience",
+    "producerService": "dwp-people-server",
+    "eventType": "EmployeeChangeAppliedNotificationRequested.v1",
+    "schemaVersion": 1,
+    "typeKey": "HCM.EMPLOYEE_CHANGE_APPLIED",
+    "ownerAppKey": "hcm",
+    "requiredEntitlement": "APP.HCM:VIEW",
+    "everyOtherEventForThisSource": "FAIL_CLOSED_WHEN_NOTIFICATION_HINTS_EXIST"
+  },
+  "typedContractDecision": {
+    "intent": "PDX_012_HrisNotificationIntentV1",
+    "receipt": "PDX_013_HrisNotificationReceiptV1",
+    "selectedReceiptBinding": "HrisNotificationContractAdapter.bindReceipt",
+    "runtimeTypedToGenericBridge": "NOT_IN_THIS_PACKET",
+    "reason": "PDX-012 intentionally forbids raw template variables and the current People handoff is READY_LOCAL_ONLY. SYS-API-026 or SYS-API-033 must separately authorize relay and receipt transport.",
+    "falseClosureForbidden": true
+  },
+  "allowedBackendPaths": [
+    "dwp-notification-server/src/main/resources/application.yml",
+    "dwp-notification-server/src/main/java/com/dwp/services/notification/integration/NotificationDomainEventTranslator.java",
+    "dwp-notification-server/src/test/java/com/dwp/services/notification/config/NotificationRuntimeConfigurationInvariantTest.java",
+    "dwp-notification-server/src/test/java/com/dwp/services/notification/integration/NotificationDomainEventTranslatorTest.java",
+    "dwp-notification-server/src/main/resources/db/migration/V35__register_hcm_employee_change_applied_notification.sql",
+    "dwp-notification-server/src/test/java/com/dwp/services/notification/migration/NotificationMigrationInvariantTest.java",
+    "dwp-notification-server/src/test/java/com/dwp/services/notification/integration/NotificationStructuredContextMaterializationPostgresIntegrationTest.java",
+    "dwp-notification-server/src/main/java/com/dwp/services/notification/hriscontracts/HrisNotificationContractAdapter.java",
+    "dwp-notification-server/src/test/java/com/dwp/services/notification/hriscontracts/HrisNotificationIntentV1ProviderContractTest.java",
+    "dwp-notification-server/src/test/java/com/dwp/services/notification/hriscontracts/HrisNotificationReceiptV1ProviderContractTest.java"
+  ],
+  "implementationRules": [
+    "Keep all pre-existing producer source behavior unchanged.",
+    "Require exact event-type binding for the reserved HRIS source even when environment configuration is incomplete.",
+    "Reject source-only, wildcard, duplicate and unknown source-event bindings.",
+    "Register exactly one HCM type version and two static IN_APP templates from template-package.v1.json.",
+    "Do not add raw HR values, rendered message content or destinations to PDX-012.",
+    "Do not edit People, Auth, Gateway, frontend runtime, shell, menu, route or any migration V1 through V34.",
+    "Do not implement or enable the People relay or Notification domain-event consumer in this packet."
+  ],
+  "verification": {
+    "policy": "RUN_CHANGED_CLUSTER_ONCE_AND_RERUN_ONLY_THE_SMALLEST_FAILED_TARGET_AFTER_A_FIX",
+    "contractCluster": "./gradlew :dwp-notification-server:test --tests '*NotificationRuntimeConfigurationInvariantTest' --tests '*NotificationDomainEventTranslatorTest' --tests '*HrisNotificationIntentV1ProviderContractTest' --tests '*HrisNotificationReceiptV1ProviderContractTest' --tests '*NotificationMigrationInvariantTest' --no-daemon --max-workers=1",
+    "postgresTarget": "./gradlew :dwp-notification-server:test --tests '*NotificationStructuredContextMaterializationPostgresIntegrationTest.hcmEmployeeChangeAppliedMaterializesThroughExactSourceEventAndEntitlement' --no-daemon --max-workers=1",
+    "postgresPolicy": "RUN_ONLY_WHEN_DWP_NOTIFICATION_CONTEXT_TEST_DB_URL_POINTS_TO_A_DISPOSABLE_DATABASE; OTHERWISE_RECORD_NOT_RUN_EXTERNAL_GATE",
+    "repositoryWideSuite": "NOT_REQUIRED"
+  },
+  "acceptance": [
+    "PLAT004-HRM002-AC-01",
+    "PLAT004-HRM002-AC-02",
+    "PLAT004-HRM002-AC-03",
+    "PLAT004-HRM002-AC-04",
+    "PLAT004-HRM002-AC-05",
+    "PLAT004-HRM002-AC-06",
+    "PLAT004-HRM002-AC-07",
+    "PLAT004-HRM002-AC-08"
+  ],
+  "activationBoundary": {
+    "notificationDomainEventsDefault": "OFF",
+    "peopleExperienceDefault": "OFF",
+    "peopleRelayDefault": "OFF",
+    "routeOrMenuActivationAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantActivationAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "COMMIT_AND_PUSH_THIS_CONTROL_CARRIER_THEN_IMPLEMENT_ONLY_THE_AUTHORIZED_DEFAULT_OFF_NOTIFICATION_DELTA_ON_DWP_DEV"
+}
