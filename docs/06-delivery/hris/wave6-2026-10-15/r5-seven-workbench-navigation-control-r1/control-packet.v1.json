@@ -1,0 +1,98 @@
+{
+  "schema": "dwp.hris.wave6-r5-seven-workbench-navigation-control-packet.v1",
+  "packetId": "HRIS-WAVE6-R5-SEVEN-WORKBENCH-NAVIGATION-R1",
+  "issuedAt": "2026-10-17T08:44:20+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL_WITH_HRIS_SYS",
+  "state": "AUTHORIZED_TO_IMPLEMENT_AFTER_R4",
+  "dependsOn": {
+    "path": "docs/06-delivery/hris/wave6-2026-10-15/r4-sys-012-home-composition-integration-r1/central-integration-result.v1.json",
+    "sha256": "3076abc4209d47742a30d845584c4e308475273308433c30f553689093d806b6",
+    "requiredStatus": "PASS_R4_INTEGRATED_CLOSED_DEFAULT_OFF"
+  },
+  "startingPins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "49f593457af4b7b0ec13b36183c0431b7e7a248c",
+      "tree": "d7c0850342126000a015eb242d8ad1e5eb456736"
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "e29343454608e0719da2598a30deda15578e6efc",
+      "tree": "8147c14beece614cb6776f97f4f857bb81dc9783"
+    },
+    "platformMigrationHighWater": 328,
+    "migrationLease": "V329"
+  },
+  "canonicalSources": [
+    {
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/hris-information-architecture-register.csv",
+      "sha256": "ab506a2bb2f80c8ab81a4b9d575374d6bda83b312d11dce07495d4812bdf4686"
+    },
+    {
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/hris-shell-navigation-register.csv",
+      "sha256": "f85ee40a66ce4100c5578fd3ca96bc89b652b0762e19d74cc7aeb76338009000"
+    },
+    {
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/hris-workbench-task-group-register.csv",
+      "sha256": "f0b1ebb316e4d5944aac90002e144f25d8c1318216b6733e674cdc8c5042872b"
+    },
+    {
+      "path": "apps/dwp/src/features/hris/shell/model/hris-information-architecture.generated.ts",
+      "sha256": "584cc32f845720ad06fb1bdcea7c967026c0e3a648f70e0215fd8a95a6b055bd"
+    }
+  ],
+  "sealedDecision": {
+    "policyModel": "SEVEN_WORKBENCH_SINGLE_IMMUTABLE_AGGREGATE_V2",
+    "reason": "Sidebar, landing and deep-link decisions must share one atomic effective revision pin.",
+    "legacyV1": "PRESERVE_HR_OPERATIONS_HISTORY_DIGESTS_RECEIPTS_MAKER_CHECKER_CAS_AUDIT_AND_OUTBOX",
+    "tenantLayer": "BASELINE",
+    "legalEntityLayer": "RESTRICTIVE_ONLY_NEVER_REENABLE",
+    "activation": "DEFAULT_OFF_NO_ENROLLED_TENANTS"
+  },
+  "topology": {
+    "shellHomeNodes": 1,
+    "workbenches": 7,
+    "taskGroups": 46,
+    "descendantNodes": 97,
+    "allIaNodes": 98,
+    "workbenchCounts": [
+      {"workbenchId": "HRIS-WB-MY-HR", "groups": 6, "nodes": 14},
+      {"workbenchId": "HRIS-WB-TEAM", "groups": 5, "nodes": 7},
+      {"workbenchId": "HRIS-WB-HR-OPERATIONS", "groups": 7, "nodes": 17},
+      {"workbenchId": "HRIS-WB-TIME", "groups": 6, "nodes": 11},
+      {"workbenchId": "HRIS-WB-PAYROLL", "groups": 7, "nodes": 14},
+      {"workbenchId": "HRIS-WB-PERFORMANCE", "groups": 7, "nodes": 12},
+      {"workbenchId": "HRIS-WB-SETTINGS", "groups": 8, "nodes": 22}
+    ]
+  },
+  "effectiveProjectionRule": "CANONICAL_ORDERED_TOPOLOGY_INTERSECT_INSTALLED_INTERSECT_DEPLOYED_INTERSECT_TENANT_ENABLED_INTERSECT_LEGAL_ENABLED_INTERSECT_EXACT_PAGE_AUTHORIZED",
+  "landingRule": "CANONICAL_DEFAULT_IF_EFFECTIVE_ELSE_FIRST_EFFECTIVE_DESCENDANT_ELSE_OMIT_WORKBENCH",
+  "deepLinkRule": "EXACT_CANONICAL_OR_SEALED_COMPATIBILITY_ROUTE_AND_SAME_EFFECTIVE_REVISION_PIN_OR_DENY",
+  "frontendRule": "GLOBAL_SIDEBAR_REMAINS_HOME_PLUS_SEVEN_WORKBENCHES; ONLY_SELECTED_WORKBENCH_REVEALS_AUTHORIZED_TASK_GROUPS_PROGRESSIVELY",
+  "exclusions": [
+    "Do not show all 98 nodes in the global sidebar.",
+    "Do not include /hr/explore in task navigation.",
+    "Do not include BENSK /hr/benefits or /hr/operations/benefits.",
+    "Do not expose undeployed or unauthorized IA nodes as placeholder success pages.",
+    "Do not use command permissions to infer VIEW visibility.",
+    "Do not activate any tenant, customer data or production release."
+  ],
+  "r6Boundary": "R6 exposes additional already implemented module screens; R5 supplies only the shared policy, task-navigation frame, landing and deep-link decisions.",
+  "targetedValidation": {
+    "backend": "navigationpolicy package tests plus V329 migration contract and one Postgres migration test",
+    "frontend": "IA validator, shell/task projection, runtime policy, route/layout Vitest, changed-file lint and one representative seven-workbench Playwright journey",
+    "correctionPolicy": "FAILED_TARGET_ONLY_AFTER_CORRECTION_NO_REPOSITORY_WIDE_REPEAT"
+  },
+  "acceptance": [
+    "exact 7/46/97 topology and canonical ordering",
+    "one aggregate revision pin for sidebar landing and deep link",
+    "unauthorized nodes and empty groups/workbenches omitted",
+    "default fallback to first effective descendant",
+    "missing or stale enforced policy fails closed",
+    "V1 history and lifecycle controls preserved",
+    "default OFF and no tenant enrollment",
+    "desktop mobile keyboard 200 percent zoom dark high-contrast and reduced-motion evidence"
+  ]
+}

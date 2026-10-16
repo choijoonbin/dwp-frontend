@@ -1,0 +1,47 @@
+{
+  "schema": "dwp.hris.wave6-r4-sys-home-composition-central-integration-result.v1",
+  "receiptId": "HRIS-WAVE6-R4-SYS-012-HOME-COMPOSITION-INTEGRATION-R1",
+  "issuedAt": "2026-10-17T08:44:20+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "status": "PASS_R4_INTEGRATED_CLOSED_DEFAULT_OFF",
+  "decision": "CLOSE_R4_AT_EXACT_REMOTE_DWP_DEV_WITHOUT_BROWSER_OWNER_TENANT_CUSTOMER_OR_PRODUCTION_ACTIVATION",
+  "moduleResult": {
+    "path": "docs/06-delivery/hris/wave6-2026-10-15/r4-sys-012-home-composition-control-r1/module-result-evidence.v1.json",
+    "sha256": "eef9897a3f49bea23fc6d751ce4a87dfcf702a2e6971136fd73768105cfe2e51",
+    "ownerCommit": "d2ed28aa3ce9b3ae3e64767db1c29224c92dfff9"
+  },
+  "finalBinding": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "49f593457af4b7b0ec13b36183c0431b7e7a248c",
+      "tree": "d7c0850342126000a015eb242d8ad1e5eb456736",
+      "upstream": "origin/dwp-dev",
+      "localRemoteExact": true,
+      "workingTreeClean": true
+    },
+    "frontendControlParent": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "e29343454608e0719da2598a30deda15578e6efc",
+      "tree": "8147c14beece614cb6776f97f4f857bb81dc9783",
+      "localRemoteExactBeforeCarrier": true,
+      "workingTreeCleanBeforeCarrier": true
+    }
+  },
+  "closure": {
+    "fourOwnerComposition": "IMPLEMENTED_AND_TARGETED_VERIFIED",
+    "authorityAndFreshnessRace": "FAIL_CLOSED",
+    "partialFailureIsolation": "BOUNDED_PER_OWNER",
+    "runtime": "DEFAULT_OFF",
+    "routeOrMenuActivated": false,
+    "tenantActivated": false,
+    "customerDataUsed": false,
+    "productionReleased": false
+  },
+  "r5Eligibility": {
+    "state": "ELIGIBLE_AFTER_CONTROL_PACKET_SEAL",
+    "id": "R5-SEAL-AND-INTEGRATE-SHARED-SEVEN-WORKBENCH-TASK-NAVIGATION",
+    "mustConsumeBackendCommit": "49f593457af4b7b0ec13b36183c0431b7e7a248c"
+  }
+}

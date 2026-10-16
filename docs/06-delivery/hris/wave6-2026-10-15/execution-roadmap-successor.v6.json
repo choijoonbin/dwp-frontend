@@ -1,0 +1,94 @@
+{
+  "schema": "dwp.hris.wave6-execution-roadmap-successor.v6",
+  "roadmapId": "HRIS-WAVE6-EXECUTION-ROADMAP-SUCCESSOR-20261017-R6",
+  "issuedAt": "2026-10-17T08:44:20+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "supersedes": {
+    "path": "docs/06-delivery/hris/wave6-2026-10-15/execution-roadmap-successor.v5.json",
+    "sha256": "cdac84a3624c419092a8d941eea9b3bf85e148faa7f0a66653a6581d2fa043f2",
+    "preservation": "IMMUTABLE_PREDECESSOR_RETAINED",
+    "inheritedClosedMilestones": true
+  },
+  "baseline": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "49f593457af4b7b0ec13b36183c0431b7e7a248c",
+      "tree": "d7c0850342126000a015eb242d8ad1e5eb456736",
+      "upstream": "origin/dwp-dev",
+      "localRemoteExact": true,
+      "workingTreeClean": true
+    },
+    "frontendControlParent": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "e29343454608e0719da2598a30deda15578e6efc",
+      "tree": "8147c14beece614cb6776f97f4f857bb81dc9783",
+      "localRemoteExactBeforeCarrier": true
+    }
+  },
+  "inheritedClosed": [
+    {
+      "id": "R2-RESOLVE-HOME-PRODUCER-PURPOSE-AND-TYPE",
+      "state": "CLOSED"
+    },
+    {
+      "id": "R3A-R3D-HOME-PRODUCERS",
+      "state": "CLOSED_ALL_FOUR_DEFAULT_OFF",
+      "evidence": {
+        "path": "docs/06-delivery/hris/wave6-2026-10-15/r3-home-producer-integration-r1/central-integration-result.v1.json",
+        "sha256": "052ee3bb6a28dbebb1401768034adc34937c3949c1e537eda8537bad324a891c"
+      }
+    }
+  ],
+  "closedByThisSuccessor": {
+    "id": "R4-INTEGRATE-SYS-012-HOME-COMPOSITION-RESIDUAL",
+    "state": "CLOSED_INTEGRATED_DEFAULT_OFF",
+    "evidence": {
+      "path": "docs/06-delivery/hris/wave6-2026-10-15/r4-sys-012-home-composition-integration-r1/central-integration-result.v1.json",
+      "sha256": "3076abc4209d47742a30d845584c4e308475273308433c30f553689093d806b6"
+    },
+    "backendCommit": "49f593457af4b7b0ec13b36183c0431b7e7a248c",
+    "targetedTests": 17,
+    "independentReviewBlockers": 0
+  },
+  "nextExecutable": {
+    "id": "R5-SEAL-AND-INTEGRATE-SHARED-SEVEN-WORKBENCH-TASK-NAVIGATION",
+    "state": "AUTHORIZED_NEXT_EXECUTABLE",
+    "owner": "SYS_COMMON_INTEGRATION_CONTROL_WITH_HRIS_SYS",
+    "controlPacket": {
+      "path": "docs/06-delivery/hris/wave6-2026-10-15/r5-seven-workbench-navigation-control-r1/control-packet.v1.json",
+      "sha256": "a8b8a6a386e91ef02e65a7b2e22d41aaa80e1377265d909fccf98839ac00dd77"
+    },
+    "policyModel": "SEVEN_WORKBENCH_SINGLE_IMMUTABLE_AGGREGATE_V2",
+    "topology": {
+      "workbenches": 7,
+      "taskGroups": 46,
+      "descendantNodes": 97
+    }
+  },
+  "withheld": [
+    {
+      "id": "R6-EXPOSE-EXISTING-IMPLEMENTED-SCREENS-THROUGH-SEVEN-WORKBENCHES",
+      "state": "WITHHELD_PENDING_R5"
+    },
+    {
+      "id": "R7-COMPLETE-REMAINING-ACTIVE-BASE-SLICES",
+      "state": "WITHHELD_PENDING_R6"
+    }
+  ],
+  "validationPolicy": {
+    "changedClusterFirst": true,
+    "failedTargetOnlyAfterCorrection": true,
+    "repositoryWideSuitePerCorrection": false,
+    "fullSuiteOnlyAtExplicitReleaseGateOrCrossCuttingRisk": true,
+    "reuseExactR4Evidence": true
+  },
+  "activationPolicy": {
+    "allNewFeaturesDefaultOff": true,
+    "tenantActivationAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "EXECUTE_R5_FROM_THE_EXACT_PINS_AND_SEALED_SINGLE_AGGREGATE_V2_CONTROL_PACKET"
+}

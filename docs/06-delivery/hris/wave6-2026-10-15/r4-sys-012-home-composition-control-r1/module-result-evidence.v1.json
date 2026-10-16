@@ -1,0 +1,62 @@
+{
+  "schema": "dwp.hris.wave6-r4-sys-home-composition-module-result.v1",
+  "resultId": "HRIS-WAVE6-R4-SYS-012-HOME-COMPOSITION-RESULT-R1",
+  "issuedAt": "2026-10-17T08:44:20+09:00",
+  "issuedBy": "HRIS-SYS",
+  "status": "PASS_CORE_IMPLEMENTED_DEFAULT_OFF",
+  "sliceId": "BASE-TFR-SYS-012",
+  "ownerBranch": "codex/hris-r4-sys-012-home-composition-20261017-r1",
+  "ownerCommit": "d2ed28aa3ce9b3ae3e64767db1c29224c92dfff9",
+  "ownerTree": "d7c0850342126000a015eb242d8ad1e5eb456736",
+  "implementation": {
+    "package": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/home",
+    "boundary": "CONTROLLER_FREE_COMPOSITION_CORE",
+    "ownerModules": ["HRM", "PER", "TIM", "PAY"],
+    "eventContracts": ["XCON-012", "XCON-013", "XCON-014", "XCON-015"],
+    "ownerProfile": "HrisHomeContributionMaterialization.v1",
+    "ownerPurpose": "HRIS_HOME_MATERIALIZATION",
+    "browserPurpose": "HRIS_HOME_VIEW",
+    "runtimeDefault": "OFF",
+    "boundedOwnerConcurrency": 4,
+    "sharedOwnerDeadlineDefault": "PT0.5S"
+  },
+  "acceptance": {
+    "tenantBoundCandidates": "PASS",
+    "currentAuthoritySnapshotAndRevocation": "PASS",
+    "sealedDigestBeforeUse": "PASS",
+    "viewMaskOmitMonotonicity": "PASS",
+    "completionTimeFreshness": "PASS",
+    "freshOnlyRejectsSealedStaleState": "PASS",
+    "exactAuthorizedDeepLinks": "PASS",
+    "moduleFailureIsolation": "PASS",
+    "sharedBoundedDeadline": "PASS",
+    "boundedRejectingExecutor": "PASS",
+    "browserPayloadMinimization": "PASS",
+    "missingOrFalseFeatureFlag": "ABSENT",
+    "enabledWithoutControlledPorts": "FAILS_STARTUP_CLOSED"
+  },
+  "targetedVerification": {
+    "command": "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.hrisconfiguration.home.*' --no-daemon --max-workers=1",
+    "tests": 17,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "finalCorrectionCommand": "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.hrisconfiguration.home.HrisHomeCompositionServiceTest' --no-daemon --max-workers=1",
+    "finalCorrectionTests": 13,
+    "gitDiffCheck": "PASS",
+    "repositoryWideSuite": "NOT_RUN_CHANGED_CLUSTER_POLICY"
+  },
+  "independentReview": {
+    "reviewer": "/root/r4_r5_security_arch_review",
+    "state": "PASS_AFTER_HARDENING",
+    "remainingP0": 0,
+    "remainingP1": 0,
+    "remainingP2": 0
+  },
+  "nonclaims": [
+    "No browser controller, route, Gateway or OpenAPI activation is included.",
+    "No event consumer, production candidate adapter, owner HTTP adapter or RS256 signer is included.",
+    "No tenant, customer-data or production activation is authorized.",
+    "A future owner transport adapter must enforce bounded connect/read timeouts within the shared deadline."
+  ]
+}
