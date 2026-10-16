@@ -1,0 +1,550 @@
+{
+  "schema": "dwp.hris.wave6-execution-roadmap-successor.v2",
+  "roadmapId": "HRIS-WAVE6-EXECUTION-ROADMAP-SUCCESSOR-20261016-R2",
+  "issuedAt": "2026-10-16T14:50:53+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "supersedes": {
+    "path": "docs/06-delivery/hris/wave6-2026-10-15/execution-roadmap-successor.v1.json",
+    "sha256": "be526bd5ac8f9045956dabbeb7e4d3f1b7da7c74a57789057b60ff6ae7f2be59",
+    "preservation": "IMMUTABLE_PREDECESSOR_RETAINED_BECAUSE_SYS009_SOURCE_EVIDENCE_PINS_ITS_DIGEST",
+    "reason": "Reconcile the roadmap with the integrated module results and the current local-runtime and seven-workbench presentation gaps."
+  },
+  "baseline": {
+    "observedAt": "2026-10-16T14:50:53+09:00",
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "6c0f903f8648ad4af007ce908c58fc6e898cbcda",
+      "tree": "e9618a2d60c6e55d54f04bd24f00f288a4b22528",
+      "upstream": "origin/dwp-dev",
+      "localRemoteExact": true,
+      "workingTreeCleanBeforeThisSuccessor": true
+    },
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "3672ee0aca83c63369d9649f2cd1cf7f741e1b7d",
+      "tree": "6558f9cb4f85f0d83c5dd161ba697ab7d2804905",
+      "upstream": "origin/dwp-dev",
+      "localRemoteExact": true,
+      "workingTreeCleanAtObservation": true
+    }
+  },
+  "reconciledMilestones": [
+    {
+      "id": "MOD-PER-COMPPLAN",
+      "state": "ENGINEERING_COMPLETE_INTEGRATED_DEFAULT_OFF",
+      "doNotReopen": true,
+      "evidence": [
+        {
+          "path": "docs/06-delivery/hris/2026-10-14-wave3-mod-per-compplan-central-integration-receipt.v2.json",
+          "sha256": "e337826708682b0748d975a8b4d63fd12b999515df64e1d7dbfc10cd988b952b"
+        },
+        {
+          "path": "docs/06-delivery/hris/wave4-2026-10-14/central-integration-receipt.v1.json",
+          "sha256": "f3c9f03488ffd384dbff170e0ca95dab9941a10f058f706c53ea566743e4452d"
+        }
+      ],
+      "closed": [
+        "COMPPLAN_PRODUCER_AND_CONTROL_PLANE",
+        "PAY_CONSUMER_CODE_AND_TARGETED_BROKER_CONTRACT",
+        "SVC_PER_RATE_AND_CONCURRENCY_ADMISSION",
+        "SVC_PER_BOUNDED_ATOMIC_RESPONSE_SPOOL"
+      ],
+      "withheldNotImplementationWork": [
+        "EXTERNAL_MANAGED_BROKER_CONNECTIVITY_AND_ACL_ACCEPTANCE",
+        "FEATURE_ENABLEMENT",
+        "TENANT_CUSTOMER_AND_PRODUCTION_ACTIVATION"
+      ]
+    },
+    {
+      "id": "BASE-TFR-SYS-012-WORK-EXPLORER",
+      "state": "INTEGRATED_CLOSED_DEFAULT_OFF",
+      "evidence": {
+        "path": "docs/06-delivery/hris/wave6-2026-10-15/sys-012-work-explorer-integration-r1/central-integration-result.v1.json",
+        "sha256": "54ef4a7383e34f30803add14d18b8fd9c27c36e17c9a420d81e4b80099fcb507"
+      },
+      "nonclaim": "The Explorer does not implement or replace the seven workbench task-navigation surfaces."
+    },
+    {
+      "id": "BASE-TFR-HRM-002",
+      "state": "INTEGRATED_CLOSED_DEFAULT_OFF",
+      "evidence": {
+        "path": "docs/06-delivery/hris/wave6-2026-10-15/hrm-002-experience-integration-r1/central-integration-result.v1.json",
+        "sha256": "60ed600b9160586d59df0c6986a663f105acc8e5b440389a346075ec7444e8b2"
+      }
+    },
+    {
+      "id": "PLAT-004-HRM-002-RUNTIME-ONBOARDING",
+      "state": "INTEGRATED_CLOSED_DEFAULT_OFF",
+      "evidence": {
+        "path": "docs/06-delivery/hris/wave6-2026-10-15/plat-004-people-hris-notification-control-r1/runtime-onboarding-result.v1.json",
+        "sha256": "91800231b10153911c6db1260b1737fe2eec79769fd484a4883c38ea97827709"
+      }
+    },
+    {
+      "id": "BASE-TFR-SYS-009",
+      "state": "INTEGRATED_CLOSED_DEFAULT_OFF",
+      "evidence": {
+        "path": "docs/06-delivery/hris/wave6-2026-10-15/sys-009-controlled-transfer-control-r1/central-integration-result.v1.json",
+        "sha256": "599200abd4a5919a77b33ad75f759253f80410e1408b1465cc08b6a2ae6de172"
+      }
+    }
+  ],
+  "confirmedGaps": [
+    {
+      "id": "P0-LOCAL-RUNTIME-TIME-PAYROLL",
+      "priority": "P0",
+      "state": "CLOSED_VERIFIED_AT_BACKEND_BASELINE",
+      "owner": "SYS_COMMON_INTEGRATION_CONTROL",
+      "problem": "Previously, the standard local dev controller did not register, provision or start dwp-time-server:8011 and dwp-payroll-server:8012.",
+      "scope": [
+        "SERVICE_AND_PROFILE_REGISTRATION",
+        "START_ORDER_BEFORE_GATEWAY",
+        "ISOLATED_DATABASE_ROLES_AND_MIGRATION_CONTROL_RECEIPTS",
+        "OWNER_ONLY_SECRET_AND_FEATURE_FLAG_SCOPING",
+        "READINESS_FOR_8011_AND_8012"
+      ],
+      "nonclaim": "The visible operational Time and Payroll paths are owner-service paths backed by dwp-time-server:8011 and dwp-payroll-server:8012. The People-backed personal self-service paths are /hr/time and /hr/pay and are tracked separately by P0.1; closing this owner-runtime gap does not close that personal-path defect or the seven-workbench task-navigation gap.",
+      "exitCriteria": [
+        "DEVCTL_TARGETED_TESTS_PASS",
+        "TIME_8011_READINESS_PASS",
+        "PAYROLL_8012_READINESS_PASS",
+        "OWNER_SERVICE_SECRETS_REMAIN_SERVICE_SCOPED",
+        "DARK_FEATURES_REMAIN_OFF"
+      ],
+      "closureEvidence": {
+        "backendCommit": "3672ee0aca83c63369d9649f2cd1cf7f741e1b7d",
+        "backendTree": "6558f9cb4f85f0d83c5dd161ba697ab7d2804905",
+        "upstream": "origin/dwp-dev",
+        "localRemoteExact": true,
+        "targetedTests": "PASS",
+        "runtimeAcceptance": {
+          "http200": [
+            "TIME_8011",
+            "PAYROLL_8012",
+            "GATEWAY",
+            "FRONTEND_4200"
+          ],
+          "timeReceipt": {
+            "rank": 12,
+            "rows": 12
+          },
+          "payrollReceipt": {
+            "rank": 10,
+            "rows": 10,
+            "v51Applied": true
+          },
+          "sharedCurrentControlReference": "dwp-migration-control-v2:711472247f9d54a109f5095bbff1e2913aa7707835af712af08b8e2cab018cf6"
+        },
+        "localReceiptFilesCommitted": false
+      }
+    },
+    {
+      "id": "P0.1-PEOPLE-SELF-SERVICE-LOCAL-FIXTURE-AND-PROJECTION",
+      "priority": "P0.1",
+      "state": "OPEN_CONFIRMED_LOCAL_RUNTIME_DEFECT",
+      "owner": "HRIS-HRM_WITH_SYS_COMMON_INTEGRATION_CONTROL",
+      "problem": "The local People self-service time card becomes legitimately empty after the fixed seed period, while the pay projection leaks the internal LOCAL_SEED marker that the frontend contract correctly rejects.",
+      "surfaces": [
+        {
+          "route": "/hr/time",
+          "apiOwner": "dwp-people-server",
+          "state": "STALE_FIXED_DATE_LOCAL_SEED_RETURNS_NORMAL_EMPTY",
+          "requiredCorrection": "Use a rolling, deterministic, local-only as-of fixture that is idempotent, preserves user-created data and is forbidden outside the local seed profile.",
+          "evidencePaths": [
+            "dwp-backend/dwp-people-server/src/main/resources/db/local-seed/R__seed_skax_hr_experience.sql",
+            "dwp-backend/dwp-people-server/src/main/java/com/dwp/services/people/hr/HrTimeRepository.java"
+          ]
+        },
+        {
+          "route": "/hr/pay",
+          "apiOwner": "dwp-people-server",
+          "state": "LOCAL_SEED_DATA_ORIGIN_REJECTED_BY_FRONTEND_NORMALIZER",
+          "requiredCorrection": "Canonicalize LOCAL_SEED to the public REFERENCE origin at the People API boundary; keep the frontend closed enum unchanged so LOCAL_SEED remains rejected if it leaks.",
+          "evidencePaths": [
+            "dwp-backend/dwp-people-server/src/main/resources/db/local-seed/R__seed_skax_hr_experience.sql",
+            "dwp-backend/dwp-people-server/src/main/java/com/dwp/services/people/hr/HrBenefitsPayRepository.java",
+            "apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.ts"
+          ]
+        }
+      ],
+      "constraints": [
+        "DO_NOT_CHANGE_AUTHORIZATION_OR_GRANTS",
+        "DO_NOT_RELAX_THE_FRONTEND_DATA_ORIGIN_ENUM",
+        "DO_NOT_OVERWRITE_USER_CREATED_LOCAL_DATA",
+        "DO_NOT_ENABLE_LOCAL_FIXTURES_OUTSIDE_THE_LOCAL_PROFILE"
+      ],
+      "exitCriteria": [
+        "TIME_CURRENT_CARD_RENDERS_FROM_THE_ROLLING_LOCAL_ONLY_FIXTURE",
+        "TIME_FIXTURE_IS_DETERMINISTIC_IDEMPOTENT_AND_PRESERVES_USER_DATA",
+        "PAY_SELF_SERVICE_RENDERS_WITH_THE_CANONICAL_REFERENCE_ORIGIN",
+        "LOCAL_SEED_NEVER_LEAVES_THE_PEOPLE_API_BOUNDARY",
+        "FRONTEND_CONTINUES_TO_REJECT_LOCAL_SEED",
+        "EFFECTIVE_AUTHORIZATION_GRANTS_ARE_UNCHANGED",
+        "ONLY_THE_AFFECTED_PEOPLE_AND_FRONTEND_TARGET_TESTS_ARE_RUN"
+      ],
+      "nonclaim": "The personal People routes /hr/time and /hr/pay are separate from the operational Time and Payroll workbench functions whose owner-service paths use dwp-time-server:8011 and dwp-payroll-server:8012. Closing this gap does not close the seven-workbench task-navigation gap."
+    },
+    {
+      "id": "P1-HOME-PRODUCER-CANONICAL-PURPOSE-AND-TYPE",
+      "priority": "P1",
+      "state": "OPEN_CONTROL_PACKETS_PREPARED_TOKENS_WITHHELD",
+      "owner": "SYS_COMMON_INTEGRATION_CONTROL_WITH_FIVE_MODULE_OWNERS",
+      "problem": "HRM-003, PER-007, TIM-018 and PAY-015 cannot start until Central resolves one canonical Home contribution purpose and response type; SYS-012 Home composition remains downstream of all four producer results.",
+      "producerPackets": [
+        {
+          "sliceId": "BASE-TFR-HRM-003",
+          "owner": "HRIS-HRM",
+          "path": "docs/06-delivery/hris/wave6-2026-10-15/hrm-003-home-producer-control-r1/control-packet.v1.json",
+          "sha256": "3154d3ec42421a0d1407ac48081a337ba6955ee6955df7ee6bf0c83bed9a6a9a"
+        },
+        {
+          "sliceId": "BASE-TFR-PER-007",
+          "owner": "HRIS-PER",
+          "path": "docs/06-delivery/hris/wave6-2026-10-15/per-007-home-producer-control-r1/control-packet.v1.json",
+          "sha256": "f8fbd1c89b90e1e0e745b313be4f73268e060258737e4b11a6043ff3952cfb86"
+        },
+        {
+          "sliceId": "BASE-TFR-TIM-018",
+          "owner": "HRIS-TIM",
+          "path": "docs/06-delivery/hris/wave6-2026-10-15/tim-018-home-producer-control-r1/control-packet.v1.json",
+          "sha256": "3122e35ebe47e4401cbda3f87732f5d9b3cbb07f5acdb852e169b0b65fa6b3e4"
+        },
+        {
+          "sliceId": "BASE-TFR-PAY-015",
+          "owner": "HRIS-PAY",
+          "path": "docs/06-delivery/hris/wave6-2026-10-15/pay-015-home-producer-control-r1/control-packet.v1.json",
+          "sha256": "47802b874bb7ca855483f217e2d06170e49b898d000fed47d0134dd7ea43a396"
+        }
+      ],
+      "exitCriteria": [
+        "ONE_CANONICAL_PURPOSE_CODE",
+        "ONE_CANONICAL_HOME_CONTRIBUTION_RESPONSE_PROFILE",
+        "FOUR_OWNER_PACKETS_REPINNED_TO_THE_SAME_CENTRAL_DECISION",
+        "FOUR_OWNER_TOKENS_ISSUED_ONLY_AFTER_RECONCILIATION",
+        "SYS012_HOME_RESIDUAL_STARTS_ONLY_AFTER_ALL_FOUR_RESULTS_ARE_INTEGRATED"
+      ]
+    },
+    {
+      "id": "P2-SEVEN-WORKBENCH-TASK-NAVIGATION-AND-ROUTE-READINESS",
+      "priority": "P2",
+      "state": "OPEN_CONTRACT_PRESENT_PRESENTATION_NOT_WIRED",
+      "owner": "HRIS-SYS_WITH_MODULE_ROUTE_OWNERS",
+      "problem": "The reviewed 98-node IA and 46 task groups exist, but the shared shell hides surface navigation and renders only the seven compatibility workbench entries. Canonical task navigation and canonical default landing routes are not mounted.",
+      "contract": {
+        "nodes": 98,
+        "shellEntries": 9,
+        "workbenches": 7,
+        "taskGroups": 46,
+        "source": "apps/dwp/src/features/hris/shell/model/hris-information-architecture.generated.ts",
+        "runtimeManifest": "apps/dwp/src/features/hris/shell/model/hris-runtime-navigation-manifest.ts",
+        "currentShellProjection": "apps/dwp/src/features/hris/shell/model/hris-shell-navigation-contract.ts",
+        "currentHideSurfaceNavigation": true
+      },
+      "workbenches": [
+        {
+          "id": "HRIS-WB-MY-HR",
+          "owner": "HRIS-HRM",
+          "taskGroupCount": 6,
+          "canonicalEntryRoute": "/hr/me",
+          "canonicalEntryRouteReady": true,
+          "canonicalDefaultRoute": "/hr/me/profile",
+          "canonicalDefaultRouteReady": false,
+          "taskNavigationReady": false
+        },
+        {
+          "id": "HRIS-WB-TEAM",
+          "owner": "HRIS-HRM",
+          "taskGroupCount": 5,
+          "canonicalEntryRoute": "/hr/team",
+          "canonicalEntryRouteReady": true,
+          "canonicalDefaultRoute": "/hr/team/home",
+          "canonicalDefaultRouteReady": false,
+          "taskNavigationReady": false
+        },
+        {
+          "id": "HRIS-WB-HR-OPERATIONS",
+          "owner": "HRIS-HRM",
+          "taskGroupCount": 7,
+          "canonicalEntryRoute": "/hr/operations",
+          "canonicalEntryRouteReady": true,
+          "canonicalDefaultRoute": "/hr/operations/home",
+          "canonicalDefaultRouteReady": false,
+          "taskNavigationReady": false
+        },
+        {
+          "id": "HRIS-WB-TIME",
+          "owner": "HRIS-TIM",
+          "taskGroupCount": 6,
+          "canonicalEntryRoute": "/hr/operations/time",
+          "canonicalEntryRouteReady": true,
+          "canonicalDefaultRoute": "/hr/operations/time/command-center",
+          "canonicalDefaultRouteReady": false,
+          "taskNavigationReady": false
+        },
+        {
+          "id": "HRIS-WB-PAYROLL",
+          "owner": "HRIS-PAY",
+          "taskGroupCount": 7,
+          "canonicalEntryRoute": "/hr/operations/payroll",
+          "canonicalEntryRouteReady": false,
+          "compatibilityEntryRoute": "/hr/operations/pay",
+          "canonicalDefaultRoute": "/hr/operations/payroll/command-center",
+          "canonicalDefaultRouteReady": false,
+          "taskNavigationReady": false
+        },
+        {
+          "id": "HRIS-WB-PERFORMANCE",
+          "owner": "HRIS-PER",
+          "taskGroupCount": 7,
+          "canonicalEntryRoute": "/hr/operations/performance",
+          "canonicalEntryRouteReady": false,
+          "compatibilityEntryRoute": "/hr/operations/talent",
+          "canonicalDefaultRoute": "/hr/operations/performance/command-center",
+          "canonicalDefaultRouteReady": false,
+          "taskNavigationReady": false
+        },
+        {
+          "id": "HRIS-WB-SETTINGS",
+          "owner": "HRIS-SYS",
+          "taskGroupCount": 8,
+          "canonicalEntryRoute": "/hr/settings",
+          "canonicalEntryRouteReady": false,
+          "compatibilityEntryRoute": "/hr/manage/system",
+          "canonicalDefaultRoute": "/hr/settings/enterprise",
+          "canonicalDefaultRouteReady": false,
+          "taskNavigationReady": false
+        }
+      ],
+      "exitCriteria": [
+        "SEVEN_WORKBENCHES_PROJECT_ONLY_AUTHORIZED_DESCENDANTS",
+        "FORTY_SIX_TASK_GROUPS_KEEP_CONTRACT_ORDER_AND_PROGRESSIVE_DISCLOSURE",
+        "CANONICAL_ENTRY_AND_DEFAULT_ROUTES_HAVE_EXACT_PAGE_CONTRACTS",
+        "LANDING_FALLS_BACK_TO_FIRST_AUTHORIZED_DESCENDANT",
+        "DEEP_LINK_AND_SIDEBAR_USE_ONE_EFFECTIVE_NAVIGATION_POLICY_REVISION",
+        "NO_GLOBAL_98_NODE_TREE_IN_THE_SIDEBAR",
+        "MOBILE_KEYBOARD_ZOOM_AND_EMPTY_DENIED_DEGRADED_STATES_PASS"
+      ]
+    }
+  ],
+  "executionPlan": [
+    {
+      "order": 0,
+      "id": "R0-RESEAL-AUTHORITATIVE-BASELINE",
+      "state": "DONE_BY_THIS_SUCCESSOR",
+      "dependsOn": [],
+      "owner": "SYS_COMMON_INTEGRATION_CONTROL"
+    },
+    {
+      "order": 1,
+      "id": "R1-CLOSE-P0-LOCAL-RUNTIME-TIME-PAYROLL",
+      "state": "CLOSED_VERIFIED_AT_BACKEND_BASELINE",
+      "dependsOn": ["R0-RESEAL-AUTHORITATIVE-BASELINE"],
+      "owner": "SYS_COMMON_INTEGRATION_CONTROL",
+      "validation": "DEVCTL_CLUSTER_AND_8011_8012_READINESS_ONLY"
+    },
+    {
+      "order": 2,
+      "id": "R1B-CLOSE-PEOPLE-SELF-SERVICE-LOCAL-FIXTURE-AND-PROJECTION",
+      "state": "NEXT_EXECUTABLE",
+      "dependsOn": ["R1-CLOSE-P0-LOCAL-RUNTIME-TIME-PAYROLL"],
+      "owner": "HRIS-HRM_WITH_SYS_COMMON_INTEGRATION_CONTROL",
+      "scope": "ROLLING_LOCAL_TIME_FIXTURE_AND_PAY_LOCAL_SEED_TO_REFERENCE_API_CANONICALIZATION_WITHOUT_AUTHORIZATION_CHANGE",
+      "validation": "AFFECTED_PEOPLE_AND_FRONTEND_TARGETS_ONLY"
+    },
+    {
+      "order": 3,
+      "id": "R2-RESOLVE-HOME-PRODUCER-PURPOSE-AND-TYPE",
+      "state": "WITHHELD_PENDING_R1B",
+      "dependsOn": ["R1B-CLOSE-PEOPLE-SELF-SERVICE-LOCAL-FIXTURE-AND-PROJECTION"],
+      "owner": "SYS_COMMON_INTEGRATION_CONTROL",
+      "scope": "ONE_CANONICAL_PURPOSE_AND_ONE_CANONICAL_HOME_CONTRIBUTION_RESPONSE_PROFILE_FOR_ALL_FOUR_PRODUCERS"
+    },
+    {
+      "order": 4,
+      "parallelGroup": "HOME_PRODUCERS",
+      "id": "R3A-IMPLEMENT-INTEGRATE-HRM-003-HOME-PRODUCER",
+      "state": "WITHHELD_PENDING_R2_AND_OWNER_TOKEN",
+      "dependsOn": ["R2-RESOLVE-HOME-PRODUCER-PURPOSE-AND-TYPE"],
+      "owner": "HRIS-HRM"
+    },
+    {
+      "order": 4,
+      "parallelGroup": "HOME_PRODUCERS",
+      "id": "R3B-IMPLEMENT-INTEGRATE-PER-007-HOME-PRODUCER",
+      "state": "WITHHELD_PENDING_R2_AND_OWNER_TOKEN",
+      "dependsOn": ["R2-RESOLVE-HOME-PRODUCER-PURPOSE-AND-TYPE"],
+      "owner": "HRIS-PER"
+    },
+    {
+      "order": 4,
+      "parallelGroup": "HOME_PRODUCERS",
+      "id": "R3C-IMPLEMENT-INTEGRATE-TIM-018-HOME-PRODUCER",
+      "state": "WITHHELD_PENDING_R2_AND_OWNER_TOKEN",
+      "dependsOn": ["R2-RESOLVE-HOME-PRODUCER-PURPOSE-AND-TYPE"],
+      "owner": "HRIS-TIM"
+    },
+    {
+      "order": 4,
+      "parallelGroup": "HOME_PRODUCERS",
+      "id": "R3D-IMPLEMENT-INTEGRATE-PAY-015-HOME-PRODUCER",
+      "state": "WITHHELD_PENDING_R2_AND_OWNER_TOKEN",
+      "dependsOn": ["R2-RESOLVE-HOME-PRODUCER-PURPOSE-AND-TYPE"],
+      "owner": "HRIS-PAY"
+    },
+    {
+      "order": 5,
+      "id": "R4-INTEGRATE-SYS-012-HOME-COMPOSITION-RESIDUAL",
+      "state": "WITHHELD_PENDING_ALL_FOUR_PRODUCER_RESULTS",
+      "dependsOn": [
+        "R3A-IMPLEMENT-INTEGRATE-HRM-003-HOME-PRODUCER",
+        "R3B-IMPLEMENT-INTEGRATE-PER-007-HOME-PRODUCER",
+        "R3C-IMPLEMENT-INTEGRATE-TIM-018-HOME-PRODUCER",
+        "R3D-IMPLEMENT-INTEGRATE-PAY-015-HOME-PRODUCER"
+      ],
+      "owner": "HRIS-SYS_WITH_SYS_COMMON_INTEGRATION_CONTROL",
+      "nonclaim": "Do not reopen the already closed SYS-012 Work Explorer increment."
+    },
+    {
+      "order": 6,
+      "id": "R5-SEAL-AND-INTEGRATE-SHARED-SEVEN-WORKBENCH-TASK-NAVIGATION",
+      "state": "WITHHELD_PENDING_R4",
+      "dependsOn": ["R4-INTEGRATE-SYS-012-HOME-COMPOSITION-RESIDUAL"],
+      "owner": "SYS_COMMON_INTEGRATION_CONTROL_WITH_HRIS-SYS",
+      "scope": "SHARED_FRAME_AUTHORIZED_TASK_GROUP_PROJECTION_CANONICAL_LANDING_ROUTE_READINESS_AND_DEEP_LINK_POLICY"
+    },
+    {
+      "order": 7,
+      "id": "R6-EXPOSE-EXISTING-IMPLEMENTED-SCREENS-THROUGH-SEVEN-WORKBENCHES",
+      "state": "WITHHELD_PENDING_R5",
+      "dependsOn": ["R5-SEAL-AND-INTEGRATE-SHARED-SEVEN-WORKBENCH-TASK-NAVIGATION"],
+      "owners": ["HRIS-HRM", "HRIS-PER", "HRIS-TIM", "HRIS-PAY", "HRIS-SYS"],
+      "rule": "Expose only current implemented and exactly authorized routes; unavailable IA nodes remain hidden or explicitly unavailable and must never become fake-success menu items."
+    },
+    {
+      "order": 8,
+      "id": "R7-COMPLETE-REMAINING-ACTIVE-BASE-SLICES",
+      "state": "PER_SLICE_PACKET_TOKEN_WORKTREE_AND_ACCEPTANCE_REQUIRED",
+      "dependsOn": ["R6-EXPOSE-EXISTING-IMPLEMENTED-SCREENS-THROUGH-SEVEN-WORKBENCHES"],
+      "owners": ["HRIS-HRM", "HRIS-PER", "HRIS-TIM", "HRIS-PAY", "HRIS-SYS"],
+      "inventoryRule": "Complete every still-open active BASE_TARGET_FAMILY row; HRM-006 and SYS-013 remain retired evidence-only and must not receive implementation work."
+    },
+    {
+      "order": 9,
+      "id": "R8-COMPLETE-REMAINING-MODERN-CAPABILITIES",
+      "state": "PER_CAPABILITY_PACKET_TOKEN_WORKTREE_AND_ACCEPTANCE_REQUIRED",
+      "dependsOn": ["R7-COMPLETE-REMAINING-ACTIVE-BASE-SLICES"],
+      "owners": ["HRIS-HRM", "HRIS-PER", "HRIS-TIM", "HRIS-PAY", "HRIS-SYS"],
+      "excludeCompleted": ["MOD-PER-COMPPLAN"],
+      "rule": "Reclassify every other modern capability at the then-current pins before issuing an exact owner token; never reimplement the completed compensation-planning capability."
+    },
+    {
+      "order": 10,
+      "id": "R9-PROVE-102-98-46-COMPLETENESS",
+      "state": "WITHHELD_PENDING_R8",
+      "dependsOn": ["R8-COMPLETE-REMAINING-MODERN-CAPABILITIES"],
+      "owner": "SYS_COMMON_INTEGRATION_CONTROL",
+      "canonicalGate": "G4_FUNCTIONAL_GATE",
+      "counts": {
+        "trackedSlices": 102,
+        "activeSlices": 100,
+        "retiredEvidenceOnlySlices": 2,
+        "iaNodes": 98,
+        "taskGroups": 46
+      },
+      "exitCriteria": [
+        "ALL_102_ROWS_HAVE_FINAL_VERIFIED_DISPOSITION",
+        "ALL_100_ACTIVE_SLICES_HAVE_CLOSED_FUNCTIONAL_EVIDENCE",
+        "TWO_RETIRED_ROWS_HAVE_NO_IMPLEMENTATION_TOUCH",
+        "ALL_98_IA_NODES_HAVE_EXACT_ROUTE_SURFACE_OWNER_AND_STATE",
+        "ALL_46_TASK_GROUPS_HAVE_AUTHORIZED_PROGRESSIVE_DISCLOSURE_AND_ROUTE_READINESS",
+        "UNMAPPED_ORPHAN_DUPLICATE_AND_FAKE_SUCCESS_COUNTS_ARE_ZERO"
+      ]
+    },
+    {
+      "order": 11,
+      "id": "R10A-G5A-DESIGN-REQUEST-READY",
+      "state": "WITHHELD_PENDING_R9_AND_MODULE_G4",
+      "dependsOn": ["R9-PROVE-102-98-46-COMPLETENESS"],
+      "owner": "FIVE_MODULE_OWNERS_WITH_SYS_COMMON_INTEGRATION_CONTROL",
+      "scope": "FULL_SURFACE_DESIGN_AI_PACKAGES_WITH_SYNTHETIC_OR_IRREVERSIBLY_MASKED_DATA_UNMAPPED_ZERO_AND_INTEGRITY_ZIPS",
+      "iaNodeAllocation": {
+        "HRIS-HRM": 24,
+        "HRIS-PER": 19,
+        "HRIS-PAY": 17,
+        "HRIS-TIM": 17,
+        "HRIS-SYS": 21,
+        "total": 98
+      }
+    },
+    {
+      "order": 11,
+      "id": "R10B-G5B-DESIGN-ACCEPTED",
+      "state": "WITHHELD_PENDING_R10A_AND_USER_PRODUCT_OWNER_ACCEPTANCE",
+      "dependsOn": ["R10A-G5A-DESIGN-REQUEST-READY"],
+      "owner": "USER_AND_PRODUCT_OWNERS",
+      "scope": "EDITABLE_FRAMES_COMPONENTS_VARIANTS_TOKENS_INTERACTIONS_ASSETS_LICENSES_AND_SCREEN_FAMILY_DECISIONS"
+    },
+    {
+      "order": 11,
+      "id": "R10C-G5C-VISUAL-REPLACEMENT-COMPLETE",
+      "state": "WITHHELD_PENDING_R10B",
+      "dependsOn": ["R10B-G5B-DESIGN-ACCEPTED"],
+      "owner": "FIVE_MODULE_OWNERS_WITH_SYS_COMMON_INTEGRATION_CONTROL",
+      "scope": "APPROVED_VISUAL_REPLACEMENT_WITH_FUNCTION_AUTHORIZATION_STATE_ACCESSIBILITY_RESPONSIVE_VISUAL_AND_GOLDEN_REGRESSION"
+    },
+    {
+      "order": 12,
+      "id": "R11-PRODUCTION-G6-ACTIVATION-ACCEPTANCE",
+      "state": "WITHHELD_PENDING_R10C",
+      "dependsOn": ["R10C-G5C-VISUAL-REPLACEMENT-COMPLETE"],
+      "owner": "SYS_COMMON_INTEGRATION_CONTROL_WITH_SECURITY_OPERATIONS_AND_CUSTOMER_ACCEPTANCE_OWNERS",
+      "scope": "TENANT_CONFIGURABILITY_LEGAL_PACKS_REAL_CONNECTORS_CUSTOMER_MIGRATION_PARALLEL_RUN_RECONCILIATION_SECURITY_OBSERVABILITY_ROLLBACK_DR_AND_PRODUCTION_RELEASE_READINESS"
+    }
+  ],
+  "gateVocabulary": {
+    "historicalIntegrationG6": {
+      "canonicalName": "G6_W1_SUCCESSOR",
+      "state": "COMPLETED_2026_10_12",
+      "purpose": "One frozen synthetic integration runtime run used as evidence for delegation.",
+      "evidence": {
+        "path": "docs/06-delivery/hris/2026-10-12-g6-w1-successor-receipt.json",
+        "sha256": "e9844302d03b81a8a473be4b85ee80862a16946264c0d0d9e4636f6cac80107c"
+      },
+      "notEquivalentTo": "PRODUCTION_G6_ACTIVATION_ACCEPTANCE"
+    },
+    "historicalDelegationG7": {
+      "canonicalName": "G7_EVIDENCE_PROMOTION_AND_MODULE_DELEGATION",
+      "state": "COMPLETED_2026_10_12_AND_CONSUMED_BY_SUCCESSOR_WAVES",
+      "purpose": "Promote frozen evidence and authorize exact per-slice module packets, tokens and worktrees without rerunning product code.",
+      "evidence": {
+        "path": "docs/06-delivery/hris/2026-10-12-g7-evidence-promotion-and-delegation-receipt.json",
+        "sha256": "80bc8a7da69e3bb3fc733be28a02d8db4f5c2f5652bc3fb80659ae37437bf93b"
+      },
+      "notEquivalentTo": "PRODUCT_COMPLETENESS_OR_PRODUCTION_RELEASE"
+    },
+    "productionG6": {
+      "canonicalName": "PRODUCTION_G6_ACTIVATION_ACCEPTANCE",
+      "state": "FUTURE_WITHHELD_UNTIL_R10C",
+      "purpose": "Authorize tenant, legal-pack, real-connector, customer-data migration, production activation and release only after functional and visual completion.",
+      "mustNeverBeInferredFromHistoricalG6OrG7": true
+    }
+  },
+  "validationPolicy": {
+    "changedClusterFirst": true,
+    "failedTargetOnlyAfterCorrection": true,
+    "oneBoundedStageBeforeHandoff": true,
+    "repositoryWideSuitePerCorrection": false,
+    "fullSuiteOnlyAtExplicitReleaseGateOrCrossCuttingRisk": true,
+    "reuseUnaffectedEvidence": true
+  },
+  "activationPolicy": {
+    "allNewFeaturesDefaultOff": true,
+    "menuVisibilityRequiresTenantPolicyAndExactAuthorization": true,
+    "tenantActivationAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "CLOSE_R1B_PEOPLE_SELF_SERVICE_LOCAL_FIXTURE_AND_PROJECTION_WITH_TARGETED_PEOPLE_AND_FRONTEND_ACCEPTANCE_BEFORE_R2_HOME_PRODUCER_RECONCILIATION"
+}
