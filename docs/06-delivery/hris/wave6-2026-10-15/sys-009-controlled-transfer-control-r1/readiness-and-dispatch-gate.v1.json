@@ -1,0 +1,26 @@
+{
+  "schema": "dwp.hris.sys009.readiness-dispatch-gate.v1",
+  "gateId": "HRIS-WAVE6-SYS-009-READINESS-DISPATCH-R1",
+  "evaluatedAt": "2026-10-16T10:24:22+09:00",
+  "sliceId": "BASE-TFR-SYS-009",
+  "decision": {
+    "state": "START_TOKEN_ISSUED_RUNTIME_AUTHORIZED_IN_PROGRESS_ADMISSION_PENDING",
+    "implementationAuthorized": true,
+    "startTokenIssued": true,
+    "worktreeMaterializationAuthorized": true,
+    "migrationLeaseActive": true,
+    "preTokenDraftAdmitted": false,
+    "reason": "The exact authorization carrier and Gateway runtime-context supplement are integrated default-OFF at 7d948cc86e6e8c56de92b1224d67bdebf7d90c3a, V328 remains absent, V327 is stable, and the lease and start token are issued. Both dirty worktrees now point at the final base, but their pre-token drafts remain unadmitted until every dirty path is reviewed after issuance against the exact work packet or shared-receipt amendment."
+  },
+  "dependencies": {"required": ["DEP-001", "DEP-002", "DEP-003", "DEP-016"], "state": "RECOVERED_READY", "runtimePrerequisites": []},
+  "centralCarrierGates": [
+    {"gate": "EXACT_AUTHORIZATION_PEP_OPENAPI_GATEWAY_CARRIER_INTEGRATED", "state": "PASS", "evidence": "dwp-backend dwp-dev/origin at 7d948cc86e6e8c56de92b1224d67bdebf7d90c3a tree e7f324c4210868178d8e6d8544635e46227ff847"},
+    {"gate": "BASE_CARRIER_TARGETED_TESTS", "state": "PASS_REPORTED_BY_CARRIER", "evidence": "controlled-transfer-control-authority.v1.json#/centralCarrier/baseCarrierIntegrationEvidence/targetedValidation"},
+    {"gate": "CENTRAL_CARRIER_RUNTIME_CONTEXT_SUPPLEMENT", "state": "PASS", "evidence": "focused method PASS; ProductSurfaceDecisionContextFilterTest 37/37 PASS; generator/fixture checks PASS; integrated at 7d948cc86e6e8c56de92b1224d67bdebf7d90c3a"},
+    {"gate": "V328_ABSENT_V327_STABLE", "state": "PASS", "evidence": "V328 absent; V327 12932 bytes sha256 8586a323808e902533e073c83bc6fb83f456173a9f626801bfbe611f19e7d9d7"},
+    {"gate": "MIGRATION_LEASE_ACTIVATED", "state": "PASS", "evidence": "migration-lease-activation.v1.json"},
+    {"gate": "PRETOKEN_DRAFT_ADMISSION", "state": "PENDING", "evidence": "start-token-issued.v1.json#/runtimeWorktree/admissionProtocol"}
+  ],
+  "closedFacts": ["source family DWP.OBJECT.CONTROLLED_TRANSFER", "owner HRIS-SYS and dwp-platform-server", "SYS-API-033/034 and SYS-EVT-008 exact scope", "non-UI supporting slice", "all new runtime default OFF"],
+  "nonclaims": ["pre-token dirty draft admitted", "direct dwp-dev merge authorized", "authorization bundle runtime enabled", "HOME producer token issued", "tenant/customer/production rollout authorized"]
+}

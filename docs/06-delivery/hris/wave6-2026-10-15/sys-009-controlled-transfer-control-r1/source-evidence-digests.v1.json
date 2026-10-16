@@ -1,0 +1,19 @@
+{
+  "schema": "dwp.hris.sys009.source-evidence-digests.v1",
+  "sliceId": "BASE-TFR-SYS-009",
+  "preparedAt": "2026-10-16T09:45:26+09:00",
+  "algorithm": "SHA-256",
+  "rule": "Any digest drift invalidates this preparation and requires review of only the changed source and its direct dependants.",
+  "sources": [
+    {"path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/g3-slice-code-go-register.csv", "sha256": "fb646668329e93ca0b83b74e2a3e43619954cec1cb2f6770029677edbc8d5725"},
+    {"path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/target-family-resolution-register.csv", "sha256": "a8746b9b89bf6bebd0a5b6fe4d8f9e985e223dcd6d395f5ef03b6f3f98d16189"},
+    {"path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/api-pep-binding-register.csv", "sha256": "0e38d724516a8b271069241ffa0fb6400984dc703758767de53cbaffb4f93da3"},
+    {"path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/08-transport-schema-contract.md", "sha256": "681bb72403f9f3e11cb09d761e9d0bd43b70d71c79b4bedd49c92dd7c06b9d48"},
+    {"path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-evidence/sys/g2-contract-catalog.csv", "sha256": "1251cd627675b07563c340c8a87ed50723ebc6bfe4dd447f34dc41f113891206"},
+    {"path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-evidence/sys/g2-transport-schemas.v1.json", "sha256": "7067a7adad828d4918220fcde54fc0fa9a2add5db1d5745e0a4acb0a50698cf7"},
+    {"path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-evidence/sys/g2-platform-physical-schema.sql", "sha256": "5bd0fe6877ea0fb5a545f701dba7847c173a52dbe415a2b642d2a6a138594aa8"},
+    {"path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-evidence/sys/g2-state-machines.md", "sha256": "7ee14c1369945498029b00b119679f3f6dd9c1285df1f176b186bbd1b45b8f10"},
+    {"path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-evidence/sys/g2-implementation-contract.v2.md", "sha256": "fd4c05cc6dd836441e9a0786484103deafa0a7375d3c1b8124d16dabafd149a7"},
+    {"path": "docs/06-delivery/hris/wave6-2026-10-15/execution-roadmap-successor.v1.json", "sha256": "be526bd5ac8f9045956dabbeb7e4d3f1b7da7c74a57789057b60ff6ae7f2be59"}
+  ]
+}

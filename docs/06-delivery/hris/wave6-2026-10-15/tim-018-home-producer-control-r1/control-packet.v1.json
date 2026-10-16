@@ -1,0 +1,32 @@
+{
+  "schema": "dwp.hris.home-producer-control-packet.v1",
+  "packetId": "HRIS-WAVE6-TIM-018-HOME-PRODUCER-CONTROL-R1",
+  "preparedAt": "2026-10-16T09:45:26+09:00",
+  "slice": {"sliceId": "BASE-TFR-TIM-018", "sourceRef": "TFR-TIM-018", "moduleSession": "HRIS-TIM", "ownerService": "dwp-time-server", "boundedContext": "TIME_LEAVE", "sourceFamilySha256": "0ffa7c533f2b060d826de4f6c7e6bcb044e63288843d1c0949f1c54007309169", "sourceRowCount": 20},
+  "authority": {
+    "ownerPep": "PEP-TIM-001",
+    "servicePep": "SVC-PEP-TIM-002",
+    "xcon": "XCON-014",
+    "event": "EVT-TIM:HrisHomeContributionChanged.v1",
+    "capabilities": ["hcm.operations.time.update", "hcm.personal.time.view", "hcm.team.time.approve"],
+    "internalGet": "/internal/hris-time/v1/home-contributions/{payloadRef}",
+    "caller": "dwp-platform-server",
+    "purposeResolution": {"state": "CENTRAL_RECONCILIATION_REQUIRED", "serviceBindingValue": "HRIS_HOME_CONTRIBUTION_MATERIALIZE", "homeSecurityValue": "HRIS_HOME_MATERIALIZATION", "sourceContractValue": "HRIS_HOME_MATERIALIZATION", "implementationValue": null},
+    "materializationTypeResolution": {"state": "CENTRAL_RECONCILIATION_REQUIRED", "serviceBindingValue": "TimeLeaveHomeContributionV1", "homeSecurityValue": "TimeLeaveHomeContributionV1", "sourceContractValue": "TimeHomeContribution.v1", "canonicalXconProfile": "TimeLeaveHomeContribution.v1", "implementationValue": null}
+  },
+  "evidencePins": [
+    {"path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/service-api-auth-binding-register.csv", "sha256": "a54272429e70d0e2494e082b214615a4befe2354d5ab72bf7619500e2b0fdcaa"},
+    {"path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/home-materialization-security-register.csv", "sha256": "e5a0855091992de0e1f894a980422a5d426ebd96bb5f4ff811accb407f99fe59"},
+    {"path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/cross-module-contract-register.csv", "sha256": "783bd3f6c6fdcf5d35da73020b2cc01f0c59cfd6e9fe9d56ffa75a3cd380f725"},
+    {"path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/cross-module-canonical-schemas.v1.json", "sha256": "f6fb63f52e2b6043b62f8afdd87b7acdbd89fe9db3330d8a2818be9e5c8326c4"},
+    {"path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/cross-module-schema-binding-register.csv", "sha256": "b78fbae31c9cd48c4eadc37ea689d4f6987642ee8562700205f3c14bad0c6334"},
+    {"path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-evidence/tim/g2-api-event-contracts.json", "sha256": "1251365481d7063bf3fcf0e3e5bfaeca148554da354ac60fe29d2e67d1c1cb7f"}
+  ],
+  "readinessGate": {"state": "CENTRAL_RECONCILIATION_REQUIRED", "tokenState": "WITHHELD", "implementationAuthorized": false, "worktreeAuthorized": false, "reason": "The service binding purpose conflicts with the home-security and TIM source purpose, and the TIM source response type conflicts with the service/security/canonical type. Central authority must issue one purpose/type reconciliation receipt before any token or implementation."},
+  "work": {"objective": "After central reconciliation selects one purpose and one materialization response type, publish a minimized Time/Leave home-contribution change reference and materialize only those selected values for authorized Platform requests.", "required": ["central reconciliation receipt with non-null implementation purpose and type", "server-bound tenant and signed on-behalf-of principal", "current widget capability, TIME_GROUP scope, purpose and field-policy re-evaluation", "closed TimeLeaveHomeData", "no location evidence or leave reasons", "opaque tenant-bound ref and verified digest", "freshness/state/deep-link validation", "transactional outbox and replay safety", "default OFF"]},
+  "resultContract": {"requiredState": "OWNER_HOME_PRODUCER_COMPLETE_INTEGRATION_PENDING_DEFAULT_OFF", "acceptance": ["central reconciliation receipt pins the single implemented purpose and materialization response type", "exact SVC-PEP-TIM-002 workload enforcement", "XCON-014 closed module TIM event with time-* or leave-* widget key", "SELF/TEAM/TIME_GROUP scope and revision binding", "unknown ref, digest mismatch, stale permission and cross-tenant fail closed", "location evidence and leave reasons never exposed", "fresh/degraded/unavailable and partial-failure semantics", "outbox duplicate/replay and crash recovery", "no browser route or caller-selected tenant", "targeted owner tests pass", "feature and event publication remain default OFF"]},
+  "touchManifest": {"allowedBackendAfterToken": ["dwp-time-server/src/main/java/com/dwp/services/time/home/**", "dwp-time-server/src/test/java/com/dwp/services/time/home/**", "dwp-time-server/src/test/java/com/dwp/services/time/contracts/xcon/Xcon014TimeLeaveHomeContributionChangedV1ProviderContractTest.java", "dwp-time-server/src/main/resources/application.yml (TIM home producer default-OFF settings only)"], "allowedFrontendAfterToken": [], "forbidden": ["SYS Home composition", "central authorization/OpenAPI/generated contracts", "People/Payroll source", "clock/absence unrelated runtime", "browser UI or menu", "existing migrations", "tenant/customer/production activation"], "outsideBoundaryAction": "STOP_AND_REQUEST_EXACT_AMENDMENT"},
+  "migrationDecision": {"state": "NO_NEW_MIGRATION_EXPECTED_RECONFIRM_AT_TOKEN", "currentHighWater": "TIME:V11", "rule": "Reuse Time/Leave owner projections and outbox. If durable payload-reference persistence is necessary, withhold token issuance and issue one exact JIT Time migration lease."},
+  "tokenPreparation": {"state": "PREPARED_NOT_ISSUED", "issueState": "WITHHELD_CENTRAL_RECONCILIATION_REQUIRED", "reservedTokenId": "HRIS-WAVE6-START-BASE-TFR-TIM-018-R1", "requiredBeforeIssue": ["central purpose/type reconciliation receipt PASS", "control carrier committed/pushed", "current endpoint/event/purpose parity audit PASS", "migration decision reconfirmed", "backend dwp-dev clean remote exact", "dedicated HRIS-TIM worktree clean remote exact", "exact targeted commands recorded"], "implementationAuthorized": false},
+  "basePinsAtPreparation": {"backend": "dwp-backend@7d948cc86e6e8c56de92b1224d67bdebf7d90c3a", "frontendControl": "dwp-frontend@75e79078bae2b2e4a1dbbaf73c8b91a092bb1520"}
+}

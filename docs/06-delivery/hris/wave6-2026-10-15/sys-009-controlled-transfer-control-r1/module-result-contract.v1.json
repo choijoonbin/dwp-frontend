@@ -1,0 +1,22 @@
+{
+  "schema": "dwp.hris.module-result-contract.v1",
+  "contractId": "HRIS-WAVE6-RESULT-BASE-TFR-SYS-009-R1",
+  "sliceId": "BASE-TFR-SYS-009",
+  "requiredResultState": "MODULE_RUNTIME_COMPLETE_CONTROL_INTEGRATION_PENDING_DEFAULT_OFF",
+  "acceptanceCriteria": [
+    {"id": "SYS009-AC-01", "assertion": "SYS-API-033 implements the exact GET path, required asOf/fields/freshness query and closed CatalogResponse."},
+    {"id": "SYS009-AC-02", "assertion": "SYS-API-034 implements the exact POST path, required headers, closed FileTransferCommand and 202 Receipt."},
+    {"id": "SYS009-AC-03", "assertion": "PEP-SYS-035/036 enforce the exact app, duty, capability, population, field and purpose intersections with negative tests."},
+    {"id": "SYS009-AC-04", "assertion": "Verified tenant and principal are server-bound; cross-tenant, caller-tenant and opaque-target probes fail closed."},
+    {"id": "SYS009-AC-05", "assertion": "Same key plus full snapshot digest returns the original receipt; key/payload mismatch returns 409 without a second transfer."},
+    {"id": "SYS009-AC-06", "assertion": "Object version, ETag, digest, byte size, media and CLEAN scan evidence are atomically bound; every mismatch fails before receipt creation."},
+    {"id": "SYS009-AC-07", "assertion": "Direction is derived only from transferKind and all outbound kinds require recipient policy and positive egress revision."},
+    {"id": "SYS009-AC-08", "assertion": "Only legal state transitions occur; quarantine/failure/expiry/cancel and immutable terminal evidence are proved."},
+    {"id": "SYS009-AC-09", "assertion": "Shared receipt seals originating action, subject, population, field, purpose and authorization revisions; later reads apply the more restrictive current/originating decision."},
+    {"id": "SYS009-AC-10", "assertion": "SYS-EVT-008 is emitted by transactional outbox with the exact minimized payload and event-id dedup semantics."},
+    {"id": "SYS009-AC-11", "assertion": "V328 passes clean install and V327-to-V328 upgrade with historical checksum preservation, forced RLS, constraints and tenant-negative PostgreSQL evidence."},
+    {"id": "SYS009-AC-12", "assertion": "Runtime remains default OFF and no route/menu, policy, tenant, customer or production activation is claimed."}
+  ],
+  "requiredEvidence": ["backend module commit and remote-exact branch lineage", "changed-path manifest", "all twelve acceptance outcomes with command and result", "migration checksum and disposable PostgreSQL evidence", "central-carrier checksum pins", "default-OFF and nonactivation statement"],
+  "forbiddenCompletionClaims": ["direct dwp-dev merge authorized", "central result admitted", "tenant/customer/production enabled"]
+}

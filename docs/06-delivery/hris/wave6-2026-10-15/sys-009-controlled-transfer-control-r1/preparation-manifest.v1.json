@@ -1,0 +1,57 @@
+{
+  "schema": "dwp.hris.wave6.preparation-manifest.v1",
+  "manifestId": "HRIS-WAVE6-SYS-009-AND-HOME-PRODUCERS-PREPARATION-R1",
+  "preparedAt": "2026-10-16T10:26:02+09:00",
+  "state": "SYS009_RUNTIME_AUTHORIZED_IN_PROGRESS_HOME_TOKENS_WITHHELD",
+  "integrationTarget": "dwp-dev",
+  "finalBackendPin": {
+    "commit": "7d948cc86e6e8c56de92b1224d67bdebf7d90c3a",
+    "tree": "e7f324c4210868178d8e6d8544635e46227ff847",
+    "originExact": true,
+    "aheadBehind": "0/0",
+    "clean": true
+  },
+  "sys009": {
+    "sliceId": "BASE-TFR-SYS-009",
+    "state": "START_TOKEN_ISSUED_RUNTIME_IN_PROGRESS_POST_TOKEN_ADMISSION_PENDING",
+    "migration": "PLATFORM:V328_ACTIVE_AUTHORING_POST_TOKEN_ADMISSION_PENDING",
+    "runtimeDraft": "PRETOKEN_DIRTY_DRAFT_ON_FINAL_BASE_UNADMITTED",
+    "sharedReceiptDraft": "PRETOKEN_DIRTY_DRAFT_ON_FINAL_BASE_UNADMITTED",
+    "sealedArtifacts": [
+      {"path": "source-evidence-digests.v1.json", "bytes": 2368, "sha256": "7b3321808b57b7bb016ed0732f8bb00b26115946920caeefca6c9a59c97cfa7b"},
+      {"path": "controlled-transfer-control-authority.v1.json", "bytes": 15706, "sha256": "09af79561c7e8de436c885e4c2443a093ec8798f7b64e36c55538bca22bd4664"},
+      {"path": "migration-lease.v1.json", "bytes": 3097, "sha256": "e312b8512ead83ca98328bed9a02e6f170d2e2cddd55701bfb898c9eb0b19d1d"},
+      {"path": "migration-lease-activation.v1.json", "bytes": 2123, "sha256": "d77934e10f94ecbe811037fb2ca34748ce4d444faa75fad59d595ada93335c59"},
+      {"path": "module-result-contract.v1.json", "bytes": 2721, "sha256": "d52d4258586ef9157ae6bccd9fabd5d4580cc1f7b8b2b1ee8c87b4b3a62d9a21"},
+      {"path": "readiness-and-dispatch-gate.v1.json", "bytes": 2621, "sha256": "6ed758b539b64033237c47b5e08f1cc05368c89895ca4f636318ccb170d0c7bd"},
+      {"path": "start-token-preparation.v1.json", "bytes": 2476, "sha256": "76898de06cd503551bfcfcd6a694ae82f9abfa9b0d9f50867ac723393f562934"},
+      {"path": "targeted-validation-plan.v1.json", "bytes": 6066, "sha256": "323814e96ecd00cba8f76658450be490347fe0042340e6187f1f204ee3d08a00"},
+      {"path": "work-packet.v1.json", "bytes": 11024, "sha256": "153156e8910e1506772e4d3888dcbf9c0ad81126797dc3f2f9811e55046d9c87"},
+      {"path": "shared-receipt-control-amendment.v1.json", "bytes": 4678, "sha256": "ccabd54a69a0b4bf7d9310f03c65c9d906ebec7e1f6d8cc95fcde3e3dacee806"},
+      {"path": "start-token-issued.v1.json", "bytes": 4403, "sha256": "d6471bbb0e668cea5b758b9dfb3c3bd7f85de91fd807e65c89af52f816f6bf99"},
+      {"path": "issued-manifest.v1.json", "bytes": 3017, "sha256": "8535569ea236874cb6f1a5a8cc8729b6646c38c8af98f086a26840e64f9639a3"}
+    ]
+  },
+  "homeProducers": [
+    {"sliceId": "BASE-TFR-HRM-003", "moduleSession": "HRIS-HRM", "path": "../hrm-003-home-producer-control-r1/control-packet.v1.json", "bytes": 6383, "sha256": "3154d3ec42421a0d1407ac48081a337ba6955ee6955df7ee6bf0c83bed9a6a9a", "state": "CENTRAL_RECONCILIATION_REQUIRED", "tokenState": "WITHHELD"},
+    {"sliceId": "BASE-TFR-PER-007", "moduleSession": "HRIS-PER", "path": "../per-007-home-producer-control-r1/control-packet.v1.json", "bytes": 6508, "sha256": "f8fbd1c89b90e1e0e745b313be4f73268e060258737e4b11a6043ff3952cfb86", "state": "CENTRAL_RECONCILIATION_REQUIRED", "tokenState": "WITHHELD"},
+    {"sliceId": "BASE-TFR-TIM-018", "moduleSession": "HRIS-TIM", "path": "../tim-018-home-producer-control-r1/control-packet.v1.json", "bytes": 6385, "sha256": "3122e35ebe47e4401cbda3f87732f5d9b3cbb07f5acdb852e169b0b65fa6b3e4", "state": "CENTRAL_RECONCILIATION_REQUIRED", "tokenState": "WITHHELD"},
+    {"sliceId": "BASE-TFR-PAY-015", "moduleSession": "HRIS-PAY", "path": "../pay-015-home-producer-control-r1/control-packet.v1.json", "bytes": 6487, "sha256": "47802b874bb7ca855483f217e2d06170e49b898d000fed47d0134dd7ea43a396", "state": "CENTRAL_RECONCILIATION_REQUIRED", "tokenState": "WITHHELD"}
+  ],
+  "authority": {
+    "moduleImplementationAuthorized": true,
+    "migrationAuthoringAuthorized": true,
+    "sharedReceiptAmendmentAuthorized": true,
+    "worktreeMaterializationAuthorized": true,
+    "postAdmissionModuleBranchCommitPushAuthorized": true,
+    "mergeToDwpDevAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantCustomerProductionActivationAuthorized": false,
+    "homeProducerImplementationAuthorized": false
+  },
+  "hashBoundary": {
+    "selfHashDeclared": false,
+    "reason": "The preparation manifest is calculated last and deliberately does not hash itself. It seals issued-manifest.v1.json, whose own manifest deliberately excludes both itself and this file."
+  },
+  "nextAction": "Review and record post-token admission for the two SYS009 dirty worktrees on final base 7d948cc8, then execute only the focused validation plan and commit/push the authorized module branches. Direct dwp-dev merge and all runtime activation remain unauthorized. The four HOME producer packets remain CENTRAL_RECONCILIATION_REQUIRED with tokens withheld."
+}

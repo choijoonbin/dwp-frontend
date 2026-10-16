@@ -1,0 +1,24 @@
+{
+  "schema": "dwp.hris.module-start-token-preparation.v1",
+  "preparationId": "HRIS-WAVE6-START-PREP-BASE-TFR-SYS-009-R1",
+  "sliceId": "BASE-TFR-SYS-009",
+  "preparedAt": "2026-10-16T09:45:26+09:00",
+  "state": "SATISFIED_SUPERSEDED_BY_ISSUED_TOKEN",
+  "tokenIdReserved": "HRIS-WAVE6-START-BASE-TFR-SYS-009-R1",
+  "implementationAuthorized": true,
+  "migrationAuthoringAuthorized": true,
+  "worktreeAuthorized": true,
+  "requiredBeforeIssue": [
+    {"requirement": "central authorization/PEP/OpenAPI/Gateway carrier and runtime-context supplement integrated default-OFF", "state": "SATISFIED", "evidence": "dwp-backend@7d948cc86e6e8c56de92b1224d67bdebf7d90c3a"},
+    {"requirement": "base carrier targeted audit", "state": "SATISFIED_REPORTED_BY_CARRIER", "evidence": "controlled-transfer-control-authority.v1.json#/centralCarrier/baseCarrierIntegrationEvidence/targetedValidation"},
+    {"requirement": "Gateway runtime-context supplement focused and full-class tests", "state": "SATISFIED", "evidence": "focused method PASS; ProductSurfaceDecisionContextFilterTest 37/37 PASS; generator/fixture checks PASS"},
+    {"requirement": "backend dwp-dev clean and remote exact", "state": "SATISFIED", "evidence": "7d948cc86e6e8c56de92b1224d67bdebf7d90c3a tree e7f324c4210868178d8e6d8544635e46227ff847"},
+    {"requirement": "V328 absent with V327 checksum unchanged", "state": "SATISFIED", "evidence": "V327 12932 bytes sha256 8586a323808e902533e073c83bc6fb83f456173a9f626801bfbe611f19e7d9d7"},
+    {"requirement": "V328 lease activation receipt", "state": "SATISFIED", "evidence": "migration-lease-activation.v1.json"},
+    {"requirement": "dedicated HRIS-SYS backend worktree", "state": "SATISFIED_WITH_DECLARED_PRETOKEN_DRAFT_EXCEPTION", "evidence": "The uncommitted/unpushed draft originated on 51573d67 and was preserved while the branch fast-forwarded through f577 to final pin 7d948cc8. It still requires path-by-path post-token review before admission."},
+    {"requirement": "issued work packet and token sealed", "state": "SATISFIED", "evidence": "issued-manifest.v1.json and preparation-manifest.v1.json"}
+  ],
+  "successor": "start-token-issued.v1.json",
+  "issueRule": "This preparation records prerequisite disposition but is not executable authority; only its exact successor start-token is executable, and that token does not retroactively admit the pre-token dirty draft.",
+  "expiry": "INVALIDATED_BY_ANY_BASE_SOURCE_CONTRACT_ROUTE_SCHEMA_OR_MIGRATION_DRIFT"
+}

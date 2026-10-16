@@ -1,0 +1,32 @@
+{
+  "schema": "dwp.hris.home-producer-control-packet.v1",
+  "packetId": "HRIS-WAVE6-PAY-015-HOME-PRODUCER-CONTROL-R1",
+  "preparedAt": "2026-10-16T09:45:26+09:00",
+  "slice": {"sliceId": "BASE-TFR-PAY-015", "sourceRef": "TFR-PAY-015", "moduleSession": "HRIS-PAY", "ownerService": "dwp-payroll-server", "boundedContext": "PAYROLL_STATUTORY", "sourceFamilySha256": "b711226d9a6f4a78f0c5439e494b0c0c76c036b51a79228fe12538d8d98be9f6", "sourceRowCount": 7},
+  "authority": {
+    "ownerPep": "PEP-PAY-001",
+    "servicePep": "SVC-PEP-PAY-001",
+    "xcon": "XCON-015",
+    "event": "EVT-PAY:HrisHomeContributionChanged.v1",
+    "capabilities": ["hcm.operations.payroll-support.view", "hcm.personal.pay-statement.view"],
+    "internalGet": "/internal/hris-payroll/v1/home-contributions/{payloadRef}",
+    "caller": "dwp-platform-server",
+    "purposeResolution": {"state": "CENTRAL_RECONCILIATION_REQUIRED", "serviceBindingValue": "HRIS_HOME_CONTRIBUTION_MATERIALIZE", "homeSecurityValue": "HRIS_HOME_MATERIALIZATION", "sourceContractValue": "HRIS_HOME_MATERIALIZATION", "implementationValue": null},
+    "materializationTypeResolution": {"state": "CENTRAL_RECONCILIATION_REQUIRED", "serviceBindingValue": "PayrollHomeContributionV1", "homeSecurityValue": "PayrollHomeContributionV1", "sourceContractValue": "PayrollHomeContribution.v1", "canonicalXconProfile": "PayrollHomeContribution.v1", "implementationValue": null}
+  },
+  "evidencePins": [
+    {"path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/service-api-auth-binding-register.csv", "sha256": "a54272429e70d0e2494e082b214615a4befe2354d5ab72bf7619500e2b0fdcaa"},
+    {"path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/home-materialization-security-register.csv", "sha256": "e5a0855091992de0e1f894a980422a5d426ebd96bb5f4ff811accb407f99fe59"},
+    {"path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/cross-module-contract-register.csv", "sha256": "783bd3f6c6fdcf5d35da73020b2cc01f0c59cfd6e9fe9d56ffa75a3cd380f725"},
+    {"path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/cross-module-canonical-schemas.v1.json", "sha256": "f6fb63f52e2b6043b62f8afdd87b7acdbd89fe9db3330d8a2818be9e5c8326c4"},
+    {"path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/cross-module-schema-binding-register.csv", "sha256": "b78fbae31c9cd48c4eadc37ea689d4f6987642ee8562700205f3c14bad0c6334"},
+    {"path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-evidence/pay/g2-api-event-contracts.json", "sha256": "040e64703871582aaff04f102495592f405a603f690ed4f8a20029981eee3a21"}
+  ],
+  "readinessGate": {"state": "CENTRAL_RECONCILIATION_REQUIRED", "tokenState": "WITHHELD", "implementationAuthorized": false, "worktreeAuthorized": false, "reason": "The service binding purpose conflicts with the home-security and PAY source purpose, while the response type spelling differs between V1 and .v1 authorities. Central authority must issue one purpose/type reconciliation receipt before any token or implementation."},
+  "work": {"objective": "After central reconciliation selects one purpose and one materialization response type, publish a minimized Payroll home-contribution change reference and materialize only those selected values for authorized Platform requests.", "required": ["central reconciliation receipt with non-null implementation purpose and type", "server-bound tenant and signed on-behalf-of principal", "current widget capability, PAY_GROUP/LEGAL_ENTITY scope, purpose and field-policy re-evaluation", "closed PayrollHomeData", "protected money VIEW/MASK/OMIT", "no worker payroll lines, bank or tax secrets", "opaque tenant-bound ref and verified digest", "transactional outbox and replay safety", "default OFF"]},
+  "resultContract": {"requiredState": "OWNER_HOME_PRODUCER_COMPLETE_INTEGRATION_PENDING_DEFAULT_OFF", "acceptance": ["central reconciliation receipt pins the single implemented purpose and materialization response type", "exact SVC-PEP-PAY-001 workload enforcement", "XCON-015 closed module PAY event with payroll-* widget key", "SELF/PAY_GROUP/LEGAL_ENTITY scope and revision binding", "unknown ref, digest mismatch, stale permission and cross-tenant fail closed", "money is VIEW amount+currency, MASK fixed sentinel, or OMIT with no value", "worker lines and bank/tax secrets never returned", "fresh/degraded/unavailable and partial-failure semantics", "outbox duplicate/replay and crash recovery", "targeted owner tests pass without reopening compensation input", "feature and event publication remain default OFF"]},
+  "touchManifest": {"allowedBackendAfterToken": ["dwp-payroll-server/src/main/java/com/dwp/services/payroll/home/**", "dwp-payroll-server/src/test/java/com/dwp/services/payroll/home/**", "dwp-payroll-server/src/test/java/com/dwp/services/payroll/contracts/xcon/Xcon015PayrollHomeContributionChangedV1ProviderContractTest.java", "dwp-payroll-server/src/main/resources/application.yml (PAY home producer default-OFF settings only)"], "allowedFrontendAfterToken": [], "forbidden": ["V49 compensation input and V50 calculation", "SYS Home composition", "central authorization/OpenAPI/generated contracts", "People/Time source", "browser UI or menu", "existing migrations", "tenant/customer/production activation"], "outsideBoundaryAction": "STOP_AND_REQUEST_EXACT_AMENDMENT"},
+  "migrationDecision": {"state": "NO_NEW_MIGRATION_EXPECTED_RECONFIRM_AT_TOKEN", "currentHighWater": "PAYROLL:V50", "rule": "Reuse Payroll projections and owner outbox. If durable payload-reference persistence is necessary, withhold token issuance and issue one exact JIT Payroll migration lease."},
+  "tokenPreparation": {"state": "PREPARED_NOT_ISSUED", "issueState": "WITHHELD_CENTRAL_RECONCILIATION_REQUIRED", "reservedTokenId": "HRIS-WAVE6-START-BASE-TFR-PAY-015-R1", "requiredBeforeIssue": ["central purpose/type reconciliation receipt PASS", "control carrier committed/pushed", "current endpoint/event/protected-money parity audit PASS", "migration decision reconfirmed", "backend dwp-dev clean remote exact", "dedicated HRIS-PAY worktree clean remote exact", "exact targeted commands recorded"], "implementationAuthorized": false},
+  "basePinsAtPreparation": {"backend": "dwp-backend@7d948cc86e6e8c56de92b1224d67bdebf7d90c3a", "frontendControl": "dwp-frontend@75e79078bae2b2e4a1dbbaf73c8b91a092bb1520"}
+}

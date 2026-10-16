@@ -1,0 +1,49 @@
+{
+  "schema": "dwp.hris.sys009.issued-manifest.v1",
+  "manifestId": "HRIS-WAVE6-SYS-009-ISSUED-MANIFEST-R1",
+  "issuedAt": "2026-10-16T10:26:02+09:00",
+  "sliceId": "BASE-TFR-SYS-009",
+  "state": "START_TOKEN_ISSUED_RUNTIME_AUTHORIZED_ADMISSION_PENDING",
+  "finalBackendPin": {
+    "repository": "dwp-backend",
+    "branch": "dwp-dev",
+    "upstream": "origin/dwp-dev",
+    "commit": "7d948cc86e6e8c56de92b1224d67bdebf7d90c3a",
+    "tree": "e7f324c4210868178d8e6d8544635e46227ff847",
+    "localRemoteExact": true,
+    "aheadBehind": "0/0",
+    "clean": true
+  },
+  "artifacts": [
+    {"path": "source-evidence-digests.v1.json", "bytes": 2368, "sha256": "7b3321808b57b7bb016ed0732f8bb00b26115946920caeefca6c9a59c97cfa7b"},
+    {"path": "controlled-transfer-control-authority.v1.json", "bytes": 15706, "sha256": "09af79561c7e8de436c885e4c2443a093ec8798f7b64e36c55538bca22bd4664"},
+    {"path": "migration-lease.v1.json", "bytes": 3097, "sha256": "e312b8512ead83ca98328bed9a02e6f170d2e2cddd55701bfb898c9eb0b19d1d"},
+    {"path": "migration-lease-activation.v1.json", "bytes": 2123, "sha256": "d77934e10f94ecbe811037fb2ca34748ce4d444faa75fad59d595ada93335c59"},
+    {"path": "module-result-contract.v1.json", "bytes": 2721, "sha256": "d52d4258586ef9157ae6bccd9fabd5d4580cc1f7b8b2b1ee8c87b4b3a62d9a21"},
+    {"path": "readiness-and-dispatch-gate.v1.json", "bytes": 2621, "sha256": "6ed758b539b64033237c47b5e08f1cc05368c89895ca4f636318ccb170d0c7bd"},
+    {"path": "start-token-preparation.v1.json", "bytes": 2476, "sha256": "76898de06cd503551bfcfcd6a694ae82f9abfa9b0d9f50867ac723393f562934"},
+    {"path": "targeted-validation-plan.v1.json", "bytes": 6066, "sha256": "323814e96ecd00cba8f76658450be490347fe0042340e6187f1f204ee3d08a00"},
+    {"path": "work-packet.v1.json", "bytes": 11024, "sha256": "153156e8910e1506772e4d3888dcbf9c0ad81126797dc3f2f9811e55046d9c87"},
+    {"path": "shared-receipt-control-amendment.v1.json", "bytes": 4678, "sha256": "ccabd54a69a0b4bf7d9310f03c65c9d906ebec7e1f6d8cc95fcde3e3dacee806"},
+    {"path": "start-token-issued.v1.json", "bytes": 4403, "sha256": "d6471bbb0e668cea5b758b9dfb3c3bd7f85de91fd807e65c89af52f816f6bf99"}
+  ],
+  "authority": {
+    "moduleImplementationAuthorized": true,
+    "migrationAuthoringAuthorized": true,
+    "sharedReceiptAmendmentAuthorized": true,
+    "postAdmissionModuleBranchCommitPushAuthorized": true,
+    "directDwpDevMergeAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantCustomerProductionActivationAuthorized": false
+  },
+  "admission": {
+    "runtimeDraftState": "PRETOKEN_DIRTY_DRAFT_UNADMITTED_PENDING_POST_TOKEN_REVIEW",
+    "sharedReceiptDraftState": "PRETOKEN_DIRTY_DRAFT_UNADMITTED_PENDING_POST_TOKEN_REVIEW",
+    "cleanWorktreeClaimed": false
+  },
+  "hashBoundary": {
+    "selfHashDeclared": false,
+    "preparationManifestIncluded": false,
+    "reason": "This manifest does not hash itself or preparation-manifest.v1.json. The preparation manifest seals this issued manifest last, preventing a circular hash claim."
+  }
+}

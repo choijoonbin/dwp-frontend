@@ -1,0 +1,47 @@
+{
+  "schema": "dwp.hris.migration-lease-activation.v1",
+  "activationId": "HRIS-WAVE6-SYS-009-PLATFORM-V328-ACTIVATION-R1",
+  "activatedAt": "2026-10-16T10:24:22+09:00",
+  "sliceId": "BASE-TFR-SYS-009",
+  "lease": "migration-lease.v1.json",
+  "state": "ACTIVE_AUTHORING_POST_TOKEN_ADMISSION_REQUIRED",
+  "basePin": {
+    "repository": "dwp-backend",
+    "branch": "dwp-dev",
+    "upstream": "origin/dwp-dev",
+    "commit": "7d948cc86e6e8c56de92b1224d67bdebf7d90c3a",
+    "tree": "e7f324c4210868178d8e6d8544635e46227ff847",
+    "localRemoteExact": true,
+    "clean": true
+  },
+  "migrationEvidence": {
+    "leasedPath": "dwp-platform-server/src/main/resources/db/migration/V328__create_hris_controlled_file_transfers.sql",
+    "v328PresentOnBase": false,
+    "priorVersion": "V327",
+    "priorPath": "dwp-platform-server/src/main/resources/db/migration/V327__create_hris_work_explorer.sql",
+    "priorBytes": 12932,
+    "priorSha256": "8586a323808e902533e073c83bc6fb83f456173a9f626801bfbe611f19e7d9d7",
+    "secondMigrationAuthorized": false,
+    "v327ModificationAuthorized": false
+  },
+  "runtimeObservation": {
+    "worktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave6-20261016/sys-009-r1/backend",
+    "branch": "codex/hris-wave6-sys-009-backend-20261016-r1",
+    "draftOriginBase": "51573d67baad0cb18ad7204f652e6705595d4b51",
+    "observedHeadAtIssuance": "7d948cc86e6e8c56de92b1224d67bdebf7d90c3a",
+    "observedTreeAtIssuance": "e7f324c4210868178d8e6d8544635e46227ff847",
+    "aheadOfActivatedBase": 0,
+    "behindActivatedBase": 0,
+    "preTokenDraftPresent": true,
+    "preTokenDraftCommitted": false,
+    "preTokenDraftPushed": false,
+    "preTokenDraftAdmitted": false
+  },
+  "authority": {
+    "authoringAuthorized": true,
+    "exactlyOneMigrationAuthorized": true,
+    "activationCondition": "The runtime branch has integrated 7d948cc86e6e8c56de92b1224d67bdebf7d90c3a; the still-dirty pre-token draft must now be reviewed path-by-path and explicitly admitted under start-token-issued.v1.json.",
+    "directDwpDevMergeAuthorized": false,
+    "tenantCustomerProductionActivationAuthorized": false
+  }
+}

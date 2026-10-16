@@ -1,0 +1,61 @@
+{
+  "schema": "dwp.hris.sys009.shared-receipt-control-amendment.v1",
+  "amendmentId": "HRIS-WAVE6-SYS-009-SHARED-RECEIPT-AC09-R1",
+  "issuedAt": "2026-10-16T10:13:16+09:00",
+  "sliceId": "BASE-TFR-SYS-009",
+  "reason": "SYS009-AC-09 reuses the existing shared command-receipt read boundary. The exact controller, filter, authority source and adapter paths below may be changed only to recognize controlled-transfer receipt authority without expanding Work Explorer.",
+  "authority": {
+    "state": "ISSUED_NARROW_AC09_ONLY",
+    "authorizationAlias": "DWP_CONTROLLED_TRANSFER_CREATE",
+    "storedReceiptOriginatingAction": "CONTROLLED_TRANSFER_CREATE",
+    "aliasAndStoredActionMustRemainDistinct": true,
+    "originatingRouteId": "route.hcm.management.controlled-transfer-create.action",
+    "originatingPurposeCode": "HRIS_INTEGRATION_ADMIN",
+    "receiptReadPath": "GET /v1/admin/hris/command-receipts/{receiptId}",
+    "decisionRule": "The read applies the more restrictive intersection of current and originating app, duty, capability, population, field, purpose and authorization-revision seals.",
+    "denialRule": "Missing, mismatched, expired or unauthorized evidence returns the existing opaque not-found behavior without disclosing receipt, subject, transfer or digest detail."
+  },
+  "sealMapping": {
+    "population_scope_digest": "SYS009 AccessSeal.populationScopeDigest",
+    "authority_population_scope_digest": "HrisExplorerAuthoritySeals.populationScopeDigest(origin contextScopeKey)",
+    "forbidden": "Do not store the broader SYS009 AccessSeal.authorityDigest in authority_population_scope_digest.",
+    "reproofCompatibility": "The existing current-origin receipt reproof recomputes HrisExplorerAuthoritySeals.populationScopeDigest(origin contextScopeKey) and requires exact equality."
+  },
+  "permittedRuntimePaths": [
+    "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisCommandReceiptController.java",
+    "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerController.java",
+    "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerOwnerEvidenceFilter.java",
+    "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/AuthHrisExplorerAuthorityEvidenceQuery.java"
+  ],
+  "permittedTestPaths": [
+    "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/AuthHrisExplorerAuthorityEvidenceQueryTest.java",
+    "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisPlatformReceiptAuthorityAdapterTest.java",
+    "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerReceiptControllerTest.java",
+    "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisSharedReceiptFeatureGateTest.java"
+  ],
+  "requiredChanges": [
+    "Recognize only the stored receipt originating action CONTROLLED_TRANSFER_CREATE, route and purpose tuple at the shared receipt authority boundary; do not substitute authorization alias DWP_CONTROLLED_TRANSFER_CREATE for the stored action.",
+    "Preserve the existing receipt URL, response contract, opaque denial behavior and current-versus-originating restrictive intersection.",
+    "Add positive and negative focused evidence for the exact controlled-transfer tuple, purpose mismatch, route mismatch and stale or weaker current authority."
+  ],
+  "explicitlyForbidden": [
+    "adding or changing /v1/hris/explorer routes",
+    "expanding explorer route catalogs, recents, preferences, browser UI or menus",
+    "changing HrisExplorerService, HrisExplorerRepository or JdbcHrisExplorerRepository",
+    "changing Work Explorer semantics or tests outside the exact permitted path lists",
+    "using this amendment to activate any tenant, customer or production runtime"
+  ],
+  "executionWorktree": {
+    "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave6-20261016/sys-009-receipt-r1/backend",
+    "branch": "codex/hris-wave6-sys-009-receipt-20261016-r1",
+    "baseCommit": "7d948cc86e6e8c56de92b1224d67bdebf7d90c3a",
+    "baseTree": "e7f324c4210868178d8e6d8544635e46227ff847",
+    "aheadBehind": "0/0",
+    "dirtyPreTokenDraftPresent": true,
+    "preTokenDraftCommitted": false,
+    "preTokenDraftPushed": false,
+    "preTokenDraftAdmitted": false,
+    "admissionRequirement": "Review all eight exact dirty paths against this amendment after token issuance and record admission before module-branch commit or push."
+  },
+  "outsideBoundaryAction": "STOP_AND_REQUEST_A_NEW_EXACT_CONTROL_AMENDMENT"
+}

@@ -1,0 +1,32 @@
+{
+  "schema": "dwp.hris.home-producer-control-packet.v1",
+  "packetId": "HRIS-WAVE6-PER-007-HOME-PRODUCER-CONTROL-R1",
+  "preparedAt": "2026-10-16T09:45:26+09:00",
+  "slice": {"sliceId": "BASE-TFR-PER-007", "sourceRef": "TFR-PER-007", "moduleSession": "HRIS-PER", "ownerService": "dwp-people-server", "boundedContext": "PERFORMANCE", "sourceFamilySha256": "9c10e1d03cb59f039990cab408d4e3a548d70120ffd8c5cc0c8b0ece26337a91", "sourceRowCount": 5},
+  "authority": {
+    "ownerPep": "PEP-PER-001",
+    "servicePep": "SVC-PEP-PER-002",
+    "xcon": "XCON-012",
+    "event": "EVT-PER:HrisHomeContributionChanged.v1",
+    "capabilities": ["hcm.operations.performance.update", "hcm.personal.performance.view", "hcm.team.performance.review"],
+    "internalGet": "/internal/hris-performance/v1/home-contributions/{payloadRef}",
+    "caller": "dwp-platform-server",
+    "purposeResolution": {"state": "CENTRAL_RECONCILIATION_REQUIRED", "serviceBindingValue": "HRIS_HOME_CONTRIBUTION_MATERIALIZE", "homeSecurityValue": "HRIS_HOME_MATERIALIZATION", "sourceContractValue": "HRIS_HOME_CONTRIBUTION_MATERIALIZE", "implementationValue": null},
+    "materializationTypeResolution": {"state": "CENTRAL_RECONCILIATION_REQUIRED", "serviceBindingValue": "PerformanceHomeContributionV1", "homeSecurityValue": "PerformanceHomeContributionV1", "sourceContractValue": "PerformanceHomeContribution.v1", "canonicalXconProfile": "PerformanceHomeContribution.v1", "implementationValue": null}
+  },
+  "evidencePins": [
+    {"path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/service-api-auth-binding-register.csv", "sha256": "a54272429e70d0e2494e082b214615a4befe2354d5ab72bf7619500e2b0fdcaa"},
+    {"path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/home-materialization-security-register.csv", "sha256": "e5a0855091992de0e1f894a980422a5d426ebd96bb5f4ff811accb407f99fe59"},
+    {"path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/cross-module-contract-register.csv", "sha256": "783bd3f6c6fdcf5d35da73020b2cc01f0c59cfd6e9fe9d56ffa75a3cd380f725"},
+    {"path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/cross-module-canonical-schemas.v1.json", "sha256": "f6fb63f52e2b6043b62f8afdd87b7acdbd89fe9db3330d8a2818be9e5c8326c4"},
+    {"path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/cross-module-schema-binding-register.csv", "sha256": "b78fbae31c9cd48c4eadc37ea689d4f6987642ee8562700205f3c14bad0c6334"},
+    {"path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-evidence/per/g2-readiness/api-event-contracts.yaml", "sha256": "559c345053d205902613f502be18dcbc22577e9286686827ad6383a5d2211f5a"}
+  ],
+  "readinessGate": {"state": "CENTRAL_RECONCILIATION_REQUIRED", "tokenState": "WITHHELD", "implementationAuthorized": false, "worktreeAuthorized": false, "reason": "The service/source purpose and home-security purpose differ, while the response type spelling differs between V1 and .v1 authorities. Central authority must issue one purpose/type reconciliation receipt before any token or implementation."},
+  "work": {"objective": "After central reconciliation selects one purpose and one materialization response type, publish a minimized Performance home-contribution change reference and materialize only those selected values for authorized Platform requests.", "required": ["central reconciliation receipt with non-null implementation purpose and type", "server-bound tenant and signed on-behalf-of principal", "current widget capability, scope, purpose and field-policy re-evaluation", "closed PerformanceHomeData", "opaque tenant-bound payloadRef and verified digest", "freshness/state/deep-link validation", "transactional outbox and replay safety", "default OFF"]},
+  "resultContract": {"requiredState": "OWNER_HOME_PRODUCER_COMPLETE_INTEGRATION_PENDING_DEFAULT_OFF", "acceptance": ["central reconciliation receipt pins the single implemented purpose and materialization response type", "exact SVC-PEP-PER-002 workload enforcement", "XCON-012 closed module PER event with performance-* widget key", "SELF/TEAM/NAMED_POPULATION scope and revision binding", "unknown ref, digest mismatch, stale permission and cross-tenant fail closed", "closed typed field decisions without review text or sensitive raw payload", "fresh/degraded/unavailable and partial-failure semantics", "outbox duplicate/replay and crash recovery", "no browser route or caller-selected tenant", "targeted owner tests pass without reopening compensation planning", "feature and event publication remain default OFF"]},
+  "touchManifest": {"allowedBackendAfterToken": ["dwp-people-server/src/main/java/com/dwp/services/people/hris/performance/home/**", "dwp-people-server/src/test/java/com/dwp/services/people/hris/performance/home/**", "dwp-people-server/src/test/java/com/dwp/services/people/hris/performance/contracts/xcon/Xcon012PerformanceHomeContributionChangedV1ProviderContractTest.java", "dwp-people-server/src/main/resources/application.yml (PER home producer default-OFF settings only)"], "allowedFrontendAfterToken": [], "forbidden": ["MOD-PER-COMPPLAN and V17/V18", "SYS Home composition", "central authorization/OpenAPI/generated contracts", "HRM/Time/Payroll source", "browser UI or menu", "existing migrations", "tenant/customer/production activation"], "outsideBoundaryAction": "STOP_AND_REQUEST_EXACT_AMENDMENT"},
+  "migrationDecision": {"state": "NO_NEW_MIGRATION_EXPECTED_RECONFIRM_AT_TOKEN", "currentHighWater": "PERFORMANCE:V18", "rule": "Reuse current Performance projections and owner outbox. If durable payload-reference persistence is necessary, withhold the token and issue a one-file JIT performance-stream lease."},
+  "tokenPreparation": {"state": "PREPARED_NOT_ISSUED", "issueState": "WITHHELD_CENTRAL_RECONCILIATION_REQUIRED", "reservedTokenId": "HRIS-WAVE6-START-BASE-TFR-PER-007-R1", "requiredBeforeIssue": ["central purpose/type reconciliation receipt PASS", "control carrier committed/pushed", "current endpoint/event parity audit PASS", "migration decision reconfirmed", "backend dwp-dev clean remote exact", "dedicated HRIS-PER worktree clean remote exact", "exact targeted commands recorded"], "implementationAuthorized": false},
+  "basePinsAtPreparation": {"backend": "dwp-backend@7d948cc86e6e8c56de92b1224d67bdebf7d90c3a", "frontendControl": "dwp-frontend@75e79078bae2b2e4a1dbbaf73c8b91a092bb1520"}
+}
