@@ -1,0 +1,103 @@
+{
+  "schema": "dwp.hris.wave6-execution-roadmap-successor.v4",
+  "roadmapId": "HRIS-WAVE6-EXECUTION-ROADMAP-SUCCESSOR-20261016-R4",
+  "issuedAt": "2026-10-16T18:15:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "supersedes": {
+    "path": "docs/06-delivery/hris/wave6-2026-10-15/execution-roadmap-successor.v3.json",
+    "sha256": "7227e937f02c94d2c6aa17bfe182063f1c05a6427cef82e5e6aad9a6b57c6369",
+    "preservation": "IMMUTABLE_PREDECESSOR_RETAINED_AS_R2_STARTING_BASELINE",
+    "inheritedClosedMilestones": true
+  },
+  "baseline": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "8c28fd91622e04dcfcfb91738684d18ee25d2941",
+      "tree": "6f9e2f9cdc7ad1206cdc5f71f5bde5dfa9a448a5",
+      "upstream": "origin/dwp-dev",
+      "localRemoteExact": true,
+      "workingTreeClean": true
+    },
+    "frontendControlParent": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "472dd2c6f07f4223d5314313087553f914b39f9f",
+      "upstream": "origin/dwp-dev",
+      "localRemoteExactBeforeThisCarrier": true
+    }
+  },
+  "closedByThisSuccessor": [
+    {
+      "id": "R2-RESOLVE-HOME-PRODUCER-PURPOSE-AND-TYPE",
+      "state": "CLOSED_RECONCILED_CONTRACT_IMPLEMENTED_AND_PUSHED",
+      "decision": {
+        "purpose": "HRIS_HOME_MATERIALIZATION",
+        "responseProfile": "HrisHomeContributionMaterialization.v1",
+        "admissionProfile": "HomeMaterializationWorkloadProof.v1",
+        "eventType": "dwp.hris.home.contribution-changed.v1"
+      },
+      "evidence": {
+        "path": "docs/06-delivery/hris/wave6-2026-10-15/r2-home-producer-contract-reconciliation-r1/central-reconciliation-receipt.v1.json",
+        "sha256": "537a3a00ab984d5979929efdf94e0b3adbded570f8e5cef72641bd9ba832e1a1"
+      },
+      "targetedContractTests": 10
+    }
+  ],
+  "parallelExecution": {
+    "group": "HOME_PRODUCERS",
+    "state": "AUTHORIZED_PARALLEL_NEXT_EXECUTABLE",
+    "stages": [
+      {
+        "id": "R3A-IMPLEMENT-INTEGRATE-HRM-003-HOME-PRODUCER",
+        "owner": "HRIS-HRM",
+        "token": "HRIS-WAVE6-START-BASE-TFR-HRM-003-R2",
+        "packet": {"path": "docs/06-delivery/hris/wave6-2026-10-15/hrm-003-home-producer-control-r1/control-packet.v2.json", "sha256": "479c1276f4fb5aa18cfd4884d6a6c5be807806b65ccf7dee0665790df25188c8"}
+      },
+      {
+        "id": "R3B-IMPLEMENT-INTEGRATE-PER-007-HOME-PRODUCER",
+        "owner": "HRIS-PER",
+        "token": "HRIS-WAVE6-START-BASE-TFR-PER-007-R2",
+        "packet": {"path": "docs/06-delivery/hris/wave6-2026-10-15/per-007-home-producer-control-r1/control-packet.v2.json", "sha256": "92645a5afcada74c7e173fe3bee478d93441085a237d6a662a95b0853e6ce037"}
+      },
+      {
+        "id": "R3C-IMPLEMENT-INTEGRATE-TIM-018-HOME-PRODUCER",
+        "owner": "HRIS-TIM",
+        "token": "HRIS-WAVE6-START-BASE-TFR-TIM-018-R2",
+        "packet": {"path": "docs/06-delivery/hris/wave6-2026-10-15/tim-018-home-producer-control-r1/control-packet.v2.json", "sha256": "ecf4a9c0c8bc58a9d1b18e1387c49383ddf42980c4231d24ef5924df6273cd33"}
+      },
+      {
+        "id": "R3D-IMPLEMENT-INTEGRATE-PAY-015-HOME-PRODUCER",
+        "owner": "HRIS-PAY",
+        "token": "HRIS-WAVE6-START-BASE-TFR-PAY-015-R2",
+        "packet": {"path": "docs/06-delivery/hris/wave6-2026-10-15/pay-015-home-producer-control-r1/control-packet.v2.json", "sha256": "12d5d18f324657e2a979299287f03aeb03cb129f5d82f4fd50788fee432fa5d7"}
+      }
+    ],
+    "completionRule": "ALL_FOUR_OWNER_RESULTS_MUST_PASS_TARGETED_SECURITY_CONTRACT_OUTBOX_AND_DEFAULT_OFF_ACCEPTANCE_BEFORE_R4"
+  },
+  "withheld": [
+    {
+      "id": "R4-INTEGRATE-SYS-012-HOME-COMPOSITION-RESIDUAL",
+      "state": "WITHHELD_PENDING_ALL_FOUR_R3_RESULTS",
+      "nonclaim": "R3 does not change Gateway, frontend, browser routes, menus, or the already closed Work Explorer increment."
+    },
+    {
+      "id": "R5-SEAL-AND-INTEGRATE-SHARED-SEVEN-WORKBENCH-TASK-NAVIGATION",
+      "state": "WITHHELD_PENDING_R4"
+    }
+  ],
+  "validationPolicy": {
+    "changedClusterFirst": true,
+    "failedTargetOnlyAfterCorrection": true,
+    "repositoryWideSuitePerCorrection": false,
+    "fullSuiteOnlyAtExplicitReleaseGateOrCrossCuttingRisk": true,
+    "reuseR2ContractEvidence": true
+  },
+  "activationPolicy": {
+    "allNewFeaturesDefaultOff": true,
+    "tenantActivationAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "EXECUTE_R3A_R3B_R3C_R3D_IN_DEDICATED_OWNER_WORKTREES_THEN_INTEGRATE_ONLY_AFTER_EACH_TARGETED_ACCEPTANCE_PASSES"
+}

@@ -1,0 +1,239 @@
+{
+  "schema": "dwp.hris.home-producer-contract-reconciliation-receipt.v1",
+  "receiptId": "HRIS-WAVE6-R2-HOME-PRODUCER-CONTRACT-RECONCILIATION-R1",
+  "issuedAt": "2026-10-16T18:00:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "PASS_R2_RECONCILED",
+  "scope": [
+    "BASE-TFR-HRM-003",
+    "BASE-TFR-PER-007",
+    "BASE-TFR-TIM-018",
+    "BASE-TFR-PAY-015"
+  ],
+  "decision": {
+    "workloadPurpose": "HRIS_HOME_MATERIALIZATION",
+    "supersededAlias": "HRIS_HOME_CONTRIBUTION_MATERIALIZE",
+    "browserCompositionPurpose": "HRIS_HOME_VIEW",
+    "responseProfile": "HrisHomeContributionMaterialization.v1",
+    "javaType": "com.dwp.platform.contracts.hris.home.HrisHomeContributionMaterializationV1",
+    "eventType": "dwp.hris.home.contribution-changed.v1",
+    "eventSchemaVersion": 1,
+    "reason": "The owner-security register and its repository validator fix HRIS_HOME_MATERIALIZATION for all four owner routes. HRIS_HOME_VIEW remains a separate downstream SYS composition purpose. A single closed materialization envelope prevents four owner-specific transport DTOs while preserving each generated XCON data profile."
+  },
+  "materializationContract": {
+    "exactFields": [
+      "profile",
+      "module",
+      "widgetKey",
+      "widgetType",
+      "browserAudience",
+      "ownerPopulationScope",
+      "scopeRevision",
+      "populationScopeDigest",
+      "fieldPolicyRevision",
+      "purposeCode",
+      "state",
+      "generatedAt",
+      "freshUntil",
+      "staleAfter",
+      "deepLink",
+      "sourceVersion",
+      "payloadRef",
+      "payloadDigest",
+      "asOf",
+      "data",
+      "fieldDecisions",
+      "partialFailures"
+    ],
+    "purposeCode": "HRIS_HOME_MATERIALIZATION",
+    "states": ["FRESH", "STALE", "DEGRADED", "UNAVAILABLE"],
+    "fieldDecisions": ["VIEW", "MASK", "OMIT"],
+    "opaqueReferencePattern": "^href_[A-Za-z0-9_-]{16,128}$",
+    "digestPattern": "^[0-9a-f]{64}$",
+    "deepLinkPrefix": "/hr",
+    "closedDataProfiles": {
+      "HRM:PEOPLE_SUMMARY": {
+        "profile": "PeopleHomeContribution.v1",
+        "fields": ["employmentStatus", "organizationLabel", "pendingActionCount"]
+      },
+      "PER:PERFORMANCE_SUMMARY": {
+        "profile": "PerformanceHomeContribution.v1",
+        "fields": ["goalProgress", "reviewStatus", "pendingActionCount"]
+      },
+      "TIM:TIME_LEAVE_SUMMARY": {
+        "profile": "TimeLeaveHomeContribution.v1",
+        "fields": ["clockState", "leaveBalanceMinutes", "openTimecardCount", "pendingApprovalCount"]
+      },
+      "PAY:PAYROLL_SUMMARY": {
+        "profile": "PayrollHomeContribution.v1",
+        "fields": ["payPeriodLabel", "grossPay", "netPay", "payslipAvailable"]
+      }
+    },
+    "forbidden": [
+      "FREE_FORM_MAP_DATA",
+      "UNKNOWN_JSON_FIELDS",
+      "RAW_PERSON_OR_REVIEW_TEXT",
+      "TIME_LOCATION_OR_LEAVE_REASON",
+      "PAYROLL_WORKER_LINES_BANK_OR_TAX_DATA",
+      "SYS_ACTION_ITEMS_FROM_OWNER_PRODUCERS"
+    ]
+  },
+  "admissionContract": {
+    "javaType": "com.dwp.platform.contracts.hris.home.HomeMaterializationWorkloadProofV1",
+    "method": "GET",
+    "callerWorkload": "dwp-platform-server",
+    "body": "FORBIDDEN",
+    "query": "FORBIDDEN",
+    "requiredSignedContext": [
+      "ownerAudience",
+      "tenantId",
+      "delegatedSubjectPrincipalPublicId",
+      "capabilityContractKey",
+      "ownerPopulationScope",
+      "scopeRevision",
+      "populationScopeDigest",
+      "effectivePermissionRevision",
+      "fieldPolicyRevision",
+      "widgetKey",
+      "browserAudience",
+      "purpose",
+      "method",
+      "path",
+      "correlationId",
+      "jti",
+      "requestNonce",
+      "iat",
+      "nbf",
+      "exp"
+    ],
+    "verification": [
+      "RS256_TRUST_STORE_KEY_AND_DERIVED_WORKLOAD_IDENTITY",
+      "EXACT_CALLER_OWNER_AUDIENCE_TENANT_PURPOSE_METHOD_AND_PATH",
+      "MAXIMUM_THIRTY_SECOND_FRESHNESS",
+      "DURABLE_JTI_AND_NONCE_REPLAY_RESERVATION",
+      "CURRENT_TENANT_CAPABILITY_PERMISSION_SCOPE_AND_FIELD_POLICY_REEVALUATION",
+      "BROWSER_USER_COOKIE_AND_CALLER_TENANT_HEADERS_FORBIDDEN",
+      "DUPLICATE_OR_UNKNOWN_DWP_HEADERS_FORBIDDEN"
+    ]
+  },
+  "moduleBindings": [
+    {
+      "sliceId": "BASE-TFR-HRM-003",
+      "module": "HRM",
+      "ownerAudience": "dwp-people-server",
+      "path": "/internal/hris-people/v1/home-contributions/{payloadRef}",
+      "widgetType": "PEOPLE_SUMMARY",
+      "widgetKeyPattern": "^people-[a-z0-9-]{1,33}$",
+      "scopes": ["SELF", "TEAM", "NAMED_POPULATION"],
+      "capabilities": ["hcm.personal.profile.view", "hcm.operations.people.view"],
+      "xcon": "XCON-013",
+      "xconProfile": "PeopleHomeContribution.v1"
+    },
+    {
+      "sliceId": "BASE-TFR-PER-007",
+      "module": "PER",
+      "ownerAudience": "dwp-people-server",
+      "path": "/internal/hris-performance/v1/home-contributions/{payloadRef}",
+      "widgetType": "PERFORMANCE_SUMMARY",
+      "widgetKeyPattern": "^performance-[a-z0-9-]{1,28}$",
+      "scopes": ["SELF", "TEAM", "NAMED_POPULATION"],
+      "capabilities": ["hcm.operations.performance.view"],
+      "xcon": "XCON-012",
+      "xconProfile": "PerformanceHomeContribution.v1"
+    },
+    {
+      "sliceId": "BASE-TFR-TIM-018",
+      "module": "TIM",
+      "ownerAudience": "dwp-time-server",
+      "path": "/internal/hris-time/v1/home-contributions/{payloadRef}",
+      "widgetType": "TIME_LEAVE_SUMMARY",
+      "widgetKeyPattern": "^(time|leave)-[a-z0-9-]{1,34}$",
+      "scopes": ["SELF", "TEAM", "TIME_GROUP"],
+      "capabilities": ["hcm.personal.time.view", "hcm.team.time.approve", "hcm.operations.time.update"],
+      "xcon": "XCON-014",
+      "xconProfile": "TimeLeaveHomeContribution.v1"
+    },
+    {
+      "sliceId": "BASE-TFR-PAY-015",
+      "module": "PAY",
+      "ownerAudience": "dwp-payroll-server",
+      "path": "/internal/hris-payroll/v1/home-contributions/{payloadRef}",
+      "widgetType": "PAYROLL_SUMMARY",
+      "widgetKeyPattern": "^payroll-[a-z0-9-]{1,30}$",
+      "scopes": ["SELF", "PAY_GROUP", "LEGAL_ENTITY"],
+      "capabilities": ["hcm.operations.payroll-support.view"],
+      "xcon": "XCON-015",
+      "xconProfile": "PayrollHomeContribution.v1"
+    }
+  ],
+  "semanticSeals": {
+    "time": {
+      "openTimecardStates": ["OPEN", "SUBMITTED", "IN_REVIEW"],
+      "leaveBalanceWhenOwnerSourceMissing": "OMIT_WITH_TYPED_PARTIAL_FAILURE",
+      "aggregateClockState": "OMIT"
+    },
+    "payroll": {
+      "eligibleRunStates": ["FINALIZED"],
+      "aggregateMoneyProjection": "OMIT",
+      "missingPeriodOrPayslipSource": "OMIT_WITH_TYPED_PARTIAL_FAILURE",
+      "moneyMaskSentinel": "••••"
+    },
+    "freshness": {
+      "missingRequiredOwnerData": "DEGRADED_WHEN_AT_LEAST_ONE_SAFE_FIELD_REMAINS_OTHERWISE_UNAVAILABLE",
+      "expiredReference": "FAIL_CLOSED_NOT_FOUND"
+    }
+  },
+  "durabilityDecision": {
+    "migrationRequired": false,
+    "payloadReference": "STATELESS_TENANT_AND_DIGEST_BOUND_HMAC_REFERENCE",
+    "eventOutbox": "sys_domain_event_outbox_via_DomainEventRecorder",
+    "rule": "No module migration is authorized. If implementation proves historical immutable payload storage necessary, stop and obtain the packet's one-file JIT migration lease."
+  },
+  "capabilityCorrections": {
+    "removedNonexistentKeys": [
+      "hcm.team.members.view",
+      "hcm.personal.performance.view",
+      "hcm.personal.pay-statement.view"
+    ],
+    "rule": "R3 may accept only capability keys present in the current generated owner PEP. SELF or aggregate audiences without one of the sealed current keys fail closed; R3 does not modify central authorization."
+  },
+  "r3Authorization": {
+    "state": "AUTHORIZED_AFTER_CONTROL_CARRIER_PUSH",
+    "parallelGroup": "HOME_PRODUCERS",
+    "dedicatedWorktreesRequired": true,
+    "featuresDefaultOff": true,
+    "frontendChangesAuthorized": false,
+    "gatewayOrSysCompositionAuthorized": false,
+    "wideRegressionAuthorized": false
+  },
+  "contractImplementation": {
+    "repository": "dwp-backend",
+    "branch": "dwp-dev",
+    "commit": "8c28fd91622e04dcfcfb91738684d18ee25d2941",
+    "tree": "6f9e2f9cdc7ad1206cdc5f71f5bde5dfa9a448a5",
+    "upstream": "origin/dwp-dev",
+    "localRemoteExact": true,
+    "files": [
+      "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/home/HrisHomeContributionMaterializationV1.java",
+      "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/home/HomeMaterializationWorkloadProofV1.java"
+    ],
+    "targetedVerification": {
+      "command": "./gradlew :dwp-platform-contracts:test --tests 'com.dwp.platform.contracts.hris.home.HrisHomeContributionMaterializationV1Test' --tests 'com.dwp.platform.contracts.hris.home.HomeMaterializationWorkloadProofV1Test'",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "result": "PASS"
+    }
+  },
+  "evidence": [
+    "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/service-api-auth-binding-register.csv",
+    "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/home-materialization-security-register.csv",
+    "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/cross-module-contract-register.csv",
+    "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/cross-module-canonical-schemas.v1.json"
+  ],
+  "baseline": {
+    "backendBeforeR2Contract": "dwp-backend@a9d4f0963fccdff9925ea7cbdee4c3447392b84e",
+    "frontendControlBeforeR2": "dwp-frontend@472dd2c6f07f4223d5314313087553f914b39f9f"
+  }
+}

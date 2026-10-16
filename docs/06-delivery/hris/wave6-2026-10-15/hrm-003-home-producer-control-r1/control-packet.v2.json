@@ -1,0 +1,66 @@
+{
+  "schema": "dwp.hris.home-producer-control-packet.v2",
+  "packetId": "HRIS-WAVE6-HRM-003-HOME-PRODUCER-CONTROL-R2",
+  "issuedAt": "2026-10-16T18:00:00+09:00",
+  "supersedes": {
+    "path": "docs/06-delivery/hris/wave6-2026-10-15/hrm-003-home-producer-control-r1/control-packet.v1.json",
+    "sha256": "3154d3ec42421a0d1407ac48081a337ba6955ee6955df7ee6bf0c83bed9a6a9a",
+    "preservation": "IMMUTABLE_PREDECESSOR_RETAINED"
+  },
+  "reconciliation": {
+    "path": "docs/06-delivery/hris/wave6-2026-10-15/r2-home-producer-contract-reconciliation-r1/central-reconciliation-receipt.v1.json",
+    "sha256": "537a3a00ab984d5979929efdf94e0b3adbded570f8e5cef72641bd9ba832e1a1"
+  },
+  "slice": {
+    "sliceId": "BASE-TFR-HRM-003",
+    "moduleSession": "HRIS-HRM",
+    "ownerService": "dwp-people-server",
+    "boundedContext": "HRIS_PEOPLE"
+  },
+  "authority": {
+    "pep": "PEP-HRM-016",
+    "servicePep": "SVC-PEP-HRM-006",
+    "xcon": "XCON-013",
+    "path": "/internal/hris-people/v1/home-contributions/{payloadRef}",
+    "purpose": "HRIS_HOME_MATERIALIZATION",
+    "responseProfile": "HrisHomeContributionMaterialization.v1",
+    "moduleDataProfile": "PeopleHomeContribution.v1",
+    "eventType": "dwp.hris.home.contribution-changed.v1",
+    "capabilities": ["hcm.personal.profile.view", "hcm.operations.people.view"],
+    "scopes": ["SELF", "TEAM", "NAMED_POPULATION"]
+  },
+  "readinessGate": {
+    "state": "PASS_R2_RECONCILED",
+    "tokenState": "ISSUED",
+    "tokenId": "HRIS-WAVE6-START-BASE-TFR-HRM-003-R2",
+    "implementationAuthorized": true,
+    "worktreeAuthorized": true,
+    "featureActivationAuthorized": false
+  },
+  "touchManifest": {
+    "allowed": [
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/home/**",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/home/**",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/contracts/xcon/Xcon013PeopleHomeContributionChangedV1ProviderContractTest.java",
+      "dwp-people-server/src/main/resources/application.yml (HRM home producer default-OFF settings only)"
+    ],
+    "forbidden": ["FRONTEND", "GATEWAY", "SYS_HOME_COMPOSITION", "CENTRAL_AUTHORIZATION", "GENERATED_CONTRACTS", "MIGRATIONS", "PERFORMANCE_TIME_PAYROLL_SOURCE"]
+  },
+  "acceptance": [
+    "EXACT_SIGNED_WORKLOAD_TENANT_PURPOSE_PATH_AND_DELEGATED_SUBJECT",
+    "CURRENT_CAPABILITY_PERMISSION_SCOPE_AND_FIELD_POLICY_REEVALUATION",
+    "CLOSED_PEOPLE_DATA_ONLY",
+    "OPAQUE_TENANT_BOUND_REF_AND_CANONICAL_DIGEST",
+    "VIEW_MASK_OMIT_AND_PARTIAL_FAILURE_SEMANTICS",
+    "XCON_013_AND_SHARED_TRANSACTIONAL_OUTBOX_REPLAY",
+    "UNKNOWN_STALE_DIGEST_MISMATCH_AND_CROSS_TENANT_FAIL_CLOSED",
+    "NO_BROWSER_ROUTE_OR_CALLER_TENANT",
+    "DEFAULT_OFF",
+    "TARGETED_TESTS_PASS"
+  ],
+  "migration": {"authorized": false, "highWater": "PEOPLE:V56", "decision": "USE_STATELESS_REF_AND_SHARED_SYS_DOMAIN_EVENT_OUTBOX"},
+  "basePins": {
+    "backend": "dwp-backend@8c28fd91622e04dcfcfb91738684d18ee25d2941",
+    "frontendControl": "dwp-frontend@472dd2c6f07f4223d5314313087553f914b39f9f"
+  }
+}

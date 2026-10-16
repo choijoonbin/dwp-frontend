@@ -1,0 +1,40 @@
+{
+  "schema": "dwp.hris.home-producer-control-packet.v2",
+  "packetId": "HRIS-WAVE6-PER-007-HOME-PRODUCER-CONTROL-R2",
+  "issuedAt": "2026-10-16T18:00:00+09:00",
+  "supersedes": {
+    "path": "docs/06-delivery/hris/wave6-2026-10-15/per-007-home-producer-control-r1/control-packet.v1.json",
+    "sha256": "f8fbd1c89b90e1e0e745b313be4f73268e060258737e4b11a6043ff3952cfb86",
+    "preservation": "IMMUTABLE_PREDECESSOR_RETAINED"
+  },
+  "reconciliation": {
+    "path": "docs/06-delivery/hris/wave6-2026-10-15/r2-home-producer-contract-reconciliation-r1/central-reconciliation-receipt.v1.json",
+    "sha256": "537a3a00ab984d5979929efdf94e0b3adbded570f8e5cef72641bd9ba832e1a1"
+  },
+  "slice": {"sliceId": "BASE-TFR-PER-007", "moduleSession": "HRIS-PER", "ownerService": "dwp-people-server", "boundedContext": "PERFORMANCE"},
+  "authority": {
+    "pep": "PEP-PER-001",
+    "servicePep": "SVC-PEP-PER-002",
+    "xcon": "XCON-012",
+    "path": "/internal/hris-performance/v1/home-contributions/{payloadRef}",
+    "purpose": "HRIS_HOME_MATERIALIZATION",
+    "responseProfile": "HrisHomeContributionMaterialization.v1",
+    "moduleDataProfile": "PerformanceHomeContribution.v1",
+    "eventType": "dwp.hris.home.contribution-changed.v1",
+    "capabilities": ["hcm.operations.performance.view"],
+    "scopes": ["SELF", "TEAM", "NAMED_POPULATION"]
+  },
+  "readinessGate": {"state": "PASS_R2_RECONCILED", "tokenState": "ISSUED", "tokenId": "HRIS-WAVE6-START-BASE-TFR-PER-007-R2", "implementationAuthorized": true, "worktreeAuthorized": true, "featureActivationAuthorized": false},
+  "touchManifest": {
+    "allowed": [
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/performance/home/**",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/performance/home/**",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/performance/contracts/xcon/Xcon012PerformanceHomeContributionChangedV1ProviderContractTest.java",
+      "dwp-people-server/src/main/resources/application.yml (PER home producer default-OFF settings only)"
+    ],
+    "forbidden": ["FRONTEND", "GATEWAY", "SYS_HOME_COMPOSITION", "CENTRAL_AUTHORIZATION", "GENERATED_CONTRACTS", "MIGRATIONS", "COMPPLAN_V17_V18", "HRM_TIME_PAYROLL_SOURCE"]
+  },
+  "acceptance": ["EXACT_SIGNED_WORKLOAD_TENANT_PURPOSE_PATH_AND_DELEGATED_SUBJECT", "CURRENT_CAPABILITY_PERMISSION_SCOPE_AND_FIELD_POLICY_REEVALUATION", "CLOSED_PERFORMANCE_DATA_WITHOUT_TEXT_SCORE_RATING_OR_FEEDBACK", "OPAQUE_TENANT_BOUND_REF_AND_CANONICAL_DIGEST", "VIEW_MASK_OMIT_AND_PARTIAL_FAILURE_SEMANTICS", "XCON_012_AND_SHARED_TRANSACTIONAL_OUTBOX_REPLAY", "UNKNOWN_STALE_DIGEST_MISMATCH_AND_CROSS_TENANT_FAIL_CLOSED", "NO_BROWSER_ROUTE_OR_CALLER_TENANT", "DEFAULT_OFF", "TARGETED_TESTS_PASS"],
+  "migration": {"authorized": false, "highWater": "PERFORMANCE:V18", "decision": "USE_STATELESS_REF_AND_SHARED_SYS_DOMAIN_EVENT_OUTBOX"},
+  "basePins": {"backend": "dwp-backend@8c28fd91622e04dcfcfb91738684d18ee25d2941", "frontendControl": "dwp-frontend@472dd2c6f07f4223d5314313087553f914b39f9f"}
+}

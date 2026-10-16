@@ -1,0 +1,28 @@
+{
+  "schema": "dwp.hris.home-producer-control-packet.v2",
+  "packetId": "HRIS-WAVE6-PAY-015-HOME-PRODUCER-CONTROL-R2",
+  "issuedAt": "2026-10-16T18:00:00+09:00",
+  "supersedes": {"path": "docs/06-delivery/hris/wave6-2026-10-15/pay-015-home-producer-control-r1/control-packet.v1.json", "sha256": "47802b874bb7ca855483f217e2d06170e49b898d000fed47d0134dd7ea43a396", "preservation": "IMMUTABLE_PREDECESSOR_RETAINED"},
+  "reconciliation": {"path": "docs/06-delivery/hris/wave6-2026-10-15/r2-home-producer-contract-reconciliation-r1/central-reconciliation-receipt.v1.json", "sha256": "537a3a00ab984d5979929efdf94e0b3adbded570f8e5cef72641bd9ba832e1a1"},
+  "slice": {"sliceId": "BASE-TFR-PAY-015", "moduleSession": "HRIS-PAY", "ownerService": "dwp-payroll-server", "boundedContext": "PAYROLL_STATUTORY"},
+  "authority": {
+    "pep": "PEP-PAY-001",
+    "servicePep": "SVC-PEP-PAY-001",
+    "xcon": "XCON-015",
+    "path": "/internal/hris-payroll/v1/home-contributions/{payloadRef}",
+    "purpose": "HRIS_HOME_MATERIALIZATION",
+    "responseProfile": "HrisHomeContributionMaterialization.v1",
+    "moduleDataProfile": "PayrollHomeContribution.v1",
+    "eventType": "dwp.hris.home.contribution-changed.v1",
+    "capabilities": ["hcm.operations.payroll-support.view"],
+    "scopes": ["SELF", "PAY_GROUP", "LEGAL_ENTITY"]
+  },
+  "readinessGate": {"state": "PASS_R2_RECONCILED", "tokenState": "ISSUED", "tokenId": "HRIS-WAVE6-START-BASE-TFR-PAY-015-R2", "implementationAuthorized": true, "worktreeAuthorized": true, "featureActivationAuthorized": false},
+  "touchManifest": {
+    "allowed": ["dwp-payroll-server/src/main/java/com/dwp/services/payroll/home/**", "dwp-payroll-server/src/test/java/com/dwp/services/payroll/home/**", "dwp-payroll-server/src/test/java/com/dwp/services/payroll/contracts/xcon/Xcon015PayrollHomeContributionChangedV1ProviderContractTest.java", "dwp-payroll-server/src/main/resources/application.yml (PAY home producer default-OFF settings only)"],
+    "forbidden": ["FRONTEND", "GATEWAY", "SYS_HOME_COMPOSITION", "CENTRAL_AUTHORIZATION", "GENERATED_CONTRACTS", "MIGRATIONS", "V49_V50_V51_OR_COMPENSATION_INPUT", "WORKER_LINES_BANK_OR_TAX_DATA", "HRM_PERFORMANCE_TIME_SOURCE"]
+  },
+  "acceptance": ["EXACT_SIGNED_WORKLOAD_TENANT_PURPOSE_PATH_AND_DELEGATED_SUBJECT", "CURRENT_CAPABILITY_PERMISSION_SCOPE_AND_FIELD_POLICY_REEVALUATION", "SELF_PAY_GROUP_LEGAL_ENTITY_CONTAINMENT", "FINALIZED_RUNS_ONLY", "AGGREGATE_MONEY_OMITTED", "MONEY_VIEW_AMOUNT_CURRENCY_MASK_FIXED_SENTINEL_OR_OMIT_NO_VALUE", "MISSING_PERIOD_OR_PAYSLIP_OMITTED_WITH_TYPED_PARTIAL_FAILURE", "OPAQUE_TENANT_BOUND_REF_AND_CANONICAL_DIGEST", "XCON_015_AND_SHARED_TRANSACTIONAL_OUTBOX_REPLAY", "UNKNOWN_STALE_DIGEST_MISMATCH_AND_CROSS_TENANT_FAIL_CLOSED", "DEFAULT_OFF", "TARGETED_TESTS_PASS"],
+  "migration": {"authorized": false, "highWater": "PAYROLL:V51", "decision": "USE_STATELESS_REF_AND_SHARED_SYS_DOMAIN_EVENT_OUTBOX"},
+  "basePins": {"backend": "dwp-backend@8c28fd91622e04dcfcfb91738684d18ee25d2941", "frontendControl": "dwp-frontend@472dd2c6f07f4223d5314313087553f914b39f9f"}
+}

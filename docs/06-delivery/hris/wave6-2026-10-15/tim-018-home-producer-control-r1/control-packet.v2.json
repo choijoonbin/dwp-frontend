@@ -1,0 +1,29 @@
+{
+  "schema": "dwp.hris.home-producer-control-packet.v2",
+  "packetId": "HRIS-WAVE6-TIM-018-HOME-PRODUCER-CONTROL-R2",
+  "issuedAt": "2026-10-16T18:00:00+09:00",
+  "supersedes": {"path": "docs/06-delivery/hris/wave6-2026-10-15/tim-018-home-producer-control-r1/control-packet.v1.json", "sha256": "3122e35ebe47e4401cbda3f87732f5d9b3cbb07f5acdb852e169b0b65fa6b3e4", "preservation": "IMMUTABLE_PREDECESSOR_RETAINED"},
+  "reconciliation": {"path": "docs/06-delivery/hris/wave6-2026-10-15/r2-home-producer-contract-reconciliation-r1/central-reconciliation-receipt.v1.json", "sha256": "537a3a00ab984d5979929efdf94e0b3adbded570f8e5cef72641bd9ba832e1a1"},
+  "slice": {"sliceId": "BASE-TFR-TIM-018", "moduleSession": "HRIS-TIM", "ownerService": "dwp-time-server", "boundedContext": "TIME_LEAVE"},
+  "authority": {
+    "pep": "PEP-TIM-001",
+    "servicePep": "SVC-PEP-TIM-002",
+    "xcon": "XCON-014",
+    "path": "/internal/hris-time/v1/home-contributions/{payloadRef}",
+    "purpose": "HRIS_HOME_MATERIALIZATION",
+    "responseProfile": "HrisHomeContributionMaterialization.v1",
+    "moduleDataProfile": "TimeLeaveHomeContribution.v1",
+    "supersededDataProfileAlias": "TimeHomeContribution.v1",
+    "eventType": "dwp.hris.home.contribution-changed.v1",
+    "capabilities": ["hcm.personal.time.view", "hcm.team.time.approve", "hcm.operations.time.update"],
+    "scopes": ["SELF", "TEAM", "TIME_GROUP"]
+  },
+  "readinessGate": {"state": "PASS_R2_RECONCILED", "tokenState": "ISSUED", "tokenId": "HRIS-WAVE6-START-BASE-TFR-TIM-018-R2", "implementationAuthorized": true, "worktreeAuthorized": true, "featureActivationAuthorized": false},
+  "touchManifest": {
+    "allowed": ["dwp-time-server/src/main/java/com/dwp/services/time/home/**", "dwp-time-server/src/test/java/com/dwp/services/time/home/**", "dwp-time-server/src/test/java/com/dwp/services/time/contracts/xcon/Xcon014TimeLeaveHomeContributionChangedV1ProviderContractTest.java", "dwp-time-server/src/main/resources/application.yml (TIM home producer default-OFF settings only)"],
+    "forbidden": ["FRONTEND", "GATEWAY", "SYS_HOME_COMPOSITION", "CENTRAL_AUTHORIZATION", "GENERATED_CONTRACTS", "MIGRATIONS", "LOCATION_EVIDENCE", "LEAVE_REASON", "HRM_PERFORMANCE_PAYROLL_SOURCE"]
+  },
+  "acceptance": ["EXACT_SIGNED_WORKLOAD_TENANT_PURPOSE_PATH_AND_DELEGATED_SUBJECT", "CURRENT_CAPABILITY_PERMISSION_SCOPE_AND_FIELD_POLICY_REEVALUATION", "SELF_TEAM_TIME_GROUP_CONTAINMENT", "AGGREGATE_CLOCK_STATE_OMITTED", "MISSING_LEAVE_BALANCE_OMITTED_WITH_TYPED_PARTIAL_FAILURE", "OPAQUE_TENANT_BOUND_REF_AND_CANONICAL_DIGEST", "VIEW_MASK_OMIT_AND_PARTIAL_FAILURE_SEMANTICS", "XCON_014_AND_SHARED_TRANSACTIONAL_OUTBOX_REPLAY", "UNKNOWN_STALE_DIGEST_MISMATCH_AND_CROSS_TENANT_FAIL_CLOSED", "DEFAULT_OFF", "TARGETED_TESTS_PASS"],
+  "migration": {"authorized": false, "highWater": "TIME:V11", "decision": "USE_STATELESS_REF_AND_SHARED_SYS_DOMAIN_EVENT_OUTBOX"},
+  "basePins": {"backend": "dwp-backend@8c28fd91622e04dcfcfb91738684d18ee25d2941", "frontendControl": "dwp-frontend@472dd2c6f07f4223d5314313087553f914b39f9f"}
+}
