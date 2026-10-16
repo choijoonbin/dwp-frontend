@@ -23,8 +23,8 @@
     "backend": {
       "repository": "dwp-backend",
       "branch": "dwp-dev",
-      "commit": "3672ee0aca83c63369d9649f2cd1cf7f741e1b7d",
-      "tree": "6558f9cb4f85f0d83c5dd161ba697ab7d2804905",
+      "commit": "56b39d0d1847a1c95c399308d7d5cdac166ca03b",
+      "tree": "9b98d4d57274683ac5e413ca88053e2b16976088",
       "upstream": "origin/dwp-dev",
       "localRemoteExact": true,
       "workingTreeCleanAtObservation": true
@@ -114,8 +114,8 @@
         "DARK_FEATURES_REMAIN_OFF"
       ],
       "closureEvidence": {
-        "backendCommit": "3672ee0aca83c63369d9649f2cd1cf7f741e1b7d",
-        "backendTree": "6558f9cb4f85f0d83c5dd161ba697ab7d2804905",
+        "backendCommit": "56b39d0d1847a1c95c399308d7d5cdac166ca03b",
+        "backendTree": "9b98d4d57274683ac5e413ca88053e2b16976088",
         "upstream": "origin/dwp-dev",
         "localRemoteExact": true,
         "targetedTests": "PASS",
@@ -135,7 +135,7 @@
             "rows": 10,
             "v51Applied": true
           },
-          "sharedCurrentControlReference": "dwp-migration-control-v2:711472247f9d54a109f5095bbff1e2913aa7707835af712af08b8e2cab018cf6"
+          "sharedCurrentControlReference": "dwp-migration-control-v2:e3957f196a098020825d6e31e8251851786da97e71f5b2edecb1cbbc5ceed824"
         },
         "localReceiptFilesCommitted": false
       }
