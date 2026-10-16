@@ -1,0 +1,47 @@
+{
+  "schema": "dwp.hris.central-integration-result.v1",
+  "resultId": "HRIS-WAVE6-SYS-009-CENTRAL-INTEGRATION-R1",
+  "recordedAt": "2026-10-16T10:53:55+09:00",
+  "sliceId": "BASE-TFR-SYS-009",
+  "state": "INTEGRATED_TO_DWP_DEV_DEFAULT_OFF",
+  "authorization": "central-result-admission.v1.json",
+  "integration": {
+    "repository": "dwp-backend",
+    "branch": "dwp-dev",
+    "upstream": "origin/dwp-dev",
+    "previousCommit": "7d948cc86e6e8c56de92b1224d67bdebf7d90c3a",
+    "integratedCommit": "adc3c0b3bf78743bceb45e6fd18507156096b870",
+    "integratedTree": "3a284eaa6800436abd941bdd7b83a3856137ae7a",
+    "mode": "FAST_FORWARD_ONLY",
+    "localRemoteExact": true,
+    "aheadBehind": "0/0",
+    "clean": true,
+    "changedPathCount": 25
+  },
+  "moduleBranches": [
+    {"branch": "codex/hris-wave6-sys-009-receipt-20261016-r1", "commit": "eb87269cfce4a6f0a9ed49fe73490307b2d76fb2", "remoteExactAtResult": true},
+    {"branch": "codex/hris-wave6-sys-009-backend-20261016-r1", "commit": "adc3c0b3bf78743bceb45e6fd18507156096b870", "remoteExactAtResult": true}
+  ],
+  "acceptedEvidence": {
+    "moduleResult": "module-result-evidence.v1.json",
+    "acceptanceCriteria": "SYS009-AC-01_THROUGH_SYS009-AC-12_ALL_PASS",
+    "migration": "V328 clean and V327-to-V328 PostgreSQL Testcontainers evidence PASS; V327 historical checksum unchanged",
+    "sharedReceipt": "current-and-origin restrictive reauthorization PASS with controlled-transfer-only feature gate",
+    "independentAudit": "P0=0_P1=0_P2=0",
+    "finalChangedOwnerVerification": "23/23 PASS; unchanged idempotency PASS reused",
+    "combinedVerification": "38/38 PASS"
+  },
+  "runtimeState": {
+    "controlledTransferDefault": "OFF",
+    "controlledTransferAuthorityDefault": "OFF",
+    "authorizationBundleV44": "DRAFT",
+    "tenantCustomerProductionActivation": false
+  },
+  "homeProducerSuccessors": [
+    {"sliceId": "BASE-TFR-HRM-003", "state": "CENTRAL_RECONCILIATION_REQUIRED", "token": "WITHHELD"},
+    {"sliceId": "BASE-TFR-PER-007", "state": "CENTRAL_RECONCILIATION_REQUIRED", "token": "WITHHELD"},
+    {"sliceId": "BASE-TFR-TIM-018", "state": "CENTRAL_RECONCILIATION_REQUIRED", "token": "WITHHELD"},
+    {"sliceId": "BASE-TFR-PAY-015", "state": "CENTRAL_RECONCILIATION_REQUIRED", "token": "WITHHELD"}
+  ],
+  "nextAction": "Resolve one canonical home-contribution purpose and response type for HRM-003, PER-007, TIM-018 and PAY-015 in Central, issue owner-specific module tokens only after reconciliation, and keep all runtime and tenant activation separate."
+}
