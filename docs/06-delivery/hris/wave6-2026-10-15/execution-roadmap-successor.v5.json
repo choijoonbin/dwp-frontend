@@ -1,0 +1,123 @@
+{
+  "schema": "dwp.hris.wave6-execution-roadmap-successor.v5",
+  "roadmapId": "HRIS-WAVE6-EXECUTION-ROADMAP-SUCCESSOR-20261016-R5",
+  "issuedAt": "2026-10-16T18:36:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "supersedes": {
+    "path": "docs/06-delivery/hris/wave6-2026-10-15/execution-roadmap-successor.v4.json",
+    "sha256": "019ff7db22834169b1ec05a2dbd183b414da50ae1c3666cac059dcd4887a82c3",
+    "preservation": "IMMUTABLE_PREDECESSOR_RETAINED_AS_R3_STARTING_BASELINE",
+    "inheritedClosedMilestones": true
+  },
+  "baseline": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "34d0a6c4be86e29addb77c73cb3b3f67e3095cb9",
+      "tree": "2a9a963e0b1a213307c948528c148fc0f1b232a2",
+      "upstream": "origin/dwp-dev",
+      "localRemoteExact": true,
+      "workingTreeClean": true
+    },
+    "frontendControlParent": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "c60e9d9577f01a4204972b76d09c521b28a39c0d",
+      "upstream": "origin/dwp-dev",
+      "localRemoteExactBeforeThisCarrier": true
+    }
+  },
+  "inheritedClosed": [
+    {
+      "id": "R2-RESOLVE-HOME-PRODUCER-PURPOSE-AND-TYPE",
+      "state": "CLOSED_RECONCILED_CONTRACT_IMPLEMENTED_AND_PUSHED",
+      "evidence": {
+        "path": "docs/06-delivery/hris/wave6-2026-10-15/r2-home-producer-contract-reconciliation-r1/central-reconciliation-receipt.v1.json",
+        "sha256": "537a3a00ab984d5979929efdf94e0b3adbded570f8e5cef72641bd9ba832e1a1"
+      }
+    }
+  ],
+  "closedByThisSuccessor": {
+    "group": "HOME_PRODUCERS",
+    "state": "R3A_R3B_R3C_R3D_INTEGRATED_CLOSED_DEFAULT_OFF",
+    "centralEvidence": {
+      "path": "docs/06-delivery/hris/wave6-2026-10-15/r3-home-producer-integration-r1/central-integration-result.v1.json",
+      "sha256": "052ee3bb6a28dbebb1401768034adc34937c3949c1e537eda8537bad324a891c"
+    },
+    "stages": [
+      {
+        "id": "R3A-IMPLEMENT-INTEGRATE-HRM-003-HOME-PRODUCER",
+        "owner": "HRIS-HRM",
+        "state": "CLOSED_DEFAULT_OFF",
+        "evidence": {
+          "path": "docs/06-delivery/hris/wave6-2026-10-15/hrm-003-home-producer-control-r1/module-result-evidence.v1.json",
+          "sha256": "747e56533531d403c2895b0a97f95be8744855560040bbf281870ce39fe667cb"
+        }
+      },
+      {
+        "id": "R3B-IMPLEMENT-INTEGRATE-PER-007-HOME-PRODUCER",
+        "owner": "HRIS-PER",
+        "state": "CLOSED_DEFAULT_OFF",
+        "evidence": {
+          "path": "docs/06-delivery/hris/wave6-2026-10-15/per-007-home-producer-control-r1/module-result-evidence.v1.json",
+          "sha256": "518b99da78db9c5da55aca79078bdc2504c414fd2e65e32e96257becc28ee41b"
+        }
+      },
+      {
+        "id": "R3C-IMPLEMENT-INTEGRATE-TIM-018-HOME-PRODUCER",
+        "owner": "HRIS-TIM",
+        "state": "CLOSED_DEFAULT_OFF",
+        "evidence": {
+          "path": "docs/06-delivery/hris/wave6-2026-10-15/tim-018-home-producer-control-r1/module-result-evidence.v1.json",
+          "sha256": "42caddcb0f08cda7f9b0e5e0e7fe6e64198bf8deeff57db3f65c7cdb15846ebc"
+        }
+      },
+      {
+        "id": "R3D-IMPLEMENT-INTEGRATE-PAY-015-HOME-PRODUCER",
+        "owner": "HRIS-PAY",
+        "state": "CLOSED_DEFAULT_OFF",
+        "evidence": {
+          "path": "docs/06-delivery/hris/wave6-2026-10-15/pay-015-home-producer-control-r1/module-result-evidence.v1.json",
+          "sha256": "127fa07259335457ccc3fae42eeec0cc858ae3564fb02d90e585cfaa068888d3"
+        }
+      }
+    ],
+    "completionRule": "ALL_FOUR_OWNER_RESULTS_AND_SHARED_SECURITY_HARDENING_PASS_AT_THE_SAME_FINAL_BACKEND_HEAD"
+  },
+  "nextExecutable": {
+    "id": "R4-INTEGRATE-SYS-012-HOME-COMPOSITION-RESIDUAL",
+    "state": "NEXT_EXECUTABLE",
+    "owner": "HRIS-SYS",
+    "sliceId": "BASE-TFR-SYS-012",
+    "scope": "Compose the four sealed owner materializations for HRIS Home without changing their authority boundaries or activating owner features.",
+    "entryCriteria": [
+      "consume the exact final R3 backend commit and tree",
+      "consume HrisHomeContributionMaterialization.v1 for all four owners",
+      "preserve HRIS_HOME_VIEW as the browser-composition purpose and HRIS_HOME_MATERIALIZATION as the owner workload purpose",
+      "keep browser route, menu, tenant and production activation outside this implementation increment",
+      "use changed-cluster-first verification"
+    ]
+  },
+  "withheld": [
+    {
+      "id": "R5-SEAL-AND-INTEGRATE-SHARED-SEVEN-WORKBENCH-TASK-NAVIGATION",
+      "state": "WITHHELD_PENDING_R4"
+    }
+  ],
+  "validationPolicy": {
+    "changedClusterFirst": true,
+    "failedTargetOnlyAfterCorrection": true,
+    "repositoryWideSuitePerCorrection": false,
+    "fullSuiteOnlyAtExplicitReleaseGateOrCrossCuttingRisk": true,
+    "reuseExactR2AndR3Evidence": true,
+    "r3FinalTestCounts": 81
+  },
+  "activationPolicy": {
+    "allNewFeaturesDefaultOff": true,
+    "publicationAdaptersActivated": false,
+    "tenantActivationAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "DISPATCH_R4_SYS_012_HOME_COMPOSITION_RESIDUAL_ONLY_AFTER_ALL_PLACEHOLDERS_ARE_BOUND_AND_THE_R3_CARRIER_IS_PUSHED_REMOTE_EXACT"
+}

@@ -1,0 +1,61 @@
+{
+  "schema": "dwp.hris.wave6-home-producer-module-result-evidence.v1",
+  "resultId": "HRIS-WAVE6-PAY-015-HOME-PRODUCER-MODULE-RESULT-R1",
+  "issuedAt": "2026-10-16T18:36:00+09:00",
+  "issuedBy": "HRIS-PAY",
+  "status": "PASS_OWNER_RESULT_INTEGRATED_AND_CENTRALLY_HARDENED_DEFAULT_OFF",
+  "slice": {
+    "sliceId": "BASE-TFR-PAY-015",
+    "moduleSession": "HRIS-PAY",
+    "ownerService": "dwp-payroll-server",
+    "boundedContext": "PAYROLL_STATUTORY"
+  },
+  "control": {
+    "path": "docs/06-delivery/hris/wave6-2026-10-15/pay-015-home-producer-control-r1/control-packet.v2.json",
+    "sha256": "12d5d18f324657e2a979299287f03aeb03cb129f5d82f4fd50788fee432fa5d7",
+    "tokenId": "HRIS-WAVE6-START-BASE-TFR-PAY-015-R2"
+  },
+  "ownerResult": {
+    "branch": "codex/hris-r3-pay-015",
+    "commit": "847a83b669ac48840d9564ea1beaa2918e085984",
+    "targetedTests": 16,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "result": "PASS"
+  },
+  "centralIntegration": {
+    "mergeCommit": "7bd5e586f0c92413d2f8aa0c7b35e4297c693ae9",
+    "finalBackendCommit": "34d0a6c4be86e29addb77c73cb3b3f67e3095cb9",
+    "finalBackendTree": "2a9a963e0b1a213307c948528c148fc0f1b232a2",
+    "targetedClosureTests": 81,
+    "result": "PASS_AFTER_SHARED_R3_HARDENING"
+  },
+  "acceptance": {
+    "passed": 12,
+    "total": 12,
+    "closedAtFinalBoundHead": [
+      "exact signed workload admission with body, query and transfer-encoding rejection",
+      "SELF, PAY_GROUP and LEGAL_ENTITY containment",
+      "finalized runs only with aggregate money omitted",
+      "money VIEW, MASK and OMIT policy without restricted payroll detail",
+      "tenant-bound reference with shared exact-wire canonical digest",
+      "XCON-015 through the shared transactional outbox with event-local sequence one",
+      "feature and event publication remain default OFF"
+    ]
+  },
+  "migration": {
+    "added": false,
+    "highWaterPreserved": "PAYROLL:V51",
+    "decision": "STATELESS_REFERENCE_AND_EXISTING_SHARED_OUTBOX"
+  },
+  "activationBoundary": {
+    "runtimeDefault": "OFF",
+    "featureActivated": false,
+    "publicationActivated": false,
+    "tenantActivated": false,
+    "customerDataUsed": false,
+    "productionReleased": false
+  },
+  "nonclaim": "The producer is integrated code only. No publication-candidate production adapter, tenant configuration, browser route, menu, SYS composition, customer-data use or production release is activated by this result."
+}

@@ -1,0 +1,61 @@
+{
+  "schema": "dwp.hris.wave6-home-producer-module-result-evidence.v1",
+  "resultId": "HRIS-WAVE6-TIM-018-HOME-PRODUCER-MODULE-RESULT-R1",
+  "issuedAt": "2026-10-16T18:36:00+09:00",
+  "issuedBy": "HRIS-TIM",
+  "status": "PASS_OWNER_RESULT_INTEGRATED_AND_CENTRALLY_HARDENED_DEFAULT_OFF",
+  "slice": {
+    "sliceId": "BASE-TFR-TIM-018",
+    "moduleSession": "HRIS-TIM",
+    "ownerService": "dwp-time-server",
+    "boundedContext": "TIME_LEAVE"
+  },
+  "control": {
+    "path": "docs/06-delivery/hris/wave6-2026-10-15/tim-018-home-producer-control-r1/control-packet.v2.json",
+    "sha256": "ecf4a9c0c8bc58a9d1b18e1387c49383ddf42980c4231d24ef5924df6273cd33",
+    "tokenId": "HRIS-WAVE6-START-BASE-TFR-TIM-018-R2"
+  },
+  "ownerResult": {
+    "branch": "codex/hris-r3-tim-018",
+    "commit": "1489b80729d6b3e901f1aec5895071484615f9e6",
+    "targetedTests": 17,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "result": "PASS"
+  },
+  "centralIntegration": {
+    "mergeCommit": "10cd987c53f32be03a9be6bad6723545d205439e",
+    "finalBackendCommit": "34d0a6c4be86e29addb77c73cb3b3f67e3095cb9",
+    "finalBackendTree": "2a9a963e0b1a213307c948528c148fc0f1b232a2",
+    "targetedClosureTests": 81,
+    "result": "PASS_AFTER_SHARED_R3_HARDENING"
+  },
+  "acceptance": {
+    "passed": 11,
+    "total": 11,
+    "closedAtFinalBoundHead": [
+      "exact signed workload admission and durable atomic JTI and nonce replay reservation",
+      "SELF, TEAM and TIME_GROUP containment",
+      "aggregate clock state omitted and missing leave balance reported as a typed partial failure",
+      "timecard states aligned to the V11 domain constraint",
+      "tenant-bound reference with shared exact-wire canonical digest",
+      "XCON-014 through the shared transactional outbox with event-local sequence one",
+      "feature and event publication remain default OFF"
+    ]
+  },
+  "migration": {
+    "added": false,
+    "highWaterPreserved": "TIME:V11",
+    "decision": "STATELESS_REFERENCE_AND_EXISTING_SHARED_OUTBOX_AND_INBOX"
+  },
+  "activationBoundary": {
+    "runtimeDefault": "OFF",
+    "featureActivated": false,
+    "publicationActivated": false,
+    "tenantActivated": false,
+    "customerDataUsed": false,
+    "productionReleased": false
+  },
+  "nonclaim": "The producer is integrated code only. No publication-candidate production adapter, tenant configuration, browser route, menu, SYS composition, customer-data use or production release is activated by this result."
+}

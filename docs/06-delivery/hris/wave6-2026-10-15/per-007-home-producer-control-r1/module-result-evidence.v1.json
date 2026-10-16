@@ -1,0 +1,61 @@
+{
+  "schema": "dwp.hris.wave6-home-producer-module-result-evidence.v1",
+  "resultId": "HRIS-WAVE6-PER-007-HOME-PRODUCER-MODULE-RESULT-R1",
+  "issuedAt": "2026-10-16T18:36:00+09:00",
+  "issuedBy": "HRIS-PER",
+  "status": "PASS_OWNER_RESULT_INTEGRATED_AND_CENTRALLY_HARDENED_DEFAULT_OFF",
+  "slice": {
+    "sliceId": "BASE-TFR-PER-007",
+    "moduleSession": "HRIS-PER",
+    "ownerService": "dwp-people-server",
+    "boundedContext": "PERFORMANCE"
+  },
+  "control": {
+    "path": "docs/06-delivery/hris/wave6-2026-10-15/per-007-home-producer-control-r1/control-packet.v2.json",
+    "sha256": "92645a5afcada74c7e173fe3bee478d93441085a237d6a662a95b0853e6ce037",
+    "tokenId": "HRIS-WAVE6-START-BASE-TFR-PER-007-R2"
+  },
+  "ownerResult": {
+    "branch": "codex/hris-r3-per-007",
+    "commit": "3c43f494d88b8c4aac6630e8d057662871cde2b6",
+    "targetedTests": 13,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "result": "PASS"
+  },
+  "centralIntegration": {
+    "mergeCommit": "9b4caca77479188489e822dbad7e89795f9bf307",
+    "finalBackendCommit": "34d0a6c4be86e29addb77c73cb3b3f67e3095cb9",
+    "finalBackendTree": "2a9a963e0b1a213307c948528c148fc0f1b232a2",
+    "targetedClosureTests": 81,
+    "result": "PASS_AFTER_SHARED_R3_HARDENING"
+  },
+  "acceptance": {
+    "passed": 10,
+    "total": 10,
+    "closedAtFinalBoundHead": [
+      "exact signed workload admission runs before the generic People security filter",
+      "body, query, transfer-encoding and caller-tenant inputs fail closed",
+      "durable atomic JTI and nonce replay reservation",
+      "closed performance projection without text, score, rating or feedback",
+      "tenant-bound reference with shared exact-wire canonical digest",
+      "XCON-012 through the shared transactional outbox with event-local sequence one",
+      "feature and event publication remain default OFF"
+    ]
+  },
+  "migration": {
+    "added": false,
+    "highWaterPreserved": "PERFORMANCE:V18",
+    "decision": "STATELESS_REFERENCE_AND_EXISTING_SHARED_OUTBOX_AND_INBOX"
+  },
+  "activationBoundary": {
+    "runtimeDefault": "OFF",
+    "featureActivated": false,
+    "publicationActivated": false,
+    "tenantActivated": false,
+    "customerDataUsed": false,
+    "productionReleased": false
+  },
+  "nonclaim": "The producer is integrated code only. No publication-candidate production adapter, tenant configuration, browser route, menu, SYS composition, customer-data use or production release is activated by this result."
+}

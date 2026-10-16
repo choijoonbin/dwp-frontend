@@ -1,0 +1,142 @@
+{
+  "schema": "dwp.hris.wave6-r3-home-producer-central-integration-result.v1",
+  "receiptId": "HRIS-WAVE6-R3-HOME-PRODUCER-CENTRAL-INTEGRATION-RESULT-R1",
+  "issuedAt": "2026-10-16T18:36:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "status": "PASS_ALL_FOUR_PRODUCERS_INTEGRATED_CLOSED_DEFAULT_OFF",
+  "decision": "CLOSE_R3A_THROUGH_R3D_AT_ONE_EXACT_BACKEND_HEAD_WITHOUT_FEATURE_PUBLICATION_TENANT_CUSTOMER_OR_PRODUCTION_ACTIVATION",
+  "r2Foundation": {
+    "receipt": {
+      "path": "docs/06-delivery/hris/wave6-2026-10-15/r2-home-producer-contract-reconciliation-r1/central-reconciliation-receipt.v1.json",
+      "sha256": "537a3a00ab984d5979929efdf94e0b3adbded570f8e5cef72641bd9ba832e1a1"
+    },
+    "backendCommit": "8c28fd91622e04dcfcfb91738684d18ee25d2941",
+    "workloadPurpose": "HRIS_HOME_MATERIALIZATION",
+    "responseProfile": "HrisHomeContributionMaterialization.v1",
+    "eventType": "dwp.hris.home.contribution-changed.v1"
+  },
+  "moduleResults": [
+    {
+      "stage": "R3A",
+      "sliceId": "BASE-TFR-HRM-003",
+      "owner": "HRIS-HRM",
+      "ownerCommit": "03c898b41256fec3091d53963b7fa33fb8ab8e83",
+      "integrationMergeCommit": "3b543d4e0b8f227d787cc62a3db5786f587cc713",
+      "ownerTargetedTests": 10,
+      "evidence": {
+        "path": "docs/06-delivery/hris/wave6-2026-10-15/hrm-003-home-producer-control-r1/module-result-evidence.v1.json",
+        "sha256": "747e56533531d403c2895b0a97f95be8744855560040bbf281870ce39fe667cb"
+      },
+      "result": "PASS_DEFAULT_OFF"
+    },
+    {
+      "stage": "R3B",
+      "sliceId": "BASE-TFR-PER-007",
+      "owner": "HRIS-PER",
+      "ownerCommit": "3c43f494d88b8c4aac6630e8d057662871cde2b6",
+      "integrationMergeCommit": "9b4caca77479188489e822dbad7e89795f9bf307",
+      "ownerTargetedTests": 13,
+      "evidence": {
+        "path": "docs/06-delivery/hris/wave6-2026-10-15/per-007-home-producer-control-r1/module-result-evidence.v1.json",
+        "sha256": "518b99da78db9c5da55aca79078bdc2504c414fd2e65e32e96257becc28ee41b"
+      },
+      "result": "PASS_DEFAULT_OFF"
+    },
+    {
+      "stage": "R3C",
+      "sliceId": "BASE-TFR-TIM-018",
+      "owner": "HRIS-TIM",
+      "ownerCommit": "1489b80729d6b3e901f1aec5895071484615f9e6",
+      "integrationMergeCommit": "10cd987c53f32be03a9be6bad6723545d205439e",
+      "ownerTargetedTests": 17,
+      "evidence": {
+        "path": "docs/06-delivery/hris/wave6-2026-10-15/tim-018-home-producer-control-r1/module-result-evidence.v1.json",
+        "sha256": "42caddcb0f08cda7f9b0e5e0e7fe6e64198bf8deeff57db3f65c7cdb15846ebc"
+      },
+      "result": "PASS_DEFAULT_OFF"
+    },
+    {
+      "stage": "R3D",
+      "sliceId": "BASE-TFR-PAY-015",
+      "owner": "HRIS-PAY",
+      "ownerCommit": "847a83b669ac48840d9564ea1beaa2918e085984",
+      "integrationMergeCommit": "7bd5e586f0c92413d2f8aa0c7b35e4297c693ae9",
+      "ownerTargetedTests": 16,
+      "evidence": {
+        "path": "docs/06-delivery/hris/wave6-2026-10-15/pay-015-home-producer-control-r1/module-result-evidence.v1.json",
+        "sha256": "127fa07259335457ccc3fae42eeec0cc858ae3564fb02d90e585cfaa068888d3"
+      },
+      "result": "PASS_DEFAULT_OFF"
+    }
+  ],
+  "finalBinding": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "upstream": "origin/dwp-dev",
+      "commit": "34d0a6c4be86e29addb77c73cb3b3f67e3095cb9",
+      "tree": "2a9a963e0b1a213307c948528c148fc0f1b232a2",
+      "clean": true,
+      "upstreamAhead": 0,
+      "upstreamBehind": 0,
+      "remoteExact": true
+    },
+    "frontendControlParent": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "c60e9d9577f01a4204972b76d09c521b28a39c0d",
+      "cleanBeforeCarrier": true,
+      "remoteExactBeforeCarrier": true
+    }
+  },
+  "crossModuleClosure": {
+    "sharedCanonicalDigest": "SHA256_OF_EXACT_MATERIALIZATION_WIRE_WITH_ONLY_PAYLOAD_REF_AND_PAYLOAD_DIGEST_EXCLUDED",
+    "opaqueReference": "TENANT_AND_DIGEST_BOUND_STATELESS_HMAC",
+    "eventAggregate": "EVENT_ID_SPECIFIC_SEQUENCE_ONE",
+    "outbox": "EXISTING_SYS_DOMAIN_EVENT_OUTBOX",
+    "replay": "DURABLE_ATOMIC_JTI_AND_NONCE_RESERVATION_WHERE_REQUIRED",
+    "ingress": "EXACT_INTERNAL_GET_NO_QUERY_NO_BODY_NO_TRANSFER_ENCODING_NO_CALLER_TENANT",
+    "authority": "CURRENT_OWNER_AUTHORITY_REEVALUATED_OR_ACTIVATION_FAILS_CLOSED",
+    "fieldPolicy": "VIEW_MASK_OMIT_WITH_TYPED_PARTIAL_FAILURES",
+    "unknownOrStaleOrCrossTenantOrDigestMismatch": "OPAQUE_NOT_FOUND",
+    "newMigrations": 0
+  },
+  "targetedVerification": {
+    "policy": "CHANGED_CLUSTER_FIRST_AND_FAILED_TARGET_ONLY_AFTER_CORRECTION",
+    "ownerTestsReused": 56,
+    "finalClosureTests": 81,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "fullRepositorySuites": "NOT_RUN_NOT_REQUIRED_FOR_THIS_CHANGED_CLUSTER_GATE",
+    "gitDiffCheck": "PASS"
+  },
+  "independentSecurityReview": {
+    "reviewerIdentity": "/root/r3_security_review",
+    "state": "PASS_AFTER_TARGETED_HARDENING",
+    "remainingP0": 0,
+    "remainingP1": 0,
+    "activationDependenciesRemainExplicitNonclaims": true
+  },
+  "completionBoundary": {
+    "state": "R3A_R3B_R3C_R3D_INTEGRATED_CLOSED_DEFAULT_OFF",
+    "runtimeDefault": "OFF",
+    "featureActivated": false,
+    "publicationActivated": false,
+    "currentAuthorityOrCandidateAdaptersActivated": false,
+    "browserRouteOrMenuActivated": false,
+    "sysHomeCompositionImplementedByThisResult": false,
+    "tenantActivated": false,
+    "customerDataUsed": false,
+    "productionReleased": false,
+    "nonclaim": "This result closes only the four owner producer increments. R4 SYS-012 Home composition, production authority or publication-candidate adapters, tenant configuration, feature enablement and release remain separate controlled work."
+  },
+  "r4Eligibility": {
+    "allFourR3GatesPassed": true,
+    "state": "NEXT_EXECUTABLE",
+    "sliceId": "BASE-TFR-SYS-012",
+    "scope": "SYS_HOME_COMPOSITION_RESIDUAL",
+    "mustConsume": "THE_FINAL_BOUND_R3_PRODUCER_CONTRACTS_WITHOUT_ACTIVATING_OWNER_FEATURES"
+  },
+  "nextAction": "EXECUTE_R4_SYS_012_HOME_COMPOSITION_RESIDUAL_IN_A_DEDICATED_OWNER_WORKTREE_USING_THE_FINAL_BOUND_R3_RECEIPT"
+}
