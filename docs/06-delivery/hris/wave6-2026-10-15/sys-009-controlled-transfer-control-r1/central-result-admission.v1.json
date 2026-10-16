@@ -1,0 +1,50 @@
+{
+  "schema": "dwp.hris.central-result-admission.v1",
+  "admissionId": "HRIS-WAVE6-SYS-009-CENTRAL-RESULT-ADMISSION-R1",
+  "admittedAt": "2026-10-16T10:52:26+09:00",
+  "admittedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "sliceId": "BASE-TFR-SYS-009",
+  "state": "ADMITTED_FOR_EXACT_FAST_FORWARD_TO_DWP_DEV_DEFAULT_OFF",
+  "moduleResult": {
+    "path": "module-result-evidence.v1.json",
+    "resultId": "HRIS-WAVE6-RESULT-BASE-TFR-SYS-009-R1",
+    "bytes": 5037,
+    "sha256": "fde3c17bc194682d744ca95359d4b21fd4c55a701af9a3c2c109ca8176dc89af",
+    "requiredState": "MODULE_RUNTIME_COMPLETE_CONTROL_INTEGRATION_PENDING_DEFAULT_OFF"
+  },
+  "integration": {
+    "repository": "dwp-backend",
+    "targetBranch": "dwp-dev",
+    "requiredTargetHead": "7d948cc86e6e8c56de92b1224d67bdebf7d90c3a",
+    "sourceBranch": "codex/hris-wave6-sys-009-backend-20261016-r1",
+    "sourceCommit": "adc3c0b3bf78743bceb45e6fd18507156096b870",
+    "sourceTree": "3a284eaa6800436abd941bdd7b83a3856137ae7a",
+    "sourceRemoteExact": true,
+    "mergeMode": "FAST_FORWARD_ONLY",
+    "changedPathCount": 25
+  },
+  "gates": [
+    {"gate": "START_TOKEN_AND_POST_TOKEN_ADMISSION", "state": "PASS", "evidence": "start-token-issued.v1.json and post-token-admission.v1.json"},
+    {"gate": "TWELVE_ACCEPTANCE_RESULTS", "state": "PASS", "evidence": "module-result-evidence.v1.json contains PASS for SYS009-AC-01 through SYS009-AC-12"},
+    {"gate": "TARGETED_TESTS", "state": "PASS", "evidence": "carrier, runtime, shared-receipt and combined exact selectors all pass; PostgreSQL Testcontainers executed"},
+    {"gate": "INDEPENDENT_FINAL_AUDIT", "state": "PASS", "evidence": "P0=0, P1=0, P2=0 after five final boundary fixes"},
+    {"gate": "REMOTE_EXACT_MODULE_RESULT", "state": "PASS", "evidence": "origin/codex/hris-wave6-sys-009-backend-20261016-r1@adc3c0b3"},
+    {"gate": "DEFAULT_OFF_AND_NONACTIVATION", "state": "PASS", "evidence": "application.yml controlled-transfer and authority defaults false; authorization v44 remains DRAFT"}
+  ],
+  "authority": {
+    "exactFastForwardToDwpDevAuthorized": true,
+    "pushDwpDevAuthorized": true,
+    "contentChangeDuringIntegrationAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "authorizationActivationAuthorized": false,
+    "tenantCustomerProductionActivationAuthorized": false
+  },
+  "invalidationConditions": [
+    "dwp-backend dwp-dev is not clean and remote-exact at requiredTargetHead before integration",
+    "source branch is not remote-exact at sourceCommit and sourceTree",
+    "fast-forward-only integration is impossible",
+    "any source content or migration changes after this admission",
+    "feature, authorization, tenant, customer or production activation is attempted"
+  ],
+  "nextAction": "Fast-forward dwp-backend dwp-dev to the exact admitted source commit, push, verify local/remote exact, and record a default-OFF central integration result."
+}

@@ -1,0 +1,55 @@
+{
+  "schema": "dwp.hris.module-result-evidence.v1",
+  "resultId": "HRIS-WAVE6-RESULT-BASE-TFR-SYS-009-R1",
+  "recordedAt": "2026-10-16T10:52:26+09:00",
+  "sliceId": "BASE-TFR-SYS-009",
+  "moduleSession": "HRIS-SYS",
+  "state": "MODULE_RUNTIME_COMPLETE_CONTROL_INTEGRATION_PENDING_DEFAULT_OFF",
+  "lineage": {
+    "base": "dwp-backend@7d948cc86e6e8c56de92b1224d67bdebf7d90c3a",
+    "runtimeCommit": "1c5d5a957ef0ca34382c5d7291a9f180a4c86fd7",
+    "sharedReceiptCommit": "eb87269cfce4a6f0a9ed49fe73490307b2d76fb2",
+    "combinedCommit": "7bb453b4383af4afe2b9dbb1d9cc6d87f6c21167",
+    "hardeningCommit": "adc3c0b3bf78743bceb45e6fd18507156096b870",
+    "resultTree": "3a284eaa6800436abd941bdd7b83a3856137ae7a",
+    "moduleBranch": "codex/hris-wave6-sys-009-backend-20261016-r1",
+    "moduleRemoteExact": true,
+    "changedPathCount": 25
+  },
+  "acceptanceResults": [
+    {"id": "SYS009-AC-01", "state": "PASS", "evidence": "Exact GET path, closed query, population-bound catalog, freshness and signed request-bound cursor are covered by API, service and PostgreSQL tests."},
+    {"id": "SYS009-AC-02", "state": "PASS", "evidence": "Exact POST path enforces all required headers including single bounded step-up challenge, strict duplicate/trailing-token JSON and bounded request streaming; returns 202 Receipt."},
+    {"id": "SYS009-AC-03", "state": "PASS", "evidence": "Carrier PEP plus Gateway context projection and runtime repository predicates enforce app, duty, capability, population, field and fixed purpose intersections."},
+    {"id": "SYS009-AC-04", "state": "PASS", "evidence": "Tenant and principal are server-owned; RLS and exact population kind/digest predicates deny cross-tenant and cross-population reads."},
+    {"id": "SYS009-AC-05", "state": "PASS", "evidence": "Canonical tenant/owner/client-key replay precedes external calls; same subject+digest replays, payload mismatch and cross-subject reuse return opaque 409."},
+    {"id": "SYS009-AC-06", "state": "PASS", "evidence": "Object version, ETag, digest, size, media and signed CLEAN scan evidence are bound and every tested mismatch fails before receipt creation."},
+    {"id": "SYS009-AC-07", "state": "PASS", "evidence": "Direction derives from transferKind; all outbound kinds require a verified recipient policy and positive egress revision."},
+    {"id": "SYS009-AC-08", "state": "PASS", "evidence": "V328 trigger enforces legal CAS transitions, lease rules, expiry time, terminal immutability and delete denial with PostgreSQL evidence."},
+    {"id": "SYS009-AC-09", "state": "PASS", "evidence": "Shared receipt seals the controlled-transfer origin and reapplies the restrictive current/origin decision; revoke, expiry, route, purpose and seal mismatch fail closed."},
+    {"id": "SYS009-AC-10", "state": "PASS", "evidence": "SYS-EVT-008 is written through the transactional outbox with the typed minimized contract and deterministic event identity."},
+    {"id": "SYS009-AC-11", "state": "PASS", "evidence": "V328 clean and V327-to-V328 PostgreSQL Testcontainers paths pass with V327 checksum preservation, forced RLS, constraints and tenant/population negative probes."},
+    {"id": "SYS009-AC-12", "state": "PASS", "evidence": "Runtime, authority clients and authorization bundle remain default OFF/DRAFT; no tenant, customer or production activation is included."}
+  ],
+  "verification": {
+    "carrier": "Central carrier focused checks and 46 Java tests PASS at f577eebb; Gateway runtime-context ProductSurfaceDecisionContextFilterTest 37/37 PASS at 7d948cc8.",
+    "runtimeFinal": "Five controlled-transfer selectors: 20/20 PASS including four PostgreSQL Testcontainers tests; after final audit fixes, changed-owner API/Service/MigrationContract/PostgreSQL selectors: 23/23 PASS and unchanged idempotency PASS reused.",
+    "sharedReceipt": "Five shared-receipt focused classes: 41/41 PASS.",
+    "combined": "Post-merge API, idempotency, feature gate, Auth origin reproof and receipt adapter: 38/38 PASS.",
+    "independentAudit": "Final read-only audit after the five boundary fixes: P0=0, P1=0, P2=0.",
+    "policy": "Only changed clusters and failed targets were rerun; no repository-wide suite was executed."
+  },
+  "migration": {
+    "path": "dwp-platform-server/src/main/resources/db/migration/V328__create_hris_controlled_file_transfers.sql",
+    "bytes": 14104,
+    "sha256": "10641685bc479b6c3b3f0f94c232f456f7c0502929b87ca80cbb96d1ae400d79",
+    "priorV327Bytes": 12932,
+    "priorV327Sha256": "8586a323808e902533e073c83bc6fb83f456173a9f626801bfbe611f19e7d9d7",
+    "secondMigrationUsed": false
+  },
+  "runtime": {
+    "enabledByDefault": false,
+    "authorityEnabledByDefault": false,
+    "requiredBeforeAnyFutureEnablement": ["private cursor HMAC secret", "internal authority base URL and service token", "deployed metadata, signed CLEAN scan and egress policy authorities", "separate tenant rollout approval"]
+  },
+  "nonclaims": ["tenant enabled", "customer enabled", "authorization bundle approved or assigned", "production released"]
+}
