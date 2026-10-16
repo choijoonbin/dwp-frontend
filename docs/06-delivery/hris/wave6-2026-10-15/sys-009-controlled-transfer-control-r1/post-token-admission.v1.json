@@ -1,0 +1,86 @@
+{
+  "schema": "dwp.hris.sys009.post-token-admission.v1",
+  "admissionId": "HRIS-WAVE6-SYS-009-POST-TOKEN-ADMISSION-R1",
+  "recordedAt": "2026-10-16T10:41:05+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "sliceId": "BASE-TFR-SYS-009",
+  "startToken": "HRIS-WAVE6-START-BASE-TFR-SYS-009-R1",
+  "controlCommit": "dwp-frontend@0f3337eb35ce8cd13fa0b688dbebf8768b7f1cc0",
+  "finalBackendBase": {
+    "repository": "dwp-backend",
+    "branch": "dwp-dev",
+    "commit": "7d948cc86e6e8c56de92b1224d67bdebf7d90c3a",
+    "tree": "e7f324c4210868178d8e6d8544635e46227ff847",
+    "upstream": "origin/dwp-dev"
+  },
+  "runtimeDraftAdmission": {
+    "worktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave6-20261016/sys-009-r1/backend",
+    "branch": "codex/hris-wave6-sys-009-backend-20261016-r1",
+    "head": "7d948cc86e6e8c56de92b1224d67bdebf7d90c3a",
+    "pathCount": 17,
+    "paths": [
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/controlledtransfer/ControlledTransferAuthorityPorts.java",
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/controlledtransfer/ControlledTransferController.java",
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/controlledtransfer/ControlledTransferDomainEvents.java",
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/controlledtransfer/ControlledTransferDtos.java",
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/controlledtransfer/ControlledTransferRepository.java",
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/controlledtransfer/ControlledTransferRuntimeConfiguration.java",
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/controlledtransfer/ControlledTransferService.java",
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/controlledtransfer/HttpControlledTransferAuthorities.java",
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/controlledtransfer/JdbcControlledTransferRepository.java",
+      "dwp-platform-server/src/main/resources/application.yml",
+      "dwp-platform-server/src/main/resources/db/migration/V328__create_hris_controlled_file_transfers.sql",
+      "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/controlledtransfer/ControlledTransferApiContractTest.java",
+      "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/controlledtransfer/ControlledTransferIdempotencyTest.java",
+      "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/controlledtransfer/ControlledTransferJsonBoundaryTest.java",
+      "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/controlledtransfer/ControlledTransferMigrationContractTest.java",
+      "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/controlledtransfer/ControlledTransferMigrationPostgresTest.java",
+      "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/controlledtransfer/ControlledTransferServiceTest.java"
+    ],
+    "outsideIssuedBoundary": [],
+    "contentManifestSha256": "223ef7a4778a05e97b629920453fc1498a2d10c9367c3e0763dcb0305cedbc3f",
+    "porcelainSha256": "32ab653f7499203e44b1923138b20e541aefbc40139b1bc5a3e7b67819b0d76f",
+    "diffCheck": "PASS",
+    "targetedEvidence": "ControlledTransferApiContractTest, ControlledTransferServiceTest, ControlledTransferIdempotencyTest, ControlledTransferMigrationContractTest and ControlledTransferMigrationPostgresTest: 20 tests, 0 skipped, 0 failed, BUILD SUCCESSFUL; PostgreSQL Testcontainers included",
+    "decision": "ADMITTED_FOR_MODULE_BRANCH_COMMIT_AND_PUSH"
+  },
+  "sharedReceiptDraftAdmission": {
+    "worktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave6-20261016/sys-009-receipt-r1/backend",
+    "branch": "codex/hris-wave6-sys-009-receipt-20261016-r1",
+    "head": "7d948cc86e6e8c56de92b1224d67bdebf7d90c3a",
+    "pathCount": 8,
+    "paths": [
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/AuthHrisExplorerAuthorityEvidenceQuery.java",
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisCommandReceiptController.java",
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerController.java",
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerOwnerEvidenceFilter.java",
+      "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/AuthHrisExplorerAuthorityEvidenceQueryTest.java",
+      "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerReceiptControllerTest.java",
+      "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisPlatformReceiptAuthorityAdapterTest.java",
+      "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisSharedReceiptFeatureGateTest.java"
+    ],
+    "outsideIssuedBoundary": [],
+    "contentManifestSha256": "f53df5f0634cc6a6f37f0fbc654149e070af6cf7bb8f87f40f48cfbd87160228",
+    "porcelainSha256": "1d8de9efe9604242b0071ceb3592cf85356116b579f390b072dbf8a617ffa64f",
+    "diffCheck": "PASS",
+    "targetedEvidence": "Five shared-receipt focused classes: 41 tests, 0 failed; Explorer-off controlled-transfer-only gate and current/origin revoke, expiry and mismatch denial included",
+    "decision": "ADMITTED_FOR_MODULE_BRANCH_COMMIT_AND_PUSH"
+  },
+  "semanticChecks": {
+    "storedOriginatingAction": "CONTROLLED_TRANSFER_CREATE",
+    "authorizationAlias": "DWP_CONTROLLED_TRANSFER_CREATE",
+    "aliasAndStoredActionDistinct": true,
+    "internalReceiptKey": "ct1:<OWNER>:<lowercaseHex SHA-256(clientKey)>",
+    "internalReceiptKeyLength": 72,
+    "populationSealMapping": "population_scope_digest=AccessSeal.populationScopeDigest; authority_population_scope_digest=HrisExplorerAuthoritySeals.populationScopeDigest(origin contextScopeKey)",
+    "defaultRuntime": "OFF"
+  },
+  "decision": {
+    "state": "BOTH_PRETOKEN_DRAFTS_ADMITTED_FOR_MODULE_BRANCH_COMMIT_AND_PUSH",
+    "moduleBranchCommitPushAuthorized": true,
+    "mergeToDwpDevAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantCustomerProductionActivationAuthorized": false,
+    "nextAction": "Commit and push both admitted module branches, combine them on the SYS009 module branch, run only the smallest combined receipt/runtime verification, and return result evidence for central admission."
+  }
+}
