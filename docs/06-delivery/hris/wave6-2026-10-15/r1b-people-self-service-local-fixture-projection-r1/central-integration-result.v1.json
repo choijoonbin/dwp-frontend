@@ -1,0 +1,107 @@
+{
+  "schema": "dwp.hris.central-integration-result.v1",
+  "resultId": "R1B-PEOPLE-SELF-SERVICE-LOCAL-FIXTURE-PROJECTION-20261016-R1",
+  "completedAt": "2026-10-16T17:35:51+09:00",
+  "owner": "HRIS-HRM_WITH_SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "INTEGRATED_CLOSED_LOCAL_ONLY",
+  "scope": [
+    "PEOPLE_PERSONAL_TIME_CURRENT_PERIOD_LOCAL_FIXTURE",
+    "PEOPLE_PERSONAL_PAY_PUBLIC_DATA_ORIGIN_PROJECTION",
+    "STRICT_FRONTEND_CONTRACT_PRESERVATION"
+  ],
+  "repositories": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "a9d4f0963fccdff9925ea7cbdee4c3447392b84e",
+      "tree": "618680f59d3eab09c1c1e917c13b9f7ecd6c9909",
+      "upstream": "origin/dwp-dev",
+      "localRemoteExact": true
+    },
+    "frontendContractBaseline": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "e1bfd742bc8408679ec606ed08613ced2ff48d27",
+      "tree": "8b137e170a52c6418998a1ff0969893d9c742695",
+      "sourceChanged": false,
+      "reason": "The existing personal Time and Payroll models already fail closed on LOCAL_SEED and correctly render an honest empty Time response."
+    }
+  },
+  "implementation": {
+    "time": {
+      "apiOwner": "dwp-people-server",
+      "route": "/api/people/v1/hr/time",
+      "strategy": "A local-only lifecycle refreshes deterministic current and previous weekly fixture rows at People startup and daily at 00:05 Asia/Seoul, independent of Flyway repeatable checksums.",
+      "safety": [
+        "BEAN_REQUIRES_LOCAL_SEED_ENABLED",
+        "CONSTRUCTION_FAILS_CLOSED_UNLESS_RUNTIME_ENVIRONMENT_IS_LOCAL",
+        "DETERMINISTIC_PUBLIC_IDENTIFIERS",
+        "INSERT_ON_CONFLICT_DO_NOTHING",
+        "CHILD_ROWS_REQUIRE_THE_EXACT_FIXTURE_CARD_IDENTIFIER",
+        "USER_CREATED_CARDS_ENTRIES_AND_CARD_STATUS_ARE_NOT_OVERWRITTEN"
+      ]
+    },
+    "pay": {
+      "apiOwner": "dwp-people-server",
+      "routes": [
+        "/api/people/v1/hr/pay",
+        "/api/people/v1/hr/home"
+      ],
+      "strategy": "Canonicalize only the internal LOCAL_SEED data-origin marker to the public REFERENCE value at the People API projection boundary.",
+      "safety": [
+        "PERSISTED_PROVENANCE_REMAINS_UNCHANGED",
+        "OTHER_ORIGIN_VALUES_REMAIN_UNCHANGED",
+        "MONETARY_DATA_REMAINS_REDACTED",
+        "FRONTEND_ALLOWLIST_REMAINS_STRICT"
+      ]
+    }
+  },
+  "constraintsVerified": {
+    "authorizationOrGrantChanges": false,
+    "productionFixtureActivation": false,
+    "frontendEnumRelaxation": false,
+    "userCreatedLocalDataOverwrite": false
+  },
+  "targetedValidation": {
+    "backend": {
+      "command": "./gradlew :dwp-people-server:test --tests 'com.dwp.services.people.hr.LocalHrTimeFixturePostgresTest' --tests 'com.dwp.services.people.hr.HrServiceTest.payCanonicalizesLocalSeedOriginAtThePeopleApiBoundary' --tests 'com.dwp.services.people.hr.HrServiceTest.homeProvidesFreshRoleAwareWorkflowSignalsWithoutAdditionalClientFanOut'",
+      "tests": 5,
+      "result": "PASS",
+      "coverage": [
+        "FUTURE_AS_OF_ROLL_FORWARD",
+        "NEXT_DAY_INCREMENTAL_REFRESH",
+        "EXACT_REPLAY_NO_OP",
+        "SELF_SERVICE_ENTRY_AND_STATUS_PRESERVATION",
+        "MANUAL_CARD_NON_INTERFERENCE",
+        "NON_LOCAL_FAIL_CLOSED",
+        "PAY_AND_HOME_PUBLIC_ORIGIN_CANONICALIZATION"
+      ]
+    },
+    "frontend": {
+      "command": "yarn vitest run apps/dwp/src/features/hris/payroll/model/payroll-self-service-model.test.ts apps/dwp/src/features/hris/time/testing/hris-time-model.test.ts apps/dwp/src/features/hris/payroll/api/payroll-api.test.ts apps/dwp/src/features/hris/time/api/hris-time-api.test.ts apps/dwp/src/features/hris/shell/testing/hris-home-mount-contract.test.ts",
+      "files": 5,
+      "tests": 75,
+      "result": "PASS"
+    },
+    "localRuntime": {
+      "peopleReadinessHttpStatus": 200,
+      "currentDate": "2026-10-16",
+      "fixtureCardCounts": {
+        "2026-10-05": 178,
+        "2026-10-12": 178
+      },
+      "authenticatedGatewayAcceptance": {
+        "timeHttpStatus": 200,
+        "timeCardPresent": true,
+        "timePeriodStart": "2026-10-12",
+        "timePeriodEnd": "2026-10-18",
+        "timeEntries": 5,
+        "payHttpStatus": 200,
+        "payCyclePresent": true,
+        "payDataOrigin": "REFERENCE",
+        "monetaryDataRedacted": true
+      }
+    }
+  },
+  "nextExecutable": "R2-RESOLVE-HOME-PRODUCER-PURPOSE-AND-TYPE"
+}
