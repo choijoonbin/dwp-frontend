@@ -4,7 +4,12 @@ import { createHash } from 'node:crypto';
 import { PRODUCT_SURFACE_HIGH_RISK_COMMAND_CATALOG } from '../../apps/dwp/src/components/product-surface-high-risk-command-catalog';
 
 type SurfaceId = 'approvals.work' | 'approvals.admin';
-type HcmSurfaceId = 'hcm.personal' | 'hcm.team' | 'hcm.operations' | 'hcm.management';
+type HcmSurfaceId =
+  | 'hcm.personal'
+  | 'hcm.team'
+  | 'hcm.utility'
+  | 'hcm.operations'
+  | 'hcm.management';
 
 export type ApprovalAuthorityOptions = {
   work?: boolean;
@@ -569,6 +574,13 @@ export async function mockHcmProductSurfaceAuthority(
       ['hcm.team.time.read', 'hcm.team.absence.read']
     ),
     hcmContext(
+      'hcm.utility',
+      'work',
+      { key: 'scope:hcm:utility', kind: 'SELF' },
+      [],
+      ['hcm.app.shell.view']
+    ),
+    hcmContext(
       'hcm.operations',
       'management',
       { key: 'scope:hcm:operations', kind: 'TARGET_POPULATION' },
@@ -588,6 +600,8 @@ export async function mockHcmProductSurfaceAuthority(
         'hcm.operations.benefits.read',
         'hcm.operations.pay.read',
         'hcm.operations.talent.read',
+        'hcm.operations.performance.view',
+        'hcm.compensation.plan.view',
         'hcm.operations.assignment-proposal.create',
         'hcm.operations.assignment-proposal.validate',
         'hcm.operations.assignment-proposal.submit',

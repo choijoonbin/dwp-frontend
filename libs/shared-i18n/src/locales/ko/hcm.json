@@ -347,6 +347,8 @@
     }
   },
   "navigation": {
+    "policyStatus": "HRIS 메뉴 접근 상태",
+    "policyLoading": "적용된 HRIS 업무 메뉴 정책을 확인하는 중입니다",
     "groups": {
       "hcm": {
         "shell-home": "시작",

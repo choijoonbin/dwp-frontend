@@ -347,6 +347,8 @@
     }
   },
   "navigation": {
+    "policyStatus": "HRIS navigation access status",
+    "policyLoading": "Verifying the effective HRIS task navigation policy",
     "groups": {
       "hcm": {
         "shell-home": "Start",
