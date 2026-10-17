@@ -1,0 +1,275 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-01.tim-007-pay-owner-review.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-01-TIM-007-PAY-OWNER-REVIEW-20261017-R1",
+  "reviewedAt": "2026-10-17T16:53:38+09:00",
+  "reviewedBy": "HRIS_PAY_OWNER_INDEPENDENT_REVIEW",
+  "result": "APPROVED_EXACT_PAYROLL_CONSUMER_PATH_ALLOCATION_NO_P0_OR_P1",
+  "reviewTarget": {
+    "path": "tim-007-internal-trust-packet.v1.json",
+    "expectedSha256": "f9f8287ea9e9c72792f1553611bde04b36b8fb150e8a477d1f05ef25545c7fd2",
+    "recomputedSha256": "f9f8287ea9e9c72792f1553611bde04b36b8fb150e8a477d1f05ef25545c7fd2",
+    "hashMatches": true,
+    "gateId": "HRIS-WAVE7-R7-BATCH-01-TIM-007-PAY-CONSUMER-OWNER-REVIEW-R1"
+  },
+  "lineage": {
+    "frontendCarrier": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "e569982492e8eac01fcc87674e4aea10b90d990a",
+      "tree": "33b6ff429d3b9f2253bcf74314c55af301c156f4"
+    },
+    "backendEvidencePin": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "3d3f141d95f0252f66bd5987b6cba30fadc431e9",
+      "tree": "bd0de7c5e36658da84bdb2cadd6e0504b2f9323b"
+    },
+    "boundaryValidation": {
+      "path": "boundary-validation-receipt.v1.json",
+      "sha256": "ada7e69cbd140a42b6c319dcebdab841be9ee2cc80ed17ddf78c66b9e2c11a8d"
+    },
+    "migrationLeaseState": {
+      "path": "../r7-batch-01-authorization-decisions-r1/migration-lease-state.v1.json",
+      "sha256": "9e019aea75199a9d0e664aacf70c51c028959fc2d32789f716244668c2adeb92"
+    }
+  },
+  "reviewScope": {
+    "performed": [
+      "recomputed the trust packet, immutable predecessor and source-register SHA-256 values",
+      "read the actual Payroll compensation-plan owner-refetch client, token issuer, canonicalizer, consumer and JDBC idempotency boundary at the pinned backend commit",
+      "read the actual People owner ingress trust profile and filter used as the closest SPIFFE and strict-JWT provider precedent",
+      "read the actual Time hidden owner endpoint and replay-reservation precedent",
+      "read the canonical XCON-008 through XCON-011 schemas and generated bindings without regenerating them",
+      "checked the current Payroll migration high-water and absence of any closedtime package or TIM-007 Payroll migration",
+      "ran only the existing targeted owner-refetch, digest, feature-default and generated-contract regressions"
+    ],
+    "notPerformed": [
+      "TIM-007 source implementation",
+      "new Payroll or Time migration authoring or execution",
+      "new closed-time HTTP, streaming, broker or PostgreSQL integration execution",
+      "repository-wide backend, frontend or product test suites",
+      "tenant enrollment, runtime activation, branch push or dwp-dev merge"
+    ]
+  },
+  "actualSourceEvidence": [
+    {
+      "path": "dwp-payroll-server/src/main/java/com/dwp/services/payroll/input/compensationplan/CompensationPlanSnapshotOwnerHttpClient.java",
+      "sha256": "ff036a96a59ea314f33806d3d70f836dccaf17e6258857a0e789b5e3385667cd",
+      "confirmed": [
+        "origin-only HTTPS and HTTP/2",
+        "TLS 1.3 with client key and owner trust stores",
+        "default-off conditional bean",
+        "PAY-owned tenant:grantRevision:policyRevision map"
+      ]
+    },
+    {
+      "path": "dwp-payroll-server/src/main/java/com/dwp/services/payroll/input/compensationplan/CompensationPlanOwnerTokenIssuer.java",
+      "sha256": "eb71722975ea573efe1662cd4e15e812e83ca7421cb09bdd531b78980f748572",
+      "confirmed": [
+        "RS256 compact JWT with kid and JWT type",
+        "thirty-second maximum lifetime",
+        "method, path, tenant grant, policy revision, purpose, projection, target identity and digest binding"
+      ]
+    },
+    {
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/compensationplanning/ApprovedCompensationSnapshotTrustProfile.java",
+      "sha256": "9d879c636aecd968ba30ab1221626a3046b42beb5d9bbbf992500d293aaa1641",
+      "confirmed": [
+        "exact Payroll SPIFFE URI SAN",
+        "strict JOSE and closed claim set with duplicate detection",
+        "current owner-loaded tenant grant and policy revision revalidation",
+        "target identity and digest binding before owner access"
+      ]
+    },
+    {
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/compensationplanning/ApprovedCompensationSnapshotIngressFilter.java",
+      "sha256": "83ab7de7b63c27ee08f04d188705d6adeac34b3abd0d03039056b5a2e7e5973d",
+      "confirmed": [
+        "hidden workload ingress",
+        "browser and caller-authority header rejection",
+        "tenant rate and concurrency boundary",
+        "opaque no-store denial"
+      ]
+    },
+    {
+      "path": "dwp-time-server/src/main/java/com/dwp/services/time/home/TimeHomeMaterializationController.java",
+      "sha256": "d828e17f50fb90f3072838daed786846ee48be77afd6b6c3a14596edcf55f9aa",
+      "confirmed": [
+        "hidden owner-local GET endpoint",
+        "exact request path with query and request-body rejection",
+        "no-store response and opaque no-store denial",
+        "default-off conditional bean"
+      ]
+    },
+    {
+      "path": "dwp-payroll-server/src/main/java/com/dwp/services/payroll/input/compensationplan/CompensationPlanInputCanonicalizer.java",
+      "sha256": "67bec9f4e9468aebb608334929f4f5d7f731e052f65b53e3806f865e22dde314",
+      "confirmed": [
+        "event-to-snapshot identity checks",
+        "strict ordered sequence and line digest verification",
+        "whole-payload digest recomputation before materialization"
+      ]
+    },
+    {
+      "path": "dwp-payroll-server/src/main/java/com/dwp/services/payroll/input/compensationplan/CompensationPlanInputConsumer.java",
+      "sha256": "ca77c2f2224f64596b5c539c94b1cc8cc30c2954b494d80967e3fe158832d98d",
+      "confirmed": [
+        "event as an owner-refetch trigger rather than trusted result bytes",
+        "owner rejection quarantine and transient transport retry separation",
+        "verification before the atomic repository apply boundary"
+      ]
+    },
+    {
+      "path": "dwp-payroll-server/src/main/java/com/dwp/services/payroll/input/compensationplan/JdbcCompensationPlanInputRepository.java",
+      "sha256": "5710ba90929ee1f077ebf40d94ba07cc741e50e6f1ebec724a48f81ae0247822",
+      "confirmed": [
+        "tenant-bound reads and writes",
+        "event-id digest conflict fencing",
+        "aggregate locking, deterministic receipt identities and exact replay",
+        "inputs, receipt, outbox and attempt applied atomically by the calling transaction"
+      ]
+    },
+    {
+      "path": "contracts/hris/canonical/schemas/cross-module-canonical-schemas.v1.json",
+      "sha256": "8109568c1cfafa5021b5e831ac17c5dbbfeaaf2b3a7472fc4ff488eacb0bc866",
+      "confirmed": [
+        "XCON-008 bounded streaming, staging, count, sequence and digest metadata",
+        "XCON-009, XCON-010 and XCON-011 closed-set required fields"
+      ]
+    }
+  ],
+  "baselineFindings": {
+    "closedTimeConsumerMainPackageExists": false,
+    "closedTimeConsumerTestPackageExists": false,
+    "payrollMigrationHighWater": "V51",
+    "payrollV52LeaseOwner": "BASE-TFR-PAY-013",
+    "tim007PayrollMigrationLease": "NONE",
+    "generatedXconContractsModified": false,
+    "interpretation": "This receipt approves a future source allocation only. It does not claim that the Payroll consumer, durable storage or end-to-end TIM-007 flow already exists."
+  },
+  "payOwnerDecision": {
+    "decision": "APPROVE_FOR_FUTURE_TIM_START_TOKEN_REFERENCE",
+    "approvedWritablePaths": [
+      "backend:dwp-payroll-server/src/main/java/com/dwp/services/payroll/input/closedtime/**",
+      "backend:dwp-payroll-server/src/test/java/com/dwp/services/payroll/input/closedtime/**"
+    ],
+    "pathCount": 2,
+    "conditions": [
+      "Authoring may begin only after a fresh central BASE-TFR-TIM-007 start token binds this receipt SHA-256 and the reviewed trust-packet SHA-256.",
+      "The new package may own only its inbox, quarantine, receipt, staging and materialized Payroll input abstractions; it must not write Time state or read Time storage.",
+      "The consumer must use direct TLS 1.3 mTLS plus exact RS256 workload JWT; gateway, browser, user, delegated and support identities are forbidden.",
+      "The consumer must independently verify tenant grant revision, policy revision, purpose, projection, result and handoff identity, worker and line counts, ordered sequence, sourceEntryDigest, sourceDigest, ruleDigest and payloadDigest before atomic finalization.",
+      "No partial or quarantined row may become calculation input, and refetch or receipt creation cannot release calculation.",
+      "The exact idempotency key is tenantId|closedTimeResultId|payloadDigest; same result with a different digest and same handoff with a different result are quarantined conflicts.",
+      "Time remains the sole canonical closed-result writer; Payroll remains the sole writer of its consumer-owned state.",
+      "Feature state remains default OFF with zero tenant enrollment and zero configured tenant grants."
+    ]
+  },
+  "securityImplementationDeltas": {
+    "existingPatternsAreEvidenceOnly": true,
+    "codeReuseAuthorized": false,
+    "mustNotCopyFromCompensationPlanPattern": [
+      "Do not send snapshotRevision or payloadDigest as query parameters; TIM-007 permits no query parameters.",
+      "Do not couple jti to correlationId; correlationId is the stable XCON-011 lineage identity while every refetch attempt receives a separate fresh replay-protected jti.",
+      "Do not deserialize an unbounded XCON-008 result into an in-memory object graph before byte, compression-ratio, line-count and sequence limits are enforced.",
+      "Do not treat the event payload as result bytes or as calculation-release authority."
+    ],
+    "requiredNewConsumerBehavior": [
+      "strict exact-claim and duplicate-claim rejection",
+      "durable fresh-jti replay reservation",
+      "bounded decompression and incremental streaming verification before allocation",
+      "staged temporary rows with rollback and quarantine on every mismatch",
+      "atomic existing-receipt return for exact duplicate delivery",
+      "explicit reopen invalidation or retro lineage without rewriting finalized Payroll"
+    ]
+  },
+  "singleWriterDecision": {
+    "canonicalClosedTimeWriter": "HRIS-TIM",
+    "payrollConsumerWriter": "HRIS-PAY_INPUT_CLOSEDTIME_ONLY",
+    "approvedPayrollState": [
+      "inbox",
+      "quarantine",
+      "receipt",
+      "staging",
+      "materialized Payroll input"
+    ],
+    "forbidden": [
+      "Payroll SQL against Time tables",
+      "Payroll updates to close, result, handoff, Time receipt or Time outbox state",
+      "Time SQL or service writes to Payroll tables",
+      "a second writer or in-place rewrite of canonical XCON-008 results",
+      "calculation, preparation, release or statutory-output writes from this package"
+    ]
+  },
+  "migrationBoundary": {
+    "payrollMigrationAuthoringAuthorized": false,
+    "payrollV52ReuseAuthorized": false,
+    "runtimeTableCreationAuthorized": false,
+    "existingCompensationPlanTableReuseAuthorized": false,
+    "rule": "Any durable Payroll table, RLS policy, grant, trigger or schema alteration requires a separate append-only HRIS-PAY migration decision and non-conflicting lease.",
+    "completionImpact": "The source allocation can enter the TIM start token, but durable Payroll ingestion and combined TIM-007 end-to-end completion remain blocked until that separate decision exists."
+  },
+  "targetedVerificationRequiredAfterStartToken": {
+    "policy": "NEW_CLOSEDTIME_CLUSTER_FIRST_FAILED_TARGET_ONLY_AFTER_CORRECTION_NO_REPOSITORY_WIDE_RERUN_PER_FIX",
+    "commands": [
+      "./gradlew :dwp-payroll-server:test --tests 'com.dwp.services.payroll.input.closedtime.*' --no-daemon --max-workers=1",
+      "./gradlew :dwp-platform-contracts:test --tests 'com.dwp.platform.contract.GeneratedHrisContractTest' --no-daemon --max-workers=1"
+    ],
+    "mandatoryCases": [
+      "feature absent or false creates no consumer, no transport and no tenant grant",
+      "exact TLS 1.3 mTLS SPIFFE identity and exact RS256 JWT pass while browser, gateway, header override, wrong workload, audience, purpose, projection, path, tenant and stale grant fail closed",
+      "stable correlationId and separate fresh jti are proven, and duplicate jti is denied before owner bytes are accepted",
+      "compressed and uncompressed byte ceilings, compression ratio, header, line and one-million-line ceilings apply before unbounded allocation",
+      "worker count, line count, zero-based implicit sequence, each sourceEntryDigest and all three result digests are verified incrementally",
+      "line gap, duplicate, count mismatch, identity mismatch and digest mismatch roll back staging and create quarantine evidence with no materialized input",
+      "same idempotency key and bytes return the original receipt, while same result with another digest and same handoff with another result quarantine",
+      "XCON-011 is only an exact owner-authored refetch trigger; envelope identity conflict, reopen handling and result-unknown recovery are covered",
+      "no Time database access, no Time write, no Payroll calculation release and no file outside the two approved globs",
+      "generated XCON-008 through XCON-011 source remains byte-identical"
+    ],
+    "futureDatabaseCasesAfterSeparateMigrationDecision": [
+      "clean install and real upgrade for the newly leased Payroll migration",
+      "forced tenant isolation, append-only grants and no UPDATE, DELETE or TRUNCATE for runtime identity",
+      "crash between staging and finalization leaves no calculation-visible partial input",
+      "concurrent identical and conflicting handoffs retain one deterministic receipt or quarantine conflict"
+    ]
+  },
+  "executedTargetedEvidence": {
+    "backendCommit": "3d3f141d95f0252f66bd5987b6cba30fadc431e9",
+    "command": "./gradlew :dwp-payroll-server:test --tests 'com.dwp.services.payroll.input.compensationplan.CompensationPlanSnapshotOwnerHttpClientTest' --tests 'com.dwp.services.payroll.input.compensationplan.CompensationPlanInputCanonicalizerTest' --tests 'com.dwp.services.payroll.input.compensationplan.CompensationPlanInputFeatureFlagTest' --tests 'com.dwp.services.payroll.input.compensationplan.CompensationPlanInputBrokerConsumerTest' :dwp-platform-contracts:test --tests 'com.dwp.platform.contract.GeneratedHrisContractTest' --no-daemon --max-workers=1",
+    "result": "PASS",
+    "tests": 26,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "meaning": "The pinned reusable security, digest, feature-default and generated-contract foundations pass; this is not evidence that the unimplemented TIM-007 consumer passes."
+  },
+  "findings": {
+    "p0": [],
+    "p1": [],
+    "intentionalResidualGates": [
+      "A fresh central TIM start token must bind this receipt and the trust packet before any closedtime source authoring or worktree materialization.",
+      "A separate PAY-owned migration decision is required before durable consumer persistence can be authored or runtime completeness claimed.",
+      "New closedtime negative, streaming, idempotency and single-writer tests must pass before module branch push or integration review.",
+      "Tenant enrollment, configured grants, production release and runtime activation remain separate later decisions."
+    ]
+  },
+  "authority": {
+    "payOwnerReviewIssued": true,
+    "packetHashAccepted": true,
+    "payrollConsumerAllocationApproved": true,
+    "payrollConsumerPathsEligibleForFreshTimStartToken": true,
+    "sourceImplementationAuthorized": false,
+    "worktreeMaterializationAuthorized": false,
+    "internalTrustAuthoringAuthorized": false,
+    "payrollMigrationAuthoringAuthorized": false,
+    "moduleStartTokenIssued": false,
+    "moduleBranchCommitAuthorized": false,
+    "moduleBranchPushAuthorized": false,
+    "mergeToDwpDevAuthorized": false,
+    "endToEndCompletionClaimAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "activationAuthorized": false
+  },
+  "nextGate": "CENTRAL_CONTROL_MAY_ISSUE_A_FRESH_BASE_TFR_TIM_007_START_TOKEN_THAT_BINDS_THIS_RECEIPT_AND_THE_REVIEWED_TRUST_PACKET; AUTHORING_REMAINS_FORBIDDEN_UNTIL_THAT_TOKEN"
+}
