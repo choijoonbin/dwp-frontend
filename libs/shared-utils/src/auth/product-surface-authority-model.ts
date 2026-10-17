@@ -43,7 +43,7 @@ type ProductSurfaceContextListDataV2Base = Omit<
 export type ProductSurfaceContextListDataV2 =
   | (ProductSurfaceContextListDataV2Base & {
       activeAccessMode: 'NORMAL' | 'ELEVATED';
-      sourceRevisions: ProductSurfaceSourceRevisionsV2;
+      sourceRevisions: ProductSurfaceSourceRevisionsV2 & { support: null };
     })
   | (ProductSurfaceContextListDataV2Base & {
       activeAccessMode: 'PROVIDER_SUPPORT';
@@ -286,7 +286,7 @@ function validSourceRevisions(
     (activeAccessMode === 'PROVIDER_SUPPORT'
       ? nonBlank(revisions.support)
       : (activeAccessMode === 'NORMAL' || activeAccessMode === 'ELEVATED') &&
-        (revisions.support === null || nonBlank(revisions.support)))
+        revisions.support === null)
   );
 }
 

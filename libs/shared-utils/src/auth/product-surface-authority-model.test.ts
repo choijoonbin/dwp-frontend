@@ -128,6 +128,16 @@ describe('product surface authority model', () => {
     elevated.contexts[0]!.accessMode = 'ELEVATED';
     expect(() => parseProductSurfaceAuthoritySnapshot(elevated, RECEIVED_AT)).not.toThrow();
 
+    for (const activeAccessMode of ['NORMAL', 'ELEVATED'] as const) {
+      const candidate = envelope();
+      candidate.activeAccessMode = activeAccessMode;
+      candidate.contexts[0]!.accessMode = activeAccessMode;
+      candidate.sourceRevisions.support = 'support-not-applicable';
+      expect(() => parseProductSurfaceAuthoritySnapshot(candidate, RECEIVED_AT)).toThrow(
+        /envelope is invalid/
+      );
+    }
+
     for (const candidate of [
       { ...envelope(), contractVersion: '1' },
       {
@@ -479,6 +489,7 @@ describe('product surface authority model', () => {
   it('rejects support-session authority mixed into a normal access-mode context', () => {
     const candidate = providerSupportEnvelope();
     candidate.activeAccessMode = 'NORMAL';
+    candidate.sourceRevisions.support = null;
     candidate.contexts[0]!.accessMode = 'NORMAL';
 
     expect(() => parseProductSurfaceAuthoritySnapshot(candidate, RECEIVED_AT)).toThrow(
