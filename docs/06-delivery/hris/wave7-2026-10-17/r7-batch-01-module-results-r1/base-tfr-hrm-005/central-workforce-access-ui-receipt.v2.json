@@ -1,0 +1,74 @@
+{
+  "schema": "dwp.hris.wave7.hrm-005-central-workforce-access-ui-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-01-HRM-005-CENTRAL-WORKFORCE-ACCESS-UI-20261017-R2",
+  "recordedAt": "2026-10-17T19:43:42+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-HRM",
+  "sliceId": "BASE-TFR-HRM-005",
+  "canonicalFeature": "HRIS_ORGANIZATION_POSITIONS",
+  "state": "CENTRAL_WORKFORCE_ACCESS_UI_INTEGRATED_DWP_DEV_DEFAULT_OFF_MOUNT_PENDING",
+  "predecessorReceipt": {
+    "path": "central-integration-receipt.v1.json",
+    "role": "SOURCE_AND_MIGRATION_INTEGRATION_RECEIPT_PRESERVED"
+  },
+  "closedGate": "central workforce-access UI label, serialization and i18n support for ORGANIZATION",
+  "independentReview": {
+    "decision": "GO_FOR_DEFAULT_OFF_CENTRAL_INTEGRATION_NO_GO_FOR_ACTIVATION",
+    "remainingP0": 0,
+    "remainingP1": 0,
+    "remainingP2": 0,
+    "reviewedCommit": "2403d6afbdd42e85c6ce0bfd6127e27ecade0c97",
+    "reviewedTree": "b861f6258c16dcda42cdc142f943c7c0d364865c",
+    "semanticProof": [
+      "ORGANIZATION is labelled Organization structure and 조직 구조 without claiming EMPLOYMENT position authority.",
+      "Unknown future field groups render the localized UNKNOWN label and never expose raw values or translation keys.",
+      "DIRECTORY-required and maximum-four guidance render as distinct semantic block paragraphs.",
+      "The presentation test name recognizes ORGANIZATION independently and carries no position-authority claim."
+    ]
+  },
+  "integration": {
+    "repository": "dwp-frontend",
+    "branch": "dwp-dev",
+    "mergeCommit": "96e82f046ee38e14ec015b6f54fc92b93b0d75a9",
+    "tree": "a1aaec04a71651428f5e0362560c20fdfa450b26",
+    "parents": [
+      "007fdd2ebadeccc46bdd55d3d6ced72e8866dd39",
+      "2403d6afbdd42e85c6ce0bfd6127e27ecade0c97"
+    ],
+    "mergeConflicts": 0,
+    "originExactAfterPush": true
+  },
+  "verification": {
+    "policy": "Only directly affected tests and changed-file formatting/lint were run; no broad suite was repeated.",
+    "semanticCorrectionCluster": "2 files, 9/9 passed",
+    "finalPresentationCorrectionCluster": "2 files, 4/4 passed",
+    "changedFilePrettier": "PASS",
+    "changedFileEslint": "PASS",
+    "localeJsonParse": "PASS"
+  },
+  "rollout": {
+    "runtimeDefault": "OFF",
+    "enrolledTenants": [],
+    "centralRouteOrShellMounted": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "remainingGates": [
+    "trusted server-side tenant feature activation and enrollment authority shared by PAGE, navigation and workspace",
+    "central route, shell and explicit adapter injection mount",
+    "HRM005-AC-10 browser and accessibility matrix after the trusted mount",
+    "separate tenant enrollment, activation and production release authority"
+  ],
+  "completion": {
+    "sourceIntegrated": true,
+    "migrationIntegrated": true,
+    "centralWorkforceAccessUiIntegrated": true,
+    "defaultOffPreserved": true,
+    "activationComplete": false,
+    "acceptancePending": [
+      "HRM005-AC-10"
+    ]
+  }
+}
