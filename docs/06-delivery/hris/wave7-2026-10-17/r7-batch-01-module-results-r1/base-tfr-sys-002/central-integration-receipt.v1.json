@@ -1,0 +1,81 @@
+{
+  "schema": "dwp.hris.wave7.module-central-integration-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-01-SYS-002-CENTRAL-INTEGRATION-20261017-R1",
+  "recordedAt": "2026-10-17T19:19:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-SYS",
+  "sliceId": "BASE-TFR-SYS-002",
+  "canonicalFeature": "HRIS_OPERATIONS_EXCEPTION_CENTER",
+  "state": "SOURCE_INTEGRATED_DWP_DEV_DEFAULT_OFF_EXTERNAL_PRODUCER_GATE",
+  "independentReview": {
+    "decision": "GO_FOR_CONTROLLED_BACKEND_AND_FRONTEND_INTEGRATION_NO_GO_FOR_ACTIVATION",
+    "remainingP0": 0,
+    "remainingP1": 0,
+    "reviewedBackendCommit": "988e1d030a006a73df91530a339ad5120272126f",
+    "reviewedBackendTree": "d7c7573c23ad238b10a12440497aa44eba4244e1",
+    "reviewedFrontendEvidenceCommit": "bd557c91b741551a5e71721584997cf78531c888"
+  },
+  "controlCorrections": [
+    {
+      "id": "DETAIL_PUBLIC_ID_COLLISION",
+      "commit": "ddfd79665b701445da5046812074acfcd9e44947",
+      "result": "CLOSED",
+      "proof": "Detail resolves a tenant-wide public-ID count in one snapshot and fails closed when cross-source ownership is ambiguous."
+    },
+    {
+      "id": "LIST_CURSOR_PUBLIC_ID_COLLISION",
+      "commit": "988e1d030a006a73df91530a339ad5120272126f",
+      "result": "CLOSED",
+      "proof": "List computes tenant-wide collision state in one materialized-CTE snapshot before authorization filters, page rows or cursor emission; a filtered-out PAY collision at the same timestamp and limit boundary is rejected."
+    }
+  ],
+  "integration": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "mergeCommit": "d4dd0ae685aff8759d1c15e1f9d4bbd223f60040",
+      "tree": "2158f9b7fcb9890c3ecfdd9d0919ddfafdc57156",
+      "parents": [
+        "f970407d099f6fdca822c8faf5fc8677fe75b538",
+        "988e1d030a006a73df91530a339ad5120272126f"
+      ],
+      "originExactAfterPush": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "mergeCommit": "e73d5f7d8b56e6b1acdf841acd52ddf36c1425d6",
+      "tree": "904268dc708fad18adf8e74ff5a03a111040a71e",
+      "parents": [
+        "bad9161083f6d5e4e7cbbcc6f6d0f2060ed5e478",
+        "bd557c91b741551a5e71721584997cf78531c888"
+      ],
+      "originExactAfterPush": true
+    },
+    "mergeConflicts": 0,
+    "moduleClustersRepeated": false,
+    "reasonNotRepeated": "The reviewed branch bytes merged without overlap. The initial bounded 77-test backend universe, PostgreSQL V331 evidence, frontend 25 tests and the two exact post-review PostgreSQL corrections form the effective final evidence; repository-wide reruns after each correction are prohibited."
+  },
+  "rollout": {
+    "runtimeDefault": "OFF",
+    "enrolledTenants": [],
+    "liveProducerRegistryEntries": 0,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "remainingGates": [
+    "central shell and route mount",
+    "AC10 browser and runtime visual matrix after the central mount",
+    "external owner producer onboarding and cross-service producer E2E",
+    "separate tenant-enrollment and activation authority"
+  ],
+  "completion": {
+    "sourceIntegrated": true,
+    "migrationIntegrated": true,
+    "defaultOffPreserved": true,
+    "liveProducerE2EComplete": false,
+    "activationComplete": false,
+    "acceptanceFailed": []
+  }
+}
