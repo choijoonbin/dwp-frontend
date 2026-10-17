@@ -1,0 +1,382 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-01-hrm-005-transport-and-reuse-seam-successor.v1",
+  "decisionId": "HRIS-WAVE7-R7-BATCH-01-HRM-005-TRANSPORT-AND-REUSE-SEAM-SUCCESSOR-20261017-R1",
+  "issuedAt": "2026-10-17T16:55:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL_HRM_BOUNDARY_REVIEW",
+  "state": "SEALED_APPEND_ONLY_SUCCESSOR_START_TOKEN_WITHHELD_PENDING_PEOPLE_PEP_RUNTIME_PATCH",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_DECISION_ID_AND_SHA256",
+    "historicalSourcesModified": false
+  },
+  "purpose": "Resolve the PEP-HRM-010 transport mismatch and the exact OrganizationExplorer reuse seam before any HRM-005 implementation token is issued, without editing the historical G2 schema or mounting the central HCM route.",
+  "lineage": {
+    "frontendCarrier": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "e569982492e8eac01fcc87674e4aea10b90d990a",
+      "tree": "33b6ff429d3b9f2253bcf74314c55af301c156f4",
+      "originExactAtDecision": true
+    },
+    "backendEvidencePin": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "3d3f141d95f0252f66bd5987b6cba30fadc431e9",
+      "tree": "bd0de7c5e36658da84bdb2cadd6e0504b2f9323b",
+      "originExactAtDecision": true
+    }
+  },
+  "immutablePredecessors": [
+    {
+      "role": "R7_SOURCE_AUTHORITY",
+      "path": "../r7-batch-01-dispatch-r1/source-authority.v1.json",
+      "sha256": "d40df88e26530bd467c5cc6210d967b31a521f06647e672987393c1d1837165e"
+    },
+    {
+      "role": "R7_CENTRAL_BATCH_MANIFEST",
+      "path": "../r7-batch-01-dispatch-r1/central-batch-manifest.v1.json",
+      "sha256": "5a10f45872c6f7e8959faa16b7313df3e60e4eb3057cacffa779728ba321073c"
+    },
+    {
+      "role": "HRM005_OWNER_PACKET",
+      "path": "../r7-batch-01-dispatch-r1/owner-packets/base-tfr-hrm-005.owner-packet.v1.json",
+      "sha256": "0fcd8d27fd283b5ddbd697e9ccce3427966e960d80186f02c7cba709cfb66506"
+    },
+    {
+      "role": "R7_AUTHORIZATION_V5_DECISION",
+      "path": "../r7-batch-01-authorization-decisions-r1/central-authorization-decision-amendment.v5.json",
+      "sha256": "1cd3598ae7dd4c7629afc199b265c9d3d10de40706a43583790651336b86dbd2"
+    },
+    {
+      "role": "R7_FRONTEND_V49_SYNC_RECEIPT",
+      "path": "../r7-batch-01-auth-v49-integration-r1/frontend-v49-sync-and-integration-receipt.v1.json",
+      "sha256": "178152fad3821c4387a6795b33cce4111997bb753e864b574c45964a0a746da5"
+    },
+    {
+      "role": "R7_MODULE_BOUNDARY_RECEIPT",
+      "path": "boundary-validation-receipt.v1.json",
+      "sha256": "ada7e69cbd140a42b6c319dcebdab841be9ee2cc80ed17ddf78c66b9e2c11a8d"
+    }
+  ],
+  "historicalG2Authority": {
+    "operationSource": {
+      "path": "../../recovery/hris-porting-blueprint-2026-09-09/session-evidence/hrm/g2-readiness/api-event-contracts.v1.json",
+      "sha256": "0c3ec58b29dcf534d1b887fed5678e878e4a514cf3f943165e47dd7a486355bb",
+      "jsonPointer": "/endpoints/10",
+      "operationId": "queryOrganizationGraph",
+      "rule": "IMMUTABLE_OPERATION_AND_REQUIRED_FIELD_AUTHORITY"
+    },
+    "schemaSupplement": {
+      "path": "../../recovery/hris-porting-blueprint-2026-09-09/coding-readiness/hrm-transport-schema-supplement.v1.json",
+      "sha256": "85d29729961f4348b595f9773c76afd7232e4b92c5f198351afb4d8ac0dcf404",
+      "queryPointer": "/$defs/OrganizationGraphQuery",
+      "responsePointer": "/$defs/OrganizationGraph",
+      "rule": "IMMUTABLE_HISTORICAL_G2_SCHEMA_NOT_AN_IMPLEMENTABLE_POSITION_RESPONSE"
+    },
+    "resolutionRegister": {
+      "path": "../../recovery/hris-porting-blueprint-2026-09-09/coding-readiness/transport-schema-resolution-register.csv",
+      "sha256": "86e76b0fe8b36102f35b2e82b7d8ffc3fc250455dde6d2d7747ac3f1a6cc877e",
+      "rowId": "TSR-010"
+    },
+    "pepBindingRegister": {
+      "path": "../../recovery/hris-porting-blueprint-2026-09-09/coding-readiness/api-pep-binding-register.csv",
+      "sha256": "0e38d724516a8b271069241ffa0fb6400984dc703758767de53cbaffb4f93da3",
+      "rowId": "PEP-HRM-010"
+    },
+    "preservedFacts": [
+      "The query fields remain exactly asOf, rootPublicId, depth, relationshipType and includePositions, all required.",
+      "The canonical browser path remains GET /api/people/v1/hris/organizations/graph and the owner path remains GET /v1/hris/organizations/graph.",
+      "Depth remains bounded to 0 through 12 and every returned organization remains population-authorized.",
+      "The historical response contains organization nodes but no position collection, so includePositions cannot be implemented from that response shape without an append-only successor."
+    ]
+  },
+  "currentEngineEvidence": {
+    "dto": {
+      "repository": "dwp-backend",
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/organization/OrganizationChartDtos.java",
+      "sha256": "2129cf3d95ab715d26316469f8ca1ebd41c20ea4711d01091af0569d2f774da1"
+    },
+    "service": {
+      "repository": "dwp-backend",
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/organization/OrganizationChartService.java",
+      "sha256": "01005b728d7272996ac21b972dcf13f2098d2225dc11e85e2ae55a1c2621787e"
+    },
+    "repository": {
+      "repository": "dwp-backend",
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/organization/OrganizationChartRepository.java",
+      "sha256": "374cb32db0e7081f3497418dbbc6311f77cd2a88a338b3b38c8220fab3e9f7e2"
+    },
+    "provenReuse": [
+      "OrganizationChartService already resolves an effective-dated tenant-scoped organization subtree and clamps ordinary engine depth to 1 through 12.",
+      "OrganizationChartRepository already sources the primary SUPERVISORY organization parent and effective SUPERVISORY position parent at a LocalDate.",
+      "OrganizationChartDtos.Position already provides the only position field model admitted by this successor.",
+      "The successor is a deterministic read adapter and response projection over the existing engine, not a second graph source or persistence model."
+    ]
+  },
+  "transportSuccessor": {
+    "contractId": "PEP-HRM-010-ORGANIZATION-GRAPH-WITH-POSITIONS-V2",
+    "successorOf": "queryOrganizationGraph/OrganizationGraphV1",
+    "method": "GET",
+    "browserPath": "/api/people/v1/hris/organizations/graph",
+    "ownerPath": "/v1/hris/organizations/graph",
+    "routeContractKey": "route.hcm.operations.organization-graph.data",
+    "pageRouteContractKey": "route.hcm.operations.organization-positions.page",
+    "authorizationEquivalenceKey": "wire-authority.hcm.operations.organization-graph.v1",
+    "capability": "hcm.operations.organization.view",
+    "mode": "QUERY_ONLY_SIDE_EFFECT_FREE",
+    "query": {
+      "additionalProperties": false,
+      "required": [
+        "asOf",
+        "rootPublicId",
+        "depth",
+        "relationshipType",
+        "includePositions"
+      ],
+      "fields": {
+        "asOf": {
+          "type": "RFC3339_INSTANT_WITH_EXPLICIT_OFFSET",
+          "mapping": "Instant.parse(asOf) then LocalDate.ofInstant(parsedInstant, ZoneOffset.UTC)",
+          "rule": "The same instant always selects the same UTC effective date; JVM, tenant, browser and daylight-saving zones cannot change the selected date. Offset-free local date-time and date-only values fail closed before owner repository access."
+        },
+        "rootPublicId": {
+          "type": "UUID",
+          "requiredNonNull": true,
+          "mapping": "OrganizationChartService requestedRoot",
+          "rule": "Omission, blank and null are invalid. An absent or unauthorized root is returned through the existing opaque not-found/denial policy without disclosing node existence."
+        },
+        "depth": {
+          "type": "INTEGER",
+          "minimum": 0,
+          "maximum": 12,
+          "mapping": {
+            "0": "Invoke the existing engine with depth 1 and project only the requested root organization. If includePositions is true, retain only positions owned by that root organization.",
+            "1_TO_12": "Pass the exact value to the existing engine. Root is logical depth 0 and descendants through the requested depth are retained."
+          },
+          "rule": "Values outside 0 through 12 are rejected; they are never clamped by the public successor adapter."
+        },
+        "relationshipType": {
+          "type": "ENUM",
+          "acceptedThisSlice": ["REPORTING"],
+          "sourceMapping": {
+            "REPORTING": "PRIMARY_SUPERVISORY_ORGANIZATION_RELATIONSHIP"
+          },
+          "explicitlyUnsupported": ["LEGAL", "COST"],
+          "rule": "LEGAL and COST return the safe 422 code UNSUPPORTED_RELATIONSHIP_MODEL before repository access. Unknown values return 400. REPORTING cannot be broadened to MATRIX, FUNCTIONAL, administrative parent, legal-entity containment or cost-center membership.",
+          "futureRule": "LEGAL and COST require separate source-backed graph models, separate authorization and a new append-only successor."
+        },
+        "includePositions": {
+          "type": "BOOLEAN",
+          "semantics": {
+            "false": "Return positionsIncluded=false and an empty positions array. No position identifier, count, vacancy, incumbent or cost fact may be inferred from the response.",
+            "true": "Return positionsIncluded=true and only effective positions whose organizationPublicId belongs to the authorized returned organization set. Depth 0 therefore returns only positions owned by the root organization."
+          },
+          "authorizationRule": "includePositions=true requires the server-authoritative position/employment field decision in addition to the organization population decision; absence of that decision fails closed rather than silently presenting an unauthorized position set."
+        }
+      }
+    },
+    "response": {
+      "schemaKey": "OrganizationGraphWithPositionsV2",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "asOf",
+        "effectiveDate",
+        "rootPublicId",
+        "depth",
+        "relationshipType",
+        "positionsIncluded",
+        "nodes",
+        "positions"
+      ],
+      "topLevelFields": {
+        "schemaVersion": {"constant": 2},
+        "asOf": {"type": "CANONICAL_UTC_INSTANT", "source": "normalized request asOf"},
+        "effectiveDate": {"type": "ISO_LOCAL_DATE", "source": "UTC adapter date"},
+        "rootPublicId": {"type": "UUID", "source": "validated request rootPublicId"},
+        "depth": {"type": "INTEGER_0_TO_12", "source": "validated request depth"},
+        "relationshipType": {"constant": "REPORTING"},
+        "positionsIncluded": {"type": "BOOLEAN", "source": "validated request includePositions"},
+        "nodes": {"type": "ARRAY_OF_ORGANIZATION_NODE_V2"},
+        "positions": {"type": "ARRAY_OF_ORGANIZATION_POSITION_V2"}
+      },
+      "organizationNode": {
+        "additionalProperties": false,
+        "required": ["organizationPublicId", "name", "depth"],
+        "fields": {
+          "organizationPublicId": "UUID mapped from OrganizationChartDtos.Organization.organizationId",
+          "parentPublicId": "nullable UUID mapped from parentOrganizationId; forced null for the response root",
+          "name": "nonblank string mapped from name",
+          "depth": "integer 0 through requested depth, recomputed relative to root"
+        }
+      },
+      "positionDto": {
+        "name": "OrganizationPositionV2",
+        "sourceModel": "OrganizationChartDtos.Position",
+        "additionalProperties": false,
+        "required": [
+          "positionPublicId",
+          "positionKey",
+          "title",
+          "organizationPublicId",
+          "status",
+          "positionType",
+          "criticality",
+          "budgetedFte",
+          "incumbentPersonPublicIds",
+          "subordinatePositionCount"
+        ],
+        "fields": {
+          "positionPublicId": "UUID mapped from positionId",
+          "positionKey": "nonblank string mapped from positionKey",
+          "title": "nonblank string mapped from title",
+          "organizationPublicId": "UUID mapped from organizationId and required to belong to returned nodes",
+          "reportsToPositionPublicId": "nullable UUID mapped from reportsToPositionId; null when the effective parent is outside the returned position set",
+          "status": "string mapped from effective status, including FILLED, OPEN or PLANNED",
+          "positionType": "string mapped from positionType",
+          "criticality": "string mapped from criticality",
+          "budgetedFte": "decimal mapped from budgetedFte",
+          "annualCostAmount": "nullable decimal mapped from annualCostAmount",
+          "costCurrency": "nullable string mapped from costCurrency",
+          "jobProfileName": "nullable string mapped from jobProfileName",
+          "locationName": "nullable string mapped from locationName",
+          "availabilityDate": "nullable ISO local date mapped from availabilityDate",
+          "incumbentPersonPublicIds": "array of UUID mapped from incumbentPersonIds and sorted lexicographically",
+          "subordinatePositionCount": "nonnegative integer recomputed after response filtering"
+        }
+      },
+      "stableOrder": {
+        "nodes": "depth ascending, then organizationPublicId canonical string ascending",
+        "positions": "organizationPublicId canonical string ascending, then positionKey ascending using Unicode code-point order, then positionPublicId canonical string ascending",
+        "incumbentPersonPublicIds": "canonical UUID string ascending",
+        "rule": "Database row order, HashMap iteration order and scenario append order are never response ordering authority."
+      }
+    },
+    "failClosedErrors": [
+      {"condition": "invalid or missing required query", "status": 400, "code": "INVALID_ORGANIZATION_GRAPH_QUERY"},
+      {"condition": "relationshipType LEGAL or COST", "status": 422, "code": "UNSUPPORTED_RELATIONSHIP_MODEL"},
+      {"condition": "missing trusted organization or position authority", "status": 403, "code": "OPAQUE_AUTHORIZATION_DENIED"},
+      {"condition": "root absent from the authorized effective graph", "status": 404, "code": "ORGANIZATION_GRAPH_NOT_FOUND"}
+    ]
+  },
+  "explorerReuseSeam": {
+    "decision": "ALLOW_ONE_EXACT_INJECTION_SEAM_ONLY",
+    "path": "apps/dwp/src/features/people/organization/organization-chart-manager.tsx",
+    "currentSha256": "c67bbf9e4e7a259a2a849688248b6c51944d0f0c2d2bde46c9db24ef0b6e6cd8",
+    "defaultManagementBehaviorByteEquivalent": true,
+    "existingModelPath": "libs/shared-utils/src/api/people-admin-api.ts",
+    "existingModelSha256": "6263590ce225937dc137e78c0788883f5226828919062f174852fbd9ecc072ef",
+    "exactInjectionContract": {
+      "name": "HrisOrganizationPositionsQueryAdapter",
+      "closedProperties": ["kind", "query"],
+      "kindConstant": "HRIS_ORGANIZATION_POSITIONS_V2",
+      "query": "(request: OrganizationGraphWithPositionsV2Query, signal: AbortSignal) => Promise<OrganizationGraphWithPositionsV2>",
+      "commandPropertiesAllowed": []
+    },
+    "branchingRule": {
+      "default": "When the adapter is absent, execute the existing directory/workforce management OrganizationExplorer branch with behavior, query keys, scenario, intelligence, candidates, commands, URL semantics and rendering equivalent to the pinned source.",
+      "canonicalHris": "When the exact adapter is present, execute a separate read-only organization/position branch in the same file. Only the canonical graph query may run. Organization and position focus, asOf, root, depth, includePositions and inspector state may be represented in the URL.",
+      "hookIsolation": "Management hooks and canonical hooks must reside in separate child components so React hook order stays static and the canonical branch never instantiates management mutations."
+    },
+    "canonicalBranchDeniedMounts": [
+      "listOrganizationScenarios",
+      "listWorkforceOrganizationCandidates",
+      "getOrganizationIntelligence",
+      "addOrganizationScenarioMove",
+      "addOrganizationScenarioPositionMove",
+      "useProductActionMutation",
+      "OrganizationScenarioDrawer",
+      "OrganizationIntelligencePanel",
+      "scenario preview or publish controls",
+      "drag-to-move commands",
+      "candidate lookup",
+      "controlled export shortcut"
+    ],
+    "managementRegressionRule": "The no-adapter branch must retain the existing management behavior. Targeted tests must prove the same requests and enabled states for directory and workforce modes; this successor grants no semantic change to that branch.",
+    "allowedFutureFrontendDelta": [
+      "apps/dwp/src/features/hris/people/organization-positions/**",
+      "apps/dwp/src/features/hris/people/__tests__/g3-slices/base-tfr-hrm-005.slice.test.tsx",
+      "apps/dwp/src/features/people/organization/organization-chart-manager.tsx"
+    ],
+    "excludedCentralMountPaths": [
+      "architecture/**",
+      "apps/dwp/src/routes/**",
+      "apps/dwp/src/features/hris/shell/**",
+      "apps/dwp/src/features/hcm/hcm-navigation.ts",
+      "apps/dwp/src/pages/hcm.tsx"
+    ],
+    "outsideBoundaryAction": "STOP_AND_REQUEST_EXACT_CONTROL_REALLOCATION"
+  },
+  "peoplePepRuntimePrerequisite": {
+    "state": "OPEN_BLOCKING_HRM005_START_TOKEN",
+    "finding": "Authorization v49 and its generated People projection contain the organization graph route, but the active HcmV3PepRegistry remains pinned to hcm-people-pep-v42.generated.json and HcmScopeSelectionValidator does not recognize predicate.hcm-organization-graph-authority.v1.",
+    "generatedV49Evidence": {
+      "path": "dwp-people-server/src/main/resources/product-authorization/hcm-people-pep-v49.generated.json",
+      "sha256": "bf2d079820cceba5ed8adcb0b7927daaef239bccc178138e25a6f889f55b1834",
+      "routeCount": 103,
+      "containsOrganizationGraphRoute": true
+    },
+    "activeRuntimeEvidence": {
+      "registryPath": "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmV3PepRegistry.java",
+      "registrySha256": "803db9c485fa99745cf9ef602d7d25f9bc9cc0d51a89d70ca9b76361161223d6",
+      "activeResource": "product-authorization/hcm-people-pep-v42.generated.json",
+      "activeResourceSha256": "fea385d75343d64b8a4bc60c9b4d073e142e1b7e87ef697e10810ed70db67056",
+      "activeRouteCount": 97,
+      "containsOrganizationGraphRoute": false,
+      "scopeValidatorPath": "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmScopeSelectionValidator.java",
+      "scopeValidatorSha256": "055ba16f23cff7da869cc7c98bac9dbde2f902c79478ddb1b9bb51aad8d8a216",
+      "organizationGraphPredicateRecognized": false
+    },
+    "separateCentralPatchAcceptanceRequired": [
+      "Bind the active People PEP registry to the accepted generated v49 projection and its exact checksum without editing the generated projection.",
+      "Add a closed owner implementation for predicate.hcm-organization-graph-authority.v1 that requires the trusted operations TARGET_POPULATION and the exact organization root population before repository access.",
+      "Prove the exact GET /v1/hris/organizations/graph binding is owned and accepted only for route.hcm.operations.organization-graph.data with the v49 read-only profile.",
+      "Prove wrong route, method, purpose, scope, policy revision, field decision and forged client authority fail before controller or repository access.",
+      "Record an independent central patch acceptance receipt and merge it to backend dwp-dev before issuing the HRM-005 token."
+    ],
+    "authority": {
+      "centralPatchDefined": true,
+      "centralPatchImplementationAuthorizedByThisDecision": false,
+      "centralPatchAccepted": false,
+      "hrm005StartTokenMayIssue": false
+    }
+  },
+  "migrationDecision": {
+    "stream": "PEOPLE_MAIN",
+    "candidateVersion": "V57",
+    "schemaDeltaProven": false,
+    "lease": "NONE",
+    "migrationAuthoringAllowed": false,
+    "reason": "The successor reuses the existing effective-dated organization, relationship, position and People outbox schema. The adapter and response projection introduce no persistence requirement.",
+    "forbidden": "Do not create V57, reserve V57 or claim migration credit for HRM-005."
+  },
+  "targetedAcceptanceForFutureToken": [
+    "Strict query validation including UTC conversion around date boundaries and offset-equivalent instants",
+    "Depth 0 root-only and depth 1 through 12 exact subtree behavior without public clamping",
+    "REPORTING to primary SUPERVISORY mapping and pre-repository LEGAL/COST rejection",
+    "includePositions false empty projection and true authorized filtered position projection",
+    "Stable node, position and incumbent ordering under shuffled repository inputs",
+    "Opaque wrong-tenant, wrong-population, wrong-field and missing-root denial",
+    "No-adapter OrganizationExplorer management regression",
+    "Canonical adapter no scenario, intelligence, candidate, mutation or export invocation",
+    "Changed-path proof excluding central mount paths and historical G2 sources"
+  ],
+  "authority": {
+    "appendOnlySuccessorDecisionIssued": true,
+    "historicalG2MutationAuthorized": false,
+    "transportSemanticsSealed": true,
+    "explorerInjectionSeamSealed": true,
+    "peoplePepRuntimePrerequisiteSatisfied": false,
+    "peopleV57LeaseIssued": false,
+    "sourceImplementationAuthorized": false,
+    "migrationAuthoringAuthorized": false,
+    "moduleStartTokenIssued": false,
+    "moduleBranchCommitAuthorized": false,
+    "moduleBranchPushAuthorized": false,
+    "mergeToDwpDevAuthorized": false,
+    "centralFrontendMountAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "activationAuthorized": false
+  },
+  "nextGate": "SEPARATE_CENTRAL_PEOPLE_PEP_V49_RUNTIME_PATCH_ACCEPTED_AND_INTEGRATED_THEN_FRESH_HRM005_TOKEN_WITH_THIS_DECISION_HASH"
+}
