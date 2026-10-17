@@ -14,9 +14,9 @@ export type ProductAuthorizationRouteProjection = Readonly<{
 
 export const PRODUCT_AUTHORIZATION_REGISTRY_REVISION = {
   bundleKey: 'product-surfaces',
-  version: 47,
-  checksum: '925e8bfc406bc7e4ee62aee08582fdd7c67c629ffde470051704eaec5404800e',
-  indexChecksum: '88200a7d1ec9fc92f8809b171f390fd34747f4b25592cee19df52eb2bd9a02f8',
+  version: 48,
+  checksum: '9fd324cd67ede1f02cc8ac33c08ad880ec6e283f99f5d7aa50e0e514545aa043',
+  indexChecksum: '3f66090d62d33892ebe5e3ce85752ba445060d92ed572b89cfe72c9b5675c12e',
 } as const;
 
 export const PRODUCT_SURFACE_ROLLOUT_INVENTORY_REVISION = {
@@ -8085,6 +8085,166 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
       {
         method: 'POST',
         path: '/api/payroll/v1/formulas/versions',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.configuration.payroll-foundation-configuration.data',
+    routeKind: 'DATA',
+    navigationContextId: 'hcm.management',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/payroll/v1/settings/payroll/foundation/configurations/{configurationId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.configuration.payroll-foundation-configurations.data',
+    routeKind: 'DATA',
+    navigationContextId: 'hcm.management',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/payroll/v1/settings/payroll/foundation/configurations',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.configuration.payroll-foundation-create.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.management',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/payroll/v1/settings/payroll/foundation/configurations',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.configuration.payroll-foundation-publish.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.management',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/payroll/v1/settings/payroll/foundation/configurations/{configurationId}/publish',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.configuration.payroll-foundation-receipt.data',
+    routeKind: 'DATA',
+    navigationContextId: 'hcm.management',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/payroll/v1/settings/payroll/foundation/receipts/{commandId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.configuration.payroll-foundation-reconcile.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.management',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/payroll/v1/settings/payroll/foundation/receipts/{commandId}/reconcile',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.configuration.payroll-foundation-reverse.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.management',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/payroll/v1/settings/payroll/foundation/configurations/{configurationId}/reversals',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.configuration.payroll-foundation-simulate.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.management',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/payroll/v1/settings/payroll/foundation/configurations/{configurationId}/simulations',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.configuration.payroll-foundation-update.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.management',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'PUT',
+        path: '/api/payroll/v1/settings/payroll/foundation/configurations/{configurationId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.configuration.payroll-foundation-versions.data',
+    routeKind: 'DATA',
+    navigationContextId: 'hcm.management',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/payroll/v1/settings/payroll/foundation/configurations/{configurationId}/versions',
       },
     ],
   },
