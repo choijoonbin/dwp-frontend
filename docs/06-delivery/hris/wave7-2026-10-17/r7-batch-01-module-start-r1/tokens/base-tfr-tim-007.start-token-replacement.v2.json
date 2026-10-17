@@ -1,0 +1,254 @@
+{
+  "schema": "dwp.hris.module-start-token-replacement.v2",
+  "tokenId": "HRIS-WAVE7-R7-BATCH-01-START-BASE-TFR-TIM-007-20261017-R2",
+  "issuedAt": "2026-10-17T19:39:08+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-TIM",
+  "sliceId": "BASE-TFR-TIM-007",
+  "canonicalFeature": "HRIS_TIME_CLOSE_HANDOFF",
+  "featureAliasesAuthorized": [],
+  "state": "REPLACEMENT_ISSUED_MODULE_IMPLEMENTATION_RESUMED_DEFAULT_OFF_BRANCH_COMMIT_AND_PUSH_ONLY",
+  "permittedAction": "Continue the existing isolated TIM-007 owner worktrees without merging the central carrier; implement and prove the sealed Time close, reopen, immutable result, payroll handoff and frontend slice, author only Time V12, and implement only a default-OFF non-durable PAY closed-time consumer port and fixtures inside the already authorized globs; commit and push only the exact module branches.",
+  "supersession": {
+    "predecessorToken": {
+      "path": "base-tfr-tim-007.start-token.v1.json",
+      "sha256": "5e1f1b5d4e4e40f6745db22c0c3f4ca3eb6ae89574c60c8fabb77887988307a8",
+      "bytes": 13691,
+      "disposition": "SUPERSEDED_AFTER_CENTRAL_BRIDGE_PAUSE_AND_INTEGRATION"
+    },
+    "pauseReasonClosed": "The TIM public transport, projection, event, receipt and product-authorization semantics are now integrated and independently reviewed on backend dwp-dev.",
+    "unchangedAuthorityInherited": [
+      "the original owner packet, source authority, v49 predecessor evidence, internal trust packet and PAY owner review",
+      "the exact Time V12 lease and prohibition on a second Time migration or any PAY migration",
+      "the original business, trust, per-route purpose, scope, responsibility and fresh-command challenge seals",
+      "the original fourteen acceptance criteria and exact module result evidence root",
+      "default OFF, empty tenant enrollment, internal trust default DENY and zero-call requirements",
+      "no direct dwp-dev merge, central route or shell mount, activation, enrollment, customer data or production release"
+    ]
+  },
+  "hashDag": {
+    "role": "REPLACEMENT_AFTER_INDEPENDENTLY_REVIEWED_CENTRAL_BRIDGE_INTEGRATION",
+    "centralDecision": {
+      "path": "../tim-007-central-contract-bridge-decision.v1.json",
+      "sha256": "9718b37c56a8976053e4a1bbb0645eb517045d22f9508ef75b809bb624ed1566",
+      "bytes": 25839
+    },
+    "centralImplementationPlan": {
+      "path": "../tim-007-central-contract-bridge-implementation-plan.v1.json",
+      "sha256": "4a47fe6d6a7fa61d2ba24c620082c59a9e2c68eed986bda6223b2232cd7cf1b7",
+      "bytes": 14162
+    },
+    "centralIntegrationReceipt": {
+      "path": "../../r7-batch-01-module-results-r1/base-tfr-tim-007/central-bridge-integration-receipt.v1.json",
+      "sha256": "078bda3272de74ce348cf2677075d64cbcfd41922e05f1d12babbaf15f15a87e",
+      "bytes": 6410,
+      "role": "PRESERVED_PREDECESSOR_RECEIPT"
+    },
+    "authoritativeReceiptCorrection": {
+      "path": "../../r7-batch-01-module-results-r1/base-tfr-tim-007/central-bridge-integration-receipt-correction.v2.json",
+      "sha256": "95fafd56b417b6282d5fc13c1133308f2844aa51ae5f7adbb468410b48ccc31c",
+      "bytes": 3725,
+      "role": "AUTHORITATIVE_RUNTIME_AVAILABILITY_AND_HASH_DAG_CORRECTION"
+    }
+  },
+  "centralReferencePin": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "bada002d2a55f2d7e0a16dd1c8f240f1526aae82",
+      "tree": "40f9ad7052cb22dd7191d3b43cec714ec06ba17c",
+      "originExactAtIssue": true,
+      "role": "READ_ONLY_SEMANTIC_AND_FUTURE_INTEGRATION_PIN_NOT_A_MODULE_WORKTREE_BASE"
+    },
+    "frontendEvidenceCarrier": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "59ee6de3e79bc0a944822f9c47e10c5d254b3302",
+      "tree": "652326fd9cfd8b99c399783b480ba76cd744eb06",
+      "originExactAtIssue": true,
+      "laterTokenCarrierMustNotEnterModuleWorktree": true
+    }
+  },
+  "moduleWorktrees": [
+    {
+      "repository": "dwp-backend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261017/r7-batch01/tim-007/backend",
+      "branch": "codex/hris-wave7-r7-batch01-tim-007-backend-20261017-r1",
+      "upstream": "origin/codex/hris-wave7-r7-batch01-tim-007-backend-20261017-r1",
+      "head": "fcb5c1f397d14ea77c7ff9714a272449d99e18a4",
+      "tree": "147bb1afd5635209d5db166a513d970b6e0002c3",
+      "upstreamHead": "fcb5c1f397d14ea77c7ff9714a272449d99e18a4",
+      "upstreamAhead": 0,
+      "upstreamBehind": 0,
+      "porcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "state": "CLEAN_REMOTE_EXACT_CONTINUE_WITHOUT_MERGE_REBASE_OR_CHERRY_PICK"
+    },
+    {
+      "repository": "dwp-frontend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261017/r7-batch01/tim-007/frontend",
+      "branch": "codex/hris-wave7-r7-batch01-tim-007-frontend-20261017-r1",
+      "upstream": "origin/codex/hris-wave7-r7-batch01-tim-007-frontend-20261017-r1",
+      "head": "4b46c02d1e98b8d0cfb78189126aa47ac90f2fda",
+      "tree": "0e37221429763f5d13c799e22bf10ad8a6648f1a",
+      "upstreamHead": "4b46c02d1e98b8d0cfb78189126aa47ac90f2fda",
+      "upstreamAhead": 0,
+      "upstreamBehind": 0,
+      "porcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "state": "CLEAN_REMOTE_EXACT_CONTINUE_WITHOUT_MERGE_REBASE_OR_CHERRY_PICK"
+    }
+  ],
+  "centralContractToConsume": {
+    "productAuthorization": "v50 is DRAFT, automatic import is FALSE, runtime default is OFF and tenant enrollment is empty; v1-v49 remain immutable.",
+    "publicTransport": "Use the exact integrated Time OpenAPI and gateway-public bindings, standard problem responses and strong ETag precondition behavior; do not invent local public schemas.",
+    "events": "Use the exact integrated AsyncAPI TimePeriodClosed.v1, TimePeriodReopened.v1 and PayrollTimeHandoffReady.v1 bindings without modifying canonical XCON.",
+    "payOutcome": "Use the integrated in-process TIM payroll handoff outcome bridge while preserving ACKNOWLEDGED, REJECTED and RESULT_UNKNOWN lineage and exact-replay idempotency.",
+    "commandReceipt": "Expose the module close-result lookup seam needed by a unique CommandReceiptProvider; do not shadow or duplicate the central registry contract in the old-base module branch."
+  },
+  "moduleImplementationRequirements": [
+    "Implement Time close validation, CAS close, forward-only reopen, immutable blocker/result snapshots, SoD, step-up only where sealed, transactional events, and handoff lineage exactly as the inherited token requires.",
+    "Implement Time V12 at dwp-time-server/src/main/resources/db/migration/V12__tim_base_tfr_tim_007_close_handoff.sql and no other migration.",
+    "Implement the frontend close slice and all fourteen acceptance results without touching central HCM route, shell or menu files.",
+    "Inside the PAY closedtime globs, implement only a default-OFF non-durable consumer port and fixtures; do not create runtime tables, a migration, an inbox, durable deduplication, staging or verified payroll-input persistence.",
+    "Expose stable close-result ownership and originating-authority revalidation methods so the central adapter can register exactly one close CommandReceiptProvider after the module branch is integrated.",
+    "Record PDX-011 live producer and the durable PAY consumer as external gates, not as completed behavior."
+  ],
+  "touchBoundary": {
+    "allowedBackend": [
+      "dwp-time-server/src/main/java/com/dwp/services/time/close/**",
+      "dwp-time-server/src/test/java/com/dwp/services/time/close/**",
+      "dwp-time-server/src/main/resources/db/migration/V12__tim_base_tfr_tim_007_close_handoff.sql",
+      "dwp-payroll-server/src/main/java/com/dwp/services/payroll/input/closedtime/**",
+      "dwp-payroll-server/src/test/java/com/dwp/services/payroll/input/closedtime/**"
+    ],
+    "allowedFrontend": [
+      "apps/dwp/src/features/hris/time/close/**",
+      "apps/dwp/src/features/hris/time/__tests__/g3-slices/base-tfr-tim-007.slice.test.tsx",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-results-r1/base-tfr-tim-007/**"
+    ],
+    "forbidden": [
+      "merge, rebase or cherry-pick of dwp-dev or either central carrier into either module worktree",
+      "local copies or shadows of contracts/openapi, contracts/asyncapi, contracts/product-authorization, commandreceipt registry interfaces or canonical XCON",
+      "frontend HCM routes, shell, menu or tenant activation files",
+      "PAY migration, runtime table, durable persistence or reuse of unrelated payroll or compensation tables",
+      "a TIM-to-PAY end-to-end, payroll calculation, payroll release or production approval-integration completion claim",
+      "feature enablement, tenant enrollment, customer data or production release"
+    ],
+    "outsideBoundaryAction": "STOP_AND_REQUEST_EXACT_CONTROL_OR_TRUST_REALLOCATION"
+  },
+  "centralAdmissionGateAfterModuleBranch": {
+    "state": "P0_FOR_CENTRAL_RESULT_ADMISSION_NOT_A_BLOCKER_TO_MODULE_BRANCH_IMPLEMENTATION",
+    "requiredOnIntegratedBackendBase": [
+      "register exactly one close CommandReceiptProvider backed by the module's close-result ownership and sealed originating-authority revalidation seam",
+      "make command-receipt HTTP ownership and close authority/filter availability depend on the TIM close feature rather than dwp.hris.time.timecard.enabled",
+      "preserve Timecard-only behavior when only the Timecard feature is enabled and reject ambiguous or unavailable ownership fail-closed",
+      "prove default-OFF and unenrolled zero-call behavior plus no-store and audit invariants with only the affected receipt/close target cluster"
+    ],
+    "moduleBranchMayBeSubmittedBeforeClosure": true,
+    "mergeToDwpDevOrCentralReceiptMayBeDeclaredBeforeClosure": false,
+    "activationDecisionBeforeClosure": "NO_GO"
+  },
+  "commandReceiptAllocationOverride": {
+    "supersedesOwnershipOnly": "central-bridge-integration-receipt-correction.v2.json correctedCommandReceiptStatus.requiredFromTimModule",
+    "securityRequirementsPreserved": true,
+    "moduleOwnerResponsibility": "Expose and prove the stable close-result ownership and sealed originating-authority revalidation seam entirely inside the authorized close paths.",
+    "centralIntegrationControlResponsibility": "On the integrated backend base, implement the close CommandReceiptProvider adapter, decouple the shared controller/filter authority from the Timecard feature, and run only the affected receipt/close targets before central admission.",
+    "reason": "The unchanged module worktree predates the central registry contract and may not merge, rebase, cherry-pick or locally shadow it."
+  },
+  "externalGates": {
+    "pdx011LiveProducer": {
+      "state": "EXTERNAL_GATE",
+      "allowedNow": "default-OFF Time consumer port and fixtures",
+      "forbiddenClaim": "production approval integration complete"
+    },
+    "payDurableClosedTimeConsumer": {
+      "state": "P0_EXTERNAL_PAY_OWNER_MIGRATION_GATE",
+      "requiredLater": [
+        "separate PAY owner decision and next-free PAY migration lease",
+        "inbox and durable deduplication",
+        "quarantine and receiver receipt revision",
+        "proof replay and staging",
+        "verified payroll input and outcome callback outbox",
+        "RLS and tenant predicates"
+      ],
+      "authorizedNow": "non-durable default-OFF port and fixtures only",
+      "timToPayEndToEndClaimAuthorized": false
+    }
+  },
+  "migration": {
+    "leaseId": "HRIS-WAVE7-R7-BATCH-01-TIME-MAIN-V12-20261017-R1",
+    "stream": "TIME_MAIN",
+    "version": "V12",
+    "path": "dwp-time-server/src/main/resources/db/migration/V12__tim_base_tfr_tim_007_close_handoff.sql",
+    "state": "ACTIVE_AUTHORING_ONLY",
+    "secondTimeMigrationAuthorized": false,
+    "payrollMigrationAuthorized": false
+  },
+  "acceptanceCriteria": [
+    "TIM007-AC-01",
+    "TIM007-AC-02",
+    "TIM007-AC-03",
+    "TIM007-AC-04",
+    "TIM007-AC-05",
+    "TIM007-AC-06",
+    "TIM007-AC-07",
+    "TIM007-AC-08",
+    "TIM007-AC-09",
+    "TIM007-AC-10",
+    "TIM007-AC-11",
+    "TIM007-AC-12",
+    "TIM007-AC-13",
+    "TIM007-AC-14"
+  ],
+  "verification": {
+    "policy": "Run the new TIM-007 close, handoff and trust cluster first; after any correction rerun only the smallest failed target; do not run repository-wide suites per correction.",
+    "backend": "./gradlew :dwp-time-server:test --tests 'com.dwp.services.time.close.*' :dwp-payroll-server:test --tests 'com.dwp.services.payroll.input.closedtime.*' --no-daemon --max-workers=1",
+    "database": [
+      "real PostgreSQL clean migration through Time V12",
+      "real PostgreSQL Time V11-to-V12 upgrade"
+    ],
+    "frontend": [
+      "pnpm exec vitest run apps/dwp/src/features/hris/time/__tests__/g3-slices/base-tfr-tim-007.slice.test.tsx apps/dwp/src/features/hris/time/close",
+      "pnpm exec eslint apps/dwp/src/features/hris/time/close"
+    ],
+    "browserBeforeCentralMountAuthorized": false,
+    "repositoryWideSuitePerCorrection": false
+  },
+  "rollout": {
+    "feature": "HRIS_TIME_CLOSE_HANDOFF",
+    "runtimeDefault": "OFF",
+    "internalTrustDefault": "DENY",
+    "enrolledTenants": [],
+    "zeroCallRequirement": "Feature absent, false or tenant unenrolled causes zero close controller, repository, outbox, handoff and internal-trust calls."
+  },
+  "authority": {
+    "moduleImplementationAuthorized": true,
+    "exactV12MigrationAuthoringAuthorized": true,
+    "nonDurablePayClosedTimePortAndFixturesAuthorized": true,
+    "payrollDurablePersistenceAuthorized": false,
+    "moduleBranchCommitAuthorized": true,
+    "moduleBranchPushAuthorized": true,
+    "moduleResultSubmissionAuthorized": true,
+    "mergeToDwpDevAuthorizedBeforeCentralAdmissionGate": false,
+    "centralResultAdmissionAuthorizedBeforeGate": false,
+    "centralRouteOrShellMountAuthorized": false,
+    "centralCarrierMergeIntoModuleWorktreeAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "completionBoundary": {
+    "requiredModuleResultState": "MODULE_IMPLEMENTATION_COMPLETE_BRANCHES_PUSHED_CONTROL_REVIEW_PENDING_DEFAULT_OFF",
+    "requiredCentralAdmissionState": "MODULE_REVIEW_GO_CLOSE_RECEIPT_ADAPTER_GATE_CLOSED_DEFAULT_OFF",
+    "directDwpDevMergeAuthorized": false,
+    "activationComplete": false
+  },
+  "invalidationConditions": [
+    "either module worktree path, branch, head, tree, upstream, ahead/behind or clean state differs before the first module edit",
+    "any hash-bound decision, plan, receipt or predecessor token bytes change",
+    "Time V12 exists from another owner or a second Time migration is required",
+    "PAY durable persistence, a PAY migration or a path outside the exact boundary is required",
+    "the integrated public transport, event, projection, receipt, trust or immutable-result contract is weakened or locally shadowed",
+    "dwp-dev merge, central mount, feature enablement, tenant enrollment or production release is attempted from the module session"
+  ]
+}
