@@ -330,10 +330,10 @@ export function WorkforceAccessPolicyDialog({
           <Typography component="legend" variant="caption" color="text.secondary" fontWeight={700}>
             {t('workforceAccess.fields.fieldGroups')}
           </Typography>
-          <Typography variant="caption" color="text.secondary">
+          <Typography component="p" variant="caption" color="text.secondary" sx={{ m: 0 }}>
             {t('workforceAccess.warnings.directoryRequired')}
           </Typography>
-          <Typography variant="caption" color="text.secondary">
+          <Typography component="p" variant="caption" color="text.secondary" sx={{ m: 0 }}>
             {t('workforceAccess.warnings.fieldGroupLimit')}
           </Typography>
           <Stack

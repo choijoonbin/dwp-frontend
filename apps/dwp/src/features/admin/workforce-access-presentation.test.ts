@@ -11,7 +11,7 @@ import {
 } from './workforce-access-presentation';
 
 describe('workforce access presentation', () => {
-  it('recognizes the organization and position field authority independently', () => {
+  it('recognizes ORGANIZATION as an independent field authority', () => {
     expect(workforceFieldGroupLabelKey('ORGANIZATION')).toBe(
       'workforceAccess.fieldGroups.ORGANIZATION'
     );

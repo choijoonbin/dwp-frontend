@@ -47,6 +47,8 @@ vi.mock('react-i18next', () => ({
       const labels: Record<string, string> = {
         'workforceAccess.fieldGroups.ORGANIZATION': '조직 구조',
         'workforceAccess.fieldGroups.UNKNOWN': '데이터 그룹 확인 불가',
+        'workforceAccess.warnings.directoryRequired': '기본 프로필은 필수입니다.',
+        'workforceAccess.warnings.fieldGroupLimit': '데이터 그룹은 최대 4개입니다.',
       };
       return labels[key] ?? key;
     },
@@ -101,6 +103,17 @@ describe('WorkforceAccessPolicyDialog field groups', () => {
         })
       );
     });
+
+    const directoryCaption = Array.from(container.querySelectorAll('p')).find(
+      (element) => element.textContent === '기본 프로필은 필수입니다.'
+    );
+    const fieldGroupLimitCaption = Array.from(container.querySelectorAll('p')).find(
+      (element) => element.textContent === '데이터 그룹은 최대 4개입니다.'
+    );
+    expect(directoryCaption?.tagName).toBe('P');
+    expect(fieldGroupLimitCaption?.tagName).toBe('P');
+    expect(directoryCaption).not.toBe(fieldGroupLimitCaption);
+    expect(directoryCaption?.nextElementSibling).toBe(fieldGroupLimitCaption);
 
     const organization = fieldGroupCheckbox('조직 구조');
     expect(organization).toBeDefined();
