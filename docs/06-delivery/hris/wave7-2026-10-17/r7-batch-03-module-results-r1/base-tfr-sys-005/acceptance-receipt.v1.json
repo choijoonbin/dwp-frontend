@@ -1,0 +1,87 @@
+{
+  "schema": "dwp.hris.module-acceptance-receipt.v1",
+  "generatedAt": "2026-10-17T19:20:59Z",
+  "sliceId": "BASE-TFR-SYS-005",
+  "state": "SYS005_EVIDENCE_ONLY_REUSE_CLOSURE_COMPLETE_BRANCH_PUSHED_CENTRAL_REVIEW_PENDING_NO_SOURCE_NO_MIGRATION",
+  "results": [
+    {
+      "id": "SYS005-AC-01",
+      "result": "PASS",
+      "criterion": "All twelve sealed TFR-SYS-005 source rows are accounted for without creating one-for-one legacy routes or claiming legacy screen parity.",
+      "evidence": ["source-coverage-manifest.v1.json contains exactly 12 distinct sealed route artifacts.", "All rows resolve many-to-one to DWP.COMMUNICATION.TEMPLATES and the existing Notification owner.", "No legacy Notice, Board, DynamicBoard or detail redirect was authored."]
+    },
+    {
+      "id": "SYS005-AC-02",
+      "result": "PASS",
+      "criterion": "SHARED-API-007 resolves exactly to GET /api/notifications/v1/admin/templates and owner GET /v1/admin/templates on dwp-notification-server.",
+      "evidence": ["The canonical OpenAPI fragment seals operationId notification_templates and ApiResponse<TemplateWorkspace>.", "NotificationAdminController owns @GetMapping(\"/templates\") beneath /v1/admin.", "Gateway browser prefix remains /api/notifications/v1."]
+    },
+    {
+      "id": "SYS005-AC-03",
+      "result": "PASS",
+      "criterion": "SHARED-API-008 resolves exactly to POST /api/notifications/v1/admin/templates/drafts and owner POST /v1/admin/templates/drafts with Idempotency-Key.",
+      "evidence": ["The canonical OpenAPI fragment seals operationId notification_createTemplateDraft.", "The request schema is TemplateDraftRequest and response is ApiResponse<TemplateRevision>.", "Idempotency-Key is a required header in OpenAPI and NotificationAdminController."]
+    },
+    {
+      "id": "SYS005-AC-04",
+      "result": "PASS",
+      "criterion": "The bounded backend and frontend OpenAPI fragments for both APIs and core schemas remain byte-semantically identical at the sealed digest.",
+      "evidence": ["Backend canonical fragment: 3889 bytes, SHA-256 88be25e0e95fe8c8281b3f140823819b421a08d025203b4fe1fef54ddcff7c08.", "Frontend canonical fragment: 3889 bytes, same SHA-256.", "Byte comparison passed using the semantic disposition's exact jq filter."]
+    },
+    {
+      "id": "SYS005-AC-05",
+      "result": "PASS",
+      "criterion": "The existing /notifications/admin/templates surface remains the only UI target and no HRIS menu, route, redirect or IA node is added.",
+      "evidence": ["Existing notification route and navigation targets passed the bounded frontend tests.", "The only repository writes are result JSON documents.", "No apps, libs, generated route, menu or IA path changed."]
+    },
+    {
+      "id": "SYS005-AC-06",
+      "result": "PASS",
+      "criterion": "Catalog, draft and publish authorization continues to use ADMIN.NOTIFICATION_TEMPLATE with separate VIEW, MANAGE and APPROVE enforcement and no role-name bypass.",
+      "evidence": ["NotificationSecurityFilter maps /v1/admin/templates to ADMIN.NOTIFICATION_TEMPLATE.", "GET admits VIEW, MANAGE or APPROVE; ordinary writes require MANAGE; publish/reject paths require APPROVE.", "NotificationSecurityFilterTest passed all 7 selected tests."]
+    },
+    {
+      "id": "SYS005-AC-07",
+      "result": "PASS",
+      "criterion": "Existing tenant-scoped immutable revisions, RLS, expected-version, idempotency, independent approval and audit behavior are evidenced without source modification or recount.",
+      "evidence": ["Existing V13 enforces revision state, approval fields and author/approver separation; notification migration high-water remains V35.", "Template service checks tenant scope, expected version, idempotent replay and maker-checker before recording notification.template.published.", "Template service, repository, draft governance and the selected migration invariant tests passed."]
+    },
+    {
+      "id": "SYS005-AC-08",
+      "result": "PASS",
+      "criterion": "PLAT-004 evidence distinguishes the non-callable namespace, /direct service endpoint and Kafka domain-event transport and adds no SYS producer or onboarding.",
+      "evidence": ["/internal/v1/intents is only the controller namespace; @PostMapping(\"/direct\") is the callable HTTP endpoint.", "The canonical domain-event topic remains dwp.domain-events.v1 using DomainEventEnvelope and NotificationDomainEventTranslator.", "No /direct use, SYS producer registration or exact SYS onboarding was added."]
+    },
+    {
+      "id": "SYS005-AC-09",
+      "result": "PASS",
+      "criterion": "NotificationTemplatePublished.v1 is recorded as non-required and replaced only by immutable revision plus notification.template.published audit evidence.",
+      "evidence": ["The sealed semantic disposition marks NotificationTemplatePublished.v1 non-required for this reuse closure.", "The symbol is absent from backend and frontend non-document source.", "No event alias, publisher, consumer or HRIS projection was created."]
+    },
+    {
+      "id": "SYS005-AC-10",
+      "result": "PASS",
+      "criterion": "No backend, frontend application/library, generated contract, OpenAPI, AsyncAPI, product-authorization, migration or central-control path changes.",
+      "evidence": ["Backend remained clean at f448c36feee2ed7f59eacc64f450e6db3865f1c5.", "Frontend application and library paths remained identical to base 695c40b40c7461911100243b7d052dea07584bc0.", "The closure diff is restricted to the exact result-evidence root."]
+    },
+    {
+      "id": "SYS005-AC-11",
+      "result": "PASS_WITH_CONFIGURATION_ONLY_FRONTEND_RETRY",
+      "criterion": "The bounded owner and frontend test set passes once; any correction reruns only the smallest failed target and no repository-wide suite is run.",
+      "evidence": ["Backend bounded group passed 8 suites and 52 tests on its first execution.", "Frontend first invocation stopped before discovery because the evidence worktree intentionally had no node_modules; zero tests ran.", "A repository-external dependency resolver corrected only config loading, then the same sealed three-file group passed 32 tests; no full suite ran."]
+    },
+    {
+      "id": "SYS005-AC-12",
+      "result": "PASS",
+      "criterion": "The result evidence states that this closes reuse coverage only and does not authorize tenant activation, customer parity or production release.",
+      "evidence": ["The module result claims zero pre-admission business-completion credit.", "Feature enablement and tenant enrollment remain false.", "Customer parity, dwp-dev merge and production release are expressly not authorized."]
+    }
+  ],
+  "summary": {
+    "acceptanceResultCount": 12,
+    "reuseCoverageClosed": true,
+    "centralReviewPending": true,
+    "productionImplementationClaimed": false,
+    "businessCompletionCredit": 0
+  }
+}

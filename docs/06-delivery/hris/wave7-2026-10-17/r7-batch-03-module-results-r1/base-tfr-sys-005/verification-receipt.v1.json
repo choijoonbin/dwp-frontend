@@ -1,0 +1,71 @@
+{
+  "schema": "dwp.hris.module-verification-receipt.v1",
+  "generatedAt": "2026-10-17T19:20:59Z",
+  "sliceId": "BASE-TFR-SYS-005",
+  "policy": "RUN_EACH_BOUNDED_TARGET_GROUP_ONCE; AFTER_FAILURE_RERUN_ONLY_THE_SMALLEST_IDENTIFIABLE_FAILED_UNIT; NO_REPOSITORY_WIDE_SUITE",
+  "backend": {
+    "repository": "dwp-backend",
+    "commit": "f448c36feee2ed7f59eacc64f450e6db3865f1c5",
+    "tree": "cec08e55f33fa71482c583137e3ccc3d8bf11572",
+    "command": "./gradlew :dwp-notification-server:test --tests '*NotificationTemplateServiceTest' --tests '*NotificationTemplateRepositoryTest' --tests '*NotificationDraftGovernanceServiceTest' --tests '*NotificationSecurityFilterTest' --tests '*NotificationMigrationInvariantTest.governsTenantTemplateOverridesAsImmutableMakerCheckerRevisions' --tests '*NotificationDomainEventTranslatorTest' --tests '*HrisNotificationIntentV1ProviderContractTest' --tests '*HrisNotificationReceiptV1ProviderContractTest'",
+    "executionCount": 1,
+    "result": "PASS",
+    "suiteCount": 8,
+    "testCount": 52,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "log": {
+      "path": "/Users/a10697/Work/DWP/.codex-evidence/r7-sys-005-20261018/backend-targeted-tests.log",
+      "sha256": "5a094934557b28293b8cbeed478b5846bf10e1eb0d9ecdefe48359316f52909c",
+      "bytes": 1265
+    }
+  },
+  "frontend": {
+    "repository": "dwp-frontend",
+    "commit": "695c40b40c7461911100243b7d052dea07584bc0",
+    "tree": "8af76d722d8c299b0eb6768e15066e4675a24724",
+    "sealedTargetCommand": "pnpm exec vitest run apps/dwp/src/routes/notification-routes.test.tsx apps/dwp/src/features/notifications/notification-navigation.test.ts libs/shared-utils/src/api/notification-api.test.ts",
+    "initialExecution": {
+      "result": "CONFIG_RESOLUTION_FAILURE_BEFORE_TEST_DISCOVERY",
+      "testsRun": 0,
+      "reason": "The fresh evidence worktree intentionally had no node_modules, so vitest.config.ts could not resolve vitest/config.",
+      "repositoryWritePerformed": false,
+      "log": {
+        "path": "/Users/a10697/Work/DWP/.codex-evidence/r7-sys-005-20261018/frontend-targeted-tests.log",
+        "sha256": "8e9e3a5096ad5538a8e52fa245bc323705358336e4a2aab381e9f958f48eae04",
+        "bytes": 1405
+      }
+    },
+    "configurationOnlyRetry": {
+      "command": "PATH=/Users/a10697/Work/DWP/dwp-frontend/node_modules/.bin:$PATH COREPACK_ENABLE_PROJECT_SPEC=0 corepack pnpm@10.18.3 exec vitest run --config /tmp/sys005-vitest.config.mjs apps/dwp/src/routes/notification-routes.test.tsx apps/dwp/src/features/notifications/notification-navigation.test.ts libs/shared-utils/src/api/notification-api.test.ts",
+      "targetSetChanged": false,
+      "temporaryConfigOutsideRepositories": true,
+      "temporaryConfigSha256": "1f9de32751c34cae708bb1a20331f3a4539193d06325e222e2a45cbddf9098fb",
+      "result": "PASS",
+      "testFiles": 3,
+      "testsPassed": 32,
+      "testsFailed": 0,
+      "log": {
+        "path": "/Users/a10697/Work/DWP/.codex-evidence/r7-sys-005-20261018/frontend-targeted-tests-config-retry.log",
+        "sha256": "6b972278ab21a0785ed54821635c92bb0b89f8ee43ffc8f17b4dd849f65576a0",
+        "bytes": 403
+      }
+    }
+  },
+  "openApiParity": {
+    "extractionId": "SYS005-SHARED-API-007-008-OPENAPI-FRAGMENT-V1",
+    "jqFilter": "{operations:{templateCatalogGet:.paths[\"/api/notifications/v1/admin/templates\"].get,templateDraftCreatePost:.paths[\"/api/notifications/v1/admin/templates/drafts\"].post},schemas:{ApiResponseTemplateWorkspace:.components.schemas.notification_ApiResponseTemplateWorkspace,ApiResponseTemplateRevision:.components.schemas.notification_ApiResponseTemplateRevision,TemplateWorkspace:.components.schemas.notification_TemplateWorkspace,TemplateVariant:.components.schemas.notification_TemplateVariant,TemplateContent:.components.schemas.notification_TemplateContent,TemplateDraftRequest:.components.schemas.notification_TemplateDraftRequest,TemplateRevision:.components.schemas.notification_TemplateRevision}}",
+    "serialization": "LC_ALL=C jq -S -c with exactly one trailing LF",
+    "backend": {"input": "/Users/a10697/Work/DWP/dwp-backend/contracts/openapi/gateway-public.json", "bytes": 3889, "sha256": "88be25e0e95fe8c8281b3f140823819b421a08d025203b4fe1fef54ddcff7c08"},
+    "frontend": {"input": "libs/api-contracts/openapi/gateway-public.json", "bytes": 3889, "sha256": "88be25e0e95fe8c8281b3f140823819b421a08d025203b4fe1fef54ddcff7c08"},
+    "byteParity": true,
+    "log": {"path": "/Users/a10697/Work/DWP/.codex-evidence/r7-sys-005-20261018/openapi-parity.log", "sha256": "0983fac958ca0114c0aa2a9df7d72754409d138ffe0ced0e9178cb2f81417340", "bytes": 926}
+  },
+  "nonExecutions": {
+    "repositoryWideSuite": false,
+    "migrationCleanUpgrade": "NOT_APPLICABLE_NO_SCHEMA_TOUCH",
+    "workerRecovery": "NOT_APPLICABLE_NO_NEW_RUNTIME",
+    "browser": "NOT_REQUIRED_FOR_EVIDENCE_ONLY_REUSE_CLOSURE"
+  }
+}
