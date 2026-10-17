@@ -1,0 +1,179 @@
+{
+  "schema": "dwp.hris.r7-batch02-module-source-admission-decision.v1",
+  "decisionId": "HRIS-WAVE7-R7-BATCH02-MODULE-SOURCE-ADMISSION-20261018-R1",
+  "issuedAt": "2026-10-18T01:05:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "TWO_MODULE_RESULTS_HASH_PINNED_AND_AUTHORIZED_FOR_NO_FF_DWP_DEV_ADMISSION_DEFAULT_OFF",
+  "supersedes": null,
+  "authority": {
+    "roadmap": {
+      "path": "../execution-roadmap-successor.v16.json",
+      "sha256": "34ac13dc4bcf635f605b541255a1cbe68f7a1904f8e303b5484f0a2204c6bde2",
+      "requiredState": "R7_BATCH_02_TWO_MODULE_TOKENS_ISSUED_DEFAULT_OFF_THREE_LANES_SEMANTIC_NO_GO_ZERO_ACTIVE_LEASES"
+    },
+    "centralCarrier": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commitBeforeThisDecision": "da32f8ead331968d7c57950e25bebe0bfb84b211",
+      "treeBeforeThisDecision": "cbd6c2882f35e85c067c7b9cd9b3951f06a39ce7",
+      "cleanAndOriginExact": true
+    }
+  },
+  "admittedResults": [
+    {
+      "sliceId": "BASE-TFR-HRM-007",
+      "moduleSession": "HRIS-HRM",
+      "decision": "GO_FOR_SOURCE_ADMISSION_DEFAULT_OFF",
+      "backend": {
+        "repository": "dwp-backend",
+        "branch": "codex/hris-wave7-r7-batch02-hrm-007-backend-20261017-r1",
+        "baseCommit": "59964de62cd4da8bcb9f9384d6e2ef85e8c07b09",
+        "sourceCommit": "0dfc590808adf78690f20e7153406d747264b933",
+        "sourceTree": "28bcb9cb5cd028d0e2284622156b5fc52b2387cc",
+        "remoteExact": true,
+        "clean": true
+      },
+      "frontend": {
+        "repository": "dwp-frontend",
+        "branch": "codex/hris-wave7-r7-batch02-hrm-007-frontend-20261017-r1",
+        "baseCommit": "f749d046417a35642d158c0d0f674704ace7d4bb",
+        "initialSourceCommit": "1ceee83eab7bb2afa38dcb66aa67376a927ef9c6",
+        "hardeningCommit": "6a00c85e71e650fce03b8422d84c6e561e585afb",
+        "hardeningTree": "789270c65da3279f6ff767ed2299e4e984547ce3",
+        "finalEvidenceCommit": "f1f3f83cce8b93bfe122b3f2666c8981d95c6914",
+        "finalTree": "fea706bd499355822ed706c018082c6648e283a9",
+        "remoteExact": true,
+        "clean": true
+      },
+      "evidence": [
+        {
+          "path": "../r7-batch-02-module-results-r1/base-tfr-hrm-007/acceptance-results.v1.json",
+          "sha256": "5fb202f9b45d5231999294da187fd24dfa5ee1a3a5e771600f4bcf73837e71f7",
+          "bytes": 9850
+        },
+        {
+          "path": "../r7-batch-02-module-results-r1/base-tfr-hrm-007/changed-path-and-no-recount.v1.json",
+          "sha256": "f96218a582ef54e88ec86a51f11d83c605ab5bebe9fe1281c8997ce487b2f669",
+          "bytes": 11531
+        },
+        {
+          "path": "../r7-batch-02-module-results-r1/base-tfr-hrm-007/entry-query-evidence.v1.json",
+          "sha256": "12185e39c85f25a225572b49c1d38c5cad5f44a2be3687d11a4d64b8a483479b",
+          "bytes": 13115
+        },
+        {
+          "path": "../r7-batch-02-module-results-r1/base-tfr-hrm-007/materialization-receipt.v1.json",
+          "sha256": "34710031254317e790c6435f83d5ea55964612e8befc55c52c7b43529d8d3d12",
+          "bytes": 7024
+        },
+        {
+          "path": "../r7-batch-02-module-results-r1/base-tfr-hrm-007/module-result-evidence.v1.json",
+          "sha256": "16bad2aa3de2ca2e56475c0206ece6d1bd7158713e9bb659cd2e5588d833b5fb",
+          "bytes": 19613
+        }
+      ],
+      "independentReview": {
+        "decision": "GO_FOR_CENTRAL_NO_FF_ADMISSION_DEFAULT_OFF",
+        "p0": 0,
+        "p1": 0,
+        "p2NonBlocking": 4,
+        "verifiedRemediations": [
+          "authority-sensitive cache key and metadata plus exact revoke purge",
+          "synchronous action fence and live cache/action revalidation",
+          "allowlisted deep-link state preserves non-default scope and drops unsafe state",
+          "EFFECTIVE_ON request-only, IAQ-013 CONFIG_SCOPE-only and AC09 central-v51-pending evidence"
+        ]
+      }
+    },
+    {
+      "sliceId": "BASE-TFR-SYS-003",
+      "moduleSession": "HRIS-SYS",
+      "decision": "GO_FOR_FRONTEND_SOURCE_ADMISSION_DEFAULT_OFF",
+      "backend": {
+        "repository": "dwp-backend",
+        "mode": "READ_ONLY_NO_SOURCE_ADMISSION",
+        "baseCommit": "59964de62cd4da8bcb9f9384d6e2ef85e8c07b09",
+        "changed": false
+      },
+      "frontend": {
+        "repository": "dwp-frontend",
+        "branch": "codex/hris-wave7-r7-batch02-sys-003-frontend-20261017-r1",
+        "baseCommit": "f749d046417a35642d158c0d0f674704ace7d4bb",
+        "finalSourceCommit": "1f0a475bbc8865511ddc436a91f294c2929ec731",
+        "finalEvidenceCommit": "e7e7ff69dfd3d9923c3e47515a11fbc3f8c04345",
+        "finalTree": "b57ca50f8bc796d5f5dbec7f7100b51bf06c1120",
+        "remoteExact": true,
+        "clean": true
+      },
+      "evidence": [
+        {
+          "path": "../r7-batch-02-module-results-r1/base-tfr-sys-003/acceptance-receipt.v1.json",
+          "sha256": "a6e8c6c96adc7d02c5f772cc9c3881733b06f60b00c3543fadb87b2c85459524",
+          "bytes": 7768
+        },
+        {
+          "path": "../r7-batch-02-module-results-r1/base-tfr-sys-003/changed-path-manifest.v2.json",
+          "sha256": "a6ce05685390fa0017ddc51fce92338e7016246e106d6c1fed755521f6b8196f",
+          "bytes": 3263
+        },
+        {
+          "path": "../r7-batch-02-module-results-r1/base-tfr-sys-003/module-result.v1.json",
+          "sha256": "86673661ec04c5cd29657c41c4f2750087099010e26395e9aa2d9960e809df4d",
+          "bytes": 4228
+        },
+        {
+          "path": "../r7-batch-02-module-results-r1/base-tfr-sys-003/verification-receipt.v2.json",
+          "sha256": "037c15c88f479b8577726a08a0674503d6990d98a2cd2b2a27f7a6ba9100db4a",
+          "bytes": 5954
+        }
+      ],
+      "independentReview": {
+        "decision": "GO_FOR_CENTRAL_NO_FF_ADMISSION_DEFAULT_OFF",
+        "p0": 0,
+        "p1": 0,
+        "p2": 0,
+        "rule": "Reuse native Approval owner contracts; add no Platform proxy and no duplicate HCM API alias."
+      }
+    }
+  ],
+  "mergeAuthorization": {
+    "strategy": "NO_FF_EXACT_BRANCH_HEAD",
+    "backend": [
+      "Merge 0dfc590808adf78690f20e7153406d747264b933 into dwp-backend dwp-dev."
+    ],
+    "frontend": [
+      "Merge f1f3f83cce8b93bfe122b3f2666c8981d95c6914 into dwp-frontend dwp-dev.",
+      "Merge e7e7ff69dfd3d9923c3e47515a11fbc3f8c04345 into dwp-frontend dwp-dev."
+    ],
+    "conflictPolicy": "STOP_ON_CONFLICT_NO_AUTOMATIC_RESOLUTION",
+    "verification": "For a conflict-free merge verify ancestry, exact admitted blobs, clean worktree and origin exact. Do not rerun module suites."
+  },
+  "centralSuccessorAuthority": {
+    "productAuthorizationBundle": 51,
+    "authMigration": "V260",
+    "hrm007": "Generate and admit three exact HCM PAGE/DATA pairs, tighten People owner authority to exact DATA tuples and CONFIG_SCOPE-only IAQ-013, then mount trusted production wrappers.",
+    "sys003": "Generate two HCM authorization-only PAGE contracts, combine HCM page evidence with native Approval route/action evidence, and keep any unmapped mutation SoD disabled.",
+    "generatorChangeAllowed": true,
+    "authGatewayPeopleFrontendCentralChangesAllowed": true,
+    "targetedVerificationOnly": true
+  },
+  "rollout": {
+    "runtimeDefault": "OFF",
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCreditBeforeCentralGates": 0
+  },
+  "withheldLanesUnchanged": [
+    "BASE-TFR-PER-002",
+    "BASE-TFR-PAY-001",
+    "BASE-TFR-TIM-001"
+  ],
+  "nonClaims": [
+    "Central v51, Auth V260, Gateway, People and frontend mount work is complete.",
+    "Browser acceptance is complete.",
+    "Any feature or tenant is activated.",
+    "R7 or Batch-02 business completion is complete."
+  ]
+}
