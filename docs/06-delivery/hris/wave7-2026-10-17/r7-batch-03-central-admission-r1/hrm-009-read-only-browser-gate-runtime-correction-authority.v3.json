@@ -1,0 +1,335 @@
+{
+  "schema": "dwp.hris.r7-batch03-hrm009-read-only-browser-gate-runtime-correction-authority.v3",
+  "decisionId": "HRIS-WAVE7-R7-BATCH03-HRM009-READ-ONLY-BROWSER-GATE-RUNTIME-CORRECTION-AUTHORITY-20261018-R3",
+  "issuedAt": "2026-10-18T08:45:02+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "AUTHORIZED_TARGETED_SCOPE_COMPATIBILITY_FIXTURE_COUNTER_CORRECTION_AND_FIVE_ROW_BROWSER_DRIVER_ZERO_WRITE",
+  "purpose": "Issue one append-only sealed successor to the v1 fixture authority and v2 owner-path correction after the real 1440 CUA observation found that the canonical shell scope query was rejected before DATA evaluation. This successor authorizes only the exact scope-query compatibility correction, exact fixture counter semantics correction, matching targeted tests, and one execution of each existing five-row Chromium browser-gate scenario. It does not activate or enroll a tenant, authorize customer or production data, enable a writable action, or close HRM-009, Batch-03, or R7.",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_DECISION_ID_AND_SHA256",
+    "predecessorMutation": "FORBIDDEN"
+  },
+  "predecessorDocuments": {
+    "originalFixtureAuthority": {
+      "path": "hrm-009-read-only-browser-gate-fixture-execution-authority.v1.json",
+      "sha256": "320c81c2289168d36214dbfb2ee86d2ef0d5168c48fb11c3e77fd7d5246c5649",
+      "bytes": 9219,
+      "preservation": "IMMUTABLE"
+    },
+    "ownerPathCorrectionSuccessor": {
+      "path": "hrm-009-read-only-browser-gate-fixture-execution-authority-successor.v2.json",
+      "sha256": "965ade679a8942df88a47b27fe4f9e748d64f240273c2366131bff33444ed04b",
+      "bytes": 4187,
+      "preservation": "IMMUTABLE"
+    },
+    "inheritedCentralExecutionAuthority": {
+      "path": "hrm-009-central-successor-execution-authority.v1.json",
+      "sha256": "347398ba3b7303a3499a9b18ab9a494fdf3c03e90cce1726f95522bd5334f2a7",
+      "bytes": 39007,
+      "preservation": "IMMUTABLE"
+    },
+    "inheritedCentralIntegrationReceipt": {
+      "path": "hrm-009-central-successor-integration-receipt.v1.json",
+      "sha256": "aaaf7b969ff82a006426be7713893c44d15ab155ad0ddb9f84be778c46364454",
+      "bytes": 5994,
+      "preservation": "IMMUTABLE"
+    }
+  },
+  "effectiveInheritance": {
+    "inheritsAllUnchangedV1AndV2Terms": true,
+    "effectiveSequence": [
+      "hrm-009-read-only-browser-gate-fixture-execution-authority.v1.json",
+      "hrm-009-read-only-browser-gate-fixture-execution-authority-successor.v2.json",
+      "hrm-009-read-only-browser-gate-runtime-correction-authority.v3.json"
+    ],
+    "v3OverridesOnly": [
+      "production scope-query compatibility at the HRM-009 route-state boundary",
+      "fixture unexpected-evaluation and forwarded-request counter semantics",
+      "the browser driver assignment for the existing five-row matrix",
+      "the exact four-file implementation allowlist"
+    ]
+  },
+  "actualCuaObservation": {
+    "driver": "CODEX_CUA_IN_APP_BROWSER",
+    "viewport": "1440x900",
+    "runtime": "DEDICATED_LOCALHOST_HRM009_READ_ONLY_FIXTURE",
+    "canonicalRoute": "/hr/me/requests",
+    "canonicalShellQuery": "scope=scope:hrm009:self",
+    "trustedPageDecisionScope": "scope:hrm009:self",
+    "observedBoundary": "parseHrm009RouteState",
+    "observedAllowedKeys": ["tab", "focus", "navigationScope", "legalEntityPublicId"],
+    "observedResult": {
+      "pageAuthorityReached": true,
+      "routeState": "INVALID_UNKNOWN_SCOPE_QUERY_KEY",
+      "dataEvaluationCount": 0,
+      "ownerGetCount": 0,
+      "writeCount": 0
+    },
+    "rootCause": "The canonical shell emitted the exact trusted PAGE scope as the scalar scope query, but parseHrm009RouteState did not include scope in its allowedKeys set. The route therefore failed closed before the DATA authority request and People owner GET, even though the query scope and trusted PAGE decision scope were equal.",
+    "interpretation": "The zero DATA and GET counts are evidence of a production route-state compatibility gap, not evidence that the DATA or owner projection contracts are absent and not permission to weaken PAGE, DATA, scope, or read-only trust checks."
+  },
+  "correctionAProductionScopeQueryCompatibility": {
+    "authorizedProductionPaths": [
+      "apps/dwp/src/features/hris/integration/hris-hrm-009-route-admission.tsx",
+      "apps/dwp/src/features/hris/integration/hris-hrm-009-route-admission.test.tsx"
+    ],
+    "authorizedBehaviorChange": "Accept the canonical scope query at the HRM-009 route-state boundary only when it is a well-formed scalar public id and, when present, exactly equals the already trusted PAGE decision scope before any DATA evaluation can begin.",
+    "scopeQueryContract": {
+      "key": "scope",
+      "presence": "OPTIONAL_FOR_EXISTING_DIRECT_ROUTE_COMPATIBILITY",
+      "cardinality": "ZERO_OR_ONE",
+      "whitespacePolicy": "VALUE_MUST_EQUAL_ITS_TRIMMED_FORM",
+      "blankPolicy": "FAIL_CLOSED",
+      "duplicatePolicy": "FAIL_CLOSED",
+      "format": "PUBLIC_ID_1_TO_128_ASCII_ALPHANUMERIC_DOT_UNDERSCORE_COLON_HYPHEN",
+      "exactPattern": "^[A-Za-z0-9._:-]{1,128}$",
+      "foreignScopePolicy": "FAIL_CLOSED_BEFORE_DATA_EVALUATION",
+      "comparison": "IF_PRESENT_ROUTE_SCOPE_MUST_EQUAL_PAGE_DECISION_SCOPE_KEY_EXACTLY",
+      "missingScopeBehavior": "PRESERVE_THE_EXISTING_TRUSTED_PAGE_AND_REQUEST_SCOPE_RESOLUTION_PATH"
+    },
+    "requiredTests": [
+      "canonical scalar scope:hrm009:self is parsed and can proceed only with the exact PAGE decision scope",
+      "a foreign but syntactically valid scope fails closed before DATA evaluation",
+      "duplicate scope keys fail closed",
+      "blank or whitespace-padded scope fails closed",
+      "a malformed public id fails closed",
+      "existing tab, focus, navigationScope and legalEntityPublicId validation remains unchanged"
+    ],
+    "productionBehaviorChangeLimit": "SCOPE_QUERY_COMPATIBILITY_ONLY",
+    "otherProductionSourceChangesAuthorized": false
+  },
+  "correctionBFixtureAndEvidenceCounters": {
+    "authorizedPaths": [
+      "scripts/hris-hrm-009-read-only-browser-gate-server.mjs",
+      "e2e/hris-hrm-009-read-only-browser-gate.spec.ts"
+    ],
+    "evaluationRouting": {
+      "syntheticAuthorityKeys": [
+        "route.hcm.personal.requests.page",
+        "route.hcm.personal.requests.data",
+        "route.hcm.operations.certificates-documents.page",
+        "route.hcm.operations.certificates-documents.data"
+      ],
+      "otherWellFormedRouteContracts": "FORWARD_ORIGINAL_BOUNDED_BODY_AND_AUTH_HEADERS_TO_PINNED_GATEWAY_WITHOUT_INCREMENTING_UNEXPECTED_AUTHORITY",
+      "bodyLimitBytes": 32768,
+      "failClosedCasesThatIncrementUnexpectedAuthorityEvaluations": [
+        "malformed JSON",
+        "empty body or missing or blank routeContractKey",
+        "body larger than the bounded evaluation limit",
+        "an exact synthetic HRM-009 key whose subject, product, surface or requested scope violates its sealed contract"
+      ]
+    },
+    "forwardedRequestCounterContract": {
+      "shape": {
+        "forwardedRequests": {
+          "attempted": ["total", "authLogin", "authMe", "ordinaryApi"],
+          "succeeded": ["total", "authLogin", "authMe", "ordinaryApi"]
+        }
+      },
+      "attemptedMeaning": "Increment immediately before creating the pinned upstream request.",
+      "succeededMeaning": "Increment only after the pinned upstream returns an HTTP status from 200 through 299 for the same classified request.",
+      "networkErrorOrUpstreamNon2xx": "ATTEMPT_ONLY_NOT_SUCCESS",
+      "evidenceAssertion": "Browser-gate success requires succeeded authLogin, authMe and ordinaryApi counters to be positive; attempt counters alone cannot satisfy live-forward evidence.",
+      "classificationStability": "The same request contributes to total and exactly one applicable authLogin, authMe or ordinaryApi bucket under both attempted and succeeded groups."
+    },
+    "secretHandling": {
+      "rawRequestBodyLogged": false,
+      "cookieLogged": false,
+      "authorizationHeaderLogged": false,
+      "passwordOrCredentialLogged": false,
+      "permittedLogData": "bounded route keys, methods, canonical paths, counter classes, reason codes, status classes and monotonic sequence only"
+    },
+    "requiredSpecAdjustment": "Update only the dedicated HRM-009 browser-gate spec types and assertions to the corrected unexpected-evaluation and attempted-versus-succeeded counter contract."
+  },
+  "correctionCDriverSuccessor": {
+    "dedicatedConfig": "playwright.hris-hrm-009-read-only.config.ts",
+    "dedicatedSpec": "e2e/hris-hrm-009-read-only-browser-gate.spec.ts",
+    "driver": "PLAYWRIGHT_CHROMIUM",
+    "configEditAuthorized": false,
+    "workers": 1,
+    "retries": 0,
+    "executionMode": "SERIAL",
+    "trace": "off",
+    "video": "off",
+    "credentials": "ENVIRONMENT_ONLY_E2E_HRIS_HRM009_EMAIL_AND_E2E_HRIS_HRM009_PASSWORD",
+    "freshAuthenticatedContextPerRow": true,
+    "runEachRowExactlyOnce": true,
+    "duplicateExecutionForbidden": true,
+    "failurePolicy": "AFTER_A_CORRECTION_REPEAT_ONLY_THE_SMALLEST_FAILED_ROW_AND_NEVER_REPLAY_A_PASSING_ROW",
+    "matrix": [
+      {
+        "row": "1440_LIGHT_PERSONAL",
+        "viewport": "1440x900",
+        "surface": "hcm.personal",
+        "locale": "en",
+        "required": ["PAGE_BEFORE_DATA_BEFORE_OWNER_GET", "KEYBOARD", "VISIBLE_FOCUS", "ZERO_POST"]
+      },
+      {
+        "row": "1280_DARK_OPERATIONS",
+        "viewport": "1280x800",
+        "surface": "hcm.operations",
+        "locale": "en",
+        "required": ["METADATA_ONLY", "ACTION_DISABLED", "DARK", "ZERO_POST"]
+      },
+      {
+        "row": "390_KO_REDUCED_MOTION_PERSONAL",
+        "viewport": "390x844",
+        "surface": "hcm.personal",
+        "locale": "ko-KR",
+        "required": ["REDUCED_MOTION", "LONG_KO_EN_LABEL", "NO_HORIZONTAL_OVERFLOW", "ZERO_POST"]
+      },
+      {
+        "row": "320_FORCED_COLORS_PARTIAL_OPERATIONS",
+        "viewport": "320x720",
+        "surface": "hcm.operations",
+        "required": ["FORCED_COLORS", "PARTIAL_STATE", "KEYBOARD", "ACTION_DISABLED", "ZERO_POST"]
+      },
+      {
+        "row": "640_CSS_200_PERCENT_PERSONAL",
+        "viewport": "640x450",
+        "deviceScaleFactor": 2,
+        "surface": "hcm.personal",
+        "required": ["SEMANTIC_READING_ORDER", "NO_HORIZONTAL_OVERFLOW", "ZERO_POST"]
+      }
+    ],
+    "cuaResponsibilities": [
+      "Observe the checked-in default-OFF runtime and prove zero HRM-009 enrollment or owner traffic.",
+      "Observe the standard 1440 positive fixture journey visually and through the accessibility tree after the targeted corrections."
+    ],
+    "playwrightResponsibilities": [
+      "Execute each of the five already dedicated Chromium rows exactly once.",
+      "Control forced-colors, reduced-motion, locale, deviceScaleFactor and isolated fresh-login contexts without changing operating-system settings.",
+      "Attach sanitized screenshots and fixture counter snapshots without raw secrets."
+    ],
+    "driverReason": "The CUA in-app browser cannot deterministically control forced-colors, reduced-motion, deviceScaleFactor, or isolated fresh-login contexts. Changing operating-system accessibility or display settings is forbidden, so those matrix controls belong to the existing dedicated Playwright Chromium spec while CUA retains default-OFF and standard 1440 visual and accessibility observation.",
+    "operatingSystemSettingChangesAuthorized": false,
+    "evidenceSanitization": {
+      "rawCredentials": "FORBIDDEN",
+      "cookies": "FORBIDDEN",
+      "authorizationHeaders": "FORBIDDEN",
+      "rawRequestBodies": "FORBIDDEN",
+      "allowed": [
+        "sanitized screenshots",
+        "accessibility findings",
+        "viewport and media metadata",
+        "canonical route keys and paths",
+        "counter snapshots and monotonic event order"
+      ]
+    }
+  },
+  "effectiveImplementationAllowlist": {
+    "exactFiles": [
+      "scripts/hris-hrm-009-read-only-browser-gate-server.mjs",
+      "e2e/hris-hrm-009-read-only-browser-gate.spec.ts",
+      "apps/dwp/src/features/hris/integration/hris-hrm-009-route-admission.tsx",
+      "apps/dwp/src/features/hris/integration/hris-hrm-009-route-admission.test.tsx"
+    ],
+    "exactFileCount": 4,
+    "otherFrontendFilesAuthorized": false,
+    "backendFilesAuthorized": false,
+    "agentFilesAuthorized": false,
+    "packageOrLockfileEditsAuthorized": false,
+    "runtimeDefaultEditsAuthorized": false,
+    "databaseOrMigrationEditsAuthorized": false
+  },
+  "pinnedCurrentRepositories": {
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "e1b88b491a954d04888bb717c176a9fbb9100f52",
+      "tree": "9c97dc382c10a54b9e10f097ba2afe76c7c65f88",
+      "originExact": true,
+      "clean": true
+    },
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "f9d2556294fe92a26090ab26781d74dc861062cd",
+      "tree": "c4cb353f1fd314c054f4094b36927d99897180da",
+      "originExact": true,
+      "clean": true
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "originExact": true,
+      "clean": true
+    }
+  },
+  "sealedProductAuthorization": {
+    "version": 52,
+    "status": "DRAFT",
+    "checksum": "b33fbf968e71f97b09fa497fdfad7d2f6854199170b79fd1602a0ea604977346",
+    "runtimeDefault": "OFF",
+    "persistentFeatureActivationCount": 0,
+    "persistentTenantEnrollmentCount": 0,
+    "automaticImportEnabled": false
+  },
+  "authority": {
+    "targetedScopeQueryCompatibilityAuthorized": true,
+    "fixtureCounterCorrectionAuthorized": true,
+    "dedicatedFiveRowPlaywrightRunAuthorized": true,
+    "standardCuaObservationAuthorized": true,
+    "productionBehaviorChange": "SCOPE_QUERY_COMPATIBILITY_ONLY",
+    "persistentActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "writableActionAuthorized": false,
+    "centralMergeAuthorizedByThisDocument": false
+  },
+  "verificationPolicy": {
+    "authorityDocumentChecks": ["JSON_PARSE", "PRETTIER_CHECK"],
+    "implementationStaticChecks": [
+      "NODE_CHECK_FIXTURE",
+      "PRETTIER_EXACT_FOUR_FILES",
+      "ESLINT_EXACT_FOUR_FILES"
+    ],
+    "targetedUnitChecks": ["HRM009_ROUTE_ADMISSION_TEST_FILE_ONLY"],
+    "browserChecks": [
+      "EXISTING_DEDICATED_FIVE_ROW_PLAYWRIGHT_CHROMIUM_SPEC_ONCE",
+      "CUA_DEFAULT_OFF",
+      "CUA_STANDARD_1440_VISUAL_AX"
+    ],
+    "repositoryWideSuiteAuthorized": false,
+    "broadBrowserReplayAuthorized": false,
+    "unrelatedRegressionExecutionAuthorized": false
+  },
+  "branchPolicy": {
+    "implementationBase": "EXACT_POST_V3_DWP_DEV_HEAD",
+    "strategy": "CLEAN_PINNED_WORKTREE_BRANCH_THEN_TARGETED_REVIEW_THEN_EXACT_NO_FF_CENTRAL_MERGE",
+    "conflictPolicy": "STOP_ON_CONFLICT_NO_AUTOMATIC_RESOLUTION",
+    "directImplementationWorkOnDwpDev": false
+  },
+  "forbidden": [
+    "Changing a file outside the exact four-file implementation allowlist",
+    "Changing the dedicated Playwright config, package.json, a lockfile, a migration, a checked-in runtime default, activation, or enrollment",
+    "Logging credentials, cookies, Authorization headers, raw request bodies, or other secrets",
+    "Using customer or production data",
+    "Changing operating-system forced-colors, reduced-motion, display-scale, locale, or accessibility settings",
+    "Executing any browser matrix row more than once unless that exact row failed and a correction was applied",
+    "Enabling or exercising a writable HRM-009 action, step-up, POST, PUT, PATCH, or DELETE",
+    "Claiming download, revoke, verification, expiry, access-audit, download-audit, persistent activation, enrollment, or production release",
+    "Treating fixture evidence as business completion credit"
+  ],
+  "requiredNext": [
+    "Commit and push only this append-only v3 authority on its clean frontend branch, then merge it to frontend dwp-dev before implementation starts.",
+    "Create one clean implementation worktree from the exact post-v3 frontend dwp-dev head and change only the four allowlisted files.",
+    "Run only the exact static and route-admission checks, then independently review scope fail-closed behavior, counter semantics, and secret handling.",
+    "After exact central merge, run every existing dedicated Playwright Chromium row once and use CUA only for checked-in default-OFF plus standard 1440 visual and accessibility observation.",
+    "If a row fails after correction, rerun only that smallest failed row; do not replay passing rows or run a broad suite.",
+    "Issue a separate sanitized append-only browser-gate receipt before any Batch-03 sequencing-exit decision."
+  ],
+  "nonClaims": [
+    "HRM-009 full slice completion",
+    "Batch-03 completion",
+    "R7 completion",
+    "Writable certificate request, issuance, download, revoke or verification",
+    "Persistent tenant activation or enrollment",
+    "Customer-data use or production release",
+    "Business completion credit"
+  ]
+}
