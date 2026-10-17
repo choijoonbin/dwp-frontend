@@ -1,0 +1,140 @@
+{
+  "schema": "dwp.hris.wave6-execution-roadmap-successor.v10",
+  "roadmapId": "HRIS-WAVE6-EXECUTION-ROADMAP-SUCCESSOR-20261017-R10",
+  "issuedAt": "2026-10-17T14:25:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "supersedes": {
+    "path": "docs/06-delivery/hris/wave6-2026-10-15/execution-roadmap-successor.v9.json",
+    "sha256": "c66c4749882de08c4bad7f80650f010aba03d541d5776a32993d6ad8e22b6edd",
+    "preservation": "IMMUTABLE_PREDECESSOR_RETAINED",
+    "inheritedClosedMilestones": true
+  },
+  "baselineBeforeEvidenceCarrier": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "6e7d1a6a8d0337c545abf83f5e243a8aa11f8457",
+      "tree": "9fb489ae33334898c6044f1b9a3f30ab42a0f71d",
+      "upstream": "origin/dwp-dev",
+      "localRemoteExact": true,
+      "workingTreeClean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "33e818df9d5dd49118e8aa7cc863da888a24150f",
+      "tree": "74f3fee2c62bf43b76131dbc8b10c36ffb8463a2",
+      "upstream": "origin/dwp-dev",
+      "localRemoteExactBeforeCarrier": true
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "upstream": "origin/dwp-dev",
+      "localRemoteExact": true,
+      "changedByR6C": false
+    }
+  },
+  "inheritedClosed": [
+    "R2-RESOLVE-HOME-PRODUCER-PURPOSE-AND-TYPE",
+    "R3A-R3D-HOME-PRODUCERS",
+    "R4-INTEGRATE-SYS-012-HOME-COMPOSITION-RESIDUAL",
+    "R5-SEAL-AND-INTEGRATE-SHARED-SEVEN-WORKBENCH-TASK-NAVIGATION",
+    "R6-A-EXPOSE-AUDITED-V45-PAGE-SUBSET",
+    "R6-B-SEAL-V46-EXACT-POLICY-DECISION-CARRIER"
+  ],
+  "closedByThisSuccessor": {
+    "id": "R6-C-RESEAL-SEMANTIC-AND-OWNER-MISMATCH-SCREENS",
+    "state": "CLOSED_INTEGRATED_DEFAULT_OFF",
+    "evidence": {
+      "path": "docs/06-delivery/hris/wave6-2026-10-15/r6c-semantic-owner-reseal-integration-r1/central-integration-result.v1.json",
+      "sha256": "847586873f7c4a997cc7bbfd3cdbd64e2632aafc592899d9389f8a2443b60b26"
+    },
+    "backendCommit": "6e7d1a6a8d0337c545abf83f5e243a8aa11f8457",
+    "frontendCommitBeforeEvidenceCarrier": "33e818df9d5dd49118e8aa7cc863da888a24150f",
+    "authorizationRegistryVersion": 47,
+    "authorizationRegistrySha256": "925e8bfc406bc7e4ee62aee08582fdd7c67c629ffde470051704eaec5404800e",
+    "canonicalPageRoutesAdded": 5,
+    "runtimeOwnerOverlayRecords": 4,
+    "compatibilityDeepLinkOnlyPaths": 3,
+    "explicitDeferredPaths": 4,
+    "historicalIaSnapshotMutated": false,
+    "tenantActivation": false,
+    "productionRelease": false
+  },
+  "r6Closure": {
+    "state": "CLOSED_ALL_R6A_R6B_R6C_INTEGRATED_DEFAULT_OFF",
+    "remainingR6ImplementationWork": 0,
+    "separateSuccessorSubjects": [
+      "PAY_COMPOSITE_SETTINGS_AUTHORITY",
+      "CONTROLLED_EXPORT_DEDICATED_TOPOLOGY_NODE"
+    ]
+  },
+  "nextExecutable": {
+    "id": "R7-C0-RECLASSIFY-AND-CLOSE-RESIDUAL-CONTROL",
+    "state": "AUTHORIZED_NEXT_EXECUTABLE_AFTER_R6C_EVIDENCE_CARRIER",
+    "owner": "SYS_COMMON_INTEGRATION_CONTROL",
+    "objective": "Replace the stale Wave3 status view with an evidence-only 86-row successor classification, close the already integrated SYS-001 residual without reimplementation, and issue exact successor packets before any new module coding.",
+    "orderedWork": [
+      "Issue one immutable successor carrier for all 86 BASE rows from the Wave3 v2 overlay without modifying the historical CSV.",
+      "Classify only evidence-closed results as complete; preserve two retired rows and keep partial surfaces or missing receipts open.",
+      "Issue a no-code SYS-001 close receipt only after proving its backend, navigation adapter and Work Explorer integration commits are ancestors of the current dwp-dev pins.",
+      "Prepare separate controlled-export topology and PAY composite settings authority successors; neither successor may mark a business slice complete.",
+      "Only after C0 closeout issue fresh five-lane module packets and tokens for HRM-005, PAY-013, PER-001, SYS-002 and TIM-007."
+    ],
+    "auditedCountsAtR6BPin": {
+      "universe": 86,
+      "retired": 2,
+      "evidenceClosedComplete": 25,
+      "implementedIntegratedExplicitCloseResidual": 1,
+      "partialSurfaceOrOverlap": 4,
+      "noCurrentSliceResult": 54,
+      "active": 84,
+      "activeIncomplete": 59
+    },
+    "mandatoryCorrections": [
+      {
+        "sliceId": "BASE-TFR-PAY-016",
+        "classification": "EVIDENCE_CLOSED_COMPLETE",
+        "reason": "Wave4 integration plus the later PAY-011 V49-to-V50 PostgreSQL upgrade proof closes the earlier database-verification limitation."
+      },
+      {
+        "sliceId": "BASE-TFR-SYS-001",
+        "classification": "INTEGRATED_EXPLICIT_CLOSE_RESIDUAL",
+        "reason": "The latest explicit receipt still says ADAPTER_CODE_COMPLETE_WORK_EXPLORER_MOUNT_PENDING; completion cannot be inferred until a no-code successor receipt binds the final pins."
+      }
+    ],
+    "entryCriteria": [
+      "consume backend dwp-dev 6e7d1a6a8d0337c545abf83f5e243a8aa11f8457",
+      "consume frontend dwp-dev 33e818df9d5dd49118e8aa7cc863da888a24150f plus this evidence carrier",
+      "consume agent dwp-dev 9beb5439cad065e7d919a98c9f9becb44481508a",
+      "do not mutate the Wave3 successor overlay v2 CSV",
+      "do not issue module source authority before the reclassification and SYS-001 close receipts are sealed"
+    ],
+    "minimumAcceptance": [
+      "All 86 BASE rows occur exactly once and counts reconcile to 86.",
+      "Every complete row points to an explicit closure receipt and ancestor integration commit.",
+      "Every incomplete row retains its owner queue, dependency IDs and exact next action.",
+      "SYS-001 receives no source changes and is closed only by current-pin evidence.",
+      "The first five-lane batch has fresh packets, tokens, touch policies, migration leases where required and result evidence contracts."
+    ]
+  },
+  "validationPolicy": {
+    "evidenceAndAncestorChecksFirst": true,
+    "changedClusterFirst": true,
+    "failedTargetOnlyAfterCorrection": true,
+    "repositoryWideSuitePerCorrection": false,
+    "fullSuiteOnlyAtExplicitReleaseGateOrCrossCuttingRisk": true
+  },
+  "activationPolicy": {
+    "allNewFeaturesDefaultOff": true,
+    "runtimeModeDefault": "OFF",
+    "enrolledTenantsDefault": [],
+    "tenantActivationAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "ISSUE_R7_C0_86_ROW_RECLASSIFICATION_AND_SYS_001_NO_CODE_CLOSE_RECEIPT_FROM_THE_R6C_REMOTE_PINS"
+}

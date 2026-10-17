@@ -1,0 +1,192 @@
+{
+  "schema": "dwp.hris.wave6-r6c-semantic-owner-reseal-central-integration-result.v1",
+  "receiptId": "HRIS-WAVE6-R6C-SEMANTIC-OWNER-RESEAL-INTEGRATION-R1",
+  "issuedAt": "2026-10-17T14:24:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "status": "PASS_R6C_INTEGRATED_CLOSED_DEFAULT_OFF",
+  "decision": "CLOSE_R6C_AT_EXACT_REMOTE_DWP_DEV_WITHOUT_HISTORICAL_IA_REWRITE_TENANT_ACTIVATION_CUSTOMER_DATA_OR_PRODUCTION_RELEASE",
+  "sourcePins": {
+    "backend": "fa54d7b65063eba595c40329a6c96ebf94b107ca",
+    "frontend": "4b0cb3e7f2d5121fad21dc06369f14312139e537",
+    "roadmap": {
+      "path": "docs/06-delivery/hris/wave6-2026-10-15/execution-roadmap-successor.v9.json",
+      "sha256": "c66c4749882de08c4bad7f80650f010aba03d541d5776a32993d6ad8e22b6edd"
+    }
+  },
+  "ownerResults": {
+    "backend": {
+      "branch": "codex/hris-r6c-backend-v47-owner-overlay-20261017-r1",
+      "commit": "b54eaa0b38e0a5d7df08a5b2384583131c8276e8",
+      "remoteExact": true
+    },
+    "frontend": {
+      "branch": "codex/hris-r6c-frontend-canonical-20261017-r1",
+      "commit": "2bb328944471e1c61a36464d5bb4298868782ddb",
+      "remoteExact": true
+    }
+  },
+  "finalBinding": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "6e7d1a6a8d0337c545abf83f5e243a8aa11f8457",
+      "tree": "9fb489ae33334898c6044f1b9a3f30ab42a0f71d",
+      "upstream": "origin/dwp-dev",
+      "localRemoteExact": true,
+      "workingTreeClean": true
+    },
+    "frontendBeforeEvidenceCarrier": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "33e818df9d5dd49118e8aa7cc863da888a24150f",
+      "tree": "74f3fee2c62bf43b76131dbc8b10c36ffb8463a2",
+      "upstream": "origin/dwp-dev",
+      "localRemoteExact": true,
+      "workingTreeCleanBeforeCarrier": true
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "upstream": "origin/dwp-dev",
+      "localRemoteExact": true,
+      "workingTreeClean": true,
+      "changedByR6C": false
+    }
+  },
+  "appendOnlyAuthorization": {
+    "registryVersion": 47,
+    "registrySha256": "925e8bfc406bc7e4ee62aee08582fdd7c67c629ffde470051704eaec5404800e",
+    "versionIndexSha256": "88200a7d1ec9fc92f8809b171f390fd34747f4b25592cee19df52eb2bd9a02f8",
+    "platformPepSha256": "4afb76601a7c0e3dbf7647b075ad17433ca70107f825071584c4f3ba1bb1caae",
+    "pilotFixtureSha256": "a5c4098b4ec6d424e25b2c907fba4b08065d788f1306bc79f602d5a3b06c8d0a",
+    "v46PhysicalArtifacts": {
+      "bundleSha256": "12542c9e9c11922168eb848029404546c4898da35677a86a7509466c7690eb87",
+      "authSeedSha256": "12542c9e9c11922168eb848029404546c4898da35677a86a7509466c7690eb87",
+      "platformPepFileSha256": "0491fef0d1a9a08f38911b041bdde954b39c8a974e156f460f15f9603858ac2c",
+      "byteIdenticalToR6BPin": true
+    },
+    "v256SeedDeclaration": "DRAFT_NO_AUTOMATIC_ACTIVATION"
+  },
+  "canonicalPageRoutes": [
+    {
+      "nodeId": "BASE:time-work-plans",
+      "path": "/hr/operations/time/work-plans",
+      "routeContractKey": "route.hcm.operations.time-work-plans.page",
+      "runtimeOwner": "dwp-time-server",
+      "firstRead": "GET /api/time/v1/hris/work-plans?effectiveOn={required}",
+      "targetBinding": "CONFIG_SCOPE"
+    },
+    {
+      "nodeId": "BASE:performance-goal-cycles",
+      "path": "/hr/operations/performance/goal-cycles",
+      "routeContractKey": "route.hcm.operations.performance-goal-cycles.page",
+      "runtimeOwner": "dwp-people-server",
+      "firstRead": "GET /api/people/v1/hris/performance/cycles",
+      "targetBinding": "TARGET_POPULATION"
+    },
+    {
+      "nodeId": "BASE:team-leave",
+      "path": "/hr/team/leave",
+      "routeContractKey": "route.hcm.team.leave.page",
+      "runtimeOwner": "dwp-people-server",
+      "firstRead": "GET /api/people/v1/hr/team/absence",
+      "targetBinding": "RELATIONSHIP_AND_TARGET_POPULATION"
+    },
+    {
+      "nodeId": "BASE:time-leave-operations",
+      "path": "/hr/operations/time/leave-operations",
+      "routeContractKey": "route.hcm.operations.time-leave-operations.page",
+      "runtimeOwner": "dwp-people-server",
+      "firstRead": "GET /api/people/v1/hr/operations/{domain=ABSENCE}",
+      "targetBinding": "TARGET_POPULATION"
+    },
+    {
+      "nodeId": "BASE:hr-operations-home",
+      "path": "/hr/operations/home",
+      "routeContractKey": "route.hcm.operations.home.page",
+      "runtimeOwner": "dwp-people-server",
+      "firstRead": "GET /api/people/v1/workforce/operations/overview",
+      "targetBinding": "EXACT_EXISTING_OVERVIEW_PROFILES"
+    }
+  ],
+  "runtimeOwnerOverlay": {
+    "revision": "R6C_RUNTIME_OWNER_OVERLAY_V1",
+    "checksum": "42ed206e45fab76f77725ba5d37543e06b8df62da7aa142bb620b032bf552dbd",
+    "recordCount": 4,
+    "nodes": [
+      "BASE:team-time",
+      "BASE:team-leave",
+      "BASE:time-leave-operations",
+      "BASE:hr-operations-home"
+    ],
+    "authorityGrant": "PROHIBITED",
+    "activationRule": "ONLY_AFTER_EXACT_V47_PAGE_AUTHORITY_AND_OWNER_CONTRACT_MATCH",
+    "mismatchBehavior": "FAIL_CLOSED",
+    "v3ResponseAndRevisionPin": "SEALED_FULL_RECORD_TUPLES"
+  },
+  "navigationClosure": {
+    "canonicalMenuAndDeepLink": [
+      "/hr/operations/time/work-plans",
+      "/hr/operations/performance/goal-cycles",
+      "/hr/team/leave",
+      "/hr/operations/time/leave-operations",
+      "/hr/operations/home"
+    ],
+    "existingCanonicalOwnerReseal": [
+      "/hr/team/time"
+    ],
+    "compatibilityDeepLinkOnlyNoMenuDuplicate": [
+      "/hr/team/absence",
+      "/hr/operations/absence",
+      "/hr/operations"
+    ],
+    "stillFailClosed": [
+      "/hr/operations/time",
+      "/hr/operations/pay",
+      "/hr/operations/talent",
+      "/hr/data/exports"
+    ],
+    "historicalGeneratedIaMutated": false
+  },
+  "targetedValidation": {
+    "policy": "CHANGED_CLUSTER_ONCE_THEN_FAILED_TARGET_ONLY",
+    "backend": {
+      "pythonContractAndGeneratorTargets": "PASS_15_OF_15",
+      "authTargets": "PASS_25_AFTER_ONE_FIXTURE_CHECKSUM_CORRECTION_AND_FAILED_CLASS_ONLY_RERUN_7_OF_7",
+      "platformTargets": "PASS_46_AFTER_ONE_VERSION_ASSERTION_CORRECTION_AND_FAILED_CLASS_ONLY_RERUN_3_OF_3",
+      "generatorCheck": "PASS",
+      "fixtureCheck": "PASS",
+      "diffCheck": "PASS",
+      "independentReviewP0P1": 0
+    },
+    "frontend": {
+      "navigationRuntime": "PASS_21_OF_21",
+      "navigationRuntimeMounted": "PASS_6_OF_6",
+      "sevenWorkbenchPolicy": "PASS_5_OF_5",
+      "canonicalHcmAndRouteTargets": "PASS_64",
+      "hcmProviderAndLinkTargets": "PASS_29",
+      "productCompatibilityAndExpansionFailedTargets": "PASS_120",
+      "authorizationAndFixtureSync": "PASS",
+      "targetedEslint": "PASS",
+      "diffCheck": "PASS",
+      "entrypointAuditBlockersRemaining": 0
+    },
+    "repositoryWideSuiteRepeated": false
+  },
+  "activation": {
+    "v3TransportEnabledByDefault": false,
+    "authorityAdapterEnabledByDefault": false,
+    "navigationControllerEnabledByDefault": false,
+    "runtimeModeDefault": "OFF",
+    "enrolledTenantsDefault": [],
+    "tenantActivationAuthorized": false,
+    "customerDataUsed": false,
+    "productionReleased": false
+  },
+  "r7Eligibility": {
+    "state": "ELIGIBLE_AFTER_R6C_EVIDENCE_CARRIER",
+    "requiredFirstAction": "ISSUE_DETERMINISTIC_86_ROW_BASE_RECLASSIFICATION_AND_CLOSE_SYS_001_RESIDUAL_WITHOUT_REIMPLEMENTATION"
+  }
+}
