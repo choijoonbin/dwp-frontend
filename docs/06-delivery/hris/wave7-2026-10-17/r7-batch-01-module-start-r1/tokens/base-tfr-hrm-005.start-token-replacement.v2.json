@@ -1,0 +1,182 @@
+{
+  "schema": "dwp.hris.module-start-token-replacement.v2",
+  "tokenId": "HRIS-WAVE7-R7-BATCH-01-START-BASE-TFR-HRM-005-20261017-R2",
+  "issuedAt": "2026-10-17T18:17:11+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-HRM",
+  "sliceId": "BASE-TFR-HRM-005",
+  "canonicalFeature": "HRIS_ORGANIZATION_POSITIONS",
+  "state": "REISSUED_INHERIT_DIRTY_WORKTREES_AUTHOR_PEOPLE_V57_IMPLEMENT_TEST_COMMIT_AND_PUSH_ONLY",
+  "permittedAction": "Continue the preserved HRM-005 implementation in the same two worktrees, add only the sealed ORGANIZATION workforce field and exact organization graph resolver repair plus People V57, run the bounded verification, and commit and push only the existing module branches.",
+  "supersession": {
+    "predecessorToken": {
+      "path": "base-tfr-hrm-005.start-token.v1.json",
+      "sha256": "fdb3d9c635bf059aa56a62ecbc4d94ad0f4bb449ffbc929beb20dc51eae43f62",
+      "bytes": 13160,
+      "disposition": "INVALIDATED_SUPERSEDED_BY_APPEND_ONLY_R2",
+      "reason": "A People V57 migration and owner paths outside the v1 boundary were proven necessary after module authoring began."
+    },
+    "unchangedAuthorityInherited": [
+      "original owner packet, source authority and authorization decision",
+      "integrated People v49 projection and owner PEP runtime",
+      "original backend and frontend touch boundaries",
+      "canonical feature, purpose, capability, predicate and result evidence root",
+      "default OFF, empty enrollment and zero-call requirements",
+      "central merge, route-shell mount, activation and production prohibitions"
+    ]
+  },
+  "hashDag": {
+    "authorityDecision": {
+      "path": "../hrm-005-blocker-audit-and-authority-successor.v1.json",
+      "sha256": "1c69f209b10f6ff3a28e156f4889991bdf56f7a7e348afdec1e1dc401bf6eb78",
+      "bytes": 9006
+    },
+    "migrationLeaseSuccessor": {
+      "path": "../migration-lease-activation-successor.v2.json",
+      "sha256": "26c9fdca22eb8571d71502194a79fe200e51ecc5abaa8f62d3e3815dc8056505",
+      "bytes": 4138,
+      "leaseId": "HRIS-WAVE7-R7-BATCH-01-PEOPLE-MAIN-V57-20261017-R1"
+    },
+    "authorityValidation": {
+      "path": "../hrm-005-authority-successor-validation-receipt.v1.json",
+      "sha256": "7851c6b278844f48681facb463d1390c694757683ba147eb2bac98db45cef4ee",
+      "bytes": 4129
+    },
+    "centralCarrier": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "216b13aeef09af73a5fc4d5ea94c6771541abab7",
+      "tree": "3fed30f4e6083158060953ca7af36cb54bdcc8b8",
+      "originExactAtIssue": true,
+      "mustNotEnterModuleWorktrees": true
+    },
+    "order": "v1 token plus immutable R7 evidence -> blocker authority successor -> V57 lease successor -> authority validation -> this replacement token"
+  },
+  "worktrees": {
+    "backend": {
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261017/r7-batch01/hrm-005/backend",
+      "branch": "codex/hris-wave7-r7-batch01-hrm-005-backend-20261017-r1",
+      "upstream": "origin/codex/hris-wave7-r7-batch01-hrm-005-backend-20261017-r1",
+      "head": "fcb5c1f397d14ea77c7ff9714a272449d99e18a4",
+      "tree": "147bb1afd5635209d5db166a513d970b6e0002c3",
+      "upstreamAhead": 0,
+      "upstreamBehind": 0,
+      "state": "DIRTY_IN_PROGRESS_EXACTLY_INHERITED",
+      "changedPathCount": 11
+    },
+    "frontend": {
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261017/r7-batch01/hrm-005/frontend",
+      "branch": "codex/hris-wave7-r7-batch01-hrm-005-frontend-20261017-r1",
+      "upstream": "origin/codex/hris-wave7-r7-batch01-hrm-005-frontend-20261017-r1",
+      "head": "4b46c02d1e98b8d0cfb78189126aa47ac90f2fda",
+      "tree": "0e37221429763f5d13c799e22bf10ad8a6648f1a",
+      "upstreamAhead": 0,
+      "upstreamBehind": 0,
+      "state": "DIRTY_IN_PROGRESS_EXACTLY_INHERITED",
+      "changedPathCount": 10
+    },
+    "continuation": "Continue in place. Do not reset, recreate, rebase, merge or cherry-pick either central carrier."
+  },
+  "inheritedDirtyManifest": {
+    "backend": [
+      {"path": "dwp-people-server/src/main/java/com/dwp/services/people/organization/OrganizationScenarioService.java", "sha256": "1f054eac2152f38d0dbf4d71a55c6dc450c35800a0e385a4960ad1567bcb26ee", "bytes": 43926},
+      {"path": "dwp-people-server/src/test/java/com/dwp/services/people/organization/OrganizationScenarioServiceTest.java", "sha256": "2ec26a47d9ac41fa226ae61c5b0722f1d64184476426ba4ebb47280f59bdc8e3", "bytes": 39317},
+      {"path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/organization/OrganizationChangedOutbox.java", "sha256": "8e662af011e6dc2b78f7b52b3a5166c54492aa7fef3977f1e39f0a86e0ded6c0", "bytes": 8252},
+      {"path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/organization/OrganizationGraphAdvice.java", "sha256": "ef75b734332d0421c9608904d61a436ba089ef874d0507d9c2d1c9f0d0d515b4", "bytes": 2713},
+      {"path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/organization/OrganizationGraphController.java", "sha256": "88ab58be534d6ef9204021ed8bcab2a3bf71b4bd4088264f99a93cb85af2560f", "bytes": 4109},
+      {"path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/organization/OrganizationGraphProblem.java", "sha256": "672ddf6ee8ee124d93e38fc32b36b7f0e4b0dfaba402360a568336d73c70aebe", "bytes": 628},
+      {"path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/organization/OrganizationGraphService.java", "sha256": "c9e252f590dbb9352cbfc52f4021df9741fcbf7749026e0dd44c96d8945d2d72", "bytes": 12926},
+      {"path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/organization/OrganizationGraphWithPositionsV2.java", "sha256": "42978dd9595c321af53923c9423f7f65b8156090f046fc4540c742dad6826511", "bytes": 3992},
+      {"path": "dwp-people-server/src/test/java/com/dwp/services/people/hris/organization/HrmOrganizationPositionsContractTest.java", "sha256": "7f248f1a083fe5e2924754fb7c7ed57e4e8d7416a27f8a3b7fd0e0696e92ea16", "bytes": 8883},
+      {"path": "dwp-people-server/src/test/java/com/dwp/services/people/hris/organization/OrganizationChangedOutboxTest.java", "sha256": "5a3adcddd1404240d723e5352ef25cb42ceee34461b88994af4ea066353569c0", "bytes": 8535},
+      {"path": "dwp-people-server/src/test/java/com/dwp/services/people/hris/organization/OrganizationGraphServiceTest.java", "sha256": "0970899c1edd76f596810a549b9bc3e07008cbfbcd489f191b0f110abda1efc8", "bytes": 13484}
+    ],
+    "frontend": [
+      {"path": "apps/dwp/src/features/people/organization/organization-chart-manager.tsx", "sha256": "dba699f68cbf37d0fd213cd01d23a7f0a1aad08bb1d664578c925def41562377", "bytes": 34872},
+      {"path": "apps/dwp/src/features/hris/people/__tests__/g3-slices/base-tfr-hrm-005.slice.test.tsx", "sha256": "845da92bbfc5b99c5b55145a6397c5bf883f17516a1413bd486419796f1381a2", "bytes": 4264},
+      {"path": "apps/dwp/src/features/hris/people/organization-positions/index.ts", "sha256": "77ffa48a5d808126a99beaabab6da5f8d55ba1af46d6631f2d451cd7a1516135", "bytes": 1006},
+      {"path": "apps/dwp/src/features/hris/people/organization-positions/organization-positions-api.test.ts", "sha256": "e2556dda391312af0cca5da05c092a431b5c1f6015446fa53e2c9e0636f3245b", "bytes": 2444},
+      {"path": "apps/dwp/src/features/hris/people/organization-positions/organization-positions-api.ts", "sha256": "8c3dc7c54b947e8a0017e024b5e8f21e12ccb5684226b15ac5e401624bb7d62c", "bytes": 1387},
+      {"path": "apps/dwp/src/features/hris/people/organization-positions/organization-positions-contract.test.ts", "sha256": "3e2fd352ac6a084a478e4719f4e25288bd98d942f17d7ecc8ed6bc07868b5d5a", "bytes": 6027},
+      {"path": "apps/dwp/src/features/hris/people/organization-positions/organization-positions-contract.ts", "sha256": "b2a23d2027ee603d5461178414231529db5dde3c4b5d2d0e71322b24fd510e4d", "bytes": 16463},
+      {"path": "apps/dwp/src/features/hris/people/organization-positions/organization-positions-explorer.tsx", "sha256": "58fb3f6abcedde1bfe236f3a631ed9d2524320db3dc48419bb12bbbe26eb07a0", "bytes": 24649},
+      {"path": "apps/dwp/src/features/hris/people/organization-positions/organization-positions-workspace.test.tsx", "sha256": "23ea5cb879fda5c308ef003a912301bae90b25f2aae68cb8e9195a70c219c0db", "bytes": 14696},
+      {"path": "apps/dwp/src/features/hris/people/organization-positions/organization-positions-workspace.tsx", "sha256": "f8c80ab3a7ecdaba8616d9a6d2b21b5a6fe4b8c0834112b8c2b2fa2103b3e969", "bytes": 1718}
+    ],
+    "rule": "Every listed file is an accepted starting point, not accepted final implementation. Any unlisted preexisting dirty path invalidates this token."
+  },
+  "exactSuccessorDelta": {
+    "migration": {
+      "leaseId": "HRIS-WAVE7-R7-BATCH-01-PEOPLE-MAIN-V57-20261017-R1",
+      "path": "dwp-people-server/src/main/resources/db/migration/V57__allow_organization_workforce_field_group.sql",
+      "secondMigrationAuthorized": false
+    },
+    "additionalBackendWritePaths": [
+      "dwp-people-server/src/main/java/com/dwp/services/people/workforce/WorkforceAccessPolicyService.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/workforce/WorkforceAccessPolicyServiceTest.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/organization/OrganizationChartService.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/organization/OrganizationChartServiceTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hr/HcmPopulationScopeServiceTest.java",
+      "dwp-people-server/src/main/resources/db/migration/V57__allow_organization_workforce_field_group.sql"
+    ],
+    "runtimeRules": [
+      "Add only ORGANIZATION to the workforce policy service allowlist; CreatePolicyRequest and OpenAPI maxItems remain 4.",
+      "V57 adds ORGANIZATION to the existing four-value database constraint without backfill or elevation.",
+      "OrganizationChartService uses ORGANIZATION plus ORGANIZATION_TARGET_POPULATION only for the two exact graph route keys.",
+      "Management and legacy workforce chart routes and resolver behavior remain unchanged.",
+      "HcmScopeSelectionValidator, HcmV3PepRegistry, generated v49 projection and central contracts remain byte-unchanged."
+    ]
+  },
+  "verification": {
+    "first": [
+      "V57 contract test and real PostgreSQL clean plus V56-to-V57 upgrade",
+      "WorkforceAccessPolicyServiceTest",
+      "HcmPopulationScopeServiceTest",
+      "OrganizationChartServiceTest",
+      "HrmOrganizationPositionsContractTest"
+    ],
+    "thenOnce": "Run the complete bounded HRM-005 verification cluster declared by the v1 token after all first targets pass.",
+    "afterFailure": "Fix and rerun only the smallest failed target first.",
+    "knownTestHarnessFix": "Disable WRITE_DATES_AS_TIMESTAMPS in the standalone HRM contract test ObjectMapper.",
+    "repositoryWideSuitePerCorrection": false,
+    "browserBeforeCentralMountAuthorized": false
+  },
+  "resultEvidence": {
+    "exactRoot": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-results-r1/base-tfr-hrm-005",
+    "mustState": [
+      "all original HRM-005 acceptance results",
+      "V57 clean and upgrade evidence",
+      "ORGANIZATION policy positive and unknown-field negative evidence",
+      "exact graph route resolver positive and legacy-route non-regression evidence",
+      "inherited dirty manifest lineage and final changed-path closed set",
+      "default OFF and no tenant enrollment"
+    ]
+  },
+  "authority": {
+    "moduleImplementationAuthorized": true,
+    "exactPeopleV57AuthoringAuthorized": true,
+    "existingDirtyStateInheritanceAuthorized": true,
+    "moduleBranchCommitAuthorized": true,
+    "moduleBranchPushAuthorized": true,
+    "mergeToDwpDevAuthorized": false,
+    "centralRouteOrShellMountAuthorized": false,
+    "centralCarrierMergeIntoModuleWorktreeAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "invalidationConditions": [
+    "a preexisting dirty path or byte hash differs from inheritedDirtyManifest before resume",
+    "a second People migration or any path outside v1 plus exactSuccessorDelta is required",
+    "CreatePolicyRequest/OpenAPI maxItems is changed from 4",
+    "the v49 generated projection, central PEP runtime or resolver meaning is changed",
+    "a central carrier is merged, rebased or cherry-picked into either module worktree",
+    "feature enablement, tenant enrollment, dwp-dev merge or production release is attempted"
+  ],
+  "completionBoundary": {
+    "requiredResultState": "MODULE_IMPLEMENTATION_COMPLETE_BRANCHES_PUSHED_CONTROL_REVIEW_PENDING_DEFAULT_OFF",
+    "directDwpDevMergeAuthorized": false,
+    "centralResultAdmissionAuthorized": false
+  }
+}

@@ -1,0 +1,102 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-01-module-start-validation-receipt-successor.v2",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-01-MODULE-START-VALIDATION-20261017-R2",
+  "validatedAt": "2026-10-17T18:17:13+09:00",
+  "validatedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "result": "PASS_EXACT_THREE_FILE_HRM_REPLACEMENT_TOKEN_CARRIER_READY_TO_COMMIT_PUSH_AND_REDISPATCH",
+  "scope": "Validate only the HRM-005 replacement token and batch state successor. No module source, migration, test, merge, route-shell mount, feature activation or tenant enrollment is performed by this receipt.",
+  "hashDag": {
+    "authorityValidation": {
+      "path": "hrm-005-authority-successor-validation-receipt.v1.json",
+      "sha256": "7851c6b278844f48681facb463d1390c694757683ba147eb2bac98db45cef4ee",
+      "bytes": 4129
+    },
+    "replacementToken": {
+      "path": "tokens/base-tfr-hrm-005.start-token-replacement.v2.json",
+      "sha256": "0524c5171c1eac53cb2f66cf872ea34c571e5c22bc7bc99b4b7d4882366037a7",
+      "bytes": 12853
+    },
+    "stateSuccessor": {
+      "path": "start-token-state-successor.v3.json",
+      "sha256": "73d1aacea8eed2b836ef1a42987135b88e96d62ec3b14c2ffc4006eff60c5aff",
+      "bytes": 4937
+    },
+    "order": "authority carrier -> HRM replacement token -> batch state successor -> this validation receipt",
+    "hashMode": "RAW_UTF8_FILE_BYTES"
+  },
+  "exactCarrierPaths": [
+    "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-start-r1/tokens/base-tfr-hrm-005.start-token-replacement.v2.json",
+    "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-start-r1/start-token-state-successor.v3.json",
+    "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-start-r1/module-start-validation-receipt-successor.v2.json"
+  ],
+  "validation": {
+    "exactNewPathCount": 3,
+    "allJsonParseWithJq": true,
+    "allRawSha256AndByteReferencesMatch": true,
+    "authorityCarrierCommitOnOriginDwpDev": "216b13aeef09af73a5fc4d5ea94c6771541abab7",
+    "authorityCarrierTree": "3fed30f4e6083158060953ca7af36cb54bdcc8b8",
+    "hrmR1Disposition": "INVALIDATED_SUPERSEDED",
+    "hrmR2State": "ACTIVE_AUTHORING_RESUME",
+    "payAndSysTokensByteUnchanged": true,
+    "timTokenByteUnchangedButAuthoringPaused": true,
+    "perRemainsNoGo": true,
+    "issuedTokenCountRemainsFour": true,
+    "activeAuthoringCount": 3,
+    "moduleMergeToDwpDevWithheld": true,
+    "centralRouteAndShellMountWithheld": true,
+    "featureEnablementAndTenantEnrollmentWithheld": true
+  },
+  "hrmWorktreeValidation": {
+    "backend": {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261017/r7-batch01/hrm-005/backend",
+      "branch": "codex/hris-wave7-r7-batch01-hrm-005-backend-20261017-r1",
+      "head": "fcb5c1f397d14ea77c7ff9714a272449d99e18a4",
+      "tree": "147bb1afd5635209d5db166a513d970b6e0002c3",
+      "upstreamAhead": 0,
+      "upstreamBehind": 0,
+      "changedPathCount": 11,
+      "allInheritedPathBytesMatchReplacementToken": true,
+      "unlistedDirtyPaths": 0
+    },
+    "frontend": {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261017/r7-batch01/hrm-005/frontend",
+      "branch": "codex/hris-wave7-r7-batch01-hrm-005-frontend-20261017-r1",
+      "head": "4b46c02d1e98b8d0cfb78189126aa47ac90f2fda",
+      "tree": "0e37221429763f5d13c799e22bf10ad8a6648f1a",
+      "upstreamAhead": 0,
+      "upstreamBehind": 0,
+      "changedPathCount": 10,
+      "allInheritedPathBytesMatchReplacementToken": true,
+      "unlistedDirtyPaths": 0
+    },
+    "centralCarrierPresentInModuleWorktrees": false,
+    "resetRecreateRebaseRequired": false
+  },
+  "migrationValidation": {
+    "stream": "PEOPLE_MAIN",
+    "observedHighWater": "V56",
+    "leasedVersion": "V57",
+    "exactPath": "dwp-people-server/src/main/resources/db/migration/V57__allow_organization_workforce_field_group.sql",
+    "pathPresentBeforeResume": false,
+    "exclusiveLeaseCount": 1,
+    "secondPeopleMigrationAuthorized": false
+  },
+  "dispatchPrecondition": "Commit and push exactly these three files on frontend dwp-dev, verify origin/dwp-dev equals the resulting commit, and only then send the R2 token path and SHA to the existing HRIS-HRM session.",
+  "verificationPolicy": {
+    "testOrder": "V57 and the five exact owner targets first, then one bounded HRM-005 aggregate.",
+    "onFailure": "Rerun only the smallest failed target after correction.",
+    "repositoryWideSuitePerCorrection": false,
+    "finalIntegrationAndBrowserMatrix": "Central phase only after admitted module results."
+  },
+  "authority": {
+    "exactThreeFileCarrierReadyToCommitAndPush": true,
+    "hrmRedispatchAuthorizedAfterExactCarrierPush": true,
+    "hrmImplementationCommitAndPushAuthorizedAfterRedispatch": true,
+    "moduleMergeToDwpDevAuthorized": false,
+    "centralRouteOrShellMountAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "COMMIT_AND_PUSH_THE_EXACT_THREE_FILE_CARRIER_THEN_REDISPATCH_ONLY_HRM_WITH_THE_REPLACEMENT_TOKEN_AND_CONTINUE_TIM_SUCCESSOR_WORK"
+}

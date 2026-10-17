@@ -1,0 +1,112 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-01-start-token-state-successor.v3",
+  "stateId": "HRIS-WAVE7-R7-BATCH-01-START-TOKEN-STATE-SUCCESSOR-20261017-R3",
+  "recordedAt": "2026-10-17T18:17:12+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "HRM_REISSUED_PAY_SYS_CONTINUE_TIM_PAUSED_PENDING_SUCCESSOR_PER_NO_GO",
+  "purpose": "Replace only the invalidated HRM-005 R1 token with a dirty-state-inheriting R2 token, preserve PAY and SYS tokens, record TIM authoring paused at its proven contract gap, and preserve PER NO-GO.",
+  "predecessorState": {
+    "path": "start-token-state-successor.v2.json",
+    "sha256": "975d2c15acd2c23191dc382ba1278b0a30c3cce75d5026044b6a85e30ae1deb7",
+    "bytes": 6204,
+    "mutated": false
+  },
+  "predecessorValidation": {
+    "path": "module-start-validation-receipt.v1.json",
+    "sha256": "a5f305fcdb834159011b2778112b8f3c63144cafb867445bd4c9dc386ee48ee5",
+    "bytes": 7706,
+    "mutated": false
+  },
+  "authorityCarrier": {
+    "repository": "dwp-frontend",
+    "branch": "dwp-dev",
+    "commit": "216b13aeef09af73a5fc4d5ea94c6771541abab7",
+    "tree": "3fed30f4e6083158060953ca7af36cb54bdcc8b8",
+    "originExact": true
+  },
+  "replacement": {
+    "supersededToken": {
+      "path": "tokens/base-tfr-hrm-005.start-token.v1.json",
+      "sha256": "fdb3d9c635bf059aa56a62ecbc4d94ad0f4bb449ffbc929beb20dc51eae43f62",
+      "bytes": 13160,
+      "state": "INVALIDATED_SUPERSEDED"
+    },
+    "activeToken": {
+      "path": "tokens/base-tfr-hrm-005.start-token-replacement.v2.json",
+      "sha256": "0524c5171c1eac53cb2f66cf872ea34c571e5c22bc7bc99b4b7d4882366037a7",
+      "bytes": 12853,
+      "state": "ISSUED_RESUME_EXISTING_WORKTREES"
+    }
+  },
+  "issuedTokenClosedSet": [
+    {
+      "moduleSession": "HRIS-HRM",
+      "sliceId": "BASE-TFR-HRM-005",
+      "canonicalFeature": "HRIS_ORGANIZATION_POSITIONS",
+      "tokenPath": "tokens/base-tfr-hrm-005.start-token-replacement.v2.json",
+      "tokenSha256": "0524c5171c1eac53cb2f66cf872ea34c571e5c22bc7bc99b4b7d4882366037a7",
+      "state": "ACTIVE_AUTHORING_RESUME",
+      "migrationLeaseId": "HRIS-WAVE7-R7-BATCH-01-PEOPLE-MAIN-V57-20261017-R1"
+    },
+    {
+      "moduleSession": "HRIS-PAY",
+      "sliceId": "BASE-TFR-PAY-013",
+      "canonicalFeature": "HRIS_PAYROLL_RUN_PREPARE",
+      "tokenPath": "tokens/base-tfr-pay-013.start-token.v1.json",
+      "tokenSha256": "0261536b268f9cb0caf22eda0d5bcb03a61d0fba9d084a156e8ee3c7a91a8aa8",
+      "state": "ACTIVE_AUTHORING_UNCHANGED",
+      "migrationLeaseId": "HRIS-WAVE7-R7-BATCH-01-PAYROLL-MAIN-V52-20261017-R1"
+    },
+    {
+      "moduleSession": "HRIS-SYS",
+      "sliceId": "BASE-TFR-SYS-002",
+      "canonicalFeature": "HRIS_OPERATIONS_EXCEPTION_CENTER",
+      "tokenPath": "tokens/base-tfr-sys-002.start-token.v1.json",
+      "tokenSha256": "62f7f265b9fcf5115401a152abaef045fcffcfb5747529fdbfa1aa4722837a37",
+      "state": "ACTIVE_AUTHORING_UNCHANGED",
+      "migrationLeaseId": "HRIS-WAVE7-R7-BATCH-01-PLATFORM-MAIN-V331-20261017-R1"
+    },
+    {
+      "moduleSession": "HRIS-TIM",
+      "sliceId": "BASE-TFR-TIM-007",
+      "canonicalFeature": "HRIS_TIME_CLOSE_HANDOFF",
+      "tokenPath": "tokens/base-tfr-tim-007.start-token.v1.json",
+      "tokenSha256": "5e1f1b5d4e4e40f6745db22c0c3f4ca3eb6ae89574c60c8fabb77887988307a8",
+      "state": "PAUSED_PROVEN_CONTRACT_GAP_NO_SOURCE_EDITS",
+      "migrationLeaseId": "HRIS-WAVE7-R7-BATCH-01-TIME-MAIN-V12-20261017-R1",
+      "requiredNext": "Central transport, event, receipt, handoff outcome and IAQ successor plus replacement token."
+    }
+  ],
+  "issuedTokenCount": 4,
+  "activeModuleAuthoringCount": 3,
+  "pausedModuleAuthoringCount": 1,
+  "worktreeCount": 8,
+  "excludedModule": {
+    "moduleSession": "HRIS-PER",
+    "sliceId": "BASE-TFR-PER-001",
+    "state": "SEALED_NO_GO_UNSEALED_NO_SOURCE_AUTHORITY",
+    "worktreeAuthorized": false,
+    "startTokenIssued": false,
+    "migrationAuthorized": false
+  },
+  "authority": {
+    "hrmResumeAuthorizedAfterExactCarrierPush": true,
+    "payAndSysContinueAuthorized": true,
+    "timResumeAuthorized": false,
+    "perStartAuthorized": false,
+    "moduleBranchCommitAndPushAuthorizedForActiveTokens": true,
+    "mergeToDwpDevAuthorized": false,
+    "centralRouteOrMenuMountAuthorized": false,
+    "tokenCarrierMergeOrRebaseIntoModuleWorktreesAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "verificationPolicy": {
+    "changedClusterFirst": true,
+    "afterFailure": "Rerun only the smallest failed target after correction.",
+    "repositoryWideSuitePerCorrection": false,
+    "finalIntegrationAndBrowserMatrix": "Run once centrally after every admitted module result and required central bridge are integrated."
+  },
+  "nextAction": "VALIDATE_AND_PUSH_THE_HRM_REPLACEMENT_TOKEN_CARRIER_RESUME_HRM_WITHOUT_TOUCHING_ITS_WORKTREES_AND_CONTINUE_THE_CENTRAL_TIM_SUCCESSOR"
+}
