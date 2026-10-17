@@ -1,0 +1,167 @@
+{
+  "schema": "dwp.hris.wave7.r7-c1-cross-cutting-successor-integration.v1",
+  "receiptId": "HRIS-WAVE7-R7-C1-CROSS-CUTTING-SUCCESSOR-INTEGRATION-20261017-R1",
+  "issuedAt": "2026-10-17T15:10:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "decision": "PASS_INTEGRATED_DEFAULT_OFF",
+  "baseline": {
+    "roadmap": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/execution-roadmap-successor.v11.json",
+      "sha256": "8527c96f72cd1b98fc73e0f6cf14499f0508bbb958b16b5679bcfc9f347b25ae"
+    },
+    "backend": "dwp-backend:dwp-dev@6e7d1a6a8d0337c545abf83f5e243a8aa11f8457",
+    "frontend": "dwp-frontend:dwp-dev@1ef489ac313572af747ce88736db8f4ec49aa908",
+    "agent": "dwp_agent:dwp-dev@9beb5439cad065e7d919a98c9f9becb44481508a"
+  },
+  "controlledExportTopology": {
+    "classification": "NAVIGATION_TOPOLOGY_REMEDIATION_ONLY",
+    "ownerCommits": {
+      "backend": "7ba54c67441ee762588ef9b9a6583e24fa73f556",
+      "frontend": "7324355e8a6081696655feb000af5c4d169dace8"
+    },
+    "integrationCommits": {
+      "backend": "159e47bb4c189aec9dcd27edbd48397c40443f57",
+      "frontend": "ebe4295366b2cb9273cafd429d27bc1fc970e81e"
+    },
+    "topology": {
+      "predecessorRevision": "HRIS-IA-98-WB7-G46-N97-R5",
+      "successorRevision": "HRIS-IA-99-WB7-G46-N98-R6",
+      "successorSha256": "4ac4b5411d804888ff1a4bd0373c70419b698a0abe43d0de43bd646966cfe166",
+      "workbenches": 7,
+      "groups": 46,
+      "descendantNodes": 98,
+      "newNodeId": "MODERN:hcm.management.controlled-export",
+      "canonicalPath": "/hr/data/exports",
+      "ownerSession": "HRIS-HRM",
+      "runtimeOwner": "dwp-people-server",
+      "groupId": "SET-08",
+      "displayOrder": 5
+    },
+    "migration": {
+      "version": 330,
+      "path": "dwp-platform-server/src/main/resources/db/migration/V330__accept_controlled_export_navigation_topology_successor.sql",
+      "oldExactPairAccepted": true,
+      "successorExactPairAccepted": true,
+      "mixedPairRejected": true,
+      "backfillOrDataUpdate": false
+    },
+    "securityBoundary": {
+      "existingPageRoute": "route.hcm.management.controlled-export.page",
+      "permission": "ACTION.WORKFORCE_CONTROLLED_EXPORT:VIEW",
+      "legacyGovernanceAuthorityAccepted": false,
+      "oldPublishedPolicyReadable": true,
+      "oldTopologyMutablePromotionAllowed": false,
+      "installedByDefault": false,
+      "deployedByDefault": false
+    },
+    "validation": {
+      "backendTargetedTests": 45,
+      "frontendTargetedTests": 45,
+      "independentReview": "P0_P1_NONE_AFTER_ONE_P1_LIFECYCLE_FIX",
+      "fullRepositorySuiteRun": false,
+      "failedTargetOnlyRerun": true
+    },
+    "nonClaims": [
+      "The existing People controlled-export API and domain were not reimplemented.",
+      "BASE-TFR-SYS-010 is not complete and receives no progress credit.",
+      "The historical generated IA, canonical topology and four-record owner overlay were not mutated."
+    ]
+  },
+  "payCompositeSettingsAuthority": {
+    "classification": "AUTHORITY_AND_EXPOSURE_ONLY",
+    "ownerCommits": {
+      "backend": "98753c68264be3440ab14bbfee21a8b25448484d",
+      "frontend": "922e6ef4058b398dbf7c20c2fbca76955406d266"
+    },
+    "integrationCommits": {
+      "backend": "b0db3577fd6517e64dd9de625fb67e99ff19630d",
+      "frontend": "af65a9c6a3f994989b1388c15df890d0b3345eda"
+    },
+    "authorization": {
+      "registryVersion": 48,
+      "registrySha256": "9fd324cd67ede1f02cc8ac33c08ad880ec6e283f99f5d7aa50e0e514545aa043",
+      "indexSha256": "3f66090d62d33892ebe5e3ce85752ba445060d92ed572b89cfe72c9b5675c12e",
+      "payrollPepSha256": "a0e8f8ad423201cb13794f2a6209583048665084d1b9c0a18e6d620b9e34c66e",
+      "dataRoutes": 4,
+      "actionRoutes": 6,
+      "subjectAndNavigationContext": "hcm.management",
+      "publicPrefix": "/api/payroll/v1/settings/payroll/foundation",
+      "ownerPrefix": "/v1/settings/payroll/foundation",
+      "existingPageRoutePreserved": "route.hcm.configuration.payroll.page"
+    },
+    "securityBoundary": {
+      "queryPageAdded": false,
+      "operationsAuthorityAcceptedAsSubstitute": false,
+      "operationsPayPageExposed": false,
+      "publishAndReverseRequireElevatedStepUp": true,
+      "decisionCasRequiredForCommands": true,
+      "existingDomainServiceReused": true,
+      "databaseOrMigrationChanged": false,
+      "backendFlags": [
+        "DWP_HRIS_PAYROLL_FOUNDATION_WAVE1_ENABLED",
+        "DWP_HRIS_PAYROLL_FOUNDATION_SETTINGS_ENABLED"
+      ],
+      "backendFlagsMustBothBeTrue": true,
+      "frontendFlag": "VITE_HRIS_PAYROLL_SETTINGS_FOUNDATION_ENABLED",
+      "allFlagsDefaultOff": true
+    },
+    "validation": {
+      "authorizationV48PythonTests": 6,
+      "authorizationV47PreservationTests": 4,
+      "payrollSettingsTests": 6,
+      "frontendTargetedTests": 5,
+      "generatorFixtureAndOpenApiChecks": "PASS",
+      "gatewayCompile": "PASS",
+      "independentReview": "P0_P1_NONE",
+      "fullRepositorySuiteRun": false,
+      "knownUnrelatedBaselineTypecheckIssue": "libs/shared-utils/src/api/hcm-audit-evidence-api.test.ts:117 TS2352"
+    },
+    "nonClaims": [
+      "BASE-TFR-PAY-007 is not counted again.",
+      "No payroll business domain, persistence schema or completed operations adapter was replaced.",
+      "No tenant activation or production release is authorized."
+    ]
+  },
+  "finalPinsBeforeThisReceipt": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "b0db3577fd6517e64dd9de625fb67e99ff19630d",
+      "tree": "36d18dc16c23a39b604e815c56f3c1566a7fa521",
+      "upstream": "origin/dwp-dev",
+      "localRemoteExact": true,
+      "workingTreeClean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "af65a9c6a3f994989b1388c15df890d0b3345eda",
+      "tree": "fcc85b80bc6dd71f595f5445b8ea0eada766f762",
+      "upstream": "origin/dwp-dev",
+      "localRemoteExactBeforeReceipt": true
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "upstream": "origin/dwp-dev",
+      "localRemoteExact": true,
+      "changedByR7C1": false
+    }
+  },
+  "businessSliceAccounting": {
+    "completed": 26,
+    "retired": 2,
+    "activeIncomplete": 58,
+    "incrementFromR7C1": 0
+  },
+  "activation": {
+    "runtimeDefault": "OFF",
+    "enrolledTenants": [],
+    "tenantActivationAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "ISSUE_R7_BATCH_01_EXACT_OWNER_PACKETS_AND_CENTRAL_APPEND_ONLY_AUTHORITY_PACKET_FROM_THE_FINAL_R7_C1_PINS"
+}
