@@ -14,9 +14,9 @@ export type ProductAuthorizationRouteProjection = Readonly<{
 
 export const PRODUCT_AUTHORIZATION_REGISTRY_REVISION = {
   bundleKey: 'product-surfaces',
-  version: 43,
-  checksum: '2222319502c362caf247a7a47fdacfc63c774dbf156f6272cafae797627e2400',
-  indexChecksum: 'ec02b0d686273117a99829907931db433c04129b676e0ae41fa14161e98fc9aa',
+  version: 47,
+  checksum: '925e8bfc406bc7e4ee62aee08582fdd7c67c629ffde470051704eaec5404800e',
+  indexChecksum: '88200a7d1ec9fc92f8809b171f390fd34747f4b25592cee19df52eb2bd9a02f8',
 } as const;
 
 export const PRODUCT_SURFACE_ROLLOUT_INVENTORY_REVISION = {
@@ -7865,6 +7865,134 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
     ],
   },
   {
+    routeContractKey: 'route.hcm.configuration.navigation-policy-v2-draft-create.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.configuration',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v2/admin/hris/navigation-policies/drafts',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.configuration.navigation-policy-v2-draft-submit.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.configuration',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v2/admin/hris/navigation-policies/drafts/{revisionId}/submit',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.configuration.navigation-policy-v2-draft-update.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.configuration',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'PUT',
+        path: '/api/platform/v2/admin/hris/navigation-policies/drafts/{revisionId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.configuration.navigation-policy-v2-draft-validate.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.configuration',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v2/admin/hris/navigation-policies/drafts/{revisionId}/validate',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.configuration.navigation-policy-v2-revision-approve.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.configuration',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v2/admin/hris/navigation-policies/revisions/{revisionId}/approve',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.configuration.navigation-policy-v2-revision-publish.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.configuration',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v2/admin/hris/navigation-policies/revisions/{revisionId}/publish',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.configuration.navigation-policy-v2-revision-restore.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.configuration',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v2/admin/hris/navigation-policies/revisions/{revisionId}/restore',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.configuration.navigation-policy-v2-workspace.data',
+    routeKind: 'DATA',
+    navigationContextId: 'hcm.management',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v2/admin/hris/navigation-policies/workspace',
+      },
+    ],
+  },
+  {
     routeContractKey: 'route.hcm.configuration.navigation-policy-workspace.page',
     routeKind: 'PAGE',
     navigationContextId: 'hcm.management',
@@ -8077,6 +8205,38 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
       {
         method: 'GET',
         path: '/api/people/v1/workforce/exports/{requestId}/attempts',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.management.controlled-transfer-create.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.management',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/platform/v1/admin/hris/file-transfers',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.management.controlled-transfer.data',
+    routeKind: 'DATA',
+    navigationContextId: 'hcm.management',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/hris/file-transfers',
       },
     ],
   },
@@ -8961,6 +9121,22 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
     ],
   },
   {
+    routeContractKey: 'route.hcm.operations.home.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: 'hcm.operations.home',
+    pattern: '/hr/operations/home',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/people/v1/workforce/operations/overview',
+      },
+    ],
+  },
+  {
     routeContractKey: 'route.hcm.operations.navigation-projection.data',
     routeKind: 'DATA',
     navigationContextId: 'hcm.operations',
@@ -9429,6 +9605,22 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
     ],
   },
   {
+    routeContractKey: 'route.hcm.operations.performance-goal-cycles.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: 'hcm.operations.performance-goal-cycles',
+    pattern: '/hr/operations/performance/goal-cycles',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/people/v1/hris/performance/cycles',
+      },
+    ],
+  },
+  {
     routeContractKey: 'route.hcm.operations.performance-multirater-surveys.page',
     routeKind: 'PAGE',
     navigationContextId: 'hcm.operations',
@@ -9617,6 +9809,38 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
       {
         method: 'GET',
         path: '/api/time/v1/hris/workbench/time-interpretation',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.time-leave-operations.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: 'hcm.operations.time-leave-operations',
+    pattern: '/hr/operations/time/leave-operations',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/people/v1/hr/operations/{domain}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.time-work-plans.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: 'hcm.operations.time-work-plans',
+    pattern: '/hr/operations/time/work-plans',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/time/v1/hris/work-plans',
       },
     ],
   },
@@ -10189,6 +10413,102 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
     ],
   },
   {
+    routeContractKey: 'route.hcm.shell.navigation-aggregate-legal-entity.data',
+    routeKind: 'DATA',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v2/hris/navigation/projection',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.shell.navigation-aggregate-v3.data',
+    routeKind: 'DATA',
+    navigationContextId: 'hcm.utility',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.utility',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v3/hris/navigation/projection',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.shell.navigation-aggregate.data',
+    routeKind: 'DATA',
+    navigationContextId: 'hcm.utility',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.utility',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v2/hris/navigation/projection',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.shell.navigation-deep-link-decision-legal-entity.data',
+    routeKind: 'DATA',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v2/hris/navigation/deep-link-decision',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.shell.navigation-deep-link-decision-v3.data',
+    routeKind: 'DATA',
+    navigationContextId: 'hcm.utility',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.utility',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v3/hris/navigation/deep-link-decision',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.shell.navigation-deep-link-decision.data',
+    routeKind: 'DATA',
+    navigationContextId: 'hcm.utility',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.utility',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v2/hris/navigation/deep-link-decision',
+      },
+    ],
+  },
+  {
     routeContractKey: 'route.hcm.team.absence-decision.action',
     routeKind: 'ACTION',
     navigationContextId: 'hcm.team',
@@ -10233,6 +10553,22 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
       {
         method: 'GET',
         path: '/api/people/v1/hr/team',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.team.leave.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'hcm.team',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.team',
+    routeId: 'hcm.team.leave',
+    pattern: '/hr/team/leave',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/people/v1/hr/team/absence',
       },
     ],
   },

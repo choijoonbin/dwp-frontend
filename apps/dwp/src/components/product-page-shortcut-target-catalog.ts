@@ -53,7 +53,7 @@ export const PRODUCT_PAGE_SHORTCUT_TARGET_CATALOG = {
   hcmTeamAbsence: {
     productId: 'hcm',
     surfaceId: 'hcm.team',
-    routeContractKey: 'route.hcm.team.absence.page',
+    routeContractKey: 'route.hcm.team.leave.page',
   },
 } as const satisfies Readonly<
   Record<string, Readonly<{ productId: string; surfaceId: string; routeContractKey: string }>>

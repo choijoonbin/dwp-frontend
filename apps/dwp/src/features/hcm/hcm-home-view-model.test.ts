@@ -230,7 +230,7 @@ describe('HCM home view model provider consumption', () => {
       providerSnapshots: [
         provider('hrm-team-shape', '/hr/team', 'FORBIDDEN', { directReportCount: 999 }),
         provider('tim-team-time-decisions', '/hr/team/time'),
-        provider('tim-team-absence-decisions', '/hr/team/absence'),
+        provider('tim-team-absence-decisions', '/hr/team/leave'),
       ],
       identity: {},
       employeeServicesDisclosed: false,

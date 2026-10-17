@@ -6,6 +6,8 @@ import {
   HRIS_V46_SELF_POLICY_ROUTE_BINDINGS,
   HRIS_WORKBENCH_IDS,
   hrisV46SelfPolicyRouteBinding,
+  isHrisRuntimeEffectiveRouteAlias,
+  isHrisRuntimeMenuRouteAlias,
 } from './seven-workbench-navigation-policy';
 
 describe('generated seven-workbench task-navigation catalog', () => {
@@ -90,6 +92,57 @@ describe('generated seven-workbench task-navigation catalog', () => {
         );
       }
     }
+  });
+
+  it('admits the R6-C canonical routes while keeping compatibility aliases out of menus', () => {
+    for (const path of [
+      '/hr/operations/time/work-plans',
+      '/hr/operations/performance/goal-cycles',
+      '/hr/team/leave',
+      '/hr/operations/time/leave-operations',
+      '/hr/operations/home',
+      '/hr/team/time',
+    ]) {
+      expect(isHrisRuntimeEffectiveRouteAlias(path), path).toBe(true);
+      expect(isHrisRuntimeMenuRouteAlias(path), path).toBe(true);
+    }
+
+    for (const path of ['/hr/team/absence', '/hr/operations/absence', '/hr/operations']) {
+      expect(isHrisRuntimeEffectiveRouteAlias(path), path).toBe(true);
+      expect(isHrisRuntimeMenuRouteAlias(path), path).toBe(false);
+    }
+
+    for (const path of [
+      '/hr/operations/time',
+      '/hr/operations/pay',
+      '/hr/operations/talent',
+      '/hr/data/exports',
+    ]) {
+      expect(isHrisRuntimeEffectiveRouteAlias(path), path).toBe(false);
+      expect(isHrisRuntimeMenuRouteAlias(path), path).toBe(false);
+    }
+
+    expect(
+      HRIS_SEVEN_WORKBENCH_NAVIGATION_CATALOG.flatMap((workbench) => workbench.groups)
+        .flatMap((group) => group.nodes)
+        .filter((node) =>
+          [
+            'BASE:team-time',
+            'BASE:team-leave',
+            'BASE:time-leave-operations',
+            'BASE:hr-operations-home',
+          ].includes(node.nodeId)
+        )
+        .map((node) => [node.nodeId, node.routeAliases])
+    ).toEqual([
+      ['BASE:team-time', ['/hr/team/time']],
+      ['BASE:team-leave', ['/hr/team/leave', '/hr/team/absence']],
+      ['BASE:hr-operations-home', ['/hr/operations/home', '/hr/operations']],
+      [
+        'BASE:time-leave-operations',
+        ['/hr/operations/time/leave-operations', '/hr/operations/absence'],
+      ],
+    ]);
   });
 
   it('seals only the six exact v46 SELF POLICY aliases without reconstructing IA routes', () => {

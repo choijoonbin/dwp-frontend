@@ -97,7 +97,7 @@ describe('product PAGE shortcut exact disclosure', () => {
     ['hcmDirectory', '/hr/directory'],
     ['hcmOrganization', '/hr/organization'],
     ['hcmTeamTime', '/hr/team/time'],
-    ['hcmTeamAbsence', '/hr/team/absence'],
+    ['hcmTeamAbsence', '/hr/team/leave'],
   ] as const)('keeps shortcut %s bound to the registered PAGE owner', (targetKey, pattern) => {
     const target = PRODUCT_PAGE_SHORTCUT_TARGETS[targetKey];
     expect(requireProductPageRouteContract(target.routeContractKey)).toMatchObject({

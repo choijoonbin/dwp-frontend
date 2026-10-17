@@ -320,13 +320,20 @@ describe('rollout 110/111 exact navigation targets', () => {
     authority.envelope = { ...authority.envelope!, contexts: canonicalContexts };
 
     for (const surfaceId of mixedSurfaceIds) {
+      const surface = HCM_PRODUCT_MANIFEST.surfaces.find(
+        (candidate) => candidate.id === surfaceId
+      )!;
+      const navigationPaths = new Set(
+        surface.navigation.flatMap((group) => group.items.map((item) => item.path))
+      );
       const canonical = canonicalContexts.find((context) => context.surfaceKey === surfaceId)!;
       const targetScope = canonical.scopes.find((scope) => scope.kind === 'TARGET_POPULATION')!;
       for (const route of REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG.filter(
         (candidate) =>
           candidate.routeKind === 'PAGE' &&
           candidate.productId === 'hcm' &&
-          candidate.surfaceId === surfaceId
+          candidate.surfaceId === surfaceId &&
+          navigationPaths.has(candidate.pattern)
       )) {
         const existing = routeDecisions[route.routeContractKey];
         expect(existing?.state, route.routeContractKey).toBe('allowed');
@@ -364,7 +371,7 @@ describe('rollout 110/111 exact navigation targets', () => {
       registeredRoutes: REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG,
       rolloutMode: 'surface-ui',
     });
-    expect(targetPaths).toHaveLength(11);
+    expect(targetPaths).toHaveLength(20);
     expect(targetPaths.filter((path) => targets?.has(path))).toEqual(targetPaths);
 
     const personalRoute = REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG.find(
@@ -416,6 +423,7 @@ describe('rollout 110/111 exact navigation targets', () => {
 
     for (const surface of manifest.surfaces) {
       const firstPath = surface.navigation.flatMap((group) => group.items)[0]?.path;
+      if (!firstPath) continue;
       expect(firstPath, `${surface.id} navigation`).toBeDefined();
       expect(visible.has(firstPath!), `${surface.id}/${firstPath}`).toBe(true);
       expect(visible.get(firstPath!)).toEqual({

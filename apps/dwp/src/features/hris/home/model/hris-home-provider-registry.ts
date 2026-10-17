@@ -534,7 +534,7 @@ const providers: readonly HrisHomeWidgetProvider<HrHomeOverview>[] = Object.free
       actionId: 'OPEN_TEAM_ABSENCE_DECISIONS',
       labelKey: 'home.tools.teamAbsence',
     }),
-    deepLink: '/hr/team/absence',
+    deepLink: '/hr/team/leave',
     project(_overview: HrHomeOverview): HrisHomeProviderResolution<TimTeamAbsencePayload> {
       return unavailable('TIM_TEAM_ABSENCE_OWNER_API_REQUIRED');
     },
@@ -686,7 +686,7 @@ const registeredDeepLinks = new Set([
   '/hr/time',
   '/hr/absence',
   '/hr/team/time',
-  '/hr/team/absence',
+  '/hr/team/leave',
   '/hr/pay',
   '/hr/talent',
 ]);

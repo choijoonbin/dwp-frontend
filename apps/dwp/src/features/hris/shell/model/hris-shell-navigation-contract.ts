@@ -28,8 +28,8 @@ type HrisShellEntry = Readonly<{
 }>;
 
 /**
- * Compatibility paths are deliberately finite and unique. They preserve the existing exact PAGE
- * guards while the canonical workbench landing routes are implemented in later slices.
+ * Static candidates are deliberately finite and unique. Canonical R6-C PAGEs own presentation;
+ * historical aliases are selection-only so bookmarks never create a second sidebar entry.
  * BENSK benefits routes and /hr/explore are intentionally absent.
  */
 export const HRIS_SHELL_ENTRIES: readonly HrisShellEntry[] = [
@@ -58,14 +58,14 @@ export const HRIS_SHELL_ENTRIES: readonly HrisShellEntry[] = [
   {
     view: 'workbench-team',
     groupId: 'workbenches',
-    candidates: ['/hr/team', '/hr/team/time', '/hr/team/absence'],
+    candidates: ['/hr/team', '/hr/team/time', '/hr/team/leave'],
     icon: UsersRound,
   },
   {
     view: 'workbench-hr-operations',
     groupId: 'workbenches',
     candidates: [
-      '/hr/operations',
+      '/hr/operations/home',
       '/hr/operations/people',
       '/hr/operations/people/employee-change-requests',
       '/hr/operations/people/employment-assignments',
@@ -79,10 +79,11 @@ export const HRIS_SHELL_ENTRIES: readonly HrisShellEntry[] = [
     groupId: 'workbenches',
     candidates: [
       '/hr/operations/time',
+      '/hr/operations/time/work-plans',
       '/hr/operations/time/clock-ingestion',
       '/hr/operations/time/interpretation',
       '/hr/operations/time/exceptions',
-      '/hr/operations/absence',
+      '/hr/operations/time/leave-operations',
     ],
     icon: Clock3,
   },
@@ -97,6 +98,7 @@ export const HRIS_SHELL_ENTRIES: readonly HrisShellEntry[] = [
     groupId: 'workbenches',
     candidates: [
       '/hr/operations/talent',
+      '/hr/operations/performance/goal-cycles',
       '/hr/operations/performance/review-operations',
       '/hr/operations/performance/compensation-planning',
     ],
@@ -123,6 +125,13 @@ const HRIS_SHELL_EXCLUDED_PATHS = [
   '/hr/operations/benefits',
   '/hr/explore',
 ] as const;
+
+const HRIS_SHELL_DEEP_LINK_SELECTION: Readonly<Record<string, HrisShellEntry['view']>> =
+  Object.freeze({
+    '/hr/team/absence': 'workbench-team',
+    '/hr/operations': 'workbench-hr-operations',
+    '/hr/operations/absence': 'workbench-time',
+  });
 
 function authorizedCandidates(
   entry: HrisShellEntry,
@@ -174,6 +183,8 @@ export function resolveHrisShellSelectedView(pathname: string): string | undefin
   ) {
     return undefined;
   }
+  const compatibilityOwner = HRIS_SHELL_DEEP_LINK_SELECTION[normalizedPath];
+  if (compatibilityOwner) return compatibilityOwner;
   return resolveProductNavigationSelection(normalizedPath, HRIS_SHELL_OWNERSHIP)?.view;
 }
 

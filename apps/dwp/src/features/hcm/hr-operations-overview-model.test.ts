@@ -25,5 +25,17 @@ describe('HR operations overview destinations', () => {
     expect(
       Object.values(HR_OPERATIONS_DESTINATIONS).every(({ path }) => path.startsWith('/hr/'))
     ).toBe(true);
+    expect(hrOperationsDestination('TIME')).toEqual({
+      path: '/hr/operations/time/work-plans',
+      view: 'time-work-plans',
+    });
+    expect(hrOperationsDestination('ABSENCE')).toEqual({
+      path: '/hr/operations/time/leave-operations',
+      view: 'time-leave-operations',
+    });
+    expect(hrOperationsDestination('TALENT')).toEqual({
+      path: '/hr/operations/performance/goal-cycles',
+      view: 'performance-goal-cycles',
+    });
   });
 });

@@ -148,7 +148,7 @@ export const GOVERNED_PRODUCT_ENTRY_CATALOG: readonly ProductEntryManifest[] = [
         plane: 'management',
         labelKey: 'navigation.groups.hcm.operate',
         taskKinds: ['operations'],
-        indexPath: '/hr/operations',
+        indexPath: '/hr/operations/home',
         supportedScopeKinds: ['ORG_UNIT', 'LEGAL_ENTITY', 'TARGET_POPULATION', 'SUPPORT_SESSION'],
         returnSurfaceId: 'hcm.personal',
       },

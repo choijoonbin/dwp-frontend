@@ -3,7 +3,7 @@ import type { HrTeamWorkspace } from '@dwp-frontend/shared-utils';
 export type HrTeamDecisionDestination = Readonly<{
   domain: 'time' | 'absence';
   count: number;
-  route: '/hr/team/time' | '/hr/team/absence';
+  route: '/hr/team/time' | '/hr/team/leave';
 }>;
 
 export function buildHrTeamDecisionDestinations(
@@ -18,7 +18,7 @@ export function buildHrTeamDecisionDestinations(
     Object.freeze({
       domain: 'absence' as const,
       count: Math.max(0, workspace.absencePendingCount),
-      route: '/hr/team/absence' as const,
+      route: '/hr/team/leave' as const,
     }),
   ]);
 }

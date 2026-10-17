@@ -152,6 +152,12 @@ const SEALED_COMPATIBILITY_ROUTES: Readonly<Record<string, readonly string[]>> =
   'BASE:hr-employment-assignments': ['/hr/operations/assignments'],
   'BASE:hr-organization-positions': ['/hr/design/organization'],
 });
+const R6C_RUNTIME_OWNER_OVERLAY_NODES: ReadonlySet<string> = new Set([
+  'BASE:team-time',
+  'BASE:team-leave',
+  'BASE:time-leave-operations',
+  'BASE:hr-operations-home',
+]);
 const SEALED_COMPATIBILITY_OWNER_BY_PATH: Readonly<Record<string, string | null>> = Object.freeze({
   '/hr/me': 'BASE:my-hr-profile',
   '/hr/team': 'BASE:team-home',
@@ -254,25 +260,25 @@ const HRIS_RUNTIME_EXPLICIT_EXCLUDED_PATHS: ReadonlySet<string> = new Set([
   '/hr/operations/pay',
   '/hr/operations/talent',
   '/hr/data/exports',
-  '/hr/operations',
-  '/hr/team/time',
-  '/hr/team/absence',
-  '/hr/operations/absence',
 ]);
 const HRIS_RUNTIME_DEEP_LINK_ONLY_COMPATIBILITY_PATHS: ReadonlySet<string> = new Set([
   '/hr/operations/assignments',
+  '/hr/operations',
+  '/hr/team/absence',
+  '/hr/operations/absence',
 ]);
 const nodeById = new Map(
   HRIS_RUNTIME_NAVIGATION_MANIFEST.nodes.map((node) => [node.iaNodeId, node])
 );
 
 function candidateRoutes(node: (typeof HRIS_RUNTIME_NAVIGATION_MANIFEST.nodes)[number]) {
-  return uniqueRoutes([
-    node.currentCatalog?.href,
-    ...(node.currentCatalog?.legacyPaths ?? []),
-    node.canonicalRoute,
-    ...(SEALED_COMPATIBILITY_ROUTES[node.iaNodeId] ?? []),
-  ]);
+  const currentRoutes = [node.currentCatalog?.href, ...(node.currentCatalog?.legacyPaths ?? [])];
+  const compatibilityRoutes = SEALED_COMPATIBILITY_ROUTES[node.iaNodeId] ?? [];
+  return uniqueRoutes(
+    R6C_RUNTIME_OWNER_OVERLAY_NODES.has(node.iaNodeId)
+      ? [node.canonicalRoute, ...currentRoutes, ...compatibilityRoutes]
+      : [...currentRoutes, node.canonicalRoute, ...compatibilityRoutes]
+  );
 }
 
 const candidateOwnersByPath = new Map<string, Set<string>>();

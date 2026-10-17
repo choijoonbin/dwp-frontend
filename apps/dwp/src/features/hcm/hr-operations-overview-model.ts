@@ -9,11 +9,17 @@ export const HR_OPERATIONS_DESTINATIONS: Readonly<
   Record<HrDomainOperationsSummary['domain'], HrOperationsDestination>
 > = {
   WORKFORCE: { path: '/hr/operations/people', view: 'people' },
-  TIME: { path: '/hr/operations/time', view: 'time-operations' },
-  ABSENCE: { path: '/hr/operations/absence', view: 'absence-operations' },
+  TIME: { path: '/hr/operations/time/work-plans', view: 'time-work-plans' },
+  ABSENCE: {
+    path: '/hr/operations/time/leave-operations',
+    view: 'time-leave-operations',
+  },
   BENEFITS: { path: '/hr/operations/benefits', view: 'benefits-operations' },
   PAY: { path: '/hr/operations/pay', view: 'pay-operations' },
-  TALENT: { path: '/hr/operations/talent', view: 'talent-operations' },
+  TALENT: {
+    path: '/hr/operations/performance/goal-cycles',
+    view: 'performance-goal-cycles',
+  },
 };
 
 export function hrOperationsDestination(
