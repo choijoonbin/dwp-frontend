@@ -1,0 +1,255 @@
+{
+  "schema": "dwp.hris.wave7.tenant-feature-activation-implementation-plan.v1",
+  "planId": "HRIS-WAVE7-TENANT-FEATURE-ACTIVATION-PLAN-20261017-R1",
+  "plannedAt": "2026-10-17T19:43:42+09:00",
+  "plannedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "READY_FOR_THREE_DISJOINT_DEFAULT_OFF_WORKTREES_AFTER_CARRIER_PUSH",
+  "decision": {
+    "path": "tenant-feature-activation-decision.v1.json",
+    "sha256": "fda6f51622c843b0c0da35f73b550cd6bd33c0ed190ee19058ac15f0e0502284",
+    "bytes": 15775
+  },
+  "basePins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "bada002d2a55f2d7e0a16dd1c8f240f1526aae82",
+      "tree": "40f9ad7052cb22dd7191d3b43cec714ec06ba17c",
+      "originExactAtPlan": true,
+      "cleanAtPlan": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "0653c9c89ea90c4f85c0ebea605109cf866ae081",
+      "tree": "e3e94bbdea7921f3a4f18e471b8aa644fa5407ec",
+      "originExactAtPlan": true,
+      "cleanBeforeAuthorityCarrier": true,
+      "authorityCarrierMustNotBeMergedIntoImplementationWorktree": true
+    }
+  },
+  "workstreams": [
+    {
+      "id": "R7-ACTIVATION-AUTH-V259",
+      "repository": "dwp-backend",
+      "worktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261017/r7-activation/auth",
+      "branch": "codex/hris-wave7-activation-auth-v259-20261017-r1",
+      "baseCommit": "bada002d2a55f2d7e0a16dd1c8f240f1526aae82",
+      "allowedPaths": [
+        "dwp-auth-server/src/main/resources/db/migration/V259__govern_product_feature_activation_and_tenant_enrollment.sql",
+        "dwp-auth-server/src/main/java/com/dwp/services/auth/tenantfeatureactivation/**",
+        "dwp-auth-server/src/main/java/com/dwp/services/auth/dto/ProductSurfaceAuthorityDtos.java",
+        "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationDecisionSupport.java",
+        "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationAuthorityAdapter.java",
+        "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductSurfaceAuthorityService.java",
+        "dwp-auth-server/src/main/java/com/dwp/services/auth/config/ProductAuthorizationOperationsSecurityConfig.java",
+        "dwp-auth-server/src/main/java/com/dwp/services/auth/config/ProductSurfaceInternalSecurityConfig.java",
+        "dwp-auth-server/src/test/java/com/dwp/services/auth/tenantfeatureactivation/**",
+        "dwp-auth-server/src/test/java/com/dwp/services/auth/tenantfeatureactivation/TenantFeatureActivationV259PostgresTest.java",
+        "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationTenantFeatureActivationTest.java",
+        "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationAuthorityAdapterTest.java",
+        "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductSurfaceAuthorityServiceTest.java",
+        "dwp-auth-server/src/test/java/com/dwp/services/auth/repository/TenantFeatureActivationV259MigrationContractTest.java",
+        "dwp-auth-server/src/test/java/com/dwp/services/auth/config/ProductAuthorizationOperationsSecurityConfigTest.java",
+        "dwp-auth-server/src/test/java/com/dwp/services/auth/config/ProductSurfaceInternalSecurityConfigTest.java",
+        "dwp-auth-server/src/test/java/com/dwp/services/auth/config/ProductAuthorizationInternalSecurityChainTest.java"
+      ],
+      "requirements": [
+        "V259 seeds exactly four OFF catalog policies and sixteen immutable route bindings with hcm, APP.HCM and minimum bundle version 50; it seeds zero global ACTIVE and zero tenant enrollment rows.",
+        "Catalog and binding rows reject UPDATE and DELETE; workflow winners use partial uniqueness; all feature, product, app, bundle, route-kind and subject tuples are validated.",
+        "Global activation and tenant enrollment each use append-only DRAFT, IN_REVIEW, APPROVED, ACTIVE, REVOKED or SUPERSEDED workflow with three distinct actors, CAS and immutable receipt or event history.",
+        "The reader has no permissive production fallback and returns UNGATED, FEATURE_NOT_ACTIVATED, TENANT_NOT_ENROLLED, ACTIVE or AUTHORITY_UNAVAILABLE.",
+        "Existing authorization and suppression run first; APP.HCM adoption is checked before global or tenant feature state is disclosed; activation never grants a capability or permission.",
+        "The authority result includes a nonblank tenantControlRevision for governed and UNGATED routes without changing existing policyRevision or authRevision formats.",
+        "The canonical AuthorityResult adds tenantControlRevision while retaining the prior-arity source-compatibility constructor that delegates tenantControlRevision to null; all governed and UNGATED production paths use the canonical constructor and treat null or blank tenantControlRevision as authority unavailable rather than trusted authority.",
+        "Provider support follows the same gate and cannot bypass activation or enrollment.",
+        "TenantFeatureActivationV259PostgresTest executes real PostgreSQL clean migration through V259 and a V258-to-V259 upgrade, then proves catalog-only OFF state, zero active or enrollment seeds, immutable rows, partial uniqueness, three-person SoD, CAS and append-only events."
+      ],
+      "targetedVerification": [
+        "./gradlew :dwp-auth-server:test --tests 'com.dwp.services.auth.repository.TenantFeatureActivationV259MigrationContractTest' --tests 'com.dwp.services.auth.tenantfeatureactivation.*' --tests 'com.dwp.services.auth.service.ProductAuthorizationTenantFeatureActivationTest' --no-daemon --max-workers=1",
+        "./gradlew :dwp-auth-server:test --tests 'com.dwp.services.auth.service.ProductAuthorizationAuthorityAdapterTest' --tests 'com.dwp.services.auth.service.ProductSurfaceAuthorityServiceTest' --no-daemon --max-workers=1",
+        "./gradlew :dwp-auth-server:test --tests 'com.dwp.services.auth.config.ProductAuthorizationOperationsSecurityConfigTest' --tests 'com.dwp.services.auth.config.ProductSurfaceInternalSecurityConfigTest' --tests 'com.dwp.services.auth.config.ProductAuthorizationInternalSecurityChainTest' --no-daemon --max-workers=1",
+        "./gradlew :dwp-auth-server:test --tests 'com.dwp.services.auth.tenantfeatureactivation.TenantFeatureActivationV259PostgresTest' --no-daemon --max-workers=1"
+      ],
+      "forbidden": [
+        "modifying V258, v50 or any generated v50 artifact",
+        "creating v51",
+        "seeding any active release or tenant enrollment",
+        "changing Gateway, owner-service or frontend source",
+        "granting permission through enrollment"
+      ]
+    },
+    {
+      "id": "R7-ACTIVATION-GATEWAY",
+      "repository": "dwp-backend",
+      "worktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261017/r7-activation/gateway",
+      "branch": "codex/hris-wave7-activation-gateway-20261017-r1",
+      "baseCommit": "bada002d2a55f2d7e0a16dd1c8f240f1526aae82",
+      "allowedPaths": [
+        "dwp-gateway/src/main/java/com/dwp/gateway/filter/ProductSurfaceDecisionContextFilter.java",
+        "dwp-gateway/src/main/java/com/dwp/gateway/productsurface/ProductSurfaceAuthorityClient.java",
+        "dwp-gateway/src/main/java/com/dwp/gateway/productsurface/ProductSurfaceContextDtos.java",
+        "dwp-gateway/src/main/java/com/dwp/gateway/productsurface/ProductSurfaceContextAggregationSupport.java",
+        "dwp-gateway/src/main/java/com/dwp/gateway/productsurface/ProductSurfaceContextAggregationService.java",
+        "dwp-gateway/src/test/java/com/dwp/gateway/ProductSurfaceDecisionContextFilterTest.java",
+        "dwp-gateway/src/test/java/com/dwp/gateway/productsurface/ProductSurfaceContextAggregationServiceTest.java",
+        "dwp-gateway/src/test/java/com/dwp/gateway/productsurface/GovernedTenantFeatureRouteSetTest.java"
+      ],
+      "requirements": [
+        "The exact sixteen-route immutable closed set always performs Auth direct evaluation even at rollout 000/100.",
+        "A branch-local test proves the exact hash-bound sixteen-route closed set from this decision without tenant or environment allowlists; it does not claim V259 migration parity before the Auth branch is integrated.",
+        "tenantControl is nonblank, included in SourceRevisions and composite decision revision, and context contract version advances to 2.",
+        "The canonical SourceRevisions record adds tenantControl while retaining a five-argument source-compatibility constructor that delegates tenantControl to null; aggregation treats null or blank tenantControl as authority unavailable and never emits contract v2 or trusted forwarding from that compatibility path.",
+        "Activation-required outcomes return 403 and authority-unavailable outcomes return 503 with zero owner-chain calls.",
+        "Only ACTIVE outcomes forward exact trusted decision evidence."
+      ],
+      "targetedVerification": [
+        "./gradlew :dwp-gateway:test --tests 'com.dwp.gateway.ProductSurfaceDecisionContextFilterTest' --tests 'com.dwp.gateway.productsurface.ProductSurfaceContextAggregationServiceTest' --tests 'com.dwp.gateway.productsurface.GovernedTenantFeatureRouteSetTest' --no-daemon --max-workers=1"
+      ],
+      "forbidden": [
+        "tenant IDs, environment feature flags or percentage-based bypass for the governed route set",
+        "Auth V259 or owner-service changes",
+        "activation or enrollment",
+        "generated v50 changes"
+      ]
+    },
+    {
+      "id": "R7-ACTIVATION-FRONTEND-ADMISSION",
+      "repository": "dwp-frontend",
+      "worktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261017/r7-activation/frontend",
+      "branch": "codex/hris-wave7-activation-frontend-admission-20261017-r1",
+      "baseCommit": "0653c9c89ea90c4f85c0ebea605109cf866ae081",
+      "allowedPaths": [
+        "libs/shared-utils/src/api/auth-api.ts",
+        "libs/shared-utils/src/api/auth-api.test.ts",
+        "libs/shared-utils/src/auth/product-surface-authority-model.ts",
+        "libs/shared-utils/src/auth/product-surface-authority-model.test.ts",
+        "libs/shared-utils/src/auth/product-surface-context-provider*.ts*",
+        "libs/shared-utils/src/test-utils/approval-workflow-planning-fixtures.ts",
+        "apps/dwp/src/features/shell/product-surface-context.ts",
+        "apps/dwp/src/features/shell/product-surface-context.test.ts",
+        "apps/dwp/src/features/shell/product-surface-authority-bridge.tsx",
+        "apps/dwp/src/features/shell/product-surface-authority-bridge*.test.ts*",
+        "apps/dwp/src/features/shell/product-surface-compatibility-navigation.ts",
+        "apps/dwp/src/routes/product-surface-canary-routes.tsx",
+        "apps/dwp/src/routes/product-surface-canary-routes.test.ts",
+        "apps/dwp/src/routes/product-surface-compatibility-navigation.test.ts",
+        "apps/dwp/src/routes/product-canary-access-state.tsx",
+        "apps/dwp/src/routes/product-canary-access-state.test.ts",
+        "apps/dwp/src/components/product-surface-access-state.tsx",
+        "apps/dwp/src/components/product-surface-access-state.test.tsx",
+        "apps/dwp/src/components/product-surface-access-state-model.ts",
+        "apps/dwp/src/components/product-surface-access-state-model.test.ts",
+        "apps/dwp/src/features/hcm/hcm-navigation.ts",
+        "apps/dwp/src/features/hcm/hcm-navigation.test.ts",
+        "apps/dwp/src/pages/hcm.tsx",
+        "apps/dwp/src/pages/hcm.test.ts",
+        "apps/dwp/src/features/hris/integration/hris-feature-route-admission.ts",
+        "apps/dwp/src/features/hris/integration/hris-feature-route-admission.test.tsx",
+        "apps/dwp/src/features/hris/people/organization-positions/**",
+        "apps/dwp/src/features/hris/payroll/population/**",
+        "apps/dwp/src/features/hris/administration/operations/**",
+        "apps/dwp/src/features/hris/shell/navigation-policy/hris-navigation-policy-runtime*.ts*",
+        "libs/shared-i18n/src/locales/en/common.json",
+        "libs/shared-i18n/src/locales/ko/common.json"
+      ],
+      "requirements": [
+        "parseProductSurfaceAuthoritySnapshot and validSourceRevisions reject contract v1, missing or blank tenantControl and accept only contract v2 with every existing exact source revision plus nonblank tenantControl.",
+        "The raw ProductSurfaceContextListData transport DTO may keep tenantControl optional solely for backward-compatible untrusted deserialization and test construction; the parser returns a refined contract-v2 authority type with literal contractVersion 2 and required nonblank tenantControl, and no trusted consumer may read the raw DTO directly.",
+        "Preserve distinct activation, enrollment, app-adoption and authority-unavailable reason codes; never send feature-control remediation to the privileged-access page.",
+        "Add six governed PAGE items and actual HRM, PAY and SYS lazy mounts; TIM navigation may be cataloged but its workspace route and lazy mount remain absent until TIM module and central admission complete.",
+        "Create one typed exact-route admission adapter based only on useOptionalAllowedExactProductRoute; no browser environment flag, tenant allowlist or secondary feature snapshot.",
+        "HRM and PAY active subtrees mount only with exact PAGE admission and their typed owner binding.",
+        "SYS additionally requires exact exception list and detail DATA decisions and independent TARGET_POPULATION package scope; PAGE CONFIG_SCOPE is never reused.",
+        "The exact SYS admission test proves PAGE-only, missing DATA decision, missing TARGET_POPULATION and CONFIG_SCOPE substitution all produce zero workspace data-source calls; only both exact DATA decisions plus an independent TARGET_POPULATION admit the active subtree.",
+        "Navigation policy intersects Product Surface allowed paths and cannot re-add an activation-denied page."
+      ],
+      "targetedVerification": [
+        "yarn vitest run libs/shared-utils/src/api/auth-api.test.ts libs/shared-utils/src/auth/product-surface-authority-model.test.ts apps/dwp/src/features/shell/product-surface-context.test.ts apps/dwp/src/features/shell/product-surface-authority-bridge.test.ts apps/dwp/src/features/shell/product-surface-authority-bridge.mounted.test.ts libs/shared-utils/src/auth/product-surface-context-provider.test.ts libs/shared-utils/src/auth/product-surface-context-provider.mounted.test.tsx libs/shared-utils/src/auth/product-surface-context-provider.x04.mounted.test.tsx",
+        "yarn vitest run apps/dwp/src/features/approvals/approval-workflow-planning-authority.test.ts",
+        "yarn vitest run apps/dwp/src/routes/product-surface-compatibility-navigation.test.ts apps/dwp/src/routes/product-surface-canary-routes.test.ts apps/dwp/src/routes/product-canary-access-state.test.ts apps/dwp/src/components/product-surface-access-state.test.tsx apps/dwp/src/components/product-surface-access-state-model.test.ts apps/dwp/src/features/hcm/hcm-navigation.test.ts apps/dwp/src/pages/hcm.test.ts",
+        "yarn vitest run apps/dwp/src/features/hris/integration/hris-feature-route-admission.test.tsx apps/dwp/src/features/hris/people/__tests__/g3-slices/base-tfr-hrm-005.slice.test.tsx apps/dwp/src/features/hris/payroll/__tests__/g3-slices/base-tfr-pay-013.slice.test.tsx apps/dwp/src/features/hris/administration/__tests__/g3-slices/base-tfr-sys-002.slice.test.tsx apps/dwp/src/features/hris/shell/navigation-policy/hris-navigation-policy-runtime.mounted.test.tsx",
+        "yarn eslint libs/shared-utils/src/api/auth-api.ts libs/shared-utils/src/api/auth-api.test.ts libs/shared-utils/src/auth/product-surface-authority-model.ts libs/shared-utils/src/auth/product-surface-authority-model.test.ts libs/shared-utils/src/auth/product-surface-context-provider.tsx libs/shared-utils/src/auth/product-surface-context-provider.test.ts libs/shared-utils/src/auth/product-surface-context-provider.mounted.test.tsx libs/shared-utils/src/auth/product-surface-context-provider.x04.mounted.test.tsx libs/shared-utils/src/test-utils/approval-workflow-planning-fixtures.ts apps/dwp/src/features/shell/product-surface-context.ts apps/dwp/src/features/shell/product-surface-context.test.ts apps/dwp/src/features/shell/product-surface-authority-bridge.tsx apps/dwp/src/features/shell/product-surface-authority-bridge.test.ts apps/dwp/src/features/shell/product-surface-authority-bridge.mounted.test.ts apps/dwp/src/features/shell/product-surface-compatibility-navigation.ts apps/dwp/src/routes/product-surface-compatibility-navigation.test.ts apps/dwp/src/routes/product-surface-canary-routes.tsx apps/dwp/src/routes/product-surface-canary-routes.test.ts apps/dwp/src/routes/product-canary-access-state.tsx apps/dwp/src/routes/product-canary-access-state.test.ts apps/dwp/src/components/product-surface-access-state.tsx apps/dwp/src/components/product-surface-access-state.test.tsx apps/dwp/src/components/product-surface-access-state-model.ts apps/dwp/src/components/product-surface-access-state-model.test.ts apps/dwp/src/features/hcm/hcm-navigation.ts apps/dwp/src/features/hcm/hcm-navigation.test.ts apps/dwp/src/pages/hcm.tsx apps/dwp/src/pages/hcm.test.ts apps/dwp/src/features/hris/integration apps/dwp/src/features/hris/people/organization-positions apps/dwp/src/features/hris/payroll/population apps/dwp/src/features/hris/administration/operations apps/dwp/src/features/hris/shell/navigation-policy",
+        "yarn typecheck"
+      ],
+      "forbidden": [
+        "TIM close source, TIM workspace route or TIM lazy mount before module and central admission",
+        "literal enabled or tenantEnrolled true fallbacks",
+        "browser environment activation flags or tenant ID allowlists",
+        "using PAGE CONFIG_SCOPE for SYS DATA TARGET_POPULATION",
+        "activation, tenant enrollment or customer data",
+        "authority carrier merge, rebase or cherry-pick into this worktree"
+      ]
+    }
+  ],
+  "integratedRouteParityGate": {
+    "state": "RUN_ONLY_AFTER_AUTH_V259_AND_GATEWAY_BRANCHES_ARE_BOTH_PRESENT_ON_THE_INTEGRATION_CANDIDATE",
+    "repository": "dwp-backend",
+    "worktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261017/r7-activation/integration",
+    "branch": "codex/hris-wave7-activation-integration-20261017-r1",
+    "base": "CURRENT_DWP_DEV_AFTER_REVIEWED_AUTH_V259_INTEGRATION",
+    "requiredLocalMerge": "codex/hris-wave7-activation-gateway-20261017-r1",
+    "allowedChangedPaths": [
+      "dwp-gateway/src/test/java/com/dwp/gateway/productsurface/TenantFeatureActivationV259RouteParityTest.java"
+    ],
+    "path": "dwp-gateway/src/test/java/com/dwp/gateway/productsurface/TenantFeatureActivationV259RouteParityTest.java",
+    "owner": "SYS_COMMON_INTEGRATION_CONTROL",
+    "requirements": [
+      "Parse the integrated V259 migration's sixteen route seed tuples.",
+      "Compare them exactly with the Gateway always-evaluate closed set including route key and count.",
+      "Reject missing, extra, duplicate or reordered semantic tuples without changing V259 or the reviewed Gateway branch."
+    ],
+    "verification": "./gradlew :dwp-gateway:test --tests 'com.dwp.gateway.productsurface.TenantFeatureActivationV259RouteParityTest' --no-daemon --max-workers=1",
+    "branchWorkstreamMayClaimV259ParityBeforeThisGate": false
+  },
+  "deferredOwnerDefenseWorkstream": {
+    "state": "NOT_AUTHORIZED_TO_REMOVE_LOCAL_GATES_UNTIL_AUTH_AND_GATEWAY_INTEGRATED_PROOF",
+    "afterCentralProof": [
+      "People HcmProductSurfacePepFilter enforces exact trusted HRM decision even at rollout 000/100 before its local enrollment list is removed.",
+      "Payroll and Platform exact-evidence behavior is preserved while their redundant local tenant lists are removed.",
+      "SYS background consumers use an activation event or outbox local projection and skip when absent, stale or unavailable.",
+      "TIM shared command-receipt local activation projection remains until its separate zero-call P0 gate closes."
+    ]
+  },
+  "implementationOrder": [
+    "Commit and push the roadmap, decision and this exact plan as one frontend authority carrier.",
+    "Materialize the three exact clean worktrees from their pinned code bases and push their empty branches.",
+    "Implement the three disjoint workstreams in parallel.",
+    "Run each listed targeted cluster once; after a failure rerun only the smallest failed target.",
+    "Commit and push each workstream with changed-path and exact test evidence.",
+    "Independently review all three diffs and cross-check V259 versus Gateway route parity and Auth versus frontend wire compatibility.",
+    "Integrate Auth V259 first and run its bounded integrated targets once.",
+    "Merge Gateway into an integration candidate second, add and run the exact integrated V259-to-Gateway parity gate once, then admit Gateway only after that gate passes.",
+    "Only after both backend integrations are proven, integrate the frontend admission branch and run its bounded union once.",
+    "Issue a default-OFF central integration receipt; do not activate or enroll a tenant.",
+    "Authorize the deferred owner-defense workstream in a fresh exact token and keep TIM catalog-only."
+  ],
+  "correctionPolicy": {
+    "first": "the changed workstream's listed target cluster",
+    "afterFailure": "the smallest failed method, test file or migration scenario only",
+    "repositoryWideSuitePerCorrection": false,
+    "frontendTypecheck": "Run once after all frontend contract-v2 fixture updates because tenantControl is a cross-cutting required wire field; do not repeat it after each correction unless the failing TypeScript target itself changes.",
+    "browserBeforeTrustedMount": false,
+    "finalBrowserMatrix": "once only after trusted mounts exist and separate activation authority is granted"
+  },
+  "rollout": {
+    "globalActiveFeatures": [],
+    "enrolledTenants": [],
+    "runtimeDefault": "OFF",
+    "timCatalogOnly": true,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "authority": {
+    "threeWorktreesMayBeCreatedAfterCarrierPush": true,
+    "workstreamBranchCommitAndPushAuthorized": true,
+    "integratedV259GatewayParityTestAuthoringAuthorized": true,
+    "centralMergeAuthorizedOnlyAfterIndependentReview": true,
+    "deferredOwnerLocalGateRemovalAuthorizedNow": false,
+    "globalFeatureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "VALIDATE_COMMIT_AND_PUSH_THIS_THREE_FILE_AUTHORITY_CARRIER_THEN_MATERIALIZE_AND_DISPATCH_THE_THREE_DISJOINT_DEFAULT_OFF_WORKSTREAMS"
+}

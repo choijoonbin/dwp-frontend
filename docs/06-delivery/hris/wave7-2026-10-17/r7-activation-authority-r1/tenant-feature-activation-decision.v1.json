@@ -1,0 +1,265 @@
+{
+  "schema": "dwp.hris.wave7.tenant-feature-activation-decision.v1",
+  "decisionId": "HRIS-WAVE7-TENANT-FEATURE-ACTIVATION-20261017-R1",
+  "decidedAt": "2026-10-17T19:43:42+09:00",
+  "decidedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "IMPLEMENTATION_AUTHORIZED_DEFAULT_OFF_NO_ACTIVATION_OR_ENROLLMENT",
+  "purpose": "Provide one server-trusted positive feature-release and tenant-enrollment prerequisite for the R7 HRIS slices before any PAGE, navigation, workspace or owner call can become visible or executable.",
+  "repositoryPins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "bada002d2a55f2d7e0a16dd1c8f240f1526aae82",
+      "tree": "40f9ad7052cb22dd7191d3b43cec714ec06ba17c",
+      "originExact": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "0653c9c89ea90c4f85c0ebea605109cf866ae081",
+      "tree": "e3e94bbdea7921f3a4f18e471b8aa644fa5407ec",
+      "originExact": true
+    }
+  },
+  "immutableInputs": {
+    "hrmSourceIntegration": {
+      "path": "../r7-batch-01-module-results-r1/base-tfr-hrm-005/central-integration-receipt.v1.json",
+      "sha256": "996320b6ca7e1d9add27de7934728ff6c2586640b5d48467dbd4ca195c09a0f3",
+      "bytes": 3582
+    },
+    "hrmWorkforceUiIntegration": {
+      "path": "../r7-batch-01-module-results-r1/base-tfr-hrm-005/central-workforce-access-ui-receipt.v2.json",
+      "sha256": "99291cc642341e0db9718bb02a7c7d8d53b36f3d1d2e29f9c032062d28131d6b",
+      "bytes": 3152
+    },
+    "paySourceIntegration": {
+      "path": "../r7-batch-01-module-results-r1/base-tfr-pay-013/central-integration-receipt.v1.json",
+      "sha256": "a28c1013209dbd80aaca82a43b96f61e54deeb4527bc24ab3dbe71328234501d",
+      "bytes": 4021
+    },
+    "sysSourceIntegration": {
+      "path": "../r7-batch-01-module-results-r1/base-tfr-sys-002/central-integration-receipt.v1.json",
+      "sha256": "14ac145086701a5d716ef319894e117f8bca85f7566c6651a476acc9fc44f20e",
+      "bytes": 3398
+    },
+    "timCentralBridgeCorrection": {
+      "path": "../r7-batch-01-module-results-r1/base-tfr-tim-007/central-bridge-integration-receipt-correction.v2.json",
+      "sha256": "95fafd56b417b6282d5fc13c1133308f2844aa51ae5f7adbb468410b48ccc31c",
+      "bytes": 3725
+    },
+    "timReplacementToken": {
+      "path": "../r7-batch-01-module-start-r1/tokens/base-tfr-tim-007.start-token-replacement.v2.json",
+      "sha256": "513ff5cb20962515c69851d9dac6e01f502e58481bb9046b477510f45c3dbabb",
+      "bytes": 15163
+    }
+  },
+  "rejectedReuse": {
+    "component": "TenantCapabilityOverride",
+    "reason": "Its absent-row default is ENABLED and its DISABLED or INHERIT states only suppress existing authority. Reusing it as a positive activation source would make missing rows an enablement bypass.",
+    "preservedRole": "After positive feature activation and enrollment, it remains an additional capability restriction and may only narrow authority."
+  },
+  "governedFeatures": [
+    {
+      "featureKey": "HRIS_ORGANIZATION_POSITIONS",
+      "module": "HRM",
+      "productKey": "hcm",
+      "appResourceKey": "APP.HCM",
+      "minimumBundleVersion": 50,
+      "routes": [
+        {"routeContractKey": "route.hcm.operations.organization-positions.page", "routeKind": "PAGE"},
+        {"routeContractKey": "route.hcm.operations.organization-graph.data", "routeKind": "DATA"}
+      ]
+    },
+    {
+      "featureKey": "HRIS_OPERATIONS_EXCEPTION_CENTER",
+      "module": "SYS",
+      "productKey": "hcm",
+      "appResourceKey": "APP.HCM",
+      "minimumBundleVersion": 50,
+      "routes": [
+        {"routeContractKey": "route.hcm.configuration.settings-operations.page", "routeKind": "PAGE"},
+        {"routeContractKey": "route.hcm.operations.exception.data", "routeKind": "DATA"},
+        {"routeContractKey": "route.hcm.operations.exception-detail.data", "routeKind": "DATA"}
+      ],
+      "scopeInvariant": "The PAGE keeps CONFIG_SCOPE. Both exception DATA decisions require their own TARGET_POPULATION authority; PAGE admission must never be reused as the DATA population scope.",
+      "positiveMountRequirement": "The frontend must obtain separate exact direct DATA decisions and an independent exception package-scope selection before mounting any exception data source or hook.",
+      "activationBeforePositiveMountProof": "NO_GO"
+    },
+    {
+      "featureKey": "HRIS_PAYROLL_RUN_PREPARE",
+      "module": "PAY",
+      "productKey": "hcm",
+      "appResourceKey": "APP.HCM",
+      "minimumBundleVersion": 50,
+      "routes": [
+        {"routeContractKey": "route.hcm.operations.payroll-population.page", "routeKind": "PAGE"},
+        {"routeContractKey": "route.hcm.operations.payroll-support.data", "routeKind": "DATA"},
+        {"routeContractKey": "route.hcm.operations.payroll-run.action", "routeKind": "ACTION"}
+      ]
+    },
+    {
+      "featureKey": "HRIS_TIME_CLOSE_HANDOFF",
+      "module": "TIM",
+      "productKey": "hcm",
+      "appResourceKey": "APP.HCM",
+      "minimumBundleVersion": 50,
+      "routes": [
+        {"routeContractKey": "route.hcm.operations.time-command-center.page", "routeKind": "PAGE"},
+        {"routeContractKey": "route.hcm.operations.time-daily-close.page", "routeKind": "PAGE"},
+        {"routeContractKey": "route.hcm.operations.time-monthly-close.page", "routeKind": "PAGE"},
+        {"routeContractKey": "route.hcm.operations.time-close-validate.action", "routeKind": "ACTION"},
+        {"routeContractKey": "route.hcm.operations.time-close.action", "routeKind": "ACTION"},
+        {"routeContractKey": "route.hcm.operations.time-reopen.action", "routeKind": "ACTION"},
+        {"routeContractKey": "route.hcm.operations.time-payroll-handoff-create.action", "routeKind": "ACTION"},
+        {"routeContractKey": "route.hcm.operations.time-payroll-handoff.data", "routeKind": "DATA"}
+      ],
+      "moduleState": "CATALOG_ONLY_UNTIL_TIM_007_MODULE_AND_CENTRAL_ADMISSION_GATES_CLOSE",
+      "activationBeforeSharedReceiptZeroCallGate": "NO_GO"
+    }
+  ],
+  "excludedSharedRoute": {
+    "routeContractKey": "route.hcm.time.command-receipt.data",
+    "bindingDecision": "NOT_BOUND_TO_A_SINGLE_FEATURE_BY_V259",
+    "reason": "The shared route can serve Timecard and close receipts, so binding it only to HRIS_TIME_CLOSE_HANDOFF would incorrectly suppress Timecard audit access. Leaving it ungated is also insufficient because the registry probes every provider and TIM requires zero close-provider and repository calls while the close feature is absent, false or unenrolled.",
+    "p0BeforeTimActivation": [
+      "either introduce a separately governed close-receipt route in an independently authorized v51 successor",
+      "or preserve an owner-local activation projection and select the sealed origin feature before any close provider ownership or repository probe"
+    ],
+    "sharedReceiptLocalProjectionRemovalAuthorized": false,
+    "timActivationBeforeClosure": "NO_GO"
+  },
+  "v259Contract": {
+    "migration": "dwp-auth-server/src/main/resources/db/migration/V259__govern_product_feature_activation_and_tenant_enrollment.sql",
+    "predecessor": "V258",
+    "tables": [
+      "sys_product_feature_activation_policies",
+      "sys_product_feature_route_bindings",
+      "auth_product_feature_activation_changes",
+      "com_tenant_feature_enrollment_changes",
+      "auth_product_feature_control_events"
+    ],
+    "catalogSeedCount": 4,
+    "routeBindingSeedCount": 16,
+    "globalActiveSeedCount": 0,
+    "tenantEnrollmentSeedCount": 0,
+    "baseline": "OFF",
+    "routeUniqueness": "route_contract_key is globally unique across feature bindings",
+    "immutability": [
+      "catalog, policy and route rows reject UPDATE and DELETE through database triggers; changes require versioned append-only successors",
+      "at most one open or ACTIVE workflow winner exists per global feature and per tenant-feature through partial unique indexes",
+      "feature key, product key, APP.HCM, minimum bundle version, route kind and Product Surface subject or surface must remain mutually consistent",
+      "all 16 seeded route bindings must match the immutable v50 route kind, product and surface tuple"
+    ],
+    "workflow": {
+      "states": ["DRAFT", "IN_REVIEW", "APPROVED", "ACTIVE", "REVOKED", "SUPERSEDED"],
+      "separationOfDuties": "requester, reviewer and activator are three distinct actors",
+      "concurrency": "CAS version is mandatory",
+      "history": "append-only immutable receipt and event history"
+    },
+    "tenantAppPrerequisite": "The tenant hcm app installation must be ENABLED before a tenant enrollment can become ACTIVE."
+  },
+  "runtimeDecisionOrder": [
+    "validate exact registered route and subject",
+    "evaluate existing app entitlement, capability or responsibility, scope, SoD and tenant capability suppression",
+    "only if the existing outcome would be ALLOWED or STEP_UP_REQUIRED, resolve the feature binding and positive gate",
+    "return TENANT_APP_ADOPTION_REQUIRED before reading or disclosing global activation or tenant enrollment when the APP.HCM installation is absent or disabled",
+    "return FEATURE_ACTIVATION_REQUIRED when no active global release exists",
+    "return TENANT_FEATURE_ENROLLMENT_REQUIRED when the tenant is not actively enrolled",
+    "preserve the prior ALLOWED or STEP_UP_REQUIRED outcome only when all positive prerequisites are active",
+    "return AUTHORITY_RESOLUTION_UNAVAILABLE on schema, reader, duplicate-binding, revision or evidence failure"
+  ],
+  "privacyInvariant": "A user who fails the existing authorization must receive the existing app, route, scope or SoD denial and must not learn feature activation or enrollment state.",
+  "providerSupportInvariant": "Support or provider access never bypasses the positive activation and tenant-enrollment gate.",
+  "revisionContract": {
+    "field": "tenantControlRevision",
+    "digestInputs": [
+      "tenant capability suppression effective revision",
+      "global feature activation revision",
+      "tenant enrollment revision",
+      "tenant app installation state and version"
+    ],
+    "gatewaySourceRevision": "tenantControl",
+    "contextContractVersion": 2,
+    "wireRequirements": [
+      "Auth authority result, Gateway authority client, SourceRevisions, aggregation support and service, frontend auth API and parser all require a nonblank tenantControl revision",
+      "the composite decision and product-evaluation revision include tenantControl as a separate source",
+      "an UNGATED route receives a stable catalog plus UNGATED revision rather than an empty or omitted value",
+      "missing or malformed tenantControl evidence fails closed as AUTHORITY_RESOLUTION_UNAVAILABLE"
+    ],
+    "forbidden": "Do not append a suffix to existing policyRevision or authRevision values because current consumers use their exact format and equality."
+  },
+  "gatewayEnforcement": {
+    "problem": "The current 000/100 rollout may bypass Auth PRODUCT evaluation and call an owner directly.",
+    "required": "The exact closed set of all 16 governed route keys always performs Auth direct evaluation independent of rollout percentage.",
+    "driftControl": "A targeted parity test must compare the V259 route seed set with the Gateway closed set.",
+    "ownerBypassClosure": "For all governed routes, an owner service must validate exact trusted decision evidence even when a rollout second bit is zero. People HcmProductSurfacePepFilter may not bypass exact PEP for HRM-005 at 000/100; Payroll and Platform existing exact-evidence behavior must be preserved.",
+    "denyBehavior": {
+      "activationRequired": "403 and zero owner-chain calls",
+      "authorityUnavailable": "503 and zero owner-chain calls",
+      "active": "forward only with trusted decision evidence"
+    }
+  },
+  "frontendAdmission": {
+    "source": "exact direct Product Surface PAGE decision only",
+    "navigation": "Product Surface allowed paths intersect tenant navigation policy; navigation policy can only narrow and never activate.",
+    "directLink": "The same PAGE decision guards the direct route and first-allowed-page selection.",
+    "workspace": "The active subtree and its hooks or data source mount only after exact PAGE admission and a typed module adapter are both present.",
+    "sysDataAdmission": "SYS obtains exact exception list and detail DATA decisions plus an independent TARGET_POPULATION package-scope selection; PAGE CONFIG_SCOPE never enters the DATA adapter.",
+    "reasonUx": "The frontend preserves FEATURE_ACTIVATION_REQUIRED, TENANT_FEATURE_ENROLLMENT_REQUIRED, TENANT_APP_ADOPTION_REQUIRED and AUTHORITY_RESOLUTION_UNAVAILABLE distinctly. Feature-control reasons must not link to the unrelated /account/security#privileged-access page; an authorized tenant feature-management destination or a safe return action is required.",
+    "forbidden": [
+      "browser environment feature flags",
+      "tenant ID allowlists in frontend source or configuration",
+      "a browser featureActivations snapshot as a second authority",
+      "using PAGE CONFIG_SCOPE as SYS exception DATA TARGET_POPULATION"
+    ]
+  },
+  "ownerDefense": {
+    "required": "Owner PEP validates exact trusted route, context, scope, decision revision, revalidateAt, access mode, purpose and population; missing trusted evidence fails closed.",
+    "localEnrollmentRemovalOrder": "Remove HRM, PAY and SYS owner-local tenant lists only after V259 Auth evaluation, Gateway always-evaluate enforcement and owner exact-evidence behavior are integrated and proven. Do not remove the TIM shared-receipt local activation projection before its separate zero-call P0 gate closes.",
+    "backgroundWorkers": "Non-HTTP workers consume an activation event/outbox read projection and skip work when absent, stale or unavailable; local tenant strings are forbidden."
+  },
+  "activationBlockers": [
+    {
+      "id": "TIM_SHARED_COMMAND_RECEIPT_ZERO_CALL",
+      "severity": "P0",
+      "state": "OPEN",
+      "blocks": "HRIS_TIME_CLOSE_HANDOFF global activation or tenant enrollment",
+      "doesNotBlock": "default-OFF catalog, module source, central adapter design or targeted tests"
+    },
+    {
+      "id": "SYS_SEPARATE_DATA_TARGET_POPULATION_ADMISSION",
+      "severity": "P0",
+      "state": "OPEN",
+      "blocks": "HRIS_OPERATIONS_EXCEPTION_CENTER global activation, tenant enrollment or positive workspace mount",
+      "doesNotBlock": "default-OFF activation substrate and exact DATA adapter implementation"
+    }
+  ],
+  "rolloutDefaults": {
+    "globalActivation": "NONE_OFF",
+    "tenantEnrollments": [],
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "missingReaderOrSchema": "AUTHORITY_RESOLUTION_UNAVAILABLE",
+    "enrollmentGrantsPermission": false
+  },
+  "immutability": {
+    "productAuthorizationV50MayChange": false,
+    "authV258MayChange": false,
+    "generatedV50ArtifactsMayChange": false,
+    "v51AuthorizedByThisDecision": false
+  },
+  "authority": {
+    "isolatedImplementationPlanAuthorized": true,
+    "authV259AuthoringAuthorized": true,
+    "defaultOffCatalogAndWorkflowImplementationAuthorized": true,
+    "gatewayAlwaysEvaluateAndRevisionImplementationAuthorized": true,
+    "frontendTrustedAdmissionAndMountImplementationAuthorized": true,
+    "hrmPaySysOwnerLocalGateRemovalAfterCentralProofAuthorized": true,
+    "timSharedReceiptLocalGateRemovalAuthorized": false,
+    "globalFeatureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "WRITE_A_HASH_BOUND_DISJOINT_IMPLEMENTATION_PLAN_THEN_IMPLEMENT_AUTH_GATE_GATEWAY_ENFORCEMENT_AND_FRONTEND_ADMISSION_IN_ISOLATED_WORKTREES_WITH_TARGETED_TESTS_ONLY"
+}

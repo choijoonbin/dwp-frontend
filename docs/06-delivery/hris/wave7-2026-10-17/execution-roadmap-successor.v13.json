@@ -1,0 +1,190 @@
+{
+  "schema": "dwp.hris.wave7-execution-roadmap-successor.v13",
+  "roadmapId": "HRIS-WAVE7-EXECUTION-ROADMAP-SUCCESSOR-20261017-R13",
+  "issuedAt": "2026-10-17T19:43:42+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "R7_BATCH_01_PARTIAL_CENTRAL_ADMISSION_TIM_MODULE_ACTIVE_BATCH_02_BLOCKED",
+  "supersedes": {
+    "path": "execution-roadmap-successor.v12.json",
+    "sha256": "41bb9dd1c5b3b8e8ece8bf0288fa93808fee88dd5abe3a35079f02665c9e6a3e",
+    "bytes": 4349,
+    "reason": "R12 still describes Batch-01 packet issuance as future work even though three lanes are centrally integrated, one lane has a terminal semantic NO_GO and TIM-007 is the only active module implementation."
+  },
+  "classificationAuthority": {
+    "path": "r7-c0-reclassification-r1/base-slice-reclassification.v1.json",
+    "sha256": "73c02c6d945f2b62ae716d2dbbf76e5123a2863f50d19de51e27085943291de8",
+    "bytes": 141708,
+    "batchSequencingRule": "START_ONLY_AFTER_PREDECESSOR_BATCH_EVIDENCE_IS_ACCEPTED_AND_DEPENDENCIES_REMAIN_SATISFIED"
+  },
+  "observedCleanPinsBeforeThisCarrier": {
+    "backend": {
+      "commit": "bada002d2a55f2d7e0a16dd1c8f240f1526aae82",
+      "tree": "40f9ad7052cb22dd7191d3b43cec714ec06ba17c",
+      "branch": "dwp-dev",
+      "originExact": true,
+      "clean": true
+    },
+    "frontend": {
+      "commit": "0653c9c89ea90c4f85c0ebea605109cf866ae081",
+      "tree": "e3e94bbdea7921f3a4f18e471b8aa644fa5407ec",
+      "branch": "dwp-dev",
+      "originExact": true,
+      "clean": true
+    },
+    "agent": {
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "branch": "dwp-dev",
+      "originExact": true,
+      "clean": true
+    }
+  },
+  "closedMilestonesInherited": {
+    "r6": "CLOSED_ALL_R6A_R6B_R6C_INTEGRATED_DEFAULT_OFF",
+    "r7C0": "CLOSED_INTEGRATED_EVIDENCE_ONLY",
+    "r7C1": "CLOSED_INTEGRATED_DEFAULT_OFF_BUSINESS_COMPLETION_INCREMENT_ZERO"
+  },
+  "portfolioAggregate": {
+    "universe": 86,
+    "retired": 2,
+    "active": 84,
+    "completed": 26,
+    "activeIncomplete": 58,
+    "batch01BusinessCompletionIncrement": 0,
+    "distributionNote": "R12 partialSurfaceOrOverlap and noCurrentSliceResult counts are historical pre-admission classifications and are not asserted as a current detailed distribution by this successor."
+  },
+  "batch01": {
+    "state": "PARTIAL_CENTRAL_ADMISSION_TIM_MODULE_ACTIVE_NO_BUSINESS_COMPLETION",
+    "lanes": [
+      {
+        "sliceId": "BASE-TFR-HRM-005",
+        "state": "SOURCE_V57_AND_CENTRAL_WORKFORCE_UI_INTEGRATED_DEFAULT_OFF_TRUSTED_MOUNT_AND_AC10_PENDING",
+        "businessCompletionCredit": 0,
+        "evidence": [
+          {"path": "r7-batch-01-module-results-r1/base-tfr-hrm-005/central-integration-receipt.v1.json", "sha256": "996320b6ca7e1d9add27de7934728ff6c2586640b5d48467dbd4ca195c09a0f3"},
+          {"path": "r7-batch-01-module-results-r1/base-tfr-hrm-005/central-workforce-access-ui-receipt.v2.json", "sha256": "99291cc642341e0db9718bb02a7c7d8d53b36f3d1d2e29f9c032062d28131d6b"}
+        ]
+      },
+      {
+        "sliceId": "BASE-TFR-PAY-013",
+        "state": "SOURCE_AND_V52_INTEGRATED_DEFAULT_OFF_TRUSTED_MOUNT_PRODUCTION_ADAPTER_AND_AC10_PENDING",
+        "businessCompletionCredit": 0,
+        "evidence": {"path": "r7-batch-01-module-results-r1/base-tfr-pay-013/central-integration-receipt.v1.json", "sha256": "a28c1013209dbd80aaca82a43b96f61e54deeb4527bc24ab3dbe71328234501d"}
+      },
+      {
+        "sliceId": "BASE-TFR-PER-001",
+        "state": "SEALED_NO_GO_UNSEALED_NO_SOURCE_AUTHORITY",
+        "sequencingDisposition": "CENTRALLY_ACCEPTED_TERMINAL_DISPOSITION",
+        "businessCompletionCredit": 0,
+        "sourceImplementationComplete": false,
+        "resumeCondition": "A separate append-only semantic successor must define the atomic review-assignment or results-published producer, recipient purpose and deep link before any coding token.",
+        "evidence": {"path": "r7-per-001-semantic-no-go-r1/semantic-decision-receipt.v1.json", "sha256": "f113a8dfd363bae19dcb44764313155819531c8f141875386619ed55b10e65fb"}
+      },
+      {
+        "sliceId": "BASE-TFR-SYS-002",
+        "state": "SOURCE_AND_V331_INTEGRATED_DEFAULT_OFF_EXTERNAL_PRODUCER_TRUSTED_MOUNT_AND_AC10_PENDING",
+        "businessCompletionCredit": 0,
+        "evidence": {"path": "r7-batch-01-module-results-r1/base-tfr-sys-002/central-integration-receipt.v1.json", "sha256": "14ac145086701a5d716ef319894e117f8bca85f7566c6651a476acc9fc44f20e"}
+      },
+      {
+        "sliceId": "BASE-TFR-TIM-007",
+        "state": "CENTRAL_BRIDGE_INTEGRATED_REPLACEMENT_TOKEN_ACTIVE_MODULE_IMPLEMENTATION_IN_PROGRESS",
+        "businessCompletionCredit": 0,
+        "centralEvidence": {"path": "r7-batch-01-module-results-r1/base-tfr-tim-007/central-bridge-integration-receipt-correction.v2.json", "sha256": "95fafd56b417b6282d5fc13c1133308f2844aa51ae5f7adbb468410b48ccc31c"},
+        "activeToken": {"path": "r7-batch-01-module-start-r1/tokens/base-tfr-tim-007.start-token-replacement.v2.json", "sha256": "513ff5cb20962515c69851d9dac6e01f502e58481bb9046b477510f45c3dbabb"},
+        "requiredBeforeBatchExit": [
+          "Time V12 and module close/reopen/immutable-result source",
+          "frontend close workspaces and fourteen acceptance results",
+          "default-OFF non-durable PAY closed-time port and fixtures only",
+          "independent result review",
+          "central close CommandReceiptProvider adapter and Timecard-feature decoupling gate",
+          "default-OFF backend and frontend central admission receipt"
+        ]
+      }
+    ]
+  },
+  "authorityPrecedence": [
+    "append-only lane correction or successor receipts override only the fields they explicitly supersede",
+    "HRM workforce UI receipt v2 closes the UI gate left open by HRM central receipt v1",
+    "TIM central bridge correction v2 supersedes the predecessor receipt's command-receipt availability wording",
+    "TIM replacement token v2 closes the central-bridge pause and is the only active TIM module implementation authority",
+    "this R13 supersedes R12 nextExecutable and codingGate state without changing immutable R6, C0 or C1 evidence"
+  ],
+  "batch02": {
+    "slices": [
+      "BASE-TFR-HRM-007",
+      "BASE-TFR-PAY-001",
+      "BASE-TFR-PER-002",
+      "BASE-TFR-SYS-003",
+      "BASE-TFR-TIM-001"
+    ],
+    "state": "NOT_DISPATCHABLE_TIM_007_MODULE_AND_CENTRAL_ADMISSION_PENDING",
+    "allowedNow": [
+      "read-only contract preflight",
+      "read-only dependency and semantic preflight",
+      "read-only migration high-water and collision preflight"
+    ],
+    "forbiddenNow": [
+      "owner packet issuance",
+      "start token issuance",
+      "worktree materialization",
+      "migration lease activation",
+      "source authoring or commit"
+    ],
+    "dispatchConditions": [
+      "TIM-007 module result independently reviewed and centrally admitted default OFF",
+      "Batch-01 sequencing exit accepts the PER-001 terminal NO_GO without awarding completion credit",
+      "all five Batch-02 dependency, semantic and next-free migration checks remain satisfied on the new central pins",
+      "fresh exact owner packets, required central authorization successor, JIT leases and start tokens are issued"
+    ],
+    "tenantActivationRequiredForDefaultOffSourceDispatch": false,
+    "trustedMountRequiredForBusinessCompletionOrAC10": true
+  },
+  "centralActivationAndMountLane": {
+    "state": "AUTHORIZED_DESIGN_AND_DEFAULT_OFF_IMPLEMENTATION_ONLY",
+    "authority": {
+      "path": "r7-activation-authority-r1/tenant-feature-activation-decision.v1.json",
+      "sha256": "fda6f51622c843b0c0da35f73b550cd6bd33c0ed190ee19058ac15f0e0502284",
+      "bytes": 15775
+    },
+    "principle": "Feature activation and tenant enrollment are server-trusted positive prerequisites that add no permission; exact Product Surface PAGE decisions remain the authority for menu, direct links and workspace admission.",
+    "mayProceedInParallelWithTimModule": true,
+    "timCatalogMayProceedDefaultOff": true,
+    "timWorkspaceMountBeforeModuleAndCentralAdmission": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "migrationLeaseSuccessorRequired": {
+    "PeopleV57": "CONSUMED_INTEGRATED",
+    "PayrollV52": "CONSUMED_INTEGRATED",
+    "PlatformV331": "CONSUMED_INTEGRATED",
+    "TimeV12": "ACTIVE_UNTIL_TIM_MODULE_ADMISSION",
+    "purpose": "Replace stale ACTIVE_AUTHORING_ONLY records before Batch-02 lease allocation."
+  },
+  "validationPolicy": {
+    "evidenceAndAncestorChecksFirst": true,
+    "changedClusterFirst": true,
+    "failedTargetOnlyAfterCorrection": true,
+    "repositoryWideSuitePerCorrection": false,
+    "fullSuiteOnlyAtExplicitReleaseGateOrCrossCuttingRisk": true,
+    "browserMatrix": "Run once only after trusted activation authority and central mounts are integrated."
+  },
+  "nonClaims": [
+    "Batch-01 business completion",
+    "PER-001 source implementation",
+    "TIM-to-PAY durable end-to-end completion",
+    "SYS external producer end-to-end completion",
+    "tenant enrollment, customer-data readiness or production release"
+  ],
+  "nextExecutable": {
+    "id": "R7-BATCH-01-TIM-007-MODULE-IMPLEMENTATION",
+    "authority": {
+      "path": "r7-batch-01-module-start-r1/tokens/base-tfr-tim-007.start-token-replacement.v2.json",
+      "sha256": "513ff5cb20962515c69851d9dac6e01f502e58481bb9046b477510f45c3dbabb"
+    },
+    "parallelCentralLane": "tenant feature activation authority and trusted mount implementation may proceed default OFF",
+    "afterTimModule": "independent review, central CommandReceipt admission gate, default-OFF integration, migration lease successor, Batch-01 sequencing exit, then Batch-02 preflight"
+  }
+}
