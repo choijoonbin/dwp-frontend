@@ -1,0 +1,121 @@
+{
+  "schema": "dwp.hris.r7-batch03-sys005-evidence-admission-decision.v1",
+  "decisionId": "HRIS-WAVE7-R7-BATCH03-SYS005-EVIDENCE-ADMISSION-20261018-R1",
+  "issuedAt": "2026-10-18T04:33:25+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "SYS005_EVIDENCE_ONLY_REUSE_CLOSURE_INDEPENDENTLY_ACCEPTED_EXACT_NO_FF_ADMISSION_AUTHORIZED_NO_SOURCE_NO_MIGRATION_ZERO_BUSINESS_CREDIT",
+  "authorityBasis": {
+    "batch03Preflight": {
+      "path": "../r7-batch-03-preflight-r1/semantic-dependency-migration-preflight.v1.json",
+      "sha256": "dde2815eceb71c37d77334002d6cdbd26812c63bd6d38fc0fd82dea17ff745e8",
+      "bytes": 11972
+    },
+    "startToken": {
+      "path": "../r7-batch-03-module-start-r1/tokens/base-tfr-sys-005.start-token.v1.json",
+      "sha256": "2ead9c8f169b047d94401a297abbfca9fc9a35980aa3ee783d245241f4d09078",
+      "bytes": 13832
+    },
+    "centralCarrierBeforeDecision": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "a315bd70835172713fee31269f77e7870269abdb",
+      "tree": "340436ab130d1b4d68c778a5d904a75a0f36590e",
+      "originExact": true
+    }
+  },
+  "admittedResult": {
+    "sliceId": "BASE-TFR-SYS-005",
+    "moduleSession": "HRIS-SYS",
+    "mode": "EVIDENCE_ONLY_REUSE_CLOSURE",
+    "repository": "dwp-frontend",
+    "branch": "codex/hris-wave7-r7-batch03-sys-005-evidence-20261018-r1",
+    "baseCommit": "695c40b40c7461911100243b7d052dea07584bc0",
+    "head": "23c3b0c95fd7ead648b332c580c39f5a8290ea88",
+    "tree": "ffacfbfb2422b69beafa98c1351130cc2d6e9905",
+    "remoteExact": true,
+    "clean": true,
+    "changedPathCount": 12,
+    "changedPathBoundary": "ONLY_JSON_FILES_UNDER_R7_BATCH_03_MODULE_RESULTS_R1_BASE_TFR_SYS_005",
+    "productionSourceChanged": false,
+    "testSourceChanged": false,
+    "migrationChanged": false,
+    "menuOrRouteChanged": false,
+    "generatedContractChanged": false,
+    "productAuthorizationChanged": false
+  },
+  "effectiveEvidence": [
+    {
+      "path": "../r7-batch-03-module-results-r1/base-tfr-sys-005/verification-receipt.v2.json",
+      "sha256": "676a19afb25145b8c8edfc49c2c728657b0f24c7d81810adbd05f9282ec86603",
+      "bytes": 4147
+    },
+    {
+      "path": "../r7-batch-03-module-results-r1/base-tfr-sys-005/acceptance-receipt.v2.json",
+      "sha256": "d3a77269709338be455352d6b0feed28247980a511cd5e47ec38a10ac9df9f8b",
+      "bytes": 1674
+    },
+    {
+      "path": "../r7-batch-03-module-results-r1/base-tfr-sys-005/module-result.v2.json",
+      "sha256": "790bbdd30cd949db3c2c09aea4a6d758627af2f334c828d1ba42155086afe6cf",
+      "bytes": 1424
+    },
+    {
+      "path": "../r7-batch-03-module-results-r1/base-tfr-sys-005/branch-receipt.v2.json",
+      "sha256": "2d93fbb19fc60de73a2060a080769370cb015814d3cc5e1f0cfd331c89bf5229",
+      "bytes": 1585
+    },
+    {
+      "path": "../r7-batch-03-module-results-r1/base-tfr-sys-005/changed-path-manifest.v2.json",
+      "sha256": "6ea2c7a28022bb7ce44aad5da73a447e438013bceaa73b4ddf9c618ca8c38048",
+      "bytes": 1634
+    },
+    {
+      "path": "../r7-batch-03-module-results-r1/base-tfr-sys-005/reuse-contract-receipt.v1.json",
+      "sha256": "08b049e1ff357dae3bac61d5b0c613c6aa48e31d261b2e3916cd81cb92446ec6",
+      "bytes": 3971
+    },
+    {
+      "path": "../r7-batch-03-module-results-r1/base-tfr-sys-005/source-coverage-manifest.v1.json",
+      "sha256": "48c8167d54a4a39cfe6d3d60bbb45964efc31c71e9410a5e028a5988e68dc42a",
+      "bytes": 5665
+    }
+  ],
+  "verificationDecision": {
+    "independentReview": "GO",
+    "p0": 0,
+    "p1": 0,
+    "p2": 0,
+    "backend": "8_SUITES_52_TESTS_PASS_FROM_V1_FIRST_EXECUTION",
+    "frontend": "3_FILES_32_TESTS_PASS_WITH_DWP_APP_NODE_AND_SHARED_UTILS_JSDOM",
+    "openApi": "BOTH_CANONICAL_3889_BYTES_SHA256_88BE25E0E95FE8C8281B3F140823819B421A08D025203B4FE1FEF54DDCFF7C08",
+    "priorFailureHistoryPreserved": true,
+    "repositoryWideSuiteRun": false,
+    "additionalTestExecutionRequiredForConflictFreeAdmission": false
+  },
+  "mergeAuthorization": {
+    "authorizedActor": "SYS_COMMON_INTEGRATION_CONTROL",
+    "strategy": "NO_FF_EXACT_BRANCH_HEAD",
+    "exactHead": "23c3b0c95fd7ead648b332c580c39f5a8290ea88",
+    "conflictPolicy": "STOP_ON_CONFLICT_NO_AUTOMATIC_RESOLUTION",
+    "postMergeChecks": [
+      "prove exact admitted HEAD is an ancestor of dwp-dev",
+      "prove all 12 admitted result JSON paths have exact admitted blobs",
+      "prove dwp-dev is clean and origin exact after push"
+    ],
+    "moduleDirectMergeAuthorized": false
+  },
+  "rollout": {
+    "runtimeDefault": "OFF_UNCHANGED",
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0
+  },
+  "nonClaims": [
+    "SYS-005 introduces new production or test source.",
+    "SYS-005 introduces a migration, menu, route, generated contract or runtime.",
+    "Batch-03 or R7 is complete.",
+    "Any feature or tenant is activated."
+  ]
+}
