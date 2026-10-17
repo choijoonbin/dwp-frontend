@@ -340,19 +340,29 @@ function receiptValue(value: unknown, path: string): void {
   integer(source.revision, `${path}.revision`, 1);
 }
 
-function metadataValue(value: unknown, path: string): void {
+function metadataValue(value: unknown, path: string): Record<string, unknown> {
   const source = exact(value, path, ['key', 'version', 'digest']);
   text(source.key, `${path}.key`, 128, PUBLIC_ID);
   text(source.version, `${path}.version`, 64, PUBLIC_ID);
-  if (source.digest !== null) text(source.digest, `${path}.digest`, 64, DIGEST);
+  return source;
+}
+
+function certificateMetadataValue(value: unknown, path: string): void {
+  const source = metadataValue(value, path);
+  if (source.digest !== null) invalid(`${path}.digest`);
+}
+
+function documentMetadataValue(value: unknown, path: string): void {
+  const source = metadataValue(value, path);
+  text(source.digest, `${path}.digest`, 64, DIGEST);
 }
 
 const FIELD_PARSERS = Object.freeze({
   REQUEST_SUMMARY: aggregateValue,
   REQUEST_STATUS: statusValue,
   COMMAND_RECEIPT: receiptValue,
-  CERTIFICATE_METADATA: metadataValue,
-  DOCUMENT_METADATA: metadataValue,
+  CERTIFICATE_METADATA: certificateMetadataValue,
+  DOCUMENT_METADATA: documentMetadataValue,
 });
 
 function fieldDecision(value: unknown, path: string, parseValue: typeof aggregateValue) {

@@ -102,12 +102,12 @@ function item(queryId: Hrm009QueryId): Hrm009WireProjection['items'][number] {
       CERTIFICATE_METADATA: view({
         key: 'certificate:employment',
         version: 'v1',
-        digest: 'a'.repeat(64),
+        digest: null,
       }),
       DOCUMENT_METADATA: view({
         key: 'document:employment',
         version: 'v2',
-        digest: null,
+        digest: 'a'.repeat(64),
       }),
     },
     deepLink: { route: contract.route, resourcePublicId: 'certificate:1001' },

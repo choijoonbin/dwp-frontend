@@ -191,6 +191,35 @@ describe('HRM-009 Stage-A sealed contracts', () => {
     }
   );
 
+  it('enforces asymmetric certificate and document digest shapes', () => {
+    const certificateDigest = hrm009ProjectionWire('IAQ-010');
+    const certificateMetadata = certificateDigest.items[0]!.fieldGroups.CERTIFICATE_METADATA as {
+      value: { digest: string | null };
+    };
+    certificateMetadata.value.digest = 'a'.repeat(64);
+    expect(() => selectHrm009Projection('IAQ-010', certificateDigest)).toThrow(
+      'items[0].fieldGroups.CERTIFICATE_METADATA.value.digest'
+    );
+
+    const missingDocumentDigest = hrm009ProjectionWire('IAQ-010');
+    const documentMetadata = missingDocumentDigest.items[0]!.fieldGroups.DOCUMENT_METADATA as {
+      value: { digest: string | null };
+    };
+    documentMetadata.value.digest = null;
+    expect(() => selectHrm009Projection('IAQ-010', missingDocumentDigest)).toThrow(
+      'items[0].fieldGroups.DOCUMENT_METADATA.value.digest'
+    );
+
+    const uppercaseDocumentDigest = hrm009ProjectionWire('IAQ-010');
+    const uppercaseMetadata = uppercaseDocumentDigest.items[0]!.fieldGroups.DOCUMENT_METADATA as {
+      value: { digest: string | null };
+    };
+    uppercaseMetadata.value.digest = 'A'.repeat(64);
+    expect(() => selectHrm009Projection('IAQ-010', uppercaseDocumentDigest)).toThrow(
+      'items[0].fieldGroups.DOCUMENT_METADATA.value.digest'
+    );
+  });
+
   it('rejects additive fields, cross-query actions, cardinality violations, and bad summaries', () => {
     const additive = hrm009ProjectionWire('IAQ-010');
     Object.assign(additive.items[0]!, { downloadUrl: 'https://example.invalid/raw' });
