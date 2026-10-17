@@ -1,0 +1,98 @@
+{
+  "schema": "dwp.hris.module-verification-receipt.v2",
+  "generatedAt": "2026-10-17T19:26:54Z",
+  "sliceId": "BASE-TFR-SYS-005",
+  "successorOf": {
+    "path": "verification-receipt.v1.json",
+    "sha256": "ef22a6e4a81efb8e3e74b32cf291b3271f18507286cf6e7f88c182c34edbb9f0",
+    "bytes": 4877,
+    "mutationPerformed": false
+  },
+  "independentReviewFinding": {
+    "priority": "P1",
+    "finding": "The v1 configuration-only retry executed all three files with environment=node, while notification-api.test.ts belongs to the shared-utils project whose repository environment is jsdom.",
+    "v1FrontendRetryAcceptedAsAC11Evidence": false,
+    "v1FailureHistoryPreserved": true
+  },
+  "repositoryProjectSemantics": [
+    {
+      "project": "dwp-app",
+      "sourceConfig": "apps/dwp/vitest.config.ts",
+      "environment": "node",
+      "targets": [
+        "apps/dwp/src/routes/notification-routes.test.tsx",
+        "apps/dwp/src/features/notifications/notification-navigation.test.ts"
+      ],
+      "aliasesPreserved": [
+        "@dwp-frontend/design-system -> libs/design-system/src",
+        "@dwp-frontend/shared-i18n -> libs/shared-i18n/src",
+        "@dwp-frontend/shared-utils -> libs/shared-utils/src"
+      ]
+    },
+    {
+      "project": "shared-utils",
+      "sourceConfig": "libs/shared-utils/vitest.config.ts",
+      "environment": "jsdom",
+      "targets": ["libs/shared-utils/src/api/notification-api.test.ts"],
+      "aliasesPreserved": [
+        "@dwp-frontend/shared-utils -> libs/shared-utils/src/index.ts",
+        "@dwp-frontend/shared-utils/* -> libs/shared-utils/src",
+        "@dwp-frontend/design-system -> libs/design-system/src/index.ts",
+        "@dwp-frontend/design-system/* -> libs/design-system/src"
+      ],
+      "globals": false
+    }
+  ],
+  "correctedExecution": {
+    "command": "PATH=/Users/a10697/Work/DWP/dwp-frontend/node_modules/.bin:$PATH COREPACK_ENABLE_PROJECT_SPEC=0 corepack pnpm@10.18.3 exec vitest run --config /tmp/sys005-vitest-projects.config.mjs --reporter=verbose apps/dwp/src/routes/notification-routes.test.tsx apps/dwp/src/features/notifications/notification-navigation.test.ts libs/shared-utils/src/api/notification-api.test.ts",
+    "temporaryConfig": {
+      "path": "/tmp/sys005-vitest-projects.config.mjs",
+      "repositoryExternal": true,
+      "sha256": "196b32e0f70ce27d82de63ed092c2625d189db92a082aa50542b0ce521da6e43",
+      "bytes": 2962,
+      "productionOrTestSource": false
+    },
+    "targetSet": [
+      "apps/dwp/src/routes/notification-routes.test.tsx",
+      "apps/dwp/src/features/notifications/notification-navigation.test.ts",
+      "libs/shared-utils/src/api/notification-api.test.ts"
+    ],
+    "targetSetChanged": false,
+    "repositoryWideSuite": false,
+    "result": "PASS",
+    "testFiles": 3,
+    "testsPassed": 32,
+    "testsFailed": 0,
+    "projectEvidence": {
+      "dwpAppFiles": 2,
+      "sharedUtilsFiles": 1,
+      "verboseReporterPrefixes": ["|dwp-app|", "|shared-utils|"]
+    },
+    "log": {
+      "path": "/Users/a10697/Work/DWP/.codex-evidence/r7-sys-005-20261018/frontend-targeted-tests-project-env-correction.log",
+      "sha256": "4cf9876a260c961b3e422caddb54ec7c08b33f2683bab9493f22ba3a7733fd35",
+      "bytes": 5511
+    }
+  },
+  "preservedHistory": [
+    {
+      "event": "INITIAL_SEALED_GROUP_INVOCATION",
+      "result": "CONFIG_RESOLUTION_FAILURE_BEFORE_TEST_DISCOVERY",
+      "testsRun": 0,
+      "logSha256": "8e9e3a5096ad5538a8e52fa245bc323705358336e4a2aab381e9f958f48eae04"
+    },
+    {
+      "event": "V1_SINGLE_ENVIRONMENT_RETRY",
+      "result": "32_TESTS_PASSED_BUT_NOT_ACCEPTED_FOR_AC11",
+      "reason": "shared-utils executed under node instead of its repository jsdom environment",
+      "logSha256": "6b972278ab21a0785ed54821635c92bb0b89f8ee43ffc8f17b4dd849f65576a0"
+    }
+  ],
+  "effectiveVerification": {
+    "backend": "8_SUITES_52_TESTS_PASS_FIRST_EXECUTION_FROM_V1",
+    "frontend": "3_FILES_32_TESTS_PASS_WITH_REPOSITORY_PROJECT_ENVIRONMENTS",
+    "openApi": "BOTH_3889_BYTES_SHA256_88BE25E0E95FE8C8281B3F140823819B421A08D025203B4FE1FEF54DDCFF7C08_FROM_V1",
+    "fullSuiteRun": false,
+    "sourceChanged": false
+  }
+}

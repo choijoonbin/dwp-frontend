@@ -1,0 +1,77 @@
+{
+  "schema": "dwp.hris.module-result.v1",
+  "generatedAt": "2026-10-17T19:20:59Z",
+  "sliceId": "BASE-TFR-SYS-005",
+  "tokenId": "HRIS-WAVE7-R7-BATCH-03-START-BASE-TFR-SYS-005-EVIDENCE-ONLY-20261018-R1",
+  "state": "SYS005_EVIDENCE_ONLY_REUSE_CLOSURE_COMPLETE_BRANCH_PUSHED_CENTRAL_REVIEW_PENDING_NO_SOURCE_NO_MIGRATION",
+  "authority": {
+    "carrierRepository": "dwp-frontend",
+    "carrierCommit": "a315bd70835172713fee31269f77e7870269abdb",
+    "carrierMergedIntoEvidenceBranch": false,
+    "startToken": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-start-r1/tokens/base-tfr-sys-005.start-token.v1.json",
+      "sha256": "2ead9c8f169b047d94401a297abbfca9fc9a35980aa3ee783d245241f4d09078",
+      "bytes": 13832
+    },
+    "ownerPacket": {
+      "sha256": "fb0d307133d4683eab4a711f6dab3b02d00f5e77b5139b8fc847bb50479d6635",
+      "bytes": 17635
+    },
+    "semanticDisposition": {
+      "sha256": "9083a90510f2567281d7f96a77eabfab71bc7e908cb004f36338c34562fc4587",
+      "bytes": 11796
+    },
+    "batch03Preflight": {
+      "sha256": "dde2815eceb71c37d77334002d6cdbd26812c63bd6d38fc0fd82dea17ff745e8",
+      "bytes": 11972
+    },
+    "roadmap": {
+      "sha256": "0151e49edbfcd5297ac1e9506210a1e3b83622b89ef869a8579765e13380a40a",
+      "bytes": 6946
+    }
+  },
+  "frontend": {
+    "branch": "codex/hris-wave7-r7-batch03-sys-005-evidence-20261018-r1",
+    "upstream": "origin/codex/hris-wave7-r7-batch03-sys-005-evidence-20261018-r1",
+    "baseCommit": "695c40b40c7461911100243b7d052dea07584bc0",
+    "baseTree": "8af76d722d8c299b0eb6768e15066e4675a24724",
+    "evidenceBundleCommitRecordedByFollowingBranchReceipt": true
+  },
+  "backend": {
+    "mode": "READ_ONLY_OWNER_CONTRACT_AND_TEST_EXECUTION",
+    "commit": "f448c36feee2ed7f59eacc64f450e6db3865f1c5",
+    "tree": "cec08e55f33fa71482c583137e3ccc3d8bf11572",
+    "changed": false,
+    "committed": false,
+    "pushed": false
+  },
+  "reuseClosure": {
+    "canonicalFeature": "NONE_EXISTING_NOTIFICATION_PLATFORM_REUSE",
+    "runtimeOwner": "dwp-notification-server",
+    "existingUserSurface": "/notifications/admin/templates",
+    "sourceRowCount": 12,
+    "sourceFamilySha256": "2f7300f5a1141bd786ffad12d6d5504f9478cbf1d18e76b60b1fc0fb9eb73421",
+    "sharedContracts": ["SHARED-API-007", "SHARED-API-008"],
+    "platformBoundary": "PLAT-004",
+    "productionImplementationClaimed": false,
+    "oneForOneLegacyRouteParityClaimed": false,
+    "businessCompletionCreditBeforeCentralAdmission": 0
+  },
+  "changeBoundary": {
+    "productionSourceChanged": false,
+    "testSourceChanged": false,
+    "backendChanged": false,
+    "migrationChanged": false,
+    "menuChanged": false,
+    "routeChanged": false,
+    "redirectChanged": false,
+    "generatedContractChanged": false,
+    "openApiChanged": false,
+    "asyncApiChanged": false,
+    "productAuthorizationChanged": false,
+    "featureEnabled": false,
+    "tenantEnrolled": false,
+    "dwpDevMergePerformed": false,
+    "productionReleaseAuthorized": false
+  }
+}

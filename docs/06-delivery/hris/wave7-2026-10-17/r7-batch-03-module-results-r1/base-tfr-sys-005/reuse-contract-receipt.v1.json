@@ -1,0 +1,75 @@
+{
+  "schema": "dwp.hris.reuse-contract-receipt.v1",
+  "generatedAt": "2026-10-17T19:20:59Z",
+  "sliceId": "BASE-TFR-SYS-005",
+  "owner": "dwp-notification-server",
+  "contracts": [
+    {
+      "id": "SHARED-API-007",
+      "method": "GET",
+      "browserPath": "/api/notifications/v1/admin/templates",
+      "ownerPath": "/v1/admin/templates",
+      "response": "ApiResponse<TemplateWorkspace>",
+      "operationId": "notification_templates"
+    },
+    {
+      "id": "SHARED-API-008",
+      "method": "POST",
+      "browserPath": "/api/notifications/v1/admin/templates/drafts",
+      "ownerPath": "/v1/admin/templates/drafts",
+      "requiredHeader": "Idempotency-Key",
+      "request": "TemplateDraftRequest",
+      "response": "ApiResponse<TemplateRevision>",
+      "operationId": "notification_createTemplateDraft"
+    }
+  ],
+  "authorization": {
+    "resource": "ADMIN.NOTIFICATION_TEMPLATE",
+    "catalogRead": ["VIEW", "MANAGE", "APPROVE"],
+    "draftWrite": ["MANAGE"],
+    "publishOrReject": ["APPROVE"],
+    "roleNameBypass": false
+  },
+  "PLAT-004": {
+    "recoveryNamespace": "/internal/v1/intents",
+    "namespaceCallable": false,
+    "directHttpEndpoint": "/internal/v1/intents/direct",
+    "directHttpUseInThisClosure": false,
+    "canonicalDomainEventTopic": "dwp.domain-events.v1",
+    "envelope": "DomainEventEnvelope",
+    "runtimeTranslator": "NotificationDomainEventTranslator",
+    "runtimeListener": "NotificationDomainEventKafkaListener",
+    "sysProducerRegistered": false,
+    "sysExactOnboardingAdded": false
+  },
+  "NotificationTemplatePublished.v1": {
+    "required": false,
+    "observedInBackendNonDocumentSource": false,
+    "observedInFrontendNonDocumentSource": false,
+    "replacementEvidence": ["immutable tenant template revision and checksum", "notification.template.published audit outbox record", "published override and immutable history from SHARED-API-007"],
+    "eventAuthored": false,
+    "publisherAuthored": false,
+    "consumerAuthored": false,
+    "hrisProjectionAuthored": false
+  },
+  "existingSourceSeals": {
+    "backendOpenApiSha256": "0c8560d19bfdc409cc6208a8b423e5121aab4b0c461ec42ceb3a07e86f7edbfb",
+    "frontendOpenApiSha256": "bcc41751c61c1bfc661df4efb4707aee564468ce40123732035e49ee9d2316c3",
+    "notificationAdminControllerSha256": "895dbdd2d889ad7ec912ef382f45738a9c622686482ebe8ae4c4b90f5496c6ca",
+    "notificationProducerControllerSha256": "705bfb926b7dd3ba38c5eb9daa3d7ad0533efd84af16f9f7b698075abcacee7b",
+    "notificationTemplateServiceSha256": "1bee10c2c4a4267c564d79bc770d53aeca9675f0e98cbded714410e9699631ec",
+    "notificationTemplateRepositorySha256": "30e1d34934fb439c738e9be31068261ba8acc1bfe89e937e50cc087d0c74251c",
+    "notificationDraftGovernanceServiceSha256": "9752d14e39e14d1043814c8188131bdab8ff15000e6dcac89672b221677df08d",
+    "notificationSecurityFilterSha256": "8f439a69e8c7ed1aa3af0c83a6516e955c370fe3c1ac9f783349f70c49cfd686",
+    "notificationDomainEventTranslatorSha256": "9b090616432b566104583f3c87a0ea213af8f972eeae4ae9b02bc5adcb87e525",
+    "notificationDomainEventKafkaListenerSha256": "cf407fd2f1d2f7506f4d3fe72fcd5f24b563eab220c1c5de1bcb2492b0a76313",
+    "domainEventsAsyncApiSha256": "3d3c12cb26a04eaff7470c6f1fc05dfaa6b836fca63f6f4fe42f388d56802a33",
+    "notificationTemplateGovernanceMigrationV13Sha256": "0aa44f284d0c68c8f189b6f5f63140199443bcff16d60dffabf458be3e2825eb",
+    "notificationMigrationHighWater": "V35",
+    "hrisNotificationIntentV1Sha256": "86f61e966ed8bbac8ffdc4088869e863e573c786e1c360ec6ee554657329ad07",
+    "hrisNotificationReceiptV1Sha256": "052170635e85321f9c40736d8fd990a4d75a4d588fe545e626460b584f7ac20d",
+    "frontendNotificationAdminApiSha256": "b423c0b085c03c263ab7bb2e383f899414d4bab2887ee7a7c2e2891422019b4e",
+    "frontendNotificationRoutesSha256": "93781254cb0953d6b406eea799174e9f95e7560d270b514b1de2755331d4ff34",
+    "frontendNotificationNavigationSha256": "2aad24660e3f177c196fef860eabfef0ae8e89f7e0291650c67f9943537954fa"
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "schema": "dwp.hris.module-acceptance-receipt.v2",
+  "generatedAt": "2026-10-17T19:26:54Z",
+  "sliceId": "BASE-TFR-SYS-005",
+  "successorOf": {
+    "path": "acceptance-receipt.v1.json",
+    "sha256": "29ae892b8f27125ddb14664bd8c33cdd6fb328334d041b31ab4f59ab99ac3fe5",
+    "bytes": 6847,
+    "mutationPerformed": false
+  },
+  "unchangedAcceptanceResults": [
+    "SYS005-AC-01",
+    "SYS005-AC-02",
+    "SYS005-AC-03",
+    "SYS005-AC-04",
+    "SYS005-AC-05",
+    "SYS005-AC-06",
+    "SYS005-AC-07",
+    "SYS005-AC-08",
+    "SYS005-AC-09",
+    "SYS005-AC-10",
+    "SYS005-AC-12"
+  ],
+  "replacementResults": [
+    {
+      "id": "SYS005-AC-11",
+      "replacesV1Result": "PASS_WITH_CONFIGURATION_ONLY_FRONTEND_RETRY",
+      "result": "PASS_AFTER_PROJECT_ENVIRONMENT_CORRECTION",
+      "criterion": "The bounded owner and frontend test set passes under each repository project's original environment; no repository-wide suite is run.",
+      "evidence": [
+        "Backend evidence remains 8 suites and 52 tests passing on its first execution.",
+        "The two apps/dwp targets ran in the dwp-app project with environment=node.",
+        "libs/shared-utils/src/api/notification-api.test.ts ran in the shared-utils project with environment=jsdom.",
+        "The corrected exact three-file target set passed 32 of 32 tests and no full suite was run.",
+        "The v1 node-only retry remains in history but is not used as acceptance evidence."
+      ]
+    }
+  ],
+  "effectiveSummary": {
+    "acceptanceResultCount": 12,
+    "passed": 12,
+    "failed": 0,
+    "centralReviewPending": true,
+    "productionImplementationClaimed": false,
+    "businessCompletionCredit": 0
+  }
+}

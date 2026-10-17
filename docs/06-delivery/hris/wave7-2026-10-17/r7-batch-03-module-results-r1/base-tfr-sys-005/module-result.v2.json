@@ -1,0 +1,36 @@
+{
+  "schema": "dwp.hris.module-result.v2",
+  "generatedAt": "2026-10-17T19:26:54Z",
+  "sliceId": "BASE-TFR-SYS-005",
+  "state": "SYS005_EVIDENCE_ONLY_REUSE_CLOSURE_COMPLETE_BRANCH_PUSHED_CENTRAL_REVIEW_PENDING_NO_SOURCE_NO_MIGRATION",
+  "successorOf": {
+    "path": "module-result.v1.json",
+    "sha256": "dafc39b7387819c375fa40e23757d761c315068fd8dae2274cfa32a12314ad19",
+    "bytes": 3004,
+    "mutationPerformed": false
+  },
+  "correction": {
+    "finding": "P1_FRONTEND_PROJECT_ENVIRONMENT_MISMATCH",
+    "priorClosureHead": "ff55d9bd94c8be71bc9da58b51d6a4e37836b8d7",
+    "priorClosureTree": "1c8893406cdaa53df54b8771a2fb370a4364b663",
+    "correctedVerification": "verification-receipt.v2.json",
+    "correctedAcceptance": "acceptance-receipt.v2.json",
+    "effectiveFrontendResult": "3_FILES_32_TESTS_PASS_UNDER_DWP_APP_NODE_AND_SHARED_UTILS_JSDOM",
+    "finalCorrectionCommitAndTreeReportedExternallyBecauseAGitCommitCannotSelfHash": true
+  },
+  "unchangedBoundaries": {
+    "productionSourceChanged": false,
+    "testSourceChanged": false,
+    "backendChanged": false,
+    "migrationChanged": false,
+    "menuOrRouteChanged": false,
+    "generatedContractChanged": false,
+    "openApiOrAsyncApiChanged": false,
+    "productAuthorizationChanged": false,
+    "authorityCarrierMerged": false,
+    "dwpDevMerged": false,
+    "featureEnabled": false,
+    "tenantEnrolled": false,
+    "businessCompletionCredit": 0
+  }
+}

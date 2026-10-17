@@ -1,0 +1,50 @@
+{
+  "schema": "dwp.hris.changed-path-manifest.v1",
+  "generatedAt": "2026-10-17T19:22:35Z",
+  "sliceId": "BASE-TFR-SYS-005",
+  "comparison": {
+    "repository": "dwp-frontend",
+    "baseCommit": "695c40b40c7461911100243b7d052dea07584bc0",
+    "baseTree": "8af76d722d8c299b0eb6768e15066e4675a24724",
+    "evidenceBundleCommit": "79099bd10c6439fd5f52811002ee0484954dec2a",
+    "evidenceBundleTree": "da370c8637a9251bd4c8795a60ea7af92ea16fec"
+  },
+  "evidenceBundlePaths": [
+    {"path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-results-r1/base-tfr-sys-005/acceptance-receipt.v1.json", "sha256": "29ae892b8f27125ddb14664bd8c33cdd6fb328334d041b31ab4f59ab99ac3fe5", "bytes": 6847},
+    {"path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-results-r1/base-tfr-sys-005/module-result.v1.json", "sha256": "dafc39b7387819c375fa40e23757d761c315068fd8dae2274cfa32a12314ad19", "bytes": 3004},
+    {"path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-results-r1/base-tfr-sys-005/reuse-contract-receipt.v1.json", "sha256": "08b049e1ff357dae3bac61d5b0c613c6aa48e31d261b2e3916cd81cb92446ec6", "bytes": 3971},
+    {"path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-results-r1/base-tfr-sys-005/source-coverage-manifest.v1.json", "sha256": "48c8167d54a4a39cfe6d3d60bbb45964efc31c71e9410a5e028a5988e68dc42a", "bytes": 5665},
+    {"path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-results-r1/base-tfr-sys-005/verification-receipt.v1.json", "sha256": "ef22a6e4a81efb8e3e74b32cf291b3271f18507286cf6e7f88c182c34edbb9f0", "bytes": 4877}
+  ],
+  "closureReceiptPaths": [
+    "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-results-r1/base-tfr-sys-005/changed-path-manifest.v1.json",
+    "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-results-r1/base-tfr-sys-005/branch-receipt.v1.json"
+  ],
+  "scopeAssertions": {
+    "evidenceBundlePathCount": 5,
+    "expectedFinalPathCount": 7,
+    "allPathsUnderExactResultRoot": true,
+    "productionSourceChanged": false,
+    "testSourceChanged": false,
+    "backendChanged": false,
+    "migrationChanged": false,
+    "menuChanged": false,
+    "routeChanged": false,
+    "redirectChanged": false,
+    "generatedContractChanged": false,
+    "openApiChanged": false,
+    "asyncApiChanged": false,
+    "productAuthorizationChanged": false,
+    "centralControlChanged": false,
+    "authorityCarrierMerged": false,
+    "dwpDevMerged": false
+  },
+  "immutableOwnerPins": {
+    "backendCommit": "f448c36feee2ed7f59eacc64f450e6db3865f1c5",
+    "backendTree": "cec08e55f33fa71482c583137e3ccc3d8bf11572",
+    "frontendOpenApiSha256": "bcc41751c61c1bfc661df4efb4707aee564468ce40123732035e49ee9d2316c3",
+    "backendOpenApiSha256": "0c8560d19bfdc409cc6208a8b423e5121aab4b0c461ec42ceb3a07e86f7edbfb",
+    "frontendNotificationRouteSha256": "93781254cb0953d6b406eea799174e9f95e7560d270b514b1de2755331d4ff34",
+    "frontendNotificationNavigationSha256": "2aad24660e3f177c196fef860eabfef0ae8e89f7e0291650c67f9943537954fa"
+  }
+}

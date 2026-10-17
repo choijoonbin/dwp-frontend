@@ -1,0 +1,50 @@
+{
+  "schema": "dwp.hris.source-coverage-manifest.v1",
+  "generatedAt": "2026-10-17T19:20:59Z",
+  "sliceId": "BASE-TFR-SYS-005",
+  "sourceRef": "TFR-SYS-005",
+  "sourceRegister": {
+    "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-registers/hris-sys-source-coverage.csv",
+    "sha256": "88e23e9b2356bd40b23ddd1bdc8602aa6a0e439081d26f474e98aef3cdb9a294",
+    "bytes": 154062
+  },
+  "familySeal": {
+    "algorithm": "SHA-256 of the UTF-8 target_api_or_event field without a trailing newline",
+    "sealedTargetApiOrEvent": "GET|POST /api/notifications/v1/admin/templates; NotificationTemplatePublished.v1",
+    "sha256": "2f7300f5a1141bd786ffad12d6d5504f9478cbf1d18e76b60b1fc0fb9eb73421",
+    "rowCount": 12,
+    "decisionId": "DEC-SYS-007",
+    "disposition": "REUSE",
+    "resolutionMode": "RELATED_REUSE_ALLOWED",
+    "boundedContext": "DWP_NOTIFICATION_PLATFORM",
+    "runtimeOwner": "dwp-notification-server"
+  },
+  "effectiveSemanticOverride": {
+    "NotificationTemplatePublishedV1Required": false,
+    "replacement": "IMMUTABLE_TEMPLATE_REVISION_PLUS_NOTIFICATION_TEMPLATE_PUBLISHED_AUDIT",
+    "oneForOneLegacyRouteParity": false,
+    "newRouteOrRedirect": false
+  },
+  "rows": [
+    {"ordinal": 1, "artifactId": "route:sys:sys/src/benitworx/router/portalRouter.js:51", "displayKey": "DynamicBoard", "sourceFile": "sys/src/benitworx/router/portalRouter.js", "sourceLine": 51, "legacyContract": "'/hr/:moduleName/dynamic-board/:progKey'", "legacyComponent": "@/benitworx/views/com/dynamicBoard/DynamicBoard.vue", "target": "DWP.COMMUNICATION.TEMPLATES"},
+    {"ordinal": 2, "artifactId": "route:sys:sys/src/benitworx/router/portalRouter.js:56", "displayKey": "DynamicBoardDetail", "sourceFile": "sys/src/benitworx/router/portalRouter.js", "sourceLine": 56, "legacyContract": "'/hr/:moduleName/dynamic-board/:progKey/detail'", "legacyComponent": "@/benitworx/views/com/dynamicBoard/DynamicBoardDetail.vue", "target": "DWP.COMMUNICATION.TEMPLATES"},
+    {"ordinal": 3, "artifactId": "route:sys:sys/src/benitworx/router/sysRouter.js:190", "displayKey": "Notice", "sourceFile": "sys/src/benitworx/router/sysRouter.js", "sourceLine": 190, "legacyContract": "'/hr/sys/notice'", "legacyComponent": "@/benitworx/views/sys/notice/Notice", "target": "DWP.COMMUNICATION.TEMPLATES"},
+    {"ordinal": 4, "artifactId": "route:sys:sys/src/benitworx/router/sysRouter.js:195", "displayKey": "NoticeDetail", "sourceFile": "sys/src/benitworx/router/sysRouter.js", "sourceLine": 195, "legacyContract": "'/hr/sys/notice/detail'", "legacyComponent": "@/benitworx/views/sys/notice/NoticeDetail", "target": "DWP.COMMUNICATION.TEMPLATES"},
+    {"ordinal": 5, "artifactId": "route:sys:sys/src/benitworx/router/sysRouter.js:200", "displayKey": "Board", "sourceFile": "sys/src/benitworx/router/sysRouter.js", "sourceLine": 200, "legacyContract": "'/hr/sys/board'", "legacyComponent": "@/benitworx/views/sys/board/Board", "target": "DWP.COMMUNICATION.TEMPLATES"},
+    {"ordinal": 6, "artifactId": "route:sys:sys/src/benitworx/router/sysRouter.js:205", "displayKey": "BoardDetail", "sourceFile": "sys/src/benitworx/router/sysRouter.js", "sourceLine": 205, "legacyContract": "'/hr/sys/board/detail'", "legacyComponent": "@/benitworx/views/sys/board/BoardDetail", "target": "DWP.COMMUNICATION.TEMPLATES"},
+    {"ordinal": 7, "artifactId": "route:sys:sys/src/benitworx/router/sysRouter.js:220", "displayKey": "MailTmplt", "sourceFile": "sys/src/benitworx/router/sysRouter.js", "sourceLine": 220, "legacyContract": "'/hr/sys/template/mail'", "legacyComponent": "@/benitworx/views/sys/template/mail/MailTmplt", "target": "DWP.COMMUNICATION.TEMPLATES"},
+    {"ordinal": 8, "artifactId": "route:sys:sys/src/benitworx/router/sysRouter.js:225", "displayKey": "MailTmpltDetail", "sourceFile": "sys/src/benitworx/router/sysRouter.js", "sourceLine": 225, "legacyContract": "'/hr/sys/template/mail/detail'", "legacyComponent": "@/benitworx/views/sys/template/mail/MailTmpltDetail", "target": "DWP.COMMUNICATION.TEMPLATES"},
+    {"ordinal": 9, "artifactId": "route:sys:sys/src/benitworx/router/sysRouter.js:230", "displayKey": "NotfcTmplt", "sourceFile": "sys/src/benitworx/router/sysRouter.js", "sourceLine": 230, "legacyContract": "'/hr/sys/template/notfc'", "legacyComponent": "@/benitworx/views/sys/template/notfc/NotfcTmplt", "target": "DWP.COMMUNICATION.TEMPLATES"},
+    {"ordinal": 10, "artifactId": "route:sys:sys/src/benitworx/router/sysRouter.js:235", "displayKey": "NotfcTmpltDetail", "sourceFile": "sys/src/benitworx/router/sysRouter.js", "sourceLine": 235, "legacyContract": "'/hr/sys/template/notfc/detail'", "legacyComponent": "@/benitworx/views/sys/template/notfc/NotfcTmpltDetail", "target": "DWP.COMMUNICATION.TEMPLATES"},
+    {"ordinal": 11, "artifactId": "route:sys:sys/src/benitworx/router/sysRouter.js:651", "displayKey": "UserNotice", "sourceFile": "sys/src/benitworx/router/sysRouter.js", "sourceLine": 651, "legacyContract": "'/hr/sys/notice-board'", "legacyComponent": "@/benitworx/views/sys/notice/NoticeInq", "target": "DWP.COMMUNICATION.TEMPLATES"},
+    {"ordinal": 12, "artifactId": "route:sys:sys/src/benitworx/router/sysRouter.js:656", "displayKey": "UserNoticeDetail", "sourceFile": "sys/src/benitworx/router/sysRouter.js", "sourceLine": 656, "legacyContract": "'/hr/sys/notice-board/detail'", "legacyComponent": "@/benitworx/views/sys/notice/NoticeInqDetail", "target": "DWP.COMMUNICATION.TEMPLATES"}
+  ],
+  "coverageResult": {
+    "distinctArtifactCount": 12,
+    "allRowsDecided": true,
+    "allRowsReuse": true,
+    "allRowsNotificationBoundedContext": true,
+    "allRowsExistingOwner": true,
+    "newLegacyRoutesCreated": 0
+  }
+}

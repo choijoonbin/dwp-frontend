@@ -1,0 +1,40 @@
+{
+  "schema": "dwp.hris.evidence-branch-receipt.v2",
+  "generatedAt": "2026-10-17T19:26:54Z",
+  "sliceId": "BASE-TFR-SYS-005",
+  "state": "SYS005_EVIDENCE_ONLY_REUSE_CLOSURE_COMPLETE_BRANCH_PUSHED_CENTRAL_REVIEW_PENDING_NO_SOURCE_NO_MIGRATION",
+  "successorOf": {
+    "path": "branch-receipt.v1.json",
+    "sha256": "422360bd108acc2a77a1b0e3e004dac999150baa42240d7ce88ce58adb205a0b",
+    "bytes": 1731,
+    "mutationPerformed": false
+  },
+  "branch": "codex/hris-wave7-r7-batch03-sys-005-evidence-20261018-r1",
+  "upstream": "origin/codex/hris-wave7-r7-batch03-sys-005-evidence-20261018-r1",
+  "correctionBase": {
+    "commit": "ff55d9bd94c8be71bc9da58b51d6a4e37836b8d7",
+    "tree": "1c8893406cdaa53df54b8771a2fb370a4364b663",
+    "remoteExactBeforeCorrection": true,
+    "worktreeCleanBeforeCorrection": true
+  },
+  "correctedVerification": {
+    "receipt": "verification-receipt.v2.json",
+    "acceptanceReceipt": "acceptance-receipt.v2.json",
+    "targetSet": "EXACT_ORIGINAL_THREE_FILES",
+    "environmentMap": {
+      "apps/dwp": "node",
+      "libs/shared-utils": "jsdom"
+    },
+    "result": "3_FILES_32_TESTS_PASS",
+    "priorFailureHistoryPreserved": true,
+    "priorNodeOnlyRetryAccepted": false
+  },
+  "lineage": {
+    "baseCommit": "695c40b40c7461911100243b7d052dea07584bc0",
+    "baseTree": "8af76d722d8c299b0eb6768e15066e4675a24724",
+    "authorityCarrier": "a315bd70835172713fee31269f77e7870269abdb",
+    "authorityCarrierAncestor": false,
+    "dwpDevMergePerformed": false
+  },
+  "finalCorrectionCommitAndTreeReportedExternallyBecauseAGitCommitCannotSelfHash": true
+}
