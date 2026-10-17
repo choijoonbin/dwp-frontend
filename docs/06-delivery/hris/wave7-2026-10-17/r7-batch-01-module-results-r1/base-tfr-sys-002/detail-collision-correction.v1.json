@@ -1,0 +1,147 @@
+{
+  "schema": "dwp.hris.module-correction-receipt.v1",
+  "generatedAt": "2026-10-17T10:02:44Z",
+  "sliceId": "BASE-TFR-SYS-002",
+  "state": "MODULE_SOURCE_COMPLETE; LIVE_PRODUCER_E2E_EXTERNAL_GATE",
+  "correction": {
+    "id": "SYS002-DETAIL-PUBLIC-ID-COLLISION-20261017-R1",
+    "result": "PASS",
+    "finding": "exception_public_id is not globally unique within a tenant because the sealed primary or unique identity includes event_source; a detail lookup by tenant and public ID alone could therefore select the wrong source row nondeterministically.",
+    "authority": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-start-r1/sys-002-event-ingress-seal.v1.json",
+      "sha256": "1fba405bff7936958af02fd53836dcbd30afd9e59aced2d346a275d82f787d0f",
+      "sealedUniqueness": [
+        "PRIMARY_OR_UNIQUE tenant_id plus event_source plus exception_public_id",
+        "UNIQUE tenant_id plus event_source plus exception_public_id plus source_revision"
+      ],
+      "globalTenantPublicIdUniquenessSealed": false
+    },
+    "resolution": {
+      "repositoryBehavior": [
+        "Zero authorized matches returns Optional.empty for the existing opaque 404 path.",
+        "Exactly one tenant-wide public-ID match that is authorized returns that projection.",
+        "More than one tenant-wide public-ID match with an authorized candidate fails closed with AUTHORITY_RESOLUTION_UNAVAILABLE instead of selecting a row.",
+        "An unauthorized-only public ID remains opaque and returns no projection."
+      ],
+      "singleSnapshot": true,
+      "migrationChanged": false,
+      "secondMigrationAdded": false
+    }
+  },
+  "backend": {
+    "repository": "dwp-backend",
+    "branch": "codex/hris-wave7-r7-batch01-sys-002-backend-20261017-r1",
+    "predecessorSourceCommit": "6e555f7e3f36014b5a0ea68d446b87872661a39c",
+    "predecessorSourceTree": "7c7d5d9641f2060f9e1b94a42f70d25c05d73d9b",
+    "correctionCommit": "ddfd79665b701445da5046812074acfcd9e44947",
+    "correctionTree": "778c334cede93a9126eb02438c9e48e1097dbd98",
+    "parent": "6e555f7e3f36014b5a0ea68d446b87872661a39c",
+    "remoteRef": "refs/heads/codex/hris-wave7-r7-batch01-sys-002-backend-20261017-r1",
+    "remoteCorrectionCommitAtPush": "ddfd79665b701445da5046812074acfcd9e44947",
+    "pushed": true,
+    "changedPaths": [
+      {
+        "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/operations/JdbcHrisOperationalExceptionRepository.java",
+        "sha256": "5613df9315274be09f6b01fea862df3df706b69b3e9e4265bed95f2ab54e1b57"
+      },
+      {
+        "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/operations/HrisOperationalExceptionMigrationPostgresTest.java",
+        "sha256": "cde0335474a7b7fce5fcc6ed7944a4cfbd42fcf863e6b1931eb36e0a22b50e43"
+      }
+    ]
+  },
+  "verification": {
+    "policy": {
+      "smallestAffectedTargetOnly": true,
+      "fullSeventySevenTestAggregateRerun": false,
+      "frontendSourceRerunRequired": false
+    },
+    "command": "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.hrisconfiguration.operations.HrisOperationalExceptionMigrationPostgresTest.detailLookupFailsClosedForCrossSourcePublicIdCollision' --no-daemon --max-workers=1",
+    "history": [
+      {
+        "sequence": 1,
+        "result": "COMPILE_FAILED",
+        "testsExecuted": 0,
+        "detail": "AssertJ overload inference was ambiguous when asserting directly on TransactionTemplate.execute.",
+        "log": {
+          "sha256": "4f426458a9fce3119b822cfea713c6f4835c9a4d8077cd6313e4a5a51919ece0",
+          "bytes": 38637,
+          "committed": false
+        }
+      },
+      {
+        "sequence": 2,
+        "result": "COMPILE_FAILED",
+        "testsExecuted": 0,
+        "detail": "The explicit Optional local-variable correction initially omitted the java.util.Optional import.",
+        "log": {
+          "sha256": "994be14167afcbd7951b7cd07787d65bb0abd961373c74b8d4edda49226b7081",
+          "bytes": 35591,
+          "committed": false
+        }
+      },
+      {
+        "sequence": 3,
+        "result": "PASS",
+        "tests": 1,
+        "skipped": 0,
+        "failures": 0,
+        "errors": 0,
+        "durationSeconds": 4.059,
+        "postgresRealContainer": "postgres:16-alpine",
+        "testcase": "detailLookupFailsClosedForCrossSourcePublicIdCollision",
+        "coverage": [
+          "No public-ID match returns empty.",
+          "One HRM source match returns HRM detail.",
+          "A second PAY source row with the same tenant and public ID causes AUTHORITY_RESOLUTION_UNAVAILABLE even when only HRM is authorized."
+        ],
+        "log": {
+          "sha256": "556cb014a9fbc34f11daac042d0c274bfe2c8e1138f9f1f9fc3690ad8e149249",
+          "bytes": 17558,
+          "committed": false
+        }
+      }
+    ],
+    "gitDiffCheck": "PASS",
+    "allowedPathCheck": "PASS",
+    "immutableHashCheck": "PASS"
+  },
+  "immutableFiles": [
+    {
+      "path": "dwp-platform-server/src/main/resources/product-authorization/hcm-platform-pep-v49.generated.json",
+      "sha256": "46073e2e262f7af783853e3efd769c336915873e641ea2e5f55b05d494d8f286",
+      "changed": false
+    },
+    {
+      "path": "dwp-platform-server/src/main/resources/db/migration/V330__accept_controlled_export_navigation_topology_successor.sql",
+      "sha256": "0ed682d631189184d26d4031c4770781c8acef8e7b5a2f571468595be5b76a26",
+      "changed": false
+    },
+    {
+      "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/security/PlatformSecurityFilter.java",
+      "sha256": "289bd3df959d3e8a532c2bff9e5463faaf80260b32dcae1e77ed2623fc8e7fb8",
+      "changed": false
+    },
+    {
+      "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisCommandReceiptController.java",
+      "sha256": "23bf42b0a6b7ac76421fbf39d81c728cdbf608cf9d22f3a5795999d7eb3a84e4",
+      "changed": false
+    },
+    {
+      "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerReceiptControllerTest.java",
+      "sha256": "34aae423723da30629970ad8ee79d60d465489fb27a68e43f6d495f604cc1ead",
+      "changed": false
+    }
+  ],
+  "authorityBoundaries": {
+    "dwpDevMergePerformed": false,
+    "centralRouteOrShellMountPerformed": false,
+    "featureActivationPerformed": false,
+    "tenantEnrollmentPerformed": false,
+    "producerOnboardingPerformed": false,
+    "browserValidationPerformed": false,
+    "frontendSourceChangedByCorrection": false,
+    "laterTokenCarrierAncestor": false,
+    "laterTokenCarrierPrefix": "cb0dca6f"
+  }
+}
