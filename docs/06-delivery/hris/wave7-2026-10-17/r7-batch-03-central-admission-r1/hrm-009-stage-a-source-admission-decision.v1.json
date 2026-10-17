@@ -1,0 +1,235 @@
+{
+  "schema": "dwp.hris.r7-batch03-hrm009-stagea-source-admission-decision.v1",
+  "decisionId": "HRIS-WAVE7-R7-BATCH03-HRM009-STAGEA-SOURCE-ADMISSION-20261018-R1",
+  "issuedAt": "2026-10-18T06:21:56+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "HRM009_STAGE_A_SOURCE_INDEPENDENTLY_ACCEPTED_EXACT_NO_FF_ADMISSION_AUTHORIZED_DEFAULT_OFF_ZERO_BUSINESS_CREDIT_FULL_SLICE_OPEN",
+  "authorityBasis": {
+    "batch03Preflight": {
+      "path": "../r7-batch-03-preflight-r1/semantic-dependency-migration-preflight.v1.json",
+      "sha256": "dde2815eceb71c37d77334002d6cdbd26812c63bd6d38fc0fd82dea17ff745e8",
+      "bytes": 11972
+    },
+    "centralAuthorization": {
+      "path": "../r7-batch-03-module-start-r1/central-authorization-successor.v1.json",
+      "sha256": "c49c856034dbf0fae7923c75356378b62203e2c7ab80bf9374269225be9d20f9",
+      "bytes": 18313
+    },
+    "activeMigrationLease": {
+      "path": "../r7-batch-03-module-start-r1/migration-lease-activation.v2.json",
+      "sha256": "17e29d15179e22c81f9c3c9c4abb9cea18b72d5b5d5cf4801b95fad26e0128a6",
+      "bytes": 6669
+    },
+    "materializationReceipt": {
+      "path": "../r7-batch-03-module-start-r1/worktree-materialization-receipt.v1.json",
+      "sha256": "132927c954abeab18b17fc19e0a9966c18a933fa462a355473ea32a63f9c817d",
+      "bytes": 6022
+    },
+    "startToken": {
+      "path": "../r7-batch-03-module-start-r1/tokens/base-tfr-hrm-009.start-token.v2.json",
+      "sha256": "0839ba5e76094b7ee024fee11478eb85f04a9969b65bc8f611239fc4eae79df7",
+      "bytes": 20608
+    },
+    "centralCarrierBeforeDecision": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "108572337d742b4f3b010b31dae0327873b2d65f",
+      "tree": "97985d6e1b1d3c28e78717938ad6d3b0a68d98f0",
+      "originExact": true,
+      "clean": true
+    }
+  },
+  "admittedResult": {
+    "sliceId": "BASE-TFR-HRM-009",
+    "stageId": "BASE-TFR-HRM-009-STAGE-A",
+    "moduleSession": "HRIS-HRM",
+    "mode": "REQUEST_AND_ISSUE_METADATA_STAGE_A_SOURCE_ONLY",
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "codex/hris-wave7-r7-batch03-hrm-009-stage-a-backend-20261018-r1",
+      "baseCommit": "f448c36feee2ed7f59eacc64f450e6db3865f1c5",
+      "head": "39abe180426b553ffab0122add331f337e6f7821",
+      "tree": "7097f60a9ccca1fe3cc6449a4242d6b83c1b8fdf",
+      "remoteExact": true,
+      "clean": true,
+      "changedPathCount": 21,
+      "migration": "dwp-people-server/src/main/resources/db/migration/V58__hrm_base_tfr_hrm_009_stage_a.sql",
+      "changeBoundary": "ONLY_CERTIFICATE_STAGE_A_PACKAGE_TESTS_AND_EXACT_PEOPLE_V58"
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "codex/hris-wave7-r7-batch03-hrm-009-stage-a-frontend-20261018-r1",
+      "baseCommit": "a315bd70835172713fee31269f77e7870269abdb",
+      "initialSourceCommits": [
+        "06ff7e8a737ed798d93516d1859f1e83d4fb8065",
+        "c300a50d3a38b21e853c1d9f29af26eee17814b5"
+      ],
+      "initialEvidenceCommit": "924a2a5913916b10525e2c8dfb63598130edde4b",
+      "digestContractCorrectionCommit": "fbba35c0a65555cc6de4fe82541e17cd3c31f36f",
+      "digestContractCorrectionTree": "a43009aff40eb28e1b9b478a2b542931e7044b2f",
+      "finalEvidenceHead": "b270f5de7dd9f3540953ffd634754c2b9b447b04",
+      "finalTree": "0aa2cc99b91bbfcd44679c1f8e902bef0dfe5eef",
+      "remoteExact": true,
+      "clean": true,
+      "changedPathCount": 19,
+      "changeBoundary": "ONLY_UNMOUNTED_CERTIFICATE_STAGE_A_FEATURE_TESTS_AND_EXACT_RESULT_EVIDENCE",
+      "routeMenuShellChanged": false,
+      "runtimeDefault": "OFF"
+    }
+  },
+  "effectiveEvidence": [
+    {
+      "path": "../r7-batch-03-module-results-r1/base-tfr-hrm-009-stage-a/acceptance-results.v1.json",
+      "sha256": "8b9b51b089f7b42bb35a1ff65313791ecb4e8c93cae163de7788b7b50f1f303b",
+      "bytes": 12794,
+      "immutableBySuccessor": true
+    },
+    {
+      "path": "../r7-batch-03-module-results-r1/base-tfr-hrm-009-stage-a/changed-path-and-no-recount.v1.json",
+      "sha256": "51b334830e7b561fef102f5c3db23faf403c0b627ec642b1d08435c7a09283e1",
+      "bytes": 14894,
+      "immutableBySuccessor": true
+    },
+    {
+      "path": "../r7-batch-03-module-results-r1/base-tfr-hrm-009-stage-a/materialization-receipt.v1.json",
+      "sha256": "3da34cc99eb6aa3a7c7bc0cbbdb2a633cffd080ede093629463f108fe9629771",
+      "bytes": 10103,
+      "immutableBySuccessor": true
+    },
+    {
+      "path": "../r7-batch-03-module-results-r1/base-tfr-hrm-009-stage-a/module-result-evidence.v1.json",
+      "sha256": "1e9dadfeb76674b2c5b3acef877f792be9728652a8435c85b6e37bce5a3a7e66",
+      "bytes": 16536,
+      "immutableBySuccessor": true
+    },
+    {
+      "path": "../r7-batch-03-module-results-r1/base-tfr-hrm-009-stage-a/people-v58-evidence.v1.json",
+      "sha256": "dd48e7baddfe3b56a5f090e7f11568080c4195cb4ce9a22eb87240a6d9f683a2",
+      "bytes": 11203,
+      "immutableBySuccessor": true
+    },
+    {
+      "path": "../r7-batch-03-module-results-r1/base-tfr-hrm-009-stage-a/request-issue-evidence.v1.json",
+      "sha256": "e01b453b4851d39f5a739640331cfc9e5974bd5b21f03e2ec76f7d780fde2984",
+      "bytes": 23409,
+      "immutableBySuccessor": true
+    },
+    {
+      "path": "../r7-batch-03-module-results-r1/base-tfr-hrm-009-stage-a/acceptance-results.v2.json",
+      "sha256": "f36c4cb92f28c3e38bf1309449acd5ef039990599c7b70292354262398425c97",
+      "bytes": 6201,
+      "effectiveSuccessor": true
+    },
+    {
+      "path": "../r7-batch-03-module-results-r1/base-tfr-hrm-009-stage-a/changed-path-and-no-recount.v2.json",
+      "sha256": "8d483a1a12d904e869d05ed7691193d6820cdf90480a7859bc39a0c0513f406f",
+      "bytes": 8868,
+      "effectiveSuccessor": true
+    },
+    {
+      "path": "../r7-batch-03-module-results-r1/base-tfr-hrm-009-stage-a/request-issue-evidence.v2.json",
+      "sha256": "82924e341a57c22430af5a1c6c2c0ac88b08464d334cea1e92e04cf98d3b8d26",
+      "bytes": 7529,
+      "effectiveSuccessor": true
+    },
+    {
+      "path": "../r7-batch-03-module-results-r1/base-tfr-hrm-009-stage-a/module-result-evidence.v2.json",
+      "sha256": "caf5b2d196005e833619629bb04071b37f47417d449c3baea54e8bfdb3cb8c0e",
+      "bytes": 12673,
+      "effectiveSuccessor": true
+    }
+  ],
+  "verificationDecision": {
+    "backendIndependentReview": {
+      "decision": "GO",
+      "p0": 0,
+      "p1": 0,
+      "p2NonBlocking": 3
+    },
+    "frontendIndependentReview": {
+      "decision": "GO",
+      "p0": 0,
+      "p1": 0,
+      "priorDigestContractP1Closed": true,
+      "p2TotalNonBlocking": 7
+    },
+    "evidenceIndependentReview": {
+      "decision": "GO",
+      "p0": 0,
+      "p1": 0,
+      "v1FilesProvenImmutable": 6,
+      "v2FilesHashDagReproduced": 4,
+      "exactPnpmVitestRuns": 2,
+      "exactPnpmVitestOutcome": "BOTH_BLOCKED_BEFORE_COLLECTION_BY_YARN_PACKAGE_MANAGER_ENFORCEMENT_ZERO_TESTS_COLLECTED",
+      "broadRerun": false
+    },
+    "admittedBoundedResults": {
+      "backend": "FINAL_CHANGED_METHOD_RUN_14_OF_14_PASS_ZERO_SKIPPED_WITH_PRIOR_BOUNDED_39_UNIQUE_TESTS_RECORDED",
+      "frontendDigestCorrection": "2_PASS_0_FAIL_24_SKIPPED_AND_THREE_FILE_ESLINT_PASS",
+      "browser": "PENDING_CENTRAL_ROUTE_MOUNT_GATE"
+    },
+    "repositoryWideSuiteRerunForAdmission": false
+  },
+  "nonblockingResiduals": [
+    "frontend/backend Unicode idempotency length difference",
+    "local Bearer, If-Match and certificate-type handling narrower than some input schemas",
+    "broad local Problem enum",
+    "actual PostgreSQL two-session receipt race not run",
+    "repository SQL limit/keyset pushdown absent",
+    "historical broad and PostgreSQL raw XML preservation provenance insufficient",
+    "central v52 exact DATA key adoption pending"
+  ],
+  "mergeAuthorization": {
+    "authorizedActor": "SYS_COMMON_INTEGRATION_CONTROL",
+    "strategy": "NO_FF_EXACT_BRANCH_HEAD",
+    "backendExactHead": "39abe180426b553ffab0122add331f337e6f7821",
+    "frontendExactHead": "b270f5de7dd9f3540953ffd634754c2b9b447b04",
+    "conflictPolicy": "STOP_ON_CONFLICT_NO_AUTOMATIC_RESOLUTION",
+    "postMergeChecks": [
+      "prove each exact admitted HEAD is an ancestor of the corresponding dwp-dev",
+      "prove admitted changed paths retain the exact admitted blobs",
+      "prove each dwp-dev worktree is clean and origin exact after push"
+    ],
+    "testExecutionRequiredForConflictFreeAdmission": false,
+    "moduleDirectMergeAuthorized": false
+  },
+  "centralSuccessorBoundary": {
+    "authorizedByThisDecision": false,
+    "requiredNext": [
+      "append-only central authority for product-authorization v52",
+      "Auth V261 and generated Gateway and People projections",
+      "frontend route and shell mount while runtime remains default OFF and tenant enrollment remains zero",
+      "trusted browser acceptance gate"
+    ],
+    "fullSliceStillRequired": [
+      "production artifact provider binding",
+      "download and revoke transport and acceptance",
+      "certificate expiry behavior and acceptance",
+      "separately authorized access and download audit behavior and acceptance",
+      "Platform generic creator retirement proof before any tenant enrollment"
+    ]
+  },
+  "rollout": {
+    "runtimeDefault": "OFF",
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "tenantEnrollmentCount": 0,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "stageASourceCompletionCreditBeforeCentralGates": 0,
+    "fullSliceBusinessCompletionCredit": 0
+  },
+  "withheldLanesUnchanged": [
+    "BASE-TFR-PER-003",
+    "BASE-TFR-PAY-002",
+    "BASE-TFR-TIM-002"
+  ],
+  "nonClaims": [
+    "Central product-authorization v52, Auth V261, Gateway, People projection, route or shell work is complete.",
+    "Browser acceptance is complete.",
+    "Download, revoke, expiry, access or download audit acceptance is complete.",
+    "A production-success artifact provider is bound.",
+    "Any feature or tenant is activated or enrolled.",
+    "BASE-TFR-HRM-009, Batch-03 or R7 is complete."
+  ]
+}
