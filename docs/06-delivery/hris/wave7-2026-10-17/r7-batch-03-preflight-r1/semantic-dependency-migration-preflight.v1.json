@@ -1,0 +1,253 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-03-semantic-dependency-migration-preflight.v1",
+  "preflightId": "HRIS-WAVE7-R7-BATCH-03-PREFLIGHT-20261018-R1",
+  "recordedAt": "2026-10-18T04:02:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "NO_SOURCE_STARTS_ONE_HRM_PACKET_CONDITIONAL_ONE_SYS_EVIDENCE_CLOSURE_CONDITIONAL_THREE_SEMANTIC_NO_GO",
+  "authorityBasis": {
+    "roadmap": {
+      "path": "../execution-roadmap-successor.v17.json",
+      "sha256": "0151e49edbfcd5297ac1e9506210a1e3b83622b89ef869a8579765e13380a40a",
+      "bytes": 6946,
+      "requiredState": "R7_BATCH_02_CENTRAL_INTEGRATION_CLOSED_DEFAULT_OFF_BATCH_03_PREFLIGHT_NEXT_ZERO_TENANT_ENROLLMENT"
+    },
+    "batch02Closure": {
+      "path": "../r7-batch-02-central-admission-r1/central-integration-receipt.v1.json",
+      "sha256": "29270abfc53237cf0a390b834fcf1705354f0694e24ace7f5b013b237d73ebb2",
+      "bytes": 6472,
+      "requiredDecision": "BATCH_02_CENTRAL_INTEGRATION_CLOSED_DEFAULT_OFF_NEXT_BATCH_PREFLIGHT_AUTHORIZED"
+    },
+    "reclassification": {
+      "path": "../r7-c0-reclassification-r1/base-slice-reclassification.v1.json",
+      "sha256": "73c02c6d945f2b62ae716d2dbbf76e5123a2863f50d19de51e27085943291de8",
+      "bytes": 141708
+    }
+  },
+  "pinBasis": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "f448c36feee2ed7f59eacc64f450e6db3865f1c5",
+      "tree": "cec08e55f33fa71482c583137e3ccc3d8bf11572",
+      "originExact": true,
+      "clean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "f850db7200f1d6983f37798a2461dc0d6959ec19",
+      "tree": "47143b4e3d7cd38cac6b0cfc72cb8ec0bda3b63e",
+      "originExact": true,
+      "cleanBeforeThisPreflight": true
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "originExact": true,
+      "clean": true
+    }
+  },
+  "globalRules": {
+    "sourceStartRequiresExactOwnerPacketAndToken": true,
+    "migrationRequiresProvenSchemaDeltaAndExclusiveLease": true,
+    "freshWorktreeRequiredForWritableModuleSource": true,
+    "defaultOff": true,
+    "tenantEnrollmentCount": 0,
+    "repositoryWideSuitePerCorrection": false
+  },
+  "laneDecisions": [
+    {
+      "sliceId": "BASE-TFR-HRM-009",
+      "moduleSession": "HRIS-HRM",
+      "decision": "CONDITIONAL_GO_FOR_EXACT_PACKET_SOURCE_START_NO_GO",
+      "businessMeaning": "Govern employee certificate request and HR certificate/document operations through People-owned projections, durable request and issuance state, and a minimized CertificateIssued.v1 boundary without recounting the generic Platform service center.",
+      "exactContracts": {
+        "entryQueries": [
+          {
+            "id": "IAQ-003",
+            "method": "GET",
+            "browserPath": "/api/people/v1/hris/workbench/self-service/requests",
+            "canonicalRoute": "/hr/me/requests"
+          },
+          {
+            "id": "IAQ-010",
+            "method": "GET",
+            "browserPath": "/api/people/v1/hris/workbench/operations/certificates/documents",
+            "canonicalRoute": "/hr/operations/people/certificates-documents"
+          }
+        ],
+        "command": {
+          "id": "PEP-HRM-012",
+          "method": "POST",
+          "browserPath": "/api/people/v1/hris/certificates"
+        },
+        "event": "CertificateIssued.v1"
+      },
+      "acceptedEvidence": [
+        {
+          "path": "../../recovery/exact-supplements/2026-10-06/accepted-successors/hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-api-contract-register.csv",
+          "sha256": "5f47efd33a1d5aa3d11a4d9fd5716cd4e35650e9fec0868ecb77c8c90a4cd988",
+          "bytes": 100020
+        },
+        {
+          "path": "../../recovery/exact-supplements/2026-10-06/accepted-successors/hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-runtime-invariant-register.csv",
+          "sha256": "fcdfd1a26d8fca2c8d9a2a8279a3c5a99844ba827aefe47cbac2210b8753f77a",
+          "bytes": 51783
+        },
+        {
+          "path": "../../recovery/exact-supplements/2026-10-06/hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-projection-schemas.v1.json",
+          "sha256": "b185accd712216c39bf8a66f70cbbf0092a27a8c2c5e3d7457ecd4d511afa048",
+          "bytes": 1523618
+        },
+        {
+          "path": "../../recovery/hris-porting-blueprint-2026-09-09/coding-readiness/api-pep-binding-register.csv",
+          "sha256": "0e38d724516a8b271069241ffa0fb6400984dc703758767de53cbaffb4f93da3",
+          "bytes": 126576
+        },
+        {
+          "path": "../../recovery/hris-porting-blueprint-2026-09-09/coding-readiness/transport-schema-resolution-register.csv",
+          "sha256": "86e76b0fe8b36102f35b2e82b7d8ffc3fc250455dde6d2d7747ac3f1a6cc877e",
+          "bytes": 219704
+        },
+        {
+          "path": "../../recovery/hris-porting-blueprint-2026-09-09/session-evidence/hrm/g2-readiness/physical-schema-blueprint.sql",
+          "sha256": "dbe18b0a2700bac21088391d2d9c13d155d30058b44843aeed033d3333896969",
+          "bytes": 51577
+        },
+        {
+          "path": "../../recovery/hris-porting-blueprint-2026-09-09/session-evidence/hrm/g2-readiness/api-event-contracts.v1.json",
+          "sha256": "0c3ec58b29dcf534d1b887fed5678e878e4a514cf3f943165e47dd7a486355bb",
+          "bytes": 25944
+        },
+        {
+          "path": "../../recovery/hris-porting-blueprint-2026-09-09/session-evidence/hrm/g2-readiness/state-guard-idempotency-recovery.md",
+          "sha256": "72e72be66fa7aba49c945ab9eb503fb69d3b2fffc838096a4b20d6c6a52f58a6",
+          "bytes": 14892
+        }
+      ],
+      "partialSurfaceBoundary": {
+        "existingRoute": "/hr/services",
+        "existingSeed": "people.employment-certificate",
+        "owner": "DWP_PLATFORM_SERVICE_CENTER",
+        "decision": "READ_ONLY_REUSE_SEAM_NOT_HRM009_COMPLETION_NO_DOUBLE_CREATE_NO_RECOUNT"
+      },
+      "migration": {
+        "stream": "PEOPLE_MAIN",
+        "observedHighWater": "V57",
+        "requiredVersion": "V58",
+        "reason": "People-owned certificate request and issued-certificate durable state, RLS, expiry, revoke, audit and outbox are absent.",
+        "leaseState": "REQUIRED_NOT_ISSUED"
+      },
+      "blockingConditions": [
+        "Seal revoke and download owner routes or explicitly exclude them through an accepted semantic successor while preserving expiry and access-log acceptance boundaries.",
+        "Issue an exact owner packet that directly hash-pins accepted G2 sources because module-exact-business-start-canonical omits TFR-HRM-009 and PEP-HRM-012.",
+        "Issue an exclusive People V58 migration lease.",
+        "Seal canonical feature key plus PAGE, DATA and ACTION route contracts and authorization profile, duty, purpose, population and field-policy requirements.",
+        "Seal coexistence and no-double-create rules for the generic Platform service center."
+      ],
+      "packetAuthorized": false,
+      "startTokenAuthorized": false,
+      "migrationLeaseAuthorized": false
+    },
+    {
+      "sliceId": "BASE-TFR-SYS-005",
+      "moduleSession": "HRIS-SYS",
+      "decision": "CONDITIONAL_GO_FOR_EVIDENCE_ONLY_REUSE_CLOSURE_PRODUCTION_SOURCE_NO_GO",
+      "businessMeaning": "Close communication-template coverage by proving reuse of the existing Notification-owned template catalog, draft governance and delivery transport without adding an HRIS runtime, persistence, menu, route or product-authorization surface.",
+      "existingContracts": [
+        {
+          "id": "SHARED-API-007",
+          "method": "GET",
+          "browserPath": "/api/notifications/v1/admin/templates",
+          "ownerPath": "/v1/admin/templates",
+          "owner": "dwp-notification-server"
+        },
+        {
+          "id": "SHARED-API-008",
+          "method": "POST",
+          "browserPath": "/api/notifications/v1/admin/templates/drafts",
+          "ownerPath": "/v1/admin/templates/drafts",
+          "owner": "dwp-notification-server",
+          "requiredHeader": "Idempotency-Key"
+        }
+      ],
+      "contractDigest": {
+        "scope": "Backend and frontend OpenAPI fragments for SHARED-API-007, SHARED-API-008 and their core schemas",
+        "sha256": "6f8a56bdb0ab4ed211060a74c2af2e4c1f80d53507c5f40629dda3f48af77f8e",
+        "matching": true
+      },
+      "semanticDispositionsRequired": [
+        "NotificationTemplatePublished.v1 is not present in current owner contracts or source; evidence-only closure must mark it non-required and use immutable template revision plus notification.template.published audit evidence, otherwise this lane is NO_GO.",
+        "PLAT-004 /internal/v1/intents is a namespace, not a callable endpoint; direct HTTP is /internal/v1/intents/direct while canonical domain-event transport is Kafka dwp.domain-events.v1 through DomainEventEnvelope and NotificationDomainEventTranslator.",
+        "Historical Platform migration and HRIS administration source commands are superseded for this reuse-only lane."
+      ],
+      "migration": {
+        "stream": "NONE",
+        "activeLeaseCount": 0,
+        "reason": "All persistence and governance remain owned by the existing Notification service."
+      },
+      "allowedChange": "Evidence documents only after an exact evidence-only packet and token.",
+      "forbiddenChange": [
+        "Backend or frontend production source",
+        "Notification, Platform or HRIS migration",
+        "New service, controller, repository, event, producer or onboarding",
+        "New HRIS menu, route, redirect or product-authorization contract"
+      ],
+      "packetAuthorized": false,
+      "startTokenAuthorized": false,
+      "productionSourceWriteAuthorized": false
+    },
+    {
+      "sliceId": "BASE-TFR-PER-003",
+      "moduleSession": "HRIS-PER",
+      "decision": "SEMANTIC_NO_GO_NO_PACKET_NO_TOKEN_NO_LEASE_NO_SOURCE",
+      "missingAuthority": "Schedule, hold, complete, acknowledge and cancel owner-route transaction semantics.",
+      "migration": "PERFORMANCE_V19_NOT_ISSUED"
+    },
+    {
+      "sliceId": "BASE-TFR-PAY-002",
+      "moduleSession": "HRIS-PAY",
+      "decision": "SEMANTIC_NO_GO_NO_PACKET_NO_TOKEN_NO_LEASE_NO_SOURCE",
+      "missingAuthority": "Exact connector target, mapping, idempotency, reconciliation and owner binding.",
+      "migration": "PAYROLL_V53_NOT_ISSUED"
+    },
+    {
+      "sliceId": "BASE-TFR-TIM-002",
+      "moduleSession": "HRIS-TIM",
+      "decision": "SEMANTIC_NO_GO_NO_PACKET_NO_TOKEN_NO_LEASE_NO_SOURCE",
+      "missingAuthority": "Notification trigger, type key, recipient, template version, variables, deep link, opt-out, masking and receipt contract.",
+      "migration": "TIME_V13_NOT_ISSUED"
+    }
+  ],
+  "migrationHighWater": {
+    "PEOPLE_MAIN": "V57",
+    "PERFORMANCE": "V18",
+    "PAYROLL_MAIN": "V52",
+    "PLATFORM_MAIN": "V331",
+    "TIME_MAIN": "V12",
+    "AUTH_MAIN": "V260",
+    "NOTIFICATION_MAIN": "V35",
+    "APPROVAL_MAIN": "V58",
+    "PRODUCT_AUTHORIZATION_BUNDLE": "v51"
+  },
+  "authority": {
+    "preflightComplete": true,
+    "sourceAuthoringAuthorizedByThisReceipt": false,
+    "migrationAuthoringAuthorizedByThisReceipt": false,
+    "evidenceOnlyAuthoringAuthorizedByThisReceipt": false,
+    "freshPacketsMayBeIssuedAfterSemanticDispositionFor": [
+      "BASE-TFR-HRM-009",
+      "BASE-TFR-SYS-005"
+    ],
+    "packetsTokensAndLeasesWithheldFor": [
+      "BASE-TFR-PER-003",
+      "BASE-TFR-PAY-002",
+      "BASE-TFR-TIM-002"
+    ],
+    "tenantActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "Seal the SYS-005 evidence-only semantic dispositions and issue an evidence token; create an HRM-009 semantic successor for revoke/download scope, Platform coexistence and exact authorization before any owner packet or People V58 lease."
+}
