@@ -1,0 +1,100 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-01-start-token-state-successor.v4",
+  "stateId": "HRIS-WAVE7-R7-BATCH-01-START-TOKEN-STATE-SUCCESSOR-20261017-R4",
+  "recordedAt": "2026-10-17T19:03:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "PAY_REISSUED_HRM_AND_SYS_CONTROL_REVIEW_TIM_CENTRAL_BRIDGE_IN_PROGRESS_PER_NO_GO",
+  "purpose": "Replace only PAY-013 R1 with a dirty-state-inheriting exact two-path R2 token, preserve completed module branches without premature integration, and keep TIM and PER gates explicit.",
+  "predecessorState": {
+    "path": "start-token-state-successor.v3.json",
+    "sha256": "73d1aacea8eed2b836ef1a42987135b88e96d62ec3b14c2ffc4006eff60c5aff",
+    "bytes": 4937,
+    "mutated": false
+  },
+  "authorityCarrierParent": {
+    "repository": "dwp-frontend",
+    "branch": "dwp-dev",
+    "commit": "7c031c09dac30a5125ec3dc711011155d0ae4e2b",
+    "tree": "d499ca4f06a50b657e1cba159a82af2375d2151a",
+    "originExact": true
+  },
+  "payReplacement": {
+    "supersededToken": {
+      "path": "tokens/base-tfr-pay-013.start-token.v1.json",
+      "sha256": "0261536b268f9cb0caf22eda0d5bcb03a61d0fba9d084a156e8ee3c7a91a8aa8",
+      "bytes": 14124,
+      "state": "SUPERSEDED_ONLY_FOR_EXACT_STARTUP_GUARD_PATH_REALLOCATION"
+    },
+    "activeToken": {
+      "path": "tokens/base-tfr-pay-013.start-token-replacement.v2.json",
+      "sha256": "db803c85a17d3845ec2c4d6e5a57978a2e6581a98e7caa43186525146928cc6b",
+      "bytes": 7506,
+      "state": "ISSUED_RESUME_EXISTING_WORKTREES"
+    },
+    "validation": {
+      "path": "pay-013-authority-successor-validation-receipt.v1.json",
+      "sha256": "ca0ee037ede857108a3b937034f2b210ad904064d59409a8e9d1b5e0ca8a0d57",
+      "bytes": 2334,
+      "decision": "GO_RESUME_HRIS_PAY_ON_EXACT_REPLACEMENT_TOKEN"
+    }
+  },
+  "laneStates": [
+    {
+      "moduleSession": "HRIS-HRM",
+      "sliceId": "BASE-TFR-HRM-005",
+      "sourceState": "MODULE_BRANCHES_PUSHED",
+      "controlState": "INDEPENDENT_REVIEW_FOUND_CENTRAL_DEFAULT_OFF_CANONICAL_PATH_HARDENING_REQUIRED",
+      "integrationAuthorized": false
+    },
+    {
+      "moduleSession": "HRIS-PAY",
+      "sliceId": "BASE-TFR-PAY-013",
+      "sourceState": "BACKEND_DIRTY_PRESERVED_FRONTEND_PUSHED",
+      "controlState": "ACTIVE_AUTHORING_RESUME_R2",
+      "tokenPath": "tokens/base-tfr-pay-013.start-token-replacement.v2.json",
+      "migrationLeaseId": "HRIS-WAVE7-R7-BATCH-01-PAYROLL-MAIN-V52-20261017-R1"
+    },
+    {
+      "moduleSession": "HRIS-SYS",
+      "sliceId": "BASE-TFR-SYS-002",
+      "sourceState": "MODULE_BRANCHES_PUSHED_WITH_TARGETED_DUPLICATE_ID_FAIL_CLOSED_HARDENING_IN_PROGRESS",
+      "controlState": "CONTROL_REVIEW_PENDING",
+      "integrationAuthorized": false
+    },
+    {
+      "moduleSession": "HRIS-TIM",
+      "sliceId": "BASE-TFR-TIM-007",
+      "sourceState": "NO_MODULE_SOURCE_EDITS",
+      "controlState": "CENTRAL_CONTRACT_AND_RECEIPT_RUNTIME_BRIDGE_IN_PROGRESS",
+      "replacementModuleTokenIssued": false
+    },
+    {
+      "moduleSession": "HRIS-PER",
+      "sliceId": "BASE-TFR-PER-001",
+      "sourceState": "NO_SOURCE_EDITS",
+      "controlState": "SEALED_SEMANTIC_NO_GO",
+      "startTokenIssued": false
+    }
+  ],
+  "authority": {
+    "payResumeAuthorizedAfterCarrierPush": true,
+    "hrmIntegrationAuthorized": false,
+    "sysIntegrationAuthorized": false,
+    "timModuleResumeAuthorized": false,
+    "perStartAuthorized": false,
+    "moduleBranchCommitAndPushAuthorizedForPayR2": true,
+    "mergeToDwpDevAuthorized": false,
+    "centralRouteOrMenuMountAuthorized": false,
+    "tokenCarrierMergeOrRebaseIntoModuleWorktreesAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "verificationPolicy": {
+    "changedClusterFirst": true,
+    "afterFailure": "Rerun only the smallest failed target after correction.",
+    "repositoryWideSuitePerCorrection": false,
+    "finalIntegrationAndBrowserMatrix": "Run once centrally only after admitted module results and required central bridges are integrated."
+  },
+  "nextAction": "COMMIT_AND_PUSH_THIS_APPEND_ONLY_CARRIER_THEN_RESUME_HRIS_PAY_ON_R2_WHILE_CONTROL_REVIEWS_CONTINUE"
+}

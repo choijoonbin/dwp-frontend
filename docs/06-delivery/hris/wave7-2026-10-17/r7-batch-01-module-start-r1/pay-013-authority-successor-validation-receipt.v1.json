@@ -1,0 +1,31 @@
+{
+  "schema": "dwp.hris.module-start-token-successor-validation-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-01-PAY-013-AUTHORITY-SUCCESSOR-VALIDATION-20261017-R1",
+  "recordedAt": "2026-10-17T19:02:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "sliceId": "BASE-TFR-PAY-013",
+  "state": "VALID_REPLACEMENT_TOKEN_EXACT_TWO_PATH_STARTUP_GUARD_REALLOCATION",
+  "validatedToken": {
+    "path": "tokens/base-tfr-pay-013.start-token-replacement.v2.json",
+    "sha256": "db803c85a17d3845ec2c4d6e5a57978a2e6581a98e7caa43186525146928cc6b",
+    "bytes": 7506
+  },
+  "checks": [
+    {"id": "PAY013-R2-01", "result": "PASS", "evidence": "R1 token and successor-state hashes and byte counts match immutable dwp-dev files."},
+    {"id": "PAY013-R2-02", "result": "PASS", "evidence": "Backend remains at the exact R1 base and upstream with 31 inherited changed files bound by content-manifest and porcelain digests; frontend is clean, pushed and upstream exact at 8f49115e."},
+    {"id": "PAY013-R2-03", "result": "PASS", "evidence": "The only additional write paths are PayrollDatabaseMigrationConfiguration.java and PayrollServerApplicationContextTest.java."},
+    {"id": "PAY013-R2-04", "result": "PASS", "evidence": "The publisher ACL delta is closed to three V52 projection relations and their three actual PostgreSQL sequence identifiers, including the 63-byte truncated population-revision sequence name."},
+    {"id": "PAY013-R2-05", "result": "PASS", "evidence": "Allowed privileges exactly match V52: relation SELECT/INSERT and sequence USAGE/SELECT; UPDATE, DELETE, wildcard grants, RLS bypass and guard weakening remain forbidden."},
+    {"id": "PAY013-R2-06", "result": "PASS", "evidence": "Verification is failure-local: application-context target first, then one bounded PAY-013 cluster; repository-wide reruns remain forbidden."},
+    {"id": "PAY013-R2-07", "result": "PASS", "evidence": "Default OFF, zero enrollment, direct dwp-dev merge, central mount, activation, customer data and production release prohibitions remain unchanged."}
+  ],
+  "result": {
+    "decision": "GO_RESUME_HRIS_PAY_ON_EXACT_REPLACEMENT_TOKEN",
+    "p0": 0,
+    "p1": 0,
+    "authorizedAdditionalPathCount": 2,
+    "migrationLeaseChanged": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false
+  }
+}

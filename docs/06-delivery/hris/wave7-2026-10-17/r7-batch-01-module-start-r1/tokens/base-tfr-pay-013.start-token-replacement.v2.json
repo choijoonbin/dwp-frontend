@@ -1,0 +1,136 @@
+{
+  "schema": "dwp.hris.module-start-token-replacement.v2",
+  "tokenId": "HRIS-WAVE7-R7-BATCH-01-START-BASE-TFR-PAY-013-20261017-R2",
+  "issuedAt": "2026-10-17T19:01:24+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-PAY",
+  "sliceId": "BASE-TFR-PAY-013",
+  "canonicalFeature": "HRIS_PAYROLL_RUN_PREPARE",
+  "state": "REISSUED_INHERIT_DIRTY_BACKEND_REPAIR_EXACT_V52_PUBLISHER_STARTUP_GUARD_COMMIT_AND_PUSH_ONLY",
+  "permittedAction": "Continue the preserved PAY-013 implementation in the same worktrees; update only the Payroll startup publisher ACL allowlist and its application-context regression for the three V52 publisher-owned projections and sequences; run the smallest startup target first, then the bounded PAY-013 verification once; commit and push only the existing module branches.",
+  "supersession": {
+    "predecessorToken": {
+      "path": "base-tfr-pay-013.start-token.v1.json",
+      "sha256": "0261536b268f9cb0caf22eda0d5bcb03a61d0fba9d084a156e8ee3c7a91a8aa8",
+      "bytes": 14124,
+      "disposition": "SUPERSEDED_ONLY_FOR_EXACT_STARTUP_GUARD_PATH_REALLOCATION",
+      "reason": "V52 correctly grants least-privilege publisher ACLs for its three publisher-owned projections and their sequences, but the existing startup ACL guard rejects those exact grants; the two guard paths were read-only/outside the R1 write boundary."
+    },
+    "unchangedAuthorityInherited": [
+      "owner packet, source authority, v49 route/predicate authority and migration lease",
+      "all R1 backend and frontend write paths and the exact PAY-013 result evidence root",
+      "V52-only migration rule and PAY-011 calculation ownership boundary",
+      "default OFF, empty tenant enrollment and zero-call requirements",
+      "central merge, shell mount, activation, customer-data and production prohibitions"
+    ]
+  },
+  "hashDag": {
+    "predecessorState": {
+      "path": "../start-token-state-successor.v3.json",
+      "sha256": "73d1aacea8eed2b836ef1a42987135b88e96d62ec3b14c2ffc4006eff60c5aff",
+      "bytes": 4937,
+      "mutated": false
+    },
+    "carrierParent": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "7c031c09dac30a5125ec3dc711011155d0ae4e2b",
+      "tree": "d499ca4f06a50b657e1cba159a82af2375d2151a",
+      "originExactAtIssue": true
+    }
+  },
+  "worktrees": {
+    "backend": {
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261017/r7-batch01/pay-013/backend",
+      "branch": "codex/hris-wave7-r7-batch01-pay-013-backend-20261017-r1",
+      "upstream": "origin/codex/hris-wave7-r7-batch01-pay-013-backend-20261017-r1",
+      "head": "fcb5c1f397d14ea77c7ff9714a272449d99e18a4",
+      "tree": "147bb1afd5635209d5db166a513d970b6e0002c3",
+      "upstreamHead": "fcb5c1f397d14ea77c7ff9714a272449d99e18a4",
+      "upstreamAhead": 0,
+      "upstreamBehind": 0,
+      "state": "DIRTY_IN_PROGRESS_EXACTLY_INHERITED",
+      "changedFileClosedSetCount": 31,
+      "changedContentManifestSha256": "ca1315c88bd9cc2215aaf976d952456cc76424da65517087212ad0744cb87633",
+      "porcelainSha256": "3038508600ac4ba00c41dc3710003a0e47a8b2634ce5411c52fd493a5014f792"
+    },
+    "frontend": {
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261017/r7-batch01/pay-013/frontend",
+      "branch": "codex/hris-wave7-r7-batch01-pay-013-frontend-20261017-r1",
+      "upstream": "origin/codex/hris-wave7-r7-batch01-pay-013-frontend-20261017-r1",
+      "head": "8f49115e1a581c61cc083c762a2af6904f2513b9",
+      "tree": "5c46ab13a97b8a1d30a975ae5f66e20ccfe3ac56",
+      "upstreamHead": "8f49115e1a581c61cc083c762a2af6904f2513b9",
+      "upstreamAhead": 0,
+      "upstreamBehind": 0,
+      "state": "SOURCE_COMPLETE_PUSHED_CLEAN_REMOTE_EXACT"
+    },
+    "continuation": "Continue in place. Do not reset, recreate, rebase, merge or cherry-pick a central carrier."
+  },
+  "exactSuccessorDelta": {
+    "additionalBackendWritePaths": [
+      "dwp-payroll-server/src/main/java/com/dwp/services/payroll/PayrollDatabaseMigrationConfiguration.java",
+      "dwp-payroll-server/src/test/java/com/dwp/services/payroll/PayrollServerApplicationContextTest.java"
+    ],
+    "allowedPublisherObjects": {
+      "relations": [
+        "public.pay_population_source_revisions",
+        "public.pay_population_source_members",
+        "public.pay_semantic_source_revisions"
+      ],
+      "sequences": [
+        "public.pay_population_source_revisions_population_source_internal_id_s",
+        "public.pay_population_source_members_population_member_internal_id_seq",
+        "public.pay_semantic_source_revisions_semantic_source_internal_id_seq"
+      ]
+    },
+    "runtimeRules": [
+      "Extend only publisherPolicy with the exact privileges already granted by V52: relation SELECT and INSERT, plus sequence USAGE and SELECT, for the closed set above.",
+      "Preserve pairwise-distinct migration, runtime and publisher roles and preserve steady-state exact-ACL verification.",
+      "Add an application-context/startup policy regression proving the exact V52 publisher ACLs are accepted and an unlisted privilege remains rejected.",
+      "Do not weaken AuxiliaryRoleAclGuard, use a wildcard, authorize UPDATE/DELETE, or change V52 ownership/RLS semantics."
+    ]
+  },
+  "verification": {
+    "first": "./gradlew :dwp-payroll-server:test --tests 'com.dwp.services.payroll.PayrollServerApplicationContextTest' --no-daemon --max-workers=1",
+    "thenOnce": "Run the complete bounded PAY-013 verification cluster declared by the R1 token only after the startup target passes.",
+    "afterFailure": "Fix and rerun only the smallest failed target first.",
+    "repositoryWideSuitePerCorrection": false,
+    "browserBeforeCentralMountAuthorized": false
+  },
+  "resultEvidence": {
+    "exactRoot": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-results-r1/base-tfr-pay-013",
+    "mustAppend": [
+      "R2 replacement-token lineage and inherited dirty manifest digest",
+      "exact startup publisher-policy allowlist and negative over-grant proof",
+      "application-context target result followed by the single bounded PAY-013 verification result"
+    ]
+  },
+  "authority": {
+    "moduleImplementationAuthorized": true,
+    "exactPayrollV52AuthoringAuthorized": true,
+    "existingDirtyStateInheritanceAuthorized": true,
+    "exactStartupGuardRepairAuthorized": true,
+    "moduleBranchCommitAuthorized": true,
+    "moduleBranchPushAuthorized": true,
+    "mergeToDwpDevAuthorized": false,
+    "centralRouteOrShellMountAuthorized": false,
+    "centralCarrierMergeIntoModuleWorktreeAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "invalidationConditions": [
+    "the backend inherited 31-file content manifest differs before resume",
+    "a path outside R1 plus the exact two successor paths is required",
+    "any publisher object or privilege outside the six-object closed set is added",
+    "the publisher can UPDATE or DELETE an authority projection or bypass RLS",
+    "a second Payroll migration, central carrier merge/rebase, feature enablement, tenant enrollment, dwp-dev merge or production release is attempted"
+  ],
+  "completionBoundary": {
+    "requiredResultState": "MODULE_IMPLEMENTATION_COMPLETE_BRANCHES_PUSHED_CONTROL_REVIEW_PENDING_DEFAULT_OFF",
+    "directDwpDevMergeAuthorized": false,
+    "centralResultAdmissionAuthorized": false
+  }
+}
