@@ -1,0 +1,471 @@
+{
+  "schema": "dwp.hris.wave7.module-result-evidence.v1",
+  "resultId": "HRIS-WAVE7-R7-BATCH-02-BASE-TFR-HRM-007-MODULE-RESULT-R1",
+  "issuedAt": "2026-10-18T00:29:38+09:00",
+  "issuedBy": "HRIS-HRM",
+  "moduleSession": "HRIS-HRM",
+  "sliceId": "BASE-TFR-HRM-007",
+  "canonicalFeature": "HRIS_HRM_APPOINTMENT_WORKBENCH",
+  "status": "HRM007_MODULE_SOURCE_COMPLETE_BRANCHES_PUSHED_CONTROL_REVIEW_PENDING_DEFAULT_OFF_ZERO_CREDIT",
+  "authority": {
+    "startToken": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-02-module-start-r1/tokens/base-tfr-hrm-007.start-token.v1.json",
+      "tokenId": "HRIS-WAVE7-R7-BATCH-02-START-BASE-TFR-HRM-007-20261017-R1",
+      "sha256": "0e5f577c60eb697b750fdea05b3b796fed077e4acf10424367cbf02395b0e901",
+      "bytes": 14032,
+      "state": "ISSUED_FRESH_WORKTREE_MATERIALIZATION_OWNER_SOURCE_TEST_COMMIT_PUSH_ONLY_DEFAULT_OFF"
+    },
+    "ownerPacket": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-02-module-start-r1/owner-packets/base-tfr-hrm-007.owner-packet.v1.json",
+      "sha256": "729b3b5587e6621b41934521c08edc6ea6c5ce827bdba4bfb3dac34f8f0f0c41",
+      "bytes": 18901,
+      "state": "SEALED_FOR_FRESH_PINNED_MODULE_TOKEN_DEFAULT_OFF"
+    },
+    "centralAuthorizationSuccessor": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-02-module-start-r1/central-authorization-successor.v1.json",
+      "sha256": "131376aac17d25947abe54fe0dc1969c795f150882e93a671bdae9ce1b618dc1",
+      "bytes": 10098,
+      "laneState": "SEALED_FOR_OWNER_SOURCE_WITH_EXISTING_ACTION_REUSE"
+    },
+    "batch02Preflight": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-02-preflight-r1/semantic-dependency-migration-preflight.v2.json",
+      "sha256": "2706a07dbb245c53a07858a590d1710a865d4a899cbab084b42ea0ed52ec23e8",
+      "bytes": 5773,
+      "decision": "GO_FOR_FRESH_PACKET"
+    },
+    "authorityCarrierExclusion": {
+      "commit": "da32f8ead331968d7c57950e25bebe0bfb84b211",
+      "tree": "cbd6c2882f35e85c067c7b9cd9b3951f06a39ce7",
+      "frontendSourceCommitAncestor": false,
+      "mergeBase": "f749d046417a35642d158c0d0f674704ace7d4bb",
+      "mergeRebaseOrCherryPickPerformed": false
+    }
+  },
+  "moduleResults": {
+    "backend": {
+      "repository": "dwp-backend",
+      "baseCommit": "59964de62cd4da8bcb9f9384d6e2ef85e8c07b09",
+      "baseTree": "108eb56abdb23f6bd4346b21fac1974da18b01c1",
+      "branch": "codex/hris-wave7-r7-batch02-hrm-007-backend-20261017-r1",
+      "upstream": "origin/codex/hris-wave7-r7-batch02-hrm-007-backend-20261017-r1",
+      "sourceResultCommit": "0dfc590808adf78690f20e7153406d747264b933",
+      "sourceResultTree": "28bcb9cb5cd028d0e2284622156b5fc52b2387cc",
+      "sourceCommitParent": "59964de62cd4da8bcb9f9384d6e2ef85e8c07b09",
+      "sourceWorktreeClean": true,
+      "sourceWorktreePorcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "upstreamAhead": 0,
+      "upstreamBehind": 0,
+      "remoteExact": true,
+      "changedPathCount": 19
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "baseCommit": "f749d046417a35642d158c0d0f674704ace7d4bb",
+      "baseTree": "3bfecda45d73a2e70d4685dbb4c5861f73dc64c6",
+      "branch": "codex/hris-wave7-r7-batch02-hrm-007-frontend-20261017-r1",
+      "upstream": "origin/codex/hris-wave7-r7-batch02-hrm-007-frontend-20261017-r1",
+      "initialSourceCommit": "1ceee83eab7bb2afa38dcb66aa67376a927ef9c6",
+      "initialSourceTree": "f53b7b084612a2483cf6820a75c368f8a3cef0e1",
+      "initialSourceCommitParent": "f749d046417a35642d158c0d0f674704ace7d4bb",
+      "sourceResultCommit": "6a00c85e71e650fce03b8422d84c6e561e585afb",
+      "sourceResultTree": "789270c65da3279f6ff767ed2299e4e984547ce3",
+      "sourceCommitParent": "1ceee83eab7bb2afa38dcb66aa67376a927ef9c6",
+      "sourceCommitSubject": "fix(hris): harden HRM-007 governed cache",
+      "sourceLineage": [
+        "f749d046417a35642d158c0d0f674704ace7d4bb",
+        "1ceee83eab7bb2afa38dcb66aa67376a927ef9c6",
+        "6a00c85e71e650fce03b8422d84c6e561e585afb"
+      ],
+      "initialSourceWorktreeCleanBeforeEvidence": true,
+      "initialSourceWorktreePorcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "successorSourcePathsClean": true,
+      "evidencePathsExcludedFromSourceCommits": true,
+      "sourceUpstreamAhead": 0,
+      "sourceUpstreamBehind": 0,
+      "sourceRemoteExact": true,
+      "sourceChangedPathCount": 10,
+      "evidenceCommitPendingControlReview": true
+    }
+  },
+  "implementation": {
+    "transport": [
+      {
+        "queryId": "IAQ-005",
+        "operationId": "IAQ.OP.005",
+        "variantKey": "PEOPLE_CHANGES",
+        "ownerPath": "GET /v1/hris/workbench/team/people-changes",
+        "browserPath": "GET /api/people/v1/hris/workbench/team/people-changes",
+        "route": "/hr/team/people-changes",
+        "responseFieldGroups": [
+          "CHANGE_REQUEST_SUMMARY",
+          "LIMITED_EMPLOYMENT",
+          "APPROVAL_STATUS"
+        ]
+      },
+      {
+        "queryId": "IAQ-007",
+        "operationId": "IAQ.OP.007",
+        "variantKey": "APPOINTMENTS",
+        "ownerPath": "GET /v1/hris/workbench/operations/appointments",
+        "browserPath": "GET /api/people/v1/hris/workbench/operations/appointments",
+        "route": "/hr/operations/people/appointments",
+        "responseFieldGroups": [
+          "APPOINTMENT",
+          "ASSIGNMENT",
+          "EMPLOYMENT"
+        ]
+      },
+      {
+        "queryId": "IAQ-013",
+        "operationId": "IAQ.OP.013",
+        "variantKey": "PEOPLE_EMPLOYMENT",
+        "ownerPath": "GET /v1/hris/workbench/configuration/people-employment",
+        "browserPath": "GET /api/people/v1/hris/workbench/configuration/people-employment",
+        "route": "/hr/settings/people-employment",
+        "responseFieldGroups": [
+          "POLICY_METADATA",
+          "EMPLOYMENT_RULE",
+          "IMPACT_SUMMARY"
+        ]
+      }
+    ],
+    "projection": {
+      "effectiveOn": "REQUEST_FILTER_AND_AS_OF_SEMANTICS_ONLY_NOT_A_RESPONSE_FIELD_GROUP",
+      "additionalProperties": false,
+      "stableTieBreak": "itemPublicId",
+      "limitRange": "1..100",
+      "cursorIsolation": "tenant, query, population, scopeDecisionRevision, authorizationDecisionRevision, asOf, sort, limit, last item, filter digest, locale and time zone",
+      "topLevelScalarPollution": "REJECT_BEFORE_SERVICE",
+      "localeAndTimeZone": "CANONICALIZE_OR_REJECT"
+    },
+    "authorization": {
+      "predicatePolicySets": {
+        "IAQ-005": [
+          "predicate.team-target-population.v1"
+        ],
+        "IAQ-007": [
+          "predicate.hcm-workforce-visible-person.v1"
+        ],
+        "IAQ-013": [
+          "predicate.hcm-configuration-scope.v1"
+        ]
+      },
+      "iaQ013SealedPopulationAllowlist": [
+        "CONFIG_SCOPE",
+        "LEGAL_ENTITY",
+        "POLICY_NODE"
+      ],
+      "iaQ013CurrentOwnerPopulation": "CONFIG_SCOPE_TENANT_WIDE_ONLY; all other supplied population shapes fail closed",
+      "trustedRevisionRule": "cachePolicy.authorizationDecisionRevision equals HcmPep decisionRevision and is distinct from the derived scopeDecisionRevision",
+      "purposeBoundary": "Each query pins its purpose and accepts no caller purpose override; exact wrong-purpose behavior and exact generated profile, projection and schema keys remain pending central-v51 admission.",
+      "opaqueDenial": true
+    },
+    "actions": {
+      "responseKeys": [
+        "hris.action.hrm.create-employee-change-request",
+        "hris.action.hrm.submit-employee-change-request",
+        "hris.action.hrm.create-assignment-event",
+        "hris.action.hrm.validate-assignment-event",
+        "hris.action.hrm.submit-assignment-event",
+        "hris.action.hrm.publish-assignment-event"
+      ],
+      "pepIdsAreProvenanceOnly": true,
+      "actualCommandPermissions": [
+        "ACTION.HRIS_PEOPLE_CHANGE_REQUEST:CREATE",
+        "ACTION.HRIS_ASSIGNMENT_EVENT:MANAGE",
+        "ACTION.HRIS_WORKFORCE_CHANGE_APPROVE:APPROVE"
+      ],
+      "newCommandLifecycleAdded": false
+    },
+    "frontend": {
+      "adapter": "sealed read-only GET adapter",
+      "variants": [
+        "PEOPLE_CHANGES",
+        "APPOINTMENTS",
+        "PEOPLE_EMPLOYMENT"
+      ],
+      "centralSensitiveCacheIdentity": "tenantId, actorId, accessMode, productId, surfaceId, contextScopeKey and authorization decisionRevision plus adapter and complete HRM-007 request identity",
+      "queryMeta": "accessSensitive=true with tenantId, actorId, accessMode, productId, surfaceId, contextScopeKey and decisionRevision",
+      "terminalFailurePolicy": "Terminal, unclassified and branded local contract/revision failures cancel and remove the exact query.",
+      "staleRetention": "HTTP 429/503/network only, with actions disabled",
+      "actionFence": "Synchronous fence plus exact live cache state, current projection and current action checks fail closed through refresh, cursor transition and terminal-error pre-render windows.",
+      "deepLinkState": "force tab/focus; preserve one validated scope including scope:hcm/non-default, individually allowlisted navigationScope and legalEntityPublicId values, asOf and exact current-query sort/filter keys; drop cursor, trusted, unknown and cross-query keys",
+      "materialStates": [
+        "loading",
+        "empty",
+        "partial",
+        "unavailable",
+        "complete",
+        "permission-denied",
+        "stale"
+      ]
+    },
+    "migration": {
+      "stream": "PEOPLE_MAIN",
+      "observedHighWater": "V57",
+      "candidate": "V58",
+      "decision": "NO_LEASE_PROJECTION_ONLY_NO_MIGRATION_NEEDED",
+      "v58Authored": false
+    }
+  },
+  "verification": {
+    "backend": [
+      {
+        "command": "./gradlew :dwp-people-server:compileTestJava --no-daemon --max-workers=1",
+        "runs": 1,
+        "result": "PASS"
+      },
+      {
+        "command": "./gradlew :dwp-people-server:test --tests 'com.dwp.services.people.hris.workbench.hrm007.*' --no-daemon --max-workers=1",
+        "runs": 1,
+        "tests": 28,
+        "passed": 27,
+        "failed": 1,
+        "result": "ONE_FIXTURE_ONLY_TEST_FAILURE",
+        "failure": "Hrm007CursorCodecTest.allSealedBindingsAndSignatureFailClosedWhenChanged"
+      },
+      {
+        "command": "./gradlew :dwp-people-server:test --tests 'com.dwp.services.people.hris.workbench.hrm007.Hrm007CursorCodecTest.allSealedBindingsAndSignatureFailClosedWhenChanged' --no-daemon --max-workers=1",
+        "runs": 1,
+        "tests": 1,
+        "passed": 1,
+        "failed": 0,
+        "result": "PASS"
+      },
+      {
+        "command": "./gradlew :dwp-people-server:test --tests 'com.dwp.services.people.hris.employeeservice.employeechange.HrmIaEntryQueryContractTest' --tests 'com.dwp.services.people.hris.employment.HrmG3SliceContractTest' --no-daemon --max-workers=1",
+        "runs": 1,
+        "tests": 16,
+        "passed": 16,
+        "failed": 0,
+        "result": "PASS"
+      },
+      {
+        "target": "Hrm007AuthorityTest post-audit smallest target",
+        "tests": 4,
+        "passed": 4,
+        "failed": 0,
+        "result": "PASS"
+      },
+      {
+        "target": "Hrm007IaEntryQueryContractTest post-audit smallest target",
+        "tests": 14,
+        "passed": 14,
+        "failed": 0,
+        "result": "PASS"
+      },
+      {
+        "target": "Hrm007AuthorityTest plus Hrm007ControllerContractTest final smallest targets",
+        "tests": 11,
+        "passed": 11,
+        "failed": 0,
+        "result": "PASS"
+      }
+    ],
+    "backendBroadRerunAfterCorrections": false,
+    "frontend": [
+      {
+        "command": "pnpm exec vitest run apps/dwp/src/features/hris/people/__tests__/g3-slices/base-tfr-hrm-007.slice.test.tsx apps/dwp/src/features/hris/people/hrm-007-workbench",
+        "runs": 1,
+        "result": "BLOCKED_BEFORE_TEST_COLLECTION",
+        "reason": "Repository package-manager enforcement declares Yarn; no Vitest source test started."
+      },
+      {
+        "command": "pnpm exec eslint apps/dwp/src/features/hris/people/hrm-007-workbench apps/dwp/src/features/hris/people/__tests__/g3-slices/base-tfr-hrm-007.slice.test.tsx",
+        "runs": 1,
+        "result": "BLOCKED_BEFORE_LINT",
+        "reason": "Repository package-manager enforcement declares Yarn; no ESLint target started."
+      },
+      {
+        "command": "yarn exec vitest run apps/dwp/src/features/hris/people/__tests__/g3-slices/base-tfr-hrm-007.slice.test.tsx apps/dwp/src/features/hris/people/hrm-007-workbench",
+        "runs": 1,
+        "files": 4,
+        "tests": 38,
+        "passed": 37,
+        "failed": 1,
+        "result": "ONE_TEST_CODE_FAILURE",
+        "failure": "ReferenceError: Stack is not defined in the workbench test harness"
+      },
+      {
+        "command": "yarn exec vitest run apps/dwp/src/features/hris/people/hrm-007-workbench/hrm-007-workbench.test.tsx",
+        "runs": 1,
+        "tests": 17,
+        "passed": 17,
+        "failed": 0,
+        "result": "PASS"
+      },
+      {
+        "command": "yarn exec vitest run apps/dwp/src/features/hris/people/hrm-007-workbench/hrm-007-api.test.ts",
+        "runs": 2,
+        "testsPerRun": 9,
+        "passedPerRun": 9,
+        "failedPerRun": 0,
+        "result": "PASS"
+      },
+      {
+        "command": "yarn exec vitest run apps/dwp/src/features/hris/people/hrm-007-workbench/hrm-007-contract.test.ts apps/dwp/src/features/hris/people/hrm-007-workbench/hrm-007-workbench.test.tsx",
+        "runs": 1,
+        "tests": 40,
+        "passed": 40,
+        "failed": 0,
+        "perFile": {
+          "hrm-007-contract.test.ts": 9,
+          "hrm-007-workbench.test.tsx": 31
+        },
+        "result": "PASS"
+      }
+    ],
+    "frontendSuccessorTargetedRuns": [
+      {
+        "target": "initial governed-cache and deep-link successor target",
+        "passed": 13,
+        "failed": 0,
+        "skipped": 20,
+        "result": "PASS"
+      },
+      {
+        "target": "intermediate generalized non-retain attempt",
+        "passed": 13,
+        "failed": 1,
+        "skipped": 19,
+        "result": "ONE_INTERMEDIATE_FAILURE_BEFORE_CORRECTION"
+      },
+      {
+        "target": "corrected main successor target",
+        "passed": 14,
+        "failed": 0,
+        "skipped": 19,
+        "result": "PASS"
+      },
+      {
+        "target": "default-gc sensitive-cache purge target",
+        "passed": 8,
+        "failed": 0,
+        "skipped": 25,
+        "result": "PASS"
+      },
+      {
+        "target": "opaque-scope target",
+        "passed": 1,
+        "failed": 0,
+        "skipped": 32,
+        "result": "PASS"
+      },
+      {
+        "target": "action-fence target",
+        "passed": 1,
+        "failed": 0,
+        "skipped": 32,
+        "result": "PASS"
+      },
+      {
+        "target": "combined P1 regression target before cursor extension",
+        "passed": 10,
+        "failed": 0,
+        "skipped": 23,
+        "result": "PASS"
+      },
+      {
+        "target": "final fence target including same-act refresh, Next transition and terminal-error gap",
+        "passed": 1,
+        "failed": 0,
+        "skipped": 32,
+        "result": "PASS"
+      }
+    ],
+    "frontendBroadRerunAfterSuccessor": false,
+    "frontendLatestPerFileBoundedInventory": {
+      "base-tfr-hrm-007.slice.test.tsx": 5,
+      "hrm-007-api.test.ts": 9,
+      "hrm-007-contract.test.ts": 9,
+      "hrm-007-workbench.test.tsx": 33,
+      "boundedInventoryTotal": 56,
+      "singleCombinedRunClaimed": false
+    },
+    "frontendLint": {
+      "command": "yarn exec eslint apps/dwp/src/features/hris/people/hrm-007-workbench apps/dwp/src/features/hris/people/__tests__/g3-slices/base-tfr-hrm-007.slice.test.tsx",
+      "result": "PASS",
+      "laterSmallestAffectedScopes": "PASS",
+      "finalExactCommand": "yarn exec eslint apps/dwp/src/features/hris/people/hrm-007-workbench",
+      "finalExactResult": "PASS"
+    },
+    "frontendFormat": {
+      "tool": "yarn exec prettier --check",
+      "scope": "changed frontend source files only",
+      "result": "PASS",
+      "finalExactCommand": "yarn exec prettier --check apps/dwp/src/features/hris/people/hrm-007-workbench",
+      "finalExactResult": "PASS"
+    },
+    "browser": {
+      "run": false,
+      "result": "PENDING_CENTRAL_ROUTE_MOUNT_BROWSER_GATE",
+      "reason": "Central v51 generation and route/shell admission are not module-authorized."
+    }
+  },
+  "acceptance": {
+    "resultPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-02-module-results-r1/base-tfr-hrm-007/acceptance-results.v1.json",
+    "sha256": "5fb202f9b45d5231999294da187fd24dfa5ee1a3a5e771600f4bcf73837e71f7",
+    "bytes": 9850,
+    "passed": 10,
+    "pendingCentralV51ConfigScopeOnly": 1,
+    "pendingCentralBrowserGate": 1,
+    "failed": 0
+  },
+  "supportingEvidence": [
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-02-module-results-r1/base-tfr-hrm-007/materialization-receipt.v1.json",
+      "sha256": "34710031254317e790c6435f83d5ea55964612e8befc55c52c7b43529d8d3d12",
+      "bytes": 7024
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-02-module-results-r1/base-tfr-hrm-007/entry-query-evidence.v1.json",
+      "sha256": "12185e39c85f25a225572b49c1d38c5cad5f44a2be3687d11a4d64b8a483479b",
+      "bytes": 13115
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-02-module-results-r1/base-tfr-hrm-007/changed-path-and-no-recount.v1.json",
+      "sha256": "f96218a582ef54e88ec86a51f11d83c605ab5bebe9fe1281c8997ce487b2f669",
+      "bytes": 11531
+    }
+  ],
+  "sourceReview": {
+    "independentAudit": "NO_P0_OR_P1",
+    "nonblockingResiduals": [
+      "Deep-link filter and asOf value validation remains looser than the sealed request parser.",
+      "Admitted navigation selector-pair canonicalization remains looser than the sealed parser."
+    ],
+    "disposition": "NONBLOCKING_P2_CENTRAL_ADMISSION_REVIEW"
+  },
+  "activationBoundary": {
+    "runtimeDefault": "OFF",
+    "enrolledTenants": [],
+    "ownerRuntimeMountWhenOff": false,
+    "ownerCallsWhenOffOrUnenrolled": 0,
+    "enabledActionsWhenOffOrUnenrolled": 0,
+    "centralV51Generated": false,
+    "centralRouteOrShellMountedByModule": false,
+    "browserGatePassed": false,
+    "featureEnabled": false,
+    "tenantEnrollmentPerformed": false,
+    "dwpDevMergePerformed": false,
+    "centralPublishPerformed": false,
+    "productionActivationPerformed": false,
+    "businessCompletionCredit": 0
+  },
+  "remainingControlGates": [
+    "Control review and central result admission",
+    "Central product-authorization v51 generation, exact generated profile/projection/schema keys, wrong-purpose runtime proof and publication",
+    "Central route and shell mount",
+    "AC10 browser viewport, zoom, theme, contrast, reduced-motion, keyboard and screen-reader matrix",
+    "Merge to dwp-dev",
+    "Explicit tenant enrollment, publish and activation authority"
+  ],
+  "nonClaims": [
+    "No central v51, generated IA, route, shell, menu or architecture change occurred in either module source branch.",
+    "No exact generated profile, projection, schema-key or wrong-purpose central-v51 admission pass is claimed by the module source branches.",
+    "No browser acceptance pass is claimed before central route and shell admission.",
+    "No HRM-008 or HRM-010 lifecycle, command, event, outbox, approval, receipt, source, test or migration is counted as HRM-007 delivery.",
+    "No merge, central publication, feature enablement, tenant enrollment, customer-data use or production activation occurred."
+  ],
+  "businessCompletionCredit": 0
+}

@@ -1,0 +1,341 @@
+{
+  "schema": "dwp.hris.wave7.module-entry-query-evidence.v1",
+  "evidenceId": "HRIS-WAVE7-R7-BATCH-02-BASE-TFR-HRM-007-ENTRY-QUERY-R1",
+  "issuedAt": "2026-10-18T00:29:38+09:00",
+  "issuedBy": "HRIS-HRM",
+  "sliceId": "BASE-TFR-HRM-007",
+  "resultState": "HRM007_MODULE_SOURCE_COMPLETE_BRANCHES_PUSHED_CONTROL_REVIEW_PENDING_DEFAULT_OFF_ZERO_CREDIT",
+  "entryQueries": [
+    {
+      "queryId": "IAQ-005",
+      "operationId": "IAQ.OP.005",
+      "variantKey": "PEOPLE_CHANGES",
+      "method": "GET",
+      "ownerPath": "/v1/hris/workbench/team/people-changes",
+      "browserPath": "/api/people/v1/hris/workbench/team/people-changes",
+      "canonicalRoute": "/hr/team/people-changes",
+      "deepLinkTemplate": "/hr/team/people-changes?tab=overview&focus={resourcePublicId}",
+      "capability": "hcm.team.people-change.view",
+      "profile": "HRIS_LINE_MANAGER",
+      "duty": "HRIS_DUTY_MANAGER_PEOPLE_CHANGE_READER",
+      "purpose": "HR_LIFECYCLE",
+      "productId": "hcm",
+      "surfaceId": "hcm.team",
+      "populationSet": [
+        "APPROVED_DELEGATION",
+        "DIRECT_REPORTS"
+      ],
+      "targetBindingKinds": [
+        "TARGET_POPULATION"
+      ],
+      "predicatePolicyKeys": [
+        "predicate.team-target-population.v1"
+      ],
+      "responseFieldGroups": [
+        "CHANGE_REQUEST_SUMMARY",
+        "LIMITED_EMPLOYMENT",
+        "APPROVAL_STATUS"
+      ],
+      "effectiveOn": "REQUEST_FILTER_AND_AS_OF_SEMANTICS_ONLY_NOT_A_RESPONSE_FIELD_GROUP",
+      "pageLimit": {
+        "minimum": 1,
+        "maximum": 100
+      },
+      "sortAllowlist": [
+        "approvalStatus:ASC",
+        "approvalStatus:DESC",
+        "changeRequestSummary:ASC",
+        "changeRequestSummary:DESC",
+        "itemPublicId:ASC",
+        "itemPublicId:DESC",
+        "limitedEmployment:ASC",
+        "limitedEmployment:DESC"
+      ],
+      "actions": [
+        {
+          "actionKey": "hris.action.hrm.create-employee-change-request",
+          "pepProvenance": "PEP-HRM-003",
+          "commandPermission": "ACTION.HRIS_PEOPLE_CHANGE_REQUEST:CREATE",
+          "additionalConditions": [
+            "CHANGE_REQUEST_SUMMARY field decision is VIEW"
+          ]
+        },
+        {
+          "actionKey": "hris.action.hrm.submit-employee-change-request",
+          "pepProvenance": "PEP-HRM-004",
+          "commandPermission": "ACTION.HRIS_PEOPLE_CHANGE_REQUEST:CREATE",
+          "additionalConditions": [
+            "CHANGE_REQUEST_SUMMARY field decision is VIEW",
+            "item state is DRAFT",
+            "trusted actor personPublicId equals requesterPublicId"
+          ]
+        }
+      ]
+    },
+    {
+      "queryId": "IAQ-007",
+      "operationId": "IAQ.OP.007",
+      "variantKey": "APPOINTMENTS",
+      "method": "GET",
+      "ownerPath": "/v1/hris/workbench/operations/appointments",
+      "browserPath": "/api/people/v1/hris/workbench/operations/appointments",
+      "canonicalRoute": "/hr/operations/people/appointments",
+      "deepLinkTemplate": "/hr/operations/people/appointments?tab=overview&focus={resourcePublicId}",
+      "capability": "hcm.operations.people.view",
+      "profile": "HRIS_HR_BUSINESS_PARTNER",
+      "duty": "HRIS_DUTY_CORE_VIEWER",
+      "purpose": "HR_LIFECYCLE",
+      "productId": "hcm",
+      "surfaceId": "hcm.operations",
+      "populationSet": [
+        "LEGAL_ENTITY",
+        "NAMED_POPULATION",
+        "ORG_TREE",
+        "ORG_UNIT"
+      ],
+      "targetBindingKinds": [
+        "TARGET_POPULATION"
+      ],
+      "predicatePolicyKeys": [
+        "predicate.hcm-workforce-visible-person.v1"
+      ],
+      "responseFieldGroups": [
+        "APPOINTMENT",
+        "ASSIGNMENT",
+        "EMPLOYMENT"
+      ],
+      "effectiveOn": "REQUEST_FILTER_AND_AS_OF_SEMANTICS_ONLY_NOT_A_RESPONSE_FIELD_GROUP",
+      "pageLimit": {
+        "minimum": 1,
+        "maximum": 100
+      },
+      "sortAllowlist": [
+        "appointment:ASC",
+        "appointment:DESC",
+        "assignment:ASC",
+        "assignment:DESC",
+        "employment:ASC",
+        "employment:DESC",
+        "itemPublicId:ASC",
+        "itemPublicId:DESC"
+      ],
+      "actions": [
+        {
+          "actionKey": "hris.action.hrm.create-assignment-event",
+          "pepProvenance": "PEP-HRM-006",
+          "commandPermission": "ACTION.HRIS_ASSIGNMENT_EVENT:MANAGE",
+          "additionalConditions": [
+            "ASSIGNMENT field decision is VIEW"
+          ]
+        },
+        {
+          "actionKey": "hris.action.hrm.validate-assignment-event",
+          "pepProvenance": "PEP-HRM-007",
+          "commandPermission": "ACTION.HRIS_ASSIGNMENT_EVENT:MANAGE",
+          "additionalConditions": [
+            "ASSIGNMENT field decision is VIEW",
+            "item state is DRAFT"
+          ]
+        },
+        {
+          "actionKey": "hris.action.hrm.submit-assignment-event",
+          "pepProvenance": "PEP-HRM-008",
+          "commandPermission": "ACTION.HRIS_ASSIGNMENT_EVENT:MANAGE",
+          "additionalConditions": [
+            "ASSIGNMENT field decision is VIEW",
+            "item state is VALIDATED"
+          ]
+        },
+        {
+          "actionKey": "hris.action.hrm.publish-assignment-event",
+          "pepProvenance": "PEP-HRM-009",
+          "commandPermission": "ACTION.HRIS_WORKFORCE_CHANGE_APPROVE:APPROVE",
+          "additionalConditions": [
+            "ASSIGNMENT field decision is VIEW",
+            "item state is APPROVED"
+          ]
+        }
+      ]
+    },
+    {
+      "queryId": "IAQ-013",
+      "operationId": "IAQ.OP.013",
+      "variantKey": "PEOPLE_EMPLOYMENT",
+      "method": "GET",
+      "ownerPath": "/v1/hris/workbench/configuration/people-employment",
+      "browserPath": "/api/people/v1/hris/workbench/configuration/people-employment",
+      "canonicalRoute": "/hr/settings/people-employment",
+      "deepLinkTemplate": "/hr/settings/people-employment?tab=overview&focus={resourcePublicId}",
+      "capability": "hcm.configuration.workbench.view",
+      "profile": "HRIS_CONFIG_AUTHOR",
+      "duty": "HRIS_DUTY_CONFIGURATION_WORKBENCH_READER",
+      "purpose": "HRIS_CONFIGURATION",
+      "productId": "hcm",
+      "surfaceId": "hcm.management",
+      "populationSet": [
+        "CONFIG_SCOPE",
+        "LEGAL_ENTITY",
+        "POLICY_NODE"
+      ],
+      "currentOwnerPopulationConstraint": "CONFIG_SCOPE_TENANT_WIDE_ONLY_WITH_NO_MANAGER_ASSIGNMENT_OR_ORGANIZATION_IDS; every other supplied population shape fails closed",
+      "targetBindingKinds": [
+        "CONFIG_SCOPE"
+      ],
+      "predicatePolicyKeys": [
+        "predicate.hcm-configuration-scope.v1"
+      ],
+      "responseFieldGroups": [
+        "POLICY_METADATA",
+        "EMPLOYMENT_RULE",
+        "IMPACT_SUMMARY"
+      ],
+      "effectiveOn": "REQUEST_FILTER_AND_AS_OF_SEMANTICS_ONLY_NOT_A_RESPONSE_FIELD_GROUP",
+      "pageLimit": {
+        "minimum": 1,
+        "maximum": 100
+      },
+      "sortAllowlist": [
+        "employmentRule:ASC",
+        "employmentRule:DESC",
+        "impactSummary:ASC",
+        "impactSummary:DESC",
+        "itemPublicId:ASC",
+        "itemPublicId:DESC",
+        "policyMetadata:ASC",
+        "policyMetadata:DESC"
+      ],
+      "actions": []
+    }
+  ],
+  "commonProjectionContract": {
+    "responseFieldGroupCountPerQuery": 3,
+    "additionalProperties": false,
+    "queryStates": [
+      "COMPLETE",
+      "EMPTY",
+      "PARTIAL",
+      "UNAVAILABLE"
+    ],
+    "freshnessStates": [
+      "CURRENT",
+      "STALE",
+      "UNAVAILABLE"
+    ],
+    "unavailableRule": "UNAVAILABLE requires UNAVAILABLE freshness, zero items and no cursor.",
+    "partialRule": "PARTIAL requires at least one typed partial failure.",
+    "cursorBindings": [
+      "tenant",
+      "queryId",
+      "targetPopulation",
+      "scopeDecisionRevision",
+      "authorizationDecisionRevision",
+      "asOf",
+      "sort",
+      "pageLimit",
+      "lastItemPublicId",
+      "filterDigest",
+      "locale",
+      "timeZone"
+    ],
+    "requestValidation": [
+      "Unknown query, sort, filter, field or action is rejected.",
+      "Caller tenant input is rejected.",
+      "Required top-level scalars must occur exactly once; optional top-level scalars may occur at most once.",
+      "Empty filters serialize as exactly filter={}; nested filters are allowed only when at least one allowlisted leaf is emitted.",
+      "Locale and time zone are canonicalized or rejected."
+    ],
+    "authorization": [
+      "Exact route predicate-policy and target-binding sets are required.",
+      "Projection cachePolicy.authorizationDecisionRevision must equal the trusted HcmPep decisionRevision and is distinct from the derived scopeDecisionRevision.",
+      "Each module query pins its purpose and accepts no caller purpose override; exact wrong-purpose runtime proof and exact generated profile, projection and schema keys remain pending central-v51 admission.",
+      "Wrong or stale authority is opaque and discloses no object existence."
+    ]
+  },
+  "frontendCacheAndRefresh": {
+    "centralSensitiveCacheIdentity": [
+      "tenantId",
+      "actorId",
+      "accessMode",
+      "productId",
+      "surfaceId",
+      "contextScopeKey",
+      "authorization decisionRevision"
+    ],
+    "hrm007RequestIdentity": [
+      "adapter identity",
+      "queryId",
+      "locale",
+      "timeZone",
+      "correlationId",
+      "asOf",
+      "sort",
+      "limit",
+      "cursor",
+      "filter"
+    ],
+    "queryMeta": {
+      "accessSensitive": true,
+      "fields": [
+        "tenantId",
+        "actorId",
+        "accessMode",
+        "productId",
+        "surfaceId",
+        "contextScopeKey",
+        "decisionRevision"
+      ]
+    },
+    "cancelAndRemoveExactQueryOn": [
+      "HTTP_400",
+      "HTTP_401",
+      "HTTP_403",
+      "HTTP_404",
+      "HTTP_409",
+      "BRANDED_LOCAL_CONTRACT_ERROR",
+      "BRANDED_LOCAL_REVISION_ERROR",
+      "ANY_OTHER_UNCLASSIFIED_NON_RETAINABLE_FAILURE"
+    ],
+    "retainStaleDataWithActionsDisabledOn": [
+      "HTTP_429",
+      "HTTP_503",
+      "NETWORK_ERROR"
+    ],
+    "actionFence": "Actions fail closed through refresh, cursor transition and terminal-error pre-render windows by a synchronous fence plus exact live cache state, current projection and current action checks.",
+    "paginationIdentityChangeRule": "Reset synchronously before a changed query, scope, decision revision, options or adapter can issue the prior cursor.",
+    "deepLinkState": "Force tab=overview and the selected focus; preserve only one validated scope value including scope:hcm/non-default, individually allowlisted navigationScope and legalEntityPublicId values, asOf and the exact current-query sort/filter allowlist; drop cursor, trusted context, unknown keys and cross-query sort/filter keys."
+  },
+  "boundedEvidence": {
+    "backend": [
+      "The prescribed HRM-007 wildcard run collected 28 tests: 27 passed and one fixture-only CursorCodec test failed before source execution completed.",
+      "Hrm007CursorCodecTest.allSealedBindingsAndSignatureFailClosedWhenChanged passed on the required smallest named rerun.",
+      "The exact HRM-008 and HRM-010 reuse seams passed 16 of 16 once.",
+      "Post-audit Hrm007AuthorityTest passed 4 of 4, Hrm007IaEntryQueryContractTest passed 14 of 14, and final Authority plus Controller targets passed 11 of 11."
+    ],
+    "frontend": [
+      "The Yarn-equivalent initial exact cluster collected 38 tests: 37 passed and one test-harness-only Stack import failure occurred.",
+      "The smallest workbench rerun passed 17 of 17 after the test-only correction.",
+      "Post-hardening API passed 9 of 9; contract plus workbench passed 40 of 40; final API rerun passed 9 of 9.",
+      "Successor targets recorded: initial 13 passed and 20 skipped; an intermediate generalized non-retain attempt had 13 passed, 1 failed and 19 skipped before correction; corrected main target had 14 passed and 19 skipped.",
+      "Successor default-gc purge target had 8 passed and 25 skipped; opaque-scope target had 1 passed and 32 skipped; action-fence target had 1 passed and 32 skipped.",
+      "The combined P1 regression target had 10 passed and 23 skipped before cursor extension; the final fence target including same-act refresh, Next transition and terminal-error gap had 1 passed and 32 skipped.",
+      "Final exact workbench ESLint and Prettier checks passed; no broad test rerun occurred.",
+      "The latest per-file bounded inventory is slice 5, API 9, contract 9 and workbench 33; this is not claimed as one 56-test run."
+    ]
+  },
+  "sourceReview": {
+    "independentAudit": "NO_P0_OR_P1",
+    "nonblockingResiduals": [
+      "Deep-link filter and asOf value validation remains looser than the sealed request parser.",
+      "Admitted navigation selector-pair canonicalization remains looser than the sealed parser."
+    ],
+    "disposition": "NONBLOCKING_P2_CENTRAL_ADMISSION_REVIEW"
+  },
+  "centralAdmissionPending": [
+    "product-authorization v51",
+    "exact generated profile, projection and schema keys",
+    "exact wrong-purpose runtime proof",
+    "route and shell mount",
+    "browser gate, dwp-dev merge, publish and activation"
+  ],
+  "businessCompletionCredit": 0
+}
