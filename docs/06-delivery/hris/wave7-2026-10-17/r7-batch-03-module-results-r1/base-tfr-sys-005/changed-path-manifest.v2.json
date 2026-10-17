@@ -1,0 +1,37 @@
+{
+  "schema": "dwp.hris.changed-path-manifest.v2",
+  "generatedAt": "2026-10-17T19:26:54Z",
+  "sliceId": "BASE-TFR-SYS-005",
+  "successorOf": {
+    "path": "changed-path-manifest.v1.json",
+    "sha256": "2574662bcc0bd46f02e594790d69135ef3aacc5d9579a5725c0213a531d85d06",
+    "bytes": 3028,
+    "mutationPerformed": false
+  },
+  "correctionBase": {
+    "commit": "ff55d9bd94c8be71bc9da58b51d6a4e37836b8d7",
+    "tree": "1c8893406cdaa53df54b8771a2fb370a4364b663"
+  },
+  "successorPaths": [
+    "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-results-r1/base-tfr-sys-005/verification-receipt.v2.json",
+    "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-results-r1/base-tfr-sys-005/acceptance-receipt.v2.json",
+    "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-results-r1/base-tfr-sys-005/module-result.v2.json",
+    "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-results-r1/base-tfr-sys-005/branch-receipt.v2.json",
+    "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-results-r1/base-tfr-sys-005/changed-path-manifest.v2.json"
+  ],
+  "effectiveBranchDiff": {
+    "baseCommit": "695c40b40c7461911100243b7d052dea07584bc0",
+    "expectedResultRootPathCountAfterCorrection": 12,
+    "allPathsUnderExactResultRoot": true,
+    "v1EvidenceFilesModified": false,
+    "productionSourceChanged": false,
+    "testSourceChanged": false,
+    "backendChanged": false,
+    "migrationChanged": false,
+    "menuOrRouteChanged": false,
+    "generatedOrProductAuthorizationChanged": false,
+    "openApiOrAsyncApiChanged": false,
+    "centralControlChanged": false,
+    "dwpDevMerged": false
+  }
+}
