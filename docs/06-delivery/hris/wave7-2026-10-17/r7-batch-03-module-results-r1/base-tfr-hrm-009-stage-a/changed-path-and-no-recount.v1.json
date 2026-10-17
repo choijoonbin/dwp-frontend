@@ -1,0 +1,259 @@
+{
+  "schema": "dwp.hris.wave7.changed-path-and-no-recount.v1",
+  "evidenceId": "HRIS-WAVE7-R7-BATCH-03-BASE-TFR-HRM-009-STAGE-A-CHANGED-PATH-R1",
+  "issuedAt": "2026-10-18T05:44:32+09:00",
+  "issuedBy": "HRIS-HRM",
+  "sliceId": "BASE-TFR-HRM-009",
+  "stageId": "BASE-TFR-HRM-009-STAGE-A",
+  "resultState": "HRM009_REQUEST_ISSUE_STAGE_A_SOURCE_AND_V58_COMPLETE_EXACT_MODULE_BRANCHES_PUSHED_CONTROL_REVIEW_PENDING_DEFAULT_OFF_FULL_SLICE_OPEN_ZERO_CREDIT",
+  "manifestFormats": {
+    "path": "LC_ALL=C sorted repository-relative path followed by LF for every record, including the final record",
+    "nameStatus": "LC_ALL=C sorted <status><TAB><repository-relative-path><LF> for every record, including the final record",
+    "content": "LC_ALL=C sorted <lowercase-sha256><SP><decimal-bytes><SP><repository-relative-path><LF> for every record, including the final record"
+  },
+  "backend": {
+    "baseCommit": "f448c36feee2ed7f59eacc64f450e6db3865f1c5",
+    "baseTree": "cec08e55f33fa71482c583137e3ccc3d8bf11572",
+    "branch": "codex/hris-wave7-r7-batch03-hrm-009-stage-a-backend-20261018-r1",
+    "upstream": "origin/codex/hris-wave7-r7-batch03-hrm-009-stage-a-backend-20261018-r1",
+    "initialSourceCommit": "4f8bf1de944874d5f021653c0ccc50d43c740b45",
+    "initialSourceTree": "1413fecb00b36ed9e61111022e85cb7c4230602c",
+    "initialSourceCommitParent": "f448c36feee2ed7f59eacc64f450e6db3865f1c5",
+    "sourceCommit": "39abe180426b553ffab0122add331f337e6f7821",
+    "sourceTree": "7097f60a9ccca1fe3cc6449a4242d6b83c1b8fdf",
+    "sourceCommitParent": "4f8bf1de944874d5f021653c0ccc50d43c740b45",
+    "sourceCommitSubject": "fix(hris): close HRM-009 replay and query boundaries",
+    "sourceCommitCountFromBase": 2,
+    "sourceLineage": [
+      "f448c36feee2ed7f59eacc64f450e6db3865f1c5",
+      "4f8bf1de944874d5f021653c0ccc50d43c740b45",
+      "39abe180426b553ffab0122add331f337e6f7821"
+    ],
+    "changedPathCount": 21,
+    "sortedPathManifestSha256": "f58ec1f283109c6e7e688b752424aff085571dabd06b897665f5e43dc8436f57",
+    "sortedNameStatusManifestSha256": "57b75938945ab880633c68696e520d3e414ffecfba5fa8d10a40baaf036cbfbc",
+    "sortedContentManifestSha256": "49841d94c18e176265e4d79f7178b39a1b1fc75d2b055a61091ec99be10df21f",
+    "contentManifestTotalBytes": 310617,
+    "sourceWorktreePorcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "changedPaths": [
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/certificate/CertificateArtifactPort.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/certificate/CertificateAuthority.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/certificate/CertificateCanonicalizer.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/certificate/CertificateController.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/certificate/CertificateCursorCodec.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/certificate/CertificateDtos.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/certificate/CertificateException.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/certificate/CertificateProblemAdvice.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/certificate/CertificateProjector.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/certificate/CertificateQueryDefinition.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/certificate/CertificateRepository.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/certificate/CertificateService.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/certificate/FailClosedCertificateArtifactAdapter.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/certificate/Hrm009RolloutGate.java",
+      "dwp-people-server/src/main/resources/db/migration/V58__hrm_base_tfr_hrm_009_stage_a.sql",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/employeeservice/certificate/CertificateArtifactPortConformanceTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/employeeservice/certificate/CertificateAuthorizationTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/employeeservice/certificate/CertificateIdempotencyRecoveryTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/employeeservice/certificate/Hrm009StageAContractTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/employeeservice/certificate/Hrm009V58MigrationContractTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/employeeservice/certificate/Hrm009V58MigrationPostgresTest.java"
+    ],
+    "outsideAuthorizedUnionCount": 0,
+    "remoteExactBeforeEvidence": true,
+    "upstreamAhead": 0,
+    "upstreamBehind": 0
+  },
+  "frontendSource": {
+    "baseCommit": "a315bd70835172713fee31269f77e7870269abdb",
+    "baseTree": "340436ab130d1b4d68c778a5d904a75a0f36590e",
+    "branch": "codex/hris-wave7-r7-batch03-hrm-009-stage-a-frontend-20261018-r1",
+    "upstream": "origin/codex/hris-wave7-r7-batch03-hrm-009-stage-a-frontend-20261018-r1",
+    "initialSourceCommit": "06ff7e8a737ed798d93516d1859f1e83d4fb8065",
+    "initialSourceTree": "499aa93b865822e1e92dca76f03bb1ce093ce796",
+    "initialSourceCommitParent": "a315bd70835172713fee31269f77e7870269abdb",
+    "sourceCommit": "c300a50d3a38b21e853c1d9f29af26eee17814b5",
+    "sourceTree": "04d1e895858630f8c88ab9adc72ba64ee148b288",
+    "sourceCommitParent": "06ff7e8a737ed798d93516d1859f1e83d4fb8065",
+    "sourceCommitSubject": "fix(hris): align HRM-009 UUID transport boundary",
+    "sourceCommitCountFromBase": 2,
+    "sourceLineage": [
+      "a315bd70835172713fee31269f77e7870269abdb",
+      "06ff7e8a737ed798d93516d1859f1e83d4fb8065",
+      "c300a50d3a38b21e853c1d9f29af26eee17814b5"
+    ],
+    "changedPathCount": 9,
+    "sortedPathManifestSha256": "a1bb54a410ead2178f2a4a230f528c1f854bb5cf64ea95de18a05e0e61bb6fb6",
+    "sortedNameStatusManifestSha256": "6faaa383cb7900851f9a2f230e8167ad2b90d8513b568fff88507028a54001d8",
+    "sortedContentManifestSha256": "85f4bc865d3e2a96528fe8ab4a0ccfdfca8466b5d6b834450fda8d688e2937a7",
+    "contentManifestTotalBytes": 113895,
+    "sourceWorktreePorcelainSha256BeforeEvidence": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "successorSourcePathsClean": true,
+    "evidencePathsExcludedFromSourceCommits": true,
+    "changedPaths": [
+      "apps/dwp/src/features/hris/employee-services/certificates/certificate-api.ts",
+      "apps/dwp/src/features/hris/employee-services/certificates/certificate-contract.ts",
+      "apps/dwp/src/features/hris/employee-services/certificates/certificate-workbench.tsx",
+      "apps/dwp/src/features/hris/employee-services/certificates/index.ts",
+      "apps/dwp/src/features/hris/employee-services/certificates/testing/certificate-api.test.ts",
+      "apps/dwp/src/features/hris/employee-services/certificates/testing/certificate-fixtures.test-support.ts",
+      "apps/dwp/src/features/hris/employee-services/certificates/testing/certificate-workbench.test.tsx",
+      "apps/dwp/src/features/hris/employee-services/certificates/use-certificate-workbench.ts",
+      "apps/dwp/src/features/hris/people/__tests__/g3-slices/base-tfr-hrm-009-stage-a.slice.test.tsx"
+    ],
+    "outsideAuthorizedUnionCount": 0,
+    "remoteExactBeforeEvidence": true,
+    "upstreamAhead": 0,
+    "upstreamBehind": 0
+  },
+  "frontendFinalClosedSet": {
+    "sourcePathCount": 9,
+    "evidencePathCount": 6,
+    "totalChangedPathCount": 15,
+    "sortedPathManifestSha256": "51278c8d9f5f3c1bff39184ac35a99ad4f170d203923978b59a8b301651c4e47",
+    "sortedNameStatusManifestSha256": "b8e6fe8dfc602e669c40595da920d1c386aa6b0792a9b00893fafa1d4e151022",
+    "contentManifestSha256": null,
+    "contentManifestOmissionReason": "A manifest embedded in one of the files it hashes would be self-referential. Supporting evidence files are individually hashed by module-result-evidence.v1.json, while this closed set canonically seals names and statuses only.",
+    "evidencePaths": [
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-results-r1/base-tfr-hrm-009-stage-a/acceptance-results.v1.json",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-results-r1/base-tfr-hrm-009-stage-a/changed-path-and-no-recount.v1.json",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-results-r1/base-tfr-hrm-009-stage-a/materialization-receipt.v1.json",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-results-r1/base-tfr-hrm-009-stage-a/module-result-evidence.v1.json",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-results-r1/base-tfr-hrm-009-stage-a/people-v58-evidence.v1.json",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-results-r1/base-tfr-hrm-009-stage-a/request-issue-evidence.v1.json"
+    ],
+    "outsideAuthorizedUnionCount": 0,
+    "evidenceCommitPendingControlReview": true
+  },
+  "protectedBackendTrees": [
+    {
+      "boundary": "PRODUCT_AUTHORIZATION",
+      "path": "contracts/product-authorization",
+      "baseTree": "a6d5dfb89f3cf7c26fa50055ef3b08f2c9a41d0f",
+      "sourceTree": "a6d5dfb89f3cf7c26fa50055ef3b08f2c9a41d0f"
+    },
+    {
+      "boundary": "OPENAPI",
+      "path": "contracts/openapi",
+      "baseTree": "8dae65971144935308105293bb7ce57569a95470",
+      "sourceTree": "8dae65971144935308105293bb7ce57569a95470"
+    },
+    {
+      "boundary": "AUTH_SERVER",
+      "path": "dwp-auth-server",
+      "baseTree": "9eb3a98c1566f54fb8e6d164bfa100afd2cee026",
+      "sourceTree": "9eb3a98c1566f54fb8e6d164bfa100afd2cee026"
+    },
+    {
+      "boundary": "GATEWAY",
+      "path": "dwp-gateway",
+      "baseTree": "b0e244dc5bec38562dddfa5f73808359005cc6f2",
+      "sourceTree": "b0e244dc5bec38562dddfa5f73808359005cc6f2"
+    },
+    {
+      "boundary": "PLATFORM_SERVER",
+      "path": "dwp-platform-server",
+      "baseTree": "6baa1694dacf248807ced8cc3bb8147daa96dc4f",
+      "sourceTree": "6baa1694dacf248807ced8cc3bb8147daa96dc4f"
+    },
+    {
+      "boundary": "PLATFORM_CONTRACTS",
+      "path": "dwp-platform-contracts",
+      "baseTree": "b255d16a901eb89784362e186bb1a4f450fea207",
+      "sourceTree": "b255d16a901eb89784362e186bb1a4f450fea207"
+    },
+    {
+      "boundary": "HRM010_EMPLOYEE_CHANGE_MAIN",
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/employeechange",
+      "baseTree": "d67f1eae2051c24ef3fd8169e32defd04339a1d3",
+      "sourceTree": "d67f1eae2051c24ef3fd8169e32defd04339a1d3"
+    },
+    {
+      "boundary": "HRM007_WORKBENCH_MAIN",
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/workbench/hrm007",
+      "baseTree": "aa6e5c7fb96b0baaa7a3fcf947a0cb25c257ba7b",
+      "sourceTree": "aa6e5c7fb96b0baaa7a3fcf947a0cb25c257ba7b"
+    }
+  ],
+  "historicalMigrationProtection": {
+    "path": "dwp-people-server/src/main/resources/db/migration",
+    "range": "V1_THROUGH_V57",
+    "pathCount": 57,
+    "format": "LC_ALL=C sorted <git-blob-id><SP><repository-relative-path><LF>",
+    "baseManifestSha256": "e9d7331141cf65d2d6c18b4f966f3afdf9365a73fbffa4db168a62b8bc6c04e1",
+    "sourceManifestSha256": "e9d7331141cf65d2d6c18b4f966f3afdf9365a73fbffa4db168a62b8bc6c04e1",
+    "changed": false
+  },
+  "protectedFrontendTrees": [
+    {
+      "boundary": "ARCHITECTURE",
+      "path": "architecture",
+      "baseTree": "7fff5f36c344f063c6a2f6a44f23548913be0890",
+      "sourceTree": "7fff5f36c344f063c6a2f6a44f23548913be0890"
+    },
+    {
+      "boundary": "ROUTES",
+      "path": "apps/dwp/src/routes",
+      "baseTree": "d4868a10a98c1ec2146a4b67534b96708da63cbf",
+      "sourceTree": "d4868a10a98c1ec2146a4b67534b96708da63cbf"
+    },
+    {
+      "boundary": "HRIS_SHELL",
+      "path": "apps/dwp/src/features/hris/shell",
+      "baseTree": "3fb5270390a3aadf8aabd000bdf6828840c1275d",
+      "sourceTree": "3fb5270390a3aadf8aabd000bdf6828840c1275d"
+    },
+    {
+      "boundary": "HRIS_SHELL_MODEL",
+      "path": "apps/dwp/src/features/hris/shell/model",
+      "baseTree": "5fd4dd4083387bcd5db5d494776e328d5cbcb1da",
+      "sourceTree": "5fd4dd4083387bcd5db5d494776e328d5cbcb1da"
+    },
+    {
+      "boundary": "HRM010_EMPLOYEE_CHANGE",
+      "path": "apps/dwp/src/features/hris/employee-services/employee-change",
+      "baseTree": "198c2cd205e56fdc2ce613c91c3e8c9253632c74",
+      "sourceTree": "198c2cd205e56fdc2ce613c91c3e8c9253632c74"
+    },
+    {
+      "boundary": "COMMAND_RECEIPT_REUSE",
+      "path": "apps/dwp/src/features/hris/people/command-receipts",
+      "baseTree": "7e077c83d22dceeba249829cb8ebba419970ede7",
+      "sourceTree": "7e077c83d22dceeba249829cb8ebba419970ede7"
+    }
+  ],
+  "protectedContent": {
+    "productAuthorizationChanged": false,
+    "openApiChanged": false,
+    "authChanged": false,
+    "gatewayChanged": false,
+    "platformChanged": false,
+    "historicalMigrationChanged": false,
+    "frontendArchitectureChanged": false,
+    "frontendRoutesChanged": false,
+    "frontendHrisShellChanged": false,
+    "downloadImplementationAdded": false,
+    "revokeImplementationAdded": false,
+    "verificationTransportAdded": false,
+    "accessDownloadAuditImplementationAdded": false,
+    "productionArtifactProviderAdded": false
+  },
+  "carrierExclusion": {
+    "authorityCarrierCommit": "108572337d742b4f3b010b31dae0327873b2d65f",
+    "authorityCarrierTree": "97985d6e1b1d3c28e78717938ad6d3b0a68d98f0",
+    "frontendSourceCommitAncestor": false,
+    "authorityCarrierCommitSourceAncestor": false,
+    "mergeBase": "a315bd70835172713fee31269f77e7870269abdb",
+    "mergeRebaseOrCherryPickPerformed": false
+  },
+  "noRecount": [
+    "BASE-TFR-HRM-010 employee-change source, actions, lifecycle, receipts and tests reused by IAQ-003",
+    "BASE-TFR-HRM-007 workbench authority and projection patterns used read-only as precedent",
+    "V54 command-receipt table and immutable originating-context trigger",
+    "existing sys_people_audit_events and sys_people_outbox_events",
+    "generic Platform /hr/services surface, people.employment-certificate seed and all existing Platform requests",
+    "existing product authorization, OpenAPI, Auth, Gateway, IA catalog, frontend route and shell assets",
+    "download, revoke and verification transport and acceptance; expiry behavior and acceptance; and access/download audit behavior and acceptance outside Stage A"
+  ],
+  "stageASourceCompletionCreditBeforeCentralAdmission": 0,
+  "fullSliceBusinessCompletionCredit": 0
+}

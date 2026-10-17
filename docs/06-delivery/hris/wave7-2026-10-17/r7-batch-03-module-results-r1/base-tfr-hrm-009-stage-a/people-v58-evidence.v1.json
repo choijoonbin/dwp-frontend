@@ -1,0 +1,305 @@
+{
+  "schema": "dwp.hris.wave7.people-v58-evidence.v1",
+  "evidenceId": "HRIS-WAVE7-R7-BATCH-03-BASE-TFR-HRM-009-STAGE-A-PEOPLE-V58-EVIDENCE-R1",
+  "issuedAt": "2026-10-18T05:44:32+09:00",
+  "issuedBy": "HRIS-HRM",
+  "sliceId": "BASE-TFR-HRM-009",
+  "stageId": "BASE-TFR-HRM-009-STAGE-A",
+  "status": "PASS_CLEAN_AND_UPGRADE_EXACT_MANIFEST_NO_BACKFILL_NO_ELEVATION",
+  "resultState": "HRM009_REQUEST_ISSUE_STAGE_A_SOURCE_AND_V58_COMPLETE_EXACT_MODULE_BRANCHES_PUSHED_CONTROL_REVIEW_PENDING_DEFAULT_OFF_FULL_SLICE_OPEN_ZERO_CREDIT",
+  "authority": {
+    "startToken": {
+      "tokenId": "HRIS-WAVE7-R7-BATCH-03-START-BASE-TFR-HRM-009-REQUEST-ISSUE-STAGE-A-20261018-R2",
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-start-r1/tokens/base-tfr-hrm-009.start-token.v2.json",
+      "sha256": "0839ba5e76094b7ee024fee11478eb85f04a9969b65bc8f611239fc4eae79df7",
+      "bytes": 20608
+    },
+    "reservedManifest": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-start-r1/migration-lease-activation.v1.json#/exactMigrationManifest",
+      "sha256": "c93451aec3ec94778974d04fe1a5360229113d247f1a9fa6781398466632ebd0",
+      "bytes": 14786
+    },
+    "activeLease": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-start-r1/migration-lease-activation.v2.json",
+      "sha256": "17e29d15179e22c81f9c3c9c4abb9cea18b72d5b5d5cf4801b95fad26e0128a6",
+      "bytes": 6669,
+      "activationId": "HRIS-WAVE7-R7-BATCH-03-MIGRATION-LEASE-ACTIVATION-20261018-R2",
+      "leaseId": "HRIS-WAVE7-R7-BATCH-03-PEOPLE-MAIN-V58-HRM009-STAGE-A-20261018-R1",
+      "activeLeaseCount": 1
+    }
+  },
+  "backendResult": {
+    "baseCommit": "f448c36feee2ed7f59eacc64f450e6db3865f1c5",
+    "initialSourceCommit": "4f8bf1de944874d5f021653c0ccc50d43c740b45",
+    "initialSourceTree": "1413fecb00b36ed9e61111022e85cb7c4230602c",
+    "commit": "39abe180426b553ffab0122add331f337e6f7821",
+    "tree": "7097f60a9ccca1fe3cc6449a4242d6b83c1b8fdf",
+    "parent": "4f8bf1de944874d5f021653c0ccc50d43c740b45",
+    "upstreamAhead": 0,
+    "upstreamBehind": 0,
+    "remoteExact": true
+  },
+  "migration": {
+    "stream": "PEOPLE_MAIN",
+    "predecessorHighWater": "V57",
+    "version": "V58",
+    "path": "dwp-people-server/src/main/resources/db/migration/V58__hrm_base_tfr_hrm_009_stage_a.sql",
+    "sha256": "702b96820b38b7c0d5135792f7085db81e741206b134b83d488c1f7760bca9d2",
+    "bytes": 9696,
+    "createTables": [
+      {
+        "name": "ppl_certificate_requests",
+        "primaryKey": "certificate_request_id",
+        "publicIdentity": "public_id",
+        "tenantIdentity": "tenant_id",
+        "foreignKeys": [
+          "tenant_id plus requester_person_id to ppl_persons",
+          "tenant_id plus subject_person_id to ppl_persons"
+        ],
+        "sealedMetadata": [
+          "requester_person_id",
+          "subject_person_id",
+          "certificate_type",
+          "locale",
+          "purpose_code",
+          "template_public_id",
+          "template_version",
+          "correlation_id",
+          "requested_at",
+          "created_by"
+        ],
+        "states": [
+          "REQUESTED",
+          "VALIDATING",
+          "ISSUED",
+          "FAILED",
+          "CANCELLED"
+        ]
+      },
+      {
+        "name": "ppl_issued_certificates",
+        "primaryKey": "issued_certificate_id",
+        "publicIdentity": "public_id",
+        "tenantIdentity": "tenant_id",
+        "foreignKeys": [
+          "tenant_id plus certificate_request_id to ppl_certificate_requests"
+        ],
+        "sealedMetadata": [
+          "certificate_request_id",
+          "object_public_id",
+          "object_version",
+          "content_sha256",
+          "verification_token_hash",
+          "issued_at",
+          "created_by"
+        ],
+        "states": [
+          "ISSUED",
+          "REVOKED",
+          "EXPIRED"
+        ]
+      }
+    ],
+    "explicitIndexes": [
+      {
+        "name": "idx_ppl_certificate_requests_work_queue",
+        "unique": false,
+        "table": "ppl_certificate_requests",
+        "columns": [
+          "tenant_id",
+          "lifecycle_state",
+          "requested_at"
+        ],
+        "predicate": "lifecycle_state IN ('REQUESTED','VALIDATING')"
+      },
+      {
+        "name": "uidx_ppl_command_receipts_tenant_command_idempotency",
+        "unique": true,
+        "table": "ppl_command_receipts",
+        "columns": [
+          "tenant_id",
+          "command_type",
+          "idempotency_key"
+        ],
+        "precondition": "Fail when duplicates exist without deleting, merging or rewriting receipts."
+      }
+    ],
+    "rowLevelSecurity": [
+      {
+        "table": "ppl_certificate_requests",
+        "enabled": true,
+        "forced": true,
+        "policy": "ppl_certificate_requests_tenant_policy",
+        "usingAndCheck": "tenant_id = NULLIF(current_setting('dwp.tenant_id', true), '')::BIGINT"
+      },
+      {
+        "table": "ppl_issued_certificates",
+        "enabled": true,
+        "forced": true,
+        "policy": "ppl_issued_certificates_tenant_policy",
+        "usingAndCheck": "tenant_id = NULLIF(current_setting('dwp.tenant_id', true), '')::BIGINT"
+      }
+    ],
+    "guardFunctionsAndTriggers": [
+      {
+        "function": "public.ppl_guard_certificate_request_state()",
+        "trigger": "trg_ppl_certificate_request_state",
+        "table": "ppl_certificate_requests",
+        "events": "BEFORE INSERT OR UPDATE OR DELETE",
+        "rules": [
+          "insert only REQUESTED at version zero",
+          "delete denied",
+          "REQUESTED may transition only to VALIDATING or CANCELLED",
+          "VALIDATING may transition only to ISSUED or FAILED",
+          "sealed metadata cannot change",
+          "version advances exactly one",
+          "terminal state requires completed_at"
+        ],
+        "security": "fixed search_path and PUBLIC EXECUTE revoked"
+      },
+      {
+        "function": "public.ppl_guard_issued_certificate_state()",
+        "trigger": "trg_ppl_issued_certificate_state",
+        "table": "ppl_issued_certificates",
+        "events": "BEFORE INSERT OR UPDATE OR DELETE",
+        "rules": [
+          "insert only ISSUED from a same-tenant VALIDATING request",
+          "delete denied",
+          "ISSUED may transition only to EXPIRED or to REVOKED before expiry",
+          "sealed metadata cannot change",
+          "REVOKED requires timestamp and reason",
+          "REVOKED and EXPIRED are terminal"
+        ],
+        "security": "fixed search_path and PUBLIC EXECUTE revoked"
+      }
+    ],
+    "reuseWithoutDdl": [
+      "ppl_command_receipts table and its immutable originating-context trigger",
+      "sys_people_audit_events",
+      "sys_people_outbox_events"
+    ],
+    "forbiddenAndAbsent": [
+      "document bytes or blob table",
+      "local template, seal, signature or verification table",
+      "new command-receipt, audit or outbox table",
+      "cross-service foreign key",
+      "Platform svc_requests change",
+      "data backfill",
+      "data deletion",
+      "automatic privilege elevation",
+      "second People migration"
+    ]
+  },
+  "historicalProtection": {
+    "historicalRange": "V1_THROUGH_V57",
+    "historicalPathCount": 57,
+    "manifestFormat": "LC_ALL=C sorted <git-blob-id><SP><repository-relative-path><LF>",
+    "baseManifestSha256": "e9d7331141cf65d2d6c18b4f966f3afdf9365a73fbffa4db168a62b8bc6c04e1",
+    "resultManifestSha256": "e9d7331141cf65d2d6c18b4f966f3afdf9365a73fbffa4db168a62b8bc6c04e1",
+    "historicalMigrationsChanged": false,
+    "v54Path": "dwp-people-server/src/main/resources/db/migration/V54__create_employee_change_request_lifecycle.sql",
+    "v54Sha256": "f701bfaff260331c83dc60bcd5b7c7fb2f9c58b11e888705c4c999a48d0ecac9",
+    "v54Bytes": 30049,
+    "v54Changed": false,
+    "preV58FlywayChecksumsPreserved": true,
+    "competingV58Present": false
+  },
+  "verification": {
+    "static": [
+      {
+        "target": "Hrm009V58MigrationContractTest",
+        "tests": 5,
+        "passed": 5,
+        "failed": 0,
+        "skipped": 0,
+        "result": "PASS"
+      }
+    ],
+    "postgresqlInitialRun": {
+      "target": "Hrm009V58MigrationPostgresTest",
+      "tests": 8,
+      "passed": 6,
+      "failed": 2,
+      "skipped": 0,
+      "result": "TWO_CORRECTABLE_TEST_FIXTURE_OR_ACL_ASSERTION_FAILURES",
+      "failures": [
+        "clean migration expected direct function ACL rows instead of checking effective PUBLIC privilege through aclexplode",
+        "service rollback fixture omitted sys_service_tenants"
+      ]
+    },
+    "postgresqlSmallestReruns": [
+      {
+        "target": "cleanMigrationThroughV58BuildsTheExactSchemaRlsIndexesAndLockedGuards",
+        "tests": 1,
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0,
+        "result": "PASS"
+      },
+      {
+        "target": "transactionRollbackLeavesNoRequestIssuedReceiptSuccessAuditOrOutbox",
+        "tests": 1,
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0,
+        "result": "PASS"
+      }
+    ],
+    "postgresqlFinalAddedMethods": {
+      "initialTarget": [
+        "selfProjectionRequiresRequesterSubjectAndPurposeToMatchTheTrustedActor",
+        "operationsProjectionUsesOnlyCurrentInScopeWorkforceAssignments"
+      ],
+      "initialResult": "ONE_PASS_ONE_FIXTURE_FAILURE_BEFORE_ASSERTION",
+      "failure": "operations projection fixture lacked the tenant DEPARTMENT catalog row",
+      "smallestRerunTarget": "operationsProjectionUsesOnlyCurrentInScopeWorkforceAssignments",
+      "smallestRerun": {
+        "tests": 1,
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0,
+        "wallSeconds": 16.83,
+        "gradleSeconds": 16,
+        "xmlTestSeconds": 2.315
+      },
+      "effectiveResult": "BOTH_PASS_ZERO_SKIPPED"
+    },
+    "database": {
+      "containerRuntime": "Docker Desktop 29.8.2",
+      "dockerApi": "1.56",
+      "testFramework": "Testcontainers 1.21.4",
+      "image": "postgres:16-alpine",
+      "databaseVersion": "PostgreSQL 16.15",
+      "available": true,
+      "unavailableRuleUsed": false
+    },
+    "broadPostCorrectionClassRerun": false,
+    "singleTenMethodCombinedPassClaimed": false
+  },
+  "databaseAssertions": {
+    "freshThroughV58": "PASS",
+    "v57ToV58Upgrade": "PASS",
+    "historicalRowsAndChecksumsPreserved": true,
+    "duplicateReceiptPreflightFailsWithoutRewrite": true,
+    "strictReceiptUniqueness": true,
+    "requestTableForcedRls": true,
+    "issuedTableForcedRls": true,
+    "missingContextDenied": true,
+    "crossTenantReadAndWriteDenied": true,
+    "selfProjectionRequesterSubjectPurposeIsolation": true,
+    "operationsProjectionCurrentScopeIsolation": true,
+    "stateTransitionsClosed": true,
+    "immutableFieldsClosed": true,
+    "deleteDenied": true,
+    "revokeTimingGuarded": true,
+    "retryableArtifactFailureRollsBackEveryDurableEffect": true,
+    "rawTransactionRollbackLeavesNoPartialWrite": true,
+    "actualTwoSessionReceiptInsertionRaceExecuted": false
+  },
+  "dataManipulationPresent": false,
+  "backfillPresent": false,
+  "privilegeElevationPresent": false,
+  "secondMigrationPresent": false,
+  "stageASourceCompletionCreditBeforeCentralAdmission": 0,
+  "fullSliceBusinessCompletionCredit": 0
+}

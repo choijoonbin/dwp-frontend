@@ -1,0 +1,620 @@
+{
+  "schema": "dwp.hris.wave7.hrm009-request-issue-evidence.v1",
+  "evidenceId": "HRIS-WAVE7-R7-BATCH-03-BASE-TFR-HRM-009-STAGE-A-REQUEST-ISSUE-R1",
+  "issuedAt": "2026-10-18T05:44:32+09:00",
+  "issuedBy": "HRIS-HRM",
+  "sliceId": "BASE-TFR-HRM-009",
+  "stageId": "BASE-TFR-HRM-009-STAGE-A",
+  "resultState": "HRM009_REQUEST_ISSUE_STAGE_A_SOURCE_AND_V58_COMPLETE_EXACT_MODULE_BRANCHES_PUSHED_CONTROL_REVIEW_PENDING_DEFAULT_OFF_FULL_SLICE_OPEN_ZERO_CREDIT",
+  "entryQueries": [
+    {
+      "queryId": "IAQ-003",
+      "operationId": "IAQ.OP.003",
+      "iaNodeId": "BASE:my-hr-requests",
+      "variantKey": "REQUESTS",
+      "method": "GET",
+      "ownerPath": "/v1/hris/workbench/self-service/requests",
+      "browserPath": "/api/people/v1/hris/workbench/self-service/requests",
+      "canonicalRoute": "/hr/me/requests",
+      "deepLinkTemplate": "/hr/me/requests?tab=overview&focus={resourcePublicId}",
+      "routeContractKey": "route.hcm.personal.requests.data",
+      "profileKey": "self-request-reader",
+      "bindingKey": "route.hcm.personal.requests.data.binding.01",
+      "projectionPolicyKey": "route.hcm.personal.requests.data.self-request-reader.projection.v1",
+      "responseSchemaKey": "Hrm009SelfRequestsProjectionV1",
+      "fieldPolicyKey": "hrm009.iaq-003.fields.v1",
+      "authorizationEquivalenceKey": "wire-authority.hcm.personal.requests.v1",
+      "capability": "hcm.personal.requests.view",
+      "profileAndDuty": "HRIS_EMPLOYEE>HRIS_DUTY_SELF_REQUEST_READER",
+      "purpose": "EMPLOYEE_SELF_SERVICE",
+      "populationSet": [
+        "SELF"
+      ],
+      "targetBindingKinds": [
+        "SELF"
+      ],
+      "predicatePolicyKeys": [
+        "predicate.self-person.v1"
+      ],
+      "responseFieldGroups": [
+        "REQUEST_SUMMARY",
+        "REQUEST_STATUS",
+        "COMMAND_RECEIPT"
+      ],
+      "filters": [
+        "requestSummary",
+        "requestStatus",
+        "commandReceipt",
+        "effectiveOn"
+      ],
+      "sortAllowlist": [
+        "requestSummary:ASC",
+        "requestSummary:DESC",
+        "requestStatus:ASC",
+        "requestStatus:DESC",
+        "commandReceipt:ASC",
+        "commandReceipt:DESC",
+        "itemPublicId:ASC",
+        "itemPublicId:DESC"
+      ],
+      "defaultSort": "itemPublicId:ASC",
+      "pageLimit": 100,
+      "actionAllowlist": [
+        "hris.action.hrm.create-employee-change-request",
+        "hris.action.hrm.submit-employee-change-request",
+        "hris.action.hrm.request-certificate"
+      ],
+      "repositoryIsolation": "Every self row is bound to the trusted tenant, requester_person_id equals the trusted actor, subject_person_id equals the trusted actor and purpose_code equals EMPLOYEE_SELF_SERVICE."
+    },
+    {
+      "queryId": "IAQ-010",
+      "operationId": "IAQ.OP.010",
+      "iaNodeId": "BASE:hr-certificates-documents",
+      "variantKey": "CERTIFICATES_DOCUMENTS",
+      "method": "GET",
+      "ownerPath": "/v1/hris/workbench/operations/certificates/documents",
+      "browserPath": "/api/people/v1/hris/workbench/operations/certificates/documents",
+      "canonicalRoute": "/hr/operations/people/certificates-documents",
+      "deepLinkTemplate": "/hr/operations/people/certificates-documents?tab=overview&focus={resourcePublicId}",
+      "routeContractKey": "route.hcm.operations.certificates-documents.data",
+      "profileKey": "people-operations-reader",
+      "bindingKey": "route.hcm.operations.certificates-documents.data.binding.01",
+      "projectionPolicyKey": "route.hcm.operations.certificates-documents.data.people-operations-reader.projection.v1",
+      "responseSchemaKey": "Hrm009CertificatesDocumentsProjectionV1",
+      "fieldPolicyKey": "hrm009.iaq-010.fields.v1",
+      "authorizationEquivalenceKey": "wire-authority.hcm.operations.certificates-documents.v1",
+      "capability": "hcm.operations.people.view",
+      "profileAndDuty": "HRIS_HR_BUSINESS_PARTNER>HRIS_DUTY_CORE_VIEWER",
+      "purpose": "HR_OPERATIONS",
+      "populationSet": [
+        "LEGAL_ENTITY",
+        "NAMED_POPULATION",
+        "ORG_TREE",
+        "ORG_UNIT"
+      ],
+      "targetBindingKinds": [
+        "TARGET_POPULATION"
+      ],
+      "predicatePolicyKeys": [
+        "predicate.hcm-workforce-visible-person.v1"
+      ],
+      "responseFieldGroups": [
+        "CERTIFICATE_METADATA",
+        "DOCUMENT_METADATA"
+      ],
+      "filters": [
+        "certificateMetadata",
+        "documentMetadata",
+        "effectiveOn"
+      ],
+      "sortAllowlist": [
+        "certificateMetadata:ASC",
+        "certificateMetadata:DESC",
+        "documentMetadata:ASC",
+        "documentMetadata:DESC",
+        "itemPublicId:ASC",
+        "itemPublicId:DESC"
+      ],
+      "defaultSort": "itemPublicId:ASC",
+      "pageLimit": 100,
+      "actionAllowlist": [
+        "hris.action.hrm.request-certificate"
+      ],
+      "repositoryIsolation": "Every operations row is tenant-bound and joined only through a current workforce assignment inside the exact accepted LEGAL_ENTITY, NAMED_POPULATION, ORG_TREE or ORG_UNIT scope."
+    }
+  ],
+  "commonProjectionContract": {
+    "additionalProperties": false,
+    "queryStates": [
+      "COMPLETE",
+      "EMPTY",
+      "PARTIAL",
+      "UNAVAILABLE"
+    ],
+    "freshnessStates": [
+      "CURRENT",
+      "STALE",
+      "UNAVAILABLE"
+    ],
+    "unavailableRule": "UNAVAILABLE has zero items, no cursor and UNAVAILABLE freshness.",
+    "partialRule": "PARTIAL has at least one typed partial failure; COMPLETE has none.",
+    "fieldDecisionRule": "VIEW serializes an allowed typed value, MASK serializes no value with a mask reason, and an absent sealed group is counted as OMIT.",
+    "metadataOnlyRule": "No projection contains bytes, download URLs, verification tokens, verification hashes, revoke controls or unapproved field groups; object identity, object version and content digest are allowed only inside the approved DOCUMENT_METADATA group.",
+    "cursorBindings": [
+      "tenant",
+      "queryId",
+      "targetPopulation",
+      "scopeDecisionRevision",
+      "authorizationDecisionRevision",
+      "asOf",
+      "requestedSort",
+      "pageLimit",
+      "lastItemPublicId"
+    ],
+    "requestValidation": [
+      "Unknown query, filter, sort, field or action is rejected.",
+      "The empty filter envelope is exactly filter={} and cannot be combined with nested filter members.",
+      "Limits are 1 through 100; at most three unique allowlisted sorts are accepted and an internal itemPublicId stable tie-break is always applied.",
+      "Tenant, profile, duty, purpose, population and field-policy evidence come only from trusted context and are never accepted as caller query parameters."
+    ],
+    "authorization": [
+      "Exact DATA route, profile, binding, projection-policy, response-schema and field-policy keys are required.",
+      "Exact capability, duty, purpose, predicate-policy and target-binding sets are required.",
+      "Scope and authorization revisions fail closed before disclosure, filtering, ordering or cursor use.",
+      "Wrong or stale authority produces one opaque denial and discloses no object existence."
+    ],
+    "centralAdoptionState": "OWNER_SIDE_EXACT_KEYS_IMPLEMENTED_CENTRAL_PRODUCT_AUTHORIZATION_V52_ADOPTION_AND_PROOF_PENDING"
+  },
+  "commandContract": {
+    "bindingId": "PEP-HRM-012",
+    "operationId": "requestCertificate",
+    "method": "POST",
+    "browserPath": "/api/people/v1/hris/certificates",
+    "ownerPath": "/v1/hris/certificates",
+    "singleActionRoute": "route.hcm.operations.certificate-issue.action",
+    "appEntitlement": "APP.HCM:VIEW",
+    "requiredHeaders": [
+      "Authorization",
+      "Idempotency-Key",
+      "If-Match",
+      "X-Correlation-ID"
+    ],
+    "optionalHeader": "X-Purpose-Code",
+    "bodyRequired": [
+      "personPublicId",
+      "certificateType",
+      "purposeCode",
+      "locale",
+      "asOf"
+    ],
+    "additionalBodyProperties": false,
+    "personAndCorrelationUuid": "CANONICAL_36_CHARACTER_UUID_VERSION_1_THROUGH_5_RFC_VARIANT_8_9_A_OR_B",
+    "idempotencyKey": "OPAQUE_LENGTH_ONLY_16_THROUGH_128_NO_CHARACTER_ALLOWLIST",
+    "successStatus": 202,
+    "response": "CommandReceiptV1",
+    "receiptBinding": [
+      "correlationId",
+      "purposeCode",
+      "commandType=CERTIFICATE_REQUEST",
+      "originatingAction=REQUEST_CERTIFICATE",
+      "subjectPrincipalPublicId"
+    ],
+    "acceptedPepPurposeCodes": [
+      "EMPLOYEE_SELF_SERVICE",
+      "TEAM_MANAGEMENT",
+      "HR_OPERATIONS"
+    ],
+    "selfProfile": {
+      "selection": "request.personPublicId equals trusted actor personPublicId",
+      "profileKey": "certificate-self-requester",
+      "capability": "hcm.personal.certificate.request",
+      "duty": "HRIS_EMPLOYEE>HRIS_DUTY_SELF_CERTIFICATE_REQUESTER",
+      "resource": "ACTION.HRIS_CERTIFICATE",
+      "permission": "CREATE",
+      "purpose": "EMPLOYEE_SELF_SERVICE",
+      "population": [
+        "SELF"
+      ],
+      "fieldGroups": [
+        "DIRECTORY",
+        "DOCUMENT_CONTENT",
+        "EMPLOYMENT"
+      ]
+    },
+    "operationsProfile": {
+      "selection": "request.personPublicId differs from trusted actor personPublicId",
+      "profileKey": "certificate-operations-issuer",
+      "capability": "hcm.operations.certificate.issue",
+      "duty": "HRIS_HR_BUSINESS_PARTNER>HRIS_DUTY_CERTIFICATE_ISSUER",
+      "resource": "ACTION.HRIS_CERTIFICATE",
+      "permission": "ISSUE",
+      "purpose": "HR_OPERATIONS",
+      "population": [
+        "LEGAL_ENTITY",
+        "NAMED_POPULATION",
+        "ORG_TREE",
+        "ORG_UNIT"
+      ],
+      "fieldGroups": [
+        "DIRECTORY",
+        "DOCUMENT_CONTENT",
+        "EMPLOYMENT"
+      ]
+    },
+    "teamManagementDisposition": {
+      "purpose": "TEAM_MANAGEMENT",
+      "stageAState": "DENY_DEFER_NO_PROFILE_NO_FALLBACK",
+      "mutationReached": false
+    },
+    "commonRisk": "HIGH_STEP_UP_REQUIRED_FOR_BOTH_PROFILES",
+    "branchRule": "The owner derives the branch from trusted actor identity and the subject. Caller tenant, role, duty, mode or population cannot choose or downgrade a branch, and a denied branch never falls back."
+  },
+  "idempotencyAndRecovery": {
+    "scope": [
+      "tenant_id",
+      "command_type",
+      "idempotency_key"
+    ],
+    "sameHashReplay": "Return the exact original durable receipt in any durable state without artifact, audit, outbox or domain mutation rerun.",
+    "differentHashReuse": "Return 409 IDEMPOTENCY_KEY_REUSED before any additional side effect.",
+    "schemaVersionMismatch": "Cannot replay across a different command schema version.",
+    "initialReplayOrdering": "Receipt lookup precedes mutable subject, population and object-version validation after structurally valid HIGH-step-up authority.",
+    "lateRaceOrdering": "After the subject row lock, the receipt is read again before mutable population resolution, challenge consumption or any new mutation.",
+    "concurrency": "A deterministic winning reservation and a receipt committed while another caller waits on the subject lock both return the winner without artifact rerun.",
+    "remainingP2": "No two independent database sessions concurrently race the same receipt insertion in this Stage-A suite."
+  },
+  "issuanceTransaction": {
+    "requestStates": [
+      "REQUESTED",
+      "VALIDATING",
+      "ISSUED",
+      "FAILED",
+      "CANCELLED"
+    ],
+    "stageAExecutableIssuedState": "ISSUED",
+    "frozenArtifactInputs": [
+      "subject snapshot",
+      "template public ID",
+      "template version",
+      "seal version",
+      "certificate type",
+      "locale",
+      "purpose",
+      "asOf"
+    ],
+    "frozenArtifactResults": [
+      "object public ID",
+      "object version",
+      "content SHA-256"
+    ],
+    "atomicCommit": [
+      "certificate request ISSUED",
+      "immutable issued-certificate metadata",
+      "succeeded command receipt",
+      "people audit event",
+      "CertificateIssued.v1 semantic outbox event"
+    ],
+    "eventType": "CertificateIssued.v1",
+    "eventPayloadClosedSet": [
+      "requestPublicId",
+      "certificatePublicId",
+      "subjectPersonPublicId",
+      "certificateType",
+      "issuedAt",
+      "expiresAt"
+    ]
+  },
+  "artifactPort": {
+    "interface": "CertificateArtifactPort",
+    "productionBinding": "FailClosedCertificateArtifactAdapter",
+    "productionSuccessProviderAuthorized": false,
+    "productionBehavior": "Return unavailable with no issued row, succeeded receipt, audit success or semantic event.",
+    "testOnlyBinding": "CertificateArtifactConformanceDouble",
+    "testOnlyLocation": "dwp-people-server/src/test/java/com/dwp/services/people/hris/employeeservice/certificate/CertificateArtifactPortConformanceTest.java",
+    "testProof": [
+      "deterministic immutable success metadata",
+      "retryable provider unavailability",
+      "transaction rollback through the real service and PostgreSQL repository"
+    ],
+    "forbiddenAndAbsent": [
+      "production provider endpoint",
+      "document bytes",
+      "filesystem output",
+      "local blob",
+      "template engine",
+      "seal engine",
+      "signature engine",
+      "verification transport",
+      "download implementation"
+    ]
+  },
+  "frontendComponentEvidence": {
+    "runtimeDefault": "OFF",
+    "enrolledTenants": [],
+    "ownerCallsWhenAbsentOffOrUnenrolled": 0,
+    "surfaces": [
+      {
+        "queryId": "IAQ-003",
+        "primaryUser": "Employee",
+        "operationalQuestion": "Which governed HR requests can I review, and can I request a certificate now?",
+        "primaryAction": "Request certificate",
+        "archetype": "list-detail"
+      },
+      {
+        "queryId": "IAQ-010",
+        "primaryUser": "HR operations certificate issuer",
+        "operationalQuestion": "Which certificate metadata in my authorized population needs an issuance decision?",
+        "primaryAction": "Issue certificate request",
+        "archetype": "focus-form"
+      }
+    ],
+    "materialStates": [
+      "loading",
+      "empty",
+      "partial",
+      "unavailable",
+      "opaque-denied",
+      "stale",
+      "complete"
+    ],
+    "componentFakeMatrix": [
+      "1440px light",
+      "1280px dark",
+      "390px high contrast",
+      "320px reduced motion partial",
+      "1440px at 200-percent zoom",
+      "1280px at 200-percent zoom",
+      "keyboard-only focus and semantic submit",
+      "long Korean and English labels"
+    ],
+    "stalePolicy": "Only HTTP 429, HTTP 503 and network errors retain stale metadata; command delegation is synchronously fenced.",
+    "browserRun": false,
+    "browserResult": "PENDING_CENTRAL_ROUTE_MOUNT_BROWSER_GATE"
+  },
+  "boundedVerification": {
+    "backend": {
+      "initialClassRuns": [
+        {
+          "target": "Hrm009StageAContractTest",
+          "tests": 7,
+          "passed": 7,
+          "failed": 0,
+          "result": "PASS"
+        },
+        {
+          "target": "CertificateAuthorizationTest",
+          "tests": 6,
+          "passed": 6,
+          "failed": 0,
+          "result": "PASS"
+        },
+        {
+          "target": "CertificateIdempotencyRecoveryTest",
+          "tests": 10,
+          "passed": 10,
+          "failed": 0,
+          "result": "PASS"
+        },
+        {
+          "target": "CertificateArtifactPortConformanceTest",
+          "tests": 3,
+          "passed": 3,
+          "failed": 0,
+          "result": "PASS"
+        },
+        {
+          "target": "Hrm009V58MigrationContractTest",
+          "tests": 5,
+          "passed": 5,
+          "failed": 0,
+          "result": "PASS"
+        },
+        {
+          "target": "Hrm009V58MigrationPostgresTest initial bounded class run",
+          "tests": 8,
+          "passed": 6,
+          "failed": 2,
+          "skipped": 0,
+          "result": "TWO_TEST_FIXTURE_OR_ACL_ASSERTION_FAILURES_BEFORE_CORRECTION",
+          "failures": [
+            "clean migration PUBLIC ACL assertion did not account for aclexplode semantics",
+            "rollback fixture omitted the required sys_service_tenants row"
+          ]
+        },
+        {
+          "target": "clean migration method smallest rerun",
+          "tests": 1,
+          "passed": 1,
+          "failed": 0,
+          "result": "PASS"
+        },
+        {
+          "target": "transaction rollback method smallest rerun",
+          "tests": 1,
+          "passed": 1,
+          "failed": 0,
+          "result": "PASS"
+        }
+      ],
+      "preflightHistory": [
+        {
+          "command": "./gradlew :dwp-people-server:compileJava --no-daemon --max-workers=1",
+          "runs": 1,
+          "result": "PASS"
+        },
+        {
+          "command": "./gradlew :dwp-people-server:compileTestJava --no-daemon --max-workers=1",
+          "runs": 1,
+          "result": "FAIL",
+          "reason": "Ambiguous JdbcTemplate.query overload in a PostgreSQL test fixture; corrected to queryForList. The passing classes were not broadly rerun."
+        },
+        {
+          "command": "./gradlew :dwp-people-server:test --tests 'com.dwp.services.people.hris.employeeservice.certificate.*' --no-daemon --max-workers=1",
+          "runs": 1,
+          "result": "FAILED_BEFORE_TEST_COLLECTION",
+          "reason": "CertificateService referenced PersonRow.personPublicId instead of publicId during compileJava."
+        },
+        {
+          "command": "./gradlew :dwp-people-server:compileJava --no-daemon --max-workers=1",
+          "runs": 1,
+          "result": "PASS_AFTER_SMALLEST_CORRECTION"
+        }
+      ],
+      "finalChangedMethodRun": {
+        "targetMethodCount": 14,
+        "testsCollected": 14,
+        "passed": 13,
+        "failed": 1,
+        "skipped": 0,
+        "wallSeconds": 20.42,
+        "gradleSeconds": 19,
+        "failure": "operationsProjectionUsesOnlyCurrentInScopeWorkforceAssignments fixture lacked the tenant DEPARTMENT catalog row and failed before its assertion",
+        "smallestRerun": {
+          "target": "Hrm009V58MigrationPostgresTest.operationsProjectionUsesOnlyCurrentInScopeWorkforceAssignments",
+          "tests": 1,
+          "passed": 1,
+          "failed": 0,
+          "skipped": 0,
+          "wallSeconds": 16.83,
+          "gradleSeconds": 16,
+          "xmlTestSeconds": 2.315
+        },
+        "effectiveChangedMethodCoverage": "14_OF_14_PASS_ZERO_SKIPPED"
+      },
+      "latestSourceTestInventory": {
+        "Hrm009StageAContractTest": 9,
+        "CertificateAuthorizationTest": 9,
+        "CertificateIdempotencyRecoveryTest": 11,
+        "CertificateArtifactPortConformanceTest": 3,
+        "Hrm009V58MigrationContractTest": 5,
+        "Hrm009V58MigrationPostgresTest": 10,
+        "inventoryTotal": 47,
+        "singleCombinedRunClaimed": false
+      },
+      "broadRerunAfterCorrections": false
+    },
+    "frontend": {
+      "prescribedPnpm": [
+        {
+          "command": "pnpm exec vitest run apps/dwp/src/features/hris/people/__tests__/g3-slices/base-tfr-hrm-009-stage-a.slice.test.tsx apps/dwp/src/features/hris/employee-services/certificates",
+          "runs": 1,
+          "result": "BLOCKED_BEFORE_TEST_COLLECTION",
+          "reason": "The repository packageManager field requires Yarn; no Vitest source test started."
+        },
+        {
+          "command": "pnpm exec eslint apps/dwp/src/features/hris/employee-services/certificates apps/dwp/src/features/hris/people/__tests__/g3-slices/base-tfr-hrm-009-stage-a.slice.test.tsx",
+          "runs": 1,
+          "result": "BLOCKED_BEFORE_ANALYSIS",
+          "reason": "The repository packageManager field requires Yarn; no ESLint target started."
+        }
+      ],
+      "initialYarnBoundedRun": {
+        "target": "slice, certificate-api and certificate-workbench test files",
+        "tests": 20,
+        "passed": 17,
+        "failed": 3,
+        "result": "THREE_TEST_HARNESS_FAILURES_BEFORE_SMALLEST_CORRECTIONS"
+      },
+      "targetedSuccessorRuns": [
+        {
+          "target": "three initially failing cases",
+          "passed": 3,
+          "failed": 0,
+          "skipped": 17,
+          "result": "PASS"
+        },
+        {
+          "target": "five contract and component boundary cases",
+          "passed": 5,
+          "failed": 0,
+          "skipped": 20,
+          "result": "PASS"
+        },
+        {
+          "target": "receipt binding case",
+          "passed": 1,
+          "failed": 0,
+          "skipped": 3,
+          "result": "PASS"
+        },
+        {
+          "target": "optional purpose header case",
+          "passed": 1,
+          "failed": 0,
+          "skipped": 6,
+          "result": "PASS"
+        },
+        {
+          "target": "independent audit supplement",
+          "passed": 9,
+          "failed": 0,
+          "skipped": 16,
+          "result": "PASS"
+        },
+        {
+          "target": "final idempotency and metadata-version boundaries",
+          "passed": 2,
+          "failed": 0,
+          "skipped": 28,
+          "result": "PASS"
+        },
+        {
+          "target": "strict UUID v1-through-v5 transport boundary",
+          "preExecutionAttempts": 1,
+          "preExecutionResult": "BLOCKED_BY_YARN_NODE_MODULES_STATE_FILE_BEFORE_TEST",
+          "repair": "Verified lock, package and Yarn config hashes against the main checkout and restored the ignored node_modules symlink.",
+          "passed": 1,
+          "failed": 0,
+          "skipped": 5,
+          "durationMilliseconds": 857,
+          "result": "PASS"
+        }
+      ],
+      "lint": {
+        "fullAuthorizedScope": "PASS",
+        "successorAffectedScopes": "PASS",
+        "uuidCorrectionThreeFileScope": "PASS",
+        "uuidCorrectionPreExecutionAttempts": 1,
+        "uuidCorrectionPreExecutionResult": "BLOCKED_BY_YARN_NODE_MODULES_STATE_FILE_BEFORE_LINT"
+      },
+      "latestPerFileInventory": {
+        "base-tfr-hrm-009-stage-a.slice.test.tsx": 7,
+        "certificate-api.test.ts": 6,
+        "certificate-workbench.test.tsx": 25,
+        "inventoryTotal": 38,
+        "singleCombinedRunClaimed": false
+      },
+      "broadRerunAfterCorrections": false
+    }
+  },
+  "sourceReview": {
+    "independentAudit": "NO_P0_OR_P1",
+    "nonblockingResiduals": [
+      "Central v52 must adopt and prove the exact owner-side DATA binding, projection, schema and field-policy keys.",
+      "Backend Idempotency-Key length uses Java UTF-16 code units for non-BMP input.",
+      "Certificate type whitespace, Bearer and If-Match handling are locally narrower than the generic accepted schemas.",
+      "The local Problem enum is broader than the bounded Stage-A cases.",
+      "No actual two-session database insertion race was executed."
+    ],
+    "disposition": "NONBLOCKING_P2_AND_CENTRAL_ADMISSION_REVIEW"
+  },
+  "centralAdmissionPending": [
+    "product-authorization v52 adoption of the exact five sealed route contracts and three new capabilities",
+    "Auth V261",
+    "generated Gateway and People projections",
+    "frontend route and shell mount",
+    "trusted browser matrix",
+    "dwp-dev merge and central publication"
+  ],
+  "fullSlicePending": [
+    "shared production artifact provider binding",
+    "download transport and acceptance",
+    "revoke transport and acceptance",
+    "certificate expiry behavior and acceptance",
+    "separately authorized access/download audit behavior and acceptance",
+    "Platform generic-creator retirement proof",
+    "tenant enrollment and activation"
+  ],
+  "stageASourceCompletionCreditBeforeCentralAdmission": 0,
+  "fullSliceBusinessCompletionCredit": 0
+}
