@@ -58,7 +58,10 @@ import {
   HRIS_NAVIGATION_TOPOLOGY_SHA256,
   useHrisRuntimeNavigationPolicy,
 } from './hris-navigation-policy-runtime';
-import { canonicalHrisWorkbench } from './seven-workbench-navigation-policy';
+import {
+  canonicalHrisWorkbench,
+  isHrisRuntimeEffectiveRouteAlias,
+} from './seven-workbench-navigation-policy';
 
 let host: HTMLDivElement;
 let root: Root;
@@ -87,9 +90,7 @@ function mount(initialEntry: string, children: ReactNode = <RuntimeProbe />) {
   root.render(
     <QueryClientProvider client={queryClient}>
       <MemoryRouter initialEntries={[initialEntry]}>
-        <HrisNavigationPolicyRuntimeProvider>
-          {children}
-        </HrisNavigationPolicyRuntimeProvider>
+        <HrisNavigationPolicyRuntimeProvider>{children}</HrisNavigationPolicyRuntimeProvider>
       </MemoryRouter>
     </QueryClientProvider>
   );
@@ -443,7 +444,13 @@ function enforcedProjection(revisionPin: string) {
             groupId: group.groupId,
             displayOrder: group.displayOrder,
             defaultNodeId: node.nodeId,
-            nodes: [{ nodeId: node.nodeId, displayOrder: node.displayOrder }],
+            nodes: [
+              {
+                nodeId: node.nodeId,
+                displayOrder: node.displayOrder,
+                routeAliases: node.routeAliases.filter(isHrisRuntimeEffectiveRouteAlias),
+              },
+            ],
           },
         ],
       },

@@ -169,6 +169,26 @@ export const HRIS_POLICY_ONLY_COMPATIBILITY_PATHS = Object.freeze([
   '/hr/organization',
   '/hr/manage/system',
 ] as const);
+const HRIS_RUNTIME_EXPLICIT_EXCLUDED_PATHS: ReadonlySet<string> = new Set([
+  '/hr/benefits',
+  '/hr/operations/benefits',
+  '/hr/explore',
+  '/hr/settings/navigation-policy',
+  '/hr/data/reference',
+  '/hr/data/integrations',
+  '/hr/operations/performance/multirater-surveys',
+  '/hr/operations/time',
+  '/hr/operations/pay',
+  '/hr/operations/talent',
+  '/hr/data/exports',
+  '/hr/operations',
+  '/hr/team/time',
+  '/hr/team/absence',
+  '/hr/operations/absence',
+]);
+const HRIS_RUNTIME_DEEP_LINK_ONLY_COMPATIBILITY_PATHS: ReadonlySet<string> = new Set([
+  '/hr/operations/assignments',
+]);
 const nodeById = new Map(
   HRIS_RUNTIME_NAVIGATION_MANIFEST.nodes.map((node) => [node.iaNodeId, node])
 );
@@ -214,8 +234,19 @@ function routePath(route: string) {
 }
 
 export function isHrisRuntimeEffectiveRouteAlias(route: string) {
-  return !HRIS_POLICY_ONLY_COMPATIBILITY_PATHS.includes(
-    routePath(route) as (typeof HRIS_POLICY_ONLY_COMPATIBILITY_PATHS)[number]
+  const path = routePath(route);
+  return (
+    !HRIS_RUNTIME_EXPLICIT_EXCLUDED_PATHS.has(path) &&
+    !HRIS_POLICY_ONLY_COMPATIBILITY_PATHS.includes(
+      path as (typeof HRIS_POLICY_ONLY_COMPATIBILITY_PATHS)[number]
+    )
+  );
+}
+
+export function isHrisRuntimeMenuRouteAlias(route: string) {
+  return (
+    isHrisRuntimeEffectiveRouteAlias(route) &&
+    !HRIS_RUNTIME_DEEP_LINK_ONLY_COMPATIBILITY_PATHS.has(routePath(route))
   );
 }
 

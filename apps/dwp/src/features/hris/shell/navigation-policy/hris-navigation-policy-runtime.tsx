@@ -27,6 +27,7 @@ import {
   HRIS_WORKBENCH_IDS,
   HRIS_WORKBENCH_VIEW_BY_ID,
   isHrisRuntimeEffectiveRouteAlias,
+  isHrisRuntimeMenuRouteAlias,
 } from './seven-workbench-navigation-policy';
 import {
   HRIS_LEGAL_ENTITY_SELECTOR_PARAM,
@@ -267,11 +268,15 @@ export function projectHrisWorkbenchTaskNavigation(
   return Object.freeze(
     workbench.groups.flatMap((group) => {
       const nodes = group.nodes.flatMap((node) => {
-        const routeAliases = node.routeAliases.filter(
+        const authorizedAliases = node.routeAliases.filter(
           (route) =>
             isHrisRuntimeEffectiveRouteAlias(route) &&
             normalizedAuthorized.has(normalizePath(route))
         );
+        const menuTarget = authorizedAliases.find(isHrisRuntimeMenuRouteAlias);
+        const routeAliases = menuTarget
+          ? [menuTarget, ...authorizedAliases.filter((route) => route !== menuTarget)]
+          : [];
         return routeAliases.length
           ? [Object.freeze({ ...node, routeAliases: Object.freeze(routeAliases) })]
           : [];
@@ -504,11 +509,7 @@ export function HrisNavigationPolicyDeepLinkGuard({ children }: { children: Reac
       if (policy.denialReason === 'NAVIGATION_PROJECTION_PENDING') {
         return (
           <section aria-label={t('navigation.policyStatus')}>
-            <LoadingState
-              label={t('navigation.policyLoading')}
-              variant="skeleton"
-              size="page"
-            />
+            <LoadingState label={t('navigation.policyLoading')} variant="skeleton" size="page" />
           </section>
         );
       }
@@ -633,7 +634,8 @@ function selectEffectiveGroups(
       if (displayOrder !== canonicalNode.displayOrder) {
         throw new Error('Effective policy node order is invalid.');
       }
-      return Object.freeze({ ...canonicalNode, displayOrder });
+      const routeAliases = selectEffectiveRouteAliases(node.routeAliases, canonicalNode);
+      return Object.freeze({ ...canonicalNode, displayOrder, routeAliases });
     });
     const defaultNodeId = nonBlank(source.defaultNodeId, 'effective default node');
     if (!nodes.some((node) => node.nodeId === defaultNodeId)) {
@@ -653,6 +655,33 @@ function selectEffectiveGroups(
   });
   assertIncreasingOrder(groups, 'group');
   return Object.freeze(groups);
+}
+
+function selectEffectiveRouteAliases(
+  value: unknown,
+  canonicalNode: HrisTaskNavigationGroup['nodes'][number]
+) {
+  if (!Array.isArray(value) || !value.length) {
+    throw new Error('Effective policy node route aliases are invalid.');
+  }
+  const sealedAliases = canonicalNode.routeAliases.filter(isHrisRuntimeEffectiveRouteAlias);
+  const sealedOrder = new Map(sealedAliases.map((alias, index) => [alias, index]));
+  const seenAliases = new Set<string>();
+  let previousOrder = -1;
+  const routeAliases = value.map((candidate) => {
+    const alias = nonBlank(candidate, 'effective node route alias');
+    const displayOrder = sealedOrder.get(alias);
+    if (seenAliases.has(alias)) {
+      throw new Error('Effective policy node route alias is duplicated.');
+    }
+    if (displayOrder === undefined || displayOrder <= previousOrder) {
+      throw new Error('Effective policy node route alias is not sealed.');
+    }
+    seenAliases.add(alias);
+    previousOrder = displayOrder;
+    return alias;
+  });
+  return Object.freeze(routeAliases);
 }
 
 function effectiveRouteMatches(policy: HrisRuntimeNavigationPolicy, requestedPath: string) {
