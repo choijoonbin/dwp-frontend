@@ -5,6 +5,7 @@ import type { APIRequestContext, Page, TestInfo } from '@playwright/test';
 
 const BROWSER_BASE_URL = 'http://127.0.0.1:4219';
 const FIXTURE_URL = 'http://127.0.0.1:8919/api/__hrm009-gate';
+const EVALUATION_URL = 'http://127.0.0.1:8919/api/auth/product-surface-access/evaluate';
 const PERSONAL_PATH = '/hr/me/requests?tab=overview&focus=request:1001';
 const OPERATIONS_PATH = '/hr/operations/people/certificates-documents?tab=overview';
 const PERSONAL_PAGE_KEY = 'route.hcm.personal.requests.page';
@@ -37,10 +38,18 @@ type GateLog = Readonly<{
     ownerGets: Readonly<Record<string, number>>;
     mutations: Readonly<Record<string, number>>;
     forwardedRequests: Readonly<{
-      total: number;
-      authLogin: number;
-      authMe: number;
-      ordinaryApi: number;
+      attempted: Readonly<{
+        total: number;
+        authLogin: number;
+        authMe: number;
+        ordinaryApi: number;
+      }>;
+      succeeded: Readonly<{
+        total: number;
+        authLogin: number;
+        authMe: number;
+        ordinaryApi: number;
+      }>;
     }>;
     unexpectedAuthorityEvaluations: number;
     stepUpRequests: number;
@@ -212,16 +221,18 @@ function expectGateEvidence(log: GateLog, surface: Surface) {
   expect(log.counters.unexpectedAuthorityEvaluations).toBe(0);
   expect(log.counters.stepUpRequests).toBe(0);
   expect(Object.values(log.counters.mutations).reduce((sum, count) => sum + count, 0)).toBe(0);
-  expect(log.counters.forwardedRequests.authLogin).toBeGreaterThanOrEqual(1);
-  expect(log.counters.forwardedRequests.authMe).toBeGreaterThanOrEqual(1);
-  expect(log.counters.forwardedRequests.ordinaryApi).toBeGreaterThanOrEqual(1);
-  expect(log.counters.forwardedRequests.total).toBeGreaterThanOrEqual(3);
-  expect(Object.keys(log.counters.forwardedRequests).sort()).toEqual([
-    'authLogin',
-    'authMe',
-    'ordinaryApi',
-    'total',
-  ]);
+  const { attempted, succeeded } = log.counters.forwardedRequests;
+  expect(succeeded.authLogin).toBeGreaterThanOrEqual(1);
+  expect(succeeded.authMe).toBeGreaterThanOrEqual(1);
+  expect(succeeded.ordinaryApi).toBeGreaterThanOrEqual(1);
+  expect(succeeded.total).toBeGreaterThanOrEqual(3);
+  expect(attempted.total).toBeGreaterThanOrEqual(succeeded.total);
+  expect(attempted.authLogin).toBeGreaterThanOrEqual(succeeded.authLogin);
+  expect(attempted.authMe).toBeGreaterThanOrEqual(succeeded.authMe);
+  expect(attempted.ordinaryApi).toBeGreaterThanOrEqual(succeeded.ordinaryApi);
+  expect(Object.keys(log.counters.forwardedRequests).sort()).toEqual(['attempted', 'succeeded']);
+  expect(Object.keys(attempted).sort()).toEqual(['authLogin', 'authMe', 'ordinaryApi', 'total']);
+  expect(Object.keys(succeeded).sort()).toEqual(['authLogin', 'authMe', 'ordinaryApi', 'total']);
 
   const pageSequence = firstSequence(
     log,
@@ -263,6 +274,92 @@ async function attachEvidence(
 }
 
 test.describe.configure({ mode: 'serial' });
+
+test.beforeAll(async () => {
+  const headers = {
+    authorization: 'Bearer negative-preflight-authorization-secret',
+    cookie: 'negative-preflight-cookie-secret=1',
+    'content-type': 'application/json',
+  };
+  const reset = async () => {
+    const response = await fetch(`${FIXTURE_URL}/reset`, { method: 'POST' });
+    expect(response.ok).toBe(true);
+  };
+  await reset();
+  try {
+    const malformed = await fetch(EVALUATION_URL, {
+      method: 'POST',
+      headers,
+      body: '{"sentinel":"negative-preflight-body-secret"',
+    });
+    expect(malformed.status).toBe(400);
+
+    const blankRoute = await fetch(EVALUATION_URL, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        routeContractKey: '',
+        sentinel: 'negative-preflight-body-secret',
+      }),
+    });
+    expect(blankRoute.status).toBe(400);
+
+    const oversized = await fetch(EVALUATION_URL, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        routeContractKey: PERSONAL_PAGE_KEY,
+        sentinel: 'negative-preflight-body-secret',
+        padding: 'x'.repeat(33_000),
+      }),
+    });
+    expect(oversized.status).toBe(413);
+
+    const exactContractMismatch = await fetch(EVALUATION_URL, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        subject: {
+          type: 'PRODUCT',
+          productKey: 'hcm',
+          surfaceKey: 'negative-preflight-surface-secret',
+        },
+        routeContractKey: PERSONAL_PAGE_KEY,
+        contextScopeKey: 'negative-preflight-scope-secret',
+        sentinel: 'negative-preflight-body-secret',
+      }),
+    });
+    expect(exactContractMismatch.status).toBe(200);
+    expect((await exactContractMismatch.json()).data.decision).toBe('ROUTE_DENIED');
+
+    const logResponse = await fetch(`${FIXTURE_URL}/log`);
+    expect(logResponse.ok).toBe(true);
+    const log = (await logResponse.json()) as GateLog;
+    expect(log.counters.unexpectedAuthorityEvaluations).toBe(4);
+    expect(
+      log.events.filter((event) => event.type === 'AUTHORITY_EVALUATION_REJECTED')
+    ).toHaveLength(4);
+    expect(Object.values(log.counters.pageEvaluations).every((count) => count === 0)).toBe(true);
+    expect(Object.values(log.counters.dataEvaluations).every((count) => count === 0)).toBe(true);
+    expect(Object.values(log.counters.ownerGets).every((count) => count === 0)).toBe(true);
+    expect(log.counters.forwardedRequests).toEqual({
+      attempted: { total: 0, authLogin: 0, authMe: 0, ordinaryApi: 0 },
+      succeeded: { total: 0, authLogin: 0, authMe: 0, ordinaryApi: 0 },
+    });
+    const serializedLog = JSON.stringify(log);
+    for (const secret of [
+      'negative-preflight-authorization-secret',
+      'negative-preflight-cookie-secret',
+      'negative-preflight-body-secret',
+      'negative-preflight-surface-secret',
+      'negative-preflight-scope-secret',
+    ]) {
+      expect(serializedLog).not.toContain(secret);
+    }
+  } finally {
+    await reset();
+  }
+});
 
 test('1440 light personal route preserves PAGE-DATA-GET order and keyboard focus', async ({
   page,

@@ -82,6 +82,10 @@ function defaultScenarios() {
   return { personal: 'COMPLETE', operations: 'COMPLETE' };
 }
 
+function forwardedRequestCounts() {
+  return { total: 0, authLogin: 0, authMe: 0, ordinaryApi: 0 };
+}
+
 function defaultCounters() {
   return {
     pageEvaluations: Object.fromEntries(
@@ -100,10 +104,8 @@ function defaultCounters() {
     },
     mutations: {},
     forwardedRequests: {
-      total: 0,
-      authLogin: 0,
-      authMe: 0,
-      ordinaryApi: 0,
+      attempted: forwardedRequestCounts(),
+      succeeded: forwardedRequestCounts(),
     },
     unexpectedAuthorityEvaluations: 0,
     stepUpRequests: 0,
@@ -322,7 +324,6 @@ function evaluateAuthority(body, response) {
     counters.unexpectedAuthorityEvaluations += 1;
     recordEvent('AUTHORITY_EVALUATION_REJECTED', {
       routeContractKey: routeContractKey || null,
-      surfaceKey: surfaceKey || null,
       reasonCode: 'ROUTE_NOT_ALLOWLISTED',
     });
     denial(response, 'ROUTE_DENIED', 'ROUTE_CAPABILITY_REQUIRED');
@@ -332,8 +333,6 @@ function evaluateAuthority(body, response) {
     counters.unexpectedAuthorityEvaluations += 1;
     recordEvent('AUTHORITY_EVALUATION_REJECTED', {
       routeContractKey,
-      surfaceKey,
-      contextScopeKey,
       reasonCode: 'SCOPE_MISMATCH',
     });
     denial(response, 'SCOPE_INVALID', 'SCOPE_CONTEXT_EXPIRED');
@@ -366,6 +365,7 @@ async function routeAuthorityEvaluation(request, response, pathname) {
   try {
     bodyBuffer = await readBody(request, MAX_EVALUATION_BODY_BYTES);
   } catch (error) {
+    counters.unexpectedAuthorityEvaluations += 1;
     const tooLarge = error instanceof Error && error.message === 'REQUEST_TOO_LARGE';
     recordEvent('AUTHORITY_EVALUATION_REJECTED', {
       reasonCode: tooLarge ? 'REQUEST_TOO_LARGE' : 'INVALID_REQUEST_BODY',
@@ -383,6 +383,7 @@ async function routeAuthorityEvaluation(request, response, pathname) {
   try {
     body = parseJson(bodyBuffer);
   } catch {
+    counters.unexpectedAuthorityEvaluations += 1;
     recordEvent('AUTHORITY_EVALUATION_REJECTED', { reasonCode: 'INVALID_REQUEST_BODY' });
     failure(response, 400, 'Authority evaluation request is invalid.', 'INVALID_REQUEST_BODY');
     return;
@@ -390,6 +391,7 @@ async function routeAuthorityEvaluation(request, response, pathname) {
 
   const routeContractKey = typeof body?.routeContractKey === 'string' ? body.routeContractKey : '';
   if (!routeContractKey.trim()) {
+    counters.unexpectedAuthorityEvaluations += 1;
     recordEvent('AUTHORITY_EVALUATION_REJECTED', { reasonCode: 'ROUTE_CONTRACT_REQUIRED' });
     failure(response, 400, 'Authority evaluation request is invalid.', 'ROUTE_CONTRACT_REQUIRED');
     return;
@@ -626,17 +628,34 @@ async function control(request, response, url) {
   failure(response, 404, 'Fixture control endpoint was not found.', 'NOT_FOUND');
 }
 
+function forwardedRequestBucket(method, pathname) {
+  if (method === 'POST' && pathname === '/api/auth/login') return 'authLogin';
+  if (method === 'GET' && pathname === '/api/auth/me') return 'authMe';
+  if (pathname.startsWith('/api/')) return 'ordinaryApi';
+  return undefined;
+}
+
+function incrementForwardedRequest(stage, bucket) {
+  stage.total += 1;
+  if (bucket) stage[bucket] += 1;
+}
+
+function forwardedRequestHeaders(request, body) {
+  const headers = { ...request.headers, host: UPSTREAM.host };
+  if (body !== undefined) {
+    delete headers['transfer-encoding'];
+    delete headers.trailer;
+    headers['content-length'] = String(body.length);
+  }
+  return headers;
+}
+
 function forward(request, response, pathname, body) {
   const method = request.method ?? 'GET';
-  counters.forwardedRequests.total += 1;
-  if (method === 'POST' && pathname === '/api/auth/login') {
-    counters.forwardedRequests.authLogin += 1;
-  } else if (method === 'GET' && pathname === '/api/auth/me') {
-    counters.forwardedRequests.authMe += 1;
-  } else if (pathname.startsWith('/api/')) {
-    counters.forwardedRequests.ordinaryApi += 1;
-  }
-  const headers = { ...request.headers, host: UPSTREAM.host };
+  const bucket = forwardedRequestBucket(method, pathname);
+  const forwardedRequests = counters.forwardedRequests;
+  incrementForwardedRequest(forwardedRequests.attempted, bucket);
+  const headers = forwardedRequestHeaders(request, body);
   const upstreamRequest = http.request(
     {
       protocol: UPSTREAM.protocol,
@@ -647,7 +666,45 @@ function forward(request, response, pathname, body) {
       headers,
     },
     (upstreamResponse) => {
-      response.writeHead(upstreamResponse.statusCode ?? 502, upstreamResponse.headers);
+      const statusCode = upstreamResponse.statusCode ?? 502;
+      let upstreamEnded = false;
+      let downstreamFinished = false;
+      let forwardingFailed = false;
+      let successCounted = false;
+      const countCompletedSuccess = () => {
+        if (
+          !successCounted &&
+          !forwardingFailed &&
+          upstreamEnded &&
+          downstreamFinished &&
+          statusCode >= 200 &&
+          statusCode <= 299
+        ) {
+          successCounted = true;
+          incrementForwardedRequest(forwardedRequests.succeeded, bucket);
+        }
+      };
+      upstreamResponse.once('end', () => {
+        upstreamEnded = true;
+        countCompletedSuccess();
+      });
+      upstreamResponse.once('aborted', () => {
+        forwardingFailed = true;
+      });
+      upstreamResponse.once('error', () => {
+        forwardingFailed = true;
+      });
+      response.once('finish', () => {
+        downstreamFinished = true;
+        countCompletedSuccess();
+      });
+      response.once('close', () => {
+        if (!response.writableFinished) forwardingFailed = true;
+      });
+      response.once('error', () => {
+        forwardingFailed = true;
+      });
+      response.writeHead(statusCode, upstreamResponse.headers);
       upstreamResponse.pipe(response);
     }
   );

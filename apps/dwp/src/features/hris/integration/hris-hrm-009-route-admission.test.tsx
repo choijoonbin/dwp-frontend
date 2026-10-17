@@ -157,7 +157,7 @@ function authorityFixture(testCase: (typeof CASES)[number]): {
         policy: 'product-authorization-v52',
         productRelationship: 'relationship-v52',
         targetPopulation: 'population-v52',
-        support: 'support-v52',
+        support: null,
         tenantControl: 'tenant-control-v52',
       },
       activeAccessMode: 'NORMAL' as const,
@@ -282,7 +282,10 @@ describe('R7 HRM-009 central read-only admission', () => {
       const dataResponse = deferred<ProductSurfaceEvaluationData>();
       state.evaluateProduct.mockReturnValue(dataResponse.promise);
 
-      mount(createElement(testCase.component), `${testCase.path}?tab=overview&focus=item-7`);
+      mount(
+        createElement(testCase.component),
+        `${testCase.path}?tab=overview&focus=item-7&scope=${encodeURIComponent(SCOPE)}`
+      );
       expect(state.evaluateProduct).toHaveBeenCalledTimes(1);
       expect(host.querySelector('[data-runtime-state="loading"]')).not.toBeNull();
       await act(async () => {
@@ -360,6 +363,7 @@ describe('R7 HRM-009 central read-only admission', () => {
     state.requestScope = { ...requestScope(testCase), contextScopeKey: 'scope-foreign' };
     remount(fixture.page);
     state.requestScope = requestScope(testCase);
+    remount(fixture.page, `${testCase.path}?scope=scope-foreign`);
     remount(fixture.page, `${testCase.path}/foreign?download=true`);
 
     expect(state.evaluateProduct).not.toHaveBeenCalled();
@@ -422,9 +426,15 @@ describe('R7 HRM-009 central read-only admission', () => {
       parseHrm009RouteState(
         'IAQ-003',
         '/hr/me/requests',
-        new URLSearchParams('tab=overview&focus=request-7&navigationScope=TENANT')
+        new URLSearchParams(
+          'tab=overview&focus=request-7&scope=scope%3Ahrm009%3Aself&navigationScope=TENANT'
+        )
       )
-    ).toEqual({ state: 'valid', initialFocusPublicId: 'request-7' });
+    ).toEqual({
+      state: 'valid',
+      initialFocusPublicId: 'request-7',
+      requestedScopeKey: 'scope:hrm009:self',
+    });
     expect(
       parseHrm009RouteState(
         'IAQ-010',
@@ -444,5 +454,16 @@ describe('R7 HRM-009 central read-only admission', () => {
         new URLSearchParams('download=true')
       )
     ).toEqual({ state: 'invalid' });
+
+    for (const query of [
+      'scope=',
+      'scope=%20scope%3Ahrm009%3Aself',
+      'scope=scope%3Ahrm009%3Aself%2Fforeign',
+      'scope=scope%3Ahrm009%3Aself&scope=scope%3Ahrm009%3Aself',
+    ]) {
+      expect(
+        parseHrm009RouteState('IAQ-003', '/hr/me/requests', new URLSearchParams(query))
+      ).toEqual({ state: 'invalid' });
+    }
   });
 });
