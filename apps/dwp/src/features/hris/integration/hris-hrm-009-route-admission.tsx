@@ -86,7 +86,12 @@ const RUNTIME_CONTRACTS: Readonly<Record<Hrm009QueryId, RuntimeContract>> = Obje
 });
 
 export type Hrm009RouteState =
-  Readonly<{ state: 'valid'; initialFocusPublicId?: string }> | Readonly<{ state: 'invalid' }>;
+  | Readonly<{
+      state: 'valid';
+      initialFocusPublicId?: string;
+      requestedScopeKey?: string;
+    }>
+  | Readonly<{ state: 'invalid' }>;
 
 function normalizedPath(pathname: string) {
   return pathname.length > 1 ? pathname.replace(/\/+$/u, '') : pathname;
@@ -106,10 +111,11 @@ export function parseHrm009RouteState(
 ): Hrm009RouteState {
   const contract = RUNTIME_CONTRACTS[queryId];
   if (normalizedPath(pathname) !== contract.path) return { state: 'invalid' };
-  const allowedKeys = new Set(['tab', 'focus', 'navigationScope', 'legalEntityPublicId']);
+  const allowedKeys = new Set(['tab', 'focus', 'scope', 'navigationScope', 'legalEntityPublicId']);
   if ([...search.keys()].some((key) => !allowedKeys.has(key))) return { state: 'invalid' };
   const tab = scalar(search, 'tab');
   const focus = scalar(search, 'focus');
+  const requestedScopeKey = scalar(search, 'scope');
   const navigationScope = scalar(search, 'navigationScope');
   const legalEntityPublicId = scalar(search, 'legalEntityPublicId');
   if (
@@ -117,6 +123,8 @@ export function parseHrm009RouteState(
     (tab !== undefined && tab !== 'overview') ||
     focus === null ||
     (focus !== undefined && !PUBLIC_ID.test(focus)) ||
+    requestedScopeKey === null ||
+    (requestedScopeKey !== undefined && !PUBLIC_ID.test(requestedScopeKey)) ||
     navigationScope === null ||
     legalEntityPublicId === null ||
     (navigationScope !== undefined &&
@@ -134,6 +142,7 @@ export function parseHrm009RouteState(
   return Object.freeze({
     state: 'valid' as const,
     ...(focus === undefined ? {} : { initialFocusPublicId: focus }),
+    ...(requestedScopeKey === undefined ? {} : { requestedScopeKey }),
   });
 }
 
@@ -306,6 +315,8 @@ function Hrm009RouteAdmission({ queryId }: Readonly<{ queryId: Hrm009QueryId }>)
     () => parseHrm009RouteState(queryId, location.pathname, new URLSearchParams(location.search)),
     [location.pathname, location.search, queryId]
   );
+  const requestedRouteScopeKey =
+    routeState.state === 'valid' ? routeState.requestedScopeKey : undefined;
   const pageEvidence = useMemo<PageEvidence | null>(() => {
     if (
       !runtimeEnabled ||
@@ -315,6 +326,7 @@ function Hrm009RouteAdmission({ queryId }: Readonly<{ queryId: Hrm009QueryId }>)
       !requestGoverned ||
       !requestReady ||
       !requestContextScopeKey ||
+      (requestedRouteScopeKey !== undefined && requestedRouteScopeKey !== pageDecision.scope.key) ||
       !tenantId ||
       !actorId ||
       requestTenantId !== tenantId ||
@@ -364,6 +376,7 @@ function Hrm009RouteAdmission({ queryId }: Readonly<{ queryId: Hrm009QueryId }>)
     requestGoverned,
     requestProductId,
     requestReady,
+    requestedRouteScopeKey,
     requestSurfaceId,
     requestTenantId,
     routeState.state,
