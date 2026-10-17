@@ -1,0 +1,176 @@
+{
+  "schema": "dwp.hris.wave7-execution-roadmap-successor.v11",
+  "roadmapId": "HRIS-WAVE7-EXECUTION-ROADMAP-SUCCESSOR-20261017-R11",
+  "issuedAt": "2026-10-17T14:30:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "supersedes": {
+    "path": "docs/06-delivery/hris/wave6-2026-10-15/execution-roadmap-successor.v10.json",
+    "sha256": "dd443ddbf564313eb0d5f0f5c685e2c8455a865e4554cc90524a1835726b3315",
+    "preservation": "IMMUTABLE_PREDECESSOR_RETAINED",
+    "inheritedClosedMilestones": true
+  },
+  "integratedPinsBeforeThisCarrier": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "6e7d1a6a8d0337c545abf83f5e243a8aa11f8457",
+      "tree": "9fb489ae33334898c6044f1b9a3f30ab42a0f71d",
+      "upstream": "origin/dwp-dev",
+      "localRemoteExact": true,
+      "changedByR7C0": false
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "d11df35ed11c32b6b5fafbe4097f39974df941b2",
+      "tree": "74c8af3eff1fbfd9bab8cceeebf0a8c0fce130f6",
+      "upstream": "origin/dwp-dev",
+      "localRemoteExactBeforeCarrier": true
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "upstream": "origin/dwp-dev",
+      "localRemoteExact": true,
+      "changedByR7C0": false
+    }
+  },
+  "r6Closure": {
+    "state": "CLOSED_ALL_R6A_R6B_R6C_INTEGRATED_DEFAULT_OFF",
+    "remainingR6ImplementationWork": 0,
+    "backendIntegrationCommit": "6e7d1a6a8d0337c545abf83f5e243a8aa11f8457",
+    "frontendR6EvidenceCarrierCommit": "6c0d181c7acab57179d8760ae0aeba80e6ee4d35",
+    "authorizationRegistryVersion": 47,
+    "tenantActivation": false,
+    "productionRelease": false
+  },
+  "closedByThisSuccessor": {
+    "id": "R7-C0-RECLASSIFY-AND-CLOSE-RESIDUAL-CONTROL",
+    "state": "CLOSED_INTEGRATED_EVIDENCE_ONLY",
+    "frontendIntegrationCommitBeforeRoadmapCarrier": "d11df35ed11c32b6b5fafbe4097f39974df941b2",
+    "evidence": {
+      "baseReclassification": {
+        "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-c0-reclassification-r1/base-slice-reclassification.v1.json",
+        "sha256": "73c02c6d945f2b62ae716d2dbbf76e5123a2863f50d19de51e27085943291de8"
+      },
+      "sys001NoCodeClose": {
+        "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-c0-reclassification-r1/sys-001-no-code-close.v1.json",
+        "sha256": "8d801dce37a21c9b5a5e4a12a98aa4282b3d756f168c09e6db301d7ad00218c8"
+      }
+    },
+    "preCloseSnapshot": {
+      "universe": 86,
+      "retired": 2,
+      "evidenceClosedComplete": 25,
+      "integratedExplicitCloseResidual": 1,
+      "partialSurfaceOrOverlap": 4,
+      "noCurrentSliceResult": 54,
+      "active": 84,
+      "activeIncomplete": 59
+    },
+    "effectiveStateAfterSys001Receipt": {
+      "universe": 86,
+      "retired": 2,
+      "completed": 26,
+      "partialSurfaceOrOverlap": 4,
+      "noCurrentSliceResult": 54,
+      "active": 84,
+      "activeIncomplete": 58,
+      "equations": [
+        "2 + 26 + 4 + 54 = 86",
+        "86 - 2 = 84 active",
+        "4 + 54 = 58 active incomplete after SYS-001 close"
+      ]
+    },
+    "sourceChanges": false,
+    "historicalWave3OverlayMutated": false,
+    "businessSliceDoubleCounted": false
+  },
+  "auditedSuccessorBoundaries": {
+    "payCompositeSettingsAuthority": {
+      "state": "AUDIT_COMPLETE_IMPLEMENTATION_REQUIRED",
+      "canonicalPage": "/hr/settings/payroll",
+      "tab": "foundation",
+      "boundary": "Keep the single configuration PAGE. Add separate hcm.management DATA and ACTION authorities under a unique settings API prefix, and require the PAGE grant, selected-tab first-read grant and exact action grant together.",
+      "forbidden": [
+        "Do not reuse hcm.operations payroll-foundation routes or capabilities in settings.",
+        "Do not create a second PAGE pattern containing a query string.",
+        "Do not expose or activate /hr/operations/pay.",
+        "Do not count PAY-007 business implementation a second time."
+      ],
+      "classification": "AUTHORITY_AND_EXPOSURE_ONLY",
+      "defaultOff": true
+    },
+    "controlledExportDedicatedTopology": {
+      "state": "AUDIT_COMPLETE_IMPLEMENTATION_REQUIRED",
+      "canonicalPage": "/hr/data/exports",
+      "boundary": "Keep the existing People-owned v47 PAGE and API contracts. Append a dedicated HRIS-HRM controlled-export node to SET-08 and retire only the historical BASE:dwp-governance semantic alias at runtime.",
+      "forbidden": [
+        "Do not create product-authorization v48 solely for this topology repair.",
+        "Do not rebuild the controlled-export API or People domain.",
+        "Do not mutate the historical generated IA or BASE:dwp-governance catalog record.",
+        "Do not classify BASE-TFR-SYS-010 as complete or in progress from this repair."
+      ],
+      "classification": "NAVIGATION_TOPOLOGY_REMEDIATION_ONLY",
+      "defaultOff": true
+    }
+  },
+  "nextExecutable": {
+    "id": "R7-C1-SEAL-TWO-CROSS-CUTTING-SUCCESSORS",
+    "state": "AUTHORIZED_NEXT_EXECUTABLE_AFTER_R7_C0_EVIDENCE_CARRIER",
+    "owner": "SYS_COMMON_INTEGRATION_CONTROL",
+    "orderedWork": [
+      "Implement and integrate the controlled-export 97-to-98 descendant append-only topology successor with a leased database migration and synchronized backend/frontend exact pins.",
+      "Implement and integrate the PAY composite settings authority with a new immutable authorization successor, unique settings API aliases, strict owner PEP and a default-off foundation tab.",
+      "Issue separate evidence receipts; neither successor may increment business-slice completion counts.",
+      "Recompute and seal the R7 execution pin after both successors are integrated.",
+      "Then issue and execute the first five-lane module batch for HRM-005, PAY-013, PER-001, SYS-002 and TIM-007."
+    ],
+    "firstFiveLaneBatch": [
+      "BASE-TFR-HRM-005",
+      "BASE-TFR-PAY-013",
+      "BASE-TFR-PER-001",
+      "BASE-TFR-SYS-002",
+      "BASE-TFR-TIM-007"
+    ],
+    "entryCriteria": [
+      "consume backend dwp-dev 6e7d1a6a8d0337c545abf83f5e243a8aa11f8457",
+      "consume frontend dwp-dev d11df35ed11c32b6b5fafbe4097f39974df941b2 plus this roadmap carrier",
+      "consume agent dwp-dev 9beb5439cad065e7d919a98c9f9becb44481508a",
+      "preserve all R6 default-off and exact-owner boundaries",
+      "obtain an unused backend migration lease before authoring the topology migration",
+      "do not start business-slice coding until both cross-cutting successors have exact implementation packets"
+    ],
+    "minimumAcceptance": [
+      "Controlled export has one canonical dedicated node, one runtime owner and no governance alias ownership at the successor pin.",
+      "Old published navigation policies remain valid and do not automatically enable the appended node.",
+      "Payroll Foundation settings uses only hcm.management composite authority and never accepts hcm.operations as a substitute.",
+      "Both successors remain OFF and unenrolled by default and fail closed on revision, checksum, tenant, scope, predicate or action mismatch.",
+      "Only changed-cluster and failed-target reruns are performed before integration."
+    ]
+  },
+  "nonClaims": [
+    "R7 business implementation is not complete.",
+    "BASE-TFR-SYS-010 is not complete and receives no credit from controlled-export topology remediation.",
+    "BASE-TFR-PAY-007 is not counted again by PAY settings authority exposure.",
+    "No tenant activation, customer-data use or production release is authorized."
+  ],
+  "validationPolicy": {
+    "evidenceAndAncestorChecksFirst": true,
+    "changedClusterFirst": true,
+    "failedTargetOnlyAfterCorrection": true,
+    "repositoryWideSuitePerCorrection": false,
+    "fullSuiteOnlyAtExplicitReleaseGateOrCrossCuttingRisk": true
+  },
+  "activationPolicy": {
+    "allNewFeaturesDefaultOff": true,
+    "runtimeModeDefault": "OFF",
+    "enrolledTenantsDefault": [],
+    "tenantActivationAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "IMPLEMENT_AND_INTEGRATE_R7_C1_CONTROLLED_EXPORT_TOPOLOGY_AND_PAY_COMPOSITE_SETTINGS_AUTHORITY_THEN_ISSUE_FIRST_FIVE_LANE_BATCH"
+}
