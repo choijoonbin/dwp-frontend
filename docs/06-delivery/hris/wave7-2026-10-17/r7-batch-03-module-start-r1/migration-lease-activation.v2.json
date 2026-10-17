@@ -1,0 +1,128 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-03-migration-lease-activation.v2",
+  "activationId": "HRIS-WAVE7-R7-BATCH-03-MIGRATION-LEASE-ACTIVATION-20261018-R2",
+  "activatedAt": "2026-10-18T04:42:00+09:00",
+  "activatedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "ONE_EXCLUSIVE_PEOPLE_V58_STAGE_A_LEASE_ACTIVE_EXECUTABLE_TOKEN_V2_REQUIRED_FOR_AUTHORING",
+  "purpose": "Activate exactly one People main V58 authoring lease for the exact HRM-009 Stage-A migration path after actual clean pinned backend worktree materialization. This active lease must be combined with the matching executable start-token v2 and grants no authority outside the sealed V58 manifest.",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ACTIVATION_ID_AND_SHA256"
+  },
+  "successorOf": {
+    "path": "migration-lease-activation.v1.json",
+    "sha256": "c93451aec3ec94778974d04fe1a5360229113d247f1a9fa6781398466632ebd0",
+    "bytes": 14786,
+    "reservationId": "HRIS-WAVE7-R7-BATCH-03-MIGRATION-LEASE-RESERVATION-20261018-R1",
+    "requiredState": "ZERO_ACTIVE_LEASES_PEOPLE_V58_RESERVED_NOT_ACTIVE_PENDING_MATERIALIZED_CLEAN_WORKTREE_PROOF",
+    "supersededField": "lease.state",
+    "supersession": "RESERVED_NOT_ACTIVE_TO_ACTIVE_EXCLUSIVE_AFTER_MATERIALIZATION_PROOF"
+  },
+  "authorityBasis": {
+    "worktreeMaterializationReceipt": {
+      "path": "worktree-materialization-receipt.v1.json",
+      "sha256": "132927c954abeab18b17fc19e0a9966c18a933fa462a355473ea32a63f9c817d",
+      "bytes": 6022,
+      "receiptId": "HRIS-WAVE7-R7-BATCH-03-HRM009-STAGE-A-WORKTREE-MATERIALIZATION-20261018-R1",
+      "requiredState": "MATERIALIZED_CLEAN_EXACT_PINS_NO_SOURCE_EDITS_NO_UPSTREAM_NO_REMOTE_BRANCH"
+    },
+    "semanticDisposition": {
+      "path": "semantic-dispositions/base-tfr-hrm-009-stage-a.semantic-disposition.v1.json",
+      "sha256": "2c61d96164f2a594aee8bacf729a8f1a9112167639f9ef1a5bc5f3cf4f1040bb",
+      "bytes": 19804
+    },
+    "centralAuthorizationSuccessor": {
+      "path": "central-authorization-successor.v1.json",
+      "sha256": "c49c856034dbf0fae7923c75356378b62203e2c7ab80bf9374269225be9d20f9",
+      "bytes": 18313
+    },
+    "ownerPacket": {
+      "path": "owner-packets/base-tfr-hrm-009.owner-packet.v1.json",
+      "sha256": "d27de6435c88913821d2b0d947e3ad8d05a1b61703724dd4cd223823dc0729cc",
+      "bytes": 29078
+    },
+    "withheldTokenV1": {
+      "path": "tokens/base-tfr-hrm-009.start-token.v1.json",
+      "sha256": "9385a52b966686e0b990315d77d0173cda760ca8ad4623039c2cbeb12f48db20",
+      "bytes": 22518,
+      "requiredExecutable": false
+    }
+  },
+  "lease": {
+    "leaseId": "HRIS-WAVE7-R7-BATCH-03-PEOPLE-MAIN-V58-HRM009-STAGE-A-20261018-R1",
+    "moduleSession": "HRIS-HRM",
+    "moduleThreadId": "01a0f53e-9a75-7421-969f-473b0cfb9439",
+    "sliceId": "BASE-TFR-HRM-009",
+    "stageId": "BASE-TFR-HRM-009-STAGE-A",
+    "canonicalFeature": "HRIS_HRM_CERTIFICATE_WORKBENCH",
+    "stream": "PEOPLE_MAIN",
+    "version": "V58",
+    "predecessorHighWater": "V57",
+    "exactPath": "dwp-people-server/src/main/resources/db/migration/V58__hrm_base_tfr_hrm_009_stage_a.sql",
+    "manifestAuthority": "migration-lease-activation.v1.json#/exactMigrationManifest",
+    "manifestAuthoritySha256": "c93451aec3ec94778974d04fe1a5360229113d247f1a9fa6781398466632ebd0",
+    "state": "ACTIVE_EXCLUSIVE_ONE_PATH_MATCHING_EXECUTABLE_TOKEN_V2_REQUIRED",
+    "activeLeaseCountForPeopleV58": 1,
+    "secondMigrationAuthorized": false,
+    "existingMigrationEditAuthorized": false,
+    "dataBackfillAuthorized": false
+  },
+  "materializedBackendBinding": {
+    "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261018/r7-batch03/hrm-009-stage-a/backend",
+    "branch": "codex/hris-wave7-r7-batch03-hrm-009-stage-a-backend-20261018-r1",
+    "headAtActivation": "f448c36feee2ed7f59eacc64f450e6db3865f1c5",
+    "treeAtActivation": "cec08e55f33fa71482c583137e3ccc3d8bf11572",
+    "porcelainSha256AtActivation": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "upstreamAtActivation": null,
+    "remoteBranchAtActivation": null,
+    "exact": true,
+    "clean": true
+  },
+  "activationConditionsSatisfied": {
+    "materializedBackendWorktreeExactAndClean": true,
+    "peopleHighWaterIsV57": true,
+    "exactV58PathAbsent": true,
+    "competingPeopleV58Absent": true,
+    "reservedManifestUnchanged": true,
+    "activeLeaseCountAfterActivation": 1
+  },
+  "authoringBoundary": {
+    "allowed": [
+      "Create only dwp-people-server/src/main/resources/db/migration/V58__hrm_base_tfr_hrm_009_stage_a.sql",
+      "Implement exactly the two tables, two indexes, FORCE RLS policies, guards and V54 receipt reuse sealed by migration-lease-activation.v1.json#/exactMigrationManifest"
+    ],
+    "forbidden": [
+      "Any edit to migrations V1 through V57",
+      "Any second People migration or path other than the exact V58 path",
+      "Any data backfill, deletion or automatic privilege elevation",
+      "Any download, revoke, verification transport, Platform or central authorization migration"
+    ],
+    "deviationAction": "STOP_AND_REQUEST_AN_APPEND_ONLY_LEASE_AND_TOKEN_SUCCESSOR"
+  },
+  "authority": {
+    "activeLeaseCount": 1,
+    "oneExactPeopleV58AuthoringLeaseActive": true,
+    "v58AuthoringAuthorizedByLeaseAlone": false,
+    "v58AuthoringAuthorizedOnlyWithMatchingExecutableTokenV2": true,
+    "sourceAuthoringOutsideExactV58Authorized": false,
+    "testExecutionAuthorizedByLeaseAlone": false,
+    "moduleBranchCommitAuthorizedByLeaseAlone": false,
+    "moduleBranchPushAuthorizedByLeaseAlone": false,
+    "centralWriteAuthorized": false,
+    "directDwpDevMergeAuthorized": false,
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "customerDataAuthorized": false,
+    "fullSliceCompletionCredit": 0,
+    "productionExecutionAuthorized": false
+  },
+  "invalidationConditions": [
+    "The backend worktree head, tree, branch or path differs before the first authorized edit.",
+    "The backend worktree porcelain is non-empty before the first authorized edit.",
+    "People main high-water differs from V57 or any V58 path exists before this owner creates the exact leased path.",
+    "The v1 manifest is insufficient, an existing migration must change, a second migration is required or a data backfill is needed.",
+    "The matching executable start-token v2 is absent, invalid or hash-mismatched.",
+    "Any central, Platform, activation, tenant, customer or production action is attempted."
+  ],
+  "nextGate": "ISSUE_ONE_APPEND_ONLY_EXECUTABLE_HRM009_STAGE_A_START_TOKEN_V2_HASH_BOUND_TO_THIS_ACTIVE_LEASE_AND_THE_MATERIALIZATION_RECEIPT"
+}
