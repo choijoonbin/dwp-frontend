@@ -1,0 +1,145 @@
+{
+  "schema": "dwp.hris.module-verification-receipt.v1",
+  "generatedAt": "2026-10-17T09:37:35Z",
+  "sliceId": "BASE-TFR-SYS-002",
+  "state": "MODULE_SOURCE_COMPLETE; LIVE_PRODUCER_E2E_EXTERNAL_GATE",
+  "policy": {
+    "targetedOnly": true,
+    "repositoryWideRerunAfterCorrection": false,
+    "smallestFailedTargetRerun": true,
+    "browserAuthorized": false
+  },
+  "backend": {
+    "requiredAggregateCommand": "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.security.HcmPlatformPepSecurityContractTest' --tests 'com.dwp.services.platform.security.PlatformSecurityFilterTest' --tests 'com.dwp.services.platform.hrisconfiguration.operations.*' --no-daemon --max-workers=1",
+    "history": [
+      {
+        "sequence": 1,
+        "phase": "pre-authority-correction",
+        "result": "COMPILE_FAILED",
+        "detail": "NamedParameterJdbcTemplate.query overload was ambiguous in the first draft; the two-argument RowMapper form fixed it.",
+        "log": {
+          "sha256": "576477d54d948a08a5474e091ef89947c4a80da3a5d16ef2c35e6d5df25c8999",
+          "bytes": 9119,
+          "committed": false
+        }
+      },
+      {
+        "sequence": 2,
+        "command": "./gradlew :dwp-platform-server:compileJava --no-daemon --max-workers=1",
+        "result": "PASS",
+        "detail": "Smallest failed compile target after the first draft correction; BUILD SUCCESSFUL."
+      },
+      {
+        "sequence": 3,
+        "command": "./gradlew :dwp-platform-server:compileTestJava --no-daemon",
+        "result": "ABORTED_BEFORE_TASK_EXECUTION",
+        "detail": "An agent-started command was interrupted during daemon startup; no Gradle task line, test result or usable exit result was produced."
+      },
+      {
+        "sequence": 4,
+        "phase": "post-authority-correction-final-aggregate",
+        "result": "TEST_ASSERTIONS_FAILED",
+        "testsExecuted": 77,
+        "testsFailed": 2,
+        "testsPassedBeforeCorrection": 75,
+        "detail": "One uppercase UUID negative fixture contained no alphabetic hex and one RLS assertion inspected only the wrapper message although the PostgreSQL root cause proved RLS denial.",
+        "log": {
+          "sha256": "edfbb1efd37c5f9ebd4da3adba03c5b5b495eea6aa685570e7537f4d080ca49c",
+          "bytes": 19978,
+          "committed": false
+        }
+      },
+      {
+        "sequence": 5,
+        "command": "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.hrisconfiguration.operations.HrisOperationalExceptionMigrationPostgresTest' --tests 'com.dwp.services.platform.hrisconfiguration.operations.HrisOperationalExceptionProjectionContractTest' --no-daemon --max-workers=1",
+        "result": "PASS",
+        "detail": "Only the two failed classes were rerun after correcting their assertions.",
+        "log": {
+          "sha256": "1483a4c62226e4482665520cecae6ffe62f1b2e53d84559b9f5d6dc7caf13bd2",
+          "bytes": 17688,
+          "committed": false
+        }
+      },
+      {
+        "sequence": 6,
+        "command": "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.hrisconfiguration.operations.HrisOperationalExceptionProjectionContractTest' --no-daemon --max-workers=1",
+        "result": "PASS",
+        "tests": 9,
+        "skipped": 0,
+        "detail": "Smallest affected class after sealing the exact shared topic and Kafka group.",
+        "log": {
+          "sha256": "d5bd0ff72cc4057e304c188f5611454f3dc21324b0b8d71a5316a4aea510f0d7",
+          "bytes": 17666,
+          "committed": false
+        }
+      },
+      {
+        "sequence": 7,
+        "command": "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.hrisconfiguration.operations.HrisOperationalExceptionMigrationPostgresTest' --no-daemon --max-workers=1",
+        "result": "PASS",
+        "tests": 3,
+        "skipped": 0,
+        "failures": 0,
+        "errors": 0,
+        "durationSeconds": 11.218,
+        "testcases": [
+          "cleanMigrationThroughV331CreatesExactProjectionRlsAndRuntimeAcl",
+          "v330ToV331IsForwardOnlyAndAddsExactlyTheProjectionTable",
+          "postgresAdapterIsIdempotentContiguousAndGapBounded"
+        ],
+        "log": {
+          "sha256": "28398353015ad85163437cad64bea03ef6eb1dc305090293cd45748756b9a868",
+          "bytes": 1603,
+          "committed": false
+        }
+      }
+    ],
+    "effectiveFinalResult": {
+      "result": "PASS",
+      "targetedTestUniverse": 77,
+      "basis": "The aggregate's unaffected tests passed; each failed or subsequently affected smallest class passed after its final correction.",
+      "postgresRealContainer": "postgres:16-alpine",
+      "postgresSkipped": 0
+    }
+  },
+  "frontend": {
+    "dependencySetup": {
+      "packageManager": "pnpm@10.18.3 via isolated Corepack home",
+      "projectPackageManagerDeclaration": "yarn@4.17.1",
+      "dependencySource": "/Users/a10697/Work/DWP/dwp-frontend/node_modules",
+      "temporaryWorktreeSymlinkRemoved": true
+    },
+    "commands": [
+      {
+        "command": "pnpm exec vitest run apps/dwp/src/features/hris/administration/__tests__/g3-slices/base-tfr-sys-002.slice.test.tsx apps/dwp/src/features/hris/administration/operations",
+        "result": "PASS",
+        "testFiles": 3,
+        "tests": 25,
+        "durationSeconds": 2.57,
+        "log": {
+          "sha256": "43c444e26fa9d61da9a8d28d10d919587f869e2c05870db6682361ebe1bc7fdb",
+          "bytes": 397,
+          "committed": false
+        }
+      },
+      {
+        "command": "pnpm exec eslint apps/dwp/src/features/hris/administration/operations",
+        "result": "PASS",
+        "diagnostics": 0,
+        "log": {
+          "sha256": "8840018c8a92dd6b93f37a1b43898dd0b3a69c6898bdda811c4ecd7fd3c0d88c",
+          "bytes": 121,
+          "committed": false
+        }
+      }
+    ]
+  },
+  "staticChecks": {
+    "gitDiffCheck": "PASS",
+    "allowedPathCheck": "PASS",
+    "immutableHashCheck": "PASS",
+    "forbiddenMutationSurfaceCheck": "PASS",
+    "laterTokenCarrierAncestor": false,
+    "browserRun": false
+  }
+}
