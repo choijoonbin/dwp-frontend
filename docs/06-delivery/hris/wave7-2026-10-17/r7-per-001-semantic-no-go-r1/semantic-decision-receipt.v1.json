@@ -1,0 +1,331 @@
+{
+  "schema": "dwp.hris.wave7.r7-per-notification-semantic-no-go-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BASE-TFR-PER-001-SEMANTIC-NO-GO-20261017-R1",
+  "revision": 1,
+  "issuedAt": "2026-10-17T15:27:32+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "SEALED_NO_GO_UNSEALED_NO_SOURCE_AUTHORITY",
+  "immutability": {
+    "sealed": true,
+    "appendOnly": true,
+    "predecessorMutation": "FORBIDDEN",
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_RECEIPT_ID_AND_SHA256"
+  },
+  "scope": {
+    "sliceId": "BASE-TFR-PER-001",
+    "module": "PER",
+    "moduleSession": "HRIS-PER",
+    "sourceRef": "TFR-PER-001",
+    "sourceCapability": "PER-NOTIFICATION-001",
+    "sharedContract": "PLAT-004",
+    "pageArchetype": "NON_UI_SUPPORTING_SLICE",
+    "decisionQuestion": "Whether an existing Performance event can truthfully and safely own one shared notification intent now, including the proposed HCM.PERFORMANCE.REVIEW_ASSIGNED meaning."
+  },
+  "predecessor": {
+    "path": "../r7-batch-01-dispatch-r1/owner-packets/base-tfr-per-001.owner-packet.v1.json",
+    "sha256": "60037320b9fffa4a5dfe1a7867f8087a71de791fde76047c14ddd101dedc514f",
+    "packetId": "HRIS-WAVE7-R7-BATCH-01-OWNER-BASE-TFR-PER-001-20261017-R1",
+    "preservedByteForByte": true,
+    "relationship": "APPEND_ONLY_SEMANTIC_NO_GO_SUCCESSOR"
+  },
+  "repositoryPins": {
+    "frontendCarrierBase": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "cbce6c8dbee403f7d63a7a6c21d954d45027e943",
+      "tree": "6938e4cd8904419fcd888d8a1647f136970d29d1"
+    },
+    "backendEvidenceAuthority": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "b0db3577fd6517e64dd9de625fb67e99ff19630d",
+      "tree": "36d18dc16c23a39b604e815c56f3c1566a7fa521",
+      "source": "../r7-batch-01-dispatch-r1/source-authority.v1.json"
+    }
+  },
+  "sourceFinding": {
+    "sourceFamilySha256": "cb7aa91280cca068e3ea8515562402a6584b12e2505f04d9b9c99917a22f114c",
+    "sourceRowCount": 2,
+    "sourceSemanticLineage": "PER-NOTIFICATION-001::PLAT-004",
+    "provenMeaning": "Remove Performance-specific mail-template and direct-send coupling and reuse the shared DWP notification contract with minimal allowlisted intent.",
+    "notProven": [
+      "a review-assignment notification business fact",
+      "a cycle-publication recipient",
+      "a submission recipient",
+      "a source URI or requested-event name",
+      "a notification type key or purpose",
+      "a recipient reference shape",
+      "a variable allowlist or template model",
+      "an owner deep link"
+    ],
+    "smallestSafeSourceBackedSemantic": "NO_RUNTIME_NOTIFICATION_ONBOARDING_UNTIL_AN_ATOMIC_OWNER_FACT_AND_OWNER_ROUTE_EXIST"
+  },
+  "candidateAssessment": [
+    {
+      "candidate": "PerformanceCyclePublished.v1",
+      "decision": "REJECTED_FALSE_BUSINESS_FACT",
+      "reason": "The transition publishes a cycle version and its payload contains cycle metadata only. It neither creates nor identifies a review assignment, review, reviewer, recipient or reviewer task.",
+      "proposedTypeKey": "HCM.PERFORMANCE.REVIEW_ASSIGNED",
+      "proposedTypeKeyDecision": "REJECTED_UNSEALED_NO_SOURCE_AUTHORITY"
+    },
+    {
+      "candidate": "PerformanceReviewSubmitted.v1",
+      "decision": "REJECTED_TEMPORAL_AND_SEMANTIC_INVERSION",
+      "reason": "The event is emitted after an already-assigned reviewer submits a review. Translating it as REVIEW_ASSIGNED would notify after task completion and reverse the source fact."
+    },
+    {
+      "candidate": "PerformanceResultsPublished.v1",
+      "decision": "FUTURE_SOURCE_BACKED_CANDIDATE_NOT_SELECTED",
+      "reason": "Recovered recovery semantics explicitly preserve published results when notification delivery fails, but the pinned runtime has no ResultsPublished producer and the owner results route remains planned and unimplemented."
+    },
+    {
+      "candidate": "PerformanceReviewAssignmentActivated.v1",
+      "decision": "FUTURE_PROPOSED_CANDIDATE_NOT_CANONICAL",
+      "reason": "A truthful review-assigned notification would require an atomic production transition that creates or activates the assigned review and emits its owner fact in the same transaction. No such producer or canonical event currently exists."
+    }
+  ],
+  "sealedDecision": {
+    "decision": "NO_GO",
+    "reasonCode": "UNSEALED_NO_SOURCE_AUTHORITY",
+    "implementationSemanticValues": {
+      "triggeringPerformanceTransition": "UNSEALED_NO_SOURCE_AUTHORITY",
+      "sourceUri": "UNSEALED_NO_SOURCE_AUTHORITY",
+      "requestedEventType": "UNSEALED_NO_SOURCE_AUTHORITY",
+      "requestedEventSchemaVersion": "UNSEALED_NO_SOURCE_AUTHORITY",
+      "typeKey": "UNSEALED_NO_SOURCE_AUTHORITY",
+      "recipientAuthority": "UNSEALED_NO_SOURCE_AUTHORITY",
+      "recipientReferenceShape": "UNSEALED_NO_SOURCE_AUTHORITY",
+      "purposeCode": "UNSEALED_NO_SOURCE_AUTHORITY",
+      "variableAllowlist": "UNSEALED_NO_SOURCE_AUTHORITY",
+      "templateKey": "UNSEALED_NO_SOURCE_AUTHORITY",
+      "templateVersion": "UNSEALED_NO_SOURCE_AUTHORITY",
+      "templateModelDigest": "UNSEALED_NO_SOURCE_AUTHORITY",
+      "localeFallback": "UNSEALED_NO_SOURCE_AUTHORITY",
+      "deepLinkTemplate": "UNSEALED_NO_SOURCE_AUTHORITY"
+    },
+    "prohibitedMappings": [
+      "PerformanceCyclePublished.v1 -> HCM.PERFORMANCE.REVIEW_ASSIGNED",
+      "PerformanceReviewSubmitted.v1 -> HCM.PERFORMANCE.REVIEW_ASSIGNED",
+      "PerformancePopulationFrozen.v1 -> HCM.PERFORMANCE.REVIEW_ASSIGNED"
+    ],
+    "runtimeOnboardingNow": false,
+    "completionCredit": 0
+  },
+  "recipientAuthorityFinding": {
+    "currentState": "NOT_CURRENTLY_AUTHORITY_BINDABLE",
+    "performanceSchemaFinding": "Performance V18 already stores reviewer_principal_public_id and due_at on assigned-review state, so a future recipient person reference does not by itself prove a schema delta.",
+    "producerFinding": "No production INSERT into hris_performance.prf_review_assignments and no assignment-created or assignment-activated owner event exists at the pinned backend commit.",
+    "authFinding": "The current HRIS recipient-authority endpoint accepts only HCM.EMPLOYEE_CHANGE_APPLIED_NOTIFICATION and therefore cannot authorize a Performance purpose as-is.",
+    "requiredFutureBoundary": "A separately approved purpose-bound Auth recipient authority must resolve the immutable reviewer person reference to one active tenant-bound DWP user and fail closed.",
+    "forbiddenInputs": [
+      "caller-selected DWP user IDs",
+      "raw email addresses",
+      "channel choices",
+      "unverified reviewer-assignment references"
+    ]
+  },
+  "ownerRouteFinding": {
+    "assignedReviewRouteState": "NOT_MOUNTED",
+    "resultsRouteState": "PLANNED_NOT_IMPLEMENTED",
+    "currentPersonalPerformanceSurface": "/hr/talent currently mounts the goals-oriented HrisPerformanceWorkspace and is not an assigned-review deep link.",
+    "operatorRouteExclusion": "/hr/operations/performance/review-operations is an operator population-freeze/review-operations surface, not the recipient reviewer task.",
+    "decision": "NO_DEEP_LINK_MAY_BE_SEALED_OR_INVENTED"
+  },
+  "migrationDecision": {
+    "peopleMain": {
+      "candidateVersion": "V57",
+      "required": false,
+      "authorized": false,
+      "decision": "NOT_A_PERFORMANCE_STREAM_AND_NOT_GENUINELY_NEEDED_FOR_BASE_TFR_PER_001"
+    },
+    "notificationMain": {
+      "candidateVersion": "V36",
+      "requiredNow": false,
+      "leaseIssued": false,
+      "authoringAuthorized": false,
+      "futureCondition": "Only after one exact owner fact, recipient authority, purpose, variables, templates and owner route are separately sealed."
+    },
+    "performance": {
+      "currentHighWater": "V18",
+      "candidateNextVersion": "V19",
+      "requiredNow": false,
+      "leaseIssued": false,
+      "authoringAuthorized": false,
+      "futureCondition": "Performance V19 is conditional only if the accepted future contract still requires owner-local durable notification intent, claim or receipt-lineage storage that V18 cannot represent. Recipient reference resolution alone does not justify V19.",
+      "noSchemaPath": "If owner-local receipt lineage is removed by a separately accepted contract, reuse the existing Performance outbox without a Performance migration."
+    }
+  },
+  "futureReleasePrerequisites": [
+    {
+      "id": "PER001-FUTURE-01",
+      "criterion": "Central product and architecture authority selects exactly one truthful business fact: an atomic review-assignment activation producer or the implemented PerformanceResultsPublished.v1 producer."
+    },
+    {
+      "id": "PER001-FUTURE-02",
+      "criterion": "For review assignment, the owner transaction durably creates or activates prf_review_assignments and emits one canonical fact with immutable review, reviewer-person, due-date and correlation references; the candidate event name remains unsealed until approved."
+    },
+    {
+      "id": "PER001-FUTURE-03",
+      "criterion": "For results publication, the ResultSet producer and publication invariants exist before a notification mapping is approved."
+    },
+    {
+      "id": "PER001-FUTURE-04",
+      "criterion": "The recipient workflow route is mounted, authorized and capable of resolving the exact focus reference; an operator route cannot substitute for a reviewer or result-recipient route."
+    },
+    {
+      "id": "PER001-FUTURE-05",
+      "criterion": "Auth admits one exact Performance notification purpose and resolves a tenant-bound active DWP user from an immutable owner person reference without caller-selected destinations."
+    },
+    {
+      "id": "PER001-FUTURE-06",
+      "criterion": "Central seals the exact source URI, requested-event schema, typeKey, purpose, recipient shape, variables, templates, locale fallback and deep-link allowlist in an append-only successor."
+    },
+    {
+      "id": "PER001-FUTURE-07",
+      "criterion": "A separate cross-owner touch packet and any required Notification V36 lease are issued before source work; Performance V19 is leased only under the owner-local receipt-lineage condition."
+    }
+  ],
+  "evidence": [
+    {
+      "id": "PER001-EV-01",
+      "repository": "dwp-frontend",
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-evidence/per/g1-decision-log.csv",
+      "sha256": "9c0600dee1440132f720bece1b83724124a33ee8753e0ac8c7eff9ed674572b4",
+      "locator": "PER-DEC-016"
+    },
+    {
+      "id": "PER001-EV-02",
+      "repository": "dwp-frontend",
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/target-family-resolution-register.csv",
+      "sha256": "a8746b9b89bf6bebd0a5b6fe4d8f9e985e223dcd6d395f5ef03b6f3f98d16189",
+      "locator": "TFR-PER-001"
+    },
+    {
+      "id": "PER001-EV-03",
+      "repository": "dwp-frontend",
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-evidence/per/g2-readiness/api-event-contracts.yaml",
+      "sha256": "559c345053d205902613f502be18dcbc22577e9286686827ad6383a5d2211f5a",
+      "locator": "lines 1029-1049"
+    },
+    {
+      "id": "PER001-EV-04",
+      "repository": "dwp-frontend",
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-evidence/per/g2-readiness/state-guard-idempotency-recovery.md",
+      "sha256": "ab6000d5a14b329b58a04e497545933575708d3e22264db238186e94f9cd91c0",
+      "locator": "line 142"
+    },
+    {
+      "id": "PER001-EV-05",
+      "repository": "dwp-frontend",
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-evidence/per/g2-readiness/ADR-001-performance-boundary.md",
+      "sha256": "e5b2ac007b6fea507f85ac1bb31b56fe6af8e11b906bcc51253a84caaae44004",
+      "locator": "line 44"
+    },
+    {
+      "id": "PER001-EV-06",
+      "repository": "dwp-frontend",
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/hris-information-architecture-register.csv",
+      "sha256": "ab506a2bb2f80c8ab81a4b9d575374d6bda83b312d11dce07495d4812bdf4686",
+      "locator": "BASE:my-goals-performance and BASE:performance-results"
+    },
+    {
+      "id": "PER001-EV-07",
+      "repository": "dwp-backend",
+      "commit": "b0db3577fd6517e64dd9de625fb67e99ff19630d",
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/PerformanceCycleCommandRepository.java",
+      "gitBlob": "3c05e915b905f4933d917fb8ee1c5523922d10cb",
+      "locator": "lines 283-332"
+    },
+    {
+      "id": "PER001-EV-08",
+      "repository": "dwp-backend",
+      "commit": "b0db3577fd6517e64dd9de625fb67e99ff19630d",
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/performance/review/PerformanceReviewRepository.java",
+      "gitBlob": "46d244f889eadfe85197ef87cad93411412ec959",
+      "locator": "lines 181-251"
+    },
+    {
+      "id": "PER001-EV-09",
+      "repository": "dwp-backend",
+      "commit": "b0db3577fd6517e64dd9de625fb67e99ff19630d",
+      "path": "dwp-people-server/src/main/resources/db/performance-migration/V18__per_base_tfr_per_013.sql",
+      "gitBlob": "9c59cf074f9751a540b9dac1ebfa61406cba3216",
+      "locator": "lines 1-61"
+    },
+    {
+      "id": "PER001-EV-10",
+      "repository": "dwp-backend",
+      "commit": "b0db3577fd6517e64dd9de625fb67e99ff19630d",
+      "path": "dwp-people-server/src/main/resources/db/performance-migration/V1__per_create_evaluation_cycle_foundation.sql",
+      "gitBlob": "3bfb2b6570863e31f1916abe8dae03be90f8d96f",
+      "locator": "lines 250-301"
+    },
+    {
+      "id": "PER001-EV-11",
+      "repository": "dwp-backend",
+      "commit": "b0db3577fd6517e64dd9de625fb67e99ff19630d",
+      "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/dto/HrisRecipientAuthorityDtos.java",
+      "gitBlob": "704892b074173e767355de359e65740e1cc1b140",
+      "locator": "lines 13-51"
+    },
+    {
+      "id": "PER001-EV-12",
+      "repository": "dwp-frontend",
+      "commit": "cbce6c8dbee403f7d63a7a6c21d954d45027e943",
+      "path": "apps/dwp/src/features/hris/performance/pages/hris-performance-review-workspace.tsx",
+      "gitBlob": "179e6162e3ba79213b0975acdb6550d513059403",
+      "locator": "lines 16-19"
+    },
+    {
+      "id": "PER001-EV-13",
+      "repository": "dwp-frontend",
+      "commit": "cbce6c8dbee403f7d63a7a6c21d954d45027e943",
+      "path": "apps/dwp/src/pages/hcm.tsx",
+      "gitBlob": "6f1fe0b822d442bdcc3b6977615ceb94ea7c4aa6",
+      "locator": "lines 232-265"
+    }
+  ],
+  "validationClaims": [
+    {
+      "id": "PER001-VAL-01",
+      "result": "PASS",
+      "claim": "The predecessor owner packet SHA-256 matches and no predecessor file is modified."
+    },
+    {
+      "id": "PER001-VAL-02",
+      "result": "PASS",
+      "claim": "Pinned main-source search returns zero production INSERT statements for prf_review_assignments."
+    },
+    {
+      "id": "PER001-VAL-03",
+      "result": "PASS",
+      "claim": "Pinned main-source search returns zero PerformanceResultsPublished.v1 producers and zero review-assignment-activated event producers."
+    },
+    {
+      "id": "PER001-VAL-04",
+      "result": "PASS",
+      "claim": "Every implementation semantic field is exactly UNSEALED_NO_SOURCE_AUTHORITY; no type, template, recipient, variable or route is invented."
+    },
+    {
+      "id": "PER001-VAL-05",
+      "result": "PASS",
+      "claim": "No source, migration, generated authorization, runtime configuration or predecessor evidence is changed by this receipt."
+    }
+  ],
+  "authority": {
+    "noGoDecisionSealed": true,
+    "implementationSemanticValuesSealed": false,
+    "sourceImplementationAuthorized": false,
+    "notificationV36LeaseIssued": false,
+    "peopleV57LeaseIssued": false,
+    "performanceV19LeaseIssued": false,
+    "migrationAuthoringAuthorized": false,
+    "worktreeMaterializationAuthorized": false,
+    "moduleBranchCommitAuthorized": false,
+    "moduleBranchPushAuthorized": false,
+    "startTokenIssued": false,
+    "mergeToDwpDevAuthorized": false,
+    "activationAuthorized": false
+  },
+  "nextGate": "APPEND_ONLY_PRODUCT_SEMANTIC_SUCCESSOR_AFTER_ATOMIC_OWNER_PRODUCER_OWNER_ROUTE_AND_PURPOSE_BOUND_RECIPIENT_AUTHORITY_EXIST"
+}
