@@ -41,6 +41,8 @@ export type ProductSurfaceHighRiskOperation =
   | 'HCM_TIME_CLOCK_EVENT_VOID'
   | 'HCM_PAYROLL_FOUNDATION_PUBLISH'
   | 'HCM_PAYROLL_FOUNDATION_REVERSE'
+  | 'HCM_PAYROLL_FOUNDATION_SETTINGS_PUBLISH'
+  | 'HCM_PAYROLL_FOUNDATION_SETTINGS_REVERSE'
   | 'HCM_PAYROLL_FORMULA_PUBLISH'
   | 'HCM_NAVIGATION_POLICY_APPROVE'
   | 'HCM_NAVIGATION_POLICY_PUBLISH'
@@ -288,6 +290,18 @@ export const PRODUCT_SURFACE_HIGH_RISK_COMMAND_CATALOG: readonly ProductSurfaceH
       productKey: 'hcm',
       surfaceKey: 'hcm.operations',
       routeContractKey: 'route.hcm.operations.payroll-foundation-reverse.action',
+    },
+    {
+      operation: 'HCM_PAYROLL_FOUNDATION_SETTINGS_PUBLISH',
+      productKey: 'hcm',
+      surfaceKey: 'hcm.management',
+      routeContractKey: 'route.hcm.configuration.payroll-foundation-publish.action',
+    },
+    {
+      operation: 'HCM_PAYROLL_FOUNDATION_SETTINGS_REVERSE',
+      productKey: 'hcm',
+      surfaceKey: 'hcm.management',
+      routeContractKey: 'route.hcm.configuration.payroll-foundation-reverse.action',
     },
     {
       operation: 'HCM_PAYROLL_FORMULA_PUBLISH',

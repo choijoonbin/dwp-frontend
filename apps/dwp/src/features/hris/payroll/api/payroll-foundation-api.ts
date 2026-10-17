@@ -319,3 +319,100 @@ export const payrollFoundationDataSource: PayrollFoundationDataSource = Object.f
   receipt: getPayrollFoundationReceipt,
   reconcile: reconcilePayrollFoundationReceipt,
 });
+
+/** Builds a route-family adapter without changing the shared Foundation domain/runtime. */
+export function createPayrollFoundationDataSource(apiBase: string): PayrollFoundationDataSource {
+  if (!apiBase.startsWith('/api/payroll/v1/') || apiBase.endsWith('/')) {
+    throw new Error('A canonical payroll API base is required.');
+  }
+  const path = (configurationId: string) =>
+    `${apiBase}/configurations/${encodeURIComponent(configurationId)}`;
+
+  return Object.freeze({
+    async list(scope) {
+      const response = await axiosInstance.get<ApiResponse<unknown>>(
+        `${apiBase}/configurations`,
+        scoped(scope)
+      );
+      return response.data.data;
+    },
+    async get(configurationId, scope) {
+      const response = await axiosInstance.get<ApiResponse<unknown>>(
+        path(configurationId),
+        scoped(scope)
+      );
+      return response.data.data;
+    },
+    async versions(configurationId, scope) {
+      const response = await axiosInstance.get<ApiResponse<unknown>>(
+        `${path(configurationId)}/versions`,
+        scoped(scope)
+      );
+      return response.data.data;
+    },
+    async create(request, commandId, scope, authority) {
+      const response = await axiosInstance.post<
+        ApiResponse<unknown>,
+        PayrollFoundationCreateRequest
+      >(`${apiBase}/configurations`, request, commandScope(scope, commandId, authority));
+      return response.data.data;
+    },
+    async update(configurationId, request, commandId, scope, authority) {
+      const response = await axiosInstance.put<
+        ApiResponse<unknown>,
+        PayrollFoundationUpdateRequest
+      >(path(configurationId), request, commandScope(scope, commandId, authority));
+      return response.data.data;
+    },
+    async simulate(configurationId, request, commandId, scope, authority) {
+      const response = await axiosInstance.post<
+        ApiResponse<unknown>,
+        PayrollFoundationVersionCommand
+      >(`${path(configurationId)}/simulations`, request, commandScope(scope, commandId, authority));
+      return response.data.data;
+    },
+    async publish(configurationId, request, commandId, scope, authority) {
+      const response = await axiosInstance.post<
+        ApiResponse<unknown>,
+        PayrollFoundationVersionCommand
+      >(
+        `${path(configurationId)}/publish`,
+        request,
+        commandScope(scope, commandId, authority, true, request.expectedVersion)
+      );
+      return response.data.data;
+    },
+    async reverse(configurationId, request, commandId, scope, authority) {
+      const response = await axiosInstance.post<
+        ApiResponse<unknown>,
+        PayrollFoundationReversalCommand
+      >(
+        `${path(configurationId)}/reversals`,
+        request,
+        commandScope(scope, commandId, authority, true, request.expectedVersion)
+      );
+      return response.data.data;
+    },
+    async receipt(commandId, scope) {
+      const response = await axiosInstance.get<ApiResponse<unknown>>(
+        `${apiBase}/receipts/${encodeURIComponent(commandId)}`,
+        scoped(scope)
+      );
+      return response.data.data;
+    },
+    async reconcile(commandId, scope, authority) {
+      const governed = productSurfaceGovernedMutationConfig(authority);
+      const response = await axiosInstance.post<ApiResponse<unknown>, Record<string, never>>(
+        `${apiBase}/receipts/${encodeURIComponent(commandId)}/reconcile`,
+        {},
+        {
+          ...scoped(scope),
+          ...governed,
+          headers: governed.headers,
+          csrfReplay: 'NEVER',
+        }
+      );
+      return response.data.data;
+    },
+  });
+}
