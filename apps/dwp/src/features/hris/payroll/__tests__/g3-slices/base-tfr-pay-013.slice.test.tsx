@@ -447,6 +447,18 @@ describe('[SLICE:BASE-TFR-PAY-013] population and prepare contract', () => {
     );
   });
 
+  it('rejects a legacy success envelope at the sealed IAQ transport boundary', async () => {
+    transport.get.mockResolvedValueOnce({ data: { data: projectionWire() } });
+
+    await expect(
+      queryPayrollPopulation(query(), {
+        routeContractKey: PAYROLL_POPULATION_DATA_ROUTE_CONTRACT_KEY,
+        contextScopeKey: CONTEXT_SCOPE,
+        decisionRevision: AUTH_REVISION,
+      })
+    ).rejects.toThrow();
+  });
+
   it('uses exact DATA/ACTION aliases, IAQ query serialization, 202 receipt, and governed headers', async () => {
     transport.get.mockResolvedValueOnce({ data: projectionWire() });
     await expect(
