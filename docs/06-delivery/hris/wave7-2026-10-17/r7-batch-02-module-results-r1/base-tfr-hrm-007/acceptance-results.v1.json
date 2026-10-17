@@ -1,0 +1,148 @@
+{
+  "schema": "dwp.hris.wave7.module-acceptance-results.v1",
+  "evidenceId": "HRIS-WAVE7-R7-BATCH-02-BASE-TFR-HRM-007-ACCEPTANCE-R1",
+  "issuedAt": "2026-10-18T00:29:38+09:00",
+  "issuedBy": "HRIS-HRM",
+  "sliceId": "BASE-TFR-HRM-007",
+  "resultState": "HRM007_MODULE_SOURCE_COMPLETE_BRANCHES_PUSHED_CONTROL_REVIEW_PENDING_DEFAULT_OFF_ZERO_CREDIT",
+  "summary": {
+    "total": 12,
+    "passed": 10,
+    "pendingCentralV51ConfigScopeOnly": 1,
+    "pendingCentralBrowserGate": 1,
+    "failed": 0
+  },
+  "acceptanceResults": [
+    {
+      "id": "HRM007-AC-01",
+      "result": "PASS",
+      "criterion": "IAQ-005, IAQ-007 and IAQ-013 expose only their exact GET owner and browser paths and return the sealed projection variants.",
+      "evidence": [
+        "Hrm007IaEntryQueryController exposes only GET /v1/hris/workbench/team/people-changes, /operations/appointments and /configuration/people-employment.",
+        "The frontend sealed GET adapter maps only the three corresponding /api/people browser paths and rejects unknown query identities.",
+        "The response projection variants are PEOPLE_CHANGES, APPOINTMENTS and PEOPLE_EMPLOYMENT."
+      ]
+    },
+    {
+      "id": "HRM007-AC-02",
+      "result": "PASS",
+      "criterion": "EMPTY and UNAVAILABLE contain zero items; PARTIAL contains typed failures; COMPLETE contains no partial failures.",
+      "evidence": [
+        "Backend projection contracts cover EMPTY, PARTIAL, COMPLETE and UNAVAILABLE invariants.",
+        "UNAVAILABLE is rejected unless freshness is UNAVAILABLE; EMPTY and UNAVAILABLE reject items and cursors.",
+        "Frontend strict parsing and material-state tests cover the same invariants without a blank state."
+      ]
+    },
+    {
+      "id": "HRM007-AC-03",
+      "result": "PASS",
+      "criterion": "Every cursor binds tenant, query, population, scope and authorization revisions, as-of, sort, limit and last item; a mismatch or stale revision fails closed.",
+      "evidence": [
+        "Hrm007CursorCodec binds and verifies every sealed cursor dimension, including authorization decision revision and limit.",
+        "Frontend cache identity uses the central product-surface sensitive contract: tenantId, actorId, accessMode, productId, surfaceId, contextScopeKey and authorization decisionRevision plus the complete HRM-007 request identity.",
+        "Pagination state resets synchronously before a changed query, scope, revision, options or adapter can send an old cursor."
+      ]
+    },
+    {
+      "id": "HRM007-AC-04",
+      "result": "PASS",
+      "criterion": "Each query enforces limit 100, the exact sort allowlist and stable itemPublicId tie-breaking without cross-tenant rows.",
+      "evidence": [
+        "Backend request preparation accepts limits 1 through 100, enforces each query's exact sort allowlist and appends itemPublicId:ASC when absent.",
+        "JdbcHrm007ProjectionSource predicates every read by the trusted tenant and sealed population.",
+        "Top-level required and optional scalar multiplicity pollution, caller tenant input and unknown filter keys are rejected before service invocation."
+      ]
+    },
+    {
+      "id": "HRM007-AC-05",
+      "result": "PASS",
+      "criterion": "Field VIEW, MASK and OMIT decisions match serialized fields and fieldDecisionSummary for every item.",
+      "evidence": [
+        "Each query serializes exactly its three pinned response field groups; EFFECTIVE_ON is request filter/as-of semantics only.",
+        "Contract tests compare the serialized field set and fieldDecisionSummary for VIEW, MASK and OMIT decisions.",
+        "The frontend parser rejects undeclared fields and revalidates every injected-adapter result at the consumption boundary."
+      ]
+    },
+    {
+      "id": "HRM007-AC-06",
+      "result": "PASS",
+      "criterion": "Trusted tenant and policy context are never accepted from query parameters or serialized into the response.",
+      "evidence": [
+        "Tenant identity comes only from PeopleRequestContext and HcmPepContext; caller tenant parameters are rejected.",
+        "Backend serialization tests prove tenant, target population, profile, duty and purpose are absent from response items.",
+        "The GET adapter emits only allowlisted request keys and falls back to filter={} when no nested filter leaf exists."
+      ]
+    },
+    {
+      "id": "HRM007-AC-07",
+      "result": "PASS",
+      "criterion": "Deep links are limited to the three canonical routes and available actions are exactly IAQ-005 PEP-HRM-003/004, IAQ-007 PEP-HRM-006/007/008/009 and none for IAQ-013.",
+      "evidence": [
+        "Response action keys are the six sealed hris.action.* keys; PEP-HRM identifiers are provenance only and are never serialized as action keys.",
+        "Actual command permissions, field VIEW decisions, ownership and lifecycle state gate every emitted action.",
+        "Deep links force tab and focus while preserving only one validated scope (including scope:hcm/non-default), individually allowlisted navigationScope and legalEntityPublicId values, asOf and the exact current-query sort/filter allowlist; cursor, trusted, unknown and cross-query keys are dropped."
+      ]
+    },
+    {
+      "id": "HRM007-AC-08",
+      "result": "PASS",
+      "criterion": "All actions delegate to integrated HRM-008 or HRM-010 owner endpoints; HRM-007 creates no command, approval, event, outbox or receipt implementation.",
+      "evidence": [
+        "IAQ-005 action links target existing employee-change request endpoints; IAQ-007 action links target existing assignment-event endpoints.",
+        "The backend delta contains only read-side hrm007 projection, authority, cursor, controller and tests.",
+        "HRM-008, HRM-010, their lifecycle tests, events, migrations and generated contracts are unchanged and receive no completion credit."
+      ]
+    },
+    {
+      "id": "HRM007-AC-09",
+      "result": "PENDING_CENTRAL_V51/CONFIG_SCOPE_ONLY",
+      "criterion": "Wrong tenant, profile, duty, target population, purpose, field decision or decision revision returns one opaque denial and discloses no object existence.",
+      "evidence": [
+        "Hrm007Authority requires exact trusted route, predicate-policy and target-binding sets plus live population evidence.",
+        "IAQ-013 implements only tenant-wide CONFIG_SCOPE within the sealed CONFIG_SCOPE/POLICY_NODE/LEGAL_ENTITY allowlist and fails closed for every other supplied population shape.",
+        "The module pins each query purpose and accepts no caller purpose override; exact wrong-purpose behavior and the generated profile, projection and schema keys remain a central-v51 admission proof and are not claimed by this module branch.",
+        "Terminal, unclassified and local contract failures cancel and remove the exact sensitive query; only HTTP 429, HTTP 503 and network failures retain stale data with actions disabled."
+      ]
+    },
+    {
+      "id": "HRM007-AC-10",
+      "result": "PENDING_CENTRAL_ROUTE_MOUNT_BROWSER_GATE",
+      "criterion": "Each page renders distinct loading, empty, partial, unavailable, complete, denied and stale states and passes keyboard, screen-reader, 1440, 1280, 390, 320, 200-percent zoom, light, dark, high-contrast and reduced-motion checks.",
+      "evidence": [
+        "Component tests cover all material states, semantic status/live regions, keyboard-focusable controls and fake responsive variants for all three pages; the final workbench file contains 33 tests.",
+        "Source includes compact responsive layout, forced-colors behavior and no motion dependency."
+      ],
+      "pendingReason": "The token permits component-level responsive and accessibility verification with fakes only. Central v51 generation, route/shell mount and the real browser matrix remain control-owned and pending."
+    },
+    {
+      "id": "HRM007-AC-11",
+      "result": "PASS",
+      "criterion": "Feature OFF or tenant unenrolled mounts no owner data runtime, sends zero network calls and exposes no enabled action.",
+      "evidence": [
+        "The default gate is enabled=false with an empty enrolled-tenant set.",
+        "A trusted admission still requires explicit gate enabled and tenantEnrolled truth; absent, false and unenrolled cases make zero adapter calls.",
+        "A synchronous fence plus exact live cache state, current projection and current action checks disables delegation through refresh, cursor transition and terminal-error pre-render windows.",
+        "Backend rollout-gate tests prove the owner controller, authority, repository, projection and cursor runtime are absent while OFF."
+      ]
+    },
+    {
+      "id": "HRM007-AC-12",
+      "result": "PASS",
+      "criterion": "Changed-path evidence proves HRM-008, HRM-010, generated authorization, shell and historical migrations are byte-unchanged and receive zero HRM-007 completion credit.",
+      "evidence": [
+        "The backend commit and two-commit frontend lineage change exactly 19 authorized backend and the same 10 authorized frontend paths.",
+        "Protected backend HRM-008, HRM-010 and migration tree objects and protected frontend employment, employee-change, shell/model, routes and architecture tree objects are identical at base and source.",
+        "Central v51, route/shell admission, merge, publish and activation remain pending; business completion credit is zero."
+      ]
+    }
+  ],
+  "sourceReview": {
+    "independentAudit": "NO_P0_OR_P1",
+    "nonblockingResiduals": [
+      "Deep-link filter and asOf values are allowlisted and structurally bounded but are not yet validated as strictly as the sealed request parser.",
+      "Admitted navigation selector-pair canonicalization remains looser than the sealed parser."
+    ],
+    "disposition": "NONBLOCKING_P2_CENTRAL_ADMISSION_REVIEW"
+  },
+  "businessCompletionCredit": 0
+}

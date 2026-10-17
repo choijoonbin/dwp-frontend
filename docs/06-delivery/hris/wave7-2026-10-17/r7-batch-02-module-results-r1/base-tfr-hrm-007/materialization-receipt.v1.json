@@ -1,0 +1,128 @@
+{
+  "schema": "dwp.hris.wave7.module-materialization-receipt.v1",
+  "evidenceId": "HRIS-WAVE7-R7-BATCH-02-BASE-TFR-HRM-007-MATERIALIZATION-R1",
+  "issuedAt": "2026-10-18T00:29:38+09:00",
+  "issuedBy": "HRIS-HRM",
+  "moduleSession": "HRIS-HRM",
+  "sliceId": "BASE-TFR-HRM-007",
+  "canonicalFeature": "HRIS_HRM_APPOINTMENT_WORKBENCH",
+  "resultState": "HRM007_MODULE_SOURCE_COMPLETE_BRANCHES_PUSHED_CONTROL_REVIEW_PENDING_DEFAULT_OFF_ZERO_CREDIT",
+  "authority": {
+    "startToken": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-02-module-start-r1/tokens/base-tfr-hrm-007.start-token.v1.json",
+      "tokenId": "HRIS-WAVE7-R7-BATCH-02-START-BASE-TFR-HRM-007-20261017-R1",
+      "sha256": "0e5f577c60eb697b750fdea05b3b796fed077e4acf10424367cbf02395b0e901",
+      "bytes": 14032,
+      "requiredState": "ISSUED_FRESH_WORKTREE_MATERIALIZATION_OWNER_SOURCE_TEST_COMMIT_PUSH_ONLY_DEFAULT_OFF"
+    },
+    "ownerPacket": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-02-module-start-r1/owner-packets/base-tfr-hrm-007.owner-packet.v1.json",
+      "sha256": "729b3b5587e6621b41934521c08edc6ea6c5ce827bdba4bfb3dac34f8f0f0c41",
+      "bytes": 18901,
+      "requiredState": "SEALED_FOR_FRESH_PINNED_MODULE_TOKEN_DEFAULT_OFF"
+    },
+    "centralAuthorizationSuccessor": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-02-module-start-r1/central-authorization-successor.v1.json",
+      "sha256": "131376aac17d25947abe54fe0dc1969c795f150882e93a671bdae9ce1b618dc1",
+      "bytes": 10098,
+      "requiredLaneState": "SEALED_FOR_OWNER_SOURCE_WITH_EXISTING_ACTION_REUSE"
+    },
+    "batch02Preflight": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-02-preflight-r1/semantic-dependency-migration-preflight.v2.json",
+      "sha256": "2706a07dbb245c53a07858a590d1710a865d4a899cbab084b42ea0ed52ec23e8",
+      "bytes": 5773,
+      "requiredDecision": "GO_FOR_FRESH_PACKET"
+    },
+    "roadmap": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/execution-roadmap-successor.v15.json",
+      "sha256": "6dd79a60a255e90365bc2003040bbbce9074f4ebfcbb70732dd0250829506ca0",
+      "bytes": 7007
+    }
+  },
+  "materializationPolicy": "FRESH_FROM_EXACT_PIN_NO_BATCH01_REUSE_NO_WORKING_TREE_COPY",
+  "expectedInitialPorcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "worktrees": {
+    "backend": {
+      "repository": "dwp-backend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261017/r7-batch02/hrm-007/backend",
+      "branch": "codex/hris-wave7-r7-batch02-hrm-007-backend-20261017-r1",
+      "authorizedPushTarget": "origin/codex/hris-wave7-r7-batch02-hrm-007-backend-20261017-r1",
+      "baseCommit": "59964de62cd4da8bcb9f9384d6e2ef85e8c07b09",
+      "baseTree": "108eb56abdb23f6bd4346b21fac1974da18b01c1",
+      "materializedHead": "59964de62cd4da8bcb9f9384d6e2ef85e8c07b09",
+      "materializedTree": "108eb56abdb23f6bd4346b21fac1974da18b01c1",
+      "initialPorcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "freshExactBase": true,
+      "batch01WorktreeReused": false,
+      "workingTreeFilesCopied": false,
+      "sourceCommit": "0dfc590808adf78690f20e7153406d747264b933",
+      "sourceTree": "28bcb9cb5cd028d0e2284622156b5fc52b2387cc",
+      "sourceCommitParent": "59964de62cd4da8bcb9f9384d6e2ef85e8c07b09",
+      "upstream": "origin/codex/hris-wave7-r7-batch02-hrm-007-backend-20261017-r1",
+      "upstreamAhead": 0,
+      "upstreamBehind": 0,
+      "remoteExact": true,
+      "sourceWorktreeClean": true,
+      "sourceWorktreePorcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261017/r7-batch02/hrm-007/frontend",
+      "branch": "codex/hris-wave7-r7-batch02-hrm-007-frontend-20261017-r1",
+      "authorizedPushTarget": "origin/codex/hris-wave7-r7-batch02-hrm-007-frontend-20261017-r1",
+      "baseCommit": "f749d046417a35642d158c0d0f674704ace7d4bb",
+      "baseTree": "3bfecda45d73a2e70d4685dbb4c5861f73dc64c6",
+      "materializedHead": "f749d046417a35642d158c0d0f674704ace7d4bb",
+      "materializedTree": "3bfecda45d73a2e70d4685dbb4c5861f73dc64c6",
+      "initialPorcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "freshExactBase": true,
+      "batch01WorktreeReused": false,
+      "workingTreeFilesCopied": false,
+      "initialSourceCommit": "1ceee83eab7bb2afa38dcb66aa67376a927ef9c6",
+      "initialSourceTree": "f53b7b084612a2483cf6820a75c368f8a3cef0e1",
+      "initialSourceCommitParent": "f749d046417a35642d158c0d0f674704ace7d4bb",
+      "sourceCommit": "6a00c85e71e650fce03b8422d84c6e561e585afb",
+      "sourceTree": "789270c65da3279f6ff767ed2299e4e984547ce3",
+      "sourceCommitParent": "1ceee83eab7bb2afa38dcb66aa67376a927ef9c6",
+      "sourceCommitSubject": "fix(hris): harden HRM-007 governed cache",
+      "sourceLineage": [
+        {
+          "commit": "1ceee83eab7bb2afa38dcb66aa67376a927ef9c6",
+          "tree": "f53b7b084612a2483cf6820a75c368f8a3cef0e1",
+          "parent": "f749d046417a35642d158c0d0f674704ace7d4bb",
+          "role": "INITIAL_EXACT_BASE_SOURCE_COMMIT"
+        },
+        {
+          "commit": "6a00c85e71e650fce03b8422d84c6e561e585afb",
+          "tree": "789270c65da3279f6ff767ed2299e4e984547ce3",
+          "parent": "1ceee83eab7bb2afa38dcb66aa67376a927ef9c6",
+          "role": "GOVERNED_CACHE_SUCCESSOR_SOURCE_COMMIT"
+        }
+      ],
+      "upstream": "origin/codex/hris-wave7-r7-batch02-hrm-007-frontend-20261017-r1",
+      "upstreamAhead": 0,
+      "upstreamBehind": 0,
+      "remoteExact": true,
+      "initialSourceWorktreeCleanBeforeEvidence": true,
+      "initialSourceWorktreePorcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "successorSourcePathsClean": true,
+      "evidencePathsExcludedFromSourceCommits": true
+    }
+  },
+  "authorityCarrierExclusion": {
+    "repository": "dwp-frontend",
+    "commit": "da32f8ead331968d7c57950e25bebe0bfb84b211",
+    "tree": "cbd6c2882f35e85c067c7b9cd9b3951f06a39ce7",
+    "sourceCommitAncestor": false,
+    "sourceAndCarrierMergeBase": "f749d046417a35642d158c0d0f674704ace7d4bb",
+    "mergeRebaseOrCherryPickPerformed": false
+  },
+  "materializationAssertions": [
+    "Both module worktrees were materialized from the exact clean base commits and trees named by the start token.",
+    "Neither Batch-01 working state nor authority-carrier content entered either module source branch.",
+    "The backend source result is a single-parent commit whose sole parent is its exact base pin.",
+    "The frontend source result has an explicit two-commit lineage: the initial source commit is parented by the exact base and the governed-cache successor is parented by that initial source commit.",
+    "Only the exact authorized backend and frontend module branches were pushed."
+  ],
+  "businessCompletionCredit": 0
+}
