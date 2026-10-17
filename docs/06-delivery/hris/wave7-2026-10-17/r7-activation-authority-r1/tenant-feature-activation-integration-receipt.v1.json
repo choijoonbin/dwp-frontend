@@ -1,0 +1,166 @@
+{
+  "schema": "dwp.hris.wave7.tenant-feature-activation-integration-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-TENANT-FEATURE-ACTIVATION-INTEGRATION-20261017-R1",
+  "recordedAt": "2026-10-17T20:53:33+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "INTEGRATED_DWP_DEV_DEFAULT_OFF_ZERO_TENANT_ENROLLMENT",
+  "authority": {
+    "decision": {
+      "path": "tenant-feature-activation-decision.v1.json",
+      "sha256": "fda6f51622c843b0c0da35f73b550cd6bd33c0ed190ee19058ac15f0e0502284",
+      "bytes": 15775
+    },
+    "implementationPlan": {
+      "path": "tenant-feature-activation-implementation-plan.v1.json",
+      "sha256": "34de2fd610e08dbf920f0235fce437d5672d63c41da4c46bcf1cddb971a07ceb"
+    },
+    "carrierCommit": "f5421a467c3d70a1c155eee99028dc4d32d577ad",
+    "carrierTree": "f4ccc6612549e134786ab0e011aedf680e75204e"
+  },
+  "independentReviews": [
+    {
+      "workstream": "R7-ACTIVATION-AUTH-V259",
+      "decision": "GO",
+      "remainingP0": 0,
+      "remainingP1": 0,
+      "remainingP2": 0,
+      "reviewedCommit": "64cac13606f84907e8fff04aec0109e49c5f4272",
+      "reviewedTree": "72e593cb0a08f4abca8f89ba173c8a7254113a4f"
+    },
+    {
+      "workstream": "R7-ACTIVATION-GATEWAY-AND-INTEGRATED-V259-PARITY",
+      "decision": "GO_AFTER_ONE_PARITY_TEST_COVERAGE_CORRECTION",
+      "remainingP0": 0,
+      "remainingP1": 0,
+      "remainingP2": 0,
+      "reviewedGatewayCommit": "65d640de5eba0100a6b5e501ca80ee0b48f67fd6",
+      "reviewedGatewayTree": "d7d4dcd50e62a2ce122d79304efe3a851bd0bc96",
+      "reviewedIntegratedCommit": "02acdc4760107d3a737e0f1c72a3bf07f67d7bf9",
+      "reviewedIntegratedTree": "270bbd1f97a73a6ee676c9421e0d5b460fda2fe5"
+    },
+    {
+      "workstream": "R7-ACTIVATION-FRONTEND-ADMISSION",
+      "decision": "GO",
+      "remainingP0": 0,
+      "remainingP1": 0,
+      "remainingP2": 0,
+      "reviewedCommit": "526d790affe01e6b12ddff039a46bc31502372e6",
+      "reviewedTree": "be359d19fab5d046d99b1dde6ada45c61faa0862",
+      "allowedChangedPathCount": 35
+    }
+  ],
+  "integration": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "authMergeCommit": "696a5ac6173fad065407e64371e57f5f98884c90",
+      "authTree": "72e593cb0a08f4abca8f89ba173c8a7254113a4f",
+      "gatewayMergeCommit": "5d0368e70754955ccf1236b332f9e1f3f5885208",
+      "gatewayTree": "270bbd1f97a73a6ee676c9421e0d5b460fda2fe5",
+      "gatewayMergeParents": [
+        "696a5ac6173fad065407e64371e57f5f98884c90",
+        "02acdc4760107d3a737e0f1c72a3bf07f67d7bf9"
+      ],
+      "originExactAfterPush": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "mergeCommit": "39e6953e242773b0da93beec7ca04ac3077bd45d",
+      "tree": "3dc00cf2c3c4af3d1f6d21d343e70eab86e823ec",
+      "mergeParents": [
+        "f5421a467c3d70a1c155eee99028dc4d32d577ad",
+        "526d790affe01e6b12ddff039a46bc31502372e6"
+      ],
+      "originExactAfterPush": true
+    },
+    "mergeConflicts": 0
+  },
+  "verification": {
+    "policy": "Each recorded phase target once; after a failure only the smallest failed target; no repository-wide suite per correction.",
+    "auth": {
+      "integratedClusters": 4,
+      "result": "PASS",
+      "repeatedAfterPass": false,
+      "scope": [
+        "V259 migration contract and real PostgreSQL clean plus V258-to-V259 upgrade",
+        "tenant feature workflow and authorization ordering",
+        "authority adapter and Product Surface authority service",
+        "operations and internal security chains"
+      ]
+    },
+    "gateway": {
+      "branchCluster": {"tests": 83, "passed": 83, "failed": 0},
+      "initialIntegratedParity": {"tests": 1, "passed": 1, "failed": 0},
+      "integratedGatewayRegression": {"tests": 83, "passed": 83, "failed": 0},
+      "correctedIntegratedParity": {"tests": 1, "passed": 1, "failed": 0},
+      "fullBindingAttributesSealed": [
+        "ordered route key",
+        "feature key",
+        "policy version",
+        "product key",
+        "app resource key",
+        "minimum bundle version",
+        "route kind",
+        "subject type",
+        "surface key"
+      ],
+      "executionSequence": [
+        "The reviewed Gateway branch cluster ran once.",
+        "The initial integrated V259-to-Gateway parity target ran once.",
+        "An additional bounded integrated Gateway regression cluster ran once after the initial parity target.",
+        "Independent review found one parity-test coverage defect, so only the corrected parity target ran again."
+      ],
+      "gatewayRegressionRepeatedAfterParityCorrection": false,
+      "productionSourceTestsRepeatedAfterParityCorrection": false
+    },
+    "frontend": {
+      "integratedVitest": {"files": 21, "tests": 288, "passed": 288, "failed": 0},
+      "targetedEslint": {"errors": 0, "warnings": 0},
+      "branchTypecheckRuns": 1,
+      "changedFileTypeDiagnostics": "PASS",
+      "knownBaselineTypecheckErrors": 4,
+      "knownBaselineErrorsProvenByteIdentical": true,
+      "integratedTypecheckRepeated": false,
+      "reasonNotRepeated": "The reviewed source tree was merged without overlap; the one required full typecheck already isolated four byte-identical baseline errors and all changed-file diagnostics pass."
+    }
+  },
+  "sealedBehavior": {
+    "catalogPolicies": 4,
+    "governedRouteBindings": 16,
+    "globalActiveSeeds": 0,
+    "tenantEnrollmentSeeds": 0,
+    "gatewayAlwaysEvaluatesGovernedRoutesAtRollout000And100": true,
+    "activationOrEnrollmentAddsPermission": false,
+    "ownerCallOnActivationEnrollmentOrAuthorityDenial": false,
+    "frontendContractVersion": 2,
+    "tenantControlRevisionRequired": true,
+    "mountedDefaultOffWorkspaces": [
+      "HRIS_ORGANIZATION_POSITIONS",
+      "HRIS_PAYROLL_RUN_PREPARE",
+      "HRIS_OPERATIONS_EXCEPTION_CENTER"
+    ],
+    "timCatalogOnlyWithoutWorkspaceMount": true,
+    "navigationIsAllowedPathIntersection": true
+  },
+  "rollout": {
+    "runtimeDefault": "OFF",
+    "enrolledTenants": [],
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "browserMatrixRun": false,
+    "browserMatrixReason": "No feature activation or tenant enrollment is authorized; browser acceptance remains a later explicit activation gate."
+  },
+  "completion": {
+    "authorityIntegrated": true,
+    "authIntegrated": true,
+    "gatewayIntegrated": true,
+    "frontendAdmissionIntegrated": true,
+    "defaultOffPreserved": true,
+    "tenantActivated": false,
+    "productionReleased": false
+  },
+  "nextAction": "Resolve TIM-007 close-period producer control without inventing an authority, finish and independently review the default-OFF TIM module branches, then perform central CommandReceipt admission before Batch-02 dispatch."
+}
