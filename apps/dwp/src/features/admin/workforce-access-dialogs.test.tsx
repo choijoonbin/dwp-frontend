@@ -4,9 +4,15 @@ import { act, createElement, type ReactNode } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { WorkforceAccessPolicyDialog } from './workforce-access-dialogs';
+import {
+  WorkforceAccessPolicyDialog,
+  WorkforceAccessRevokeDialog,
+} from './workforce-access-dialogs';
 
-import type { CreateWorkforceAccessPolicyRequest } from '@dwp-frontend/shared-utils';
+import type {
+  CreateWorkforceAccessPolicyRequest,
+  WorkforceAccessPolicy,
+} from '@dwp-frontend/shared-utils';
 
 const dialog = vi.hoisted(() => ({ submit: null as null | (() => Promise<void>) }));
 
@@ -37,7 +43,13 @@ vi.mock('@dwp-frontend/design-system', async () => {
 vi.mock('@dwp-frontend/shared-i18n', () => ({ formatDate: (value: string) => value }));
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
-    t: (key: string) => (key === 'workforceAccess.fieldGroups.ORGANIZATION' ? '조직·포지션' : key),
+    t: (key: string) => {
+      const labels: Record<string, string> = {
+        'workforceAccess.fieldGroups.ORGANIZATION': '조직 구조',
+        'workforceAccess.fieldGroups.UNKNOWN': '데이터 그룹 확인 불가',
+      };
+      return labels[key] ?? key;
+    },
   }),
 }));
 
@@ -90,7 +102,7 @@ describe('WorkforceAccessPolicyDialog field groups', () => {
       );
     });
 
-    const organization = fieldGroupCheckbox('조직·포지션');
+    const organization = fieldGroupCheckbox('조직 구조');
     expect(organization).toBeDefined();
     expect(organization?.disabled).toBe(false);
 
@@ -107,5 +119,35 @@ describe('WorkforceAccessPolicyDialog field groups', () => {
         fieldGroups: ['DIRECTORY', 'EMPLOYMENT', 'ORGANIZATION', 'WORKER_IDENTIFIERS'],
       })
     );
+  });
+
+  it('fails closed to the unknown label when a revoke policy has a future field group', async () => {
+    const policy = {
+      policyId: 'policy-future-field',
+      subjectType: 'ROLE',
+      subjectRef: 'HR_ADMIN',
+      populationType: 'TENANT',
+      fieldGroups: ['FUTURE'],
+      actionCodes: ['READ'],
+      lifecycleState: 'ACTIVE',
+      justification: 'Existing policy returned by a newer server',
+      version: 1,
+    } as unknown as WorkforceAccessPolicy;
+
+    await act(async () => {
+      root.render(
+        createElement(WorkforceAccessRevokeDialog, {
+          policy,
+          subject: { displayName: 'HR administrator' },
+          busy: false,
+          onClose: vi.fn(),
+          onSubmit: vi.fn().mockResolvedValue(undefined),
+        })
+      );
+    });
+
+    expect(container.textContent).toContain('데이터 그룹 확인 불가');
+    expect(container.textContent).not.toContain('workforceAccess.fieldGroups.FUTURE');
+    expect(container.textContent).not.toContain('FUTURE');
   });
 });

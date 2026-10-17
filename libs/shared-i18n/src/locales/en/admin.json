@@ -5129,7 +5129,7 @@
       "WORKER_IDENTIFIERS": "Worker and assignment identifiers",
       "EMPLOYMENT": "Employment and assignment history",
       "JOB_GRADE": "Job grade and level",
-      "ORGANIZATION": "Organizations and positions",
+      "ORGANIZATION": "Organization structure",
       "UNKNOWN": "Data group unavailable"
     },
     "actions": {

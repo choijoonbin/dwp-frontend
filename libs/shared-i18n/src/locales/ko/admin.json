@@ -5031,7 +5031,7 @@
       "WORKER_IDENTIFIERS": "사번·배치 식별정보",
       "EMPLOYMENT": "고용·배치 이력",
       "JOB_GRADE": "직급·등급",
-      "ORGANIZATION": "조직·포지션",
+      "ORGANIZATION": "조직 구조",
       "UNKNOWN": "데이터 그룹 확인 불가"
     },
     "actions": {

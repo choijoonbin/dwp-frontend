@@ -24,7 +24,10 @@ import type {
   WorkforceOrganizationOption,
 } from '@dwp-frontend/shared-utils';
 import type { TFunction } from 'i18next';
-import { WORKFORCE_ACCESS_FIELD_GROUPS } from './workforce-access-presentation';
+import {
+  workforceFieldGroupLabelKey,
+  WORKFORCE_ACCESS_FIELD_GROUPS,
+} from './workforce-access-presentation';
 
 const MAX_FIELD_GROUPS = 4;
 const ACTIONS = ['READ', 'EXPORT'] as const;
@@ -482,7 +485,7 @@ export function WorkforceAccessRevokeDialog({
             </Typography>
             <Stack component="dd" direction="row" flexWrap="wrap" gap={0.5}>
               {policy.fieldGroups.map((field) => (
-                <Chip key={field} size="small" label={t(`workforceAccess.fieldGroups.${field}`)} />
+                <Chip key={field} size="small" label={t(workforceFieldGroupLabelKey(field))} />
               ))}
             </Stack>
             <Typography component="dt" variant="caption" fontWeight={700}>

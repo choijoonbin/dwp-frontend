@@ -45,7 +45,7 @@ vi.mock('react-i18next', () => ({
         'workforceAccess.fieldGroups.WORKER_IDENTIFIERS': '사번·배치 식별정보',
         'workforceAccess.fieldGroups.EMPLOYMENT': '고용·배치 이력',
         'workforceAccess.fieldGroups.JOB_GRADE': '직급·등급',
-        'workforceAccess.fieldGroups.ORGANIZATION': '조직·포지션',
+        'workforceAccess.fieldGroups.ORGANIZATION': '조직 구조',
         'workforceAccess.roles.ADMIN': '통합 관리자',
         'workforceAccess.roleDescriptions.ADMIN': '기존 통합 관리자 정책',
         'workforceAccess.subjectTypes.ROLE': '역할 기본',
@@ -321,7 +321,7 @@ describe('WorkforceAccessManager', () => {
     expect(container?.textContent).toContain('사번·배치 식별정보');
     expect(container?.textContent).toContain('고용·배치 이력');
     expect(container?.textContent).toContain('직급·등급');
-    expect(container?.textContent).toContain('조직·포지션');
+    expect(container?.textContent).toContain('조직 구조');
     expect(container?.textContent).not.toContain('+2');
   });
 
