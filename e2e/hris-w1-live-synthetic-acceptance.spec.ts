@@ -18,6 +18,7 @@ import {
   installHrisW1BrowserFirewall,
   isExactHrisW1AuthorityResponseEvidence,
   newHrisW1FirewallObservation,
+  resolveHrisW1HcmPageSurfaceKey,
 } from './support/hris-w1-browser-firewall-contract.mjs';
 import {
   readHrisW1HomeRuntimeBoundary,
@@ -363,7 +364,7 @@ async function exerciseRoute(
       });
     await expect(page.locator(ACCESS_STATE_SELECTOR)).toHaveCount(0);
     await expect(page.locator(route.marker!).first()).toBeVisible();
-    const pageSurfaceKey = `hcm.${route.pageRouteContractKey.split('.')[2]}`;
+    const pageSurfaceKey = resolveHrisW1HcmPageSurfaceKey(route.pageRouteContractKey);
     await expect
       .poll(
         () =>

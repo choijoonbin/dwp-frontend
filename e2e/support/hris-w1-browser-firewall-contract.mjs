@@ -133,6 +133,13 @@ function sha256(bytes) {
   return createHash('sha256').update(bytes).digest('hex');
 }
 
+export function resolveHrisW1HcmPageSurfaceKey(routeContractKey) {
+  const routeNamespace = String(routeContractKey ?? '').split('.')[2];
+  const surfaceKey = HCM_PAGE_SURFACE_BY_ROUTE_NAMESPACE[routeNamespace];
+  if (!surfaceKey) fail('HCM PAGE route namespace is not canonical');
+  return surfaceKey;
+}
+
 function officialHcmPageContracts(source) {
   if (
     !hasExactKeys(valueRecord(source), [
@@ -214,7 +221,7 @@ export function resolveHrisW1HighEvaluationContract(route) {
     fail('HIGH expectedOperation must resolve one canonical HCM binding');
   }
   const [operation, surfaceKey, routeContractKey, module] = operationBindings[0];
-  const pageSurfaceKey = `hcm.${String(route?.pageRouteContractKey ?? '').split('.')[2]}`;
+  const pageSurfaceKey = resolveHrisW1HcmPageSurfaceKey(route?.pageRouteContractKey);
   if (
     preview.expectedRouteContractKey !== routeContractKey ||
     route?.module !== module ||
@@ -249,7 +256,7 @@ export function buildHrisW1ActiveEvaluationContracts(routes, enabled = true) {
               kind: 'PAGE',
               routeContractKey: route.pageRouteContractKey,
               productKey: 'hcm',
-              surfaceKey: `hcm.${route.pageRouteContractKey.split('.')[2]}`,
+              surfaceKey: resolveHrisW1HcmPageSurfaceKey(route.pageRouteContractKey),
               contextScopeKey: route.expectedScopeKey ?? null,
             },
           ];

@@ -7,6 +7,7 @@ import {
   HRIS_W1_AUTHORITY_RESPONSE_MAX_BYTES,
   HRIS_W1_HOME_SHADOW_RECEIPT_PATH,
   HRIS_W1_OFFICIAL_HCM_PAGE_EVALUATION_CONTRACTS,
+  buildHrisW1ActiveEvaluationContracts,
   classifyHrisW1AuthorityEvaluation,
   classifyHrisW1ExpectedBlockedSideEffect,
   isExactHrisW1AuthorityResponseEvidence,
@@ -120,6 +121,50 @@ describe('HRIS W1 browser firewall contract', () => {
         )
       ).observation.reason
     ).toBe('EXACT_HIGH_CONTRACT');
+  });
+
+  it('maps active PAGE namespaces to their canonical HCM surfaces', () => {
+    const contracts = buildHrisW1ActiveEvaluationContracts([
+      {
+        outcome: 'allowed',
+        pageRouteContractKey: 'route.hcm.configuration.workflow.page',
+        expectedScopeKey: 'configuration-scope',
+      },
+      {
+        outcome: 'allowed',
+        pageRouteContractKey: 'route.hcm.team.delegation.page',
+        expectedScopeKey: 'team-scope',
+      },
+      {
+        outcome: 'allowed',
+        pageRouteContractKey: 'route.hcm.operations.people-appointments.page',
+        expectedScopeKey: 'operations-scope',
+      },
+    ]);
+
+    expect(contracts).toEqual([
+      {
+        kind: 'PAGE',
+        routeContractKey: 'route.hcm.configuration.workflow.page',
+        productKey: 'hcm',
+        surfaceKey: 'hcm.management',
+        contextScopeKey: 'configuration-scope',
+      },
+      {
+        kind: 'PAGE',
+        routeContractKey: 'route.hcm.team.delegation.page',
+        productKey: 'hcm',
+        surfaceKey: 'hcm.team',
+        contextScopeKey: 'team-scope',
+      },
+      {
+        kind: 'PAGE',
+        routeContractKey: 'route.hcm.operations.people-appointments.page',
+        productKey: 'hcm',
+        surfaceKey: 'hcm.operations',
+        contextScopeKey: 'operations-scope',
+      },
+    ]);
   });
 
   it('blocks unknown, malformed, query-bearing, or mismatched authority evaluations', () => {
