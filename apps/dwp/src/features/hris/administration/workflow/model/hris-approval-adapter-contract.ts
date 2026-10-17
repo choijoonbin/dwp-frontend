@@ -91,8 +91,31 @@ export type HrisApprovalCommandRunner = <T>(input: Readonly<{
   run: (execution: ApprovalMutationExecution) => Promise<T>;
 }>) => Promise<T>;
 
+export class HrisApprovalMutationExecutionMismatchError extends Error {
+  constructor() {
+    super('Approval mutation execution does not match the admitted owner scope.');
+    this.name = 'HrisApprovalMutationExecutionMismatchError';
+  }
+}
+
 const NON_BLANK = /\S/u;
 const SCOPE_KEY = /^[A-Za-z0-9._:-]{1,256}$/u;
+
+export async function runWithTrustedApprovalMutationExecution<T>(
+  admission: HrisApprovalAdapterAdmission,
+  execution: ApprovalMutationExecution,
+  run: (execution: ApprovalMutationExecution) => Promise<T>
+): Promise<T> {
+  if (
+    execution.mode !== 'SECURE' ||
+    execution.contextScopeKey !== admission.ownerContextScopeKey ||
+    execution.expectedDecisionRevision !== admission.pageDecisionRevision ||
+    !NON_BLANK.test(execution.idempotencyKey ?? '')
+  ) {
+    throw new HrisApprovalMutationExecutionMismatchError();
+  }
+  return await run(execution);
+}
 
 function commonAdmission(
   admission: HrisApprovalAdapterAdmission | undefined,

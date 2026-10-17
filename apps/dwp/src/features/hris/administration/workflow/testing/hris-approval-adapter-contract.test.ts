@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import {
   delegationManageAdmitted,
@@ -6,10 +6,13 @@ import {
   HRIS_APPROVAL_SHARED_API_CONTRACTS,
   mergeHrisApprovalQueryState,
   parseHrisApprovalQueryState,
+  runWithTrustedApprovalMutationExecution,
   workflowPublishAdmitted,
   workflowReadAdmitted,
 } from '../model/hris-approval-adapter-contract';
 import { delegationAdmission, workflowAdmission } from './hris-approval-adapter-fixtures.test-support';
+
+import type { ApprovalMutationExecution } from '@dwp-frontend/shared-utils';
 
 describe('HRIS Approval adapter authority contract', () => {
   it('seals all five shared routes and methods without a local proxy', () => {
@@ -59,6 +62,39 @@ describe('HRIS Approval adapter authority contract', () => {
       })
     ).toBe(false);
   });
+
+  it.each([
+    ['publish', 'scope', workflowAdmission()],
+    ['create', 'scope', delegationAdmission()],
+    ['revoke', 'scope', delegationAdmission()],
+    ['publish', 'mode', workflowAdmission()],
+    ['publish', 'revision', workflowAdmission()],
+    ['publish', 'idempotency', workflowAdmission()],
+  ] as const)(
+    'fails closed when %s receives a mutation execution with mismatched %s',
+    async (_operation, mismatch, admission) => {
+      const ownerCommand = vi.fn().mockResolvedValue('owner-result');
+      const secureExecution: ApprovalMutationExecution = {
+        mode: 'SECURE',
+        rolloutState: '111',
+        expectedDecisionRevision:
+          mismatch === 'revision' ? 'stale-decision' : admission.pageDecisionRevision,
+        contextKey: 'approval-owner',
+        contextScopeKey:
+          mismatch === 'scope' ? 'owner-scope-42' : admission.ownerContextScopeKey,
+        idempotencyKey: mismatch === 'idempotency' ? '' : 'sys003-command-0002',
+      };
+      const execution: ApprovalMutationExecution =
+        mismatch === 'mode'
+          ? { mode: 'LEGACY_COMPATIBILITY', rolloutState: '100' }
+          : secureExecution;
+
+      await expect(
+        runWithTrustedApprovalMutationExecution(admission, execution, ownerCommand)
+      ).rejects.toThrow('does not match the admitted owner scope');
+      expect(ownerCommand).not.toHaveBeenCalled();
+    }
+  );
 
   it('keeps only safe overview and focus URL state', () => {
     const parsed = parseHrisApprovalQueryState(

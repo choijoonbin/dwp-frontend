@@ -22,6 +22,7 @@ import {
   HRIS_APPROVAL_SHARED_API_CONTRACTS,
   mergeHrisApprovalQueryState,
   parseHrisApprovalQueryState,
+  runWithTrustedApprovalMutationExecution,
 } from '../../../administration/workflow/model/hris-approval-adapter-contract';
 
 import type {
@@ -183,7 +184,10 @@ function ActiveDelegation({
       return commandRunner({
         routeContractKey: HRIS_APPROVAL_SHARED_API_CONTRACTS.delegationCreate.routeContractKey,
         expectedDecisionRevision: admission.pageDecisionRevision,
-        run: (execution) => dataSource.create(input, execution),
+        run: (execution) =>
+          runWithTrustedApprovalMutationExecution(admission, execution, (trustedExecution) =>
+            dataSource.create(input, trustedExecution)
+          ),
       });
     },
     onSuccess: (result) => {
@@ -215,7 +219,9 @@ function ActiveDelegation({
         expectedDecisionRevision: admission.pageDecisionRevision,
         expectedObjectVersion: snapshot.version,
         run: (execution) =>
-          dataSource.revoke(snapshot.delegationId, snapshot.version, execution),
+          runWithTrustedApprovalMutationExecution(admission, execution, (trustedExecution) =>
+            dataSource.revoke(snapshot.delegationId, snapshot.version, trustedExecution)
+          ),
       });
     },
     onSuccess: (result) => {

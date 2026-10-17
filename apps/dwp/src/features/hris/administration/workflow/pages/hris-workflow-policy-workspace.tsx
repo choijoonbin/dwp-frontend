@@ -19,6 +19,7 @@ import {
   HRIS_APPROVAL_SHARED_API_CONTRACTS,
   mergeHrisApprovalQueryState,
   parseHrisApprovalQueryState,
+  runWithTrustedApprovalMutationExecution,
   workflowPublishAdmitted,
   workflowReadAdmitted,
 } from '../model/hris-approval-adapter-contract';
@@ -151,10 +152,12 @@ function ActiveWorkflow({
         expectedDecisionRevision: admission.pageDecisionRevision,
         expectedObjectVersion: snapshot.version,
         run: (execution) =>
-          dataSource.publish(
-            snapshot.policyId,
-            { expectedVersion: snapshot.version, reviewComment: snapshot.comment },
-            execution
+          runWithTrustedApprovalMutationExecution(admission, execution, (trustedExecution) =>
+            dataSource.publish(
+              snapshot.policyId,
+              { expectedVersion: snapshot.version, reviewComment: snapshot.comment },
+              trustedExecution
+            )
           ),
       });
     },

@@ -1,9 +1,7 @@
-import {
-  getApprovalPolicies,
-  publishApprovalPolicy,
-} from '@dwp-frontend/shared-utils/api/approval-api';
+import { getApprovalPolicies } from '@dwp-frontend/shared-utils/api/approval-management-api';
+import { publishApprovalPolicy } from '@dwp-frontend/shared-utils/api/approval-api';
 
-import type { ApprovalPolicy } from '@dwp-frontend/shared-utils/api/approval-api';
+import type { ApprovalPolicy } from '@dwp-frontend/shared-utils/api/approval-management-contract';
 import type { ApprovalMutationExecution } from '@dwp-frontend/shared-utils/api/approval-governed-mutation';
 
 export type HrisWorkflowPolicyDataSource = Readonly<{
