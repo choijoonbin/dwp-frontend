@@ -1,0 +1,185 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-01-auth-v49-backend-implementation-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-01-AUTH-V49-BACKEND-IMPLEMENTATION-20261017-R1",
+  "recordedAt": "2026-10-17T16:50:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL_AUTH_LANE",
+  "result": "PASS_READY_FOR_INDEPENDENT_ACCEPTANCE",
+  "authorityChain": [
+    {
+      "path": "../r7-batch-01-authorization-decisions-r1/central-authorization-decision-amendment.v5.json",
+      "sha256": "1cd3598ae7dd4c7629afc199b265c9d3d10de40706a43583790651336b86dbd2"
+    },
+    {
+      "path": "../r7-batch-01-authorization-decisions-r1/auth-lane-token-amendment.v5.json",
+      "sha256": "a27ec3e72f867f3d295a0eac39bc4515f058353471e6db1ea22e4d597b0b1064"
+    },
+    {
+      "path": "../r7-batch-01-authorization-decisions-r1/validation-receipt-successor.v5.json",
+      "sha256": "5fb3b512ce5512e159015363b6c1e4573f87decabbc13f3b11a7ee487f7dae83"
+    },
+    {
+      "path": "../r7-batch-01-authorization-decisions-r1/auth-lane-token-amendment.v6.json",
+      "sha256": "e54d6e50b641572d7acbc835e133b36a0303434421652dd966bee576b8f28fe0"
+    },
+    {
+      "path": "../r7-batch-01-authorization-decisions-r1/validation-receipt-successor.v6.json",
+      "sha256": "b2c37dd375356c5bb40aea601a62a92feb184e859a86ac92055f73d2f94c9602"
+    }
+  ],
+  "backendCandidate": {
+    "repository": "dwp-backend",
+    "baseCommit": "b0db3577fd6517e64dd9de625fb67e99ff19630d",
+    "branch": "codex/hris-wave7-r7-batch01-auth-v49-backend-20261017-r1",
+    "implementationCommit": "952e97c47bb8757f8eaae73c58174b1b9c58baef",
+    "seedLoaderCorrectionCommit": "0634aa68f2ef184e671059147998d6ff808862c1",
+    "headCommit": "0634aa68f2ef184e671059147998d6ff808862c1",
+    "headTree": "bd0de7c5e36658da84bdb2cadd6e0504b2f9323b",
+    "worktreeClean": true,
+    "pushed": false,
+    "mergedToDwpDev": false
+  },
+  "changedFiles": {
+    "path": "backend-changed-files.v1.json",
+    "sha256": "cb0c9821592c6e2894e5676f1b74328d6e5482d721e21fbd467e274ed50c7e2d",
+    "expectedCount": 50,
+    "actualCount": 50,
+    "v5ExactPaths": 49,
+    "v6ExactAppendOnlyPaths": 1,
+    "outsideAuthorityPaths": 0,
+    "retiredOrForbiddenPaths": 0
+  },
+  "artifacts": {
+    "bundleVersion": 49,
+    "bundleStatus": "DRAFT",
+    "embeddedCanonicalChecksum": "5c1dccdc27d8b260fbf001de5695e983a7107072824a8087038340d0d84cbc60",
+    "canonicalAndBundleFileSha256": "18793822b574b3bda2389585ad8b77b490019e1f3ef82f784c0178c15286f2f9",
+    "indexFileSha256": "2aacc76d115311f52b5d069e911f145f7aecb557df778d704870fcfa6f748239",
+    "preservedV48FileSha256": "5b1d87250c3adcc72f2dd75238956c1da69a31d47512394480dba865ebced3c4",
+    "fixtureEmbeddedChecksum": "d678c2d9d4ddcf5194ce5b1e8ac29882cd505ef59650a0ab9dab5f8c2da4be68",
+    "counts": {
+      "capabilities": 262,
+      "accessPolicies": 24,
+      "entitlementExpressions": 17,
+      "predicatePolicies": 81,
+      "routes": 1079,
+      "immutableVersions": 49
+    },
+    "ownerProjectionFileSha256": {
+      "people": "bf2d079820cceba5ed8adcb0b7927daaef239bccc178138e25a6f889f55b1834",
+      "payroll": "663ced685337956e1c198680283003339d149216caf39697b143ce969ea29f7b",
+      "platform": "46073e2e262f7af783853e3efd769c336915873e641ea2e5f55b05d494d8f286",
+      "time": "29e4e3b6729097551b7b9ecf137e7373b45a438e9bffc18ed8dd155db26ad00b"
+    }
+  },
+  "genericSessionNoCommandTopology": {
+    "scopeClarification": "The exact twelve-route set is the R7 generic-session no-command set only. It explicitly excludes the separately sealed HCM audit exception and Approval receipt/rejection exceptions, which remain governed by their own unchanged contracts.",
+    "exactRoutes": [
+      "route.hcm.configuration.configuration-version.data",
+      "route.hcm.configuration.configurations.data",
+      "route.hcm.operations.payroll-population.page",
+      "route.hcm.operations.payroll-support.data",
+      "route.hcm.operations.payroll-run.data",
+      "route.hcm.operations.time-close-validate.action",
+      "route.hcm.operations.time-interpretation-run.action",
+      "route.hcm.operations.time-interpretation-trace.data",
+      "route.hcm.operations.time-payroll-handoff-create.action",
+      "route.hcm.operations.time-payroll-handoff.data",
+      "route.hcm.time.timecard-correction.action",
+      "route.hcm.time.timecard.data"
+    ],
+    "routeCount": 12,
+    "thirteenthRouteFailsClosed": true,
+    "genericChallengeOwnerForwarding": false
+  },
+  "runtimeProof": {
+    "trustedCarrier": "Auth DB session access mode -> /auth/me activeAccessMode -> Gateway verified identity",
+    "clientAccessModeHeaderTrusted": false,
+    "providerSupportPrecedenceRetained": true,
+    "anyPrecedence": "ALLOWED > STEP_UP_REQUIRED > HARD_DENY",
+    "allPrecedence": "HARD_DENY > STEP_UP_REQUIRED > ALLOWED",
+    "expressionReductionOrderIndependent": true,
+    "internalAuthorityEndpointPubliclyDiscoverable": false,
+    "internalAuthorityEndpointNullSafe": true,
+    "payV49HelperExactRoutes": 4,
+    "payPreparePredicate": "predicate.hcm-payroll-run-prepare-authority.v1",
+    "payCalculatePredicate": "predicate.hcm-payroll-run-authority.v1",
+    "productSurfaceStepUpChallengeServiceChanged": false,
+    "productSurfaceStepUpChallengeServiceTestChanged": false
+  },
+  "targetedVerification": [
+    {
+      "id": "AUTHV49-IMP-001",
+      "scope": "generator --check for immutable versions 1 through 49 and v49 canonical checksum/counts",
+      "result": "PASS"
+    },
+    {
+      "id": "AUTHV49-IMP-002",
+      "scope": "pilot fixture generation/check",
+      "tests": 71,
+      "negativeCases": 46,
+      "generatorMutationControls": 41,
+      "failures": 0,
+      "result": "PASS"
+    },
+    {
+      "id": "AUTHV49-IMP-003",
+      "scope": "Python product authorization v21, v47 and v49",
+      "tests": 18,
+      "failures": 0,
+      "result": "PASS"
+    },
+    {
+      "id": "AUTHV49-IMP-004",
+      "scope": "Auth contract, authority, carrier, resolver, lineage and migration targeted tests",
+      "tests": 85,
+      "failures": 0,
+      "result": "PASS"
+    },
+    {
+      "id": "AUTHV49-IMP-005",
+      "scope": "Gateway verified identity, carrier, route catalog and decision-context targeted tests",
+      "tests": 128,
+      "failures": 0,
+      "result": "PASS"
+    },
+    {
+      "id": "AUTHV49-IMP-006",
+      "scope": "ProductAuthorizationSeedLoaderTest after exact v6 correction",
+      "tests": 3,
+      "failures": 0,
+      "result": "PASS"
+    },
+    {
+      "id": "AUTHV49-IMP-007",
+      "scope": "sealed v49 runtime prepare and calculate challenge resolution",
+      "tests": 1,
+      "failures": 0,
+      "result": "PASS"
+    },
+    {
+      "id": "AUTHV49-IMP-008",
+      "scope": "exact changed-path, retired/forbidden path, worktree cleanliness and git diff --check",
+      "result": "PASS"
+    }
+  ],
+  "rolloutPosture": {
+    "defaultOff": true,
+    "tenantEnrollmentCount": 0,
+    "runtimeActivationAuthorized": false,
+    "customerTrafficAuthorized": false
+  },
+  "authority": {
+    "implementationReceiptIssued": true,
+    "independentAcceptanceRequired": true,
+    "v49AcceptanceCandidate": true,
+    "v49Accepted": false,
+    "authLanePushAuthorized": false,
+    "authLaneMergeAuthorized": false,
+    "frontendV49SyncAuthorized": false,
+    "moduleTokenIssuanceAllowed": false,
+    "moduleImplementationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "activationAuthorized": false
+  },
+  "nextGate": "INDEPENDENT_BACKEND_IMPLEMENTATION_REVIEW_AND_ACCEPTANCE_RECEIPT"
+}

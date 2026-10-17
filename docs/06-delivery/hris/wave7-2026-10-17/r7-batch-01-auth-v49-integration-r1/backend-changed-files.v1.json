@@ -1,0 +1,219 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-01-auth-v49-changed-files-manifest.v1",
+  "manifestId": "HRIS-WAVE7-R7-BATCH-01-AUTH-V49-CHANGED-FILES-20261017-R1",
+  "recordedAt": "2026-10-17T16:48:00+09:00",
+  "repository": "dwp-backend",
+  "baseCommit": "b0db3577fd6517e64dd9de625fb67e99ff19630d",
+  "candidateCommit": "0634aa68f2ef184e671059147998d6ff808862c1",
+  "candidateTree": "bd0de7c5e36658da84bdb2cadd6e0504b2f9323b",
+  "authority": {
+    "v5ExactPathCount": 49,
+    "v6AppendedExactPath": "dwp-auth-server/src/test/java/com/dwp/services/auth/config/ProductAuthorizationSeedLoaderTest.java",
+    "effectiveExactPathCount": 50
+  },
+  "changedFileCount": 50,
+  "files": [
+    {
+      "path": "contracts/product-authorization/pilot-fixtures.v1.generated.json",
+      "sha256": "9b152d42ec5d18d5dcb6a907196002fd3669e9f739756bc69bc27c785c3b808d"
+    },
+    {
+      "path": "contracts/product-authorization/pilot-fixtures.v1.schema.json",
+      "sha256": "a7f71abdf45628bb1956d4211e2ad21a92f256f01b1207f85479da159e9f9e11"
+    },
+    {
+      "path": "contracts/product-authorization/product-surfaces-v1.bundle-v49.json",
+      "sha256": "18793822b574b3bda2389585ad8b77b490019e1f3ef82f784c0178c15286f2f9"
+    },
+    {
+      "path": "contracts/product-authorization/product-surfaces-v1.index.json",
+      "sha256": "2aacc76d115311f52b5d069e911f145f7aecb557df778d704870fcfa6f748239"
+    },
+    {
+      "path": "contracts/product-authorization/product-surfaces-v1.json",
+      "sha256": "18793822b574b3bda2389585ad8b77b490019e1f3ef82f784c0178c15286f2f9"
+    },
+    {
+      "path": "contracts/product-authorization/product-surfaces-v1.yaml",
+      "sha256": "26c67071e31b397b197faf199412b3929309ed8000307aea2f714698edffaf70"
+    },
+    {
+      "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/controller/AuthController.java",
+      "sha256": "df378da2f985bfe7451b764ce2cb840b4b37a9155862c39fd3ee94d7f1df7eff"
+    },
+    {
+      "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/dto/MeResponse.java",
+      "sha256": "1e102a133d2fed068c9ed5be8bba04c65a11c5a625aad258db3175e208b5871d"
+    },
+    {
+      "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/AuthSessionService.java",
+      "sha256": "ec45259a06d3aaa93a6ad17c3a5defd7c6a0dc12c371b7a1fcf5b320977fca05"
+    },
+    {
+      "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/PayrollV49ElevatedAuthorityPolicy.java",
+      "sha256": "fd79bbdb5e804994250e26ffc54f87d0a2450fb579756f52a22c564739bb5b12"
+    },
+    {
+      "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationAuthorityAdapter.java",
+      "sha256": "c5d50bb9ec6f90c5fa1df8a11d24f2f3929cb8912be9d1d381db8cf4a9d05616"
+    },
+    {
+      "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationContractValidator.java",
+      "sha256": "1703337bdb33f9dcbcc8d55472a050a653083b56fd783a43d33cd3c68e8aa414"
+    },
+    {
+      "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationGateTopologyValidator.java",
+      "sha256": "f50906ab29841a6d2418e577d0b6421855028fd91a5616988c0d5153e2b660ee"
+    },
+    {
+      "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationReleaseLineage.java",
+      "sha256": "8469057226bec1669c732d5d20ce781db6c0e50a40d221d1816672ab0af51207"
+    },
+    {
+      "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductSurfaceStepUpRouteResolver.java",
+      "sha256": "fe1d2ec83e52c4f52b68a5b9609264cdbfd8e9beb4e15e21ac54a6f01bc0f6fd"
+    },
+    {
+      "path": "dwp-auth-server/src/main/resources/db/migration/V257__declare_hris_payroll_settings_and_r7_authorization_seeds.sql",
+      "sha256": "44639e2f61f2d1474a3ef59337a318557ac766c83b9e72dc98c0c01b80eb3bbf"
+    },
+    {
+      "path": "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v49.generated.json",
+      "sha256": "18793822b574b3bda2389585ad8b77b490019e1f3ef82f784c0178c15286f2f9"
+    },
+    {
+      "path": "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.generated.json",
+      "sha256": "18793822b574b3bda2389585ad8b77b490019e1f3ef82f784c0178c15286f2f9"
+    },
+    {
+      "path": "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.index.generated.json",
+      "sha256": "2aacc76d115311f52b5d069e911f145f7aecb557df778d704870fcfa6f748239"
+    },
+    {
+      "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/config/ProductAuthorizationSeedLoaderTest.java",
+      "sha256": "bcaf393776c5dad4324533dc451325a01a3dd5873855b7be1b080a0aa7d2cfa0"
+    },
+    {
+      "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/controller/AuthControllerDiscoveryTest.java",
+      "sha256": "1c3779b691a0b09761f8b9f69d3e4c15bd3832e529ae6bb41a75af5451ea296c"
+    },
+    {
+      "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/repository/HrisR7AuthorizationSeedMigrationContractTest.java",
+      "sha256": "9af62fcb306216efac9a0dce56cbfd8533c616662d1768f4cc9d1db200cb389f"
+    },
+    {
+      "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/service/AuthSessionServiceTest.java",
+      "sha256": "0606a5275cca98e75e30740b209d4972e15b9f6d54bc8139633a389e702463b6"
+    },
+    {
+      "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/service/PayrollV49ElevatedAuthorityPolicyTest.java",
+      "sha256": "2eb04b74162bafed49f0445a2c5682bf4b10e917e364f11a9b93a6c6308d8843"
+    },
+    {
+      "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationAuthorityAdapterTest.java",
+      "sha256": "d88286a06d15e44b7867b631570cbe58434610db56fe470b07d0878330b1ee8a"
+    },
+    {
+      "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationContractReleaseLineageTest.java",
+      "sha256": "5c2b8ad3a3fa15df8c4328ad01b506a4d8b49646e17550552b42ca0f24ee6e0b"
+    },
+    {
+      "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationContractValidatorTest.java",
+      "sha256": "4b26504f57d4facb93a538fdfa4d9e07a0f9f87cb93e884ca01cc9f961beb818"
+    },
+    {
+      "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationReleaseLineageTest.java",
+      "sha256": "f3af4132d493042ff2bee548221f57c7b3ccce8482f26a458f11e3d231ffbfa7"
+    },
+    {
+      "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductSurfaceStepUpLatestRuntimeTest.java",
+      "sha256": "7e02a468de44dcccee4c08f66dd59c4e9506a01ca66961737618994708d7245b"
+    },
+    {
+      "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductSurfaceStepUpRouteResolverTest.java",
+      "sha256": "0307d185a84ee666ca804248c7af1022a5267f39642b2dd46d06f744e430c8e9"
+    },
+    {
+      "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductSurfaceStepUpRuntimeSpringFixture.java",
+      "sha256": "5b2b140375aa091a17cc2283856f51d434a5bf5553e030626db429afdf962ebc"
+    },
+    {
+      "path": "dwp-gateway/src/main/java/com/dwp/gateway/filter/ProductSurfaceDecisionContextFilter.java",
+      "sha256": "203d73fa8195f39dadf83ff66fd82282bd30bbde2c623cd6fd97fcfec0b7d18a"
+    },
+    {
+      "path": "dwp-gateway/src/main/java/com/dwp/gateway/filter/VerifiedIdentityFilter.java",
+      "sha256": "56434a819be3d0d959d9b77d4f68a84b25b0f51cba3656d977db5fc3725b5a94"
+    },
+    {
+      "path": "dwp-gateway/src/main/java/com/dwp/gateway/productsurface/GeneratedProductRouteCatalog.java",
+      "sha256": "04ef804202d4732a985cc0db027334bfa577d85fd23d25fd662698bf125116a6"
+    },
+    {
+      "path": "dwp-gateway/src/main/java/com/dwp/gateway/security/AuthSessionVerifier.java",
+      "sha256": "335bec687099b2698b5b55bd8480804d7bf055fcca2430253516817c9c0bf2cf"
+    },
+    {
+      "path": "dwp-gateway/src/main/java/com/dwp/gateway/security/VerifiedIdentity.java",
+      "sha256": "f3b92898800c3f750f1f77b533903f37f29ec372b162c86029f1f7c324b7fa56"
+    },
+    {
+      "path": "dwp-gateway/src/test/java/com/dwp/gateway/AuthSessionVerifierTest.java",
+      "sha256": "55a96a679112b560d1932d86bd0d9fb89f522be710c8c0489abc24a99e685118"
+    },
+    {
+      "path": "dwp-gateway/src/test/java/com/dwp/gateway/ProductSurfaceDecisionContextFilterTest.java",
+      "sha256": "0373d65806fa45674654b49a4dc43df122b31cbfc0a94b07cfb973e8bc41fb46"
+    },
+    {
+      "path": "dwp-gateway/src/test/java/com/dwp/gateway/VerifiedIdentityFilterTest.java",
+      "sha256": "6bfb9b99dc52facdb827a285e9a519b8cfe496ad8f7fb6c3a575b81df7222f86"
+    },
+    {
+      "path": "dwp-gateway/src/test/java/com/dwp/gateway/productsurface/GeneratedProductRouteCatalogTest.java",
+      "sha256": "fe345581bfe424b90782f067f8b93208b1449550164624fcb7adafb38bc03dc6"
+    },
+    {
+      "path": "dwp-gateway/src/test/java/com/dwp/gateway/security/VerifiedIdentityTest.java",
+      "sha256": "42a36481006089f1dfe690770b9b6a5a0834be80425f398a3bf5e966df47d2e8"
+    },
+    {
+      "path": "dwp-payroll-server/src/main/resources/product-authorization/hcm-payroll-pep-v49.generated.json",
+      "sha256": "663ced685337956e1c198680283003339d149216caf39697b143ce969ea29f7b"
+    },
+    {
+      "path": "dwp-people-server/src/main/resources/product-authorization/hcm-people-pep-v49.generated.json",
+      "sha256": "bf2d079820cceba5ed8adcb0b7927daaef239bccc178138e25a6f889f55b1834"
+    },
+    {
+      "path": "dwp-platform-server/src/main/resources/product-authorization/hcm-platform-pep-v49.generated.json",
+      "sha256": "46073e2e262f7af783853e3efd769c336915873e641ea2e5f55b05d494d8f286"
+    },
+    {
+      "path": "dwp-time-server/src/main/resources/product-authorization/hcm-time-pep-v49.generated.json",
+      "sha256": "29e4e3b6729097551b7b9ecf137e7373b45a438e9bffc18ed8dd155db26ad00b"
+    },
+    {
+      "path": "scripts/generate-product-authorization-contracts.py",
+      "sha256": "ec81a0afe25868ef4ee6a989a46b8b1cb82d6639c46c092a527295d21017deb5"
+    },
+    {
+      "path": "scripts/generate-product-authorization-fixtures.py",
+      "sha256": "8227a33ae8fbb13f13763b5f9a5451691092a8ce6080293cc50733245bbf0a5e"
+    },
+    {
+      "path": "scripts/tests/test_product_authorization_v21.py",
+      "sha256": "31741c788bfc579bfee07868303ce7ae944febe6fd843ec5f4540c9e1691303b"
+    },
+    {
+      "path": "scripts/tests/test_product_authorization_v47.py",
+      "sha256": "394e30eb5f3bc5fb4400e36b6452849dcc4b2c42b53ea3f9424790ac1b9cf074"
+    },
+    {
+      "path": "scripts/tests/test_product_authorization_v49.py",
+      "sha256": "e7e0f7cd0d37fbc3f2f44044f22560a12ce60b76ff4f2518e12ec10c91f6f761"
+    }
+  ],
+  "retiredAndForbiddenChangedPaths": [],
+  "result": "PASS_EXACT_FIFTY_PATH_CLOSED_SET"
+}
