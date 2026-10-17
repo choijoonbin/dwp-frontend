@@ -1,0 +1,145 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-01-frontend-v49-sync-and-integration-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-01-FRONTEND-V49-SYNC-INTEGRATION-20261017-R1",
+  "recordedAt": "2026-10-17T17:05:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL_WITH_INDEPENDENT_REVIEW",
+  "result": "PASS_FRONTEND_V49_SYNC_INTEGRATED_MODULE_TOKEN_BOUNDARY_OPEN",
+  "acceptedBackend": {
+    "acceptanceReceipt": {
+      "path": "backend-independent-review-and-acceptance-receipt.v1.json",
+      "sha256": "a4554d45ff833e15b5c907d13b51a2b3e3f38284e01b325cf2008a9823728d5f"
+    },
+    "dwpDevCommit": "3d3f141d95f0252f66bd5987b6cba30fadc431e9",
+    "dwpDevTree": "bd0de7c5e36658da84bdb2cadd6e0504b2f9323b",
+    "originExact": true,
+    "clean": true
+  },
+  "frontendSync": {
+    "baseCommit": "2ccf6b4732eb5ef7aabc2fe76433785b035d4945",
+    "branch": "codex/hris-wave7-r7-batch01-frontend-v49-sync-20261017-r1",
+    "candidateCommit": "f713db23ee5a9868c367fd1fe7d62073dd4b656a",
+    "candidateTree": "a1b6b2008a02a8fdc45501dddd39e64d5df0a988",
+    "dwpDevMergeCommit": "d87ca022ef9c03c3d4b1e492a2cc5525538ba28b",
+    "dwpDevMergeTree": "c1ddad1c02dd37346069ab5c5aab4b07c73e17f6",
+    "originExact": true,
+    "clean": true
+  },
+  "changedPaths": {
+    "count": 8,
+    "exact": [
+      "apps/dwp/src/routes/product-route-contracts.generated.test.ts",
+      "apps/dwp/src/routes/product-surface-authorization.generated.ts",
+      "architecture/pilot-fixtures.v1.generated.json",
+      "architecture/product-page-routes.v1.json",
+      "architecture/product-surface-authorization.v1.json",
+      "libs/shared-utils/src/test-utils/pilot-authorization-fixtures.generated.ts",
+      "scripts/product-authorization-fixture-versions.mjs",
+      "scripts/sync-product-surface-authorization.mjs"
+    ],
+    "outsideScope": 0,
+    "commonMountFilesChanged": 0
+  },
+  "officialArtifactBinding": {
+    "backendSnapshotByteExact": true,
+    "backendFixtureByteExact": true,
+    "bundleVersion": 49,
+    "bundleStatus": "DRAFT",
+    "embeddedChecksum": "5c1dccdc27d8b260fbf001de5695e983a7107072824a8087038340d0d84cbc60",
+    "fixtureChecksum": "d678c2d9d4ddcf5194ce5b1e8ac29882cd505ef59650a0ab9dab5f8c2da4be68",
+    "counts": {
+      "capabilities": 262,
+      "accessPolicies": 24,
+      "entitlementExpressions": 17,
+      "predicatePolicies": 81,
+      "routes": 1079,
+      "pageRoutes": 144
+    }
+  },
+  "newPageRouteClosedSet": [
+    {
+      "routeContractKey": "route.hcm.operations.organization-positions.page",
+      "path": "/hr/operations/people/organization-positions"
+    },
+    {
+      "routeContractKey": "route.hcm.operations.payroll-population.page",
+      "path": "/hr/operations/payroll/population"
+    },
+    {
+      "routeContractKey": "route.hcm.configuration.settings-operations.page",
+      "path": "/hr/settings/operations"
+    },
+    {
+      "routeContractKey": "route.hcm.operations.time-command-center.page",
+      "path": "/hr/operations/time/command-center"
+    },
+    {
+      "routeContractKey": "route.hcm.operations.time-daily-close.page",
+      "path": "/hr/operations/time/daily-close"
+    },
+    {
+      "routeContractKey": "route.hcm.operations.time-monthly-close.page",
+      "path": "/hr/operations/time/monthly-close"
+    }
+  ],
+  "mountPosture": {
+    "hcmNavigationChanged": false,
+    "hcmPageChanged": false,
+    "hcmRoutesChanged": false,
+    "actualNewReactMountCount": 0,
+    "defaultOff": true,
+    "tenantEnrollmentCount": 0,
+    "rule": "The six PAGE entries are registry reservations only. Their feature implementations and one central adapter mount remain separately gated."
+  },
+  "targetedVerification": [
+    {
+      "scope": "authorization snapshot and fixture official byte equality",
+      "result": "PASS"
+    },
+    {
+      "scope": "Vitest product route, route source and fixture adapter",
+      "tests": 19,
+      "failures": 0,
+      "result": "PASS"
+    },
+    {
+      "scope": "official backend complete-set acceptance",
+      "tests": 1,
+      "failures": 0,
+      "result": "PASS"
+    },
+    {
+      "scope": "independent changed route contract proof",
+      "tests": 7,
+      "failures": 0,
+      "result": "PASS"
+    },
+    {
+      "scope": "Prettier, ESLint, Node syntax and git diff checks",
+      "result": "PASS"
+    }
+  ],
+  "independentReview": {
+    "remainingP0": 0,
+    "remainingP1": 0,
+    "mergeable": true,
+    "preExistingP2": [
+      "hris-w1-browser-firewall-contract hardcodes 26 while the current base already has 45 HCM PAGE routes",
+      "hcm-product-manifest has stale management DATA/ACTION expectations on the current base",
+      "the 91.6 MB static JSON import can exceed the test harness NAPI conversion limit"
+    ],
+    "ownership": "Resolve once in the central frontend adapter lane by dynamic counting, default-off reserved PAGE treatment and fs.readFileSync JSON parsing; do not duplicate fixes in module branches."
+  },
+  "authority": {
+    "frontendV49SyncAccepted": true,
+    "frontendV49SyncIntegrated": true,
+    "backendV49Integrated": true,
+    "moduleTokenBoundaryOpen": true,
+    "moduleTokenIssuanceAllowedAfterBoundarySealsAndFreshPins": true,
+    "moduleImplementationAuthorized": false,
+    "moduleMigrationAuthoringAuthorized": false,
+    "centralFrontendMountAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "runtimeActivationAuthorized": false
+  },
+  "nextGate": "SYS_EVENT_AND_TIM_TRUST_SEALS_THEN_FRESH_MODULE_START_TOKENS"
+}
