@@ -1,7 +1,16 @@
+import type { WorkforceAccessFieldGroup } from '@dwp-frontend/shared-utils';
+
 const WORKFORCE_ROLES = new Set(['ADMIN', 'HR_ADMIN', 'PEOPLE_ADMIN']);
 const POPULATIONS = new Set(['TENANT', 'ORG_UNIT', 'ORG_TREE']);
 const SUBJECT_TYPES = new Set(['ROLE', 'USER']);
-const FIELD_GROUPS = new Set(['DIRECTORY', 'WORKER_IDENTIFIERS', 'EMPLOYMENT', 'JOB_GRADE']);
+export const WORKFORCE_ACCESS_FIELD_GROUPS = [
+  'DIRECTORY',
+  'WORKER_IDENTIFIERS',
+  'EMPLOYMENT',
+  'JOB_GRADE',
+  'ORGANIZATION',
+] as const satisfies readonly WorkforceAccessFieldGroup[];
+const FIELD_GROUPS = new Set<string>(WORKFORCE_ACCESS_FIELD_GROUPS);
 const ACTIONS = new Set(['READ', 'EXPORT']);
 const STATES = new Set(['ACTIVE', 'SCHEDULED', 'REVOKED', 'EXPIRED']);
 

@@ -2,6 +2,9 @@ import { axiosInstance } from '../axios-instance';
 
 import type { ApiResponse } from '../types';
 
+export type WorkforceAccessFieldGroup =
+  'DIRECTORY' | 'WORKER_IDENTIFIERS' | 'EMPLOYMENT' | 'JOB_GRADE' | 'ORGANIZATION';
+
 export type WorkforceAccessPolicy = {
   policyId: string;
   subjectType: 'ROLE' | 'USER';
@@ -9,7 +12,7 @@ export type WorkforceAccessPolicy = {
   populationType: 'TENANT' | 'ORG_UNIT' | 'ORG_TREE';
   organizationId?: string | null;
   organizationName?: string | null;
-  fieldGroups: Array<'DIRECTORY' | 'WORKER_IDENTIFIERS' | 'EMPLOYMENT' | 'JOB_GRADE'>;
+  fieldGroups: WorkforceAccessFieldGroup[];
   actionCodes: Array<'READ' | 'EXPORT'>;
   validFrom?: string | null;
   validTo?: string | null;
