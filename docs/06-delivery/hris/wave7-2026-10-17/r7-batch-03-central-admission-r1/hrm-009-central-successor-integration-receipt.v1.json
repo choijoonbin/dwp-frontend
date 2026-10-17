@@ -1,0 +1,134 @@
+{
+  "schema": "dwp.hris.r7-batch03-hrm009-central-successor-integration-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH03-HRM009-CENTRAL-SUCCESSOR-INTEGRATION-20261018-R1",
+  "recordedAt": "2026-10-18T07:46:54+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "EXACT_BACKEND_AND_FRONTEND_CENTRAL_SUCCESSOR_HEADS_NO_FF_MERGED_AND_PUSHED_DEFAULT_OFF_ZERO_ENROLLMENT_BROWSER_GATE_PENDING",
+  "authorityChain": {
+    "resultEvidence": {
+      "path": "hrm-009-central-successor-result-evidence.v1.json",
+      "sha256": "5634142bf7c8e9ffda88a11a10895869a25f78f3fbf07f1b88676925bd01b26c",
+      "bytes": 33427,
+      "carrierCommit": "8faa7f1738e552acff1e9faf0e495516003a3447",
+      "carrierTree": "f7a3a909c655da55187905a92b50c14d4d9cce20"
+    },
+    "admissionDecision": {
+      "path": "hrm-009-central-successor-admission-decision.v1.json",
+      "sha256": "69d88be836b48b63da98a4d5a69874045467ffe561a0d5c1128128cb07dcf9d0",
+      "bytes": 8502,
+      "carrierCommit": "8faa7f1738e552acff1e9faf0e495516003a3447",
+      "carrierTree": "f7a3a909c655da55187905a92b50c14d4d9cce20",
+      "decision": "AUTHORIZE_EXACT_REVIEWED_BACKEND_AND_FRONTEND_HEADS_ONLY_FOR_NO_FF_DWP_DEV_MERGE_STOP_ON_CONFLICT_NO_TEST_RERUN"
+    }
+  },
+  "integratedSource": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "sourceBranch": "codex/hris-wave7-r7-batch03-hrm-009-central-backend-20261018-r1",
+      "exactReviewedHead": "d739802af71bb56c6c2b1e1de433de503eecf0c7",
+      "exactReviewedTree": "ae5aba749390685eff5aeb041f39a8d4f2ada0d0",
+      "mergeCommit": "a8c7e57eddfbec3a30278fa5cfe48786606867b9",
+      "mergeTree": "ae5aba749390685eff5aeb041f39a8d4f2ada0d0",
+      "mergeParents": [
+        "1e3bd64fb13bdc7d772913ad48a9cce315ea05b0",
+        "d739802af71bb56c6c2b1e1de433de503eecf0c7"
+      ],
+      "exactHeadIsMergeAncestor": true,
+      "changedPathCount": 43,
+      "pathBlobManifestSha256": "a2d7bcdc3ba1b7f92cf85550ac32c858255365f71aea29a3fece9adce1824daa",
+      "allAdmittedBlobsMatch": true,
+      "blobMismatchCount": 0,
+      "worktreeClean": true,
+      "originExact": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "sourceBranch": "codex/hris-wave7-r7-batch03-hrm-009-central-frontend-20261018-r1",
+      "exactReviewedHead": "5f61fcf1454d73553e7b0c0f2a55a16da689b105",
+      "exactReviewedTree": "7ee0310f0ed87c84f14d2b330ff68b1f4e38dbe4",
+      "mergeCommit": "81b35db1125cc51e7c06848922da38e6127d5848",
+      "mergeTree": "a7dafeb770f419a514c9aa57b93400e64be90e30",
+      "mergeParents": [
+        "8faa7f1738e552acff1e9faf0e495516003a3447",
+        "5f61fcf1454d73553e7b0c0f2a55a16da689b105"
+      ],
+      "exactHeadIsMergeAncestor": true,
+      "changedPathCount": 25,
+      "pathOnlyManifestSha256": "ddfb817039f183c5842709c8b1386027e93ec8770f69a0962de835c7e746f5e7",
+      "nameStatusManifestSha256": "ecb78726bf1e25d27994046097ba1931d24f9eb42558e38f091566cb6f40581e",
+      "contentManifestSha256": "6f2c1575b23d47d85b44c84716a5e60192b21d0a9553e27155f1f59f35cfd346",
+      "allAdmittedBlobsMatch": true,
+      "blobMismatchCount": 0,
+      "worktreeCleanBeforeReceipt": true,
+      "originExactBeforeReceipt": true
+    }
+  },
+  "centralAdmissionVerification": {
+    "mergeStrategy": "NO_FF_EXACT_REVIEWED_HEADS_ONLY",
+    "mergeConflicts": 0,
+    "automaticConflictResolution": false,
+    "backendAncestorCheck": "PASS",
+    "frontendAncestorCheck": "PASS",
+    "backendExactBlobCount": 43,
+    "frontendExactBlobCount": 25,
+    "backendBlobMismatchCount": 0,
+    "frontendBlobMismatchCount": 0,
+    "backendOriginExact": true,
+    "frontendOriginExactBeforeReceipt": true,
+    "testExecutionDuringAdmission": false,
+    "boundedTestRerunDuringAdmission": false,
+    "repositoryWideSuiteRerun": false
+  },
+  "integratedBoundary": {
+    "productAuthorizationVersion": 52,
+    "productAuthorizationStatus": "DRAFT",
+    "productAuthorizationChecksum": "b33fbf968e71f97b09fa497fdfad7d2f6854199170b79fd1602a0ea604977346",
+    "authMigration": "V261",
+    "authPolicyOwnerBindingTotals": "7/29/29",
+    "frontendReadOnlyPageDataMountIntegrated": true,
+    "backendActionContractIntegratedButNotActivated": true,
+    "runtimeDefault": "OFF",
+    "automaticImportEnabled": false,
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "tenantEnrollmentCount": 0,
+    "customerDataAuthorized": false,
+    "frontendActionDelegateIntegrated": false,
+    "frontendActionUiAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "downloadRevokeVerificationExpiryOrAuditIntegrated": false
+  },
+  "browserGate": {
+    "required": true,
+    "state": "PENDING",
+    "authorizedScope": "DEFAULT_OFF_READ_ONLY_PAGE_DATA_MOUNT_NO_ACTION_DELEGATE_ZERO_POST",
+    "mustRunAfterThisReceipt": true,
+    "businessCompletionClaimBeforeGate": false
+  },
+  "residualsCarriedForward": [
+    "frontend/backend Unicode idempotency length difference",
+    "local Bearer, If-Match and certificate-type handling narrower than some input schemas",
+    "broad local Problem enum",
+    "actual PostgreSQL two-session receipt race not run",
+    "repository SQL limit/keyset pushdown absent",
+    "historical broad and PostgreSQL raw XML preservation provenance insufficient"
+  ],
+  "decision": "CENTRAL_SUCCESSOR_SOURCE_INTEGRATION_CLOSED_BROWSER_GATE_REQUIRED_BEFORE_READ_ONLY_ACCEPTANCE",
+  "remainingState": {
+    "centralSourceIntegrated": true,
+    "browserAcceptanceComplete": false,
+    "frontendActionUiAuthorized": false,
+    "hrm009FullSliceComplete": false,
+    "batch03Complete": false,
+    "r7Complete": false
+  },
+  "nonClaims": [
+    "The read-only browser acceptance gate is complete.",
+    "The HRM-009 ACTION UI is implemented or authorized.",
+    "Any feature or tenant is activated or enrolled.",
+    "Download, revoke, verification, expiry or access/download audit acceptance is complete.",
+    "BASE-TFR-HRM-009, Batch-03 or R7 is complete."
+  ]
+}
