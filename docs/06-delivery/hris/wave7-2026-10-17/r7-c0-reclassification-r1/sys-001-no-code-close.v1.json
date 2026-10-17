@@ -1,0 +1,206 @@
+{
+  "schema": "dwp.hris.wave7.r7-c0-sys-001-no-code-close.v1",
+  "receiptId": "HRIS-WAVE7-R7-C0-SYS-001-NO-CODE-CLOSE-20261017-R1",
+  "issuedAt": "2026-10-17T14:46:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "sliceId": "BASE-TFR-SYS-001",
+  "decision": "EXPLICIT_FINAL_PIN_CLOSE_NO_CODE",
+  "classificationTransition": {
+    "from": "INTEGRATED_EXPLICIT_CLOSE_RESIDUAL",
+    "to": "EXPLICIT_FINAL_PIN_CLOSED_NO_CODE",
+    "baseSnapshot": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-c0-reclassification-r1/base-slice-reclassification.v1.json",
+      "sha256": "73c02c6d945f2b62ae716d2dbbf76e5123a2863f50d19de51e27085943291de8",
+      "countingBoundary": "The sibling base ledger intentionally preserves SYS-001 as its one pre-close residual; this receipt is the subsequent explicit transition."
+    }
+  },
+  "finalPinsBeforeDocumentationCarrier": {
+    "backend": "dwp-backend:dwp-dev@6e7d1a6a8d0337c545abf83f5e243a8aa11f8457",
+    "frontend": "dwp-frontend:dwp-dev@6c0d181c7acab57179d8760ae0aeba80e6ee4d35",
+    "agent": "dwp_agent:dwp-dev@9beb5439cad065e7d919a98c9f9becb44481508a"
+  },
+  "pendingPredecessorReceipts": [
+    {
+      "path": "docs/06-delivery/hris/wave5-2026-10-14/sys-001-control-r1/central-runtime-integration-receipt.v1.json",
+      "sha256": "33fcb0c681189dc23f2da62eb8f9c43ed18796401743f9ff1725ec3d43ad3fe1",
+      "state": "CENTRAL_RUNTIME_COMPLETE_NAVIGATION_ADAPTER_PENDING",
+      "backendCommit": "c9a112bf13cc3c240cf48bc51c6001e5601b847e",
+      "frontendSequencingCommit": "0eb4f09420bd1b3ab7496737e37fded247dd76c5"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave5-2026-10-14/sys-001-nav-adapter-integration-r1/central-integration-result.v1.json",
+      "sha256": "7d181ebe5047bb32915ffbc753948f03b94b2853ed18c980eb533fa0c8cf9c26",
+      "state": "ADAPTER_CODE_COMPLETE_WORK_EXPLORER_MOUNT_PENDING",
+      "frontendOwnerCommit": "0c83828a30283a0a188ce95652ff105efca2656b",
+      "frontendIntegrationCommit": "61f5a74fe51c8e0d97bba865c811028186ddfb69",
+      "backendSequencingCommit": "67287b33be62c338d7ea6183e22ff3372e0c45c1"
+    }
+  ],
+  "successorEvidence": [
+    {
+      "path": "docs/06-delivery/hris/wave6-2026-10-15/sys-012-work-explorer-integration-r1/central-integration-result.v1.json",
+      "sha256": "54ef4a7383e34f30803add14d18b8fd9c27c36e17c9a420d81e4b80099fcb507",
+      "state": "MODULE_RUNTIME_AND_USER_JOURNEY_INTEGRATED_CLOSED_DEFAULT_OFF",
+      "backendOwnerCommit": "6e1ea3cd14224988936fee8af908b706b7aedbc9",
+      "backendIntegrationCommit": "9c9e33c29a63e2638213d424e74c8fabed2e7a4b",
+      "frontendOwnerCommit": "640d1aca79514bd365c366ab9393df6b9d614155",
+      "frontendIntegrationCommit": "2d0cd58b9ce6b05fc6d364461d9e0172b016a787",
+      "satisfies": "The separately sealed governed Work Explorer mount and user-journey boundary that the SYS-001 adapter receipt left pending."
+    },
+    {
+      "path": "docs/06-delivery/hris/wave6-2026-10-15/r4-sys-012-home-composition-integration-r1/central-integration-result.v1.json",
+      "sha256": "3076abc4209d47742a30d845584c4e308475273308433c30f553689093d806b6",
+      "state": "PASS_R4_INTEGRATED_CLOSED_DEFAULT_OFF",
+      "backendFinalBindingCommit": "49f593457af4b7b0ec13b36183c0431b7e7a248c",
+      "satisfies": "Supplemental successor proof that Work Explorer home composition is integrated and remains default off; it does not itself activate SYS-001."
+    }
+  ],
+  "ancestryVerification": {
+    "method": "git merge-base --is-ancestor <candidate> <finalPin>; git merge-base <candidate> <finalPin>",
+    "performedAgainstLocalRepositoriesAtExactRemotePins": true,
+    "checks": [
+      {
+        "repository": "dwp-backend",
+        "subject": "SYS-001 runtime backend",
+        "candidate": "c9a112bf13cc3c240cf48bc51c6001e5601b847e",
+        "finalPin": "6e7d1a6a8d0337c545abf83f5e243a8aa11f8457",
+        "exitCode": 0,
+        "mergeBase": "c9a112bf13cc3c240cf48bc51c6001e5601b847e",
+        "ancestor": true
+      },
+      {
+        "repository": "dwp-backend",
+        "subject": "SYS-001 nav receipt backend sequencing",
+        "candidate": "67287b33be62c338d7ea6183e22ff3372e0c45c1",
+        "finalPin": "6e7d1a6a8d0337c545abf83f5e243a8aa11f8457",
+        "exitCode": 0,
+        "mergeBase": "67287b33be62c338d7ea6183e22ff3372e0c45c1",
+        "ancestor": true
+      },
+      {
+        "repository": "dwp-frontend",
+        "subject": "SYS-001 runtime frontend sequencing",
+        "candidate": "0eb4f09420bd1b3ab7496737e37fded247dd76c5",
+        "finalPin": "6c0d181c7acab57179d8760ae0aeba80e6ee4d35",
+        "exitCode": 0,
+        "mergeBase": "0eb4f09420bd1b3ab7496737e37fded247dd76c5",
+        "ancestor": true
+      },
+      {
+        "repository": "dwp-frontend",
+        "subject": "SYS-001 navigation adapter owner",
+        "candidate": "0c83828a30283a0a188ce95652ff105efca2656b",
+        "finalPin": "6c0d181c7acab57179d8760ae0aeba80e6ee4d35",
+        "exitCode": 0,
+        "mergeBase": "0c83828a30283a0a188ce95652ff105efca2656b",
+        "ancestor": true
+      },
+      {
+        "repository": "dwp-frontend",
+        "subject": "SYS-001 navigation adapter integration",
+        "candidate": "61f5a74fe51c8e0d97bba865c811028186ddfb69",
+        "finalPin": "6c0d181c7acab57179d8760ae0aeba80e6ee4d35",
+        "exitCode": 0,
+        "mergeBase": "61f5a74fe51c8e0d97bba865c811028186ddfb69",
+        "ancestor": true
+      },
+      {
+        "repository": "dwp-backend",
+        "subject": "SYS-012 Work Explorer owner",
+        "candidate": "6e1ea3cd14224988936fee8af908b706b7aedbc9",
+        "finalPin": "6e7d1a6a8d0337c545abf83f5e243a8aa11f8457",
+        "exitCode": 0,
+        "mergeBase": "6e1ea3cd14224988936fee8af908b706b7aedbc9",
+        "ancestor": true
+      },
+      {
+        "repository": "dwp-backend",
+        "subject": "SYS-012 Work Explorer integration",
+        "candidate": "9c9e33c29a63e2638213d424e74c8fabed2e7a4b",
+        "finalPin": "6e7d1a6a8d0337c545abf83f5e243a8aa11f8457",
+        "exitCode": 0,
+        "mergeBase": "9c9e33c29a63e2638213d424e74c8fabed2e7a4b",
+        "ancestor": true
+      },
+      {
+        "repository": "dwp-frontend",
+        "subject": "SYS-012 Work Explorer owner",
+        "candidate": "640d1aca79514bd365c366ab9393df6b9d614155",
+        "finalPin": "6c0d181c7acab57179d8760ae0aeba80e6ee4d35",
+        "exitCode": 0,
+        "mergeBase": "640d1aca79514bd365c366ab9393df6b9d614155",
+        "ancestor": true
+      },
+      {
+        "repository": "dwp-frontend",
+        "subject": "SYS-012 Work Explorer integration",
+        "candidate": "2d0cd58b9ce6b05fc6d364461d9e0172b016a787",
+        "finalPin": "6c0d181c7acab57179d8760ae0aeba80e6ee4d35",
+        "exitCode": 0,
+        "mergeBase": "2d0cd58b9ce6b05fc6d364461d9e0172b016a787",
+        "ancestor": true
+      },
+      {
+        "repository": "dwp-backend",
+        "subject": "SYS-012 home composition final binding",
+        "candidate": "49f593457af4b7b0ec13b36183c0431b7e7a248c",
+        "finalPin": "6e7d1a6a8d0337c545abf83f5e243a8aa11f8457",
+        "exitCode": 0,
+        "mergeBase": "49f593457af4b7b0ec13b36183c0431b7e7a248c",
+        "ancestor": true
+      }
+    ],
+    "allCandidatesExist": true,
+    "allCandidatesAreAncestors": true,
+    "allMergeBasesEqualCandidates": true
+  },
+  "closureRationale": [
+    "The SYS-001 backend runtime commit is retained by the final backend pin.",
+    "The exact SYS-001 navigation adapter owner and integration commits are retained by the final frontend pin.",
+    "The later SYS-012 Work Explorer owner and integration commits are retained by both final pins and explicitly close the governed mount/user-journey boundary while remaining default off.",
+    "The R4 SYS-012 home composition final binding is also retained by the final backend pin.",
+    "Therefore the historical pending boundary can be closed by evidence only; reimplementation or source delta would be duplicate work."
+  ],
+  "changeInventory": {
+    "productionSourceFilesChanged": [
+
+    ],
+    "testSourceFilesChanged": [
+
+    ],
+    "migrationFilesChanged": [
+
+    ],
+    "apiOrOpenApiChanged": false,
+    "routeOrMenuChanged": false,
+    "authorizationRegistryChanged": false,
+    "documentationFilesCreated": [
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-c0-reclassification-r1/base-slice-reclassification.v1.json",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-c0-reclassification-r1/sys-001-no-code-close.v1.json"
+    ]
+  },
+  "validation": {
+    "commands": [
+      "git merge-base --is-ancestor <candidate> <finalPin>",
+      "git merge-base <candidate> <finalPin>",
+      "jq empty base-slice-reclassification.v1.json sys-001-no-code-close.v1.json",
+      "jq deterministic count/uniqueness/source-line assertions",
+      "git diff --check"
+    ],
+    "fullRepositoryTestsRun": false,
+    "targetedProductTestsRun": false,
+    "reason": "Documentation-only evidence close; commit ancestry and deterministic JSON/source reconciliation are the proportionate gates."
+  },
+  "nonclaims": {
+    "runtimeDefault": "OFF",
+    "authorizationState": "DRAFT",
+    "featureActivationAuthorized": false,
+    "routeOrMenuActivationAuthorized": false,
+    "tenantActivationAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "newBusinessCapabilityImplemented": false
+  },
+  "finalState": "PASS_EXPLICIT_FINAL_PIN_CLOSED_NO_CODE_DEFAULT_OFF",
+  "nextAction": "REMOVE_SYS_001_FROM_FRESH_IMPLEMENTATION_QUEUES; PRESERVE_THE_86_ROW_PRE_CLOSE_SNAPSHOT_FOR_AUDIT; PROCEED_WITH_SEPARATE_R7_SUCCESSOR_PACKETS_ONLY_AFTER_C0_INTEGRATION"
+}

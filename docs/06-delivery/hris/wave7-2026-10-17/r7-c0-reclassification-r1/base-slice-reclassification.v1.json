@@ -1,0 +1,3873 @@
+{
+  "schema": "dwp.hris.wave7.r7-c0-base-slice-reclassification.v1",
+  "carrierId": "HRIS-WAVE7-R7-C0-BASE-SLICE-RECLASSIFICATION-20261017-R1",
+  "issuedAt": "2026-10-17T14:45:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "purpose": "Deterministically reclassify every historical BASE row exactly once from immutable Wave3 overlay v2 using only explicit receipts and ancestor integration commits.",
+  "sourceAuthority": {
+    "overlay": {
+      "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+      "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+      "role": "immutable historical source inventory; not modified by R7-C0"
+    },
+    "overlayMutated": false,
+    "roadmap": {
+      "path": "docs/06-delivery/hris/wave6-2026-10-15/execution-roadmap-successor.v10.json",
+      "sha256": "dd443ddbf564313eb0d5f0f5c685e2c8455a865e4554cc90524a1835726b3315"
+    },
+    "dependencyRegister": {
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/module-dependency-register.csv",
+      "sha256": "b8f1a11d1a32cf6f5a9a99ff73066b7e65787319ac18cf0d2b4891d22587c348"
+    },
+    "routeEvidenceMatrix": {
+      "path": "docs/06-delivery/hris/wave6-2026-10-15/r6-implemented-screen-exposure-control-r1/route-evidence-matrix.v1.json",
+      "sha256": "76abc4e2ceecfe0f4439a5c2842910a1a796b09ec1b20de0307dadc8e58811c2"
+    }
+  },
+  "classificationPins": {
+    "backend": "dwp-backend:dwp-dev@6e7d1a6a8d0337c545abf83f5e243a8aa11f8457",
+    "frontend": "dwp-frontend:dwp-dev@6c0d181c7acab57179d8760ae0aeba80e6ee4d35",
+    "agent": "dwp_agent:dwp-dev@9beb5439cad065e7d919a98c9f9becb44481508a"
+  },
+  "countReconciliation": {
+    "universe": 86,
+    "retired": 2,
+    "evidenceClosedComplete": 25,
+    "integratedExplicitCloseResidual": 1,
+    "partialSurfaceOrOverlap": 4,
+    "noCurrentSliceResult": 54,
+    "active": 84,
+    "activeIncompleteAtSnapshot": 59,
+    "equations": [
+      "2 + 25 + 1 + 4 + 54 = 86",
+      "86 - 2 = 84 active",
+      "1 + 4 + 54 = 59 active incomplete at the pre-close classification snapshot"
+    ]
+  },
+  "moduleSummary": {
+    "HRM": {
+      "sourceRows": 16,
+      "retired": 1,
+      "active": 15,
+      "complete": 6,
+      "residual": 0,
+      "partial": 2,
+      "noResult": 7,
+      "activeIncomplete": 9
+    },
+    "PAY": {
+      "sourceRows": 21,
+      "retired": 0,
+      "active": 21,
+      "complete": 5,
+      "residual": 0,
+      "partial": 1,
+      "noResult": 15,
+      "activeIncomplete": 16
+    },
+    "PER": {
+      "sourceRows": 16,
+      "retired": 0,
+      "active": 16,
+      "complete": 5,
+      "residual": 0,
+      "partial": 1,
+      "noResult": 10,
+      "activeIncomplete": 11
+    },
+    "SYS": {
+      "sourceRows": 14,
+      "retired": 1,
+      "active": 13,
+      "complete": 4,
+      "residual": 1,
+      "partial": 0,
+      "noResult": 8,
+      "activeIncomplete": 9
+    },
+    "TIM": {
+      "sourceRows": 19,
+      "retired": 0,
+      "active": 19,
+      "complete": 5,
+      "residual": 0,
+      "partial": 0,
+      "noResult": 14,
+      "activeIncomplete": 14
+    }
+  },
+  "mandatoryCorrections": [
+    {
+      "sliceId": "BASE-TFR-PAY-016",
+      "decision": "IN_EVIDENCE_CLOSED_COMPLETE",
+      "reason": "Wave4 integration is supplemented by the later PAY-011 PostgreSQL clean and V49-to-V50 upgrade proof; the earlier database-verification limitation is no longer an open classification blocker.",
+      "evidencePointerIds": [
+        "PAY016_WAVE4",
+        "PAY011_INTEGRATION"
+      ]
+    },
+    {
+      "sliceId": "BASE-TFR-SYS-001",
+      "decision": "OUT_OF_EVIDENCE_CLOSED_COMPLETE_AT_RECLASSIFICATION_SNAPSHOT",
+      "reason": "The last direct SYS-001 receipt explicitly left Work Explorer mount pending. It remains the sole residual in this 86-row snapshot and transitions only through the sibling no-code final-pin closure receipt.",
+      "sameCarrierTransition": {
+        "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-c0-reclassification-r1/sys-001-no-code-close.v1.json",
+        "receiptId": "HRIS-WAVE7-R7-C0-SYS-001-NO-CODE-CLOSE-20261017-R1",
+        "postReceiptState": "EXPLICIT_FINAL_PIN_CLOSED_NO_CODE",
+        "countingRule": "Do not rewrite the requested pre-close 25/1/4/54 snapshot counts; consume this transition before issuing module source authority."
+      }
+    }
+  ],
+  "stateArrays": {
+    "RETIRED": [
+      {
+        "sliceId": "BASE-TFR-HRM-006",
+        "classification": "RETIRED",
+        "module": "HRM",
+        "ownerSession": "HRIS-HRM",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 2,
+          "sourceRef": "TFR-HRM-006",
+          "sourceModule": "HRM",
+          "semanticLineage": "TFR-HRM-006::OUT_OF_SCOPE.BENSK|OUT_OF_SCOPE.TECHNICAL_DUPLICATE::DECISION:HRM-DEC-008|DECISION:HRM-DEC-009"
+        },
+        "dependencies": [
+
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "NONE_RETIRED_NO_SOURCE_AUTHORITY"
+      },
+      {
+        "sliceId": "BASE-TFR-SYS-013",
+        "classification": "RETIRED",
+        "module": "SYS",
+        "ownerSession": "HRIS-SYS",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 67,
+          "sourceRef": "TFR-SYS-013",
+          "sourceModule": "SYS",
+          "semanticLineage": "TFR-SYS-013::DWP.PLATFORM.RETIRED_LEGACY_PATH::DECISION:DEC-SYS-013"
+        },
+        "dependencies": [
+
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "NONE_RETIRED_NO_SOURCE_AUTHORITY"
+      }
+    ],
+    "EVIDENCE_CLOSED_COMPLETE": [
+      {
+        "sliceId": "BASE-TFR-HRM-001",
+        "classification": "EVIDENCE_CLOSED_COMPLETE",
+        "module": "HRM",
+        "ownerSession": "HRIS-HRM",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 3,
+          "sourceRef": "TFR-HRM-001",
+          "sourceModule": "HRM",
+          "semanticLineage": "TFR-HRM-001::settings-workflow::PLAT-003"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-014",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "HRM001_NO_CODE"
+        ],
+        "integrationCommitPointers": {
+          "frontend": "0eb4f09420bd1b3ab7496737e37fded247dd76c5",
+          "backend": "c9a112bf13cc3c240cf48bc51c6001e5601b847e"
+        },
+        "nextAction": "NONE_ALREADY_EVIDENCE_CLOSED; DO_NOT_REIMPLEMENT_OR_ISSUE_A_NEW_SOURCE_TOKEN"
+      },
+      {
+        "sliceId": "BASE-TFR-HRM-002",
+        "classification": "EVIDENCE_CLOSED_COMPLETE",
+        "module": "HRM",
+        "ownerSession": "HRIS-HRM",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 4,
+          "sourceRef": "TFR-HRM-002",
+          "sourceModule": "HRM",
+          "semanticLineage": "TFR-HRM-002::dwp-experience::PEP-HRM-014|SYS-API-026|SYS-API-027|PLAT-003|PLAT-004|SYS-API-033"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-014",
+          "DEP-015",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "HRM002_INTEGRATION"
+        ],
+        "integrationCommitPointers": {
+          "frontend": "88a3b333022a431f87e756a0cc1614c25f94fd3e",
+          "backend": "92979d3537cd6984be43afdb58cb14b9e1c4b24e"
+        },
+        "nextAction": "NONE_ALREADY_EVIDENCE_CLOSED; DO_NOT_REIMPLEMENT_OR_ISSUE_A_NEW_SOURCE_TOKEN"
+      },
+      {
+        "sliceId": "BASE-TFR-HRM-003",
+        "classification": "EVIDENCE_CLOSED_COMPLETE",
+        "module": "HRM",
+        "ownerSession": "HRIS-HRM",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 5,
+          "sourceRef": "TFR-HRM-003",
+          "sourceModule": "HRM",
+          "semanticLineage": "TFR-HRM-003::hr-operations-home::PEP-HRM-016|SVC-PEP-HRM-006|XCON-013|EVT-HRM:HrisHomeContributionChanged.v1"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-011",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "R3_HOME_PRODUCERS"
+        ],
+        "integrationCommitPointers": {
+          "frontendControlParent": "c60e9d9577f01a4204972b76d09c521b28a39c0d",
+          "backend": "34d0a6c4be86e29addb77c73cb3b3f67e3095cb9"
+        },
+        "nextAction": "NONE_ALREADY_EVIDENCE_CLOSED; DO_NOT_REIMPLEMENT_OR_ISSUE_A_NEW_SOURCE_TOKEN"
+      },
+      {
+        "sliceId": "BASE-TFR-HRM-004",
+        "classification": "EVIDENCE_CLOSED_COMPLETE",
+        "module": "HRM",
+        "ownerSession": "HRIS-HRM",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 6,
+          "sourceRef": "TFR-HRM-004",
+          "sourceModule": "HRM",
+          "semanticLineage": "TFR-HRM-004::hr-people::PEP-HRM-001|PEP-HRM-002|SVC-PEP-HRM-002|EVT-HRM:PersonChanged.v1"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-007",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "G5_FREEZE",
+          "G6_W1_SUCCESSOR"
+        ],
+        "integrationCommitPointers": {
+          "frontend": "4546024ca9036f217c1d13ddb0622c21a3264b60",
+          "backend": "c0d72ca8e26a6e2a0b3885b62c0aa0e3ad7b1329"
+        },
+        "nextAction": "NONE_ALREADY_EVIDENCE_CLOSED; DO_NOT_REIMPLEMENT_OR_ISSUE_A_NEW_SOURCE_TOKEN"
+      },
+      {
+        "sliceId": "BASE-TFR-HRM-008",
+        "classification": "EVIDENCE_CLOSED_COMPLETE",
+        "module": "HRM",
+        "ownerSession": "HRIS-HRM",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 9,
+          "sourceRef": "TFR-HRM-008",
+          "sourceModule": "HRM",
+          "semanticLineage": "TFR-HRM-008::hr-employment-assignments::PEP-HRM-006|PEP-HRM-007|PEP-HRM-008|PEP-HRM-009|SVC-PEP-HRM-004|XCON-001|XCON-003|XCON-004|XCON-005|XCON-016|EVT-HRM:AssignmentChanged.v1|EVT-HRM:WorkerHired.v1|EVT-HRM:WorkerChanged.v1|EVT-HRM:EmploymentChanged.v1|EVT-HRM:WorkplaceChanged.v1"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-007",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "WAVE2_START",
+          "WAVE2_WIRING"
+        ],
+        "integrationCommitPointers": {
+          "frontend": "a1c621984886f99049af5be82340dafeac025679",
+          "backend": "5b35f8a49e5f4743cd00571ed9bd134e15fff94d"
+        },
+        "nextAction": "NONE_ALREADY_EVIDENCE_CLOSED; DO_NOT_REIMPLEMENT_OR_ISSUE_A_NEW_SOURCE_TOKEN"
+      },
+      {
+        "sliceId": "BASE-TFR-HRM-010",
+        "classification": "EVIDENCE_CLOSED_COMPLETE",
+        "module": "HRM",
+        "ownerSession": "HRIS-HRM",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 11,
+          "sourceRef": "TFR-HRM-010",
+          "sourceModule": "HRM",
+          "semanticLineage": "TFR-HRM-010::hr-employee-change-requests::PEP-HRM-003|PEP-HRM-004|PEP-HRM-005|SVC-PEP-HRM-001|EVT-HRM:EmployeeChangeApplied.v1"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "G7_SYS_HRM_PROMOTION",
+          "G7_SYS_HRM_CLOSURE"
+        ],
+        "integrationCommitPointers": {
+          "frontend": "83b4e500be99f6bffd30f3b985faf67b67a349e2",
+          "backend": "deb39a02634826d40ae5de5e30f54223c31b5851"
+        },
+        "nextAction": "NONE_ALREADY_EVIDENCE_CLOSED; DO_NOT_REIMPLEMENT_OR_ISSUE_A_NEW_SOURCE_TOKEN"
+      },
+      {
+        "sliceId": "BASE-TFR-PAY-006",
+        "classification": "EVIDENCE_CLOSED_COMPLETE",
+        "module": "PAY",
+        "ownerSession": "HRIS-PAY",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 29,
+          "sourceRef": "TFR-PAY-006",
+          "sourceModule": "PAY",
+          "semanticLineage": "TFR-PAY-006::PAY-ELEMENT-FORMULA::PEP-PAY-004|PEP-PAY-005|PEP-PAY-006|PEP-PAY-007|PEP-PAY-008|EVT-PAY:PayrollConfigurationPublished"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-004",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "WAVE2_START",
+          "WAVE2_WIRING"
+        ],
+        "integrationCommitPointers": {
+          "frontend": "a1c621984886f99049af5be82340dafeac025679",
+          "backend": "5b35f8a49e5f4743cd00571ed9bd134e15fff94d"
+        },
+        "nextAction": "NONE_ALREADY_EVIDENCE_CLOSED; DO_NOT_REIMPLEMENT_OR_ISSUE_A_NEW_SOURCE_TOKEN"
+      },
+      {
+        "sliceId": "BASE-TFR-PAY-007",
+        "classification": "EVIDENCE_CLOSED_COMPLETE",
+        "module": "PAY",
+        "ownerSession": "HRIS-PAY",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 30,
+          "sourceRef": "TFR-PAY-007",
+          "sourceModule": "PAY",
+          "semanticLineage": "TFR-PAY-007::PAY-FOUNDATION::PEP-PAY-002|PEP-PAY-003|EVT-PAY:PayrollConfigurationPublished"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-004",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "G5_FREEZE",
+          "G6_W1_SUCCESSOR"
+        ],
+        "integrationCommitPointers": {
+          "frontend": "4546024ca9036f217c1d13ddb0622c21a3264b60",
+          "backend": "c0d72ca8e26a6e2a0b3885b62c0aa0e3ad7b1329"
+        },
+        "nextAction": "NONE_ALREADY_EVIDENCE_CLOSED; DO_NOT_REIMPLEMENT_OR_ISSUE_A_NEW_SOURCE_TOKEN"
+      },
+      {
+        "sliceId": "BASE-TFR-PAY-011",
+        "classification": "EVIDENCE_CLOSED_COMPLETE",
+        "module": "PAY",
+        "ownerSession": "HRIS-PAY",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 34,
+          "sourceRef": "TFR-PAY-011",
+          "sourceModule": "PAY",
+          "semanticLineage": "TFR-PAY-011::PAY-CALCULATION::PEP-PAY-012|PEP-PAY-013|PEP-PAY-017|PEP-PAY-018|PEP-PAY-033|EVT-PAY:PayrollCalculated|EVT-PAY:PayrollRunApproved|EVT-PAY:PayrollFinalized"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "PAY011_INTEGRATION"
+        ],
+        "integrationCommitPointers": {
+          "frontend": "e2fe179a75c678fda9515e2ef5714d9dd7b5bef8",
+          "backend": "67287b33be62c338d7ea6183e22ff3372e0c45c1"
+        },
+        "nextAction": "NONE_ALREADY_EVIDENCE_CLOSED; DO_NOT_REIMPLEMENT_OR_ISSUE_A_NEW_SOURCE_TOKEN"
+      },
+      {
+        "sliceId": "BASE-TFR-PAY-015",
+        "classification": "EVIDENCE_CLOSED_COMPLETE",
+        "module": "PAY",
+        "ownerSession": "HRIS-PAY",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 38,
+          "sourceRef": "TFR-PAY-015",
+          "sourceModule": "PAY",
+          "semanticLineage": "TFR-PAY-015::PAY-DASHBOARD::PEP-PAY-001|SVC-PEP-PAY-001|XCON-015|EVT-PAY:HrisHomeContributionChanged.v1"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-013",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "R3_HOME_PRODUCERS"
+        ],
+        "integrationCommitPointers": {
+          "frontendControlParent": "c60e9d9577f01a4204972b76d09c521b28a39c0d",
+          "backend": "34d0a6c4be86e29addb77c73cb3b3f67e3095cb9"
+        },
+        "nextAction": "NONE_ALREADY_EVIDENCE_CLOSED; DO_NOT_REIMPLEMENT_OR_ISSUE_A_NEW_SOURCE_TOKEN"
+      },
+      {
+        "sliceId": "BASE-TFR-PAY-016",
+        "classification": "EVIDENCE_CLOSED_COMPLETE",
+        "module": "PAY",
+        "ownerSession": "HRIS-PAY",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 39,
+          "sourceRef": "TFR-PAY-016",
+          "sourceModule": "PAY",
+          "semanticLineage": "TFR-PAY-016::PAY-WORKER-INPUT::PEP-PAY-009|PEP-PAY-010|SVC-PEP-PER-001|XCON-020|XCON-021"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016",
+          "DEP-019"
+        ],
+        "evidencePointerIds": [
+          "PAY016_WAVE4",
+          "PAY011_INTEGRATION"
+        ],
+        "integrationCommitPointers": {
+          "frontend": "2eadf94edbece0c46373820b581f6bb063426bc5",
+          "backend": "c857fe8fdc3234f2e9c4b017bdecf71bb3ea2aa7",
+          "upgradeProofBackend": "67287b33be62c338d7ea6183e22ff3372e0c45c1"
+        },
+        "nextAction": "NONE_ALREADY_EVIDENCE_CLOSED; DO_NOT_REIMPLEMENT_OR_ISSUE_A_NEW_SOURCE_TOKEN"
+      },
+      {
+        "sliceId": "BASE-TFR-PER-005",
+        "classification": "EVIDENCE_CLOSED_COMPLETE",
+        "module": "PER",
+        "ownerSession": "HRIS-PER",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 49,
+          "sourceRef": "TFR-PER-005",
+          "sourceModule": "PER",
+          "semanticLineage": "TFR-PER-005::PER-CYCLE-001::PEP-PER-002|PEP-PER-003|PEP-PER-004|PEP-PER-005|PEP-PER-006|PEP-PER-007|EVT-PER:PerformanceCyclePublished.v1"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-004",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "G5_FREEZE",
+          "G6_W1_SUCCESSOR"
+        ],
+        "integrationCommitPointers": {
+          "frontend": "4546024ca9036f217c1d13ddb0622c21a3264b60",
+          "backend": "c0d72ca8e26a6e2a0b3885b62c0aa0e3ad7b1329"
+        },
+        "nextAction": "NONE_ALREADY_EVIDENCE_CLOSED; DO_NOT_REIMPLEMENT_OR_ISSUE_A_NEW_SOURCE_TOKEN"
+      },
+      {
+        "sliceId": "BASE-TFR-PER-006",
+        "classification": "EVIDENCE_CLOSED_COMPLETE",
+        "module": "PER",
+        "ownerSession": "HRIS-PER",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 50,
+          "sourceRef": "TFR-PER-006",
+          "sourceModule": "PER",
+          "semanticLineage": "TFR-PER-006::PER-POPULATION-001::PEP-PER-008|PEP-PER-009|EVT-PER:PerformancePopulationFrozen.v1"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "G7_PER_TIM_PROMOTION"
+        ],
+        "integrationCommitPointers": {
+          "frontend": "f0341e521ef331eab9f7f17fea2ca6b713df7ed0",
+          "backend": "2152531116731b678c79c3d13db139f18392ecd9"
+        },
+        "nextAction": "NONE_ALREADY_EVIDENCE_CLOSED; DO_NOT_REIMPLEMENT_OR_ISSUE_A_NEW_SOURCE_TOKEN"
+      },
+      {
+        "sliceId": "BASE-TFR-PER-007",
+        "classification": "EVIDENCE_CLOSED_COMPLETE",
+        "module": "PER",
+        "ownerSession": "HRIS-PER",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 51,
+          "sourceRef": "TFR-PER-007",
+          "sourceModule": "PER",
+          "semanticLineage": "TFR-PER-007::PER-HOME-001::PEP-PER-001|SVC-PEP-PER-002|XCON-012|EVT-PER:HrisHomeContributionChanged.v1"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-010",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "R3_HOME_PRODUCERS"
+        ],
+        "integrationCommitPointers": {
+          "frontendControlParent": "c60e9d9577f01a4204972b76d09c521b28a39c0d",
+          "backend": "34d0a6c4be86e29addb77c73cb3b3f67e3095cb9"
+        },
+        "nextAction": "NONE_ALREADY_EVIDENCE_CLOSED; DO_NOT_REIMPLEMENT_OR_ISSUE_A_NEW_SOURCE_TOKEN"
+      },
+      {
+        "sliceId": "BASE-TFR-PER-013",
+        "classification": "EVIDENCE_CLOSED_COMPLETE",
+        "module": "PER",
+        "ownerSession": "HRIS-PER",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 57,
+          "sourceRef": "TFR-PER-013",
+          "sourceModule": "PER",
+          "semanticLineage": "TFR-PER-013::PER-REVIEW-001::PEP-PER-012|PEP-PER-013|PEP-PER-014|EVT-PER:PerformanceReviewSubmitted.v1"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "PER_TIM_INTEGRATION"
+        ],
+        "integrationCommitPointers": {
+          "frontend": "9dd489de7f28b9b516e2ad29479ecf5a71f11a7a",
+          "backend": "3e0c8d6e1bc0fbb0563a05023e619714dae54326"
+        },
+        "nextAction": "NONE_ALREADY_EVIDENCE_CLOSED; DO_NOT_REIMPLEMENT_OR_ISSUE_A_NEW_SOURCE_TOKEN"
+      },
+      {
+        "sliceId": "BASE-TFR-PER-016",
+        "classification": "EVIDENCE_CLOSED_COMPLETE",
+        "module": "PER",
+        "ownerSession": "HRIS-PER",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 60,
+          "sourceRef": "TFR-PER-016",
+          "sourceModule": "PER",
+          "semanticLineage": "TFR-PER-016::PER-WORKFORCE-PROJECTION-001::SVC-PEP-HRM-002|XCON-001|XCON-003|XCON-004|XCON-005|XCON-006"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-007",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "WAVE2_START",
+          "WAVE2_WIRING"
+        ],
+        "integrationCommitPointers": {
+          "frontend": "a1c621984886f99049af5be82340dafeac025679",
+          "backend": "5b35f8a49e5f4743cd00571ed9bd134e15fff94d"
+        },
+        "nextAction": "NONE_ALREADY_EVIDENCE_CLOSED; DO_NOT_REIMPLEMENT_OR_ISSUE_A_NEW_SOURCE_TOKEN"
+      },
+      {
+        "sliceId": "BASE-TFR-SYS-004",
+        "classification": "EVIDENCE_CLOSED_COMPLETE",
+        "module": "SYS",
+        "ownerSession": "HRIS-SYS",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 71,
+          "sourceRef": "TFR-SYS-004",
+          "sourceModule": "SYS",
+          "semanticLineage": "TFR-SYS-004::DWP.IDENTITY.PRODUCT_ACCESS::SYS-API-001|SYS-API-002|SYS-API-003|SYS-API-004|SYS-API-005|SYS-API-006|SYS-API-007|SYS-API-008|SYS-API-009|SYS-API-010|SYS-API-037|SYS-EVT-001|SYS-EVT-002"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-004",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "G5_FREEZE",
+          "G6_W1_SUCCESSOR"
+        ],
+        "integrationCommitPointers": {
+          "frontend": "4546024ca9036f217c1d13ddb0622c21a3264b60",
+          "backend": "c0d72ca8e26a6e2a0b3885b62c0aa0e3ad7b1329"
+        },
+        "nextAction": "NONE_ALREADY_EVIDENCE_CLOSED; DO_NOT_REIMPLEMENT_OR_ISSUE_A_NEW_SOURCE_TOKEN"
+      },
+      {
+        "sliceId": "BASE-TFR-SYS-007",
+        "classification": "EVIDENCE_CLOSED_COMPLETE",
+        "module": "SYS",
+        "ownerSession": "HRIS-SYS",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 74,
+          "sourceRef": "TFR-SYS-007",
+          "sourceModule": "SYS",
+          "semanticLineage": "TFR-SYS-007::HRIS.CONFIG.REFERENCE_DATA::SYS-API-011|SYS-API-012|SYS-API-013|SYS-API-014|SYS-API-015|SYS-API-016|SYS-API-041|SYS-API-042|SYS-API-043|SYS-API-044|SYS-API-045|SYS-EVT-003"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-004",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "G7_SYS_HRM_PROMOTION",
+          "G7_SYS_HRM_CLOSURE"
+        ],
+        "integrationCommitPointers": {
+          "frontend": "83b4e500be99f6bffd30f3b985faf67b67a349e2",
+          "backend": "deb39a02634826d40ae5de5e30f54223c31b5851"
+        },
+        "nextAction": "NONE_ALREADY_EVIDENCE_CLOSED; DO_NOT_REIMPLEMENT_OR_ISSUE_A_NEW_SOURCE_TOKEN"
+      },
+      {
+        "sliceId": "BASE-TFR-SYS-009",
+        "classification": "EVIDENCE_CLOSED_COMPLETE",
+        "module": "SYS",
+        "ownerSession": "HRIS-SYS",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 76,
+          "sourceRef": "TFR-SYS-009",
+          "sourceModule": "SYS",
+          "semanticLineage": "TFR-SYS-009::DWP.OBJECT.CONTROLLED_TRANSFER::SYS-API-033|SYS-API-034|SYS-EVT-008"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "SYS009_INTEGRATION"
+        ],
+        "integrationCommitPointers": {
+          "backend": "adc3c0b3bf78743bceb45e6fd18507156096b870"
+        },
+        "nextAction": "NONE_ALREADY_EVIDENCE_CLOSED; DO_NOT_REIMPLEMENT_OR_ISSUE_A_NEW_SOURCE_TOKEN"
+      },
+      {
+        "sliceId": "BASE-TFR-SYS-012",
+        "classification": "EVIDENCE_CLOSED_COMPLETE",
+        "module": "SYS",
+        "ownerSession": "HRIS-SYS",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 79,
+          "sourceRef": "TFR-SYS-012",
+          "sourceModule": "SYS",
+          "semanticLineage": "TFR-SYS-012::HRIS.EXPERIENCE.COMPOSITION::SVC-PEP-HRM-006|SVC-PEP-PAY-001|SVC-PEP-PER-002|SVC-PEP-TIM-002|SYS-API-026|SYS-API-027|SYS-API-031|SYS-API-032|SYS-API-039|SYS-API-040|SYS-EVT-007|XCON-012|XCON-013|XCON-014|XCON-015"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-010",
+          "DEP-011",
+          "DEP-012",
+          "DEP-013",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "SYS012_WORK_EXPLORER",
+          "SYS012_HOME_COMPOSITION"
+        ],
+        "integrationCommitPointers": {
+          "frontend": "2d0cd58b9ce6b05fc6d364461d9e0172b016a787",
+          "backend": "9c9e33c29a63e2638213d424e74c8fabed2e7a4b",
+          "homeCompositionBackend": "49f593457af4b7b0ec13b36183c0431b7e7a248c"
+        },
+        "nextAction": "NONE_ALREADY_EVIDENCE_CLOSED; DO_NOT_REIMPLEMENT_OR_ISSUE_A_NEW_SOURCE_TOKEN"
+      },
+      {
+        "sliceId": "BASE-TFR-TIM-006",
+        "classification": "EVIDENCE_CLOSED_COMPLETE",
+        "module": "TIM",
+        "ownerSession": "HRIS-TIM",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 89,
+          "sourceRef": "TFR-TIM-006",
+          "sourceModule": "TIM",
+          "semanticLineage": "TFR-TIM-006::TIM-CLOCK::PEP-TIM-007|PEP-TIM-008|EVT-TIM:ClockEventRecorded"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-006",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "G7_PER_TIM_PROMOTION"
+        ],
+        "integrationCommitPointers": {
+          "frontend": "f0341e521ef331eab9f7f17fea2ca6b713df7ed0",
+          "backend": "2152531116731b678c79c3d13db139f18392ecd9"
+        },
+        "nextAction": "NONE_ALREADY_EVIDENCE_CLOSED; DO_NOT_REIMPLEMENT_OR_ISSUE_A_NEW_SOURCE_TOKEN"
+      },
+      {
+        "sliceId": "BASE-TFR-TIM-010",
+        "classification": "EVIDENCE_CLOSED_COMPLETE",
+        "module": "TIM",
+        "ownerSession": "HRIS-TIM",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 93,
+          "sourceRef": "TFR-TIM-010",
+          "sourceModule": "TIM",
+          "semanticLineage": "TFR-TIM-010::TIM-INTERPRETATION::PEP-TIM-009|PEP-TIM-010|EVT-TIM:TimeInterpreted"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "WAVE2_START",
+          "WAVE2_WIRING"
+        ],
+        "integrationCommitPointers": {
+          "frontend": "a1c621984886f99049af5be82340dafeac025679",
+          "backend": "5b35f8a49e5f4743cd00571ed9bd134e15fff94d"
+        },
+        "nextAction": "NONE_ALREADY_EVIDENCE_CLOSED; DO_NOT_REIMPLEMENT_OR_ISSUE_A_NEW_SOURCE_TOKEN"
+      },
+      {
+        "sliceId": "BASE-TFR-TIM-016",
+        "classification": "EVIDENCE_CLOSED_COMPLETE",
+        "module": "TIM",
+        "ownerSession": "HRIS-TIM",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 99,
+          "sourceRef": "TFR-TIM-016",
+          "sourceModule": "TIM",
+          "semanticLineage": "TFR-TIM-016::TIM-SCHEDULE::PEP-TIM-002|PEP-TIM-003|PEP-TIM-004|PEP-TIM-005|PEP-TIM-006"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-004",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "G5_FREEZE",
+          "G6_W1_SUCCESSOR"
+        ],
+        "integrationCommitPointers": {
+          "frontend": "4546024ca9036f217c1d13ddb0622c21a3264b60",
+          "backend": "c0d72ca8e26a6e2a0b3885b62c0aa0e3ad7b1329"
+        },
+        "nextAction": "NONE_ALREADY_EVIDENCE_CLOSED; DO_NOT_REIMPLEMENT_OR_ISSUE_A_NEW_SOURCE_TOKEN"
+      },
+      {
+        "sliceId": "BASE-TFR-TIM-017",
+        "classification": "EVIDENCE_CLOSED_COMPLETE",
+        "module": "TIM",
+        "ownerSession": "HRIS-TIM",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 100,
+          "sourceRef": "TFR-TIM-017",
+          "sourceModule": "TIM",
+          "semanticLineage": "TFR-TIM-017::TIM-TIMECARD::PEP-TIM-011|PEP-TIM-012|PEP-TIM-013|PEP-TIM-014|PEP-TIM-028|EVT-TIM:TimecardDecisionRecorded"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "PER_TIM_INTEGRATION"
+        ],
+        "integrationCommitPointers": {
+          "frontend": "9dd489de7f28b9b516e2ad29479ecf5a71f11a7a",
+          "backend": "3e0c8d6e1bc0fbb0563a05023e619714dae54326"
+        },
+        "nextAction": "NONE_ALREADY_EVIDENCE_CLOSED; DO_NOT_REIMPLEMENT_OR_ISSUE_A_NEW_SOURCE_TOKEN"
+      },
+      {
+        "sliceId": "BASE-TFR-TIM-018",
+        "classification": "EVIDENCE_CLOSED_COMPLETE",
+        "module": "TIM",
+        "ownerSession": "HRIS-TIM",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 101,
+          "sourceRef": "TFR-TIM-018",
+          "sourceModule": "TIM",
+          "semanticLineage": "TFR-TIM-018::TIM-DASHBOARD::PEP-TIM-001|SVC-PEP-TIM-002|XCON-014|EVT-TIM:HrisHomeContributionChanged.v1"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-012",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "R3_HOME_PRODUCERS"
+        ],
+        "integrationCommitPointers": {
+          "frontendControlParent": "c60e9d9577f01a4204972b76d09c521b28a39c0d",
+          "backend": "34d0a6c4be86e29addb77c73cb3b3f67e3095cb9"
+        },
+        "nextAction": "NONE_ALREADY_EVIDENCE_CLOSED; DO_NOT_REIMPLEMENT_OR_ISSUE_A_NEW_SOURCE_TOKEN"
+      }
+    ],
+    "INTEGRATED_EXPLICIT_CLOSE_RESIDUAL": [
+      {
+        "sliceId": "BASE-TFR-SYS-001",
+        "classification": "INTEGRATED_EXPLICIT_CLOSE_RESIDUAL",
+        "module": "SYS",
+        "ownerSession": "HRIS-SYS",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 68,
+          "sourceRef": "TFR-SYS-001",
+          "sourceModule": "SYS",
+          "semanticLineage": "TFR-SYS-001::DWP.GOVERNANCE.AUDIT_EVIDENCE::SHARED-API-009|PLAT-005"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "SYS001_RUNTIME_PENDING",
+          "SYS001_NAV_PENDING",
+          "SYS012_WORK_EXPLORER",
+          "SYS012_HOME_COMPOSITION"
+        ],
+        "integrationCommitPointers": {
+          "frontendRuntimePin": "0eb4f09420bd1b3ab7496737e37fded247dd76c5",
+          "backendRuntimePin": "c9a112bf13cc3c240cf48bc51c6001e5601b847e",
+          "frontendNavIntegration": "61f5a74fe51c8e0d97bba865c811028186ddfb69",
+          "frontendWorkExplorerIntegration": "2d0cd58b9ce6b05fc6d364461d9e0172b016a787",
+          "backendWorkExplorerIntegration": "9c9e33c29a63e2638213d424e74c8fabed2e7a4b"
+        },
+        "nextAction": "CONSUME_DOCS_06_DELIVERY_HRIS_WAVE7_2026_10_17_R7_C0_RECLASSIFICATION_R1_SYS_001_NO_CODE_CLOSE_V1_JSON_AS_THE_EXPLICIT_FINAL_PIN_NO_CODE_TRANSITION; NO_SOURCE_CHANGE"
+      }
+    ],
+    "PARTIAL_SURFACE_OR_OVERLAP": [
+      {
+        "sliceId": "BASE-TFR-HRM-005",
+        "classification": "PARTIAL_SURFACE_OR_OVERLAP",
+        "module": "HRM",
+        "ownerSession": "HRIS-HRM",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 7,
+          "sourceRef": "TFR-HRM-005",
+          "sourceModule": "HRM",
+          "semanticLineage": "TFR-HRM-005::hr-organization-positions::PEP-HRM-006|PEP-HRM-007|PEP-HRM-008|PEP-HRM-009|PEP-HRM-010|XCON-006|EVT-HRM:OrganizationChanged.v1"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-007",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "AUDIT_THE_EXISTING_PARTIAL_SURFACE_THEN_ISSUE_AN_EXACT_DELTA_ONLY_OWNER_PACKET_FOR_BASE-TFR-HRM-005; PRESERVE_PROVEN_BEHAVIOR_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-HRM-009",
+        "classification": "PARTIAL_SURFACE_OR_OVERLAP",
+        "module": "HRM",
+        "ownerSession": "HRIS-HRM",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 10,
+          "sourceRef": "TFR-HRM-009",
+          "sourceModule": "HRM",
+          "semanticLineage": "TFR-HRM-009::hr-certificates-documents::PEP-HRM-012|EVT-HRM:CertificateIssued.v1"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "AUDIT_THE_EXISTING_PARTIAL_SURFACE_THEN_ISSUE_AN_EXACT_DELTA_ONLY_OWNER_PACKET_FOR_BASE-TFR-HRM-009; PRESERVE_PROVEN_BEHAVIOR_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-PAY-009",
+        "classification": "PARTIAL_SURFACE_OR_OVERLAP",
+        "module": "PAY",
+        "ownerSession": "HRIS-PAY",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 32,
+          "sourceRef": "TFR-PAY-009",
+          "sourceModule": "PAY",
+          "semanticLineage": "TFR-PAY-009::PAY-PAYSLIP::PEP-PAY-026|PEP-PAY-027|EVT-PAY:PayslipPublished"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "AUDIT_THE_EXISTING_PARTIAL_SURFACE_THEN_ISSUE_AN_EXACT_DELTA_ONLY_OWNER_PACKET_FOR_BASE-TFR-PAY-009; PRESERVE_PROVEN_BEHAVIOR_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-PER-009",
+        "classification": "PARTIAL_SURFACE_OR_OVERLAP",
+        "module": "PER",
+        "ownerSession": "HRIS-PER",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 53,
+          "sourceRef": "TFR-PER-009",
+          "sourceModule": "PER",
+          "semanticLineage": "TFR-PER-009::PER-GOAL-001::PEP-PER-010|PEP-PER-011|EVT-PER:PerformanceGoalCommitted.v1"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "AUDIT_THE_EXISTING_PARTIAL_SURFACE_THEN_ISSUE_AN_EXACT_DELTA_ONLY_OWNER_PACKET_FOR_BASE-TFR-PER-009; PRESERVE_PROVEN_BEHAVIOR_AND_DEFAULT_OFF"
+      }
+    ],
+    "NO_CURRENT_SLICE_RESULT": [
+      {
+        "sliceId": "BASE-TFR-HRM-007",
+        "classification": "NO_CURRENT_SLICE_RESULT",
+        "module": "HRM",
+        "ownerSession": "HRIS-HRM",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 8,
+          "sourceRef": "TFR-HRM-007",
+          "sourceModule": "HRM",
+          "semanticLineage": "TFR-HRM-007::hr-appointments::PEP-HRM-006|PEP-HRM-007|PEP-HRM-008|PEP-HRM-009|EVT-HRM:AssignmentChanged.v1"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-HRM-007_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-HRM-011",
+        "classification": "NO_CURRENT_SLICE_RESULT",
+        "module": "HRM",
+        "ownerSession": "HRIS-HRM",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 12,
+          "sourceRef": "TFR-HRM-011",
+          "sourceModule": "HRM",
+          "semanticLineage": "TFR-HRM-011::hr-contracts-compensation-basis::PEP-HRM-011|SVC-PEP-HRM-003|SVC-PEP-HRM-005|XCON-002|XCON-007|XCON-017|XCON-018|XCON-019|EVT-HRM:EmploymentContractIssued.v1|EVT-HRM:CompensationBasisChanged.v1|EVT-HRM:WorkerDependentEligibilityChanged.v1|EVT-HRM:WorkerTaxIdentityChanged.v1|EVT-HRM:WorkerBankAccountTokenChanged.v1"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-008",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-HRM-011_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-HRM-012",
+        "classification": "NO_CURRENT_SLICE_RESULT",
+        "module": "HRM",
+        "ownerSession": "HRIS-HRM",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 13,
+          "sourceRef": "TFR-HRM-012",
+          "sourceModule": "HRM",
+          "semanticLineage": "TFR-HRM-012::hr-data-quality::PEP-HRM-015|EVT-HRM:WorkforceIngestionReconciled.v1"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-HRM-012_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-HRM-013",
+        "classification": "NO_CURRENT_SLICE_RESULT",
+        "module": "HRM",
+        "ownerSession": "HRIS-HRM",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 14,
+          "sourceRef": "TFR-HRM-013",
+          "sourceModule": "HRM",
+          "semanticLineage": "TFR-HRM-013::hr-exit-return::PEP-HRM-013|EVT-HRM:WorkerSeparated.v1"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-HRM-013_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-HRM-014",
+        "classification": "NO_CURRENT_SLICE_RESULT",
+        "module": "HRM",
+        "ownerSession": "HRIS-HRM",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 15,
+          "sourceRef": "TFR-HRM-014",
+          "sourceModule": "HRM",
+          "semanticLineage": "TFR-HRM-014::settings-documents-communications::SYS-API-011|SYS-API-012|SYS-API-013|SYS-API-014|SYS-API-015|SYS-API-016|SYS-API-033|PLAT-004"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-004",
+          "DEP-015",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-HRM-014_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-HRM-016",
+        "classification": "NO_CURRENT_SLICE_RESULT",
+        "module": "HRM",
+        "ownerSession": "HRIS-HRM",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 16,
+          "sourceRef": "TFR-HRM-016",
+          "sourceModule": "HRM",
+          "semanticLineage": "TFR-HRM-016::settings-reference::SYS-API-011|SYS-API-012|SYS-API-013|SYS-API-014|SYS-API-015|SYS-API-016|SYS-EVT-003"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-004",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-HRM-016_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-HRM-017",
+        "classification": "NO_CURRENT_SLICE_RESULT",
+        "module": "HRM",
+        "ownerSession": "HRIS-HRM",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 17,
+          "sourceRef": "TFR-HRM-017",
+          "sourceModule": "HRM",
+          "semanticLineage": "TFR-HRM-017::settings-operations::SYS-API-011|SYS-API-012|SYS-API-013|SYS-API-014|SYS-API-015|SYS-API-016|PLAT-005"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-004",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-HRM-017_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-PAY-001",
+        "classification": "NO_CURRENT_SLICE_RESULT",
+        "module": "PAY",
+        "ownerSession": "HRIS-PAY",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 24,
+          "sourceRef": "TFR-PAY-001",
+          "sourceModule": "PAY",
+          "semanticLineage": "TFR-PAY-001::PAY-PLATFORM-NOTIFICATION::PLAT-004"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-015",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-PAY-001_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-PAY-002",
+        "classification": "NO_CURRENT_SLICE_RESULT",
+        "module": "PAY",
+        "ownerSession": "HRIS-PAY",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 25,
+          "sourceRef": "TFR-PAY-002",
+          "sourceModule": "PAY",
+          "semanticLineage": "TFR-PAY-002::PAY-CONNECTOR::SYS-API-021|SYS-API-022|SYS-API-023|SYS-API-024|SYS-API-025|PEP-PAY-003|PEP-PAY-009"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-006",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-PAY-002_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-PAY-003",
+        "classification": "NO_CURRENT_SLICE_RESULT",
+        "module": "PAY",
+        "ownerSession": "HRIS-PAY",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 26,
+          "sourceRef": "TFR-PAY-003",
+          "sourceModule": "PAY",
+          "semanticLineage": "TFR-PAY-003::PAY-KR-INSURANCE::PEP-PAY-028|PEP-PAY-012|PEP-PAY-014|EVT-PAY:PayrollCalculated"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-PAY-003_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-PAY-004",
+        "classification": "NO_CURRENT_SLICE_RESULT",
+        "module": "PAY",
+        "ownerSession": "HRIS-PAY",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 27,
+          "sourceRef": "TFR-PAY-004",
+          "sourceModule": "PAY",
+          "semanticLineage": "TFR-PAY-004::PAY-RETIREMENT::PEP-PAY-028|PEP-PAY-012|PEP-PAY-014|EVT-PAY:PayrollCalculated"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-PAY-004_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-PAY-005",
+        "classification": "NO_CURRENT_SLICE_RESULT",
+        "module": "PAY",
+        "ownerSession": "HRIS-PAY",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 28,
+          "sourceRef": "TFR-PAY-005",
+          "sourceModule": "PAY",
+          "semanticLineage": "TFR-PAY-005::PAY-KR-TAX::PEP-PAY-028|PEP-PAY-012|PEP-PAY-014|EVT-PAY:PayrollCalculated"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-PAY-005_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-PAY-008",
+        "classification": "NO_CURRENT_SLICE_RESULT",
+        "module": "PAY",
+        "ownerSession": "HRIS-PAY",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 31,
+          "sourceRef": "TFR-PAY-008",
+          "sourceModule": "PAY",
+          "semanticLineage": "TFR-PAY-008::PAY-PAYMENT::PEP-PAY-021|PEP-PAY-022|PEP-PAY-023|PEP-PAY-024|PEP-PAY-025|EVT-PAY:PaymentInstructionReleased|EVT-PAY:PayrollPosted"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-PAY-008_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-PAY-010",
+        "classification": "NO_CURRENT_SLICE_RESULT",
+        "module": "PAY",
+        "ownerSession": "HRIS-PAY",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 33,
+          "sourceRef": "TFR-PAY-010",
+          "sourceModule": "PAY",
+          "semanticLineage": "TFR-PAY-010::PAY-RETRO-OFFCYCLE::PEP-PAY-019|PEP-PAY-020|EVT-PAY:PayrollCorrectionPosted"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-PAY-010_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-PAY-012",
+        "classification": "NO_CURRENT_SLICE_RESULT",
+        "module": "PAY",
+        "ownerSession": "HRIS-PAY",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 35,
+          "sourceRef": "TFR-PAY-012",
+          "sourceModule": "PAY",
+          "semanticLineage": "TFR-PAY-012::PAY-RESULT-TRACE::PEP-PAY-014|PEP-PAY-015|PEP-PAY-016|PEP-PAY-032|EVT-PAY:PayrollValidated"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-PAY-012_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-PAY-013",
+        "classification": "NO_CURRENT_SLICE_RESULT",
+        "module": "PAY",
+        "ownerSession": "HRIS-PAY",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 36,
+          "sourceRef": "TFR-PAY-013",
+          "sourceModule": "PAY",
+          "semanticLineage": "TFR-PAY-013::PAY-RUN-PREPARE::PEP-PAY-011|EVT-PAY:PayrollRunPrepared"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-PAY-013_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-PAY-014",
+        "classification": "NO_CURRENT_SLICE_RESULT",
+        "module": "PAY",
+        "ownerSession": "HRIS-PAY",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 37,
+          "sourceRef": "TFR-PAY-014",
+          "sourceModule": "PAY",
+          "semanticLineage": "TFR-PAY-014::PAY-STATUTORY-DEDUCTION::PEP-PAY-004|PEP-PAY-005|PEP-PAY-008|PEP-PAY-012|PEP-PAY-014"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-PAY-014_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-PAY-017",
+        "classification": "NO_CURRENT_SLICE_RESULT",
+        "module": "PAY",
+        "ownerSession": "HRIS-PAY",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 40,
+          "sourceRef": "TFR-PAY-017",
+          "sourceModule": "PAY",
+          "semanticLineage": "TFR-PAY-017::PAY-YEA-HYBRID::PEP-PAY-029|PEP-PAY-030|PEP-PAY-031|EVT-PAY:YearEndCaseChanged"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-PAY-017_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-PAY-018",
+        "classification": "NO_CURRENT_SLICE_RESULT",
+        "module": "PAY",
+        "ownerSession": "HRIS-PAY",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 41,
+          "sourceRef": "TFR-PAY-018",
+          "sourceModule": "PAY",
+          "semanticLineage": "TFR-PAY-018::PAY-PLATFORM-AUTOMATION::SYS-API-017|SYS-API-018|SYS-API-019|SYS-API-020"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-004",
+          "DEP-005",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-PAY-018_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-PAY-019",
+        "classification": "NO_CURRENT_SLICE_RESULT",
+        "module": "PAY",
+        "ownerSession": "HRIS-PAY",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 42,
+          "sourceRef": "TFR-PAY-019",
+          "sourceModule": "PAY",
+          "semanticLineage": "TFR-PAY-019::PAY-PLATFORM-CONFIG::SYS-API-011|SYS-API-012|SYS-API-013|SYS-API-014|SYS-API-015|SYS-API-016|EVT-PAY:PolicyPublished"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-004",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-PAY-019_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-PAY-020",
+        "classification": "NO_CURRENT_SLICE_RESULT",
+        "module": "PAY",
+        "ownerSession": "HRIS-PAY",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 43,
+          "sourceRef": "TFR-PAY-020",
+          "sourceModule": "PAY",
+          "semanticLineage": "TFR-PAY-020::PAY-TIME-PROJECTION::SVC-PEP-TIM-001|XCON-008|XCON-009|XCON-010|XCON-011"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-009",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-PAY-020_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-PAY-021",
+        "classification": "NO_CURRENT_SLICE_RESULT",
+        "module": "PAY",
+        "ownerSession": "HRIS-PAY",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 44,
+          "sourceRef": "TFR-PAY-021",
+          "sourceModule": "PAY",
+          "semanticLineage": "TFR-PAY-021::PAY-HRM-PROJECTION::SVC-PEP-HRM-002|SVC-PEP-HRM-003|SVC-PEP-HRM-005|XCON-001|XCON-002|XCON-003|XCON-004|XCON-005|XCON-006|XCON-007|XCON-017|XCON-018|XCON-019"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-007",
+          "DEP-008",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-PAY-021_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-PER-001",
+        "classification": "NO_CURRENT_SLICE_RESULT",
+        "module": "PER",
+        "ownerSession": "HRIS-PER",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 45,
+          "sourceRef": "TFR-PER-001",
+          "sourceModule": "PER",
+          "semanticLineage": "TFR-PER-001::PER-NOTIFICATION-001::PLAT-004"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-015",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-PER-001_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-PER-002",
+        "classification": "NO_CURRENT_SLICE_RESULT",
+        "module": "PER",
+        "ownerSession": "HRIS-PER",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 46,
+          "sourceRef": "TFR-PER-002",
+          "sourceModule": "PER",
+          "semanticLineage": "TFR-PER-002::PER-CALIBRATION-001::PEP-PER-017|EVT-PER:PerformanceCalibrationApproved.v1"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-PER-002_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-PER-003",
+        "classification": "NO_CURRENT_SLICE_RESULT",
+        "module": "PER",
+        "ownerSession": "HRIS-PER",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 47,
+          "sourceRef": "TFR-PER-003",
+          "sourceModule": "PER",
+          "semanticLineage": "TFR-PER-003::PER-CHECKIN-001::PEP-PER-016"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-PER-003_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-PER-004",
+        "classification": "NO_CURRENT_SLICE_RESULT",
+        "module": "PER",
+        "ownerSession": "HRIS-PER",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 48,
+          "sourceRef": "TFR-PER-004",
+          "sourceModule": "PER",
+          "semanticLineage": "TFR-PER-004::PER-CONFIG-001::SYS-API-011|SYS-API-012|SYS-API-013|SYS-API-014|SYS-API-015|SYS-API-016"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-004",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-PER-004_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-PER-008",
+        "classification": "NO_CURRENT_SLICE_RESULT",
+        "module": "PER",
+        "ownerSession": "HRIS-PER",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 52,
+          "sourceRef": "TFR-PER-008",
+          "sourceModule": "PER",
+          "semanticLineage": "TFR-PER-008::PER-FEEDBACK-001::PEP-PER-015|EVT-PER:PerformanceFeedbackSubmitted.v1"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-PER-008_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-PER-010",
+        "classification": "NO_CURRENT_SLICE_RESULT",
+        "module": "PER",
+        "ownerSession": "HRIS-PER",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 54,
+          "sourceRef": "TFR-PER-010",
+          "sourceModule": "PER",
+          "semanticLineage": "TFR-PER-010::PER-INTEGRATION-001::PEP-PER-020|EVT-PER:PerformanceImportCompleted.v1"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-PER-010_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-PER-011",
+        "classification": "NO_CURRENT_SLICE_RESULT",
+        "module": "PER",
+        "ownerSession": "HRIS-PER",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 55,
+          "sourceRef": "TFR-PER-011",
+          "sourceModule": "PER",
+          "semanticLineage": "TFR-PER-011::PER-MONITOR-001::PEP-PER-001|PEP-PER-021|PLAT-005"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-PER-011_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-PER-012",
+        "classification": "NO_CURRENT_SLICE_RESULT",
+        "module": "PER",
+        "ownerSession": "HRIS-PER",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 56,
+          "sourceRef": "TFR-PER-012",
+          "sourceModule": "PER",
+          "semanticLineage": "TFR-PER-012::PER-RESULT-001::PEP-PER-018|PEP-PER-019|EVT-PER:PerformanceResultsPublished.v1|EVT-PER:PerformanceAppealResolved.v1"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-PER-012_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-PER-014",
+        "classification": "NO_CURRENT_SLICE_RESULT",
+        "module": "PER",
+        "ownerSession": "HRIS-PER",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 58,
+          "sourceRef": "TFR-PER-014",
+          "sourceModule": "PER",
+          "semanticLineage": "TFR-PER-014::PER-TEMPLATE-001::PEP-PER-003|PEP-PER-005|PEP-PER-006|PEP-PER-007"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-004",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-PER-014_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-PER-015",
+        "classification": "NO_CURRENT_SLICE_RESULT",
+        "module": "PER",
+        "ownerSession": "HRIS-PER",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 59,
+          "sourceRef": "TFR-PER-015",
+          "sourceModule": "PER",
+          "semanticLineage": "TFR-PER-015::PER-PLATFORM-001::SYS-API-017|SYS-API-018|SYS-API-019|SYS-API-020"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-004",
+          "DEP-005",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-PER-015_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-SYS-002",
+        "classification": "NO_CURRENT_SLICE_RESULT",
+        "module": "SYS",
+        "ownerSession": "HRIS-SYS",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 69,
+          "sourceRef": "TFR-SYS-002",
+          "sourceModule": "SYS",
+          "semanticLineage": "TFR-SYS-002::DWP.OPERATIONS.OBSERVABILITY::SYS-API-035|SYS-API-036|SYS-API-038|SYS-EVT-009"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-004",
+          "DEP-005",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-SYS-002_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-SYS-003",
+        "classification": "NO_CURRENT_SLICE_RESULT",
+        "module": "SYS",
+        "ownerSession": "HRIS-SYS",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 70,
+          "sourceRef": "TFR-SYS-003",
+          "sourceModule": "SYS",
+          "semanticLineage": "TFR-SYS-003::DWP.APPROVAL.WORKFLOW::SHARED-API-005|SHARED-API-006|SHARED-API-010|SHARED-API-011|SHARED-API-012|PLAT-003"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-014",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-SYS-003_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-SYS-005",
+        "classification": "NO_CURRENT_SLICE_RESULT",
+        "module": "SYS",
+        "ownerSession": "HRIS-SYS",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 72,
+          "sourceRef": "TFR-SYS-005",
+          "sourceModule": "SYS",
+          "semanticLineage": "TFR-SYS-005::DWP.COMMUNICATION.TEMPLATES::SHARED-API-007|SHARED-API-008|PLAT-004"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-015",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-SYS-005_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-SYS-006",
+        "classification": "NO_CURRENT_SLICE_RESULT",
+        "module": "SYS",
+        "ownerSession": "HRIS-SYS",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 73,
+          "sourceRef": "TFR-SYS-006",
+          "sourceModule": "SYS",
+          "semanticLineage": "TFR-SYS-006::DWP.AUTOMATION.CONTROL_PLANE::SYS-API-017|SYS-API-018|SYS-API-019|SYS-API-020|SYS-API-046|SYS-API-047|SYS-API-048|SYS-API-049|SYS-API-050|SYS-API-051|SYS-API-052|SYS-API-053|SYS-API-054|SYS-API-055|SYS-API-056|SYS-EVT-004"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-004",
+          "DEP-005",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-SYS-006_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-SYS-008",
+        "classification": "NO_CURRENT_SLICE_RESULT",
+        "module": "SYS",
+        "ownerSession": "HRIS-SYS",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 75,
+          "sourceRef": "TFR-SYS-008",
+          "sourceModule": "SYS",
+          "semanticLineage": "TFR-SYS-008::DWP.INTEGRATION.CONTROL_PLANE::SYS-API-021|SYS-API-022|SYS-API-023|SYS-API-024|SYS-API-025|SYS-API-057|SYS-API-058|SYS-API-059|SYS-API-060|SYS-API-061|SYS-API-062|SYS-API-063|SYS-API-064|SYS-API-065|SYS-API-066|SYS-API-067|SYS-API-068|SYS-EVT-005"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-006",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-SYS-008_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-SYS-010",
+        "classification": "NO_CURRENT_SLICE_RESULT",
+        "module": "SYS",
+        "ownerSession": "HRIS-SYS",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 77,
+          "sourceRef": "TFR-SYS-010",
+          "sourceModule": "SYS",
+          "semanticLineage": "TFR-SYS-010::DWP.DATA.GOVERNANCE::SHARED-API-003|SHARED-API-004"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-SYS-010_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-SYS-011",
+        "classification": "NO_CURRENT_SLICE_RESULT",
+        "module": "SYS",
+        "ownerSession": "HRIS-SYS",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 78,
+          "sourceRef": "TFR-SYS-011",
+          "sourceModule": "SYS",
+          "semanticLineage": "TFR-SYS-011::DWP.TENANT.ENTERPRISE_DIRECTORY::SHARED-API-001|SHARED-API-002"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-004",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-SYS-011_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-HRM-015",
+        "classification": "NO_CURRENT_SLICE_RESULT",
+        "module": "SYS",
+        "ownerSession": "HRIS-SYS",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 80,
+          "sourceRef": "TFR-HRM-015",
+          "sourceModule": "HRM",
+          "semanticLineage": "TFR-HRM-015::dwp-extensibility::SYS-API-028|SYS-API-029|SYS-API-030|SYS-API-069|SYS-API-070|SYS-API-071|SYS-API-072|SYS-API-073|SYS-API-074|SYS-API-075|SYS-EVT-006"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-HRM-015_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-TIM-001",
+        "classification": "NO_CURRENT_SLICE_RESULT",
+        "module": "TIM",
+        "ownerSession": "HRIS-TIM",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 84,
+          "sourceRef": "TFR-TIM-001",
+          "sourceModule": "TIM",
+          "semanticLineage": "TFR-TIM-001::TIM-APPROVAL::PLAT-003|EVT-TIM:ApprovalDecisionRecorded"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-014",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-TIM-001_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-TIM-002",
+        "classification": "NO_CURRENT_SLICE_RESULT",
+        "module": "TIM",
+        "ownerSession": "HRIS-TIM",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 85,
+          "sourceRef": "TFR-TIM-002",
+          "sourceModule": "TIM",
+          "semanticLineage": "TFR-TIM-002::TIM-PLATFORM-NOTIFICATION::PLAT-004"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-015",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-TIM-002_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-TIM-003",
+        "classification": "NO_CURRENT_SLICE_RESULT",
+        "module": "TIM",
+        "ownerSession": "HRIS-TIM",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 86,
+          "sourceRef": "TFR-TIM-003",
+          "sourceModule": "TIM",
+          "semanticLineage": "TFR-TIM-003::TIM-LEAVE-ABSENCE::XCON-004|EVT-TIM:EmploymentChanged.v1"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-007",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-TIM-003_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-TIM-004",
+        "classification": "NO_CURRENT_SLICE_RESULT",
+        "module": "TIM",
+        "ownerSession": "HRIS-TIM",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 87,
+          "sourceRef": "TFR-TIM-004",
+          "sourceModule": "TIM",
+          "semanticLineage": "TFR-TIM-004::TIM-PLATFORM-AUTOMATION::SYS-API-017|SYS-API-018|SYS-API-019|SYS-API-020"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-004",
+          "DEP-005",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-TIM-004_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-TIM-005",
+        "classification": "NO_CURRENT_SLICE_RESULT",
+        "module": "TIM",
+        "ownerSession": "HRIS-TIM",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 88,
+          "sourceRef": "TFR-TIM-005",
+          "sourceModule": "TIM",
+          "semanticLineage": "TFR-TIM-005::TIM-PLATFORM-CONFIG::SYS-API-011|SYS-API-012|SYS-API-013|SYS-API-014|SYS-API-015|SYS-API-016|EVT-TIM:PolicyPublished"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-004",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-TIM-005_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-TIM-007",
+        "classification": "NO_CURRENT_SLICE_RESULT",
+        "module": "TIM",
+        "ownerSession": "HRIS-TIM",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 90,
+          "sourceRef": "TFR-TIM-007",
+          "sourceModule": "TIM",
+          "semanticLineage": "TFR-TIM-007::TIM-CLOSE-HANDOFF::PEP-TIM-022|PEP-TIM-023|PEP-TIM-024|PEP-TIM-025|PEP-TIM-026|SVC-PEP-TIM-001|XCON-008|XCON-009|XCON-010|XCON-011|EVT-TIM:TimePeriodClosed.v1|EVT-TIM:TimePeriodReopened.v1|EVT-TIM:PayrollTimeHandoffReady.v1"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-009",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-TIM-007_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-TIM-008",
+        "classification": "NO_CURRENT_SLICE_RESULT",
+        "module": "TIM",
+        "ownerSession": "HRIS-TIM",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 91,
+          "sourceRef": "TFR-TIM-008",
+          "sourceModule": "TIM",
+          "semanticLineage": "TFR-TIM-008::TIM-CONNECTOR::SYS-API-021|SYS-API-022|SYS-API-023|SYS-API-024|SYS-API-025|PEP-TIM-007"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-006",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-TIM-008_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-TIM-009",
+        "classification": "NO_CURRENT_SLICE_RESULT",
+        "module": "TIM",
+        "ownerSession": "HRIS-TIM",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 92,
+          "sourceRef": "TFR-TIM-009",
+          "sourceModule": "TIM",
+          "semanticLineage": "TFR-TIM-009::TIM-ANALYTICS::PEP-TIM-001|PEP-TIM-027"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-TIM-009_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-TIM-011",
+        "classification": "NO_CURRENT_SLICE_RESULT",
+        "module": "TIM",
+        "ownerSession": "HRIS-TIM",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 94,
+          "sourceRef": "TFR-TIM-011",
+          "sourceModule": "TIM",
+          "semanticLineage": "TFR-TIM-011::TIM-LEAVE-KR::SYS-API-011|SYS-API-012|SYS-API-013|SYS-API-014|SYS-API-015|SYS-API-016|PEP-TIM-015|PEP-TIM-016|PEP-TIM-017"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-004",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-TIM-011_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-TIM-012",
+        "classification": "NO_CURRENT_SLICE_RESULT",
+        "module": "TIM",
+        "ownerSession": "HRIS-TIM",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 95,
+          "sourceRef": "TFR-TIM-012",
+          "sourceModule": "TIM",
+          "semanticLineage": "TFR-TIM-012::TIM-LEAVE-LEDGER::PEP-TIM-017|PEP-TIM-018|EVT-TIM:LeaveLedgerPosted"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-TIM-012_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-TIM-013",
+        "classification": "NO_CURRENT_SLICE_RESULT",
+        "module": "TIM",
+        "ownerSession": "HRIS-TIM",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 96,
+          "sourceRef": "TFR-TIM-013",
+          "sourceModule": "TIM",
+          "semanticLineage": "TFR-TIM-013::TIM-LEAVE-POLICY::PEP-TIM-015|PEP-TIM-016"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-004",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-TIM-013_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-TIM-014",
+        "classification": "NO_CURRENT_SLICE_RESULT",
+        "module": "TIM",
+        "ownerSession": "HRIS-TIM",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 97,
+          "sourceRef": "TFR-TIM-014",
+          "sourceModule": "TIM",
+          "semanticLineage": "TFR-TIM-014::TIM-LEAVE-REQUEST::PEP-TIM-019|PEP-TIM-020|PEP-TIM-021|EVT-TIM:LeaveDecisionRecorded"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-TIM-014_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-TIM-015",
+        "classification": "NO_CURRENT_SLICE_RESULT",
+        "module": "TIM",
+        "ownerSession": "HRIS-TIM",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 98,
+          "sourceRef": "TFR-TIM-015",
+          "sourceModule": "TIM",
+          "semanticLineage": "TFR-TIM-015::TIM-OVERTIME::PLAT-003|PEP-TIM-011|PEP-TIM-012|PEP-TIM-013|PEP-TIM-014"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-014",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-TIM-015_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "sliceId": "BASE-TFR-TIM-019",
+        "classification": "NO_CURRENT_SLICE_RESULT",
+        "module": "TIM",
+        "ownerSession": "HRIS-TIM",
+        "source": {
+          "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+          "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+          "line": 102,
+          "sourceRef": "TFR-TIM-019",
+          "sourceModule": "TIM",
+          "semanticLineage": "TFR-TIM-019::TIM-HRM-PROJECTION::SVC-PEP-HRM-002|SVC-PEP-HRM-004|XCON-001|XCON-003|XCON-005|XCON-006|XCON-016"
+        },
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-007",
+          "DEP-016"
+        ],
+        "evidencePointerIds": [
+          "OVERLAY_V2"
+        ],
+        "integrationCommitPointers": {
+        },
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-TIM-019_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      }
+    ]
+  },
+  "ownerQueues": {
+    "HRIS-HRM": [
+      {
+        "queuePosition": 1,
+        "sliceId": "BASE-TFR-HRM-005",
+        "classificationAtReclassificationSnapshot": "PARTIAL_SURFACE_OR_OVERLAP",
+        "sourceLine": 7,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-007",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-01",
+        "nextAction": "AUDIT_THE_EXISTING_PARTIAL_SURFACE_THEN_ISSUE_AN_EXACT_DELTA_ONLY_OWNER_PACKET_FOR_BASE-TFR-HRM-005; PRESERVE_PROVEN_BEHAVIOR_AND_DEFAULT_OFF"
+      },
+      {
+        "queuePosition": 2,
+        "sliceId": "BASE-TFR-HRM-007",
+        "classificationAtReclassificationSnapshot": "NO_CURRENT_SLICE_RESULT",
+        "sourceLine": 8,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-02",
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-HRM-007_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "queuePosition": 3,
+        "sliceId": "BASE-TFR-HRM-009",
+        "classificationAtReclassificationSnapshot": "PARTIAL_SURFACE_OR_OVERLAP",
+        "sourceLine": 10,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-03",
+        "nextAction": "AUDIT_THE_EXISTING_PARTIAL_SURFACE_THEN_ISSUE_AN_EXACT_DELTA_ONLY_OWNER_PACKET_FOR_BASE-TFR-HRM-009; PRESERVE_PROVEN_BEHAVIOR_AND_DEFAULT_OFF"
+      },
+      {
+        "queuePosition": 4,
+        "sliceId": "BASE-TFR-HRM-011",
+        "classificationAtReclassificationSnapshot": "NO_CURRENT_SLICE_RESULT",
+        "sourceLine": 12,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-008",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-04",
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-HRM-011_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "queuePosition": 5,
+        "sliceId": "BASE-TFR-HRM-012",
+        "classificationAtReclassificationSnapshot": "NO_CURRENT_SLICE_RESULT",
+        "sourceLine": 13,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-05",
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-HRM-012_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "queuePosition": 6,
+        "sliceId": "BASE-TFR-HRM-013",
+        "classificationAtReclassificationSnapshot": "NO_CURRENT_SLICE_RESULT",
+        "sourceLine": 14,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-06",
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-HRM-013_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "queuePosition": 7,
+        "sliceId": "BASE-TFR-HRM-014",
+        "classificationAtReclassificationSnapshot": "NO_CURRENT_SLICE_RESULT",
+        "sourceLine": 15,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-004",
+          "DEP-015",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-07",
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-HRM-014_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "queuePosition": 8,
+        "sliceId": "BASE-TFR-HRM-016",
+        "classificationAtReclassificationSnapshot": "NO_CURRENT_SLICE_RESULT",
+        "sourceLine": 16,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-004",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-08",
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-HRM-016_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "queuePosition": 9,
+        "sliceId": "BASE-TFR-HRM-017",
+        "classificationAtReclassificationSnapshot": "NO_CURRENT_SLICE_RESULT",
+        "sourceLine": 17,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-004",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-09",
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-HRM-017_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      }
+    ],
+    "HRIS-PAY": [
+      {
+        "queuePosition": 1,
+        "sliceId": "BASE-TFR-PAY-013",
+        "classificationAtReclassificationSnapshot": "NO_CURRENT_SLICE_RESULT",
+        "sourceLine": 36,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-01",
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-PAY-013_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "queuePosition": 2,
+        "sliceId": "BASE-TFR-PAY-001",
+        "classificationAtReclassificationSnapshot": "NO_CURRENT_SLICE_RESULT",
+        "sourceLine": 24,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-015",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-02",
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-PAY-001_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "queuePosition": 3,
+        "sliceId": "BASE-TFR-PAY-002",
+        "classificationAtReclassificationSnapshot": "NO_CURRENT_SLICE_RESULT",
+        "sourceLine": 25,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-006",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-03",
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-PAY-002_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "queuePosition": 4,
+        "sliceId": "BASE-TFR-PAY-003",
+        "classificationAtReclassificationSnapshot": "NO_CURRENT_SLICE_RESULT",
+        "sourceLine": 26,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-04",
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-PAY-003_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "queuePosition": 5,
+        "sliceId": "BASE-TFR-PAY-004",
+        "classificationAtReclassificationSnapshot": "NO_CURRENT_SLICE_RESULT",
+        "sourceLine": 27,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-05",
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-PAY-004_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "queuePosition": 6,
+        "sliceId": "BASE-TFR-PAY-005",
+        "classificationAtReclassificationSnapshot": "NO_CURRENT_SLICE_RESULT",
+        "sourceLine": 28,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-06",
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-PAY-005_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "queuePosition": 7,
+        "sliceId": "BASE-TFR-PAY-008",
+        "classificationAtReclassificationSnapshot": "NO_CURRENT_SLICE_RESULT",
+        "sourceLine": 31,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-07",
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-PAY-008_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "queuePosition": 8,
+        "sliceId": "BASE-TFR-PAY-009",
+        "classificationAtReclassificationSnapshot": "PARTIAL_SURFACE_OR_OVERLAP",
+        "sourceLine": 32,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-08",
+        "nextAction": "AUDIT_THE_EXISTING_PARTIAL_SURFACE_THEN_ISSUE_AN_EXACT_DELTA_ONLY_OWNER_PACKET_FOR_BASE-TFR-PAY-009; PRESERVE_PROVEN_BEHAVIOR_AND_DEFAULT_OFF"
+      },
+      {
+        "queuePosition": 9,
+        "sliceId": "BASE-TFR-PAY-010",
+        "classificationAtReclassificationSnapshot": "NO_CURRENT_SLICE_RESULT",
+        "sourceLine": 33,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-09",
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-PAY-010_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "queuePosition": 10,
+        "sliceId": "BASE-TFR-PAY-012",
+        "classificationAtReclassificationSnapshot": "NO_CURRENT_SLICE_RESULT",
+        "sourceLine": 35,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-10",
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-PAY-012_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "queuePosition": 11,
+        "sliceId": "BASE-TFR-PAY-014",
+        "classificationAtReclassificationSnapshot": "NO_CURRENT_SLICE_RESULT",
+        "sourceLine": 37,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-11",
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-PAY-014_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "queuePosition": 12,
+        "sliceId": "BASE-TFR-PAY-017",
+        "classificationAtReclassificationSnapshot": "NO_CURRENT_SLICE_RESULT",
+        "sourceLine": 40,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-12",
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-PAY-017_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "queuePosition": 13,
+        "sliceId": "BASE-TFR-PAY-018",
+        "classificationAtReclassificationSnapshot": "NO_CURRENT_SLICE_RESULT",
+        "sourceLine": 41,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-004",
+          "DEP-005",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-13",
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-PAY-018_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "queuePosition": 14,
+        "sliceId": "BASE-TFR-PAY-019",
+        "classificationAtReclassificationSnapshot": "NO_CURRENT_SLICE_RESULT",
+        "sourceLine": 42,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-004",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-14",
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-PAY-019_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "queuePosition": 15,
+        "sliceId": "BASE-TFR-PAY-020",
+        "classificationAtReclassificationSnapshot": "NO_CURRENT_SLICE_RESULT",
+        "sourceLine": 43,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-009",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+          "BASE-TFR-TIM-007"
+        ],
+        "recommendedBatch": "R7-BATCH-15",
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-PAY-020_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "queuePosition": 16,
+        "sliceId": "BASE-TFR-PAY-021",
+        "classificationAtReclassificationSnapshot": "NO_CURRENT_SLICE_RESULT",
+        "sourceLine": 44,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-007",
+          "DEP-008",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+          "BASE-TFR-HRM-011"
+        ],
+        "recommendedBatch": "R7-BATCH-16",
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-PAY-021_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      }
+    ],
+    "HRIS-PER": [
+      {
+        "queuePosition": 1,
+        "sliceId": "BASE-TFR-PER-001",
+        "classificationAtReclassificationSnapshot": "NO_CURRENT_SLICE_RESULT",
+        "sourceLine": 45,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-015",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-01",
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-PER-001_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "queuePosition": 2,
+        "sliceId": "BASE-TFR-PER-002",
+        "classificationAtReclassificationSnapshot": "NO_CURRENT_SLICE_RESULT",
+        "sourceLine": 46,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-02",
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-PER-002_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "queuePosition": 3,
+        "sliceId": "BASE-TFR-PER-003",
+        "classificationAtReclassificationSnapshot": "NO_CURRENT_SLICE_RESULT",
+        "sourceLine": 47,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-03",
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-PER-003_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "queuePosition": 4,
+        "sliceId": "BASE-TFR-PER-004",
+        "classificationAtReclassificationSnapshot": "NO_CURRENT_SLICE_RESULT",
+        "sourceLine": 48,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-004",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-04",
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-PER-004_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "queuePosition": 5,
+        "sliceId": "BASE-TFR-PER-008",
+        "classificationAtReclassificationSnapshot": "NO_CURRENT_SLICE_RESULT",
+        "sourceLine": 52,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-05",
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-PER-008_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "queuePosition": 6,
+        "sliceId": "BASE-TFR-PER-009",
+        "classificationAtReclassificationSnapshot": "PARTIAL_SURFACE_OR_OVERLAP",
+        "sourceLine": 53,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-06",
+        "nextAction": "AUDIT_THE_EXISTING_PARTIAL_SURFACE_THEN_ISSUE_AN_EXACT_DELTA_ONLY_OWNER_PACKET_FOR_BASE-TFR-PER-009; PRESERVE_PROVEN_BEHAVIOR_AND_DEFAULT_OFF"
+      },
+      {
+        "queuePosition": 7,
+        "sliceId": "BASE-TFR-PER-010",
+        "classificationAtReclassificationSnapshot": "NO_CURRENT_SLICE_RESULT",
+        "sourceLine": 54,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-07",
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-PER-010_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "queuePosition": 8,
+        "sliceId": "BASE-TFR-PER-011",
+        "classificationAtReclassificationSnapshot": "NO_CURRENT_SLICE_RESULT",
+        "sourceLine": 55,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-08",
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-PER-011_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "queuePosition": 9,
+        "sliceId": "BASE-TFR-PER-012",
+        "classificationAtReclassificationSnapshot": "NO_CURRENT_SLICE_RESULT",
+        "sourceLine": 56,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-09",
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-PER-012_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "queuePosition": 10,
+        "sliceId": "BASE-TFR-PER-014",
+        "classificationAtReclassificationSnapshot": "NO_CURRENT_SLICE_RESULT",
+        "sourceLine": 58,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-004",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-10",
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-PER-014_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "queuePosition": 11,
+        "sliceId": "BASE-TFR-PER-015",
+        "classificationAtReclassificationSnapshot": "NO_CURRENT_SLICE_RESULT",
+        "sourceLine": 59,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-004",
+          "DEP-005",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-11",
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-PER-015_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      }
+    ],
+    "HRIS-SYS": [
+      {
+        "queuePosition": 1,
+        "sliceId": "BASE-TFR-SYS-001",
+        "classificationAtReclassificationSnapshot": "INTEGRATED_EXPLICIT_CLOSE_RESIDUAL",
+        "sourceLine": 68,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-C0-SYS-001-NO-CODE-CLOSE",
+        "nextAction": "CONSUME_DOCS_06_DELIVERY_HRIS_WAVE7_2026_10_17_R7_C0_RECLASSIFICATION_R1_SYS_001_NO_CODE_CLOSE_V1_JSON_AS_THE_EXPLICIT_FINAL_PIN_NO_CODE_TRANSITION; NO_SOURCE_CHANGE"
+      },
+      {
+        "queuePosition": 2,
+        "sliceId": "BASE-TFR-SYS-002",
+        "classificationAtReclassificationSnapshot": "NO_CURRENT_SLICE_RESULT",
+        "sourceLine": 69,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-004",
+          "DEP-005",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-01",
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-SYS-002_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "queuePosition": 3,
+        "sliceId": "BASE-TFR-SYS-003",
+        "classificationAtReclassificationSnapshot": "NO_CURRENT_SLICE_RESULT",
+        "sourceLine": 70,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-014",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-02",
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-SYS-003_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "queuePosition": 4,
+        "sliceId": "BASE-TFR-SYS-005",
+        "classificationAtReclassificationSnapshot": "NO_CURRENT_SLICE_RESULT",
+        "sourceLine": 72,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-015",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-03",
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-SYS-005_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "queuePosition": 5,
+        "sliceId": "BASE-TFR-SYS-006",
+        "classificationAtReclassificationSnapshot": "NO_CURRENT_SLICE_RESULT",
+        "sourceLine": 73,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-004",
+          "DEP-005",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-04",
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-SYS-006_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "queuePosition": 6,
+        "sliceId": "BASE-TFR-SYS-008",
+        "classificationAtReclassificationSnapshot": "NO_CURRENT_SLICE_RESULT",
+        "sourceLine": 75,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-006",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-05",
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-SYS-008_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "queuePosition": 7,
+        "sliceId": "BASE-TFR-SYS-010",
+        "classificationAtReclassificationSnapshot": "NO_CURRENT_SLICE_RESULT",
+        "sourceLine": 77,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-06",
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-SYS-010_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "queuePosition": 8,
+        "sliceId": "BASE-TFR-SYS-011",
+        "classificationAtReclassificationSnapshot": "NO_CURRENT_SLICE_RESULT",
+        "sourceLine": 78,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-004",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-07",
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-SYS-011_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "queuePosition": 9,
+        "sliceId": "BASE-TFR-HRM-015",
+        "classificationAtReclassificationSnapshot": "NO_CURRENT_SLICE_RESULT",
+        "sourceLine": 80,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-08",
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-HRM-015_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      }
+    ],
+    "HRIS-TIM": [
+      {
+        "queuePosition": 1,
+        "sliceId": "BASE-TFR-TIM-007",
+        "classificationAtReclassificationSnapshot": "NO_CURRENT_SLICE_RESULT",
+        "sourceLine": 90,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-009",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-01",
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-TIM-007_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "queuePosition": 2,
+        "sliceId": "BASE-TFR-TIM-001",
+        "classificationAtReclassificationSnapshot": "NO_CURRENT_SLICE_RESULT",
+        "sourceLine": 84,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-014",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-02",
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-TIM-001_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "queuePosition": 3,
+        "sliceId": "BASE-TFR-TIM-002",
+        "classificationAtReclassificationSnapshot": "NO_CURRENT_SLICE_RESULT",
+        "sourceLine": 85,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-015",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-03",
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-TIM-002_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "queuePosition": 4,
+        "sliceId": "BASE-TFR-TIM-003",
+        "classificationAtReclassificationSnapshot": "NO_CURRENT_SLICE_RESULT",
+        "sourceLine": 86,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-007",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-04",
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-TIM-003_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "queuePosition": 5,
+        "sliceId": "BASE-TFR-TIM-004",
+        "classificationAtReclassificationSnapshot": "NO_CURRENT_SLICE_RESULT",
+        "sourceLine": 87,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-004",
+          "DEP-005",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-05",
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-TIM-004_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "queuePosition": 6,
+        "sliceId": "BASE-TFR-TIM-005",
+        "classificationAtReclassificationSnapshot": "NO_CURRENT_SLICE_RESULT",
+        "sourceLine": 88,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-004",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-06",
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-TIM-005_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "queuePosition": 7,
+        "sliceId": "BASE-TFR-TIM-008",
+        "classificationAtReclassificationSnapshot": "NO_CURRENT_SLICE_RESULT",
+        "sourceLine": 91,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-006",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-07",
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-TIM-008_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "queuePosition": 8,
+        "sliceId": "BASE-TFR-TIM-009",
+        "classificationAtReclassificationSnapshot": "NO_CURRENT_SLICE_RESULT",
+        "sourceLine": 92,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-08",
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-TIM-009_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "queuePosition": 9,
+        "sliceId": "BASE-TFR-TIM-011",
+        "classificationAtReclassificationSnapshot": "NO_CURRENT_SLICE_RESULT",
+        "sourceLine": 94,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-004",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-09",
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-TIM-011_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "queuePosition": 10,
+        "sliceId": "BASE-TFR-TIM-012",
+        "classificationAtReclassificationSnapshot": "NO_CURRENT_SLICE_RESULT",
+        "sourceLine": 95,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-10",
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-TIM-012_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "queuePosition": 11,
+        "sliceId": "BASE-TFR-TIM-013",
+        "classificationAtReclassificationSnapshot": "NO_CURRENT_SLICE_RESULT",
+        "sourceLine": 96,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-004",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-11",
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-TIM-013_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "queuePosition": 12,
+        "sliceId": "BASE-TFR-TIM-014",
+        "classificationAtReclassificationSnapshot": "NO_CURRENT_SLICE_RESULT",
+        "sourceLine": 97,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-12",
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-TIM-014_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "queuePosition": 13,
+        "sliceId": "BASE-TFR-TIM-015",
+        "classificationAtReclassificationSnapshot": "NO_CURRENT_SLICE_RESULT",
+        "sourceLine": 98,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-014",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-13",
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-TIM-015_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      },
+      {
+        "queuePosition": 14,
+        "sliceId": "BASE-TFR-TIM-019",
+        "classificationAtReclassificationSnapshot": "NO_CURRENT_SLICE_RESULT",
+        "sourceLine": 102,
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-007",
+          "DEP-016"
+        ],
+        "predecessorSlices": [
+
+        ],
+        "recommendedBatch": "R7-BATCH-14",
+        "nextAction": "ISSUE_A_FRESH_EXACT_OWNER_PACKET_AND_START_TOKEN_FOR_BASE-TFR-TIM-019_FROM_THE_R7_C0_PINS; REQUIRE_TARGETED_EVIDENCE_AND_DEFAULT_OFF"
+      }
+    ]
+  },
+  "recommendedBatchOrder": [
+    {
+      "batch": "R7-C0-SYS-001-NO-CODE-CLOSE",
+      "sliceIds": [
+        "BASE-TFR-SYS-001"
+      ],
+      "rule": "Evidence-only transition in the sibling receipt; no source token and no implementation."
+    },
+    {
+      "batch": "R7-BATCH-01",
+      "sliceIds": [
+        "BASE-TFR-HRM-005",
+        "BASE-TFR-PAY-013",
+        "BASE-TFR-PER-001",
+        "BASE-TFR-SYS-002",
+        "BASE-TFR-TIM-007"
+      ],
+      "rule": "FIRST_FIVE_LANE_BATCH_AFTER_R7_C0_CLOSEOUT"
+    },
+    {
+      "batch": "R7-BATCH-02",
+      "sliceIds": [
+        "BASE-TFR-HRM-007",
+        "BASE-TFR-PAY-001",
+        "BASE-TFR-PER-002",
+        "BASE-TFR-SYS-003",
+        "BASE-TFR-TIM-001"
+      ],
+      "rule": "START_ONLY_AFTER_PREDECESSOR_BATCH_EVIDENCE_IS_ACCEPTED_AND_DEPENDENCIES_REMAIN_SATISFIED"
+    },
+    {
+      "batch": "R7-BATCH-03",
+      "sliceIds": [
+        "BASE-TFR-HRM-009",
+        "BASE-TFR-PAY-002",
+        "BASE-TFR-PER-003",
+        "BASE-TFR-SYS-005",
+        "BASE-TFR-TIM-002"
+      ],
+      "rule": "START_ONLY_AFTER_PREDECESSOR_BATCH_EVIDENCE_IS_ACCEPTED_AND_DEPENDENCIES_REMAIN_SATISFIED"
+    },
+    {
+      "batch": "R7-BATCH-04",
+      "sliceIds": [
+        "BASE-TFR-HRM-011",
+        "BASE-TFR-PAY-003",
+        "BASE-TFR-PER-004",
+        "BASE-TFR-SYS-006",
+        "BASE-TFR-TIM-003"
+      ],
+      "rule": "START_ONLY_AFTER_PREDECESSOR_BATCH_EVIDENCE_IS_ACCEPTED_AND_DEPENDENCIES_REMAIN_SATISFIED"
+    },
+    {
+      "batch": "R7-BATCH-05",
+      "sliceIds": [
+        "BASE-TFR-HRM-012",
+        "BASE-TFR-PAY-004",
+        "BASE-TFR-PER-008",
+        "BASE-TFR-SYS-008",
+        "BASE-TFR-TIM-004"
+      ],
+      "rule": "START_ONLY_AFTER_PREDECESSOR_BATCH_EVIDENCE_IS_ACCEPTED_AND_DEPENDENCIES_REMAIN_SATISFIED"
+    },
+    {
+      "batch": "R7-BATCH-06",
+      "sliceIds": [
+        "BASE-TFR-HRM-013",
+        "BASE-TFR-PAY-005",
+        "BASE-TFR-PER-009",
+        "BASE-TFR-SYS-010",
+        "BASE-TFR-TIM-005"
+      ],
+      "rule": "START_ONLY_AFTER_PREDECESSOR_BATCH_EVIDENCE_IS_ACCEPTED_AND_DEPENDENCIES_REMAIN_SATISFIED"
+    },
+    {
+      "batch": "R7-BATCH-07",
+      "sliceIds": [
+        "BASE-TFR-HRM-014",
+        "BASE-TFR-PAY-008",
+        "BASE-TFR-PER-010",
+        "BASE-TFR-SYS-011",
+        "BASE-TFR-TIM-008"
+      ],
+      "rule": "START_ONLY_AFTER_PREDECESSOR_BATCH_EVIDENCE_IS_ACCEPTED_AND_DEPENDENCIES_REMAIN_SATISFIED"
+    },
+    {
+      "batch": "R7-BATCH-08",
+      "sliceIds": [
+        "BASE-TFR-HRM-016",
+        "BASE-TFR-PAY-009",
+        "BASE-TFR-PER-011",
+        "BASE-TFR-HRM-015",
+        "BASE-TFR-TIM-009"
+      ],
+      "rule": "START_ONLY_AFTER_PREDECESSOR_BATCH_EVIDENCE_IS_ACCEPTED_AND_DEPENDENCIES_REMAIN_SATISFIED"
+    },
+    {
+      "batch": "R7-BATCH-09",
+      "sliceIds": [
+        "BASE-TFR-HRM-017",
+        "BASE-TFR-PAY-010",
+        "BASE-TFR-PER-012",
+        "BASE-TFR-TIM-011"
+      ],
+      "rule": "START_ONLY_AFTER_PREDECESSOR_BATCH_EVIDENCE_IS_ACCEPTED_AND_DEPENDENCIES_REMAIN_SATISFIED"
+    },
+    {
+      "batch": "R7-BATCH-10",
+      "sliceIds": [
+        "BASE-TFR-PAY-012",
+        "BASE-TFR-PER-014",
+        "BASE-TFR-TIM-012"
+      ],
+      "rule": "START_ONLY_AFTER_PREDECESSOR_BATCH_EVIDENCE_IS_ACCEPTED_AND_DEPENDENCIES_REMAIN_SATISFIED"
+    },
+    {
+      "batch": "R7-BATCH-11",
+      "sliceIds": [
+        "BASE-TFR-PAY-014",
+        "BASE-TFR-PER-015",
+        "BASE-TFR-TIM-013"
+      ],
+      "rule": "START_ONLY_AFTER_PREDECESSOR_BATCH_EVIDENCE_IS_ACCEPTED_AND_DEPENDENCIES_REMAIN_SATISFIED"
+    },
+    {
+      "batch": "R7-BATCH-12",
+      "sliceIds": [
+        "BASE-TFR-PAY-017",
+        "BASE-TFR-TIM-014"
+      ],
+      "rule": "START_ONLY_AFTER_PREDECESSOR_BATCH_EVIDENCE_IS_ACCEPTED_AND_DEPENDENCIES_REMAIN_SATISFIED"
+    },
+    {
+      "batch": "R7-BATCH-13",
+      "sliceIds": [
+        "BASE-TFR-PAY-018",
+        "BASE-TFR-TIM-015"
+      ],
+      "rule": "START_ONLY_AFTER_PREDECESSOR_BATCH_EVIDENCE_IS_ACCEPTED_AND_DEPENDENCIES_REMAIN_SATISFIED"
+    },
+    {
+      "batch": "R7-BATCH-14",
+      "sliceIds": [
+        "BASE-TFR-PAY-019",
+        "BASE-TFR-TIM-019"
+      ],
+      "rule": "START_ONLY_AFTER_PREDECESSOR_BATCH_EVIDENCE_IS_ACCEPTED_AND_DEPENDENCIES_REMAIN_SATISFIED"
+    },
+    {
+      "batch": "R7-BATCH-15",
+      "sliceIds": [
+        "BASE-TFR-PAY-020"
+      ],
+      "rule": "START_ONLY_AFTER_PREDECESSOR_BATCH_EVIDENCE_IS_ACCEPTED_AND_DEPENDENCIES_REMAIN_SATISFIED"
+    },
+    {
+      "batch": "R7-BATCH-16",
+      "sliceIds": [
+        "BASE-TFR-PAY-021"
+      ],
+      "rule": "START_ONLY_AFTER_PREDECESSOR_BATCH_EVIDENCE_IS_ACCEPTED_AND_DEPENDENCIES_REMAIN_SATISFIED"
+    }
+  ],
+  "evidenceCatalog": {
+    "OVERLAY_V2": {
+      "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+      "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+      "role": "immutable historical source inventory; not modified by R7-C0"
+    },
+    "OVERLAY_EVIDENCE_V2": {
+      "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.evidence.v2.json",
+      "sha256": "d7b6a9df2a6570584062f6ff8ee7a4aa85a1ce8061c52614c28e015c8a755ced",
+      "role": "historical overlay evidence"
+    },
+    "G5_FREEZE": {
+      "path": "docs/06-delivery/hris/2026-10-12-g5-integrated-stabilization-freeze-receipt.json",
+      "sha256": "4a5a3505414dbec26ea4ef35eb4b4371c9c765272a39285298f3374090ec58ae",
+      "role": "G5 integrated stabilization freeze"
+    },
+    "G6_W1_SUCCESSOR": {
+      "path": "docs/06-delivery/hris/2026-10-12-g6-w1-successor-receipt.json",
+      "sha256": "e9844302d03b81a8a473be4b85ee80862a16946264c0d0d9e4636f6cac80107c",
+      "role": "G6 W1 frozen successor receipt"
+    },
+    "WAVE2_START": {
+      "path": "docs/06-delivery/hris/wave2-2026-10-13/start-manifest.v1.json",
+      "sha256": "80474ad8d1fa08992b8fbe87bb930d2df95712ca241e9eff261e5daa22f39bb3",
+      "role": "Wave2 exact start manifest"
+    },
+    "WAVE2_WIRING": {
+      "path": "docs/06-delivery/hris/wave2-2026-10-13/shared-wiring-receipt.v1.json",
+      "sha256": "2689d1d652b7808a6b689797e1ecf423f7ca0658f5b73b2a22beb82b19e2987a",
+      "role": "Wave2 integration and shared wiring closure"
+    },
+    "G7_PER_TIM_PROMOTION": {
+      "path": "docs/06-delivery/hris/2026-10-12-g7-evidence-promotion-and-delegation-receipt.json",
+      "sha256": "80bc8a7da69e3bb3fc733be28a02d8db4f5c2f5652bc3fb80659ae37437bf93b",
+      "role": "G7 PER/TIM promotion"
+    },
+    "G7_SYS_HRM_PROMOTION": {
+      "path": "docs/06-delivery/hris/2026-10-12-g7-sys-hrm-promotion-receipt.v2.json",
+      "sha256": "d09e250da60b797404109dca5342db7cb6806144b51e3f5c92cd2ebc9925d275",
+      "role": "G7 SYS/HRM promotion"
+    },
+    "G7_SYS_HRM_CLOSURE": {
+      "path": "docs/06-delivery/hris/g7-delegation-successors/2026-10-12/sys-hrm-r3-result-acceptance/runs/sys-hrm-r3-20261012-r3/integrated-closure.v3.json",
+      "sha256": "0a6cbc3a4e0ac756e632333e1c9b6b9131139b7f914725f8716933439f79d3e1",
+      "role": "G7 SYS/HRM integrated closure"
+    },
+    "PAY016_WAVE4": {
+      "path": "docs/06-delivery/hris/wave4-2026-10-14/central-integration-receipt.v1.json",
+      "sha256": "f3c9f03488ffd384dbff170e0ca95dab9941a10f058f706c53ea566743e4452d",
+      "role": "PAY-016 Wave4 integration"
+    },
+    "HRM001_NO_CODE": {
+      "path": "docs/06-delivery/hris/wave5-2026-10-14/hrm-001-delta-r1/no-code-closure-receipt.v1.json",
+      "sha256": "c1a1629988e2638dffd2f9d204137517f3df7b4977e2ec966af97180c56192bc",
+      "role": "HRM-001 exact no-code conformance close"
+    },
+    "PAY011_INTEGRATION": {
+      "path": "docs/06-delivery/hris/wave5-2026-10-14/pay-011-integration-r1/central-integration-result.v1.json",
+      "sha256": "4d53174298fb4c055df1ef71851483a86bdf0be64e2c0538b359ccfcbf18793e",
+      "role": "PAY-011 integration and V49-to-V50 PostgreSQL upgrade proof"
+    },
+    "PER_TIM_INTEGRATION": {
+      "path": "docs/06-delivery/hris/wave5-2026-10-14/per-tim-integration-r1/central-integration-result.v1.json",
+      "sha256": "456b2e85c8c6a7e8ab3e7c5aed5cb37d3728a9e07db863d510edd736b114be9b",
+      "role": "PER-013 and TIM-017 integrated closure"
+    },
+    "HRM002_INTEGRATION": {
+      "path": "docs/06-delivery/hris/wave6-2026-10-15/hrm-002-experience-integration-r1/central-integration-result.v1.json",
+      "sha256": "60ed600b9160586d59df0c6986a663f105acc8e5b440389a346075ec7444e8b2",
+      "role": "HRM-002 exact integrated close"
+    },
+    "R3_HOME_PRODUCERS": {
+      "path": "docs/06-delivery/hris/wave6-2026-10-15/r3-home-producer-integration-r1/central-integration-result.v1.json",
+      "sha256": "052ee3bb6a28dbebb1401768034adc34937c3949c1e537eda8537bad324a891c",
+      "role": "HRM-003/PER-007/TIM-018/PAY-015 producer closure"
+    },
+    "SYS009_INTEGRATION": {
+      "path": "docs/06-delivery/hris/wave6-2026-10-15/sys-009-controlled-transfer-control-r1/central-integration-result.v1.json",
+      "sha256": "599200abd4a5919a77b33ad75f759253f80410e1408b1465cc08b6a2ae6de172",
+      "role": "SYS-009 exact integrated close"
+    },
+    "SYS012_WORK_EXPLORER": {
+      "path": "docs/06-delivery/hris/wave6-2026-10-15/sys-012-work-explorer-integration-r1/central-integration-result.v1.json",
+      "sha256": "54ef4a7383e34f30803add14d18b8fd9c27c36e17c9a420d81e4b80099fcb507",
+      "role": "SYS-012 Work Explorer integrated close"
+    },
+    "SYS012_HOME_COMPOSITION": {
+      "path": "docs/06-delivery/hris/wave6-2026-10-15/r4-sys-012-home-composition-integration-r1/central-integration-result.v1.json",
+      "sha256": "3076abc4209d47742a30d845584c4e308475273308433c30f553689093d806b6",
+      "role": "SYS-012 home composition successor close"
+    },
+    "SYS001_RUNTIME_PENDING": {
+      "path": "docs/06-delivery/hris/wave5-2026-10-14/sys-001-control-r1/central-runtime-integration-receipt.v1.json",
+      "sha256": "33fcb0c681189dc23f2da62eb8f9c43ed18796401743f9ff1725ec3d43ad3fe1",
+      "role": "SYS-001 backend complete with navigation adapter pending"
+    },
+    "SYS001_NAV_PENDING": {
+      "path": "docs/06-delivery/hris/wave5-2026-10-14/sys-001-nav-adapter-integration-r1/central-integration-result.v1.json",
+      "sha256": "7d181ebe5047bb32915ffbc753948f03b94b2853ed18c980eb533fa0c8cf9c26",
+      "role": "SYS-001 navigation adapter complete with Work Explorer mount pending"
+    }
+  },
+  "verifiedCompleteCommitAncestry": {
+    "backendPin": "6e7d1a6a8d0337c545abf83f5e243a8aa11f8457",
+    "frontendPin": "6c0d181c7acab57179d8760ae0aeba80e6ee4d35",
+    "method": "git merge-base --is-ancestor <evidenceCommit> <classificationPin>",
+    "allListedIntegrationCommitsAncestor": true,
+    "backendCommits": [
+      "2152531116731b678c79c3d13db139f18392ecd9",
+      "34d0a6c4be86e29addb77c73cb3b3f67e3095cb9",
+      "3e0c8d6e1bc0fbb0563a05023e619714dae54326",
+      "49f593457af4b7b0ec13b36183c0431b7e7a248c",
+      "5b35f8a49e5f4743cd00571ed9bd134e15fff94d",
+      "67287b33be62c338d7ea6183e22ff3372e0c45c1",
+      "92979d3537cd6984be43afdb58cb14b9e1c4b24e",
+      "9c9e33c29a63e2638213d424e74c8fabed2e7a4b",
+      "adc3c0b3bf78743bceb45e6fd18507156096b870",
+      "c0d72ca8e26a6e2a0b3885b62c0aa0e3ad7b1329",
+      "c857fe8fdc3234f2e9c4b017bdecf71bb3ea2aa7",
+      "c9a112bf13cc3c240cf48bc51c6001e5601b847e",
+      "deb39a02634826d40ae5de5e30f54223c31b5851"
+    ],
+    "frontendCommits": [
+      "0eb4f09420bd1b3ab7496737e37fded247dd76c5",
+      "2d0cd58b9ce6b05fc6d364461d9e0172b016a787",
+      "2eadf94edbece0c46373820b581f6bb063426bc5",
+      "4546024ca9036f217c1d13ddb0622c21a3264b60",
+      "61f5a74fe51c8e0d97bba865c811028186ddfb69",
+      "83b4e500be99f6bffd30f3b985faf67b67a349e2",
+      "88a3b333022a431f87e756a0cc1614c25f94fd3e",
+      "9dd489de7f28b9b516e2ad29479ecf5a71f11a7a",
+      "a1c621984886f99049af5be82340dafeac025679",
+      "c60e9d9577f01a4204972b76d09c521b28a39c0d",
+      "e2fe179a75c678fda9515e2ef5714d9dd7b5bef8",
+      "f0341e521ef331eab9f7f17fea2ca6b713df7ed0"
+    ]
+  },
+  "integrity": {
+    "sourceBaseRowCount": 86,
+    "stateArrayEntryCount": 86,
+    "stateArrayUniqueSliceCount": 86,
+    "ownerQueueEntryCount": 59,
+    "ownerQueueUniqueSliceCount": 59,
+    "allSourceRowsClassifiedExactlyOnce": true,
+    "allActiveIncompleteRowsQueuedExactlyOnce": true,
+    "completeRequiresExplicitReceiptAndAncestorCommit": true,
+    "inferencePromotionsAllowed": false
+  },
+  "authorityBoundary": {
+    "documentationOnly": true,
+    "sourceChangeAuthorized": false,
+    "moduleStartTokenIssued": false,
+    "migrationLeaseIssued": false,
+    "featureActivationAuthorized": false,
+    "tenantActivationAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "roadmapV11CreatedByThisCarrier": false
+  },
+  "nextAction": "CONSUME_THE_SIBLING_SYS_001_NO_CODE_CLOSE_RECEIPT_THEN_ISSUE_SEPARATE_CONTROLLED_EXPORT_AND_PAY_COMPOSITE_AUTHORITY_SUCCESSORS_BEFORE_FRESH_FIVE_LANE_PACKETS"
+}
