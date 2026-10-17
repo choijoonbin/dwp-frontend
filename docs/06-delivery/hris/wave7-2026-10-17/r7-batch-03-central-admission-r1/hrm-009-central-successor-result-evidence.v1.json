@@ -1,0 +1,517 @@
+{
+  "schema": "dwp.hris.r7-batch03-hrm009-central-successor-result-evidence.v1",
+  "evidenceId": "HRIS-WAVE7-R7-BATCH03-HRM009-CENTRAL-SUCCESSOR-RESULT-EVIDENCE-20261018-R1",
+  "recordedAt": "2026-10-18T07:36:22+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "EXACT_BACKEND_AND_FRONTEND_CANDIDATES_IMPLEMENTED_PUSHED_SOURCE_AND_EVIDENCE_REVIEWED_READY_FOR_EXACT_CENTRAL_ADMISSION",
+  "immutability": {
+    "intendedAfterAdmission": true,
+    "amendmentPolicyAfterAdmission": "APPEND_ONLY_SUCCESSOR_WITH_NEW_EVIDENCE_ID_AND_SHA256",
+    "currentDocumentReviewState": "GO",
+    "reviewedDraft": {
+      "sha256": "e5bf55585c9503e3d27dea5ad63f28e4161eca48fee9fffb941d72cdab33664e",
+      "bytes": 32311,
+      "reviewDecision": "GO_FOR_TARGETED_SEAL_PATCH",
+      "p0": 0,
+      "p1": 0,
+      "p2": 2
+    }
+  },
+  "authorityChain": {
+    "executionAuthority": {
+      "path": "hrm-009-central-successor-execution-authority.v1.json",
+      "sha256": "347398ba3b7303a3499a9b18ab9a494fdf3c03e90cce1726f95522bd5334f2a7",
+      "bytes": 39007,
+      "carrierCommit": "723f5b3fbc3fbd92799bb0f474078a1a255db0b5",
+      "carrierTree": "eb3132fdcbdb36e95fddc080f1ec281ba9a552f6",
+      "referenceReproduced": true
+    },
+    "materializationStartReceipt": {
+      "path": "hrm-009-central-successor-materialization-start-receipt.v1.json",
+      "sha256": "e896b8c13f7bf57a300da0ea644ace8feb5e8f623b269e62c06642ca05a41735",
+      "bytes": 4484,
+      "carrierCommit": "b90c439c019fe048ff2cc14cc4e782860eea42f8",
+      "carrierTree": "35c253b65872878baf2e590502a9134a030bbc99",
+      "referenceReproduced": true
+    }
+  },
+  "centralCarrierAtEvidenceDraft": {
+    "repository": "dwp-frontend",
+    "branch": "dwp-dev",
+    "head": "b90c439c019fe048ff2cc14cc4e782860eea42f8",
+    "tree": "35c253b65872878baf2e590502a9134a030bbc99",
+    "originHead": "b90c439c019fe048ff2cc14cc4e782860eea42f8",
+    "originExactBeforeEvidenceFiles": true,
+    "cleanBeforeEvidenceFiles": true,
+    "candidateHeadsMerged": false
+  },
+  "backendCandidate": {
+    "repository": "dwp-backend",
+    "worktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261018/r7-batch03/hrm-009-central/backend",
+    "branch": "codex/hris-wave7-r7-batch03-hrm-009-central-backend-20261018-r1",
+    "upstream": "origin/codex/hris-wave7-r7-batch03-hrm-009-central-backend-20261018-r1",
+    "baseCommit": "1e3bd64fb13bdc7d772913ad48a9cce315ea05b0",
+    "baseTree": "7097f60a9ccca1fe3cc6449a4242d6b83c1b8fdf",
+    "head": "d739802af71bb56c6c2b1e1de433de503eecf0c7",
+    "tree": "ae5aba749390685eff5aeb041f39a8d4f2ada0d0",
+    "parents": [
+      "1e3bd64fb13bdc7d772913ad48a9cce315ea05b0"
+    ],
+    "subject": "feat(hris): add HRM-009 v52 authorization successor",
+    "baseIsMergeBase": true,
+    "upstreamAhead": 0,
+    "upstreamBehind": 0,
+    "upstreamExact": true,
+    "worktreeClean": true,
+    "changedPathCount": 43,
+    "commitStat": {
+      "filesChanged": 43,
+      "insertions": 177659,
+      "deletions": 71
+    },
+    "allowlistAudit": {
+      "changed": 43,
+      "outside": 0,
+      "diffCheck": "PASS",
+      "forbiddenPredecessorMutationCount": 0,
+      "v1ThroughV51AndV1ThroughV260Immutable": true,
+      "v51FileSha256Preserved": "9c5a2f02551c7eaf38046a696ea0db80e97a16cf9c0a9324d3e515d2e9c6d8aa"
+    },
+    "manifests": {
+      "pathOnlySha256": "3692b7aa443550e469cd7609868b402a6e265a7922a595404108f5e8bc241fa4",
+      "pathOnlyReproduction": "git diff --name-only 1e3bd64fb13bdc7d772913ad48a9cce315ea05b0...d739802af71bb56c6c2b1e1de433de503eecf0c7 | shasum -a 256",
+      "nameStatusSha256": "6461aa939234a12d0dc0f3eb50053791cebb5de517eb4b11014103fc80f0f6a1",
+      "nameStatusReproduction": "git diff --name-status 1e3bd64fb13bdc7d772913ad48a9cce315ea05b0...d739802af71bb56c6c2b1e1de433de503eecf0c7 | shasum -a 256",
+      "pathTabBlobSha256": "a2d7bcdc3ba1b7f92cf85550ac32c858255365f71aea29a3fece9adce1824daa",
+      "pathTabBlobFormat": "For each name-only path in Git order: <path><TAB><head-blob-object-id><LF>",
+      "allReproduced": true
+    },
+    "changedPaths": [
+      "contracts/product-authorization/pilot-fixtures.v1.generated.json",
+      "contracts/product-authorization/product-surfaces-v1.bundle-v52.json",
+      "contracts/product-authorization/product-surfaces-v1.index.json",
+      "contracts/product-authorization/product-surfaces-v1.json",
+      "contracts/product-authorization/product-surfaces-v1.yaml",
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationAuthorityAdapter.java",
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationReleaseLineage.java",
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductSurfaceStepUpChallengeService.java",
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductSurfaceStepUpRouteResolver.java",
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/tenantfeatureactivation/TenantFeatureActivationRepository.java",
+      "dwp-auth-server/src/main/resources/db/migration/V261__declare_hris_r7_batch03_hrm009_v52_authorization_seed.sql",
+      "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v52.generated.json",
+      "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.generated.json",
+      "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.index.generated.json",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/repository/TenantFeatureActivationV261MigrationContractTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationContractReleaseLineageTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationHcmAuthorityAdapterTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationReleaseLineageTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationV52ContractTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductSurfaceStepUpChallengeServiceTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductSurfaceStepUpLatestRuntimeTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductSurfaceStepUpRouteResolverTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/tenantfeatureactivation/TenantFeatureActivationV259PostgresTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/tenantfeatureactivation/TenantFeatureActivationV261PostgresTest.java",
+      "dwp-gateway/src/main/java/com/dwp/gateway/filter/ProductSurfaceDecisionContextFilter.java",
+      "dwp-gateway/src/test/java/com/dwp/gateway/ProductSurfaceDecisionContextFilterTest.java",
+      "dwp-gateway/src/test/java/com/dwp/gateway/productsurface/GeneratedProductRouteCatalogTest.java",
+      "dwp-gateway/src/test/java/com/dwp/gateway/productsurface/TenantFeatureActivationV261RouteParityTest.java",
+      "dwp-payroll-server/src/main/resources/product-authorization/hcm-payroll-pep-v52.generated.json",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/certificate/CertificateAuthority.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmProductSurfacePepFilter.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmScopeSelectionValidator.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmV3PepRegistry.java",
+      "dwp-people-server/src/main/resources/product-authorization/hcm-people-pep-v52.generated.json",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/employeeservice/certificate/CertificateAuthorizationTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmOwnerPepExecutionTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmProductSurfacePepFilterTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmV3PepRegistryTest.java",
+      "dwp-platform-server/src/main/resources/product-authorization/hcm-platform-pep-v52.generated.json",
+      "dwp-time-server/src/main/resources/product-authorization/hcm-time-pep-v52.generated.json",
+      "scripts/generate-product-authorization-contracts.py",
+      "scripts/generate-product-authorization-fixtures.py",
+      "scripts/tests/test_product_authorization_v52.py"
+    ]
+  },
+  "frontendCandidate": {
+    "repository": "dwp-frontend",
+    "worktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261018/r7-batch03/hrm-009-central/frontend",
+    "branch": "codex/hris-wave7-r7-batch03-hrm-009-central-frontend-20261018-r1",
+    "upstream": "origin/codex/hris-wave7-r7-batch03-hrm-009-central-frontend-20261018-r1",
+    "baseCommit": "723f5b3fbc3fbd92799bb0f474078a1a255db0b5",
+    "baseTree": "eb3132fdcbdb36e95fddc080f1ec281ba9a552f6",
+    "initialImplementationCommit": "b40f82ea18a45cf04c8d96df1075f2a0a24afaa4",
+    "initialImplementationTree": "0902716b8f63f373a661992009d8cea0790a7735",
+    "correctionBase": "b40f82ea18a45cf04c8d96df1075f2a0a24afaa4",
+    "head": "5f61fcf1454d73553e7b0c0f2a55a16da689b105",
+    "tree": "7ee0310f0ed87c84f14d2b330ff68b1f4e38dbe4",
+    "parents": [
+      "b40f82ea18a45cf04c8d96df1075f2a0a24afaa4"
+    ],
+    "subject": "fix(hris): close HRM-009 read-only review gaps",
+    "baseIsMergeBase": true,
+    "upstreamAhead": 0,
+    "upstreamBehind": 0,
+    "upstreamExact": true,
+    "worktreeClean": true,
+    "changedPathCount": 25,
+    "initialCommitStat": {
+      "filesChanged": 25,
+      "insertions": 84890,
+      "deletions": 5451
+    },
+    "correction": {
+      "changedPathCount": 6,
+      "insertions": 91,
+      "deletions": 12,
+      "paths": [
+        "apps/dwp/src/features/hris/employee-services/certificates/certificate-workbench.tsx",
+        "apps/dwp/src/features/hris/employee-services/certificates/testing/certificate-workbench.test.tsx",
+        "apps/dwp/src/features/hris/shell/navigation-policy/hris-navigation-policy-runtime.test.ts",
+        "apps/dwp/src/features/hris/shell/navigation-policy/hris-navigation-policy-runtime.tsx",
+        "apps/dwp/src/features/hris/shell/navigation-policy/seven-workbench-navigation-policy.test.ts",
+        "apps/dwp/src/features/hris/shell/navigation-policy/seven-workbench-navigation-policy.ts"
+      ]
+    },
+    "allowlistAudit": {
+      "changed": 25,
+      "outside": 0,
+      "diffCheck": "PASS",
+      "historicalBundles": "PASS_V1_THROUGH_V51",
+      "v52ExactBackend": true,
+      "v46HistoricalBindingPreserved": true,
+      "routeDelta": [
+        "route.hcm.operations.certificates-documents.page",
+        "route.hcm.personal.requests.page"
+      ],
+      "porcelainParsingIncident": "The first audit omitted the leading dot from .env.example because it did not use NUL-delimited porcelain parsing; the audit parser was corrected and no source defect existed."
+    },
+    "manifests": {
+      "pathOnlyCsortSha256": "ddfb817039f183c5842709c8b1386027e93ec8770f69a0962de835c7e746f5e7",
+      "pathOnlyReproduction": "git diff --name-only 723f5b3fbc3fbd92799bb0f474078a1a255db0b5..5f61fcf1454d73553e7b0c0f2a55a16da689b105 | LC_ALL=C sort | shasum -a 256",
+      "nameStatusCsortSha256": "ecb78726bf1e25d27994046097ba1931d24f9eb42558e38f091566cb6f40581e",
+      "nameStatusReproduction": "git diff --name-status 723f5b3fbc3fbd92799bb0f474078a1a255db0b5..5f61fcf1454d73553e7b0c0f2a55a16da689b105 | LC_ALL=C sort | shasum -a 256",
+      "contentManifestSha256": "6f2c1575b23d47d85b44c84716a5e60192b21d0a9553e27155f1f59f35cfd346",
+      "contentManifestFormat": "For each C-sorted name-only path: <lowercase-SHA256-of-HEAD-blob-content><SPACE><decimal-blob-bytes><SPACE><path><LF>",
+      "allReproduced": true
+    },
+    "changedPaths": [
+      ".env.example",
+      "apps/dwp/src/features/hcm/hcm-navigation.test.ts",
+      "apps/dwp/src/features/hcm/hcm-navigation.ts",
+      "apps/dwp/src/features/hcm/hcm-product-manifest.test.ts",
+      "apps/dwp/src/features/hcm/hcm-product-manifest.ts",
+      "apps/dwp/src/features/hris/employee-services/certificates/certificate-workbench.tsx",
+      "apps/dwp/src/features/hris/employee-services/certificates/testing/certificate-workbench.test.tsx",
+      "apps/dwp/src/features/hris/integration/hris-hrm-009-route-admission.test.tsx",
+      "apps/dwp/src/features/hris/integration/hris-hrm-009-route-admission.tsx",
+      "apps/dwp/src/features/hris/shell/navigation-policy/hris-navigation-policy-runtime.test.ts",
+      "apps/dwp/src/features/hris/shell/navigation-policy/hris-navigation-policy-runtime.tsx",
+      "apps/dwp/src/features/hris/shell/navigation-policy/seven-workbench-navigation-policy.test.ts",
+      "apps/dwp/src/features/hris/shell/navigation-policy/seven-workbench-navigation-policy.ts",
+      "apps/dwp/src/pages/hcm.test.ts",
+      "apps/dwp/src/pages/hcm.tsx",
+      "apps/dwp/src/routes/product-route-contracts.generated.test.ts",
+      "apps/dwp/src/routes/product-surface-authorization.generated.ts",
+      "apps/dwp/src/vite-env.d.ts",
+      "architecture/pilot-fixtures.v1.generated.json",
+      "architecture/product-page-routes.v1.json",
+      "architecture/product-surface-authorization.v1.json",
+      "libs/shared-i18n/src/locales/en/hcm.json",
+      "libs/shared-i18n/src/locales/ko/hcm.json",
+      "libs/shared-utils/src/test-utils/pilot-authorization-fixtures.generated.ts",
+      "scripts/product-authorization-fixture-versions.mjs"
+    ]
+  },
+  "sealedV52Result": {
+    "version": 52,
+    "bundleStatus": "DRAFT",
+    "bundleChecksum": "b33fbf968e71f97b09fa497fdfad7d2f6854199170b79fd1602a0ea604977346",
+    "bundleFileSha256": "6a7c8888b244e7de4fcc885ec1a04cfb6a10eb845c1fabd5d6edbccbce5f93a0",
+    "bundleFileBytes": 2602601,
+    "counts": {
+      "capabilities": 268,
+      "accessPolicies": 24,
+      "entitlementExpressions": 17,
+      "predicatePolicies": 81,
+      "routes": 1092,
+      "routeKinds": {
+        "PAGE": 151,
+        "DATA": 331,
+        "ACTION": 610
+      }
+    },
+    "delta": {
+      "capabilities": 3,
+      "routes": 5
+    },
+    "peoplePep": {
+      "fileSha256": "274ebe8f4ce9724e6c9fb357c9d932682f91fe4205172f77d79217875827ef2d",
+      "fileBytes": 333775,
+      "projectionChecksum": "97ab65be9f292fe2aaa07d762c4a501a67ac37f9ec6d2ffb7b84d560bfa8a036",
+      "sourceRegistryRouteCount": 1092,
+      "projectedRouteContractCount": 114,
+      "bindingPairCount": 141,
+      "capabilities": 57,
+      "accessPolicies": 5,
+      "entitlementExpressions": 3,
+      "predicatePolicies": 18,
+      "routeKinds": {
+        "PAGE": 40,
+        "DATA": 25,
+        "ACTION": 49
+      }
+    },
+    "pilotFixture": {
+      "fileSha256": "57e049a8f1bf67b588aa74e63f053172fc07cbdec07d159d9c1618782c81f4da",
+      "fileBytes": 115145,
+      "checksum": "c046e0b18d59d873d06e845909f251e491af16703ddd159d12b7cc0cad6ca245"
+    },
+    "authV261FreshTotals": {
+      "policies": 7,
+      "owners": 29,
+      "bindings": 29
+    },
+    "runtimeDefault": "OFF",
+    "automaticImportEnabled": false,
+    "activationCount": 0,
+    "tenantEnrollmentCount": 0
+  },
+  "boundedVerification": {
+    "policy": "Each named bounded target was run once; after a failure only the smallest remaining failing target was rerun. No repository-wide suite was run or rerun.",
+    "backend": {
+      "pythonV52": {
+        "command": "python3 -m unittest scripts.tests.test_product_authorization_v52",
+        "result": "PASS",
+        "tests": 5,
+        "failed": 0
+      },
+      "fixtureCheck": {
+        "command": "python3 scripts/generate-product-authorization-fixtures.py --check",
+        "result": "PASS",
+        "tests": 71,
+        "negativeCases": 46,
+        "generatorMutationControls": 41,
+        "checksum": "c046e0b18d59d873d06e845909f251e491af16703ddd159d12b7cc0cad6ca245"
+      },
+      "contractCheck": {
+        "command": "python3 scripts/generate-product-authorization-contracts.py --check",
+        "result": "PASS",
+        "verifiedVersions": "V1_THROUGH_V52",
+        "latestRoutes": 1092,
+        "checksum": "b33fbf968e71f97b09fa497fdfad7d2f6854199170b79fd1602a0ea604977346"
+      },
+      "authInitialBoundedBatch": {
+        "command": "./gradlew :dwp-auth-server:test --tests com.dwp.services.auth.service.ProductAuthorizationV52ContractTest --tests com.dwp.services.auth.service.ProductAuthorizationReleaseLineageTest --tests com.dwp.services.auth.service.ProductAuthorizationContractReleaseLineageTest --tests com.dwp.services.auth.service.ProductAuthorizationAuthorityAdapterTest --tests com.dwp.services.auth.service.ProductAuthorizationHcmAuthorityAdapterTest --tests com.dwp.services.auth.service.ProductSurfaceStepUpRouteResolverTest --tests com.dwp.services.auth.service.ProductSurfaceStepUpChallengeServiceTest --tests com.dwp.services.auth.service.ProductSurfaceStepUpLatestRuntimeTest --tests com.dwp.services.auth.service.ProductAuthorizationTenantFeatureActivationTest --tests com.dwp.services.auth.repository.TenantFeatureActivationV261MigrationContractTest --tests com.dwp.services.auth.tenantfeatureactivation.TenantFeatureActivationV259PostgresTest --tests com.dwp.services.auth.tenantfeatureactivation.TenantFeatureActivationV261PostgresTest",
+        "result": "FAIL_THEN_TARGETED_FIX",
+        "tests": 98,
+        "passed": 84,
+        "failed": 14,
+        "failingClass": "com.dwp.services.auth.service.ProductSurfaceStepUpLatestRuntimeTest",
+        "otherClassesPassedInitially": 75,
+        "rootCause": "The runtime test Spring context lacked a TenantFeatureActivationReader bean, so the production adapter correctly failed closed as AUTHORITY_UNAVAILABLE with reason AUTHORITY_RESOLUTION_UNAVAILABLE. Production logic was not relaxed; the test fixture received an explicit GateResult.ungoverned(routeContractKey) reader."
+      },
+      "authMinimalReruns": [
+        {
+          "command": "./gradlew :dwp-auth-server:test --tests 'com.dwp.services.auth.service.ProductSurfaceStepUpLatestRuntimeTest.latestSevenIssuesAnExactlyBoundSignedChallengeUsingCurrentDatabaseAuthority'",
+          "phase": "REPRODUCE",
+          "result": "FAIL_1_OF_1_EXPECTED_STEP_UP_REQUIRED_WAS_AUTHORITY_UNAVAILABLE"
+        },
+        {
+          "command": "./gradlew :dwp-auth-server:test --tests 'com.dwp.services.auth.service.ProductSurfaceStepUpLatestRuntimeTest.latestSevenIssuesAnExactlyBoundSignedChallengeUsingCurrentDatabaseAuthority'",
+          "phase": "DIAGNOSE_AFTER_REASON_ASSERTION",
+          "result": "FAIL_1_OF_1_AUTHORITY_RESOLUTION_UNAVAILABLE_CONFIRMED"
+        },
+        {
+          "command": "./gradlew :dwp-auth-server:test --tests 'com.dwp.services.auth.service.ProductSurfaceStepUpLatestRuntimeTest.latestSevenIssuesAnExactlyBoundSignedChallengeUsingCurrentDatabaseAuthority'",
+          "phase": "AFTER_FIXTURE_CORRECTION",
+          "result": "PASS_1_OF_1_BUILD_SUCCESSFUL"
+        },
+        {
+          "command": "./gradlew :dwp-auth-server:test --tests com.dwp.services.auth.service.ProductSurfaceStepUpLatestRuntimeTest",
+          "phase": "ONLY_PREVIOUSLY_FAILING_CLASS",
+          "result": "PASS_23_OF_23_FAIL_0_ERROR_0_SKIP_0"
+        }
+      ],
+      "authFinalAccounting": {
+        "initiallyPassingOtherClasses": 75,
+        "correctedFailingClass": 23,
+        "boundedTotal": 98,
+        "passed": 98,
+        "fullTwelveClassBatchRerun": false
+      },
+      "gateway": {
+        "command": "./gradlew :dwp-gateway:test --tests com.dwp.gateway.ProductSurfaceDecisionContextFilterTest --tests com.dwp.gateway.ProductSurfaceStepUpGatewayChainTest --tests com.dwp.gateway.ProductSurfaceFeatureRolloutContractTest --tests com.dwp.gateway.ProductSurfaceFeatureRolloutFailureContractTest --tests com.dwp.gateway.productsurface.GeneratedProductRouteCatalogTest --tests com.dwp.gateway.productsurface.TenantFeatureActivationV261RouteParityTest",
+        "result": "PASS_BUILD_SUCCESSFUL",
+        "tests": 124,
+        "classCounts": [49, 4, 31, 3, 36, 1],
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "people": {
+        "command": "./gradlew :dwp-people-server:test --tests com.dwp.services.people.security.HcmV3PepRegistryTest --tests com.dwp.services.people.security.HcmProductSurfacePepFilterTest --tests com.dwp.services.people.security.HcmOwnerPepExecutionTest --tests com.dwp.services.people.hris.employeeservice.certificate.CertificateAuthorizationTest --tests com.dwp.services.people.hris.employeeservice.certificate.Hrm009StageAContractTest",
+        "result": "PASS_BUILD_SUCCESSFUL",
+        "tests": 63,
+        "classCounts": [17, 15, 13, 9, 9],
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "generatorInvocationCorrection": {
+        "failedCommand": "python3 scripts/generate-product-authorization-fixtures.py",
+        "failedResult": "USAGE_ERROR_ONE_OF_WRITE_OR_CHECK_REQUIRED",
+        "correctedCommand": "python3 scripts/generate-product-authorization-fixtures.py --write",
+        "correctedResult": "PASS_WROTE_71_TESTS_46_NEGATIVE_41_MUTATION_CONTROLS",
+        "contractWriteCommand": "python3 scripts/generate-product-authorization-contracts.py",
+        "contractWriteResult": "PASS_V52_GENERATED"
+      }
+    },
+    "frontend": {
+      "initialNineFileVitest": {
+        "command": "yarn vitest run apps/dwp/src/features/hris/integration/hris-hrm-009-route-admission.test.tsx apps/dwp/src/features/hris/employee-services/certificates/testing/certificate-workbench.test.tsx apps/dwp/src/features/hcm/hcm-navigation.test.ts apps/dwp/src/features/hcm/hcm-product-manifest.test.ts apps/dwp/src/pages/hcm.test.ts apps/dwp/src/features/hris/shell/navigation-policy/seven-workbench-navigation-policy.test.ts apps/dwp/src/features/hris/shell/navigation-policy/hris-navigation-policy-runtime.test.ts apps/dwp/src/features/hris/shell/navigation-policy/hris-navigation-policy-runtime.mounted.test.tsx apps/dwp/src/routes/product-route-contracts.generated.test.ts",
+        "result": "FAIL_THEN_MINIMAL_RERUNS",
+        "filesPassed": 6,
+        "filesFailed": 3,
+        "testsPassed": 97,
+        "testsFailed": 5,
+        "failureDetail": "hcm-product-manifest.test.ts failed during import with a NAPI String error before collecting tests; certificate-workbench.test.tsx had 2 failures across 27 tests; hris-hrm-009-route-admission.test.tsx had 3 failures across 7 tests.",
+        "failedFiles": [
+          "apps/dwp/src/features/hcm/hcm-product-manifest.test.ts",
+          "apps/dwp/src/features/hris/employee-services/certificates/testing/certificate-workbench.test.tsx",
+          "apps/dwp/src/features/hris/integration/hris-hrm-009-route-admission.test.tsx"
+        ]
+      },
+      "minimalReruns": [
+        {
+          "command": "yarn vitest run apps/dwp/src/features/hris/integration/hris-hrm-009-route-admission.test.tsx apps/dwp/src/features/hris/employee-services/certificates/testing/certificate-workbench.test.tsx apps/dwp/src/features/hcm/hcm-product-manifest.test.ts",
+          "result": "ONE_FILE_PASS_TWO_FILES_FAIL_33_TESTS_PASS_6_FAIL",
+          "closed": "certificate-workbench.test.tsx_27_OF_27",
+          "remainingFiles": 2
+        },
+        {
+          "command": "yarn prettier --write apps/dwp/src/features/hcm/hcm-product-manifest.test.ts apps/dwp/src/features/hris/integration/hris-hrm-009-route-admission.test.tsx && yarn vitest run apps/dwp/src/features/hcm/hcm-product-manifest.test.ts apps/dwp/src/features/hris/integration/hris-hrm-009-route-admission.test.tsx",
+          "result": "ONE_FILE_PASS_ONE_FILE_FAIL_11_TESTS_PASS_1_FAIL",
+          "closed": "hris-hrm-009-route-admission.test.tsx_7_OF_7",
+          "remainingFiles": 1
+        },
+        {
+          "command": "yarn prettier --write apps/dwp/src/features/hcm/hcm-product-manifest.test.ts && yarn vitest run apps/dwp/src/features/hcm/hcm-product-manifest.test.ts",
+          "result": "PASS_ONE_FILE_5_OF_5",
+          "remainingFiles": 0
+        },
+        {
+          "command": "yarn prettier --write apps/dwp/src/features/hcm/hcm-navigation.ts apps/dwp/src/features/hcm/hcm-navigation.test.ts apps/dwp/src/features/hcm/hcm-product-manifest.test.ts apps/dwp/src/features/hris/shell/navigation-policy/seven-workbench-navigation-policy.ts apps/dwp/src/features/hris/shell/navigation-policy/seven-workbench-navigation-policy.test.ts apps/dwp/src/features/hris/shell/navigation-policy/hris-navigation-policy-runtime.tsx apps/dwp/src/features/hris/shell/navigation-policy/hris-navigation-policy-runtime.test.ts && yarn vitest run apps/dwp/src/features/hcm/hcm-navigation.test.ts apps/dwp/src/features/hcm/hcm-product-manifest.test.ts apps/dwp/src/features/hris/shell/navigation-policy/seven-workbench-navigation-policy.test.ts apps/dwp/src/features/hris/shell/navigation-policy/hris-navigation-policy-runtime.test.ts",
+          "result": "PASS_4_FILES_45_OF_45",
+          "purpose": "NAVIGATION_SUCCESSOR_AFFECTED_SUBSET_ONLY"
+        }
+      ],
+      "generatedSync": {
+        "authorizationSyncCommand": "node scripts/sync-product-surface-authorization.mjs --sync /Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261018/r7-batch03/hrm-009-central/backend/contracts/product-authorization",
+        "authorizationSyncResult": "PASS_V1_THROUGH_V52_CHECKSUM_B33FBF968E71F97B09FA497FDFAD7D2F6854199170B79FD1602A0EA604977346_PAGE_151",
+        "fixtureSyncCommand": "node scripts/sync-product-authorization-fixtures.mjs --sync /Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261018/r7-batch03/hrm-009-central/backend/contracts/product-authorization/pilot-fixtures.v1.generated.json --authorization /Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261018/r7-batch03/hrm-009-central/backend/contracts/product-authorization",
+        "fixtureSyncResult": "PASS_V1_THROUGH_V52_CHECKSUM_C046E0B18D59D873D06E845909F251E491AF16703DDD159D12B7CC0CAD6CA245",
+        "authorizationCheckCommand": "node scripts/sync-product-surface-authorization.mjs --check /Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261018/r7-batch03/hrm-009-central/backend/contracts/product-authorization",
+        "authorizationCheckResult": "PASS_OFFICIAL_BACKEND_ARTIFACT_MATCHED",
+        "fixtureCheckCommand": "node scripts/sync-product-authorization-fixtures.mjs --check /Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261018/r7-batch03/hrm-009-central/backend/contracts/product-authorization/pilot-fixtures.v1.generated.json --authorization /Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261018/r7-batch03/hrm-009-central/backend/contracts/product-authorization",
+        "fixtureCheckResult": "PASS_OFFICIAL_BACKEND_ARTIFACT_MATCHED"
+      },
+      "initialEslint": {
+        "command": "yarn eslint apps/dwp/src/features/hcm/hcm-navigation.test.ts apps/dwp/src/features/hcm/hcm-navigation.ts apps/dwp/src/features/hcm/hcm-product-manifest.test.ts apps/dwp/src/features/hcm/hcm-product-manifest.ts apps/dwp/src/features/hris/employee-services/certificates/certificate-workbench.tsx apps/dwp/src/features/hris/employee-services/certificates/testing/certificate-workbench.test.tsx apps/dwp/src/features/hris/integration/hris-hrm-009-route-admission.tsx apps/dwp/src/features/hris/integration/hris-hrm-009-route-admission.test.tsx apps/dwp/src/features/hris/shell/navigation-policy/hris-navigation-policy-runtime.test.ts apps/dwp/src/features/hris/shell/navigation-policy/hris-navigation-policy-runtime.tsx apps/dwp/src/features/hris/shell/navigation-policy/seven-workbench-navigation-policy.test.ts apps/dwp/src/features/hris/shell/navigation-policy/seven-workbench-navigation-policy.ts apps/dwp/src/pages/hcm.test.ts apps/dwp/src/pages/hcm.tsx apps/dwp/src/routes/product-route-contracts.generated.test.ts apps/dwp/src/routes/product-surface-authorization.generated.ts apps/dwp/src/vite-env.d.ts libs/shared-utils/src/test-utils/pilot-authorization-fixtures.generated.ts scripts/product-authorization-fixture-versions.mjs",
+        "result": "PASS_EXIT_0_EMPTY_OUTPUT"
+      },
+      "reviewCorrection": {
+        "receivedFindings": [
+          "Stage-A notice needed exact unsupported download, revoke, verification, expiry, access-audit and download-audit disclosure plus zero related controls and network-call proof.",
+          "The stale Production remains unmounted wording needed mounted-read-only and ACTION-withheld semantics.",
+          "minimumBundleVersion 52 needed active V3 runtime validation against generated registry version and checksum with fail-close behavior."
+        ],
+        "targetedCommand": "yarn vitest run apps/dwp/src/features/hris/employee-services/certificates/testing/certificate-workbench.test.tsx apps/dwp/src/features/hris/shell/navigation-policy/seven-workbench-navigation-policy.test.ts apps/dwp/src/features/hris/shell/navigation-policy/hris-navigation-policy-runtime.test.ts",
+        "targetedResult": "PASS_3_FILES_56_OF_56",
+        "smallestAssertionRerunReason": "After the 56-of-56 run, the unsupported-control test was strengthened to assert that clicking the disabled action performs no additional owner-adapter or network call; only the changed certificate workbench test file required another run.",
+        "smallestAssertionRerunCommand": "yarn vitest run apps/dwp/src/features/hris/employee-services/certificates/testing/certificate-workbench.test.tsx",
+        "smallestAssertionRerunResult": "PASS_1_FILE_27_OF_27",
+        "eslintCommand": "yarn eslint apps/dwp/src/features/hris/employee-services/certificates/certificate-workbench.tsx apps/dwp/src/features/hris/employee-services/certificates/testing/certificate-workbench.test.tsx apps/dwp/src/features/hris/shell/navigation-policy/seven-workbench-navigation-policy.ts apps/dwp/src/features/hris/shell/navigation-policy/seven-workbench-navigation-policy.test.ts apps/dwp/src/features/hris/shell/navigation-policy/hris-navigation-policy-runtime.tsx apps/dwp/src/features/hris/shell/navigation-policy/hris-navigation-policy-runtime.test.ts",
+        "eslintResult": "PASS_EXIT_0",
+        "finalAssertionTestFileEslintCommand": "yarn eslint apps/dwp/src/features/hris/employee-services/certificates/testing/certificate-workbench.test.tsx",
+        "finalAssertionTestFileEslint": "PASS_EXIT_0",
+        "diffCheck": "PASS"
+      }
+    },
+    "repositoryWideSuiteExecuted": false,
+    "repositoryWideSuiteRerun": false,
+    "testExecutionDuringEvidenceDraft": false
+  },
+  "independentSourceReviews": {
+    "backend": {
+      "decision": "GO",
+      "p0": 0,
+      "p1": 0,
+      "p2": 0,
+      "reviewedHead": "d739802af71bb56c6c2b1e1de433de503eecf0c7",
+      "reviewedTree": "ae5aba749390685eff5aeb041f39a8d4f2ada0d0",
+      "reviewedPathCount": 43
+    },
+    "frontend": {
+      "initialDecision": "NO_GO",
+      "initialP0": 0,
+      "initialP1": 2,
+      "initialP2": 2,
+      "correctionDecision": "GO",
+      "correctionP0": 0,
+      "correctionP1": 0,
+      "correctionP2": 0,
+      "reviewedHead": "5f61fcf1454d73553e7b0c0f2a55a16da689b105",
+      "reviewedTree": "7ee0310f0ed87c84f14d2b330ff68b1f4e38dbe4",
+      "reviewedPathCount": 25
+    },
+    "resultEvidenceDocument": {
+      "decision": "GO_AFTER_TARGETED_SEAL_PATCH",
+      "p0": 0,
+      "p1": 0,
+      "p2": 2
+    }
+  },
+  "sourceBoundary": {
+    "feature": "HRIS_HRM_CERTIFICATE_WORKBENCH",
+    "minimumBundleVersion": 52,
+    "authMigration": "V261",
+    "backendActionContractGeneratedAndEnforcedOnCandidate": true,
+    "frontendReadOnlyPageDataMountImplementedOnCandidate": true,
+    "frontendActionDelegateImplemented": false,
+    "frontendActionUiAuthorized": false,
+    "frontendActionUiWithheldReason": "The trusted subject person object version and accepted cross-surface HIGH coordinator remain absent from the accepted frontend projection contract.",
+    "runtimeDefault": "OFF",
+    "automaticImportEnabled": false,
+    "backendActionContractActivationAuthorized": false,
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "tenantEnrollmentCount": 0,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "directModuleMergeAuthorized": false,
+    "browserAcceptanceComplete": false,
+    "browserGateState": "PENDING_AFTER_EXACT_CENTRAL_MERGE",
+    "downloadOrRevokeOrVerificationOrExpiryIntegrated": false,
+    "accessOrDownloadAuditAcceptanceComplete": false,
+    "hrm009FullSliceComplete": false,
+    "batch03Complete": false,
+    "r7Complete": false
+  },
+  "residualsCarriedForward": [
+    "frontend/backend Unicode idempotency length difference",
+    "local Bearer, If-Match and certificate-type handling narrower than some input schemas",
+    "broad local Problem enum",
+    "actual PostgreSQL two-session receipt race not run",
+    "repository SQL limit/keyset pushdown absent",
+    "historical broad and PostgreSQL raw XML preservation provenance insufficient"
+  ],
+  "result": "EXACT_BACKEND_AND_FRONTEND_CANDIDATES_AND_BOUNDED_EVIDENCE_REVIEWED_READY_FOR_CENTRAL_ADMISSION",
+  "nonClaims": [
+    "This evidence document by itself does not merge either candidate.",
+    "Either candidate has already been merged to dwp-dev.",
+    "The read-only browser acceptance gate is complete.",
+    "The HRM-009 ACTION UI is implemented or authorized.",
+    "Any feature is activated or any tenant is enrolled.",
+    "BASE-TFR-HRM-009, Batch-03 or R7 is complete."
+  ]
+}

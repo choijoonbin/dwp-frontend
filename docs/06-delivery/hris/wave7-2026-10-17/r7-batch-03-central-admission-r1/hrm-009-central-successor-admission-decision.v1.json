@@ -1,0 +1,189 @@
+{
+  "schema": "dwp.hris.r7-batch03-hrm009-central-successor-admission-decision.v1",
+  "decisionId": "HRIS-WAVE7-R7-BATCH03-HRM009-CENTRAL-SUCCESSOR-ADMISSION-20261018-R1",
+  "issuedAt": "2026-10-18T07:36:22+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "authorizedActor": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "SEALED_EXACT_TWO_HEAD_NO_FF_ADMISSION_AUTHORIZED_DEFAULT_OFF_ZERO_ENROLLMENT_BROWSER_GATE_PENDING",
+  "immutability": {
+    "sealed": true,
+    "reason": "Two independent document reviews reproduced the evidence, Git identities and boundaries; the reviewed draft received GO with no P0 or P1 finding and the two P2 evidence clarifications are incorporated in this seal.",
+    "reviewedDraft": {
+      "sha256": "17a82086f8ca060e636879fe7789088b7843f339ccc1cdcc529bbe29a049cb74",
+      "bytes": 7739
+    },
+    "amendmentPolicyAfterSeal": "APPEND_ONLY_SUCCESSOR_WITH_NEW_DECISION_ID_AND_SHA256"
+  },
+  "evidence": {
+    "resultEvidence": {
+      "path": "hrm-009-central-successor-result-evidence.v1.json",
+      "sha256": "5634142bf7c8e9ffda88a11a10895869a25f78f3fbf07f1b88676925bd01b26c",
+      "bytes": 33427,
+      "referenceReproduced": true,
+      "documentReviewState": "GO"
+    },
+    "executionAuthority": {
+      "path": "hrm-009-central-successor-execution-authority.v1.json",
+      "sha256": "347398ba3b7303a3499a9b18ab9a494fdf3c03e90cce1726f95522bd5334f2a7",
+      "bytes": 39007,
+      "carrierCommit": "723f5b3fbc3fbd92799bb0f474078a1a255db0b5",
+      "carrierTree": "eb3132fdcbdb36e95fddc080f1ec281ba9a552f6",
+      "referenceReproduced": true
+    },
+    "materializationStartReceipt": {
+      "path": "hrm-009-central-successor-materialization-start-receipt.v1.json",
+      "sha256": "e896b8c13f7bf57a300da0ea644ace8feb5e8f623b269e62c06642ca05a41735",
+      "bytes": 4484,
+      "carrierCommit": "b90c439c019fe048ff2cc14cc4e782860eea42f8",
+      "carrierTree": "35c253b65872878baf2e590502a9134a030bbc99",
+      "referenceReproduced": true
+    }
+  },
+  "centralCarrierBeforeDecisionFiles": {
+    "repository": "dwp-frontend",
+    "branch": "dwp-dev",
+    "head": "b90c439c019fe048ff2cc14cc4e782860eea42f8",
+    "tree": "35c253b65872878baf2e590502a9134a030bbc99",
+    "originHead": "b90c439c019fe048ff2cc14cc4e782860eea42f8",
+    "originExact": true,
+    "clean": true
+  },
+  "centralWorktreeAfterDraftFiles": {
+    "headUnchanged": "b90c439c019fe048ff2cc14cc4e782860eea42f8",
+    "treeUnchanged": "35c253b65872878baf2e590502a9134a030bbc99",
+    "originExact": true,
+    "clean": false,
+    "expectedUntrackedOnly": [
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-central-admission-r1/hrm-009-central-successor-admission-decision.v1.json",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-central-admission-r1/hrm-009-central-successor-result-evidence.v1.json"
+    ],
+    "unexpectedTrackedOrUntrackedPathCount": 0
+  },
+  "candidateAdmission": {
+    "strategy": "NO_FF_EXACT_REVIEWED_HEADS_ONLY",
+    "conflictPolicy": "STOP_ON_CONFLICT_NO_AUTOMATIC_RESOLUTION",
+    "backend": {
+      "repository": "dwp-backend",
+      "targetBranch": "dwp-dev",
+      "sourceBranch": "codex/hris-wave7-r7-batch03-hrm-009-central-backend-20261018-r1",
+      "baseCommit": "1e3bd64fb13bdc7d772913ad48a9cce315ea05b0",
+      "baseTree": "7097f60a9ccca1fe3cc6449a4242d6b83c1b8fdf",
+      "exactHead": "d739802af71bb56c6c2b1e1de433de503eecf0c7",
+      "exactTree": "ae5aba749390685eff5aeb041f39a8d4f2ada0d0",
+      "changedPathCount": 43,
+      "pathBlobManifestSha256": "a2d7bcdc3ba1b7f92cf85550ac32c858255365f71aea29a3fece9adce1824daa",
+      "upstreamExact": true,
+      "worktreeClean": true,
+      "independentSourceReview": {
+        "decision": "GO",
+        "p0": 0,
+        "p1": 0,
+        "p2": 0
+      }
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "targetBranch": "dwp-dev",
+      "sourceBranch": "codex/hris-wave7-r7-batch03-hrm-009-central-frontend-20261018-r1",
+      "baseCommit": "723f5b3fbc3fbd92799bb0f474078a1a255db0b5",
+      "baseTree": "eb3132fdcbdb36e95fddc080f1ec281ba9a552f6",
+      "exactHead": "5f61fcf1454d73553e7b0c0f2a55a16da689b105",
+      "exactTree": "7ee0310f0ed87c84f14d2b330ff68b1f4e38dbe4",
+      "changedPathCount": 25,
+      "pathOnlyManifestSha256": "ddfb817039f183c5842709c8b1386027e93ec8770f69a0962de835c7e746f5e7",
+      "nameStatusManifestSha256": "ecb78726bf1e25d27994046097ba1931d24f9eb42558e38f091566cb6f40581e",
+      "contentManifestSha256": "6f2c1575b23d47d85b44c84716a5e60192b21d0a9553e27155f1f59f35cfd346",
+      "upstreamExact": true,
+      "worktreeClean": true,
+      "independentSourceReview": {
+        "decision": "GO_AFTER_CORRECTION",
+        "p0": 0,
+        "p1": 0,
+        "p2": 0
+      }
+    },
+    "exactHeadsOnly": true,
+    "substituteHeadOrTipAuthorized": false,
+    "directModuleMergeAuthorized": false,
+    "mergeAuthorized": true,
+    "mergeAuthorizationPending": null
+  },
+  "postMergeVerificationPolicy": {
+    "allowedChecksOnly": [
+      "Verify each exact reviewed head is an ancestor of its target dwp-dev merge commit.",
+      "Verify every admitted path resolves to the exact reviewed blob or exact reviewed content at the target merge tree.",
+      "Verify each target dwp-dev worktree is clean after receipt creation boundaries are accounted for.",
+      "Verify each final dwp-dev head equals origin/dwp-dev after push."
+    ],
+    "moduleTestRerunAuthorized": false,
+    "boundedTestRerunAuthorized": false,
+    "repositoryWideSuiteAuthorized": false,
+    "reason": "The exact candidate heads already carry bounded execution evidence and independent source review. Central admission is a Git identity and provenance operation, not another test cycle."
+  },
+  "browserGate": {
+    "required": true,
+    "timing": "AFTER_BOTH_EXACT_NO_FF_MERGES_AND_CENTRAL_INTEGRATION_RECEIPT",
+    "currentState": "PENDING",
+    "scope": "Default-OFF read-only PAGE/DATA mount only; no ACTION delegate or write path.",
+    "completionClaimBeforeGate": false
+  },
+  "rolloutBoundary": {
+    "feature": "HRIS_HRM_CERTIFICATE_WORKBENCH",
+    "minimumBundleVersion": 52,
+    "authMigration": "V261",
+    "bundleStatus": "DRAFT",
+    "runtimeDefault": "OFF",
+    "automaticImportEnabled": false,
+    "backendActionContractActivationAuthorized": false,
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "tenantEnrollmentCount": 0,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "frontendActionUiAuthorized": false,
+    "frontendActionDelegateAuthorized": false,
+    "downloadRevokeVerificationExpiryExpansionAuthorized": false,
+    "accessOrDownloadAuditCompletionAuthorized": false
+  },
+  "completionBoundary": {
+    "sourceAdmissionAuthorized": true,
+    "browserAcceptanceComplete": false,
+    "hrm009FullSliceCompletionAuthorized": false,
+    "batch03CompletionAuthorized": false,
+    "r7CompletionAuthorized": false,
+    "businessCompletionIncrement": 0
+  },
+  "documentReview": {
+    "decision": "GO_AFTER_TARGETED_SEAL_PATCH",
+    "p0": 0,
+    "p1": 0,
+    "p2": 2,
+    "reviewers": [
+      "/root/r7_hrm009_backend_result_review",
+      "/root/r7_hrm009_frontend_result_review"
+    ],
+    "requiredChecks": [
+      "Reproduce every referenced SHA-256 and byte count.",
+      "Reproduce current main HEAD, tree and origin equality.",
+      "Reproduce both candidate HEADs, trees, bases, path counts, manifests, clean states and upstream equality.",
+      "Confirm bounded execution history does not claim a full-suite rerun.",
+      "Confirm exact two-head, stop-on-conflict, no-test-rerun and post-merge browser boundaries."
+    ]
+  },
+  "residualsCarriedForward": [
+    "frontend/backend Unicode idempotency length difference",
+    "local Bearer, If-Match and certificate-type handling narrower than some input schemas",
+    "broad local Problem enum",
+    "actual PostgreSQL two-session receipt race not run",
+    "repository SQL limit/keyset pushdown absent",
+    "historical broad and PostgreSQL raw XML preservation provenance insufficient"
+  ],
+  "decision": "AUTHORIZE_EXACT_REVIEWED_BACKEND_AND_FRONTEND_HEADS_ONLY_FOR_NO_FF_DWP_DEV_MERGE_STOP_ON_CONFLICT_NO_TEST_RERUN",
+  "nonClaims": [
+    "Neither exact candidate has been merged by this decision document itself.",
+    "The browser gate is complete.",
+    "The HRM-009 ACTION UI is implemented or authorized.",
+    "Any feature is activated or any tenant is enrolled.",
+    "BASE-TFR-HRM-009, Batch-03 or R7 is complete."
+  ]
+}
