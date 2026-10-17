@@ -1,0 +1,119 @@
+{
+  "schema": "dwp.hris.wave7.module-start-token-replacement.v4",
+  "tokenId": "HRIS-WAVE7-R7-BATCH-01-START-BASE-TFR-TIM-007-20261017-R4",
+  "issuedAt": "2026-10-17T21:49:16+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "sliceId": "BASE-TFR-TIM-007",
+  "moduleSession": "HRIS-TIM",
+  "moduleThreadId": "01a0f53d-d3c4-7790-b175-5d84c90f341b",
+  "state": "EXACT_TOUCH_BOUNDARY_REALLOCATION_ISSUED_FOR_TWO_V12_MIGRATION_COUNT_ASSERTIONS",
+  "supersession": {
+    "predecessorToken": {
+      "path": "base-tfr-tim-007.start-token-replacement.v3.json",
+      "sha256": "49368c81f212a4e3a7bfa806b865188d719b566bf8ff9b7bc55858149d24c477",
+      "bytes": 13465,
+      "disposition": "SUPERSEDED_ONLY_TO_REALLOCATE_ONE_EXISTING_REGRESSION_TEST_FILE_AFTER_THE_AUTHORIZED_V12_INCREMENTED_V10_TO_LATEST_FROM_ONE_MIGRATION_TO_TWO"
+    },
+    "inheritance": "Every business, security, producer, ACL, rollout, completion, worktree, source-authority and verification constraint in R3 remains authoritative except for the single path and two assertion edits explicitly added by this token.",
+    "explicitOverride": "Add dwp-time-server/src/test/java/com/dwp/services/time/timecard/TimecardMigrationIntegrationTest.java to the backend touch boundary solely to change two V10-to-latest migrationsExecuted expectations from one to two after the already-authorized V12 migration."
+  },
+  "haltEvidence": {
+    "exactBoundedCommandAttempts": 1,
+    "exactBoundedCommandResult": {
+      "timeTestsObserved": 50,
+      "timeFailuresObserved": 7,
+      "payTaskReached": false
+    },
+    "smallestTargetCorrectionsAlreadyClosed": {
+      "authorizedTimeFailures": 5,
+      "result": "PASS",
+      "policy": "Each corrected failure was rerun only at the smallest method or class target."
+    },
+    "paySmallestTarget": {
+      "tests": 8,
+      "failures": 0,
+      "result": "PASS"
+    },
+    "remainingFailures": [
+      {
+        "testClass": "com.dwp.services.time.timecard.TimecardMigrationIntegrationTest",
+        "testMethod": "seededV10UpgradePreservesHistoryCanonicalizesLegacyWriterAndSharesCounter",
+        "reason": "V10-to-latest now applies the authorized V11 and V12 migrations, while the predecessor assertion expects one migration."
+      },
+      {
+        "testClass": "com.dwp.services.time.timecard.TimecardMigrationIntegrationTest",
+        "testMethod": "v10CanonicalZeroQuantityNullReasonReversalIsPreservedButRejectedForNewRows",
+        "reason": "V10-to-latest now applies the authorized V11 and V12 migrations, while the predecessor assertion expects one migration."
+      }
+    ],
+    "failureClassification": "EXPECTED_FORWARD_ONLY_MIGRATION_COUNT_SUCCESSOR_MAINTENANCE_NOT_A_RUNTIME_OR_SCHEMA_FAILURE",
+    "commitOrPushPerformedAtHalt": false
+  },
+  "backendWorktreeAtReallocation": {
+    "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261017/r7-batch01/tim-007/backend",
+    "branch": "codex/hris-wave7-r7-batch01-tim-007-backend-20261017-r1",
+    "baseHead": "fcb5c1f397d14ea77c7ff9714a272449d99e18a4",
+    "baseUpstreamHead": "fcb5c1f397d14ea77c7ff9714a272449d99e18a4",
+    "changedFileCount": 39,
+    "pathAndContentManifestAlgorithm": "From the backend worktree, emit git ls-files --modified --others --exclude-standard as NUL-delimited paths, sort paths bytewise with sort -z, run shasum -a 256 for every path in that order using the exact '<hex><two spaces><path><newline>' output, then hash that complete manifest with shasum -a 256.",
+    "pathAndContentManifestSha256": "650936890b7b68f54c95d98cb24e044c0bfd003905eb73d314aa80c6624f4f78",
+    "porcelainAlgorithm": "Hash the exact bytes emitted by git status --porcelain=v1 with shasum -a 256.",
+    "porcelainSha256": "9dd07cfda4764d28583fb42918a3a44aeadb28a78a2b3a81e96b0ebd04a4b509",
+    "diffCheck": "PASS",
+    "instruction": "Resume this halted WIP in place without merge, rebase, cherry-pick, reset, copy or regeneration."
+  },
+  "exactTouchBoundaryReallocation": {
+    "addedBackendPath": "dwp-time-server/src/test/java/com/dwp/services/time/timecard/TimecardMigrationIntegrationTest.java",
+    "allowedEdits": [
+      {
+        "testMethod": "seededV10UpgradePreservesHistoryCanonicalizesLegacyWriterAndSharesCounter",
+        "assertionSemanticChange": "migrationsExecuted expectation changes from exactly 1 to exactly 2 for V10-to-latest because V11 and V12 are both applied."
+      },
+      {
+        "testMethod": "v10CanonicalZeroQuantityNullReasonReversalIsPreservedButRejectedForNewRows",
+        "assertionSemanticChange": "migrationsExecuted expectation changes from exactly 1 to exactly 2 for V10-to-latest because V11 and V12 are both applied."
+      }
+    ],
+    "allowedProductionChanges": 0,
+    "allowedAdditionalTestChanges": 0,
+    "allR3TouchPathsRemainInherited": true,
+    "allR3ForbiddenPathsAndBehaviorsRemainInherited": true
+  },
+  "verification": {
+    "fullBoundedCommandRerunAuthorized": false,
+    "repositoryWideTestAuthorized": false,
+    "frontendRerunAuthorized": false,
+    "onlyAuthorizedCommand": "./gradlew :dwp-time-server:test --tests 'com.dwp.services.time.timecard.TimecardMigrationIntegrationTest.seededV10UpgradePreservesHistoryCanonicalizesLegacyWriterAndSharesCounter' --tests 'com.dwp.services.time.timecard.TimecardMigrationIntegrationTest.v10CanonicalZeroQuantityNullReasonReversalIsPreservedButRejectedForNewRows' --no-daemon --max-workers=1",
+    "successComposition": "The original exact run's passing tests, the five passed smallest-target Time corrections, the eight passed PAY tests and this two-method PASS together close the R3 bounded verification set without rerunning already-passed tests.",
+    "onFailure": "Correct only the failing assertion or its directly proven cause inside the inherited R3 boundary, then rerun only the single failing method. Stop if any additional path or semantic expansion is required."
+  },
+  "permittedCompletion": {
+    "backend": "After the exact two-method target passes, run static boundary checks and git diff --check, then commit and push only the TIM module backend branch.",
+    "frontend": "Do not rerun frontend tests. Preserve reviewed source commit 0ae922ee9cbb57a705b90d53a29d49c97f24e9cb; add and push only the inherited module-result evidence if required.",
+    "central": "Do not merge to dwp-dev, mount the module, enable the feature, enroll a tenant or claim business completion from the module session.",
+    "requiredReport": [
+      "backend commit, tree and upstream parity",
+      "changed-path proof against R3 plus this exact reallocation",
+      "two-method test count and result",
+      "composed bounded verification totals without a broad rerun",
+      "producer absence, ACL denials, default-OFF and zero business-completion credit evidence",
+      "frontend evidence commit and tree if evidence is added",
+      "remaining P0, P1 and P2 findings"
+    ]
+  },
+  "invalidationConditions": [
+    "the halted 39-file manifest or porcelain digest differs before resumption",
+    "any edit other than the two migration-count assertions is made in TimecardMigrationIntegrationTest",
+    "any path outside R3 plus the one reallocated test file is required",
+    "the exact two-method target reveals a runtime, schema, ACL or contract failure rather than the sealed count change",
+    "any R3 hash-bound authority bytes change",
+    "a second Time migration, PAY migration, producer, materializer, inferred authority, activation, enrollment or central merge is attempted"
+  ],
+  "completionBoundary": {
+    "moduleResultStateAfterPass": "MODULE_CONSUMER_COMPLETE_BRANCHES_PUSHED_EXTERNAL_PERIOD_PRODUCER_GATE_DEFAULT_OFF",
+    "independentCentralReviewStillRequired": true,
+    "directDwpDevMergeAuthorized": false,
+    "activationComplete": false,
+    "businessCompletionCredit": 0
+  }
+}
