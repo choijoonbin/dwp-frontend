@@ -1,0 +1,59 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-01-validation-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-01-DISPATCH-VALIDATION-20261017-R1",
+  "validatedAt": "2026-10-17T15:25:00+09:00",
+  "validatedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "result": "PASS_PACKET_CONTROL_ONLY",
+  "manifest": {
+    "path": "central-batch-manifest.v1.json",
+    "sha256": "5a10f45872c6f7e8959faa16b7313df3e60e4eb3057cacffa779728ba321073c"
+  },
+  "validatedArtifacts": [
+    {"path": "source-authority.v1.json", "sha256": "d40df88e26530bd467c5cc6210d967b31a521f06647e672987393c1d1837165e"},
+    {"path": "central-authorization-successor-packet.v1.json", "sha256": "dd1b68e54ee6cbc73c0fa1b9da181fac04575c702f89c98ce27c73968b29963a"},
+    {"path": "start-token-state.v1.json", "sha256": "cd09dabbf705a2a4f5d3c4833a6795c9a4b3029b5a79b55c2bd4c534d806d810"},
+    {"path": "owner-packets/base-tfr-hrm-005.owner-packet.v1.json", "sha256": "0fcd8d27fd283b5ddbd697e9ccce3427966e960d80186f02c7cba709cfb66506"},
+    {"path": "owner-packets/base-tfr-pay-013.owner-packet.v1.json", "sha256": "bbb1576a3c2672f29ddad43ae6413f69c033a0037416075aaeab6f2b9f178ed8"},
+    {"path": "owner-packets/base-tfr-per-001.owner-packet.v1.json", "sha256": "60037320b9fffa4a5dfe1a7867f8087a71de791fde76047c14ddd101dedc514f"},
+    {"path": "owner-packets/base-tfr-sys-002.owner-packet.v1.json", "sha256": "fb41aa71b2f6fc16394a8d97491797f80b1b74d61ea41b4fce1384a65b881f33"},
+    {"path": "owner-packets/base-tfr-tim-007.owner-packet.v1.json", "sha256": "91ad50b4676c12ba041c4661b02ecfe65370dd3bfffbad74a972db700a54a9f8"}
+  ],
+  "checks": [
+    {"id": "VAL-001", "result": "PASS", "evidence": "Ten dispatch JSON files parse; five owner packet identities are unique and equal the immutable batch closed set."},
+    {"id": "VAL-002", "result": "PASS", "evidence": "Every source-authority immutable file and predecessor SHA-256 equals current bytes at carrier ec5170a1 or backend b0db3577 as recorded."},
+    {"id": "VAL-003", "result": "PASS", "evidence": "Backend b0db3577, frontend business pin af65a9c6, agent 9beb5439 and carrier ec5170a1 commits and trees resolve; af65a9c6 is an ancestor of ec5170a1."},
+    {"id": "VAL-004", "result": "PASS", "evidence": "Authorization v48 bundle file, embedded checksum, index file and index checksum match the immutable predecessor; no product-authorization v49 artifact exists."},
+    {"id": "VAL-005", "result": "PASS", "evidence": "Candidate PAGE/DATA/ACTION tuples retain source-register methods, paths, owner services, profiles, capabilities and targets; unresolved predicates, routes and step-up values remain explicit generator blockers."},
+    {"id": "VAL-006", "result": "PASS", "evidence": "PEP-TIM-026 remains ACTION exactly as classified by the source register and was not silently remodeled to DATA."},
+    {"id": "VAL-007", "result": "PASS", "evidence": "BASE-TFR-PER-001 remains NON_UI with no browser route or v49 candidate; trigger, event, type, recipient, purpose, variables, templates and deep-link semantics remain centrally undecided."},
+    {"id": "VAL-008", "result": "PASS", "evidence": "Migration high-water is People main V56, Payroll V51, Notification V35, Platform V330, Time V11 and People Performance V18; proposed next versions are V57 conditional, V52, V36, V331 and V12."},
+    {"id": "VAL-009", "result": "PASS", "evidence": "Every owner packet is default OFF with zero enrolled tenants and false source, migration, worktree, token, merge and activation authority."},
+    {"id": "VAL-010", "result": "PASS", "evidence": "Start-token issued set is empty; all five candidate labels explicitly state that a condition label is not authority."},
+    {"id": "VAL-011", "result": "PASS", "evidence": "Changed paths are confined to docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-dispatch-r1; historical registers, product sources and generated artifacts are unchanged."},
+    {"id": "VAL-012", "result": "PASS", "evidence": "HRM-008, PAY-011, PEP-SYS-040, SYS-006, PLAT-004 common notification and XCON-006/XCON-008..011 are reuse/no-recount boundaries."}
+  ],
+  "migrationHighWater": {
+    "PEOPLE_MAIN": 56,
+    "PAYROLL_MAIN": 51,
+    "NOTIFICATION_MAIN": 35,
+    "PLATFORM_MAIN": 330,
+    "TIME_MAIN": 11,
+    "PEOPLE_PERFORMANCE": 18
+  },
+  "testPolicy": {
+    "jsonSourceHashPinAndBoundaryValidationExecuted": true,
+    "productTestsExecuted": false,
+    "databaseMigrationsExecuted": false,
+    "browserTestsExecuted": false,
+    "reason": "The batch carrier grants scope packet authority only; future owner start tokens own targeted product verification."
+  },
+  "authority": {
+    "validationReceiptIssued": true,
+    "sourceImplementationAuthorized": false,
+    "migrationAuthoringAuthorized": false,
+    "worktreeMaterializationAuthorized": false,
+    "startTokenIssued": false,
+    "mergeToDwpDevAuthorized": false,
+    "activationAuthorized": false
+  }
+}

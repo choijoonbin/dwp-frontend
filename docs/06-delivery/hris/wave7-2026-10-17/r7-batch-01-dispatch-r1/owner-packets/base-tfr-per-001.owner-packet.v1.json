@@ -1,0 +1,203 @@
+{
+  "schema": "dwp.hris.wave7.r7-owner-packet.v1",
+  "packetId": "HRIS-WAVE7-R7-BATCH-01-OWNER-BASE-TFR-PER-001-20261017-R1",
+  "revision": 1,
+  "immutability": {"sealed": true, "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_PACKET_ID_AND_SHA256"},
+  "issuedAt": "2026-10-17T15:25:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "SEALED_SCOPE_CENTRAL_SEMANTIC_DECISION_REQUIRED_PRE_TOKEN",
+  "module": "PER",
+  "moduleSession": "HRIS-PER",
+  "sliceId": "BASE-TFR-PER-001",
+  "sourceRef": "TFR-PER-001",
+  "sourceAuthority": {
+    "path": "../source-authority.v1.json",
+    "sha256": "d40df88e26530bd467c5cc6210d967b31a521f06647e672987393c1d1837165e",
+    "overlayLine": 45,
+    "sourceFamilySha256": "cb7aa91280cca068e3ea8515562402a6584b12e2505f04d9b9c99917a22f114c",
+    "sourceRowCount": 2,
+    "r7C0Classification": "NO_CURRENT_SLICE_RESULT"
+  },
+  "businessMeaning": "Replace the SKKF mail-template preview and direct mail-send behaviors with one minimal, allowlisted Performance-owned notification intent delivered through the shared notification platform without direct channel coupling.",
+  "exactDelta": {
+    "provenExisting": [
+      "PLAT-004 notification intent and receipt foundations, generated contracts and the generic NotificationDomainEventTranslator already exist.",
+      "BASE-TFR-HRM-002 already onboarded one exact HRM employee-change source/event/type and Notification V35 templates.",
+      "The Performance schema already has prf_outbox_events and can publish owner events without a new People migration by default."
+    ],
+    "missingWorkAfterCentralDecision": [
+      "Emit one exact Performance-owned requested event from an approved domain transition in the same transaction and existing Performance outbox.",
+      "Allowlist the exact Performance source URI and requested-event pair in the shared translator.",
+      "Register the exact type key, recipient authority, purpose, variable allowlist, template versions and safe deep-link policy in Notification V36.",
+      "Consume receipts without making notification delivery the authority for Performance domain state."
+    ],
+    "centralDecisionBlocker": {
+      "state": "DECISION_REQUIRED_BEFORE_OWNER_SOURCE_TOKEN",
+      "mustSeal": [
+        "one exact triggering Performance domain transition",
+        "one Performance source URI",
+        "one requested-event type and schema version",
+        "one notification typeKey",
+        "recipient authority and recipient reference shape",
+        "purpose code",
+        "allowlisted variable keys",
+        "template keys and locale fallbacks",
+        "safe owner deep-link route and parameters"
+      ],
+      "forbiddenAssumption": "The implementer must not choose a review, goal, cycle, calibration or appeal trigger merely because it appears suitable."
+    },
+    "reuseOnly": [
+      "PLAT-004 intent and receipt contracts",
+      "NotificationDomainEventTranslator framework",
+      "existing Performance outbox",
+      "shared notification delivery, channel selection, preference and receipt infrastructure"
+    ],
+    "noTouchOrRecount": [
+      "Do not copy the HRM source urn:dwp:people:hrm:dwp-experience, EmployeeChangeAppliedNotificationRequested.v1 or HCM.EMPLOYEE_CHANGE_APPLIED type.",
+      "Do not count the generic notification foundation or HRM V35 onboarding as PER-001 delivery.",
+      "Do not add a mail preview screen, direct mail API, raw email address, SMTP call, channel selector or direct notification database write.",
+      "Do not create a browser PAGE, DATA or ACTION route for this NON_UI_SUPPORTING_SLICE.",
+      "Do not create the obsolete historical V1__per_base_tfr_per_001.sql."
+    ]
+  },
+  "ownership": {
+    "repositories": ["dwp-backend"],
+    "runtimeOwners": ["dwp-people-server", "dwp-notification-server"],
+    "singleWriterByConcern": {
+      "performanceDomainEvent": "HRIS-PER in dwp-people-server",
+      "notificationAdmissionAndTemplate": "DWP_NOTIFICATION in dwp-notification-server"
+    },
+    "candidateWritablePathsAfterCentralDecisionAndFreshToken": [
+      "backend:dwp-people-server/src/main/java/com/dwp/services/people/hris/performance/notification/**",
+      "backend:dwp-people-server/src/test/java/com/dwp/services/people/hris/performance/notification/**",
+      "backend:dwp-notification-server/src/main/java/com/dwp/services/notification/integration/NotificationDomainEventTranslator.java",
+      "backend:dwp-notification-server/src/test/java/com/dwp/services/notification/integration/NotificationDomainEventTranslatorTest.java",
+      "backend:dwp-notification-server/src/main/resources/db/migration/V36__register_hcm_performance_notification.sql",
+      "backend:dwp-notification-server/src/test/java/com/dwp/services/notification/migration/**"
+    ],
+    "unallocatedTriggerOwnerPath": "CENTRAL_DECISION_REQUIRED_BEFORE_TOKEN",
+    "readOnlyReusePaths": [
+      "backend:dwp-people-server/src/main/java/com/dwp/services/people/hris/experience/**",
+      "backend:dwp-notification-server/src/main/resources/db/migration/V35__register_hcm_employee_change_applied_notification.sql",
+      "backend:dwp-platform-contracts/**",
+      "frontend:apps/dwp/src/features/hris/performance/**"
+    ],
+    "controlOwnedUntilSeparateDecision": [
+      "all notification semantic values listed in centralDecisionBlocker.mustSeal",
+      "shared generated PLAT-004 contract schema",
+      "any new browser or central authorization route"
+    ],
+    "outsideBoundaryAction": "STOP_AND_REQUEST_EXACT_CROSS_OWNER_OR_SEMANTIC_REALLOCATION"
+  },
+  "experienceContract": {
+    "pageArchetype": "NON_UI_SUPPORTING_SLICE",
+    "canonicalRoute": null,
+    "menuPlacement": null,
+    "frontendImplementationRequired": false,
+    "browserRouteForbidden": true,
+    "userOutcome": "An authorized recipient receives a localized Performance notification linked to the owning Performance workflow, while domain truth and retry remain visible through existing owner surfaces and receipts."
+  },
+  "contracts": {
+    "primary": "CENTRAL_DECISION_REQUIRED",
+    "relatedSharedContract": "PLAT-004",
+    "requestedEvent": "CENTRAL_DECISION_REQUIRED",
+    "sourceUri": "CENTRAL_DECISION_REQUIRED",
+    "typeKey": "CENTRAL_DECISION_REQUIRED",
+    "purposeCode": "CENTRAL_DECISION_REQUIRED",
+    "recipientAuthority": "CENTRAL_DECISION_REQUIRED",
+    "domainRules": [
+      "Performance domain state remains authoritative when notification delivery is delayed, rejected or permanently failed.",
+      "Intent variables and recipient references are minimal and allowlisted; raw addresses and channel choices are not domain payload fields.",
+      "Duplicate owner events and translator replay materialize one logical notification intent and one stable receipt lineage.",
+      "Unknown source, event, type, purpose, recipient or variable fails closed before delivery."
+    ]
+  },
+  "authorization": {
+    "centralAuthV49Required": false,
+    "browserPageDataActionCandidates": [],
+    "state": "NON_UI_NO_BROWSER_AUTH_ROUTE",
+    "serviceBoundary": "PLAT-004 trusted event envelope, tenant, purpose, source/event allowlist and recipient authority",
+    "defaultDeny": true
+  },
+  "dependencies": [
+    {"id": "DEP-001", "state": "CONTRACT_READY_NO_BROWSER_ROUTE"},
+    {"id": "DEP-002", "state": "CONTRACT_READY_ENVELOPE_AND_RECIPIENT_SCOPE_FAIL_CLOSED"},
+    {"id": "DEP-003", "state": "FOUNDATION_READY_OWNER_EVENT_REQUIRED"},
+    {"id": "DEP-015", "state": "FOUNDATION_READY_EXACT_PERFORMANCE_ONBOARDING_MISSING"},
+    {"id": "DEP-016", "state": "FOUNDATION_READY_LOCAL_OUTBOX_REQUIRED"}
+  ],
+  "migration": {
+    "notification": {
+      "stream": "NOTIFICATION_MAIN",
+      "version": "V36",
+      "path": "dwp-notification-server/src/main/resources/db/migration/V36__register_hcm_performance_notification.sql",
+      "state": "REQUIRED_LEASE_WITHHELD",
+      "authoringAllowed": false
+    },
+    "performance": {
+      "stream": "PERFORMANCE",
+      "state": "NO_MIGRATION_AUTHORIZED_REUSE_EXISTING_OUTBOX",
+      "historicalV1Forbidden": true,
+      "rule": "If the sealed trigger proves a Performance schema delta, stop and request a separate next-version lease after current V18; this packet grants none."
+    }
+  },
+  "rollout": {
+    "feature": "HRIS_PERFORMANCE_NOTIFICATION_ONBOARDING",
+    "runtimeDefault": "OFF",
+    "enrolledTenants": [],
+    "tenantActivationAuthorized": false,
+    "customerDataAuthorized": false,
+    "externalDeliveryActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "acceptanceCriteria": [
+    {"id": "PER001-AC-01", "criterion": "A separately sealed approved Performance transition appends exactly one minimal requested event in the same domain transaction."},
+    {"id": "PER001-AC-02", "criterion": "The translator accepts only the sealed Performance source URI, requested-event type, schema version, purpose and typeKey combination."},
+    {"id": "PER001-AC-03", "criterion": "Recipient references and variables match the sealed allowlists; raw email addresses, direct channel selection and arbitrary template keys are rejected."},
+    {"id": "PER001-AC-04", "criterion": "Exact replay is idempotent and mismatched digest, tenant, source, type, purpose, recipient or variable fails closed."},
+    {"id": "PER001-AC-05", "criterion": "Notification V36 registers exact templates, locale fallback and type metadata without changing V35 or HRM onboarding bytes."},
+    {"id": "PER001-AC-06", "criterion": "Delivery accepted, delayed, rejected and permanently failed outcomes do not mutate authoritative Performance state."},
+    {"id": "PER001-AC-07", "criterion": "The deep link is allowlisted to the sealed owner route and contains no tenant override, raw address or sensitive payload."},
+    {"id": "PER001-AC-08", "criterion": "Feature OFF or unenrolled tenant emits no external notification request and creates no browser route."},
+    {"id": "PER001-AC-09", "criterion": "Targeted evidence covers producer transactionality, translator negative cases, retry/replay and receipt lineage."},
+    {"id": "PER001-AC-10", "criterion": "Changed-path evidence proves PLAT-004, HRM V35, generated contracts and frontend were reused without duplicate completion credit."}
+  ],
+  "targetedVerification": {
+    "policy": "SEMANTIC_DECISION_TESTS_THEN_PER_PRODUCER_AND_NOTIFICATION_ONBOARDING_CLUSTER; FAILED_TARGET_ONLY_AFTER_CORRECTION",
+    "backendTargets": [
+      "new Performance notification producer contract test named after the separately sealed trigger",
+      "existing NotificationDomainEventTranslatorTest extended only for the exact Performance pair and negative matrix",
+      "new Notification V36 migration/catalog/template invariant test",
+      "shared PLAT-004 provider contract regression"
+    ],
+    "frontendTargets": [],
+    "databaseTargets": ["Notification V36 clean install and V35-to-V36 upgrade"],
+    "repositoryWideSuitePerCorrection": false
+  },
+  "evidenceContract": {
+    "required": [
+      "separate central semantic decision receipt",
+      "People and Notification module branch SHAs",
+      "ten acceptance results with test or source evidence",
+      "Notification V36 clean and V35-to-V36 upgrade evidence",
+      "source/event/type/purpose/recipient/variable negative matrix",
+      "idempotency, retry and receipt lineage evidence",
+      "default-off, zero-enrollment and no-browser-route evidence",
+      "changed-path and no-recount manifest"
+    ],
+    "businessCompletionCreditBeforeEvidence": 0
+  },
+  "authority": {
+    "scopePacketSealed": true,
+    "semanticDecisionSealed": false,
+    "sourceImplementationAuthorized": false,
+    "migrationAuthoringAuthorized": false,
+    "worktreeMaterializationAuthorized": false,
+    "moduleBranchCommitAuthorized": false,
+    "moduleBranchPushAuthorized": false,
+    "startTokenIssued": false,
+    "mergeToDwpDevAuthorized": false,
+    "activationAuthorized": false
+  },
+  "nextGate": "SEPARATE_PER_NOTIFICATION_SEMANTIC_DECISION_AND_CROSS_OWNER_TOUCH_PACKET_PLUS_ACTIVE_NOTIFICATION_V36_LEASE_THEN_FRESH_PINNED_PER_START_TOKEN"
+}

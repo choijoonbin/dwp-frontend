@@ -1,0 +1,210 @@
+{
+  "schema": "dwp.hris.wave7.r7-owner-packet.v1",
+  "packetId": "HRIS-WAVE7-R7-BATCH-01-OWNER-BASE-TFR-SYS-002-20261017-R1",
+  "revision": 1,
+  "immutability": {"sealed": true, "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_PACKET_ID_AND_SHA256"},
+  "issuedAt": "2026-10-17T15:25:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "SEALED_PRE_TOKEN_CENTRAL_AUTH_AND_V331_LEASE_REQUIRED",
+  "module": "SYS",
+  "moduleSession": "HRIS-SYS",
+  "sliceId": "BASE-TFR-SYS-002",
+  "sourceRef": "TFR-SYS-002",
+  "sourceAuthority": {
+    "path": "../source-authority.v1.json",
+    "sha256": "d40df88e26530bd467c5cc6210d967b31a521f06647e672987393c1d1837165e",
+    "overlayLine": 69,
+    "sourceFamilySha256": "5b4a9d774a961d56f2225749f6981122106d3b863b8a2d601034313758559d6f",
+    "sourceRowCount": 5,
+    "r7C0Classification": "NO_CURRENT_SLICE_RESULT"
+  },
+  "businessMeaning": "Replace legacy server-error, unauthorized, access-denied and exception-history pages with a central tenant-safe HRIS operations view that supports read, redacted detail, receipt inspection and allowlisted owner deep links while leaving every recovery command with its domain owner.",
+  "exactDelta": {
+    "provenExisting": [
+      "PEP-SYS-040 GET /api/platform/v1/admin/hris/command-receipts/{receiptId} is already implemented in HrisCommandReceiptController with v48 command-receipt capability, originating-command predicate, opaque denial and targeted tests.",
+      "Generic product telemetry and WorkplaceExceptionConsole provide reusable operational patterns but are not the SYS-002 HRIS exception projection.",
+      "The shared IA node also references SYS-006 automation actions, which are outside this slice."
+    ],
+    "missingWork": [
+      "Consume owner-produced SYS-EVT-009 envelopes into a monotonic tenant-scoped operational exception projection.",
+      "Implement PEP-SYS-037 list and PEP-SYS-038 redacted detail.",
+      "Implement IAQ-059 and the read/deep-link-only settings operations workspace.",
+      "Bind the existing PEP-SYS-040 receipt reader without creating a second receipt controller or store."
+    ],
+    "reuseOnly": [
+      "PEP-SYS-040",
+      "HrisCommandReceiptController",
+      "hcm.command-receipt.view",
+      "predicate.hcm-platform-command-receipt-authority.v1",
+      "generic telemetry correlation and problem response conventions"
+    ],
+    "noTouchOrRecount": [
+      "Do not duplicate or count PEP-SYS-040 as new SYS-002 implementation.",
+      "Do not move or proxy recovery commands into the central operations view.",
+      "Do not implement or count SYS-006 automation commands exposed by the shared IA node.",
+      "Do not treat WorkplaceExceptionConsole or generic telemetry as completed SYS-002 business evidence.",
+      "Do not mutate Platform V330, product authorization v48 or historical registers."
+    ]
+  },
+  "ownership": {
+    "repositories": ["dwp-backend", "dwp-frontend"],
+    "runtimeOwner": "dwp-platform-server",
+    "singleWriter": "HRIS-SYS",
+    "candidateWritablePathsAfterFreshToken": [
+      "backend:dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/operations/**",
+      "backend:dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/operations/**",
+      "backend:dwp-platform-server/src/main/resources/db/migration/V331__create_hris_operational_exception_projection.sql",
+      "frontend:apps/dwp/src/features/hris/administration/operations/**",
+      "frontend:apps/dwp/src/features/hris/administration/__tests__/g3-slices/base-tfr-sys-002.slice.test.tsx"
+    ],
+    "readOnlyReusePaths": [
+      "backend:dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisCommandReceiptController.java",
+      "backend:dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerReceiptControllerTest.java",
+      "backend:dwp-platform-server/src/main/resources/db/migration/V330__accept_controlled_export_navigation_topology_successor.sql",
+      "all domain-owner recovery command implementations"
+    ],
+    "controlOwnedUntilSeparatePacket": [
+      "backend:contracts/product-authorization/**",
+      "backend:contracts/openapi/**",
+      "backend:dwp-auth-server/**",
+      "backend:dwp-gateway/**",
+      "frontend:architecture/**",
+      "frontend:apps/dwp/src/routes/**",
+      "frontend:apps/dwp/src/features/hris/shell/**"
+    ],
+    "outsideBoundaryAction": "STOP_AND_REQUEST_EXACT_CONTROL_REALLOCATION"
+  },
+  "experienceContract": {
+    "primaryUser": "HRIS configuration author or authorized operational exception reader",
+    "operationalQuestion": "Which HRIS operational exceptions affect authorized users or processes, what is their current owner state, and where should investigation continue?",
+    "primaryAction": "Inspect a redacted exception and open the allowlisted owning-domain deep link or existing command receipt.",
+    "pageArchetype": "OPERATIONAL_LIST_DETAIL",
+    "iaNodeId": "BASE:settings-operations",
+    "entryQueryId": "IAQ-059",
+    "canonicalRoute": "/hr/settings/operations",
+    "workbenchTab": "overview",
+    "deepLinkTemplate": "/hr/settings/operations?tab=overview&focus={resourcePublicId}",
+    "menuPlacement": "SETTINGS/SET-08",
+    "scopeRule": "Customer impact and owner state precede infrastructure detail; central recovery buttons are forbidden."
+  },
+  "contracts": {
+    "entryQuery": {
+      "id": "IAQ-059",
+      "method": "GET",
+      "browserPath": "/api/platform/v1/hris/workbench/settings-operations",
+      "ownerPath": "/v1/hris/workbench/settings-operations"
+    },
+    "exceptionList": {
+      "id": "PEP-SYS-037",
+      "method": "GET",
+      "browserPath": "/api/platform/v1/admin/hris/operations/exceptions",
+      "ownerPath": "/v1/admin/hris/operations/exceptions"
+    },
+    "exceptionDetail": {
+      "id": "PEP-SYS-038",
+      "method": "GET",
+      "browserPath": "/api/platform/v1/admin/hris/operations/exceptions/{exceptionId}",
+      "ownerPath": "/v1/admin/hris/operations/exceptions/{exceptionId}"
+    },
+    "receiptReuse": "PEP-SYS-040",
+    "consumedEvent": {
+      "id": "SYS-EVT-009",
+      "type": "dwp.hris.operational-exception.projection-changed.v1",
+      "requiredFields": ["exceptionPublicId", "ownerService", "ownerModule", "severity", "state", "sourceRevision", "correlationId", "occurredAt"]
+    },
+    "projection": {
+      "states": ["OPEN", "ACKNOWLEDGED", "RECOVERING", "RESOLVED", "SUPPRESSED"],
+      "fields": ["tenantId", "ownerService", "ownerModule", "sourceRef", "sourceRevision", "type", "severity", "state", "code", "summaryKey", "ownerRouteKey", "evidenceRefs", "correlationId", "eventDigest", "firstObservedAt", "lastObservedAt", "occurrenceCount", "version"],
+      "rules": ["monotonic owner revision", "duplicate digest idempotent", "out-of-order ignored and audited", "owner route key allowlisted", "payload redacted by field decision"]
+    }
+  },
+  "authorization": {
+    "centralPacket": "../central-authorization-successor-packet.v1.json",
+    "state": "AUTHORIZED_AFTER_CENTRAL_AUTH_PACKET",
+    "pageAndEntryTuple": "R7B01-AUTH-SYS-PAGE-ENTRY-001",
+    "exceptionDataTuple": "R7B01-AUTH-SYS-DATA-001",
+    "receiptTuple": "R7B01-AUTH-SYS-RECEIPT-REUSE-001",
+    "tenantSource": "TRUSTED_GATEWAY_CONTEXT_ONLY",
+    "authorizedPackageScopeRequired": true,
+    "defaultDeny": true,
+    "opaqueDenial": true
+  },
+  "dependencies": [
+    {"id": "DEP-001", "state": "CONTRACT_READY_FAIL_CLOSED"},
+    {"id": "DEP-002", "state": "CONTRACT_READY_STALE_REVISION_DENIED"},
+    {"id": "DEP-003", "state": "FOUNDATION_READY_OWNER_EVENTS_REQUIRED"},
+    {"id": "DEP-004", "state": "CONTRACT_READY_LAST_APPROVED_OR_DISABLED"},
+    {"id": "DEP-005", "state": "RECEIPT_FOUNDATION_READY_NO_CENTRAL_RECOVERY_COMMAND"},
+    {"id": "DEP-016", "state": "FOUNDATION_READY_AUDIT_REQUIRED"}
+  ],
+  "migration": {
+    "stream": "PLATFORM_MAIN",
+    "version": "V331",
+    "path": "dwp-platform-server/src/main/resources/db/migration/V331__create_hris_operational_exception_projection.sql",
+    "state": "REQUIRED_LEASE_WITHHELD",
+    "authoringAllowed": false,
+    "predecessor": "V330 is consumed by R7-C1 controlled-export topology and is immutable."
+  },
+  "rollout": {
+    "feature": "HRIS_OPERATIONS_EXCEPTION_CENTER",
+    "runtimeDefault": "OFF",
+    "receiptGateDecision": "The fresh token must preserve the existing endpoint and may only separate its shared false gate if central operations requires independent default-off admission.",
+    "enrolledTenants": [],
+    "tenantActivationAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "acceptanceCriteria": [
+    {"id": "SYS002-AC-01", "criterion": "Valid SYS-EVT-009 envelopes materialize one tenant-scoped exception projection with monotonic owner revision."},
+    {"id": "SYS002-AC-02", "criterion": "Duplicate digest is idempotent and out-of-order or conflicting owner revision does not overwrite newer state."},
+    {"id": "SYS002-AC-03", "criterion": "PEP-SYS-037 provides stable scoped ordering and cursor binding; PEP-SYS-038 returns exact redacted detail or opaque denial."},
+    {"id": "SYS002-AC-04", "criterion": "Owner route keys and deep-link parameters are allowlisted; arbitrary URLs or recovery commands are never returned."},
+    {"id": "SYS002-AC-05", "criterion": "PEP-SYS-040 is reused byte-for-behavior with originating-command scope and is not duplicated."},
+    {"id": "SYS002-AC-06", "criterion": "Wrong tenant, package scope, purpose, field decision, revision or capability fails closed without exception existence leakage."},
+    {"id": "SYS002-AC-07", "criterion": "The central view is read and deep-link only; all recovery mutations remain in the owning domain."},
+    {"id": "SYS002-AC-08", "criterion": "IAQ-059 excludes SYS-006 automation actions and reports unavailable, partial and stale owner projections explicitly."},
+    {"id": "SYS002-AC-09", "criterion": "Loading, empty, unavailable, partial, complete, permission and stale states preserve scope and selection without a blank canvas."},
+    {"id": "SYS002-AC-10", "criterion": "1440, 1280, 390, 320 and 200-percent zoom plus light, dark, high contrast, reduced motion and keyboard navigation pass."},
+    {"id": "SYS002-AC-11", "criterion": "Feature OFF or unenrolled tenant mounts no exception query runtime and processes no owner event into an exposed projection."},
+    {"id": "SYS002-AC-12", "criterion": "Changed-path evidence proves PEP-SYS-040, SYS-006, owner recovery commands, V330, v48 and historical registers were not modified or recounted."}
+  ],
+  "targetedVerification": {
+    "policy": "NEW_SYS002_PROJECTION_QUERY_CLUSTER_FIRST_THEN_EXISTING_RECEIPT_REGRESSION; FAILED_TARGET_ONLY_AFTER_CORRECTION",
+    "backendTargets": [
+      "new com.dwp.services.platform.hrisconfiguration.operations.HrisOperationalExceptionProjectionContractTest",
+      "new com.dwp.services.platform.hrisconfiguration.operations.HrisOperationsEntryQueryContractTest",
+      "existing com.dwp.services.platform.hrisconfiguration.explorer.HrisExplorerReceiptControllerTest",
+      "existing shared receipt feature-gate and security tests"
+    ],
+    "frontendTargets": [
+      "apps/dwp/src/features/hris/administration/__tests__/g3-slices/base-tfr-sys-002.slice.test.tsx",
+      "one read-to-owner-deep-link responsive and accessibility journey after central Auth integration"
+    ],
+    "databaseTargets": ["V331 clean install and V330-to-V331 real PostgreSQL upgrade"],
+    "repositoryWideSuitePerCorrection": false
+  },
+  "evidenceContract": {
+    "required": [
+      "backend and frontend module branch SHAs",
+      "twelve acceptance results with test or source evidence",
+      "V331 clean and V330-to-V331 upgrade evidence",
+      "event monotonicity, duplicate and out-of-order evidence",
+      "tenant, package, redaction and deep-link negative evidence",
+      "PEP-SYS-040 reuse regression evidence",
+      "default-off, zero-enrollment and changed-path/no-recount manifests"
+    ],
+    "businessCompletionCreditBeforeEvidence": 0
+  },
+  "authority": {
+    "packetSealed": true,
+    "sourceImplementationAuthorized": false,
+    "migrationAuthoringAuthorized": false,
+    "worktreeMaterializationAuthorized": false,
+    "moduleBranchCommitAuthorized": false,
+    "moduleBranchPushAuthorized": false,
+    "startTokenIssued": false,
+    "mergeToDwpDevAuthorized": false,
+    "activationAuthorized": false
+  },
+  "nextGate": "CENTRAL_AUTH_PACKET_APPROVAL_AND_INTEGRATION_PLUS_ACTIVE_V331_LEASE_THEN_FRESH_PINNED_SYS_START_TOKEN"
+}

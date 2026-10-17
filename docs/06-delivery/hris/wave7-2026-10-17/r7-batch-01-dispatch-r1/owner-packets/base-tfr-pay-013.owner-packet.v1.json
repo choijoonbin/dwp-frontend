@@ -1,0 +1,206 @@
+{
+  "schema": "dwp.hris.wave7.r7-owner-packet.v1",
+  "packetId": "HRIS-WAVE7-R7-BATCH-01-OWNER-BASE-TFR-PAY-013-20261017-R1",
+  "revision": 1,
+  "immutability": {"sealed": true, "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_PACKET_ID_AND_SHA256"},
+  "issuedAt": "2026-10-17T15:25:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "SEALED_PRE_TOKEN_CENTRAL_AUTH_AND_V52_LEASE_REQUIRED",
+  "module": "PAY",
+  "moduleSession": "HRIS-PAY",
+  "sliceId": "BASE-TFR-PAY-013",
+  "sourceRef": "TFR-PAY-013",
+  "sourceAuthority": {
+    "path": "../source-authority.v1.json",
+    "sha256": "d40df88e26530bd467c5cc6210d967b31a521f06647e672987393c1d1837165e",
+    "overlayLine": 36,
+    "sourceFamilySha256": "3260534ab6e6e4130e8d5927518bb13d0a6780ac39f25d3d87a81523c2cc7720",
+    "sourceRowCount": 23,
+    "r7C0Classification": "NO_CURRENT_SLICE_RESULT"
+  },
+  "businessMeaning": "Prepare one payroll run idempotently by validating and freezing typed source revisions before any calculation and emit the canonical prepared event.",
+  "exactDelta": {
+    "provenExisting": [
+      "BASE-TFR-PAY-011 already owns run attempts, deterministic calculation, query, approval, finalization, receipts, workers, outbox and V50/V51 schema.",
+      "The current calculation seam already performs a prepare-like semantic bind and input freeze before advancing through READY, so PAY-013 overlaps its boundary but is not yet an independent command.",
+      "Existing payroll run and input snapshot tables, command receipts and outbox are reusable foundations."
+    ],
+    "missingWork": [
+      "Add exact PEP-PAY-011 POST /api/payroll/v1/runs as the idempotent prepare boundary.",
+      "Freeze a complete deterministic set of typed source revisions and preflight facts before READY.",
+      "Move only the initial freeze responsibility out of PAY-011 calculation so calculation consumes an already frozen READY run.",
+      "Emit PayrollRunPrepared.v1 transactionally after the immutable preparation snapshot is complete.",
+      "Implement IAQ-014 and the payroll population/preflight workspace."
+    ],
+    "stateBoundary": {
+      "prepare": "NONE_OR_DRAFT -> PREPARING -> READY",
+      "calculate": "READY -> CALCULATING",
+      "retry": "PAY-011 retains calculation FAILED retry semantics; prepare replay must not create a new calculation attempt.",
+      "decision": "The implementation token must preserve this split and may not leave calculation responsible for the initial source freeze."
+    },
+    "reuseOnly": [
+      "BASE-TFR-PAY-011 calculation engine",
+      "existing pay_payroll_runs lineage",
+      "existing command receipt and outbox infrastructure",
+      "existing GET /api/payroll/v1/runs/{runId} and calculation/approve/finalize routes"
+    ],
+    "noTouchOrRecount": [
+      "Do not create a second payroll calculation engine, run aggregate, receipt store or outbox.",
+      "Do not count BASE-TFR-PAY-011 calculation, approval or finalization as PAY-013 delivery.",
+      "Do not add DEP-007 or DEP-009 to this slice merely because later payroll calculation may consume those producers.",
+      "Do not reopen PAY Foundation settings or BASE-TFR-PAY-007 from the R7-C1 authority-only successor."
+    ]
+  },
+  "ownership": {
+    "repositories": ["dwp-backend", "dwp-frontend"],
+    "runtimeOwner": "dwp-payroll-server",
+    "singleWriter": "HRIS-PAY",
+    "candidateWritablePathsAfterFreshToken": [
+      "backend:dwp-payroll-server/src/main/java/com/dwp/services/payroll/preparation/**",
+      "backend:dwp-payroll-server/src/test/java/com/dwp/services/payroll/preparation/**",
+      "backend:dwp-payroll-server/src/main/java/com/dwp/services/payroll/calculation/PayrollCalculationService.java",
+      "backend:dwp-payroll-server/src/main/java/com/dwp/services/payroll/calculation/PayrollCalculationStore.java",
+      "backend:dwp-payroll-server/src/main/java/com/dwp/services/payroll/calculation/JdbcPayrollCalculationStore.java",
+      "backend:dwp-payroll-server/src/test/java/com/dwp/services/payroll/calculation/** only for exact prepare-to-calculate regression",
+      "backend:dwp-payroll-server/src/main/resources/db/migration/V52__pay_base_tfr_pay_013_run_prepare.sql",
+      "frontend:apps/dwp/src/features/hris/payroll/population/**",
+      "frontend:apps/dwp/src/features/hris/payroll/__tests__/g3-slices/base-tfr-pay-013.slice.test.tsx"
+    ],
+    "readOnlyReusePaths": [
+      "backend:dwp-payroll-server/src/main/java/com/dwp/services/payroll/calculation/** except the three exact boundary files above",
+      "backend:dwp-payroll-server/src/main/resources/db/migration/V50__pay_base_tfr_pay_011_calculation.sql",
+      "backend:dwp-payroll-server/src/main/resources/db/migration/V51__pay_harden_v49_v50_owner_trigger_boundaries.sql",
+      "frontend:apps/dwp/src/features/hris/payroll/calculation/**"
+    ],
+    "controlOwnedUntilSeparatePacket": [
+      "backend:contracts/product-authorization/**",
+      "backend:contracts/openapi/**",
+      "backend:dwp-auth-server/**",
+      "backend:dwp-gateway/**",
+      "frontend:architecture/**",
+      "frontend:apps/dwp/src/routes/**",
+      "frontend:apps/dwp/src/features/hris/shell/**"
+    ],
+    "outsideBoundaryAction": "STOP_AND_REQUEST_EXACT_CONTROL_REALLOCATION"
+  },
+  "experienceContract": {
+    "primaryUser": "Payroll support viewer preparing a governed payroll population",
+    "operationalQuestion": "Is the selected payroll population complete, current and safe to freeze for this run?",
+    "primaryAction": "Review preflight findings and prepare one payroll run from the immutable population snapshot.",
+    "pageArchetype": "LIST_DETAIL_WITH_PREFLIGHT_WORKFLOW",
+    "iaNodeId": "BASE:pay-population",
+    "entryQueryId": "IAQ-014",
+    "canonicalRoute": "/hr/operations/payroll/population",
+    "workbenchTab": "overview",
+    "deepLinkTemplate": "/hr/operations/payroll/population?tab=overview&focus={resourcePublicId}",
+    "menuPlacement": "PAYROLL/PAY-01",
+    "relatedRouteRule": "Link to the existing payroll command center after preparation; do not rebuild calculation controls on this page."
+  },
+  "contracts": {
+    "entryQuery": {
+      "id": "IAQ-014",
+      "method": "GET",
+      "browserPath": "/api/payroll/v1/workbench/population",
+      "ownerPath": "/v1/workbench/population"
+    },
+    "prepareCommand": {
+      "id": "PEP-PAY-011",
+      "method": "POST",
+      "browserPath": "/api/payroll/v1/runs",
+      "ownerPath": "/v1/runs"
+    },
+    "producedEvent": "PayrollRunPrepared.v1",
+    "domainRules": [
+      "Preparation binds tenant, legal entity, pay group, population, policy revision, semantic mapping revision and every typed source revision.",
+      "The frozen snapshot is immutable and calculation may consume it only from READY.",
+      "Same idempotency key and canonical body returns the recorded result; a different body conflicts.",
+      "A preflight or persistence failure emits neither READY nor PayrollRunPrepared.v1."
+    ]
+  },
+  "authorization": {
+    "centralPacket": "../central-authorization-successor-packet.v1.json",
+    "state": "AUTHORIZED_AFTER_CENTRAL_AUTH_PACKET",
+    "pageAndDataTuple": "R7B01-AUTH-PAY-PAGE-DATA-001",
+    "actionTuple": "R7B01-AUTH-PAY-ACTION-001",
+    "tenantSource": "TRUSTED_GATEWAY_CONTEXT_ONLY",
+    "stepUpRequired": true,
+    "approvalAndSodDecision": "MUST_BE_SEALED_IN_CENTRAL_AUTH_PACKET",
+    "defaultDeny": true
+  },
+  "dependencies": [
+    {"id": "DEP-001", "state": "CONTRACT_READY_FAIL_CLOSED"},
+    {"id": "DEP-002", "state": "CONTRACT_READY_STALE_REVISION_DENIED"},
+    {"id": "DEP-003", "state": "FOUNDATION_READY_EVENT_PRODUCER_REQUIRED"},
+    {"id": "DEP-016", "state": "FOUNDATION_READY_LOCAL_OUTBOX_REQUIRED"}
+  ],
+  "migration": {
+    "stream": "PAYROLL_MAIN",
+    "version": "V52",
+    "path": "dwp-payroll-server/src/main/resources/db/migration/V52__pay_base_tfr_pay_013_run_prepare.sql",
+    "state": "REQUIRED_LEASE_WITHHELD",
+    "authoringAllowed": false,
+    "reason": "The exact preparation source-lineage and preflight facts must be append-only and not overloaded into the attempt-bound PAY-011 snapshot model."
+  },
+  "rollout": {
+    "feature": "HRIS_PAYROLL_RUN_PREPARE",
+    "runtimeDefault": "OFF",
+    "existingCalculationFlagMustRemainOffByDefault": true,
+    "enrolledTenants": [],
+    "tenantActivationAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "acceptanceCriteria": [
+    {"id": "PAY013-AC-01", "criterion": "IAQ-014 returns a deterministic scoped population, revision and preflight summary with stable ordering and bound cursor."},
+    {"id": "PAY013-AC-02", "criterion": "Prepare rejects incomplete, stale, mixed-tenant, mismatched-purpose or unauthorized source revisions before creating READY."},
+    {"id": "PAY013-AC-03", "criterion": "The immutable snapshot contains every typed source identity, revision, digest and preflight decision needed by calculation."},
+    {"id": "PAY013-AC-04", "criterion": "Same idempotency key and canonical request replays the recorded outcome; body mismatch returns conflict without side effects."},
+    {"id": "PAY013-AC-05", "criterion": "Exactly one PayrollRunPrepared.v1 event is observable after commit and no event is emitted on failed preparation."},
+    {"id": "PAY013-AC-06", "criterion": "PAY-011 calculation starts only from READY and consumes the exact frozen snapshot without rebinding or refreezing initial inputs."},
+    {"id": "PAY013-AC-07", "criterion": "Calculation FAILED retry behavior remains owned by PAY-011 and does not create a second prepared snapshot."},
+    {"id": "PAY013-AC-08", "criterion": "Step-up, approval and SoD decisions are enforced from server-verified context; client claims cannot satisfy them."},
+    {"id": "PAY013-AC-09", "criterion": "Loading, empty, unavailable, partial, complete, permission and stale states preserve user inputs and never enable prepare ambiguously."},
+    {"id": "PAY013-AC-10", "criterion": "1440, 1280, 390, 320 and 200-percent zoom plus light, dark, high contrast, reduced motion and keyboard navigation pass."},
+    {"id": "PAY013-AC-11", "criterion": "Feature OFF or unenrolled tenant mounts no prepare runtime and issues no population query or command."},
+    {"id": "PAY013-AC-12", "criterion": "Changed-path evidence proves PAY-011 engine, receipts, outbox, R7-C1 settings and historical registers were reused without duplicate completion credit."}
+  ],
+  "targetedVerification": {
+    "policy": "NEW_PAY013_PREPARE_CLUSTER_FIRST_THEN_PAY011_BOUNDARY_REGRESSION; FAILED_TARGET_ONLY_AFTER_CORRECTION",
+    "backendTargets": [
+      "new com.dwp.services.payroll.preparation.PayrollRunPrepareContractTest",
+      "new com.dwp.services.payroll.preparation.PayrollPopulationEntryQueryContractTest",
+      "existing com.dwp.services.payroll.calculation.PayrollG3SliceContractTest",
+      "existing calculation service and worker tests only where the READY boundary changes"
+    ],
+    "frontendTargets": [
+      "apps/dwp/src/features/hris/payroll/__tests__/g3-slices/base-tfr-pay-013.slice.test.tsx",
+      "one population-to-prepare responsive and accessibility journey after central Auth integration"
+    ],
+    "databaseTargets": ["V52 clean install and V51-to-V52 real PostgreSQL upgrade"],
+    "repositoryWideSuitePerCorrection": false
+  },
+  "evidenceContract": {
+    "required": [
+      "backend and frontend module branch SHAs",
+      "twelve acceptance results with test or source evidence",
+      "V52 clean and V51-to-V52 upgrade evidence",
+      "snapshot completeness and target determinism evidence",
+      "idempotency, step-up, SoD, tenant and authorization negative evidence",
+      "PAY-011 calculation regression evidence",
+      "default-off, zero-enrollment and changed-path/no-recount manifests"
+    ],
+    "businessCompletionCreditBeforeEvidence": 0
+  },
+  "authority": {
+    "packetSealed": true,
+    "sourceImplementationAuthorized": false,
+    "migrationAuthoringAuthorized": false,
+    "worktreeMaterializationAuthorized": false,
+    "moduleBranchCommitAuthorized": false,
+    "moduleBranchPushAuthorized": false,
+    "startTokenIssued": false,
+    "mergeToDwpDevAuthorized": false,
+    "activationAuthorized": false
+  },
+  "nextGate": "CENTRAL_AUTH_PACKET_APPROVAL_AND_INTEGRATION_PLUS_ACTIVE_V52_LEASE_THEN_FRESH_PINNED_PAY_START_TOKEN"
+}
