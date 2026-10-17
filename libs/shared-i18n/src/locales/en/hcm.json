@@ -376,6 +376,7 @@
         "home": { "label": "HRIS home" },
         "me": { "label": "My HR profile" },
         "employment-documents": { "label": "Employment & documents" },
+        "requests": { "label": "My HR requests" },
         "time": { "label": "My time" },
         "absence": { "label": "Time off" },
         "benefits": { "label": "Benefits" },
@@ -396,6 +397,7 @@
         "employee-change-requests": { "label": "Employee change requests" },
         "employment-assignments": { "label": "Employment & assignments" },
         "people-appointments": { "label": "People appointments" },
+        "certificates-documents": { "label": "Certificates & documents" },
         "assignments": { "label": "Assignments" },
         "time-operations": { "label": "Time operations" },
         "time-work-plans": { "label": "Work plans" },
@@ -438,6 +440,11 @@
         "eyebrow": "HRIS / My HR",
         "title": "Employment & documents",
         "description": "Review your current employment, assignment, contract, and document metadata within the self-service boundary."
+      },
+      "requests": {
+        "eyebrow": "HRIS / My HR",
+        "title": "My HR requests and certificates",
+        "description": "Review governed request status and certificate metadata in the read-only Stage-A boundary."
       },
       "time": {
         "eyebrow": "HRIS / My HR",
@@ -528,6 +535,11 @@
         "eyebrow": "HRIS / HR operations",
         "title": "Employment & assignments",
         "description": "Review effective-dated employment and assignments, then govern assignment-event validation, submission, and publication."
+      },
+      "certificates-documents": {
+        "eyebrow": "HRIS / HR operations",
+        "title": "Certificates and documents",
+        "description": "Review governed certificate and document metadata for the authorized population in the read-only Stage-A boundary."
       },
       "assignments": {
         "eyebrow": "HRIS / HR operations",

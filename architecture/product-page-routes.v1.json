@@ -472,6 +472,13 @@
       "surfaceId": "hcm.operations"
     },
     {
+      "routeContractKey": "route.hcm.operations.certificates-documents.page",
+      "routeId": "hcm.operations.certificates-documents",
+      "pattern": "/hr/operations/people/certificates-documents",
+      "productId": "hcm",
+      "surfaceId": "hcm.operations"
+    },
+    {
       "routeContractKey": "route.hcm.operations.employee-change-requests.page",
       "routeId": "hcm.operations.employee-change-requests",
       "pattern": "/hr/operations/people/employee-change-requests",
@@ -678,6 +685,13 @@
       "routeContractKey": "route.hcm.personal.pay.page",
       "routeId": "hcm.personal.pay",
       "pattern": "/hr/pay",
+      "productId": "hcm",
+      "surfaceId": "hcm.personal"
+    },
+    {
+      "routeContractKey": "route.hcm.personal.requests.page",
+      "routeId": "hcm.personal.requests",
+      "pattern": "/hr/me/requests",
       "productId": "hcm",
       "surfaceId": "hcm.personal"
     },

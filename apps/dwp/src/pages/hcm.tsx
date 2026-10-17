@@ -183,6 +183,16 @@ const HrisHrm007PeopleEmploymentRouteAdmission = lazy(() =>
     default: module.HrisHrm007PeopleEmploymentRouteAdmission,
   }))
 );
+const HrisHrm009SelfServiceRequestsRouteAdmission = lazy(() =>
+  import('../features/hris/integration/hris-hrm-009-route-admission').then((module) => ({
+    default: module.HrisHrm009SelfServiceRequestsRouteAdmission,
+  }))
+);
+const HrisHrm009OperationsCertificatesRouteAdmission = lazy(() =>
+  import('../features/hris/integration/hris-hrm-009-route-admission').then((module) => ({
+    default: module.HrisHrm009OperationsCertificatesRouteAdmission,
+  }))
+);
 const HrisWorkflowPolicyRouteAdmission = lazy(() =>
   import('../features/hris/integration/hris-sys-003-route-admission').then((module) => ({
     default: module.HrisWorkflowPolicyRouteAdmission,
@@ -272,6 +282,7 @@ function HcmPageContent({ page }: { page: HcmNavigationItem }) {
   const contentByView: Partial<Record<HcmView, ReactNode>> = {
     me: <MyHrProfile />,
     'employment-documents': <HrisEmploymentDocumentsWorkspace />,
+    requests: <HrisHrm009SelfServiceRequestsRouteAdmission />,
     time: <HrisTimeWorkspace />,
     absence: <HrAbsenceWorkspace />,
     benefits: <HrBenefitsWorkspace />,
@@ -290,6 +301,7 @@ function HcmPageContent({ page }: { page: HcmNavigationItem }) {
     'employee-change-requests': <HrisEmployeeChangeWorkspace />,
     'employment-assignments': <HrisEmploymentAssignmentsWorkspace />,
     'people-appointments': <HrisHrm007AppointmentsRouteAdmission />,
+    'certificates-documents': <HrisHrm009OperationsCertificatesRouteAdmission />,
     'organization-positions': <HrisOrganizationPositionsRouteAdmission />,
     'payroll-population': <HrisPayrollPopulationRouteAdmission />,
     assignments: <AssignmentRegister assignmentProposal={assignmentProposalPort} />,
@@ -327,9 +339,11 @@ function HcmPageContent({ page }: { page: HcmNavigationItem }) {
     page.view === 'organization-positions' ||
     page.view === 'payroll-population' ||
     page.view === 'settings-operations' ||
+    page.view === 'requests' ||
     page.view === 'team-people-changes' ||
     page.view === 'team-delegation' ||
     page.view === 'people-appointments' ||
+    page.view === 'certificates-documents' ||
     page.view === 'settings-people-employment' ||
     page.view === 'settings-workflow'
   ) {

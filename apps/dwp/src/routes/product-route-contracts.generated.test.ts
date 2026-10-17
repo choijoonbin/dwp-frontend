@@ -112,6 +112,23 @@ const R7_BATCH_02_HCM_PAGE_ROUTES = [
   },
 ] as const;
 
+const R7_BATCH_03_HCM_PAGE_ROUTES = [
+  {
+    routeContractKey: 'route.hcm.operations.certificates-documents.page',
+    routeId: 'hcm.operations.certificates-documents',
+    pattern: '/hr/operations/people/certificates-documents',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+  },
+  {
+    routeContractKey: 'route.hcm.personal.requests.page',
+    routeId: 'hcm.personal.requests',
+    pattern: '/hr/me/requests',
+    productId: 'hcm',
+    surfaceId: 'hcm.personal',
+  },
+] as const;
+
 const authorizationSnapshot = JSON.parse(
   fs.readFileSync(
     path.resolve(process.cwd(), 'architecture/product-surface-authorization.v1.json'),
@@ -180,7 +197,7 @@ describe('generated product route authorization contracts', () => {
       'spaces',
       'workplace',
     ]);
-    expect(router).toHaveLength(149);
+    expect(router).toHaveLength(151);
     expect(registry).toEqual(router);
     expect(
       router.filter((route) =>
@@ -196,6 +213,13 @@ describe('generated product route authorization contracts', () => {
         )
       )
     ).toEqual([...R7_BATCH_02_HCM_PAGE_ROUTES]);
+    expect(
+      router.filter((route) =>
+        R7_BATCH_03_HCM_PAGE_ROUTES.some(
+          (expected) => expected.routeContractKey === route.routeContractKey
+        )
+      )
+    ).toEqual([...R7_BATCH_03_HCM_PAGE_ROUTES]);
     expect(() =>
       buildProductPageRouteContractSource(
         [HCM_PRODUCT_MANIFEST],
@@ -236,8 +260,8 @@ describe('generated product route authorization contracts', () => {
     );
     expect(nonPages.every((route) => route.routeId === null && route.pattern === null)).toBe(true);
     expect(DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(71);
-    expect(ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(220);
-    expect(REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG).toHaveLength(220);
+    expect(ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(222);
+    expect(REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG).toHaveLength(222);
     expect(REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG.every((route) => route.routeKind === 'PAGE')).toBe(
       true
     );

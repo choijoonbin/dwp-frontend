@@ -376,6 +376,7 @@
         "home": { "label": "HRIS 홈" },
         "me": { "label": "나의 인사정보" },
         "employment-documents": { "label": "고용 및 문서" },
+        "requests": { "label": "나의 HR 요청" },
         "time": { "label": "나의 근태" },
         "absence": { "label": "휴가" },
         "benefits": { "label": "복리후생" },
@@ -396,6 +397,7 @@
         "employee-change-requests": { "label": "직원변경 요청" },
         "employment-assignments": { "label": "고용관계·배치" },
         "people-appointments": { "label": "인사발령" },
+        "certificates-documents": { "label": "증명·문서" },
         "assignments": { "label": "발령 현황" },
         "time-operations": { "label": "근태 운영" },
         "time-work-plans": { "label": "근무계획" },
@@ -438,6 +440,11 @@
         "eyebrow": "HRIS / 내 HR",
         "title": "고용 및 문서",
         "description": "셀프서비스 범위에서 현재 고용관계, 배치, 계약 및 문서 메타데이터를 확인합니다."
+      },
+      "requests": {
+        "eyebrow": "HRIS / 내 HR",
+        "title": "나의 HR 요청 및 증명서",
+        "description": "읽기 전용 Stage-A 범위에서 권한이 확인된 요청 상태와 증명서 메타데이터를 검토합니다."
       },
       "time": {
         "eyebrow": "HRIS / 내 HR",
@@ -528,6 +535,11 @@
         "eyebrow": "HRIS / HR 운영",
         "title": "고용관계·배치",
         "description": "유효일 기준 고용관계와 배치를 검토하고 배치 이벤트의 검증·제출·게시를 통제합니다."
+      },
+      "certificates-documents": {
+        "eyebrow": "HRIS / HR 운영",
+        "title": "증명·문서",
+        "description": "읽기 전용 Stage-A 범위에서 허용된 인력 대상의 증명서 및 문서 메타데이터를 검토합니다."
       },
       "assignments": {
         "eyebrow": "HRIS / HR 운영",

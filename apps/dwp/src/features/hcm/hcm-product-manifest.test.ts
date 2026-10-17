@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
+import fs from 'node:fs';
+import path from 'node:path';
 
-import authorizationSource from '../../../../../architecture/product-surface-authorization.v1.json';
 import { isSegmentOwnedPath } from '../../components/product-manifest';
 import { PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE } from '../../routes/product-page-route-contracts';
 import { hcmRoutes } from '../../routes/hcm-routes';
@@ -19,6 +20,7 @@ type RegistryRequiredAccess = {
 type RegistryRoute = {
   routeContractKey: string;
   routeKind: 'PAGE' | 'DATA' | 'ACTION';
+  bindingMode?: 'AUTHORIZATION_ONLY';
   subject: { productKey: string; surfaceKey: string };
   navigationContextId: string;
   uiRouteId: string | null;
@@ -37,6 +39,13 @@ type RegistryBundle = {
   routes: readonly RegistryRoute[];
 };
 
+const authorizationSource = JSON.parse(
+  fs.readFileSync(
+    path.resolve(process.cwd(), 'architecture/product-surface-authorization.v1.json'),
+    'utf8'
+  )
+) as { bundles: readonly RegistryBundle[] };
+
 const HCM_UTILITY_ROUTE_KEYS = [
   'route.hcm.shell.navigation-aggregate-v3.data',
   'route.hcm.shell.navigation-aggregate.data',
@@ -48,11 +57,13 @@ const HCM_UTILITY_ROUTE_KEYS = [
   'route.hcm.utility.explorer.page',
 ] as const;
 
+const HCM_AUTHORIZATION_ONLY_PAGE_KEYS = new Set([
+  'route.hcm.configuration.workflow.page',
+  'route.hcm.team.delegation.page',
+]);
+
 function registryRoutes(): readonly RegistryRoute[] {
-  const source = authorizationSource as unknown as {
-    bundles: readonly RegistryBundle[];
-  };
-  const latestBundle = source.bundles
+  const latestBundle = authorizationSource.bundles
     .filter((bundle) => bundle.bundleKey === 'product-surfaces')
     .sort((left, right) => right.version - left.version)[0];
   if (!latestBundle) throw new Error('Missing Product Surface authorization bundle.');
@@ -143,10 +154,10 @@ describe('HCM W1b product manifest', () => {
       )
     ).toEqual({
       'hcm.personal': 11,
-      'hcm.team': 3,
+      'hcm.team': 5,
       'hcm.utility': 0,
-      'hcm.operations': 17,
-      'hcm.management': 8,
+      'hcm.operations': 20,
+      'hcm.management': 11,
     });
     expect(HCM_PRODUCT_MANIFEST.surfaces.map((surface) => surface.supportedScopeKinds)).toEqual([
       ['SELF'],
@@ -157,12 +168,12 @@ describe('HCM W1b product manifest', () => {
     ]);
   });
 
-  it('binds all 39 menu items within the 45 official HCM PAGE records', () => {
+  it('binds the 47 default-OFF menu items within the 58 official HCM PAGE records', () => {
     const routerRecords = PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.filter(
       (route) => route.productId === 'hcm'
     );
     const registryRecords = registryRoutes().filter((route) => route.subject?.productKey === 'hcm');
-    expect(routerRecords).toHaveLength(45);
+    expect(routerRecords).toHaveLength(58);
 
     for (const surface of HCM_PRODUCT_MANIFEST.surfaces) {
       for (const item of surface.navigation.flatMap((group) => group.items)) {
@@ -198,11 +209,11 @@ describe('HCM W1b product manifest', () => {
       ])
     );
     expect(bySurfaceAndKind).toEqual({
-      'hcm.personal': { PAGE: 11, DATA: 5, ACTION: 8 },
-      'hcm.team': { PAGE: 4, DATA: 1, ACTION: 2 },
+      'hcm.personal': { PAGE: 12, DATA: 6, ACTION: 8 },
+      'hcm.team': { PAGE: 6, DATA: 2, ACTION: 2 },
       'hcm.utility': { PAGE: 1, DATA: 5, ACTION: 2 },
-      'hcm.operations': { PAGE: 20, DATA: 29, ACTION: 48 },
-      'hcm.management': { PAGE: 9, DATA: 8, ACTION: 41 },
+      'hcm.operations': { PAGE: 27, DATA: 36, ACTION: 54 },
+      'hcm.management': { PAGE: 12, DATA: 13, ACTION: 47 },
     });
     expect(
       records
@@ -228,7 +239,16 @@ describe('HCM W1b product manifest', () => {
 
     for (const route of records) {
       expect(route.navigationContextId, route.routeContractKey).not.toBe('');
-      expect(route.gatewayApiBindings.length, route.routeContractKey).toBeGreaterThan(0);
+      if (HCM_AUTHORIZATION_ONLY_PAGE_KEYS.has(route.routeContractKey)) {
+        expect(route, route.routeContractKey).toMatchObject({
+          routeKind: 'PAGE',
+          bindingMode: 'AUTHORIZATION_ONLY',
+          gatewayApiBindings: [],
+          servicePepBindings: [],
+        });
+      } else {
+        expect(route.gatewayApiBindings.length, route.routeContractKey).toBeGreaterThan(0);
+      }
       expect(route.servicePepBindings.length, route.routeContractKey).toBe(
         route.gatewayApiBindings.length
       );

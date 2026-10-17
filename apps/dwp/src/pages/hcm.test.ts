@@ -101,6 +101,8 @@ describe('HCM legacy page guard', () => {
     '/hr/team/people-changes',
     '/hr/team/delegation',
     '/hr/operations/people/appointments',
+    '/hr/me/requests',
+    '/hr/operations/people/certificates-documents',
     '/hr/settings/people-employment',
     '/hr/settings/workflow',
     '/hr/operations/payroll/population',

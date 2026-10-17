@@ -1,16 +1,20 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import {
   HRIS_SEVEN_WORKBENCH_NAVIGATION_CATALOG,
   HRIS_TASK_NODE_IDS,
   HRIS_V46_SELF_POLICY_ROUTE_BINDINGS,
+  HRIS_V52_PAGE_AUTHORITY_ROUTE_BINDINGS,
   HRIS_WORKBENCH_IDS,
   hrisV46SelfPolicyRouteBinding,
+  hrisV52PageAuthorityRouteBinding,
   isHrisRuntimeEffectiveRouteAlias,
   isHrisRuntimeMenuRouteAlias,
 } from './seven-workbench-navigation-policy';
 
 describe('successor seven-workbench task-navigation catalog', () => {
+  afterEach(() => vi.unstubAllEnvs());
+
   it('preserves the exact 7/46/98 topology and canonical order', () => {
     expect(
       HRIS_SEVEN_WORKBENCH_NAVIGATION_CATALOG.map((workbench) => workbench.workbenchId)
@@ -173,6 +177,48 @@ describe('successor seven-workbench task-navigation catalog', () => {
     ] as const) {
       expect(hrisV46SelfPolicyRouteBinding(nodeId, path)).toBeUndefined();
     }
+  });
+
+  it('adds the v52 PAGE-authority aliases without mutating the v46 POLICY set', () => {
+    expect(HRIS_V46_SELF_POLICY_ROUTE_BINDINGS).toHaveLength(6);
+    expect(HRIS_V52_PAGE_AUTHORITY_ROUTE_BINDINGS).toEqual([
+      expect.objectContaining({
+        nodeId: 'BASE:my-hr-requests',
+        path: '/hr/me/requests',
+        routeContractKey: 'route.hcm.personal.requests.page',
+        minimumBundleVersion: 52,
+        authorizationRegistryChecksum:
+          'b33fbf968e71f97b09fa497fdfad7d2f6854199170b79fd1602a0ea604977346',
+        surfaceId: 'hcm.personal',
+      }),
+      expect.objectContaining({
+        nodeId: 'BASE:hr-certificates-documents',
+        path: '/hr/operations/people/certificates-documents',
+        routeContractKey: 'route.hcm.operations.certificates-documents.page',
+        minimumBundleVersion: 52,
+        authorizationRegistryChecksum:
+          'b33fbf968e71f97b09fa497fdfad7d2f6854199170b79fd1602a0ea604977346',
+        surfaceId: 'hcm.operations',
+      }),
+    ]);
+    vi.stubEnv('VITE_HRIS_HRM_009_ENABLED', 'false');
+    expect(
+      hrisV52PageAuthorityRouteBinding('BASE:my-hr-requests', '/hr/me/requests')
+    ).toBeUndefined();
+    vi.stubEnv('VITE_HRIS_HRM_009_ENABLED', 'true');
+    expect(
+      hrisV52PageAuthorityRouteBinding('BASE:my-hr-requests', '/hr/me/requests')
+    ).toMatchObject({
+      feature: 'HRIS_HRM_CERTIFICATE_WORKBENCH',
+      capability: 'hcm.personal.requests.view',
+    });
+    expect(
+      hrisV52PageAuthorityRouteBinding(
+        'BASE:hr-certificates-documents',
+        '/hr/operations/people/certificates-documents'
+      )
+    ).toMatchObject({ capability: 'hcm.operations.people.view' });
+    expect(hrisV52PageAuthorityRouteBinding('BASE:my-hr-requests', '/hr/services')).toBeUndefined();
   });
 });
 

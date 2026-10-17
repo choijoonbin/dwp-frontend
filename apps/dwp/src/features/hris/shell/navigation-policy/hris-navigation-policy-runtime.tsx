@@ -24,14 +24,17 @@ import {
   HRIS_NAVIGATION_TOPOLOGY_SUCCESSOR_REVISION,
   HRIS_NAVIGATION_TOPOLOGY_SUCCESSOR_SHA256,
 } from '../model/hris-navigation-topology-successor';
+import { PRODUCT_AUTHORIZATION_REGISTRY_REVISION } from '../../../../routes/product-surface-authorization.generated';
 import {
   canonicalHrisWorkbench,
   hrisWorkbenchIdForView,
   HRIS_SEVEN_WORKBENCH_NAVIGATION_CATALOG,
   HRIS_V46_SELF_POLICY_ROUTE_BINDINGS,
+  HRIS_V52_PAGE_AUTHORITY_ROUTE_BINDINGS,
   HRIS_WORKBENCH_IDS,
   HRIS_WORKBENCH_VIEW_BY_ID,
   hrisV46SelfPolicyRouteBinding,
+  hrisV52PageAuthorityRouteBinding,
   isHrisRuntimeEffectiveRouteAlias,
   isHrisRuntimeMenuRouteAlias,
 } from './seven-workbench-navigation-policy';
@@ -81,6 +84,18 @@ export const HRIS_NAVIGATION_RUNTIME_OWNER_OVERLAY_REVISION =
 export const HRIS_NAVIGATION_RUNTIME_OWNER_OVERLAY_SHA256 =
   '42ed206e45fab76f77725ba5d37543e06b8df62da7aa142bb620b032bf552dbd' as const;
 export { HRIS_LEGAL_ENTITY_SELECTOR_PARAM, selectHrisLegalEntitySelector };
+
+function currentHrisV52PageAuthorityRouteBinding(nodeId: string, route: string) {
+  const binding = hrisV52PageAuthorityRouteBinding(nodeId, route);
+  if (
+    !binding ||
+    PRODUCT_AUTHORIZATION_REGISTRY_REVISION.version !== binding.minimumBundleVersion ||
+    PRODUCT_AUTHORIZATION_REGISTRY_REVISION.checksum !== binding.authorizationRegistryChecksum
+  ) {
+    return undefined;
+  }
+  return binding;
+}
 
 type RuntimeNavigationPolicyProjectionBase = Readonly<{
   topologyRevision: typeof HRIS_NAVIGATION_TOPOLOGY_REVISION;
@@ -480,9 +495,13 @@ export function projectHrisWorkbenchTaskNavigation(
             isRuntimeEffectiveRouteAlias(policy.schemaVersion, node.nodeId, route) &&
             normalizedAuthorized.has(normalizePath(route))
         );
-        const menuTarget = authorizedAliases.find((route) =>
-          isRuntimeMenuRouteAlias(policy.schemaVersion, node.nodeId, route)
-        );
+        const menuTarget =
+          authorizedAliases.find((route) =>
+            Boolean(currentHrisV52PageAuthorityRouteBinding(node.nodeId, route))
+          ) ??
+          authorizedAliases.find((route) =>
+            isRuntimeMenuRouteAlias(policy.schemaVersion, node.nodeId, route)
+          );
         const routeAliases = menuTarget
           ? [menuTarget, ...authorizedAliases.filter((route) => route !== menuTarget)]
           : [];
@@ -902,11 +921,18 @@ function selectEffectiveRouteAliases(
   const policyNode = canonicalNode.routeAliases.some((alias) =>
     hrisV46SelfPolicyRouteBinding(canonicalNode.nodeId, alias)
   );
-  const sealedAliases = canonicalNode.routeAliases.filter((alias) =>
-    schemaVersion === '3' && policyNode
-      ? nodePolicyRoutes.some((route) => route.path === normalizePath(alias))
-      : isHrisRuntimeEffectiveRouteAlias(alias)
-  );
+  const sealedAliases = canonicalNode.routeAliases.filter((alias) => {
+    const v52Candidate = HRIS_V52_PAGE_AUTHORITY_ROUTE_BINDINGS.some(
+      (binding) => binding.nodeId === canonicalNode.nodeId && binding.path === normalizePath(alias)
+    );
+    if (v52Candidate) {
+      return Boolean(currentHrisV52PageAuthorityRouteBinding(canonicalNode.nodeId, alias));
+    }
+    if (schemaVersion === '3' && policyNode) {
+      return nodePolicyRoutes.some((route) => route.path === normalizePath(alias));
+    }
+    return isHrisRuntimeEffectiveRouteAlias(alias);
+  });
   const sealedOrder = new Map(sealedAliases.map((alias, index) => [alias, index]));
   const seenAliases = new Set<string>();
   let previousOrder = -1;
@@ -1238,6 +1264,10 @@ function isRuntimeEffectiveRouteAlias(
   nodeId: string,
   route: string
 ) {
+  const v52Candidate = HRIS_V52_PAGE_AUTHORITY_ROUTE_BINDINGS.some(
+    (binding) => binding.nodeId === nodeId && binding.path === normalizePath(route)
+  );
+  if (v52Candidate) return Boolean(currentHrisV52PageAuthorityRouteBinding(nodeId, route));
   const policyNode = HRIS_V46_SELF_POLICY_ROUTE_BINDINGS.some(
     (binding) => binding.nodeId === nodeId
   );
@@ -1253,7 +1283,13 @@ function isRuntimeMenuRouteAlias(
   route: string
 ) {
   if (!isRuntimeEffectiveRouteAlias(schemaVersion, nodeId, route)) return false;
-  return hrisV46SelfPolicyRouteBinding(nodeId, route) ? true : isHrisRuntimeMenuRouteAlias(route);
+  if (
+    hrisV46SelfPolicyRouteBinding(nodeId, route) ||
+    currentHrisV52PageAuthorityRouteBinding(nodeId, route)
+  ) {
+    return true;
+  }
+  return isHrisRuntimeMenuRouteAlias(route);
 }
 
 function isRuntimePolicyFresh(policy: HrisRuntimeNavigationPolicy) {

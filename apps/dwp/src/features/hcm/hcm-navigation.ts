@@ -7,6 +7,7 @@ import {
   Clock3,
   ContactRound,
   DatabaseZap,
+  FileCheck2,
   FileLock2,
   Gauge,
   GitBranch,
@@ -40,6 +41,7 @@ export type HcmView =
   | 'home'
   | 'me'
   | 'employment-documents'
+  | 'requests'
   | 'time'
   | 'absence'
   | 'benefits'
@@ -60,6 +62,7 @@ export type HcmView =
   | 'employee-change-requests'
   | 'employment-assignments'
   | 'people-appointments'
+  | 'certificates-documents'
   | 'organization-positions'
   | 'assignments'
   | 'time-operations'
@@ -104,6 +107,7 @@ export type HrisR7GovernedPageCatalogItem = Readonly<{
   feature:
     | 'HRIS_ORGANIZATION_POSITIONS'
     | 'HRIS_HRM_APPOINTMENT_WORKBENCH'
+    | 'HRIS_HRM_CERTIFICATE_WORKBENCH'
     | 'HRIS_APPROVAL_WORKFLOW_AND_DELEGATION_ADAPTERS'
     | 'HRIS_PAYROLL_RUN_PREPARE'
     | 'HRIS_OPERATIONS_EXCEPTION_CENTER'
@@ -116,6 +120,20 @@ export type HrisR7GovernedPageCatalogItem = Readonly<{
 
 export const HRIS_R7_GOVERNED_PAGE_CATALOG: readonly HrisR7GovernedPageCatalogItem[] =
   Object.freeze([
+    Object.freeze({
+      feature: 'HRIS_HRM_CERTIFICATE_WORKBENCH',
+      module: 'HRM',
+      path: '/hr/me/requests',
+      routeContractKey: 'route.hcm.personal.requests.page',
+      state: 'ADMISSION_MOUNTED',
+    }),
+    Object.freeze({
+      feature: 'HRIS_HRM_CERTIFICATE_WORKBENCH',
+      module: 'HRM',
+      path: '/hr/operations/people/certificates-documents',
+      routeContractKey: 'route.hcm.operations.certificates-documents.page',
+      state: 'ADMISSION_MOUNTED',
+    }),
     Object.freeze({
       feature: 'HRIS_HRM_APPOINTMENT_WORKBENCH',
       module: 'HRM',
@@ -221,6 +239,16 @@ export const HCM_NAVIGATION: readonly HcmNavigationGroup[] = [
         audience: 'all',
         governedOnly: true,
         requiredResourceKey: 'DATA.HRIS_WORKFORCE',
+        requiredPermissionCode: 'VIEW',
+      },
+      {
+        section: 'personal',
+        view: 'requests',
+        path: '/hr/me/requests',
+        icon: FileCheck2,
+        audience: 'all',
+        governedOnly: true,
+        requiredResourceKey: 'DATA.HRIS_SELF_REQUEST',
         requiredPermissionCode: 'VIEW',
       },
       { section: 'personal', view: 'time', path: '/hr/time', icon: Clock3, audience: 'all' },
@@ -495,6 +523,16 @@ export const HCM_NAVIGATION: readonly HcmNavigationGroup[] = [
       },
       {
         section: 'operate',
+        view: 'certificates-documents',
+        path: '/hr/operations/people/certificates-documents',
+        icon: FileCheck2,
+        audience: 'operator',
+        governedOnly: true,
+        requiredResourceKey: 'DATA.HRIS_WORKFORCE',
+        requiredPermissionCode: 'VIEW',
+      },
+      {
+        section: 'operate',
         view: 'organization-positions',
         path: '/hr/operations/people/organization-positions',
         icon: Network,
@@ -681,13 +719,14 @@ const capability = (capabilityContractKey: string) => ({
   capabilityContractKey,
 });
 
-export const HCM_PERSONAL_NAVIGATION = projectProductSurfaceNavigation(HCM_NAVIGATION, {
+const HCM_PERSONAL_NAVIGATION_WITH_HRM009 = projectProductSurfaceNavigation(HCM_NAVIGATION, {
   home: { taskKind: 'work', access: policy('hcm.personal-core-access.v1') },
   me: { taskKind: 'work', access: policy('hcm.personal-core-access.v1') },
   'employment-documents': {
     taskKind: 'work',
     access: capability('hcm.personal.profile.view'),
   },
+  requests: { taskKind: 'work', access: capability('hcm.personal.requests.view') },
   time: { taskKind: 'work', access: policy('hcm.personal-core-access.v1') },
   absence: { taskKind: 'work', access: policy('hcm.personal-core-access.v1') },
   benefits: { taskKind: 'work', access: policy('hcm.personal-core-access.v1') },
@@ -697,6 +736,27 @@ export const HCM_PERSONAL_NAVIGATION = projectProductSurfaceNavigation(HCM_NAVIG
   directory: { taskKind: 'work', access: policy('hcm.directory-access.v1') },
   organization: { taskKind: 'work', access: policy('hcm.directory-access.v1') },
 });
+
+export function isHrisHrm009FrontendEnabled() {
+  return import.meta.env.VITE_HRIS_HRM_009_ENABLED === 'true';
+}
+
+function withoutHrm009Navigation(navigation: ReturnType<typeof projectProductSurfaceNavigation>) {
+  return navigation.flatMap((group) => {
+    const items = group.items.filter(
+      (item) => item.view !== 'requests' && item.view !== 'certificates-documents'
+    );
+    return items.length ? [{ ...group, items }] : [];
+  });
+}
+
+export function createHcmPersonalNavigation(hrm009Enabled = isHrisHrm009FrontendEnabled()) {
+  return hrm009Enabled
+    ? HCM_PERSONAL_NAVIGATION_WITH_HRM009
+    : withoutHrm009Navigation(HCM_PERSONAL_NAVIGATION_WITH_HRM009);
+}
+
+export const HCM_PERSONAL_NAVIGATION = createHcmPersonalNavigation();
 
 export const HCM_TEAM_NAVIGATION = projectProductSurfaceNavigation(HCM_NAVIGATION, {
   team: { taskKind: 'team', access: policy('hcm.team-access.v1') },
@@ -712,7 +772,7 @@ export const HCM_TEAM_NAVIGATION = projectProductSurfaceNavigation(HCM_NAVIGATIO
   },
 });
 
-export const HCM_OPERATIONS_NAVIGATION = projectProductSurfaceNavigation(HCM_NAVIGATION, {
+const HCM_OPERATIONS_NAVIGATION_WITH_HRM009 = projectProductSurfaceNavigation(HCM_NAVIGATION, {
   'operations-home': {
     taskKind: 'operations',
     access: {
@@ -783,6 +843,10 @@ export const HCM_OPERATIONS_NAVIGATION = projectProductSurfaceNavigation(HCM_NAV
     taskKind: 'operations',
     access: capability('hcm.operations.people.view'),
   },
+  'certificates-documents': {
+    taskKind: 'operations',
+    access: capability('hcm.operations.people.view'),
+  },
   'organization-positions': {
     taskKind: 'operations',
     access: capability('hcm.operations.organization.view'),
@@ -793,6 +857,14 @@ export const HCM_OPERATIONS_NAVIGATION = projectProductSurfaceNavigation(HCM_NAV
   },
   assignments: { taskKind: 'operations', access: capability('hcm.operations.workforce.read') },
 });
+
+export function createHcmOperationsNavigation(hrm009Enabled = isHrisHrm009FrontendEnabled()) {
+  return hrm009Enabled
+    ? HCM_OPERATIONS_NAVIGATION_WITH_HRM009
+    : withoutHrm009Navigation(HCM_OPERATIONS_NAVIGATION_WITH_HRM009);
+}
+
+export const HCM_OPERATIONS_NAVIGATION = createHcmOperationsNavigation();
 
 export const HCM_MANAGEMENT_NAVIGATION = projectProductSurfaceNavigation(HCM_NAVIGATION, {
   'system-access': {
