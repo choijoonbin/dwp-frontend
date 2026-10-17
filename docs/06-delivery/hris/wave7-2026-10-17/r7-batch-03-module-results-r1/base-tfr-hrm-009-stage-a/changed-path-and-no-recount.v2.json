@@ -1,0 +1,183 @@
+{
+  "schema": "dwp.hris.wave7.changed-path-and-no-recount.v2",
+  "evidenceId": "HRIS-WAVE7-R7-BATCH-03-BASE-TFR-HRM-009-STAGE-A-CHANGED-PATH-R2",
+  "issuedAt": "2026-10-18T06:10:37+09:00",
+  "issuedBy": "HRIS-HRM",
+  "sliceId": "BASE-TFR-HRM-009",
+  "stageId": "BASE-TFR-HRM-009-STAGE-A",
+  "resultState": "HRM009_REQUEST_ISSUE_STAGE_A_SOURCE_AND_V58_COMPLETE_EXACT_MODULE_BRANCHES_PUSHED_CONTROL_REVIEW_PENDING_DEFAULT_OFF_FULL_SLICE_OPEN_ZERO_CREDIT",
+  "successorOf": {
+    "path": "changed-path-and-no-recount.v1.json",
+    "sha256": "51b334830e7b561fef102f5c3db23faf403c0b627ec642b1d08435c7a09283e1",
+    "bytes": 14894,
+    "mutationPerformed": false
+  },
+  "priorEvidenceClosure": {
+    "commit": "924a2a5913916b10525e2c8dfb63598130edde4b",
+    "tree": "fe5b1806ef7ec920a1677befb5e3134a82d1a859",
+    "parent": "c300a50d3a38b21e853c1d9f29af26eee17814b5",
+    "subject": "docs(hris): record HRM-009 Stage A evidence",
+    "v1EvidencePathCount": 6,
+    "v1EvidenceFilesModifiedBySuccessor": false
+  },
+  "frontendSource": {
+    "repository": "dwp-frontend",
+    "baseCommit": "a315bd70835172713fee31269f77e7870269abdb",
+    "baseTree": "340436ab130d1b4d68c778a5d904a75a0f36590e",
+    "branch": "codex/hris-wave7-r7-batch03-hrm-009-stage-a-frontend-20261018-r1",
+    "upstream": "origin/codex/hris-wave7-r7-batch03-hrm-009-stage-a-frontend-20261018-r1",
+    "sourceResultCommit": "fbba35c0a65555cc6de4fe82541e17cd3c31f36f",
+    "sourceResultTree": "a43009aff40eb28e1b9b478a2b542931e7044b2f",
+    "sourceResultParent": "924a2a5913916b10525e2c8dfb63598130edde4b",
+    "sourceResultSubject": "fix(hris): enforce HRM-009 metadata digest shapes",
+    "sourceOnlyCommitCountFromBase": 3,
+    "totalCommitCountFromBaseIncludingV1EvidenceClosure": 4,
+    "lineage": [
+      {
+        "commit": "a315bd70835172713fee31269f77e7870269abdb",
+        "kind": "BASE"
+      },
+      {
+        "commit": "06ff7e8a737ed798d93516d1859f1e83d4fb8065",
+        "tree": "499aa93b865822e1e92dca76f03bb1ce093ce796",
+        "kind": "INITIAL_SOURCE"
+      },
+      {
+        "commit": "c300a50d3a38b21e853c1d9f29af26eee17814b5",
+        "tree": "04d1e895858630f8c88ab9adc72ba64ee148b288",
+        "kind": "UUID_SOURCE_CORRECTION"
+      },
+      {
+        "commit": "924a2a5913916b10525e2c8dfb63598130edde4b",
+        "tree": "fe5b1806ef7ec920a1677befb5e3134a82d1a859",
+        "kind": "V1_EVIDENCE_CLOSURE"
+      },
+      {
+        "commit": "fbba35c0a65555cc6de4fe82541e17cd3c31f36f",
+        "tree": "a43009aff40eb28e1b9b478a2b542931e7044b2f",
+        "kind": "METADATA_DIGEST_SOURCE_CORRECTION"
+      }
+    ],
+    "remoteExactBeforeV2Evidence": true,
+    "worktreeCleanBeforeV2Evidence": true,
+    "upstreamAhead": 0,
+    "upstreamBehind": 0,
+    "evidencePathsExcludedFromSourceCorrectionCommit": true
+  },
+  "sourceCorrectionDelta": {
+    "comparison": "924a2a5913916b10525e2c8dfb63598130edde4b..fbba35c0a65555cc6de4fe82541e17cd3c31f36f",
+    "changedPathCount": 3,
+    "sortedPathManifestSha256": "9b6f0dfc52f6174a62935b0809e5aa6ddede3464be8767bcbb2e39e2a25f8d56",
+    "sortedNameStatusManifestSha256": "36f3d59d4c00d5005408124b2a1c537da0e4e9f20e61f7372ba44f8ea4e11a79",
+    "contentTotalBytes": 57543,
+    "paths": [
+      {
+        "path": "apps/dwp/src/features/hris/employee-services/certificates/certificate-contract.ts",
+        "status": "M",
+        "sha256": "ee77fa793ca2e1396f48e086f18d704de1c6ea4b3e94df2de8c645879e268bbb",
+        "bytes": 25478
+      },
+      {
+        "path": "apps/dwp/src/features/hris/employee-services/certificates/testing/certificate-fixtures.test-support.ts",
+        "status": "M",
+        "sha256": "8b4a92509402b5736ef504938487487d26be735ec484e409fcd1a0f2064209dd",
+        "bytes": 5893
+      },
+      {
+        "path": "apps/dwp/src/features/hris/employee-services/certificates/testing/certificate-workbench.test.tsx",
+        "status": "M",
+        "sha256": "65b8938fd83843346e2bc2b6fba77db9d89842f115e9ac570b897a42c28ba5f5",
+        "bytes": 26172
+      }
+    ],
+    "outsideAuthorizedUnionCount": 0
+  },
+  "effectiveSourceClosedSet": {
+    "comparison": "a315bd70835172713fee31269f77e7870269abdb..fbba35c0a65555cc6de4fe82541e17cd3c31f36f restricted to the exact frontend source allowlist",
+    "sourcePathCount": 9,
+    "sortedPathManifestSha256": "a1bb54a410ead2178f2a4a230f528c1f854bb5cf64ea95de18a05e0e61bb6fb6",
+    "sortedNameStatusManifestSha256": "6faaa383cb7900851f9a2f230e8167ad2b90d8513b568fff88507028a54001d8",
+    "sortedContentManifestSha256": "62b1d6f970dd140933548586b4e9ea41dd871976d81369204b7c5dc2eee083b7",
+    "contentManifestTotalBytes": 115537,
+    "paths": [
+      "apps/dwp/src/features/hris/employee-services/certificates/certificate-api.ts",
+      "apps/dwp/src/features/hris/employee-services/certificates/certificate-contract.ts",
+      "apps/dwp/src/features/hris/employee-services/certificates/certificate-workbench.tsx",
+      "apps/dwp/src/features/hris/employee-services/certificates/index.ts",
+      "apps/dwp/src/features/hris/employee-services/certificates/testing/certificate-api.test.ts",
+      "apps/dwp/src/features/hris/employee-services/certificates/testing/certificate-fixtures.test-support.ts",
+      "apps/dwp/src/features/hris/employee-services/certificates/testing/certificate-workbench.test.tsx",
+      "apps/dwp/src/features/hris/employee-services/certificates/use-certificate-workbench.ts",
+      "apps/dwp/src/features/hris/people/__tests__/g3-slices/base-tfr-hrm-009-stage-a.slice.test.tsx"
+    ],
+    "outsideAuthorizedUnionCount": 0
+  },
+  "immutableV1Evidence": [
+    {
+      "path": "acceptance-results.v1.json",
+      "sha256": "8b9b51b089f7b42bb35a1ff65313791ecb4e8c93cae163de7788b7b50f1f303b",
+      "bytes": 12794
+    },
+    {
+      "path": "changed-path-and-no-recount.v1.json",
+      "sha256": "51b334830e7b561fef102f5c3db23faf403c0b627ec642b1d08435c7a09283e1",
+      "bytes": 14894
+    },
+    {
+      "path": "materialization-receipt.v1.json",
+      "sha256": "3da34cc99eb6aa3a7c7bc0cbbdb2a633cffd080ede093629463f108fe9629771",
+      "bytes": 10103
+    },
+    {
+      "path": "module-result-evidence.v1.json",
+      "sha256": "1e9dadfeb76674b2c5b3acef877f792be9728652a8435c85b6e37bce5a3a7e66",
+      "bytes": 16536
+    },
+    {
+      "path": "people-v58-evidence.v1.json",
+      "sha256": "dd48e7baddfe3b56a5f090e7f11568080c4195cb4ce9a22eb87240a6d9f683a2",
+      "bytes": 11203
+    },
+    {
+      "path": "request-issue-evidence.v1.json",
+      "sha256": "e01b453b4851d39f5a739640331cfc9e5974bd5b21f03e2ec76f7d780fde2984",
+      "bytes": 23409
+    }
+  ],
+  "effectiveBranchClosedSet": {
+    "baseCommit": "a315bd70835172713fee31269f77e7870269abdb",
+    "sourcePathCount": 9,
+    "immutableV1EvidencePathCount": 6,
+    "successorV2EvidencePathCount": 4,
+    "totalChangedPathCount": 19,
+    "sortedPathManifestSha256": "fd180373e7b7dda98e74b62a0feaa38970026fae2eeb9798c0106f2dcac115b0",
+    "sortedNameStatusManifestSha256": "685b8a6e95b531cef98cda51d5957495a89c504c221c2bcb97371c0fbc979208",
+    "contentManifestSha256": null,
+    "contentManifestOmissionReason": "A changed-path manifest cannot embed a digest over itself. The terminal module-result-evidence.v2.json hashes every current subordinate evidence node, while this record seals the complete path and status set.",
+    "successorEvidencePaths": [
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-results-r1/base-tfr-hrm-009-stage-a/acceptance-results.v2.json",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-results-r1/base-tfr-hrm-009-stage-a/changed-path-and-no-recount.v2.json",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-results-r1/base-tfr-hrm-009-stage-a/module-result-evidence.v2.json",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-results-r1/base-tfr-hrm-009-stage-a/request-issue-evidence.v2.json"
+    ],
+    "allPathsUnderAuthorizedUnion": true,
+    "v1EvidenceFilesModified": false,
+    "backendChangedBySuccessor": false,
+    "migrationChangedBySuccessor": false,
+    "centralControlChanged": false,
+    "routeOrShellChanged": false,
+    "successorEvidenceCommitPendingControlReview": true
+  },
+  "manifestFormats": {
+    "path": "LC_ALL=C sorted repository-relative path followed by LF for every record, including the final record",
+    "nameStatus": "LC_ALL=C sorted <status><TAB><repository-relative-path><LF> for every record, including the final record",
+    "content": "Order repository-relative paths with LC_ALL=C, then render each record as <lowercase-sha256><SP><decimal-bytes><SP><repository-relative-path><LF>, including the final record"
+  },
+  "noRecount": {
+    "v1NoRecountListCarriedForward": true,
+    "newSourceIsOnlyAnAC09FrontendBoundaryCorrection": true,
+    "fullSliceCompletionStillOpen": true
+  },
+  "stageASourceCompletionCreditBeforeCentralAdmission": 0,
+  "fullSliceBusinessCompletionCredit": 0
+}

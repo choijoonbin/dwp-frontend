@@ -1,0 +1,164 @@
+{
+  "schema": "dwp.hris.wave7.module-acceptance-results.v2",
+  "evidenceId": "HRIS-WAVE7-R7-BATCH-03-BASE-TFR-HRM-009-STAGE-A-ACCEPTANCE-R2",
+  "issuedAt": "2026-10-18T06:10:37+09:00",
+  "issuedBy": "HRIS-HRM",
+  "sliceId": "BASE-TFR-HRM-009",
+  "stageId": "BASE-TFR-HRM-009-STAGE-A",
+  "resultState": "HRM009_REQUEST_ISSUE_STAGE_A_SOURCE_AND_V58_COMPLETE_EXACT_MODULE_BRANCHES_PUSHED_CONTROL_REVIEW_PENDING_DEFAULT_OFF_FULL_SLICE_OPEN_ZERO_CREDIT",
+  "successorOf": {
+    "path": "acceptance-results.v1.json",
+    "sha256": "8b9b51b089f7b42bb35a1ff65313791ecb4e8c93cae163de7788b7b50f1f303b",
+    "bytes": 12794,
+    "mutationPerformed": false
+  },
+  "centralReviewCorrection": {
+    "finding": "The v1 frontend IAQ-010 fixture and parser reversed or permitted the two accepted metadata digest shapes.",
+    "acceptedOwnerWire": {
+      "CERTIFICATE_METADATA.digest": "EXACT_NULL",
+      "DOCUMENT_METADATA.digest": "REQUIRED_LOWERCASE_64_HEX"
+    },
+    "sourceSuccessor": {
+      "repository": "dwp-frontend",
+      "commit": "fbba35c0a65555cc6de4fe82541e17cd3c31f36f",
+      "tree": "a43009aff40eb28e1b9b478a2b542931e7044b2f",
+      "parent": "924a2a5913916b10525e2c8dfb63598130edde4b",
+      "subject": "fix(hris): enforce HRM-009 metadata digest shapes",
+      "branchRemoteExact": true,
+      "upstreamAhead": 0,
+      "upstreamBehind": 0
+    },
+    "changedPaths": [
+      "apps/dwp/src/features/hris/employee-services/certificates/certificate-contract.ts",
+      "apps/dwp/src/features/hris/employee-services/certificates/testing/certificate-fixtures.test-support.ts",
+      "apps/dwp/src/features/hris/employee-services/certificates/testing/certificate-workbench.test.tsx"
+    ]
+  },
+  "unchangedAcceptanceResults": [
+    {
+      "id": "HRM009-STAGEA-AC-01",
+      "result": "PASS"
+    },
+    {
+      "id": "HRM009-STAGEA-AC-02",
+      "result": "PASS"
+    },
+    {
+      "id": "HRM009-STAGEA-AC-03",
+      "result": "PASS"
+    },
+    {
+      "id": "HRM009-STAGEA-AC-04",
+      "result": "PASS"
+    },
+    {
+      "id": "HRM009-STAGEA-AC-05",
+      "result": "PASS"
+    },
+    {
+      "id": "HRM009-STAGEA-AC-06",
+      "result": "PASS"
+    },
+    {
+      "id": "HRM009-STAGEA-AC-07",
+      "result": "PASS"
+    },
+    {
+      "id": "HRM009-STAGEA-AC-08",
+      "result": "PASS"
+    },
+    {
+      "id": "HRM009-STAGEA-AC-10",
+      "result": "PASS"
+    },
+    {
+      "id": "HRM009-STAGEA-AC-11",
+      "result": "PENDING_CENTRAL_ROUTE_MOUNT_BROWSER_GATE"
+    },
+    {
+      "id": "HRM009-STAGEA-AC-12",
+      "result": "PASS"
+    }
+  ],
+  "replacementResults": [
+    {
+      "id": "HRM009-STAGEA-AC-09",
+      "replacesV1Result": "PASS",
+      "v1Qualification": "The v1 PASS relied on a frontend fixture and parser with reversed or permissive metadata digest shapes and is superseded by this corrected result.",
+      "result": "PASS_AFTER_FRONTEND_METADATA_DIGEST_SHAPE_CORRECTION",
+      "criterion": "No API, event, projection or UI reveals document bytes, object or download URL, verification token or verification hash, revoke control, download action, revoke action or invented capability; the accepted IAQ-010 owner wire requires CERTIFICATE_METADATA.digest to be exactly null and DOCUMENT_METADATA.digest to be a required lowercase 64-hex content digest.",
+      "evidence": [
+        "The dedicated frontend CERTIFICATE_METADATA parser now rejects every non-null digest.",
+        "The dedicated frontend DOCUMENT_METADATA parser now requires a lowercase 64-hex digest and rejects null and uppercase values.",
+        "The IAQ-010 fixture now matches the accepted owner wire instead of reversing the two digest shapes.",
+        "The smallest exact Yarn Vitest successor target passed both selected cases with 24 other cases skipped; no broad rerun is claimed.",
+        "No download, revoke or verification transport, action, capability, route or UI control was added by the correction."
+      ]
+    }
+  ],
+  "correctionVerification": {
+    "vitest": {
+      "command": "yarn vitest run apps/dwp/src/features/hris/employee-services/certificates/testing/certificate-workbench.test.tsx -t \"accepts the exact metadata-only IAQ-010 projection|enforces asymmetric certificate and document digest shapes\"",
+      "testFiles": 1,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 24,
+      "wallSeconds": 2.02,
+      "testMilliseconds": 2,
+      "result": "PASS"
+    },
+    "eslint": {
+      "command": "yarn eslint apps/dwp/src/features/hris/employee-services/certificates/certificate-contract.ts apps/dwp/src/features/hris/employee-services/certificates/testing/certificate-fixtures.test-support.ts apps/dwp/src/features/hris/employee-services/certificates/testing/certificate-workbench.test.tsx",
+      "exitCode": 0,
+      "output": "",
+      "wallSeconds": 1.049,
+      "result": "PASS_CLEAN"
+    },
+    "broadRerun": false
+  },
+  "sourceReview": {
+    "independentAudit": "NO_OPEN_P0_OR_P1_AFTER_AC09_CORRECTION",
+    "residualCount": 7,
+    "nonblockingResiduals": [
+      {
+        "priority": "P2",
+        "finding": "frontend/backend Unicode idempotency length difference"
+      },
+      {
+        "priority": "P2",
+        "finding": "local Bearer/If-Match/certificate-type handling narrower than some input schemas"
+      },
+      {
+        "priority": "P2",
+        "finding": "broad local Problem enum"
+      },
+      {
+        "priority": "P2",
+        "finding": "actual PostgreSQL two-session receipt race not run"
+      },
+      {
+        "priority": "P2",
+        "finding": "repository SQL limit/keyset pushdown absent"
+      },
+      {
+        "priority": "P2",
+        "finding": "historical broad/PG raw XML preservation provenance insufficient"
+      },
+      {
+        "priority": "P2",
+        "finding": "central v52 exact DATA key adoption pending"
+      }
+    ],
+    "disposition": "NONBLOCKING_SEVEN_P2_AND_CENTRAL_ADMISSION_REVIEW"
+  },
+  "effectiveSummary": {
+    "total": 12,
+    "passed": 11,
+    "pendingCentralRouteMountBrowserGate": 1,
+    "failed": 0,
+    "centralAdmissionPending": true,
+    "singleBroadFrontendPassClaimed": false
+  },
+  "stageASourceCompletionCreditBeforeCentralAdmission": 0,
+  "fullSliceBusinessCompletionCredit": 0
+}

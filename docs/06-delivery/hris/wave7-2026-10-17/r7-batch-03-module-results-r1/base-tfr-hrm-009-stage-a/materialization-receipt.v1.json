@@ -1,0 +1,175 @@
+{
+  "schema": "dwp.hris.wave7.module-materialization-receipt.v1",
+  "evidenceId": "HRIS-WAVE7-R7-BATCH-03-BASE-TFR-HRM-009-STAGE-A-MATERIALIZATION-R1",
+  "issuedAt": "2026-10-18T05:44:32+09:00",
+  "issuedBy": "HRIS-HRM",
+  "moduleSession": "HRIS-HRM",
+  "moduleThreadId": "01a0f53e-9a75-7421-969f-473b0cfb9439",
+  "sliceId": "BASE-TFR-HRM-009",
+  "stageId": "BASE-TFR-HRM-009-STAGE-A",
+  "canonicalFeature": "HRIS_HRM_CERTIFICATE_WORKBENCH",
+  "resultState": "HRM009_REQUEST_ISSUE_STAGE_A_SOURCE_AND_V58_COMPLETE_EXACT_MODULE_BRANCHES_PUSHED_CONTROL_REVIEW_PENDING_DEFAULT_OFF_FULL_SLICE_OPEN_ZERO_CREDIT",
+  "authority": {
+    "executableStartToken": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-start-r1/tokens/base-tfr-hrm-009.start-token.v2.json",
+      "tokenId": "HRIS-WAVE7-R7-BATCH-03-START-BASE-TFR-HRM-009-REQUEST-ISSUE-STAGE-A-20261018-R2",
+      "sha256": "0839ba5e76094b7ee024fee11478eb85f04a9969b65bc8f611239fc4eae79df7",
+      "bytes": 20608,
+      "requiredState": "ISSUED_EXECUTABLE_EXACT_MATERIALIZED_WORKTREES_ACTIVE_V58_STAGE_A_SOURCE_TEST_COMMIT_PUSH_ONLY_DEFAULT_OFF_FULL_SLICE_OPEN",
+      "executable": true
+    },
+    "ownerPacket": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-start-r1/owner-packets/base-tfr-hrm-009.owner-packet.v1.json",
+      "sha256": "d27de6435c88913821d2b0d947e3ad8d05a1b61703724dd4cd223823dc0729cc",
+      "bytes": 29078,
+      "requiredState": "SEALED_EXACT_REQUEST_ISSUE_METADATA_STAGE_A_PACKET_READY_EXECUTABLE_TOKEN_WITHHELD_PENDING_MATERIALIZED_WORKTREES_AND_ACTIVE_V58_LEASE_SUCCESSOR_DEFAULT_OFF_FULL_SLICE_OPEN"
+    },
+    "semanticDisposition": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-start-r1/semantic-dispositions/base-tfr-hrm-009-stage-a.semantic-disposition.v1.json",
+      "sha256": "2c61d96164f2a594aee8bacf729a8f1a9112167639f9ef1a5bc5f3cf4f1040bb",
+      "bytes": 19804
+    },
+    "centralAuthorizationSuccessor": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-start-r1/central-authorization-successor.v1.json",
+      "sha256": "c49c856034dbf0fae7923c75356378b62203e2c7ab80bf9374269225be9d20f9",
+      "bytes": 18313,
+      "requiredState": "HRM009_STAGE_A_PACKET_AUTHORITY_SEALED_EXECUTABLE_SOURCE_PENDING_MATERIALIZED_WORKTREES_AND_ACTIVE_V58_LEASE_SUCCESSOR_CENTRAL_V52_AUTH_V261_DEFERRED_DEFAULT_OFF"
+    },
+    "reservedLease": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-start-r1/migration-lease-activation.v1.json",
+      "sha256": "c93451aec3ec94778974d04fe1a5360229113d247f1a9fa6781398466632ebd0",
+      "bytes": 14786,
+      "reservationId": "HRIS-WAVE7-R7-BATCH-03-MIGRATION-LEASE-RESERVATION-20261018-R1"
+    },
+    "activeLease": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-start-r1/migration-lease-activation.v2.json",
+      "sha256": "17e29d15179e22c81f9c3c9c4abb9cea18b72d5b5d5cf4801b95fad26e0128a6",
+      "bytes": 6669,
+      "activationId": "HRIS-WAVE7-R7-BATCH-03-MIGRATION-LEASE-ACTIVATION-20261018-R2",
+      "leaseId": "HRIS-WAVE7-R7-BATCH-03-PEOPLE-MAIN-V58-HRM009-STAGE-A-20261018-R1",
+      "activeLeaseCount": 1
+    },
+    "worktreeMaterializationReceipt": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-start-r1/worktree-materialization-receipt.v1.json",
+      "sha256": "132927c954abeab18b17fc19e0a9966c18a933fa462a355473ea32a63f9c817d",
+      "bytes": 6022,
+      "receiptId": "HRIS-WAVE7-R7-BATCH-03-HRM009-STAGE-A-WORKTREE-MATERIALIZATION-20261018-R1"
+    },
+    "withheldTokenPredecessor": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-start-r1/tokens/base-tfr-hrm-009.start-token.v1.json",
+      "sha256": "9385a52b966686e0b990315d77d0173cda760ca8ad4623039c2cbeb12f48db20",
+      "bytes": 22518,
+      "executable": false
+    }
+  },
+  "materializationPolicy": "FRESH_FROM_EXACT_PIN_NO_PRIOR_BATCH_OR_FEATURE_WORKTREE_REUSE_NO_WORKING_TREE_COPY",
+  "expectedInitialPorcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "worktrees": {
+    "backend": {
+      "repository": "dwp-backend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261018/r7-batch03/hrm-009-stage-a/backend",
+      "branch": "codex/hris-wave7-r7-batch03-hrm-009-stage-a-backend-20261018-r1",
+      "authorizedPushTarget": "origin/codex/hris-wave7-r7-batch03-hrm-009-stage-a-backend-20261018-r1",
+      "baseCommit": "f448c36feee2ed7f59eacc64f450e6db3865f1c5",
+      "baseTree": "cec08e55f33fa71482c583137e3ccc3d8bf11572",
+      "materializedHead": "f448c36feee2ed7f59eacc64f450e6db3865f1c5",
+      "materializedTree": "cec08e55f33fa71482c583137e3ccc3d8bf11572",
+      "initialPorcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "initialUpstream": null,
+      "initialRemoteBranch": null,
+      "freshExactBase": true,
+      "priorWorktreeReused": false,
+      "workingTreeFilesCopied": false,
+      "initialSourceCommit": "4f8bf1de944874d5f021653c0ccc50d43c740b45",
+      "initialSourceTree": "1413fecb00b36ed9e61111022e85cb7c4230602c",
+      "initialSourceCommitParent": "f448c36feee2ed7f59eacc64f450e6db3865f1c5",
+      "sourceCommit": "39abe180426b553ffab0122add331f337e6f7821",
+      "sourceTree": "7097f60a9ccca1fe3cc6449a4242d6b83c1b8fdf",
+      "sourceCommitParent": "4f8bf1de944874d5f021653c0ccc50d43c740b45",
+      "sourceCommitSubject": "fix(hris): close HRM-009 replay and query boundaries",
+      "sourceLineage": [
+        {
+          "commit": "4f8bf1de944874d5f021653c0ccc50d43c740b45",
+          "tree": "1413fecb00b36ed9e61111022e85cb7c4230602c",
+          "parent": "f448c36feee2ed7f59eacc64f450e6db3865f1c5",
+          "role": "INITIAL_STAGE_A_SOURCE_COMMIT"
+        },
+        {
+          "commit": "39abe180426b553ffab0122add331f337e6f7821",
+          "tree": "7097f60a9ccca1fe3cc6449a4242d6b83c1b8fdf",
+          "parent": "4f8bf1de944874d5f021653c0ccc50d43c740b45",
+          "role": "FINAL_REPLAY_QUERY_AND_TRANSPORT_BOUNDARY_CORRECTION"
+        }
+      ],
+      "upstream": "origin/codex/hris-wave7-r7-batch03-hrm-009-stage-a-backend-20261018-r1",
+      "upstreamAhead": 0,
+      "upstreamBehind": 0,
+      "remoteExact": true,
+      "sourceWorktreeCleanBeforeEvidence": true,
+      "sourceWorktreePorcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261018/r7-batch03/hrm-009-stage-a/frontend",
+      "branch": "codex/hris-wave7-r7-batch03-hrm-009-stage-a-frontend-20261018-r1",
+      "authorizedPushTarget": "origin/codex/hris-wave7-r7-batch03-hrm-009-stage-a-frontend-20261018-r1",
+      "baseCommit": "a315bd70835172713fee31269f77e7870269abdb",
+      "baseTree": "340436ab130d1b4d68c778a5d904a75a0f36590e",
+      "materializedHead": "a315bd70835172713fee31269f77e7870269abdb",
+      "materializedTree": "340436ab130d1b4d68c778a5d904a75a0f36590e",
+      "initialPorcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "initialUpstream": null,
+      "initialRemoteBranch": null,
+      "freshExactBase": true,
+      "priorWorktreeReused": false,
+      "workingTreeFilesCopied": false,
+      "initialSourceCommit": "06ff7e8a737ed798d93516d1859f1e83d4fb8065",
+      "initialSourceTree": "499aa93b865822e1e92dca76f03bb1ce093ce796",
+      "initialSourceCommitParent": "a315bd70835172713fee31269f77e7870269abdb",
+      "sourceCommit": "c300a50d3a38b21e853c1d9f29af26eee17814b5",
+      "sourceTree": "04d1e895858630f8c88ab9adc72ba64ee148b288",
+      "sourceCommitParent": "06ff7e8a737ed798d93516d1859f1e83d4fb8065",
+      "sourceCommitSubject": "fix(hris): align HRM-009 UUID transport boundary",
+      "sourceLineage": [
+        {
+          "commit": "06ff7e8a737ed798d93516d1859f1e83d4fb8065",
+          "tree": "499aa93b865822e1e92dca76f03bb1ce093ce796",
+          "parent": "a315bd70835172713fee31269f77e7870269abdb",
+          "role": "INITIAL_STAGE_A_COMPONENT_SOURCE_COMMIT"
+        },
+        {
+          "commit": "c300a50d3a38b21e853c1d9f29af26eee17814b5",
+          "tree": "04d1e895858630f8c88ab9adc72ba64ee148b288",
+          "parent": "06ff7e8a737ed798d93516d1859f1e83d4fb8065",
+          "role": "STRICT_UUID_TRANSPORT_BOUNDARY_CORRECTION"
+        }
+      ],
+      "upstream": "origin/codex/hris-wave7-r7-batch03-hrm-009-stage-a-frontend-20261018-r1",
+      "upstreamAhead": 0,
+      "upstreamBehind": 0,
+      "remoteExact": true,
+      "sourceWorktreeCleanBeforeEvidence": true,
+      "sourceWorktreePorcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "evidencePathsExcludedFromSourceCommits": true,
+      "evidenceCommitPendingControlReview": true
+    }
+  },
+  "authorityCarrierExclusion": {
+    "repository": "dwp-frontend",
+    "authorityCarrierCommit": "108572337d742b4f3b010b31dae0327873b2d65f",
+    "authorityCarrierTree": "97985d6e1b1d3c28e78717938ad6d3b0a68d98f0",
+    "frontendSourceCommitAncestor": false,
+    "authorityCarrierCommitSourceAncestor": false,
+    "sourceAndCarrierMergeBase": "a315bd70835172713fee31269f77e7870269abdb",
+    "mergeRebaseOrCherryPickPerformed": false
+  },
+  "materializationAssertions": [
+    "Both module worktrees were materialized cleanly from the exact commits and trees sealed by the executable token and the control-owned materialization receipt.",
+    "Neither prior-batch worktree state nor the later authority-carrier commits entered either source lineage.",
+    "The backend and frontend source results each have an explicit two-commit lineage beginning at the exact sealed base.",
+    "Only the two exact authorized module branches were pushed, and each remote head equals the final source commit with zero divergence.",
+    "The frontend evidence files are separate from the source-result commits and remain pending a control-review evidence commit."
+  ],
+  "stageASourceCompletionCreditBeforeCentralAdmission": 0,
+  "fullSliceBusinessCompletionCredit": 0
+}

@@ -1,0 +1,152 @@
+{
+  "schema": "dwp.hris.wave7.module-acceptance-results.v1",
+  "evidenceId": "HRIS-WAVE7-R7-BATCH-03-BASE-TFR-HRM-009-STAGE-A-ACCEPTANCE-R1",
+  "issuedAt": "2026-10-18T05:44:32+09:00",
+  "issuedBy": "HRIS-HRM",
+  "sliceId": "BASE-TFR-HRM-009",
+  "stageId": "BASE-TFR-HRM-009-STAGE-A",
+  "resultState": "HRM009_REQUEST_ISSUE_STAGE_A_SOURCE_AND_V58_COMPLETE_EXACT_MODULE_BRANCHES_PUSHED_CONTROL_REVIEW_PENDING_DEFAULT_OFF_FULL_SLICE_OPEN_ZERO_CREDIT",
+  "summary": {
+    "total": 12,
+    "passed": 11,
+    "pendingCentralRouteMountBrowserGate": 1,
+    "failed": 0
+  },
+  "acceptanceResults": [
+    {
+      "id": "HRM009-STAGEA-AC-01",
+      "result": "PASS",
+      "criterion": "IAQ-003 and IAQ-010 expose only their exact accepted GET browser and owner paths, page limit, stable ordering, deep links, metadata field groups and action allowlists.",
+      "evidence": [
+        "CertificateController exposes only GET /v1/hris/workbench/self-service/requests, GET /v1/hris/workbench/operations/certificates/documents and the separately sealed POST command.",
+        "CertificateQueryDefinition pins IAQ-003 and IAQ-010 to their exact browser and owner paths, limit 100, itemPublicId stable tie-break, canonical deep links, field groups, filters, sorts and action allowlists.",
+        "The frontend adapter and strict projection parser map only the two accepted browser paths and reject unknown query identities, additive fields and cross-query actions."
+      ]
+    },
+    {
+      "id": "HRM009-STAGEA-AC-02",
+      "result": "PASS",
+      "criterion": "Both projections enforce COMPLETE, EMPTY, PARTIAL and UNAVAILABLE cardinality, freshness, typed partial failure, cursor scope/revision and VIEW, MASK or OMIT field-decision invariants.",
+      "evidence": [
+        "Backend contract tests cover state cardinality, typed partial failure, field-decision summaries and cursor binding to the sealed tenant, query, population, revisions, as-of, requested sort, limit and last item.",
+        "CertificateProjector prevents MASKed metadata from influencing returned items, filtering or ordering and counts absent sealed groups as OMIT.",
+        "Frontend parsing revalidates all projection states and field decisions at the component consumption boundary; only retryable 429, 503 or network refresh failures retain stale metadata with the command synchronously fenced."
+      ]
+    },
+    {
+      "id": "HRM009-STAGEA-AC-03",
+      "result": "PASS",
+      "criterion": "PEP-HRM-012 accepts only the five sealed request fields and required command headers, rejects unknown fields and returns the durable 202 CommandReceiptV1 contract.",
+      "evidence": [
+        "The command JSON boundary accepts exactly personPublicId, certificateType, purposeCode, locale and asOf and rejects unknown, missing, duplicate and wrong-typed members.",
+        "Authorization, Idempotency-Key, If-Match and X-Correlation-ID are required; X-Purpose-Code is the only sealed optional header.",
+        "The owner returns 202 CommandReceiptV1, and the frontend validates correlation, purpose, command type, originating action and subject bindings before accepting the receipt."
+      ]
+    },
+    {
+      "id": "HRM009-STAGEA-AC-04",
+      "result": "PASS",
+      "criterion": "The owner deterministically chooses self or operations authority from trusted actor-person identity and personPublicId, enforces the exact duty, purpose, population and field groups and requires common HIGH step-up before mutation; TEAM_MANAGEMENT is negatively asserted as DENY/DEFER with no team profile and no fallback.",
+      "evidence": [
+        "Subject equality with the trusted actor selects only the self profile; a non-self subject selects only the operations profile and the caller cannot supply an authorization mode.",
+        "Exact route, profile, binding, projection, schema, field-policy, capability, duty, purpose, population, predicate and target-binding tuples fail closed on any mismatch.",
+        "Both profiles require the one shared HIGH-risk action route before mutation, while TEAM_MANAGEMENT is denied before population resolution with no profile or fallback."
+      ]
+    },
+    {
+      "id": "HRM009-STAGEA-AC-05",
+      "result": "PASS",
+      "criterion": "The tenant, command type and idempotency-key scope serializes concurrent reservation; same-hash replay returns the original receipt and different-hash reuse returns 409 without another side effect.",
+      "evidence": [
+        "The V58 unique index seals tenant_id, command_type and idempotency_key after a duplicate preflight that does not delete, merge or rewrite receipts.",
+        "Same-hash replay returns every original durable receipt state, including success and non-success, without rerunning the artifact port; a different hash or command schema version returns 409 before side effects.",
+        "Recovery tests cover a winning concurrent reservation and a receipt committed while the caller waits for the subject lock; both replay before challenge consumption or artifact invocation."
+      ]
+    },
+    {
+      "id": "HRM009-STAGEA-AC-06",
+      "result": "PASS",
+      "criterion": "People V58 creates exactly the two certificate metadata tables, blueprint constraints, queue and receipt indexes, forced tenant RLS policies and immutable transition guards with no second migration or historical edit.",
+      "evidence": [
+        "The exact leased V58 path creates ppl_certificate_requests and ppl_issued_certificates, one queue index and one stricter receipt index, two FORCE RLS policies and two locked-down guard functions/triggers.",
+        "Static migration tests prove the closed manifest and unchanged V54 receipt migration; the historical V1 through V57 blob/path manifest is byte-identical at base and result.",
+        "Real PostgreSQL 16.15 Testcontainers tests cover clean migration, V57-to-V58 upgrade, duplicate preflight, strict receipt uniqueness, RLS, state guards, immutable fields and rollback with zero skipped tests in the executed targets."
+      ]
+    },
+    {
+      "id": "HRM009-STAGEA-AC-07",
+      "result": "PASS",
+      "criterion": "A successful issue freezes template, seal and subject inputs plus object identity and digest, then atomically commits request ISSUED, issued metadata, receipt, audit and the exact six-field CertificateIssued.v1 outbox event.",
+      "evidence": [
+        "CertificateService freezes subject, template and seal inputs before artifact invocation and persists the returned object identity, object version and digest as immutable issued metadata.",
+        "The successful transaction commits the ISSUED request, issued row, succeeded receipt, audit event and semantic outbox together.",
+        "The CertificateIssued.v1 payload is exactly requestPublicId, certificatePublicId, subjectPersonPublicId, certificateType, issuedAt and expiresAt."
+      ]
+    },
+    {
+      "id": "HRM009-STAGEA-AC-08",
+      "result": "PASS",
+      "criterion": "The production artifact adapter fails closed with no issued state or event while the test-only conformance double proves deterministic success, retryable failure and rollback without becoming a production binding.",
+      "evidence": [
+        "FailClosedCertificateArtifactAdapter is the only production binding and never returns artifact success or performs network, filesystem, object, template, seal, signature or document-content work.",
+        "CertificateArtifactConformanceDouble exists only under the test source set and proves deterministic immutable metadata plus retryable unavailability.",
+        "A real PostgreSQL service transaction with the failing conformance double rolls back request, issued metadata, receipt success, audit and outbox effects."
+      ]
+    },
+    {
+      "id": "HRM009-STAGEA-AC-09",
+      "result": "PASS",
+      "criterion": "No API, event, projection or UI reveals document bytes, object or download URL, verification token or hash, revoke control, download action, revoke action or invented capability.",
+      "evidence": [
+        "The projection and event closed sets are metadata-only, and the frontend strict parser rejects additive disclosure fields.",
+        "No download, revoke or verification controller, route, client, capability, duty, action or UI control exists in the changed paths.",
+        "Object identity, object version and content digest appear only in the approved DOCUMENT_METADATA projection; verification-token hash remains persistence-only and no bytes, download URL, verification token, verification hash or revoke control is serialized."
+      ]
+    },
+    {
+      "id": "HRM009-STAGEA-AC-10",
+      "result": "PASS",
+      "criterion": "Feature absent, false or tenant unenrolled mounts no owner runtime and sends zero calls; Platform people.employment-certificate remains read-only and no Platform request is copied, migrated or mirrored.",
+      "evidence": [
+        "Hrm009RolloutGate defaults OFF with an empty enrollment set and prevents controller, authority, repository, artifact, audit and event work.",
+        "Frontend absent, false and unenrolled gates render the disabled boundary with zero query and command calls.",
+        "The protected dwp-platform-server and dwp-platform-contracts tree objects are identical at base and result; no Platform request or seed changed."
+      ]
+    },
+    {
+      "id": "HRM009-STAGEA-AC-11",
+      "result": "PENDING_CENTRAL_ROUTE_MOUNT_BROWSER_GATE",
+      "criterion": "The two component surfaces identify primary user, operational question, primary action and list-detail or focus-form archetype and cover loading, empty, partial, unavailable, denied, stale and complete states at 1440, 1280, 390, 320, 200-percent zoom, light, dark, high contrast, reduced motion, keyboard and long Korean/English labels.",
+      "evidence": [
+        "Unmounted component tests identify the employee list-detail and operations focus-form users, questions, primary actions and archetypes.",
+        "Component fakes cover 1440, 1280, 390 and 320 widths, 200-percent zoom, light and dark modes, forced colors, reduced motion, keyboard-only use, long Korean and English labels and partial state.",
+        "Material-state tests cover loading, empty, partial, unavailable, opaque denied, stale and complete rendering with a synchronous command fence."
+      ],
+      "pendingReason": "The executable token permits component-level evidence with fakes only. Product-authorization v52, Auth V261, Gateway projection, route and shell mount and the trusted browser matrix remain control-owned and were not run or claimed."
+    },
+    {
+      "id": "HRM009-STAGEA-AC-12",
+      "result": "PASS",
+      "criterion": "Changed-path evidence proves only exact Stage-A paths and V58 changed, central and Platform paths stayed untouched, download/revoke remain NO-GO, and expiry plus separately authorized access/download audit acceptance remain open mandatory full-slice boundaries; business completion credit is zero pending central admission and later activation.",
+      "evidence": [
+        "The backend two-commit lineage changes exactly 21 allowed paths, including the one leased V58 migration, and the frontend two-commit lineage changes exactly nine allowed source paths.",
+        "Protected central authorization, OpenAPI, Auth, Gateway, Platform, shell, route, architecture and historical migration objects are unchanged.",
+        "Central admission, production artifact binding, download, revoke, expiry acceptance, access/download audit acceptance, browser gate, merge, Platform cutover, tenant enrollment and activation remain pending with zero Stage-A source and full-slice business completion credit."
+      ]
+    }
+  ],
+  "sourceReview": {
+    "independentAudit": "NO_P0_OR_P1",
+    "nonblockingResiduals": [
+      "The owner-side DATA binding, projection, schema and field-policy keys require central product-authorization v52 adoption and proof before admission.",
+      "Backend Idempotency-Key length uses Java UTF-16 code units, which differs from JSON Schema Unicode code-point length for non-BMP input.",
+      "Frontend and backend certificateType validation trim or reject edge whitespace more narrowly than the accepted generic string schema.",
+      "Local Authorization Bearer and numeric version If-Match handling are narrower than the accepted transport patterns.",
+      "The local Problem code enum is broader than the Stage-A cases exercised by the bounded tests.",
+      "The concurrency suite models the winning receipt race deterministically but does not execute two simultaneous database insertion sessions."
+    ],
+    "disposition": "NONBLOCKING_P2_AND_CENTRAL_ADMISSION_REVIEW"
+  },
+  "stageASourceCompletionCreditBeforeCentralAdmission": 0,
+  "fullSliceBusinessCompletionCredit": 0
+}

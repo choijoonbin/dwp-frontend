@@ -1,0 +1,352 @@
+{
+  "schema": "dwp.hris.wave7.module-result-evidence.v1",
+  "resultId": "HRIS-WAVE7-R7-BATCH-03-BASE-TFR-HRM-009-STAGE-A-MODULE-RESULT-R1",
+  "issuedAt": "2026-10-18T05:44:32+09:00",
+  "issuedBy": "HRIS-HRM",
+  "moduleSession": "HRIS-HRM",
+  "moduleThreadId": "01a0f53e-9a75-7421-969f-473b0cfb9439",
+  "sliceId": "BASE-TFR-HRM-009",
+  "stageId": "BASE-TFR-HRM-009-STAGE-A",
+  "canonicalFeature": "HRIS_HRM_CERTIFICATE_WORKBENCH",
+  "status": "HRM009_REQUEST_ISSUE_STAGE_A_SOURCE_AND_V58_COMPLETE_EXACT_MODULE_BRANCHES_PUSHED_CONTROL_REVIEW_PENDING_DEFAULT_OFF_FULL_SLICE_OPEN_ZERO_CREDIT",
+  "authority": {
+    "startToken": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-start-r1/tokens/base-tfr-hrm-009.start-token.v2.json",
+      "tokenId": "HRIS-WAVE7-R7-BATCH-03-START-BASE-TFR-HRM-009-REQUEST-ISSUE-STAGE-A-20261018-R2",
+      "sha256": "0839ba5e76094b7ee024fee11478eb85f04a9969b65bc8f611239fc4eae79df7",
+      "bytes": 20608,
+      "state": "ISSUED_EXECUTABLE_EXACT_MATERIALIZED_WORKTREES_ACTIVE_V58_STAGE_A_SOURCE_TEST_COMMIT_PUSH_ONLY_DEFAULT_OFF_FULL_SLICE_OPEN"
+    },
+    "ownerPacket": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-start-r1/owner-packets/base-tfr-hrm-009.owner-packet.v1.json",
+      "sha256": "d27de6435c88913821d2b0d947e3ad8d05a1b61703724dd4cd223823dc0729cc",
+      "bytes": 29078
+    },
+    "semanticDisposition": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-start-r1/semantic-dispositions/base-tfr-hrm-009-stage-a.semantic-disposition.v1.json",
+      "sha256": "2c61d96164f2a594aee8bacf729a8f1a9112167639f9ef1a5bc5f3cf4f1040bb",
+      "bytes": 19804
+    },
+    "centralAuthorizationSuccessor": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-start-r1/central-authorization-successor.v1.json",
+      "sha256": "c49c856034dbf0fae7923c75356378b62203e2c7ab80bf9374269225be9d20f9",
+      "bytes": 18313,
+      "centralProductAuthorizationV52AndAuthV261Deferred": true
+    },
+    "activeLease": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-start-r1/migration-lease-activation.v2.json",
+      "sha256": "17e29d15179e22c81f9c3c9c4abb9cea18b72d5b5d5cf4801b95fad26e0128a6",
+      "bytes": 6669,
+      "leaseId": "HRIS-WAVE7-R7-BATCH-03-PEOPLE-MAIN-V58-HRM009-STAGE-A-20261018-R1",
+      "activeLeaseCount": 1
+    },
+    "materializationReceipt": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-start-r1/worktree-materialization-receipt.v1.json",
+      "sha256": "132927c954abeab18b17fc19e0a9966c18a933fa462a355473ea32a63f9c817d",
+      "bytes": 6022
+    },
+    "authorityCarrierExclusion": {
+      "commit": "108572337d742b4f3b010b31dae0327873b2d65f",
+      "tree": "97985d6e1b1d3c28e78717938ad6d3b0a68d98f0",
+      "frontendSourceCommitAncestor": false,
+      "authorityCarrierCommitSourceAncestor": false,
+      "mergeBase": "a315bd70835172713fee31269f77e7870269abdb",
+      "mergeRebaseOrCherryPickPerformed": false
+    }
+  },
+  "moduleResults": {
+    "backend": {
+      "repository": "dwp-backend",
+      "baseCommit": "f448c36feee2ed7f59eacc64f450e6db3865f1c5",
+      "baseTree": "cec08e55f33fa71482c583137e3ccc3d8bf11572",
+      "branch": "codex/hris-wave7-r7-batch03-hrm-009-stage-a-backend-20261018-r1",
+      "upstream": "origin/codex/hris-wave7-r7-batch03-hrm-009-stage-a-backend-20261018-r1",
+      "initialSourceCommit": "4f8bf1de944874d5f021653c0ccc50d43c740b45",
+      "initialSourceTree": "1413fecb00b36ed9e61111022e85cb7c4230602c",
+      "initialSourceCommitParent": "f448c36feee2ed7f59eacc64f450e6db3865f1c5",
+      "sourceResultCommit": "39abe180426b553ffab0122add331f337e6f7821",
+      "sourceResultTree": "7097f60a9ccca1fe3cc6449a4242d6b83c1b8fdf",
+      "sourceCommitParent": "4f8bf1de944874d5f021653c0ccc50d43c740b45",
+      "sourceCommitSubject": "fix(hris): close HRM-009 replay and query boundaries",
+      "sourceLineage": [
+        "f448c36feee2ed7f59eacc64f450e6db3865f1c5",
+        "4f8bf1de944874d5f021653c0ccc50d43c740b45",
+        "39abe180426b553ffab0122add331f337e6f7821"
+      ],
+      "sourceWorktreeClean": true,
+      "sourceWorktreePorcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "upstreamAhead": 0,
+      "upstreamBehind": 0,
+      "remoteExact": true,
+      "changedPathCount": 21
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "baseCommit": "a315bd70835172713fee31269f77e7870269abdb",
+      "baseTree": "340436ab130d1b4d68c778a5d904a75a0f36590e",
+      "branch": "codex/hris-wave7-r7-batch03-hrm-009-stage-a-frontend-20261018-r1",
+      "upstream": "origin/codex/hris-wave7-r7-batch03-hrm-009-stage-a-frontend-20261018-r1",
+      "initialSourceCommit": "06ff7e8a737ed798d93516d1859f1e83d4fb8065",
+      "initialSourceTree": "499aa93b865822e1e92dca76f03bb1ce093ce796",
+      "initialSourceCommitParent": "a315bd70835172713fee31269f77e7870269abdb",
+      "sourceResultCommit": "c300a50d3a38b21e853c1d9f29af26eee17814b5",
+      "sourceResultTree": "04d1e895858630f8c88ab9adc72ba64ee148b288",
+      "sourceCommitParent": "06ff7e8a737ed798d93516d1859f1e83d4fb8065",
+      "sourceCommitSubject": "fix(hris): align HRM-009 UUID transport boundary",
+      "sourceLineage": [
+        "a315bd70835172713fee31269f77e7870269abdb",
+        "06ff7e8a737ed798d93516d1859f1e83d4fb8065",
+        "c300a50d3a38b21e853c1d9f29af26eee17814b5"
+      ],
+      "sourceWorktreeCleanBeforeEvidence": true,
+      "sourceWorktreePorcelainSha256BeforeEvidence": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sourcePathsClean": true,
+      "evidencePathsExcludedFromSourceCommits": true,
+      "sourceUpstreamAhead": 0,
+      "sourceUpstreamBehind": 0,
+      "sourceRemoteExact": true,
+      "sourceChangedPathCount": 9,
+      "evidencePathCount": 6,
+      "evidenceCommitPendingControlReview": true
+    }
+  },
+  "implementation": {
+    "entryQueries": [
+      {
+        "queryId": "IAQ-003",
+        "operationId": "IAQ.OP.003",
+        "variantKey": "REQUESTS",
+        "ownerPath": "GET /v1/hris/workbench/self-service/requests",
+        "browserPath": "GET /api/people/v1/hris/workbench/self-service/requests",
+        "route": "/hr/me/requests",
+        "dataRouteContract": "route.hcm.personal.requests.data",
+        "purpose": "EMPLOYEE_SELF_SERVICE",
+        "population": [
+          "SELF"
+        ],
+        "responseFieldGroups": [
+          "REQUEST_SUMMARY",
+          "REQUEST_STATUS",
+          "COMMAND_RECEIPT"
+        ]
+      },
+      {
+        "queryId": "IAQ-010",
+        "operationId": "IAQ.OP.010",
+        "variantKey": "CERTIFICATES_DOCUMENTS",
+        "ownerPath": "GET /v1/hris/workbench/operations/certificates/documents",
+        "browserPath": "GET /api/people/v1/hris/workbench/operations/certificates/documents",
+        "route": "/hr/operations/people/certificates-documents",
+        "dataRouteContract": "route.hcm.operations.certificates-documents.data",
+        "purpose": "HR_OPERATIONS",
+        "population": [
+          "LEGAL_ENTITY",
+          "NAMED_POPULATION",
+          "ORG_TREE",
+          "ORG_UNIT"
+        ],
+        "responseFieldGroups": [
+          "CERTIFICATE_METADATA",
+          "DOCUMENT_METADATA"
+        ]
+      }
+    ],
+    "command": {
+      "bindingId": "PEP-HRM-012",
+      "operationId": "requestCertificate",
+      "ownerPath": "POST /v1/hris/certificates",
+      "browserPath": "POST /api/people/v1/hris/certificates",
+      "singleActionRoute": "route.hcm.operations.certificate-issue.action",
+      "successStatus": 202,
+      "response": "CommandReceiptV1",
+      "profiles": [
+        "certificate-self-requester",
+        "certificate-operations-issuer"
+      ],
+      "teamManagement": "DENY_DEFER_NO_PROFILE_NO_FALLBACK",
+      "risk": "HIGH_STEP_UP_REQUIRED_FOR_BOTH_PROFILES"
+    },
+    "event": {
+      "type": "CertificateIssued.v1",
+      "aggregate": "CertificateRequest",
+      "payload": [
+        "requestPublicId",
+        "certificatePublicId",
+        "subjectPersonPublicId",
+        "certificateType",
+        "issuedAt",
+        "expiresAt"
+      ]
+    },
+    "artifactPort": {
+      "interface": "CertificateArtifactPort",
+      "productionBinding": "FailClosedCertificateArtifactAdapter",
+      "testOnlyBinding": "CertificateArtifactConformanceDouble",
+      "productionSuccessProviderPresent": false
+    },
+    "migration": {
+      "stream": "PEOPLE_MAIN",
+      "version": "V58",
+      "path": "dwp-people-server/src/main/resources/db/migration/V58__hrm_base_tfr_hrm_009_stage_a.sql",
+      "sha256": "702b96820b38b7c0d5135792f7085db81e741206b134b83d488c1f7760bca9d2",
+      "bytes": 9696,
+      "tables": 2,
+      "indexes": 2,
+      "forcedRlsPolicies": 2,
+      "stateGuards": 2,
+      "historicalMigrationEdit": false,
+      "secondMigration": false,
+      "backfill": false
+    },
+    "frontend": {
+      "surfaces": [
+        "IAQ-003 employee list-detail",
+        "IAQ-010 operations focus-form"
+      ],
+      "mountState": "UNMOUNTED_COMPONENTS_ONLY",
+      "runtimeDefault": "OFF",
+      "enrolledTenants": [],
+      "ownerCallsWhenAbsentOffOrUnenrolled": 0,
+      "componentFakeEvidence": true,
+      "trustedBrowserEvidence": false
+    }
+  },
+  "verification": {
+    "backend": {
+      "compileJavaPreflight": "PASS",
+      "compileTestJavaInitial": "FAIL_AMBIGUOUS_TEST_FIXTURE_QUERY_OVERLOAD_CORRECTED_NO_BROAD_RERUN",
+      "prescribedWildcard": "FAILED_BEFORE_TEST_COLLECTION_ON_COMPILEJAVA_ACCESSOR_CORRECTED",
+      "smallestCompileJavaRerun": "PASS",
+      "initialNamedClassHistory": {
+        "Hrm009StageAContractTest": "7_PASS",
+        "CertificateAuthorizationTest": "6_PASS",
+        "CertificateIdempotencyRecoveryTest": "10_PASS",
+        "CertificateArtifactPortConformanceTest": "3_PASS",
+        "Hrm009V58MigrationContractTest": "5_PASS",
+        "Hrm009V58MigrationPostgresTest": "8_COLLECTED_6_PASS_2_FAIL_THEN_EACH_SMALLEST_FAILED_METHOD_PASS"
+      },
+      "finalChangedMethodHistory": {
+        "tests": 14,
+        "initial": "13_PASS_1_FIXTURE_FAILURE_0_SKIPPED",
+        "smallestRerun": "1_PASS_0_SKIPPED",
+        "effective": "14_OF_14_PASS_0_SKIPPED"
+      },
+      "database": "Docker Desktop 29.8.2, API 1.56, Testcontainers 1.21.4, postgres:16-alpine, PostgreSQL 16.15",
+      "databaseUnavailable": false,
+      "broadPostCorrectionRerun": false,
+      "singleFullInventoryPassClaimed": false
+    },
+    "frontend": {
+      "prescribedPnpmVitest": "BLOCKED_BEFORE_COLLECTION_PACKAGE_MANAGER_REQUIRES_YARN",
+      "prescribedPnpmEslint": "BLOCKED_BEFORE_ANALYSIS_PACKAGE_MANAGER_REQUIRES_YARN",
+      "initialYarnBounded": "20_COLLECTED_17_PASS_3_TEST_HARNESS_FAILURES",
+      "targetedCorrections": [
+        "3 pass and 17 skipped",
+        "5 pass and 20 skipped",
+        "1 receipt case pass and 3 skipped",
+        "1 optional-header case pass and 6 skipped",
+        "9 audit-supplement cases pass and 16 skipped",
+        "2 final boundary cases pass and 28 skipped"
+      ],
+      "uuidCorrection": "Two Yarn node_modules state-file pre-execution blocks, then 1 pass and 5 skipped in 857ms after restoring the ignored node_modules symlink",
+      "eslint": "Authorized full scope and every affected successor scope passed; UUID three-file scope passed after the same pre-execution environment repair",
+      "latestInventory": "slice 7, API 6, workbench 25, total 38; no single combined pass claimed",
+      "broadPostCorrectionRerun": false
+    },
+    "browser": {
+      "run": false,
+      "result": "PENDING_CENTRAL_ROUTE_MOUNT_BROWSER_GATE",
+      "reason": "Central product-authorization v52, Auth V261, Gateway projection and route/shell admission are not module-authorized."
+    }
+  },
+  "acceptance": {
+    "resultPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-results-r1/base-tfr-hrm-009-stage-a/acceptance-results.v1.json",
+    "sha256": "8b9b51b089f7b42bb35a1ff65313791ecb4e8c93cae163de7788b7b50f1f303b",
+    "bytes": 12794,
+    "passed": 11,
+    "pendingCentralRouteMountBrowserGate": 1,
+    "failed": 0
+  },
+  "supportingEvidence": [
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-results-r1/base-tfr-hrm-009-stage-a/acceptance-results.v1.json",
+      "sha256": "8b9b51b089f7b42bb35a1ff65313791ecb4e8c93cae163de7788b7b50f1f303b",
+      "bytes": 12794
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-results-r1/base-tfr-hrm-009-stage-a/materialization-receipt.v1.json",
+      "sha256": "3da34cc99eb6aa3a7c7bc0cbbdb2a633cffd080ede093629463f108fe9629771",
+      "bytes": 10103
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-results-r1/base-tfr-hrm-009-stage-a/request-issue-evidence.v1.json",
+      "sha256": "e01b453b4851d39f5a739640331cfc9e5974bd5b21f03e2ec76f7d780fde2984",
+      "bytes": 23409
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-results-r1/base-tfr-hrm-009-stage-a/people-v58-evidence.v1.json",
+      "sha256": "dd48e7baddfe3b56a5f090e7f11568080c4195cb4ce9a22eb87240a6d9f683a2",
+      "bytes": 11203
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-results-r1/base-tfr-hrm-009-stage-a/changed-path-and-no-recount.v1.json",
+      "sha256": "51b334830e7b561fef102f5c3db23faf403c0b627ec642b1d08435c7a09283e1",
+      "bytes": 14894
+    }
+  ],
+  "sourceReview": {
+    "independentAudit": "NO_P0_OR_P1",
+    "nonblockingResiduals": [
+      "Central v52 adoption and proof of the exact owner-side DATA keys remains pending.",
+      "Backend Idempotency-Key length uses Java UTF-16 code units for non-BMP input.",
+      "Certificate type whitespace, Bearer and If-Match handling are narrower locally than the generic accepted schemas.",
+      "The local Problem enum is broader than the bounded Stage-A cases.",
+      "No actual two-session database receipt insertion race was executed."
+    ],
+    "disposition": "NONBLOCKING_P2_AND_CENTRAL_ADMISSION_REVIEW"
+  },
+  "activationBoundary": {
+    "runtimeDefault": "OFF",
+    "enrolledTenants": [],
+    "ownerRuntimeMountWhenOff": false,
+    "ownerCallsWhenOffOrUnenrolled": 0,
+    "centralProductAuthorizationV52Generated": false,
+    "authV261Authored": false,
+    "gatewayProjectionAuthored": false,
+    "centralRouteOrShellMountedByModule": false,
+    "browserGatePassed": false,
+    "productionArtifactProviderBound": false,
+    "genericPlatformCreatorRetired": false,
+    "featureEnabled": false,
+    "tenantEnrollmentPerformed": false,
+    "dwpDevMergePerformed": false,
+    "centralPublishPerformed": false,
+    "productionActivationPerformed": false,
+    "stageASourceCompletionCreditBeforeCentralAdmission": 0,
+    "fullSliceBusinessCompletionCredit": 0
+  },
+  "remainingControlGates": [
+    "Independent control review and central result admission",
+    "Central product-authorization v52, Auth V261 and generated Gateway and People projection admission",
+    "Frontend route and shell mount plus trusted browser viewport, zoom, theme, contrast, reduced-motion, keyboard and screen-reader matrix",
+    "Separately accepted shared production artifact provider binding",
+    "Download and revoke transport and acceptance",
+    "Certificate expiry behavior and acceptance",
+    "Separately authorized access/download audit behavior and acceptance",
+    "Merge to dwp-dev",
+    "Platform generic creator retirement and no-double-create proof",
+    "Explicit tenant enrollment, publication and activation authority"
+  ],
+  "nonClaims": [
+    "This result does not complete BASE-TFR-HRM-009 or HRM-GOLD-012.",
+    "No download, revoke, verification transport or access/download audit implementation or acceptance is claimed.",
+    "No expiry acceptance is claimed.",
+    "No production-success artifact provider, document-content infrastructure, template, seal, signature or verification engine is claimed.",
+    "No central v52, Auth V261, Gateway, OpenAPI, IA catalog, shell, menu, route or Platform source change occurred in either module branch.",
+    "No browser acceptance pass is claimed before central route and shell admission.",
+    "No merge, central publication, generic Platform seed retirement, feature enablement, tenant enrollment, customer-data use or production activation occurred.",
+    "No single broad backend or frontend all-pass rerun is claimed after bounded corrections."
+  ],
+  "stageASourceCompletionCreditBeforeCentralAdmission": 0,
+  "fullSliceBusinessCompletionCredit": 0
+}
