@@ -1,0 +1,140 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-01-module-authorization-decision.v1",
+  "decisionId": "HRIS-WAVE7-R7-BATCH-01-AUTH-DECISION-BASE-TFR-PAY-013-20261017-R1",
+  "recordedAt": "2026-10-17T16:00:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "DECISION_SEALED_FOR_V49_GENERATION_ONLY",
+  "module": "PAY",
+  "sliceId": "BASE-TFR-PAY-013",
+  "immutablePredecessor": {
+    "path": "../../r7-batch-01-dispatch-r1/central-authorization-successor-packet.v1.json",
+    "sha256": "dd1b68e54ee6cbc73c0fa1b9da181fac04575c702f89c98ce27c73968b29963a",
+    "candidateIds": [
+      "R7B01-AUTH-PAY-PAGE-DATA-001",
+      "R7B01-AUTH-PAY-ACTION-001"
+    ],
+    "mutationForbidden": true
+  },
+  "sealedDecisions": {
+    "page": {
+      "routeContractKey": "route.hcm.operations.payroll-population.page",
+      "routeKind": "PAGE",
+      "uiRoutePattern": "/hr/operations/payroll/population",
+      "navigationContextId": "hcm.operations",
+      "requiredCapability": "hcm.operations.payroll-support.view",
+      "projectionPolicyKey": "route.hcm.operations.payroll-population.page.payroll-support-viewer.projection.v1",
+      "responseContractKey": "route.hcm.operations.payroll-support.data.response.v1",
+      "responseContractMode": "SHARED_WITH_ENTRY_DATA",
+      "predicatePolicyKey": "predicate.hcm-payroll-population-authority.v1",
+      "activeAccessModes": [
+        "ELEVATED"
+      ],
+      "stepUpRequired": true,
+      "activationPolicy": "STEPUP-MGMT-HIGH-V1"
+    },
+    "entryData": {
+      "routeContractKey": "route.hcm.operations.payroll-support.data",
+      "routeKind": "DATA",
+      "gatewayBinding": "GET /api/payroll/v1/workbench/population",
+      "ownerBinding": "GET /v1/workbench/population",
+      "ownerService": "dwp-payroll-server",
+      "requiredCapability": "hcm.operations.payroll-support.view",
+      "projectionPolicyKey": "route.hcm.operations.payroll-support.data.payroll-support-viewer.projection.v1",
+      "responseContractKey": "route.hcm.operations.payroll-support.data.response.v1",
+      "predicatePolicyKey": "predicate.hcm-payroll-population-authority.v1",
+      "activeAccessModes": [
+        "ELEVATED"
+      ],
+      "stepUpRequired": true,
+      "activationPolicy": "STEPUP-MGMT-HIGH-V1"
+    },
+    "capabilityHardening": [
+      {
+        "capability": "hcm.operations.payroll-support.view",
+        "riskTier": "HIGH",
+        "activationPolicy": "STEPUP-MGMT-HIGH-V1"
+      },
+      {
+        "capability": "hcm.operations.payroll-run.execute",
+        "riskTier": "CRITICAL",
+        "activationPolicy": "STEPUP-MGMT-HIGH-V1"
+      }
+    ],
+    "populationPredicate": {
+      "predicatePolicyKey": "predicate.hcm-payroll-population-authority.v1",
+      "ownerService": "dwp-payroll-server",
+      "scopeResolver": "PAY_TARGET_POPULATION",
+      "targetBindingKinds": [
+        "TARGET_POPULATION"
+      ],
+      "requiredFacts": [
+        "tenantId",
+        "legalEntityId",
+        "payGroupId",
+        "namedPopulationId",
+        "policyRevision",
+        "purposeCode"
+      ],
+      "purposeCode": "PAYROLL_OPERATIONS",
+      "denyOnMissingOrStaleEvidence": true
+    },
+    "prepareAction": {
+      "routeContractKey": "route.hcm.operations.payroll-run.action",
+      "routeKind": "ACTION",
+      "gatewayBinding": "POST /api/payroll/v1/runs",
+      "ownerBinding": "POST /v1/runs",
+      "ownerService": "dwp-payroll-server",
+      "requiredCapability": "hcm.operations.payroll-run.execute",
+      "predicatePolicyKey": "predicate.hcm-payroll-run-authority.v1",
+      "sodPredicatePolicyKey": "predicate.hcm-payroll-run-sod.v1",
+      "target": {
+        "kind": "BODY_FIELD",
+        "resourceType": "PAYROLL_RUN_PREPARATION",
+        "field": "preparationId",
+        "format": "UUID",
+        "source": "CLIENT_GENERATED",
+        "serverMustNotReplace": true
+      },
+      "precondition": {
+        "header": "X-DWP-Expected-Object-Version",
+        "requiredValue": "0",
+        "missingOrOtherValue": "DENY"
+      },
+      "approvalRequired": true,
+      "activeAccessModes": [
+        "ELEVATED"
+      ],
+      "stepUpRequired": true,
+      "activationPolicy": "STEPUP-MGMT-HIGH-V1"
+    },
+    "calculateAction": {
+      "routeContractKey": "route.hcm.operations.payroll-run-calculate.action",
+      "target": "runId",
+      "targetBindingKinds": [
+        "OBJECT",
+        "TARGET_POPULATION"
+      ],
+      "activeAccessModes": [
+        "ELEVATED"
+      ],
+      "stepUpRequired": true,
+      "activationPolicy": "STEPUP-MGMT-HIGH-V1",
+      "preserveExistingSemantics": true
+    }
+  },
+  "preservation": {
+    "reuseWithoutRecount": [
+      "PEP-PAY-011",
+      "PAY-011 calculation, receipt and outbox"
+    ],
+    "runPreparationDoesNotPretendRunIdExists": true,
+    "migrationLease": "PAYROLL_MAIN_V52"
+  },
+  "authority": {
+    "v49GenerationInputAuthorized": true,
+    "moduleImplementationAuthorized": false,
+    "migrationAuthoringAuthorized": false,
+    "moduleStartTokenIssued": false,
+    "activationAuthorized": false
+  }
+}

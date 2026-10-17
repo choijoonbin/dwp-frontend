@@ -1,0 +1,142 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-01-central-authorization-decision-successor.v1",
+  "packetId": "HRIS-WAVE7-R7-BATCH-01-CENTRAL-AUTHORIZATION-DECISION-SUCCESSOR-20261017-R1",
+  "recordedAt": "2026-10-17T16:00:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "DECISIONS_SEALED_V49_GENERATION_AUTHORIZED_CHECKSUM_ADMISSION_PENDING",
+  "purpose": "Seal the four source-backed authorization decisions needed to generate product-authorization v49 while withholding every module implementation, migration authoring, merge, rollout and activation authority.",
+  "immutablePredecessors": [
+    {
+      "path": "../r7-batch-01-dispatch-r1/central-authorization-successor-packet.v1.json",
+      "sha256": "dd1b68e54ee6cbc73c0fa1b9da181fac04575c702f89c98ce27c73968b29963a",
+      "state": "DECISION_REQUIRED_BEFORE_V49_GENERATION"
+    },
+    {
+      "path": "../r7-batch-01-dispatch-r1/start-token-state.v1.json",
+      "sha256": "cd09dabbf705a2a4f5d3c4833a6795c9a4b3029b5a79b55c2bd4c534d806d810",
+      "issuedTokenCount": 0
+    },
+    {
+      "backendPath": "contracts/product-authorization/product-surfaces-v1.bundle-v48.json",
+      "fileSha256": "5b1d87250c3adcc72f2dd75238956c1da69a31d47512394480dba865ebced3c4",
+      "embeddedContractChecksum": "9fd324cd67ede1f02cc8ac33c08ad880ec6e283f99f5d7aa50e0e514545aa043",
+      "preservation": "BYTE_IMMUTABLE"
+    }
+  ],
+  "closedDecisionSet": [
+    {
+      "module": "HRM",
+      "sliceId": "BASE-TFR-HRM-005",
+      "path": "decisions/base-tfr-hrm-005.authorization-decision.v1.json",
+      "sha256": "aa214ce9f28635ffad90d6306b7bf3b2be2548add197f3d0ea23063967301a94",
+      "result": "PAGE_AND_DATA_DECIDED_NO_STEPUP"
+    },
+    {
+      "module": "PAY",
+      "sliceId": "BASE-TFR-PAY-013",
+      "path": "decisions/base-tfr-pay-013.authorization-decision.v1.json",
+      "sha256": "e44ef024ccb257cbb3205f921c015881139c98940496f59222866b718e232b16",
+      "result": "PAGE_DATA_PREPARATION_ACTION_AND_RISK_CONFLICT_DECIDED"
+    },
+    {
+      "module": "SYS",
+      "sliceId": "BASE-TFR-SYS-002",
+      "path": "decisions/base-tfr-sys-002.authorization-decision.v1.json",
+      "sha256": "801e1cade194aceff1394789ee9247fefd4b317bc86d0a1bd3dce5d78c9e3a69",
+      "result": "PAGE_DATA_AND_PUBLIC_STATE_CONTRACT_DECIDED"
+    },
+    {
+      "module": "TIM",
+      "sliceId": "BASE-TFR-TIM-007",
+      "path": "decisions/base-tfr-tim-007.authorization-decision.v1.json",
+      "sha256": "f0c068d587182837059413895d5f8cc6c1f346f5564a99e1b6822bfa8c9ac203",
+      "result": "THREE_PAGE_BINDINGS_FIVE_OPERATIONS_AND_TRUST_BOUNDARY_DECIDED"
+    }
+  ],
+  "excludedFromThisDecisionSet": [
+    {
+      "sliceId": "BASE-TFR-PER-001",
+      "reason": "NON_UI semantic and notification onboarding decision is a separate lane and produces no v49 browser authorization tuple."
+    }
+  ],
+  "crossModuleDecisions": {
+    "browserTenantSource": "TRUSTED_GATEWAY_CONTEXT_ONLY",
+    "callerSuppliedTenantOverride": "FORBIDDEN",
+    "normalAndElevatedNoStepUpReads": [
+      "HRM organization positions and graph",
+      "SYS settings operations and exception list/detail",
+      "TIM command center, daily close and monthly close"
+    ],
+    "elevatedStepUpReads": [
+      "PAY payroll population and payroll support"
+    ],
+    "sysExceptionStateBoundary": {
+      "public": [
+        "OPEN",
+        "ACKNOWLEDGED",
+        "RESOLVED"
+      ],
+      "internalOnly": [
+        "RECOVERING",
+        "SUPPRESSED"
+      ],
+      "rule": "Internal-only statuses project to OPEN unless an authoritative terminal source event yields RESOLVED."
+    },
+    "timInternalTrustBoundary": "SVC-PEP-TIM-001 is excluded from browser v49 and requires a separate deny-by-default mutual workload trust packet."
+  },
+  "v49GenerationAdmission": {
+    "generationAuthorized": true,
+    "authorityScope": "PRODUCT_AUTHORIZATION_V49_GENERATION_AND_TARGETED_VALIDATION_ONLY",
+    "expectedOutputs": [
+      {
+        "backendPath": "contracts/product-authorization/product-surfaces-v1.bundle-v49.json",
+        "requiredVersion": 49,
+        "fileSha256": null,
+        "embeddedContractChecksum": null,
+        "bindingState": "MUST_BE_BOUND_BY_BACKEND_GENERATION_RECEIPT"
+      },
+      {
+        "backendPath": "contracts/product-authorization/product-surfaces-v1.json",
+        "requiredVersion": 49,
+        "fileSha256": null,
+        "embeddedContractChecksum": null,
+        "bindingState": "MUST_EQUAL_ACCEPTED_V49_CANONICAL_BYTES"
+      },
+      {
+        "backendPath": "contracts/product-authorization/product-surfaces-v1.index.json",
+        "requiredLatestVersion": 49,
+        "fileSha256": null,
+        "embeddedIndexChecksum": null,
+        "bindingState": "MUST_BE_BOUND_BY_BACKEND_GENERATION_RECEIPT"
+      }
+    ],
+    "mandatoryValidation": [
+      "v48 remains byte-identical",
+      "all four module decision artifact SHA-256 values match before generation",
+      "generated bundle and canonical contract are byte-equivalent",
+      "embedded checksums recompute from canonicalized content",
+      "index latest version and checksum bind the exact generated v49 file",
+      "generator, fixtures, Auth contract tests and Gateway contract checks pass",
+      "no PER browser tuple and no SVC-PEP-TIM-001 browser route exists",
+      "PEP-SYS-040 is byte-equivalent and SYS-006 actions are absent",
+      "default runtime is OFF and enrolled tenant set is empty"
+    ],
+    "admissionCondition": "No owner-module start token may be issued until a separate backend generation receipt supplies and verifies every non-null file and embedded checksum above, and that receipt is integrated on dwp-dev.",
+    "generatedArtifactAccepted": false,
+    "promotionToModuleImplementationAuthorized": false
+  },
+  "authority": {
+    "decisionPacketSealed": true,
+    "authLaneTokenMayBeIssued": true,
+    "v49GenerationAuthorized": true,
+    "sourceImplementationAuthorized": false,
+    "migrationAuthoringAuthorized": false,
+    "ownerWorktreeMaterializationAuthorized": false,
+    "ownerModuleStartTokenIssued": false,
+    "moduleBranchCommitAuthorized": false,
+    "moduleBranchPushAuthorized": false,
+    "mergeToDwpDevAuthorized": false,
+    "activationAuthorized": false
+  },
+  "nextGate": "BACKEND_V49_GENERATION_RECEIPT_WITH_EXACT_FILE_AND_EMBEDDED_CHECKSUMS_THEN_FRESH_PINNED_OWNER_START_TOKENS"
+}

@@ -1,0 +1,136 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-01-module-authorization-decision.v1",
+  "decisionId": "HRIS-WAVE7-R7-BATCH-01-AUTH-DECISION-BASE-TFR-SYS-002-20261017-R1",
+  "recordedAt": "2026-10-17T16:00:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "DECISION_SEALED_FOR_V49_GENERATION_ONLY",
+  "module": "SYS",
+  "sliceId": "BASE-TFR-SYS-002",
+  "immutablePredecessor": {
+    "path": "../../r7-batch-01-dispatch-r1/central-authorization-successor-packet.v1.json",
+    "sha256": "dd1b68e54ee6cbc73c0fa1b9da181fac04575c702f89c98ce27c73968b29963a",
+    "candidateIds": [
+      "R7B01-AUTH-SYS-PAGE-ENTRY-001",
+      "R7B01-AUTH-SYS-DATA-001",
+      "R7B01-AUTH-SYS-RECEIPT-REUSE-001"
+    ],
+    "mutationForbidden": true
+  },
+  "sealedDecisions": {
+    "page": {
+      "routeContractKey": "route.hcm.configuration.settings-operations.page",
+      "routeKind": "PAGE",
+      "uiRoutePattern": "/hr/settings/operations",
+      "navigationContextId": "hcm.management",
+      "requiredCapability": "hcm.configuration.workbench.view",
+      "projectionPolicyKey": "route.hcm.configuration.settings-operations.page.configuration-reader.projection.v1",
+      "responseContractKey": "route.hcm.configuration.settings-operations.page.response.v1",
+      "predicatePolicyKey": "predicate.hcm-settings-operations-authority.v1",
+      "activeAccessModes": [
+        "NORMAL",
+        "ELEVATED"
+      ],
+      "stepUpRequired": false
+    },
+    "entryData": {
+      "routeContractKey": "route.hcm.configuration.settings-operations.page",
+      "routeKind": "PAGE_ENTRY_DATA_BINDING",
+      "gatewayBinding": "GET /api/platform/v1/hris/workbench/settings-operations",
+      "ownerBinding": "GET /v1/hris/workbench/settings-operations",
+      "ownerService": "dwp-platform-server",
+      "requiredCapability": "hcm.configuration.workbench.view",
+      "predicatePolicyKey": "predicate.hcm-settings-operations-authority.v1",
+      "activeAccessModes": [
+        "NORMAL",
+        "ELEVATED"
+      ],
+      "stepUpRequired": false
+    },
+    "exceptionData": [
+      {
+        "routeContractKey": "route.hcm.operations.exception.data",
+        "routeKind": "DATA",
+        "gatewayBinding": "GET /api/platform/v1/admin/hris/operations/exceptions",
+        "ownerBinding": "GET /v1/admin/hris/operations/exceptions",
+        "projectionPolicyKey": "route.hcm.operations.exception.data.operation-exception-reader.projection.v1",
+        "responseContractKey": "route.hcm.operations.exception.data.response.v1"
+      },
+      {
+        "routeContractKey": "route.hcm.operations.exception-detail.data",
+        "routeKind": "DATA",
+        "gatewayBinding": "GET /api/platform/v1/admin/hris/operations/exceptions/{exceptionId}",
+        "ownerBinding": "GET /v1/admin/hris/operations/exceptions/{exceptionId}",
+        "projectionPolicyKey": "route.hcm.operations.exception-detail.data.operation-exception-reader.projection.v1",
+        "responseContractKey": "route.hcm.operations.exception-detail.data.response.v1"
+      }
+    ],
+    "exceptionAuthorization": {
+      "ownerService": "dwp-platform-server",
+      "requiredCapability": "hcm.operations.exception.view",
+      "predicatePolicyKey": "predicate.hcm-operation-exception-authority.v1",
+      "targetBindingKinds": [
+        "TARGET_POPULATION",
+        "OBJECT"
+      ],
+      "activeAccessModes": [
+        "NORMAL",
+        "ELEVATED"
+      ],
+      "stepUpRequired": false
+    },
+    "settingsPredicate": {
+      "predicatePolicyKey": "predicate.hcm-settings-operations-authority.v1",
+      "ownerService": "dwp-platform-server",
+      "scopeResolver": "APP_RESOURCE_SET:RS_HCM_CONFIG",
+      "targetBindingKinds": [
+        "CONFIG_SCOPE"
+      ],
+      "denyOnMissingOrStaleEvidence": true
+    },
+    "exceptionPredicate": {
+      "predicatePolicyKey": "predicate.hcm-operation-exception-authority.v1",
+      "ownerService": "dwp-platform-server",
+      "requiredFacts": [
+        "tenantId",
+        "authorizedPackageScope",
+        "ownerModule",
+        "exceptionId",
+        "policyRevision",
+        "purposeCode"
+      ],
+      "purposeCode": "HRIS_OPERATIONS",
+      "denyOnMissingOrStaleEvidence": true
+    },
+    "exceptionStateContract": {
+      "publicApiStates": [
+        "OPEN",
+        "ACKNOWLEDGED",
+        "RESOLVED"
+      ],
+      "internalProjectionStatuses": [
+        "RECOVERING",
+        "SUPPRESSED"
+      ],
+      "projectionRule": "RECOVERING and SUPPRESSED are never serialized as public API states; project either as OPEN or, only when an authoritative source terminal event exists, RESOLVED.",
+      "defaultProjectionForInternalOnlyStatus": "OPEN",
+      "terminalEvidenceRequiredForResolved": true,
+      "unknownStateBehavior": "FAIL_CLOSED"
+    }
+  },
+  "preservation": {
+    "pepSys040": "REUSE_BYTE_EQUIVALENT_NO_ROUTE_CAPABILITY_PREDICATE_OR_STEPUP_CHANGE",
+    "excludedScope": [
+      "SYS-006 automation actions",
+      "owner recovery mutations"
+    ],
+    "migrationLease": "PLATFORM_MAIN_V331",
+    "immutablePredecessorMigration": "V330"
+  },
+  "authority": {
+    "v49GenerationInputAuthorized": true,
+    "moduleImplementationAuthorized": false,
+    "migrationAuthoringAuthorized": false,
+    "moduleStartTokenIssued": false,
+    "activationAuthorized": false
+  }
+}
