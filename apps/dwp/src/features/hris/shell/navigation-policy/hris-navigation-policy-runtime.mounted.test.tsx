@@ -9,6 +9,7 @@ const state = vi.hoisted(() => ({
   canary: {} as Record<string, unknown>,
   snapshot: {} as Record<string, unknown>,
   transport: { get: vi.fn() },
+  v3Enabled: false,
 }));
 
 vi.mock('@dwp-frontend/shared-utils', async (importOriginal) => ({
@@ -45,11 +46,14 @@ vi.mock('../../../../components/product-surface-canary-runtime', async (importOr
 vi.mock('./hris-navigation-policy-feature', () => ({
   HRIS_NAVIGATION_POLICY_RUNTIME_STATE: 'ON',
   isHrisNavigationPolicyRuntimeEnabled: () => true,
+  isHrisNavigationPolicyV3RuntimeEnabled: () => state.v3Enabled,
 }));
 
 import {
   HrisNavigationPolicyDeepLinkGuard,
   HrisNavigationPolicyRuntimeProvider,
+  HRIS_NAVIGATION_AUTHORIZATION_REGISTRY_SHA256,
+  HRIS_NAVIGATION_AUTHORIZATION_REGISTRY_VERSION,
   HRIS_NAVIGATION_GENERATED_IA_SHA256,
   HRIS_NAVIGATION_IA_REGISTER_SHA256,
   HRIS_NAVIGATION_SHELL_REGISTER_SHA256,
@@ -60,6 +64,7 @@ import {
 } from './hris-navigation-policy-runtime';
 import {
   canonicalHrisWorkbench,
+  HRIS_V46_SELF_POLICY_ROUTE_BINDINGS,
   isHrisRuntimeEffectiveRouteAlias,
 } from './seven-workbench-navigation-policy';
 
@@ -104,6 +109,7 @@ describe('root-mounted HRIS navigation policy provider', () => {
     document.body.appendChild(host);
     root = createRoot(host);
     state.transport.get.mockReset();
+    state.v3Enabled = false;
     const authority = utilityAuthority();
     state.canary = authority.canary;
     state.snapshot = authority.snapshot;
@@ -142,6 +148,25 @@ describe('root-mounted HRIS navigation policy provider', () => {
         predicate: (query) => query.queryKey[0] === 'hris',
       })
     ).toHaveLength(1);
+  });
+
+  it('uses the V3 tenant carrier only when its transport gate is enabled', async () => {
+    state.v3Enabled = true;
+    const pin = `nav-v3-${'e'.repeat(64)}`;
+    state.transport.get.mockResolvedValue({ data: { data: enforcedV3Projection(pin) } });
+
+    await act(async () => {
+      mount('/hr/home');
+    });
+    await act(async () => {
+      await vi.waitFor(() => expect(policyOutput().dataset.pin).toBe(pin));
+    });
+
+    expect(policyOutput().dataset.mode).toBe('ENFORCED');
+    expect(state.transport.get).toHaveBeenCalledOnce();
+    expect(state.transport.get.mock.calls[0]![0]).toContain(
+      '/api/platform/v3/hris/navigation/projection?navigationScope=TENANT'
+    );
   });
 
   it('uses one trusted operations scope for a legal entity across workbench moves', async () => {
@@ -449,6 +474,86 @@ function enforcedProjection(revisionPin: string) {
                 nodeId: node.nodeId,
                 displayOrder: node.displayOrder,
                 routeAliases: node.routeAliases.filter(isHrisRuntimeEffectiveRouteAlias),
+              },
+            ],
+          },
+        ],
+      },
+    ],
+    denialReason: null,
+    evaluatedAt: '2029-01-01T00:00:00.000Z',
+  };
+}
+
+function enforcedV3Projection(revisionPin: string) {
+  const canonical = canonicalHrisWorkbench('HRIS-WB-MY-HR')!;
+  const group = canonical.groups[0]!;
+  const binding = HRIS_V46_SELF_POLICY_ROUTE_BINDINGS[0]!;
+  const node = group.nodes.find((candidate) => candidate.nodeId === binding.nodeId)!;
+  const freshUntil = '2099-01-01T00:00:00.000Z';
+  return {
+    schemaVersion: '3',
+    topologyRevision: HRIS_NAVIGATION_TOPOLOGY_REVISION,
+    topologySha256: HRIS_NAVIGATION_TOPOLOGY_SHA256,
+    iaRegisterSha256: HRIS_NAVIGATION_IA_REGISTER_SHA256,
+    shellRegisterSha256: HRIS_NAVIGATION_SHELL_REGISTER_SHA256,
+    taskGroupRegisterSha256: HRIS_NAVIGATION_TASK_GROUP_REGISTER_SHA256,
+    generatedIaSha256: HRIS_NAVIGATION_GENERATED_IA_SHA256,
+    authorizationRegistryVersion: HRIS_NAVIGATION_AUTHORIZATION_REGISTRY_VERSION,
+    authorizationRegistryChecksum: HRIS_NAVIGATION_AUTHORIZATION_REGISTRY_SHA256,
+    authorityDecisionCount: 6,
+    navigationContextScopeKey: `hcm-scope-${'1'.repeat(40)}`,
+    authoritySelfScopeKey: `scope-${'7'.repeat(32)}`,
+    authoritySnapshotRevision: 'snapshot-1',
+    authorityDecisionRevision: 'decision-1',
+    authorityAuthRevision: 'auth-1',
+    authorityPolicyRevision: 'policy-1',
+    authorityRelationshipRevision: 'relationship-1',
+    authorityFreshUntil: freshUntil,
+    admittedPolicyRoutes: [
+      {
+        nodeId: binding.nodeId,
+        path: binding.path,
+        routeContractKey: binding.routeContractKey,
+        profileKey: binding.profileKey,
+        targetBinding: binding.targetBinding,
+        scopeBinding: {
+          kind: binding.scopeBindingKind,
+          key: `scope-${'7'.repeat(32)}`,
+          personPublicId: '6d07e952-2f5f-4dc1-8be7-6d7e210d23af',
+        },
+        decision: 'ALLOWED',
+        routeGrantRef: `grant-${'8'.repeat(32)}`,
+        decisionRevision: 'decision-1',
+        authRevision: 'auth-1',
+        policyRevision: 'policy-1',
+        relationshipRevision: 'relationship-1',
+        freshUntil,
+      },
+    ],
+    enforcementState: 'ENFORCED',
+    policyEnforced: true,
+    tenantPolicyId: null,
+    tenantRevisionId: null,
+    tenantRevisionNumber: null,
+    legalEntityRevisionId: null,
+    legalEntityRevisionNumber: null,
+    revisionPin,
+    workbenches: [
+      {
+        workbenchId: canonical.workbenchId,
+        displayOrder: canonical.displayOrder,
+        landingNodeId: node.nodeId,
+        groups: [
+          {
+            groupId: group.groupId,
+            displayOrder: group.displayOrder,
+            defaultNodeId: node.nodeId,
+            nodes: [
+              {
+                nodeId: node.nodeId,
+                displayOrder: node.displayOrder,
+                routeAliases: [binding.path],
               },
             ],
           },

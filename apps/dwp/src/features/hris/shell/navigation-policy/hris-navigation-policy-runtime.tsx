@@ -24,8 +24,10 @@ import {
   canonicalHrisWorkbench,
   hrisWorkbenchIdForView,
   HRIS_SEVEN_WORKBENCH_NAVIGATION_CATALOG,
+  HRIS_V46_SELF_POLICY_ROUTE_BINDINGS,
   HRIS_WORKBENCH_IDS,
   HRIS_WORKBENCH_VIEW_BY_ID,
+  hrisV46SelfPolicyRouteBinding,
   isHrisRuntimeEffectiveRouteAlias,
   isHrisRuntimeMenuRouteAlias,
 } from './seven-workbench-navigation-policy';
@@ -34,7 +36,10 @@ import {
   isHrisLegalEntityPublicId,
   selectHrisLegalEntitySelector,
 } from './hris-legal-entity-selector';
-import { isHrisNavigationPolicyRuntimeEnabled } from './hris-navigation-policy-feature';
+import {
+  isHrisNavigationPolicyRuntimeEnabled,
+  isHrisNavigationPolicyV3RuntimeEnabled,
+} from './hris-navigation-policy-feature';
 
 import type { ApiResponse } from '@dwp-frontend/shared-utils';
 import type {
@@ -47,8 +52,12 @@ import type {
   HrisWorkbenchId,
 } from './seven-workbench-navigation-policy';
 
-export const HRIS_NAVIGATION_POLICY_RUNTIME_PATH =
+export const HRIS_NAVIGATION_POLICY_V2_RUNTIME_PATH =
   '/api/platform/v2/hris/navigation/projection' as const;
+export const HRIS_NAVIGATION_POLICY_V3_RUNTIME_PATH =
+  '/api/platform/v3/hris/navigation/projection' as const;
+/** Compatibility export retained for consumers that still identify the V2 carrier explicitly. */
+export const HRIS_NAVIGATION_POLICY_RUNTIME_PATH = HRIS_NAVIGATION_POLICY_V2_RUNTIME_PATH;
 export const HRIS_NAVIGATION_SCOPE_PARAM = 'navigationScope' as const;
 export const HRIS_NAVIGATION_TOPOLOGY_REVISION = 'HRIS-IA-98-WB7-G46-N97-R5' as const;
 // SHA-256 of `topologyRevision|ia|shell|taskGroup|generatedIa|7|46|97` as UTF-8.
@@ -62,10 +71,12 @@ export const HRIS_NAVIGATION_TASK_GROUP_REGISTER_SHA256 =
   'f0b1ebb316e4d5944aac90002e144f25d8c1318216b6733e674cdc8c5042872b' as const;
 export const HRIS_NAVIGATION_GENERATED_IA_SHA256 =
   '584cc32f845720ad06fb1bdcea7c967026c0e3a648f70e0215fd8a95a6b055bd' as const;
+export const HRIS_NAVIGATION_AUTHORIZATION_REGISTRY_VERSION = 46 as const;
+export const HRIS_NAVIGATION_AUTHORIZATION_REGISTRY_SHA256 =
+  '3499e37653587feed433f84a79fbe7d0e80a1a7c0634d858a13f4e09d4bd015e' as const;
 export { HRIS_LEGAL_ENTITY_SELECTOR_PARAM, selectHrisLegalEntitySelector };
 
-export type RuntimeNavigationPolicyProjection = Readonly<{
-  schemaVersion: '2';
+type RuntimeNavigationPolicyProjectionBase = Readonly<{
   topologyRevision: typeof HRIS_NAVIGATION_TOPOLOGY_REVISION;
   topologySha256: typeof HRIS_NAVIGATION_TOPOLOGY_SHA256;
   iaRegisterSha256: typeof HRIS_NAVIGATION_IA_REGISTER_SHA256;
@@ -91,12 +102,57 @@ export type RuntimeNavigationPolicyProjection = Readonly<{
   evaluatedAt: string;
 }>;
 
+export type RuntimeNavigationPolicyProjectionV2 = RuntimeNavigationPolicyProjectionBase &
+  Readonly<{ schemaVersion: '2' }>;
+
+export type HrisRuntimeAdmittedPolicyRoute = Readonly<{
+  nodeId: string;
+  path: string;
+  routeContractKey: string;
+  profileKey: 'full-work';
+  targetBinding: 'SELF';
+  scopeBinding: Readonly<{
+    kind: 'SELF';
+    key: string;
+    personPublicId: string;
+  }>;
+  decision: 'ALLOWED';
+  routeGrantRef: string;
+  decisionRevision: string;
+  authRevision: string;
+  policyRevision: string;
+  relationshipRevision: string;
+  freshUntil: string;
+}>;
+
+export type RuntimeNavigationPolicyProjectionV3 = RuntimeNavigationPolicyProjectionBase &
+  Readonly<{
+    schemaVersion: '3';
+    authorizationRegistryVersion: typeof HRIS_NAVIGATION_AUTHORIZATION_REGISTRY_VERSION;
+    authorizationRegistryChecksum: typeof HRIS_NAVIGATION_AUTHORIZATION_REGISTRY_SHA256;
+    authorityDecisionCount: 0 | 6;
+    navigationContextScopeKey: string;
+    authoritySelfScopeKey: string | null;
+    authoritySnapshotRevision: string | null;
+    authorityDecisionRevision: string | null;
+    authorityAuthRevision: string | null;
+    authorityPolicyRevision: string | null;
+    authorityRelationshipRevision: string | null;
+    authorityFreshUntil: string | null;
+    admittedPolicyRoutes: readonly HrisRuntimeAdmittedPolicyRoute[];
+  }>;
+
+export type RuntimeNavigationPolicyProjection =
+  RuntimeNavigationPolicyProjectionV2 | RuntimeNavigationPolicyProjectionV3;
+
 export type HrisRuntimeNavigationWorkbench = Omit<HrisTaskNavigationWorkbench, 'defaultNodeId'> &
   Readonly<{ landingNodeId: string }>;
 
 export type HrisRuntimeNavigationPolicy = Readonly<{
   mode: 'STATIC' | 'ENFORCED' | 'FAIL_CLOSED';
+  schemaVersion: '2' | '3' | null;
   revisionPin: string;
+  authorityFreshUntil: string | null;
   workbenches: readonly HrisRuntimeNavigationWorkbench[];
   orderedNodeIds: readonly string[];
   denialReason: string | null;
@@ -112,7 +168,9 @@ export type HrisRuntimeNavigationResolution = Readonly<{
 
 const STATIC_POLICY: HrisRuntimeNavigationPolicy = Object.freeze({
   mode: 'STATIC',
+  schemaVersion: null,
   revisionPin: 'static',
+  authorityFreshUntil: null,
   workbenches: Object.freeze([]),
   orderedNodeIds: Object.freeze([]),
   denialReason: null,
@@ -121,7 +179,9 @@ const STATIC_POLICY: HrisRuntimeNavigationPolicy = Object.freeze({
 function failClosedPolicy(revisionPin: string, denialReason: string) {
   return Object.freeze({
     mode: 'FAIL_CLOSED' as const,
+    schemaVersion: null,
     revisionPin,
+    authorityFreshUntil: null,
     workbenches: Object.freeze([]),
     orderedNodeIds: Object.freeze([]),
     denialReason,
@@ -145,10 +205,15 @@ const policyContext = createContext<HrisRuntimeNavigationPolicy>(STATIC_POLICY);
 export async function readRuntimeNavigationPolicyProjection(input: {
   contextScopeKey: string;
   navigationScope: 'TENANT' | 'LEGAL_ENTITY';
+  carrierVersion?: '2' | '3';
   legalEntityPublicId?: string | null;
   correlationId: string;
   signal?: AbortSignal;
 }): Promise<RuntimeNavigationPolicyProjection> {
+  const carrierVersion = input.carrierVersion ?? '2';
+  if (carrierVersion === '3' && input.navigationScope !== 'TENANT') {
+    throw new Error('HRIS navigation V3 is restricted to tenant SELF scope.');
+  }
   const search = new URLSearchParams();
   search.set(HRIS_NAVIGATION_SCOPE_PARAM, input.navigationScope);
   if (
@@ -162,20 +227,32 @@ export async function readRuntimeNavigationPolicyProjection(input: {
   }
   const scoped = productSurfaceReadScopeConfig(input.contextScopeKey, input.signal);
   const suffix = search.size ? `?${search.toString()}` : '';
-  const response = await axiosInstance.get<ApiResponse<unknown>>(
-    `${HRIS_NAVIGATION_POLICY_RUNTIME_PATH}${suffix}`,
-    { ...scoped, headers: { 'X-Correlation-ID': input.correlationId } }
-  );
-  return selectRuntimeHrisNavigationPolicyProjection(response.data.data);
+  const runtimePath =
+    carrierVersion === '3'
+      ? HRIS_NAVIGATION_POLICY_V3_RUNTIME_PATH
+      : HRIS_NAVIGATION_POLICY_V2_RUNTIME_PATH;
+  const response = await axiosInstance.get<ApiResponse<unknown>>(`${runtimePath}${suffix}`, {
+    ...scoped,
+    headers: { 'X-Correlation-ID': input.correlationId },
+  });
+  const projection = selectRuntimeHrisNavigationPolicyProjection(response.data.data);
+  if (projection.schemaVersion !== carrierVersion) {
+    throw new Error('HRIS navigation projection carrier version is invalid.');
+  }
+  if (
+    projection.schemaVersion === '3' &&
+    projection.navigationContextScopeKey !== input.contextScopeKey
+  ) {
+    throw new Error('HRIS navigation projection context scope is invalid.');
+  }
+  return projection;
 }
 
 export function selectRuntimeHrisNavigationPolicyProjection(
   value: unknown
 ): RuntimeNavigationPolicyProjection {
   const projection = record(value, 'runtime projection');
-  if (projection.schemaVersion !== '2') {
-    throw new Error('HRIS navigation projection schema is invalid.');
-  }
+  const schemaVersion = oneOf(projection.schemaVersion, ['2', '3'] as const, 'projection schema');
   if (
     projection.topologyRevision !== HRIS_NAVIGATION_TOPOLOGY_REVISION ||
     projection.topologySha256 !== HRIS_NAVIGATION_TOPOLOGY_SHA256 ||
@@ -201,8 +278,22 @@ export function selectRuntimeHrisNavigationPolicyProjection(
   if (typeof projection.policyEnforced !== 'boolean') {
     throw new Error('HRIS navigation projection enforcement marker is invalid.');
   }
-  const selected = Object.freeze({
-    schemaVersion: '2',
+  const evaluatedAt = instant(projection.evaluatedAt);
+  const v3Authority =
+    schemaVersion === '3'
+      ? selectV3AuthorityCarrier(projection, enforcementState, evaluatedAt)
+      : null;
+  const admittedPolicyRoutes =
+    v3Authority?.admittedPolicyRoutes ?? Object.freeze([] as HrisRuntimeAdmittedPolicyRoute[]);
+  const workbenches = selectEffectiveWorkbenches(
+    projection.workbenches,
+    admittedPolicyRoutes,
+    schemaVersion
+  );
+  if (schemaVersion === '3') {
+    assertAdmittedPolicyRoutesConsumed(workbenches, admittedPolicyRoutes);
+  }
+  const common = {
     topologyRevision: HRIS_NAVIGATION_TOPOLOGY_REVISION,
     topologySha256: HRIS_NAVIGATION_TOPOLOGY_SHA256,
     iaRegisterSha256: HRIS_NAVIGATION_IA_REGISTER_SHA256,
@@ -216,11 +307,20 @@ export function selectRuntimeHrisNavigationPolicyProjection(
     tenantRevisionNumber: optionalInteger(projection.tenantRevisionNumber),
     legalEntityRevisionId: optionalUuid(projection.legalEntityRevisionId),
     legalEntityRevisionNumber: optionalInteger(projection.legalEntityRevisionNumber),
-    revisionPin: optionalNavigationRevisionPin(projection.revisionPin),
-    workbenches: selectEffectiveWorkbenches(projection.workbenches),
+    revisionPin: optionalNavigationRevisionPin(projection.revisionPin, schemaVersion),
+    workbenches,
     denialReason: optionalString(projection.denialReason),
-    evaluatedAt: instant(projection.evaluatedAt),
-  }) as RuntimeNavigationPolicyProjection;
+    evaluatedAt,
+  } as const;
+  const selected = Object.freeze(
+    schemaVersion === '2'
+      ? { schemaVersion, ...common }
+      : {
+          schemaVersion,
+          ...common,
+          ...v3Authority!,
+        }
+  ) as RuntimeNavigationPolicyProjection;
   assertRuntimeProjectionState(selected);
   return selected;
 }
@@ -231,6 +331,12 @@ export function selectHrisRuntimeNavigationPolicy(
   assertRuntimeProjectionState(projection);
   if (['NOT_ENROLLED', 'OFF', 'SHADOW'].includes(projection.enforcementState)) {
     return STATIC_POLICY;
+  }
+  if (projection.schemaVersion === '3' && !isFreshAfterNow(projection.authorityFreshUntil)) {
+    return failClosedPolicy(
+      projection.revisionPin ?? `stale:${projection.evaluatedAt}`,
+      'AUTHORITY_DECISION_STALE'
+    );
   }
   if (
     projection.enforcementState !== 'ENFORCED' ||
@@ -244,7 +350,9 @@ export function selectHrisRuntimeNavigationPolicy(
   }
   return Object.freeze({
     mode: 'ENFORCED',
+    schemaVersion: projection.schemaVersion,
     revisionPin: projection.revisionPin,
+    authorityFreshUntil: projection.schemaVersion === '3' ? projection.authorityFreshUntil : null,
     workbenches: projection.workbenches,
     orderedNodeIds: Object.freeze(
       projection.workbenches.flatMap((workbench) =>
@@ -260,7 +368,7 @@ export function projectHrisWorkbenchTaskNavigation(
   view: string,
   authorizedPaths: ReadonlySet<string>
 ): readonly HrisTaskNavigationGroup[] {
-  if (policy.mode !== 'ENFORCED') return Object.freeze([]);
+  if (policy.mode !== 'ENFORCED' || !isRuntimePolicyFresh(policy)) return Object.freeze([]);
   const workbenchId = hrisWorkbenchIdForView(view);
   const workbench = policy.workbenches.find((candidate) => candidate.workbenchId === workbenchId);
   if (!workbench) return Object.freeze([]);
@@ -270,10 +378,12 @@ export function projectHrisWorkbenchTaskNavigation(
       const nodes = group.nodes.flatMap((node) => {
         const authorizedAliases = node.routeAliases.filter(
           (route) =>
-            isHrisRuntimeEffectiveRouteAlias(route) &&
+            isRuntimeEffectiveRouteAlias(policy.schemaVersion, node.nodeId, route) &&
             normalizedAuthorized.has(normalizePath(route))
         );
-        const menuTarget = authorizedAliases.find(isHrisRuntimeMenuRouteAlias);
+        const menuTarget = authorizedAliases.find((route) =>
+          isRuntimeMenuRouteAlias(policy.schemaVersion, node.nodeId, route)
+        );
         const routeAliases = menuTarget
           ? [menuTarget, ...authorizedAliases.filter((route) => route !== menuTarget)]
           : [];
@@ -323,7 +433,7 @@ export function resolveHrisRuntimePolicyLanding(
       ).flatMap((group) => group.nodes)
     : [];
   const node = nodes.find((candidate) => candidate.nodeId === workbench?.landingNodeId) ?? nodes[0];
-  return policy.mode === 'ENFORCED' && workbench && node
+  return policy.mode === 'ENFORCED' && isRuntimePolicyFresh(policy) && workbench && node
     ? resolution(policy, 'ALLOW', workbench.workbenchId, node.nodeId, node.routeAliases[0] ?? null)
     : resolution(policy, 'DENY', workbenchId, null, null);
 }
@@ -341,7 +451,7 @@ export function resolveHrisRuntimePolicyDeepLink(
     return resolution(policy, 'DENY', null, null, null);
   }
   const match = effectiveRouteMatches(policy, requestedPath);
-  return policy.mode === 'ENFORCED' && match.length === 1
+  return policy.mode === 'ENFORCED' && isRuntimePolicyFresh(policy) && match.length === 1
     ? resolution(
         policy,
         'ALLOW',
@@ -354,6 +464,7 @@ export function resolveHrisRuntimePolicyDeepLink(
 
 export function HrisNavigationPolicyRuntimeProvider({ children }: { children: ReactNode }) {
   const runtimeEnabled = isHrisNavigationPolicyRuntimeEnabled();
+  const v3RuntimeEnabled = isHrisNavigationPolicyV3RuntimeEnabled();
   const auth = useAuth();
   const productAuthority = useProductSurfaceAuthority();
   const canaryAuthority = useProductSurfaceCanaryAuthority();
@@ -362,6 +473,8 @@ export function HrisNavigationPolicyRuntimeProvider({ children }: { children: Re
   const [searchParams] = useSearchParams();
   const legalEntitySelector = selectHrisLegalEntitySelector(searchParams);
   const navigationScope = legalEntitySelector.state === 'LEGAL_ENTITY' ? 'LEGAL_ENTITY' : 'TENANT';
+  const carrierVersion =
+    navigationScope === 'TENANT' && v3RuntimeEnabled ? ('3' as const) : ('2' as const);
   const scopeSurface = resolveHrisNavigationProjectionScopeSurface(
     pathname,
     legalEntitySelector.state
@@ -389,7 +502,7 @@ export function HrisNavigationPolicyRuntimeProvider({ children }: { children: Re
     queryKey: [
       'hris',
       'navigation-policy',
-      'runtime-v2',
+      `runtime-v${carrierVersion}`,
       navigationScope,
       legalEntitySelector.legalEntityPublicId,
       requestScope.cacheKey,
@@ -398,6 +511,7 @@ export function HrisNavigationPolicyRuntimeProvider({ children }: { children: Re
       readRuntimeNavigationPolicyProjection({
         contextScopeKey: requestScope.contextScopeKey!,
         navigationScope,
+        carrierVersion,
         legalEntityPublicId: legalEntitySelector.legalEntityPublicId,
         correlationId,
         signal,
@@ -537,7 +651,7 @@ function projectAggregateShell(
   const home = projectHrisShellNavigation(
     normalized.has('/hr/home') ? new Set(['/hr/home']) : new Set()
   );
-  if (policy.mode !== 'ENFORCED') return home;
+  if (policy.mode !== 'ENFORCED' || !isRuntimePolicyFresh(policy)) return home;
   const items = policy.workbenches.flatMap((workbench) => {
     const view = HRIS_WORKBENCH_VIEW_BY_ID[workbench.workbenchId];
     const groups = projectHrisWorkbenchTaskNavigation(policy, view, normalized);
@@ -564,13 +678,17 @@ function projectAggregateShell(
 function resolveAggregateSelectedView(policy: HrisRuntimeNavigationPolicy, pathname: string) {
   const normalized = normalizePath(pathname);
   if (normalized === '/hr/home') return 'shell-home';
-  if (policy.mode !== 'ENFORCED') return undefined;
+  if (policy.mode !== 'ENFORCED' || !isRuntimePolicyFresh(policy)) return undefined;
   const matches = effectiveRouteMatches(policy, normalized);
   const workbenchIds = new Set(matches.map((match) => match.workbenchId));
   return workbenchIds.size === 1 ? HRIS_WORKBENCH_VIEW_BY_ID[[...workbenchIds][0]!] : undefined;
 }
 
-function selectEffectiveWorkbenches(value: unknown): readonly HrisRuntimeNavigationWorkbench[] {
+function selectEffectiveWorkbenches(
+  value: unknown,
+  admittedPolicyRoutes: readonly HrisRuntimeAdmittedPolicyRoute[],
+  schemaVersion: RuntimeNavigationPolicyProjection['schemaVersion']
+): readonly HrisRuntimeNavigationWorkbench[] {
   if (!Array.isArray(value)) throw new Error('HRIS navigation projection workbenches are invalid.');
   const seenWorkbenches = new Set<string>();
   const seenNodes = new Set<string>();
@@ -582,7 +700,13 @@ function selectEffectiveWorkbenches(value: unknown): readonly HrisRuntimeNavigat
       throw new Error('Effective policy workbench is duplicated.');
     }
     seenWorkbenches.add(workbenchId);
-    const groups = selectEffectiveGroups(source.groups, canonical, seenNodes);
+    const groups = selectEffectiveGroups(
+      source.groups,
+      canonical,
+      seenNodes,
+      admittedPolicyRoutes,
+      schemaVersion
+    );
     const landingNodeId = nonBlank(source.landingNodeId, 'effective landing node');
     if (!groups.flatMap((group) => group.nodes).some((node) => node.nodeId === landingNodeId)) {
       throw new Error('Effective policy landing node is invalid.');
@@ -605,7 +729,9 @@ function selectEffectiveWorkbenches(value: unknown): readonly HrisRuntimeNavigat
 function selectEffectiveGroups(
   value: unknown,
   canonicalWorkbench: HrisTaskNavigationWorkbench,
-  seenNodes: Set<string>
+  seenNodes: Set<string>,
+  admittedPolicyRoutes: readonly HrisRuntimeAdmittedPolicyRoute[],
+  schemaVersion: RuntimeNavigationPolicyProjection['schemaVersion']
 ): readonly HrisTaskNavigationGroup[] {
   if (!Array.isArray(value) || !value.length) {
     throw new Error('Effective policy workbench groups are invalid.');
@@ -634,7 +760,12 @@ function selectEffectiveGroups(
       if (displayOrder !== canonicalNode.displayOrder) {
         throw new Error('Effective policy node order is invalid.');
       }
-      const routeAliases = selectEffectiveRouteAliases(node.routeAliases, canonicalNode);
+      const routeAliases = selectEffectiveRouteAliases(
+        node.routeAliases,
+        canonicalNode,
+        admittedPolicyRoutes,
+        schemaVersion
+      );
       return Object.freeze({ ...canonicalNode, displayOrder, routeAliases });
     });
     const defaultNodeId = nonBlank(source.defaultNodeId, 'effective default node');
@@ -659,12 +790,24 @@ function selectEffectiveGroups(
 
 function selectEffectiveRouteAliases(
   value: unknown,
-  canonicalNode: HrisTaskNavigationGroup['nodes'][number]
+  canonicalNode: HrisTaskNavigationGroup['nodes'][number],
+  admittedPolicyRoutes: readonly HrisRuntimeAdmittedPolicyRoute[],
+  schemaVersion: RuntimeNavigationPolicyProjection['schemaVersion']
 ) {
   if (!Array.isArray(value) || !value.length) {
     throw new Error('Effective policy node route aliases are invalid.');
   }
-  const sealedAliases = canonicalNode.routeAliases.filter(isHrisRuntimeEffectiveRouteAlias);
+  const nodePolicyRoutes = admittedPolicyRoutes.filter(
+    (route) => route.nodeId === canonicalNode.nodeId
+  );
+  const policyNode = canonicalNode.routeAliases.some((alias) =>
+    hrisV46SelfPolicyRouteBinding(canonicalNode.nodeId, alias)
+  );
+  const sealedAliases = canonicalNode.routeAliases.filter((alias) =>
+    schemaVersion === '3' && policyNode
+      ? nodePolicyRoutes.some((route) => route.path === normalizePath(alias))
+      : isHrisRuntimeEffectiveRouteAlias(alias)
+  );
   const sealedOrder = new Map(sealedAliases.map((alias, index) => [alias, index]));
   const seenAliases = new Set<string>();
   let previousOrder = -1;
@@ -684,6 +827,256 @@ function selectEffectiveRouteAliases(
   return Object.freeze(routeAliases);
 }
 
+function selectV3AuthorityCarrier(
+  projection: Record<string, unknown>,
+  enforcementState: RuntimeNavigationPolicyProjectionBase['enforcementState'],
+  evaluatedAt: string
+) {
+  if (
+    projection.authorizationRegistryVersion !== HRIS_NAVIGATION_AUTHORIZATION_REGISTRY_VERSION ||
+    projection.authorizationRegistryChecksum !== HRIS_NAVIGATION_AUTHORIZATION_REGISTRY_SHA256
+  ) {
+    throw new Error('HRIS navigation authorization registry is invalid.');
+  }
+  if (!Array.isArray(projection.admittedPolicyRoutes)) {
+    throw new Error('HRIS navigation admitted POLICY routes are invalid.');
+  }
+  const navigationContextScopeKey = patternedOpaque(
+    projection.navigationContextScopeKey,
+    /^hcm-scope-[a-f0-9]{40}$/u,
+    'navigation context scope key'
+  );
+
+  if (enforcementState !== 'ENFORCED') {
+    const authorityValues = [
+      projection.authoritySnapshotRevision,
+      projection.authorityDecisionRevision,
+      projection.authorityAuthRevision,
+      projection.authorityPolicyRevision,
+      projection.authorityRelationshipRevision,
+      projection.authorityFreshUntil,
+    ];
+    if (
+      projection.admittedPolicyRoutes.length !== 0 ||
+      projection.authorityDecisionCount !== 0 ||
+      (projection.authoritySelfScopeKey !== null &&
+        projection.authoritySelfScopeKey !== undefined) ||
+      authorityValues.some((value) => value !== null && value !== undefined)
+    ) {
+      throw new Error('Non-enforced HRIS navigation V3 authority carrier is inconsistent.');
+    }
+    return Object.freeze({
+      authorizationRegistryVersion: HRIS_NAVIGATION_AUTHORIZATION_REGISTRY_VERSION,
+      authorizationRegistryChecksum: HRIS_NAVIGATION_AUTHORIZATION_REGISTRY_SHA256,
+      authorityDecisionCount: 0 as const,
+      navigationContextScopeKey,
+      authoritySelfScopeKey: null,
+      authoritySnapshotRevision: null,
+      authorityDecisionRevision: null,
+      authorityAuthRevision: null,
+      authorityPolicyRevision: null,
+      authorityRelationshipRevision: null,
+      authorityFreshUntil: null,
+      admittedPolicyRoutes: Object.freeze([] as HrisRuntimeAdmittedPolicyRoute[]),
+    });
+  }
+
+  if (projection.authorityDecisionCount !== 6) {
+    throw new Error('HRIS navigation authority decision count is invalid.');
+  }
+  const authoritySelfScopeKey = patternedOpaque(
+    projection.authoritySelfScopeKey,
+    /^scope-[a-f0-9]{32}$/u,
+    'authority SELF scope key'
+  );
+  const authoritySnapshotRevision = boundedOpaque(
+    projection.authoritySnapshotRevision,
+    'authority snapshot revision'
+  );
+  const authorityDecisionRevision = boundedOpaque(
+    projection.authorityDecisionRevision,
+    'authority decision revision'
+  );
+  const authorityAuthRevision = boundedOpaque(
+    projection.authorityAuthRevision,
+    'authority auth revision'
+  );
+  const authorityPolicyRevision = boundedOpaque(
+    projection.authorityPolicyRevision,
+    'authority policy revision'
+  );
+  const authorityRelationshipRevision = boundedOpaque(
+    projection.authorityRelationshipRevision,
+    'authority relationship revision'
+  );
+  const authorityFreshUntil = instant(projection.authorityFreshUntil);
+  if (Date.parse(authorityFreshUntil) <= Date.parse(evaluatedAt)) {
+    throw new Error('HRIS navigation authority freshness is invalid.');
+  }
+  const admittedPolicyRoutes = selectAdmittedPolicyRoutes(projection.admittedPolicyRoutes, {
+    authorityDecisionRevision,
+    authorityAuthRevision,
+    authorityPolicyRevision,
+    authorityRelationshipRevision,
+    authorityFreshUntil,
+    authoritySelfScopeKey,
+  });
+  return Object.freeze({
+    authorizationRegistryVersion: HRIS_NAVIGATION_AUTHORIZATION_REGISTRY_VERSION,
+    authorizationRegistryChecksum: HRIS_NAVIGATION_AUTHORIZATION_REGISTRY_SHA256,
+    authorityDecisionCount: 6 as const,
+    navigationContextScopeKey,
+    authoritySelfScopeKey,
+    authoritySnapshotRevision,
+    authorityDecisionRevision,
+    authorityAuthRevision,
+    authorityPolicyRevision,
+    authorityRelationshipRevision,
+    authorityFreshUntil,
+    admittedPolicyRoutes,
+  });
+}
+
+function selectAdmittedPolicyRoutes(
+  value: readonly unknown[],
+  authority: Readonly<{
+    authorityDecisionRevision: string;
+    authorityAuthRevision: string;
+    authorityPolicyRevision: string;
+    authorityRelationshipRevision: string;
+    authorityFreshUntil: string;
+    authoritySelfScopeKey: string;
+  }>
+) {
+  const seenNodes = new Set<string>();
+  const seenPaths = new Set<string>();
+  let previousOrder = -1;
+  const routes = value.map((candidate) => {
+    const source = record(candidate, 'admitted POLICY route');
+    const nodeId = nonBlank(source.nodeId, 'admitted POLICY node id');
+    const path = nonBlank(source.path, 'admitted POLICY path');
+    const binding = hrisV46SelfPolicyRouteBinding(nodeId, path);
+    const displayOrder = HRIS_V46_SELF_POLICY_ROUTE_BINDINGS.findIndex(
+      (candidateBinding) =>
+        candidateBinding.nodeId === nodeId && candidateBinding.path === normalizePath(path)
+    );
+    if (!binding || displayOrder <= previousOrder || path !== normalizePath(path)) {
+      throw new Error('Admitted POLICY route is not sealed.');
+    }
+    if (seenNodes.has(nodeId) || seenPaths.has(path)) {
+      throw new Error('Admitted POLICY route is duplicated.');
+    }
+    if (
+      source.routeContractKey !== binding.routeContractKey ||
+      source.profileKey !== binding.profileKey ||
+      source.targetBinding !== binding.targetBinding ||
+      source.decision !== 'ALLOWED' ||
+      source.decisionRevision !== authority.authorityDecisionRevision ||
+      source.authRevision !== authority.authorityAuthRevision ||
+      source.policyRevision !== authority.authorityPolicyRevision ||
+      source.relationshipRevision !== authority.authorityRelationshipRevision ||
+      source.freshUntil !== authority.authorityFreshUntil
+    ) {
+      throw new Error('Admitted POLICY route authority binding is invalid.');
+    }
+    const routeGrantRef = patternedOpaque(
+      source.routeGrantRef,
+      /^grant-[a-f0-9]{32}$/u,
+      'admitted POLICY route grant ref'
+    );
+    const scopeBinding = record(source.scopeBinding, 'admitted POLICY scope binding');
+    if (scopeBinding.kind !== binding.scopeBindingKind) {
+      throw new Error('Admitted POLICY route scope binding is invalid.');
+    }
+    const selectedScopeBinding = Object.freeze({
+      kind: 'SELF' as const,
+      key: patternedOpaque(scopeBinding.key, /^scope-[a-f0-9]{32}$/u, 'admitted POLICY scope key'),
+      personPublicId: requiredUuid(scopeBinding.personPublicId, 'admitted POLICY person public id'),
+    });
+    if (selectedScopeBinding.key !== authority.authoritySelfScopeKey) {
+      throw new Error('Admitted POLICY route SELF scope is inconsistent.');
+    }
+    seenNodes.add(nodeId);
+    seenPaths.add(path);
+    previousOrder = displayOrder;
+    return Object.freeze({
+      nodeId,
+      path,
+      routeContractKey: binding.routeContractKey,
+      profileKey: binding.profileKey,
+      targetBinding: binding.targetBinding,
+      scopeBinding: selectedScopeBinding,
+      decision: 'ALLOWED' as const,
+      routeGrantRef,
+      decisionRevision: authority.authorityDecisionRevision,
+      authRevision: authority.authorityAuthRevision,
+      policyRevision: authority.authorityPolicyRevision,
+      relationshipRevision: authority.authorityRelationshipRevision,
+      freshUntil: authority.authorityFreshUntil,
+    });
+  });
+  return Object.freeze(routes);
+}
+
+function assertAdmittedPolicyRoutesConsumed(
+  workbenches: readonly HrisRuntimeNavigationWorkbench[],
+  admittedPolicyRoutes: readonly HrisRuntimeAdmittedPolicyRoute[]
+) {
+  const consumed = new Set(
+    workbenches.flatMap((workbench) =>
+      workbench.groups.flatMap((group) =>
+        group.nodes.flatMap((node) =>
+          node.routeAliases.flatMap((route) =>
+            hrisV46SelfPolicyRouteBinding(node.nodeId, route)
+              ? [`${node.nodeId}\u0000${normalizePath(route)}`]
+              : []
+          )
+        )
+      )
+    )
+  );
+  const admitted = new Set(
+    admittedPolicyRoutes.map((route) => `${route.nodeId}\u0000${route.path}`)
+  );
+  if (
+    consumed.size !== admitted.size ||
+    [...admitted].some((routeKey) => !consumed.has(routeKey))
+  ) {
+    throw new Error('Effective POLICY aliases and admitted decisions are inconsistent.');
+  }
+}
+
+function isRuntimeEffectiveRouteAlias(
+  schemaVersion: HrisRuntimeNavigationPolicy['schemaVersion'],
+  nodeId: string,
+  route: string
+) {
+  const policyNode = HRIS_V46_SELF_POLICY_ROUTE_BINDINGS.some(
+    (binding) => binding.nodeId === nodeId
+  );
+  if (schemaVersion === '3' && policyNode) {
+    return Boolean(hrisV46SelfPolicyRouteBinding(nodeId, route));
+  }
+  return isHrisRuntimeEffectiveRouteAlias(route);
+}
+
+function isRuntimeMenuRouteAlias(
+  schemaVersion: HrisRuntimeNavigationPolicy['schemaVersion'],
+  nodeId: string,
+  route: string
+) {
+  if (!isRuntimeEffectiveRouteAlias(schemaVersion, nodeId, route)) return false;
+  return hrisV46SelfPolicyRouteBinding(nodeId, route) ? true : isHrisRuntimeMenuRouteAlias(route);
+}
+
+function isRuntimePolicyFresh(policy: HrisRuntimeNavigationPolicy) {
+  return policy.schemaVersion !== '3' || isFreshAfterNow(policy.authorityFreshUntil);
+}
+
+function isFreshAfterNow(value: string | null) {
+  return value !== null && Date.parse(value) > Date.now();
+}
+
 function effectiveRouteMatches(policy: HrisRuntimeNavigationPolicy, requestedPath: string) {
   const path = normalizePath(requestedPath);
   return policy.workbenches.flatMap((workbench) =>
@@ -691,7 +1084,9 @@ function effectiveRouteMatches(policy: HrisRuntimeNavigationPolicy, requestedPat
       group.nodes
         .filter((node) =>
           node.routeAliases.some(
-            (route) => isHrisRuntimeEffectiveRouteAlias(route) && normalizePath(route) === path
+            (route) =>
+              isRuntimeEffectiveRouteAlias(policy.schemaVersion, node.nodeId, route) &&
+              normalizePath(route) === path
           )
         )
         .map((node) => ({ workbenchId: workbench.workbenchId, node }))
@@ -746,23 +1141,41 @@ function nonBlank(value: unknown, label: string): string {
   return value;
 }
 
+function boundedOpaque(value: unknown, label: string) {
+  const candidate = nonBlank(value, label);
+  if (candidate !== candidate.trim() || candidate.length > 512 || /[\r\n]/u.test(candidate)) {
+    throw new Error(`${label} is invalid.`);
+  }
+  return candidate;
+}
+
+function patternedOpaque(value: unknown, pattern: RegExp, label: string) {
+  const candidate = boundedOpaque(value, label);
+  if (!pattern.test(candidate)) throw new Error(`${label} is invalid.`);
+  return candidate;
+}
+
 function optionalString(value: unknown): string | null {
   return value == null ? null : nonBlank(value, 'optional string');
 }
 
 function optionalUuid(value: unknown): string | null {
   if (value == null) return null;
-  const candidate = nonBlank(value, 'UUID');
+  return requiredUuid(value, 'UUID');
+}
+
+function requiredUuid(value: unknown, label: string): string {
+  const candidate = nonBlank(value, label);
   if (!/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/iu.test(candidate)) {
-    throw new Error('UUID is invalid.');
+    throw new Error(`${label} is invalid.`);
   }
   return candidate;
 }
 
-function optionalNavigationRevisionPin(value: unknown): string | null {
+function optionalNavigationRevisionPin(value: unknown, schemaVersion: '2' | '3'): string | null {
   if (value == null) return null;
   const candidate = nonBlank(value, 'navigation revision pin');
-  if (!/^nav-v2-[a-f0-9]{64}$/u.test(candidate)) {
+  if (!new RegExp(`^nav-v${schemaVersion}-[a-f0-9]{64}$`, 'u').test(candidate)) {
     throw new Error('Navigation revision pin is invalid.');
   }
   return candidate;

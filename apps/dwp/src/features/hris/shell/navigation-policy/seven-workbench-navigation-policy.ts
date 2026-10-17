@@ -169,6 +169,79 @@ export const HRIS_POLICY_ONLY_COMPATIBILITY_PATHS = Object.freeze([
   '/hr/organization',
   '/hr/manage/system',
 ] as const);
+
+export type HrisV46SelfPolicyRouteBinding = Readonly<{
+  nodeId: string;
+  path: string;
+  routeContractKey: string;
+  profileKey: 'full-work';
+  targetBinding: 'SELF';
+  scopeBindingKind: 'SELF';
+}>;
+
+/**
+ * R6-B's closed POLICY admission set. These are authorization-registry facts, not aliases that
+ * may be derived from the IA catalog. In particular, planned IA routes such as `/hr/me/profile`
+ * are intentionally absent and cannot be reconstructed by the browser.
+ */
+export const HRIS_V46_SELF_POLICY_ROUTE_BINDINGS: readonly HrisV46SelfPolicyRouteBinding[] =
+  Object.freeze([
+    Object.freeze({
+      nodeId: 'BASE:my-hr-profile',
+      path: '/hr/me',
+      routeContractKey: 'route.hcm.personal.me.page',
+      profileKey: 'full-work',
+      targetBinding: 'SELF',
+      scopeBindingKind: 'SELF',
+    }),
+    Object.freeze({
+      nodeId: 'BASE:my-time',
+      path: '/hr/time',
+      routeContractKey: 'route.hcm.personal.time.page',
+      profileKey: 'full-work',
+      targetBinding: 'SELF',
+      scopeBindingKind: 'SELF',
+    }),
+    Object.freeze({
+      nodeId: 'BASE:my-leave',
+      path: '/hr/absence',
+      routeContractKey: 'route.hcm.personal.absence.page',
+      profileKey: 'full-work',
+      targetBinding: 'SELF',
+      scopeBindingKind: 'SELF',
+    }),
+    Object.freeze({
+      nodeId: 'BASE:my-pay-tax',
+      path: '/hr/pay',
+      routeContractKey: 'route.hcm.personal.pay.page',
+      profileKey: 'full-work',
+      targetBinding: 'SELF',
+      scopeBindingKind: 'SELF',
+    }),
+    Object.freeze({
+      nodeId: 'BASE:my-goals-performance',
+      path: '/hr/talent',
+      routeContractKey: 'route.hcm.personal.talent.page',
+      profileKey: 'full-work',
+      targetBinding: 'SELF',
+      scopeBindingKind: 'SELF',
+    }),
+    Object.freeze({
+      nodeId: 'BASE:my-hr-requests',
+      path: '/hr/services',
+      routeContractKey: 'route.hcm.personal.services.page',
+      profileKey: 'full-work',
+      targetBinding: 'SELF',
+      scopeBindingKind: 'SELF',
+    }),
+  ]);
+
+export function hrisV46SelfPolicyRouteBinding(nodeId: string, route: string) {
+  const path = routePath(route);
+  return HRIS_V46_SELF_POLICY_ROUTE_BINDINGS.find(
+    (binding) => binding.nodeId === nodeId && binding.path === path
+  );
+}
 const HRIS_RUNTIME_EXPLICIT_EXCLUDED_PATHS: ReadonlySet<string> = new Set([
   '/hr/benefits',
   '/hr/operations/benefits',
