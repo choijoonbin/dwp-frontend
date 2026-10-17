@@ -1,0 +1,81 @@
+{
+  "schema": "dwp.hris.r7-batch03-hrm009-read-only-browser-gate-fixture-execution-authority-successor.v2",
+  "decisionId": "HRIS-WAVE7-R7-BATCH03-HRM009-READ-ONLY-BROWSER-GATE-FIXTURE-AUTHORITY-20261018-R2",
+  "issuedAt": "2026-10-18T08:05:41+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "AUTHORIZED_ISOLATED_NON_PERSISTENT_READ_ONLY_BROWSER_GATE_FIXTURE_ZERO_POST_PATH_CORRECTED",
+  "purpose": "Correct one non-executable personal owner-GET path in the sealed v1 fixture authority while inheriting every other scope, prohibition, runtime pin, file allowlist, browser matrix and non-claim unchanged.",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_DECISION_ID_AND_SHA256",
+    "predecessorMutation": "FORBIDDEN"
+  },
+  "supersedes": {
+    "path": "hrm-009-read-only-browser-gate-fixture-execution-authority.v1.json",
+    "sha256": "320c81c2289168d36214dbfb2ee86d2ef0d5168c48fb11c3e77fd7d5246c5649",
+    "bytes": 9219,
+    "preservation": "IMMUTABLE"
+  },
+  "contractEvidence": {
+    "frontendContractPath": "apps/dwp/src/features/hris/employee-services/certificates/certificate-contract.ts",
+    "queryId": "IAQ-003",
+    "browserPath": "/api/people/v1/hris/workbench/self-service/requests",
+    "ownerPath": "/v1/hris/workbench/self-service/requests",
+    "canonicalRoute": "/hr/me/requests"
+  },
+  "correction": {
+    "field": "fixtureBoundary.allowedSyntheticResponses",
+    "removeEffectiveValue": "GET /api/people/v1/hris/workbench/me/requests",
+    "addEffectiveValue": "GET /api/people/v1/hris/workbench/self-service/requests",
+    "reason": "The v1 value was not an implemented browser contract and could never observe the admitted IAQ-003 owner query."
+  },
+  "effectiveAuthority": {
+    "inheritAllUnchangedV1Fields": true,
+    "authorizedTestSupportPaths": [
+      "scripts/hris-hrm-009-read-only-browser-gate-server.mjs",
+      "playwright.hris-hrm-009-read-only.config.ts",
+      "e2e/hris-hrm-009-read-only-browser-gate.spec.ts"
+    ],
+    "effectiveSyntheticResponses": [
+      "GET /api/auth/product-surface-contexts with trusted contractVersion 2 and fresh five-minute lease",
+      "POST /api/auth/product-surface-access/evaluate for exactly route.hcm.personal.requests.page",
+      "POST /api/auth/product-surface-access/evaluate for exactly route.hcm.personal.requests.data",
+      "POST /api/auth/product-surface-access/evaluate for exactly route.hcm.operations.certificates-documents.page",
+      "POST /api/auth/product-surface-access/evaluate for exactly route.hcm.operations.certificates-documents.data",
+      "GET /api/people/v1/hris/workbench/self-service/requests",
+      "GET /api/people/v1/hris/workbench/operations/certificates/documents"
+    ],
+    "productionSourceEdits": [],
+    "packageOrLockfileEdits": [],
+    "existingTestHelperEdits": [],
+    "persistentDatabaseMutationAuthorized": false,
+    "tenantActivationOrEnrollmentAuthorized": false,
+    "customerDataAuthorized": false,
+    "writableActionAuthorized": false
+  },
+  "branchPolicy": {
+    "branch": "codex/hris-wave7-r7-batch03-hrm-009-browser-gate-20261018-r1",
+    "requiredBase": "POST_SUCCESSOR_DWP_DEV_HEAD",
+    "strategy": "FAST_FORWARD_CLEAN_UNCHANGED_WORKTREE_TO_SUCCESSOR_THEN_IMPLEMENT_THEN_REVIEW_THEN_EXACT_NO_FF_CENTRAL_MERGE"
+  },
+  "authority": {
+    "pathCorrectionEffective": true,
+    "isolatedFixtureAuthoringAuthorized": true,
+    "isolatedReadOnlyBrowserGateAuthorized": true,
+    "productionSourceChangeAuthorized": false,
+    "centralMergeAuthorizedByThisDocument": false,
+    "readOnlyMountAcceptanceRequiresObservedFullMatrix": true
+  },
+  "requiredNext": [
+    "Commit and push this append-only successor on frontend dwp-dev.",
+    "Fast-forward the still-clean browser-gate worktree to the exact post-successor dwp-dev head.",
+    "Implement only the three inherited allowlisted test-support files using the corrected IAQ-003 path."
+  ],
+  "nonClaims": [
+    "HRM-009 full slice completion",
+    "Batch-03 completion",
+    "R7 completion",
+    "Writable certificate behavior",
+    "Tenant activation, enrollment, customer-data use, production release or business completion credit"
+  ]
+}
