@@ -1,4 +1,5 @@
 import { HRIS_RUNTIME_NAVIGATION_MANIFEST } from '../model/hris-runtime-navigation-manifest';
+import { HRIS_CONTROLLED_EXPORT_NODE_ID } from '../model/hris-navigation-topology-successor';
 
 export const HRIS_WORKBENCH_IDS = [
   'HRIS-WB-MY-HR',
@@ -55,7 +56,7 @@ const EXPECTED_TOPOLOGY: Readonly<
   'HRIS-WB-TIME': { groups: 6, nodes: 11 },
   'HRIS-WB-PAYROLL': { groups: 7, nodes: 14 },
   'HRIS-WB-PERFORMANCE': { groups: 7, nodes: 12 },
-  'HRIS-WB-SETTINGS': { groups: 8, nodes: 22 },
+  'HRIS-WB-SETTINGS': { groups: 8, nodes: 23 },
 });
 
 const EXCLUDED_ROUTES = new Set(['/hr/explore', '/hr/benefits', '/hr/operations/benefits']);
@@ -162,6 +163,7 @@ const SEALED_COMPATIBILITY_OWNER_BY_PATH: Readonly<Record<string, string | null>
   '/hr/me': 'BASE:my-hr-profile',
   '/hr/team': 'BASE:team-home',
   '/hr/data/integrations': null,
+  '/hr/data/exports': HRIS_CONTROLLED_EXPORT_NODE_ID,
 });
 export const HRIS_POLICY_ONLY_COMPATIBILITY_PATHS = Object.freeze([
   '/hr/me',
@@ -259,7 +261,6 @@ const HRIS_RUNTIME_EXPLICIT_EXCLUDED_PATHS: ReadonlySet<string> = new Set([
   '/hr/operations/time',
   '/hr/operations/pay',
   '/hr/operations/talent',
-  '/hr/data/exports',
 ]);
 const HRIS_RUNTIME_DEEP_LINK_ONLY_COMPATIBILITY_PATHS: ReadonlySet<string> = new Set([
   '/hr/operations/assignments',
@@ -421,8 +422,8 @@ function buildCatalog(): readonly HrisTaskNavigationWorkbench[] {
       }
     }
   }
-  if (groupCount !== 46 || seenNodes.size !== 97) {
-    throw new Error('HRIS task navigation must contain exactly 46 groups and 97 descendants.');
+  if (groupCount !== 46 || seenNodes.size !== 98) {
+    throw new Error('HRIS task navigation must contain exactly 46 groups and 98 descendants.');
   }
   return Object.freeze(workbenches);
 }

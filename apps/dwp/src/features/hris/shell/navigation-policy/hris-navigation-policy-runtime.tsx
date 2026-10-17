@@ -21,6 +21,10 @@ import {
   resolveHrisShellSelectedView,
 } from '../model/hris-shell-navigation-contract';
 import {
+  HRIS_NAVIGATION_TOPOLOGY_SUCCESSOR_REVISION,
+  HRIS_NAVIGATION_TOPOLOGY_SUCCESSOR_SHA256,
+} from '../model/hris-navigation-topology-successor';
+import {
   canonicalHrisWorkbench,
   hrisWorkbenchIdForView,
   HRIS_SEVEN_WORKBENCH_NAVIGATION_CATALOG,
@@ -59,10 +63,8 @@ export const HRIS_NAVIGATION_POLICY_V3_RUNTIME_PATH =
 /** Compatibility export retained for consumers that still identify the V2 carrier explicitly. */
 export const HRIS_NAVIGATION_POLICY_RUNTIME_PATH = HRIS_NAVIGATION_POLICY_V2_RUNTIME_PATH;
 export const HRIS_NAVIGATION_SCOPE_PARAM = 'navigationScope' as const;
-export const HRIS_NAVIGATION_TOPOLOGY_REVISION = 'HRIS-IA-98-WB7-G46-N97-R5' as const;
-// SHA-256 of `topologyRevision|ia|shell|taskGroup|generatedIa|7|46|97` as UTF-8.
-export const HRIS_NAVIGATION_TOPOLOGY_SHA256 =
-  '4d27b3b8958d591968ed42e7ccd6387664fff66a364adfc83a8a5b7f223a6d8a' as const;
+export const HRIS_NAVIGATION_TOPOLOGY_REVISION = HRIS_NAVIGATION_TOPOLOGY_SUCCESSOR_REVISION;
+export const HRIS_NAVIGATION_TOPOLOGY_SHA256 = HRIS_NAVIGATION_TOPOLOGY_SUCCESSOR_SHA256;
 export const HRIS_NAVIGATION_IA_REGISTER_SHA256 =
   'ab506a2bb2f80c8ab81a4b9d575374d6bda83b312d11dce07495d4812bdf4686' as const;
 export const HRIS_NAVIGATION_SHELL_REGISTER_SHA256 =

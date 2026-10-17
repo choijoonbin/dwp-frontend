@@ -37,6 +37,11 @@ import {
   HRIS_NAVIGATION_POLICY_V3_RUNTIME_STATE,
 } from './hris-navigation-policy-feature';
 import {
+  HRIS_CONTROLLED_EXPORT_NODE_ID,
+  HRIS_NAVIGATION_TOPOLOGY_PREDECESSOR_REVISION,
+  HRIS_NAVIGATION_TOPOLOGY_PREDECESSOR_SHA256,
+} from '../model/hris-navigation-topology-successor';
+import {
   canonicalHrisWorkbench,
   HRIS_SEVEN_WORKBENCH_NAVIGATION_CATALOG,
   HRIS_V46_SELF_POLICY_ROUTE_BINDINGS,
@@ -273,6 +278,22 @@ describe('server-owned HRIS seven-workbench navigation runtime', () => {
     ).toThrow('topology');
     expect(() =>
       selectRuntimeHrisNavigationPolicyProjection(
+        projection('OFF', {
+          topologyRevision: HRIS_NAVIGATION_TOPOLOGY_PREDECESSOR_REVISION,
+          topologySha256: HRIS_NAVIGATION_TOPOLOGY_PREDECESSOR_SHA256,
+        })
+      )
+    ).toThrow('topology');
+    expect(() =>
+      selectRuntimeHrisNavigationPolicyProjection(
+        projection('OFF', {
+          topologyRevision: HRIS_NAVIGATION_TOPOLOGY_PREDECESSOR_REVISION,
+          topologySha256: HRIS_NAVIGATION_TOPOLOGY_SHA256,
+        })
+      )
+    ).toThrow('topology');
+    expect(() =>
+      selectRuntimeHrisNavigationPolicyProjection(
         projection('ENFORCED', {
           policyEnforced: true,
           revisionPin: 'nav-v2-truncated',
@@ -486,6 +507,48 @@ describe('server-owned HRIS seven-workbench navigation runtime', () => {
     expect(resolveHrisRuntimePolicyDeepLink(policy, compatibilityPath, authorized)).toMatchObject({
       decision: 'ALLOW',
       nodeId: 'BASE:hr-operations-home',
+    });
+  });
+
+  it('projects the controlled export only from its dedicated SET-08 successor node', () => {
+    const route = '/hr/data/exports';
+    const policy = enforcedPolicy([
+      effectiveWorkbench('HRIS-WB-SETTINGS', [HRIS_CONTROLLED_EXPORT_NODE_ID]),
+    ]);
+    const authorized = new Set([route]);
+    const tasks = projectHrisWorkbenchTaskNavigation(policy, 'workbench-settings', authorized);
+    const shellItems = createHrisPolicyShellNavigationProjection(policy)
+      .project(authorized)
+      .flatMap((group) => group.items);
+
+    expect(tasks).toEqual([
+      expect.objectContaining({
+        groupId: 'SET-08',
+        nodes: [
+          expect.objectContaining({
+            nodeId: HRIS_CONTROLLED_EXPORT_NODE_ID,
+            routeAliases: [route],
+            displayOrder: 5,
+          }),
+        ],
+      }),
+    ]);
+    expect(shellItems).toEqual([
+      expect.objectContaining({
+        path: route,
+        view: 'workbench-settings',
+        activePathPrefixes: [route],
+      }),
+    ]);
+    expect(
+      resolveHrisRuntimePolicyDeepLink(policy, `${route}?dataset=workers#requests`, authorized)
+    ).toMatchObject({
+      decision: 'ALLOW',
+      nodeId: HRIS_CONTROLLED_EXPORT_NODE_ID,
+      route,
+    });
+    expect(resolveHrisRuntimePolicyDeepLink(policy, route, new Set())).toMatchObject({
+      decision: 'DENY',
     });
   });
 
