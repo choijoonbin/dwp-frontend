@@ -1,0 +1,124 @@
+{
+  "schema": "dwp.hris.wave6-r6a-implemented-screen-exposure-module-result.v1",
+  "resultId": "HRIS-WAVE6-R6A-IMPLEMENTED-SCREEN-EXPOSURE-RESULT-R1",
+  "issuedAt": "2026-10-17T11:46:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL_WITH_MODULE_OWNERS",
+  "status": "PASS_IMPLEMENTED_INTEGRATED_DEFAULT_OFF",
+  "controlPacket": {
+    "path": "docs/06-delivery/hris/wave6-2026-10-15/r6-implemented-screen-exposure-control-r1/control-packet.v1.json",
+    "sha256": "c1eb8616174dc9118f168d9cc07288ae5d9d714b68793c2b0afa20b5707be6e4"
+  },
+  "routeEvidenceMatrix": {
+    "path": "docs/06-delivery/hris/wave6-2026-10-15/r6-implemented-screen-exposure-control-r1/route-evidence-matrix.v1.json",
+    "sha256": "76abc4e2ceecfe0f4439a5c2842910a1a796b09ec1b20de0307dadc8e58811c2",
+    "role": "R6_IMPLEMENTATION_AND_DEPLOYMENT_AMENDMENT_WITH_HISTORICAL_IA_SNAPSHOT_PRESERVED"
+  },
+  "ownerResults": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "codex/hris-r6a-exact-screen-exposure-backend-20261017-r1",
+      "commit": "b2a4bb297534ebc3e9640b4ed111355378b30632",
+      "tree": "e34475baace1788266c9c66cf38fc1709af8d3dd",
+      "pushed": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "codex/hris-r6a-exact-screen-exposure-frontend-20261017-r1",
+      "commit": "1aac6bdf71a1a48457f0b17a93cd269b1d33f741",
+      "tree": "e3767b070ad831a97e8edf6596b783b0e3eb0dbf",
+      "pushed": true
+    }
+  },
+  "implementedContract": {
+    "installedNodes": 12,
+    "exactServerAdmittedPaths": 13,
+    "defaultDeployedNodes": [
+      "BASE:my-employment-documents",
+      "BASE:hr-employment-assignments",
+      "BASE:hr-organization-positions"
+    ],
+    "featureGatedInstalledNodes": 9,
+    "effectiveIntersection": "CANONICAL_INTERSECT_IMPLEMENTATION_ALLOWLIST_INTERSECT_INSTALLED_INTERSECT_DEPLOYED_INTERSECT_TENANT_INTERSECT_LEGAL_INTERSECT_EXACT_SERVER_ADMITTED_PAGE_PATH",
+    "frontendIntersection": "SERVER_ADMITTED_ROUTE_ALIASES_INTERSECT_GATEWAY_AUTHORIZED_PATHS",
+    "assignmentCanonicalMenuPath": "/hr/operations/people/employment-assignments",
+    "assignmentCompatibilityDeepLinkOnly": "/hr/operations/assignments",
+    "sidebarLandingDeepLinkShareSameAggregatePin": true,
+    "pinBindsNormalizedExactAdmittedPaths": true,
+    "historicalIaSnapshotMutated": false,
+    "policyAuthorityInferred": false
+  },
+  "activation": {
+    "controllerFeatureEnabledByDefault": false,
+    "runtimeModeDefault": "OFF",
+    "enrolledTenantsDefault": [],
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "targetedVerification": {
+    "backend": {
+      "initialChangedNavigationPolicyBatch": {
+        "tests": 20,
+        "passed": 19,
+        "fixtureOnlyFailures": 1
+      },
+      "failedTargetAfterFixtureCorrection": {
+        "tests": 1,
+        "passed": 1,
+        "failures": 0
+      },
+      "postgresLifecycleTarget": {
+        "tests": 1,
+        "result": "BUILD_SUCCESSFUL"
+      },
+      "finalDeepLinkContractTargets": {
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "xmlConfirmed": true
+      },
+      "gitDiffCheck": "PASS",
+      "repositoryWideSuite": "NOT_RUN_CHANGED_CLUSTER_POLICY"
+    },
+    "frontend": {
+      "initialRelevantVitestBatch": {
+        "files": 4,
+        "tests": 26,
+        "passed": 25,
+        "fixtureOnlyFailures": 1
+      },
+      "failedRuntimeFileAfterFixtureCorrection": {
+        "tests": 15,
+        "passed": 15,
+        "failures": 0
+      },
+      "changedFileEslint": "PASS",
+      "prettier": "PASS_4_OF_4",
+      "gitDiffCheck": "PASS",
+      "repositoryWideSuite": "NOT_RUN_CHANGED_CLUSTER_POLICY"
+    }
+  },
+  "independentReview": {
+    "reviewer": "/root/r5_authorization_carrier",
+    "initialP0": 0,
+    "initialP1": 2,
+    "p1Dispositions": [
+      "FIXED_COMPATIBILITY_ONLY_NODE_DROPPED_FROM_EFFECTIVE_PROJECTION",
+      "FIXED_ALLOWED_SUCCESS_TARGET_OUTSIDE_PINNED_ALIASES"
+    ],
+    "remainingP0": 0,
+    "remainingP1": 0,
+    "remainingP2Blockers": 0
+  },
+  "r6bBoundary": {
+    "state": "NEXT_EXECUTABLE_NOT_PART_OF_R6A",
+    "id": "R6-B-SEAL-V46-EXACT-POLICY-DECISION-CARRIER",
+    "rule": "No POLICY alias is admitted until a trusted exact decision carrier binds the route, profile, target, scope, revisions and freshness into the aggregate pin."
+  },
+  "nonclaims": [
+    "R6-A does not activate the navigation-policy controller, any tenant, customer data or production release.",
+    "R6-A does not expose the nine installed feature-gated nodes until their owner gates and deployed catalog are explicitly enabled.",
+    "R6-A does not infer POLICY authority from permissions, screen presence or IA membership.",
+    "R6-A does not change the historical recovered IA topology."
+  ]
+}

@@ -67,6 +67,7 @@
     "route.hcm.personal.employment-documents.page",
     "route.hcm.operations.people.page",
     "route.hcm.operations.employment-assignments.page",
+    "route.hcm.operations.assignments.page",
     "route.hcm.management.org-design.page",
     "route.hcm.operations.employee-change-requests.page",
     "route.hcm.operations.time-clock-ingestion.page",

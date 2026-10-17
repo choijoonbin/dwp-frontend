@@ -1,0 +1,465 @@
+{
+  "schema": "dwp.hris.wave6-r6a-route-evidence-matrix.v1",
+  "matrixId": "HRIS-WAVE6-R6A-EXACT-PAGE-ROUTE-EVIDENCE-20261017-R1",
+  "issuedAt": "2026-10-17T11:45:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL_WITH_MODULE_OWNERS",
+  "status": "PASS_EXACT_PAGE_AMENDMENT_SEALED_DEFAULT_OFF",
+  "purpose": "Record the R6-A implementation and deployment amendment for the exact v45 PAGE subset without rewriting the recovered historical information-architecture snapshot.",
+  "historicalSnapshotPolicy": {
+    "navigationTopologyRevision": "HRIS-IA-98-WB7-G46-N97-R5",
+    "preservation": "IMMUTABLE_RECOVERY_SNAPSHOT_RETAINED",
+    "amendmentRule": "This matrix is the R6 implementation and deployment amendment. It does not mutate the historical IA node register, infer route authority, or change the sealed 7-workbench/46-group/97-descendant topology.",
+    "authorizationRegistryVersion": 45,
+    "authorizationRegistrySha256": "6f41e17159104cd0fd721a13877611b6225bd6458cb2831f0f30e51573992e64"
+  },
+  "summary": {
+    "installedNodes": 12,
+    "nodeRecords": 12,
+    "exactRouteRows": 13,
+    "distinctExactPageContractKeys": 13,
+    "exactFrontendPaths": 13,
+    "defaultDeployedNodes": 3,
+    "featureGatedInstalledNodes": 9,
+    "pageAuthorityOnly": true,
+    "policyAuthorityInferred": false,
+    "controllerFeatureEnabledByDefault": false,
+    "runtimeModeDefault": "OFF",
+    "enrolledTenantsDefault": []
+  },
+  "exactPageRouteContractKeys": [
+    "route.hcm.personal.employment-documents.page",
+    "route.hcm.operations.people.page",
+    "route.hcm.operations.employment-assignments.page",
+    "route.hcm.operations.assignments.page",
+    "route.hcm.management.org-design.page",
+    "route.hcm.operations.employee-change-requests.page",
+    "route.hcm.operations.time-clock-ingestion.page",
+    "route.hcm.operations.time-interpretation.page",
+    "route.hcm.operations.time-exceptions.page",
+    "route.hcm.operations.performance-review-operations.page",
+    "route.hcm.operations.compensation-planning.page",
+    "route.hcm.configuration.settings-reference.page",
+    "route.hcm.configuration.payroll.page"
+  ],
+  "routes": [
+    {
+      "nodeId": "BASE:my-employment-documents",
+      "module": "HRIS-HRM",
+      "runtimeOwner": "dwp-people-server",
+      "exactRoutes": [
+        {
+          "path": "/hr/me/employment-documents",
+          "usage": "CANONICAL_MENU_AND_DEEP_LINK",
+          "routeContractKey": "route.hcm.personal.employment-documents.page",
+          "profileKey": "self-service",
+          "targetBindingKinds": ["SELF"],
+          "capabilityContractKey": "hcm.personal.profile.view",
+          "trustedPermission": "DATA.HRIS_SELF_PROFILE:VIEW"
+        }
+      ],
+      "deployment": {
+        "installedByDefault": true,
+        "deployedByDefault": true,
+        "featureGate": "NO_SINGLE_OWNER_ROUTE_FLAG",
+        "featureGateDefault": "NOT_APPLICABLE",
+        "note": "dwp.hris.experience.enabled remains false for command-receipt behavior and does not gate this first-read projection."
+      },
+      "migrationCondition": "EXISTING_WORKFORCE_SCHEMA; R6A_DOES_NOT_ASSERT_ONE_MIGRATION_AS_THE_SOLE_ROUTE_GATE"
+    },
+    {
+      "nodeId": "BASE:hr-people",
+      "module": "HRIS-HRM",
+      "runtimeOwner": "dwp-people-server",
+      "exactRoutes": [
+        {
+          "path": "/hr/operations/people",
+          "usage": "CANONICAL_MENU_AND_DEEP_LINK",
+          "routeContractKey": "route.hcm.operations.people.page",
+          "profileKey": "full-management",
+          "targetBindingKinds": ["TARGET_POPULATION"],
+          "capabilityContractKey": "hcm.operations.workforce.read",
+          "trustedPermission": "DATA.WORKFORCE:VIEW",
+          "nonclaim": "The provider-support profile is not inferred as exact R6-A PAGE authority."
+        }
+      ],
+      "deployment": {
+        "installedByDefault": true,
+        "deployedByDefault": false,
+        "featureGate": "dwp.people.people360-runtime-enabled",
+        "featureGateDefault": false,
+        "deploymentPrerequisite": "Enable the owner runtime, migration and exact owner PEP in the same environment before adding this node to deployed-nodes."
+      },
+      "migrationCondition": "OWNER_MIGRATION_MUST_BE_PRESENT; R6A_DOES_NOT_ASSERT_ONE_MIGRATION_AS_THE_SOLE_ROUTE_GATE"
+    },
+    {
+      "nodeId": "BASE:hr-employment-assignments",
+      "module": "HRIS-HRM",
+      "runtimeOwner": "dwp-people-server",
+      "exactRoutes": [
+        {
+          "path": "/hr/operations/people/employment-assignments",
+          "usage": "CANONICAL_MENU_AND_DEEP_LINK",
+          "routeContractKey": "route.hcm.operations.employment-assignments.page",
+          "profileKey": "full-management",
+          "targetBindingKinds": ["TARGET_POPULATION"],
+          "capabilityContractKey": "hcm.operations.people.view",
+          "trustedPermission": "DATA.HRIS_WORKFORCE:VIEW"
+        },
+        {
+          "path": "/hr/operations/assignments",
+          "usage": "COMPATIBILITY_DEEP_LINK_ONLY",
+          "routeContractKey": "route.hcm.operations.assignments.page",
+          "profileKey": "full-management",
+          "targetBindingKinds": ["TARGET_POPULATION"],
+          "capabilityContractKey": "hcm.operations.workforce.read",
+          "trustedPermission": "DATA.WORKFORCE:VIEW",
+          "menuDuplicateAllowed": false
+        }
+      ],
+      "deployment": {
+        "installedByDefault": true,
+        "deployedByDefault": true,
+        "featureGate": "NO_SINGLE_OWNER_ROUTE_FLAG",
+        "featureGateDefault": "NOT_APPLICABLE"
+      },
+      "migrationCondition": "EXISTING_WORKFORCE_SCHEMA; R6A_DOES_NOT_ASSERT_ONE_MIGRATION_AS_THE_SOLE_ROUTE_GATE"
+    },
+    {
+      "nodeId": "BASE:hr-organization-positions",
+      "module": "HRIS-HRM",
+      "runtimeOwner": "dwp-people-server",
+      "exactRoutes": [
+        {
+          "path": "/hr/design/organization",
+          "usage": "SEALED_COMPATIBILITY_MENU_AND_DEEP_LINK",
+          "topologyCanonicalPath": "/hr/operations/people/organization-positions",
+          "topologyCanonicalPathAdmitted": false,
+          "routeContractKey": "route.hcm.management.org-design.page",
+          "profileKey": "full-management",
+          "targetBindingKinds": ["CONFIG_SCOPE"],
+          "capabilityContractKey": "hcm.org-design.read",
+          "trustedPermission": "ACTION.WORKFORCE_ORG_DESIGN:VIEW"
+        }
+      ],
+      "deployment": {
+        "installedByDefault": true,
+        "deployedByDefault": true,
+        "featureGate": "NO_SINGLE_OWNER_ROUTE_FLAG",
+        "featureGateDefault": "NOT_APPLICABLE"
+      },
+      "migrationCondition": "EXISTING_WORKFORCE_AND_ORGANIZATION_SCHEMA; R6A_DOES_NOT_ASSERT_ONE_MIGRATION_AS_THE_SOLE_ROUTE_GATE"
+    },
+    {
+      "nodeId": "BASE:hr-employee-change-requests",
+      "module": "HRIS-HRM",
+      "runtimeOwner": "dwp-people-server",
+      "exactRoutes": [
+        {
+          "path": "/hr/operations/people/employee-change-requests",
+          "usage": "CANONICAL_MENU_AND_DEEP_LINK",
+          "routeContractKey": "route.hcm.operations.employee-change-requests.page",
+          "profileKey": "full-management",
+          "targetBindingKinds": ["TARGET_POPULATION"],
+          "capabilityContractKey": "hcm.operations.people.view",
+          "trustedPermission": "DATA.HRIS_WORKFORCE:VIEW"
+        }
+      ],
+      "deployment": {
+        "installedByDefault": true,
+        "deployedByDefault": false,
+        "featureGate": "dwp.hris.employee-change.enabled",
+        "featureGateDefault": false,
+        "deploymentPrerequisite": "Enable the owner feature, V54 migration and exact owner PEP before adding this node to deployed-nodes."
+      },
+      "migrationEvidence": [
+        "dwp-people-server/src/main/resources/db/migration/V54__create_employee_change_request_lifecycle.sql"
+      ]
+    },
+    {
+      "nodeId": "BASE:time-clock-ingestion",
+      "module": "HRIS-TIM",
+      "runtimeOwner": "dwp-time-server",
+      "exactRoutes": [
+        {
+          "path": "/hr/operations/time/clock-ingestion",
+          "usage": "CANONICAL_MENU_AND_DEEP_LINK",
+          "routeContractKey": "route.hcm.operations.time-clock-ingestion.page",
+          "profileKey": "full-management",
+          "targetBindingKinds": ["TARGET_POPULATION"],
+          "capabilityContractKey": "hcm.operations.time.view",
+          "trustedPermission": "DATA.HR_TIME:VIEW"
+        }
+      ],
+      "deployment": {
+        "installedByDefault": true,
+        "deployedByDefault": false,
+        "featureGate": "dwp.hris.time.clock-ingestion.enabled",
+        "featureGateDefault": false,
+        "deploymentPrerequisite": "Enable the owner feature, V8 migration and exact owner PEP before adding this node to deployed-nodes."
+      },
+      "migrationEvidence": [
+        "dwp-time-server/src/main/resources/db/migration/V8__tim_create_clock_ingestion.sql",
+        "dwp-time-server/src/main/resources/db/migration/V9__tim_bind_clock_void_step_up.sql"
+      ]
+    },
+    {
+      "nodeId": "BASE:time-interpretation",
+      "module": "HRIS-TIM",
+      "runtimeOwner": "dwp-time-server",
+      "exactRoutes": [
+        {
+          "path": "/hr/operations/time/interpretation",
+          "usage": "CANONICAL_MENU_AND_DEEP_LINK",
+          "routeContractKey": "route.hcm.operations.time-interpretation.page",
+          "profileKey": "full-management",
+          "targetBindingKinds": ["TARGET_POPULATION"],
+          "capabilityContractKey": "hcm.operations.time.view",
+          "trustedPermission": "DATA.HR_TIME:VIEW"
+        }
+      ],
+      "deployment": {
+        "installedByDefault": true,
+        "deployedByDefault": false,
+        "featureGate": "dwp.hris.time.interpretation.enabled",
+        "featureGateDefault": false,
+        "deploymentPrerequisite": "Enable the owner feature, V10 migration and exact owner PEP before adding this node to deployed-nodes."
+      },
+      "migrationEvidence": [
+        "dwp-time-server/src/main/resources/db/migration/V10__tim_base_tfr_tim_010.sql"
+      ]
+    },
+    {
+      "nodeId": "BASE:time-exceptions",
+      "module": "HRIS-TIM",
+      "runtimeOwner": "dwp-time-server",
+      "exactRoutes": [
+        {
+          "path": "/hr/operations/time/exceptions",
+          "usage": "CANONICAL_MENU_AND_DEEP_LINK",
+          "routeContractKey": "route.hcm.operations.time-exceptions.page",
+          "profileKey": "full-management",
+          "targetBindingKinds": ["TARGET_POPULATION"],
+          "capabilityContractKey": "hcm.operations.time.view",
+          "trustedPermission": "DATA.HR_TIME:VIEW"
+        }
+      ],
+      "deployment": {
+        "installedByDefault": true,
+        "deployedByDefault": false,
+        "featureGate": "dwp.hris.time.clock-ingestion.enabled",
+        "featureGateDefault": false,
+        "deploymentPrerequisite": "Enable the owner feature, V8 migration and exact owner PEP before adding this node to deployed-nodes."
+      },
+      "migrationEvidence": [
+        "dwp-time-server/src/main/resources/db/migration/V8__tim_create_clock_ingestion.sql",
+        "dwp-time-server/src/main/resources/db/migration/V9__tim_bind_clock_void_step_up.sql"
+      ]
+    },
+    {
+      "nodeId": "BASE:performance-review-operations",
+      "module": "HRIS-PER",
+      "runtimeOwner": "dwp-people-server",
+      "exactRoutes": [
+        {
+          "path": "/hr/operations/performance/review-operations",
+          "usage": "CANONICAL_MENU_AND_DEEP_LINK",
+          "routeContractKey": "route.hcm.operations.performance-review-operations.page",
+          "profileKey": "full-management",
+          "targetBindingKinds": ["TARGET_POPULATION"],
+          "capabilityContractKey": "hcm.operations.performance.view",
+          "trustedPermission": "DATA.HR_TALENT:VIEW"
+        }
+      ],
+      "deployment": {
+        "installedByDefault": true,
+        "deployedByDefault": false,
+        "featureGate": "dwp.hris.performance.population-freeze.enabled",
+        "featureGateDefault": false,
+        "deploymentPrerequisite": "Enable the owner feature, performance migrations and exact owner PEP before adding this node to deployed-nodes."
+      },
+      "migrationEvidence": [
+        "dwp-people-server/src/main/resources/db/performance-migration/V2__per_create_population_freeze.sql",
+        "dwp-people-server/src/main/resources/db/performance-migration/V3__per_harden_review_operation_capture.sql"
+      ]
+    },
+    {
+      "nodeId": "MODERN:hcm.operations.compensation-planning",
+      "module": "HRIS-PER",
+      "runtimeOwner": "dwp-people-server",
+      "exactRoutes": [
+        {
+          "path": "/hr/operations/performance/compensation-planning",
+          "usage": "CANONICAL_MENU_AND_DEEP_LINK",
+          "routeContractKey": "route.hcm.operations.compensation-planning.page",
+          "profileKey": "full-management",
+          "targetBindingKinds": ["TARGET_POPULATION"],
+          "capabilityContractKey": "hcm.compensation.plan.view",
+          "trustedPermission": "DATA.HRIS_COMPENSATION_PLAN:VIEW"
+        }
+      ],
+      "deployment": {
+        "installedByDefault": true,
+        "deployedByDefault": false,
+        "featureGate": "dwp.hris.performance.compensation-planning.enabled",
+        "featureGateDefault": false,
+        "deploymentPrerequisite": "Enable the owner feature, performance V17 migration and exact owner PEP before adding this node to deployed-nodes."
+      },
+      "migrationEvidence": [
+        "dwp-people-server/src/main/resources/db/performance-migration/V17__per_modern_compensation_planning.sql"
+      ]
+    },
+    {
+      "nodeId": "BASE:settings-reference",
+      "module": "HRIS-SYS",
+      "runtimeOwner": "dwp-platform-server",
+      "exactRoutes": [
+        {
+          "path": "/hr/settings/reference-data",
+          "usage": "CANONICAL_MENU_AND_DEEP_LINK",
+          "routeContractKey": "route.hcm.configuration.settings-reference.page",
+          "profileKey": "configuration-reader",
+          "targetBindingKinds": ["CONFIG_SCOPE"],
+          "capabilityContractKey": "hcm.configuration.workbench.view",
+          "trustedPermission": "CONFIG.HRIS_WORKBENCH:VIEW"
+        }
+      ],
+      "deployment": {
+        "installedByDefault": true,
+        "deployedByDefault": false,
+        "featureGate": "dwp.hris.reference-configuration.enabled",
+        "featureGateDefault": false,
+        "deploymentPrerequisite": "Enable the owner feature, V325 migration and exact owner PEP before adding this node to deployed-nodes."
+      },
+      "migrationEvidence": [
+        "dwp-platform-server/src/main/resources/db/migration/V325__create_hris_reference_configuration_lifecycle.sql"
+      ]
+    },
+    {
+      "nodeId": "BASE:settings-payroll",
+      "module": "HRIS-PAY",
+      "runtimeOwner": "dwp-payroll-server",
+      "exactRoutes": [
+        {
+          "path": "/hr/settings/payroll",
+          "usage": "CANONICAL_MENU_AND_DEEP_LINK",
+          "routeContractKey": "route.hcm.configuration.payroll.page",
+          "profileKey": "configuration-author",
+          "targetBindingKinds": ["CONFIG_SCOPE"],
+          "capabilityContractKey": "hcm.configuration.workbench.view",
+          "trustedPermission": "CONFIG.HRIS_WORKBENCH:VIEW"
+        }
+      ],
+      "deployment": {
+        "installedByDefault": true,
+        "deployedByDefault": false,
+        "featureGate": "dwp.hris.payroll-configuration.wave2.enabled",
+        "featureGateDefault": false,
+        "deploymentPrerequisite": "Enable the owner feature, V6 migration and exact owner PEP before adding this node to deployed-nodes."
+      },
+      "migrationEvidence": [
+        "dwp-payroll-server/src/main/resources/db/migration/V6__pay_base_tfr_pay_006.sql"
+      ]
+    }
+  ],
+  "withheld": {
+    "semanticMismatch": [
+      {
+        "path": "/hr/operations/time",
+        "observedScreen": "WORK_PLAN_STUDIO",
+        "requiredMeaning": "TIME_COMMAND_CENTER"
+      },
+      {
+        "path": "/hr/operations/pay",
+        "observedScreen": "PAYROLL_FOUNDATION_CONFIGURATION_STUDIO",
+        "requiredMeaning": "PAY_COMMAND_CENTER"
+      },
+      {
+        "path": "/hr/operations/talent",
+        "observedScreen": "PERFORMANCE_CYCLE_AUTHORING",
+        "requiredMeaning": "PERFORMANCE_COMMAND_CENTER"
+      },
+      {
+        "path": "/hr/data/exports",
+        "observedScreen": "CONTROLLED_EXPORT_QUEUE",
+        "requiredMeaning": "DWP_GOVERNANCE_EXPORT_SURFACE"
+      }
+    ],
+    "ownerResealRequired": [
+      {
+        "path": "/hr/team/time",
+        "iaOwner": "dwp-time-server",
+        "observedApiOwner": "dwp-people-server"
+      },
+      {
+        "path": "/hr/team/absence",
+        "iaOwner": "dwp-time-server",
+        "observedApiOwner": "dwp-people-server"
+      },
+      {
+        "path": "/hr/operations/absence",
+        "iaOwner": "dwp-time-server",
+        "observedApiOwner": "dwp-people-server"
+      }
+    ],
+    "ownerMismatch": [
+      {
+        "path": "/hr/operations",
+        "iaOwner": "HRIS-SYS_PLATFORM",
+        "observedApiOwner": "dwp-people-server",
+        "requiredAction": "RESEAL_OWNER_BEFORE_EXPOSURE"
+      }
+    ],
+    "unimplementedOrAmbiguousOrHardExcluded": [
+      {
+        "path": "/hr/operations/performance/multirater-surveys",
+        "reason": "PAGE_MAP_EXISTS_BUT_NO_ACTUAL_ROUTE_COMPONENT_OR_CONTROLLER"
+      },
+      {
+        "path": "/hr/data/integrations",
+        "reason": "AMBIGUOUS_OWNER_AND_AUTHORITY"
+      },
+      {
+        "path": "/hr/benefits",
+        "reason": "OWNERLESS_OR_HARD_EXCLUDED_BY_AUDIT"
+      },
+      {
+        "path": "/hr/operations/benefits",
+        "reason": "OWNERLESS_OR_HARD_EXCLUDED_BY_AUDIT"
+      },
+      {
+        "path": "/hr/explore",
+        "reason": "OWNERLESS_OR_HARD_EXCLUDED_BY_AUDIT"
+      },
+      {
+        "path": "/hr/settings/navigation-policy",
+        "reason": "NOT_IN_R6A_EXACT_PAGE_ALLOWLIST"
+      },
+      {
+        "path": "/hr/data/reference",
+        "reason": "NOT_IN_R6A_EXACT_PAGE_ALLOWLIST"
+      }
+    ],
+    "policyAuthority": {
+      "state": "WITHHELD_TO_R6_B_V46",
+      "rule": "No permission code, screen presence, canonical IA membership or v45 node-level result can be reinterpreted as an exact POLICY decision.",
+      "nextCarrierMustBind": [
+        "nodeId",
+        "path",
+        "routeContractKey",
+        "profileKey",
+        "targetBinding",
+        "scopeBinding",
+        "decisionRevision",
+        "authorityRevisions",
+        "freshUntil",
+        "normalizedExactAdmittedPathSetIntoAggregatePin"
+      ]
+    }
+  },
+  "nonclaims": [
+    "Installed does not mean deployed.",
+    "Deployed does not bypass tenant policy, legal-entity restriction, exact route authority, owner PEP or feature flags.",
+    "No tenant, customer data or production activation is authorized.",
+    "No POLICY route is exposed by this amendment."
+  ]
+}

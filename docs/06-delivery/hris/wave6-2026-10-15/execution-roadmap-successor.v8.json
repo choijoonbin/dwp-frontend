@@ -1,0 +1,171 @@
+{
+  "schema": "dwp.hris.wave6-execution-roadmap-successor.v8",
+  "roadmapId": "HRIS-WAVE6-EXECUTION-ROADMAP-SUCCESSOR-20261017-R8",
+  "issuedAt": "2026-10-17T11:48:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "supersedes": {
+    "path": "docs/06-delivery/hris/wave6-2026-10-15/execution-roadmap-successor.v7.json",
+    "sha256": "dc7b386d23ab77588debc39102ce862d911a7ecafe8ea545c9bf056bbc215ed6",
+    "preservation": "IMMUTABLE_PREDECESSOR_RETAINED",
+    "inheritedClosedMilestones": true
+  },
+  "baselineBeforeEvidenceCarrier": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "c970c29ae8f8470b762ec89a3dbae805add31db0",
+      "tree": "e34475baace1788266c9c66cf38fc1709af8d3dd",
+      "upstream": "origin/dwp-dev",
+      "localRemoteExact": true,
+      "workingTreeClean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "e2015f469438540b5b0ac79355241748d7484497",
+      "tree": "5a2850d0912390c6ab97e45bdd184997a6008792",
+      "upstream": "origin/dwp-dev",
+      "localRemoteExactBeforeCarrier": true
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "upstream": "origin/dwp-dev",
+      "localRemoteExact": true,
+      "changedByR6A": false
+    }
+  },
+  "inheritedClosed": [
+    {
+      "id": "R2-RESOLVE-HOME-PRODUCER-PURPOSE-AND-TYPE",
+      "state": "CLOSED"
+    },
+    {
+      "id": "R3A-R3D-HOME-PRODUCERS",
+      "state": "CLOSED_ALL_FOUR_DEFAULT_OFF"
+    },
+    {
+      "id": "R4-INTEGRATE-SYS-012-HOME-COMPOSITION-RESIDUAL",
+      "state": "CLOSED_INTEGRATED_DEFAULT_OFF"
+    },
+    {
+      "id": "R5-SEAL-AND-INTEGRATE-SHARED-SEVEN-WORKBENCH-TASK-NAVIGATION",
+      "state": "CLOSED_INTEGRATED_DEFAULT_OFF"
+    }
+  ],
+  "closedByThisSuccessor": {
+    "id": "R6-A-EXPOSE-AUDITED-V45-PAGE-SUBSET",
+    "state": "CLOSED_INTEGRATED_DEFAULT_OFF",
+    "evidence": {
+      "path": "docs/06-delivery/hris/wave6-2026-10-15/r6-implemented-screen-exposure-integration-r1/central-integration-result.v1.json",
+      "sha256": "3965a602c496258db7d677f4a5fc46750508683c7a701581374f6b3be5e54149"
+    },
+    "backendCommit": "c970c29ae8f8470b762ec89a3dbae805add31db0",
+    "frontendCommitBeforeEvidenceCarrier": "e2015f469438540b5b0ac79355241748d7484497",
+    "installedNodes": 12,
+    "exactPaths": 13,
+    "defaultDeployedNodes": 3,
+    "featureGatedInstalledNodes": 9,
+    "independentReviewRemainingP0": 0,
+    "independentReviewRemainingP1": 0,
+    "historicalIaSnapshotMutated": false
+  },
+  "nextExecutable": {
+    "id": "R6-B-SEAL-V46-EXACT-POLICY-DECISION-CARRIER",
+    "state": "AUTHORIZED_NEXT_EXECUTABLE_AFTER_R6A_EVIDENCE_CARRIER",
+    "owner": "SYS_COMMON_INTEGRATION_CONTROL_WITH_HRIS_SYS_AND_SECURITY",
+    "objective": "Replace v45 POLICY ambiguity with a trusted exact server decision carrier and bind each admitted POLICY alias into the aggregate v46 revision pin without permission inference.",
+    "authorizedFirstSlice": [
+      {
+        "nodeId": "BASE:my-hr-profile",
+        "path": "/hr/me",
+        "routeContractKey": "route.hcm.personal.me.page"
+      },
+      {
+        "nodeId": "BASE:my-time",
+        "path": "/hr/time",
+        "routeContractKey": "route.hcm.personal.time.page"
+      },
+      {
+        "nodeId": "BASE:my-leave",
+        "path": "/hr/absence",
+        "routeContractKey": "route.hcm.personal.absence.page"
+      },
+      {
+        "nodeId": "BASE:my-pay-tax",
+        "path": "/hr/pay",
+        "routeContractKey": "route.hcm.personal.pay.page"
+      },
+      {
+        "nodeId": "BASE:my-goals-performance",
+        "path": "/hr/talent",
+        "routeContractKey": "route.hcm.personal.talent.page"
+      },
+      {
+        "nodeId": "BASE:my-hr-requests",
+        "path": "/hr/services",
+        "routeContractKey": "route.hcm.personal.services.page"
+      }
+    ],
+    "firstSliceInvariant": "All six contracts are v45 ACTIVE full-work POLICY routes with SELF target binding; v46 must carry one atomic trusted decision snapshot and must not infer any route from a permission code.",
+    "explicitlyDeferredPolicyPaths": [
+      "/hr/directory",
+      "/hr/organization",
+      "/hr/team",
+      "/hr/manage/system",
+      "/hr/operations",
+      "/hr/home",
+      "/hr/benefits"
+    ],
+    "orderedWork": [
+      "Define the exact POLICY decision schema for nodeId, path, routeContractKey, profileKey, target binding, scope binding, decision revision, authority revisions and freshUntil.",
+      "Register only authoritative active POLICY contracts and their exact profile and target semantics; begin with SELF-scoped routes whose ownership and target binding can be proven.",
+      "Implement the server adapter and aggregate v46 projection so the normalized exact admitted POLICY path set and authority revisions are part of the revision pin.",
+      "Extend the frontend parser only for exact server-returned v46 POLICY aliases intersected with Gateway-authorized paths; do not reconstruct aliases locally.",
+      "Keep semantic mismatches, owner reseal paths, owner mismatch paths, ambiguous routes and unimplemented routes withheld.",
+      "Run changed backend and frontend contract clusters once, correct only failed targets, complete independent authorization review, then integrate to dwp-dev and issue the R6-B receipt."
+    ],
+    "entryCriteria": [
+      "consume backend dwp-dev c970c29ae8f8470b762ec89a3dbae805add31db0",
+      "consume frontend dwp-dev e2015f469438540b5b0ac79355241748d7484497 plus the R6-A evidence carrier",
+      "retain authorization registry v45 and topology HRIS-IA-98-WB7-G46-N97-R5 as immutable predecessors while authoring a versioned v46 carrier",
+      "do not treat permission codes, screen presence, canonical IA membership or node-level decisions as exact POLICY grants"
+    ],
+    "minimumAcceptance": [
+      "Every admitted POLICY alias has one exact active route contract, selected profile, target binding and scope binding.",
+      "Stale, missing, ambiguous, wrong-target, wrong-scope and revision-mismatched decisions fail closed.",
+      "Sidebar, workbench landing and deep-link decisions consume the same pinned exact alias set.",
+      "No currently withheld PAGE or POLICY path becomes visible merely because its component exists."
+    ]
+  },
+  "withheld": [
+    {
+      "id": "R6-C-RESEAL-SEMANTIC-AND-OWNER-MISMATCH-SCREENS",
+      "state": "WITHHELD_PENDING_EXACT_SEMANTICS_AND_OWNER_CONTRACTS",
+      "scope": "4 semantic mismatch paths, 3 owner reseal paths and 1 owner mismatch path"
+    },
+    {
+      "id": "R7-COMPLETE-REMAINING-ACTIVE-BASE-SLICES",
+      "state": "WITHHELD_PENDING_R6B_AND_REQUIRED_R6_OWNER_RESEALS"
+    }
+  ],
+  "validationPolicy": {
+    "changedClusterFirst": true,
+    "failedTargetOnlyAfterCorrection": true,
+    "repositoryWideSuitePerCorrection": false,
+    "fullSuiteOnlyAtExplicitReleaseGateOrCrossCuttingRisk": true,
+    "reuseExactR6AEvidence": true
+  },
+  "activationPolicy": {
+    "allNewFeaturesDefaultOff": true,
+    "navigationControllerEnabledByDefault": false,
+    "runtimeModeDefault": "OFF",
+    "enrolledTenantsDefault": [],
+    "tenantActivationAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "IMPLEMENT_R6B_V46_EXACT_POLICY_DECISION_CARRIER_FROM_THE_R6A_REMOTE_PINS_WITHOUT_INFERRING_ANY_PERMISSION_OR_ALIAS"
+}
