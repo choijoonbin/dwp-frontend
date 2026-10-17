@@ -1,0 +1,121 @@
+{
+  "schema": "dwp.hris.module-verification-receipt.v1",
+  "generatedAt": "2026-10-17T14:52:40Z",
+  "sliceId": "BASE-TFR-SYS-003",
+  "state": "SYS003_FRONTEND_REUSE_ADAPTER_IMPLEMENTATION_COMPLETE_BRANCH_PUSHED_CONTROL_REVIEW_PENDING_DEFAULT_OFF",
+  "environment": {
+    "packageManager": "pnpm@10.18.3",
+    "projectIsolation": "COREPACK_ENABLE_PROJECT_SPEC=0",
+    "dependencySource": "/Users/a10697/Work/DWP/dwp-frontend/node_modules",
+    "temporaryNodeModulesLinkRemoved": true
+  },
+  "testHistory": [
+    {
+      "sequence": 1,
+      "kind": "VITEST_EXACT_AGGREGATE",
+      "command": "pnpm exec vitest run apps/dwp/src/features/hris/administration/__tests__/g3-slices/base-tfr-sys-003.slice.test.tsx apps/dwp/src/features/hris/administration/workflow apps/dwp/src/features/hris/team/delegation",
+      "result": "14_PASSED_3_FAILED_WAIT_TIMING",
+      "testFiles": 6,
+      "tests": 17,
+      "passed": 14,
+      "failed": 3,
+      "log": {
+        "path": "/Users/a10697/Work/DWP/.codex-evidence/r7-sys-003-20261017/frontend/targeted-vitest-aggregate.log",
+        "sha256": "d2a8c598a5e3d6eeb66966ceb09c618ec53f7e1fcb0935be438b94e609e10229",
+        "bytes": 3775
+      }
+    },
+    {
+      "sequence": 2,
+      "kind": "VITEST_SMALLEST_FAILED_FILES_RERUN",
+      "command": "pnpm exec vitest run apps/dwp/src/features/hris/administration/workflow/testing/hris-workflow-policy-workspace.test.tsx apps/dwp/src/features/hris/team/delegation/testing/hris-team-delegation-workspace.test.tsx",
+      "result": "6_PASSED_1_FAILED_WAIT_TIMING",
+      "testFiles": 2,
+      "tests": 7,
+      "passed": 6,
+      "failed": 1,
+      "log": {
+        "path": "/Users/a10697/Work/DWP/.codex-evidence/r7-sys-003-20261017/frontend/targeted-vitest-failed-files-rerun.log",
+        "sha256": "3c0de0458304332d7b6c6ef7b8e66545651efefd4f11dd664769a4d5ad7a7646",
+        "bytes": 2771
+      }
+    },
+    {
+      "sequence": 3,
+      "kind": "VITEST_SMALLEST_FAILED_CASE_RERUN",
+      "command": "pnpm exec vitest run apps/dwp/src/features/hris/administration/workflow/testing/hris-workflow-policy-workspace.test.tsx -t 'renders the owner pending state without an optimistic success'",
+      "result": "PASS",
+      "testFiles": 1,
+      "testsPassed": 1,
+      "testsSkipped": 4,
+      "log": {
+        "path": "/Users/a10697/Work/DWP/.codex-evidence/r7-sys-003-20261017/frontend/targeted-vitest-single-case-rerun.log",
+        "sha256": "d3df2436475149e5fb58d1d48e023de315b83b94754783ea007c151ed9830b17",
+        "bytes": 407
+      }
+    },
+    {
+      "sequence": 4,
+      "kind": "ESLINT_EXACT_TARGETS",
+      "command": "pnpm exec eslint apps/dwp/src/features/hris/administration/__tests__/g3-slices/base-tfr-sys-003.slice.test.tsx apps/dwp/src/features/hris/administration/workflow apps/dwp/src/features/hris/team/delegation",
+      "result": "PASS_WITH_2_REACT_HOOKS_WARNINGS",
+      "errors": 0,
+      "warnings": 2,
+      "log": {
+        "path": "/Users/a10697/Work/DWP/.codex-evidence/r7-sys-003-20261017/frontend/targeted-eslint-initial.log",
+        "sha256": "6375a392162336be2fb1add3554631cbc320dbc54fc409141127b363e133341f",
+        "bytes": 983
+      }
+    },
+    {
+      "sequence": 5,
+      "kind": "ESLINT_SMALLEST_WARNING_FILES_RERUN",
+      "result": "PASS_CLEAN",
+      "errors": 0,
+      "warnings": 0,
+      "log": {
+        "path": "/Users/a10697/Work/DWP/.codex-evidence/r7-sys-003-20261017/frontend/targeted-eslint-warning-files-rerun.log",
+        "sha256": "8840018c8a92dd6b93f37a1b43898dd0b3a69c6898bdda811c4ecd7fd3c0d88c",
+        "bytes": 121
+      }
+    },
+    {
+      "sequence": 6,
+      "kind": "VITEST_SUBJECT_IDENTITY_CORRECTION",
+      "command": "pnpm exec vitest run apps/dwp/src/features/hris/administration/workflow/testing/hris-approval-adapter-contract.test.ts",
+      "result": "PASS",
+      "testFiles": 1,
+      "tests": 3,
+      "passed": 3,
+      "failed": 0,
+      "log": {
+        "path": "/Users/a10697/Work/DWP/.codex-evidence/r7-sys-003-20261017/frontend/authority-contract-correction.log",
+        "sha256": "ae8a89fa838deaf6717f593879918f2ce76624aa1b300575b6c90af6945ab0a6",
+        "bytes": 389
+      }
+    },
+    {
+      "sequence": 7,
+      "kind": "ESLINT_SUBJECT_IDENTITY_CORRECTION_PATHS",
+      "result": "PASS_CLEAN",
+      "errors": 0,
+      "warnings": 0,
+      "log": {
+        "path": "/Users/a10697/Work/DWP/.codex-evidence/r7-sys-003-20261017/frontend/authority-contract-eslint.log",
+        "sha256": "8840018c8a92dd6b93f37a1b43898dd0b3a69c6898bdda811c4ecd7fd3c0d88c",
+        "bytes": 121
+      }
+    }
+  ],
+  "effectiveFinalResult": {
+    "vitestOriginalUniverse": "17_OF_17_PASS_AFTER_SMALLEST_FAILED_TARGET_RERUNS",
+    "eslint": "PASS_CLEAN_AFTER_SMALLEST_WARNING_TARGET_RERUN",
+    "subjectIdentityCorrection": "3_OF_3_PASS_AND_ESLINT_CLEAN",
+    "backend": "READ_ONLY_HASH_AND_MIGRATION_HIGH_WATER_VERIFIED",
+    "browser": "NOT_AUTHORIZED_BEFORE_CENTRAL_MOUNT",
+    "browserBeforeCentralMountAuthorized": false,
+    "centralMount": false,
+    "defaultOff": true
+  },
+  "nonExecutionNote": "The first package-manager invocation stopped before test discovery because the evidence directory did not yet exist and the Corepack shim detected a Yarn project; it ran zero tests and produced no retained log. The exact aggregate command was then executed once with the isolated pnpm invocation, after which only the smallest failed targets were rerun."
+}
