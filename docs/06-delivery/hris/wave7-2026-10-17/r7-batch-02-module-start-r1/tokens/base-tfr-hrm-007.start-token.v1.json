@@ -1,0 +1,271 @@
+{
+  "schema": "dwp.hris.module-start-token.v1",
+  "tokenId": "HRIS-WAVE7-R7-BATCH-02-START-BASE-TFR-HRM-007-20261017-R1",
+  "issuedAt": "2026-10-17T23:42:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-HRM",
+  "moduleThreadId": "01a0f53e-9a75-7421-969f-473b0cfb9439",
+  "sliceId": "BASE-TFR-HRM-007",
+  "canonicalFeature": "HRIS_HRM_APPOINTMENT_WORKBENCH",
+  "featureAliasesAuthorized": [],
+  "state": "ISSUED_FRESH_WORKTREE_MATERIALIZATION_OWNER_SOURCE_TEST_COMMIT_PUSH_ONLY_DEFAULT_OFF",
+  "permittedAction": "Create two fresh HRM-007 module worktrees from the exact backend and frontend dwp-dev pins, implement only IAQ-005, IAQ-007 and IAQ-013 with read-only reuse of the sealed HRM-008 and HRM-010 command lifecycles, run the bounded targets once, and commit and push only the two exact module branches.",
+  "immutableEvidence": {
+    "ownerPacket": {
+      "path": "../owner-packets/base-tfr-hrm-007.owner-packet.v1.json",
+      "sha256": "729b3b5587e6621b41934521c08edc6ea6c5ce827bdba4bfb3dac34f8f0f0c41",
+      "bytes": 18901,
+      "requiredState": "SEALED_FOR_FRESH_PINNED_MODULE_TOKEN_DEFAULT_OFF"
+    },
+    "centralAuthorizationSuccessor": {
+      "path": "../central-authorization-successor.v1.json",
+      "sha256": "131376aac17d25947abe54fe0dc1969c795f150882e93a671bdae9ce1b618dc1",
+      "bytes": 10098,
+      "requiredLaneState": "SEALED_FOR_OWNER_SOURCE_WITH_EXISTING_ACTION_REUSE",
+      "centralV51AdmissionDeferred": true
+    },
+    "roadmap": {
+      "path": "../../execution-roadmap-successor.v15.json",
+      "sha256": "6dd79a60a255e90365bc2003040bbbce9074f4ebfcbb70732dd0250829506ca0",
+      "bytes": 7007
+    },
+    "batch02Preflight": {
+      "path": "../../r7-batch-02-preflight-r1/semantic-dependency-migration-preflight.v2.json",
+      "sha256": "2706a07dbb245c53a07858a590d1710a865d4a899cbab084b42ea0ed52ec23e8",
+      "bytes": 5773,
+      "requiredDecision": "GO_FOR_FRESH_PACKET"
+    }
+  },
+  "authorityBaselineCarrier": {
+    "repository": "dwp-frontend",
+    "branch": "dwp-dev",
+    "commit": "f749d046417a35642d158c0d0f674704ace7d4bb",
+    "tree": "3bfecda45d73a2e70d4685dbb4c5861f73dc64c6",
+    "originExactAtAuthorityIssue": true,
+    "purpose": "LATEST_CLEAN_BATCH01_EXIT_AND_BATCH02_PREFLIGHT_CARRIER",
+    "tokenCarrierMustNotBeMergedRebasedOrCherryPickedIntoModuleWorktrees": true
+  },
+  "basePins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "remote": "origin/dwp-dev",
+      "commit": "59964de62cd4da8bcb9f9384d6e2ef85e8c07b09",
+      "tree": "108eb56abdb23f6bd4346b21fac1974da18b01c1",
+      "requiredAncestor": true,
+      "requiredCleanAtMaterialization": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "remote": "origin/dwp-dev",
+      "commit": "f749d046417a35642d158c0d0f674704ace7d4bb",
+      "tree": "3bfecda45d73a2e70d4685dbb4c5861f73dc64c6",
+      "requiredAncestor": true,
+      "requiredCleanAtMaterialization": true
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "mode": "READ_ONLY_NO_WORKTREE_NO_SOURCE_CHANGE"
+    }
+  },
+  "worktreeMaterialization": {
+    "policy": "FRESH_FROM_EXACT_PIN_NO_BATCH01_REUSE_NO_WORKING_TREE_COPY",
+    "expectedInitialPorcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "backend": {
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261017/r7-batch02/hrm-007/backend",
+      "branch": "codex/hris-wave7-r7-batch02-hrm-007-backend-20261017-r1",
+      "createFrom": "59964de62cd4da8bcb9f9384d6e2ef85e8c07b09",
+      "expectedInitialTree": "108eb56abdb23f6bd4346b21fac1974da18b01c1",
+      "remoteBranchBeforeFirstPush": "MUST_NOT_EXIST_OR_MUST_EQUAL_EXACT_BASE_WITH_ZERO_DIVERGENCE",
+      "authorizedPushTarget": "origin/codex/hris-wave7-r7-batch02-hrm-007-backend-20261017-r1"
+    },
+    "frontend": {
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261017/r7-batch02/hrm-007/frontend",
+      "branch": "codex/hris-wave7-r7-batch02-hrm-007-frontend-20261017-r1",
+      "createFrom": "f749d046417a35642d158c0d0f674704ace7d4bb",
+      "expectedInitialTree": "3bfecda45d73a2e70d4685dbb4c5861f73dc64c6",
+      "remoteBranchBeforeFirstPush": "MUST_NOT_EXIST_OR_MUST_EQUAL_EXACT_BASE_WITH_ZERO_DIVERGENCE",
+      "authorizedPushTarget": "origin/codex/hris-wave7-r7-batch02-hrm-007-frontend-20261017-r1"
+    },
+    "preEditChecks": [
+      "fetch origin without merging",
+      "prove each createFrom commit exists and has the exact expected tree",
+      "prove the planned worktree path and branch are absent or are a pristine exact-base materialization created for this token",
+      "prove git status porcelain is empty before the first edit",
+      "record the materialized HEAD, tree, branch, upstream state and porcelain digest in result evidence"
+    ],
+    "forbiddenOperations": [
+      "reuse any Batch-01 worktree",
+      "copy uncommitted files from another checkout",
+      "merge, rebase or cherry-pick dwp-dev or the authority carrier after materialization",
+      "change either exact module branch name or push to dwp-dev"
+    ]
+  },
+  "sealedScope": {
+    "entryQueryIds": ["IAQ-005", "IAQ-007", "IAQ-013"],
+    "iaNodeIds": ["BASE:team-people-changes", "BASE:hr-appointments", "BASE:settings-people-employment"],
+    "ownerPaths": [
+      "GET /v1/hris/workbench/team/people-changes",
+      "GET /v1/hris/workbench/operations/appointments",
+      "GET /v1/hris/workbench/configuration/people-employment"
+    ],
+    "browserPaths": [
+      "GET /api/people/v1/hris/workbench/team/people-changes",
+      "GET /api/people/v1/hris/workbench/operations/appointments",
+      "GET /api/people/v1/hris/workbench/configuration/people-employment"
+    ],
+    "canonicalRoutes": [
+      "/hr/team/people-changes",
+      "/hr/operations/people/appointments",
+      "/hr/settings/people-employment"
+    ],
+    "readOnlyActionReuse": {
+      "IAQ-005": ["PEP-HRM-003", "PEP-HRM-004"],
+      "IAQ-007": ["PEP-HRM-006", "PEP-HRM-007", "PEP-HRM-008", "PEP-HRM-009"],
+      "IAQ-013": []
+    },
+    "existingLifecycleNoTouch": ["PEP-HRM-005", "AssignmentChanged.v1", "BASE-TFR-HRM-008", "BASE-TFR-HRM-010"],
+    "commonProjectionRulesSource": "owner packet commonProjectionContract",
+    "noRecount": true
+  },
+  "authorizationContract": {
+    "sourceDecision": "../central-authorization-successor.v1.json#laneDecisions/BASE-TFR-HRM-007",
+    "appEntitlement": "APP.HCM:VIEW",
+    "tenantSource": "TRUSTED_GATEWAY_CONTEXT_ONLY",
+    "callerTenantOverride": "FORBIDDEN",
+    "purposes": {
+      "IAQ-005": "HR_LIFECYCLE",
+      "IAQ-007": "HR_LIFECYCLE",
+      "IAQ-013": "HRIS_CONFIGURATION"
+    },
+    "defaultDeny": true,
+    "opaqueDenial": true,
+    "staleScopeOrAuthorizationRevision": "FAIL_CLOSED",
+    "ownerSourceMayBeImplemented": true,
+    "centralProductAuthorizationV51GenerationAuthorized": false,
+    "centralRouteAdmissionAuthorized": false,
+    "rule": "The module implements fail-closed owner source and UI components only. Control generates and admits v51 route/page/data aliases after final module result SHAs and changed paths are reviewed."
+  },
+  "touchBoundary": {
+    "allowedBackend": [
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/workbench/hrm007/**",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/workbench/hrm007/**"
+    ],
+    "allowedFrontend": [
+      "apps/dwp/src/features/hris/people/hrm-007-workbench/**",
+      "apps/dwp/src/features/hris/people/__tests__/g3-slices/base-tfr-hrm-007.slice.test.tsx",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-02-module-results-r1/base-tfr-hrm-007/**"
+    ],
+    "readOnlyReuse": [
+      "backend:dwp-people-server/src/main/java/com/dwp/services/people/hris/employment/**",
+      "backend:dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/employeechange/**",
+      "backend:dwp-people-server/src/main/resources/product-authorization/hcm-people-pep-v50.generated.json",
+      "frontend:apps/dwp/src/features/hris/employment/**",
+      "frontend:apps/dwp/src/features/hris/employee-services/employee-change/**",
+      "frontend:apps/dwp/src/features/hris/shell/model/**"
+    ],
+    "forbidden": [
+      "all People migrations including V58",
+      "contracts/product-authorization/**, contracts/openapi/**, dwp-auth-server/**, dwp-gateway/** and dwp-platform-contracts/**",
+      "frontend architecture, routes, generated IA model, HRIS shell, menu or catalog files",
+      "all HRM-008 and HRM-010 source, tests, migrations and result evidence",
+      "a new command, approval, event, outbox, command receipt, assignment lifecycle or employee-change lifecycle",
+      "central control evidence outside the exact HRM-007 result evidence root"
+    ],
+    "outsideBoundaryAction": "STOP_AND_REQUEST_EXACT_CONTROL_REALLOCATION"
+  },
+  "migration": {
+    "stream": "PEOPLE_MAIN",
+    "observedHighWater": "V57",
+    "candidateIfSeparatelyProven": "V58",
+    "decision": "NO_LEASE_PROJECTION_ONLY_EXPECTED",
+    "V58AuthoringAuthorized": false,
+    "migrationPathAuthorized": false,
+    "rule": "Reuse existing read models. Any claimed schema need invalidates continued authoring of that migration and requires a separate proof, review and exclusive People V58 lease before one migration file is created."
+  },
+  "rollout": {
+    "feature": "HRIS_HRM_APPOINTMENT_WORKBENCH",
+    "runtimeDefault": "OFF",
+    "enrolledTenants": [],
+    "zeroCallRequirement": "Feature absent, false or tenant unenrolled produces no owner query, repository, projection, cursor or reused-command call.",
+    "componentPreviewWithFakes": true,
+    "trustedBrowserEndToEndBeforeCentralAdmission": false,
+    "tenantActivationAuthorized": false
+  },
+  "acceptanceCriteria": [
+    "HRM007-AC-01",
+    "HRM007-AC-02",
+    "HRM007-AC-03",
+    "HRM007-AC-04",
+    "HRM007-AC-05",
+    "HRM007-AC-06",
+    "HRM007-AC-07",
+    "HRM007-AC-08",
+    "HRM007-AC-09",
+    "HRM007-AC-10",
+    "HRM007-AC-11",
+    "HRM007-AC-12"
+  ],
+  "verification": {
+    "policy": "Run the new HRM-007 cluster once after implementation; run the two exact reuse-seam tests once; after a correction rerun only the smallest failed class, file or named test before any broader rerun.",
+    "backendFirst": "./gradlew :dwp-people-server:test --tests 'com.dwp.services.people.hris.workbench.hrm007.*' --no-daemon --max-workers=1",
+    "backendReuseSeamsOnce": "./gradlew :dwp-people-server:test --tests 'com.dwp.services.people.hris.employeeservice.employeechange.HrmIaEntryQueryContractTest' --tests 'com.dwp.services.people.hris.employment.HrmG3SliceContractTest' --no-daemon --max-workers=1",
+    "frontend": [
+      "pnpm exec vitest run apps/dwp/src/features/hris/people/__tests__/g3-slices/base-tfr-hrm-007.slice.test.tsx apps/dwp/src/features/hris/people/hrm-007-workbench",
+      "pnpm exec eslint apps/dwp/src/features/hris/people/hrm-007-workbench apps/dwp/src/features/hris/people/__tests__/g3-slices/base-tfr-hrm-007.slice.test.tsx"
+    ],
+    "database": "NOT_AUTHORIZED_AND_NOT_REQUIRED_WITHOUT_A_V58_LEASE",
+    "browser": "COMPONENT_LEVEL_RESPONSIVE_AND_ACCESSIBILITY_WITH_FAKES_ONLY_UNTIL_CENTRAL_V51_ADMISSION",
+    "repositoryWideSuitePerCorrection": false,
+    "fullSuiteAuthorized": false
+  },
+  "resultEvidence": {
+    "exactRoot": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-02-module-results-r1/base-tfr-hrm-007",
+    "required": [
+      "materialization receipt with exact base pins, clean porcelain digests and branch names",
+      "backend and frontend result commits, trees, pushed upstream heads and exact base ancestry",
+      "all twelve acceptance results with source or bounded-target evidence",
+      "IAQ-005, IAQ-007 and IAQ-013 positive, denial, cursor-revision and field-decision evidence",
+      "default-OFF, zero-enrollment and zero-call evidence",
+      "People V58 non-need proof",
+      "changed-path closed set and HRM-008/HRM-010 byte-unchanged no-recount proof",
+      "explicit statement that central v51 admission, dwp-dev merge, activation and business completion remain pending"
+    ],
+    "businessCompletionCreditBeforeCentralAdmissionAndActivation": 0
+  },
+  "authority": {
+    "freshWorktreeMaterializationAuthorized": true,
+    "moduleImplementationAuthorized": true,
+    "moduleBranchCommitAuthorized": true,
+    "moduleBranchPushAuthorized": true,
+    "migrationAuthoringAuthorized": false,
+    "centralProductAuthorizationWriteAuthorized": false,
+    "centralRouteOrShellMountAuthorized": false,
+    "mergeToDwpDevAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "invalidationConditions": [
+    "an immutable evidence hash, base commit or base tree differs",
+    "a planned worktree or branch exists with a different head, tree, upstream or non-empty porcelain",
+    "any path outside the exact touch boundary is required",
+    "People V58 or any other migration is required",
+    "an existing HRM-008 or HRM-010 command, event, approval, outbox, receipt, source or migration must change",
+    "a central product-authorization, OpenAPI, route, shell, menu, IA catalog or generated contract change is attempted in a module worktree",
+    "the authority carrier is merged, rebased or cherry-picked into either module worktree",
+    "feature activation, tenant enrollment, direct dwp-dev merge, customer data or production release is attempted"
+  ],
+  "completionBoundary": {
+    "requiredResultState": "HRM007_MODULE_SOURCE_COMPLETE_BRANCHES_PUSHED_CONTROL_REVIEW_PENDING_DEFAULT_OFF_ZERO_CREDIT",
+    "directDwpDevMergeAuthorized": false,
+    "centralResultAdmissionAuthorized": false,
+    "centralV51GenerationAuthorized": false,
+    "activationAuthorized": false
+  }
+}

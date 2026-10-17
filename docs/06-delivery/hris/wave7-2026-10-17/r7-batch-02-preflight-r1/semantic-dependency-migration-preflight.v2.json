@@ -1,0 +1,157 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-02-semantic-dependency-migration-preflight.v2",
+  "preflightId": "HRIS-WAVE7-R7-BATCH-02-PREFLIGHT-20261017-R2",
+  "recordedAt": "2026-10-17T23:32:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "TWO_LANES_READY_FOR_FRESH_AUTHORITY_THREE_LANES_WITHHELD_SEMANTIC_NO_GO_HASH_DAG_COMPLETE",
+  "supersedes": {
+    "path": "semantic-dependency-migration-preflight.v1.json",
+    "sha256": "cfd13aa0304fdcf622155616cba679175f3cd515bc55d1de4fbcb08760559987",
+    "bytes": 7281,
+    "mutated": false,
+    "reason": "V1 recorded the correct lane decisions but its relative Batch-01 exit reference omitted sha256 and byte binding."
+  },
+  "pinBasis": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "59964de62cd4da8bcb9f9384d6e2ef85e8c07b09",
+      "tree": "108eb56abdb23f6bd4346b21fac1974da18b01c1",
+      "originExact": true,
+      "clean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "85c619dad84c1875e8fe9b570ae912bf8712202e",
+      "tree": "1bf82c9b9b1ad5edd82b6c1c3ec9190eb59c7bc9",
+      "originExactAtV1Assessment": true,
+      "cleanAtV1Assessment": true
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "originExact": true,
+      "clean": true
+    }
+  },
+  "batch01Exit": {
+    "path": "../r7-batch-01-sequencing-exit-r1/sequencing-exit-receipt.v1.json",
+    "sha256": "1e337eddb0ea937de4eaae0e54782a2ec2b838cb62ed3e54d064bab0adff1111",
+    "bytes": 5419,
+    "stateRequired": "BATCH_01_SEQUENCING_EXIT_ACCEPTED_ZERO_BUSINESS_CREDIT"
+  },
+  "globalFindings": {
+    "allRegisteredDependenciesReady": true,
+    "formalPredecessorSlices": [],
+    "tenantActivationRequiredForDefaultOffSourceAuthoring": false,
+    "trustedMountRequiredForBusinessCompletion": true,
+    "reuseBatch01Worktrees": false,
+    "freshWorktreesFromExactPinsRequired": true,
+    "migrationOnlyWhenSchemaDeltaIsProven": true
+  },
+  "laneDecisions": [
+    {
+      "sliceId": "BASE-TFR-HRM-007",
+      "moduleSession": "HRIS-HRM",
+      "threadId": "01a0f53e-9a75-7421-969f-473b0cfb9439",
+      "decision": "GO_FOR_FRESH_PACKET",
+      "scope": [
+        "IAQ-005",
+        "IAQ-007",
+        "IAQ-013"
+      ],
+      "reuse": [
+        "BASE-TFR-HRM-008 PEP-HRM-006 through PEP-HRM-009",
+        "BASE-TFR-HRM-010 PEP-HRM-003 and PEP-HRM-004"
+      ],
+      "migration": "PEOPLE_MAIN V58 only after separate proof and exclusive successor lease"
+    },
+    {
+      "sliceId": "BASE-TFR-PER-002",
+      "moduleSession": "HRIS-PER",
+      "threadId": "01a0f53e-9c6d-74e1-a11a-0dd4a4ab25a9",
+      "decision": "NO_GO_COMPLETE_CALIBRATION_TRANSITION_INPUTS_UNSEALED",
+      "scope": [
+        "complete Calibration state machine from the exact-business canonical design",
+        "owner-authoritative baseline",
+        "IAQ-024",
+        "PEP-PER-017",
+        "PerformanceCalibrationApproved.v1"
+      ],
+      "migration": "PERFORMANCE V19 exclusive lease required",
+      "missingAuthority": [
+        "deterministic create input and owner route",
+        "baseline validation, start, submit, return, resume, approve, lock and cancel command inputs",
+        "exact Approval request workflowKey, requestedAction, subjectRef and subjectRevision binding",
+        "APPROVED, REJECTED, CANCELED and EXPIRED decision-to-state mapping",
+        "exact PerformanceCalibrationApproved.v1 production boundary"
+      ],
+      "packetAuthorized": false,
+      "startTokenAuthorized": false,
+      "migrationLeaseAuthorized": false
+    },
+    {
+      "sliceId": "BASE-TFR-SYS-003",
+      "moduleSession": "HRIS-SYS",
+      "threadId": "01a0f53d-d62d-7971-81f7-1822b513ccb4",
+      "decision": "GO_FOR_FRESH_PACKET",
+      "scope": [
+        "/hr/settings/workflow",
+        "/hr/team/delegation",
+        "SHARED-API-005",
+        "SHARED-API-006",
+        "SHARED-API-010",
+        "SHARED-API-011",
+        "SHARED-API-012"
+      ],
+      "reuse": "Existing Approval runtime, APIs, persistence and product capabilities only",
+      "migration": "NONE unless a separately reviewed persistence delta is proven"
+    },
+    {
+      "sliceId": "BASE-TFR-PAY-001",
+      "moduleSession": "HRIS-PAY",
+      "decision": "NO_GO_UNSEALED_PRODUCT_NOTIFICATION_SEMANTICS",
+      "packetAuthorized": false,
+      "startTokenAuthorized": false,
+      "migrationLeaseAuthorized": false
+    },
+    {
+      "sliceId": "BASE-TFR-TIM-001",
+      "moduleSession": "HRIS-TIM",
+      "decision": "NO_GO_UNSEALED_TIME_DECISION_BINDING",
+      "packetAuthorized": false,
+      "startTokenAuthorized": false,
+      "migrationLeaseAuthorized": false
+    }
+  ],
+  "migrationHighWater": {
+    "PEOPLE_MAIN": "V57",
+    "PERFORMANCE": "V18",
+    "PAYROLL_MAIN": "V52",
+    "PLATFORM_MAIN": "V331",
+    "TIME_MAIN": "V12",
+    "AUTH_MAIN": "V259",
+    "NOTIFICATION_MAIN": "V35",
+    "APPROVAL_MAIN": "V58",
+    "PRODUCT_AUTHORIZATION_BUNDLE": "v50"
+  },
+  "authority": {
+    "freshPacketsMayBeIssuedFor": [
+      "BASE-TFR-HRM-007",
+      "BASE-TFR-SYS-003"
+    ],
+    "packetsAndTokensWithheldFor": [
+      "BASE-TFR-PER-002",
+      "BASE-TFR-PAY-001",
+      "BASE-TFR-TIM-001"
+    ],
+    "sourceAuthoringAuthorizedByThisReceipt": false,
+    "migrationAuthoringAuthorizedByThisReceipt": false,
+    "tenantActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "Issue exact owner packets and tokens for HRM-007 and SYS-003 only; route PER-002 to a semantic successor for every calibration transition and approval-event binding; keep PAY-001 and TIM-001 source blocked."
+}

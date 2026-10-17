@@ -1,0 +1,323 @@
+{
+  "schema": "dwp.hris.wave7.r7-owner-packet.v1",
+  "packetId": "HRIS-WAVE7-R7-BATCH-02-OWNER-BASE-TFR-SYS-003-20261017-R1",
+  "revision": 1,
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_PACKET_ID_AND_SHA256"
+  },
+  "issuedAt": "2026-10-17T23:39:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "SEALED_EXACT_REUSE_ADAPTER_SCOPE_READY_FOR_PINNED_TOKEN_NO_MIGRATION_LEASE",
+  "module": "SYS",
+  "moduleSession": "HRIS-SYS",
+  "moduleThreadId": "01a0f53d-d62d-7971-81f7-1822b513ccb4",
+  "sliceId": "BASE-TFR-SYS-003",
+  "sourceRef": "TFR-SYS-003",
+  "sourceAuthority": {
+    "sourceFamilySha256": "ef4581a0a39a65591d10d96a2a3663fdafaa3dda9daebb239a9720e99a5f23a1",
+    "sourceRowCount": 10,
+    "decisionId": "DEC-SYS-006",
+    "disposition": "REUSE",
+    "boundedContext": "DWP_APPROVAL_PLATFORM",
+    "runtimeOwner": "dwp-approval-server",
+    "batch02Preflight": {
+      "path": "../../r7-batch-02-preflight-r1/semantic-dependency-migration-preflight.v2.json",
+      "sha256": "2706a07dbb245c53a07858a590d1710a865d4a899cbab084b42ea0ed52ec23e8",
+      "bytes": 5773,
+      "requiredDecision": "GO_FOR_FRESH_PACKET"
+    },
+    "centralAuthorization": {
+      "path": "../central-authorization-successor.v1.json",
+      "sha256": "131376aac17d25947abe54fe0dc1969c795f150882e93a671bdae9ce1b618dc1",
+      "bytes": 10098,
+      "requiredDecision": "SEALED_CROSS_PRODUCT_ADAPTER_REUSE_ONLY"
+    },
+    "sysExactBusinessStart": {
+      "path": "../../../recovery/hris-porting-blueprint-2026-09-09/coding-readiness/sys-exact-business-start-successor.v1.json",
+      "sha256": "aa4f82925a5a34132ed69844ca088111d551b7effbe1d70d8104846db82c44be",
+      "bytes": 31406
+    },
+    "sharedContractCatalog": {
+      "path": "../../../recovery/hris-porting-blueprint-2026-09-09/coding-readiness/shared-contract-catalog.csv",
+      "sha256": "34ffec83a60a7cb369406807bb856755e7bb34cf2be5dacb67dac1b0f3a07118",
+      "bytes": 3193
+    },
+    "iaNodeAccessContract": {
+      "path": "../../../recovery/hris-porting-blueprint-2026-09-09/coding-readiness/ia-node-access-contract-register.csv",
+      "sha256": "3fc33ce63642c337c9cf8dc6cfbd3b9287d9b1202c5b709e137744c7b28494bf",
+      "bytes": 46496
+    },
+    "crossProductAuthorizationExceptions": {
+      "path": "../../../recovery/hris-porting-blueprint-2026-09-09/coding-readiness/ia-shared-authorization-exception-register.csv",
+      "sha256": "80aa6a5da61d0f9716e375c8dbb1b66b7a22394af602ba233f78b1b8ea27c4b8",
+      "bytes": 3239
+    }
+  },
+  "businessMeaning": "Expose approval-policy administration and manager delegation inside the HRIS information architecture by adapting the existing DWP Approval product contracts. HRIS supplies contextual routes and presentation only; dwp-approval-server remains the sole business and persistence owner.",
+  "exactDelta": {
+    "provenExisting": [
+      "The Approval product already owns policy catalog, policy publish, delegation list, delegation create and delegation revoke behavior and persistence.",
+      "The HRIS information architecture already reserves BASE:settings-workflow at /hr/settings/workflow and BASE:team-delegation at /hr/team/delegation.",
+      "The shared frontend approval clients and workspaces already implement reusable policy and delegation interaction patterns.",
+      "The cross-product authorization register already requires both APP.HCM and APP.APPROVALS product access plus exact read or command capability and duty bindings."
+    ],
+    "missingWork": [
+      "Implement the default-off HRIS workflow-policy workspace at /hr/settings/workflow.",
+      "Implement the default-off HRIS manager delegation workspace at /hr/team/delegation.",
+      "Add thin HRIS adapters for SHARED-API-005, SHARED-API-006, SHARED-API-010, SHARED-API-011 and SHARED-API-012 without changing their owner semantics.",
+      "Bind loading, empty, unavailable, permission, stale-selection, mutation-pending and immutable receipt outcomes into the HRIS shell without a blank canvas."
+    ],
+    "reuseOnly": [
+      "dwp-approval-server ApprovalAdminController policy catalog and publish endpoints",
+      "dwp-approval-server ApprovalController delegation list, create and revoke endpoints",
+      "libs/shared-utils approval-management-api for policy query and approval-api for policy publish plus delegation list, create and revoke",
+      "existing Approval policy and delegation models, presentation components, owner guards, receipts and persistence",
+      "existing HRIS information-architecture nodes and shell admission"
+    ],
+    "noTouchOrRecount": [
+      "Do not create an HRIS approval engine, workflow evaluator, delegation engine, approval receipt store or duplicate approval table.",
+      "Do not proxy, fork or reimplement the five SHARED API endpoints in Platform, People, Time, Payroll or Performance services.",
+      "Do not modify shared Approval business transitions or count existing Approval implementation as new SYS-003 business logic.",
+      "Do not modify generated product-authorization, OpenAPI, gateway, Auth or route catalogs under this packet.",
+      "Do not author Platform V332, Approval V59 or any other migration without a separately reviewed persistence-delta proof and a new exclusive lease.",
+      "Do not mutate historical registers or Batch01 evidence."
+    ]
+  },
+  "ownership": {
+    "repositories": [
+      "dwp-frontend"
+    ],
+    "runtimeOwner": "dwp-approval-server",
+    "singleWriter": "HRIS-SYS",
+    "candidateWritablePathsAfterFreshToken": [
+      "frontend:apps/dwp/src/features/hris/administration/workflow/**",
+      "frontend:apps/dwp/src/features/hris/team/delegation/**",
+      "frontend:apps/dwp/src/features/hris/administration/__tests__/g3-slices/base-tfr-sys-003.slice.test.tsx"
+    ],
+    "readOnlyReusePaths": [
+      "backend:dwp-approval-server/src/main/java/com/dwp/services/approval/api/ApprovalAdminController.java",
+      "backend:dwp-approval-server/src/main/java/com/dwp/services/approval/api/ApprovalController.java",
+      "backend:dwp-approval-server/src/main/java/com/dwp/services/approval/domain/**",
+      "backend:dwp-approval-server/src/main/resources/db/migration/**",
+      "frontend:libs/shared-utils/src/api/approval-management-api.ts",
+      "frontend:libs/shared-utils/src/api/approval-api.ts",
+      "frontend:apps/dwp/src/features/approvals/**",
+      "frontend:apps/dwp/src/features/hris/shell/model/hris-information-architecture.generated.ts"
+    ],
+    "controlOwnedUntilSeparatePacket": [
+      "backend:contracts/product-authorization/**",
+      "backend:contracts/openapi/**",
+      "backend:dwp-auth-server/**",
+      "backend:dwp-gateway/**",
+      "frontend:architecture/**",
+      "frontend:apps/dwp/src/routes/**",
+      "frontend:apps/dwp/src/features/hris/shell/model/**",
+      "backend:any database migration path"
+    ],
+    "outsideBoundaryAction": "STOP_AND_REQUEST_EXACT_CONTROL_REALLOCATION"
+  },
+  "experienceContract": {
+    "settingsWorkflow": {
+      "primaryUser": "HRIS configuration author or policy publisher",
+      "operationalQuestion": "Which Approval policies govern HRIS work and which approved version can be published without bypassing four-eyes controls?",
+      "canonicalRoute": "/hr/settings/workflow",
+      "iaNodeId": "BASE:settings-workflow",
+      "entryContract": "SHARED-API-005",
+      "commandContract": "SHARED-API-006",
+      "readCapability": "approvals.policy.read",
+      "commandCapability": "approvals.policy.publish",
+      "readDuty": "HRIS_DUTY_CONFIGURATION_WORKBENCH_READER",
+      "commandDuty": "HRIS_DUTY_POLICY_PUBLISHER",
+      "deepLinkTemplate": "/hr/settings/workflow?tab=overview&focus={resourcePublicId}"
+    },
+    "teamDelegation": {
+      "primaryUser": "Line manager with an authorized delegation population",
+      "operationalQuestion": "Which approval duties are delegated for my authorized population, during which window, and can a governed create or revoke command be submitted?",
+      "canonicalRoute": "/hr/team/delegation",
+      "iaNodeId": "BASE:team-delegation",
+      "entryContract": "SHARED-API-010",
+      "commandContracts": [
+        "SHARED-API-011",
+        "SHARED-API-012"
+      ],
+      "readCapability": "approvals.work.delegation.read",
+      "commandCapability": "approvals.work.delegation.manage",
+      "readDuty": "HRIS_DUTY_MANAGER_TEAM_READER",
+      "deepLinkTemplate": "/hr/team/delegation?tab=overview&focus={resourcePublicId}"
+    },
+    "scopeRule": "Both APP.HCM and APP.APPROVALS access are required. Page, data and command decisions remain separate; a read decision never authorizes publish, create or revoke."
+  },
+  "contracts": {
+    "approvalPolicyCatalog": {
+      "id": "SHARED-API-005",
+      "method": "GET",
+      "browserPath": "/api/approvals/v1/admin/policies",
+      "ownerPath": "/v1/admin/policies",
+      "owner": "dwp-approval-server"
+    },
+    "approvalPolicyPublish": {
+      "id": "SHARED-API-006",
+      "method": "POST",
+      "browserPath": "/api/approvals/v1/admin/policies/{policyId}/publish",
+      "ownerPath": "/v1/admin/policies/{policyId}/publish",
+      "owner": "dwp-approval-server"
+    },
+    "delegationList": {
+      "id": "SHARED-API-010",
+      "method": "GET",
+      "browserPath": "/api/approvals/v1/delegations",
+      "ownerPath": "/v1/delegations",
+      "owner": "dwp-approval-server"
+    },
+    "delegationCreate": {
+      "id": "SHARED-API-011",
+      "method": "POST",
+      "browserPath": "/api/approvals/v1/delegations",
+      "ownerPath": "/v1/delegations",
+      "owner": "dwp-approval-server"
+    },
+    "delegationRevoke": {
+      "id": "SHARED-API-012",
+      "method": "POST",
+      "browserPath": "/api/approvals/v1/delegations/{delegationId}/revoke",
+      "ownerPath": "/v1/delegations/{delegationId}/revoke",
+      "owner": "dwp-approval-server"
+    },
+    "adapterRules": [
+      "Preserve exact HTTP method, route, request and response shapes and owner-issued problem details.",
+      "Propagate the installed trusted request scope; never synthesize tenant, role, duty, population, purpose or decision headers.",
+      "Preserve owner idempotency, subject revision, policy version, delegation window and receipt semantics.",
+      "Abort superseded queries and invalidate only the exact policy or delegation query after a successful owner command.",
+      "Never transform a denied or unavailable command into a local optimistic success."
+    ]
+  },
+  "dependencies": [
+    {
+      "id": "DEP-001",
+      "state": "CONTRACT_READY_FAIL_CLOSED"
+    },
+    {
+      "id": "DEP-002",
+      "state": "CONTRACT_READY_STALE_REVISION_DENIED"
+    },
+    {
+      "id": "DEP-003",
+      "state": "EXISTING_APPROVAL_OWNER_RUNTIME_REUSE_REQUIRED"
+    },
+    {
+      "id": "DEP-014",
+      "state": "EXISTING_CROSS_PRODUCT_AUTHORIZATION_EXCEPTION_BOUND"
+    },
+    {
+      "id": "DEP-016",
+      "state": "FOUNDATION_READY_AUDIT_AND_RECEIPT_REQUIRED"
+    }
+  ],
+  "migration": {
+    "state": "NO_LEASE_NO_AUTHORING",
+    "expectedPersistenceDelta": "NONE",
+    "platformCurrentHighWater": "V331",
+    "approvalCurrentHighWater": "V58",
+    "platformCandidateIfSeparatelyProven": "V332",
+    "approvalCandidateIfSeparatelyProven": "V59",
+    "separateGate": "A reviewed persistence touch manifest and a new exclusive lease must precede any migration authoring."
+  },
+  "rollout": {
+    "feature": "HRIS_APPROVAL_WORKFLOW_AND_DELEGATION_ADAPTERS",
+    "runtimeDefault": "OFF",
+    "enrolledTenants": [],
+    "tenantActivationAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "SYS003-AC-01",
+      "criterion": "/hr/settings/workflow mounts a real HRIS workflow-policy workspace and invokes only SHARED-API-005 when its default-off feature and page/data decisions permit it."
+    },
+    {
+      "id": "SYS003-AC-02",
+      "criterion": "An authorized policy publish invokes only SHARED-API-006 with the current policy/version context, owner-required idempotency and immutable receipt handling."
+    },
+    {
+      "id": "SYS003-AC-03",
+      "criterion": "/hr/team/delegation mounts a real manager delegation workspace and invokes only SHARED-API-010 for the installed authorized population."
+    },
+    {
+      "id": "SYS003-AC-04",
+      "criterion": "Delegation create and revoke invoke only SHARED-API-011 and SHARED-API-012 and preserve owner window, scope, subject revision, idempotency and receipt semantics."
+    },
+    {
+      "id": "SYS003-AC-05",
+      "criterion": "Policy read and publish plus delegation read and manage capabilities are evaluated separately; read access never renders an enabled mutation without the exact command decision."
+    },
+    {
+      "id": "SYS003-AC-06",
+      "criterion": "Missing APP.HCM or APP.APPROVALS access, wrong tenant, role plane, duty, population, purpose, revision or SoD fails closed before owner query or mutation and does not leak resource existence."
+    },
+    {
+      "id": "SYS003-AC-07",
+      "criterion": "Adapters preserve existing Approval request and response contracts and do not add a Platform proxy, HRIS business transition or second command receipt."
+    },
+    {
+      "id": "SYS003-AC-08",
+      "criterion": "Loading, empty, unavailable, partial, permission, stale-selection, command-pending, success-receipt and owner-rejection states remain explicit and never render a blank canvas."
+    },
+    {
+      "id": "SYS003-AC-09",
+      "criterion": "Route, tab and focus state are URL-addressable and preserve an authorized selection across refresh; unauthorized focus identifiers are removed without disclosure."
+    },
+    {
+      "id": "SYS003-AC-10",
+      "criterion": "Both workspaces pass keyboard and screen-reader operation plus 1440, 1280, 390, 320 and 200-percent zoom checks in light, dark, high-contrast and reduced-motion modes."
+    },
+    {
+      "id": "SYS003-AC-11",
+      "criterion": "Feature OFF or an unenrolled tenant mounts no policy or delegation owner query runtime and exposes no enabled command."
+    },
+    {
+      "id": "SYS003-AC-12",
+      "criterion": "Changed-path evidence proves no Approval engine, owner controller, owner persistence, migration, product-authorization, OpenAPI, Auth, Gateway, route catalog or historical register was modified or recounted."
+    }
+  ],
+  "targetedVerification": {
+    "policy": "NEW_SYS003_ADAPTER_AND_WORKSPACE_TARGETS_FIRST; EXISTING_OWNER_CONTRACT_TESTS_ONLY_IF_A_REUSED_SEAM_CHANGED; FAILED_TARGET_ONLY_AFTER_CORRECTION; NO_REPOSITORY_WIDE_RERUN",
+    "frontendTargets": [
+      "apps/dwp/src/features/hris/administration/__tests__/g3-slices/base-tfr-sys-003.slice.test.tsx",
+      "new workflow-policy adapter and workspace tests under apps/dwp/src/features/hris/administration/workflow",
+      "new delegation adapter and workspace tests under apps/dwp/src/features/hris/team/delegation"
+    ],
+    "conditionalReuseRegressionTargets": [
+      "libs/shared-utils/src/api/approval-management-api.test.ts only if the policy-query client changes under a separately issued successor",
+      "the smallest approval-api policy-publish or delegation test only if that shared client changes under a separately issued successor",
+      "dwp-approval-server ApprovalDelegationControllerTest and ApprovalServiceTest only if separately authorized backend adapter work becomes necessary"
+    ],
+    "databaseTargets": [],
+    "repositoryWideSuitePerCorrection": false
+  },
+  "evidenceContract": {
+    "required": [
+      "frontend module branch SHA and tree",
+      "twelve acceptance results with source or targeted-test evidence",
+      "five SHARED API adapter route/method seals",
+      "cross-product entitlement, duty, population, purpose, revision and SoD negative evidence",
+      "default-off and zero-enrollment evidence",
+      "responsive and accessibility evidence",
+      "changed-path and no-recount manifest proving no backend or migration delta"
+    ],
+    "businessCompletionCreditBeforeEvidence": 0
+  },
+  "authority": {
+    "packetSealed": true,
+    "sourceImplementationAuthorized": false,
+    "migrationAuthoringAuthorized": false,
+    "worktreeMaterializationAuthorized": false,
+    "moduleBranchCommitAuthorized": false,
+    "moduleBranchPushAuthorized": false,
+    "startTokenIssued": false,
+    "mergeToDwpDevAuthorized": false,
+    "activationAuthorized": false
+  },
+  "nextGate": "FRESH_PINNED_SYS003_START_TOKEN_FROM_FRONTEND_CARRIER_F749D046_WITH_NO_MIGRATION_LEASE"
+}

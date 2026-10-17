@@ -1,0 +1,128 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-02-migration-lease-activation.v1",
+  "activationId": "HRIS-WAVE7-R7-BATCH-02-MIGRATION-LEASE-ACTIVATION-20261017-R1",
+  "activatedAt": "2026-10-17T23:36:00+09:00",
+  "activatedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "ZERO_ACTIVE_LEASES_PERFORMANCE_V19_CANDIDATE_RESERVED_NOT_ISSUED",
+  "purpose": "Record V19 as the next collision-free Performance candidate for BASE-TFR-PER-002 without activating authoring authority while the calibration transition and approval-event semantics remain unsealed. No Batch-02 schema authoring is granted.",
+  "authorityBasis": {
+    "roadmap": {
+      "path": "../execution-roadmap-successor.v15.json",
+      "sha256": "6dd79a60a255e90365bc2003040bbbce9074f4ebfcbb70732dd0250829506ca0",
+      "bytes": 7007
+    },
+    "preflight": {
+      "path": "../r7-batch-02-preflight-r1/semantic-dependency-migration-preflight.v2.json",
+      "sha256": "2706a07dbb245c53a07858a590d1710a865d4a899cbab084b42ea0ed52ec23e8",
+      "bytes": 5773
+    },
+    "centralAuthorization": {
+      "path": "central-authorization-successor.v1.json",
+      "sha256": "131376aac17d25947abe54fe0dc1969c795f150882e93a671bdae9ce1b618dc1",
+      "bytes": 10098
+    }
+  },
+  "pinBasis": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "59964de62cd4da8bcb9f9384d6e2ef85e8c07b09",
+      "tree": "108eb56abdb23f6bd4346b21fac1974da18b01c1",
+      "originExact": true,
+      "clean": true
+    },
+    "frontendAuthorityCarrier": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "f749d046417a35642d158c0d0f674704ace7d4bb",
+      "tree": "3bfecda45d73a2e70d4685dbb4c5861f73dc64c6",
+      "originExact": true,
+      "cleanBeforeThisSuccessor": true
+    }
+  },
+  "reservedCandidate": {
+    "leaseId": "HRIS-WAVE7-R7-BATCH-02-PERFORMANCE-V19-20261017-R1",
+    "moduleSession": "HRIS-PER",
+    "sliceId": "BASE-TFR-PER-002",
+    "canonicalFeature": "HRIS_PERFORMANCE_CALIBRATION",
+    "stream": "PERFORMANCE",
+    "version": "V19",
+    "predecessorHighWater": "V18",
+    "exactPath": "dwp-people-server/src/main/resources/db/performance-migration/V19__per_base_tfr_per_002.sql",
+    "state": "RESERVED_NOT_ACTIVE_NO_AUTHORING_UNTIL_SEMANTIC_SUCCESSOR_AND_NEW_LEASE",
+    "semanticBoundary": [
+      "Create only the tenant-scoped calibration session and append-only adjustment persistence required by PER-CALIBRATION-001.",
+      "Persist the owner-derived immutable baseline digest, aggregate revision, governed state and named-population reference.",
+      "Persist every adjustment as immutable before/after, reason, actor, sequence and approval lineage; direct overwrite is forbidden.",
+      "Support transactional PerformanceCalibrationApproved.v1 outbox evidence without duplicating the existing generic outbox infrastructure.",
+      "Use public identifiers at API boundaries and preserve internal identifiers inside the owner store."
+    ],
+    "authorizedTables": [
+      "prf_calibration_sessions",
+      "prf_calibration_adjustments"
+    ],
+    "dataBackfillAuthorized": false,
+    "automaticPrivilegeGrantAuthorized": false,
+    "existingMigrationEditAuthorized": false,
+    "secondPerformanceMigrationAuthorized": false
+  },
+  "explicitNonLeases": [
+    {
+      "sliceId": "BASE-TFR-HRM-007",
+      "stream": "PEOPLE_MAIN",
+      "candidate": "V58",
+      "state": "NOT_LEASED_SCHEMA_DELTA_NOT_PROVEN",
+      "rule": "Projection and adapter work must reuse the current schema; stop for central review if an unavoidable delta is proven."
+    },
+    {
+      "sliceId": "BASE-TFR-SYS-003",
+      "streams": [
+        "PLATFORM_MAIN",
+        "APPROVAL_MAIN"
+      ],
+      "candidates": [
+        "V332",
+        "V59"
+      ],
+      "state": "NOT_LEASED_REUSE_EXISTING_APPROVAL_PERSISTENCE"
+    },
+    {
+      "sliceId": "BASE-TFR-PAY-001",
+      "streams": [
+        "PAYROLL_MAIN",
+        "NOTIFICATION_MAIN"
+      ],
+      "state": "WITHHELD_SEMANTIC_NO_GO"
+    },
+    {
+      "sliceId": "BASE-TFR-TIM-001",
+      "stream": "TIME_MAIN",
+      "state": "WITHHELD_SEMANTIC_NO_GO"
+    }
+  ],
+  "verificationRequiredIfActivatedBySuccessor": {
+    "static": [
+      "V19 is unique in the Performance migration stream and V18 bytes remain unchanged.",
+      "Only the exact leased path is added and no second Performance migration exists in the module result.",
+      "Every table and unique key includes tenant ownership and immutable replay constraints."
+    ],
+    "database": [
+      "Real PostgreSQL clean Performance migration through V19.",
+      "Real PostgreSQL Performance V18-to-V19 upgrade.",
+      "Tenant-isolation, duplicate-idempotency, stale-revision and immutable-adjustment negative cases."
+    ],
+    "unavailableDatabaseRule": "Report BLOCKED rather than PASS if the required real PostgreSQL verification cannot run."
+  },
+  "authority": {
+    "activeLeaseCount": 0,
+    "oneExactMigrationPathActive": false,
+    "v19AuthoringAuthorized": false,
+    "successorLeaseRequired": true,
+    "moduleBranchCommitAndPushAuthorizedByThisLeaseAlone": false,
+    "mergeToDwpDevAuthorized": false,
+    "tenantActivationAuthorized": false,
+    "customerDatabaseExecutionAuthorized": false,
+    "productionExecutionAuthorized": false
+  },
+  "nextAction": "Keep V19 absent. After a PER-002 semantic successor seals every transition input and Approval binding, recheck the high-water mark and issue a new exclusive lease before authoring."
+}

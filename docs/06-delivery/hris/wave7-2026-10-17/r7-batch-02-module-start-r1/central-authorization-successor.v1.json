@@ -1,0 +1,225 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-02-central-authorization-successor.v1",
+  "decisionId": "HRIS-WAVE7-R7-BATCH-02-CENTRAL-AUTHORIZATION-SUCCESSOR-20261017-R1",
+  "issuedAt": "2026-10-17T23:34:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "TWO_EXACT_SOURCE_LANES_SEALED_PER_002_TRANSITION_AUTHORITY_WITHHELD_CENTRAL_V51_ADMISSION_DEFERRED",
+  "purpose": "Seal the exact HRIS owner/API authorization boundary needed to start HRM-007 and SYS-003, record why PER-002 cannot yet start, and avoid mutating the immutable v50 product-authorization bundle or granting PAY-001, TIM-001, tenant activation or central route admission.",
+  "authorityBasis": {
+    "roadmap": {
+      "path": "../execution-roadmap-successor.v15.json",
+      "sha256": "6dd79a60a255e90365bc2003040bbbce9074f4ebfcbb70732dd0250829506ca0",
+      "bytes": 7007
+    },
+    "batch02Preflight": {
+      "path": "../r7-batch-02-preflight-r1/semantic-dependency-migration-preflight.v2.json",
+      "sha256": "2706a07dbb245c53a07858a590d1710a865d4a899cbab084b42ea0ed52ec23e8",
+      "bytes": 5773
+    },
+    "registers": [
+      {
+        "repositoryPath": "docs/06-delivery/hris/recovery/exact-supplements/2026-10-06/accepted-successors/hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-api-contract-register.csv",
+        "sha256": "5f47efd33a1d5aa3d11a4d9fd5716cd4e35650e9fec0868ecb77c8c90a4cd988",
+        "bytes": 100020
+      },
+      {
+        "repositoryPath": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/api-pep-binding-register.csv",
+        "sha256": "0e38d724516a8b271069241ffa0fb6400984dc703758767de53cbaffb4f93da3",
+        "bytes": 126576
+      },
+      {
+        "repositoryPath": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/shared-contract-catalog.csv",
+        "sha256": "34ffec83a60a7cb369406807bb856755e7bb34cf2be5dacb67dac1b0f3a07118",
+        "bytes": 3193
+      },
+      {
+        "repositoryPath": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/ia-shared-authorization-exception-register.csv",
+        "sha256": "80aa6a5da61d0f9716e375c8dbb1b66b7a22394af602ba233f78b1b8ea27c4b8",
+        "bytes": 3239
+      }
+    ]
+  },
+  "immutablePredecessor": {
+    "version": 50,
+    "bundleStatus": "DRAFT",
+    "repositoryPath": "backend:contracts/product-authorization/product-surfaces-v1.bundle-v50.json",
+    "fileSha256": "71faf9324732fd34424b7de8079a9f21f34ee01cae7b24eaaa45d8e011a842f1",
+    "bytes": 2570167,
+    "embeddedChecksum": "c52222caad2749c4048c694f6582e157f6ab1184f73237f0944c3d88807a2760",
+    "preservation": "IMMUTABLE_NO_BATCH_02_MODULE_WRITE"
+  },
+  "globalRules": {
+    "appEntitlement": "APP.HCM:VIEW",
+    "tenantSource": "TRUSTED_GATEWAY_CONTEXT_ONLY",
+    "callerSuppliedTenantOverride": "FORBIDDEN",
+    "defaultDeny": true,
+    "opaqueDenial": true,
+    "staleRevision": "FAIL_CLOSED_BEFORE_OWNER_MUTATION",
+    "runtimeDefault": "OFF",
+    "enrolledTenants": [],
+    "centralBundleWriteOwner": "SYS_COMMON_INTEGRATION_CONTROL"
+  },
+  "laneDecisions": [
+    {
+      "sliceId": "BASE-TFR-HRM-007",
+      "state": "SEALED_FOR_OWNER_SOURCE_WITH_EXISTING_ACTION_REUSE",
+      "entryQueries": [
+        {
+          "id": "IAQ-005",
+          "method": "GET",
+          "browserPath": "/api/people/v1/hris/workbench/team/people-changes",
+          "ownerPath": "/v1/hris/workbench/team/people-changes",
+          "uiRoute": "/hr/team/people-changes",
+          "capability": "hcm.team.people-change.view",
+          "profile": "HRIS_LINE_MANAGER>HRIS_DUTY_MANAGER_PEOPLE_CHANGE_READER",
+          "purpose": "HR_LIFECYCLE"
+        },
+        {
+          "id": "IAQ-007",
+          "method": "GET",
+          "browserPath": "/api/people/v1/hris/workbench/operations/appointments",
+          "ownerPath": "/v1/hris/workbench/operations/appointments",
+          "uiRoute": "/hr/operations/people/appointments",
+          "capability": "hcm.operations.people.view",
+          "profile": "HRIS_HR_BUSINESS_PARTNER>HRIS_DUTY_CORE_VIEWER",
+          "purpose": "HR_LIFECYCLE"
+        },
+        {
+          "id": "IAQ-013",
+          "method": "GET",
+          "browserPath": "/api/people/v1/hris/workbench/configuration/people-employment",
+          "ownerPath": "/v1/hris/workbench/configuration/people-employment",
+          "uiRoute": "/hr/settings/people-employment",
+          "capability": "hcm.configuration.workbench.view",
+          "profile": "HRIS_CONFIG_AUTHOR>HRIS_DUTY_CONFIGURATION_WORKBENCH_READER",
+          "purpose": "HRIS_CONFIGURATION"
+        }
+      ],
+      "actionsReuseOnly": [
+        "PEP-HRM-006",
+        "PEP-HRM-007",
+        "PEP-HRM-008",
+        "PEP-HRM-009",
+        "PEP-HRM-003",
+        "PEP-HRM-004"
+      ],
+      "noRecount": [
+        "BASE-TFR-HRM-008",
+        "BASE-TFR-HRM-010"
+      ]
+    },
+    {
+      "sliceId": "BASE-TFR-PER-002",
+      "state": "WITHHELD_TRANSITION_INPUT_AND_APPROVAL_EVENT_BINDING_UNSEALED",
+      "entryQuery": {
+        "id": "IAQ-024",
+        "method": "GET",
+        "browserPath": "/api/people/v1/hris/performance/workbench/calibration",
+        "ownerPath": "/v1/hris/performance/workbench/calibration",
+        "uiRoute": "/hr/operations/performance/calibration",
+        "capability": "hcm.operations.performance.view",
+        "profile": "HRIS_PERFORMANCE_OPERATOR>HRIS_DUTY_PERFORMANCE_OPERATIONS_READER",
+        "purpose": "PERFORMANCE_CALIBRATION"
+      },
+      "onlySealedAction": {
+        "id": "PEP-PER-017",
+        "method": "POST",
+        "browserPath": "/api/people/v1/hris/performance/calibration-sessions/{sessionId}/adjustments",
+        "ownerPath": "/v1/hris/performance/calibration-sessions/{sessionId}/adjustments",
+        "capability": "hcm.operations.performance.calibrate",
+        "profile": "HRIS_PERFORMANCE_CALIBRATOR>HRIS_DUTY_PERFORMANCE_CALIBRATOR",
+        "resource": "ACTION.HRIS_PERFORMANCE_CALIBRATE",
+        "population": "NAMED_POPULATION",
+        "fieldGroup": "PERFORMANCE_PRIVATE",
+        "purpose": "PERFORMANCE_CALIBRATION"
+      },
+      "missingAuthority": [
+        "calibration-session create input and owner route",
+        "baseline.validate, start, submit, return, resume, approve, lock and cancel command inputs",
+        "approval workflowKey, requestedAction, subjectRef and subjectRevision",
+        "APPROVED, REJECTED, CANCELED and EXPIRED decision-to-state mapping",
+        "PerformanceCalibrationApproved.v1 transaction boundary"
+      ],
+      "reason": "IAQ-024 and PEP-PER-017 seal query and adjustment only. The generic exact-business state list does not authorize undocumented runtime inputs or an Approval binding.",
+      "ownerPacketAuthorized": false,
+      "startTokenAuthorized": false,
+      "migrationLeaseAuthorized": false
+    },
+    {
+      "sliceId": "BASE-TFR-SYS-003",
+      "state": "SEALED_CROSS_PRODUCT_ADAPTER_REUSE_ONLY",
+      "pages": [
+        {
+          "uiRoute": "/hr/settings/workflow",
+          "queryContract": "SHARED-API-005",
+          "queryCapability": "approvals.policy.read",
+          "commandContract": "SHARED-API-006",
+          "commandCapability": "approvals.policy.publish",
+          "existingRouteContracts": [
+            "route.approvals.admin.policies.page",
+            "route.approvals.admin.policy-publish.action"
+          ]
+        },
+        {
+          "uiRoute": "/hr/team/delegation",
+          "queryContract": "SHARED-API-010",
+          "queryCapability": "approvals.work.delegation.read",
+          "commandContracts": [
+            "SHARED-API-011",
+            "SHARED-API-012"
+          ],
+          "commandCapability": "approvals.work.delegation.manage",
+          "existingRouteContracts": [
+            "route.approvals.work.delegations.page",
+            "route.approvals.work.delegation-create.action",
+            "route.approvals.work.delegation-revoke.action"
+          ]
+        }
+      ],
+      "reuseRules": [
+        "Use the existing Approval owner APIs, product capabilities, SoD and object-version guards.",
+        "Create no HRIS-specific approval engine, approval table, copied policy or delegation state machine.",
+        "The HRIS surfaces are adapters; Approval remains the runtime and persistence owner."
+      ]
+    }
+  ],
+  "centralAdmissionAfterModuleResults": {
+    "candidateVersion": 51,
+    "generationAuthorizedNow": false,
+    "requiredDelta": [
+      "Append only the exact HRM-007 page and data contracts that targeted module evidence proves.",
+      "Add only HCM UI aliases for SYS-003 while preserving the existing Approval API route contracts and capabilities.",
+      "Do not add PER-002 until a separate semantic successor seals every transition input and Approval event binding.",
+      "Generate matching Auth and owner projections and run the changed authorization cluster once."
+    ],
+    "moduleWritable": false,
+    "reason": "Central bundle admission must bind final module result SHAs and changed paths; source start does not require premature v51 generation."
+  },
+  "withheldLanes": [
+    {
+      "sliceId": "BASE-TFR-PER-002",
+      "state": "NO_GO_NO_EXECUTABLE_PACKET_NO_TOKEN_NO_LEASE_NO_SOURCE"
+    },
+    {
+      "sliceId": "BASE-TFR-PAY-001",
+      "state": "NO_GO_NO_PACKET_NO_TOKEN_NO_SOURCE"
+    },
+    {
+      "sliceId": "BASE-TFR-TIM-001",
+      "state": "NO_GO_NO_PACKET_NO_TOKEN_NO_SOURCE"
+    }
+  ],
+  "authority": {
+    "hrm007OwnerSourceMayBeTokenized": true,
+    "per002OwnerSourceMayBeTokenized": false,
+    "sys003AdapterSourceMayBeTokenized": true,
+    "productAuthorizationV51GenerationAuthorized": false,
+    "moduleWriteToCentralContractsAuthorized": false,
+    "mergeToDwpDevAuthorized": false,
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "Bind this decision in exactly two executable owner packets and start tokens for HRM-007 and SYS-003; route PER-002 to semantic remediation and issue no active migration lease."
+}

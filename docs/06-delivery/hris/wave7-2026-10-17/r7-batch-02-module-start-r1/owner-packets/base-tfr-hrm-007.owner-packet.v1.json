@@ -1,0 +1,317 @@
+{
+  "schema": "dwp.hris.wave7.r7-owner-packet.v1",
+  "packetId": "HRIS-WAVE7-R7-BATCH-02-OWNER-BASE-TFR-HRM-007-20261017-R1",
+  "revision": 1,
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_PACKET_ID_AND_SHA256"
+  },
+  "issuedAt": "2026-10-17T23:38:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "SEALED_FOR_FRESH_PINNED_MODULE_TOKEN_DEFAULT_OFF",
+  "module": "HRM",
+  "moduleSession": "HRIS-HRM",
+  "moduleThreadId": "01a0f53e-9a75-7421-969f-473b0cfb9439",
+  "sliceId": "BASE-TFR-HRM-007",
+  "sourceRef": "TFR-HRM-007",
+  "businessMeaning": "Present manager people changes, HR appointments and people-employment configuration as three governed IA entry projections over the already integrated employee-change and assignment-event lifecycles; do not create another command lifecycle or source of truth.",
+  "immutableAuthorityBasis": {
+    "roadmap": {
+      "path": "../../execution-roadmap-successor.v15.json",
+      "sha256": "6dd79a60a255e90365bc2003040bbbce9074f4ebfcbb70732dd0250829506ca0",
+      "bytes": 7007,
+      "requiredState": "R7_BATCH_01_SEQUENCING_EXIT_ACCEPTED_ZERO_CREDIT_BATCH_02_THREE_LANES_AUTHORITY_READY_TWO_LANES_SEMANTIC_NO_GO"
+    },
+    "batch02Preflight": {
+      "path": "../../r7-batch-02-preflight-r1/semantic-dependency-migration-preflight.v2.json",
+      "sha256": "2706a07dbb245c53a07858a590d1710a865d4a899cbab084b42ea0ed52ec23e8",
+      "bytes": 5773,
+      "requiredDecision": "GO_FOR_FRESH_PACKET"
+    },
+    "centralAuthorizationSuccessor": {
+      "path": "../central-authorization-successor.v1.json",
+      "sha256": "131376aac17d25947abe54fe0dc1969c795f150882e93a671bdae9ce1b618dc1",
+      "bytes": 10098,
+      "laneState": "SEALED_FOR_OWNER_SOURCE_WITH_EXISTING_ACTION_REUSE",
+      "centralV51GenerationAuthorized": false
+    },
+    "sourceFamily": {
+      "resolutionId": "TFR-HRM-007",
+      "sourceFamilySha256": "9d2373936772c7f15ba4fde19d4d480235e7bcc1e18db24adf312cb6f6ee2066",
+      "sourceRowCount": 31,
+      "semanticLineage": "TFR-HRM-007::hr-appointments::PEP-HRM-006|PEP-HRM-007|PEP-HRM-008|PEP-HRM-009|EVT-HRM:AssignmentChanged.v1"
+    },
+    "entryQueryRegister": {
+      "path": "../../../recovery/exact-supplements/2026-10-06/accepted-successors/hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-api-contract-register.csv",
+      "sha256": "5f47efd33a1d5aa3d11a4d9fd5716cd4e35650e9fec0868ecb77c8c90a4cd988",
+      "bytes": 100020,
+      "closedSet": ["IAQ-005", "IAQ-007", "IAQ-013"]
+    },
+    "entryQueryInvariantRegister": {
+      "path": "../../../recovery/exact-supplements/2026-10-06/accepted-successors/hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-runtime-invariant-register.csv",
+      "sha256": "fcdfd1a26d8fca2c8d9a2a8279a3c5a99844ba827aefe47cbac2210b8753f77a",
+      "bytes": 51783
+    },
+    "projectionSchemas": {
+      "path": "../../../recovery/exact-supplements/2026-10-06/hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-projection-schemas.v1.json",
+      "sha256": "b185accd712216c39bf8a66f70cbbf0092a27a8c2c5e3d7457ecd4d511afa048",
+      "bytes": 1523618
+    },
+    "informationArchitecture": {
+      "path": "../../../recovery/hris-porting-blueprint-2026-09-09/coding-readiness/hris-information-architecture-register.csv",
+      "sha256": "ab506a2bb2f80c8ab81a4b9d575374d6bda83b312d11dce07495d4812bdf4686",
+      "bytes": 103877,
+      "closedSet": ["BASE:team-people-changes", "BASE:hr-appointments", "BASE:settings-people-employment"]
+    },
+    "pepRegister": {
+      "path": "../../../recovery/hris-porting-blueprint-2026-09-09/coding-readiness/api-pep-binding-register.csv",
+      "sha256": "0e38d724516a8b271069241ffa0fb6400984dc703758767de53cbaffb4f93da3",
+      "bytes": 126576,
+      "reuseOnly": ["PEP-HRM-003", "PEP-HRM-004", "PEP-HRM-005", "PEP-HRM-006", "PEP-HRM-007", "PEP-HRM-008", "PEP-HRM-009"]
+    }
+  },
+  "basePins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "59964de62cd4da8bcb9f9384d6e2ef85e8c07b09",
+      "tree": "108eb56abdb23f6bd4346b21fac1974da18b01c1",
+      "requiredRemote": "origin/dwp-dev",
+      "requiredRemoteExact": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "f749d046417a35642d158c0d0f674704ace7d4bb",
+      "tree": "3bfecda45d73a2e70d4685dbb4c5861f73dc64c6",
+      "requiredRemote": "origin/dwp-dev",
+      "requiredCommitReachable": true,
+      "requiredRemoteExactBeforeAuthorityCarrier": true,
+      "authorityCarrierAdvanceAllowed": true
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "readOnly": true
+    }
+  },
+  "exactDelta": {
+    "provenExisting": [
+      "BASE-TFR-HRM-008 already owns the canonical effective-dated assignment-event lifecycle, AssignmentChanged.v1 publication, PEP-HRM-006 through PEP-HRM-009 and People V55.",
+      "BASE-TFR-HRM-010 already owns the canonical employee-change lifecycle and PEP-HRM-003 through PEP-HRM-005.",
+      "The generated HRIS information architecture already declares all three target IA nodes and canonical routes.",
+      "Product-authorization v50 and the People owner runtime contain the reused action capability and predicate foundations."
+    ],
+    "missingWork": [
+      "Implement the IAQ-005 owner query projection and team people-changes page over the existing employee-change read model.",
+      "Implement the IAQ-007 owner query projection and HR appointments page over the existing effective-dated assignment-event read model.",
+      "Implement the IAQ-013 owner query projection and people-employment configuration page using read-only policy and employment-rule sources.",
+      "Implement the common sealed IA-query state, cursor, field-decision, deep-link and available-action projection behavior for only these three query IDs.",
+      "Provide bounded module evidence for all twelve acceptance criteria, default-OFF behavior, migration non-need and the no-recount boundary."
+    ],
+    "reuseOnly": {
+      "hrm008": ["PEP-HRM-006", "PEP-HRM-007", "PEP-HRM-008", "PEP-HRM-009", "AssignmentChanged.v1", "effective-dated assignment-event repository and publication lifecycle"],
+      "hrm010": ["PEP-HRM-003", "PEP-HRM-004", "PEP-HRM-005", "employee-change repository, approval state and immutable receipt lifecycle"],
+      "central": ["product-authorization v50", "trusted People request context", "existing field projection and target-population resolvers", "generated HRIS IA catalog"]
+    },
+    "noTouchOrRecount": [
+      "Do not reopen, clone, rename, extend or count BASE-TFR-HRM-008 as HRM-007 delivery.",
+      "Do not reopen, clone, rename, extend or count BASE-TFR-HRM-010 as HRM-007 delivery.",
+      "Do not implement a second assignment-event, employee-change, approval, outbox or command-receipt lifecycle.",
+      "Do not modify or regenerate PEP-HRM-003 through PEP-HRM-009, AssignmentChanged.v1 or their historical migrations.",
+      "Do not count existing commands, events, repositories, routes, navigation nodes or policy runtime as newly delivered HRM-007 behavior."
+    ]
+  },
+  "ownership": {
+    "repositories": ["dwp-backend", "dwp-frontend"],
+    "runtimeOwner": "dwp-people-server",
+    "singleWriter": "HRIS-HRM",
+    "candidateWritablePathsAfterThisPacketAndFreshToken": {
+      "backend": [
+        "dwp-people-server/src/main/java/com/dwp/services/people/hris/workbench/hrm007/**",
+        "dwp-people-server/src/test/java/com/dwp/services/people/hris/workbench/hrm007/**"
+      ],
+      "frontend": [
+        "apps/dwp/src/features/hris/people/hrm-007-workbench/**",
+        "apps/dwp/src/features/hris/people/__tests__/g3-slices/base-tfr-hrm-007.slice.test.tsx",
+        "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-02-module-results-r1/base-tfr-hrm-007/**"
+      ]
+    },
+    "readOnlyReusePaths": [
+      "backend:dwp-people-server/src/main/java/com/dwp/services/people/hris/employment/**",
+      "backend:dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/employeechange/**",
+      "backend:dwp-people-server/src/main/resources/product-authorization/hcm-people-pep-v50.generated.json",
+      "frontend:apps/dwp/src/features/hris/employment/**",
+      "frontend:apps/dwp/src/features/hris/employee-services/employee-change/**",
+      "frontend:apps/dwp/src/features/hris/shell/model/**"
+    ],
+    "controlOwnedUntilSeparateCentralAdmission": [
+      "backend:contracts/product-authorization/**",
+      "backend:contracts/openapi/**",
+      "backend:dwp-auth-server/**",
+      "backend:dwp-gateway/**",
+      "backend:dwp-platform-contracts/**",
+      "frontend:architecture/**",
+      "frontend:apps/dwp/src/routes/**",
+      "frontend:apps/dwp/src/features/hris/shell/**"
+    ],
+    "outsideBoundaryAction": "STOP_AND_REQUEST_EXACT_CONTROL_REALLOCATION"
+  },
+  "entryQueries": [
+    {
+      "id": "IAQ-005",
+      "operationId": "IAQ.OP.005",
+      "iaNodeId": "BASE:team-people-changes",
+      "method": "GET",
+      "browserPath": "/api/people/v1/hris/workbench/team/people-changes",
+      "ownerPath": "/v1/hris/workbench/team/people-changes",
+      "canonicalRoute": "/hr/team/people-changes",
+      "deepLinkTemplate": "/hr/team/people-changes?tab=overview&focus={resourcePublicId}",
+      "capability": "hcm.team.people-change.view",
+      "profileAndDuty": "HRIS_LINE_MANAGER>HRIS_DUTY_MANAGER_PEOPLE_CHANGE_READER",
+      "fieldGroups": ["CHANGE_REQUEST_SUMMARY", "LIMITED_EMPLOYMENT", "APPROVAL_STATUS", "EFFECTIVE_ON"],
+      "sortAllowlist": ["changeRequestSummary", "limitedEmployment", "approvalStatus", "itemPublicId"],
+      "defaultSort": "itemPublicId:ASC",
+      "pageLimit": 100,
+      "availableActions": ["PEP-HRM-003", "PEP-HRM-004"],
+      "purpose": "HR_LIFECYCLE",
+      "population": ["DIRECT_REPORTS", "APPROVED_DELEGATION"]
+    },
+    {
+      "id": "IAQ-007",
+      "operationId": "IAQ.OP.007",
+      "iaNodeId": "BASE:hr-appointments",
+      "method": "GET",
+      "browserPath": "/api/people/v1/hris/workbench/operations/appointments",
+      "ownerPath": "/v1/hris/workbench/operations/appointments",
+      "canonicalRoute": "/hr/operations/people/appointments",
+      "deepLinkTemplate": "/hr/operations/people/appointments?tab=overview&focus={resourcePublicId}",
+      "capability": "hcm.operations.people.view",
+      "profileAndDuty": "HRIS_HR_BUSINESS_PARTNER>HRIS_DUTY_CORE_VIEWER",
+      "fieldGroups": ["APPOINTMENT", "ASSIGNMENT", "EMPLOYMENT", "EFFECTIVE_ON"],
+      "sortAllowlist": ["appointment", "assignment", "employment", "itemPublicId"],
+      "defaultSort": "itemPublicId:ASC",
+      "pageLimit": 100,
+      "availableActions": ["PEP-HRM-006", "PEP-HRM-007", "PEP-HRM-008", "PEP-HRM-009"],
+      "purpose": "HR_LIFECYCLE",
+      "population": ["LEGAL_ENTITY", "ORG_TREE", "ORG_UNIT", "NAMED_POPULATION"]
+    },
+    {
+      "id": "IAQ-013",
+      "operationId": "IAQ.OP.013",
+      "iaNodeId": "BASE:settings-people-employment",
+      "method": "GET",
+      "browserPath": "/api/people/v1/hris/workbench/configuration/people-employment",
+      "ownerPath": "/v1/hris/workbench/configuration/people-employment",
+      "canonicalRoute": "/hr/settings/people-employment",
+      "deepLinkTemplate": "/hr/settings/people-employment?tab=overview&focus={resourcePublicId}",
+      "capability": "hcm.configuration.workbench.view",
+      "profileAndDuty": "HRIS_CONFIG_AUTHOR>HRIS_DUTY_CONFIGURATION_WORKBENCH_READER",
+      "fieldGroups": ["POLICY_METADATA", "EMPLOYMENT_RULE", "IMPACT_SUMMARY", "EFFECTIVE_ON"],
+      "sortAllowlist": ["policyMetadata", "employmentRule", "impactSummary", "itemPublicId"],
+      "defaultSort": "itemPublicId:ASC",
+      "pageLimit": 100,
+      "availableActions": [],
+      "purpose": "HRIS_CONFIGURATION",
+      "population": ["CONFIG_SCOPE", "POLICY_NODE", "LEGAL_ENTITY"]
+    }
+  ],
+  "commonProjectionContract": {
+    "queryStates": ["COMPLETE", "EMPTY", "PARTIAL", "UNAVAILABLE"],
+    "freshnessStates": ["CURRENT", "STALE", "UNAVAILABLE"],
+    "requiredPepLayers": ["GATEWAY_APP_ENTITLEMENT", "OWNER_API_OPERATION", "RESOURCE_POPULATION", "REPOSITORY_TENANT_PREDICATE", "FIELD_PROJECTION", "PURPOSE_POLICY", "AUDIT_DECISION"],
+    "cursorBindings": ["tenant", "queryId", "targetPopulation", "scopeDecisionRevision", "authorizationDecisionRevision", "asOf", "sort", "pageLimit", "lastItemPublicId"],
+    "tenantSource": "TRUSTED_GATEWAY_CONTEXT_ONLY",
+    "callerTenantOverride": "FORBIDDEN",
+    "defaultDeny": true,
+    "opaqueDenial": true,
+    "unknownQuerySortFilterOrAction": "REJECT",
+    "unavailableRule": "UNAVAILABLE has zero items, no cursor and UNAVAILABLE freshness",
+    "partialRule": "PARTIAL has at least one typed partial failure",
+    "fieldRule": "Every serialized field group has exactly one VIEW, MASK or OMIT decision and the summary matches the serialized result"
+  },
+  "dependencies": [
+    {"id": "DEP-001", "state": "READY_REUSE_TRUSTED_IDENTITY_CONTEXT"},
+    {"id": "DEP-002", "state": "READY_REUSE_FAIL_CLOSED_AUTHORIZATION_AND_STALE_REVISION_DENIAL"},
+    {"id": "DEP-003", "state": "READY_REUSE_HRM008_ASSIGNMENT_CHANGED_PRODUCER_NO_NEW_PRODUCER"},
+    {"id": "DEP-016", "state": "READY_NOT_WRITTEN_BY_QUERY_ONLY_DELTA"}
+  ],
+  "migration": {
+    "stream": "PEOPLE_MAIN",
+    "observedHighWater": "V57",
+    "candidateVersion": "V58",
+    "state": "NO_LEASE_PROJECTION_ONLY_EXPECTED",
+    "authoringAllowed": false,
+    "rule": "Use existing HRM-008, HRM-010 and policy read models. If an append-only schema delta is proven unavoidable, stop all migration authoring and request a separately reviewed exclusive People V58 lease; this packet and token do not authorize V58."
+  },
+  "rollout": {
+    "feature": "HRIS_HRM_APPOINTMENT_WORKBENCH",
+    "runtimeDefault": "OFF",
+    "enrolledTenants": [],
+    "tenantActivationAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "zeroCallRule": "Feature absent, false or tenant unenrolled performs no owner query, reused command, repository, cursor or projection work."
+  },
+  "acceptanceCriteria": [
+    {"id": "HRM007-AC-01", "criterion": "IAQ-005, IAQ-007 and IAQ-013 expose only their exact GET owner and browser paths and return the sealed projection variants."},
+    {"id": "HRM007-AC-02", "criterion": "EMPTY and UNAVAILABLE contain zero items; PARTIAL contains typed failures; COMPLETE contains no partial failures."},
+    {"id": "HRM007-AC-03", "criterion": "Every cursor binds tenant, query, population, scope and authorization revisions, as-of, sort, limit and last item; a mismatch or stale revision fails closed."},
+    {"id": "HRM007-AC-04", "criterion": "Each query enforces limit 100, the exact sort allowlist and stable itemPublicId tie-breaking without cross-tenant rows."},
+    {"id": "HRM007-AC-05", "criterion": "Field VIEW, MASK and OMIT decisions match serialized fields and fieldDecisionSummary for every item."},
+    {"id": "HRM007-AC-06", "criterion": "Trusted tenant and policy context are never accepted from query parameters or serialized into the response."},
+    {"id": "HRM007-AC-07", "criterion": "Deep links are limited to the three canonical routes and available actions are exactly IAQ-005 PEP-HRM-003/004, IAQ-007 PEP-HRM-006/007/008/009 and none for IAQ-013."},
+    {"id": "HRM007-AC-08", "criterion": "All actions delegate to integrated HRM-008 or HRM-010 owner endpoints; HRM-007 creates no command, approval, event, outbox or receipt implementation."},
+    {"id": "HRM007-AC-09", "criterion": "Wrong tenant, profile, duty, target population, purpose, field decision or decision revision returns one opaque denial and discloses no object existence."},
+    {"id": "HRM007-AC-10", "criterion": "Each page renders distinct loading, empty, partial, unavailable, complete, denied and stale states and passes keyboard, screen-reader, 1440, 1280, 390, 320, 200-percent zoom, light, dark, high-contrast and reduced-motion checks."},
+    {"id": "HRM007-AC-11", "criterion": "Feature OFF or tenant unenrolled mounts no owner data runtime, sends zero network calls and exposes no enabled action."},
+    {"id": "HRM007-AC-12", "criterion": "Changed-path evidence proves HRM-008, HRM-010, generated authorization, shell and historical migrations are byte-unchanged and receive zero HRM-007 completion credit."}
+  ],
+  "targetedVerification": {
+    "policy": "NEW_HRM007_TARGETS_ONCE_THEN_SHARED_REUSE_SEAM_ONLY_IF_TOUCHED; AFTER_FAILURE_RERUN_SMALLEST_FAILED_TARGET_ONLY",
+    "backendTargets": [
+      "new com.dwp.services.people.hris.workbench.hrm007.Hrm007IaEntryQueryContractTest",
+      "new HRM-007 projection, cursor, authorization and default-off unit targets",
+      "existing HrmIaEntryQueryContractTest only as an HRM-010 read-model reuse seam check",
+      "existing HrmG3SliceContractTest only as an HRM-008 action-link reuse seam check"
+    ],
+    "frontendTargets": [
+      "apps/dwp/src/features/hris/people/__tests__/g3-slices/base-tfr-hrm-007.slice.test.tsx",
+      "apps/dwp/src/features/hris/people/hrm-007-workbench/**/*.test.tsx",
+      "ESLint only for the changed HRM-007 frontend path"
+    ],
+    "databaseTargets": [],
+    "databaseRule": "No database target exists without a separately issued People V58 lease.",
+    "repositoryWideSuitePerCorrection": false,
+    "browserBeforeCentralAdmissionAuthorized": false
+  },
+  "evidenceContract": {
+    "requiredResultRoot": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-02-module-results-r1/base-tfr-hrm-007",
+    "required": [
+      "backend and frontend module branch SHAs, trees and pinned base ancestry",
+      "twelve acceptance results with source or bounded-test evidence",
+      "three entry-query positive, negative and cursor-revision evidence sets",
+      "trusted-tenant, population, purpose, field and opaque-denial evidence",
+      "default-OFF, zero-enrollment and zero-call evidence",
+      "People V58 non-need proof",
+      "changed-path and HRM-008/HRM-010 no-recount manifest"
+    ],
+    "businessCompletionCreditBeforeCentralAdmissionAndActivation": 0
+  },
+  "authority": {
+    "packetSealed": true,
+    "freshStartTokenMayBeIssued": true,
+    "moduleSourceImplementationAuthorizedByPacketAlone": false,
+    "migrationAuthoringAuthorized": false,
+    "centralAuthorizationGenerationAuthorizedByPacketAlone": false,
+    "centralRouteOrShellMountAuthorized": false,
+    "mergeToDwpDevAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextGate": "HASH_BIND_THIS_PACKET_IN_FRESH_HRM007_START_TOKEN_AND_MATERIALIZE_TWO_CLEAN_MODULE_WORKTREES_FROM_THE_EXACT_BASE_PINS"
+}

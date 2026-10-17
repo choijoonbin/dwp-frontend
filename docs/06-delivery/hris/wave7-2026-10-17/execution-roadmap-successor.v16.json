@@ -1,0 +1,169 @@
+{
+  "schema": "dwp.hris.wave7-execution-roadmap-successor.v16",
+  "roadmapId": "HRIS-WAVE7-EXECUTION-ROADMAP-SUCCESSOR-20261017-R16",
+  "issuedAt": "2026-10-17T23:47:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "R7_BATCH_02_TWO_MODULE_TOKENS_ISSUED_DEFAULT_OFF_THREE_LANES_SEMANTIC_NO_GO_ZERO_ACTIVE_LEASES",
+  "supersedes": {
+    "path": "execution-roadmap-successor.v15.json",
+    "sha256": "6dd79a60a255e90365bc2003040bbbce9074f4ebfcbb70732dd0250829506ca0",
+    "bytes": 7007,
+    "reason": "R15 authorized fresh packet issuance but predates the independent semantic review that limited executable authority to HRM-007 and SYS-003, withheld PER-002, and reserved Performance V19 without issuing a lease."
+  },
+  "observedCleanPinsBeforeThisCarrier": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "59964de62cd4da8bcb9f9384d6e2ef85e8c07b09",
+      "tree": "108eb56abdb23f6bd4346b21fac1974da18b01c1",
+      "originExact": true,
+      "clean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "f749d046417a35642d158c0d0f674704ace7d4bb",
+      "tree": "3bfecda45d73a2e70d4685dbb4c5861f73dc64c6",
+      "originExact": true,
+      "cleanBeforeThisCarrier": true
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "originExact": true,
+      "clean": true
+    }
+  },
+  "closedMilestonesInherited": [
+    "R6A",
+    "R6B",
+    "R6C",
+    "R6 integrated default-OFF closure",
+    "R7 C0 reclassification",
+    "R7 activation infrastructure integrated default OFF with zero tenant enrollment",
+    "R7 Batch-01 sequencing exit accepted with zero business-completion credit",
+    "R7 Batch-02 semantic dependency and migration preflight"
+  ],
+  "batch02Authority": {
+    "state": "TWO_EXACT_TOKENS_ISSUED_THREE_WITHHELD_ZERO_ACTIVE_LEASES",
+    "startTokenState": {
+      "path": "r7-batch-02-module-start-r1/start-token-state.v1.json",
+      "sha256": "d2f67a29d4d7f14d748bc05272f590d95d7f1766d3ac26b1f6e3c0c187cfe6a2",
+      "bytes": 5945
+    },
+    "centralAuthorization": {
+      "path": "r7-batch-02-module-start-r1/central-authorization-successor.v1.json",
+      "sha256": "131376aac17d25947abe54fe0dc1969c795f150882e93a671bdae9ce1b618dc1",
+      "bytes": 10098,
+      "v51GenerationAuthorized": false
+    },
+    "migrationLease": {
+      "path": "r7-batch-02-module-start-r1/migration-lease-activation.v1.json",
+      "sha256": "c13a87d949f518ce7ab8a6cd590a1373a2bd3e0fa17ee7d5591672d868b17175",
+      "bytes": 5475,
+      "activeLeaseCount": 0,
+      "reservedCandidate": "PERFORMANCE V19 NOT ISSUED; semantic successor and a new exclusive lease required"
+    },
+    "activeLanes": [
+      {
+        "sliceId": "BASE-TFR-HRM-007",
+        "moduleSession": "HRIS-HRM",
+        "threadId": "01a0f53e-9a75-7421-969f-473b0cfb9439",
+        "token": {
+          "path": "r7-batch-02-module-start-r1/tokens/base-tfr-hrm-007.start-token.v1.json",
+          "sha256": "0e5f577c60eb697b750fdea05b3b796fed077e4acf10424367cbf02395b0e901",
+          "bytes": 14032
+        },
+        "scope": "IAQ-005, IAQ-007 and IAQ-013 projection work with HRM-008 and HRM-010 command reuse only",
+        "migration": "NONE"
+      },
+      {
+        "sliceId": "BASE-TFR-SYS-003",
+        "moduleSession": "HRIS-SYS",
+        "threadId": "01a0f53d-d62d-7971-81f7-1822b513ccb4",
+        "token": {
+          "path": "r7-batch-02-module-start-r1/tokens/base-tfr-sys-003.start-token.v1.json",
+          "sha256": "d45ae2febddd6d202da217bba0eac23f2f87bdf862a06e74dc5a28ec66013e2a",
+          "bytes": 14195
+        },
+        "scope": "Frontend adapters for /hr/settings/workflow and /hr/team/delegation over five existing Approval contracts",
+        "migration": "NONE"
+      }
+    ],
+    "withheldLanes": [
+      {
+        "sliceId": "BASE-TFR-PER-002",
+        "moduleSession": "HRIS-PER",
+        "threadId": "01a0f53e-9c6d-74e1-a11a-0dd4a4ab25a9",
+        "state": "SEMANTIC_NO_GO_NO_PACKET_NO_TOKEN_NO_WORKTREE_NO_SOURCE_NO_ACTIVE_LEASE",
+        "requiredSuccessor": "Seal every calibration transition input, Approval decision mapping and PerformanceCalibrationApproved.v1 transaction boundary before any owner packet, token or V19 lease."
+      },
+      {
+        "sliceId": "BASE-TFR-PAY-001",
+        "state": "SEMANTIC_NO_GO_NO_PACKET_NO_TOKEN_NO_SOURCE"
+      },
+      {
+        "sliceId": "BASE-TFR-TIM-001",
+        "state": "SEMANTIC_NO_GO_NO_PACKET_NO_TOKEN_NO_SOURCE"
+      }
+    ]
+  },
+  "tenantFeatureActivationLane": {
+    "state": "INTEGRATED_DEFAULT_OFF_ZERO_TENANT_ENROLLMENT",
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "globalActiveSeeds": 0,
+    "tenantEnrollmentSeeds": 0,
+    "openP0Gates": [
+      "TIM_CLOSE_PERIOD_DEFINITION_PRODUCER",
+      "TIM_CLOSE_TRUSTED_OWNER_HEADER_ISSUER"
+    ]
+  },
+  "portfolioAggregate": {
+    "universe": 86,
+    "retired": 2,
+    "active": 84,
+    "completed": 26,
+    "activeIncomplete": 58,
+    "batch02BusinessCompletionIncrementBeforeCentralAdmission": 0
+  },
+  "nextExecutable": {
+    "id": "R7-BATCH-02-TWO-MODULE-FOUR-WORKTREE-DISPATCH",
+    "steps": [
+      "Push this authority carrier to frontend origin/dwp-dev.",
+      "Materialize four exact worktrees from the HRM-007 and SYS-003 token base pins; SYS backend remains read-only.",
+      "Push three writable module branches at their exact clean bases before source work.",
+      "Dispatch executable source work only to HRM-007 and SYS-003; send PER-002 only the semantic-remediation gap with no source authority.",
+      "Require bounded changed-cluster evidence, independent result review and central admission before any dwp-dev merge."
+    ],
+    "validationPolicy": {
+      "initial": "Run each token's bounded target set once.",
+      "afterFailure": "Rerun only the smallest failing target after correction.",
+      "repositoryWideSuitePerCorrection": false,
+      "fullSuite": "Only at an explicitly authorized central release gate or proven cross-cutting risk."
+    }
+  },
+  "authority": {
+    "twoModuleSourceStartsAuthorizedAfterCarrierPush": true,
+    "moduleBranchCommitAndPushAuthorized": true,
+    "directDwpDevMergeAuthorized": false,
+    "centralV51GenerationAuthorized": false,
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "businessCompletionCredit": 0,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nonClaims": [
+    "R7 is complete",
+    "Batch-02 module results are complete",
+    "Batch-02 source is integrated into dwp-dev",
+    "PAY-001 or TIM-001 source work is authorized",
+    "PER-002 source work, owner packet, start token or active Performance V19 lease is authorized",
+    "product-authorization v51 exists or is admitted",
+    "any tenant feature is active or enrolled",
+    "customer data or production release is authorized"
+  ]
+}

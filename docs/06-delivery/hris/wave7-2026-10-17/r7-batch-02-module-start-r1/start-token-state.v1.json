@@ -1,0 +1,125 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-02-start-token-state.v1",
+  "stateId": "HRIS-WAVE7-R7-BATCH-02-START-TOKEN-STATE-20261017-R1",
+  "recordedAt": "2026-10-17T23:46:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "TWO_EXACT_TOKENS_ISSUED_PENDING_CARRIER_PUSH_AND_FRESH_WORKTREES_THREE_LANES_WITHHELD_ZERO_ACTIVE_LEASES",
+  "purpose": "Bind only the semantically sealed HRM-007 and SYS-003 lanes to exact owner packets, a shared central-authorization successor and immutable dwp-dev bases while preserving PER-002, PAY-001 and TIM-001 as NO_GO with zero active migration leases.",
+  "authorityCarrierParent": {
+    "repository": "dwp-frontend",
+    "branch": "dwp-dev",
+    "commit": "f749d046417a35642d158c0d0f674704ace7d4bb",
+    "tree": "3bfecda45d73a2e70d4685dbb4c5861f73dc64c6",
+    "originExact": true,
+    "rule": "This document and the token set become executable only after one append-only carrier commit is pushed to origin/dwp-dev; that later carrier must not enter the pinned module worktrees."
+  },
+  "commonEvidence": {
+    "centralAuthorization": {
+      "path": "central-authorization-successor.v1.json",
+      "sha256": "131376aac17d25947abe54fe0dc1969c795f150882e93a671bdae9ce1b618dc1",
+      "bytes": 10098
+    },
+    "migrationLease": {
+      "path": "migration-lease-activation.v1.json",
+      "sha256": "c13a87d949f518ce7ab8a6cd590a1373a2bd3e0fa17ee7d5591672d868b17175",
+      "bytes": 5475,
+      "activeLeaseCount": 0,
+      "reservedCandidate": "PERFORMANCE V19 NOT ISSUED; successor semantic seal and a new exclusive lease are required before authoring"
+    },
+    "roadmap": {
+      "path": "../execution-roadmap-successor.v15.json",
+      "sha256": "6dd79a60a255e90365bc2003040bbbce9074f4ebfcbb70732dd0250829506ca0",
+      "bytes": 7007
+    }
+  },
+  "activeTokens": [
+    {
+      "sliceId": "BASE-TFR-HRM-007",
+      "moduleSession": "HRIS-HRM",
+      "threadId": "01a0f53e-9a75-7421-969f-473b0cfb9439",
+      "ownerPacket": {
+        "path": "owner-packets/base-tfr-hrm-007.owner-packet.v1.json",
+        "sha256": "729b3b5587e6621b41934521c08edc6ea6c5ce827bdba4bfb3dac34f8f0f0c41",
+        "bytes": 18901
+      },
+      "startToken": {
+        "path": "tokens/base-tfr-hrm-007.start-token.v1.json",
+        "sha256": "0e5f577c60eb697b750fdea05b3b796fed077e4acf10424367cbf02395b0e901",
+        "bytes": 14032
+      },
+      "migration": "NO_LEASE_STOP_IF_SCHEMA_DELTA_IS_PROVEN",
+      "dispatchState": "AUTHORIZED_AFTER_CARRIER_PUSH_AND_EXACT_WORKTREE_MATERIALIZATION"
+    },
+    {
+      "sliceId": "BASE-TFR-SYS-003",
+      "moduleSession": "HRIS-SYS",
+      "threadId": "01a0f53d-d62d-7971-81f7-1822b513ccb4",
+      "ownerPacket": {
+        "path": "owner-packets/base-tfr-sys-003.owner-packet.v1.json",
+        "sha256": "f29a4addb1c9d6b6971cca40464d304eaccf8ecfec980ed0ac0276c8224fcbc9",
+        "bytes": 16555
+      },
+      "startToken": {
+        "path": "tokens/base-tfr-sys-003.start-token.v1.json",
+        "sha256": "d45ae2febddd6d202da217bba0eac23f2f87bdf862a06e74dc5a28ec66013e2a",
+        "bytes": 14195
+      },
+      "migration": "NO_LEASE_FRONTEND_ADAPTER_ONLY",
+      "dispatchState": "AUTHORIZED_AFTER_CARRIER_PUSH_AND_EXACT_WORKTREE_MATERIALIZATION"
+    }
+  ],
+  "withheldLanes": [
+    {
+      "sliceId": "BASE-TFR-PER-002",
+      "moduleSession": "HRIS-PER",
+      "threadId": "01a0f53e-9c6d-74e1-a11a-0dd4a4ab25a9",
+      "state": "SEMANTIC_NO_GO_NO_OWNER_PACKET_NO_TOKEN_NO_WORKTREE_NO_SOURCE_NO_ACTIVE_MIGRATION_LEASE",
+      "requiredSuccessor": "Seal calibration create, baseline validate, start, submit, return, resume, approve, lock and cancel inputs plus Approval decision mapping and the PerformanceCalibrationApproved.v1 transaction boundary."
+    },
+    {
+      "sliceId": "BASE-TFR-PAY-001",
+      "moduleSession": "HRIS-PAY",
+      "state": "SEMANTIC_NO_GO_NO_OWNER_PACKET_NO_TOKEN_NO_WORKTREE_NO_SOURCE"
+    },
+    {
+      "sliceId": "BASE-TFR-TIM-001",
+      "moduleSession": "HRIS-TIM",
+      "state": "SEMANTIC_NO_GO_NO_OWNER_PACKET_NO_TOKEN_NO_WORKTREE_NO_SOURCE"
+    }
+  ],
+  "basePins": {
+    "backend": {
+      "commit": "59964de62cd4da8bcb9f9384d6e2ef85e8c07b09",
+      "tree": "108eb56abdb23f6bd4346b21fac1974da18b01c1"
+    },
+    "frontend": {
+      "commit": "f749d046417a35642d158c0d0f674704ace7d4bb",
+      "tree": "3bfecda45d73a2e70d4685dbb4c5861f73dc64c6"
+    },
+    "agent": {
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88"
+    }
+  },
+  "dispatchOrder": [
+    "Commit and push this authority carrier once.",
+    "Materialize and verify four exact fresh worktrees for HRM-007 backend/frontend and SYS-003 backend/frontend without copying the carrier into them; SYS backend remains read-only.",
+    "Push the three writable module branches at their exact bases before source work.",
+    "Dispatch only HRM-007 and SYS-003 executable tokens; route PER-002 to read-only semantic remediation with no source, worktree or migration authority.",
+    "Run each token's bounded tests once; after a failure rerun only the smallest failing target.",
+    "Commit and push module branches and produce exact module-result evidence for independent review."
+  ],
+  "authority": {
+    "twoModuleStartsAuthorizedAfterCarrierPush": true,
+    "worktreeMaterializationAuthorizedAfterCarrierPush": true,
+    "moduleBranchCommitAndPushAuthorized": true,
+    "mergeToDwpDevAuthorized": false,
+    "centralV51GenerationAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "businessCompletionCreditBeforeCentralAdmission": 0,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "Complete independent authority review, commit and push the carrier, materialize four exact worktrees, then dispatch only the HRM-007 and SYS-003 executable tokens while PER-002 remains semantic-remediation-only."
+}

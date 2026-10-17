@@ -1,0 +1,292 @@
+{
+  "schema": "dwp.hris.module-start-token.v1",
+  "tokenId": "HRIS-WAVE7-R7-BATCH-02-START-BASE-TFR-SYS-003-20261017-R1",
+  "issuedAt": "2026-10-17T23:44:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-SYS",
+  "moduleThreadId": "01a0f53d-d62d-7971-81f7-1822b513ccb4",
+  "sliceId": "BASE-TFR-SYS-003",
+  "canonicalFeature": "HRIS_APPROVAL_WORKFLOW_AND_DELEGATION_ADAPTERS",
+  "featureAliasesAuthorized": [],
+  "state": "ISSUED_FRONTEND_REUSE_ADAPTER_IMPLEMENTATION_COMMIT_AND_PUSH_NO_MIGRATION",
+  "permittedAction": "In the exact fresh SYS-003 frontend worktree, implement and prove only the two default-off HRIS presentation adapters for /hr/settings/workflow and /hr/team/delegation over SHARED-API-005, SHARED-API-006 and SHARED-API-010 through SHARED-API-012; commit and push only the exact frontend module branch. The backend worktree is read-only verification evidence.",
+  "hashDag": {
+    "predecessor": {
+      "path": "../central-authorization-successor.v1.json",
+      "sha256": "131376aac17d25947abe54fe0dc1969c795f150882e93a671bdae9ce1b618dc1",
+      "bytes": 10098
+    },
+    "role": "SYS003_PARALLEL_START_TOKEN_AFTER_EXACT_CROSS_PRODUCT_REUSE_SEAL"
+  },
+  "immutableEvidence": {
+    "ownerPacket": {
+      "path": "../owner-packets/base-tfr-sys-003.owner-packet.v1.json",
+      "sha256": "f29a4addb1c9d6b6971cca40464d304eaccf8ecfec980ed0ac0276c8224fcbc9",
+      "bytes": 16555
+    },
+    "centralAuthorization": {
+      "path": "../central-authorization-successor.v1.json",
+      "sha256": "131376aac17d25947abe54fe0dc1969c795f150882e93a671bdae9ce1b618dc1",
+      "bytes": 10098,
+      "requiredLaneState": "SEALED_CROSS_PRODUCT_ADAPTER_REUSE_ONLY"
+    },
+    "batch02Preflight": {
+      "path": "../../r7-batch-02-preflight-r1/semantic-dependency-migration-preflight.v2.json",
+      "sha256": "2706a07dbb245c53a07858a590d1710a865d4a899cbab084b42ea0ed52ec23e8",
+      "bytes": 5773,
+      "requiredDecision": "GO_FOR_FRESH_PACKET"
+    },
+    "roadmap": {
+      "path": "../../execution-roadmap-successor.v15.json",
+      "sha256": "6dd79a60a255e90365bc2003040bbbce9074f4ebfcbb70732dd0250829506ca0",
+      "bytes": 7007
+    }
+  },
+  "basePins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "59964de62cd4da8bcb9f9384d6e2ef85e8c07b09",
+      "tree": "108eb56abdb23f6bd4346b21fac1974da18b01c1",
+      "use": "READ_ONLY_OWNER_CONTRACT_VERIFICATION"
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "f749d046417a35642d158c0d0f674704ace7d4bb",
+      "tree": "3bfecda45d73a2e70d4685dbb4c5861f73dc64c6",
+      "use": "WRITABLE_MODULE_SOURCE_BASE",
+      "laterTokenCarrierMustNotEnterModuleWorktree": true
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "use": "READ_ONLY_ORCHESTRATION_PIN"
+    }
+  },
+  "freshWorktreePolicy": {
+    "reuseBatch01Worktrees": false,
+    "reuseAnyExistingFeatureWorktree": false,
+    "materializeOnlyFromExactPins": true,
+    "verifyCleanAndExactBeforeFirstEdit": true,
+    "backend": {
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261017/r7-batch02/sys-003/backend",
+      "branch": "codex/hris-wave7-r7-batch02-sys-003-backend-20261017-r1",
+      "baseCommit": "59964de62cd4da8bcb9f9384d6e2ef85e8c07b09",
+      "baseTree": "108eb56abdb23f6bd4346b21fac1974da18b01c1",
+      "mode": "READ_ONLY_VERIFICATION_NO_COMMIT"
+    },
+    "frontend": {
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261017/r7-batch02/sys-003/frontend",
+      "branch": "codex/hris-wave7-r7-batch02-sys-003-frontend-20261017-r1",
+      "baseCommit": "f749d046417a35642d158c0d0f674704ace7d4bb",
+      "baseTree": "3bfecda45d73a2e70d4685dbb4c5861f73dc64c6",
+      "mode": "WRITABLE_EXACT_MODULE_SCOPE_COMMIT_AND_PUSH"
+    },
+    "carrierRule": "This token is carried after the pinned frontend commit. Do not merge or cherry-pick its carrier into either module worktree; copy the immutable token as dispatch evidence only.",
+    "deviationAction": "STOP_AND_REQUEST_A_SUCCESSOR_TOKEN"
+  },
+  "ownerAuthorizationContract": {
+    "global": {
+      "requiredProducts": [
+        "APP.HCM:VIEW",
+        "APP.APPROVALS:VIEW"
+      ],
+      "tenantSource": "TRUSTED_GATEWAY_CONTEXT_ONLY",
+      "callerSuppliedTenantOverride": "FORBIDDEN",
+      "defaultDeny": true,
+      "opaqueDenial": true,
+      "staleRevision": "FAIL_CLOSED_BEFORE_OWNER_QUERY_OR_MUTATION"
+    },
+    "settingsWorkflow": {
+      "uiRoute": "/hr/settings/workflow",
+      "query": {
+        "contract": "SHARED-API-005",
+        "capability": "approvals.policy.read",
+        "duty": "HRIS_DUTY_CONFIGURATION_WORKBENCH_READER"
+      },
+      "publish": {
+        "contract": "SHARED-API-006",
+        "capability": "approvals.policy.publish",
+        "duty": "HRIS_DUTY_POLICY_PUBLISHER",
+        "sod": [
+          "SOD_HRIS_CONFIG_FOUR_EYES",
+          "SOD_HRIS_AUDIT_INDEPENDENCE"
+        ]
+      },
+      "existingRouteContracts": [
+        "route.approvals.admin.policies.page",
+        "route.approvals.admin.policy-publish.action"
+      ]
+    },
+    "teamDelegation": {
+      "uiRoute": "/hr/team/delegation",
+      "query": {
+        "contract": "SHARED-API-010",
+        "capability": "approvals.work.delegation.read",
+        "duty": "HRIS_DUTY_MANAGER_TEAM_READER"
+      },
+      "commands": [
+        {
+          "contract": "SHARED-API-011",
+          "capability": "approvals.work.delegation.manage"
+        },
+        {
+          "contract": "SHARED-API-012",
+          "capability": "approvals.work.delegation.manage"
+        }
+      ],
+      "sod": [
+        "SOD_HRIS_AUDIT_INDEPENDENCE"
+      ],
+      "existingRouteContracts": [
+        "route.approvals.work.delegations.page",
+        "route.approvals.work.delegation-create.action",
+        "route.approvals.work.delegation-revoke.action"
+      ]
+    },
+    "centralAdmission": "HCM route aliases and any product-authorization v51 projection remain central-control work after module result evidence; the module may not write them."
+  },
+  "adapterAndBusinessBoundary": {
+    "allowed": [
+      "Present existing Approval policy catalog and governed publish behavior in the HRIS settings layout.",
+      "Present existing Approval delegation list, create and revoke behavior in the HRIS team layout.",
+      "Translate HRIS URL tab and focus state into safe local presentation state.",
+      "Reuse existing owner clients, types, problem responses, idempotency and receipt semantics without semantic alteration."
+    ],
+    "forbidden": [
+      "Any HRIS-specific approval, workflow, policy or delegation business state machine",
+      "Any copied or proxied Approval endpoint",
+      "Any duplicated Approval table, command receipt, outbox, authorization predicate or capability",
+      "Any synthetic trusted identity, tenant, role, duty, population, purpose, field or revision context",
+      "Any optimistic success that is not backed by the owner response or receipt",
+      "Any business completion or tenant activation claim"
+    ]
+  },
+  "migration": {
+    "state": "NO_LEASE_NO_AUTHORING",
+    "expectedPersistenceDelta": "NONE",
+    "platformCurrentHighWater": "V331",
+    "approvalCurrentHighWater": "V58",
+    "authorizedPaths": [],
+    "migrationAuthoringAuthorized": false,
+    "stopCondition": "If implementation requires persistence, stop and submit an exact touch manifest for independent review before requesting Platform V332 or Approval V59."
+  },
+  "touchBoundary": {
+    "allowedBackend": [],
+    "allowedFrontend": [
+      "apps/dwp/src/features/hris/administration/workflow/**",
+      "apps/dwp/src/features/hris/team/delegation/**",
+      "apps/dwp/src/features/hris/administration/__tests__/g3-slices/base-tfr-sys-003.slice.test.tsx",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-02-module-results-r1/base-tfr-sys-003/**"
+    ],
+    "readOnlyReuse": [
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/api/ApprovalAdminController.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/api/ApprovalController.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/domain/**",
+      "dwp-approval-server/src/main/resources/db/migration/**",
+      "libs/shared-utils/src/api/approval-management-api.ts",
+      "libs/shared-utils/src/api/approval-api.ts",
+      "apps/dwp/src/features/approvals/**",
+      "apps/dwp/src/features/hris/shell/model/hris-information-architecture.generated.ts"
+    ],
+    "forbidden": [
+      "backend source, tests or migrations under the present token",
+      "contracts/product-authorization/**, contracts/openapi/**, dwp-auth-server/** and dwp-gateway/**",
+      "frontend architecture, application routes, generated product authorization and HRIS shell model or menu files",
+      "shared Approval API clients or Approval product workspaces without a successor boundary packet",
+      "central control evidence outside the exact SYS-003 module-result root",
+      "PAY-001, TIM-001 or any Batch01 slice"
+    ],
+    "outsideBoundaryAction": "STOP_AND_REQUEST_EXACT_CONTROL_REALLOCATION"
+  },
+  "rollout": {
+    "feature": "HRIS_APPROVAL_WORKFLOW_AND_DELEGATION_ADAPTERS",
+    "runtimeDefault": "OFF",
+    "enrolledTenants": [],
+    "zeroCallRequirement": "Feature absent, false or tenant unenrolled causes zero SHARED-API-005, SHARED-API-006, SHARED-API-010, SHARED-API-011 and SHARED-API-012 owner calls from the HRIS adapters."
+  },
+  "acceptanceCriteria": [
+    "SYS003-AC-01",
+    "SYS003-AC-02",
+    "SYS003-AC-03",
+    "SYS003-AC-04",
+    "SYS003-AC-05",
+    "SYS003-AC-06",
+    "SYS003-AC-07",
+    "SYS003-AC-08",
+    "SYS003-AC-09",
+    "SYS003-AC-10",
+    "SYS003-AC-11",
+    "SYS003-AC-12"
+  ],
+  "verification": {
+    "policy": "Run the new SYS-003 adapter and workspace targets once; after a correction rerun only the smallest failed file or case. Run an existing reused-seam target only when that seam changed. Do not run a repository-wide suite per correction.",
+    "frontend": [
+      "pnpm exec vitest run apps/dwp/src/features/hris/administration/__tests__/g3-slices/base-tfr-sys-003.slice.test.tsx apps/dwp/src/features/hris/administration/workflow apps/dwp/src/features/hris/team/delegation",
+      "pnpm exec eslint apps/dwp/src/features/hris/administration/workflow apps/dwp/src/features/hris/team/delegation apps/dwp/src/features/hris/administration/__tests__/g3-slices/base-tfr-sys-003.slice.test.tsx"
+    ],
+    "conditionalReuse": [
+      "Run libs/shared-utils/src/api/approval-management-api.test.ts only if the shared policy-query client changes under a separately issued successor.",
+      "Run the smallest approval-api policy-publish or delegation frontend test only if that shared client seam changes under a separately issued successor.",
+      "Run no backend target unless the implementation report identifies a suspected owner regression; diagnosis remains read-only."
+    ],
+    "database": [],
+    "browserBeforeCentralMountAuthorized": false,
+    "repositoryWideSuitePerCorrection": false
+  },
+  "resultEvidence": {
+    "exactRoot": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-02-module-results-r1/base-tfr-sys-003",
+    "required": [
+      "frontend module branch result commit and base lineage",
+      "all twelve acceptance results with source or targeted-test evidence",
+      "five SHARED API route and method seals",
+      "cross-product entitlement, duty, population, purpose, revision and SoD negative evidence",
+      "default-off and zero-enrollment evidence",
+      "responsive and accessibility evidence",
+      "changed-path and no-recount manifest proving backend, migration and central-control paths unchanged"
+    ]
+  },
+  "nonClaims": [
+    "This token does not prove either HRIS workspace complete.",
+    "This token does not activate a feature or enroll a tenant.",
+    "This token does not authorize product-authorization v51 generation or an HCM route alias.",
+    "This token does not grant a migration lease or backend write authority.",
+    "This token does not merge any module result to dwp-dev or grant business completion credit.",
+    "This token does not authorize PAY-001 or TIM-001 source work."
+  ],
+  "authority": {
+    "moduleImplementationAuthorized": true,
+    "frontendSourceAuthoringAuthorized": true,
+    "backendSourceAuthoringAuthorized": false,
+    "migrationAuthoringAuthorized": false,
+    "freshWorktreeMaterializationAuthorized": true,
+    "frontendModuleBranchCommitAuthorized": true,
+    "frontendModuleBranchPushAuthorized": true,
+    "backendModuleBranchCommitAuthorized": false,
+    "backendModuleBranchPushAuthorized": false,
+    "mergeToDwpDevAuthorized": false,
+    "centralAuthorizationProjectionWriteAuthorized": false,
+    "centralRouteOrShellMountAuthorized": false,
+    "tokenCarrierMergeIntoModuleWorktreeAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "completionBoundary": {
+    "requiredResultState": "SYS003_FRONTEND_REUSE_ADAPTER_IMPLEMENTATION_COMPLETE_BRANCH_PUSHED_CONTROL_REVIEW_PENDING_DEFAULT_OFF",
+    "directDwpDevMergeAuthorized": false,
+    "centralResultAdmissionAuthorized": false
+  },
+  "invalidationConditions": [
+    "A fresh worktree path, branch, base head, tree, upstream or clean state differs before the first edit.",
+    "Any hash-bound owner packet, central authorization, preflight or roadmap bytes change.",
+    "An existing Approval API cannot satisfy the sealed contract without owner semantic changes.",
+    "A backend, migration, shared Approval client, product-authorization, OpenAPI, Auth, Gateway, route or HRIS shell model change is required.",
+    "A second feature alias, copied API, duplicated persistence or synthesized trust context is introduced.",
+    "Feature enablement, tenant enrollment, dwp-dev merge, business completion credit or production release is attempted."
+  ]
+}
