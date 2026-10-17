@@ -1,0 +1,87 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-01-authorization-decision-validation-receipt.v2",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-01-AUTHORIZATION-DECISION-VALIDATION-20261017-R2",
+  "validatedAt": "2026-10-17T16:10:00+09:00",
+  "validatedBy": "SYS_COMMON_INTEGRATION_CONTROL_INDEPENDENT_P1_RECHECK",
+  "result": "PASS_AUTH_LANE_PATH_BOUNDARY_CORRECTED",
+  "immutablePredecessors": [
+    {
+      "path": "auth-lane-token-state.v1.json",
+      "sha256": "bbaf6fe886dbd7734b8875c19bac04b8006349c3019aed603f88a9152afec5a3"
+    },
+    {
+      "path": "validation-receipt.v1.json",
+      "sha256": "d3bb3900f302c7d79ee41e28dc07d48e28d0c110e7a7a45697ec5eab45ce44bf"
+    }
+  ],
+  "validatedAmendment": {
+    "path": "auth-lane-token-amendment.v2.json",
+    "sha256": "e29a7e24ac70495a606a0785e2d14dae589258a43da7b05e7da7928cd02a9c41"
+  },
+  "checks": [
+    {
+      "id": "AUTHDEC-R2-VAL-001",
+      "result": "PASS",
+      "evidence": "The v1 token and v1 validation receipt are byte-immutable; the correction is append-only v2."
+    },
+    {
+      "id": "AUTHDEC-R2-VAL-002",
+      "result": "PASS",
+      "evidence": "The exact Gateway main-source exception is only ProductSurfaceDecisionContextFilter.java and explicitly forbids business policy, tenant override and fail-open behavior."
+    },
+    {
+      "id": "AUTHDEC-R2-VAL-003",
+      "result": "PASS",
+      "evidence": "Exactly four generated-only owner projection resources are unconditionally added: People, Payroll, Platform and Time v49."
+    },
+    {
+      "id": "AUTHDEC-R2-VAL-004",
+      "result": "PASS",
+      "evidence": "Owner registry source/tests are conditional on fail-closed generator validation need and are limited to v49 resource lineage, checksum, route-count, parsing and registration assertions."
+    },
+    {
+      "id": "AUTHDEC-R2-VAL-005",
+      "result": "PASS",
+      "evidence": "Auth V257 is conditional on the existing append-only release-lineage pattern and may contain only v49 identity, checksum and lineage metadata."
+    },
+    {
+      "id": "AUTHDEC-R2-VAL-006",
+      "result": "PASS",
+      "evidence": "Business controllers, application/domain services, SVC-PEP-TIM-001 and all module migrations remain denied."
+    },
+    {
+      "id": "AUTHDEC-R2-VAL-007",
+      "result": "PASS",
+      "evidence": "The backend receipt must bind four owner projection checksums plus Gateway and any conditionally touched lineage file hashes before v49 acceptance."
+    },
+    {
+      "id": "AUTHDEC-R2-VAL-008",
+      "result": "PASS",
+      "evidence": "Auth lane commit remains the sole issued token; push, dwp-dev merge, module tokens, migration authoring, enrollment and activation remain false."
+    },
+    {
+      "id": "AUTHDEC-R2-VAL-009",
+      "result": "PASS",
+      "evidence": "The correction changes only two append-only JSON artifacts in the existing successor evidence directory."
+    }
+  ],
+  "residualGate": {
+    "backendGenerationReceiptRequired": true,
+    "exactChangedPathAdmissionRequired": true,
+    "conditionalPathNeedProofRequired": true,
+    "allGeneratedFileAndEmbeddedChecksumsRequired": true,
+    "generatedV49Accepted": false,
+    "moduleStartTokenIssuanceAllowed": false
+  },
+  "authority": {
+    "p1Closed": true,
+    "authLaneGenerationAuthorized": true,
+    "authLaneCommitAuthorized": true,
+    "authLanePushAuthorized": false,
+    "authLaneMergeAuthorized": false,
+    "moduleImplementationAuthorized": false,
+    "moduleMigrationAuthoringAuthorized": false,
+    "moduleStartTokenIssued": false,
+    "activationAuthorized": false
+  }
+}
