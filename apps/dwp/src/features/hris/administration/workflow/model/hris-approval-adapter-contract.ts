@@ -73,6 +73,8 @@ export type HrisApprovalAdapterAdmission = Readonly<{
   approvalsProductAccess: 'VIEW';
   tenantId: string;
   actorId: string;
+  ownerTenantId: string;
+  ownerActorId: string;
   rolePlane: 'SETTINGS_ADMIN' | 'MANAGER';
   ownerContextScopeKey: string;
   populationScopeKey?: string;
@@ -107,6 +109,8 @@ function commonAdmission(
       admission.rolePlane === rolePlane &&
       NON_BLANK.test(admission.tenantId) &&
       NON_BLANK.test(admission.actorId) &&
+      admission.ownerTenantId === admission.tenantId &&
+      admission.ownerActorId === admission.actorId &&
       SCOPE_KEY.test(admission.ownerContextScopeKey) &&
       NON_BLANK.test(admission.pageDecisionRevision) &&
       admission.purposeBound === true &&
@@ -185,6 +189,8 @@ export function approvalAdapterScopeIdentity(admission: HrisApprovalAdapterAdmis
   return JSON.stringify([
     admission.tenantId,
     admission.actorId,
+    admission.ownerTenantId,
+    admission.ownerActorId,
     admission.rolePlane,
     admission.ownerContextScopeKey,
     admission.populationScopeKey ?? '',

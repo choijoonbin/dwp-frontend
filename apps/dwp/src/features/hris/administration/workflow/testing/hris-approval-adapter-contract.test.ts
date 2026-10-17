@@ -27,9 +27,19 @@ describe('HRIS Approval adapter authority contract', () => {
     expect(workflowReadAdmitted(workflow)).toBe(true);
     expect(workflowPublishAdmitted(workflow)).toBe(true);
     expect(workflowPublishAdmitted({ ...workflow, command: undefined })).toBe(false);
+    expect(workflowReadAdmitted({ ...workflow, hcmProductAccess: 'DENY' as 'VIEW' })).toBe(false);
     expect(workflowReadAdmitted({ ...workflow, approvalsProductAccess: 'DENY' as 'VIEW' })).toBe(
       false
     );
+    expect(workflowReadAdmitted({ ...workflow, ownerTenantId: 'tenant-99' })).toBe(false);
+    expect(workflowReadAdmitted({ ...workflow, ownerActorId: '99' })).toBe(false);
+    expect(workflowReadAdmitted({ ...workflow, rolePlane: 'MANAGER' })).toBe(false);
+    expect(
+      workflowReadAdmitted({
+        ...workflow,
+        read: { ...workflow.read, duty: 'HRIS_DUTY_MANAGER_TEAM_READER' },
+      })
+    ).toBe(false);
     expect(workflowReadAdmitted({ ...workflow, purposeBound: false as true })).toBe(false);
     expect(
       workflowPublishAdmitted({
