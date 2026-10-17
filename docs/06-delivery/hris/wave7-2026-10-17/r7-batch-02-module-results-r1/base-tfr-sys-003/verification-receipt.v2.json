@@ -1,0 +1,120 @@
+{
+  "schema": "dwp.hris.module-verification-receipt.v2",
+  "generatedAt": "2026-10-17T15:03:15Z",
+  "sliceId": "BASE-TFR-SYS-003",
+  "state": "SYS003_FRONTEND_REUSE_ADAPTER_IMPLEMENTATION_COMPLETE_BRANCH_PUSHED_CONTROL_REVIEW_PENDING_DEFAULT_OFF",
+  "successorOf": {
+    "path": "verification-receipt.v1.json",
+    "sha256": "fc389add6764a259430d0223cb6726dded409f0d036a4ee8f7d28b7e49d7b62d",
+    "bytes": 5416,
+    "mutationPerformed": false
+  },
+  "historicalSequenceCorrections": [
+    {
+      "v1Sequence": 2,
+      "reason": "The immutable log contains the five-test BASE-TFR-SYS-003 slice and the two-test delegation workspace, not the two workspace files stated by v1.",
+      "command": "COREPACK_ENABLE_PROJECT_SPEC=0 corepack pnpm@10.18.3 exec vitest run apps/dwp/src/features/hris/administration/__tests__/g3-slices/base-tfr-sys-003.slice.test.tsx apps/dwp/src/features/hris/team/delegation/testing/hris-team-delegation-workspace.test.tsx",
+      "result": "6_PASSED_1_FAILED_WAIT_TIMING",
+      "testFiles": 2,
+      "tests": 7,
+      "passed": 6,
+      "failed": 1,
+      "log": {
+        "path": "/Users/a10697/Work/DWP/.codex-evidence/r7-sys-003-20261017/frontend/targeted-vitest-failed-files-rerun.log",
+        "sha256": "3c0de0458304332d7b6c6ef7b8e66545651efefd4f11dd664769a4d5ad7a7646",
+        "bytes": 2771
+      }
+    },
+    {
+      "v1Sequence": 3,
+      "reason": "The immutable log contains the delegation-pending case from the five-test BASE-TFR-SYS-003 slice, not a workflow-policy workspace case as stated by v1.",
+      "command": "COREPACK_ENABLE_PROJECT_SPEC=0 corepack pnpm@10.18.3 exec vitest run apps/dwp/src/features/hris/administration/__tests__/g3-slices/base-tfr-sys-003.slice.test.tsx -t 'preserves delegation create window and revoke revision without optimistic success'",
+      "result": "PASS",
+      "testFiles": 1,
+      "testsPassed": 1,
+      "testsSkipped": 4,
+      "log": {
+        "path": "/Users/a10697/Work/DWP/.codex-evidence/r7-sys-003-20261017/frontend/targeted-vitest-single-case-rerun.log",
+        "sha256": "d3df2436475149e5fb58d1d48e023de315b83b94754783ea007c151ed9830b17",
+        "bytes": 407
+      }
+    }
+  ],
+  "supersededV1EslintDisposition": {
+    "sequences": [5, 7],
+    "carriedForwardAsCurrentEvidence": false,
+    "reason": "Those commandless immutable logs have identical content hashes. This successor does not reuse either hash as new evidence; the current source is covered by the two distinct command-bearing ESLint logs below."
+  },
+  "followUpSource": {
+    "commit": "1f0a475bbc8865511ddc436a91f294c2929ec731",
+    "tree": "ab01e5bf6531f3d2cf8f7be6fa18f88e847bae08",
+    "parent": "0ab21293adddb47799a62e7d32bcdad875915e9b",
+    "purpose": "Fail closed unless returned ApprovalMutationExecution matches the admitted secure owner scope, decision revision and nonblank idempotency contract; import policy reads directly from approval-management-api.ts."
+  },
+  "followUpVerification": [
+    {
+      "sequence": "FOLLOWUP-01",
+      "kind": "VITEST_WRONG_EXECUTION_MINIMUM_TARGET",
+      "command": "COREPACK_ENABLE_PROJECT_SPEC=0 corepack pnpm@10.18.3 exec vitest run apps/dwp/src/features/hris/administration/workflow/testing/hris-approval-adapter-contract.test.ts -t 'fails closed when'",
+      "result": "PASS",
+      "testFiles": 1,
+      "testsPassed": 6,
+      "testsSkipped": 3,
+      "negativeCases": [
+        "publish wrong contextScopeKey",
+        "create wrong contextScopeKey",
+        "revoke wrong contextScopeKey",
+        "publish legacy mode",
+        "publish stale expectedDecisionRevision",
+        "publish blank idempotencyKey"
+      ],
+      "log": {
+        "path": "/Users/a10697/Work/DWP/.codex-evidence/r7-sys-003-20261018/frontend-followup/wrong-execution-contract.log",
+        "sha256": "f27dc410d3767da189c9c40843c84727e29c39da801bfd1c01432ff97a16e00a",
+        "bytes": 401
+      }
+    },
+    {
+      "sequence": "FOLLOWUP-02",
+      "kind": "ESLINT_CHANGED_CONTRACT_PATHS",
+      "command": "COREPACK_ENABLE_PROJECT_SPEC=0 corepack pnpm@10.18.3 exec eslint apps/dwp/src/features/hris/administration/workflow/api/hris-workflow-policy-adapter.ts apps/dwp/src/features/hris/administration/workflow/model/hris-approval-adapter-contract.ts apps/dwp/src/features/hris/administration/workflow/testing/hris-approval-adapter-contract.test.ts",
+      "result": "PASS_CLEAN",
+      "errors": 0,
+      "warnings": 0,
+      "log": {
+        "path": "/Users/a10697/Work/DWP/.codex-evidence/r7-sys-003-20261018/frontend-followup/changed-contract-eslint.log",
+        "sha256": "a0c8215ef80bf680ed4e5960342b047cfca9be64a1833d9914af39a417f7b1ec",
+        "bytes": 471,
+        "containsExactCommand": true
+      }
+    },
+    {
+      "sequence": "FOLLOWUP-03",
+      "kind": "ESLINT_CHANGED_COMMAND_CALL_SITES",
+      "command": "COREPACK_ENABLE_PROJECT_SPEC=0 corepack pnpm@10.18.3 exec eslint apps/dwp/src/features/hris/administration/workflow/pages/hris-workflow-policy-workspace.tsx apps/dwp/src/features/hris/team/delegation/pages/hris-team-delegation-workspace.tsx",
+      "result": "PASS_CLEAN",
+      "errors": 0,
+      "warnings": 0,
+      "log": {
+        "path": "/Users/a10697/Work/DWP/.codex-evidence/r7-sys-003-20261018/frontend-followup/changed-call-sites-eslint.log",
+        "sha256": "353e3152b378a17973db28c651125a35576cc87f79c9c68369d57ac2ee737a77",
+        "bytes": 371,
+        "containsExactCommand": true
+      }
+    }
+  ],
+  "executionPolicy": {
+    "fullAggregateRerunPerformed": false,
+    "onlyMinimumWrongExecutionTargetRun": true,
+    "onlyChangedSourcePathsLinted": true
+  },
+  "effectiveFinalResult": {
+    "wrongExecutionContract": "6_OF_6_PASS",
+    "changedSourceEslint": "PASS_CLEAN",
+    "policyReadDependencyBoundary": "DIRECT_APPROVAL_MANAGEMENT_API_IMPORT",
+    "backend": "UNCHANGED_READ_ONLY",
+    "centralRouteAndGeneratedAuthorization": "UNCHANGED",
+    "dwpDevMerge": "NOT_PERFORMED",
+    "defaultOff": true
+  }
+}
