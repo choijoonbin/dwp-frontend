@@ -1,0 +1,87 @@
+{
+  "schema": "dwp.hris.wave7.module-central-integration-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-01-HRM-005-CENTRAL-INTEGRATION-20261017-R1",
+  "recordedAt": "2026-10-17T19:12:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-HRM",
+  "sliceId": "BASE-TFR-HRM-005",
+  "canonicalFeature": "HRIS_ORGANIZATION_POSITIONS",
+  "state": "SOURCE_INTEGRATED_DWP_DEV_DEFAULT_OFF_ACTIVATION_BLOCKED",
+  "independentReview": {
+    "decision": "GO_FOR_CONTROLLED_BACKEND_AND_FRONTEND_INTEGRATION_NO_GO_FOR_ACTIVATION",
+    "remainingP0": 0,
+    "remainingP1": 0,
+    "remainingP2": 0,
+    "reviewedBackendCommit": "ab373e70bdbefae250f294014c8bac45ccae6079",
+    "reviewedBackendTree": "44e3ef90384f73e54b71faa0af6832b0bfc964a5",
+    "reviewedFrontendSourceCommit": "a217e7de6e3e361c856838917903ae60fd394790",
+    "reviewedFrontendEvidenceCommit": "353eadd894fba9df3a44118188337e89b50af01e"
+  },
+  "centralPrerequisite": {
+    "repository": "dwp-backend",
+    "commit": "bf5fc244000f7c80d5ea8b3b5549bd5be00fbcfa",
+    "purpose": "Close the Spring matrix-path default-OFF bypass before admitting HRM-005.",
+    "changedPaths": [
+      "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmProductSurfacePepFilter.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmProductSurfacePepFilterTest.java"
+    ],
+    "verification": {
+      "target": "HcmProductSurfacePepFilterTest",
+      "tests": 14,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "zeroDownstreamCallMatrixVariants": true
+    }
+  },
+  "integration": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "mergeCommit": "f970407d099f6fdca822c8faf5fc8677fe75b538",
+      "tree": "b71d949c7c564e49d3ad2b3f7fdec7e4b6baa93f",
+      "parents": [
+        "bf5fc244000f7c80d5ea8b3b5549bd5be00fbcfa",
+        "ab373e70bdbefae250f294014c8bac45ccae6079"
+      ],
+      "originExactAfterPush": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "mergeCommit": "e467145c688c2ca566da90d4b7f81661f51ad4ac",
+      "tree": "63e942e68f5a056c4523ab8f55c8d4e234c07b60",
+      "parents": [
+        "5efc750e67e3e7c174b15db18440b5ee3f1d1781",
+        "353eadd894fba9df3a44118188337e89b50af01e"
+      ],
+      "originExactAfterPush": true
+    },
+    "mergeConflicts": 0,
+    "moduleClustersRepeated": false,
+    "reasonNotRepeated": "The independently reviewed branch bytes were merged without overlap; the existing bounded 90/90 backend, 4/4 V57 PostgreSQL and 30/30 frontend evidence remains the tested source lineage. Only the newly discovered central gate was tested at its affected class."
+  },
+  "rollout": {
+    "runtimeDefault": "OFF",
+    "enrolledTenants": [],
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "remainingGates": [
+    "central route and shell mount plus explicit adapter injection",
+    "central workforce-access UI label and i18n support for ORGANIZATION",
+    "AC10 browser matrix at 1440, 1280, 390 and 320 widths plus 200 percent zoom, light, dark, high contrast, reduced motion and keyboard navigation",
+    "separate tenant-enrollment and activation authority"
+  ],
+  "completion": {
+    "sourceIntegrated": true,
+    "migrationIntegrated": true,
+    "defaultOffPreserved": true,
+    "activationComplete": false,
+    "acceptancePassed": 11,
+    "acceptancePending": ["HRM005-AC-10"],
+    "acceptanceFailed": []
+  }
+}
