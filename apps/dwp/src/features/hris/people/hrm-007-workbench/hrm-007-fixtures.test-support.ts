@@ -7,6 +7,9 @@ export const HRM007_TEST_AS_OF = '2026-10-17T00:00:00Z';
 export const HRM007_TEST_CURSOR = 'abcdefghijklmnop';
 
 export const HRM007_TEST_SCOPE: Hrm007TrustedScope = Object.freeze({
+  tenantId: 'tenant:one',
+  actorId: 'actor:hrm-007',
+  accessMode: 'NORMAL',
   contextScopeKey: 'scope:tenant-one:hrm-007',
   decisionRevision: 'decision:hrm-007:51',
   locale: 'en-US',

@@ -4,6 +4,7 @@ import { createRoot, type Root } from 'react-dom/client';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { HttpError, HttpTransportError } from '@dwp-frontend/shared-utils';
+import { isProductAuthoritySensitiveQuery } from '@dwp-frontend/shared-utils/auth/product-surface-context-provider';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { HRM007_ADAPTER_KIND, HRM007_FEATURE } from './hrm-007-contract';
@@ -14,6 +15,7 @@ import {
   Hrm007TeamPeopleChangesPage,
   Hrm007Workbench,
 } from './hrm-007-workbench';
+import { hrm007QueryContract } from './use-hrm-007-workbench';
 import {
   HRM007_TEST_CURSOR,
   HRM007_TEST_SCOPE,
@@ -116,7 +118,7 @@ describe('HRM-007 governed workbench runtime', () => {
     document.body.appendChild(host);
     root = createRoot(host);
     client = new QueryClient({
-      defaultOptions: { queries: { retry: false, gcTime: 0 } },
+      defaultOptions: { queries: { retry: false } },
     });
   });
 
@@ -152,6 +154,65 @@ describe('HRM-007 governed workbench runtime', () => {
       tenantEnrolled: false,
     });
     expect(Object.isFrozen(HRM007_DEFAULT_GATE)).toBe(true);
+  });
+
+  it('registers HRM-007 cache for central authority revocation and purges the snapshot', async () => {
+    const source = adapter(projection('IAQ-005'));
+    await renderWorkbench({
+      queryId: 'IAQ-005',
+      gate: ADMITTED,
+      scope: HRM007_TEST_SCOPE,
+      adapter: source,
+    });
+    await shown('Employment details change');
+
+    const contract = hrm007QueryContract(source, 'IAQ-005', HRM007_TEST_SCOPE);
+    expect(contract.queryKey.slice(0, 10)).toEqual([
+      'product-surface-sensitive',
+      HRM007_TEST_SCOPE.tenantId,
+      HRM007_TEST_SCOPE.actorId,
+      HRM007_TEST_SCOPE.accessMode,
+      'hcm',
+      'hcm.team',
+      HRM007_TEST_SCOPE.contextScopeKey,
+      HRM007_TEST_SCOPE.decisionRevision,
+      'hris',
+      'hrm-007',
+    ]);
+    expect(contract.meta).toEqual({
+      accessSensitive: true,
+      tenantId: HRM007_TEST_SCOPE.tenantId,
+      actorId: HRM007_TEST_SCOPE.actorId,
+      accessMode: HRM007_TEST_SCOPE.accessMode,
+      productId: 'hcm',
+      surfaceId: 'hcm.team',
+      contextScopeKey: HRM007_TEST_SCOPE.contextScopeKey,
+      decisionRevision: HRM007_TEST_SCOPE.decisionRevision,
+    });
+    const cached = client.getQueryCache().find({ queryKey: contract.queryKey, exact: true });
+    expect(cached?.meta).toEqual(contract.meta);
+    expect(
+      cached &&
+        isProductAuthoritySensitiveQuery(cached, {
+          tenantId: HRM007_TEST_SCOPE.tenantId,
+          actorId: HRM007_TEST_SCOPE.actorId,
+          accessMode: HRM007_TEST_SCOPE.accessMode,
+        })
+    ).toBe(true);
+
+    await act(async () => {
+      client.removeQueries({
+        predicate: (query) =>
+          isProductAuthoritySensitiveQuery(query, {
+            tenantId: HRM007_TEST_SCOPE.tenantId,
+            actorId: HRM007_TEST_SCOPE.actorId,
+            accessMode: HRM007_TEST_SCOPE.accessMode,
+          }),
+      });
+    });
+    expect(
+      client.getQueryCache().find({ queryKey: contract.queryKey, exact: true })
+    ).toBeUndefined();
   });
 
   it.each([
@@ -251,10 +312,11 @@ describe('HRM-007 governed workbench runtime', () => {
   });
 
   it.each([400, 401, 403, 404, 409])(
-    'conceals cached objects and actions after HTTP %s',
+    'conceals and purges cached objects and actions after HTTP %s',
     async (status) => {
       const source = adapter(projection('IAQ-005'));
       const delegate = vi.fn();
+      const queryKey = hrm007QueryContract(source, 'IAQ-005', HRM007_TEST_SCOPE).queryKey;
       await renderWorkbench({
         queryId: 'IAQ-005',
         gate: ADMITTED,
@@ -271,6 +333,7 @@ describe('HRM-007 governed workbench runtime', () => {
       expect(document.body.textContent).not.toContain('Employment details change');
       expect(document.body.textContent).not.toContain('Create Employee Change Request');
       expect(delegate).not.toHaveBeenCalled();
+      await vi.waitFor(() => expect(client.getQueryData(queryKey)).toBeUndefined());
     }
   );
 
@@ -287,9 +350,10 @@ describe('HRM-007 governed workbench runtime', () => {
         wire.queryState.cachePolicy.authorizationDecisionRevision = 'decision:hrm-007:999';
       },
     ],
-  ] as const)('conceals cached objects after a local %s', async (_label, corrupt) => {
+  ] as const)('conceals and purges cached objects after a local %s', async (_label, corrupt) => {
     const source = adapter(projection('IAQ-005'));
     const delegate = vi.fn();
+    const queryKey = hrm007QueryContract(source, 'IAQ-005', HRM007_TEST_SCOPE).queryKey;
     await renderWorkbench({
       queryId: 'IAQ-005',
       gate: ADMITTED,
@@ -308,6 +372,7 @@ describe('HRM-007 governed workbench runtime', () => {
     expect(document.body.textContent).not.toContain('Employment details change');
     expect(document.body.textContent).not.toContain('Create Employee Change Request');
     expect(delegate).not.toHaveBeenCalled();
+    await vi.waitFor(() => expect(client.getQueryData(queryKey)).toBeUndefined());
   });
 
   it.each([
@@ -319,6 +384,7 @@ describe('HRM-007 governed workbench runtime', () => {
     async (_label, failure) => {
       const source = adapter(projection('IAQ-005'));
       const delegate = vi.fn();
+      const queryKey = hrm007QueryContract(source, 'IAQ-005', HRM007_TEST_SCOPE).queryKey;
       await renderWorkbench({
         queryId: 'IAQ-005',
         gate: ADMITTED,
@@ -333,11 +399,13 @@ describe('HRM-007 governed workbench runtime', () => {
       expect(document.body.textContent).toContain('Employment details change');
       expect(button('Create Employee Change Request').disabled).toBe(true);
       expect(document.querySelector('[data-runtime-state="stale"]')).not.toBeNull();
+      expect(client.getQueryData(queryKey)).toBeDefined();
     }
   );
 
   it('does not retain cached data for an unclassified local failure', async () => {
     const source = adapter(projection('IAQ-005'));
+    const queryKey = hrm007QueryContract(source, 'IAQ-005', HRM007_TEST_SCOPE).queryKey;
     await renderWorkbench({
       queryId: 'IAQ-005',
       gate: ADMITTED,
@@ -350,6 +418,68 @@ describe('HRM-007 governed workbench runtime', () => {
     await shown('Owner data could not be loaded');
     expect(document.body.textContent).not.toContain('Employment details change');
     expect(document.querySelector('[data-runtime-state="stale"]')).toBeNull();
+    await vi.waitFor(() => expect(client.getQueryData(queryKey)).toBeUndefined());
+    await act(async () => button('Retry').click());
+    await shown('Employment details change');
+  });
+
+  it('fences delegated actions synchronously while refresh is in flight or terminally failed', async () => {
+    const source = adapter(projection('IAQ-005'));
+    const delegate = vi.fn();
+    await renderWorkbench({
+      queryId: 'IAQ-005',
+      gate: ADMITTED,
+      scope: HRM007_TEST_SCOPE,
+      adapter: source,
+      onDelegateAction: delegate,
+    });
+    await shown('Employment details change');
+    expect(button('Create Employee Change Request').disabled).toBe(false);
+
+    const pending = deferred<Hrm007Projection>();
+    vi.mocked(source.query).mockReturnValueOnce(pending.promise);
+    await act(async () => {
+      button('Refresh').click();
+      button('Create Employee Change Request').click();
+    });
+    expect(delegate).not.toHaveBeenCalled();
+    await vi.waitFor(() => expect(button('Create Employee Change Request').disabled).toBe(true));
+    button('Create Employee Change Request').click();
+    expect(delegate).not.toHaveBeenCalled();
+
+    pending.resolve(projection('IAQ-005'));
+    await vi.waitFor(() => expect(button('Create Employee Change Request').disabled).toBe(false));
+
+    const pendingNext = deferred<Hrm007Projection>();
+    vi.mocked(source.query).mockReturnValueOnce(pendingNext.promise);
+    await act(async () => {
+      button('Next').click();
+      button('Create Employee Change Request').click();
+    });
+    expect(delegate).not.toHaveBeenCalled();
+    pendingNext.resolve(projection('IAQ-005'));
+    await shown('Employment details change');
+    await vi.waitFor(() => expect(button('Create Employee Change Request').disabled).toBe(false));
+
+    const actionBeforeTerminalRender = button('Create Employee Change Request');
+    let attemptedAtTerminalState = false;
+    const unsubscribe = client.getQueryCache().subscribe((event) => {
+      if (
+        attemptedAtTerminalState ||
+        event.query.state.status !== 'error' ||
+        event.query.state.fetchStatus !== 'idle'
+      ) {
+        return;
+      }
+      attemptedAtTerminalState = true;
+      actionBeforeTerminalRender.click();
+    });
+    vi.mocked(source.query).mockRejectedValueOnce(new HttpError('not disclosed', 403));
+    await act(async () => button('Refresh').click());
+    unsubscribe();
+    expect(attemptedAtTerminalState).toBe(true);
+    await shown('The current access context cannot disclose this workbench');
+    expect(delegate).not.toHaveBeenCalled();
   });
 
   it('isolates cached data when the adapter instance changes', async () => {
@@ -473,7 +603,7 @@ describe('HRM-007 governed workbench runtime', () => {
     }
   );
 
-  it('preserves tab/asOf URL state when keyboard-operable selection updates focus', async () => {
+  it('preserves only authority selectors and IAQ-specific filter/sort URL state when selection updates focus', async () => {
     const wire = hrm007ProjectionWire('IAQ-005');
     const second = structuredClone(wire.items[0]!);
     second.itemPublicId = 'people-change:1002';
@@ -484,22 +614,42 @@ describe('HRM-007 governed workbench runtime', () => {
     const source = adapter(wire as unknown as Hrm007Projection);
     await renderWorkbench(
       { queryId: 'IAQ-005', gate: ADMITTED, scope: HRM007_TEST_SCOPE, adapter: source },
-      '/hr/team/people-changes?tab=overview&asOf=2026-10-17&focus=people-change%3A1001&unsafe=drop'
+      '/hr/team/people-changes?tab=other&scope=scope%3Ahcm%2Fnon-default&navigationScope=LEGAL_ENTITY&legalEntityPublicId=6d07e952-2f5f-4dc1-8be7-6d7e210d23af&asOf=2026-10-17&sort=approvalStatus%3ADESC&sort=itemPublicId%3AASC&filter%5BapprovalStatus%5D%5Bcodes%5D=APPROVED&filter%5BapprovalStatus%5D%5Bcodes%5D=PENDING&filter%5BapprovalStatus%5D%5BminimumRevision%5D=2&filter%5Bappointment%5D%5BstartFrom%5D=2026-10-17T00%3A00%3A00Z&cursor=abcdefghijklmnop&tenantId=forbidden&decisionRevision=forbidden&focus=people-change%3A1001&unsafe=drop'
     );
     await shown('Second governed change');
     const detailLink = [...document.querySelectorAll('a')].find((candidate) =>
       candidate.textContent?.includes('Open governed detail')
     );
-    expect(detailLink?.getAttribute('href')).toContain('asOf=2026-10-17');
-    expect(detailLink?.getAttribute('href')).not.toContain('unsafe');
+    const detailSearch = new URL(detailLink?.getAttribute('href') ?? '', 'https://dwp.invalid')
+      .searchParams;
+    expect(detailSearch.get('tab')).toBe('overview');
+    expect(detailSearch.get('scope')).toBe('scope:hcm/non-default');
+    expect(detailSearch.get('navigationScope')).toBe('LEGAL_ENTITY');
+    expect(detailSearch.get('legalEntityPublicId')).toBe('6d07e952-2f5f-4dc1-8be7-6d7e210d23af');
+    expect(detailSearch.get('asOf')).toBe('2026-10-17');
+    expect(detailSearch.getAll('sort')).toEqual(['approvalStatus:DESC', 'itemPublicId:ASC']);
+    expect(detailSearch.getAll('filter[approvalStatus][codes]')).toEqual(['APPROVED', 'PENDING']);
+    expect(detailSearch.get('filter[approvalStatus][minimumRevision]')).toBe('2');
+    expect(detailSearch.get('filter[appointment][startFrom]')).toBeNull();
+    expect(detailSearch.get('cursor')).toBeNull();
+    expect(detailSearch.get('tenantId')).toBeNull();
+    expect(detailSearch.get('decisionRevision')).toBeNull();
+    expect(detailSearch.get('unsafe')).toBeNull();
     const selection = button('Second governed change');
     expect(selection.getAttribute('aria-pressed')).toBe('false');
     await act(async () => selection.click());
     const location = document.querySelector('[data-testid="location"]')?.textContent ?? '';
-    expect(location).toContain('tab=overview');
-    expect(location).toContain('asOf=2026-10-17');
-    expect(location).toContain('focus=people-change%3A1002');
-    expect(location).not.toContain('unsafe');
+    const selectedSearch = new URLSearchParams(location);
+    expect(selectedSearch.get('tab')).toBe('overview');
+    expect(selectedSearch.get('focus')).toBe('people-change:1002');
+    expect(selectedSearch.get('scope')).toBe('scope:hcm/non-default');
+    expect(selectedSearch.get('navigationScope')).toBe('LEGAL_ENTITY');
+    expect(selectedSearch.get('legalEntityPublicId')).toBe('6d07e952-2f5f-4dc1-8be7-6d7e210d23af');
+    expect(selectedSearch.getAll('sort')).toEqual(['approvalStatus:DESC', 'itemPublicId:ASC']);
+    expect(selectedSearch.getAll('filter[approvalStatus][codes]')).toEqual(['APPROVED', 'PENDING']);
+    expect(selectedSearch.get('filter[appointment][startFrom]')).toBeNull();
+    expect(selectedSearch.get('cursor')).toBeNull();
+    expect(selectedSearch.get('unsafe')).toBeNull();
     expect(selection.getAttribute('aria-pressed')).toBe('true');
   });
 

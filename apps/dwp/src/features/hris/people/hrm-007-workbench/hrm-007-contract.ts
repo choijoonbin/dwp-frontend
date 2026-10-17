@@ -1,3 +1,5 @@
+import type { ProductAccessMode } from '../../../shell/product-surface-context';
+
 export const HRM007_FEATURE = 'HRIS_HRM_APPOINTMENT_WORKBENCH' as const;
 export const HRM007_ADAPTER_KIND = 'HRIS_HRM_007_ENTRY_QUERY_V1' as const;
 
@@ -59,6 +61,8 @@ export const HRM007_QUERY_CONTRACTS = Object.freeze({
     variantKey: 'PEOPLE_CHANGES',
     path: '/api/people/v1/hris/workbench/team/people-changes',
     route: '/hr/team/people-changes',
+    productId: 'hcm',
+    surfaceId: 'hcm.team',
     capability: 'hcm.team.people-change.view',
     purpose: 'HR_LIFECYCLE',
     fieldGroups: ['CHANGE_REQUEST_SUMMARY', 'LIMITED_EMPLOYMENT', 'APPROVAL_STATUS'],
@@ -91,6 +95,8 @@ export const HRM007_QUERY_CONTRACTS = Object.freeze({
     variantKey: 'APPOINTMENTS',
     path: '/api/people/v1/hris/workbench/operations/appointments',
     route: '/hr/operations/people/appointments',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
     capability: 'hcm.operations.people.view',
     purpose: 'HR_LIFECYCLE',
     fieldGroups: ['APPOINTMENT', 'ASSIGNMENT', 'EMPLOYMENT'],
@@ -128,6 +134,8 @@ export const HRM007_QUERY_CONTRACTS = Object.freeze({
     variantKey: 'PEOPLE_EMPLOYMENT',
     path: '/api/people/v1/hris/workbench/configuration/people-employment',
     route: '/hr/settings/people-employment',
+    productId: 'hcm',
+    surfaceId: 'hcm.management',
     capability: 'hcm.configuration.workbench.view',
     purpose: 'HRIS_CONFIGURATION',
     fieldGroups: ['POLICY_METADATA', 'EMPLOYMENT_RULE', 'IMPACT_SUMMARY'],
@@ -249,6 +257,9 @@ export type Hrm007Projection = Readonly<{
 }>;
 
 export type Hrm007TrustedScope = Readonly<{
+  tenantId: string;
+  actorId: string;
+  accessMode: ProductAccessMode;
   contextScopeKey: string;
   decisionRevision: string;
   locale: string;
@@ -710,6 +721,9 @@ function parseFilterValue(kind: FilterKind, value: unknown, path: string): unkno
 
 export function assertHrm007TrustedScope(value: unknown): Hrm007TrustedScope {
   const source = exact(value, 'scope', [
+    'tenantId',
+    'actorId',
+    'accessMode',
     'contextScopeKey',
     'decisionRevision',
     'locale',
@@ -728,6 +742,14 @@ export function assertHrm007TrustedScope(value: unknown): Hrm007TrustedScope {
   }
   if (!canonicalLocale || !canonicalTimeZone) return invalid('scope.localeOrTimeZone');
   return Object.freeze({
+    tenantId: text(source.tenantId, 'scope.tenantId', 128, PUBLIC_ID),
+    actorId: text(source.actorId, 'scope.actorId', 128, PUBLIC_ID),
+    accessMode:
+      source.accessMode === 'NORMAL' ||
+      source.accessMode === 'ELEVATED' ||
+      source.accessMode === 'PROVIDER_SUPPORT'
+        ? source.accessMode
+        : invalid('scope.accessMode'),
     contextScopeKey: text(source.contextScopeKey, 'scope.contextScopeKey', 256),
     decisionRevision: text(source.decisionRevision, 'scope.decisionRevision', 128, PUBLIC_ID),
     locale: canonicalLocale,
@@ -796,6 +818,9 @@ export function assertHrm007QueryRequest(
   );
   if (source.limit !== 100) return invalid('request.limit');
   const scope = assertHrm007TrustedScope({
+    tenantId: 'validated:tenant',
+    actorId: 'validated:actor',
+    accessMode: 'NORMAL',
     contextScopeKey: 'validated:adapter',
     decisionRevision: 'validated:adapter',
     locale: source.locale,

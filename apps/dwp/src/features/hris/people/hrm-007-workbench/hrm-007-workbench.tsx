@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link as RouterLink, useSearchParams } from 'react-router-dom';
 import { BriefcaseBusiness, RefreshCw, Settings2, UsersRound } from 'lucide-react';
+import { useQueryClient } from '@tanstack/react-query';
 import { HttpError, HttpTransportError } from '@dwp-frontend/shared-utils';
 import {
   ActionButton,
@@ -265,7 +266,9 @@ function WorkbenchDetail({
             intent="secondary"
             size="small"
             disabled={!actionsEnabled || !onDelegateAction}
-            onClick={() => onDelegateAction?.(queryId, item, action)}
+            onClick={() => {
+              if (actionsEnabled) onDelegateAction?.(queryId, item, action);
+            }}
           >
             {actionLabel(action)}
           </ActionButton>
@@ -294,16 +297,109 @@ function mayRetainCachedProjection(error: unknown) {
   );
 }
 
-function governedSearchParams(current: URLSearchParams, focus: string): URLSearchParams {
-  const next = new URLSearchParams({ tab: 'overview', focus });
-  const asOf = current.get('asOf');
-  if (
-    asOf &&
-    (/^\d{4}-\d{2}-\d{2}$/u.test(asOf) ||
-      /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,9})?(?:Z|[+-]\d{2}:\d{2})$/u.test(asOf))
-  ) {
-    next.set('asOf', asOf);
+const HRM007_FILTER_SEARCH_KEYS: Readonly<Record<Hrm007QueryId, readonly string[]>> = Object.freeze(
+  {
+    'IAQ-005': Object.freeze([
+      'filter[changeRequestSummary][minimumItemCount]',
+      'filter[changeRequestSummary][maximumItemCount]',
+      'filter[limitedEmployment][codes]',
+      'filter[limitedEmployment][minimumRevision]',
+      'filter[approvalStatus][codes]',
+      'filter[approvalStatus][minimumRevision]',
+      'filter[effectiveOn]',
+    ]),
+    'IAQ-007': Object.freeze([
+      'filter[appointment][startFrom]',
+      'filter[appointment][startTo]',
+      'filter[appointment][endFrom]',
+      'filter[appointment][endTo]',
+      'filter[assignment][codes]',
+      'filter[assignment][publicIds]',
+      'filter[employment][activeOn]',
+      'filter[employment][from]',
+      'filter[employment][to]',
+      'filter[effectiveOn]',
+    ]),
+    'IAQ-013': Object.freeze([
+      'filter[policyMetadata][policyKeys]',
+      'filter[policyMetadata][minimumRevision]',
+      'filter[employmentRule][policyKeys]',
+      'filter[employmentRule][minimumRevision]',
+      'filter[impactSummary][minimumItemCount]',
+      'filter[impactSummary][maximumItemCount]',
+      'filter[effectiveOn]',
+    ]),
   }
+);
+
+const REPEATABLE_FILTER_SEARCH_KEY = /\]\[(?:codes|publicIds|policyKeys)\]$/u;
+const CIVIL_DATE_OR_INSTANT =
+  /^(?:\d{4}-\d{2}-\d{2}|\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,9})?(?:Z|[+-]\d{2}:\d{2}))$/u;
+const LEGAL_ENTITY_PUBLIC_ID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/iu;
+
+function appendSingleSearchValue(
+  target: URLSearchParams,
+  source: URLSearchParams,
+  key: string,
+  validate: (value: string) => boolean = (value) =>
+    Boolean(value) && value === value.trim() && value.length <= 1024
+) {
+  const values = source.getAll(key);
+  if (values.length === 1 && validate(values[0]!)) target.append(key, values[0]!);
+}
+
+function governedSearchParams(
+  queryId: Hrm007QueryId,
+  current: URLSearchParams,
+  focus: string
+): URLSearchParams {
+  const next = new URLSearchParams({ tab: 'overview', focus });
+  appendSingleSearchValue(
+    next,
+    current,
+    'scope',
+    (value) => Boolean(value) && value === value.trim() && value.length <= 256
+  );
+  appendSingleSearchValue(
+    next,
+    current,
+    'navigationScope',
+    (value) => value === 'TENANT' || value === 'LEGAL_ENTITY'
+  );
+  appendSingleSearchValue(next, current, 'legalEntityPublicId', (value) =>
+    LEGAL_ENTITY_PUBLIC_ID.test(value)
+  );
+  appendSingleSearchValue(next, current, 'asOf', (value) => CIVIL_DATE_OR_INSTANT.test(value));
+
+  const requestedSort = current.getAll('sort');
+  const canonicalSort = [...requestedSort];
+  if (canonicalSort.length && !canonicalSort.some((value) => value.startsWith('itemPublicId:'))) {
+    canonicalSort.push('itemPublicId:ASC');
+  }
+  if (
+    canonicalSort.length <= 3 &&
+    new Set(canonicalSort).size === canonicalSort.length &&
+    canonicalSort.every((value) =>
+      (HRM007_QUERY_CONTRACTS[queryId].sorts as readonly string[]).includes(value)
+    ) &&
+    (canonicalSort.length === 0 || canonicalSort.at(-1)?.startsWith('itemPublicId:'))
+  ) {
+    requestedSort.forEach((value) => next.append('sort', value));
+  }
+
+  HRM007_FILTER_SEARCH_KEYS[queryId].forEach((key) => {
+    const values = current.getAll(key);
+    const repeatable = REPEATABLE_FILTER_SEARCH_KEY.test(key);
+    if (
+      values.length === 0 ||
+      (!repeatable && values.length !== 1) ||
+      (repeatable && (values.length > 50 || new Set(values).size !== values.length)) ||
+      values.some((value) => !value || value !== value.trim() || value.length > 1024)
+    ) {
+      return;
+    }
+    values.forEach((value) => next.append(key, value));
+  });
   return next;
 }
 
@@ -338,7 +434,7 @@ function ProjectionWorkspace({
   const runtimeState = stale ? 'stale' : projection.queryState.state.toLowerCase();
   const copy = PAGE_COPY[queryId];
   const select = (item: Hrm007Item) => {
-    setSearchParams(governedSearchParams(searchParams, item.deepLink.resourcePublicId), {
+    setSearchParams(governedSearchParams(queryId, searchParams, item.deepLink.resourcePublicId), {
       replace: true,
     });
   };
@@ -430,10 +526,12 @@ function ProjectionWorkspace({
             queryId={queryId}
             item={selected}
             deepLink={`${selected.deepLink.route}?${governedSearchParams(
+              queryId,
               searchParams,
               selected.deepLink.resourcePublicId
             ).toString()}`}
             actionsEnabled={
+              !fetching &&
               !stale &&
               projection.queryState.freshness === 'CURRENT' &&
               projection.queryState.state === 'COMPLETE'
@@ -459,26 +557,53 @@ function ProjectionWorkspace({
   );
 }
 
-function AdmittedHrm007Workbench({
-  queryId,
-  scope,
-  adapter,
-  options,
-  onDelegateAction,
-}: Readonly<{
+type AdmittedHrm007WorkbenchProps = Readonly<{
   queryId: Hrm007QueryId;
   scope: Hrm007TrustedScope;
   adapter: Hrm007QueryAdapter;
   options?: Hrm007QueryOptions;
   onDelegateAction?: Hrm007ActionDelegate;
-}>) {
+}>;
+
+type Hrm007TerminalFailure = Readonly<{
+  kind: 'concealed' | 'unavailable';
+  queryKey: readonly unknown[];
+}>;
+
+function ActiveHrm007Workbench({
+  queryId,
+  scope,
+  adapter,
+  options,
+  onDelegateAction,
+  onTerminalFailure,
+}: AdmittedHrm007WorkbenchProps &
+  Readonly<{ onTerminalFailure: (failure: Hrm007TerminalFailure) => void }>) {
+  const queryClient = useQueryClient();
+  const actionFence = useRef(false);
   const initialCursor = options?.cursor ?? null;
   const [cursorHistory, setCursorHistory] = useState<readonly (string | null)[]>([initialCursor]);
   const pageIndex = cursorHistory.length - 1;
   const cursor = cursorHistory[pageIndex] ?? null;
   const activeOptions = { ...options, cursor };
-  const query = useHrm007WorkbenchQuery({ adapter, queryId, scope, options: activeOptions });
-  if (mustConcealProjection(query.error)) {
+  const queryKey = hrm007QueryKey(adapter, queryId, scope, activeOptions);
+  const query = useHrm007WorkbenchQuery({
+    adapter,
+    queryId,
+    scope,
+    options: activeOptions,
+  });
+  const concealError = mustConcealProjection(query.error);
+  const discardError = Boolean(query.error && !mayRetainCachedProjection(query.error));
+  useEffect(() => {
+    if (!query.isFetching && !query.error) actionFence.current = false;
+  }, [query.data, query.error, query.isFetching]);
+  useEffect(() => {
+    if (discardError) {
+      onTerminalFailure({ kind: concealError ? 'concealed' : 'unavailable', queryKey });
+    }
+  }, [concealError, discardError, onTerminalFailure, queryKey]);
+  if (concealError) {
     return (
       <div data-testid="hrm-007-denied" data-runtime-state="denied">
         <GuidedEmptyState
@@ -504,7 +629,9 @@ function AdmittedHrm007Workbench({
           title="Governed workbench unavailable"
           description="Owner data could not be loaded. No lifecycle action was enabled."
           retryLabel="Retry"
-          onRetry={() => void query.refetch()}
+          onRetry={() =>
+            onTerminalFailure({ kind: concealError ? 'concealed' : 'unavailable', queryKey })
+          }
           retrying={query.isFetching}
           size="page"
         />
@@ -540,22 +667,100 @@ function AdmittedHrm007Workbench({
       </div>
     );
   }
+  const delegateCurrentAction: Hrm007ActionDelegate | undefined = onDelegateAction
+    ? (delegatedQueryId, delegatedItem, delegatedAction) => {
+        const liveState = queryClient.getQueryState<Hrm007Projection>(queryKey);
+        const liveProjection = liveState?.data;
+        if (
+          actionFence.current ||
+          delegatedQueryId !== queryId ||
+          !liveState ||
+          liveState.fetchStatus !== 'idle' ||
+          liveState.status !== 'success' ||
+          liveState.error ||
+          liveProjection?.queryState.state !== 'COMPLETE' ||
+          liveProjection.queryState.freshness !== 'CURRENT'
+        ) {
+          return;
+        }
+        const liveItem = liveProjection.items.find(
+          (item) => item.itemPublicId === delegatedItem.itemPublicId
+        );
+        const liveAction = liveItem?.availableActions.find(
+          (action) => action.actionKey === delegatedAction.actionKey
+        );
+        if (liveItem && liveAction) onDelegateAction(queryId, liveItem, liveAction);
+      }
+    : undefined;
   return (
     <ProjectionWorkspace
       queryId={queryId}
       projection={query.data}
       staleByRefreshFailure={Boolean(query.error && mayRetainCachedProjection(query.error))}
       fetching={query.isFetching}
-      onRefresh={() => void query.refetch()}
+      onRefresh={() => {
+        actionFence.current = true;
+        void query.refetch();
+      }}
       canPrevious={pageIndex > 0}
-      onPrevious={() => setCursorHistory((history) => history.slice(0, -1))}
+      onPrevious={() => {
+        actionFence.current = true;
+        setCursorHistory((history) => history.slice(0, -1));
+      }}
       onNext={() => {
         const next = query.data.queryState.nextCursor;
-        if (next) setCursorHistory((history) => [...history, next]);
+        if (next) {
+          actionFence.current = true;
+          setCursorHistory((history) => [...history, next]);
+        }
       }}
-      onDelegateAction={onDelegateAction}
+      onDelegateAction={delegateCurrentAction}
     />
   );
+}
+
+function AdmittedHrm007Workbench(props: AdmittedHrm007WorkbenchProps) {
+  const queryClient = useQueryClient();
+  const [terminalFailure, setTerminalFailure] = useState<Hrm007TerminalFailure | null>(null);
+  useEffect(() => {
+    if (!terminalFailure) return;
+    const exactQuery = { queryKey: terminalFailure.queryKey, exact: true } as const;
+    let cancellation: Promise<void>;
+    try {
+      cancellation = queryClient.cancelQueries(exactQuery);
+    } catch {
+      cancellation = Promise.resolve();
+    }
+    queryClient.removeQueries(exactQuery);
+    void cancellation.catch(() => undefined);
+  }, [queryClient, terminalFailure]);
+  if (terminalFailure?.kind === 'concealed') {
+    return (
+      <div data-testid="hrm-007-denied" data-runtime-state="denied">
+        <GuidedEmptyState
+          kind="permission"
+          title="This governed workbench is unavailable"
+          description="The current access context cannot disclose this workbench."
+          size="page"
+        />
+      </div>
+    );
+  }
+  if (terminalFailure?.kind === 'unavailable') {
+    return (
+      <div data-testid="hrm-007-unavailable" data-runtime-state="unavailable">
+        <LocalErrorState
+          title="Governed workbench unavailable"
+          description="Owner data could not be loaded. No lifecycle action was enabled."
+          retryLabel="Retry"
+          onRetry={() => setTerminalFailure(null)}
+          retrying={false}
+          size="page"
+        />
+      </div>
+    );
+  }
+  return <ActiveHrm007Workbench {...props} onTerminalFailure={setTerminalFailure} />;
 }
 
 export type Hrm007WorkbenchProps = Readonly<{
@@ -601,6 +806,9 @@ export function Hrm007Workbench({
     trustedScope = assertHrm007TrustedScope(
       trustedAdmission && admission
         ? {
+            tenantId: admission.tenantId,
+            actorId: admission.actorId,
+            accessMode: admission.accessMode,
             contextScopeKey: admission.contextScopeKey,
             decisionRevision: admission.decisionRevision,
             locale: admission.locale,

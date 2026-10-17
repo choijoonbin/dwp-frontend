@@ -22,7 +22,11 @@ export {
   Hrm007TeamPeopleChangesPage,
   Hrm007Workbench,
 } from './hrm-007-workbench';
-export { hrm007QueryKey, useHrm007WorkbenchQuery } from './use-hrm-007-workbench';
+export {
+  hrm007QueryContract,
+  hrm007QueryKey,
+  useHrm007WorkbenchQuery,
+} from './use-hrm-007-workbench';
 
 export type { Hrm007QueryAdapter } from './hrm-007-api';
 export type {
