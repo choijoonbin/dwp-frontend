@@ -1,0 +1,207 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-01-central-authorization-decision-amendment.v5",
+  "amendmentId": "HRIS-WAVE7-R7-BATCH-01-CENTRAL-AUTHORIZATION-DECISION-AMENDMENT-20261017-R5",
+  "recordedAt": "2026-10-17T16:45:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL_EXPRESSION_AND_PAY_CHALLENGE_REPAIR",
+  "state": "P1_EXACT_GENERIC_SET_EXPRESSION_REDUCTION_AND_PAY_V49_CHALLENGE_RUNTIME_SEALED_APPEND_ONLY",
+  "immutablePredecessors": [
+    {
+      "path": "central-authorization-decision-amendment.v4.json",
+      "sha256": "ecd9af970c170d09416b8eba115b2b8b534c85c13dc95487d20f5c3597728d4d",
+      "mutationForbidden": true
+    },
+    {
+      "path": "auth-lane-token-amendment.v4.json",
+      "sha256": "d76bd88e06b576f0e6c6c25422379e6381fe758427ced155368f2ef987367800",
+      "mutationForbidden": true
+    },
+    {
+      "path": "validation-receipt-successor.v4.json",
+      "sha256": "8b28214faeecc7975fdc3df95e2345213bc129fe2218c8635d17c9483d5884c6",
+      "mutationForbidden": true
+    },
+    {
+      "repository": "dwp-frontend",
+      "commit": "767c0f160efed82cb1e343b5ac53a6ab956c2573",
+      "tree": "9220b6ac31104bb50fa7339730732bbb1b8eb4da",
+      "mutationForbidden": true
+    }
+  ],
+  "precedence": "This v5 amendment supersedes v4 as the effective central decision where v4 omitted six grandfathered generic-session routes, did not fully define order-independent capability-expression reduction, retained the narrowly named uncommitted payroll-read helper, or did not make the exact v49 PAY fresh-command profiles reachable by the sealed challenge resolver. Every v4 carrier, internal-endpoint, exact PAGE/DATA tuple, equivalence key, responseSchemaKey, denial and false authority flag remains in force unless v5 explicitly strengthens it.",
+  "independentReviewFinding": {
+    "severity": "P1",
+    "summary": "The v4 generic-session topology listed only six v49 routes, expression reduction retained declaration-order sensitivity, and the sealed step-up resolver could neither load v49 nor select the exact ELEVATED-only PAY command profiles. This could reject valid bundles, choose unstable expression outcomes, or make prepare/calculate challenges unreachable.",
+    "repairType": "APPEND_ONLY_AUTHORITY_SUCCESSOR"
+  },
+  "exactGenericSessionNoCommandTopology": {
+    "grandfatheredPreV49Routes": [
+      "route.hcm.configuration.configuration-version.data",
+      "route.hcm.configuration.configurations.data",
+      "route.hcm.operations.time-interpretation-run.action",
+      "route.hcm.operations.time-interpretation-trace.data",
+      "route.hcm.time.timecard-correction.action",
+      "route.hcm.time.timecard.data"
+    ],
+    "v49RoutesRetainedFromV4": [
+      "route.hcm.operations.payroll-population.page",
+      "route.hcm.operations.payroll-support.data",
+      "route.hcm.operations.payroll-run.data",
+      "route.hcm.operations.time-close-validate.action",
+      "route.hcm.operations.time-payroll-handoff-create.action",
+      "route.hcm.operations.time-payroll-handoff.data"
+    ],
+    "effectiveExactTwelveRouteClosedSet": [
+      "route.hcm.configuration.configuration-version.data",
+      "route.hcm.configuration.configurations.data",
+      "route.hcm.operations.payroll-population.page",
+      "route.hcm.operations.payroll-support.data",
+      "route.hcm.operations.payroll-run.data",
+      "route.hcm.operations.time-close-validate.action",
+      "route.hcm.operations.time-interpretation-run.action",
+      "route.hcm.operations.time-interpretation-trace.data",
+      "route.hcm.operations.time-payroll-handoff-create.action",
+      "route.hcm.operations.time-payroll-handoff.data",
+      "route.hcm.time.timecard-correction.action",
+      "route.hcm.time.timecard.data"
+    ],
+    "closedSetRule": "Only these twelve routes may require generic session step-up while having no stepUpCommandBindings. Any thirteenth route is a hard topology failure requiring a new append-only decision.",
+    "normalRule": "NORMAL evaluation returns STEP_UP_REQUIRED without owner-service forwarding or protected payload only when an activated capability branch is decisive after all applicable alternatives are evaluated. A satisfiable non-activated ANY member or otherwise applicable ALLOWED access-profile alternative on these routes wins and suppresses the challenge; existing explicit scope-selector and blocking-denial rules are not weakened.",
+    "elevatedRule": "ELEVATED never inherits or reuses the NORMAL challenge result. It reevaluates the complete exact route profile, capability expression, predicates, scopes and access-mode constraints and forwards only an ALLOWED result.",
+    "grandfatheredProfileAlternativeRule": "For the six grandfathered routes only, declaration or precedence order may not make an activated management branch challenge before an applicable self-service or other non-activated branch is shown not to allow. This is an OR-alternative reduction, not a grant of access across profiles.",
+    "noCommandRule": "No synthetic body, path, header, target, expected-version or owner-forward binding may be created for the twelve generic-session routes.",
+    "freshCommandExclusion": "PAY prepare/calculate and TIM close/reopen are not members of this set and retain their exact fresh command-bound evidence."
+  },
+  "orderIndependentCapabilityExpressionReduction": {
+    "normalization": "CAPABILITY_EXPRESSION keys form an order-independent unique set. Missing, blank, duplicate or unregistered members fail closed. Evaluation and evidence combination use canonical capability-contract-key order, never declaration order.",
+    "anyPrecedence": [
+      "ALLOWED",
+      "STEP_UP_REQUIRED",
+      "HARD_DENY"
+    ],
+    "allPrecedence": [
+      "HARD_DENY",
+      "STEP_UP_REQUIRED",
+      "ALLOWED"
+    ],
+    "hardDenyDefinition": "Every result other than ALLOWED or STEP_UP_REQUIRED is a hard deny. When more than one member yields the winning category, the selected denial/challenge and combined grants/scopes are derived in canonical capability-key order so the complete response is permutation-independent.",
+    "anyRule": "ANY returns ALLOWED when at least one member is ALLOWED. Only when no member is ALLOWED may STEP_UP_REQUIRED win over hard deny. Thus an activated branch produces a challenge only when it is decisive, never when an alternate branch already allows access.",
+    "allRule": "ALL returns a hard deny when any member hard-denies, even if another member requires step-up. When no member hard-denies, STEP_UP_REQUIRED wins over ALLOWED. ALL returns ALLOWED only when every member is ALLOWED.",
+    "elevatedRule": "ELEVATED reevaluates every member under the same ANY/ALL reduction. Elevation changes activation eligibility only; it does not bypass entitlement, permission, relationship, responsibility, SoD, target-population, predicate, scope or lifecycle checks.",
+    "requiredPermutationProof": [
+      "ANY: ALLOWED plus STEP_UP_REQUIRED yields the same ALLOWED response for every member ordering.",
+      "ANY: STEP_UP_REQUIRED plus hard deny yields the same STEP_UP_REQUIRED response for every member ordering.",
+      "ALL: hard deny plus STEP_UP_REQUIRED yields the same hard-deny response for every member ordering.",
+      "ALL: ALLOWED plus STEP_UP_REQUIRED yields the same STEP_UP_REQUIRED response for every member ordering.",
+      "Multiple members in the same winning category produce canonically ordered grants, scopes and selected evidence for every permutation."
+    ]
+  },
+  "payV49FreshCommandChallengeRuntime": {
+    "supportedRuntime": {
+      "bundleKey": "product-surfaces",
+      "bundleVersion": 49,
+      "runtimeSupported": true,
+      "sealedRuntimeRequired": true,
+      "activeStoredBundleAndPointerSealRequired": true,
+      "checksumAndPointerDriftFailClosed": true,
+      "v49AcceptedForRelease": false
+    },
+    "exactCommandRoutes": [
+      {
+        "purpose": "PREPARE",
+        "routeContractKey": "route.hcm.operations.payroll-run.action",
+        "profileKey": "payroll-run-operator",
+        "activeAccessModes": [
+          "ELEVATED"
+        ],
+        "requiredAccessType": "CAPABILITY",
+        "capabilityContractKey": "hcm.operations.payroll-run.execute",
+        "predicatePolicyKeys": [
+          "predicate.hcm-payroll-run-prepare-authority.v1"
+        ],
+        "bindingKey": "route.hcm.operations.payroll-run.action.binding.01",
+        "gatewayMethod": "POST",
+        "gatewayPath": "/api/payroll/v1/runs",
+        "ownerServiceKey": "payroll",
+        "audience": "dwp-payroll-server",
+        "targetType": "PAYROLL_RUN_PREPARATION",
+        "targetIdBodyFields": [
+          "preparationId"
+        ],
+        "expectedObjectVersionSource": "COMMAND_HEADER",
+        "expectedObjectVersionName": "X-DWP-Expected-Object-Version"
+      },
+      {
+        "purpose": "CALCULATE",
+        "routeContractKey": "route.hcm.operations.payroll-run-calculate.action",
+        "profileKey": "payroll-run-operator",
+        "activeAccessModes": [
+          "ELEVATED"
+        ],
+        "requiredAccessType": "CAPABILITY",
+        "capabilityContractKey": "hcm.operations.payroll-run.execute",
+        "predicatePolicyKeys": [
+          "predicate.hcm-payroll-run-authority.v1"
+        ],
+        "bindingKey": "route.hcm.operations.payroll-run-calculate.action.binding.01",
+        "gatewayMethod": "POST",
+        "gatewayPath": "/api/payroll/v1/runs/{runId}/attempts",
+        "ownerServiceKey": "payroll",
+        "audience": "dwp-payroll-server",
+        "targetType": "PAYROLL_RUN",
+        "targetIdPathParameter": "runId",
+        "expectedObjectVersionSource": "COMMAND_HEADER",
+        "expectedObjectVersionName": "X-DWP-Expected-Object-Version"
+      }
+    ],
+    "resolverRule": "ProductSurfaceStepUpRouteResolver may select an ELEVATED-only access profile solely while resolving a challenge for one of the two exact PAY command routes. The profile must be the unique highest-precedence exact profile, use direct CAPABILITY access to the active activated hcm.operations.payroll-run.execute contract, and match every exact route, gateway and command-binding field above. Missing, additional, ambiguous or drifted profiles/bindings fail with authority unavailable or challenge mismatch before signing.",
+    "normalEvaluationRule": "Normal authority evaluation may admit the exact ELEVATED-only profiles as STEP_UP_REQUIRED candidates only through PayrollV49ElevatedAuthorityPolicy. It must never return ALLOWED for either command in NORMAL and must never generalize to another ELEVATED-only profile.",
+    "elevatedEvaluationRule": "After trusted session elevation, Auth reevaluates the exact ELEVATED profile and all capability, predicate, target and scope constraints. The fresh signed command proof remains mandatory and is not replaced by the ELEVATED carrier.",
+    "challengeServiceDecision": "ProductSurfaceStepUpChallengeService remains unchanged. Its existing resolver, authority-result, revision, fresh-assurance, audience and signature checks are sufficient once the resolver and exact policy expose the sealed v49 routes.",
+    "fixtureNecessity": "ProductSurfaceStepUpRuntimeSpringFixture currently permits only dwp-approval-server and dwp-people-server. The v49 PAY proof therefore requires adding exactly dwp-payroll-server to that test-only audience set; wildcard audiences, production configuration changes and removal of existing audiences are forbidden."
+  },
+  "payrollPolicyHelperReplacement": {
+    "retiredMainPath": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/PayrollSupportElevatedReadAuthorityPolicy.java",
+    "retiredTestPath": "dwp-auth-server/src/test/java/com/dwp/services/auth/service/PayrollSupportElevatedReadAuthorityPolicyTest.java",
+    "retiredPathsAuthorized": false,
+    "replacementMainPath": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/PayrollV49ElevatedAuthorityPolicy.java",
+    "replacementTestPath": "dwp-auth-server/src/test/java/com/dwp/services/auth/service/PayrollV49ElevatedAuthorityPolicyTest.java",
+    "replacementScope": [
+      "route.hcm.operations.payroll-population.page",
+      "route.hcm.operations.payroll-support.data",
+      "route.hcm.operations.payroll-run.action",
+      "route.hcm.operations.payroll-run-calculate.action"
+    ],
+    "payrollRunDataExpressionRule": "route.hcm.operations.payroll-run.data remains governed by the generic-session set and exact ANY expression reduction, not by widening the four-route helper.",
+    "noGeneralization": "The replacement helper must reject every non-v49, non-exact, multi-profile, wrong-mode, wrong-capability, wrong-predicate, wrong-binding or drifted route contract."
+  },
+  "retainedV4Boundaries": {
+    "trustedAuthDatabaseSessionCarrier": true,
+    "serverOwnedAuthMeActiveAccessMode": true,
+    "gatewayExactModeValidationAndClientHeaderDistrust": true,
+    "providerSupportPrecedence": true,
+    "directAndAnyAllActivatedCapabilityTraversal": true,
+    "internalOnlyAuthorityEndpointNullSafeAndNonPublic": true,
+    "genericChallengeNeverForwardsToOwner": true,
+    "pageAndDataRouteTuplesRemainExact": true,
+    "authorizationEquivalenceKeysRemainExact": true,
+    "responseSchemaKeysRemainExact": true,
+    "timeCloseReopenFreshBindingsRemainExact": true
+  },
+  "authority": {
+    "decisionAmendmentRecorded": true,
+    "exactTwelveRouteGenericSetSealed": true,
+    "expressionReductionSealed": true,
+    "payV49ChallengeRuntimeBoundarySealed": true,
+    "v49Accepted": false,
+    "moduleTokenIssuanceAllowed": false,
+    "authLanePushAuthorized": false,
+    "authLaneMergeAuthorized": false,
+    "migrationAuthoringAuthorized": false,
+    "moduleImplementationAuthorized": false,
+    "moduleMigrationAuthoringAuthorized": false,
+    "moduleStartTokenIssued": false,
+    "tenantEnrollmentAuthorized": false,
+    "activationAuthorized": false
+  },
+  "nextGate": "AUTH_LANE_TOKEN_V5_MUST_BIND_THIS_EXACT_DECISION_AND_BACKEND_IMPLEMENTATION_RECEIPT_PLUS_INDEPENDENT_REVIEW_MUST_PASS_BEFORE_V49_ACCEPTANCE_MODULE_TOKENS_PUSH_MERGE_OR_MIGRATION_AUTHORITY"
+}

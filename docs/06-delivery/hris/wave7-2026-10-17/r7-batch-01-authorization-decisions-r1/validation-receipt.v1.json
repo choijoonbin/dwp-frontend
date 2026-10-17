@@ -1,0 +1,121 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-01-authorization-decision-validation-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-01-AUTHORIZATION-DECISION-VALIDATION-20261017-R1",
+  "validatedAt": "2026-10-17T16:00:00+09:00",
+  "validatedBy": "SYS_COMMON_INTEGRATION_CONTROL_INDEPENDENT_SELF_CHECK",
+  "result": "PASS_DECISIONS_AND_AUTH_LANE_CONTROL_ONLY",
+  "validatedArtifacts": [
+    {
+      "path": "decisions/base-tfr-hrm-005.authorization-decision.v1.json",
+      "sha256": "aa214ce9f28635ffad90d6306b7bf3b2be2548add197f3d0ea23063967301a94"
+    },
+    {
+      "path": "decisions/base-tfr-pay-013.authorization-decision.v1.json",
+      "sha256": "e44ef024ccb257cbb3205f921c015881139c98940496f59222866b718e232b16"
+    },
+    {
+      "path": "decisions/base-tfr-sys-002.authorization-decision.v1.json",
+      "sha256": "801e1cade194aceff1394789ee9247fefd4b317bc86d0a1bd3dce5d78c9e3a69"
+    },
+    {
+      "path": "decisions/base-tfr-tim-007.authorization-decision.v1.json",
+      "sha256": "f0c068d587182837059413895d5f8cc6c1f346f5564a99e1b6822bfa8c9ac203"
+    },
+    {
+      "path": "central-authorization-decision-successor.v1.json",
+      "sha256": "4b8bcc3b4ee62954cd80f36f43fc0659f20fbc28707aaa12f3eea5e0ff1089cd"
+    },
+    {
+      "path": "migration-lease-state.v1.json",
+      "sha256": "9e019aea75199a9d0e664aacf70c51c028959fc2d32789f716244668c2adeb92"
+    },
+    {
+      "path": "auth-lane-token-state.v1.json",
+      "sha256": "bbaf6fe886dbd7734b8875c19bac04b8006349c3019aed603f88a9152afec5a3"
+    }
+  ],
+  "checks": [
+    {
+      "id": "AUTHDEC-VAL-001",
+      "result": "PASS",
+      "evidence": "All seven predecessor-independent successor JSON artifacts parse, have unique identities and match their recorded SHA-256 values."
+    },
+    {
+      "id": "AUTHDEC-VAL-002",
+      "result": "PASS",
+      "evidence": "The sealed r1 central authorization packet remains dd1b68e54ee6cbc73c0fa1b9da181fac04575c702f89c98ce27c73968b29963a and was not modified."
+    },
+    {
+      "id": "AUTHDEC-VAL-003",
+      "result": "PASS",
+      "evidence": "HRM seals organization-positions PAGE plus organization-graph DATA on predicate.hcm-organization-graph-authority.v1 for NORMAL and ELEVATED modes with no step-up."
+    },
+    {
+      "id": "AUTHDEC-VAL-004",
+      "result": "PASS",
+      "evidence": "PAY seals payroll-population PAGE, payroll-support DATA and payroll-run ACTION; client UUID preparationId targets PAYROLL_RUN_PREPARATION with expected version 0, approval and elevated step-up, while calculate remains runId-bound."
+    },
+    {
+      "id": "AUTHDEC-VAL-005",
+      "result": "PASS",
+      "evidence": "PAY capability hardening is fail-closed: payroll-support view is HIGH and payroll-run execute is CRITICAL, both use STEPUP-MGMT-HIGH-V1, and PAY-011 is reuse/no-recount."
+    },
+    {
+      "id": "AUTHDEC-VAL-006",
+      "result": "PASS",
+      "evidence": "SYS seals settings operations PAGE plus exception list/detail DATA; public states are only OPEN, ACKNOWLEDGED and RESOLVED, while RECOVERING and SUPPRESSED remain internal and project to OPEN absent terminal source evidence."
+    },
+    {
+      "id": "AUTHDEC-VAL-007",
+      "result": "PASS",
+      "evidence": "SYS preserves PEP-SYS-040 byte-equivalent, excludes SYS-006 and recovery mutations, and adds no step-up for the decided read routes."
+    },
+    {
+      "id": "AUTHDEC-VAL-008",
+      "result": "PASS",
+      "evidence": "TIM seals three PAGE entry-data bindings without duplicate DATA aliases and five PEP operations; close/reopen require fresh step-up and SoD, validation and handoff creation do not, and GET handoff remains DATA transport with ACTION capability."
+    },
+    {
+      "id": "AUTHDEC-VAL-009",
+      "result": "PASS",
+      "evidence": "SVC-PEP-TIM-001 is excluded from browser v49 and remains subject to a separate mutual workload trust packet."
+    },
+    {
+      "id": "AUTHDEC-VAL-010",
+      "result": "PASS",
+      "evidence": "Only Payroll V52, Platform V331 and Time V12 are exclusively reserved; People and Notification have no lease and every migration authoring flag is false."
+    },
+    {
+      "id": "AUTHDEC-VAL-011",
+      "result": "PASS",
+      "evidence": "Exactly one token exists and is confined to the central Auth v49 lane; all five module token states remain false and moduleStartTokenCount is zero."
+    },
+    {
+      "id": "AUTHDEC-VAL-012",
+      "result": "PASS",
+      "evidence": "v49 generation is authorized but acceptance, push, dwp-dev merge, module implementation and activation remain false until a backend receipt binds exact generated file and embedded checksums."
+    },
+    {
+      "id": "AUTHDEC-VAL-013",
+      "result": "PASS",
+      "evidence": "Changed paths are confined to the append-only r7-batch-01-authorization-decisions-r1 directory; sealed r1 dispatch files, product code, migrations and generated artifacts are unchanged in this branch."
+    }
+  ],
+  "testPolicy": {
+    "jsonParseHashSemanticAndBoundaryChecksExecuted": true,
+    "productTestsExecuted": false,
+    "databaseMigrationsExecuted": false,
+    "browserTestsExecuted": false,
+    "reason": "This branch records authorization decisions and one Auth generation token only; backend v49 and future module owners carry targeted product verification."
+  },
+  "authority": {
+    "validationReceiptIssued": true,
+    "authLaneGenerationAuthorized": true,
+    "generatedV49Accepted": false,
+    "moduleSourceImplementationAuthorized": false,
+    "migrationAuthoringAuthorized": false,
+    "moduleStartTokenIssued": false,
+    "mergeToDwpDevAuthorized": false,
+    "activationAuthorized": false
+  }
+}

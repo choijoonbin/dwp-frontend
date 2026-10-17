@@ -1,0 +1,68 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-01-migration-lease-state.v1",
+  "stateId": "HRIS-WAVE7-R7-BATCH-01-MIGRATION-LEASE-STATE-20261017-R1",
+  "recordedAt": "2026-10-17T16:00:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "EXCLUSIVE_VERSIONS_RESERVED_AUTHORING_WITHHELD",
+  "purpose": "Prevent migration-number collisions while preserving the rule that a reserved version is not implementation authority.",
+  "leases": [
+    {
+      "leaseId": "HRIS-WAVE7-R7-BATCH-01-PAYROLL-MAIN-V52-20261017-R1",
+      "stream": "PAYROLL_MAIN",
+      "version": "V52",
+      "owner": "HRIS-PAY",
+      "sliceId": "BASE-TFR-PAY-013",
+      "predecessorHighWater": "V51",
+      "state": "RESERVED_EXCLUSIVE",
+      "authoringAllowed": false,
+      "activationAllowed": false
+    },
+    {
+      "leaseId": "HRIS-WAVE7-R7-BATCH-01-PLATFORM-MAIN-V331-20261017-R1",
+      "stream": "PLATFORM_MAIN",
+      "version": "V331",
+      "owner": "HRIS-SYS",
+      "sliceId": "BASE-TFR-SYS-002",
+      "predecessorHighWater": "V330",
+      "state": "RESERVED_EXCLUSIVE",
+      "authoringAllowed": false,
+      "activationAllowed": false
+    },
+    {
+      "leaseId": "HRIS-WAVE7-R7-BATCH-01-TIME-MAIN-V12-20261017-R1",
+      "stream": "TIME_MAIN",
+      "version": "V12",
+      "owner": "HRIS-TIM",
+      "sliceId": "BASE-TFR-TIM-007",
+      "predecessorHighWater": "V11",
+      "state": "RESERVED_EXCLUSIVE",
+      "authoringAllowed": false,
+      "activationAllowed": false
+    }
+  ],
+  "notLeased": [
+    {
+      "stream": "PEOPLE_MAIN",
+      "candidateVersion": "V57",
+      "reason": "HRM-005 has no accepted schema delta; acquire only after owner proof."
+    },
+    {
+      "stream": "NOTIFICATION_MAIN",
+      "candidateVersion": "V36",
+      "reason": "PER-001 semantic and notification onboarding decision remains a separate lane."
+    }
+  ],
+  "invariants": [
+    "A reserved version may not be authored until a separate fresh owner start token names the same lease id.",
+    "No other R7 batch may claim V52, V331 or V12 while these reservations remain active.",
+    "V51, V330 and V11 remain immutable.",
+    "No People or Notification migration authority is implied by this state."
+  ],
+  "authority": {
+    "reservationRecorded": true,
+    "migrationAuthoringAuthorized": false,
+    "moduleImplementationAuthorized": false,
+    "moduleStartTokenIssued": false,
+    "activationAuthorized": false
+  }
+}

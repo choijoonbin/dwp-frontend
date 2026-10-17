@@ -1,0 +1,87 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-01-module-authorization-decision.v1",
+  "decisionId": "HRIS-WAVE7-R7-BATCH-01-AUTH-DECISION-BASE-TFR-HRM-005-20261017-R1",
+  "recordedAt": "2026-10-17T16:00:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "DECISION_SEALED_FOR_V49_GENERATION_ONLY",
+  "module": "HRM",
+  "sliceId": "BASE-TFR-HRM-005",
+  "immutablePredecessor": {
+    "path": "../../r7-batch-01-dispatch-r1/central-authorization-successor-packet.v1.json",
+    "sha256": "dd1b68e54ee6cbc73c0fa1b9da181fac04575c702f89c98ce27c73968b29963a",
+    "candidateIds": [
+      "R7B01-AUTH-HRM-PAGE-001",
+      "R7B01-AUTH-HRM-DATA-001",
+      "R7B01-AUTH-HRM-ACTION-REUSE-001"
+    ],
+    "mutationForbidden": true
+  },
+  "sealedDecisions": {
+    "page": {
+      "routeContractKey": "route.hcm.operations.organization-positions.page",
+      "routeKind": "PAGE",
+      "uiRoutePattern": "/hr/operations/people/organization-positions",
+      "navigationContextId": "hcm.operations",
+      "requiredCapability": "hcm.operations.organization.view",
+      "projectionPolicyKey": "route.hcm.operations.organization-positions.page.organization-viewer.projection.v1",
+      "responseContractKey": "route.hcm.operations.organization-graph.data.response.v1",
+      "responseContractMode": "SHARED_WITH_ENTRY_DATA",
+      "predicatePolicyKey": "predicate.hcm-organization-graph-authority.v1",
+      "activeAccessModes": [
+        "NORMAL",
+        "ELEVATED"
+      ],
+      "stepUpRequired": false
+    },
+    "data": {
+      "routeContractKey": "route.hcm.operations.organization-graph.data",
+      "routeKind": "DATA",
+      "gatewayBinding": "GET /api/people/v1/hris/organizations/graph",
+      "ownerBinding": "GET /v1/hris/organizations/graph",
+      "ownerService": "dwp-people-server",
+      "requiredCapability": "hcm.operations.organization.view",
+      "projectionPolicyKey": "route.hcm.operations.organization-graph.data.organization-viewer.projection.v1",
+      "responseContractKey": "route.hcm.operations.organization-graph.data.response.v1",
+      "predicatePolicyKey": "predicate.hcm-organization-graph-authority.v1",
+      "targetBindingKinds": [
+        "TARGET_POPULATION"
+      ],
+      "activeAccessModes": [
+        "NORMAL",
+        "ELEVATED"
+      ],
+      "stepUpRequired": false
+    },
+    "predicate": {
+      "predicatePolicyKey": "predicate.hcm-organization-graph-authority.v1",
+      "ownerService": "dwp-people-server",
+      "requiredFacts": [
+        "tenantId",
+        "legalEntityId",
+        "organizationScope",
+        "policyRevision",
+        "purposeCode"
+      ],
+      "purposeCode": "HR_OPERATIONS",
+      "denyOnMissingOrStaleEvidence": true
+    }
+  },
+  "preservation": {
+    "reuseWithoutRecount": [
+      "PEP-HRM-006",
+      "PEP-HRM-007",
+      "PEP-HRM-008",
+      "PEP-HRM-009",
+      "BASE-TFR-HRM-008"
+    ],
+    "newPeopleMigrationLease": "NONE_UNLESS_OWNER_PROVES_APPEND_ONLY_SCHEMA_DELTA",
+    "notificationMigrationLease": "NONE"
+  },
+  "authority": {
+    "v49GenerationInputAuthorized": true,
+    "moduleImplementationAuthorized": false,
+    "migrationAuthoringAuthorized": false,
+    "moduleStartTokenIssued": false,
+    "activationAuthorized": false
+  }
+}

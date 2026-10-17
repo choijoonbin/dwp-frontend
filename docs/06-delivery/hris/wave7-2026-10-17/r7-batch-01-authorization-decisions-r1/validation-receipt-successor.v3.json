@@ -1,0 +1,152 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-01-authorization-decision-validation-receipt.v3",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-01-AUTHORIZATION-DECISION-VALIDATION-20261017-R3",
+  "validatedAt": "2026-10-17T16:22:00+09:00",
+  "validatedBy": "SYS_COMMON_INTEGRATION_CONTROL_INDEPENDENT_P1_EXACT_TUPLE_RECHECK",
+  "result": "PASS_APPEND_ONLY_V3_REPAIR_WITH_TRUSTED_ELEVATED_CARRIER_GATE_OPEN",
+  "immutablePredecessors": [
+    {
+      "path": "central-authorization-decision-successor.v1.json",
+      "sha256": "4b8bcc3b4ee62954cd80f36f43fc0659f20fbc28707aaa12f3eea5e0ff1089cd"
+    },
+    {
+      "path": "auth-lane-token-state.v1.json",
+      "sha256": "bbaf6fe886dbd7734b8875c19bac04b8006349c3019aed603f88a9152afec5a3"
+    },
+    {
+      "path": "auth-lane-token-amendment.v2.json",
+      "sha256": "e29a7e24ac70495a606a0785e2d14dae589258a43da7b05e7da7928cd02a9c41"
+    },
+    {
+      "path": "validation-receipt.v1.json",
+      "sha256": "d3bb3900f302c7d79ee41e28dc07d48e28d0c110e7a7a45697ec5eab45ce44bf"
+    },
+    {
+      "path": "validation-receipt-successor.v2.json",
+      "sha256": "c658d2910d0f4d941272f4effb4435b9eece4bf868b945e6386b3ea386d4bd33"
+    },
+    {
+      "path": "decisions/base-tfr-hrm-005.authorization-decision.v1.json",
+      "sha256": "aa214ce9f28635ffad90d6306b7bf3b2be2548add197f3d0ea23063967301a94"
+    },
+    {
+      "path": "decisions/base-tfr-pay-013.authorization-decision.v1.json",
+      "sha256": "e44ef024ccb257cbb3205f921c015881139c98940496f59222866b718e232b16"
+    },
+    {
+      "path": "decisions/base-tfr-sys-002.authorization-decision.v1.json",
+      "sha256": "801e1cade194aceff1394789ee9247fefd4b317bc86d0a1bd3dce5d78c9e3a69"
+    },
+    {
+      "path": "decisions/base-tfr-tim-007.authorization-decision.v1.json",
+      "sha256": "f0c068d587182837059413895d5f8cc6c1f346f5564a99e1b6822bfa8c9ac203"
+    }
+  ],
+  "validatedSuccessors": [
+    {
+      "path": "central-authorization-decision-amendment.v3.json",
+      "sha256": "fb0a458adad61d5cd2a718a7a8980f86971711ada78b3d92245fb90bd9bec43c"
+    },
+    {
+      "path": "auth-lane-token-amendment.v3.json",
+      "sha256": "177c3fccde1a69e50d390ccbc025f7b621aac92feb80838528913f63041f7d40"
+    }
+  ],
+  "checks": [
+    {
+      "id": "AUTHDEC-R3-VAL-001",
+      "result": "PASS",
+      "evidence": "Every v1 and v2 predecessor is byte-immutable at its recorded SHA-256; the repair adds only three v3 successor JSON artifacts."
+    },
+    {
+      "id": "AUTHDEC-R3-VAL-002",
+      "result": "PASS",
+      "evidence": "The HRM, PAY, SYS and TIM PAGE/DATA closed set records exact routeContractKey, uiRouteId, uiRoutePattern, projectionPolicyKey and responseSchemaKey values. The non-standard predecessor responseContractKey field is explicitly superseded and forbidden as v49 generation input."
+    },
+    {
+      "id": "AUTHDEC-R3-VAL-003",
+      "result": "PASS",
+      "evidence": "Only HRM organization graph and PAY payroll population may intentionally share a PAGE/DATA wire binding, under wire-authority.hcm.operations.organization-graph.v1 and wire-authority.hcm.operations.payroll-population.v1 respectively; unkeyed collision remains forbidden."
+    },
+    {
+      "id": "AUTHDEC-R3-VAL-004",
+      "result": "PASS",
+      "evidence": "PAY PAGE/DATA reads are ELEVATED-only with stepUpRequired=true, freshCommandBoundStepUpRequired=false and no command binding. V3 authorizes fail-closed NORMAL challenge and isolated policy semantics only; it does not claim end-to-end ELEVATED allow."
+    },
+    {
+      "id": "AUTHDEC-R3-VAL-005",
+      "result": "PASS",
+      "evidence": "The exact PAY runtime exception is limited to two Auth source files, their two tests, the existing Gateway decision-context filter and its test. No /auth/me, session or Gateway identity-carrier path is guessed or authorized."
+    },
+    {
+      "id": "AUTHDEC-R3-VAL-006",
+      "result": "PASS",
+      "evidence": "PEP-TIM-022 through PEP-TIM-026 all require generic session step-up. Only PEP-TIM-023 and PEP-TIM-024 require fresh TIME_PERIOD/periodId/COMMAND_HEADER/If-Match evidence; 022, 025 and 026 have approvalRequired=false and no command binding."
+    },
+    {
+      "id": "AUTHDEC-R3-VAL-007",
+      "result": "PASS",
+      "evidence": "The TIME generator exception is limited to generic-session-step-up representation and exact v49 proof; capability splitting, weakening, access-mode changes and business behavior remain forbidden."
+    },
+    {
+      "id": "AUTHDEC-R3-VAL-008",
+      "result": "PASS",
+      "evidence": "The effective exact changed-path closed set supersedes predecessor globs and contains the generated artifacts plus only the named runtime, release and validation files. The added release boundary contains the pilot-fixtures schema, ProductAuthorizationContractValidator, ProductAuthorizationReleaseLineage, two named lineage tests, V257__declare_hris_payroll_settings_and_r7_authorization_seeds.sql, its named contract test, and script tests v21/v47/v49. ProductAuthorizationGateTopologyValidator is explicitly outside v3 authority."
+    },
+    {
+      "id": "AUTHDEC-R3-VAL-009",
+      "result": "PASS",
+      "evidence": "The v3 token binds the exact decision-amendment SHA-256 and requires a backend receipt to prove an allowlisted changed-path subset, exact file hashes, route tuples, runtime fail-closed behavior and absence of business/domain changes."
+    },
+    {
+      "id": "AUTHDEC-R3-VAL-010",
+      "result": "PASS",
+      "evidence": "Business/domain implementation, module migrations, SVC-PEP-TIM-001, feature activation, tenant enrollment, tenant override, push, dwp-dev merge and owner-module token issuance remain forbidden."
+    },
+    {
+      "id": "AUTHDEC-R3-VAL-011",
+      "result": "PASS",
+      "evidence": "The current Gateway request context cannot transport a fresh elevated Auth-session access mode and therefore remains NORMAL. V49 acceptance and module-token issuance stay false pending a separate append-only v4 exact decision and implementation."
+    },
+    {
+      "id": "AUTHDEC-R3-VAL-012",
+      "result": "PASS",
+      "evidence": "All three v3 files parse as JSON; recorded predecessor and successor SHA-256 values match the exact current bytes; the diff contains only new files under the existing authorization-decision successor directory."
+    }
+  ],
+  "residualGate": {
+    "decisionId": "TRUSTED_ELEVATED_SESSION_ACCESS_MODE_CARRIER_DECISION_AND_IMPLEMENTATION_REQUIRED",
+    "state": "OPEN_BLOCKING_V49_ACCEPTANCE_AND_MODULE_TOKENS",
+    "requiredSuccessor": "Separate append-only v4 decision/token selecting exact source-backed carrier paths, trust boundary, freshness, downgrade and targeted proof.",
+    "backendGenerationReceiptStillRequired": true,
+    "exactChangedPathAdmissionRequired": true,
+    "allGeneratedFileAndEmbeddedChecksumsRequired": true,
+    "v49Accepted": false,
+    "moduleTokenIssuanceAllowed": false
+  },
+  "testPolicy": {
+    "jsonParseExecuted": true,
+    "sha256RecomputationExecuted": true,
+    "semanticInvariantChecksExecuted": true,
+    "appendOnlyDiffBoundaryExecuted": true,
+    "productTestsExecuted": false,
+    "databaseMigrationsExecuted": false,
+    "browserTestsExecuted": false,
+    "reason": "This repair is an append-only authority artifact change; the isolated backend lane owns the narrowly targeted product proofs after a complete exact token exists."
+  },
+  "authority": {
+    "validationReceiptIssued": true,
+    "p1ExactTupleRepairValidated": true,
+    "authLaneCommitAuthorized": true,
+    "authLanePushAuthorized": false,
+    "authLaneMergeAuthorized": false,
+    "v49Accepted": false,
+    "moduleImplementationAuthorized": false,
+    "moduleMigrationAuthoringAuthorized": false,
+    "moduleTokenIssuanceAllowed": false,
+    "moduleStartTokenIssued": false,
+    "tenantEnrollmentAuthorized": false,
+    "activationAuthorized": false
+  },
+  "nextGate": "TRUSTED_ELEVATED_SESSION_ACCESS_MODE_CARRIER_DECISION_AND_IMPLEMENTATION_REQUIRED"
+}

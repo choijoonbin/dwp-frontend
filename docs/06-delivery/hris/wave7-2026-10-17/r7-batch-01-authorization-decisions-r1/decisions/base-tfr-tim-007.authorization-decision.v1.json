@@ -1,0 +1,199 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-01-module-authorization-decision.v1",
+  "decisionId": "HRIS-WAVE7-R7-BATCH-01-AUTH-DECISION-BASE-TFR-TIM-007-20261017-R1",
+  "recordedAt": "2026-10-17T16:00:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "DECISION_SEALED_FOR_V49_GENERATION_ONLY",
+  "module": "TIM",
+  "sliceId": "BASE-TFR-TIM-007",
+  "immutablePredecessor": {
+    "path": "../../r7-batch-01-dispatch-r1/central-authorization-successor-packet.v1.json",
+    "sha256": "dd1b68e54ee6cbc73c0fa1b9da181fac04575c702f89c98ce27c73968b29963a",
+    "candidateIds": [
+      "R7B01-AUTH-TIM-PAGE-DATA-001",
+      "R7B01-AUTH-TIM-ACTION-001"
+    ],
+    "mutationForbidden": true
+  },
+  "sealedDecisions": {
+    "pageAndEntryData": [
+      {
+        "pageRouteContractKey": "route.hcm.operations.time-command-center.page",
+        "routeKind": "PAGE",
+        "uiRoutePattern": "/hr/operations/time/command-center",
+        "gatewayBinding": "GET /api/time/v1/hris/workbench/time-command-center",
+        "ownerBinding": "GET /v1/hris/workbench/time-command-center",
+        "projectionPolicyKey": "route.hcm.operations.time-command-center.page.time-operations-reader.projection.v1",
+        "responseContractKey": "route.hcm.operations.time-command-center.page.response.v1"
+      },
+      {
+        "pageRouteContractKey": "route.hcm.operations.time-daily-close.page",
+        "routeKind": "PAGE",
+        "uiRoutePattern": "/hr/operations/time/daily-close",
+        "gatewayBinding": "GET /api/time/v1/hris/workbench/time-daily-close",
+        "ownerBinding": "GET /v1/hris/workbench/time-daily-close",
+        "projectionPolicyKey": "route.hcm.operations.time-daily-close.page.time-operations-reader.projection.v1",
+        "responseContractKey": "route.hcm.operations.time-daily-close.page.response.v1"
+      },
+      {
+        "pageRouteContractKey": "route.hcm.operations.time-monthly-close.page",
+        "routeKind": "PAGE",
+        "uiRoutePattern": "/hr/operations/time/monthly-close",
+        "gatewayBinding": "GET /api/time/v1/hris/workbench/time-monthly-close",
+        "ownerBinding": "GET /v1/hris/workbench/time-monthly-close",
+        "projectionPolicyKey": "route.hcm.operations.time-monthly-close.page.time-operations-reader.projection.v1",
+        "responseContractKey": "route.hcm.operations.time-monthly-close.page.response.v1"
+      }
+    ],
+    "pageAndDataAuthorization": {
+      "navigationContextId": "hcm.operations",
+      "ownerService": "dwp-time-server",
+      "requiredCapability": "hcm.operations.time.view",
+      "predicatePolicyKey": "predicate.hcm-time-period-authority.v1",
+      "activeAccessModes": [
+        "NORMAL",
+        "ELEVATED"
+      ],
+      "stepUpRequired": false
+    },
+    "predicate": {
+      "predicatePolicyKey": "predicate.hcm-time-period-authority.v1",
+      "ownerService": "dwp-time-server",
+      "scopeResolver": "TIME_TARGET_POPULATION",
+      "targetBindingKinds": [
+        "OBJECT",
+        "TARGET_POPULATION"
+      ],
+      "requiredFacts": [
+        "tenantId",
+        "periodId",
+        "legalEntityId",
+        "timeGroupId",
+        "expectedVersion",
+        "policyRevision",
+        "purposeCode"
+      ],
+      "purposeCodes": [
+        "TIME_OPERATIONS",
+        "TIME_CLOSE",
+        "WORK_TIME_PERIOD_CLOSURE",
+        "CLOSED_TIME_PAYROLL_TRANSFER"
+      ],
+      "denyOnMissingOrStaleEvidence": true
+    },
+    "newCapabilities": [
+      {
+        "capability": "hcm.operations.time.close",
+        "resourceKey": "ACTION.HRIS_TIME_CLOSE",
+        "action": "EXECUTE",
+        "riskTier": "CRITICAL",
+        "activationPolicy": "STEPUP-MGMT-HIGH-V1"
+      },
+      {
+        "capability": "hcm.operations.time.reopen",
+        "resourceKey": "ACTION.HRIS_TIME_REOPEN",
+        "action": "MANAGE",
+        "riskTier": "CRITICAL",
+        "activationPolicy": "STEPUP-MGMT-HIGH-V1"
+      }
+    ],
+    "actions": [
+      {
+        "bindingRef": "PEP-TIM-022",
+        "routeContractKey": "route.hcm.operations.time-close-validate.action",
+        "transportRouteKind": "ACTION",
+        "binding": "POST /api/time/v1/close-periods/{periodId}/validations",
+        "requiredCapability": "hcm.operations.time.close",
+        "freshStepUpRequired": false,
+        "approvalRequired": false
+      },
+      {
+        "bindingRef": "PEP-TIM-023",
+        "routeContractKey": "route.hcm.operations.time-close.action",
+        "transportRouteKind": "ACTION",
+        "binding": "POST /api/time/v1/close-periods/{periodId}/close",
+        "requiredCapability": "hcm.operations.time.close",
+        "freshStepUpRequired": true,
+        "approvalRequired": true,
+        "stepUpBinding": {
+          "targetType": "TIME_PERIOD",
+          "targetIdSource": "periodId",
+          "evidenceSource": "COMMAND_HEADER",
+          "expectedVersionHeader": "If-Match",
+          "resourceOwner": "time",
+          "ownerService": "dwp-time-server"
+        },
+        "sodRules": [
+          "NO_CLOSE_WITH_UNRESOLVED_EXCEPTION",
+          "CLOSE_MAKER_MUST_DIFFER_FROM_APPROVER"
+        ]
+      },
+      {
+        "bindingRef": "PEP-TIM-024",
+        "routeContractKey": "route.hcm.operations.time-reopen.action",
+        "transportRouteKind": "ACTION",
+        "binding": "POST /api/time/v1/close-periods/{periodId}/reopen",
+        "requiredCapability": "hcm.operations.time.reopen",
+        "freshStepUpRequired": true,
+        "approvalRequired": true,
+        "stepUpBinding": {
+          "targetType": "TIME_PERIOD",
+          "targetIdSource": "periodId",
+          "evidenceSource": "COMMAND_HEADER",
+          "expectedVersionHeader": "If-Match",
+          "resourceOwner": "time",
+          "ownerService": "dwp-time-server"
+        },
+        "sodRules": [
+          "NO_REOPEN_OWN_CLOSE",
+          "CORRECTION_MAKER_MUST_DIFFER_FROM_CLOSE_APPROVER"
+        ]
+      },
+      {
+        "bindingRef": "PEP-TIM-025",
+        "routeContractKey": "route.hcm.operations.time-payroll-handoff-create.action",
+        "transportRouteKind": "ACTION",
+        "binding": "POST /api/time/v1/close-periods/{periodId}/payroll-handoffs",
+        "requiredCapability": "hcm.operations.time.close",
+        "freshStepUpRequired": false,
+        "approvalRequired": false,
+        "precondition": "AUTHORITATIVELY_CLOSED_PERIOD_ONLY"
+      },
+      {
+        "bindingRef": "PEP-TIM-026",
+        "routeContractKey": "route.hcm.operations.time-payroll-handoff.data",
+        "transportRouteKind": "DATA",
+        "binding": "GET /api/time/v1/payroll-handoffs/{handoffId}",
+        "requiredCapability": "hcm.operations.time.close",
+        "authorizationClassification": "ACTION_CAPABILITY_PRESERVED",
+        "freshStepUpRequired": false,
+        "remodelToDataCapabilityForbidden": true
+      }
+    ],
+    "internalTrust": {
+      "contractId": "SVC-PEP-TIM-001",
+      "browserAuthorizationBundleMember": false,
+      "separateMutualWorkloadTrustRequired": true,
+      "browserOrUserTokenAllowed": false,
+      "tenantOverrideAllowed": false
+    }
+  },
+  "preservation": {
+    "reuseWithoutRegeneration": [
+      "XCON-008",
+      "XCON-009",
+      "XCON-010",
+      "XCON-011"
+    ],
+    "migrationLease": "TIME_MAIN_V12",
+    "immutablePredecessorMigration": "V11"
+  },
+  "authority": {
+    "v49GenerationInputAuthorized": true,
+    "moduleImplementationAuthorized": false,
+    "internalTrustImplementationAuthorized": false,
+    "migrationAuthoringAuthorized": false,
+    "moduleStartTokenIssued": false,
+    "activationAuthorized": false
+  }
+}

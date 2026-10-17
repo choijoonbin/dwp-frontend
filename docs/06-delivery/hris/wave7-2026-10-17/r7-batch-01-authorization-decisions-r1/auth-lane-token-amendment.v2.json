@@ -1,0 +1,121 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-01-auth-lane-token-amendment.v2",
+  "amendmentId": "HRIS-WAVE7-R7-BATCH-01-AUTH-LANE-TOKEN-AMENDMENT-20261017-R2",
+  "recordedAt": "2026-10-17T16:10:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "P1_PATH_BOUNDARY_CORRECTED_AUTH_LANE_ONLY",
+  "immutablePredecessor": {
+    "path": "auth-lane-token-state.v1.json",
+    "sha256": "bbaf6fe886dbd7734b8875c19bac04b8006349c3019aed603f88a9152afec5a3",
+    "mutationForbidden": true
+  },
+  "decisionPacket": {
+    "path": "central-authorization-decision-successor.v1.json",
+    "sha256": "4b8bcc3b4ee62954cd80f36f43fc0659f20fbc28707aaa12f3eea5e0ff1089cd"
+  },
+  "problem": "The v1 token authorized central generator outputs but its broad owner-main prohibition also denied generated owner PEP projections and the narrow Gateway decision-context carrier needed to validate v49.",
+  "precedence": "This amendment supersedes v1 only for the exact allowlisted exceptions and conditions below. Every v1 denial and authority flag not named here remains in force.",
+  "unconditionalNarrowExceptions": [
+    {
+      "path": "dwp-gateway/src/main/java/com/dwp/gateway/filter/ProductSurfaceDecisionContextFilter.java",
+      "purpose": "Carry only v49 product-surface decision context required by generated route evaluation.",
+      "forbiddenWithinFile": [
+        "business authorization policy",
+        "module-domain orchestration",
+        "tenant override",
+        "fail-open fallback"
+      ]
+    },
+    {
+      "path": "dwp-people-server/src/main/resources/product-authorization/hcm-people-pep-v49.generated.json",
+      "purpose": "Generated-only People owner PEP projection"
+    },
+    {
+      "path": "dwp-payroll-server/src/main/resources/product-authorization/hcm-payroll-pep-v49.generated.json",
+      "purpose": "Generated-only Payroll owner PEP projection"
+    },
+    {
+      "path": "dwp-platform-server/src/main/resources/product-authorization/hcm-platform-pep-v49.generated.json",
+      "purpose": "Generated-only Platform owner PEP projection"
+    },
+    {
+      "path": "dwp-time-server/src/main/resources/product-authorization/hcm-time-pep-v49.generated.json",
+      "purpose": "Generated-only Time owner PEP projection"
+    }
+  ],
+  "conditionalRegistryLineageExceptions": {
+    "condition": "Generator validation must fail closed because an existing owner registry or its lineage/count assertion cannot discover or verify the generated v49 projection. Cosmetic renaming, business behavior, controller wiring and domain implementation are not qualifying reasons.",
+    "allowedPaths": [
+      "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmV3PepRegistry.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmV3PepRegistryTest.java",
+      "dwp-payroll-server/src/main/java/com/dwp/services/payroll/security/PayrollV41PepRegistry.java",
+      "dwp-payroll-server/src/main/java/com/dwp/services/payroll/foundation/PayrollFoundationSettingsV48PepRegistry.java",
+      "dwp-payroll-server/src/test/**/PepRegistry-or-registration-lineage-count-tests",
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/security/HcmPlatformPepRegistry.java",
+      "dwp-platform-server/src/test/java/com/dwp/services/platform/security/HcmPlatformPepSecurityContractTest.java",
+      "dwp-time-server/src/main/java/**/generated-v49-owner-registry-lineage-count-only",
+      "dwp-time-server/src/test/**/generated-v49-owner-registry-lineage-count-tests-only"
+    ],
+    "allowedChangeKinds": [
+      "v49 generated resource path",
+      "v49 projection key or checksum lineage",
+      "expected generated route count",
+      "fail-closed parsing and registration assertion",
+      "targeted tests proving the same"
+    ],
+    "proofRequiredInBackendReceipt": [
+      "failing generator or targeted validation evidence before the change",
+      "minimal changed-line manifest",
+      "passing targeted validation after the change",
+      "proof that no controller, business service or domain mutation was introduced"
+    ]
+  },
+  "conditionalAuthReleaseLineageException": {
+    "path": "dwp-auth-server/src/main/resources/db/migration/V257__declare_hris_r7_batch01_v49_authorization_seed.sql",
+    "condition": "The established immutable product-authorization release-lineage pattern proves a new Auth seed migration is required for v49 discovery or checksum binding.",
+    "allowedContent": [
+      "v49 bundle identity",
+      "v49 bundle and index checksums",
+      "append-only release-lineage metadata"
+    ],
+    "forbiddenContent": [
+      "module business schema",
+      "tenant enrollment",
+      "feature activation",
+      "owner-domain data mutation",
+      "replacement or mutation of prior release lineage"
+    ],
+    "proofRequiredInBackendReceipt": true
+  },
+  "explicitDenialsAfterAmendment": [
+    "All HRM, PAY, SYS, TIM and PER business controllers remain forbidden.",
+    "All HRM, PAY, SYS, TIM and PER business application/domain services remain forbidden.",
+    "Payroll V52, Platform V331, Time V12, People V57 and Notification V36 authoring remains forbidden.",
+    "Any module migration other than the conditionally permitted Auth V257 release-lineage seed remains forbidden.",
+    "SVC-PEP-TIM-001 implementation remains forbidden.",
+    "Push, dwp-dev merge, rollout, tenant enrollment and activation remain forbidden."
+  ],
+  "checksumAdmission": {
+    "generatedOwnerProjectionChecksumsRequired": [
+      "hcm-people-pep-v49.generated.json",
+      "hcm-payroll-pep-v49.generated.json",
+      "hcm-platform-pep-v49.generated.json",
+      "hcm-time-pep-v49.generated.json"
+    ],
+    "gatewayChangedFileSha256Required": true,
+    "conditionalLineageChangedFileSha256Required": true,
+    "v49Accepted": false,
+    "moduleTokenIssuanceAllowed": false
+  },
+  "authority": {
+    "authLaneTokenAmended": true,
+    "authLaneCommitAuthorized": true,
+    "authLanePushAuthorized": false,
+    "authLaneMergeAuthorized": false,
+    "moduleImplementationAuthorized": false,
+    "moduleMigrationAuthoringAuthorized": false,
+    "moduleStartTokenIssued": false,
+    "activationAuthorized": false
+  },
+  "nextGate": "BACKEND_V49_RECEIPT_MUST_PROVE_EACH_UNCONDITIONAL_AND_CONDITIONAL_PATH_USE_AND_BIND_ALL_GENERATED_CHECKSUMS"
+}

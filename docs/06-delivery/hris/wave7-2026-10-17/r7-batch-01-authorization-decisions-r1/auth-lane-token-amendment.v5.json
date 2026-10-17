@@ -1,0 +1,270 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-01-auth-lane-token-amendment.v5",
+  "amendmentId": "HRIS-WAVE7-R7-BATCH-01-AUTH-LANE-TOKEN-AMENDMENT-20261017-R5",
+  "recordedAt": "2026-10-17T16:46:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL_EXPRESSION_AND_PAY_CHALLENGE_REPAIR",
+  "state": "P1_EXACT_GENERIC_SET_EXPRESSION_REDUCTION_AND_PAY_V49_RUNTIME_BOUND_AUTH_LANE_ONLY",
+  "immutablePredecessors": [
+    {
+      "path": "central-authorization-decision-amendment.v4.json",
+      "sha256": "ecd9af970c170d09416b8eba115b2b8b534c85c13dc95487d20f5c3597728d4d",
+      "mutationForbidden": true
+    },
+    {
+      "path": "auth-lane-token-amendment.v4.json",
+      "sha256": "d76bd88e06b576f0e6c6c25422379e6381fe758427ced155368f2ef987367800",
+      "mutationForbidden": true
+    },
+    {
+      "path": "validation-receipt-successor.v4.json",
+      "sha256": "8b28214faeecc7975fdc3df95e2345213bc129fe2218c8635d17c9483d5884c6",
+      "mutationForbidden": true
+    },
+    {
+      "repository": "dwp-frontend",
+      "commit": "767c0f160efed82cb1e343b5ac53a6ab956c2573",
+      "tree": "9220b6ac31104bb50fa7339730732bbb1b8eb4da",
+      "mutationForbidden": true
+    }
+  ],
+  "boundDecisionAmendment": {
+    "path": "central-authorization-decision-amendment.v5.json",
+    "sha256": "1cd3598ae7dd4c7629afc199b265c9d3d10de40706a43583790651336b86dbd2",
+    "requiredState": "P1_EXACT_GENERIC_SET_EXPRESSION_REDUCTION_AND_PAY_V49_CHALLENGE_RUNTIME_SEALED_APPEND_ONLY"
+  },
+  "precedence": "This v5 token supersedes v4 as the effective Auth-lane boundary. It replaces the retired payroll-read helper paths, adds only the exact PAY v49 resolver proof paths, expands the generic-session topology to the exact twelve-route set, and strengthens expression reduction. All unaffected v4 carrier, Gateway, generation, release and validation allowances remain bound by this exact effective path set and their prior conditions.",
+  "retiredAndForbiddenPaths": [
+    "dwp-auth-server/src/main/java/com/dwp/services/auth/service/PayrollSupportElevatedReadAuthorityPolicy.java",
+    "dwp-auth-server/src/test/java/com/dwp/services/auth/service/PayrollSupportElevatedReadAuthorityPolicyTest.java",
+    "dwp-gateway/src/test/java/com/dwp/gateway/filter/ProductSurfaceDecisionContextFilterTest.java"
+  ],
+  "retiredPathRule": "The two uncommitted PayrollSupportElevatedReadAuthorityPolicy paths must be absent from the implementation commit and replaced by the exact PayrollV49ElevatedAuthorityPolicy paths. The previously retired duplicate Gateway test path remains forbidden.",
+  "effectiveExactChangedPathClosedSet": [
+    "contracts/product-authorization/pilot-fixtures.v1.generated.json",
+    "contracts/product-authorization/pilot-fixtures.v1.schema.json",
+    "contracts/product-authorization/product-surfaces-v1.bundle-v49.json",
+    "contracts/product-authorization/product-surfaces-v1.index.json",
+    "contracts/product-authorization/product-surfaces-v1.json",
+    "contracts/product-authorization/product-surfaces-v1.yaml",
+    "dwp-auth-server/src/main/java/com/dwp/services/auth/controller/AuthController.java",
+    "dwp-auth-server/src/main/java/com/dwp/services/auth/dto/MeResponse.java",
+    "dwp-auth-server/src/main/java/com/dwp/services/auth/service/AuthSessionService.java",
+    "dwp-auth-server/src/main/java/com/dwp/services/auth/service/PayrollV49ElevatedAuthorityPolicy.java",
+    "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationAuthorityAdapter.java",
+    "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationContractValidator.java",
+    "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationGateTopologyValidator.java",
+    "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationReleaseLineage.java",
+    "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductSurfaceStepUpRouteResolver.java",
+    "dwp-auth-server/src/main/resources/db/migration/V257__declare_hris_payroll_settings_and_r7_authorization_seeds.sql",
+    "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v49.generated.json",
+    "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.generated.json",
+    "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.index.generated.json",
+    "dwp-auth-server/src/test/java/com/dwp/services/auth/controller/AuthControllerDiscoveryTest.java",
+    "dwp-auth-server/src/test/java/com/dwp/services/auth/repository/HrisR7AuthorizationSeedMigrationContractTest.java",
+    "dwp-auth-server/src/test/java/com/dwp/services/auth/service/AuthSessionServiceTest.java",
+    "dwp-auth-server/src/test/java/com/dwp/services/auth/service/PayrollV49ElevatedAuthorityPolicyTest.java",
+    "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationAuthorityAdapterTest.java",
+    "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationContractReleaseLineageTest.java",
+    "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationContractValidatorTest.java",
+    "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationReleaseLineageTest.java",
+    "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductSurfaceStepUpLatestRuntimeTest.java",
+    "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductSurfaceStepUpRouteResolverTest.java",
+    "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductSurfaceStepUpRuntimeSpringFixture.java",
+    "dwp-gateway/src/main/java/com/dwp/gateway/filter/ProductSurfaceDecisionContextFilter.java",
+    "dwp-gateway/src/main/java/com/dwp/gateway/filter/VerifiedIdentityFilter.java",
+    "dwp-gateway/src/main/java/com/dwp/gateway/productsurface/GeneratedProductRouteCatalog.java",
+    "dwp-gateway/src/main/java/com/dwp/gateway/security/AuthSessionVerifier.java",
+    "dwp-gateway/src/main/java/com/dwp/gateway/security/VerifiedIdentity.java",
+    "dwp-gateway/src/test/java/com/dwp/gateway/AuthSessionVerifierTest.java",
+    "dwp-gateway/src/test/java/com/dwp/gateway/ProductSurfaceDecisionContextFilterTest.java",
+    "dwp-gateway/src/test/java/com/dwp/gateway/VerifiedIdentityFilterTest.java",
+    "dwp-gateway/src/test/java/com/dwp/gateway/productsurface/GeneratedProductRouteCatalogTest.java",
+    "dwp-gateway/src/test/java/com/dwp/gateway/security/VerifiedIdentityTest.java",
+    "dwp-payroll-server/src/main/resources/product-authorization/hcm-payroll-pep-v49.generated.json",
+    "dwp-people-server/src/main/resources/product-authorization/hcm-people-pep-v49.generated.json",
+    "dwp-platform-server/src/main/resources/product-authorization/hcm-platform-pep-v49.generated.json",
+    "dwp-time-server/src/main/resources/product-authorization/hcm-time-pep-v49.generated.json",
+    "scripts/generate-product-authorization-contracts.py",
+    "scripts/generate-product-authorization-fixtures.py",
+    "scripts/tests/test_product_authorization_v21.py",
+    "scripts/tests/test_product_authorization_v47.py",
+    "scripts/tests/test_product_authorization_v49.py"
+  ],
+  "closedSetRule": "The backend v49 Auth-lane implementation commit may change only effectiveExactChangedPathClosedSet and must contain none of retiredAndForbiddenPaths. Presence of any other path is a hard denial requiring a new append-only exact-path decision.",
+  "exactGenericSessionTopologyException": {
+    "allowedMainPaths": [
+      "scripts/generate-product-authorization-contracts.py",
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationGateTopologyValidator.java",
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationAuthorityAdapter.java",
+      "dwp-gateway/src/main/java/com/dwp/gateway/productsurface/GeneratedProductRouteCatalog.java"
+    ],
+    "allowedTargetedTestPaths": [
+      "scripts/tests/test_product_authorization_v49.py",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationContractValidatorTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationAuthorityAdapterTest.java",
+      "dwp-gateway/src/test/java/com/dwp/gateway/productsurface/GeneratedProductRouteCatalogTest.java"
+    ],
+    "grandfatheredPreV49Routes": [
+      "route.hcm.configuration.configuration-version.data",
+      "route.hcm.configuration.configurations.data",
+      "route.hcm.operations.time-interpretation-run.action",
+      "route.hcm.operations.time-interpretation-trace.data",
+      "route.hcm.time.timecard-correction.action",
+      "route.hcm.time.timecard.data"
+    ],
+    "v49RoutesRetainedFromV4": [
+      "route.hcm.operations.payroll-population.page",
+      "route.hcm.operations.payroll-support.data",
+      "route.hcm.operations.payroll-run.data",
+      "route.hcm.operations.time-close-validate.action",
+      "route.hcm.operations.time-payroll-handoff-create.action",
+      "route.hcm.operations.time-payroll-handoff.data"
+    ],
+    "effectiveExactTwelveRouteClosedSet": [
+      "route.hcm.configuration.configuration-version.data",
+      "route.hcm.configuration.configurations.data",
+      "route.hcm.operations.payroll-population.page",
+      "route.hcm.operations.payroll-support.data",
+      "route.hcm.operations.payroll-run.data",
+      "route.hcm.operations.time-close-validate.action",
+      "route.hcm.operations.time-interpretation-run.action",
+      "route.hcm.operations.time-interpretation-trace.data",
+      "route.hcm.operations.time-payroll-handoff-create.action",
+      "route.hcm.operations.time-payroll-handoff.data",
+      "route.hcm.time.timecard-correction.action",
+      "route.hcm.time.timecard.data"
+    ],
+    "requiredBehavior": [
+      "Only the exact twelve routes may have generic session step-up with no command binding.",
+      "A NORMAL challenge is emitted only when an activated branch is decisive; an ALLOWED ANY member or otherwise applicable ALLOWED access-profile alternative on the exact grandfathered routes wins without challenge, while explicit selector and blocking-denial rules remain intact.",
+      "A generic challenge never forwards to an owner service and never returns a protected payload.",
+      "ELEVATED performs complete exact reevaluation and does not inherit a NORMAL result.",
+      "No owner, target, expected-version or command binding may be synthesized for a generic route."
+    ]
+  },
+  "expressionReductionException": {
+    "allowedMainPath": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationAuthorityAdapter.java",
+    "allowedTargetedTestPath": "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationAuthorityAdapterTest.java",
+    "anyPrecedence": "ALLOWED > STEP_UP_REQUIRED > HARD_DENY",
+    "allPrecedence": "HARD_DENY > STEP_UP_REQUIRED > ALLOWED",
+    "canonicalization": "Expression members and winning evidence are reduced in unique ascending capability-contract-key order. Duplicate, missing, blank or unregistered members fail closed. Input declaration order must not affect decision, reason, grants, scopes or selected challenge evidence.",
+    "requiredSemantics": [
+      "ANY with an ALLOWED alternate never challenges merely because another branch is activated.",
+      "ANY challenges only when no branch allows and at least one exact activated branch returns STEP_UP_REQUIRED.",
+      "ALL hard-denies if any branch hard-denies; otherwise it challenges if any branch requires step-up; otherwise all branches must allow.",
+      "ELEVATED reevaluates the exact expression and every non-activation constraint.",
+      "On the exact six grandfathered routes, an applicable ALLOWED access-profile alternative is reduced as an OR alternative before a management STEP_UP_REQUIRED result may become decisive."
+    ],
+    "permutationTestsRequired": true
+  },
+  "payV49ElevatedPolicyException": {
+    "allowedMainPath": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/PayrollV49ElevatedAuthorityPolicy.java",
+    "allowedTestPath": "dwp-auth-server/src/test/java/com/dwp/services/auth/service/PayrollV49ElevatedAuthorityPolicyTest.java",
+    "adapterMainPath": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationAuthorityAdapter.java",
+    "adapterTestPath": "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationAuthorityAdapterTest.java",
+    "exactHelperRoutes": [
+      "route.hcm.operations.payroll-population.page",
+      "route.hcm.operations.payroll-support.data",
+      "route.hcm.operations.payroll-run.action",
+      "route.hcm.operations.payroll-run-calculate.action"
+    ],
+    "normalRule": "The helper may admit only an exact v49 ELEVATED-only profile as a NORMAL STEP_UP_REQUIRED candidate. It can never return ALLOWED, weaken a predicate or synthesize a route/binding.",
+    "elevatedRule": "ELEVATED authority remains full ordinary policy reevaluation. The helper does not bypass capability, predicate, scope, target, SoD or fresh command evidence.",
+    "payrollRunDataRule": "route.hcm.operations.payroll-run.data is excluded from the helper and remains governed by exact ANY expression reduction.",
+    "retiredHelperPathsAuthorized": false
+  },
+  "payV49StepUpResolverException": {
+    "allowedMainPath": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductSurfaceStepUpRouteResolver.java",
+    "allowedTargetedTestPaths": [
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductSurfaceStepUpRouteResolverTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductSurfaceStepUpLatestRuntimeTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductSurfaceStepUpRuntimeSpringFixture.java"
+    ],
+    "servicePathNotAuthorized": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductSurfaceStepUpChallengeService.java",
+    "serviceTestPathNotAuthorized": "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductSurfaceStepUpChallengeServiceTest.java",
+    "runtimeRule": "Bundle version 49 is added to both the supported step-up runtime set and sealed runtime set. It must be the active stored product-surfaces bundle with a matching active pointer, checksum, schema and seal; drift or ambiguity fails closed.",
+    "profileSelectionRule": "For challenge resolution only, the resolver may select the unique highest-precedence exact ELEVATED-only direct CAPABILITY profile on route.hcm.operations.payroll-run.action or route.hcm.operations.payroll-run-calculate.action. It may not generalize ELEVATED-only selection to any other route or expression.",
+    "exactPrepareBinding": {
+      "routeContractKey": "route.hcm.operations.payroll-run.action",
+      "profileKey": "payroll-run-operator",
+      "capabilityContractKey": "hcm.operations.payroll-run.execute",
+      "predicatePolicyKey": "predicate.hcm-payroll-run-prepare-authority.v1",
+      "bindingKey": "route.hcm.operations.payroll-run.action.binding.01",
+      "method": "POST",
+      "path": "/api/payroll/v1/runs",
+      "ownerServiceKey": "payroll",
+      "audience": "dwp-payroll-server",
+      "targetType": "PAYROLL_RUN_PREPARATION",
+      "targetIdBodyFields": [
+        "preparationId"
+      ],
+      "expectedObjectVersionSource": "COMMAND_HEADER",
+      "expectedObjectVersionName": "X-DWP-Expected-Object-Version"
+    },
+    "exactCalculateBinding": {
+      "routeContractKey": "route.hcm.operations.payroll-run-calculate.action",
+      "profileKey": "payroll-run-operator",
+      "capabilityContractKey": "hcm.operations.payroll-run.execute",
+      "predicatePolicyKey": "predicate.hcm-payroll-run-authority.v1",
+      "bindingKey": "route.hcm.operations.payroll-run-calculate.action.binding.01",
+      "method": "POST",
+      "path": "/api/payroll/v1/runs/{runId}/attempts",
+      "ownerServiceKey": "payroll",
+      "audience": "dwp-payroll-server",
+      "targetType": "PAYROLL_RUN",
+      "targetIdPathParameter": "runId",
+      "expectedObjectVersionSource": "COMMAND_HEADER",
+      "expectedObjectVersionName": "X-DWP-Expected-Object-Version"
+    },
+    "fixtureChangeRule": "ProductSurfaceStepUpRuntimeSpringFixture may add exactly dwp-payroll-server to its existing test-only allowed-audience set because the two exact bindings require that audience. No wildcard, production setting or service change is admitted.",
+    "ambiguityAndDriftRule": "A missing, non-ELEVATED-only, non-direct, non-activated, lower/duplicate precedence, wrong predicate, wrong route, wrong binding, wrong audience, wrong target or wrong expected-version contract fails closed before challenge signing."
+  },
+  "retainedV4RuntimeBoundaries": [
+    "Trusted active Auth-session carrier and exact NORMAL/ELEVATED parsing.",
+    "Client active-mode header distrust and PROVIDER_SUPPORT precedence.",
+    "Complete direct and ANY/ALL activated-capability traversal in generator, Auth and Gateway.",
+    "Internal-only hris-navigation-policy-decisions endpoint remains null-safe and invisible to public lookup.",
+    "Exact PAGE/DATA tuples, authorization-equivalence keys and responseSchemaKey fields.",
+    "TIM 023/024 and PAY prepare/calculate fresh command evidence; generic challenges never owner-forward."
+  ],
+  "migrationBoundary": {
+    "retainedPreviouslyAuthorizedPath": "dwp-auth-server/src/main/resources/db/migration/V257__declare_hris_payroll_settings_and_r7_authorization_seeds.sql",
+    "v5NewOrChangedMigrationAuthoringAuthorized": false,
+    "rule": "V5 opens no migration change. The previously authorized exact V257 lineage artifact may appear in the implementation receipt only under its unchanged v4 content boundary; no additional migration, business schema, enrollment or activation content is admitted."
+  },
+  "implementationReceiptProofRequired": [
+    "The changed-path manifest is a subset of effectiveExactChangedPathClosedSet and contains no retired or forbidden path.",
+    "The two retired PayrollSupportElevatedReadAuthorityPolicy files are absent and the exact replacement helper plus test are present when the PAY helper is changed.",
+    "Generator/Auth/Gateway proofs recognize exactly twelve generic-session no-command routes and reject a thirteenth route.",
+    "Authority adapter permutation tests prove exact ANY and ALL precedence with identical complete results for every member ordering.",
+    "PAY helper tests prove only the two exact reads plus prepare/calculate can become NORMAL challenge candidates and never NORMAL ALLOWED.",
+    "Resolver tests prove v49 sealed loading, exact prepare/calculate resolution, unique ELEVATED-only direct activated profile selection, drift/ambiguity failure and exact dwp-payroll-server audience.",
+    "ProductSurfaceStepUpChallengeService and its test remain byte-unchanged; only the test fixture audience is minimally extended.",
+    "All v4 carrier, internal endpoint, PAGE/DATA tuple, equivalence, response schema, generated checksum and release-lineage proofs remain passing.",
+    "No new or changed migration, business controller/service, owner-module implementation, tenant enrollment or activation file is introduced by v5."
+  ],
+  "explicitDenialsAfterAmendment": [
+    "ProductSurfaceStepUpChallengeService and ProductSurfaceStepUpChallengeServiceTest changes are forbidden.",
+    "Any ELEVATED-only resolver generalization beyond the exact two PAY routes is forbidden.",
+    "NORMAL ALLOWED for either exact PAY command profile is forbidden.",
+    "A challenge when an ANY alternate branch already allows is forbidden.",
+    "Declaration-order-dependent expression decisions or evidence are forbidden.",
+    "All HRM, PAY, SYS, TIM and PER business controllers, application services and domain services remain forbidden.",
+    "New migration authoring, module migrations, feature activation, tenant enrollment, push, merge and module-token issuance remain forbidden."
+  ],
+  "authority": {
+    "authLaneTokenAmended": true,
+    "authLaneImplementationCommitAuthorizedWithinExactClosedSet": true,
+    "v49Accepted": false,
+    "moduleTokenIssuanceAllowed": false,
+    "authLanePushAuthorized": false,
+    "authLaneMergeAuthorized": false,
+    "migrationAuthoringAuthorized": false,
+    "moduleImplementationAuthorized": false,
+    "moduleMigrationAuthoringAuthorized": false,
+    "moduleStartTokenIssued": false,
+    "tenantEnrollmentAuthorized": false,
+    "activationAuthorized": false
+  },
+  "nextGate": "BACKEND_V49_IMPLEMENTATION_RECEIPT_AND_INDEPENDENT_REVIEW_REQUIRED_BEFORE_V49_ACCEPTANCE_MODULE_TOKENS_PUSH_MERGE_OR_MIGRATION_AUTHORITY"
+}
