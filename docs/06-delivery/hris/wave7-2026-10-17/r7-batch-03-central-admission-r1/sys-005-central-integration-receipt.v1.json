@@ -1,0 +1,148 @@
+{
+  "schema": "dwp.hris.r7-batch03-sys005-central-integration-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH03-SYS005-CENTRAL-INTEGRATION-20261018-R1",
+  "recordedAt": "2026-10-18T04:41:26+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "SYS005_EVIDENCE_ONLY_REUSE_CLOSURE_CENTRALLY_INTEGRATED_NO_SOURCE_NO_MIGRATION_DEFAULT_OFF_ZERO_BUSINESS_CREDIT",
+  "authority": {
+    "admissionDecision": {
+      "path": "sys-005-evidence-admission-decision.v1.json",
+      "sha256": "96fdd1eaac03bd308d25f760c2b89fe96a5ad51e71eaea7e79a99d35080ecbdc",
+      "bytes": 4979,
+      "carrierCommit": "f8e38167863eb45a8a09f941afc7c030d11cda19",
+      "carrierTree": "24f4271c4322e946a0170ee17505f4a33436e13f"
+    },
+    "admissionDecisionState": "SYS005_EVIDENCE_ONLY_REUSE_CLOSURE_INDEPENDENTLY_ACCEPTED_EXACT_NO_FF_ADMISSION_AUTHORIZED_NO_SOURCE_NO_MIGRATION_ZERO_BUSINESS_CREDIT",
+    "mergeStrategy": "NO_FF_EXACT_ADMITTED_BRANCH_HEAD",
+    "conflictPolicy": "STOP_ON_CONFLICT_NO_AUTOMATIC_RESOLUTION"
+  },
+  "integratedResult": {
+    "sliceId": "BASE-TFR-SYS-005",
+    "moduleSession": "HRIS-SYS",
+    "mode": "EVIDENCE_ONLY_REUSE_CLOSURE",
+    "repository": "dwp-frontend",
+    "sourceBranch": "codex/hris-wave7-r7-batch03-sys-005-evidence-20261018-r1",
+    "exactModuleHead": "23c3b0c95fd7ead648b332c580c39f5a8290ea88",
+    "exactModuleTree": "ffacfbfb2422b69beafa98c1351130cc2d6e9905",
+    "decisionCarrierCommit": "f8e38167863eb45a8a09f941afc7c030d11cda19",
+    "mergeCommit": "47bea91c3da86aea975b5c4d4101d9081d3a7ad4",
+    "mergeTree": "b4c3f11b4df5f376db0efee25074964b6a44a71a",
+    "mergeParents": [
+      "f8e38167863eb45a8a09f941afc7c030d11cda19",
+      "23c3b0c95fd7ead648b332c580c39f5a8290ea88"
+    ],
+    "exactModuleHeadIsMergeAncestor": true,
+    "decisionCarrierIsMergeAncestor": true,
+    "changedPathCount": 12,
+    "changedPathBoundary": "ONLY_JSON_FILES_UNDER_R7_BATCH_03_MODULE_RESULTS_R1_BASE_TFR_SYS_005"
+  },
+  "exactBlobVerification": {
+    "method": "READ_ONLY_GIT_BLOB_ID_COMPARISON_EXACT_MODULE_HEAD_TO_CURRENT_DWP_DEV",
+    "allTwelveMatch": true,
+    "items": [
+      {
+        "path": "../r7-batch-03-module-results-r1/base-tfr-sys-005/acceptance-receipt.v1.json",
+        "blob": "a5b0914a045b4d795784c1564a96ca9fed5480df"
+      },
+      {
+        "path": "../r7-batch-03-module-results-r1/base-tfr-sys-005/acceptance-receipt.v2.json",
+        "blob": "a4d93b5bf1f1f5371a57ba82204f7c845dbf6816"
+      },
+      {
+        "path": "../r7-batch-03-module-results-r1/base-tfr-sys-005/branch-receipt.v1.json",
+        "blob": "0eb2a90a85d17c1041efef9ea947c8363381b8f4"
+      },
+      {
+        "path": "../r7-batch-03-module-results-r1/base-tfr-sys-005/branch-receipt.v2.json",
+        "blob": "32c8e37cd049a530c83725520bb5802c4378e29a"
+      },
+      {
+        "path": "../r7-batch-03-module-results-r1/base-tfr-sys-005/changed-path-manifest.v1.json",
+        "blob": "ff85082a0fe0b42ba112d74a62485b603d1e204c"
+      },
+      {
+        "path": "../r7-batch-03-module-results-r1/base-tfr-sys-005/changed-path-manifest.v2.json",
+        "blob": "b22e33d1118892ac5b0ff24028e28e718e5ff9e6"
+      },
+      {
+        "path": "../r7-batch-03-module-results-r1/base-tfr-sys-005/module-result.v1.json",
+        "blob": "d33b95255badbb4d991d0c835717c1793f43ede9"
+      },
+      {
+        "path": "../r7-batch-03-module-results-r1/base-tfr-sys-005/module-result.v2.json",
+        "blob": "ac382237fc04c3615de840ca913b5db04b87b1be"
+      },
+      {
+        "path": "../r7-batch-03-module-results-r1/base-tfr-sys-005/reuse-contract-receipt.v1.json",
+        "blob": "54e79d4ae30376dc17b085d466d1595d6713b89e"
+      },
+      {
+        "path": "../r7-batch-03-module-results-r1/base-tfr-sys-005/source-coverage-manifest.v1.json",
+        "blob": "a9e8374e49430e59030e95fed834e7a10a290a33"
+      },
+      {
+        "path": "../r7-batch-03-module-results-r1/base-tfr-sys-005/verification-receipt.v1.json",
+        "blob": "6da6451aac343a4b2f5d90ccd6ccc8a740db6f95"
+      },
+      {
+        "path": "../r7-batch-03-module-results-r1/base-tfr-sys-005/verification-receipt.v2.json",
+        "blob": "a00bec0fed9dec2103f48be68fe5440e3ccf36be"
+      }
+    ]
+  },
+  "currentCentralStateBeforeReceipt": {
+    "repository": "dwp-frontend",
+    "branch": "dwp-dev",
+    "commit": "c5710d9927f507acfa190bd8b336accb885e5de1",
+    "tree": "2f3fd62ebf1ec9284f3a4822fd2ad9f174f86df7",
+    "mergeCommitIsCurrentMainAncestor": true,
+    "originExact": true,
+    "clean": true
+  },
+  "verification": {
+    "ancestryCheckedReadOnly": true,
+    "exactBlobSetCheckedReadOnly": true,
+    "testExecutionDuringCentralAdmission": false,
+    "repositoryWideSuiteRerun": false,
+    "admittedBoundedVerificationReused": {
+      "backend": "8_SUITES_52_TESTS_PASS_FROM_V1_FIRST_EXECUTION",
+      "frontend": "3_FILES_32_TESTS_PASS_WITH_DWP_APP_NODE_AND_SHARED_UTILS_JSDOM",
+      "openApi": "BOTH_CANONICAL_3889_BYTES_SHA256_88BE25E0E95FE8C8281B3F140823819B421A08D025203B4FE1FEF54DDCFF7C08"
+    },
+    "independentReview": {
+      "decision": "GO",
+      "p0": 0,
+      "p1": 0,
+      "p2": 0
+    }
+  },
+  "changeBoundary": {
+    "productionSourceChanged": false,
+    "testSourceChanged": false,
+    "migrationChanged": false,
+    "menuOrRouteChanged": false,
+    "generatedContractChanged": false,
+    "productAuthorizationChanged": false
+  },
+  "rollout": {
+    "runtimeDefault": "OFF_UNCHANGED",
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "tenantEnrollmentCount": 0,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0
+  },
+  "decision": "SYS005_EVIDENCE_ONLY_REUSE_CLOSURE_CENTRALLY_INTEGRATED",
+  "remainingState": {
+    "batch03Complete": false,
+    "r7Complete": false
+  },
+  "nonClaims": [
+    "SYS-005 adds or changes production source, test source, a migration, menu, route or generated contract.",
+    "Any feature or tenant is activated.",
+    "SYS-005 receives business-completion credit.",
+    "Batch-03 is complete.",
+    "R7 is complete."
+  ]
+}
