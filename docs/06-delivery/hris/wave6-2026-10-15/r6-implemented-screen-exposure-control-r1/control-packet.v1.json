@@ -1,0 +1,172 @@
+{
+  "schema": "dwp.hris.wave6-r6-implemented-screen-exposure-control-packet.v1",
+  "packetId": "HRIS-WAVE6-R6-IMPLEMENTED-SCREEN-EXPOSURE-20261017-R1",
+  "issuedAt": "2026-10-17T11:20:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL_WITH_MODULE_OWNERS",
+  "state": "AUTHORIZED_TO_IMPLEMENT",
+  "objective": "Expose the independently audited R6-A exact PAGE subset through the sealed seven-workbench aggregate, without treating screen presence as deployment or POLICY authority.",
+  "startingPins": {
+    "backend": {
+      "branch": "dwp-dev",
+      "commit": "ad04a6596c96b66f988c15abaa30ef8637d9374d"
+    },
+    "frontend": {
+      "branch": "dwp-dev",
+      "commit": "06620531b1beba3011e4360f643cdd46a09aada6"
+    },
+    "authorizationRegistryVersion": 45,
+    "authorizationRegistrySha256": "6f41e17159104cd0fd721a13877611b6225bd6458cb2831f0f30e51573992e64",
+    "navigationTopologyRevision": "HRIS-IA-98-WB7-G46-N97-R5"
+  },
+  "inventory": {
+    "implementedLocalScreens": 38,
+    "fixedHomeScreens": 1,
+    "eligibleDescendantNodes": 12,
+    "eligibleFrontendPaths": 13,
+    "capabilityAuthorizedNodes": 12,
+    "policyAuthorizedOwnerNodes": 0,
+    "policyCarrierRouteContracts": 0,
+    "implementedButHardExcludedScreens": 2,
+    "implementedButOwnerlessScreens": 3,
+    "unimplementedCanonicalNodes": 67,
+    "conditionalOwnerResealNodes": 3,
+    "semanticMismatchNodes": 4
+  },
+  "eligibleNodeIds": [
+    "BASE:my-employment-documents",
+    "BASE:hr-people",
+    "BASE:hr-employment-assignments",
+    "BASE:hr-organization-positions",
+    "BASE:hr-employee-change-requests",
+    "BASE:time-clock-ingestion",
+    "BASE:time-interpretation",
+    "BASE:time-exceptions",
+    "BASE:performance-review-operations",
+    "MODERN:hcm.operations.compensation-planning",
+    "BASE:settings-reference",
+    "BASE:settings-payroll"
+  ],
+  "eligibleFrontendPaths": [
+    "/hr/me/employment-documents",
+    "/hr/operations/people",
+    "/hr/operations/people/employment-assignments",
+    "/hr/operations/assignments",
+    "/hr/design/organization",
+    "/hr/operations/people/employee-change-requests",
+    "/hr/operations/time/clock-ingestion",
+    "/hr/operations/time/interpretation",
+    "/hr/operations/time/exceptions",
+    "/hr/operations/performance/review-operations",
+    "/hr/operations/performance/compensation-planning",
+    "/hr/settings/reference-data",
+    "/hr/settings/payroll"
+  ],
+  "exactPageRouteContracts": [
+    "route.hcm.personal.employment-documents.page",
+    "route.hcm.operations.people.page",
+    "route.hcm.operations.employment-assignments.page",
+    "route.hcm.management.org-design.page",
+    "route.hcm.operations.employee-change-requests.page",
+    "route.hcm.operations.time-clock-ingestion.page",
+    "route.hcm.operations.time-interpretation.page",
+    "route.hcm.operations.time-exceptions.page",
+    "route.hcm.operations.performance-review-operations.page",
+    "route.hcm.operations.compensation-planning.page",
+    "route.hcm.configuration.settings-reference.page",
+    "route.hcm.configuration.payroll.page"
+  ],
+  "policyCarrierSuccessor": {
+    "state": "WITHHELD_TO_R6_B_V46",
+    "reason": "v45 aggregate EffectiveNode cannot express an exact server-admitted alias and the current permission-only provider cannot prove POLICY decisions.",
+    "minimumContract": "Trusted server authority source returns exact nodeId, path, routeContractKey, profileKey, target binding, scope binding, decision revision, authority revisions and freshUntil; aggregate v46 binds admitted aliases into its pin.",
+    "routeContractKeys": [
+      "route.hcm.management.system.page",
+      "route.hcm.operations.assignments.page",
+      "route.hcm.operations.overview.page",
+      "route.hcm.operations.people.page",
+      "route.hcm.personal.absence.page",
+      "route.hcm.personal.directory.page",
+      "route.hcm.personal.me.page",
+      "route.hcm.personal.organization.page",
+      "route.hcm.personal.pay.page",
+      "route.hcm.personal.services.page",
+      "route.hcm.personal.talent.page",
+      "route.hcm.personal.time.page",
+      "route.hcm.team.home.page"
+    ],
+    "excludedPolicyRouteContracts": [
+      "route.hcm.personal.home.page",
+      "route.hcm.personal.benefits.page"
+    ],
+    "nodeGrantRule": "No R6-A node or alias may be granted by a POLICY inference.",
+    "revisionRule": "R6-B must include the normalized exact admitted path set and authority revisions in the aggregate pin."
+  },
+  "activation": {
+    "controllerFeatureEnabledByDefault": false,
+    "runtimeModeDefault": "OFF",
+    "enrolledTenantsDefault": [],
+    "installedCatalogDefault": [
+      "BASE:my-employment-documents",
+      "BASE:hr-people",
+      "BASE:hr-employment-assignments",
+      "BASE:hr-organization-positions",
+      "BASE:hr-employee-change-requests",
+      "BASE:time-clock-ingestion",
+      "BASE:time-interpretation",
+      "BASE:time-exceptions",
+      "BASE:performance-review-operations",
+      "MODERN:hcm.operations.compensation-planning",
+      "BASE:settings-reference",
+      "BASE:settings-payroll"
+    ],
+    "deployedCatalogDefault": [
+      "BASE:my-employment-documents",
+      "BASE:hr-people",
+      "BASE:hr-employment-assignments",
+      "BASE:hr-organization-positions"
+    ],
+    "conditionalDeploymentRule": "The other eight installed nodes enter deployed only when their owner feature flag, migration and PEP are enabled in the same environment.",
+    "customerActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "explicitExclusions": [
+    "/hr/benefits",
+    "/hr/operations/benefits",
+    "/hr/explore",
+    "/hr/settings/navigation-policy",
+    "/hr/data/reference",
+    "/hr/data/integrations",
+    "/hr/operations/performance/multirater-surveys",
+    "/hr/operations/time",
+    "/hr/operations/pay",
+    "/hr/operations/talent",
+    "/hr/data/exports",
+    "/hr/operations",
+    "/hr/team/time",
+    "/hr/team/absence",
+    "/hr/operations/absence",
+    "Every POLICY route until the R6-B v46 exact decision carrier is complete",
+    "Every canonical IA route without both an implemented screen and an active PAGE contract"
+  ],
+  "orderedImplementation": [
+    "Restrict the server-owned implementation allowlist to the 12 independently audited PAGE nodes while retaining configured installed and deployed intersection gates.",
+    "Return only server-admitted exact PAGE aliases for each effective node.",
+    "Bind the normalized exact admitted path set into the aggregate revision pin and reuse it for deep-link decisions.",
+    "Render only server-returned aliases intersected with Gateway-authorized paths; canonical route is the menu target and the assignment compatibility route remains deep-link only.",
+    "Verify changed backend and frontend clusters once, then merge owner branches into dwp-dev and issue closure evidence."
+  ],
+  "acceptance": [
+    "POLICY authority is never inferred from a permission code.",
+    "Only the 12 audited implementation nodes can pass the implementation allowlist even if configuration names another canonical node.",
+    "The projection returns only exact server-admitted PAGE paths and the frontend does not reconstruct additional aliases.",
+    "Installed, deployed, tenant policy, legal-entity restriction and route authority remain an intersection.",
+    "All ownerless, excluded, unimplemented and ambiguous routes remain absent.",
+    "Runtime activation remains default OFF with no enrolled tenant."
+  ],
+  "validationPolicy": {
+    "changedClusterFirst": true,
+    "failedTargetOnlyAfterCorrection": true,
+    "repositoryWideRerunPerCorrection": false,
+    "fullSuiteOnlyAtReleaseGate": true
+  }
+}
