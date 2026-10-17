@@ -30,7 +30,9 @@
     "implementedButOwnerlessScreens": 3,
     "unimplementedCanonicalNodes": 67,
     "conditionalOwnerResealNodes": 3,
-    "semanticMismatchNodes": 4
+    "semanticMismatchNodes": 4,
+    "defaultDeployedNodes": 3,
+    "featureGatedInstalledNodes": 9
   },
   "eligibleNodeIds": [
     "BASE:my-employment-documents",
@@ -121,11 +123,10 @@
     ],
     "deployedCatalogDefault": [
       "BASE:my-employment-documents",
-      "BASE:hr-people",
       "BASE:hr-employment-assignments",
       "BASE:hr-organization-positions"
     ],
-    "conditionalDeploymentRule": "The other eight installed nodes enter deployed only when their owner feature flag, migration and PEP are enabled in the same environment.",
+    "conditionalDeploymentRule": "The other nine installed nodes, including People 360, enter deployed only when their owner feature flag, migration and PEP are enabled in the same environment.",
     "customerActivationAuthorized": false,
     "productionReleaseAuthorized": false
   },
