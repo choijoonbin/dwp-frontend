@@ -1,0 +1,136 @@
+{
+  "schema": "dwp.hris.module-acceptance-receipt.v1",
+  "generatedAt": "2026-10-17T09:37:35Z",
+  "sliceId": "BASE-TFR-SYS-002",
+  "state": "MODULE_SOURCE_COMPLETE; LIVE_PRODUCER_E2E_EXTERNAL_GATE",
+  "results": [
+    {
+      "id": "SYS002-AC-01",
+      "criterion": "Valid SYS-EVT-009 envelopes materialize one tenant-scoped exception projection with monotonic owner revision.",
+      "result": "PASS",
+      "evidence": [
+        "HrisOperationalExceptionEventContract validates the exact sealed envelope, source cross-product, canonical fields and owner revision.",
+        "JdbcHrisOperationalExceptionRepository uses revision-one INSERT and revision-greater-than-one UPDATE-CAS.",
+        "HrisOperationalExceptionMigrationPostgresTest.postgresAdapterIsIdempotentContiguousAndGapBounded passed against PostgreSQL 16."
+      ]
+    },
+    {
+      "id": "SYS002-AC-02",
+      "criterion": "Duplicate digest is idempotent and out-of-order or conflicting owner revision does not overwrite newer state.",
+      "result": "PASS",
+      "evidence": [
+        "The shared inbox and offset ledger are reused with a distinct exact consumer identity.",
+        "Admission and projection execute in separate PROPAGATION_REQUIRES_NEW transactions so redelivery cannot erase durable gap state.",
+        "Real PostgreSQL coverage proves duplicate, conflicting revision, bounded sequence-gap and contiguous advance behavior."
+      ]
+    },
+    {
+      "id": "SYS002-AC-03",
+      "criterion": "PEP-SYS-037 provides stable scoped ordering and cursor binding; PEP-SYS-038 returns exact redacted detail or opaque denial.",
+      "result": "PASS",
+      "evidence": [
+        "HrisOperationsEntryQueryContractTest.listUsesStableOpaqueCursorAndProjectsInternalStatesAndDeepLinks passed.",
+        "HrisOperationsEntryQueryContractTest.detailHasClosedFieldDecisionsAndNeverReturnsRedactedPayload passed.",
+        "Frontend scope transitions synchronously discard old cursor history, receipt and protected detail before the first request under the new package scope."
+      ]
+    },
+    {
+      "id": "SYS002-AC-04",
+      "criterion": "Owner route keys and deep-link parameters are allowlisted; arbitrary URLs or recovery commands are never returned.",
+      "result": "PASS",
+      "evidence": [
+        "Backend owner route keys map to a finite 19-route/five-owner table and generate only a focus UUID parameter.",
+        "Frontend parsing binds every allowlisted route to its sealed owner module and rejects cross-module rows.",
+        "Frontend URL rewriting retains only tab, focus, owner, severity and state; recovery and unknown parameters are removed."
+      ]
+    },
+    {
+      "id": "SYS002-AC-05",
+      "criterion": "PEP-SYS-040 is reused byte-for-behavior with originating-command scope and is not duplicated.",
+      "result": "PASS",
+      "evidence": [
+        "HrisCommandReceiptController SHA-256 remains 23bf42b0a6b7ac76421fbf39d81c728cdbf608cf9d22f3a5795999d7eb3a84e4.",
+        "HrisExplorerReceiptControllerTest SHA-256 remains 34aae423723da30629970ad8ee79d60d465489fb27a68e43f6d495f604cc1ead.",
+        "Frontend receipt requests reuse queryWorkExplorerActivityReceipt with purpose signal only and no selected package scope."
+      ]
+    },
+    {
+      "id": "SYS002-AC-06",
+      "criterion": "Wrong tenant, package scope, purpose, field decision, revision or capability fails closed without exception existence leakage.",
+      "result": "PASS",
+      "evidence": [
+        "Settings scope is recomputed from trusted tenant and actor plus hcm.management/APP_RESOURCE_SET:RS_HCM_CONFIG.",
+        "Exception scope is recomputed from trusted tenant and actor plus hcm.operations and each canonical raw resource-set duty.",
+        "HcmPlatformPepSecurityContractTest and HrisOperationsEntryQueryContractTest cover wrong purpose, raw scope, actor, tenant, set, duty, population, package, object and field-decision near misses."
+      ]
+    },
+    {
+      "id": "SYS002-AC-07",
+      "criterion": "The central view is read and deep-link only; all recovery mutations remain in the owning domain.",
+      "result": "PASS",
+      "evidence": [
+        "HrisOperationsController exposes only three GET handlers.",
+        "Frontend data source exposes only IAQ-059, PEP-SYS-037, PEP-SYS-038 and reused PEP-SYS-040 reads.",
+        "The slice test proves no recover, retry, resolve, suppress or automate command control is rendered."
+      ]
+    },
+    {
+      "id": "SYS002-AC-08",
+      "criterion": "IAQ-059 excludes SYS-006 automation actions and reports unavailable, partial and stale owner projections explicitly.",
+      "result": "PASS",
+      "evidence": [
+        "HrisOperationsEntryQueryContractTest.iaqSummaryDistinguishesUnavailablePartialStaleAndComplete passed.",
+        "The entry DTO requires the exact ordered HRM/PER/PAY/SYS/TIM source vector and backend-derived state/reason consistency.",
+        "No SYS-006 source or automation path is in either source commit."
+      ]
+    },
+    {
+      "id": "SYS002-AC-09",
+      "criterion": "Loading, empty, unavailable, partial, complete, permission and stale states preserve scope and selection without a blank canvas.",
+      "result": "PASS",
+      "evidence": [
+        "base-tfr-sys-002.slice.test.tsx exercises loading, empty, no-producer, unavailable, partial, complete, permission and stale states.",
+        "Deep-linked selection survives an opaque detail denial while protected content and owner links are cleared.",
+        "Package, actor, tenant and request-scope identity changes reset bound cursor, page history and receipt state."
+      ]
+    },
+    {
+      "id": "SYS002-AC-10",
+      "criterion": "1440, 1280, 390, 320 and 200-percent zoom plus light, dark, high contrast, reduced motion and keyboard navigation pass.",
+      "result": "PASS_SOURCE_CONTRACT_RUNTIME_VISUAL_DEFERRED_BY_AUTHORITY",
+      "evidence": [
+        "Responsive grid, overflow-safe composition, semantic state styling, visible focus, long Korean/English copy, aria-busy, aria-current and keyboard focus retention are implemented and covered at component/source level.",
+        "The start token explicitly sets browserBeforeCentralMountAuthorized=false; therefore no browser viewport, theme or screenshot claim is made.",
+        "Runtime visual verification is deferred until a separately authorized central mount."
+      ]
+    },
+    {
+      "id": "SYS002-AC-11",
+      "criterion": "Feature OFF or unenrolled tenant mounts no exception query runtime and processes no owner event into an exposed projection.",
+      "result": "PASS",
+      "evidence": [
+        "All operations Spring beans are ConditionalOnProperty enabled=true with matchIfMissing=false.",
+        "The production owner summary registry is fail-closed with zero entries.",
+        "Backend context/consumer tests and frontend slice tests prove absent, false or unenrolled state makes zero projection, query, detail and receipt calls."
+      ]
+    },
+    {
+      "id": "SYS002-AC-12",
+      "criterion": "Changed-path evidence proves PEP-SYS-040, SYS-006, owner recovery commands, V330, v48 and historical registers were not modified or recounted.",
+      "result": "PASS",
+      "evidence": [
+        "changed-path-manifest.v1.json lists all 15 backend and 10 frontend source paths with SHA-256 values.",
+        "V330, generated v49, PlatformSecurityFilter, receipt controller and receipt test immutable hashes match the token authority.",
+        "No auth, gateway, OpenAPI, frontend route/shell/menu, SYS-006, recovery command, v48, historical register, second migration or completion recount path changed."
+      ]
+    }
+  ],
+  "summary": {
+    "acceptanceResultCount": 12,
+    "sourceComplete": true,
+    "liveProducerE2EComplete": false,
+    "liveProducerE2EGate": "EXTERNAL_OWNER_ONBOARDING_AND_CONTROL_AUTHORITY",
+    "controlReviewPending": true,
+    "defaultOff": true
+  }
+}

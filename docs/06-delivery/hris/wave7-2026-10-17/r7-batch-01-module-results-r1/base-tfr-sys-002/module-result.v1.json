@@ -1,0 +1,109 @@
+{
+  "schema": "dwp.hris.module-result.v1",
+  "generatedAt": "2026-10-17T09:37:35Z",
+  "sliceId": "BASE-TFR-SYS-002",
+  "tokenId": "HRIS-WAVE7-R7-BATCH-01-START-BASE-TFR-SYS-002-20261017-R1",
+  "token": {
+    "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-start-r1/tokens/base-tfr-sys-002.start-token.v1.json",
+    "sha256": "62f7f265b9fcf5115401a152abaef045fcffcfb5747529fdbfa1aa4722837a37",
+    "bytes": 13720
+  },
+  "state": "MODULE_SOURCE_COMPLETE; LIVE_PRODUCER_E2E_EXTERNAL_GATE",
+  "tokenCompletionState": "MODULE_IMPLEMENTATION_COMPLETE_BRANCH_PUSHED_CONTROL_REVIEW_PENDING_DEFAULT_OFF",
+  "canonicalFeature": "HRIS_OPERATIONS_EXCEPTION_CENTER",
+  "rollout": {
+    "runtimeDefault": "OFF",
+    "enrolledTenants": [],
+    "featureEnabled": false,
+    "tenantEnrollmentPerformed": false,
+    "productionOwnerProducerRegistryEntries": 0
+  },
+  "sourceResults": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "codex/hris-wave7-r7-batch01-sys-002-backend-20261017-r1",
+      "baseCommit": "fcb5c1f397d14ea77c7ff9714a272449d99e18a4",
+      "baseTree": "147bb1afd5635209d5db166a513d970b6e0002c3",
+      "sourceCommit": "6e555f7e3f36014b5a0ea68d446b87872661a39c",
+      "sourceTree": "7c7d5d9641f2060f9e1b94a42f70d25c05d73d9b",
+      "remoteRef": "refs/heads/codex/hris-wave7-r7-batch01-sys-002-backend-20261017-r1",
+      "remoteSourceCommitAtPush": "6e555f7e3f36014b5a0ea68d446b87872661a39c",
+      "pushed": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "codex/hris-wave7-r7-batch01-sys-002-frontend-20261017-r1",
+      "baseCommit": "4b46c02d1e98b8d0cfb78189126aa47ac90f2fda",
+      "baseTree": "0e37221429763f5d13c799e22bf10ad8a6648f1a",
+      "sourceCommit": "9f93da42219fcd359a5fc015ace6ce5d695f5fed",
+      "sourceTree": "0d6c6eb2d95af935f418a2417864443c7db7a169",
+      "remoteRef": "refs/heads/codex/hris-wave7-r7-batch01-sys-002-frontend-20261017-r1",
+      "remoteSourceCommitAtPush": "9f93da42219fcd359a5fc015ace6ce5d695f5fed",
+      "pushed": true
+    }
+  },
+  "authorityDag": {
+    "ownerPacketSha256": "fb41aa71b2f6fc16394a8d97491797f80b1b74d61ea41b4fce1384a65b881f33",
+    "sourceAuthoritySha256": "d40df88e26530bd467c5cc6210d967b31a521f06647e672987393c1d1837165e",
+    "backendV49AcceptanceSha256": "a4554d45ff833e15b5c907d13b51a2b3e3f38284e01b325cf2008a9823728d5f",
+    "frontendV49SyncSha256": "178152fad3821c4387a6795b33cce4111997bb753e864b574c45964a0a746da5",
+    "authorizationDecisionSha256": "801e1cade194aceff1394789ee9247fefd4b317bc86d0a1bd3dce5d78c9e3a69",
+    "ownerRuntimePreflightSha256": "aed8d293bb6ad6d48ecf76594484b82b3cba9572ab199d4ccbfbeaff068fa20",
+    "eventIngressSealSha256": "1fba405bff7936958af02fd53836dcbd30afd9e59aced2d346a275d82f787d0f",
+    "moduleStartPreparationSha256": "94c4e366bf75f14850e1207158a5f4947ad6afdfc41e63813bb124569d1f12eb",
+    "migrationLeaseActivationSha256": "6ad36eba8162ae01d1b009f27cfae3172d5615e8932eedb82d0418ccb5d5ab39"
+  },
+  "implementedContracts": {
+    "event": {
+      "eventType": "dwp.hris.operational-exception.projection-changed.v1",
+      "topic": "dwp.domain-events.v1",
+      "kafkaGroup": "dwp-platform-hris-operational-exception-v1",
+      "ledgerConsumer": "dwp-platform-server.hris-operational-exception-v1",
+      "transportBytes": "ConsumerRecord<String,byte[]>",
+      "productionSummaryRegistryEntryCount": 0
+    },
+    "authorization": {
+      "settings": "IAQ-059 / HRIS_CONFIGURATION / CONFIG_SCOPE",
+      "list": "PEP-SYS-037 / HRIS_OPERATIONS / TARGET_POPULATION",
+      "detail": "PEP-SYS-038 / HRIS_OPERATIONS / TARGET_POPULATION+OBJECT",
+      "receiptReuse": "PEP-SYS-040 unchanged",
+      "opaqueScopePattern": "^scope-[a-f0-9]{32}$",
+      "resourceDuty": "HRIS_DUTY_OPERATION_EXCEPTION_READER@<RAW_RESOURCE_SET_KEY>"
+    },
+    "v49Closure": {
+      "sourceRegistryRouteCount": 1079,
+      "projectedRouteContractCount": 53,
+      "bindingPairCount": 54,
+      "capabilityCount": 21,
+      "accessPolicyCount": 4,
+      "entitlementExpressionCount": 3,
+      "predicatePolicyCount": 11,
+      "platformBindingCount": 46,
+      "sys002RouteCount": 3
+    },
+    "migration": {
+      "leaseId": "HRIS-WAVE7-R7-BATCH-01-PLATFORM-MAIN-V331-20261017-R1",
+      "version": "V331",
+      "cleanMigrationVerified": true,
+      "v330ToV331UpgradeVerified": true,
+      "postgresTests": 3,
+      "postgresSkipped": 0
+    }
+  },
+  "authorityBoundaries": {
+    "dwpDevMergePerformed": false,
+    "centralRouteOrShellMountPerformed": false,
+    "featureActivationPerformed": false,
+    "tenantEnrollmentPerformed": false,
+    "producerOnboardingPerformed": false,
+    "browserValidationPerformed": false,
+    "browserValidationReason": "The start token sets browserBeforeCentralMountAuthorized=false.",
+    "laterTokenCarrierAncestor": false,
+    "laterTokenCarrierPrefix": "cb0dca6f"
+  },
+  "externalGates": [
+    "A live owner-producer code-to-summary-key registry remains empty until owner-specific producer onboarding is separately authorized.",
+    "Cross-service live-producer E2E remains outside this module source packet.",
+    "Runtime visual verification follows central mount authorization; no browser was run in this module worktree."
+  ]
+}

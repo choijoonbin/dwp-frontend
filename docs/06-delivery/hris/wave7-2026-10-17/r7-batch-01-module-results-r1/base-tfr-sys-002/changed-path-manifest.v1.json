@@ -1,0 +1,158 @@
+{
+  "schema": "dwp.hris.module-changed-path-manifest.v1",
+  "generatedAt": "2026-10-17T09:37:35Z",
+  "sliceId": "BASE-TFR-SYS-002",
+  "state": "MODULE_SOURCE_COMPLETE; LIVE_PRODUCER_E2E_EXTERNAL_GATE",
+  "backend": {
+    "commit": "6e555f7e3f36014b5a0ea68d446b87872661a39c",
+    "tree": "7c7d5d9641f2060f9e1b94a42f70d25c05d73d9b",
+    "paths": [
+      {
+        "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/operations/HrisOperationalExceptionEventConsumer.java",
+        "sha256": "a0364d4e4d74a062a6c7f351c212dfb661dd78e9b62541bfa3162b8097d783f8"
+      },
+      {
+        "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/operations/HrisOperationalExceptionEventContract.java",
+        "sha256": "215807c90d9ffead2022f9e4ba8a9540750a99305dee99a1406fb853f581b99a"
+      },
+      {
+        "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/operations/HrisOperationalExceptionRepository.java",
+        "sha256": "f372910f7af36ce6d2cef41e4433e9f6799f9bb51329109793941ed24b950855"
+      },
+      {
+        "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/operations/HrisOperationsController.java",
+        "sha256": "9491209e8639f3273db12a10f223c893b6084fd81befdaa7612f43d877f670c5"
+      },
+      {
+        "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/operations/HrisOperationsModels.java",
+        "sha256": "e8727c56989fe7ab36bc26d627fe89a11f553985b6e70df1b22781cd9557c8fe"
+      },
+      {
+        "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/operations/HrisOperationsRuntimeControls.java",
+        "sha256": "3f1763d72d8aa0fccfee474cbfba2e00ab69fd17c8b0575cab991f77d02a1cda"
+      },
+      {
+        "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/operations/HrisOperationsService.java",
+        "sha256": "d45cbc1476e200bfbd97b9f24a8a3d86c14ddfd1bb4ac4acb6e7bbd0e83c93e6"
+      },
+      {
+        "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/operations/JdbcHrisOperationalExceptionRepository.java",
+        "sha256": "c164fd949d9bae2b558fc8ff2ef406653c6174c0a22247dd37ede2800e928c33"
+      },
+      {
+        "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/security/HcmPlatformPepRegistry.java",
+        "sha256": "4937a56914321b40f83223258110962c31c3040cc4cd9b1f156bae4ae9faefc8"
+      },
+      {
+        "path": "dwp-platform-server/src/main/resources/db/migration/V331__create_hris_operational_exception_projection.sql",
+        "sha256": "ca4ba4733960e684921bb4e5ba5aebe6adfe50dff30c848e1af5c158982ae3c1"
+      },
+      {
+        "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/operations/HrisOperationalExceptionMigrationContractTest.java",
+        "sha256": "de8f79fdb1c3c5a1da344451c6614ac0310951c622db73c1a7f945dd4dcce44d"
+      },
+      {
+        "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/operations/HrisOperationalExceptionMigrationPostgresTest.java",
+        "sha256": "1cff4581a4edffec38a17b13d9c3f74523adab683111d591f28f2d637d702ff1"
+      },
+      {
+        "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/operations/HrisOperationalExceptionProjectionContractTest.java",
+        "sha256": "7bdcff1b4d9003ab360ccf6d0c7a5908cbebcf936a771eaf2fcee83704b2a3c3"
+      },
+      {
+        "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/operations/HrisOperationsEntryQueryContractTest.java",
+        "sha256": "490bf692ced6dca0ba732d5cb4d8cb4a9eb69cf239cd3b88bcbb11e554530ac9"
+      },
+      {
+        "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/security/HcmPlatformPepSecurityContractTest.java",
+        "sha256": "b11dfe8cda06219b27395e6cf946ccf6976f81c0ea4d66de2891547794305698"
+      }
+    ]
+  },
+  "frontend": {
+    "commit": "9f93da42219fcd359a5fc015ace6ce5d695f5fed",
+    "tree": "0d6c6eb2d95af935f418a2417864443c7db7a169",
+    "paths": [
+      {
+        "path": "apps/dwp/src/features/hris/administration/__tests__/g3-slices/base-tfr-sys-002.slice.test.tsx",
+        "sha256": "3e130ff842371d86bb1e3e39cf36688ad5743e4b5cea6412b427694ebfbc3dad"
+      },
+      {
+        "path": "apps/dwp/src/features/hris/administration/operations/api/hris-operations-api.ts",
+        "sha256": "a9e4beb4d05976cbbb7509664af771643f5f6ac5373cb9ef834b7ef7111dac4c"
+      },
+      {
+        "path": "apps/dwp/src/features/hris/administration/operations/components/hris-operations-workspace-view.tsx",
+        "sha256": "2c113f6c597084bdc68a6a355f33a86a85036db089760c6a06530f1d2c7dabcd"
+      },
+      {
+        "path": "apps/dwp/src/features/hris/administration/operations/hooks/use-hris-operations-workspace.ts",
+        "sha256": "d3f25b68299c5316b914b5d465672edd2574238477e570ea68a32922e5ebbd5a"
+      },
+      {
+        "path": "apps/dwp/src/features/hris/administration/operations/index.ts",
+        "sha256": "cba73c3e7116b711c7aae21c4933d88e9b92af9580498b54d8f371d45cbeaa65"
+      },
+      {
+        "path": "apps/dwp/src/features/hris/administration/operations/model/hris-operations-contract.ts",
+        "sha256": "96e50c994eef356ae92bca922eced17ba4be8e592b43122780c83a0cd78846aa"
+      },
+      {
+        "path": "apps/dwp/src/features/hris/administration/operations/pages/hris-operations-workspace.tsx",
+        "sha256": "25d61ab525dc0b137750ac57db5d816895204bb98258bdb77d007edfde38571f"
+      },
+      {
+        "path": "apps/dwp/src/features/hris/administration/operations/testing/hris-operations-api.test.ts",
+        "sha256": "d1dd441ce300b627575d1567e83d4f93960c07d18aad9678a194db86bef17beb"
+      },
+      {
+        "path": "apps/dwp/src/features/hris/administration/operations/testing/hris-operations-contract.test.ts",
+        "sha256": "9fcf7fcde2ce6c94cf6a9f8c979e707f1934d1beeb2421174ecc019f48db9d25"
+      },
+      {
+        "path": "apps/dwp/src/features/hris/administration/operations/testing/hris-operations-fixtures.test-support.ts",
+        "sha256": "9e6dcadeab6a2ec765c69c0ac1a6e5c68aaefed7fe9dd9f384ca7df3abfadbe8"
+      }
+    ]
+  },
+  "immutableFiles": [
+    {
+      "path": "dwp-platform-server/src/main/resources/product-authorization/hcm-platform-pep-v49.generated.json",
+      "sha256": "46073e2e262f7af783853e3efd769c336915873e641ea2e5f55b05d494d8f286",
+      "changed": false
+    },
+    {
+      "path": "dwp-platform-server/src/main/resources/db/migration/V330__accept_controlled_export_navigation_topology_successor.sql",
+      "sha256": "0ed682d631189184d26d4031c4770781c8acef8e7b5a2f571468595be5b76a26",
+      "changed": false
+    },
+    {
+      "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/security/PlatformSecurityFilter.java",
+      "sha256": "289bd3df959d3e8a532c2bff9e5463faaf80260b32dcae1e77ed2623fc8e7fb8",
+      "changed": false
+    },
+    {
+      "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisCommandReceiptController.java",
+      "sha256": "23bf42b0a6b7ac76421fbf39d81c728cdbf608cf9d22f3a5795999d7eb3a84e4",
+      "changed": false
+    },
+    {
+      "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerReceiptControllerTest.java",
+      "sha256": "34aae423723da30629970ad8ee79d60d465489fb27a68e43f6d495f604cc1ead",
+      "changed": false
+    }
+  ],
+  "exclusions": {
+    "receiptControllerOrStoreChanged": false,
+    "sys006Changed": false,
+    "ownerRecoveryCommandChanged": false,
+    "v330Changed": false,
+    "v48Changed": false,
+    "historicalRegisterChanged": false,
+    "frontendRouteShellOrMenuChanged": false,
+    "authGatewayOrOpenApiChanged": false,
+    "centralCompletionRecountChanged": false,
+    "secondMigrationAdded": false
+  },
+  "allowedPathAudit": "PASS"
+}
