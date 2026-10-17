@@ -10,8 +10,8 @@ import {
   isHrisRuntimeMenuRouteAlias,
 } from './seven-workbench-navigation-policy';
 
-describe('generated seven-workbench task-navigation catalog', () => {
-  it('preserves the exact generated 7/46/97 topology and canonical order', () => {
+describe('successor seven-workbench task-navigation catalog', () => {
+  it('preserves the exact 7/46/98 topology and canonical order', () => {
     expect(
       HRIS_SEVEN_WORKBENCH_NAVIGATION_CATALOG.map((workbench) => workbench.workbenchId)
     ).toEqual(HRIS_WORKBENCH_IDS);
@@ -30,19 +30,19 @@ describe('generated seven-workbench task-navigation catalog', () => {
       { groups: 6, nodes: 11 },
       { groups: 7, nodes: 14 },
       { groups: 7, nodes: 12 },
-      { groups: 8, nodes: 22 },
+      { groups: 8, nodes: 23 },
     ]);
     expect(HRIS_SEVEN_WORKBENCH_NAVIGATION_CATALOG.flatMap((value) => value.groups)).toHaveLength(
       46
     );
-    expect(HRIS_TASK_NODE_IDS.size).toBe(97);
+    expect(HRIS_TASK_NODE_IDS.size).toBe(98);
   });
 
   it('keeps every node in one canonical group and never creates excluded navigation aliases', () => {
     const nodes = HRIS_SEVEN_WORKBENCH_NAVIGATION_CATALOG.flatMap((workbench) =>
       workbench.groups.flatMap((group) => group.nodes)
     );
-    expect(new Set(nodes.map((node) => node.nodeId)).size).toBe(97);
+    expect(new Set(nodes.map((node) => node.nodeId)).size).toBe(98);
     expect(nodes.flatMap((node) => node.routeAliases)).not.toEqual(
       expect.arrayContaining(['/hr/explore', '/hr/benefits', '/hr/operations/benefits'])
     );
@@ -64,6 +64,14 @@ describe('generated seven-workbench task-navigation catalog', () => {
     expect(owners('/hr/me')).toEqual(['BASE:my-hr-profile']);
     expect(owners('/hr/team')).toEqual(['BASE:team-home']);
     expect(owners('/hr/data/integrations')).toEqual([]);
+    expect(owners('/hr/data/exports')).toEqual(['MODERN:hcm.management.controlled-export']);
+    expect(node('BASE:dwp-governance').routeAliases).not.toContain('/hr/data/exports');
+    expect(node('MODERN:hcm.management.controlled-export')).toMatchObject({
+      label: { ko: '통제형 반출', en: 'Governed exports' },
+      canonicalRoute: '/hr/data/exports',
+      routeAliases: ['/hr/data/exports'],
+      displayOrder: 5,
+    });
     const ownerByPath = new Map<string, string>();
     for (const candidate of nodes) {
       for (const route of candidate.routeAliases) {
@@ -102,6 +110,7 @@ describe('generated seven-workbench task-navigation catalog', () => {
       '/hr/operations/time/leave-operations',
       '/hr/operations/home',
       '/hr/team/time',
+      '/hr/data/exports',
     ]) {
       expect(isHrisRuntimeEffectiveRouteAlias(path), path).toBe(true);
       expect(isHrisRuntimeMenuRouteAlias(path), path).toBe(true);
@@ -112,12 +121,7 @@ describe('generated seven-workbench task-navigation catalog', () => {
       expect(isHrisRuntimeMenuRouteAlias(path), path).toBe(false);
     }
 
-    for (const path of [
-      '/hr/operations/time',
-      '/hr/operations/pay',
-      '/hr/operations/talent',
-      '/hr/data/exports',
-    ]) {
+    for (const path of ['/hr/operations/time', '/hr/operations/pay', '/hr/operations/talent']) {
       expect(isHrisRuntimeEffectiveRouteAlias(path), path).toBe(false);
       expect(isHrisRuntimeMenuRouteAlias(path), path).toBe(false);
     }

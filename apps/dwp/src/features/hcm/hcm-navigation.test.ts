@@ -53,6 +53,7 @@ describe('HR product navigation', () => {
   it('keeps legacy bookmarks while resolving every destination to the HR shell', () => {
     expect(mapLegacyHrPath('/people/directory')).toBe('/hr/directory');
     expect(mapLegacyHrPath('/workforce/data-operations')).toBe('/hr/data/integrations');
+    expect(mapLegacyHrPath('/workforce/exports')).toBe('/hr/data/exports');
     expect(mapLegacyHrPath('/WORKFORCE/DATA-OPERATIONS/?scope=S#tab')).toBeUndefined();
     expect(mapLegacyHrPath('/WORKFORCE/DATA-OPERATIONS/')).toBe('/hr/data/integrations');
     expect(mapLegacyHrPath('/people/unknown')).toBeUndefined();
