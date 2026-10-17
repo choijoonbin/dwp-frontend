@@ -1,0 +1,138 @@
+{
+  "schema": "dwp.hris.r7-batch03-hrm009-stagea-central-integration-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH03-HRM009-STAGEA-CENTRAL-INTEGRATION-20261018-R1",
+  "recordedAt": "2026-10-18T06:28:21+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "HRM009_STAGE_A_SOURCE_CENTRALLY_INTEGRATED_DEFAULT_OFF_ZERO_BUSINESS_CREDIT_FULL_SLICE_AND_BROWSER_GATE_OPEN",
+  "authority": {
+    "admissionDecision": {
+      "path": "hrm-009-stage-a-source-admission-decision.v1.json",
+      "sha256": "1b080e96ee296987093ada84b8e6058315f3f9ddeaa435fb1194551c345a8403",
+      "bytes": 10006,
+      "carrierCommit": "56e67c9ad29c66e4201d32cbf530a6064e075ddb",
+      "carrierTree": "cb1317776653951b52db2f0310ac777b2995233c"
+    },
+    "admissionState": "HRM009_STAGE_A_SOURCE_INDEPENDENTLY_ACCEPTED_EXACT_NO_FF_ADMISSION_AUTHORIZED_DEFAULT_OFF_ZERO_BUSINESS_CREDIT_FULL_SLICE_OPEN",
+    "mergeStrategy": "NO_FF_EXACT_ADMITTED_BRANCH_HEAD",
+    "conflictPolicy": "STOP_ON_CONFLICT_NO_AUTOMATIC_RESOLUTION",
+    "validationPolicy": "Read-only ancestry, exact admitted blob, clean worktree and origin equality checks only; no module or repository-wide suite rerun."
+  },
+  "integratedSource": {
+    "sliceId": "BASE-TFR-HRM-009",
+    "stageId": "BASE-TFR-HRM-009-STAGE-A",
+    "moduleSession": "HRIS-HRM",
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "sourceBranch": "codex/hris-wave7-r7-batch03-hrm-009-stage-a-backend-20261018-r1",
+      "exactModuleHead": "39abe180426b553ffab0122add331f337e6f7821",
+      "exactModuleTree": "7097f60a9ccca1fe3cc6449a4242d6b83c1b8fdf",
+      "mergeCommit": "1e3bd64fb13bdc7d772913ad48a9cce315ea05b0",
+      "mergeTree": "7097f60a9ccca1fe3cc6449a4242d6b83c1b8fdf",
+      "mergeParents": [
+        "f448c36feee2ed7f59eacc64f450e6db3865f1c5",
+        "39abe180426b553ffab0122add331f337e6f7821"
+      ],
+      "exactModuleHeadIsMergeAncestor": true,
+      "changedPathCount": 21,
+      "exactPathBlobManifestSha256": "f34f5f20093bb754e7f7d0ce772fc2fef7a8f55243ff41ae28ccc7d4e8dfeee9",
+      "allAdmittedBlobsMatch": true,
+      "originExact": true,
+      "clean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "sourceBranch": "codex/hris-wave7-r7-batch03-hrm-009-stage-a-frontend-20261018-r1",
+      "exactModuleHead": "b270f5de7dd9f3540953ffd634754c2b9b447b04",
+      "exactModuleTree": "0aa2cc99b91bbfcd44679c1f8e902bef0dfe5eef",
+      "decisionCarrierCommit": "56e67c9ad29c66e4201d32cbf530a6064e075ddb",
+      "mergeCommit": "dc9b7993a7c677f03a775e66b4ad9d23adfd42a3",
+      "mergeTree": "f6a5d540c27ae636d206bfdafbaef1922e7b35c5",
+      "mergeParents": [
+        "56e67c9ad29c66e4201d32cbf530a6064e075ddb",
+        "b270f5de7dd9f3540953ffd634754c2b9b447b04"
+      ],
+      "exactModuleHeadIsMergeAncestor": true,
+      "decisionCarrierIsMergeAncestor": true,
+      "changedPathCount": 19,
+      "exactPathBlobManifestSha256": "49ef23c6d6a3fc7ca27388339239b21d4c6ed7df052612afde1aa64ed74de7be",
+      "allAdmittedBlobsMatch": true,
+      "originExactBeforeReceipt": true,
+      "cleanBeforeReceipt": true
+    }
+  },
+  "verification": {
+    "backend": {
+      "exactHeadAncestor": true,
+      "exactAdmittedBlobCount": 21,
+      "currentDwpDevEqualsOrigin": true,
+      "worktreeClean": true
+    },
+    "frontend": {
+      "exactHeadAncestor": true,
+      "decisionCarrierAncestor": true,
+      "exactAdmittedBlobCount": 19,
+      "currentDwpDevEqualsOriginBeforeReceipt": true,
+      "worktreeCleanBeforeReceipt": true
+    },
+    "testExecutionDuringCentralAdmission": false,
+    "repositoryWideSuiteRerun": false,
+    "independentAdmissionReview": {
+      "decision": "GO",
+      "p0": 0,
+      "p1": 0,
+      "p2NonBlocking": 7
+    }
+  },
+  "sourceBoundary": {
+    "requestIssueMetadataStageAIntegrated": true,
+    "peopleV58Integrated": true,
+    "frontendFeatureIntegratedButUnmounted": true,
+    "runtimeDefault": "OFF",
+    "routeMenuShellChangedByModule": false,
+    "productAuthorizationV52Integrated": false,
+    "authV261Integrated": false,
+    "gatewayOrPeopleGeneratedProjectionIntegrated": false,
+    "browserAcceptanceComplete": false,
+    "productionArtifactProviderBound": false,
+    "downloadOrRevokeIntegrated": false,
+    "expiryAcceptanceComplete": false,
+    "accessOrDownloadAuditAcceptanceComplete": false
+  },
+  "nonblockingResidualsCarriedForward": [
+    "frontend/backend Unicode idempotency length difference",
+    "local Bearer, If-Match and certificate-type handling narrower than some input schemas",
+    "broad local Problem enum",
+    "actual PostgreSQL two-session receipt race not run",
+    "repository SQL limit/keyset pushdown absent",
+    "historical broad and PostgreSQL raw XML preservation provenance insufficient",
+    "central v52 exact DATA key adoption pending"
+  ],
+  "rollout": {
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "tenantEnrollmentCount": 0,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionIncrement": 0
+  },
+  "decision": "HRM009_STAGE_A_SOURCE_CENTRAL_INTEGRATION_CLOSED_CENTRAL_SUCCESSOR_AUTHORITY_REQUIRED",
+  "requiredNext": [
+    "Issue an append-only central successor authorization for product-authorization v52, Auth V261, generated Gateway and People projections, and the frontend route and shell mount.",
+    "Keep runtime default OFF and tenant enrollment at zero while executing bounded central verification.",
+    "Run the trusted browser acceptance gate only after the route and shell mount exists.",
+    "Do not claim full-slice completion until artifact binding, download, revoke, expiry and access/download audit boundaries are separately satisfied."
+  ],
+  "remainingState": {
+    "batch03Complete": false,
+    "r7Complete": false
+  },
+  "nonClaims": [
+    "Central product-authorization v52, Auth V261, generated projections or route and shell mount is complete.",
+    "Browser acceptance is complete.",
+    "Any feature or tenant is activated or enrolled.",
+    "BASE-TFR-HRM-009 receives business-completion credit or is complete.",
+    "Batch-03 or R7 is complete."
+  ]
+}
