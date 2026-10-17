@@ -1,0 +1,147 @@
+{
+  "schema": "dwp.hris.wave6-r6b-v46-exact-policy-carrier-central-integration-result.v1",
+  "receiptId": "HRIS-WAVE6-R6B-V46-EXACT-POLICY-CARRIER-INTEGRATION-R1",
+  "issuedAt": "2026-10-17T13:38:21+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "status": "PASS_R6B_INTEGRATED_CLOSED_DEFAULT_OFF",
+  "decision": "CLOSE_R6B_AT_EXACT_REMOTE_DWP_DEV_WITHOUT_PERMISSION_INFERENCE_TENANT_ACTIVATION_CUSTOMER_DATA_OR_PRODUCTION_RELEASE",
+  "sourcePins": {
+    "backendBeforeR6B": "c970c29ae8f8470b762ec89a3dbae805add31db0",
+    "frontendBeforeR6B": "1e107f20182d91a1a300d5fc32cfe178a20250f0",
+    "authorizationRegistryPredecessor": {
+      "version": 45,
+      "preservedImmutable": true
+    }
+  },
+  "ownerResults": {
+    "auth": {
+      "branch": "codex/hris-r6b-auth-v46-backend-20261017-r1",
+      "commit": "8df78bee220fb9932b5cb80602365e84d55a1e1e",
+      "remoteExact": true
+    },
+    "platform": {
+      "branch": "codex/hris-r6b-platform-backend-20261017-r1",
+      "commit": "91497ff97dbad8b419c77ee5a99eab0a808aeb42",
+      "remoteExact": true
+    },
+    "frontend": {
+      "branch": "codex/hris-r6b-policy-frontend-20261017-r1",
+      "commit": "c0975a7ee6f6986802cb140e8364508876a8caea",
+      "remoteExact": true
+    }
+  },
+  "finalBinding": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "fa54d7b65063eba595c40329a6c96ebf94b107ca",
+      "tree": "65b86d22cac748d6e3d4b2771bd81d8d5ffe7052",
+      "upstream": "origin/dwp-dev",
+      "localRemoteExact": true,
+      "workingTreeClean": true
+    },
+    "frontendBeforeEvidenceCarrier": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "92e770e8328370c3cee0110352d2ff4dcd170fc9",
+      "tree": "b48237bb48897b0967d22f015cc8c42e70cb1626",
+      "upstream": "origin/dwp-dev",
+      "localRemoteExact": true,
+      "workingTreeCleanBeforeCarrier": true
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "upstream": "origin/dwp-dev",
+      "localRemoteExact": true,
+      "workingTreeClean": true,
+      "changedByR6B": false
+    }
+  },
+  "authorizationSeal": {
+    "registryVersion": 46,
+    "registrySha256": "3499e37653587feed433f84a79fbe7d0e80a1a7c0634d858a13f4e09d4bd015e",
+    "platformPepSha256": "a3bf5dbd0438fe6cfa68c2d187521beacc98b275c35d12b26c60c41bf5d731fd",
+    "versionIndexSha256": "bb9e6c15c39980c35d2d50f1224213e98acbf8aca116b195241a75d4fac4d2d4",
+    "v45ArtifactsBytePreserved": true,
+    "v255SeedDeclaration": "DRAFT_NO_AUTOMATIC_ACTIVATION"
+  },
+  "closedPolicySlice": [
+    {
+      "nodeId": "BASE:my-hr-profile",
+      "path": "/hr/me",
+      "routeContractKey": "route.hcm.personal.me.page"
+    },
+    {
+      "nodeId": "BASE:my-time",
+      "path": "/hr/time",
+      "routeContractKey": "route.hcm.personal.time.page"
+    },
+    {
+      "nodeId": "BASE:my-leave",
+      "path": "/hr/absence",
+      "routeContractKey": "route.hcm.personal.absence.page"
+    },
+    {
+      "nodeId": "BASE:my-pay-tax",
+      "path": "/hr/pay",
+      "routeContractKey": "route.hcm.personal.pay.page"
+    },
+    {
+      "nodeId": "BASE:my-goals-performance",
+      "path": "/hr/talent",
+      "routeContractKey": "route.hcm.personal.talent.page"
+    },
+    {
+      "nodeId": "BASE:my-hr-requests",
+      "path": "/hr/services",
+      "routeContractKey": "route.hcm.personal.services.page"
+    }
+  ],
+  "closure": {
+    "authClosedRequest": "PASS_NO_CALLER_CANDIDATE_PATH_NODE_OR_LEGAL_ENTITY_INPUT",
+    "authAtomicSnapshot": "PASS_REPEATABLE_READ_ALL_SIX_DECISIONS",
+    "platformExactDataPep": "PASS_TWO_V46_DATA_ROUTES",
+    "platformSelfScope": "PASS_SERVER_COMPUTED_NO_BROWSER_SELECTED_SCOPE",
+    "inactiveCarrier": "PASS_NOT_ENROLLED_OR_OFF_EMPTY_POLICY_SET",
+    "enforcedCarrier": "PASS_EXACT_ALLOWED_INTERSECTION_ONLY",
+    "freshnessAndRevisionCas": "PASS_FAIL_CLOSED",
+    "aggregateRevisionPin": "PASS_V2_PIN_REGISTRY_AUTHORITY_AND_EXACT_ROUTE_TUPLES",
+    "sameAggregateSidebarLandingDeepLink": "PASS",
+    "frontendAliasReconstruction": "DENIED",
+    "v3ToV2ErrorDowngrade": "DENIED",
+    "legalEntityV3": "NOT_AUTHORIZED_TENANT_SELF_ONLY",
+    "v2Behavior": "PRESERVED"
+  },
+  "targetedValidation": {
+    "policy": "CHANGED_CLUSTER_ONCE_THEN_FAILED_TARGET_ONLY",
+    "auth": "PASS_SERVICE_DTO_SECURITY_MIGRATION_GENERATOR_AND_LINEAGE_TARGETS",
+    "platformInitialLogicalCluster": "PASS_39_AFTER_THREE_EXPECTATION_CORRECTIONS_AND_FAILED_CLASS_ONLY_RERUN",
+    "platformMergeImpact": {
+      "HcmPlatformPepSecurityContractTest": "PASS_21_OF_21",
+      "NavigationPolicyAggregateV3ControllerTest": "PASS_3_OF_3",
+      "NavigationPolicyAggregateV3CatalogTest": "PASS_6_OF_6"
+    },
+    "frontendRuntime": "PASS_19_OF_19_FAILED_TARGET_RERUN_AFTER_ONE_V2_COMPATIBILITY_EXPECTATION_CORRECTION",
+    "frontendMountedAndRegistry": "PASS",
+    "frontendLintPrettierDiffCheck": "PASS",
+    "repositoryWideSuiteRepeated": false
+  },
+  "activation": {
+    "v3TransportEnabledByDefault": false,
+    "authorityAdapterEnabledByDefault": false,
+    "navigationControllerEnabledByDefault": false,
+    "runtimeModeDefault": "OFF",
+    "enrolledTenantsDefault": [],
+    "tenantActivationAuthorized": false,
+    "customerDataUsed": false,
+    "productionReleased": false
+  },
+  "r6cEligibility": {
+    "state": "ELIGIBLE_AFTER_R6B_EVIDENCE_CARRIER",
+    "id": "R6-C-RESEAL-SEMANTIC-AND-OWNER-MISMATCH-SCREENS",
+    "requiredFirstAction": "APPEND_V47_WITH_EXACT_CANONICAL_PAGE_CONTRACTS_AND_NON_GRANTING_RUNTIME_OWNER_OVERLAY_WITHOUT_MUTATING_V46_OR_HISTORICAL_IA"
+  }
+}

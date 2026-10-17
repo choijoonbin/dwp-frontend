@@ -1,0 +1,240 @@
+{
+  "schema": "dwp.hris.wave6-execution-roadmap-successor.v9",
+  "roadmapId": "HRIS-WAVE6-EXECUTION-ROADMAP-SUCCESSOR-20261017-R9",
+  "issuedAt": "2026-10-17T13:39:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "supersedes": {
+    "path": "docs/06-delivery/hris/wave6-2026-10-15/execution-roadmap-successor.v8.json",
+    "sha256": "5e2eef8fb43cec1c759e9b8a4aa533eb49a1976168a2501215491352607f5dda",
+    "preservation": "IMMUTABLE_PREDECESSOR_RETAINED",
+    "inheritedClosedMilestones": true
+  },
+  "baselineBeforeEvidenceCarrier": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "fa54d7b65063eba595c40329a6c96ebf94b107ca",
+      "tree": "65b86d22cac748d6e3d4b2771bd81d8d5ffe7052",
+      "upstream": "origin/dwp-dev",
+      "localRemoteExact": true,
+      "workingTreeClean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "92e770e8328370c3cee0110352d2ff4dcd170fc9",
+      "tree": "b48237bb48897b0967d22f015cc8c42e70cb1626",
+      "upstream": "origin/dwp-dev",
+      "localRemoteExactBeforeCarrier": true
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "upstream": "origin/dwp-dev",
+      "localRemoteExact": true,
+      "changedByR6B": false
+    }
+  },
+  "inheritedClosed": [
+    {
+      "id": "R2-RESOLVE-HOME-PRODUCER-PURPOSE-AND-TYPE",
+      "state": "CLOSED"
+    },
+    {
+      "id": "R3A-R3D-HOME-PRODUCERS",
+      "state": "CLOSED_ALL_FOUR_DEFAULT_OFF"
+    },
+    {
+      "id": "R4-INTEGRATE-SYS-012-HOME-COMPOSITION-RESIDUAL",
+      "state": "CLOSED_INTEGRATED_DEFAULT_OFF"
+    },
+    {
+      "id": "R5-SEAL-AND-INTEGRATE-SHARED-SEVEN-WORKBENCH-TASK-NAVIGATION",
+      "state": "CLOSED_INTEGRATED_DEFAULT_OFF"
+    },
+    {
+      "id": "R6-A-EXPOSE-AUDITED-V45-PAGE-SUBSET",
+      "state": "CLOSED_INTEGRATED_DEFAULT_OFF"
+    }
+  ],
+  "closedByThisSuccessor": {
+    "id": "R6-B-SEAL-V46-EXACT-POLICY-DECISION-CARRIER",
+    "state": "CLOSED_INTEGRATED_DEFAULT_OFF",
+    "evidence": {
+      "path": "docs/06-delivery/hris/wave6-2026-10-15/r6b-v46-exact-policy-carrier-integration-r1/central-integration-result.v1.json",
+      "sha256": "ce2fa9e77eeec9bb41cf08786ab69ff01651c8438adf466e3563694b907013d7"
+    },
+    "backendCommit": "fa54d7b65063eba595c40329a6c96ebf94b107ca",
+    "frontendCommitBeforeEvidenceCarrier": "92e770e8328370c3cee0110352d2ff4dcd170fc9",
+    "exactSelfPolicyRoutes": 6,
+    "exactPlatformV3DataRoutes": 2,
+    "authorizationRegistryVersion": 46,
+    "authorizationRegistrySha256": "3499e37653587feed433f84a79fbe7d0e80a1a7c0634d858a13f4e09d4bd015e",
+    "permissionOrIaAliasInference": false,
+    "tenantActivation": false,
+    "productionRelease": false
+  },
+  "nextExecutable": {
+    "id": "R6-C-RESEAL-SEMANTIC-AND-OWNER-MISMATCH-SCREENS",
+    "state": "AUTHORIZED_NEXT_EXECUTABLE_AFTER_R6B_EVIDENCE_CARRIER",
+    "owner": "SYS_COMMON_INTEGRATION_CONTROL_WITH_HRIS_HRM_TIM_PER_PAY_AND_SECURITY",
+    "objective": "Append exact canonical PAGE contracts and a non-granting runtime-owner overlay for the audited R6-C set while preserving v46 and the recovered historical IA snapshot.",
+    "appendOnlyContract": {
+      "version": 47,
+      "predecessorVersion": 46,
+      "predecessorMustRemainByteIdentical": true,
+      "policyDecisionSet": "SAME_EXACT_SIX_SELF_ROUTES_AS_V46",
+      "platformV3DataRoutes": "PRESERVE_AND_REBIND_TO_EXACT_V47_CHECKSUM",
+      "newExactPageRoutes": 5
+    },
+    "canonicalPageRoutes": [
+      {
+        "nodeId": "BASE:time-work-plans",
+        "path": "/hr/operations/time/work-plans",
+        "runtimeOwner": "dwp-time-server",
+        "routeContractKey": "route.hcm.operations.time-work-plans.page",
+        "firstRead": "GET /api/time/v1/hris/work-plans"
+      },
+      {
+        "nodeId": "BASE:performance-goal-cycles",
+        "path": "/hr/operations/performance/goal-cycles",
+        "runtimeOwner": "dwp-people-server",
+        "routeContractKey": "route.hcm.operations.performance-goal-cycles.page",
+        "firstRead": "GET /api/people/v1/hris/performance/cycles"
+      },
+      {
+        "nodeId": "BASE:team-leave",
+        "path": "/hr/team/leave",
+        "runtimeOwner": "dwp-people-server",
+        "routeContractKey": "route.hcm.team.leave.page"
+      },
+      {
+        "nodeId": "BASE:time-leave-operations",
+        "path": "/hr/operations/time/leave-operations",
+        "runtimeOwner": "dwp-people-server",
+        "routeContractKey": "route.hcm.operations.time-leave-operations.page"
+      },
+      {
+        "nodeId": "BASE:hr-operations-home",
+        "path": "/hr/operations/home",
+        "runtimeOwner": "dwp-people-server",
+        "routeContractKey": "route.hcm.operations.home.page"
+      }
+    ],
+    "runtimeOwnerOverlay": {
+      "revision": "R6C_RUNTIME_OWNER_OVERLAY_V1",
+      "mayGrantAuthority": false,
+      "mustMatchExactActivePageContract": true,
+      "records": [
+        {
+          "nodeId": "BASE:team-time",
+          "canonicalPath": "/hr/team/time",
+          "historicalOwner": "HRIS-TIM",
+          "effectiveRuntimeOwner": "dwp-people-server"
+        },
+        {
+          "nodeId": "BASE:team-leave",
+          "canonicalPath": "/hr/team/leave",
+          "compatibilityPath": "/hr/team/absence",
+          "historicalOwner": "HRIS-TIM",
+          "effectiveRuntimeOwner": "dwp-people-server"
+        },
+        {
+          "nodeId": "BASE:time-leave-operations",
+          "canonicalPath": "/hr/operations/time/leave-operations",
+          "compatibilityPath": "/hr/operations/absence",
+          "historicalOwner": "HRIS-TIM",
+          "effectiveRuntimeOwner": "dwp-people-server"
+        },
+        {
+          "nodeId": "BASE:hr-operations-home",
+          "canonicalPath": "/hr/operations/home",
+          "compatibilityPath": "/hr/operations",
+          "historicalOwner": "HRIS-PLATFORM",
+          "effectiveRuntimeOwner": "dwp-people-server"
+        }
+      ],
+      "requiredPinMaterial": [
+        "overlayRevision",
+        "overlayChecksum",
+        "nodeId",
+        "historicalOwner",
+        "effectiveRuntimeOwner",
+        "canonicalPath",
+        "compatibilityPath",
+        "routeContractKey",
+        "firstReadBinding",
+        "registryVersion",
+        "registryChecksum",
+        "evidenceDigest"
+      ]
+    },
+    "compatibilityPolicy": {
+      "deepLinkOnlyNoMenuDuplicate": [
+        "/hr/team/absence",
+        "/hr/operations/absence",
+        "/hr/operations"
+      ],
+      "remainFailClosed": [
+        "/hr/operations/time",
+        "/hr/operations/pay",
+        "/hr/operations/talent",
+        "/hr/data/exports"
+      ],
+      "notes": {
+        "/hr/operations/time": "Do not use the generic command-center PAGE for the Work Plans implementation.",
+        "/hr/operations/talent": "Do not use the generic talent command-center PAGE for the Performance Goal Cycles implementation.",
+        "/hr/operations/pay": "Payroll Foundation remains at /hr/settings/payroll?tab=foundation and requires a separate composite PAY settings authority packet before exposure.",
+        "/hr/data/exports": "The controlled export utility must not impersonate BASE:dwp-governance; add a dedicated topology node in a successor packet."
+      }
+    },
+    "entryCriteria": [
+      "consume backend dwp-dev fa54d7b65063eba595c40329a6c96ebf94b107ca",
+      "consume frontend dwp-dev 92e770e8328370c3cee0110352d2ff4dcd170fc9 plus this evidence carrier",
+      "retain authorization registry v46 and historical generated IA artifacts byte-identical",
+      "do not activate tenant enrollment, customer data or production runtime"
+    ],
+    "minimumAcceptance": [
+      "All five canonical PAGE routes have one exact active contract, profile, target binding, owner endpoint and gateway binding.",
+      "The owner overlay cannot create authority and fails closed on registry, route, owner, evidence or checksum mismatch.",
+      "The V3 revision pin covers the exact v47 registry and owner-overlay revision and checksum.",
+      "Canonical menus render once and compatibility paths remain deep-link-only.",
+      "The four explicitly deferred aliases remain absent from the effective menu and deep-link admission set.",
+      "Changed backend and frontend clusters pass under changed-cluster-first and failed-target-only rerun policy."
+    ]
+  },
+  "withheld": [
+    {
+      "id": "R6-C-PAY-COMPOSITE-SETTINGS-AUTHORITY",
+      "state": "WITHHELD_SEPARATE_SUCCESSOR_REQUIRED",
+      "path": "/hr/settings/payroll?tab=foundation"
+    },
+    {
+      "id": "R6-C-CONTROLLED-EXPORT-DEDICATED-IA-NODE",
+      "state": "WITHHELD_TO_R7_TOPOLOGY_SUCCESSOR",
+      "path": "/hr/data/exports"
+    },
+    {
+      "id": "R7-COMPLETE-REMAINING-ACTIVE-BASE-SLICES",
+      "state": "WITHHELD_PENDING_R6C_CLOSEOUT_AND_DETERMINISTIC_RECLASSIFICATION"
+    }
+  ],
+  "validationPolicy": {
+    "changedClusterFirst": true,
+    "failedTargetOnlyAfterCorrection": true,
+    "repositoryWideSuitePerCorrection": false,
+    "fullSuiteOnlyAtExplicitReleaseGateOrCrossCuttingRisk": true
+  },
+  "activationPolicy": {
+    "allNewFeaturesDefaultOff": true,
+    "navigationControllerEnabledByDefault": false,
+    "runtimeModeDefault": "OFF",
+    "enrolledTenantsDefault": [],
+    "tenantActivationAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "IMPLEMENT_R6C_APPEND_ONLY_V47_CANONICAL_PAGE_AND_NON_GRANTING_OWNER_OVERLAY_FROM_THE_R6B_REMOTE_PINS"
+}
