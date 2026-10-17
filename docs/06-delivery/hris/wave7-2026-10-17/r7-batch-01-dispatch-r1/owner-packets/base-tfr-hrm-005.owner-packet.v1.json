@@ -1,0 +1,195 @@
+{
+  "schema": "dwp.hris.wave7.r7-owner-packet.v1",
+  "packetId": "HRIS-WAVE7-R7-BATCH-01-OWNER-BASE-TFR-HRM-005-20261017-R1",
+  "revision": 1,
+  "immutability": {"sealed": true, "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_PACKET_ID_AND_SHA256"},
+  "issuedAt": "2026-10-17T15:25:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "SEALED_PRE_TOKEN_CENTRAL_AUTH_REQUIRED",
+  "module": "HRM",
+  "moduleSession": "HRIS-HRM",
+  "sliceId": "BASE-TFR-HRM-005",
+  "sourceRef": "TFR-HRM-005",
+  "sourceAuthority": {
+    "path": "../source-authority.v1.json",
+    "sha256": "d40df88e26530bd467c5cc6210d967b31a521f06647e672987393c1d1837165e",
+    "overlayLine": 7,
+    "sourceFamilySha256": "aff33d64feb7769426e17e372962e09ff34f27f37b021a5daa22079a7f2a70b2",
+    "sourceRowCount": 43,
+    "r7C0Classification": "PARTIAL_SURFACE_OR_OVERLAP"
+  },
+  "businessMeaning": "Replace direct organization mutation screens with an as-of organization graph and effective-dated assignment-event workflow while emitting the canonical organization change signal.",
+  "exactDelta": {
+    "provenExisting": [
+      "The production OrganizationExplorer and organization chart, intelligence, scenario, position, move, validation, approval and publication services already implement the main organization engine.",
+      "As-of graph behavior, cycle and overlap guards, tenant scoping and impact preview already exist in the organization package.",
+      "BASE-TFR-HRM-008 already completed PEP-HRM-006 through PEP-HRM-009, its assignment-event UI, V55 and targeted evidence.",
+      "XCON-006 and its generated OrganizationChanged.v1 payload contract already exist, and Performance already consumes it."
+    ],
+    "missingWork": [
+      "Add the canonical PEP-HRM-010 graph query adapter at GET /api/people/v1/hris/organizations/graph backed by the existing organization engine.",
+      "Expose the canonical organization-positions workspace by adapting the existing OrganizationExplorer rather than creating a second graph or scenario engine.",
+      "Append OrganizationChanged.v1/XCON-006 transactionally from the existing successful scenario publication boundary with idempotent outbox semantics."
+    ],
+    "reuseOnly": [
+      "PEP-HRM-006",
+      "PEP-HRM-007",
+      "PEP-HRM-008",
+      "PEP-HRM-009",
+      "XCON-006",
+      "existing OrganizationExplorer",
+      "existing organization scenario engine",
+      "existing People outbox infrastructure"
+    ],
+    "noTouchOrRecount": [
+      "Do not reopen, clone or count BASE-TFR-HRM-008.",
+      "Do not create a second assignment-event workflow or a second organization graph persistence model.",
+      "Do not regenerate or modify XCON-006 unless an independently proven contract defect receives a separate Control packet.",
+      "Do not count existing scenario, position, cycle, overlap, tenant or impact-preview behavior as newly delivered HRM-005 work."
+    ]
+  },
+  "ownership": {
+    "repositories": ["dwp-backend", "dwp-frontend"],
+    "runtimeOwner": "dwp-people-server",
+    "singleWriter": "HRIS-HRM",
+    "candidateWritablePathsAfterFreshToken": [
+      "backend:dwp-people-server/src/main/java/com/dwp/services/people/hris/organization/**",
+      "backend:dwp-people-server/src/test/java/com/dwp/services/people/hris/organization/**",
+      "backend:dwp-people-server/src/main/java/com/dwp/services/people/organization/OrganizationScenarioService.java",
+      "backend:dwp-people-server/src/test/java/com/dwp/services/people/organization/OrganizationScenarioServiceTest.java",
+      "frontend:apps/dwp/src/features/hris/people/organization-positions/**",
+      "frontend:apps/dwp/src/features/hris/people/__tests__/g3-slices/base-tfr-hrm-005.slice.test.tsx"
+    ],
+    "readOnlyReusePaths": [
+      "backend:dwp-people-server/src/main/java/com/dwp/services/people/organization/** except the exact publication seam allocated above",
+      "backend:dwp-people-server/src/main/java/com/dwp/services/people/hris/employment/**",
+      "frontend:apps/dwp/src/features/people/organization/**",
+      "backend:dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/Xcon006OrganizationChangedV1.java"
+    ],
+    "controlOwnedUntilSeparatePacket": [
+      "backend:contracts/product-authorization/**",
+      "backend:contracts/openapi/**",
+      "backend:dwp-auth-server/**",
+      "backend:dwp-gateway/**",
+      "backend:dwp-platform-contracts/**",
+      "frontend:architecture/**",
+      "frontend:apps/dwp/src/routes/**",
+      "frontend:apps/dwp/src/features/hris/shell/**"
+    ],
+    "outsideBoundaryAction": "STOP_AND_REQUEST_EXACT_CONTROL_REALLOCATION"
+  },
+  "experienceContract": {
+    "primaryUser": "HR business partner with organization-view duty",
+    "operationalQuestion": "What is the effective organization and position structure at the selected date, and what changed through an approved scenario?",
+    "primaryAction": "Inspect the graph and open an existing governed assignment or scenario workflow.",
+    "pageArchetype": "GRAPH_WITH_FOCUS_DETAIL",
+    "iaNodeId": "BASE:hr-organization-positions",
+    "canonicalRoute": "/hr/operations/people/organization-positions",
+    "workbenchTab": "overview",
+    "deepLinkTemplate": "/hr/operations/people/organization-positions?tab=overview&focus={resourcePublicId}",
+    "menuPlacement": "HR_OPERATIONS/HROPS-03",
+    "implementationRule": "Reuse and adapt the existing OrganizationExplorer; preserve URL scope, as-of date, focus and inspector state."
+  },
+  "contracts": {
+    "entryQuery": {
+      "id": "PEP-HRM-010",
+      "method": "GET",
+      "browserPath": "/api/people/v1/hris/organizations/graph",
+      "ownerPath": "/v1/hris/organizations/graph"
+    },
+    "relatedActionsReuseOnly": ["PEP-HRM-006", "PEP-HRM-007", "PEP-HRM-008", "PEP-HRM-009"],
+    "producedEvent": "OrganizationChanged.v1",
+    "producedContract": "XCON-006",
+    "domainRules": [
+      "Published graph and positions are effective-dated and tenant-scoped.",
+      "Cycle, overlap and stale-revision failures have no partial side effects.",
+      "Only a successful enabled publication appends one deterministic organization-change event.",
+      "Correction is forward-only; emitted history and published snapshots are immutable."
+    ]
+  },
+  "authorization": {
+    "centralPacket": "../central-authorization-successor-packet.v1.json",
+    "state": "AUTHORIZED_AFTER_CENTRAL_AUTH_PACKET",
+    "pageAndDataTuple": "R7B01-AUTH-HRM-PAGE-001|R7B01-AUTH-HRM-DATA-001",
+    "actionTuple": "R7B01-AUTH-HRM-ACTION-REUSE-001",
+    "tenantSource": "TRUSTED_GATEWAY_CONTEXT_ONLY",
+    "defaultDeny": true,
+    "opaqueDenial": true
+  },
+  "dependencies": [
+    {"id": "DEP-001", "state": "CONTRACT_READY_FAIL_CLOSED"},
+    {"id": "DEP-002", "state": "CONTRACT_READY_STALE_REVISION_DENIED"},
+    {"id": "DEP-003", "state": "FOUNDATION_READY_PRODUCER_DELTA_IN_THIS_SLICE"},
+    {"id": "DEP-007", "state": "CONTRACT_READY_ORGANIZATION_CHANGED_PRODUCER_DELTA_IN_THIS_SLICE"},
+    {"id": "DEP-016", "state": "FOUNDATION_READY_LOCAL_OUTBOX_REQUIRED"}
+  ],
+  "migration": {
+    "stream": "PEOPLE_MAIN",
+    "candidateVersion": "V57",
+    "state": "NO_LEASE_UNLESS_SCHEMA_DELTA_IS_PROVEN",
+    "authoringAllowed": false,
+    "rule": "Reuse the existing People outbox and organization schema. Control may lease V57 only after the owner proves an append-only schema requirement that cannot be represented by the current model."
+  },
+  "rollout": {
+    "feature": "HRIS_ORGANIZATION_POSITIONS",
+    "runtimeDefault": "OFF",
+    "existingPublishGate": "OrganizationPublishRolloutGate",
+    "enrolledTenants": [],
+    "tenantActivationAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "acceptanceCriteria": [
+    {"id": "HRM005-AC-01", "criterion": "PEP-HRM-010 returns the existing as-of graph and positions in stable order without creating a parallel source of truth."},
+    {"id": "HRM005-AC-02", "criterion": "As-of changes preserve effective intervals and reject stale or overlapping mutations without partial writes."},
+    {"id": "HRM005-AC-03", "criterion": "Cycle validation and impact preview remain behaviorally identical to the existing organization engine."},
+    {"id": "HRM005-AC-04", "criterion": "Wrong tenant, legal entity, organization scope, purpose, field decision or policy revision fails closed and does not disclose node existence."},
+    {"id": "HRM005-AC-05", "criterion": "A successful enabled scenario publication appends exactly one OrganizationChanged.v1 envelope with XCON-006 payload and source revision."},
+    {"id": "HRM005-AC-06", "criterion": "Exact replay is idempotent, mismatched replay conflicts, and a failed publication emits no change event."},
+    {"id": "HRM005-AC-07", "criterion": "The canonical route adapts the existing OrganizationExplorer and preserves tab, as-of date, selected focus and return navigation."},
+    {"id": "HRM005-AC-08", "criterion": "Loading, empty, unavailable, partial, complete, permission-denied and stale states are materially distinct and never render a blank canvas."},
+    {"id": "HRM005-AC-09", "criterion": "Deep links and actions are allowlisted and hidden or disabled from the same server-authoritative access decision."},
+    {"id": "HRM005-AC-10", "criterion": "1440, 1280, 390, 320 and 200-percent zoom plus light, dark, high contrast, reduced motion and keyboard navigation pass."},
+    {"id": "HRM005-AC-11", "criterion": "Feature OFF or unenrolled tenant mounts no owner data runtime and sends no organization query or command."},
+    {"id": "HRM005-AC-12", "criterion": "Changed-path evidence proves HRM-008 employment, generated XCON, central authorization and historical registers were not modified or counted."}
+  ],
+  "targetedVerification": {
+    "policy": "NEW_HRM005_CLUSTER_FIRST_THEN_EXISTING_ORGANIZATION_SEAM; FAILED_TARGET_ONLY_AFTER_CORRECTION",
+    "backendTargets": [
+      "new com.dwp.services.people.hris.organization.HrmOrganizationPositionsContractTest",
+      "existing com.dwp.services.people.organization.OrganizationScenarioServiceTest",
+      "existing com.dwp.services.people.organization.OrganizationPublishRolloutGateTest",
+      "HRM-008 regression only if its shared outbox or publication seam changes"
+    ],
+    "frontendTargets": [
+      "apps/dwp/src/features/hris/people/__tests__/g3-slices/base-tfr-hrm-005.slice.test.tsx",
+      "one canonical-route responsive and accessibility journey after central Auth integration"
+    ],
+    "databaseTargets": ["V57 clean and V56-to-V57 upgrade only when V57 is actually leased"],
+    "repositoryWideSuitePerCorrection": false
+  },
+  "evidenceContract": {
+    "required": [
+      "backend and frontend module branch SHAs",
+      "twelve acceptance results with test or source evidence",
+      "event envelope and idempotency evidence",
+      "tenant and authorization negative evidence",
+      "default-off and zero-enrollment evidence",
+      "changed-path and no-recount manifest",
+      "migration non-need proof or active V57 lease plus clean-upgrade evidence"
+    ],
+    "businessCompletionCreditBeforeEvidence": 0
+  },
+  "authority": {
+    "packetSealed": true,
+    "sourceImplementationAuthorized": false,
+    "migrationAuthoringAuthorized": false,
+    "worktreeMaterializationAuthorized": false,
+    "moduleBranchCommitAuthorized": false,
+    "moduleBranchPushAuthorized": false,
+    "startTokenIssued": false,
+    "mergeToDwpDevAuthorized": false,
+    "activationAuthorized": false
+  },
+  "nextGate": "CENTRAL_AUTH_PACKET_APPROVAL_AND_INTEGRATION_THEN_FRESH_PINNED_HRM_START_TOKEN"
+}

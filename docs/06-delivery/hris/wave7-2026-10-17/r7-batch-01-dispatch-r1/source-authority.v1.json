@@ -1,0 +1,246 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-01-source-authority.v1",
+  "authorityId": "HRIS-WAVE7-R7-BATCH-01-SOURCE-AUTHORITY-20261017-R1",
+  "issuedAt": "2026-10-17T15:25:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "SEALED_EXACT_SOURCE_AUTHORITY_CODING_WITHHELD",
+  "purpose": "Freeze the exact evidence, integrated repository pins and interpretation precedence for the first R7 five-lane business batch without granting source implementation authority.",
+  "integratedPins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "b0db3577fd6517e64dd9de625fb67e99ff19630d",
+      "tree": "36d18dc16c23a39b604e815c56f3c1566a7fa521",
+      "upstream": "origin/dwp-dev",
+      "localRemoteExact": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "af65a9c6a3f994989b1388c15df890d0b3345eda",
+      "tree": "fcc85b80bc6dd71f595f5445b8ea0eada766f762",
+      "upstream": "origin/dwp-dev",
+      "localRemoteExactBeforeThisCarrier": true
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "upstream": "origin/dwp-dev",
+      "localRemoteExact": true
+    }
+  },
+  "packetCarrierBase": {
+    "repository": "dwp-frontend",
+    "branch": "dwp-dev",
+    "commit": "ec5170a17aaf76185961b3a573f75e0ce5c98de5",
+    "tree": "effba3d491d045b22c368fa13926d692d10850a4",
+    "upstream": "origin/dwp-dev",
+    "localRemoteExactBeforeThisCarrier": true,
+    "rule": "The af65a9c6 frontend pin remains the final R7-C1 product integration pin; ec5170a1 is the append-only C1 evidence and roadmap carrier on which this packet carrier is based."
+  },
+  "r7C1Closure": {
+    "state": "CLOSED_INTEGRATED_CROSS_CUTTING_ONLY",
+    "controlledExportTopology": {
+      "backendMergeCommit": "159e47bb4c189aec9dcd27edbd48397c40443f57",
+      "frontendMergeCommit": "ebe4295366b2cb9273cafd429d27bc1fc970e81e",
+      "platformMigration": "V330__accept_controlled_export_navigation_topology_successor.sql",
+      "businessSliceCredit": 0,
+      "defaultOffPreserved": true
+    },
+    "payCompositeSettingsAuthority": {
+      "backendMergeCommit": "b0db3577fd6517e64dd9de625fb67e99ff19630d",
+      "frontendMergeCommit": "af65a9c6a3f994989b1388c15df890d0b3345eda",
+      "authorizationVersion": 48,
+      "businessSliceCredit": 0,
+      "defaultOffPreserved": true
+    },
+    "entryGateResult": "PASS_FOR_PACKET_ISSUANCE_ONLY"
+  },
+  "immutableSources": [
+    {
+      "role": "R7_CURRENT_ROADMAP",
+      "repository": "dwp-frontend",
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/execution-roadmap-successor.v12.json",
+      "sha256": "41bb9dd1c5b3b8e8ece8bf0288fa93808fee88dd5abe3a35079f02665c9e6a3e"
+    },
+    {
+      "role": "R7_C1_INTEGRATION_RECEIPT",
+      "repository": "dwp-frontend",
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-c1-cross-cutting-successor-integration-r1/central-integration-result.v1.json",
+      "sha256": "00571a21f8a2c913ec6945ce788f71dad47032a53ad522913d29d4be9f2ab176"
+    },
+    {
+      "role": "R7_PREDECESSOR_ROADMAP",
+      "repository": "dwp-frontend",
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/execution-roadmap-successor.v11.json",
+      "sha256": "8527c96f72cd1b98fc73e0f6cf14499f0508bbb958b16b5679bcfc9f347b25ae"
+    },
+    {
+      "role": "R7_C0_CLASSIFICATION",
+      "repository": "dwp-frontend",
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-c0-reclassification-r1/base-slice-reclassification.v1.json",
+      "sha256": "73c02c6d945f2b62ae716d2dbbf76e5123a2863f50d19de51e27085943291de8"
+    },
+    {
+      "role": "IMMUTABLE_BASE_INVENTORY",
+      "repository": "dwp-frontend",
+      "path": "docs/06-delivery/hris/wave3-2026-10-13/successor-slice-overlay.v2.csv",
+      "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b"
+    },
+    {
+      "role": "SOURCE_FAMILY_RESOLUTION",
+      "repository": "dwp-frontend",
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/target-family-resolution-register.csv",
+      "sha256": "a8746b9b89bf6bebd0a5b6fe4d8f9e985e223dcd6d395f5ef03b6f3f98d16189"
+    },
+    {
+      "role": "HISTORICAL_G3_SCOPE_EVIDENCE_NOT_CURRENT_TOKEN",
+      "repository": "dwp-frontend",
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/g3-slice-code-go-register.csv",
+      "sha256": "fb646668329e93ca0b83b74e2a3e43619954cec1cb2f6770029677edbc8d5725"
+    },
+    {
+      "role": "CANONICAL_INFORMATION_ARCHITECTURE",
+      "repository": "dwp-frontend",
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/hris-information-architecture-register.csv",
+      "sha256": "ab506a2bb2f80c8ab81a4b9d575374d6bda83b312d11dce07495d4812bdf4686"
+    },
+    {
+      "role": "IA_ACCESS_CONTRACT",
+      "repository": "dwp-frontend",
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/ia-node-access-contract-register.csv",
+      "sha256": "3fc33ce63642c337c9cf8dc6cfbd3b9287d9b1202c5b709e137744c7b28494bf"
+    },
+    {
+      "role": "BROWSER_OWNER_PEP_BINDINGS",
+      "repository": "dwp-frontend",
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/api-pep-binding-register.csv",
+      "sha256": "0e38d724516a8b271069241ffa0fb6400984dc703758767de53cbaffb4f93da3"
+    },
+    {
+      "role": "SERVICE_AUTH_BINDINGS",
+      "repository": "dwp-frontend",
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/service-api-auth-binding-register.csv",
+      "sha256": "a54272429e70d0e2494e082b214615a4befe2354d5ab72bf7619500e2b0fdcaa"
+    },
+    {
+      "role": "MODULE_DEPENDENCIES",
+      "repository": "dwp-frontend",
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/module-dependency-register.csv",
+      "sha256": "b8f1a11d1a32cf6f5a9a99ff73066b7e65787319ac18cf0d2b4891d22587c348"
+    },
+    {
+      "role": "ACCEPTED_ENTRY_QUERY_CONTRACTS",
+      "repository": "dwp-frontend",
+      "path": "docs/06-delivery/hris/recovery/exact-supplements/2026-10-06/accepted-successors/hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-api-contract-register.csv",
+      "sha256": "5f47efd33a1d5aa3d11a4d9fd5716cd4e35650e9fec0868ecb77c8c90a4cd988"
+    },
+    {
+      "role": "ACCEPTED_ENTRY_QUERY_INVARIANTS",
+      "repository": "dwp-frontend",
+      "path": "docs/06-delivery/hris/recovery/exact-supplements/2026-10-06/accepted-successors/hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-runtime-invariant-register.csv",
+      "sha256": "fcdfd1a26d8fca2c8d9a2a8279a3c5a99844ba827aefe47cbac2210b8753f77a"
+    },
+    {
+      "role": "ACCESS_PACKAGE_SOURCE",
+      "repository": "dwp-frontend",
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/hris-permission-group-matrix.csv",
+      "sha256": "9daf98e2b6c3eadec2a7e782516046f074cb0775c03bdc7fbd75c08adce33578"
+    },
+    {
+      "role": "ATOMIC_DUTY_SOURCE",
+      "repository": "dwp-frontend",
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/hris-atomic-duty-matrix.csv",
+      "sha256": "cdb96241579a0c81320b3fc60b3032e0ba641d25dda304eaadbde6f61325b6fc"
+    },
+    {
+      "role": "IMMUTABLE_AUTH_V48_INDEX",
+      "repository": "dwp-backend",
+      "path": "contracts/product-authorization/product-surfaces-v1.index.json",
+      "sha256": "f893e514adec14564d1d683f6cff22ac7babd08912ce47945735fa45b1ae7c99"
+    },
+    {
+      "role": "IMMUTABLE_AUTH_V48_BUNDLE",
+      "repository": "dwp-backend",
+      "path": "contracts/product-authorization/product-surfaces-v1.bundle-v48.json",
+      "sha256": "5b1d87250c3adcc72f2dd75238956c1da69a31d47512394480dba865ebced3c4",
+      "embeddedContractChecksum": "9fd324cd67ede1f02cc8ac33c08ad880ec6e283f99f5d7aa50e0e514545aa043",
+      "indexChecksum": "3f66090d62d33892ebe5e3ce85752ba445060d92ed572b89cfe72c9b5675c12e",
+      "bundleStatus": "DRAFT"
+    }
+  ],
+  "selectedSourceFamilies": [
+    {
+      "sliceId": "BASE-TFR-HRM-005",
+      "sourceRef": "TFR-HRM-005",
+      "overlayLine": 7,
+      "familySha256": "aff33d64feb7769426e17e372962e09ff34f27f37b021a5daa22079a7f2a70b2",
+      "sourceRowCount": 43,
+      "classification": "PARTIAL_SURFACE_OR_OVERLAP",
+      "semanticLineage": "hr-organization-positions::PEP-HRM-006|PEP-HRM-007|PEP-HRM-008|PEP-HRM-009|PEP-HRM-010|XCON-006|EVT-HRM:OrganizationChanged.v1"
+    },
+    {
+      "sliceId": "BASE-TFR-PAY-013",
+      "sourceRef": "TFR-PAY-013",
+      "overlayLine": 36,
+      "familySha256": "3260534ab6e6e4130e8d5927518bb13d0a6780ac39f25d3d87a81523c2cc7720",
+      "sourceRowCount": 23,
+      "classification": "NO_CURRENT_SLICE_RESULT",
+      "semanticLineage": "PAY-RUN-PREPARE::PEP-PAY-011|EVT-PAY:PayrollRunPrepared"
+    },
+    {
+      "sliceId": "BASE-TFR-PER-001",
+      "sourceRef": "TFR-PER-001",
+      "overlayLine": 45,
+      "familySha256": "cb7aa91280cca068e3ea8515562402a6584b12e2505f04d9b9c99917a22f114c",
+      "sourceRowCount": 2,
+      "classification": "NO_CURRENT_SLICE_RESULT",
+      "semanticLineage": "PER-NOTIFICATION-001::PLAT-004"
+    },
+    {
+      "sliceId": "BASE-TFR-SYS-002",
+      "sourceRef": "TFR-SYS-002",
+      "overlayLine": 69,
+      "familySha256": "5b4a9d774a961d56f2225749f6981122106d3b863b8a2d601034313758559d6f",
+      "sourceRowCount": 5,
+      "classification": "NO_CURRENT_SLICE_RESULT",
+      "semanticLineage": "DWP.OPERATIONS.OBSERVABILITY::SYS-API-035|SYS-API-036|SYS-API-038|SYS-EVT-009"
+    },
+    {
+      "sliceId": "BASE-TFR-TIM-007",
+      "sourceRef": "TFR-TIM-007",
+      "overlayLine": 90,
+      "familySha256": "cf3f686f4466ee193413c124dae40c0fe72270bae8de0355ef3f23ebb8f9835f",
+      "sourceRowCount": 22,
+      "classification": "NO_CURRENT_SLICE_RESULT",
+      "semanticLineage": "TIM-CLOSE-HANDOFF::PEP-TIM-022|PEP-TIM-023|PEP-TIM-024|PEP-TIM-025|PEP-TIM-026|SVC-PEP-TIM-001|XCON-008|XCON-009|XCON-010|XCON-011|EVT-TIM:TimePeriodClosed.v1|EVT-TIM:TimePeriodReopened.v1|EVT-TIM:PayrollTimeHandoffReady.v1"
+    }
+  ],
+  "interpretationPrecedence": [
+    "The exact integrated code pins override historical implementation-state and migration-allocation columns.",
+    "R7-C0 classification and explicit integration receipts override recovered G3 NOT_STARTED_G3 labels.",
+    "Accepted exact supplements override superseded draft entry-query rows.",
+    "A historical G3 code-go token is evidence only and is not a current R7 Start Token.",
+    "No historical register or Wave3 overlay may be rewritten by this batch carrier. Corrections are append-only in this directory."
+  ],
+  "sourceAuthority": {
+    "ownerPacketAuthoringAuthorized": true,
+    "centralAuthorizationPacketAuthoringAuthorized": true,
+    "sourceImplementationAuthorized": false,
+    "migrationAuthoringAuthorized": false,
+    "worktreeMaterializationAuthorized": false,
+    "startTokenIssued": false,
+    "mergeToDwpDevAuthorized": false,
+    "activationAuthorized": false
+  },
+  "invalidationConditions": [
+    "Any recorded dwp-dev commit or tree is not an ancestor of the implementation worktree base.",
+    "Any immutable source hash or selected source-family hash differs.",
+    "Authorization v48 bytes, embedded checksum or index checksum differ.",
+    "A historical code-go label is used as current implementation authority.",
+    "A completed or shared predecessor is counted or implemented again.",
+    "A feature, tenant enrollment, customer data path or production release is enabled."
+  ]
+}

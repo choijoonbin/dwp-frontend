@@ -1,0 +1,401 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-01-central-authorization-successor-packet.v1",
+  "packetId": "HRIS-WAVE7-R7-BATCH-01-CENTRAL-AUTHORIZATION-SUCCESSOR-20261017-R1",
+  "preparedAt": "2026-10-17T15:25:00+09:00",
+  "preparedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "DECISION_REQUIRED_BEFORE_V49_GENERATION",
+  "purpose": "Define only source-backed PAGE, DATA and ACTION candidates needed by R7-BATCH-01 and block product-authorization v49 generation until every unresolved predicate, step-up and route-shape decision is sealed.",
+  "sourceAuthority": {
+    "path": "source-authority.v1.json",
+    "sha256": "d40df88e26530bd467c5cc6210d967b31a521f06647e672987393c1d1837165e"
+  },
+  "immutablePredecessor": {
+    "version": 48,
+    "bundleStatus": "DRAFT",
+    "bundlePath": "backend:contracts/product-authorization/product-surfaces-v1.bundle-v48.json",
+    "bundleSha256": "5b1d87250c3adcc72f2dd75238956c1da69a31d47512394480dba865ebced3c4",
+    "embeddedContractChecksum": "9fd324cd67ede1f02cc8ac33c08ad880ec6e283f99f5d7aa50e0e514545aa043",
+    "indexPath": "backend:contracts/product-authorization/product-surfaces-v1.index.json",
+    "indexSha256": "f893e514adec14564d1d683f6cff22ac7babd08912ce47945735fa45b1ae7c99",
+    "indexChecksum": "3f66090d62d33892ebe5e3ce85752ba445060d92ed572b89cfe72c9b5675c12e",
+    "preservation": "IMMUTABLE_APPEND_ONLY_SUCCESSOR_REQUIRED"
+  },
+  "globalTupleRules": {
+    "appEntitlement": "APP.HCM:VIEW",
+    "browserTenantSource": "TRUSTED_GATEWAY_CONTEXT_ONLY",
+    "callerSuppliedTenantOverride": "FORBIDDEN",
+    "requiredPepLayers": [
+      "GATEWAY_APP_ENTITLEMENT",
+      "OWNER_API_OPERATION",
+      "RESOURCE_POPULATION",
+      "REPOSITORY_TENANT_PREDICATE",
+      "FIELD_PROJECTION",
+      "PURPOSE_POLICY",
+      "AUDIT_DECISION"
+    ],
+    "opaqueDenial": true,
+    "staleRevisionBehavior": "FAIL_CLOSED",
+    "defaultRuntimeMode": "OFF",
+    "defaultEnrolledTenants": []
+  },
+  "candidateTuples": [
+    {
+      "candidateId": "R7B01-AUTH-HRM-PAGE-001",
+      "sliceId": "BASE-TFR-HRM-005",
+      "kind": "PAGE",
+      "status": "DECISION_REQUIRED_BEFORE_V49_GENERATION",
+      "uiRoute": "/hr/operations/people/organization-positions",
+      "navigationContextId": "hcm.operations",
+      "entryBindingRef": "PEP-HRM-010",
+      "method": "GET",
+      "browserPath": "/api/people/v1/hris/organizations/graph",
+      "ownerPath": "/v1/hris/organizations/graph",
+      "ownerService": "dwp-people-server",
+      "profile": "HRIS_HR_BUSINESS_PARTNER>HRIS_DUTY_ORGANIZATION_VIEWER",
+      "capability": "hcm.operations.organization.view",
+      "target": {
+        "resourceType": "DATA",
+        "resourceKey": "DATA.HRIS_ORGANIZATION",
+        "populationTypes": ["LEGAL_ENTITY", "ORG_TREE", "ORG_UNIT"],
+        "fieldGroups": ["ORGANIZATION"],
+        "purposeCode": "HR_OPERATIONS"
+      },
+      "predicate": {
+        "targetBindingKinds": ["TARGET_POPULATION"],
+        "requiredFacts": ["tenantId", "legalEntityId", "organizationScope", "policyRevision", "purposeCode"],
+        "policyKey": "DECISION_REQUIRED_BEFORE_V49_GENERATION"
+      },
+      "stepUp": {
+        "required": "DECISION_REQUIRED_BEFORE_V49_GENERATION",
+        "reason": "The source PEP and IA bind the viewer profile but the atomic-duty source does not seal a step-up result for HRIS_DUTY_ORGANIZATION_VIEWER."
+      },
+      "sourceRefs": ["hris-information-architecture-register.csv#BASE:hr-organization-positions", "api-pep-binding-register.csv#PEP-HRM-010"]
+    },
+    {
+      "candidateId": "R7B01-AUTH-HRM-DATA-001",
+      "sliceId": "BASE-TFR-HRM-005",
+      "kind": "DATA",
+      "status": "DECISION_REQUIRED_BEFORE_V49_GENERATION",
+      "bindingRef": "PEP-HRM-010",
+      "method": "GET",
+      "browserPath": "/api/people/v1/hris/organizations/graph",
+      "ownerPath": "/v1/hris/organizations/graph",
+      "ownerService": "dwp-people-server",
+      "profile": "HRIS_HR_BUSINESS_PARTNER>HRIS_DUTY_ORGANIZATION_VIEWER",
+      "capability": "hcm.operations.organization.view",
+      "target": {
+        "resourceType": "DATA",
+        "resourceKey": "DATA.HRIS_ORGANIZATION",
+        "populationTypes": ["LEGAL_ENTITY", "ORG_TREE", "ORG_UNIT"],
+        "fieldGroups": ["ORGANIZATION"],
+        "purposeCode": "HR_OPERATIONS"
+      },
+      "predicate": {
+        "targetBindingKinds": ["TARGET_POPULATION"],
+        "requiredFacts": ["tenantId", "legalEntityId", "organizationScope", "policyRevision", "purposeCode"],
+        "policyKey": "DECISION_REQUIRED_BEFORE_V49_GENERATION"
+      },
+      "stepUp": {"required": "DECISION_REQUIRED_BEFORE_V49_GENERATION"},
+      "sourceRefs": ["api-pep-binding-register.csv#PEP-HRM-010"]
+    },
+    {
+      "candidateId": "R7B01-AUTH-HRM-ACTION-REUSE-001",
+      "sliceId": "BASE-TFR-HRM-005",
+      "kind": "ACTION_REUSE_SET",
+      "status": "EXISTING_V48_REUSE_NO_NEW_ROUTE_OR_CAPABILITY",
+      "bindingRefs": ["PEP-HRM-006", "PEP-HRM-007", "PEP-HRM-008", "PEP-HRM-009"],
+      "methodsAndBrowserPaths": [
+        "POST /api/people/v1/hris/assignment-events",
+        "POST /api/people/v1/hris/assignment-events/{eventPublicId}/validate",
+        "POST /api/people/v1/hris/assignment-events/{eventPublicId}/submit",
+        "POST /api/people/v1/hris/assignment-events/{eventPublicId}/publish"
+      ],
+      "ownerService": "dwp-people-server",
+      "profiles": ["HRIS_HR_BUSINESS_PARTNER>HRIS_DUTY_ASSIGNMENT_MAKER", "HRIS_HR_LIFECYCLE_APPROVER>HRIS_DUTY_CORE_APPROVER"],
+      "capabilities": ["hcm.operations.assignment.manage", "hcm.operations.people-change.approve"],
+      "predicatePolicyKey": "predicate.hcm-employee-change-authority.v1",
+      "stepUp": {"required": "PRESERVE_V48_AND_OWNER_ENFORCEMENT"},
+      "recountForbidden": "BASE-TFR-HRM-008"
+    },
+    {
+      "candidateId": "R7B01-AUTH-PAY-PAGE-DATA-001",
+      "sliceId": "BASE-TFR-PAY-013",
+      "kind": "PAGE_AND_ENTRY_DATA",
+      "status": "DECISION_REQUIRED_BEFORE_V49_GENERATION",
+      "uiRoute": "/hr/operations/payroll/population",
+      "navigationContextId": "hcm.operations",
+      "entryBindingRef": "IAQ-014",
+      "method": "GET",
+      "browserPath": "/api/payroll/v1/workbench/population",
+      "ownerPath": "/v1/workbench/population",
+      "ownerService": "dwp-payroll-server",
+      "profile": "HRIS_PAYROLL_SUPPORT_VIEWER>HRIS_DUTY_PAYROLL_SUPPORT_VIEWER",
+      "capability": "hcm.operations.payroll-support.view",
+      "target": {
+        "resourceType": "DATA",
+        "resourceKey": "DATA.HRIS_PAYROLL_STATUS",
+        "populationTypes": ["LEGAL_ENTITY", "PAY_GROUP", "NAMED_POPULATION"],
+        "fieldGroups": ["PAYROLL_POPULATION", "PROJECTION_VERSION", "PAY_RESULT_MASKED"],
+        "purposeCode": "PAYROLL_OPERATIONS"
+      },
+      "predicate": {
+        "scopeResolver": "PAY_TARGET_POPULATION",
+        "targetBindingKinds": ["TARGET_POPULATION"],
+        "requiredFacts": ["tenantId", "legalEntityId", "payGroupId", "namedPopulationId", "policyRevision", "purposeCode"],
+        "policyKey": "DECISION_REQUIRED_BEFORE_V49_GENERATION"
+      },
+      "stepUp": {
+        "required": true,
+        "sourceRef": "hris-atomic-duty-matrix.csv#HRIS_DUTY_PAYROLL_SUPPORT_VIEWER"
+      },
+      "sourceRefs": ["ia-entry-query-api-contract-register.csv#IAQ-014", "hris-information-architecture-register.csv#BASE:pay-population"]
+    },
+    {
+      "candidateId": "R7B01-AUTH-PAY-ACTION-001",
+      "sliceId": "BASE-TFR-PAY-013",
+      "kind": "ACTION",
+      "status": "DECISION_REQUIRED_BEFORE_V49_GENERATION",
+      "bindingRef": "PEP-PAY-011",
+      "method": "POST",
+      "browserPath": "/api/payroll/v1/runs",
+      "ownerPath": "/v1/runs",
+      "ownerService": "dwp-payroll-server",
+      "profile": "HRIS_PAYROLL_RUN_OPERATOR>HRIS_DUTY_PAYROLL_RUN_OPERATOR",
+      "capability": "hcm.operations.payroll-run.execute",
+      "target": {
+        "resourceType": "ACTION",
+        "resourceKey": "ACTION.HRIS_PAYROLL_RUN",
+        "populationTypes": ["LEGAL_ENTITY", "PAY_GROUP"],
+        "fieldGroups": ["PAY_INPUT", "PAY_RESULT"],
+        "purposeCode": "PAYROLL_PROCESSING"
+      },
+      "predicate": {
+        "existingCandidatePolicyKey": "predicate.hcm-payroll-run-authority.v1",
+        "sodCandidatePolicyKey": "predicate.hcm-payroll-run-sod.v1",
+        "targetBindingKinds": ["OBJECT", "TARGET_POPULATION"],
+        "decision": "CONFIRM_PREPARE_WITHOUT_RUN_ID_CAN_BE_BOUND_BEFORE_REUSING_THE_EXISTING_CALCULATE_PREDICATE"
+      },
+      "stepUp": {
+        "required": true,
+        "approvalRequired": true,
+        "sourceRef": "hris-atomic-duty-matrix.csv#HRIS_DUTY_PAYROLL_RUN_OPERATOR",
+        "v48ConflictToResolve": "The existing capability is MEDIUM with no route-level step-up declaration while the atomic duty classifies the operation CRITICAL and step-up required."
+      },
+      "sourceRefs": ["api-pep-binding-register.csv#PEP-PAY-011"]
+    },
+    {
+      "candidateId": "R7B01-AUTH-SYS-PAGE-ENTRY-001",
+      "sliceId": "BASE-TFR-SYS-002",
+      "kind": "PAGE_AND_ENTRY_DATA",
+      "status": "DECISION_REQUIRED_BEFORE_V49_GENERATION",
+      "uiRoute": "/hr/settings/operations",
+      "navigationContextId": "hcm.management",
+      "entryBindingRef": "IAQ-059",
+      "method": "GET",
+      "browserPath": "/api/platform/v1/hris/workbench/settings-operations",
+      "ownerPath": "/v1/hris/workbench/settings-operations",
+      "ownerService": "dwp-platform-server",
+      "profile": "HRIS_CONFIG_AUTHOR>HRIS_DUTY_CONFIGURATION_WORKBENCH_READER",
+      "capability": "hcm.configuration.workbench.view",
+      "target": {
+        "resourceType": "CONFIG",
+        "resourceKey": "CONFIG.HRIS_WORKBENCH",
+        "populationTypes": ["POLICY_NODE", "LEGAL_ENTITY"],
+        "fieldGroups": ["OPERATION_POLICY", "EXCEPTION_POLICY", "EFFECTIVE_STATUS"],
+        "purposeCode": "HRIS_CONFIGURATION"
+      },
+      "predicate": {
+        "scopeResolver": "APP_RESOURCE_SET:RS_HCM_CONFIG",
+        "targetBindingKinds": ["CONFIG_SCOPE"],
+        "existingReferencePattern": "predicate.hcm-reference-configuration-authority.v1",
+        "policyKey": "DECISION_REQUIRED_BEFORE_V49_GENERATION"
+      },
+      "stepUp": {"required": "DECISION_REQUIRED_BEFORE_V49_GENERATION"},
+      "scopeExclusion": "Do not bind SYS-006 automation actions listed on the shared IA node.",
+      "sourceRefs": ["ia-entry-query-api-contract-register.csv#IAQ-059", "hris-information-architecture-register.csv#BASE:settings-operations"]
+    },
+    {
+      "candidateId": "R7B01-AUTH-SYS-DATA-001",
+      "sliceId": "BASE-TFR-SYS-002",
+      "kind": "DATA_SET",
+      "status": "DECISION_REQUIRED_BEFORE_V49_GENERATION",
+      "bindingRefs": ["PEP-SYS-037", "PEP-SYS-038"],
+      "methodsAndBrowserPaths": [
+        "GET /api/platform/v1/admin/hris/operations/exceptions",
+        "GET /api/platform/v1/admin/hris/operations/exceptions/{exceptionId}"
+      ],
+      "ownerPaths": [
+        "/v1/admin/hris/operations/exceptions",
+        "/v1/admin/hris/operations/exceptions/{exceptionId}"
+      ],
+      "ownerService": "dwp-platform-server",
+      "profiles": [
+        "HRIS_HR_BUSINESS_PARTNER>HRIS_DUTY_OPERATION_EXCEPTION_READER",
+        "HRIS_TIMEKEEPER>HRIS_DUTY_OPERATION_EXCEPTION_READER",
+        "HRIS_TIME_CONTROLLER>HRIS_DUTY_OPERATION_EXCEPTION_READER",
+        "HRIS_LEAVE_ADMINISTRATOR>HRIS_DUTY_OPERATION_EXCEPTION_READER",
+        "HRIS_PAYROLL_RUN_OPERATOR>HRIS_DUTY_OPERATION_EXCEPTION_READER",
+        "HRIS_PAYROLL_CONTROLLER>HRIS_DUTY_OPERATION_EXCEPTION_READER",
+        "HRIS_PERFORMANCE_OPERATOR>HRIS_DUTY_OPERATION_EXCEPTION_READER",
+        "HRIS_INTEGRATION_EXECUTOR>HRIS_DUTY_OPERATION_EXCEPTION_READER",
+        "HRIS_AUDITOR>HRIS_DUTY_OPERATION_EXCEPTION_READER"
+      ],
+      "capability": "hcm.operations.exception.view",
+      "target": {
+        "resourceType": "DATA",
+        "resourceKey": "DATA.HRIS_OPERATION_EXCEPTION",
+        "populationTypes": ["AUTHORIZED_PACKAGE_SCOPE"],
+        "fieldGroups": ["OPERATION_EXCEPTION", "OWNER_DEEP_LINK", "RECOVERY_METADATA", "REDACTED_PAYLOAD"],
+        "purposeCode": "HRIS_OPERATIONS"
+      },
+      "predicate": {
+        "targetBindingKinds": ["TARGET_POPULATION", "OBJECT"],
+        "requiredFacts": ["tenantId", "authorizedPackageScope", "ownerModule", "exceptionId", "policyRevision", "purposeCode"],
+        "policyKey": "DECISION_REQUIRED_BEFORE_V49_GENERATION"
+      },
+      "stepUp": {"required": "DECISION_REQUIRED_BEFORE_V49_GENERATION"},
+      "sourceRefs": ["api-pep-binding-register.csv#PEP-SYS-037", "api-pep-binding-register.csv#PEP-SYS-038"]
+    },
+    {
+      "candidateId": "R7B01-AUTH-SYS-RECEIPT-REUSE-001",
+      "sliceId": "BASE-TFR-SYS-002",
+      "kind": "DATA_REUSE",
+      "status": "EXISTING_V48_REUSE_NO_NEW_ROUTE_OR_CAPABILITY",
+      "bindingRef": "PEP-SYS-040",
+      "method": "GET",
+      "browserPath": "/api/platform/v1/admin/hris/command-receipts/{receiptId}",
+      "ownerPath": "/v1/admin/hris/command-receipts/{receiptId}",
+      "ownerService": "dwp-platform-server",
+      "capability": "hcm.command-receipt.view",
+      "target": {
+        "resourceType": "DATA",
+        "resourceKey": "DATA.HRIS_COMMAND_RECEIPT",
+        "populationTypes": ["ORIGINATING_COMMAND_SCOPE"],
+        "fieldGroups": ["COMMAND_RECEIPT"],
+        "purposeCode": "COMMAND_STATUS"
+      },
+      "predicatePolicyKey": "predicate.hcm-platform-command-receipt-authority.v1",
+      "stepUp": {"required": false},
+      "recountForbidden": "PEP-SYS-040"
+    },
+    {
+      "candidateId": "R7B01-AUTH-TIM-PAGE-DATA-001",
+      "sliceId": "BASE-TFR-TIM-007",
+      "kind": "PAGE_AND_ENTRY_DATA_SET",
+      "status": "DECISION_REQUIRED_BEFORE_V49_GENERATION",
+      "entries": [
+        {
+          "uiRoute": "/hr/operations/time/command-center",
+          "bindingRef": "IAQ-039",
+          "method": "GET",
+          "browserPath": "/api/time/v1/hris/workbench/time-command-center",
+          "ownerPath": "/v1/hris/workbench/time-command-center"
+        },
+        {
+          "uiRoute": "/hr/operations/time/daily-close",
+          "bindingRef": "IAQ-043",
+          "method": "GET",
+          "browserPath": "/api/time/v1/hris/workbench/time-daily-close",
+          "ownerPath": "/v1/hris/workbench/time-daily-close"
+        },
+        {
+          "uiRoute": "/hr/operations/time/monthly-close",
+          "bindingRef": "IAQ-044",
+          "method": "GET",
+          "browserPath": "/api/time/v1/hris/workbench/time-monthly-close",
+          "ownerPath": "/v1/hris/workbench/time-monthly-close"
+        }
+      ],
+      "navigationContextId": "hcm.operations",
+      "ownerService": "dwp-time-server",
+      "profile": "HRIS_TIMEKEEPER>HRIS_DUTY_TIME_OPERATIONS_READER",
+      "capability": "hcm.operations.time.view",
+      "target": {
+        "resourceType": "DATA",
+        "resourceKey": "DATA.HR_TIME",
+        "populationTypes": ["LEGAL_ENTITY", "TIME_GROUP", "ORG_TREE"],
+        "fieldGroups": ["TIME_PERIOD", "EXCEPTION_SUMMARY", "COMMAND_RECEIPT", "CLOSE_STATUS", "IMPACT_SUMMARY", "PAYROLL_HANDOFF"],
+        "purposeCodes": ["TIME_OPERATIONS", "TIME_CLOSE"]
+      },
+      "predicate": {
+        "scopeResolver": "TIME_TARGET_POPULATION",
+        "targetBindingKinds": ["TARGET_POPULATION"],
+        "existingCandidatePolicyKey": "predicate.hcm-time-capture-authority.v1",
+        "decision": "CONFIRM_CLOSE_PERIOD_SCOPE_AND_TIME_CLOSE_PURPOSE_BEFORE_REUSE"
+      },
+      "stepUp": {"required": "DECISION_REQUIRED_BEFORE_V49_GENERATION"},
+      "sourceRefs": ["ia-entry-query-api-contract-register.csv#IAQ-039", "ia-entry-query-api-contract-register.csv#IAQ-043", "ia-entry-query-api-contract-register.csv#IAQ-044"]
+    },
+    {
+      "candidateId": "R7B01-AUTH-TIM-ACTION-001",
+      "sliceId": "BASE-TFR-TIM-007",
+      "kind": "ACTION_SET",
+      "status": "DECISION_REQUIRED_BEFORE_V49_GENERATION",
+      "entries": [
+        {"bindingRef": "PEP-TIM-022", "method": "POST", "browserPath": "/api/time/v1/close-periods/{periodId}/validations", "ownerPath": "/v1/close-periods/{periodId}/validations", "capability": "hcm.operations.time.close", "resourceKey": "ACTION.HRIS_TIME_CLOSE", "action": "EXECUTE"},
+        {"bindingRef": "PEP-TIM-023", "method": "POST", "browserPath": "/api/time/v1/close-periods/{periodId}/close", "ownerPath": "/v1/close-periods/{periodId}/close", "capability": "hcm.operations.time.close", "resourceKey": "ACTION.HRIS_TIME_CLOSE", "action": "EXECUTE"},
+        {"bindingRef": "PEP-TIM-024", "method": "POST", "browserPath": "/api/time/v1/close-periods/{periodId}/reopen", "ownerPath": "/v1/close-periods/{periodId}/reopen", "capability": "hcm.operations.time.reopen", "resourceKey": "ACTION.HRIS_TIME_REOPEN", "action": "MANAGE"},
+        {"bindingRef": "PEP-TIM-025", "method": "POST", "browserPath": "/api/time/v1/close-periods/{periodId}/payroll-handoffs", "ownerPath": "/v1/close-periods/{periodId}/payroll-handoffs", "capability": "hcm.operations.time.close", "resourceKey": "ACTION.HRIS_TIME_CLOSE", "action": "EXECUTE"},
+        {"bindingRef": "PEP-TIM-026", "method": "GET", "browserPath": "/api/time/v1/payroll-handoffs/{handoffId}", "ownerPath": "/v1/payroll-handoffs/{handoffId}", "capability": "hcm.operations.time.close", "resourceKey": "ACTION.HRIS_TIME_CLOSE", "action": "EXECUTE", "classification": "ACTION_PER_SOURCE_REGISTER_NO_REMODEL"}
+      ],
+      "ownerService": "dwp-time-server",
+      "profiles": ["HRIS_TIME_CONTROLLER>HRIS_DUTY_TIME_CLOSE_OPERATOR", "HRIS_TIME_CONTROLLER>HRIS_DUTY_TIME_REOPEN_OPERATOR"],
+      "target": {
+        "resourceType": "ACTION",
+        "populationTypes": ["LEGAL_ENTITY", "TIME_GROUP"],
+        "fieldGroups": ["LIMITED_PROFILE", "TIME_RESULT"],
+        "purposeCodes": ["WORK_TIME_PERIOD_CLOSURE", "CLOSED_TIME_PAYROLL_TRANSFER"]
+      },
+      "predicate": {
+        "targetBindingKinds": ["OBJECT", "TARGET_POPULATION"],
+        "requiredFacts": ["tenantId", "periodId", "legalEntityId", "timeGroupId", "expectedVersion", "policyRevision", "purposeCode"],
+        "closePolicyKey": "DECISION_REQUIRED_BEFORE_V49_GENERATION",
+        "reopenPolicyKey": "DECISION_REQUIRED_BEFORE_V49_GENERATION",
+        "sodRules": ["NO_CLOSE_WITH_UNRESOLVED_EXCEPTION", "NO_REOPEN_OWN_CLOSE"]
+      },
+      "stepUp": {
+        "required": true,
+        "approvalRequired": true,
+        "sourceRefs": ["hris-atomic-duty-matrix.csv#HRIS_DUTY_TIME_CLOSE_OPERATOR", "hris-atomic-duty-matrix.csv#HRIS_DUTY_TIME_REOPEN_OPERATOR"]
+      },
+      "sourceRefs": ["api-pep-binding-register.csv#PEP-TIM-022..PEP-TIM-026"]
+    }
+  ],
+  "perBoundary": {
+    "sliceId": "BASE-TFR-PER-001",
+    "ui": "NON_UI_SUPPORTING_SLICE",
+    "browserPageRoute": "FORBIDDEN",
+    "browserDataOrActionRoute": "FORBIDDEN_UNLESS_A_LATER_CENTRAL_DECISION_PROVES_A_NON_BROWSER_OWNER_CONTRACT",
+    "v49Candidates": []
+  },
+  "mandatoryDecisions": [
+    "Seal exact routeContractKey, uiRouteId, projectionPolicyKey and responseSchemaKey for every new PAGE and DATA tuple.",
+    "Seal exact new predicate policy keys for organization view, payroll population, operations exception and time close/reopen; do not silently reuse a similarly scoped predecessor.",
+    "Resolve every DECISION_REQUIRED step-up value, including the Payroll v48 capability-risk conflict.",
+    "Keep IAQ-059 SYS-006 automation actions outside the SYS-002 successor.",
+    "Prove HRM PEP-006..009 and SYS PEP-040 remain byte-equivalent reuse and are not emitted as new v49 ownership.",
+    "Allocate any Auth database migration independently; no Auth migration lease is granted by this packet."
+  ],
+  "generatorGate": {
+    "productAuthorizationTargetVersion": 49,
+    "generationAuthorized": false,
+    "reason": "DECISION_REQUIRED_BEFORE_V49_GENERATION",
+    "requiredBeforeGeneration": [
+      "all candidate status values are SEALED_EXACT or EXISTING_V48_REUSE_NO_NEW_ROUTE_OR_CAPABILITY",
+      "all exact predicate policy keys and target binding kinds are sealed",
+      "all step-up and SoD decisions are sealed",
+      "owner API method/path/profile/capability tuples are acknowledged by each module owner packet",
+      "an append-only v49 generator packet and any required Auth migration lease are issued"
+    ]
+  },
+  "authority": {
+    "v48MutationAuthorized": false,
+    "v49GenerationAuthorized": false,
+    "authorizationSourceEditAuthorized": false,
+    "gatewayOrOpenApiEditAuthorized": false,
+    "moduleCodingTokenAuthorized": false,
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionReleaseAuthorized": false
+  }
+}

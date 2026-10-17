@@ -1,0 +1,182 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-01-central-manifest.v1",
+  "manifestId": "HRIS-WAVE7-R7-BATCH-01-DISPATCH-20261017-R1",
+  "issuedAt": "2026-10-17T15:25:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "OWNER_PACKETS_SEALED_START_TOKENS_WITHHELD",
+  "purpose": "Publish the immutable exact-scope owner packets for the first R7 five-lane batch while keeping central authorization, semantic decisions, migration leases, fresh execution pins and implementation tokens fail closed.",
+  "predecessors": {
+    "executionRoadmap": {
+      "path": "../execution-roadmap-successor.v12.json",
+      "sha256": "41bb9dd1c5b3b8e8ece8bf0288fa93808fee88dd5abe3a35079f02665c9e6a3e",
+      "state": "R7_C1_CLOSED_R7_BATCH_01_PACKET_ISSUANCE_ALLOWED"
+    },
+    "r7C1CentralIntegrationReceipt": {
+      "path": "../r7-c1-cross-cutting-successor-integration-r1/central-integration-result.v1.json",
+      "sha256": "00571a21f8a2c913ec6945ce788f71dad47032a53ad522913d29d4be9f2ab176"
+    },
+    "sourceRoadmapV11": {
+      "path": "../execution-roadmap-successor.v11.json",
+      "sha256": "8527c96f72cd1b98fc73e0f6cf14499f0508bbb958b16b5679bcfc9f347b25ae"
+    },
+    "r7C0Reclassification": {
+      "path": "../r7-c0-reclassification-r1/base-slice-reclassification.v1.json",
+      "sha256": "73c02c6d945f2b62ae716d2dbbf76e5123a2863f50d19de51e27085943291de8"
+    }
+  },
+  "pins": {
+    "packetCarrierBase": {
+      "repository": "dwp-frontend",
+      "commit": "ec5170a17aaf76185961b3a573f75e0ce5c98de5",
+      "tree": "effba3d491d045b22c368fa13926d692d10850a4"
+    },
+    "r7C1BusinessIntegration": {
+      "backend": "b0db3577fd6517e64dd9de625fb67e99ff19630d",
+      "frontend": "af65a9c6a3f994989b1388c15df890d0b3345eda",
+      "agent": "9beb5439cad065e7d919a98c9f9becb44481508a"
+    },
+    "interpretation": "af65a9c6 remains the frontend product/business integration pin; ec5170a1 is the later append-only C1 evidence carrier and this dispatch branch base. Neither is a future owner start-token execution pin."
+  },
+  "controlArtifacts": {
+    "sourceAuthority": {
+      "path": "source-authority.v1.json",
+      "sha256": "d40df88e26530bd467c5cc6210d967b31a521f06647e672987393c1d1837165e"
+    },
+    "authorizationSuccessor": {
+      "path": "central-authorization-successor-packet.v1.json",
+      "sha256": "dd1b68e54ee6cbc73c0fa1b9da181fac04575c702f89c98ce27c73968b29963a",
+      "state": "DECISION_REQUIRED_BEFORE_V49_GENERATION",
+      "v49GenerationAuthorized": false
+    },
+    "startTokenState": {
+      "path": "start-token-state.v1.json",
+      "sha256": "cd09dabbf705a2a4f5d3c4833a6795c9a4b3029b5a79b55c2bd4c534d806d810",
+      "issuedTokenCount": 0
+    }
+  },
+  "batch": {
+    "batchId": "R7-BATCH-01",
+    "closedSet": [
+      "BASE-TFR-HRM-005",
+      "BASE-TFR-PAY-013",
+      "BASE-TFR-PER-001",
+      "BASE-TFR-SYS-002",
+      "BASE-TFR-TIM-007"
+    ],
+    "ownerPacketCount": 5,
+    "startTokenCount": 0,
+    "businessSliceCreditAtPacketIssue": 0,
+    "defaultOff": true,
+    "enrolledTenants": []
+  },
+  "ownerPackets": [
+    {
+      "sliceId": "BASE-TFR-HRM-005",
+      "owner": "HRIS-HRM",
+      "repositorySet": ["dwp-backend", "dwp-frontend"],
+      "serviceSet": ["dwp-people-server"],
+      "path": "owner-packets/base-tfr-hrm-005.owner-packet.v1.json",
+      "sha256": "0fcd8d27fd283b5ddbd697e9ccce3427966e960d80186f02c7cba709cfb66506",
+      "candidateStartState": "AUTHORIZED_AFTER_CENTRAL_AUTH_PACKET",
+      "migration": "PEOPLE_V57_ONLY_IF_SCHEMA_DELTA_PROVEN_NO_LEASE",
+      "immediatelyParallelImplementable": false
+    },
+    {
+      "sliceId": "BASE-TFR-PAY-013",
+      "owner": "HRIS-PAY",
+      "repositorySet": ["dwp-backend", "dwp-frontend"],
+      "serviceSet": ["dwp-payroll-server"],
+      "path": "owner-packets/base-tfr-pay-013.owner-packet.v1.json",
+      "sha256": "bbb1576a3c2672f29ddad43ae6413f69c033a0037416075aaeab6f2b9f178ed8",
+      "candidateStartState": "AUTHORIZED_AFTER_CENTRAL_AUTH_PACKET",
+      "migration": "PAYROLL_V52_REQUIRED_LEASE_WITHHELD",
+      "immediatelyParallelImplementable": false
+    },
+    {
+      "sliceId": "BASE-TFR-PER-001",
+      "owner": "HRIS-PER_AND_DWP_NOTIFICATION",
+      "repositorySet": ["dwp-backend"],
+      "serviceSet": ["dwp-people-server", "dwp-notification-server"],
+      "path": "owner-packets/base-tfr-per-001.owner-packet.v1.json",
+      "sha256": "60037320b9fffa4a5dfe1a7867f8087a71de791fde76047c14ddd101dedc514f",
+      "candidateStartState": "AUTHORIZED_AFTER_CENTRAL_SEMANTIC_DECISION_AND_NOTIFICATION_ONBOARDING_PACKET",
+      "migration": "NOTIFICATION_V36_REQUIRED_LEASE_WITHHELD",
+      "browserRoute": "FORBIDDEN_NON_UI",
+      "immediatelyParallelImplementable": false
+    },
+    {
+      "sliceId": "BASE-TFR-SYS-002",
+      "owner": "HRIS-SYS",
+      "repositorySet": ["dwp-backend", "dwp-frontend"],
+      "serviceSet": ["dwp-platform-server"],
+      "path": "owner-packets/base-tfr-sys-002.owner-packet.v1.json",
+      "sha256": "fb41aa71b2f6fc16394a8d97491797f80b1b74d61ea41b4fce1384a65b881f33",
+      "candidateStartState": "AUTHORIZED_AFTER_CENTRAL_AUTH_PACKET",
+      "migration": "PLATFORM_V331_REQUIRED_LEASE_WITHHELD_V330_IMMUTABLE",
+      "immediatelyParallelImplementable": false
+    },
+    {
+      "sliceId": "BASE-TFR-TIM-007",
+      "owner": "HRIS-TIM",
+      "repositorySet": ["dwp-backend", "dwp-frontend"],
+      "serviceSet": ["dwp-time-server"],
+      "path": "owner-packets/base-tfr-tim-007.owner-packet.v1.json",
+      "sha256": "91ad50b4676c12ba041c4661b02ecfe65370dd3bfffbad74a972db700a54a9f8",
+      "candidateStartState": "AUTHORIZED_AFTER_CENTRAL_AUTH_PACKET",
+      "migration": "TIME_V12_REQUIRED_LEASE_WITHHELD",
+      "immediatelyParallelImplementable": false
+    }
+  ],
+  "centralBlockers": [
+    "approve every unresolved route, target, predicate and step-up item in central-authorization-successor-packet.v1.json",
+    "generate, validate and integrate authorization v49 from the approved exact tuple packet; no owner may edit generated or central Auth sources",
+    "seal BASE-TFR-PER-001 trigger/type/template/recipient/variable/deep-link semantics and exact cross-owner paths without inventing a browser route",
+    "seal SVC-PEP-TIM-001 workload trust details",
+    "acquire exclusive V52, V36, V331 and V12 leases, plus V57 only on accepted schema proof",
+    "fetch fresh clean origin/dwp-dev pins and materialize separate owner worktrees after central integrations"
+  ],
+  "duplicateAndNoTouchPolicy": {
+    "mustReuseWithoutRecount": [
+      "BASE-TFR-HRM-008 employment capability",
+      "BASE-TFR-PAY-011 payroll calculation engine, snapshots, workers, receipts and outbox",
+      "PEP-SYS-040 shared command receipt endpoint",
+      "SYS-006 scheduled automation and every owner recovery command",
+      "PLAT-004 common notification translator and provider delivery",
+      "XCON-006 and XCON-008 through XCON-011 generated contracts"
+    ],
+    "mustNotModifyBeforeSeparateCentralToken": [
+      "historical source, completion, evidence, waiver and exception registers",
+      "authorization v48 bundle, index, generator and central Auth/runtime sources",
+      "central frontend route and HRIS shell manifests",
+      "generated OpenAPI and platform contract files",
+      "R7-C1 V330 and completed business implementation"
+    ]
+  },
+  "verificationPolicy": {
+    "packetIssueChecksOnly": [
+      "JSON parse and closed-set uniqueness",
+      "source, artifact and predecessor SHA-256 equality",
+      "repository commit/tree existence and carrier ancestry",
+      "authorization v48 immutable predecessor checksum/index equality and v49 absence",
+      "migration high-water and proposed next-version equality",
+      "changed-path confinement to this new dispatch directory",
+      "all implementation, migration, worktree, start-token, merge and activation authority false"
+    ],
+    "productTestsExecuted": false,
+    "reason": "This carrier issues scope/evidence packets only. Product tests belong to future owner tokens and must be targeted per packet."
+  },
+  "authority": {
+    "ownerPacketIssued": true,
+    "centralAuthorizationApproved": false,
+    "authorizationV49GenerationAuthorized": false,
+    "sourceImplementationAuthorized": false,
+    "migrationAuthoringAuthorized": false,
+    "worktreeMaterializationAuthorized": false,
+    "moduleBranchCommitAuthorized": false,
+    "moduleBranchPushAuthorized": false,
+    "startTokenIssued": false,
+    "mergeToDwpDevAuthorized": false,
+    "activationAuthorized": false
+  },
+  "nextGate": "CENTRAL_AUTH_AND_SEMANTIC_DECISIONS_INTEGRATED_THEN_FRESH_PINS_LEASES_WORKTREES_AND_SEPARATE_OWNER_START_TOKENS"
+}

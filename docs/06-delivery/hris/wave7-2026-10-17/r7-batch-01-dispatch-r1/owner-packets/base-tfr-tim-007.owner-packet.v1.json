@@ -1,0 +1,212 @@
+{
+  "schema": "dwp.hris.wave7.r7-owner-packet.v1",
+  "packetId": "HRIS-WAVE7-R7-BATCH-01-OWNER-BASE-TFR-TIM-007-20261017-R1",
+  "revision": 1,
+  "immutability": {"sealed": true, "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_PACKET_ID_AND_SHA256"},
+  "issuedAt": "2026-10-17T15:25:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "SEALED_PRE_TOKEN_CENTRAL_AUTH_INTERNAL_TRUST_AND_V12_LEASE_REQUIRED",
+  "module": "TIM",
+  "moduleSession": "HRIS-TIM",
+  "sliceId": "BASE-TFR-TIM-007",
+  "sourceRef": "TFR-TIM-007",
+  "sourceAuthority": {
+    "path": "../source-authority.v1.json",
+    "sha256": "d40df88e26530bd467c5cc6210d967b31a521f06647e672987393c1d1837165e",
+    "overlayLine": 90,
+    "sourceFamilySha256": "cf3f686f4466ee193413c124dae40c0fe72270bae8de0355ef3f23ebb8f9835f",
+    "sourceRowCount": 22,
+    "r7C0Classification": "NO_CURRENT_SLICE_RESULT"
+  },
+  "businessMeaning": "Validate, close and reopen time periods with guarded maker-checker semantics, publish immutable closed-time results, and hand them to Payroll through a typed receipt and authorized digest-verified refetch contract.",
+  "exactDelta": {
+    "provenExisting": [
+      "Time V1 through V11 implement other time capabilities but no close-period or payroll-handoff runtime, schema or canonical page.",
+      "The current /hr/operations/time workspace is a work-plan studio and is not a close or handoff surface.",
+      "Generated XCON-008 through XCON-011 contracts already exist in dwp-platform-contracts."
+    ],
+    "missingWork": [
+      "Implement the close-period aggregate, validations, immutable result snapshots, reopen correction lineage, payroll handoff, receipts, outbox and owner queries in Time V12.",
+      "Implement PEP-TIM-022 through PEP-TIM-026 and the three exact IA entry queries.",
+      "Implement SVC-PEP-TIM-001 as a payroll-only internal streaming refetch with digest, count and sequence verification.",
+      "Implement command-center, daily-close and monthly-close workspaces without replacing work plans, timecards, clock ingestion or interpretation."
+    ],
+    "reuseOnly": [
+      "XCON-008",
+      "XCON-009",
+      "XCON-010",
+      "XCON-011",
+      "shared event envelope and audit foundations",
+      "existing Time shell and shared operational presentation components"
+    ],
+    "noTouchOrRecount": [
+      "Do not regenerate XCON-008 through XCON-011.",
+      "Do not count clocking, timecard, work-plan, interpretation or existing /hr/operations/time behavior as TIM-007 delivery.",
+      "Do not expose SVC-PEP-TIM-001 to a browser, user token or caller-provided tenant.",
+      "Do not let Payroll query Time tables directly or let Time write Payroll state.",
+      "Do not mutate Time V11 or historical registers."
+    ]
+  },
+  "ownership": {
+    "repositories": ["dwp-backend", "dwp-frontend"],
+    "runtimeOwner": "dwp-time-server",
+    "consumer": "dwp-payroll-server through SVC-PEP-TIM-001 only",
+    "singleWriter": "HRIS-TIM",
+    "candidateWritablePathsAfterFreshToken": [
+      "backend:dwp-time-server/src/main/java/com/dwp/services/time/close/**",
+      "backend:dwp-time-server/src/test/java/com/dwp/services/time/close/**",
+      "backend:dwp-time-server/src/main/resources/db/migration/V12__tim_base_tfr_tim_007_close_handoff.sql",
+      "frontend:apps/dwp/src/features/hris/time/close/**",
+      "frontend:apps/dwp/src/features/hris/time/__tests__/g3-slices/base-tfr-tim-007.slice.test.tsx"
+    ],
+    "readOnlyReusePaths": [
+      "backend:dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/** for XCON-008 through XCON-011",
+      "backend:dwp-time-server/src/main/java/com/dwp/services/time/timecard/**",
+      "backend:dwp-time-server/src/main/java/com/dwp/services/time/interpretation/**",
+      "backend:dwp-time-server/src/main/java/com/dwp/services/time/workregime/**",
+      "frontend:apps/dwp/src/features/hris/time/interpretation/**"
+    ],
+    "controlOwnedUntilSeparatePacket": [
+      "backend:contracts/product-authorization/**",
+      "backend:contracts/openapi/**",
+      "backend:dwp-auth-server/**",
+      "backend:dwp-gateway/**",
+      "backend:dwp-platform-contracts/**",
+      "frontend:architecture/**",
+      "frontend:apps/dwp/src/routes/**",
+      "frontend:apps/dwp/src/features/hris/shell/**"
+    ],
+    "outsideBoundaryAction": "STOP_AND_REQUEST_EXACT_CONTROL_OR_TRUST_REALLOCATION"
+  },
+  "experienceContract": {
+    "primaryUser": "Timekeeper monitoring closure and Time controller executing governed close or reopen",
+    "operationalQuestion": "Which time periods are safe to close, which blockers or corrections remain, and what immutable result is ready for Payroll?",
+    "primaryAction": "Validate a period, approve close or reopen with justification, then inspect handoff state and receipt.",
+    "pageArchetype": "COMMAND_CENTER_PLUS_WORKFLOW_LIST_DETAIL",
+    "iaNodes": [
+      {"id": "BASE:time-command-center", "query": "IAQ-039", "route": "/hr/operations/time/command-center", "tab": "summary", "deepLink": "/hr/operations/time/command-center?period={periodPublicId}&tab=exceptions"},
+      {"id": "BASE:time-daily-close", "query": "IAQ-043", "route": "/hr/operations/time/daily-close", "tab": "overview", "deepLink": "/hr/operations/time/daily-close?tab=overview&focus={resourcePublicId}"},
+      {"id": "BASE:time-monthly-close", "query": "IAQ-044", "route": "/hr/operations/time/monthly-close", "tab": "overview", "deepLink": "/hr/operations/time/monthly-close?tab=overview&focus={resourcePublicId}"}
+    ],
+    "menuPlacement": "TIME/TIME-01 and TIME-06",
+    "statePreservation": ["legal entity", "time group", "period", "tab", "filter", "selection", "inspector"]
+  },
+  "contracts": {
+    "entryQueries": [
+      {"id": "IAQ-039", "method": "GET", "browserPath": "/api/time/v1/hris/workbench/time-command-center", "ownerPath": "/v1/hris/workbench/time-command-center"},
+      {"id": "IAQ-043", "method": "GET", "browserPath": "/api/time/v1/hris/workbench/time-daily-close", "ownerPath": "/v1/hris/workbench/time-daily-close"},
+      {"id": "IAQ-044", "method": "GET", "browserPath": "/api/time/v1/hris/workbench/time-monthly-close", "ownerPath": "/v1/hris/workbench/time-monthly-close"}
+    ],
+    "commandsAndReceipt": [
+      {"id": "PEP-TIM-022", "operation": "validate", "method": "POST", "browserPath": "/api/time/v1/close-periods/{periodId}/validations", "ownerPath": "/v1/close-periods/{periodId}/validations"},
+      {"id": "PEP-TIM-023", "operation": "close", "method": "POST", "browserPath": "/api/time/v1/close-periods/{periodId}/close", "ownerPath": "/v1/close-periods/{periodId}/close"},
+      {"id": "PEP-TIM-024", "operation": "reopen", "method": "POST", "browserPath": "/api/time/v1/close-periods/{periodId}/reopen", "ownerPath": "/v1/close-periods/{periodId}/reopen"},
+      {"id": "PEP-TIM-025", "operation": "handoff.create", "method": "POST", "browserPath": "/api/time/v1/close-periods/{periodId}/payroll-handoffs", "ownerPath": "/v1/close-periods/{periodId}/payroll-handoffs"},
+      {"id": "PEP-TIM-026", "operation": "handoff.query", "method": "GET", "browserPath": "/api/time/v1/payroll-handoffs/{handoffId}", "ownerPath": "/v1/payroll-handoffs/{handoffId}", "authClassification": "ACTION.HRIS_TIME_CLOSE:EXECUTE per source register; do not silently remodel"}
+    ],
+    "internalRefetch": {
+      "id": "SVC-PEP-TIM-001",
+      "method": "GET",
+      "path": "/internal/hris-time/v1/closed-time-results/{closedTimeResultId}",
+      "audience": "dwp-payroll-server only",
+      "authentication": ["MTLS_SPIFFE_WORKLOAD_IDENTITY", "OAUTH2_CLIENT_CREDENTIAL_JWT_AUD_DWP_TIME"],
+      "tenant": ["SIGNED_TENANT_CLAIM", "OWNER_TENANT_GRANT_REVALIDATION", "TARGET_TENANT_MATCH", "NO_CALLER_TENANT_OVERRIDE"],
+      "transport": ["NO_BROWSER_ROUTE", "TLS_1_3", "RATE_LIMITED", "STREAMING", "DIGEST_COUNT_SEQUENCE_VERIFIED"]
+    },
+    "producedEvents": ["TimePeriodClosed.v1", "TimePeriodReopened.v1", "PayrollTimeHandoffReady.v1"],
+    "producedContracts": ["XCON-008", "XCON-009", "XCON-010", "XCON-011"],
+    "aggregateStates": ["OPEN", "VALIDATING", "CLOSING", "CLOSED", "REOPEN_REQUESTED", "REOPENED", "FAILED"],
+    "handoffOutcomes": ["PENDING", "ACKNOWLEDGED", "REJECTED", "RESULT_UNKNOWN"]
+  },
+  "authorization": {
+    "centralPacket": "../central-authorization-successor-packet.v1.json",
+    "state": "AUTHORIZED_AFTER_CENTRAL_AUTH_PACKET_AND_INTERNAL_TRUST_PACKET",
+    "pageAndDataTuple": "R7B01-AUTH-TIM-PAGE-DATA-001",
+    "actionTuple": "R7B01-AUTH-TIM-ACTION-001",
+    "internalServiceRouteExcludedFromBrowserAuth": true,
+    "tenantSource": "TRUSTED_GATEWAY_OR_SIGNED_WORKLOAD_CONTEXT_ONLY",
+    "stepUpRequiredForCloseAndReopen": true,
+    "sodRules": ["NO_CLOSE_WITH_UNRESOLVED_EXCEPTION", "NO_REOPEN_OWN_CLOSE", "correction maker must differ from close approver"],
+    "defaultDeny": true
+  },
+  "dependencies": [
+    {"id": "DEP-001", "state": "CONTRACT_READY_FAIL_CLOSED"},
+    {"id": "DEP-002", "state": "CONTRACT_READY_STALE_REVISION_DENIED"},
+    {"id": "DEP-003", "state": "FOUNDATION_READY_PRODUCER_REQUIRED"},
+    {"id": "DEP-009", "state": "CONTRACT_READY_RUNTIME_PRODUCER_DELIVERED_BY_THIS_SLICE"},
+    {"id": "DEP-016", "state": "FOUNDATION_READY_LOCAL_OUTBOX_REQUIRED"}
+  ],
+  "migration": {
+    "stream": "TIME_MAIN",
+    "version": "V12",
+    "path": "dwp-time-server/src/main/resources/db/migration/V12__tim_base_tfr_tim_007_close_handoff.sql",
+    "state": "REQUIRED_LEASE_WITHHELD",
+    "authoringAllowed": false,
+    "requiredSchema": ["close periods and attempts", "immutable closed results, lines and source revisions", "payroll handoffs", "command receipts", "outbox and inbox/replay fences"]
+  },
+  "rollout": {
+    "feature": "HRIS_TIME_CLOSE_HANDOFF",
+    "runtimeDefault": "OFF",
+    "internalTrustDefault": "DENY",
+    "enrolledTenants": [],
+    "tenantActivationAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "acceptanceCriteria": [
+    {"id": "TIM007-AC-01", "criterion": "Validation captures an immutable blocker snapshot and expected version without closing or partially mutating the period."},
+    {"id": "TIM007-AC-02", "criterion": "Close requires CLOSED-eligible state, current CAS, elevated step-up, approval and all SoD rules."},
+    {"id": "TIM007-AC-03", "criterion": "A successful close creates one immutable result with source, rule and payload digests plus count and sequence evidence."},
+    {"id": "TIM007-AC-04", "criterion": "Reopen requires elevated step-up, reason, current version and an approver distinct from the original closer."},
+    {"id": "TIM007-AC-05", "criterion": "Reopen is a forward correction that never mutates or deletes the closed result or prior events."},
+    {"id": "TIM007-AC-06", "criterion": "Payroll handoff can start only from CLOSED and binds the immutable result id, close revision and digest."},
+    {"id": "TIM007-AC-07", "criterion": "ACKNOWLEDGED, REJECTED and RESULT_UNKNOWN outcomes retain stable receipt and refetch lineage; exact replay is idempotent."},
+    {"id": "TIM007-AC-08", "criterion": "SVC-PEP-TIM-001 rejects browser tokens, wrong workload, wrong audience, unsigned or mismatched tenant and stale owner grant."},
+    {"id": "TIM007-AC-09", "criterion": "Streaming refetch verifies source, rule and payload digest, row count and sequence before Payroll may accept the result."},
+    {"id": "TIM007-AC-10", "criterion": "Wrong tenant, legal entity, time group, purpose, field decision, revision, capability or step-up fails closed and leaks no period existence."},
+    {"id": "TIM007-AC-11", "criterion": "All three entry queries satisfy empty, unavailable, partial, complete, cursor, stable-order, field-decision, locale/time-zone, deep-link/action allowlist and Problem invariants."},
+    {"id": "TIM007-AC-12", "criterion": "Command controls preserve period, filters, selection and justification across refresh, partial failure and receipt recovery."},
+    {"id": "TIM007-AC-13", "criterion": "1440, 1280, 390, 320 and 200-percent zoom plus light, dark, high contrast, reduced motion and keyboard navigation pass."},
+    {"id": "TIM007-AC-14", "criterion": "Feature OFF or unenrolled tenant mounts no close runtime; changed-path evidence proves existing time features and generated XCON contracts were not modified or recounted."}
+  ],
+  "targetedVerification": {
+    "policy": "NEW_TIM007_CLOSE_HANDOFF_AND_TRUST_CLUSTER_FIRST; FAILED_TARGET_ONLY_AFTER_CORRECTION",
+    "backendTargets": [
+      "new com.dwp.services.time.close.TimeCloseHandoffContractTest",
+      "new com.dwp.services.time.close.ClosedTimeResultServiceAuthorizationTest",
+      "new com.dwp.services.time.close.TimeCloseHandoffRecoveryTest",
+      "generated XCON provider contract regression without regeneration"
+    ],
+    "frontendTargets": [
+      "apps/dwp/src/features/hris/time/__tests__/g3-slices/base-tfr-tim-007.slice.test.tsx",
+      "one validate-close-reopen-handoff responsive and accessibility journey after central Auth integration"
+    ],
+    "databaseTargets": ["V12 clean install and V11-to-V12 real PostgreSQL upgrade"],
+    "repositoryWideSuitePerCorrection": false
+  },
+  "evidenceContract": {
+    "required": [
+      "backend and frontend module branch SHAs",
+      "fourteen acceptance results with test or source evidence",
+      "V12 clean and V11-to-V12 upgrade evidence",
+      "CAS, step-up, SoD, blocker snapshot, forward correction and immutable result evidence",
+      "internal workload trust and digest/count/sequence negative evidence",
+      "idempotency, crash/replay, receipt and RESULT_UNKNOWN evidence",
+      "default-off, zero-enrollment and changed-path/no-recount manifests"
+    ],
+    "businessCompletionCreditBeforeEvidence": 0
+  },
+  "authority": {
+    "packetSealed": true,
+    "sourceImplementationAuthorized": false,
+    "migrationAuthoringAuthorized": false,
+    "internalTrustAuthoringAuthorized": false,
+    "worktreeMaterializationAuthorized": false,
+    "moduleBranchCommitAuthorized": false,
+    "moduleBranchPushAuthorized": false,
+    "startTokenIssued": false,
+    "mergeToDwpDevAuthorized": false,
+    "activationAuthorized": false
+  },
+  "nextGate": "CENTRAL_AUTH_AND_INTERNAL_TRUST_PACKET_APPROVAL_AND_INTEGRATION_PLUS_ACTIVE_V12_LEASE_THEN_FRESH_PINNED_TIM_START_TOKEN"
+}

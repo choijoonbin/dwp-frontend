@@ -1,0 +1,151 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-01-start-token-state.v1",
+  "stateId": "HRIS-WAVE7-R7-BATCH-01-START-TOKEN-STATE-20261017-R1",
+  "recordedAt": "2026-10-17T15:25:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "NO_START_TOKENS_ISSUED_AUTHORITY_WITHHELD",
+  "purpose": "Keep owner scope packets and implementation authority separate. This file records candidate readiness conditions only and grants no source, migration, worktree, commit, push, merge or activation authority.",
+  "sourceAuthority": {
+    "path": "source-authority.v1.json",
+    "sha256": "d40df88e26530bd467c5cc6210d967b31a521f06647e672987393c1d1837165e"
+  },
+  "authorizationSuccessor": {
+    "path": "central-authorization-successor-packet.v1.json",
+    "sha256": "dd1b68e54ee6cbc73c0fa1b9da181fac04575c702f89c98ce27c73968b29963a",
+    "state": "DECISION_REQUIRED_BEFORE_V49_GENERATION",
+    "approved": false,
+    "generated": false,
+    "integrated": false
+  },
+  "carrierAndBusinessPins": {
+    "packetCarrierBase": "ec5170a17aaf76185961b3a573f75e0ce5c98de5",
+    "frontendBusinessPin": "af65a9c6a3f994989b1388c15df890d0b3345eda",
+    "backendBusinessPin": "b0db3577fd6517e64dd9de625fb67e99ff19630d",
+    "agentPin": "9beb5439cad065e7d919a98c9f9becb44481508a",
+    "freshExecutionPinsMaterialized": false,
+    "rule": "After central authorization or semantic integration, every eventual start token must be rebound to newly fetched clean origin/dwp-dev pins and fresh isolated owner worktrees. These packet-time pins are evidence only."
+  },
+  "issuedTokenClosedSet": [],
+  "issuedTokenCount": 0,
+  "candidateStates": [
+    {
+      "sliceId": "BASE-TFR-HRM-005",
+      "owner": "HRIS-HRM",
+      "packet": {
+        "path": "owner-packets/base-tfr-hrm-005.owner-packet.v1.json",
+        "sha256": "0fcd8d27fd283b5ddbd697e9ccce3427966e960d80186f02c7cba709cfb66506"
+      },
+      "state": "AUTHORIZED_AFTER_CENTRAL_AUTH_PACKET",
+      "conditionLabelIsNotAuthority": true,
+      "blockers": [
+        "central authorization successor decisions approved, v49 generated, validated and integrated",
+        "canonical HRM route and PAGE/DATA tuple rebound to the integrated v49 bytes",
+        "fresh backend and frontend origin/dwp-dev pins plus clean isolated owner worktrees",
+        "People V57 lease only if an owner-proven append-only schema delta is accepted"
+      ],
+      "migrationLease": "NOT_REQUESTED_UNLESS_SCHEMA_DELTA_PROVEN",
+      "startTokenIssued": false
+    },
+    {
+      "sliceId": "BASE-TFR-PAY-013",
+      "owner": "HRIS-PAY",
+      "packet": {
+        "path": "owner-packets/base-tfr-pay-013.owner-packet.v1.json",
+        "sha256": "bbb1576a3c2672f29ddad43ae6413f69c033a0037416075aaeab6f2b9f178ed8"
+      },
+      "state": "AUTHORIZED_AFTER_CENTRAL_AUTH_PACKET",
+      "conditionLabelIsNotAuthority": true,
+      "blockers": [
+        "central authorization successor decisions approved, v49 generated, validated and integrated",
+        "Payroll PAGE/DATA/ACTION tuple conflict resolved without weakening step-up",
+        "active exclusive Payroll V52 lease",
+        "fresh backend and frontend origin/dwp-dev pins plus clean isolated owner worktrees"
+      ],
+      "migrationLease": "PAYROLL_MAIN_V52_REQUIRED_NOT_ISSUED",
+      "startTokenIssued": false
+    },
+    {
+      "sliceId": "BASE-TFR-PER-001",
+      "owner": "HRIS-PER_AND_DWP_NOTIFICATION",
+      "packet": {
+        "path": "owner-packets/base-tfr-per-001.owner-packet.v1.json",
+        "sha256": "60037320b9fffa4a5dfe1a7867f8087a71de791fde76047c14ddd101dedc514f"
+      },
+      "state": "AUTHORIZED_AFTER_CENTRAL_SEMANTIC_DECISION_AND_NOTIFICATION_ONBOARDING_PACKET",
+      "conditionLabelIsNotAuthority": true,
+      "blockers": [
+        "central decision seals the exact Performance transition, requested event type, source URI, typeKey, purpose, recipient authority, variable allowlist, locale fallback, template references and deep-link allowlist",
+        "exact Performance trigger-owner path and cross-owner notification touch packet sealed",
+        "active exclusive Notification V36 lease",
+        "fresh backend origin/dwp-dev pin plus clean isolated People and Notification owner worktrees"
+      ],
+      "migrationLease": "NOTIFICATION_MAIN_V36_REQUIRED_NOT_ISSUED",
+      "browserAuthorizationRequired": false,
+      "browserRouteAllowed": false,
+      "startTokenIssued": false
+    },
+    {
+      "sliceId": "BASE-TFR-SYS-002",
+      "owner": "HRIS-SYS",
+      "packet": {
+        "path": "owner-packets/base-tfr-sys-002.owner-packet.v1.json",
+        "sha256": "fb41aa71b2f6fc16394a8d97491797f80b1b74d61ea41b4fce1384a65b881f33"
+      },
+      "state": "AUTHORIZED_AFTER_CENTRAL_AUTH_PACKET",
+      "conditionLabelIsNotAuthority": true,
+      "blockers": [
+        "central authorization successor decisions approved, v49 generated, validated and integrated",
+        "canonical operations route and PAGE/DATA tuples rebound to the integrated v49 bytes",
+        "active exclusive Platform V331 lease with V330 preserved immutable",
+        "fresh backend and frontend origin/dwp-dev pins plus clean isolated owner worktrees"
+      ],
+      "migrationLease": "PLATFORM_MAIN_V331_REQUIRED_NOT_ISSUED",
+      "startTokenIssued": false
+    },
+    {
+      "sliceId": "BASE-TFR-TIM-007",
+      "owner": "HRIS-TIM",
+      "packet": {
+        "path": "owner-packets/base-tfr-tim-007.owner-packet.v1.json",
+        "sha256": "91ad50b4676c12ba041c4661b02ecfe65370dd3bfffbad74a972db700a54a9f8"
+      },
+      "state": "AUTHORIZED_AFTER_CENTRAL_AUTH_PACKET",
+      "conditionLabelIsNotAuthority": true,
+      "blockers": [
+        "central authorization successor decisions approved, v49 generated, validated and integrated",
+        "all three canonical Time routes and PAGE/DATA/ACTION tuples rebound to the integrated v49 bytes",
+        "SVC-PEP-TIM-001 workload identity, audience, tenant propagation and deny-by-default trust packet approved and integrated",
+        "active exclusive Time V12 lease",
+        "fresh backend and frontend origin/dwp-dev pins plus clean isolated owner worktrees"
+      ],
+      "migrationLease": "TIME_MAIN_V12_REQUIRED_NOT_ISSUED",
+      "startTokenIssued": false
+    }
+  ],
+  "futureTokenBindingContract": {
+    "mustBind": [
+      "exact owner packet path and SHA-256",
+      "source-authority path and SHA-256",
+      "approved and integrated authorization or semantic decision receipt",
+      "fresh origin/dwp-dev commit and tree for every touched repository",
+      "fresh isolated worktree and owner branch",
+      "exact writable paths and no-touch paths",
+      "active migration lease where required",
+      "default-OFF and zero-enrollment posture",
+      "acceptance, targeted-test and evidence contract"
+    ],
+    "mustNotReuseThisStateAsToken": true,
+    "staleOnAnyPinOrDecisionChange": true
+  },
+  "authority": {
+    "sourceImplementationAuthorized": false,
+    "migrationAuthoringAuthorized": false,
+    "worktreeMaterializationAuthorized": false,
+    "moduleBranchCommitAuthorized": false,
+    "moduleBranchPushAuthorized": false,
+    "startTokenIssued": false,
+    "mergeToDwpDevAuthorized": false,
+    "activationAuthorized": false
+  },
+  "nextAction": "Resolve and integrate the central authorization successor and PER semantic decision packets, then fetch fresh pins, acquire exact migration leases, materialize clean owner worktrees and issue separate immutable start tokens."
+}
