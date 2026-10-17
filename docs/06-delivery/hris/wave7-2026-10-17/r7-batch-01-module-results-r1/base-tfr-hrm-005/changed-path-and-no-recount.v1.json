@@ -1,0 +1,147 @@
+{
+  "schema": "dwp.hris.wave7.changed-path-and-no-recount.v1",
+  "evidenceId": "HRIS-WAVE7-R7-BATCH-01-BASE-TFR-HRM-005-CHANGED-PATH-R1",
+  "issuedAt": "2026-10-17T18:34:35+09:00",
+  "issuedBy": "HRIS-HRM",
+  "sliceId": "BASE-TFR-HRM-005",
+  "manifestFormats": {
+    "path": "LC_ALL=C sorted repository-relative path, one path and LF per record",
+    "nameStatus": "LC_ALL=C sorted git name-status record and LF",
+    "content": "lowercase SHA-256, decimal byte count and repository-relative path in sorted-path order"
+  },
+  "inheritedDirtyLineage": {
+    "replacementTokenSha256": "0524c5171c1eac53cb2f66cf872ea34c571e5c22bc7bc99b4b7d4882366037a7",
+    "replacementTokenBytes": 12853,
+    "verifiedBeforeSuccessorEdit": true,
+    "backendEntriesVerified": 11,
+    "frontendEntriesVerified": 10,
+    "shaAndByteMismatches": 0,
+    "unlistedPreexistingDirtyPaths": 0
+  },
+  "backend": {
+    "baseCommit": "fcb5c1f397d14ea77c7ff9714a272449d99e18a4",
+    "baseTree": "147bb1afd5635209d5db166a513d970b6e0002c3",
+    "sourceCommit": "ab373e70bdbefae250f294014c8bac45ccae6079",
+    "sourceTree": "44e3ef90384f73e54b71faa0af6832b0bfc964a5",
+    "changedPathCount": 19,
+    "sortedPathManifestSha256": "99353b2d02a3d4d4aded48877959a2247e86f4a6ae026a349c928bf62d90150e",
+    "sortedNameStatusManifestSha256": "450fcd950543db7b6a035b5765ebb57ead9f1063955cd6367ad71d58917f3d22",
+    "sortedContentManifestSha256": "e75eb4cfdf33e4e4ba9f9991520a4067ecff4df3fae0b9132e1c8982d8a8bc08",
+    "sourceWorktreePorcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "changedPaths": [
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/organization/OrganizationChangedOutbox.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/organization/OrganizationGraphAdvice.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/organization/OrganizationGraphController.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/organization/OrganizationGraphProblem.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/organization/OrganizationGraphService.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/organization/OrganizationGraphWithPositionsV2.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/organization/OrganizationChartService.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/organization/OrganizationScenarioService.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/workforce/WorkforceAccessPolicyService.java",
+      "dwp-people-server/src/main/resources/db/migration/V57__allow_organization_workforce_field_group.sql",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hr/HcmPopulationScopeServiceTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/organization/Hrm005V57MigrationContractTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/organization/Hrm005V57MigrationPostgresTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/organization/HrmOrganizationPositionsContractTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/organization/OrganizationChangedOutboxTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/organization/OrganizationGraphServiceTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/organization/OrganizationChartServiceTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/organization/OrganizationScenarioServiceTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/workforce/WorkforceAccessPolicyServiceTest.java"
+    ],
+    "outsideAuthorizedUnionCount": 0,
+    "remoteExactBeforeEvidence": true,
+    "upstreamAhead": 0,
+    "upstreamBehind": 0
+  },
+  "frontendSource": {
+    "baseCommit": "4b46c02d1e98b8d0cfb78189126aa47ac90f2fda",
+    "baseTree": "0e37221429763f5d13c799e22bf10ad8a6648f1a",
+    "sourceCommit": "a217e7de6e3e361c856838917903ae60fd394790",
+    "sourceTree": "85becbb066ab5eba22f3a3fbd316fdfcdf772856",
+    "changedPathCount": 10,
+    "sortedPathManifestSha256": "41f4d49d95bec1965331d197d53e556f5c8d285e59c95b838dd8869809e442b2",
+    "sortedNameStatusManifestSha256": "685790a974fdbe744372bbc8e44967b4f2fe83c75d22b17776db501709ac44b6",
+    "sortedContentManifestSha256": "e3e0966a2f7c03f156984a09861944c2ee0bf30ce5d8c3a7542c12de9e5e118a",
+    "sourceWorktreePorcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "changedPaths": [
+      "apps/dwp/src/features/hris/people/__tests__/g3-slices/base-tfr-hrm-005.slice.test.tsx",
+      "apps/dwp/src/features/hris/people/organization-positions/index.ts",
+      "apps/dwp/src/features/hris/people/organization-positions/organization-positions-api.test.ts",
+      "apps/dwp/src/features/hris/people/organization-positions/organization-positions-api.ts",
+      "apps/dwp/src/features/hris/people/organization-positions/organization-positions-contract.test.ts",
+      "apps/dwp/src/features/hris/people/organization-positions/organization-positions-contract.ts",
+      "apps/dwp/src/features/hris/people/organization-positions/organization-positions-explorer.tsx",
+      "apps/dwp/src/features/hris/people/organization-positions/organization-positions-workspace.test.tsx",
+      "apps/dwp/src/features/hris/people/organization-positions/organization-positions-workspace.tsx",
+      "apps/dwp/src/features/people/organization/organization-chart-manager.tsx"
+    ],
+    "outsideAuthorizedUnionCount": 0,
+    "remoteExactBeforeEvidence": true,
+    "upstreamAhead": 0,
+    "upstreamBehind": 0
+  },
+  "frontendFinalClosedSet": {
+    "sourcePathCount": 10,
+    "evidencePathCount": 4,
+    "totalChangedPathCount": 14,
+    "sortedPathManifestSha256": "6a80738424b045a715bf33822997382bea019acf7004b8bd8b2bbda2421f1001",
+    "sortedNameStatusManifestSha256": "2df3fa72b728dd258057f67164df6ffb7e0cf57d45fd9c385b258977ad2e8d5c",
+    "evidencePaths": [
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-results-r1/base-tfr-hrm-005/acceptance-results.v1.json",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-results-r1/base-tfr-hrm-005/changed-path-and-no-recount.v1.json",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-results-r1/base-tfr-hrm-005/module-result-evidence.v1.json",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-results-r1/base-tfr-hrm-005/people-v57-evidence.v1.json"
+    ],
+    "outsideAuthorizedUnionCount": 0
+  },
+  "protectedContent": {
+    "v34Changed": false,
+    "createPolicyRequestChanged": false,
+    "openApiChanged": false,
+    "generatedPeopleV49Changed": false,
+    "xcon006GeneratedContractChanged": false,
+    "centralAuthorizationChanged": false,
+    "frontendArchitectureChanged": false,
+    "frontendRoutesChanged": false,
+    "frontendHrisShellChanged": false,
+    "hrm008EmploymentOrAssignmentEventChanged": false,
+    "historicalRegistersChanged": false
+  },
+  "protectedHashes": [
+    {
+      "path": "dwp-people-server/src/main/resources/db/migration/V34__add_workforce_access_boundaries.sql",
+      "sha256": "561f4a50830205c0a5347bba5d78a2577284caf3b178740ec64a1664730639ea"
+    },
+    {
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/workforce/WorkforceAccessDtos.java",
+      "sha256": "4704257fe896673bd0f8c1e5ef08b46eb5b2c7c5aecccbf81fa0039a02f2ea2f"
+    },
+    {
+      "path": "contracts/openapi/people.json",
+      "sha256": "4f8b31b2b0e3d2227bf6c02f9bf18092121323292160408601cabbd70c579ce8"
+    },
+    {
+      "path": "dwp-people-server/src/main/resources/product-authorization/hcm-people-pep-v49.generated.json",
+      "sha256": "bf2d079820cceba5ed8adcb0b7927daaef239bccc178138e25a6f889f55b1834"
+    },
+    {
+      "path": "dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/Xcon006OrganizationChangedV1.java",
+      "sha256": "f283f84ab0573276a0f8e075fff8597e5a2822a224d991aabcf87644f06c0b8b"
+    }
+  ],
+  "carrierExclusion": {
+    "userStatedCentralR2Carrier": "84b29c574ebed1436a234aeeb69e74c657635fe7",
+    "replacementTokenHashDagCarrier": "216b13aeef09af73a5fc4d5ea94c6771541abab7",
+    "invalidatedEarlierCarrierPrefix": "cb0dca6f",
+    "eachIsFrontendSourceCommitAncestor": false,
+    "mergeRebaseOrCherryPickPerformed": false
+  },
+  "noRecount": [
+    "BASE-TFR-HRM-008 employment and assignment-event implementation",
+    "existing organization graph persistence, scenario, position, cycle, overlap and impact-preview engine",
+    "generated XCON-006 contract",
+    "central v49 authorization and generated People projection",
+    "historical migration and delivery registers"
+  ]
+}

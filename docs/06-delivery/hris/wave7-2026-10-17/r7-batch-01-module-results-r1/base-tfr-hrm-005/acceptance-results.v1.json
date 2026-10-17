@@ -1,0 +1,132 @@
+{
+  "schema": "dwp.hris.wave7.module-acceptance-results.v1",
+  "evidenceId": "HRIS-WAVE7-R7-BATCH-01-BASE-TFR-HRM-005-ACCEPTANCE-R1",
+  "issuedAt": "2026-10-17T18:34:35+09:00",
+  "issuedBy": "HRIS-HRM",
+  "sliceId": "BASE-TFR-HRM-005",
+  "resultState": "MODULE_IMPLEMENTATION_COMPLETE_BRANCHES_PUSHED_CONTROL_REVIEW_PENDING_DEFAULT_OFF",
+  "summary": {
+    "total": 12,
+    "passed": 11,
+    "pendingCentralBrowserGate": 1,
+    "failed": 0
+  },
+  "acceptanceResults": [
+    {
+      "id": "HRM005-AC-01",
+      "result": "PASS",
+      "criterion": "PEP-HRM-010 returns the existing as-of graph and positions in stable order without a parallel source of truth.",
+      "evidence": [
+        "OrganizationGraphController and OrganizationGraphService adapt OrganizationChartService at GET /v1/hris/organizations/graph.",
+        "OrganizationGraphServiceTest covers UTC effective-date conversion, depth 0 and 1..12, stable node/position/incumbent ordering, parent filtering and subordinate recount.",
+        "HrmOrganizationPositionsContractTest covers the exact unwrapped OrganizationGraphWithPositionsV2 wire response and canonical Instant echo."
+      ]
+    },
+    {
+      "id": "HRM005-AC-02",
+      "result": "PASS",
+      "criterion": "As-of changes preserve effective intervals and reject stale or overlapping mutations without partial writes.",
+      "evidence": [
+        "The existing organization scenario engine remains the mutation source of truth.",
+        "OrganizationScenarioServiceTest passed 16 tests in the bounded cluster, including stale and failed-publication behavior."
+      ]
+    },
+    {
+      "id": "HRM005-AC-03",
+      "result": "PASS",
+      "criterion": "Cycle validation and impact preview remain behaviorally identical to the existing organization engine.",
+      "evidence": [
+        "OrganizationScenarioService continues to call the existing graph validators and OrganizationChartService projections.",
+        "OrganizationScenarioServiceTest and OrganizationPublishRolloutGateTest passed in the bounded cluster."
+      ]
+    },
+    {
+      "id": "HRM005-AC-04",
+      "result": "PASS",
+      "criterion": "Wrong tenant, legal entity, organization scope, purpose, field decision or policy revision fails closed without node-existence disclosure.",
+      "evidence": [
+        "The bounded HcmV3PepRegistryTest, HcmProductSurfacePepFilterTest and HcmOwnerPepExecutionTest passed 41 tests.",
+        "Only the two exact graph route keys require ORGANIZATION and revalidate ORGANIZATION_TARGET_POPULATION; management and legacy operations branches retain their prior resolver behavior.",
+        "Frontend adapter instances use a serializable per-instance cache discriminator, and cached 403/404 results conceal the previous graph before rendering permission/not-found state."
+      ]
+    },
+    {
+      "id": "HRM005-AC-05",
+      "result": "PASS",
+      "criterion": "A successful enabled publication appends exactly one OrganizationChanged.v1 envelope with XCON-006 payload and source revision.",
+      "evidence": [
+        "OrganizationScenarioService appends through OrganizationChangedOutbox only after the existing publish boundary succeeds.",
+        "OrganizationChangedOutboxTest passed 4 tests; OrganizationScenarioServiceTest verifies event count, source revision, changed organizations and no event before success."
+      ]
+    },
+    {
+      "id": "HRM005-AC-06",
+      "result": "PASS",
+      "criterion": "Exact replay is idempotent, mismatched replay conflicts, and failed publication emits no event.",
+      "evidence": [
+        "Event and revision UUIDs are deterministic and replay comparison includes tenant, aggregate, event type, payload, correlation and occurrence time.",
+        "OrganizationChangedOutboxTest and OrganizationScenarioServiceTest cover exact replay, mismatch and failed-publication no-append behavior.",
+        "Rollback on an outbox insert failure is established by the service transaction plus outbox Propagation.MANDATORY; no separate real-database rollback integration test is claimed."
+      ]
+    },
+    {
+      "id": "HRM005-AC-07",
+      "result": "PASS",
+      "criterion": "The canonical route adapts OrganizationExplorer and preserves tab, as-of date, selected focus and return navigation.",
+      "evidence": [
+        "OrganizationExplorer accepts only the sealed HrisOrganizationPositionsQueryAdapter kind/query seam; its management branch remains unchanged.",
+        "organization-positions-workspace.test.tsx covers tab=overview, asOf, focus selection, keyboard focus and Return to graph URL behavior.",
+        "Upper-case input UUIDs normalize to canonical lower case before query and response comparison."
+      ]
+    },
+    {
+      "id": "HRM005-AC-08",
+      "result": "PASS",
+      "criterion": "Loading, empty, unavailable, partial, complete, permission-denied and stale states are materially distinct and never blank.",
+      "evidence": [
+        "organization-positions-workspace.test.tsx covers all seven states plus required-root first-use and invalid-filter states.",
+        "Permission and non-disclosed-root failures conceal cached graph data; other refresh failures may retain the last authorized snapshot under an explicit stale warning."
+      ]
+    },
+    {
+      "id": "HRM005-AC-09",
+      "result": "PASS",
+      "criterion": "Deep links and actions are allowlisted and hidden or disabled from the same server-authoritative access decision.",
+      "evidence": [
+        "Unknown or ambiguous focus selectors do not open an inspector or issue a second owner query.",
+        "The runtime gate and sealed adapter determine mounting; the adapter carries the server-authoritative request scope and adapter replacement starts an isolated pending query without prior-data reuse.",
+        "This module adds no management mutation hooks."
+      ]
+    },
+    {
+      "id": "HRM005-AC-10",
+      "result": "PENDING_CENTRAL_ROUTE_MOUNT_BROWSER_GATE",
+      "criterion": "1440, 1280, 390, 320 and 200-percent zoom plus light, dark, high contrast, reduced motion and keyboard navigation pass.",
+      "evidence": [
+        "Component source includes responsive breakpoints, forced-colors borders, semantic lists/aside, aria labels, focusable buttons and no motion dependency.",
+        "Targeted Vitest covers keyboard-focusable inspection and nonblank responsive component states."
+      ],
+      "pendingReason": "The replacement token forbids browser execution before the central route/shell mount, and this module branch is not authorized to add that mount. No browser-pass claim is made."
+    },
+    {
+      "id": "HRM005-AC-11",
+      "result": "PASS",
+      "criterion": "Feature OFF or unenrolled tenant mounts no owner runtime and sends no organization query or command.",
+      "evidence": [
+        "HRIS_ORGANIZATION_POSITIONS_DEFAULT_GATE is enabled=false and tenantEnrolled=false.",
+        "The slice and workspace tests cover absent/default false, explicit false and unenrolled cases with zero adapter calls.",
+        "The backend bounded HcmProductSurfacePepFilterTest confirms the existing default-off pre-chain denial."
+      ]
+    },
+    {
+      "id": "HRM005-AC-12",
+      "result": "PASS",
+      "criterion": "Changed-path evidence excludes HRM-008 employment, generated XCON, central authorization and historical registers from modification or credit.",
+      "evidence": [
+        "The source commits change exactly 19 authorized backend and 10 authorized frontend paths.",
+        "V34, OpenAPI, CreatePolicyRequest, generated v49, XCON-006, central route/shell and HRM-008 implementation paths are unchanged.",
+        "Existing scenario, position, assignment-event and generated-contract capability is reused and not recounted."
+      ]
+    }
+  ]
+}

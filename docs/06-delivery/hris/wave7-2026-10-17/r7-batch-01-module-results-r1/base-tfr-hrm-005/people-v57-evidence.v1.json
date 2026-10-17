@@ -1,0 +1,103 @@
+{
+  "schema": "dwp.hris.wave7.people-v57-evidence.v1",
+  "evidenceId": "HRIS-WAVE7-R7-BATCH-01-BASE-TFR-HRM-005-PEOPLE-V57-EVIDENCE-R1",
+  "issuedAt": "2026-10-17T18:34:35+09:00",
+  "issuedBy": "HRIS-HRM",
+  "sliceId": "BASE-TFR-HRM-005",
+  "status": "PASS_CLEAN_AND_UPGRADE_NO_BACKFILL_NO_ELEVATION",
+  "authority": {
+    "replacementTokenId": "HRIS-WAVE7-R7-BATCH-01-START-BASE-TFR-HRM-005-20261017-R2",
+    "replacementTokenPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-start-r1/tokens/base-tfr-hrm-005.start-token-replacement.v2.json",
+    "replacementTokenSha256": "0524c5171c1eac53cb2f66cf872ea34c571e5c22bc7bc99b4b7d4882366037a7",
+    "replacementTokenBytes": 12853,
+    "leaseId": "HRIS-WAVE7-R7-BATCH-01-PEOPLE-MAIN-V57-20261017-R1"
+  },
+  "backendResult": {
+    "commit": "ab373e70bdbefae250f294014c8bac45ccae6079",
+    "tree": "44e3ef90384f73e54b71faa0af6832b0bfc964a5"
+  },
+  "migration": {
+    "stream": "PEOPLE_MAIN",
+    "version": "57",
+    "path": "dwp-people-server/src/main/resources/db/migration/V57__allow_organization_workforce_field_group.sql",
+    "sha256": "f4fb5413812a8c38152daeb23eec9990638044b085144c5789c2d7bca46fb323",
+    "bytes": 403,
+    "operations": [
+      "DROP CONSTRAINT ck_workforce_access_policy_fields",
+      "ADD CONSTRAINT ck_workforce_access_policy_fields"
+    ],
+    "allowedFieldGroups": [
+      "DIRECTORY",
+      "WORKER_IDENTIFIERS",
+      "EMPLOYMENT",
+      "JOB_GRADE",
+      "ORGANIZATION"
+    ],
+    "nonEmptyConstraintPreserved": true,
+    "dataManipulationPresent": false,
+    "backfillPresent": false,
+    "privilegeElevationPresent": false,
+    "secondMigrationPresent": false
+  },
+  "historicalProtection": {
+    "v34Path": "dwp-people-server/src/main/resources/db/migration/V34__add_workforce_access_boundaries.sql",
+    "v34Sha256": "561f4a50830205c0a5347bba5d78a2577284caf3b178740ec64a1664730639ea",
+    "v34Changed": false,
+    "preV57FlywayChecksumsPreserved": true,
+    "existingPolicyRowsPreserved": true,
+    "existingPolicyFieldsPreserved": true,
+    "existingPolicyVersionPreserved": true
+  },
+  "requestContractProtection": {
+    "createPolicyRequestPath": "dwp-people-server/src/main/java/com/dwp/services/people/workforce/WorkforceAccessDtos.java",
+    "createPolicyRequestMaxItems": 4,
+    "changed": false,
+    "openApiPath": "contracts/openapi/people.json",
+    "openApiSha256": "4f8b31b2b0e3d2227bf6c02f9bf18092121323292160408601cabbd70c579ce8",
+    "openApiMaxItems": 4,
+    "openApiChanged": false
+  },
+  "runtimeEvidence": {
+    "allowlistPath": "dwp-people-server/src/main/java/com/dwp/services/people/workforce/WorkforceAccessPolicyService.java",
+    "allowlistSha256": "7dc1bf7f3d0804159fed38557b8d961256c915a8c643b8bfa793f9d43218ded3",
+    "positive": "DIRECTORY plus ORGANIZATION is accepted and persists as an explicit policy decision.",
+    "negative": "An unknown field group is rejected before repository or audit interaction.",
+    "inheritedPrerequisite": "Workforce policy creation continues to require DIRECTORY; ORGANIZATION is additive and does not weaken that baseline prerequisite."
+  },
+  "verification": [
+    {
+      "command": "./gradlew :dwp-people-server:test --tests 'com.dwp.services.people.hris.organization.Hrm005V57MigrationContractTest' --tests 'com.dwp.services.people.hris.organization.Hrm005V57MigrationPostgresTest' --no-daemon --max-workers=1",
+      "result": "PASS",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "database": "Testcontainers PostgreSQL"
+    },
+    {
+      "command": "./gradlew :dwp-people-server:test --tests 'com.dwp.services.people.workforce.WorkforceAccessPolicyServiceTest' --no-daemon --max-workers=1",
+      "result": "PASS",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "command": "./gradlew :dwp-people-server:test --tests 'com.dwp.services.people.hr.HcmPopulationScopeServiceTest' --no-daemon --max-workers=1",
+      "result": "PASS",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "databaseAssertions": {
+    "freshToV57": "PASS",
+    "v56ToV57Upgrade": "PASS",
+    "organizationAccepted": true,
+    "emptyArrayRejected": true,
+    "unknownFieldRejected": true,
+    "tenantResolutionIsolated": true,
+    "existingRowsElevated": false
+  }
+}
