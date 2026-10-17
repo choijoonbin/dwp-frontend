@@ -1,0 +1,91 @@
+{
+  "schema": "dwp.hris.r7-batch03-hrm009-central-successor-materialization-start-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH03-HRM009-CENTRAL-SUCCESSOR-MATERIALIZATION-START-20261018-R1",
+  "recordedAt": "2026-10-18T06:51:30+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "EXACT_PINNED_CENTRAL_SUCCESSOR_WORKTREES_MATERIALIZED_PUSHED_AND_AUTHORIZED_FOR_BOUNDED_IMPLEMENTATION",
+  "authority": {
+    "path": "hrm-009-central-successor-execution-authority.v1.json",
+    "sha256": "347398ba3b7303a3499a9b18ab9a494fdf3c03e90cce1726f95522bd5334f2a7",
+    "bytes": 39007,
+    "carrierCommit": "723f5b3fbc3fbd92799bb0f474078a1a255db0b5",
+    "carrierTree": "eb3132fdcbdb36e95fddc080f1ec281ba9a552f6",
+    "carrierOriginExact": true,
+    "carrierCleanBeforeReceipt": true,
+    "independentReview": {
+      "decision": "GO",
+      "p0": 0,
+      "p1": 0,
+      "p2": 0
+    }
+  },
+  "materializedWorktrees": {
+    "backend": {
+      "repository": "dwp-backend",
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261018/r7-batch03/hrm-009-central/backend",
+      "branch": "codex/hris-wave7-r7-batch03-hrm-009-central-backend-20261018-r1",
+      "baseCommit": "1e3bd64fb13bdc7d772913ad48a9cce315ea05b0",
+      "baseTree": "7097f60a9ccca1fe3cc6449a4242d6b83c1b8fdf",
+      "baseDwpDevOriginExact": true,
+      "worktreeClean": true,
+      "remoteBranchCreated": true,
+      "upstreamHead": "1e3bd64fb13bdc7d772913ad48a9cce315ea05b0",
+      "upstreamExact": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261018/r7-batch03/hrm-009-central/frontend",
+      "branch": "codex/hris-wave7-r7-batch03-hrm-009-central-frontend-20261018-r1",
+      "baseCommit": "723f5b3fbc3fbd92799bb0f474078a1a255db0b5",
+      "baseTree": "eb3132fdcbdb36e95fddc080f1ec281ba9a552f6",
+      "baseDwpDevOriginExact": true,
+      "worktreeClean": true,
+      "remoteBranchCreated": true,
+      "upstreamHead": "723f5b3fbc3fbd92799bb0f474078a1a255db0b5",
+      "upstreamExact": true
+    }
+  },
+  "executionToken": {
+    "sliceId": "BASE-TFR-HRM-009",
+    "stageId": "BASE-TFR-HRM-009-CENTRAL-SUCCESSOR-READ-ONLY",
+    "decision": "GO_FOR_EXACT_V52_V261_AUTH_GATEWAY_PEOPLE_RUNTIME_AND_DEFAULT_OFF_READ_ONLY_FRONTEND_IMPLEMENTATION",
+    "backendAuthorized": true,
+    "frontendReadOnlyAuthorized": true,
+    "frontendActionDelegateAuthorized": false,
+    "centralMergeAuthorized": false,
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "customerDataAuthorized": false,
+    "repositoryWideSuiteAuthorized": false
+  },
+  "implementationBoundary": {
+    "backend": "Only paths explicitly enumerated by backendExecutionAuthority in the authority document may change.",
+    "frontend": "Only generated synchronization, route/menu/shell, navigation-policy successor and Stage-A disclosure paths explicitly enumerated by frontendExecutionAuthority may change.",
+    "dependencyOrder": "Frontend may prepare its read-only shell in parallel but must synchronize final generated authorization artifacts from the reviewed backend v52 output.",
+    "verification": "Run each named bounded target once; after a failure rerun only the smallest failing target.",
+    "forbidden": [
+      "frontend ACTION delegate, POST, step-up request or writable HRM-009 control",
+      "feature activation, tenant enrollment, customer data or production rollout",
+      "Platform creator, seed, request or deep-link mutation",
+      "download, revoke, verification, expiry or access/download audit expansion",
+      "mutation of authorization v1-v51 or migrations V1-V260",
+      "repository-wide test-suite rerun"
+    ]
+  },
+  "requiredExit": [
+    "Both implementation branches are committed and pushed at exact reviewed heads.",
+    "Bounded verification evidence records first-pass and smallest-target correction outcomes without broad reruns.",
+    "Independent backend, frontend and evidence reviews close all P0 and P1 findings.",
+    "A separate append-only central admission decision names the exact accepted heads before any no-ff dwp-dev merge."
+  ],
+  "remainingState": {
+    "implementationStarted": true,
+    "centralSuccessorImplemented": false,
+    "centralAdmissionComplete": false,
+    "readOnlyBrowserGateComplete": false,
+    "writableActionUiAuthorized": false,
+    "hrm009FullSliceComplete": false,
+    "batch03Complete": false,
+    "r7Complete": false
+  }
+}
