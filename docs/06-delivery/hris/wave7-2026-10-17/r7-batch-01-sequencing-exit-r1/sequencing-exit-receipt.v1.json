@@ -1,0 +1,154 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-01-sequencing-exit-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-01-SEQUENCING-EXIT-20261017-R1",
+  "recordedAt": "2026-10-17T23:20:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "BATCH_01_SEQUENCING_EXIT_ACCEPTED_ZERO_BUSINESS_CREDIT",
+  "acceptedModuleResults": [
+    {
+      "sliceId": "BASE-TFR-HRM-005",
+      "state": "INTEGRATED_DEFAULT_OFF_ZERO_CREDIT",
+      "receipt": {
+        "path": "../r7-batch-01-module-results-r1/base-tfr-hrm-005/central-integration-receipt.v1.json",
+        "sha256": "996320b6ca7e1d9add27de7934728ff6c2586640b5d48467dbd4ca195c09a0f3",
+        "bytes": 3582
+      },
+      "uiReceipt": {
+        "path": "../r7-batch-01-module-results-r1/base-tfr-hrm-005/central-workforce-access-ui-receipt.v2.json",
+        "sha256": "99291cc642341e0db9718bb02a7c7d8d53b36f3d1d2e29f9c032062d28131d6b",
+        "bytes": 3152
+      }
+    },
+    {
+      "sliceId": "BASE-TFR-PAY-013",
+      "state": "INTEGRATED_DEFAULT_OFF_ZERO_CREDIT",
+      "receipt": {
+        "path": "../r7-batch-01-module-results-r1/base-tfr-pay-013/central-integration-receipt.v1.json",
+        "sha256": "a28c1013209dbd80aaca82a43b96f61e54deeb4527bc24ab3dbe71328234501d",
+        "bytes": 4021
+      }
+    },
+    {
+      "sliceId": "BASE-TFR-SYS-002",
+      "state": "INTEGRATED_DEFAULT_OFF_ZERO_CREDIT",
+      "receipt": {
+        "path": "../r7-batch-01-module-results-r1/base-tfr-sys-002/central-integration-receipt.v1.json",
+        "sha256": "14ac145086701a5d716ef319894e117f8bca85f7566c6651a476acc9fc44f20e",
+        "bytes": 3398
+      }
+    },
+    {
+      "sliceId": "BASE-TFR-TIM-007",
+      "state": "INTEGRATED_CONSUMER_ONLY_DEFAULT_OFF_EXTERNAL_PRODUCER_GATE_ZERO_CREDIT",
+      "receipt": {
+        "path": "../r7-batch-01-module-results-r1/base-tfr-tim-007/central-integration-receipt.v1.json",
+        "sha256": "303fc52c95596e5afcb42b92ad4b138f5fa09e83e038c6f511f1fb7aff700535",
+        "bytes": 8308
+      }
+    },
+    {
+      "sliceId": "BASE-TFR-PER-001",
+      "state": "TERMINAL_SEMANTIC_NO_GO_ZERO_CREDIT",
+      "receipt": {
+        "path": "../r7-per-001-semantic-no-go-r1/semantic-decision-receipt.v1.json",
+        "sha256": "f113a8dfd363bae19dcb44764313155819531c8f141875386619ed55b10e65fb",
+        "bytes": 16229
+      }
+    }
+  ],
+  "observedCleanPinsBeforeThisCarrier": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "59964de62cd4da8bcb9f9384d6e2ef85e8c07b09",
+      "tree": "108eb56abdb23f6bd4346b21fac1974da18b01c1",
+      "originExact": true,
+      "clean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "85c619dad84c1875e8fe9b570ae912bf8712202e",
+      "tree": "1bf82c9b9b1ad5edd82b6c1c3ec9190eb59c7bc9",
+      "originExact": true,
+      "clean": true
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "originExact": true,
+      "clean": true
+    }
+  },
+  "migrationLeaseClosure": [
+    {
+      "stream": "PEOPLE_MAIN",
+      "version": "V57",
+      "sliceId": "BASE-TFR-HRM-005",
+      "state": "CONSUMED_INTEGRATED"
+    },
+    {
+      "stream": "PAYROLL_MAIN",
+      "version": "V52",
+      "leaseId": "HRIS-WAVE7-R7-BATCH-01-PAYROLL-MAIN-V52-20261017-R1",
+      "sliceId": "BASE-TFR-PAY-013",
+      "state": "CONSUMED_INTEGRATED"
+    },
+    {
+      "stream": "PLATFORM_MAIN",
+      "version": "V331",
+      "leaseId": "HRIS-WAVE7-R7-BATCH-01-PLATFORM-MAIN-V331-20261017-R1",
+      "sliceId": "BASE-TFR-SYS-002",
+      "state": "CONSUMED_INTEGRATED"
+    },
+    {
+      "stream": "TIME_MAIN",
+      "version": "V12",
+      "leaseId": "HRIS-WAVE7-R7-BATCH-01-TIME-MAIN-V12-20261017-R1",
+      "sliceId": "BASE-TFR-TIM-007",
+      "state": "CONSUMED_INTEGRATED"
+    }
+  ],
+  "acceptedOpenGates": [
+    {
+      "gateId": "TIM_CLOSE_PERIOD_DEFINITION_PRODUCER",
+      "severity": "P0",
+      "state": "OPEN_EXTERNAL_SOURCE_AUTHORITY_GATE",
+      "blocks": [
+        "TIM feature activation",
+        "TIM business-completion credit",
+        "live TIM-to-Payroll end-to-end claim"
+      ],
+      "doesNotBlock": [
+        "Batch-01 sequencing exit",
+        "fresh default-OFF source dispatch for semantically sealed later slices"
+      ]
+    },
+    {
+      "gateId": "TIM_CLOSE_TRUSTED_OWNER_HEADER_ISSUER",
+      "severity": "P0",
+      "state": "OPEN_BEFORE_ANY_TENANT_ENROLLMENT",
+      "reason": "The Gateway removes the three client headers and intentionally does not issue trusted replacements in this default-OFF source integration."
+    }
+  ],
+  "portfolioAccounting": {
+    "universe": 86,
+    "retired": 2,
+    "active": 84,
+    "completedBeforeBatch01": 26,
+    "batch01BusinessCompletionIncrement": 0,
+    "completedAfterBatch01": 26
+  },
+  "authority": {
+    "batch01Closed": true,
+    "externalTimProducerGateAcceptedForSequencing": true,
+    "tenantFeatureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "batch02SourceDispatchAuthorizedByThisReceipt": false
+  },
+  "nextAction": "Record a fresh Batch-02 semantic and migration preflight on these exact pins; issue start authority only for slices whose product semantics are sealed."
+}

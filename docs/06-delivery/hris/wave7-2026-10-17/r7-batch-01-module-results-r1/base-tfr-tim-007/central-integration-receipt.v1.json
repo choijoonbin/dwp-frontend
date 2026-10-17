@@ -1,0 +1,238 @@
+{
+  "schema": "dwp.hris.wave7.module-central-integration-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-01-TIM-007-CENTRAL-INTEGRATION-20261017-R1",
+  "recordedAt": "2026-10-17T23:18:08+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-TIM",
+  "threadId": "01a0f53d-d3c4-7790-b175-5d84c90f341b",
+  "sliceId": "BASE-TFR-TIM-007",
+  "canonicalFeature": "HRIS_TIME_CLOSE_HANDOFF",
+  "state": "SOURCE_INTEGRATED_DWP_DEV_CONSUMER_ONLY_DEFAULT_OFF_EXTERNAL_PERIOD_PRODUCER_GATE",
+  "authorityInputs": [
+    {
+      "path": "../../execution-roadmap-successor.v14.json",
+      "sha256": "34303ac69ccf3e1778c1583951bca462237e02cf8fee99e58f54b65f21a75101",
+      "bytes": 8338
+    },
+    {
+      "path": "../../r7-activation-authority-r1/tenant-feature-activation-integration-receipt.v1.json",
+      "sha256": "e71689196cdcadd3f09ba77c8d3fd7fde7a60db8e3374586b9d8d89ceee38d7b",
+      "bytes": 6828
+    },
+    {
+      "path": "../../r7-batch-01-module-start-r1/tim-007-close-period-producer-control-decision.v1.json",
+      "sha256": "5b7a19b008ca291216b2af5474c918e17f7b2b4d60459e0c7134faf87de64711",
+      "bytes": 10262
+    },
+    {
+      "path": "../../r7-batch-01-module-start-r1/tokens/base-tfr-tim-007.start-token-replacement.v4.json",
+      "sha256": "42798a701b45290db615ec73d393b6211b62126b309262ebb92c6b2571d87a63",
+      "bytes": 7811
+    },
+    {
+      "path": "../../r7-batch-01-module-start-r1/tokens/base-tfr-tim-007.start-token-replacement.v5.json",
+      "sha256": "1a8aaad7c28dba8f1466897229838f2eeb2d95bfcb72f90505aae7ea65f7c18b",
+      "bytes": 9165
+    }
+  ],
+  "reviewedModuleSources": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "codex/hris-wave7-r7-batch01-tim-007-backend-20261017-r1",
+      "commit": "73db18d80631c705d7f92048c9d03f064671e702",
+      "tree": "5bb21967a782ded48f26e77f42626991d984adaa",
+      "originExact": true,
+      "clean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "codex/hris-wave7-r7-batch01-tim-007-frontend-20261017-r1",
+      "commit": "0ae922ee9cbb57a705b90d53a29d49c97f24e9cb",
+      "tree": "32ad9bd28adb971f851e66f1140b44374d13b352",
+      "originExact": true,
+      "clean": true
+    }
+  },
+  "independentReviews": [
+    {
+      "workstream": "TIM_007_MODULE_SCOPE_DATABASE_REPLAY",
+      "decision": "GO",
+      "reviewedCommit": "73db18d80631c705d7f92048c9d03f064671e702",
+      "remainingP0": 0,
+      "remainingP1": 0,
+      "remainingP2": 0
+    },
+    {
+      "workstream": "TIM_007_MODULE_SECURITY_CLOSURE",
+      "decision": "GO",
+      "reviewedCommit": "73db18d80631c705d7f92048c9d03f064671e702",
+      "remainingP0": 0,
+      "remainingP1": 0,
+      "remainingP2": 0
+    },
+    {
+      "workstream": "TIM_007_CENTRAL_ADMISSION_SECURITY",
+      "decision": "GO_AFTER_CLOSE_AND_TIMECARD_EXPIRY_FENCES",
+      "reviewedTree": "108eb56abdb23f6bd4346b21fac1974da18b01c1",
+      "remainingP0": 0,
+      "remainingP1": 0,
+      "remainingP2": 0
+    },
+    {
+      "workstream": "TIM_007_CENTRAL_ADMISSION_ARCHITECTURE_AND_BOOT",
+      "decision": "GO_AFTER_TIMECARD_ONLY_BOOT_EVIDENCE",
+      "reviewedTree": "108eb56abdb23f6bd4346b21fac1974da18b01c1",
+      "remainingP0": 0,
+      "remainingP1": 0,
+      "remainingP2": 0
+    }
+  ],
+  "integration": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "moduleMergeCommit": "e166b5597d7bba7d7dbf63e2fdc0165840a45d8a",
+      "moduleMergeTree": "94a5e9f0fa698db36f6860f4786b651cf4f34891",
+      "moduleMergeParents": [
+        "5d0368e70754955ccf1236b332f9e1f3f5885208",
+        "73db18d80631c705d7f92048c9d03f064671e702"
+      ],
+      "centralAdmissionCommits": [
+        "7caa4f854af657996ccecbfd439715bfe3b500d1",
+        "2ffb2317e6310449a51400486ccbe84293d8376b",
+        "59964de62cd4da8bcb9f9384d6e2ef85e8c07b09"
+      ],
+      "finalCommit": "59964de62cd4da8bcb9f9384d6e2ef85e8c07b09",
+      "finalTree": "108eb56abdb23f6bd4346b21fac1974da18b01c1",
+      "originExactAfterPush": true,
+      "clean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "mergeCommit": "85c619dad84c1875e8fe9b570ae912bf8712202e",
+      "tree": "1bf82c9b9b1ad5edd82b6c1c3ec9190eb59c7bc9",
+      "mergeParents": [
+        "f6c42990d8f7ecfff9bfdd252da5e63592a8b0bd",
+        "0ae922ee9cbb57a705b90d53a29d49c97f24e9cb"
+      ],
+      "originExactAfterPush": true,
+      "clean": true
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "originExact": true,
+      "clean": true
+    },
+    "mergeConflicts": 0,
+    "uniqueBackendChangedPaths": 63,
+    "centralCompanionChangedPaths": 23,
+    "frontendChangedPaths": 9
+  },
+  "verification": {
+    "policy": "Run each bounded cluster once; after a failure rerun only the smallest failed class or method; never repeat R6 or an already closed module cluster.",
+    "module": {
+      "predecessorComposite": {
+        "tests": 58,
+        "passed": 58,
+        "failed": 0,
+        "repeatedAfterPass": false
+      },
+      "securityCorrection": {
+        "initialTests": 45,
+        "initialPassed": 44,
+        "initialFailed": 1,
+        "failedMethodRetry": 1,
+        "failedMethodRetryPassed": 1,
+        "effectiveFinalPassed": 45
+      },
+      "frontend": {
+        "tests": 25,
+        "passed": 25,
+        "failed": 0,
+        "targetedEslintErrors": 0,
+        "repeatedAfterPass": false
+      }
+    },
+    "centralCompanion": {
+      "initialGateway": {
+        "tests": 57,
+        "passed": 57,
+        "failed": 0
+      },
+      "initialTime": {
+        "tests": 37,
+        "passed": 35,
+        "failed": 2,
+        "failureKind": "test-wiring-only"
+      },
+      "minimumRetries": [
+        "Only CommandReceiptFeatureIsolationTest was rerun after the duration conversion correction; one constructor-injection method remained.",
+        "Only the remaining failing method was rerun after the @Autowired correction and passed."
+      ],
+      "effectiveInitialClusterPassed": 94,
+      "closeExpiryFence": {
+        "tests": 5,
+        "passed": 5,
+        "failed": 0
+      },
+      "timecardExpiryAndBootFence": {
+        "tests": 7,
+        "passed": 7,
+        "failed": 0
+      },
+      "broadSuiteRepeated": false
+    }
+  },
+  "sealedBehavior": {
+    "gatewayClientScopeHeadersRemoved": [
+      "X-DWP-Responsibilities",
+      "X-DWP-Legal-Entity-Public-ID",
+      "X-DWP-Time-Group-Public-ID"
+    ],
+    "gatewayReissuesThoseHeaders": false,
+    "providerNeutralCommandReceiptBoundary": true,
+    "timecardOnlyBoot": true,
+    "closeOnlyBoot": true,
+    "mixedProviderEnvelopeAndCollisionFailClosed": true,
+    "closeActivationAndEnrollmentBeforeStorageProbe": true,
+    "commonAndProviderNativeExpiryBeforeStorageProbeAndRead": true,
+    "originAuthorityAndDigestDomainRevalidated": true,
+    "immutableRevisionReplay": true,
+    "closedResultGraphAppendAfterClosed": false,
+    "runtimePeriodProducerAdded": false,
+    "runtimePeriodCreateRouteAdded": false,
+    "periodInsertOrSequencePrivilegeAdded": false,
+    "durablePayrollConsumerStoreAdded": false
+  },
+  "rollout": {
+    "runtimeDefault": "OFF",
+    "enrolledTenants": [],
+    "centralTrustedOwnerHeaderIssuerImplemented": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "browserMatrixRun": false
+  },
+  "completion": {
+    "sourceIntegrated": true,
+    "migrationIntegrated": true,
+    "consumerOnlyCompletion": true,
+    "businessCompletionCredit": 0,
+    "activationComplete": false,
+    "liveTimToPayrollEndToEnd": false,
+    "externalPeriodProducerGate": "P0_OPEN_FOR_ACTIVATION_AND_BUSINESS_COMPLETION_ACCEPTED_FOR_BATCH_SEQUENCING"
+  },
+  "nonClaims": [
+    "A live Time close-period producer exists.",
+    "Any tenant is enrolled for Time close.",
+    "The Gateway currently issues trusted close responsibility, legal-entity or time-group owner headers.",
+    "TIM to Payroll handoff is live end to end.",
+    "TIM-007 has business-completion credit.",
+    "Customer data use or production release is authorized."
+  ]
+}

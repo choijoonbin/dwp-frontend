@@ -1,0 +1,182 @@
+{
+  "schema": "dwp.hris.wave7-execution-roadmap-successor.v15",
+  "roadmapId": "HRIS-WAVE7-EXECUTION-ROADMAP-SUCCESSOR-20261017-R15",
+  "issuedAt": "2026-10-17T23:28:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "R7_BATCH_01_SEQUENCING_EXIT_ACCEPTED_ZERO_CREDIT_BATCH_02_THREE_LANES_AUTHORITY_READY_TWO_LANES_SEMANTIC_NO_GO",
+  "supersedes": {
+    "path": "execution-roadmap-successor.v14.json",
+    "sha256": "34303ac69ccf3e1778c1583951bca462237e02cf8fee99e58f54b65f21a75101",
+    "bytes": 8338,
+    "reason": "R14 predates final TIM-007 central admission, Batch-01 sequencing exit and the fresh Batch-02 semantic and migration preflight."
+  },
+  "observedCleanPinsBeforeThisCarrier": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "59964de62cd4da8bcb9f9384d6e2ef85e8c07b09",
+      "tree": "108eb56abdb23f6bd4346b21fac1974da18b01c1",
+      "originExact": true,
+      "clean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "85c619dad84c1875e8fe9b570ae912bf8712202e",
+      "tree": "1bf82c9b9b1ad5edd82b6c1c3ec9190eb59c7bc9",
+      "originExact": true,
+      "clean": true
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "originExact": true,
+      "clean": true
+    }
+  },
+  "closedMilestones": [
+    "R6A",
+    "R6B",
+    "R6C",
+    "R6 integrated default-OFF closure",
+    "R7 C0 reclassification",
+    "R7 tenant-feature activation infrastructure integrated default OFF",
+    "R7 Batch-01 central authorization",
+    "R7 Batch-01 source results admitted or terminally dispositioned",
+    "R7 Batch-01 sequencing exit accepted with zero business-completion credit"
+  ],
+  "tenantFeatureActivationLane": {
+    "state": "INTEGRATED_DEFAULT_OFF_ZERO_TENANT_ENROLLMENT",
+    "backendCommit": "59964de62cd4da8bcb9f9384d6e2ef85e8c07b09",
+    "frontendCommit": "85c619dad84c1875e8fe9b570ae912bf8712202e",
+    "globalActiveSeeds": 0,
+    "tenantEnrollmentSeeds": 0,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "businessCompletionIncrement": 0,
+    "openActivationGates": [
+      "TIM_CLOSE_PERIOD_DEFINITION_PRODUCER",
+      "TIM_CLOSE_TRUSTED_OWNER_HEADER_ISSUER"
+    ]
+  },
+  "batch01": {
+    "state": "SEQUENCING_EXIT_ACCEPTED_ZERO_BUSINESS_CREDIT",
+    "sequencingExitReceipt": {
+      "path": "r7-batch-01-sequencing-exit-r1/sequencing-exit-receipt.v1.json",
+      "sha256": "1e337eddb0ea937de4eaae0e54782a2ec2b838cb62ed3e54d064bab0adff1111",
+      "bytes": 5419
+    },
+    "tim007CentralIntegrationReceipt": {
+      "path": "r7-batch-01-module-results-r1/base-tfr-tim-007/central-integration-receipt.v1.json",
+      "sha256": "303fc52c95596e5afcb42b92ad4b138f5fa09e83e038c6f511f1fb7aff700535",
+      "bytes": 8308
+    },
+    "acceptedLaneDispositions": {
+      "BASE-TFR-HRM-005": "INTEGRATED_DEFAULT_OFF_ZERO_CREDIT",
+      "BASE-TFR-PAY-013": "INTEGRATED_DEFAULT_OFF_ZERO_CREDIT",
+      "BASE-TFR-PER-001": "TERMINAL_SEMANTIC_NO_GO_ZERO_CREDIT",
+      "BASE-TFR-SYS-002": "INTEGRATED_DEFAULT_OFF_ZERO_CREDIT",
+      "BASE-TFR-TIM-007": "INTEGRATED_CONSUMER_ONLY_DEFAULT_OFF_EXTERNAL_PRODUCER_GATE_ZERO_CREDIT"
+    },
+    "businessCompletionIncrement": 0
+  },
+  "batch02": {
+    "state": "PREFLIGHT_ACCEPTED_THREE_LANES_READY_FOR_FRESH_AUTHORITY_TWO_LANES_WITHHELD",
+    "preflight": {
+      "path": "r7-batch-02-preflight-r1/semantic-dependency-migration-preflight.v1.json",
+      "sha256": "cfd13aa0304fdcf622155616cba679175f3cd515bc55d1de4fbcb08760559987",
+      "bytes": 7281
+    },
+    "readyForFreshAuthority": [
+      {
+        "sliceId": "BASE-TFR-HRM-007",
+        "moduleSession": "HRIS-HRM",
+        "threadId": "01a0f53e-9a75-7421-969f-473b0cfb9439",
+        "migration": "PEOPLE_MAIN V58 only if a schema delta is proven"
+      },
+      {
+        "sliceId": "BASE-TFR-PER-002",
+        "moduleSession": "HRIS-PER",
+        "threadId": "01a0f53e-9c6d-74e1-a11a-0dd4a4ab25a9",
+        "migration": "PERFORMANCE V19 exclusive lease required"
+      },
+      {
+        "sliceId": "BASE-TFR-SYS-003",
+        "moduleSession": "HRIS-SYS",
+        "threadId": "01a0f53d-d62d-7971-81f7-1822b513ccb4",
+        "migration": "No migration unless a separately reviewed persistence delta is proven"
+      }
+    ],
+    "withheldSemanticNoGo": [
+      {
+        "sliceId": "BASE-TFR-PAY-001",
+        "moduleSession": "HRIS-PAY",
+        "reason": "The product notification trigger, recipient, template, deep-link, opt-out, masking and receipt semantics are not sealed.",
+        "sourceAuthoringAuthorized": false,
+        "migrationLeaseAuthorized": false
+      },
+      {
+        "sliceId": "BASE-TFR-TIM-001",
+        "moduleSession": "HRIS-TIM",
+        "reason": "The Time aggregate, action, subject, transition and TIM-007 non-overlap bindings are not sealed.",
+        "sourceAuthoringAuthorized": false,
+        "migrationLeaseAuthorized": false
+      }
+    ],
+    "authorityState": {
+      "ownerPacketsIssued": false,
+      "startTokensIssued": false,
+      "worktreesMaterialized": false,
+      "sourceDispatchActive": false,
+      "nextRequiredControl": "Issue exact fresh owner packets and start tokens for the three GO lanes only, including an exclusive PERFORMANCE V19 lease for PER-002."
+    }
+  },
+  "portfolioAggregate": {
+    "universe": 86,
+    "retired": 2,
+    "active": 84,
+    "completed": 26,
+    "activeIncomplete": 58,
+    "batch01BusinessCompletionIncrement": 0
+  },
+  "validationPolicy": {
+    "evidenceAndAncestorChecksFirst": true,
+    "changedClusterFirst": true,
+    "failedTargetOnlyAfterCorrection": true,
+    "repositoryWideSuitePerCorrection": false,
+    "fullSuiteOnlyAtExplicitReleaseGateOrCrossCuttingRisk": true,
+    "browserMatrix": "Not authorized while feature activation and tenant enrollment remain false."
+  },
+  "nextExecutable": {
+    "id": "R7-BATCH-02-THREE-LANE-AUTHORITY-ISSUANCE",
+    "scope": [
+      "BASE-TFR-HRM-007",
+      "BASE-TFR-PER-002",
+      "BASE-TFR-SYS-003"
+    ],
+    "requiredOutput": [
+      "three exact owner packets",
+      "one central authorization successor",
+      "one exclusive PERFORMANCE V19 migration lease",
+      "three exact start tokens",
+      "fresh module worktrees from the latest dwp-dev pins"
+    ],
+    "forbidden": [
+      "BASE-TFR-PAY-001 owner packet or start token",
+      "BASE-TFR-TIM-001 owner packet or start token",
+      "tenant feature activation or enrollment",
+      "customer-data or production-release claims"
+    ]
+  },
+  "nonClaims": [
+    "R7 is complete",
+    "Batch-02 source dispatch is active",
+    "Batch-01 earned business-completion credit",
+    "TIM close periods have a live producer",
+    "the Gateway issues trusted TIM owner headers",
+    "any tenant feature is active or enrolled",
+    "customer data or production release is authorized"
+  ]
+}

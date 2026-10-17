@@ -1,0 +1,189 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-02-semantic-dependency-migration-preflight.v1",
+  "preflightId": "HRIS-WAVE7-R7-BATCH-02-PREFLIGHT-20261017-R1",
+  "recordedAt": "2026-10-17T23:22:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "THREE_LANES_READY_FOR_FRESH_AUTHORITY_TWO_LANES_WITHHELD_SEMANTIC_NO_GO",
+  "pinBasis": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "59964de62cd4da8bcb9f9384d6e2ef85e8c07b09",
+      "tree": "108eb56abdb23f6bd4346b21fac1974da18b01c1",
+      "originExact": true,
+      "clean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "85c619dad84c1875e8fe9b570ae912bf8712202e",
+      "tree": "1bf82c9b9b1ad5edd82b6c1c3ec9190eb59c7bc9",
+      "originExact": true,
+      "clean": true
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "originExact": true,
+      "clean": true
+    }
+  },
+  "batch01Exit": {
+    "path": "../r7-batch-01-sequencing-exit-r1/sequencing-exit-receipt.v1.json",
+    "stateRequired": "BATCH_01_SEQUENCING_EXIT_ACCEPTED_ZERO_BUSINESS_CREDIT"
+  },
+  "globalFindings": {
+    "allRegisteredDependenciesReady": true,
+    "formalPredecessorSlices": [],
+    "tenantActivationRequiredForDefaultOffSourceAuthoring": false,
+    "trustedMountRequiredForBusinessCompletion": true,
+    "reuseBatch01Worktrees": false,
+    "freshWorktreesFromLatestDwpDevRequired": true,
+    "migrationOnlyWhenSchemaDeltaIsProven": true
+  },
+  "lanes": [
+    {
+      "sliceId": "BASE-TFR-HRM-007",
+      "moduleSession": "HRIS-HRM",
+      "threadId": "01a0f53e-9a75-7421-969f-473b0cfb9439",
+      "runtimeOwner": "dwp-people-server",
+      "uiRequired": true,
+      "semanticDecision": "GO_FOR_FRESH_PACKET",
+      "scope": [
+        "IAQ-005 people-changes query and page",
+        "IAQ-007 appointments query and page",
+        "IAQ-013 people-employment query and page"
+      ],
+      "reuseBoundary": "Reuse HRM-008 PEP-HRM-006 through PEP-HRM-009 and HRM-010 PEP-HRM-003 through PEP-HRM-005; do not reimplement or recount them.",
+      "migration": {
+        "stream": "PEOPLE_MAIN",
+        "currentHighWater": "V57",
+        "candidate": "V58",
+        "leasePolicy": "Issue only if a schema delta is proven; projection-only work receives no migration."
+      }
+    },
+    {
+      "sliceId": "BASE-TFR-PAY-001",
+      "moduleSession": "HRIS-PAY",
+      "threadId": "01a0f53d-d1c4-7c22-b69d-f4039003a430",
+      "runtimeOwners": [
+        "dwp-payroll-server",
+        "dwp-notification-server"
+      ],
+      "uiRequired": false,
+      "semanticDecision": "NO_GO_UNSEALED_PRODUCT_NOTIFICATION_SEMANTICS",
+      "startTokenAuthorized": false,
+      "missingAuthority": [
+        "exactly one trigger business event and source URI",
+        "notification typeKey and purpose",
+        "recipient authority and recipient reference format",
+        "template key, version, digest, locale fallback and typed variable allowlist",
+        "route-key deep link and allowed parameters",
+        "opt-out, masking and receipt policy",
+        "Payroll and Notification owner change boundaries"
+      ],
+      "skkfDisposition": "RETIRE_FROM_CORE customer-specific ADDSK behavior; it is evidence of legacy behavior, not product authority.",
+      "migration": {
+        "payrollCurrentHighWater": "V52",
+        "payrollCandidate": "V53",
+        "notificationCurrentHighWater": "V35",
+        "notificationCandidate": "V36",
+        "leaseAuthorized": false
+      }
+    },
+    {
+      "sliceId": "BASE-TFR-PER-002",
+      "moduleSession": "HRIS-PER",
+      "threadId": "01a0f53e-9c6d-74e1-a11a-0dd4a4ab25a9",
+      "runtimeOwner": "dwp-people-server performance migration stream",
+      "uiRequired": true,
+      "semanticDecision": "GO_FOR_FRESH_PACKET",
+      "scope": [
+        "complete Calibration state machine",
+        "authoritative baseline calculation",
+        "IAQ-024 calibration query and page",
+        "PEP-PER-017 authorization",
+        "PerformanceCalibrationApproved.v1 typed event"
+      ],
+      "migration": {
+        "stream": "PERFORMANCE",
+        "currentHighWater": "V18",
+        "candidate": "V19",
+        "leasePolicy": "Fresh exclusive V19 lease is required because no calibration runtime or schema exists."
+      }
+    },
+    {
+      "sliceId": "BASE-TFR-SYS-003",
+      "moduleSession": "HRIS-SYS",
+      "threadId": "01a0f53d-d62d-7971-81f7-1822b513ccb4",
+      "runtimeOwner": "dwp-approval-server",
+      "uiRequired": true,
+      "semanticDecision": "GO_FOR_FRESH_PACKET",
+      "scope": [
+        "/hr/settings/workflow",
+        "/hr/team/delegation",
+        "SHARED-API-005, SHARED-API-006 and SHARED-API-010 through SHARED-API-012 adapters"
+      ],
+      "reuseBoundary": "Reuse the existing Approval engine and APIs; do not create an HRIS-specific approval engine or duplicate approval tables.",
+      "migration": {
+        "expected": "NONE",
+        "platformCurrentHighWater": "V331",
+        "platformCandidateIfProven": "V332",
+        "approvalCurrentHighWater": "V58",
+        "approvalCandidateIfProven": "V59",
+        "leasePolicy": "No lease unless a separately reviewed persistence delta is proven."
+      }
+    },
+    {
+      "sliceId": "BASE-TFR-TIM-001",
+      "moduleSession": "HRIS-TIM",
+      "threadId": "01a0f53d-d3c4-7790-b175-5d84c90f341b",
+      "runtimeOwner": "dwp-time-server",
+      "uiRequired": false,
+      "semanticDecision": "NO_GO_UNSEALED_TIME_DECISION_BINDING",
+      "startTokenAuthorized": false,
+      "missingAuthority": [
+        "exact Time aggregate list",
+        "workflowKey, requestedAction, subjectRef and subjectRevision per aggregate",
+        "APPROVED, REJECTED, CANCELED and EXPIRED owner transitions",
+        "TIM-007 close-approval non-overlap and no-recount boundary"
+      ],
+      "evidenceDisposition": "ApprovalDecisionRecorded.v1 is a structural event lineage only; historical code GO is not current business authority and the latest semantic closure remains NOT_CERTIFIED.",
+      "migration": {
+        "stream": "TIME_MAIN",
+        "currentHighWater": "V12",
+        "candidate": "V13",
+        "leaseAuthorized": false
+      }
+    }
+  ],
+  "migrationHighWater": {
+    "PEOPLE_MAIN": "V57",
+    "PERFORMANCE": "V18",
+    "PAYROLL_MAIN": "V52",
+    "PLATFORM_MAIN": "V331",
+    "TIME_MAIN": "V12",
+    "AUTH_MAIN": "V259",
+    "NOTIFICATION_MAIN": "V35",
+    "APPROVAL_MAIN": "V58",
+    "PRODUCT_AUTHORIZATION_BUNDLE": "v50"
+  },
+  "authority": {
+    "freshPacketsMayBeIssuedFor": [
+      "BASE-TFR-HRM-007",
+      "BASE-TFR-PER-002",
+      "BASE-TFR-SYS-003"
+    ],
+    "packetsAndTokensWithheldFor": [
+      "BASE-TFR-PAY-001",
+      "BASE-TFR-TIM-001"
+    ],
+    "sourceAuthoringAuthorizedByThisReceipt": false,
+    "migrationAuthoringAuthorizedByThisReceipt": false,
+    "tenantActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "Issue exact owner packets, start tokens and only the proven just-in-time migration lease for the three GO lanes; route PAY-001 and TIM-001 to semantic remediation without source work."
+}
