@@ -1,0 +1,42 @@
+{
+  "schema": "dwp.hris.evidence-branch-receipt.v1",
+  "generatedAt": "2026-10-17T19:22:35Z",
+  "sliceId": "BASE-TFR-SYS-005",
+  "state": "SYS005_EVIDENCE_ONLY_REUSE_CLOSURE_COMPLETE_BRANCH_PUSHED_CENTRAL_REVIEW_PENDING_NO_SOURCE_NO_MIGRATION",
+  "branch": "codex/hris-wave7-r7-batch03-sys-005-evidence-20261018-r1",
+  "upstream": "origin/codex/hris-wave7-r7-batch03-sys-005-evidence-20261018-r1",
+  "base": {
+    "commit": "695c40b40c7461911100243b7d052dea07584bc0",
+    "tree": "8af76d722d8c299b0eb6768e15066e4675a24724"
+  },
+  "evidenceBundle": {
+    "commit": "79099bd10c6439fd5f52811002ee0484954dec2a",
+    "tree": "da370c8637a9251bd4c8795a60ea7af92ea16fec",
+    "parent": "695c40b40c7461911100243b7d052dea07584bc0",
+    "remoteRefAtReceiptAuthoring": "79099bd10c6439fd5f52811002ee0484954dec2a",
+    "pushed": true
+  },
+  "lineage": {
+    "exactBaseAncestor": true,
+    "authorityCarrier": "a315bd70835172713fee31269f77e7870269abdb",
+    "authorityCarrierAncestor": false,
+    "authorityCarrierMergedOrCherryPicked": false,
+    "dwpDevMergePerformed": false
+  },
+  "verificationSummary": {
+    "backend": "8_SUITES_52_TESTS_PASS_FIRST_EXECUTION",
+    "frontend": "3_FILES_32_TESTS_PASS_AFTER_CONFIGURATION_ONLY_ZERO_TEST_RETRY",
+    "openApi": "BOTH_3889_BYTES_SHA256_88BE25E0E95FE8C8281B3F140823819B421A08D025203B4FE1FEF54DDCFF7C08",
+    "acceptance": "12_OF_12_PASS",
+    "sourceCoverage": "12_OF_12_ROWS_REUSE_ACCOUNTED",
+    "fullSuiteRun": false
+  },
+  "closure": {
+    "exactResultRootOnly": true,
+    "sourceDelta": "NONE",
+    "migrationDelta": "NONE",
+    "centralAdmissionPending": true,
+    "businessCompletionCredit": 0,
+    "finalClosureCommitAndTreeReportedExternallyBecauseAGitCommitCannotSelfHash": true
+  }
+}
