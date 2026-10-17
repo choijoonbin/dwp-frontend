@@ -519,5 +519,87 @@
     "customerDataAuthorized": false,
     "productionReleaseAuthorized": false
   },
-  "nextAction": "CENTRAL_RESULT_ACCEPTANCE_DEFAULT_OFF_INTEGRATION_AND_AUTHORIZED_BROWSER_MATRIX_REVIEW"
+  "nextAction": "CENTRAL_RESULT_ACCEPTANCE_DEFAULT_OFF_INTEGRATION_AND_AUTHORIZED_BROWSER_MATRIX_REVIEW",
+  "latestState": "MODULE_CORRECTION_COMPLETE_BRANCH_PUSHED_CONTROL_REVIEW_PENDING_DEFAULT_OFF",
+  "correctionHistory": [
+    {
+      "correctionId": "HRIS-WAVE7-R7-BATCH-01-BASE-TFR-PAY-013-CORRECTION-20261017-R3",
+      "recordedAt": "2026-10-17T19:27:07+09:00",
+      "state": "MODULE_CORRECTION_COMPLETE_BRANCH_PUSHED_CONTROL_REVIEW_PENDING_DEFAULT_OFF",
+      "authority": {
+        "tokenPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-start-r1/tokens/base-tfr-pay-013.start-token-correction.v3.json",
+        "tokenId": "HRIS-WAVE7-R7-BATCH-01-CORRECTION-BASE-TFR-PAY-013-20261017-R3",
+        "sha256": "b20ec9aa49b98f7ff85cad5eedbfa415ad79208e589f8cf5958aa08754be5f8f",
+        "bytes": 4289,
+        "centralCarrierCommit": "be0d2dd0e014ed2e9d62cbab346199be028d7359",
+        "centralCarrierTree": "044766d71d2e0b13146bbed3157ce0028a855e4d",
+        "centralPrerequisiteCommit": "67b2112b7eecad48d8c3ecf89d734425f2d2e872",
+        "centralPrerequisiteTree": "4c3e042c7f3586436c920b9bd464f5e8afd939ab",
+        "centralCarriersMergedIntoModuleHistory": false
+      },
+      "startCheckpoint": {
+        "branch": "codex/hris-wave7-r7-batch01-pay-013-frontend-20261017-r1",
+        "upstream": "origin/codex/hris-wave7-r7-batch01-pay-013-frontend-20261017-r1",
+        "head": "7777928a47b2376087d058042bac60aebdf2f852",
+        "tree": "15fdc4027c822064ff6ac3b5a7862522108ab5b2",
+        "clean": true,
+        "remoteExact": true,
+        "upstreamAhead": 0,
+        "upstreamBehind": 0
+      },
+      "correction": {
+        "constant": "PAYROLL_COMMAND_CENTER_PATH",
+        "priorPath": "/hr/operations/payroll/command-center",
+        "canonicalPath": "/hr/operations/pay",
+        "successCtaUsesCorrectedConstant": true,
+        "literalHrefRegressionAssertion": true,
+        "changedPaths": [
+          "apps/dwp/src/features/hris/payroll/population/payroll-population-contract.ts",
+          "apps/dwp/src/features/hris/payroll/__tests__/g3-slices/base-tfr-pay-013.slice.test.tsx"
+        ],
+        "changedFileManifestSha256": "5101839d2aaac9dd834cb2a3e57e16e9b02f63098d478a0be4b4eef1a2c61549",
+        "changedNameStatusManifestSha256": "12722720d0ef62b5080041f76318f73b42ce3638044f7f98d0c0699c1f6d173b",
+        "changedContentManifestSha256": "e4069cc6e09fdd33bc9464154d23d0bc83dff8db76eb3c1261c2642f85a4b7eb",
+        "routePageAliasOrNavigationAdded": false,
+        "centralHighRiskContractDuplicated": false,
+        "backendChangedOrRetested": false
+      },
+      "verification": {
+        "command": "yarn vitest run apps/dwp/src/features/hris/payroll/__tests__/g3-slices/base-tfr-pay-013.slice.test.tsx",
+        "status": "PASS_SINGLE_AUTHORIZED_RUN",
+        "testFileCount": 1,
+        "testCount": 12,
+        "failures": 0,
+        "rerunCount": 0,
+        "repositoryWideSuiteRun": false,
+        "backendRetestRun": false,
+        "browserRun": false
+      },
+      "result": {
+        "sourceCorrectionCommit": "12600e3095efa7fd810df4d1e52e03fbc2285fb6",
+        "sourceCorrectionTree": "612d10501ead29f610d25e2fbf7ee9fcf4349fcd",
+        "branch": "codex/hris-wave7-r7-batch01-pay-013-frontend-20261017-r1",
+        "upstream": "origin/codex/hris-wave7-r7-batch01-pay-013-frontend-20261017-r1",
+        "sourceCheckpointClean": true,
+        "sourceCheckpointRemoteExact": true,
+        "sourceCheckpointUpstreamAhead": 0,
+        "sourceCheckpointUpstreamBehind": 0,
+        "evidenceCarrierCommitRecordedExternally": true
+      },
+      "preservedBoundary": {
+        "defaultOff": true,
+        "enrolledTenantCount": 0,
+        "backendChanged": false,
+        "backendRetested": false,
+        "repositoryWideSuiteRun": false,
+        "browserRun": false,
+        "centralRouteOrShellMountPerformed": false,
+        "mergeToDwpDevPerformed": false,
+        "featureEnablementPerformed": false,
+        "tenantEnrollmentPerformed": false,
+        "productionReleasePerformed": false
+      },
+      "nextAction": "CENTRAL_CONTROL_REVIEW_WITH_DEFAULT_OFF_PRESERVED"
+    }
+  ]
 }
