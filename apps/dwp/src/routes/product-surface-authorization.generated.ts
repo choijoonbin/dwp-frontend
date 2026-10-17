@@ -14,9 +14,9 @@ export type ProductAuthorizationRouteProjection = Readonly<{
 
 export const PRODUCT_AUTHORIZATION_REGISTRY_REVISION = {
   bundleKey: 'product-surfaces',
-  version: 51,
-  checksum: '3beda5c13a3af0e265ace4533a3afcee3691c2b7486465dcf46156e58ae5ed2c',
-  indexChecksum: '65091e1c8ace82ff9376658c7cd46d0a5850c138c28eccd8ba724316eb5a2a56',
+  version: 52,
+  checksum: 'b33fbf968e71f97b09fa497fdfad7d2f6854199170b79fd1602a0ea604977346',
+  indexChecksum: '5e444564797eb56fd3055eb00c6e3250111b3045fdbff81f0485a3164bf8b010',
 } as const;
 
 export const PRODUCT_SURFACE_ROLLOUT_INVENTORY_REVISION = {
@@ -9068,6 +9068,54 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
     ],
   },
   {
+    routeContractKey: 'route.hcm.operations.certificate-issue.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/people/v1/hris/certificates',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.certificates-documents.data',
+    routeKind: 'DATA',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/people/v1/hris/workbench/operations/certificates/documents',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.certificates-documents.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: 'hcm.operations.certificates-documents',
+    pattern: '/hr/operations/people/certificates-documents',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/people/v1/hris/workbench/operations/certificates/documents',
+      },
+    ],
+  },
+  {
     routeContractKey: 'route.hcm.operations.compensation-budget-allocate.action',
     routeKind: 'ACTION',
     navigationContextId: 'hcm.operations',
@@ -10784,6 +10832,38 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
       {
         method: 'GET',
         path: '/api/auth/hris/product-access/snapshot',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.personal.requests.data',
+    routeKind: 'DATA',
+    navigationContextId: 'hcm.personal',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.personal',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/people/v1/hris/workbench/self-service/requests',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.personal.requests.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'hcm.personal',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.personal',
+    routeId: 'hcm.personal.requests',
+    pattern: '/hr/me/requests',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/people/v1/hris/workbench/self-service/requests',
       },
     ],
   },

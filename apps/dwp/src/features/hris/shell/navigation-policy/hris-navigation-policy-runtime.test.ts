@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const transport = vi.hoisted(() => ({ get: vi.fn() }));
 
@@ -45,6 +45,7 @@ import {
   canonicalHrisWorkbench,
   HRIS_SEVEN_WORKBENCH_NAVIGATION_CATALOG,
   HRIS_V46_SELF_POLICY_ROUTE_BINDINGS,
+  HRIS_V52_PAGE_AUTHORITY_ROUTE_BINDINGS,
   HRIS_WORKBENCH_IDS,
   HRIS_WORKBENCH_VIEW_BY_ID,
   isHrisRuntimeEffectiveRouteAlias,
@@ -53,7 +54,11 @@ import {
 import type { HrisWorkbenchId } from './seven-workbench-navigation-policy';
 
 describe('server-owned HRIS seven-workbench navigation runtime', () => {
-  beforeEach(() => transport.get.mockReset());
+  beforeEach(() => {
+    transport.get.mockReset();
+    vi.stubEnv('VITE_HRIS_HRM_009_ENABLED', 'false');
+  });
+  afterEach(() => vi.unstubAllEnvs());
 
   it('keeps NOT_ENROLLED, OFF, and SHADOW on the finite compatibility shell', () => {
     for (const enforcementState of ['NOT_ENROLLED', 'OFF', 'SHADOW'] as const) {
@@ -706,6 +711,78 @@ describe('server-owned HRIS seven-workbench navigation runtime', () => {
     for (const withheld of ['/hr/me/profile', '/hr/me/leave', '/hr/me/requests', '/hr/team']) {
       expect(resolveHrisRuntimePolicyDeepLink(policy, withheld, authorized).decision).toBe('DENY');
     }
+  });
+
+  it('admits the append-only v52 SELF alias only when its exact PAGE path is authorized', () => {
+    const admittedPolicyRoutes = HRIS_V46_SELF_POLICY_ROUTE_BINDINGS.map(admittedPolicyRoute);
+    const myHr = effectiveV3SelfWorkbench();
+    const withV52Alias = {
+      ...myHr,
+      groups: myHr.groups.map((group) => ({
+        ...group,
+        nodes: group.nodes.map((node) =>
+          node.nodeId === 'BASE:my-hr-requests'
+            ? { ...node, routeAliases: [...node.routeAliases, '/hr/me/requests'] }
+            : node
+        ),
+      })),
+    };
+    const operations = effectiveWorkbench('HRIS-WB-HR-OPERATIONS', [
+      'BASE:hr-certificates-documents',
+    ]);
+    const successorProjection = projectionV3('ENFORCED', {
+      policyEnforced: true,
+      revisionPin: revisionPin('3', 'e'),
+      admittedPolicyRoutes,
+      workbenches: [withV52Alias, operations],
+    });
+    expect(() => selectRuntimeHrisNavigationPolicyProjection(successorProjection)).toThrow(
+      /route alias is not sealed/u
+    );
+    vi.stubEnv('VITE_HRIS_HRM_009_ENABLED', 'true');
+    const policy = selectHrisRuntimeNavigationPolicy(
+      selectRuntimeHrisNavigationPolicyProjection(successorProjection)
+    );
+    const withoutV52Page = new Set(
+      HRIS_V46_SELF_POLICY_ROUTE_BINDINGS.map((binding) => binding.path)
+    );
+    expect(
+      resolveHrisRuntimePolicyDeepLink(policy, '/hr/me/requests', withoutV52Page).decision
+    ).toBe('DENY');
+    const withV52Page = new Set([...withoutV52Page, '/hr/me/requests']);
+    expect(resolveHrisRuntimePolicyDeepLink(policy, '/hr/me/requests', withV52Page)).toMatchObject({
+      decision: 'ALLOW',
+      nodeId: 'BASE:my-hr-requests',
+      route: '/hr/me/requests',
+    });
+    expect(
+      projectHrisWorkbenchTaskNavigation(policy, 'workbench-my-hr', withV52Page)
+        .flatMap((group) => group.nodes)
+        .find((node) => node.nodeId === 'BASE:my-hr-requests')?.routeAliases
+    ).toEqual(['/hr/me/requests', '/hr/services']);
+    expect(HRIS_V52_PAGE_AUTHORITY_ROUTE_BINDINGS[0]?.minimumBundleVersion).toBe(52);
+    expect(
+      resolveHrisRuntimePolicyDeepLink(
+        policy,
+        '/hr/operations/people/certificates-documents',
+        withV52Page
+      ).decision
+    ).toBe('DENY');
+    const withBothV52Pages = new Set([
+      ...withV52Page,
+      '/hr/operations/people/certificates-documents',
+    ]);
+    expect(
+      resolveHrisRuntimePolicyDeepLink(
+        policy,
+        '/hr/operations/people/certificates-documents',
+        withBothV52Pages
+      )
+    ).toMatchObject({
+      decision: 'ALLOW',
+      nodeId: 'BASE:hr-certificates-documents',
+      route: '/hr/operations/people/certificates-documents',
+    });
   });
 
   it('accepts the sealed R6-C owner overlay aliases only in canonical-first order', () => {

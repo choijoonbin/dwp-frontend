@@ -63,6 +63,8 @@ export type Hrm009CertificateWorkbenchProps = Readonly<{
   scope?: Hrm009TrustedScope;
   /** Component-preview seam only. Production remains unmounted and default-OFF in Stage A. */
   adapter?: Hrm009QueryAdapter;
+  /** Optional deep-link focus selected only after the read projection passes its sealed parser. */
+  initialFocusPublicId?: string;
   defaultPersonPublicId?: string;
   onRequestCertificate?: Hrm009RequestCertificateDelegate;
 }>;
@@ -81,7 +83,7 @@ const SURFACE_COPY: Readonly<Record<Hrm009QueryId, SurfaceCopy>> = Object.freeze
     eyebrow: 'Employee self-service · governed requests',
     title: 'My HR requests and certificates',
     description:
-      'Review disclosed request metadata and prepare a certificate request for owner authorization.',
+      'Review disclosed request and certificate metadata in the current read-only Stage-A scope.',
     listTitle: 'My disclosed requests',
     emptyTitle: 'No disclosed requests',
     emptyDescription: 'No request metadata is available in this governed self-service scope.',
@@ -90,7 +92,7 @@ const SURFACE_COPY: Readonly<Record<Hrm009QueryId, SurfaceCopy>> = Object.freeze
     eyebrow: 'HR operations · governed certificate metadata',
     title: 'Certificates and documents',
     description:
-      'Inspect certificate metadata for the authorized population and prepare an issuance request.',
+      'Inspect certificate metadata for the authorized population in the current read-only Stage-A scope.',
     listTitle: 'Certificate metadata requiring review',
     emptyTitle: 'No disclosed certificate metadata',
     emptyDescription: 'No certificate metadata is available in this governed operations scope.',
@@ -229,6 +231,7 @@ function CertificateRequestForm({
           size="small"
           label="Person public ID"
           value={personPublicId}
+          disabled={!onRequestCertificate}
           onChange={(event) => setPersonPublicId(event.target.value)}
           inputProps={{ autoComplete: 'off', spellCheck: false }}
         />
@@ -239,6 +242,7 @@ function CertificateRequestForm({
           size="small"
           label="Certificate type"
           value={certificateType}
+          disabled={!onRequestCertificate}
           onChange={(event) => setCertificateType(event.target.value)}
         >
           <MenuItem value="EMPLOYMENT_CERTIFICATE">Employment certificate</MenuItem>
@@ -251,6 +255,7 @@ function CertificateRequestForm({
           size="small"
           label="As-of instant (ISO 8601)"
           value={requestAsOf}
+          disabled={!onRequestCertificate}
           onChange={(event) => setRequestAsOf(event.target.value)}
           inputProps={{ autoComplete: 'off', spellCheck: false }}
           sx={{ gridColumn: { sm: '1 / -1' } }}
@@ -588,12 +593,14 @@ function ActiveCertificateWorkbench({
   queryId,
   scope,
   adapter,
+  initialFocusPublicId,
   defaultPersonPublicId,
   onRequestCertificate,
 }: Readonly<{
   queryId: Hrm009QueryId;
   scope: Hrm009TrustedScope;
   adapter: Hrm009QueryAdapter;
+  initialFocusPublicId?: string;
   defaultPersonPublicId?: string;
   onRequestCertificate?: Hrm009RequestCertificateDelegate;
 }>) {
@@ -602,7 +609,7 @@ function ActiveCertificateWorkbench({
   const forcedColors = useMediaQuery('(forced-colors: active)', { noSsr: true });
   const reducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)', { noSsr: true });
   const query = useHrm009WorkbenchQuery({ adapter, queryId, scope });
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(initialFocusPublicId ?? null);
   const projection = query.projection;
   useEffect(() => {
     if (projection && !projection.items.some((item) => item.itemPublicId === selectedId)) {
@@ -740,6 +747,13 @@ function ActiveCertificateWorkbench({
         </Stack>
       </Paper>
 
+      {!onRequestCertificate && (
+        <InlineFeedback severity="info" title="Stage-A is read only">
+          This mount discloses request status and certificate/document metadata only. Certificate
+          submission and all document content or lifecycle controls are unavailable in this stage.
+        </InlineFeedback>
+      )}
+
       {query.stale && (
         <InlineFeedback severity="warning" title="The disclosed metadata is stale">
           Owner data could not be refreshed. All certificate actions remain disabled until a current
@@ -835,6 +849,7 @@ export function Hrm009CertificateWorkbench({
   gate = HRM009_DEFAULT_GATE,
   scope,
   adapter,
+  initialFocusPublicId,
   defaultPersonPublicId,
   onRequestCertificate,
 }: Hrm009CertificateWorkbenchProps) {
@@ -884,6 +899,7 @@ export function Hrm009CertificateWorkbench({
       queryId={queryId}
       scope={trustedScope}
       adapter={adapter}
+      initialFocusPublicId={initialFocusPublicId}
       defaultPersonPublicId={defaultPersonPublicId}
       onRequestCertificate={onRequestCertificate}
     />

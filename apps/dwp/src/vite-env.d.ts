@@ -10,6 +10,7 @@ interface ImportMetaEnv {
   readonly VITE_PRODUCT_NOTIFICATION_RUNTIME?: string;
   readonly VITE_PRODUCT_SURFACE_TELEMETRY_COLLECTION?: string;
   readonly VITE_HRIS_HRM_007_ENABLED?: string;
+  readonly VITE_HRIS_HRM_009_ENABLED?: string;
   readonly VITE_HRIS_SYS_003_ENABLED?: string;
 }
 

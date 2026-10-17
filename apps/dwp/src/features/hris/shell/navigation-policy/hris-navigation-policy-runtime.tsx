@@ -29,9 +29,11 @@ import {
   hrisWorkbenchIdForView,
   HRIS_SEVEN_WORKBENCH_NAVIGATION_CATALOG,
   HRIS_V46_SELF_POLICY_ROUTE_BINDINGS,
+  HRIS_V52_PAGE_AUTHORITY_ROUTE_BINDINGS,
   HRIS_WORKBENCH_IDS,
   HRIS_WORKBENCH_VIEW_BY_ID,
   hrisV46SelfPolicyRouteBinding,
+  hrisV52PageAuthorityRouteBinding,
   isHrisRuntimeEffectiveRouteAlias,
   isHrisRuntimeMenuRouteAlias,
 } from './seven-workbench-navigation-policy';
@@ -480,9 +482,13 @@ export function projectHrisWorkbenchTaskNavigation(
             isRuntimeEffectiveRouteAlias(policy.schemaVersion, node.nodeId, route) &&
             normalizedAuthorized.has(normalizePath(route))
         );
-        const menuTarget = authorizedAliases.find((route) =>
-          isRuntimeMenuRouteAlias(policy.schemaVersion, node.nodeId, route)
-        );
+        const menuTarget =
+          authorizedAliases.find((route) =>
+            Boolean(hrisV52PageAuthorityRouteBinding(node.nodeId, route))
+          ) ??
+          authorizedAliases.find((route) =>
+            isRuntimeMenuRouteAlias(policy.schemaVersion, node.nodeId, route)
+          );
         const routeAliases = menuTarget
           ? [menuTarget, ...authorizedAliases.filter((route) => route !== menuTarget)]
           : [];
@@ -902,11 +908,18 @@ function selectEffectiveRouteAliases(
   const policyNode = canonicalNode.routeAliases.some((alias) =>
     hrisV46SelfPolicyRouteBinding(canonicalNode.nodeId, alias)
   );
-  const sealedAliases = canonicalNode.routeAliases.filter((alias) =>
-    schemaVersion === '3' && policyNode
-      ? nodePolicyRoutes.some((route) => route.path === normalizePath(alias))
-      : isHrisRuntimeEffectiveRouteAlias(alias)
-  );
+  const sealedAliases = canonicalNode.routeAliases.filter((alias) => {
+    const v52Candidate = HRIS_V52_PAGE_AUTHORITY_ROUTE_BINDINGS.some(
+      (binding) => binding.nodeId === canonicalNode.nodeId && binding.path === normalizePath(alias)
+    );
+    if (v52Candidate) {
+      return Boolean(hrisV52PageAuthorityRouteBinding(canonicalNode.nodeId, alias));
+    }
+    if (schemaVersion === '3' && policyNode) {
+      return nodePolicyRoutes.some((route) => route.path === normalizePath(alias));
+    }
+    return isHrisRuntimeEffectiveRouteAlias(alias);
+  });
   const sealedOrder = new Map(sealedAliases.map((alias, index) => [alias, index]));
   const seenAliases = new Set<string>();
   let previousOrder = -1;
@@ -1238,6 +1251,10 @@ function isRuntimeEffectiveRouteAlias(
   nodeId: string,
   route: string
 ) {
+  const v52Candidate = HRIS_V52_PAGE_AUTHORITY_ROUTE_BINDINGS.some(
+    (binding) => binding.nodeId === nodeId && binding.path === normalizePath(route)
+  );
+  if (v52Candidate) return Boolean(hrisV52PageAuthorityRouteBinding(nodeId, route));
   const policyNode = HRIS_V46_SELF_POLICY_ROUTE_BINDINGS.some(
     (binding) => binding.nodeId === nodeId
   );
@@ -1253,7 +1270,13 @@ function isRuntimeMenuRouteAlias(
   route: string
 ) {
   if (!isRuntimeEffectiveRouteAlias(schemaVersion, nodeId, route)) return false;
-  return hrisV46SelfPolicyRouteBinding(nodeId, route) ? true : isHrisRuntimeMenuRouteAlias(route);
+  if (
+    hrisV46SelfPolicyRouteBinding(nodeId, route) ||
+    hrisV52PageAuthorityRouteBinding(nodeId, route)
+  ) {
+    return true;
+  }
+  return isHrisRuntimeMenuRouteAlias(route);
 }
 
 function isRuntimePolicyFresh(policy: HrisRuntimeNavigationPolicy) {

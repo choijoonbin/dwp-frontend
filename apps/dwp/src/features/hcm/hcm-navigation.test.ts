@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 
 import { isHrWorkItem, selectCurrentPerson } from './hcm-experience-model';
 import {
+  createHcmOperationsNavigation,
+  createHcmPersonalNavigation,
   findHcmNavigationItem,
   HCM_DEEP_LINK_COMPATIBILITY_ITEMS,
   HCM_MANAGEMENT_NAVIGATION,
@@ -165,6 +167,12 @@ describe('HR product navigation', () => {
       requiredResourceKey: 'DATA.HRIS_WORKFORCE',
       requiredPermissionCode: 'VIEW',
     });
+    expect(findHcmNavigationItem('/hr/me/requests')).toMatchObject({
+      view: 'requests',
+      governedOnly: true,
+      requiredResourceKey: 'DATA.HRIS_SELF_REQUEST',
+      requiredPermissionCode: 'VIEW',
+    });
     expect(findHcmNavigationItem('/hr/operations/time/clock-ingestion')).toMatchObject({
       view: 'time-clock-ingestion',
       governedOnly: true,
@@ -239,6 +247,12 @@ describe('HR product navigation', () => {
       requiredResourceKey: 'DATA.HRIS_WORKFORCE',
       requiredPermissionCode: 'VIEW',
     });
+    expect(findHcmNavigationItem('/hr/operations/people/certificates-documents')).toMatchObject({
+      view: 'certificates-documents',
+      governedOnly: true,
+      requiredResourceKey: 'DATA.HRIS_WORKFORCE',
+      requiredPermissionCode: 'VIEW',
+    });
     expect(findHcmNavigationItem('/hr/settings/people-employment')).toMatchObject({
       view: 'settings-people-employment',
       governedOnly: true,
@@ -280,6 +294,11 @@ describe('HR product navigation', () => {
       taskKind: 'work',
       access: { type: 'capability', capabilityContractKey: 'hcm.personal.profile.view' },
     });
+    expect(item(createHcmPersonalNavigation(true), 'requests')).toMatchObject({
+      path: '/hr/me/requests',
+      taskKind: 'work',
+      access: { type: 'capability', capabilityContractKey: 'hcm.personal.requests.view' },
+    });
     expect(item(HCM_OPERATIONS_NAVIGATION, 'employment-assignments')).toMatchObject({
       path: '/hr/operations/people/employment-assignments',
       taskKind: 'operations',
@@ -300,6 +319,13 @@ describe('HR product navigation', () => {
       taskKind: 'operations',
       access: { type: 'capability', capabilityContractKey: 'hcm.operations.people.view' },
     });
+    expect(item(createHcmOperationsNavigation(true), 'certificates-documents')).toMatchObject({
+      path: '/hr/operations/people/certificates-documents',
+      taskKind: 'operations',
+      access: { type: 'capability', capabilityContractKey: 'hcm.operations.people.view' },
+    });
+    expect(item(createHcmPersonalNavigation(false), 'requests')).toBeUndefined();
+    expect(item(createHcmOperationsNavigation(false), 'certificates-documents')).toBeUndefined();
     expect(item(HCM_OPERATIONS_NAVIGATION, 'time-interpretation')).toMatchObject({
       path: '/hr/operations/time/interpretation',
       taskKind: 'operations',
@@ -359,12 +385,12 @@ describe('HR product navigation', () => {
   });
 
   it('catalogs the R7 PAGEs while mounting only admitted central routes', () => {
-    expect(HRIS_R7_GOVERNED_PAGE_CATALOG).toHaveLength(11);
+    expect(HRIS_R7_GOVERNED_PAGE_CATALOG).toHaveLength(13);
     expect(
       HRIS_R7_GOVERNED_PAGE_CATALOG.filter((item) => item.state === 'ADMISSION_MOUNTED').map(
         (item) => item.module
       )
-    ).toEqual(['HRM', 'HRM', 'HRM', 'HRM', 'PAY', 'SYS', 'SYS', 'SYS']);
+    ).toEqual(['HRM', 'HRM', 'HRM', 'HRM', 'HRM', 'HRM', 'PAY', 'SYS', 'SYS', 'SYS']);
     const timItems = HRIS_R7_GOVERNED_PAGE_CATALOG.filter((item) => item.module === 'TIM');
     expect(timItems).toHaveLength(3);
     expect(timItems.every((item) => item.state === 'CATALOG_ONLY')).toBe(true);
@@ -390,6 +416,22 @@ describe('HR product navigation', () => {
       view: 'team-delegation',
       governedOnly: true,
     });
+    expect(
+      HRIS_R7_GOVERNED_PAGE_CATALOG.filter(
+        (item) => item.feature === 'HRIS_HRM_CERTIFICATE_WORKBENCH'
+      ).map(({ path, routeContractKey, state }) => ({ path, routeContractKey, state }))
+    ).toEqual([
+      {
+        path: '/hr/me/requests',
+        routeContractKey: 'route.hcm.personal.requests.page',
+        state: 'ADMISSION_MOUNTED',
+      },
+      {
+        path: '/hr/operations/people/certificates-documents',
+        routeContractKey: 'route.hcm.operations.certificates-documents.page',
+        state: 'ADMISSION_MOUNTED',
+      },
+    ]);
     expect(
       HRIS_R7_GOVERNED_PAGE_CATALOG.filter(
         (item) => item.feature === 'HRIS_HRM_APPOINTMENT_WORKBENCH'

@@ -33,6 +33,7 @@ export const HCM_PRODUCT_MANIFEST = defineProductManifest({
         { kind: 'exact', path: '/hr/home' },
         { kind: 'exact', path: '/hr/me' },
         { kind: 'exact', path: '/hr/me/employment-documents' },
+        { kind: 'exact', path: '/hr/me/requests' },
         { kind: 'exact', path: '/hr/time' },
         { kind: 'exact', path: '/hr/absence' },
         { kind: 'exact', path: '/hr/benefits' },

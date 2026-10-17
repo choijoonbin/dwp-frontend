@@ -607,6 +607,22 @@ describe('HRM-009 Stage-A unmounted component surfaces', () => {
     expect(document.querySelector('[data-runtime-state="denied"]')).not.toBeNull();
   });
 
+  it('discloses the central Stage-A limit and keeps every request control disabled without a delegate', async () => {
+    const source = adapter(projection('IAQ-003'));
+    await renderWorkbench('IAQ-003', source, {
+      initialFocusPublicId: 'request:1001',
+      defaultPersonPublicId: HRM009_TEST_PERSON_ID,
+    });
+    await shown('Stage-A is read only');
+
+    expect(document.body.textContent).toContain(
+      'Certificate submission and all document content or lifecycle controls are unavailable'
+    );
+    expect(button('Review and send request').disabled).toBe(true);
+    expect(document.querySelectorAll('form input:not(:disabled)')).toHaveLength(0);
+    expect(document.querySelectorAll('form button:not(:disabled)')).toHaveLength(0);
+  });
+
   it('retains a failed refresh only as stale metadata and synchronously fences the command', async () => {
     const source = adapter(projection('IAQ-003'));
     const delegate = vi.fn();

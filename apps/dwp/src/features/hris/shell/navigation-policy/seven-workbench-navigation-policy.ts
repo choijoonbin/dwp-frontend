@@ -244,9 +244,55 @@ export const HRIS_V46_SELF_POLICY_ROUTE_BINDINGS: readonly HrisV46SelfPolicyRout
     }),
   ]);
 
+export type HrisV52PageAuthorityRouteBinding = Readonly<{
+  nodeId: 'BASE:my-hr-requests' | 'BASE:hr-certificates-documents';
+  path: '/hr/me/requests' | '/hr/operations/people/certificates-documents';
+  routeContractKey:
+    'route.hcm.personal.requests.page' | 'route.hcm.operations.certificates-documents.page';
+  feature: 'HRIS_HRM_CERTIFICATE_WORKBENCH';
+  minimumBundleVersion: 52;
+  surfaceId: 'hcm.personal' | 'hcm.operations';
+  capability: 'hcm.personal.requests.view' | 'hcm.operations.people.view';
+}>;
+
+/**
+ * Append-only v52 PAGE-authority successor. This does not alter the historical v46 POLICY
+ * bindings: the shell may project these aliases only when the exact current PAGE path is present
+ * in the Product Surface authorized-path set.
+ */
+export const HRIS_V52_PAGE_AUTHORITY_ROUTE_BINDINGS: readonly HrisV52PageAuthorityRouteBinding[] =
+  Object.freeze([
+    Object.freeze({
+      nodeId: 'BASE:my-hr-requests',
+      path: '/hr/me/requests',
+      routeContractKey: 'route.hcm.personal.requests.page',
+      feature: 'HRIS_HRM_CERTIFICATE_WORKBENCH',
+      minimumBundleVersion: 52,
+      surfaceId: 'hcm.personal',
+      capability: 'hcm.personal.requests.view',
+    }),
+    Object.freeze({
+      nodeId: 'BASE:hr-certificates-documents',
+      path: '/hr/operations/people/certificates-documents',
+      routeContractKey: 'route.hcm.operations.certificates-documents.page',
+      feature: 'HRIS_HRM_CERTIFICATE_WORKBENCH',
+      minimumBundleVersion: 52,
+      surfaceId: 'hcm.operations',
+      capability: 'hcm.operations.people.view',
+    }),
+  ]);
+
 export function hrisV46SelfPolicyRouteBinding(nodeId: string, route: string) {
   const path = routePath(route);
   return HRIS_V46_SELF_POLICY_ROUTE_BINDINGS.find(
+    (binding) => binding.nodeId === nodeId && binding.path === path
+  );
+}
+
+export function hrisV52PageAuthorityRouteBinding(nodeId: string, route: string) {
+  if (import.meta.env.VITE_HRIS_HRM_009_ENABLED !== 'true') return undefined;
+  const path = routePath(route);
+  return HRIS_V52_PAGE_AUTHORITY_ROUTE_BINDINGS.find(
     (binding) => binding.nodeId === nodeId && binding.path === path
   );
 }
