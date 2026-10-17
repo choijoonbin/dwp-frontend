@@ -1,0 +1,67 @@
+{
+  "schema": "dwp.hris.wave7.tim-007-central-bridge-integration-receipt-correction.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-01-TIM-007-CENTRAL-BRIDGE-INTEGRATION-20261017-R2",
+  "recordedAt": "2026-10-17T19:38:28+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-TIM",
+  "sliceId": "BASE-TFR-TIM-007",
+  "canonicalFeature": "HRIS_TIME_CLOSE_HANDOFF",
+  "state": "AUTHORITATIVE_APPEND_ONLY_CORRECTION_CENTRAL_BRIDGE_INTEGRATED_DEFAULT_OFF",
+  "supersession": {
+    "predecessor": {
+      "path": "central-bridge-integration-receipt.v1.json",
+      "sha256": "078bda3272de74ce348cf2677075d64cbcfd41922e05f1d12babbaf15f15a87e",
+      "bytes": 6410,
+      "disposition": "PRESERVED_NON_AUTHORITATIVE_AFTER_THIS_CORRECTION"
+    },
+    "reason": [
+      "Bind the decision and implementation plan bytes into the evidence DAG.",
+      "Distinguish integrated implementations from runtime availability because the HTTP owner and Timecard provider remain conditional on the Timecard feature."
+    ],
+    "unchangedEvidenceInherited": [
+      "both independent review decisions and reviewed commit/tree pins",
+      "both backend merge commits, the bounded stale-fixture correction and origin-exact push",
+      "the targeted integrated verification counts",
+      "DRAFT v50, default OFF, empty enrollment and all external gates",
+      "no activation, tenant enrollment, customer data or production release authority"
+    ]
+  },
+  "authorityInputs": {
+    "decision": {
+      "path": "../../r7-batch-01-module-start-r1/tim-007-central-contract-bridge-decision.v1.json",
+      "sha256": "9718b37c56a8976053e4a1bbb0645eb517045d22f9508ef75b809bb624ed1566",
+      "bytes": 25839,
+      "role": "CENTRAL_BRIDGE_SCOPE_AND_SEMANTIC_AUTHORITY"
+    },
+    "implementationPlan": {
+      "path": "../../r7-batch-01-module-start-r1/tim-007-central-contract-bridge-implementation-plan.v1.json",
+      "sha256": "4a47fe6d6a7fa61d2ba24c620082c59a9e2c68eed986bda6223b2232cd7cf1b7",
+      "bytes": 14162,
+      "role": "DISJOINT_WORKSTREAM_AND_TARGETED_VERIFICATION_AUTHORITY"
+    }
+  },
+  "correctedCommandReceiptStatus": {
+    "registryImplementationIntegrated": true,
+    "timecardProviderImplementationIntegrated": true,
+    "currentRuntimeAvailability": "CONDITIONAL_ON_DWP_HRIS_TIME_TIMECARD_ENABLED_NOT_VALID_FOR_CLOSE_ONLY_ACTIVATION",
+    "requiredFromTimModule": [
+      "register a close-result CommandReceiptProvider with unique owner discovery and sealed originating-authority revalidation",
+      "make the command-receipt HTTP owner and close authority/filter path available under the TIM close feature without requiring the Timecard feature",
+      "preserve default OFF, fail-closed authority, no-store response and registry ambiguity/timeout/error audit semantics",
+      "prove zero close-receipt calls when the TIM close feature is absent, false or the tenant is not enrolled"
+    ],
+    "activationDecisionBeforeClosure": "NO_GO"
+  },
+  "integratedPin": {
+    "repository": "dwp-backend",
+    "branch": "dwp-dev",
+    "commit": "bada002d2a55f2d7e0a16dd1c8f240f1526aae82",
+    "tree": "40f9ad7052cb22dd7191d3b43cec714ec06ba17c",
+    "originExactAfterPush": true
+  },
+  "externalGateRestatement": {
+    "pdx011LiveProducer": "External; default-OFF consumer port and fixtures may proceed, production approval-integration completion may not be claimed.",
+    "payDurableClosedTimeConsumer": "P0 separate PAY owner and migration gate; TIM-007 may not create PAY runtime tables or durable persistence and may not claim TIM-to-PAY end-to-end, calculation or release completion."
+  },
+  "nextAction": "ISSUE_A_REPLACEMENT_TIM_MODULE_TOKEN_HASH_BOUND_TO_THIS_CORRECTION_AND_THE_INTEGRATED_BACKEND_PIN"
+}
