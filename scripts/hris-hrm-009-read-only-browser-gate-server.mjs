@@ -63,7 +63,6 @@ const PERSONAL_SCOPE = Object.freeze({
   displayName: 'My HR certificate requests',
   isDefault: true,
   readOnly: true,
-  validUntil: null,
 });
 
 const OPERATIONS_SCOPE = Object.freeze({
@@ -72,7 +71,6 @@ const OPERATIONS_SCOPE = Object.freeze({
   displayName: 'HR certificate operations population',
   isDefault: true,
   readOnly: true,
-  validUntil: null,
 });
 
 let sequence = 0;
@@ -149,28 +147,42 @@ function failure(response, statusCode, message, reasonCode) {
   });
 }
 
-function readJson(request, maximumBytes) {
+function readBody(request, maximumBytes) {
   return new Promise((resolve, reject) => {
     const chunks = [];
     let received = 0;
+    let tooLarge = false;
     request.on('data', (chunk) => {
       received += chunk.length;
       if (received > maximumBytes) {
-        reject(new Error('REQUEST_TOO_LARGE'));
-        request.destroy();
+        tooLarge = true;
+        chunks.length = 0;
         return;
       }
-      chunks.push(chunk);
+      if (!tooLarge) chunks.push(chunk);
     });
     request.on('end', () => {
-      try {
-        resolve(chunks.length ? JSON.parse(Buffer.concat(chunks).toString('utf8')) : {});
-      } catch {
-        reject(new Error('INVALID_JSON'));
+      if (tooLarge) {
+        reject(new Error('REQUEST_TOO_LARGE'));
+        return;
       }
+      resolve(Buffer.concat(chunks, received));
     });
+    request.on('aborted', () => reject(new Error('REQUEST_ABORTED')));
     request.on('error', reject);
   });
+}
+
+function parseJson(body) {
+  try {
+    return body.length ? JSON.parse(body.toString('utf8')) : {};
+  } catch {
+    throw new Error('INVALID_JSON');
+  }
+}
+
+async function readJson(request, maximumBytes) {
+  return parseJson(await readBody(request, maximumBytes));
 }
 
 function freshAuthorityTimes() {
@@ -196,7 +208,6 @@ function capabilityGrant({ capabilityContractKey, resolvedCapabilityCode, author
     requiresProductEntitlement: false,
     readOnly: true,
     activationState: 'ACTIVE',
-    validUntil: null,
   };
 }
 
@@ -293,16 +304,7 @@ function denial(response, decision, reasonCode) {
   success(response, { decision, reasonCode, decisionRevision: DECISION_REVISION });
 }
 
-async function evaluateAuthority(request, response) {
-  let body;
-  try {
-    body = await readJson(request, MAX_EVALUATION_BODY_BYTES);
-  } catch {
-    counters.unexpectedAuthorityEvaluations += 1;
-    recordEvent('AUTHORITY_EVALUATION_REJECTED', { reasonCode: 'INVALID_REQUEST_BODY' });
-    failure(response, 400, 'Authority evaluation request is invalid.', 'INVALID_REQUEST_BODY');
-    return;
-  }
+function evaluateAuthority(body, response) {
   const routeContractKey = typeof body?.routeContractKey === 'string' ? body.routeContractKey : '';
   const contract = CONTRACTS[routeContractKey];
   const subject = body?.subject;
@@ -357,6 +359,46 @@ async function evaluateAuthority(request, response) {
     validUntil: null,
     revalidateAt,
   });
+}
+
+async function routeAuthorityEvaluation(request, response, pathname) {
+  let bodyBuffer;
+  try {
+    bodyBuffer = await readBody(request, MAX_EVALUATION_BODY_BYTES);
+  } catch (error) {
+    const tooLarge = error instanceof Error && error.message === 'REQUEST_TOO_LARGE';
+    recordEvent('AUTHORITY_EVALUATION_REJECTED', {
+      reasonCode: tooLarge ? 'REQUEST_TOO_LARGE' : 'INVALID_REQUEST_BODY',
+    });
+    failure(
+      response,
+      tooLarge ? 413 : 400,
+      'Authority evaluation request is invalid.',
+      tooLarge ? 'REQUEST_TOO_LARGE' : 'INVALID_REQUEST_BODY'
+    );
+    return;
+  }
+
+  let body;
+  try {
+    body = parseJson(bodyBuffer);
+  } catch {
+    recordEvent('AUTHORITY_EVALUATION_REJECTED', { reasonCode: 'INVALID_REQUEST_BODY' });
+    failure(response, 400, 'Authority evaluation request is invalid.', 'INVALID_REQUEST_BODY');
+    return;
+  }
+
+  const routeContractKey = typeof body?.routeContractKey === 'string' ? body.routeContractKey : '';
+  if (!routeContractKey.trim()) {
+    recordEvent('AUTHORITY_EVALUATION_REJECTED', { reasonCode: 'ROUTE_CONTRACT_REQUIRED' });
+    failure(response, 400, 'Authority evaluation request is invalid.', 'ROUTE_CONTRACT_REQUIRED');
+    return;
+  }
+  if (!Object.hasOwn(CONTRACTS, routeContractKey)) {
+    forward(request, response, pathname, bodyBuffer);
+    return;
+  }
+  evaluateAuthority(body, response);
 }
 
 function action(actionKey, hrefTemplate) {
@@ -584,7 +626,7 @@ async function control(request, response, url) {
   failure(response, 404, 'Fixture control endpoint was not found.', 'NOT_FOUND');
 }
 
-function forward(request, response, pathname) {
+function forward(request, response, pathname, body) {
   const method = request.method ?? 'GET';
   counters.forwardedRequests.total += 1;
   if (method === 'POST' && pathname === '/api/auth/login') {
@@ -620,7 +662,11 @@ function forward(request, response, pathname) {
     }
   });
   request.on('aborted', () => upstreamRequest.destroy());
-  request.pipe(upstreamRequest);
+  if (body === undefined) {
+    request.pipe(upstreamRequest);
+  } else {
+    upstreamRequest.end(body);
+  }
 }
 
 const server = http.createServer(async (request, response) => {
@@ -637,7 +683,7 @@ const server = http.createServer(async (request, response) => {
     return;
   }
   if (method === 'POST' && pathname === EVALUATION_PATH) {
-    await evaluateAuthority(request, response);
+    await routeAuthorityEvaluation(request, response, pathname);
     return;
   }
   if (pathname.startsWith(STEP_UP_PREFIX)) {
