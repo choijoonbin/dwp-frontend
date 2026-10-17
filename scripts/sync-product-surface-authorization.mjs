@@ -92,6 +92,28 @@ const V30_RESEARCH_AUTHORITY_UPGRADE_ROUTES = new Set([
 const V30_RESEARCH_READ_AUTHORITY_UPGRADE_ROUTES = new Set(
   [...V30_RESEARCH_AUTHORITY_UPGRADE_ROUTES].filter((key) => key.endsWith('.data'))
 );
+const V49_PAYROLL_CAPABILITY_HARDENING = Object.freeze({
+  'hcm.operations.payroll-run.execute': Object.freeze({
+    riskTier: 'CRITICAL',
+    activationPolicy: 'STEPUP-MGMT-HIGH-V1',
+  }),
+  'hcm.operations.payroll-support.view': Object.freeze({
+    riskTier: 'HIGH',
+    activationPolicy: 'STEPUP-MGMT-HIGH-V1',
+  }),
+});
+const V49_PAYROLL_CALCULATE_ROUTE = 'route.hcm.operations.payroll-run-calculate.action';
+const V49_PAYROLL_CALCULATE_STEP_UP = Object.freeze([
+  Object.freeze({
+    audience: 'dwp-payroll-server',
+    bindingKey: 'route.hcm.operations.payroll-run-calculate.action.binding.01',
+    expectedObjectVersionName: 'X-DWP-Expected-Object-Version',
+    expectedObjectVersionSource: 'COMMAND_HEADER',
+    ownerServiceKey: 'payroll',
+    targetIdPathParameter: 'runId',
+    targetType: 'PAYROLL_RUN',
+  }),
+]);
 
 function fail(message) {
   throw new Error(`Product surface authorization contract error: ${message}`);
@@ -282,7 +304,8 @@ function validateNoDroppedContracts(previous, next) {
           record,
           candidate
         ) &&
-        !isV37TimeVoidProfileRemoval(next.version, section, record[key], record, candidate)
+        !isV37TimeVoidProfileRemoval(next.version, section, record[key], record, candidate) &&
+        !isV49PayrollSecurityHardening(next.version, section, record[key], record, candidate)
       ) {
         fail(
           `v${next.version} non-monotonically changed v${previous.version} ${section} ${record[key]}`
@@ -456,6 +479,59 @@ function isV37TimeVoidProfileRemoval(version, section, key, previous, candidate)
   }
   const normalized = structuredClone(candidate);
   normalized.accessProfiles = structuredClone(previous.accessProfiles);
+  return canonicalJson(normalized) === canonicalJson(previous);
+}
+
+function isV49PayrollSecurityHardening(version, section, key, previous, candidate) {
+  if (version !== 49) return false;
+  const capabilityHardening = V49_PAYROLL_CAPABILITY_HARDENING[key];
+  if (section === 'capabilities' && capabilityHardening) {
+    if (
+      candidate.riskTier !== capabilityHardening.riskTier ||
+      candidate.activationPolicy !== capabilityHardening.activationPolicy
+    ) {
+      return false;
+    }
+    const previousRoutes = previous.routeContractKeys ?? [];
+    const candidateRoutes = candidate.routeContractKeys ?? [];
+    if (
+      new Set(candidateRoutes).size !== candidateRoutes.length ||
+      !previousRoutes.every((routeKey) => candidateRoutes.includes(routeKey))
+    ) {
+      return false;
+    }
+    const normalized = structuredClone(candidate);
+    normalized.riskTier = previous.riskTier;
+    normalized.activationPolicy = previous.activationPolicy;
+    normalized.routeContractKeys = structuredClone(previousRoutes);
+    return canonicalJson(normalized) === canonicalJson(previous);
+  }
+  if (section !== 'routes' || key !== V49_PAYROLL_CALCULATE_ROUTE) return false;
+  const normalized = structuredClone(candidate);
+  const candidateProfiles = new Map(
+    normalized.accessProfiles.map((profile) => [profile.profileKey, profile])
+  );
+  const previousProfiles = new Map(
+    previous.accessProfiles.map((profile) => [profile.profileKey, profile])
+  );
+  const candidateProfile = candidateProfiles.get('payroll-run-operator');
+  const previousProfile = previousProfiles.get('payroll-run-operator');
+  if (
+    candidateProfiles.size !== 1 ||
+    previousProfiles.size !== 1 ||
+    !candidateProfile ||
+    !previousProfile ||
+    canonicalJson(candidateProfile.activeAccessModes) !== canonicalJson(['ELEVATED']) ||
+    canonicalJson(normalized.stepUpCommandBindings) !== canonicalJson(V49_PAYROLL_CALCULATE_STEP_UP)
+  ) {
+    return false;
+  }
+  candidateProfile.activeAccessModes = structuredClone(previousProfile.activeAccessModes);
+  if (Object.hasOwn(previous, 'stepUpCommandBindings')) {
+    normalized.stepUpCommandBindings = structuredClone(previous.stepUpCommandBindings);
+  } else {
+    delete normalized.stepUpCommandBindings;
+  }
   return canonicalJson(normalized) === canonicalJson(previous);
 }
 

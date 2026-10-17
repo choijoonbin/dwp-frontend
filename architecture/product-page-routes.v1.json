@@ -388,6 +388,13 @@
       "surfaceId": "hcm.management"
     },
     {
+      "routeContractKey": "route.hcm.configuration.settings-operations.page",
+      "routeId": "hcm.management.settings-operations",
+      "pattern": "/hr/settings/operations",
+      "productId": "hcm",
+      "surfaceId": "hcm.management"
+    },
+    {
       "routeContractKey": "route.hcm.management.controlled-export.page",
       "routeId": "hcm.management.controlled-export",
       "pattern": "/hr/data/exports",
@@ -472,6 +479,13 @@
       "surfaceId": "hcm.operations"
     },
     {
+      "routeContractKey": "route.hcm.operations.organization-positions.page",
+      "routeId": "hcm.operations.organization-positions",
+      "pattern": "/hr/operations/people/organization-positions",
+      "productId": "hcm",
+      "surfaceId": "hcm.operations"
+    },
+    {
       "routeContractKey": "route.hcm.operations.overview.page",
       "routeId": "hcm.operations.overview",
       "pattern": "/hr/operations",
@@ -482,6 +496,13 @@
       "routeContractKey": "route.hcm.operations.pay.page",
       "routeId": "hcm.operations.pay",
       "pattern": "/hr/operations/pay",
+      "productId": "hcm",
+      "surfaceId": "hcm.operations"
+    },
+    {
+      "routeContractKey": "route.hcm.operations.payroll-population.page",
+      "routeId": "hcm.operations.payroll-population",
+      "pattern": "/hr/operations/payroll/population",
       "productId": "hcm",
       "surfaceId": "hcm.operations"
     },
@@ -528,6 +549,20 @@
       "surfaceId": "hcm.operations"
     },
     {
+      "routeContractKey": "route.hcm.operations.time-command-center.page",
+      "routeId": "hcm.operations.time-command-center",
+      "pattern": "/hr/operations/time/command-center",
+      "productId": "hcm",
+      "surfaceId": "hcm.operations"
+    },
+    {
+      "routeContractKey": "route.hcm.operations.time-daily-close.page",
+      "routeId": "hcm.operations.time-daily-close",
+      "pattern": "/hr/operations/time/daily-close",
+      "productId": "hcm",
+      "surfaceId": "hcm.operations"
+    },
+    {
       "routeContractKey": "route.hcm.operations.time-exceptions.page",
       "routeId": "hcm.operations.time-exceptions",
       "pattern": "/hr/operations/time/exceptions",
@@ -545,6 +580,13 @@
       "routeContractKey": "route.hcm.operations.time-leave-operations.page",
       "routeId": "hcm.operations.time-leave-operations",
       "pattern": "/hr/operations/time/leave-operations",
+      "productId": "hcm",
+      "surfaceId": "hcm.operations"
+    },
+    {
+      "routeContractKey": "route.hcm.operations.time-monthly-close.page",
+      "routeId": "hcm.operations.time-monthly-close",
+      "pattern": "/hr/operations/time/monthly-close",
       "productId": "hcm",
       "surfaceId": "hcm.operations"
     },
