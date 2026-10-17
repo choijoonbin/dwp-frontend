@@ -1,0 +1,253 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-01-hrm-005-boundary-validation-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-01-HRM-005-BOUNDARY-VALIDATION-20261017-R1",
+  "validatedAt": "2026-10-17T17:00:00+09:00",
+  "validatedBy": "SYS_COMMON_INTEGRATION_CONTROL_HRM_INDEPENDENT_BOUNDARY_RECHECK",
+  "result": "PASS_SUCCESSOR_SEALED_START_TOKEN_BLOCKED_ONLY_BY_PEOPLE_PEP_RUNTIME_PATCH",
+  "lineage": {
+    "frontendCarrier": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "e569982492e8eac01fcc87674e4aea10b90d990a",
+      "tree": "33b6ff429d3b9f2253bcf74314c55af301c156f4",
+      "originExact": true
+    },
+    "backendEvidencePin": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "3d3f141d95f0252f66bd5987b6cba30fadc431e9",
+      "tree": "bd0de7c5e36658da84bdb2cadd6e0504b2f9323b",
+      "originExact": true
+    }
+  },
+  "validatedDecision": {
+    "path": "hrm-005-transport-and-reuse-seam-successor.v1.json",
+    "sha256": "3cbc7b9632ec267bca8b068e23a30b021fbeab35f1ce9c807122d2e812088aff",
+    "result": "PASS"
+  },
+  "recomputedEvidence": [
+    {
+      "role": "R7_SOURCE_AUTHORITY",
+      "path": "../r7-batch-01-dispatch-r1/source-authority.v1.json",
+      "expectedSha256": "d40df88e26530bd467c5cc6210d967b31a521f06647e672987393c1d1837165e",
+      "result": "PASS"
+    },
+    {
+      "role": "R7_CENTRAL_BATCH_MANIFEST",
+      "path": "../r7-batch-01-dispatch-r1/central-batch-manifest.v1.json",
+      "expectedSha256": "5a10f45872c6f7e8959faa16b7313df3e60e4eb3057cacffa779728ba321073c",
+      "result": "PASS"
+    },
+    {
+      "role": "HRM005_OWNER_PACKET",
+      "path": "../r7-batch-01-dispatch-r1/owner-packets/base-tfr-hrm-005.owner-packet.v1.json",
+      "expectedSha256": "0fcd8d27fd283b5ddbd697e9ccce3427966e960d80186f02c7cba709cfb66506",
+      "result": "PASS"
+    },
+    {
+      "role": "R7_AUTHORIZATION_V5_DECISION",
+      "path": "../r7-batch-01-authorization-decisions-r1/central-authorization-decision-amendment.v5.json",
+      "expectedSha256": "1cd3598ae7dd4c7629afc199b265c9d3d10de40706a43583790651336b86dbd2",
+      "result": "PASS"
+    },
+    {
+      "role": "R7_FRONTEND_V49_SYNC_RECEIPT",
+      "path": "../r7-batch-01-auth-v49-integration-r1/frontend-v49-sync-and-integration-receipt.v1.json",
+      "expectedSha256": "178152fad3821c4387a6795b33cce4111997bb753e864b574c45964a0a746da5",
+      "result": "PASS"
+    },
+    {
+      "role": "R7_MODULE_BOUNDARY_RECEIPT",
+      "path": "boundary-validation-receipt.v1.json",
+      "expectedSha256": "ada7e69cbd140a42b6c319dcebdab841be9ee2cc80ed17ddf78c66b9e2c11a8d",
+      "result": "PASS"
+    },
+    {
+      "role": "HISTORICAL_G2_OPERATION_SOURCE",
+      "path": "../../recovery/hris-porting-blueprint-2026-09-09/session-evidence/hrm/g2-readiness/api-event-contracts.v1.json",
+      "expectedSha256": "0c3ec58b29dcf534d1b887fed5678e878e4a514cf3f943165e47dd7a486355bb",
+      "result": "PASS"
+    },
+    {
+      "role": "HISTORICAL_G2_SCHEMA_SUPPLEMENT",
+      "path": "../../recovery/hris-porting-blueprint-2026-09-09/coding-readiness/hrm-transport-schema-supplement.v1.json",
+      "expectedSha256": "85d29729961f4348b595f9773c76afd7232e4b92c5f198351afb4d8ac0dcf404",
+      "result": "PASS"
+    },
+    {
+      "role": "TRANSPORT_SCHEMA_RESOLUTION_REGISTER",
+      "path": "../../recovery/hris-porting-blueprint-2026-09-09/coding-readiness/transport-schema-resolution-register.csv",
+      "expectedSha256": "86e76b0fe8b36102f35b2e82b7d8ffc3fc250455dde6d2d7747ac3f1a6cc877e",
+      "result": "PASS"
+    },
+    {
+      "role": "API_PEP_BINDING_REGISTER",
+      "path": "../../recovery/hris-porting-blueprint-2026-09-09/coding-readiness/api-pep-binding-register.csv",
+      "expectedSha256": "0e38d724516a8b271069241ffa0fb6400984dc703758767de53cbaffb4f93da3",
+      "result": "PASS"
+    },
+    {
+      "role": "PINNED_ORGANIZATION_EXPLORER",
+      "path": "../../../../../apps/dwp/src/features/people/organization/organization-chart-manager.tsx",
+      "expectedSha256": "c67bbf9e4e7a259a2a849688248b6c51944d0f0c2d2bde46c9db24ef0b6e6cd8",
+      "result": "PASS"
+    },
+    {
+      "role": "PINNED_FRONTEND_ORGANIZATION_MODEL",
+      "path": "../../../../../libs/shared-utils/src/api/people-admin-api.ts",
+      "expectedSha256": "6263590ce225937dc137e78c0788883f5226828919062f174852fbd9ecc072ef",
+      "result": "PASS"
+    }
+  ],
+  "backendEvidenceRecomputed": [
+    {
+      "path": "contracts/product-authorization/product-surfaces-v1.bundle-v49.json",
+      "sha256": "18793822b574b3bda2389585ad8b77b490019e1f3ef82f784c0178c15286f2f9",
+      "result": "PASS"
+    },
+    {
+      "path": "dwp-people-server/src/main/resources/product-authorization/hcm-people-pep-v49.generated.json",
+      "sha256": "bf2d079820cceba5ed8adcb0b7927daaef239bccc178138e25a6f889f55b1834",
+      "result": "PASS_ROUTE_PRESENT"
+    },
+    {
+      "path": "dwp-people-server/src/main/resources/product-authorization/hcm-people-pep-v42.generated.json",
+      "sha256": "fea385d75343d64b8a4bc60c9b4d073e142e1b7e87ef697e10810ed70db67056",
+      "result": "PASS_ROUTE_ABSENT"
+    },
+    {
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmV3PepRegistry.java",
+      "sha256": "803db9c485fa99745cf9ef602d7d25f9bc9cc0d51a89d70ca9b76361161223d6",
+      "result": "PASS_ACTIVE_RESOURCE_IS_V42"
+    },
+    {
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmScopeSelectionValidator.java",
+      "sha256": "055ba16f23cff7da869cc7c98bac9dbde2f902c79478ddb1b9bb51aad8d8a216",
+      "result": "PASS_ORGANIZATION_GRAPH_PREDICATE_ABSENT"
+    },
+    {
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/organization/OrganizationChartDtos.java",
+      "sha256": "2129cf3d95ab715d26316469f8ca1ebd41c20ea4711d01091af0569d2f774da1",
+      "result": "PASS"
+    },
+    {
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/organization/OrganizationChartService.java",
+      "sha256": "01005b728d7272996ac21b972dcf13f2098d2225dc11e85e2ae55a1c2621787e",
+      "result": "PASS"
+    },
+    {
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/organization/OrganizationChartRepository.java",
+      "sha256": "374cb32db0e7081f3497418dbbc6311f77cd2a88a338b3b38c8220fab3e9f7e2",
+      "result": "PASS"
+    }
+  ],
+  "semanticChecks": [
+    {
+      "id": "HRM005-BOUNDARY-001",
+      "result": "PASS",
+      "evidence": "The decision is append-only. No historical G2 operation, supplement, resolution register, PEP binding register, owner packet or authorization artifact was edited."
+    },
+    {
+      "id": "HRM005-BOUNDARY-002",
+      "result": "PASS",
+      "evidence": "The successor keeps all five historical query fields required and deterministically maps an explicit-offset instant to a UTC LocalDate. rootPublicId is non-null and values outside depth 0 through 12 are rejected rather than clamped."
+    },
+    {
+      "id": "HRM005-BOUNDARY-003",
+      "result": "PASS",
+      "evidence": "Depth 0 is root-only, while 1 through 12 reuse the current engine's root-at-zero subtree semantics. Position projection at depth 0 is confined to the root organization."
+    },
+    {
+      "id": "HRM005-BOUNDARY-004",
+      "result": "PASS",
+      "evidence": "REPORTING is the only admitted relationship model and maps only to the primary effective SUPERVISORY source. LEGAL and COST are explicitly unsupported and fail before repository access; no source-free graph semantics are invented."
+    },
+    {
+      "id": "HRM005-BOUNDARY-005",
+      "result": "PASS",
+      "evidence": "OrganizationGraphWithPositionsV2 closes the historical includePositions gap with an always-present positions array, a positionsIncluded marker and an exact field mapping to the current OrganizationChartDtos.Position model."
+    },
+    {
+      "id": "HRM005-BOUNDARY-006",
+      "result": "PASS",
+      "evidence": "includePositions=false discloses no position facts; true is population- and field-decision-bound. Node, position and incumbent ordering is fully deterministic and independent of database, hash-map or scenario append order."
+    },
+    {
+      "id": "HRM005-BOUNDARY-007",
+      "result": "PASS",
+      "evidence": "The only shared Explorer exception is organization-chart-manager.tsx. Its no-adapter management behavior is sealed byte-equivalent to the pinned baseline, while the closed canonical adapter exposes one query method and mounts no scenario, intelligence, candidate, mutation or export runtime."
+    },
+    {
+      "id": "HRM005-BOUNDARY-008",
+      "result": "PASS",
+      "evidence": "Architecture, routes, HRIS shell, hcm-navigation.ts and hcm.tsx remain central-owned and excluded. This decision creates no React mount and no runtime activation."
+    },
+    {
+      "id": "HRM005-BOUNDARY-009",
+      "result": "PASS",
+      "evidence": "The v49 People projection contains the exact graph route, but active HcmV3PepRegistry remains on v42 and the owner predicate closure lacks predicate.hcm-organization-graph-authority.v1. A separately accepted central patch is therefore a real start-token prerequisite."
+    },
+    {
+      "id": "HRM005-BOUNDARY-010",
+      "result": "PASS",
+      "evidence": "Existing effective organization, relationship, position and outbox schema is sufficient. People V57 has no lease, no file and no authoring authority."
+    },
+    {
+      "id": "HRM005-BOUNDARY-011",
+      "result": "PASS",
+      "evidence": "Both new documents parse strictly as JSON; all recorded hashes recompute; targeted closed-set assertions and git diff --check pass. No broad product suite was repeated for an authority-only documentation change."
+    }
+  ],
+  "validationScope": {
+    "performed": [
+      "strict JSON parse of both new artifacts",
+      "SHA-256 recomputation for every named frontend predecessor and source",
+      "SHA-256 recomputation for the named backend engine and People PEP runtime evidence",
+      "closed-set semantic assertions for query, response, relationship, position, Explorer seam, migration and authority booleans",
+      "changed-path confinement and git diff whitespace validation"
+    ],
+    "notPerformed": [
+      "People PEP runtime patch implementation",
+      "HRM-005 backend or frontend implementation",
+      "database migration authoring or execution",
+      "browser, Gradle, Vitest or repository-wide product suite",
+      "branch push, dwp-dev merge, tenant enrollment or activation"
+    ]
+  },
+  "changedPathBoundary": {
+    "exactCount": 2,
+    "exactPaths": [
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-start-r1/hrm-005-boundary-validation-receipt.v1.json",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-start-r1/hrm-005-transport-and-reuse-seam-successor.v1.json"
+    ],
+    "outsidePaths": 0,
+    "historicalFilesChanged": 0,
+    "productSourceFilesChanged": 0
+  },
+  "residualBlockers": [
+    {
+      "blockerId": "HRM005-PEOPLE-PEP-V49-RUNTIME-CENTRAL-PATCH",
+      "severity": "P0_START_TOKEN_BLOCKING",
+      "owner": "SYS_COMMON_INTEGRATION_CONTROL_WITH_HRIS_HRM_OWNER_REVIEW",
+      "state": "OPEN",
+      "requiredClosure": "Accept and integrate the separate People PEP runtime v49 binding and organization-graph owner predicate patch, then issue a fresh HRM-005 token that binds this decision SHA-256."
+    }
+  ],
+  "authority": {
+    "validationReceiptIssued": true,
+    "transportSuccessorAccepted": true,
+    "explorerReuseSeamAccepted": true,
+    "peopleV57Required": false,
+    "peopleV57LeaseIssued": false,
+    "peoplePepRuntimePrerequisiteSatisfied": false,
+    "hrm005StartTokenMayIssue": false,
+    "sourceImplementationAuthorized": false,
+    "migrationAuthoringAuthorized": false,
+    "moduleBranchPushAuthorized": false,
+    "mergeToDwpDevAuthorized": false,
+    "centralFrontendMountAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "activationAuthorized": false
+  },
+  "nextGate": "CENTRAL_PEOPLE_PEP_V49_RUNTIME_PATCH_ACCEPTANCE_AND_INTEGRATION_THEN_FRESH_HRM005_TOKEN"
+}
