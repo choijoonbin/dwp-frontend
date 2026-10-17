@@ -204,4 +204,35 @@ describe('Shared product-surface HIGH command contract', () => {
       idempotencyKey: '99999999-9999-4999-8999-999999999999',
     });
   });
+
+  it('binds PAY run preparation to the canonical operations ACTION and exact target type', () => {
+    expect(
+      buildApprovalHighRiskActionEvaluationRequest('HCM_PAYROLL_RUN_PREPARE', {
+        contextKey: authority.contextKey,
+        contextScopeKey: authority.contextScopeKey,
+      })
+    ).toEqual({
+      subject: { type: 'PRODUCT', productKey: 'hcm', surfaceKey: 'hcm.operations' },
+      routeContractKey: 'route.hcm.operations.payroll-run.action',
+      contextScopeKey: 'population-team-a',
+    });
+
+    expect(
+      productSurfaceHighRiskCommand({
+        operation: 'HCM_PAYROLL_RUN_PREPARE',
+        commandMethod: 'POST',
+        commandPath: '/api/payroll/v1/runs',
+        targetType: 'PAYROLL_RUN_PREPARATION',
+        targetId: 'preparation-1',
+        expectedObjectVersion: 0,
+        idempotencyKey: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+        payload: { populationPublicId: 'population.monthly-seoul' },
+      })
+    ).toMatchObject({
+      operation: 'HCM_PAYROLL_RUN_PREPARE',
+      targetType: 'PAYROLL_RUN_PREPARATION',
+      targetId: 'preparation-1',
+      expectedObjectVersion: 0,
+    });
+  });
 });
