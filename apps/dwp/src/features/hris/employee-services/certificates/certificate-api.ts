@@ -21,7 +21,7 @@ import type {
 } from './certificate-contract';
 
 const CERTIFICATE_PATH = '/api/people/v1/hris/certificates';
-const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu;
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu;
 
 export const HRM009_API_CONTRACTS = Object.freeze([
   Object.freeze({

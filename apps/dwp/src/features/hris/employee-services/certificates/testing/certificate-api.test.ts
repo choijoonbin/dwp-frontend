@@ -195,4 +195,20 @@ describe('HRM-009 owner API', () => {
     }
     expect(runtime.post).toHaveBeenCalledTimes(2);
   });
+
+  it('rejects UUID versions outside the accepted v1-v5 transport boundary before I/O', async () => {
+    const versionSix = '22222222-2222-6222-8222-222222222222';
+
+    await expect(
+      requestCertificate({ ...command, correlationId: versionSix }, authority())
+    ).rejects.toThrow('Certificate correlation identifier is invalid.');
+    await expect(
+      requestCertificate(
+        { ...command, request: { ...command.request, personPublicId: versionSix } },
+        authority()
+      )
+    ).rejects.toThrow('certificateRequest.personPublicId');
+
+    expect(runtime.post).not.toHaveBeenCalled();
+  });
 });
