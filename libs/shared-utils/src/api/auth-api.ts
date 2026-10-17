@@ -111,6 +111,9 @@ export type ProductSurfaceDecisionCode =
   | 'SCOPE_INVALID'
   | 'EXPIRED'
   | 'ACTIVATION_REQUIRED'
+  | 'FEATURE_ACTIVATION_REQUIRED'
+  | 'TENANT_FEATURE_ENROLLMENT_REQUIRED'
+  | 'TENANT_APP_ADOPTION_REQUIRED'
   | 'STEP_UP_REQUIRED'
   | 'SOD_CONFLICT'
   | 'SUPPORT_SCOPE_DENIED'
@@ -194,6 +197,11 @@ export type ProductSurfaceContextListData = {
     productRelationship?: string | null;
     targetPopulation?: string | null;
     support?: string | null;
+    /**
+     * Raw transport compatibility only. Contract-v2 consumers must pass through
+     * parseProductSurfaceAuthoritySnapshot before trusting this revision.
+     */
+    tenantControl?: string | null;
   };
   activeAccessMode: ProductSurfaceAccessMode;
   generatedAt: string;

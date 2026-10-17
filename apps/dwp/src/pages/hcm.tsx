@@ -98,6 +98,21 @@ const HrisClockIngestionOperationsWorkspace = lazy(() =>
     })
   )
 );
+const HrisOrganizationPositionsRouteAdmission = lazy(() =>
+  import('../features/hris/integration/hris-feature-route-admission').then((module) => ({
+    default: module.HrisOrganizationPositionsRouteAdmission,
+  }))
+);
+const HrisPayrollPopulationRouteAdmission = lazy(() =>
+  import('../features/hris/integration/hris-feature-route-admission').then((module) => ({
+    default: module.HrisPayrollPopulationRouteAdmission,
+  }))
+);
+const HrisOperationsRouteAdmission = lazy(() =>
+  import('../features/hris/integration/hris-feature-route-admission').then((module) => ({
+    default: module.HrisOperationsRouteAdmission,
+  }))
+);
 const HrisTimeInterpretationOperationsWorkspace = lazy(() =>
   import('../features/hris/time').then((module) => ({
     default: module.HrisTimeInterpretationOperationsWorkspace,
@@ -247,6 +262,8 @@ function HcmPageContent({ page }: { page: HcmNavigationItem }) {
     people: <HrisPeople360Workspace />,
     'employee-change-requests': <HrisEmployeeChangeWorkspace />,
     'employment-assignments': <HrisEmploymentAssignmentsWorkspace />,
+    'organization-positions': <HrisOrganizationPositionsRouteAdmission />,
+    'payroll-population': <HrisPayrollPopulationRouteAdmission />,
     assignments: <AssignmentRegister assignmentProposal={assignmentProposalPort} />,
     'time-operations': <HrisTimeOperationsWorkspace />,
     'time-work-plans': <HrisTimeOperationsWorkspace />,
@@ -267,6 +284,7 @@ function HcmPageContent({ page }: { page: HcmNavigationItem }) {
     'settings-reference': <HrisReferenceConfigurationWorkspace />,
     'settings-payroll': <HrisPayrollConfigurationWorkspace />,
     'settings-navigation-policy': <HrisNavigationPolicyCommandRuntime />,
+    'settings-operations': <HrisOperationsRouteAdmission />,
     'reference-data': <WorkforceReferenceData />,
     'data-operations': <WorkforceDataOperations />,
     exports: <WorkforceExportCenter />,
@@ -274,6 +292,18 @@ function HcmPageContent({ page }: { page: HcmNavigationItem }) {
   const content = contentByView[page.view];
 
   if (!content) return <Navigate to="/403" replace />;
+
+  if (
+    page.view === 'organization-positions' ||
+    page.view === 'payroll-population' ||
+    page.view === 'settings-operations'
+  ) {
+    return (
+      <PageCanvas>
+        <Suspense fallback={<RouteFallback />}>{content}</Suspense>
+      </PageCanvas>
+    );
+  }
 
   return (
     <PageCanvas>

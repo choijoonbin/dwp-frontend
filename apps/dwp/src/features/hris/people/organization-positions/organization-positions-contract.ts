@@ -74,6 +74,14 @@ export type HrisOrganizationPositionsRuntimeGate = Readonly<{
   tenantEnrolled: boolean;
 }>;
 
+export type HrisOrganizationPositionsTrustedAdmission = Readonly<{
+  kind: 'TRUSTED_PRODUCT_SURFACE_PAGE';
+  feature: typeof HRIS_ORGANIZATION_POSITIONS_FEATURE;
+  pageRouteContractKey: typeof HRIS_ORGANIZATION_GRAPH_CONTRACT.pageRouteContractKey;
+  contextScopeKey: string;
+  decisionRevision: string;
+}>;
+
 export const HRIS_ORGANIZATION_POSITIONS_DEFAULT_GATE: HrisOrganizationPositionsRuntimeGate =
   Object.freeze({
     feature: HRIS_ORGANIZATION_POSITIONS_FEATURE,

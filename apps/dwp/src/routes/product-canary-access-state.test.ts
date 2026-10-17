@@ -4,6 +4,7 @@ import {
   resolveCanaryAccessActionKinds,
   resolveCanarySafeReturnPath,
   resolveCanarySelectableScopes,
+  resolveCanaryTelemetryReasonCode,
 } from './product-canary-access-state';
 
 import type { ProductSurfaceCanaryAuthority } from '../features/shell/product-surface-canary-runtime';
@@ -39,12 +40,38 @@ describe('Canary typed access-state actions', () => {
     expect([
       ...resolveCanaryAccessActionKinds({ state: 'activation-required' }, true, true),
     ]).toEqual(['return', 'activate-access']);
+    expect([
+      ...resolveCanaryAccessActionKinds({ state: 'feature-activation-required' }, true, true),
+    ]).toEqual(['return']);
+    expect([
+      ...resolveCanaryAccessActionKinds(
+        { state: 'tenant-feature-enrollment-required' },
+        true,
+        true
+      ),
+    ]).toEqual(['return']);
+    expect([
+      ...resolveCanaryAccessActionKinds({ state: 'tenant-app-adoption-required' }, true, true),
+    ]).toEqual(['return', 'request-access']);
   });
 
   it('never turns a Work route denial into an app-management responsibility request', () => {
     expect([
       ...resolveCanaryAccessActionKinds({ state: 'route-denied' }, true, true, false),
     ]).toEqual(['return']);
+  });
+
+  it('keeps feature-control UX distinct while using the compatible telemetry reason', () => {
+    expect(resolveCanaryTelemetryReasonCode('feature-activation-required')).toBe(
+      'ACTIVATION_REQUIRED'
+    );
+    expect(resolveCanaryTelemetryReasonCode('tenant-feature-enrollment-required')).toBe(
+      'ACTIVATION_REQUIRED'
+    );
+    expect(resolveCanaryTelemetryReasonCode('tenant-app-adoption-required')).toBe(
+      'ACTIVATION_REQUIRED'
+    );
+    expect(resolveCanaryTelemetryReasonCode('route-denied')).toBe('ROUTE_DENIED');
   });
 });
 

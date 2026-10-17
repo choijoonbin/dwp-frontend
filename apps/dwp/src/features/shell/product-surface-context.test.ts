@@ -136,6 +136,36 @@ describe('effective product surface context', () => {
     });
     expect(
       mapProductSurfaceDirectEvaluation(
+        {
+          decision: 'ACTIVATION_REQUIRED',
+          reasonCode: 'FEATURE_ACTIVATION_REQUIRED',
+        },
+        { productKey: 'example', surfaceKey: 'example.admin' }
+      )
+    ).toMatchObject({ state: 'feature-activation-required' });
+    expect(
+      mapProductSurfaceDirectEvaluation(
+        {
+          decision: 'ROUTE_DENIED',
+          reasonCode: 'FEATURE_ACTIVATION_REQUIRED',
+        },
+        { productKey: 'example', surfaceKey: 'example.admin' }
+      )
+    ).toMatchObject({ state: 'route-denied' });
+    expect(
+      mapProductSurfaceAccessError({
+        status: 403,
+        reasonCode: 'TENANT_FEATURE_ENROLLMENT_REQUIRED',
+      })
+    ).toMatchObject({ state: 'tenant-feature-enrollment-required' });
+    expect(
+      mapProductSurfaceAccessError({
+        status: 403,
+        reasonCode: 'TENANT_APP_ADOPTION_REQUIRED',
+      })
+    ).toMatchObject({ state: 'tenant-app-adoption-required' });
+    expect(
+      mapProductSurfaceDirectEvaluation(
         { decision: 'ROUTE_DENIED', correlationId: 'correlation-direct-1' },
         { productKey: 'example', surfaceKey: 'example.admin' }
       )

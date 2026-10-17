@@ -61,9 +61,16 @@ let activeObservation: Observation | null = null;
 
 function authorityEnvelope(revision: string): ProductSurfaceContextListData {
   return {
-    contractVersion: '1',
+    contractVersion: '2',
     decisionRevision: revision,
-    sourceRevisions: { auth: `auth-${revision}` },
+    sourceRevisions: {
+      auth: `auth-${revision}`,
+      policy: `policy-${revision}`,
+      productRelationship: `relationship-${revision}`,
+      targetPopulation: `population-${revision}`,
+      support: `support-${revision}`,
+      tenantControl: `tenant-control-${revision}`,
+    },
     activeAccessMode: 'NORMAL',
     generatedAt: new Date(Date.now() - 1_000).toISOString(),
     contexts: [

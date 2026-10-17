@@ -8,6 +8,7 @@ import {
   HCM_OPERATIONS_NAVIGATION,
   HCM_PERSONAL_NAVIGATION,
   HCM_TEAM_NAVIGATION,
+  HRIS_R7_GOVERNED_PAGE_CATALOG,
   mapLegacyHrPath,
   visibleHcmNavigation,
 } from './hcm-navigation';
@@ -293,6 +294,32 @@ describe('HR product navigation', () => {
     expect(findHcmNavigationItem('/hr/operations/assignments')).toMatchObject({
       view: 'assignments',
       path: '/hr/operations/assignments',
+    });
+  });
+
+  it('catalogs all six R7 PAGEs while mounting only the admitted HRM, PAY and SYS routes', () => {
+    expect(HRIS_R7_GOVERNED_PAGE_CATALOG).toHaveLength(6);
+    expect(
+      HRIS_R7_GOVERNED_PAGE_CATALOG.filter((item) => item.state === 'ADMISSION_MOUNTED').map(
+        (item) => item.module
+      )
+    ).toEqual(['HRM', 'PAY', 'SYS']);
+    const timItems = HRIS_R7_GOVERNED_PAGE_CATALOG.filter((item) => item.module === 'TIM');
+    expect(timItems).toHaveLength(3);
+    expect(timItems.every((item) => item.state === 'CATALOG_ONLY')).toBe(true);
+    expect(timItems.every((item) => findHcmNavigationItem(item.path) === undefined)).toBe(true);
+
+    expect(findHcmNavigationItem('/hr/operations/people/organization-positions')).toMatchObject({
+      view: 'organization-positions',
+      governedOnly: true,
+    });
+    expect(findHcmNavigationItem('/hr/operations/payroll/population')).toMatchObject({
+      view: 'payroll-population',
+      governedOnly: true,
+    });
+    expect(findHcmNavigationItem('/hr/settings/operations')).toMatchObject({
+      view: 'settings-operations',
+      governedOnly: true,
     });
   });
 });

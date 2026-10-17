@@ -178,6 +178,15 @@ export type PayrollRunPrepareRollout = Readonly<{
   enrolledTenantIds: readonly string[];
 }>;
 
+export type PayrollPopulationTrustedAdmission = Readonly<{
+  kind: 'TRUSTED_PRODUCT_SURFACE_PAGE';
+  feature: typeof PAYROLL_RUN_PREPARE_FEATURE;
+  pageRouteContractKey: typeof PAYROLL_POPULATION_PAGE_ROUTE_CONTRACT_KEY;
+  tenantId: string;
+  contextScopeKey: string;
+  decisionRevision: string;
+}>;
+
 export const PAYROLL_RUN_PREPARE_DEFAULT_ROLLOUT: PayrollRunPrepareRollout = Object.freeze({
   feature: PAYROLL_RUN_PREPARE_FEATURE,
   enabled: PAYROLL_RUN_PREPARE_DEFAULT_ENABLED,

@@ -19,6 +19,7 @@ export { HrisOrganizationPositionsWorkspace } from './organization-positions-wor
 export type {
   HrisOrganizationPositionsQueryAdapter,
   HrisOrganizationPositionsRuntimeGate,
+  HrisOrganizationPositionsTrustedAdmission,
   OrganizationGraphFailure,
   OrganizationGraphFailureKind,
   OrganizationGraphWithPositionsV2,

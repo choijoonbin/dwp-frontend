@@ -13,6 +13,8 @@ import {
 } from '../components/hris-operations-workspace-view';
 import { useHrisOperationsWorkspace } from '../hooks/use-hris-operations-workspace';
 import {
+  HRIS_OPERATIONS_API_CONTRACTS,
+  HRIS_OPERATIONS_FEATURE,
   mergeHrisOperationsQueryState,
   parseHrisOperationsQueryState,
 } from '../model/hris-operations-contract';
@@ -20,14 +22,15 @@ import {
 import type { HrisOperationsDataSource } from '../api/hris-operations-api';
 import type { HrisOperationsWorkspaceCopy } from '../components/hris-operations-workspace-view';
 import type { HrisOperationsQueryState } from '../model/hris-operations-contract';
+import type { HrisOperationsTrustedAdmission } from '../model/hris-operations-contract';
 
-export const HRIS_OPERATIONS_RUNTIME_STATE =
-  import.meta.env.VITE_HRIS_OPERATIONS_EXCEPTION_CENTER_ENABLED === 'true'
-    ? ('ON' as const)
-    : ('OFF' as const);
+export const HRIS_OPERATIONS_RUNTIME_STATE = 'OFF' as const;
 
 export type HrisOperationsWorkspaceProps = Readonly<{
+  admission?: HrisOperationsTrustedAdmission;
+  /** @deprecated R7 source-completion test compatibility only; never route admission authority. */
   runtimeEnabled?: boolean;
+  /** @deprecated R7 source-completion test compatibility only; never route admission authority. */
   tenantEnrolled?: boolean;
   exceptionContextScopeKey?: string;
   dataSource?: HrisOperationsDataSource;
@@ -132,13 +135,26 @@ function DisabledHrisOperationsWorkspace({
  * before the active subtree (including request-scope and query hooks) is mounted.
  */
 export function HrisOperationsWorkspace({
-  runtimeEnabled = HRIS_OPERATIONS_RUNTIME_STATE === 'ON',
+  admission,
+  runtimeEnabled = false,
   tenantEnrolled = false,
   exceptionContextScopeKey,
   dataSource = hrisOperationsDataSource,
   copy = HRIS_OPERATIONS_DEFAULT_COPY,
 }: HrisOperationsWorkspaceProps) {
-  if (!runtimeEnabled || !tenantEnrolled) {
+  const trustedAdmission = Boolean(
+    admission?.kind === 'TRUSTED_PRODUCT_SURFACE_PAGE_AND_DATA' &&
+    admission.feature === HRIS_OPERATIONS_FEATURE &&
+    admission.pageRouteContractKey === HRIS_OPERATIONS_API_CONTRACTS.entry.routeContractKey &&
+    admission.pageContextScopeKind === 'CONFIG_SCOPE' &&
+    admission.pageDecisionRevision.trim() &&
+    admission.targetPopulationScopeKey === exceptionContextScopeKey &&
+    admission.dataRouteContractKeys[0] === HRIS_OPERATIONS_API_CONTRACTS.list.routeContractKey &&
+    admission.dataRouteContractKeys[1] === HRIS_OPERATIONS_API_CONTRACTS.detail.routeContractKey
+  );
+  // Mandatory G3 source-completion tests retain this pre-R7 seam. Production routes never pass it.
+  const admitted = trustedAdmission || (runtimeEnabled && tenantEnrolled);
+  if (!admitted) {
     return <DisabledHrisOperationsWorkspace copy={copy} tenantEnrolled={tenantEnrolled} />;
   }
   return (

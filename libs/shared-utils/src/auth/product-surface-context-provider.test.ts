@@ -6,14 +6,14 @@ import {
   productSurfaceEvaluationQueryKey,
 } from './product-surface-context-provider';
 
-import type { ProductSurfaceAuthoritySnapshot } from './product-surface-authority-model';
+import type { TrustedProductSurfaceAuthoritySnapshot } from './product-surface-authority-model';
 
 describe('product surface authority cache invalidation', () => {
   it('does not reuse a direct ALLOWED result across list-envelope revisions', () => {
     const snapshot = (decisionRevision: string) =>
       ({
         envelope: { activeAccessMode: 'NORMAL', decisionRevision },
-      }) as ProductSurfaceAuthoritySnapshot;
+      }) as unknown as TrustedProductSurfaceAuthoritySnapshot;
     const request = {
       subject: {
         type: 'PRODUCT' as const,

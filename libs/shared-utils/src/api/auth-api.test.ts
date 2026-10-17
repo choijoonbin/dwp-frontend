@@ -67,9 +67,16 @@ describe('auth login API', () => {
   it('calls the exact Gateway context endpoint without client subject inputs', async () => {
     setTenantId('11');
     const data = {
-      contractVersion: '1',
+      contractVersion: '2',
       decisionRevision: 'psr-1',
-      sourceRevisions: {},
+      sourceRevisions: {
+        auth: 'auth-1',
+        policy: 'policy-1',
+        productRelationship: 'relationship-1',
+        targetPopulation: 'population-1',
+        support: 'support-1',
+        tenantControl: 'tenant-control-1',
+      },
       activeAccessMode: 'NORMAL',
       generatedAt: '2026-08-24T01:00:00Z',
       contexts: [],

@@ -43,7 +43,7 @@ import type {
   ProductSurfaceEvaluationData,
   ProductSurfaceEvaluationRequest,
 } from '@dwp-frontend/shared-utils/api/auth-api';
-import type { ProductSurfaceAuthoritySnapshot } from '@dwp-frontend/shared-utils/auth/product-surface-authority-model';
+import type { TrustedProductSurfaceAuthoritySnapshot } from '@dwp-frontend/shared-utils/auth/product-surface-authority-model';
 import type {
   ProductSurfaceCanaryAuthority,
   ProductSurfaceRolloutFlags,
@@ -431,7 +431,7 @@ function effectiveContext(context: ProductSurfaceEffectiveContext): EffectivePro
 }
 
 function effectiveEnvelope(
-  snapshot: ProductSurfaceAuthoritySnapshot
+  snapshot: TrustedProductSurfaceAuthoritySnapshot
 ): EffectiveProductSurfaceContextEnvelope {
   return {
     contractVersion: snapshot.envelope.contractVersion,
@@ -451,6 +451,7 @@ function effectiveEnvelope(
 function directEvaluation(data: ProductSurfaceEvaluationData): ProductSurfaceDirectEvaluation {
   return {
     decision: data.decision,
+    reasonCode: data.reasonCode ?? undefined,
     decisionRevision: data.decisionRevision ?? undefined,
     context: data.context ? effectiveContext(data.context) : undefined,
     routeGrantRef: data.routeGrantRef ?? undefined,
@@ -547,7 +548,7 @@ export function ProductSurfaceAuthorityBridge({
   const snapshot = authority.status === 'ready' ? authority.snapshot : undefined;
   const directDecisionClockAnchorRef = useRef<
     | {
-        snapshot: ProductSurfaceAuthoritySnapshot;
+        snapshot: TrustedProductSurfaceAuthoritySnapshot;
         anchor: ReturnType<typeof createDirectDecisionClockAnchor>;
       }
     | undefined

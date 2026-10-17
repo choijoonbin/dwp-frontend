@@ -35,6 +35,7 @@ import type {
 import type {
   ProductRolloutResolution,
   ProductSurfaceAuthoritySnapshot,
+  TrustedProductSurfaceAuthoritySnapshot,
 } from './product-surface-authority-model';
 
 export const productSurfaceAuthorityQueryPrefix = ['auth', 'product-surface-contexts'] as const;
@@ -49,9 +50,11 @@ const MAX_HARD_REVISION_RETRIES = 3;
 
 type ProductSurfaceAuthorityStatus = 'signed-out' | 'loading' | 'ready' | 'authority-unavailable';
 
-export type ProductSurfaceAuthorityContextValue = {
+export type ProductSurfaceAuthorityContextValue<
+  TSnapshot extends ProductSurfaceAuthoritySnapshot = ProductSurfaceAuthoritySnapshot,
+> = {
   status: ProductSurfaceAuthorityStatus;
-  snapshot?: ProductSurfaceAuthoritySnapshot;
+  snapshot?: TSnapshot;
   serverNowMs?: number;
   rolloutForProduct: (productKey: string) => ProductRolloutResolution;
   evaluateProduct: typeof evaluateProductSurfaceAccess;
@@ -86,7 +89,10 @@ const unavailableRollout = (): ProductRolloutResolution => ({
   state: 'authority-unavailable',
 });
 
-const ProductSurfaceAuthorityContext = createContext<ProductSurfaceAuthorityContextValue>({
+type TrustedProductSurfaceAuthorityContextValue =
+  ProductSurfaceAuthorityContextValue<TrustedProductSurfaceAuthoritySnapshot>;
+
+const ProductSurfaceAuthorityContext = createContext<TrustedProductSurfaceAuthorityContextValue>({
   status: 'signed-out',
   rolloutForProduct: unavailableRollout,
   evaluateProduct: evaluateProductSurfaceAccess,
@@ -229,7 +235,7 @@ export function ProductSurfaceAuthorityProvider({
   );
 
   const refreshActiveAuthorityEvaluations = useCallback(
-    async (authority: ProductSurfaceAuthoritySnapshot) => {
+    async (authority: TrustedProductSurfaceAuthoritySnapshot) => {
       const matches = (candidate: {
         meta?: Readonly<Record<string, unknown>>;
         queryKey: readonly unknown[];
@@ -297,7 +303,7 @@ export function ProductSurfaceAuthorityProvider({
           ) {
             return false;
           }
-          let result: ProductSurfaceAuthoritySnapshot;
+          let result: TrustedProductSurfaceAuthoritySnapshot;
           let revisionRetry = 0;
           while (true) {
             result = await loadAuthoritySnapshot();
@@ -369,7 +375,7 @@ export function ProductSurfaceAuthorityProvider({
       if (!previous || !productSurfaceSnapshotRemainsValid(previous, Date.now())) {
         return hardRevalidate();
       }
-      let next: ProductSurfaceAuthoritySnapshot;
+      let next: TrustedProductSurfaceAuthoritySnapshot;
       try {
         next = await loadAuthoritySnapshot();
       } catch {
@@ -688,7 +694,7 @@ export function ProductSurfaceAuthorityProvider({
     setAuthorityBlocked(false);
   }, [auth.isAuthenticated]);
 
-  const value = useMemo<ProductSurfaceAuthorityContextValue>(() => {
+  const value = useMemo<TrustedProductSurfaceAuthorityContextValue>(() => {
     const status: ProductSurfaceAuthorityStatus = !auth.isAuthenticated
       ? 'signed-out'
       : query.isPending
@@ -716,12 +722,12 @@ export function ProductSurfaceAuthorityProvider({
   );
 }
 
-export function useProductSurfaceAuthority(): ProductSurfaceAuthorityContextValue {
+export function useProductSurfaceAuthority(): TrustedProductSurfaceAuthorityContextValue {
   return useContext(ProductSurfaceAuthorityContext);
 }
 
 export function productSurfaceEvaluationQueryKey(
-  snapshot: ProductSurfaceAuthoritySnapshot,
+  snapshot: TrustedProductSurfaceAuthoritySnapshot,
   request: ProductSurfaceEvaluationRequest,
   identity: { tenantId: string; actorId: string }
 ) {

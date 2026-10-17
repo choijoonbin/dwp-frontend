@@ -16,15 +16,43 @@ import { resolveProductSurfaceReturnTarget } from '../features/shell/product-sur
 import { useProductSurfaceTelemetry } from '../observability/product-surface-telemetry-context';
 import { productSurfaceTelemetryEvent } from '../observability/product-surface-telemetry';
 
+import type { ProductSurfaceReasonCode } from '@dwp-frontend/shared-utils/api/observability-api';
 import type { ProductSurfaceAccessStateActions } from '../components/product-surface-access-state';
 import type { ProductSurfaceCanaryAuthority } from '../features/shell/product-surface-canary-runtime';
-import type { EffectiveScope, SurfaceDecision } from '../features/shell/product-surface-context';
+import type {
+  EffectiveScope,
+  SurfaceDecision,
+  SurfaceDeniedState,
+} from '../features/shell/product-surface-context';
 import type { RegisteredProductRoute } from './product-route-contract-source';
 
 function isFutureInstant(value: string | undefined, serverNowMs: number): boolean {
   if (!value) return true;
   const timestamp = Date.parse(value);
   return Number.isFinite(timestamp) && timestamp > serverNowMs;
+}
+
+const CANARY_TELEMETRY_REASON_CODES = {
+  'app-denied': 'APP_DENIED',
+  'surface-denied': 'SURFACE_DENIED',
+  'route-denied': 'ROUTE_DENIED',
+  'scope-selection-required': 'SCOPE_SELECTION_REQUIRED',
+  'scope-invalid': 'SCOPE_INVALID',
+  expired: 'EXPIRED',
+  'activation-required': 'ACTIVATION_REQUIRED',
+  'feature-activation-required': 'ACTIVATION_REQUIRED',
+  'tenant-feature-enrollment-required': 'ACTIVATION_REQUIRED',
+  'tenant-app-adoption-required': 'ACTIVATION_REQUIRED',
+  'step-up-required': 'STEP_UP_REQUIRED',
+  'sod-conflict': 'SOD_CONFLICT',
+  'support-scope-denied': 'SUPPORT_SCOPE_DENIED',
+  'authority-unavailable': 'AUTHORITY_UNAVAILABLE',
+} as const satisfies Record<SurfaceDeniedState, ProductSurfaceReasonCode>;
+
+export function resolveCanaryTelemetryReasonCode(
+  state: SurfaceDeniedState
+): ProductSurfaceReasonCode {
+  return CANARY_TELEMETRY_REASON_CODES[state];
 }
 
 export function resolveCanarySelectableScopes(
@@ -125,7 +153,12 @@ export function resolveCanaryAccessActionKinds(
   ) {
     actions.add('select-scope');
   }
-  if (hasRequestableApp && decision.state === 'app-denied') actions.add('request-access');
+  if (
+    hasRequestableApp &&
+    (decision.state === 'app-denied' || decision.state === 'tenant-app-adoption-required')
+  ) {
+    actions.add('request-access');
+  }
   if (
     hasRequestableApp &&
     managementSurface &&
@@ -219,9 +252,7 @@ export function ProductCanaryAccessState({
   const surfacePlane = manifest?.surfaces.find((surface) => surface.id === surfaceId)?.plane;
   const managementSurface = surfacePlane === 'management';
   const focusIdentityKey = `${auth.user?.identityPlane ?? 'anonymous'}:${auth.user?.tenantId ?? ''}:${auth.user?.userId ?? ''}`;
-  const reasonCode = decision.state.replaceAll('-', '_').toUpperCase() as Parameters<
-    typeof productSurfaceTelemetryEvent.routeDenied
-  >[0]['reasonCode'];
+  const reasonCode = resolveCanaryTelemetryReasonCode(decision.state);
   useEffect(() => {
     if (!surfaceId || !/^[a-z][a-z0-9-]*\.[a-z][a-z0-9-]*$/u.test(surfaceId)) return;
     const canonicalSurfaceId = surfaceId as `${string}.${string}`;
