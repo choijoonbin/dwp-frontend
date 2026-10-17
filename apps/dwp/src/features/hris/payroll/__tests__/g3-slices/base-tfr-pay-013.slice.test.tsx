@@ -424,7 +424,7 @@ describe('[SLICE:BASE-TFR-PAY-013] population and prepare contract', () => {
   });
 
   it('serializes the required empty IAQ filter object without inventing bracket members', async () => {
-    transport.get.mockResolvedValueOnce({ data: { data: projectionWire() } });
+    transport.get.mockResolvedValueOnce({ data: projectionWire() });
     await queryPayrollPopulation(
       validatePayrollPopulationQuery({
         limit: 100,
@@ -448,7 +448,7 @@ describe('[SLICE:BASE-TFR-PAY-013] population and prepare contract', () => {
   });
 
   it('uses exact DATA/ACTION aliases, IAQ query serialization, 202 receipt, and governed headers', async () => {
-    transport.get.mockResolvedValueOnce({ data: { data: projectionWire() } });
+    transport.get.mockResolvedValueOnce({ data: projectionWire() });
     await expect(
       queryPayrollPopulation(query(), {
         routeContractKey: PAYROLL_POPULATION_DATA_ROUTE_CONTRACT_KEY,
@@ -479,7 +479,7 @@ describe('[SLICE:BASE-TFR-PAY-013] population and prepare contract', () => {
 
     transport.post.mockResolvedValueOnce({
       status: 202,
-      data: { data: receiptWire() },
+      data: receiptWire(),
     });
     await expect(preparePayrollRun(command(), apiAuthority())).resolves.toMatchObject({
       receiptId: ids.receipt,
@@ -528,11 +528,18 @@ describe('[SLICE:BASE-TFR-PAY-013] population and prepare contract', () => {
 
   it('treats a non-202 or substituted prepare receipt as an unknown dispatched outcome', async () => {
     transport.post
-      .mockResolvedValueOnce({ status: 200, data: { data: receiptWire() } })
+      .mockResolvedValueOnce({ status: 200, data: receiptWire() })
       .mockResolvedValueOnce({
         status: 202,
-        data: { data: { ...receiptWire(), originatingAction: 'PAY_RUN_APPROVE' } },
+        data: { ...receiptWire(), originatingAction: 'PAY_RUN_APPROVE' },
+      })
+      .mockResolvedValueOnce({
+        status: 202,
+        data: { data: receiptWire() },
       });
+    await expect(preparePayrollRun(command(), apiAuthority())).rejects.toBeInstanceOf(
+      PayrollRunPrepareOutcomeUnknownError
+    );
     await expect(preparePayrollRun(command(), apiAuthority())).rejects.toBeInstanceOf(
       PayrollRunPrepareOutcomeUnknownError
     );

@@ -12,10 +12,7 @@ import {
   validatePayrollRunPrepareCommand,
 } from './payroll-population-contract';
 
-import type {
-  ApiResponse,
-  ProductSurfaceGovernedMutationAuthority,
-} from '@dwp-frontend/shared-utils';
+import type { ProductSurfaceGovernedMutationAuthority } from '@dwp-frontend/shared-utils';
 import type {
   PayrollPopulationProjection,
   PayrollPopulationQuery,
@@ -120,14 +117,14 @@ export async function queryPayrollPopulation(
     throw new Error('Payroll population DATA route authority is unavailable.');
   }
   const scoped = productSurfaceReadScopeConfig(context.contextScopeKey, context.signal);
-  const response = await axiosInstance.get<ApiResponse<unknown>>(populationUrl(query), {
+  const response = await axiosInstance.get<unknown>(populationUrl(query), {
     ...scoped,
     headers: {
       'X-Correlation-ID': query.correlationId,
       'X-DWP-Route-Contract-Key': context.routeContractKey,
     },
   });
-  const projection = parsePayrollPopulationProjection(response.data.data);
+  const projection = parsePayrollPopulationProjection(response.data);
   if (
     projection.queryState.correlationId !== query.correlationId ||
     projection.queryState.cachePolicy.authorizationDecisionRevision !== context.decisionRevision
@@ -175,7 +172,7 @@ export async function preparePayrollRun(
   authority: PayrollRunPrepareAuthority
 ) {
   const command = validatePayrollRunPrepareCommand(candidate);
-  const response = await axiosInstance.post<ApiResponse<unknown>, PayrollRunPrepareCommand>(
+  const response = await axiosInstance.post<unknown, PayrollRunPrepareCommand>(
     PAYROLL_RUN_PREPARE_PATH,
     command,
     prepareConfig(command, authority)
@@ -184,7 +181,7 @@ export async function preparePayrollRun(
     if (response.status !== 202) {
       throw new Error('Payroll preparation did not return the sealed 202 receipt transport.');
     }
-    const receipt = parsePayrollRunPreparedReceipt(response.data.data);
+    const receipt = parsePayrollRunPreparedReceipt(response.data);
     if (receipt.correlationId !== authority.correlationId) {
       throw new Error('Payroll preparation receipt belongs to another command.');
     }
