@@ -91,7 +91,7 @@ export const HCM_PRODUCT_MANIFEST = defineProductManifest({
       labelKey: 'navigation.groups.hcm.operate',
       taskKinds: ['operations'],
       routeMatchers: [{ kind: 'prefix', path: '/hr/operations' }],
-      indexPath: '/hr/operations',
+      indexPath: '/hr/operations/home',
       navigation: HCM_OPERATIONS_NAVIGATION,
       entryAccess: {
         type: 'policy',

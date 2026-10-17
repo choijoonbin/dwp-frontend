@@ -40,7 +40,7 @@ const EXPECTED_MENU_COUNTS: Readonly<Record<string, number>> = {
   calendar: 11,
   communications: 6,
   dwaion: 19,
-  hcm: 37,
+  hcm: 39,
   mail: 24,
   meetings: 10,
   messaging: 8,
@@ -107,7 +107,7 @@ function routeBySurfaceId(
 }
 
 describe('all-product surface expansion', () => {
-  it('registers all 12 business apps and exactly the governed 189 menu rows', () => {
+  it('registers all 12 business apps and exactly the governed 191 menu rows', () => {
     expect(GOVERNED_PRODUCT_MANIFESTS.map((manifest) => manifest.id).sort()).toEqual(
       Object.keys(EXPECTED_MENU_COUNTS).sort()
     );
@@ -122,7 +122,7 @@ describe('all-product surface expansion', () => {
         manifest.surfaces.length
       );
     }
-    expect(Object.values(EXPECTED_MENU_COUNTS).reduce((sum, count) => sum + count, 0)).toBe(189);
+    expect(Object.values(EXPECTED_MENU_COUNTS).reduce((sum, count) => sum + count, 0)).toBe(191);
   });
 
   it('binds promoted Workplace menus to their explicit PAGE authority source', () => {
@@ -464,7 +464,7 @@ describe('all-product surface expansion', () => {
     ]);
     expect(
       PRODUCT_MENU_ROUTES.filter((menu) => menu.productSurfaceId).map((menu) => menu.path)
-    ).toHaveLength(189);
+    ).toHaveLength(191);
 
     const spacesWorkShell = spacesRoutes[0]?.children?.find(
       (route) => !route.index && route.path === undefined

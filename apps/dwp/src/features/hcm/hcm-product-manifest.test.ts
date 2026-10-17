@@ -38,6 +38,10 @@ type RegistryBundle = {
 };
 
 const HCM_UTILITY_ROUTE_KEYS = [
+  'route.hcm.shell.navigation-aggregate-v3.data',
+  'route.hcm.shell.navigation-aggregate.data',
+  'route.hcm.shell.navigation-deep-link-decision-v3.data',
+  'route.hcm.shell.navigation-deep-link-decision.data',
   'route.hcm.utility.explorer-command-receipt.data',
   'route.hcm.utility.explorer-preferences-update.action',
   'route.hcm.utility.explorer-recent-create.action',
@@ -128,6 +132,9 @@ describe('HCM W1b product manifest', () => {
 
   it('keeps the utility out of the personal, team, operations, and management menus', () => {
     expect(
+      HCM_PRODUCT_MANIFEST.surfaces.find((surface) => surface.id === 'hcm.operations')
+    ).toMatchObject({ indexPath: '/hr/operations/home' });
+    expect(
       Object.fromEntries(
         HCM_PRODUCT_MANIFEST.surfaces.map((surface) => [
           surface.id,
@@ -138,7 +145,7 @@ describe('HCM W1b product manifest', () => {
       'hcm.personal': 11,
       'hcm.team': 3,
       'hcm.utility': 0,
-      'hcm.operations': 15,
+      'hcm.operations': 17,
       'hcm.management': 8,
     });
     expect(HCM_PRODUCT_MANIFEST.surfaces.map((surface) => surface.supportedScopeKinds)).toEqual([
@@ -150,12 +157,12 @@ describe('HCM W1b product manifest', () => {
     ]);
   });
 
-  it('binds all 37 menu items within the 40 official HCM PAGE records', () => {
+  it('binds all 39 menu items within the 45 official HCM PAGE records', () => {
     const routerRecords = PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.filter(
       (route) => route.productId === 'hcm'
     );
     const registryRecords = registryRoutes().filter((route) => route.subject?.productKey === 'hcm');
-    expect(routerRecords).toHaveLength(40);
+    expect(routerRecords).toHaveLength(45);
 
     for (const surface of HCM_PRODUCT_MANIFEST.surfaces) {
       for (const item of surface.navigation.flatMap((group) => group.items)) {
@@ -192,10 +199,10 @@ describe('HCM W1b product manifest', () => {
     );
     expect(bySurfaceAndKind).toEqual({
       'hcm.personal': { PAGE: 11, DATA: 5, ACTION: 8 },
-      'hcm.team': { PAGE: 3, DATA: 1, ACTION: 2 },
-      'hcm.utility': { PAGE: 1, DATA: 1, ACTION: 2 },
-      'hcm.operations': { PAGE: 16, DATA: 27, ACTION: 48 },
-      'hcm.management': { PAGE: 9, DATA: 6, ACTION: 33 },
+      'hcm.team': { PAGE: 4, DATA: 1, ACTION: 2 },
+      'hcm.utility': { PAGE: 1, DATA: 5, ACTION: 2 },
+      'hcm.operations': { PAGE: 20, DATA: 29, ACTION: 48 },
+      'hcm.management': { PAGE: 9, DATA: 8, ACTION: 41 },
     });
     expect(
       records
@@ -257,6 +264,7 @@ describe('HCM W1b product manifest', () => {
       .sort((left, right) => left.routeContractKey.localeCompare(right.routeContractKey));
     expect(supportRoutes.map((route) => route.routeContractKey)).toEqual([
       'route.hcm.operations.assignments.page',
+      'route.hcm.operations.home.page',
       'route.hcm.operations.overview.page',
       'route.hcm.operations.people.page',
     ]);
@@ -269,6 +277,7 @@ describe('HCM W1b product manifest', () => {
       )
     ).toEqual([
       { type: 'POLICY', accessPolicyKey: 'hcm.operations-workforce-read.v1' },
+      { type: 'POLICY', accessPolicyKey: 'hcm.operations-overview-read.v1' },
       { type: 'POLICY', accessPolicyKey: 'hcm.operations-overview-read.v1' },
       { type: 'POLICY', accessPolicyKey: 'hcm.operations-workforce-read.v1' },
     ]);

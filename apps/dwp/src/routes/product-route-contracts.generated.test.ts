@@ -86,10 +86,13 @@ describe('generated product route authorization contracts', () => {
       'spaces',
       'workplace',
     ]);
-    expect(router).toHaveLength(133);
+    expect(router).toHaveLength(138);
     expect(registry).toEqual(router);
     expect(() =>
-      buildProductPageRouteContractSource([HCM_PRODUCT_MANIFEST], PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE)
+      buildProductPageRouteContractSource(
+        [HCM_PRODUCT_MANIFEST],
+        PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE
+      )
     ).not.toThrow();
     expect(() =>
       buildProductPageRouteContractSource(
@@ -125,8 +128,8 @@ describe('generated product route authorization contracts', () => {
     );
     expect(nonPages.every((route) => route.routeId === null && route.pattern === null)).toBe(true);
     expect(DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(71);
-    expect(ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(204);
-    expect(REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG).toHaveLength(204);
+    expect(ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(209);
+    expect(REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG).toHaveLength(209);
     expect(REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG.every((route) => route.routeKind === 'PAGE')).toBe(
       true
     );

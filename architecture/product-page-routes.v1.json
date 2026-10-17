@@ -465,6 +465,13 @@
       "surfaceId": "hcm.operations"
     },
     {
+      "routeContractKey": "route.hcm.operations.home.page",
+      "routeId": "hcm.operations.home",
+      "pattern": "/hr/operations/home",
+      "productId": "hcm",
+      "surfaceId": "hcm.operations"
+    },
+    {
       "routeContractKey": "route.hcm.operations.overview.page",
       "routeId": "hcm.operations.overview",
       "pattern": "/hr/operations",
@@ -482,6 +489,13 @@
       "routeContractKey": "route.hcm.operations.people.page",
       "routeId": "hcm.operations.people",
       "pattern": "/hr/operations/people",
+      "productId": "hcm",
+      "surfaceId": "hcm.operations"
+    },
+    {
+      "routeContractKey": "route.hcm.operations.performance-goal-cycles.page",
+      "routeId": "hcm.operations.performance-goal-cycles",
+      "pattern": "/hr/operations/performance/goal-cycles",
       "productId": "hcm",
       "surfaceId": "hcm.operations"
     },
@@ -524,6 +538,20 @@
       "routeContractKey": "route.hcm.operations.time-interpretation.page",
       "routeId": "hcm.operations.time-interpretation",
       "pattern": "/hr/operations/time/interpretation",
+      "productId": "hcm",
+      "surfaceId": "hcm.operations"
+    },
+    {
+      "routeContractKey": "route.hcm.operations.time-leave-operations.page",
+      "routeId": "hcm.operations.time-leave-operations",
+      "pattern": "/hr/operations/time/leave-operations",
+      "productId": "hcm",
+      "surfaceId": "hcm.operations"
+    },
+    {
+      "routeContractKey": "route.hcm.operations.time-work-plans.page",
+      "routeId": "hcm.operations.time-work-plans",
+      "pattern": "/hr/operations/time/work-plans",
       "productId": "hcm",
       "surfaceId": "hcm.operations"
     },
@@ -622,6 +650,13 @@
       "routeContractKey": "route.hcm.team.home.page",
       "routeId": "hcm.team.home",
       "pattern": "/hr/team",
+      "productId": "hcm",
+      "surfaceId": "hcm.team"
+    },
+    {
+      "routeContractKey": "route.hcm.team.leave.page",
+      "routeId": "hcm.team.leave",
+      "pattern": "/hr/team/leave",
       "productId": "hcm",
       "surfaceId": "hcm.team"
     },

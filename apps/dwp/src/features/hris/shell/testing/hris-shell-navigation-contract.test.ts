@@ -34,15 +34,48 @@ describe('canonical HRIS shell navigation projection', () => {
 
   it('omits a workbench without an authorized descendant and links to the first allowed PAGE', () => {
     const projected = projectHrisShellNavigation(
-      new Set(['/hr/home', '/hr/team/absence', '/hr/operations/assignments', '/hr/data/exports'])
+      new Set(['/hr/home', '/hr/team/leave', '/hr/operations/assignments', '/hr/data/exports'])
     ).flatMap((group) => group.items);
 
     expect(projected.map(({ view, path }) => ({ view, path }))).toEqual([
       { view: 'shell-home', path: '/hr/home' },
-      { view: 'workbench-team', path: '/hr/team/absence' },
+      { view: 'workbench-team', path: '/hr/team/leave' },
       { view: 'workbench-hr-operations', path: '/hr/operations/assignments' },
       { view: 'workbench-settings', path: '/hr/data/exports' },
     ]);
+  });
+
+  it('projects every R6-C canonical owner once and keeps historical aliases selection-only', () => {
+    const projected = projectHrisShellNavigation(
+      new Set([
+        '/hr/team/leave',
+        '/hr/operations/home',
+        '/hr/operations/time/work-plans',
+        '/hr/operations/time/leave-operations',
+        '/hr/operations/performance/goal-cycles',
+      ])
+    ).flatMap((group) => group.items);
+
+    expect(projected.map(({ view, path }) => ({ view, path }))).toEqual([
+      { view: 'workbench-team', path: '/hr/team/leave' },
+      { view: 'workbench-hr-operations', path: '/hr/operations/home' },
+      { view: 'workbench-time', path: '/hr/operations/time/work-plans' },
+      {
+        view: 'workbench-performance',
+        path: '/hr/operations/performance/goal-cycles',
+      },
+    ]);
+    expect(
+      projectHrisShellNavigation(
+        new Set(['/hr/team/absence', '/hr/operations', '/hr/operations/absence'])
+      )
+    ).toEqual([]);
+    expect(HRIS_SHELL_ENTRIES.flatMap((entry) => entry.candidates)).not.toEqual(
+      expect.arrayContaining(['/hr/team/absence', '/hr/operations', '/hr/operations/absence'])
+    );
+    expect(resolveHrisShellSelectedView('/hr/team/absence')).toBe('workbench-team');
+    expect(resolveHrisShellSelectedView('/hr/operations')).toBe('workbench-hr-operations');
+    expect(resolveHrisShellSelectedView('/hr/operations/absence')).toBe('workbench-time');
   });
 
   it('uses the governed system page as the settings workbench landing when it is authorized', () => {

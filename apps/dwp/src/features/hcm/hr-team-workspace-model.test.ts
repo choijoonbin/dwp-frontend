@@ -11,7 +11,7 @@ describe('HRIS team workspace model', () => {
       buildHrTeamDecisionDestinations({ timePendingCount: 3, absencePendingCount: 2 })
     ).toEqual([
       { domain: 'time', count: 3, route: '/hr/team/time' },
-      { domain: 'absence', count: 2, route: '/hr/team/absence' },
+      { domain: 'absence', count: 2, route: '/hr/team/leave' },
     ]);
   });
 

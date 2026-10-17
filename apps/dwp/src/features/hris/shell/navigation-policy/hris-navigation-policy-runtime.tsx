@@ -71,9 +71,13 @@ export const HRIS_NAVIGATION_TASK_GROUP_REGISTER_SHA256 =
   'f0b1ebb316e4d5944aac90002e144f25d8c1318216b6733e674cdc8c5042872b' as const;
 export const HRIS_NAVIGATION_GENERATED_IA_SHA256 =
   '584cc32f845720ad06fb1bdcea7c967026c0e3a648f70e0215fd8a95a6b055bd' as const;
-export const HRIS_NAVIGATION_AUTHORIZATION_REGISTRY_VERSION = 46 as const;
+export const HRIS_NAVIGATION_AUTHORIZATION_REGISTRY_VERSION = 47 as const;
 export const HRIS_NAVIGATION_AUTHORIZATION_REGISTRY_SHA256 =
-  '3499e37653587feed433f84a79fbe7d0e80a1a7c0634d858a13f4e09d4bd015e' as const;
+  '925e8bfc406bc7e4ee62aee08582fdd7c67c629ffde470051704eaec5404800e' as const;
+export const HRIS_NAVIGATION_RUNTIME_OWNER_OVERLAY_REVISION =
+  'R6C_RUNTIME_OWNER_OVERLAY_V1' as const;
+export const HRIS_NAVIGATION_RUNTIME_OWNER_OVERLAY_SHA256 =
+  '42ed206e45fab76f77725ba5d37543e06b8df62da7aa142bb620b032bf552dbd' as const;
 export { HRIS_LEGAL_ENTITY_SELECTOR_PARAM, selectHrisLegalEntitySelector };
 
 type RuntimeNavigationPolicyProjectionBase = Readonly<{
@@ -125,11 +129,104 @@ export type HrisRuntimeAdmittedPolicyRoute = Readonly<{
   freshUntil: string;
 }>;
 
+export type HrisRuntimeOwnerOverlayRecord = Readonly<{
+  nodeId: string;
+  historicalOwner: string;
+  effectiveRuntimeOwner: string;
+  canonicalPath: string;
+  compatibilityPath: string | null;
+  routeContractKey: string;
+  firstReadBinding: Readonly<{
+    method: string;
+    gatewayPath: string;
+    serviceKey: string;
+    servicePath: string;
+  }>;
+  registryVersion: typeof HRIS_NAVIGATION_AUTHORIZATION_REGISTRY_VERSION;
+  registryChecksum: typeof HRIS_NAVIGATION_AUTHORIZATION_REGISTRY_SHA256;
+  evidenceDigest: string;
+}>;
+
+export const HRIS_NAVIGATION_RUNTIME_OWNER_OVERLAY_RECORDS: readonly HrisRuntimeOwnerOverlayRecord[] =
+  Object.freeze([
+    Object.freeze({
+      nodeId: 'BASE:team-time',
+      historicalOwner: 'HRIS-TIM',
+      effectiveRuntimeOwner: 'dwp-people-server',
+      canonicalPath: '/hr/team/time',
+      compatibilityPath: null,
+      routeContractKey: 'route.hcm.team.time.page',
+      firstReadBinding: Object.freeze({
+        method: 'GET',
+        gatewayPath: '/api/people/v1/hr/team/time',
+        serviceKey: 'people',
+        servicePath: '/v1/hr/team/time',
+      }),
+      registryVersion: HRIS_NAVIGATION_AUTHORIZATION_REGISTRY_VERSION,
+      registryChecksum: HRIS_NAVIGATION_AUTHORIZATION_REGISTRY_SHA256,
+      evidenceDigest: '2ee4cff60ee78cb7ac5d034ea7af0bc7b1782969250e05a2de9fd977e6c8dd48',
+    }),
+    Object.freeze({
+      nodeId: 'BASE:team-leave',
+      historicalOwner: 'HRIS-TIM',
+      effectiveRuntimeOwner: 'dwp-people-server',
+      canonicalPath: '/hr/team/leave',
+      compatibilityPath: '/hr/team/absence',
+      routeContractKey: 'route.hcm.team.leave.page',
+      firstReadBinding: Object.freeze({
+        method: 'GET',
+        gatewayPath: '/api/people/v1/hr/team/absence',
+        serviceKey: 'people',
+        servicePath: '/v1/hr/team/absence',
+      }),
+      registryVersion: HRIS_NAVIGATION_AUTHORIZATION_REGISTRY_VERSION,
+      registryChecksum: HRIS_NAVIGATION_AUTHORIZATION_REGISTRY_SHA256,
+      evidenceDigest: '71897471bbd7cd0ae24a881c282d92f2c110a0f0ea2ace0cb4596179c474a968',
+    }),
+    Object.freeze({
+      nodeId: 'BASE:time-leave-operations',
+      historicalOwner: 'HRIS-TIM',
+      effectiveRuntimeOwner: 'dwp-people-server',
+      canonicalPath: '/hr/operations/time/leave-operations',
+      compatibilityPath: '/hr/operations/absence',
+      routeContractKey: 'route.hcm.operations.time-leave-operations.page',
+      firstReadBinding: Object.freeze({
+        method: 'GET',
+        gatewayPath: '/api/people/v1/hr/operations/{domain=ABSENCE}',
+        serviceKey: 'people',
+        servicePath: '/v1/hr/operations/{domain=ABSENCE}',
+      }),
+      registryVersion: HRIS_NAVIGATION_AUTHORIZATION_REGISTRY_VERSION,
+      registryChecksum: HRIS_NAVIGATION_AUTHORIZATION_REGISTRY_SHA256,
+      evidenceDigest: '8bac591712bd9a57a1b8a8269a6ffc5f7d626efef85f2c0bb6be8334b663cb88',
+    }),
+    Object.freeze({
+      nodeId: 'BASE:hr-operations-home',
+      historicalOwner: 'HRIS-PLATFORM',
+      effectiveRuntimeOwner: 'dwp-people-server',
+      canonicalPath: '/hr/operations/home',
+      compatibilityPath: '/hr/operations',
+      routeContractKey: 'route.hcm.operations.home.page',
+      firstReadBinding: Object.freeze({
+        method: 'GET',
+        gatewayPath: '/api/people/v1/workforce/operations/overview',
+        serviceKey: 'people',
+        servicePath: '/v1/workforce/operations/overview',
+      }),
+      registryVersion: HRIS_NAVIGATION_AUTHORIZATION_REGISTRY_VERSION,
+      registryChecksum: HRIS_NAVIGATION_AUTHORIZATION_REGISTRY_SHA256,
+      evidenceDigest: '9fa6f38cc9a465a0c41ba72335089040a4cb6714950310efa2213727ac2a92f5',
+    }),
+  ]);
+
 export type RuntimeNavigationPolicyProjectionV3 = RuntimeNavigationPolicyProjectionBase &
   Readonly<{
     schemaVersion: '3';
     authorizationRegistryVersion: typeof HRIS_NAVIGATION_AUTHORIZATION_REGISTRY_VERSION;
     authorizationRegistryChecksum: typeof HRIS_NAVIGATION_AUTHORIZATION_REGISTRY_SHA256;
+    runtimeOwnerOverlayRevision: typeof HRIS_NAVIGATION_RUNTIME_OWNER_OVERLAY_REVISION;
+    runtimeOwnerOverlayChecksum: typeof HRIS_NAVIGATION_RUNTIME_OWNER_OVERLAY_SHA256;
+    runtimeOwnerOverlayRecords: readonly HrisRuntimeOwnerOverlayRecord[];
     authorityDecisionCount: 0 | 6;
     navigationContextScopeKey: string;
     authoritySelfScopeKey: string | null;
@@ -841,6 +938,7 @@ function selectV3AuthorityCarrier(
   if (!Array.isArray(projection.admittedPolicyRoutes)) {
     throw new Error('HRIS navigation admitted POLICY routes are invalid.');
   }
+  const runtimeOwnerOverlay = selectV3RuntimeOwnerOverlay(projection);
   const navigationContextScopeKey = patternedOpaque(
     projection.navigationContextScopeKey,
     /^hcm-scope-[a-f0-9]{40}$/u,
@@ -868,6 +966,7 @@ function selectV3AuthorityCarrier(
     return Object.freeze({
       authorizationRegistryVersion: HRIS_NAVIGATION_AUTHORIZATION_REGISTRY_VERSION,
       authorizationRegistryChecksum: HRIS_NAVIGATION_AUTHORIZATION_REGISTRY_SHA256,
+      ...runtimeOwnerOverlay,
       authorityDecisionCount: 0 as const,
       navigationContextScopeKey,
       authoritySelfScopeKey: null,
@@ -924,6 +1023,7 @@ function selectV3AuthorityCarrier(
   return Object.freeze({
     authorizationRegistryVersion: HRIS_NAVIGATION_AUTHORIZATION_REGISTRY_VERSION,
     authorizationRegistryChecksum: HRIS_NAVIGATION_AUTHORIZATION_REGISTRY_SHA256,
+    ...runtimeOwnerOverlay,
     authorityDecisionCount: 6 as const,
     navigationContextScopeKey,
     authoritySelfScopeKey,
@@ -935,6 +1035,91 @@ function selectV3AuthorityCarrier(
     authorityFreshUntil,
     admittedPolicyRoutes,
   });
+}
+
+function selectV3RuntimeOwnerOverlay(projection: Record<string, unknown>) {
+  if (
+    projection.runtimeOwnerOverlayRevision !== HRIS_NAVIGATION_RUNTIME_OWNER_OVERLAY_REVISION ||
+    projection.runtimeOwnerOverlayChecksum !== HRIS_NAVIGATION_RUNTIME_OWNER_OVERLAY_SHA256 ||
+    !Array.isArray(projection.runtimeOwnerOverlayRecords) ||
+    projection.runtimeOwnerOverlayRecords.length !==
+      HRIS_NAVIGATION_RUNTIME_OWNER_OVERLAY_RECORDS.length
+  ) {
+    throw new Error('HRIS navigation runtime owner overlay is invalid.');
+  }
+  const runtimeOwnerOverlayRecords = projection.runtimeOwnerOverlayRecords.map(
+    (candidate, index) => {
+      const source = record(candidate, 'runtime owner overlay record');
+      const firstRead = record(source.firstReadBinding, 'runtime owner overlay first-read binding');
+      const selected: HrisRuntimeOwnerOverlayRecord = Object.freeze({
+        nodeId: nonBlank(source.nodeId, 'runtime owner overlay node'),
+        historicalOwner: nonBlank(source.historicalOwner, 'runtime owner overlay historical owner'),
+        effectiveRuntimeOwner: nonBlank(
+          source.effectiveRuntimeOwner,
+          'runtime owner overlay effective owner'
+        ),
+        canonicalPath: nonBlank(source.canonicalPath, 'runtime owner overlay canonical path'),
+        compatibilityPath: optionalString(source.compatibilityPath),
+        routeContractKey: nonBlank(source.routeContractKey, 'runtime owner overlay route contract'),
+        firstReadBinding: Object.freeze({
+          method: nonBlank(firstRead.method, 'runtime owner overlay first-read method'),
+          gatewayPath: nonBlank(
+            firstRead.gatewayPath,
+            'runtime owner overlay first-read gateway path'
+          ),
+          serviceKey: nonBlank(
+            firstRead.serviceKey,
+            'runtime owner overlay first-read service key'
+          ),
+          servicePath: nonBlank(
+            firstRead.servicePath,
+            'runtime owner overlay first-read service path'
+          ),
+        }),
+        registryVersion: integer(source.registryVersion, 1) as 47,
+        registryChecksum: nonBlank(
+          source.registryChecksum,
+          'runtime owner overlay registry checksum'
+        ) as typeof HRIS_NAVIGATION_AUTHORIZATION_REGISTRY_SHA256,
+        evidenceDigest: patternedOpaque(
+          source.evidenceDigest,
+          /^[a-f0-9]{64}$/u,
+          'runtime owner overlay evidence digest'
+        ),
+      });
+      const expected = HRIS_NAVIGATION_RUNTIME_OWNER_OVERLAY_RECORDS[index];
+      if (!expected || !sameRuntimeOwnerOverlayRecord(selected, expected)) {
+        throw new Error('HRIS navigation runtime owner overlay record is not sealed.');
+      }
+      return selected;
+    }
+  );
+  return Object.freeze({
+    runtimeOwnerOverlayRevision: HRIS_NAVIGATION_RUNTIME_OWNER_OVERLAY_REVISION,
+    runtimeOwnerOverlayChecksum: HRIS_NAVIGATION_RUNTIME_OWNER_OVERLAY_SHA256,
+    runtimeOwnerOverlayRecords: Object.freeze(runtimeOwnerOverlayRecords),
+  });
+}
+
+function sameRuntimeOwnerOverlayRecord(
+  left: HrisRuntimeOwnerOverlayRecord,
+  right: HrisRuntimeOwnerOverlayRecord
+) {
+  return (
+    left.nodeId === right.nodeId &&
+    left.historicalOwner === right.historicalOwner &&
+    left.effectiveRuntimeOwner === right.effectiveRuntimeOwner &&
+    left.canonicalPath === right.canonicalPath &&
+    left.compatibilityPath === right.compatibilityPath &&
+    left.routeContractKey === right.routeContractKey &&
+    left.firstReadBinding.method === right.firstReadBinding.method &&
+    left.firstReadBinding.gatewayPath === right.firstReadBinding.gatewayPath &&
+    left.firstReadBinding.serviceKey === right.firstReadBinding.serviceKey &&
+    left.firstReadBinding.servicePath === right.firstReadBinding.servicePath &&
+    left.registryVersion === right.registryVersion &&
+    left.registryChecksum === right.registryChecksum &&
+    left.evidenceDigest === right.evidenceDigest
+  );
 }
 
 function selectAdmittedPolicyRoutes(

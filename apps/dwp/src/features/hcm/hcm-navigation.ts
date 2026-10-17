@@ -51,19 +51,24 @@ export type HcmView =
   | 'team'
   | 'team-time'
   | 'team-absence'
+  | 'team-leave'
   | 'operations'
+  | 'operations-home'
   | 'people'
   | 'employee-change-requests'
   | 'employment-assignments'
   | 'assignments'
   | 'time-operations'
+  | 'time-work-plans'
   | 'time-clock-ingestion'
   | 'time-interpretation'
   | 'time-exceptions'
   | 'absence-operations'
+  | 'time-leave-operations'
   | 'benefits-operations'
   | 'pay-operations'
   | 'talent-operations'
+  | 'performance-goal-cycles'
   | 'performance-review-operations'
   | 'compensation-planning'
   | 'organization-design'
@@ -189,10 +194,13 @@ export const HCM_NAVIGATION: readonly HcmNavigationGroup[] = [
       },
       {
         section: 'team',
-        view: 'team-absence',
-        path: '/hr/team/absence',
+        view: 'team-leave',
+        path: '/hr/team/leave',
         icon: CalendarDays,
         audience: 'manager',
+        governedOnly: true,
+        requiredResourceKey: 'DATA.HR_ABSENCE',
+        requiredPermissionCode: 'VIEW',
       },
     ],
   },
@@ -201,10 +209,11 @@ export const HCM_NAVIGATION: readonly HcmNavigationGroup[] = [
     items: [
       {
         section: 'operate',
-        view: 'operations',
-        path: '/hr/operations',
+        view: 'operations-home',
+        path: '/hr/operations/home',
         icon: Gauge,
         audience: 'operator',
+        governedOnly: true,
         requiredAnySupportScopes: ['WORKFORCE_READ'],
       },
       {
@@ -215,6 +224,16 @@ export const HCM_NAVIGATION: readonly HcmNavigationGroup[] = [
         audience: 'time-admin',
         requiredResourceKey: 'DATA.HR_TIME',
         requiredAnyPermissionCodes: ['VIEW_TENANT', 'APPROVE', 'MANAGE'],
+      },
+      {
+        section: 'operate',
+        view: 'time-work-plans',
+        path: '/hr/operations/time/work-plans',
+        icon: CalendarCheck2,
+        audience: 'time-admin',
+        governedOnly: true,
+        requiredResourceKey: 'DATA.HR_TIME',
+        requiredPermissionCode: 'VIEW',
       },
       {
         section: 'operate',
@@ -248,12 +267,13 @@ export const HCM_NAVIGATION: readonly HcmNavigationGroup[] = [
       },
       {
         section: 'operate',
-        view: 'absence-operations',
-        path: '/hr/operations/absence',
+        view: 'time-leave-operations',
+        path: '/hr/operations/time/leave-operations',
         icon: CalendarCheck2,
         audience: 'absence-admin',
+        governedOnly: true,
         requiredResourceKey: 'DATA.HR_ABSENCE',
-        requiredAnyPermissionCodes: ['VIEW_TENANT', 'APPROVE', 'MANAGE'],
+        requiredPermissionCode: 'VIEW',
       },
       {
         section: 'operate',
@@ -281,6 +301,16 @@ export const HCM_NAVIGATION: readonly HcmNavigationGroup[] = [
         audience: 'talent-admin',
         requiredResourceKey: 'DATA.HR_TALENT',
         requiredAnyPermissionCodes: ['VIEW_TENANT', 'APPROVE', 'MANAGE'],
+      },
+      {
+        section: 'operate',
+        view: 'performance-goal-cycles',
+        path: '/hr/operations/performance/goal-cycles',
+        icon: ShieldCheck,
+        audience: 'talent-admin',
+        governedOnly: true,
+        requiredResourceKey: 'DATA.HR_TALENT',
+        requiredPermissionCode: 'VIEW',
       },
       {
         section: 'operate',
@@ -430,6 +460,38 @@ export const HCM_NAVIGATION: readonly HcmNavigationGroup[] = [
   },
 ];
 
+/**
+ * Historical bookmarks remain resolvable, but are deliberately kept outside every navigation
+ * projection. The canonical R6-C PAGE owns menu placement; these aliases can only be reached by
+ * an existing deep link and never create a second menu entry.
+ */
+export const HCM_DEEP_LINK_COMPATIBILITY_ITEMS: readonly HcmNavigationItem[] = Object.freeze([
+  Object.freeze({
+    section: 'team',
+    view: 'team-leave',
+    path: '/hr/team/absence',
+    icon: CalendarDays,
+    audience: 'manager',
+  }),
+  Object.freeze({
+    section: 'operate',
+    view: 'operations-home',
+    path: '/hr/operations',
+    icon: Gauge,
+    audience: 'operator',
+    requiredAnySupportScopes: ['WORKFORCE_READ'],
+  }),
+  Object.freeze({
+    section: 'operate',
+    view: 'time-leave-operations',
+    path: '/hr/operations/absence',
+    icon: CalendarCheck2,
+    audience: 'absence-admin',
+    requiredResourceKey: 'DATA.HR_ABSENCE',
+    requiredAnyPermissionCodes: ['VIEW_TENANT', 'APPROVE', 'MANAGE'],
+  }),
+]);
+
 const policy = (accessPolicyKey: string) => ({ type: 'policy' as const, accessPolicyKey });
 const capability = (capabilityContractKey: string) => ({
   type: 'capability' as const,
@@ -456,11 +518,11 @@ export const HCM_PERSONAL_NAVIGATION = projectProductSurfaceNavigation(HCM_NAVIG
 export const HCM_TEAM_NAVIGATION = projectProductSurfaceNavigation(HCM_NAVIGATION, {
   team: { taskKind: 'team', access: policy('hcm.team-access.v1') },
   'team-time': { taskKind: 'team', access: capability('hcm.team.time.read') },
-  'team-absence': { taskKind: 'team', access: capability('hcm.team.absence.read') },
+  'team-leave': { taskKind: 'team', access: capability('hcm.team.absence.read') },
 });
 
 export const HCM_OPERATIONS_NAVIGATION = projectProductSurfaceNavigation(HCM_NAVIGATION, {
-  operations: {
+  'operations-home': {
     taskKind: 'operations',
     access: {
       type: 'capability-expression',
@@ -476,6 +538,10 @@ export const HCM_OPERATIONS_NAVIGATION = projectProductSurfaceNavigation(HCM_NAV
     },
   },
   'time-operations': { taskKind: 'operations', access: capability('hcm.operations.time.read') },
+  'time-work-plans': {
+    taskKind: 'operations',
+    access: capability('hcm.operations.time.read'),
+  },
   'time-clock-ingestion': {
     taskKind: 'operations',
     access: capability('hcm.operations.time.view'),
@@ -488,7 +554,7 @@ export const HCM_OPERATIONS_NAVIGATION = projectProductSurfaceNavigation(HCM_NAV
     taskKind: 'operations',
     access: capability('hcm.operations.time.view'),
   },
-  'absence-operations': {
+  'time-leave-operations': {
     taskKind: 'operations',
     access: capability('hcm.operations.absence.read'),
   },
@@ -498,6 +564,10 @@ export const HCM_OPERATIONS_NAVIGATION = projectProductSurfaceNavigation(HCM_NAV
   },
   'pay-operations': { taskKind: 'operations', access: capability('hcm.operations.pay.read') },
   'talent-operations': {
+    taskKind: 'operations',
+    access: capability('hcm.operations.talent.read'),
+  },
+  'performance-goal-cycles': {
     taskKind: 'operations',
     access: capability('hcm.operations.talent.read'),
   },
@@ -576,7 +646,7 @@ export function canAccessHcmNavigationAudience(
   if (item.audience === 'benefits-admin') return access.canManageBenefits === true;
   if (item.audience === 'pay-admin') return access.canManagePay === true;
   if (item.audience === 'talent-admin') return access.canManageTalent === true;
-  if (item.view === 'operations') {
+  if (item.view === 'operations-home') {
     return (
       access.canAccessOperationsOverview === true ||
       access.canOperate ||
@@ -603,5 +673,8 @@ export function visibleHcmNavigation(access: HcmAudienceAccess): HcmNavigationGr
 
 export function findHcmNavigationItem(pathname: string): HcmNavigationItem | undefined {
   const normalized = pathname.length > 1 ? pathname.replace(/\/+$/u, '') : pathname;
-  return HCM_NAVIGATION.flatMap((group) => group.items).find((item) => item.path === normalized);
+  return [
+    ...HCM_NAVIGATION.flatMap((group) => group.items),
+    ...HCM_DEEP_LINK_COMPATIBILITY_ITEMS,
+  ].find((item) => item.path === normalized);
 }

@@ -19,6 +19,9 @@ import {
   HRIS_NAVIGATION_TOPOLOGY_REVISION,
   HRIS_NAVIGATION_TOPOLOGY_SHA256,
   HRIS_NAVIGATION_POLICY_V3_RUNTIME_PATH,
+  HRIS_NAVIGATION_RUNTIME_OWNER_OVERLAY_RECORDS,
+  HRIS_NAVIGATION_RUNTIME_OWNER_OVERLAY_REVISION,
+  HRIS_NAVIGATION_RUNTIME_OWNER_OVERLAY_SHA256,
   projectHrisWorkbenchTaskNavigation,
   readRuntimeNavigationPolicyProjection,
   resolveHrisNavigationProjectionScopeSurface,
@@ -54,9 +57,9 @@ describe('server-owned HRIS seven-workbench navigation runtime', () => {
       );
       expect(policy.mode).toBe('STATIC');
       const items = createHrisPolicyShellNavigationProjection(policy)
-        .project(new Set(['/hr/operations', '/hr/unimplemented']))
+        .project(new Set(['/hr/operations/home', '/hr/unimplemented']))
         .flatMap((group) => group.items);
-      expect(items.map((item) => item.path)).toEqual(['/hr/operations']);
+      expect(items.map((item) => item.path)).toEqual(['/hr/operations/home']);
       expect(items).toHaveLength(1);
     }
   });
@@ -452,6 +455,40 @@ describe('server-owned HRIS seven-workbench navigation runtime', () => {
     ).toBe('ALLOW');
   });
 
+  it('selects the R6-C operations home as the menu target while preserving the old deep link', () => {
+    const compatibilityPath = '/hr/operations';
+    const canonicalPath = '/hr/operations/home';
+    const policy = enforcedPolicy([
+      effectiveWorkbench('HRIS-WB-HR-OPERATIONS', ['BASE:hr-operations-home']),
+    ]);
+    const authorized = new Set([compatibilityPath, canonicalPath]);
+
+    expect(
+      projectHrisWorkbenchTaskNavigation(policy, 'workbench-hr-operations', authorized).flatMap(
+        (group) => group.nodes
+      )
+    ).toEqual([
+      expect.objectContaining({
+        nodeId: 'BASE:hr-operations-home',
+        routeAliases: [canonicalPath, compatibilityPath],
+      }),
+    ]);
+    expect(
+      createHrisPolicyShellNavigationProjection(policy)
+        .project(authorized)
+        .flatMap((group) => group.items)
+    ).toEqual([
+      expect.objectContaining({
+        path: canonicalPath,
+        activePathPrefixes: [canonicalPath, compatibilityPath],
+      }),
+    ]);
+    expect(resolveHrisRuntimePolicyDeepLink(policy, compatibilityPath, authorized)).toMatchObject({
+      decision: 'ALLOW',
+      nodeId: 'BASE:hr-operations-home',
+    });
+  });
+
   it('rejects missing, duplicate, unsafe, excluded, POLICY-only, and unsealed server aliases', () => {
     const people = effectiveWorkbench('HRIS-WB-HR-OPERATIONS', ['BASE:hr-people']);
     const peoplePath = '/hr/operations/people';
@@ -493,14 +530,16 @@ describe('server-owned HRIS seven-workbench navigation runtime', () => {
       )
     ).toThrow('not sealed');
 
-    const operations = effectiveWorkbench('HRIS-WB-HR-OPERATIONS', ['BASE:hr-operations-home']);
+    const timeOperations = effectiveWorkbench('HRIS-WB-TIME', ['BASE:time-command-center']);
     expect(() =>
       selectRuntimeHrisNavigationPolicyProjection(
         projection('ENFORCED', {
           policyEnforced: true,
           revisionPin: revisionPin('1'),
           workbenches: [
-            withNodeRouteAliases(operations, 'BASE:hr-operations-home', ['/hr/operations']),
+            withNodeRouteAliases(timeOperations, 'BASE:time-command-center', [
+              '/hr/operations/time',
+            ]),
           ],
         })
       )
@@ -573,6 +612,9 @@ describe('server-owned HRIS seven-workbench navigation runtime', () => {
     expect(selectedProjection.admittedPolicyRoutes[0]?.routeGrantRef).toBe(
       `grant-${'8'.repeat(32)}`
     );
+    expect(selectedProjection.runtimeOwnerOverlayRecords).toEqual(
+      HRIS_NAVIGATION_RUNTIME_OWNER_OVERLAY_RECORDS
+    );
     expect(shellItems).toEqual([
       expect.objectContaining({
         path: '/hr/me',
@@ -601,6 +643,43 @@ describe('server-owned HRIS seven-workbench navigation runtime', () => {
     for (const withheld of ['/hr/me/profile', '/hr/me/leave', '/hr/me/requests', '/hr/team']) {
       expect(resolveHrisRuntimePolicyDeepLink(policy, withheld, authorized).decision).toBe('DENY');
     }
+  });
+
+  it('accepts the sealed R6-C owner overlay aliases only in canonical-first order', () => {
+    const selected = selectRuntimeHrisNavigationPolicyProjection(
+      projectionV3('ENFORCED', {
+        policyEnforced: true,
+        revisionPin: revisionPin('3', 'd'),
+        admittedPolicyRoutes: HRIS_V46_SELF_POLICY_ROUTE_BINDINGS.map(admittedPolicyRoute),
+        workbenches: [
+          effectiveV3SelfWorkbench(),
+          effectiveWorkbench('HRIS-WB-TEAM', ['BASE:team-leave']),
+          effectiveWorkbench('HRIS-WB-HR-OPERATIONS', ['BASE:hr-operations-home']),
+          effectiveWorkbench('HRIS-WB-TIME', ['BASE:time-leave-operations']),
+        ],
+      })
+    );
+
+    expect(
+      selected.workbenches.flatMap((workbench) =>
+        workbench.groups.flatMap((group) =>
+          group.nodes
+            .filter((node) =>
+              ['BASE:team-leave', 'BASE:hr-operations-home', 'BASE:time-leave-operations'].includes(
+                node.nodeId
+              )
+            )
+            .map((node) => [node.nodeId, node.routeAliases])
+        )
+      )
+    ).toEqual([
+      ['BASE:team-leave', ['/hr/team/leave', '/hr/team/absence']],
+      ['BASE:hr-operations-home', ['/hr/operations/home', '/hr/operations']],
+      [
+        'BASE:time-leave-operations',
+        ['/hr/operations/time/leave-operations', '/hr/operations/absence'],
+      ],
+    ]);
   });
 
   it('rejects hostile, mismatched, stale, duplicate, and unused V3 POLICY decisions', () => {
@@ -663,6 +742,28 @@ describe('server-owned HRIS seven-workbench navigation runtime', () => {
         })
       )
     ).toThrow(/freshness/u);
+    for (const overlayDrift of [
+      { runtimeOwnerOverlayChecksum: '0'.repeat(64) },
+      { runtimeOwnerOverlayRecords: HRIS_NAVIGATION_RUNTIME_OWNER_OVERLAY_RECORDS.slice(1) },
+      {
+        runtimeOwnerOverlayRecords: HRIS_NAVIGATION_RUNTIME_OWNER_OVERLAY_RECORDS.map(
+          (record, index) =>
+            index === 0 ? { ...record, effectiveRuntimeOwner: 'dwp-time-server' } : record
+        ),
+      },
+    ]) {
+      expect(() =>
+        selectRuntimeHrisNavigationPolicyProjection(
+          projectionV3('ENFORCED', {
+            policyEnforced: true,
+            revisionPin: revisionPin('3', 'b'),
+            admittedPolicyRoutes: [validRoute],
+            workbenches,
+            ...overlayDrift,
+          })
+        )
+      ).toThrow(/owner overlay/u);
+    }
   });
 
   it('accepts only an empty V3 authority carrier outside ENFORCED mode', () => {
@@ -929,6 +1030,12 @@ function projectionV3(
     schemaVersion: '3',
     authorizationRegistryVersion: HRIS_NAVIGATION_AUTHORIZATION_REGISTRY_VERSION,
     authorizationRegistryChecksum: HRIS_NAVIGATION_AUTHORIZATION_REGISTRY_SHA256,
+    runtimeOwnerOverlayRevision: HRIS_NAVIGATION_RUNTIME_OWNER_OVERLAY_REVISION,
+    runtimeOwnerOverlayChecksum: HRIS_NAVIGATION_RUNTIME_OWNER_OVERLAY_SHA256,
+    runtimeOwnerOverlayRecords: HRIS_NAVIGATION_RUNTIME_OWNER_OVERLAY_RECORDS.map((record) => ({
+      ...record,
+      firstReadBinding: { ...record.firstReadBinding },
+    })),
     authorityDecisionCount: enforced ? 6 : 0,
     navigationContextScopeKey: `hcm-scope-${'1'.repeat(40)}`,
     authoritySelfScopeKey: enforced ? `scope-${'7'.repeat(32)}` : null,

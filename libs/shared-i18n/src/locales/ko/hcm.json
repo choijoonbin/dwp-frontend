@@ -387,19 +387,24 @@
         "team": { "label": "내 팀" },
         "team-time": { "label": "팀 근태 승인" },
         "team-absence": { "label": "팀 휴가 승인" },
+        "team-leave": { "label": "팀 휴가 승인" },
         "operations": { "label": "운영 현황" },
+        "operations-home": { "label": "운영 현황" },
         "people": { "label": "인력 정보" },
         "employee-change-requests": { "label": "직원변경 요청" },
         "employment-assignments": { "label": "고용관계·배치" },
         "assignments": { "label": "발령 현황" },
         "time-operations": { "label": "근태 운영" },
+        "time-work-plans": { "label": "근무계획" },
         "time-clock-ingestion": { "label": "타각 수집" },
         "time-interpretation": { "label": "근태 해석" },
         "time-exceptions": { "label": "근태 예외" },
         "absence-operations": { "label": "휴가 운영" },
+        "time-leave-operations": { "label": "휴가 운영" },
         "benefits-operations": { "label": "복리후생 운영" },
         "pay-operations": { "label": "급여 운영" },
         "talent-operations": { "label": "인재 운영" },
+        "performance-goal-cycles": { "label": "목표 주기" },
         "performance-review-operations": { "label": "평가 운영" },
         "compensation-planning": { "label": "보상 계획" },
         "organization-design": { "label": "조직 설계" },
@@ -484,7 +489,17 @@
         "title": "팀 휴가 승인",
         "description": "현재 보고 관계에 속한 팀원의 휴가 신청을 검토합니다."
       },
+      "team-leave": {
+        "eyebrow": "HRIS / 내 팀",
+        "title": "팀 휴가 승인",
+        "description": "현재 보고 관계에 속한 팀원의 휴가 신청을 검토합니다."
+      },
       "operations": {
+        "eyebrow": "HRIS / HR 운영",
+        "title": "인력 운영 현황",
+        "description": "인력 데이터 무결성, 조직 신호 및 원천 데이터 최신성을 점검합니다."
+      },
+      "operations-home": {
         "eyebrow": "HRIS / HR 운영",
         "title": "인력 운영 현황",
         "description": "인력 데이터 무결성, 조직 신호 및 원천 데이터 최신성을 점검합니다."
@@ -519,6 +534,11 @@
         "title": "근태 운영",
         "description": "근태 예외, 제출 대기와 마감 준비도를 관리합니다."
       },
+      "time-work-plans": {
+        "eyebrow": "HRIS / 근태 운영",
+        "title": "근무계획",
+        "description": "유효일 기준 근무제, 일정과 배정 준비도를 관리합니다."
+      },
       "time-clock-ingestion": {
         "eyebrow": "HRIS / 근태 운영",
         "title": "타각 수집",
@@ -539,6 +559,11 @@
         "title": "휴가 운영",
         "description": "휴가 정책, 잔여일과 승인 대기 상태를 통제합니다."
       },
+      "time-leave-operations": {
+        "eyebrow": "HRIS / 근태 운영",
+        "title": "휴가 운영",
+        "description": "휴가 정책, 잔여일과 승인 대기 상태를 통제합니다."
+      },
       "benefits-operations": {
         "eyebrow": "HRIS / HR 운영",
         "title": "복리후생 운영",
@@ -553,6 +578,11 @@
         "eyebrow": "HRIS / HR 운영",
         "title": "인재 운영",
         "description": "성장 여정, 목표 위험과 필수 학습 상태를 관리합니다."
+      },
+      "performance-goal-cycles": {
+        "eyebrow": "HRIS / 성과 운영",
+        "title": "목표 주기",
+        "description": "유효일 기준 성과 주기, 단계와 게시 준비도를 구성하고 점검합니다."
       },
       "performance-review-operations": {
         "eyebrow": "HRIS / 성과 운영",

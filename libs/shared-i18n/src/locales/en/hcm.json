@@ -387,19 +387,24 @@
         "team": { "label": "My team" },
         "team-time": { "label": "Team time approvals" },
         "team-absence": { "label": "Team leave approvals" },
+        "team-leave": { "label": "Team leave approvals" },
         "operations": { "label": "Operations overview" },
+        "operations-home": { "label": "Operations overview" },
         "people": { "label": "Workforce people" },
         "employee-change-requests": { "label": "Employee change requests" },
         "employment-assignments": { "label": "Employment & assignments" },
         "assignments": { "label": "Assignments" },
         "time-operations": { "label": "Time operations" },
+        "time-work-plans": { "label": "Work plans" },
         "time-clock-ingestion": { "label": "Clock ingestion" },
         "time-interpretation": { "label": "Time interpretation" },
         "time-exceptions": { "label": "Time exceptions" },
         "absence-operations": { "label": "Absence operations" },
+        "time-leave-operations": { "label": "Leave operations" },
         "benefits-operations": { "label": "Benefits operations" },
         "pay-operations": { "label": "Pay operations" },
         "talent-operations": { "label": "Talent operations" },
+        "performance-goal-cycles": { "label": "Goal cycles" },
         "performance-review-operations": { "label": "Performance review operations" },
         "compensation-planning": { "label": "Compensation planning" },
         "organization-design": { "label": "Organization design" },
@@ -484,7 +489,17 @@
         "title": "Team leave approvals",
         "description": "Review time-off requests inside your current reporting population."
       },
+      "team-leave": {
+        "eyebrow": "HRIS / My team",
+        "title": "Team leave approvals",
+        "description": "Review time-off requests inside your current reporting population."
+      },
       "operations": {
+        "eyebrow": "HRIS / HR operations",
+        "title": "Workforce operations",
+        "description": "Review workforce integrity, structure signals, and source freshness."
+      },
+      "operations-home": {
         "eyebrow": "HRIS / HR operations",
         "title": "Workforce operations",
         "description": "Review workforce integrity, structure signals, and source freshness."
@@ -519,6 +534,11 @@
         "title": "Time operations",
         "description": "Manage time exceptions, submitted cards, and close readiness."
       },
+      "time-work-plans": {
+        "eyebrow": "HRIS / Time operations",
+        "title": "Work plans",
+        "description": "Manage effective-dated work patterns, schedules, and assignment readiness."
+      },
       "time-clock-ingestion": {
         "eyebrow": "HRIS / Time operations",
         "title": "Clock ingestion",
@@ -539,6 +559,11 @@
         "title": "Absence operations",
         "description": "Control leave plans, balances, and pending requests."
       },
+      "time-leave-operations": {
+        "eyebrow": "HRIS / Time operations",
+        "title": "Leave operations",
+        "description": "Control leave plans, balances, and pending requests."
+      },
       "benefits-operations": {
         "eyebrow": "HRIS / HR operations",
         "title": "Benefits operations",
@@ -553,6 +578,11 @@
         "eyebrow": "HRIS / HR operations",
         "title": "Talent operations",
         "description": "Manage journeys, goal risk, and required learning."
+      },
+      "performance-goal-cycles": {
+        "eyebrow": "HRIS / Performance operations",
+        "title": "Goal cycles",
+        "description": "Configure and monitor effective-dated performance cycles, stages, and publication readiness."
       },
       "performance-review-operations": {
         "eyebrow": "HRIS / Performance operations",

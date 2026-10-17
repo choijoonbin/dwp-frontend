@@ -3,9 +3,11 @@ import { describe, expect, it } from 'vitest';
 import { isHrWorkItem, selectCurrentPerson } from './hcm-experience-model';
 import {
   findHcmNavigationItem,
+  HCM_DEEP_LINK_COMPATIBILITY_ITEMS,
   HCM_MANAGEMENT_NAVIGATION,
   HCM_OPERATIONS_NAVIGATION,
   HCM_PERSONAL_NAVIGATION,
+  HCM_TEAM_NAVIGATION,
   mapLegacyHrPath,
   visibleHcmNavigation,
 } from './hcm-navigation';
@@ -43,9 +45,9 @@ describe('HR product navigation', () => {
       'organization',
     ]);
     expect(manager.flatMap((group) => group.items).some((item) => item.view === 'team')).toBe(true);
-    expect(
-      operator.flatMap((group) => group.items).some((item) => item.view === 'operations')
-    ).toBe(true);
+    expect(operator.flatMap((group) => group.items).some((item) => item.view === 'people')).toBe(
+      true
+    );
   });
 
   it('keeps legacy bookmarks while resolving every destination to the HR shell', () => {
@@ -56,6 +58,35 @@ describe('HR product navigation', () => {
     expect(mapLegacyHrPath('/people/unknown')).toBeUndefined();
     expect(mapLegacyHrPath('/workforce/unknown')).toBeUndefined();
     expect(findHcmNavigationItem('/hr/design/organization')?.view).toBe('organization-design');
+  });
+
+  it('mounts canonical R6-C pages and keeps historical aliases deep-link-only', () => {
+    expect(
+      [
+        '/hr/operations/time/work-plans',
+        '/hr/operations/performance/goal-cycles',
+        '/hr/team/leave',
+        '/hr/operations/time/leave-operations',
+        '/hr/operations/home',
+      ].map((path) => findHcmNavigationItem(path)?.path)
+    ).toEqual([
+      '/hr/operations/time/work-plans',
+      '/hr/operations/performance/goal-cycles',
+      '/hr/team/leave',
+      '/hr/operations/time/leave-operations',
+      '/hr/operations/home',
+    ]);
+    expect(HCM_DEEP_LINK_COMPATIBILITY_ITEMS.map((item) => item.path)).toEqual([
+      '/hr/team/absence',
+      '/hr/operations',
+      '/hr/operations/absence',
+    ]);
+    const menuPaths = [...HCM_TEAM_NAVIGATION, ...HCM_OPERATIONS_NAVIGATION].flatMap((group) =>
+      group.items.map((item) => item.path)
+    );
+    expect(menuPaths).not.toEqual(
+      expect.arrayContaining(['/hr/team/absence', '/hr/operations', '/hr/operations/absence'])
+    );
   });
 
   it('shows exact management work without requiring the broad workforce operator role', () => {
@@ -97,7 +128,7 @@ describe('HR product navigation', () => {
       .filter((item) => item.section === 'operate')
       .map((item) => item.view);
 
-    expect(operationsViews).toEqual(['operations', 'time-operations']);
+    expect(operationsViews).toEqual(['time-operations']);
     expect(operationsViews).not.toContain('people');
     expect(operationsViews).not.toContain('assignments');
   });
@@ -148,6 +179,18 @@ describe('HR product navigation', () => {
       view: 'time-interpretation',
       governedOnly: true,
       requiredResourceKey: 'DATA.HR_TIME',
+      requiredPermissionCode: 'VIEW',
+    });
+    expect(findHcmNavigationItem('/hr/operations/time/work-plans')).toMatchObject({
+      view: 'time-work-plans',
+      governedOnly: true,
+      requiredResourceKey: 'DATA.HR_TIME',
+      requiredPermissionCode: 'VIEW',
+    });
+    expect(findHcmNavigationItem('/hr/operations/performance/goal-cycles')).toMatchObject({
+      view: 'performance-goal-cycles',
+      governedOnly: true,
+      requiredResourceKey: 'DATA.HR_TALENT',
       requiredPermissionCode: 'VIEW',
     });
     expect(findHcmNavigationItem('/hr/operations/performance/review-operations')).toMatchObject({
@@ -214,6 +257,16 @@ describe('HR product navigation', () => {
       path: '/hr/operations/time/interpretation',
       taskKind: 'operations',
       access: { type: 'capability', capabilityContractKey: 'hcm.operations.time.view' },
+    });
+    expect(item(HCM_OPERATIONS_NAVIGATION, 'time-work-plans')).toMatchObject({
+      path: '/hr/operations/time/work-plans',
+      taskKind: 'operations',
+      access: { type: 'capability', capabilityContractKey: 'hcm.operations.time.read' },
+    });
+    expect(item(HCM_OPERATIONS_NAVIGATION, 'performance-goal-cycles')).toMatchObject({
+      path: '/hr/operations/performance/goal-cycles',
+      taskKind: 'operations',
+      access: { type: 'capability', capabilityContractKey: 'hcm.operations.talent.read' },
     });
     expect(item(HCM_OPERATIONS_NAVIGATION, 'compensation-planning')).toMatchObject({
       path: '/hr/operations/performance/compensation-planning',

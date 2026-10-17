@@ -52,11 +52,11 @@ describe('HCM query discriminator source contract', () => {
     const overview = source('./hr-operations-overview.tsx');
     for (const path of [
       '/hr/operations/people',
-      '/hr/operations/time',
-      '/hr/operations/absence',
+      '/hr/operations/time/work-plans',
+      '/hr/operations/time/leave-operations',
       '/hr/operations/benefits',
       '/hr/operations/pay',
-      '/hr/operations/talent',
+      '/hr/operations/performance/goal-cycles',
     ]) {
       expect(source('./hr-operations-overview-model.ts')).toContain(`path: '${path}'`);
     }
