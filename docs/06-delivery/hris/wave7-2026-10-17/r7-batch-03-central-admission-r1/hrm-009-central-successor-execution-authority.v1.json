@@ -1,0 +1,683 @@
+{
+  "schema": "dwp.hris.r7-batch03-hrm009-central-successor-execution-authority.v1",
+  "decisionId": "HRIS-WAVE7-R7-BATCH03-HRM009-CENTRAL-SUCCESSOR-EXECUTION-AUTHORITY-20261018-R1",
+  "issuedAt": "2026-10-18T06:43:50+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "HRM009_CENTRAL_V52_V261_AND_READ_ONLY_PAGE_DATA_MOUNT_AUTHORIZED_IN_PINNED_WORKTREES_FRONTEND_ACTION_UI_WITHHELD_DEFAULT_OFF_ZERO_ENROLLMENT",
+  "purpose": "Authorize the exact central successor needed after the independently accepted and centrally integrated HRM-009 Stage-A source: immutable product-authorization v52, Auth V261, bounded Auth/Gateway/People runtime hardening, synchronized frontend authorization artifacts, and two default-OFF read-only PAGE/DATA mounts. The single ACTION contract may be generated and enforced by backend runtime, but no frontend ACTION delegate, POST path, activation, enrollment or customer-data use is authorized because the accepted read projections do not expose the trusted subject person object version and the frontend has no accepted cross-surface HIGH coordinator from hcm.personal to the one hcm.operations ACTION.",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_DECISION_ID_AND_SHA256",
+    "predecessorMutation": "FORBIDDEN"
+  },
+  "authorityBasis": {
+    "batch03Preflight": {
+      "path": "../r7-batch-03-preflight-r1/semantic-dependency-migration-preflight.v1.json",
+      "sha256": "dde2815eceb71c37d77334002d6cdbd26812c63bd6d38fc0fd82dea17ff745e8",
+      "bytes": 11972
+    },
+    "sealedContractDesign": {
+      "path": "../r7-batch-03-module-start-r1/central-authorization-successor.v1.json",
+      "sha256": "c49c856034dbf0fae7923c75356378b62203e2c7ab80bf9374269225be9d20f9",
+      "bytes": 18313
+    },
+    "sourceAdmissionDecision": {
+      "path": "hrm-009-stage-a-source-admission-decision.v1.json",
+      "sha256": "1b080e96ee296987093ada84b8e6058315f3f9ddeaa435fb1194551c345a8403",
+      "bytes": 10006,
+      "carrierCommit": "56e67c9ad29c66e4201d32cbf530a6064e075ddb",
+      "carrierTree": "cb1317776653951b52db2f0310ac777b2995233c"
+    },
+    "centralIntegrationReceipt": {
+      "path": "hrm-009-stage-a-central-integration-receipt.v1.json",
+      "sha256": "d8e3208a96d7e7fc24c6385e99f10c52963d7ba7f27a8dedfb382cdd66df56e0",
+      "bytes": 6183
+    },
+    "centralCarrierBeforeAuthority": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "1ab15b3210e8b997615c12a4db2e6cbe29efd536",
+      "tree": "981a193e51a305662d636deb4acdc775045411a3",
+      "originExact": true,
+      "clean": true
+    },
+    "integratedBackendCarrier": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "1e3bd64fb13bdc7d772913ad48a9cce315ea05b0",
+      "tree": "7097f60a9ccca1fe3cc6449a4242d6b83c1b8fdf",
+      "originExact": true,
+      "clean": true
+    }
+  },
+  "effectiveEvidence": [
+    {
+      "path": "../r7-batch-03-module-results-r1/base-tfr-hrm-009-stage-a/acceptance-results.v1.json",
+      "sha256": "8b9b51b089f7b42bb35a1ff65313791ecb4e8c93cae163de7788b7b50f1f303b",
+      "bytes": 12794,
+      "immutableBySuccessor": true
+    },
+    {
+      "path": "../r7-batch-03-module-results-r1/base-tfr-hrm-009-stage-a/changed-path-and-no-recount.v1.json",
+      "sha256": "51b334830e7b561fef102f5c3db23faf403c0b627ec642b1d08435c7a09283e1",
+      "bytes": 14894,
+      "immutableBySuccessor": true
+    },
+    {
+      "path": "../r7-batch-03-module-results-r1/base-tfr-hrm-009-stage-a/materialization-receipt.v1.json",
+      "sha256": "3da34cc99eb6aa3a7c7bc0cbbdb2a633cffd080ede093629463f108fe9629771",
+      "bytes": 10103,
+      "immutableBySuccessor": true
+    },
+    {
+      "path": "../r7-batch-03-module-results-r1/base-tfr-hrm-009-stage-a/module-result-evidence.v1.json",
+      "sha256": "1e9dadfeb76674b2c5b3acef877f792be9728652a8435c85b6e37bce5a3a7e66",
+      "bytes": 16536,
+      "immutableBySuccessor": true
+    },
+    {
+      "path": "../r7-batch-03-module-results-r1/base-tfr-hrm-009-stage-a/people-v58-evidence.v1.json",
+      "sha256": "dd48e7baddfe3b56a5f090e7f11568080c4195cb4ce9a22eb87240a6d9f683a2",
+      "bytes": 11203,
+      "immutableBySuccessor": true
+    },
+    {
+      "path": "../r7-batch-03-module-results-r1/base-tfr-hrm-009-stage-a/request-issue-evidence.v1.json",
+      "sha256": "e01b453b4851d39f5a739640331cfc9e5974bd5b21f03e2ec76f7d780fde2984",
+      "bytes": 23409,
+      "immutableBySuccessor": true
+    },
+    {
+      "path": "../r7-batch-03-module-results-r1/base-tfr-hrm-009-stage-a/acceptance-results.v2.json",
+      "sha256": "f36c4cb92f28c3e38bf1309449acd5ef039990599c7b70292354262398425c97",
+      "bytes": 6201,
+      "effectiveSuccessor": true
+    },
+    {
+      "path": "../r7-batch-03-module-results-r1/base-tfr-hrm-009-stage-a/changed-path-and-no-recount.v2.json",
+      "sha256": "8d483a1a12d904e869d05ed7691193d6820cdf90480a7859bc39a0c0513f406f",
+      "bytes": 8868,
+      "effectiveSuccessor": true
+    },
+    {
+      "path": "../r7-batch-03-module-results-r1/base-tfr-hrm-009-stage-a/request-issue-evidence.v2.json",
+      "sha256": "82924e341a57c22430af5a1c6c2c0ac88b08464d334cea1e92e04cf98d3b8d26",
+      "bytes": 7529,
+      "effectiveSuccessor": true
+    },
+    {
+      "path": "../r7-batch-03-module-results-r1/base-tfr-hrm-009-stage-a/module-result-evidence.v2.json",
+      "sha256": "caf5b2d196005e833619629bb04071b37f47417d449c3baea54e8bfdb3cb8c0e",
+      "bytes": 12673,
+      "effectiveSuccessor": true
+    }
+  ],
+  "immutablePredecessors": {
+    "productAuthorization": {
+      "version": 51,
+      "bundleStatus": "DRAFT",
+      "repositoryPath": "backend:contracts/product-authorization/product-surfaces-v1.bundle-v51.json",
+      "fileSha256": "9c5a2f02551c7eaf38046a696ea0db80e97a16cf9c0a9324d3e515d2e9c6d8aa",
+      "bytes": 2588474,
+      "embeddedChecksum": "3beda5c13a3af0e265ace4533a3afcee3691c2b7486465dcf46156e58ae5ed2c",
+      "preservation": "IMMUTABLE_NO_EDIT"
+    },
+    "authMigration": {
+      "version": "V260",
+      "repositoryPath": "backend:dwp-auth-server/src/main/resources/db/migration/V260__declare_hris_r7_batch02_v51_authorization_seed.sql",
+      "sha256": "d6cfffa183f91738a0f56ea283e69a84c251d30ba6c09f464ce643b05df4e534",
+      "bytes": 3639,
+      "preservation": "IMMUTABLE_NEW_DELTA_ONLY_AT_V261"
+    }
+  },
+  "executionIdentity": {
+    "sliceId": "BASE-TFR-HRM-009",
+    "stageId": "BASE-TFR-HRM-009-CENTRAL-SUCCESSOR-A",
+    "moduleSession": "SYS_COMMON_INTEGRATION_CONTROL_WITH_HRIS_HRM_SOURCE",
+    "feature": "HRIS_HRM_CERTIFICATE_WORKBENCH",
+    "minimumBundleVersion": 52,
+    "candidateAuthMigration": "V261",
+    "appEntitlement": "APP.HCM:VIEW",
+    "runtimeDefault": "OFF",
+    "enrolledTenants": [],
+    "tenantEnrollmentCount": 0
+  },
+  "sealedV52Delta": {
+    "bundleStatus": "DRAFT",
+    "automaticImportEnabled": false,
+    "predecessorCounts": {
+      "capabilities": 265,
+      "accessPolicies": 24,
+      "entitlementExpressions": 17,
+      "predicatePolicies": 81,
+      "routes": 1087
+    },
+    "expectedCounts": {
+      "capabilities": 268,
+      "accessPolicies": 24,
+      "entitlementExpressions": 17,
+      "predicatePolicies": 81,
+      "routes": 1092
+    },
+    "hcmPageCount": {
+      "before": 56,
+      "after": 58
+    },
+    "newCapabilities": [
+      {
+        "contractKey": "hcm.personal.requests.view",
+        "resource": "DATA.HRIS_SELF_REQUEST",
+        "permission": "VIEW",
+        "scopeResolver": "SELF",
+        "riskTier": "MEDIUM",
+        "stepUpRequired": false
+      },
+      {
+        "contractKey": "hcm.personal.certificate.request",
+        "resource": "ACTION.HRIS_CERTIFICATE",
+        "permission": "CREATE",
+        "scopeResolver": "SELF",
+        "riskTier": "MEDIUM",
+        "capabilityStepUpRequired": false,
+        "effectiveSharedRouteRisk": "HIGH"
+      },
+      {
+        "contractKey": "hcm.operations.certificate.issue",
+        "resource": "ACTION.HRIS_CERTIFICATE",
+        "permission": "ISSUE",
+        "scopeResolver": "WORKFORCE_TARGET_POPULATION",
+        "riskTier": "HIGH",
+        "activationPolicy": "STEPUP-MGMT-HIGH-V1",
+        "stepUpRequired": true
+      }
+    ],
+    "existingCapabilityAppendOnlyBinding": {
+      "contractKey": "hcm.operations.people.view",
+      "semanticMeaningChanged": false,
+      "appendRouteKeys": [
+        "route.hcm.operations.certificates-documents.page",
+        "route.hcm.operations.certificates-documents.data"
+      ]
+    },
+    "routeContracts": [
+      {
+        "routeContractKey": "route.hcm.personal.requests.page",
+        "routeKind": "PAGE",
+        "surface": "hcm.personal",
+        "uiRoutePattern": "/hr/me/requests",
+        "gatewayBinding": "GET /api/people/v1/hris/workbench/self-service/requests",
+        "serviceBinding": "GET /v1/hris/workbench/self-service/requests",
+        "authorizationEquivalenceKey": "wire-authority.hcm.personal.requests.v1",
+        "capability": "hcm.personal.requests.view",
+        "profile": "self-request-reader",
+        "purpose": "EMPLOYEE_SELF_SERVICE",
+        "population": [
+          "SELF"
+        ],
+        "fieldGroups": [
+          "REQUEST_SUMMARY",
+          "REQUEST_STATUS",
+          "COMMAND_RECEIPT"
+        ]
+      },
+      {
+        "routeContractKey": "route.hcm.personal.requests.data",
+        "routeKind": "DATA",
+        "surface": "hcm.personal",
+        "gatewayBinding": "GET /api/people/v1/hris/workbench/self-service/requests",
+        "serviceBinding": "GET /v1/hris/workbench/self-service/requests",
+        "authorizationEquivalenceKey": "wire-authority.hcm.personal.requests.v1",
+        "capability": "hcm.personal.requests.view",
+        "profile": "self-request-reader",
+        "purpose": "EMPLOYEE_SELF_SERVICE",
+        "population": [
+          "SELF"
+        ],
+        "fieldGroups": [
+          "REQUEST_SUMMARY",
+          "REQUEST_STATUS",
+          "COMMAND_RECEIPT"
+        ],
+        "apiBindingKey": "route.hcm.personal.requests.data.binding.01",
+        "projectionPolicyKey": "route.hcm.personal.requests.data.self-request-reader.projection.v1",
+        "responseSchemaKey": "Hrm009SelfRequestsProjectionV1",
+        "fieldPolicyKey": "hrm009.iaq-003.fields.v1"
+      },
+      {
+        "routeContractKey": "route.hcm.operations.certificates-documents.page",
+        "routeKind": "PAGE",
+        "surface": "hcm.operations",
+        "uiRoutePattern": "/hr/operations/people/certificates-documents",
+        "gatewayBinding": "GET /api/people/v1/hris/workbench/operations/certificates/documents",
+        "serviceBinding": "GET /v1/hris/workbench/operations/certificates/documents",
+        "authorizationEquivalenceKey": "wire-authority.hcm.operations.certificates-documents.v1",
+        "capability": "hcm.operations.people.view",
+        "profile": "people-operations-reader",
+        "purpose": "HR_OPERATIONS",
+        "population": [
+          "LEGAL_ENTITY",
+          "NAMED_POPULATION",
+          "ORG_TREE",
+          "ORG_UNIT"
+        ],
+        "fieldGroups": [
+          "CERTIFICATE_METADATA",
+          "DOCUMENT_METADATA"
+        ]
+      },
+      {
+        "routeContractKey": "route.hcm.operations.certificates-documents.data",
+        "routeKind": "DATA",
+        "surface": "hcm.operations",
+        "gatewayBinding": "GET /api/people/v1/hris/workbench/operations/certificates/documents",
+        "serviceBinding": "GET /v1/hris/workbench/operations/certificates/documents",
+        "authorizationEquivalenceKey": "wire-authority.hcm.operations.certificates-documents.v1",
+        "capability": "hcm.operations.people.view",
+        "profile": "people-operations-reader",
+        "purpose": "HR_OPERATIONS",
+        "population": [
+          "LEGAL_ENTITY",
+          "NAMED_POPULATION",
+          "ORG_TREE",
+          "ORG_UNIT"
+        ],
+        "fieldGroups": [
+          "CERTIFICATE_METADATA",
+          "DOCUMENT_METADATA"
+        ],
+        "apiBindingKey": "route.hcm.operations.certificates-documents.data.binding.01",
+        "projectionPolicyKey": "route.hcm.operations.certificates-documents.data.people-operations-reader.projection.v1",
+        "responseSchemaKey": "Hrm009CertificatesDocumentsProjectionV1",
+        "fieldPolicyKey": "hrm009.iaq-010.fields.v1"
+      },
+      {
+        "routeContractKey": "route.hcm.operations.certificate-issue.action",
+        "routeKind": "ACTION",
+        "surface": "hcm.operations",
+        "gatewayBinding": "POST /api/people/v1/hris/certificates",
+        "serviceBinding": "POST /v1/hris/certificates",
+        "routeRiskTier": "HIGH",
+        "commonStepUpRequired": true,
+        "acceptedPepPurposeCodes": [
+          "EMPLOYEE_SELF_SERVICE",
+          "TEAM_MANAGEMENT",
+          "HR_OPERATIONS"
+        ],
+        "stageAPurposeDisposition": {
+          "EMPLOYEE_SELF_SERVICE": "ALLOW_ONLY_THROUGH_SELF_PROFILE",
+          "HR_OPERATIONS": "ALLOW_ONLY_THROUGH_OPERATIONS_PROFILE",
+          "TEAM_MANAGEMENT": "DENY_DEFER_NO_PROFILE_NO_FALLBACK"
+        },
+        "stepUpCommandBinding": {
+          "ownerServiceKey": "people",
+          "audience": "dwp-people-server",
+          "targetType": "PERSON",
+          "targetIdBodyFields": [
+            "personPublicId"
+          ],
+          "expectedObjectVersionSource": "COMMAND_HEADER",
+          "expectedObjectVersionName": "X-DWP-Expected-Object-Version"
+        },
+        "accessProfiles": [
+          {
+            "precedence": 300,
+            "profileKey": "certificate-operations-issuer",
+            "capability": "hcm.operations.certificate.issue",
+            "purpose": "HR_OPERATIONS",
+            "population": [
+              "LEGAL_ENTITY",
+              "NAMED_POPULATION",
+              "ORG_TREE",
+              "ORG_UNIT"
+            ]
+          },
+          {
+            "precedence": 200,
+            "profileKey": "certificate-self-requester",
+            "capability": "hcm.personal.certificate.request",
+            "purpose": "EMPLOYEE_SELF_SERVICE",
+            "population": [
+              "SELF"
+            ]
+          }
+        ],
+        "ownerBranchRule": "People derives self versus operations from trusted actor-person identity and body.personPublicId; caller purpose, role, duty, population, tenant or mode never selects a branch.",
+        "frontendBindingState": "WITHHELD"
+      }
+    ],
+    "sameWireGetResolution": "For each same-method and same-path PAGE/DATA pair, Gateway must select the lexicographically canonical DATA route key for network enforcement and must never fail open or select PAGE authority.",
+    "forbiddenAlias": "route.hcm.personal.certificate-request.action"
+  },
+  "backendExecutionAuthority": {
+    "authorized": true,
+    "worktreeOnlyBeforeReview": true,
+    "generatorAndGeneratedArtifacts": {
+      "authorizedSourcePaths": [
+        "contracts/product-authorization/product-surfaces-v1.yaml",
+        "scripts/generate-product-authorization-contracts.py",
+        "scripts/generate-product-authorization-fixtures.py",
+        "scripts/tests/test_product_authorization_v52.py"
+      ],
+      "authorizedOutputs": [
+        "contracts/product-authorization/product-surfaces-v1.bundle-v52.json",
+        "contracts/product-authorization/product-surfaces-v1.json",
+        "contracts/product-authorization/product-surfaces-v1.index.json",
+        "contracts/product-authorization/product-surface-rollout-inventory.v1.generated.json",
+        "contracts/product-authorization/pilot-fixtures.v1.generated.json",
+        "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v52.generated.json",
+        "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.generated.json",
+        "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.index.generated.json",
+        "dwp-gateway/src/main/resources/product-authorization/product-surface-rollout-inventory.v1.generated.json",
+        "dwp-people-server/src/main/resources/product-authorization/hcm-people-pep-v52.generated.json",
+        "dwp-time-server/src/main/resources/product-authorization/hcm-time-pep-v52.generated.json",
+        "dwp-platform-server/src/main/resources/product-authorization/hcm-platform-pep-v52.generated.json",
+        "dwp-payroll-server/src/main/resources/product-authorization/hcm-payroll-pep-v52.generated.json"
+      ],
+      "rules": [
+        "Generate v52 from immutable v51 plus exactly the sealed delta in this authority.",
+        "Advance latest aliases, index and generated projections consistently; never rewrite v1 through v51.",
+        "Time, Platform and Payroll v52 projections are version-lineage copies with no new service authority unless the generator deterministically carries existing contracts.",
+        "Keep bundle status DRAFT and preserve zero activation and zero enrollment."
+      ]
+    },
+    "auth": {
+      "authorizedProductionPaths": [
+        "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationReleaseLineage.java",
+        "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationAuthorityAdapter.java",
+        "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductSurfaceStepUpRouteResolver.java",
+        "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductSurfaceStepUpChallengeService.java",
+        "dwp-auth-server/src/main/java/com/dwp/services/auth/tenantfeatureactivation/TenantFeatureActivationRepository.java",
+        "dwp-auth-server/src/main/resources/db/migration/V261__declare_hris_r7_batch03_hrm009_v52_authorization_seed.sql"
+      ],
+      "requiredBehavior": [
+        "Seal v52 checksum and exact counts in release lineage and advance latest index validation to versions 1 through 52.",
+        "Register exactly one HRIS_HRM_CERTIFICATE_WORKBENCH policy at minimum bundle 52, baseline OFF, no automatic import and no tenant enrollment.",
+        "Register exactly five new route owners and five route bindings; fresh-install totals must become seven policies, twenty-nine owners and twenty-nine bindings.",
+        "V261 may replace the route surface constraint only to preserve hcm.team, hcm.operations and hcm.management and append hcm.personal.",
+        "Resolve both action profiles without allowing self MEDIUM capability to bypass the shared route HIGH requirement.",
+        "Issue step-up challenges for the selected self or operations profile while preserving one route-wide HIGH assurance and the exact PERSON/body.personPublicId/header-version binding.",
+        "Correct migration provenance so minimum bundle 52 resolves to v261 while prior bundle provenance remains unchanged."
+      ],
+      "boundedTestBoundary": [
+        "scripts/tests/test_product_authorization_v52.py",
+        "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationV52ContractTest.java",
+        "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationReleaseLineageTest.java",
+        "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationContractReleaseLineageTest.java",
+        "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationAuthorityAdapterTest.java",
+        "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationHcmAuthorityAdapterTest.java",
+        "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductSurfaceStepUpRouteResolverTest.java",
+        "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductSurfaceStepUpChallengeServiceTest.java",
+        "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductSurfaceStepUpLatestRuntimeTest.java",
+        "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationTenantFeatureActivationTest.java",
+        "dwp-auth-server/src/test/java/com/dwp/services/auth/repository/TenantFeatureActivationV261MigrationContractTest.java",
+        "dwp-auth-server/src/test/java/com/dwp/services/auth/tenantfeatureactivation/TenantFeatureActivationV259PostgresTest.java",
+        "dwp-auth-server/src/test/java/com/dwp/services/auth/tenantfeatureactivation/TenantFeatureActivationV261PostgresTest.java"
+      ]
+    },
+    "gateway": {
+      "authorizedProductionPaths": [
+        "dwp-gateway/src/main/java/com/dwp/gateway/filter/ProductSurfaceDecisionContextFilter.java"
+      ],
+      "readOnlyProductionReference": "dwp-gateway/src/main/java/com/dwp/gateway/productsurface/GeneratedProductRouteCatalog.java",
+      "requiredBehavior": [
+        "Recognize the five-route HRIS_HRM_CERTIFICATE_WORKBENCH tenant-feature set at minimum bundle 52 while remaining default OFF.",
+        "Collapse same GET/path PAGE and DATA matches to the exact DATA route key and reject ambiguity outside that sealed equivalence.",
+        "Accept only SELF for the personal GET and the closed LEGAL_ENTITY, NAMED_POPULATION, ORG_TREE and ORG_UNIT set for the operations GET.",
+        "Forward the exact four GET purpose and field-policy bindings from the generated descriptor.",
+        "Exclude the shared ACTION from any static purpose map; strip caller-supplied purpose and field-policy internal headers before trusted values are established.",
+        "Add X-DWP-Field-Policy-Key to the inbound internal-header sanitization set.",
+        "Enforce route-wide HIGH for the ACTION before owner mutation and never create a TEAM_MANAGEMENT fallback."
+      ],
+      "boundedTestBoundary": [
+        "dwp-gateway/src/test/java/com/dwp/gateway/ProductSurfaceDecisionContextFilterTest.java",
+        "dwp-gateway/src/test/java/com/dwp/gateway/ProductSurfaceStepUpGatewayChainTest.java",
+        "dwp-gateway/src/test/java/com/dwp/gateway/ProductSurfaceFeatureRolloutContractTest.java",
+        "dwp-gateway/src/test/java/com/dwp/gateway/ProductSurfaceFeatureRolloutFailureContractTest.java",
+        "dwp-gateway/src/test/java/com/dwp/gateway/productsurface/GeneratedProductRouteCatalogTest.java",
+        "dwp-gateway/src/test/java/com/dwp/gateway/productsurface/TenantFeatureActivationV261RouteParityTest.java"
+      ]
+    },
+    "people": {
+      "authorizedProductionPaths": [
+        "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmV3PepRegistry.java",
+        "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmProductSurfacePepFilter.java",
+        "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmScopeSelectionValidator.java",
+        "dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/certificate/CertificateAuthority.java"
+      ],
+      "requiredBehavior": [
+        "Load and checksum-seal the v52 People PEP projection and fail closed on count, route, profile or projection drift.",
+        "Propagate the selected action profile and selected trusted scope instead of choosing only the highest precedence profile.",
+        "Preserve route-wide HIGH for both action profiles; never downgrade self to the capability MEDIUM baseline.",
+        "Derive EMPLOYEE_SELF_SERVICE or HR_OPERATIONS only from the selected trusted profile and actor-person equality; ignore or reject caller purpose.",
+        "Change the self ACTION scope check in CertificateAuthority from hcm.personal to hcm.operations because the single shared ACTION surface is hcm.operations; keep the self read scope hcm.personal.",
+        "TEAM_MANAGEMENT remains DENY_DEFER_NO_PROFILE_NO_FALLBACK and all denial occurs before mutation."
+      ],
+      "boundedTestBoundary": [
+        "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmV3PepRegistryTest.java",
+        "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmProductSurfacePepFilterTest.java",
+        "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmOwnerPepExecutionTest.java",
+        "dwp-people-server/src/test/java/com/dwp/services/people/hris/employeeservice/certificate/CertificateAuthorizationTest.java",
+        "dwp-people-server/src/test/java/com/dwp/services/people/hris/employeeservice/certificate/Hrm009StageAContractTest.java"
+      ]
+    },
+    "forbiddenBackendChanges": [
+      "Any mutation of product-authorization bundles v1 through v51 or migrations V1 through V260.",
+      "A second personal ACTION alias or any TEAM_MANAGEMENT profile, capability or fallback.",
+      "Any feature activation, tenant enrollment, customer data, automatic import or approval state.",
+      "Any Platform generic creator, Platform seed, Platform source or historical Platform request mutation.",
+      "Any download, revoke, verification, expiry, access-audit or download-audit transport or completion claim.",
+      "Any production-success artifact provider binding.",
+      "Any backend source or test path not explicitly enumerated by generatorAndGeneratedArtifacts, auth, gateway or people in this authority."
+    ]
+  },
+  "frontendExecutionAuthority": {
+    "authorized": true,
+    "mode": "DEFAULT_OFF_READ_ONLY_PAGE_DATA_MOUNT_NO_ACTION_DELEGATE",
+    "worktreeOnlyBeforeReview": true,
+    "generatedSynchronizationPaths": [
+      "architecture/product-surface-authorization.v1.json",
+      "architecture/product-page-routes.v1.json",
+      "scripts/product-authorization-fixture-versions.mjs",
+      "scripts/sync-product-surface-authorization.mjs",
+      "apps/dwp/src/routes/product-surface-authorization.generated.ts",
+      "architecture/pilot-fixtures.v1.generated.json",
+      "libs/shared-utils/src/test-utils/pilot-authorization-fixtures.generated.ts",
+      "apps/dwp/src/routes/product-route-contracts.generated.test.ts"
+    ],
+    "routeMenuShellPaths": [
+      ".env.example",
+      "apps/dwp/src/vite-env.d.ts",
+      "apps/dwp/src/features/hris/integration/hris-hrm-009-route-admission.tsx",
+      "apps/dwp/src/features/hris/integration/hris-hrm-009-route-admission.test.tsx",
+      "apps/dwp/src/features/hcm/hcm-navigation.ts",
+      "apps/dwp/src/features/hcm/hcm-navigation.test.ts",
+      "apps/dwp/src/features/hcm/hcm-product-manifest.ts",
+      "apps/dwp/src/features/hcm/hcm-product-manifest.test.ts",
+      "apps/dwp/src/pages/hcm.tsx",
+      "apps/dwp/src/pages/hcm.test.ts",
+      "libs/shared-i18n/src/locales/en/hcm.json",
+      "libs/shared-i18n/src/locales/ko/hcm.json"
+    ],
+    "navigationPolicySuccessorPaths": [
+      "apps/dwp/src/features/hris/shell/navigation-policy/seven-workbench-navigation-policy.ts",
+      "apps/dwp/src/features/hris/shell/navigation-policy/seven-workbench-navigation-policy.test.ts",
+      "apps/dwp/src/features/hris/shell/navigation-policy/hris-navigation-policy-runtime.tsx",
+      "apps/dwp/src/features/hris/shell/navigation-policy/hris-navigation-policy-runtime.test.ts",
+      "apps/dwp/src/features/hris/shell/navigation-policy/hris-navigation-policy-runtime.mounted.test.tsx"
+    ],
+    "stageALimitDisclosurePaths": [
+      "apps/dwp/src/features/hris/employee-services/certificates/certificate-workbench.tsx",
+      "apps/dwp/src/features/hris/employee-services/certificates/testing/certificate-workbench.test.tsx"
+    ],
+    "requiredBehavior": [
+      "Add VITE_HRIS_HRM_009_ENABLED with false as the checked-in default.",
+      "Mount exactly /hr/me/requests and /hr/operations/people/certificates-documents through generated official PAGE contracts and the exact PAGE admission; do not edit hcm-routes.tsx because it consumes the official PAGE source.",
+      "Add both legacy HCM navigation items as governedOnly and require the exact current PAGE ALLOW plus the authorized path before product-shell visibility.",
+      "Feature OFF, tenant unenrolled, PAGE denied, stale authority, wrong surface or wrong scope produces no menu visibility, no DATA evaluation, no owner GET and no POST.",
+      "Only after PAGE ALLOW may the admission evaluate the paired DATA key; only matching DATA ALLOW with the same trusted tenant, actor, scope and decision revision may call the exact owner GET.",
+      "PAGE ALLOW plus DATA deny or unavailable remains opaque and performs zero owner GET.",
+      "The route admission passes no onRequestCertificate or equivalent writable callback; the Stage-A control remains disabled and every POST count remains zero.",
+      "Display a truthful Stage-A metadata/request-only limitation without exposing bytes, URL, token, digest, seal or signature data.",
+      "Do not edit the generated HRIS information-architecture source because both canonical routes already exist there."
+    ],
+    "navigationPolicySuccessor": {
+      "required": true,
+      "rule": "Preserve HRIS_V46_SELF_POLICY_ROUTE_BINDINGS unchanged. Add an append-only versioned successor bound to admitted v52 PAGE authority so /hr/me/requests can be evaluated under V3 ENFORCED without converting the historical /hr/services binding or accepting planned IA as authority.",
+      "operationsRule": "The operations certificate/document node may be admitted only through its exact v52 PAGE contract and the existing closed HR operations population policy.",
+      "predecessorBehavior": "Until the successor is active and its v52 revision/checksum is valid, V3 ENFORCED continues to deny /hr/me/requests.",
+      "failClosed": true
+    },
+    "actionUiWithheld": {
+      "state": "NO_GO_NO_FRONTEND_ACTION_DELEGATE_NO_POST",
+      "reasons": [
+        "IAQ-003 and IAQ-010 do not expose the trusted subject person object version required by the People command and X-DWP-Expected-Object-Version binding.",
+        "The accepted self PAGE is hcm.personal while the one sealed ACTION is hcm.operations; the current HIGH coordinator requires same-surface PAGE and ACTION authority.",
+        "Inventing a second personal ACTION alias, reusing a request revision, document version or constant, or weakening route-wide HIGH is forbidden."
+      ],
+      "requiredSeparateSuccessor": [
+        "Add a trusted subject person object-version projection or another accepted owner-issued concurrency token.",
+        "Seal a cross-surface HIGH coordinator that preserves tenant, actor, revision and SELF scope while targeting the single hcm.operations ACTION.",
+        "Bind the generated PERSON target descriptor to the frontend command model and prove challenge and mutation parity.",
+        "Prove the Platform generic certificate creator is hidden or non-writable for the selected tenant before any HRM write enrollment."
+      ]
+    },
+    "forbiddenFrontendChanges": [
+      "Any ACTION callback, POST call, step-up challenge request, writable button or optimistic mutation for HRM-009.",
+      "Any mutation of historical authorization artifacts v1 through v51 or historical navigation binding constants.",
+      "Any download, revoke, verification, expiry, access-audit or download-audit UI, route or network call.",
+      "Any edit that hides, rewrites, clones or migrates existing Platform requests or deep links.",
+      "Any feature activation, tenant enrollment, customer data or production rollout claim."
+    ]
+  },
+  "platformCoexistenceControl": {
+    "genericSurface": "/hr/services",
+    "genericSeed": "people.employment-certificate",
+    "stateDuringThisAuthority": "UNCHANGED_AND_MAY_REMAIN_WRITABLE_WHILE_HRM_ACTION_UI_AND_ENROLLMENT_ARE_ZERO",
+    "historicalRequests": "PLATFORM_OWNED_NO_COPY_NO_MIRROR_NO_MIGRATION_DEEP_LINKS_PRESERVED",
+    "tenantCutoverAuthorized": false,
+    "activationPrecondition": "Before any later tenant write enrollment, a separate authority must prove the Platform generic creator hidden or non-writable for that tenant and prevent simultaneous writable state.",
+    "rollbackOrder": "Disable HRM creation first; only then may central control reactivate the Platform generic creator."
+  },
+  "boundedVerificationPolicy": {
+    "firstPass": "Run each named changed authorization, migration, route-admission, navigation and workbench target once after implementation.",
+    "failurePolicy": "After a failure, run only the smallest failing target until corrected; do not restart all bounded targets after every finding.",
+    "repositoryWideSuiteAuthorized": false,
+    "backendAcceptance": [
+      "v52 checksum, exact counts, immutable v1-v51 preservation, latest alias/index and all generated projection parity",
+      "V261 DRAFT seed, automatic import false, default OFF, zero enrollment, seven-policy and twenty-nine-owner/binding fresh-install totals",
+      "five-route feature ownership and the exact DATA projection keys",
+      "same-wire GET collapses to DATA and all nonsealed ambiguity fails closed",
+      "self and operations selected profiles both require route-wide HIGH and TEAM_MANAGEMENT has no profile or fallback",
+      "caller tenant, purpose, role, duty, population, mode and internal field-policy headers cannot broaden authority",
+      "People self ACTION uses hcm.operations while self read remains hcm.personal",
+      "stale decision, scope or object revision denies before mutation"
+    ],
+    "frontendAcceptance": [
+      "v52 checksum/count/generated parity and HCM PAGE count 56 to 58",
+      "feature OFF, unenrolled, PAGE denied, stale or wrong scope gives zero menu, DATA evaluation, owner GET and POST",
+      "PAGE ALLOW plus DATA DENY gives zero owner GET and opaque denial",
+      "IAQ-003 exact SELF GET, list-detail and focus deep link",
+      "IAQ-010 exact operations GET, focus form and metadata-only disclosure",
+      "partial, unavailable and stale states keep the action disabled and POST count zero",
+      "Stage-A text explicitly excludes download, revoke, verification, expiry and access/download audit and exposes no forbidden control",
+      "V3 ENFORCED admits /hr/me/requests only through the append-only v52 navigation successor",
+      "1440, 1280, 390 and 320 widths; 200 percent zoom; keyboard; screen reader; light, dark, forced-colors and reduced-motion; long Korean and English labels"
+    ],
+    "browserGate": {
+      "authorizedAfterCentralMount": true,
+      "trusted": true,
+      "writableActionExpected": false,
+      "requiredZeroPost": true,
+      "requiredBeforeReadOnlyMountAcceptance": true
+    }
+  },
+  "executionAndAdmissionSequence": {
+    "orderedSteps": [
+      "Record this append-only authority on dwp-frontend dwp-dev and push it before source work starts.",
+      "Materialize clean backend and frontend worktrees pinned to the exact post-authority dwp-dev heads and record their paths, branches, base commits, trees, origin equality and clean state.",
+      "Issue a hash-bound start receipt that names this authority, both worktrees and the exact touch boundaries.",
+      "Implement backend and frontend only on their pushed central-successor branches; frontend may prepare read-only shell work in parallel but must synchronize only the final reviewed backend v52 artifacts.",
+      "Run only the bounded verification targets once and preserve every failed and corrected receipt without broad reruns.",
+      "Push final branch heads and record exact SHAs, trees, changed paths, hashes, generated parity and bounded-test outcomes.",
+      "Perform independent backend, frontend and evidence reviews; any P0 or P1 keeps central admission NO-GO.",
+      "Issue a separate append-only central admission decision naming the exact reviewed branch heads.",
+      "Merge only those exact reviewed heads with no-ff into dwp-dev; stop on conflict and do not resolve automatically.",
+      "Prove exact-head ancestry, exact changed-path blobs, clean worktrees and origin equality, then record a central integration receipt.",
+      "Run the trusted read-only browser gate after the merged route and shell mount exists; do not exercise or claim a writable ACTION."
+    ],
+    "branchPolicy": {
+      "backend": "codex/hris-wave7-r7-batch03-hrm-009-central-backend-20261018-r1",
+      "frontend": "codex/hris-wave7-r7-batch03-hrm-009-central-frontend-20261018-r1",
+      "strategy": "PINNED_WORKTREE_BRANCH_THEN_INDEPENDENT_REVIEW_THEN_EXACT_NO_FF_CENTRAL_MERGE",
+      "conflictPolicy": "STOP_ON_CONFLICT_NO_AUTOMATIC_RESOLUTION",
+      "directWorkOnDwpDevAfterAuthority": false,
+      "directModuleMergeAuthorized": false,
+      "mergeToDwpDevAuthorizedByThisDocument": false
+    }
+  },
+  "rollout": {
+    "runtimeDefault": "OFF",
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "tenantEnrollmentCount": 0,
+    "customerDataAuthorized": false,
+    "automaticImportAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "backendActionContractActivationAuthorized": false,
+    "frontendActionUiAuthorized": false,
+    "readOnlyBusinessCompletionCredit": 0,
+    "fullSliceBusinessCompletionCredit": 0
+  },
+  "residualsCarriedForward": [
+    "frontend/backend Unicode idempotency length difference",
+    "local Bearer, If-Match and certificate-type handling narrower than some input schemas",
+    "broad local Problem enum",
+    "actual PostgreSQL two-session receipt race not run",
+    "repository SQL limit/keyset pushdown absent",
+    "historical broad and PostgreSQL raw XML preservation provenance insufficient"
+  ],
+  "withheldLanesUnchanged": [
+    "BASE-TFR-PER-003",
+    "BASE-TFR-PAY-002",
+    "BASE-TFR-TIM-002"
+  ],
+  "authority": {
+    "productAuthorizationV52GenerationAuthorized": true,
+    "authV261AuthoringAuthorized": true,
+    "authGatewayPeopleRuntimeSeamAuthoringAuthorized": true,
+    "frontendV52SynchronizationAuthorized": true,
+    "frontendReadOnlyPageDataMountAuthorized": true,
+    "navigationPolicyV52SuccessorAuthorized": true,
+    "frontendActionDelegateAuthorized": false,
+    "platformCutoverAuthorized": false,
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "customerDataAuthorized": false,
+    "downloadRevokeVerificationExpiryOrAuditAuthorized": false,
+    "centralMergeAuthorizedNow": false
+  },
+  "requiredNext": [
+    "Commit and push this authority on frontend dwp-dev.",
+    "Materialize and hash-bind the exact backend and frontend central-successor worktrees.",
+    "Implement the authorized v52/V261/runtime and read-only frontend deltas with bounded tests.",
+    "Complete independent result review before issuing any exact-head central admission decision."
+  ],
+  "remainingState": {
+    "hrm009StageASourceIntegrated": true,
+    "hrm009CentralSuccessorImplemented": false,
+    "hrm009WritableActionUi": false,
+    "hrm009FullSliceComplete": false,
+    "batch03Complete": false,
+    "r7Complete": false
+  },
+  "nonClaims": [
+    "Product-authorization v52, Auth V261, Gateway, People or frontend central successor source is already implemented.",
+    "The frontend can safely issue the certificate ACTION.",
+    "Browser acceptance is complete.",
+    "The Platform generic certificate creator is retired or non-writable.",
+    "Download, revoke, verification, expiry or access/download audit acceptance is complete.",
+    "A production-success artifact provider is bound.",
+    "Any feature or tenant is activated or enrolled.",
+    "BASE-TFR-HRM-009, Batch-03 or R7 is complete."
+  ]
+}
