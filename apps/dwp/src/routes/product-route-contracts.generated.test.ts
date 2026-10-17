@@ -29,6 +29,51 @@ const MAIL_ORGANIZATION_PAGE_ROUTE_KEYS = [
   'route.mail.work.organization.page',
 ] as const;
 
+const R7_BATCH_01_HCM_PAGE_ROUTES = [
+  {
+    routeContractKey: 'route.hcm.configuration.settings-operations.page',
+    routeId: 'hcm.management.settings-operations',
+    pattern: '/hr/settings/operations',
+    productId: 'hcm',
+    surfaceId: 'hcm.management',
+  },
+  {
+    routeContractKey: 'route.hcm.operations.organization-positions.page',
+    routeId: 'hcm.operations.organization-positions',
+    pattern: '/hr/operations/people/organization-positions',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+  },
+  {
+    routeContractKey: 'route.hcm.operations.payroll-population.page',
+    routeId: 'hcm.operations.payroll-population',
+    pattern: '/hr/operations/payroll/population',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+  },
+  {
+    routeContractKey: 'route.hcm.operations.time-command-center.page',
+    routeId: 'hcm.operations.time-command-center',
+    pattern: '/hr/operations/time/command-center',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+  },
+  {
+    routeContractKey: 'route.hcm.operations.time-daily-close.page',
+    routeId: 'hcm.operations.time-daily-close',
+    pattern: '/hr/operations/time/daily-close',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+  },
+  {
+    routeContractKey: 'route.hcm.operations.time-monthly-close.page',
+    routeId: 'hcm.operations.time-monthly-close',
+    pattern: '/hr/operations/time/monthly-close',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+  },
+] as const;
+
 const authorizationSnapshot = JSON.parse(
   fs.readFileSync(
     path.resolve(process.cwd(), 'architecture/product-surface-authorization.v1.json'),
@@ -86,8 +131,15 @@ describe('generated product route authorization contracts', () => {
       'spaces',
       'workplace',
     ]);
-    expect(router).toHaveLength(138);
+    expect(router).toHaveLength(144);
     expect(registry).toEqual(router);
+    expect(
+      router.filter((route) =>
+        R7_BATCH_01_HCM_PAGE_ROUTES.some(
+          (expected) => expected.routeContractKey === route.routeContractKey
+        )
+      )
+    ).toEqual([...R7_BATCH_01_HCM_PAGE_ROUTES]);
     expect(() =>
       buildProductPageRouteContractSource(
         [HCM_PRODUCT_MANIFEST],
@@ -128,8 +180,8 @@ describe('generated product route authorization contracts', () => {
     );
     expect(nonPages.every((route) => route.routeId === null && route.pattern === null)).toBe(true);
     expect(DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(71);
-    expect(ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(209);
-    expect(REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG).toHaveLength(209);
+    expect(ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(215);
+    expect(REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG).toHaveLength(215);
     expect(REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG.every((route) => route.routeKind === 'PAGE')).toBe(
       true
     );

@@ -14,9 +14,9 @@ export type ProductAuthorizationRouteProjection = Readonly<{
 
 export const PRODUCT_AUTHORIZATION_REGISTRY_REVISION = {
   bundleKey: 'product-surfaces',
-  version: 48,
-  checksum: '9fd324cd67ede1f02cc8ac33c08ad880ec6e283f99f5d7aa50e0e514545aa043',
-  indexChecksum: '3f66090d62d33892ebe5e3ce85752ba445060d92ed572b89cfe72c9b5675c12e',
+  version: 49,
+  checksum: '5c1dccdc27d8b260fbf001de5695e983a7107072824a8087038340d0d84cbc60',
+  indexChecksum: '159f4d0087eeacd5d6d5653d0126599ddf195f5188341c51933b8a2b673f756c',
 } as const;
 
 export const PRODUCT_SURFACE_ROLLOUT_INVENTORY_REVISION = {
@@ -8265,6 +8265,22 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
     ],
   },
   {
+    routeContractKey: 'route.hcm.configuration.settings-operations.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'hcm.management',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.management',
+    routeId: 'hcm.management.settings-operations',
+    pattern: '/hr/settings/operations',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/hris/workbench/settings-operations',
+      },
+    ],
+  },
+  {
     routeContractKey: 'route.hcm.configuration.settings-reference.page',
     routeKind: 'PAGE',
     navigationContextId: 'hcm.management',
@@ -9281,6 +9297,38 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
     ],
   },
   {
+    routeContractKey: 'route.hcm.operations.exception-detail.data',
+    routeKind: 'DATA',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/hris/operations/exceptions/{exceptionId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.exception.data',
+    routeKind: 'DATA',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/platform/v1/admin/hris/operations/exceptions',
+      },
+    ],
+  },
+  {
     routeContractKey: 'route.hcm.operations.home.page',
     routeKind: 'PAGE',
     navigationContextId: 'hcm.operations',
@@ -9309,6 +9357,38 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
       {
         method: 'GET',
         path: '/api/platform/v1/hris/navigation/projection',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.organization-graph.data',
+    routeKind: 'DATA',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/people/v1/hris/organizations/graph',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.organization-positions.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: 'hcm.operations.organization-positions',
+    pattern: '/hr/operations/people/organization-positions',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/people/v1/hris/organizations/graph',
       },
     ],
   },
@@ -9521,6 +9601,22 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
     ],
   },
   {
+    routeContractKey: 'route.hcm.operations.payroll-population.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: 'hcm.operations.payroll-population',
+    pattern: '/hr/operations/payroll/population',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/payroll/v1/workbench/population',
+      },
+    ],
+  },
+  {
     routeContractKey: 'route.hcm.operations.payroll-run-approve.action',
     routeKind: 'ACTION',
     navigationContextId: 'hcm.operations',
@@ -9569,6 +9665,22 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
     ],
   },
   {
+    routeContractKey: 'route.hcm.operations.payroll-run.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/payroll/v1/runs',
+      },
+    ],
+  },
+  {
     routeContractKey: 'route.hcm.operations.payroll-run.data',
     routeKind: 'DATA',
     navigationContextId: 'hcm.operations',
@@ -9581,6 +9693,22 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
       {
         method: 'GET',
         path: '/api/payroll/v1/runs/{runId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.payroll-support.data',
+    routeKind: 'DATA',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/payroll/v1/workbench/population',
       },
     ],
   },
@@ -9909,6 +10037,70 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
     ],
   },
   {
+    routeContractKey: 'route.hcm.operations.time-close-validate.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/time/v1/close-periods/{periodId}/validations',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.time-close.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/time/v1/close-periods/{periodId}/close',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.time-command-center.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: 'hcm.operations.time-command-center',
+    pattern: '/hr/operations/time/command-center',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/time/v1/hris/workbench/time-command-center',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.time-daily-close.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: 'hcm.operations.time-daily-close',
+    pattern: '/hr/operations/time/daily-close',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/time/v1/hris/workbench/time-daily-close',
+      },
+    ],
+  },
+  {
     routeContractKey: 'route.hcm.operations.time-exceptions.page',
     routeKind: 'PAGE',
     navigationContextId: 'hcm.operations',
@@ -9985,6 +10177,70 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
       {
         method: 'GET',
         path: '/api/people/v1/hr/operations/{domain}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.time-monthly-close.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: 'hcm.operations.time-monthly-close',
+    pattern: '/hr/operations/time/monthly-close',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/time/v1/hris/workbench/time-monthly-close',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.time-payroll-handoff-create.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/time/v1/close-periods/{periodId}/payroll-handoffs',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.time-payroll-handoff.data',
+    routeKind: 'DATA',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/time/v1/payroll-handoffs/{handoffId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.time-reopen.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/time/v1/close-periods/{periodId}/reopen',
       },
     ],
   },
