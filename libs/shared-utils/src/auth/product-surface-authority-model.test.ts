@@ -25,7 +25,7 @@ function envelope() {
       policy: 'policy-2',
       productRelationship: 'relationship-3',
       targetPopulation: 'population-5',
-      support: 'support-1',
+      support: null as string | null,
       tenantControl: 'tenant-control-6',
     },
     activeAccessMode: 'NORMAL',
@@ -83,6 +83,7 @@ function envelope() {
 function providerSupportEnvelope() {
   const candidate = structuredClone(envelope());
   candidate.activeAccessMode = 'PROVIDER_SUPPORT';
+  candidate.sourceRevisions.support = 'support-1';
   const context = candidate.contexts[0]!;
   context.contextKey = 'ctx-communications-support';
   context.surfaceKey = 'communications.management';
@@ -115,11 +116,27 @@ function providerSupportEnvelope() {
 }
 
 describe('product surface authority model', () => {
-  it('accepts only contract v2 with the exact nonblank tenant-control revision set', () => {
+  it('accepts exact contract-v2 revisions with mode-bound nullable support evidence', () => {
     expect(parseProductSurfaceAuthoritySnapshot(envelope(), RECEIVED_AT).envelope).toMatchObject({
       contractVersion: '2',
-      sourceRevisions: { tenantControl: 'tenant-control-6' },
+      activeAccessMode: 'NORMAL',
+      sourceRevisions: { support: null, tenantControl: 'tenant-control-6' },
     });
+
+    const elevated = envelope();
+    elevated.activeAccessMode = 'ELEVATED';
+    elevated.contexts[0]!.accessMode = 'ELEVATED';
+    expect(() => parseProductSurfaceAuthoritySnapshot(elevated, RECEIVED_AT)).not.toThrow();
+
+    for (const activeAccessMode of ['NORMAL', 'ELEVATED'] as const) {
+      const candidate = envelope();
+      candidate.activeAccessMode = activeAccessMode;
+      candidate.contexts[0]!.accessMode = activeAccessMode;
+      candidate.sourceRevisions.support = 'support-not-applicable';
+      expect(() => parseProductSurfaceAuthoritySnapshot(candidate, RECEIVED_AT)).toThrow(
+        /envelope is invalid/
+      );
+    }
 
     for (const candidate of [
       { ...envelope(), contractVersion: '1' },
@@ -135,12 +152,53 @@ describe('product surface authority model', () => {
       },
       {
         ...envelope(),
+        sourceRevisions: { ...envelope().sourceRevisions, support: '' },
+      },
+      {
+        ...envelope(),
+        sourceRevisions: Object.fromEntries(
+          Object.entries(envelope().sourceRevisions).filter(([key]) => key !== 'support')
+        ),
+      },
+      {
+        ...envelope(),
         sourceRevisions: { ...envelope().sourceRevisions, unexpected: 'revision' },
       },
     ]) {
       expect(() => parseProductSurfaceAuthoritySnapshot(candidate, RECEIVED_AT)).toThrow(
         /envelope is invalid/
       );
+    }
+
+    for (const key of [
+      'auth',
+      'policy',
+      'productRelationship',
+      'targetPopulation',
+      'tenantControl',
+    ] as const) {
+      const candidate = envelope();
+      candidate.sourceRevisions[key] = '';
+      expect(() => parseProductSurfaceAuthoritySnapshot(candidate, RECEIVED_AT)).toThrow(
+        /envelope is invalid/
+      );
+    }
+
+    for (const key of [
+      'auth',
+      'policy',
+      'productRelationship',
+      'targetPopulation',
+      'support',
+      'tenantControl',
+    ] as const) {
+      const candidate = envelope();
+      const sourceRevisions = Object.fromEntries(
+        Object.entries(candidate.sourceRevisions).filter(([candidateKey]) => candidateKey !== key)
+      );
+      expect(() =>
+        parseProductSurfaceAuthoritySnapshot({ ...candidate, sourceRevisions }, RECEIVED_AT)
+      ).toThrow(/envelope is invalid/);
     }
   });
 
@@ -353,6 +411,17 @@ describe('product surface authority model', () => {
     }
   );
 
+  it('requires a nonblank support revision for provider-support mode', () => {
+    for (const support of [null, '']) {
+      const candidate = providerSupportEnvelope();
+      candidate.sourceRevisions.support = support;
+
+      expect(() => parseProductSurfaceAuthoritySnapshot(candidate, RECEIVED_AT)).toThrow(
+        /envelope is invalid/
+      );
+    }
+  });
+
   it('rejects malformed, mixed, or writable provider support contexts at the wire boundary', () => {
     type SupportEnvelope = ReturnType<typeof providerSupportEnvelope>;
     const mutations: readonly ((candidate: SupportEnvelope) => void)[] = [
@@ -420,6 +489,7 @@ describe('product surface authority model', () => {
   it('rejects support-session authority mixed into a normal access-mode context', () => {
     const candidate = providerSupportEnvelope();
     candidate.activeAccessMode = 'NORMAL';
+    candidate.sourceRevisions.support = null;
     candidate.contexts[0]!.accessMode = 'NORMAL';
 
     expect(() => parseProductSurfaceAuthoritySnapshot(candidate, RECEIVED_AT)).toThrow(
