@@ -5129,6 +5129,7 @@
       "WORKER_IDENTIFIERS": "Worker and assignment identifiers",
       "EMPLOYMENT": "Employment and assignment history",
       "JOB_GRADE": "Job grade and level",
+      "ORGANIZATION": "Organization structure",
       "UNKNOWN": "Data group unavailable"
     },
     "actions": {
@@ -5174,7 +5175,8 @@
     "warnings": {
       "userOverride": "A user exception replaces rather than adds to role policies. Include every scope this user still needs.",
       "export": "Export moves workforce data outside the product interface. Allow it only when it is required.",
-      "directoryRequired": "Basic profile data is required by every policy and cannot be cleared."
+      "directoryRequired": "Basic profile data is required by every policy and cannot be cleared.",
+      "fieldGroupLimit": "Select up to four data groups, including the required directory basics."
     },
     "references": {
       "loading": "Loading user and organization choices.",

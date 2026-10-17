@@ -45,6 +45,7 @@ vi.mock('react-i18next', () => ({
         'workforceAccess.fieldGroups.WORKER_IDENTIFIERS': '사번·배치 식별정보',
         'workforceAccess.fieldGroups.EMPLOYMENT': '고용·배치 이력',
         'workforceAccess.fieldGroups.JOB_GRADE': '직급·등급',
+        'workforceAccess.fieldGroups.ORGANIZATION': '조직 구조',
         'workforceAccess.roles.ADMIN': '통합 관리자',
         'workforceAccess.roleDescriptions.ADMIN': '기존 통합 관리자 정책',
         'workforceAccess.subjectTypes.ROLE': '역할 기본',
@@ -303,10 +304,14 @@ describe('WorkforceAccessManager', () => {
     expect(container?.textContent).toContain('만료일 없음');
   });
 
-  it('shows all four permitted data groups without a hidden overflow count', async () => {
+  it('shows every permitted data group without a hidden overflow count', async () => {
     workforceApi.listPolicies.mockResolvedValue([
       policy({
         fieldGroups: ['DIRECTORY', 'WORKER_IDENTIFIERS', 'EMPLOYMENT', 'JOB_GRADE'],
+      }),
+      policy({
+        policyId: 'policy-organization',
+        fieldGroups: ['DIRECTORY', 'ORGANIZATION'],
       }),
     ]);
     await mountManager();
@@ -316,6 +321,7 @@ describe('WorkforceAccessManager', () => {
     expect(container?.textContent).toContain('사번·배치 식별정보');
     expect(container?.textContent).toContain('고용·배치 이력');
     expect(container?.textContent).toContain('직급·등급');
+    expect(container?.textContent).toContain('조직 구조');
     expect(container?.textContent).not.toContain('+2');
   });
 

@@ -19,15 +19,21 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import type {
   CreateWorkforceAccessPolicyRequest,
+  WorkforceAccessFieldGroup,
   WorkforceAccessPolicy,
   WorkforceOrganizationOption,
 } from '@dwp-frontend/shared-utils';
 import type { TFunction } from 'i18next';
-const FIELD_GROUPS = ['DIRECTORY', 'WORKER_IDENTIFIERS', 'EMPLOYMENT', 'JOB_GRADE'] as const;
+import {
+  workforceFieldGroupLabelKey,
+  WORKFORCE_ACCESS_FIELD_GROUPS,
+} from './workforce-access-presentation';
+
+const MAX_FIELD_GROUPS = 4;
 const ACTIONS = ['READ', 'EXPORT'] as const;
 const WORKFORCE_ROLES = ['HR_ADMIN', 'PEOPLE_ADMIN'] as const;
 
-type FieldGroup = (typeof FIELD_GROUPS)[number];
+type FieldGroup = WorkforceAccessFieldGroup;
 type WorkforceAction = (typeof ACTIONS)[number];
 type SubjectType = 'ROLE' | 'USER';
 type PopulationType = 'TENANT' | 'ORG_UNIT' | 'ORG_TREE';
@@ -108,6 +114,7 @@ export function WorkforceAccessPolicyDialog({
     populationType !== 'TENANT' && (organizationsLoading || organizationsError);
   const invalidValidityRange = hasInvalidValidityRange(validFrom, validTo);
   const pastValidityEnd = hasPastValidityEnd(validTo);
+  const fieldGroupLimitReached = fieldGroups.length >= MAX_FIELD_GROUPS;
   const valid =
     !userReferenceUnavailable &&
     !organizationReferenceUnavailable &&
@@ -126,9 +133,11 @@ export function WorkforceAccessPolicyDialog({
 
   const toggleField = (value: FieldGroup) => {
     if (value === 'DIRECTORY') return;
-    setFieldGroups((current) =>
-      current.includes(value) ? current.filter((item) => item !== value) : [...current, value]
-    );
+    setFieldGroups((current) => {
+      if (current.includes(value)) return current.filter((item) => item !== value);
+      if (current.length >= MAX_FIELD_GROUPS) return current;
+      return [...current, value];
+    });
   };
 
   const toggleAction = (value: WorkforceAction) => {
@@ -321,8 +330,11 @@ export function WorkforceAccessPolicyDialog({
           <Typography component="legend" variant="caption" color="text.secondary" fontWeight={700}>
             {t('workforceAccess.fields.fieldGroups')}
           </Typography>
-          <Typography variant="caption" color="text.secondary">
+          <Typography component="p" variant="caption" color="text.secondary" sx={{ m: 0 }}>
             {t('workforceAccess.warnings.directoryRequired')}
+          </Typography>
+          <Typography component="p" variant="caption" color="text.secondary" sx={{ m: 0 }}>
+            {t('workforceAccess.warnings.fieldGroupLimit')}
           </Typography>
           <Stack
             direction={{ xs: 'column', sm: 'row' }}
@@ -330,13 +342,16 @@ export function WorkforceAccessPolicyDialog({
             gap={0.25}
             sx={{ mt: 0.5 }}
           >
-            {FIELD_GROUPS.map((field) => (
+            {WORKFORCE_ACCESS_FIELD_GROUPS.map((field) => (
               <FormControlLabel
                 key={field}
                 control={
                   <Checkbox
                     checked={field === 'DIRECTORY' || fieldGroups.includes(field)}
-                    disabled={field === 'DIRECTORY'}
+                    disabled={
+                      field === 'DIRECTORY' ||
+                      (!fieldGroups.includes(field) && fieldGroupLimitReached)
+                    }
                     onChange={() => toggleField(field)}
                   />
                 }
@@ -470,7 +485,7 @@ export function WorkforceAccessRevokeDialog({
             </Typography>
             <Stack component="dd" direction="row" flexWrap="wrap" gap={0.5}>
               {policy.fieldGroups.map((field) => (
-                <Chip key={field} size="small" label={t(`workforceAccess.fieldGroups.${field}`)} />
+                <Chip key={field} size="small" label={t(workforceFieldGroupLabelKey(field))} />
               ))}
             </Stack>
             <Typography component="dt" variant="caption" fontWeight={700}>

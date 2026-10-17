@@ -11,6 +11,12 @@ import {
 } from './workforce-access-presentation';
 
 describe('workforce access presentation', () => {
+  it('recognizes ORGANIZATION as an independent field authority', () => {
+    expect(workforceFieldGroupLabelKey('ORGANIZATION')).toBe(
+      'workforceAccess.fieldGroups.ORGANIZATION'
+    );
+  });
+
   it('fails closed for unknown server values', () => {
     expect(workforcePopulationLabelKey('FUTURE')).toBe('workforceAccess.populations.UNKNOWN');
     expect(workforceRoleLabelKey('INTERNAL_ROLE')).toBe('workforceAccess.roles.UNKNOWN');
