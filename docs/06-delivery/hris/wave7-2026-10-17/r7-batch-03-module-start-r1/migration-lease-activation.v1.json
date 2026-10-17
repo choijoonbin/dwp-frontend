@@ -1,0 +1,281 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-03-migration-lease-activation.v1",
+  "reservationId": "HRIS-WAVE7-R7-BATCH-03-MIGRATION-LEASE-RESERVATION-20261018-R1",
+  "recordedAt": "2026-10-18T04:22:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "ZERO_ACTIVE_LEASES_PEOPLE_V58_RESERVED_NOT_ACTIVE_PENDING_MATERIALIZED_CLEAN_WORKTREE_PROOF",
+  "purpose": "Exclusively reserve People main migration V58 and its exact path for the BASE-TFR-HRM-009 request/issue metadata Stage A without activating migration authoring. A later append-only successor may activate the lease only after actual clean pinned backend worktree materialization is evidenced; executable source authority additionally requires the matching owner packet and an executable successor token.",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ACTIVATION_ID_AND_SHA256"
+  },
+  "authorityBasis": {
+    "roadmap": {
+      "path": "../execution-roadmap-successor.v17.json",
+      "sha256": "0151e49edbfcd5297ac1e9506210a1e3b83622b89ef869a8579765e13380a40a",
+      "bytes": 6946
+    },
+    "batch03Preflight": {
+      "path": "../r7-batch-03-preflight-r1/semantic-dependency-migration-preflight.v1.json",
+      "sha256": "dde2815eceb71c37d77334002d6cdbd26812c63bd6d38fc0fd82dea17ff745e8",
+      "bytes": 11972,
+      "requiredLeaseState": "REQUIRED_NOT_ISSUED"
+    },
+    "semanticDisposition": {
+      "path": "semantic-dispositions/base-tfr-hrm-009-stage-a.semantic-disposition.v1.json",
+      "sha256": "2c61d96164f2a594aee8bacf729a8f1a9112167639f9ef1a5bc5f3cf4f1040bb",
+      "bytes": 19804,
+      "requiredState": "SEALED_STAGE_A_REQUEST_ISSUE_METADATA_PACKET_MAY_BE_PREPARED_SOURCE_NO_GO_PENDING_MATERIALIZED_WORKTREES_ACTIVE_LEASE_AND_EXECUTABLE_SUCCESSOR_TOKEN"
+    },
+    "centralAuthorizationSuccessor": {
+      "path": "central-authorization-successor.v1.json",
+      "sha256": "c49c856034dbf0fae7923c75356378b62203e2c7ab80bf9374269225be9d20f9",
+      "bytes": 18313,
+      "requiredState": "HRM009_STAGE_A_PACKET_AUTHORITY_SEALED_EXECUTABLE_SOURCE_PENDING_MATERIALIZED_WORKTREES_AND_ACTIVE_V58_LEASE_SUCCESSOR_CENTRAL_V52_AUTH_V261_DEFERRED_DEFAULT_OFF"
+    },
+    "physicalSchema": {
+      "path": "../../recovery/hris-porting-blueprint-2026-09-09/session-evidence/hrm/g2-readiness/physical-schema-blueprint.sql",
+      "sha256": "dbe18b0a2700bac21088391d2d9c13d155d30058b44843aeed033d3333896969",
+      "bytes": 51577
+    },
+    "stateGuard": {
+      "path": "../../recovery/hris-porting-blueprint-2026-09-09/session-evidence/hrm/g2-readiness/state-guard-idempotency-recovery.md",
+      "sha256": "72e72be66fa7aba49c945ab9eb503fb69d3b2fffc838096a4b20d6c6a52f58a6",
+      "bytes": 14892
+    }
+  },
+  "pinBasis": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "f448c36feee2ed7f59eacc64f450e6db3865f1c5",
+      "tree": "cec08e55f33fa71482c583137e3ccc3d8bf11572",
+      "observedHighWater": "V57",
+      "candidatePathPresentAtReservation": false
+    },
+    "frontendAuthorityCarrier": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "a315bd70835172713fee31269f77e7870269abdb",
+      "tree": "340436ab130d1b4d68c778a5d904a75a0f36590e",
+      "use": "AUTHORITY_CARRIER_ONLY"
+    }
+  },
+  "lease": {
+    "leaseId": "HRIS-WAVE7-R7-BATCH-03-PEOPLE-MAIN-V58-HRM009-STAGE-A-20261018-R1",
+    "moduleSession": "HRIS-HRM",
+    "moduleThreadId": "01a0f53e-9a75-7421-969f-473b0cfb9439",
+    "sliceId": "BASE-TFR-HRM-009",
+    "stageId": "BASE-TFR-HRM-009-STAGE-A",
+    "canonicalFeature": "HRIS_HRM_CERTIFICATE_WORKBENCH",
+    "stream": "PEOPLE_MAIN",
+    "version": "V58",
+    "predecessorHighWater": "V57",
+    "exactPath": "dwp-people-server/src/main/resources/db/migration/V58__hrm_base_tfr_hrm_009_stage_a.sql",
+    "state": "RESERVED_NOT_ACTIVE_NO_AUTHORING_UNTIL_MATERIALIZED_CLEAN_WORKTREE_PROOF_ACTIVE_LEASE_SUCCESSOR_AND_EXECUTABLE_SUCCESSOR_TOKEN",
+    "activeLeaseCountForPeopleV58": 0,
+    "plannedBackendWorktree": {
+      "plannedAbsolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261018/r7-batch03/hrm-009-stage-a/backend",
+      "plannedBranch": "codex/hris-wave7-r7-batch03-hrm-009-stage-a-backend-20261018-r1",
+      "plannedPushTarget": "origin/codex/hris-wave7-r7-batch03-hrm-009-stage-a-backend-20261018-r1",
+      "createFrom": "f448c36feee2ed7f59eacc64f450e6db3865f1c5",
+      "expectedInitialTree": "cec08e55f33fa71482c583137e3ccc3d8bf11572",
+      "expectedInitialPorcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "materializationStateAtReservation": "NOT_MATERIALIZED_NO_HEAD_BRANCH_UPSTREAM_OR_PORCELAIN_RECEIPT_CLAIMED"
+    },
+    "reservationSemantics": "This document reserves only the version and exact path. It is not an active lease and grants no migration write, source write, test, commit or push authority. Actual clean pinned backend worktree evidence must be hash-bound by a later active-lease successor, and that successor must then be bound by a separate executable source token."
+  },
+  "exactMigrationManifest": {
+    "createTables": [
+      {
+        "name": "ppl_certificate_requests",
+        "columns": [
+          "certificate_request_id BIGSERIAL PRIMARY KEY",
+          "public_id UUID NOT NULL DEFAULT pg_catalog.gen_random_uuid()",
+          "tenant_id BIGINT NOT NULL",
+          "requester_person_id BIGINT NOT NULL",
+          "subject_person_id BIGINT NOT NULL",
+          "certificate_type VARCHAR(80) NOT NULL",
+          "locale VARCHAR(35) NOT NULL",
+          "purpose_code VARCHAR(80) NOT NULL",
+          "lifecycle_state VARCHAR(24) NOT NULL DEFAULT 'REQUESTED'",
+          "template_public_id UUID NOT NULL",
+          "template_version INTEGER NOT NULL",
+          "correlation_id UUID NOT NULL",
+          "version BIGINT NOT NULL DEFAULT 0",
+          "requested_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp()",
+          "completed_at TIMESTAMPTZ",
+          "created_by BIGINT NOT NULL",
+          "updated_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp()",
+          "updated_by BIGINT NOT NULL"
+        ],
+        "constraints": [
+          "uk_ppl_certificate_requests_public UNIQUE(public_id)",
+          "uk_ppl_certificate_requests_id UNIQUE(tenant_id, certificate_request_id)",
+          "uk_ppl_certificate_requests_correlation UNIQUE(tenant_id, correlation_id)",
+          "fk_ppl_certificate_requests_requester FOREIGN KEY(tenant_id, requester_person_id) REFERENCES ppl_persons(tenant_id, person_id)",
+          "fk_ppl_certificate_requests_subject FOREIGN KEY(tenant_id, subject_person_id) REFERENCES ppl_persons(tenant_id, person_id)",
+          "ck_ppl_certificate_requests_state lifecycle_state IN REQUESTED, VALIDATING, ISSUED, FAILED, CANCELLED"
+        ]
+      },
+      {
+        "name": "ppl_issued_certificates",
+        "columns": [
+          "issued_certificate_id BIGSERIAL PRIMARY KEY",
+          "public_id UUID NOT NULL DEFAULT pg_catalog.gen_random_uuid()",
+          "tenant_id BIGINT NOT NULL",
+          "certificate_request_id BIGINT NOT NULL",
+          "object_public_id UUID NOT NULL",
+          "object_version INTEGER NOT NULL",
+          "content_sha256 CHAR(64) NOT NULL",
+          "verification_token_hash CHAR(64) NOT NULL",
+          "lifecycle_state VARCHAR(20) NOT NULL DEFAULT 'ISSUED'",
+          "issued_at TIMESTAMPTZ NOT NULL",
+          "expires_at TIMESTAMPTZ",
+          "revoked_at TIMESTAMPTZ",
+          "revoke_reason_code VARCHAR(80)",
+          "retention_until DATE",
+          "legal_hold BOOLEAN NOT NULL DEFAULT FALSE",
+          "created_by BIGINT NOT NULL",
+          "updated_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp()",
+          "updated_by BIGINT NOT NULL"
+        ],
+        "constraints": [
+          "uk_ppl_issued_certificates_public UNIQUE(public_id)",
+          "uk_ppl_issued_certificates_request UNIQUE(tenant_id, certificate_request_id)",
+          "uk_ppl_issued_certificates_verify UNIQUE(tenant_id, verification_token_hash)",
+          "fk_ppl_issued_certificates_request FOREIGN KEY(tenant_id, certificate_request_id) REFERENCES ppl_certificate_requests(tenant_id, certificate_request_id)",
+          "ck_ppl_issued_certificates_state lifecycle_state IN ISSUED, REVOKED, EXPIRED",
+          "ck_ppl_issued_certificates_expiry expires_at IS NULL OR expires_at > issued_at",
+          "ck_ppl_issued_certificates_revoke requires revoked_at and revoke_reason_code when state is REVOKED"
+        ]
+      }
+    ],
+    "indexes": [
+      {
+        "name": "idx_ppl_certificate_requests_work_queue",
+        "unique": false,
+        "table": "ppl_certificate_requests",
+        "columns": [
+          "tenant_id",
+          "lifecycle_state",
+          "requested_at"
+        ],
+        "predicate": "lifecycle_state IN ('REQUESTED','VALIDATING')"
+      },
+      {
+        "name": "uidx_ppl_command_receipts_tenant_command_idempotency",
+        "unique": true,
+        "table": "ppl_command_receipts",
+        "columns": [
+          "tenant_id",
+          "command_type",
+          "idempotency_key"
+        ],
+        "precondition": "Fail the migration if duplicate rows exist; do not delete, merge or rewrite receipts."
+      }
+    ],
+    "rowLevelSecurity": [
+      {
+        "table": "ppl_certificate_requests",
+        "enable": true,
+        "force": true,
+        "policy": "ppl_certificate_requests_tenant_policy",
+        "usingAndCheck": "tenant_id = NULLIF(current_setting('dwp.tenant_id', true), '')::BIGINT"
+      },
+      {
+        "table": "ppl_issued_certificates",
+        "enable": true,
+        "force": true,
+        "policy": "ppl_issued_certificates_tenant_policy",
+        "usingAndCheck": "tenant_id = NULLIF(current_setting('dwp.tenant_id', true), '')::BIGINT"
+      }
+    ],
+    "guardFunctionsAndTriggers": [
+      {
+        "function": "public.ppl_guard_certificate_request_state()",
+        "trigger": "trg_ppl_certificate_request_state",
+        "table": "ppl_certificate_requests",
+        "events": "BEFORE INSERT OR UPDATE OR DELETE",
+        "rules": [
+          "allow insert only with lifecycle_state REQUESTED and version 0",
+          "deny delete",
+          "allow only REQUESTED to VALIDATING or CANCELLED and VALIDATING to ISSUED or FAILED",
+          "deny changes to tenant, public ID, requester, subject, type, locale, purpose, template identity/version, correlation, requested_at and created_by",
+          "require version to advance exactly by one for an allowed transition",
+          "require completed_at for ISSUED, FAILED and CANCELLED"
+        ]
+      },
+      {
+        "function": "public.ppl_guard_issued_certificate_state()",
+        "trigger": "trg_ppl_issued_certificate_state",
+        "table": "ppl_issued_certificates",
+        "events": "BEFORE INSERT OR UPDATE OR DELETE",
+        "rules": [
+          "allow insert only with lifecycle_state ISSUED and a same-tenant parent request in VALIDATING",
+          "deny delete",
+          "allow only ISSUED to EXPIRED or ISSUED to REVOKED before expiry",
+          "deny changes to tenant, public ID, request ID, object identity/version, content digest, verification-token hash, issued_at and created_by",
+          "require revoke timestamp and reason for REVOKED",
+          "deny any transition out of REVOKED or EXPIRED"
+        ]
+      }
+    ],
+    "reuseWithoutDdl": [
+      "ppl_command_receipts table and its existing immutable originating-context trigger except for the one stricter unique index above",
+      "sys_people_audit_events",
+      "sys_people_outbox_events"
+    ],
+    "forbiddenDdl": [
+      "document bytes or blob table",
+      "local template, seal, signature or verification table",
+      "new command-receipt, audit or outbox table",
+      "cross-service foreign key",
+      "Platform svc_requests modification",
+      "data backfill, deletion or automatic privilege elevation"
+    ]
+  },
+  "verificationRequired": {
+    "executionAuthorizedNow": false,
+    "when": "ONLY_AFTER_AN_ACTIVE_LEASE_SUCCESSOR_AND_EXECUTABLE_SUCCESSOR_TOKEN",
+    "static": [
+      "V58 is unique in People main and the exact leased path is the only new People migration.",
+      "V1 through V57 bytes and checksums remain unchanged.",
+      "The migration contains exactly the two tables, constraints, two explicit indexes, forced RLS policies and two immutable-state guards in the manifest.",
+      "The V54 receipt table is reused and only the sealed stricter unique index is added."
+    ],
+    "database": [
+      "real PostgreSQL clean People migration through V58",
+      "real PostgreSQL People V57-to-V58 upgrade",
+      "RLS missing-context and cross-tenant denial for both new tables",
+      "duplicate tenant, command type and idempotency key rejection without receipt deletion or rewrite",
+      "legal request and issued-state transitions plus illegal transition, immutable-field mutation and delete rejection",
+      "transaction rollback leaves no request, issued row, receipt success, audit or outbox partial write"
+    ],
+    "unavailableDatabaseRule": "Report BLOCKED, not PASS, if the required real PostgreSQL verification cannot run."
+  },
+  "authority": {
+    "activeLeaseCount": 0,
+    "oneExactPeopleMigrationPathReserved": true,
+    "v58AuthoringAuthorized": false,
+    "activeLeaseSuccessorMayBeConsideredAfterMaterializedCleanWorktreeProof": true,
+    "existingMigrationEditAuthorized": false,
+    "secondPeopleMigrationAuthorized": false,
+    "dataBackfillAuthorized": false,
+    "automaticPrivilegeElevationAuthorized": false,
+    "moduleBranchCommitAndPushAuthorizedByThisLeaseAlone": false,
+    "mergeToDwpDevAuthorized": false,
+    "tenantActivationAuthorized": false,
+    "customerDatabaseExecutionAuthorized": false,
+    "productionExecutionAuthorized": false
+  },
+  "invalidationConditions": [
+    "People V58 or the exact leased path exists from another owner before the first authorized edit.",
+    "People main high-water differs from V57 at worktree materialization.",
+    "The planned backend worktree path or branch exists with a different head, tree, upstream or non-empty porcelain.",
+    "An existing migration must change, a second People migration is required or a data backfill becomes necessary.",
+    "Any table, index, policy or guard outside the exact manifest is required.",
+    "Download, revoke, verification, Platform persistence, customer execution or production release is attempted."
+  ],
+  "nextAction": "HASH_BIND_THIS_RESERVED_NOT_ACTIVE_LEASE_WITH_THE_SEMANTIC_AND_CENTRAL_AUTHORIZATION_DECISIONS_IN_THE_EXACT_HRM009_STAGE_A_OWNER_PACKET_AND_WITHHELD_TOKEN; THEN_MATERIALIZE_AND_PROVE_THE_CLEAN_PINNED_WORKTREES_BEFORE_ISSUING_AN_ACTIVE_LEASE_SUCCESSOR_AND_EXECUTABLE_SUCCESSOR_TOKEN"
+}

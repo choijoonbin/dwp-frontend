@@ -1,0 +1,560 @@
+{
+  "schema": "dwp.hris.wave7.r7-owner-packet.v1",
+  "packetId": "HRIS-WAVE7-R7-BATCH-03-OWNER-BASE-TFR-HRM-009-STAGE-A-20261018-R1",
+  "revision": 1,
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_PACKET_ID_AND_SHA256"
+  },
+  "issuedAt": "2026-10-18T04:23:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "SEALED_EXACT_REQUEST_ISSUE_METADATA_STAGE_A_PACKET_READY_EXECUTABLE_TOKEN_WITHHELD_PENDING_MATERIALIZED_WORKTREES_AND_ACTIVE_V58_LEASE_SUCCESSOR_DEFAULT_OFF_FULL_SLICE_OPEN",
+  "module": "HRM",
+  "moduleSession": "HRIS-HRM",
+  "moduleThreadId": "01a0f53e-9a75-7421-969f-473b0cfb9439",
+  "sliceId": "BASE-TFR-HRM-009",
+  "stageId": "BASE-TFR-HRM-009-STAGE-A",
+  "sourceRef": "TFR-HRM-009",
+  "immutableAuthorityBasis": {
+    "roadmap": {
+      "path": "../../execution-roadmap-successor.v17.json",
+      "sha256": "0151e49edbfcd5297ac1e9506210a1e3b83622b89ef869a8579765e13380a40a",
+      "bytes": 6946
+    },
+    "batch03Preflight": {
+      "path": "../../r7-batch-03-preflight-r1/semantic-dependency-migration-preflight.v1.json",
+      "sha256": "dde2815eceb71c37d77334002d6cdbd26812c63bd6d38fc0fd82dea17ff745e8",
+      "bytes": 11972,
+      "requiredDecision": "CONDITIONAL_GO_FOR_EXACT_PACKET_SOURCE_START_NO_GO"
+    },
+    "semanticDisposition": {
+      "path": "../semantic-dispositions/base-tfr-hrm-009-stage-a.semantic-disposition.v1.json",
+      "sha256": "2c61d96164f2a594aee8bacf729a8f1a9112167639f9ef1a5bc5f3cf4f1040bb",
+      "bytes": 19804,
+      "requiredDecision": "GO_FOR_EXACT_STAGE_A_PACKET_AND_RESERVED_LEASE_REQUEST_ISSUE_METADATA_ONLY_EXECUTABLE_SOURCE_TOKEN_WITHHELD_DOWNLOAD_REVOKE_NO_GO_FULL_SLICE_CREDIT_ZERO"
+    },
+    "centralAuthorizationSuccessor": {
+      "path": "../central-authorization-successor.v1.json",
+      "sha256": "c49c856034dbf0fae7923c75356378b62203e2c7ab80bf9374269225be9d20f9",
+      "bytes": 18313,
+      "requiredState": "HRM009_STAGE_A_PACKET_AUTHORITY_SEALED_EXECUTABLE_SOURCE_PENDING_MATERIALIZED_WORKTREES_AND_ACTIVE_V58_LEASE_SUCCESSOR_CENTRAL_V52_AUTH_V261_DEFERRED_DEFAULT_OFF"
+    },
+    "migrationLeaseActivation": {
+      "path": "../migration-lease-activation.v1.json",
+      "sha256": "c93451aec3ec94778974d04fe1a5360229113d247f1a9fa6781398466632ebd0",
+      "bytes": 14786,
+      "reservationId": "HRIS-WAVE7-R7-BATCH-03-MIGRATION-LEASE-RESERVATION-20261018-R1",
+      "leaseId": "HRIS-WAVE7-R7-BATCH-03-PEOPLE-MAIN-V58-HRM009-STAGE-A-20261018-R1",
+      "requiredState": "ZERO_ACTIVE_LEASES_PEOPLE_V58_RESERVED_NOT_ACTIVE_PENDING_MATERIALIZED_CLEAN_WORKTREE_PROOF"
+    },
+    "sourceFamily": {
+      "resolutionId": "TFR-HRM-009",
+      "sourceFamilySha256": "23593695008480f8100a3040dd21cc7011c3078b113902dc6b9e2e357084352a",
+      "sourceRowCount": 21,
+      "semanticLineage": "TFR-HRM-009::hr-certificates-documents::PEP-HRM-012|EVT-HRM:CertificateIssued.v1"
+    },
+    "acceptedContracts": {
+      "entryQueryRegister": {
+        "path": "../../../recovery/exact-supplements/2026-10-06/accepted-successors/hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-api-contract-register.csv",
+        "sha256": "5f47efd33a1d5aa3d11a4d9fd5716cd4e35650e9fec0868ecb77c8c90a4cd988",
+        "bytes": 100020,
+        "closedSet": [
+          "IAQ-003",
+          "IAQ-010"
+        ]
+      },
+      "entryQueryInvariantRegister": {
+        "path": "../../../recovery/exact-supplements/2026-10-06/accepted-successors/hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-runtime-invariant-register.csv",
+        "sha256": "fcdfd1a26d8fca2c8d9a2a8279a3c5a99844ba827aefe47cbac2210b8753f77a",
+        "bytes": 51783
+      },
+      "projectionSchemas": {
+        "path": "../../../recovery/exact-supplements/2026-10-06/hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-projection-schemas.v1.json",
+        "sha256": "b185accd712216c39bf8a66f70cbbf0092a27a8c2c5e3d7457ecd4d511afa048",
+        "bytes": 1523618
+      },
+      "pepRegister": {
+        "path": "../../../recovery/hris-porting-blueprint-2026-09-09/coding-readiness/api-pep-binding-register.csv",
+        "sha256": "0e38d724516a8b271069241ffa0fb6400984dc703758767de53cbaffb4f93da3",
+        "bytes": 126576,
+        "closedSet": [
+          "PEP-HRM-012"
+        ]
+      },
+      "transportSchema": {
+        "path": "../../../recovery/hris-porting-blueprint-2026-09-09/coding-readiness/hrm-transport-schema-supplement.v1.json",
+        "sha256": "85d29729961f4348b595f9773c76afd7232e4b92c5f198351afb4d8ac0dcf404",
+        "bytes": 20613,
+        "operation": "requestCertificate"
+      },
+      "apiEventContract": {
+        "path": "../../../recovery/hris-porting-blueprint-2026-09-09/session-evidence/hrm/g2-readiness/api-event-contracts.v1.json",
+        "sha256": "0c3ec58b29dcf534d1b887fed5678e878e4a514cf3f943165e47dd7a486355bb",
+        "bytes": 25944
+      },
+      "physicalSchema": {
+        "path": "../../../recovery/hris-porting-blueprint-2026-09-09/session-evidence/hrm/g2-readiness/physical-schema-blueprint.sql",
+        "sha256": "dbe18b0a2700bac21088391d2d9c13d155d30058b44843aeed033d3333896969",
+        "bytes": 51577
+      },
+      "stateGuard": {
+        "path": "../../../recovery/hris-porting-blueprint-2026-09-09/session-evidence/hrm/g2-readiness/state-guard-idempotency-recovery.md",
+        "sha256": "72e72be66fa7aba49c945ab9eb503fb69d3b2fffc838096a4b20d6c6a52f58a6",
+        "bytes": 14892
+      }
+    }
+  },
+  "basePins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "f448c36feee2ed7f59eacc64f450e6db3865f1c5",
+      "tree": "cec08e55f33fa71482c583137e3ccc3d8bf11572",
+      "requiredRemote": "origin/dwp-dev",
+      "requiredRemoteExact": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "a315bd70835172713fee31269f77e7870269abdb",
+      "tree": "340436ab130d1b4d68c778a5d904a75a0f36590e",
+      "requiredRemote": "origin/dwp-dev",
+      "requiredCommitReachable": true,
+      "requiredRemoteExactBeforeAuthorityCarrier": true,
+      "authorityCarrierAdvanceAllowed": true
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "readOnly": true
+    }
+  },
+  "businessMeaning": "Provide employee certificate request and HR certificate/document metadata workbenches through one People-owned request-and-issue command, durable immutable metadata and a minimized CertificateIssued.v1 event. Stage A intentionally excludes document delivery, revocation and access/download audit implementation while preserving expiry and access/download audit as mandatory later full-slice acceptance boundaries; Stage A receives zero full-slice completion credit.",
+  "exactDelta": {
+    "provenExisting": [
+      "Trusted tenant, person, population, field-policy, purpose and step-up contexts already exist in the People and Gateway foundations.",
+      "V54 owns the generic immutable command-receipt lifecycle and V51 owns current product authorization.",
+      "sys_people_audit_events and sys_people_outbox_events are the existing audit and semantic-event stores.",
+      "The HRIS information architecture already declares BASE:my-hr-requests and BASE:hr-certificates-documents.",
+      "The generic Platform service center already owns /hr/services and the people.employment-certificate seed."
+    ],
+    "missingWork": [
+      "Implement exact IAQ-003 and IAQ-010 owner projections and their Stage-A component surfaces.",
+      "Implement PEP-HRM-012 requestCertificate with the accepted body, headers, 202 receipt and deterministic self-versus-operations owner authorization branch.",
+      "Implement People V58 exactly as leased, including the strict receipt replay index, forced RLS and immutable state guards.",
+      "Implement atomic request-to-issued metadata, receipt, audit and CertificateIssued.v1 outbox behavior.",
+      "Implement CertificateArtifactPort, a fail-closed production adapter and test-only conformance double.",
+      "Produce bounded positive, negative, replay, recovery, tenant, field, purpose, population, step-up, default-OFF and changed-path evidence."
+    ],
+    "noTouchOrRecount": [
+      "Do not implement or claim download, revoke or verification behavior.",
+      "Do not implement or claim access/download audit behavior in Stage A; its acceptance boundary and expiry acceptance remain mandatory for full-slice completion.",
+      "Do not add a second action route for the same POST method and path.",
+      "Do not change existing Platform service-center source, data, seed or open requests.",
+      "Do not change or recount PEP-HRM-003 or PEP-HRM-004; IAQ-003 may expose their accepted links as read-only reuse only.",
+      "Do not create a command-receipt, audit, outbox, document-content, template, seal or signature table.",
+      "Do not write product-authorization v52, Auth V261, Gateway, generated owner projections, frontend route catalog, shell or navigation in either module worktree."
+    ]
+  },
+  "entryQueries": [
+    {
+      "id": "IAQ-003",
+      "operationId": "IAQ.OP.003",
+      "iaNodeId": "BASE:my-hr-requests",
+      "method": "GET",
+      "browserPath": "/api/people/v1/hris/workbench/self-service/requests",
+      "ownerPath": "/v1/hris/workbench/self-service/requests",
+      "canonicalRoute": "/hr/me/requests",
+      "deepLinkTemplate": "/hr/me/requests?tab=overview&focus={resourcePublicId}",
+      "capability": "hcm.personal.requests.view",
+      "profileAndDuty": "HRIS_EMPLOYEE>HRIS_DUTY_SELF_REQUEST_READER",
+      "fieldGroups": [
+        "REQUEST_SUMMARY",
+        "REQUEST_STATUS",
+        "COMMAND_RECEIPT"
+      ],
+      "purpose": "EMPLOYEE_SELF_SERVICE",
+      "population": [
+        "SELF"
+      ],
+      "availableActions": [
+        "PEP-HRM-003",
+        "PEP-HRM-004",
+        "PEP-HRM-012"
+      ],
+      "stageANewAction": "PEP-HRM-012",
+      "pageLimit": 100,
+      "defaultSort": "itemPublicId:ASC"
+    },
+    {
+      "id": "IAQ-010",
+      "operationId": "IAQ.OP.010",
+      "iaNodeId": "BASE:hr-certificates-documents",
+      "method": "GET",
+      "browserPath": "/api/people/v1/hris/workbench/operations/certificates/documents",
+      "ownerPath": "/v1/hris/workbench/operations/certificates/documents",
+      "canonicalRoute": "/hr/operations/people/certificates-documents",
+      "deepLinkTemplate": "/hr/operations/people/certificates-documents?tab=overview&focus={resourcePublicId}",
+      "capability": "hcm.operations.people.view",
+      "profileAndDuty": "HRIS_HR_BUSINESS_PARTNER>HRIS_DUTY_CORE_VIEWER",
+      "fieldGroups": [
+        "CERTIFICATE_METADATA",
+        "DOCUMENT_METADATA"
+      ],
+      "purpose": "HR_OPERATIONS",
+      "population": [
+        "LEGAL_ENTITY",
+        "NAMED_POPULATION",
+        "ORG_TREE",
+        "ORG_UNIT"
+      ],
+      "availableActions": [
+        "PEP-HRM-012"
+      ],
+      "pageLimit": 100,
+      "defaultSort": "itemPublicId:ASC"
+    }
+  ],
+  "commonProjectionContract": {
+    "queryStates": [
+      "COMPLETE",
+      "EMPTY",
+      "PARTIAL",
+      "UNAVAILABLE"
+    ],
+    "freshnessStates": [
+      "CURRENT",
+      "STALE",
+      "UNAVAILABLE"
+    ],
+    "requiredPepLayers": [
+      "GATEWAY_APP_ENTITLEMENT",
+      "OWNER_API_OPERATION",
+      "RESOURCE_POPULATION",
+      "REPOSITORY_TENANT_PREDICATE",
+      "FIELD_PROJECTION",
+      "PURPOSE_POLICY",
+      "AUDIT_DECISION"
+    ],
+    "cursorBindings": [
+      "tenant",
+      "queryId",
+      "targetPopulation",
+      "scopeDecisionRevision",
+      "authorizationDecisionRevision",
+      "asOf",
+      "sort",
+      "pageLimit",
+      "lastItemPublicId"
+    ],
+    "tenantSource": "TRUSTED_GATEWAY_CONTEXT_ONLY",
+    "callerTenantOverride": "FORBIDDEN",
+    "defaultDeny": true,
+    "opaqueDenial": true,
+    "unknownQuerySortFilterOrAction": "REJECT",
+    "unavailableRule": "UNAVAILABLE has zero items, no cursor and UNAVAILABLE freshness.",
+    "partialRule": "PARTIAL has at least one typed partial failure.",
+    "metadataOnlyRule": "No projection contains bytes, download URLs, verification tokens, verification hashes or revoke controls."
+  },
+  "commandContract": {
+    "id": "PEP-HRM-012",
+    "operationId": "requestCertificate",
+    "method": "POST",
+    "browserPath": "/api/people/v1/hris/certificates",
+    "ownerPath": "/v1/hris/certificates",
+    "requiredHeaders": [
+      "Authorization",
+      "Idempotency-Key",
+      "If-Match",
+      "X-Correlation-ID"
+    ],
+    "optionalHeader": "X-Purpose-Code",
+    "bodyRequired": [
+      "personPublicId",
+      "certificateType",
+      "purposeCode",
+      "locale",
+      "asOf"
+    ],
+    "additionalBodyProperties": false,
+    "successStatus": 202,
+    "response": "CommandReceiptV1",
+    "singleActionRoute": "route.hcm.operations.certificate-issue.action",
+    "acceptedPepPurposeCodes": [
+      "EMPLOYEE_SELF_SERVICE",
+      "TEAM_MANAGEMENT",
+      "HR_OPERATIONS"
+    ],
+    "selfProfile": {
+      "capability": "hcm.personal.certificate.request",
+      "duty": "HRIS_EMPLOYEE>HRIS_DUTY_SELF_CERTIFICATE_REQUESTER",
+      "permission": "ACTION.HRIS_CERTIFICATE:CREATE",
+      "purpose": "EMPLOYEE_SELF_SERVICE",
+      "population": "SELF"
+    },
+    "operationsProfile": {
+      "capability": "hcm.operations.certificate.issue",
+      "duty": "HRIS_HR_BUSINESS_PARTNER>HRIS_DUTY_CERTIFICATE_ISSUER",
+      "permission": "ACTION.HRIS_CERTIFICATE:ISSUE",
+      "purpose": "HR_OPERATIONS",
+      "population": "LEGAL_ENTITY|NAMED_POPULATION|ORG_TREE|ORG_UNIT"
+    },
+    "teamManagementDisposition": {
+      "purpose": "TEAM_MANAGEMENT",
+      "stageAState": "DENY_DEFER_NO_PROFILE_NO_FALLBACK",
+      "rule": "Do not invent a team profile; deny TEAM_MANAGEMENT before mutation and require a separately accepted successor before it can be reconsidered."
+    },
+    "commonRisk": "HIGH_STEP_UP_REQUIRED",
+    "branchRule": "Subject equality with trusted actor person selects self and a non-self target selects operations only for their sealed purposes; TEAM_MANAGEMENT has no Stage-A profile, caller cannot select a branch and denial never falls back."
+  },
+  "deferredRequiredFullSliceBoundary": {
+    "stageAImplementationAuthorized": false,
+    "requiredBeforeFullSliceCompletion": [
+      "certificate expiry behavior and acceptance",
+      "separately authorized access/download audit behavior and acceptance"
+    ],
+    "waivedByStageA": false
+  },
+  "eventContract": {
+    "eventType": "CertificateIssued.v1",
+    "aggregate": "CertificateRequest",
+    "requiredPayload": [
+      "requestPublicId",
+      "certificatePublicId",
+      "subjectPersonPublicId",
+      "certificateType",
+      "issuedAt",
+      "expiresAt"
+    ],
+    "dataMinimization": "No bytes, URLs, tokens, hashes, seals, signatures or employee details beyond the accepted six fields.",
+    "transaction": "ISSUED request, immutable issued row, succeeded receipt, audit and semantic outbox commit atomically."
+  },
+  "artifactAdapter": {
+    "interface": "CertificateArtifactPort",
+    "productionBinding": "FailClosedCertificateArtifactAdapter",
+    "testBinding": "CertificateArtifactConformanceDouble",
+    "productionBehavior": "Classify unavailable and create no issued row, success receipt or event until a separately accepted shared provider binding exists.",
+    "forbidden": "No invented provider route, network fallback, filesystem output, local blob, template, seal, signature, verification or download implementation."
+  },
+  "platformCoexistence": {
+    "genericSurface": "/hr/services",
+    "genericSeed": "people.employment-certificate",
+    "moduleTouch": "NONE_READ_ONLY_EVIDENCE_ONLY",
+    "existingRequests": "Remain Platform-owned and complete at their original surface.",
+    "noDoubleCreate": "A tenant can never have both generic Platform and HRM certificate creators writable.",
+    "activationOrder": "After central admission and production adapter acceptance, central control retires or hides the generic seed for the selected tenant, proves no new generic creation, then and only then may a later authority consider HRM enrollment.",
+    "rollbackOrder": "Disable HRM creation before reactivating the generic seed."
+  },
+  "ownership": {
+    "repositories": [
+      "dwp-backend",
+      "dwp-frontend"
+    ],
+    "runtimeOwner": "dwp-people-server",
+    "singleWriter": "HRIS-HRM",
+    "candidateWritablePathsAfterPacketAndToken": {
+      "backend": [
+        "dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/certificate/**",
+        "dwp-people-server/src/test/java/com/dwp/services/people/hris/employeeservice/certificate/**",
+        "dwp-people-server/src/main/resources/db/migration/V58__hrm_base_tfr_hrm_009_stage_a.sql"
+      ],
+      "frontend": [
+        "apps/dwp/src/features/hris/employee-services/certificates/**",
+        "apps/dwp/src/features/hris/people/__tests__/g3-slices/base-tfr-hrm-009-stage-a.slice.test.tsx",
+        "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-results-r1/base-tfr-hrm-009-stage-a/**"
+      ]
+    },
+    "readOnlyReusePaths": [
+      "backend:dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/employeechange/**",
+      "backend:dwp-people-server/src/main/java/com/dwp/services/people/hris/workbench/hrm007/**",
+      "backend:dwp-people-server/src/main/resources/db/migration/V54__create_employee_change_request_lifecycle.sql",
+      "backend:dwp-platform-server/src/main/resources/db/migration/V62__create_employee_service_center.sql",
+      "frontend:apps/dwp/src/features/hris/employee-services/employee-change/**",
+      "frontend:apps/dwp/src/features/hris/people/command-receipts/**",
+      "frontend:apps/dwp/src/features/hris/shell/model/**"
+    ],
+    "controlOwnedUntilSeparateCentralAdmission": [
+      "backend:contracts/product-authorization/**",
+      "backend:contracts/openapi/**",
+      "backend:dwp-auth-server/**",
+      "backend:dwp-gateway/**",
+      "backend:dwp-platform-server/**",
+      "backend:dwp-platform-contracts/**",
+      "frontend:architecture/**",
+      "frontend:apps/dwp/src/routes/**",
+      "frontend:apps/dwp/src/features/hris/shell/**"
+    ],
+    "outsideBoundaryAction": "STOP_AND_REQUEST_EXACT_CONTROL_REALLOCATION"
+  },
+  "dependencies": [
+    {
+      "id": "DEP-001",
+      "state": "READY_REUSE_TRUSTED_IDENTITY_AND_TENANT_CONTEXT"
+    },
+    {
+      "id": "DEP-002",
+      "state": "READY_REUSE_FAIL_CLOSED_AUTHORIZATION_STEP_UP_AND_STALE_REVISION_DENIAL"
+    },
+    {
+      "id": "DEP-003",
+      "state": "READY_REUSE_SEMANTIC_OUTBOX_WITH_NEW_CERTIFICATEISSUED_PAYLOAD_ONLY"
+    },
+    {
+      "id": "DEP-016",
+      "state": "BOUNDED_TO_INTERFACE_FAIL_CLOSED_PRODUCTION_BINDING_AND_TEST_CONFORMANCE_DOUBLE_NO_PRODUCTION_PROVIDER_CLAIM"
+    }
+  ],
+  "migration": {
+    "leaseId": "HRIS-WAVE7-R7-BATCH-03-PEOPLE-MAIN-V58-HRM009-STAGE-A-20261018-R1",
+    "stream": "PEOPLE_MAIN",
+    "observedHighWater": "V57",
+    "authorizedVersion": "V58",
+    "exactPath": "dwp-people-server/src/main/resources/db/migration/V58__hrm_base_tfr_hrm_009_stage_a.sql",
+    "state": "RESERVED_NOT_ACTIVE_AUTHORING_NOT_AUTHORIZED_PENDING_MATERIALIZED_CLEAN_WORKTREE_PROOF_ACTIVE_LEASE_SUCCESSOR_AND_EXECUTABLE_SUCCESSOR_TOKEN",
+    "manifestAuthority": "../migration-lease-activation.v1.json#/exactMigrationManifest",
+    "activeLeaseCount": 0,
+    "authoringAuthorized": false,
+    "secondMigrationAuthorized": false,
+    "existingMigrationEditAuthorized": false,
+    "dataBackfillAuthorized": false
+  },
+  "targetedVerification": {
+    "executionAuthorizedNow": false,
+    "authorizationPrecondition": "ACTIVE_V58_LEASE_SUCCESSOR_AND_EXECUTABLE_SOURCE_TOKEN_AFTER_ACTUAL_CLEAN_PINNED_WORKTREE_MATERIALIZATION",
+    "policy": "RUN_EACH_NEW_STAGE_A_TARGET_GROUP_ONCE; AFTER_FAILURE_RERUN_ONLY_THE_SMALLEST_FAILED_CLASS_FILE_OR_CASE; NO_REPOSITORY_WIDE_SUITE",
+    "backend": [
+      "new com.dwp.services.people.hris.employeeservice.certificate.Hrm009StageAContractTest",
+      "new com.dwp.services.people.hris.employeeservice.certificate.CertificateAuthorizationTest",
+      "new com.dwp.services.people.hris.employeeservice.certificate.CertificateIdempotencyRecoveryTest",
+      "new com.dwp.services.people.hris.employeeservice.certificate.CertificateArtifactPortConformanceTest",
+      "new com.dwp.services.people.hris.employeeservice.certificate.Hrm009V58MigrationContractTest",
+      "new com.dwp.services.people.hris.employeeservice.certificate.Hrm009V58MigrationPostgresTest"
+    ],
+    "frontend": [
+      "apps/dwp/src/features/hris/people/__tests__/g3-slices/base-tfr-hrm-009-stage-a.slice.test.tsx",
+      "apps/dwp/src/features/hris/employee-services/certificates/**/*.test.tsx",
+      "ESLint only for the two exact changed frontend source/test roots"
+    ],
+    "database": [
+      "real PostgreSQL clean People migration through V58",
+      "real PostgreSQL People V57-to-V58 upgrade",
+      "RLS, state guard, immutable metadata, receipt uniqueness and transaction rollback cases from the lease"
+    ],
+    "databaseUnavailableRule": "BLOCKED_NOT_PASS",
+    "browser": "COMPONENT_LEVEL_WITH_FAKES_ONLY_UNTIL_CENTRAL_V52_AND_AUTH_V261_ADMISSION; NO_ROUTE_MOUNT_OR_LIVE_TENANT_CALL",
+    "repositoryWideSuitePerCorrection": false,
+    "fullSuiteAuthorized": false
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "HRM009-STAGEA-AC-01",
+      "criterion": "IAQ-003 and IAQ-010 expose only their exact accepted GET browser and owner paths, page limit, stable ordering, deep links, metadata field groups and action allowlists."
+    },
+    {
+      "id": "HRM009-STAGEA-AC-02",
+      "criterion": "Both projections enforce COMPLETE, EMPTY, PARTIAL and UNAVAILABLE cardinality, freshness, typed partial failure, cursor scope/revision and VIEW, MASK or OMIT field-decision invariants."
+    },
+    {
+      "id": "HRM009-STAGEA-AC-03",
+      "criterion": "PEP-HRM-012 accepts only the five sealed request fields and required command headers, rejects unknown fields and returns the durable 202 CommandReceiptV1 contract."
+    },
+    {
+      "id": "HRM009-STAGEA-AC-04",
+      "criterion": "The owner deterministically chooses self or operations authority from trusted actor-person identity and personPublicId, enforces the exact duty, purpose, population and field groups and requires common HIGH step-up before mutation; TEAM_MANAGEMENT is negatively asserted as DENY/DEFER with no team profile and no fallback."
+    },
+    {
+      "id": "HRM009-STAGEA-AC-05",
+      "criterion": "The tenant, command type and idempotency-key scope serializes concurrent reservation; same-hash replay returns the original receipt and different-hash reuse returns 409 without another side effect."
+    },
+    {
+      "id": "HRM009-STAGEA-AC-06",
+      "criterion": "People V58 creates exactly the two certificate metadata tables, blueprint constraints, queue and receipt indexes, forced tenant RLS policies and immutable transition guards with no second migration or historical edit."
+    },
+    {
+      "id": "HRM009-STAGEA-AC-07",
+      "criterion": "A successful issue freezes template, seal and subject inputs plus object identity and digest, then atomically commits request ISSUED, issued metadata, receipt, audit and the exact six-field CertificateIssued.v1 outbox event."
+    },
+    {
+      "id": "HRM009-STAGEA-AC-08",
+      "criterion": "The production artifact adapter fails closed with no issued state or event while the test-only conformance double proves deterministic success, retryable failure and rollback without becoming a production binding."
+    },
+    {
+      "id": "HRM009-STAGEA-AC-09",
+      "criterion": "No API, event, projection or UI reveals document bytes, object or download URL, verification token or hash, revoke control, download action, revoke action or invented capability."
+    },
+    {
+      "id": "HRM009-STAGEA-AC-10",
+      "criterion": "Feature absent, false or tenant unenrolled mounts no owner runtime and sends zero calls; Platform people.employment-certificate remains read-only and no Platform request is copied, migrated or mirrored."
+    },
+    {
+      "id": "HRM009-STAGEA-AC-11",
+      "criterion": "The two component surfaces identify primary user, operational question, primary action and list-detail or focus-form archetype and cover loading, empty, partial, unavailable, denied, stale and complete states at 1440, 1280, 390, 320, 200-percent zoom, light, dark, high contrast, reduced motion, keyboard and long Korean/English labels."
+    },
+    {
+      "id": "HRM009-STAGEA-AC-12",
+      "criterion": "Changed-path evidence proves only exact Stage-A paths and V58 changed, central and Platform paths stayed untouched, download/revoke remain NO-GO, and expiry plus separately authorized access/download audit acceptance remain open mandatory full-slice boundaries; business completion credit is zero pending central admission and later activation."
+    }
+  ],
+  "rollout": {
+    "feature": "HRIS_HRM_CERTIFICATE_WORKBENCH",
+    "runtimeDefault": "OFF",
+    "enrolledTenants": [],
+    "zeroCallRequirement": "Feature absent, false or tenant unenrolled performs no owner query, command, repository, artifact adapter, audit or event work.",
+    "componentPreviewWithFakes": true,
+    "trustedBrowserEndToEndBeforeCentralAdmission": false,
+    "tenantActivationAuthorized": false,
+    "platformCutoverAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "evidenceContract": {
+    "requiredResultRoot": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-results-r1/base-tfr-hrm-009-stage-a",
+    "required": [
+      "backend and frontend materialization receipts with exact base pins, clean porcelain digests and fresh branch names",
+      "backend and frontend result commits, trees, pushed upstream heads and exact base ancestry",
+      "all twelve Stage-A acceptance results with source or bounded-test evidence",
+      "IAQ-003, IAQ-010 and PEP-HRM-012 positive and fail-closed authorization evidence",
+      "V58 clean and upgrade PostgreSQL receipts plus migration manifest and historical-checksum evidence",
+      "idempotency concurrency, replay mismatch, state guard, immutable metadata, atomic rollback and worker recovery evidence",
+      "production adapter fail-closed and conformance-double isolation evidence",
+      "default-OFF, zero-enrollment, zero-call and Platform no-double-create non-activation evidence",
+      "changed-path manifest proving zero central, Platform, download, revoke, verification and access/download audit implementation delta",
+      "explicit statement that product-auth v52, Auth V261, central route admission, dwp-dev merge, activation, expiry acceptance, access/download audit acceptance and full-slice completion remain pending"
+    ],
+    "stageASourceCompletionCreditBeforeCentralAdmission": 0,
+    "fullSliceBusinessCompletionCredit": 0
+  },
+  "authority": {
+    "packetSealed": true,
+    "pendingNonExecutableTokenMayBeRecorded": true,
+    "executableStartTokenMayBeIssuedNow": false,
+    "worktreeMaterializationAuthorizedByPacketAlone": false,
+    "moduleSourceImplementationAuthorizedByPacketAlone": false,
+    "v58MigrationAuthoringAuthorizedByPacketAlone": false,
+    "testExecutionAuthorizedByPacketAlone": false,
+    "moduleBranchCommitAuthorizedByPacketAlone": false,
+    "moduleBranchPushAuthorizedByPacketAlone": false,
+    "centralAuthorizationGenerationAuthorizedByPacketAlone": false,
+    "downloadOrRevokeAuthoringAuthorized": false,
+    "platformSourceAuthoringAuthorized": false,
+    "centralRouteOrShellMountAuthorized": false,
+    "mergeToDwpDevAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "customerDataAuthorized": false,
+    "fullSliceCompletionCredit": 0,
+    "productionReleaseAuthorized": false
+  },
+  "nonClaims": [
+    "This packet does not complete BASE-TFR-HRM-009 or HRM-GOLD-012.",
+    "This packet does not define or authorize download, revoke or verification transport, capability or UI.",
+    "This packet does not implement or satisfy access/download audit acceptance; both expiry acceptance and separately authorized access/download audit acceptance remain mandatory for full-slice completion.",
+    "This packet does not assert a production artifact provider is available.",
+    "This packet does not authorize product-authorization v52, Auth V261, Gateway, shell, route catalog or Platform source writes.",
+    "This packet does not activate a feature, retire the generic Platform seed, enroll a tenant or authorize customer data.",
+    "This packet alone authorizes no source edit, migration edit, test execution, commit or push."
+  ],
+  "nextGate": "HASH_BIND_THIS_PACKET_AND_ALL_PREDECESSORS_IN_ONE_WITHHELD_HRM009_STAGE_A_TOKEN_RECORD; THEN_ACTUALLY_MATERIALIZE_AND_PROVE_CLEAN_PINNED_BACKEND_AND_FRONTEND_WORKTREES_BEFORE_ISSUING_AN_ACTIVE_V58_LEASE_SUCCESSOR_AND_EXECUTABLE_SUCCESSOR_TOKEN"
+}

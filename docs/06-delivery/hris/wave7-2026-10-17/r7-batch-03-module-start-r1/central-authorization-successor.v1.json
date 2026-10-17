@@ -1,0 +1,415 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-03-central-authorization-successor.v1",
+  "decisionId": "HRIS-WAVE7-R7-BATCH-03-HRM009-CENTRAL-AUTHORIZATION-SUCCESSOR-20261018-R1",
+  "issuedAt": "2026-10-18T04:21:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "HRM009_STAGE_A_PACKET_AUTHORITY_SEALED_EXECUTABLE_SOURCE_PENDING_MATERIALIZED_WORKTREES_AND_ACTIVE_V58_LEASE_SUCCESSOR_CENTRAL_V52_AUTH_V261_DEFERRED_DEFAULT_OFF",
+  "purpose": "Seal the PAGE, DATA and one shared ACTION authorization design required by the BASE-TFR-HRM-009 request/issue metadata Stage A while allowing only packet preparation and a withheld token record. Executable source authority remains unavailable until clean pinned backend and frontend worktrees are actually materialized, an active V58 lease successor binds that evidence and an executable successor token is issued. Product-authorization v52 and Auth V261 remain central-only after module-result review; download, revoke, verification, activation and tenant enrollment remain unauthorized.",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_DECISION_ID_AND_SHA256"
+  },
+  "authorityBasis": {
+    "roadmap": {
+      "path": "../execution-roadmap-successor.v17.json",
+      "sha256": "0151e49edbfcd5297ac1e9506210a1e3b83622b89ef869a8579765e13380a40a",
+      "bytes": 6946
+    },
+    "batch03Preflight": {
+      "path": "../r7-batch-03-preflight-r1/semantic-dependency-migration-preflight.v1.json",
+      "sha256": "dde2815eceb71c37d77334002d6cdbd26812c63bd6d38fc0fd82dea17ff745e8",
+      "bytes": 11972,
+      "requiredDecision": "CONDITIONAL_GO_FOR_EXACT_PACKET_SOURCE_START_NO_GO"
+    },
+    "semanticDisposition": {
+      "path": "semantic-dispositions/base-tfr-hrm-009-stage-a.semantic-disposition.v1.json",
+      "sha256": "2c61d96164f2a594aee8bacf729a8f1a9112167639f9ef1a5bc5f3cf4f1040bb",
+      "bytes": 19804,
+      "requiredDecision": "GO_FOR_EXACT_STAGE_A_PACKET_AND_RESERVED_LEASE_REQUEST_ISSUE_METADATA_ONLY_EXECUTABLE_SOURCE_TOKEN_WITHHELD_DOWNLOAD_REVOKE_NO_GO_FULL_SLICE_CREDIT_ZERO"
+    },
+    "registers": [
+      {
+        "path": "../../recovery/exact-supplements/2026-10-06/accepted-successors/hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-api-contract-register.csv",
+        "sha256": "5f47efd33a1d5aa3d11a4d9fd5716cd4e35650e9fec0868ecb77c8c90a4cd988",
+        "bytes": 100020,
+        "closedSet": [
+          "IAQ-003",
+          "IAQ-010"
+        ]
+      },
+      {
+        "path": "../../recovery/hris-porting-blueprint-2026-09-09/coding-readiness/api-pep-binding-register.csv",
+        "sha256": "0e38d724516a8b271069241ffa0fb6400984dc703758767de53cbaffb4f93da3",
+        "bytes": 126576,
+        "closedSet": [
+          "PEP-HRM-012"
+        ]
+      },
+      {
+        "path": "../../recovery/exact-supplements/2026-10-06/hris-porting-blueprint-2026-09-09/hris-atomic-duty-matrix.csv",
+        "sha256": "bc6a387b648be7ead865691653f647bd67f694b2bf3868e5d5eaad5dfab16caa",
+        "bytes": 59593,
+        "closedDuties": [
+          "HRIS_DUTY_SELF_REQUEST_READER",
+          "HRIS_DUTY_CORE_VIEWER",
+          "HRIS_DUTY_SELF_CERTIFICATE_REQUESTER",
+          "HRIS_DUTY_CERTIFICATE_ISSUER"
+        ]
+      }
+    ]
+  },
+  "immutablePredecessor": {
+    "version": 51,
+    "bundleStatus": "DRAFT",
+    "repositoryPath": "backend:contracts/product-authorization/product-surfaces-v1.bundle-v51.json",
+    "fileSha256": "9c5a2f02551c7eaf38046a696ea0db80e97a16cf9c0a9324d3e515d2e9c6d8aa",
+    "bytes": 2588474,
+    "embeddedChecksum": "3beda5c13a3af0e265ace4533a3afcee3691c2b7486465dcf46156e58ae5ed2c",
+    "preservation": "IMMUTABLE_NO_BATCH_03_MODULE_WRITE"
+  },
+  "authPredecessor": {
+    "version": "V260",
+    "repositoryPath": "backend:dwp-auth-server/src/main/resources/db/migration/V260__declare_hris_r7_batch02_v51_authorization_seed.sql",
+    "sha256": "d6cfffa183f91738a0f56ea283e69a84c251d30ba6c09f464ce643b05df4e534",
+    "bytes": 3639,
+    "preservation": "IMMUTABLE_NEW_AUTH_DELTA_MUST_USE_V261"
+  },
+  "globalRules": {
+    "appEntitlement": "APP.HCM:VIEW",
+    "tenantSource": "TRUSTED_GATEWAY_CONTEXT_ONLY",
+    "callerSuppliedTenantOverride": "FORBIDDEN",
+    "callerSelectedAuthorizationMode": "FORBIDDEN",
+    "defaultDeny": true,
+    "opaqueDenial": true,
+    "staleRevision": "FAIL_CLOSED_BEFORE_OWNER_MUTATION",
+    "runtimeDefault": "OFF",
+    "enrolledTenants": [],
+    "centralBundleWriteOwner": "SYS_COMMON_INTEGRATION_CONTROL",
+    "moduleCentralContractWrite": "FORBIDDEN"
+  },
+  "laneDecision": {
+    "sliceId": "BASE-TFR-HRM-009",
+    "stageId": "BASE-TFR-HRM-009-STAGE-A",
+    "state": "SEALED_FOR_EXACT_OWNER_PACKET_ONLY_EXECUTABLE_REQUEST_ISSUE_METADATA_SOURCE_PENDING_MATERIALIZED_WORKTREES_ACTIVE_V58_LEASE_SUCCESSOR_AND_EXECUTABLE_SUCCESSOR_TOKEN",
+    "feature": {
+      "canonicalFeatureKey": "HRIS_HRM_CERTIFICATE_WORKBENCH",
+      "minimumBundleVersion": 52,
+      "runtimeDefault": "OFF",
+      "enrolledTenants": []
+    },
+    "routeContracts": [
+      {
+        "routeContractKey": "route.hcm.personal.requests.page",
+        "routeKind": "PAGE",
+        "surface": "hcm.personal",
+        "uiRoutePattern": "/hr/me/requests",
+        "gatewayBinding": "GET /api/people/v1/hris/workbench/self-service/requests",
+        "serviceBinding": "GET /v1/hris/workbench/self-service/requests",
+        "authorizationEquivalenceKey": "wire-authority.hcm.personal.requests.v1",
+        "capability": "hcm.personal.requests.view",
+        "profile": "self-request-reader",
+        "duty": "HRIS_EMPLOYEE>HRIS_DUTY_SELF_REQUEST_READER",
+        "purpose": "EMPLOYEE_SELF_SERVICE",
+        "population": [
+          "SELF"
+        ],
+        "fieldGroups": [
+          "REQUEST_SUMMARY",
+          "REQUEST_STATUS",
+          "COMMAND_RECEIPT"
+        ],
+        "predicatePolicyKeys": [
+          "predicate.self-person.v1"
+        ],
+        "targetBindingKinds": [
+          "SELF"
+        ]
+      },
+      {
+        "routeContractKey": "route.hcm.personal.requests.data",
+        "routeKind": "DATA",
+        "surface": "hcm.personal",
+        "gatewayBinding": "GET /api/people/v1/hris/workbench/self-service/requests",
+        "serviceBinding": "GET /v1/hris/workbench/self-service/requests",
+        "authorizationEquivalenceKey": "wire-authority.hcm.personal.requests.v1",
+        "capability": "hcm.personal.requests.view",
+        "profile": "self-request-reader",
+        "duty": "HRIS_EMPLOYEE>HRIS_DUTY_SELF_REQUEST_READER",
+        "purpose": "EMPLOYEE_SELF_SERVICE",
+        "population": [
+          "SELF"
+        ],
+        "fieldGroups": [
+          "REQUEST_SUMMARY",
+          "REQUEST_STATUS",
+          "COMMAND_RECEIPT"
+        ],
+        "predicatePolicyKeys": [
+          "predicate.self-person.v1"
+        ],
+        "targetBindingKinds": [
+          "SELF"
+        ]
+      },
+      {
+        "routeContractKey": "route.hcm.operations.certificates-documents.page",
+        "routeKind": "PAGE",
+        "surface": "hcm.operations",
+        "uiRoutePattern": "/hr/operations/people/certificates-documents",
+        "gatewayBinding": "GET /api/people/v1/hris/workbench/operations/certificates/documents",
+        "serviceBinding": "GET /v1/hris/workbench/operations/certificates/documents",
+        "authorizationEquivalenceKey": "wire-authority.hcm.operations.certificates-documents.v1",
+        "capability": "hcm.operations.people.view",
+        "profile": "people-operations-reader",
+        "duty": "HRIS_HR_BUSINESS_PARTNER>HRIS_DUTY_CORE_VIEWER",
+        "purpose": "HR_OPERATIONS",
+        "population": [
+          "LEGAL_ENTITY",
+          "NAMED_POPULATION",
+          "ORG_TREE",
+          "ORG_UNIT"
+        ],
+        "fieldGroups": [
+          "CERTIFICATE_METADATA",
+          "DOCUMENT_METADATA"
+        ],
+        "predicatePolicyKeys": [
+          "predicate.hcm-workforce-visible-person.v1"
+        ],
+        "targetBindingKinds": [
+          "TARGET_POPULATION"
+        ]
+      },
+      {
+        "routeContractKey": "route.hcm.operations.certificates-documents.data",
+        "routeKind": "DATA",
+        "surface": "hcm.operations",
+        "gatewayBinding": "GET /api/people/v1/hris/workbench/operations/certificates/documents",
+        "serviceBinding": "GET /v1/hris/workbench/operations/certificates/documents",
+        "authorizationEquivalenceKey": "wire-authority.hcm.operations.certificates-documents.v1",
+        "capability": "hcm.operations.people.view",
+        "profile": "people-operations-reader",
+        "duty": "HRIS_HR_BUSINESS_PARTNER>HRIS_DUTY_CORE_VIEWER",
+        "purpose": "HR_OPERATIONS",
+        "population": [
+          "LEGAL_ENTITY",
+          "NAMED_POPULATION",
+          "ORG_TREE",
+          "ORG_UNIT"
+        ],
+        "fieldGroups": [
+          "CERTIFICATE_METADATA",
+          "DOCUMENT_METADATA"
+        ],
+        "predicatePolicyKeys": [
+          "predicate.hcm-workforce-visible-person.v1"
+        ],
+        "targetBindingKinds": [
+          "TARGET_POPULATION"
+        ]
+      },
+      {
+        "routeContractKey": "route.hcm.operations.certificate-issue.action",
+        "routeKind": "ACTION",
+        "surface": "hcm.operations",
+        "gatewayBinding": "POST /api/people/v1/hris/certificates",
+        "serviceBinding": "POST /v1/hris/certificates",
+        "authorizationEquivalenceKey": null,
+        "routeRiskTier": "HIGH",
+        "commonStepUpRequired": true,
+        "acceptedPepPurposeCodes": [
+          "EMPLOYEE_SELF_SERVICE",
+          "TEAM_MANAGEMENT",
+          "HR_OPERATIONS"
+        ],
+        "stageAPurposeDisposition": {
+          "EMPLOYEE_SELF_SERVICE": "ALLOW_ONLY_THROUGH_SELF_PROFILE",
+          "HR_OPERATIONS": "ALLOW_ONLY_THROUGH_OPERATIONS_PROFILE",
+          "TEAM_MANAGEMENT": "DENY_DEFER_NO_PROFILE_NO_FALLBACK"
+        },
+        "accessProfiles": [
+          {
+            "precedence": 300,
+            "profileKey": "certificate-operations-issuer",
+            "capability": "hcm.operations.certificate.issue",
+            "duty": "HRIS_HR_BUSINESS_PARTNER>HRIS_DUTY_CERTIFICATE_ISSUER",
+            "resource": "ACTION.HRIS_CERTIFICATE",
+            "permission": "ISSUE",
+            "purpose": "HR_OPERATIONS",
+            "population": [
+              "LEGAL_ENTITY",
+              "NAMED_POPULATION",
+              "ORG_TREE",
+              "ORG_UNIT"
+            ],
+            "fieldGroups": [
+              "DIRECTORY",
+              "DOCUMENT_CONTENT",
+              "EMPLOYMENT"
+            ],
+            "predicatePolicyKeys": [
+              "predicate.hcm-workforce-visible-person.v1",
+              "predicate.people.object-version.v1"
+            ],
+            "targetBindingKinds": [
+              "OBJECT",
+              "TARGET_POPULATION"
+            ]
+          },
+          {
+            "precedence": 200,
+            "profileKey": "certificate-self-requester",
+            "capability": "hcm.personal.certificate.request",
+            "duty": "HRIS_EMPLOYEE>HRIS_DUTY_SELF_CERTIFICATE_REQUESTER",
+            "resource": "ACTION.HRIS_CERTIFICATE",
+            "permission": "CREATE",
+            "purpose": "EMPLOYEE_SELF_SERVICE",
+            "population": [
+              "SELF"
+            ],
+            "fieldGroups": [
+              "DIRECTORY",
+              "DOCUMENT_CONTENT",
+              "EMPLOYMENT"
+            ],
+            "predicatePolicyKeys": [
+              "predicate.self-person.v1",
+              "predicate.people.object-version.v1"
+            ],
+            "targetBindingKinds": [
+              "SELF",
+              "OBJECT"
+            ]
+          }
+        ],
+        "branchResolution": "Owner derives self versus operations from trusted actor-person identity and request personPublicId; the request contains no caller-selected mode.",
+        "stepUpRule": "Gateway applies the maximum route risk, HIGH, to both profiles before owner mutation; this intentionally makes the self branch stricter than its atomic-duty MEDIUM baseline rather than allowing an operations downgrade."
+      }
+    ],
+    "plannedAliasDisposition": {
+      "routeKey": "route.hcm.personal.certificate-request.action",
+      "state": "PLANNED_DESIGN_ALIAS_SUPERSEDED_BEFORE_FIRST_PUBLICATION_NOT_MATERIALIZED",
+      "reason": "Two distinct route authorities on the same POST method and path can make Gateway uniqueRoute resolution fail closed or create an authorization downgrade."
+    },
+    "capabilityDecisions": [
+      {
+        "contractKey": "hcm.personal.requests.view",
+        "state": "NEW_FROM_ACCEPTED_IAQ_AND_ATOMIC_DUTY_NOT_IN_V51",
+        "resource": "DATA.HRIS_SELF_REQUEST",
+        "permission": "VIEW",
+        "scopeResolver": "SELF",
+        "riskTier": "MEDIUM",
+        "stepUpRequired": false
+      },
+      {
+        "contractKey": "hcm.personal.certificate.request",
+        "state": "NEW_FROM_ACCEPTED_PEP_AND_ATOMIC_DUTY_NOT_IN_V51",
+        "resource": "ACTION.HRIS_CERTIFICATE",
+        "permission": "CREATE",
+        "scopeResolver": "SELF",
+        "riskTier": "MEDIUM",
+        "capabilityStepUpBaseline": false,
+        "effectiveRouteStepUp": "HIGH_REQUIRED_BY_SHARED_ACTION"
+      },
+      {
+        "contractKey": "hcm.operations.certificate.issue",
+        "state": "NEW_FROM_ACCEPTED_PEP_AND_ATOMIC_DUTY_NOT_IN_V51",
+        "resource": "ACTION.HRIS_CERTIFICATE",
+        "permission": "ISSUE",
+        "scopeResolver": "WORKFORCE_TARGET_POPULATION",
+        "riskTier": "HIGH",
+        "activationPolicy": "STEPUP-MGMT-HIGH-V1",
+        "stepUpRequired": true
+      },
+      {
+        "contractKey": "hcm.operations.people.view",
+        "state": "REUSE_EXISTING_V51_CAPABILITY_APPEND_ONLY_ROUTE_KEY_BINDING",
+        "resource": "DATA.HRIS_WORKFORCE",
+        "permission": "VIEW",
+        "scopeResolver": "WORKFORCE_TARGET_POPULATION"
+      }
+    ],
+    "downloadAndRevoke": {
+      "routeContracts": [],
+      "capabilities": [],
+      "duties": [],
+      "uiActions": [],
+      "state": "WITHHELD_NO_ACCEPTED_TRANSPORT_OR_AUTHORITY",
+      "deferredRequiredFullSliceAcceptance": [
+        "certificate expiry behavior and acceptance",
+        "separately authorized access/download audit behavior and acceptance"
+      ]
+    }
+  },
+  "platformCoexistenceControl": {
+    "genericSurface": "/hr/services",
+    "genericSeed": "people.employment-certificate",
+    "moduleWriteAuthorized": false,
+    "centralActivationPrecondition": "For a selected tenant, retire or hide generic Platform creation and prove it is non-writable before HRM feature enrollment.",
+    "historicalOwnership": "Existing and open Platform svc_requests remain Platform-owned with their original deep links and are never copied or mirrored into People.",
+    "rollbackOrder": "Disable HRM creation first; only then may central control reactivate the generic Platform seed.",
+    "simultaneousWritableState": "FORBIDDEN"
+  },
+  "centralAdmissionAfterModuleResults": {
+    "candidateProductAuthorizationVersion": 52,
+    "candidateAuthMigration": "V261",
+    "generationAuthorizedNow": false,
+    "moduleWritable": false,
+    "requiredInput": [
+      "pushed backend and frontend Stage-A result SHAs, trees and exact changed paths",
+      "People V58 clean and V57-to-V58 PostgreSQL receipts",
+      "all Stage-A acceptance results",
+      "default-OFF and zero-enrollment evidence",
+      "no download, revoke, verification, Platform or central-control delta evidence"
+    ],
+    "exactCentralDeltaIfAdmitted": [
+      "Generate immutable product-authorization v52 from v51 plus only the five sealed HRM-009 route contracts and three accepted new capabilities.",
+      "Append the two certificate/document PAGE and DATA route keys to existing hcm.operations.people.view without changing its permission meaning.",
+      "Generate matching Gateway and People PEP projections and synchronized frontend authorization artifacts.",
+      "Author Auth V261 to register v52 as DRAFT with automatic import disabled, register the feature default OFF and bind its route owners and duties.",
+      "In Auth V261 replace ck_product_feature_route_surface only to preserve hcm.team, hcm.operations and hcm.management and append hcm.personal.",
+      "Mount the two UI routes and navigation only after the generated central contract is admitted; no module worktree edits shell or route catalogs.",
+      "Do not add activation, feature enrollment, download, revoke or verification rows."
+    ],
+    "prohibitions": [
+      "Do not mutate product-authorization v51 or Auth V260.",
+      "Do not publish both certificate action aliases.",
+      "Do not add an undocumented mode, query discriminator, endpoint or capability.",
+      "Do not admit any central artifact before independent result review."
+    ]
+  },
+  "withheldLanes": [
+    {
+      "subject": "HRM009_DOWNLOAD",
+      "state": "NO_GO_NO_ROUTE_NO_CAPABILITY_NO_UI_ACTION_NO_SOURCE"
+    },
+    {
+      "subject": "HRM009_REVOKE",
+      "state": "NO_GO_NO_ROUTE_NO_CAPABILITY_NO_UI_ACTION_NO_SOURCE"
+    },
+    {
+      "subject": "HRM009_PRODUCTION_ACTIVATION",
+      "state": "NO_GO_SHARED_ARTIFACT_ADAPTER_AND_PLATFORM_CUTOVER_PROOF_REQUIRED"
+    }
+  ],
+  "authority": {
+    "hrm009StageAOwnerPacketMayBeSealed": true,
+    "pendingNonExecutableTokenMayBeRecorded": true,
+    "executableSourceTokenMayBeIssuedNow": false,
+    "moduleSourceOrTestAuthoringAuthorized": false,
+    "v58MigrationAuthoringAuthorized": false,
+    "productAuthorizationV52GenerationAuthorized": false,
+    "authV261AuthoringAuthorized": false,
+    "gatewayGeneratedProjectionAuthoringAuthorized": false,
+    "frontendShellAndRouteAuthoringAuthorized": false,
+    "moduleWriteToCentralContractsAuthorized": false,
+    "downloadOrRevokeAuthorizationAuthoringAuthorized": false,
+    "mergeToDwpDevAuthorized": false,
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "customerDataAuthorized": false,
+    "fullSliceCompletionCredit": 0,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "RESERVE_ONE_EXCLUSIVE_PEOPLE_V58_STAGE_A_PATH_THEN_HASH_BIND_THIS_DECISION_WITH_THE_SEMANTIC_DISPOSITION_IN_THE_EXACT_OWNER_PACKET_AND_WITHHELD_TOKEN; ONLY_AFTER_ACTUAL_CLEAN_PINNED_BACKEND_AND_FRONTEND_WORKTREE_MATERIALIZATION_MAY_AN_ACTIVE_LEASE_SUCCESSOR_AND_EXECUTABLE_SUCCESSOR_TOKEN_BE_ISSUED"
+}
