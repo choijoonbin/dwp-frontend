@@ -1,0 +1,93 @@
+{
+  "schema": "dwp.hris.wave7.module-central-integration-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-01-PAY-013-CENTRAL-INTEGRATION-20261017-R1",
+  "recordedAt": "2026-10-17T19:30:57+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-PAY",
+  "sliceId": "BASE-TFR-PAY-013",
+  "canonicalFeature": "HRIS_PAYROLL_RUN_PREPARE",
+  "state": "SOURCE_INTEGRATED_DWP_DEV_DEFAULT_OFF_CENTRAL_MOUNT_PENDING",
+  "independentReview": {
+    "decision": "GO_FOR_DEFAULT_OFF_INTEGRATION_NO_GO_FOR_ACTIVATION",
+    "remainingP0": 0,
+    "remainingP1": 0,
+    "remainingP2": 0,
+    "reviewedBackendCommit": "81271b08c2a2c919b911f5d6e22a76a23b0d35e4",
+    "reviewedBackendTree": "863e18ba6da7b8041859c129491cc81c60968abb",
+    "reviewedFrontendEvidenceCommit": "45087f9f691e77f3678acc440674a1c57e027545",
+    "reviewedFrontendTree": "a4ca017a11f10c3a311e7e2c00387cc8a2071334",
+    "evidenceSha256": "27a3699c1ffb56aa26c614d2ce957fda7a16fd977a33ba512bb19cc80d8b9c44"
+  },
+  "controlCorrections": [
+    {
+      "id": "PAYROLL_RUN_PREPARE_HIGH_RISK_CATALOG",
+      "repository": "dwp-frontend",
+      "commit": "67b2112b7eecad48d8c3ecf89d734425f2d2e872",
+      "tree": "4c3e042c7f3586436c920b9bd464f5e8afd939ab",
+      "result": "CLOSED",
+      "proof": "The central catalog binds HCM_PAYROLL_RUN_PREPARE and PAYROLL_RUN_PREPARATION to route.hcm.operations.payroll-run.action; the focused command-contract target passed 6/6."
+    },
+    {
+      "id": "CANONICAL_SUCCESS_CTA",
+      "repository": "dwp-frontend",
+      "commit": "12600e3095efa7fd810df4d1e52e03fbc2285fb6",
+      "result": "CLOSED",
+      "proof": "The success CTA uses the registered /hr/operations/pay PAGE and the exact PAY-013 slice passed 12/12 once."
+    }
+  ],
+  "integration": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "mergeCommit": "4ec8efd6436a64cad9bdd03a87d26f2f5be0bec6",
+      "tree": "985577f035375412be19df092f16ab489894b0dc",
+      "parents": [
+        "d4dd0ae685aff8759d1c15e1f9d4bbd223f60040",
+        "81271b08c2a2c919b911f5d6e22a76a23b0d35e4"
+      ],
+      "originExactAfterPush": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "mergeCommit": "f2ec5d46c5cda37aa04061d1b886dff645a0f9d8",
+      "tree": "69c3dd4746f02a752b1601e056423b59957c8b8e",
+      "parents": [
+        "be0d2dd0e014ed2e9d62cbab346199be028d7359",
+        "45087f9f691e77f3678acc440674a1c57e027545"
+      ],
+      "originExactAfterPush": true
+    },
+    "mergeConflicts": 0,
+    "moduleClustersRepeated": false,
+    "reasonNotRepeated": "Independent review reproduced the closed manifests and merge-tree safety. The admitted bytes are the already tested 37-test backend cluster, 18-test PostgreSQL migration/boundary cluster, startup 8/8, frontend 12/12 and the two focused post-review contract corrections; broad reruns after an overlap-free merge are prohibited."
+  },
+  "rollout": {
+    "runtimeDefault": "OFF",
+    "enrolledTenants": [],
+    "centralRouteOrShellMounted": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "remainingGates": [
+    "trusted tenant feature-activation and enrollment authority shared by PAGE, navigation and workspace",
+    "central route, shell and PAGE/DATA/high-risk owner-binding adapter mount",
+    "production population and semantic adapters plus exact PAY_GROUP and NAMED scope authority",
+    "live PEP approval and separation-of-duties end-to-end verification",
+    "PAY013-AC-10 browser and accessibility matrix after the central mount",
+    "separate tenant enrollment, activation and production release authority"
+  ],
+  "completion": {
+    "sourceIntegrated": true,
+    "migrationIntegrated": true,
+    "defaultOffPreserved": true,
+    "activationComplete": false,
+    "acceptancePassed": 11,
+    "acceptancePending": [
+      "PAY013-AC-10"
+    ],
+    "acceptanceFailed": []
+  }
+}
