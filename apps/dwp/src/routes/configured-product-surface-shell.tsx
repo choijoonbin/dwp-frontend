@@ -52,6 +52,8 @@ export function ConfiguredProductSurfaceShell({
   resolveMobileShell,
   legacy,
   shellNavigationProjection,
+  renderNavigationItemChildren,
+  navigationChildrenPresentation,
 }: {
   manifest: ProductSurfaceManifest;
   surfaceId: string;
@@ -60,6 +62,8 @@ export function ConfiguredProductSurfaceShell({
   resolveMobileShell?: ProductAreaLayoutProps['resolveMobileShell'];
   legacy: ReactNode;
   shellNavigationProjection?: ProductShellNavigationProjection;
+  renderNavigationItemChildren?: ProductAreaLayoutProps['renderNavigationItemChildren'];
+  navigationChildrenPresentation?: ProductAreaLayoutProps['navigationChildrenPresentation'];
 }) {
   const decision = useAllowedProductSurface();
   const applicationRuntime = useProductApplicationRuntime();
@@ -104,6 +108,8 @@ export function ConfiguredProductSurfaceShell({
     resolveMobileShell,
     surface: runtime,
     shellNavigationProjection,
+    renderNavigationItemChildren,
+    navigationChildrenPresentation,
   };
   if (presentation === 'compatibility-management' || presentation === 'compatibility-work') {
     return <ProductAreaLayout {...layoutProps} />;

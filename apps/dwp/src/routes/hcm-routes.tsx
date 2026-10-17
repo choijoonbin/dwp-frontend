@@ -1,4 +1,5 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AuthGuard } from '@dwp-frontend/shared-utils/auth/auth-guard';
 import { useAuth } from '@dwp-frontend/shared-utils/auth/auth-provider';
 import { isProviderIdentity } from '@dwp-frontend/shared-utils/auth/control-plane-access';
@@ -13,15 +14,28 @@ import {
 } from '../features/hcm/hcm-navigation';
 import { HCM_PRODUCT_MANIFEST } from '../features/hcm/hcm-product-manifest';
 import { canAccessLegacyHcmSurface, useHcmAccess } from '../features/hcm/hcm-surface-access';
-import { HRIS_SHELL_NAVIGATION_PROJECTION } from '../features/hris/shell/model/hris-shell-navigation-contract';
 import {
   HrisNavigationPolicyDeepLinkGuard,
   HrisNavigationPolicyRuntimeProvider,
+  renderHrisTaskNavigation,
+  resolveHrisRuntimePolicyLanding,
+  resolveTaskLocation,
   useHrisNavigationPolicyShellProjection,
+  useHrisRuntimeNavigationPolicy,
 } from '../features/hris/shell/navigation-policy';
 import { useOptionalAllowedProductSurface } from '../components/allowed-product-surface-context';
 import { isSegmentOwnedPath } from '../components/product-manifest';
+import {
+  ProductAreaAuthorizedNavigationPathsProvider,
+  useProductAreaAuthorizedNavigationPaths,
+} from '../components/product-area-authorized-navigation-context';
 import { ProductSurfaceAccessState } from '../components/product-surface-access-state';
+import {
+  resolveCanaryProductFlags,
+  resolveProductSurfaceRolloutMode,
+  useProductSurfaceCanaryAuthority,
+} from '../features/shell/product-surface-canary-runtime';
+import { buildProductCompatibilityNavigationTargets } from '../features/shell/product-surface-compatibility-navigation';
 import { ProductAreaNavigationItemAccessGuard } from '../layouts/product-area-navigation-access-guard';
 import { ConfiguredProductSurfaceShell } from './configured-product-surface-shell';
 import { LegacyProductFirstAllowedIndex } from './legacy-product-first-allowed-index';
@@ -43,6 +57,7 @@ import {
 
 import type { HcmNavigationItem } from '../features/hcm/hcm-navigation';
 import type { HcmLegacySurfaceId } from '../features/hcm/hcm-surface-access';
+import type { HrisWorkbenchId } from '../features/hris/shell/navigation-policy';
 
 const HcmPage = lazy(() => import('../pages/hcm'));
 const HrisWorkExplorer = lazy(() => import('../features/hris/explorer'));
@@ -178,6 +193,30 @@ const hcmPageRoutes = OFFICIAL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.filter(
   (route) =>
     route.productId === 'hcm' && isSegmentOwnedPath(route.pattern, HCM_PRODUCT_MANIFEST.basePath)
 );
+const hcmRegisteredPageRoutes = hcmPageRoutes.map((route) => ({
+  ...route,
+  routeKind: 'PAGE' as const,
+}));
+
+function HcmNavigationPolicyRuntimeRoot() {
+  const authority = useProductSurfaceCanaryAuthority();
+  const authorizedPaths = useMemo(() => {
+    const targets = buildProductCompatibilityNavigationTargets({
+      authority,
+      manifest: HCM_PRODUCT_MANIFEST,
+      registeredRoutes: hcmRegisteredPageRoutes,
+      rolloutMode: resolveProductSurfaceRolloutMode(resolveCanaryProductFlags(authority, 'hcm')),
+    });
+    return new Set(targets?.keys() ?? []);
+  }, [authority]);
+  return (
+    <ProductAreaAuthorizedNavigationPathsProvider paths={authorizedPaths}>
+      <HrisNavigationPolicyRuntimeProvider>
+        <Outlet />
+      </HrisNavigationPolicyRuntimeProvider>
+    </ProductAreaAuthorizedNavigationPathsProvider>
+  );
+}
 
 const hcmManagementLegacyItems = hcmPageRoutes
   .filter((route) => route.surfaceId === 'hcm.management')
@@ -200,13 +239,17 @@ function HcmLegacyManagementIndex() {
 
 function hcmSurfaceShell(surfaceId: string) {
   const legacy = legacyShellForSurface(surfaceId);
-  if (surfaceId === 'hcm.operations') {
-    return (
-      <HrisNavigationPolicyRuntimeProvider>
-        <HcmOperationsConfiguredSurfaceShell legacy={legacy} />
-      </HrisNavigationPolicyRuntimeProvider>
-    );
-  }
+  return <HcmConfiguredSurfaceShell surfaceId={surfaceId} legacy={legacy} />;
+}
+
+function HcmConfiguredSurfaceShell({
+  surfaceId,
+  legacy,
+}: {
+  surfaceId: string;
+  legacy: React.ReactNode;
+}) {
+  const shellNavigationProjection = useHrisNavigationPolicyShellProjection();
   return (
     <ConfiguredProductSurfaceShell
       manifest={HCM_PRODUCT_MANIFEST}
@@ -214,21 +257,9 @@ function hcmSurfaceShell(surfaceId: string) {
       areaKey="hcm"
       translationNamespace="hcm"
       legacy={legacy}
-      shellNavigationProjection={HRIS_SHELL_NAVIGATION_PROJECTION}
-    />
-  );
-}
-
-function HcmOperationsConfiguredSurfaceShell({ legacy }: { legacy: React.ReactNode }) {
-  const shellNavigationProjection = useHrisNavigationPolicyShellProjection();
-  return (
-    <ConfiguredProductSurfaceShell
-      manifest={HCM_PRODUCT_MANIFEST}
-      surfaceId="hcm.operations"
-      areaKey="hcm"
-      translationNamespace="hcm"
-      legacy={legacy}
       shellNavigationProjection={shellNavigationProjection}
+      renderNavigationItemChildren={renderHrisTaskNavigation}
+      navigationChildrenPresentation="disclosure"
     />
   );
 }
@@ -283,7 +314,44 @@ function hcmRelativePath(pattern: string, parent: string): string {
   return pattern.slice(prefix.length);
 }
 
-function hcmChildren(surfaceId: string, parent: string, indexRouteKey?: string): RouteObject[] {
+export function HrisWorkbenchPolicyIndex({
+  workbenchId,
+  fallback,
+}: {
+  workbenchId: HrisWorkbenchId;
+  fallback: React.ReactNode;
+}) {
+  const { t } = useTranslation('hcm');
+  const policy = useHrisRuntimeNavigationPolicy();
+  const authorizedPaths = useProductAreaAuthorizedNavigationPaths() ?? new Set<string>();
+  const location = useLocation();
+  if (policy.mode === 'STATIC') return fallback;
+  const landing = resolveHrisRuntimePolicyLanding(policy, workbenchId, authorizedPaths);
+  if (landing.decision === 'DENY' || !landing.route) {
+    if (policy.denialReason === 'NAVIGATION_PROJECTION_PENDING') return routeFallback;
+    const state = resolveHrisWorkbenchPolicyAccessState(policy.denialReason);
+    return (
+      <section aria-label={t('navigation.policyStatus')}>
+        <ProductSurfaceAccessState decision={{ state }} />
+      </section>
+    );
+  }
+  const target = resolveTaskLocation(landing.route, location.search);
+  return target.pathname === location.pathname ? fallback : <Navigate replace to={target} />;
+}
+
+export function resolveHrisWorkbenchPolicyAccessState(denialReason: string | null) {
+  if (denialReason === 'NAVIGATION_PROJECTION_UNAVAILABLE') return 'authority-unavailable';
+  if (denialReason === 'INVALID_LEGAL_ENTITY_SELECTOR') return 'scope-invalid';
+  return 'route-denied';
+}
+
+function hcmChildren(
+  surfaceId: string,
+  parent: string,
+  indexRouteKey?: string,
+  indexElement?: React.ReactNode
+): RouteObject[] {
   const records = hcmPageRoutes.filter((route) => route.surfaceId === surfaceId);
   return [
     ...(indexRouteKey
@@ -291,7 +359,7 @@ function hcmChildren(surfaceId: string, parent: string, indexRouteKey?: string):
           {
             index: true,
             handle: { routeContractKey: indexRouteKey },
-            element: hcmGovernedPage(indexRouteKey),
+            element: indexElement ?? hcmGovernedPage(indexRouteKey),
           },
         ]
       : []),
@@ -356,14 +424,19 @@ function hcmSurfaceRoutes(): RouteObject[] {
         {
           index: true,
           element: (
-            <ProductCanaryFirstAllowedIndex
-              productId="hcm"
-              surfaceId="hcm.management"
-              candidates={managementCandidates.map((route) => ({
-                routeContractKey: route.routeContractKey,
-                path: route.pattern,
-              }))}
-              legacy={<HcmLegacyManagementIndex />}
+            <HrisWorkbenchPolicyIndex
+              workbenchId="HRIS-WB-SETTINGS"
+              fallback={
+                <ProductCanaryFirstAllowedIndex
+                  productId="hcm"
+                  surfaceId="hcm.management"
+                  candidates={managementCandidates.map((route) => ({
+                    routeContractKey: route.routeContractKey,
+                    path: route.pattern,
+                  }))}
+                  legacy={<HcmLegacyManagementIndex />}
+                />
+              }
             />
           ),
         },
@@ -401,13 +474,25 @@ function hcmSurfaceRoutes(): RouteObject[] {
       children: hcmChildren(
         'hcm.operations',
         '/hr/operations',
-        'route.hcm.operations.overview.page'
+        'route.hcm.operations.overview.page',
+        <HrisWorkbenchPolicyIndex
+          workbenchId="HRIS-WB-HR-OPERATIONS"
+          fallback={hcmGovernedPage('route.hcm.operations.overview.page')}
+        />
       ),
     },
     {
       path: 'team',
       element: hcmSurfaceBoundary('hcm.team'),
-      children: hcmChildren('hcm.team', '/hr/team', 'route.hcm.team.home.page'),
+      children: hcmChildren(
+        'hcm.team',
+        '/hr/team',
+        'route.hcm.team.home.page',
+        <HrisWorkbenchPolicyIndex
+          workbenchId="HRIS-WB-TEAM"
+          fallback={hcmGovernedPage('route.hcm.team.home.page')}
+        />
+      ),
     },
     {
       element: hcmSurfaceBoundary('hcm.personal'),
@@ -431,7 +516,7 @@ export const hcmRoutes: RouteObject[] = [
     element: (
       <AuthGuard fallback={authenticationFallback}>
         <WorkspaceRouteGuard>
-          <Outlet />
+          <HcmNavigationPolicyRuntimeRoot />
         </WorkspaceRouteGuard>
       </AuthGuard>
     ),
