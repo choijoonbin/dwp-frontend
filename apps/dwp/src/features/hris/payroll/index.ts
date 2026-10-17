@@ -32,7 +32,12 @@ export {
   HrisPayrollFoundationOperationsWorkspace,
   type HrisPayrollFoundationOperationsWorkspaceProps,
 } from './pages/hris-payroll-foundation-operations-workspace';
+export {
+  HrisPayrollFoundationSettingsWorkspace,
+  type HrisPayrollFoundationSettingsWorkspaceProps,
+} from './pages/hris-payroll-foundation-settings-workspace';
 export { usePayrollFoundationCommandExecutors } from './hooks/use-payroll-foundation-command-executors';
+export { usePayrollFoundationSettingsCommandExecutors } from './hooks/use-payroll-foundation-settings-command-executors';
 export type {
   PayrollFoundationCommandExecutor,
   PayrollFoundationCommandExecutors,
@@ -50,8 +55,15 @@ export {
   reversePayrollFoundation,
   getPayrollFoundationReceipt,
   reconcilePayrollFoundationReceipt,
+  createPayrollFoundationDataSource,
   type PayrollFoundationDataSource,
 } from './api/payroll-foundation-api';
+export {
+  PAYROLL_FOUNDATION_SETTINGS_API_BASE,
+  PAYROLL_FOUNDATION_SETTINGS_READ_CONTRACTS,
+  PAYROLL_FOUNDATION_SETTINGS_ACTION_CONTRACTS,
+  payrollFoundationSettingsDataSource,
+} from './api/payroll-foundation-settings-api';
 export {
   PAYROLL_FOUNDATION_CONTRACT,
   FOUNDATION_ROUNDING_MODES,
