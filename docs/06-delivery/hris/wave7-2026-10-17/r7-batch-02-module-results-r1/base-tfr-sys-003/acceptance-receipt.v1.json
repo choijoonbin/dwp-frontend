@@ -1,0 +1,136 @@
+{
+  "schema": "dwp.hris.module-acceptance-receipt.v1",
+  "generatedAt": "2026-10-17T14:52:40Z",
+  "sliceId": "BASE-TFR-SYS-003",
+  "state": "SYS003_FRONTEND_REUSE_ADAPTER_IMPLEMENTATION_COMPLETE_BRANCH_PUSHED_CONTROL_REVIEW_PENDING_DEFAULT_OFF",
+  "results": [
+    {
+      "id": "SYS003-AC-01",
+      "result": "PASS",
+      "criterion": "/hr/settings/workflow exposes a real default-off workflow-policy workspace and invokes only SHARED-API-005 after exact read admission.",
+      "evidence": [
+        "HrisWorkflowPolicyWorkspace does not mount ActiveWorkflow without exact cross-product admission.",
+        "hrisWorkflowPolicyDataSource.list delegates only to getApprovalPolicies with the installed owner context scope and AbortSignal.",
+        "The workspace and slice targets prove default-off zero-call and authorized list behavior."
+      ]
+    },
+    {
+      "id": "SYS003-AC-02",
+      "result": "PASS",
+      "criterion": "Policy publish invokes only SHARED-API-006 with current policy version, governed execution and owner-confirmed outcome.",
+      "evidence": [
+        "The source snapshot is re-read from the exact query cache before dispatch and must retain policy ID, version, pending-review state and independent actor.",
+        "The command runner receives the exact policy-publish route, decision revision and object version; publishApprovalPolicy preserves step-up and idempotency semantics.",
+        "No optimistic success or local command receipt is created; only the returned Approval owner projection is installed."
+      ]
+    },
+    {
+      "id": "SYS003-AC-03",
+      "result": "PASS",
+      "criterion": "/hr/team/delegation exposes a real default-off manager workspace and invokes only SHARED-API-010 for the installed population.",
+      "evidence": [
+        "Delegation admission requires APP.HCM and APP.APPROVALS, the manager plane, exact read capability/duty, an opaque owner scope and a population scope.",
+        "hrisDelegationDataSource.list delegates only to getApprovalDelegations with the installed owner context scope and AbortSignal.",
+        "The workspace test proves owner list rendering and subject-revision visibility."
+      ]
+    },
+    {
+      "id": "SYS003-AC-04",
+      "result": "PASS",
+      "criterion": "Delegation create and revoke invoke only SHARED-API-011 and SHARED-API-012 with owner window, scope, revision and governed execution intact.",
+      "evidence": [
+        "The adapter passes create input unchanged to createApprovalDelegation and passes delegation ID plus expected version unchanged to revokeApprovalDelegation.",
+        "The slice target proves create pending without optimistic success and revoke execution with objectVersion 9.",
+        "Successful commands replace the exact owner query projection and invalidate only its exact cache key."
+      ]
+    },
+    {
+      "id": "SYS003-AC-05",
+      "result": "PASS",
+      "criterion": "Read and command capabilities are evaluated separately.",
+      "evidence": [
+        "workflowReadAdmitted and workflowPublishAdmitted are separate predicates; delegationReadAdmitted and delegationManageAdmitted are separate predicates.",
+        "An admitted read with no command decision renders disabled mutation controls and makes no mutation call.",
+        "Each command predicate requires the exact action route set and decision revision."
+      ]
+    },
+    {
+      "id": "SYS003-AC-06",
+      "result": "PASS",
+      "criterion": "Cross-product entitlement, tenant, actor, role, duty, population, purpose, revision and SoD near misses fail closed before owner access.",
+      "evidence": [
+        "The common admission predicate requires both product views and exact equality of HCM tenant/actor with Approval-owner tenant/actor.",
+        "Workspace-specific predicates require exact role plane, read duty, capability, route, bound purpose and population where applicable.",
+        "Command predicates require subject revision, current decision revision and exact ordered SoD seals; the contract target covers each negative class."
+      ]
+    },
+    {
+      "id": "SYS003-AC-07",
+      "result": "PASS",
+      "criterion": "Adapters preserve existing Approval contracts and add no proxy, business transition or second receipt.",
+      "evidence": [
+        "Only approval-management-api.ts#getApprovalPolicies and approval-api.ts publish/list/create/revoke clients are called.",
+        "No axios, fetch, HRIS endpoint, backend source or persistence path exists in the changed paths.",
+        "Owner outcomes explicitly state that no local receipt was created."
+      ]
+    },
+    {
+      "id": "SYS003-AC-08",
+      "result": "PASS",
+      "criterion": "Operational states remain explicit and do not render a blank canvas.",
+      "evidence": [
+        "Source renders explicit loading, empty, owner-unavailable, permission, stale-focus, command-pending, owner-confirmed and owner-rejected states.",
+        "Policy and delegation adapters are independent, so one unavailable owner view does not erase the other workspace shell.",
+        "The slice target directly exercises loading, empty, unavailable, permission, pending and success states."
+      ]
+    },
+    {
+      "id": "SYS003-AC-09",
+      "result": "PASS",
+      "criterion": "Tab and focus are URL-addressable and unauthorized focus values are removed without disclosure.",
+      "evidence": [
+        "Only tab=overview and a bounded safe focus token are accepted by the local query-state parser.",
+        "Missing or stale focus is replaced with the first authorized owner row, or removed for an empty list.",
+        "Scope identity changes remount the active subtree and discard prior selection, command feedback and query state."
+      ]
+    },
+    {
+      "id": "SYS003-AC-10",
+      "result": "PASS_SOURCE_CONTRACT_RUNTIME_VISUAL_DEFERRED_BY_AUTHORITY",
+      "criterion": "Both workspaces provide responsive, keyboard, screen-reader, contrast and reduced-motion-safe source behavior.",
+      "evidence": [
+        "Responsive minmax grids collapse at xs and expand at md; copy uses overflowWrap and no fixed canvas width.",
+        "Interactive rows use ButtonBase with aria-current and visible focus; loading uses aria-busy and commands expose textual pending outcomes.",
+        "No custom animation or color-only status exists. Browser screenshots and viewport/theme claims are deferred because browserBeforeCentralMountAuthorized=false."
+      ]
+    },
+    {
+      "id": "SYS003-AC-11",
+      "result": "PASS",
+      "criterion": "Feature OFF or unenrolled tenant mounts no owner runtime and exposes no enabled command.",
+      "evidence": [
+        "Both exported runtime state constants are OFF.",
+        "Without exact tenant-enrolled admission the active React Query subtree is never mounted.",
+        "The slice and both workspace tests prove zero list, publish, create and revoke calls when admission is absent or invalid."
+      ]
+    },
+    {
+      "id": "SYS003-AC-12",
+      "result": "PASS",
+      "criterion": "Changed-path and no-recount evidence proves all forbidden owner and central-control paths remain unchanged.",
+      "evidence": [
+        "All 14 source paths are inside the three exact writable frontend patterns.",
+        "Shared Approval clients, generated authorization, HRIS shell model and backend controllers retain their base hashes.",
+        "No backend, migration, OpenAPI, Auth, Gateway, route catalog, product-authorization, historical register or Batch01 evidence path changed."
+      ]
+    }
+  ],
+  "summary": {
+    "acceptanceResultCount": 12,
+    "sourceComplete": true,
+    "controlReviewPending": true,
+    "defaultOff": true,
+    "centralMountComplete": false,
+    "businessCompletionClaimed": false
+  }
+}

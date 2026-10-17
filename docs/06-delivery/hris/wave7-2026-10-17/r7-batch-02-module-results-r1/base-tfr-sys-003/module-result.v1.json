@@ -1,0 +1,103 @@
+{
+  "schema": "dwp.hris.module-result.v1",
+  "generatedAt": "2026-10-17T14:52:40Z",
+  "sliceId": "BASE-TFR-SYS-003",
+  "tokenId": "HRIS-WAVE7-R7-BATCH-02-START-BASE-TFR-SYS-003-20261017-R1",
+  "state": "SYS003_FRONTEND_REUSE_ADAPTER_IMPLEMENTATION_COMPLETE_BRANCH_PUSHED_CONTROL_REVIEW_PENDING_DEFAULT_OFF",
+  "authority": {
+    "carrierCommit": "da32f8ead331968d7c57950e25bebe0bfb84b211",
+    "carrierMergedIntoModuleWorktree": false,
+    "ownerPacket": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-02-module-start-r1/owner-packets/base-tfr-sys-003.owner-packet.v1.json",
+      "sha256": "f29a4addb1c9d6b6971cca40464d304eaccf8ecfec980ed0ac0276c8224fcbc9",
+      "bytes": 16555
+    },
+    "startToken": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-02-module-start-r1/tokens/base-tfr-sys-003.start-token.v1.json",
+      "sha256": "d45ae2febddd6d202da217bba0eac23f2f87bdf862a06e74dc5a28ec66013e2a",
+      "bytes": 14195
+    },
+    "centralAuthorizationSha256": "131376aac17d25947abe54fe0dc1969c795f150882e93a671bdae9ce1b618dc1"
+  },
+  "sourceResult": {
+    "repository": "dwp-frontend",
+    "branch": "codex/hris-wave7-r7-batch02-sys-003-frontend-20261017-r1",
+    "baseCommit": "f749d046417a35642d158c0d0f674704ace7d4bb",
+    "baseTree": "3bfecda45d73a2e70d4685dbb4c5861f73dc64c6",
+    "implementationCommit": "b3176a2f9cbc81d727d062989092eceacdbb3c01",
+    "implementationTree": "36ceac157f7abb3b0646df5cf96249de3e02a6bc",
+    "subjectIdentityCorrectionCommit": "ec09e69fb52187f8f800694286b82dbeca0b2d29",
+    "finalSourceTree": "396f2aec702fa70cb736a2af1a3ca47d61fa6a19",
+    "remoteRef": "refs/heads/codex/hris-wave7-r7-batch02-sys-003-frontend-20261017-r1",
+    "remoteCommitAtPush": "ec09e69fb52187f8f800694286b82dbeca0b2d29",
+    "pushed": true
+  },
+  "backendVerification": {
+    "repository": "dwp-backend",
+    "mode": "READ_ONLY_VERIFICATION_NO_COMMIT_NO_PUSH",
+    "branch": "codex/hris-wave7-r7-batch02-sys-003-backend-20261017-r1",
+    "commit": "59964de62cd4da8bcb9f9384d6e2ef85e8c07b09",
+    "tree": "108eb56abdb23f6bd4346b21fac1974da18b01c1",
+    "approvalAdminControllerSha256": "066e471ed3cae1e109e36357d4fb4c1baea94855a9104d6321ea53cf28f90a40",
+    "approvalControllerSha256": "2d3f8db6051196a5e06adfea6bf9a9735812dafa5c648bb25cdd8b7a425f2701",
+    "approvalMigrationHighWater": "V58",
+    "changed": false
+  },
+  "rollout": {
+    "feature": "HRIS_APPROVAL_WORKFLOW_AND_DELEGATION_ADAPTERS",
+    "runtimeDefault": "OFF",
+    "enrolledTenants": [],
+    "featureEnabled": false,
+    "tenantEnrollmentPerformed": false,
+    "centralRouteMounted": false
+  },
+  "sharedContracts": [
+    {
+      "id": "SHARED-API-005",
+      "method": "GET",
+      "path": "/api/approvals/v1/admin/policies",
+      "client": "approval-management-api.ts#getApprovalPolicies"
+    },
+    {
+      "id": "SHARED-API-006",
+      "method": "POST",
+      "path": "/api/approvals/v1/admin/policies/{policyId}/publish",
+      "client": "approval-api.ts#publishApprovalPolicy"
+    },
+    {
+      "id": "SHARED-API-010",
+      "method": "GET",
+      "path": "/api/approvals/v1/delegations",
+      "client": "approval-api.ts#getApprovalDelegations"
+    },
+    {
+      "id": "SHARED-API-011",
+      "method": "POST",
+      "path": "/api/approvals/v1/delegations",
+      "client": "approval-api.ts#createApprovalDelegation"
+    },
+    {
+      "id": "SHARED-API-012",
+      "method": "POST",
+      "path": "/api/approvals/v1/delegations/{delegationId}/revoke",
+      "client": "approval-api.ts#revokeApprovalDelegation"
+    }
+  ],
+  "implementationBoundary": {
+    "approvalRuntimeOwner": "dwp-approval-server",
+    "localApprovalEngineCreated": false,
+    "localApprovalPersistenceCreated": false,
+    "localProxyCreated": false,
+    "localCommandReceiptCreated": false,
+    "sharedClientChanged": false,
+    "backendChanged": false,
+    "migrationChanged": false,
+    "generatedAuthorizationChanged": false,
+    "hrisRouteOrShellChanged": false,
+    "dwpDevMergePerformed": false,
+    "featureActivationPerformed": false,
+    "tenantEnrollmentPerformed": false,
+    "browserValidationPerformed": false,
+    "browserValidationReason": "The start token sets browserBeforeCentralMountAuthorized=false."
+  }
+}

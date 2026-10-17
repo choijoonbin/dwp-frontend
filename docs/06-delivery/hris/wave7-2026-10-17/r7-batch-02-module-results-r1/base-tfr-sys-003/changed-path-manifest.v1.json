@@ -1,0 +1,54 @@
+{
+  "schema": "dwp.hris.changed-path-manifest.v1",
+  "generatedAt": "2026-10-17T14:52:40Z",
+  "sliceId": "BASE-TFR-SYS-003",
+  "comparison": {
+    "repository": "dwp-frontend",
+    "baseCommit": "f749d046417a35642d158c0d0f674704ace7d4bb",
+    "sourceHead": "ec09e69fb52187f8f800694286b82dbeca0b2d29",
+    "sourceTree": "396f2aec702fa70cb736a2af1a3ca47d61fa6a19"
+  },
+  "sourcePaths": [
+    {"path": "apps/dwp/src/features/hris/administration/__tests__/g3-slices/base-tfr-sys-003.slice.test.tsx", "sha256": "fe178e1ffb9da682875f33e9c8bc1c07211bcaee90d7cdad168712d3c43789c7"},
+    {"path": "apps/dwp/src/features/hris/administration/workflow/api/hris-workflow-policy-adapter.ts", "sha256": "b1c3f36ad0dec0e38fdcb299eb9c8f89867b2293d33642c300f3d18b8bb0c529"},
+    {"path": "apps/dwp/src/features/hris/administration/workflow/index.ts", "sha256": "4fd7184829e9e756b4492e5cf45e7cb7bad99e89564ac2ca379489667eeee2e5"},
+    {"path": "apps/dwp/src/features/hris/administration/workflow/model/hris-approval-adapter-contract.ts", "sha256": "31d0467c4be29f769f6405e5377dde3691b655950fb831a5be747234b8cde04c"},
+    {"path": "apps/dwp/src/features/hris/administration/workflow/pages/hris-workflow-policy-workspace.tsx", "sha256": "1924d551469750577ec75432b1ee1fddcd4386b7b72fdd1ece7bd18aeb8aab44"},
+    {"path": "apps/dwp/src/features/hris/administration/workflow/testing/hris-approval-adapter-contract.test.ts", "sha256": "221a5ccb4632aaa5e75293321faeefdd8c2e340ac4ec9453f63e8d16438d05b4"},
+    {"path": "apps/dwp/src/features/hris/administration/workflow/testing/hris-approval-adapter-fixtures.test-support.ts", "sha256": "03336a990f05fc36217b15b6772e7795ac4dc39843c1ef35b5a6a81881d6028b"},
+    {"path": "apps/dwp/src/features/hris/administration/workflow/testing/hris-workflow-policy-adapter.test.ts", "sha256": "925bdd263eb17063ddcb14dc6477acd43466fe35358de326d4baa3b0983e8b19"},
+    {"path": "apps/dwp/src/features/hris/administration/workflow/testing/hris-workflow-policy-workspace.test.tsx", "sha256": "248f7bf3f34e9478267be119cca85f1c1a540df6e1bd1d7149d3c0838d3bdd69"},
+    {"path": "apps/dwp/src/features/hris/team/delegation/api/hris-delegation-adapter.ts", "sha256": "0ebe50e3a3dd4b5d0d6ddb3908ecc6237764ee54ed93cc75241f46c1bbbb174d"},
+    {"path": "apps/dwp/src/features/hris/team/delegation/index.ts", "sha256": "939d85fe50c7ff365478cba1d0a2b665adb318fe3e544e05e9aa892148a48ef0"},
+    {"path": "apps/dwp/src/features/hris/team/delegation/pages/hris-team-delegation-workspace.tsx", "sha256": "1a4b848abbb525e282fcbc73ac07e539ca72ffcb2fd6891a53d6fa47b3d4eac8"},
+    {"path": "apps/dwp/src/features/hris/team/delegation/testing/hris-delegation-adapter.test.ts", "sha256": "5e6f3fbcbf45c6f90e1a73af49164ae2ace8fb55e5f81f83ef0b0e7088e89add"},
+    {"path": "apps/dwp/src/features/hris/team/delegation/testing/hris-team-delegation-workspace.test.tsx", "sha256": "1918af6a2d788daf430b6f8a988a3da064fd2dc20edc30c9e6cd6b55b90a8bfd"}
+  ],
+  "immutableFrontendPaths": [
+    {"path": "libs/shared-utils/src/api/approval-management-api.ts", "baseSha256": "91cebc232240751b8e6c605ab1dacc3d83e67930578bee2faa9af482d40d7c7e", "headSha256": "91cebc232240751b8e6c605ab1dacc3d83e67930578bee2faa9af482d40d7c7e", "changed": false},
+    {"path": "libs/shared-utils/src/api/approval-api.ts", "baseSha256": "485d2327bb9067754cd7e79c8a6a5ebd60695847adf81d154d0dcfd07f45ee46", "headSha256": "485d2327bb9067754cd7e79c8a6a5ebd60695847adf81d154d0dcfd07f45ee46", "changed": false},
+    {"path": "apps/dwp/src/features/hris/shell/model/hris-information-architecture.generated.ts", "baseSha256": "584cc32f845720ad06fb1bdcea7c967026c0e3a648f70e0215fd8a95a6b055bd", "headSha256": "584cc32f845720ad06fb1bdcea7c967026c0e3a648f70e0215fd8a95a6b055bd", "changed": false},
+    {"path": "apps/dwp/src/routes/product-surface-authorization.generated.ts", "baseSha256": "8f7de67534572e3edefe02c54df6f009f7fb2726e73205fce62be4fa3f600eef", "headSha256": "8f7de67534572e3edefe02c54df6f009f7fb2726e73205fce62be4fa3f600eef", "changed": false}
+  ],
+  "backendReadOnlyPaths": [
+    {"path": "ApprovalAdminController.java", "sha256": "066e471ed3cae1e109e36357d4fb4c1baea94855a9104d6321ea53cf28f90a40"},
+    {"path": "ApprovalController.java", "sha256": "2d3f8db6051196a5e06adfea6bf9a9735812dafa5c648bb25cdd8b7a425f2701"}
+  ],
+  "scopeAssertions": {
+    "sourcePathCount": 14,
+    "allSourcePathsWithinWritablePatterns": true,
+    "sharedApprovalClientChanged": false,
+    "backendChanged": false,
+    "migrationChanged": false,
+    "openApiChanged": false,
+    "authChanged": false,
+    "gatewayChanged": false,
+    "centralRouteCatalogChanged": false,
+    "generatedProductAuthorizationChanged": false,
+    "hrisShellChanged": false,
+    "historicalRegisterChanged": false,
+    "batch01EvidenceChanged": false,
+    "authorityCarrierMerged": false,
+    "dwpDevMerged": false
+  }
+}

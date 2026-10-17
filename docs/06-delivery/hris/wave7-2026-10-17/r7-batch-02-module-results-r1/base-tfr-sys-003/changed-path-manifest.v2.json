@@ -1,0 +1,69 @@
+{
+  "schema": "dwp.hris.changed-path-manifest.v2",
+  "generatedAt": "2026-10-17T15:03:15Z",
+  "sliceId": "BASE-TFR-SYS-003",
+  "successorOf": {
+    "path": "changed-path-manifest.v1.json",
+    "sha256": "72448395ad40a5a59a30468e6c6f666eeb5146113518ff5211ebf2bead32f9ae",
+    "bytes": 4827,
+    "mutationPerformed": false
+  },
+  "comparison": {
+    "repository": "dwp-frontend",
+    "priorEvidenceCommit": "0ab21293adddb47799a62e7d32bcdad875915e9b",
+    "followUpSourceCommit": "1f0a475bbc8865511ddc436a91f294c2929ec731",
+    "followUpSourceTree": "ab01e5bf6531f3d2cf8f7be6fa18f88e847bae08"
+  },
+  "followUpSourcePaths": [
+    {
+      "path": "apps/dwp/src/features/hris/administration/workflow/api/hris-workflow-policy-adapter.ts",
+      "sha256": "2acac589163f26590e089438978a331988940e4de9c291a788ea58b6f17d72a1",
+      "purpose": "Import policy reads directly from approval-management-api.ts while retaining approval-api.ts for publish."
+    },
+    {
+      "path": "apps/dwp/src/features/hris/administration/workflow/model/hris-approval-adapter-contract.ts",
+      "sha256": "031317274a3e8cf5515d731324897f106d6528f146211cccbd377f95e72b74d8",
+      "purpose": "Reject legacy mode, wrong owner context scope, stale decision revision and blank idempotency before owner mutation."
+    },
+    {
+      "path": "apps/dwp/src/features/hris/administration/workflow/pages/hris-workflow-policy-workspace.tsx",
+      "sha256": "b2bc275ebaa1afbcdb27e03c8b0fc71c151f59dc5ebe6f0fca21859ca4457afa",
+      "purpose": "Apply the returned-execution guard before policy publish."
+    },
+    {
+      "path": "apps/dwp/src/features/hris/administration/workflow/testing/hris-approval-adapter-contract.test.ts",
+      "sha256": "8f133b9195288de4cbee9631073ee968d1a0c7b6683ea27df5c0f9f9a89f8f31",
+      "purpose": "Prove publish/create/revoke wrong-scope rejection plus mode, revision and idempotency rejection."
+    },
+    {
+      "path": "apps/dwp/src/features/hris/team/delegation/pages/hris-team-delegation-workspace.tsx",
+      "sha256": "8b2d2766d3b75ae32c1c2c74d4b04b07542d851fb2eba0ce018e126b6fab73c6",
+      "purpose": "Apply the returned-execution guard before delegation create and revoke."
+    }
+  ],
+  "scopeAssertions": {
+    "followUpSourcePathCount": 5,
+    "allFollowUpPathsWithinOriginalWritablePatterns": true,
+    "priorEvidenceFilesModified": false,
+    "sharedApprovalClientModified": false,
+    "backendModified": false,
+    "migrationModified": false,
+    "centralRouteModified": false,
+    "generatedAuthorizationModified": false,
+    "dwpDevMerged": false,
+    "featureActivationPerformed": false,
+    "tenantEnrollmentPerformed": false
+  },
+  "dependencyBoundary": {
+    "policyRead": "@dwp-frontend/shared-utils/api/approval-management-api#getApprovalPolicies",
+    "policyPublish": "@dwp-frontend/shared-utils/api/approval-api#publishApprovalPolicy",
+    "approvalManagementApiSha256": "91cebc232240751b8e6c605ab1dacc3d83e67930578bee2faa9af482d40d7c7e",
+    "approvalApiSha256": "485d2327bb9067754cd7e79c8a6a5ebd60695847adf81d154d0dcfd07f45ee46",
+    "sharedClientFilesModified": false
+  },
+  "backendReadOnly": {
+    "commit": "59964de62cd4da8bcb9f9384d6e2ef85e8c07b09",
+    "tree": "108eb56abdb23f6bd4346b21fac1974da18b01c1",
+    "changed": false
+  }
+}
