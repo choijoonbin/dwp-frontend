@@ -1,0 +1,190 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-01-module-start-boundary-validation-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-01-MODULE-START-BOUNDARY-VALIDATION-20261017-R1",
+  "validatedAt": "2026-10-17T16:44:33+09:00",
+  "validatedBy": "SYS_COMMON_INTEGRATION_CONTROL_INDEPENDENT_SEMANTIC_RECHECK",
+  "result": "PASS_CONTRACT_BOUNDARIES_SEALED_WITH_PAY_OWNER_REVIEW_GATE_PENDING",
+  "lineage": {
+    "frontendCarrier": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "2ccf6b4732eb5ef7aabc2fe76433785b035d4945",
+      "tree": "5a3d24741b6abdafcc1703595d6f7101510a5606"
+    },
+    "backendEvidencePin": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "3d3f141d95f0252f66bd5987b6cba30fadc431e9",
+      "tree": "bd0de7c5e36658da84bdb2cadd6e0504b2f9323b"
+    }
+  },
+  "validatedArtifacts": [
+    {
+      "path": "sys-002-event-ingress-seal.v1.json",
+      "sha256": "1fba405bff7936958af02fd53836dcbd30afd9e59aced2d346a275d82f787d0f",
+      "result": "PASS"
+    },
+    {
+      "path": "tim-007-internal-trust-packet.v1.json",
+      "sha256": "f9f8287ea9e9c72792f1553611bde04b36b8fb150e8a477d1f05ef25545c7fd2",
+      "result": "PASS_WITH_PAY_CONSUMER_OWNER_REVIEW_PENDING"
+    }
+  ],
+  "additionalValidationEvidence": [
+    {
+      "repository": "dwp-backend",
+      "path": "contracts/product-authorization/product-surfaces-v1.bundle-v49.json",
+      "sha256": "18793822b574b3bda2389585ad8b77b490019e1f3ef82f784c0178c15286f2f9",
+      "bundleStatus": "DRAFT",
+      "version": 49,
+      "routeCount": 1079,
+      "validatedFact": "ALL_NINETEEN_SYS_SOURCE_ALLOWLIST_OWNER_ROUTE_KEYS_EXIST"
+    }
+  ],
+  "validationScope": {
+    "performed": [
+      "strict JSON parse of both sealed artifacts",
+      "SHA-256 recomputation for every immutable predecessor and named source register",
+      "SHA-256 recomputation for every named backend code, contract and migration evidence file",
+      "closed-set semantic checks for required payload fields, exact sources, routes, paths, claims and authority booleans",
+      "append-only path and git diff whitespace validation"
+    ],
+    "notPerformed": [
+      "product source implementation",
+      "database migration authoring or execution",
+      "Kafka producer or consumer execution",
+      "HTTP trust integration execution",
+      "browser, product suite or end-to-end execution",
+      "tenant enrollment or feature activation"
+    ]
+  },
+  "independentBoundaryReview": {
+    "reviewerRole": "READ_ONLY_CROSS_BOUNDARY_REVIEWER",
+    "reviewedArtifactHashes": {
+      "sys002": "1fba405bff7936958af02fd53836dcbd30afd9e59aced2d346a275d82f787d0f",
+      "tim007": "f9f8287ea9e9c72792f1553611bde04b36b8fb150e8a477d1f05ef25545c7fd2"
+    },
+    "finalResult": "PASS_NO_REMAINING_P0_OR_P1",
+    "confirmed": [
+      "SYS subject, SYS-owned ledger adapter, revision-conflict, bounded-gap and code-to-summaryKey boundaries are internally consistent with the pinned shared event implementation.",
+      "TIM handoffId, stable event correlationId and per-attempt fresh replay-protected jti separate causal, audit and retry identities without contradiction.",
+      "Default OFF, zero enrollment and false implementation, migration, start-token, push, merge and activation authority are retained."
+    ],
+    "intentionalGatesNotDefects": [
+      "HRIS-PAY hash-bound owner review before Payroll consumer allocation",
+      "per-owner producer onboarding before live SYS-002 end-to-end or completion claims"
+    ]
+  },
+  "checks": [
+    {
+      "id": "R7-B01-BOUNDARY-VAL-001",
+      "result": "PASS",
+      "evidence": "Both artifacts parse as JSON, occupy only the new append-only r7-batch-01-module-start-r1 directory and bind the exact frontend and backend commits and trees recorded by this receipt."
+    },
+    {
+      "id": "R7-B01-BOUNDARY-VAL-002",
+      "result": "PASS",
+      "evidence": "All immutable predecessor, G2 catalog, service-auth register and cross-module binding register SHA-256 values recompute exactly; no predecessor is edited or superseded in place."
+    },
+    {
+      "id": "R7-B01-BOUNDARY-VAL-003",
+      "result": "PASS",
+      "evidence": "SYS-002 closes the SYS-EVT-009 payload mismatch by requiring sourceRef, type, code, summaryKey, ownerRouteKey and evidenceRefs in addition to identity, revision, severity, state, correlation and occurrence time, with additional properties denied."
+    },
+    {
+      "id": "R7-B01-BOUNDARY-VAL-004",
+      "result": "PASS",
+      "evidence": "SYS-002 defines exactly five unique HRM, PER, PAY, SYS and TIM source tuples. Envelope source, owner service, owner module, anchored opaque sourceRef and exact PAGE route key must all select the same row; all nineteen route keys exist in pinned DRAFT authorization bundle v49, while arbitrary URI, URL and cross-row combinations fail closed."
+    },
+    {
+      "id": "R7-B01-BOUNDARY-VAL-005",
+      "result": "PASS",
+      "evidence": "The SYS transport matches the pinned shared domain-event implementation: topic dwp.domain-events.v1, UTF-8 JSON DomainEventEnvelope, helper-compatible subject HRIS_OPERATIONAL_EXCEPTION/{id}, partition key tenantId|source|aggregateType|aggregateId, shared inbox and offset ledgers, and DomainEventJson reserialization digest semantics."
+    },
+    {
+      "id": "R7-B01-BOUNDARY-VAL-006",
+      "result": "PASS",
+      "evidence": "SYS idempotency and ordering distinguish same-id duplicate, same-id payload conflict, same-revision conflict and sequence gap. Because the current shared consumer cannot prove revision digest conflict or bounded gaps, direct use is forbidden; the sealed SYS adapter reuses its tables while adding offset locking, same-revision digest checks, durable gap attempts and atomic projection, offset and completion."
+    },
+    {
+      "id": "R7-B01-BOUNDARY-VAL-007",
+      "result": "PASS",
+      "evidence": "The SYS migration boundary grants only future Platform V331 projection authoring, reuses the shared ledgers, leaves pinned V330 byte-immutable and grants no producer migration or implementation."
+    },
+    {
+      "id": "R7-B01-BOUNDARY-VAL-008",
+      "result": "PASS",
+      "evidence": "No SYS-EVT-009 owner producer or live code-to-summaryKey pair is currently onboarded. Each producer packet must append a finite hash-bound mapping; fixtures and stubs cannot satisfy live delivery or final SYS-002 completion, and producer implementation remains unauthorized."
+    },
+    {
+      "id": "R7-B01-BOUNDARY-VAL-009",
+      "result": "PASS",
+      "evidence": "TIM-007 preserves HRIS-TIM as the only canonical closed-time writer and confines HRIS-PAY to consumer-owned inbox, quarantine, receipt, staging and materialized input state; cross-service database access and command behavior are denied."
+    },
+    {
+      "id": "R7-B01-BOUNDARY-VAL-010",
+      "result": "PASS",
+      "evidence": "The TIM provider boundary is limited to the exact Time close main, test and V12 paths. The two Payroll input/closedtime paths remain review-gated, no Payroll migration is leased and calculation, preparation, platform-contract, auth, gateway and OpenAPI paths are excluded."
+    },
+    {
+      "id": "R7-B01-BOUNDARY-VAL-011",
+      "result": "PASS",
+      "evidence": "The hidden GET binding requires direct TLS 1.3 mTLS workload identity plus an exact short-lived RS256 JWT. Caller, audience, tenant grant revisions, purpose, projection, method, path, handoffId, result identity, counts, sequence facts and all three digests are bound and owner-revalidated; stable canonical correlationId preserves event-to-audit lineage while a separate fresh jti replay-protects each attempt."
+    },
+    {
+      "id": "R7-B01-BOUNDARY-VAL-012",
+      "result": "PASS",
+      "evidence": "Browser, gateway, user, delegated, support-session, tenant-header, query, request-body and redirect entry are denied before owner repository access; the endpoint is absent from public OpenAPI and browser authorization bundles."
+    },
+    {
+      "id": "R7-B01-BOUNDARY-VAL-013",
+      "result": "PASS",
+      "evidence": "The XCON-008, XCON-009, XCON-010 and XCON-011 schema and binding digests are pinned. XCON-008 ingest is bounded and staged and can finalize only after full identity, count, sequence, digest and byte-bound verification."
+    },
+    {
+      "id": "R7-B01-BOUNDARY-VAL-014",
+      "result": "PASS",
+      "evidence": "HRIS-PAY owner approval is explicitly REQUIRED_PENDING, self-approval is forbidden and the approval receipt must bind the final TIM packet SHA-256 before any Payroll consumer path enters a token, worktree, commit or end-to-end claim."
+    },
+    {
+      "id": "R7-B01-BOUNDARY-VAL-015",
+      "result": "PASS",
+      "evidence": "Both boundaries are default OFF with zero enrollment. Source implementation, migration authoring, module start, branch push, dwp-dev merge, tenant enrollment and activation remain false; this is a contract-seal receipt only."
+    },
+    {
+      "id": "R7-B01-BOUNDARY-VAL-016",
+      "result": "PASS",
+      "evidence": "JSON parse, targeted semantic assertions, evidence hash recomputation and git diff --check pass; no broad product re-execution is claimed."
+    }
+  ],
+  "residualGates": [
+    {
+      "gateId": "HRIS-WAVE7-R7-BATCH-01-TIM-007-PAY-CONSUMER-OWNER-REVIEW-R1",
+      "owner": "HRIS-PAY",
+      "state": "OPEN_BLOCKING_PAY_CONSUMER_ALLOCATION_AND_TIM007_END_TO_END_COMPLETION",
+      "reason": "Only HRIS-PAY can approve its two consumer-owned input/closedtime source globs. The required append-only receipt must bind tim-007-internal-trust-packet.v1.json SHA-256 f9f8287ea9e9c72792f1553611bde04b36b8fb150e8a477d1f05ef25545c7fd2."
+    },
+    {
+      "gateId": "HRIS-WAVE7-R7-BATCH-01-SYS-002-PRODUCER-ONBOARDING",
+      "owner": "EACH_HRIS_OWNER_MODULE",
+      "state": "OPEN_BLOCKING_LIVE_PRODUCER_AND_FINAL_MULTI_SERVICE_E2E_CLAIM",
+      "reason": "The seal intentionally authorizes zero producer implementations; each owner requires a separate exact source-path packet, contract proof and default-off activation decision."
+    }
+  ],
+  "authority": {
+    "validationReceiptIssued": true,
+    "sysEventIngressSemanticsSealed": true,
+    "timInternalTrustSemanticsSealed": true,
+    "sysConsumerTokenMayReferenceSeal": true,
+    "timeProviderTokenMayReferencePacket": true,
+    "payrollConsumerAllocationApproved": false,
+    "sourceImplementationAuthorized": false,
+    "migrationAuthoringAuthorized": false,
+    "moduleStartTokenIssued": false,
+    "moduleBranchPushAuthorized": false,
+    "mergeToDwpDevAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "activationAuthorized": false
+  },
+  "nextGate": "CENTRAL_MODULE_TOKEN_ISSUANCE_MAY_REFERENCE_SYS_SEAL_AND_TIME_PROVIDER_PACKET; PAY_CONSUMER_PATHS_REQUIRE_HASH_BOUND_HRIS_PAY_OWNER_REVIEW_FIRST"
+}
