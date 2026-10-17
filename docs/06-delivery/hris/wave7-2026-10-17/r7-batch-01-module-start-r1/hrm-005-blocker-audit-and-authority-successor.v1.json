@@ -1,0 +1,179 @@
+{
+  "schema": "dwp.hris.wave7.hrm-005-blocker-audit-and-authority-successor.v1",
+  "decisionId": "HRIS-WAVE7-R7-BATCH-01-HRM-005-BLOCKER-AUTHORITY-20261017-R1",
+  "decidedAt": "2026-10-17T18:06:26+09:00",
+  "decidedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "APPEND_ONLY_SUCCESSOR_REQUIRES_PEOPLE_V57_AND_EXACT_OWNER_SCOPE_REALLOCATION",
+  "scope": "Resolve the two production blockers discovered after HRM-005 module authoring began while preserving every valid in-progress file and every v49 authorization decision.",
+  "predecessors": {
+    "startToken": {
+      "path": "tokens/base-tfr-hrm-005.start-token.v1.json",
+      "sha256": "fdb3d9c635bf059aa56a62ecbc4d94ad0f4bb449ffbc929beb20dc51eae43f62",
+      "bytes": 13160,
+      "successorDisposition": "INVALIDATED_BY_PROVEN_V57_AND_OUT_OF_BOUNDARY_REQUIREMENT"
+    },
+    "ownerPacket": {
+      "path": "../r7-batch-01-dispatch-r1/owner-packets/base-tfr-hrm-005.owner-packet.v1.json",
+      "sha256": "0fcd8d27fd283b5ddbd697e9ccce3427966e960d80186f02c7cba709cfb66506",
+      "bytes": 11614,
+      "mutated": false
+    },
+    "centralAuthorizationSuccessor": {
+      "path": "../r7-batch-01-dispatch-r1/central-authorization-successor-packet.v1.json",
+      "sha256": "dd1b68e54ee6cbc73c0fa1b9da181fac04575c702f89c98ce27c73968b29963a",
+      "bytes": 20514,
+      "sealedMeaning": {
+        "fieldGroups": ["ORGANIZATION"]
+      }
+    },
+    "peopleV49RuntimeAcceptance": {
+      "path": "people-v49-runtime-acceptance-receipt.v1.json",
+      "sha256": "d7f32bafafc8539d351d35f1347397c0ece81216c44c2c6cdfc790f0902c868a",
+      "bytes": 9627,
+      "sealedMeaning": {
+        "scopeResolver": "ORGANIZATION_TARGET_POPULATION",
+        "requiredField": "ORGANIZATION",
+        "exactScopedResponsibility": "HRIS_DUTY_ORGANIZATION_VIEWER@ORGANIZATION_TARGET_POPULATION"
+      }
+    },
+    "authorizationDecision": {
+      "path": "../r7-batch-01-authorization-decisions-r1/decisions/base-tfr-hrm-005.authorization-decision.v1.json",
+      "sha256": "aa214ce9f28635ffad90d6306b7bf3b2be2548add197f3d0ea23063967301a94",
+      "bytes": 3222,
+      "mutated": false
+    }
+  },
+  "findings": [
+    {
+      "id": "HRM005-BLOCKER-001",
+      "severity": "P0",
+      "result": "PROVEN",
+      "evidence": [
+        "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmScopeSelectionValidator.java requires field group ORGANIZATION for the two organization graph routes.",
+        "dwp-people-server/src/main/java/com/dwp/services/people/workforce/WorkforceAccessPolicyService.java accepts only DIRECTORY, WORKER_IDENTIFIERS, EMPLOYMENT and JOB_GRADE.",
+        "dwp-people-server/src/main/resources/db/migration/V34__add_workforce_access_boundaries.sql rejects ORGANIZATION in ck_workforce_access_policy_fields."
+      ],
+      "impact": "No persisted production policy can satisfy the sealed v49 organization viewer decision, so an enabled request fails before the HRM-005 controller.",
+      "decision": "Preserve ORGANIZATION semantics and add it append-only in People V57; do not weaken the contract to DIRECTORY and do not mutate V34."
+    },
+    {
+      "id": "HRM005-BLOCKER-002",
+      "severity": "P0",
+      "result": "PROVEN",
+      "evidence": [
+        "HcmScopeSelectionValidator accepts ORGANIZATION_TARGET_POPULATION for the exact graph routes.",
+        "OrganizationChartService.chartDecision revalidates operations traffic with WORKFORCE_TARGET_POPULATION or ORG_UNIT/LEGAL_ENTITY.",
+        "The resolver source is an input to the owner-derived scope digest."
+      ],
+      "impact": "The same request cannot pass both owner checks even when its tenant, population and policy are current.",
+      "decision": "Add a route-key-exact graph branch in OrganizationChartService that requires ORGANIZATION and revalidates only ORGANIZATION_TARGET_POPULATION; retain every management and legacy workforce chart branch unchanged."
+    }
+  ],
+  "successorAuthority": {
+    "migrationLeaseRequired": true,
+    "migration": {
+      "stream": "PEOPLE_MAIN",
+      "version": "V57",
+      "path": "dwp-people-server/src/main/resources/db/migration/V57__allow_organization_workforce_field_group.sql",
+      "semantics": [
+        "Drop and recreate only ck_workforce_access_policy_fields.",
+        "Preserve the existing four field groups and add ORGANIZATION.",
+        "Require nonempty field_groups exactly as V34 does."
+      ],
+      "forbidden": [
+        "V34 mutation",
+        "data backfill",
+        "automatic role or policy elevation",
+        "tenant enrollment",
+        "a second People migration"
+      ]
+    },
+    "additionalBackendWritePaths": [
+      "dwp-people-server/src/main/java/com/dwp/services/people/workforce/WorkforceAccessPolicyService.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/workforce/WorkforceAccessPolicyServiceTest.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/organization/OrganizationChartService.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/organization/OrganizationChartServiceTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hr/HcmPopulationScopeServiceTest.java",
+      "dwp-people-server/src/main/resources/db/migration/V57__allow_organization_workforce_field_group.sql"
+    ],
+    "exactRuntimeRules": {
+      "workforcePolicyFieldGroups": [
+        "DIRECTORY",
+        "WORKER_IDENTIFIERS",
+        "EMPLOYMENT",
+        "JOB_GRADE",
+        "ORGANIZATION"
+      ],
+      "requestMaximumFieldGroupsUnchanged": 4,
+      "graphRouteKeys": [
+        "route.hcm.operations.organization-positions.page",
+        "route.hcm.operations.organization-graph.data"
+      ],
+      "graphRequiredField": "ORGANIZATION",
+      "graphResolver": "ORGANIZATION_TARGET_POPULATION",
+      "legacyBranchesUnchanged": true
+    },
+    "readOnlyUnchanged": [
+      "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmScopeSelectionValidator.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmV3PepRegistry.java",
+      "dwp-people-server/src/main/resources/product-authorization/hcm-people-pep-v49.generated.json",
+      "contracts/product-authorization/**",
+      "contracts/openapi/**",
+      "dwp-auth-server/**",
+      "dwp-gateway/**"
+    ]
+  },
+  "preservedInProgressState": {
+    "backend": {
+      "worktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261017/r7-batch01/hrm-005/backend",
+      "branch": "codex/hris-wave7-r7-batch01-hrm-005-backend-20261017-r1",
+      "head": "fcb5c1f397d14ea77c7ff9714a272449d99e18a4",
+      "tree": "147bb1afd5635209d5db166a513d970b6e0002c3",
+      "upstreamAhead": 0,
+      "upstreamBehind": 0,
+      "changedPathCount": 11,
+      "allPathsWithinV1Boundary": true
+    },
+    "frontend": {
+      "worktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261017/r7-batch01/hrm-005/frontend",
+      "branch": "codex/hris-wave7-r7-batch01-hrm-005-frontend-20261017-r1",
+      "head": "4b46c02d1e98b8d0cfb78189126aa47ac90f2fda",
+      "tree": "0e37221429763f5d13c799e22bf10ad8a6648f1a",
+      "upstreamAhead": 0,
+      "upstreamBehind": 0,
+      "changedPathCount": 10,
+      "allPathsWithinV1Boundary": true
+    },
+    "continuationRule": "Do not reset, recreate, rebase or merge the central carrier. A replacement token must inherit these exact worktrees and authorize only the new paths plus the original v1 paths."
+  },
+  "verification": {
+    "order": [
+      "V57 migration contract and real PostgreSQL clean plus V56-to-V57 upgrade",
+      "WorkforceAccessPolicyServiceTest",
+      "HcmPopulationScopeServiceTest",
+      "OrganizationChartServiceTest",
+      "HrmOrganizationPositionsContractTest",
+      "one bounded HRM-005 aggregate after the new targets pass"
+    ],
+    "afterFailure": "Fix and rerun only the smallest failed target first.",
+    "repositoryWideSuitePerCorrection": false,
+    "knownHarnessCorrection": "The standalone contract-test ObjectMapper must disable WRITE_DATES_AS_TIMESTAMPS so Instant is compared as an RFC3339 string; this does not change production behavior."
+  },
+  "deferredBeforeActivation": {
+    "item": "Expose the ORGANIZATION field group in the central workforce-access administration UI, presentation labels, Korean and English i18n and focused tests.",
+    "minimumModuleResumeBlocker": false,
+    "activationGate": true
+  },
+  "authority": {
+    "appendOnlyMigrationLeaseSuccessorAuthorized": true,
+    "replacementStartTokenAuthorizedAfterLeaseAndValidation": true,
+    "existingDirtyWorktreeInheritanceAuthorized": true,
+    "moduleCommitAndPushStillWithheldUntilReplacementToken": true,
+    "mergeToDwpDevAuthorized": false,
+    "centralRouteOrShellMountAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "ISSUE_THE_APPEND_ONLY_PEOPLE_V57_LEASE_SUCCESSOR_VALIDATE_THE_AUTHORITY_AND_THEN_REISSUE_ONLY_THE_HRM_005_START_TOKEN"
+}

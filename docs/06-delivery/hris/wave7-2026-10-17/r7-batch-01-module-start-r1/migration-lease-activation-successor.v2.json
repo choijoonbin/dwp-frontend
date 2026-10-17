@@ -1,0 +1,86 @@
+{
+  "schema": "dwp.hris.migration-lease-activation-successor.v2",
+  "activationId": "HRIS-WAVE7-R7-BATCH-01-MIGRATION-LEASE-ACTIVATION-20261017-R2",
+  "activatedAt": "2026-10-17T18:06:26+09:00",
+  "activatedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "FOUR_EXCLUSIVE_LEASES_ACTIVE_HRM_V57_APPEND_ONLY_SUCCESSOR",
+  "purpose": "Supersede only the prior HRM no-migration decision after a production blocker proved that ORGANIZATION cannot be represented by the V34 workforce policy constraint. Preserve the three original leases byte-for-byte by reference.",
+  "predecessor": {
+    "path": "migration-lease-activation.v1.json",
+    "sha256": "6ad36eba8162ae01d1b009f27cfae3172d5615e8932eedb82d0418ccb5d5ab39",
+    "bytes": 7731,
+    "preservedActiveLeaseIds": [
+      "HRIS-WAVE7-R7-BATCH-01-PAYROLL-MAIN-V52-20261017-R1",
+      "HRIS-WAVE7-R7-BATCH-01-PLATFORM-MAIN-V331-20261017-R1",
+      "HRIS-WAVE7-R7-BATCH-01-TIME-MAIN-V12-20261017-R1"
+    ],
+    "supersededDecision": "HRIS-HRM / BASE-TFR-HRM-005 / PEOPLE_MAIN V57 / NONE_PROVEN_REUSE"
+  },
+  "decisionEvidence": {
+    "path": "hrm-005-blocker-audit-and-authority-successor.v1.json",
+    "sha256": "1c69f209b10f6ff3a28e156f4889991bdf56f7a7e348afdec1e1dc401bf6eb78",
+    "bytes": 9006
+  },
+  "observedBackendBase": {
+    "repository": "dwp-backend",
+    "moduleWorktreeCommit": "fcb5c1f397d14ea77c7ff9714a272449d99e18a4",
+    "moduleWorktreeTree": "147bb1afd5635209d5db166a513d970b6e0002c3",
+    "stream": "PEOPLE_MAIN",
+    "predecessorHighWater": "V56",
+    "candidatePathPresentAtDecision": false
+  },
+  "newLease": {
+    "leaseId": "HRIS-WAVE7-R7-BATCH-01-PEOPLE-MAIN-V57-20261017-R1",
+    "moduleSession": "HRIS-HRM",
+    "sliceId": "BASE-TFR-HRM-005",
+    "canonicalFeature": "HRIS_ORGANIZATION_POSITIONS",
+    "stream": "PEOPLE_MAIN",
+    "version": "V57",
+    "predecessorHighWater": "V56",
+    "exactPath": "dwp-people-server/src/main/resources/db/migration/V57__allow_organization_workforce_field_group.sql",
+    "state": "ACTIVE_AUTHORING_ONLY_WITH_REPLACEMENT_TOKEN",
+    "semantics": "Append ORGANIZATION to ck_workforce_access_policy_fields while preserving every existing field group and nonempty constraint.",
+    "dataBackfillAuthorized": false,
+    "automaticPolicyElevationAuthorized": false,
+    "secondPeopleMigrationAuthorized": false,
+    "backendWorktree": {
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261017/r7-batch01/hrm-005/backend",
+      "branch": "codex/hris-wave7-r7-batch01-hrm-005-backend-20261017-r1",
+      "upstream": "origin/codex/hris-wave7-r7-batch01-hrm-005-backend-20261017-r1",
+      "head": "fcb5c1f397d14ea77c7ff9714a272449d99e18a4",
+      "tree": "147bb1afd5635209d5db166a513d970b6e0002c3",
+      "upstreamAhead": 0,
+      "upstreamBehind": 0,
+      "dirtyInheritedByReplacementToken": true,
+      "existingChangedPathCount": 11
+    }
+  },
+  "verificationRequired": {
+    "contract": [
+      "V57 exact path and version uniqueness",
+      "V34 historical checksum unchanged",
+      "constraint keeps the original four values and adds only ORGANIZATION",
+      "empty and unknown field groups remain rejected"
+    ],
+    "database": [
+      "real PostgreSQL clean migration through People V57",
+      "real PostgreSQL People V56-to-V57 upgrade",
+      "existing policies remain unchanged",
+      "an explicitly authored ORGANIZATION policy is accepted",
+      "tenant isolation remains unchanged"
+    ],
+    "unavailableDatabaseRule": "Report BLOCKED, not PASS, when required real PostgreSQL execution is unavailable."
+  },
+  "authority": {
+    "fourExactMigrationPathsActive": true,
+    "validOnlyWithMatchingFreshReplacementToken": true,
+    "existingMigrationEditAuthorized": false,
+    "secondMigrationAuthorized": false,
+    "moduleBranchCommitAndPushAuthorizedByThisActivationAlone": false,
+    "mergeToDwpDevAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "customerDatabaseExecutionAuthorized": false,
+    "productionExecutionAuthorized": false
+  },
+  "nextAction": "VALIDATE_THIS_SUCCESSOR_WITH_THE_HRM_BLOCKER_DECISION_AND_ISSUE_THE_HASH_BOUND_HRM_005_REPLACEMENT_TOKEN"
+}

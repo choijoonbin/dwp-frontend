@@ -1,0 +1,98 @@
+{
+  "schema": "dwp.hris.wave7.hrm-005-authority-successor-validation-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-01-HRM-005-AUTHORITY-VALIDATION-20261017-R1",
+  "validatedAt": "2026-10-17T18:06:26+09:00",
+  "validatedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "result": "PASS_REPLACEMENT_TOKEN_MAY_BE_ISSUED_AFTER_EXACT_THREE_FILE_CARRIER_PUSH",
+  "hashDag": {
+    "decision": {
+      "path": "hrm-005-blocker-audit-and-authority-successor.v1.json",
+      "sha256": "1c69f209b10f6ff3a28e156f4889991bdf56f7a7e348afdec1e1dc401bf6eb78",
+      "bytes": 9006
+    },
+    "lease": {
+      "path": "migration-lease-activation-successor.v2.json",
+      "sha256": "26c9fdca22eb8571d71502194a79fe200e51ecc5abaa8f62d3e3815dc8056505",
+      "bytes": 4138
+    },
+    "order": "immutable R7 authority and HRM token -> blocker decision -> migration lease successor -> this validation receipt",
+    "hashMode": "RAW_UTF8_FILE_BYTES"
+  },
+  "exactCarrierPaths": [
+    "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-start-r1/hrm-005-blocker-audit-and-authority-successor.v1.json",
+    "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-start-r1/migration-lease-activation-successor.v2.json",
+    "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-start-r1/hrm-005-authority-successor-validation-receipt.v1.json"
+  ],
+  "validation": {
+    "jsonParse": true,
+    "rawByteReferencesMatch": true,
+    "historicalV34Mutation": false,
+    "peopleV57PathAbsentAtDecision": true,
+    "peopleV57ExclusiveLeaseCount": 1,
+    "fieldGroupDelta": {
+      "preserved": ["DIRECTORY", "WORKER_IDENTIFIERS", "EMPLOYMENT", "JOB_GRADE"],
+      "added": ["ORGANIZATION"],
+      "removed": [],
+      "unknownAuthorized": false
+    },
+    "resolverDelta": {
+      "exactRoutes": [
+        "route.hcm.operations.organization-positions.page",
+        "route.hcm.operations.organization-graph.data"
+      ],
+      "requiredField": "ORGANIZATION",
+      "resolver": "ORGANIZATION_TARGET_POPULATION",
+      "legacyResolverWeakening": false
+    },
+    "centralV49ProjectionMutationAuthorized": false,
+    "createPolicyRequestMaxItemsUnchangedAtFour": true,
+    "peopleOpenApiMutationRequired": false,
+    "existingDirtyFilesMayBeInherited": true,
+    "existingDirtyFilesMayBeReset": false,
+    "frontendWorktreeNeedsCentralCarrier": false,
+    "moduleMergeToDwpDevWithheld": true,
+    "featureEnablementAndTenantEnrollmentWithheld": true
+  },
+  "worktreeObservation": {
+    "backend": {
+      "head": "fcb5c1f397d14ea77c7ff9714a272449d99e18a4",
+      "tree": "147bb1afd5635209d5db166a513d970b6e0002c3",
+      "upstreamAhead": 0,
+      "upstreamBehind": 0,
+      "changedPathCount": 11,
+      "changedPathsWithinOriginalBoundary": true
+    },
+    "frontend": {
+      "head": "4b46c02d1e98b8d0cfb78189126aa47ac90f2fda",
+      "tree": "0e37221429763f5d13c799e22bf10ad8a6648f1a",
+      "upstreamAhead": 0,
+      "upstreamBehind": 0,
+      "changedPathCount": 10,
+      "changedPathsWithinOriginalBoundary": true
+    }
+  },
+  "verificationPolicy": {
+    "firstTargets": [
+      "V57 migration contract plus PostgreSQL clean and V56-to-V57 upgrade",
+      "WorkforceAccessPolicyServiceTest",
+      "HcmPopulationScopeServiceTest",
+      "OrganizationChartServiceTest",
+      "HrmOrganizationPositionsContractTest"
+    ],
+    "aggregateAfterFirstTargets": "Run the bounded HRM-005 token cluster once.",
+    "afterFailure": "Rerun only the smallest failed target after correction.",
+    "repositoryWideSuitePerCorrection": false
+  },
+  "authority": {
+    "exactThreeFileCarrierReadyToCommitAndPush": true,
+    "replacementTokenAuthoringAuthorizedAfterPush": true,
+    "moduleResumeAuthorizedBeforeReplacementToken": false,
+    "moduleCommitAndPushAuthorizedBeforeReplacementToken": false,
+    "mergeToDwpDevAuthorized": false,
+    "centralRouteOrShellMountAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "COMMIT_AND_PUSH_THE_EXACT_THREE_FILE_AUTHORITY_CARRIER_THEN_ISSUE_AN_APPEND_ONLY_HRM_005_REPLACEMENT_TOKEN_AND_SUCCESSOR_STATE"
+}
