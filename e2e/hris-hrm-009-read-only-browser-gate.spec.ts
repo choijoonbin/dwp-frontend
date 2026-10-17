@@ -1,10 +1,9 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
-import { FULL_PRODUCT_PERMISSIONS, mockShellSession } from './support/shell-session';
-
 import type { APIRequestContext, Page, TestInfo } from '@playwright/test';
 
+const BROWSER_BASE_URL = 'http://127.0.0.1:4219';
 const FIXTURE_URL = 'http://127.0.0.1:8919/api/__hrm009-gate';
 const PERSONAL_PATH = '/hr/me/requests?tab=overview&focus=request:1001';
 const OPERATIONS_PATH = '/hr/operations/people/certificates-documents?tab=overview';
@@ -17,6 +16,11 @@ const OPERATIONS_OWNER_PATH = '/api/people/v1/hris/workbench/operations/certific
 
 type Scenario = 'COMPLETE' | 'EMPTY' | 'PARTIAL' | 'UNAVAILABLE';
 type Surface = 'personal' | 'operations';
+type EphemeralAppearance = Readonly<{
+  mode: 'light' | 'dark';
+  reduceMotion: boolean;
+  highContrast?: boolean;
+}>;
 type GateEvent = Readonly<{
   sequence: number;
   type: string;
@@ -32,6 +36,12 @@ type GateLog = Readonly<{
     dataEvaluations: Readonly<Record<string, number>>;
     ownerGets: Readonly<Record<string, number>>;
     mutations: Readonly<Record<string, number>>;
+    forwardedRequests: Readonly<{
+      total: number;
+      authLogin: number;
+      authMe: number;
+      ordinaryApi: number;
+    }>;
     unexpectedAuthorityEvaluations: number;
     stepUpRequests: number;
   }>;
@@ -43,6 +53,9 @@ const fixtureTransportPatterns = [
   '**/api/auth/product-surface-access/evaluate',
   '**/api/people/v1/hris/workbench/self-service/requests**',
   '**/api/people/v1/hris/workbench/operations/certificates/documents**',
+  '**/api/people/v1/hris/certificates**',
+  '**/api/people/v1/hris/employee-change-requests**',
+  '**/api/auth/product-surface-step-up-challenges**',
 ] as const;
 
 async function resetFixture(
@@ -69,36 +82,69 @@ async function passThroughFixtureTransport(page: Page) {
   }
 }
 
+function liveCredentials() {
+  const email = process.env.E2E_HRIS_HRM009_EMAIL?.trim();
+  const password = process.env.E2E_HRIS_HRM009_PASSWORD;
+  if (!email || !password) {
+    throw new Error(
+      'E2E_HRIS_HRM009_EMAIL and E2E_HRIS_HRM009_PASSWORD are required for the live local HRM-009 browser gate.'
+    );
+  }
+  return { email, password };
+}
+
+async function signInToLiveLocalSession(page: Page, returnPath: string) {
+  const credentials = liveCredentials();
+  const expectedPathname = new URL(returnPath, BROWSER_BASE_URL).pathname;
+  await page.goto(`/sign-in?returnUrl=${encodeURIComponent(returnPath)}`, {
+    waitUntil: 'domcontentloaded',
+  });
+  const form = page.locator('#dwp-sign-in-form');
+  await expect(form).toBeVisible();
+  await form.locator('input[name="email"]').fill(credentials.email);
+  await form.locator('input[name="password"]').fill(credentials.password);
+  const loginFinished = page.waitForResponse(
+    (response) =>
+      new URL(response.url()).pathname === '/api/auth/login' &&
+      response.request().method() === 'POST'
+  );
+  await form.locator('button[type="submit"]').click();
+  const loginResponse = await loginFinished;
+  expect(loginResponse.status(), 'Live Gateway login must succeed.').toBe(200);
+  await expect(page).toHaveURL((url) => url.pathname === expectedPathname, { timeout: 45_000 });
+}
+
+async function setEphemeralAppearance(page: Page, appearance: EphemeralAppearance) {
+  await page.addInitScript((preference) => {
+    window.localStorage.setItem(
+      'dwp.appearance.v1',
+      JSON.stringify({
+        mode: preference.mode,
+        density: 'standard',
+        highContrast: preference.highContrast ?? false,
+        reduceMotion: preference.reduceMotion,
+      })
+    );
+  }, appearance);
+}
+
 async function preparePage(
   page: Page,
   request: APIRequestContext,
+  returnPath: string,
   options: Readonly<{
-    locale?: 'en' | 'ko';
-    mode?: 'light' | 'dark';
-    reduceMotion?: boolean;
+    appearance: EphemeralAppearance;
     personalScenario?: Scenario;
     operationsScenario?: Scenario;
-  }> = {}
+  }>
 ) {
+  await setEphemeralAppearance(page, options.appearance);
   await resetFixture(request, {
     personal: options.personalScenario,
     operations: options.operationsScenario,
   });
-  await mockShellSession(page, ['HR_ADMIN'], {
-    locale: options.locale ?? 'en',
-    displayName: 'HRM-009 Browser Gate',
-    jobTitle: 'HR operations verifier',
-    permissions: FULL_PRODUCT_PERMISSIONS,
-    appearance: {
-      mode: options.mode ?? 'light',
-      density: 'standard',
-      highContrast: false,
-      reduceMotion: options.reduceMotion ?? false,
-    },
-  });
-  // Registered after the broad authenticated shell fixture so these exact four transports reach
-  // the localhost gate server. All ordinary shell requests remain synthetic and isolated.
   await passThroughFixtureTransport(page);
+  await signInToLiveLocalSession(page, returnPath);
 }
 
 async function expectNoHorizontalOverflow(page: Page, label: string) {
@@ -166,6 +212,16 @@ function expectGateEvidence(log: GateLog, surface: Surface) {
   expect(log.counters.unexpectedAuthorityEvaluations).toBe(0);
   expect(log.counters.stepUpRequests).toBe(0);
   expect(Object.values(log.counters.mutations).reduce((sum, count) => sum + count, 0)).toBe(0);
+  expect(log.counters.forwardedRequests.authLogin).toBeGreaterThanOrEqual(1);
+  expect(log.counters.forwardedRequests.authMe).toBeGreaterThanOrEqual(1);
+  expect(log.counters.forwardedRequests.ordinaryApi).toBeGreaterThanOrEqual(1);
+  expect(log.counters.forwardedRequests.total).toBeGreaterThanOrEqual(3);
+  expect(Object.keys(log.counters.forwardedRequests).sort()).toEqual([
+    'authLogin',
+    'authMe',
+    'ordinaryApi',
+    'total',
+  ]);
 
   const pageSequence = firstSequence(
     log,
@@ -214,10 +270,14 @@ test('1440 light personal route preserves PAGE-DATA-GET order and keyboard focus
 }, testInfo) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.emulateMedia({ colorScheme: 'light', reducedMotion: 'no-preference' });
-  await preparePage(page, request);
-
-  await page.goto(PERSONAL_PATH, { waitUntil: 'domcontentloaded' });
+  await preparePage(page, request, PERSONAL_PATH, {
+    appearance: { mode: 'light', reduceMotion: false },
+  });
   await expectReadOnlyStageA(page, 'complete');
+  await expect(page.getByTestId('hrm-009-certificate-workbench')).toHaveAttribute(
+    'data-color-scheme',
+    'light'
+  );
   await expect(page).toHaveURL((url) => {
     return (
       url.pathname === '/hr/me/requests' &&
@@ -246,13 +306,14 @@ test('1280 dark operations route is metadata-only with every action disabled', a
 }, testInfo) => {
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.emulateMedia({ colorScheme: 'dark', reducedMotion: 'no-preference' });
-  await preparePage(page, request, { mode: 'dark' });
-
-  await page.goto(OPERATIONS_PATH, { waitUntil: 'domcontentloaded' });
+  await preparePage(page, request, OPERATIONS_PATH, {
+    appearance: { mode: 'dark', reduceMotion: false },
+  });
   await expectReadOnlyStageA(page, 'complete');
   const workbench = page.getByTestId('hrm-009-certificate-workbench');
   await expect(workbench).toHaveAttribute('data-page-archetype', 'focus-form');
   await expect(workbench).toHaveAttribute('data-color-scheme', 'dark');
+  expect(await page.evaluate(() => matchMedia('(prefers-color-scheme: dark)').matches)).toBe(true);
   await expect(page.getByTestId('hrm-009-operations-focus-form')).toBeVisible();
   await expect(page.getByText('digest recorded', { exact: false })).toBeVisible();
   await expectNoHorizontalOverflow(page, '1280 operations read-only gate must not overflow');
@@ -261,23 +322,37 @@ test('1280 dark operations route is metadata-only with every action disabled', a
 });
 
 test('390 Korean reduced-motion route preserves the long bilingual request label', async ({
-  page,
+  browser,
   request,
 }, testInfo) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.emulateMedia({ colorScheme: 'light', reducedMotion: 'reduce' });
-  await preparePage(page, request, { locale: 'ko', reduceMotion: true });
-
-  await page.goto(PERSONAL_PATH, { waitUntil: 'domcontentloaded' });
-  await expectReadOnlyStageA(page, 'complete');
-  const workbench = page.getByTestId('hrm-009-certificate-workbench');
-  await expect(workbench).toHaveAttribute('data-layout-density', 'compact');
-  await expect(workbench).toHaveAttribute('data-reduced-motion', 'active');
-  await expect(page.getByText('증명서 요청', { exact: false }).first()).toBeVisible();
-  await expect(page.getByText('globally mobile employee', { exact: false }).first()).toBeVisible();
-  await expectNoHorizontalOverflow(page, '390 Korean personal gate must not overflow');
-  await expectAccessible(page);
-  await attachEvidence(page, request, testInfo, '390-ko-reduced-personal', 'personal');
+  const context = await browser.newContext({
+    baseURL: BROWSER_BASE_URL,
+    viewport: { width: 390, height: 844 },
+    locale: 'ko-KR',
+    colorScheme: 'light',
+    reducedMotion: 'reduce',
+    serviceWorkers: 'block',
+  });
+  const page = await context.newPage();
+  try {
+    await preparePage(page, request, PERSONAL_PATH, {
+      appearance: { mode: 'light', reduceMotion: true },
+    });
+    await expectReadOnlyStageA(page, 'complete');
+    expect(await page.evaluate(() => navigator.language)).toBe('ko-KR');
+    const workbench = page.getByTestId('hrm-009-certificate-workbench');
+    await expect(workbench).toHaveAttribute('data-layout-density', 'compact');
+    await expect(workbench).toHaveAttribute('data-reduced-motion', 'active');
+    await expect(page.getByText('증명서 요청', { exact: false }).first()).toBeVisible();
+    await expect(
+      page.getByText('globally mobile employee', { exact: false }).first()
+    ).toBeVisible();
+    await expectNoHorizontalOverflow(page, '390 Korean personal gate must not overflow');
+    await expectAccessible(page);
+    await attachEvidence(page, request, testInfo, '390-ko-reduced-personal', 'personal');
+  } finally {
+    await context.close();
+  }
 });
 
 test('320 forced-colors operations route reports partial owner data without enabling actions', async ({
@@ -290,12 +365,14 @@ test('320 forced-colors operations route reports partial owner data without enab
     forcedColors: 'active',
     reducedMotion: 'reduce',
   });
-  await preparePage(page, request, { operationsScenario: 'PARTIAL', reduceMotion: true });
-
-  await page.goto(OPERATIONS_PATH, { waitUntil: 'domcontentloaded' });
+  await preparePage(page, request, OPERATIONS_PATH, {
+    appearance: { mode: 'light', reduceMotion: true, highContrast: true },
+    operationsScenario: 'PARTIAL',
+  });
   await expectReadOnlyStageA(page, 'partial');
   const workbench = page.getByTestId('hrm-009-certificate-workbench');
   await expect(workbench).toHaveAttribute('data-forced-colors', 'active');
+  await expect(workbench).toHaveAttribute('data-reduced-motion', 'active');
   await expect(
     page.getByText('Some governed metadata is unavailable', { exact: true })
   ).toBeVisible();
@@ -316,6 +393,7 @@ test('1280 physical pixels at 200 percent zoom preserves semantic reading order'
   // 640 CSS pixels at deviceScaleFactor 2 represents a 1280-pixel display at 200% zoom while
   // exercising the same responsive breakpoints delivered to an actual zoomed browser.
   const context = await browser.newContext({
+    baseURL: BROWSER_BASE_URL,
     viewport: { width: 640, height: 450 },
     deviceScaleFactor: 2,
     colorScheme: 'light',
@@ -324,8 +402,9 @@ test('1280 physical pixels at 200 percent zoom preserves semantic reading order'
   });
   const page = await context.newPage();
   try {
-    await preparePage(page, request, { reduceMotion: true });
-    await page.goto(PERSONAL_PATH, { waitUntil: 'domcontentloaded' });
+    await preparePage(page, request, PERSONAL_PATH, {
+      appearance: { mode: 'light', reduceMotion: true },
+    });
     await expectReadOnlyStageA(page, 'complete');
     const headings = page.locator('main h1, main h2, main h3');
     await expect(headings.first()).toContainText('My HR requests and certificates');

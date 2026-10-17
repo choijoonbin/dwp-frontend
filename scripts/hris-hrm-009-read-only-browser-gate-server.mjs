@@ -101,6 +101,12 @@ function defaultCounters() {
       [OPERATIONS_OWNER_PATH]: 0,
     },
     mutations: {},
+    forwardedRequests: {
+      total: 0,
+      authLogin: 0,
+      authMe: 0,
+      ordinaryApi: 0,
+    },
     unexpectedAuthorityEvaluations: 0,
     stepUpRequests: 0,
   };
@@ -258,7 +264,7 @@ function authorityEnvelope() {
       policy: 'product-authorization-v52',
       productRelationship: 'product-relationship-v52',
       targetPopulation: 'target-population-v52',
-      support: 'support-v52',
+      support: null,
       tenantControl: 'tenant-control-v52',
     },
     activeAccessMode: 'NORMAL',
@@ -578,7 +584,16 @@ async function control(request, response, url) {
   failure(response, 404, 'Fixture control endpoint was not found.', 'NOT_FOUND');
 }
 
-function forward(request, response) {
+function forward(request, response, pathname) {
+  const method = request.method ?? 'GET';
+  counters.forwardedRequests.total += 1;
+  if (method === 'POST' && pathname === '/api/auth/login') {
+    counters.forwardedRequests.authLogin += 1;
+  } else if (method === 'GET' && pathname === '/api/auth/me') {
+    counters.forwardedRequests.authMe += 1;
+  } else if (pathname.startsWith('/api/')) {
+    counters.forwardedRequests.ordinaryApi += 1;
+  }
   const headers = { ...request.headers, host: UPSTREAM.host };
   const upstreamRequest = http.request(
     {
@@ -641,7 +656,7 @@ const server = http.createServer(async (request, response) => {
     serveOwnerProjection(request, response, url, 'operations');
     return;
   }
-  forward(request, response);
+  forward(request, response, pathname);
 });
 
 server.listen(PORT, HOST, () => {

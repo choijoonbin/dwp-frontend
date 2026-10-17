@@ -1,6 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
 
-const BASE_URL = process.env.E2E_HRIS_HRM009_BASE_URL || 'http://127.0.0.1:4219';
+const BASE_URL = 'http://127.0.0.1:4219';
 const FIXTURE_URL = 'http://127.0.0.1:8919';
 const REUSE_EXISTING_SERVER = process.env.E2E_REUSE_EXISTING_SERVER === 'true';
 
@@ -19,7 +19,7 @@ export default defineConfig({
   use: {
     baseURL: BASE_URL,
     serviceWorkers: 'block',
-    trace: 'retain-on-failure',
+    trace: 'off',
     screenshot: 'only-on-failure',
     video: 'off',
   },
