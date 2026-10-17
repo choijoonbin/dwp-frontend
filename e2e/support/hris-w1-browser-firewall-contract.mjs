@@ -50,6 +50,15 @@ const OFFICIAL_PAGE_KEYS = Object.freeze([
   'routeId',
   'surfaceId',
 ]);
+const HCM_PAGE_SURFACE_BY_ROUTE_NAMESPACE = Object.freeze({
+  audit: 'hcm.management',
+  configuration: 'hcm.management',
+  management: 'hcm.management',
+  operations: 'hcm.operations',
+  personal: 'hcm.personal',
+  team: 'hcm.team',
+  utility: 'hcm.utility',
+});
 const HCM_HIGH_OPERATION_BINDINGS = Object.freeze([
   ['HCM_ORG_PUBLISH', 'hcm.management', 'route.hcm.management.org-publish.action', 'SYS'],
   [
@@ -139,21 +148,22 @@ function officialHcmPageContracts(source) {
     fail('official product PAGE source is not the exact v1 document');
   }
   const hcm = source.pageRoutes.filter((route) => route?.productId === 'hcm');
-  if (hcm.length !== 26) fail(`official HCM PAGE count is ${hcm.length}, expected 26`);
+  if (hcm.length !== 56) fail(`official HCM PAGE count is ${hcm.length}, expected 56`);
   const seen = new Set();
   for (const route of hcm) {
+    const routeNamespace = route?.routeContractKey?.split('.')[2];
     if (
       !hasExactKeys(valueRecord(route), OFFICIAL_PAGE_KEYS) ||
       typeof route.routeContractKey !== 'string' ||
-      !/^route\.hcm\.(management|operations|personal|team)\.[a-z0-9-]+\.page$/u.test(
+      !/^route\.hcm\.(audit|configuration|management|operations|personal|team|utility)\.[a-z0-9-]+\.page$/u.test(
         route.routeContractKey
       ) ||
       typeof route.surfaceId !== 'string' ||
-      !/^hcm\.(management|operations|personal|team)$/u.test(route.surfaceId) ||
-      route.routeContractKey.split('.')[2] !== route.surfaceId.split('.')[1] ||
-      route.routeId !== route.routeContractKey.slice('route.'.length, -'.page'.length) ||
+      HCM_PAGE_SURFACE_BY_ROUTE_NAMESPACE[routeNamespace] !== route.surfaceId ||
+      typeof route.routeId !== 'string' ||
+      !/^hcm\.[a-z0-9-]+\.[a-z0-9-]+$/u.test(route.routeId) ||
       typeof route.pattern !== 'string' ||
-      !/^\/hr(?:\/|$)/u.test(route.pattern) ||
+      !/^(?:\/hr|\/admin\/governance\/audit-overview)(?:\/|$)/u.test(route.pattern) ||
       seen.has(route.routeContractKey)
     ) {
       fail('official HCM PAGE tuple is malformed or duplicated');

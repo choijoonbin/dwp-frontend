@@ -168,6 +168,31 @@ const HrisEmploymentAssignmentsWorkspace = lazy(() =>
     default: module.HrisEmploymentAssignmentsWorkspace,
   }))
 );
+const HrisHrm007TeamPeopleChangesRouteAdmission = lazy(() =>
+  import('../features/hris/integration/hris-hrm-007-route-admission').then((module) => ({
+    default: module.HrisHrm007TeamPeopleChangesRouteAdmission,
+  }))
+);
+const HrisHrm007AppointmentsRouteAdmission = lazy(() =>
+  import('../features/hris/integration/hris-hrm-007-route-admission').then((module) => ({
+    default: module.HrisHrm007AppointmentsRouteAdmission,
+  }))
+);
+const HrisHrm007PeopleEmploymentRouteAdmission = lazy(() =>
+  import('../features/hris/integration/hris-hrm-007-route-admission').then((module) => ({
+    default: module.HrisHrm007PeopleEmploymentRouteAdmission,
+  }))
+);
+const HrisWorkflowPolicyRouteAdmission = lazy(() =>
+  import('../features/hris/integration/hris-sys-003-route-admission').then((module) => ({
+    default: module.HrisWorkflowPolicyRouteAdmission,
+  }))
+);
+const HrisTeamDelegationRouteAdmission = lazy(() =>
+  import('../features/hris/integration/hris-sys-003-route-admission').then((module) => ({
+    default: module.HrisTeamDelegationRouteAdmission,
+  }))
+);
 const HrisEmployeeChangeWorkspace = lazy(() =>
   import('../features/hris/employee-services/employee-change').then((module) => ({
     default: module.HrisEmployeeChangeWorkspace,
@@ -258,10 +283,13 @@ function HcmPageContent({ page }: { page: HcmNavigationItem }) {
     team: <MyTeam />,
     'team-time': <HrTeamTimeWorkspace />,
     'team-leave': <HrTeamAbsenceWorkspace />,
+    'team-people-changes': <HrisHrm007TeamPeopleChangesRouteAdmission />,
+    'team-delegation': <HrisTeamDelegationRouteAdmission />,
     'operations-home': <HrOperationsOverview />,
     people: <HrisPeople360Workspace />,
     'employee-change-requests': <HrisEmployeeChangeWorkspace />,
     'employment-assignments': <HrisEmploymentAssignmentsWorkspace />,
+    'people-appointments': <HrisHrm007AppointmentsRouteAdmission />,
     'organization-positions': <HrisOrganizationPositionsRouteAdmission />,
     'payroll-population': <HrisPayrollPopulationRouteAdmission />,
     assignments: <AssignmentRegister assignmentProposal={assignmentProposalPort} />,
@@ -285,6 +313,8 @@ function HcmPageContent({ page }: { page: HcmNavigationItem }) {
     'settings-payroll': <HrisPayrollConfigurationWorkspace />,
     'settings-navigation-policy': <HrisNavigationPolicyCommandRuntime />,
     'settings-operations': <HrisOperationsRouteAdmission />,
+    'settings-people-employment': <HrisHrm007PeopleEmploymentRouteAdmission />,
+    'settings-workflow': <HrisWorkflowPolicyRouteAdmission />,
     'reference-data': <WorkforceReferenceData />,
     'data-operations': <WorkforceDataOperations />,
     exports: <WorkforceExportCenter />,
@@ -296,7 +326,12 @@ function HcmPageContent({ page }: { page: HcmNavigationItem }) {
   if (
     page.view === 'organization-positions' ||
     page.view === 'payroll-population' ||
-    page.view === 'settings-operations'
+    page.view === 'settings-operations' ||
+    page.view === 'team-people-changes' ||
+    page.view === 'team-delegation' ||
+    page.view === 'people-appointments' ||
+    page.view === 'settings-people-employment' ||
+    page.view === 'settings-workflow'
   ) {
     return (
       <PageCanvas>

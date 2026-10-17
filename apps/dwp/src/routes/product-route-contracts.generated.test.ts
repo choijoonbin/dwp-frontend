@@ -74,6 +74,44 @@ const R7_BATCH_01_HCM_PAGE_ROUTES = [
   },
 ] as const;
 
+const R7_BATCH_02_HCM_PAGE_ROUTES = [
+  {
+    routeContractKey: 'route.hcm.configuration.people-employment.page',
+    routeId: 'hcm.management.people-employment',
+    pattern: '/hr/settings/people-employment',
+    productId: 'hcm',
+    surfaceId: 'hcm.management',
+  },
+  {
+    routeContractKey: 'route.hcm.configuration.workflow.page',
+    routeId: 'hcm.management.workflow',
+    pattern: '/hr/settings/workflow',
+    productId: 'hcm',
+    surfaceId: 'hcm.management',
+  },
+  {
+    routeContractKey: 'route.hcm.operations.people-appointments.page',
+    routeId: 'hcm.operations.people-appointments',
+    pattern: '/hr/operations/people/appointments',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+  },
+  {
+    routeContractKey: 'route.hcm.team.delegation.page',
+    routeId: 'hcm.team.delegation',
+    pattern: '/hr/team/delegation',
+    productId: 'hcm',
+    surfaceId: 'hcm.team',
+  },
+  {
+    routeContractKey: 'route.hcm.team.people-changes.page',
+    routeId: 'hcm.team.people-changes',
+    pattern: '/hr/team/people-changes',
+    productId: 'hcm',
+    surfaceId: 'hcm.team',
+  },
+] as const;
+
 const authorizationSnapshot = JSON.parse(
   fs.readFileSync(
     path.resolve(process.cwd(), 'architecture/product-surface-authorization.v1.json'),
@@ -85,7 +123,18 @@ const authorizationSnapshot = JSON.parse(
   bundles: Array<{
     bundleKey: string;
     version: number;
-    routes: Array<{ routeKind: 'PAGE' | 'DATA' | 'ACTION' }>;
+    routes: Array<{
+      routeContractKey: string;
+      routeKind: 'PAGE' | 'DATA' | 'ACTION';
+      bindingMode?: 'AUTHORIZATION_ONLY';
+      purposeCode?: string;
+      gatewayApiBindings: unknown[];
+      servicePepBindings: unknown[];
+      accessProfiles: Array<{
+        requiredAccess: { capabilityContractKey: string };
+        responseProjectionBindings?: unknown[];
+      }>;
+    }>;
   }>;
 };
 const latestAuthorizationBundles = authorizationSnapshot.bundles.filter(
@@ -131,7 +180,7 @@ describe('generated product route authorization contracts', () => {
       'spaces',
       'workplace',
     ]);
-    expect(router).toHaveLength(144);
+    expect(router).toHaveLength(149);
     expect(registry).toEqual(router);
     expect(
       router.filter((route) =>
@@ -140,6 +189,13 @@ describe('generated product route authorization contracts', () => {
         )
       )
     ).toEqual([...R7_BATCH_01_HCM_PAGE_ROUTES]);
+    expect(
+      router.filter((route) =>
+        R7_BATCH_02_HCM_PAGE_ROUTES.some(
+          (expected) => expected.routeContractKey === route.routeContractKey
+        )
+      )
+    ).toEqual([...R7_BATCH_02_HCM_PAGE_ROUTES]);
     expect(() =>
       buildProductPageRouteContractSource(
         [HCM_PRODUCT_MANIFEST],
@@ -180,8 +236,8 @@ describe('generated product route authorization contracts', () => {
     );
     expect(nonPages.every((route) => route.routeId === null && route.pattern === null)).toBe(true);
     expect(DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(71);
-    expect(ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(215);
-    expect(REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG).toHaveLength(215);
+    expect(ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(220);
+    expect(REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG).toHaveLength(220);
     expect(REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG.every((route) => route.routeKind === 'PAGE')).toBe(
       true
     );
@@ -226,6 +282,52 @@ describe('generated product route authorization contracts', () => {
           (route) => route.routeContractKey === `route.dwaion.work.${view}.page`
         )
       ).toEqual([expect.objectContaining(expected)]);
+    }
+  });
+
+  it('keeps SYS authorization-only PAGE evidence outside network catalogs', () => {
+    const expected = [
+      {
+        routeContractKey: 'route.hcm.configuration.workflow.page',
+        capabilityContractKey: 'hcm.configuration.workflow.view',
+        purposeCode: 'HRIS_CONFIGURATION',
+      },
+      {
+        routeContractKey: 'route.hcm.team.delegation.page',
+        capabilityContractKey: 'hcm.team.members.view',
+        purposeCode: 'TEAM_MANAGEMENT',
+      },
+    ] as const;
+
+    for (const contract of expected) {
+      expect(
+        PRODUCT_AUTHORIZATION_PAGE_PROJECTIONS.find(
+          (route) => route.routeContractKey === contract.routeContractKey
+        )
+      ).toMatchObject({ gatewayBindings: [] });
+      expect(
+        latestAuthorizationBundle.routes.find(
+          (route) => route.routeContractKey === contract.routeContractKey
+        )
+      ).toMatchObject({
+        routeKind: 'PAGE',
+        bindingMode: 'AUTHORIZATION_ONLY',
+        purposeCode: contract.purposeCode,
+        gatewayApiBindings: [],
+        servicePepBindings: [],
+        accessProfiles: [
+          {
+            requiredAccess: {
+              capabilityContractKey: contract.capabilityContractKey,
+            },
+          },
+        ],
+      });
+      expect(
+        latestAuthorizationBundle.routes
+          .find((route) => route.routeContractKey === contract.routeContractKey)
+          ?.accessProfiles.some((profile) => 'responseProjectionBindings' in profile)
+      ).toBe(false);
     }
   });
 

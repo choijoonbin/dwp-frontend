@@ -114,6 +114,45 @@ const V49_PAYROLL_CALCULATE_STEP_UP = Object.freeze([
     targetType: 'PAYROLL_RUN',
   }),
 ]);
+const V50_TIM007_ROUTE_RESPONSES = Object.freeze([
+  Object.freeze({
+    routeContractKey: 'route.hcm.operations.time-command-center.page',
+    profileKey: 'time-operations-reader',
+    responseSchemaKey: 'TimeCommandCenterProjectionV1',
+    apiBindingKey: 'route.hcm.operations.time-command-center.page.binding.01',
+    projectionPolicyKey:
+      'route.hcm.operations.time-command-center.page.time-operations-reader.projection.v1',
+    openApiSchemaSha256: 'b9f8e20f38dc265df0b65ae498c5728536e9634b719bae11dad4aeb53f3afd8e',
+  }),
+  Object.freeze({
+    routeContractKey: 'route.hcm.operations.time-daily-close.page',
+    profileKey: 'time-operations-reader',
+    responseSchemaKey: 'TimeDailyCloseProjectionV1',
+    apiBindingKey: 'route.hcm.operations.time-daily-close.page.binding.01',
+    projectionPolicyKey:
+      'route.hcm.operations.time-daily-close.page.time-operations-reader.projection.v1',
+    openApiSchemaSha256: '7ad4402e9fd26c2d76fc38f9554a6f8370562e536879e516084c32d57c85e039',
+  }),
+  Object.freeze({
+    routeContractKey: 'route.hcm.operations.time-monthly-close.page',
+    profileKey: 'time-operations-reader',
+    responseSchemaKey: 'TimeMonthlyCloseProjectionV1',
+    apiBindingKey: 'route.hcm.operations.time-monthly-close.page.binding.01',
+    projectionPolicyKey:
+      'route.hcm.operations.time-monthly-close.page.time-operations-reader.projection.v1',
+    openApiSchemaSha256: '985741661b4d879f242bfcbeb9310af40ae917411ae817bf1eb6239766e580c9',
+  }),
+  Object.freeze({
+    routeContractKey: 'route.hcm.operations.time-payroll-handoff.data',
+    profileKey: 'time-close-operator',
+    responseSchemaKey: 'PayrollTimeHandoffStatusV1',
+  }),
+  Object.freeze({
+    routeContractKey: 'route.hcm.time.command-receipt.data',
+    profileKey: 'originating-command',
+    responseSchemaKey: 'TimeCommandReceiptLookupV1',
+  }),
+]);
 
 function fail(message) {
   throw new Error(`Product surface authorization contract error: ${message}`);
@@ -305,7 +344,8 @@ function validateNoDroppedContracts(previous, next) {
           candidate
         ) &&
         !isV37TimeVoidProfileRemoval(next.version, section, record[key], record, candidate) &&
-        !isV49PayrollSecurityHardening(next.version, section, record[key], record, candidate)
+        !isV49PayrollSecurityHardening(next.version, section, record[key], record, candidate) &&
+        !isV50Tim007ResponseUpgrade(next.version, section, record[key], record, candidate)
       ) {
         fail(
           `v${next.version} non-monotonically changed v${previous.version} ${section} ${record[key]}`
@@ -532,6 +572,53 @@ function isV49PayrollSecurityHardening(version, section, key, previous, candidat
   } else {
     delete normalized.stepUpCommandBindings;
   }
+  return canonicalJson(normalized) === canonicalJson(previous);
+}
+
+function isV50Tim007ResponseUpgrade(version, section, key, previous, candidate) {
+  if (version !== 50 || section !== 'routes') return false;
+  const patch = V50_TIM007_ROUTE_RESPONSES.find((entry) => entry.routeContractKey === key);
+  if (!patch) return false;
+  const normalized = structuredClone(candidate);
+  const previousProfiles = new Map(
+    previous.accessProfiles.map((profile) => [profile.profileKey, profile])
+  );
+  const candidateProfiles = new Map(
+    normalized.accessProfiles.map((profile) => [profile.profileKey, profile])
+  );
+  if (
+    previousProfiles.size !== candidateProfiles.size ||
+    [...previousProfiles.keys()].some((profileKey) => !candidateProfiles.has(profileKey))
+  ) {
+    return false;
+  }
+  const previousProfile = previousProfiles.get(patch.profileKey);
+  const candidateProfile = candidateProfiles.get(patch.profileKey);
+  if (!previousProfile || !candidateProfile) return false;
+  const previousBindings = previousProfile.responseProjectionBindings;
+  let expectedBindings;
+  if (patch.openApiSchemaSha256) {
+    expectedBindings = [
+      {
+        additionalProperties: false,
+        apiBindingKey: patch.apiBindingKey,
+        openApiSchemaSha256: patch.openApiSchemaSha256,
+        projectionPolicyKey: patch.projectionPolicyKey,
+        responseSchemaKey: patch.responseSchemaKey,
+        schemaVersion: 1,
+      },
+    ];
+  } else {
+    expectedBindings = structuredClone(previousBindings);
+    if (expectedBindings.length !== 1) return false;
+    expectedBindings[0].responseSchemaKey = patch.responseSchemaKey;
+  }
+  if (
+    canonicalJson(candidateProfile.responseProjectionBindings) !== canonicalJson(expectedBindings)
+  ) {
+    return false;
+  }
+  candidateProfile.responseProjectionBindings = structuredClone(previousBindings);
   return canonicalJson(normalized) === canonicalJson(previous);
 }
 

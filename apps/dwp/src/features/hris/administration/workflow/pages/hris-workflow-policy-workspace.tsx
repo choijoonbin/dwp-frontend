@@ -71,7 +71,7 @@ function DisabledWorkflow({ invalid }: Readonly<{ invalid: boolean }>) {
         title={invalid ? 'Workflow policy access is unavailable' : 'Workflow policy is off'}
       >
         {invalid
-          ? 'The cross-product tenant, role, duty, purpose, decision or product authority is not current. No Approval owner request was started.'
+          ? 'The HCM page and Approval read evidence no longer match the same tenant, actor, scope or authority revision. No Approval owner request was started.'
           : 'This default-off HRIS adapter is not enrolled for the tenant. No Approval policy request was started.'}
       </InlineFeedback>
       <Paper variant="outlined" sx={{ p: { xs: 1.5, sm: 2 } }}>
@@ -131,7 +131,9 @@ function ActiveWorkflow({
   const makerBlocked =
     selected?.pendingBy != null && String(selected.pendingBy) === admission.actorId;
   const publish = useMutation({
-    mutationFn: async (snapshot: Readonly<{ policyId: string; version: number; comment: string }>) => {
+    mutationFn: async (
+      snapshot: Readonly<{ policyId: string; version: number; comment: string }>
+    ) => {
       const current = queryClient
         .getQueryData<ApprovalPolicy[]>(queryKey)
         ?.find((policy) => policy.policyId === snapshot.policyId);
@@ -206,7 +208,9 @@ function ActiveWorkflow({
       ) : policies.isError ? (
         <InlineFeedback
           severity={denied(policies.error) ? 'error' : 'warning'}
-          title={denied(policies.error) ? 'Policy access is unavailable' : 'Policy owner unavailable'}
+          title={
+            denied(policies.error) ? 'Policy access is unavailable' : 'Policy owner unavailable'
+          }
         >
           No cached policy selection or command is shown. Confirm authority, then retry the exact
           owner query.
@@ -219,7 +223,10 @@ function ActiveWorkflow({
         <Box
           sx={{
             display: 'grid',
-            gridTemplateColumns: { xs: 'minmax(0, 1fr)', md: 'minmax(260px, .8fr) minmax(0, 1.2fr)' },
+            gridTemplateColumns: {
+              xs: 'minmax(0, 1fr)',
+              md: 'minmax(260px, .8fr) minmax(0, 1.2fr)',
+            },
             gap: 2,
             minWidth: 0,
           }}
@@ -273,7 +280,9 @@ function ActiveWorkflow({
                 </Box>
                 <InlineFeedback
                   severity={selected.pendingReview ? 'warning' : 'info'}
-                  title={selected.pendingReview ? 'Independent review required' : 'No publishable review'}
+                  title={
+                    selected.pendingReview ? 'Independent review required' : 'No publishable review'
+                  }
                 >
                   {selected.pendingReview
                     ? selected.pendingChangeReason || 'Review the pending owner policy change.'
@@ -290,7 +299,9 @@ function ActiveWorkflow({
                   onChange={(event) => setReviewComment(event.target.value)}
                   multiline
                   minRows={3}
-                  disabled={!canPublish || !selected.pendingReview || makerBlocked || publish.isPending}
+                  disabled={
+                    !canPublish || !selected.pendingReview || makerBlocked || publish.isPending
+                  }
                   inputProps={{ maxLength: 1000 }}
                 />
                 <Stack direction={{ xs: 'column', sm: 'row' }} gap={1}>

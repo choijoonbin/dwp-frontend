@@ -79,7 +79,9 @@ export type PilotAuthorizationTestCase = Readonly<{
       | 46
       | 47
       | 48
-      | 49;
+      | 49
+      | 50
+      | 51;
     sha256: string;
   }>;
   activeAccessMode?: 'NORMAL' | 'PROVIDER_SUPPORT';
@@ -119,7 +121,7 @@ export type PilotAuthorizationFixtureBundle = Readonly<{
     authority: 'INFORMATIONAL_ONLY';
     bundleKey: 'product-surfaces';
     indexSha256: string;
-    latestAliasVersion: 49;
+    latestAliasVersion: 51;
     versions: readonly Readonly<{
       bundleKey: 'product-surfaces';
       version:
@@ -171,7 +173,9 @@ export type PilotAuthorizationFixtureBundle = Readonly<{
         | 46
         | 47
         | 48
-        | 49;
+        | 49
+        | 50
+        | 51;
       sha256: string;
     }>[];
   }>;
@@ -1674,7 +1678,7 @@ export const PILOT_AUTHORIZATION_FIXTURES = {
   ],
   fixedClock: '2026-08-21T09:00:00Z',
   fixtureBundleKey: 'pilot-fixtures.v1',
-  fixtureChecksum: 'd678c2d9d4ddcf5194ce5b1e8ac29882cd505ef59650a0ab9dab5f8c2da4be68',
+  fixtureChecksum: '4e919a4a39464a30cc3ca6cb9f7142c19dbc8d0223520cea6daab44c46731618',
   fixtureChecksumAlgorithm: 'SHA-256',
   negativeCases: [
     {
@@ -1912,8 +1916,8 @@ export const PILOT_AUTHORIZATION_FIXTURES = {
   registryLineage: {
     authority: 'INFORMATIONAL_ONLY',
     bundleKey: 'product-surfaces',
-    indexSha256: '159f4d0087eeacd5d6d5653d0126599ddf195f5188341c51933b8a2b673f756c',
-    latestAliasVersion: 49,
+    indexSha256: '65091e1c8ace82ff9376658c7cd46d0a5850c138c28eccd8ba724316eb5a2a56',
+    latestAliasVersion: 51,
     versions: [
       {
         bundleKey: 'product-surfaces',
@@ -2159,6 +2163,16 @@ export const PILOT_AUTHORIZATION_FIXTURES = {
         bundleKey: 'product-surfaces',
         sha256: '5c1dccdc27d8b260fbf001de5695e983a7107072824a8087038340d0d84cbc60',
         version: 49,
+      },
+      {
+        bundleKey: 'product-surfaces',
+        sha256: 'c52222caad2749c4048c694f6582e157f6ab1184f73237f0944c3d88807a2760',
+        version: 50,
+      },
+      {
+        bundleKey: 'product-surfaces',
+        sha256: '3beda5c13a3af0e265ace4533a3afcee3691c2b7486465dcf46156e58ae5ed2c',
+        version: 51,
       },
     ],
   },

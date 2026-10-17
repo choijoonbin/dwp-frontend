@@ -93,7 +93,7 @@ describe('HRIS W1 browser firewall contract', () => {
       left.routeContractKey.localeCompare(right.routeContractKey)
     );
 
-    expect(firewall).toHaveLength(26);
+    expect(firewall).toHaveLength(56);
     expect(firewall).toEqual(generated);
   });
 

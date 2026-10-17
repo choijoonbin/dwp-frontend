@@ -11,7 +11,6 @@ export const HRIS_APPROVAL_SHARED_API_CONTRACTS = Object.freeze({
     method: 'GET',
     path: '/api/approvals/v1/admin/policies',
     capability: 'approvals.policy.read',
-    duty: 'HRIS_DUTY_CONFIGURATION_WORKBENCH_READER',
     routeContractKey: 'route.approvals.admin.policies.page',
   }),
   policyPublish: Object.freeze({
@@ -19,7 +18,6 @@ export const HRIS_APPROVAL_SHARED_API_CONTRACTS = Object.freeze({
     method: 'POST',
     path: '/api/approvals/v1/admin/policies/{policyId}/publish',
     capability: 'approvals.policy.publish',
-    duty: 'HRIS_DUTY_POLICY_PUBLISHER',
     routeContractKey: 'route.approvals.admin.policy-publish.action',
   }),
   delegationList: Object.freeze({
@@ -27,7 +25,6 @@ export const HRIS_APPROVAL_SHARED_API_CONTRACTS = Object.freeze({
     method: 'GET',
     path: '/api/approvals/v1/delegations',
     capability: 'approvals.work.delegation.read',
-    duty: 'HRIS_DUTY_MANAGER_TEAM_READER',
     routeContractKey: 'route.approvals.work.delegations.page',
   }),
   delegationCreate: Object.freeze({
@@ -49,19 +46,16 @@ export const HRIS_APPROVAL_SHARED_API_CONTRACTS = Object.freeze({
 export type HrisApprovalReadAdmission = Readonly<{
   allowed: true;
   capability: string;
-  duty: string;
   routeContractKey: string;
+  contextScopeKey: string;
+  decisionRevision: string;
 }>;
 
 export type HrisApprovalCommandAdmission = Readonly<{
   allowed: true;
   capability: string;
-  duty: string;
   routeContractKeys: readonly string[];
   decisionRevision: string;
-  purposeBound: true;
-  subjectRevisionBound: true;
-  separationOfDuties: readonly string[];
 }>;
 
 export type HrisApprovalAdapterAdmission = Readonly<{
@@ -69,27 +63,27 @@ export type HrisApprovalAdapterAdmission = Readonly<{
   feature: typeof HRIS_APPROVAL_ADAPTER_FEATURE;
   workspace: 'SETTINGS_WORKFLOW' | 'TEAM_DELEGATION';
   tenantEnrolled: true;
-  hcmProductAccess: 'VIEW';
-  approvalsProductAccess: 'VIEW';
   tenantId: string;
   actorId: string;
   ownerTenantId: string;
   ownerActorId: string;
-  rolePlane: 'SETTINGS_ADMIN' | 'MANAGER';
+  hcmPageRouteContractKey: string;
+  hcmContextScopeKey: string;
   ownerContextScopeKey: string;
   populationScopeKey?: string;
   pageDecisionRevision: string;
-  purposeBound: true;
   read: HrisApprovalReadAdmission;
   command?: HrisApprovalCommandAdmission;
 }>;
 
-export type HrisApprovalCommandRunner = <T>(input: Readonly<{
-  routeContractKey: string;
-  expectedDecisionRevision: string;
-  expectedObjectVersion?: number;
-  run: (execution: ApprovalMutationExecution) => Promise<T>;
-}>) => Promise<T>;
+export type HrisApprovalCommandRunner = <T>(
+  input: Readonly<{
+    routeContractKey: string;
+    expectedDecisionRevision: string;
+    expectedObjectVersion?: number;
+    run: (execution: ApprovalMutationExecution) => Promise<T>;
+  }>
+) => Promise<T>;
 
 export class HrisApprovalMutationExecutionMismatchError extends Error {
   constructor() {
@@ -119,25 +113,23 @@ export async function runWithTrustedApprovalMutationExecution<T>(
 
 function commonAdmission(
   admission: HrisApprovalAdapterAdmission | undefined,
-  workspace: HrisApprovalAdapterAdmission['workspace'],
-  rolePlane: HrisApprovalAdapterAdmission['rolePlane']
+  workspace: HrisApprovalAdapterAdmission['workspace']
 ): admission is HrisApprovalAdapterAdmission {
   return Boolean(
     admission?.kind === 'TRUSTED_HRIS_APPROVAL_CROSS_PRODUCT' &&
-      admission.feature === HRIS_APPROVAL_ADAPTER_FEATURE &&
-      admission.workspace === workspace &&
-      admission.tenantEnrolled === true &&
-      admission.hcmProductAccess === 'VIEW' &&
-      admission.approvalsProductAccess === 'VIEW' &&
-      admission.rolePlane === rolePlane &&
-      NON_BLANK.test(admission.tenantId) &&
-      NON_BLANK.test(admission.actorId) &&
-      admission.ownerTenantId === admission.tenantId &&
-      admission.ownerActorId === admission.actorId &&
-      SCOPE_KEY.test(admission.ownerContextScopeKey) &&
-      NON_BLANK.test(admission.pageDecisionRevision) &&
-      admission.purposeBound === true &&
-      admission.read.allowed === true
+    admission.feature === HRIS_APPROVAL_ADAPTER_FEATURE &&
+    admission.workspace === workspace &&
+    admission.tenantEnrolled === true &&
+    NON_BLANK.test(admission.tenantId) &&
+    NON_BLANK.test(admission.actorId) &&
+    admission.ownerTenantId === admission.tenantId &&
+    admission.ownerActorId === admission.actorId &&
+    SCOPE_KEY.test(admission.hcmContextScopeKey) &&
+    SCOPE_KEY.test(admission.ownerContextScopeKey) &&
+    NON_BLANK.test(admission.pageDecisionRevision) &&
+    admission.read.allowed === true &&
+    admission.read.contextScopeKey === admission.ownerContextScopeKey &&
+    admission.read.decisionRevision === admission.pageDecisionRevision
   );
 }
 
@@ -146,10 +138,10 @@ export function workflowReadAdmitted(
 ): admission is HrisApprovalAdapterAdmission {
   const contract = HRIS_APPROVAL_SHARED_API_CONTRACTS.policyList;
   return Boolean(
-    commonAdmission(admission, 'SETTINGS_WORKFLOW', 'SETTINGS_ADMIN') &&
-      admission.read.capability === contract.capability &&
-      admission.read.duty === contract.duty &&
-      admission.read.routeContractKey === contract.routeContractKey
+    commonAdmission(admission, 'SETTINGS_WORKFLOW') &&
+    admission.hcmPageRouteContractKey === 'route.hcm.configuration.workflow.page' &&
+    admission.read.capability === contract.capability &&
+    admission.read.routeContractKey === contract.routeContractKey
   );
 }
 
@@ -158,17 +150,11 @@ export function workflowPublishAdmitted(admission: HrisApprovalAdapterAdmission)
   const contract = HRIS_APPROVAL_SHARED_API_CONTRACTS.policyPublish;
   return Boolean(
     workflowReadAdmitted(admission) &&
-      command?.allowed === true &&
-      command.capability === contract.capability &&
-      command.duty === contract.duty &&
-      command.routeContractKeys.length === 1 &&
-      command.routeContractKeys[0] === contract.routeContractKey &&
-      command.decisionRevision === admission.pageDecisionRevision &&
-      command.purposeBound === true &&
-      command.subjectRevisionBound === true &&
-      command.separationOfDuties.length === 2 &&
-      command.separationOfDuties[0] === 'SOD_HRIS_CONFIG_FOUR_EYES' &&
-      command.separationOfDuties[1] === 'SOD_HRIS_AUDIT_INDEPENDENCE'
+    command?.allowed === true &&
+    command.capability === contract.capability &&
+    command.routeContractKeys.length === 1 &&
+    command.routeContractKeys[0] === contract.routeContractKey &&
+    command.decisionRevision === admission.pageDecisionRevision
   );
 }
 
@@ -177,12 +163,12 @@ export function delegationReadAdmitted(
 ): admission is HrisApprovalAdapterAdmission {
   const contract = HRIS_APPROVAL_SHARED_API_CONTRACTS.delegationList;
   return Boolean(
-    commonAdmission(admission, 'TEAM_DELEGATION', 'MANAGER') &&
-      admission.read.capability === contract.capability &&
-      admission.read.duty === contract.duty &&
-      admission.read.routeContractKey === contract.routeContractKey &&
-      admission.populationScopeKey &&
-      SCOPE_KEY.test(admission.populationScopeKey)
+    commonAdmission(admission, 'TEAM_DELEGATION') &&
+    admission.hcmPageRouteContractKey === 'route.hcm.team.delegation.page' &&
+    admission.read.capability === contract.capability &&
+    admission.read.routeContractKey === contract.routeContractKey &&
+    admission.populationScopeKey &&
+    admission.populationScopeKey === admission.hcmContextScopeKey
   );
 }
 
@@ -194,17 +180,11 @@ export function delegationManageAdmitted(admission: HrisApprovalAdapterAdmission
   ];
   return Boolean(
     delegationReadAdmitted(admission) &&
-      command?.allowed === true &&
-      command.capability ===
-        HRIS_APPROVAL_SHARED_API_CONTRACTS.delegationCreate.capability &&
-      command.duty === HRIS_APPROVAL_SHARED_API_CONTRACTS.delegationList.duty &&
-      command.routeContractKeys.length === 2 &&
-      command.routeContractKeys.every((route, index) => route === expectedRoutes[index]) &&
-      command.decisionRevision === admission.pageDecisionRevision &&
-      command.purposeBound === true &&
-      command.subjectRevisionBound === true &&
-      command.separationOfDuties.length === 1 &&
-      command.separationOfDuties[0] === 'SOD_HRIS_AUDIT_INDEPENDENCE'
+    command?.allowed === true &&
+    command.capability === HRIS_APPROVAL_SHARED_API_CONTRACTS.delegationCreate.capability &&
+    command.routeContractKeys.length === 2 &&
+    command.routeContractKeys.every((route, index) => route === expectedRoutes[index]) &&
+    command.decisionRevision === admission.pageDecisionRevision
   );
 }
 
@@ -214,10 +194,15 @@ export function approvalAdapterScopeIdentity(admission: HrisApprovalAdapterAdmis
     admission.actorId,
     admission.ownerTenantId,
     admission.ownerActorId,
-    admission.rolePlane,
+    admission.hcmPageRouteContractKey,
+    admission.hcmContextScopeKey,
     admission.ownerContextScopeKey,
     admission.populationScopeKey ?? '',
     admission.pageDecisionRevision,
+    admission.read.routeContractKey,
+    admission.read.capability,
+    admission.read.contextScopeKey,
+    admission.read.decisionRevision,
   ]);
 }
 

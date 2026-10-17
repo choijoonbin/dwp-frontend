@@ -25,10 +25,7 @@ import {
   runWithTrustedApprovalMutationExecution,
 } from '../../../administration/workflow/model/hris-approval-adapter-contract';
 
-import type {
-  ApprovalDelegation,
-  ApprovalDelegationCreateInput,
-} from '@dwp-frontend/shared-utils';
+import type { ApprovalDelegation, ApprovalDelegationCreateInput } from '@dwp-frontend/shared-utils';
 import type { HrisDelegationDataSource } from '../api/hris-delegation-adapter';
 import type {
   HrisApprovalAdapterAdmission,
@@ -88,7 +85,7 @@ function DisabledDelegation({ invalid }: Readonly<{ invalid: boolean }>) {
         title={invalid ? 'Delegation access is unavailable' : 'Team delegation is off'}
       >
         {invalid
-          ? 'The cross-product tenant, role, duty, population, purpose or decision authority is not current. No Approval owner request was started.'
+          ? 'The HCM team page and Approval read evidence no longer match the same tenant, actor, population scope or authority revision. No Approval owner request was started.'
           : 'This default-off HRIS adapter is not enrolled for the tenant. No Approval delegation request was started.'}
       </InlineFeedback>
       <Paper variant="outlined" sx={{ p: { xs: 1.5, sm: 2 } }}>
@@ -333,7 +330,11 @@ function ActiveDelegation({
       ) : delegations.isError ? (
         <InlineFeedback
           severity={denied(delegations.error) ? 'error' : 'warning'}
-          title={denied(delegations.error) ? 'Delegation access is unavailable' : 'Delegation owner unavailable'}
+          title={
+            denied(delegations.error)
+              ? 'Delegation access is unavailable'
+              : 'Delegation owner unavailable'
+          }
         >
           No cached delegation selection or command is shown. Confirm authority, then retry the
           exact owner query.
@@ -356,7 +357,9 @@ function ActiveDelegation({
                 <Box component="li" key={delegation.delegationId}>
                   <ButtonBase
                     onClick={() => select(delegation.delegationId)}
-                    aria-current={selected?.delegationId === delegation.delegationId ? 'true' : undefined}
+                    aria-current={
+                      selected?.delegationId === delegation.delegationId ? 'true' : undefined
+                    }
                     sx={{
                       width: 1,
                       p: 1.5,
@@ -400,9 +403,7 @@ function ActiveDelegation({
                 <ActionButton
                   intent="danger"
                   startIcon={<UserRoundX size={17} />}
-                  disabled={
-                    !canManage || pending || selected.lifecycleState !== 'ACTIVE'
-                  }
+                  disabled={!canManage || pending || selected.lifecycleState !== 'ACTIVE'}
                   onClick={() =>
                     revoke.mutate({
                       delegationId: selected.delegationId,

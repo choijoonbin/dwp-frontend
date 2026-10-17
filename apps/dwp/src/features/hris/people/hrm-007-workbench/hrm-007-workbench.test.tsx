@@ -69,7 +69,7 @@ function LocationProbe() {
 
 async function renderWorkbench(
   props: Hrm007WorkbenchProps,
-  entry = '/hr/team/people-changes?tab=overview&asOf=2026-10-17'
+  entry = '/hr/team/people-changes?tab=overview&asOf=2026-10-17T00:00:00Z'
 ) {
   await act(async () => {
     root.render(
@@ -614,7 +614,7 @@ describe('HRM-007 governed workbench runtime', () => {
     const source = adapter(wire as unknown as Hrm007Projection);
     await renderWorkbench(
       { queryId: 'IAQ-005', gate: ADMITTED, scope: HRM007_TEST_SCOPE, adapter: source },
-      '/hr/team/people-changes?tab=other&scope=scope%3Ahcm%2Fnon-default&navigationScope=LEGAL_ENTITY&legalEntityPublicId=6d07e952-2f5f-4dc1-8be7-6d7e210d23af&asOf=2026-10-17&sort=approvalStatus%3ADESC&sort=itemPublicId%3AASC&filter%5BapprovalStatus%5D%5Bcodes%5D=APPROVED&filter%5BapprovalStatus%5D%5Bcodes%5D=PENDING&filter%5BapprovalStatus%5D%5BminimumRevision%5D=2&filter%5Bappointment%5D%5BstartFrom%5D=2026-10-17T00%3A00%3A00Z&cursor=abcdefghijklmnop&tenantId=forbidden&decisionRevision=forbidden&focus=people-change%3A1001&unsafe=drop'
+      '/hr/team/people-changes?tab=other&scope=scope%3Ahcm%2Fnon-default&navigationScope=LEGAL_ENTITY&legalEntityPublicId=6d07e952-2f5f-4dc1-8be7-6d7e210d23af&asOf=2026-10-17T00%3A00%3A00Z&sort=approvalStatus%3ADESC&sort=itemPublicId%3AASC&filter%5BapprovalStatus%5D%5Bcodes%5D=APPROVED&filter%5BapprovalStatus%5D%5Bcodes%5D=PENDING&filter%5BapprovalStatus%5D%5BminimumRevision%5D=2&filter%5Bappointment%5D%5BstartFrom%5D=2026-10-17T00%3A00%3A00Z&cursor=abcdefghijklmnop&tenantId=forbidden&decisionRevision=forbidden&focus=people-change%3A1001&unsafe=drop'
     );
     await shown('Second governed change');
     const detailLink = [...document.querySelectorAll('a')].find((candidate) =>
@@ -626,7 +626,7 @@ describe('HRM-007 governed workbench runtime', () => {
     expect(detailSearch.get('scope')).toBe('scope:hcm/non-default');
     expect(detailSearch.get('navigationScope')).toBe('LEGAL_ENTITY');
     expect(detailSearch.get('legalEntityPublicId')).toBe('6d07e952-2f5f-4dc1-8be7-6d7e210d23af');
-    expect(detailSearch.get('asOf')).toBe('2026-10-17');
+    expect(detailSearch.get('asOf')).toBe('2026-10-17T00:00:00Z');
     expect(detailSearch.getAll('sort')).toEqual(['approvalStatus:DESC', 'itemPublicId:ASC']);
     expect(detailSearch.getAll('filter[approvalStatus][codes]')).toEqual(['APPROVED', 'PENDING']);
     expect(detailSearch.get('filter[approvalStatus][minimumRevision]')).toBe('2');

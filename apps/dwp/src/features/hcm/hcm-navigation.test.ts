@@ -221,6 +221,36 @@ describe('HR product navigation', () => {
       requiredResourceKey: 'DATA.HRIS_WORKFORCE',
       requiredPermissionCode: 'VIEW',
     });
+    expect(findHcmNavigationItem('/hr/team/people-changes')).toMatchObject({
+      view: 'team-people-changes',
+      governedOnly: true,
+      requiredResourceKey: 'DATA.HRIS_WORKFORCE',
+      requiredPermissionCode: 'VIEW',
+    });
+    expect(findHcmNavigationItem('/hr/team/delegation')).toMatchObject({
+      view: 'team-delegation',
+      governedOnly: true,
+      requiredResourceKey: 'DATA.HRIS_WORKFORCE',
+      requiredPermissionCode: 'VIEW',
+    });
+    expect(findHcmNavigationItem('/hr/operations/people/appointments')).toMatchObject({
+      view: 'people-appointments',
+      governedOnly: true,
+      requiredResourceKey: 'DATA.HRIS_WORKFORCE',
+      requiredPermissionCode: 'VIEW',
+    });
+    expect(findHcmNavigationItem('/hr/settings/people-employment')).toMatchObject({
+      view: 'settings-people-employment',
+      governedOnly: true,
+      requiredResourceKey: 'CONFIG.HRIS_WORKBENCH',
+      requiredPermissionCode: 'VIEW',
+    });
+    expect(findHcmNavigationItem('/hr/settings/workflow')).toMatchObject({
+      view: 'settings-workflow',
+      governedOnly: true,
+      requiredResourceKey: 'CONFIG.HRIS_WORKBENCH',
+      requiredPermissionCode: 'VIEW',
+    });
     expect(findHcmNavigationItem('/hr/settings/reference-data')).toMatchObject({
       view: 'settings-reference',
       governedOnly: true,
@@ -252,6 +282,21 @@ describe('HR product navigation', () => {
     });
     expect(item(HCM_OPERATIONS_NAVIGATION, 'employment-assignments')).toMatchObject({
       path: '/hr/operations/people/employment-assignments',
+      taskKind: 'operations',
+      access: { type: 'capability', capabilityContractKey: 'hcm.operations.people.view' },
+    });
+    expect(item(HCM_TEAM_NAVIGATION, 'team-people-changes')).toMatchObject({
+      path: '/hr/team/people-changes',
+      taskKind: 'team',
+      access: { type: 'capability', capabilityContractKey: 'hcm.team.people-change.view' },
+    });
+    expect(item(HCM_TEAM_NAVIGATION, 'team-delegation')).toMatchObject({
+      path: '/hr/team/delegation',
+      taskKind: 'team',
+      access: { type: 'capability', capabilityContractKey: 'hcm.team.members.view' },
+    });
+    expect(item(HCM_OPERATIONS_NAVIGATION, 'people-appointments')).toMatchObject({
+      path: '/hr/operations/people/appointments',
       taskKind: 'operations',
       access: { type: 'capability', capabilityContractKey: 'hcm.operations.people.view' },
     });
@@ -291,19 +336,35 @@ describe('HR product navigation', () => {
         capabilityContractKey: 'hcm.configuration.navigation-policy.view',
       },
     });
+    expect(item(HCM_MANAGEMENT_NAVIGATION, 'settings-people-employment')).toMatchObject({
+      path: '/hr/settings/people-employment',
+      taskKind: 'administration',
+      access: {
+        type: 'capability',
+        capabilityContractKey: 'hcm.configuration.workbench.view',
+      },
+    });
+    expect(item(HCM_MANAGEMENT_NAVIGATION, 'settings-workflow')).toMatchObject({
+      path: '/hr/settings/workflow',
+      taskKind: 'administration',
+      access: {
+        type: 'capability',
+        capabilityContractKey: 'hcm.configuration.workflow.view',
+      },
+    });
     expect(findHcmNavigationItem('/hr/operations/assignments')).toMatchObject({
       view: 'assignments',
       path: '/hr/operations/assignments',
     });
   });
 
-  it('catalogs all six R7 PAGEs while mounting only the admitted HRM, PAY and SYS routes', () => {
-    expect(HRIS_R7_GOVERNED_PAGE_CATALOG).toHaveLength(6);
+  it('catalogs the R7 PAGEs while mounting only admitted central routes', () => {
+    expect(HRIS_R7_GOVERNED_PAGE_CATALOG).toHaveLength(11);
     expect(
       HRIS_R7_GOVERNED_PAGE_CATALOG.filter((item) => item.state === 'ADMISSION_MOUNTED').map(
         (item) => item.module
       )
-    ).toEqual(['HRM', 'PAY', 'SYS']);
+    ).toEqual(['HRM', 'HRM', 'HRM', 'HRM', 'PAY', 'SYS', 'SYS', 'SYS']);
     const timItems = HRIS_R7_GOVERNED_PAGE_CATALOG.filter((item) => item.module === 'TIM');
     expect(timItems).toHaveLength(3);
     expect(timItems.every((item) => item.state === 'CATALOG_ONLY')).toBe(true);
@@ -321,6 +382,51 @@ describe('HR product navigation', () => {
       view: 'settings-operations',
       governedOnly: true,
     });
+    expect(findHcmNavigationItem('/hr/settings/workflow')).toMatchObject({
+      view: 'settings-workflow',
+      governedOnly: true,
+    });
+    expect(findHcmNavigationItem('/hr/team/delegation')).toMatchObject({
+      view: 'team-delegation',
+      governedOnly: true,
+    });
+    expect(
+      HRIS_R7_GOVERNED_PAGE_CATALOG.filter(
+        (item) => item.feature === 'HRIS_HRM_APPOINTMENT_WORKBENCH'
+      ).map(({ path, routeContractKey, state }) => ({ path, routeContractKey, state }))
+    ).toEqual([
+      {
+        path: '/hr/team/people-changes',
+        routeContractKey: 'route.hcm.team.people-changes.page',
+        state: 'ADMISSION_MOUNTED',
+      },
+      {
+        path: '/hr/operations/people/appointments',
+        routeContractKey: 'route.hcm.operations.people-appointments.page',
+        state: 'ADMISSION_MOUNTED',
+      },
+      {
+        path: '/hr/settings/people-employment',
+        routeContractKey: 'route.hcm.configuration.people-employment.page',
+        state: 'ADMISSION_MOUNTED',
+      },
+    ]);
+    expect(
+      HRIS_R7_GOVERNED_PAGE_CATALOG.filter(
+        (item) => item.feature === 'HRIS_APPROVAL_WORKFLOW_AND_DELEGATION_ADAPTERS'
+      ).map(({ path, routeContractKey, state }) => ({ path, routeContractKey, state }))
+    ).toEqual([
+      {
+        path: '/hr/settings/workflow',
+        routeContractKey: 'route.hcm.configuration.workflow.page',
+        state: 'ADMISSION_MOUNTED',
+      },
+      {
+        path: '/hr/team/delegation',
+        routeContractKey: 'route.hcm.team.delegation.page',
+        state: 'ADMISSION_MOUNTED',
+      },
+    ]);
   });
 });
 

@@ -381,6 +381,13 @@
       "surfaceId": "hcm.management"
     },
     {
+      "routeContractKey": "route.hcm.configuration.people-employment.page",
+      "routeId": "hcm.management.people-employment",
+      "pattern": "/hr/settings/people-employment",
+      "productId": "hcm",
+      "surfaceId": "hcm.management"
+    },
+    {
       "routeContractKey": "route.hcm.configuration.settings-reference.page",
       "routeId": "hcm.management.settings-reference",
       "pattern": "/hr/settings/reference-data",
@@ -391,6 +398,13 @@
       "routeContractKey": "route.hcm.configuration.settings-operations.page",
       "routeId": "hcm.management.settings-operations",
       "pattern": "/hr/settings/operations",
+      "productId": "hcm",
+      "surfaceId": "hcm.management"
+    },
+    {
+      "routeContractKey": "route.hcm.configuration.workflow.page",
+      "routeId": "hcm.management.workflow",
+      "pattern": "/hr/settings/workflow",
       "productId": "hcm",
       "surfaceId": "hcm.management"
     },
@@ -503,6 +517,13 @@
       "routeContractKey": "route.hcm.operations.payroll-population.page",
       "routeId": "hcm.operations.payroll-population",
       "pattern": "/hr/operations/payroll/population",
+      "productId": "hcm",
+      "surfaceId": "hcm.operations"
+    },
+    {
+      "routeContractKey": "route.hcm.operations.people-appointments.page",
+      "routeId": "hcm.operations.people-appointments",
+      "pattern": "/hr/operations/people/appointments",
       "productId": "hcm",
       "surfaceId": "hcm.operations"
     },
@@ -689,6 +710,13 @@
       "surfaceId": "hcm.team"
     },
     {
+      "routeContractKey": "route.hcm.team.delegation.page",
+      "routeId": "hcm.team.delegation",
+      "pattern": "/hr/team/delegation",
+      "productId": "hcm",
+      "surfaceId": "hcm.team"
+    },
+    {
       "routeContractKey": "route.hcm.team.home.page",
       "routeId": "hcm.team.home",
       "pattern": "/hr/team",
@@ -699,6 +727,13 @@
       "routeContractKey": "route.hcm.team.leave.page",
       "routeId": "hcm.team.leave",
       "pattern": "/hr/team/leave",
+      "productId": "hcm",
+      "surfaceId": "hcm.team"
+    },
+    {
+      "routeContractKey": "route.hcm.team.people-changes.page",
+      "routeId": "hcm.team.people-changes",
+      "pattern": "/hr/team/people-changes",
       "productId": "hcm",
       "surfaceId": "hcm.team"
     },

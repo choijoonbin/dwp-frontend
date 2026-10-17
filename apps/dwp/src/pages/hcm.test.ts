@@ -98,6 +98,11 @@ describe('HCM legacy page guard', () => {
 
   it.each([
     '/hr/operations/people/organization-positions',
+    '/hr/team/people-changes',
+    '/hr/team/delegation',
+    '/hr/operations/people/appointments',
+    '/hr/settings/people-employment',
+    '/hr/settings/workflow',
     '/hr/operations/payroll/population',
     '/hr/settings/operations',
   ])('resolves the admitted R7 PAGE %s through the governed shell', (path) => {

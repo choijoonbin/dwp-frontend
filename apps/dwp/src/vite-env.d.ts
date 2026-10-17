@@ -9,6 +9,8 @@ interface ImportMetaEnv {
   readonly VITE_HOME_WIDGET_LIBRARY_ENABLED?: string;
   readonly VITE_PRODUCT_NOTIFICATION_RUNTIME?: string;
   readonly VITE_PRODUCT_SURFACE_TELEMETRY_COLLECTION?: string;
+  readonly VITE_HRIS_HRM_007_ENABLED?: string;
+  readonly VITE_HRIS_SYS_003_ENABLED?: string;
 }
 
 interface ImportMeta {

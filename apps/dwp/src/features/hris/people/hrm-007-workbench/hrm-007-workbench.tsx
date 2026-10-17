@@ -333,8 +333,7 @@ const HRM007_FILTER_SEARCH_KEYS: Readonly<Record<Hrm007QueryId, readonly string[
 );
 
 const REPEATABLE_FILTER_SEARCH_KEY = /\]\[(?:codes|publicIds|policyKeys)\]$/u;
-const CIVIL_DATE_OR_INSTANT =
-  /^(?:\d{4}-\d{2}-\d{2}|\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,9})?(?:Z|[+-]\d{2}:\d{2}))$/u;
+const HRM007_AS_OF = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,9})?(?:Z|[+-]\d{2}:\d{2})$/u;
 const LEGAL_ENTITY_PUBLIC_ID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/iu;
 
 function appendSingleSearchValue(
@@ -360,16 +359,25 @@ function governedSearchParams(
     'scope',
     (value) => Boolean(value) && value === value.trim() && value.length <= 256
   );
-  appendSingleSearchValue(
-    next,
-    current,
-    'navigationScope',
-    (value) => value === 'TENANT' || value === 'LEGAL_ENTITY'
-  );
-  appendSingleSearchValue(next, current, 'legalEntityPublicId', (value) =>
-    LEGAL_ENTITY_PUBLIC_ID.test(value)
-  );
-  appendSingleSearchValue(next, current, 'asOf', (value) => CIVIL_DATE_OR_INSTANT.test(value));
+  const navigationScopes = current.getAll('navigationScope');
+  const legalEntityPublicIds = current.getAll('legalEntityPublicId');
+  if (
+    navigationScopes.length === 1 &&
+    navigationScopes[0] === 'TENANT' &&
+    legalEntityPublicIds.length === 0
+  ) {
+    next.set('navigationScope', 'TENANT');
+  }
+  if (
+    navigationScopes.length === 1 &&
+    navigationScopes[0] === 'LEGAL_ENTITY' &&
+    legalEntityPublicIds.length === 1 &&
+    LEGAL_ENTITY_PUBLIC_ID.test(legalEntityPublicIds[0]!)
+  ) {
+    next.set('navigationScope', 'LEGAL_ENTITY');
+    next.set('legalEntityPublicId', legalEntityPublicIds[0]!);
+  }
+  appendSingleSearchValue(next, current, 'asOf', (value) => HRM007_AS_OF.test(value));
 
   const requestedSort = current.getAll('sort');
   const canonicalSort = [...requestedSort];

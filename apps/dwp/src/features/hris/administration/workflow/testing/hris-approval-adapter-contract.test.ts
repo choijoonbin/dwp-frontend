@@ -10,7 +10,12 @@ import {
   workflowPublishAdmitted,
   workflowReadAdmitted,
 } from '../model/hris-approval-adapter-contract';
-import { delegationAdmission, workflowAdmission } from './hris-approval-adapter-fixtures.test-support';
+import {
+  delegationAdmission,
+  delegationCommandAdmission,
+  workflowAdmission,
+  workflowCommandAdmission,
+} from './hris-approval-adapter-fixtures.test-support';
 
 import type { ApprovalMutationExecution } from '@dwp-frontend/shared-utils';
 
@@ -23,42 +28,78 @@ describe('HRIS Approval adapter authority contract', () => {
       delegationCreate: expect.objectContaining({ id: 'SHARED-API-011', method: 'POST' }),
       delegationRevoke: expect.objectContaining({ id: 'SHARED-API-012', method: 'POST' }),
     });
+    expect(
+      Object.values(HRIS_APPROVAL_SHARED_API_CONTRACTS).every(
+        (contract) => !Object.hasOwn(contract, 'duty')
+      )
+    ).toBe(true);
   });
 
-  it('separates read and command authority and fails closed on cross-product near misses', () => {
+  it('requires exact same-revision HCM PAGE and native Approval PAGE read evidence', () => {
     const workflow = workflowAdmission();
     expect(workflowReadAdmitted(workflow)).toBe(true);
-    expect(workflowPublishAdmitted(workflow)).toBe(true);
-    expect(workflowPublishAdmitted({ ...workflow, command: undefined })).toBe(false);
-    expect(workflowReadAdmitted({ ...workflow, hcmProductAccess: 'DENY' as 'VIEW' })).toBe(false);
-    expect(workflowReadAdmitted({ ...workflow, approvalsProductAccess: 'DENY' as 'VIEW' })).toBe(
-      false
-    );
     expect(workflowReadAdmitted({ ...workflow, ownerTenantId: 'tenant-99' })).toBe(false);
     expect(workflowReadAdmitted({ ...workflow, ownerActorId: '99' })).toBe(false);
-    expect(workflowReadAdmitted({ ...workflow, rolePlane: 'MANAGER' })).toBe(false);
     expect(
       workflowReadAdmitted({
         ...workflow,
-        read: { ...workflow.read, duty: 'HRIS_DUTY_MANAGER_TEAM_READER' },
+        hcmPageRouteContractKey: 'route.hcm.team.delegation.page',
       })
     ).toBe(false);
-    expect(workflowReadAdmitted({ ...workflow, purposeBound: false as true })).toBe(false);
     expect(
-      workflowPublishAdmitted({
+      workflowReadAdmitted({
         ...workflow,
-        command: { ...workflow.command!, decisionRevision: 'stale' },
+        read: { ...workflow.read, contextScopeKey: 'approval-admin-scope-99' },
+      })
+    ).toBe(false);
+    expect(
+      workflowReadAdmitted({
+        ...workflow,
+        read: { ...workflow.read, decisionRevision: 'stale' },
       })
     ).toBe(false);
 
     const team = delegationAdmission();
     expect(delegationReadAdmitted(team)).toBe(true);
-    expect(delegationManageAdmitted(team)).toBe(true);
     expect(delegationReadAdmitted({ ...team, populationScopeKey: undefined })).toBe(false);
+    expect(
+      delegationReadAdmitted({
+        ...team,
+        populationScopeKey: 'different-hcm-population',
+      })
+    ).toBe(false);
+  });
+
+  it('keeps commands absent by default and admits only exact native Approval ACTION evidence', () => {
+    const workflow = workflowAdmission();
+    expect(workflowPublishAdmitted(workflow)).toBe(false);
+    expect(workflowPublishAdmitted({ ...workflow, command: workflowCommandAdmission() })).toBe(
+      true
+    );
+    expect(
+      workflowPublishAdmitted({
+        ...workflow,
+        command: workflowCommandAdmission({ decisionRevision: 'stale' }),
+      })
+    ).toBe(false);
+    expect(
+      workflowPublishAdmitted({
+        ...workflow,
+        command: workflowCommandAdmission({
+          routeContractKeys: ['route.approvals.admin.policy-create.action'],
+        }),
+      })
+    ).toBe(false);
+
+    const team = delegationAdmission();
+    expect(delegationManageAdmitted(team)).toBe(false);
+    expect(delegationManageAdmitted({ ...team, command: delegationCommandAdmission() })).toBe(true);
     expect(
       delegationManageAdmitted({
         ...team,
-        command: { ...team.command!, separationOfDuties: [] },
+        command: delegationCommandAdmission({
+          routeContractKeys: ['route.approvals.work.delegation-create.action'],
+        }),
       })
     ).toBe(false);
   });
@@ -80,8 +121,7 @@ describe('HRIS Approval adapter authority contract', () => {
         expectedDecisionRevision:
           mismatch === 'revision' ? 'stale-decision' : admission.pageDecisionRevision,
         contextKey: 'approval-owner',
-        contextScopeKey:
-          mismatch === 'scope' ? 'owner-scope-42' : admission.ownerContextScopeKey,
+        contextScopeKey: mismatch === 'scope' ? 'owner-scope-42' : admission.ownerContextScopeKey,
         idempotencyKey: mismatch === 'idempotency' ? '' : 'sys003-command-0002',
       };
       const execution: ApprovalMutationExecution =

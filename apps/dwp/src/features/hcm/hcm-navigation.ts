@@ -52,11 +52,14 @@ export type HcmView =
   | 'team-time'
   | 'team-absence'
   | 'team-leave'
+  | 'team-people-changes'
+  | 'team-delegation'
   | 'operations'
   | 'operations-home'
   | 'people'
   | 'employee-change-requests'
   | 'employment-assignments'
+  | 'people-appointments'
   | 'organization-positions'
   | 'assignments'
   | 'time-operations'
@@ -81,6 +84,8 @@ export type HcmView =
   | 'settings-payroll'
   | 'settings-navigation-policy'
   | 'settings-operations'
+  | 'settings-people-employment'
+  | 'settings-workflow'
   | 'exports';
 
 export type HcmNavigationItem = ProductNavigationItem & {
@@ -98,6 +103,8 @@ export type HcmNavigationGroup = {
 export type HrisR7GovernedPageCatalogItem = Readonly<{
   feature:
     | 'HRIS_ORGANIZATION_POSITIONS'
+    | 'HRIS_HRM_APPOINTMENT_WORKBENCH'
+    | 'HRIS_APPROVAL_WORKFLOW_AND_DELEGATION_ADAPTERS'
     | 'HRIS_PAYROLL_RUN_PREPARE'
     | 'HRIS_OPERATIONS_EXCEPTION_CENTER'
     | 'HRIS_TIME_CLOSE_HANDOFF';
@@ -109,6 +116,27 @@ export type HrisR7GovernedPageCatalogItem = Readonly<{
 
 export const HRIS_R7_GOVERNED_PAGE_CATALOG: readonly HrisR7GovernedPageCatalogItem[] =
   Object.freeze([
+    Object.freeze({
+      feature: 'HRIS_HRM_APPOINTMENT_WORKBENCH',
+      module: 'HRM',
+      path: '/hr/team/people-changes',
+      routeContractKey: 'route.hcm.team.people-changes.page',
+      state: 'ADMISSION_MOUNTED',
+    }),
+    Object.freeze({
+      feature: 'HRIS_HRM_APPOINTMENT_WORKBENCH',
+      module: 'HRM',
+      path: '/hr/operations/people/appointments',
+      routeContractKey: 'route.hcm.operations.people-appointments.page',
+      state: 'ADMISSION_MOUNTED',
+    }),
+    Object.freeze({
+      feature: 'HRIS_HRM_APPOINTMENT_WORKBENCH',
+      module: 'HRM',
+      path: '/hr/settings/people-employment',
+      routeContractKey: 'route.hcm.configuration.people-employment.page',
+      state: 'ADMISSION_MOUNTED',
+    }),
     Object.freeze({
       feature: 'HRIS_ORGANIZATION_POSITIONS',
       module: 'HRM',
@@ -128,6 +156,20 @@ export const HRIS_R7_GOVERNED_PAGE_CATALOG: readonly HrisR7GovernedPageCatalogIt
       module: 'SYS',
       path: '/hr/settings/operations',
       routeContractKey: 'route.hcm.configuration.settings-operations.page',
+      state: 'ADMISSION_MOUNTED',
+    }),
+    Object.freeze({
+      feature: 'HRIS_APPROVAL_WORKFLOW_AND_DELEGATION_ADAPTERS',
+      module: 'SYS',
+      path: '/hr/settings/workflow',
+      routeContractKey: 'route.hcm.configuration.workflow.page',
+      state: 'ADMISSION_MOUNTED',
+    }),
+    Object.freeze({
+      feature: 'HRIS_APPROVAL_WORKFLOW_AND_DELEGATION_ADAPTERS',
+      module: 'SYS',
+      path: '/hr/team/delegation',
+      routeContractKey: 'route.hcm.team.delegation.page',
       state: 'ADMISSION_MOUNTED',
     }),
     Object.freeze({
@@ -261,6 +303,26 @@ export const HCM_NAVIGATION: readonly HcmNavigationGroup[] = [
         audience: 'manager',
         governedOnly: true,
         requiredResourceKey: 'DATA.HR_ABSENCE',
+        requiredPermissionCode: 'VIEW',
+      },
+      {
+        section: 'team',
+        view: 'team-people-changes',
+        path: '/hr/team/people-changes',
+        icon: ClipboardList,
+        audience: 'manager',
+        governedOnly: true,
+        requiredResourceKey: 'DATA.HRIS_WORKFORCE',
+        requiredPermissionCode: 'VIEW',
+      },
+      {
+        section: 'team',
+        view: 'team-delegation',
+        path: '/hr/team/delegation',
+        icon: GitBranch,
+        audience: 'manager',
+        governedOnly: true,
+        requiredResourceKey: 'DATA.HRIS_WORKFORCE',
         requiredPermissionCode: 'VIEW',
       },
     ],
@@ -423,6 +485,16 @@ export const HCM_NAVIGATION: readonly HcmNavigationGroup[] = [
       },
       {
         section: 'operate',
+        view: 'people-appointments',
+        path: '/hr/operations/people/appointments',
+        icon: BriefcaseBusiness,
+        audience: 'operator',
+        governedOnly: true,
+        requiredResourceKey: 'DATA.HRIS_WORKFORCE',
+        requiredPermissionCode: 'VIEW',
+      },
+      {
+        section: 'operate',
         view: 'organization-positions',
         path: '/hr/operations/people/organization-positions',
         icon: Network,
@@ -522,6 +594,26 @@ export const HCM_NAVIGATION: readonly HcmNavigationGroup[] = [
       },
       {
         section: 'foundation',
+        view: 'settings-people-employment',
+        path: '/hr/settings/people-employment',
+        icon: Settings2,
+        audience: 'operator',
+        governedOnly: true,
+        requiredResourceKey: 'CONFIG.HRIS_WORKBENCH',
+        requiredPermissionCode: 'VIEW',
+      },
+      {
+        section: 'foundation',
+        view: 'settings-workflow',
+        path: '/hr/settings/workflow',
+        icon: GitBranch,
+        audience: 'operator',
+        governedOnly: true,
+        requiredResourceKey: 'CONFIG.HRIS_WORKBENCH',
+        requiredPermissionCode: 'VIEW',
+      },
+      {
+        section: 'foundation',
         view: 'reference-data',
         path: '/hr/data/reference',
         icon: BookKey,
@@ -610,6 +702,14 @@ export const HCM_TEAM_NAVIGATION = projectProductSurfaceNavigation(HCM_NAVIGATIO
   team: { taskKind: 'team', access: policy('hcm.team-access.v1') },
   'team-time': { taskKind: 'team', access: capability('hcm.team.time.read') },
   'team-leave': { taskKind: 'team', access: capability('hcm.team.absence.read') },
+  'team-people-changes': {
+    taskKind: 'team',
+    access: capability('hcm.team.people-change.view'),
+  },
+  'team-delegation': {
+    taskKind: 'team',
+    access: capability('hcm.team.members.view'),
+  },
 });
 
 export const HCM_OPERATIONS_NAVIGATION = projectProductSurfaceNavigation(HCM_NAVIGATION, {
@@ -679,6 +779,10 @@ export const HCM_OPERATIONS_NAVIGATION = projectProductSurfaceNavigation(HCM_NAV
     taskKind: 'operations',
     access: capability('hcm.operations.people.view'),
   },
+  'people-appointments': {
+    taskKind: 'operations',
+    access: capability('hcm.operations.people.view'),
+  },
   'organization-positions': {
     taskKind: 'operations',
     access: capability('hcm.operations.organization.view'),
@@ -710,6 +814,14 @@ export const HCM_MANAGEMENT_NAVIGATION = projectProductSurfaceNavigation(HCM_NAV
   'settings-operations': {
     taskKind: 'administration',
     access: capability('hcm.configuration.workbench.view'),
+  },
+  'settings-people-employment': {
+    taskKind: 'administration',
+    access: capability('hcm.configuration.workbench.view'),
+  },
+  'settings-workflow': {
+    taskKind: 'administration',
+    access: capability('hcm.configuration.workflow.view'),
   },
   'organization-design': {
     taskKind: 'administration',

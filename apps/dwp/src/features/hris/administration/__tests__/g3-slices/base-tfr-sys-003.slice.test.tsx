@@ -4,16 +4,15 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import {
-  HRIS_APPROVAL_SHARED_API_CONTRACTS,
-  HrisWorkflowPolicyWorkspace,
-} from '../../workflow';
+import { HRIS_APPROVAL_SHARED_API_CONTRACTS, HrisWorkflowPolicyWorkspace } from '../../workflow';
 import { HrisTeamDelegationWorkspace } from '../../../team/delegation';
 import {
   delegation,
   delegationAdmission,
+  delegationCommandAdmission,
   policy,
   workflowAdmission,
+  workflowCommandAdmission,
 } from '../../workflow/testing/hris-approval-adapter-fixtures.test-support';
 
 import type { ApprovalMutationExecution } from '@dwp-frontend/shared-utils';
@@ -24,12 +23,13 @@ import type { HrisApprovalCommandRunner } from '../../workflow';
 const secureExecution = (input: {
   expectedDecisionRevision: string;
   expectedObjectVersion?: number;
+  contextScopeKey: string;
 }): ApprovalMutationExecution => ({
   mode: 'SECURE',
   rolloutState: '111',
   expectedDecisionRevision: input.expectedDecisionRevision,
   contextKey: 'approval-owner',
-  contextScopeKey: 'owner-scope-42',
+  contextScopeKey: input.contextScopeKey,
   idempotencyKey: 'sys003-command-0001',
   ...(input.expectedObjectVersion === undefined
     ? {}
@@ -44,10 +44,13 @@ const secureExecution = (input: {
       }),
 });
 
-function commandRunner(spy: ReturnType<typeof vi.fn>): HrisApprovalCommandRunner {
+function commandRunner(
+  spy: ReturnType<typeof vi.fn>,
+  contextScopeKey: string
+): HrisApprovalCommandRunner {
   return async <T,>(input: Parameters<HrisApprovalCommandRunner>[0]) => {
     spy(input);
-    return input.run(secureExecution(input)) as Promise<T>;
+    return input.run(secureExecution({ ...input, contextScopeKey })) as Promise<T>;
   };
 }
 
@@ -60,9 +63,10 @@ function button(host: HTMLElement, label: string): HTMLButtonElement {
 }
 
 function input(element: HTMLInputElement | HTMLTextAreaElement, value: string) {
-  const prototype = element instanceof HTMLTextAreaElement
-    ? HTMLTextAreaElement.prototype
-    : HTMLInputElement.prototype;
+  const prototype =
+    element instanceof HTMLTextAreaElement
+      ? HTMLTextAreaElement.prototype
+      : HTMLInputElement.prototype;
   Object.getOwnPropertyDescriptor(prototype, 'value')?.set?.call(element, value);
   element.dispatchEvent(new Event('input', { bubbles: true }));
   element.dispatchEvent(new Event('change', { bubbles: true }));
@@ -95,11 +99,13 @@ describe('BASE-TFR-SYS-003 frontend acceptance slice', () => {
   }
 
   it('seals the five shared owner contracts and no local API route', () => {
-    expect(Object.values(HRIS_APPROVAL_SHARED_API_CONTRACTS).map(({ id, method, path }) => ({
-      id,
-      method,
-      path,
-    }))).toEqual([
+    expect(
+      Object.values(HRIS_APPROVAL_SHARED_API_CONTRACTS).map(({ id, method, path }) => ({
+        id,
+        method,
+        path,
+      }))
+    ).toEqual([
       { id: 'SHARED-API-005', method: 'GET', path: '/api/approvals/v1/admin/policies' },
       {
         id: 'SHARED-API-006',
@@ -157,9 +163,9 @@ describe('BASE-TFR-SYS-003 frontend acceptance slice', () => {
     const runnerSpy = vi.fn();
     await render(
       <HrisWorkflowPolicyWorkspace
-        admission={workflowAdmission()}
+        admission={{ ...workflowAdmission(), command: workflowCommandAdmission() }}
         dataSource={source}
-        commandRunner={commandRunner(runnerSpy)}
+        commandRunner={commandRunner(runnerSpy, 'approval-admin-scope-42')}
       />
     );
     await vi.waitFor(() => expect(source.list).toHaveBeenCalledTimes(1));
@@ -187,7 +193,7 @@ describe('BASE-TFR-SYS-003 frontend acceptance slice', () => {
       <HrisWorkflowPolicyWorkspace
         admission={{ ...workflowAdmission(), command: undefined }}
         dataSource={source}
-        commandRunner={commandRunner(runnerSpy)}
+        commandRunner={commandRunner(runnerSpy, 'approval-admin-scope-42')}
       />
     );
     await vi.waitFor(() => expect(source.list).toHaveBeenCalledTimes(2));
@@ -200,16 +206,19 @@ describe('BASE-TFR-SYS-003 frontend acceptance slice', () => {
     const source: HrisDelegationDataSource = {
       list: vi.fn().mockResolvedValue([delegation()]),
       create: vi.fn().mockImplementation(
-        () => new Promise((resolve) => { resolveCreate = resolve; })
+        () =>
+          new Promise((resolve) => {
+            resolveCreate = resolve;
+          })
       ),
       revoke: vi.fn().mockResolvedValue([delegation({ lifecycleState: 'REVOKED', version: 10 })]),
     };
     const runnerSpy = vi.fn();
     await render(
       <HrisTeamDelegationWorkspace
-        admission={delegationAdmission()}
+        admission={{ ...delegationAdmission(), command: delegationCommandAdmission() }}
         dataSource={source}
-        commandRunner={commandRunner(runnerSpy)}
+        commandRunner={commandRunner(runnerSpy, 'approval-work-scope-42')}
       />
     );
     await vi.waitFor(() => expect(source.list).toHaveBeenCalledTimes(1));
@@ -237,7 +246,9 @@ describe('BASE-TFR-SYS-003 frontend acceptance slice', () => {
       expect(host.textContent).toContain('No optimistic success has been applied')
     );
     await act(async () => resolveCreate?.([delegation()]));
-    await vi.waitFor(() => expect(host.textContent).toContain('Owner-confirmed delegation outcome'));
+    await vi.waitFor(() =>
+      expect(host.textContent).toContain('Owner-confirmed delegation outcome')
+    );
 
     await act(async () => button(host, 'Revoke delegation').click());
     await vi.waitFor(() => expect(source.revoke).toHaveBeenCalledTimes(1));
@@ -287,7 +298,7 @@ describe('BASE-TFR-SYS-003 frontend acceptance slice', () => {
 
     await render(
       <HrisWorkflowPolicyWorkspace
-        admission={{ ...workflowAdmission(), purposeBound: false as true }}
+        admission={{ ...workflowAdmission(), ownerActorId: 'foreign-actor' }}
         dataSource={unavailableSource}
       />
     );

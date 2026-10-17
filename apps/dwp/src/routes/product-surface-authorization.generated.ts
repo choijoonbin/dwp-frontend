@@ -14,9 +14,9 @@ export type ProductAuthorizationRouteProjection = Readonly<{
 
 export const PRODUCT_AUTHORIZATION_REGISTRY_REVISION = {
   bundleKey: 'product-surfaces',
-  version: 49,
-  checksum: '5c1dccdc27d8b260fbf001de5695e983a7107072824a8087038340d0d84cbc60',
-  indexChecksum: '159f4d0087eeacd5d6d5653d0126599ddf195f5188341c51933b8a2b673f756c',
+  version: 51,
+  checksum: '3beda5c13a3af0e265ace4533a3afcee3691c2b7486465dcf46156e58ae5ed2c',
+  indexChecksum: '65091e1c8ace82ff9376658c7cd46d0a5850c138c28eccd8ba724316eb5a2a56',
 } as const;
 
 export const PRODUCT_SURFACE_ROLLOUT_INVENTORY_REVISION = {
@@ -8265,6 +8265,38 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
     ],
   },
   {
+    routeContractKey: 'route.hcm.configuration.people-employment.data',
+    routeKind: 'DATA',
+    navigationContextId: 'hcm.management',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.management',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/people/v1/hris/workbench/configuration/people-employment',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.configuration.people-employment.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'hcm.management',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.management',
+    routeId: 'hcm.management.people-employment',
+    pattern: '/hr/settings/people-employment',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/people/v1/hris/workbench/configuration/people-employment',
+      },
+    ],
+  },
+  {
     routeContractKey: 'route.hcm.configuration.settings-operations.page',
     routeKind: 'PAGE',
     navigationContextId: 'hcm.management',
@@ -8295,6 +8327,17 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
         path: '/api/platform/v1/hris/workbench/settings-reference',
       },
     ],
+  },
+  {
+    routeContractKey: 'route.hcm.configuration.workflow.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'hcm.management',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.management',
+    routeId: 'hcm.management.workflow',
+    pattern: '/hr/settings/workflow',
+    gatewayBindings: [],
   },
   {
     routeContractKey: 'route.hcm.management.controlled-export-cancel.action',
@@ -9713,6 +9756,38 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
     ],
   },
   {
+    routeContractKey: 'route.hcm.operations.people-appointments.data',
+    routeKind: 'DATA',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/people/v1/hris/workbench/operations/appointments',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.people-appointments.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: 'hcm.operations.people-appointments',
+    pattern: '/hr/operations/people/appointments',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/people/v1/hris/workbench/operations/appointments',
+      },
+    ],
+  },
+  {
     routeContractKey: 'route.hcm.operations.people.page',
     routeKind: 'PAGE',
     navigationContextId: 'hcm.operations',
@@ -10957,6 +11032,17 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
     ],
   },
   {
+    routeContractKey: 'route.hcm.team.delegation.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'hcm.team',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.team',
+    routeId: 'hcm.team.delegation',
+    pattern: '/hr/team/delegation',
+    gatewayBindings: [],
+  },
+  {
     routeContractKey: 'route.hcm.team.home.page',
     routeKind: 'PAGE',
     navigationContextId: 'hcm.team',
@@ -10985,6 +11071,38 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
       {
         method: 'GET',
         path: '/api/people/v1/hr/team/absence',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.team.people-changes.data',
+    routeKind: 'DATA',
+    navigationContextId: 'hcm.team',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.team',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/people/v1/hris/workbench/team/people-changes',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.team.people-changes.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'hcm.team',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.team',
+    routeId: 'hcm.team.people-changes',
+    pattern: '/hr/team/people-changes',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/people/v1/hris/workbench/team/people-changes',
       },
     ],
   },
