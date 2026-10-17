@@ -1,0 +1,193 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-01-people-v49-runtime-acceptance-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-01-PEOPLE-V49-RUNTIME-ACCEPTANCE-20261017-R1",
+  "acceptedAt": "2026-10-17T17:22:00+09:00",
+  "acceptedBy": "SYS_COMMON_INTEGRATION_CONTROL_INDEPENDENT_OWNER_PEP_REVIEW",
+  "result": "PASS_ACCEPTED_AND_INTEGRATED_NO_P0_OR_P1_DEFAULT_OFF",
+  "immutableEvidence": [
+    {
+      "path": "owner-v49-runtime-preflight.v1.json",
+      "sha256": "aed8d293bb6ad6d48ecf76594484b82b3cba9572ab199d4cccfbfeaff068fa20",
+      "bytes": 50406,
+      "role": "PRE_PATCH_OWNER_RUNTIME_GAP_AND_EXACT_AMENDMENT_BOUNDARY"
+    },
+    {
+      "path": "hrm-005-transport-and-reuse-seam-successor.v1.json",
+      "sha256": "3cbc7b9632ec267bca8b068e23a30b021fbeab35f1ce9c807122d2e812088aff",
+      "bytes": 21875,
+      "role": "HRM005_EXACT_TRANSPORT_REUSE_AND_OWNER_AUTHORITY_SEAL"
+    },
+    {
+      "path": "hrm-005-boundary-validation-receipt.v1.json",
+      "sha256": "0ee5859e91cf92123a6faa7a27cafa13b0fac56e970f02cab8ef62f7cd5c76f5",
+      "bytes": 12039,
+      "role": "HRM005_INDEPENDENT_BOUNDARY_VALIDATION"
+    }
+  ],
+  "candidateBackend": {
+    "repository": "dwp-backend",
+    "branch": "codex/hris-wave7-r7-people-v49-runtime-backend-20261017-r1",
+    "baseCommit": "3d3f141d95f0252f66bd5987b6cba30fadc431e9",
+    "baseTree": "bd0de7c5e36658da84bdb2cadd6e0504b2f9323b",
+    "candidateCommit": "ff17e06f81e5247d358186c5beef0d56ab7ef316",
+    "candidateTree": "147bb1afd5635209d5db166a513d970b6e0002c3",
+    "parentCommit": "3d3f141d95f0252f66bd5987b6cba30fadc431e9",
+    "candidateWorktreeClean": true,
+    "historyShape": "SINGLE_CHILD_OF_ACCEPTED_BACKEND_V49_BASE"
+  },
+  "changedPathBoundary": {
+    "result": "PASS_EXACT_SIX_PATH_CLOSED_SET",
+    "pathCount": 6,
+    "paths": [
+      {
+        "path": "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmProductSurfacePepFilter.java",
+        "sha256": "fdf12b0a4f8ac9b47d0b2db4b479a12a5b78370b39d6422b9eaf4d894753ae6b",
+        "bytes": 15613,
+        "role": "TRUSTED_CONTEXT_DEFAULT_OFF_AND_TENANT_ENROLLMENT_PRE_CHAIN_GATE"
+      },
+      {
+        "path": "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmScopeSelectionValidator.java",
+        "sha256": "04d68b1a1e8cdc9debfa6818525fe04125b73d7be96424494335c37bb2040712",
+        "bytes": 13386,
+        "role": "OWNER_DERIVED_ORGANIZATION_TARGET_POPULATION_AND_FIELD_AUTHORITY"
+      },
+      {
+        "path": "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmV3PepRegistry.java",
+        "sha256": "86fb7b74e8db6c56a95a1abc86fb82e12f46e7f675a92fca9408767e0801384a",
+        "bytes": 34222,
+        "role": "PINNED_PEOPLE_V49_REGISTRY_ROUTE_PURPOSE_PREDICATE_AND_CHECKSUM_CLOSURE"
+      },
+      {
+        "path": "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmOwnerPepExecutionTest.java",
+        "sha256": "7024cb56b63f12157b6e276dc6eb4572cec22386a98217de346e10e3d2525e08",
+        "bytes": 22586,
+        "role": "OWNER_SCOPE_AND_FIELD_REVALIDATION_CONTRACT_TEST"
+      },
+      {
+        "path": "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmProductSurfacePepFilterTest.java",
+        "sha256": "0bad927b93a615d8fb497c7d8017491a4efb1e9ee63d93644373f5bcd838b376",
+        "bytes": 24379,
+        "role": "TRUSTED_ROUTE_ZERO_CALL_AND_MALFORMED_AUTHORITY_CONTRACT_TEST"
+      },
+      {
+        "path": "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmV3PepRegistryTest.java",
+        "sha256": "9c306b62722dc365cb62be5478f5d5a809ca2b8652a5731c35fe8f09f0a1911c",
+        "bytes": 29379,
+        "role": "V49_CLOSURE_V42_REGRESSION_AND_SHARED_PATH_ALIAS_CONTRACT_TEST"
+      }
+    ],
+    "outsideBoundaryPathCount": 0,
+    "generatedProjectionModified": false,
+    "gitShowCheck": "PASS"
+  },
+  "runtimeContract": {
+    "claimedRoutes": [
+      {
+        "routeContractKey": "route.hcm.operations.organization-positions.page",
+        "routeKind": "PAGE",
+        "method": "GET",
+        "ownerPath": "/v1/hris/organizations/graph"
+      },
+      {
+        "routeContractKey": "route.hcm.operations.organization-graph.data",
+        "routeKind": "DATA",
+        "method": "GET",
+        "ownerPath": "/v1/hris/organizations/graph"
+      }
+    ],
+    "sharedWirePathSelection": "TRUSTED_ROUTE_CONTRACT_KEY_REQUIRED_PAGE_AND_DATA_NEVER_PATH_ONLY",
+    "capability": "hcm.operations.organization.view",
+    "resolvedCapability": "DATA.HRIS_ORGANIZATION:VIEW",
+    "predicatePolicyKey": "predicate.hcm-organization-graph-authority.v1",
+    "purposeCode": "HR_OPERATIONS",
+    "operation": "READ",
+    "scopeResolver": "ORGANIZATION_TARGET_POPULATION",
+    "requiredResponsibility": "HRIS_DUTY_ORGANIZATION_VIEWER",
+    "exactScopedResponsibility": "HRIS_DUTY_ORGANIZATION_VIEWER@ORGANIZATION_TARGET_POPULATION",
+    "requiredField": "ORGANIZATION",
+    "populationSelection": "OWNER_DERIVED_TARGET_POPULATION_ONLY",
+    "trustedTenantSource": "PeopleRequestContext.require().tenantId()",
+    "rawTenantHeaderAuthority": false,
+    "canonicalFeature": "HRIS_ORGANIZATION_POSITIONS",
+    "featureAliasesAuthorized": [],
+    "runtimeModeDefault": "OFF",
+    "enrolledTenantsDefault": [],
+    "failClosedGuarantee": "FEATURE_ABSENT_DEFAULT_FALSE_EXPLICIT_FALSE_OR_TENANT_UNENROLLED_RETURNS_ONE_OPAQUE_PRE_CHAIN_DENIAL_WITH_ZERO_CONTROLLER_SERVICE_REPOSITORY_OUTBOX_AND_SCOPE_VALIDATOR_CALLS"
+  },
+  "generatedProjection": {
+    "path": "dwp-people-server/src/main/resources/product-authorization/hcm-people-pep-v49.generated.json",
+    "fileSha256": "bf2d079820cceba5ed8adcb0b7927daaef239bccc178138e25a6f889f55b1834",
+    "bytes": 304189,
+    "projectionKey": "hcm-people-pep-v49",
+    "projectionChecksum": "3346929f550830ee236af702be33da2e58ccfbd0704c44d820f5d8f98a33739a",
+    "projectionChecksumPinMode": "COMPILED_CONSTANT_AND_RECOMPUTED_RESOURCE_VALUE_MUST_MATCH",
+    "sourceBundleVersion": 49,
+    "sourceBundleRouteCount": 1079,
+    "projectedRouteContractCount": 103,
+    "bindingPairCount": 130,
+    "v42BindingSubsetRetained": true,
+    "modifiedByCandidate": false
+  },
+  "targetedVerification": {
+    "policy": "CORRECTED_CLUSTER_ONLY_NO_REPOSITORY_WIDE_SUITE",
+    "command": "./gradlew :dwp-people-server:test --tests 'com.dwp.services.people.security.HcmV3PepRegistryTest.loadsTheExactV49PeopleClosureAndRetainsTheV42Bindings' --tests 'com.dwp.services.people.security.HcmV3PepRegistryTest.organizationPageAndDataShareOnlyTheWirePathNotTheirTrustedRouteIdentity' --tests 'com.dwp.services.people.security.HcmProductSurfacePepFilterTest.organizationPageAndDataUseTheirExactTrustedRouteOnTheSharedGetPath' --tests 'com.dwp.services.people.security.HcmProductSurfacePepFilterTest.organizationFeatureAbsentFalseOrTenantUnenrolledHasOneOpaqueZeroCallDenial' --tests 'com.dwp.services.people.security.HcmProductSurfacePepFilterTest.malformedOrganizationAuthorityNeverReachesTheControllerOrRepository' --tests 'com.dwp.services.people.security.HcmOwnerPepExecutionTest.organizationPageAndDataRevalidateOnlyTheOwnerDerivedOrganizationRootScope' --no-daemon --max-workers=1",
+    "selectedTestCount": 6,
+    "selectedTestsPassed": 6,
+    "selectedTestsFailed": 0,
+    "selectedTestsSkipped": 0,
+    "automaticPilotFixturesCheck": {
+      "testCount": 71,
+      "passed": 71,
+      "failed": 0,
+      "skipped": 0
+    },
+    "repositoryWideSuiteExecuted": false,
+    "result": "PASS"
+  },
+  "independentReview": {
+    "reviewerRole": "READ_ONLY_OWNER_PEP_RUNTIME_ACCEPTANCE_REVIEWER",
+    "reviewedCandidateCommit": "ff17e06f81e5247d358186c5beef0d56ab7ef316",
+    "reviewedCandidateTree": "147bb1afd5635209d5db166a513d970b6e0002c3",
+    "result": "GO",
+    "p0Count": 0,
+    "p1Count": 0,
+    "closedPriorP1": [
+      "Exact responsibility suffix is fixed to ORGANIZATION_TARGET_POPULATION and wrong-scope responsibility is denied.",
+      "Owner revalidation requires ORGANIZATION field authority on the owner-derived target population.",
+      "The compiled projection checksum is pinned independently and must equal the recomputed resource checksum.",
+      "Feature absent, default false, explicit false and tenant unenrolled deny before the chain with zero owner data or mutation calls."
+    ],
+    "mergeCondition": "CANDIDATE_COMMIT_AND_TREE_BYTE_IDENTITY_MUST_NOT_CHANGE"
+  },
+  "integratedBackend": {
+    "repository": "dwp-backend",
+    "branch": "dwp-dev",
+    "commit": "fcb5c1f397d14ea77c7ff9714a272449d99e18a4",
+    "tree": "147bb1afd5635209d5db166a513d970b6e0002c3",
+    "parents": [
+      "3d3f141d95f0252f66bd5987b6cba30fadc431e9",
+      "ff17e06f81e5247d358186c5beef0d56ab7ef316"
+    ],
+    "candidateTreeIdentityPreserved": true,
+    "upstream": "origin/dwp-dev",
+    "cleanAndRemoteExact": true
+  },
+  "authority": {
+    "acceptanceReceiptIssued": true,
+    "peopleV49OwnerRuntimeAccepted": true,
+    "peopleV49OwnerRuntimeIntegrated": true,
+    "hrm005CentralPeoplePepPrerequisiteSatisfied": true,
+    "worktreeMaterializationAuthorizedByThisReceipt": false,
+    "moduleSourceImplementationAuthorized": false,
+    "migrationAuthoringAuthorized": false,
+    "moduleStartTokenIssued": false,
+    "moduleBranchCommitAuthorized": false,
+    "moduleBranchPushAuthorized": false,
+    "mergeToDwpDevAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextGate": "COMMIT_AND_PUSH_THE_MODULE_START_PREPARATION_CARRIER_THEN_MATERIALIZE_ONLY_THE_EIGHT_EXACT_MODULE_WORKTREES; SOURCE_MIGRATION_AND_START_TOKEN_AUTHORITY_REMAIN_WITHHELD"
+}

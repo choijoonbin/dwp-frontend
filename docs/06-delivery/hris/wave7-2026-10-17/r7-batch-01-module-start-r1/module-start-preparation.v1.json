@@ -1,0 +1,393 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-01-module-start-preparation.v1",
+  "preparationId": "HRIS-WAVE7-R7-BATCH-01-MODULE-START-PREPARATION-20261017-R1",
+  "preparedAt": "2026-10-17T17:24:00+09:00",
+  "preparedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "READY_TO_COMMIT_AND_PUSH_PREPARATION_THEN_MATERIALIZE_EIGHT_WORKTREES_TOKENS_WITHHELD",
+  "immutableInputs": [
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-auth-v49-integration-r1/backend-independent-review-and-acceptance-receipt.v1.json",
+      "sha256": "a4554d45ff833e15b5c907d13b51a2b3e3f38284e01b325cf2008a9823728d5f",
+      "bytes": 5590,
+      "role": "CENTRAL_AUTHORIZATION_V49_BACKEND_ACCEPTANCE"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-auth-v49-integration-r1/frontend-v49-sync-and-integration-receipt.v1.json",
+      "sha256": "178152fad3821c4387a6795b33cce4111997bb753e864b574c45964a0a746da5",
+      "bytes": 5447,
+      "role": "CENTRAL_AUTHORIZATION_V49_FRONTEND_SYNC_ACCEPTANCE"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-dispatch-r1/start-token-state.v1.json",
+      "sha256": "cd09dabbf705a2a4f5d3c4833a6795c9a4b3029b5a79b55c2bd4c534d806d810",
+      "bytes": 7444,
+      "role": "IMMUTABLE_PREDECESSOR_ALL_MODULE_TOKENS_WITHHELD"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-authorization-decisions-r1/migration-lease-state.v1.json",
+      "sha256": "9e019aea75199a9d0e664aacf70c51c028959fc2d32789f716244668c2adeb92",
+      "bytes": 2414,
+      "role": "EXCLUSIVE_PAYROLL_PLATFORM_AND_TIME_VERSION_RESERVATIONS_AUTHORING_WITHHELD"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-start-r1/owner-v49-runtime-preflight.v1.json",
+      "sha256": "aed8d293bb6ad6d48ecf76594484b82b3cba9572ab199d4cccfbfeaff068fa20",
+      "bytes": 50406,
+      "role": "FOUR_OWNER_RUNTIME_EXACT_DELTA_AND_FRESH_TOKEN_REQUIREMENTS"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-start-r1/people-v49-runtime-acceptance-receipt.v1.json",
+      "sha256": "d7f32bafafc8539d351d35f1347397c0ece81216c44c2c6cdfc790f0902c868a",
+      "bytes": 9627,
+      "role": "INTEGRATED_PEOPLE_V49_OWNER_RUNTIME_ACCEPTANCE"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-start-r1/hrm-005-transport-and-reuse-seam-successor.v1.json",
+      "sha256": "3cbc7b9632ec267bca8b068e23a30b021fbeab35f1ce9c807122d2e812088aff",
+      "bytes": 21875,
+      "role": "HRM005_TRANSPORT_REUSE_AND_FRONTEND_ADAPTER_SEAM"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-start-r1/hrm-005-boundary-validation-receipt.v1.json",
+      "sha256": "0ee5859e91cf92123a6faa7a27cafa13b0fac56e970f02cab8ef62f7cd5c76f5",
+      "bytes": 12039,
+      "role": "HRM005_INDEPENDENT_BOUNDARY_ACCEPTANCE"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-start-r1/sys-002-event-ingress-seal.v1.json",
+      "sha256": "1fba405bff7936958af02fd53836dcbd30afd9e59aced2d346a275d82f787d0f",
+      "bytes": 22028,
+      "role": "SYS002_EVENT_INGRESS_AND_PRODUCER_EXTERNAL_GATE_SEAL"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-start-r1/tim-007-internal-trust-packet.v1.json",
+      "sha256": "f9f8287ea9e9c72792f1553611bde04b36b8fb150e8a477d1f05ef25545c7fd2",
+      "bytes": 22373,
+      "role": "TIM007_INTERNAL_TRUST_AND_CLOSED_TIME_HANDOFF_SEAL"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-start-r1/tim-007-pay-owner-review.v1.json",
+      "sha256": "2480142163c3b257686691bc73312bed1dc5669c1d86d1c3fabd826a1d734842",
+      "bytes": 16299,
+      "role": "PAY_OWNER_APPROVAL_FOR_TWO_EXACT_CLOSEDTIME_SOURCE_GLOBS"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-per-001-semantic-no-go-r1/semantic-decision-receipt.v1.json",
+      "sha256": "f113a8dfd363bae19dcb44764313155819531c8f141875386619ed55b10e65fb",
+      "bytes": 16229,
+      "role": "PER001_SEALED_NO_GO_AND_ZERO_WORKTREE_AUTHORITY"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-dispatch-r1/owner-packets/base-tfr-hrm-005.owner-packet.v1.json",
+      "sha256": "0fcd8d27fd283b5ddbd697e9ccce3427966e960d80186f02c7cba709cfb66506",
+      "bytes": 11614,
+      "role": "HRM005_OWNER_PACKET"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-dispatch-r1/owner-packets/base-tfr-pay-013.owner-packet.v1.json",
+      "sha256": "bbb1576a3c2672f29ddad43ae6413f69c033a0037416075aaeab6f2b9f178ed8",
+      "bytes": 12365,
+      "role": "PAY013_OWNER_PACKET"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-dispatch-r1/owner-packets/base-tfr-sys-002.owner-packet.v1.json",
+      "sha256": "fb41aa71b2f6fc16394a8d97491797f80b1b74d61ea41b4fce1384a65b881f33",
+      "bytes": 12627,
+      "role": "SYS002_OWNER_PACKET"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-dispatch-r1/owner-packets/base-tfr-tim-007.owner-packet.v1.json",
+      "sha256": "91ad50b4676c12ba041c4661b02ecfe65370dd3bfffbad74a972db700a54a9f8",
+      "bytes": 14331,
+      "role": "TIM007_OWNER_PACKET"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-authorization-decisions-r1/decisions/base-tfr-hrm-005.authorization-decision.v1.json",
+      "sha256": "aa214ce9f28635ffad90d6306b7bf3b2be2548add197f3d0ea23063967301a94",
+      "bytes": 3222,
+      "role": "HRM005_AUTHORIZATION_DECISION"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-authorization-decisions-r1/decisions/base-tfr-pay-013.authorization-decision.v1.json",
+      "sha256": "e44ef024ccb257cbb3205f921c015881139c98940496f59222866b718e232b16",
+      "bytes": 5019,
+      "role": "PAY013_AUTHORIZATION_DECISION"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-authorization-decisions-r1/decisions/base-tfr-sys-002.authorization-decision.v1.json",
+      "sha256": "801e1cade194aceff1394789ee9247fefd4b317bc86d0a1bd3dce5d78c9e3a69",
+      "bytes": 5277,
+      "role": "SYS002_AUTHORIZATION_DECISION"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-authorization-decisions-r1/decisions/base-tfr-tim-007.authorization-decision.v1.json",
+      "sha256": "f0c068d587182837059413895d5f8cc6c1f346f5564a99e1b6822bfa8c9ac203",
+      "bytes": 7526,
+      "role": "TIM007_AUTHORIZATION_DECISION"
+    }
+  ],
+  "observedBases": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "fcb5c1f397d14ea77c7ff9714a272449d99e18a4",
+      "tree": "147bb1afd5635209d5db166a513d970b6e0002c3",
+      "upstream": "origin/dwp-dev",
+      "cleanAndRemoteExact": true,
+      "basePolicy": "ALL_FOUR_BACKEND_WORKTREES_MUST_USE_THIS_EXACT_INTEGRATED_PEOPLE_V49_PIN"
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commitBeforePreparation": "8d7889455181a0acee830a935d5f94930968066d",
+      "treeBeforePreparation": "4988dd7426143be97b62c4936518a4aea1633d90",
+      "upstream": "origin/dwp-dev",
+      "cleanAndRemoteExactBeforePreparation": true,
+      "basePolicy": "ALL_FOUR_FRONTEND_WORKTREES_MUST_USE_THE_EXACT_CLEAN_PUSHED_COMMIT_CONTAINING_ONLY_THIS_TWO_FILE_PREPARATION_CARRIER; LATER_TOKEN_CARRIER_MUST_NOT_BE_MERGED_REBASED_OR_CHERRY_PICKED_INTO_THEM"
+    }
+  },
+  "plannedWorktrees": [
+    {
+      "moduleSession": "HRIS-HRM",
+      "sliceId": "BASE-TFR-HRM-005",
+      "repository": "dwp-backend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261017/r7-batch01/hrm-005/backend",
+      "branch": "codex/hris-wave7-r7-batch01-hrm-005-backend-20261017-r1",
+      "requiredBaseCommit": "fcb5c1f397d14ea77c7ff9714a272449d99e18a4",
+      "requiredBaseTree": "147bb1afd5635209d5db166a513d970b6e0002c3",
+      "requiredState": "MATERIALIZED_PUSHED_CLEAN_REMOTE_EXACT"
+    },
+    {
+      "moduleSession": "HRIS-HRM",
+      "sliceId": "BASE-TFR-HRM-005",
+      "repository": "dwp-frontend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261017/r7-batch01/hrm-005/frontend",
+      "branch": "codex/hris-wave7-r7-batch01-hrm-005-frontend-20261017-r1",
+      "requiredBaseCommit": "POST_PREPARATION_CARRIER_ORIGIN_DWP_DEV_EXACT_HEAD",
+      "requiredState": "MATERIALIZED_PUSHED_CLEAN_REMOTE_EXACT"
+    },
+    {
+      "moduleSession": "HRIS-PAY",
+      "sliceId": "BASE-TFR-PAY-013",
+      "repository": "dwp-backend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261017/r7-batch01/pay-013/backend",
+      "branch": "codex/hris-wave7-r7-batch01-pay-013-backend-20261017-r1",
+      "requiredBaseCommit": "fcb5c1f397d14ea77c7ff9714a272449d99e18a4",
+      "requiredBaseTree": "147bb1afd5635209d5db166a513d970b6e0002c3",
+      "requiredState": "MATERIALIZED_PUSHED_CLEAN_REMOTE_EXACT"
+    },
+    {
+      "moduleSession": "HRIS-PAY",
+      "sliceId": "BASE-TFR-PAY-013",
+      "repository": "dwp-frontend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261017/r7-batch01/pay-013/frontend",
+      "branch": "codex/hris-wave7-r7-batch01-pay-013-frontend-20261017-r1",
+      "requiredBaseCommit": "POST_PREPARATION_CARRIER_ORIGIN_DWP_DEV_EXACT_HEAD",
+      "requiredState": "MATERIALIZED_PUSHED_CLEAN_REMOTE_EXACT"
+    },
+    {
+      "moduleSession": "HRIS-SYS",
+      "sliceId": "BASE-TFR-SYS-002",
+      "repository": "dwp-backend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261017/r7-batch01/sys-002/backend",
+      "branch": "codex/hris-wave7-r7-batch01-sys-002-backend-20261017-r1",
+      "requiredBaseCommit": "fcb5c1f397d14ea77c7ff9714a272449d99e18a4",
+      "requiredBaseTree": "147bb1afd5635209d5db166a513d970b6e0002c3",
+      "requiredState": "MATERIALIZED_PUSHED_CLEAN_REMOTE_EXACT"
+    },
+    {
+      "moduleSession": "HRIS-SYS",
+      "sliceId": "BASE-TFR-SYS-002",
+      "repository": "dwp-frontend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261017/r7-batch01/sys-002/frontend",
+      "branch": "codex/hris-wave7-r7-batch01-sys-002-frontend-20261017-r1",
+      "requiredBaseCommit": "POST_PREPARATION_CARRIER_ORIGIN_DWP_DEV_EXACT_HEAD",
+      "requiredState": "MATERIALIZED_PUSHED_CLEAN_REMOTE_EXACT"
+    },
+    {
+      "moduleSession": "HRIS-TIM",
+      "sliceId": "BASE-TFR-TIM-007",
+      "repository": "dwp-backend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261017/r7-batch01/tim-007/backend",
+      "branch": "codex/hris-wave7-r7-batch01-tim-007-backend-20261017-r1",
+      "requiredBaseCommit": "fcb5c1f397d14ea77c7ff9714a272449d99e18a4",
+      "requiredBaseTree": "147bb1afd5635209d5db166a513d970b6e0002c3",
+      "requiredState": "MATERIALIZED_PUSHED_CLEAN_REMOTE_EXACT"
+    },
+    {
+      "moduleSession": "HRIS-TIM",
+      "sliceId": "BASE-TFR-TIM-007",
+      "repository": "dwp-frontend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261017/r7-batch01/tim-007/frontend",
+      "branch": "codex/hris-wave7-r7-batch01-tim-007-frontend-20261017-r1",
+      "requiredBaseCommit": "POST_PREPARATION_CARRIER_ORIGIN_DWP_DEV_EXACT_HEAD",
+      "requiredState": "MATERIALIZED_PUSHED_CLEAN_REMOTE_EXACT"
+    }
+  ],
+  "migrationPlan": [
+    {
+      "moduleSession": "HRIS-HRM",
+      "sliceId": "BASE-TFR-HRM-005",
+      "stream": "PEOPLE_MAIN",
+      "decision": "NONE_PROVEN_REUSE",
+      "observedHighWater": "V56",
+      "candidateVersion": "V57",
+      "candidatePathPresent": false,
+      "leaseState": "NOT_RESERVED_NOT_AUTHORIZED",
+      "rule": "REUSE_EXISTING_ORGANIZATION_AND_OUTBOX_SCHEMA; DO_NOT_AUTHOR_V57"
+    },
+    {
+      "moduleSession": "HRIS-PAY",
+      "sliceId": "BASE-TFR-PAY-013",
+      "leaseId": "HRIS-WAVE7-R7-BATCH-01-PAYROLL-MAIN-V52-20261017-R1",
+      "stream": "PAYROLL_MAIN",
+      "version": "V52",
+      "path": "dwp-payroll-server/src/main/resources/db/migration/V52__pay_base_tfr_pay_013_run_prepare.sql",
+      "observedHighWater": "V51",
+      "pathPresentAtPreparation": false,
+      "leaseState": "RESERVED_EXCLUSIVE_ACTIVATION_PENDING"
+    },
+    {
+      "moduleSession": "HRIS-SYS",
+      "sliceId": "BASE-TFR-SYS-002",
+      "leaseId": "HRIS-WAVE7-R7-BATCH-01-PLATFORM-MAIN-V331-20261017-R1",
+      "stream": "PLATFORM_MAIN",
+      "version": "V331",
+      "path": "dwp-platform-server/src/main/resources/db/migration/V331__create_hris_operational_exception_projection.sql",
+      "observedHighWater": "V330",
+      "pathPresentAtPreparation": false,
+      "leaseState": "RESERVED_EXCLUSIVE_ACTIVATION_PENDING"
+    },
+    {
+      "moduleSession": "HRIS-TIM",
+      "sliceId": "BASE-TFR-TIM-007",
+      "leaseId": "HRIS-WAVE7-R7-BATCH-01-TIME-MAIN-V12-20261017-R1",
+      "stream": "TIME_MAIN",
+      "version": "V12",
+      "path": "dwp-time-server/src/main/resources/db/migration/V12__tim_base_tfr_tim_007_close_handoff.sql",
+      "observedHighWater": "V11",
+      "pathPresentAtPreparation": false,
+      "leaseState": "RESERVED_EXCLUSIVE_ACTIVATION_PENDING"
+    }
+  ],
+  "tokenIssueGates": {
+    "closedBeforeCarrierPush": {
+      "centralAuthorizationV49AcceptedAndIntegratedDefaultOff": true,
+      "peopleV49RuntimeAcceptedAndIntegrated": true,
+      "fourOwnerPacketsAndAuthorizationDecisionsHashPinned": true,
+      "hrmTransportAndReuseBoundaryAccepted": true,
+      "sysEventIngressBoundarySealed": true,
+      "timInternalTrustBoundarySealed": true,
+      "payOwnerReviewForTimConsumerPathsAccepted": true,
+      "threeMigrationVersionsExclusivelyReserved": true,
+      "per001NoGoSealed": true,
+      "canonicalFeatureNamesResolved": true
+    },
+    "pendingAfterCarrierPush": {
+      "preparationCarrierCommittedAndPushed": false,
+      "eightExactWorktreesMaterialized": false,
+      "eightBranchesPushedCleanAndRemoteExact": false,
+      "threeMigrationLeasesActivated": false,
+      "fourFreshHashBoundStartTokensIssued": false,
+      "startTokenStateSuccessorIssued": false,
+      "moduleStartValidationReceiptIssued": false
+    },
+    "issueRule": "AFTER_THIS_EXACT_TWO_FILE_CARRIER_IS_COMMITTED_AND_PUSHED_MATERIALIZE_AND_PUSH_ONLY_THE_EIGHT_PLANNED_WORKTREES; THEN_ISSUE_ONE_LEASE_ACTIVATION_THREE_MIGRATION_LEASES_FOUR_FRESH_TOKENS_ONE_STATE_SUCCESSOR_AND_ONE_VALIDATION_RECEIPT_IN_A_SEPARATE_CARRIER",
+    "hashDagOrder": [
+      "migration-lease-activation.v1.json",
+      "tokens/base-tfr-hrm-005.start-token.v1.json",
+      "tokens/base-tfr-pay-013.start-token.v1.json",
+      "tokens/base-tfr-sys-002.start-token.v1.json",
+      "tokens/base-tfr-tim-007.start-token.v1.json",
+      "start-token-state-successor.v2.json",
+      "module-start-validation-receipt.v1.json"
+    ]
+  },
+  "dispatchContract": {
+    "eligibleModulesAfterFreshToken": [
+      {
+        "moduleSession": "HRIS-HRM",
+        "sliceId": "BASE-TFR-HRM-005",
+        "canonicalFeature": "HRIS_ORGANIZATION_POSITIONS",
+        "featureAliasesAuthorized": [],
+        "plannedTokenPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-start-r1/tokens/base-tfr-hrm-005.start-token.v1.json",
+        "resultEvidenceRoot": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-results-r1/base-tfr-hrm-005"
+      },
+      {
+        "moduleSession": "HRIS-PAY",
+        "sliceId": "BASE-TFR-PAY-013",
+        "canonicalFeature": "HRIS_PAYROLL_RUN_PREPARE",
+        "featureAliasesAuthorized": [],
+        "explicitlyForbiddenFeatureAlias": "HRIS_PAYROLL_POPULATION_PREPARATION",
+        "plannedTokenPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-start-r1/tokens/base-tfr-pay-013.start-token.v1.json",
+        "resultEvidenceRoot": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-results-r1/base-tfr-pay-013"
+      },
+      {
+        "moduleSession": "HRIS-SYS",
+        "sliceId": "BASE-TFR-SYS-002",
+        "canonicalFeature": "HRIS_OPERATIONS_EXCEPTION_CENTER",
+        "featureAliasesAuthorized": [],
+        "explicitlyForbiddenFeatureAlias": "HRIS_OPERATIONAL_EXCEPTION_PROJECTION",
+        "plannedTokenPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-start-r1/tokens/base-tfr-sys-002.start-token.v1.json",
+        "resultEvidenceRoot": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-results-r1/base-tfr-sys-002"
+      },
+      {
+        "moduleSession": "HRIS-TIM",
+        "sliceId": "BASE-TFR-TIM-007",
+        "canonicalFeature": "HRIS_TIME_CLOSE_HANDOFF",
+        "featureAliasesAuthorized": [],
+        "plannedTokenPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-start-r1/tokens/base-tfr-tim-007.start-token.v1.json",
+        "resultEvidenceRoot": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-results-r1/base-tfr-tim-007"
+      }
+    ],
+    "featureResolutionRule": "EACH_SLICE_USES_EXACTLY_ONE_OWNER_PACKET_CANONICAL_FEATURE; ABSENT_FALSE_OR_TENANT_UNENROLLED_MUST_PROVE_ZERO_BEAN_CONTROLLER_SERVICE_REPOSITORY_OUTBOX_WORKER_AND_INTERNAL_TRUST_CALLS",
+    "excludedModule": {
+      "moduleSession": "HRIS-PER",
+      "sliceId": "BASE-TFR-PER-001",
+      "packetFeatureName": "HRIS_PERFORMANCE_NOTIFICATION_ONBOARDING",
+      "state": "SEALED_NO_GO_UNSEALED_NO_SOURCE_AUTHORITY",
+      "worktreePlanned": false,
+      "startTokenPlanned": false,
+      "notificationV36LeasePlanned": false,
+      "peopleV57LeasePlanned": false,
+      "performanceV19LeasePlanned": false,
+      "reason": "ATOMIC_OWNER_PRODUCER_OWNER_ROUTE_AND_PURPOSE_BOUND_RECIPIENT_AUTHORITY_REMAIN_UNSEALED"
+    },
+    "moduleWorktreeBaseRule": "BACKEND_USES_THE_INTEGRATED_PEOPLE_V49_PIN; FRONTEND_USES_THE_PREPARATION_CARRIER_PIN; THE_LATER_TOKEN_CARRIER_IS_CENTRAL_READ_ONLY_AUTHORITY_AND_MUST_NOT_CHANGE_MODULE_BASES",
+    "verificationPolicy": {
+      "order": "NEW_OR_CHANGED_CLUSTER_FIRST_THEN_ONLY_NAMED_SHARED_REGRESSION_SEAMS",
+      "afterFailure": "FIX_AND_RERUN_THE_SMALLEST_FAILED_TARGET_FIRST",
+      "repositoryWideSuitePerCorrection": false,
+      "routedBrowserTestBeforeCentralMount": false,
+      "finalIntegrationAndBrowserMatrix": "CENTRAL_PHASE_AFTER_ALL_FOUR_ACCEPTED_MODULE_RESULTS"
+    },
+    "centralFrontendRouteAndShellMountAuthorized": false,
+    "moduleMergeToDwpDevAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "activationAuthorized": false
+  },
+  "authority": {
+    "preparationRecorded": true,
+    "worktreeMaterializationAuthorizedAfterCarrierPush": true,
+    "authorizedWorktreeCount": 8,
+    "authorizedModuleSessions": [
+      "HRIS-HRM",
+      "HRIS-PAY",
+      "HRIS-SYS",
+      "HRIS-TIM"
+    ],
+    "perWorktreeMaterializationAuthorized": false,
+    "moduleSourceImplementationAuthorized": false,
+    "migrationAuthoringAuthorized": false,
+    "moduleStartTokenIssued": false,
+    "moduleBranchCommitAuthorized": false,
+    "moduleBranchPushAuthorized": false,
+    "mergeToDwpDevAuthorized": false,
+    "centralRouteOrMenuMountAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "COMMIT_AND_PUSH_EXACTLY_THIS_PREPARATION_AND_PEOPLE_ACCEPTANCE_RECEIPT; MATERIALIZE_PUSH_AND_VERIFY_ONLY_THE_EIGHT_PLANNED_WORKTREES; DO_NOT_AUTHOR_SOURCE_OR_MIGRATIONS_OR_DISPATCH_MODULES_BEFORE_THE_SEPARATE_HASH_BOUND_TOKEN_CARRIER"
+}
