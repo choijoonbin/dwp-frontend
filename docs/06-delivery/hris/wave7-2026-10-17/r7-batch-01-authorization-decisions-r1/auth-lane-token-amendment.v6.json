@@ -1,0 +1,90 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-01-auth-lane-token-amendment.v6",
+  "amendmentId": "HRIS-WAVE7-R7-BATCH-01-AUTH-LANE-TOKEN-AMENDMENT-20261017-R6",
+  "recordedAt": "2026-10-17T16:29:26+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL_SEED_LOADER_REGRESSION_REPAIR",
+  "state": "P1_V49_SEED_LOADER_LATEST_INDEX_PROOF_PATH_ADDED_APPEND_ONLY",
+  "immutablePredecessors": [
+    {
+      "path": "central-authorization-decision-amendment.v5.json",
+      "sha256": "1cd3598ae7dd4c7629afc199b265c9d3d10de40706a43583790651336b86dbd2",
+      "mutationForbidden": true
+    },
+    {
+      "path": "auth-lane-token-amendment.v5.json",
+      "sha256": "a27ec3e72f867f3d295a0eac39bc4515f058353471e6db1ea22e4d597b0b1064",
+      "mutationForbidden": true
+    },
+    {
+      "path": "validation-receipt-successor.v5.json",
+      "sha256": "5fb3b512ce5512e159015363b6c1e4573f87decabbc13f3b11a7ee487f7dae83",
+      "mutationForbidden": true
+    },
+    {
+      "repository": "dwp-frontend",
+      "commit": "0ad007e93e363f3e9fd82be446d9223c48ed86f2",
+      "tree": "01ea0fe31541e13cbabc8b54d8f5dfb56ff25af3",
+      "mutationForbidden": true
+    },
+    {
+      "repository": "dwp-backend-auth-lane",
+      "commit": "952e97c47bb8757f8eaae73c58174b1b9c58baef",
+      "tree": "a18a3db1112d3e399c7d42b7f26511258f634276",
+      "mutationForbidden": true
+    }
+  ],
+  "precedence": "This v6 amendment supersedes v5 only for the exact additional targeted test path below. Every v5 central decision, runtime rule, changed-path allowance, denial and false authority flag remains in force.",
+  "observedRegression": {
+    "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/config/ProductAuthorizationSeedLoaderTest.java",
+    "cause": "The accepted v49 candidate moves the immutable index and latest alias from v48 to v49, increases immutable imports from 48 to 49 and route count from 1063 to 1079, while this existing latest-index regression test still asserts the v48 values.",
+    "targetedFailureCount": 2,
+    "classification": "P1_RELEASE_LINEAGE_REGRESSION_PROOF_GAP",
+    "productionBehaviorChangeRequired": false
+  },
+  "exactAppendOnlyPathAllowance": {
+    "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/config/ProductAuthorizationSeedLoaderTest.java",
+    "allowedChangeKinds": [
+      "latest index version assertion from 48 to 49",
+      "immutable version sequence append of 49 only",
+      "latest alias bundle version assertion from 48 to 49",
+      "latest alias route-count assertion from 1063 to 1079",
+      "immutable import invocation count from 48 to 49"
+    ],
+    "forbiddenChangeKinds": [
+      "production loader behavior",
+      "approval, activation or rollback behavior",
+      "fixture weakening or assertion removal",
+      "wildcard version acceptance",
+      "tenant enrollment or runtime activation"
+    ]
+  },
+  "effectiveChangedPathRule": "The effective v6 Auth-lane changed-path closed set is the exact 49-path v5 set plus only ProductAuthorizationSeedLoaderTest.java, for exactly 50 paths. No other path is admitted.",
+  "requiredTargetedProof": {
+    "gradleTask": ":dwp-auth-server:test",
+    "testSelector": "com.dwp.services.auth.config.ProductAuthorizationSeedLoaderTest",
+    "expectedTests": 3,
+    "requiredResult": "PASS_WITH_ZERO_FAILURES",
+    "additionalRequirements": [
+      "The implementation commit contains exactly the v5 set plus the one appended test path.",
+      "The v49 latest alias remains DRAFT and no approve, activate or rollback call is made.",
+      "All immutable versions 1 through 49 are imported exactly once when bulk import is enabled.",
+      "The explicit immutable-version import test remains unchanged in behavior."
+    ]
+  },
+  "authority": {
+    "authLaneTokenAmended": true,
+    "seedLoaderTargetedTestRepairAuthorized": true,
+    "authLaneImplementationCommitAuthorizedWithinExactFiftyPathClosedSet": true,
+    "v49Accepted": false,
+    "moduleTokenIssuanceAllowed": false,
+    "authLanePushAuthorized": false,
+    "authLaneMergeAuthorized": false,
+    "migrationAuthoringAuthorized": false,
+    "moduleImplementationAuthorized": false,
+    "moduleMigrationAuthoringAuthorized": false,
+    "moduleStartTokenIssued": false,
+    "tenantEnrollmentAuthorized": false,
+    "activationAuthorized": false
+  },
+  "nextGate": "TARGETED_SEED_LOADER_TEST_REPAIR_THEN_REFRESHED_BACKEND_IMPLEMENTATION_RECEIPT_AND_INDEPENDENT_REVIEW"
+}

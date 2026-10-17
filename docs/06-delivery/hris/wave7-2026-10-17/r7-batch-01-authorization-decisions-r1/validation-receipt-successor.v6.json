@@ -1,0 +1,95 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-01-authorization-decision-validation-receipt.v6",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-01-AUTHORIZATION-DECISION-VALIDATION-20261017-R6",
+  "validatedAt": "2026-10-17T16:31:00+09:00",
+  "validatedBy": "SYS_COMMON_INTEGRATION_CONTROL_INDEPENDENT_PATH_BOUNDARY_RECHECK",
+  "result": "PASS_APPEND_ONLY_V6_TEST_PATH_REPAIR_AUTHORITY_WITH_IMPLEMENTATION_GATE_OPEN",
+  "immutablePredecessors": [
+    {
+      "path": "central-authorization-decision-amendment.v5.json",
+      "sha256": "1cd3598ae7dd4c7629afc199b265c9d3d10de40706a43583790651336b86dbd2"
+    },
+    {
+      "path": "auth-lane-token-amendment.v5.json",
+      "sha256": "a27ec3e72f867f3d295a0eac39bc4515f058353471e6db1ea22e4d597b0b1064"
+    },
+    {
+      "path": "validation-receipt-successor.v5.json",
+      "sha256": "5fb3b512ce5512e159015363b6c1e4573f87decabbc13f3b11a7ee487f7dae83"
+    },
+    {
+      "repository": "dwp-frontend",
+      "commit": "0ad007e93e363f3e9fd82be446d9223c48ed86f2",
+      "tree": "01ea0fe31541e13cbabc8b54d8f5dfb56ff25af3"
+    },
+    {
+      "repository": "dwp-backend-auth-lane",
+      "commit": "952e97c47bb8757f8eaae73c58174b1b9c58baef",
+      "tree": "a18a3db1112d3e399c7d42b7f26511258f634276"
+    }
+  ],
+  "validatedSuccessor": {
+    "path": "auth-lane-token-amendment.v6.json",
+    "sha256": "e54d6e50b641572d7acbc835e133b36a0303434421652dd966bee576b8f28fe0"
+  },
+  "checks": [
+    {
+      "id": "AUTHDEC-R6-VAL-001",
+      "result": "PASS",
+      "evidence": "All three v5 authority files and their recorded SHA-256 values remain byte-immutable; v6 is append-only."
+    },
+    {
+      "id": "AUTHDEC-R6-VAL-002",
+      "result": "PASS",
+      "evidence": "The independent implementation review reproduced two failures caused only by ProductAuthorizationSeedLoaderTest retaining v48 latest-version, immutable-version-count and 1063-route assertions after the generated index and alias moved to v49 with 1079 routes."
+    },
+    {
+      "id": "AUTHDEC-R6-VAL-003",
+      "result": "PASS",
+      "evidence": "V6 admits exactly one additional existing test file and only exact v49 expectation updates. Production loader code, service behavior, migration, enrollment and activation remain denied."
+    },
+    {
+      "id": "AUTHDEC-R6-VAL-004",
+      "result": "PASS",
+      "evidence": "The effective changed-path boundary is deterministic: the exact 49-path v5 set plus one named test path equals an exact 50-path closed set, with every v5 forbidden path retained."
+    },
+    {
+      "id": "AUTHDEC-R6-VAL-005",
+      "result": "PASS",
+      "evidence": "The targeted proof requires all three seed-loader tests, exact versions 1 through 49, DRAFT-only import and zero approval, activation or rollback interaction; assertion removal or wildcard acceptance is forbidden."
+    },
+    {
+      "id": "AUTHDEC-R6-VAL-006",
+      "result": "PASS",
+      "evidence": "JSON parse, predecessor/successor hash recomputation, one-path set arithmetic and git diff --check pass. No product suite, migration or browser run is claimed by this authority-only receipt."
+    }
+  ],
+  "residualGate": {
+    "decisionId": "AUTH_LANE_V49_SEED_LOADER_REPAIR_IMPLEMENTATION_AND_REFRESHED_REVIEW_REQUIRED",
+    "state": "OPEN_BLOCKING_V49_ACCEPTANCE_MODULE_TOKENS_PUSH_AND_MERGE",
+    "targetedSeedLoaderRepairRequired": true,
+    "refreshedBackendImplementationReceiptRequired": true,
+    "independentImplementationReviewRequired": true,
+    "exactFiftyPathAdmissionRequired": true,
+    "v49Accepted": false,
+    "moduleTokenIssuanceAllowed": false,
+    "authLanePushAuthorized": false,
+    "authLaneMergeAuthorized": false
+  },
+  "authority": {
+    "validationReceiptIssued": true,
+    "seedLoaderTargetedTestRepairAuthorized": true,
+    "authLaneImplementationCommitAuthorizedWithinExactFiftyPathClosedSet": true,
+    "v49Accepted": false,
+    "moduleImplementationAuthorized": false,
+    "moduleMigrationAuthoringAuthorized": false,
+    "moduleTokenIssuanceAllowed": false,
+    "moduleStartTokenIssued": false,
+    "authLanePushAuthorized": false,
+    "authLaneMergeAuthorized": false,
+    "migrationAuthoringAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "activationAuthorized": false
+  },
+  "nextGate": "TARGETED_SEED_LOADER_TEST_REPAIR_THEN_REFRESHED_BACKEND_IMPLEMENTATION_RECEIPT_AND_INDEPENDENT_REVIEW"
+}
