@@ -1,0 +1,203 @@
+{
+  "schema": "dwp.hris.r7-batch03-hrm009-read-only-browser-gate-fixture-execution-authority.v1",
+  "decisionId": "HRIS-WAVE7-R7-BATCH03-HRM009-READ-ONLY-BROWSER-GATE-FIXTURE-AUTHORITY-20261018-R1",
+  "issuedAt": "2026-10-18T08:03:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "AUTHORIZED_ISOLATED_NON_PERSISTENT_READ_ONLY_BROWSER_GATE_FIXTURE_ZERO_POST",
+  "purpose": "Authorize one bounded, reproducible localhost browser fixture that proves the already merged HRM-009 v52 PAGE-to-DATA-to-People-GET read-only path without activating a tenant, enrolling a tenant, mutating a database, using customer data, or enabling the withheld certificate ACTION. The fixture may override only the trusted authority envelope, the exact four HRM-009 PAGE/DATA evaluations, and the exact two Stage-A owner GET projections while forwarding the ordinary local shell and authenticated session to the recovered dwp-dev runtime.",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_DECISION_ID_AND_SHA256",
+    "predecessorMutation": "FORBIDDEN"
+  },
+  "authorityChain": {
+    "centralSuccessorExecutionAuthority": {
+      "path": "hrm-009-central-successor-execution-authority.v1.json",
+      "sha256": "347398ba3b7303a3499a9b18ab9a494fdf3c03e90cce1726f95522bd5334f2a7",
+      "bytes": 39007
+    },
+    "centralIntegrationReceipt": {
+      "path": "hrm-009-central-successor-integration-receipt.v1.json",
+      "sha256": "aaaf7b969ff82a006426be7713893c44d15ab155ad0ddb9f84be778c46364454",
+      "bytes": 5994
+    },
+    "batch03Preflight": {
+      "path": "../r7-batch-03-preflight-r1/semantic-dependency-migration-preflight.v1.json",
+      "sha256": "dde2815eceb71c37d77334002d6cdbd26812c63bd6d38fc0fd82dea17ff745e8",
+      "bytes": 11972
+    }
+  },
+  "pinnedRuntimeBeforeAuthority": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "80cbedf48066d22c86c28ceb7f38c1e91c60260a",
+      "tree": "8815e20cba4fc695bddbc23fed55e09383b6ae65",
+      "originExact": true,
+      "clean": true,
+      "note": "Runtime head includes the post-admission Auth constructor-injection and People proxy-startup correctness fixes; it does not redefine the admitted HRM-009 candidate head."
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "56c57199be021dd585383ef891c784fe622deea9",
+      "tree": "e83e2fb7bf56ec370a90125be385bd6f5bffbc11",
+      "originExact": true,
+      "clean": true
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "originExact": true,
+      "clean": true
+    },
+    "admittedHrm009BackendMerge": "a8c7e57eddfbec3a30278fa5cfe48786606867b9",
+    "admittedHrm009FrontendMerge": "81b35db1125cc51e7c06848922da38e6127d5848"
+  },
+  "sealedContract": {
+    "productAuthorizationVersion": 52,
+    "bundleStatus": "DRAFT",
+    "checksum": "b33fbf968e71f97b09fa497fdfad7d2f6854199170b79fd1602a0ea604977346",
+    "authMigration": "V261",
+    "runtimeDefault": "OFF",
+    "automaticImportEnabled": false,
+    "persistentFeatureActivationCount": 0,
+    "persistentTenantEnrollmentCount": 0
+  },
+  "authorizedPaths": {
+    "newTestSupportOnly": [
+      "scripts/hris-hrm-009-read-only-browser-gate-server.mjs",
+      "playwright.hris-hrm-009-read-only.config.ts",
+      "e2e/hris-hrm-009-read-only-browser-gate.spec.ts"
+    ],
+    "newEvidenceOnly": [
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-central-admission-r1/hrm-009-read-only-browser-gate-evidence/*",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-central-admission-r1/hrm-009-read-only-browser-gate-receipt.v1.json"
+    ],
+    "productionSourceEdits": [],
+    "packageOrLockfileEdits": [],
+    "existingTestHelperEdits": []
+  },
+  "fixtureBoundary": {
+    "transport": "LOCALHOST_EPHEMERAL_REVERSE_PROXY",
+    "persistence": "NONE",
+    "ordinaryRuntimeForwardTarget": "http://127.0.0.1:8080",
+    "dedicatedViteRuntime": {
+      "featureFlag": "VITE_HRIS_HRM_009_ENABLED=true",
+      "scope": "DEDICATED_NON_PRODUCTION_LOCALHOST_PORT_ONLY",
+      "checkedInDefaultRemainsFalse": true
+    },
+    "allowedSyntheticResponses": [
+      "GET /api/auth/product-surface-contexts with trusted contractVersion 2 and fresh five-minute lease",
+      "POST /api/auth/product-surface-access/evaluate for exactly route.hcm.personal.requests.page",
+      "POST /api/auth/product-surface-access/evaluate for exactly route.hcm.personal.requests.data",
+      "POST /api/auth/product-surface-access/evaluate for exactly route.hcm.operations.certificates-documents.page",
+      "POST /api/auth/product-surface-access/evaluate for exactly route.hcm.operations.certificates-documents.data",
+      "GET /api/people/v1/hris/workbench/me/requests",
+      "GET /api/people/v1/hris/workbench/operations/certificates/documents"
+    ],
+    "allOtherRequests": "FORWARD_TO_PINNED_LOCAL_DWP_DEV_GATEWAY",
+    "requiredDenials": [
+      "Every authority evaluation outside the exact four PAGE/DATA keys",
+      "Every HRM-009 POST, PUT, PATCH or DELETE",
+      "Every step-up request for HRM-009"
+    ],
+    "requiredCounters": [
+      "PAGE evaluation by exact key",
+      "DATA evaluation by exact key",
+      "owner GET by exact path",
+      "HRM-009 mutation by method and path",
+      "unexpected authority evaluation"
+    ]
+  },
+  "requiredBrowserMatrix": [
+    {
+      "viewport": "1440x900",
+      "surface": "hcm.personal",
+      "locale": "en",
+      "theme": "light",
+      "required": ["PAGE_BEFORE_DATA_BEFORE_OWNER_GET", "KEYBOARD_REACHABLE", "VISIBLE_FOCUS", "FOCUS_DEEP_LINK", "ZERO_POST"]
+    },
+    {
+      "viewport": "1280x800",
+      "surface": "hcm.operations",
+      "locale": "en",
+      "theme": "dark",
+      "required": ["PAGE_BEFORE_DATA_BEFORE_OWNER_GET", "METADATA_ONLY", "ACTION_DISABLED", "ZERO_POST"]
+    },
+    {
+      "viewport": "390x844",
+      "surface": "hcm.personal",
+      "locale": "ko",
+      "preference": "reduced-motion",
+      "required": ["LONG_KO_EN_LABEL", "NO_HORIZONTAL_DOCUMENT_OVERFLOW", "ACTION_DISABLED", "ZERO_POST"]
+    },
+    {
+      "viewport": "320x720",
+      "surface": "hcm.operations",
+      "preference": "forced-colors",
+      "required": ["PARTIAL_STATE_TRUTHFUL", "KEYBOARD_REACHABLE", "ACTION_DISABLED", "ZERO_POST"]
+    },
+    {
+      "viewport": "640x450_WITH_200_PERCENT_ZOOM",
+      "surface": "hcm.personal",
+      "required": ["NO_HORIZONTAL_DOCUMENT_OVERFLOW", "SEMANTIC_READING_ORDER", "ZERO_POST"]
+    }
+  ],
+  "verificationPolicy": {
+    "browserDriver": "CODEX_CUA_IN_APP_BROWSER",
+    "runEachScenarioOnce": true,
+    "failurePolicy": "REPEAT_ONLY_THE_SMALLEST_FAILED_SCENARIO_AFTER_CORRECTION",
+    "repositoryWideSuiteAuthorized": false,
+    "productionDataAuthorized": false,
+    "persistentDatabaseMutationAuthorized": false,
+    "evidenceRequired": [
+      "viewport screenshot per representative journey",
+      "accessibility-tree observation",
+      "fixture request-order and counter snapshot",
+      "checked-in default-OFF live-runtime observation"
+    ]
+  },
+  "branchPolicy": {
+    "branch": "codex/hris-wave7-r7-batch03-hrm-009-browser-gate-20261018-r1",
+    "strategy": "PINNED_WORKTREE_BRANCH_THEN_REVIEW_THEN_EXACT_NO_FF_CENTRAL_MERGE",
+    "directTestSupportWorkOnDwpDev": false,
+    "conflictPolicy": "STOP_ON_CONFLICT_NO_AUTOMATIC_RESOLUTION"
+  },
+  "forbidden": [
+    "Changing any production frontend or backend source",
+    "Changing package.json, a lockfile, checked-in runtime defaults, activation or enrollment",
+    "Using customer data or claiming production rollout",
+    "Mounting or exercising the withheld ACTION delegate or any HRM-009 mutation",
+    "Claiming download, revoke, verification, expiry, access-audit or download-audit behavior",
+    "Promoting synthetic fixture data to business completion evidence"
+  ],
+  "authority": {
+    "isolatedFixtureAuthoringAuthorized": true,
+    "isolatedReadOnlyBrowserGateAuthorized": true,
+    "productionSourceChangeAuthorized": false,
+    "persistentActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "customerDataAuthorized": false,
+    "writableActionAuthorized": false,
+    "centralMergeAuthorizedByThisDocument": false,
+    "readOnlyMountAcceptanceRequiresObservedFullMatrix": true
+  },
+  "requiredNext": [
+    "Commit and push this append-only authority on frontend dwp-dev.",
+    "Create a clean worktree from the exact post-authority frontend dwp-dev head.",
+    "Author only the three allowlisted test-support files and run no repository-wide suite.",
+    "Independently review exact changed paths and fail-closed counters before exact no-ff central merge.",
+    "Run the CUA browser matrix against the merged source and record an append-only browser-gate receipt."
+  ],
+  "nonClaims": [
+    "HRM-009 full slice completion",
+    "Batch-03 completion",
+    "R7 completion",
+    "Writable certificate request, issuance, download, revoke or verification",
+    "Tenant activation, enrollment, customer-data use or production release",
+    "Business completion credit"
+  ]
+}
