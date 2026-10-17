@@ -59,9 +59,9 @@ export type Hrm009RequestCertificateDelegate = (
 export type Hrm009CertificateWorkbenchProps = Readonly<{
   queryId: Hrm009QueryId;
   gate?: Hrm009RuntimeGate;
-  /** Component-preview seam only. A later central admission owns the trusted runtime binding. */
+  /** Trusted read scope supplied only by the central PAGE-to-DATA admission. */
   scope?: Hrm009TrustedScope;
-  /** Component-preview seam only. Production remains unmounted and default-OFF in Stage A. */
+  /** Read-only owner GET adapter; the central mount keeps every ACTION delegate withheld. */
   adapter?: Hrm009QueryAdapter;
   /** Optional deep-link focus selected only after the read projection passes its sealed parser. */
   initialFocusPublicId?: string;
@@ -285,7 +285,7 @@ function CertificateRequestForm({
         </ActionButton>
         {!onRequestCertificate && (
           <Typography variant="caption" color="text.secondary">
-            The command delegate remains unmounted until central admission.
+            The command delegate is intentionally withheld for this read-only Stage-A mount.
           </Typography>
         )}
       </Stack>
@@ -750,7 +750,8 @@ function ActiveCertificateWorkbench({
       {!onRequestCertificate && (
         <InlineFeedback severity="info" title="Stage-A is read only">
           This mount discloses request status and certificate/document metadata only. Certificate
-          submission and all document content or lifecycle controls are unavailable in this stage.
+          submission is disabled. Download, revoke, verification, expiry, access-audit, and
+          download-audit are not supported in this stage.
         </InlineFeedback>
       )}
 

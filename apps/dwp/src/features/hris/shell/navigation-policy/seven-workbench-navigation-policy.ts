@@ -251,6 +251,7 @@ export type HrisV52PageAuthorityRouteBinding = Readonly<{
     'route.hcm.personal.requests.page' | 'route.hcm.operations.certificates-documents.page';
   feature: 'HRIS_HRM_CERTIFICATE_WORKBENCH';
   minimumBundleVersion: 52;
+  authorizationRegistryChecksum: 'b33fbf968e71f97b09fa497fdfad7d2f6854199170b79fd1602a0ea604977346';
   surfaceId: 'hcm.personal' | 'hcm.operations';
   capability: 'hcm.personal.requests.view' | 'hcm.operations.people.view';
 }>;
@@ -268,6 +269,8 @@ export const HRIS_V52_PAGE_AUTHORITY_ROUTE_BINDINGS: readonly HrisV52PageAuthori
       routeContractKey: 'route.hcm.personal.requests.page',
       feature: 'HRIS_HRM_CERTIFICATE_WORKBENCH',
       minimumBundleVersion: 52,
+      authorizationRegistryChecksum:
+        'b33fbf968e71f97b09fa497fdfad7d2f6854199170b79fd1602a0ea604977346',
       surfaceId: 'hcm.personal',
       capability: 'hcm.personal.requests.view',
     }),
@@ -277,6 +280,8 @@ export const HRIS_V52_PAGE_AUTHORITY_ROUTE_BINDINGS: readonly HrisV52PageAuthori
       routeContractKey: 'route.hcm.operations.certificates-documents.page',
       feature: 'HRIS_HRM_CERTIFICATE_WORKBENCH',
       minimumBundleVersion: 52,
+      authorizationRegistryChecksum:
+        'b33fbf968e71f97b09fa497fdfad7d2f6854199170b79fd1602a0ea604977346',
       surfaceId: 'hcm.operations',
       capability: 'hcm.operations.people.view',
     }),

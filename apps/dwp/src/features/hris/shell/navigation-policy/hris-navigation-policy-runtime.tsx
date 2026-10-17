@@ -24,6 +24,7 @@ import {
   HRIS_NAVIGATION_TOPOLOGY_SUCCESSOR_REVISION,
   HRIS_NAVIGATION_TOPOLOGY_SUCCESSOR_SHA256,
 } from '../model/hris-navigation-topology-successor';
+import { PRODUCT_AUTHORIZATION_REGISTRY_REVISION } from '../../../../routes/product-surface-authorization.generated';
 import {
   canonicalHrisWorkbench,
   hrisWorkbenchIdForView,
@@ -83,6 +84,18 @@ export const HRIS_NAVIGATION_RUNTIME_OWNER_OVERLAY_REVISION =
 export const HRIS_NAVIGATION_RUNTIME_OWNER_OVERLAY_SHA256 =
   '42ed206e45fab76f77725ba5d37543e06b8df62da7aa142bb620b032bf552dbd' as const;
 export { HRIS_LEGAL_ENTITY_SELECTOR_PARAM, selectHrisLegalEntitySelector };
+
+function currentHrisV52PageAuthorityRouteBinding(nodeId: string, route: string) {
+  const binding = hrisV52PageAuthorityRouteBinding(nodeId, route);
+  if (
+    !binding ||
+    PRODUCT_AUTHORIZATION_REGISTRY_REVISION.version !== binding.minimumBundleVersion ||
+    PRODUCT_AUTHORIZATION_REGISTRY_REVISION.checksum !== binding.authorizationRegistryChecksum
+  ) {
+    return undefined;
+  }
+  return binding;
+}
 
 type RuntimeNavigationPolicyProjectionBase = Readonly<{
   topologyRevision: typeof HRIS_NAVIGATION_TOPOLOGY_REVISION;
@@ -484,7 +497,7 @@ export function projectHrisWorkbenchTaskNavigation(
         );
         const menuTarget =
           authorizedAliases.find((route) =>
-            Boolean(hrisV52PageAuthorityRouteBinding(node.nodeId, route))
+            Boolean(currentHrisV52PageAuthorityRouteBinding(node.nodeId, route))
           ) ??
           authorizedAliases.find((route) =>
             isRuntimeMenuRouteAlias(policy.schemaVersion, node.nodeId, route)
@@ -913,7 +926,7 @@ function selectEffectiveRouteAliases(
       (binding) => binding.nodeId === canonicalNode.nodeId && binding.path === normalizePath(alias)
     );
     if (v52Candidate) {
-      return Boolean(hrisV52PageAuthorityRouteBinding(canonicalNode.nodeId, alias));
+      return Boolean(currentHrisV52PageAuthorityRouteBinding(canonicalNode.nodeId, alias));
     }
     if (schemaVersion === '3' && policyNode) {
       return nodePolicyRoutes.some((route) => route.path === normalizePath(alias));
@@ -1254,7 +1267,7 @@ function isRuntimeEffectiveRouteAlias(
   const v52Candidate = HRIS_V52_PAGE_AUTHORITY_ROUTE_BINDINGS.some(
     (binding) => binding.nodeId === nodeId && binding.path === normalizePath(route)
   );
-  if (v52Candidate) return Boolean(hrisV52PageAuthorityRouteBinding(nodeId, route));
+  if (v52Candidate) return Boolean(currentHrisV52PageAuthorityRouteBinding(nodeId, route));
   const policyNode = HRIS_V46_SELF_POLICY_ROUTE_BINDINGS.some(
     (binding) => binding.nodeId === nodeId
   );
@@ -1272,7 +1285,7 @@ function isRuntimeMenuRouteAlias(
   if (!isRuntimeEffectiveRouteAlias(schemaVersion, nodeId, route)) return false;
   if (
     hrisV46SelfPolicyRouteBinding(nodeId, route) ||
-    hrisV52PageAuthorityRouteBinding(nodeId, route)
+    currentHrisV52PageAuthorityRouteBinding(nodeId, route)
   ) {
     return true;
   }

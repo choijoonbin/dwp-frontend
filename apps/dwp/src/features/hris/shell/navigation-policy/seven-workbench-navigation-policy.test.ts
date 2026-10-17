@@ -187,6 +187,8 @@ describe('successor seven-workbench task-navigation catalog', () => {
         path: '/hr/me/requests',
         routeContractKey: 'route.hcm.personal.requests.page',
         minimumBundleVersion: 52,
+        authorizationRegistryChecksum:
+          'b33fbf968e71f97b09fa497fdfad7d2f6854199170b79fd1602a0ea604977346',
         surfaceId: 'hcm.personal',
       }),
       expect.objectContaining({
@@ -194,6 +196,8 @@ describe('successor seven-workbench task-navigation catalog', () => {
         path: '/hr/operations/people/certificates-documents',
         routeContractKey: 'route.hcm.operations.certificates-documents.page',
         minimumBundleVersion: 52,
+        authorizationRegistryChecksum:
+          'b33fbf968e71f97b09fa497fdfad7d2f6854199170b79fd1602a0ea604977346',
         surfaceId: 'hcm.operations',
       }),
     ]);

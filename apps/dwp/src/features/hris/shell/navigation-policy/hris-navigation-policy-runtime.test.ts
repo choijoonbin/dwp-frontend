@@ -1,10 +1,23 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const transport = vi.hoisted(() => ({ get: vi.fn() }));
+const generatedAuthorizationRegistry = vi.hoisted(() => ({
+  revision: {
+    bundleKey: 'product-surfaces',
+    version: 52 as number,
+    checksum: 'b33fbf968e71f97b09fa497fdfad7d2f6854199170b79fd1602a0ea604977346' as string,
+    indexChecksum: '5e444564797eb56fd3055eb00c6e3250111b3045fdbff81f0485a3164bf8b010' as string,
+  },
+}));
 
 vi.mock('@dwp-frontend/shared-utils', async (importOriginal) => ({
   ...(await importOriginal<object>()),
   axiosInstance: transport,
+}));
+
+vi.mock('../../../../routes/product-surface-authorization.generated', async (importOriginal) => ({
+  ...(await importOriginal<object>()),
+  PRODUCT_AUTHORIZATION_REGISTRY_REVISION: generatedAuthorizationRegistry.revision,
 }));
 
 import {
@@ -56,6 +69,9 @@ import type { HrisWorkbenchId } from './seven-workbench-navigation-policy';
 describe('server-owned HRIS seven-workbench navigation runtime', () => {
   beforeEach(() => {
     transport.get.mockReset();
+    generatedAuthorizationRegistry.revision.version = 52;
+    generatedAuthorizationRegistry.revision.checksum =
+      'b33fbf968e71f97b09fa497fdfad7d2f6854199170b79fd1602a0ea604977346';
     vi.stubEnv('VITE_HRIS_HRM_009_ENABLED', 'false');
   });
   afterEach(() => vi.unstubAllEnvs());
@@ -740,6 +756,20 @@ describe('server-owned HRIS seven-workbench navigation runtime', () => {
       /route alias is not sealed/u
     );
     vi.stubEnv('VITE_HRIS_HRM_009_ENABLED', 'true');
+
+    generatedAuthorizationRegistry.revision.version = 51;
+    expect(() => selectRuntimeHrisNavigationPolicyProjection(successorProjection)).toThrow(
+      /route alias is not sealed/u
+    );
+
+    generatedAuthorizationRegistry.revision.version = 52;
+    generatedAuthorizationRegistry.revision.checksum = '0'.repeat(64);
+    expect(() => selectRuntimeHrisNavigationPolicyProjection(successorProjection)).toThrow(
+      /route alias is not sealed/u
+    );
+
+    generatedAuthorizationRegistry.revision.checksum =
+      'b33fbf968e71f97b09fa497fdfad7d2f6854199170b79fd1602a0ea604977346';
     const policy = selectHrisRuntimeNavigationPolicy(
       selectRuntimeHrisNavigationPolicyProjection(successorProjection)
     );

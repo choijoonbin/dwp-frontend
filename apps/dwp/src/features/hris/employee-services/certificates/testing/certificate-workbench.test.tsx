@@ -328,7 +328,7 @@ describe('HRM-009 Stage-A sealed contracts', () => {
   });
 });
 
-describe('HRM-009 Stage-A unmounted component surfaces', () => {
+describe('HRM-009 Stage-A read-only component surfaces', () => {
   beforeEach(() => {
     Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
     installComponentFakeEnvironment({
@@ -408,7 +408,6 @@ describe('HRM-009 Stage-A unmounted component surfaces', () => {
         expect.any(AbortSignal)
       );
       expect(document.body.textContent).not.toContain('a'.repeat(64));
-      expect(document.body.textContent?.toLowerCase()).not.toMatch(/download|revoke|verification/u);
     }
   );
 
@@ -615,12 +614,39 @@ describe('HRM-009 Stage-A unmounted component surfaces', () => {
     });
     await shown('Stage-A is read only');
 
+    const exactLimitation =
+      'Download, revoke, verification, expiry, access-audit, and download-audit are not supported in this stage.';
+    expect(document.body.textContent).toContain('Certificate submission is disabled.');
+    expect(document.body.textContent).toContain(exactLimitation);
     expect(document.body.textContent).toContain(
-      'Certificate submission and all document content or lifecycle controls are unavailable'
+      'The command delegate is intentionally withheld for this read-only Stage-A mount.'
     );
-    expect(button('Review and send request').disabled).toBe(true);
+    const reviewButton = button('Review and send request');
+    expect(reviewButton.disabled).toBe(true);
     expect(document.querySelectorAll('form input:not(:disabled)')).toHaveLength(0);
     expect(document.querySelectorAll('form button:not(:disabled)')).toHaveLength(0);
+    const unsupportedControl = /download|revoke|verification|expiry|access-audit|download-audit/iu;
+    expect(
+      [...document.querySelectorAll('button, a')].filter((control) =>
+        unsupportedControl.test(control.textContent ?? '')
+      )
+    ).toHaveLength(0);
+    expect(
+      [...document.querySelectorAll<HTMLAnchorElement>('a[href]')].filter((link) =>
+        unsupportedControl.test(link.getAttribute('href') ?? '')
+      )
+    ).toHaveLength(0);
+    expect(document.querySelectorAll('button[formaction]')).toHaveLength(0);
+    expect(source.query).toHaveBeenCalledOnce();
+    expect(source.query).toHaveBeenCalledWith(
+      'IAQ-003',
+      expect.any(Object),
+      HRM009_TEST_SCOPE.contextScopeKey,
+      expect.any(AbortSignal)
+    );
+    const admittedOwnerGetCount = vi.mocked(source.query).mock.calls.length;
+    await act(async () => reviewButton.click());
+    expect(vi.mocked(source.query).mock.calls.slice(admittedOwnerGetCount)).toHaveLength(0);
   });
 
   it('retains a failed refresh only as stale metadata and synchronously fences the command', async () => {
