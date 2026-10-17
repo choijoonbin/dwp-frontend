@@ -1,0 +1,182 @@
+{
+  "schema": "dwp.hris.wave7.tim-007-central-contract-bridge-implementation-plan.v1",
+  "planId": "HRIS-WAVE7-R7-BATCH-01-TIM-007-CENTRAL-BRIDGE-PLAN-20261017-R1",
+  "plannedAt": "2026-10-17T18:27:37+09:00",
+  "plannedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "READY_FOR_TWO_DISJOINT_CENTRAL_BACKEND_WORKTREES_AFTER_EXACT_DECISION_CARRIER_PUSH",
+  "decision": {
+    "path": "tim-007-central-contract-bridge-decision.v1.json",
+    "sha256": "9718b37c56a8976053e4a1bbb0645eb517045d22f9508ef75b809bb624ed1566",
+    "bytes": 25839
+  },
+  "backendBase": {
+    "repository": "dwp-backend",
+    "branch": "dwp-dev",
+    "commit": "fcb5c1f397d14ea77c7ff9714a272449d99e18a4",
+    "tree": "147bb1afd5635209d5db166a513d970b6e0002c3",
+    "originExactAtPlan": true,
+    "cleanAtPlan": true
+  },
+  "workstreams": [
+    {
+      "id": "TIM007-CENTRAL-CONTRACT",
+      "worktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261017/tim007-central/contract",
+      "branch": "codex/hris-wave7-tim007-central-contract-20261017-r1",
+      "upstream": "origin/codex/hris-wave7-tim007-central-contract-20261017-r1",
+      "allowedPaths": [
+        "contracts/openapi/hris-wave1-design-time.json",
+        "contracts/openapi/time.json",
+        "contracts/openapi/gateway-public.json",
+        "contracts/asyncapi/domain-events.yaml",
+        "contracts/in-process/hris/tim-payroll-handoff-outcome-bridge.v1.json",
+        "contracts/product-authorization/product-surfaces-v1.yaml",
+        "contracts/product-authorization/product-surfaces-v1.bundle-v50.json",
+        "contracts/product-authorization/product-surfaces-v1.json",
+        "contracts/product-authorization/product-surfaces-v1.index.json",
+        "contracts/product-authorization/pilot-fixtures.v1.schema.json",
+        "contracts/product-authorization/pilot-fixtures.v1.generated.json",
+        "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v50.generated.json",
+        "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.generated.json",
+        "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.index.generated.json",
+        "contracts/product-authorization/product-surface-rollout-inventory.v1.generated.json",
+        "dwp-gateway/src/main/resources/product-authorization/product-surface-rollout-inventory.v1.generated.json",
+        "dwp-people-server/src/main/resources/product-authorization/hcm-people-pep-v50.generated.json",
+        "dwp-time-server/src/main/resources/product-authorization/hcm-time-pep-v50.generated.json",
+        "dwp-platform-server/src/main/resources/product-authorization/hcm-platform-pep-v50.generated.json",
+        "dwp-payroll-server/src/main/resources/product-authorization/hcm-payroll-pep-v50.generated.json",
+        "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationReleaseLineage.java",
+        "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationContractValidator.java",
+        "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductSurfaceStepUpRouteResolver.java",
+        "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationReleaseLineageTest.java",
+        "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationContractReleaseLineageTest.java",
+        "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationContractValidatorTest.java",
+        "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductSurfaceStepUpRouteResolverTest.java",
+        "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductSurfaceStepUpLatestRuntimeTest.java",
+        "dwp-auth-server/src/main/java/com/dwp/services/auth/config/ProductAuthorizationSeedLoader.java",
+        "dwp-auth-server/src/test/java/com/dwp/services/auth/config/ProductAuthorizationSeedLoaderTest.java",
+        "dwp-auth-server/src/test/java/com/dwp/services/auth/support/PilotAuthorizationFixtureAdapter.java",
+        "dwp-auth-server/src/test/java/com/dwp/services/auth/support/PilotAuthorizationFixtureAdapterTest.java",
+        "dwp-auth-server/src/main/resources/db/migration/V258__declare_tim007_v50_authorization_seed.sql",
+        "dwp-auth-server/src/test/java/com/dwp/services/auth/repository/Tim007V50AuthorizationSeedMigrationContractTest.java",
+        "dwp-gateway/src/test/java/com/dwp/gateway/support/PilotAuthorizationFixtureAdapter.java",
+        "dwp-gateway/src/test/java/com/dwp/gateway/support/PilotAuthorizationFixtureAdapterTest.java",
+        "contracts/product-authorization/hcm-time-close-projections-v50.generated.json",
+        "dwp-time-server/src/main/resources/product-authorization/hcm-time-close-projections-v50.generated.json",
+        "scripts/generate-hcm-time-close-projection-contracts.py",
+        "scripts/generate-product-authorization-contracts.py",
+        "scripts/generate-product-authorization-fixtures.py",
+        "scripts/export-openapi-contracts.py",
+        "scripts/tests/test_tim007_contract_bridge.py",
+        "scripts/tests/test_hcm_time_close_projection_contracts.py",
+        "scripts/tests/test_product_authorization_v50.py",
+        "scripts/tests/test_product_authorization_v21.py",
+        "scripts/tests/test_product_authorization_v47.py",
+        "scripts/tests/test_product_authorization_v49.py",
+        "scripts/tests/test_product_authorization_fixture_schema.py",
+        "scripts/tests/test_export_openapi_contracts.py",
+        "dwp-platform-contracts/src/test/java/com/dwp/platform/contract/Tim007CloseHandoffAsyncApiContractTest.java"
+      ],
+      "conditionalPathPolicy": {
+        "contracts/product-authorization/product-surface-rollout-inventory.v1.generated.json": "May change only when deterministic v50 generation changes this generated inventory.",
+        "dwp-gateway/src/main/resources/product-authorization/product-surface-rollout-inventory.v1.generated.json": "May change only when deterministic v50 generation changes this generated inventory.",
+        "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationContractValidator.java": "May change only when the sealed v50 lineage requires a bounded validator update.",
+        "dwp-auth-server/src/main/java/com/dwp/services/auth/config/ProductAuthorizationSeedLoader.java": "May change only when the immutable DRAFT loader cannot ingest the exact v50 descriptor without a bounded update."
+      },
+      "forbidden": [
+        "canonical XCON schema or generated Java binding modification",
+        "v49 product authorization artifact modification",
+        "Time V12 or any Time/PAY runtime migration; only the explicitly authorized Auth V258 DRAFT seed declaration is allowed",
+        "feature activation or tenant enrollment",
+        "service-interface registry entry without a real PAY client source",
+        "module worktree modification"
+      ],
+      "targetedVerification": [
+        "python3 scripts/export-openapi-contracts.py --check --approved-snapshots",
+        "python3 scripts/generate-product-authorization-contracts.py --check",
+        "python3 scripts/generate-product-authorization-fixtures.py --check",
+        "python3 scripts/generate-hcm-time-close-projection-contracts.py --check --openapi contracts/openapi/time.json",
+        "python3 -m unittest scripts.tests.test_tim007_contract_bridge scripts.tests.test_hcm_time_close_projection_contracts scripts.tests.test_export_openapi_contracts scripts.tests.test_product_authorization_fixture_schema scripts.tests.test_product_authorization_v21 scripts.tests.test_product_authorization_v47 scripts.tests.test_product_authorization_v49 scripts.tests.test_product_authorization_v50",
+        "./gradlew :dwp-auth-server:test --tests 'com.dwp.services.auth.service.ProductAuthorizationReleaseLineageTest' --tests 'com.dwp.services.auth.service.ProductAuthorizationContractReleaseLineageTest' --tests 'com.dwp.services.auth.service.ProductAuthorizationContractValidatorTest' --tests 'com.dwp.services.auth.service.ProductSurfaceStepUpRouteResolverTest' --tests 'com.dwp.services.auth.service.ProductSurfaceStepUpLatestRuntimeTest' --tests 'com.dwp.services.auth.config.ProductAuthorizationSeedLoaderTest' --tests 'com.dwp.services.auth.repository.Tim007V50AuthorizationSeedMigrationContractTest' --no-daemon --max-workers=1",
+        "./gradlew :dwp-auth-server:test --tests 'com.dwp.services.auth.support.PilotAuthorizationFixtureAdapterTest' --no-daemon --max-workers=1",
+        "./gradlew :dwp-gateway:test --tests 'com.dwp.gateway.support.PilotAuthorizationFixtureAdapterTest' --no-daemon --max-workers=1",
+        "./gradlew :dwp-platform-contracts:test --tests 'com.dwp.platform.contract.Tim007CloseHandoffAsyncApiContractTest' --no-daemon --max-workers=1"
+      ]
+    },
+    {
+      "id": "TIM007-CENTRAL-RECEIPT-RUNTIME",
+      "worktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261017/tim007-central/runtime",
+      "branch": "codex/hris-wave7-tim007-central-runtime-20261017-r1",
+      "upstream": "origin/codex/hris-wave7-tim007-central-runtime-20261017-r1",
+      "allowedPaths": [
+        "dwp-time-server/src/main/java/com/dwp/services/time/commandreceipt/**",
+        "dwp-time-server/src/test/java/com/dwp/services/time/commandreceipt/**",
+        "dwp-time-server/src/main/java/com/dwp/services/time/api/HrisTimeProblemV1.java",
+        "dwp-time-server/src/main/java/com/dwp/services/time/api/HrisTimeProblemCode.java",
+        "dwp-time-server/src/main/java/com/dwp/services/time/api/HrisTimeApiException.java",
+        "dwp-time-server/src/main/java/com/dwp/services/time/api/HrisTimeProblemAdvice.java",
+        "dwp-time-server/src/main/java/com/dwp/services/time/api/HrisTimeProblemWriter.java",
+        "dwp-time-server/src/test/java/com/dwp/services/time/api/HrisTimeProblemAdviceTest.java",
+        "dwp-time-server/src/main/java/com/dwp/services/time/timecard/TimecardOwnerController.java",
+        "dwp-time-server/src/main/java/com/dwp/services/time/timecard/TimecardOwnerAccessFilter.java",
+        "dwp-time-server/src/main/java/com/dwp/services/time/timecard/TimecardCommandReceiptProvider.java",
+        "dwp-time-server/src/test/java/com/dwp/services/time/timecard/TimecardCommandReceiptProviderTest.java",
+        "dwp-time-server/src/test/java/com/dwp/services/time/timecard/TimecardOwnerBoundaryContractTest.java",
+        "dwp-time-server/src/test/java/com/dwp/services/time/timecard/GatewayVerifiedTimecardOwnerAuthoritySourceTest.java",
+        "dwp-time-server/src/test/java/com/dwp/services/time/timecard/TimecardOwnerRouteTest.java"
+      ],
+      "preserve": [
+        "TimeCommandReceiptV1 nine-field wire shape",
+        "TimecardModels, TimecardService and TimecardRepository except use through the new adapter",
+        "GatewayVerifiedTimecardOwnerAuthoritySource",
+        "TimecardOwnerRoute.RECEIPT semantic authority",
+        "all non-receipt Timecard controller and filter behavior"
+      ],
+      "forbidden": [
+        "Time close aggregate or V12 implementation",
+        "PAY source or migration implementation",
+        "central contract files owned by the other workstream",
+        "global exception behavior outside commandreceipt and close",
+        "module worktree modification"
+      ],
+      "targetedVerification": [
+        "./gradlew :dwp-time-server:test --tests 'com.dwp.services.time.commandreceipt.*' --tests 'com.dwp.services.time.api.HrisTimeProblemAdviceTest' --tests 'com.dwp.services.time.timecard.TimecardCommandReceiptProviderTest' --tests 'com.dwp.services.time.timecard.TimecardOwnerBoundaryContractTest' --tests 'com.dwp.services.time.timecard.GatewayVerifiedTimecardOwnerAuthoritySourceTest' --tests 'com.dwp.services.time.timecard.TimecardOwnerRouteTest' --no-daemon --max-workers=1"
+      ]
+    }
+  ],
+  "implementationOrder": [
+    "Commit and push this exact two-file frontend authority carrier.",
+    "Materialize and push the two backend branches at the exact base.",
+    "Implement both disjoint workstreams in parallel.",
+    "Run each workstream's first targeted cluster once; after correction rerun only the smallest failed target.",
+    "Commit and push each branch independently with changed-path and test evidence.",
+    "Independently review both diffs against the decision and path boundary.",
+    "Merge contract workstream then runtime workstream to backend dwp-dev, resolving no semantic overlap.",
+    "Run only the union of the two targeted clusters once on integrated dwp-dev.",
+    "Write and push a central integration receipt in frontend dwp-dev.",
+    "Issue the append-only TIM replacement authority chain pinned to the integrated backend commit and tree.",
+    "Redispatch only HRIS-TIM; never merge the central carrier into the old module worktrees."
+  ],
+  "correctionPolicy": {
+    "first": "changed workstream cluster",
+    "afterFailure": "smallest failed target only",
+    "repositoryWideSuitePerCorrection": false,
+    "browserBeforeModuleAndCentralMount": false,
+    "finalIntegrationMatrix": "one central run after all module results and mounts are admitted"
+  },
+  "externalGatePolicy": {
+    "pdx011LiveProducer": "record as external; do not block default-OFF consumer-port source if fixtures prove the port",
+    "payDurableConsumerMigration": "separate P0 owner gate; do not allocate a PAY migration or claim end-to-end TIM-to-PAY completion in this bridge"
+  },
+  "authority": {
+    "twoBackendWorktreesMayBeCreatedAfterCarrierPush": true,
+    "workstreamBranchCommitAndPushAuthorized": true,
+    "centralBackendDwpDevMergeAuthorizedAfterIndependentReview": true,
+    "frontendAuthorityCarrierMergeIntoBackendOrModuleWorktreesAuthorized": false,
+    "timModuleResumeBeforeReplacementTokenAuthorized": false,
+    "payMigrationAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "VALIDATE_COMMIT_AND_PUSH_THE_EXACT_TWO_FILE_AUTHORITY_CARRIER_THEN_CREATE_THE_TWO_BACKEND_WORKTREES_AND_DISPATCH_THE_DISJOINT_CENTRAL_IMPLEMENTATIONS"
+}

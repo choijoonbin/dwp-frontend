@@ -1,0 +1,245 @@
+{
+  "schema": "dwp.hris.wave7.tim-007-central-contract-bridge-decision.v1",
+  "decisionId": "HRIS-WAVE7-R7-BATCH-01-TIM-007-CENTRAL-BRIDGE-20261017-R1",
+  "decidedAt": "2026-10-17T18:27:37+09:00",
+  "decidedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "CENTRAL_BRIDGE_REQUIRED_TIM_MODULE_PAUSED_UNTIL_REPLACEMENT_TOKEN",
+  "purpose": "Promote recoverable Wave-5/G2 TIM close and handoff semantics into a forward-only R7 contract, resolve the remaining receipt, outcome, projection and event binding gaps, and prohibit the Time module from inventing public transport or cross-service semantics.",
+  "immutableInputs": {
+    "timStartTokenR1": {"path": "tokens/base-tfr-tim-007.start-token.v1.json", "sha256": "5e1f1b5d4e4e40f6745db22c0c3f4ca3eb6ae89574c60c8fabb77887988307a8", "bytes": 13691},
+    "ownerPacket": {"path": "../r7-batch-01-dispatch-r1/owner-packets/base-tfr-tim-007.owner-packet.v1.json", "sha256": "91ad50b4676c12ba041c4661b02ecfe65370dd3bfffbad74a972db700a54a9f8", "bytes": 14331},
+    "g2Transport": {"path": "../../recovery/hris-porting-blueprint-2026-09-09/session-evidence/tim/g2-transport-schemas.v1.json", "sha256": "1fb8e961f4283940a356cf20b77fe19a58231c8aaabb4af142e163f55f741dcc", "bytes": 28885, "role": "HISTORICAL_EXACT_SHAPE_INPUT_NOT_CURRENT_AUTHORITY"},
+    "g2ApiEvent": {"path": "../../recovery/hris-porting-blueprint-2026-09-09/session-evidence/tim/g2-api-event-contracts.json", "sha256": "1251365481d7063bf3fcf0e3e5bfaeca148554da354ac60fe29d2e67d1c1cb7f", "bytes": 19564, "role": "HISTORICAL_EXACT_BUSINESS_AND_EVENT_INPUT_NOT_CURRENT_AUTHORITY"},
+    "transportResolutionRegister": {"path": "../../recovery/hris-porting-blueprint-2026-09-09/coding-readiness/transport-schema-resolution-register.csv", "sha256": "86e76b0fe8b36102f35b2e82b7d8ffc3fc250455dde6d2d7747ac3f1a6cc877e", "bytes": 219704, "rows": ["TSR-059", "TSR-060", "TSR-061", "TSR-062", "TSR-063"]},
+    "validIaqSupplement": {"path": "../../recovery/exact-supplements/2026-10-06/hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-projection-schemas.v1.json", "sha256": "b185accd712216c39bf8a66f70cbbf0092a27a8c2c5e3d7457ecd4d511afa048", "bytes": 1523618},
+    "internalTrustPacket": {"path": "tim-007-internal-trust-packet.v1.json", "sha256": "f9f8287ea9e9c72792f1553611bde04b36b8fb150e8a477d1f05ef25545c7fd2", "bytes": 22373},
+    "payOwnerReview": {"path": "tim-007-pay-owner-review.v1.json", "sha256": "2480142163c3b257686691bc73312bed1dc5669c1d86d1c3fabd826a1d734842", "bytes": 16299},
+    "canonicalXcon": {"repository": "dwp-backend", "path": "contracts/hris/canonical/schemas/cross-module-canonical-schemas.v1.json", "sha256": "8109568c1cfafa5021b5e831ac17c5dbbfeaaf2b3a7472fc4ff488eacb0bc866", "bytes": 30400, "readOnlyDefinitions": ["XCON_008", "XCON_009", "XCON_010", "XCON_011"]}
+  },
+  "provenBlockers": [
+    "The five public close and handoff paths are absent from the current Time OpenAPI.",
+    "The three TIM typed events are absent from the current AsyncAPI.",
+    "The v49 handoff GET response binding cannot express handoff state or receiver receipt.",
+    "The only public command receipt mapping and DTO are Timecard-specific.",
+    "The historical transport is not in the R7 token DAG and conflicts with current step-up, ETag and runtime event-key conventions.",
+    "IAQ-039, IAQ-043 and IAQ-044 lack valid current generated projections.",
+    "PAY durable closed-time ingestion has no migration lease and remains a separate owner gate."
+  ],
+  "publicOperations": [
+    {"id": "PEP-TIM-022", "operationId": "hrisTimeValidateClosePeriod", "method": "POST", "path": "/v1/close-periods/{periodId}/validations", "purpose": "WORK_TIME_PERIOD_CLOSURE", "request": "TimeCloseValidationCommandV1", "requiredBody": ["asOf"], "success": "202 TimeCloseCommandReceiptV1", "stepUp": false},
+    {"id": "PEP-TIM-023", "operationId": "hrisTimeClosePeriod", "method": "POST", "path": "/v1/close-periods/{periodId}/close", "purpose": "WORK_TIME_PERIOD_CLOSURE", "request": "TimeCloseCommandV1", "requiredBody": ["asOf", "approvalReceiptId"], "success": "202 TimeCloseCommandReceiptV1", "stepUp": true},
+    {"id": "PEP-TIM-024", "operationId": "hrisTimeReopenPeriod", "method": "POST", "path": "/v1/close-periods/{periodId}/reopen", "purpose": "WORK_TIME_PERIOD_CLOSURE", "request": "TimeReopenCommandV1", "requiredBody": ["asOf", "approvalReceiptId", "reasonCode"], "success": "202 TimeCloseCommandReceiptV1", "stepUp": true},
+    {"id": "PEP-TIM-025", "operationId": "hrisTimeCreatePayrollHandoff", "method": "POST", "path": "/v1/close-periods/{periodId}/payroll-handoffs", "purpose": "CLOSED_TIME_PAYROLL_TRANSFER", "request": "PayrollTimeHandoffCommandV1", "requiredBody": ["closedTimeResultId", "payrollEntityId", "payPeriodId"], "success": "202 TimeCloseCommandReceiptV1", "stepUp": false},
+    {"id": "PEP-TIM-026", "operationId": "hrisTimeGetPayrollHandoff", "method": "GET", "path": "/v1/payroll-handoffs/{handoffId}", "purpose": "CLOSED_TIME_PAYROLL_TRANSFER", "request": null, "success": "200 PayrollTimeHandoffStatusV1", "stepUp": false, "capability": "ACTION.HRIS_TIME_CLOSE:EXECUTE"}
+  ],
+  "transportSeal": {
+    "allBodiesAdditionalProperties": false,
+    "reopenReasonCode": {"pattern": "^[A-Z][A-Z0-9._-]{0,79}$", "allowedOnlyOn": ["PEP-TIM-024"]},
+    "postHeaders": {
+      "requiredAll": ["Idempotency-Key", "If-Match", "X-Correlation-ID", "X-Purpose-Code", "X-DWP-Expected-Decision-Revision"],
+      "idempotencyKey": "trimmed single value length 16..128",
+      "ifMatch": "single strong numeric ETag matching ^\"[0-9]+\"$ and representing close-period aggregate version",
+      "correlation": "single UUID",
+      "purpose": "exact operation purpose",
+      "expectedDecisionRevision": "^psr-[0-9a-f]{64}$",
+      "stepUpRequiredOnly": ["PEP-TIM-023", "PEP-TIM-024"],
+      "stepUpForbidden": ["PEP-TIM-022", "PEP-TIM-025"],
+      "forbiddenOverrides": ["tenant", "actor", "population"]
+    },
+    "getHeaders": ["X-Correlation-ID", "X-Purpose-Code", "X-DWP-Expected-Decision-Revision"],
+    "successHeaders": {
+      "post": ["Location", "Retry-After: 1", "Cache-Control: no-store", "X-Correlation-ID", "X-DWP-Decision-Revision"],
+      "postEtag": false,
+      "handoffGet": ["Cache-Control: no-store", "ETag: strong numeric version", "X-Correlation-ID", "X-DWP-Decision-Revision"]
+    },
+    "precondition": {
+      "missingIfMatch": "428 PRECONDITION_REQUIRED",
+      "malformedWeakWildcardBareOrMultiple": "400 SCHEMA_INVALID",
+      "versionMismatch": "412 PRECONDITION_FAILED with currentVersion and current ETag",
+      "lifecycleIdempotencyOrDecisionRevisionConflict": "409 STALE_OR_STATE_CONFLICT"
+    },
+    "problem": {
+      "mediaType": "application/problem+json",
+      "required": ["type", "title", "status", "code", "correlationId", "retryable"],
+      "optional": ["currentVersion", "receiptId", "fieldErrors"],
+      "map": {"400": "SCHEMA_INVALID", "401": "AUTHENTICATION_REQUIRED", "403": "AUTHORIZATION_DENIED", "404": "TARGET_NOT_DISCLOSED", "409": "STALE_OR_STATE_CONFLICT", "412": "PRECONDITION_FAILED", "422": "DOMAIN_RULE_REJECTED", "428": "PRECONDITION_REQUIRED", "429": "RATE_LIMITED", "503": "AUTHORITY_UNAVAILABLE"},
+      "retryAfterRequired": [429, 503]
+    }
+  },
+  "receiptSeal": {
+    "existingTimecardDto": "TimeCommandReceiptV1 remains byte-compatible and is never converted to oneOf.",
+    "newCommandDto": {
+      "name": "TimeCloseCommandReceiptV1",
+      "required": ["receiptId", "commandType", "originatingAction", "subjectPrincipalPublicId", "populationScopeDigest", "fieldPolicyRevision", "purposeCode", "authorizationRevision", "status", "correlationId", "requestDigest", "createdAt"],
+      "optionalNonNull": ["aggregateVersion", "resultRef"],
+      "statuses": ["ACCEPTED", "RUNNING", "SUCCEEDED", "REJECTED", "FAILED", "RESULT_UNKNOWN"]
+    },
+    "commandPairs": [
+      "PERIOD_VALIDATE/TIME_PERIOD_VALIDATE/WORK_TIME_PERIOD_CLOSURE",
+      "PERIOD_CLOSE/TIME_PERIOD_CLOSE/WORK_TIME_PERIOD_CLOSURE",
+      "PERIOD_REOPEN/TIME_PERIOD_REOPEN/WORK_TIME_PERIOD_CLOSURE",
+      "PAYROLL_HANDOFF/TIME_PAYROLL_HANDOFF/CLOSED_TIME_PAYROLL_TRANSFER"
+    ],
+    "lookupDto": "TimeCommandReceiptLookupV1 is the only oneOf of TimeCommandReceiptV1 and TimeCloseCommandReceiptV1.",
+    "singleRouteOwner": {
+      "path": "/v1/command-receipts/{receiptId}",
+      "rule": "A central provider registry asks every tenant-scoped provider for ownership; zero successful owners is opaque 404 only after every provider completed successfully, one owner revalidates sealed originating authority, multiple owners is audited 503, and any provider lookup error, timeout or unavailability is audited 503 fail-closed rather than treated as zero owners; first-provider-wins is forbidden.",
+      "timecardCompatibilityAdapterRequired": true,
+      "closeProviderOwnedByTimModuleAfterReplacement": true
+    },
+    "resultUnknown": "Once a durable receipt is reserved, uncertain processing is represented by receipt status RESULT_UNKNOWN rather than an untracked raw 503."
+  },
+  "idempotencyAndApproval": {
+    "idempotencyScope": ["tenantId", "subjectPrincipalPublicId", "routeContractKey", "Idempotency-Key"],
+    "requestDigest": ["periodId", "expected aggregate version", "purpose", "expected decision revision", "RFC8785 canonical body"],
+    "digestExcludes": ["Bearer token", "raw step-up challenge", "correlationId"],
+    "sameDigest": "Return the original persisted 202 body and receipt without a second mutation or outbox row.",
+    "differentDigest": "409 STALE_OR_STATE_CONFLICT",
+    "approval": {
+      "requiredOnly": ["close", "reopen"],
+      "subjectRef": "time-period:{lowercase-periodId}",
+      "subjectRevision": "If-Match numeric version",
+      "decision": "APPROVED",
+      "actions": {"close": "TIME_PERIOD_CLOSE", "reopen": "TIME_PERIOD_REOPEN"},
+      "mustVerify": ["request payload digest", "decision and request revisions", "decision digest", "not expired", "not cancelled", "not stale"],
+      "separationOfDuties": ["close maker differs from approval actor", "reopen actor differs from original closer", "reopen correction maker differs from close approver"],
+      "reason": "reopen request reasonCode equals canonical PDX-011 reasonCode; close approval reason is null"
+    }
+  },
+  "handoffSeal": {
+    "createClientFields": ["closedTimeResultId", "payrollEntityId", "payPeriodId"],
+    "serverDerivedFromImmutableResult": ["closeRevision", "workerCount", "lineCount", "sourceDigest", "ruleDigest", "payloadDigest", "sequence evidence"],
+    "publicStatusDto": {
+      "name": "PayrollTimeHandoffStatusV1",
+      "requiredAlwaysSerialized": ["handoffId", "closePeriodId", "closedTimeResultId", "closeRevision", "payrollEntityId", "payPeriodId", "workerCount", "lineCount", "sourceDigest", "ruleDigest", "payloadDigest", "status", "receiverReceiptId", "receiverReceiptRevision", "receiverReceiptDigest", "reasonCode", "outcomeAt", "createdAt", "updatedAt", "version"],
+      "statuses": ["PENDING", "ACKNOWLEDGED", "REJECTED", "RESULT_UNKNOWN"],
+      "version": "starts at 1 and increases for every accepted outcome transition",
+      "stateInvariants": {
+        "PENDING": "receiverReceiptId, receiverReceiptRevision, receiverReceiptDigest, reasonCode and outcomeAt are null",
+        "ACKNOWLEDGED": "receiverReceiptId, receiverReceiptRevision, receiverReceiptDigest and outcomeAt are non-null; reasonCode is null",
+        "REJECTED": "receiverReceiptId, receiverReceiptRevision, receiverReceiptDigest, reasonCode and outcomeAt are non-null",
+        "RESULT_UNKNOWN": "receiverReceiptId, receiverReceiptRevision, receiverReceiptDigest, reasonCode and outcomeAt are non-null"
+      }
+    },
+    "internalOutcome": {
+      "contractPath": "contracts/in-process/hris/tim-payroll-handoff-outcome-bridge.v1.json",
+      "bindingId": "SVC-PEP-TIM-003",
+      "method": "POST",
+      "path": "/internal/hris-time/v1/payroll-handoffs/{handoffId}/outcomes",
+      "purpose": "HRIS_CLOSED_TIME_HANDOFF_OUTCOME",
+      "caller": "spiffe://dwp/service/dwp-payroll-server",
+      "requiredHeaders": {"X-DWP-Service-Identity": "single exact dwp-payroll-server", "X-DWP-Workload-Proof": "single compact JWS", "X-Correlation-ID": "single canonical lowercase UUID equal to body correlationId"},
+      "request": "PayrollTimeHandoffOutcomeV1",
+      "fields": ["closedTimeResultId", "closeRevision", "payloadDigest", "outcome", "receiverReceiptId", "receiverReceiptRevision", "receiverReceiptDigest", "reasonCode", "outcomeAt", "correlationId"],
+      "outcomes": ["ACKNOWLEDGED", "REJECTED", "RESULT_UNKNOWN"],
+      "requestSchema": {
+        "additionalProperties": false,
+        "requiredAndAlwaysSerialized": ["closedTimeResultId", "closeRevision", "payloadDigest", "outcome", "receiverReceiptId", "receiverReceiptRevision", "receiverReceiptDigest", "reasonCode", "outcomeAt", "correlationId"],
+        "constraints": {
+          "closedTimeResultId": "canonical lowercase UUID",
+          "closeRevision": "positive integer",
+          "payloadDigest": "lowercase 64-character SHA-256 hex",
+          "outcome": "ACKNOWLEDGED|REJECTED|RESULT_UNKNOWN",
+          "receiverReceiptId": "canonical lowercase UUID",
+          "receiverReceiptRevision": "positive integer",
+          "receiverReceiptDigest": "lowercase 64-character SHA-256 hex",
+          "reasonCode": "null only for ACKNOWLEDGED; non-null uppercase ^[A-Z][A-Z0-9._-]{0,79}$ for REJECTED and RESULT_UNKNOWN",
+          "outcomeAt": "non-null RFC3339 UTC instant normalized with Z",
+          "correlationId": "canonical lowercase UUID and equal to the request X-Correlation-ID"
+        }
+      },
+      "trust": ["TLS1.3 mTLS whose SPIFFE SAN maps to workload dwp-payroll-server", "X-DWP-Service-Identity is exactly dwp-payroll-server", "single compact RS256 X-DWP-Workload-Proof", "audience dwp-time-server", "maximum 30 seconds", "durable single-use replay namespace", "no browser, user, tenant or forwarded override headers"],
+      "proofJoseHeaderExact": {"additionalProperties": false, "exactFields": ["alg", "typ", "kid"], "fixed": {"alg": "RS256", "typ": "JWT"}, "minimumRsaBits": 2048},
+      "proofClaimsExact": ["iss", "aud", "sub", "iat", "nbf", "exp", "jti", "requestNonce", "bindingId", "purpose", "method", "path", "tenantId", "tenantGrantRevision", "policyRevision", "requestBodySha256", "authn"],
+      "proofBinding": ["bindingId=SVC-PEP-TIM-003", "purpose=HRIS_CLOSED_TIME_HANDOFF_OUTCOME", "method=POST", "path is the canonical path with the exact lowercase handoffId and no query or trailing alias", "requestBodySha256 is the lowercase SHA-256 of the exact received UTF-8 body bytes", "certificate SPIFFE SAN maps to workload dwp-payroll-server and independently X-DWP-Service-Identity, iss and sub are each exactly dwp-payroll-server", "aud=dwp-time-server", "iat equals nbf, exp is after iat, exp minus iat is at most 30 seconds and the proof is currently valid", "jti and requestNonce are distinct canonical lowercase UUIDs", "authn is exactly [MTLS_SPIFFE,CLIENT_CREDENTIAL_JWT] and is re-derived from the verified certificate and registered kid profile rather than trusted from the claim"],
+      "tenantTrust": ["tenantId is a positive signed owner tenant and comes only from the verified proof", "the Time owner revalidates its current tenant grant authorizing dwp-payroll-server for the signed tenant", "signed tenantGrantRevision and policyRevision each exactly equal the Time owner's current revalidated revisions", "target handoff tenant matches", "caller-provided tenant override is forbidden"],
+      "replay": "jti and requestNonce are durable single-use within the proof validity window; an exact business-outcome retry is handled only by the receiver receipt id/revision/digest rule after a fresh valid proof; reused proof material is denied.",
+      "deny": ["additional, missing or duplicate proof claims", "duplicate or unrecognized X-DWP headers", "Authorization or Cookie", "browser or user token", "forwarded identity or tenant", "query parameters", "path alias or trailing slash", "wrong service, audience, tenant, body digest, binding, purpose, method or path"],
+      "errorProfile": {
+        "mediaType": "application/problem+json",
+        "body": "HrisTimeProblemV1 with only type, title, status, code, correlationId and retryable; detail, fieldErrors, tenantId, handoffId and target-derived values are forbidden",
+        "map": {
+          "400": {"code": "SCHEMA_INVALID", "retryable": false, "when": "strict JSON, additionalProperties, required/nullability/format constraint, path parameter, X-Correlation-ID or body/header correlation validation fails"},
+          "401": {"code": "AUTHENTICATION_REQUIRED", "retryable": false, "when": "missing, malformed, unverifiable or expired workload proof, reused jti or requestNonce, or missing/invalid mTLS"},
+          "403": {"code": "AUTHORIZATION_DENIED", "retryable": false, "when": "verified caller has wrong audience, binding, purpose, method, path, grant, tenantGrantRevision or policyRevision"},
+          "404": {"code": "TARGET_NOT_DISCLOSED", "retryable": false, "when": "tenant or target mismatch using one constant opaque representation"},
+          "409": {"code": "STALE_OR_STATE_CONFLICT", "retryable": false, "when": "outcome transition, outcomeCommandDigest or receiver revision conflict; quarantine and audit required"},
+          "429": {"code": "RATE_LIMITED", "retryable": true, "when": "rate limited; Retry-After required"},
+          "503": {"code": "AUTHORITY_UNAVAILABLE", "retryable": true, "when": "trust, grant, replay-store, provider or dependency authority is unavailable; Retry-After required"}
+        },
+        "headers": "Cache-Control: no-store and X-Correlation-ID are required on every error; when the request X-Correlation-ID is absent or invalid the owner generates one canonical lowercase UUID and uses it identically in the response header and problem body; Retry-After is additionally required on 429 and 503",
+        "nonDisclosure": "Every error body uses a constant title for its status and omits handoff existence and all target-derived data."
+      },
+      "transitions": ["PENDING -> ACKNOWLEDGED|REJECTED|RESULT_UNKNOWN at receiver revision 1", "RESULT_UNKNOWN -> ACKNOWLEDGED|REJECTED with same receiverReceiptId and exact next revision", "ACKNOWLEDGED and REJECTED terminal"],
+      "idempotency": "The outcomeCommandDigest is SHA-256 over RFC8785 canonical JSON containing tenantId, lowercase handoffId, closedTimeResultId, closeRevision, payloadDigest, outcome, receiverReceiptId, receiverReceiptRevision, receiverReceiptDigest, reasonCode, outcomeAt and correlationId. The same tenant/handoff/receiverReceiptId/revision and outcomeCommandDigest replays the original 200; any semantic change, digest conflict or revision gap is 409 plus quarantine and audit.",
+      "success": "200 PayrollTimeHandoffStatusV1 with Cache-Control: no-store and strong numeric ETag matching the returned version",
+      "writer": "Only Time writes handoff state; no fourth AsyncAPI event is introduced."
+    }
+  },
+  "entryQuerySeal": {
+    "source": "validIaqSupplement",
+    "bindings": [
+      {"id": "IAQ-039", "component": "TimeCommandCenterProjectionV1", "requestShapeSha256": "9d9cdcc8167d834c225201a85171688cbc4abab9cffea93cf402e45dc0c16882", "responseShapeSha256": "b6ec3f072228de6e2cbd26ef7cd280342d02dae807d6a712ab4227cf65c266d8"},
+      {"id": "IAQ-043", "component": "TimeDailyCloseProjectionV1", "requestShapeSha256": "88e86bfced9b5f766de79d3937a0fa99061d517c4a4a6bc34d31c3a66e8a4e92", "responseShapeSha256": "2f630f7e883e9889552f12345d8c9c7c3a758e998fddef5bac58e55daae14a7c"},
+      {"id": "IAQ-044", "component": "TimeMonthlyCloseProjectionV1", "requestShapeSha256": "12d54d5ef6749483c1d22eecb110199dedd6a8cac609e73c47af2f0ef4fb652f", "responseShapeSha256": "b89467f686abde5193b310ee2f9c4e0c967df2d31534a2bb471311ff63ede492"}
+    ],
+    "commonRequiredQuery": ["limit", "filter", "sort", "locale", "timeZone", "correlationId"],
+    "commonOptionalQuery": ["asOf", "cursor"],
+    "arrayEncoding": "form/explode=true",
+    "filterFieldsByBinding": {
+      "IAQ-039": ["commandReceipt", "effectiveOn", "exceptionSummary", "timePeriod"],
+      "IAQ-043": ["closeStatus", "effectiveOn", "impactSummary", "timePeriod"],
+      "IAQ-044": ["closeStatus", "effectiveOn", "payrollHandoff", "timePeriod"]
+    },
+    "invariants": ["VIEW/MASK/OMIT", "empty/partial/complete/unavailable", "opaque cursor bound to query", "stable order", "field-decision summary", "locale and IANA time zone", "deep-link and action allowlist"]
+  },
+  "eventSeal": {
+    "topic": "dwp.domain-events.v1",
+    "partitionKey": "tenantId|source|aggregateType|aggregateId",
+    "common": ["tenantId is required positive", "schemaVersion=1", "source=dwp-time-server", "correlationId from command", "causationId=receiptId", "mutation receipt terminal update and outbox insert in one transaction", "exact retry reuses event and outbox row", "unique tenant/type/aggregateId/aggregateSequence"],
+    "messages": [
+      {"message": "timePeriodClosed", "type": "TimePeriodClosed.v1", "aggregateType": "ClosePeriod", "aggregateId": "closePeriodId", "aggregateSequence": "closeRevision", "data": "XCON-009"},
+      {"message": "timePeriodReopened", "type": "TimePeriodReopened.v1", "aggregateType": "ClosePeriod", "aggregateId": "closePeriodId", "aggregateSequence": "newRevision", "data": "XCON-010"},
+      {"message": "payrollTimeHandoffReady", "type": "PayrollTimeHandoffReady.v1", "aggregateType": "PayrollHandoff", "aggregateId": "handoffId", "aggregateSequence": 1, "data": "XCON-011"}
+    ],
+    "canonicalXconModificationAuthorized": false
+  },
+  "productAuthorizationSuccessor": {
+    "currentHighWater": "v49",
+    "target": "exactly v50 on backend base fcb5c1f397d14ea77c7ff9714a272449d99e18a4, with Auth migration V258 reserved against predecessor V257; if either slot is occupied before integration this decision and plan become invalid and must be reissued before implementation continues",
+    "changes": ["IAQ-039 response -> TimeCommandCenterProjectionV1", "IAQ-043 response -> TimeDailyCloseProjectionV1", "IAQ-044 response -> TimeMonthlyCloseProjectionV1", "PEP-TIM-026 response -> PayrollTimeHandoffStatusV1", "PEP-TIM-028 route.hcm.time.command-receipt.data response -> TimeCommandReceiptLookupV1"],
+    "unchanged": ["close and reopen alone require step-up", "validate and handoff create do not require step-up", "feature default OFF", "tenant enrollment empty", "v49 artifacts immutable"],
+    "runtimeLineage": ["ProductAuthorizationReleaseLineage accepts exactly the pinned v50 checksum/counts in addition to immutable v1-v49", "seed index latestVersion and version count advance from 49 to 50", "ProductAuthorizationSeedLoader imports the fifty DRAFT seed descriptors without approving or activating any version", "the generated pilot fixture schema, fixture registry and Auth/Gateway fixture adapters pin the exact v50 checksum and latestVersion 50 while preserving every historical version", "ProductSurfaceStepUpRouteResolver recognizes the sealed v50 runtime bundle so close and reopen step-up resolution remains fail-closed but available after an independently authorized future activation", "validator, fixture-consumer and step-up resolver regressions prove v49 stays byte-immutable and v50 alone contains the forward bindings"],
+    "authSeedDeclarationMigration": {
+      "predecessorHighWater": "V257",
+      "version": "V258",
+      "path": "dwp-auth-server/src/main/resources/db/migration/V258__declare_tim007_v50_authorization_seed.sql",
+      "semantics": "Insert exactly product-surfaces version 50, its generated checksum and product-surfaces-v1.bundle-v50.generated.json with intended status DRAFT and automatic_import_enabled FALSE.",
+      "secondAuthMigrationAuthorized": false,
+      "approvalActivationGrantEnrollmentAuthorized": false
+    },
+    "state": "DRAFT_DEFAULT_OFF_NOT_ACTIVATED"
+  },
+  "externalGates": [
+    {"id": "PDX-011-LIVE-PRODUCER", "state": "EXTERNAL_GATE", "allowedNow": "default-OFF Time consumer port and fixtures", "forbiddenClaim": "production approval integration complete"},
+    {"id": "PAY-DURABLE-CLOSED-TIME-CONSUMER", "state": "P0_EXTERNAL_OWNER_MIGRATION_GATE", "reason": "PAY V52 belongs to PAY-013 and TIM-007 has no Payroll migration authority.", "required": ["separate PAY owner decision", "next-free PAY migration lease", "inbox/dedup", "quarantine", "receiver receipt/revision", "proof replay", "staging", "verified payroll input", "outcome callback outbox", "RLS and tenant predicates"], "forbidden": ["runtime table creation", "reuse of unrelated compensation or payroll-run tables", "end-to-end or calculation-release completion claim before the gate closes"]}
+  ],
+  "authority": {
+    "centralBackendBridgeImplementationAuthorized": true,
+    "centralOpenApiAndAsyncApiSuccessorAuthorized": true,
+    "centralProductAuthorizationNextVersionAuthorized": true,
+    "exactAuthV258DraftSeedDeclarationAuthorized": true,
+    "centralReceiptAndProblemSeamAuthorized": true,
+    "centralInProcessOutcomeContractAuthorized": true,
+    "historicalInputMutationAuthorized": false,
+    "canonicalXconRegenerationAuthorized": false,
+    "timModuleResumeAuthorized": false,
+    "timReplacementTokenAuthorizedBeforeBridgeIntegrationAndReview": false,
+    "payDurableMigrationAuthorized": false,
+    "mergeOtherModuleResultsAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "CREATE_A_HASH_BOUND_IMPLEMENTATION_PLAN_IMPLEMENT_THE_CENTRAL_BRIDGE_IN_ISOLATED_BACKEND_BRANCHES_RUN_ONLY_TARGETED_TESTS_INDEPENDENTLY_REVIEW_AND_INTEGRATE_THEN_ISSUE_THE_TIM_REPLACEMENT_TOKEN"
+}
