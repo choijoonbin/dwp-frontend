@@ -24,20 +24,31 @@ const POLICY_AUTHORITY_MODES = new Set([
 const RESPONSIBILITY_REQUIREMENTS = new Set(['REQUIRED', 'NOT_REQUIRED', 'LEGACY_OVERSIGHT']);
 const ACTIVATION_STATES = new Set(['ACTIVE', 'ELIGIBLE']);
 
-export type ProductSurfaceContextListDataV2 = Omit<
+export type ProductSurfaceSourceRevisionsV2 = {
+  auth: string;
+  policy: string;
+  productRelationship: string;
+  targetPopulation: string;
+  support: string | null;
+  tenantControl: string;
+};
+
+type ProductSurfaceContextListDataV2Base = Omit<
   ProductSurfaceContextListData,
-  'contractVersion' | 'sourceRevisions'
+  'contractVersion' | 'sourceRevisions' | 'activeAccessMode'
 > & {
   contractVersion: '2';
-  sourceRevisions: {
-    auth: string;
-    policy: string;
-    productRelationship: string;
-    targetPopulation: string;
-    support: string;
-    tenantControl: string;
-  };
 };
+
+export type ProductSurfaceContextListDataV2 =
+  | (ProductSurfaceContextListDataV2Base & {
+      activeAccessMode: 'NORMAL' | 'ELEVATED';
+      sourceRevisions: ProductSurfaceSourceRevisionsV2;
+    })
+  | (ProductSurfaceContextListDataV2Base & {
+      activeAccessMode: 'PROVIDER_SUPPORT';
+      sourceRevisions: ProductSurfaceSourceRevisionsV2 & { support: string };
+    });
 
 /**
  * The generic default remains available to pure model fixtures that never cross the transport
@@ -258,15 +269,24 @@ const SOURCE_REVISION_KEYS = [
   'support',
   'tenantControl',
 ] as const;
+const NON_SUPPORT_SOURCE_REVISION_KEYS = SOURCE_REVISION_KEYS.filter(
+  (key): key is Exclude<(typeof SOURCE_REVISION_KEYS)[number], 'support'> => key !== 'support'
+);
 
 function validSourceRevisions(
-  value: unknown
+  value: unknown,
+  activeAccessMode: unknown
 ): value is ProductSurfaceContextListDataV2['sourceRevisions'] {
   const revisions = record(value);
   return Boolean(
     revisions &&
     Object.keys(revisions).length === SOURCE_REVISION_KEYS.length &&
-    SOURCE_REVISION_KEYS.every((key) => nonBlank(revisions[key]))
+    SOURCE_REVISION_KEYS.every((key) => Object.prototype.hasOwnProperty.call(revisions, key)) &&
+    NON_SUPPORT_SOURCE_REVISION_KEYS.every((key) => nonBlank(revisions[key])) &&
+    (activeAccessMode === 'PROVIDER_SUPPORT'
+      ? nonBlank(revisions.support)
+      : (activeAccessMode === 'NORMAL' || activeAccessMode === 'ELEVATED') &&
+        (revisions.support === null || nonBlank(revisions.support)))
   );
 }
 
@@ -279,9 +299,9 @@ export function parseProductSurfaceAuthoritySnapshot(
     !envelope ||
     envelope.contractVersion !== '2' ||
     !nonBlank(envelope.decisionRevision) ||
-    !validSourceRevisions(envelope.sourceRevisions) ||
     !nonBlank(envelope.activeAccessMode) ||
     !ACCESS_MODES.has(envelope.activeAccessMode) ||
+    !validSourceRevisions(envelope.sourceRevisions, envelope.activeAccessMode) ||
     !validInstant(envelope.generatedAt) ||
     !Array.isArray(envelope.contexts) ||
     !Array.isArray(envelope.rollouts)

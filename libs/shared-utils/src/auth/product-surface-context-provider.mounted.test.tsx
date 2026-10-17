@@ -51,7 +51,7 @@ function authorityEnvelope(
       policy: `policy-${revision}`,
       productRelationship: `relationship-${revision}`,
       targetPopulation: `population-${revision}`,
-      support: `support-${revision}`,
+      support: null,
       tenantControl: `tenant-control-${revision}`,
     },
     activeAccessMode: 'NORMAL',
