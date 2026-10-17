@@ -1,0 +1,961 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-01-owner-v49-runtime-preflight.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-01-OWNER-V49-RUNTIME-PREFLIGHT-20261017-R1",
+  "analyzedAt": "2026-10-17T16:59:34+09:00",
+  "analyzedBy": "SYS_COMMON_INTEGRATION_CONTROL_OWNER_PEP_RUNTIME_PREFLIGHT",
+  "result": "NO_GO_EXISTING_TOKEN_CONDITIONAL_GO_AFTER_AMENDED_FRESH_OWNER_TOKENS",
+  "lineage": {
+    "frontendCarrier": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "aa2991d66be1cfb74db4bf4b4a8a99d9bd34618f",
+      "tree": "3888d2f45193ddd24bbf56ceadcc2d5ea4bcda81"
+    },
+    "backendRuntimePin": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "3d3f141d95f0252f66bd5987b6cba30fadc431e9",
+      "tree": "bd0de7c5e36658da84bdb2cadd6e0504b2f9323b"
+    },
+    "v49Registry": {
+      "version": 49,
+      "bundleKey": "product-surfaces",
+      "embeddedSha256": "5c1dccdc27d8b260fbf001de5695e983a7107072824a8087038340d0d84cbc60",
+      "sourceRouteCount": 1079
+    }
+  },
+  "scope": {
+    "performed": [
+      "read-only comparison of all four generated v49 owner projections against the owner-service runtime registries, filters, authority sources, predicate closures, purpose checks and step-up seams at the pinned backend commit",
+      "closed-set review of all BASE-TFR-HRM-005, BASE-TFR-PAY-013, BASE-TFR-SYS-002 and BASE-TFR-TIM-007 PAGE, DATA and ACTION routes",
+      "exact writable-path delta and targeted-test definition for a future amended fresh token",
+      "default-OFF, zero-enrollment and zero-controller-or-repository-call gate definition"
+    ],
+    "notPerformed": [
+      "owner source implementation or modification",
+      "database migration authoring or execution",
+      "backend, frontend, browser or repository-wide test execution",
+      "module worktree materialization, owner commit, push or merge",
+      "tenant enrollment or runtime activation"
+    ]
+  },
+  "projectionEvidence": [
+    {
+      "module": "HRM",
+      "path": "dwp-people-server/src/main/resources/product-authorization/hcm-people-pep-v49.generated.json",
+      "fileSha256": "bf2d079820cceba5ed8adcb0b7927daaef239bccc178138e25a6f889f55b1834",
+      "projectionKey": "hcm-people-pep-v49",
+      "projectedRouteContractCount": 103,
+      "bindingPairCount": 130,
+      "routeKindCounts": {
+        "PAGE": 35,
+        "DATA": 20,
+        "ACTION": 48
+      },
+      "capabilityCount": 52,
+      "accessPolicyCount": 5,
+      "entitlementExpressionCount": 3,
+      "predicatePolicyCount": 18,
+      "projectionChecksum": "3346929f550830ee236af702be33da2e58ccfbd0704c44d820f5d8f98a33739a"
+    },
+    {
+      "module": "PAY",
+      "path": "dwp-payroll-server/src/main/resources/product-authorization/hcm-payroll-pep-v49.generated.json",
+      "fileSha256": "663ced685337956e1c198680283003339d149216caf39697b143ce969ea29f7b",
+      "projectionKey": "hcm-payroll-pep-v49",
+      "projectedRouteContractCount": 34,
+      "bindingPairCount": 34,
+      "routeKindCounts": {
+        "PAGE": 2,
+        "DATA": 11,
+        "ACTION": 21
+      },
+      "capabilityCount": 16,
+      "accessPolicyCount": 0,
+      "entitlementExpressionCount": 0,
+      "predicatePolicyCount": 8,
+      "projectionChecksum": "5204125c7748c5052a952506646b30ffb8109463d1b01066f3830e1c1af663b6"
+    },
+    {
+      "module": "SYS",
+      "path": "dwp-platform-server/src/main/resources/product-authorization/hcm-platform-pep-v49.generated.json",
+      "fileSha256": "46073e2e262f7af783853e3efd769c336915873e641ea2e5f55b05d494d8f286",
+      "projectionKey": "hcm-platform-pep-v49",
+      "projectedRouteContractCount": 53,
+      "bindingPairCount": 54,
+      "routeKindCounts": {
+        "PAGE": 7,
+        "DATA": 19,
+        "ACTION": 27
+      },
+      "capabilityCount": 21,
+      "accessPolicyCount": 4,
+      "entitlementExpressionCount": 3,
+      "predicatePolicyCount": 11,
+      "projectionChecksum": "de70aba5a34df3bfdf1687386fb9c183a1a250e205dc4ac73968e2dfb731dd5e"
+    },
+    {
+      "module": "TIM",
+      "path": "dwp-time-server/src/main/resources/product-authorization/hcm-time-pep-v49.generated.json",
+      "fileSha256": "29e4e3b6729097551b7b9ecf137e7373b45a438e9bffc18ed8dd155db26ad00b",
+      "projectionKey": "hcm-time-pep-v49",
+      "projectedRouteContractCount": 29,
+      "bindingPairCount": 29,
+      "routeKindCounts": {
+        "PAGE": 7,
+        "DATA": 6,
+        "ACTION": 16
+      },
+      "capabilityCount": 15,
+      "accessPolicyCount": 0,
+      "entitlementExpressionCount": 0,
+      "predicatePolicyCount": 9,
+      "projectionChecksum": "848bee74cf878067755e83f2cce5203dc029fe2a782810436e9f7cbc7ac7c682"
+    }
+  ],
+  "sliceRouteClosedSet": {
+    "totalRouteCount": 16,
+    "routeKindCounts": {
+      "PAGE": 6,
+      "DATA": 5,
+      "ACTION": 5
+    },
+    "modules": [
+      {
+        "module": "HRM",
+        "sliceId": "BASE-TFR-HRM-005",
+        "ownerService": "dwp-people-server",
+        "routeCount": 2,
+        "routeKindCounts": {
+          "PAGE": 1,
+          "DATA": 1,
+          "ACTION": 0
+        },
+        "routes": [
+          {
+            "routeContractKey": "route.hcm.operations.organization-positions.page",
+            "routeKind": "PAGE",
+            "method": "GET",
+            "gatewayPath": "/api/people/v1/hris/organizations/graph",
+            "ownerPath": "/v1/hris/organizations/graph",
+            "profileKey": "organization-viewer",
+            "capability": "hcm.operations.organization.view",
+            "resolvedCapability": "DATA.HRIS_ORGANIZATION:VIEW",
+            "requiredResponsibility": "HRIS_DUTY_ORGANIZATION_VIEWER",
+            "scopeResolver": "ORGANIZATION_TARGET_POPULATION",
+            "predicatePolicyKeys": [
+              "predicate.hcm-organization-graph-authority.v1"
+            ],
+            "targetBindingKinds": [
+              "TARGET_POPULATION"
+            ],
+            "activeAccessModes": [
+              "NORMAL",
+              "ELEVATED"
+            ],
+            "purposeCode": "HR_OPERATIONS",
+            "freshCommandStepUpRequired": false
+          },
+          {
+            "routeContractKey": "route.hcm.operations.organization-graph.data",
+            "routeKind": "DATA",
+            "method": "GET",
+            "gatewayPath": "/api/people/v1/hris/organizations/graph",
+            "ownerPath": "/v1/hris/organizations/graph",
+            "profileKey": "organization-viewer",
+            "capability": "hcm.operations.organization.view",
+            "resolvedCapability": "DATA.HRIS_ORGANIZATION:VIEW",
+            "requiredResponsibility": "HRIS_DUTY_ORGANIZATION_VIEWER",
+            "scopeResolver": "ORGANIZATION_TARGET_POPULATION",
+            "predicatePolicyKeys": [
+              "predicate.hcm-organization-graph-authority.v1"
+            ],
+            "targetBindingKinds": [
+              "TARGET_POPULATION"
+            ],
+            "activeAccessModes": [
+              "NORMAL",
+              "ELEVATED"
+            ],
+            "purposeCode": "HR_OPERATIONS",
+            "freshCommandStepUpRequired": false
+          }
+        ],
+        "runtimeReachability": {
+          "result": "FAIL_OWNER_PEP_NOT_REACHED",
+          "currentRegistry": "HcmV3PepRegistry",
+          "currentResource": "product-authorization/hcm-people-pep-v42.generated.json",
+          "currentRegistrySourceSha256": "803db9c485fa99745cf9ef602d7d25f9bc9cc0d51a89d70ca9b76361161223d6",
+          "currentScopeValidatorSourceSha256": "055ba16f23cff7da869cc7c98bac9dbde2f902c79478ddb1b9bb51aad8d8a216",
+          "claimedSliceRouteCount": 0,
+          "reasons": [
+            "The registry is hard-coded to v42 resource, registry checksum, projection checksum and v42 counts, so neither v49 route is compiled.",
+            "The current namespace claim accepts /v1/hr only as an exact path or slash-prefixed family and therefore does not claim /v1/hris/organizations/graph.",
+            "The route-to-purpose map does not include either HRM-005 route.",
+            "HcmScopeSelectionValidator does not close predicate.hcm-organization-graph-authority.v1."
+          ]
+        },
+        "exactAdditionalWritableSecurityPaths": {
+          "outsideCurrentCandidatePaths": [
+            "backend:dwp-people-server/src/main/java/com/dwp/services/people/security/HcmV3PepRegistry.java",
+            "backend:dwp-people-server/src/main/java/com/dwp/services/people/security/HcmScopeSelectionValidator.java",
+            "backend:dwp-people-server/src/test/java/com/dwp/services/people/security/HcmV3PepRegistryTest.java",
+            "backend:dwp-people-server/src/test/java/com/dwp/services/people/security/HcmProductSurfacePepFilterTest.java",
+            "backend:dwp-people-server/src/test/java/com/dwp/services/people/security/HcmOwnerPepExecutionTest.java"
+          ],
+          "existingCandidatePathAlreadyCoversNewAdapter": "backend:dwp-people-server/src/main/java/com/dwp/services/people/hris/organization/**",
+          "notRequiredForInitialDelta": [
+            "backend:dwp-people-server/src/main/java/com/dwp/services/people/security/HcmProductSurfacePepFilter.java"
+          ]
+        },
+        "freshTokenRequiredSeals": [
+          "pin hcm-people-pep-v49 and its exact registry and projection checksums",
+          "add exact claim, route, purpose, predicate and ORGANIZATION_TARGET_POPULATION validation for the two HRM-005 routes",
+          "require READ operation and ORGANIZATION field authority with current field and authorization revisions",
+          "require HRIS_DUTY_ORGANIZATION_VIEWER at the resolved organization target population",
+          "distinguish the PAGE and DATA aliases by the single trusted route contract key even though method and paths are identical"
+        ],
+        "targetedVerification": {
+          "command": "./gradlew :dwp-people-server:test --tests 'com.dwp.services.people.security.HcmV3PepRegistryTest' --tests 'com.dwp.services.people.security.HcmProductSurfacePepFilterTest' --tests 'com.dwp.services.people.security.HcmOwnerPepExecutionTest' --tests 'com.dwp.services.people.hris.organization.*' --no-daemon --max-workers=1",
+          "mandatoryCases": [
+            "both exact route aliases authorize only with matching trusted route, method, path, projection, capability, predicate, purpose, target population and responsibility",
+            "missing or stale decision, field or authorization revision and wrong legal entity, organization scope or purpose fail before controller or repository access",
+            "near-miss, encoded separator, duplicate header and PAGE-or-DATA route alias mismatch fail closed",
+            "the six-route v42-to-v49 People projection expansion is explicitly regression-checked so unrelated routes do not gain accidental semantics"
+          ]
+        },
+        "defaultOffZeroCall": {
+          "feature": "HRIS_ORGANIZATION_POSITIONS",
+          "requiredResult": "FEATURE_ABSENT_FALSE_OR_TENANT_UNENROLLED_CAUSES_ZERO_ORGANIZATION_QUERY_COMMAND_REPOSITORY_AND_OUTBOX_CALLS"
+        },
+        "goNoGo": "NO_GO_CURRENT; GO_AFTER_FRESH_TOKEN_AMENDMENT_AND_TARGETED_SECURITY_TEST_PASS"
+      },
+      {
+        "module": "PAY",
+        "sliceId": "BASE-TFR-PAY-013",
+        "ownerService": "dwp-payroll-server",
+        "routeCount": 3,
+        "routeKindCounts": {
+          "PAGE": 1,
+          "DATA": 1,
+          "ACTION": 1
+        },
+        "routes": [
+          {
+            "routeContractKey": "route.hcm.operations.payroll-population.page",
+            "routeKind": "PAGE",
+            "method": "GET",
+            "gatewayPath": "/api/payroll/v1/workbench/population",
+            "ownerPath": "/v1/workbench/population",
+            "profileKey": "payroll-support-viewer",
+            "capability": "hcm.operations.payroll-support.view",
+            "resolvedCapability": "DATA.HRIS_PAYROLL_STATUS:VIEW",
+            "scopeResolver": "PAY_TARGET_POPULATION",
+            "predicatePolicyKeys": [
+              "predicate.hcm-payroll-population-authority.v1"
+            ],
+            "targetBindingKinds": [
+              "TARGET_POPULATION"
+            ],
+            "activeAccessModes": [
+              "ELEVATED"
+            ],
+            "purposeCode": "PAYROLL_OPERATIONS",
+            "freshCommandStepUpRequired": false,
+            "stepUpMeaning": "ELEVATED_SESSION_REQUIRED_NO_COMMAND_CHALLENGE_BINDING"
+          },
+          {
+            "routeContractKey": "route.hcm.operations.payroll-support.data",
+            "routeKind": "DATA",
+            "method": "GET",
+            "gatewayPath": "/api/payroll/v1/workbench/population",
+            "ownerPath": "/v1/workbench/population",
+            "profileKey": "payroll-support-viewer",
+            "capability": "hcm.operations.payroll-support.view",
+            "resolvedCapability": "DATA.HRIS_PAYROLL_STATUS:VIEW",
+            "scopeResolver": "PAY_TARGET_POPULATION",
+            "predicatePolicyKeys": [
+              "predicate.hcm-payroll-population-authority.v1"
+            ],
+            "targetBindingKinds": [
+              "TARGET_POPULATION"
+            ],
+            "activeAccessModes": [
+              "ELEVATED"
+            ],
+            "purposeCode": "PAYROLL_OPERATIONS",
+            "freshCommandStepUpRequired": false,
+            "stepUpMeaning": "ELEVATED_SESSION_REQUIRED_NO_COMMAND_CHALLENGE_BINDING"
+          },
+          {
+            "routeContractKey": "route.hcm.operations.payroll-run.action",
+            "routeKind": "ACTION",
+            "method": "POST",
+            "gatewayPath": "/api/payroll/v1/runs",
+            "ownerPath": "/v1/runs",
+            "profileKey": "payroll-run-operator",
+            "capability": "hcm.operations.payroll-run.execute",
+            "resolvedCapability": "ACTION.HRIS_PAYROLL_RUN:EXECUTE",
+            "scopeResolver": "PAYROLL_LEGAL_ENTITY_GROUP_SCOPE",
+            "predicatePolicyKeys": [
+              "predicate.hcm-payroll-run-prepare-authority.v1"
+            ],
+            "targetBindingKinds": [
+              "OBJECT",
+              "TARGET_POPULATION"
+            ],
+            "activeAccessModes": [
+              "ELEVATED"
+            ],
+            "purposeCode": "PAYROLL_PROCESSING",
+            "freshCommandStepUpRequired": true,
+            "stepUpBinding": {
+              "audience": "dwp-payroll-server",
+              "targetType": "PAYROLL_RUN_PREPARATION",
+              "targetIdBodyField": "preparationId",
+              "expectedObjectVersionHeader": "X-DWP-Expected-Object-Version",
+              "requiredInitialObjectVersion": "0"
+            }
+          }
+        ],
+        "runtimeReachability": {
+          "result": "FAIL_OWNER_PEP_NOT_REACHED",
+          "currentRegistriesAndFilters": [
+            {
+              "registry": "PayrollV41PepRegistry",
+              "registrySourceSha256": "26e4bbbad8c2c82ccd85510dde63a763168a0e6184a8eb33ec714a28e181d4cf",
+              "filter": "PayrollCalculationSecurityFilter",
+              "filterSourceSha256": "aa7d470a4003dd50b5c5421f97445e15d78cebd65b24b1ad8545d93ed79a8ed3",
+              "scope": "existing calculation, run view, approval, finalization and receipt routes only"
+            },
+            {
+              "registry": "PayrollFoundationSettingsV48PepRegistry",
+              "registrySourceSha256": "d3517bedd732288a4ea9625b1d176f346392d6893cad8e8df0a00c743206d016",
+              "filter": "PayrollFoundationSettingsSecurityFilter",
+              "filterSourceSha256": "5d9fb715dc9f5b641e9cf5a0a2a8853d46e007639fa75c336c07b9f1621e8093",
+              "scope": "settings payroll-foundation routes only"
+            },
+            {
+              "filter": "PayrollFoundationSecurityFilter",
+              "filterSourceSha256": "515e20e794816fe89670600426a4d2f2cf7aadeeb313a8a5ef84ace59c7145a1",
+              "scope": "/v1/hris/payroll/foundation only"
+            }
+          ],
+          "claimedSliceRouteCount": 0,
+          "reasons": [
+            "Neither the v41 calculation filter nor either Foundation filter owns GET /v1/workbench/population or POST /v1/runs.",
+            "The PAGE and DATA bindings share the same method and paths and therefore cannot be selected safely without the trusted route contract key.",
+            "The effective v49 prepare predicate is predicate.hcm-payroll-run-prepare-authority.v1; retaining the earlier generic run or run-SoD predicate tuple would be stale.",
+            "The current cryptographic PayrollStepUpVerifier is package-private and cannot be reused safely by a preparation-owned PEP without a narrowly allocated visibility seam."
+          ]
+        },
+        "exactAdditionalWritableSecurityPaths": {
+          "outsideCurrentCandidatePaths": [
+            "backend:dwp-payroll-server/src/main/java/com/dwp/services/payroll/security/PayrollStepUpVerifier.java",
+            "backend:dwp-payroll-server/src/test/java/com/dwp/services/payroll/security/PayrollStepUpVerifierContractTest.java"
+          ],
+          "exactSecurityFilesInsideExistingPreparationCandidatePath": [
+            "backend:dwp-payroll-server/src/main/java/com/dwp/services/payroll/preparation/PayrollPreparationV49PepRegistry.java",
+            "backend:dwp-payroll-server/src/main/java/com/dwp/services/payroll/preparation/PayrollPreparationSecurityFilter.java",
+            "backend:dwp-payroll-server/src/main/java/com/dwp/services/payroll/preparation/PayrollPreparationRequestContext.java",
+            "backend:dwp-payroll-server/src/main/java/com/dwp/services/payroll/preparation/PayrollPreparationAuthorityAdapter.java",
+            "backend:dwp-payroll-server/src/main/java/com/dwp/services/payroll/preparation/PayrollPreparationHighRiskCommandGuard.java",
+            "backend:dwp-payroll-server/src/test/java/com/dwp/services/payroll/preparation/PayrollPreparationV49PepRegistryTest.java",
+            "backend:dwp-payroll-server/src/test/java/com/dwp/services/payroll/preparation/PayrollPreparationSecurityFilterTest.java",
+            "backend:dwp-payroll-server/src/test/java/com/dwp/services/payroll/preparation/PayrollPreparationHighRiskCommandGuardTest.java"
+          ],
+          "mustRemainReadOnly": [
+            "backend:dwp-payroll-server/src/main/java/com/dwp/services/payroll/security/PayrollV41PepRegistry.java",
+            "backend:dwp-payroll-server/src/main/java/com/dwp/services/payroll/security/PayrollCalculationSecurityFilter.java",
+            "backend:dwp-payroll-server/src/main/java/com/dwp/services/payroll/foundation/PayrollFoundationSettingsV48PepRegistry.java",
+            "backend:dwp-payroll-server/src/main/java/com/dwp/services/payroll/foundation/PayrollFoundationSettingsSecurityFilter.java",
+            "backend:dwp-payroll-server/src/main/java/com/dwp/services/payroll/foundation/PayrollFoundationSecurityFilter.java"
+          ]
+        },
+        "freshTokenRequiredSeals": [
+          "pin hcm-payroll-pep-v49 and select exactly the three PAY-013 routes rather than replacing the v41 or Foundation owners",
+          "require trusted route-key disambiguation for the PAGE and DATA aliases",
+          "enforce ELEVATED access, PAY_TARGET_POPULATION and PAYROLL_OPERATIONS on both read aliases",
+          "enforce predicate.hcm-payroll-run-prepare-authority.v1, PAYROLL_PROCESSING, preparationId, expected initial object version 0 and a replay-protected cryptographic command challenge on POST /v1/runs",
+          "reuse PayrollStepUpVerifier through a visibility-only seam; a second verifier or weakened duplicate policy is forbidden"
+        ],
+        "targetedVerification": {
+          "command": "./gradlew :dwp-payroll-server:test --tests 'com.dwp.services.payroll.preparation.*' --tests 'com.dwp.services.payroll.security.PayrollStepUpVerifierContractTest' --tests 'com.dwp.services.payroll.calculation.PayrollG3SliceContractTest' --no-daemon --max-workers=1",
+          "conditionalExtraTargets": "run only the exact calculation service or worker tests whose READY boundary changed",
+          "mandatoryCases": [
+            "PAGE and DATA aliases reject missing, duplicate or mismatched trusted route keys before controller or repository access",
+            "wrong population, purpose, active mode, capability, decision revision, field revision or authorization revision fails closed",
+            "prepare rejects missing or non-zero expected object version and missing, replayed, expired, wrong issuer, wrong audience or wrong-key challenge",
+            "prepare challenge binds route, method, public path, preparationId, object version, idempotency key, payload digest, context, scope and decision revision"
+          ]
+        },
+        "defaultOffZeroCall": {
+          "feature": "HRIS_PAYROLL_POPULATION_PREPARATION",
+          "requiredResult": "FEATURE_ABSENT_FALSE_OR_TENANT_UNENROLLED_CAUSES_ZERO_PREPARATION_CONTROLLER_STORE_CALCULATION_AND_WORKER_CALLS"
+        },
+        "goNoGo": "NO_GO_CURRENT; GO_AFTER_FRESH_TOKEN_AMENDMENT_AND_TARGETED_SECURITY_TEST_PASS"
+      },
+      {
+        "module": "SYS",
+        "sliceId": "BASE-TFR-SYS-002",
+        "ownerService": "dwp-platform-server",
+        "routeCount": 3,
+        "routeKindCounts": {
+          "PAGE": 1,
+          "DATA": 2,
+          "ACTION": 0
+        },
+        "routes": [
+          {
+            "routeContractKey": "route.hcm.configuration.settings-operations.page",
+            "routeKind": "PAGE",
+            "method": "GET",
+            "gatewayPath": "/api/platform/v1/hris/workbench/settings-operations",
+            "ownerPath": "/v1/hris/workbench/settings-operations",
+            "profileKey": "configuration-reader",
+            "capability": "hcm.configuration.workbench.view",
+            "resolvedCapability": "CONFIG.HRIS_WORKBENCH:VIEW",
+            "scopeResolver": "APP_RESOURCE_SET:RS_HCM_CONFIG",
+            "predicatePolicyKeys": [
+              "predicate.hcm-settings-operations-authority.v1"
+            ],
+            "targetBindingKinds": [
+              "CONFIG_SCOPE"
+            ],
+            "activeAccessModes": [
+              "NORMAL",
+              "ELEVATED"
+            ],
+            "purposeCode": "HRIS_CONFIGURATION",
+            "purposeSealState": "PRESENT_IN_DISPATCH_CANDIDATE_BUT_MISSING_FROM_FINAL_MODULE_DECISION_REQUIRES_FRESH_TOKEN_RESEAL",
+            "freshCommandStepUpRequired": false
+          },
+          {
+            "routeContractKey": "route.hcm.operations.exception.data",
+            "routeKind": "DATA",
+            "method": "GET",
+            "gatewayPath": "/api/platform/v1/admin/hris/operations/exceptions",
+            "ownerPath": "/v1/admin/hris/operations/exceptions",
+            "profileKey": "operation-exception-reader",
+            "capability": "hcm.operations.exception.view",
+            "resolvedCapability": "DATA.HRIS_OPERATION_EXCEPTION:VIEW",
+            "requiredResponsibility": "HRIS_DUTY_OPERATION_EXCEPTION_READER",
+            "scopeResolver": "AUTHORIZED_PACKAGE_SCOPE",
+            "predicatePolicyKeys": [
+              "predicate.hcm-operation-exception-authority.v1"
+            ],
+            "targetBindingKinds": [
+              "TARGET_POPULATION"
+            ],
+            "activeAccessModes": [
+              "NORMAL",
+              "ELEVATED"
+            ],
+            "purposeCode": "HRIS_OPERATIONS",
+            "freshCommandStepUpRequired": false
+          },
+          {
+            "routeContractKey": "route.hcm.operations.exception-detail.data",
+            "routeKind": "DATA",
+            "method": "GET",
+            "gatewayPath": "/api/platform/v1/admin/hris/operations/exceptions/{exceptionId}",
+            "ownerPath": "/v1/admin/hris/operations/exceptions/{exceptionId}",
+            "profileKey": "operation-exception-reader",
+            "capability": "hcm.operations.exception.view",
+            "resolvedCapability": "DATA.HRIS_OPERATION_EXCEPTION:VIEW",
+            "requiredResponsibility": "HRIS_DUTY_OPERATION_EXCEPTION_READER",
+            "scopeResolver": "AUTHORIZED_PACKAGE_SCOPE",
+            "predicatePolicyKeys": [
+              "predicate.hcm-operation-exception-authority.v1"
+            ],
+            "targetBindingKinds": [
+              "TARGET_POPULATION",
+              "OBJECT"
+            ],
+            "activeAccessModes": [
+              "NORMAL",
+              "ELEVATED"
+            ],
+            "purposeCode": "HRIS_OPERATIONS",
+            "freshCommandStepUpRequired": false
+          }
+        ],
+        "runtimeReachability": {
+          "result": "FAIL_OWNER_PEP_NOT_REACHED",
+          "currentRegistry": "HcmPlatformPepRegistry",
+          "currentResource": "product-authorization/hcm-platform-pep-v47.generated.json",
+          "currentRegistrySourceSha256": "5416a7accd8d36318c7a44586fc9e1d3c04990a2ec18b8323a1309ffc0271e05",
+          "currentFilter": "PlatformSecurityFilter",
+          "currentFilterSourceSha256": "289bd3df959d3e8a532c2bff9e5463faaf80260b32dcae1e77ed2623fc8e7fb8",
+          "claimedSliceRouteCount": 0,
+          "reasons": [
+            "HcmPlatformPepRegistry is hard-coded to v47 and its path-family claim omits settings-operations and both operational-exception families.",
+            "PlatformSecurityFilter therefore computes hcmPlatformPath=false and never invokes the exact HCM registry for the three routes.",
+            "Generic Platform permission handling is not an equivalent fallback because it does not close the required predicate, purpose and required-responsibility tuple.",
+            "The settings purpose HRIS_CONFIGURATION was recorded in the dispatch candidate but omitted from the final sealed module decision."
+          ]
+        },
+        "exactAdditionalWritableSecurityPaths": {
+          "outsideCurrentCandidatePaths": [
+            "backend:dwp-platform-server/src/main/java/com/dwp/services/platform/security/HcmPlatformPepRegistry.java",
+            "backend:dwp-platform-server/src/test/java/com/dwp/services/platform/security/HcmPlatformPepSecurityContractTest.java",
+            "backend:dwp-platform-server/src/test/java/com/dwp/services/platform/security/PlatformSecurityFilterTest.java"
+          ],
+          "existingCandidatePathAlreadyCoversOperationsAuthorityAdapter": "backend:dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/operations/**",
+          "notRequiredForInitialDelta": [
+            "backend:dwp-platform-server/src/main/java/com/dwp/services/platform/security/PlatformSecurityFilter.java",
+            "backend:dwp-platform-server/src/main/java/com/dwp/services/platform/security/PlatformProductAuthorizationSupport.java"
+          ]
+        },
+        "freshTokenRequiredSeals": [
+          "pin hcm-platform-pep-v49 and update exact envelope, checksum, count and path-family closure",
+          "add exact route-level validation for settings predicate and CONFIG_SCOPE",
+          "re-seal HRIS_CONFIGURATION as the settings-operations purpose before implementation",
+          "require HRIS_DUTY_OPERATION_EXCEPTION_READER at AUTHORIZED_PACKAGE_SCOPE and HRIS_OPERATIONS for both exception routes",
+          "preserve tenant control-plane identity and reject provider, support and non-tenant identities before controller or repository access"
+        ],
+        "targetedVerification": {
+          "command": "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.security.HcmPlatformPepSecurityContractTest' --tests 'com.dwp.services.platform.security.PlatformSecurityFilterTest' --tests 'com.dwp.services.platform.hrisconfiguration.operations.*' --no-daemon --max-workers=1",
+          "conditionalExtraTargets": "run existing Explorer receipt tests only if a shared receipt seam changes",
+          "mandatoryCases": [
+            "all three exact routes reach the HCM Platform PEP only with exact trusted route, method, path, context, scope and current decision revision",
+            "wrong settings purpose or config scope and wrong exception purpose, package scope, duty, owner module or exception object fail closed",
+            "provider, support, conflicting role-plane and non-tenant identity fail before operations controller or repository access",
+            "near-miss, encoded separator, matrix parameter and extra path segment are owned and denied rather than falling through to generic Platform authorization"
+          ]
+        },
+        "defaultOffZeroCall": {
+          "feature": "HRIS_OPERATIONAL_EXCEPTION_PROJECTION",
+          "requiredResult": "FEATURE_ABSENT_FALSE_OR_TENANT_UNENROLLED_CAUSES_ZERO_EVENT_INGRESS_PROJECTION_REPOSITORY_QUERY_AND_RECEIPT_CALLS"
+        },
+        "goNoGo": "NO_GO_CURRENT; GO_AFTER_FRESH_TOKEN_AMENDMENT_SETTINGS_PURPOSE_RESEAL_AND_TARGETED_SECURITY_TEST_PASS"
+      },
+      {
+        "module": "TIM",
+        "sliceId": "BASE-TFR-TIM-007",
+        "ownerService": "dwp-time-server",
+        "routeCount": 8,
+        "routeKindCounts": {
+          "PAGE": 3,
+          "DATA": 1,
+          "ACTION": 4
+        },
+        "routes": [
+          {
+            "routeContractKey": "route.hcm.operations.time-command-center.page",
+            "routeKind": "PAGE",
+            "method": "GET",
+            "gatewayPath": "/api/time/v1/hris/workbench/time-command-center",
+            "ownerPath": "/v1/hris/workbench/time-command-center",
+            "profileKey": "time-operations-reader",
+            "capability": "hcm.operations.time.view",
+            "resolvedCapability": "DATA.HR_TIME:VIEW",
+            "scopeResolver": "TIME_TARGET_POPULATION",
+            "predicatePolicyKeys": [
+              "predicate.hcm-time-period-authority.v1"
+            ],
+            "targetBindingKinds": [
+              "TARGET_POPULATION"
+            ],
+            "activeAccessModes": [
+              "NORMAL",
+              "ELEVATED"
+            ],
+            "freshCommandStepUpRequired": false,
+            "candidatePurposeForFreshToken": "TIME_OPERATIONS"
+          },
+          {
+            "routeContractKey": "route.hcm.operations.time-daily-close.page",
+            "routeKind": "PAGE",
+            "method": "GET",
+            "gatewayPath": "/api/time/v1/hris/workbench/time-daily-close",
+            "ownerPath": "/v1/hris/workbench/time-daily-close",
+            "profileKey": "time-operations-reader",
+            "capability": "hcm.operations.time.view",
+            "resolvedCapability": "DATA.HR_TIME:VIEW",
+            "scopeResolver": "TIME_TARGET_POPULATION",
+            "predicatePolicyKeys": [
+              "predicate.hcm-time-period-authority.v1"
+            ],
+            "targetBindingKinds": [
+              "TARGET_POPULATION"
+            ],
+            "activeAccessModes": [
+              "NORMAL",
+              "ELEVATED"
+            ],
+            "freshCommandStepUpRequired": false,
+            "candidatePurposeForFreshToken": "TIME_CLOSE"
+          },
+          {
+            "routeContractKey": "route.hcm.operations.time-monthly-close.page",
+            "routeKind": "PAGE",
+            "method": "GET",
+            "gatewayPath": "/api/time/v1/hris/workbench/time-monthly-close",
+            "ownerPath": "/v1/hris/workbench/time-monthly-close",
+            "profileKey": "time-operations-reader",
+            "capability": "hcm.operations.time.view",
+            "resolvedCapability": "DATA.HR_TIME:VIEW",
+            "scopeResolver": "TIME_TARGET_POPULATION",
+            "predicatePolicyKeys": [
+              "predicate.hcm-time-period-authority.v1"
+            ],
+            "targetBindingKinds": [
+              "TARGET_POPULATION"
+            ],
+            "activeAccessModes": [
+              "NORMAL",
+              "ELEVATED"
+            ],
+            "freshCommandStepUpRequired": false,
+            "candidatePurposeForFreshToken": "TIME_CLOSE"
+          },
+          {
+            "routeContractKey": "route.hcm.operations.time-close-validate.action",
+            "routeKind": "ACTION",
+            "method": "POST",
+            "gatewayPath": "/api/time/v1/close-periods/{periodId}/validations",
+            "ownerPath": "/v1/close-periods/{periodId}/validations",
+            "profileKey": "time-close-operator",
+            "capability": "hcm.operations.time.close",
+            "resolvedCapability": "ACTION.HRIS_TIME_CLOSE:EXECUTE",
+            "requiredResponsibility": "HRIS_DUTY_TIME_CLOSE_OPERATOR",
+            "scopeResolver": "TIME_TARGET_POPULATION",
+            "predicatePolicyKeys": [
+              "predicate.hcm-time-period-authority.v1"
+            ],
+            "targetBindingKinds": [
+              "OBJECT",
+              "TARGET_POPULATION"
+            ],
+            "activeAccessModes": [
+              "NORMAL",
+              "ELEVATED"
+            ],
+            "freshCommandStepUpRequired": false,
+            "candidatePurposeForFreshToken": "WORK_TIME_PERIOD_CLOSURE"
+          },
+          {
+            "routeContractKey": "route.hcm.operations.time-close.action",
+            "routeKind": "ACTION",
+            "method": "POST",
+            "gatewayPath": "/api/time/v1/close-periods/{periodId}/close",
+            "ownerPath": "/v1/close-periods/{periodId}/close",
+            "profileKey": "time-close-operator",
+            "capability": "hcm.operations.time.close",
+            "resolvedCapability": "ACTION.HRIS_TIME_CLOSE:EXECUTE",
+            "requiredResponsibility": "HRIS_DUTY_TIME_CLOSE_OPERATOR",
+            "scopeResolver": "TIME_TARGET_POPULATION",
+            "predicatePolicyKeys": [
+              "predicate.hcm-time-period-authority.v1",
+              "predicate.hcm-time-close-sod.v1"
+            ],
+            "targetBindingKinds": [
+              "OBJECT",
+              "TARGET_POPULATION"
+            ],
+            "activeAccessModes": [
+              "NORMAL",
+              "ELEVATED"
+            ],
+            "freshCommandStepUpRequired": true,
+            "stepUpBinding": {
+              "audience": "dwp-time-server",
+              "targetType": "TIME_PERIOD",
+              "targetIdPathParameter": "periodId",
+              "expectedObjectVersionHeader": "If-Match"
+            },
+            "candidatePurposeForFreshToken": "WORK_TIME_PERIOD_CLOSURE"
+          },
+          {
+            "routeContractKey": "route.hcm.operations.time-reopen.action",
+            "routeKind": "ACTION",
+            "method": "POST",
+            "gatewayPath": "/api/time/v1/close-periods/{periodId}/reopen",
+            "ownerPath": "/v1/close-periods/{periodId}/reopen",
+            "profileKey": "time-reopen-operator",
+            "capability": "hcm.operations.time.reopen",
+            "resolvedCapability": "ACTION.HRIS_TIME_REOPEN:MANAGE",
+            "requiredResponsibility": "HRIS_DUTY_TIME_REOPEN_OPERATOR",
+            "scopeResolver": "TIME_TARGET_POPULATION",
+            "predicatePolicyKeys": [
+              "predicate.hcm-time-period-authority.v1",
+              "predicate.hcm-time-reopen-sod.v1"
+            ],
+            "targetBindingKinds": [
+              "OBJECT",
+              "TARGET_POPULATION"
+            ],
+            "activeAccessModes": [
+              "NORMAL",
+              "ELEVATED"
+            ],
+            "freshCommandStepUpRequired": true,
+            "stepUpBinding": {
+              "audience": "dwp-time-server",
+              "targetType": "TIME_PERIOD",
+              "targetIdPathParameter": "periodId",
+              "expectedObjectVersionHeader": "If-Match"
+            },
+            "candidatePurposeForFreshToken": "WORK_TIME_PERIOD_CLOSURE"
+          },
+          {
+            "routeContractKey": "route.hcm.operations.time-payroll-handoff-create.action",
+            "routeKind": "ACTION",
+            "method": "POST",
+            "gatewayPath": "/api/time/v1/close-periods/{periodId}/payroll-handoffs",
+            "ownerPath": "/v1/close-periods/{periodId}/payroll-handoffs",
+            "profileKey": "time-close-operator",
+            "capability": "hcm.operations.time.close",
+            "resolvedCapability": "ACTION.HRIS_TIME_CLOSE:EXECUTE",
+            "requiredResponsibility": "HRIS_DUTY_TIME_CLOSE_OPERATOR",
+            "scopeResolver": "TIME_TARGET_POPULATION",
+            "predicatePolicyKeys": [
+              "predicate.hcm-time-period-authority.v1"
+            ],
+            "targetBindingKinds": [
+              "OBJECT",
+              "TARGET_POPULATION"
+            ],
+            "activeAccessModes": [
+              "NORMAL",
+              "ELEVATED"
+            ],
+            "freshCommandStepUpRequired": false,
+            "candidatePurposeForFreshToken": "CLOSED_TIME_PAYROLL_TRANSFER"
+          },
+          {
+            "routeContractKey": "route.hcm.operations.time-payroll-handoff.data",
+            "routeKind": "DATA",
+            "method": "GET",
+            "gatewayPath": "/api/time/v1/payroll-handoffs/{handoffId}",
+            "ownerPath": "/v1/payroll-handoffs/{handoffId}",
+            "profileKey": "time-close-operator",
+            "capability": "hcm.operations.time.close",
+            "resolvedCapability": "ACTION.HRIS_TIME_CLOSE:EXECUTE",
+            "requiredResponsibility": "HRIS_DUTY_TIME_CLOSE_OPERATOR",
+            "scopeResolver": "TIME_TARGET_POPULATION",
+            "predicatePolicyKeys": [
+              "predicate.hcm-time-period-authority.v1"
+            ],
+            "targetBindingKinds": [
+              "OBJECT",
+              "TARGET_POPULATION"
+            ],
+            "activeAccessModes": [
+              "NORMAL",
+              "ELEVATED"
+            ],
+            "responseSchemaKey": "ClosedTimeResultV1",
+            "freshCommandStepUpRequired": false,
+            "candidatePurposeForFreshToken": "CLOSED_TIME_PAYROLL_TRANSFER"
+          }
+        ],
+        "runtimeReachability": {
+          "result": "FAIL_OWNER_PEP_NOT_REACHED",
+          "currentSharedV49RegistryOrFilterExists": false,
+          "currentGatewayVerifiedPatterns": [
+            {
+              "path": "dwp-time-server/src/main/java/com/dwp/services/time/workregime/GatewayVerifiedWorkRegimeOwnerAuthoritySource.java",
+              "sourceSha256": "c1eceb1a983581492fce1d1b57650f3be259fc1cec1f69eb594a679e85371de5"
+            },
+            {
+              "path": "dwp-time-server/src/main/java/com/dwp/services/time/clockingestion/GatewayVerifiedClockOwnerAuthoritySource.java",
+              "sourceSha256": "ecb26e19a01c151a47f095f0bcdc7f2de607919353efbd73925f14112d744c0a"
+            },
+            {
+              "path": "dwp-time-server/src/main/java/com/dwp/services/time/interpretation/GatewayVerifiedInterpretationOwnerAuthoritySource.java",
+              "sourceSha256": "28518d42cf64c585dcb51cfe3e988d0496812101ecba124273e67ae649f052e8"
+            },
+            {
+              "path": "dwp-time-server/src/main/java/com/dwp/services/time/timecard/GatewayVerifiedTimecardOwnerAuthoritySource.java",
+              "sourceSha256": "17b81e9d3bf25bf4798353a837faf77587f03c5c26c9ae3504e173d4d2bfa28e"
+            }
+          ],
+          "claimedSliceRouteCount": 0,
+          "reasons": [
+            "The existing GatewayVerified authority sources are feature-local and none owns the close-period, close-workbench or payroll-handoff path families.",
+            "No Time registry or filter currently parses hcm-time-pep-v49 for the eight TIM-007 routes.",
+            "The sealed decision lists four allowed purposes but does not assign an exact purpose to each route, so an owner implementation cannot safely choose among them without a fresh central seal."
+          ]
+        },
+        "exactAdditionalWritableSecurityPaths": {
+          "outsideCurrentCandidatePaths": [],
+          "reasonNoOutsidePathRequired": "All new TIM owner PEP security files can remain under the already proposed backend:dwp-time-server/src/main/java/com/dwp/services/time/close/** and matching test wildcard.",
+          "exactSecurityFilesInsideExistingCloseCandidatePath": [
+            "backend:dwp-time-server/src/main/java/com/dwp/services/time/close/TimeCloseV49PepRegistry.java",
+            "backend:dwp-time-server/src/main/java/com/dwp/services/time/close/GatewayVerifiedTimeCloseOwnerAuthoritySource.java",
+            "backend:dwp-time-server/src/main/java/com/dwp/services/time/close/TimeCloseOwnerAccessFilter.java",
+            "backend:dwp-time-server/src/main/java/com/dwp/services/time/close/TimeCloseRequestContext.java",
+            "backend:dwp-time-server/src/main/java/com/dwp/services/time/close/TimeCloseHighRiskCommandGuard.java",
+            "backend:dwp-time-server/src/main/java/com/dwp/services/time/close/TimeCloseStepUpVerifier.java",
+            "backend:dwp-time-server/src/test/java/com/dwp/services/time/close/TimeCloseV49PepRegistryTest.java",
+            "backend:dwp-time-server/src/test/java/com/dwp/services/time/close/TimeCloseOwnerAccessFilterTest.java",
+            "backend:dwp-time-server/src/test/java/com/dwp/services/time/close/TimeCloseHighRiskCommandGuardTest.java"
+          ]
+        },
+        "freshTokenRequiredSeals": [
+          "pin hcm-time-pep-v49 and select exactly the eight TIM-007 routes",
+          "seal the exact per-route purpose map before source authoring; proposed closure is command-center to TIME_OPERATIONS, daily and monthly pages to TIME_CLOSE, validate, close and reopen to WORK_TIME_PERIOD_CLOSURE, and both handoff routes to CLOSED_TIME_PAYROLL_TRANSFER",
+          "require TIME_TARGET_POPULATION and the exact close or reopen duty at that scope",
+          "require fresh cryptographic command challenges only for close and reopen and bind route, public path, periodId, If-Match, idempotency key, payload digest, context, scope and decision revision",
+          "preserve ACTION.HRIS_TIME_CLOSE:EXECUTE for payroll-handoff DATA; do not remodel it as a data capability",
+          "claim each close and handoff path family broadly enough that unknown, encoded, duplicate-slash and matrix-parameter variants are denied rather than bypassed"
+        ],
+        "targetedVerification": {
+          "command": "./gradlew :dwp-time-server:test --tests 'com.dwp.services.time.close.*' --no-daemon --max-workers=1",
+          "mandatoryCases": [
+            "each exact PAGE, DATA and ACTION route authorizes only with matching trusted route, path, method, purpose, capability, predicate, target population and responsibility",
+            "validate and both handoff routes require no fresh command challenge while close and reopen require exact replay-protected challenge evidence",
+            "wrong or missing If-Match, periodId, route, public path, idempotency key, payload digest, context, scope or decision revision fails before service or repository access",
+            "close SoD and reopen SoD predicates are independently required and cannot be satisfied by the period predicate alone",
+            "handoff DATA returns only ClosedTimeResultV1 after exact owner authority and never through browser, support, provider or arbitrary service identity"
+          ]
+        },
+        "defaultOffZeroCall": {
+          "feature": "HRIS_TIME_CLOSE_HANDOFF",
+          "requiredResult": "FEATURE_ABSENT_FALSE_OR_TENANT_UNENROLLED_CAUSES_ZERO_CLOSE_CONTROLLER_REPOSITORY_OUTBOX_HANDOFF_AND_INTERNAL_TRUST_CALLS"
+        },
+        "goNoGo": "NO_GO_CURRENT; GO_AFTER_FRESH_TOKEN_PURPOSE_SEAL_AND_TARGETED_SECURITY_TEST_PASS"
+      }
+    ]
+  },
+  "globalFailClosedTestMatrix": [
+    "exact valid route reaches its owner controller only after owner PEP success",
+    "missing, duplicate, malformed or wrong trusted route contract header fails closed",
+    "PAGE and DATA alias route mismatch, method mismatch and projection mismatch fail closed",
+    "near-miss path, encoded separator, duplicate slash, matrix parameter and extra path segment fail before controller and repository access",
+    "stale revalidation time, current decision revision, policy revision, field revision or authorization revision fails closed",
+    "wrong tenant, context, scope, population kind, purpose, active access mode, capability or required responsibility fails closed",
+    "support session, provider identity, conflicting identity plane and unapproved workload identity fail closed",
+    "every denied case proves zero controller, service, repository, outbox and worker calls",
+    "feature absent, feature false, tenant unenrolled and zero configured grant prove no business runtime materialization and zero owner data calls",
+    "fresh command challenge negative cases cover missing, replayed, expired, wrong issuer, wrong audience, wrong key and route, target, version, idempotency, payload, context, scope or decision mismatch"
+  ],
+  "findings": {
+    "p0": [
+      {
+        "id": "OWNER-V49-P0-001",
+        "modules": [
+          "HRM"
+        ],
+        "finding": "Both HRM-005 aliases bypass the intended owner PEP because the People registry is v42, does not claim /v1/hris/organizations/graph and lacks the predicate and purpose closure."
+      },
+      {
+        "id": "OWNER-V49-P0-002",
+        "modules": [
+          "PAY"
+        ],
+        "finding": "All three PAY-013 routes are outside the v41 calculation and v48 Foundation PEPs; the prepare action additionally requires the v49 prepare predicate and a cryptographic step-up verifier seam."
+      },
+      {
+        "id": "OWNER-V49-P0-003",
+        "modules": [
+          "SYS"
+        ],
+        "finding": "All three SYS-002 routes are outside the v47 Platform HCM claim set, and generic Platform permission checks do not enforce the exact predicate, purpose and responsibility tuple."
+      },
+      {
+        "id": "OWNER-V49-P0-004",
+        "modules": [
+          "TIM"
+        ],
+        "finding": "All eight TIM-007 routes lack a close-owned v49 PEP; existing Time GatewayVerified implementations are unrelated feature-local patterns."
+      },
+      {
+        "id": "OWNER-V49-P0-005",
+        "modules": [
+          "SYS",
+          "TIM"
+        ],
+        "finding": "The settings purpose and exact Time per-route purpose assignments are not fully sealed in the final module decisions and must be bound by fresh amended tokens before source authoring."
+      },
+      {
+        "id": "OWNER-V49-P0-006",
+        "modules": [
+          "HRM",
+          "PAY",
+          "SYS",
+          "TIM"
+        ],
+        "finding": "The existing owner packets do not allocate every required shared security source and test path, so current-token source implementation is unauthorized even where a module wildcard could contain new files."
+      }
+    ],
+    "p1": [
+      {
+        "id": "OWNER-V49-P1-001",
+        "module": "HRM",
+        "finding": "A full People registry move from v42 to v49 introduces six route contracts: operations home, organization graph, organization positions, performance goal cycles, time leave operations and team leave. Exact regression must prevent unreviewed semantic expansion."
+      },
+      {
+        "id": "OWNER-V49-P1-002",
+        "module": "PAY",
+        "finding": "The population PAGE and DATA routes have identical method and paths. Any path-only selector is ambiguous and must be rejected in favor of the trusted route key."
+      },
+      {
+        "id": "OWNER-V49-P1-003",
+        "module": "PAY",
+        "finding": "A duplicate preparation-local step-up cryptographic implementation would create policy drift; the fresh token must allocate only a narrow visibility seam to the existing PayrollStepUpVerifier."
+      },
+      {
+        "id": "OWNER-V49-P1-004",
+        "module": "SYS",
+        "finding": "The Platform registry must claim encoded and structural near-misses in the three new path families so they are denied instead of falling through to generic authorization."
+      },
+      {
+        "id": "OWNER-V49-P1-005",
+        "module": "TIM",
+        "finding": "Only close and reopen have v49 step-up command bindings; applying a fresh challenge to validate or handoff, or omitting it from close or reopen, would contradict the sealed transport semantics."
+      },
+      {
+        "id": "OWNER-V49-P1-006",
+        "modules": [
+          "HRM",
+          "PAY",
+          "SYS",
+          "TIM"
+        ],
+        "finding": "Default-OFF and tenant-unenrolled tests must prove zero business bean, controller, service, repository, outbox and worker calls; a rendered denial or empty response alone is insufficient."
+      }
+    ]
+  },
+  "goNoGo": {
+    "existingOwnerPacketsAndUnamendedTokens": "NO_GO_ALL_FOUR_MODULES",
+    "reason": "Generated v49 projections exist and are checksum-closed, but none of the four owner runtimes currently reaches an exact PEP for its new slice routes and the current writable boundaries are incomplete.",
+    "amendedFreshTokenDecision": {
+      "HRM": "GO_AFTER_EXACT_PEOPLE_SECURITY_PATH_REALLOCATION_AND_TARGETED_TEST_PASS",
+      "PAY": "GO_AFTER_EXACT_PAYROLL_STEP_UP_SEAM_REALLOCATION_AND_TARGETED_TEST_PASS",
+      "SYS": "GO_AFTER_EXACT_PLATFORM_REGISTRY_PATH_REALLOCATION_SETTINGS_PURPOSE_RESEAL_AND_TARGETED_TEST_PASS",
+      "TIM": "GO_WITHIN_EXISTING_CLOSE_WILDCARD_AFTER_EXACT_PURPOSE_MAP_SEAL_AND_TARGETED_TEST_PASS"
+    },
+    "overallAfterAmendment": "GO_FOR_PARALLEL_MODULE_AUTHORING_ONLY_AFTER_FOUR_NEW_HASH_BOUND_START_TOKENS_REFERENCE_THIS_PREFLIGHT_AND_THE_V49_PROJECTION_CHECKSUMS",
+    "stillNotAuthorizedByGo": [
+      "push",
+      "merge to dwp-dev",
+      "tenant enrollment",
+      "activation",
+      "production release",
+      "end-to-end completion claim before module evidence"
+    ]
+  },
+  "verificationPolicy": {
+    "testOrder": "NEW_OR_CHANGED_SECURITY_CLUSTER_FIRST_THEN_ONLY_THE_SHARED_REGRESSION_SEAMS_NAMED_ABOVE",
+    "onFailure": "FIX_AND_RERUN_FAILED_TARGET_FIRST",
+    "repositoryWideSuitePerCorrection": false,
+    "broadSuiteAuthorizedByThisReceipt": false
+  },
+  "authority": {
+    "preflightEvidenceIssued": true,
+    "sourceImplementationAuthorized": false,
+    "securitySourceModificationAuthorized": false,
+    "moduleWorktreeMaterializationAuthorized": false,
+    "migrationAuthoringAuthorized": false,
+    "moduleStartTokenIssued": false,
+    "moduleCommitAuthorized": false,
+    "modulePushAuthorized": false,
+    "mergeToDwpDevAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "activationAuthorized": false
+  },
+  "nextGate": "CENTRAL_CONTROL_MUST_ISSUE_FOUR_AMENDED_FRESH_HASH_BOUND_OWNER_START_TOKENS_WITH_THE_EXACT_SECURITY_PATHS_AND_PURPOSE_SEALS_ABOVE; ONLY_THEN_MAY_HRM_PAY_SYS_AND_TIM_BEGIN_PARALLEL_SOURCE_AUTHORING"
+}
