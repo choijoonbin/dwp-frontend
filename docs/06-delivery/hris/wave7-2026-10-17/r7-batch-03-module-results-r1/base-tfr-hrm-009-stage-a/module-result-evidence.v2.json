@@ -1,0 +1,286 @@
+{
+  "schema": "dwp.hris.wave7.module-result-evidence.v2",
+  "resultId": "HRIS-WAVE7-R7-BATCH-03-BASE-TFR-HRM-009-STAGE-A-MODULE-RESULT-R2",
+  "issuedAt": "2026-10-18T06:10:37+09:00",
+  "issuedBy": "HRIS-HRM",
+  "sliceId": "BASE-TFR-HRM-009",
+  "stageId": "BASE-TFR-HRM-009-STAGE-A",
+  "status": "HRM009_REQUEST_ISSUE_STAGE_A_SOURCE_AND_V58_COMPLETE_EXACT_MODULE_BRANCHES_PUSHED_CONTROL_REVIEW_PENDING_DEFAULT_OFF_FULL_SLICE_OPEN_ZERO_CREDIT",
+  "successorOf": {
+    "path": "module-result-evidence.v1.json",
+    "sha256": "1e9dadfeb76674b2c5b3acef877f792be9728652a8435c85b6e37bce5a3a7e66",
+    "bytes": 16536,
+    "mutationPerformed": false
+  },
+  "authority": {
+    "startToken": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-start-r1/tokens/base-tfr-hrm-009.start-token.v2.json",
+      "tokenId": "HRIS-WAVE7-R7-BATCH-03-START-BASE-TFR-HRM-009-REQUEST-ISSUE-STAGE-A-20261018-R2",
+      "sha256": "0839ba5e76094b7ee024fee11478eb85f04a9969b65bc8f611239fc4eae79df7",
+      "bytes": 20608
+    },
+    "ownerPacket": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-start-r1/owner-packets/base-tfr-hrm-009.owner-packet.v1.json",
+      "sha256": "d27de6435c88913821d2b0d947e3ad8d05a1b61703724dd4cd223823dc0729cc",
+      "bytes": 29078
+    },
+    "semanticDisposition": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-start-r1/semantic-dispositions/base-tfr-hrm-009-stage-a.semantic-disposition.v1.json",
+      "sha256": "2c61d96164f2a594aee8bacf729a8f1a9112167639f9ef1a5bc5f3cf4f1040bb",
+      "bytes": 19804
+    },
+    "centralAuthorizationSuccessor": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-start-r1/central-authorization-successor.v1.json",
+      "sha256": "c49c856034dbf0fae7923c75356378b62203e2c7ab80bf9374269225be9d20f9",
+      "bytes": 18313
+    },
+    "activeLease": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-start-r1/migration-lease-activation.v2.json",
+      "sha256": "17e29d15179e22c81f9c3c9c4abb9cea18b72d5b5d5cf4801b95fad26e0128a6",
+      "bytes": 6669
+    },
+    "materializationReceipt": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-start-r1/worktree-materialization-receipt.v1.json",
+      "sha256": "132927c954abeab18b17fc19e0a9966c18a933fa462a355473ea32a63f9c817d",
+      "bytes": 6022
+    }
+  },
+  "centralReviewSuccessor": {
+    "finding": "The v1 frontend IAQ-010 fixture and parser reversed or permitted the accepted asymmetric metadata digest shapes.",
+    "acceptedOwnerWire": {
+      "CERTIFICATE_METADATA.digest": "EXACT_NULL",
+      "DOCUMENT_METADATA.digest": "REQUIRED_LOWERCASE_64_HEX"
+    },
+    "correctionCommit": "fbba35c0a65555cc6de4fe82541e17cd3c31f36f",
+    "correctionTree": "a43009aff40eb28e1b9b478a2b542931e7044b2f",
+    "correctionParent": "924a2a5913916b10525e2c8dfb63598130edde4b",
+    "correctionSubject": "fix(hris): enforce HRM-009 metadata digest shapes",
+    "changedPathCount": 3,
+    "productionOrTestScopeExpansion": false,
+    "v1EvidenceMutated": false
+  },
+  "moduleResults": {
+    "backend": {
+      "carriedForwardFromV1": true,
+      "sourceResultCommit": "39abe180426b553ffab0122add331f337e6f7821",
+      "sourceResultTree": "7097f60a9ccca1fe3cc6449a4242d6b83c1b8fdf",
+      "changedPathCount": 21,
+      "successorChangedBackend": false,
+      "successorChangedMigration": false
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "baseCommit": "a315bd70835172713fee31269f77e7870269abdb",
+      "baseTree": "340436ab130d1b4d68c778a5d904a75a0f36590e",
+      "branch": "codex/hris-wave7-r7-batch03-hrm-009-stage-a-frontend-20261018-r1",
+      "upstream": "origin/codex/hris-wave7-r7-batch03-hrm-009-stage-a-frontend-20261018-r1",
+      "priorEvidenceCommit": "924a2a5913916b10525e2c8dfb63598130edde4b",
+      "priorEvidenceTree": "fe5b1806ef7ec920a1677befb5e3134a82d1a859",
+      "sourceResultCommit": "fbba35c0a65555cc6de4fe82541e17cd3c31f36f",
+      "sourceResultTree": "a43009aff40eb28e1b9b478a2b542931e7044b2f",
+      "sourceResultParent": "924a2a5913916b10525e2c8dfb63598130edde4b",
+      "sourceResultSubject": "fix(hris): enforce HRM-009 metadata digest shapes",
+      "sourceChangedPathCountFromBase": 9,
+      "sourceCorrectionPathCount": 3,
+      "immutableV1EvidencePathCount": 6,
+      "successorV2EvidencePathCount": 4,
+      "effectiveBranchChangedPathCount": 19,
+      "remoteExactBeforeV2Evidence": true,
+      "upstreamAhead": 0,
+      "upstreamBehind": 0,
+      "successorEvidenceCommitPendingControlReview": true
+    }
+  },
+  "verification": {
+    "backend": {
+      "carriedForwardFromV1": true,
+      "newBackendRunForThisSuccessor": false,
+      "effectiveChangedMethodCoverage": "14_OF_14_PASS_ZERO_SKIPPED",
+      "broadPostCorrectionRerun": false,
+      "singleFullInventoryPassClaimed": false
+    },
+    "frontend": {
+      "prescribedPnpmVitest": {
+        "command": "pnpm exec vitest run apps/dwp/src/features/hris/people/__tests__/g3-slices/base-tfr-hrm-009-stage-a.slice.test.tsx apps/dwp/src/features/hris/employee-services/certificates",
+        "runs": 2,
+        "bothRuns": "BLOCKED_BEFORE_TEST_COLLECTION_BY_YARN_PACKAGE_MANAGER_ENFORCEMENT",
+        "testsCollected": 0,
+        "broadRerun": false,
+        "passClaimed": false
+      },
+      "metadataDigestCorrectionVitest": {
+        "command": "yarn vitest run apps/dwp/src/features/hris/employee-services/certificates/testing/certificate-workbench.test.tsx -t \"accepts the exact metadata-only IAQ-010 projection|enforces asymmetric certificate and document digest shapes\"",
+        "testFiles": 1,
+        "passed": 2,
+        "failed": 0,
+        "skipped": 24,
+        "wallSeconds": 2.02,
+        "testMilliseconds": 2,
+        "result": "PASS"
+      },
+      "metadataDigestCorrectionEslint": {
+        "command": "yarn eslint apps/dwp/src/features/hris/employee-services/certificates/certificate-contract.ts apps/dwp/src/features/hris/employee-services/certificates/testing/certificate-fixtures.test-support.ts apps/dwp/src/features/hris/employee-services/certificates/testing/certificate-workbench.test.tsx",
+        "exitCode": 0,
+        "output": "",
+        "wallSeconds": 1.049,
+        "result": "PASS_CLEAN"
+      },
+      "latestInventory": {
+        "slice": 7,
+        "api": 6,
+        "workbench": 26,
+        "total": 39,
+        "singleCombinedRunClaimed": false
+      },
+      "allV1FailureAndPrecollectionHistoryPreserved": true,
+      "broadPostCorrectionRerun": false
+    },
+    "browser": {
+      "run": false,
+      "result": "PENDING_CENTRAL_ROUTE_MOUNT_BROWSER_GATE"
+    }
+  },
+  "acceptance": {
+    "resultPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-results-r1/base-tfr-hrm-009-stage-a/acceptance-results.v2.json",
+    "sha256": "f36c4cb92f28c3e38bf1309449acd5ef039990599c7b70292354262398425c97",
+    "bytes": 6201,
+    "total": 12,
+    "passed": 11,
+    "pendingCentralRouteMountBrowserGate": 1,
+    "failed": 0
+  },
+  "sourceReview": {
+    "independentAudit": "NO_OPEN_P0_OR_P1_AFTER_AC09_CORRECTION",
+    "residualCount": 7,
+    "nonblockingResiduals": [
+      {
+        "priority": "P2",
+        "finding": "frontend/backend Unicode idempotency length difference"
+      },
+      {
+        "priority": "P2",
+        "finding": "local Bearer/If-Match/certificate-type handling narrower than some input schemas"
+      },
+      {
+        "priority": "P2",
+        "finding": "broad local Problem enum"
+      },
+      {
+        "priority": "P2",
+        "finding": "actual PostgreSQL two-session receipt race not run"
+      },
+      {
+        "priority": "P2",
+        "finding": "repository SQL limit/keyset pushdown absent"
+      },
+      {
+        "priority": "P2",
+        "finding": "historical broad/PG raw XML preservation provenance insufficient"
+      },
+      {
+        "priority": "P2",
+        "finding": "central v52 exact DATA key adoption pending"
+      }
+    ],
+    "disposition": "NONBLOCKING_SEVEN_P2_AND_CENTRAL_ADMISSION_REVIEW"
+  },
+  "supportingEvidence": [
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-results-r1/base-tfr-hrm-009-stage-a/acceptance-results.v2.json",
+      "sha256": "f36c4cb92f28c3e38bf1309449acd5ef039990599c7b70292354262398425c97",
+      "bytes": 6201
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-results-r1/base-tfr-hrm-009-stage-a/changed-path-and-no-recount.v2.json",
+      "sha256": "8d483a1a12d904e869d05ed7691193d6820cdf90480a7859bc39a0c0513f406f",
+      "bytes": 8868
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-results-r1/base-tfr-hrm-009-stage-a/materialization-receipt.v1.json",
+      "sha256": "3da34cc99eb6aa3a7c7bc0cbbdb2a633cffd080ede093629463f108fe9629771",
+      "bytes": 10103
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-results-r1/base-tfr-hrm-009-stage-a/people-v58-evidence.v1.json",
+      "sha256": "dd48e7baddfe3b56a5f090e7f11568080c4195cb4ce9a22eb87240a6d9f683a2",
+      "bytes": 11203
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-results-r1/base-tfr-hrm-009-stage-a/request-issue-evidence.v2.json",
+      "sha256": "82924e341a57c22430af5a1c6c2c0ac88b08464d334cea1e92e04cf98d3b8d26",
+      "bytes": 7529
+    }
+  ],
+  "hashDag": {
+    "predecessor": {
+      "path": "module-result-evidence.v1.json",
+      "sha256": "1e9dadfeb76674b2c5b3acef877f792be9728652a8435c85b6e37bce5a3a7e66",
+      "bytes": 16536
+    },
+    "currentSubordinateNodes": [
+      {
+        "path": "acceptance-results.v2.json",
+        "sha256": "f36c4cb92f28c3e38bf1309449acd5ef039990599c7b70292354262398425c97",
+        "bytes": 6201
+      },
+      {
+        "path": "changed-path-and-no-recount.v2.json",
+        "sha256": "8d483a1a12d904e869d05ed7691193d6820cdf90480a7859bc39a0c0513f406f",
+        "bytes": 8868
+      },
+      {
+        "path": "materialization-receipt.v1.json",
+        "sha256": "3da34cc99eb6aa3a7c7bc0cbbdb2a633cffd080ede093629463f108fe9629771",
+        "bytes": 10103
+      },
+      {
+        "path": "people-v58-evidence.v1.json",
+        "sha256": "dd48e7baddfe3b56a5f090e7f11568080c4195cb4ce9a22eb87240a6d9f683a2",
+        "bytes": 11203
+      },
+      {
+        "path": "request-issue-evidence.v2.json",
+        "sha256": "82924e341a57c22430af5a1c6c2c0ac88b08464d334cea1e92e04cf98d3b8d26",
+        "bytes": 7529
+      }
+    ],
+    "terminalNode": "module-result-evidence.v2.json",
+    "terminalNodeSelfHashEmbedded": false,
+    "terminalNodeSelfHashOmissionReason": "A file cannot contain its own stable content hash; its final SHA-256 and byte count are reported after materialization.",
+    "acyclic": true
+  },
+  "activationBoundary": {
+    "carriedForwardFromV1": true,
+    "runtimeDefault": "OFF",
+    "enrolledTenants": [],
+    "centralProductAuthorizationV52Generated": false,
+    "centralRouteOrShellMountedByModule": false,
+    "browserGatePassed": false,
+    "productionArtifactProviderBound": false,
+    "featureEnabled": false,
+    "tenantEnrollmentPerformed": false,
+    "dwpDevMergePerformed": false,
+    "centralPublishPerformed": false,
+    "productionActivationPerformed": false
+  },
+  "remainingControlGates": [
+    "Central result admission and exact product-authorization v52 DATA-key proof",
+    "Auth V261 and generated Gateway and People projection admission",
+    "Frontend route and shell mount plus the trusted browser accessibility matrix",
+    "Separately accepted shared production artifact provider binding",
+    "Download and revoke transport and acceptance",
+    "Certificate expiry behavior and acceptance",
+    "Separately authorized access/download audit behavior and acceptance",
+    "Merge to dwp-dev, Platform generic creator retirement, tenant enrollment and activation"
+  ],
+  "nonClaims": [
+    "This successor does not complete BASE-TFR-HRM-009 or HRM-GOLD-012.",
+    "No download, revoke, verification transport, expiry or access/download audit implementation or acceptance is claimed.",
+    "No production-success artifact provider or document-content infrastructure is claimed.",
+    "No central v52, Auth V261, Gateway, OpenAPI, IA catalog, shell, menu, route or Platform source change is claimed.",
+    "No browser acceptance pass, merge, publication, tenant enrollment, customer-data use or production activation is claimed.",
+    "No successful run of the exact prescribed pnpm Vitest command and no single broad backend or frontend all-pass run is claimed."
+  ],
+  "stageASourceCompletionCreditBeforeCentralAdmission": 0,
+  "fullSliceBusinessCompletionCredit": 0
+}

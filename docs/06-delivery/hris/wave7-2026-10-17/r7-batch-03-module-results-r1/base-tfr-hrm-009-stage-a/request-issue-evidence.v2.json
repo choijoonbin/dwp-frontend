@@ -1,0 +1,188 @@
+{
+  "schema": "dwp.hris.wave7.hrm009-request-issue-evidence.v2",
+  "evidenceId": "HRIS-WAVE7-R7-BATCH-03-BASE-TFR-HRM-009-STAGE-A-REQUEST-ISSUE-R2",
+  "issuedAt": "2026-10-18T06:10:37+09:00",
+  "issuedBy": "HRIS-HRM",
+  "sliceId": "BASE-TFR-HRM-009",
+  "stageId": "BASE-TFR-HRM-009-STAGE-A",
+  "resultState": "HRM009_REQUEST_ISSUE_STAGE_A_SOURCE_AND_V58_COMPLETE_EXACT_MODULE_BRANCHES_PUSHED_CONTROL_REVIEW_PENDING_DEFAULT_OFF_FULL_SLICE_OPEN_ZERO_CREDIT",
+  "successorOf": {
+    "path": "request-issue-evidence.v1.json",
+    "sha256": "e01b453b4851d39f5a739640331cfc9e5974bd5b21f03e2ec76f7d780fde2984",
+    "bytes": 23409,
+    "mutationPerformed": false
+  },
+  "successorScope": {
+    "replacedFacts": [
+      "HRM009-STAGEA-AC-09 frontend metadata digest-shape evidence",
+      "effective prescribed pnpm Vitest attempt count and collection result",
+      "frontend source successor identity and latest per-file inventory",
+      "effective seven-item P2 source review"
+    ],
+    "unchangedV1Sections": [
+      "artifactPort",
+      "commandContract",
+      "entryQueries",
+      "idempotencyAndRecovery",
+      "issuanceTransaction",
+      "all backend verification history",
+      "all earlier frontend Yarn verification and failure history not explicitly replaced here"
+    ],
+    "priorFailureAndPrecollectionHistoryPreserved": true
+  },
+  "centralReviewBC": {
+    "finding": "The v1 frontend fixture and shared metadata parser reversed or permissively accepted the distinct CERTIFICATE_METADATA and DOCUMENT_METADATA digest shapes required by the owner wire.",
+    "acceptedOwnerWire": {
+      "CERTIFICATE_METADATA": {
+        "digest": null,
+        "rule": "EXACT_NULL"
+      },
+      "DOCUMENT_METADATA": {
+        "digest": "lowercase 64-hex",
+        "rule": "REQUIRED_LOWERCASE_64_HEX"
+      }
+    },
+    "correctedFrontendBoundary": [
+      "CERTIFICATE_METADATA uses a dedicated parser that rejects non-null digest values.",
+      "DOCUMENT_METADATA uses a dedicated parser that requires the lowercase 64-hex content digest.",
+      "The fixture carries the accepted asymmetric shapes.",
+      "Negative cases reject a non-null certificate digest, a null document digest and an uppercase document digest."
+    ],
+    "noScopeExpansion": {
+      "downloadAdded": false,
+      "revokeAdded": false,
+      "verificationTransportAdded": false,
+      "newCapabilityOrDutyAdded": false,
+      "routeOrShellChanged": false,
+      "centralAuthorizationChanged": false
+    }
+  },
+  "frontendSourceSuccessor": {
+    "repository": "dwp-frontend",
+    "branch": "codex/hris-wave7-r7-batch03-hrm-009-stage-a-frontend-20261018-r1",
+    "upstream": "origin/codex/hris-wave7-r7-batch03-hrm-009-stage-a-frontend-20261018-r1",
+    "commit": "fbba35c0a65555cc6de4fe82541e17cd3c31f36f",
+    "tree": "a43009aff40eb28e1b9b478a2b542931e7044b2f",
+    "parent": "924a2a5913916b10525e2c8dfb63598130edde4b",
+    "subject": "fix(hris): enforce HRM-009 metadata digest shapes",
+    "remoteExactBeforeSuccessorEvidence": true,
+    "worktreeCleanBeforeSuccessorEvidence": true,
+    "upstreamAhead": 0,
+    "upstreamBehind": 0,
+    "changedPathCount": 3,
+    "changedPaths": [
+      "apps/dwp/src/features/hris/employee-services/certificates/certificate-contract.ts",
+      "apps/dwp/src/features/hris/employee-services/certificates/testing/certificate-fixtures.test-support.ts",
+      "apps/dwp/src/features/hris/employee-services/certificates/testing/certificate-workbench.test.tsx"
+    ]
+  },
+  "boundedVerification": {
+    "prescribedPnpmVitest": {
+      "command": "pnpm exec vitest run apps/dwp/src/features/hris/people/__tests__/g3-slices/base-tfr-hrm-009-stage-a.slice.test.tsx apps/dwp/src/features/hris/employee-services/certificates",
+      "runs": 2,
+      "attempts": [
+        {
+          "sequence": 1,
+          "recordedBy": "request-issue-evidence.v1.json",
+          "result": "BLOCKED_BEFORE_TEST_COLLECTION",
+          "reason": "The repository packageManager field requires Yarn; no Vitest source test started.",
+          "testsCollected": 0
+        },
+        {
+          "sequence": 2,
+          "recordedBy": "central review B/C",
+          "result": "BLOCKED_BEFORE_TEST_COLLECTION",
+          "reason": "The repository packageManager field requires Yarn; no Vitest source test started.",
+          "testsCollected": 0
+        }
+      ],
+      "effective": {
+        "runs": 2,
+        "blockedBeforeCollection": 2,
+        "testsCollected": 0,
+        "testsPassed": 0,
+        "testsFailed": 0,
+        "testsSkipped": 0,
+        "packageManagerEnforcement": "YARN_REQUIRED",
+        "broadRerun": false,
+        "passClaimed": false
+      }
+    },
+    "metadataDigestCorrection": {
+      "vitest": {
+        "command": "yarn vitest run apps/dwp/src/features/hris/employee-services/certificates/testing/certificate-workbench.test.tsx -t \"accepts the exact metadata-only IAQ-010 projection|enforces asymmetric certificate and document digest shapes\"",
+        "testFiles": 1,
+        "tests": 26,
+        "passed": 2,
+        "failed": 0,
+        "skipped": 24,
+        "wallSeconds": 2.02,
+        "testMilliseconds": 2,
+        "result": "PASS"
+      },
+      "eslint": {
+        "command": "yarn eslint apps/dwp/src/features/hris/employee-services/certificates/certificate-contract.ts apps/dwp/src/features/hris/employee-services/certificates/testing/certificate-fixtures.test-support.ts apps/dwp/src/features/hris/employee-services/certificates/testing/certificate-workbench.test.tsx",
+        "exitCode": 0,
+        "output": "",
+        "wallSeconds": 1.049,
+        "result": "PASS_CLEAN"
+      }
+    },
+    "latestPerFileInventory": {
+      "base-tfr-hrm-009-stage-a.slice.test.tsx": 7,
+      "certificate-api.test.ts": 6,
+      "certificate-workbench.test.tsx": 26,
+      "inventoryTotal": 39,
+      "singleCombinedRunClaimed": false
+    },
+    "broadRerunAfterCorrections": false
+  },
+  "effectiveProjectionContractCorrection": {
+    "CERTIFICATE_METADATA.digest": "EXACT_NULL",
+    "DOCUMENT_METADATA.digest": "REQUIRED_LOWERCASE_64_HEX",
+    "documentDigestKind": "CONTENT_DIGEST_NOT_VERIFICATION_HASH",
+    "strictAdditionalPropertyRejectionUnchanged": true,
+    "bytesOrDownloadUrlDisclosed": false,
+    "verificationTokenOrVerificationHashDisclosed": false,
+    "revokeControlDisclosed": false
+  },
+  "sourceReview": {
+    "independentAudit": "NO_OPEN_P0_OR_P1_AFTER_AC09_CORRECTION",
+    "residualCount": 7,
+    "nonblockingResiduals": [
+      {
+        "priority": "P2",
+        "finding": "frontend/backend Unicode idempotency length difference"
+      },
+      {
+        "priority": "P2",
+        "finding": "local Bearer/If-Match/certificate-type handling narrower than some input schemas"
+      },
+      {
+        "priority": "P2",
+        "finding": "broad local Problem enum"
+      },
+      {
+        "priority": "P2",
+        "finding": "actual PostgreSQL two-session receipt race not run"
+      },
+      {
+        "priority": "P2",
+        "finding": "repository SQL limit/keyset pushdown absent"
+      },
+      {
+        "priority": "P2",
+        "finding": "historical broad/PG raw XML preservation provenance insufficient"
+      },
+      {
+        "priority": "P2",
+        "finding": "central v52 exact DATA key adoption pending"
+      }
+    ],
+    "disposition": "NONBLOCKING_SEVEN_P2_AND_CENTRAL_ADMISSION_REVIEW"
+  },
+  "centralAdmissionPending": true,
+  "fullSlicePending": true,
+  "stageASourceCompletionCreditBeforeCentralAdmission": 0,
+  "fullSliceBusinessCompletionCredit": 0
+}
