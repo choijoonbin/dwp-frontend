@@ -1,0 +1,267 @@
+{
+  "schema": "dwp.hris.module-start-token.v1",
+  "tokenId": "HRIS-WAVE7-R7-BATCH-01-START-BASE-TFR-SYS-002-20261017-R1",
+  "issuedAt": "2026-10-17T17:32:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-SYS",
+  "sliceId": "BASE-TFR-SYS-002",
+  "canonicalFeature": "HRIS_OPERATIONS_EXCEPTION_CENTER",
+  "featureAliasesAuthorized": [],
+  "explicitlyForbiddenFeatureAlias": "HRIS_OPERATIONAL_EXCEPTION_PROJECTION",
+  "state": "ISSUED_MODULE_IMPLEMENTATION_MIGRATION_COMMIT_AND_PUSH_ONLY",
+  "permittedAction": "Implement and prove only the sealed SYS-002 operational exception projection, queries and read/deep-link workspace in the two exact owner worktrees; author only Platform V331; commit and push only the exact module branches.",
+  "hashDag": {
+    "predecessor": {
+      "path": "../migration-lease-activation.v1.json",
+      "sha256": "6ad36eba8162ae01d1b009f27cfae3172d5615e8932eedb82d0418ccb5d5ab39",
+      "bytes": 7731
+    },
+    "role": "PARALLEL_TOKEN_AFTER_LEASE_ACTIVATION"
+  },
+  "immutableEvidence": {
+    "ownerPacket": {
+      "path": "../../r7-batch-01-dispatch-r1/owner-packets/base-tfr-sys-002.owner-packet.v1.json",
+      "sha256": "fb41aa71b2f6fc16394a8d97491797f80b1b74d61ea41b4fce1384a65b881f33",
+      "bytes": 12627
+    },
+    "sourceAuthority": {
+      "path": "../../r7-batch-01-dispatch-r1/source-authority.v1.json",
+      "sha256": "d40df88e26530bd467c5cc6210d967b31a521f06647e672987393c1d1837165e",
+      "bytes": 11740
+    },
+    "centralAuthorizationV49BackendAcceptance": {
+      "path": "../../r7-batch-01-auth-v49-integration-r1/backend-independent-review-and-acceptance-receipt.v1.json",
+      "sha256": "a4554d45ff833e15b5c907d13b51a2b3e3f38284e01b325cf2008a9823728d5f",
+      "bytes": 5590
+    },
+    "centralAuthorizationV49FrontendSync": {
+      "path": "../../r7-batch-01-auth-v49-integration-r1/frontend-v49-sync-and-integration-receipt.v1.json",
+      "sha256": "178152fad3821c4387a6795b33cce4111997bb753e864b574c45964a0a746da5",
+      "bytes": 5447
+    },
+    "authorizationDecision": {
+      "path": "../../r7-batch-01-authorization-decisions-r1/decisions/base-tfr-sys-002.authorization-decision.v1.json",
+      "sha256": "801e1cade194aceff1394789ee9247fefd4b317bc86d0a1bd3dce5d78c9e3a69",
+      "bytes": 5277
+    },
+    "ownerRuntimePreflight": {
+      "path": "../owner-v49-runtime-preflight.v1.json",
+      "sha256": "aed8d293bb6ad6d48ecf76594484b82b3cba9572ab199d4cccfbfeaff068fa20",
+      "bytes": 50406
+    },
+    "eventIngressSeal": {
+      "path": "../sys-002-event-ingress-seal.v1.json",
+      "sha256": "1fba405bff7936958af02fd53836dcbd30afd9e59aced2d346a275d82f787d0f",
+      "bytes": 22028
+    },
+    "moduleStartPreparation": {
+      "path": "../module-start-preparation.v1.json",
+      "sha256": "94c4e366bf75f14850e1207158a5f4947ad6afdfc41e63813bb124569d1f12eb",
+      "bytes": 19424
+    },
+    "migrationLeaseActivation": {
+      "path": "../migration-lease-activation.v1.json",
+      "leaseId": "HRIS-WAVE7-R7-BATCH-01-PLATFORM-MAIN-V331-20261017-R1",
+      "sha256": "6ad36eba8162ae01d1b009f27cfae3172d5615e8932eedb82d0418ccb5d5ab39",
+      "bytes": 7731
+    }
+  },
+  "basePins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "commit": "fcb5c1f397d14ea77c7ff9714a272449d99e18a4",
+      "tree": "147bb1afd5635209d5db166a513d970b6e0002c3"
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "commit": "4b46c02d1e98b8d0cfb78189126aa47ac90f2fda",
+      "tree": "0e37221429763f5d13c799e22bf10ad8a6648f1a",
+      "laterTokenCarrierMustNotEnterModuleWorktree": true
+    }
+  },
+  "worktrees": [
+    {
+      "repository": "dwp-backend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261017/r7-batch01/sys-002/backend",
+      "branch": "codex/hris-wave7-r7-batch01-sys-002-backend-20261017-r1",
+      "upstream": "origin/codex/hris-wave7-r7-batch01-sys-002-backend-20261017-r1",
+      "head": "fcb5c1f397d14ea77c7ff9714a272449d99e18a4",
+      "tree": "147bb1afd5635209d5db166a513d970b6e0002c3",
+      "upstreamHead": "fcb5c1f397d14ea77c7ff9714a272449d99e18a4",
+      "upstreamAhead": 0,
+      "upstreamBehind": 0,
+      "porcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "state": "MATERIALIZED_PUSHED_CLEAN_REMOTE_EXACT"
+    },
+    {
+      "repository": "dwp-frontend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261017/r7-batch01/sys-002/frontend",
+      "branch": "codex/hris-wave7-r7-batch01-sys-002-frontend-20261017-r1",
+      "upstream": "origin/codex/hris-wave7-r7-batch01-sys-002-frontend-20261017-r1",
+      "head": "4b46c02d1e98b8d0cfb78189126aa47ac90f2fda",
+      "tree": "0e37221429763f5d13c799e22bf10ad8a6648f1a",
+      "upstreamHead": "4b46c02d1e98b8d0cfb78189126aa47ac90f2fda",
+      "upstreamAhead": 0,
+      "upstreamBehind": 0,
+      "porcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "state": "MATERIALIZED_PUSHED_CLEAN_REMOTE_EXACT"
+    }
+  ],
+  "ownerAuthorizationContract": {
+    "generatedProjectionPath": "dwp-platform-server/src/main/resources/product-authorization/hcm-platform-pep-v49.generated.json",
+    "generatedProjectionFileSha256": "46073e2e262f7af783853e3efd769c336915873e641ea2e5f55b05d494d8f286",
+    "projectionChecksum": "de70aba5a34df3bfdf1687386fb9c183a1a250e205dc4ac73968e2dfb731dd5e",
+    "routePurposeSeal": [
+      {
+        "route": "route.hcm.configuration.settings-operations.page",
+        "purpose": "HRIS_CONFIGURATION",
+        "scope": "APP_RESOURCE_SET:RS_HCM_CONFIG",
+        "targetBindingKinds": [
+          "CONFIG_SCOPE"
+        ],
+        "predicate": "predicate.hcm-settings-operations-authority.v1"
+      },
+      {
+        "route": "route.hcm.operations.exception.data",
+        "purpose": "HRIS_OPERATIONS",
+        "scope": "AUTHORIZED_PACKAGE_SCOPE",
+        "targetBindingKinds": [
+          "TARGET_POPULATION"
+        ],
+        "predicate": "predicate.hcm-operation-exception-authority.v1",
+        "responsibility": "HRIS_DUTY_OPERATION_EXCEPTION_READER"
+      },
+      {
+        "route": "route.hcm.operations.exception-detail.data",
+        "purpose": "HRIS_OPERATIONS",
+        "scope": "AUTHORIZED_PACKAGE_SCOPE",
+        "targetBindingKinds": [
+          "TARGET_POPULATION",
+          "OBJECT"
+        ],
+        "predicate": "predicate.hcm-operation-exception-authority.v1",
+        "responsibility": "HRIS_DUTY_OPERATION_EXCEPTION_READER"
+      }
+    ],
+    "identityRule": "Tenant control-plane identity only; provider, support, conflicting role-plane and non-tenant identities fail before controller or repository access.",
+    "nearMissRule": "Encoded separators, matrix parameters, duplicate slashes, extra segments and unknown variants are claimed and denied rather than falling through to generic Platform authorization.",
+    "defaultDeny": true,
+    "opaqueDenial": true
+  },
+  "eventAndBusinessBoundary": {
+    "input": "Only the exact sealed SYS-EVT-009 owner envelope may update the projection.",
+    "projection": "Tenant-scoped, monotonic owner revision; duplicate digest idempotent; out-of-order or conflicting revision cannot overwrite newer state.",
+    "surface": "PEP-SYS-037 list, PEP-SYS-038 redacted detail and IAQ-059 read/deep-link only.",
+    "reuse": "PEP-SYS-040 HrisCommandReceiptController remains byte-for-behavior and is not duplicated or recounted.",
+    "excluded": "SYS-006 automation actions and every recovery mutation remain in their owning domains."
+  },
+  "migration": {
+    "leaseId": "HRIS-WAVE7-R7-BATCH-01-PLATFORM-MAIN-V331-20261017-R1",
+    "stream": "PLATFORM_MAIN",
+    "version": "V331",
+    "path": "dwp-platform-server/src/main/resources/db/migration/V331__create_hris_operational_exception_projection.sql",
+    "state": "ACTIVE_AUTHORING_ONLY",
+    "secondMigrationAuthorized": false
+  },
+  "touchBoundary": {
+    "allowedBackend": [
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/operations/**",
+      "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/operations/**",
+      "dwp-platform-server/src/main/resources/db/migration/V331__create_hris_operational_exception_projection.sql",
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/security/HcmPlatformPepRegistry.java",
+      "dwp-platform-server/src/test/java/com/dwp/services/platform/security/HcmPlatformPepSecurityContractTest.java",
+      "dwp-platform-server/src/test/java/com/dwp/services/platform/security/PlatformSecurityFilterTest.java"
+    ],
+    "allowedFrontend": [
+      "apps/dwp/src/features/hris/administration/operations/**",
+      "apps/dwp/src/features/hris/administration/__tests__/g3-slices/base-tfr-sys-002.slice.test.tsx",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-results-r1/base-tfr-sys-002/**"
+    ],
+    "readOnlyReuse": [
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/security/PlatformSecurityFilter.java",
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/security/PlatformProductAuthorizationSupport.java",
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisCommandReceiptController.java",
+      "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerReceiptControllerTest.java",
+      "dwp-platform-server/src/main/resources/db/migration/V330__accept_controlled_export_navigation_topology_successor.sql",
+      "dwp-platform-server/src/main/resources/product-authorization/hcm-platform-pep-v49.generated.json"
+    ],
+    "forbidden": [
+      "contracts/product-authorization/**, contracts/openapi/**, dwp-auth-server/** and dwp-gateway/**",
+      "frontend architecture, HCM route files and HRIS shell or menu files",
+      "a duplicate receipt controller or store, owner recovery commands, SYS-006 automation, V330 modification or second migration",
+      "generic telemetry or WorkplaceExceptionConsole completion recount",
+      "central control evidence outside the exact module result evidence root"
+    ],
+    "outsideBoundaryAction": "STOP_AND_REQUEST_EXACT_CONTROL_REALLOCATION"
+  },
+  "rollout": {
+    "feature": "HRIS_OPERATIONS_EXCEPTION_CENTER",
+    "runtimeDefault": "OFF",
+    "enrolledTenants": [],
+    "zeroCallRequirement": "Feature absent, false or tenant unenrolled causes zero event-ingress, projection, repository, query and receipt calls."
+  },
+  "acceptanceCriteria": [
+    "SYS002-AC-01",
+    "SYS002-AC-02",
+    "SYS002-AC-03",
+    "SYS002-AC-04",
+    "SYS002-AC-05",
+    "SYS002-AC-06",
+    "SYS002-AC-07",
+    "SYS002-AC-08",
+    "SYS002-AC-09",
+    "SYS002-AC-10",
+    "SYS002-AC-11",
+    "SYS002-AC-12"
+  ],
+  "verification": {
+    "policy": "Run the new SYS-002 projection and security cluster first; after a correction rerun only the smallest failed target; no repository-wide suite per correction.",
+    "backend": "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.security.HcmPlatformPepSecurityContractTest' --tests 'com.dwp.services.platform.security.PlatformSecurityFilterTest' --tests 'com.dwp.services.platform.hrisconfiguration.operations.*' --no-daemon --max-workers=1",
+    "conditionalBackend": "Run HrisExplorerReceiptControllerTest only if a shared receipt seam changes.",
+    "database": [
+      "real PostgreSQL clean migration through V331",
+      "real PostgreSQL V330-to-V331 upgrade"
+    ],
+    "frontend": [
+      "pnpm exec vitest run apps/dwp/src/features/hris/administration/__tests__/g3-slices/base-tfr-sys-002.slice.test.tsx apps/dwp/src/features/hris/administration/operations",
+      "pnpm exec eslint apps/dwp/src/features/hris/administration/operations"
+    ],
+    "browserBeforeCentralMountAuthorized": false,
+    "repositoryWideSuitePerCorrection": false
+  },
+  "resultEvidence": {
+    "exactRoot": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-results-r1/base-tfr-sys-002",
+    "required": [
+      "backend and frontend module branch result commits and base lineage",
+      "all twelve acceptance results with source or targeted-test evidence",
+      "V331 clean and V330-to-V331 upgrade evidence",
+      "event monotonicity, duplicate, out-of-order, tenant, package, redaction and deep-link negative evidence",
+      "PEP-SYS-040 reuse regression evidence",
+      "default-off, zero-enrollment and changed-path/no-recount manifests"
+    ]
+  },
+  "authority": {
+    "moduleImplementationAuthorized": true,
+    "exactV331MigrationAuthoringAuthorized": true,
+    "moduleBranchCommitAuthorized": true,
+    "moduleBranchPushAuthorized": true,
+    "mergeToDwpDevAuthorized": false,
+    "centralRouteOrShellMountAuthorized": false,
+    "tokenCarrierMergeIntoModuleWorktreeAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "completionBoundary": {
+    "requiredResultState": "MODULE_IMPLEMENTATION_COMPLETE_BRANCH_PUSHED_CONTROL_REVIEW_PENDING_DEFAULT_OFF",
+    "directDwpDevMergeAuthorized": false,
+    "centralResultAdmissionAuthorized": false
+  },
+  "invalidationConditions": [
+    "either owner worktree path, branch, head, tree, upstream, ahead/behind or clean state differs before the first module edit",
+    "any hash-bound evidence, event ingress seal or generated Platform v49 projection bytes change",
+    "V331 exists from another owner, a second migration or a path outside the exact boundary is required",
+    "the forbidden feature alias is used or recovery and automation ownership is weakened",
+    "feature enablement, tenant enrollment, dwp-dev merge or production release is attempted"
+  ]
+}

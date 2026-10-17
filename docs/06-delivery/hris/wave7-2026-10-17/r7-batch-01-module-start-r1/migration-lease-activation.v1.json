@@ -1,0 +1,160 @@
+{
+  "schema": "dwp.hris.migration-lease-activation.v1",
+  "activationId": "HRIS-WAVE7-R7-BATCH-01-MIGRATION-LEASE-ACTIVATION-20261017-R1",
+  "activatedAt": "2026-10-17T17:32:00+09:00",
+  "activatedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "THREE_EXCLUSIVE_LEASES_ACTIVE_FOR_EXACT_MODULE_AUTHORING_ONLY",
+  "purpose": "Activate only the reserved Payroll V52, Platform V331 and Time V12 migration paths after all eight owner worktrees were materialized, pushed, clean and remote-exact. This activation grants no second migration, dwp-dev merge, tenant activation or production authority.",
+  "immutableEvidence": {
+    "reservationState": {
+      "path": "../r7-batch-01-authorization-decisions-r1/migration-lease-state.v1.json",
+      "sha256": "9e019aea75199a9d0e664aacf70c51c028959fc2d32789f716244668c2adeb92",
+      "bytes": 2414
+    },
+    "moduleStartPreparation": {
+      "path": "module-start-preparation.v1.json",
+      "sha256": "94c4e366bf75f14850e1207158a5f4947ad6afdfc41e63813bb124569d1f12eb",
+      "bytes": 19424
+    },
+    "peopleV49RuntimeAcceptance": {
+      "path": "people-v49-runtime-acceptance-receipt.v1.json",
+      "sha256": "d7f32bafafc8539d351d35f1347397c0ece81216c44c2c6cdfc790f0902c868a",
+      "bytes": 9627
+    }
+  },
+  "observedBackendBase": {
+    "repository": "dwp-backend",
+    "branch": "dwp-dev",
+    "commit": "fcb5c1f397d14ea77c7ff9714a272449d99e18a4",
+    "tree": "147bb1afd5635209d5db166a513d970b6e0002c3",
+    "upstream": "origin/dwp-dev",
+    "cleanAndRemoteExactAtMaterialization": true
+  },
+  "leases": [
+    {
+      "leaseId": "HRIS-WAVE7-R7-BATCH-01-PAYROLL-MAIN-V52-20261017-R1",
+      "moduleSession": "HRIS-PAY",
+      "sliceId": "BASE-TFR-PAY-013",
+      "canonicalFeature": "HRIS_PAYROLL_RUN_PREPARE",
+      "stream": "PAYROLL_MAIN",
+      "version": "V52",
+      "predecessorHighWater": "V51",
+      "exactPath": "dwp-payroll-server/src/main/resources/db/migration/V52__pay_base_tfr_pay_013_run_prepare.sql",
+      "exactPathPresentBeforeAuthoring": false,
+      "state": "ACTIVE_AUTHORING_ONLY",
+      "secondMigrationAuthorized": false,
+      "backendWorktree": {
+        "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261017/r7-batch01/pay-013/backend",
+        "branch": "codex/hris-wave7-r7-batch01-pay-013-backend-20261017-r1",
+        "upstream": "origin/codex/hris-wave7-r7-batch01-pay-013-backend-20261017-r1",
+        "head": "fcb5c1f397d14ea77c7ff9714a272449d99e18a4",
+        "tree": "147bb1afd5635209d5db166a513d970b6e0002c3",
+        "upstreamHead": "fcb5c1f397d14ea77c7ff9714a272449d99e18a4",
+        "upstreamAhead": 0,
+        "upstreamBehind": 0,
+        "porcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "state": "MATERIALIZED_PUSHED_CLEAN_REMOTE_EXACT"
+      }
+    },
+    {
+      "leaseId": "HRIS-WAVE7-R7-BATCH-01-PLATFORM-MAIN-V331-20261017-R1",
+      "moduleSession": "HRIS-SYS",
+      "sliceId": "BASE-TFR-SYS-002",
+      "canonicalFeature": "HRIS_OPERATIONS_EXCEPTION_CENTER",
+      "stream": "PLATFORM_MAIN",
+      "version": "V331",
+      "predecessorHighWater": "V330",
+      "exactPath": "dwp-platform-server/src/main/resources/db/migration/V331__create_hris_operational_exception_projection.sql",
+      "exactPathPresentBeforeAuthoring": false,
+      "state": "ACTIVE_AUTHORING_ONLY",
+      "secondMigrationAuthorized": false,
+      "backendWorktree": {
+        "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261017/r7-batch01/sys-002/backend",
+        "branch": "codex/hris-wave7-r7-batch01-sys-002-backend-20261017-r1",
+        "upstream": "origin/codex/hris-wave7-r7-batch01-sys-002-backend-20261017-r1",
+        "head": "fcb5c1f397d14ea77c7ff9714a272449d99e18a4",
+        "tree": "147bb1afd5635209d5db166a513d970b6e0002c3",
+        "upstreamHead": "fcb5c1f397d14ea77c7ff9714a272449d99e18a4",
+        "upstreamAhead": 0,
+        "upstreamBehind": 0,
+        "porcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "state": "MATERIALIZED_PUSHED_CLEAN_REMOTE_EXACT"
+      }
+    },
+    {
+      "leaseId": "HRIS-WAVE7-R7-BATCH-01-TIME-MAIN-V12-20261017-R1",
+      "moduleSession": "HRIS-TIM",
+      "sliceId": "BASE-TFR-TIM-007",
+      "canonicalFeature": "HRIS_TIME_CLOSE_HANDOFF",
+      "stream": "TIME_MAIN",
+      "version": "V12",
+      "predecessorHighWater": "V11",
+      "exactPath": "dwp-time-server/src/main/resources/db/migration/V12__tim_base_tfr_tim_007_close_handoff.sql",
+      "exactPathPresentBeforeAuthoring": false,
+      "state": "ACTIVE_AUTHORING_ONLY",
+      "secondMigrationAuthorized": false,
+      "backendWorktree": {
+        "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261017/r7-batch01/tim-007/backend",
+        "branch": "codex/hris-wave7-r7-batch01-tim-007-backend-20261017-r1",
+        "upstream": "origin/codex/hris-wave7-r7-batch01-tim-007-backend-20261017-r1",
+        "head": "fcb5c1f397d14ea77c7ff9714a272449d99e18a4",
+        "tree": "147bb1afd5635209d5db166a513d970b6e0002c3",
+        "upstreamHead": "fcb5c1f397d14ea77c7ff9714a272449d99e18a4",
+        "upstreamAhead": 0,
+        "upstreamBehind": 0,
+        "porcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "state": "MATERIALIZED_PUSHED_CLEAN_REMOTE_EXACT"
+      }
+    }
+  ],
+  "noMigrationDecision": {
+    "moduleSession": "HRIS-HRM",
+    "sliceId": "BASE-TFR-HRM-005",
+    "canonicalFeature": "HRIS_ORGANIZATION_POSITIONS",
+    "stream": "PEOPLE_MAIN",
+    "observedHighWater": "V56",
+    "candidateVersion": "V57",
+    "candidatePathPresent": false,
+    "decision": "NONE_PROVEN_REUSE",
+    "rule": "Reuse the existing organization and outbox schema; V57 is not reserved or authorized. Stop for a separate schema decision if an append-only delta is proven."
+  },
+  "verificationRequired": {
+    "PAYROLL_MAIN_V52": [
+      "real PostgreSQL clean migration through V52",
+      "real PostgreSQL V51-to-V52 upgrade",
+      "historical checksum preservation and tenant isolation"
+    ],
+    "PLATFORM_MAIN_V331": [
+      "real PostgreSQL clean migration through V331",
+      "real PostgreSQL V330-to-V331 upgrade",
+      "historical checksum preservation, forced RLS and cross-tenant denial"
+    ],
+    "TIME_MAIN_V12": [
+      "real PostgreSQL clean migration through V12",
+      "real PostgreSQL V11-to-V12 upgrade",
+      "historical checksum preservation, immutable close lineage and tenant isolation"
+    ],
+    "unavailableDatabaseRule": "Report BLOCKED, not PASS, when the required real PostgreSQL execution is unavailable."
+  },
+  "authority": {
+    "threeExactMigrationPathsAuthorized": true,
+    "validOnlyWithMatchingFreshStartToken": true,
+    "existingMigrationEditAuthorized": false,
+    "secondMigrationAuthorized": false,
+    "peopleV57Authorized": false,
+    "notificationV36Authorized": false,
+    "performanceV19Authorized": false,
+    "moduleBranchCommitAndPushAuthorizedByThisActivationAlone": false,
+    "mergeToDwpDevAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "customerDatabaseExecutionAuthorized": false,
+    "productionExecutionAuthorized": false
+  },
+  "invalidationConditions": [
+    "an exact leased path exists from another owner before the first module edit",
+    "an owning backend worktree branch, head, tree, upstream, ahead/behind or clean state differs before the first module edit",
+    "an existing migration must change or a second migration is required",
+    "a module uses a non-canonical feature alias or works outside its fresh token boundary",
+    "cross-service foreign keys, direct owner-database access, tenant activation, customer execution or production release is attempted"
+  ]
+}

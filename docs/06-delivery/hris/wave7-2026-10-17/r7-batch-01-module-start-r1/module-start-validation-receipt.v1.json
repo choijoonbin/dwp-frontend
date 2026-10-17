@@ -1,0 +1,167 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-01-module-start-validation-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-01-MODULE-START-VALIDATION-20261017-R1",
+  "validatedAt": "2026-10-17T17:32:00+09:00",
+  "validatedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "result": "PASS_EXACT_SEVEN_FILE_TOKEN_CARRIER_READY_TO_COMMIT_PUSH_AND_DISPATCH",
+  "scope": "Semantic and filesystem validation of the migration activation, four fresh owner tokens and successor token state. No module source, migration, test, merge, route-shell mount, tenant enrollment or activation was performed by this receipt.",
+  "hashDag": {
+    "leaseActivation": {
+      "path": "migration-lease-activation.v1.json",
+      "sha256": "6ad36eba8162ae01d1b009f27cfae3172d5615e8932eedb82d0418ccb5d5ab39",
+      "bytes": 7731
+    },
+    "tokens": [
+      {
+        "path": "tokens/base-tfr-hrm-005.start-token.v1.json",
+        "sha256": "fdb3d9c635bf059aa56a62ecbc4d94ad0f4bb449ffbc929beb20dc51eae43f62",
+        "bytes": 13160
+      },
+      {
+        "path": "tokens/base-tfr-pay-013.start-token.v1.json",
+        "sha256": "0261536b268f9cb0caf22eda0d5bcb03a61d0fba9d084a156e8ee3c7a91a8aa8",
+        "bytes": 14124
+      },
+      {
+        "path": "tokens/base-tfr-sys-002.start-token.v1.json",
+        "sha256": "62f7f265b9fcf5115401a152abaef045fcffcfb5747529fdbfa1aa4722837a37",
+        "bytes": 13720
+      },
+      {
+        "path": "tokens/base-tfr-tim-007.start-token.v1.json",
+        "sha256": "5e1f1b5d4e4e40f6745db22c0c3f4ca3eb6ae89574c60c8fabb77887988307a8",
+        "bytes": 13691
+      }
+    ],
+    "stateSuccessor": {
+      "path": "start-token-state-successor.v2.json",
+      "sha256": "975d2c15acd2c23191dc382ba1278b0a30c3cce75d5026044b6a85e30ae1deb7",
+      "bytes": 6204
+    },
+    "order": "lease activation -> four parallel tokens -> state successor -> this validation receipt",
+    "hashMode": "RAW_UTF8_FILE_BYTES"
+  },
+  "exactCarrierPaths": [
+    "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-start-r1/migration-lease-activation.v1.json",
+    "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-start-r1/tokens/base-tfr-hrm-005.start-token.v1.json",
+    "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-start-r1/tokens/base-tfr-pay-013.start-token.v1.json",
+    "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-start-r1/tokens/base-tfr-sys-002.start-token.v1.json",
+    "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-start-r1/tokens/base-tfr-tim-007.start-token.v1.json",
+    "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-start-r1/start-token-state-successor.v2.json",
+    "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-start-r1/module-start-validation-receipt.v1.json"
+  ],
+  "validation": {
+    "exactNewPathCount": 7,
+    "allJsonParseWithJq": true,
+    "allPredecessorHashesAndBytesMatchRawFiles": true,
+    "canonicalFeatureNamesOnly": true,
+    "forbiddenPayAndSysAliasesAbsentAsActiveFeatureNames": true,
+    "moduleResultRootsExactAndDisjoint": true,
+    "perRemainsNoGoWithNoWorktreeAndNoToken": true,
+    "moduleMergeToDwpDevWithheld": true,
+    "centralRouteAndShellMountWithheld": true,
+    "featureEnablementAndTenantEnrollmentWithheld": true
+  },
+  "worktreeValidation": {
+    "expectedCount": 8,
+    "observedCount": 8,
+    "backendBase": {
+      "commit": "fcb5c1f397d14ea77c7ff9714a272449d99e18a4",
+      "tree": "147bb1afd5635209d5db166a513d970b6e0002c3"
+    },
+    "frontendBase": {
+      "commit": "4b46c02d1e98b8d0cfb78189126aa47ac90f2fda",
+      "tree": "0e37221429763f5d13c799e22bf10ad8a6648f1a"
+    },
+    "porcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "allBranchesMatchExactTokenNames": true,
+    "allUpstreamsExistAndMatchHead": true,
+    "allAheadBehindZero": true,
+    "allClean": true,
+    "allRemoteExact": true,
+    "frontendModuleBasePolicy": "Keep all four frontend worktrees at the preparation carrier; do not merge, rebase or cherry-pick this token carrier into them."
+  },
+  "migrationValidation": [
+    {
+      "moduleSession": "HRIS-HRM",
+      "stream": "PEOPLE_MAIN",
+      "observedHighWater": "V56",
+      "candidate": "V57",
+      "candidatePathPresent": false,
+      "decision": "NONE_PROVEN_REUSE_NO_AUTHORING"
+    },
+    {
+      "moduleSession": "HRIS-PAY",
+      "stream": "PAYROLL_MAIN",
+      "observedHighWater": "V51",
+      "candidate": "V52",
+      "exactPath": "dwp-payroll-server/src/main/resources/db/migration/V52__pay_base_tfr_pay_013_run_prepare.sql",
+      "exactPathPresent": false,
+      "lease": "ACTIVE_AUTHORING_ONLY"
+    },
+    {
+      "moduleSession": "HRIS-SYS",
+      "stream": "PLATFORM_MAIN",
+      "observedHighWater": "V330",
+      "candidate": "V331",
+      "exactPath": "dwp-platform-server/src/main/resources/db/migration/V331__create_hris_operational_exception_projection.sql",
+      "exactPathPresent": false,
+      "lease": "ACTIVE_AUTHORING_ONLY"
+    },
+    {
+      "moduleSession": "HRIS-TIM",
+      "stream": "TIME_MAIN",
+      "observedHighWater": "V11",
+      "candidate": "V12",
+      "exactPath": "dwp-time-server/src/main/resources/db/migration/V12__tim_base_tfr_tim_007_close_handoff.sql",
+      "exactPathPresent": false,
+      "lease": "ACTIVE_AUTHORING_ONLY"
+    }
+  ],
+  "dispatchClosedSet": [
+    {
+      "moduleSession": "HRIS-HRM",
+      "sliceId": "BASE-TFR-HRM-005",
+      "canonicalFeature": "HRIS_ORGANIZATION_POSITIONS",
+      "resultEvidenceRoot": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-results-r1/base-tfr-hrm-005"
+    },
+    {
+      "moduleSession": "HRIS-PAY",
+      "sliceId": "BASE-TFR-PAY-013",
+      "canonicalFeature": "HRIS_PAYROLL_RUN_PREPARE",
+      "resultEvidenceRoot": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-results-r1/base-tfr-pay-013"
+    },
+    {
+      "moduleSession": "HRIS-SYS",
+      "sliceId": "BASE-TFR-SYS-002",
+      "canonicalFeature": "HRIS_OPERATIONS_EXCEPTION_CENTER",
+      "resultEvidenceRoot": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-results-r1/base-tfr-sys-002"
+    },
+    {
+      "moduleSession": "HRIS-TIM",
+      "sliceId": "BASE-TFR-TIM-007",
+      "canonicalFeature": "HRIS_TIME_CLOSE_HANDOFF",
+      "resultEvidenceRoot": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-results-r1/base-tfr-tim-007"
+    }
+  ],
+  "dispatchPrecondition": "Commit and push exactly these seven files on frontend dwp-dev, verify origin/dwp-dev equals the resulting carrier commit, and only then send each token and its exact worktree paths to the corresponding existing module session.",
+  "verificationPolicy": {
+    "moduleOrder": "Four modules may author in parallel within disjoint token boundaries.",
+    "testOrder": "Changed cluster first, then named shared seams only.",
+    "onFailure": "Rerun only the smallest failed target after correction.",
+    "repositoryWideSuitePerCorrection": false,
+    "finalIntegrationAndBrowserMatrix": "Run once centrally only after all four result packets pass independent review."
+  },
+  "authority": {
+    "tokenCarrierReadyToCommitAndPush": true,
+    "moduleDispatchAuthorizedAfterExactCarrierPush": true,
+    "moduleImplementationCommitAndPushAuthorizedAfterDispatch": true,
+    "moduleMergeToDwpDevAuthorized": false,
+    "centralRouteOrShellMountAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "COMMIT_AND_PUSH_THE_EXACT_SEVEN_FILE_CARRIER_THEN_DISPATCH_HRM_PAY_SYS_AND_TIM_TOKENS_TO_THE_EXISTING_MODULE_SESSIONS; DO_NOT_DISPATCH_PER_OR_MERGE_ANY_MODULE_RESULT_TO_DWP_DEV_BEFORE_INDEPENDENT_RESULT_REVIEW"
+}

@@ -1,0 +1,250 @@
+{
+  "schema": "dwp.hris.module-start-token.v1",
+  "tokenId": "HRIS-WAVE7-R7-BATCH-01-START-BASE-TFR-HRM-005-20261017-R1",
+  "issuedAt": "2026-10-17T17:32:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-HRM",
+  "sliceId": "BASE-TFR-HRM-005",
+  "canonicalFeature": "HRIS_ORGANIZATION_POSITIONS",
+  "featureAliasesAuthorized": [],
+  "state": "ISSUED_MODULE_IMPLEMENTATION_COMMIT_AND_PUSH_ONLY",
+  "permittedAction": "Implement and prove only the sealed HRM-005 organization graph adapter, OrganizationExplorer seam and transactional OrganizationChanged.v1 publication delta in the two exact owner worktrees; commit and push only the exact module branches.",
+  "hashDag": {
+    "predecessor": {
+      "path": "../migration-lease-activation.v1.json",
+      "sha256": "6ad36eba8162ae01d1b009f27cfae3172d5615e8932eedb82d0418ccb5d5ab39",
+      "bytes": 7731
+    },
+    "role": "FIRST_TOKEN_AFTER_LEASE_ACTIVATION"
+  },
+  "immutableEvidence": {
+    "ownerPacket": {
+      "path": "../../r7-batch-01-dispatch-r1/owner-packets/base-tfr-hrm-005.owner-packet.v1.json",
+      "sha256": "0fcd8d27fd283b5ddbd697e9ccce3427966e960d80186f02c7cba709cfb66506",
+      "bytes": 11614
+    },
+    "sourceAuthority": {
+      "path": "../../r7-batch-01-dispatch-r1/source-authority.v1.json",
+      "sha256": "d40df88e26530bd467c5cc6210d967b31a521f06647e672987393c1d1837165e",
+      "bytes": 11740
+    },
+    "centralAuthorizationV49BackendAcceptance": {
+      "path": "../../r7-batch-01-auth-v49-integration-r1/backend-independent-review-and-acceptance-receipt.v1.json",
+      "sha256": "a4554d45ff833e15b5c907d13b51a2b3e3f38284e01b325cf2008a9823728d5f",
+      "bytes": 5590
+    },
+    "centralAuthorizationV49FrontendSync": {
+      "path": "../../r7-batch-01-auth-v49-integration-r1/frontend-v49-sync-and-integration-receipt.v1.json",
+      "sha256": "178152fad3821c4387a6795b33cce4111997bb753e864b574c45964a0a746da5",
+      "bytes": 5447
+    },
+    "authorizationDecision": {
+      "path": "../../r7-batch-01-authorization-decisions-r1/decisions/base-tfr-hrm-005.authorization-decision.v1.json",
+      "sha256": "aa214ce9f28635ffad90d6306b7bf3b2be2548add197f3d0ea23063967301a94",
+      "bytes": 3222
+    },
+    "ownerRuntimePreflight": {
+      "path": "../owner-v49-runtime-preflight.v1.json",
+      "sha256": "aed8d293bb6ad6d48ecf76594484b82b3cba9572ab199d4cccfbfeaff068fa20",
+      "bytes": 50406
+    },
+    "transportAndReuseSeam": {
+      "path": "../hrm-005-transport-and-reuse-seam-successor.v1.json",
+      "sha256": "3cbc7b9632ec267bca8b068e23a30b021fbeab35f1ce9c807122d2e812088aff",
+      "bytes": 21875
+    },
+    "boundaryValidation": {
+      "path": "../hrm-005-boundary-validation-receipt.v1.json",
+      "sha256": "0ee5859e91cf92123a6faa7a27cafa13b0fac56e970f02cab8ef62f7cd5c76f5",
+      "bytes": 12039
+    },
+    "peopleV49RuntimeAcceptance": {
+      "path": "../people-v49-runtime-acceptance-receipt.v1.json",
+      "sha256": "d7f32bafafc8539d351d35f1347397c0ece81216c44c2c6cdfc790f0902c868a",
+      "bytes": 9627
+    },
+    "moduleStartPreparation": {
+      "path": "../module-start-preparation.v1.json",
+      "sha256": "94c4e366bf75f14850e1207158a5f4947ad6afdfc41e63813bb124569d1f12eb",
+      "bytes": 19424
+    }
+  },
+  "basePins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "commit": "fcb5c1f397d14ea77c7ff9714a272449d99e18a4",
+      "tree": "147bb1afd5635209d5db166a513d970b6e0002c3",
+      "containsIntegratedPeopleV49Runtime": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "commit": "4b46c02d1e98b8d0cfb78189126aa47ac90f2fda",
+      "tree": "0e37221429763f5d13c799e22bf10ad8a6648f1a",
+      "containsPreparationCarrierOnly": true,
+      "laterTokenCarrierMustNotEnterModuleWorktree": true
+    }
+  },
+  "worktrees": [
+    {
+      "repository": "dwp-backend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261017/r7-batch01/hrm-005/backend",
+      "branch": "codex/hris-wave7-r7-batch01-hrm-005-backend-20261017-r1",
+      "upstream": "origin/codex/hris-wave7-r7-batch01-hrm-005-backend-20261017-r1",
+      "head": "fcb5c1f397d14ea77c7ff9714a272449d99e18a4",
+      "tree": "147bb1afd5635209d5db166a513d970b6e0002c3",
+      "upstreamHead": "fcb5c1f397d14ea77c7ff9714a272449d99e18a4",
+      "upstreamAhead": 0,
+      "upstreamBehind": 0,
+      "porcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "state": "MATERIALIZED_PUSHED_CLEAN_REMOTE_EXACT"
+    },
+    {
+      "repository": "dwp-frontend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261017/r7-batch01/hrm-005/frontend",
+      "branch": "codex/hris-wave7-r7-batch01-hrm-005-frontend-20261017-r1",
+      "upstream": "origin/codex/hris-wave7-r7-batch01-hrm-005-frontend-20261017-r1",
+      "head": "4b46c02d1e98b8d0cfb78189126aa47ac90f2fda",
+      "tree": "0e37221429763f5d13c799e22bf10ad8a6648f1a",
+      "upstreamHead": "4b46c02d1e98b8d0cfb78189126aa47ac90f2fda",
+      "upstreamAhead": 0,
+      "upstreamBehind": 0,
+      "porcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "state": "MATERIALIZED_PUSHED_CLEAN_REMOTE_EXACT"
+    }
+  ],
+  "ownerAuthorizationContract": {
+    "generatedProjectionPath": "dwp-people-server/src/main/resources/product-authorization/hcm-people-pep-v49.generated.json",
+    "generatedProjectionFileSha256": "bf2d079820cceba5ed8adcb0b7927daaef239bccc178138e25a6f889f55b1834",
+    "projectionChecksum": "3346929f550830ee236af702be33da2e58ccfbd0704c44d820f5d8f98a33739a",
+    "routes": [
+      "route.hcm.operations.organization-positions.page",
+      "route.hcm.operations.organization-graph.data"
+    ],
+    "sharedWirePath": "GET /api/people/v1/hris/organizations/graph",
+    "routeSelection": "TRUSTED_ROUTE_CONTRACT_KEY_REQUIRED_PAGE_AND_DATA_NEVER_PATH_ONLY",
+    "capability": "hcm.operations.organization.view",
+    "resolvedCapability": "DATA.HRIS_ORGANIZATION:VIEW",
+    "predicatePolicyKey": "predicate.hcm-organization-graph-authority.v1",
+    "purposeCode": "HR_OPERATIONS",
+    "operation": "READ",
+    "scopeResolver": "ORGANIZATION_TARGET_POPULATION",
+    "requiredResponsibility": "HRIS_DUTY_ORGANIZATION_VIEWER@ORGANIZATION_TARGET_POPULATION",
+    "requiredField": "ORGANIZATION",
+    "trustedTenantSource": "PeopleRequestContext.require().tenantId()",
+    "defaultDeny": true,
+    "opaqueDenial": true
+  },
+  "transportAndReuseContract": {
+    "asOfInput": "Instant normalized to UTC LocalDate internally with canonical Instant echo",
+    "rootPublicId": "REQUIRED",
+    "depth": "0 returns root-only projection after underlying depth-1 query; 1 through 12 use the existing graph engine",
+    "positions": "EXPLICITLY_REQUESTED_ONLY",
+    "hierarchy": "REPORTING maps to SUPERVISORY only; LEGAL and COST fail closed",
+    "frontendSeam": "Adapt the existing OrganizationExplorer in organization-chart-manager.tsx; do not create a parallel explorer or graph store",
+    "event": "Append exactly one OrganizationChanged.v1/XCON-006 envelope transactionally from successful enabled scenario publication with idempotent outbox semantics"
+  },
+  "migration": {
+    "stream": "PEOPLE_MAIN",
+    "decision": "NONE_PROVEN_REUSE",
+    "observedHighWater": "V56",
+    "V57AuthoringAuthorized": false,
+    "rule": "Reuse existing organization and outbox schema. Stop and request a separate lease if an append-only schema delta is proven."
+  },
+  "touchBoundary": {
+    "allowedBackend": [
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/organization/**",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/organization/**",
+      "dwp-people-server/src/main/java/com/dwp/services/people/organization/OrganizationScenarioService.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/organization/OrganizationScenarioServiceTest.java"
+    ],
+    "allowedFrontend": [
+      "apps/dwp/src/features/hris/people/organization-positions/**",
+      "apps/dwp/src/features/hris/people/__tests__/g3-slices/base-tfr-hrm-005.slice.test.tsx",
+      "apps/dwp/src/features/people/organization/organization-chart-manager.tsx",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-results-r1/base-tfr-hrm-005/**"
+    ],
+    "readOnlyCentralPeopleV49Runtime": [
+      "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmProductSurfacePepFilter.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmScopeSelectionValidator.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmV3PepRegistry.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmOwnerPepExecutionTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmProductSurfacePepFilterTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmV3PepRegistryTest.java",
+      "dwp-people-server/src/main/resources/product-authorization/hcm-people-pep-v49.generated.json"
+    ],
+    "forbidden": [
+      "contracts/product-authorization/**, contracts/openapi/**, dwp-auth-server/**, dwp-gateway/** and generated contracts",
+      "frontend architecture, HCM route files and HRIS shell or menu files",
+      "BASE-TFR-HRM-008 employment or assignment-event implementation",
+      "a second organization graph, scenario engine, persistence model, assignment workflow or XCON-006 regeneration",
+      "central control evidence outside the exact module result evidence root"
+    ],
+    "outsideBoundaryAction": "STOP_AND_REQUEST_EXACT_CONTROL_REALLOCATION"
+  },
+  "rollout": {
+    "feature": "HRIS_ORGANIZATION_POSITIONS",
+    "runtimeDefault": "OFF",
+    "enrolledTenants": [],
+    "zeroCallRequirement": "Feature absent, default-false, explicit false or tenant unenrolled causes one opaque pre-chain denial and zero controller, service, repository, outbox and scope-validator calls."
+  },
+  "acceptanceCriteria": [
+    "HRM005-AC-01",
+    "HRM005-AC-02",
+    "HRM005-AC-03",
+    "HRM005-AC-04",
+    "HRM005-AC-05",
+    "HRM005-AC-06",
+    "HRM005-AC-07",
+    "HRM005-AC-08",
+    "HRM005-AC-09",
+    "HRM005-AC-10",
+    "HRM005-AC-11",
+    "HRM005-AC-12"
+  ],
+  "verification": {
+    "policy": "Run the new or changed HRM-005 cluster first; after a correction rerun only the smallest failed target; do not run a repository-wide suite per correction.",
+    "backend": "./gradlew :dwp-people-server:test --tests 'com.dwp.services.people.security.HcmV3PepRegistryTest' --tests 'com.dwp.services.people.security.HcmProductSurfacePepFilterTest' --tests 'com.dwp.services.people.security.HcmOwnerPepExecutionTest' --tests 'com.dwp.services.people.hris.organization.*' --tests 'com.dwp.services.people.organization.OrganizationScenarioServiceTest' --tests 'com.dwp.services.people.organization.OrganizationPublishRolloutGateTest' --no-daemon --max-workers=1",
+    "frontend": [
+      "pnpm exec vitest run apps/dwp/src/features/hris/people/__tests__/g3-slices/base-tfr-hrm-005.slice.test.tsx apps/dwp/src/features/hris/people/organization-positions",
+      "pnpm exec eslint apps/dwp/src/features/hris/people/organization-positions apps/dwp/src/features/people/organization/organization-chart-manager.tsx"
+    ],
+    "browserBeforeCentralMountAuthorized": false,
+    "repositoryWideSuitePerCorrection": false
+  },
+  "resultEvidence": {
+    "exactRoot": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-results-r1/base-tfr-hrm-005",
+    "required": [
+      "backend and frontend module branch result commits and base lineage",
+      "all twelve acceptance results with source or targeted-test evidence",
+      "transport, stable-order, event, replay, tenant and authorization negative evidence",
+      "default-off and zero-enrollment zero-call evidence",
+      "changed-path and no-recount manifest",
+      "explicit People V57 non-need proof"
+    ]
+  },
+  "authority": {
+    "moduleImplementationAuthorized": true,
+    "moduleBranchCommitAuthorized": true,
+    "moduleBranchPushAuthorized": true,
+    "migrationAuthoringAuthorized": false,
+    "mergeToDwpDevAuthorized": false,
+    "centralRouteOrShellMountAuthorized": false,
+    "tokenCarrierMergeIntoModuleWorktreeAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "completionBoundary": {
+    "requiredResultState": "MODULE_IMPLEMENTATION_COMPLETE_BRANCH_PUSHED_CONTROL_REVIEW_PENDING_DEFAULT_OFF",
+    "directDwpDevMergeAuthorized": false,
+    "centralResultAdmissionAuthorized": false
+  },
+  "invalidationConditions": [
+    "either owner worktree path, branch, head, tree, upstream, ahead/behind or clean state differs before the first module edit",
+    "any hash-bound evidence, integrated People v49 runtime or generated projection bytes change",
+    "People V57 or a path outside the exact touch boundary is required",
+    "the OrganizationExplorer seam would require central route or shell edits",
+    "feature enablement, tenant enrollment, dwp-dev merge or production release is attempted"
+  ]
+}

@@ -1,0 +1,268 @@
+{
+  "schema": "dwp.hris.module-start-token.v1",
+  "tokenId": "HRIS-WAVE7-R7-BATCH-01-START-BASE-TFR-PAY-013-20261017-R1",
+  "issuedAt": "2026-10-17T17:32:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-PAY",
+  "sliceId": "BASE-TFR-PAY-013",
+  "canonicalFeature": "HRIS_PAYROLL_RUN_PREPARE",
+  "featureAliasesAuthorized": [],
+  "explicitlyForbiddenFeatureAlias": "HRIS_PAYROLL_POPULATION_PREPARATION",
+  "state": "ISSUED_MODULE_IMPLEMENTATION_MIGRATION_COMMIT_AND_PUSH_ONLY",
+  "permittedAction": "Implement and prove only the sealed PAY-013 payroll population, immutable run preparation and prepare-to-existing-calculation boundary in the two exact owner worktrees; author only Payroll V52; commit and push only the exact module branches.",
+  "hashDag": {
+    "predecessor": {
+      "path": "../migration-lease-activation.v1.json",
+      "sha256": "6ad36eba8162ae01d1b009f27cfae3172d5615e8932eedb82d0418ccb5d5ab39",
+      "bytes": 7731
+    },
+    "role": "PARALLEL_TOKEN_AFTER_LEASE_ACTIVATION"
+  },
+  "immutableEvidence": {
+    "ownerPacket": {
+      "path": "../../r7-batch-01-dispatch-r1/owner-packets/base-tfr-pay-013.owner-packet.v1.json",
+      "sha256": "bbb1576a3c2672f29ddad43ae6413f69c033a0037416075aaeab6f2b9f178ed8",
+      "bytes": 12365
+    },
+    "sourceAuthority": {
+      "path": "../../r7-batch-01-dispatch-r1/source-authority.v1.json",
+      "sha256": "d40df88e26530bd467c5cc6210d967b31a521f06647e672987393c1d1837165e",
+      "bytes": 11740
+    },
+    "centralAuthorizationV49BackendAcceptance": {
+      "path": "../../r7-batch-01-auth-v49-integration-r1/backend-independent-review-and-acceptance-receipt.v1.json",
+      "sha256": "a4554d45ff833e15b5c907d13b51a2b3e3f38284e01b325cf2008a9823728d5f",
+      "bytes": 5590
+    },
+    "centralAuthorizationV49FrontendSync": {
+      "path": "../../r7-batch-01-auth-v49-integration-r1/frontend-v49-sync-and-integration-receipt.v1.json",
+      "sha256": "178152fad3821c4387a6795b33cce4111997bb753e864b574c45964a0a746da5",
+      "bytes": 5447
+    },
+    "authorizationDecision": {
+      "path": "../../r7-batch-01-authorization-decisions-r1/decisions/base-tfr-pay-013.authorization-decision.v1.json",
+      "sha256": "e44ef024ccb257cbb3205f921c015881139c98940496f59222866b718e232b16",
+      "bytes": 5019
+    },
+    "ownerRuntimePreflight": {
+      "path": "../owner-v49-runtime-preflight.v1.json",
+      "sha256": "aed8d293bb6ad6d48ecf76594484b82b3cba9572ab199d4cccfbfeaff068fa20",
+      "bytes": 50406
+    },
+    "moduleStartPreparation": {
+      "path": "../module-start-preparation.v1.json",
+      "sha256": "94c4e366bf75f14850e1207158a5f4947ad6afdfc41e63813bb124569d1f12eb",
+      "bytes": 19424
+    },
+    "migrationLeaseActivation": {
+      "path": "../migration-lease-activation.v1.json",
+      "activationId": "HRIS-WAVE7-R7-BATCH-01-MIGRATION-LEASE-ACTIVATION-20261017-R1",
+      "leaseId": "HRIS-WAVE7-R7-BATCH-01-PAYROLL-MAIN-V52-20261017-R1",
+      "sha256": "6ad36eba8162ae01d1b009f27cfae3172d5615e8932eedb82d0418ccb5d5ab39",
+      "bytes": 7731
+    }
+  },
+  "basePins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "commit": "fcb5c1f397d14ea77c7ff9714a272449d99e18a4",
+      "tree": "147bb1afd5635209d5db166a513d970b6e0002c3"
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "commit": "4b46c02d1e98b8d0cfb78189126aa47ac90f2fda",
+      "tree": "0e37221429763f5d13c799e22bf10ad8a6648f1a",
+      "laterTokenCarrierMustNotEnterModuleWorktree": true
+    }
+  },
+  "worktrees": [
+    {
+      "repository": "dwp-backend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261017/r7-batch01/pay-013/backend",
+      "branch": "codex/hris-wave7-r7-batch01-pay-013-backend-20261017-r1",
+      "upstream": "origin/codex/hris-wave7-r7-batch01-pay-013-backend-20261017-r1",
+      "head": "fcb5c1f397d14ea77c7ff9714a272449d99e18a4",
+      "tree": "147bb1afd5635209d5db166a513d970b6e0002c3",
+      "upstreamHead": "fcb5c1f397d14ea77c7ff9714a272449d99e18a4",
+      "upstreamAhead": 0,
+      "upstreamBehind": 0,
+      "porcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "state": "MATERIALIZED_PUSHED_CLEAN_REMOTE_EXACT"
+    },
+    {
+      "repository": "dwp-frontend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261017/r7-batch01/pay-013/frontend",
+      "branch": "codex/hris-wave7-r7-batch01-pay-013-frontend-20261017-r1",
+      "upstream": "origin/codex/hris-wave7-r7-batch01-pay-013-frontend-20261017-r1",
+      "head": "4b46c02d1e98b8d0cfb78189126aa47ac90f2fda",
+      "tree": "0e37221429763f5d13c799e22bf10ad8a6648f1a",
+      "upstreamHead": "4b46c02d1e98b8d0cfb78189126aa47ac90f2fda",
+      "upstreamAhead": 0,
+      "upstreamBehind": 0,
+      "porcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "state": "MATERIALIZED_PUSHED_CLEAN_REMOTE_EXACT"
+    }
+  ],
+  "ownerAuthorizationContract": {
+    "generatedProjectionPath": "dwp-payroll-server/src/main/resources/product-authorization/hcm-payroll-pep-v49.generated.json",
+    "generatedProjectionFileSha256": "663ced685337956e1c198680283003339d149216caf39697b143ce969ea29f7b",
+    "projectionChecksum": "5204125c7748c5052a952506646b30ffb8109463d1b01066f3830e1c1af663b6",
+    "routeClosedSet": [
+      {
+        "routeContractKey": "route.hcm.operations.payroll-population.page",
+        "method": "GET",
+        "ownerPath": "/v1/workbench/population",
+        "purpose": "PAYROLL_OPERATIONS",
+        "scope": "PAY_TARGET_POPULATION",
+        "activeMode": "ELEVATED",
+        "freshCommandChallengeRequired": false
+      },
+      {
+        "routeContractKey": "route.hcm.operations.payroll-support.data",
+        "method": "GET",
+        "ownerPath": "/v1/workbench/population",
+        "purpose": "PAYROLL_OPERATIONS",
+        "scope": "PAY_TARGET_POPULATION",
+        "activeMode": "ELEVATED",
+        "freshCommandChallengeRequired": false
+      },
+      {
+        "routeContractKey": "route.hcm.operations.payroll-run.action",
+        "method": "POST",
+        "ownerPath": "/v1/runs",
+        "purpose": "PAYROLL_PROCESSING",
+        "scope": "PAYROLL_LEGAL_ENTITY_GROUP_SCOPE",
+        "predicate": "predicate.hcm-payroll-run-prepare-authority.v1",
+        "activeMode": "ELEVATED",
+        "freshCommandChallengeRequired": true,
+        "challengeBinding": "dwp-payroll-server|PAYROLL_RUN_PREPARATION|preparationId|X-DWP-Expected-Object-Version=0|idempotency-key|payload-digest|context|scope|decision-revision"
+      }
+    ],
+    "sharedReadPathSelection": "TRUSTED_ROUTE_CONTRACT_KEY_REQUIRED_PAGE_AND_DATA_NEVER_PATH_ONLY",
+    "stepUpRule": "Reuse the existing PayrollStepUpVerifier through the exact visibility seam; a second verifier or weakened duplicate policy is forbidden.",
+    "defaultDeny": true
+  },
+  "businessBoundary": {
+    "prepareState": "NONE_OR_DRAFT -> PREPARING -> READY",
+    "calculateState": "READY -> CALCULATING",
+    "snapshot": "Freeze a complete deterministic set of typed source identities, revisions, digests and preflight decisions before READY.",
+    "event": "Emit exactly one PayrollRunPrepared.v1 transactionally after the immutable preparation snapshot is complete.",
+    "pay011Reuse": "PAY-011 retains calculation, FAILED retry, approval, finalization, receipts, worker and outbox ownership. Calculation consumes the existing READY snapshot without rebinding initial inputs."
+  },
+  "migration": {
+    "leaseId": "HRIS-WAVE7-R7-BATCH-01-PAYROLL-MAIN-V52-20261017-R1",
+    "stream": "PAYROLL_MAIN",
+    "version": "V52",
+    "path": "dwp-payroll-server/src/main/resources/db/migration/V52__pay_base_tfr_pay_013_run_prepare.sql",
+    "state": "ACTIVE_AUTHORING_ONLY",
+    "secondMigrationAuthorized": false
+  },
+  "touchBoundary": {
+    "allowedBackend": [
+      "dwp-payroll-server/src/main/java/com/dwp/services/payroll/preparation/**",
+      "dwp-payroll-server/src/test/java/com/dwp/services/payroll/preparation/**",
+      "dwp-payroll-server/src/main/java/com/dwp/services/payroll/calculation/PayrollCalculationService.java",
+      "dwp-payroll-server/src/main/java/com/dwp/services/payroll/calculation/PayrollCalculationStore.java",
+      "dwp-payroll-server/src/main/java/com/dwp/services/payroll/calculation/JdbcPayrollCalculationStore.java",
+      "dwp-payroll-server/src/test/java/com/dwp/services/payroll/calculation/** only for exact prepare-to-calculate regression",
+      "dwp-payroll-server/src/main/java/com/dwp/services/payroll/security/PayrollStepUpVerifier.java",
+      "dwp-payroll-server/src/test/java/com/dwp/services/payroll/security/PayrollStepUpVerifierContractTest.java",
+      "dwp-payroll-server/src/main/resources/db/migration/V52__pay_base_tfr_pay_013_run_prepare.sql"
+    ],
+    "allowedFrontend": [
+      "apps/dwp/src/features/hris/payroll/population/**",
+      "apps/dwp/src/features/hris/payroll/__tests__/g3-slices/base-tfr-pay-013.slice.test.tsx",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-results-r1/base-tfr-pay-013/**"
+    ],
+    "readOnlyReuse": [
+      "dwp-payroll-server/src/main/java/com/dwp/services/payroll/security/PayrollV41PepRegistry.java",
+      "dwp-payroll-server/src/main/java/com/dwp/services/payroll/security/PayrollCalculationSecurityFilter.java",
+      "dwp-payroll-server/src/main/java/com/dwp/services/payroll/foundation/PayrollFoundationSettingsV48PepRegistry.java",
+      "dwp-payroll-server/src/main/java/com/dwp/services/payroll/foundation/PayrollFoundationSettingsSecurityFilter.java",
+      "dwp-payroll-server/src/main/java/com/dwp/services/payroll/foundation/PayrollFoundationSecurityFilter.java",
+      "dwp-payroll-server/src/main/resources/db/migration/V50__pay_base_tfr_pay_011_calculation.sql",
+      "dwp-payroll-server/src/main/resources/db/migration/V51__pay_harden_v49_v50_owner_trigger_boundaries.sql",
+      "dwp-payroll-server/src/main/resources/product-authorization/hcm-payroll-pep-v49.generated.json"
+    ],
+    "forbidden": [
+      "contracts/product-authorization/**, contracts/openapi/**, dwp-auth-server/** and dwp-gateway/**",
+      "frontend architecture, HCM route files and HRIS shell or menu files",
+      "a second calculation engine, run aggregate, receipt store, outbox, step-up verifier or migration",
+      "PAY-011 calculation, approval or finalization completion recount",
+      "R7-C1 payroll settings or historical migration/register changes",
+      "central control evidence outside the exact module result evidence root"
+    ],
+    "outsideBoundaryAction": "STOP_AND_REQUEST_EXACT_CONTROL_REALLOCATION"
+  },
+  "rollout": {
+    "feature": "HRIS_PAYROLL_RUN_PREPARE",
+    "runtimeDefault": "OFF",
+    "enrolledTenants": [],
+    "zeroCallRequirement": "Feature absent, false or tenant unenrolled causes zero preparation controller, store, calculation and worker calls."
+  },
+  "acceptanceCriteria": [
+    "PAY013-AC-01",
+    "PAY013-AC-02",
+    "PAY013-AC-03",
+    "PAY013-AC-04",
+    "PAY013-AC-05",
+    "PAY013-AC-06",
+    "PAY013-AC-07",
+    "PAY013-AC-08",
+    "PAY013-AC-09",
+    "PAY013-AC-10",
+    "PAY013-AC-11",
+    "PAY013-AC-12"
+  ],
+  "verification": {
+    "policy": "Run the new PAY-013 preparation and security cluster first, then the named PAY-011 boundary regression; after a correction rerun only the smallest failed target; no repository-wide suite per correction.",
+    "backend": "./gradlew :dwp-payroll-server:test --tests 'com.dwp.services.payroll.preparation.*' --tests 'com.dwp.services.payroll.security.PayrollStepUpVerifierContractTest' --tests 'com.dwp.services.payroll.calculation.PayrollG3SliceContractTest' --no-daemon --max-workers=1",
+    "conditionalBackend": "Run only exact calculation service or worker tests whose READY boundary changed.",
+    "database": [
+      "real PostgreSQL clean migration through V52",
+      "real PostgreSQL V51-to-V52 upgrade"
+    ],
+    "frontend": [
+      "pnpm exec vitest run apps/dwp/src/features/hris/payroll/__tests__/g3-slices/base-tfr-pay-013.slice.test.tsx apps/dwp/src/features/hris/payroll/population",
+      "pnpm exec eslint apps/dwp/src/features/hris/payroll/population"
+    ],
+    "browserBeforeCentralMountAuthorized": false,
+    "repositoryWideSuitePerCorrection": false
+  },
+  "resultEvidence": {
+    "exactRoot": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-results-r1/base-tfr-pay-013",
+    "required": [
+      "backend and frontend module branch result commits and base lineage",
+      "all twelve acceptance results with source or targeted-test evidence",
+      "V52 clean and V51-to-V52 upgrade evidence",
+      "snapshot completeness, target determinism, idempotency, step-up, SoD, tenant and authorization negative evidence",
+      "PAY-011 calculation boundary regression evidence",
+      "default-off, zero-enrollment and changed-path/no-recount manifests"
+    ]
+  },
+  "authority": {
+    "moduleImplementationAuthorized": true,
+    "exactV52MigrationAuthoringAuthorized": true,
+    "moduleBranchCommitAuthorized": true,
+    "moduleBranchPushAuthorized": true,
+    "mergeToDwpDevAuthorized": false,
+    "centralRouteOrShellMountAuthorized": false,
+    "tokenCarrierMergeIntoModuleWorktreeAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "completionBoundary": {
+    "requiredResultState": "MODULE_IMPLEMENTATION_COMPLETE_BRANCH_PUSHED_CONTROL_REVIEW_PENDING_DEFAULT_OFF",
+    "directDwpDevMergeAuthorized": false,
+    "centralResultAdmissionAuthorized": false
+  },
+  "invalidationConditions": [
+    "either owner worktree path, branch, head, tree, upstream, ahead/behind or clean state differs before the first module edit",
+    "any hash-bound evidence or generated payroll v49 projection bytes change",
+    "V52 exists from another owner, a second migration or a path outside the exact boundary is required",
+    "the forbidden feature alias is used or PAY-011 ownership is weakened",
+    "feature enablement, tenant enrollment, dwp-dev merge or production release is attempted"
+  ]
+}

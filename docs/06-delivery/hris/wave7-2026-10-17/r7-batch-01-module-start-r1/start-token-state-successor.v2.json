@@ -1,0 +1,132 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-01-start-token-state-successor.v2",
+  "stateId": "HRIS-WAVE7-R7-BATCH-01-START-TOKEN-STATE-SUCCESSOR-20261017-R2",
+  "recordedAt": "2026-10-17T17:32:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "FOUR_FRESH_MODULE_TOKENS_ISSUED_PER_REMAINS_NO_GO",
+  "purpose": "Replace the immutable all-withheld predecessor with a hash-bound closed set of four module-authoring tokens while preserving central merge, route-shell mount, tenant enrollment and activation authority as withheld.",
+  "predecessorState": {
+    "path": "../r7-batch-01-dispatch-r1/start-token-state.v1.json",
+    "sha256": "cd09dabbf705a2a4f5d3c4833a6795c9a4b3029b5a79b55c2bd4c534d806d810",
+    "bytes": 7444,
+    "state": "NO_START_TOKENS_ISSUED_AUTHORITY_WITHHELD",
+    "mutated": false
+  },
+  "hashDagInputs": {
+    "migrationLeaseActivation": {
+      "path": "migration-lease-activation.v1.json",
+      "sha256": "6ad36eba8162ae01d1b009f27cfae3172d5615e8932eedb82d0418ccb5d5ab39",
+      "bytes": 7731
+    },
+    "tokens": [
+      {
+        "path": "tokens/base-tfr-hrm-005.start-token.v1.json",
+        "sha256": "fdb3d9c635bf059aa56a62ecbc4d94ad0f4bb449ffbc929beb20dc51eae43f62",
+        "bytes": 13160
+      },
+      {
+        "path": "tokens/base-tfr-pay-013.start-token.v1.json",
+        "sha256": "0261536b268f9cb0caf22eda0d5bcb03a61d0fba9d084a156e8ee3c7a91a8aa8",
+        "bytes": 14124
+      },
+      {
+        "path": "tokens/base-tfr-sys-002.start-token.v1.json",
+        "sha256": "62f7f265b9fcf5115401a152abaef045fcffcfb5747529fdbfa1aa4722837a37",
+        "bytes": 13720
+      },
+      {
+        "path": "tokens/base-tfr-tim-007.start-token.v1.json",
+        "sha256": "5e1f1b5d4e4e40f6745db22c0c3f4ca3eb6ae89574c60c8fabb77887988307a8",
+        "bytes": 13691
+      }
+    ]
+  },
+  "basePins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "moduleWorktreeBaseCommit": "fcb5c1f397d14ea77c7ff9714a272449d99e18a4",
+      "moduleWorktreeBaseTree": "147bb1afd5635209d5db166a513d970b6e0002c3"
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "moduleWorktreeBaseCommit": "4b46c02d1e98b8d0cfb78189126aa47ac90f2fda",
+      "moduleWorktreeBaseTree": "0e37221429763f5d13c799e22bf10ad8a6648f1a",
+      "tokenCarrierIsCentralAuthorityOnly": true,
+      "moduleWorktreesRemainOnPreparationCarrier": true
+    }
+  },
+  "issuedTokenClosedSet": [
+    {
+      "moduleSession": "HRIS-HRM",
+      "sliceId": "BASE-TFR-HRM-005",
+      "canonicalFeature": "HRIS_ORGANIZATION_POSITIONS",
+      "tokenPath": "tokens/base-tfr-hrm-005.start-token.v1.json",
+      "tokenSha256": "fdb3d9c635bf059aa56a62ecbc4d94ad0f4bb449ffbc929beb20dc51eae43f62",
+      "migration": "NONE_PROVEN_REUSE",
+      "resultEvidenceRoot": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-results-r1/base-tfr-hrm-005"
+    },
+    {
+      "moduleSession": "HRIS-PAY",
+      "sliceId": "BASE-TFR-PAY-013",
+      "canonicalFeature": "HRIS_PAYROLL_RUN_PREPARE",
+      "forbiddenAlias": "HRIS_PAYROLL_POPULATION_PREPARATION",
+      "tokenPath": "tokens/base-tfr-pay-013.start-token.v1.json",
+      "tokenSha256": "0261536b268f9cb0caf22eda0d5bcb03a61d0fba9d084a156e8ee3c7a91a8aa8",
+      "migrationLeaseId": "HRIS-WAVE7-R7-BATCH-01-PAYROLL-MAIN-V52-20261017-R1",
+      "resultEvidenceRoot": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-results-r1/base-tfr-pay-013"
+    },
+    {
+      "moduleSession": "HRIS-SYS",
+      "sliceId": "BASE-TFR-SYS-002",
+      "canonicalFeature": "HRIS_OPERATIONS_EXCEPTION_CENTER",
+      "forbiddenAlias": "HRIS_OPERATIONAL_EXCEPTION_PROJECTION",
+      "tokenPath": "tokens/base-tfr-sys-002.start-token.v1.json",
+      "tokenSha256": "62f7f265b9fcf5115401a152abaef045fcffcfb5747529fdbfa1aa4722837a37",
+      "migrationLeaseId": "HRIS-WAVE7-R7-BATCH-01-PLATFORM-MAIN-V331-20261017-R1",
+      "resultEvidenceRoot": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-results-r1/base-tfr-sys-002"
+    },
+    {
+      "moduleSession": "HRIS-TIM",
+      "sliceId": "BASE-TFR-TIM-007",
+      "canonicalFeature": "HRIS_TIME_CLOSE_HANDOFF",
+      "tokenPath": "tokens/base-tfr-tim-007.start-token.v1.json",
+      "tokenSha256": "5e1f1b5d4e4e40f6745db22c0c3f4ca3eb6ae89574c60c8fabb77887988307a8",
+      "migrationLeaseId": "HRIS-WAVE7-R7-BATCH-01-TIME-MAIN-V12-20261017-R1",
+      "resultEvidenceRoot": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-results-r1/base-tfr-tim-007"
+    }
+  ],
+  "issuedTokenCount": 4,
+  "worktreeCount": 8,
+  "worktreeState": "ALL_MATERIALIZED_PUSHED_CLEAN_REMOTE_EXACT_AT_TOKEN_ISSUE",
+  "excludedModule": {
+    "moduleSession": "HRIS-PER",
+    "sliceId": "BASE-TFR-PER-001",
+    "state": "SEALED_NO_GO_UNSEALED_NO_SOURCE_AUTHORITY",
+    "evidencePath": "../r7-per-001-semantic-no-go-r1/semantic-decision-receipt.v1.json",
+    "evidenceSha256": "f113a8dfd363bae19dcb44764313155819531c8f141875386619ed55b10e65fb",
+    "worktreeAuthorized": false,
+    "startTokenIssued": false,
+    "migrationAuthorized": false
+  },
+  "verificationPolicy": {
+    "order": "NEW_OR_CHANGED_MODULE_CLUSTER_FIRST_THEN_ONLY_NAMED_SHARED_REGRESSION_SEAMS",
+    "afterFailure": "FIX_AND_RERUN_THE_SMALLEST_FAILED_TARGET_FIRST",
+    "repositoryWideSuitePerCorrection": false,
+    "routedBrowserTestBeforeCentralMount": false,
+    "finalIntegrationAndBrowserMatrix": "CENTRAL_PHASE_ONLY_AFTER_ALL_FOUR_MODULE_RESULTS_ARE_ACCEPTED"
+  },
+  "authority": {
+    "moduleSourceImplementationAuthorized": true,
+    "exactThreeMigrationPathsAuthorized": true,
+    "moduleBranchCommitAuthorized": true,
+    "moduleBranchPushAuthorized": true,
+    "mergeToDwpDevAuthorized": false,
+    "centralRouteOrMenuMountAuthorized": false,
+    "tokenCarrierMergeOrRebaseIntoModuleWorktreesAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "DISPATCH_THE_FOUR_EXACT_TOKENS_TO_THE_EXISTING_HRIS_HRM_PAY_SYS_AND_TIM_MODULE_SESSIONS; EACH_SESSION_MUST_IMPLEMENT_TEST_COMMIT_PUSH_AND_WRITE_ONLY_ITS_EXACT_RESULT_ROOT; CENTRAL_CONTROL_REVIEWS_RESULTS_BEFORE_ANY_DWP_DEV_MERGE_OR_ROUTE_SHELL_MOUNT"
+}
