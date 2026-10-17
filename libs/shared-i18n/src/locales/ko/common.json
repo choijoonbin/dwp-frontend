@@ -70,6 +70,15 @@
     "loadFailed": "요청한 데이터를 불러오지 못했습니다.",
     "operationFailed": "작업을 완료하지 못했습니다."
   },
+  "navigation": {
+    "items": {
+      "hcm": {
+        "organization-positions": { "label": "조직·포지션" },
+        "payroll-population": { "label": "급여 대상자" },
+        "settings-operations": { "label": "운영 예외 센터" }
+      }
+    }
+  },
   "productSurface": {
     "contextBar": {
       "label": "제품 접근 컨텍스트",
@@ -169,6 +178,18 @@
       "activationRequired": {
         "title": "임시 권한 활성화가 필요합니다",
         "description": "통제된 관리 영역에 진입하기 전에 대상 권한을 활성화해 주세요."
+      },
+      "featureActivationRequired": {
+        "title": "아직 출시되지 않은 기능입니다",
+        "description": "회사에서 이 기능을 활성화하지 않았습니다. 사용할 수 있는 영역으로 돌아가거나 권한이 있는 기능 관리자에게 문의해 주세요."
+      },
+      "tenantFeatureEnrollmentRequired": {
+        "title": "회사에 이 기능이 등록되지 않았습니다",
+        "description": "기능은 출시되었지만 현재 회사에는 등록되지 않았습니다. 사용할 수 있는 영역으로 돌아가 주세요."
+      },
+      "tenantAppAdoptionRequired": {
+        "title": "회사에서 HRIS 앱을 사용하지 않습니다",
+        "description": "기능 상태를 확인하려면 먼저 HRIS 앱을 도입해야 합니다. 앱 카탈로그를 확인하거나 안전한 영역으로 돌아가 주세요."
       },
       "stepUpRequired": {
         "title": "추가 본인 확인이 필요합니다",

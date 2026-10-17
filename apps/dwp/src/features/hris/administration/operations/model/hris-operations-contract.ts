@@ -45,6 +45,19 @@ export const HRIS_OPERATIONS_API_CONTRACTS = Object.freeze({
   }),
 });
 
+export type HrisOperationsTrustedAdmission = Readonly<{
+  kind: 'TRUSTED_PRODUCT_SURFACE_PAGE_AND_DATA';
+  feature: typeof HRIS_OPERATIONS_FEATURE;
+  pageRouteContractKey: typeof HRIS_OPERATIONS_API_CONTRACTS.entry.routeContractKey;
+  pageContextScopeKind: 'CONFIG_SCOPE';
+  pageDecisionRevision: string;
+  targetPopulationScopeKey: string;
+  dataRouteContractKeys: readonly [
+    typeof HRIS_OPERATIONS_API_CONTRACTS.list.routeContractKey,
+    typeof HRIS_OPERATIONS_API_CONTRACTS.detail.routeContractKey,
+  ];
+}>;
+
 export const HRIS_OPERATION_MODULES = ['HRM', 'PER', 'PAY', 'SYS', 'TIM'] as const;
 export type HrisOperationModule = (typeof HRIS_OPERATION_MODULES)[number];
 

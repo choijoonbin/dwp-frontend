@@ -29,7 +29,7 @@ import type {
   ProductSurfaceEvaluationRequest,
   ProductSurfaceRollout,
 } from '@dwp-frontend/shared-utils/api/auth-api';
-import type { ProductSurfaceAuthoritySnapshot } from '@dwp-frontend/shared-utils/auth/product-surface-authority-model';
+import type { TrustedProductSurfaceAuthoritySnapshot } from '@dwp-frontend/shared-utils/auth/product-surface-authority-model';
 import type { ProductSurfaceAuthorityContextValue } from '@dwp-frontend/shared-utils/auth/product-surface-context-provider';
 import type * as ProductSurfaceContextProviderModule from '@dwp-frontend/shared-utils/auth/product-surface-context-provider';
 import type { ProductSurfaceCanaryAuthority } from './product-surface-canary-runtime';
@@ -119,11 +119,18 @@ function activePageQueryMeta(overrides: Readonly<Record<string, unknown>> = {}) 
   };
 }
 
-const snapshot: ProductSurfaceAuthoritySnapshot = {
+const snapshot: TrustedProductSurfaceAuthoritySnapshot = {
   envelope: {
-    contractVersion: 'product-surfaces/v3',
+    contractVersion: '2',
     decisionRevision: REVISION,
-    sourceRevisions: {},
+    sourceRevisions: {
+      auth: 'auth-1',
+      policy: 'policy-1',
+      productRelationship: 'relationship-1',
+      targetPopulation: 'population-1',
+      support: 'support-1',
+      tenantControl: 'tenant-control-1',
+    },
     activeAccessMode: 'NORMAL',
     generatedAt: GENERATED_AT,
     contexts,
@@ -180,7 +187,7 @@ function authority(
   resolution: ReturnType<typeof rollout> | { state: 'authority-unavailable' },
   options: {
     productKey?: string;
-    snapshot?: ProductSurfaceAuthoritySnapshot;
+    snapshot?: TrustedProductSurfaceAuthoritySnapshot;
   } = {}
 ): ProductSurfaceAuthorityContextValue {
   const productKey = options.productKey ?? 'approvals';
@@ -302,7 +309,7 @@ describe('mounted product surface authority bridge', () => {
     const target = GOVERNED_SURFACE_PAGE_ROUTES.find(
       (route) => route.routeContractKey === redirect.targetRouteContractKey
     )!;
-    const aliasSnapshot: ProductSurfaceAuthoritySnapshot = {
+    const aliasSnapshot: TrustedProductSurfaceAuthoritySnapshot = {
       ...snapshot,
       envelope: {
         ...snapshot.envelope,
@@ -552,7 +559,7 @@ describe('mounted product surface authority bridge', () => {
       throw new Error('background PAGE authority unavailable');
     });
     const hcmRollout = rollout('111');
-    const hcmSnapshot: ProductSurfaceAuthoritySnapshot = {
+    const hcmSnapshot: TrustedProductSurfaceAuthoritySnapshot = {
       ...snapshot,
       envelope: {
         ...snapshot.envelope,

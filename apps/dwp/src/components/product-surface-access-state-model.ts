@@ -66,6 +66,25 @@ const ACCESS_PRESENTATIONS = {
     secondaryAction: 'return',
     tone: 'attention',
   },
+  'feature-activation-required': {
+    titleKey: 'productSurface.access.featureActivationRequired.title',
+    descriptionKey: 'productSurface.access.featureActivationRequired.description',
+    primaryAction: 'return',
+    tone: 'attention',
+  },
+  'tenant-feature-enrollment-required': {
+    titleKey: 'productSurface.access.tenantFeatureEnrollmentRequired.title',
+    descriptionKey: 'productSurface.access.tenantFeatureEnrollmentRequired.description',
+    primaryAction: 'return',
+    tone: 'attention',
+  },
+  'tenant-app-adoption-required': {
+    titleKey: 'productSurface.access.tenantAppAdoptionRequired.title',
+    descriptionKey: 'productSurface.access.tenantAppAdoptionRequired.description',
+    primaryAction: 'request-access',
+    secondaryAction: 'return',
+    tone: 'attention',
+  },
   'step-up-required': {
     titleKey: 'productSurface.access.stepUpRequired.title',
     descriptionKey: 'productSurface.access.stepUpRequired.description',

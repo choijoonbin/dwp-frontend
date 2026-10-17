@@ -57,6 +57,7 @@ export type HcmView =
   | 'people'
   | 'employee-change-requests'
   | 'employment-assignments'
+  | 'organization-positions'
   | 'assignments'
   | 'time-operations'
   | 'time-work-plans'
@@ -67,6 +68,7 @@ export type HcmView =
   | 'time-leave-operations'
   | 'benefits-operations'
   | 'pay-operations'
+  | 'payroll-population'
   | 'talent-operations'
   | 'performance-goal-cycles'
   | 'performance-review-operations'
@@ -78,6 +80,7 @@ export type HcmView =
   | 'settings-reference'
   | 'settings-payroll'
   | 'settings-navigation-policy'
+  | 'settings-operations'
   | 'exports';
 
 export type HcmNavigationItem = ProductNavigationItem & {
@@ -91,6 +94,64 @@ export type HcmNavigationGroup = {
   id: HcmSection;
   items: readonly HcmNavigationItem[];
 };
+
+export type HrisR7GovernedPageCatalogItem = Readonly<{
+  feature:
+    | 'HRIS_ORGANIZATION_POSITIONS'
+    | 'HRIS_PAYROLL_RUN_PREPARE'
+    | 'HRIS_OPERATIONS_EXCEPTION_CENTER'
+    | 'HRIS_TIME_CLOSE_HANDOFF';
+  module: 'HRM' | 'PAY' | 'SYS' | 'TIM';
+  path: string;
+  routeContractKey: string;
+  state: 'ADMISSION_MOUNTED' | 'CATALOG_ONLY';
+}>;
+
+export const HRIS_R7_GOVERNED_PAGE_CATALOG: readonly HrisR7GovernedPageCatalogItem[] =
+  Object.freeze([
+    Object.freeze({
+      feature: 'HRIS_ORGANIZATION_POSITIONS',
+      module: 'HRM',
+      path: '/hr/operations/people/organization-positions',
+      routeContractKey: 'route.hcm.operations.organization-positions.page',
+      state: 'ADMISSION_MOUNTED',
+    }),
+    Object.freeze({
+      feature: 'HRIS_PAYROLL_RUN_PREPARE',
+      module: 'PAY',
+      path: '/hr/operations/payroll/population',
+      routeContractKey: 'route.hcm.operations.payroll-population.page',
+      state: 'ADMISSION_MOUNTED',
+    }),
+    Object.freeze({
+      feature: 'HRIS_OPERATIONS_EXCEPTION_CENTER',
+      module: 'SYS',
+      path: '/hr/settings/operations',
+      routeContractKey: 'route.hcm.configuration.settings-operations.page',
+      state: 'ADMISSION_MOUNTED',
+    }),
+    Object.freeze({
+      feature: 'HRIS_TIME_CLOSE_HANDOFF',
+      module: 'TIM',
+      path: '/hr/operations/time/command-center',
+      routeContractKey: 'route.hcm.operations.time-command-center.page',
+      state: 'CATALOG_ONLY',
+    }),
+    Object.freeze({
+      feature: 'HRIS_TIME_CLOSE_HANDOFF',
+      module: 'TIM',
+      path: '/hr/operations/time/daily-close',
+      routeContractKey: 'route.hcm.operations.time-daily-close.page',
+      state: 'CATALOG_ONLY',
+    }),
+    Object.freeze({
+      feature: 'HRIS_TIME_CLOSE_HANDOFF',
+      module: 'TIM',
+      path: '/hr/operations/time/monthly-close',
+      routeContractKey: 'route.hcm.operations.time-monthly-close.page',
+      state: 'CATALOG_ONLY',
+    }),
+  ]);
 
 export const HCM_NAVIGATION: readonly HcmNavigationGroup[] = [
   {
@@ -362,6 +423,26 @@ export const HCM_NAVIGATION: readonly HcmNavigationGroup[] = [
       },
       {
         section: 'operate',
+        view: 'organization-positions',
+        path: '/hr/operations/people/organization-positions',
+        icon: Network,
+        audience: 'operator',
+        governedOnly: true,
+        requiredResourceKey: 'DATA.HRIS_ORGANIZATION',
+        requiredPermissionCode: 'VIEW',
+      },
+      {
+        section: 'operate',
+        view: 'payroll-population',
+        path: '/hr/operations/payroll/population',
+        icon: ReceiptText,
+        audience: 'pay-admin',
+        governedOnly: true,
+        requiredResourceKey: 'DATA.HR_PAY',
+        requiredPermissionCode: 'VIEW',
+      },
+      {
+        section: 'operate',
         view: 'assignments',
         path: '/hr/operations/assignments',
         icon: ClipboardList,
@@ -427,6 +508,16 @@ export const HCM_NAVIGATION: readonly HcmNavigationGroup[] = [
         audience: 'operator',
         governedOnly: true,
         requiredResourceKey: 'CONFIG.HRIS_NAVIGATION_POLICY',
+        requiredPermissionCode: 'VIEW',
+      },
+      {
+        section: 'foundation',
+        view: 'settings-operations',
+        path: '/hr/settings/operations',
+        icon: Gauge,
+        audience: 'operator',
+        governedOnly: true,
+        requiredResourceKey: 'CONFIG.HRIS_WORKBENCH',
         requiredPermissionCode: 'VIEW',
       },
       {
@@ -588,6 +679,14 @@ export const HCM_OPERATIONS_NAVIGATION = projectProductSurfaceNavigation(HCM_NAV
     taskKind: 'operations',
     access: capability('hcm.operations.people.view'),
   },
+  'organization-positions': {
+    taskKind: 'operations',
+    access: capability('hcm.operations.organization.view'),
+  },
+  'payroll-population': {
+    taskKind: 'operations',
+    access: capability('hcm.operations.payroll-support.view'),
+  },
   assignments: { taskKind: 'operations', access: capability('hcm.operations.workforce.read') },
 });
 
@@ -607,6 +706,10 @@ export const HCM_MANAGEMENT_NAVIGATION = projectProductSurfaceNavigation(HCM_NAV
   'settings-navigation-policy': {
     taskKind: 'administration',
     access: capability('hcm.configuration.navigation-policy.view'),
+  },
+  'settings-operations': {
+    taskKind: 'administration',
+    access: capability('hcm.configuration.workbench.view'),
   },
   'organization-design': {
     taskKind: 'administration',

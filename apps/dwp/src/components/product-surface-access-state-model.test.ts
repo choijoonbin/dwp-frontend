@@ -12,6 +12,9 @@ const states: readonly SurfaceDeniedState[] = [
   'scope-invalid',
   'expired',
   'activation-required',
+  'feature-activation-required',
+  'tenant-feature-enrollment-required',
+  'tenant-app-adoption-required',
   'step-up-required',
   'sod-conflict',
   'support-scope-denied',
@@ -38,6 +41,15 @@ describe('product surface access presentation', () => {
     );
     expect(getProductSurfaceAccessPresentation('activation-required').primaryAction).toBe(
       'activate-access'
+    );
+    expect(getProductSurfaceAccessPresentation('feature-activation-required').primaryAction).toBe(
+      'return'
+    );
+    expect(
+      getProductSurfaceAccessPresentation('tenant-feature-enrollment-required').primaryAction
+    ).toBe('return');
+    expect(getProductSurfaceAccessPresentation('tenant-app-adoption-required').primaryAction).toBe(
+      'request-access'
     );
   });
 

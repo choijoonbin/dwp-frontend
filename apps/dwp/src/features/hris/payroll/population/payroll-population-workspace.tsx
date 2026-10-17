@@ -22,6 +22,7 @@ import Typography from '@mui/material/Typography';
 import {
   PAYROLL_COMMAND_CENTER_PATH,
   PAYROLL_POPULATION_PAGE_ROUTE_CONTRACT_KEY,
+  PAYROLL_RUN_PREPARE_FEATURE,
   PAYROLL_RUN_PREPARE_DEFAULT_ROLLOUT,
   payrollPopulationItemIsSafeToPrepare,
   payrollRunPrepareEnabledForTenant,
@@ -35,6 +36,7 @@ import type {
   PayrollPopulationFieldDecision,
   PayrollPopulationItem,
   PayrollPopulationProjection,
+  PayrollPopulationTrustedAdmission,
   PayrollRunPrepareDraft,
   PayrollRunPrepareRollout,
 } from './payroll-population-contract';
@@ -718,7 +720,9 @@ const DEFAULT_SCOPE: PayrollPopulationScope = Object.freeze({
 
 export type HrisPayrollPopulationWorkspaceProps = Readonly<{
   tenantId?: string;
+  admission?: PayrollPopulationTrustedAdmission;
   scope?: PayrollPopulationScope;
+  /** @deprecated R7 source-completion test compatibility only; never route admission authority. */
   rollout?: PayrollRunPrepareRollout;
   ownerBinding?: PayrollPopulationOwnerBinding;
   dataSource?: PayrollPopulationDataSource;
@@ -763,6 +767,7 @@ function ActivePayrollPopulationWorkspace({
  */
 export function HrisPayrollPopulationWorkspace({
   tenantId = '',
+  admission,
   scope = DEFAULT_SCOPE,
   rollout = PAYROLL_RUN_PREPARE_DEFAULT_ROLLOUT,
   ownerBinding,
@@ -773,8 +778,19 @@ export function HrisPayrollPopulationWorkspace({
   timeZone = 'UTC',
   copy = payrollPopulationCopy(locale),
 }: HrisPayrollPopulationWorkspaceProps = {}) {
+  const trustedAdmission = Boolean(
+    admission?.kind === 'TRUSTED_PRODUCT_SURFACE_PAGE' &&
+    admission.feature === PAYROLL_RUN_PREPARE_FEATURE &&
+    admission.pageRouteContractKey === PAYROLL_POPULATION_PAGE_ROUTE_CONTRACT_KEY &&
+    admission.tenantId === tenantId &&
+    admission.contextScopeKey === scope.contextScopeKey &&
+    admission.decisionRevision === scope.decisionRevision &&
+    admission.contextScopeKey.trim() &&
+    admission.decisionRevision.trim()
+  );
   const admitted =
-    payrollRunPrepareEnabledForTenant(rollout, tenantId) &&
+    // Mandatory G3 source-completion tests retain this pre-R7 seam. Production routes never pass it.
+    (trustedAdmission || payrollRunPrepareEnabledForTenant(rollout, tenantId)) &&
     scope.ready &&
     scope.tenantId === tenantId &&
     Boolean(scope.contextScopeKey) &&

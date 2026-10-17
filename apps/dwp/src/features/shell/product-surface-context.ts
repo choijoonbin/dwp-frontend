@@ -84,6 +84,9 @@ export type SurfaceDeniedState =
   | 'scope-invalid'
   | 'expired'
   | 'activation-required'
+  | 'feature-activation-required'
+  | 'tenant-feature-enrollment-required'
+  | 'tenant-app-adoption-required'
   | 'step-up-required'
   | 'sod-conflict'
   | 'support-scope-denied'
@@ -104,6 +107,7 @@ export type SurfaceDecision =
 
 export type ProductSurfaceDirectEvaluation = {
   decision: string;
+  reasonCode?: string;
   decisionRevision?: string;
   context?: EffectiveProductSurfaceContext;
   routeGrantRef?: string;
@@ -132,6 +136,9 @@ const DIRECT_DECISION_STATES: Readonly<Record<string, SurfaceDeniedState>> = {
   SCOPE_INVALID: 'scope-invalid',
   EXPIRED: 'expired',
   ACTIVATION_REQUIRED: 'activation-required',
+  FEATURE_ACTIVATION_REQUIRED: 'feature-activation-required',
+  TENANT_FEATURE_ENROLLMENT_REQUIRED: 'tenant-feature-enrollment-required',
+  TENANT_APP_ADOPTION_REQUIRED: 'tenant-app-adoption-required',
   STEP_UP_REQUIRED: 'step-up-required',
   SOD_CONFLICT: 'sod-conflict',
   SUPPORT_SCOPE_DENIED: 'support-scope-denied',
@@ -144,12 +151,27 @@ const REASON_CODE_STATES: Readonly<Record<string, SurfaceDeniedState>> = {
   ROUTE_CAPABILITY_REQUIRED: 'route-denied',
   ASSIGNMENT_EXPIRED: 'expired',
   ACTIVATION_REQUIRED: 'activation-required',
+  FEATURE_ACTIVATION_REQUIRED: 'feature-activation-required',
+  TENANT_FEATURE_ENROLLMENT_REQUIRED: 'tenant-feature-enrollment-required',
+  TENANT_APP_ADOPTION_REQUIRED: 'tenant-app-adoption-required',
   STEP_UP_REQUIRED: 'step-up-required',
   SOD_CONFLICT: 'sod-conflict',
   SUPPORT_SCOPE_REQUIRED: 'support-scope-denied',
   SCOPE_CONTEXT_EXPIRED: 'scope-invalid',
   AUTHORITY_RESOLUTION_UNAVAILABLE: 'authority-unavailable',
 };
+
+const FEATURE_CONTROL_DECISIONS = new Set([
+  'FEATURE_ACTIVATION_REQUIRED',
+  'TENANT_FEATURE_ENROLLMENT_REQUIRED',
+  'TENANT_APP_ADOPTION_REQUIRED',
+]);
+
+const FEATURE_CONTROL_REASON_CODES = new Set([
+  'FEATURE_ACTIVATION_REQUIRED',
+  'TENANT_FEATURE_ENROLLMENT_REQUIRED',
+  'TENANT_APP_ADOPTION_REQUIRED',
+]);
 
 function isExpired(isoValue: string | undefined, nowMs: number): boolean {
   if (!isoValue) return false;
@@ -199,8 +221,19 @@ export function mapProductSurfaceDirectEvaluation(
   nowMs = Date.now()
 ): SurfaceDecision {
   if (evaluation.decision !== 'ALLOWED') {
+    const directState = DIRECT_DECISION_STATES[evaluation.decision];
+    const reasonState = evaluation.reasonCode
+      ? REASON_CODE_STATES[evaluation.reasonCode]
+      : undefined;
+    const state = FEATURE_CONTROL_DECISIONS.has(evaluation.decision)
+      ? directState
+      : evaluation.reasonCode && FEATURE_CONTROL_REASON_CODES.has(evaluation.reasonCode)
+        ? evaluation.decision === 'ACTIVATION_REQUIRED'
+          ? reasonState
+          : directState
+        : (reasonState ?? directState);
     return {
-      state: DIRECT_DECISION_STATES[evaluation.decision] ?? 'authority-unavailable',
+      state: state ?? 'authority-unavailable',
       detail: deniedDetail(evaluation),
     };
   }

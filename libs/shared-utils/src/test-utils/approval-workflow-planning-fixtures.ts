@@ -115,9 +115,16 @@ export function planningAuthorityFixture(
     })),
   };
   const snapshot = parseProductSurfaceAuthoritySnapshot({
-    contractVersion: 'product-surfaces.v1',
+    contractVersion: '2',
     decisionRevision: `psr-${'a'.repeat(64)}`,
-    sourceRevisions: {},
+    sourceRevisions: {
+      auth: 'fixture-auth-revision',
+      policy: 'fixture-policy-revision',
+      productRelationship: 'fixture-relationship-revision',
+      targetPopulation: 'fixture-population-revision',
+      support: 'fixture-support-revision',
+      tenantControl: 'fixture-tenant-control-revision',
+    },
     activeAccessMode: 'NORMAL',
     generatedAt: new Date().toISOString(),
     contexts: [context],

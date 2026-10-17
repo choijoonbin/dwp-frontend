@@ -63,6 +63,10 @@ import {
   HRIS_NAVIGATION_TASK_GROUP_REGISTER_SHA256,
   HRIS_NAVIGATION_TOPOLOGY_REVISION,
   HRIS_NAVIGATION_TOPOLOGY_SHA256,
+  createHrisPolicyShellNavigationProjection,
+  resolveHrisRuntimePolicyDeepLink,
+  selectHrisRuntimeNavigationPolicy,
+  selectRuntimeHrisNavigationPolicyProjection,
   useHrisRuntimeNavigationPolicy,
 } from './hris-navigation-policy-runtime';
 import {
@@ -121,6 +125,24 @@ describe('root-mounted HRIS navigation policy provider', () => {
   afterEach(async () => {
     await act(async () => root.unmount());
     host.remove();
+  });
+
+  it('cannot re-add a policy route denied by the Product Surface allowed-path intersection', () => {
+    const projection = enforcedProjection(`nav-v2-${'a'.repeat(64)}`);
+    const policy = selectHrisRuntimeNavigationPolicy(
+      selectRuntimeHrisNavigationPolicyProjection(projection)
+    );
+    const policyPath = projection.workbenches[0]!.groups[0]!.nodes[0]!.routeAliases[0]!;
+    const activationDeniedPaths = new Set<string>();
+
+    expect(
+      resolveHrisRuntimePolicyDeepLink(policy, policyPath, activationDeniedPaths)
+    ).toMatchObject({ decision: 'DENY', route: null });
+    expect(
+      createHrisPolicyShellNavigationProjection(policy, activationDeniedPaths)
+        .project(new Set([policyPath]))
+        .flatMap((group) => group.items)
+    ).toEqual([]);
   });
 
   it('fetches once without an AllowedSurface wrapper and reuses the tenant aggregate across surfaces', async () => {

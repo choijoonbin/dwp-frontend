@@ -24,12 +24,36 @@ const POLICY_AUTHORITY_MODES = new Set([
 const RESPONSIBILITY_REQUIREMENTS = new Set(['REQUIRED', 'NOT_REQUIRED', 'LEGACY_OVERSIGHT']);
 const ACTIVATION_STATES = new Set(['ACTIVE', 'ELIGIBLE']);
 
-export type ProductSurfaceAuthoritySnapshot = {
-  envelope: ProductSurfaceContextListData;
+export type ProductSurfaceContextListDataV2 = Omit<
+  ProductSurfaceContextListData,
+  'contractVersion' | 'sourceRevisions'
+> & {
+  contractVersion: '2';
+  sourceRevisions: {
+    auth: string;
+    policy: string;
+    productRelationship: string;
+    targetPopulation: string;
+    support: string;
+    tenantControl: string;
+  };
+};
+
+/**
+ * The generic default remains available to pure model fixtures that never cross the transport
+ * trust boundary. Runtime authority providers expose TrustedProductSurfaceAuthoritySnapshot.
+ */
+export type ProductSurfaceAuthoritySnapshot<
+  TEnvelope extends ProductSurfaceContextListData = ProductSurfaceContextListData,
+> = {
+  envelope: TEnvelope;
   receivedAtMs: number;
   clockOffsetMs: number;
   earliestRevalidateAtMs: number | null;
 };
+
+export type TrustedProductSurfaceAuthoritySnapshot =
+  ProductSurfaceAuthoritySnapshot<ProductSurfaceContextListDataV2>;
 
 export type ProductRolloutResolution =
   | {
@@ -226,24 +250,34 @@ function validContext(value: unknown, activeAccessMode: string, generatedAtMs: n
   );
 }
 
-function validSourceRevisions(value: unknown): boolean {
+const SOURCE_REVISION_KEYS = [
+  'auth',
+  'policy',
+  'productRelationship',
+  'targetPopulation',
+  'support',
+  'tenantControl',
+] as const;
+
+function validSourceRevisions(
+  value: unknown
+): value is ProductSurfaceContextListDataV2['sourceRevisions'] {
   const revisions = record(value);
   return Boolean(
     revisions &&
-    Object.values(revisions).every(
-      (revision) => revision === undefined || revision === null || nonBlank(revision)
-    )
+    Object.keys(revisions).length === SOURCE_REVISION_KEYS.length &&
+    SOURCE_REVISION_KEYS.every((key) => nonBlank(revisions[key]))
   );
 }
 
 export function parseProductSurfaceAuthoritySnapshot(
   value: unknown,
   receivedAtMs = Date.now()
-): ProductSurfaceAuthoritySnapshot {
+): TrustedProductSurfaceAuthoritySnapshot {
   const envelope = record(value);
   if (
     !envelope ||
-    !nonBlank(envelope.contractVersion) ||
+    envelope.contractVersion !== '2' ||
     !nonBlank(envelope.decisionRevision) ||
     !validSourceRevisions(envelope.sourceRevisions) ||
     !nonBlank(envelope.activeAccessMode) ||
@@ -283,7 +317,7 @@ export function parseProductSurfaceAuthoritySnapshot(
   }
   const revalidateTimes = contexts.map((context) => Date.parse(context.revalidateAt));
   return {
-    envelope: envelope as unknown as ProductSurfaceContextListData,
+    envelope: envelope as unknown as ProductSurfaceContextListDataV2,
     receivedAtMs,
     clockOffsetMs: generatedAtMs - receivedAtMs,
     earliestRevalidateAtMs: revalidateTimes.length ? Math.min(...revalidateTimes) : null,

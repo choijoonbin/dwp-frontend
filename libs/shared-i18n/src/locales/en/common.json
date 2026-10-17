@@ -70,6 +70,15 @@
     "loadFailed": "The requested data could not be loaded.",
     "operationFailed": "The operation could not be completed."
   },
+  "navigation": {
+    "items": {
+      "hcm": {
+        "organization-positions": { "label": "Organization & positions" },
+        "payroll-population": { "label": "Payroll population" },
+        "settings-operations": { "label": "Operations exception center" }
+      }
+    }
+  },
   "productSurface": {
     "contextBar": {
       "label": "Product access context",
@@ -169,6 +178,18 @@
       "activationRequired": {
         "title": "Temporary activation is required",
         "description": "Activate the eligible access before entering this governed management area."
+      },
+      "featureActivationRequired": {
+        "title": "This feature has not been released",
+        "description": "Your company has not activated this feature. Return to an available area or contact an authorized feature administrator."
+      },
+      "tenantFeatureEnrollmentRequired": {
+        "title": "This company is not enrolled in the feature",
+        "description": "The feature is released, but it has not been enrolled for this company. Return to an available area."
+      },
+      "tenantAppAdoptionRequired": {
+        "title": "HRIS is not enabled for this company",
+        "description": "The HRIS application must be adopted before feature availability can be checked. Review the app catalog or return to a safe area."
       },
       "stepUpRequired": {
         "title": "Additional verification is required",

@@ -95,4 +95,15 @@ describe('HCM legacy page guard', () => {
 
     expect(pageMocks.useHcmAccess).not.toHaveBeenCalled();
   });
+
+  it.each([
+    '/hr/operations/people/organization-positions',
+    '/hr/operations/payroll/population',
+    '/hr/settings/operations',
+  ])('resolves the admitted R7 PAGE %s through the governed shell', (path) => {
+    pageMocks.useOptionalAllowedProductSurface.mockReturnValue({ state: 'allowed' });
+
+    expect(renderPage(path)).not.toContain('/403');
+    expect(pageMocks.useHcmAccess).not.toHaveBeenCalled();
+  });
 });

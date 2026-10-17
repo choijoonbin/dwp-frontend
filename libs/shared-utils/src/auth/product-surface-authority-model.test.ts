@@ -18,9 +18,16 @@ const RECEIVED_AT = Date.parse('2026-08-24T01:00:10Z');
 
 function envelope() {
   return {
-    contractVersion: '1',
+    contractVersion: '2',
     decisionRevision: 'psr-7',
-    sourceRevisions: { auth: 'auth-4', policy: 'policy-2' },
+    sourceRevisions: {
+      auth: 'auth-4',
+      policy: 'policy-2',
+      productRelationship: 'relationship-3',
+      targetPopulation: 'population-5',
+      support: 'support-1',
+      tenantControl: 'tenant-control-6',
+    },
     activeAccessMode: 'NORMAL',
     generatedAt: '2026-08-24T01:00:00Z',
     contexts: [
@@ -108,6 +115,35 @@ function providerSupportEnvelope() {
 }
 
 describe('product surface authority model', () => {
+  it('accepts only contract v2 with the exact nonblank tenant-control revision set', () => {
+    expect(parseProductSurfaceAuthoritySnapshot(envelope(), RECEIVED_AT).envelope).toMatchObject({
+      contractVersion: '2',
+      sourceRevisions: { tenantControl: 'tenant-control-6' },
+    });
+
+    for (const candidate of [
+      { ...envelope(), contractVersion: '1' },
+      {
+        ...envelope(),
+        sourceRevisions: { ...envelope().sourceRevisions, tenantControl: '' },
+      },
+      {
+        ...envelope(),
+        sourceRevisions: Object.fromEntries(
+          Object.entries(envelope().sourceRevisions).filter(([key]) => key !== 'tenantControl')
+        ),
+      },
+      {
+        ...envelope(),
+        sourceRevisions: { ...envelope().sourceRevisions, unexpected: 'revision' },
+      },
+    ]) {
+      expect(() => parseProductSurfaceAuthoritySnapshot(candidate, RECEIVED_AT)).toThrow(
+        /envelope is invalid/
+      );
+    }
+  });
+
   it('uses the server clock offset when scheduling the earliest revalidation', () => {
     const snapshot = parseProductSurfaceAuthoritySnapshot(envelope(), RECEIVED_AT);
 

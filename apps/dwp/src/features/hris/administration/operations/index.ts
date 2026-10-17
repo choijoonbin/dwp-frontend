@@ -3,6 +3,7 @@ export {
   HrisOperationsWorkspace,
 } from './pages/hris-operations-workspace';
 export type { HrisOperationsWorkspaceProps } from './pages/hris-operations-workspace';
+export type { HrisOperationsDataSource } from './api/hris-operations-api';
 
 export {
   HRIS_OPERATIONS_API_CONTRACTS,
@@ -22,4 +23,5 @@ export type {
   HrisOperationalExceptionPage,
   HrisOperationsEntry,
   HrisOperationsQueryState,
+  HrisOperationsTrustedAdmission,
 } from './model/hris-operations-contract';
