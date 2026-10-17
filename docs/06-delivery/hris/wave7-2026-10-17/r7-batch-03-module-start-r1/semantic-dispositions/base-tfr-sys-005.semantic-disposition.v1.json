@@ -1,0 +1,216 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-03-sys005-semantic-disposition.v1",
+  "dispositionId": "HRIS-WAVE7-R7-BATCH-03-SYS005-SEMANTIC-DISPOSITION-20261018-R1",
+  "revision": 1,
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_DISPOSITION_ID_AND_SHA256"
+  },
+  "recordedAt": "2026-10-18T04:07:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "SEALED_EVIDENCE_ONLY_REUSE_CLOSURE_SEMANTICS_NO_PRODUCTION_SOURCE_NO_MIGRATION",
+  "sliceId": "BASE-TFR-SYS-005",
+  "sourceRef": "TFR-SYS-005",
+  "module": "SYS",
+  "moduleSession": "HRIS-SYS",
+  "decision": "GO_FOR_EVIDENCE_ONLY_REUSE_CLOSURE_AFTER_EXACT_PACKET_AND_TOKEN_PRODUCTION_SOURCE_NO_GO",
+  "authorityBasis": {
+    "batch03Preflight": {
+      "path": "../../r7-batch-03-preflight-r1/semantic-dependency-migration-preflight.v1.json",
+      "sha256": "dde2815eceb71c37d77334002d6cdbd26812c63bd6d38fc0fd82dea17ff745e8",
+      "bytes": 11972,
+      "requiredDecision": "CONDITIONAL_GO_FOR_EVIDENCE_ONLY_REUSE_CLOSURE_PRODUCTION_SOURCE_NO_GO"
+    },
+    "sourceFamily": {
+      "sha256": "2f7300f5a1141bd786ffad12d6d5504f9478cbf1d18e76b60b1fc0fb9eb73421",
+      "rowCount": 12,
+      "decisionId": "DEC-SYS-007",
+      "disposition": "REUSE",
+      "resolutionMode": "RELATED_REUSE_ALLOWED",
+      "boundedContext": "DWP_NOTIFICATION_PLATFORM",
+      "runtimeOwner": "dwp-notification-server",
+      "writeTableGroup": "NONE_SHARED_OWNER_REUSE"
+    },
+    "pinnedRepositories": {
+      "backend": {
+        "repository": "dwp-backend",
+        "branch": "dwp-dev",
+        "commit": "f448c36feee2ed7f59eacc64f450e6db3865f1c5",
+        "tree": "cec08e55f33fa71482c583137e3ccc3d8bf11572",
+        "use": "READ_ONLY"
+      },
+      "frontend": {
+        "repository": "dwp-frontend",
+        "branch": "dwp-dev",
+        "commit": "695c40b40c7461911100243b7d052dea07584bc0",
+        "tree": "8af76d722d8c299b0eb6768e15066e4675a24724",
+        "use": "EVIDENCE_CARRIER_BASE_ONLY"
+      },
+      "agent": {
+        "repository": "dwp_agent",
+        "branch": "dwp-dev",
+        "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+        "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+        "use": "READ_ONLY_ORCHESTRATION_PIN"
+      }
+    }
+  },
+  "sealedDispositions": [
+    {
+      "id": "SYS005-SEM-001",
+      "subject": "NotificationTemplatePublished.v1",
+      "observedState": "ABSENT_FROM_CURRENT_OWNER_SOURCE_OPENAPI_ASYNCAPI_AND_RUNTIME_CONTRACTS",
+      "decision": "NON_REQUIRED_LEGACY_COVERAGE_LABEL_SUPERSEDED_FOR_THIS_REUSE_CLOSURE",
+      "replacementEvidence": [
+        "The Notification owner persists the immutable tenant template revision and checksum.",
+        "The Notification owner records notification.template.published in the audit outbox after the guarded four-eyes publish transition.",
+        "SHARED-API-007 exposes the published override and immutable revision history from the owner workspace."
+      ],
+      "prohibition": "Do not create NotificationTemplatePublished.v1, another event alias, an outbox publisher, a consumer or an HRIS-local projection under this lane.",
+      "invalidation": "If a real downstream consumer requires NotificationTemplatePublished.v1, invalidate this disposition and return the lane to semantic NO_GO for a separately authorized shared-owner runtime change."
+    },
+    {
+      "id": "SYS005-SEM-002",
+      "subject": "PLAT-004 transport identity",
+      "observedState": "THE_RECOVERY_SERVICE_ROUTE_IS_A_NAMESPACE_WHILE_CURRENT_RUNTIME_HAS_DISTINCT_DIRECT_AND_DOMAIN_EVENT_PATHS",
+      "decision": "DISTINGUISH_NAMESPACE_DIRECT_HTTP_AND_CANONICAL_DOMAIN_EVENT_TRANSPORT",
+      "transport": {
+        "recoveryNamespace": "/internal/v1/intents",
+        "namespaceCallable": false,
+        "directHttpEndpoint": "/internal/v1/intents/direct",
+        "directHttpUseInThisClosure": "NONE",
+        "canonicalDomainEventTopic": "dwp.domain-events.v1",
+        "envelope": "DomainEventEnvelope",
+        "envelopeSchema": "contracts/asyncapi/domain-events.yaml#/components/schemas/DomainEventEnvelope",
+        "runtimeTranslator": "dwp-notification-server/src/main/java/com/dwp/services/notification/integration/NotificationDomainEventTranslator.java",
+        "runtimeListener": "dwp-notification-server/src/main/java/com/dwp/services/notification/integration/NotificationDomainEventKafkaListener.java"
+      },
+      "useInThisClosure": "Evidence that the shared Notification delivery boundary exists; SYS-005 does not register a producer, add an exact source-event onboarding or emit a new intent.",
+      "prohibition": "Do not describe /internal/v1/intents as a callable endpoint and do not route SYS-005 through /direct or add a SYS-specific Kafka onboarding."
+    },
+    {
+      "id": "SYS005-SEM-003",
+      "subject": "Historical Platform implementation, verification and migration commands",
+      "observedState": "THE_HISTORICAL_G3_ROW_POINTS_TO PLATFORM_SOURCE_TESTS_A_PLATFORM_MIGRATION_RANGE_AND_AN_HRIS_ADMINISTRATION_TEST_PATH",
+      "decision": "SUPERSEDED_FOR_RELATED_NOTIFICATION_OWNER_REUSE",
+      "superseded": [
+        "G3-SYS-BE-MIGRATION and MIG-SYS-PLATFORM-261-289 for BASE-TFR-SYS-005",
+        "dwp-platform-server HrisPlatformG3SliceContractTest, HrisPlatformMigrationCleanUpgradeTest and HrisPlatformWorkerRecoveryTest commands for BASE-TFR-SYS-005",
+        "apps/dwp/src/features/hris/administration/__tests__/g3-slices/base-tfr-sys-005.slice.test.tsx as a required new implementation target"
+      ],
+      "effectiveBoundary": {
+        "productionSourceDelta": "NONE",
+        "persistenceDelta": "NONE",
+        "migration": "NONE",
+        "migrationLease": "NONE",
+        "newHrisMenuOrRoute": "NONE",
+        "newProductAuthorization": "NONE",
+        "verificationOwner": "dwp-notification-server and the existing Notification frontend product"
+      }
+    },
+    {
+      "id": "SYS005-SEM-004",
+      "subject": "Twelve legacy communication routes",
+      "observedState": "ALL_TWELVE_ROWS_ARE_SEALED_TO_TFR_SYS_005_AND_THE_EXISTING_NOTIFICATION_OWNER_CONTRACTS",
+      "decision": "MANY_TO_ONE_PLATFORM_REUSE_WITHOUT_LEGACY_ROUTE_PARITY",
+      "canonicalExistingUserSurface": "/notifications/admin/templates",
+      "newHrisIaNode": "NONE",
+      "legacyRedirects": "NONE",
+      "completionMeaning": "Contract coverage closure only; it does not claim one-for-one Notice, Board, DynamicBoard or legacy detail-route parity."
+    }
+  ],
+  "existingContractSeal": {
+    "SHARED-API-007": {
+      "owner": "dwp-notification-server",
+      "method": "GET",
+      "browserPath": "/api/notifications/v1/admin/templates",
+      "ownerPath": "/v1/admin/templates",
+      "response": "ApiResponse<TemplateWorkspace>"
+    },
+    "SHARED-API-008": {
+      "owner": "dwp-notification-server",
+      "method": "POST",
+      "browserPath": "/api/notifications/v1/admin/templates/drafts",
+      "ownerPath": "/v1/admin/templates/drafts",
+      "requiredHeader": "Idempotency-Key",
+      "request": "TemplateDraftRequest",
+      "response": "ApiResponse<TemplateRevision>"
+    },
+    "openApiFragmentParity": {
+      "scope": "SHARED-API-007, SHARED-API-008, TemplateWorkspace, TemplateDraftRequest and TemplateRevision",
+      "canonicalExtraction": {
+        "id": "SYS005-SHARED-API-007-008-OPENAPI-FRAGMENT-V1",
+        "backendInput": "contracts/openapi/gateway-public.json",
+        "frontendInput": "libs/api-contracts/openapi/gateway-public.json",
+        "operationRoots": [
+          ".paths[\"/api/notifications/v1/admin/templates\"].get",
+          ".paths[\"/api/notifications/v1/admin/templates/drafts\"].post"
+        ],
+        "schemaKeys": [
+          "notification_ApiResponseTemplateWorkspace",
+          "notification_TemplateWorkspace",
+          "notification_TemplateVariant",
+          "notification_TemplateDraftRequest",
+          "notification_ApiResponseTemplateRevision",
+          "notification_TemplateRevision",
+          "notification_TemplateContent"
+        ],
+        "jqFilter": "{operations:{templateCatalogGet:.paths[\"/api/notifications/v1/admin/templates\"].get,templateDraftCreatePost:.paths[\"/api/notifications/v1/admin/templates/drafts\"].post},schemas:{ApiResponseTemplateWorkspace:.components.schemas.notification_ApiResponseTemplateWorkspace,ApiResponseTemplateRevision:.components.schemas.notification_ApiResponseTemplateRevision,TemplateWorkspace:.components.schemas.notification_TemplateWorkspace,TemplateVariant:.components.schemas.notification_TemplateVariant,TemplateContent:.components.schemas.notification_TemplateContent,TemplateDraftRequest:.components.schemas.notification_TemplateDraftRequest,TemplateRevision:.components.schemas.notification_TemplateRevision}}",
+        "serialization": "LC_ALL=C jq -S -c; UTF-8; recursively sorted object keys; compact one-line JSON; exactly one trailing LF emitted by jq",
+        "digest": "SHA-256 over the serialized stdout including its trailing LF",
+        "serializedBytes": 3889,
+        "commandTemplate": "LC_ALL=C jq -S -c '<jqFilter>' <input> | shasum -a 256"
+      },
+      "backendSha256": "88be25e0e95fe8c8281b3f140823819b421a08d025203b4fe1fef54ddcff7c08",
+      "frontendSha256": "88be25e0e95fe8c8281b3f140823819b421a08d025203b4fe1fef54ddcff7c08",
+      "matching": true
+    }
+  },
+  "effectiveVerification": {
+    "policy": "RUN_EACH_BOUNDED_TARGET_SET_ONCE_AFTER_TOKEN; AFTER_FAILURE_RERUN_ONLY_THE_SMALLEST_FAILED_TARGET; NO_REPOSITORY_WIDE_SUITE",
+    "backend": [
+      "NotificationTemplateServiceTest",
+      "NotificationTemplateRepositoryTest",
+      "NotificationDraftGovernanceServiceTest",
+      "NotificationSecurityFilterTest",
+      "NotificationMigrationInvariantTest.governsTenantTemplateOverridesAsImmutableMakerCheckerRevisions",
+      "NotificationDomainEventTranslatorTest",
+      "HrisNotificationIntentV1ProviderContractTest",
+      "HrisNotificationReceiptV1ProviderContractTest"
+    ],
+    "frontend": [
+      "apps/dwp/src/routes/notification-routes.test.tsx",
+      "apps/dwp/src/features/notifications/notification-navigation.test.ts",
+      "libs/shared-utils/src/api/notification-api.test.ts"
+    ],
+    "static": [
+      "Validate the result JSON documents.",
+      "Run the sealed canonical extraction command for both inputs and require 3889 serialized bytes plus SHA-256 88be25e0e95fe8c8281b3f140823819b421a08d025203b4fe1fef54ddcff7c08 for each.",
+      "Prove the evidence branch changed only the exact result-evidence root."
+    ],
+    "migrationCleanUpgrade": "NOT_APPLICABLE_NO_SCHEMA_TOUCH",
+    "workerRecovery": "NOT_APPLICABLE_NO_NEW_RUNTIME"
+  },
+  "authority": {
+    "semanticDispositionSealed": true,
+    "freshEvidenceOnlyOwnerPacketMayBeIssued": true,
+    "freshEvidenceOnlyStartTokenMayBeIssued": true,
+    "productionSourceAuthoringAuthorized": false,
+    "backendAuthoringAuthorized": false,
+    "frontendAppOrLibraryAuthoringAuthorized": false,
+    "migrationAuthoringAuthorized": false,
+    "menuRouteOrRedirectAuthoringAuthorized": false,
+    "productAuthorizationAuthoringAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nonClaims": [
+    "This disposition does not complete BASE-TFR-SYS-005.",
+    "This disposition does not create or validate NotificationTemplatePublished.v1.",
+    "This disposition does not prove one-for-one legacy communication screen parity.",
+    "This disposition does not authorize source code, test source, migration, menu, route, redirect or product-authorization changes.",
+    "This disposition does not activate a feature, enroll a tenant or authorize a production release."
+  ],
+  "nextGate": "ISSUE_AN_EXACT_EVIDENCE_ONLY_OWNER_PACKET_AND_HASH_BOUND_START_TOKEN"
+}

@@ -1,0 +1,342 @@
+{
+  "schema": "dwp.hris.wave7.r7-owner-packet.v1",
+  "packetId": "HRIS-WAVE7-R7-BATCH-03-OWNER-BASE-TFR-SYS-005-20261018-R1",
+  "revision": 1,
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_PACKET_ID_AND_SHA256"
+  },
+  "issuedAt": "2026-10-18T04:08:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "SEALED_EXACT_EVIDENCE_ONLY_NOTIFICATION_REUSE_CLOSURE_READY_FOR_PINNED_TOKEN_NO_SOURCE_NO_MIGRATION",
+  "module": "SYS",
+  "moduleSession": "HRIS-SYS",
+  "moduleThreadId": "01a0f53d-d62d-7971-81f7-1822b513ccb4",
+  "sliceId": "BASE-TFR-SYS-005",
+  "sourceRef": "TFR-SYS-005",
+  "sourceAuthority": {
+    "sourceFamilySha256": "2f7300f5a1141bd786ffad12d6d5504f9478cbf1d18e76b60b1fc0fb9eb73421",
+    "sourceRowCount": 12,
+    "decisionId": "DEC-SYS-007",
+    "disposition": "REUSE",
+    "resolutionMode": "RELATED_REUSE_ALLOWED",
+    "boundedContext": "DWP_NOTIFICATION_PLATFORM",
+    "runtimeOwner": "dwp-notification-server",
+    "writeTableGroup": "NONE_SHARED_OWNER_REUSE",
+    "batch03Preflight": {
+      "path": "../../r7-batch-03-preflight-r1/semantic-dependency-migration-preflight.v1.json",
+      "sha256": "dde2815eceb71c37d77334002d6cdbd26812c63bd6d38fc0fd82dea17ff745e8",
+      "bytes": 11972,
+      "requiredDecision": "CONDITIONAL_GO_FOR_EVIDENCE_ONLY_REUSE_CLOSURE_PRODUCTION_SOURCE_NO_GO"
+    },
+    "semanticDisposition": {
+      "path": "../semantic-dispositions/base-tfr-sys-005.semantic-disposition.v1.json",
+      "sha256": "9083a90510f2567281d7f96a77eabfab71bc7e908cb004f36338c34562fc4587",
+      "bytes": 11796,
+      "requiredDecision": "GO_FOR_EVIDENCE_ONLY_REUSE_CLOSURE_AFTER_EXACT_PACKET_AND_TOKEN_PRODUCTION_SOURCE_NO_GO"
+    },
+    "sysExactBusinessStart": {
+      "path": "../../../recovery/hris-porting-blueprint-2026-09-09/coding-readiness/sys-exact-business-start-successor.v1.json",
+      "sha256": "aa4f82925a5a34132ed69844ca088111d551b7effbe1d70d8104846db82c44be",
+      "bytes": 31406
+    },
+    "sharedContractCatalog": {
+      "path": "../../../recovery/hris-porting-blueprint-2026-09-09/coding-readiness/shared-contract-catalog.csv",
+      "sha256": "34ffec83a60a7cb369406807bb856755e7bb34cf2be5dacb67dac1b0f3a07118",
+      "bytes": 3193
+    },
+    "platformIntegrationBindingRegister": {
+      "path": "../../../recovery/hris-porting-blueprint-2026-09-09/coding-readiness/platform-integration-binding-register.csv",
+      "sha256": "f7454ca7cd0c089e7fb609c452ba56b67f565850943d23a298a44409981c20a5",
+      "bytes": 6172
+    },
+    "targetFamilyResolutionRegister": {
+      "path": "../../../recovery/hris-porting-blueprint-2026-09-09/coding-readiness/target-family-resolution-register.csv",
+      "sha256": "a8746b9b89bf6bebd0a5b6fe4d8f9e985e223dcd6d395f5ef03b6f3f98d16189",
+      "bytes": 31724
+    },
+    "sysSourceCoverage": {
+      "path": "../../../recovery/hris-porting-blueprint-2026-09-09/session-registers/hris-sys-source-coverage.csv",
+      "sha256": "88e23e9b2356bd40b23ddd1bdc8602aa6a0e439081d26f474e98aef3cdb9a294",
+      "bytes": 154062
+    }
+  },
+  "businessMeaning": "Close the twelve-row legacy SYS communication-template family by proving that the existing Notification product already owns the governed template catalog, tenant draft lifecycle, immutable publish evidence and notification-intent delivery boundary. This is a reuse-coverage result, not an HRIS production implementation.",
+  "exactDelta": {
+    "provenExisting": [
+      "SHARED-API-007 and SHARED-API-008 exist in the backend and synchronized frontend OpenAPI with identical bounded fragment digests.",
+      "dwp-notification-server is the sole controller, domain, persistence, RLS, immutable revision, idempotency, four-eyes and audit owner.",
+      "The existing Notification product mounts /notifications/admin/templates and uses the exact Notification admin API client without an HRIS proxy.",
+      "PLAT-004 has an existing DomainEventEnvelope, Kafka listener, runtime translator, typed HRIS intent and receipt artifacts and provider contract tests.",
+      "The historical source family is explicitly RELATED_REUSE_ALLOWED, NONE_SHARED_OWNER_REUSE and NON_UI_SUPPORTING_SLICE."
+    ],
+    "evidenceWorkOnly": [
+      "Record the twelve legacy source rows and their single existing Notification platform target.",
+      "Record route, method, owner and schema seals for SHARED-API-007 and SHARED-API-008.",
+      "Record the PLAT-004 namespace, direct HTTP and Kafka distinctions without registering a SYS producer.",
+      "Record the bounded verification results against the unchanged owner and frontend seams.",
+      "Record a changed-path manifest proving that only the exact SYS-005 result-evidence root changed."
+    ],
+    "reuseOnly": [
+      "dwp-notification-server NotificationAdminController, NotificationTemplateService, NotificationTemplateRepository and NotificationDraftGovernanceService",
+      "existing Notification database migrations and tenant RLS",
+      "existing gateway /api/notifications/v1/** route and verified service identity",
+      "existing /notifications/admin/templates product route, navigation, Template Studio and notification-admin API client",
+      "existing DomainEventEnvelope, NotificationDomainEventKafkaListener, NotificationDomainEventTranslator, HrisNotificationIntentV1 and HrisNotificationReceiptV1 contracts"
+    ],
+    "noTouchOrRecount": [
+      "Do not create an HRIS communication service, Notification proxy, template controller, repository, table, event, producer or onboarding.",
+      "Do not create an HRIS menu, route, redirect, IA node, feature flag or product-authorization surface.",
+      "Do not modify Notification, Platform, Auth, Gateway, product-authorization, OpenAPI, AsyncAPI, generated contract or frontend application/library source.",
+      "Do not author a Notification, Platform or HRIS migration and do not inherit MIG-SYS-PLATFORM-261-289.",
+      "Do not count the existing Notification product implementation as new SYS-005 business logic or claim one-for-one legacy screen parity."
+    ]
+  },
+  "ownership": {
+    "repositories": [
+      "dwp-frontend"
+    ],
+    "runtimeOwner": "dwp-notification-server",
+    "singleWriter": "HRIS-SYS",
+    "candidateWritablePathsAfterFreshToken": [
+      "frontend:docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-results-r1/base-tfr-sys-005/**"
+    ],
+    "readOnlyReusePaths": [
+      "backend:contracts/openapi/gateway-public.json",
+      "backend:contracts/asyncapi/domain-events.yaml",
+      "backend:dwp-gateway/src/main/resources/application.yml",
+      "backend:dwp-gateway/src/main/java/com/dwp/gateway/filter/NotificationServiceIdentityFilter.java",
+      "backend:dwp-notification-server/**",
+      "backend:dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/generated/HrisNotificationIntentV1.java",
+      "backend:dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/generated/HrisNotificationReceiptV1.java",
+      "frontend:libs/api-contracts/openapi/gateway-public.json",
+      "frontend:libs/shared-utils/src/api/notification-admin-api.ts",
+      "frontend:apps/dwp/src/routes/notification-routes.tsx",
+      "frontend:apps/dwp/src/features/notifications/**"
+    ],
+    "forbiddenPaths": [
+      "backend:any path",
+      "frontend:apps/**",
+      "frontend:libs/**",
+      "frontend:architecture/**",
+      "frontend:docs outside the exact SYS-005 result-evidence root",
+      "any migration, menu, route, redirect, product-authorization or generated contract path"
+    ],
+    "outsideBoundaryAction": "STOP_AND_REQUEST_A_SUCCESSOR_PACKET; DO_NOT_EXPAND_THE_TOKEN"
+  },
+  "existingExperienceBoundary": {
+    "primaryUser": "Tenant notification template editor or independent template approver",
+    "operationalQuestion": "Which provider template variants are available, what tenant draft or published override exists, and can the current actor safely create or independently publish a revision?",
+    "pageArchetype": "EXISTING_NOTIFICATION_TEMPLATE_STUDIO",
+    "canonicalExistingRoute": "/notifications/admin/templates",
+    "existingNavigationOwner": "NOTIFICATION_PRODUCT",
+    "requiredResource": "ADMIN.NOTIFICATION_TEMPLATE",
+    "readPermissions": [
+      "VIEW",
+      "MANAGE",
+      "APPROVE"
+    ],
+    "draftPermission": "MANAGE",
+    "publishPermission": "APPROVE",
+    "newHrisRoute": "NONE",
+    "newHrisMenu": "NONE",
+    "legacyRedirect": "NONE"
+  },
+  "contracts": {
+    "templateCatalog": {
+      "id": "SHARED-API-007",
+      "method": "GET",
+      "browserPath": "/api/notifications/v1/admin/templates",
+      "ownerPath": "/v1/admin/templates",
+      "owner": "dwp-notification-server",
+      "response": "ApiResponse<TemplateWorkspace>",
+      "workspaceFields": [
+        "items",
+        "generatedAt"
+      ],
+      "variantEvidence": [
+        "typeVersionId",
+        "typeKey",
+        "appKey",
+        "channel",
+        "locale",
+        "allowedVariables",
+        "providerDefault",
+        "publishedOverride",
+        "draft",
+        "history",
+        "version"
+      ]
+    },
+    "templateDraft": {
+      "id": "SHARED-API-008",
+      "method": "POST",
+      "browserPath": "/api/notifications/v1/admin/templates/drafts",
+      "ownerPath": "/v1/admin/templates/drafts",
+      "owner": "dwp-notification-server",
+      "requiredHeader": "Idempotency-Key",
+      "request": "TemplateDraftRequest",
+      "requiredFields": [
+        "typeVersionId",
+        "channel",
+        "locale",
+        "title",
+        "body",
+        "changeReason",
+        "expectedVersion"
+      ],
+      "response": "ApiResponse<TemplateRevision>"
+    },
+    "PLAT-004": {
+      "owner": "dwp-notification-server",
+      "recoveryNamespace": "/internal/v1/intents",
+      "directHttpEndpoint": "/internal/v1/intents/direct",
+      "canonicalDomainEventTopic": "dwp.domain-events.v1",
+      "envelopeSchema": "contracts/asyncapi/domain-events.yaml#/components/schemas/DomainEventEnvelope",
+      "runtimeTranslator": "NotificationDomainEventTranslator",
+      "sys005ProducerOrOnboarding": "NONE"
+    },
+    "schemaParity": {
+      "algorithmRef": "../semantic-dispositions/base-tfr-sys-005.semantic-disposition.v1.json#/existingContractSeal/openApiFragmentParity/canonicalExtraction",
+      "commandTemplate": "LC_ALL=C jq -S -c '<sealed jqFilter>' <backendInput-or-frontendInput> | shasum -a 256",
+      "serializedBytes": 3889,
+      "boundedFragmentSha256": "88be25e0e95fe8c8281b3f140823819b421a08d025203b4fe1fef54ddcff7c08",
+      "matching": true
+    }
+  },
+  "dependencies": [
+    {
+      "id": "DEP-001",
+      "state": "EXISTING_NOTIFICATION_ADMIN_AUTHORIZATION_FAILS_CLOSED"
+    },
+    {
+      "id": "DEP-002",
+      "state": "EXISTING_OWNER_VERSION_AND_PERMISSION_CONTEXT_REUSED"
+    },
+    {
+      "id": "DEP-003",
+      "state": "EXISTING_DOMAIN_EVENT_ENVELOPE_AND_OUTBOX_FOUNDATION_REUSED_NO_NEW_PRODUCER"
+    },
+    {
+      "id": "DEP-015",
+      "state": "EXISTING_NOTIFICATION_INTENT_AND_RECEIPT_FOUNDATION_REUSED"
+    },
+    {
+      "id": "DEP-016",
+      "state": "EXISTING_NOTIFICATION_TEMPLATE_AUDIT_OUTBOX_REUSED"
+    }
+  ],
+  "migration": {
+    "state": "NO_LEASE_NO_AUTHORING",
+    "expectedPersistenceDelta": "NONE",
+    "stream": "NONE",
+    "notificationObservedHighWater": "V35",
+    "platformObservedHighWater": "V331",
+    "authorizedPaths": [],
+    "historicalAllocationDisposition": "MIG-SYS-PLATFORM-261-289_SUPERSEDED_NOT_INHERITED",
+    "migrationAuthoringAuthorized": false,
+    "stopCondition": "Any schema or persistence need invalidates this packet and requires a new preflight plus exclusive lease."
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "SYS005-AC-01",
+      "criterion": "All twelve sealed TFR-SYS-005 source rows are accounted for without creating one-for-one legacy routes or claiming legacy screen parity."
+    },
+    {
+      "id": "SYS005-AC-02",
+      "criterion": "SHARED-API-007 resolves exactly to GET /api/notifications/v1/admin/templates and owner GET /v1/admin/templates on dwp-notification-server."
+    },
+    {
+      "id": "SYS005-AC-03",
+      "criterion": "SHARED-API-008 resolves exactly to POST /api/notifications/v1/admin/templates/drafts and owner POST /v1/admin/templates/drafts with Idempotency-Key."
+    },
+    {
+      "id": "SYS005-AC-04",
+      "criterion": "The bounded backend and frontend OpenAPI fragments for both APIs and core schemas remain byte-semantically identical at the sealed digest."
+    },
+    {
+      "id": "SYS005-AC-05",
+      "criterion": "The existing /notifications/admin/templates surface remains the only UI target and no HRIS menu, route, redirect or IA node is added."
+    },
+    {
+      "id": "SYS005-AC-06",
+      "criterion": "Catalog, draft and publish authorization continues to use ADMIN.NOTIFICATION_TEMPLATE with separate VIEW, MANAGE and APPROVE enforcement and no role-name bypass."
+    },
+    {
+      "id": "SYS005-AC-07",
+      "criterion": "Existing tenant-scoped immutable revisions, RLS, expected-version, idempotency, independent approval and audit behavior are evidenced without source modification or recount."
+    },
+    {
+      "id": "SYS005-AC-08",
+      "criterion": "PLAT-004 evidence distinguishes the non-callable namespace, /direct service endpoint and Kafka domain-event transport and adds no SYS producer or onboarding."
+    },
+    {
+      "id": "SYS005-AC-09",
+      "criterion": "NotificationTemplatePublished.v1 is recorded as non-required and replaced only by immutable revision plus notification.template.published audit evidence."
+    },
+    {
+      "id": "SYS005-AC-10",
+      "criterion": "No backend, frontend application/library, generated contract, OpenAPI, AsyncAPI, product-authorization, migration or central-control path changes."
+    },
+    {
+      "id": "SYS005-AC-11",
+      "criterion": "The bounded owner and frontend test set passes once; any correction reruns only the smallest failed target and no repository-wide suite is run."
+    },
+    {
+      "id": "SYS005-AC-12",
+      "criterion": "The result evidence states that this closes reuse coverage only and does not authorize tenant activation, customer parity or production release."
+    }
+  ],
+  "targetedVerification": {
+    "policy": "EXISTING_REUSED_SEAMS_ONCE; FAILED_TARGET_ONLY_AFTER_CORRECTION; NO_REPOSITORY_WIDE_RERUN",
+    "backendCommand": "./gradlew :dwp-notification-server:test --tests '*NotificationTemplateServiceTest' --tests '*NotificationTemplateRepositoryTest' --tests '*NotificationDraftGovernanceServiceTest' --tests '*NotificationSecurityFilterTest' --tests '*NotificationMigrationInvariantTest.governsTenantTemplateOverridesAsImmutableMakerCheckerRevisions' --tests '*NotificationDomainEventTranslatorTest' --tests '*HrisNotificationIntentV1ProviderContractTest' --tests '*HrisNotificationReceiptV1ProviderContractTest'",
+    "frontendCommand": "pnpm exec vitest run apps/dwp/src/routes/notification-routes.test.tsx apps/dwp/src/features/notifications/notification-navigation.test.ts libs/shared-utils/src/api/notification-api.test.ts",
+    "staticChecks": [
+      "jq empty on every created result JSON",
+      "run the semantic disposition's sealed canonical extraction command for both inputs and require 3889 bytes plus SHA-256 88be25e0e95fe8c8281b3f140823819b421a08d025203b4fe1fef54ddcff7c08 for each",
+      "git diff --name-only against the exact base pin proving only the result-evidence root changed"
+    ],
+    "databaseTargets": [],
+    "migrationCleanUpgrade": "NOT_APPLICABLE_NO_SCHEMA_TOUCH",
+    "workerRecovery": "NOT_APPLICABLE_NO_NEW_RUNTIME",
+    "repositoryWideSuitePerCorrection": false
+  },
+  "evidenceContract": {
+    "exactRoot": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-results-r1/base-tfr-sys-005",
+    "required": [
+      "frontend evidence-only branch SHA, tree and exact base lineage",
+      "twelve acceptance results with source or bounded verification evidence",
+      "twelve-row source coverage manifest",
+      "SHARED-API-007 and SHARED-API-008 route, method, owner and schema seals",
+      "PLAT-004 transport distinction and no-producer/no-onboarding evidence",
+      "NotificationTemplatePublished.v1 non-requirement disposition reference",
+      "bounded backend and frontend test receipts",
+      "OpenAPI fragment parity digest receipt",
+      "changed-path manifest proving no production source, migration, menu, route or product-authorization delta"
+    ],
+    "businessCompletionCreditBeforeEvidence": 0
+  },
+  "authority": {
+    "packetSealed": true,
+    "evidenceOnlyAuthoringAuthorized": false,
+    "productionSourceImplementationAuthorized": false,
+    "backendSourceAuthoringAuthorized": false,
+    "frontendAppOrLibraryAuthoringAuthorized": false,
+    "testSourceAuthoringAuthorized": false,
+    "migrationAuthoringAuthorized": false,
+    "worktreeMaterializationAuthorized": false,
+    "moduleBranchCommitAuthorized": false,
+    "moduleBranchPushAuthorized": false,
+    "mergeToDwpDevAuthorized": false,
+    "activationAuthorized": false,
+    "startTokenIssued": false
+  },
+  "nonClaims": [
+    "This packet does not complete BASE-TFR-SYS-005.",
+    "This packet does not authorize any production or test source change.",
+    "This packet does not authorize a migration, feature, menu, route, redirect or authorization projection.",
+    "This packet does not claim one-for-one legacy Notice, Board or DynamicBoard parity.",
+    "This packet does not activate an existing Notification capability or enroll a tenant."
+  ],
+  "nextGate": "FRESH_HASH_BOUND_SYS005_EVIDENCE_ONLY_START_TOKEN_FROM_FRONTEND_695C40B4_WITH_MIGRATION_NONE"
+}

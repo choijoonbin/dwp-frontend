@@ -1,0 +1,269 @@
+{
+  "schema": "dwp.hris.module-start-token.v1",
+  "tokenId": "HRIS-WAVE7-R7-BATCH-03-START-BASE-TFR-SYS-005-EVIDENCE-ONLY-20261018-R1",
+  "issuedAt": "2026-10-18T04:09:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-SYS",
+  "moduleThreadId": "01a0f53d-d62d-7971-81f7-1822b513ccb4",
+  "sliceId": "BASE-TFR-SYS-005",
+  "canonicalFeature": "NONE_EXISTING_NOTIFICATION_PLATFORM_REUSE",
+  "featureAliasesAuthorized": [],
+  "state": "ISSUED_EVIDENCE_ONLY_REUSE_CLOSURE_COMMIT_AND_PUSH_NO_PRODUCTION_SOURCE_NO_MIGRATION",
+  "permittedAction": "Materialize one fresh frontend evidence worktree from the exact dwp-dev pin, inspect the exact read-only backend and frontend Notification seams, run each bounded verification set once, write only the exact SYS-005 module-result evidence root, then commit and push only that frontend evidence branch. Do not edit production or test source.",
+  "hashDag": {
+    "predecessor": {
+      "path": "../owner-packets/base-tfr-sys-005.owner-packet.v1.json",
+      "sha256": "fb0d307133d4683eab4a711f6dab3b02d00f5e77b5139b8fc847bb50479d6635",
+      "bytes": 17635
+    },
+    "role": "SYS005_EVIDENCE_ONLY_START_TOKEN_AFTER_SEALED_SEMANTIC_AND_OWNER_REUSE_BOUNDARY"
+  },
+  "immutableEvidence": {
+    "ownerPacket": {
+      "path": "../owner-packets/base-tfr-sys-005.owner-packet.v1.json",
+      "sha256": "fb0d307133d4683eab4a711f6dab3b02d00f5e77b5139b8fc847bb50479d6635",
+      "bytes": 17635,
+      "requiredState": "SEALED_EXACT_EVIDENCE_ONLY_NOTIFICATION_REUSE_CLOSURE_READY_FOR_PINNED_TOKEN_NO_SOURCE_NO_MIGRATION"
+    },
+    "semanticDisposition": {
+      "path": "../semantic-dispositions/base-tfr-sys-005.semantic-disposition.v1.json",
+      "sha256": "9083a90510f2567281d7f96a77eabfab71bc7e908cb004f36338c34562fc4587",
+      "bytes": 11796,
+      "requiredDecision": "GO_FOR_EVIDENCE_ONLY_REUSE_CLOSURE_AFTER_EXACT_PACKET_AND_TOKEN_PRODUCTION_SOURCE_NO_GO"
+    },
+    "batch03Preflight": {
+      "path": "../../r7-batch-03-preflight-r1/semantic-dependency-migration-preflight.v1.json",
+      "sha256": "dde2815eceb71c37d77334002d6cdbd26812c63bd6d38fc0fd82dea17ff745e8",
+      "bytes": 11972,
+      "requiredDecision": "CONDITIONAL_GO_FOR_EVIDENCE_ONLY_REUSE_CLOSURE_PRODUCTION_SOURCE_NO_GO"
+    },
+    "roadmap": {
+      "path": "../../execution-roadmap-successor.v17.json",
+      "sha256": "0151e49edbfcd5297ac1e9506210a1e3b83622b89ef869a8579765e13380a40a",
+      "bytes": 6946,
+      "requiredState": "R7_BATCH_02_CENTRAL_INTEGRATION_CLOSED_DEFAULT_OFF_BATCH_03_PREFLIGHT_NEXT_ZERO_TENANT_ENROLLMENT"
+    }
+  },
+  "basePins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "f448c36feee2ed7f59eacc64f450e6db3865f1c5",
+      "tree": "cec08e55f33fa71482c583137e3ccc3d8bf11572",
+      "use": "READ_ONLY_OWNER_CONTRACT_AND_TEST_EXECUTION"
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "695c40b40c7461911100243b7d052dea07584bc0",
+      "tree": "8af76d722d8c299b0eb6768e15066e4675a24724",
+      "use": "WRITABLE_EVIDENCE_BRANCH_BASE_RESULT_ROOT_ONLY",
+      "laterTokenCarrierMustNotEnterModuleWorktree": true
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "use": "READ_ONLY_ORCHESTRATION_PIN"
+    }
+  },
+  "freshWorktreePolicy": {
+    "reuseBatch01OrBatch02Worktrees": false,
+    "reuseAnyExistingFeatureWorktree": false,
+    "materializeOnlyFromExactPins": true,
+    "verifyCleanAndExactBeforeFirstWrite": true,
+    "backend": {
+      "materializationAuthorized": false,
+      "mode": "USE_EXACT_PINNED_CHECKOUT_READ_ONLY_NO_COMMIT_NO_PUSH"
+    },
+    "frontend": {
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261018/r7-batch03/sys-005-evidence/frontend",
+      "branch": "codex/hris-wave7-r7-batch03-sys-005-evidence-20261018-r1",
+      "baseCommit": "695c40b40c7461911100243b7d052dea07584bc0",
+      "baseTree": "8af76d722d8c299b0eb6768e15066e4675a24724",
+      "mode": "WRITABLE_EXACT_RESULT_EVIDENCE_ROOT_ONLY_COMMIT_AND_PUSH"
+    },
+    "carrierRule": "This token is carried after the pinned frontend commit. Do not merge or cherry-pick the carrier commit into the evidence worktree; copy the immutable packet and token as dispatch evidence only.",
+    "deviationAction": "STOP_AND_REQUEST_A_SUCCESSOR_TOKEN"
+  },
+  "semanticBoundary": {
+    "NotificationTemplatePublishedV1": {
+      "required": false,
+      "replacement": "IMMUTABLE_TEMPLATE_REVISION_PLUS_NOTIFICATION_TEMPLATE_PUBLISHED_AUDIT",
+      "newEventAuthoringAuthorized": false
+    },
+    "PLAT-004": {
+      "recoveryNamespace": "/internal/v1/intents",
+      "namespaceCallable": false,
+      "directHttpEndpoint": "/internal/v1/intents/direct",
+      "directHttpUseAuthorized": false,
+      "canonicalDomainEventTopic": "dwp.domain-events.v1",
+      "sysProducerRegistrationAuthorized": false,
+      "sysExactOnboardingAuthorized": false
+    },
+    "historicalPlatformCommands": {
+      "state": "SUPERSEDED_NOT_AUTHORIZED",
+      "platformSourceWriteAuthorized": false,
+      "platformMigrationAuthorized": false,
+      "historicalHrisTestSourceAuthoringAuthorized": false
+    }
+  },
+  "reuseContract": {
+    "templateCatalog": {
+      "id": "SHARED-API-007",
+      "method": "GET",
+      "browserPath": "/api/notifications/v1/admin/templates",
+      "ownerPath": "/v1/admin/templates",
+      "owner": "dwp-notification-server",
+      "response": "ApiResponse<TemplateWorkspace>"
+    },
+    "templateDraft": {
+      "id": "SHARED-API-008",
+      "method": "POST",
+      "browserPath": "/api/notifications/v1/admin/templates/drafts",
+      "ownerPath": "/v1/admin/templates/drafts",
+      "owner": "dwp-notification-server",
+      "requiredHeader": "Idempotency-Key",
+      "request": "TemplateDraftRequest",
+      "response": "ApiResponse<TemplateRevision>"
+    },
+    "existingUserSurface": "/notifications/admin/templates",
+    "openApiDigestAlgorithmRef": "../semantic-dispositions/base-tfr-sys-005.semantic-disposition.v1.json#/existingContractSeal/openApiFragmentParity/canonicalExtraction",
+    "openApiDigestCommandTemplate": "LC_ALL=C jq -S -c '<sealed jqFilter>' <backendInput-or-frontendInput> | shasum -a 256",
+    "boundedOpenApiFragmentBytes": 3889,
+    "boundedOpenApiFragmentSha256": "88be25e0e95fe8c8281b3f140823819b421a08d025203b4fe1fef54ddcff7c08",
+    "sourceRowCount": 12,
+    "sourceFamilySha256": "2f7300f5a1141bd786ffad12d6d5504f9478cbf1d18e76b60b1fc0fb9eb73421"
+  },
+  "migration": {
+    "state": "NONE_NO_LEASE_NO_AUTHORING",
+    "expectedPersistenceDelta": "NONE",
+    "stream": "NONE",
+    "activeLeaseCount": 0,
+    "authorizedPaths": [],
+    "historicalAllocationDisposition": "MIG-SYS-PLATFORM-261-289_SUPERSEDED_NOT_INHERITED",
+    "migrationAuthoringAuthorized": false,
+    "invalidation": "Any schema or persistence need invalidates this token and requires a new semantic preflight plus exclusive migration lease."
+  },
+  "touchBoundary": {
+    "allowedBackend": [],
+    "allowedFrontend": [
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-results-r1/base-tfr-sys-005/**"
+    ],
+    "readOnlyBackend": [
+      "ALL_PATHS"
+    ],
+    "readOnlyFrontend": [
+      "apps/**",
+      "libs/**",
+      "architecture/**",
+      "docs/** outside docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-results-r1/base-tfr-sys-005/**"
+    ],
+    "forbidden": [
+      "production source or test source",
+      "backend contracts, controllers, services, repositories, events, producers, consumers or migrations",
+      "frontend application, library, generated contract, menu, route, redirect, shell or product manifest",
+      "product-authorization, Auth, Gateway, OpenAPI or AsyncAPI changes",
+      "any file outside the exact result-evidence root"
+    ],
+    "outsideBoundaryAction": "STOP_IMMEDIATELY_AND_REQUEST_A_SUCCESSOR_TOKEN"
+  },
+  "verification": {
+    "policy": "Run each bounded target group once. If a target fails, diagnose and rerun only the smallest failing class, file or case. Do not run a repository-wide suite.",
+    "backend": {
+      "workingTreeMode": "READ_ONLY",
+      "command": "./gradlew :dwp-notification-server:test --tests '*NotificationTemplateServiceTest' --tests '*NotificationTemplateRepositoryTest' --tests '*NotificationDraftGovernanceServiceTest' --tests '*NotificationSecurityFilterTest' --tests '*NotificationMigrationInvariantTest.governsTenantTemplateOverridesAsImmutableMakerCheckerRevisions' --tests '*NotificationDomainEventTranslatorTest' --tests '*HrisNotificationIntentV1ProviderContractTest' --tests '*HrisNotificationReceiptV1ProviderContractTest'",
+      "runCountBeforeFailure": 1
+    },
+    "frontend": {
+      "command": "pnpm exec vitest run apps/dwp/src/routes/notification-routes.test.tsx apps/dwp/src/features/notifications/notification-navigation.test.ts libs/shared-utils/src/api/notification-api.test.ts",
+      "runCountBeforeFailure": 1
+    },
+    "static": [
+      "jq empty on every result JSON",
+      "run the immutable semantic disposition's exact canonical extraction command for both inputs and require 3889 bytes plus SHA-256 88be25e0e95fe8c8281b3f140823819b421a08d025203b4fe1fef54ddcff7c08 for each",
+      "git diff --name-only 695c40b40c7461911100243b7d052dea07584bc0...HEAD and prove every path is under the exact result-evidence root"
+    ],
+    "database": [],
+    "migrationCleanUpgrade": "NOT_APPLICABLE_NO_SCHEMA_TOUCH",
+    "workerRecovery": "NOT_APPLICABLE_NO_NEW_RUNTIME",
+    "browser": "NOT_REQUIRED_FOR_EVIDENCE_ONLY_REUSE_CLOSURE; EXISTING_NOTIFICATION_PRODUCT_ACTIVATION_ACCEPTANCE_REMAINS_SEPARATE",
+    "repositoryWideSuitePerCorrection": false
+  },
+  "acceptanceCriteria": [
+    "SYS005-AC-01",
+    "SYS005-AC-02",
+    "SYS005-AC-03",
+    "SYS005-AC-04",
+    "SYS005-AC-05",
+    "SYS005-AC-06",
+    "SYS005-AC-07",
+    "SYS005-AC-08",
+    "SYS005-AC-09",
+    "SYS005-AC-10",
+    "SYS005-AC-11",
+    "SYS005-AC-12"
+  ],
+  "resultEvidence": {
+    "exactRoot": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-03-module-results-r1/base-tfr-sys-005",
+    "required": [
+      "evidence-only branch SHA, tree, upstream and exact base lineage",
+      "twelve acceptance results",
+      "twelve-row source coverage manifest",
+      "SHARED-API-007 and SHARED-API-008 owner, route, method and schema seals",
+      "PLAT-004 transport distinction and no-producer/no-onboarding receipt",
+      "NotificationTemplatePublished.v1 non-requirement disposition receipt",
+      "bounded backend and frontend verification receipts",
+      "bounded OpenAPI parity digest",
+      "changed-path manifest and zero production-source/migration/menu/route/product-authorization delta"
+    ],
+    "commitPolicy": "Commit only the exact result-evidence root on the token branch and push with exact upstream tracking.",
+    "businessCompletionCreditBeforeCentralAdmission": 0
+  },
+  "nonClaims": [
+    "This token does not authorize or claim a production implementation.",
+    "This token does not create NotificationTemplatePublished.v1 or any replacement event.",
+    "This token does not claim one-for-one legacy Notice, Board, DynamicBoard or detail-route parity.",
+    "This token does not authorize a backend or frontend application/library source change.",
+    "This token does not authorize a migration, feature, menu, route, redirect or product-authorization change.",
+    "This token does not merge the evidence branch to dwp-dev or grant completion credit before central admission.",
+    "This token does not activate a capability, enroll a tenant, authorize customer data or release production."
+  ],
+  "authority": {
+    "evidenceOnlyClosureAuthorized": true,
+    "frontendResultEvidenceAuthoringAuthorized": true,
+    "productionSourceImplementationAuthorized": false,
+    "backendSourceAuthoringAuthorized": false,
+    "frontendAppOrLibraryAuthoringAuthorized": false,
+    "testSourceAuthoringAuthorized": false,
+    "migrationAuthoringAuthorized": false,
+    "freshFrontendEvidenceWorktreeMaterializationAuthorized": true,
+    "frontendEvidenceBranchCommitAuthorized": true,
+    "frontendEvidenceBranchPushAuthorized": true,
+    "backendWorktreeMaterializationAuthorized": false,
+    "backendCommitAuthorized": false,
+    "backendPushAuthorized": false,
+    "mergeToDwpDevAuthorized": false,
+    "centralAdmissionAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "completionBoundary": {
+    "requiredResultState": "SYS005_EVIDENCE_ONLY_REUSE_CLOSURE_COMPLETE_BRANCH_PUSHED_CENTRAL_REVIEW_PENDING_NO_SOURCE_NO_MIGRATION",
+    "directDwpDevMergeAuthorized": false,
+    "centralResultAdmissionAuthorized": false
+  },
+  "invalidationConditions": [
+    "The frontend evidence worktree path, branch, base head, tree, upstream or clean state differs before the first write.",
+    "The backend read-only checkout differs from the exact pinned commit or tree before verification.",
+    "Any hash-bound preflight, semantic disposition, owner packet or roadmap bytes change.",
+    "SHARED-API-007 or SHARED-API-008 method, route, owner or schema no longer matches the sealed contract.",
+    "A real consumer is proven to require NotificationTemplatePublished.v1.",
+    "SYS-005 requires /internal/v1/intents/direct, a new Kafka producer/onboarding, source code, test source, persistence, migration, menu, route, redirect or product-authorization work.",
+    "Any path outside the exact result-evidence root is modified.",
+    "Feature enablement, tenant enrollment, dwp-dev merge, completion credit or production release is attempted."
+  ]
+}
