@@ -1,0 +1,441 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-01.sys-002-event-ingress-seal.v1",
+  "sealId": "HRIS-WAVE7-R7-BATCH-01-SYS-002-EVENT-INGRESS-SEAL-20261017-R1",
+  "revision": 1,
+  "recordedAt": "2026-10-17T16:40:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "SEALED_CONTRACT_ONLY_IMPLEMENTATION_ACTIVATION_AND_PRODUCER_ONBOARDING_WITHHELD",
+  "purpose": "Close the SYS-EVT-009 payload, source, transport, idempotency and ordering boundary before BASE-TFR-SYS-002 module authoring without claiming that any owner producer is implemented.",
+  "lineage": {
+    "frontendCarrier": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "2ccf6b4732eb5ef7aabc2fe76433785b035d4945",
+      "tree": "5a3d24741b6abdafcc1703595d6f7101510a5606"
+    },
+    "backendEvidencePin": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "3d3f141d95f0252f66bd5987b6cba30fadc431e9",
+      "tree": "bd0de7c5e36658da84bdb2cadd6e0504b2f9323b",
+      "containsAuthorizationV49": true
+    },
+    "immutablePredecessors": [
+      {
+        "path": "../r7-batch-01-dispatch-r1/source-authority.v1.json",
+        "sha256": "d40df88e26530bd467c5cc6210d967b31a521f06647e672987393c1d1837165e"
+      },
+      {
+        "path": "../r7-batch-01-dispatch-r1/owner-packets/base-tfr-sys-002.owner-packet.v1.json",
+        "sha256": "fb41aa71b2f6fc16394a8d97491797f80b1b74d61ea41b4fce1384a65b881f33"
+      },
+      {
+        "path": "../r7-batch-01-authorization-decisions-r1/decisions/base-tfr-sys-002.authorization-decision.v1.json",
+        "sha256": "801e1cade194aceff1394789ee9247fefd4b317bc86d0a1bd3dce5d78c9e3a69"
+      },
+      {
+        "path": "../r7-batch-01-authorization-decisions-r1/central-authorization-decision-amendment.v5.json",
+        "sha256": "1cd3598ae7dd4c7629afc199b265c9d3d10de40706a43583790651336b86dbd2"
+      },
+      {
+        "path": "../r7-batch-01-authorization-decisions-r1/auth-lane-token-amendment.v6.json",
+        "sha256": "e54d6e50b641572d7acbc835e133b36a0303434421652dd966bee576b8f28fe0"
+      }
+    ],
+    "sourceRows": [
+      {
+        "path": "../../recovery/hris-porting-blueprint-2026-09-09/session-evidence/sys/g2-contract-catalog.csv",
+        "sha256": "1251cd627675b07563c340c8a87ed50723ebc6bfe4dd447f34dc41f113891206",
+        "selector": "contract_id=SYS-EVT-009",
+        "dataRow": 84
+      }
+    ]
+  },
+  "contractIdentity": {
+    "sliceId": "BASE-TFR-SYS-002",
+    "sourceRef": "TFR-SYS-002",
+    "contractId": "SYS-EVT-009",
+    "eventType": "dwp.hris.operational-exception.projection-changed.v1",
+    "schemaVersion": 1,
+    "aggregateType": "HRIS_OPERATIONAL_EXCEPTION",
+    "consumerOwner": "HRIS-SYS",
+    "consumerService": "dwp-platform-server",
+    "consumerName": "dwp-platform-server.hris-operational-exception-v1",
+    "singleProjectionWriter": "HRIS-SYS",
+    "ownerRecoveryCommandsRemainExternal": true
+  },
+  "transport": {
+    "broker": "KAFKA",
+    "topic": "dwp.domain-events.v1",
+    "consumerGroup": "dwp-platform-hris-operational-exception-v1",
+    "deadLetterTopic": "dwp.domain-events.v1.DLT",
+    "contentType": "application/json",
+    "characterEncoding": "UTF-8",
+    "wireEnvelope": "com.dwp.core.event.DomainEventEnvelope",
+    "envelopeProfile": "CLOUDEVENTS_ALIGNED_DWP_V1",
+    "partitionKey": "{tenantId}|{source}|{aggregateType}|{aggregateId}",
+    "strictParsing": [
+      "STRICT_DUPLICATE_DETECTION",
+      "FAIL_ON_UNKNOWN_PROPERTIES",
+      "FAIL_ON_TRAILING_TOKENS",
+      "REJECT_NON_CANONICAL_UUID_OR_INSTANT_OR_INTEGER",
+      "REJECT_INVALID_UTF8"
+    ],
+    "sharedLedger": {
+      "outbox": "sys_domain_event_outbox",
+      "inbox": "sys_domain_event_inbox",
+      "offsets": "sys_domain_event_offsets",
+      "duplicateSys002InboxForbidden": true
+    },
+    "backendEvidence": [
+      {
+        "path": "contracts/asyncapi/domain-events.yaml",
+        "sha256": "eebf7066158d78c385e80df37f5e85663ee0b1de2edd0fbea1e4081c24a87b7b"
+      },
+      {
+        "path": "dwp-core/src/main/java/com/dwp/core/event/DomainEventEnvelope.java",
+        "sha256": "c7b19c0acc02a8864aefcd17040a3f7a6a5d86641df0ec072b0cbb584b7b52f9"
+      },
+      {
+        "path": "dwp-core/src/main/java/com/dwp/core/event/DomainEventJson.java",
+        "sha256": "d0c72499e8ae888e30756d4cb49c0ca18151195edc468b293f023c2bfeb48f77"
+      },
+      {
+        "path": "dwp-core/src/main/java/com/dwp/core/event/KafkaDomainEventPublisher.java",
+        "sha256": "0408a599e3bde8cbc0af7bef0bf9408e745dfbbc5156da7f2ea7d58a92a9d15a"
+      },
+      {
+        "path": "dwp-core/src/main/java/com/dwp/core/event/DomainEventInboxRepository.java",
+        "sha256": "ef1328a42ee4de6d68b65de2257cdc0ed6fbadd3464e42f967d827ed2323be42"
+      },
+      {
+        "path": "dwp-core/src/main/java/com/dwp/core/event/IdempotentDomainEventConsumer.java",
+        "sha256": "5e8044ca75da73221066f4783f066369aa6f604946abaa503808c78b15ee704b"
+      }
+    ]
+  },
+  "exactEnvelope": {
+    "requiredFields": [
+      "specVersion",
+      "id",
+      "source",
+      "type",
+      "schemaVersion",
+      "time",
+      "subject",
+      "tenantId",
+      "aggregateType",
+      "aggregateId",
+      "aggregateSequence",
+      "correlationId",
+      "causationId",
+      "traceParent",
+      "data",
+      "extensions"
+    ],
+    "additionalProperties": false,
+    "invariants": [
+      "specVersion is exactly 1.0.",
+      "id is a canonical lowercase UUID and cannot be reused with different bytes.",
+      "type is exactly dwp.hris.operational-exception.projection-changed.v1 and schemaVersion is exactly 1.",
+      "tenantId is a positive owner-supplied tenant identifier and data cannot contain a second tenant field.",
+      "aggregateType is exactly HRIS_OPERATIONAL_EXCEPTION.",
+      "aggregateId equals data.exceptionPublicId as a canonical UUID.",
+      "aggregateSequence equals data.sourceRevision and starts at 1 for each tenant, source and aggregate.",
+      "subject is exactly HRIS_OPERATIONAL_EXCEPTION/{exceptionPublicId}, matching DomainEventEnvelope.create(aggregateType, aggregateId).",
+      "correlationId equals data.correlationId as a canonical UUID string.",
+      "time equals data.occurredAt as the same UTC instant.",
+      "causationId is null or a canonical UUID string; traceParent is null or a valid W3C traceparent.",
+      "extensions is the empty object for v1. Authority, tenant, routing and redaction cannot be asserted in extensions."
+    ]
+  },
+  "sourceAllowlist": [
+    {
+      "ownerModule": "HRM",
+      "ownerService": "dwp-people-server",
+      "envelopeSource": "urn:dwp:people:hrm:operational-exception",
+      "sourceRefPattern": "^urn:dwp:hris:hrm:[a-z][a-z0-9-]{0,63}:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "ownerRouteKeys": [
+        "route.hcm.operations.employee-change-requests.page",
+        "route.hcm.operations.employment-assignments.page",
+        "route.hcm.operations.organization-positions.page"
+      ]
+    },
+    {
+      "ownerModule": "PER",
+      "ownerService": "dwp-people-server",
+      "envelopeSource": "urn:dwp:people:performance:operational-exception",
+      "sourceRefPattern": "^urn:dwp:hris:per:[a-z][a-z0-9-]{0,63}:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "ownerRouteKeys": [
+        "route.hcm.operations.compensation-planning.page",
+        "route.hcm.operations.performance-goal-cycles.page",
+        "route.hcm.operations.performance-multirater-surveys.page",
+        "route.hcm.operations.performance-review-operations.page"
+      ]
+    },
+    {
+      "ownerModule": "PAY",
+      "ownerService": "dwp-payroll-server",
+      "envelopeSource": "urn:dwp:payroll:operational-exception",
+      "sourceRefPattern": "^urn:dwp:hris:pay:[a-z][a-z0-9-]{0,63}:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "ownerRouteKeys": [
+        "route.hcm.configuration.payroll.page",
+        "route.hcm.operations.pay.page",
+        "route.hcm.operations.payroll-population.page"
+      ]
+    },
+    {
+      "ownerModule": "SYS",
+      "ownerService": "dwp-platform-server",
+      "envelopeSource": "urn:dwp:platform:hris:operational-exception",
+      "sourceRefPattern": "^urn:dwp:hris:sys:[a-z][a-z0-9-]{0,63}:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "ownerRouteKeys": [
+        "route.hcm.configuration.navigation-policy-workspace.page",
+        "route.hcm.configuration.settings-operations.page",
+        "route.hcm.configuration.settings-reference.page",
+        "route.hcm.management.controlled-export.page"
+      ]
+    },
+    {
+      "ownerModule": "TIM",
+      "ownerService": "dwp-time-server",
+      "envelopeSource": "urn:dwp:time:operational-exception",
+      "sourceRefPattern": "^urn:dwp:hris:tim:[a-z][a-z0-9-]{0,63}:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "ownerRouteKeys": [
+        "route.hcm.operations.time-command-center.page",
+        "route.hcm.operations.time-daily-close.page",
+        "route.hcm.operations.time-exceptions.page",
+        "route.hcm.operations.time-interpretation.page",
+        "route.hcm.operations.time-monthly-close.page"
+      ]
+    }
+  ],
+  "sourceRules": [
+    "The tuple of envelope.source, data.ownerService and data.ownerModule must match one and only one sourceAllowlist row.",
+    "Existing unrelated DWP source identifiers, service display names, arbitrary URIs and prefix-only matches are denied.",
+    "data.sourceRef must match the selected row's full anchored pattern and is an opaque owner resource identity, not a browser URL.",
+    "data.ownerRouteKey must be an exact member of the selected row and resolve through the sealed HCM PAGE registry; a payload URL, redirect, query or fragment is forbidden.",
+    "Adding a source, module, service or route requires an append-only successor seal and producer contract proof. Runtime configuration cannot widen this closed set."
+  ],
+  "exactPayload": {
+    "requiredFields": [
+      "exceptionPublicId",
+      "ownerService",
+      "ownerModule",
+      "sourceRef",
+      "sourceRevision",
+      "type",
+      "severity",
+      "state",
+      "code",
+      "summaryKey",
+      "ownerRouteKey",
+      "evidenceRefs",
+      "correlationId",
+      "occurredAt"
+    ],
+    "additionalProperties": false,
+    "fieldRules": {
+      "exceptionPublicId": "CANONICAL_LOWERCASE_UUID",
+      "ownerService": "EXACT_SOURCE_ALLOWLIST_VALUE",
+      "ownerModule": "HRM|PER|PAY|SYS|TIM_AND_EXACT_SOURCE_ALLOWLIST_VALUE",
+      "sourceRef": "EXACT_SELECTED_SOURCE_REF_PATTERN_MAX_240_NO_QUERY_NO_FRAGMENT",
+      "sourceRevision": "POSITIVE_INTEGER_EQUAL_ENVELOPE_AGGREGATE_SEQUENCE",
+      "type": "^[A-Z][A-Z0-9._-]{0,79}$",
+      "severity": "INFO|WARNING|HIGH|CRITICAL",
+      "state": "OPEN|ACKNOWLEDGED|RECOVERING|RESOLVED|SUPPRESSED",
+      "code": "^[A-Z][A-Z0-9._-]{0,79}$",
+      "summaryKey": "EXACT_PRODUCER_PACKET_CODE_TO_SUMMARY_KEY_MAPPING_AND_^hris\\.operations\\.exception\\.(hrm|per|pay|sys|tim)\\.[a-z][a-z0-9._-]{0,119}$_AND_MODULE_SEGMENT_MATCH",
+      "ownerRouteKey": "EXACT_SELECTED_OWNER_ROUTE_KEY",
+      "evidenceRefs": "UNIQUE_LEXICOGRAPHIC_ARRAY_1_TO_20_OF_URN_DWP_HRIS_EVIDENCE_KIND_UUID",
+      "correlationId": "CANONICAL_LOWERCASE_UUID_EQUAL_ENVELOPE_CORRELATION_ID",
+      "occurredAt": "UTC_INSTANT_EQUAL_ENVELOPE_TIME"
+    },
+    "summaryKeyRegistry": {
+      "liveEntryCount": 0,
+      "rule": "A future owner producer packet must append an exact finite code-to-summaryKey map and its SHA-256 for that one source tuple. Runtime regex acceptance without that exact map is forbidden.",
+      "consumerFixtureRule": "SYS-owned contract fixtures may carry only fixture-local code and summaryKey pairs declared in the same test resource; fixture pairs create no live producer authority."
+    },
+    "evidenceRefPattern": "^urn:dwp:hris:evidence:(audit|command-receipt|domain-event|owner-projection):[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+    "forbiddenPayload": [
+      "tenantId or any tenant override",
+      "raw exception message, stack trace, SQL, host, pod, IP or infrastructure secret",
+      "person name, email, worker identifier, bank, tax, compensation or other HR personal data",
+      "arbitrary URL, path, redirect, query, fragment or executable recovery command",
+      "localized summary text; only the allowlisted localization summaryKey crosses the boundary",
+      "authority, role, permission, package, duty, field-policy or scope claims"
+    ]
+  },
+  "projectionSemantics": {
+    "projectionKey": [
+      "tenantId",
+      "envelope.source",
+      "exceptionPublicId"
+    ],
+    "tenantSource": "ENVELOPE_TENANT_ID_ONLY",
+    "eventDigest": "LOWERCASE_SHA256_OF_ACCEPTED_ENVELOPE_RESERIALIZED_AS_UTF8_BY_DOMAIN_EVENT_JSON",
+    "firstObservedAt": "FIRST_ACCEPTED_ENVELOPE_TIME_IMMUTABLE",
+    "lastObservedAt": "LATEST_ACCEPTED_CONTIGUOUS_ENVELOPE_TIME",
+    "occurrenceCount": "INCREMENT_ON_NEW_CONTIGUOUS_SOURCE_REVISION_ONLY",
+    "version": "PLATFORM_PROJECTION_CAS_VERSION_INCREMENT_ON_APPLIED_CHANGE_ONLY",
+    "ordering": {
+      "offsetKey": "consumerName|tenantId|source|aggregateType|aggregateId",
+      "firstSequence": 1,
+      "accept": "incomingSequence equals lastSequence plus 1",
+      "duplicate": "incomingSequence is less than or equal to lastSequence and exact prior digest matches; no projection or occurrence-count mutation",
+      "revisionConflict": "same projection key and sourceRevision with a different event id or eventDigest is quarantined and never projected",
+      "gap": "incomingSequence greater than lastSequence plus 1 is DEFERRED without projection mutation; unresolved gaps exhaust bounded retry to DLT and auditable quarantine",
+      "lateTerminal": "a terminal event cannot skip a missing predecessor"
+    },
+    "idempotency": {
+      "primaryKey": "consumerName|eventId",
+      "sameIdSameDigest": "DUPLICATE_NO_OP",
+      "sameIdDifferentDigest": "PAYLOAD_CONFLICT_QUARANTINE",
+      "transaction": "Admission is one durable transaction. Re-acquire plus offset lock, prior-revision conflict check, projection CAS, offset advance and inbox completion are one second transaction. Retry or dead-letter outcome is durable in a separate transaction."
+    },
+    "sharedConsumerCompatibility": {
+      "directUseOfCurrentIdempotentDomainEventConsumerForbidden": true,
+      "reason": "The pinned shared consumer commits begin before handler execution, treats sequence less than or equal to the current offset as duplicate without comparing a prior revision digest, and does not increment gap attempts. Those defaults cannot prove this seal's revision-conflict quarantine or bounded-gap rule.",
+      "requiredSysAdapter": "A SYS-owned adapter inside the allocated Platform operations path must reuse the shared inbox and offset tables but lock the offset row, compare event id and DomainEventJson digest for an existing same revision, increment a durable bounded gap-attempt counter and atomically apply projection CAS, offset advance and inbox completion.",
+      "maximumGapAttempts": 5,
+      "gapExhaustion": "MARK_SHARED_INBOX_DEAD_THEN_ROUTE_TO_DWP_DOMAIN_EVENTS_V1_DLT_WITHOUT_PROJECTION_MUTATION",
+      "coreModificationAuthorized": false
+    },
+    "publicStateProjection": {
+      "publicStates": [
+        "OPEN",
+        "ACKNOWLEDGED",
+        "RESOLVED"
+      ],
+      "internalOnlyStates": [
+        "RECOVERING",
+        "SUPPRESSED"
+      ],
+      "rule": "RECOVERING and SUPPRESSED serialize as OPEN unless an authoritative contiguous terminal owner event supports RESOLVED; unknown states fail closed."
+    },
+    "redaction": "Only the sealed projection fields may persist or serialize. Event bytes remain in the shared protected inbox/DLT ledger and are never returned by PEP-SYS-037, PEP-SYS-038 or IAQ-059.",
+    "recovery": "The central view may inspect redacted detail, an existing receipt or an allowlisted owner route. It never executes, proxies or synthesizes an owner recovery command."
+  },
+  "migrationBoundary": {
+    "lease": "PLATFORM_MAIN_V331",
+    "path": "dwp-platform-server/src/main/resources/db/migration/V331__create_hris_operational_exception_projection.sql",
+    "allowedNewTable": "hris_operational_exception_projection",
+    "requiredColumns": [
+      "tenant_id",
+      "exception_public_id",
+      "event_source",
+      "owner_service",
+      "owner_module",
+      "source_ref",
+      "source_revision",
+      "exception_type",
+      "severity",
+      "internal_state",
+      "code",
+      "summary_key",
+      "owner_route_key",
+      "evidence_refs",
+      "correlation_id",
+      "event_digest",
+      "first_observed_at",
+      "last_observed_at",
+      "occurrence_count",
+      "version"
+    ],
+    "requiredControls": [
+      "PRIMARY_OR_UNIQUE tenant_id plus event_source plus exception_public_id",
+      "UNIQUE tenant_id plus event_source plus exception_public_id plus source_revision",
+      "positive revision, count and version checks",
+      "closed owner module, severity and internal state checks",
+      "tenant RLS and runtime grants consistent with dwp-platform-server single writer",
+      "no seed rows, no tenant enrollment and no default activation"
+    ],
+    "reuseOnly": [
+      "sys_domain_event_inbox",
+      "sys_domain_event_offsets",
+      "sys_domain_event_outbox"
+    ],
+    "forbidden": [
+      "a duplicate SYS-002 event inbox, offset ledger or owner command table",
+      "modification of V330__accept_controlled_export_navigation_topology_successor.sql",
+      "modification of product authorization migration V257 or authorization v49 artifacts",
+      "producer schema or producer service migrations"
+    ],
+    "immutableV330Evidence": {
+      "path": "dwp-platform-server/src/main/resources/db/migration/V330__accept_controlled_export_navigation_topology_successor.sql",
+      "sha256": "0ed682d631189184d26d4031c4770781c8acef8e7b5a2f571468595be5b76a26",
+      "relation": "PREDECESSOR_ONLY_NO_SYS002_TABLE_OR_EVENT_AUTHORITY"
+    }
+  },
+  "producerOnboarding": {
+    "currentState": "NO_OWNER_PRODUCER_ONBOARDED_FOR_SYS_EVT_009",
+    "consumerImplementationMayUse": [
+      "strict contract fixtures",
+      "provider contract stubs under the SYS-owned test path",
+      "shared DomainEventEnvelope and inbox ledger",
+      "the exact sealed source and route allowlists"
+    ],
+    "consumerImplementationMustNotClaim": [
+      "live HRM, PER, PAY, SYS or TIM producer delivery",
+      "cross-service broker end-to-end completion",
+      "owner exception completeness or customer production readiness",
+      "recovery command ownership or execution"
+    ],
+    "perProducerExitGate": [
+      "An owner-specific packet authorizes changes in that owner's source paths.",
+      "The packet appends a finite exact code-to-summaryKey map and binds its SHA-256; regex-only localization-key admission is forbidden.",
+      "The producer emits the exact envelope and payload from a transactional owner outbox.",
+      "A provider contract test proves source, module, service, route and evidence allowlist conformance.",
+      "A SYS consumer contract test proves duplicate, conflict, gap, tenant and redaction behavior.",
+      "The producer remains default OFF with zero tenant enrollment until a separate activation decision."
+    ],
+    "fullProducerE2eRequiredBeforeSys002CompletionClaim": true,
+    "producerSourceImplementationAuthorizedByThisSeal": false
+  },
+  "implementationBoundary": {
+    "futureSysWritablePaths": [
+      "backend:dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/operations/**",
+      "backend:dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/operations/**",
+      "backend:dwp-platform-server/src/main/resources/db/migration/V331__create_hris_operational_exception_projection.sql"
+    ],
+    "readOnlyEvidencePaths": [
+      "backend:dwp-core/src/main/java/com/dwp/core/event/**",
+      "backend:contracts/asyncapi/domain-events.yaml",
+      "all owner producer source paths",
+      "backend:dwp-platform-server/src/main/resources/db/migration/V330__accept_controlled_export_navigation_topology_successor.sql"
+    ],
+    "outsideBoundaryAction": "STOP_AND_REQUEST_APPEND_ONLY_REALLOCATION"
+  },
+  "acceptanceConditions": [
+    "Exact envelope and payload positive fixture projects one tenant-scoped exception.",
+    "Missing sourceRef, type, code, summaryKey, ownerRouteKey or evidenceRefs is rejected before projection access.",
+    "Every source, service, module and ownerRouteKey cross-product outside the exact selected allowlist row is rejected.",
+    "Same event id and bytes is idempotent; same id with different bytes is quarantined.",
+    "Duplicate revision does not increment occurrenceCount and a revision conflict is quarantined.",
+    "A sequence gap is deferred and never mutates the visible projection.",
+    "Cross-tenant reads and writes fail closed and never disclose counts or existence.",
+    "RECOVERING and SUPPRESSED never cross the public API as new public states.",
+    "Raw messages, stack traces, arbitrary metadata, URLs and personal data are rejected or omitted.",
+    "No central recovery mutation exists and every deep link resolves from an exact PAGE route key.",
+    "V331 reuses the shared ledger and leaves V330 byte-immutable.",
+    "Producer stubs cannot satisfy the final multi-service E2E acceptance claim."
+  ],
+  "featureState": {
+    "runtimeDefault": "OFF",
+    "tenantEnrollmentCount": 0,
+    "producerEnrollmentCount": 0,
+    "activationAuthorized": false
+  },
+  "authority": {
+    "eventIngressSemanticsSealed": true,
+    "sysModuleTokenMayReferenceThisSealAfterCentralTokenIssuance": true,
+    "sourceImplementationAuthorized": false,
+    "producerImplementationAuthorized": false,
+    "migrationAuthoringAuthorized": false,
+    "moduleStartTokenIssued": false,
+    "moduleBranchPushAuthorized": false,
+    "mergeToDwpDevAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "activationAuthorized": false
+  }
+}
