@@ -1,0 +1,150 @@
+{
+  "schema": "dwp.hris.wave7.module-start-token-review-correction.v5",
+  "tokenId": "HRIS-WAVE7-R7-BATCH-01-START-BASE-TFR-TIM-007-20261017-R5",
+  "issuedAt": "2026-10-17T22:22:42+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "sliceId": "BASE-TFR-TIM-007",
+  "moduleSession": "HRIS-TIM",
+  "moduleThreadId": "01a0f53d-d3c4-7790-b175-5d84c90f341b",
+  "state": "INDEPENDENT_REVIEW_CORRECTION_AUTHORIZED_CENTRAL_ADMISSION_REMAINS_BLOCKED",
+  "supersession": {
+    "predecessorToken": {
+      "path": "base-tfr-tim-007.start-token-replacement.v4.json",
+      "sha256": "42798a701b45290db615ec73d393b6211b62126b309262ebb92c6b2571d87a63",
+      "bytes": 7811,
+      "disposition": "SUPERSEDED_AFTER_POST_COMMIT_INDEPENDENT_SECURITY_REVIEW_FOUND_BOUNDED_MODULE_CORRECTIONS"
+    },
+    "inheritance": "R3 and R4 business scope, producer gate, ACL, rollout, default-OFF, zero-call, zero-credit, source authority, acceptance identifiers, worktrees and all forbidden behaviors remain authoritative. This token authorizes only the review corrections listed below.",
+    "priorVerificationCredit": "The composed Time 50/50 plus PAY 8/8 result remains valid and must not be rerun."
+  },
+  "reviewedModulePins": {
+    "backend": {
+      "branch": "codex/hris-wave7-r7-batch01-tim-007-backend-20261017-r1",
+      "commit": "1ebba7e404573bda19c0f234f2ae64ede5200612",
+      "tree": "0673745b2f834226259f3cc0ed815e6a64784a3d",
+      "upstreamParity": "0/0",
+      "clean": true
+    },
+    "frontend": {
+      "branch": "codex/hris-wave7-r7-batch01-tim-007-frontend-20261017-r1",
+      "commit": "0ae922ee9cbb57a705b90d53a29d49c97f24e9cb",
+      "tree": "32ad9bd28adb971f851e66f1140b44374d13b352",
+      "upstreamParity": "0/0",
+      "clean": true,
+      "sourceChangesAuthorized": false
+    }
+  },
+  "independentReviewDisposition": {
+    "authorityScopeAclReview": {
+      "result": "GO",
+      "p0": 0,
+      "p1": 0,
+      "p2": 0
+    },
+    "securityReview": {
+      "result": "NO_GO_BEFORE_CORRECTION",
+      "p0": 1,
+      "p1": 2,
+      "p2": 3
+    },
+    "integrationReview": {
+      "moduleDefaultOffSourceMerge": "CONDITIONAL_GO_AFTER_MODULE_CORRECTIONS_AND_ATOMIC_CENTRAL_HEADER_SANITIZATION",
+      "centralAdmission": "NO_GO_UNTIL_PROVIDER_NEUTRAL_RECEIPT_AND_TRUSTED_CLOSE_AUTHORITY_GATES_CLOSE"
+    }
+  },
+  "moduleCorrections": [
+    {
+      "id": "TIM007-R5-01",
+      "severity": "P1",
+      "requirement": "After all blocking reads and locks and immediately before the first durable write, revalidate authority.revalidateAt for VALIDATE, CLOSE, REOPEN and HANDOFF using a fresh transaction-bound time. Revalidate approval.expiresAt at the same boundary for CLOSE and REOPEN. Expiry must produce zero receipt, period, result, outbox and handoff writes."
+    },
+    {
+      "id": "TIM007-R5-02",
+      "severity": "P1",
+      "requirement": "Enforce field-decision non-interference. Hidden CLOSE_STATUS must emit a constant restricted status and no status-derived actions. Hidden EXCEPTION_SUMMARY must not leak blocker count through close actions. Masked or omitted IMPACT_SUMMARY must not influence any public field or action."
+    },
+    {
+      "id": "TIM007-R5-03",
+      "severity": "P2_PRE_ADAPTER_BLOCKER",
+      "requirement": "recordOutcome must validate identifiers and apply the tenant activation and enrollment gate before digest work or any repository call. Disabled or unenrolled tenants must receive an opaque denial with zero repository interaction."
+    },
+    {
+      "id": "TIM007-R5-04",
+      "severity": "P2_CONTRACT_BLOCKER",
+      "requirement": "Persist enough immutable typed response state for each receiver outcome revision so an exact older replay returns the original persisted 200 response rather than the latest handoff projection. Bind the raw body and typed outcome so mutation B cannot be authorized by canonical raw body A."
+    },
+    {
+      "id": "TIM007-R5-05",
+      "severity": "P2_INVARIANT_BLOCKER",
+      "requirement": "Prevent direct result header, line or source INSERT after the owning period leaves the authorized finalize state. Preserve normal atomic finalize, but reject all additional result graph inserts once the period is CLOSED."
+    }
+  ],
+  "centralCompanionGate": {
+    "severity": "P0_ACTIVATION_BLOCKER",
+    "moduleChangeAuthorized": "The module may add fail-closed assertions proving that untrusted responsibility, legal-entity and time-group headers alone never create authority. It must not invent a trusted scope producer or weaken route authority.",
+    "centralRequiredBeforeDwpDevPush": [
+      "Gateway must remove X-DWP-Responsibilities, X-DWP-Legal-Entity-Public-ID and X-DWP-Time-Group-Public-ID from client input for all requests.",
+      "No central component may reissue those values until responsibility and close scope are derived from trusted product-decision and owner-side projection evidence.",
+      "The shared command-receipt boundary must become provider-neutral and keep Timecard and Close digest domains isolated.",
+      "Close-only and Timecard-only boot, mixed-provider ownership, tenant-unenrolled zero-probe and authority-unavailable fail-closed behavior require central target tests."
+    ],
+    "featureStateUntilClosed": "DEFAULT_OFF_EMPTY_ENROLLMENT",
+    "businessCompletionCredit": 0
+  },
+  "touchBoundary": {
+    "allowedBackend": [
+      "dwp-time-server/src/main/java/com/dwp/services/time/close/**",
+      "dwp-time-server/src/test/java/com/dwp/services/time/close/**",
+      "dwp-time-server/src/main/resources/db/migration/V12__tim_base_tfr_tim_007_close_handoff.sql"
+    ],
+    "forbidden": [
+      "any second Time migration or any PAY migration",
+      "any change to TimecardMigrationIntegrationTest or the two R4 assertions",
+      "any frontend source or frontend test change",
+      "any Gateway, Auth, central command-receipt or product-authorization change from the module worktree",
+      "any period producer, create API, scheduler, worker, materializer or inferred authority",
+      "any feature enablement, tenant enrollment, customer data, central merge or business-completion claim"
+    ],
+    "outsideBoundaryAction": "STOP_AND_REQUEST_EXACT_CONTROL_REALLOCATION"
+  },
+  "verification": {
+    "policy": "Perform static review first, then run this correction cluster once. Do not rerun the predecessor 58 tests. After a failure rerun only the smallest failed method or class.",
+    "onlyAuthorizedCommand": "./gradlew :dwp-time-server:test --tests 'com.dwp.services.time.close.TimeCloseFeatureIsolationTest' --tests 'com.dwp.services.time.close.TimeCloseWriteBoundaryTest' --tests 'com.dwp.services.time.close.TimeCloseIaQueryContractTest' --tests 'com.dwp.services.time.close.TimeCloseHandoffRecoveryTest' --tests 'com.dwp.services.time.close.TimeCloseHandoffContractTest' --tests 'com.dwp.services.time.close.TimeCloseMigrationContractTest' --tests 'com.dwp.services.time.close.TimeCloseMigrationIntegrationTest' --no-daemon --max-workers=1",
+    "requiredNamedEvidence": [
+      "all four command kinds reject expired authority immediately before first write",
+      "CLOSE and REOPEN reject expired approval immediately before first write",
+      "MASK and OMIT responses are non-interfering across hidden status, blocker and impact values",
+      "outcome gate false causes zero repository calls",
+      "revision-one exact outcome replay remains byte or field identical after revision two while current state stays revision two",
+      "typed outcome and raw body mismatch is rejected",
+      "post-CLOSED result header, line and source inserts are rejected by the database",
+      "normal close finalize and V11-to-V12 migration remain valid"
+    ],
+    "frontendRerunAuthorized": false,
+    "repositoryWideTestAuthorized": false,
+    "fullPredecessorBoundedCommandRerunAuthorized": false
+  },
+  "completion": {
+    "module": "After the correction cluster passes, run allowed-path and forbidden-dependency checks plus git diff --check, then commit and push only the existing TIM backend module branch.",
+    "requiredReport": [
+      "correction commit, tree and upstream parity",
+      "changed paths and exact test totals",
+      "smallest-target reruns only if a failure occurred",
+      "P0/P1/P2 after correction",
+      "producer absence, exact ACL, default-OFF, empty enrollment and zero-credit evidence",
+      "remaining central companion gates"
+    ],
+    "centralAdmissionAuthorized": false,
+    "directDwpDevMergeAuthorized": false,
+    "activationAuthorized": false,
+    "businessCompletionCredit": 0
+  },
+  "invalidationConditions": [
+    "the reviewed backend or frontend commit, tree, upstream parity or clean state differs before resumption",
+    "a path outside the three allowed backend patterns is required",
+    "V12 cannot express the outcome snapshot or closed-result guard without a second migration",
+    "a producer, inferred source authority, durable PAY consumer or central contract shadow is introduced",
+    "the predecessor v4 bytes or any R3 hash-bound authority bytes change",
+    "the correction requires broad suite reruns, frontend source changes, activation or tenant enrollment"
+  ]
+}
