@@ -1,0 +1,184 @@
+{
+  "schema": "dwp.hris.wave7-execution-roadmap-successor.v14",
+  "roadmapId": "HRIS-WAVE7-EXECUTION-ROADMAP-SUCCESSOR-20261017-R14",
+  "issuedAt": "2026-10-17T21:01:29+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "R7_ACTIVATION_INFRASTRUCTURE_INTEGRATED_DEFAULT_OFF_TIM_007_CONSUMER_RESUMED_BATCH_02_BLOCKED_PENDING_CENTRAL_ADMISSION",
+  "supersedes": {
+    "path": "execution-roadmap-successor.v13.json",
+    "sha256": "83ae1abad1ed15c1e33e49f64c1b0e52e40881854fed66ff6fd3d6358fcf6b8c",
+    "bytes": 9840,
+    "reason": "R13 predates the integrated tenant-feature authority and did not define a safe sequencing disposition for the missing TIM close-period producer."
+  },
+  "observedCleanPinsBeforeThisCarrier": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "5d0368e70754955ccf1236b332f9e1f3f5885208",
+      "tree": "270bbd1f97a73a6ee676c9421e0d5b460fda2fe5",
+      "originExact": true,
+      "clean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "d4c3ac219b34053afed896c1046b92324860b96e",
+      "tree": "9adb3234497ad9d2d012e0f59f12d8124847b84c",
+      "originExact": true,
+      "clean": true
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "originExact": true,
+      "clean": true
+    }
+  },
+  "closedMilestonesInherited": [
+    "R6A",
+    "R6B",
+    "R6C",
+    "R6 integrated default-OFF closure",
+    "R7 C0 reclassification",
+    "R7 Batch-01 central authorization",
+    "BASE-TFR-HRM-005 source and central default-OFF admission",
+    "BASE-TFR-PAY-013 source and central default-OFF admission",
+    "BASE-TFR-SYS-002 source and central default-OFF admission",
+    "BASE-TFR-PER-001 terminal semantic NO_GO",
+    "R7 tenant-feature Auth, Gateway and frontend admission infrastructure integrated default OFF"
+  ],
+  "tenantFeatureActivationLane": {
+    "state": "INTEGRATED_DEFAULT_OFF_ZERO_TENANT_ENROLLMENT",
+    "receipt": {
+      "path": "r7-activation-authority-r1/tenant-feature-activation-integration-receipt.v1.json",
+      "sha256": "e71689196cdcadd3f09ba77c8d3fd7fde7a60db8e3374586b9d8d89ceee38d7b",
+      "bytes": 6828
+    },
+    "backendCommit": "5d0368e70754955ccf1236b332f9e1f3f5885208",
+    "frontendCommit": "39e6953e242773b0da93beec7ca04ac3077bd45d",
+    "catalogPolicies": 4,
+    "governedRoutes": 16,
+    "globalActiveSeeds": 0,
+    "tenantEnrollmentSeeds": 0,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "businessCompletionIncrement": 0
+  },
+  "portfolioAggregate": {
+    "universe": 86,
+    "retired": 2,
+    "active": 84,
+    "completed": 26,
+    "activeIncomplete": 58,
+    "batch01BusinessCompletionIncrement": 0,
+    "activationInfrastructureBusinessCompletionIncrement": 0
+  },
+  "batch01": {
+    "state": "TIM_007_CONSUMER_IMPLEMENTATION_RESUMED_EXTERNAL_PERIOD_PRODUCER_GATE_DEFAULT_OFF",
+    "inheritedLaneDispositions": {
+      "BASE-TFR-HRM-005": "INTEGRATED_DEFAULT_OFF_NO_BUSINESS_COMPLETION",
+      "BASE-TFR-PAY-013": "INTEGRATED_DEFAULT_OFF_NO_BUSINESS_COMPLETION",
+      "BASE-TFR-PER-001": "CENTRALLY_ACCEPTED_TERMINAL_NO_GO_ZERO_CREDIT",
+      "BASE-TFR-SYS-002": "INTEGRATED_DEFAULT_OFF_NO_BUSINESS_COMPLETION"
+    },
+    "activeLane": {
+      "sliceId": "BASE-TFR-TIM-007",
+      "state": "MODULE_CONSUMER_IMPLEMENTATION_ACTIVE_EXTERNAL_PERIOD_PRODUCER_GATE_DEFAULT_OFF",
+      "producerControlDecision": {
+        "path": "r7-batch-01-module-start-r1/tim-007-close-period-producer-control-decision.v1.json",
+        "sha256": "5b7a19b008ca291216b2af5474c918e17f7b2b4d60459e0c7134faf87de64711",
+        "bytes": 10262
+      },
+      "replacementToken": {
+        "path": "r7-batch-01-module-start-r1/tokens/base-tfr-tim-007.start-token-replacement.v3.json",
+        "sha256": "49368c81f212a4e3a7bfa806b865188d719b566bf8ff9b7bc55858149d24c477",
+        "bytes": 13465
+      },
+      "businessCompletionCredit": 0,
+      "runtimeDefault": "OFF",
+      "enrolledTenants": []
+    }
+  },
+  "externalPeriodProducerSequencingDisposition": {
+    "gateId": "TIM_CLOSE_PERIOD_DEFINITION_PRODUCER",
+    "state": "P0_EXTERNAL_SOURCE_AUTHORITY_GATE_DEFAULT_OFF",
+    "blocksTimFeatureActivation": true,
+    "blocksTimBusinessCompletion": true,
+    "blocksLiveTimToPayEndToEndClaim": true,
+    "blocksFixtureBasedModuleConsumerCompletion": false,
+    "mayBeAcceptedAtBatch01SequencingExit": true,
+    "acceptanceConditions": [
+      "TIM-007 backend and frontend module branches are complete, pushed and independently reviewed with P0, P1 and P2 all zero.",
+      "The central close CommandReceiptProvider adapter and Timecard-feature decoupling gate are integrated default OFF.",
+      "Central admission records consumer-only completion, external producer gate, zero business credit and no activation.",
+      "No producer, create route, materializer or inferred period source enters the TIM module result."
+    ],
+    "reasonBatch02MayProceedAfterAcceptance": "Batch-02 default-OFF source work does not require tenant activation or a live TIM close-period producer; the unresolved producer remains a separate P0 activation and business-completion gate.",
+    "futureRequiredWork": "Issue a fresh typed period-publication owner decision and materializer migration lease without reopening or recounting the completed BASE-TFR-PAY-007 slice."
+  },
+  "nextExecutable": {
+    "id": "R7-BATCH-01-TIM-007-CONSUMER-MODULE-COMPLETION",
+    "moduleSession": "HRIS-TIM",
+    "threadId": "01a0f53d-d3c4-7790-b175-5d84c90f341b",
+    "authority": {
+      "path": "r7-batch-01-module-start-r1/tokens/base-tfr-tim-007.start-token-replacement.v3.json",
+      "sha256": "49368c81f212a4e3a7bfa806b865188d719b566bf8ff9b7bc55858149d24c477"
+    },
+    "afterModule": [
+      "independent module-result review",
+      "central CommandReceiptProvider adapter and Timecard-feature decoupling gate",
+      "default-OFF consumer-only central integration and receipt",
+      "Batch-01 sequencing exit accepting the external producer gate with zero business credit",
+      "fresh Batch-02 dependency, semantic and migration high-water preflight"
+    ]
+  },
+  "batch02": {
+    "slices": [
+      "BASE-TFR-HRM-007",
+      "BASE-TFR-PAY-001",
+      "BASE-TFR-PER-002",
+      "BASE-TFR-SYS-003",
+      "BASE-TFR-TIM-001"
+    ],
+    "state": "NOT_DISPATCHABLE_TIM_007_CONSUMER_REVIEW_AND_CENTRAL_ADMISSION_PENDING",
+    "allowedNow": [
+      "read-only contract preflight",
+      "read-only dependency and semantic preflight",
+      "read-only migration high-water and collision preflight"
+    ],
+    "forbiddenNow": [
+      "owner packet issuance",
+      "start token issuance",
+      "worktree materialization",
+      "migration lease activation",
+      "source authoring or commit"
+    ],
+    "dispatchConditions": [
+      "TIM-007 consumer module result independently reviewed and centrally admitted default OFF with the external producer gate recorded",
+      "Batch-01 sequencing exit accepts PER-001 terminal NO_GO and the TIM producer gate without awarding business-completion credit",
+      "all five Batch-02 dependency, semantic and next-free migration checks pass on fresh central pins",
+      "fresh exact owner packets, central authorization successors, just-in-time migration leases and start tokens are issued"
+    ],
+    "tenantActivationRequiredForDefaultOffSourceDispatch": false,
+    "trustedMountRequiredForBusinessCompletion": true
+  },
+  "validationPolicy": {
+    "evidenceAndAncestorChecksFirst": true,
+    "changedClusterFirst": true,
+    "failedTargetOnlyAfterCorrection": true,
+    "repositoryWideSuitePerCorrection": false,
+    "fullSuiteOnlyAtExplicitReleaseGateOrCrossCuttingRisk": true,
+    "browserMatrix": "Not authorized while feature activation and tenant enrollment remain false."
+  },
+  "nonClaims": [
+    "R7 is complete",
+    "Batch-01 has business-completion credit",
+    "TIM close periods have a live producer",
+    "TIM close and payroll handoff are live end to end",
+    "any tenant feature is active or enrolled",
+    "customer data or production release is authorized",
+    "Batch-02 source work is dispatchable before the stated gates close"
+  ]
+}

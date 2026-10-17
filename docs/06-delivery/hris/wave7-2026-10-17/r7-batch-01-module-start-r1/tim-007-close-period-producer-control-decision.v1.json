@@ -1,0 +1,194 @@
+{
+  "schema": "dwp.hris.wave7.tim-close-period-producer-control-decision.v1",
+  "decisionId": "HRIS-WAVE7-R7-BATCH-01-TIM-007-CLOSE-PERIOD-PRODUCER-CONTROL-20261017-R1",
+  "issuedAt": "2026-10-17T21:01:29+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "sliceId": "BASE-TFR-TIM-007",
+  "state": "HOLD_DEFAULT_OFF_EXTERNAL_SOURCE_AUTHORITY_GATE",
+  "trigger": "The isolated TIM module implementation proved that V12 defines the close-period aggregate but no authorized runtime producer creates tme_close_periods.",
+  "evidence": {
+    "backendWip": {
+      "worktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261017/r7-batch01/tim-007/backend",
+      "branch": "codex/hris-wave7-r7-batch01-tim-007-backend-20261017-r1",
+      "head": "fcb5c1f397d14ea77c7ff9714a272449d99e18a4",
+      "tree": "147bb1afd5635209d5db166a513d970b6e0002c3",
+      "originExactBeforeWip": true,
+      "uncommittedWipPreserved": true,
+      "wipFileCount": 17,
+      "wipPathAndContentManifestAlgorithm": "From the backend worktree, emit git ls-files --modified --others --exclude-standard as NUL-delimited paths, sort paths bytewise with sort -z, run shasum -a 256 for every path in that order using the exact '<hex><two spaces><path><newline>' output, then hash that complete manifest with shasum -a 256.",
+      "wipPathAndContentManifestSha256": "27fbdf93164257ba75e7a06d685f412c04ce01f41126079610ee25297a2f1c83",
+      "porcelainAlgorithm": "From the backend worktree, hash the exact bytes emitted by git status --porcelain=v1 with shasum -a 256.",
+      "porcelainSha256": "0fea3f10fbecda83b8b385ea32431517ce964be71e5e8166dfcb49f3330d2701"
+    },
+    "frontendModuleResult": {
+      "worktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261017/r7-batch01/tim-007/frontend",
+      "branch": "codex/hris-wave7-r7-batch01-tim-007-frontend-20261017-r1",
+      "commit": "0ae922ee9cbb57a705b90d53a29d49c97f24e9cb",
+      "tree": "32ad9bd28adb971f851e66f1140b44374d13b352",
+      "originExact": true,
+      "clean": true
+    }
+  },
+  "observedFacts": [
+    "V12 requires legal_entity_public_id, time_group_public_id, payroll_entity_public_id, pay_period_public_id, period_start and period_end for every tme_close_periods row.",
+    "The active TIM public contract contains validate, close, reopen, payroll-handoff create and handoff query operations, but no close-period create operation.",
+    "No authorized runtime source in dwp-backend inserts tme_close_periods; current TIM WIP only reads and transitions an existing row.",
+    "A database INSERT grant is a capability boundary and does not establish business source authority.",
+    "Current period rows do not carry a source-definition identity, source revision, source digest or population-source lineage sufficient to prove materialization authority.",
+    "The actor/grant populationScopeDigest on a command receipt is not a substitute for period-source population provenance."
+  ],
+  "rejectedCandidates": [
+    {
+      "candidate": "Existing PAY foundation calendar",
+      "reason": "It has no deployed period publication workload, stable payPeriodId, timeGroup binding or population source revision and digest. BASE-TFR-PAY-007 is already complete and frozen and is not reopened by this decision."
+    },
+    {
+      "candidate": "Batch-02 BASE-TFR-PAY-001",
+      "reason": "It is the PAY platform-notification slice, not a payroll-period source owner."
+    },
+    {
+      "candidate": "People pay_pay_cycles reference data",
+      "reason": "It is REFERENCE data with sourceConfirmed false and cannot establish a production source authority."
+    },
+    {
+      "candidate": "PublishedCalendarSnapshot or constructor aliases",
+      "reason": "The existing contract explicitly states that constructors confer no authority and a source alias is not a deployment stream."
+    },
+    {
+      "candidate": "Derivation from V11 timecards or IAQ",
+      "reason": "V11 lacks authoritative legal-entity, time-group, payroll-entity, pay-period and source-provenance facts required by V12."
+    }
+  ],
+  "decision": {
+    "gateId": "TIM_CLOSE_PERIOD_DEFINITION_PRODUCER",
+    "gateState": "P0_EXTERNAL_SOURCE_AUTHORITY_GATE_DEFAULT_OFF",
+    "runtimeProducerAuthorized": false,
+    "productionMaterializationClaimAuthorized": false,
+    "productionCreateApiAuthorized": false,
+    "schedulerOrWorkerAuthorized": false,
+    "runtimePeriodInsertAuthorized": false,
+    "runtimePeriodSequenceAuthorized": false,
+    "fixtureProvisioningForModuleTestsAuthorized": true,
+    "consumerImplementationAuthorized": true,
+    "businessCompletionCredit": 0,
+    "moduleResultStateWhenProven": "MODULE_CONSUMER_COMPLETE_BRANCHES_PUSHED_EXTERNAL_PERIOD_PRODUCER_GATE_DEFAULT_OFF"
+  },
+  "monthToPayrollPeriod": {
+    "state": "UNSEALED",
+    "reason": "Weekly, biweekly, semimonthly, monthly and custom payroll cadences do not prove that one calendar month maps to exactly one pay period.",
+    "forbiddenAssumptions": [
+      "choose one overlapping pay period",
+      "derive a UUID from a date or period code",
+      "silently split one monthly close into child payroll periods",
+      "change V12 to one-to-many without a separate owner decision and migration lease"
+    ]
+  },
+  "futureProducerContractMinimum": {
+    "owner": "A fresh PAY-owned or explicitly allocated typed period-publication successor; not an implicit reopening of BASE-TFR-PAY-007.",
+    "requiredControlSuccessor": {
+      "freshOwnerDecision": true,
+      "explicitlyAllocatedMaterializerExecutionPrincipalOrRole": true,
+      "currentTimeRuntimeRoleRemainsDenied": true,
+      "currentTimeRuntimeRoleMayBeReauthorizedOnlyByThatExplicitSuccessor": true,
+      "freshForwardOnlyTimeMigrationLease": true,
+      "v12MutationAfterModuleIntegration": false
+    },
+    "schemaVersionRequired": true,
+    "closedWorldSchema": "additionalProperties:false",
+    "requiredPayloadFields": [
+      "schemaVersion",
+      "sourceDefinitionId",
+      "sourceRevision",
+      "sourceDigest",
+      "closeScope",
+      "legalEntityId",
+      "timeGroupId",
+      "targetPopulationId",
+      "targetPopulationRevision",
+      "populationSourceDigest",
+      "payrollEntityId",
+      "stablePayPeriodId",
+      "inclusivePeriodStart",
+      "inclusivePeriodEnd",
+      "publicationId",
+      "causationId",
+      "correlationId",
+      "sourcePublishedAt"
+    ],
+    "requiredAuthenticatedContext": [
+      "tenantId",
+      "publisherServiceIdentity"
+    ],
+    "requiredSemantics": [
+      "tenant comes from an authenticated workload and RLS context, never from caller payload",
+      "publisherServiceIdentity comes from the authenticated workload and RLS context, never from caller payload",
+      "append-only source evidence",
+      "exact replay is a no-op",
+      "same source identity and revision with a different digest is quarantined",
+      "natural-key conflict is quarantined",
+      "semantic change, withdrawal and supersession are forward-only",
+      "idempotency, crash rollback and post-commit retry are defined"
+    ]
+  },
+  "moduleControlAmendment": {
+    "existingAllowedPathsRemain": true,
+    "additionalAllowedPaths": [
+      "dwp-time-server/src/main/java/com/dwp/services/time/TimeDatabaseMigrationConfiguration.java",
+      "dwp-time-server/src/test/java/com/dwp/services/time/TimeDatabaseMigrationConfigurationTest.java"
+    ],
+    "aclAdditions": [
+      "RELATION:public.tme_close_outbox_events:SELECT",
+      "COLUMN:public.tme_close_outbox_events.publish_attempts:UPDATE",
+      "COLUMN:public.tme_close_outbox_events.published_at:UPDATE"
+    ],
+    "runtimeRequiredExactDenials": [
+      "RELATION:public.tme_close_periods:INSERT",
+      "SEQUENCE:public.tme_close_periods_close_period_id_seq:USAGE",
+      "SEQUENCE:public.tme_close_periods_close_period_id_seq:SELECT"
+    ],
+    "fixtureProvisioningPrincipal": "Migration or test-admin owner only; never the Time runtime role.",
+    "aclForbidden": [
+      "tme_close_outbox_events INSERT",
+      "tme_close_outbox_events DELETE",
+      "tme_close_outbox_events table-wide UPDATE",
+      "projection, period, result or evidence table privilege expansion outside V12"
+    ]
+  },
+  "requiredModuleProof": {
+    "boundedCommand": "./gradlew :dwp-time-server:test --tests 'com.dwp.services.time.close.*' --tests 'com.dwp.services.time.TimeDatabaseMigrationConfigurationTest' --tests 'com.dwp.services.time.interpretation.TimeInterpretationMigrationIntegrationTest' --tests 'com.dwp.services.time.timecard.TimecardMigrationIntegrationTest' :dwp-payroll-server:test --tests 'com.dwp.services.payroll.input.closedtime.*' --no-daemon --max-workers=1",
+    "runPolicy": "Run the bounded cluster once; after a failure rerun only the smallest failed target.",
+    "requiredTargets": [
+      "TimeCloseMigrationContractTest",
+      "TimeCloseMigrationIntegrationTest clean-to-V12 and V11-to-V12",
+      "TimeClosePeriodProvisioningGateTest",
+      "TimeCloseFeatureIsolationTest",
+      "TimeCloseHandoffContractTest",
+      "TimeCloseHandoffRecoveryTest",
+      "ClosedTimeResultServiceAuthorizationTest",
+      "TimeDatabaseMigrationConfigurationTest exact close-outbox privileges",
+      "TimeInterpretationMigrationIntegrationTest",
+      "TimecardMigrationIntegrationTest"
+    ],
+    "provisioningGateAssertions": [
+      "no production create route, scheduler, worker or materializer exists",
+      "the Time runtime role lacks tme_close_periods INSERT and lacks USAGE and SELECT on its BIGSERIAL sequence",
+      "canonical period fixtures are inserted only by the migration or test-admin owner",
+      "a missing close period returns an opaque not-found result",
+      "a missing close period makes zero evidence, approval, outbox and handoff calls"
+    ],
+    "forbiddenEvidence": [
+      "TimeClosePeriodMaterializer tests before a producer contract is sealed",
+      "live producer or live TIM-to-PAY end-to-end completion",
+      "business completion or activation"
+    ]
+  },
+  "rollout": {
+    "feature": "HRIS_TIME_CLOSE_HANDOFF",
+    "runtimeDefault": "OFF",
+    "enrolledTenants": [],
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  }
+}

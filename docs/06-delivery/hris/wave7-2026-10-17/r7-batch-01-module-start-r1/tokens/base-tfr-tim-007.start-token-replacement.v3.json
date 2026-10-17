@@ -1,0 +1,217 @@
+{
+  "schema": "dwp.hris.wave7.module-start-token-replacement.v3",
+  "tokenId": "HRIS-WAVE7-R7-BATCH-01-START-BASE-TFR-TIM-007-20261017-R3",
+  "issuedAt": "2026-10-17T21:01:29+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "sliceId": "BASE-TFR-TIM-007",
+  "moduleSession": "HRIS-TIM",
+  "moduleThreadId": "01a0f53d-d3c4-7790-b175-5d84c90f341b",
+  "state": "REPLACEMENT_ISSUED_CONSUMER_IMPLEMENTATION_RESUMED_EXTERNAL_PERIOD_PRODUCER_GATE_DEFAULT_OFF",
+  "supersession": {
+    "predecessorToken": {
+      "path": "base-tfr-tim-007.start-token-replacement.v2.json",
+      "sha256": "513ff5cb20962515c69851d9dac6e01f502e58481bb9046b477510f45c3dbabb",
+      "bytes": 15163,
+      "disposition": "SUPERSEDED_AFTER_MISSING_CLOSE_PERIOD_PRODUCER_CONTROL_STOP"
+    },
+    "unchangedAuthorityInherited": [
+      "the original owner packet, source authority, v49 predecessor evidence, central contract bridge, internal trust packet and PAY owner review",
+      "the exact Time V12 lease and prohibition on a second Time migration or any PAY migration",
+      "the original business, trust, per-route purpose, scope, responsibility and fresh-command challenge seals",
+      "the original fourteen acceptance identifiers and exact module result evidence root",
+      "the original backend and frontend module worktrees without merge, rebase or cherry-pick",
+      "default OFF, empty tenant enrollment, internal trust default DENY and zero-call requirements",
+      "no direct dwp-dev merge, central mount, activation, enrollment, customer data or production release"
+    ],
+    "explicitOverrides": [
+      "TIM_CLOSE_PERIOD_DEFINITION_PRODUCER becomes a P0 external source-authority gate.",
+      "Module completion is consumer and fixture completion only with zero business-completion credit.",
+      "Two Time migration-policy files are added to the touch boundary solely for exact close-outbox publisher ACLs.",
+      "The inherited V12 and close migration tests must remove and prove the absence of Time runtime period-creation privileges."
+    ]
+  },
+  "hashDag": {
+    "producerControlDecision": {
+      "path": "../tim-007-close-period-producer-control-decision.v1.json",
+      "sha256": "5b7a19b008ca291216b2af5474c918e17f7b2b4d60459e0c7134faf87de64711",
+      "bytes": 10262
+    },
+    "tenantFeatureActivationIntegrationReceipt": {
+      "path": "../../r7-activation-authority-r1/tenant-feature-activation-integration-receipt.v1.json",
+      "sha256": "e71689196cdcadd3f09ba77c8d3fd7fde7a60db8e3374586b9d8d89ceee38d7b",
+      "bytes": 6828,
+      "role": "DEFAULT_OFF_CENTRAL_ADMISSION_INFRASTRUCTURE_ONLY"
+    }
+  },
+  "moduleWorktreesAtReplacement": {
+    "backend": {
+      "repository": "dwp-backend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261017/r7-batch01/tim-007/backend",
+      "branch": "codex/hris-wave7-r7-batch01-tim-007-backend-20261017-r1",
+      "upstream": "origin/codex/hris-wave7-r7-batch01-tim-007-backend-20261017-r1",
+      "head": "fcb5c1f397d14ea77c7ff9714a272449d99e18a4",
+      "tree": "147bb1afd5635209d5db166a513d970b6e0002c3",
+      "upstreamHead": "fcb5c1f397d14ea77c7ff9714a272449d99e18a4",
+      "uncommittedWipPreserved": true,
+      "wipFileCount": 17,
+      "wipPathAndContentManifestAlgorithm": "From the backend worktree, emit git ls-files --modified --others --exclude-standard as NUL-delimited paths, sort paths bytewise with sort -z, run shasum -a 256 for every path in that order using the exact '<hex><two spaces><path><newline>' output, then hash that complete manifest with shasum -a 256.",
+      "wipPathAndContentManifestSha256": "27fbdf93164257ba75e7a06d685f412c04ce01f41126079610ee25297a2f1c83",
+      "porcelainAlgorithm": "From the backend worktree, hash the exact bytes emitted by git status --porcelain=v1 with shasum -a 256.",
+      "porcelainSha256": "0fea3f10fbecda83b8b385ea32431517ce964be71e5e8166dfcb49f3330d2701",
+      "instruction": "Continue the preserved WIP in place; do not discard, copy, merge, rebase or cherry-pick."
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261017/r7-batch01/tim-007/frontend",
+      "branch": "codex/hris-wave7-r7-batch01-tim-007-frontend-20261017-r1",
+      "upstream": "origin/codex/hris-wave7-r7-batch01-tim-007-frontend-20261017-r1",
+      "head": "0ae922ee9cbb57a705b90d53a29d49c97f24e9cb",
+      "tree": "32ad9bd28adb971f851e66f1140b44374d13b352",
+      "upstreamHead": "0ae922ee9cbb57a705b90d53a29d49c97f24e9cb",
+      "clean": true,
+      "instruction": "Preserve the reviewed frontend result; add only result evidence if required by the inherited token."
+    }
+  },
+  "permittedAction": "Continue the preserved TIM backend WIP and reviewed frontend branch; complete only the close, reopen, immutable result, payroll handoff and default-OFF PAY consumer behavior against canonical test fixtures; align the exact Time close-outbox publisher ACL policy; remove unauthorized Time runtime period-creation privileges; prove the bounded module cluster; then commit and push only the module branches.",
+  "producerGate": {
+    "gateId": "TIM_CLOSE_PERIOD_DEFINITION_PRODUCER",
+    "state": "P0_EXTERNAL_SOURCE_AUTHORITY_GATE_DEFAULT_OFF",
+    "runtimeProducerAuthorized": false,
+    "productionMaterializationClaimAuthorized": false,
+    "runtimePeriodInsertAuthorized": false,
+    "runtimePeriodSequenceAuthorized": false,
+    "fixtureProvisioningAuthorizedOnlyInTests": true,
+    "businessCompletionCredit": 0,
+    "futureOwnerDecisionRequired": true,
+    "futureMaterializerExecutionPrincipalOrRoleAllocationRequired": true,
+    "currentTimeRuntimeRoleRemainsDeniedUnlessExplicitlyReauthorizedByThatSuccessor": true,
+    "futurePrivilegeGrantRequiresFreshForwardOnlyTimeMigrationLease": true,
+    "futureV12MutationAuthorized": false
+  },
+  "touchBoundary": {
+    "inheritedBackend": [
+      "dwp-time-server/src/main/java/com/dwp/services/time/close/**",
+      "dwp-time-server/src/test/java/com/dwp/services/time/close/**",
+      "dwp-time-server/src/main/resources/db/migration/V12__tim_base_tfr_tim_007_close_handoff.sql",
+      "dwp-payroll-server/src/main/java/com/dwp/services/payroll/input/closedtime/**",
+      "dwp-payroll-server/src/test/java/com/dwp/services/payroll/input/closedtime/**"
+    ],
+    "additionalBackend": [
+      "dwp-time-server/src/main/java/com/dwp/services/time/TimeDatabaseMigrationConfiguration.java",
+      "dwp-time-server/src/test/java/com/dwp/services/time/TimeDatabaseMigrationConfigurationTest.java"
+    ],
+    "inheritedFrontend": [
+      "apps/dwp/src/features/hris/time/close/**",
+      "apps/dwp/src/features/hris/time/__tests__/g3-slices/base-tfr-tim-007.slice.test.tsx",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-results-r1/base-tfr-tim-007/**"
+    ],
+    "forbidden": [
+      "any production close-period create API, route, scheduler, worker or materializer",
+      "any derivation from PAY, People, calendar, timecard or IAQ data that invents source authority",
+      "UUID, date or period-code inference for payPeriodId or source identity",
+      "TimeClosePeriodMaterializer implementation or test",
+      "merge, rebase or cherry-pick of dwp-dev or a central carrier into either module worktree",
+      "local copies or shadows of central OpenAPI, AsyncAPI, product-authorization, command-receipt or XCON contracts",
+      "frontend HCM routes, shell, menu or tenant activation files",
+      "a second Time migration, a PAY migration or durable PAY storage",
+      "feature enablement, tenant enrollment, customer data or production release",
+      "live producer, live TIM-to-PAY end-to-end or business-completion claim"
+    ],
+    "outsideBoundaryAction": "STOP_AND_REQUEST_EXACT_CONTROL_REALLOCATION"
+  },
+  "aclAmendment": {
+    "requiredExactAdditions": [
+      "RELATION:public.tme_close_outbox_events:SELECT",
+      "COLUMN:public.tme_close_outbox_events.publish_attempts:UPDATE",
+      "COLUMN:public.tme_close_outbox_events.published_at:UPDATE"
+    ],
+    "runtimeRequiredExactDenials": [
+      "RELATION:public.tme_close_periods:INSERT",
+      "SEQUENCE:public.tme_close_periods_close_period_id_seq:USAGE",
+      "SEQUENCE:public.tme_close_periods_close_period_id_seq:SELECT"
+    ],
+    "fixtureProvisioningPrincipal": "Migration or test-admin owner only; never the Time runtime role.",
+    "forbidden": [
+      "tme_close_outbox_events INSERT",
+      "tme_close_outbox_events DELETE",
+      "tme_close_outbox_events table-wide UPDATE",
+      "unrelated relation or column privilege changes"
+    ]
+  },
+  "moduleImplementationRequirements": [
+    "Complete Time close validation, CAS close, forward-only reopen, immutable blocker and result snapshots, separation of duties, step-up validation, transactional events and handoff lineage from the inherited token.",
+    "Keep Time V12 as the only module migration and preserve clean-to-V12 plus V11-to-V12 coverage.",
+    "Complete only the inherited default-OFF non-durable PAY consumer port and fixtures; do not add durable PAY persistence.",
+    "Use canonical close-period fixtures only inside tests and never expose fixture provisioning as a production bean, route or job.",
+    "Remove Time runtime INSERT on tme_close_periods and runtime USAGE and SELECT on its BIGSERIAL sequence while retaining period SELECT and the sealed exact UPDATE columns.",
+    "A missing close period must produce an opaque not-found result and zero evidence, approval, outbox and handoff calls.",
+    "Expose stable result ownership and originating-authority revalidation methods for the later central CommandReceiptProvider adapter.",
+    "Record the close-period producer, PDX-011 live producer and durable PAY consumer as external gates.",
+    "Do not pre-provision future materializer privileges; they require a fresh owner decision, explicit execution principal or role and a fresh forward-only Time migration lease."
+  ],
+  "acceptanceCriteria": [
+    "TIM007-AC-01",
+    "TIM007-AC-02",
+    "TIM007-AC-03",
+    "TIM007-AC-04",
+    "TIM007-AC-05",
+    "TIM007-AC-06",
+    "TIM007-AC-07",
+    "TIM007-AC-08",
+    "TIM007-AC-09",
+    "TIM007-AC-10",
+    "TIM007-AC-11",
+    "TIM007-AC-12",
+    "TIM007-AC-13",
+    "TIM007-AC-14"
+  ],
+  "acceptanceInterpretation": {
+    "allowed": "MODULE_OR_FIXTURE_VERIFIED",
+    "forbidden": "LIVE_SOURCE_VERIFIED_OR_END_TO_END_COMPLETE",
+    "businessCompletionCredit": 0
+  },
+  "verification": {
+    "policy": "Run the bounded cluster once; after a failure rerun only the smallest failed target; do not run repository-wide suites per correction.",
+    "backend": "./gradlew :dwp-time-server:test --tests 'com.dwp.services.time.close.*' --tests 'com.dwp.services.time.TimeDatabaseMigrationConfigurationTest' --tests 'com.dwp.services.time.interpretation.TimeInterpretationMigrationIntegrationTest' --tests 'com.dwp.services.time.timecard.TimecardMigrationIntegrationTest' :dwp-payroll-server:test --tests 'com.dwp.services.payroll.input.closedtime.*' --no-daemon --max-workers=1",
+    "requiredNamedCoverage": [
+      "TimeCloseMigrationContractTest",
+      "TimeCloseMigrationIntegrationTest clean-to-V12 and V11-to-V12",
+      "TimeClosePeriodProvisioningGateTest",
+      "TimeCloseFeatureIsolationTest",
+      "TimeCloseHandoffContractTest",
+      "TimeCloseHandoffRecoveryTest",
+      "ClosedTimeResultServiceAuthorizationTest",
+      "TimeDatabaseMigrationConfigurationTest exact close-outbox privileges",
+      "TimeInterpretationMigrationIntegrationTest",
+      "TimecardMigrationIntegrationTest"
+    ],
+    "frontendRerunRequired": false,
+    "frontendRerunReason": "The reviewed frontend branch is clean, pushed and unchanged by this producer-control replacement.",
+    "browserAuthorized": false
+  },
+  "completionBoundary": {
+    "requiredModuleResultState": "MODULE_CONSUMER_COMPLETE_BRANCHES_PUSHED_EXTERNAL_PERIOD_PRODUCER_GATE_DEFAULT_OFF",
+    "requiredIndependentReview": true,
+    "requiredCentralAdmissionState": "MODULE_REVIEW_GO_CLOSE_RECEIPT_ADAPTER_GATE_CLOSED_DEFAULT_OFF_EXTERNAL_PERIOD_PRODUCER",
+    "directDwpDevMergeAuthorized": false,
+    "activationComplete": false,
+    "businessCompletionCredit": 0
+  },
+  "invalidationConditions": [
+    "the preserved backend WIP manifest differs before work resumes",
+    "the reviewed frontend commit, tree, upstream or clean state differs",
+    "any hash-bound decision or predecessor token bytes change",
+    "a second Time migration, PAY migration or path outside the exact touch boundary is required",
+    "a production period producer, create route, materializer or inferred authority is attempted",
+    "period INSERT or period-sequence privileges are restored without a fresh owner decision, explicitly allocated execution principal or role and fresh forward-only Time migration lease",
+    "the central transport, event, trust, product-authorization, receipt or immutable-result contract is weakened or locally shadowed",
+    "dwp-dev merge, central mount, activation, tenant enrollment, customer data or production release is attempted from the module session"
+  ],
+  "rollout": {
+    "feature": "HRIS_TIME_CLOSE_HANDOFF",
+    "runtimeDefault": "OFF",
+    "internalTrustDefault": "DENY",
+    "enrolledTenants": [],
+    "zeroCallRequirement": "Feature absent, false or tenant unenrolled causes zero close controller, repository, evidence, approval, outbox, handoff and internal-trust calls."
+  }
+}
