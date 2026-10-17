@@ -1,0 +1,194 @@
+{
+  "schema": "dwp.hris.r7-batch02-central-integration-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH02-CENTRAL-INTEGRATION-20261018-R1",
+  "recordedAt": "2026-10-18T03:55:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "BATCH_02_TWO_MODULE_SOURCE_AND_CENTRAL_V51_INTEGRATED_DEFAULT_OFF_ZERO_BUSINESS_CREDIT",
+  "authority": {
+    "sourceAdmissionDecision": {
+      "path": "module-source-admission-decision.v1.json",
+      "sha256": "a41e80ae3377608eb00dc115ffac06c011201fa00134a0ca7b4f41dd6282e9cf",
+      "bytes": 7750
+    },
+    "mergePolicy": "NO_FF_EXACT_ADMITTED_BRANCH_HEAD",
+    "validationPolicy": "Bounded target sets once; after correction rerun only the smallest failing target; no repository-wide suite in this gate."
+  },
+  "integratedModuleSource": [
+    {
+      "sliceId": "BASE-TFR-HRM-007",
+      "backend": {
+        "admittedSourceCommit": "0dfc590808adf78690f20e7153406d747264b933",
+        "mergeCommit": "1742f2e6744bdef88bbeb9dbb912963eeac765d5",
+        "mergeTree": "28bcb9cb5cd028d0e2284622156b5fc52b2387cc",
+        "exactSourceAncestor": true
+      },
+      "frontend": {
+        "admittedEvidenceCommit": "f1f3f83cce8b93bfe122b3f2666c8981d95c6914",
+        "mergeCommit": "3db3a8847732d88ada9d281fa768e53858983b09",
+        "mergeTree": "49d30a517768e471480b29640e7887de14db74fc",
+        "exactSourceAncestor": true
+      }
+    },
+    {
+      "sliceId": "BASE-TFR-SYS-003",
+      "backend": {
+        "mode": "READ_ONLY_NO_MODULE_SOURCE"
+      },
+      "frontend": {
+        "admittedEvidenceCommit": "e7e7ff69dfd3d9923c3e47515a11fbc3f8c04345",
+        "mergeCommit": "d261bfc49436c5006639caa5321bc0c0b9714872",
+        "mergeTree": "bf22fb2c5876d0321d857ca29d00dc24a88401a7",
+        "exactSourceAncestor": true
+      }
+    }
+  ],
+  "centralIntegration": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "authorizationV51Commit": "4f6544505dd8aae43d8c8a560dbd6677ae2de3fb",
+      "iaq013ScopeTranslationFixCommit": "f448c36feee2ed7f59eacc64f450e6db3865f1c5",
+      "finalTree": "cec08e55f33fa71482c583137e3ccc3d8bf11572",
+      "originExact": true,
+      "clean": true,
+      "contract": {
+        "bundleVersion": 51,
+        "contractChecksum": "3beda5c13a3af0e265ace4533a3afcee3691c2b7486465dcf46156e58ae5ed2c",
+        "authMigration": "V260",
+        "runtimeDefault": "OFF",
+        "globalActiveSeedCount": 0,
+        "tenantEnrollmentSeedCount": 0
+      },
+      "hrm007": {
+        "exactPageDataPairs": [
+          {
+            "page": "route.hcm.team.people-changes.page",
+            "data": "route.hcm.team.people-changes.data"
+          },
+          {
+            "page": "route.hcm.operations.people-appointments.page",
+            "data": "route.hcm.operations.people-appointments.data"
+          },
+          {
+            "page": "route.hcm.configuration.people-employment.page",
+            "data": "route.hcm.configuration.people-employment.data"
+          }
+        ],
+        "iaq013Scope": "CONFIG_SCOPE_ONLY",
+        "effectiveOn": "REQUEST_ONLY"
+      },
+      "sys003": {
+        "authorizationOnlyPages": [
+          "route.hcm.configuration.workflow.page",
+          "route.hcm.team.delegation.page"
+        ],
+        "nativeApprovalOwnerReused": true,
+        "mutationState": "DISABLED_NO_TRUSTWORTHY_ACTION_SOD_MAP"
+      }
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "governedPageMountCommit": "3705ae304cc65fdc0afaaeeaab0ce02962f35c56",
+      "canonicalFirewallMappingFixCommit": "31414322faf9ee06e5778396d54be68f2c85cf8c",
+      "finalTreeBeforeThisReceipt": "7bc3d63d34957d6bf79cb211e22a1e0b6dd09098",
+      "originExactBeforeThisReceipt": true,
+      "cleanBeforeThisReceipt": true,
+      "hrm007Routes": [
+        "/hr/team/people-changes",
+        "/hr/operations/people/appointments",
+        "/hr/settings/people-employment"
+      ],
+      "sys003Routes": [
+        "/hr/settings/workflow",
+        "/hr/team/delegation"
+      ],
+      "runtimeDefault": "OFF",
+      "ownerFetchBeforeActivation": 0,
+      "publicPreviewAuthorityInjection": false
+    }
+  },
+  "focusedVerification": {
+    "backend": [
+      {
+        "target": "product-authorization v51 generator",
+        "result": "PASS_5_TESTS"
+      },
+      {
+        "target": "Auth ProductAuthorizationV51ContractTest and tenant-feature Postgres target",
+        "result": "PASS"
+      },
+      {
+        "target": "Gateway generated catalog and V260 parity",
+        "result": "PASS"
+      },
+      {
+        "target": "People HcmV3PepRegistryTest and Hrm007AuthorityTest",
+        "result": "PASS"
+      },
+      {
+        "target": "RESOURCE_SET to CONFIG_SCOPE filter correction",
+        "result": "PASS"
+      }
+    ],
+    "frontend": [
+      {
+        "target": "authorization and fixture v51 synchronization",
+        "result": "PASS"
+      },
+      {
+        "target": "bounded Batch-02 changed cluster",
+        "result": "PASS_100_TESTS"
+      },
+      {
+        "target": "two corrected route-admission files only",
+        "result": "PASS_12_OF_12"
+      },
+      {
+        "target": "canonical browser firewall mapping correction",
+        "result": "PASS_7_OF_7"
+      },
+      {
+        "target": "scoped ESLint, Prettier and diff-check",
+        "result": "PASS"
+      }
+    ],
+    "repositoryWideSuiteRerun": false
+  },
+  "independentReview": {
+    "backend": {
+      "decision": "GO",
+      "p0": 0,
+      "p1": 0,
+      "p2": 0
+    },
+    "frontendAfterCanonicalFirewallFix": {
+      "decision": "GO",
+      "reviewedRange": "3705ae304cc65fdc0afaaeeaab0ce02962f35c56..31414322faf9ee06e5778396d54be68f2c85cf8c",
+      "p0": 0,
+      "p1": 0,
+      "p2": 0
+    }
+  },
+  "rollout": {
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "browserManualAcceptance": "PENDING_SEPARATE_ACTIVATION_GATE",
+    "businessCompletionIncrement": 0
+  },
+  "withheldLanesUnchanged": [
+    "BASE-TFR-PER-002",
+    "BASE-TFR-PAY-001",
+    "BASE-TFR-TIM-001"
+  ],
+  "decision": "BATCH_02_CENTRAL_INTEGRATION_CLOSED_DEFAULT_OFF_NEXT_BATCH_PREFLIGHT_AUTHORIZED",
+  "nonClaims": [
+    "Any tenant feature is activated or enrolled.",
+    "Browser or manual activation acceptance is complete.",
+    "SYS-003 mutation authority exists.",
+    "Batch-02 adds business-completion credit.",
+    "R7 is complete."
+  ]
+}
