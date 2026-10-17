@@ -1,0 +1,116 @@
+{
+  "schema": "dwp.hris.module-correction-receipt.v1",
+  "generatedAt": "2026-10-17T10:14:32Z",
+  "sliceId": "BASE-TFR-SYS-002",
+  "state": "MODULE_SOURCE_COMPLETE; LIVE_PRODUCER_E2E_EXTERNAL_GATE",
+  "correction": {
+    "id": "SYS002-LIST-PUBLIC-ID-COLLISION-20261017-R1",
+    "result": "PASS",
+    "finding": "The list ordering and cursor used last_observed_at plus exception_public_id, while V331 permits the same tenant and public ID in different event sources. Equal timestamps could therefore place colliding rows on a page boundary and silently exclude both after the cursor, while the public detail route remained ambiguous.",
+    "resolution": {
+      "strategy": "FAIL_CLOSED_TENANT_WIDE_BEFORE_PAGE_OR_CURSOR",
+      "singleDatabaseStatementSnapshot": true,
+      "tenantWideCollisionDetectionBeforeAuthorizationFilters": true,
+      "filteredOutSourceCollisionDetected": true,
+      "cursorShapeChanged": false,
+      "failureCode": "AUTHORITY_RESOLUTION_UNAVAILABLE",
+      "failureMessage": "The HRIS exception list is unavailable",
+      "migrationChanged": false,
+      "secondMigrationAdded": false
+    }
+  },
+  "backend": {
+    "repository": "dwp-backend",
+    "branch": "codex/hris-wave7-r7-batch01-sys-002-backend-20261017-r1",
+    "predecessorCorrectionCommit": "ddfd79665b701445da5046812074acfcd9e44947",
+    "predecessorCorrectionTree": "778c334cede93a9126eb02438c9e48e1097dbd98",
+    "correctionCommit": "988e1d030a006a73df91530a339ad5120272126f",
+    "correctionTree": "d7c7573c23ad238b10a12440497aa44eba4244e1",
+    "parent": "ddfd79665b701445da5046812074acfcd9e44947",
+    "remoteRef": "refs/heads/codex/hris-wave7-r7-batch01-sys-002-backend-20261017-r1",
+    "remoteCorrectionCommitAtPush": "988e1d030a006a73df91530a339ad5120272126f",
+    "pushed": true,
+    "changedPaths": [
+      {
+        "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/operations/JdbcHrisOperationalExceptionRepository.java",
+        "sha256": "ea2107adf09a60af7f55d9cafd7d5ceffadea28bae3708e761faf3ea846a1a36"
+      },
+      {
+        "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/operations/HrisOperationalExceptionMigrationPostgresTest.java",
+        "sha256": "6ecac139ff456459751179a47bcbaf1d47afedba2f5eb94216dab87b0d12a0b2"
+      }
+    ]
+  },
+  "verification": {
+    "policy": {
+      "smallestAffectedTargetOnly": true,
+      "fullSeventySevenTestAggregateRerun": false,
+      "frontendSourceRerunRequired": false
+    },
+    "command": "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.hrisconfiguration.operations.HrisOperationalExceptionMigrationPostgresTest.listFailsClosedForCrossSourcePublicIdCollisionAtLimitBoundary' --no-daemon --max-workers=1",
+    "result": "PASS",
+    "tests": 1,
+    "skipped": 0,
+    "failures": 0,
+    "errors": 0,
+    "durationSeconds": 4.269,
+    "postgresRealContainer": "postgres:16-alpine",
+    "testcase": "listFailsClosedForCrossSourcePublicIdCollisionAtLimitBoundary",
+    "coverage": [
+      "HRM and PAY rows use the same tenant, public ID and last_observed_at.",
+      "The PAY row is outside the authorized HRM owner-module filter.",
+      "A limit-one list request fails closed before any result page or continuation cursor is returned."
+    ],
+    "log": {
+      "sha256": "58538a1f105b26e7dfd257e705067ecbafbcd79ba1998027dd9b43b1254a3719",
+      "bytes": 17536,
+      "committed": false
+    },
+    "gitDiffCheck": "PASS",
+    "allowedPathCheck": "PASS",
+    "immutableHashCheck": "PASS"
+  },
+  "immutableFiles": [
+    {
+      "path": "dwp-platform-server/src/main/resources/product-authorization/hcm-platform-pep-v49.generated.json",
+      "sha256": "46073e2e262f7af783853e3efd769c336915873e641ea2e5f55b05d494d8f286",
+      "changed": false
+    },
+    {
+      "path": "dwp-platform-server/src/main/resources/db/migration/V330__accept_controlled_export_navigation_topology_successor.sql",
+      "sha256": "0ed682d631189184d26d4031c4770781c8acef8e7b5a2f571468595be5b76a26",
+      "changed": false
+    },
+    {
+      "path": "dwp-platform-server/src/main/resources/db/migration/V331__create_hris_operational_exception_projection.sql",
+      "sha256": "ca4ba4733960e684921bb4e5ba5aebe6adfe50dff30c848e1af5c158982ae3c1",
+      "changed": false
+    },
+    {
+      "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/security/PlatformSecurityFilter.java",
+      "sha256": "289bd3df959d3e8a532c2bff9e5463faaf80260b32dcae1e77ed2623fc8e7fb8",
+      "changed": false
+    },
+    {
+      "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisCommandReceiptController.java",
+      "sha256": "23bf42b0a6b7ac76421fbf39d81c728cdbf608cf9d22f3a5795999d7eb3a84e4",
+      "changed": false
+    },
+    {
+      "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisExplorerReceiptControllerTest.java",
+      "sha256": "34aae423723da30629970ad8ee79d60d465489fb27a68e43f6d495f604cc1ead",
+      "changed": false
+    }
+  ],
+  "authorityBoundaries": {
+    "dwpDevMergePerformed": false,
+    "centralRouteOrShellMountPerformed": false,
+    "featureActivationPerformed": false,
+    "tenantEnrollmentPerformed": false,
+    "producerOnboardingPerformed": false,
+    "browserValidationPerformed": false,
+    "frontendSourceChangedByCorrection": false,
+    "laterTokenCarrierAncestor": false,
+    "laterTokenCarrierPrefix": "cb0dca6f"
+  }
+}
