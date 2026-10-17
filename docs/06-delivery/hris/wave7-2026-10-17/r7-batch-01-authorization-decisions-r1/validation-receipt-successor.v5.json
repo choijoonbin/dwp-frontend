@@ -1,0 +1,146 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-01-authorization-decision-validation-receipt.v5",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-01-AUTHORIZATION-DECISION-VALIDATION-20261017-R5",
+  "validatedAt": "2026-10-17T16:47:00+09:00",
+  "validatedBy": "SYS_COMMON_INTEGRATION_CONTROL_INDEPENDENT_EXPRESSION_AND_PAY_RUNTIME_RECHECK",
+  "result": "PASS_APPEND_ONLY_V5_AUTHORITY_REPAIR_WITH_IMPLEMENTATION_AND_REVIEW_GATE_OPEN",
+  "immutablePredecessors": [
+    {
+      "path": "central-authorization-decision-amendment.v4.json",
+      "sha256": "ecd9af970c170d09416b8eba115b2b8b534c85c13dc95487d20f5c3597728d4d"
+    },
+    {
+      "path": "auth-lane-token-amendment.v4.json",
+      "sha256": "d76bd88e06b576f0e6c6c25422379e6381fe758427ced155368f2ef987367800"
+    },
+    {
+      "path": "validation-receipt-successor.v4.json",
+      "sha256": "8b28214faeecc7975fdc3df95e2345213bc129fe2218c8635d17c9483d5884c6"
+    },
+    {
+      "repository": "dwp-frontend",
+      "commit": "767c0f160efed82cb1e343b5ac53a6ab956c2573",
+      "tree": "9220b6ac31104bb50fa7339730732bbb1b8eb4da"
+    }
+  ],
+  "validatedSuccessors": [
+    {
+      "path": "central-authorization-decision-amendment.v5.json",
+      "sha256": "1cd3598ae7dd4c7629afc199b265c9d3d10de40706a43583790651336b86dbd2"
+    },
+    {
+      "path": "auth-lane-token-amendment.v5.json",
+      "sha256": "a27ec3e72f867f3d295a0eac39bc4515f058353471e6db1ea22e4d597b0b1064"
+    }
+  ],
+  "checks": [
+    {
+      "id": "AUTHDEC-R5-VAL-001",
+      "result": "PASS",
+      "evidence": "The v4 commit 767c0f160efed82cb1e343b5ac53a6ab956c2573, tree 9220b6ac31104bb50fa7339730732bbb1b8eb4da and all three v4 files remain byte-immutable at their recorded SHA-256 values. V5 adds exactly three successor JSON artifacts."
+    },
+    {
+      "id": "AUTHDEC-R5-VAL-002",
+      "result": "PASS",
+      "evidence": "The exact generic-session no-command closed set contains six grandfathered pre-v49 routes plus the six v49 routes retained from v4, for twelve unique routes and no wildcard. A thirteenth route is expressly denied."
+    },
+    {
+      "id": "AUTHDEC-R5-VAL-003",
+      "result": "PASS",
+      "evidence": "Generic NORMAL step-up occurs only when an activated branch is decisive. An ALLOWED ANY member or otherwise applicable ALLOWED access-profile alternative on the grandfathered routes suppresses challenge; ELEVATED reevaluates the complete route, expression, predicate and scope contract. No generic route receives a synthetic command binding or owner forwarding."
+    },
+    {
+      "id": "AUTHDEC-R5-VAL-004",
+      "result": "PASS",
+      "evidence": "Capability-expression reduction is exact and order-independent: ANY is ALLOWED over STEP_UP_REQUIRED over hard deny; ALL is hard deny over STEP_UP_REQUIRED over ALLOWED. Canonical capability-key ordering governs winning evidence and permutation tests are mandatory."
+    },
+    {
+      "id": "AUTHDEC-R5-VAL-005",
+      "result": "PASS",
+      "evidence": "The uncommitted PayrollSupportElevatedReadAuthorityPolicy main/test paths are retired and absent from the effective set. PayrollV49ElevatedAuthorityPolicy main/test replace them for exactly the two reads plus prepare and calculate; payroll-run DATA remains expression-governed."
+    },
+    {
+      "id": "AUTHDEC-R5-VAL-006",
+      "result": "PASS",
+      "evidence": "The prepare and calculate routes remain ELEVATED-only direct-capability profiles with their exact v49 predicates, POST paths, payroll owner, dwp-payroll-server audience, target bindings and X-DWP-Expected-Object-Version command-header evidence. NORMAL may yield STEP_UP_REQUIRED but never ALLOWED."
+    },
+    {
+      "id": "AUTHDEC-R5-VAL-007",
+      "result": "PASS",
+      "evidence": "ProductSurfaceStepUpRouteResolver may support v49 only as an active sealed runtime and may select an ELEVATED-only profile only for the two exact PAY commands during challenge resolution. Missing, ambiguous or drifted profiles, bindings, checksums or pointers fail closed."
+    },
+    {
+      "id": "AUTHDEC-R5-VAL-008",
+      "result": "PASS",
+      "evidence": "Source inspection proves ProductSurfaceStepUpChallengeService is generic and need not change. Its main/test paths are not authorized. ProductSurfaceStepUpRuntimeSpringFixture currently lacks dwp-payroll-server, so only that exact test audience addition is admitted alongside resolver unit and latest-runtime proofs."
+    },
+    {
+      "id": "AUTHDEC-R5-VAL-009",
+      "result": "PASS",
+      "evidence": "The effective path closed set retains the necessary v4 carrier, generator, topology, Gateway high-risk, release and targeted-test files while adding only the replacement PAY helper and exact resolver proofs. Retired helper and duplicate Gateway test paths are excluded."
+    },
+    {
+      "id": "AUTHDEC-R5-VAL-010",
+      "result": "PASS",
+      "evidence": "Trusted Auth-session carrier, exact Gateway mode validation, PROVIDER_SUPPORT precedence, complete activated-capability traversal, the internal-only null-safe authority endpoint, exact PAGE/DATA tuples, equivalence keys and responseSchemaKey values remain unchanged from v4."
+    },
+    {
+      "id": "AUTHDEC-R5-VAL-011",
+      "result": "PASS",
+      "evidence": "V5 opens no migration change. The previously admitted exact V257 artifact remains bounded by v4; no additional migration, business schema, module implementation, enrollment or activation path is authorized."
+    },
+    {
+      "id": "AUTHDEC-R5-VAL-012",
+      "result": "PASS",
+      "evidence": "V49 release acceptance, module-token issuance, push, merge and migration authoring remain false until the backend implementation receipt and an independent implementation review both pass."
+    },
+    {
+      "id": "AUTHDEC-R5-VAL-013",
+      "result": "PASS",
+      "evidence": "All v5 files parse as JSON, predecessor and successor SHA-256 references match exact bytes, semantic closed-set assertions pass and git diff --check reports no whitespace errors. No product suite, migration or browser execution is claimed."
+    }
+  ],
+  "residualGate": {
+    "decisionId": "AUTH_LANE_V49_IMPLEMENTATION_RECEIPT_AND_INDEPENDENT_REVIEW_REQUIRED",
+    "state": "OPEN_BLOCKING_V49_ACCEPTANCE_MODULE_TOKENS_PUSH_MERGE_AND_MIGRATION_AUTHORITY",
+    "backendImplementationReceiptRequired": true,
+    "independentImplementationReviewRequired": true,
+    "exactChangedPathAdmissionRequired": true,
+    "allChangedFileAndGeneratedArtifactHashesRequired": true,
+    "targetedTestsRequired": true,
+    "v49Accepted": false,
+    "moduleTokenIssuanceAllowed": false,
+    "authLanePushAuthorized": false,
+    "authLaneMergeAuthorized": false,
+    "migrationAuthoringAuthorized": false
+  },
+  "testPolicy": {
+    "jsonParseExecuted": true,
+    "sha256RecomputationExecuted": true,
+    "semanticInvariantChecksExecuted": true,
+    "appendOnlyDiffBoundaryExecuted": true,
+    "gitDiffCheckExecuted": true,
+    "productTestsExecuted": false,
+    "databaseMigrationsExecuted": false,
+    "browserTestsExecuted": false,
+    "reason": "This receipt validates an append-only authority correction only. The backend lane owns the exact targeted implementation proofs after consuming the v5 token."
+  },
+  "authority": {
+    "validationReceiptIssued": true,
+    "exactTwelveRouteGenericSetValidated": true,
+    "expressionReductionDecisionValidated": true,
+    "payV49ChallengeRuntimeDecisionValidated": true,
+    "authLaneImplementationCommitAuthorizedWithinExactClosedSet": true,
+    "v49Accepted": false,
+    "moduleImplementationAuthorized": false,
+    "moduleMigrationAuthoringAuthorized": false,
+    "moduleTokenIssuanceAllowed": false,
+    "moduleStartTokenIssued": false,
+    "authLanePushAuthorized": false,
+    "authLaneMergeAuthorized": false,
+    "migrationAuthoringAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "activationAuthorized": false
+  },
+  "nextGate": "BACKEND_AUTH_LANE_V49_IMPLEMENTATION_RECEIPT_THEN_INDEPENDENT_REVIEW"
+}
