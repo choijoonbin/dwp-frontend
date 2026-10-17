@@ -3,7 +3,9 @@ import { describe, expect, it } from 'vitest';
 import {
   HRIS_SEVEN_WORKBENCH_NAVIGATION_CATALOG,
   HRIS_TASK_NODE_IDS,
+  HRIS_V46_SELF_POLICY_ROUTE_BINDINGS,
   HRIS_WORKBENCH_IDS,
+  hrisV46SelfPolicyRouteBinding,
 } from './seven-workbench-navigation-policy';
 
 describe('generated seven-workbench task-navigation catalog', () => {
@@ -49,10 +51,7 @@ describe('generated seven-workbench task-navigation catalog', () => {
       expect.arrayContaining(['/hr/operations/payroll/command-center', '/hr/operations/pay'])
     );
     expect(node('BASE:time-command-center').routeAliases).toEqual(
-      expect.arrayContaining([
-        '/hr/operations/time/command-center',
-        '/hr/operations/time',
-      ])
+      expect.arrayContaining(['/hr/operations/time/command-center', '/hr/operations/time'])
     );
     expect(node('BASE:hr-employment-assignments').routeAliases).toEqual(
       expect.arrayContaining([
@@ -90,6 +89,32 @@ describe('generated seven-workbench task-navigation catalog', () => {
           group.nodes.map((_, index) => index)
         );
       }
+    }
+  });
+
+  it('seals only the six exact v46 SELF POLICY aliases without reconstructing IA routes', () => {
+    expect(HRIS_V46_SELF_POLICY_ROUTE_BINDINGS).toEqual([
+      expect.objectContaining({ nodeId: 'BASE:my-hr-profile', path: '/hr/me' }),
+      expect.objectContaining({ nodeId: 'BASE:my-time', path: '/hr/time' }),
+      expect.objectContaining({ nodeId: 'BASE:my-leave', path: '/hr/absence' }),
+      expect.objectContaining({ nodeId: 'BASE:my-pay-tax', path: '/hr/pay' }),
+      expect.objectContaining({ nodeId: 'BASE:my-goals-performance', path: '/hr/talent' }),
+      expect.objectContaining({ nodeId: 'BASE:my-hr-requests', path: '/hr/services' }),
+    ]);
+    expect(HRIS_V46_SELF_POLICY_ROUTE_BINDINGS).toHaveLength(6);
+    expect(hrisV46SelfPolicyRouteBinding('BASE:my-hr-profile', '/hr/me')).toMatchObject({
+      routeContractKey: 'route.hcm.personal.me.page',
+      profileKey: 'full-work',
+      targetBinding: 'SELF',
+      scopeBindingKind: 'SELF',
+    });
+    for (const [nodeId, path] of [
+      ['BASE:my-hr-profile', '/hr/me/profile'],
+      ['BASE:my-leave', '/hr/me/leave'],
+      ['BASE:my-hr-requests', '/hr/me/requests'],
+      ['BASE:team-home', '/hr/team'],
+    ] as const) {
+      expect(hrisV46SelfPolicyRouteBinding(nodeId, path)).toBeUndefined();
     }
   });
 });

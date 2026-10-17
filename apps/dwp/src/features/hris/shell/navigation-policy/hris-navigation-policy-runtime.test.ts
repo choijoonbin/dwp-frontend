@@ -9,6 +9,8 @@ vi.mock('@dwp-frontend/shared-utils', async (importOriginal) => ({
 
 import {
   createHrisPolicyShellNavigationProjection,
+  HRIS_NAVIGATION_AUTHORIZATION_REGISTRY_SHA256,
+  HRIS_NAVIGATION_AUTHORIZATION_REGISTRY_VERSION,
   HRIS_NAVIGATION_GENERATED_IA_SHA256,
   HRIS_NAVIGATION_IA_REGISTER_SHA256,
   HRIS_NAVIGATION_SCOPE_PARAM,
@@ -16,6 +18,7 @@ import {
   HRIS_NAVIGATION_TASK_GROUP_REGISTER_SHA256,
   HRIS_NAVIGATION_TOPOLOGY_REVISION,
   HRIS_NAVIGATION_TOPOLOGY_SHA256,
+  HRIS_NAVIGATION_POLICY_V3_RUNTIME_PATH,
   projectHrisWorkbenchTaskNavigation,
   readRuntimeNavigationPolicyProjection,
   resolveHrisNavigationProjectionScopeSurface,
@@ -26,10 +29,14 @@ import {
   selectRuntimeHrisNavigationPolicyProjection,
   shouldReadHrisRuntimeNavigationPolicyProjection,
 } from './hris-navigation-policy-runtime';
-import { HRIS_NAVIGATION_POLICY_RUNTIME_STATE } from './hris-navigation-policy-feature';
+import {
+  HRIS_NAVIGATION_POLICY_RUNTIME_STATE,
+  HRIS_NAVIGATION_POLICY_V3_RUNTIME_STATE,
+} from './hris-navigation-policy-feature';
 import {
   canonicalHrisWorkbench,
   HRIS_SEVEN_WORKBENCH_NAVIGATION_CATALOG,
+  HRIS_V46_SELF_POLICY_ROUTE_BINDINGS,
   HRIS_WORKBENCH_IDS,
   HRIS_WORKBENCH_VIEW_BY_ID,
   isHrisRuntimeEffectiveRouteAlias,
@@ -532,8 +539,162 @@ describe('server-owned HRIS seven-workbench navigation runtime', () => {
     ).toEqual([]);
   });
 
+  it('admits only the exact six V3 SELF POLICY aliases through one pinned projection', () => {
+    const admittedPolicyRoutes = HRIS_V46_SELF_POLICY_ROUTE_BINDINGS.map(admittedPolicyRoute);
+    const myHr = effectiveV3SelfWorkbench();
+    const selectedProjection = selectRuntimeHrisNavigationPolicyProjection(
+      projectionV3('ENFORCED', {
+        policyEnforced: true,
+        revisionPin: revisionPin('3', 'a'),
+        admittedPolicyRoutes,
+        workbenches: [myHr],
+      })
+    );
+    const policy = selectHrisRuntimeNavigationPolicy(selectedProjection);
+    const authorized = new Set([
+      ...HRIS_V46_SELF_POLICY_ROUTE_BINDINGS.map((binding) => binding.path),
+      '/hr/me/profile',
+      '/hr/me/leave',
+      '/hr/me/requests',
+      '/hr/team',
+    ]);
+    const shellItems = createHrisPolicyShellNavigationProjection(policy)
+      .project(authorized)
+      .flatMap((group) => group.items);
+    const taskGroups = projectHrisWorkbenchTaskNavigation(policy, 'workbench-my-hr', authorized);
+
+    expect(policy).toMatchObject({
+      mode: 'ENFORCED',
+      schemaVersion: '3',
+      revisionPin: revisionPin('3', 'a'),
+    });
+    expect(selectedProjection.schemaVersion).toBe('3');
+    if (selectedProjection.schemaVersion !== '3') throw new Error('Expected a V3 projection.');
+    expect(selectedProjection.admittedPolicyRoutes[0]?.routeGrantRef).toBe(
+      `grant-${'8'.repeat(32)}`
+    );
+    expect(shellItems).toEqual([
+      expect.objectContaining({
+        path: '/hr/me',
+        view: 'workbench-my-hr',
+        activePathPrefixes: HRIS_V46_SELF_POLICY_ROUTE_BINDINGS.map((binding) => binding.path),
+      }),
+    ]);
+    expect(
+      taskGroups.flatMap((group) =>
+        group.nodes.map((node) => ({ nodeId: node.nodeId, routeAliases: node.routeAliases }))
+      )
+    ).toEqual(
+      HRIS_V46_SELF_POLICY_ROUTE_BINDINGS.map((binding) => ({
+        nodeId: binding.nodeId,
+        routeAliases: [binding.path],
+      }))
+    );
+    for (const binding of HRIS_V46_SELF_POLICY_ROUTE_BINDINGS) {
+      expect(resolveHrisRuntimePolicyDeepLink(policy, binding.path, authorized)).toMatchObject({
+        decision: 'ALLOW',
+        revisionPin: policy.revisionPin,
+        nodeId: binding.nodeId,
+        route: binding.path,
+      });
+    }
+    for (const withheld of ['/hr/me/profile', '/hr/me/leave', '/hr/me/requests', '/hr/team']) {
+      expect(resolveHrisRuntimePolicyDeepLink(policy, withheld, authorized).decision).toBe('DENY');
+    }
+  });
+
+  it('rejects hostile, mismatched, stale, duplicate, and unused V3 POLICY decisions', () => {
+    const binding = HRIS_V46_SELF_POLICY_ROUTE_BINDINGS[0]!;
+    const validRoute = admittedPolicyRoute(binding);
+    const workbenches = [effectiveV3SelfWorkbench([binding.nodeId])];
+    const hostileRoutes = [
+      [{ ...validRoute, path: '/hr/me/profile' }],
+      [{ ...validRoute, routeContractKey: 'route.hcm.personal.time.page' }],
+      [{ ...validRoute, profileKey: 'full-management' }],
+      [{ ...validRoute, targetBinding: 'TARGET_POPULATION' }],
+      [{ ...validRoute, routeGrantRef: validRoute.routeContractKey }],
+      [{ ...validRoute, scopeBinding: { ...validRoute.scopeBinding, kind: 'LEGAL_ENTITY' } }],
+      [{ ...validRoute, decisionRevision: 'decision-other' }],
+      [{ ...validRoute, authRevision: 'auth-other' }],
+      [{ ...validRoute, freshUntil: '2098-01-01T00:00:00.000Z' }],
+      [validRoute, validRoute],
+    ];
+    for (const admittedPolicyRoutes of hostileRoutes) {
+      expect(() =>
+        selectRuntimeHrisNavigationPolicyProjection(
+          projectionV3('ENFORCED', {
+            policyEnforced: true,
+            revisionPin: revisionPin('3', 'b'),
+            admittedPolicyRoutes,
+            workbenches,
+          })
+        )
+      ).toThrow(/POLICY|authority|freshness/u);
+    }
+    expect(() =>
+      selectRuntimeHrisNavigationPolicyProjection(
+        projectionV3('ENFORCED', {
+          policyEnforced: true,
+          revisionPin: revisionPin('3', 'b'),
+          admittedPolicyRoutes: [validRoute],
+          workbenches: [],
+        })
+      )
+    ).toThrow(/inconsistent/u);
+    expect(() =>
+      selectRuntimeHrisNavigationPolicyProjection(
+        projectionV3('ENFORCED', {
+          authorizationRegistryChecksum: '0'.repeat(64),
+          policyEnforced: true,
+          revisionPin: revisionPin('3', 'b'),
+          admittedPolicyRoutes: [validRoute],
+          workbenches,
+        })
+      )
+    ).toThrow(/registry/u);
+    expect(() =>
+      selectRuntimeHrisNavigationPolicyProjection(
+        projectionV3('ENFORCED', {
+          policyEnforced: true,
+          revisionPin: revisionPin('3', 'b'),
+          authorityFreshUntil: '2026-10-17T03:59:59.000Z',
+          admittedPolicyRoutes: [{ ...validRoute, freshUntil: '2026-10-17T03:59:59.000Z' }],
+          workbenches,
+        })
+      )
+    ).toThrow(/freshness/u);
+  });
+
+  it('accepts only an empty V3 authority carrier outside ENFORCED mode', () => {
+    for (const enforcementState of ['NOT_ENROLLED', 'OFF', 'SHADOW'] as const) {
+      const selected = selectRuntimeHrisNavigationPolicyProjection(projectionV3(enforcementState));
+      expect(selected).toMatchObject({
+        schemaVersion: '3',
+        enforcementState,
+        admittedPolicyRoutes: [],
+        authorityDecisionRevision: null,
+      });
+      expect(selectHrisRuntimeNavigationPolicy(selected).mode).toBe('STATIC');
+    }
+    expect(() =>
+      selectRuntimeHrisNavigationPolicyProjection(
+        projectionV3('OFF', {
+          authorityDecisionRevision: 'decision-1',
+        })
+      )
+    ).toThrow(/Non-enforced/u);
+    expect(() =>
+      selectRuntimeHrisNavigationPolicyProjection(
+        projectionV3('SHADOW', {
+          admittedPolicyRoutes: [admittedPolicyRoute(HRIS_V46_SELF_POLICY_ROUTE_BINDINGS[0]!)],
+        })
+      )
+    ).toThrow(/Non-enforced/u);
+  });
+
   it('keeps runtime default-off and reads only governed, ready scope evidence', () => {
     expect(HRIS_NAVIGATION_POLICY_RUNTIME_STATE).toBe('OFF');
+    expect(HRIS_NAVIGATION_POLICY_V3_RUNTIME_STATE).toBe('OFF');
     expect(
       shouldReadHrisRuntimeNavigationPolicyProjection({
         runtimeEnabled: false,
@@ -596,6 +757,38 @@ describe('server-owned HRIS seven-workbench navigation runtime', () => {
         headers: { 'X-Correlation-ID': '2983c2ef-6c0e-47f5-862c-84007dc2da6a' },
       })
     );
+  });
+
+  it('uses V3 only for an explicitly selected tenant carrier and never accepts a V2 downgrade', async () => {
+    transport.get.mockResolvedValue({ data: { data: projectionV3('OFF') } });
+    await readRuntimeNavigationPolicyProjection({
+      contextScopeKey: `hcm-scope-${'1'.repeat(40)}`,
+      navigationScope: 'TENANT',
+      carrierVersion: '3',
+      correlationId: '2983c2ef-6c0e-47f5-862c-84007dc2da6d',
+    });
+    expect(new URL(transport.get.mock.calls[0][0], 'http://test.invalid').pathname).toBe(
+      HRIS_NAVIGATION_POLICY_V3_RUNTIME_PATH
+    );
+
+    transport.get.mockResolvedValue({ data: { data: projection('OFF') } });
+    await expect(
+      readRuntimeNavigationPolicyProjection({
+        contextScopeKey: `hcm-scope-${'1'.repeat(40)}`,
+        navigationScope: 'TENANT',
+        carrierVersion: '3',
+        correlationId: '2983c2ef-6c0e-47f5-862c-84007dc2da6e',
+      })
+    ).rejects.toThrow(/carrier version/u);
+    await expect(
+      readRuntimeNavigationPolicyProjection({
+        contextScopeKey: `hcm-scope-${'1'.repeat(40)}`,
+        navigationScope: 'LEGAL_ENTITY',
+        carrierVersion: '3',
+        legalEntityPublicId: '6d07e952-2f5f-4dc1-8be7-6d7e210d23af',
+        correlationId: '2983c2ef-6c0e-47f5-862c-84007dc2da6f',
+      })
+    ).rejects.toThrow(/tenant SELF/u);
   });
 
   it('always sends the fixed tenant discriminator and rejects mixed selector shapes', async () => {
@@ -720,6 +913,79 @@ function projection(
   };
 }
 
-function revisionPin(seed: string) {
-  return `nav-v2-${seed.repeat(64)}`;
+function projectionV3(
+  enforcementState:
+    | 'NOT_ENROLLED'
+    | 'OFF'
+    | 'SHADOW'
+    | 'ENFORCED'
+    | 'DENIED_MISSING_POLICY'
+    | 'DENIED_STALE_CONTEXT',
+  overrides: Record<string, unknown> = {}
+) {
+  const enforced = enforcementState === 'ENFORCED';
+  return {
+    ...projection(enforcementState),
+    schemaVersion: '3',
+    authorizationRegistryVersion: HRIS_NAVIGATION_AUTHORIZATION_REGISTRY_VERSION,
+    authorizationRegistryChecksum: HRIS_NAVIGATION_AUTHORIZATION_REGISTRY_SHA256,
+    authorityDecisionCount: enforced ? 6 : 0,
+    navigationContextScopeKey: `hcm-scope-${'1'.repeat(40)}`,
+    authoritySelfScopeKey: enforced ? `scope-${'7'.repeat(32)}` : null,
+    authoritySnapshotRevision: enforced ? 'snapshot-1' : null,
+    authorityDecisionRevision: enforced ? 'decision-1' : null,
+    authorityAuthRevision: enforced ? 'auth-1' : null,
+    authorityPolicyRevision: enforced ? 'policy-1' : null,
+    authorityRelationshipRevision: enforced ? 'relationship-1' : null,
+    authorityFreshUntil: enforced ? '2099-01-01T00:00:00.000Z' : null,
+    admittedPolicyRoutes: [],
+    ...overrides,
+  };
+}
+
+function admittedPolicyRoute(binding: (typeof HRIS_V46_SELF_POLICY_ROUTE_BINDINGS)[number]) {
+  return {
+    nodeId: binding.nodeId,
+    path: binding.path,
+    routeContractKey: binding.routeContractKey,
+    profileKey: binding.profileKey,
+    targetBinding: binding.targetBinding,
+    scopeBinding: {
+      kind: binding.scopeBindingKind,
+      key: `scope-${'7'.repeat(32)}`,
+      personPublicId: '6d07e952-2f5f-4dc1-8be7-6d7e210d23af',
+    },
+    decision: 'ALLOWED',
+    routeGrantRef: `grant-${'8'.repeat(32)}`,
+    decisionRevision: 'decision-1',
+    authRevision: 'auth-1',
+    policyRevision: 'policy-1',
+    relationshipRevision: 'relationship-1',
+    freshUntil: '2099-01-01T00:00:00.000Z',
+  };
+}
+
+function effectiveV3SelfWorkbench(
+  nodeIds = HRIS_V46_SELF_POLICY_ROUTE_BINDINGS.map((binding) => binding.nodeId)
+) {
+  const routeByNode = new Map(
+    HRIS_V46_SELF_POLICY_ROUTE_BINDINGS.map((binding) => [binding.nodeId, binding.path])
+  );
+  const source = effectiveWorkbench('HRIS-WB-MY-HR', nodeIds);
+  return {
+    ...source,
+    groups: source.groups.map((group) => ({
+      ...group,
+      nodes: group.nodes.map((node) => ({
+        ...node,
+        routeAliases: [routeByNode.get(node.nodeId)!],
+      })),
+    })),
+  };
+}
+
+function revisionPin(versionOrSeed: '2' | '3' | string, maybeSeed?: string) {
+  const version = maybeSeed ? versionOrSeed : '2';
+  const seed = maybeSeed ?? versionOrSeed;
+  return `nav-v${version}-${seed.repeat(64)}`;
 }
