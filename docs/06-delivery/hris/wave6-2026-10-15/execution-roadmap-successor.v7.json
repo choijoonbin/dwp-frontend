@@ -1,0 +1,114 @@
+{
+  "schema": "dwp.hris.wave6-execution-roadmap-successor.v7",
+  "roadmapId": "HRIS-WAVE6-EXECUTION-ROADMAP-SUCCESSOR-20261017-R7",
+  "issuedAt": "2026-10-17T09:45:20+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "supersedes": {
+    "path": "docs/06-delivery/hris/wave6-2026-10-15/execution-roadmap-successor.v6.json",
+    "sha256": "2732b8732cf04dff6fa346eef8e29054ec7aab1e5390278794a30fb43ff983c2",
+    "preservation": "IMMUTABLE_PREDECESSOR_RETAINED",
+    "inheritedClosedMilestones": true
+  },
+  "baselineBeforeEvidenceCarrier": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "ad04a6596c96b66f988c15abaa30ef8637d9374d",
+      "tree": "1f61c00eea8a86f407efd7d7021a835b021ffbfe",
+      "upstream": "origin/dwp-dev",
+      "localRemoteExact": true,
+      "workingTreeClean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "71768a070ff675fb71ca92c62441739d64338882",
+      "tree": "f01a373d3bc8b7b69b15993156bfcb26dec7c227",
+      "upstream": "origin/dwp-dev",
+      "localRemoteExactBeforeCarrier": true
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "upstream": "origin/dwp-dev",
+      "localRemoteExact": true,
+      "changedByR5": false
+    }
+  },
+  "inheritedClosed": [
+    {
+      "id": "R2-RESOLVE-HOME-PRODUCER-PURPOSE-AND-TYPE",
+      "state": "CLOSED"
+    },
+    {
+      "id": "R3A-R3D-HOME-PRODUCERS",
+      "state": "CLOSED_ALL_FOUR_DEFAULT_OFF"
+    },
+    {
+      "id": "R4-INTEGRATE-SYS-012-HOME-COMPOSITION-RESIDUAL",
+      "state": "CLOSED_INTEGRATED_DEFAULT_OFF"
+    }
+  ],
+  "closedByThisSuccessor": {
+    "id": "R5-SEAL-AND-INTEGRATE-SHARED-SEVEN-WORKBENCH-TASK-NAVIGATION",
+    "state": "CLOSED_INTEGRATED_DEFAULT_OFF",
+    "evidence": {
+      "path": "docs/06-delivery/hris/wave6-2026-10-15/r5-seven-workbench-navigation-integration-r1/central-integration-result.v1.json",
+      "sha256": "de70b6ce8a36a2291254265252b734472e03e8b5b80cfad3d407fd2f5ad0ea9d"
+    },
+    "backendCommit": "ad04a6596c96b66f988c15abaa30ef8637d9374d",
+    "frontendCommitBeforeEvidenceCarrier": "71768a070ff675fb71ca92c62441739d64338882",
+    "topology": {
+      "workbenches": 7,
+      "taskGroups": 46,
+      "descendantNodes": 97
+    },
+    "independentReviewBlockers": 0
+  },
+  "nextExecutable": {
+    "id": "R6-EXPOSE-EXISTING-IMPLEMENTED-SCREENS-THROUGH-SEVEN-WORKBENCHES",
+    "state": "AUTHORIZED_NEXT_EXECUTABLE",
+    "owner": "SYS_COMMON_INTEGRATION_CONTROL_WITH_MODULE_OWNERS",
+    "objective": "Expose only already implemented HRIS screens through the R5 workbench frame with exact route authority and no placeholder success pages.",
+    "orderedWork": [
+      "Inventory implemented HRIS routes and bind each route to one canonical IA node.",
+      "Classify each route as PAGE or POLICY authority and seal exact backend and frontend carrier mappings.",
+      "Add missing authorization-carrier amendments for legitimate POLICY routes without inferring PAGE grants.",
+      "Connect eligible HRM, TIM, PAY, PER and SYS screens to their canonical task groups.",
+      "Keep ambiguous, undeployed and unimplemented nodes omitted.",
+      "Verify changed route clusters, deep links, workbench landing and one representative responsive journey.",
+      "Integrate module branches into dwp-dev and issue the R6 closure receipt."
+    ],
+    "requiredInputs": {
+      "backend": "ad04a6596c96b66f988c15abaa30ef8637d9374d",
+      "frontendBeforeEvidenceCarrier": "71768a070ff675fb71ca92c62441739d64338882",
+      "navigationAggregate": "HRIS-IA-98-WB7-G46-N97-R5",
+      "authorizationRegistry": 45
+    },
+    "explicitFirstBoundary": {
+      "path": "/hr/data/integrations",
+      "state": "WITHHELD_UNTIL_UNAMBIGUOUS_OWNER_AND_AUTHORITY_ARE_SEALED"
+    }
+  },
+  "withheld": [
+    {
+      "id": "R7-COMPLETE-REMAINING-ACTIVE-BASE-SLICES",
+      "state": "WITHHELD_PENDING_R6"
+    }
+  ],
+  "validationPolicy": {
+    "changedClusterFirst": true,
+    "failedTargetOnlyAfterCorrection": true,
+    "repositoryWideSuitePerCorrection": false,
+    "fullSuiteOnlyAtExplicitReleaseGateOrCrossCuttingRisk": true,
+    "reuseExactR5Evidence": true
+  },
+  "activationPolicy": {
+    "allNewFeaturesDefaultOff": true,
+    "tenantActivationAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "EXECUTE_R6_FROM_THE_EXACT_R5_REMOTE_DWP_DEV_PINS_AND_SEAL_EACH_EXPOSED_ROUTE_BEFORE_NAVIGATION_ACTIVATION"
+}

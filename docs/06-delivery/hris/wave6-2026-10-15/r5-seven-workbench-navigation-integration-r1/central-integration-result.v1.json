@@ -1,0 +1,70 @@
+{
+  "schema": "dwp.hris.wave6-r5-seven-workbench-navigation-central-integration-result.v1",
+  "receiptId": "HRIS-WAVE6-R5-SEVEN-WORKBENCH-NAVIGATION-INTEGRATION-R1",
+  "issuedAt": "2026-10-17T09:45:20+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "status": "PASS_R5_INTEGRATED_CLOSED_DEFAULT_OFF",
+  "decision": "CLOSE_R5_AT_EXACT_REMOTE_DWP_DEV_WITHOUT_TENANT_CUSTOMER_DATA_OR_PRODUCTION_ACTIVATION",
+  "moduleResult": {
+    "path": "docs/06-delivery/hris/wave6-2026-10-15/r5-seven-workbench-navigation-control-r1/module-result-evidence.v1.json",
+    "sha256": "1f8d5f28a7c513fc4261e0a471daff750db33fc557c361cd81f19da867b2009b",
+    "backendOwnerCommit": "50c7635b61d2003345e3267633ee91b28f7ac6c1",
+    "frontendOwnerCommit": "b924970d2dae9bf60e56096444cf916bd3448f43"
+  },
+  "finalBinding": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "ad04a6596c96b66f988c15abaa30ef8637d9374d",
+      "tree": "1f61c00eea8a86f407efd7d7021a835b021ffbfe",
+      "upstream": "origin/dwp-dev",
+      "localRemoteExact": true,
+      "workingTreeClean": true
+    },
+    "frontendBeforeEvidenceCarrier": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "71768a070ff675fb71ca92c62441739d64338882",
+      "tree": "f01a373d3bc8b7b69b15993156bfcb26dec7c227",
+      "upstream": "origin/dwp-dev",
+      "localRemoteExact": true,
+      "workingTreeCleanBeforeCarrier": true
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "upstream": "origin/dwp-dev",
+      "localRemoteExact": true,
+      "workingTreeClean": true,
+      "changedByR5": false
+    }
+  },
+  "closure": {
+    "singleImmutableAggregateV2": "IMPLEMENTED_AND_TARGETED_VERIFIED",
+    "topology": "SEALED_7_WORKBENCHES_46_GROUPS_97_DESCENDANTS",
+    "samePinSidebarLandingDeepLink": "PASS",
+    "tenantBaselineLegalRestrictiveOverlay": "PASS",
+    "exactPageIntersection": "PASS_FAIL_CLOSED",
+    "v1Preservation": "PASS",
+    "v329LifecycleAndImmutability": "PASS_POSTGRES",
+    "desktopMobileAccessibilityEvidence": "PASS",
+    "independentReviewRemainingBlockers": 0,
+    "runtime": "DEFAULT_OFF",
+    "tenantActivated": false,
+    "customerDataUsed": false,
+    "productionReleased": false
+  },
+  "intentionalWithholding": {
+    "policyOnlyCompatibilityPaths": "RECOGNIZED_BUT_NOT_REINTERPRETED_AS_PAGE_AUTHORITY",
+    "ambiguousIntegrationPath": "/hr/data/integrations",
+    "unimplementedPlaceholdersExposed": false
+  },
+  "r6Eligibility": {
+    "state": "ELIGIBLE_AFTER_R5_EVIDENCE_CARRIER",
+    "id": "R6-EXPOSE-EXISTING-IMPLEMENTED-SCREENS-THROUGH-SEVEN-WORKBENCHES",
+    "mustConsumeBackendCommit": "ad04a6596c96b66f988c15abaa30ef8637d9374d",
+    "mustConsumeFrontendCommit": "71768a070ff675fb71ca92c62441739d64338882",
+    "requiredFirstAction": "INVENTORY_IMPLEMENTED_ROUTES_AND_SEAL_EXACT_PAGE_OR_POLICY_AUTHORITY_PER_ROUTE_BEFORE_EXPOSURE"
+  }
+}

@@ -1,0 +1,200 @@
+{
+  "schema": "dwp.hris.wave6-r5-seven-workbench-navigation-module-result.v1",
+  "resultId": "HRIS-WAVE6-R5-SEVEN-WORKBENCH-NAVIGATION-RESULT-R1",
+  "issuedAt": "2026-10-17T09:45:20+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL_WITH_HRIS_SYS",
+  "status": "PASS_IMPLEMENTED_DEFAULT_OFF",
+  "controlPacket": {
+    "path": "docs/06-delivery/hris/wave6-2026-10-15/r5-seven-workbench-navigation-control-r1/control-packet.v1.json",
+    "sha256": "a8b8a6a386e91ef02e65a7b2e22d41aaa80e1377265d909fccf98839ac00dd77"
+  },
+  "ownerResults": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "codex/hris-r5-seven-workbench-backend-20261017-r1",
+      "commit": "50c7635b61d2003345e3267633ee91b28f7ac6c1",
+      "tree": "1f61c00eea8a86f407efd7d7021a835b021ffbfe",
+      "pushed": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "codex/hris-r5-seven-workbench-frontend-20261017-r1",
+      "commit": "b924970d2dae9bf60e56096444cf916bd3448f43",
+      "tree": "f01a373d3bc8b7b69b15993156bfcb26dec7c227",
+      "pushed": true
+    }
+  },
+  "topology": {
+    "shellHomeNodes": 1,
+    "workbenches": 7,
+    "taskGroups": 46,
+    "descendantNodes": 97,
+    "allIaNodes": 98,
+    "revision": "HRIS-IA-98-WB7-G46-N97-R5",
+    "singleAggregateModel": "SEVEN_WORKBENCH_SINGLE_IMMUTABLE_AGGREGATE_V2"
+  },
+  "implementation": {
+    "effectiveProjection": "CANONICAL_INTERSECT_INSTALLED_INTERSECT_DEPLOYED_INTERSECT_TENANT_INTERSECT_LEGAL_INTERSECT_EXACT_PAGE",
+    "scopeLayers": "TENANT_BASELINE_PLUS_RESTRICTIVE_LEGAL_ENTITY_OVERLAY",
+    "revisionPin": "nav-v2-{full-lowercase-sha256}",
+    "sharedConsumers": [
+      "SIDEBAR",
+      "WORKBENCH_LANDING",
+      "DEEP_LINK"
+    ],
+    "lifecycle": [
+      "CREATE",
+      "UPDATE",
+      "VALIDATE",
+      "SUBMIT",
+      "APPROVE",
+      "PUBLISH",
+      "RESTORE"
+    ],
+    "controls": [
+      "MAKER_CHECKER",
+      "STEP_UP",
+      "CAS",
+      "IDEMPOTENCY",
+      "AUDIT",
+      "OUTBOX",
+      "COMPLETION_TIME_FRESHNESS",
+      "LEGAL_OWNER_REVALIDATION",
+      "PUBLISHED_EVIDENCE_IMMUTABILITY"
+    ],
+    "migration": "V329",
+    "legacyV1": "PRESERVED",
+    "runtimeDefault": "OFF",
+    "enrolledTenants": []
+  },
+  "authorizationCarrier": {
+    "registryVersion": 45,
+    "registryChecksum": "6f41e17159104cd0fd721a13877611b6225bd6458cb2831f0f30e51573992e64",
+    "registryCounts": {
+      "capabilities": 258,
+      "accessPolicies": 24,
+      "entitlementExpressions": 17,
+      "predicatePolicies": 73,
+      "routes": 1046
+    },
+    "platformPepProjectionChecksum": "bd72d855d60378479fd0d8dc34b85cf6856d9f6ac3977afaeb78216e11308b71",
+    "platformPepProjectedRoutes": 48,
+    "platformPepBindingPairs": 49,
+    "tenantRuntimeProfile": "navigation-shell-reader",
+    "legalEntityRuntimeProfile": "hr-operations-reader",
+    "legalEntityScope": "TARGET_POPULATION",
+    "targetedTests": 109,
+    "failures": 0
+  },
+  "pageAuthority": {
+    "rule": "ONLY_EXPLICIT_V45_PAGE_BINDINGS_WITH_EXACT_RESOLVED_CAPABILITY",
+    "automaticCanonicalInheritance": false,
+    "commandPermissionInference": false,
+    "policyAliasInference": false,
+    "policyOnlyCompatibilityPathsDenied": [
+      "/hr/me",
+      "/hr/time",
+      "/hr/pay",
+      "/hr/talent",
+      "/hr/team",
+      "/hr/absence",
+      "/hr/services",
+      "/hr/directory",
+      "/hr/organization",
+      "/hr/manage/system"
+    ],
+    "ambiguousPathWithheld": "/hr/data/integrations",
+    "hardExcludedPaths": [
+      "/hr/explore",
+      "/hr/benefits",
+      "/hr/operations/benefits"
+    ]
+  },
+  "targetedVerification": {
+    "backend": {
+      "initialAggregateRuntimePepTests": 46,
+      "initialFailures": 0,
+      "correctionTargets": {
+        "canonical": 4,
+        "service": 12,
+        "runtimeControls": 3
+      },
+      "postgresLifecycleTests": 1,
+      "postgresSkipped": 0,
+      "finalPageAuditTests": 3,
+      "gitDiffCheck": "PASS"
+    },
+    "frontend": {
+      "targetedVitest": 29,
+      "relatedHcmRegression": 42,
+      "playwrightDesktopJourneys": 1,
+      "playwrightMobileJourneys": 1,
+      "axeSeriousOrCritical": 0,
+      "changedFileEslint": "PASS",
+      "iaCheck": "PASS_98_NODES_9_SHELL_ENTRIES_46_TASK_GROUPS",
+      "apiBoundaryCheck": "PASS",
+      "relativeCycleCheck": "PASS",
+      "localeJsonCheck": "PASS",
+      "gitDiffCheck": "PASS",
+      "repositoryWideSuite": "NOT_RUN_CHANGED_CLUSTER_POLICY",
+      "knownUnrelatedTypecheckBaseline": "libs/shared-utils/src/api/hcm-audit-evidence-api.test.ts:117 LOW severity conversion"
+    }
+  },
+  "visualEvidence": [
+    {
+      "path": "docs/06-delivery/hris/wave6-2026-10-15/r5-seven-workbench-navigation-control-r1/screenshots/seven-workbench-dark-reduced-motion.png",
+      "sha256": "5920a818553f6818255b7f07c0e032c0e558aa58dbfc5d093ca952a34987f8f3",
+      "covers": [
+        "DESKTOP",
+        "DARK",
+        "REDUCED_MOTION",
+        "KEYBOARD"
+      ]
+    },
+    {
+      "path": "docs/06-delivery/hris/wave6-2026-10-15/r5-seven-workbench-navigation-control-r1/screenshots/seven-workbench-200-percent-forced-colors.png",
+      "sha256": "8224896d8aaa0aa14332738285b248b011c555c04fcab124d48402a3ec228a39",
+      "covers": [
+        "DESKTOP",
+        "ZOOM_200_PERCENT",
+        "FORCED_COLORS"
+      ]
+    },
+    {
+      "path": "docs/06-delivery/hris/wave6-2026-10-15/r5-seven-workbench-navigation-control-r1/screenshots/seven-workbench-mobile-200-percent-forced-colors.png",
+      "sha256": "dff98b379e2046af54a0fb123643cf47a02dc86eb3056ad09e1000d6f7900cd3",
+      "covers": [
+        "MOBILE_320PX",
+        "ZOOM_200_PERCENT",
+        "FORCED_COLORS",
+        "NO_HORIZONTAL_OVERFLOW"
+      ]
+    }
+  ],
+  "review": {
+    "reviewer": "/root/r5_authorization_carrier",
+    "initialP0": 0,
+    "initialP1": 1,
+    "initialP2": 2,
+    "p1Disposition": "FIXED_POLICY_ONLY_ALIAS_FAIL_CLOSED_WITH_HOSTILE_PROJECTION_TEST",
+    "p2Disposition": "FIXED_NESTED_MAIN_AND_LOCALIZED_LOADING_STATUS",
+    "remainingP0": 0,
+    "remainingP1": 0,
+    "remainingP2": 0
+  },
+  "sourceDigests": {
+    "backendRegistryBundle": "d14cf6edfa4f9689f600f3e6883d71242c8fe730ce08e32c1dcc36f8578ded6a",
+    "backendPlatformPep": "7404c3c61ca28ac8cd2619faab6db854f0647e2cd981cd6e578f28521f01bce1",
+    "backendV329": "8c135138f09d8765be5e964e7b5d4470a4374927b2f8f6dc95671f29b27cf72b",
+    "backendCanonical": "8759ac4d39594cd86be0a8ea1c47c290a9a46b936200d5274cb17a8b41cc3cac",
+    "backendRuntimeControls": "a424953dff5cf05f6aeb8e7d178903f0bab80715f05d4199c7f6ce9348e6d25f",
+    "frontendCatalog": "7633a51f6631a33026fe5e89268afaace33e59609a25dfc41b85374882fa6619",
+    "frontendRuntime": "ddbb37aa61fb874077732d0eb3c1b3793f63ef0cd8d7f54ad6442ec7cd179edb"
+  },
+  "nonclaims": [
+    "No tenant, customer data or production activation is authorized.",
+    "R5 does not expose unimplemented IA descendants as placeholder success pages.",
+    "R5 does not infer PAGE visibility from POLICY routes or command permissions.",
+    "Additional already implemented module screens remain an R6 responsibility."
+  ]
+}
