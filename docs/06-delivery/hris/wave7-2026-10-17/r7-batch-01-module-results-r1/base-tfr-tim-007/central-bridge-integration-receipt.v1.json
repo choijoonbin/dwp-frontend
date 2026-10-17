@@ -1,0 +1,146 @@
+{
+  "schema": "dwp.hris.wave7.tim-007-central-bridge-integration-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-01-TIM-007-CENTRAL-BRIDGE-INTEGRATION-20261017-R1",
+  "recordedAt": "2026-10-17T19:37:49+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-TIM",
+  "sliceId": "BASE-TFR-TIM-007",
+  "canonicalFeature": "HRIS_TIME_CLOSE_HANDOFF",
+  "state": "CENTRAL_BRIDGE_INTEGRATED_DWP_DEV_DEFAULT_OFF_MODULE_REPLACEMENT_TOKEN_PENDING",
+  "authorityInputs": {
+    "decision": {
+      "path": "../../r7-batch-01-module-start-r1/tim-007-central-contract-bridge-decision.v1.json",
+      "role": "CENTRAL_BRIDGE_SCOPE_AND_SEMANTIC_AUTHORITY"
+    },
+    "implementationPlan": {
+      "path": "../../r7-batch-01-module-start-r1/tim-007-central-contract-bridge-implementation-plan.v1.json",
+      "role": "DISJOINT_WORKSTREAM_AND_TARGETED_VERIFICATION_AUTHORITY"
+    }
+  },
+  "independentReviews": {
+    "contractWorkstream": {
+      "decision": "GO_FOR_DEFAULT_OFF_CENTRAL_INTEGRATION_NO_GO_FOR_ACTIVATION",
+      "remainingP0": 0,
+      "remainingP1": 0,
+      "remainingP2": 0,
+      "reviewedCommit": "3bb26876c4f5e3d1c76844da00f3319ebb1e0355",
+      "reviewedTree": "6d1e7f79adb66b74143f252d98ed17caee2b2c5a",
+      "closedCorrection": "All four POST 412 precondition responses now return the current strong ETag, and the focused contract regression covers the invariant."
+    },
+    "receiptRuntimeWorkstream": {
+      "decision": "GO_FOR_DEFAULT_OFF_CENTRAL_INTEGRATION_NO_GO_FOR_ACTIVATION",
+      "remainingP0": 0,
+      "remainingP1": 0,
+      "remainingP2": 0,
+      "reviewedCommit": "17204bf6db08eadffe30f3490edb2c0dab0fc9ed",
+      "reviewedTree": "357ccef8d9095f092d6500f4d1fcd1eea0db04d4",
+      "closedCorrection": "An unavailable owner-authority source now emits the required OWNER_READ_ERROR audit record before the request fails closed."
+    }
+  },
+  "integration": {
+    "repository": "dwp-backend",
+    "branch": "dwp-dev",
+    "contractMerge": {
+      "commit": "d69e33e10a30af15beec844f2cfc65e118c614bb",
+      "tree": "8e5078dfab8af1e8962cecd750e5f2e0638fa40f",
+      "parents": [
+        "4ec8efd6436a64cad9bdd03a87d26f2f5be0bec6",
+        "3bb26876c4f5e3d1c76844da00f3319ebb1e0355"
+      ]
+    },
+    "receiptRuntimeMerge": {
+      "commit": "d4d12d03d417ea73b5c8b05f04e74b63d87aa1a4",
+      "tree": "e22453b85fb25766ef35e8664caad578256283ff",
+      "parents": [
+        "d69e33e10a30af15beec844f2cfc65e118c614bb",
+        "17204bf6db08eadffe30f3490edb2c0dab0fc9ed"
+      ]
+    },
+    "postIntegrationTestCorrection": {
+      "commit": "bada002d2a55f2d7e0a16dd1c8f240f1526aae82",
+      "tree": "40f9ad7052cb22dd7191d3b43cec714ec06ba17c",
+      "reason": "The former arbitrary-version 50 negative fixture became a real v50 after integration; only that fixture moved to unknown version 9999.",
+      "smallestFailedTargetRerun": "ProductSurfaceStepUpLatestRuntimeTest exact failed method: 1/1 passed"
+    },
+    "mergeConflicts": 0,
+    "originExactAfterPush": true
+  },
+  "integratedVerification": {
+    "policy": "Run the planned workstream union once; after a failure rerun only the smallest failed target, never the full union again.",
+    "deterministicGeneration": [
+      "OpenAPI approved snapshots: PASS, 12 services and 1757 paths",
+      "product authorization generation: PASS, immutable v1-v49 plus DRAFT v50",
+      "pilot fixture generation: PASS, 71 tests, 46 negative fixtures and 41 mutation controls",
+      "Time close projection generation: PASS, 3 bindings and 17 schemas"
+    ],
+    "pythonContractCluster": "76/76 passed",
+    "authCluster": "The planned 63-test cluster exposed exactly one stale arbitrary-version fixture; the affected method passed 1/1 after the bounded correction and the cluster was not broadly rerun.",
+    "authFixtureAdapter": "7/7 passed",
+    "gatewayFixtureAdapter": "8/8 passed",
+    "asyncApiContract": "1/1 passed",
+    "timeReceiptRuntimeCluster": "35/35 passed"
+  },
+  "sealedCentralContracts": {
+    "productAuthorization": {
+      "version": 50,
+      "state": "DRAFT",
+      "automaticImportEnabled": false,
+      "runtimeDefault": "OFF",
+      "enrolledTenants": []
+    },
+    "timeCloseProjection": {
+      "bindings": 3,
+      "schemas": 17
+    },
+    "commandReceipt": {
+      "registryAvailable": true,
+      "timecardProviderAvailable": true,
+      "timCloseProviderRequiredFromModule": true,
+      "activationCaveat": "The current controller and Timecard provider are conditional on dwp.hris.time.timecard.enabled; TIM-007 must register a close provider and make close-receipt availability and authority independent from the Timecard feature before any activation claim."
+    }
+  },
+  "externalGates": [
+    {
+      "id": "PDX-011-LIVE-PRODUCER",
+      "state": "EXTERNAL_GATE",
+      "allowedNow": "default-OFF Time consumer port and fixtures",
+      "forbiddenClaim": "production approval integration complete"
+    },
+    {
+      "id": "PAY-DURABLE-CLOSED-TIME-CONSUMER",
+      "state": "P0_EXTERNAL_OWNER_MIGRATION_GATE",
+      "allowedNow": "default-OFF non-durable PAY consumer port and fixtures inside the already authorized closedtime globs",
+      "requiredLater": [
+        "separate PAY owner decision and next-free PAY migration lease",
+        "inbox and deduplication",
+        "quarantine and receiver receipt revision",
+        "proof replay and staging",
+        "verified payroll input and outcome callback outbox",
+        "RLS and tenant predicates"
+      ],
+      "forbidden": [
+        "PAY runtime table creation or durable persistence in TIM-007",
+        "reuse of unrelated payroll or compensation tables",
+        "TIM-to-PAY end-to-end, calculation or release completion claim before this gate closes"
+      ]
+    }
+  ],
+  "rollout": {
+    "runtimeDefault": "OFF",
+    "enrolledTenants": [],
+    "centralRouteOrShellMounted": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "completion": {
+    "centralContractBridgeIntegrated": true,
+    "centralReceiptRuntimeIntegrated": true,
+    "moduleImplementationComplete": false,
+    "durablePayConsumerComplete": false,
+    "timToPayEndToEndComplete": false,
+    "activationComplete": false,
+    "nextAction": "ISSUE_HASH_BOUND_APPEND_ONLY_TIM_REPLACEMENT_TOKEN_AND_REDISPATCH_ONLY_HRIS_TIM"
+  }
+}
