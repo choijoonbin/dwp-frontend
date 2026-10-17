@@ -32,6 +32,7 @@ import {
   HRIS_SEVEN_WORKBENCH_NAVIGATION_CATALOG,
   HRIS_WORKBENCH_IDS,
   HRIS_WORKBENCH_VIEW_BY_ID,
+  isHrisRuntimeEffectiveRouteAlias,
 } from './seven-workbench-navigation-policy';
 
 import type { HrisWorkbenchId } from './seven-workbench-navigation-policy';
@@ -366,22 +367,145 @@ describe('server-owned HRIS seven-workbench navigation runtime', () => {
     }
   });
 
+  it('uses only server-admitted aliases and keeps assignment compatibility deep-link only', () => {
+    const canonicalPath = '/hr/operations/people/employment-assignments';
+    const compatibilityPath = '/hr/operations/assignments';
+    const assignment = effectiveWorkbench('HRIS-WB-HR-OPERATIONS', [
+      'BASE:hr-employment-assignments',
+    ]);
+    const policy = enforcedPolicy([
+      withNodeRouteAliases(assignment, 'BASE:hr-employment-assignments', [
+        canonicalPath,
+        compatibilityPath,
+      ]),
+    ]);
+    const authorized = new Set([canonicalPath, compatibilityPath]);
+    const projected = projectHrisWorkbenchTaskNavigation(
+      policy,
+      'workbench-hr-operations',
+      authorized
+    );
+
+    expect(projected.flatMap((group) => group.nodes)).toEqual([
+      expect.objectContaining({
+        nodeId: 'BASE:hr-employment-assignments',
+        routeAliases: [canonicalPath, compatibilityPath],
+      }),
+    ]);
+    expect(
+      createHrisPolicyShellNavigationProjection(policy)
+        .project(authorized)
+        .flatMap((group) => group.items)
+    ).toEqual([
+      expect.objectContaining({
+        path: canonicalPath,
+        activePathPrefixes: [canonicalPath, compatibilityPath],
+      }),
+    ]);
+    expect(resolveHrisRuntimePolicyDeepLink(policy, compatibilityPath, authorized)).toMatchObject({
+      decision: 'ALLOW',
+      nodeId: 'BASE:hr-employment-assignments',
+      revisionPin: policy.revisionPin,
+    });
+
+    const canonicalOnlyPolicy = enforcedPolicy([
+      withNodeRouteAliases(assignment, 'BASE:hr-employment-assignments', [canonicalPath]),
+    ]);
+    expect(
+      projectHrisWorkbenchTaskNavigation(
+        canonicalOnlyPolicy,
+        'workbench-hr-operations',
+        new Set([compatibilityPath])
+      )
+    ).toEqual([]);
+    expect(
+      resolveHrisRuntimePolicyDeepLink(
+        canonicalOnlyPolicy,
+        compatibilityPath,
+        new Set([compatibilityPath])
+      ).decision
+    ).toBe('DENY');
+
+    const compatibilityOnlyPolicy = enforcedPolicy([
+      withNodeRouteAliases(assignment, 'BASE:hr-employment-assignments', [compatibilityPath]),
+    ]);
+    expect(
+      projectHrisWorkbenchTaskNavigation(
+        compatibilityOnlyPolicy,
+        'workbench-hr-operations',
+        new Set([compatibilityPath])
+      )
+    ).toEqual([]);
+    expect(
+      resolveHrisRuntimePolicyDeepLink(
+        compatibilityOnlyPolicy,
+        compatibilityPath,
+        new Set([compatibilityPath])
+      ).decision
+    ).toBe('ALLOW');
+  });
+
+  it('rejects missing, duplicate, unsafe, excluded, POLICY-only, and unsealed server aliases', () => {
+    const people = effectiveWorkbench('HRIS-WB-HR-OPERATIONS', ['BASE:hr-people']);
+    const peoplePath = '/hr/operations/people';
+    const hostileAliases: readonly unknown[] = [
+      undefined,
+      [],
+      [peoplePath, peoplePath],
+      ['https://attacker.invalid/hr/operations/people'],
+      ['/hr/operations/people/not-sealed'],
+      ['/hr/directory'],
+    ];
+    for (const routeAliases of hostileAliases) {
+      expect(() =>
+        selectRuntimeHrisNavigationPolicyProjection(
+          projection('ENFORCED', {
+            policyEnforced: true,
+            revisionPin: revisionPin('e'),
+            workbenches: [withNodeRouteAliases(people, 'BASE:hr-people', routeAliases)],
+          })
+        )
+      ).toThrow('route alias');
+    }
+
+    const assignments = effectiveWorkbench('HRIS-WB-HR-OPERATIONS', [
+      'BASE:hr-employment-assignments',
+    ]);
+    expect(() =>
+      selectRuntimeHrisNavigationPolicyProjection(
+        projection('ENFORCED', {
+          policyEnforced: true,
+          revisionPin: revisionPin('f'),
+          workbenches: [
+            withNodeRouteAliases(assignments, 'BASE:hr-employment-assignments', [
+              '/hr/operations/assignments',
+              '/hr/operations/people/employment-assignments',
+            ]),
+          ],
+        })
+      )
+    ).toThrow('not sealed');
+
+    const operations = effectiveWorkbench('HRIS-WB-HR-OPERATIONS', ['BASE:hr-operations-home']);
+    expect(() =>
+      selectRuntimeHrisNavigationPolicyProjection(
+        projection('ENFORCED', {
+          policyEnforced: true,
+          revisionPin: revisionPin('1'),
+          workbenches: [
+            withNodeRouteAliases(operations, 'BASE:hr-operations-home', ['/hr/operations']),
+          ],
+        })
+      )
+    ).toThrow('not sealed');
+  });
+
   it('recognizes POLICY compatibility aliases but never treats them as runtime PAGE grants', () => {
     const policy = enforcedPolicy([
-      effectiveWorkbench('HRIS-WB-MY-HR', [
-        'BASE:my-hr-profile',
-        'BASE:my-time',
-        'BASE:my-leave',
-        'BASE:my-pay-tax',
-        'BASE:my-goals-performance',
-        'BASE:my-hr-requests',
-      ]),
-      effectiveWorkbench('HRIS-WB-TEAM', ['BASE:team-home']),
       effectiveWorkbench('HRIS-WB-HR-OPERATIONS', [
         'BASE:hr-people',
         'BASE:hr-organization-positions',
       ]),
-      effectiveWorkbench('HRIS-WB-SETTINGS', ['BASE:settings-operations']),
     ]);
     const policyAliases = [
       '/hr/me',
@@ -519,7 +643,11 @@ function effectiveWorkbench(
   const groups = canonical.groups.flatMap((group) => {
     const nodes = group.nodes
       .filter((node) => selected.has(node.nodeId))
-      .map((node) => ({ nodeId: node.nodeId, displayOrder: node.displayOrder }));
+      .map((node) => ({
+        nodeId: node.nodeId,
+        displayOrder: node.displayOrder,
+        routeAliases: node.routeAliases.filter(isHrisRuntimeEffectiveRouteAlias),
+      }));
     return nodes.length
       ? [
           {
@@ -543,6 +671,20 @@ function canonicalNode(nodeId: string) {
   return HRIS_SEVEN_WORKBENCH_NAVIGATION_CATALOG.flatMap((workbench) => workbench.groups)
     .flatMap((group) => group.nodes)
     .find((node) => node.nodeId === nodeId)!;
+}
+
+function withNodeRouteAliases(
+  workbench: ReturnType<typeof effectiveWorkbench>,
+  nodeId: string,
+  routeAliases: unknown
+) {
+  return {
+    ...workbench,
+    groups: workbench.groups.map((group) => ({
+      ...group,
+      nodes: group.nodes.map((node) => (node.nodeId === nodeId ? { ...node, routeAliases } : node)),
+    })),
+  };
 }
 
 function projection(
