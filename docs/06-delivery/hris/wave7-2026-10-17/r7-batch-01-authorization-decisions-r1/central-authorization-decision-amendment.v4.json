@@ -1,0 +1,203 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-01-central-authorization-decision-amendment.v4",
+  "amendmentId": "HRIS-WAVE7-R7-BATCH-01-CENTRAL-AUTHORIZATION-DECISION-AMENDMENT-20261017-R4",
+  "recordedAt": "2026-10-17T16:30:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL_TRUSTED_SESSION_CARRIER_REPAIR",
+  "state": "P1_TRUSTED_ELEVATED_SESSION_CARRIER_AND_ACTIVATED_CAPABILITY_TOPOLOGY_SEALED_APPEND_ONLY",
+  "immutablePredecessors": [
+    {
+      "path": "central-authorization-decision-amendment.v3.json",
+      "sha256": "fb0a458adad61d5cd2a718a7a8980f86971711ada78b3d92245fb90bd9bec43c",
+      "mutationForbidden": true
+    },
+    {
+      "path": "auth-lane-token-amendment.v3.json",
+      "sha256": "177c3fccde1a69e50d390ccbc025f7b621aac92feb80838528913f63041f7d40",
+      "mutationForbidden": true
+    },
+    {
+      "path": "validation-receipt-successor.v3.json",
+      "sha256": "4a760069b2611759735a0cbf92a93e4fe8140ba1d670e14021a19e9b6a7df620",
+      "mutationForbidden": true
+    },
+    {
+      "repository": "dwp-frontend",
+      "commit": "0e156446cf2d876e8de4f377973f4cfd6b7f5910",
+      "tree": "872b4edba01e6db2388b42520fa37147ee8f0732",
+      "mutationForbidden": true
+    }
+  ],
+  "precedence": "This v4 amendment supersedes v3 as the effective central authorization decision wherever v3 left the trusted elevated-session carrier unsealed, named the wrong Gateway test path, or treated only direct CAPABILITY access as activated. Every exact PAGE/DATA tuple, authorization-equivalence key, responseSchemaKey, TIME fresh-command binding, denial and false authority flag from v3 remains in force unless v4 explicitly strengthens it.",
+  "gatewayTestPathCorrection": {
+    "retiredIncorrectPath": "dwp-gateway/src/test/java/com/dwp/gateway/filter/ProductSurfaceDecisionContextFilterTest.java",
+    "retiredPathAuthorized": false,
+    "authoritativeExistingPath": "dwp-gateway/src/test/java/com/dwp/gateway/ProductSurfaceDecisionContextFilterTest.java",
+    "authoritativePathAuthorizedForTargetedChange": true,
+    "rule": "No duplicate ProductSurfaceDecisionContextFilterTest may be created under com/dwp/gateway/filter. The established com.dwp.gateway test is the only admitted test for this filter."
+  },
+  "trustedElevatedSessionCarrier": {
+    "carrierId": "AUTH_ME_ACTIVE_ACCESS_MODE_V1",
+    "sourceEndpoint": "GET /auth/me",
+    "responseField": "activeAccessMode",
+    "responseAllowedValues": [
+      "NORMAL",
+      "ELEVATED"
+    ],
+    "authSourceOfTruth": "ACTIVE_AUTH_SESSION_DATABASE_ROW_MATCHING_THE_PRESENTED_JWT",
+    "elevatedWhenAll": [
+      "The presented JWT token id resolves to an active, non-revoked, non-expired and non-idle-expired AuthSession row.",
+      "The AuthSession userId, tenantId and sessionFamilyId exactly match the authenticated JWT subject, tenant_id and sid.",
+      "AuthSession.authenticationMethod is exactly OIDC_STEP_UP after canonical normalization.",
+      "AuthSession.assuranceAcr exactly equals the configured dwp.auth.step-up.required-acr value.",
+      "AuthSession.assuranceAmr satisfies the existing OidcStepUpAmrPolicy canonical MFA-strength rule.",
+      "AuthSession.authenticatedAt is not in the future beyond the existing clock tolerance and is strictly within dwp.auth.step-up.maximum-authentication-age-seconds."
+    ],
+    "normalDowngradeWhenAny": [
+      "The current active session contains no step-up assurance.",
+      "authenticationMethod is not OIDC_STEP_UP.",
+      "The ACR is absent or differs from the exact configured required ACR.",
+      "The AMR set is absent, malformed or fails the canonical MFA-strength policy.",
+      "The assurance is outside the configured maximum age."
+    ],
+    "invalidSessionRule": "A missing or non-active AuthSession row, or a user, tenant or session-family mismatch, remains an authentication failure and must not be converted to NORMAL.",
+    "serverOwnership": [
+      "Auth computes activeAccessMode from the active database session and authenticated JWT; no request field or caller header can select it.",
+      "Gateway AuthSessionVerifier accepts only exact NORMAL or ELEVATED values from the successful /auth/me response.",
+      "A missing activeAccessMode field is interpreted as NORMAL only for rolling compatibility with an older Auth instance.",
+      "A blank, unknown, wrong-type or otherwise malformed activeAccessMode from /auth/me makes identity verification unavailable.",
+      "VerifiedIdentity carries the normalized mode to VerifiedIdentityFilter.",
+      "VerifiedIdentityFilter removes any caller-supplied X-DWP-Active-Access-Mode header and stores the verified mode only in a server-owned ServerWebExchange attribute.",
+      "ProductSurfaceDecisionContextFilter reads only the server-owned exchange attribute and never reads an active mode from a request header."
+    ],
+    "supportSessionPrecedence": "When a valid server-owned provider support session is present, ProductSurfaceDecisionContextFilter uses PROVIDER_SUPPORT regardless of the tenant session's NORMAL or ELEVATED value. ELEVATED never overrides or relabels PROVIDER_SUPPORT.",
+    "failClosedRules": [
+      "A malformed /auth/me activeAccessMode returns authority unavailable and never reaches an owner service.",
+      "A missing exchange attribute after a successful rolling-compatible identity verification is treated as NORMAL, never ELEVATED.",
+      "No internal active-mode request header is accepted as evidence, including headers supplied by a browser, reverse proxy or test client."
+    ]
+  },
+  "activatedCapabilityTraversal": {
+    "activatedCapabilityDefinition": "A capability whose lifecycleState is exactly ACTIVE, whose riskTier is HIGH or CRITICAL, and whose non-empty activationPolicy begins with STEPUP-.",
+    "requiredAccessForms": [
+      "CAPABILITY.capabilityContractKey",
+      "CAPABILITY_EXPRESSION.capabilityContractKeys with mode ANY",
+      "CAPABILITY_EXPRESSION.capabilityContractKeys with mode ALL"
+    ],
+    "sharedTraversalRule": "The generator validator, Auth ProductAuthorizationGateTopologyValidator and Gateway GeneratedProductRouteCatalog must traverse the same complete required-access capability set. Direct CAPABILITY and every member of an ANY or ALL CAPABILITY_EXPRESSION are resolved against the same capability registry; missing capability references fail closed.",
+    "expressionEvaluationRule": {
+      "ANY": "Gateway classifies the route as high-risk-step-up-capable when any expression member is activated. Auth still honors ANY: an independently allowed non-activated member may allow the route; when Auth returns STEP_UP_REQUIRED, Gateway must recognize it as a step-up result rather than translate it to authority unavailable.",
+      "ALL": "Gateway classifies the route as high-risk-step-up-capable when any required member is activated. Auth still honors ALL and may challenge only after all non-activation requirements are satisfied; an ordinary deny is never weakened into a challenge."
+    },
+    "requiredRegression": {
+      "routeContractKey": "route.hcm.operations.payroll-run.data",
+      "requiredAccessType": "CAPABILITY_EXPRESSION",
+      "requiredMode": "ANY",
+      "requiredCapabilityKeys": [
+        "hcm.operations.payroll-run.execute",
+        "hcm.operations.payroll-support.view"
+      ],
+      "normalResult": "STEP_UP_REQUIRED_CHALLENGE_NOT_503_AUTHORITY_UNAVAILABLE",
+      "elevatedResult": "REEVALUATE_EXACT_CAPABILITY_EXPRESSION_AND_PREDICATES"
+    }
+  },
+  "internalOnlyAuthorityEndpointTopology": {
+    "preexistingDefectBoundary": "The generated v48-and-later authority endpoint hris-navigation-policy-decisions.evaluate is an internal-only endpoint, but the Gateway parser currently applies public-endpoint requirements unconditionally and therefore rejects the bundle before targeted ProductSurfaceDecisionContextFilter proof can start.",
+    "endpointKey": "hris-navigation-policy-decisions.evaluate",
+    "exactTopology": {
+      "method": "POST",
+      "publicPath": null,
+      "expectedDecisionRevisionHeader": null,
+      "serviceKey": "auth",
+      "servicePath": "/internal/auth/v1/hris-navigation-policy-decisions/evaluate",
+      "requiresAuthentication": false,
+      "requiresCsrf": false
+    },
+    "parserRule": "GeneratedProductRouteCatalog must admit the exact internal-only topology without imposing /api/ or non-blank decision-revision-header requirements. Public endpoints retain those existing requirements.",
+    "lookupRule": "An internal-only authority endpoint with null publicPath must never match authorityEndpoint(method, publicPath), route lookup, public namespace derivation or any other public dispatch path. Public lookup must be null-safe and fail closed without dereferencing the null publicPath.",
+    "scopeRule": "This is a narrow parser and lookup correction in GeneratedProductRouteCatalog with proof in GeneratedProductRouteCatalogTest. It does not expose a new public route, relax any public endpoint, add authentication bypass, or change the internal service contract."
+  },
+  "genericAndFreshStepUpTopology": {
+    "genericSessionOnlyNoCommandBindingRoutes": [
+      "route.hcm.operations.payroll-population.page",
+      "route.hcm.operations.payroll-support.data",
+      "route.hcm.operations.payroll-run.data",
+      "route.hcm.operations.time-close-validate.action",
+      "route.hcm.operations.time-payroll-handoff-create.action",
+      "route.hcm.operations.time-payroll-handoff.data"
+    ],
+    "freshCommandBoundRoutes": [
+      "route.hcm.operations.payroll-run.action",
+      "route.hcm.operations.payroll-run-calculate.action",
+      "route.hcm.operations.time-close.action",
+      "route.hcm.operations.time-reopen.action"
+    ],
+    "timeRules": [
+      {
+        "bindingRef": "PEP-TIM-022",
+        "routeContractKey": "route.hcm.operations.time-close-validate.action",
+        "normalFlow": "RETURN_GENERIC_STEP_UP_CHALLENGE_WITHOUT_OWNER_FORWARDING",
+        "elevatedFlow": "REEVALUATE_AND_FORWARD_ONLY_WHEN_ALLOWED",
+        "freshCommandBoundStepUpRequired": false
+      },
+      {
+        "bindingRef": "PEP-TIM-023",
+        "routeContractKey": "route.hcm.operations.time-close.action",
+        "normalFlow": "REQUIRE_TRUSTED_SESSION_ELEVATION_BEFORE_ALLOWED_REEVALUATION",
+        "elevatedFlow": "FRESH_TIME_PERIOD_AND_IF_MATCH_COMMAND_PROOF_REMAINS_REQUIRED",
+        "freshCommandBoundStepUpRequired": true
+      },
+      {
+        "bindingRef": "PEP-TIM-024",
+        "routeContractKey": "route.hcm.operations.time-reopen.action",
+        "normalFlow": "REQUIRE_TRUSTED_SESSION_ELEVATION_BEFORE_ALLOWED_REEVALUATION",
+        "elevatedFlow": "FRESH_TIME_PERIOD_AND_IF_MATCH_COMMAND_PROOF_REMAINS_REQUIRED",
+        "freshCommandBoundStepUpRequired": true
+      },
+      {
+        "bindingRef": "PEP-TIM-025",
+        "routeContractKey": "route.hcm.operations.time-payroll-handoff-create.action",
+        "normalFlow": "RETURN_GENERIC_STEP_UP_CHALLENGE_WITHOUT_OWNER_FORWARDING",
+        "elevatedFlow": "REEVALUATE_AND_FORWARD_ONLY_WHEN_ALLOWED",
+        "freshCommandBoundStepUpRequired": false
+      },
+      {
+        "bindingRef": "PEP-TIM-026",
+        "routeContractKey": "route.hcm.operations.time-payroll-handoff.data",
+        "normalFlow": "RETURN_GENERIC_STEP_UP_CHALLENGE_WITHOUT_OWNER_FORWARDING_OR_PAYLOAD",
+        "elevatedFlow": "REEVALUATE_AND_FORWARD_ONLY_WHEN_ALLOWED",
+        "freshCommandBoundStepUpRequired": false
+      }
+    ],
+    "payRules": [
+      "Payroll population PAGE and support DATA return a generic step-up challenge in NORMAL and may return data only after ELEVATED reevaluation succeeds.",
+      "Payroll run DATA CAPABILITY_EXPRESSION returns a generic step-up challenge rather than 503 and may return data only after ELEVATED reevaluation succeeds.",
+      "Payroll prepare and calculate remain ELEVATED-authorized routes with their exact fresh target/version command bindings; the carrier makes ELEVATED reachable but never substitutes for command-bound evidence."
+    ],
+    "topologyValidatorException": "ProductAuthorizationGateTopologyValidator may accept an empty stepUpCommandBindings list only for the exact generic-session-only route closed set above. TIME close/reopen and PAY prepare/calculate must retain their exact fresh bindings; no capability may be split or weakened to evade this rule."
+  },
+  "unchangedV3DecisionBoundary": {
+    "pageAndDataRouteTuplesRemainExact": true,
+    "authorizationEquivalenceKeysRemainExact": true,
+    "responseSchemaKeysRemainExact": true,
+    "timeFreshCommandBindingsRemainExact": true,
+    "businessImplementationAuthorized": false,
+    "moduleMigrationAuthoringAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "activationAuthorized": false
+  },
+  "authority": {
+    "decisionAmendmentRecorded": true,
+    "trustedElevatedSessionCarrierDecisionSealed": true,
+    "activatedCapabilityTraversalDecisionSealed": true,
+    "v49Accepted": false,
+    "moduleTokenIssuanceAllowed": false,
+    "authLanePushAuthorized": false,
+    "authLaneMergeAuthorized": false,
+    "moduleImplementationAuthorized": false,
+    "moduleMigrationAuthoringAuthorized": false,
+    "moduleStartTokenIssued": false,
+    "tenantEnrollmentAuthorized": false,
+    "activationAuthorized": false
+  },
+  "nextGate": "AUTH_LANE_TOKEN_V4_MUST_BIND_THIS_EXACT_DECISION_AND_IMPLEMENTATION_RECEIPT_PLUS_INDEPENDENT_REVIEW_MUST_PASS_BEFORE_V49_ACCEPTANCE_OR_MODULE_TOKEN_ISSUANCE"
+}

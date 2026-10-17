@@ -1,0 +1,143 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-01-authorization-decision-validation-receipt.v4",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-01-AUTHORIZATION-DECISION-VALIDATION-20261017-R4",
+  "validatedAt": "2026-10-17T16:36:00+09:00",
+  "validatedBy": "SYS_COMMON_INTEGRATION_CONTROL_INDEPENDENT_TRUSTED_CARRIER_RECHECK",
+  "result": "PASS_APPEND_ONLY_V4_AUTHORITY_REPAIR_WITH_IMPLEMENTATION_AND_REVIEW_GATE_OPEN",
+  "immutablePredecessors": [
+    {
+      "path": "central-authorization-decision-amendment.v3.json",
+      "sha256": "fb0a458adad61d5cd2a718a7a8980f86971711ada78b3d92245fb90bd9bec43c"
+    },
+    {
+      "path": "auth-lane-token-amendment.v3.json",
+      "sha256": "177c3fccde1a69e50d390ccbc025f7b621aac92feb80838528913f63041f7d40"
+    },
+    {
+      "path": "validation-receipt-successor.v3.json",
+      "sha256": "4a760069b2611759735a0cbf92a93e4fe8140ba1d670e14021a19e9b6a7df620"
+    },
+    {
+      "repository": "dwp-frontend",
+      "commit": "0e156446cf2d876e8de4f377973f4cfd6b7f5910",
+      "tree": "872b4edba01e6db2388b42520fa37147ee8f0732"
+    }
+  ],
+  "validatedSuccessors": [
+    {
+      "path": "central-authorization-decision-amendment.v4.json",
+      "sha256": "ecd9af970c170d09416b8eba115b2b8b534c85c13dc95487d20f5c3597728d4d"
+    },
+    {
+      "path": "auth-lane-token-amendment.v4.json",
+      "sha256": "d76bd88e06b576f0e6c6c25422379e6381fe758427ced155368f2ef987367800"
+    }
+  ],
+  "checks": [
+    {
+      "id": "AUTHDEC-R4-VAL-001",
+      "result": "PASS",
+      "evidence": "The v3 commit 0e156446cf2d876e8de4f377973f4cfd6b7f5910 and all three v3 JSON files remain byte-immutable at their recorded SHA-256 values. The successor adds exactly three append-only v4 JSON files in the existing decision directory."
+    },
+    {
+      "id": "AUTHDEC-R4-VAL-002",
+      "result": "PASS",
+      "evidence": "V4 explicitly supersedes v3 where necessary, retires dwp-gateway/src/test/java/com/dwp/gateway/filter/ProductSurfaceDecisionContextFilterTest.java, authorizes the established dwp-gateway/src/test/java/com/dwp/gateway/ProductSurfaceDecisionContextFilterTest.java, and forbids a duplicate test."
+    },
+    {
+      "id": "AUTHDEC-R4-VAL-003",
+      "result": "PASS",
+      "evidence": "ProductAuthorizationGateTopologyValidator.java is admitted only for the exact PAY read and TIM 022/025/026 generic-session-step-up routes with no command binding, while PAY prepare/calculate and TIM 023/024 retain exact fresh command-bound proof."
+    },
+    {
+      "id": "AUTHDEC-R4-VAL-004",
+      "result": "PASS",
+      "evidence": "The trusted carrier derives ELEVATED only from an active identity-bound AuthSession row containing canonical fresh OIDC_STEP_UP, exact configured ACR, canonical MFA-strength AMR and assurance within configured maximum age. Every assurance miss downgrades an otherwise valid session to NORMAL; an invalid session remains authentication failure."
+    },
+    {
+      "id": "AUTHDEC-R4-VAL-005",
+      "result": "PASS",
+      "evidence": "GET /auth/me owns activeAccessMode server-side. Gateway accepts only exact NORMAL or ELEVATED, treats a missing field as rolling-safe NORMAL, rejects malformed values as authority unavailable, and transports the mode through VerifiedIdentity into a server-owned exchange attribute after removing client input. PROVIDER_SUPPORT has precedence."
+    },
+    {
+      "id": "AUTHDEC-R4-VAL-006",
+      "result": "PASS",
+      "evidence": "Generator, Auth topology and Gateway high-risk rules are bound to the same complete traversal of direct CAPABILITY and every ANY/ALL CAPABILITY_EXPRESSION member, preserving Auth expression truth while recognizing an activated-member STEP_UP_REQUIRED result as a challenge."
+    },
+    {
+      "id": "AUTHDEC-R4-VAL-007",
+      "result": "PASS",
+      "evidence": "route.hcm.operations.payroll-run.data is explicitly covered as an ANY expression over payroll-run.execute and payroll-support.view: NORMAL STEP_UP_REQUIRED cannot be translated to 503 and ELEVATED must reevaluate the exact expression and predicates."
+    },
+    {
+      "id": "AUTHDEC-R4-VAL-008",
+      "result": "PASS",
+      "evidence": "PEP-TIM-022, PEP-TIM-025 and PEP-TIM-026 use generic carrier elevation followed by ELEVATED reevaluation. PEP-TIM-023 and PEP-TIM-024 remain fresh command-bound, and PAY population/support/run reads plus prepare/calculate retain their distinct read and command semantics."
+    },
+    {
+      "id": "AUTHDEC-R4-VAL-009",
+      "result": "PASS",
+      "evidence": "The preexisting v48 internal-only hris-navigation-policy-decisions.evaluate endpoint is admitted with null publicPath and revision header only at its exact /internal/auth/v1/hris-navigation-policy-decisions/evaluate topology. Public lookup is null-safe and cannot match it; public endpoint validation remains strict."
+    },
+    {
+      "id": "AUTHDEC-R4-VAL-010",
+      "result": "PASS",
+      "evidence": "The effective changed-path list contains only the retained v3 generation/release boundary, exact Auth/Gateway carrier files, complete traversal/topology/high-risk files, and their targeted tests. It contains no business controller/service, owner-module migration, tenant enrollment or activation path."
+    },
+    {
+      "id": "AUTHDEC-R4-VAL-011",
+      "result": "PASS",
+      "evidence": "The v4 token binds the exact central v4 SHA-256. All PAGE/DATA tuples, authorization-equivalence keys, responseSchemaKey values, generated checksums and release-lineage requirements from v3 remain mandatory and unchanged."
+    },
+    {
+      "id": "AUTHDEC-R4-VAL-012",
+      "result": "PASS",
+      "evidence": "V49 acceptance, module-token issuance, push and merge remain false. They cannot become true until an exact implementation receipt and an independent implementation review both pass."
+    },
+    {
+      "id": "AUTHDEC-R4-VAL-013",
+      "result": "PASS",
+      "evidence": "All v4 artifacts parse as JSON, all recorded predecessor and successor SHA-256 values match the exact bytes, and git diff --check reports no whitespace errors. No product suite, migration or browser run is claimed by this authority-only receipt."
+    }
+  ],
+  "residualGate": {
+    "decisionId": "AUTH_LANE_V49_IMPLEMENTATION_RECEIPT_AND_INDEPENDENT_REVIEW_REQUIRED",
+    "state": "OPEN_BLOCKING_V49_ACCEPTANCE_MODULE_TOKENS_PUSH_AND_MERGE",
+    "backendImplementationReceiptRequired": true,
+    "independentImplementationReviewRequired": true,
+    "exactChangedPathAdmissionRequired": true,
+    "allChangedFileAndGeneratedArtifactHashesRequired": true,
+    "targetedTestsRequired": true,
+    "v49Accepted": false,
+    "moduleTokenIssuanceAllowed": false,
+    "authLanePushAuthorized": false,
+    "authLaneMergeAuthorized": false
+  },
+  "testPolicy": {
+    "jsonParseExecuted": true,
+    "sha256RecomputationExecuted": true,
+    "semanticInvariantChecksExecuted": true,
+    "appendOnlyDiffBoundaryExecuted": true,
+    "gitDiffCheckExecuted": true,
+    "productTestsExecuted": false,
+    "databaseMigrationsExecuted": false,
+    "browserTestsExecuted": false,
+    "reason": "This receipt validates an append-only authority correction only. The isolated backend lane owns narrowly targeted product proofs after consuming the exact v4 token."
+  },
+  "authority": {
+    "validationReceiptIssued": true,
+    "trustedCarrierDecisionValidated": true,
+    "completeCapabilityTraversalDecisionValidated": true,
+    "authLaneImplementationCommitAuthorizedWithinExactClosedSet": true,
+    "v49Accepted": false,
+    "moduleImplementationAuthorized": false,
+    "moduleMigrationAuthoringAuthorized": false,
+    "moduleTokenIssuanceAllowed": false,
+    "moduleStartTokenIssued": false,
+    "authLanePushAuthorized": false,
+    "authLaneMergeAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "activationAuthorized": false
+  },
+  "nextGate": "BACKEND_AUTH_LANE_V49_IMPLEMENTATION_RECEIPT_THEN_INDEPENDENT_REVIEW"
+}

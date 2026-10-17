@@ -1,0 +1,248 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-01-auth-lane-token-amendment.v4",
+  "amendmentId": "HRIS-WAVE7-R7-BATCH-01-AUTH-LANE-TOKEN-AMENDMENT-20261017-R4",
+  "recordedAt": "2026-10-17T16:34:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL_TRUSTED_SESSION_CARRIER_REPAIR",
+  "state": "P1_TRUSTED_SESSION_CARRIER_AND_COMPLETE_CAPABILITY_TRAVERSAL_BOUND_AUTH_LANE_ONLY",
+  "immutablePredecessors": [
+    {
+      "path": "central-authorization-decision-amendment.v3.json",
+      "sha256": "fb0a458adad61d5cd2a718a7a8980f86971711ada78b3d92245fb90bd9bec43c",
+      "mutationForbidden": true
+    },
+    {
+      "path": "auth-lane-token-amendment.v3.json",
+      "sha256": "177c3fccde1a69e50d390ccbc025f7b621aac92feb80838528913f63041f7d40",
+      "mutationForbidden": true
+    },
+    {
+      "path": "validation-receipt-successor.v3.json",
+      "sha256": "4a760069b2611759735a0cbf92a93e4fe8140ba1d670e14021a19e9b6a7df620",
+      "mutationForbidden": true
+    },
+    {
+      "repository": "dwp-frontend",
+      "commit": "0e156446cf2d876e8de4f377973f4cfd6b7f5910",
+      "tree": "872b4edba01e6db2388b42520fa37147ee8f0732",
+      "mutationForbidden": true
+    }
+  ],
+  "boundDecisionAmendment": {
+    "path": "central-authorization-decision-amendment.v4.json",
+    "sha256": "ecd9af970c170d09416b8eba115b2b8b534c85c13dc95487d20f5c3597728d4d",
+    "requiredState": "P1_TRUSTED_ELEVATED_SESSION_CARRIER_AND_ACTIVATED_CAPABILITY_TOPOLOGY_SEALED_APPEND_ONLY"
+  },
+  "precedence": "This v4 amendment supersedes v3 as the effective Auth-lane boundary. It replaces the incorrect Gateway test path, opens only the exact trusted-session carrier and complete activated-capability traversal paths below, and retains every v3 exact route tuple, equivalence key, response schema, fresh command binding, denial and false authority flag not explicitly strengthened here.",
+  "correctedGatewayTestPath": {
+    "retiredIncorrectPath": "dwp-gateway/src/test/java/com/dwp/gateway/filter/ProductSurfaceDecisionContextFilterTest.java",
+    "retiredPathAuthorized": false,
+    "authoritativeExistingPath": "dwp-gateway/src/test/java/com/dwp/gateway/ProductSurfaceDecisionContextFilterTest.java",
+    "authoritativePathAuthorized": true,
+    "duplicateTestCreationForbidden": true
+  },
+  "effectiveExactChangedPathClosedSet": [
+    "contracts/product-authorization/pilot-fixtures.v1.generated.json",
+    "contracts/product-authorization/pilot-fixtures.v1.schema.json",
+    "contracts/product-authorization/product-surfaces-v1.bundle-v49.json",
+    "contracts/product-authorization/product-surfaces-v1.index.json",
+    "contracts/product-authorization/product-surfaces-v1.json",
+    "contracts/product-authorization/product-surfaces-v1.yaml",
+    "dwp-auth-server/src/main/java/com/dwp/services/auth/controller/AuthController.java",
+    "dwp-auth-server/src/main/java/com/dwp/services/auth/dto/MeResponse.java",
+    "dwp-auth-server/src/main/java/com/dwp/services/auth/service/AuthSessionService.java",
+    "dwp-auth-server/src/main/java/com/dwp/services/auth/service/PayrollSupportElevatedReadAuthorityPolicy.java",
+    "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationAuthorityAdapter.java",
+    "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationContractValidator.java",
+    "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationGateTopologyValidator.java",
+    "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationReleaseLineage.java",
+    "dwp-auth-server/src/main/resources/db/migration/V257__declare_hris_payroll_settings_and_r7_authorization_seeds.sql",
+    "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v49.generated.json",
+    "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.generated.json",
+    "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.index.generated.json",
+    "dwp-auth-server/src/test/java/com/dwp/services/auth/controller/AuthControllerDiscoveryTest.java",
+    "dwp-auth-server/src/test/java/com/dwp/services/auth/repository/HrisR7AuthorizationSeedMigrationContractTest.java",
+    "dwp-auth-server/src/test/java/com/dwp/services/auth/service/AuthSessionServiceTest.java",
+    "dwp-auth-server/src/test/java/com/dwp/services/auth/service/PayrollSupportElevatedReadAuthorityPolicyTest.java",
+    "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationAuthorityAdapterTest.java",
+    "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationContractReleaseLineageTest.java",
+    "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationContractValidatorTest.java",
+    "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationReleaseLineageTest.java",
+    "dwp-gateway/src/main/java/com/dwp/gateway/filter/ProductSurfaceDecisionContextFilter.java",
+    "dwp-gateway/src/main/java/com/dwp/gateway/filter/VerifiedIdentityFilter.java",
+    "dwp-gateway/src/main/java/com/dwp/gateway/productsurface/GeneratedProductRouteCatalog.java",
+    "dwp-gateway/src/main/java/com/dwp/gateway/security/AuthSessionVerifier.java",
+    "dwp-gateway/src/main/java/com/dwp/gateway/security/VerifiedIdentity.java",
+    "dwp-gateway/src/test/java/com/dwp/gateway/AuthSessionVerifierTest.java",
+    "dwp-gateway/src/test/java/com/dwp/gateway/ProductSurfaceDecisionContextFilterTest.java",
+    "dwp-gateway/src/test/java/com/dwp/gateway/VerifiedIdentityFilterTest.java",
+    "dwp-gateway/src/test/java/com/dwp/gateway/productsurface/GeneratedProductRouteCatalogTest.java",
+    "dwp-gateway/src/test/java/com/dwp/gateway/security/VerifiedIdentityTest.java",
+    "dwp-payroll-server/src/main/resources/product-authorization/hcm-payroll-pep-v49.generated.json",
+    "dwp-people-server/src/main/resources/product-authorization/hcm-people-pep-v49.generated.json",
+    "dwp-platform-server/src/main/resources/product-authorization/hcm-platform-pep-v49.generated.json",
+    "dwp-time-server/src/main/resources/product-authorization/hcm-time-pep-v49.generated.json",
+    "scripts/generate-product-authorization-contracts.py",
+    "scripts/generate-product-authorization-fixtures.py",
+    "scripts/tests/test_product_authorization_v21.py",
+    "scripts/tests/test_product_authorization_v47.py",
+    "scripts/tests/test_product_authorization_v49.py"
+  ],
+  "closedSetRule": "The backend v49 Auth-lane implementation commit may change only files in effectiveExactChangedPathClosedSet. Every predecessor glob is narrowed to this effective list. Any other changed path, including a business controller/service or the retired Gateway test path, is a hard denial requiring a new append-only exact-path amendment.",
+  "trustedElevatedSessionCarrierException": {
+    "purpose": "Make ELEVATED reachable only from canonical fresh assurance on the active Auth database session and carry that server-owned result through /auth/me and verified Gateway identity into ProductSurfaceDecisionContextFilter.",
+    "authMainPaths": [
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/controller/AuthController.java",
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/dto/MeResponse.java",
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/service/AuthSessionService.java"
+    ],
+    "authTargetedTestPaths": [
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/controller/AuthControllerDiscoveryTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/AuthSessionServiceTest.java"
+    ],
+    "gatewayMainPaths": [
+      "dwp-gateway/src/main/java/com/dwp/gateway/security/AuthSessionVerifier.java",
+      "dwp-gateway/src/main/java/com/dwp/gateway/security/VerifiedIdentity.java",
+      "dwp-gateway/src/main/java/com/dwp/gateway/filter/VerifiedIdentityFilter.java",
+      "dwp-gateway/src/main/java/com/dwp/gateway/filter/ProductSurfaceDecisionContextFilter.java"
+    ],
+    "gatewayTargetedTestPaths": [
+      "dwp-gateway/src/test/java/com/dwp/gateway/AuthSessionVerifierTest.java",
+      "dwp-gateway/src/test/java/com/dwp/gateway/security/VerifiedIdentityTest.java",
+      "dwp-gateway/src/test/java/com/dwp/gateway/VerifiedIdentityFilterTest.java",
+      "dwp-gateway/src/test/java/com/dwp/gateway/ProductSurfaceDecisionContextFilterTest.java"
+    ],
+    "requiredAuthBehavior": [
+      "Auth resolves the presented JWT token id to an active, non-revoked, non-expired and non-idle-expired AuthSession database row and verifies exact userId, tenantId and sessionFamilyId identity binding.",
+      "Auth emits ELEVATED only when authenticationMethod is canonical OIDC_STEP_UP, assuranceAcr exactly equals dwp.auth.step-up.required-acr, assuranceAmr satisfies the existing OidcStepUpAmrPolicy MFA rule, and authenticatedAt is within dwp.auth.step-up.maximum-authentication-age-seconds subject only to the existing clock tolerance.",
+      "An active identity-bound session that lacks any one assurance condition is deterministically downgraded to NORMAL. A missing or invalid active session remains an authentication failure rather than a downgrade.",
+      "GET /auth/me adds the server-owned activeAccessMode field with exactly NORMAL or ELEVATED; no request value or caller header participates in its computation."
+    ],
+    "requiredGatewayBehavior": [
+      "AuthSessionVerifier accepts only exact NORMAL or ELEVATED from a successful /auth/me projection.",
+      "A missing activeAccessMode is NORMAL only for rolling compatibility; blank, unknown, wrong-type or malformed values make authority unavailable.",
+      "VerifiedIdentity carries the normalized mode and VerifiedIdentityFilter removes every caller-supplied X-DWP-Active-Access-Mode value before placing the verified mode in a server-owned ServerWebExchange attribute.",
+      "ProductSurfaceDecisionContextFilter reads only that server-owned attribute. A missing attribute is NORMAL and a valid provider support session has PROVIDER_SUPPORT precedence over ELEVATED.",
+      "No client, browser, reverse-proxy or test request header can assert ELEVATED."
+    ]
+  },
+  "completeActivatedCapabilityTraversalException": {
+    "purpose": "Apply one complete activated-capability traversal to generation, Auth topology validation and Gateway high-risk classification so a STEP_UP_REQUIRED result for an activated expression member is challenged rather than converted to 503.",
+    "mainPaths": [
+      "scripts/generate-product-authorization-contracts.py",
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationGateTopologyValidator.java",
+      "dwp-gateway/src/main/java/com/dwp/gateway/productsurface/GeneratedProductRouteCatalog.java"
+    ],
+    "targetedTestPaths": [
+      "scripts/tests/test_product_authorization_v49.py",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationContractValidatorTest.java",
+      "dwp-gateway/src/test/java/com/dwp/gateway/productsurface/GeneratedProductRouteCatalogTest.java"
+    ],
+    "requiredTraversal": [
+      "Direct CAPABILITY.capabilityContractKey.",
+      "Every CAPABILITY_EXPRESSION.capabilityContractKeys member when mode is ANY.",
+      "Every CAPABILITY_EXPRESSION.capabilityContractKeys member when mode is ALL."
+    ],
+    "requiredSemantics": [
+      "All three layers resolve the complete required-access capability set against the same registry and fail closed on a missing reference.",
+      "An active HIGH or CRITICAL capability whose non-empty activationPolicy begins with STEPUP- marks the Gateway route as high-risk-step-up-capable whether direct or nested in ANY or ALL.",
+      "Auth preserves normal ANY and ALL authorization truth; Gateway classification recognizes STEP_UP_REQUIRED but never turns an ordinary deny into a challenge.",
+      "route.hcm.operations.payroll-run.data is covered through its ANY expression over hcm.operations.payroll-run.execute and hcm.operations.payroll-support.view; NORMAL STEP_UP_REQUIRED becomes a challenge, not 503, and ELEVATED reevaluates the exact expression and predicates."
+    ]
+  },
+  "genericSessionStepUpTopologyException": {
+    "allowedTopologyPath": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationGateTopologyValidator.java",
+    "allowedGeneratorPath": "scripts/generate-product-authorization-contracts.py",
+    "allowedTargetedTests": [
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationContractValidatorTest.java",
+      "scripts/tests/test_product_authorization_v49.py"
+    ],
+    "emptyCommandBindingAllowedOnlyFor": [
+      "route.hcm.operations.payroll-population.page",
+      "route.hcm.operations.payroll-support.data",
+      "route.hcm.operations.payroll-run.data",
+      "route.hcm.operations.time-close-validate.action",
+      "route.hcm.operations.time-payroll-handoff-create.action",
+      "route.hcm.operations.time-payroll-handoff.data"
+    ],
+    "timeSemantics": {
+      "genericCarrierElevationThenReevaluation": [
+        "PEP-TIM-022",
+        "PEP-TIM-025",
+        "PEP-TIM-026"
+      ],
+      "freshCommandBoundAfterElevation": [
+        "PEP-TIM-023",
+        "PEP-TIM-024"
+      ]
+    },
+    "paySemantics": "Payroll population PAGE, payroll-support DATA and payroll-run DATA become reachable only through trusted carrier elevation followed by exact policy reevaluation. Payroll prepare and calculate remain ELEVATED plus their exact fresh command-bound proof.",
+    "forbidden": [
+      "An empty command binding on any route outside the exact generic-session-only closed set.",
+      "Removing or weakening the TIME close/reopen or PAY prepare/calculate fresh command binding.",
+      "Capability splitting, predicate weakening or business behavior changes."
+    ]
+  },
+  "internalOnlyAuthorityEndpointParserException": {
+    "allowedMainPath": "dwp-gateway/src/main/java/com/dwp/gateway/productsurface/GeneratedProductRouteCatalog.java",
+    "allowedTargetedTestPath": "dwp-gateway/src/test/java/com/dwp/gateway/productsurface/GeneratedProductRouteCatalogTest.java",
+    "exactEndpointKey": "hris-navigation-policy-decisions.evaluate",
+    "exactTopology": {
+      "method": "POST",
+      "publicPath": null,
+      "expectedDecisionRevisionHeader": null,
+      "serviceKey": "auth",
+      "servicePath": "/internal/auth/v1/hris-navigation-policy-decisions/evaluate",
+      "requiresAuthentication": false,
+      "requiresCsrf": false
+    },
+    "requiredBehavior": [
+      "The parser does not impose /api/ public-path or non-blank revision-header requirements on this exact internal-only endpoint.",
+      "Public authority endpoints retain all existing public-path and revision-header validation.",
+      "Public authorityEndpoint lookup and every public route or namespace lookup are null-safe and can never match or dispatch the internal-only endpoint.",
+      "The correction introduces no public route and no authentication or CSRF bypass for a public endpoint."
+    ]
+  },
+  "unchangedRouteContractAdmission": {
+    "v3DecisionSha256": "fb0a458adad61d5cd2a718a7a8980f86971711ada78b3d92245fb90bd9bec43c",
+    "pageAndDataRouteTuplesRemainExact": true,
+    "responseSchemaKeyRequired": true,
+    "responseContractKeyGenerationInputForbidden": true,
+    "allowedWireAuthorityEquivalenceKeys": [
+      "wire-authority.hcm.operations.organization-graph.v1",
+      "wire-authority.hcm.operations.payroll-population.v1"
+    ],
+    "unkeyedPageDataWireCollisionForbidden": true
+  },
+  "implementationReceiptProofRequired": [
+    "The backend changed-path manifest is a subset of effectiveExactChangedPathClosedSet and contains no retired path, business controller/service, module migration or tenant activation path.",
+    "Every changed file has an exact SHA-256 and a necessity mapped to one v4 invariant.",
+    "Auth targeted tests prove active-session identity binding, exact canonical OIDC_STEP_UP/ACR/MFA-AMR/max-age elevation, NORMAL downgrade and invalid-session failure.",
+    "Gateway targeted tests prove exact mode parsing, missing=NORMAL rolling compatibility, malformed=unavailable, client-header distrust, server-owned exchange transport and PROVIDER_SUPPORT precedence.",
+    "Generator, Auth and Gateway targeted tests prove identical direct/ANY/ALL activated-capability traversal and payroll-run.data challenge rather than 503.",
+    "TIM targeted proof distinguishes generic carrier elevation for 022/025/026 from fresh command-bound 023/024, and PAY proof preserves fresh prepare/calculate bindings.",
+    "GeneratedProductRouteCatalogTest proves the exact internal-only endpoint parses null-safely and is invisible to every public lookup while public endpoint validation remains strict.",
+    "All PAGE/DATA tuples, equivalence keys, responseSchemaKey fields, generated checksums and release-lineage constraints from v3 remain exact."
+  ],
+  "explicitDenialsAfterAmendment": [
+    "All HRM, PAY, SYS, TIM and PER business controllers, application services and domain services remain forbidden.",
+    "Payroll V52, Platform V331, Time V12, People V57 and Notification V36 authoring remains forbidden.",
+    "SVC-PEP-TIM-001 and all owner-module business implementation remain forbidden.",
+    "The retired dwp-gateway/src/test/java/com/dwp/gateway/filter/ProductSurfaceDecisionContextFilterTest.java path remains forbidden.",
+    "Client-controlled active-access-mode input, generic bypass, fail-open fallback, capability splitting and predicate weakening remain forbidden.",
+    "Feature activation, tenant enrollment, tenant override, push, dwp-dev merge and owner-module token issuance remain forbidden."
+  ],
+  "authority": {
+    "authLaneTokenAmended": true,
+    "authLaneImplementationCommitAuthorizedWithinExactClosedSet": true,
+    "v49Accepted": false,
+    "moduleTokenIssuanceAllowed": false,
+    "authLanePushAuthorized": false,
+    "authLaneMergeAuthorized": false,
+    "moduleImplementationAuthorized": false,
+    "moduleMigrationAuthoringAuthorized": false,
+    "moduleStartTokenIssued": false,
+    "tenantEnrollmentAuthorized": false,
+    "activationAuthorized": false
+  },
+  "nextGate": "AUTH_LANE_IMPLEMENTATION_RECEIPT_AND_INDEPENDENT_REVIEW_REQUIRED_BEFORE_V49_ACCEPTANCE_MODULE_TOKEN_PUSH_OR_MERGE"
+}
