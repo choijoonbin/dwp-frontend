@@ -13,7 +13,7 @@ export const PAYROLL_RUN_PREPARE_ROUTE_CONTRACT_KEY =
 
 export const PAYROLL_POPULATION_PATH = '/api/payroll/v1/workbench/population' as const;
 export const PAYROLL_RUN_PREPARE_PATH = '/api/payroll/v1/runs' as const;
-export const PAYROLL_COMMAND_CENTER_PATH = '/hr/operations/payroll/command-center' as const;
+export const PAYROLL_COMMAND_CENTER_PATH = '/hr/operations/pay' as const;
 
 export const PAYROLL_POPULATION_ENTRY_QUERY = Object.freeze({
   contractId: 'IAQ-014',

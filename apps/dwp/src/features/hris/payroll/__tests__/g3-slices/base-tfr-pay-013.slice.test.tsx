@@ -782,6 +782,7 @@ describe('[SLICE:BASE-TFR-PAY-013] population workspace runtime', () => {
     });
     expect(host.textContent).toContain('Preparation accepted');
     expect(host.querySelector(`a[href="${PAYROLL_COMMAND_CENTER_PATH}"]`)).not.toBeNull();
+    expect(host.querySelector('a[href="/hr/operations/pay"]')).not.toBeNull();
     expect(button('Prepare payroll run').disabled).toBe(true);
   });
 
