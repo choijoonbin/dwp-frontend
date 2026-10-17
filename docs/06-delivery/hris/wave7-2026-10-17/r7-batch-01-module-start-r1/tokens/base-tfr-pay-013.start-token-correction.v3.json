@@ -1,0 +1,87 @@
+{
+  "schema": "dwp.hris.module-correction-token.v1",
+  "tokenId": "HRIS-WAVE7-R7-BATCH-01-CORRECTION-BASE-TFR-PAY-013-20261017-R3",
+  "issuedAt": "2026-10-17T19:25:02+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "moduleSession": "HRIS-PAY",
+  "sliceId": "BASE-TFR-PAY-013",
+  "canonicalFeature": "HRIS_PAYROLL_RUN_PREPARE",
+  "state": "CORRECTION_AUTHORIZED_EXACT_CANONICAL_SUCCESS_LINK_BRANCH_COMMIT_AND_PUSH_ONLY",
+  "reason": [
+    "Independent control review confirmed that /hr/operations/payroll/command-center is not an authorized or mounted PAGE.",
+    "The canonical compatible payroll PAGE is /hr/operations/pay.",
+    "Central dwp-dev now contains the exact HCM_PAYROLL_RUN_PREPARE high-risk operation and PAYROLL_RUN_PREPARATION target type required by the future mount adapter."
+  ],
+  "supersession": {
+    "predecessorToken": {
+      "path": "base-tfr-pay-013.start-token-replacement.v2.json",
+      "sha256": "db803c85a17d3845ec2c4d6e5a57978a2e6581a98e7caa43186525146928cc6b",
+      "bytes": 7506,
+      "disposition": "COMPLETED_THEN_EXTENDED_ONLY_FOR_INDEPENDENT_REVIEW_CORRECTION"
+    },
+    "unchangedAuthorityInherited": [
+      "PAY-013 backend source and V52 evidence remain sealed and must not be edited or retested",
+      "default OFF, empty tenant enrollment and zero-call requirements",
+      "no central route or shell mount, activation, customer data or production release",
+      "no central carrier merge, rebase or cherry-pick into the module worktree"
+    ]
+  },
+  "centralPrerequisite": {
+    "repository": "dwp-frontend",
+    "branch": "dwp-dev",
+    "commit": "67b2112b7eecad48d8c3ecf89d734425f2d2e872",
+    "tree": "4c3e042c7f3586436c920b9bd464f5e8afd939ab",
+    "originExactAtIssue": true,
+    "providedContract": {
+      "operation": "HCM_PAYROLL_RUN_PREPARE",
+      "targetType": "PAYROLL_RUN_PREPARATION",
+      "routeContractKey": "route.hcm.operations.payroll-run.action",
+      "targetedVerification": "apps/dwp/src/components/product-surface-high-risk-command.test.ts: 6/6"
+    }
+  },
+  "worktree": {
+    "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261017/r7-batch01/pay-013/frontend",
+    "branch": "codex/hris-wave7-r7-batch01-pay-013-frontend-20261017-r1",
+    "upstream": "origin/codex/hris-wave7-r7-batch01-pay-013-frontend-20261017-r1",
+    "head": "7777928a47b2376087d058042bac60aebdf2f852",
+    "tree": "15fdc4027c822064ff6ac3b5a7862522108ab5b2",
+    "upstreamHead": "7777928a47b2376087d058042bac60aebdf2f852",
+    "state": "CLEAN_REMOTE_EXACT_CONTROL_REVIEW_CORRECTION_REQUIRED"
+  },
+  "exactCorrection": {
+    "writePaths": [
+      "apps/dwp/src/features/hris/payroll/population/payroll-population-contract.ts",
+      "apps/dwp/src/features/hris/payroll/__tests__/g3-slices/base-tfr-pay-013.slice.test.tsx",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-results-r1/base-tfr-pay-013/**"
+    ],
+    "requirements": [
+      "Replace PAYROLL_COMMAND_CENTER_PATH with the canonical /hr/operations/pay PAGE.",
+      "Add one exact regression assertion that the success CTA targets /hr/operations/pay.",
+      "Do not add a new route, PAGE contract, alias or navigation entry.",
+      "Do not duplicate or locally shadow the central high-risk operation or target type."
+    ]
+  },
+  "verification": {
+    "only": "Run the existing BASE-TFR-PAY-013 frontend slice target once after the two-file correction.",
+    "afterFailure": "Fix and rerun only the smallest failing test method or assertion.",
+    "repositoryWideSuiteAuthorized": false,
+    "backendRetestAuthorized": false,
+    "browserBeforeCentralMountAuthorized": false
+  },
+  "authority": {
+    "exactFrontendCorrectionAuthorized": true,
+    "moduleBranchCommitAuthorized": true,
+    "moduleBranchPushAuthorized": true,
+    "mergeToDwpDevAuthorized": false,
+    "centralRouteOrShellMountAuthorized": false,
+    "centralCarrierMergeIntoModuleWorktreeAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "completionBoundary": {
+    "requiredResultState": "MODULE_CORRECTION_COMPLETE_BRANCH_PUSHED_CONTROL_REVIEW_PENDING_DEFAULT_OFF",
+    "directDwpDevMergeAuthorized": false,
+    "centralResultAdmissionAuthorized": false
+  }
+}
