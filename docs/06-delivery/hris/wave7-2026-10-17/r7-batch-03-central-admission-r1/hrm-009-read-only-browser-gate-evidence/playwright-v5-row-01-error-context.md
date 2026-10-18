@@ -1,0 +1,152 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "본문으로 건너뛰기" [ref=e3] [cursor=pointer]:
+    - /url: "#dwp-main-content"
+  - generic [ref=e4]:
+    - complementary [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e7]:
+          - link "Digital Workplace 홈" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e10]: DWP
+            - generic [ref=e13]: Digital Workplace
+          - generic "탐색 메뉴 접기" [ref=e14]:
+            - button "탐색 메뉴 접기" [expanded] [ref=e15] [cursor=pointer]:
+              - img [ref=e17]
+              - img [ref=e20]
+        - separator [ref=e23]
+        - generic [ref=e24]:
+          - paragraph [ref=e25]: DWP HRIS
+          - paragraph [ref=e26]: SKAX
+        - navigation "HRIS 메뉴" [ref=e27]
+        - link "앱 목록으로 돌아가기" [ref=e29] [cursor=pointer]:
+          - /url: /apps
+          - img [ref=e31]
+          - text: 앱 목록으로 돌아가기
+    - banner [ref=e33]:
+      - generic [ref=e34]:
+        - generic [ref=e35]:
+          - img [ref=e37]
+          - generic [ref=e41]:
+            - generic "HRIS" [ref=e42]
+            - generic "SKAX · My HR certificate requests" [ref=e43]
+        - generic "현재 워크스페이스" [ref=e45]:
+          - generic [ref=e47]: D
+          - generic [ref=e48]:
+            - generic [ref=e49]: DWP Workspace
+            - generic [ref=e50]: 현재 워크스페이스
+        - generic [ref=e52]:
+          - group "제품 접근 컨텍스트" [ref=e53]:
+            - generic [ref=e54]:
+              - img "읽기 전용" [ref=e55]:
+                - img [ref=e56]
+                - text: 읽기 전용
+              - img "2026. 10. 18. 오전 9:47에 접근 재확인" [ref=e59]:
+                - img [ref=e60]
+                - generic [ref=e63]: 접근 재확인
+          - status [ref=e64]
+        - generic [ref=e65]:
+          - button "DWP 검색" [ref=e67] [cursor=pointer]:
+            - img [ref=e68]
+            - paragraph [ref=e71]: DWP 검색
+            - generic [ref=e72]: ⌘K
+          - generic [ref=e73]:
+            - button "전체 화면" [ref=e74] [cursor=pointer]:
+              - img [ref=e75]
+            - generic "알림" [ref=e81]:
+              - button "알림" [ref=e82] [cursor=pointer]:
+                - img [ref=e84]
+          - 'button "계정: 최준빈, SKAX integrated verification administrator" [ref=e88] [cursor=pointer]':
+            - generic [ref=e89]: 최
+            - generic [ref=e90]:
+              - generic [ref=e91]: 최준빈
+              - generic [ref=e92]: SKAX integrated verification administrator
+            - img [ref=e93]
+    - main [ref=e95]:
+      - generic [ref=e97]:
+        - generic [ref=e99]:
+          - img [ref=e101]
+          - generic [ref=e105]:
+            - text: Employee self-service · governed requests
+            - heading "My HR requests and certificates" [active] [level=1] [ref=e106]
+            - paragraph [ref=e107]: Review disclosed request and certificate metadata in the current read-only Stage-A scope.
+            - generic [ref=e108]: "Primary user: Employee · Operational question: Which governed HR requests can I review, and can I request a certificate now? · Archetype: list-detail"
+          - generic [ref=e109]:
+            - generic [ref=e111]: CURRENT
+            - generic [ref=e113]: 1 items
+            - button "Refresh" [ref=e114] [cursor=pointer]:
+              - img [ref=e116]
+              - text: Refresh
+        - status [ref=e121]:
+          - img [ref=e123]
+          - generic [ref=e125]:
+            - generic [ref=e126]: Stage-A is read only
+            - text: This mount discloses request status and certificate/document metadata only. Certificate submission is disabled. Download, revoke, verification, expiry, access-audit, and download-audit are not supported in this stage.
+        - generic [ref=e127]:
+          - generic [ref=e128]:
+            - heading "My disclosed requests" [level=2] [ref=e129]
+            - list [ref=e130]:
+              - listitem [ref=e131]:
+                - button "Employment and long-form certificate request for a globally mobile employee with an intentionally long Korean and English label 증명서 요청 RUNNING" [pressed] [ref=e132] [cursor=pointer]:
+                  - generic [ref=e133]: Employment and long-form certificate request for a globally mobile employee with an intentionally long Korean and English label 증명서 요청
+                  - text: RUNNING
+          - generic [ref=e134]:
+            - generic [ref=e135]:
+              - generic [ref=e136]:
+                - heading "Employment and long-form certificate request for a globally mobile employee with an intentionally long Korean and English label 증명서 요청" [level=2] [ref=e137]
+                - text: request:1001
+              - generic [ref=e139]: RUNNING
+            - generic [ref=e140]: "Governed detail reference: /hr/me/requests?tab=overview&focus=request%3A1001"
+            - separator [ref=e141]
+            - generic [ref=e142]:
+              - generic [ref=e143]:
+                - term [ref=e144]: REQUEST SUMMARY
+                - definition [ref=e145]: 1 items · revision 2
+              - generic [ref=e146]:
+                - term [ref=e147]: REQUEST STATUS
+                - definition [ref=e148]: RUNNING · revision 3
+              - generic [ref=e149]:
+                - term [ref=e150]: COMMAND RECEIPT
+                - definition [ref=e151]: ACCEPTED · 2026-10-18T00:00:00Z · revision 1
+            - generic [ref=e152]:
+              - separator [ref=e153]
+              - heading "Request certificate" [level=3] [ref=e154]
+              - paragraph [ref=e155]: Purpose is fixed to EMPLOYEE_SELF_SERVICE. The People owner derives self or operations authority from trusted identity and requires high step-up before mutation.
+              - generic [ref=e156]:
+                - generic [ref=e157]:
+                  - generic:
+                    - text: Person public ID
+                    - generic: "*"
+                  - generic [ref=e158]:
+                    - textbox "Person public ID" [disabled] [ref=e159]
+                    - group:
+                      - generic: Person public ID *
+                - generic [ref=e160]:
+                  - generic [ref=e161]:
+                    - text: Certificate type
+                    - generic [ref=e162]: "*"
+                  - generic [ref=e163]:
+                    - combobox "Certificate type Employment certificate" [disabled] [ref=e164]: Employment certificate
+                    - textbox [disabled]: EMPLOYMENT_CERTIFICATE
+                    - img
+                    - group:
+                      - generic: Certificate type *
+                - generic [ref=e165]:
+                  - generic [ref=e166]:
+                    - text: As-of instant (ISO 8601)
+                    - generic [ref=e167]: "*"
+                  - generic [ref=e168]:
+                    - textbox "As-of instant (ISO 8601)" [disabled] [ref=e169]: 2026-10-18T00:00:00Z
+                    - group:
+                      - generic: As-of instant (ISO 8601) *
+              - generic [ref=e170]:
+                - button "Review and send request" [disabled]
+                - generic [ref=e171]: The command delegate is intentionally withheld for this read-only Stage-A mount.
+        - generic [ref=e172]:
+          - button "Previous" [disabled]
+          - button "Next" [disabled]
+  - generic "DWAI·ON 열기" [ref=e174]:
+    - button "DWAI·ON 열기" [ref=e175] [cursor=pointer]
+```

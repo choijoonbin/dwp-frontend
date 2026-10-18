@@ -1,0 +1,413 @@
+{
+  "schema": "dwp.hris.r7-batch03-hrm009-read-only-browser-gate-browser-strictmode-authority.v6",
+  "decisionId": "HRIS-WAVE7-R7-BATCH03-HRM009-READ-ONLY-BROWSER-GATE-BROWSER-STRICTMODE-AUTHORITY-20261018-R6",
+  "issuedAt": "2026-10-18T09:44:37+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "AUTHORIZED_TARGETED_BROWSER_STRICTMODE_TASK_DEFERRAL_AND_WORKBENCH_SELECTOR_ZERO_WRITE",
+  "purpose": "Issue one append-only successor to the immutable v5 cold-start authority after its bounded corrected replay again stopped at row one. The HRM-009 read-only workbench mounted correctly and retained zero mutation, zero unexpected-authority and zero step-up evidence, but the browser assertion searched the entire page and falsely treated the account label 'SKAX integrated verification administrator' as a forbidden HRM-009 action. The same stopped run also proved that one-microtask deferral did not cross the real development StrictMode probe cleanup boundary: PAGE, DATA and owner GET transports each executed twice. This v6 authorizes only a workbench-scoped forbidden-action assertion, abort-aware one-task transport deferral at the three inspected HRM-009 read boundaries, exact regressions in their matching existing test files, one further corrected replay of row one, and one first execution of each never-run row two through five. It does not authorize fixture changes, backend changes, writable behavior, activation, enrollment, a broad suite or any replay beyond that bounded sequence.",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_DECISION_ID_AND_SHA256",
+    "predecessorMutation": "FORBIDDEN"
+  },
+  "predecessorDocument": {
+    "path": "hrm-009-read-only-browser-gate-cold-start-authority.v5.json",
+    "sha256": "7a810032006729132451ea04d2de68adf314ae0fad1fe7ceff5fa47430e9af53",
+    "bytes": 26178,
+    "preservation": "IMMUTABLE",
+    "binding": "V6_IS_INVALID_IF_THE_PREDECESSOR_BYTES_OR_SHA256_DIFFER"
+  },
+  "effectiveInheritance": {
+    "inheritsAllUnchangedV5Terms": true,
+    "effectiveSequence": [
+      "hrm-009-read-only-browser-gate-fixture-execution-authority.v1.json",
+      "hrm-009-read-only-browser-gate-fixture-execution-authority-successor.v2.json",
+      "hrm-009-read-only-browser-gate-runtime-correction-authority.v3.json",
+      "hrm-009-read-only-browser-gate-runtime-stability-authority.v4.json",
+      "hrm-009-read-only-browser-gate-cold-start-authority.v5.json",
+      "hrm-009-read-only-browser-gate-browser-strictmode-authority.v6.json"
+    ],
+    "v6OverridesOnly": [
+      "the forbidden-action locator boundary inside the dedicated HRM-009 E2E assertion",
+      "the deferral primitive used before PAGE, DATA and owner GET transport dispatch under development StrictMode",
+      "the exact seven-file implementation allowlist and three targeted test files",
+      "the bounded continuation state after the v5 row-one failure"
+    ],
+    "unchangedV5SecurityFixtureAndExecutionTermsRemainBinding": true
+  },
+  "secondMatrixFailureEvidence": {
+    "executionAuthority": "hrm-009-read-only-browser-gate-cold-start-authority.v5.json",
+    "implementationMerge": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "08bcd41a12d02093a5fad8062d319d337daa8eed",
+      "tree": "cdebe1d7200a36e7f01ef46679785d3ac9e477b9",
+      "subject": "merge(hris): stabilize HRM-009 cold-start gate"
+    },
+    "dedicatedConfig": "playwright.hris-hrm-009-read-only.config.ts",
+    "executionMode": "SERIAL_WORKER_ONE_RETRIES_ZERO_STOP_ON_FIRST_FAILURE",
+    "row": "1440_LIGHT_PERSONAL",
+    "rowOrdinal": 1,
+    "result": "FAILED_AND_STOPPED_ROWS_TWO_THROUGH_FIVE_NOT_RUN",
+    "failureSurface": "FALSE_POSITIVE_FORBIDDEN_ACTION_LOCATOR_AFTER_SUCCESSFUL_READ_ONLY_MOUNT",
+    "uiObservation": {
+      "workbenchMounted": true,
+      "workbenchRuntimeState": "complete",
+      "readOnlyBannerPresent": true,
+      "certificateSubmissionDisabled": true,
+      "mutationDelegateExposed": false,
+      "falsePositiveText": "SKAX integrated verification administrator",
+      "falsePositiveSource": "Global account button outside the HRM-009 workbench",
+      "interpretation": "The screenshot and accessibility tree show a successful read-only HRM-009 personal workbench. The test failed because the whole-page button/link locator matched the English word 'verification' in the authenticated account description, not because a certificate verification action was rendered. This artifact remains failure evidence and is not a passing row receipt."
+    },
+    "stableArtifacts": [
+      {
+        "path": "hrm-009-read-only-browser-gate-evidence/playwright-v5-row-01-failed-selector.png",
+        "sha256": "7328bf4064dac6cb1abe3a12ed77ba2f4d224e220aa3457296f6cb7f15afa735",
+        "bytes": 172712,
+        "content": "SANITIZED_1440_LIGHT_PERSONAL_SUCCESSFUL_READ_ONLY_MOUNT_WITH_FAILED_SELECTOR"
+      },
+      {
+        "path": "hrm-009-read-only-browser-gate-evidence/playwright-v5-row-01-error-context.md",
+        "sha256": "4894d3b0ab9c8aace7606ea3c1864286d8540b2d7178fb1a6306b6ebd644fba4",
+        "bytes": 7612,
+        "content": "SANITIZED_ACCESSIBILITY_CONTEXT_SHOWING_GLOBAL_ACCOUNT_FALSE_POSITIVE_AND_READ_ONLY_WORKBENCH"
+      }
+    ],
+    "fixtureSnapshotImmediatelyAfterFailure": {
+      "sequence": 120,
+      "pageEvaluations": {
+        "route.hcm.personal.requests.page": 2,
+        "route.hcm.operations.certificates-documents.page": 2
+      },
+      "selectedDataEvaluations": {
+        "route.hcm.personal.requests.data": 2
+      },
+      "selectedOwnerGets": {
+        "/api/people/v1/hris/workbench/self-service/requests": 2
+      },
+      "officialNonTargetPageDenials": 112,
+      "mutations": {},
+      "unexpectedAuthorityEvaluations": 0,
+      "stepUpRequests": 0,
+      "interpretation": "The selected personal PAGE, DATA and owner GET each executed twice, both PAGE plans executed twice, and the 56 official non-target HCM PAGE denials executed twice. One-microtask deferral therefore did not provide browser-real StrictMode exact-once dispatch."
+    },
+    "matrixContinuationState": {
+      "row1": "FAILED_TWICE_TOTAL_ONE_V4_EXECUTION_AND_ONE_V5_CORRECTED_REPLAY_NO_V6_REPLAY_YET",
+      "row2": "NEVER_RUN",
+      "row3": "NEVER_RUN",
+      "row4": "NEVER_RUN",
+      "row5": "NEVER_RUN"
+    },
+    "securityObservation": "The stopped run preserved zero mutation, zero unexpected-authority and zero step-up counters. Neither the selector false positive nor duplicate reads authorizes any writable action, route relaxation, fixture counter relaxation or business-completion credit."
+  },
+  "independentPinnedCodeInspection": {
+    "result": "TARGETED_SEVEN_FILE_CORRECTION_REQUIRED_BEFORE_ONE_BOUNDED_CONTINUATION",
+    "inspectedBase": "08bcd41a12d02093a5fad8062d319d337daa8eed",
+    "observations": [
+      {
+        "id": "BROWSER-STRICT-001",
+        "path": "e2e/hris-hrm-009-read-only-browser-gate.spec.ts",
+        "finding": "expectReadOnlyStageA located forbidden words across every page-level button and link. The global account control legitimately contained the word 'verification', so the assertion was not bounded to HRM-009-owned interactive content.",
+        "requiredBoundary": "Scope the forbidden-action interactive locator to the visible data-testid=hrm-009-certificate-workbench root while retaining the exact forbidden action vocabulary and all existing read-only, disabled-form, secret-absence and zero-write evidence."
+      },
+      {
+        "id": "BROWSER-STRICT-002",
+        "path": "apps/dwp/src/features/shell/product-surface-authority-bridge.tsx",
+        "finding": "The PAGE React Query query function used Promise.resolve().then(...). In the real browser development mount the microtask could invoke evaluateProduct before StrictMode cleanup aborted the probe signal.",
+        "requiredBoundary": "Delay PAGE transport through one cancellable browser task, inspect the same React Query signal immediately before dispatch, cancel the scheduled task on abort, and pass the unchanged signal into the active evaluateProduct call."
+      },
+      {
+        "id": "BROWSER-STRICT-003",
+        "path": "apps/dwp/src/features/hris/integration/hris-hrm-009-route-admission.tsx",
+        "finding": "The DATA admission effect used the same microtask pattern with its local AbortController. The probe cleanup occurred too late to prevent the first DATA transport.",
+        "requiredBoundary": "Delay the DATA evaluation through one cancellable browser task and dispatch only if the effect instance remains active and its controller signal remains non-aborted. Preserve the existing identity, decision-revision, scope, lease, renewal and fail-closed checks."
+      },
+      {
+        "id": "BROWSER-STRICT-004",
+        "path": "apps/dwp/src/features/hris/employee-services/certificates/use-certificate-workbench.ts",
+        "finding": "The owner GET hook also used a one-microtask adapter dispatch. The probe cleanup did not prevent the first owner request after admission.",
+        "requiredBoundary": "Delay owner adapter transport through one cancellable browser task and dispatch only for the still-current non-aborted load. Preserve refresh, cursor navigation, semantic trusted-scope changes, stale retention, late-result fencing and cancellation."
+      }
+    ],
+    "rejectedAlternatives": [
+      "Do not rename or hide the authenticated user's account description to make an HRM-009 locator pass.",
+      "Do not weaken or remove the forbidden download, revoke, verification, expiry, access-audit or download-audit vocabulary check inside the workbench.",
+      "Do not disable React StrictMode or React Query cancellation.",
+      "Do not deduplicate transports with a process-global sent flag, cross-identity cache, permanent ref or time-window heuristic.",
+      "Do not relax fixture exact counters from one to two or accept duplicate read transport as expected behavior.",
+      "Do not change the dedicated server, Playwright config, route registry, backend, runtime default, activation or enrollment."
+    ]
+  },
+  "correctionAWorkbenchScopedForbiddenActionProof": {
+    "authorizedPath": "e2e/hris-hrm-009-read-only-browser-gate.spec.ts",
+    "requiredBehavior": "Resolve the already-visible data-testid=hrm-009-certificate-workbench root and search only interactive button and anchor descendants of that root for the unchanged forbidden action vocabulary. The global shell, account control and read-only explanatory prose are outside this interactive ownership assertion.",
+    "requiredAssertions": [
+      "The HRM-009 workbench remains visible with the expected complete or partial runtime state.",
+      "Stage-A is read only and certificate submission is disabled.",
+      "Review and send request remains disabled and the form exposes no enabled input or button.",
+      "No workbench-owned button or anchor contains download, revoke, verification, expiry, access-audit or download-audit.",
+      "No 64-character digest sentinel is disclosed.",
+      "All existing zero mutation, zero step-up, ordering, accessibility, focus, overflow and attachment-sanitization assertions remain binding."
+    ],
+    "forbiddenSelectorChanges": [
+      "Removing a forbidden action term",
+      "Searching only currently visible text while ignoring an interactive descendant",
+      "Excluding a workbench-owned button or anchor by label-specific exception",
+      "Changing application account content or shell markup to satisfy this test"
+    ]
+  },
+  "correctionBAbortAwareOneTaskReadDispatch": {
+    "taskBoundaryDefinition": "One cancellable browser task means transport is not invoked in the current synchronous turn or its microtask queue. The implementation must schedule a later task, register abort cleanup before that task can dispatch, check the controlling AbortSignal and current-instance fence immediately before transport, and settle or reject the abandoned invocation without transport. A zero-delay timer or an equivalent browser task primitive is permitted; an additional Promise microtask alone is not.",
+    "page": {
+      "authorizedProductionPath": "apps/dwp/src/features/shell/product-surface-authority-bridge.tsx",
+      "authorizedTestPath": "apps/dwp/src/features/shell/product-surface-authority-bridge.mounted.test.ts",
+      "requiredBehavior": "Each semantic PAGE React Query invocation schedules one cancellable task. A StrictMode probe aborted before that task dispatches must perform zero evaluateProduct calls. The surviving active invocation must call evaluateProduct exactly once with the same request and React Query signal.",
+      "requiredRegression": [
+        "Use React StrictMode and a task boundary observable by the test, not a microtask-only act flush.",
+        "Prove exactly one non-aborted transport call per unchanged semantic PAGE query after the probe settles.",
+        "Prove a changed active canonical scope reevaluates only the required semantic PAGE identity.",
+        "Retain in-flight abort-on-unmount, navigation supersession, fail-closed denial and direct-decision lease-renewal coverage."
+      ]
+    },
+    "data": {
+      "authorizedProductionPath": "apps/dwp/src/features/hris/integration/hris-hrm-009-route-admission.tsx",
+      "authorizedTestPath": "apps/dwp/src/features/hris/integration/hris-hrm-009-route-admission.test.tsx",
+      "requiredBehavior": "Each eligible HRM-009 DATA admission effect schedules one cancellable task. The discarded StrictMode probe must perform zero evaluateProduct calls; the surviving effect must perform exactly one call for the exact DATA contract, tenant, actor, surface, context scope and decision revision.",
+      "requiredRegression": [
+        "Prove browser-task rather than microtask-only settling under React StrictMode.",
+        "Prove one DATA transport for unchanged cloned PAGE evidence and trusted request scope.",
+        "Prove a real decision-revision, context-scope or semantic identity change aborts or fences the prior invocation and evaluates the new identity once.",
+        "Prove lease renewal still schedules one fresh DATA evaluation at the authorized deadline and stale or late evidence cannot admit the owner query."
+      ]
+    },
+    "owner": {
+      "authorizedProductionPath": "apps/dwp/src/features/hris/employee-services/certificates/use-certificate-workbench.ts",
+      "authorizedTestPath": "apps/dwp/src/features/hris/employee-services/certificates/testing/certificate-workbench.test.tsx",
+      "requiredBehavior": "Each initial or explicitly requested HRM-009 owner load schedules one cancellable task. The discarded StrictMode probe must perform zero adapter.query calls; the surviving load must perform exactly one owner GET with the unchanged request, scope and signal.",
+      "requiredRegression": [
+        "Prove one owner transport on StrictMode initial mount after a real task boundary.",
+        "Prove an equal trusted-scope clone does not refetch, while a changed primitive identity does refetch once.",
+        "Prove a superseded scope aborts the prior signal and cannot publish a late projection.",
+        "Prove each explicit refresh and valid previous or next navigation remains capable of exactly one new owner transport.",
+        "Retain retryable stale-projection handling, command fencing and unmount cancellation."
+      ]
+    },
+    "crossLayerExactOnceBoundary": "For one successful row with unchanged canonical semantic identity, development StrictMode must produce exactly one selected PAGE evaluation, one selected DATA evaluation and one selected owner GET. The 56 official non-target HCM PAGE routes must each be denied once, for an aggregate officialNonTargetPageDenials value of 56.",
+    "semanticIdentityMustRemainExact": [
+      "tenantId",
+      "actorId",
+      "accessMode",
+      "productId",
+      "surfaceId",
+      "PAGE routeContractKey",
+      "DATA routeContractKey",
+      "contextScopeKey",
+      "decisionRevision",
+      "trusted owner query primitive scope",
+      "lease generation",
+      "refresh generation",
+      "cursor and as-of navigation state"
+    ],
+    "mustNotWeaken": [
+      "A real tenant, actor, access mode, product, surface, route, scope, decision revision, lease, refresh, cursor or as-of change must dispatch its new required read exactly once.",
+      "Direct-decision lease renewal and DATA admission lease renewal remain active and fail closed on expiry.",
+      "Explicit refresh remains active and cannot reuse a stale failed result as current authority.",
+      "Previous and next navigation remain bound to the requested cursor and existing fixed as-of behavior.",
+      "Unmount, route navigation, identity supersession and cancellation abort scheduled or in-flight transport and prevent stale publication.",
+      "PAGE-before-DATA-before-owner ordering remains exact.",
+      "No writable delegate, mutation, step-up request or persistent state is introduced."
+    ]
+  },
+  "effectiveImplementationAllowlist": {
+    "exactFiles": [
+      "apps/dwp/src/features/shell/product-surface-authority-bridge.tsx",
+      "apps/dwp/src/features/shell/product-surface-authority-bridge.mounted.test.ts",
+      "apps/dwp/src/features/hris/integration/hris-hrm-009-route-admission.tsx",
+      "apps/dwp/src/features/hris/integration/hris-hrm-009-route-admission.test.tsx",
+      "apps/dwp/src/features/hris/employee-services/certificates/use-certificate-workbench.ts",
+      "apps/dwp/src/features/hris/employee-services/certificates/testing/certificate-workbench.test.tsx",
+      "e2e/hris-hrm-009-read-only-browser-gate.spec.ts"
+    ],
+    "exactFileCount": 7,
+    "fixtureServerEditAuthorized": false,
+    "otherFrontendFilesAuthorized": false,
+    "backendFilesAuthorized": false,
+    "agentFilesAuthorized": false,
+    "playwrightConfigEditsAuthorized": false,
+    "packageOrLockfileEditsAuthorized": false,
+    "runtimeDefaultEditsAuthorized": false,
+    "databaseOrMigrationEditsAuthorized": false
+  },
+  "pinnedCommittedBase": {
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "08bcd41a12d02093a5fad8062d319d337daa8eed",
+      "tree": "cdebe1d7200a36e7f01ef46679785d3ac9e477b9",
+      "originExact": true,
+      "containsV5ImplementationMerge": true,
+      "worktreeCleanClaim": false,
+      "worktreeNote": "The committed base is exact. Shared untracked sanitized CUA and stopped-run evidence is not adopted as source and does not authorize unrelated changes."
+    }
+  },
+  "sealedProductAuthorization": {
+    "version": 52,
+    "status": "DRAFT",
+    "checksum": "b33fbf968e71f97b09fa497fdfad7d2f6854199170b79fd1602a0ea604977346",
+    "runtimeDefault": "OFF",
+    "persistentFeatureActivationCount": 0,
+    "persistentTenantEnrollmentCount": 0,
+    "automaticImportEnabled": false
+  },
+  "verificationPolicy": {
+    "authorityDocumentChecks": ["JSON_PARSE", "PRETTIER_CHECK_EXACT_V6_FILE"],
+    "implementationStaticChecks": [
+      "PRETTIER_CHECK_EXACT_SEVEN_FILES",
+      "ESLINT_EXACT_SEVEN_FILES",
+      "GIT_DIFF_CHECK_EXACT_ALLOWLIST"
+    ],
+    "targetedUnitChecks": [
+      "apps/dwp/src/features/shell/product-surface-authority-bridge.mounted.test.ts_ONLY",
+      "apps/dwp/src/features/hris/integration/hris-hrm-009-route-admission.test.tsx_ONLY",
+      "apps/dwp/src/features/hris/employee-services/certificates/testing/certificate-workbench.test.tsx_ONLY"
+    ],
+    "browserChecks": [
+      "FAILED_ROW_01_1440_LIGHT_PERSONAL_ONE_FURTHER_CORRECTED_REPLAY_ONLY",
+      "THEN_NEVER_RUN_ROW_02_1280_DARK_OPERATIONS_ONCE",
+      "THEN_NEVER_RUN_ROW_03_390_KO_REDUCED_MOTION_PERSONAL_ONCE",
+      "THEN_NEVER_RUN_ROW_04_320_FORCED_COLORS_PARTIAL_OPERATIONS_ONCE",
+      "THEN_NEVER_RUN_ROW_05_640_CSS_200_PERCENT_PERSONAL_ONCE"
+    ],
+    "cuaReplayRequired": false,
+    "defaultOffReplayRequired": false,
+    "fixtureServerStaticReplayRequired": false,
+    "repositoryWideSuiteAuthorized": false,
+    "fullNxOrVitestSuiteAuthorized": false,
+    "broadBrowserReplayAuthorized": false,
+    "unrelatedRegressionExecutionAuthorized": false,
+    "repeatedPassingCheckExecutionAuthorized": false
+  },
+  "boundedMatrixContinuation": {
+    "dedicatedConfig": "playwright.hris-hrm-009-read-only.config.ts",
+    "dedicatedSpec": "e2e/hris-hrm-009-read-only-browser-gate.spec.ts",
+    "driver": "PLAYWRIGHT_CHROMIUM",
+    "workers": 1,
+    "retries": 0,
+    "executionMode": "SERIAL_STOP_ON_FIRST_FAILURE",
+    "authorization": "After the exact seven-file review, static checks and three targeted test files pass, start the dedicated serial spec once. That single invocation is one further corrected replay of row one and, only while each preceding row passes in that invocation, the first and only execution of never-run rows two through five.",
+    "orderedRows": [
+      {
+        "ordinal": 1,
+        "name": "1440_LIGHT_PERSONAL",
+        "priorState": "FAILED_TWICE_TOTAL",
+        "authorizedExecution": "ONE_FURTHER_CORRECTED_REPLAY_ONLY"
+      },
+      {
+        "ordinal": 2,
+        "name": "1280_DARK_OPERATIONS",
+        "priorState": "NEVER_RUN",
+        "authorizedExecution": "FIRST_RUN_ONCE_AFTER_ROW_1_PASS"
+      },
+      {
+        "ordinal": 3,
+        "name": "390_KO_REDUCED_MOTION_PERSONAL",
+        "priorState": "NEVER_RUN",
+        "authorizedExecution": "FIRST_RUN_ONCE_AFTER_ROWS_1_TO_2_PASS"
+      },
+      {
+        "ordinal": 4,
+        "name": "320_FORCED_COLORS_PARTIAL_OPERATIONS",
+        "priorState": "NEVER_RUN",
+        "authorizedExecution": "FIRST_RUN_ONCE_AFTER_ROWS_1_TO_3_PASS"
+      },
+      {
+        "ordinal": 5,
+        "name": "640_CSS_200_PERCENT_PERSONAL",
+        "priorState": "NEVER_RUN",
+        "authorizedExecution": "FIRST_RUN_ONCE_AFTER_ROWS_1_TO_4_PASS"
+      }
+    ],
+    "requiredPositiveRowCounters": {
+      "selectedTargetPage": 1,
+      "selectedTargetData": 1,
+      "selectedOwnerGet": 1,
+      "officialNonTargetPageDenials": 56,
+      "mutationsTotal": 0,
+      "stepUpRequests": 0,
+      "unexpectedAuthorityEvaluations": 0
+    },
+    "requiredCrossRowAssertions": [
+      "PAGE_BEFORE_DATA_BEFORE_OWNER_GET",
+      "CANONICAL_SCOPE_PRESERVED",
+      "WORKBENCH_SCOPED_FORBIDDEN_INTERACTIVE_ACTIONS_ABSENT",
+      "OFFICIAL_NON_TARGET_HCM_PAGE_NEVER_LIVE_FORWARDED",
+      "STRICTMODE_PAGE_DATA_OWNER_EXACTLY_ONCE",
+      "RAW_PROJECTION_ACCEPTED",
+      "ZERO_POST_PUT_PATCH_DELETE",
+      "ZERO_STEP_UP",
+      "ZERO_UNEXPECTED_AUTHORITY_EVALUATION",
+      "SECRETS_ABSENT_FROM_ATTACHMENTS"
+    ],
+    "failurePolicy": "Stop immediately on the first failed row, preserve sanitized evidence, do not rerun that row or any prior row, and require another append-only authority before further browser execution.",
+    "passingRowReplayAuthorized": false,
+    "secondInvocationUnderV6Authorized": false
+  },
+  "authority": {
+    "workbenchScopedForbiddenActionLocatorAuthorized": true,
+    "abortAwareOneTaskPageDispatchAuthorized": true,
+    "abortAwareOneTaskDataDispatchAuthorized": true,
+    "abortAwareOneTaskOwnerDispatchAuthorized": true,
+    "matchingStrictModeRegressionExpansionAuthorized": true,
+    "oneFurtherCorrectedFailedRowReplayAuthorized": true,
+    "neverRunRowsTwoThroughFiveFirstRunAuthorized": true,
+    "productionBehaviorChange": "ABORTED_STRICTMODE_PROBES_DO_NOT_INVOKE_PAGE_DATA_OR_OWNER_READ_TRANSPORT",
+    "persistentActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "writableActionAuthorized": false,
+    "fixtureChangeAuthorized": false,
+    "centralMergeAuthorizedByThisDocument": false
+  },
+  "branchPolicy": {
+    "implementationBase": "EXACT_FRONTEND_DWP_DEV_COMMIT_08BCD41A12D02093A5FAD8062D319D337DAA8EED_PLUS_THIS_V6_AUTHORITY",
+    "strategy": "BOUNDED_SEVEN_FILE_STRICTMODE_AND_SELECTOR_CORRECTION_THEN_TARGETED_REVIEW_THEN_EXACT_CENTRAL_MERGE",
+    "conflictPolicy": "STOP_ON_CONFLICT_NO_AUTOMATIC_RESOLUTION",
+    "unrelatedDirtyFileAdoption": "FORBIDDEN"
+  },
+  "forbidden": [
+    "Changing a source or test file outside the exact seven-file implementation allowlist",
+    "Changing the dedicated fixture server, Playwright config, package.json, lockfile, migration, backend, checked-in runtime default, activation or enrollment",
+    "Changing the authenticated account description or shell markup to make the dedicated selector pass",
+    "Removing a forbidden workbench action term or adding a label-specific selector exception",
+    "Using only another microtask as the StrictMode transport boundary",
+    "Disabling StrictMode, AbortSignal propagation, React Query cancellation, fail-closed presentation or lease renewal",
+    "Deduplicating across a changed tenant, actor, access mode, product, surface, route, scope, revision, lease, refresh, cursor or as-of identity",
+    "Using a global sent flag, process-global cache, permanent cross-mount ref or arbitrary elapsed-time deduplication window",
+    "Changing expected PAGE, DATA or owner counts from one to two or changing officialNonTargetPageDenials from 56 to 112",
+    "Logging credentials, cookies, Authorization headers, raw request bodies, secret sentinels or upstream error bodies",
+    "Using customer or production data",
+    "Executing a repository-wide suite, broad browser replay, second v6 matrix invocation or any passing-row replay",
+    "Running rows two through five unless every earlier ordered row passed in the same bounded serial invocation",
+    "Enabling or exercising a writable HRM-009 action, step-up, POST, PUT, PATCH or DELETE",
+    "Claiming download, revoke, verification, expiry, access-audit, download-audit, persistent activation, enrollment or production release",
+    "Treating fixture, StrictMode or browser-gate evidence as business completion credit"
+  ],
+  "requiredNext": [
+    "Validate this v6 document with JSON parse and Prettier on this exact file only; preserve v1 through v5 bytes exactly.",
+    "Implement and independently review only the seven allowlisted files against the workbench selector and abort-aware one-task PAGE, DATA and owner contracts.",
+    "Run only the exact seven-file static checks and the three exact targeted test files named by this authority.",
+    "If all targeted checks pass, execute the dedicated serial spec once: corrected row one once, then each never-run row two through five once only while every prior row passes.",
+    "Stop on the first failure without replay or broad substitution and issue a sanitized append-only browser-gate receipt only after all five ordered rows pass."
+  ],
+  "nonClaims": [
+    "HRM-009 full slice completion",
+    "Batch-03 completion",
+    "R7 completion",
+    "Writable certificate request, issuance, download, revoke or verification",
+    "Persistent tenant activation or enrollment",
+    "Customer-data use or production release",
+    "Business completion credit"
+  ]
+}
