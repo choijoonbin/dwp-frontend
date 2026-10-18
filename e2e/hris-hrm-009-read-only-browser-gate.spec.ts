@@ -203,7 +203,7 @@ async function expectReadOnlyStageA(page: Page, expectedState: 'complete' | 'par
     0
   );
   await expect(
-    page.locator('button, a').filter({
+    workbench.locator('button, a').filter({
       hasText: /download|revoke|verification|expiry|access-audit|download-audit/iu,
     })
   ).toHaveCount(0);

@@ -84,6 +84,40 @@ const DIRECT_EVALUATION_QUERY_PREFIXES = new Set([
   'governed-route-direct-evaluation',
 ]);
 
+function abortedBeforeDispatch(message: string): Error {
+  const error = new Error(message);
+  error.name = 'AbortError';
+  return error;
+}
+
+function waitForActiveBrowserTask(signal: AbortSignal, message: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    if (signal.aborted) {
+      reject(abortedBeforeDispatch(message));
+      return;
+    }
+    let settled = false;
+    const onAbort = () => {
+      if (settled) return;
+      settled = true;
+      window.clearTimeout(timer);
+      signal.removeEventListener('abort', onAbort);
+      reject(abortedBeforeDispatch(message));
+    };
+    const timer = window.setTimeout(() => {
+      if (settled) return;
+      settled = true;
+      signal.removeEventListener('abort', onAbort);
+      if (signal.aborted) {
+        reject(abortedBeforeDispatch(message));
+        return;
+      }
+      resolve();
+    }, 0);
+    signal.addEventListener('abort', onAbort, { once: true });
+  });
+}
+
 function revokesActivePageData(decision: SurfaceDecision | undefined): boolean {
   return Boolean(
     decision && decision.state !== 'allowed' && decision.state !== 'authority-unavailable'
@@ -673,14 +707,10 @@ export function ProductSurfaceAuthorityBridge({
         actorId: String(auth.user?.userId ?? ''),
       }),
       queryFn: ({ signal }) =>
-        Promise.resolve().then(() => {
-          if (signal.aborted) {
-            const error = new Error('Product surface PAGE evaluation was aborted before dispatch.');
-            error.name = 'AbortError';
-            throw error;
-          }
-          return authority.evaluateProduct(request, { signal });
-        }),
+        waitForActiveBrowserTask(
+          signal,
+          'Product surface PAGE evaluation was aborted before dispatch.'
+        ).then(() => authority.evaluateProduct(request, { signal })),
       retry: false,
       staleTime: Number.POSITIVE_INFINITY,
       gcTime: 0,
