@@ -51,6 +51,40 @@ const HRM009_QUERY_ADAPTER = createHrm009QueryAdapter();
 const PUBLIC_ID = /^[A-Za-z0-9._:-]{1,128}$/u;
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu;
 
+function abortedBeforeDispatch(): Error {
+  const error = new Error('HRM-009 DATA evaluation was aborted before dispatch.');
+  error.name = 'AbortError';
+  return error;
+}
+
+function waitForActiveBrowserTask(signal: AbortSignal): Promise<void> {
+  return new Promise((resolve, reject) => {
+    if (signal.aborted) {
+      reject(abortedBeforeDispatch());
+      return;
+    }
+    let settled = false;
+    const onAbort = () => {
+      if (settled) return;
+      settled = true;
+      window.clearTimeout(timer);
+      signal.removeEventListener('abort', onAbort);
+      reject(abortedBeforeDispatch());
+    };
+    const timer = window.setTimeout(() => {
+      if (settled) return;
+      settled = true;
+      signal.removeEventListener('abort', onAbort);
+      if (signal.aborted) {
+        reject(abortedBeforeDispatch());
+        return;
+      }
+      resolve();
+    }, 0);
+    signal.addEventListener('abort', onAbort, { once: true });
+  });
+}
+
 type RuntimeContract = Readonly<{
   productId: 'hcm';
   surfaceId: 'hcm.personal' | 'hcm.operations';
@@ -412,9 +446,9 @@ function Hrm009RouteAdmission({ queryId }: Readonly<{ queryId: Hrm009QueryId }>)
     const controller = new AbortController();
     let active = true;
     setDataAdmission(Object.freeze({ state: 'pending', identity }));
-    void Promise.resolve()
+    void waitForActiveBrowserTask(controller.signal)
       .then(() =>
-        controller.signal.aborted
+        !active || controller.signal.aborted
           ? undefined
           : evaluateProduct(
               {

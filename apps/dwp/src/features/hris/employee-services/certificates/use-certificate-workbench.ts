@@ -38,6 +38,40 @@ export function hrm009ErrorMayRetainStaleProjection(error: unknown): boolean {
   );
 }
 
+function abortedBeforeDispatch(): Error {
+  const error = new Error('HRM-009 owner query was aborted before dispatch.');
+  error.name = 'AbortError';
+  return error;
+}
+
+function waitForActiveBrowserTask(signal: AbortSignal): Promise<void> {
+  return new Promise((resolve, reject) => {
+    if (signal.aborted) {
+      reject(abortedBeforeDispatch());
+      return;
+    }
+    let settled = false;
+    const onAbort = () => {
+      if (settled) return;
+      settled = true;
+      window.clearTimeout(timer);
+      signal.removeEventListener('abort', onAbort);
+      reject(abortedBeforeDispatch());
+    };
+    const timer = window.setTimeout(() => {
+      if (settled) return;
+      settled = true;
+      signal.removeEventListener('abort', onAbort);
+      if (signal.aborted) {
+        reject(abortedBeforeDispatch());
+        return;
+      }
+      resolve();
+    }, 0);
+    signal.addEventListener('abort', onAbort, { once: true });
+  });
+}
+
 export function useHrm009WorkbenchQuery({
   adapter,
   queryId,
@@ -98,7 +132,7 @@ export function useHrm009WorkbenchQuery({
         cursor,
         asOf: asOfRef.current,
       });
-      void Promise.resolve()
+      void waitForActiveBrowserTask(controller.signal)
         .then(() =>
           controller.signal.aborted
             ? undefined

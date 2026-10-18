@@ -246,6 +246,7 @@ describe('R7 HRM-009 central read-only admission', () => {
   afterEach(() => {
     act(() => root.unmount());
     host.remove();
+    vi.useRealTimers();
     vi.unstubAllGlobals();
     vi.unstubAllEnvs();
   });
@@ -286,7 +287,7 @@ describe('R7 HRM-009 central read-only admission', () => {
         createElement(testCase.component),
         `${testCase.path}?tab=overview&focus=item-7&scope=${encodeURIComponent(SCOPE)}`
       );
-      expect(state.evaluateProduct).toHaveBeenCalledTimes(1);
+      await vi.waitFor(() => expect(state.evaluateProduct).toHaveBeenCalledTimes(1));
       expect(host.querySelector('[data-runtime-state="loading"]')).not.toBeNull();
       await act(async () => {
         dataResponse.resolve(fixture.data);
@@ -327,6 +328,8 @@ describe('R7 HRM-009 central read-only admission', () => {
 
     const route = () => createElement(StrictMode, null, createElement(testCase.component));
     mount(route(), testCase.path);
+    await Promise.resolve();
+    expect(state.evaluateProduct).not.toHaveBeenCalled();
     await vi.waitFor(() => expect(state.renderedProps?.scope).toBeDefined());
     const admittedScope = state.renderedProps?.scope;
 
@@ -378,6 +381,75 @@ describe('R7 HRM-009 central read-only admission', () => {
     expect(state.renderedProps).not.toHaveProperty('adapter');
   });
 
+  it('renews the DATA lease once and rejects a late stale renewal while admission stays closed', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(Date.parse('2029-01-01T00:00:00.000Z'));
+    vi.stubEnv('VITE_HRIS_HRM_009_ENABLED', 'true');
+    const initialMonotonicNowMs = performance.now();
+    const initialDeadlineMs = Date.now() + 1_000;
+    const testCase = CASES[0]!;
+    const fixture = authorityFixture(testCase);
+    const expiringData = {
+      ...fixture.data,
+      revalidateAt: new Date(initialDeadlineMs).toISOString(),
+    };
+    const renewal = deferred<ProductSurfaceEvaluationData>();
+    state.snapshot = fixture.snapshot;
+    state.pageDecision = fixture.page;
+    state.requestScope = requestScope(testCase);
+    state.evaluateProduct.mockResolvedValueOnce(expiringData).mockReturnValueOnce(renewal.promise);
+
+    mount(createElement(testCase.component), testCase.path);
+    expect(state.evaluateProduct).not.toHaveBeenCalled();
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(1);
+    });
+    await vi.waitFor(() => expect(state.renderedProps?.scope).toBeDefined());
+    expect(state.evaluateProduct).toHaveBeenCalledOnce();
+
+    state.renderedProps = undefined;
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(
+        Math.max(0, initialMonotonicNowMs + 751 - performance.now())
+      );
+    });
+
+    expect(state.evaluateProduct).toHaveBeenCalledOnce();
+    expect(host.querySelector('[data-runtime-state="loading"]')).not.toBeNull();
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(1);
+    });
+    expect(state.evaluateProduct).toHaveBeenCalledTimes(2);
+    expect(host.querySelector('[data-runtime-state="loading"]')).not.toBeNull();
+    expect(state.ownerQuery).not.toHaveBeenCalled();
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(
+        Math.max(0, initialMonotonicNowMs + 1_001 - performance.now())
+      );
+    });
+    expect(state.evaluateProduct).toHaveBeenCalledTimes(2);
+    expect(host.querySelector('[data-runtime-state="loading"]')).not.toBeNull();
+    expect(state.ownerQuery).not.toHaveBeenCalled();
+
+    await act(async () => {
+      renewal.resolve(expiringData);
+      await renewal.promise;
+    });
+    await vi.waitFor(() =>
+      expect(state.renderedProps?.gate).toEqual({
+        feature: 'HRIS_HRM_CERTIFICATE_WORKBENCH',
+        enabled: true,
+        tenantEnrolled: false,
+      })
+    );
+
+    expect(state.evaluateProduct).toHaveBeenCalledTimes(2);
+    expect(state.renderedProps?.scope).toBeUndefined();
+    expect(state.renderedProps).not.toHaveProperty('adapter');
+    expect(state.ownerQuery).not.toHaveBeenCalled();
+  });
+
   it('keeps PAGE allow plus DATA deny opaque with zero owner GET and no POST delegate', async () => {
     vi.stubEnv('VITE_HRIS_HRM_009_ENABLED', 'true');
     const testCase = CASES[1]!;
@@ -389,6 +461,7 @@ describe('R7 HRM-009 central read-only admission', () => {
     state.evaluateProduct.mockReturnValue(dataResponse.promise);
 
     mount(createElement(testCase.component), testCase.path);
+    await vi.waitFor(() => expect(state.evaluateProduct).toHaveBeenCalledOnce());
     await act(async () => {
       dataResponse.resolve({ ...fixture.data, decisionRevision: 'foreign' });
       await dataResponse.promise;

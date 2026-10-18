@@ -407,6 +407,7 @@ describe('mounted product surface authority bridge', () => {
   });
 
   it('dispatches each semantic PAGE once after the StrictMode probe and reevaluates a changed scope', async () => {
+    vi.useFakeTimers();
     const observedSignals: AbortSignal[] = [];
     const evaluateProduct = vi.fn(
       async (request: ProductSurfaceEvaluationRequest, options: { signal?: AbortSignal } = {}) => {
@@ -425,7 +426,12 @@ describe('mounted product surface authority bridge', () => {
       authority(evaluateProduct, rollout('111')),
       { strictMode: true }
     );
-    await vi.waitFor(() => expect(evaluateProduct).toHaveBeenCalledTimes(APPROVALS_ROUTES.length));
+    expect(evaluateProduct).not.toHaveBeenCalled();
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(0);
+    });
+    expect(evaluateProduct).toHaveBeenCalledTimes(APPROVALS_ROUTES.length);
+    vi.useRealTimers();
 
     const initialCounts = new Map<string, number>();
     for (const [request] of evaluateProduct.mock.calls) {
@@ -783,6 +789,9 @@ describe('mounted product surface authority bridge', () => {
     });
 
     await mountBridge(APPROVALS_PATH, authority(evaluateProduct, rollout('111')));
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(1);
+    });
     await vi.waitFor(() =>
       expect(observedAuthority?.routeDecisions?.[ACTIVE_ROUTE.routeContractKey]?.state).toBe(
         'allowed'
@@ -815,6 +824,9 @@ describe('mounted product surface authority bridge', () => {
       await vi.advanceTimersByTimeAsync(
         Math.max(0, initialMonotonicNowMs + 1_000 - performance.now())
       );
+    });
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(1);
     });
     expect(observedAuthority?.routeDecisions?.[ACTIVE_ROUTE.routeContractKey]?.state).toBe(
       'expired'
@@ -851,6 +863,9 @@ describe('mounted product surface authority bridge', () => {
     });
 
     await mountBridge(APPROVALS_PATH, authority(evaluateProduct, rollout('111')));
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(0);
+    });
     await vi.waitFor(() =>
       expect(observedAuthority?.routeDecisions?.[ACTIVE_ROUTE.routeContractKey]?.state).toBe(
         'expired'
@@ -859,11 +874,12 @@ describe('mounted product surface authority bridge', () => {
     expect(evaluateProduct).toHaveBeenCalledTimes(APPROVALS_ROUTES.length);
 
     await act(async () => {
-      await queryClient.refetchQueries({
+      const refetch = queryClient.refetchQueries({
         type: 'active',
         predicate: (query) => query.queryKey[0] === 'product-surface-direct-evaluation',
       });
       await vi.advanceTimersByTimeAsync(0);
+      await refetch;
     });
     expect(evaluateProduct).toHaveBeenCalledTimes(APPROVALS_ROUTES.length * 2);
 
@@ -886,6 +902,9 @@ describe('mounted product surface authority bridge', () => {
     });
 
     await mountBridge(APPROVALS_PATH, authority(evaluateProduct, rollout('111')));
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(0);
+    });
     await vi.waitFor(() =>
       expect(observedAuthority?.routeDecisions?.[ACTIVE_ROUTE.routeContractKey]?.state).toBe(
         'allowed'
@@ -932,11 +951,12 @@ describe('mounted product surface authority bridge', () => {
     await vi.waitFor(() => expect(revokedBusinessSignal).toBeInstanceOf(AbortSignal));
     denied = true;
     await act(async () => {
-      await queryClient.refetchQueries({
+      const refetch = queryClient.refetchQueries({
         type: 'active',
         predicate: (query) => query.queryKey[0] === 'product-surface-direct-evaluation',
       });
       await vi.advanceTimersByTimeAsync(0);
+      await refetch;
       await vi.waitFor(() =>
         expect(
           APPROVALS_ROUTES.every(

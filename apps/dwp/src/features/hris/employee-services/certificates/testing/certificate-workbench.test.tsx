@@ -114,6 +114,7 @@ function button(label: string): HTMLButtonElement {
 }
 
 async function shown(text: string) {
+  await act(async () => new Promise((resolve) => window.setTimeout(resolve, 0)));
   await act(async () => {
     await vi.waitFor(() => expect(document.body.textContent).toContain(text));
   });
@@ -345,6 +346,7 @@ describe('HRM-009 Stage-A read-only component surfaces', () => {
   afterEach(async () => {
     await act(async () => root.unmount());
     document.body.replaceChildren();
+    vi.useRealTimers();
     vi.restoreAllMocks();
   });
 
@@ -412,6 +414,7 @@ describe('HRM-009 Stage-A read-only component surfaces', () => {
   );
 
   it('deduplicates StrictMode and equal trusted-scope clones while refetching a changed primitive', async () => {
+    vi.useFakeTimers();
     const source = adapter(projection('IAQ-003'));
     const renderScope = async (scope: Hrm009TrustedScope) => {
       await act(async () => {
@@ -429,8 +432,13 @@ describe('HRM-009 Stage-A read-only component surfaces', () => {
     };
 
     await renderScope(HRM009_TEST_SCOPE);
-    await shown('My HR requests and certificates');
+    expect(source.query).not.toHaveBeenCalled();
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(0);
+    });
     expect(source.query).toHaveBeenCalledOnce();
+    vi.useRealTimers();
+    await shown('My HR requests and certificates');
 
     await renderScope({ ...HRM009_TEST_SCOPE });
     await act(async () => Promise.resolve());
@@ -441,6 +449,75 @@ describe('HRM-009 Stage-A read-only component surfaces', () => {
     expect(source.query).toHaveBeenLastCalledWith(
       'IAQ-003',
       expect.objectContaining({ locale: 'ko' }),
+      HRM009_TEST_SCOPE.contextScopeKey,
+      expect.any(AbortSignal)
+    );
+  });
+
+  it('dispatches exactly one owner transport for refresh, next, and previous while retaining the first asOf snapshot', async () => {
+    const source = adapter(projection('IAQ-003'));
+    const settleOwnerTransport = async (expectedCallCount: number) => {
+      await act(async () => new Promise((resolve) => window.setTimeout(resolve, 0)));
+      await act(async () => {
+        await vi.waitFor(() => {
+          expect(source.query).toHaveBeenCalledTimes(expectedCallCount);
+          expect(button('Refresh').disabled).toBe(false);
+        });
+      });
+      await act(async () => Promise.resolve());
+      expect(source.query).toHaveBeenCalledTimes(expectedCallCount);
+    };
+
+    await act(async () => {
+      root.render(
+        <StrictMode>
+          <Hrm009CertificateWorkbench
+            queryId="IAQ-003"
+            gate={ADMITTED}
+            scope={HRM009_TEST_SCOPE}
+            adapter={source}
+          />
+        </StrictMode>
+      );
+    });
+    await settleOwnerTransport(1);
+
+    await act(async () => button('Refresh').click());
+    await settleOwnerTransport(2);
+
+    expect(button('Next').disabled).toBe(false);
+    await act(async () => button('Next').click());
+    await settleOwnerTransport(3);
+
+    expect(button('Previous').disabled).toBe(false);
+    await act(async () => button('Previous').click());
+    await settleOwnerTransport(4);
+
+    expect(source.query).toHaveBeenNthCalledWith(
+      1,
+      'IAQ-003',
+      expect.objectContaining({ cursor: null, asOf: null }),
+      HRM009_TEST_SCOPE.contextScopeKey,
+      expect.any(AbortSignal)
+    );
+    expect(source.query).toHaveBeenNthCalledWith(
+      2,
+      'IAQ-003',
+      expect.objectContaining({ cursor: null, asOf: HRM009_TEST_AS_OF }),
+      HRM009_TEST_SCOPE.contextScopeKey,
+      expect.any(AbortSignal)
+    );
+    expect(source.query).toHaveBeenNthCalledWith(
+      3,
+      'IAQ-003',
+      expect.objectContaining({ cursor: 'abcdefghijklmnop', asOf: HRM009_TEST_AS_OF }),
+      HRM009_TEST_SCOPE.contextScopeKey,
+      expect.any(AbortSignal)
+    );
+    expect(source.query).toHaveBeenNthCalledWith(
+      4,
+      'IAQ-003',
+      expect.objectContaining({ cursor: null, asOf: HRM009_TEST_AS_OF }),
       HRM009_TEST_SCOPE.contextScopeKey,
       expect.any(AbortSignal)
     );
