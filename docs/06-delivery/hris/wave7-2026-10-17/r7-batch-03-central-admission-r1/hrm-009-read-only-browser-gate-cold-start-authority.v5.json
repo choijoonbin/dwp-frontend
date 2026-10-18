@@ -1,0 +1,429 @@
+{
+  "schema": "dwp.hris.r7-batch03-hrm009-read-only-browser-gate-cold-start-authority.v5",
+  "decisionId": "HRIS-WAVE7-R7-BATCH03-HRM009-READ-ONLY-BROWSER-GATE-COLD-START-AUTHORITY-20261018-R5",
+  "issuedAt": "2026-10-18T09:32:18+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "AUTHORIZED_TARGETED_COLD_START_PAGE_BOUNDARY_AND_STRICTMODE_EXACT_ONCE_ZERO_WRITE",
+  "purpose": "Issue one append-only successor to the immutable v4 runtime-stability authority after the first authorized matrix execution stopped at the 1440 light personal row. Independent triage established that a fresh HCM mount planned all 58 official HCM PAGE contracts, the dedicated fixture mixed its two admitted HRM-009 PAGE contracts with live forwarding for the official non-target contracts, React StrictMode could immediately start the admitted PAGE query twice before the first probe was aborted, and the matrix URLs omitted the canonical admitted scope. This v5 authorizes only a deterministic sanitized route-denied fixture boundary for official non-target HCM PAGE contracts, fail-closed accounting for arbitrary or unofficial keys, an abort-aware microtask PAGE dispatch that removes only an already-aborted StrictMode probe, canonical HRM-009 scope URLs and matching negative preflight, the exact mounted regression proof, one corrected replay of the failed first row, and one first execution of each never-run row two through five. It does not authorize backend, configuration, activation, enrollment, writable behavior, a broad suite, or any replay beyond that bounded sequence.",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_DECISION_ID_AND_SHA256",
+    "predecessorMutation": "FORBIDDEN"
+  },
+  "predecessorDocument": {
+    "path": "hrm-009-read-only-browser-gate-runtime-stability-authority.v4.json",
+    "sha256": "22d36e196238a1e81a1fd887996968f331c47c239e58e4a093671f9e0405dd99",
+    "bytes": 17768,
+    "preservation": "IMMUTABLE",
+    "binding": "V5_IS_INVALID_IF_THE_PREDECESSOR_BYTES_OR_SHA256_DIFFER"
+  },
+  "effectiveInheritance": {
+    "inheritsAllUnchangedV4Terms": true,
+    "effectiveSequence": [
+      "hrm-009-read-only-browser-gate-fixture-execution-authority.v1.json",
+      "hrm-009-read-only-browser-gate-fixture-execution-authority-successor.v2.json",
+      "hrm-009-read-only-browser-gate-runtime-correction-authority.v3.json",
+      "hrm-009-read-only-browser-gate-runtime-stability-authority.v4.json",
+      "hrm-009-read-only-browser-gate-cold-start-authority.v5.json"
+    ],
+    "v5OverridesOnly": [
+      "cold-start handling of exact official non-target HCM PAGE contracts in the dedicated fixture",
+      "cold-start handling and accounting of arbitrary or unofficial authority keys in the dedicated fixture",
+      "abort-aware microtask dispatch of PAGE evaluation in the product-surface authority bridge",
+      "canonical HRM-009 scope parameters and the matching dedicated E2E negative preflight",
+      "the exact four-file implementation allowlist and bounded failed-row continuation sequence"
+    ],
+    "unchangedV4SecurityAndExecutionTermsRemainBinding": true
+  },
+  "firstMatrixFailureEvidence": {
+    "executionAuthority": "hrm-009-read-only-browser-gate-runtime-stability-authority.v4.json",
+    "dedicatedConfig": "playwright.hris-hrm-009-read-only.config.ts",
+    "executionMode": "SERIAL_WORKER_ONE_RETRIES_ZERO",
+    "row": "1440_LIGHT_PERSONAL",
+    "rowOrdinal": 1,
+    "result": "FAILED_AND_STOPPED",
+    "failureSurface": "AUTHORITY_UNAVAILABLE_FAIL_CLOSED_SCREEN",
+    "uiObservation": {
+      "heading": "현재 접근 권한을 확인할 수 없습니다",
+      "interpretation": "The browser correctly failed closed, but the admitted HRM-009 read-only workbench did not become the stable active surface. The screenshot is failure evidence and not an accepted product result."
+    },
+    "stableArtifacts": [
+      {
+        "path": "hrm-009-read-only-browser-gate-evidence/playwright-first-run-row-01-failed.png",
+        "sha256": "dc081273b628ed34d41174d429205b6b5569442947eb18d70fe50e90f3649386",
+        "bytes": 36032,
+        "content": "SANITIZED_1440_LIGHT_PERSONAL_FAILURE_SCREENSHOT"
+      },
+      {
+        "path": "hrm-009-read-only-browser-gate-evidence/playwright-first-run-row-01-error-context.md",
+        "sha256": "7856c3c2b0f91b2d83570919b3205ef622823e5fc62cfe164e427515686beb21",
+        "bytes": 732,
+        "content": "SANITIZED_ACCESSIBILITY_ERROR_CONTEXT"
+      }
+    ],
+    "fixtureSnapshotImmediatelyAfterFailure": {
+      "sequence": 6,
+      "pageEvaluations": {
+        "route.hcm.personal.requests.page": 2,
+        "route.hcm.operations.certificates-documents.page": 2
+      },
+      "dataEvaluations": {
+        "route.hcm.personal.requests.data": 1,
+        "route.hcm.operations.certificates-documents.data": 0
+      },
+      "ownerGets": {
+        "/api/people/v1/hris/workbench/self-service/requests": 1,
+        "/api/people/v1/hris/workbench/operations/certificates/documents": 0
+      },
+      "mutations": {},
+      "forwardedRequests": {
+        "attempted": {
+          "total": 316,
+          "authLogin": 1,
+          "authMe": 2,
+          "ordinaryApi": 313
+        },
+        "succeeded": {
+          "total": 196,
+          "authLogin": 1,
+          "authMe": 1,
+          "ordinaryApi": 194
+        }
+      },
+      "unexpectedAuthorityEvaluations": 0,
+      "stepUpRequests": 0
+    },
+    "monotonicEventsImmediatelyAfterFailure": [
+      {
+        "sequence": 1,
+        "type": "PAGE_EVALUATION_ALLOWED",
+        "routeContractKey": "route.hcm.operations.certificates-documents.page"
+      },
+      {
+        "sequence": 2,
+        "type": "PAGE_EVALUATION_ALLOWED",
+        "routeContractKey": "route.hcm.personal.requests.page"
+      },
+      {
+        "sequence": 3,
+        "type": "PAGE_EVALUATION_ALLOWED",
+        "routeContractKey": "route.hcm.operations.certificates-documents.page"
+      },
+      {
+        "sequence": 4,
+        "type": "PAGE_EVALUATION_ALLOWED",
+        "routeContractKey": "route.hcm.personal.requests.page"
+      },
+      {
+        "sequence": 5,
+        "type": "DATA_EVALUATION_ALLOWED",
+        "routeContractKey": "route.hcm.personal.requests.data"
+      },
+      {
+        "sequence": 6,
+        "type": "OWNER_GET_ALLOWED",
+        "path": "/api/people/v1/hris/workbench/self-service/requests"
+      }
+    ],
+    "matrixContinuationState": {
+      "row1": "FAILED_ON_FIRST_AUTHORIZED_EXECUTION_NO_REPLAY_YET",
+      "row2": "NEVER_RUN",
+      "row3": "NEVER_RUN",
+      "row4": "NEVER_RUN",
+      "row5": "NEVER_RUN"
+    },
+    "securityObservation": "The zero mutation and zero step-up counters remain valid. The duplicated admitted PAGE counters and mixed live-forward traffic are diagnostic evidence only and do not authorize relaxation of admission, counting, scope, or fail-closed behavior."
+  },
+  "independentColdStartTriage": {
+    "result": "TARGETED_CORRECTION_REQUIRED_BEFORE_BOUNDED_MATRIX_CONTINUATION",
+    "observedOfficialHcmPagePlanCount": 58,
+    "rootCauses": [
+      {
+        "id": "COLD-START-001",
+        "finding": "On a fresh governed HCM mount, the product-surface authority bridge planned all 58 registered HCM PAGE contracts in order to assemble product and surface authority, not only the active HRM-009 PAGE.",
+        "impact": "The dedicated HRM-009 fixture admitted its two target PAGE contracts but forwarded official non-target HCM PAGE evaluations to live local authority. The resulting mixed authority and high ordinary forward traffic made the cold-start result nondeterministic for this bounded fixture."
+      },
+      {
+        "id": "COLD-START-002",
+        "finding": "The PAGE React Query function invoked live evaluation immediately. During a development StrictMode mount probe, the first query could reach transport before React Query aborted it, and the remount then issued the same target PAGE evaluation again.",
+        "impact": "Both target PAGE counters were two although the semantic route, tenant, actor, scope and decision revision had not changed."
+      },
+      {
+        "id": "COLD-START-003",
+        "finding": "The dedicated matrix returned to the HRM-009 routes without the canonical context scope query parameter even though the admitted Stage-A route contract and prior CUA evidence use an explicit sealed scope.",
+        "impact": "The test did not pin the same canonical route identity used by the bounded fixture and receipt contract."
+      }
+    ],
+    "rejectedAlternatives": [
+      "Do not change the shared production authority API or backend to understand the dedicated fixture.",
+      "Do not suppress all sibling PAGE planning in the bridge because surface decisions, navigation changes and lease renewals remain valid product behavior.",
+      "Do not treat an arbitrary route-contract prefix as an official key or allow an unknown key to reach live authority.",
+      "Do not disable React StrictMode, React Query cancellation, route admission, lease renewal or fail-closed presentation.",
+      "Do not rerun the entire matrix or any passing row because only row one executed and failed."
+    ]
+  },
+  "correctionADeterministicFixtureColdStartBoundary": {
+    "authorizedPath": "scripts/hris-hrm-009-read-only-browser-gate-server.mjs",
+    "targetContractsRemainUnchanged": [
+      "route.hcm.personal.requests.page",
+      "route.hcm.personal.requests.data",
+      "route.hcm.operations.certificates-documents.page",
+      "route.hcm.operations.certificates-documents.data"
+    ],
+    "officialNonTargetHcmPageContract": {
+      "definition": "An exact routeContractKey copied from the checked-in registered HCM PAGE route source at the pinned base, excluding the two admitted HRM-009 target PAGE keys. Prefix, substring, suffix, regular-expression or caller-declared membership is forbidden.",
+      "requiredBehavior": "Return a deterministic HTTP 200 sanitized direct-evaluation envelope with decision ROUTE_DENIED, reasonCode ROUTE_CAPABILITY_REQUIRED and the sealed HRM-009 decision revision. Never forward the request to the live local authority and never include a context, scope, grant, user, credential, cookie, raw body or upstream response.",
+      "counterPolicy": "Do not increment an admitted target PAGE or DATA counter and do not classify an exact registered official non-target HCM PAGE key as an unexpected arbitrary key.",
+      "eventPolicy": "Record one monotonic sanitized denial event containing only the exact registered routeContractKey and a fixed reason code."
+    },
+    "arbitraryOrUnofficialContract": {
+      "definition": "Any evaluation routeContractKey that is neither one of the four admitted target contracts nor an exact registered official non-target HCM PAGE contract.",
+      "requiredBehavior": "Fail closed at the dedicated fixture without live forwarding. Return only a sanitized invalid or route-denied response consistent with the existing malformed-request boundary.",
+      "counterPolicy": "Increment unexpectedAuthorityEvaluations exactly once per rejected evaluation and leave all admitted target PAGE, DATA and owner counters unchanged.",
+      "eventPolicy": "Record one sanitized AUTHORITY_EVALUATION_REJECTED event with no raw subject, scope, secret, authorization header, cookie or body value."
+    },
+    "requiredNegativePreflightProof": [
+      "An exact registered official non-target HCM PAGE contract receives deterministic sanitized ROUTE_DENIED without upstream forwarding and without incrementing unexpectedAuthorityEvaluations.",
+      "An arbitrary unofficial HCM-like PAGE key fails closed, increments unexpectedAuthorityEvaluations exactly once, and is never forwarded.",
+      "Existing malformed JSON, blank route key, oversized body and exact target-contract subject mismatch cases continue to fail closed with their exact expected accounting.",
+      "All admitted target PAGE, DATA and owner counters remain zero during negative preflight.",
+      "The serialized log contains none of the preflight authorization, cookie, body, surface or scope sentinels.",
+      "The fixture is reset exactly once after the negative preflight before the corrected row replay."
+    ],
+    "unchangedBoundaries": [
+      "The four target contract subject and canonical scope checks remain exact and fail closed.",
+      "The owner GET projection shape and scenario contents authorized by v4 remain unchanged.",
+      "Mutation and step-up denial and counting remain unchanged.",
+      "Authentication, auth/me and ordinary non-authority API proxying required for the local browser session remain permitted and sanitized.",
+      "No customer, remote, production or backend authority endpoint is added."
+    ]
+  },
+  "correctionBAbortAwareMicrotaskPageDispatch": {
+    "authorizedPath": "apps/dwp/src/features/shell/product-surface-authority-bridge.tsx",
+    "requiredBehavior": "Defer each PAGE authority transport invocation by one microtask and inspect the React Query AbortSignal before invoking authority.evaluateProduct. If the signal was already aborted by a StrictMode probe, terminate that query as an abort and send no PAGE request. If it remains active, invoke the unchanged authority evaluator exactly once with the same signal.",
+    "exactOnceBoundary": "A development StrictMode cold start with unchanged tenant, actor, access mode, product, surface, route contract, context scope and decision revision must produce exactly one live PAGE evaluation for each semantic PAGE query, not one per mount probe.",
+    "mustNotWeaken": [
+      "A real active route or registered product route-set change must create and evaluate the correct new semantic PAGE queries.",
+      "A tenant, actor, access mode, product, surface, route-contract, context-scope, decision-revision or snapshot identity change must not reuse a stale decision.",
+      "A scheduled direct-decision lease renewal must still refetch the exact active query before expiry.",
+      "Unmount, navigation, cancellation and supersession must still abort in-flight transport and must not publish stale results.",
+      "Route-denied, scope-invalid, authority-unavailable and lease-expiry states must remain fail closed.",
+      "No cache lifetime, query key, retry, stale-time, garbage-collection, coordinator or presentation decision rule is relaxed."
+    ],
+    "forbiddenTechniques": [
+      "Disabling StrictMode",
+      "Using a global sent flag, process-global cache or cross-scope memo",
+      "Ignoring AbortSignal after transport starts",
+      "Suppressing a legitimate semantic change or lease renewal",
+      "Changing the number or meaning of registered PAGE contracts"
+    ]
+  },
+  "correctionCMountedRegressionProof": {
+    "authorizedPath": "apps/dwp/src/features/shell/product-surface-authority-bridge.mounted.test.ts",
+    "requiredAssertions": [
+      "Mount the bridge under React StrictMode with a deferred or observable PAGE evaluator and prove exactly one non-aborted evaluator invocation per unchanged semantic PAGE query after the probe settles.",
+      "Prove the discarded probe is aborted before live evaluateProduct transport is invoked.",
+      "Prove a real route or canonical scope change still issues the required fresh PAGE evaluation and does not reuse the prior decision.",
+      "Prove the existing lease-renewal path still invokes a fresh evaluation at its authorized deadline.",
+      "Retain the existing in-flight abort-on-unmount and fail-closed denial coverage."
+    ],
+    "testScope": "Only this mounted test file is authorized for targeted unit execution under v5. Existing assertions may be updated only where the one-microtask dispatch makes the abort boundary observable."
+  },
+  "correctionDCanonicalE2eRouteAndPreflight": {
+    "authorizedPath": "e2e/hris-hrm-009-read-only-browser-gate.spec.ts",
+    "canonicalUrls": {
+      "personal": "/hr/me/requests?tab=overview&focus=request%3A1001&scope=scope%3Ahrm009%3Aself",
+      "operations": "/hr/operations/people/certificates-documents?tab=overview&scope=scope%3Ahrm009%3Aoperations"
+    },
+    "requiredChanges": [
+      "Use the exact canonical scope on every personal and operations return route and assert it remains present after sign-in.",
+      "Extend the existing beforeAll negative preflight with one exact official non-target HCM PAGE request and one arbitrary unofficial HCM-like PAGE request.",
+      "Assert the official non-target request is deterministic sanitized ROUTE_DENIED without live forwarding or unexpected classification.",
+      "Assert the arbitrary request fails closed, is counted as unexpected exactly once and is never forwarded.",
+      "Update only the exact expected negative-preflight counters and sanitized sentinel checks implied by these two cases.",
+      "Keep PAGE-before-DATA-before-owner ordering, exact target counters, zero mutation, zero step-up, zero unexpected authority during each positive row, accessibility, overflow, focus and secret-absence assertions unchanged."
+    ],
+    "configEditAuthorized": false
+  },
+  "effectiveImplementationAllowlist": {
+    "exactFiles": [
+      "scripts/hris-hrm-009-read-only-browser-gate-server.mjs",
+      "apps/dwp/src/features/shell/product-surface-authority-bridge.tsx",
+      "apps/dwp/src/features/shell/product-surface-authority-bridge.mounted.test.ts",
+      "e2e/hris-hrm-009-read-only-browser-gate.spec.ts"
+    ],
+    "exactFileCount": 4,
+    "otherFrontendFilesAuthorized": false,
+    "backendFilesAuthorized": false,
+    "agentFilesAuthorized": false,
+    "playwrightConfigEditsAuthorized": false,
+    "packageOrLockfileEditsAuthorized": false,
+    "runtimeDefaultEditsAuthorized": false,
+    "databaseOrMigrationEditsAuthorized": false
+  },
+  "pinnedCommittedBase": {
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "fa8fe866908f9e7606bc81e7ff97dc90bcdb0fc2",
+      "tree": "0735cfc1f23a7dcdb086bdd71802fbbcdbae2f48",
+      "originExact": true,
+      "containsV4ImplementationMerge": true,
+      "worktreeCleanClaim": false,
+      "worktreeNote": "The pinned committed base is exact. Shared untracked sanitized evidence present during issuance is not adopted as source and does not authorize unrelated changes."
+    }
+  },
+  "sealedProductAuthorization": {
+    "version": 52,
+    "status": "DRAFT",
+    "checksum": "b33fbf968e71f97b09fa497fdfad7d2f6854199170b79fd1602a0ea604977346",
+    "runtimeDefault": "OFF",
+    "persistentFeatureActivationCount": 0,
+    "persistentTenantEnrollmentCount": 0,
+    "automaticImportEnabled": false
+  },
+  "verificationPolicy": {
+    "authorityDocumentChecks": ["JSON_PARSE", "PRETTIER_CHECK_EXACT_V5_FILE"],
+    "implementationStaticChecks": [
+      "NODE_CHECK_FIXTURE_ONLY",
+      "PRETTIER_CHECK_EXACT_FOUR_FILES",
+      "ESLINT_EXACT_FOUR_FILES_WHERE_APPLICABLE",
+      "GIT_DIFF_CHECK_EXACT_ALLOWLIST"
+    ],
+    "targetedUnitChecks": [
+      "apps/dwp/src/features/shell/product-surface-authority-bridge.mounted.test.ts_ONLY"
+    ],
+    "browserChecks": [
+      "FAILED_ROW_01_1440_LIGHT_PERSONAL_ONE_CORRECTED_REPLAY_ONLY",
+      "THEN_NEVER_RUN_ROW_02_1280_DARK_OPERATIONS_ONCE",
+      "THEN_NEVER_RUN_ROW_03_390_KO_REDUCED_MOTION_PERSONAL_ONCE",
+      "THEN_NEVER_RUN_ROW_04_320_FORCED_COLORS_PARTIAL_OPERATIONS_ONCE",
+      "THEN_NEVER_RUN_ROW_05_640_CSS_200_PERCENT_PERSONAL_ONCE"
+    ],
+    "cuaReplayRequired": false,
+    "defaultOffReplayRequired": false,
+    "repositoryWideSuiteAuthorized": false,
+    "fullNxOrVitestSuiteAuthorized": false,
+    "broadBrowserReplayAuthorized": false,
+    "unrelatedRegressionExecutionAuthorized": false,
+    "repeatedPassingCheckExecutionAuthorized": false
+  },
+  "boundedMatrixContinuation": {
+    "dedicatedConfig": "playwright.hris-hrm-009-read-only.config.ts",
+    "dedicatedSpec": "e2e/hris-hrm-009-read-only-browser-gate.spec.ts",
+    "driver": "PLAYWRIGHT_CHROMIUM",
+    "workers": 1,
+    "retries": 0,
+    "executionMode": "SERIAL_STOP_ON_FIRST_FAILURE",
+    "authorization": "After the exact four-file review, static checks and mounted target pass, start the dedicated serial spec once. That invocation is the one corrected replay of failed row one and, only if each prior row passes, the first and only execution of never-run rows two through five.",
+    "orderedRows": [
+      {
+        "ordinal": 1,
+        "name": "1440_LIGHT_PERSONAL",
+        "priorState": "FAILED_ONCE",
+        "authorizedExecution": "ONE_CORRECTED_REPLAY_ONLY"
+      },
+      {
+        "ordinal": 2,
+        "name": "1280_DARK_OPERATIONS",
+        "priorState": "NEVER_RUN",
+        "authorizedExecution": "FIRST_RUN_ONCE_AFTER_ROW_1_PASS"
+      },
+      {
+        "ordinal": 3,
+        "name": "390_KO_REDUCED_MOTION_PERSONAL",
+        "priorState": "NEVER_RUN",
+        "authorizedExecution": "FIRST_RUN_ONCE_AFTER_ROWS_1_TO_2_PASS"
+      },
+      {
+        "ordinal": 4,
+        "name": "320_FORCED_COLORS_PARTIAL_OPERATIONS",
+        "priorState": "NEVER_RUN",
+        "authorizedExecution": "FIRST_RUN_ONCE_AFTER_ROWS_1_TO_3_PASS"
+      },
+      {
+        "ordinal": 5,
+        "name": "640_CSS_200_PERCENT_PERSONAL",
+        "priorState": "NEVER_RUN",
+        "authorizedExecution": "FIRST_RUN_ONCE_AFTER_ROWS_1_TO_4_PASS"
+      }
+    ],
+    "requiredPositiveRowCounters": {
+      "selectedTargetPage": 1,
+      "selectedTargetData": 1,
+      "selectedOwnerGet": 1,
+      "mutationsTotal": 0,
+      "stepUpRequests": 0,
+      "unexpectedAuthorityEvaluations": 0
+    },
+    "requiredCrossRowAssertions": [
+      "PAGE_BEFORE_DATA_BEFORE_OWNER_GET",
+      "CANONICAL_SCOPE_PRESERVED",
+      "OFFICIAL_NON_TARGET_HCM_PAGE_NEVER_LIVE_FORWARDED",
+      "STRICTMODE_TARGET_PAGE_EXACTLY_ONCE",
+      "RAW_PROJECTION_ACCEPTED",
+      "ZERO_POST_PUT_PATCH_DELETE",
+      "ZERO_STEP_UP",
+      "ZERO_UNEXPECTED_AUTHORITY_EVALUATION",
+      "SECRETS_ABSENT_FROM_ATTACHMENTS"
+    ],
+    "failurePolicy": "Stop immediately on the first failed row, preserve sanitized evidence, do not rerun that row or any prior row, and require another append-only authority before further browser execution.",
+    "passingRowReplayAuthorized": false,
+    "secondFullMatrixInvocationAuthorized": false
+  },
+  "authority": {
+    "deterministicOfficialNonTargetHcmPageDenialAuthorized": true,
+    "arbitraryUnofficialKeyFailClosedAccountingAuthorized": true,
+    "abortAwareMicrotaskPageDispatchAuthorized": true,
+    "mountedStrictModeRegressionAuthorized": true,
+    "canonicalScopeAndNegativePreflightCorrectionAuthorized": true,
+    "oneCorrectedFailedRowReplayAuthorized": true,
+    "neverRunRowsTwoThroughFiveFirstRunAuthorized": true,
+    "productionBehaviorChange": "ABORTED_STRICTMODE_PROBE_DOES_NOT_INVOKE_PAGE_TRANSPORT",
+    "persistentActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "writableActionAuthorized": false,
+    "centralMergeAuthorizedByThisDocument": false
+  },
+  "branchPolicy": {
+    "implementationBase": "EXACT_FRONTEND_DWP_DEV_COMMIT_FA8FE866908F9E7606BC81E7FF97DC90BCDB0FC2_PLUS_THIS_V5_AUTHORITY",
+    "strategy": "BOUNDED_FOUR_FILE_COLD_START_CORRECTION_THEN_TARGETED_REVIEW_THEN_EXACT_CENTRAL_MERGE",
+    "conflictPolicy": "STOP_ON_CONFLICT_NO_AUTOMATIC_RESOLUTION",
+    "unrelatedDirtyFileAdoption": "FORBIDDEN"
+  },
+  "forbidden": [
+    "Changing a source or test file outside the exact four-file implementation allowlist",
+    "Changing the dedicated Playwright config, package.json, a lockfile, migration, backend, checked-in runtime default, activation or enrollment",
+    "Sending an exact official non-target HCM PAGE evaluation from the dedicated fixture to live authority",
+    "Treating a prefix, substring, suffix, regular expression or caller input as proof that a route key is officially registered",
+    "Forwarding an arbitrary, malformed or unofficial authority route key upstream",
+    "Disabling StrictMode, React Query cancellation, fail-closed presentation, authorization validation or direct-decision lease renewal",
+    "Deduplicating across a changed tenant, actor, access mode, product, surface, route, scope, revision, snapshot or lease generation",
+    "Changing query keys, retry policy, cache lifetime, stale time, garbage collection or the registered HCM route set",
+    "Logging credentials, cookies, Authorization headers, raw request bodies, secret sentinels or upstream error bodies",
+    "Using customer or production data",
+    "Executing a repository-wide suite, a broad browser replay, a second matrix invocation or any passing-row replay",
+    "Running rows two through five unless every earlier ordered row passed in the same bounded serial invocation",
+    "Enabling or exercising a writable HRM-009 action, step-up, POST, PUT, PATCH or DELETE",
+    "Claiming download, revoke, verification, expiry, access-audit, download-audit, persistent activation, enrollment or production release",
+    "Treating fixture, StrictMode or browser-gate evidence as business completion credit"
+  ],
+  "requiredNext": [
+    "Validate this v5 document with JSON parse and Prettier on this exact file only; preserve v1 through v4 bytes exactly.",
+    "Implement and independently review only the four allowlisted files against the deterministic cold-start, abort-aware dispatch, canonical scope and negative-preflight contracts.",
+    "Run only the exact four-file static checks and the mounted product-surface authority bridge test file.",
+    "If all targeted checks pass, execute the dedicated serial spec once: corrected row one once, then each never-run row two through five once only while every prior row passes.",
+    "Stop on the first failure without replay or broad substitution and issue a sanitized append-only browser-gate receipt only after all five ordered rows pass."
+  ],
+  "nonClaims": [
+    "HRM-009 full slice completion",
+    "Batch-03 completion",
+    "R7 completion",
+    "Writable certificate request, issuance, download, revoke or verification",
+    "Persistent tenant activation or enrollment",
+    "Customer-data use or production release",
+    "Business completion credit"
+  ]
+}
