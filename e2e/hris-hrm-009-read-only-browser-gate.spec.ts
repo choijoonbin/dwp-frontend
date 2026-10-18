@@ -6,12 +6,17 @@ import type { APIRequestContext, Page, TestInfo } from '@playwright/test';
 const BROWSER_BASE_URL = 'http://127.0.0.1:4219';
 const FIXTURE_URL = 'http://127.0.0.1:8919/api/__hrm009-gate';
 const EVALUATION_URL = 'http://127.0.0.1:8919/api/auth/product-surface-access/evaluate';
-const PERSONAL_PATH = '/hr/me/requests?tab=overview&focus=request:1001';
-const OPERATIONS_PATH = '/hr/operations/people/certificates-documents?tab=overview';
+const PERSONAL_PATH =
+  '/hr/me/requests?tab=overview&focus=request%3A1001&scope=scope%3Ahrm009%3Aself';
+const OPERATIONS_PATH =
+  '/hr/operations/people/certificates-documents?tab=overview&scope=scope%3Ahrm009%3Aoperations';
 const PERSONAL_PAGE_KEY = 'route.hcm.personal.requests.page';
 const PERSONAL_DATA_KEY = 'route.hcm.personal.requests.data';
 const OPERATIONS_PAGE_KEY = 'route.hcm.operations.certificates-documents.page';
 const OPERATIONS_DATA_KEY = 'route.hcm.operations.certificates-documents.data';
+const OFFICIAL_NON_TARGET_PAGE_KEY = 'route.hcm.personal.services.page';
+const ARBITRARY_UNOFFICIAL_PAGE_KEY = 'route.hcm.personal.negative-preflight-route-secret.page';
+const OFFICIAL_NON_TARGET_PAGE_COUNT = 56;
 const PERSONAL_OWNER_PATH = '/api/people/v1/hris/workbench/self-service/requests';
 const OPERATIONS_OWNER_PATH = '/api/people/v1/hris/workbench/operations/certificates/documents';
 
@@ -51,6 +56,7 @@ type GateLog = Readonly<{
         ordinaryApi: number;
       }>;
     }>;
+    officialNonTargetPageDenials: number;
     unexpectedAuthorityEvaluations: number;
     stepUpRequests: number;
   }>;
@@ -104,7 +110,9 @@ function liveCredentials() {
 
 async function signInToLiveLocalSession(page: Page, returnPath: string) {
   const credentials = liveCredentials();
-  const expectedPathname = new URL(returnPath, BROWSER_BASE_URL).pathname;
+  const expectedUrl = new URL(returnPath, BROWSER_BASE_URL);
+  const expectedPathname = expectedUrl.pathname;
+  const expectedScope = expectedUrl.searchParams.get('scope');
   await page.goto(`/sign-in?returnUrl=${encodeURIComponent(returnPath)}`, {
     waitUntil: 'domcontentloaded',
   });
@@ -120,7 +128,13 @@ async function signInToLiveLocalSession(page: Page, returnPath: string) {
   await form.locator('button[type="submit"]').click();
   const loginResponse = await loginFinished;
   expect(loginResponse.status(), 'Live Gateway login must succeed.').toBe(200);
-  await expect(page).toHaveURL((url) => url.pathname === expectedPathname, { timeout: 45_000 });
+  await expect(page).toHaveURL(
+    (url) =>
+      url.pathname === expectedPathname &&
+      url.searchParams.getAll('scope').length === 1 &&
+      url.searchParams.get('scope') === expectedScope,
+    { timeout: 45_000 }
+  );
 }
 
 async function setEphemeralAppearance(page: Page, appearance: EphemeralAppearance) {
@@ -145,13 +159,16 @@ async function preparePage(
     appearance: EphemeralAppearance;
     personalScenario?: Scenario;
     operationsScenario?: Scenario;
+    resetFixtureBefore?: boolean;
   }>
 ) {
   await setEphemeralAppearance(page, options.appearance);
-  await resetFixture(request, {
-    personal: options.personalScenario,
-    operations: options.operationsScenario,
-  });
+  if (options.resetFixtureBefore !== false) {
+    await resetFixture(request, {
+      personal: options.personalScenario,
+      operations: options.operationsScenario,
+    });
+  }
   await passThroughFixtureTransport(page);
   await signInToLiveLocalSession(page, returnPath);
 }
@@ -218,6 +235,7 @@ function expectGateEvidence(log: GateLog, surface: Surface) {
   expect(log.counters.pageEvaluations[contract.pageKey]).toBe(1);
   expect(log.counters.dataEvaluations[contract.dataKey]).toBe(1);
   expect(log.counters.ownerGets[contract.ownerPath]).toBe(1);
+  expect(log.counters.officialNonTargetPageDenials).toBe(OFFICIAL_NON_TARGET_PAGE_COUNT);
   expect(log.counters.unexpectedAuthorityEvaluations).toBe(0);
   expect(log.counters.stepUpRequests).toBe(0);
   expect(Object.values(log.counters.mutations).reduce((sum, count) => sum + count, 0)).toBe(0);
@@ -332,13 +350,57 @@ test.beforeAll(async () => {
     expect(exactContractMismatch.status).toBe(200);
     expect((await exactContractMismatch.json()).data.decision).toBe('ROUTE_DENIED');
 
+    const officialNonTarget = await fetch(EVALUATION_URL, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        subject: {
+          type: 'PRODUCT',
+          productKey: 'hcm',
+          surfaceKey: 'hcm.personal',
+        },
+        routeContractKey: OFFICIAL_NON_TARGET_PAGE_KEY,
+      }),
+    });
+    expect(officialNonTarget.status).toBe(200);
+    expect((await officialNonTarget.json()).data).toMatchObject({
+      decision: 'ROUTE_DENIED',
+      reasonCode: 'ROUTE_CAPABILITY_REQUIRED',
+    });
+
+    const arbitraryUnofficial = await fetch(EVALUATION_URL, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        subject: {
+          type: 'PRODUCT',
+          productKey: 'hcm',
+          surfaceKey: 'hcm.personal',
+        },
+        routeContractKey: ARBITRARY_UNOFFICIAL_PAGE_KEY,
+      }),
+    });
+    expect(arbitraryUnofficial.status).toBe(200);
+    expect((await arbitraryUnofficial.json()).data).toMatchObject({
+      decision: 'ROUTE_DENIED',
+      reasonCode: 'ROUTE_CAPABILITY_REQUIRED',
+    });
+
     const logResponse = await fetch(`${FIXTURE_URL}/log`);
     expect(logResponse.ok).toBe(true);
     const log = (await logResponse.json()) as GateLog;
-    expect(log.counters.unexpectedAuthorityEvaluations).toBe(4);
+    expect(log.counters.officialNonTargetPageDenials).toBe(1);
+    expect(log.counters.unexpectedAuthorityEvaluations).toBe(5);
     expect(
       log.events.filter((event) => event.type === 'AUTHORITY_EVALUATION_REJECTED')
-    ).toHaveLength(4);
+    ).toHaveLength(5);
+    expect(
+      log.events.filter(
+        (event) =>
+          event.type === 'OFFICIAL_NON_TARGET_PAGE_DENIED' &&
+          event.routeContractKey === OFFICIAL_NON_TARGET_PAGE_KEY
+      )
+    ).toHaveLength(1);
     expect(Object.values(log.counters.pageEvaluations).every((count) => count === 0)).toBe(true);
     expect(Object.values(log.counters.dataEvaluations).every((count) => count === 0)).toBe(true);
     expect(Object.values(log.counters.ownerGets).every((count) => count === 0)).toBe(true);
@@ -353,6 +415,7 @@ test.beforeAll(async () => {
       'negative-preflight-body-secret',
       'negative-preflight-surface-secret',
       'negative-preflight-scope-secret',
+      'negative-preflight-route-secret',
     ]) {
       expect(serializedLog).not.toContain(secret);
     }
@@ -369,6 +432,7 @@ test('1440 light personal route preserves PAGE-DATA-GET order and keyboard focus
   await page.emulateMedia({ colorScheme: 'light', reducedMotion: 'no-preference' });
   await preparePage(page, request, PERSONAL_PATH, {
     appearance: { mode: 'light', reduceMotion: false },
+    resetFixtureBefore: false,
   });
   await expectReadOnlyStageA(page, 'complete');
   await expect(page.getByTestId('hrm-009-certificate-workbench')).toHaveAttribute(
@@ -379,7 +443,8 @@ test('1440 light personal route preserves PAGE-DATA-GET order and keyboard focus
     return (
       url.pathname === '/hr/me/requests' &&
       url.searchParams.get('tab') === 'overview' &&
-      url.searchParams.get('focus') === 'request:1001'
+      url.searchParams.get('focus') === 'request:1001' &&
+      url.searchParams.get('scope') === 'scope:hrm009:self'
     );
   });
   await expect(page.getByText('request:1001', { exact: true }).first()).toBeVisible();

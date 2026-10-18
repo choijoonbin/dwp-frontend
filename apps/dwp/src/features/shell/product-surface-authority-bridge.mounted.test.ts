@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { act, createElement } from 'react';
+import { act, createElement, StrictMode } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { MemoryRouter, useNavigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -218,12 +218,18 @@ function AuthorityProbe() {
 
 async function mountBridge(
   pathname: string,
-  authorityValue: ProductSurfaceAuthorityContextValue
+  authorityValue: ProductSurfaceAuthorityContextValue,
+  options: Readonly<{ strictMode?: boolean }> = {}
 ): Promise<void> {
   bridgeMocks.useProductSurfaceAuthority.mockReturnValue(authorityValue);
   container = document.createElement('div');
   document.body.appendChild(container);
   root = createRoot(container);
+  const bridge = createElement(
+    ProductSurfaceAuthorityBridge,
+    { runtime: TEST_RUNTIME },
+    createElement(AuthorityProbe)
+  );
   await act(async () => {
     root?.render(
       createElement(
@@ -232,11 +238,7 @@ async function mountBridge(
         createElement(
           MemoryRouter,
           { initialEntries: [pathname] },
-          createElement(
-            ProductSurfaceAuthorityBridge,
-            { runtime: TEST_RUNTIME },
-            createElement(AuthorityProbe)
-          )
+          options.strictMode ? createElement(StrictMode, null, bridge) : bridge
         )
       )
     );
@@ -402,6 +404,52 @@ describe('mounted product surface authority bridge', () => {
     await unmountBridge();
 
     expect(signals.every((signal) => signal.aborted)).toBe(true);
+  });
+
+  it('dispatches each semantic PAGE once after the StrictMode probe and reevaluates a changed scope', async () => {
+    const observedSignals: AbortSignal[] = [];
+    const evaluateProduct = vi.fn(
+      async (request: ProductSurfaceEvaluationRequest, options: { signal?: AbortSignal } = {}) => {
+        expect(options.signal?.aborted).toBe(false);
+        if (options.signal) observedSignals.push(options.signal);
+        return {
+          decision: 'ROUTE_DENIED' as const,
+          decisionRevision: REVISION,
+          correlationId: request.routeContractKey,
+        };
+      }
+    );
+
+    await mountBridge(
+      `${APPROVALS_PATH}?scope=strict-scope-one`,
+      authority(evaluateProduct, rollout('111')),
+      { strictMode: true }
+    );
+    await vi.waitFor(() => expect(evaluateProduct).toHaveBeenCalledTimes(APPROVALS_ROUTES.length));
+
+    const initialCounts = new Map<string, number>();
+    for (const [request] of evaluateProduct.mock.calls) {
+      initialCounts.set(
+        request.routeContractKey,
+        (initialCounts.get(request.routeContractKey) ?? 0) + 1
+      );
+    }
+    expect(initialCounts.size).toBe(APPROVALS_ROUTES.length);
+    expect([...initialCounts.values()].every((count) => count === 1)).toBe(true);
+    expect(observedSignals).toHaveLength(APPROVALS_ROUTES.length);
+
+    await act(async () => {
+      navigateBridge?.(`${APPROVALS_PATH}?scope=strict-scope-two`);
+    });
+    await vi.waitFor(() =>
+      expect(
+        evaluateProduct.mock.calls.filter(
+          ([request]) => request.routeContractKey === ACTIVE_ROUTE.routeContractKey
+        )
+      ).toHaveLength(2)
+    );
+    expect(evaluateProduct).toHaveBeenCalledTimes(APPROVALS_ROUTES.length + 1);
+    expect(evaluateProduct.mock.calls.at(-1)?.[0].contextScopeKey).toBe('strict-scope-two');
   });
 
   it('settles every Work PAGE after an in-flight management-to-work scope transition', async () => {
