@@ -395,6 +395,8 @@ function Hrm009RouteAdmission({ queryId }: Readonly<{ queryId: Hrm009QueryId }>)
         pageEvidence.decisionRevision,
       ])
     : '';
+  const pageContextScopeKey = pageEvidence?.contextScopeKey ?? '';
+  const pageDecisionRevision = pageEvidence?.decisionRevision ?? '';
   const [evaluationGeneration, setEvaluationGeneration] = useState(0);
   const [dataAdmission, setDataAdmission] = useState<DataAdmissionState | null>(null);
   const clockAnchor = useMemo(
@@ -403,31 +405,39 @@ function Hrm009RouteAdmission({ queryId }: Readonly<{ queryId: Hrm009QueryId }>)
   );
 
   useEffect(() => {
-    if (!identity || !pageEvidence || !snapshot || !clockAnchor) {
+    if (!identity || !pageContextScopeKey || !pageDecisionRevision || !snapshot || !clockAnchor) {
       setDataAdmission(null);
       return undefined;
     }
     const controller = new AbortController();
     let active = true;
     setDataAdmission(Object.freeze({ state: 'pending', identity }));
-    void evaluateProduct(
-      {
-        subject: {
-          type: 'PRODUCT',
-          productKey: contract.productId,
-          surfaceKey: contract.surfaceId,
-        },
-        routeContractKey: contract.dataRouteContractKey,
-        contextScopeKey: pageEvidence.contextScopeKey,
-      },
-      { signal: controller.signal }
-    )
+    void Promise.resolve()
+      .then(() =>
+        controller.signal.aborted
+          ? undefined
+          : evaluateProduct(
+              {
+                subject: {
+                  type: 'PRODUCT',
+                  productKey: contract.productId,
+                  surfaceKey: contract.surfaceId,
+                },
+                routeContractKey: contract.dataRouteContractKey,
+                contextScopeKey: pageContextScopeKey,
+              },
+              { signal: controller.signal }
+            )
+      )
       .then((data) => {
-        if (!active) return;
+        if (!active || data === undefined) return;
         const lease = resolveHrm009DataAdmissionLease(
           queryId,
           data,
-          pageEvidence,
+          {
+            contextScopeKey: pageContextScopeKey,
+            decisionRevision: pageDecisionRevision,
+          },
           snapshot,
           directDecisionServerNow(clockAnchor)
         );
@@ -454,7 +464,8 @@ function Hrm009RouteAdmission({ queryId }: Readonly<{ queryId: Hrm009QueryId }>)
     evaluateProduct,
     evaluationGeneration,
     identity,
-    pageEvidence,
+    pageContextScopeKey,
+    pageDecisionRevision,
     queryId,
     snapshot,
   ]);
@@ -489,15 +500,21 @@ function Hrm009RouteAdmission({ queryId }: Readonly<{ queryId: Hrm009QueryId }>)
     dataAdmission.identity === identity &&
     dataAdmission.serverDeadlineMs > now
   );
-  const scope: Hrm009TrustedScope | undefined = admitted
-    ? Object.freeze({
-        contextScopeKey: pageEvidence!.contextScopeKey,
-        decisionRevision: pageEvidence!.decisionRevision,
-        locale: resolveSupportedLocale(i18n.resolvedLanguage, i18n.language),
-        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
-        correlationId,
-      })
-    : undefined;
+  const locale = resolveSupportedLocale(i18n.resolvedLanguage, i18n.language);
+  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+  const scope = useMemo<Hrm009TrustedScope | undefined>(
+    () =>
+      admitted
+        ? Object.freeze({
+            contextScopeKey: pageContextScopeKey,
+            decisionRevision: pageDecisionRevision,
+            locale,
+            timeZone,
+            correlationId,
+          })
+        : undefined,
+    [admitted, correlationId, locale, pageContextScopeKey, pageDecisionRevision, timeZone]
+  );
   const gate = Object.freeze({
     feature: HRM009_FEATURE,
     enabled: runtimeEnabled,

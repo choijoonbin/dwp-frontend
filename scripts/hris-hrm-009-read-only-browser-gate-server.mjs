@@ -539,7 +539,7 @@ function serveOwnerProjection(request, response, url, surface) {
     contextScopeKey,
     scenario: scenarios[surface],
   });
-  success(response, projection(surface, scenarios[surface], correlationId));
+  json(response, 200, projection(surface, scenarios[surface], correlationId));
 }
 
 function mutationTarget(pathname) {
