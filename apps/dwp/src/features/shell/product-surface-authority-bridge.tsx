@@ -672,7 +672,15 @@ export function ProductSurfaceAuthorityBridge({
         tenantId: String(auth.user?.tenantId ?? ''),
         actorId: String(auth.user?.userId ?? ''),
       }),
-      queryFn: ({ signal }) => authority.evaluateProduct(request, { signal }),
+      queryFn: ({ signal }) =>
+        Promise.resolve().then(() => {
+          if (signal.aborted) {
+            const error = new Error('Product surface PAGE evaluation was aborted before dispatch.');
+            error.name = 'AbortError';
+            throw error;
+          }
+          return authority.evaluateProduct(request, { signal });
+        }),
       retry: false,
       staleTime: Number.POSITIVE_INFINITY,
       gcTime: 0,

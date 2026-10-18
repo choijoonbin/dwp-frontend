@@ -57,6 +57,67 @@ const CONTRACTS = Object.freeze({
   }),
 });
 
+const OFFICIAL_HCM_PAGE_ROUTE_CONTRACTS = new Set([
+  'route.hcm.audit.evidence.page',
+  'route.hcm.configuration.navigation-policy-workspace.page',
+  'route.hcm.configuration.payroll.page',
+  'route.hcm.configuration.people-employment.page',
+  'route.hcm.configuration.settings-operations.page',
+  'route.hcm.configuration.settings-reference.page',
+  'route.hcm.configuration.workflow.page',
+  'route.hcm.management.controlled-export.page',
+  'route.hcm.management.integration.page',
+  'route.hcm.management.org-design.page',
+  'route.hcm.management.reference.page',
+  'route.hcm.management.system.page',
+  'route.hcm.operations.absence.page',
+  'route.hcm.operations.assignments.page',
+  'route.hcm.operations.benefits.page',
+  'route.hcm.operations.certificates-documents.page',
+  'route.hcm.operations.compensation-planning.page',
+  'route.hcm.operations.employee-change-requests.page',
+  'route.hcm.operations.employment-assignments.page',
+  'route.hcm.operations.home.page',
+  'route.hcm.operations.organization-positions.page',
+  'route.hcm.operations.overview.page',
+  'route.hcm.operations.pay.page',
+  'route.hcm.operations.payroll-population.page',
+  'route.hcm.operations.people-appointments.page',
+  'route.hcm.operations.people.page',
+  'route.hcm.operations.performance-goal-cycles.page',
+  'route.hcm.operations.performance-multirater-surveys.page',
+  'route.hcm.operations.performance-review-operations.page',
+  'route.hcm.operations.talent.page',
+  'route.hcm.operations.time-clock-ingestion.page',
+  'route.hcm.operations.time-command-center.page',
+  'route.hcm.operations.time-daily-close.page',
+  'route.hcm.operations.time-exceptions.page',
+  'route.hcm.operations.time-interpretation.page',
+  'route.hcm.operations.time-leave-operations.page',
+  'route.hcm.operations.time-monthly-close.page',
+  'route.hcm.operations.time-work-plans.page',
+  'route.hcm.operations.time.page',
+  'route.hcm.personal.absence.page',
+  'route.hcm.personal.benefits.page',
+  'route.hcm.personal.directory.page',
+  'route.hcm.personal.employment-documents.page',
+  'route.hcm.personal.home.page',
+  'route.hcm.personal.me.page',
+  'route.hcm.personal.organization.page',
+  'route.hcm.personal.pay.page',
+  'route.hcm.personal.requests.page',
+  'route.hcm.personal.services.page',
+  'route.hcm.personal.talent.page',
+  'route.hcm.personal.time.page',
+  'route.hcm.team.absence.page',
+  'route.hcm.team.delegation.page',
+  'route.hcm.team.home.page',
+  'route.hcm.team.leave.page',
+  'route.hcm.team.people-changes.page',
+  'route.hcm.team.time.page',
+  'route.hcm.utility.explorer.page',
+]);
+
 const PERSONAL_SCOPE = Object.freeze({
   key: 'scope:hrm009:self',
   kind: 'SELF',
@@ -107,6 +168,7 @@ function defaultCounters() {
       attempted: forwardedRequestCounts(),
       succeeded: forwardedRequestCounts(),
     },
+    officialNonTargetPageDenials: 0,
     unexpectedAuthorityEvaluations: 0,
     stepUpRequests: 0,
   };
@@ -360,7 +422,7 @@ function evaluateAuthority(body, response) {
   });
 }
 
-async function routeAuthorityEvaluation(request, response, pathname) {
+async function routeAuthorityEvaluation(request, response) {
   let bodyBuffer;
   try {
     bodyBuffer = await readBody(request, MAX_EVALUATION_BODY_BYTES);
@@ -397,7 +459,20 @@ async function routeAuthorityEvaluation(request, response, pathname) {
     return;
   }
   if (!Object.hasOwn(CONTRACTS, routeContractKey)) {
-    forward(request, response, pathname, bodyBuffer);
+    if (OFFICIAL_HCM_PAGE_ROUTE_CONTRACTS.has(routeContractKey)) {
+      counters.officialNonTargetPageDenials += 1;
+      recordEvent('OFFICIAL_NON_TARGET_PAGE_DENIED', {
+        routeContractKey,
+        reasonCode: 'ROUTE_CAPABILITY_REQUIRED',
+      });
+      denial(response, 'ROUTE_DENIED', 'ROUTE_CAPABILITY_REQUIRED');
+      return;
+    }
+    counters.unexpectedAuthorityEvaluations += 1;
+    recordEvent('AUTHORITY_EVALUATION_REJECTED', {
+      reasonCode: 'ROUTE_NOT_ALLOWLISTED',
+    });
+    denial(response, 'ROUTE_DENIED', 'ROUTE_CAPABILITY_REQUIRED');
     return;
   }
   evaluateAuthority(body, response);
@@ -740,7 +815,7 @@ const server = http.createServer(async (request, response) => {
     return;
   }
   if (method === 'POST' && pathname === EVALUATION_PATH) {
-    await routeAuthorityEvaluation(request, response, pathname);
+    await routeAuthorityEvaluation(request, response);
     return;
   }
   if (pathname.startsWith(STEP_UP_PREFIX)) {
