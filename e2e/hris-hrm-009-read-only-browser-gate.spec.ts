@@ -215,9 +215,9 @@ function expectGateEvidence(log: GateLog, surface: Surface) {
   const contract = evidenceContract(surface);
   expect(log.schemaVersion).toBe('1');
   expect(log.decisionRevision).toBe('decision:hrm-009:52');
-  expect(log.counters.pageEvaluations[contract.pageKey]).toBeGreaterThanOrEqual(1);
-  expect(log.counters.dataEvaluations[contract.dataKey]).toBeGreaterThanOrEqual(1);
-  expect(log.counters.ownerGets[contract.ownerPath]).toBeGreaterThanOrEqual(1);
+  expect(log.counters.pageEvaluations[contract.pageKey]).toBe(1);
+  expect(log.counters.dataEvaluations[contract.dataKey]).toBe(1);
+  expect(log.counters.ownerGets[contract.ownerPath]).toBe(1);
   expect(log.counters.unexpectedAuthorityEvaluations).toBe(0);
   expect(log.counters.stepUpRequests).toBe(0);
   expect(Object.values(log.counters.mutations).reduce((sum, count) => sum + count, 0)).toBe(0);

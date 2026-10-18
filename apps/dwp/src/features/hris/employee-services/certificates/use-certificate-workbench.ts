@@ -58,6 +58,23 @@ export function useHrm009WorkbenchQuery({
   const activeRequest = useRef<AbortController | null>(null);
   const requestInFlight = useRef(false);
   const cursor = cursorHistory.at(-1) ?? null;
+  const stableScope = useMemo<Hrm009TrustedScope>(
+    () =>
+      Object.freeze({
+        contextScopeKey: scope.contextScopeKey,
+        decisionRevision: scope.decisionRevision,
+        locale: scope.locale,
+        timeZone: scope.timeZone,
+        correlationId: scope.correlationId,
+      }),
+    [
+      scope.contextScopeKey,
+      scope.correlationId,
+      scope.decisionRevision,
+      scope.locale,
+      scope.timeZone,
+    ]
+  );
 
   useEffect(() => {
     projectionRef.current = projection;
@@ -77,20 +94,24 @@ export function useHrm009WorkbenchQuery({
         setStale(false);
       }
       setError(null);
-      const request = createHrm009QueryRequest(queryId, scope, {
+      const request = createHrm009QueryRequest(queryId, stableScope, {
         cursor,
         asOf: asOfRef.current,
       });
-      void adapter
-        .query(queryId, request, scope.contextScopeKey, controller.signal)
+      void Promise.resolve()
+        .then(() =>
+          controller.signal.aborted
+            ? undefined
+            : adapter.query(queryId, request, stableScope.contextScopeKey, controller.signal)
+        )
         .then((value) => {
-          if (controller.signal.aborted) return;
+          if (controller.signal.aborted || value === undefined) return;
           const nextProjection = selectHrm009Projection(queryId, value);
           if (
-            nextProjection.queryState.correlationId !== scope.correlationId ||
-            nextProjection.queryState.scopeDecisionRevision !== scope.decisionRevision ||
+            nextProjection.queryState.correlationId !== stableScope.correlationId ||
+            nextProjection.queryState.scopeDecisionRevision !== stableScope.decisionRevision ||
             nextProjection.queryState.cachePolicy.authorizationDecisionRevision !==
-              scope.decisionRevision
+              stableScope.decisionRevision
           ) {
             throw new Hrm009ContractError('trusted scope or authorization revision');
           }
@@ -123,7 +144,7 @@ export function useHrm009WorkbenchQuery({
         });
       return controller;
     },
-    [adapter, cursor, queryId, scope]
+    [adapter, cursor, queryId, stableScope]
   );
 
   useEffect(() => {

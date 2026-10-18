@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { act } from 'react';
+import { act, StrictMode } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { HttpError } from '@dwp-frontend/shared-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -31,7 +31,7 @@ import {
 } from './certificate-fixtures.test-support';
 
 import type { Hrm009QueryAdapter } from '../certificate-api';
-import type { Hrm009Projection, Hrm009QueryId } from '../certificate-contract';
+import type { Hrm009Projection, Hrm009QueryId, Hrm009TrustedScope } from '../certificate-contract';
 
 const ADMITTED = {
   feature: HRM009_FEATURE,
@@ -410,6 +410,81 @@ describe('HRM-009 Stage-A read-only component surfaces', () => {
       expect(document.body.textContent).not.toContain('a'.repeat(64));
     }
   );
+
+  it('deduplicates StrictMode and equal trusted-scope clones while refetching a changed primitive', async () => {
+    const source = adapter(projection('IAQ-003'));
+    const renderScope = async (scope: Hrm009TrustedScope) => {
+      await act(async () => {
+        root.render(
+          <StrictMode>
+            <Hrm009CertificateWorkbench
+              queryId="IAQ-003"
+              gate={ADMITTED}
+              scope={scope}
+              adapter={source}
+            />
+          </StrictMode>
+        );
+      });
+    };
+
+    await renderScope(HRM009_TEST_SCOPE);
+    await shown('My HR requests and certificates');
+    expect(source.query).toHaveBeenCalledOnce();
+
+    await renderScope({ ...HRM009_TEST_SCOPE });
+    await act(async () => Promise.resolve());
+    expect(source.query).toHaveBeenCalledOnce();
+
+    await renderScope({ ...HRM009_TEST_SCOPE, locale: 'ko' });
+    await vi.waitFor(() => expect(source.query).toHaveBeenCalledTimes(2));
+    expect(source.query).toHaveBeenLastCalledWith(
+      'IAQ-003',
+      expect.objectContaining({ locale: 'ko' }),
+      HRM009_TEST_SCOPE.contextScopeKey,
+      expect.any(AbortSignal)
+    );
+  });
+
+  it('aborts a superseded semantic scope and ignores its late owner projection', async () => {
+    const superseded = deferred<Hrm009Projection>();
+    const source = adapter();
+    vi.mocked(source.query)
+      .mockReset()
+      .mockReturnValueOnce(superseded.promise)
+      .mockResolvedValueOnce(projection('IAQ-003'));
+    const renderScope = async (scope: Hrm009TrustedScope) => {
+      await act(async () => {
+        root.render(
+          <StrictMode>
+            <Hrm009CertificateWorkbench
+              queryId="IAQ-003"
+              gate={ADMITTED}
+              scope={scope}
+              adapter={source}
+            />
+          </StrictMode>
+        );
+      });
+    };
+
+    await renderScope(HRM009_TEST_SCOPE);
+    await vi.waitFor(() => expect(source.query).toHaveBeenCalledOnce());
+    const supersededSignal = vi.mocked(source.query).mock.calls[0]?.[3];
+
+    await renderScope({ ...HRM009_TEST_SCOPE, locale: 'ko' });
+    await vi.waitFor(() => expect(source.query).toHaveBeenCalledTimes(2));
+    await shown('My HR requests and certificates');
+    expect(supersededSignal?.aborted).toBe(true);
+
+    await act(async () => {
+      superseded.resolve(projection('IAQ-003', 'UNAVAILABLE'));
+      await superseded.promise;
+    });
+    expect(document.querySelector('[data-runtime-state="complete"]')).not.toBeNull();
+    expect(document.querySelector('[data-runtime-state="unavailable"]')).toBeNull();
+    expect(source.query).toHaveBeenCalledTimes(2);
+  });
 
   it('renders IAQ-010 as a single focus-form composition without the IAQ-003 work list', async () => {
     const source = adapter(projection('IAQ-010'));
