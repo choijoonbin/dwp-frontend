@@ -1,0 +1,303 @@
+{
+  "schema": "dwp.hris.r7-batch03-hrm009-read-only-browser-gate-runtime-stability-authority.v4",
+  "decisionId": "HRIS-WAVE7-R7-BATCH03-HRM009-READ-ONLY-BROWSER-GATE-RUNTIME-STABILITY-AUTHORITY-20261018-R4",
+  "issuedAt": "2026-10-18T09:11:06+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "AUTHORIZED_TARGETED_RAW_OWNER_PROJECTION_AND_SEMANTIC_IDENTITY_STABILITY_ZERO_WRITE",
+  "purpose": "Issue one append-only successor to the immutable v3 runtime-correction authority after real CUA execution exposed exactly two remaining read-only fixture defects: the successful owner GET returned an API success envelope although the sealed HRM-009 query adapter consumes a raw Hrm009Projection, and semantically equal PAGE evidence or trusted-scope values could acquire new JavaScript object identities and repeatedly trigger DATA evaluation or owner GET. This v4 authorizes only the raw fixture projection correction, HRM-009-local primitive and memo stability, the matching targeted tests, one CUA stability observation, and the first execution of the already dedicated five-row browser matrix. It does not activate or enroll a tenant, enable or exercise a writable action, use customer or production data, or close HRM-009, Batch-03, or R7.",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_DECISION_ID_AND_SHA256",
+    "predecessorMutation": "FORBIDDEN"
+  },
+  "predecessorDocument": {
+    "path": "hrm-009-read-only-browser-gate-runtime-correction-authority.v3.json",
+    "sha256": "ecb4f7cef972afcbcb1db9b9193559fc246b51d29167d188e19af40b587fa29d",
+    "bytes": 17201,
+    "preservation": "IMMUTABLE",
+    "binding": "V4_IS_INVALID_IF_THE_PREDECESSOR_BYTES_OR_SHA256_DIFFER"
+  },
+  "effectiveInheritance": {
+    "inheritsAllUnchangedV3Terms": true,
+    "effectiveSequence": [
+      "hrm-009-read-only-browser-gate-fixture-execution-authority.v1.json",
+      "hrm-009-read-only-browser-gate-fixture-execution-authority-successor.v2.json",
+      "hrm-009-read-only-browser-gate-runtime-correction-authority.v3.json",
+      "hrm-009-read-only-browser-gate-runtime-stability-authority.v4.json"
+    ],
+    "v4OverridesOnly": [
+      "successful fixture owner GET response shape",
+      "HRM-009-local semantic primitive and memo stability for DATA evaluation and owner GET",
+      "the exact six-file implementation allowlist",
+      "the bounded verification set after these two corrections"
+    ],
+    "unchangedV3SecurityAndExecutionTermsRemainBinding": true
+  },
+  "actualCuaObservations": {
+    "driver": "CODEX_CUA_IN_APP_BROWSER",
+    "runtime": "DEDICATED_LOCALHOST_HRM009_READ_ONLY_FIXTURE",
+    "viewport": "1440x900",
+    "canonicalPersonalRoute": "/hr/me/requests?tab=overview&focus=request%3A1001&scope=scope%3Ahrm009%3Aself",
+    "observationAOwnerProjectionShape": {
+      "pageAuthorityReached": true,
+      "dataAuthorityReached": true,
+      "ownerGetReached": true,
+      "observedUiResult": "CONCEALED_OR_UNAVAILABLE_AFTER_SUCCESSFUL_OWNER_GET",
+      "rootCause": "The fixture success helper wrapped the projection as {status,message,data}, while queryHrm009Entry passes response.data directly to selectHrm009Projection and that sealed parser requires the raw top-level Hrm009Projection fields.",
+      "securityInterpretation": "This is a fixture response-shape mismatch after a trusted read-only GET. It is not permission to weaken the production projection parser, accept an additive envelope, alter an owner endpoint, or expose additional fields."
+    },
+    "observationBSemanticIdentityChurn": {
+      "pageAndScopeSemanticsChanged": false,
+      "objectReferencesChanged": true,
+      "observedEffect": "DATA evaluation and owner GET could repeat while the admitted route, query, scope primitives, decision revision, locale, time zone, correlation identifier, cursor and adapter were semantically unchanged.",
+      "rootCause": "A DATA admission effect could depend on a newly created PAGE-evidence object and the certificate query load callback could depend on a newly created trusted-scope object. React reference equality therefore treated semantically equal values as new dependencies.",
+      "securityInterpretation": "The correction must stabilize only the existing trusted primitives. It must not cache across scope or revision changes, suppress lease renewal, reuse a correlation identifier across a changed semantic identity, or weaken fail-closed admission."
+    }
+  },
+  "correctionAFixtureRawOwnerProjection": {
+    "authorizedPath": "scripts/hris-hrm-009-read-only-browser-gate-server.mjs",
+    "authorizedBehaviorChange": "For a valid GET to either sealed HRM-009 owner path, return HTTP 200 with the raw Hrm009Projection object as the JSON response body instead of wrapping it in the fixture success envelope.",
+    "ownerPaths": [
+      "/api/people/v1/hris/workbench/self-service/requests",
+      "/api/people/v1/hris/workbench/operations/certificates/documents"
+    ],
+    "successResponseContract": {
+      "httpStatus": 200,
+      "contentType": "application/json",
+      "topLevelExactKeys": ["projectionVersion", "asOf", "variantKey", "queryState", "items"],
+      "forbiddenSuccessEnvelopeKeys": ["status", "message", "data"],
+      "consumer": "queryHrm009Entry response.data passed directly to selectHrm009Projection",
+      "projectionParserChangeAuthorized": false
+    },
+    "unchangedBoundaries": [
+      "invalid contextScopeKey or correlationId still fails closed",
+      "scenario-specific COMPLETE, EMPTY, PARTIAL and UNAVAILABLE projection contents remain sealed",
+      "owner GET counters and monotonic events remain sanitized",
+      "POST, PUT, PATCH, DELETE and step-up remain denied and counted",
+      "no production API or backend source is changed"
+    ]
+  },
+  "correctionBSemanticPrimitiveAndMemoStability": {
+    "authorizedPaths": [
+      "apps/dwp/src/features/hris/integration/hris-hrm-009-route-admission.tsx",
+      "apps/dwp/src/features/hris/integration/hris-hrm-009-route-admission.test.tsx",
+      "apps/dwp/src/features/hris/employee-services/certificates/use-certificate-workbench.ts",
+      "apps/dwp/src/features/hris/employee-services/certificates/testing/certificate-workbench.test.tsx"
+    ],
+    "routeAdmissionContract": {
+      "semanticDataAdmissionIdentity": [
+        "queryId",
+        "pageRouteContractKey",
+        "dataRouteContractKey",
+        "tenantId",
+        "actorId",
+        "contextScopeKey",
+        "decisionRevision"
+      ],
+      "authorizedTechnique": "Extract the trusted PAGE evidence primitives and use those primitives plus the existing semantic identity as effect dependencies; memoize the admitted Hrm009TrustedScope from its exact primitive tuple.",
+      "forbiddenDependencyTrigger": "A new PAGE-evidence or trusted-scope object reference with all sealed primitive values unchanged must not by itself trigger another DATA evaluation or owner GET.",
+      "correlationIdRule": "Retain one correlation identifier while the semantic DATA admission identity is unchanged and issue a new identifier when that semantic identity changes.",
+      "leaseRule": "Existing lease renewal and expiry behavior remains authoritative and may trigger a fresh DATA evaluation only through the existing evaluation generation or a changed semantic identity."
+    },
+    "workbenchQueryContract": {
+      "semanticScopeTuple": [
+        "contextScopeKey",
+        "decisionRevision",
+        "locale",
+        "timeZone",
+        "correlationId"
+      ],
+      "authorizedTechnique": "Use HRM-009-local primitive dependencies or an HRM-009-local memoized trusted-scope value so the query callback is stable when the semantic scope tuple is unchanged.",
+      "mustTriggerOneFreshOwnerQueryWhenAnyChanges": [
+        "adapter identity",
+        "queryId",
+        "cursor",
+        "contextScopeKey",
+        "decisionRevision",
+        "locale",
+        "timeZone",
+        "correlationId",
+        "explicit refresh",
+        "previous or next navigation"
+      ],
+      "staleRequestPolicy": "Abort the superseded request and never apply a response from a superseded semantic identity.",
+      "crossScopeCacheAuthorized": false,
+      "globalMemoOrSharedCacheAuthorized": false,
+      "reactStrictModeDisableAuthorized": false,
+      "authorizationCheckRemovalAuthorized": false
+    },
+    "requiredTargetedTests": [
+      "Route-admission test rerenders semantically equal PAGE and request-scope values through new object identities and proves exactly one DATA evaluation for the unchanged identity.",
+      "Route-admission test proves a changed trusted primitive or the existing lease-renewal generation still causes the required fresh evaluation and remains fail closed.",
+      "Certificate-workbench test rerenders with a new trusted-scope object containing the same five primitive values and proves no duplicate owner GET.",
+      "Certificate-workbench test proves a changed semantic scope primitive causes one fresh owner GET and the superseded in-flight request cannot publish state."
+    ]
+  },
+  "cuaStabilityGate": {
+    "driver": "CODEX_CUA_IN_APP_BROWSER",
+    "target": "STANDARD_1440_LIGHT_PERSONAL_READ_ONLY_JOURNEY",
+    "precondition": "Reset the dedicated fixture counters, use the already authenticated dedicated local runtime, and navigate once to the canonical personal route without exercising any action.",
+    "requiredUiState": [
+      "hrm-009-certificate-workbench is rendered",
+      "the COMPLETE personal projection is visible",
+      "all writable actions remain disabled"
+    ],
+    "requiredCounterState": {
+      "personalDataEvaluation": 1,
+      "personalOwnerGet": 1,
+      "mutations": 0,
+      "stepUpRequests": 0,
+      "unexpectedAuthorityEvaluations": 0
+    },
+    "stabilityObservation": "After the workbench settles, take two sanitized fixture-counter snapshots separated by a no-user-action accessibility and visual observation. The PAGE, DATA, owner GET, mutation, step-up and unexpected counters and the last monotonic event sequence must remain identical between snapshots.",
+    "forbiddenDuringObservation": [
+      "refresh",
+      "pagination",
+      "route or scope change",
+      "writable action",
+      "fixture reset between the two snapshots"
+    ],
+    "defaultOffReplayRequired": false,
+    "defaultOffReason": "The checked-in default-OFF observation was already completed under v3 and this successor changes no checked-in runtime default or enrollment state."
+  },
+  "firstFiveRowMatrixGate": {
+    "dedicatedConfig": "playwright.hris-hrm-009-read-only.config.ts",
+    "dedicatedSpec": "e2e/hris-hrm-009-read-only-browser-gate.spec.ts",
+    "configEditAuthorized": false,
+    "driver": "PLAYWRIGHT_CHROMIUM",
+    "workers": 1,
+    "retries": 0,
+    "executionMode": "SERIAL",
+    "freshAuthenticatedContextPerRow": true,
+    "authorization": "RUN_THE_EXISTING_FIVE_ROWS_ONCE_ONLY_AFTER_BOTH_TARGETED_UNIT_FILES_AND_CUA_STABILITY_PASS",
+    "matrixRows": [
+      "1440_LIGHT_PERSONAL",
+      "1280_DARK_OPERATIONS",
+      "390_KO_REDUCED_MOTION_PERSONAL",
+      "320_FORCED_COLORS_PARTIAL_OPERATIONS",
+      "640_CSS_200_PERCENT_PERSONAL"
+    ],
+    "requiredCrossRowAssertions": [
+      "PAGE_BEFORE_DATA_BEFORE_OWNER_GET",
+      "RAW_PROJECTION_ACCEPTED",
+      "NO_SEMANTIC_IDENTITY_REQUEST_LOOP",
+      "ZERO_POST_PUT_PATCH_DELETE",
+      "ZERO_STEP_UP",
+      "ZERO_UNEXPECTED_AUTHORITY_EVALUATION",
+      "SECRETS_ABSENT_FROM_ATTACHMENTS"
+    ],
+    "duplicateFullMatrixExecutionAuthorized": false,
+    "failedRowReplayAuthorizedByV4": false,
+    "failurePolicy": "Stop on the first failed result, preserve sanitized evidence, and require a new append-only authority before any replay. Do not rerun passing rows or substitute a broader suite."
+  },
+  "effectiveImplementationAllowlist": {
+    "exactFiles": [
+      "scripts/hris-hrm-009-read-only-browser-gate-server.mjs",
+      "apps/dwp/src/features/hris/integration/hris-hrm-009-route-admission.tsx",
+      "apps/dwp/src/features/hris/integration/hris-hrm-009-route-admission.test.tsx",
+      "apps/dwp/src/features/hris/employee-services/certificates/use-certificate-workbench.ts",
+      "apps/dwp/src/features/hris/employee-services/certificates/testing/certificate-workbench.test.tsx",
+      "e2e/hris-hrm-009-read-only-browser-gate.spec.ts"
+    ],
+    "exactFileCount": 6,
+    "otherFrontendFilesAuthorized": false,
+    "backendFilesAuthorized": false,
+    "agentFilesAuthorized": false,
+    "playwrightConfigEditsAuthorized": false,
+    "packageOrLockfileEditsAuthorized": false,
+    "runtimeDefaultEditsAuthorized": false,
+    "databaseOrMigrationEditsAuthorized": false
+  },
+  "pinnedCommittedBase": {
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "46062c72a9cfae0ee9c12af025161d4a5df9a269",
+      "tree": "0e9da1d0ae493ccf53ad26d3f4dbb2ba85aa4719",
+      "originExact": true,
+      "worktreeCleanClaim": false,
+      "worktreeNote": "The authority binds the exact committed base. Shared uncommitted candidate changes and evidence present during issuance are not treated as prior authorization or as committed evidence."
+    }
+  },
+  "sealedProductAuthorization": {
+    "version": 52,
+    "status": "DRAFT",
+    "checksum": "b33fbf968e71f97b09fa497fdfad7d2f6854199170b79fd1602a0ea604977346",
+    "runtimeDefault": "OFF",
+    "persistentFeatureActivationCount": 0,
+    "persistentTenantEnrollmentCount": 0,
+    "automaticImportEnabled": false
+  },
+  "authority": {
+    "rawFixtureOwnerProjectionAuthorized": true,
+    "localSemanticPrimitiveMemoStabilityAuthorized": true,
+    "twoTargetedUnitFilesAuthorized": true,
+    "oneCuaStabilityObservationAuthorized": true,
+    "firstDedicatedFiveRowMatrixAuthorized": true,
+    "productionBehaviorChange": "NONE_OUTSIDE_HRM009_LOCAL_REQUEST_STABILITY",
+    "persistentActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "writableActionAuthorized": false,
+    "centralMergeAuthorizedByThisDocument": false
+  },
+  "verificationPolicy": {
+    "authorityDocumentChecks": ["JSON_PARSE", "PRETTIER_CHECK"],
+    "implementationStaticChecks": [
+      "NODE_CHECK_FIXTURE_ONLY",
+      "PRETTIER_EXACT_SIX_FILES",
+      "ESLINT_EXACT_SIX_FILES_WHERE_APPLICABLE",
+      "GIT_DIFF_CHECK_EXACT_ALLOWLIST"
+    ],
+    "targetedUnitChecks": [
+      "apps/dwp/src/features/hris/integration/hris-hrm-009-route-admission.test.tsx_ONLY",
+      "apps/dwp/src/features/hris/employee-services/certificates/testing/certificate-workbench.test.tsx_ONLY"
+    ],
+    "browserChecks": [
+      "CUA_STANDARD_1440_PERSONAL_STABILITY_ONCE",
+      "EXISTING_DEDICATED_FIVE_ROW_PLAYWRIGHT_CHROMIUM_MATRIX_FIRST_RUN_ONCE"
+    ],
+    "repositoryWideSuiteAuthorized": false,
+    "fullNxOrVitestSuiteAuthorized": false,
+    "broadBrowserReplayAuthorized": false,
+    "unrelatedRegressionExecutionAuthorized": false,
+    "repeatedPassingCheckExecutionAuthorized": false
+  },
+  "branchPolicy": {
+    "implementationBase": "EXACT_FRONTEND_DWP_DEV_COMMIT_46062C72A9CFAE0EE9C12AF025161D4A5DF9A269_PLUS_THIS_V4_AUTHORITY",
+    "strategy": "BOUNDED_SIX_FILE_CORRECTION_THEN_TARGETED_REVIEW_THEN_EXACT_CENTRAL_MERGE",
+    "conflictPolicy": "STOP_ON_CONFLICT_NO_AUTOMATIC_RESOLUTION",
+    "unrelatedDirtyFileAdoption": "FORBIDDEN"
+  },
+  "forbidden": [
+    "Changing a source or test file outside the exact six-file implementation allowlist",
+    "Changing the production Hrm009Projection wire contract or weakening selectHrm009Projection to accept an envelope",
+    "Caching or reusing authority, projections, correlation identifiers or requests across a changed tenant, actor, route, query, scope, decision revision, locale, time zone, cursor or adapter",
+    "Suppressing legitimate lease renewal, expiry, scope change, route change, pagination or explicit refresh",
+    "Disabling React StrictMode, authorization validation, abort handling or fail-closed concealment",
+    "Changing the dedicated Playwright config, package.json, a lockfile, migration, checked-in runtime default, activation or enrollment",
+    "Logging credentials, cookies, Authorization headers, raw request bodies or other secrets",
+    "Using customer or production data",
+    "Executing a repository-wide suite, a broad browser replay, or the complete five-row matrix more than once",
+    "Enabling or exercising a writable HRM-009 action, step-up, POST, PUT, PATCH or DELETE",
+    "Claiming download, revoke, verification, expiry, access-audit, download-audit, persistent activation, enrollment or production release",
+    "Treating fixture or browser-gate evidence as business completion credit"
+  ],
+  "requiredNext": [
+    "Validate this v4 document with JSON parse and Prettier only; preserve the v3 predecessor bytes exactly.",
+    "Review the six-file diff against this authority and run only the exact static checks plus the two targeted unit test files.",
+    "Use CUA once for the standard 1440 personal stability gate and prove the settled DATA and owner counters do not change without user action.",
+    "Only after the targeted units and CUA stability pass, execute the existing dedicated five-row Playwright Chromium matrix for its first run exactly once.",
+    "Stop on failure without a broad rerun and issue a separate sanitized append-only browser-gate receipt only after all authorized gates pass."
+  ],
+  "nonClaims": [
+    "HRM-009 full slice completion",
+    "Batch-03 completion",
+    "R7 completion",
+    "Writable certificate request, issuance, download, revoke or verification",
+    "Persistent tenant activation or enrollment",
+    "Customer-data use or production release",
+    "Business completion credit"
+  ]
+}
