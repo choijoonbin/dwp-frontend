@@ -1,0 +1,246 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-03-sequencing-exit-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-03-SEQUENCING-EXIT-20261018-R1",
+  "recordedAt": "2026-10-18T10:05:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "BATCH_03_SEQUENCING_EXIT_ACCEPTED_DEFAULT_OFF_ZERO_TENANT_ENROLLMENT_ZERO_BUSINESS_CREDIT",
+  "purpose": "Close the Batch-03 sequencing lane after accepting the SYS-005 evidence-only reuse closure and the bounded HRM-009 Stage-A, central successor and default-OFF read-only browser-gate results. The HRM-009 full slice remains incomplete, the three Batch-03 semantic NO-GO candidates remain undispatched, the two inherited TIM P0 gates remain open, and no tenant activation, enrollment, writable HRM-009 action, business-completion credit or production release is authorized.",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_RECEIPT_ID_AND_SHA256",
+    "predecessorMutation": "FORBIDDEN"
+  },
+  "authorityBasis": {
+    "roadmap": {
+      "path": "../execution-roadmap-successor.v17.json",
+      "sha256": "0151e49edbfcd5297ac1e9506210a1e3b83622b89ef869a8579765e13380a40a",
+      "bytes": 6946,
+      "requiredState": "R7_BATCH_02_CENTRAL_INTEGRATION_CLOSED_DEFAULT_OFF_BATCH_03_PREFLIGHT_NEXT_ZERO_TENANT_ENROLLMENT"
+    },
+    "batch03Preflight": {
+      "path": "../r7-batch-03-preflight-r1/semantic-dependency-migration-preflight.v1.json",
+      "sha256": "dde2815eceb71c37d77334002d6cdbd26812c63bd6d38fc0fd82dea17ff745e8",
+      "bytes": 11972,
+      "requiredState": "NO_SOURCE_STARTS_ONE_HRM_PACKET_CONDITIONAL_ONE_SYS_EVIDENCE_CLOSURE_CONDITIONAL_THREE_SEMANTIC_NO_GO"
+    },
+    "baseSliceReclassification": {
+      "path": "../r7-c0-reclassification-r1/base-slice-reclassification.v1.json",
+      "sha256": "73c02c6d945f2b62ae716d2dbbf76e5123a2863f50d19de51e27085943291de8",
+      "bytes": 141708
+    }
+  },
+  "acceptedModuleResults": [
+    {
+      "sliceId": "BASE-TFR-SYS-005",
+      "moduleSession": "HRIS-SYS",
+      "state": "EVIDENCE_ONLY_REUSE_CLOSURE_CENTRALLY_INTEGRATED_NO_SOURCE_NO_MIGRATION_DEFAULT_OFF_ZERO_BUSINESS_CREDIT",
+      "receipt": {
+        "path": "../r7-batch-03-central-admission-r1/sys-005-central-integration-receipt.v1.json",
+        "sha256": "161dfd25c2b5b41c7fed72c4da9a4b6d5972e54b21c87123d351f796aa823c8b",
+        "bytes": 6060
+      },
+      "businessCompletionIncrement": 0
+    },
+    {
+      "sliceId": "BASE-TFR-HRM-009",
+      "stageId": "BASE-TFR-HRM-009-STAGE-A",
+      "moduleSession": "HRIS-HRM",
+      "state": "PARTIAL_READ_ONLY_STAGE_A_AND_CENTRAL_SUCCESSOR_INTEGRATED_BROWSER_GATE_ACCEPTED_FULL_SLICE_OPEN_DEFAULT_OFF_ZERO_BUSINESS_CREDIT",
+      "stageACentralIntegrationReceipt": {
+        "path": "../r7-batch-03-central-admission-r1/hrm-009-stage-a-central-integration-receipt.v1.json",
+        "sha256": "d8e3208a96d7e7fc24c6385e99f10c52963d7ba7f27a8dedfb382cdd66df56e0",
+        "bytes": 6183
+      },
+      "centralSuccessorIntegrationReceipt": {
+        "path": "../r7-batch-03-central-admission-r1/hrm-009-central-successor-integration-receipt.v1.json",
+        "sha256": "aaaf7b969ff82a006426be7713893c44d15ab155ad0ddb9f84be778c46364454",
+        "bytes": 5994
+      },
+      "readOnlyBrowserGateReceipt": {
+        "path": "../r7-batch-03-central-admission-r1/hrm-009-read-only-browser-gate-receipt.v1.json",
+        "sha256": "2d7b41522465f5f5e52039a33a64018a31a9f2f5cc7364d8eda9c509279dd34e",
+        "bytes": 19697,
+        "requiredDecision": "HRM009_DEFAULT_OFF_READ_ONLY_BROWSER_GATE_ACCEPTED_ZERO_WRITE_ZERO_ENROLLMENT_ZERO_BUSINESS_CREDIT"
+      },
+      "readOnlyBrowserMatrix": "PLAYWRIGHT_CHROMIUM_ONE_V6_INVOCATION_FIVE_OF_FIVE_PASS_17_4_SECONDS",
+      "fullSliceComplete": false,
+      "businessCompletionIncrement": 0
+    }
+  ],
+  "preservedSemanticNoGoLanes": [
+    {
+      "sliceId": "BASE-TFR-PER-003",
+      "moduleSession": "HRIS-PER",
+      "state": "SEMANTIC_NO_GO_NO_PACKET_NO_TOKEN_NO_LEASE_NO_SOURCE",
+      "missingAuthority": "Schedule, hold, complete, acknowledge and cancel owner-route transaction semantics.",
+      "migration": "PERFORMANCE_V19_NOT_ISSUED"
+    },
+    {
+      "sliceId": "BASE-TFR-PAY-002",
+      "moduleSession": "HRIS-PAY",
+      "state": "SEMANTIC_NO_GO_NO_PACKET_NO_TOKEN_NO_LEASE_NO_SOURCE",
+      "missingAuthority": "Exact connector target, mapping, idempotency, reconciliation and owner binding.",
+      "migration": "PAYROLL_V53_NOT_ISSUED"
+    },
+    {
+      "sliceId": "BASE-TFR-TIM-002",
+      "moduleSession": "HRIS-TIM",
+      "state": "SEMANTIC_NO_GO_NO_PACKET_NO_TOKEN_NO_LEASE_NO_SOURCE",
+      "missingAuthority": "Notification trigger, type key, recipient, template version, variables, deep link, opt-out, masking and receipt contract.",
+      "migration": "TIME_V13_NOT_ISSUED"
+    }
+  ],
+  "migrationAndAuthorizationClosure": {
+    "consumedLease": {
+      "leaseId": "HRIS-WAVE7-R7-BATCH-03-PEOPLE-MAIN-V58-HRM009-STAGE-A-20261018-R1",
+      "stream": "PEOPLE_MAIN",
+      "version": "V58",
+      "sliceId": "BASE-TFR-HRM-009",
+      "stageId": "BASE-TFR-HRM-009-STAGE-A",
+      "state": "CONSUMED_CENTRALLY_INTEGRATED"
+    },
+    "activeMigrationLeaseCountAfterExit": 0,
+    "migrationHighWater": {
+      "PEOPLE_MAIN": "V58",
+      "PERFORMANCE": "V18",
+      "PAYROLL_MAIN": "V52",
+      "PLATFORM_MAIN": "V331",
+      "TIME_MAIN": "V12",
+      "AUTH_MAIN": "V261",
+      "NOTIFICATION_MAIN": "V35",
+      "APPROVAL_MAIN": "V58",
+      "PRODUCT_AUTHORIZATION_BUNDLE": "v52_DRAFT"
+    },
+    "productAuthorization": {
+      "version": 52,
+      "status": "DRAFT",
+      "checksum": "b33fbf968e71f97b09fa497fdfad7d2f6854199170b79fd1602a0ea604977346",
+      "runtimeDefault": "OFF",
+      "automaticImportEnabled": false,
+      "persistentFeatureActivationCount": 0,
+      "persistentTenantEnrollmentCount": 0
+    }
+  },
+  "acceptedOpenGates": [
+    {
+      "gateId": "TIM_CLOSE_PERIOD_DEFINITION_PRODUCER",
+      "severity": "P0",
+      "state": "OPEN_EXTERNAL_SOURCE_AUTHORITY_GATE",
+      "blocks": [
+        "TIM feature activation",
+        "TIM business-completion credit",
+        "live TIM-to-Payroll end-to-end claim"
+      ],
+      "doesNotBlock": [
+        "Batch-03 sequencing exit",
+        "fresh default-OFF Batch-04 semantic and dependency preflight"
+      ]
+    },
+    {
+      "gateId": "TIM_CLOSE_TRUSTED_OWNER_HEADER_ISSUER",
+      "severity": "P0",
+      "state": "OPEN_BEFORE_ANY_TENANT_ENROLLMENT",
+      "reason": "The Gateway still does not issue the trusted owner identity replacements required after removing the three client headers.",
+      "blocks": ["TIM tenant enrollment", "TIM production activation"],
+      "doesNotBlock": [
+        "Batch-03 sequencing exit",
+        "fresh default-OFF Batch-04 semantic and dependency preflight"
+      ]
+    }
+  ],
+  "hrm009ResidualBoundary": {
+    "readOnlyStageAAccepted": true,
+    "pageDataAndOwnerGetBrowserAcceptanceComplete": true,
+    "fullSliceComplete": false,
+    "frontendActionDelegateIntegrated": false,
+    "writableCertificateActionAuthorized": false,
+    "downloadIntegratedOrAccepted": false,
+    "revokeIntegratedOrAccepted": false,
+    "verificationIntegratedOrAccepted": false,
+    "expiryAcceptanceComplete": false,
+    "accessOrDownloadAuditAcceptanceComplete": false,
+    "businessCompletionCredit": 0,
+    "carryForward": "Treat HRM-009 only as an integrated default-OFF read-only partial slice. Any ACTION, download, revoke, verification, expiry or audit continuation requires fresh semantic authority and may not be inferred from the browser gate."
+  },
+  "observedRepositoryPinsBeforeClosureDocuments": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "f9d2556294fe92a26090ab26781d74dc861062cd",
+      "tree": "c4cb353f1fd314c054f4094b36927d99897180da",
+      "originExact": true,
+      "clean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "5e66c397cf30e9fb45dcc483b3efe92eaa1747fb",
+      "tree": "1fff3965bd2bf5d54af9b7810fa6e9e7b875ef4d",
+      "originExact": true,
+      "committedSourceClean": true,
+      "worktreeClean": false,
+      "worktreeNote": "Append-only browser evidence and the two closure documents are intentionally outside the pinned committed tree until their dedicated carrier commit; no unrelated source change is adopted."
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "originExact": true,
+      "clean": true
+    }
+  },
+  "portfolioAccounting": {
+    "universe": 86,
+    "retired": 2,
+    "active": 84,
+    "completedBeforeBatch03": 26,
+    "batch03BusinessCompletionIncrement": 0,
+    "completedAfterBatch03": 26,
+    "activeIncompleteAfterBatch03": 58,
+    "hrm009PartialIntegrationDoesNotIncrementCompleted": true,
+    "sys005EvidenceOnlyReuseClosureDoesNotIncrementCompleted": true
+  },
+  "verificationPolicyApplied": {
+    "boundedChecksOnly": true,
+    "repositoryWideSuitePerCorrection": false,
+    "passingBrowserRowReplay": false,
+    "browserMatrixInvocationCountUnderV6": 1,
+    "browserMatrixResult": "5_OF_5_PASS",
+    "independentV6Review": {
+      "reviewer": "/root/hrm009_v6_independent_review",
+      "decision": "GO",
+      "p0": 0,
+      "p1": 0,
+      "p2": 0
+    }
+  },
+  "authority": {
+    "batch03SequencingExitAccepted": true,
+    "batch03DefaultOffSourceAndEvidenceLaneClosed": true,
+    "batch03BusinessCompletionIncrement": 0,
+    "hrm009ReadOnlyBrowserGateAccepted": true,
+    "hrm009FullSliceComplete": false,
+    "sys005EvidenceOnlyReuseClosureAccepted": true,
+    "batch04SemanticDependencyMigrationPreflightMayBeIssued": true,
+    "batch04SourceDispatchAuthorizedByThisReceipt": false,
+    "modulePacketTokenWorktreeOrMigrationLeaseAuthorizedByThisReceipt": false,
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "r7Complete": false
+  },
+  "decision": "BATCH_03_SEQUENCING_EXIT_CLOSED_DEFAULT_OFF_ZERO_ENROLLMENT_ZERO_BUSINESS_CREDIT_BATCH_04_PREFLIGHT_NEXT",
+  "nonClaims": [
+    "BASE-TFR-HRM-009 is fully complete or receives business-completion credit.",
+    "The HRM-009 ACTION UI, download, revoke, verification, expiry or access/download audit boundary is complete.",
+    "BASE-TFR-PER-003, BASE-TFR-PAY-002 or BASE-TFR-TIM-002 received a packet, token, lease or source authority.",
+    "Either open TIM P0 gate is closed.",
+    "Any feature or tenant is activated or enrolled.",
+    "Customer data or production release is authorized.",
+    "Batch-04 source work is authorized.",
+    "R7 is complete."
+  ],
+  "nextAction": "Issue an append-only execution-roadmap successor that hash-pins this exit, then perform one fresh Batch-04 semantic, dependency and migration preflight on the exact repository pins. Issue no source packet, token, worktree or migration lease until that preflight separately authorizes it."
+}

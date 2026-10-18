@@ -1,0 +1,433 @@
+{
+  "schema": "dwp.hris.r7-batch03-hrm009-read-only-browser-gate-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH03-HRM009-READ-ONLY-BROWSER-GATE-20261018-R1",
+  "recordedAt": "2026-10-18T10:03:20+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "READ_ONLY_BROWSER_GATE_ACCEPTED_FIVE_OF_FIVE_DEFAULT_OFF_ZERO_WRITE_ZERO_ENROLLMENT_ZERO_BUSINESS_CREDIT",
+  "purpose": "Close only the bounded HRM-009 default-OFF read-only browser acceptance gate after preserving both stopped row-one attempts, applying the exact v6 seven-file StrictMode and selector correction, completing the bounded targeted verification and independent review, and executing the five-row dedicated Chromium matrix once under v6 with five passes. This receipt does not activate or enroll a tenant, authorize a writable certificate action, complete the full HRM-009 slice, grant business-completion credit, or authorize production release.",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_RECEIPT_ID_AND_SHA256",
+    "predecessorOrAuthorityMutation": "FORBIDDEN"
+  },
+  "authorityChain": [
+    {
+      "version": 1,
+      "path": "hrm-009-read-only-browser-gate-fixture-execution-authority.v1.json",
+      "sha256": "320c81c2289168d36214dbfb2ee86d2ef0d5168c48fb11c3e77fd7d5246c5649",
+      "bytes": 9219,
+      "role": "ISOLATED_NON_PERSISTENT_READ_ONLY_FIXTURE_AND_BROWSER_GATE_AUTHORITY",
+      "preservation": "IMMUTABLE"
+    },
+    {
+      "version": 2,
+      "path": "hrm-009-read-only-browser-gate-fixture-execution-authority-successor.v2.json",
+      "sha256": "965ade679a8942df88a47b27fe4f9e748d64f240273c2366131bff33444ed04b",
+      "bytes": 4187,
+      "role": "APPEND_ONLY_OWNER_PATH_AND_BOUNDARY_SUCCESSOR",
+      "preservation": "IMMUTABLE"
+    },
+    {
+      "version": 3,
+      "path": "hrm-009-read-only-browser-gate-runtime-correction-authority.v3.json",
+      "sha256": "ecb4f7cef972afcbcb1db9b9193559fc246b51d29167d188e19af40b587fa29d",
+      "bytes": 17201,
+      "role": "APPEND_ONLY_SCOPE_QUERY_AND_FIXTURE_COUNTER_RUNTIME_CORRECTION",
+      "preservation": "IMMUTABLE"
+    },
+    {
+      "version": 4,
+      "path": "hrm-009-read-only-browser-gate-runtime-stability-authority.v4.json",
+      "sha256": "22d36e196238a1e81a1fd887996968f331c47c239e58e4a093671f9e0405dd99",
+      "bytes": 17768,
+      "role": "APPEND_ONLY_RAW_PROJECTION_AND_RUNTIME_STABILITY_AUTHORITY",
+      "executionOutcome": "FIRST_MATRIX_INVOCATION_STOPPED_AT_ROW_01_FAILED_ROWS_02_TO_05_NOT_RUN",
+      "preservation": "IMMUTABLE"
+    },
+    {
+      "version": 5,
+      "path": "hrm-009-read-only-browser-gate-cold-start-authority.v5.json",
+      "sha256": "7a810032006729132451ea04d2de68adf314ae0fad1fe7ceff5fa47430e9af53",
+      "bytes": 26178,
+      "role": "APPEND_ONLY_DETERMINISTIC_COLD_START_AND_MICROTASK_CORRECTION_AUTHORITY",
+      "executionOutcome": "SECOND_MATRIX_INVOCATION_STOPPED_AT_ROW_01_FAILED_ROWS_02_TO_05_NOT_RUN",
+      "preservation": "IMMUTABLE"
+    },
+    {
+      "version": 6,
+      "path": "hrm-009-read-only-browser-gate-browser-strictmode-authority.v6.json",
+      "sha256": "573c37f12fbdddce0c23b0e7a34d373bb5427b31975e4dc8977d25ae0734f197",
+      "bytes": 26932,
+      "role": "APPEND_ONLY_WORKBENCH_SELECTOR_AND_ABORT_AWARE_BROWSER_TASK_STRICTMODE_AUTHORITY",
+      "executionOutcome": "ONE_AUTHORIZED_INVOCATION_FIVE_OF_FIVE_PASS",
+      "preservation": "IMMUTABLE"
+    }
+  ],
+  "upstreamAuthority": {
+    "centralSuccessorExecutionAuthority": {
+      "path": "hrm-009-central-successor-execution-authority.v1.json",
+      "sha256": "347398ba3b7303a3499a9b18ab9a494fdf3c03e90cce1726f95522bd5334f2a7",
+      "bytes": 39007
+    },
+    "centralSuccessorIntegrationReceipt": {
+      "path": "hrm-009-central-successor-integration-receipt.v1.json",
+      "sha256": "aaaf7b969ff82a006426be7713893c44d15ab155ad0ddb9f84be778c46364454",
+      "bytes": 5994,
+      "requiredPriorState": "EXACT_BACKEND_AND_FRONTEND_CENTRAL_SUCCESSOR_HEADS_NO_FF_MERGED_AND_PUSHED_DEFAULT_OFF_ZERO_ENROLLMENT_BROWSER_GATE_PENDING"
+    },
+    "stageACentralIntegrationReceipt": {
+      "path": "hrm-009-stage-a-central-integration-receipt.v1.json",
+      "sha256": "d8e3208a96d7e7fc24c6385e99f10c52963d7ba7f27a8dedfb382cdd66df56e0",
+      "bytes": 6183
+    }
+  },
+  "firstStoppedAttempt": {
+    "authorityVersion": 4,
+    "row": "1440_LIGHT_PERSONAL",
+    "rowOrdinal": 1,
+    "result": "FAILED_AND_STOPPED",
+    "rowsTwoThroughFive": "NOT_RUN",
+    "failureSurface": "AUTHORITY_UNAVAILABLE_FAIL_CLOSED_SCREEN",
+    "rootCauseClass": "MIXED_LIVE_FORWARDING_FOR_56_OFFICIAL_NON_TARGET_PAGE_CONTRACTS_PLUS_STRICTMODE_DUPLICATE_PAGE_DISPATCH_AND_MISSING_CANONICAL_SCOPE",
+    "securityResult": "ZERO_MUTATION_ZERO_STEP_UP_ZERO_UNEXPECTED_AUTHORITY_EVALUATION",
+    "stableArtifacts": [
+      {
+        "path": "hrm-009-read-only-browser-gate-evidence/playwright-first-run-row-01-failed.png",
+        "sha256": "dc081273b628ed34d41174d429205b6b5569442947eb18d70fe50e90f3649386",
+        "bytes": 36032
+      },
+      {
+        "path": "hrm-009-read-only-browser-gate-evidence/playwright-first-run-row-01-error-context.md",
+        "sha256": "7856c3c2b0f91b2d83570919b3205ef622823e5fc62cfe164e427515686beb21",
+        "bytes": 732
+      }
+    ],
+    "acceptanceTreatment": "FAILURE_EVIDENCE_RETAINED_NOT_A_PASSING_ROW_AND_NOT_REPLAYED_UNDER_V4"
+  },
+  "secondStoppedAttempt": {
+    "authorityVersion": 5,
+    "implementationMerge": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "08bcd41a12d02093a5fad8062d319d337daa8eed",
+      "tree": "cdebe1d7200a36e7f01ef46679785d3ac9e477b9"
+    },
+    "row": "1440_LIGHT_PERSONAL",
+    "rowOrdinal": 1,
+    "result": "FAILED_AND_STOPPED",
+    "rowsTwoThroughFive": "NOT_RUN",
+    "failureSurface": "GLOBAL_FORBIDDEN_ACTION_LOCATOR_FALSE_POSITIVE_AFTER_SUCCESSFUL_READ_ONLY_MOUNT",
+    "falsePositive": "The page-global button and anchor search matched the shell account description 'SKAX integrated verification administrator' outside the HRM-009 workbench.",
+    "strictModeObservation": "The same stopped run proved that microtask deferral did not cross the real browser StrictMode cleanup boundary: selected PAGE, DATA and owner GET each executed twice and the 56 official non-target PAGE denials executed twice.",
+    "securityResult": "ZERO_MUTATION_ZERO_STEP_UP_ZERO_UNEXPECTED_AUTHORITY_EVALUATION",
+    "stableArtifacts": [
+      {
+        "path": "hrm-009-read-only-browser-gate-evidence/playwright-v5-row-01-failed-selector.png",
+        "sha256": "7328bf4064dac6cb1abe3a12ed77ba2f4d224e220aa3457296f6cb7f15afa735",
+        "bytes": 172712
+      },
+      {
+        "path": "hrm-009-read-only-browser-gate-evidence/playwright-v5-row-01-error-context.md",
+        "sha256": "4894d3b0ab9c8aace7606ea3c1864286d8540b2d7178fb1a6306b6ebd644fba4",
+        "bytes": 7612
+      }
+    ],
+    "acceptanceTreatment": "FAILURE_EVIDENCE_RETAINED_NOT_A_PASSING_ROW_AND_NOT_REPLAYED_UNDER_V5"
+  },
+  "v6Implementation": {
+    "sourceBranch": "codex/hris-wave7-r7-batch03-hrm009-browser-strictmode-20261018-r1",
+    "exactFeatureCommit": "b4c785bd0f625e8a4d58d924fcc7fdce12546365",
+    "exactFeatureTree": "1fff3965bd2bf5d54af9b7810fa6e9e7b875ef4d",
+    "centralMerge": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "5e66c397cf30e9fb45dcc483b3efe92eaa1747fb",
+      "tree": "1fff3965bd2bf5d54af9b7810fa6e9e7b875ef4d",
+      "parents": [
+        "93aa32976908cc0d2db19fc2020a5932f9ea6049",
+        "b4c785bd0f625e8a4d58d924fcc7fdce12546365"
+      ],
+      "originExactBeforeReceipt": true,
+      "mergeConflicts": 0
+    },
+    "exactChangedFiles": [
+      "apps/dwp/src/features/shell/product-surface-authority-bridge.tsx",
+      "apps/dwp/src/features/shell/product-surface-authority-bridge.mounted.test.ts",
+      "apps/dwp/src/features/hris/integration/hris-hrm-009-route-admission.tsx",
+      "apps/dwp/src/features/hris/integration/hris-hrm-009-route-admission.test.tsx",
+      "apps/dwp/src/features/hris/employee-services/certificates/use-certificate-workbench.ts",
+      "apps/dwp/src/features/hris/employee-services/certificates/testing/certificate-workbench.test.tsx",
+      "e2e/hris-hrm-009-read-only-browser-gate.spec.ts"
+    ],
+    "exactChangedFileCount": 7,
+    "productionBehavior": [
+      "PAGE, DATA and owner read transports defer through one abort-aware browser task and recheck the controlling signal immediately before dispatch.",
+      "Discarded StrictMode probes dispatch no read transport while the surviving semantic invocation dispatches once.",
+      "Forbidden interactive action vocabulary is checked only inside the owned HRM-009 workbench and is not weakened.",
+      "Semantic identity changes, lease renewal, refresh, previous and next navigation, cancellation and fail-closed behavior remain active."
+    ],
+    "forbiddenChangesAbsent": [
+      "fixture server",
+      "Playwright configuration",
+      "backend source",
+      "package or lockfile",
+      "checked-in runtime default",
+      "tenant activation or enrollment",
+      "writable action delegate"
+    ]
+  },
+  "boundedVerification": {
+    "staticChecks": {
+      "scope": "EXACT_SEVEN_V6_FILES_ONLY",
+      "prettier": "PASS",
+      "eslint": "PASS",
+      "gitDiffAllowlist": "PASS"
+    },
+    "targetedTestHistory": [
+      {
+        "ordinal": 1,
+        "scope": [
+          "apps/dwp/src/features/shell/product-surface-authority-bridge.mounted.test.ts",
+          "apps/dwp/src/features/hris/integration/hris-hrm-009-route-admission.test.tsx",
+          "apps/dwp/src/features/hris/employee-services/certificates/testing/certificate-workbench.test.tsx"
+        ],
+        "result": "55_PASS_3_FAIL_OF_58",
+        "failureClass": "TEST_HARNESS_TIMER_BOUNDARY_ONLY",
+        "productionSemanticFailureObserved": false
+      },
+      {
+        "ordinal": 2,
+        "scope": "ONLY_THE_THREE_PREVIOUSLY_FAILED_TESTS_AFTER_HARNESS_CORRECTION",
+        "result": "3_OF_3_PASS"
+      },
+      {
+        "ordinal": 3,
+        "scope": "DATA_LEASE_RENEWAL_REGRESSION_ADDED_FROM_INDEPENDENT_REVIEW",
+        "result": "1_OF_1_PASS_8_SKIPPED"
+      },
+      {
+        "ordinal": 4,
+        "scope": "OWNER_REFRESH_NEXT_PREVIOUS_REGRESSION_ADDED_FROM_INDEPENDENT_REVIEW",
+        "result": "1_OF_1_PASS_29_SKIPPED"
+      }
+    ],
+    "finalTargetedCorpus": {
+      "fileCount": 3,
+      "testCount": 60,
+      "aggregateSingleInvocationSixtyOfSixtyRun": false,
+      "reason": "Each affected test has bounded passing evidence from the initial, failed-only and review-added focused executions; a redundant full replay was intentionally not performed.",
+      "unsupportedClaimForbidden": "THIS_RECEIPT_DOES_NOT_CLAIM_ONE_60_OF_60_INVOCATION"
+    },
+    "independentReview": {
+      "reviewer": "/root/hrm009_v6_independent_review",
+      "decision": "GO",
+      "p0": 0,
+      "p1": 0,
+      "p2": 0,
+      "reviewAddedRegressions": [
+        "DATA lease renewal remains live after task deferral",
+        "Owner refresh, next and previous navigation each retain one bounded transport"
+      ]
+    },
+    "repositoryWideSuiteRun": false,
+    "fullNxOrVitestSuiteRun": false,
+    "repeatedPassingCheckRun": false
+  },
+  "finalBrowserMatrix": {
+    "authorityVersion": 6,
+    "dedicatedConfig": "playwright.hris-hrm-009-read-only.config.ts",
+    "dedicatedSpec": "e2e/hris-hrm-009-read-only-browser-gate.spec.ts",
+    "driver": "PLAYWRIGHT_CHROMIUM",
+    "workers": 1,
+    "retries": 0,
+    "invocationsUnderV6": 1,
+    "result": "5_OF_5_PASS",
+    "duration": "17.4s",
+    "orderedRows": [
+      {
+        "ordinal": 1,
+        "name": "1440_LIGHT_PERSONAL",
+        "priorState": "FAILED_TWICE_TOTAL_UNDER_V4_AND_V5",
+        "v6Result": "PASS_ON_ONE_AUTHORIZED_CORRECTED_REPLAY"
+      },
+      {
+        "ordinal": 2,
+        "name": "1280_DARK_OPERATIONS",
+        "priorState": "NEVER_RUN",
+        "v6Result": "PASS_ON_FIRST_EXECUTION"
+      },
+      {
+        "ordinal": 3,
+        "name": "390_KO_REDUCED_MOTION_PERSONAL",
+        "priorState": "NEVER_RUN",
+        "v6Result": "PASS_ON_FIRST_EXECUTION"
+      },
+      {
+        "ordinal": 4,
+        "name": "320_FORCED_COLORS_PARTIAL_OPERATIONS",
+        "priorState": "NEVER_RUN",
+        "v6Result": "PASS_ON_FIRST_EXECUTION"
+      },
+      {
+        "ordinal": 5,
+        "name": "640_CSS_200_PERCENT_PERSONAL",
+        "priorState": "NEVER_RUN",
+        "v6Result": "PASS_ON_FIRST_EXECUTION"
+      }
+    ],
+    "requiredAssertionsCompletedBeforeEachRowPass": [
+      "PAGE_BEFORE_DATA_BEFORE_OWNER_GET",
+      "SELECTED_PAGE_DATA_OWNER_EXACTLY_ONCE",
+      "56_OFFICIAL_NON_TARGET_PAGE_DENIALS",
+      "CANONICAL_SCOPE_PRESERVED",
+      "WORKBENCH_SCOPED_FORBIDDEN_INTERACTIVE_ACTIONS_ABSENT",
+      "RAW_PROJECTION_ACCEPTED",
+      "ZERO_POST_PUT_PATCH_DELETE",
+      "ZERO_STEP_UP",
+      "ZERO_UNEXPECTED_AUTHORITY_EVALUATION",
+      "SECRETS_ABSENT_FROM_ATTACHMENTS",
+      "ROW_SPECIFIC_ACCESSIBILITY_FOCUS_THEME_MOTION_FORCED_COLOR_OVERFLOW_OR_READING_ORDER_ASSERTIONS"
+    ],
+    "lastRunReceipt": {
+      "path": "hrm-009-read-only-browser-gate-evidence/playwright-v6-last-run.json",
+      "sha256": "fff6299efb51ba9ef550e500ecc967e972c83e86be387042c360caea7fdbae29",
+      "bytes": 46,
+      "content": "PASSED_WITH_EMPTY_FAILED_TEST_LIST"
+    },
+    "runSummary": {
+      "path": "hrm-009-read-only-browser-gate-evidence/playwright-v6-run-summary.txt",
+      "sha256": "954b0cc89baabd8c0e75c14d205cfd58da90d72415b9b63f653e06f3956c0fb8",
+      "bytes": 1067,
+      "content": "SANITIZED_COMMAND_PIN_RESULT_ROW_NAMES_EXACT_COUNTERS_AND_ATTACHMENT_RETENTION_NOTE"
+    },
+    "attachmentRetention": {
+      "lineReporterRetainedPerRowAttachments": false,
+      "interpretation": "The line reporter did not persist one durable screenshot or log attachment per passing row. Each row's in-test sanitized log and screenshot attachment assertions completed before Playwright marked that row passed. Durable v6 last-run state and the pre-existing sanitized CUA and default-OFF evidence remain stable.",
+      "claimBoundary": "No nonexistent per-row artifact path or hash is claimed by this receipt."
+    },
+    "secondV6InvocationRun": false,
+    "passingRowReplayRun": false
+  },
+  "stableEvidence": [
+    {
+      "path": "hrm-009-read-only-browser-gate-evidence/playwright-v6-last-run.json",
+      "sha256": "fff6299efb51ba9ef550e500ecc967e972c83e86be387042c360caea7fdbae29",
+      "bytes": 46,
+      "classification": "FINAL_V6_MATRIX_STATUS"
+    },
+    {
+      "path": "hrm-009-read-only-browser-gate-evidence/playwright-v6-run-summary.txt",
+      "sha256": "954b0cc89baabd8c0e75c14d205cfd58da90d72415b9b63f653e06f3956c0fb8",
+      "bytes": 1067,
+      "classification": "SANITIZED_FINAL_V6_MATRIX_COMMAND_RESULT_ROWS_COUNTERS_AND_RETENTION_SUMMARY"
+    },
+    {
+      "path": "hrm-009-read-only-browser-gate-evidence/cua-personal-complete-1440x900.png",
+      "sha256": "68dff778eb77260f47ddc60586684a23f629ea739aacc5aad734af91836c7d47",
+      "bytes": 116468,
+      "classification": "SANITIZED_POSITIVE_CUA_READ_ONLY_OBSERVATION"
+    },
+    {
+      "path": "hrm-009-read-only-browser-gate-evidence/cua-personal-complete-1440x900.ax.txt",
+      "sha256": "a46cf461433200a29ccb01c706b3fe8078637293329dce2a8050b31182544407",
+      "bytes": 9382,
+      "classification": "SANITIZED_POSITIVE_CUA_ACCESSIBILITY_TREE"
+    },
+    {
+      "path": "hrm-009-read-only-browser-gate-evidence/default-off-1440x900.png",
+      "sha256": "214f3fbb30395ae3e3703631268dcdb71ce04784122eccbefb737a95eb25c9ea",
+      "bytes": 38679,
+      "classification": "CHECKED_IN_DEFAULT_OFF_LIVE_RUNTIME_OBSERVATION"
+    },
+    {
+      "path": "hrm-009-read-only-browser-gate-evidence/playwright-first-run-row-01-failed.png",
+      "sha256": "dc081273b628ed34d41174d429205b6b5569442947eb18d70fe50e90f3649386",
+      "bytes": 36032,
+      "classification": "V4_FAILURE_EVIDENCE_NOT_PASS"
+    },
+    {
+      "path": "hrm-009-read-only-browser-gate-evidence/playwright-first-run-row-01-error-context.md",
+      "sha256": "7856c3c2b0f91b2d83570919b3205ef622823e5fc62cfe164e427515686beb21",
+      "bytes": 732,
+      "classification": "V4_FAILURE_EVIDENCE_NOT_PASS"
+    },
+    {
+      "path": "hrm-009-read-only-browser-gate-evidence/playwright-v5-row-01-failed-selector.png",
+      "sha256": "7328bf4064dac6cb1abe3a12ed77ba2f4d224e220aa3457296f6cb7f15afa735",
+      "bytes": 172712,
+      "classification": "V5_FAILURE_EVIDENCE_NOT_PASS"
+    },
+    {
+      "path": "hrm-009-read-only-browser-gate-evidence/playwright-v5-row-01-error-context.md",
+      "sha256": "4894d3b0ab9c8aace7606ea3c1864286d8540b2d7178fb1a6306b6ebd644fba4",
+      "bytes": 7612,
+      "classification": "V5_FAILURE_EVIDENCE_NOT_PASS"
+    }
+  ],
+  "pinnedRepositoryState": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "f9d2556294fe92a26090ab26781d74dc861062cd",
+      "tree": "c4cb353f1fd314c054f4094b36927d99897180da",
+      "originExact": true,
+      "clean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "5e66c397cf30e9fb45dcc483b3efe92eaa1747fb",
+      "tree": "1fff3965bd2bf5d54af9b7810fa6e9e7b875ef4d",
+      "originExactBeforeReceipt": true,
+      "committedSourceClean": true,
+      "worktreeCleanBeforeReceipt": false,
+      "worktreeNote": "Only append-only browser evidence was untracked before this receipt; no unrelated source change is adopted."
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "originExact": true,
+      "clean": true
+    }
+  },
+  "sealedBoundary": {
+    "productAuthorizationVersion": 52,
+    "productAuthorizationStatus": "DRAFT",
+    "productAuthorizationChecksum": "b33fbf968e71f97b09fa497fdfad7d2f6854199170b79fd1602a0ea604977346",
+    "authMigration": "V261",
+    "runtimeDefault": "OFF",
+    "automaticImportEnabled": false,
+    "persistentFeatureActivationCount": 0,
+    "persistentTenantEnrollmentCount": 0,
+    "frontendActionDelegateIntegrated": false,
+    "writableActionAuthorized": false,
+    "customerDataUsed": false,
+    "productionReleaseAuthorized": false
+  },
+  "decision": "HRM009_DEFAULT_OFF_READ_ONLY_BROWSER_GATE_ACCEPTED_ZERO_WRITE_ZERO_ENROLLMENT_ZERO_BUSINESS_CREDIT",
+  "remainingState": {
+    "readOnlyBrowserAcceptanceComplete": true,
+    "centralReadOnlySourceIntegrated": true,
+    "hrm009FullSliceComplete": false,
+    "downloadIntegratedOrAccepted": false,
+    "revokeIntegratedOrAccepted": false,
+    "verificationIntegratedOrAccepted": false,
+    "expiryAcceptanceComplete": false,
+    "accessOrDownloadAuditAcceptanceComplete": false,
+    "batch03BusinessCompletionIncrement": 0,
+    "r7Complete": false
+  },
+  "nonClaims": [
+    "A single final 60-of-60 targeted unit invocation was run.",
+    "Per-row Playwright screenshots or log attachments were retained by the line reporter.",
+    "The HRM-009 ACTION UI or any writable certificate action is implemented or authorized.",
+    "Download, revoke, verification, expiry or access/download audit acceptance is complete.",
+    "Any feature or tenant is activated or enrolled.",
+    "Customer data or production release is authorized.",
+    "BASE-TFR-HRM-009 receives business-completion credit or is fully complete.",
+    "R7 is complete."
+  ],
+  "requiredNext": "Record the Batch-03 sequencing exit with zero business-completion credit, retain HRM-009 as a partial read-only slice and preserve the two open TIM P0 gates before any Batch-04 preflight or source authority."
+}

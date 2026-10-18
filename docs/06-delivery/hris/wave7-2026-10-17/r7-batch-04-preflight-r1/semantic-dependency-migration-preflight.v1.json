@@ -1,0 +1,393 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-semantic-dependency-migration-preflight.v1",
+  "preflightId": "HRIS-WAVE7-R7-BATCH-04-PREFLIGHT-20261018-R1",
+  "recordedAt": "2026-10-18T10:10:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "PREFLIGHT_COMPLETE_FIXED_ORDER_FIVE_CONDITIONAL_LANES_NO_PACKETS_NO_TOKENS_NO_LEASES_NO_SOURCE",
+  "authorityBasis": {
+    "roadmap": {
+      "path": "../execution-roadmap-successor.v18.json",
+      "sha256": "b2bf071c6012d464d4e38faa5516c020ec9ccd1aae501fd1a1f0fbf934b68e23",
+      "bytes": 10861,
+      "requiredState": "R7_BATCH_03_SEQUENCING_CLOSED_DEFAULT_OFF_ZERO_BUSINESS_CREDIT_BATCH_04_PREFLIGHT_NEXT_ZERO_TENANT_ENROLLMENT"
+    },
+    "batch03SequencingExit": {
+      "path": "../r7-batch-03-sequencing-exit-r1/sequencing-exit-receipt.v1.json",
+      "sha256": "e982b562569770246de25c6aae796797e3ececbe7811745be435df44993ca0dc",
+      "bytes": 11103,
+      "requiredState": "BATCH_03_SEQUENCING_EXIT_ACCEPTED_DEFAULT_OFF_ZERO_TENANT_ENROLLMENT_ZERO_BUSINESS_CREDIT",
+      "requiredDecision": "BATCH_03_SEQUENCING_EXIT_CLOSED_DEFAULT_OFF_ZERO_ENROLLMENT_ZERO_BUSINESS_CREDIT_BATCH_04_PREFLIGHT_NEXT"
+    },
+    "reclassification": {
+      "path": "../r7-c0-reclassification-r1/base-slice-reclassification.v1.json",
+      "sha256": "73c02c6d945f2b62ae716d2dbbf76e5123a2863f50d19de51e27085943291de8",
+      "bytes": 141708
+    }
+  },
+  "pinBasis": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "f9d2556294fe92a26090ab26781d74dc861062cd",
+      "tree": "c4cb353f1fd314c054f4094b36927d99897180da",
+      "originExact": true,
+      "clean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "5e66c397cf30e9fb45dcc483b3efe92eaa1747fb",
+      "tree": "1fff3965bd2bf5d54af9b7810fa6e9e7b875ef4d",
+      "originExact": true,
+      "committedSourceClean": true,
+      "worktreeCleanBeforeThisPreflight": false,
+      "untrackedBoundary": "APPEND_ONLY_BATCH03_BROWSER_EVIDENCE_CLOSURE_DOCUMENTS_AND_BATCH04_CONTROL_DOCUMENTS_ONLY"
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "originExact": true,
+      "clean": true
+    }
+  },
+  "canonEvidence": {
+    "overlay": {
+      "path": "../../wave3-2026-10-13/successor-slice-overlay.v2.csv",
+      "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+      "bytes": 160160
+    },
+    "dependencyRegister": {
+      "path": "../../recovery/hris-porting-blueprint-2026-09-09/coding-readiness/module-dependency-register.csv",
+      "sha256": "b8f1a11d1a32cf6f5a9a99ff73066b7e65787319ac18cf0d2b4891d22587c348",
+      "bytes": 3652
+    },
+    "targetFamilyResolutionRegister": {
+      "path": "../../recovery/exact-supplements/2026-10-06/hris-porting-blueprint-2026-09-09/coding-readiness/target-family-resolution-register.csv",
+      "sha256": "3e3618ff3ac150da8c9c7cbd3b1018e30e69652f28f3dbd8c87edb7df6a83819",
+      "bytes": 38399
+    },
+    "acceptedEntryQueryRegister": {
+      "path": "../../recovery/exact-supplements/2026-10-06/accepted-successors/hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-api-contract-register.csv",
+      "sha256": "5f47efd33a1d5aa3d11a4d9fd5716cd4e35650e9fec0868ecb77c8c90a4cd988",
+      "bytes": 100020
+    }
+  },
+  "globalRules": {
+    "fixedLaneOrder": [
+      "BASE-TFR-HRM-011",
+      "BASE-TFR-PAY-003",
+      "BASE-TFR-PER-004",
+      "BASE-TFR-SYS-006",
+      "BASE-TFR-TIM-003"
+    ],
+    "sourceStartRequiresExactOwnerPacketAndToken": true,
+    "migrationRequiresProvenSchemaDeltaAndExclusiveLease": true,
+    "sharedAuthorizationChangeRequiresSeparateCentralSuccessor": true,
+    "freshWorktreeRequiredForWritableModuleSource": true,
+    "defaultOff": true,
+    "tenantEnrollmentCount": 0,
+    "businessCompletionIncrement": 0,
+    "repositoryWideSuitePerCorrection": false
+  },
+  "dependencySnapshot": [
+    {
+      "dependencyId": "DEP-001",
+      "producer": "SYS_AUTH",
+      "consumer": "ALL",
+      "contract": "HRIS_APP_ENTITLEMENT_AND_ACCESS_PACKAGE_V1",
+      "deliveryMode": "SYNC_DECISION",
+      "registerStatus": "READY",
+      "failureGuard": "fail closed; no leaf data"
+    },
+    {
+      "dependencyId": "DEP-002",
+      "producer": "SYS_AUTH",
+      "consumer": "ALL",
+      "contract": "EFFECTIVE_PERMISSION_SCOPE_FIELD_REVISION_V1",
+      "deliveryMode": "SYNC_DECISION",
+      "registerStatus": "READY",
+      "failureGuard": "403 and cache purge"
+    },
+    {
+      "dependencyId": "DEP-003",
+      "producer": "SYS_PLATFORM",
+      "consumer": "ALL",
+      "contract": "EVENT_ENVELOPE_OUTBOX_INBOX_V1",
+      "deliveryMode": "ASYNC",
+      "registerStatus": "READY",
+      "failureGuard": "schema reject and DLQ"
+    },
+    {
+      "dependencyId": "DEP-004",
+      "producer": "SYS_PLATFORM",
+      "consumer": "ALL",
+      "contract": "CONFIG_LIFECYCLE_POLICY_REF_V1",
+      "deliveryMode": "SYNC_AND_EVENT",
+      "registerStatus": "READY",
+      "failureGuard": "last approved version or feature disabled"
+    },
+    {
+      "dependencyId": "DEP-005",
+      "producer": "SYS_PLATFORM",
+      "consumer": "HRM|PER|TIM|PAY",
+      "contract": "AUTOMATION_HANDLER_AND_RECEIPT_V1",
+      "deliveryMode": "ASYNC",
+      "registerStatus": "READY",
+      "failureGuard": "no arbitrary execution; retry receipt"
+    },
+    {
+      "dependencyId": "DEP-007",
+      "producer": "HRM",
+      "consumer": "PER|TIM|PAY",
+      "contract": "WorkerAssignmentSnapshot.v1|WorkplaceAssignmentSnapshot.v1|WorkerChanged.v1|EmploymentChanged.v1|AssignmentChanged.v1|OrganizationChanged.v1",
+      "deliveryMode": "SNAPSHOT_AND_EVENT",
+      "registerStatus": "READY",
+      "failureGuard": "stale guard; owner query"
+    },
+    {
+      "dependencyId": "DEP-008",
+      "producer": "HRM",
+      "consumer": "PAY",
+      "contract": "CompensationBasisSnapshot.v1|WorkerDependentEligibilitySnapshot.v1|WorkerTaxIdentitySnapshot.v1|WorkerBankAccountTokenSnapshot.v1|CompensationBasisChanged.v1",
+      "deliveryMode": "SNAPSHOT_AND_EVENT",
+      "registerStatus": "READY",
+      "failureGuard": "pay input validation blocks missing version and raw sensitive identifiers"
+    },
+    {
+      "dependencyId": "DEP-016",
+      "producer": "DWP_AUDIT",
+      "consumer": "ALL",
+      "contract": "AUDIT_OUTBOX_EVENT_V1",
+      "deliveryMode": "ASYNC",
+      "registerStatus": "READY",
+      "failureGuard": "domain transaction records local outbox"
+    }
+  ],
+  "laneDecisions": [
+    {
+      "order": 1,
+      "sliceId": "BASE-TFR-HRM-011",
+      "moduleSession": "HRIS-HRM",
+      "decision": "CONDITIONAL_GO_FOR_SEPARATE_EXACT_PACKET_SOURCE_START_NO_GO",
+      "classificationAtR7C0": "NO_CURRENT_SLICE_RESULT",
+      "businessMeaning": "Contract issuance and compensation basis use owner commands plus field-projected snapshots and minimized change events.",
+      "semanticLineage": "TFR-HRM-011::hr-contracts-compensation-basis::PEP-HRM-011|SVC-PEP-HRM-003|SVC-PEP-HRM-005|XCON-002|XCON-007|XCON-017|XCON-018|XCON-019|EVT-HRM:EmploymentContractIssued.v1|EVT-HRM:CompensationBasisChanged.v1|EVT-HRM:WorkerDependentEligibilityChanged.v1|EVT-HRM:WorkerTaxIdentityChanged.v1|EVT-HRM:WorkerBankAccountTokenChanged.v1",
+      "dependencies": ["DEP-001", "DEP-002", "DEP-003", "DEP-008", "DEP-016"],
+      "entryQueries": [
+        {
+          "id": "IAQ-008",
+          "method": "GET",
+          "browserPath": "/api/people/v1/hris/workbench/operations/contracts/compensation/basis",
+          "canonicalRoute": "/hr/operations/people/contracts-compensation-basis",
+          "implementationState": "REQUIRED_G3_ENTRY_QUERY_NOT_IMPLEMENTED"
+        }
+      ],
+      "migration": {
+        "stream": "PEOPLE_MAIN",
+        "observedHighWater": "V58",
+        "candidateVersionIfSchemaDeltaProven": "V59",
+        "leaseState": "NOT_ISSUED"
+      },
+      "blockingConditions": [
+        "Hash-pin the exact PEP, service, snapshot, event, field-policy and audit boundary in a fresh owner packet.",
+        "Prove whether People-owned persistence changes beyond V58 before reserving V59.",
+        "Seal any PAGE, DATA and ACTION authorization delta through a separate central successor."
+      ],
+      "packetAuthorized": false,
+      "startTokenAuthorized": false,
+      "migrationLeaseAuthorized": false
+    },
+    {
+      "order": 2,
+      "sliceId": "BASE-TFR-PAY-003",
+      "moduleSession": "HRIS-PAY",
+      "decision": "CONDITIONAL_GO_FOR_SEPARATE_EXACT_PACKET_SOURCE_START_NO_GO",
+      "classificationAtR7C0": "NO_CURRENT_SLICE_RESULT",
+      "businessMeaning": "Country-specific insurance resolves to signed country-pack activation plus immutable calculation and result projection.",
+      "semanticLineage": "TFR-PAY-003::PAY-KR-INSURANCE::PEP-PAY-028|PEP-PAY-012|PEP-PAY-014|EVT-PAY:PayrollCalculated",
+      "dependencies": ["DEP-001", "DEP-002", "DEP-003", "DEP-016"],
+      "entryQueries": [
+        {
+          "id": "IAQ-026",
+          "method": "GET",
+          "browserPath": "/api/payroll/v1/workbench/configuration/statutory",
+          "canonicalRoute": "/hr/settings/statutory",
+          "implementationState": "REQUIRED_G3_ENTRY_QUERY_NOT_IMPLEMENTED"
+        },
+        {
+          "id": "IAQ-048",
+          "method": "GET",
+          "browserPath": "/api/payroll/v1/workbench/pay-tax-social-insurance",
+          "canonicalRoute": "/hr/operations/payroll/tax-social-insurance",
+          "implementationState": "REQUIRED_G3_ENTRY_QUERY_NOT_IMPLEMENTED"
+        }
+      ],
+      "migration": {
+        "stream": "PAYROLL_MAIN",
+        "observedHighWater": "V52",
+        "candidateVersionIfSchemaDeltaProven": "V53",
+        "leaseState": "NOT_ISSUED"
+      },
+      "blockingConditions": [
+        "Seal country-pack signature, immutable calculation, result projection, reconciliation and PayrollCalculated semantics.",
+        "Prove whether Payroll-owned persistence changes beyond V52 before reserving V53.",
+        "Seal IAQ-026 and IAQ-048 coexistence without double-counting shared settings and operations surfaces."
+      ],
+      "packetAuthorized": false,
+      "startTokenAuthorized": false,
+      "migrationLeaseAuthorized": false
+    },
+    {
+      "order": 3,
+      "sliceId": "BASE-TFR-PER-004",
+      "moduleSession": "HRIS-PER",
+      "decision": "CONDITIONAL_GO_FOR_SEPARATE_EXACT_PACKET_SOURCE_START_NO_GO",
+      "classificationAtR7C0": "NO_CURRENT_SLICE_RESULT",
+      "businessMeaning": "Performance settings use typed immutable central configuration versions with validate, simulate, approve and publish lifecycle operations.",
+      "semanticLineage": "TFR-PER-004::PER-CONFIG-001::SYS-API-011|SYS-API-012|SYS-API-013|SYS-API-014|SYS-API-015|SYS-API-016",
+      "dependencies": ["DEP-001", "DEP-002", "DEP-003", "DEP-004", "DEP-016"],
+      "entryQueries": [
+        {
+          "id": "IAQ-020",
+          "method": "GET",
+          "browserPath": "/api/people/v1/hris/performance/workbench/forms-scales",
+          "canonicalRoute": "/hr/operations/performance/forms-scales",
+          "implementationState": "REQUIRED_G3_ENTRY_QUERY_NOT_IMPLEMENTED"
+        },
+        {
+          "id": "IAQ-056",
+          "method": "GET",
+          "browserPath": "/api/people/v1/hris/performance/workbench/settings-performance",
+          "canonicalRoute": "/hr/settings/performance",
+          "implementationState": "REQUIRED_G3_ENTRY_QUERY_NOT_IMPLEMENTED"
+        }
+      ],
+      "migration": {
+        "stream": "PERFORMANCE",
+        "observedHighWater": "V18",
+        "candidateVersionIfPerformanceOwnedSchemaDeltaProven": "V19",
+        "defaultIfCentralConfigurationReuseOnly": "NONE",
+        "leaseState": "NOT_ISSUED"
+      },
+      "blockingConditions": [
+        "Seal ownership between Performance projections and Platform central configuration lifecycle APIs.",
+        "Prove whether this is reuse-only or requires Performance-owned persistence beyond V18.",
+        "Seal IAQ-020 and IAQ-056 PAGE, DATA, ACTION and authorization boundaries without duplicating Platform configuration ownership."
+      ],
+      "packetAuthorized": false,
+      "startTokenAuthorized": false,
+      "migrationLeaseAuthorized": false
+    },
+    {
+      "order": 4,
+      "sliceId": "BASE-TFR-SYS-006",
+      "moduleSession": "HRIS-SYS",
+      "decision": "CONDITIONAL_GO_FOR_SEPARATE_EXACT_PACKET_SOURCE_START_NO_GO",
+      "classificationAtR7C0": "NO_CURRENT_SLICE_RESULT",
+      "businessMeaning": "Automation source screens resolve to allowlisted definitions, runs, attempts, retries, receipts and immutable state events.",
+      "semanticLineage": "TFR-SYS-006::DWP.AUTOMATION.CONTROL_PLANE::SYS-API-017|SYS-API-018|SYS-API-019|SYS-API-020|SYS-API-046|SYS-API-047|SYS-API-048|SYS-API-049|SYS-API-050|SYS-API-051|SYS-API-052|SYS-API-053|SYS-API-054|SYS-API-055|SYS-API-056|SYS-EVT-004",
+      "dependencies": ["DEP-001", "DEP-002", "DEP-003", "DEP-004", "DEP-005", "DEP-016"],
+      "sharedEntryQueryBoundary": {
+        "id": "IAQ-059",
+        "primarySliceId": "BASE-TFR-SYS-002",
+        "canonicalRoute": "/hr/settings/operations",
+        "decision": "SHARED_REUSE_BOUNDARY_NOT_SYS006_COMPLETION_OR_RECOUNT"
+      },
+      "migration": {
+        "stream": "PLATFORM_MAIN",
+        "observedHighWater": "V331",
+        "candidateVersionIfSchemaDeltaProven": "V332",
+        "leaseState": "NOT_ISSUED"
+      },
+      "blockingConditions": [
+        "Seal allowlisted handler, run, attempt, retry, receipt, idempotency and immutable state-event semantics.",
+        "Prove whether Platform-owned persistence changes beyond V331 before reserving V332.",
+        "Preserve IAQ-059 primary ownership by SYS-002 and prohibit double completion credit."
+      ],
+      "packetAuthorized": false,
+      "startTokenAuthorized": false,
+      "migrationLeaseAuthorized": false
+    },
+    {
+      "order": 5,
+      "sliceId": "BASE-TFR-TIM-003",
+      "moduleSession": "HRIS-TIM",
+      "decision": "CONDITIONAL_GO_FOR_SEPARATE_EXACT_PACKET_SOURCE_START_NO_GO",
+      "classificationAtR7C0": "NO_CURRENT_SLICE_RESULT",
+      "businessMeaning": "Employment absence facts remain People-owned and enter Time through the canonical minimized change contract.",
+      "semanticLineage": "TFR-TIM-003::TIM-LEAVE-ABSENCE::XCON-004|EVT-TIM:EmploymentChanged.v1",
+      "dependencies": ["DEP-001", "DEP-002", "DEP-003", "DEP-007", "DEP-016"],
+      "entryQueryBoundary": {
+        "primaryQueryInAcceptedRegister": "NONE_FOR_BASE_TFR_TIM_003",
+        "decision": "EXACT_OWNER_QUERY_OR_EVENT_ONLY_BOUNDARY_MUST_BE_SEALED_BEFORE_PACKET"
+      },
+      "migration": {
+        "stream": "TIME_MAIN",
+        "observedHighWater": "V12",
+        "candidateVersionIfTimeOwnedSchemaDeltaProven": "V13",
+        "defaultIfEventConsumptionRequiresNoPersistence": "NONE",
+        "leaseState": "NOT_ISSUED"
+      },
+      "blockingConditions": [
+        "Seal XCON-004 and EmploymentChanged.v1 field minimization, versioning, stale-event and owner-query recovery semantics.",
+        "Prove whether Time-owned persistence changes beyond V12 before reserving V13.",
+        "Carry the two existing TIM P0 activation blockers without treating them as blockers to documentation-only preflight."
+      ],
+      "packetAuthorized": false,
+      "startTokenAuthorized": false,
+      "migrationLeaseAuthorized": false
+    }
+  ],
+  "migrationHighWater": {
+    "PEOPLE_MAIN": "V58",
+    "PERFORMANCE": "V18",
+    "PAYROLL_MAIN": "V52",
+    "PLATFORM_MAIN": "V331",
+    "TIME_MAIN": "V12",
+    "AUTH_MAIN": "V261",
+    "NOTIFICATION_MAIN": "V35",
+    "APPROVAL_MAIN": "V58",
+    "PRODUCT_AUTHORIZATION_BUNDLE": "v52"
+  },
+  "carriedOpenGates": [
+    {
+      "gateId": "TIM_CLOSE_PERIOD_DEFINITION_PRODUCER",
+      "severity": "P0",
+      "state": "OPEN_EXTERNAL_SOURCE_AUTHORITY_GATE"
+    },
+    {
+      "gateId": "TIM_CLOSE_TRUSTED_OWNER_HEADER_ISSUER",
+      "severity": "P0",
+      "state": "OPEN_BEFORE_ANY_TENANT_ENROLLMENT"
+    }
+  ],
+  "portfolioAccounting": {
+    "universe": 86,
+    "retired": 2,
+    "active": 84,
+    "completedBeforeBatch04": 26,
+    "batch04PreflightBusinessCompletionIncrement": 0,
+    "completedAfterThisPreflight": 26
+  },
+  "authority": {
+    "preflightComplete": true,
+    "sourceAuthoringAuthorizedByThisReceipt": false,
+    "migrationAuthoringAuthorizedByThisReceipt": false,
+    "sharedAuthorizationAuthoringAuthorizedByThisReceipt": false,
+    "packetOrTokenIssuedByThisReceipt": false,
+    "freshPacketsMayBeIssuedAfterLaneConditionsAreSealedInFixedOrderFor": [
+      "BASE-TFR-HRM-011",
+      "BASE-TFR-PAY-003",
+      "BASE-TFR-PER-004",
+      "BASE-TFR-SYS-006",
+      "BASE-TFR-TIM-003"
+    ],
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "Starting with BASE-TFR-HRM-011, seal the exact owner packet and migration decision on the pinned canon; do not begin module source, reserve a migration version or advance to PAY-003 until a separate append-only authority is issued."
+}

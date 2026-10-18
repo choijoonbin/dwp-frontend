@@ -1,0 +1,18 @@
+Command: E2E_HRIS_HRM009_EMAIL=<redacted> E2E_HRIS_HRM009_PASSWORD=<redacted> E2E_REUSE_EXISTING_SERVER=true ./node_modules/.bin/playwright test --config=playwright.hris-hrm-009-read-only.config.ts
+Branch: dwp-dev
+Commit: 5e66c397cf30e9fb45dcc483b3efe92eaa1747fb
+Result: PASS
+Tests: 5 passed
+Workers: 1
+Elapsed: 17.4s
+
+1. 1440 light personal route preserves PAGE-DATA-GET order and keyboard focus
+2. 1280 dark operations route is metadata-only with every action disabled
+3. 390 Korean reduced-motion route preserves the long bilingual request label
+4. 320 forced-colors operations route reports partial owner data without enabling actions
+5. 1280 physical pixels at 200 percent zoom preserves semantic reading order
+
+The serial test itself validated, per row before attaching ephemeral evidence: selected PAGE=1,
+selected DATA=1, selected owner GET=1, official non-target PAGE denials=56,
+PAGE < DATA < owner GET, mutations=0, unexpected authority evaluations=0, and step-up=0.
+The configured line reporter did not retain successful per-row body attachments on disk.

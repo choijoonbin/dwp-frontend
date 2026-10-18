@@ -1,0 +1,158 @@
+Browser tab: 2, Title: "My HR requests and certificates · 내 HR · DWP", URL: "http://127.0.0.1:4219/hr/me/requests?tab=overview&focus=request%3A1001&scope=scope%3Ahrm009%3Aself".
+1 AXWebArea My HR requests and certificates · 내 HR · DWP, URL: 127.0.0.1:4219/hr/me/requests?tab=overview&focus=request%3A1001&scope=scope%3Ahrm009%3Aself
+	2 container root
+		3 link Description: 본문으로 건너뛰기, Value: 127.0.0.1:4219/hr/me/requests?tab=overview&focus=request%3A1001&scope=scope%3Ahrm009%3Aself#dwp-main-content
+		4 container hcm-desktop-navigation
+			5 link Description: Digital Workplace 홈, Value: 127.0.0.1:4219/
+			6 button (expanded) Description: 탐색 메뉴 접기, Secondary Actions: Collapse
+			7 text DWP HRIS
+			8 text SKAX
+			9 container HRIS 메뉴
+			10 link Description: 앱 목록으로 돌아가기, Value: 127.0.0.1:4219/apps
+		11 container
+			12 text HRIS SKAX · My HR certificate requests
+			13 container 현재 워크스페이스
+				14 text DWP Workspace 현재 워크스페이스
+			15 container 제품 접근 컨텍스트
+				16 container 읽기 전용
+				17 container 2026. 10. 18. 오전 9:08에 접근 재확인
+			18 pop up button (collapsed) Description: DWP 검색, Secondary Actions: Expand
+				19 text DWP 검색
+				20 text ⌘K
+			21 checkbox Description: 전체 화면, Value: 0
+			22 container 알림
+				23 pop up button (collapsed) Description: 알림, Secondary Actions: Expand
+			24 pop up button (collapsed) Description: 계정: 최준빈, SKAX integrated verification administrator, Secondary Actions: Expand
+				25 text 최
+				26 text 최준빈
+				27 text SKAX integrated verification administrator
+		28 container dwp-main-content
+			76 container
+				77 text EMPLOYEE SELF-SERVICE · GOVERNED REQUESTS
+				78 heading My HR requests and certificates, Value: 1
+					79 text My HR requests and certificates
+				80 text Review disclosed request and certificate metadata in the current read-only Stage-A scope. Primary user:  Employee  · Operational question: Which governed HR requests can I review, and can I request a certificate now?  · Archetype:  list-detail CURRENT 1 items
+				81 button Refresh
+					82 text Refresh
+			83 container
+				84 text Stage-A is read only This mount discloses request status and certificate/document metadata only. Certificate submission is disabled. Download, revoke, verification, expiry, access-audit, and download-audit are not supported in this stage.
+			85 container
+				86 heading My disclosed requests, Value: 2
+					87 text My disclosed requests
+				88 content list
+					89 checkbox Value: 1, Employment and long-form certificate request for a globally mobile employee with an intentionally long Korean and English label 증명서 요청 RUNNING
+			90 container
+				91 heading Value: 2, Employment and long-form certificate request for a globally mobile employee with an intentionally long Korean and English label 증명서 요청
+					92 text Employment and long-form certificate request for a globally mobile employee with an intentionally long Korean and English label 증명서 요청
+				93 text request:1001 RUNNING Governed detail reference:  /hr/me/requests?tab=overview&focus=request%3A1001
+				94 definition list
+					95 container REQUEST SUMMARY
+						96 text REQUEST SUMMARY
+					97 text 1 items · revision 2
+					98 container REQUEST STATUS
+						99 text REQUEST STATUS
+					100 text RUNNING · revision 3
+					101 container COMMAND RECEIPT
+						102 text COMMAND RECEIPT
+					103 text ACCEPTED · 2026-10-18T00:00:00Z · revision 1
+				104 heading Request certificate, Value: 3
+					105 text Request certificate
+				106 container
+					107 text Purpose is fixed to  EMPLOYEE_SELF_SERVICE . The People owner derives self or operations authority from trusted identity and requires high step-up before mutation.
+				108 container
+					109 text Person public ID
+					110 text field (disabled) Person public ID
+				111 container
+					112 text Certificate type
+					113 combo box (disabled, collapsed) Certificate type Employment certificate, Secondary Actions: Expand
+						114 text Employment certificate
+				115 container
+					116 text As-of instant (ISO 8601)
+					117 text field (disabled) As-of instant (ISO 8601), Value: 2026-10-18T00:00:00Z
+				118 button (disabled) Review and send request
+				119 text The command delegate is intentionally withheld for this read-only Stage-A mount.
+			120 button (disabled) Previous
+			121 button (disabled) Next
+		75 pop up button DWAI·ON 열기
+
+The focused UI element is 1 AXWebArea My HR requests and certificates · 내 HR · DWP, URL: 127.0.0.1:4219/hr/me/requests?tab=overview&focus=request%3A1001&scope=scope%3Ahrm009%3Aself
+
+FINAL_STABILITY_AX_DELTA
+Browser tab: 2, Title: "My HR requests and certificates · 내 HR · DWP", URL: "http://127.0.0.1:4219/hr/me/requests?tab=overview&focus=request%3A1001&scope=scope%3Ahrm009%3Aself".
+1 AXWebArea My HR requests and certificates · 내 HR · DWP, URL: 127.0.0.1:4219/hr/me/requests?tab=overview&focus=request%3A1001&scope=scope%3Ahrm009%3Aself
+	2 container root
+		3 link Description: 본문으로 건너뛰기, Value: 127.0.0.1:4219/hr/me/requests?tab=overview&focus=request%3A1001&scope=scope%3Ahrm009%3Aself#dwp-main-content
+		4 container hcm-desktop-navigation
+			5 link Description: Digital Workplace 홈, Value: 127.0.0.1:4219/
+			6 button (expanded) Description: 탐색 메뉴 접기, Secondary Actions: Collapse
+			7 text DWP HRIS
+			8 text SKAX
+			9 container HRIS 메뉴
+			10 link Description: 앱 목록으로 돌아가기, Value: 127.0.0.1:4219/apps
+		11 container
+			12 text HRIS SKAX · My HR certificate requests
+			13 container 현재 워크스페이스
+				14 text DWP Workspace 현재 워크스페이스
+			15 container 제품 접근 컨텍스트
+				16 container 읽기 전용
+				17 container 2026. 10. 18. 오전 9:22에 접근 재확인
+			18 pop up button (collapsed) Description: DWP 검색, Secondary Actions: Expand
+				19 text DWP 검색
+				20 text ⌘K
+			21 checkbox Description: 전체 화면, Value: 0
+			22 container 알림
+				23 pop up button (collapsed) Description: 알림, Secondary Actions: Expand
+			24 pop up button (collapsed) Description: 계정: 최준빈, SKAX integrated verification administrator, Secondary Actions: Expand
+				25 text 최
+				26 text 최준빈
+				27 text SKAX integrated verification administrator
+		28 container dwp-main-content
+			29 container
+				30 text EMPLOYEE SELF-SERVICE · GOVERNED REQUESTS
+				31 heading My HR requests and certificates, Value: 1
+					32 text My HR requests and certificates
+				33 text Review disclosed request and certificate metadata in the current read-only Stage-A scope. Primary user:  Employee  · Operational question: Which governed HR requests can I review, and can I request a certificate now?  · Archetype:  list-detail CURRENT 1 items
+				34 button Refresh
+					35 text Refresh
+			36 container
+				37 text Stage-A is read only This mount discloses request status and certificate/document metadata only. Certificate submission is disabled. Download, revoke, verification, expiry, access-audit, and download-audit are not supported in this stage.
+			38 container
+				39 heading My disclosed requests, Value: 2
+					40 text My disclosed requests
+				41 content list
+					42 checkbox Value: 1, Employment and long-form certificate request for a globally mobile employee with an intentionally long Korean and English label 증명서 요청 RUNNING
+			43 container
+				44 heading Value: 2, Employment and long-form certificate request for a globally mobile employee with an intentionally long Korean and English label 증명서 요청
+					45 text Employment and long-form certificate request for a globally mobile employee with an intentionally long Korean and English label 증명서 요청
+				46 text request:1001 RUNNING Governed detail reference:  /hr/me/requests?tab=overview&focus=request%3A1001
+				47 definition list
+					48 container REQUEST SUMMARY
+						49 text REQUEST SUMMARY
+					50 text 1 items · revision 2
+					51 container REQUEST STATUS
+						52 text REQUEST STATUS
+					53 text RUNNING · revision 3
+					54 container COMMAND RECEIPT
+						55 text COMMAND RECEIPT
+					56 text ACCEPTED · 2026-10-18T00:00:00Z · revision 1
+				57 heading Request certificate, Value: 3
+					58 text Request certificate
+				59 container
+					60 text Purpose is fixed to  EMPLOYEE_SELF_SERVICE . The People owner derives self or operations authority from trusted identity and requires high step-up before mutation.
+				61 container
+					62 text Person public ID
+					63 text field (disabled) Person public ID
+				64 container
+					65 text Certificate type
+					66 combo box (disabled, collapsed) Certificate type Employment certificate, Secondary Actions: Expand
+						67 text Employment certificate
+				68 container
+					69 text As-of instant (ISO 8601)
+					70 text field (disabled) As-of instant (ISO 8601), Value: 2026-10-18T00:00:00Z
+				71 button (disabled) Review and send request
+				72 text The command delegate is intentionally withheld for this read-only Stage-A mount.
+			73 button (disabled) Previous
+			74 button (disabled) Next
+		75 pop up button DWAI·ON 열기
+
+The focused UI element is 1 AXWebArea My HR requests and certificates · 내 HR · DWP, URL: 127.0.0.1:4219/hr/me/requests?tab=overview&focus=request%3A1001&scope=scope%3Ahrm009%3Aself
