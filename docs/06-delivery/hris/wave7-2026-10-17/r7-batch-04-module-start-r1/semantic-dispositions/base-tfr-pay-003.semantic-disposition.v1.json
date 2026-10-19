@@ -1,0 +1,447 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-pay003-semantic-disposition.v1",
+  "dispositionId": "HRIS-WAVE7-R7-BATCH-04-PAY003-SEMANTIC-DISPOSITION-20261019-R1",
+  "recordedAt": "2026-10-19T13:25:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ID_AND_SHA256"
+  },
+  "state": "PAY003_SEMANTIC_GAPS_RESOLVED_CENTRAL_SUCCESSOR_AND_EXACT_PACKET_MAY_BE_PREPARED_SOURCE_NO_GO_UNTIL_CENTRAL_ADMISSION_ACTIVE_EXCLUSIVE_V53_FRESH_WORKTREES_AND_TOKEN",
+  "sliceId": "BASE-TFR-PAY-003",
+  "sourceRef": "TFR-PAY-003",
+  "module": "PAY",
+  "moduleSession": "HRIS-PAY",
+  "decision": "GO_FOR_BOUNDED_CENTRAL_AUTHORIZATION_SUCCESSOR_OWNER_PACKET_AND_RESERVED_NOT_ACTIVE_PAYROLL_V53_PREPARATION_SOURCE_START_WITHHELD",
+  "authorityBasis": {
+    "batch04Preflight": {
+      "path": "../../r7-batch-04-preflight-r1/semantic-dependency-migration-preflight.v1.json",
+      "sha256": "3fe2cb0cab1aa65fbe75f1b0d8d4a74f136be457aa2c324d262eb7503789cc1c",
+      "bytes": 17214,
+      "requiredDecision": "CONDITIONAL_GO_FOR_SEPARATE_EXACT_PACKET_SOURCE_START_NO_GO"
+    },
+    "precedingLaneExit": {
+      "path": "../../r7-batch-04-central-admission-r1/hrm-011-sequencing-exit-receipt.v1.json",
+      "sha256": "1271581067af67de5a71b53c89ef1e4170756d61010e9b2b01c1167aa07fd994",
+      "bytes": 7353,
+      "carrierCommit": "15827ad8cffe6ce681eddadf8aee0dd175259671",
+      "requiredNextLane": "BASE-TFR-PAY-003",
+      "allowedWork": "SEMANTIC_CLOSURE_ONLY_BEFORE_THIS_DISPOSITION"
+    },
+    "canonicalSources": [
+      {
+        "path": "../../../recovery/exact-supplements/2026-10-06/hris-porting-blueprint-2026-09-09/coding-readiness/target-family-resolution-register.csv",
+        "sha256": "3e3618ff3ac150da8c9c7cbd3b1018e30e69652f28f3dbd8c87edb7df6a83819",
+        "bytes": 38399
+      },
+      {
+        "path": "../../../recovery/hris-porting-blueprint-2026-09-09/coding-readiness/api-pep-binding-register.csv",
+        "sha256": "0e38d724516a8b271069241ffa0fb6400984dc703758767de53cbaffb4f93da3",
+        "bytes": 126576
+      },
+      {
+        "path": "../../../recovery/hris-porting-blueprint-2026-09-09/session-evidence/pay/g2-api-event-contracts.json",
+        "sha256": "040e64703871582aaff04f102495592f405a603f690ed4f8a20029981eee3a21",
+        "bytes": 26314
+      },
+      {
+        "path": "../../../recovery/hris-porting-blueprint-2026-09-09/session-evidence/pay/g2-transport-schemas.v1.json",
+        "sha256": "d88d7b37ebda7d9abb6eb9e8aa0032bf0344a6dccc65d7d3d8b88abb06d037fd",
+        "bytes": 36218
+      },
+      {
+        "path": "../../../recovery/hris-porting-blueprint-2026-09-09/session-evidence/pay/g2-runtime-controls.md",
+        "sha256": "89f1440778d1aedd46a3839138a2f0920605e4d7326441e5771f875b29fad551",
+        "bytes": 10361
+      },
+      {
+        "path": "../../../recovery/hris-porting-blueprint-2026-09-09/session-evidence/pay/g2-physical-schema.sql",
+        "sha256": "23662d7daa89f0a6e5b4eaa754a96184d0a5fc688b4a6bc790e62fbaf428b3f0",
+        "bytes": 72758,
+        "use": "DESIGN_EVIDENCE_ONLY_NOT_AN_EXECUTED_MIGRATION"
+      },
+      {
+        "path": "../../../recovery/exact-supplements/2026-10-06/accepted-successors/hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-api-contract-register.csv",
+        "sha256": "5f47efd33a1d5aa3d11a4d9fd5716cd4e35650e9fec0868ecb77c8c90a4cd988",
+        "bytes": 100020
+      },
+      {
+        "path": "../../../recovery/exact-supplements/2026-10-06/hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-projection-schemas.v1.json",
+        "sha256": "b185accd712216c39bf8a66f70cbbf0092a27a8c2c5e3d7457ecd4d511afa048",
+        "bytes": 1523618
+      },
+      {
+        "path": "../../../recovery/hris-porting-blueprint-2026-09-09/coding-readiness/decimal-value-types.v1.json",
+        "sha256": "8597640fa5cf5051cccc14fe4b83a4f179d54dfe36f0ffdaa319dc1149b5c6a6",
+        "bytes": 5766
+      }
+    ],
+    "pinnedRepositories": {
+      "backend": {
+        "repository": "dwp-backend",
+        "branch": "dwp-dev",
+        "commit": "21a4630a97b205b95ab9c59544afb92e2d49a242",
+        "tree": "a4913e683909c04f96c896c25ea464e10a3e69f0",
+        "originExact": true,
+        "clean": true
+      },
+      "frontend": {
+        "repository": "dwp-frontend",
+        "branch": "dwp-dev",
+        "commit": "15827ad8cffe6ce681eddadf8aee0dd175259671",
+        "tree": "b020f4812a93cab17f0ca8b670549be0a07c4809",
+        "originExact": true,
+        "committedTreeCleanBeforeDraft": true
+      },
+      "agent": {
+        "repository": "dwp_agent",
+        "branch": "dwp-dev",
+        "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+        "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+        "originExact": true,
+        "clean": true
+      }
+    }
+  },
+  "semanticLineage": "TFR-PAY-003::PAY-KR-INSURANCE::IAQ-026|IAQ-048|PEP-PAY-028|PEP-PAY-012_REUSE_ONLY|PEP-PAY-014_REUSE_ONLY|EVT-PAY:PayrollCalculated_REUSE_UNCHANGED",
+  "businessBoundary": {
+    "businessMeaning": "A payroll statutory operator reviews signed country-pack metadata and safely activates one approved insurance pack for one trusted legal-entity and pay-group population; payroll support then views immutable social-insurance outcomes with the exact activated policy version.",
+    "primaryUsers": [
+      "HRIS_CONFIG_AUTHOR with HRIS_DUTY_CONFIGURATION_WORKBENCH_READER for IAQ-026",
+      "HRIS_PAYROLL_SUPPORT_VIEWER with HRIS_DUTY_PAYROLL_SUPPORT_VIEWER for IAQ-048",
+      "HRIS_STATUTORY_OPERATOR with HRIS_DUTY_STATUTORY_OPERATOR for PEP-PAY-028"
+    ],
+    "settingsRoute": "/hr/settings/statutory",
+    "operationsRoute": "/hr/operations/payroll/tax-social-insurance",
+    "activationAction": "hris.action.pay.country.pack.activate",
+    "sourceRowCoverage": 34,
+    "productionCountryPackOrLegalRateContentIncluded": false
+  },
+  "scopeResolution": {
+    "canonicalPopulationTypes": [
+      "LEGAL_ENTITY",
+      "PAY_GROUP"
+    ],
+    "trustedTenant": "DERIVED_ONLY_FROM_VERIFIED_AUTHENTICATION_CONTEXT_NEVER_FROM_PATH_QUERY_BODY_OR_CALLER_HEADER",
+    "g2VocabularyNormalization": "TENANT is an implicit trusted partition, LEGAL_PAYROLL_ENTITY resolves to canonical LEGAL_ENTITY, and PAY_GROUP is required by accepted PEP-PAY-028 and the existing payroll authorization vocabulary.",
+    "payPeriodExcluded": "Pack activation is not a payroll-run population. Time applicability is represented by the approved half-open effective period and effectiveDate, not PAY_PERIOD.",
+    "packIdResolution": "The UUID packId identifies exactly one tenant-scoped installed-pack snapshot already bound by the Payroll owner to one legalEntityPublicId and one payGroupPublicId. The owner loads that record under RLS and uses its stored scope; no scope identifiers are accepted from the activation body.",
+    "crossScopeBehavior": "Unknown, cross-tenant or unauthorized packId returns opaque 404 before evidence, current revision or lifecycle state disclosure."
+  },
+  "activationCommand": {
+    "bindingId": "PEP-PAY-028",
+    "method": "POST",
+    "browserPath": "/api/payroll/v1/country-packs/{packId}/activate",
+    "ownerPath": "/v1/country-packs/{packId}/activate",
+    "pathIdentity": "canonical UUID packId",
+    "bodyClosedSet": [
+      "officialReferenceSet",
+      "effectiveDate",
+      "goldenPackDigest",
+      "statutoryApprovalReceiptId"
+    ],
+    "requiredHeaders": [
+      "Authorization",
+      "Idempotency-Key",
+      "If-Match",
+      "X-Correlation-Id",
+      "X-Purpose-Code"
+    ],
+    "purpose": "STATUTORY_CONFIGURATION",
+    "capability": "hcm.operations.statutory.execute",
+    "resolvedCapability": "ACTION.HRIS_STATUTORY_FILING:EXECUTE",
+    "scopeResolver": "PAYROLL_LEGAL_ENTITY_GROUP_SCOPE",
+    "riskTier": "HIGH",
+    "stepUp": "STEPUP-MGMT-HIGH-V1",
+    "sodPolicy": "PACK_INSTALLER_NE_STATUTORY_APPROVER",
+    "cas": "If-Match must be one strong quoted canonical nonnegative activation revision and must equal the current installed-pack row version; stale or weak input returns 409 before activation mutation.",
+    "acceptedResponse": "PayrollCommandReceipt.v1 with ACCEPTED or SUCCEEDED only after durable atomic state, receipt and audit-outbox persistence",
+    "forbidden": [
+      "caller supplied tenant, legal-entity or pay-group authority",
+      "activation of a pack whose scope is absent or ambiguous",
+      "raw legal formulas, rates, executable code, secrets or document bytes in the request",
+      "a success response before durable commit"
+    ]
+  },
+  "signedPackLifecycle": {
+    "states": [
+      "AVAILABLE",
+      "INSTALLED",
+      "VALIDATED",
+      "APPROVED",
+      "ACTIVE",
+      "SUSPENDED",
+      "RETIRED"
+    ],
+    "legalTransitions": [
+      "AVAILABLE->INSTALLED",
+      "INSTALLED->VALIDATED",
+      "VALIDATED->APPROVED",
+      "APPROVED->ACTIVE",
+      "ACTIVE->SUSPENDED",
+      "ACTIVE->RETIRED",
+      "SUSPENDED->ACTIVE",
+      "SUSPENDED->RETIRED"
+    ],
+    "transitionRule": "Every transition appends a new lifecycle or activation revision under compare-and-set. RETIRED is terminal. Any transition not listed above, including an unlisted skipped, reverse or same-state transition, returns 409 before persistence; listed SUSPENDED->ACTIVE is the only reactivation path.",
+    "activationPreconditions": [
+      "the installed snapshot has one canonical payload digest and one supported signature algorithm and key identifier",
+      "signature verification succeeds against a separately admitted trusted key set",
+      "officialReferenceSet equals the stored approved reference evidence",
+      "goldenPackDigest equals the stored approved golden-pack evidence",
+      "statutoryApprovalReceiptId resolves to one approved receipt in the same tenant and exact pack scope",
+      "statutory approver differs from the recorded pack installer; the current activating subject is independently re-authorized and step-up verified but no unapproved third-actor inequality is invented",
+      "effectiveDate equals the snapshot lower bound and does not overlap another ever-activated winner for the same tenant, legal entity, pay group, jurisdiction and pack key",
+      "step-up, entitlement, action, population, field, purpose and audit decisions are current"
+    ],
+    "immutabilityAfterActivation": [
+      "pack identity and version",
+      "tenant, legal-entity, pay-group and jurisdiction binding",
+      "payload, artifact and signature digests",
+      "signature algorithm and key identifier",
+      "compatibility and policy schema versions",
+      "official-reference, golden-pack and statutory-approval evidence",
+      "effective lower bound, installer, approver and activation facts"
+    ],
+    "onlyAllowedPeriodMutation": "An open effectiveTo may be forward-closed once to a value greater than effectiveFrom; history is never shortened, deleted or rewritten.",
+    "providerBoundary": "Module source may define typed verification and country-rule provider ports plus fail-closed production adapters and conformance doubles. A real trusted key set, real certified pack, statutory approval source or native calculation provider remains a separate production-binding authority."
+  },
+  "idempotencyAndReceipt": {
+    "exactKey": [
+      "trusted tenantId",
+      "subjectPrincipalPublicId",
+      "originatingAction=PAY_COUNTRY_PACK_ACTIVATE",
+      "Idempotency-Key"
+    ],
+    "requestDigest": "SHA-256 over canonical schema version, packId, expected revision, exact normalized body and owner-resolved population scope; bearer, correlation and volatile transport metadata are excluded.",
+    "sameKeySameDigest": "Return the original durable receipt without a second activation, audit or outbox effect.",
+    "sameKeyDifferentDigest": "409 IDEMPOTENCY_KEY_REUSED before mutation.",
+    "transaction": "Pack activation version, command receipt and audit outbox append commit atomically.",
+    "existingRunReceiptReuse": "FORBIDDEN because pay_command_receipts requires run_id and its closed command/action guards accept payroll-run commands, not country-pack activation."
+  },
+  "entryQueries": {
+    "IAQ-026": {
+      "variantKey": "STATUTORY",
+      "method": "GET",
+      "browserPath": "/api/payroll/v1/workbench/configuration/statutory",
+      "ownerPath": "/v1/workbench/configuration/statutory",
+      "route": "/hr/settings/statutory",
+      "capability": "hcm.configuration.workbench.view",
+      "itemIdentity": "packId of the tenant-scoped installed-pack snapshot",
+      "fieldGroups": [
+        "COUNTRY_PACK_METADATA",
+        "STATUTORY_RULE",
+        "ACTIVATION_STATUS"
+      ],
+      "actions": "NONE_IN_THE_QUERY_CONTRACT",
+      "plane": "CONFIGURATION_METADATA_AND_ACTIVATION_STATE_ONLY"
+    },
+    "IAQ-048": {
+      "variantKey": "TAX_SOCIAL_INSURANCE",
+      "method": "GET",
+      "browserPath": "/api/payroll/v1/workbench/pay-tax-social-insurance",
+      "ownerPath": "/v1/workbench/pay-tax-social-insurance",
+      "route": "/hr/operations/payroll/tax-social-insurance",
+      "capability": "hcm.operations.payroll-support.view",
+      "itemIdentity": "the existing immutable workerResultId, used as the stable shared result-projection public ID for both PAY-003 social-insurance fields and future PAY-005 tax fields",
+      "pay003FieldGroups": [
+        "SOCIAL_INSURANCE",
+        "POLICY_VERSION"
+      ],
+      "taxResultOwnership": "TAX_RESULT belongs to BASE-TFR-PAY-005 and is omitted by PAY-003. Until that producer is admitted, otherwise valid worker-result rows use PARTIAL with one typed tax producer unavailable partialFailure; a future tax fact joins the same workerResultId and does not replace itemPublicId.",
+      "availablePay003Action": "hris.action.pay.country.pack.activate only when the exact item scope and preliminary PEP-PAY-028 decision allow it",
+      "plane": "IMMUTABLE_OPERATION_RESULT_ONLY"
+    },
+    "sharedInvariants": [
+      "COMPLETE EMPTY PARTIAL and UNAVAILABLE item cardinality",
+      "PARTIAL requires at least one exact partial failure",
+      "cursor binds tenant, legal-entity, pay-group, policy revision, asOf, filters, sorts, field decisions and freshness",
+      "stable itemPublicId tiebreak ordering and limit at most 100",
+      "field-decision summary exactly matches serialized VIEW MASK and omitted groups",
+      "deep links and actions are closed allowlists",
+      "trusted tenant and authority context are not serialized",
+      "locale and time zone are canonical",
+      "problem status, code and correlation are closed"
+    ],
+    "noDoubleCounting": "IAQ-026 never returns monetary outcome rows. IAQ-048 never treats configuration metadata as results and never derives TAX_RESULT or SOCIAL_INSURANCE from generic DEDUCTIONS."
+  },
+  "calculationAndResultBoundary": {
+    "pep012": "REUSE_EXISTING_GENERIC_CALCULATION_ATTEMPT_ONLY_NO_PAY003_OWNERSHIP_OR_RECOUNT",
+    "pep014": "REUSE_EXISTING_GENERIC_RESULT_ACCESS_ONLY_NO_PAY003_OWNERSHIP_OR_RECOUNT",
+    "payrollCalculated": "REUSE_UNCHANGED_MINIMIZED_EVENT_WITH_GROSS_DEDUCTIONS_NET_EMPLOYER_COST_CONTROL_TOTALS",
+    "existingLineCategories": [
+      "EARNING",
+      "DEDUCTION",
+      "EMPLOYER_COST"
+    ],
+    "forbiddenInference": "Generic DEDUCTION lines or totals cannot be relabeled, split or copied as TAX_RESULT or SOCIAL_INSURANCE.",
+    "socialInsuranceFact": "A typed country-rule provider outcome writes one immutable social-insurance result fact linked to the exact tenant, run, attempt and workerResultId plus its source result lines, country-pack snapshot, activation revision, policy version, amount, currency and canonical result digest. The fact is a field source for the stable worker-result projection item, not a new IAQ item identity.",
+    "socialInsuranceUniqueness": "Exactly zero or one aggregated SOCIAL_INSURANCE fact exists for each tenantId and workerResultId. activationRevision and policyVersion are immutable lineage attributes, not uniqueness dimensions. The exact composite foreign key (tenant_id, run_id, attempt_no, worker_result_id) references V50 pay_worker_results, every source result line may contribute to at most one aggregate, and all amounts reconcile exactly.",
+    "taxProduction": "FORBIDDEN_IN_PAY003"
+  },
+  "migrationDecision": {
+    "required": true,
+    "proof": "The executed Payroll schema ends at V52; no production country-pack route, signed snapshot, scoped activation lifecycle, activation receipt, audit outbox or typed social-insurance result fact exists. The current foundation model stores only packId, version and digest references.",
+    "stream": "PAYROLL_MAIN",
+    "predecessorHighWater": "V52",
+    "candidateVersion": "V53",
+    "exactPath": "dwp-payroll-server/src/main/resources/db/migration/V53__pay_base_tfr_pay_003_statutory_insurance.sql",
+    "tables": [
+      "pay_country_pack_version_snapshots",
+      "pay_country_pack_activation_versions",
+      "pay_country_pack_command_receipts",
+      "pay_country_pack_audit_outbox_events",
+      "pay_social_insurance_result_facts"
+    ],
+    "requiredControls": [
+      "forced RLS and explicit same-tenant composite foreign keys",
+      "UUID public identities and no customer sequence leakage",
+      "append-only or narrowly forward-closing lifecycle guards",
+      "half-open effective periods and a single ever-activated winner per exact scope",
+      "signature and evidence digests with no legal formula or rate hardcoding",
+      "installer versus statutory approver SoD",
+      "exact subject-and-action idempotency uniqueness",
+      "atomic activation receipt and audit-outbox persistence",
+      "PostedMoney NUMERIC(19,4) with canonical non-exponent wire strings and no implicit rounding",
+      "social-insurance fact lineage to generic immutable calculation output without changing V50 control-total semantics"
+    ],
+    "forbidden": [
+      "editing V1 through V52",
+      "a second V53 path",
+      "adding PAY_COUNTRY_PACK_ACTIVATE to the run-bound pay_command_receipts table",
+      "changing PayrollCalculated.v1 or its four control-total codes",
+      "adding TAX_RESULT production to PAY-003",
+      "hardcoding Korean legal rates, formulas, credentials or customer data"
+    ],
+    "leaseState": "NOT_ISSUED",
+    "sourceState": "NOT_AUTHORIZED"
+  },
+  "centralSuccessorRequirements": {
+    "productAuthorizationCandidate": "v54 after current v53",
+    "authMigrationCandidate": "V263 after current V262",
+    "featureKey": "HRIS_PAYROLL_STATUTORY_INSURANCE",
+    "defaultEnabled": false,
+    "tenantEnrollmentCount": 0,
+    "capabilityChanges": [
+      "add PEP-PAY-028 hcm.operations.statutory.execute as ACTION.HRIS_STATUTORY_FILING:EXECUTE with PAYROLL_LEGAL_ENTITY_GROUP_SCOPE, HIGH step-up and PACK_INSTALLER_NE_STATUTORY_APPROVER",
+      "add IAQ-026 PAGE and DATA route contracts to hcm.configuration.workbench.view",
+      "add IAQ-048 PAGE and DATA route contracts to hcm.operations.payroll-support.view",
+      "add the country-pack activation ACTION route contract only to hcm.operations.statutory.execute"
+    ],
+    "gatewayBoundary": "Strip caller tenant and authority headers, require trusted legalEntityPublicId and payGroupPublicId owner-population evidence, inject exact STATUTORY_CONFIGURATION purpose and bind POST packId plus strong If-Match to the decision.",
+    "fieldPolicies": [
+      "pay003.iaq-026.fields.v1",
+      "pay003.iaq-048.fields.v1"
+    ],
+    "routeOrMenuMount": "WITHHELD_UNTIL_REVIEWED_MODULE_RESULTS_AND_SEPARATE_CENTRAL_ADMISSION"
+  },
+  "moduleImplementationBoundary": {
+    "backendRoot": "dwp-payroll-server/src/main/java/com/dwp/services/payroll/statutory/pay003/**",
+    "backendTestRoot": "dwp-payroll-server/src/test/java/com/dwp/services/payroll/statutory/pay003/**",
+    "frontendRoot": "apps/dwp/src/features/hris/payroll/statutory-insurance/**",
+    "frontendSliceTest": "apps/dwp/src/features/hris/payroll/__tests__/g3-slices/base-tfr-pay-003.slice.test.tsx",
+    "resultEvidenceRoot": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-results-r1/base-tfr-pay-003/**",
+    "productionAdapters": "FAIL_CLOSED_UNTIL_SEPARATE_SIGNING_KEY_CERTIFIED_PACK_APPROVAL_AND_COUNTRY_RULE_PROVIDER_BINDING",
+    "shellRouteNavigationAndSharedSecurity": "CONTROL_OWNED_NO_TOUCH_UNTIL_MODULE_RESULT_ADMISSION"
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "PAY003-AC01",
+      "criterion": "Feature defaults OFF with zero enrolled tenants; hidden pages make zero owner calls and direct URLs fail closed."
+    },
+    {
+      "id": "PAY003-AC02",
+      "criterion": "packId owner-resolves exactly one trusted tenant, LEGAL_ENTITY and PAY_GROUP scope; caller tenant or population authority is rejected."
+    },
+    {
+      "id": "PAY003-AC03",
+      "criterion": "The closed activation transport enforces canonical UUID, exact body, exact purpose, idempotency, strong If-Match and current HIGH step-up before mutation."
+    },
+    {
+      "id": "PAY003-AC04",
+      "criterion": "Signature, official reference, golden pack and statutory approval evidence all match the installed snapshot; missing real provider material fails closed."
+    },
+    {
+      "id": "PAY003-AC05",
+      "criterion": "Lifecycle, SoD, immutable lineage, monotonic retirement and nonoverlapping half-open effective periods are enforced in service and PostgreSQL."
+    },
+    {
+      "id": "PAY003-AC06",
+      "criterion": "Exact subject-and-action idempotency returns the original receipt for the same digest and 409 for a different digest with no duplicate effects."
+    },
+    {
+      "id": "PAY003-AC07",
+      "criterion": "Activation version, durable receipt and audit outbox append atomically; rollback, lost response and retry leave a deterministic recoverable outcome."
+    },
+    {
+      "id": "PAY003-AC08",
+      "criterion": "IAQ-026 returns only COUNTRY_PACK_METADATA, STATUTORY_RULE and ACTIVATION_STATUS with exact query-state, cursor, policy and field-decision invariants."
+    },
+    {
+      "id": "PAY003-AC09",
+      "criterion": "Social-insurance facts are immutable, PostedMoney-safe, unique per tenantId and stable workerResultId with an exact V50 composite foreign key, retain activation and policy as lineage attributes, and exactly reconcile their source lines; generic DEDUCTIONS are never reinterpreted."
+    },
+    {
+      "id": "PAY003-AC10",
+      "criterion": "IAQ-048 keeps workerResultId as itemPublicId, returns SOCIAL_INSURANCE and POLICY_VERSION only for PAY-003, and omits TAX_RESULT with a typed PARTIAL failure until PAY-005 can join the same stable item identity."
+    },
+    {
+      "id": "PAY003-AC11",
+      "criterion": "Both frontend workbenches render loading, empty, complete, partial, unavailable, forbidden and retry states accessibly and responsively; action exposure follows the exact owner PEP decision."
+    },
+    {
+      "id": "PAY003-AC12",
+      "criterion": "Fresh and V52-to-V53 PostgreSQL migration tests prove RLS, constraints, immutability, overlap, SoD, idempotency, atomicity and rollback without editing prior migrations."
+    },
+    {
+      "id": "PAY003-AC13",
+      "criterion": "Authorization-negative and tenant-isolation tests prove opaque cross-scope failure, stripped caller authority, exact purpose and current-policy re-evaluation."
+    },
+    {
+      "id": "PAY003-AC14",
+      "criterion": "Targeted recovery and telemetry tests cover provider unavailable, signature failure, stale CAS, duplicate request, audit publication retry and result unknown; no repository-wide suite is required."
+    }
+  ],
+  "verificationPolicy": {
+    "semanticReview": "INDEPENDENT_REVIEW_REQUIRED_BEFORE_CARRIER_COMMIT",
+    "implementation": "RUN_EACH_AFFECTED_TARGET_GROUP_ONCE_AND_RERUN_ONLY_THE_SMALLEST_FAILED_CLASS_OR_NAMED_CASE",
+    "repositoryWideSuitePerCorrection": false,
+    "unaffectedPassingTargetRerun": false
+  },
+  "rolloutBoundary": {
+    "runtimeDefault": "OFF",
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "tenantEnrollmentCount": 0,
+    "customerDataAuthorized": false,
+    "realCountryPackOrProviderAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionIncrement": 0
+  },
+  "authority": {
+    "semanticDispositionSealed": true,
+    "centralAuthorizationSuccessorMayBeAuthored": true,
+    "ownerPacketMayBePreparedAfterCentralSuccessorAdmission": true,
+    "exclusivePayrollV53MayBeReservedNotActiveAfterCentralSuccessorAdmission": true,
+    "freshWorktreesMayBeMaterializedAfterExactPacket": true,
+    "executableStartTokenMayBeIssuedOnlyAfterActiveLeaseAndExactWorktreeReceipt": true,
+    "moduleSourceAuthoringAuthorizedNow": false,
+    "migrationAuthoringAuthorizedNow": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionProviderBindingAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "laterBatch04LaneAuthorized": false
+  },
+  "nonClaims": [
+    "Product authorization v54 or Auth V263 exists or is reserved.",
+    "Payroll V53 is reserved, active or authored.",
+    "An owner packet, worktree or executable token exists.",
+    "A real signing key, certified country pack, approval source or country-rule provider is bound.",
+    "TAX_RESULT is produced or BASE-TFR-PAY-005 is implemented.",
+    "The frontend route, shell or menu is mounted.",
+    "Any feature or tenant is activated or enrolled.",
+    "BASE-TFR-PAY-003 receives business-completion credit or is production complete."
+  ],
+  "nextGate": "INDEPENDENTLY_REVIEW_THIS_DISPOSITION_THEN_AUTHOR_AND_ADMIT_ONLY_THE_BOUNDED_PAY003_CENTRAL_AUTHORIZATION_SUCCESSOR_BEFORE_PACKET_V53_LEASE_WORKTREE_OR_SOURCE_START"
+}
