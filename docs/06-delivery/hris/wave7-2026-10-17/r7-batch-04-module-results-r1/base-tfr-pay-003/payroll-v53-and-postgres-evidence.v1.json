@@ -1,0 +1,95 @@
+{
+  "schema": "dwp.hris.wave7.payroll-v53-and-postgres-evidence.v1",
+  "evidenceId": "HRIS-WAVE7-R7-BATCH-04-BASE-TFR-PAY-003-PAYROLL-V53-POSTGRES-R1",
+  "issuedAt": "2026-10-19T15:01:00+09:00",
+  "issuedBy": "HRIS-PAY",
+  "sliceId": "BASE-TFR-PAY-003",
+  "migration": {
+    "stream": "PAYROLL_MAIN",
+    "predecessor": "V52",
+    "version": "V53",
+    "path": "dwp-payroll-server/src/main/resources/db/migration/V53__pay_base_tfr_pay_003_statutory_insurance.sql",
+    "sha256": "5e119ecdb682ae3b345c684d60eef73cef7dd2ca4c8e75298177b53a5e4a0758",
+    "bytes": 33757,
+    "createdTables": [
+      "pay_country_pack_version_snapshots",
+      "pay_country_pack_activation_versions",
+      "pay_country_pack_command_receipts",
+      "pay_country_pack_audit_outbox_events",
+      "pay_social_insurance_result_facts"
+    ],
+    "priorMigrationTreeUnchanged": true,
+    "priorMigrationManifestSha256": "47deb41d55ca4ead1058744405dd29622691e56e4a3f9ea7d6cd33e58898c0e0",
+    "historicalMigrationModified": false,
+    "secondMigrationCreated": false,
+    "backfillPerformed": false
+  },
+  "verification": {
+    "database": "PostgreSQL 16.15 via postgres:16-alpine Testcontainers",
+    "databaseUnavailable": false,
+    "databaseSkipped": 0,
+    "cleanMigration": "PASS_EMPTY_DATABASE_THROUGH_V53",
+    "upgrade": "PASS_V52_TO_V53_WITH_EXISTING_V52_ROW_PRESERVED",
+    "testClass": "com.dwp.services.payroll.statutory.pay003.Pay003PostgresContractTest",
+    "effectiveMethods": 7,
+    "effectivePassed": 7,
+    "effectiveFailed": 0,
+    "history": [
+      {
+        "scope": "Initial PAY003 target group including 6 PostgreSQL methods",
+        "total": 24,
+        "passed": 19,
+        "failed": 5,
+        "skipped": 0
+      },
+      {
+        "scope": "Exact five failed methods after diagnosis/fix",
+        "total": 5,
+        "passed": 4,
+        "failed": 1,
+        "skipped": 0,
+        "remainingFailure": "Historical-read fixture used a different legal-entity/pay-group than its seed."
+      },
+      {
+        "scope": "Exact failed jdbcReadsHonorAsOfAndSerializedPolicyKeyFilters",
+        "total": 1,
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "scope": "Changed canonical/strict-body/receipt-replay/installed-revision methods only",
+        "total": 4,
+        "passed": 4,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "scope": "Never-run runtimeCommandRollbackReplayAndAllFiveTenantPolicies",
+        "total": 1,
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "scope": "Never-run authorization/signature/approval/stale-CAS negative methods",
+        "total": 2,
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0
+      }
+    ],
+    "proof": [
+      "Exactly five V53 tables, FORCE RLS and closed grant split.",
+      "Missing tenant context and cross-tenant reads disclose zero rows for every table; owner mutation triggers reject UPDATE/DELETE on all five.",
+      "Actual runtime role performs command persistence without UPDATE grants; advisory locks plus append guard CAS serialize writes.",
+      "Atomic runtime rollback, durable original-receipt replay, digest drift conflict and one audit event across retries.",
+      "Full lifecycle, terminal retirement, monotonic occurrence time, cross-wired deferred closure and concurrent half-open overlap rejection.",
+      "Typed publisher exact V50 composite FK, immutable worker uniqueness, currency/sum/source/policy reconciliation and no generic deduction inference."
+    ],
+    "repositoryWideSuiteRun": false,
+    "fullTargetGroupRerun": false,
+    "passingTargetsCarriedUnlessChanged": true
+  },
+  "result": "PASS_ZERO_DATABASE_SKIP"
+}

@@ -1,0 +1,154 @@
+{
+  "schema": "dwp.hris.wave7.acceptance-results.v1",
+  "evidenceId": "HRIS-WAVE7-R7-BATCH-04-BASE-TFR-PAY-003-ACCEPTANCE-R1",
+  "issuedAt": "2026-10-19T15:01:00+09:00",
+  "issuedBy": "HRIS-PAY",
+  "sliceId": "BASE-TFR-PAY-003",
+  "resultState": "FOURTEEN_OF_FOURTEEN_PASS_SOURCE_AND_BOUNDED_TEST_EVIDENCE",
+  "summary": {
+    "required": 14,
+    "passed": 14,
+    "failed": 0,
+    "skipped": 0,
+    "openKnownP0": 0,
+    "openKnownP1": 0,
+    "centralModuleAdmissionPending": true,
+    "businessCompletionCreditBeforeCentralAdmission": 0
+  },
+  "results": [
+    {
+      "id": "PAY003-AC01",
+      "criterion": "Feature defaults OFF with zero enrolled tenants; hidden pages make zero owner calls and direct URLs fail closed.",
+      "result": "PASS",
+      "evidence": [
+        "Pay003SecurityFilter and every owner bean are conditional on explicit feature enablement; enrollment defaults to an empty set.",
+        "Frontend named zero-owner-call test covers both direct surfaces while off/unenrolled; slice test confirms no payroll index mount."
+      ]
+    },
+    {
+      "id": "PAY003-AC02",
+      "criterion": "packId owner-resolves exactly one trusted tenant, LEGAL_ENTITY and PAY_GROUP scope; caller tenant or population authority is rejected.",
+      "result": "PASS",
+      "evidence": [
+        "JdbcPay003ScopeResolver resolves exactly one current owner tuple using trusted tenant/actor/opaque context scope; pack lookup also filters the same tuple under RLS.",
+        "Pay003ServiceTest.signatureApprovalStaleCasAndCrossScopeNegativesHaveNoEffects and authorityNegativeMatrixRejectsCallerClaimsBeforeController pass."
+      ]
+    },
+    {
+      "id": "PAY003-AC03",
+      "criterion": "The closed activation transport enforces canonical UUID, exact body, exact purpose, idempotency, strong If-Match and current HIGH step-up before mutation.",
+      "result": "PASS",
+      "evidence": [
+        "Pay003Models rejects unknown activation fields with @JsonAnySetter even with a lenient mapper; HTTP unknown/missing/null body cases pass.",
+        "Exact route/capability/purpose, canonical UUID, strong quoted If-Match, trusted expected revision, duty and current HIGH step-up guards are enforced before activation; weak/stale/mismatched cases fail closed."
+      ]
+    },
+    {
+      "id": "PAY003-AC04",
+      "criterion": "Signature, official reference, golden pack and statutory approval evidence all match the installed snapshot; missing real provider material fails closed.",
+      "result": "PASS",
+      "evidence": [
+        "Service compares official reference, golden digest and approval receipt to the immutable installed snapshot and verifies signature/approval/rule ports.",
+        "Signature INVALID/UNAVAILABLE, approval UNAVAILABLE and country-rule UNAVAILABLE tests pass without commit; production port beans return UNAVAILABLE/deny."
+      ]
+    },
+    {
+      "id": "PAY003-AC05",
+      "criterion": "Lifecycle, SoD, immutable lineage, monotonic retirement and nonoverlapping half-open effective periods are enforced in service and PostgreSQL.",
+      "result": "PASS",
+      "evidence": [
+        "V53 appends full legal AVAILABLE→INSTALLED→VALIDATED→APPROVED→ACTIVE lifecycle, permits SUSPENDED→ACTIVE, and makes RETIRED terminal with monotonic timestamps and CAS.",
+        "Real PostgreSQL fullLifecycleCasAndDeferredClosureRejectIllegalAndCrossWiredRows and concurrent halfOpenOverlapIsSerializedAndRetiredHeadClosesTheRange pass; snapshot SoD CHECK and service evidence guards remain enforced."
+      ]
+    },
+    {
+      "id": "PAY003-AC06",
+      "criterion": "Exact subject-and-action idempotency returns the original receipt for the same digest and 409 for a different digest with no duplicate effects.",
+      "result": "PASS",
+      "evidence": [
+        "Idempotency is tenant+subject+PAY_COUNTRY_PACK_ACTIVATE+key; digest binds schema, pack, expected revision, exact body and owner scope.",
+        "Unit replay precedes stale CAS/provider calls; digest drift conflicts. Actual runtime-role JDBC transaction replays the persisted original receipt after a new correlation with one receipt/outbox effect."
+      ]
+    },
+    {
+      "id": "PAY003-AC07",
+      "criterion": "Activation version, durable receipt and audit outbox append atomically; rollback, lost response and retry leave a deterministic recoverable outcome.",
+      "result": "PASS",
+      "evidence": [
+        "Pay003Service.activate is a non-final @Transactional boundary and JdbcPay003Store commits activation, receipt and immutable audit outbox together.",
+        "Runtime-role PostgreSQL transaction injected a failure after store writes and proved all command effects rolled back; retry committed and replayed the original receipt. Cross-wired deferred closure also rolls back."
+      ]
+    },
+    {
+      "id": "PAY003-AC08",
+      "criterion": "IAQ-026 returns only COUNTRY_PACK_METADATA, STATUTORY_RULE and ACTIVATION_STATUS with exact query-state, cursor, policy and field-decision invariants.",
+      "result": "PASS",
+      "evidence": [
+        "IAQ-026 projectionVersion=2 exposes only three allowed groups, exact field summaries/cardinality and signed cursor bindings for tenant/scope/policy/asOf/filter/sort/field decisions/freshness.",
+        "Cursor tamper and changed-query binding fail closed; historical reads honor asOf and serialized policy keys. Scope revision is distinct from authorization decision revision. Zero-revision AVAILABLE snapshots are omitted; installed revisions are emitted unchanged."
+      ]
+    },
+    {
+      "id": "PAY003-AC09",
+      "criterion": "Social-insurance facts are immutable, PostedMoney-safe, unique per tenantId and stable workerResultId with an exact V50 composite foreign key, retain activation and policy as lineage attributes, and exactly reconcile their source lines; generic DEDUCTIONS are never reinterpreted.",
+      "result": "PASS",
+      "evidence": [
+        "V53 defines exact tenant/run/attempt/worker_result_id FK to V50, tenant+worker uniqueness, nonnegative NUMERIC(19,4), immutable activation/policy lineage and canonical source IDs.",
+        "Typed publisher PostgreSQL proof passes exact sum/currency/lineage and rejects mismatched sums, semantics and policy. Generic DEDUCTION category is never used to infer a social-insurance outcome."
+      ]
+    },
+    {
+      "id": "PAY003-AC10",
+      "criterion": "IAQ-048 keeps workerResultId as itemPublicId, returns SOCIAL_INSURANCE and POLICY_VERSION only for PAY-003, and omits TAX_RESULT with a typed PARTIAL failure until PAY-005 can join the same stable item identity.",
+      "result": "PASS",
+      "evidence": [
+        "IAQ-048 projectionVersion=1 retains workerResultId and serializes SOCIAL_INSURANCE/POLICY_VERSION only, actions=[] and one typed tax.result/PRODUCER_UNAVAILABLE PARTIAL failure.",
+        "Backend exact projection test and frontend closed projection test pass; TAX_RESULT/action injection is rejected. Historical taxResult request filters remain schema-valid and owner returns unavailable while that producer is absent."
+      ]
+    },
+    {
+      "id": "PAY003-AC11",
+      "criterion": "The IAQ-026 settings workbench exposes the exact resolved country-pack activation action only for a safe owner-resolved pack item and renders loading, empty, complete, partial, unavailable, forbidden, retry and step-up states accessibly and responsively. IAQ-048 renders the same non-action states for result data and exposes no PAY-003 action.",
+      "result": "PASS",
+      "evidence": [
+        "Frontend state/accessibility tests cover loading, empty, complete, partial, unavailable, forbidden, retry and HIGH step-up/unknown-outcome recovery; only exact safe IAQ-026 pack actions render.",
+        "Responsive/keyboard contract assertions cover 1440/1280/390/320 widths and 200%-zoom equivalent; 1200 CSS-pixel split breakpoint and focus/order are checked in jsdom. No mounted-route browser run is claimed."
+      ]
+    },
+    {
+      "id": "PAY003-AC12",
+      "criterion": "Fresh and V52-to-V53 PostgreSQL migration tests prove RLS, constraints, immutability, overlap, SoD, idempotency, atomicity and rollback without editing prior migrations.",
+      "result": "PASS",
+      "evidence": [
+        "PostgreSQL 16.15 Testcontainers clean migration through V53 and V52→V53 upgrade both pass with no database skips; upgrade preserves an existing V52 row.",
+        "Exact five-table manifest, FORCE RLS, grant split, all-five missing-context/cross-tenant read isolation, immutable UPDATE/DELETE denial, lifecycle/overlap/closure/rollback/idempotency and typed V50 lineage are proven.",
+        "Prior migration git-tree manifest remains byte-for-byte unchanged; no second migration or backfill."
+      ]
+    },
+    {
+      "id": "PAY003-AC13",
+      "criterion": "Authorization-negative and tenant-isolation tests prove opaque cross-scope failure, stripped caller authority, exact purpose and current-policy re-evaluation.",
+      "result": "PASS",
+      "evidence": [
+        "Exact admitted routes, capabilities, population kind and field policy key are checked against trusted Gateway evidence; caller tenant/actor/legal-entity/pay-group override headers are rejected.",
+        "Authorization negative matrix, stale decision/CAS and opaque cross-scope tests pass; current decisions are resolved per request and frozen once for projection serialization."
+      ]
+    },
+    {
+      "id": "PAY003-AC14",
+      "criterion": "Targeted recovery and telemetry tests cover provider unavailable, signature failure, stale CAS, duplicate request, audit publication retry and result unknown; no repository-wide suite is required.",
+      "result": "PASS",
+      "evidence": [
+        "Signature/provider failure, stale CAS, duplicate digest/replay, durable original receipt and unknown-outcome exact retry tests pass.",
+        "CountryPackActivated outbox/correlation/request digest are persisted atomically and immutable; publication retry reads/reuses the same durable event without new effects. Closed problem handling maps unavailable/unknown results with correlation; no repository-wide suite was run."
+      ]
+    }
+  ],
+  "nonClaims": [
+    "Feature remains default OFF with zero enrolled tenants and no customer data.",
+    "Settings and operations components remain unmounted; no shell, route, menu or i18n integration was performed.",
+    "Signature, statutory-approval, country-rule, projection-decision and activation-decision production providers remain fail closed and unbound.",
+    "No dwp-dev merge, central module admission, production activation, release or full-slice business-completion claim is made.",
+    "Existing PEP-PAY-012, PEP-PAY-014, PayrollCalculated.v1 and PAY-005 ownership are reused or preserved without new completion credit."
+  ]
+}
