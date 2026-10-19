@@ -516,9 +516,16 @@ describe('[SLICE:BASE-TFR-PAY-003] statutory insurance contract', () => {
     expect(
       validateStatutoryConfigurationQuery({
         ...valid,
-        filter: { countryPackMetadata: { keys: ['.valid'], versions: ['2026:10'] } },
+        filter: { countryPackMetadata: { keys: ['valid'], versions: ['2026:10'] } },
       }).filter.countryPackMetadata
-    ).toEqual({ keys: ['.valid'], versions: ['2026:10'] });
+    ).toEqual({ keys: ['valid'], versions: ['2026:10'] });
+    for (const filter of [
+      { countryPackMetadata: { keys: ['.valid'] } },
+      { countryPackMetadata: { versions: [':version'] } },
+      { statutoryRule: { policyKeys: ['-policy'] } },
+    ]) {
+      expect(() => validateStatutoryConfigurationQuery({ ...valid, filter })).toThrow();
+    }
     expect(() => validateStatutoryConfigurationQuery({ ...valid, limit: 101 })).toThrow();
     expect(
       validateSocialInsuranceQuery({
@@ -540,7 +547,7 @@ describe('[SLICE:BASE-TFR-PAY-003] statutory insurance contract', () => {
         correlationId: ids.query,
       }).sort
     ).toEqual(['taxResult:ASC', 'itemPublicId:ASC']);
-    expect(
+    expect(() =>
       validateSocialInsuranceQuery({
         limit: 100,
         filter: { socialInsurance: { minimumAmount: '10.0000', maximumAmount: '9.9999' } },
@@ -548,8 +555,25 @@ describe('[SLICE:BASE-TFR-PAY-003] statutory insurance contract', () => {
         locale: 'en-US',
         timeZone: 'UTC',
         correlationId: ids.query,
-      }).filter.socialInsurance
-    ).toEqual({ minimumAmount: '10.0000', maximumAmount: '9.9999' });
+      })
+    ).toThrow();
+    for (const group of ['taxResult', 'socialInsurance']) {
+      for (const [minimumAmount, maximumAmount] of [
+        ['-1.000000', '-1.000001'],
+        ['9007199254740993', '9007199254740992'],
+      ]) {
+        expect(() =>
+          validateSocialInsuranceQuery({
+            limit: 100,
+            filter: { [group]: { minimumAmount, maximumAmount } },
+            sort: ['itemPublicId:ASC'],
+            locale: 'en-US',
+            timeZone: 'UTC',
+            correlationId: ids.query,
+          })
+        ).toThrow();
+      }
+    }
   });
 
   it('serializes the accepted nested query wire and replays an opaque next cursor without authority fields', async () => {

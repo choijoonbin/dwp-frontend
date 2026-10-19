@@ -9,7 +9,7 @@ import type {
 } from './statutory-insurance-contract';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/u;
-const PUBLIC_ID = /^[A-Za-z0-9._:-]{1,128}$/u;
+const FILTER_TOKEN = /^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/u;
 const CODE = /^[A-Z][A-Z0-9_]{1,63}$/u;
 const CURSOR = /^[A-Za-z0-9_-]{16,1024}$/u;
 const DATE = /^\d{4}-\d{2}-\d{2}$/u;
@@ -166,10 +166,10 @@ function metadataFilter(value: unknown, path: string) {
   return Object.freeze({
     ...(source.keys === undefined
       ? {}
-      : { keys: stringArray(source.keys, `${path}.keys`, PUBLIC_ID) }),
+      : { keys: stringArray(source.keys, `${path}.keys`, FILTER_TOKEN) }),
     ...(source.versions === undefined
       ? {}
-      : { versions: stringArray(source.versions, `${path}.versions`, PUBLIC_ID) }),
+      : { versions: stringArray(source.versions, `${path}.versions`, FILTER_TOKEN) }),
   });
 }
 
@@ -178,7 +178,7 @@ function policyFilter(value: unknown, path: string) {
   return Object.freeze({
     ...(source.policyKeys === undefined
       ? {}
-      : { policyKeys: stringArray(source.policyKeys, `${path}.policyKeys`, PUBLIC_ID) }),
+      : { policyKeys: stringArray(source.policyKeys, `${path}.policyKeys`, FILTER_TOKEN) }),
     ...(source.minimumRevision === undefined
       ? {}
       : {
@@ -194,6 +194,21 @@ function moneyFilter(value: unknown, path: string) {
   const source = exact(value, path, ['currency', 'minimumAmount', 'maximumAmount'], []);
   const parseAmount = (amount: unknown, field: string) =>
     amount === null ? null : postedAmount(amount, `${path}.${field}`);
+  const minimum = optionalNullable(source.minimumAmount, (entry) =>
+    parseAmount(entry, 'minimumAmount')
+  );
+  const maximum = optionalNullable(source.maximumAmount, (entry) =>
+    parseAmount(entry, 'maximumAmount')
+  );
+  const scaledAmount = (amount: string) => {
+    const negative = amount.startsWith('-');
+    const [whole, fraction = ''] = (negative ? amount.slice(1) : amount).split('.');
+    const scaled = BigInt(whole!) * 1_000_000n + BigInt(fraction.padEnd(6, '0'));
+    return negative ? -scaled : scaled;
+  };
+  if (minimum != null && maximum != null && scaledAmount(minimum) > scaledAmount(maximum)) {
+    return invalid(`${path}.amountRange`);
+  }
   return Object.freeze({
     ...(source.currency === undefined
       ? {}
@@ -203,12 +218,8 @@ function moneyFilter(value: unknown, path: string) {
               ? null
               : text(source.currency, `${path}.currency`, 3, CURRENCY),
         }),
-    ...(source.minimumAmount === undefined
-      ? {}
-      : { minimumAmount: parseAmount(source.minimumAmount, 'minimumAmount') }),
-    ...(source.maximumAmount === undefined
-      ? {}
-      : { maximumAmount: parseAmount(source.maximumAmount, 'maximumAmount') }),
+    ...(minimum === undefined ? {} : { minimumAmount: minimum }),
+    ...(maximum === undefined ? {} : { maximumAmount: maximum }),
   });
 }
 
