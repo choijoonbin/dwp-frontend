@@ -1,0 +1,191 @@
+{
+  "schema": "dwp.hris.wave7.pay003-control-review-corrections.v1",
+  "evidenceId": "HRIS-WAVE7-R7-BATCH-04-BASE-TFR-PAY-003-CONTROL-CORRECTIONS-R2",
+  "issuedAt": "2026-10-19T15:22:00+09:00",
+  "issuedBy": "HRIS-PAY",
+  "sliceId": "BASE-TFR-PAY-003",
+  "supersedes": {
+    "evidenceCommit": "79c37fa4d1c848d3818708559dd58b58656de0d7",
+    "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-results-r1/base-tfr-pay-003/module-result-evidence.v1.json",
+    "sha256": "90a3c1de1ef566e02b26a01c303724ce7c6cc192e4ec975b86db81bf8ff2dfe8",
+    "bytes": 12719,
+    "previousDecision": "READY_FOR_CONTROL_INTEGRATION",
+    "previousClaimStatus": "SUPERSEDED_BY_CENTRAL_REVIEW_P0_0_P1_4_AND_THIS_BOUNDED_CORRECTION",
+    "historicalFilesAndCommitsPreserved": true
+  },
+  "scope": "ONLY_THE_FOUR_CONFIRMED_P1_FINDINGS",
+  "findings": [
+    {
+      "id": "PAY003-REVIEW-P1-01",
+      "title": "V53 actor cross-wire",
+      "status": "CLOSED",
+      "change": "All three deferred closure branches require activation.activated_by_subject_public_id = receipt.subject_principal_public_id.",
+      "proof": "activationReceiptActorCrossWireIsRejectedAtCommit inserts a coherent pack/revision/correlation/event closure with different activation and receipt subjects; PostgreSQL rejects commit and leaves no activation, receipt or outbox effects."
+    },
+    {
+      "id": "PAY003-REVIEW-P1-02",
+      "title": "PostgreSQL SoD evidence gap",
+      "status": "CLOSED",
+      "change": "Added an actual PostgreSQL insert using the same installer and statutory approver; no production constraint was weakened.",
+      "proof": "identicalInstallerAndStatutoryApproverIsRejectedByPostgres observes pay_country_pack_snapshot_sod rejection and zero persisted snapshot rows."
+    },
+    {
+      "id": "PAY003-REVIEW-P1-03",
+      "title": "Frontend exact query validation drift",
+      "status": "CLOSED",
+      "change": "Metadata keys/versions and policy keys now use the owner's leading-alphanumeric token grammar. Both amount filters reject minimum > maximum using exact signed scaled BigInt comparison at six decimal places.",
+      "proof": "The one existing query-validator named case rejects leading punctuation, reversed positive/negative ranges and ranges above JavaScript's safe integer boundary; valid signed six-decimal input remains accepted."
+    },
+    {
+      "id": "PAY003-REVIEW-P1-04",
+      "title": "Closed Problem catch-all status",
+      "status": "CLOSED",
+      "change": "Unexpected exceptions map to HTTP 503 RESULT_UNKNOWN.",
+      "proof": "unexpectedFailureUsesClosed503ProblemAndKeepsCorrelation checks exact closed response fields, retryable=true, private/no-store cache policy and unchanged correlation."
+    }
+  ],
+  "sourcePins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "codex/hris-wave7-r7-batch04-pay-003-backend-20261019-r1",
+      "previousHead": "07fd9dde6577fc2429d14f474f38cf16e9ab8379",
+      "commit": "30bf9352efcb1add45c96271045acb38c209f1c2",
+      "tree": "4af92687686d21048bab7111680b01287b31d77f",
+      "originExact": true,
+      "clean": true,
+      "correctionPaths": [
+        "dwp-payroll-server/src/main/java/com/dwp/services/payroll/statutory/pay003/Pay003ProblemAdvice.java",
+        "dwp-payroll-server/src/main/resources/db/migration/V53__pay_base_tfr_pay_003_statutory_insurance.sql",
+        "dwp-payroll-server/src/test/java/com/dwp/services/payroll/statutory/pay003/Pay003PostgresContractTest.java",
+        "dwp-payroll-server/src/test/java/com/dwp/services/payroll/statutory/pay003/Pay003ProblemAdviceTest.java"
+      ],
+      "sortedPathManifestSha256": "7587fbfa5b953e83677fab039b02bebc15f8860f4767f9e19e72616407e5b396",
+      "migration": {
+        "path": "dwp-payroll-server/src/main/resources/db/migration/V53__pay_base_tfr_pay_003_statutory_insurance.sql",
+        "sha256": "28fbeb49531104a7fd5ace1136aff8b3f1e0d1d9fb7fe13ea2b238a0316081a5",
+        "bytes": 34100,
+        "createdTables": [
+          "pay_country_pack_version_snapshots",
+          "pay_country_pack_activation_versions",
+          "pay_country_pack_command_receipts",
+          "pay_country_pack_audit_outbox_events",
+          "pay_social_insurance_result_facts"
+        ]
+      }
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "codex/hris-wave7-r7-batch04-pay-003-frontend-20261019-r1",
+      "previousHead": "79c37fa4d1c848d3818708559dd58b58656de0d7",
+      "commit": "663d1a4c3c947ba94b5e58f0341e190245e22dbd",
+      "tree": "c355e0fb1b0878bf86fcf019acb378bf9c344b83",
+      "originExact": true,
+      "clean": true,
+      "correctionPaths": [
+        "apps/dwp/src/features/hris/payroll/__tests__/g3-slices/base-tfr-pay-003.slice.test.tsx",
+        "apps/dwp/src/features/hris/payroll/statutory-insurance/statutory-insurance-query-contract.ts"
+      ],
+      "sortedPathManifestSha256": "fa193c6b1a245dbcf3a11b908356d6a18438bae01dafc081bb1163be3c9c4b76",
+      "previousModuleEvidence": {
+        "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-results-r1/base-tfr-pay-003/module-result-evidence.v1.json",
+        "sha256": "90a3c1de1ef566e02b26a01c303724ce7c6cc192e4ec975b86db81bf8ff2dfe8",
+        "bytes": 12719
+      }
+    }
+  },
+  "migration": {
+    "path": "dwp-payroll-server/src/main/resources/db/migration/V53__pay_base_tfr_pay_003_statutory_insurance.sql",
+    "sha256": "28fbeb49531104a7fd5ace1136aff8b3f1e0d1d9fb7fe13ea2b238a0316081a5",
+    "bytes": 34100,
+    "createdTables": [
+      "pay_country_pack_version_snapshots",
+      "pay_country_pack_activation_versions",
+      "pay_country_pack_command_receipts",
+      "pay_country_pack_audit_outbox_events",
+      "pay_social_insurance_result_facts"
+    ],
+    "stream": "PAYROLL_MAIN",
+    "version": "V53",
+    "predecessor": "V52",
+    "historicalV1ThroughV52Modified": false,
+    "secondMigrationCreated": false,
+    "backfillPerformed": false,
+    "cleanAndUpgradeHarness": "The existing PostgreSQL setup migrated clean through corrected V53 and V52→corrected V53 while executing only the two newly added PostgreSQL named cases. No previously passing migration test method was rerun."
+  },
+  "verification": {
+    "backend": {
+      "command": "./gradlew :dwp-payroll-server:test --tests 'com.dwp.services.payroll.statutory.pay003.Pay003PostgresContractTest.activationReceiptActorCrossWireIsRejectedAtCommit' --tests 'com.dwp.services.payroll.statutory.pay003.Pay003PostgresContractTest.identicalInstallerAndStatutoryApproverIsRejectedByPostgres' --tests 'com.dwp.services.payroll.statutory.pay003.Pay003ProblemAdviceTest.unexpectedFailureUsesClosed503ProblemAndKeepsCorrelation'",
+      "tests": 3,
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "postgresTests": 2,
+      "postgresSkipped": 0
+    },
+    "frontend": {
+      "file": "apps/dwp/src/features/hris/payroll/__tests__/g3-slices/base-tfr-pay-003.slice.test.tsx",
+      "namedCase": "validates closed queries, stable tiebreaks, bounded filters, cursor, locale, and time zone",
+      "tests": 1,
+      "passed": 1,
+      "failed": 0,
+      "intentionallyFiltered": 11,
+      "runtime": "Existing Vitest 4.1.10/main-checkout dependencies resolved in memory; no install or lockfile change.",
+      "changedRootLint": {
+        "files": 2,
+        "errors": 0,
+        "warnings": 0
+      },
+      "changedRootTypecheck": {
+        "roots": 2,
+        "changedDiagnostics": 0,
+        "dependencyDiagnostics": 0
+      }
+    },
+    "gitDiffCheck": "PASS_BOTH_SOURCE_CORRECTIONS",
+    "fullPay003GroupRerun": false,
+    "previouslyPassingUnchangedTestsRerun": false,
+    "repositoryWideSuiteRun": false
+  },
+  "acceptance": {
+    "required": 14,
+    "passed": 14,
+    "failed": 0,
+    "skipped": 0,
+    "authorityAndCriteriaUnchanged": true,
+    "affectedCriteria": [
+      "PAY003-AC07",
+      "PAY003-AC08",
+      "PAY003-AC12",
+      "PAY003-AC13",
+      "PAY003-AC14"
+    ],
+    "ac12ProofStatus": "The prior CHECK-only SoD evidence claim is superseded by the actual PostgreSQL rejection case.",
+    "carriedUniqueBackendTests": 27,
+    "newUniqueBackendTests": 3,
+    "effectiveUniqueBackendTests": 30,
+    "carriedUniqueFrontendTests": 12,
+    "changedFrontendNamedCases": 1,
+    "openP0": 0,
+    "openP1": 0,
+    "closedP1": 4
+  },
+  "rollout": {
+    "featureKey": "HRIS_PAYROLL_STATUTORY_INSURANCE",
+    "defaultEnabled": false,
+    "enrolledTenants": [],
+    "frontendMounted": false,
+    "realProductionProviderBound": false
+  },
+  "forbiddenChanges": {
+    "central": false,
+    "menu": false,
+    "route": false,
+    "auth": false,
+    "gateway": false,
+    "sharedSecurity": false,
+    "dwpDevMerge": false
+  },
+  "decision": "READY_FOR_CONTROL_INTEGRATION",
+  "centralGoClaimed": false,
+  "nextAction": "Central control re-review/admission of these exact correction source pins and the appended evidence; all rollout and production gates remain separately authorized."
+}

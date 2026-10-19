@@ -242,5 +242,78 @@
     "No dwp-dev merge, central module admission, production activation, release or full-slice business-completion claim is made.",
     "Existing PEP-PAY-012, PEP-PAY-014, PayrollCalculated.v1 and PAY-005 ownership are reused or preserved without new completion credit."
   ],
-  "nextAction": "Push this exact evidence commit and verify both origin heads and clean worktrees; hand off READY_FOR_CONTROL_INTEGRATION without dwp-dev merge."
+  "nextAction": "Push this exact evidence commit and verify both origin heads and clean worktrees; hand off READY_FOR_CONTROL_INTEGRATION without dwp-dev merge.",
+  "correctionPrecedence": "Original fields above are retained as historical R1 evidence. currentResultState/currentSourcePins/currentDecision and the latest correctionHistory entry supersede the original READY claim and source pins.",
+  "correctionHistory": [
+    {
+      "correctionId": "HRIS-WAVE7-R7-BATCH-04-BASE-TFR-PAY-003-CONTROL-CORRECTIONS-R2",
+      "recordedAt": "2026-10-19T15:22:00+09:00",
+      "supersededEvidenceCommit": "79c37fa4d1c848d3818708559dd58b58656de0d7",
+      "supersededEvidenceSha256": "90a3c1de1ef566e02b26a01c303724ce7c6cc192e4ec975b86db81bf8ff2dfe8",
+      "previousReadyClaimStatus": "SUPERSEDED_AFTER_CENTRAL_REVIEW_P0_0_P1_4",
+      "findings": {
+        "reportedP0": 0,
+        "reportedP1": 4,
+        "closedP1": 4,
+        "openP0": 0,
+        "openP1": 0
+      },
+      "correctionEvidence": {
+        "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-results-r1/base-tfr-pay-003/control-review-corrections.v1.json",
+        "sha256": "b5fd00ad860ab7eca9251fc22c7ff5b686712896b003468e2399008dabe1f607",
+        "bytes": 8944
+      },
+      "newSourceCommits": {
+        "backend": "30bf9352efcb1add45c96271045acb38c209f1c2",
+        "frontend": "663d1a4c3c947ba94b5e58f0341e190245e22dbd"
+      },
+      "verification": {
+        "newBackendNamedCases": 3,
+        "backendPassed": 3,
+        "backendFailed": 0,
+        "backendSkipped": 0,
+        "frontendChangedNamedCases": 1,
+        "frontendPassed": 1,
+        "frontendFailed": 0,
+        "frontendIntentionallyFiltered": 11,
+        "fullPay003GroupRerun": false,
+        "previouslyPassingUnchangedTestsRerun": false
+      },
+      "acceptance": {
+        "required": 14,
+        "passed": 14,
+        "failed": 0,
+        "skipped": 0
+      },
+      "decision": "READY_FOR_CONTROL_INTEGRATION",
+      "centralReReviewPending": true
+    }
+  ],
+  "currentResultState": "PAY003_R2_FOUR_CONTROL_P1_FINDINGS_CLOSED_EXACT_SOURCE_CORRECTIONS_PUSHED_FOUR_MINIMAL_CASES_PASS_DEFAULT_OFF_ZERO_ENROLLMENT",
+  "currentSourcePins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "codex/hris-wave7-r7-batch04-pay-003-backend-20261019-r1",
+      "commit": "30bf9352efcb1add45c96271045acb38c209f1c2",
+      "tree": "4af92687686d21048bab7111680b01287b31d77f",
+      "originExact": true,
+      "clean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "codex/hris-wave7-r7-batch04-pay-003-frontend-20261019-r1",
+      "sourceHeadBeforeCorrectionEvidence": "663d1a4c3c947ba94b5e58f0341e190245e22dbd",
+      "sourceTree": "c355e0fb1b0878bf86fcf019acb378bf9c344b83",
+      "originExactBeforeEvidence": true,
+      "cleanBeforeEvidence": true
+    }
+  },
+  "currentDecision": "READY_FOR_CONTROL_INTEGRATION",
+  "currentNonClaims": [
+    "Feature remains default OFF with zero enrolled tenants and no customer data.",
+    "Settings and operations components remain unmounted; no shell, route, menu or i18n integration was performed.",
+    "Signature, statutory-approval, country-rule, projection-decision and activation-decision production providers remain fail closed and unbound.",
+    "No dwp-dev merge, central module admission, production activation, release or full-slice business-completion claim is made.",
+    "Existing PEP-PAY-012, PEP-PAY-014, PayrollCalculated.v1 and PAY-005 ownership are reused or preserved without new completion credit."
+  ]
 }
