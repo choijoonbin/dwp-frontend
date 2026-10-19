@@ -83,7 +83,7 @@ const POLICY_KEY = /^[a-z][a-z0-9._-]{1,127}$/;
 const DISPLAY_KEY = /^[a-z][a-z0-9._-]{1,127}$/;
 const SHA256 = /^[0-9a-f]{64}$/;
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
-const INSTANT = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/;
+const INSTANT = /^(\d{4}-\d{2}-\d{2})T(\d{2}):(\d{2})(?::(\d{2})(?:\.(\d{1,9}))?)?(Z|([+-])(\d{2}):(\d{2}))$/;
 const ACTIONS = new Set<string>(PER004_ACTION_KEYS);
 const FIELDS: Record<Per004Variant, readonly string[]> = {
   FORMS_SCALES: ['FORM_VERSION', 'RATING_SCALE', 'POLICY_STATUS'],
@@ -105,8 +105,18 @@ function integer(value: unknown, min = 0): value is number {
   return typeof value === 'number' && Number.isSafeInteger(value) && value >= min;
 }
 function date(value: unknown): value is string {
-  return typeof value === 'string' && DATE.test(value) &&
-    !Number.isNaN(Date.parse(`${value}T00:00:00Z`));
+  if (typeof value !== 'string' || !DATE.test(value)) return false;
+  const parsed = new Date(`${value}T00:00:00Z`);
+  return !Number.isNaN(parsed.valueOf()) && parsed.toISOString().slice(0, 10) === value;
+}
+function instant(value: unknown): value is string {
+  if (typeof value !== 'string') return false;
+  const parts = INSTANT.exec(value);
+  if (!parts || !date(parts[1]) || Number(parts[2]) > 23 || Number(parts[3]) > 59 ||
+      parts[4] !== undefined && Number(parts[4]) > 59) return false;
+  if (parts[6] !== 'Z' && (Number(parts[8]) > 18 || Number(parts[9]) > 59 ||
+      Number(parts[8]) === 18 && Number(parts[9]) !== 0)) return false;
+  return Number.isFinite(Date.parse(value));
 }
 function parseValue(variant: Per004Variant, group: string, wire: unknown): void {
   const value = record(wire);
@@ -174,8 +184,7 @@ export function parsePer004Projection(wire: unknown, variant: Per004Variant): Pe
   const root = record(wire);
   keys(root, ['projectionVersion', 'asOf', 'variantKey', 'queryState', 'items']);
   if (root.projectionVersion !== '2' || root.variantKey !== variant ||
-      typeof root.asOf !== 'string' || !INSTANT.test(root.asOf) ||
-      !Number.isFinite(Date.parse(root.asOf)) || !Array.isArray(root.items) ||
+      !instant(root.asOf) || !Array.isArray(root.items) ||
       root.items.length > 100) throw new Error('PER004_CONTRACT_INVALID');
   const state = record(root.queryState);
   keys(state, ['state', 'scopeDecisionRevision', 'freshness', 'nextCursor', 'fieldDecisionSummary',
@@ -233,9 +242,7 @@ export function parsePer004Projection(wire: unknown, variant: Per004Variant): Pe
       throw new Error('PER004_CONTRACT_INVALID');
     }
     const groups = record(item.fieldGroups);
-    const unboundCreate = variant === 'PERFORMANCE' &&
-      item.statusCode === 'NO_MUTABLE_VERSION_AND_CREATE_ELIGIBLE' && Object.keys(groups).length === 0;
-    if (!unboundCreate && Object.keys(groups).length === 0 ||
+    if (Object.keys(groups).length === 0 ||
         Object.keys(groups).some((key) => !FIELDS[variant].includes(key)))
       throw new Error('PER004_CONTRACT_INVALID');
     for (const group of FIELDS[variant]) {
@@ -258,8 +265,7 @@ export function parsePer004Projection(wire: unknown, variant: Per004Variant): Pe
       const parsedAction = parsePer004Action(action, item.itemPublicId);
       if (variant === 'FORMS_SCALES' || state.state !== 'COMPLETE' || state.freshness !== 'CURRENT' ||
           !actionAllowedForState(parsedAction.actionKey, item.statusCode) ||
-          (unboundCreate ? parsedAction.actionKey !== ACTION_BASE
-            : FIELDS[variant].some((field) => record(groups[field]).decision !== 'VIEW'))) {
+          FIELDS[variant].some((field) => record(groups[field]).decision !== 'VIEW')) {
         throw new Error('PER004_ACTION_INVALID');
       }
     }

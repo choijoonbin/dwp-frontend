@@ -109,18 +109,47 @@ describe('PER-004 closed projection', () => {
     expect(() => parsePer004Projection(partialCurrent, 'PERFORMANCE')).toThrow('PER004_CONTRACT_INVALID');
   });
 
-  it('accepts only a Platform-bound synthetic create without invented owner fields', () => {
+  it('accepts only same-row synthetic create with all three owner field groups', () => {
     const candidate = projection(false);
     candidate.items[0]!.statusCode = 'NO_MUTABLE_VERSION_AND_CREATE_ELIGIBLE';
-    candidate.items[0]!.fieldGroups = {} as never;
-    candidate.queryState.fieldDecisionSummary = { viewCount: 0, maskedCount: 0, omittedCount: 3 };
     candidate.items[0]!.availableActions = [{ actionKey: PER004_ACTION_KEYS[0], method: 'POST',
       targetResourceType: 'REFERENCE_CONFIGURATION', targetConfigurationId: ID,
       resolvedHref: `/api/platform/v1/admin/hris/configurations/${ID}/versions`,
       idempotencyPolicy: 'REQUIRED_IDEMPOTENCY_KEY',
       stepUpPolicy: 'OWNER_PEP_RISK_POLICY_DECISION_REQUIRED' }] as never;
     expect(parsePer004Projection(candidate, 'PERFORMANCE').items[0]?.availableActions).toHaveLength(1);
+    candidate.items[0]!.fieldGroups = {} as never;
+    expect(() => parsePer004Projection(candidate, 'PERFORMANCE')).toThrow();
+    candidate.items[0]!.fieldGroups = projection(false).items[0]!.fieldGroups;
     candidate.items[0]!.availableActions[0]!.actionKey = PER004_ACTION_KEYS[3] as never;
     expect(() => parsePer004Projection(candidate, 'PERFORMANCE')).toThrow();
+  });
+
+  it('rejects rollover policy dates while accepting actual leap days', () => {
+    const policy = projection(false);
+    policy.items[0]!.fieldGroups.POLICY_VERSION.value.effectiveFrom = '2026-02-29';
+    expect(() => parsePer004Projection(policy, 'PERFORMANCE')).toThrow();
+    for (const invalid of ['2026-02-30', '2026-02-31', '2026-04-31']) {
+      policy.items[0]!.fieldGroups.POLICY_VERSION.value.effectiveFrom = invalid;
+      expect(() => parsePer004Projection(policy, 'PERFORMANCE')).toThrow();
+    }
+    policy.items[0]!.fieldGroups.POLICY_VERSION.value.effectiveFrom = '2028-02-29';
+    expect(() => parsePer004Projection(policy, 'PERFORMANCE')).not.toThrow();
+  });
+
+  it('accepts OffsetDateTime zero-second wire form and rejects invalid instants', () => {
+    const wire = projection(false);
+    for (const valid of ['2026-10-19T08:00Z', '2026-10-19T08:00:00Z',
+      '2026-10-19T08:00:00.123456789+09:00']) {
+      wire.asOf = valid;
+      expect(() => parsePer004Projection(wire, 'PERFORMANCE')).not.toThrow();
+    }
+    for (const invalid of ['2026-02-30T08:00Z', '2026-10-19T24:00Z',
+      '2026-10-19T08:60Z', '2026-10-19T08:00:60Z',
+      '2026-10-19T08:00+18:01', '2026-10-19T08:00+19:00',
+      '2026-10-19T08:00Zextra']) {
+      wire.asOf = invalid;
+      expect(() => parsePer004Projection(wire, 'PERFORMANCE')).toThrow();
+    }
   });
 });
