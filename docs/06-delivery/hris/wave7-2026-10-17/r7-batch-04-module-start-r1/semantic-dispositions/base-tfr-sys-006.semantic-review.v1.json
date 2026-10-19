@@ -1,0 +1,61 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-sys006-semantic-review.v1",
+  "reviewId": "HRIS-WAVE7-R7-BATCH-04-SYS006-SEMANTIC-REVIEW-20261019-R1",
+  "recordedAt": "2026-10-19T23:03:36+09:00",
+  "recordedBy": "INDEPENDENT_SYS006_SEMANTIC_REVIEW",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ID_AND_SHA256"
+  },
+  "state": "SYS006_SEMANTIC_DISPOSITION_INDEPENDENTLY_REVIEWED_PASS_ZERO_P0_ZERO_P1_ZERO_P2_CENTRAL_SUCCESSOR_MAY_PROCEED",
+  "sliceId": "BASE-TFR-SYS-006",
+  "reviewedArtifact": {
+    "path": "base-tfr-sys-006.semantic-disposition.v1.json",
+    "sha256": "e5f8ecc7db70737ae5cfb6d3ccc8879b30f0395febc35db3de4455baf1a1825f",
+    "bytes": 192503,
+    "requiredState": "SYS006_AUTOMATION_CONTROL_PLANE_BOUNDARY_SEALED_V333_REQUIRED_CENTRAL_SUCCESSOR_BEFORE_SOURCE"
+  },
+  "reviewMethod": {
+    "independentReviewer": true,
+    "jsonSyntax": "PASS",
+    "canonicalPathHashAndBytePins": "PASS",
+    "structureAndCardinalityConsistency": "PASS",
+    "typedDraft202012SchemaExecution": "PASS",
+    "apiPepRouteAndActionConsistency": "PASS",
+    "receiptLifecycleFenceAndCompensationConsistency": "PASS",
+    "eventDigestAndAtomicPublicationConsistency": "PASS",
+    "migrationDecisionConsistency": "PASS",
+    "authorizationAndActivationBoundaryConsistency": "PASS",
+    "repositoryWideSuiteRun": false,
+    "unaffectedPassingTargetRerun": false
+  },
+  "closedFindings": [
+    "definition, version, schedule and run projections expose only exact lifecycle-state and persisted-eligibility action intersections",
+    "all API JSON integer schemas are safely bounded and every digest BIGINT identity uses an exact bounded no-leading-zero decimal string",
+    "schedule policy, command object and runtime fire-cursor revisions are separated so cursor advancement preserves current approval evidence",
+    "WORKER, OWNER_RECOVERY and RECONCILER authorities have mutually exclusive lease tuples and branch-complete no-lease, worker-lease and reconciler-lease recovery",
+    "WORKER dispatches original effects only and RECONCILER dispatches approved compensation effects only under distinct idempotency and fence evidence",
+    "an orphaned compensation PREPARED is resolved only by evidence under a newly fenced RECONCILER and can never be externally redispatched",
+    "cancel acceptance atomically creates reconciliation eligibility and pending compensation facts for committed original effects while non-compensatable cancellation fails before mutation",
+    "SYS-EVT-004 is validated and appended atomically with its run transition and terminal events have no synthetic correction path"
+  ],
+  "findings": {
+    "remainingP0": 0,
+    "remainingP1": 0,
+    "remainingP2": 0
+  },
+  "authority": {
+    "semanticReviewAccepted": true,
+    "appendOnlyIaqTransportEventAndCentralAuthorizationSuccessorMayBeAuthored": true,
+    "ownerPacketAuthorizedNow": false,
+    "moduleSourceAuthoringAuthorizedNow": false,
+    "migrationReservationAuthorizedNow": false,
+    "migrationAuthoringAuthorizedNow": false,
+    "worktreeMaterializationAuthorizedNow": false,
+    "startTokenAuthorizedNow": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextGate": "AUTHOR_SEAL_AND_INDEPENDENTLY_REVIEW_ONE_APPEND_ONLY_SYS006_IAQ_TRANSPORT_EVENT_AND_CENTRAL_AUTHORIZATION_SUCCESSOR_THEN_IMPLEMENT_ONLY_ITS_BOUNDED_CENTRAL_DELTA"
+}

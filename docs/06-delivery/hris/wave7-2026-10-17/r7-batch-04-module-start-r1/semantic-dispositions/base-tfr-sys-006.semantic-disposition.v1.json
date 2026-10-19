@@ -1,0 +1,3732 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-sys006-semantic-disposition.v1",
+  "dispositionId": "HRIS-WAVE7-R7-BATCH-04-SYS006-SEMANTIC-DISPOSITION-20261019-R1",
+  "recordedAt": "2026-10-19T20:42:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ID_AND_SHA256"
+  },
+  "state": "SYS006_AUTOMATION_CONTROL_PLANE_BOUNDARY_SEALED_V333_REQUIRED_CENTRAL_SUCCESSOR_BEFORE_SOURCE",
+  "sliceId": "BASE-TFR-SYS-006",
+  "moduleSession": "HRIS-SYS",
+  "boundedContext": "DWP_PLATFORM_AUTOMATION",
+  "capability": "DWP.AUTOMATION.CONTROL_PLANE",
+  "decision": "DEC-SYS-004",
+  "disposition": "REBUILD",
+  "purpose": "Seal the exact SYS-006 automation ownership, shared-surface, typed-contract, persistence, lifecycle, retry, cancellation, event and authorization semantics without issuing a packet, token, worktree or migration lease and without starting source or activation work.",
+  "sequenceAuthority": {
+    "precedingExit": {
+      "path": "../../r7-batch-04-central-admission-r1/per-004-sequencing-exit-receipt.v1.json",
+      "sha256": "a25b77fe2030f1245f78ef05f4d2eecace04234c358d8e3482c32fad424ea2e0",
+      "bytes": 8720,
+      "requiredState": "BATCH04_LANE_3_PER004_SEQUENCING_EXIT_ACCEPTED_DEFAULT_OFF_ZERO_ENROLLMENT_ZERO_BUSINESS_CREDIT_SYS006_SEMANTIC_CLOSURE_NEXT"
+    },
+    "order": 4,
+    "laterLanesWithheld": ["BASE-TFR-TIM-003"],
+    "allowedNow": "SYS006_APPEND_ONLY_SEMANTIC_DISPOSITION_AND_INDEPENDENT_REVIEW_ONLY",
+    "notAllowedNow": [
+      "CENTRAL_AUTHORIZATION_OR_CONTRACT_SOURCE",
+      "OWNER_PACKET",
+      "START_TOKEN",
+      "WORKTREE_MATERIALIZATION",
+      "V333_RESERVATION_OR_AUTHORING",
+      "MODULE_SOURCE",
+      "ROUTE_OR_MENU_ACTIVATION",
+      "FEATURE_OR_TENANT_ENROLLMENT"
+    ]
+  },
+  "canonicalInputs": {
+    "batch04Preflight": {
+      "path": "../../r7-batch-04-preflight-r1/semantic-dependency-migration-preflight.v1.json",
+      "sha256": "3fe2cb0cab1aa65fbe75f1b0d8d4a74f136be457aa2c324d262eb7503789cc1c",
+      "bytes": 17214,
+      "correctionRule": "Its historical Platform V332 candidate is superseded because PER-004 consumed V332; current candidate is V333 only after the schema delta and later admission are proven."
+    },
+    "targetFamilyRegister": {
+      "path": "../../../recovery/exact-supplements/2026-10-06/hris-porting-blueprint-2026-09-09/coding-readiness/target-family-resolution-register.csv",
+      "sha256": "3e3618ff3ac150da8c9c7cbd3b1018e30e69652f28f3dbd8c87edb7df6a83819",
+      "bytes": 38399,
+      "targetFamilyRef": "TFR-SYS-006",
+      "sourceFamilyRef": "29d8eb318606a7c20946d21941bc0e55cd17a631836ad02434322f9d2c3ca11b",
+      "sourceParentCount": 10
+    },
+    "g3SliceCodeGoRegister": {
+      "path": "../../../recovery/hris-porting-blueprint-2026-09-09/coding-readiness/g3-slice-code-go-register.csv",
+      "sha256": "fb646668329e93ca0b83b74e2a3e43619954cec1cb2f6770029677edbc8d5725",
+      "bytes": 305301,
+      "sliceRef": "BASE-TFR-SYS-006",
+      "correctionRule": "The historical OPEN_G3_CODE row is immutable recovery evidence, not current source authority. Current R7 sequencing receipts control."
+    },
+    "sysExactBusinessStartSuccessor": {
+      "path": "../../../recovery/hris-porting-blueprint-2026-09-09/coding-readiness/sys-exact-business-start-successor.v1.json",
+      "sha256": "aa4f82925a5a34132ed69844ca088111d551b7effbe1d70d8104846db82c44be",
+      "bytes": 31406
+    },
+    "g2ContractCatalog": {
+      "path": "../../../recovery/hris-porting-blueprint-2026-09-09/session-evidence/sys/g2-contract-catalog.csv",
+      "sha256": "1251cd627675b07563c340c8a87ed50723ebc6bfe4dd447f34dc41f113891206",
+      "bytes": 17102
+    },
+    "g2GoldenScenarios": {
+      "path": "../../../recovery/hris-porting-blueprint-2026-09-09/session-evidence/sys/g2-golden-scenarios.csv",
+      "sha256": "2476313506b65294ae8d67a052bb854b22d07c4101cceb144d0c45f3e34de76d",
+      "bytes": 16979
+    },
+    "g2ImplementationContract": {
+      "path": "../../../recovery/hris-porting-blueprint-2026-09-09/session-evidence/sys/g2-implementation-contract.v2.md",
+      "sha256": "fd4c05cc6dd836441e9a0786484103deafa0a7375d3c1b8124d16dabafd149a7",
+      "bytes": 18920
+    },
+    "g2PlatformPhysicalBlueprint": {
+      "path": "../../../recovery/hris-porting-blueprint-2026-09-09/session-evidence/sys/g2-platform-physical-schema.sql",
+      "sha256": "5bd0fe6877ea0fb5a545f701dba7847c173a52dbe415a2b642d2a6a138594aa8",
+      "bytes": 58299,
+      "authority": "DESIGN_INPUT_ONLY_NOT_EXECUTED_FLYWAY_STATE"
+    },
+    "g2StateMachines": {
+      "path": "../../../recovery/hris-porting-blueprint-2026-09-09/session-evidence/sys/g2-state-machines.md",
+      "sha256": "7ee14c1369945498029b00b119679f3f6dd9c1285df1f176b186bbd1b45b8f10",
+      "bytes": 11847
+    },
+    "g2TransportSchemas": {
+      "path": "../../../recovery/hris-porting-blueprint-2026-09-09/session-evidence/sys/g2-transport-schemas.v1.json",
+      "sha256": "7067a7adad828d4918220fcde54fc0fa9a2add5db1d5745e0a4acb0a50698cf7",
+      "bytes": 95808,
+      "authority": "HISTORICAL_INPUT_REQUIRING_THE_CORRECTIONS_SEALED_HERE"
+    },
+    "apiPepBindings": {
+      "path": "../../../recovery/hris-porting-blueprint-2026-09-09/coding-readiness/api-pep-binding-register.csv",
+      "sha256": "0e38d724516a8b271069241ffa0fb6400984dc703758767de53cbaffb4f93da3",
+      "bytes": 126576
+    },
+    "acceptedIaqApiRegister": {
+      "path": "../../../recovery/exact-supplements/2026-10-06/accepted-successors/hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-api-contract-register.csv",
+      "sha256": "5f47efd33a1d5aa3d11a4d9fd5716cd4e35650e9fec0868ecb77c8c90a4cd988",
+      "bytes": 100020,
+      "entry": "IAQ-059"
+    },
+    "validExactIaqProjectionSchemas": {
+      "path": "../../../recovery/exact-supplements/2026-10-06/hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-projection-schemas.v1.json",
+      "sha256": "b185accd712216c39bf8a66f70cbbf0092a27a8c2c5e3d7457ecd4d511afa048",
+      "bytes": 1523618,
+      "qualification": "PIN_EXACT_CHECKPOINT; jq-valid; 66 projections replay PASS; byte-identical to the accepted projection successor; semantic input only, not implementation or production-authorization proof"
+    },
+    "invalidHistoricalIaqProjectionMirror": {
+      "path": "../../../recovery/hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-projection-schemas.v1.json",
+      "sha256": "48b5fbe05470c52de95a2f86fc098ba4c06cf3e6bceb7db2330e08483826b196",
+      "bytes": 400112,
+      "decision": "UNUSABLE_UI_TRUNCATED_INVALID_JSON_NEVER_PARSE_OR_CITE_AS_CANONICAL"
+    },
+    "actionKeyRegister": {
+      "path": "../../../recovery/exact-supplements/2026-10-06/hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-action-key-register.csv",
+      "sha256": "19a12600eb11e4d6c7c6098ad7f44f8afb544a1d9c698c3d2305e9e8150b5b7e",
+      "bytes": 78170
+    }
+  },
+  "observedRuntimeEvidence": {
+    "backendRepositoryPin": {
+      "branch": "dwp-dev",
+      "commit": "e709c080661e1ffcdba5e1e89c28ea49557cf50d",
+      "tree": "7076a081410fcf10cd4c6d5ece9ed3a882de1af4",
+      "originExact": true,
+      "clean": true
+    },
+    "frontendRepositoryPinBeforeThisDisposition": {
+      "branch": "dwp-dev",
+      "commit": "9f6fa831cb72dde11f9370a80ee8dee7c126d882",
+      "tree": "d13c29904fe31f86bc1ff0c2007b9d891ec9ef95",
+      "originExact": true,
+      "clean": true
+    },
+    "agentRepositoryPin": {
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "originExact": true,
+      "clean": true,
+      "decision": "NO_SYS006_OWNER_CHANGE_UNLESS_A_LATER_HANDLER_ALLOCATION_EXPLICITLY_NAMES_DWP_AGENT"
+    },
+    "canonicalTypedSchema": {
+      "repository": "dwp-backend",
+      "path": "contracts/hris/canonical/schemas/platform-dependency-canonical-schemas.v1.json",
+      "sha256": "5674845a3ba00928e8c5e05dc99a7869d3dae7ba2cc48f360c8b16db47ec3d8f",
+      "bytes": 28109,
+      "definitions": ["PDX_004", "PDX_005", "PDX_006"]
+    },
+    "generatedTypedArtifacts": [
+      {
+        "repository": "dwp-backend",
+        "path": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/generated/AutomationHandlerManifestV1.java",
+        "sha256": "1e2007894844f1d2255231af083a9bf2ae5a7bc45c7501458f1607a27ea6e999",
+        "bytes": 15353
+      },
+      {
+        "repository": "dwp-backend",
+        "path": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/generated/AutomationInvocationV1.java",
+        "sha256": "976a7ca0aa3dd4d5d00fafd31c6d8165c433552c4d06e18ffb6527f54f127d52",
+        "bytes": 17341
+      },
+      {
+        "repository": "dwp-backend",
+        "path": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/generated/AutomationRunItemReceiptV1.java",
+        "sha256": "4b2f4825ca2acb98ce63938909e33cd4c928e9170d5d7c027af9111bf8e99f55",
+        "bytes": 17347
+      }
+    ],
+    "generatedTypedArtifactTest": {
+      "repository": "dwp-backend",
+      "path": "dwp-platform-contracts/src/test/java/com/dwp/platform/contract/GeneratedHrisContractTest.java",
+      "sha256": "4faf37b3813588d155580c7c976cbb4469752ca22c0188b89ca3822ff5b5bd01",
+      "bytes": 42879
+    },
+    "sharedCommandReceipt": {
+      "repository": "dwp-backend",
+      "path": "dwp-platform-server/src/main/resources/db/migration/V327__create_hris_work_explorer.sql",
+      "sha256": "8586a323808e902533e073c83bc6fb83f456173a9f626801bfbe611f19e7d9d7",
+      "bytes": 12932,
+      "table": "sys_hris_command_receipts",
+      "queryContract": "SYS-API-038",
+      "pep": "PEP-SYS-040",
+      "primaryOwner": "BASE-TFR-SYS-002",
+      "decision": "REUSE_NO_SECOND_TABLE_CONTROLLER_ROUTE_OR_COMPLETION_CREDIT"
+    },
+    "sharedReceiptController": {
+      "repository": "dwp-backend",
+      "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisCommandReceiptController.java",
+      "sha256": "23bf42b0a6b7ac76421fbf39d81c728cdbf608cf9d22f3a5795999d7eb3a84e4",
+      "bytes": 3446,
+      "fact": "The shared controller is currently conditional only on Explorer or controlled-transfer and therefore requires one bounded automation feature-gate bridge."
+    },
+    "sharedReceiptAuthorityQuery": {
+      "repository": "dwp-backend",
+      "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/AuthHrisExplorerAuthorityEvidenceQuery.java",
+      "sha256": "00572209eb5d4b754deb299d4b636b3b580b64d21f7c8e44268afa8c8bc07f8a",
+      "bytes": 59825,
+      "fact": "PLATFORM_ORIGIN_ROUTES_BY_ACTION currently contains no SYS-006 action and must receive the exact fourteen action-key to route-contract-key mappings."
+    },
+    "sharedDomainEventLedger": {
+      "repository": "dwp-backend",
+      "path": "dwp-core/src/main/resources/db/migration/R__create_domain_event_delivery_ledger.sql",
+      "sha256": "e7123a27e6d35c991f8f49045f0f92205ff417bfbcf89a2b9a32f9ad0f479e42",
+      "bytes": 7426,
+      "tables": ["sys_domain_event_outbox", "sys_domain_event_inbox"]
+    },
+    "sharedAuditLedger": {
+      "repository": "dwp-backend",
+      "path": "dwp-platform-server/src/main/resources/db/migration/V11__create_enterprise_audit_control_plane.sql",
+      "sha256": "ca16c1cce51f0f4787eec69090152a03e04c6ac61908931d2e5dda2697f0f572",
+      "bytes": 17495,
+      "tables": ["sys_audit_outbox", "sys_audit_events"]
+    },
+    "sys002OperationsProjection": {
+      "repository": "dwp-backend",
+      "path": "dwp-platform-server/src/main/resources/db/migration/V331__create_hris_operational_exception_projection.sql",
+      "sha256": "ca4ba4733960e684921bb4e5ba5aebe6adfe50dff30c848e1af5c158982ae3c1",
+      "bytes": 9671
+    },
+    "sys002OperationsService": {
+      "repository": "dwp-backend",
+      "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/operations/HrisOperationsService.java",
+      "sha256": "d45cbc1476e200bfbd97b9f24a8a3d86c14ddfd1bb4ac4acb6e7bbd0e83c93e6",
+      "bytes": 20430,
+      "fact": "Current SYS-002 projection intentionally emits no SYS-006 automation actions."
+    },
+    "sys002FrontendContract": {
+      "repository": "dwp-frontend",
+      "path": "apps/dwp/src/features/hris/administration/operations/model/hris-operations-contract.ts",
+      "sha256": "24f49b373475be1889578b9dfd1388cebaf586badc1753e3d3e0eab2bbf8590d",
+      "bytes": 22843
+    },
+    "sys002AcceptanceReceipt": {
+      "repository": "dwp-frontend",
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-01-module-results-r1/base-tfr-sys-002/acceptance-receipt.v1.json",
+      "sha256": "07846bcfb7f8929623c4f5eb076c8563fc5203b10561d6915ec2635f4f502420",
+      "bytes": 7919
+    },
+    "currentAuthorizationBundle": {
+      "repository": "dwp-backend",
+      "path": "contracts/product-authorization/product-surfaces-v1.bundle-v55.json",
+      "sha256": "8e74e483cac14d28d40a44f3017782d33d2e5894df6943efcd9b66ecdfbe0a3b",
+      "bytes": 2632213,
+      "fact": "No SYS-006 automation browser or owner route is active in v55."
+    },
+    "currentPlatformHighWater": {
+      "repository": "dwp-backend",
+      "path": "dwp-platform-server/src/main/resources/db/migration/V332__bind_hris_reference_configuration_owner_evidence.sql",
+      "sha256": "6374af4b31590aa9aaa3dfbcbf6c028476d6c2e31e645df3ec3470511cbb61bf",
+      "bytes": 16290,
+      "fact": "V332 belongs to PER-004 and creates no sys_automation table."
+    },
+    "currentAuthHighWater": {
+      "repository": "dwp-backend",
+      "path": "dwp-auth-server/src/main/resources/db/migration/V264__declare_hris_r7_batch04_per004_v55_authorization_seed.sql",
+      "sha256": "ef96150721feaf388584e5241f2a782a8a4d96bd2e7e54350e26634744169b08",
+      "bytes": 2060,
+      "fact": "V264 belongs to PER-004 and registers no SYS-006 feature."
+    },
+    "authorizationReleaseLineageGap": {
+      "repository": "dwp-backend",
+      "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationReleaseLineage.java",
+      "sha256": "3e4b5e186b8d1322e07cd3db5b00f7392802420cc35cbea8d52886d1429eb4fb",
+      "bytes": 14299,
+      "fact": "The current strict lineage stops at v54 even though the accepted v55 bundle and V264 seed exist.",
+      "v55Pin": {
+        "contractChecksum": "7fb2121a1209b87234bcb389a9bd4c4addca3c4e8c8776a9aac70d278c74d4e6",
+        "artifactSha256": "8e74e483cac14d28d40a44f3017782d33d2e5894df6943efcd9b66ecdfbe0a3b",
+        "counts": {
+          "capabilities": 270,
+          "accessPolicies": 24,
+          "entitlementExpressions": 17,
+          "predicatePolicies": 82,
+          "routes": 1104
+        }
+      },
+      "decision": "The SYS-006 v56 central successor must first append the already-accepted exact v55 pin, then append v56 and move the seed index latest pointer directly to the contiguous 1-through-56 lineage."
+    },
+    "schemaDeltaProof": {
+      "currentSysAutomationCreateTableCount": 0,
+      "currentSysAutomationRuntimeRouteCount": 0,
+      "requiredNewTableCount": 8,
+      "decision": "PLATFORM_OWNED_SCHEMA_DELTA_PROVEN_V333_REQUIRED_BUT_NOT_RESERVED"
+    }
+  },
+  "sourceDerivation": {
+    "sourceRowCount": 10,
+    "sourceArtifacts": [
+      "portalRouter.js:4 JobSeqno",
+      "portalRouter.js:9 JobSeqnoDetail",
+      "sysRouter.js:240 Work",
+      "sysRouter.js:245 WorkDetail",
+      "sysRouter.js:250 WorkExeHist",
+      "sysRouter.js:255 WorkExeHistDetail",
+      "BatchController",
+      "JobSeqnoController",
+      "JobSeqnoInitController",
+      "JobSeqno / sys_job_seqno"
+    ],
+    "targetBehavior": "Behavioral reimplementation as signed versioned allowlisted handler manifests, schema-validated invocations, durable receipts, lease-fenced attempts, deterministic checkpoints, failed-item retry and immutable state events.",
+    "sourceReuse": "NO_SKKF_CODE_REUSE",
+    "forbiddenExecution": [
+      "ARBITRARY_CLASS_NAME",
+      "ARBITRARY_METHOD_NAME",
+      "ARBITRARY_SQL",
+      "UNSIGNED_OR_UNALLOWLISTED_HANDLER"
+    ]
+  },
+  "ownershipDecision": {
+    "runtimeOwner": "dwp-platform-server",
+    "javaPackageRoot": "com.dwp.services.platform.hrisconfiguration.automation",
+    "sourceRoot": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/automation",
+    "testRoot": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/automation",
+    "migrationRoot": "dwp-platform-server/src/main/resources/db/migration",
+    "sharedBridgeExceptions": [
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/HrisCommandReceiptController.java",
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/explorer/AuthHrisExplorerAuthorityEvidenceQuery.java"
+    ],
+    "sharedBridgeRule": "The later admitted central delta may only add the HRIS_AUTOMATION_CONTROL_PLANE condition and the sealed fourteen action-to-route mappings to these SYS-002-owned shared bridge files. It must not fork their controller, store, route, authority client or completion credit.",
+    "newServiceForbidden": "DO_NOT_CREATE_DWP_SYS_SERVER",
+    "platformOwns": [
+      "automation definition identity and metadata",
+      "signed immutable definition versions and lifecycle",
+      "approved schedules pinned to one active version",
+      "run, run attempt, item, item attempt and checkpoint orchestration",
+      "lease, fence, concurrency, idempotency, cancellation and compensation receipt coordination",
+      "shared command receipt linking, outbox event and audit evidence"
+    ],
+    "domainOwnersOwn": [
+      "typed handler implementation allocated to HRM, PER, TIM or PAY",
+      "domain input resolution, domain authorization and effect idempotency",
+      "typed item result receipt and declared compensation implementation"
+    ],
+    "agentRepository": "OUT_OF_SCOPE_UNLESS_A_LATER_EXACT_HANDLER_ALLOCATION_NAMES_IT"
+  },
+  "contractDecision": {
+    "primaryApis": [
+      "SYS-API-017.GET",
+      "SYS-API-017.POST",
+      "SYS-API-018",
+      "SYS-API-019",
+      "SYS-API-020",
+      "SYS-API-046",
+      "SYS-API-047",
+      "SYS-API-048",
+      "SYS-API-049",
+      "SYS-API-050",
+      "SYS-API-051",
+      "SYS-API-052",
+      "SYS-API-053",
+      "SYS-API-054",
+      "SYS-API-055",
+      "SYS-API-056"
+    ],
+    "primaryPepBindings": [
+      "PEP-SYS-017",
+      "PEP-SYS-018",
+      "PEP-SYS-019",
+      "PEP-SYS-020",
+      "PEP-SYS-021",
+      "PEP-SYS-048",
+      "PEP-SYS-049",
+      "PEP-SYS-050",
+      "PEP-SYS-051",
+      "PEP-SYS-052",
+      "PEP-SYS-053",
+      "PEP-SYS-054",
+      "PEP-SYS-055",
+      "PEP-SYS-056",
+      "PEP-SYS-057",
+      "PEP-SYS-058"
+    ],
+    "operationBindings": [
+      {
+        "api": "SYS-API-017.GET",
+        "pep": "PEP-SYS-017",
+        "method": "GET",
+        "browserPath": "/api/platform/v1/admin/hris/automations",
+        "meaning": "DEFINITION_CATALOG"
+      },
+      {
+        "api": "SYS-API-017.POST",
+        "pep": "PEP-SYS-018",
+        "method": "POST",
+        "browserPath": "/api/platform/v1/admin/hris/automations",
+        "meaning": "CREATE_DEFINITION_DRAFT"
+      },
+      {
+        "api": "SYS-API-018",
+        "pep": "PEP-SYS-019",
+        "method": "POST",
+        "browserPath": "/api/platform/v1/admin/hris/automations/{automationId}/runs",
+        "meaning": "QUEUE_RUN"
+      },
+      {
+        "api": "SYS-API-019",
+        "pep": "PEP-SYS-020",
+        "method": "GET",
+        "browserPath": "/api/platform/v1/admin/hris/automation-runs/{runId}",
+        "meaning": "RUN_ATTEMPT_ITEM_CHECKPOINT_RECEIPT"
+      },
+      {
+        "api": "SYS-API-020",
+        "pep": "PEP-SYS-021",
+        "method": "POST",
+        "browserPath": "/api/platform/v1/admin/hris/automation-runs/{runId}/retry",
+        "meaning": "CREATE_RETRY_ATTEMPT"
+      },
+      {
+        "api": "SYS-API-046",
+        "pep": "PEP-SYS-048",
+        "method": "POST",
+        "browserPath": "/api/platform/v1/admin/hris/automations/{automationId}/versions",
+        "meaning": "CREATE_SIGNED_DRAFT_VERSION"
+      },
+      {
+        "api": "SYS-API-047",
+        "pep": "PEP-SYS-049",
+        "method": "POST",
+        "browserPath": "/api/platform/v1/admin/hris/automations/{automationId}/versions/{version}/validate",
+        "meaning": "DRAFT_TO_VALIDATED"
+      },
+      {
+        "api": "SYS-API-048",
+        "pep": "PEP-SYS-050",
+        "method": "POST",
+        "browserPath": "/api/platform/v1/admin/hris/automations/{automationId}/versions/{version}/submit",
+        "meaning": "VALIDATED_TO_PENDING_APPROVAL"
+      },
+      {
+        "api": "SYS-API-049",
+        "pep": "PEP-SYS-051",
+        "method": "POST",
+        "browserPath": "/api/platform/v1/admin/hris/automations/{automationId}/versions/{version}/approve",
+        "meaning": "PENDING_APPROVAL_TO_APPROVED"
+      },
+      {
+        "api": "SYS-API-050",
+        "pep": "PEP-SYS-052",
+        "method": "POST",
+        "browserPath": "/api/platform/v1/admin/hris/automations/{automationId}/versions/{version}/activate",
+        "meaning": "APPROVED_TO_ACTIVE"
+      },
+      {
+        "api": "SYS-API-051",
+        "pep": "PEP-SYS-053",
+        "method": "POST",
+        "browserPath": "/api/platform/v1/admin/hris/automations/{automationId}/schedules",
+        "meaning": "CREATE_DRAFT_SCHEDULE"
+      },
+      {
+        "api": "SYS-API-052",
+        "pep": "PEP-SYS-054",
+        "method": "POST",
+        "browserPath": "/api/platform/v1/admin/hris/automation-schedules/{scheduleId}/submit",
+        "meaning": "SCHEDULE_DRAFT_TO_PENDING_APPROVAL"
+      },
+      {
+        "api": "SYS-API-053",
+        "pep": "PEP-SYS-055",
+        "method": "POST",
+        "browserPath": "/api/platform/v1/admin/hris/automation-schedules/{scheduleId}/approve",
+        "meaning": "SCHEDULE_PENDING_APPROVAL_TO_APPROVED"
+      },
+      {
+        "api": "SYS-API-054",
+        "pep": "PEP-SYS-056",
+        "method": "POST",
+        "browserPath": "/api/platform/v1/admin/hris/automation-schedules/{scheduleId}/activate",
+        "meaning": "SCHEDULE_APPROVED_TO_ACTIVE"
+      },
+      {
+        "api": "SYS-API-055",
+        "pep": "PEP-SYS-057",
+        "method": "POST",
+        "browserPath": "/api/platform/v1/admin/hris/automation-schedules/{scheduleId}/suspend",
+        "meaning": "SCHEDULE_ACTIVE_TO_SUSPENDED"
+      },
+      {
+        "api": "SYS-API-056",
+        "pep": "PEP-SYS-058",
+        "method": "POST",
+        "browserPath": "/api/platform/v1/admin/hris/automation-runs/{runId}/cancel",
+        "meaning": "CANCEL_PRE_EFFECT_OR_COMPENSATE_POST_EFFECT"
+      }
+    ],
+    "centralRouteContracts": [
+      {
+        "api": "SYS-API-017.GET",
+        "routeContractKey": "route.hcm.configuration.automation-catalog.data"
+      },
+      {
+        "api": "SYS-API-017.POST",
+        "routeContractKey": "route.hcm.configuration.automation-definition-create.action"
+      },
+      {
+        "api": "SYS-API-018",
+        "routeContractKey": "route.hcm.configuration.automation-run-queue.action"
+      },
+      {
+        "api": "SYS-API-019",
+        "routeContractKey": "route.hcm.configuration.automation-run-detail.data"
+      },
+      {
+        "api": "SYS-API-020",
+        "routeContractKey": "route.hcm.configuration.automation-run-retry.action"
+      },
+      {
+        "api": "SYS-API-046",
+        "routeContractKey": "route.hcm.configuration.automation-version-create.action"
+      },
+      {
+        "api": "SYS-API-047",
+        "routeContractKey": "route.hcm.configuration.automation-version-validate.action"
+      },
+      {
+        "api": "SYS-API-048",
+        "routeContractKey": "route.hcm.configuration.automation-version-submit.action"
+      },
+      {
+        "api": "SYS-API-049",
+        "routeContractKey": "route.hcm.configuration.automation-version-approve.action"
+      },
+      {
+        "api": "SYS-API-050",
+        "routeContractKey": "route.hcm.configuration.automation-version-activate.action"
+      },
+      {
+        "api": "SYS-API-051",
+        "routeContractKey": "route.hcm.configuration.automation-schedule-create.action"
+      },
+      {
+        "api": "SYS-API-052",
+        "routeContractKey": "route.hcm.configuration.automation-schedule-submit.action"
+      },
+      {
+        "api": "SYS-API-053",
+        "routeContractKey": "route.hcm.configuration.automation-schedule-approve.action"
+      },
+      {
+        "api": "SYS-API-054",
+        "routeContractKey": "route.hcm.configuration.automation-schedule-activate.action"
+      },
+      {
+        "api": "SYS-API-055",
+        "routeContractKey": "route.hcm.configuration.automation-schedule-suspend.action"
+      },
+      {
+        "api": "SYS-API-056",
+        "routeContractKey": "route.hcm.configuration.automation-run-cancel.action"
+      }
+    ],
+    "receiptOriginatingActionRouteBindings": [
+      {
+        "originatingAction": "hris.action.sys.post.platform.v1.admin.hris.automations",
+        "routeContractKey": "route.hcm.configuration.automation-definition-create.action"
+      },
+      {
+        "originatingAction": "hris.action.sys.post.platform.v1.admin.hris.automations.resource.runs",
+        "routeContractKey": "route.hcm.configuration.automation-run-queue.action"
+      },
+      {
+        "originatingAction": "hris.action.sys.post.platform.v1.admin.hris.automation-runs.resource.retry",
+        "routeContractKey": "route.hcm.configuration.automation-run-retry.action"
+      },
+      {
+        "originatingAction": "hris.action.sys.post.platform.v1.admin.hris.automations.resource.versions",
+        "routeContractKey": "route.hcm.configuration.automation-version-create.action"
+      },
+      {
+        "originatingAction": "hris.action.sys.post.platform.v1.admin.hris.automations.resource.versions.resource.validate",
+        "routeContractKey": "route.hcm.configuration.automation-version-validate.action"
+      },
+      {
+        "originatingAction": "hris.action.sys.post.platform.v1.admin.hris.automations.resource.versions.resource.submit",
+        "routeContractKey": "route.hcm.configuration.automation-version-submit.action"
+      },
+      {
+        "originatingAction": "hris.action.sys.post.platform.v1.admin.hris.automations.resource.versions.resource.approve",
+        "routeContractKey": "route.hcm.configuration.automation-version-approve.action"
+      },
+      {
+        "originatingAction": "hris.action.sys.post.platform.v1.admin.hris.automations.resource.versions.resource.activate",
+        "routeContractKey": "route.hcm.configuration.automation-version-activate.action"
+      },
+      {
+        "originatingAction": "hris.action.sys.post.platform.v1.admin.hris.automations.resource.schedules",
+        "routeContractKey": "route.hcm.configuration.automation-schedule-create.action"
+      },
+      {
+        "originatingAction": "hris.action.sys.post.platform.v1.admin.hris.automation-schedules.resource.submit",
+        "routeContractKey": "route.hcm.configuration.automation-schedule-submit.action"
+      },
+      {
+        "originatingAction": "hris.action.sys.post.platform.v1.admin.hris.automation-schedules.resource.approve",
+        "routeContractKey": "route.hcm.configuration.automation-schedule-approve.action"
+      },
+      {
+        "originatingAction": "hris.action.sys.post.platform.v1.admin.hris.automation-schedules.resource.activate",
+        "routeContractKey": "route.hcm.configuration.automation-schedule-activate.action"
+      },
+      {
+        "originatingAction": "hris.action.sys.post.platform.v1.admin.hris.automation-schedules.resource.suspend",
+        "routeContractKey": "route.hcm.configuration.automation-schedule-suspend.action"
+      },
+      {
+        "originatingAction": "hris.action.sys.post.platform.v1.admin.hris.automation-runs.resource.cancel",
+        "routeContractKey": "route.hcm.configuration.automation-run-cancel.action"
+      }
+    ],
+    "receiptBridgeRule": "The shared command receipt stores the exact actionKey as originatingAction. AuthHrisExplorerAuthorityEvidenceQuery adds only these fourteen mappings, and HrisCommandReceiptController adds the HRIS automation feature condition while preserving SYS-API-038, PEP-SYS-040 and SYS-002 ownership.",
+    "primaryEvent": "SYS-EVT-004",
+    "sharedReuseOnly": [
+      "IAQ-059",
+      "SYS-API-035",
+      "SYS-API-036",
+      "SYS-API-038",
+      "SYS-EVT-009",
+      "PEP-SYS-037",
+      "PEP-SYS-038",
+      "PEP-SYS-040"
+    ],
+    "sysApi017PostNormalization": {
+      "oldShapeSuperseded": "AutomationCommand containing handlerKey, schedule, concurrencyKey and enabled is rejected.",
+      "newMeaning": "Create only the automation definition identity and non-executable metadata in DRAFT.",
+      "allowedFields": ["automationKey", "displayName", "description", "ownerDomain"],
+      "forbiddenFields": [
+        "handlerKey",
+        "handlerContractVersion",
+        "schedule",
+        "concurrencyKey",
+        "enabled",
+        "activationState"
+      ],
+      "delegatedTo": {
+        "version": "SYS-API-046",
+        "schedule": "SYS-API-051",
+        "activation": "SYS-API-050_OR_SYS-API-054"
+      }
+    },
+    "commandRules": {
+      "successStatus": 202,
+      "receipt": "DURABLE_SHARED_SYS_HRIS_COMMAND_RECEIPT",
+      "requiredHeaders": ["Authorization", "X-Correlation-Id", "X-Purpose-Code", "Idempotency-Key"],
+      "casHeaderForExistingAggregateMutation": "If-Match",
+      "closedProblemStatuses": [400, 401, 403, 404, 409, 422, 429, 503]
+    },
+    "closedTransportSchemas": {
+      "schemaDialect": "https://json-schema.org/draft/2020-12/schema",
+      "schemaRule": "These authoritative JSON-Schema-shaped fragments supersede the historical prose and obsolete monolithic AutomationCommand only for SYS-API-017 GET/POST and SYS-API-019. Every object has additionalProperties false; every nullable field in the newly owned catalog and run-detail responses is required and encoded as explicit null; the reused canonical HrisCommandReceiptV1 response alone preserves NON_NULL omission for its optional aggregateVersion and resultRef; optional query fields are omitted when absent; arrays preserve the stated stable order; and validation failure returns the existing closed Problem schema.",
+      "numericInteropRule": {
+        "safeJsonIntegerMaximum": 9007199254740991,
+        "numberRule": "Every SYS-006 integer emitted as a JSON number, including API, PDX and event envelope revisions, versions and ordinals, is schema- and storage-bounded to 9007199254740991. Materialized item counts and item sequences are additionally bounded to canonical PDX-005 expectedItemCount 1000000000; attempt numbers remain bounded to 20.",
+        "bigintStringRule": "A signed-BIGINT value used in a JCS identity or digest beyond the safe-number domain is encoded as a no-leading-zero positive base-10 JSON string and parsed without coercion with an exact upper bound 9223372036854775807. Raw tenant IDs, database IDs and fence epochs never enter JSON/JCS as unsafe numbers.",
+        "signedDocumentRule": "Every RFC-8785/JCS-signed definition, execution policy, handler manifest or schedule policy document applies the same number-or-decimal-string rule to versionNumber, objectRevision, handlerManifestRevision, compatibilityBaselineVersion, submittedSubjectRevision, approvedSubjectRevision and every nested integer token before signature verification."
+      },
+      "commonTypes": {
+        "Uuid": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "Instant": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "Digest": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "SchemaVersion": {
+          "type": "string",
+          "pattern": "^[A-Za-z][A-Za-z0-9._-]{0,127}\\.v[1-9][0-9]*$"
+        },
+        "Cursor": {
+          "type": "string",
+          "minLength": 16,
+          "maxLength": 2048
+        },
+        "Fields": {
+          "description": "Closed SYS-API-017 catalog field-name set used by the query and field decision summary.",
+          "type": "array",
+          "maxItems": 14,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": [
+              "definitionPublicId",
+              "automationKey",
+              "ownerDomain",
+              "derivedLifecycleState",
+              "activeVersionNumber",
+              "versionNumber",
+              "lifecycleState",
+              "handlerKey",
+              "handlerContractVersion",
+              "objectRevision",
+              "schedulePublicId",
+              "pinnedVersionNumber",
+              "timezone",
+              "nextFireAt"
+            ]
+          }
+        },
+        "MaskedField": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["decision", "displayValue"],
+          "properties": {
+            "decision": {
+              "const": "MASK"
+            },
+            "displayValue": {
+              "const": "••••"
+            }
+          }
+        },
+        "OmittedField": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["decision"],
+          "properties": {
+            "decision": {
+              "const": "OMIT"
+            }
+          }
+        },
+        "ProjectedUuid": {
+          "oneOf": [
+            {
+              "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/Uuid"
+            },
+            {
+              "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/MaskedField"
+            },
+            {
+              "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/OmittedField"
+            }
+          ]
+        },
+        "ProjectedAutomationKey": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9.-]{2,63}$"
+            },
+            {
+              "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/MaskedField"
+            },
+            {
+              "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/OmittedField"
+            }
+          ]
+        },
+        "ProjectedOwnerDomain": {
+          "oneOf": [
+            {
+              "enum": ["HRM", "PER", "TIM", "PAY"]
+            },
+            {
+              "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/MaskedField"
+            },
+            {
+              "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/OmittedField"
+            }
+          ]
+        },
+        "ProjectedDefinitionState": {
+          "oneOf": [
+            {
+              "enum": ["DRAFT", "ACTIVE", "SUSPENDED", "RETIRED"]
+            },
+            {
+              "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/MaskedField"
+            },
+            {
+              "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/OmittedField"
+            }
+          ]
+        },
+        "ProjectedPositiveInteger": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            {
+              "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/MaskedField"
+            },
+            {
+              "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/OmittedField"
+            }
+          ]
+        },
+        "ProjectedNullablePositiveInteger": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/MaskedField"
+            },
+            {
+              "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/OmittedField"
+            }
+          ]
+        },
+        "ProjectedVersionState": {
+          "oneOf": [
+            {
+              "enum": [
+                "DRAFT",
+                "VALIDATED",
+                "PENDING_APPROVAL",
+                "APPROVED",
+                "ACTIVE",
+                "SUSPENDED",
+                "RETIRED"
+              ]
+            },
+            {
+              "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/MaskedField"
+            },
+            {
+              "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/OmittedField"
+            }
+          ]
+        },
+        "ProjectedHandlerKey": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9._-]{2,127}$"
+            },
+            {
+              "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/MaskedField"
+            },
+            {
+              "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/OmittedField"
+            }
+          ]
+        },
+        "ProjectedSchemaVersion": {
+          "oneOf": [
+            {
+              "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/SchemaVersion"
+            },
+            {
+              "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/MaskedField"
+            },
+            {
+              "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/OmittedField"
+            }
+          ]
+        },
+        "ProjectedScheduleState": {
+          "oneOf": [
+            {
+              "enum": ["DRAFT", "PENDING_APPROVAL", "APPROVED", "ACTIVE", "SUSPENDED"]
+            },
+            {
+              "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/MaskedField"
+            },
+            {
+              "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/OmittedField"
+            }
+          ]
+        },
+        "ProjectedTimezone": {
+          "oneOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            },
+            {
+              "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/MaskedField"
+            },
+            {
+              "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/OmittedField"
+            }
+          ]
+        },
+        "ProjectedNullableInstant": {
+          "oneOf": [
+            {
+              "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/Instant"
+            },
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/MaskedField"
+            },
+            {
+              "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/OmittedField"
+            }
+          ]
+        }
+      },
+      "cursorBinding": "Every cursor is authenticated and binds tenant ID, caller subject, owner-query ID, resource-type/filter digest, purpose, authorization revision, asOf, stable sort tuple and page limit. SYS-API-017 additionally binds the requested field set and field-policy revision. SYS-API-019 binds the invariant run-detail projection version and collection kind instead of accepting a field set. A mismatch, expiry or tamper returns 400 and never silently restarts pagination.",
+      "catalogProjectionClosure": {
+        "allowedFields": [
+          "definitionPublicId",
+          "automationKey",
+          "ownerDomain",
+          "derivedLifecycleState",
+          "activeVersionNumber",
+          "versionNumber",
+          "lifecycleState",
+          "handlerKey",
+          "handlerContractVersion",
+          "objectRevision",
+          "schedulePublicId",
+          "pinnedVersionNumber",
+          "timezone",
+          "nextFireAt"
+        ],
+        "queryRule": "SYS-API-017 GET rejects any fields value outside allowedFields with 400. resourceType and availableActions are control fields and are always present; each requested or policy-controlled business field remains a required property whose value is either its visible scalar, MaskedField or OmittedField, so MASK/OMIT never violates the closed union.",
+        "decisionRule": "Field policy is evaluated independently for every returned resource and field. Visible, masked and omitted names are reflected in fieldDecisionSummary. An unrequested allowed field is OmittedField. If any projected business field in a row is MaskedField or OmittedField, availableActions is empty for that row; this conservative closed rule prevents state, identity or authorization inference and no hidden value is copied into a descriptor.",
+        "stableSortRule": "Sorting and cursor binding use owner-side persisted values before projection. Masking or omission never changes the terminal tuple or leaks it through the cursor."
+      },
+      "runDetailProjectionClosure": {
+        "decision": "INVARIANT_ADMINISTRATIVE_CONTROL_PROJECTION",
+        "queryRule": "SYS-API-019 does not accept fields. Its exact top-level and nested properties are invariant automation-control metadata after the route-level owner authorization decision; they are never individually MASKed, OMITted or inferred from a client field set.",
+        "actionRule": "runPublicId and objectRevision are invariant control fields used to bind RETRY_RUN or CANCEL_RUN descriptors. Only RunActionArray is legal. retryEligibleItemCount and cancelEligibility are derived from the complete owner-side persisted item/effect set before pagination; the state, budget and eligibility schema is an executable upper bound, and authorization may only remove an otherwise eligible descriptor.",
+        "cursorRule": "attempt, item and checkpoint cursors bind the invariant run-detail projection version, collection kind and terminal tuple. Empty arrays mean genuinely empty authorized collections and never encode field omission.",
+        "fieldDecisionSummary": "NOT_APPLICABLE_AND_FORBIDDEN"
+      },
+      "fieldDecisionSummary": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["visible", "masked", "omitted", "fieldPolicyRevision"],
+        "properties": {
+          "visible": {
+            "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/Fields"
+          },
+          "masked": {
+            "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/Fields"
+          },
+          "omitted": {
+            "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/Fields"
+          },
+          "fieldPolicyRevision": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          }
+        }
+      },
+      "actionDescriptorSchemas": {
+        "CollectionActionDescriptor": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "method",
+            "actionKey",
+            "targetResourceType",
+            "resolvedHref",
+            "idempotencyPolicy",
+            "stepUpPolicy"
+          ],
+          "properties": {
+            "method": {
+              "const": "POST"
+            },
+            "actionKey": {
+              "const": "hris.action.sys.post.platform.v1.admin.hris.automations"
+            },
+            "targetResourceType": {
+              "const": "AUTOMATION_DEFINITION_COLLECTION"
+            },
+            "resolvedHref": {
+              "const": "/api/platform/v1/admin/hris/automations"
+            },
+            "idempotencyPolicy": {
+              "const": "REQUIRED_IDEMPOTENCY_KEY"
+            },
+            "stepUpPolicy": {
+              "const": "OWNER_PEP_RISK_POLICY_DECISION_REQUIRED"
+            }
+          },
+          "forbidden": ["targetPublicId", "targetVersion", "expectedObjectRevision"]
+        },
+        "ResourceActionDescriptor": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "method",
+            "actionKey",
+            "targetResourceType",
+            "targetPublicId",
+            "expectedObjectRevision",
+            "resolvedHref",
+            "idempotencyPolicy",
+            "stepUpPolicy"
+          ],
+          "properties": {
+            "method": {
+              "const": "POST"
+            },
+            "actionKey": {
+              "enum": [
+                "hris.action.sys.post.platform.v1.admin.hris.automations.resource.runs",
+                "hris.action.sys.post.platform.v1.admin.hris.automation-runs.resource.retry",
+                "hris.action.sys.post.platform.v1.admin.hris.automations.resource.versions",
+                "hris.action.sys.post.platform.v1.admin.hris.automations.resource.versions.resource.validate",
+                "hris.action.sys.post.platform.v1.admin.hris.automations.resource.versions.resource.submit",
+                "hris.action.sys.post.platform.v1.admin.hris.automations.resource.versions.resource.approve",
+                "hris.action.sys.post.platform.v1.admin.hris.automations.resource.versions.resource.activate",
+                "hris.action.sys.post.platform.v1.admin.hris.automations.resource.schedules",
+                "hris.action.sys.post.platform.v1.admin.hris.automation-schedules.resource.submit",
+                "hris.action.sys.post.platform.v1.admin.hris.automation-schedules.resource.approve",
+                "hris.action.sys.post.platform.v1.admin.hris.automation-schedules.resource.activate",
+                "hris.action.sys.post.platform.v1.admin.hris.automation-schedules.resource.suspend",
+                "hris.action.sys.post.platform.v1.admin.hris.automation-runs.resource.cancel"
+              ]
+            },
+            "targetResourceType": {
+              "enum": [
+                "AUTOMATION_DEFINITION",
+                "AUTOMATION_VERSION",
+                "AUTOMATION_SCHEDULE",
+                "AUTOMATION_RUN"
+              ]
+            },
+            "targetPublicId": {
+              "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/Uuid"
+            },
+            "targetVersion": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            "expectedObjectRevision": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            "resolvedHref": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 512,
+              "pattern": "^/api/platform/v1/admin/hris/[^{}?#]+$"
+            },
+            "idempotencyPolicy": {
+              "const": "REQUIRED_IDEMPOTENCY_KEY"
+            },
+            "stepUpPolicy": {
+              "const": "OWNER_PEP_RISK_POLICY_DECISION_REQUIRED"
+            }
+          },
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "targetResourceType": {
+                    "const": "AUTOMATION_VERSION"
+                  }
+                },
+                "required": ["targetResourceType"]
+              },
+              "then": {
+                "required": ["targetVersion"]
+              },
+              "else": {
+                "not": {
+                  "required": ["targetVersion"]
+                }
+              }
+            }
+          ],
+          "oneOf": [
+            {
+              "properties": {
+                "actionKey": {
+                  "const": "hris.action.sys.post.platform.v1.admin.hris.automations.resource.runs"
+                },
+                "targetResourceType": {
+                  "const": "AUTOMATION_DEFINITION"
+                },
+                "resolvedHref": {
+                  "pattern": "^/api/platform/v1/admin/hris/automations/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}/runs$"
+                }
+              }
+            },
+            {
+              "properties": {
+                "actionKey": {
+                  "const": "hris.action.sys.post.platform.v1.admin.hris.automation-runs.resource.retry"
+                },
+                "targetResourceType": {
+                  "const": "AUTOMATION_RUN"
+                },
+                "resolvedHref": {
+                  "pattern": "^/api/platform/v1/admin/hris/automation-runs/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}/retry$"
+                }
+              }
+            },
+            {
+              "properties": {
+                "actionKey": {
+                  "const": "hris.action.sys.post.platform.v1.admin.hris.automations.resource.versions"
+                },
+                "targetResourceType": {
+                  "const": "AUTOMATION_DEFINITION"
+                },
+                "resolvedHref": {
+                  "pattern": "^/api/platform/v1/admin/hris/automations/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}/versions$"
+                }
+              }
+            },
+            {
+              "properties": {
+                "actionKey": {
+                  "const": "hris.action.sys.post.platform.v1.admin.hris.automations.resource.versions.resource.validate"
+                },
+                "targetResourceType": {
+                  "const": "AUTOMATION_VERSION"
+                },
+                "resolvedHref": {
+                  "pattern": "^/api/platform/v1/admin/hris/automations/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}/versions/[1-9][0-9]*/validate$"
+                }
+              }
+            },
+            {
+              "properties": {
+                "actionKey": {
+                  "const": "hris.action.sys.post.platform.v1.admin.hris.automations.resource.versions.resource.submit"
+                },
+                "targetResourceType": {
+                  "const": "AUTOMATION_VERSION"
+                },
+                "resolvedHref": {
+                  "pattern": "^/api/platform/v1/admin/hris/automations/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}/versions/[1-9][0-9]*/submit$"
+                }
+              }
+            },
+            {
+              "properties": {
+                "actionKey": {
+                  "const": "hris.action.sys.post.platform.v1.admin.hris.automations.resource.versions.resource.approve"
+                },
+                "targetResourceType": {
+                  "const": "AUTOMATION_VERSION"
+                },
+                "resolvedHref": {
+                  "pattern": "^/api/platform/v1/admin/hris/automations/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}/versions/[1-9][0-9]*/approve$"
+                }
+              }
+            },
+            {
+              "properties": {
+                "actionKey": {
+                  "const": "hris.action.sys.post.platform.v1.admin.hris.automations.resource.versions.resource.activate"
+                },
+                "targetResourceType": {
+                  "const": "AUTOMATION_VERSION"
+                },
+                "resolvedHref": {
+                  "pattern": "^/api/platform/v1/admin/hris/automations/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}/versions/[1-9][0-9]*/activate$"
+                }
+              }
+            },
+            {
+              "properties": {
+                "actionKey": {
+                  "const": "hris.action.sys.post.platform.v1.admin.hris.automations.resource.schedules"
+                },
+                "targetResourceType": {
+                  "const": "AUTOMATION_DEFINITION"
+                },
+                "resolvedHref": {
+                  "pattern": "^/api/platform/v1/admin/hris/automations/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}/schedules$"
+                }
+              }
+            },
+            {
+              "properties": {
+                "actionKey": {
+                  "const": "hris.action.sys.post.platform.v1.admin.hris.automation-schedules.resource.submit"
+                },
+                "targetResourceType": {
+                  "const": "AUTOMATION_SCHEDULE"
+                },
+                "resolvedHref": {
+                  "pattern": "^/api/platform/v1/admin/hris/automation-schedules/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}/submit$"
+                }
+              }
+            },
+            {
+              "properties": {
+                "actionKey": {
+                  "const": "hris.action.sys.post.platform.v1.admin.hris.automation-schedules.resource.approve"
+                },
+                "targetResourceType": {
+                  "const": "AUTOMATION_SCHEDULE"
+                },
+                "resolvedHref": {
+                  "pattern": "^/api/platform/v1/admin/hris/automation-schedules/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}/approve$"
+                }
+              }
+            },
+            {
+              "properties": {
+                "actionKey": {
+                  "const": "hris.action.sys.post.platform.v1.admin.hris.automation-schedules.resource.activate"
+                },
+                "targetResourceType": {
+                  "const": "AUTOMATION_SCHEDULE"
+                },
+                "resolvedHref": {
+                  "pattern": "^/api/platform/v1/admin/hris/automation-schedules/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}/activate$"
+                }
+              }
+            },
+            {
+              "properties": {
+                "actionKey": {
+                  "const": "hris.action.sys.post.platform.v1.admin.hris.automation-schedules.resource.suspend"
+                },
+                "targetResourceType": {
+                  "const": "AUTOMATION_SCHEDULE"
+                },
+                "resolvedHref": {
+                  "pattern": "^/api/platform/v1/admin/hris/automation-schedules/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}/suspend$"
+                }
+              }
+            },
+            {
+              "properties": {
+                "actionKey": {
+                  "const": "hris.action.sys.post.platform.v1.admin.hris.automation-runs.resource.cancel"
+                },
+                "targetResourceType": {
+                  "const": "AUTOMATION_RUN"
+                },
+                "resolvedHref": {
+                  "pattern": "^/api/platform/v1/admin/hris/automation-runs/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}/cancel$"
+                }
+              }
+            }
+          ]
+        },
+        "ResourceActionArray": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/contractDecision/closedTransportSchemas/actionDescriptorSchemas/ResourceActionDescriptor"
+          },
+          "allOf": [
+            {
+              "contains": {
+                "properties": {
+                  "actionKey": {
+                    "const": "hris.action.sys.post.platform.v1.admin.hris.automations.resource.runs"
+                  }
+                },
+                "required": ["actionKey"]
+              },
+              "minContains": 0,
+              "maxContains": 1
+            },
+            {
+              "contains": {
+                "properties": {
+                  "actionKey": {
+                    "const": "hris.action.sys.post.platform.v1.admin.hris.automation-runs.resource.retry"
+                  }
+                },
+                "required": ["actionKey"]
+              },
+              "minContains": 0,
+              "maxContains": 1
+            },
+            {
+              "contains": {
+                "properties": {
+                  "actionKey": {
+                    "const": "hris.action.sys.post.platform.v1.admin.hris.automations.resource.versions"
+                  }
+                },
+                "required": ["actionKey"]
+              },
+              "minContains": 0,
+              "maxContains": 1
+            },
+            {
+              "contains": {
+                "properties": {
+                  "actionKey": {
+                    "const": "hris.action.sys.post.platform.v1.admin.hris.automations.resource.versions.resource.validate"
+                  }
+                },
+                "required": ["actionKey"]
+              },
+              "minContains": 0,
+              "maxContains": 1
+            },
+            {
+              "contains": {
+                "properties": {
+                  "actionKey": {
+                    "const": "hris.action.sys.post.platform.v1.admin.hris.automations.resource.versions.resource.submit"
+                  }
+                },
+                "required": ["actionKey"]
+              },
+              "minContains": 0,
+              "maxContains": 1
+            },
+            {
+              "contains": {
+                "properties": {
+                  "actionKey": {
+                    "const": "hris.action.sys.post.platform.v1.admin.hris.automations.resource.versions.resource.approve"
+                  }
+                },
+                "required": ["actionKey"]
+              },
+              "minContains": 0,
+              "maxContains": 1
+            },
+            {
+              "contains": {
+                "properties": {
+                  "actionKey": {
+                    "const": "hris.action.sys.post.platform.v1.admin.hris.automations.resource.versions.resource.activate"
+                  }
+                },
+                "required": ["actionKey"]
+              },
+              "minContains": 0,
+              "maxContains": 1
+            },
+            {
+              "contains": {
+                "properties": {
+                  "actionKey": {
+                    "const": "hris.action.sys.post.platform.v1.admin.hris.automations.resource.schedules"
+                  }
+                },
+                "required": ["actionKey"]
+              },
+              "minContains": 0,
+              "maxContains": 1
+            },
+            {
+              "contains": {
+                "properties": {
+                  "actionKey": {
+                    "const": "hris.action.sys.post.platform.v1.admin.hris.automation-schedules.resource.submit"
+                  }
+                },
+                "required": ["actionKey"]
+              },
+              "minContains": 0,
+              "maxContains": 1
+            },
+            {
+              "contains": {
+                "properties": {
+                  "actionKey": {
+                    "const": "hris.action.sys.post.platform.v1.admin.hris.automation-schedules.resource.approve"
+                  }
+                },
+                "required": ["actionKey"]
+              },
+              "minContains": 0,
+              "maxContains": 1
+            },
+            {
+              "contains": {
+                "properties": {
+                  "actionKey": {
+                    "const": "hris.action.sys.post.platform.v1.admin.hris.automation-schedules.resource.activate"
+                  }
+                },
+                "required": ["actionKey"]
+              },
+              "minContains": 0,
+              "maxContains": 1
+            },
+            {
+              "contains": {
+                "properties": {
+                  "actionKey": {
+                    "const": "hris.action.sys.post.platform.v1.admin.hris.automation-schedules.resource.suspend"
+                  }
+                },
+                "required": ["actionKey"]
+              },
+              "minContains": 0,
+              "maxContains": 1
+            },
+            {
+              "contains": {
+                "properties": {
+                  "actionKey": {
+                    "const": "hris.action.sys.post.platform.v1.admin.hris.automation-runs.resource.cancel"
+                  }
+                },
+                "required": ["actionKey"]
+              },
+              "minContains": 0,
+              "maxContains": 1
+            }
+          ]
+        },
+        "DefinitionActionArray": {
+          "$ref": "#/contractDecision/closedTransportSchemas/actionDescriptorSchemas/ResourceActionArray",
+          "maxItems": 3,
+          "items": {
+            "allOf": [
+              {
+                "$ref": "#/contractDecision/closedTransportSchemas/actionDescriptorSchemas/ResourceActionDescriptor"
+              },
+              {
+                "properties": {
+                  "actionKey": {
+                    "enum": [
+                      "hris.action.sys.post.platform.v1.admin.hris.automations.resource.runs",
+                      "hris.action.sys.post.platform.v1.admin.hris.automations.resource.versions",
+                      "hris.action.sys.post.platform.v1.admin.hris.automations.resource.schedules"
+                    ]
+                  }
+                },
+                "required": ["actionKey"]
+              }
+            ]
+          }
+        },
+        "VersionActionArray": {
+          "$ref": "#/contractDecision/closedTransportSchemas/actionDescriptorSchemas/ResourceActionArray",
+          "maxItems": 4,
+          "items": {
+            "allOf": [
+              {
+                "$ref": "#/contractDecision/closedTransportSchemas/actionDescriptorSchemas/ResourceActionDescriptor"
+              },
+              {
+                "properties": {
+                  "actionKey": {
+                    "enum": [
+                      "hris.action.sys.post.platform.v1.admin.hris.automations.resource.versions.resource.validate",
+                      "hris.action.sys.post.platform.v1.admin.hris.automations.resource.versions.resource.submit",
+                      "hris.action.sys.post.platform.v1.admin.hris.automations.resource.versions.resource.approve",
+                      "hris.action.sys.post.platform.v1.admin.hris.automations.resource.versions.resource.activate"
+                    ]
+                  }
+                },
+                "required": ["actionKey"]
+              }
+            ]
+          }
+        },
+        "ScheduleActionArray": {
+          "$ref": "#/contractDecision/closedTransportSchemas/actionDescriptorSchemas/ResourceActionArray",
+          "maxItems": 4,
+          "items": {
+            "allOf": [
+              {
+                "$ref": "#/contractDecision/closedTransportSchemas/actionDescriptorSchemas/ResourceActionDescriptor"
+              },
+              {
+                "properties": {
+                  "actionKey": {
+                    "enum": [
+                      "hris.action.sys.post.platform.v1.admin.hris.automation-schedules.resource.submit",
+                      "hris.action.sys.post.platform.v1.admin.hris.automation-schedules.resource.approve",
+                      "hris.action.sys.post.platform.v1.admin.hris.automation-schedules.resource.activate",
+                      "hris.action.sys.post.platform.v1.admin.hris.automation-schedules.resource.suspend"
+                    ]
+                  }
+                },
+                "required": ["actionKey"]
+              }
+            ]
+          }
+        },
+        "RunActionArray": {
+          "$ref": "#/contractDecision/closedTransportSchemas/actionDescriptorSchemas/ResourceActionArray",
+          "maxItems": 2,
+          "items": {
+            "allOf": [
+              {
+                "$ref": "#/contractDecision/closedTransportSchemas/actionDescriptorSchemas/ResourceActionDescriptor"
+              },
+              {
+                "properties": {
+                  "actionKey": {
+                    "enum": [
+                      "hris.action.sys.post.platform.v1.admin.hris.automation-runs.resource.retry",
+                      "hris.action.sys.post.platform.v1.admin.hris.automation-runs.resource.cancel"
+                    ]
+                  }
+                },
+                "required": ["actionKey"]
+              }
+            ]
+          }
+        }
+      },
+      "SYS_API_017_POST_REQUEST": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["automationKey", "displayName", "description", "ownerDomain"],
+        "properties": {
+          "automationKey": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9.-]{2,63}$"
+          },
+          "displayName": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "description": {
+            "oneOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "ownerDomain": {
+            "enum": ["HRM", "PER", "TIM", "PAY"]
+          }
+        }
+      },
+      "SYS_API_017_POST_RESPONSE": {
+        "title": "Sys006HrisCommandReceipt202V1",
+        "description": "The closed SYS-006 profile of the reused HrisCommandReceiptV1 wire object returned with 202. A replay may return the receipt's current closed status. aggregateVersion and resultRef are omitted until the durable positive-revision aggregate tuple exists; all other fields are required.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "receiptId",
+          "commandType",
+          "originatingAction",
+          "subjectPrincipalPublicId",
+          "populationScopeDigest",
+          "fieldPolicyRevision",
+          "purposeCode",
+          "authorizationRevision",
+          "status",
+          "correlationId",
+          "requestDigest",
+          "createdAt"
+        ],
+        "properties": {
+          "receiptId": {
+            "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/Uuid"
+          },
+          "commandType": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "originatingAction": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "subjectPrincipalPublicId": {
+            "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/Uuid"
+          },
+          "populationScopeDigest": {
+            "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/Digest"
+          },
+          "fieldPolicyRevision": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "purposeCode": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 64
+          },
+          "authorizationRevision": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "status": {
+            "enum": ["ACCEPTED", "RUNNING", "SUCCEEDED", "REJECTED", "FAILED", "RESULT_UNKNOWN"]
+          },
+          "correlationId": {
+            "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/Uuid"
+          },
+          "requestDigest": {
+            "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/Digest"
+          },
+          "createdAt": {
+            "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/Instant"
+          },
+          "aggregateVersion": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "resultRef": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "required": ["aggregateVersion"]
+            },
+            "then": {
+              "required": ["resultRef"]
+            },
+            "else": {
+              "not": {
+                "required": ["resultRef"]
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "enum": ["ACCEPTED", "REJECTED"]
+                }
+              },
+              "required": ["status"]
+            },
+            "then": {
+              "not": {
+                "anyOf": [
+                  {
+                    "required": ["aggregateVersion"]
+                  },
+                  {
+                    "required": ["resultRef"]
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "const": "SUCCEEDED"
+                }
+              },
+              "required": ["status"]
+            },
+            "then": {
+              "required": ["aggregateVersion", "resultRef"]
+            }
+          }
+        ]
+      },
+      "SYS_API_017_GET_QUERY": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["asOf", "fields", "freshness", "limit"],
+        "properties": {
+          "asOf": {
+            "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/Instant"
+          },
+          "fields": {
+            "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/Fields"
+          },
+          "freshness": {
+            "enum": ["FRESH_ONLY", "ALLOW_STALE"]
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "cursor": {
+            "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/Cursor"
+          },
+          "filter": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "resourceTypes": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 3,
+            "uniqueItems": true,
+            "items": {
+              "enum": ["AUTOMATION_DEFINITION", "AUTOMATION_VERSION", "AUTOMATION_SCHEDULE"]
+            }
+          }
+        }
+      },
+      "SYS_API_017_GET_RESPONSE": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "asOf",
+          "items",
+          "nextCursor",
+          "freshUntil",
+          "staleAfter",
+          "collectionActions",
+          "fieldDecisionSummary",
+          "authorizationRevision",
+          "correlationId"
+        ],
+        "properties": {
+          "asOf": {
+            "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/Instant"
+          },
+          "items": {
+            "type": "array",
+            "maxItems": 100,
+            "items": {
+              "oneOf": [
+                {
+                  "$ref": "#/contractDecision/closedTransportSchemas/SYS_API_017_GET_RESPONSE/itemUnion/AUTOMATION_DEFINITION"
+                },
+                {
+                  "$ref": "#/contractDecision/closedTransportSchemas/SYS_API_017_GET_RESPONSE/itemUnion/AUTOMATION_VERSION"
+                },
+                {
+                  "$ref": "#/contractDecision/closedTransportSchemas/SYS_API_017_GET_RESPONSE/itemUnion/AUTOMATION_SCHEDULE"
+                }
+              ]
+            }
+          },
+          "nextCursor": {
+            "oneOf": [
+              {
+                "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/Cursor"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "freshUntil": {
+            "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/Instant"
+          },
+          "staleAfter": {
+            "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/Instant"
+          },
+          "collectionActions": {
+            "type": "array",
+            "maxItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/contractDecision/closedTransportSchemas/actionDescriptorSchemas/CollectionActionDescriptor"
+            }
+          },
+          "fieldDecisionSummary": {
+            "$ref": "#/contractDecision/closedTransportSchemas/fieldDecisionSummary"
+          },
+          "authorizationRevision": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "correlationId": {
+            "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/Uuid"
+          }
+        },
+        "stableOrder": "resourceType ascending, then automationKey for definitions or definitionPublicId plus versionNumber/schedulePublicId for other variants; the exact terminal sort tuple is cursor-bound.",
+        "actionUniqueness": "collectionActions and every availableActions array are unique by actionKey.",
+        "itemUnion": {
+          "discriminator": "resourceType",
+          "AUTOMATION_DEFINITION": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "resourceType",
+              "definitionPublicId",
+              "automationKey",
+              "ownerDomain",
+              "derivedLifecycleState",
+              "activeVersionNumber",
+              "objectRevision",
+              "availableActions"
+            ],
+            "properties": {
+              "resourceType": {
+                "const": "AUTOMATION_DEFINITION"
+              },
+              "definitionPublicId": {
+                "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/ProjectedUuid"
+              },
+              "automationKey": {
+                "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/ProjectedAutomationKey"
+              },
+              "ownerDomain": {
+                "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/ProjectedOwnerDomain"
+              },
+              "derivedLifecycleState": {
+                "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/ProjectedDefinitionState"
+              },
+              "activeVersionNumber": {
+                "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/ProjectedNullablePositiveInteger"
+              },
+              "objectRevision": {
+                "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/ProjectedPositiveInteger"
+              },
+              "availableActions": {
+                "$ref": "#/contractDecision/closedTransportSchemas/actionDescriptorSchemas/DefinitionActionArray"
+              }
+            },
+            "allOf": [
+              {
+                "if": {
+                  "anyOf": [
+                    {
+                      "properties": {
+                        "definitionPublicId": {
+                          "type": "object"
+                        }
+                      },
+                      "required": ["definitionPublicId"]
+                    },
+                    {
+                      "properties": {
+                        "automationKey": {
+                          "type": "object"
+                        }
+                      },
+                      "required": ["automationKey"]
+                    },
+                    {
+                      "properties": {
+                        "ownerDomain": {
+                          "type": "object"
+                        }
+                      },
+                      "required": ["ownerDomain"]
+                    },
+                    {
+                      "properties": {
+                        "derivedLifecycleState": {
+                          "type": "object"
+                        }
+                      },
+                      "required": ["derivedLifecycleState"]
+                    },
+                    {
+                      "properties": {
+                        "activeVersionNumber": {
+                          "type": "object"
+                        }
+                      },
+                      "required": ["activeVersionNumber"]
+                    },
+                    {
+                      "properties": {
+                        "objectRevision": {
+                          "type": "object"
+                        }
+                      },
+                      "required": ["objectRevision"]
+                    }
+                  ]
+                },
+                "then": {
+                  "properties": {
+                    "availableActions": {
+                      "maxItems": 0
+                    }
+                  }
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "derivedLifecycleState": {
+                      "const": "DRAFT"
+                    }
+                  },
+                  "required": ["derivedLifecycleState"]
+                },
+                "then": {
+                  "properties": {
+                    "availableActions": {
+                      "maxItems": 2,
+                      "items": {
+                        "properties": {
+                          "actionKey": {
+                            "enum": [
+                              "hris.action.sys.post.platform.v1.admin.hris.automations.resource.versions",
+                              "hris.action.sys.post.platform.v1.admin.hris.automations.resource.schedules"
+                            ]
+                          }
+                        },
+                        "required": ["actionKey"]
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "derivedLifecycleState": {
+                      "enum": ["SUSPENDED", "RETIRED"]
+                    }
+                  },
+                  "required": ["derivedLifecycleState"]
+                },
+                "then": {
+                  "properties": {
+                    "availableActions": {
+                      "maxItems": 0
+                    }
+                  }
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "activeVersionNumber": {
+                      "type": "null"
+                    }
+                  },
+                  "required": ["activeVersionNumber"]
+                },
+                "then": {
+                  "properties": {
+                    "availableActions": {
+                      "maxItems": 2,
+                      "items": {
+                        "properties": {
+                          "actionKey": {
+                            "enum": [
+                              "hris.action.sys.post.platform.v1.admin.hris.automations.resource.versions",
+                              "hris.action.sys.post.platform.v1.admin.hris.automations.resource.schedules"
+                            ]
+                          }
+                        },
+                        "required": ["actionKey"]
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          "AUTOMATION_VERSION": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "resourceType",
+              "definitionPublicId",
+              "versionNumber",
+              "lifecycleState",
+              "handlerKey",
+              "handlerContractVersion",
+              "objectRevision",
+              "availableActions"
+            ],
+            "properties": {
+              "resourceType": {
+                "const": "AUTOMATION_VERSION"
+              },
+              "definitionPublicId": {
+                "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/ProjectedUuid"
+              },
+              "versionNumber": {
+                "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/ProjectedPositiveInteger"
+              },
+              "lifecycleState": {
+                "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/ProjectedVersionState"
+              },
+              "handlerKey": {
+                "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/ProjectedHandlerKey"
+              },
+              "handlerContractVersion": {
+                "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/ProjectedSchemaVersion"
+              },
+              "objectRevision": {
+                "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/ProjectedPositiveInteger"
+              },
+              "availableActions": {
+                "$ref": "#/contractDecision/closedTransportSchemas/actionDescriptorSchemas/VersionActionArray"
+              }
+            },
+            "allOf": [
+              {
+                "if": {
+                  "anyOf": [
+                    {
+                      "properties": {
+                        "definitionPublicId": {
+                          "type": "object"
+                        }
+                      },
+                      "required": ["definitionPublicId"]
+                    },
+                    {
+                      "properties": {
+                        "versionNumber": {
+                          "type": "object"
+                        }
+                      },
+                      "required": ["versionNumber"]
+                    },
+                    {
+                      "properties": {
+                        "lifecycleState": {
+                          "type": "object"
+                        }
+                      },
+                      "required": ["lifecycleState"]
+                    },
+                    {
+                      "properties": {
+                        "handlerKey": {
+                          "type": "object"
+                        }
+                      },
+                      "required": ["handlerKey"]
+                    },
+                    {
+                      "properties": {
+                        "handlerContractVersion": {
+                          "type": "object"
+                        }
+                      },
+                      "required": ["handlerContractVersion"]
+                    },
+                    {
+                      "properties": {
+                        "objectRevision": {
+                          "type": "object"
+                        }
+                      },
+                      "required": ["objectRevision"]
+                    }
+                  ]
+                },
+                "then": {
+                  "properties": {
+                    "availableActions": {
+                      "maxItems": 0
+                    }
+                  }
+                }
+              },
+              {
+                "if": {
+                  "properties": { "lifecycleState": { "const": "DRAFT" } },
+                  "required": ["lifecycleState"]
+                },
+                "then": {
+                  "properties": {
+                    "availableActions": {
+                      "maxItems": 1,
+                      "items": {
+                        "properties": {
+                          "actionKey": {
+                            "const": "hris.action.sys.post.platform.v1.admin.hris.automations.resource.versions.resource.validate"
+                          }
+                        },
+                        "required": ["actionKey"]
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "if": {
+                  "properties": { "lifecycleState": { "const": "VALIDATED" } },
+                  "required": ["lifecycleState"]
+                },
+                "then": {
+                  "properties": {
+                    "availableActions": {
+                      "maxItems": 1,
+                      "items": {
+                        "properties": {
+                          "actionKey": {
+                            "const": "hris.action.sys.post.platform.v1.admin.hris.automations.resource.versions.resource.submit"
+                          }
+                        },
+                        "required": ["actionKey"]
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "if": {
+                  "properties": { "lifecycleState": { "const": "PENDING_APPROVAL" } },
+                  "required": ["lifecycleState"]
+                },
+                "then": {
+                  "properties": {
+                    "availableActions": {
+                      "maxItems": 1,
+                      "items": {
+                        "properties": {
+                          "actionKey": {
+                            "const": "hris.action.sys.post.platform.v1.admin.hris.automations.resource.versions.resource.approve"
+                          }
+                        },
+                        "required": ["actionKey"]
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "if": {
+                  "properties": { "lifecycleState": { "const": "APPROVED" } },
+                  "required": ["lifecycleState"]
+                },
+                "then": {
+                  "properties": {
+                    "availableActions": {
+                      "maxItems": 1,
+                      "items": {
+                        "properties": {
+                          "actionKey": {
+                            "const": "hris.action.sys.post.platform.v1.admin.hris.automations.resource.versions.resource.activate"
+                          }
+                        },
+                        "required": ["actionKey"]
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "lifecycleState": { "enum": ["ACTIVE", "SUSPENDED", "RETIRED"] }
+                  },
+                  "required": ["lifecycleState"]
+                },
+                "then": { "properties": { "availableActions": { "maxItems": 0 } } }
+              }
+            ]
+          },
+          "AUTOMATION_SCHEDULE": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "resourceType",
+              "schedulePublicId",
+              "definitionPublicId",
+              "pinnedVersionNumber",
+              "lifecycleState",
+              "timezone",
+              "nextFireAt",
+              "objectRevision",
+              "availableActions"
+            ],
+            "properties": {
+              "resourceType": {
+                "const": "AUTOMATION_SCHEDULE"
+              },
+              "schedulePublicId": {
+                "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/ProjectedUuid"
+              },
+              "definitionPublicId": {
+                "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/ProjectedUuid"
+              },
+              "pinnedVersionNumber": {
+                "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/ProjectedPositiveInteger"
+              },
+              "lifecycleState": {
+                "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/ProjectedScheduleState"
+              },
+              "timezone": {
+                "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/ProjectedTimezone"
+              },
+              "nextFireAt": {
+                "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/ProjectedNullableInstant"
+              },
+              "objectRevision": {
+                "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/ProjectedPositiveInteger"
+              },
+              "availableActions": {
+                "$ref": "#/contractDecision/closedTransportSchemas/actionDescriptorSchemas/ScheduleActionArray"
+              }
+            },
+            "allOf": [
+              {
+                "if": {
+                  "anyOf": [
+                    {
+                      "properties": {
+                        "schedulePublicId": {
+                          "type": "object"
+                        }
+                      },
+                      "required": ["schedulePublicId"]
+                    },
+                    {
+                      "properties": {
+                        "definitionPublicId": {
+                          "type": "object"
+                        }
+                      },
+                      "required": ["definitionPublicId"]
+                    },
+                    {
+                      "properties": {
+                        "pinnedVersionNumber": {
+                          "type": "object"
+                        }
+                      },
+                      "required": ["pinnedVersionNumber"]
+                    },
+                    {
+                      "properties": {
+                        "lifecycleState": {
+                          "type": "object"
+                        }
+                      },
+                      "required": ["lifecycleState"]
+                    },
+                    {
+                      "properties": {
+                        "timezone": {
+                          "type": "object"
+                        }
+                      },
+                      "required": ["timezone"]
+                    },
+                    {
+                      "properties": {
+                        "nextFireAt": {
+                          "type": "object"
+                        }
+                      },
+                      "required": ["nextFireAt"]
+                    },
+                    {
+                      "properties": {
+                        "objectRevision": {
+                          "type": "object"
+                        }
+                      },
+                      "required": ["objectRevision"]
+                    }
+                  ]
+                },
+                "then": {
+                  "properties": {
+                    "availableActions": {
+                      "maxItems": 0
+                    }
+                  }
+                }
+              },
+              {
+                "if": {
+                  "properties": { "lifecycleState": { "const": "DRAFT" } },
+                  "required": ["lifecycleState"]
+                },
+                "then": {
+                  "properties": {
+                    "availableActions": {
+                      "maxItems": 1,
+                      "items": {
+                        "properties": {
+                          "actionKey": {
+                            "const": "hris.action.sys.post.platform.v1.admin.hris.automation-schedules.resource.submit"
+                          }
+                        },
+                        "required": ["actionKey"]
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "if": {
+                  "properties": { "lifecycleState": { "const": "PENDING_APPROVAL" } },
+                  "required": ["lifecycleState"]
+                },
+                "then": {
+                  "properties": {
+                    "availableActions": {
+                      "maxItems": 1,
+                      "items": {
+                        "properties": {
+                          "actionKey": {
+                            "const": "hris.action.sys.post.platform.v1.admin.hris.automation-schedules.resource.approve"
+                          }
+                        },
+                        "required": ["actionKey"]
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "if": {
+                  "properties": { "lifecycleState": { "const": "APPROVED" } },
+                  "required": ["lifecycleState"]
+                },
+                "then": {
+                  "properties": {
+                    "availableActions": {
+                      "maxItems": 1,
+                      "items": {
+                        "properties": {
+                          "actionKey": {
+                            "const": "hris.action.sys.post.platform.v1.admin.hris.automation-schedules.resource.activate"
+                          }
+                        },
+                        "required": ["actionKey"]
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "if": {
+                  "properties": { "lifecycleState": { "const": "ACTIVE" } },
+                  "required": ["lifecycleState"]
+                },
+                "then": {
+                  "properties": {
+                    "availableActions": {
+                      "maxItems": 1,
+                      "items": {
+                        "properties": {
+                          "actionKey": {
+                            "const": "hris.action.sys.post.platform.v1.admin.hris.automation-schedules.resource.suspend"
+                          }
+                        },
+                        "required": ["actionKey"]
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "if": {
+                  "properties": { "lifecycleState": { "const": "SUSPENDED" } },
+                  "required": ["lifecycleState"]
+                },
+                "then": { "properties": { "availableActions": { "maxItems": 0 } } }
+              }
+            ]
+          }
+        }
+      },
+      "SYS_API_019_GET_QUERY": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["asOf", "freshness", "limit"],
+        "properties": {
+          "asOf": {
+            "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/Instant"
+          },
+          "freshness": {
+            "enum": ["FRESH_ONLY", "ALLOW_STALE"]
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "attemptCursor": {
+            "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/Cursor"
+          },
+          "itemCursor": {
+            "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/Cursor"
+          },
+          "checkpointCursor": {
+            "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/Cursor"
+          }
+        }
+      },
+      "SYS_API_019_GET_RESPONSE": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "runPublicId",
+          "definitionPublicId",
+          "versionNumber",
+          "state",
+          "objectRevision",
+          "selectionMode",
+          "itemTotal",
+          "itemSucceeded",
+          "itemFailed",
+          "outputDigest",
+          "retryBudgetRemaining",
+          "retryEligibleItemCount",
+          "cancelEligibility",
+          "attempts",
+          "items",
+          "checkpoints",
+          "nextAttemptCursor",
+          "nextItemCursor",
+          "nextCheckpointCursor",
+          "availableActions",
+          "authorizationRevision",
+          "correlationId"
+        ],
+        "properties": {
+          "runPublicId": {
+            "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/Uuid"
+          },
+          "definitionPublicId": {
+            "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/Uuid"
+          },
+          "versionNumber": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "state": {
+            "enum": [
+              "QUEUED",
+              "LEASED",
+              "RUNNING",
+              "SUCCEEDED",
+              "PARTIAL",
+              "FAILED",
+              "CANCELLED",
+              "DEAD_LETTER"
+            ]
+          },
+          "objectRevision": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "selectionMode": {
+            "enum": ["ALL_ITEMS", "FAILED_ITEMS_ONLY"]
+          },
+          "itemTotal": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000000
+          },
+          "itemSucceeded": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000000
+          },
+          "itemFailed": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000000
+          },
+          "outputDigest": {
+            "oneOf": [
+              {
+                "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/Digest"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "retryBudgetRemaining": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 20
+          },
+          "retryEligibleItemCount": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000000,
+            "description": "Owner-derived count after exact current manifest mode, retryable receipt state, frozen selection integrity, dedupe evidence and both retry budgets are applied. It is zero outside PARTIAL or FAILED and never exceeds itemFailed."
+          },
+          "cancelEligibility": {
+            "enum": ["ELIGIBLE_NO_EFFECT", "ELIGIBLE_ALL_REQUIRED_PATHS", "INELIGIBLE"],
+            "description": "Owner-derived from the complete persisted effect and compensation set before pagination. ELIGIBLE_ALL_REQUIRED_PATHS means every uncertain effect has a trusted reconciliation path and every committed effect has an exact declared idempotent compensation path."
+          },
+          "attempts": {
+            "type": "array",
+            "maxItems": 20,
+            "items": {
+              "$ref": "#/contractDecision/closedTransportSchemas/SYS_API_019_GET_RESPONSE/closedNestedProjections/AttemptProjection"
+            }
+          },
+          "items": {
+            "type": "array",
+            "maxItems": 100,
+            "items": {
+              "$ref": "#/contractDecision/closedTransportSchemas/SYS_API_019_GET_RESPONSE/closedNestedProjections/ItemProjection"
+            }
+          },
+          "checkpoints": {
+            "type": "array",
+            "maxItems": 100,
+            "items": {
+              "$ref": "#/contractDecision/closedTransportSchemas/SYS_API_019_GET_RESPONSE/closedNestedProjections/CheckpointProjection"
+            }
+          },
+          "nextAttemptCursor": {
+            "oneOf": [
+              {
+                "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/Cursor"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "nextItemCursor": {
+            "oneOf": [
+              {
+                "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/Cursor"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "nextCheckpointCursor": {
+            "oneOf": [
+              {
+                "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/Cursor"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "availableActions": {
+            "$ref": "#/contractDecision/closedTransportSchemas/actionDescriptorSchemas/RunActionArray"
+          },
+          "authorizationRevision": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "correlationId": {
+            "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/Uuid"
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "state": {
+                  "enum": ["SUCCEEDED", "CANCELLED", "DEAD_LETTER"]
+                }
+              },
+              "required": ["state"]
+            },
+            "then": {
+              "properties": {
+                "outputDigest": {
+                  "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/Digest"
+                },
+                "retryEligibleItemCount": {
+                  "const": 0
+                },
+                "cancelEligibility": {
+                  "const": "INELIGIBLE"
+                },
+                "availableActions": {
+                  "maxItems": 0
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": { "state": { "enum": ["QUEUED", "LEASED"] } },
+              "required": ["state"]
+            },
+            "then": {
+              "properties": {
+                "retryEligibleItemCount": { "const": 0 },
+                "cancelEligibility": { "const": "ELIGIBLE_NO_EFFECT" },
+                "availableActions": {
+                  "maxItems": 1,
+                  "items": {
+                    "properties": {
+                      "actionKey": {
+                        "const": "hris.action.sys.post.platform.v1.admin.hris.automation-runs.resource.cancel"
+                      }
+                    },
+                    "required": ["actionKey"]
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": { "properties": { "state": { "const": "RUNNING" } }, "required": ["state"] },
+            "then": {
+              "properties": {
+                "retryEligibleItemCount": { "const": 0 },
+                "availableActions": {
+                  "maxItems": 1,
+                  "items": {
+                    "properties": {
+                      "actionKey": {
+                        "const": "hris.action.sys.post.platform.v1.admin.hris.automation-runs.resource.cancel"
+                      }
+                    },
+                    "required": ["actionKey"]
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "state": { "const": "RUNNING" },
+                "cancelEligibility": { "const": "INELIGIBLE" }
+              },
+              "required": ["state", "cancelEligibility"]
+            },
+            "then": { "properties": { "availableActions": { "maxItems": 0 } } }
+          },
+          {
+            "if": {
+              "properties": { "state": { "enum": ["PARTIAL", "FAILED"] } },
+              "required": ["state"]
+            },
+            "then": { "properties": { "cancelEligibility": { "const": "INELIGIBLE" } } }
+          },
+          {
+            "if": {
+              "properties": {
+                "state": { "enum": ["PARTIAL", "FAILED"] },
+                "retryBudgetRemaining": { "minimum": 1 },
+                "retryEligibleItemCount": { "minimum": 1 }
+              },
+              "required": ["state", "retryBudgetRemaining", "retryEligibleItemCount"]
+            },
+            "then": {
+              "properties": {
+                "availableActions": {
+                  "maxItems": 1,
+                  "items": {
+                    "properties": {
+                      "actionKey": {
+                        "const": "hris.action.sys.post.platform.v1.admin.hris.automation-runs.resource.retry"
+                      }
+                    },
+                    "required": ["actionKey"]
+                  }
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": { "state": { "enum": ["PARTIAL", "FAILED"] } },
+              "required": ["state"],
+              "anyOf": [
+                {
+                  "properties": { "retryBudgetRemaining": { "const": 0 } },
+                  "required": ["retryBudgetRemaining"]
+                },
+                {
+                  "properties": { "retryEligibleItemCount": { "const": 0 } },
+                  "required": ["retryEligibleItemCount"]
+                }
+              ]
+            },
+            "then": { "properties": { "availableActions": { "maxItems": 0 } } }
+          }
+        ],
+        "stableOrder": "attempts by attemptNumber ascending, items by itemSequence ascending and checkpoints by attemptNumber then checkpointOrdinal ascending; each next cursor binds its collection kind and terminal tuple.",
+        "actionUniqueness": "availableActions is unique by actionKey.",
+        "closedNestedProjections": {
+          "AttemptProjection": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "attemptNumber",
+              "selectionMode",
+              "selectedItemCount",
+              "selectedItemDigest",
+              "state",
+              "startedAt",
+              "completedAt"
+            ],
+            "properties": {
+              "attemptNumber": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 20
+              },
+              "selectionMode": {
+                "enum": ["ALL_ITEMS", "FAILED_ITEMS_ONLY"]
+              },
+              "selectedItemCount": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 1000000000
+              },
+              "selectedItemDigest": {
+                "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/Digest"
+              },
+              "state": {
+                "enum": [
+                  "QUEUED",
+                  "LEASED",
+                  "RUNNING",
+                  "SUCCEEDED",
+                  "PARTIAL",
+                  "FAILED",
+                  "CANCELLED",
+                  "DEAD_LETTER"
+                ]
+              },
+              "startedAt": {
+                "oneOf": [
+                  {
+                    "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/Instant"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "completedAt": {
+                "oneOf": [
+                  {
+                    "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/Instant"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            }
+          },
+          "ItemProjection": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "itemPublicId",
+              "itemSequence",
+              "state",
+              "attemptCount",
+              "resultDigest",
+              "errorCode",
+              "effectState",
+              "compensationState"
+            ],
+            "properties": {
+              "itemPublicId": {
+                "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/Uuid"
+              },
+              "itemSequence": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 1000000000
+              },
+              "state": {
+                "enum": [
+                  "PENDING",
+                  "LEASED",
+                  "RUNNING",
+                  "SUCCEEDED",
+                  "FAILED_RETRYABLE",
+                  "FAILED_FINAL",
+                  "CANCELLED",
+                  "DEAD_LETTER"
+                ]
+              },
+              "attemptCount": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 20
+              },
+              "resultDigest": {
+                "oneOf": [
+                  {
+                    "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/Digest"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "errorCode": {
+                "oneOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^[A-Z][A-Z0-9._-]{0,79}$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "effectState": {
+                "enum": [
+                  "NOT_STARTED",
+                  "PREPARED",
+                  "NO_EFFECT_CONFIRMED",
+                  "COMMITTED",
+                  "RESULT_UNKNOWN"
+                ]
+              },
+              "compensationState": {
+                "enum": [
+                  "NOT_REQUIRED",
+                  "PENDING",
+                  "RUNNING",
+                  "SUCCEEDED",
+                  "FAILED",
+                  "RESULT_UNKNOWN"
+                ]
+              }
+            }
+          },
+          "CheckpointProjection": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "checkpointPublicId",
+              "attemptNumber",
+              "checkpointOrdinal",
+              "processedItemCount",
+              "processedItemDigest",
+              "outputDigest",
+              "committedAt"
+            ],
+            "properties": {
+              "checkpointPublicId": {
+                "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/Uuid"
+              },
+              "attemptNumber": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 20
+              },
+              "checkpointOrdinal": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 9007199254740991
+              },
+              "processedItemCount": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 1000000000
+              },
+              "processedItemDigest": {
+                "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/Digest"
+              },
+              "outputDigest": {
+                "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/Digest"
+              },
+              "committedAt": {
+                "$ref": "#/contractDecision/closedTransportSchemas/commonTypes/Instant"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "typedArtifactContract": {
+    "numericInteropNarrowing": "The reused generated types remain canonical, but SYS-006 accepts and emits only their interoperable subset: every JSON-number revision or version is 1..9007199254740991, expectedItemCount and itemSequence are at most 1000000000, and attemptNumber is at most 20. V333 CHECK constraints enforce the same domain before any PDX object is materialized; values outside it fail closed and are never rounded or coerced.",
+    "PDX_004": {
+      "type": "AutomationHandlerManifestV1",
+      "decision": "REUSE_AS_THE_ONLY_HANDLER_MANIFEST_BOUNDARY",
+      "lifecycle": ["DRAFT", "VERIFIED", "ACTIVE", "SUSPENDED", "REVOKED"],
+      "separationRule": "Handler-manifest lifecycle is distinct from automation definition-version lifecycle.",
+      "storageMap": {
+        "handlerKey": "sys_automation_versions.handler_key",
+        "ownerService": "sys_automation_versions.handler_owner_service",
+        "contractVersion": "sys_automation_versions.handler_contract_version VARCHAR",
+        "inputSchemaRef": "sys_automation_versions.input_schema_ref",
+        "receiptSchemaRef": "sys_automation_versions.receipt_schema_ref",
+        "signatureDigest": "sys_automation_versions.handler_signature_digest",
+        "allowedScopeTypes": "sys_automation_versions.allowed_scope_types closed array",
+        "retryMode": "sys_automation_versions.manifest_retry_mode",
+        "maxAttempts": "sys_automation_versions.manifest_max_attempts",
+        "state": "sys_automation_versions.handler_manifest_state snapshot"
+      },
+      "retryModeMapping": {
+        "WHOLE_INVOCATION": "ALL_ITEMS",
+        "FAILED_ITEMS_ONLY": "FAILED_ITEMS_ONLY",
+        "NONE": "NONE"
+      },
+      "retryPolicyRule": "manifest_retry_mode controls whether a later attempt is permitted. The initial attempt always selects ALL_ITEMS; NONE forbids every later attempt and is never rewritten as a run selection mode.",
+      "maxAttemptsRange": "1_TO_20_INCLUSIVE"
+    },
+    "PDX_005": {
+      "type": "AutomationInvocationV1",
+      "decision": "REUSE_WITH_EXACT_STORAGE_MAPPING",
+      "identityRule": "invocationId equals the same runPublicId for the lifetime of a run; a retry creates a new attempt under that run and never a replacement invocation identity.",
+      "storageMap": {
+        "invocationId": "sys_automation_runs.public_id",
+        "automationId": "sys_automation_definitions.public_id through the tenant-composite version join",
+        "automationVersion": "sys_automation_versions.version_number through the tenant-composite run join; V333 bounds it to 1..9007199254740991",
+        "handlerKey": "immutable sys_automation_versions.handler_key snapshot",
+        "handlerContractVersion": "immutable sys_automation_versions.handler_contract_version VARCHAR snapshot",
+        "scopeType": "sys_automation_runs.scope_type",
+        "scopeId": "sys_automation_runs.scope_id nullable",
+        "requestedAt": "sys_automation_runs.requested_at",
+        "requestedByActorRef": "sys_automation_runs.requested_by_actor_ref",
+        "idempotencyKey": "sys_automation_runs.idempotency_key",
+        "inputRef": "sys_automation_runs.input_ref",
+        "inputDigest": "sys_automation_runs.input_digest",
+        "expectedItemCount": "sys_automation_runs.expected_item_count distinct from later derived item_total",
+        "correlationId": "sys_automation_runs.correlation_id"
+      },
+      "handlerContractVersionRule": "Persist and transport the canonical SchemaVersion string; historical integer definitions are superseded and V333 must use VARCHAR."
+    },
+    "PDX_006": {
+      "type": "AutomationRunItemReceiptV1",
+      "decision": "REUSE_WITH_EXACT_PUBLIC_TO_STORAGE_MAPPING",
+      "storageMap": {
+        "runId": "sys_automation_runs.public_id",
+        "runRevision": "sys_automation_item_attempts.run_revision_snapshot captured when the receipt state is written; V333 CHECK requires 1..9007199254740991 and never accepts revision zero",
+        "itemId": "sys_automation_run_items.public_id through the tenant-composite immutable item-attempt join",
+        "itemSequence": "sys_automation_run_items.item_sequence unique and contiguous from one within the run and bounded to 1..1000000000",
+        "subjectRef": "sys_automation_run_items.subject_ref",
+        "state": "sys_automation_item_attempts.receipt_state through the closed public mapping",
+        "attemptNumber": "sys_automation_item_attempts.attempt_ordinal",
+        "acceptedAt": "sys_automation_item_attempts.accepted_at",
+        "completedAt": "sys_automation_item_attempts.completed_at nullable",
+        "resultRef": "sys_automation_item_attempts.result_ref nullable",
+        "resultDigest": "sys_automation_item_attempts.result_digest nullable",
+        "errorCode": "sys_automation_item_attempts.error_code nullable",
+        "retryable": "sys_automation_item_attempts.retryable_snapshot; true exactly for FAILED_RETRYABLE",
+        "nextAttemptAt": "sys_automation_item_attempts.next_attempt_at nullable",
+        "correlationId": "sys_automation_item_attempts.correlation_id snapshot"
+      },
+      "stateMapping": {
+        "ACCEPTED": "PENDING",
+        "LEASED": "LEASED",
+        "RUNNING": "RUNNING",
+        "SUCCEEDED": "SUCCEEDED",
+        "FAILED_WITH_RETRYABLE_TRUE": "FAILED_RETRYABLE",
+        "FAILED_WITH_RETRYABLE_FALSE": "FAILED_FINAL",
+        "CANCELED": "CANCELLED",
+        "DEAD_LETTERED": "DEAD_LETTER"
+      },
+      "attemptReceiptRule": "sys_automation_item_attempts is the PDX-006 receipt source. An active attempt row may advance through ACCEPTED, LEASED and RUNNING, but once it records SUCCEEDED, FAILED_RETRYABLE, FAILED_FINAL, CANCELLED or DEAD_LETTER all receipt fields are immutable. A retry creates a new attempt row with the same item public ID and incremented attempt ordinal; no prior receipt is recomposed from the mutable parent summary.",
+      "positiveRunRevisionRule": "A run is inserted at object_revision 1 before any run-item or item-attempt receipt is materialized. Every accepted run transition increments it monotonically within the exact interoperable range 1..9007199254740991; run_revision_snapshot must be positive and no greater than the locked current run revision. A PDX-006 receipt can never capture zero or an unsafe JSON integer.",
+      "parentSummaryRule": "sys_automation_run_items stores only the current item summary and effect-idempotency identity. It may advance from FAILED_RETRYABLE through a new attempt but is never used to rewrite a prior PDX-006 receipt.",
+      "deadLetterStorageRule": "V333 adds DEAD_LETTER to both the parent item summary and item-attempt receipt-state domains. When mode NONE, the exact retryable set is empty or the budget is exhausted, the completing attempt is written atomically as DEAD_LETTER and the public receipt projects DEAD_LETTERED; it is not first sealed as FAILED and mutated later.",
+      "aggregateOnlyState": "PARTIAL_EXISTS_ONLY_ON_RUN_OR_RUN_ATTEMPT_NOT_ON_AN_ITEM"
+    }
+  },
+  "lifecycleDecision": {
+    "definition": {
+      "storedStates": ["DRAFT", "ACTIVE", "SUSPENDED", "RETIRED"],
+      "v1ReachableStates": ["DRAFT", "ACTIVE"],
+      "createRule": "SYS-API-017 POST creates a DRAFT definition with no executable handler, version, schedule or enabled flag.",
+      "derivedStateRule": "Definition state is materialized under the same transaction as version activation: DRAFT means no ACTIVE version and ACTIVE means exactly one ACTIVE version. SUSPENDED and RETIRED are reserved and unreachable in SYS-006 v1 because no declared API owns those transitions.",
+      "executionRule": "A definition is executable only when its materialized state is ACTIVE and the tenant-composite join resolves exactly one ACTIVE compatible version."
+    },
+    "definitionVersion": {
+      "states": [
+        "DRAFT",
+        "VALIDATED",
+        "PENDING_APPROVAL",
+        "APPROVED",
+        "ACTIVE",
+        "SUSPENDED",
+        "RETIRED"
+      ],
+      "mainPath": "DRAFT_TO_VALIDATED_TO_PENDING_APPROVAL_TO_APPROVED_TO_ACTIVE",
+      "validation": "Require trusted signature, allowlisted handler key, exact canonical SchemaVersion, closed input and receipt schemas and current compatibility baseline.",
+      "makerChecker": "Approver differs from author; stale object revision or absent step-up fails closed.",
+      "preActiveCandidateStates": ["DRAFT", "VALIDATED", "PENDING_APPROVAL", "APPROVED"],
+      "createVersionAllocation": "CREATE_VERSION locks the tenant-composite definition, verifies If-Match and allocates max(version_number)+1 under the same transaction. Multiple independently target-bound DRAFT, VALIDATED, PENDING_APPROVAL or APPROVED candidates are allowed because SYS-006 v1 has no edit, withdraw or candidate-retire command; an invalid or revoked candidate therefore cannot block a replacement. V333 enforces uniqueness on tenant_id, definition_id and version_number plus serialized monotonic allocation, not a partial unique candidate-state exclusion. Idempotent replay returns the original version; a distinct accepted request creates the next version.",
+      "activeVersion": "At most one ACTIVE version per tenant and automation definition; activation CAS failure leaves the previous active version intact.",
+      "reservedAndDerivedStates": "SUSPENDED has no SYS-006 v1 transition and is unreachable. RETIRED is reachable only as the atomic system disposition of the prior ACTIVE version when a replacement version activates; there is no direct retire action.",
+      "replacementActivation": "SYS-API-050 locks the definition, candidate and prior ACTIVE version under one tenant and CAS boundary. If any ACTIVE schedule pins the prior version it returns 409 and changes nothing; those schedules must first be suspended through SYS-API-055. Otherwise it atomically retires the prior ACTIVE version, activates the approved candidate and materializes the definition ACTIVE. Approved or suspended schedules pinned to the retired version remain immutable and can never activate or fire; a new schedule must pin the replacement version."
+    },
+    "schedule": {
+      "states": ["DRAFT", "PENDING_APPROVAL", "APPROVED", "ACTIVE", "SUSPENDED"],
+      "mainPath": "DRAFT_TO_PENDING_APPROVAL_TO_APPROVED_TO_ACTIVE_TO_SUSPENDED",
+      "pinnedFacts": [
+        "approvedAutomationVersion",
+        "timezone",
+        "expression",
+        "inputTemplateReference",
+        "inputTemplateDigest",
+        "concurrencyKeyTemplate",
+        "timezoneDatabaseRevision"
+      ],
+      "createRule": "A DRAFT schedule may pin an APPROVED or ACTIVE version, but this does not make the schedule executable.",
+      "activateRule": "SYS-API-054 succeeds only when the pinned version is currently ACTIVE and the expected schedule revision matches; otherwise it returns 409 with no transition.",
+      "fireRule": "A schedule fires only while its own state is ACTIVE and its exact pinned version remains ACTIVE. A suspended schedule has no resume API in SYS-006 v1.",
+      "fireIdentity": "scheduleFireKey is lowercase SHA-256 over UTF-8 RFC-8785/JCS of {tenantIdDecimal,schedulePublicId,scheduleRevisionDecimal,approvedSubjectRevisionDecimal,schedulePolicyDigest,scheduledInstantUtc}. tenantIdDecimal, scheduleRevisionDecimal and approvedSubjectRevisionDecimal are no-leading-zero base-10 strings parsed exactly and bounded to positive signed BIGINT; fire_cursor_revision is excluded. sys_automation_runs stores schedule_id, scheduled_instant_utc and schedule_fire_key and V333 enforces uniqueness on tenant_id, schedule_id and schedule_fire_key; duplicate delivery returns the existing run and command receipt and never creates a second effect.",
+      "fireTransaction": "Under one tenant-composite row lock and CAS on object_revision, fire_cursor_revision and the exact due next_fire_at, the scheduler verifies ACTIVE lifecycle state, the current approved subject_revision and schedule_policy_digest, the pinned ACTIVE version and current ACTIVE handler manifest. It atomically inserts the run, shared receipt and outbox and advances next_fire_at, last_scheduled_instant_utc and fire_cursor_revision only. scheduleRevisionDecimal is the compared object_revision. A fire never changes subject_revision, object_revision, policy digest or approval evidence. A crash before commit changes nothing; a retry after commit resolves the unique fire identity.",
+      "fireReceiptNamespace": "A scheduled fire uses the sealed QUEUE_RUN originating action hris.action.sys.post.platform.v1.admin.hris.automations.resource.runs, the later-admitted stable technical scheduler subject and scheduleFireKey as Idempotency-Key. Its request digest includes schedule public ID, schedule object revision, approved subject revision, schedule policy digest, scheduledInstantUtc, pinned definition/version, input digest and resolved concurrency-key digest; fire_cursor_revision is excluded. This creates no fifteenth browser action or route mapping; no fire is authorized until the technical subject binding is admitted.",
+      "clockPolicy": "The pinned IANA timezone and timezone-database revision resolve the expression. A nonexistent local time is skipped with an audit fact; an overlap fires once at the earlier UTC offset. SYS-006 v1 uses SKIP_MISSED: a fire whose scheduled instant is earlier than the current scheduler window is not backfilled and emits one deduplicated audit/outbox fact before the next future instant is calculated."
+    },
+    "run": {
+      "states": [
+        "QUEUED",
+        "LEASED",
+        "RUNNING",
+        "SUCCEEDED",
+        "PARTIAL",
+        "FAILED",
+        "CANCELLED",
+        "DEAD_LETTER"
+      ],
+      "activeStates": ["QUEUED", "LEASED", "RUNNING"],
+      "quiescentRetryableStates": ["PARTIAL", "FAILED"],
+      "finalImmutableStates": ["SUCCEEDED", "CANCELLED", "DEAD_LETTER"],
+      "mainPath": "QUEUED_TO_LEASED_TO_RUNNING_TO_SUCCEEDED_OR_PARTIAL_OR_FAILED_OR_CANCELLED_OR_DEAD_LETTER",
+      "recoveryLoop": "The only backward-looking run transition is the lease-expiry recovery CAS from LEASED or RUNNING to QUEUED that increments run revision, fences the expired attempt and creates the next attempt under leaseExpiryRecovery.safeResume.",
+      "revisionInitialization": "V333 initializes every run object_revision to 1. Every state, retry, cancel, reconciliation and recovery CAS increments it; zero is never emitted as SYS-API-019 objectRevision or captured as PDX-006 runRevision.",
+      "completionMapping": "An attempt with every item SUCCEEDED makes the run SUCCEEDED. A quiescent run with both successes and retryable failures and remaining budget is PARTIAL. A quiescent run with no successes, at least one retryable failure and remaining budget is FAILED. Any non-success outcome with manifest retry mode NONE, no exact retryable selection or exhausted budget becomes DEAD_LETTER. Cancellation follows the separately sealed fence and compensation rule.",
+      "idempotency": "The existing shared receipt namespace is exactly tenant, caller subject, originating actionKey and idempotency key. The canonical request digest includes target resource identity and revision, resolved handler key and contract version, scope, input reference/digest and every command body field. Same namespace plus same digest returns the original receipt and run; the same key used for another handler or target intentionally collides and returns 409 rather than creating a second run. This stricter action namespace satisfies the PDX-005 handler binding because handler identity is sealed inside the compared digest.",
+      "concurrency": "The browser never supplies a raw concurrency key. Manual queue renders the immutable active-version execution policy manualConcurrencyKeyTemplate; scheduled fire renders the immutable schedule concurrencyKeyTemplate that was validated against that version. Both use only the allowlisted variables tenantId, definitionPublicId, scopeType and canonical scopeId. Missing variables, unresolved placeholders or a rendered UTF-8 value outside 1..300 bytes fail with 422. The owner persists only the rendered key digest, defined as lowercase SHA-256 of the UTF-8 rendered value. V333 enforces one run in QUEUED, LEASED or RUNNING for the same tenant and digest; retry reuses the same run and digest. The canonical command request digest includes that resolved concurrency-key digest.",
+      "leaseFence": "Normal worker attempt, item, external-effect and checkpoint writes require authority kind WORKER, the exact current worker lease token and worker fence epoch, a DB-clock-unexpired worker lease and the unchanged run control-fence epoch. This worker rule neither authorizes nor blocks OWNER_RECOVERY or RECONCILER writes, which use the separately closed authorities below.",
+      "immutability": "Only SUCCEEDED, CANCELLED and DEAD_LETTER runs are terminal and immutable. PARTIAL and FAILED are quiescent but nonterminal and may change only by an authorized retry CAS that creates a new immutable attempt."
+    },
+    "fenceAuthoritySeparation": {
+      "WORKER": "Normal execution and original external-effect dispatch only. Every write requires the exact active worker lease token, worker fence epoch and control-fence epoch and an unexpired DB-clock lease. A WORKER cannot dispatch a compensation effect, and an expired or revoked token can never be reused.",
+      "OWNER_RECOVERY": "Owner command, cancel, reaper and manifest-revocation processing locks the tenant-composite run and attempt, CAS-compares the exact run revision and selects exactly one mutually exclusive branch. NO_ACTIVE_LEASE requires both worker and reconciliation lease tokens to be NULL. WORKER_LEASE requires the exact worker token, worker lease-fence snapshot, current worker fence counter and control-fence snapshot plus DB-clock expiry or an explicit revocation cause. RECONCILER_LEASE requires the exact reconciliation token, reconciliation lease-fence snapshot, current reconciliation fence counter and control-fence snapshot plus DB-clock expiry or an explicit revocation cause. Every successful branch increments control_fence_epoch; a lease branch also records revoked_at, clears only the selected core lease tuple, increments only its persistent authority fence counter and leaves the other authority untouched. OWNER_RECOVERY does not require an unexpired lease and cannot dispatch any external effect or record normal worker success.",
+      "RECONCILER": "Only after worker lease expiry or revocation and a persisted reconciliation-required fact may a separate reconciliation token and epoch be acquired. With the exact active reconciliation token, reconciliation fence epoch, control-fence epoch and an unexpired DB-clock lease, it may use trusted external receipts to resolve an original-effect PREPARED to NO_EFFECT_CONFIRMED, COMMITTED or RESULT_UNKNOWN, fold an already COMMITTED original-effect receipt into a recovery checkpoint, choose safe-resume or dead-letter, and execute only the compensation effect declared by the exact approved compensation-policy reference and digest. Compensation uses an idempotency key distinct from the original-effect key and its own request digest and receipt transition PREPARED to COMMITTED or RESULT_UNKNOWN. After a compensation dispatch fence is lost, a newly leased RECONCILER may resolve that existing PREPARED to COMMITTED or RESULT_UNKNOWN only by matching its immutable compensation key and request digest to trusted external receipt evidence; this evidence-reconciliation path cannot dispatch or redispatch an effect. A RECONCILER never dispatches or re-executes an original effect.",
+      "mutualExclusion": "An active WORKER lease and active RECONCILER lease cannot coexist. OWNER_RECOVERY branch predicates are mutually exclusive, and a successful owner write increments the shared control-fence epoch so every older worker or reconciler fence snapshot fails. Every authority-specific write records its authority kind and exact fence snapshots with the receipt, audit and outbox facts in one transaction."
+    },
+    "retry": {
+      "newAttempt": "Every retry creates a new run attempt and new item attempts; successful effects are never reset or replayed.",
+      "failedItemsOnly": "Freeze the exact retryable failed item IDs, count and canonical digest before enqueue; empty, substituted or digest-mismatched selections return 409 with no attempt.",
+      "wholeInvocation": "When the active manifest retry mode is WHOLE_INVOCATION, the owner derives ALL_ITEMS from the immutable original item IDs, count and digest. A new item attempt is created for every original item. Previously SUCCEEDED items remain SUCCEEDED and their new attempt resolves the existing effect-idempotency receipt to the identical result without invoking the external effect; missing or mismatched dedupe evidence returns 409 before any attempt is created. Failed-retryable items execute normally. A caller cannot substitute FAILED_ITEMS_ONLY for this mode.",
+      "modeSelection": "The signed current manifest determines NONE, FAILED_ITEMS_ONLY or WHOLE_INVOCATION. The browser cannot choose or override it. RETRY_RUN is absent for NONE; FAILED_ITEMS_ONLY requires the exact nonempty retryable failure set; WHOLE_INVOCATION requires at least one retryable failure plus complete original item and successful-effect dedupe evidence.",
+      "transition": "SYS-API-020 may CAS only PARTIAL or FAILED. It revalidates the existing tenant and concurrency-key exclusion, creates the next QUEUED run attempt plus exactly the mode-derived item attempts, advances the same run identity and revision back to QUEUED, and leaves every prior run/item attempt immutable.",
+      "itemMutability": "SUCCEEDED, FAILED_FINAL, CANCELLED and DEAD_LETTER items are terminal and immutable. FAILED_RETRYABLE may participate in a new immutable item attempt and its parent item projection may advance through RUNNING to a later terminal or retryable state.",
+      "budget": "Attempt number is limited to 20 and also cannot exceed the signed manifest maxAttempts. Manifest retry mode NONE, an empty retryable set or budget exhaustion transitions unresolved work and the run to DEAD_LETTER instead of exposing RETRY_RUN."
+    },
+    "checkpoint": {
+      "ordinal": "Strictly monotonic within run and attempt.",
+      "binding": "A normal checkpoint requires WORKER authority with the exact active worker lease token, worker fence epoch and control-fence epoch. A recovery checkpoint requires the exact current RECONCILER token, reconciliation fence epoch and control-fence epoch and may incorporate only an already committed externally verified receipt; it never authorizes an external effect.",
+      "digests": "Persist processed-item-set and output digests.",
+      "resume": "Resume strictly after the last committed checkpoint and never repeat a committed successful item effect."
+    },
+    "cancellationAndCompensation": {
+      "preEffect": "QUEUED, LEASED or RUNNING work may transition immediately to CANCELLED only when every item effect_state is NOT_STARTED. PREPARED is not proof of no effect.",
+      "postEffect": "A RUNNING run with a committed original external effect remains RUNNING until a separately leased RECONCILER executes only its exact approved idempotent compensation policy and links the resulting compensation receipt; only then may it transition to CANCELLED. Compensation dispatch requires the active reconciliation token and epochs, a DB-clock-unexpired lease, a key distinct from the original-effect idempotency key and a PREPARED receipt. Normal dispatch finalization advances it to COMMITTED or RESULT_UNKNOWN under that same fence; after fence loss, only the separately sealed evidence-reconciliation path may advance the existing receipt under a new reconciliation fence without external redispatch.",
+      "notCompensatable": "Reject the cancel command without changing run state.",
+      "unknownResult": "Keep the command receipt RESULT_UNKNOWN and the run reloadable and reconcilable; never infer success, failure or safe redispatch.",
+      "duplicateOrConflict": "The same compensation key and digest replays the receipt; any mismatch fails closed.",
+      "cancelAcceptanceTransaction": "With OWNER_RECOVERY authority, lock the run and active attempt, verify If-Match and the exact run revision, then select NO_ACTIVE_LEASE, WORKER_LEASE or RECONCILER_LEASE under fenceAuthoritySeparation. Atomically persist the shared cancel command receipt and cancel marker and increment the run control/cancel fence. A lease branch conditionally revokes only the lease that exists, records its revoked_at, clears that core lease tuple and increments only its persistent authority fence counter; the no-lease branch succeeds only while both tokens remain NULL. In that same transaction, each PREPARED or RESULT_UNKNOWN original effect persists reconciliation_required_at with reason CANCEL_EFFECT_EVIDENCE_REQUIRED, and each COMMITTED original effect with an exact approved compensation policy persists compensation state PENDING plus reconciliation_required_at with reason CANCEL_COMPENSATION_REQUIRED. Either fact is the explicit prerequisite for a fresh RECONCILER lease; a COMMITTED non-compensatable effect rejects cancellation before any mutation. Every older worker or reconciler finalization and checkpoint fails the new control epoch. Any required post-revocation evidence or compensation write must acquire a fresh separate RECONCILER authority; a stale authority cannot commit normal success or compensation after cancel acceptance.",
+      "effectBoundary": "Before an original external effect, a WORKER write persists PREPARED with effect_kind ORIGINAL, the current worker token and fence snapshots. A committed original handler receipt finalizes COMMITTED only under that same live worker fence. An original effect observed after fence revocation is recorded only by RECONCILER authority as RESULT_UNKNOWN or COMMITTED from trusted receipt evidence and enters reconciliation, never normal success or blind redispatch. Before a compensation effect, a RECONCILER write persists a distinct PREPARED compensation receipt with effect_kind COMPENSATION, the approved compensation-policy reference/digest, a compensation-only idempotency key and immutable dispatch reconciliation/control fence snapshots. DISPATCH_FINALIZE requires that same live reconciliation fence and may advance it to COMMITTED or RESULT_UNKNOWN. If that fence is lost, EVIDENCE_RECONCILE requires a new active RECONCILER fence, the unchanged existing PREPARED key/digest and trusted external receipt evidence; it records separate resolution fence snapshots and advances to COMMITTED or RESULT_UNKNOWN without invoking the external handler. A RECONCILER can never write an ORIGINAL dispatch receipt or redispatch a PREPARED compensation.",
+      "storageWithinEightTables": {
+        "sys_automation_versions": "Persist the declared compensation policy reference and digest as part of the signed immutable version.",
+        "sys_automation_runs": "Persist cancel requester, time, reason and monotonically increasing control_fence_epoch/cancel_fence_epoch.",
+        "sys_automation_run_attempts": "Persist reconciliation_required_at/reason, including CANCEL_EFFECT_EVIDENCE_REQUIRED and CANCEL_COMPENSATION_REQUIRED, plus non-null monotonically increasing worker_fence_epoch and reconciliation_fence_epoch counters. The worker core lease tuple is worker_lease_token + worker_leased_until + worker_lease_fence_epoch_snapshot + worker_control_fence_epoch_snapshot; the reconciler core lease tuple is reconciliation_lease_token + reconciliation_leased_until + reconciliation_lease_fence_epoch_snapshot + reconciliation_control_fence_epoch_snapshot. Each core tuple is all-NULL or all-present and must snapshot its current authority/control counters on acquisition. Its revoked_at is excluded from the tuple, is NULL while active and is set when OWNER_RECOVERY clears that tuple and increments the corresponding counter; a later acquisition resets revoked_at only after immutable audit/outbox revocation evidence exists. Worker and reconciler tuples cannot both be present.",
+        "sys_automation_item_attempts": "Persist effect_kind ORIGINAL, effect_state NOT_STARTED|PREPARED|NO_EFFECT_CONFIRMED|COMMITTED|RESULT_UNKNOWN, original-effect receipt reference/digest, original-effect idempotency key, worker/control fence snapshots and commit time.",
+        "sys_automation_run_items": "Snapshot the compensation policy reference/digest and persist one current compensation fact per item effect: state NOT_REQUIRED|PENDING|RUNNING|SUCCEEDED|FAILED|RESULT_UNKNOWN, compensation_effect_state NOT_STARTED|PREPARED|COMMITTED|RESULT_UNKNOWN, authority_kind RECONCILER, immutable dispatch reconciliation/control fence snapshots, nullable resolution reconciliation/control fence snapshots, resolution mode DISPATCH_FINALIZE|EVIDENCE_RECONCILE, a compensation-only idempotency key, request digest, receipt public ID, receipt digest and completion time. EVIDENCE_RECONCILE requires a different newly active resolution fence, the unchanged PREPARED key/digest and trusted receipt evidence and performs no external dispatch. The identity-sealed and terminal-guarded current shared receipt plus immutable audit/outbox facts retain command transition history; no ninth automation table is created."
+      },
+      "preparedWindowRule": "If cancel fences a PREPARED original attempt, the run remains nonterminal RUNNING and the attempt is marked reconciliation-required. A separately leased RECONCILER, never the revoked worker token, records authoritative proof that no original effect occurred as NO_EFFECT_CONFIRMED, an observed original effect as COMMITTED requiring compensation, or unresolved uncertainty as RESULT_UNKNOWN. For a committed original effect, only that RECONCILER may execute the approved compensation effect through the separately fenced PREPARED to COMMITTED or RESULT_UNKNOWN compensation receipt path. CANCELLED is never written and later reversed.",
+      "committedCancelRule": "Cancel acceptance for every already COMMITTED original effect atomically creates compensation state PENDING and the CANCEL_COMPENSATION_REQUIRED reconciliation fact before the old authority is fenced. That persisted fact admits a fresh RECONCILER lease for compensation; absence of the exact approved compensation policy rejects cancellation without state change.",
+      "terminalRule": "A run reaches CANCELLED only when every item effect is NOT_STARTED or NO_EFFECT_CONFIRMED, or every COMMITTED effect has compensation state SUCCEEDED. Any PREPARED, RESULT_UNKNOWN, FAILED or unknown compensation fact keeps the run non-CANCELLED and explicitly reconcilable."
+    },
+    "handlerManifestAuthority": {
+      "port": "AutomationHandlerRegistryPort",
+      "sourceOfTruth": "The domain-owner signed manifest registry is the only current authority. sys_automation_versions stores an immutable activation-time snapshot and digest for evidence, never an authorization cache or independent lifecycle owner.",
+      "exactLookupIdentity": "ownerService + handlerKey + handlerContractVersion",
+      "revalidationPoints": [
+        "VERSION_VALIDATE",
+        "VERSION_ACTIVATE",
+        "MANUAL_RUN_QUEUE",
+        "SCHEDULED_FIRE",
+        "LEASE_ACQUIRE",
+        "IMMEDIATELY_BEFORE_EACH_EXTERNAL_EFFECT"
+      ],
+      "requiredMatch": "The registry response must be currently ACTIVE and its signature key, signature digest, input schema digest, receipt schema digest, allowed scopes, retry mode, max attempts, compensation policy digest and manifest revision must exactly match the approved version evidence.",
+      "freshness": "No dispatch decision may rely only on an elapsed-time cache. Each revalidation reads a current cryptographically revisioned registry response; registry unavailable, revoked, suspended or mismatched fails closed with no external effect.",
+      "revocationPropagation": "Queued work, schedule fires and lease acquisition are blocked immediately on revalidation. A WORKER revalidates before every original effect and a RECONCILER revalidates the exact approved compensation policy before every compensation effect. Revocation uses the matching OWNER_RECOVERY branch to increment the persisted control fence and only the selected active authority fence, prevents a new effect and marks ambiguous work reconciliation-required; only a newly fenced RECONCILER may record later evidence, execute an independently valid approved compensation policy or DEAD_LETTER according to effect evidence and retry policy. An ACTIVE schedule remains configured but produces no run while its manifest is not current ACTIVE.",
+      "productionBinding": "No production registry provider or technical scheduler principal is admitted by this semantic disposition; both require the later owner packet and activation gate."
+    },
+    "leaseExpiryRecovery": {
+      "transaction": "With OWNER_RECOVERY authority the worker reaper locks the tenant-composite run and active attempt and selects WORKER_LEASE: it CAS-compares the exact run revision, worker token, worker lease-fence snapshot, current worker fence counter and control-fence snapshot, proves worker_leased_until is expired by the DB clock, increments the run control and worker fence counters, records worker_lease_revoked_at, clears the worker core lease tuple and rejects every later stale-worker write. This recovery write does not require an unexpired worker lease and cannot execute an effect.",
+      "reconcilerLeaseRecovery": "An expired or explicitly revoked reconciliation lease is recovered only through OWNER_RECOVERY RECONCILER_LEASE: lock the same tenant-composite rows, compare the exact run revision, reconciliation token, reconciliation lease-fence snapshot, current reconciliation fence counter and control-fence snapshot, prove DB-clock expiry or the explicit cause, increment the run control and reconciliation fence counters, record reconciliation_lease_revoked_at and clear the reconciliation core lease tuple. It never dispatches an original or compensation effect. Later reconciliation requires a newly acquired lease and new fence snapshots; if the revoked lease left a compensation PREPARED, the new RECONCILER may use EVIDENCE_RECONCILE with the exact persisted key/digest and trusted receipt to finalize it without external redispatch.",
+      "safeResume": "If every post-checkpoint effect is immediately proven NOT_STARTED or NO_EFFECT_CONFIRMED and the current manifest, policy and retry budget remain valid, the OWNER_RECOVERY CAS closes the expired attempt FAILED with LEASE_EXPIRED_SAFE, increments run revision, changes the run from LEASED or RUNNING to QUEUED and creates the next QUEUED attempt without a worker lease, with incremented attempt number, the same frozen item selection/count/digest and resume ordinal strictly after the last committed checkpoint. A later independent lease acquisition is required before work resumes.",
+      "preparedOrUnknown": "PREPARED or RESULT_UNKNOWN keeps the run RUNNING, marks the attempt reconciliation-required and creates no new execution attempt. A separate RECONCILER lease, never the expired worker token, resolves the exact external receipt first; NO_EFFECT_CONFIRMED may then enter safeResume, COMMITTED enters recovery-checkpoint or compensation handling, and unresolved uncertainty remains non-dispatchable.",
+      "committedNotCheckpointed": "A COMMITTED effect is never redispatched. Under RECONCILER authority its exact effect-idempotency receipt is folded into the next monotonic recovery checkpoint; only then may OWNER_RECOVERY queue a new lease-free attempt for remaining items.",
+      "deadLetter": "Manifest revocation, retry mode NONE, exhausted signed or hard attempt budget, empty safe selection, or failed dedupe evidence closes unresolved work and the run as DEAD_LETTER with an immutable receipt and audit/outbox fact."
+    }
+  },
+  "migrationDecision": {
+    "required": true,
+    "stream": "PLATFORM_MAIN",
+    "observedHighWater": "V332",
+    "candidateVersion": "V333",
+    "leaseState": "NOT_ISSUED",
+    "reason": "The executed Platform schema contains no SYS-006 automation aggregate while the sealed runtime requires eight Platform-owned stateful tables.",
+    "exactNewTables": [
+      "sys_automation_definitions",
+      "sys_automation_versions",
+      "sys_automation_schedules",
+      "sys_automation_runs",
+      "sys_automation_run_attempts",
+      "sys_automation_run_items",
+      "sys_automation_item_attempts",
+      "sys_automation_run_checkpoints"
+    ],
+    "reuseOnly": [
+      "sys_hris_command_receipts",
+      "sys_domain_event_outbox",
+      "sys_domain_event_inbox",
+      "sys_audit_outbox",
+      "sys_audit_events"
+    ],
+    "exactEvidencePersistence": {
+      "sys_automation_versions": [
+        "definition_payload canonical JSON and definition_digest",
+        "execution_policy canonical JSON and execution_policy_digest including manualConcurrencyKeyTemplate",
+        "compensation_policy_ref and compensation_policy_digest",
+        "handler_owner_service, handler_key, handler_contract_version, handler_manifest_revision and handler_manifest_digest",
+        "handler_signature_key_id, handler_signature and handler_signature_digest",
+        "input_schema_ref, input_schema_digest, receipt_schema_ref and receipt_schema_digest",
+        "validation_state, validated_by_actor_ref, validated_at, validation_receipt_id and validation_evidence_digest",
+        "compatibility_baseline_version and compatibility_baseline_digest",
+        "submitted_by_actor_ref, submitted_at, submitted_subject_revision, submission_receipt_id and submission_evidence_digest",
+        "approved_by_actor_ref, approved_at, approved_subject_revision, approval_receipt_id, approval_evidence_digest and approval_step_up_evidence_digest",
+        "activated_by_actor_ref, activated_at, activation_receipt_id and activation_evidence_digest",
+        "author_actor_ref, object_revision and immutable created_at"
+      ],
+      "sys_automation_schedules": [
+        "pinned_version identity, expression, IANA timezone, timezone_database_revision and SKIP_MISSED policy",
+        "input_template_ref, input_template_digest and concurrency_key_template",
+        "submitted_by_actor_ref, submitted_at, submitted_subject_revision, submission_receipt_id and submission_evidence_digest",
+        "approved_by_actor_ref, approved_at, approved_subject_revision, approval_receipt_id, approval_evidence_digest and approval_step_up_evidence_digest",
+        "activated_by_actor_ref, activated_at, activation_receipt_id and activation_evidence_digest",
+        "subject_revision, object_revision and immutable schedule_policy_digest",
+        "next_fire_at, last_scheduled_instant_utc and monotonically increasing fire_cursor_revision"
+      ],
+      "freshnessRules": "A signed definition, version or schedule subject mutation increments subject_revision and object_revision, changes the corresponding digest and invalidates validation, submission and approval evidence. Lifecycle transitions increment object_revision only and consume or preserve evidence only while the exact subject_revision and digest remain current. Approval requires approver != author, approved_subject_revision == current submitted_subject_revision == current subject_revision and a current target-bound step-up fact. Scheduler cursor advancement changes only next_fire_at, last_scheduled_instant_utc and fire_cursor_revision; it never changes subject_revision, object_revision or approval evidence. Activation requires approved_subject_revision == current subject_revision and the exact current schedule_policy_digest.",
+      "signatureTrust": "Validation resolves signature_key_id against the current trusted-key registry, verifies signature over the RFC-8785/JCS closed version document and stores the key revision and evidence digest. Activation repeats trust, revocation and digest verification; snapshot evidence never overrides a revoked key.",
+      "noAdditionalTables": "All evidence columns live in the declared eight tables and reference the reused shared command receipt/audit/outbox stores by public ID; no ninth SYS-006 table is permitted."
+    },
+    "requiredPhysicalControls": [
+      "tenant-composite primary and foreign keys",
+      "unique automation key per tenant",
+      "unique version number per tenant and definition",
+      "tenant-composite definition lock plus serialized monotonic version-number allocation; multiple pre-active candidates are permitted",
+      "partial unique or equivalent exclusion for one ACTIVE definition version",
+      "partial unique or equivalent exclusion for one active QUEUED, LEASED or RUNNING execution per tenant and concurrency-key digest; quiescent PARTIAL or FAILED runs do not retain the slot and retry must reacquire it",
+      "unique scheduled fire identity per tenant, schedule and schedule fire key",
+      "schedule policy subject_revision and command object_revision are independent from monotonically increasing fire_cursor_revision; cursor-only updates may change only next_fire_at, last_scheduled_instant_utc and fire_cursor_revision",
+      "scheduled fire CAS compares exact tenant, schedule, ACTIVE state, object_revision, approved subject_revision, schedule policy digest, due next_fire_at and fire_cursor_revision; it never invalidates approval evidence",
+      "four-eyes author and approver inequality checks",
+      "canonical SchemaVersion VARCHAR storage",
+      "maximum attempt check at 20 plus manifest-bound runtime guard",
+      "all JSON-number-backed revisions, versions and ordinals are database-checked within 0..9007199254740991 (positive where required); expected/materialized/selected/processed item counts and item_sequence are within 0..1000000000 (item_sequence positive), attempts within 1..20, and item-attempt run_revision_snapshot is positive and no greater than the locked run revision",
+      "immutable final SUCCEEDED, CANCELLED and DEAD_LETTER run facts; immutable completed run-attempt and item-attempt facts; immutable SUCCEEDED, FAILED_FINAL, CANCELLED and DEAD_LETTER item facts",
+      "distinct WORKER, OWNER_RECOVERY and RECONCILER fence enforcement: non-null monotonic worker and reconciliation fence counters are separate from nullable core lease tuples token + leased_until + authority-fence snapshot + control-fence snapshot; each tuple is all-NULL or all-present, revoked_at is NULL while active and set when revocation clears the tuple, and worker/reconciler tuples cannot both be present; OWNER_RECOVERY selects exactly NO_ACTIVE_LEASE, WORKER_LEASE or RECONCILER_LEASE, always increments the control fence and increments/revokes only the selected lease authority",
+      "monotonic checkpoints record writer_authority_kind WORKER or RECONCILER and the matching fence snapshots; RECONCILER checkpoints may fold only already committed verified original-effect receipt evidence and do not themselves authorize an effect",
+      "external-effect authority trigger permits authority_kind WORKER only with effect_kind ORIGINAL and permits authority_kind RECONCILER only with effect_kind COMPENSATION, exact approved compensation-policy evidence, a distinct compensation idempotency key and an active reconciliation/control fence; compensation DISPATCH_FINALIZE requires the immutable PREPARED dispatch fence to equal the same live fence, while EVIDENCE_RECONCILE requires a different newly active resolution fence, the existing PREPARED key/digest and trusted external receipt and is database-blocked from external dispatch; OWNER_RECOVERY dispatch is always rejected",
+      "effect-idempotency uniqueness",
+      "atomic cancel marker plus lease revocation and fence-epoch invalidation",
+      "cancel acceptance atomically derives reconciliation eligibility: PREPARED or RESULT_UNKNOWN original effects write CANCEL_EFFECT_EVIDENCE_REQUIRED, and COMMITTED original effects write compensation PENDING plus CANCEL_COMPENSATION_REQUIRED; a COMMITTED non-compensatable effect rejects the whole transaction",
+      "shared command receipt allowed-transition and terminal-state guard",
+      "SYS-006 shared receipt aggregate_public_id, aggregate_revision and result_ref all-null or all-present constraint with positive aggregate_revision when present",
+      "exact effect-state and compensation policy, key, digest, state and receipt linkage within the eight-table model",
+      "forced row-level security using verified SET LOCAL dwp.tenant_id",
+      "atomic shared outbox and audit publication: the exact SYS-EVT-004 row is inserted with the run CAS, one logical event identity exists per committed run revision, terminal events have no synthetic correction revision and validation failure rolls back the transition"
+    ],
+    "forbidden": [
+      "NINTH_SYS006_RECEIPT_TABLE",
+      "SECOND_COMMAND_RECEIPT_CONTROLLER_OR_ROUTE",
+      "CROSS_SERVICE_DATABASE_FOREIGN_KEY",
+      "CROSS_SERVICE_REPOSITORY_ACCESS",
+      "COPY_G2_BLUEPRINT_WHOLESALE",
+      "RESERVE_OR_AUTHOR_V333_BEFORE_CENTRAL_SUCCESSOR_ADMISSION_AND_OWNER_PACKET"
+    ]
+  },
+  "eventDecision": {
+    "schemaDialect": "https://json-schema.org/draft/2020-12/schema",
+    "eventId": "SYS-EVT-004",
+    "eventType": "dwp.hris.automation.run.state-changed.v1",
+    "envelope": "DEP-003_EVENT_ENVELOPE_OUTBOX_INBOX_V1",
+    "ordering": "Envelope aggregatePublicId is runPublicId and aggregateRevision is the exact monotonically increasing run revision; consumers order and deduplicate by envelope eventId and aggregate revision. There is at most one logical SYS-EVT-004 event identity per committed run revision; publication retries reuse that event identity and no synthetic correction revision exists.",
+    "payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "runPublicId",
+        "state",
+        "itemTotal",
+        "itemSucceeded",
+        "itemFailed",
+        "outputDigest"
+      ],
+      "properties": {
+        "runPublicId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "state": {
+          "enum": [
+            "QUEUED",
+            "LEASED",
+            "RUNNING",
+            "SUCCEEDED",
+            "PARTIAL",
+            "FAILED",
+            "CANCELLED",
+            "DEAD_LETTER"
+          ]
+        },
+        "itemTotal": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000000
+        },
+        "itemSucceeded": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000000
+        },
+        "itemFailed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000000000
+        },
+        "outputDigest": {
+          "oneOf": [
+            {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "enum": ["SUCCEEDED", "CANCELLED", "DEAD_LETTER"]
+              }
+            },
+            "required": ["state"]
+          },
+          "then": {
+            "properties": {
+              "outputDigest": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "countMapping": {
+      "itemTotal": "Exact cardinality of sys_automation_run_items for the run and equal to the frozen expected item count after materialization succeeds.",
+      "itemSucceeded": "Exact count of run items whose current state is SUCCEEDED.",
+      "itemFailed": "Exact count of run items whose current state is FAILED_RETRYABLE, FAILED_FINAL or DEAD_LETTER. CANCELLED, PENDING and RUNNING items are not failed.",
+      "stateRules": {
+        "QUEUED_OR_LEASED_OR_RUNNING": "itemSucceeded + itemFailed is less than or equal to itemTotal.",
+        "SUCCEEDED": "itemSucceeded equals itemTotal and itemFailed equals zero.",
+        "PARTIAL": "itemSucceeded is greater than zero, itemFailed is greater than zero, itemSucceeded + itemFailed equals itemTotal and at least one failed item is retryable with budget remaining.",
+        "FAILED": "itemSucceeded equals zero, itemFailed equals itemTotal, itemTotal is greater than zero and at least one failed item is retryable with budget remaining.",
+        "CANCELLED": "itemSucceeded + itemFailed may be less than itemTotal because unstarted or safely cancelled items are neither; the sealed effect and compensation terminal rule must hold.",
+        "DEAD_LETTER": "itemSucceeded + itemFailed equals itemTotal and itemFailed is greater than zero, with no retryable selection remaining."
+      }
+    },
+    "rules": [
+      "Counts are server-derived only by the closed count mapping and every state-specific equality is checked before the state event is appended.",
+      "outputDigest may be null in active or quiescent retryable states; if present it is the deterministic current receipt-set digest. It is required in SUCCEEDED, CANCELLED and DEAD_LETTER and includes the canonical empty-set digest when no output exists.",
+      "The event carries no raw input, output, item list, subject reference, actor personal data, token or secret.",
+      "SYS-EVT-004 is appended in the same transaction as the authorized run CAS and carries that committed run revision. If payload, count or output-digest validation fails, the transaction rolls back and no event is emitted. An emitted event is never edited, replaced or corrected by an event-only revision. A later SYS-EVT-004 exists only for a later independently authorized run transition; SUCCEEDED, CANCELLED and DEAD_LETTER events are final and have no forward-correction path."
+    ],
+    "outputDigestCanonicalization": {
+      "algorithm": "lowercase hexadecimal SHA-256 over the UTF-8 bytes of RFC-8785/JCS canonical JSON. Every positive BIGINT revision or sequence is encoded in the document as its no-leading-zero base-10 JSON string, never as a JSON number, so ECMAScript/JCS precision cannot collapse distinct persisted values.",
+      "closedDocument": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["runPublicId", "runRevision", "items"],
+        "properties": {
+          "runPublicId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "runRevision": {
+            "type": "string",
+            "pattern": "^(?:[1-9][0-9]{0,14}|[1-8][0-9]{15}|900[0-6][0-9]{12}|90070[0-9]{11}|90071[0-8][0-9]{10}|900719[0-8][0-9]{9}|9007199[0-1][0-9]{8}|90071992[0-4][0-9]{7}|900719925[0-3][0-9]{6}|9007199254[0-6][0-9]{5}|90071992547[0-3][0-9]{4}|9007199254740[0-8][0-9]{2}|90071992547409[0-8][0-9]|900719925474099[0-1])$",
+            "maxLength": 16,
+            "description": "Exact no-leading-zero base-10 representation of sys_automation_runs.object_revision in the closed range 1..9007199254740991. The schema rejects every larger value before canonicalization."
+          },
+          "items": {
+            "type": "array",
+            "description": "Contains every materialized run item in itemSequence order. No transport-page limit or arbitrary local cap applies to this internal canonical digest document; cardinality equals itemTotal and remains within canonical PDX-005 NonNegativeCount.",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "itemPublicId",
+                "itemSequence",
+                "receiptState",
+                "attemptNumber",
+                "resultDigest",
+                "errorCode",
+                "compensationReceiptDigest"
+              ],
+              "properties": {
+                "itemPublicId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "itemSequence": {
+                  "type": "string",
+                  "pattern": "^(?:[1-9][0-9]{0,8}|1000000000)$",
+                  "maxLength": 10,
+                  "description": "Exact base-10 representation of item_sequence, bounded by the canonical PDX-005 expectedItemCount maximum 1000000000."
+                },
+                "receiptState": {
+                  "enum": [
+                    "PENDING",
+                    "LEASED",
+                    "RUNNING",
+                    "SUCCEEDED",
+                    "FAILED_RETRYABLE",
+                    "FAILED_FINAL",
+                    "CANCELLED",
+                    "DEAD_LETTER"
+                  ]
+                },
+                "attemptNumber": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 20
+                },
+                "resultDigest": {
+                  "oneOf": [
+                    {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "errorCode": {
+                  "oneOf": [
+                    {
+                      "type": "string",
+                      "pattern": "^[A-Z][A-Z0-9._-]{0,79}$"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "compensationReceiptDigest": {
+                  "oneOf": [
+                    {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "itemOrder": "Ascending physical numeric item_sequence before decimal-string encoding; itemPublicId is the deterministic tie breaker although V333 also enforces item_sequence uniqueness within a run.",
+        "nullEncoding": "Every nullable item field is present as explicit JSON null; omitted keys, locale strings, floats, leading-zero decimal strings and unsafe BIGINT JSON numbers are forbidden.",
+        "receiptSelection": "For each materialized item use the latest persisted item-attempt receipt at or before the positive BIGINT represented by runRevision. Terminal events require a terminal receipt for every materialized item; the canonical empty items array is used only when itemTotal is zero."
+      }
+    }
+  },
+  "receiptDecision": {
+    "sharedStore": "sys_hris_command_receipts",
+    "commandReceiptStates": [
+      "ACCEPTED",
+      "RUNNING",
+      "SUCCEEDED",
+      "REJECTED",
+      "FAILED",
+      "RESULT_UNKNOWN"
+    ],
+    "runStateSeparation": "RESULT_UNKNOWN is a command receipt state and never an automation run state.",
+    "identityImmutability": "V327's existing seal remains authoritative and exhaustively keeps these nineteen physical columns immutable: public_id, tenant_id, command_type, originating_action, subject_principal_public_id, population_scope_digest, authority_population_scope_digest, field_policy_revision, authority_field_policy_revision, purpose_code, authorization_revision, authority_authorization_revision, origin_route_contract_key, origin_context_key, origin_context_scope_key, origin_decision_revision, idempotency_key, request_digest and correlation_id. SYS-006 neither weakens nor replaces that trigger.",
+    "allowedTransitions": [
+      "ACCEPTED_TO_RUNNING",
+      "ACCEPTED_TO_REJECTED",
+      "RUNNING_TO_SUCCEEDED",
+      "RUNNING_TO_FAILED",
+      "RUNNING_TO_RESULT_UNKNOWN",
+      "RESULT_UNKNOWN_TO_RUNNING",
+      "RESULT_UNKNOWN_TO_SUCCEEDED",
+      "RESULT_UNKNOWN_TO_FAILED"
+    ],
+    "storageMapping": {
+      "aggregatePublicId": "sys_hris_command_receipts.aggregate_public_id",
+      "aggregateRevision": "sys_hris_command_receipts.aggregate_revision; this is the physical mapping for the historical public Receipt.aggregateVersion field",
+      "resultRef": "sys_hris_command_receipts.result_ref"
+    },
+    "terminalGuard": "SUCCEEDED, REJECTED and FAILED are terminal; V333 augments the shared receipt trigger or an equivalent database constraint so status, aggregate_public_id, aggregate_revision, result_ref, error_code and completed_at cannot change after those states. RESULT_UNKNOWN is quiescent but nonterminal and may advance only through evidence reconciliation CAS. Every allowed transition writes an immutable audit/outbox fact in the same transaction.",
+    "statusFieldRules": {
+      "ACCEPTED": "resultRef, aggregatePublicId, aggregateRevision, error and completedAt are null.",
+      "RUNNING": "resultRef, aggregatePublicId and aggregateRevision are either all present after aggregate allocation or all null before allocation; error and completedAt are null.",
+      "REJECTED": "resultRef, aggregatePublicId and aggregateRevision are null; error and completedAt are required.",
+      "SUCCEEDED": "resultRef, aggregatePublicId, positive aggregateRevision and completedAt are required; error is null.",
+      "FAILED": "completedAt and error are required; resultRef, aggregatePublicId and positive aggregateRevision are either all present for an allocated aggregate or all null when failure preceded allocation.",
+      "RESULT_UNKNOWN": "completedAt is null; resultRef, aggregatePublicId and positive aggregateRevision are either all present for an allocated aggregate or all null when allocation itself is uncertain; error is required and identifies the reconciliation class."
+    },
+    "pairing": "For SYS-006, resultRef, aggregatePublicId and aggregateRevision are an all-null or all-present tuple. When present, resultRef resolves the exact definition, version, schedule or run identified by aggregatePublicId and aggregateRevision is the positive revision observed by the receipt; the three physical columns are never populated independently.",
+    "reconciliation": "A RESULT_UNKNOWN receipt triggers an authorized aggregate reload and external evidence reconciliation; it never changes the run by inference and never authorizes blind redispatch.",
+    "immutabilityClaim": "The shared receipt is identity-sealed and terminal-guarded current state. Immutable audit/outbox records and immutable terminal item-attempt receipts retain its transition history; the mutable current row is never described as a wholly immutable ledger."
+  },
+  "iaqDecision": {
+    "entryQuery": "IAQ-059",
+    "iaNodeId": "BASE:settings-operations",
+    "canonicalRoute": "/hr/settings/operations",
+    "primaryOwner": "BASE-TFR-SYS-002",
+    "sys006Relationship": "SHARED_ROUTE_CHILD_COMPOSITION_REUSE_ONLY_NO_OWNERSHIP_OR_RECOUNT",
+    "existingSurface": "SYS-002 retains the read/deep-link-only operations exception projection, command receipt query and page shell unchanged; it returns and renders no owner recovery command.",
+    "sharedPageComposition": "SYS-002 remains the sole owner of route.hcm.configuration.settings-operations.page and feature HRIS_OPERATIONS_EXCEPTION_CENTER. Mounting the SYS-006 child requires both a successful existing page decision with hcm.configuration.workbench.view and an independent HRIS_AUTOMATION_CONTROL_PLANE child/API decision. SYS-006 adds no PAGE route, does not reown the route and cannot broaden the base page grant. A future tenant activation must enroll both features as applicable; this disposition enrolls neither.",
+    "sys006ChildSurface": {
+      "placement": "A separately authorized automation child area within the existing settings operations route.",
+      "sections": ["AUTOMATION_DEFINITIONS", "AUTOMATION_SCHEDULES", "AUTOMATION_RUNS"],
+      "newSidebarNode": false,
+      "newPageOwnership": false,
+      "currentMountState": "UNMOUNTED_DEFAULT_OFF"
+    },
+    "historicalProjectionCorrection": "The fourteen historical IAQ-059 href-template automation descriptors are superseded. IAQ-059 itself returns no SYS-006 action descriptors. SYS-006 catalog and run-detail owner queries return exact target-bound, state-aware actions after their own authorization decision.",
+    "ownerQueryProjections": {
+      "SYS-API-017.GET": {
+        "shape": "A closed discriminated resource union plus collectionActions, stable cursor and authorization/field decision summaries.",
+        "authorizationProfiles": {
+          "AUTHOR": "HRIS_CONFIG_AUTHOR>HRIS_DUTY_POLICY_AUTHOR with hcm.configuration.policy.update",
+          "PUBLISHER": "HRIS_CONFIG_PUBLISHER>HRIS_DUTY_POLICY_PUBLISHER with hcm.configuration.policy.publish",
+          "EXECUTOR": "HRIS_INTEGRATION_EXECUTOR>HRIS_DUTY_INTEGRATION_EXECUTOR with hcm.integration.execute"
+        },
+        "profileProjectionRule": "The central append-only successor supersedes only the historical PEP-SYS-017 GET author-only profile. The owner evaluates the caller into exactly the independently satisfied profile set and returns only fields, rows and action descriptors authorized by those profiles; it never unions missing roles, grants commands from view authority or requires publisher/executor users to receive author capability. SYS-API-017 POST remains author-only under PEP-SYS-018.",
+        "resourceTypes": {
+          "AUTOMATION_DEFINITION": "definitionPublicId, automationKey, ownerDomain, derivedLifecycleState, activeVersionNumber nullable, objectRevision and availableActions",
+          "AUTOMATION_VERSION": "definitionPublicId, versionNumber, lifecycleState, handlerKey, handlerContractVersion, objectRevision and availableActions",
+          "AUTOMATION_SCHEDULE": "schedulePublicId, definitionPublicId, pinnedVersionNumber, lifecycleState, timezone, nextFireAt nullable, objectRevision and availableActions"
+        },
+        "collectionActions": "Only CREATE_DEFINITION may appear at collection level.",
+        "resourceActions": "Definition rows may expose CREATE_VERSION, CREATE_SCHEDULE or QUEUE_RUN; version rows may expose VALIDATE_VERSION, SUBMIT_VERSION, APPROVE_VERSION or ACTIVATE_VERSION; schedule rows may expose SUBMIT_SCHEDULE, APPROVE_SCHEDULE, ACTIVATE_SCHEDULE or SUSPEND_SCHEDULE.",
+        "noActionOnHiddenIdentity": true
+      },
+      "SYS-API-019": {
+        "shape": "One exact run with definition/version identity, state, object revision, selection/count/output facts, retryEligibleItemCount, cancelEligibility and invariant administrative-control attempt, item and checkpoint receipt collections. This endpoint accepts no fields parameter and emits no fieldDecisionSummary.",
+        "availableActions": "Only RETRY_RUN or CANCEL_RUN may appear, each from persisted run, retry-budget, effect and compensation facts.",
+        "identityProjection": "runPublicId, definitionPublicId, versionNumber and objectRevision are invariant authorized control fields and are never MASKed or OMITted after the owner route decision."
+      },
+      "descriptor": {
+        "resourceDescriptorRequiredFields": [
+          "method",
+          "actionKey",
+          "targetResourceType",
+          "targetPublicId",
+          "expectedObjectRevision",
+          "resolvedHref",
+          "idempotencyPolicy",
+          "stepUpPolicy"
+        ],
+        "collectionDescriptorRequiredFields": [
+          "method",
+          "actionKey",
+          "targetResourceType",
+          "resolvedHref",
+          "idempotencyPolicy",
+          "stepUpPolicy"
+        ],
+        "conditionalField": "targetVersion is required only for an automation-version resource target. Collection CREATE_DEFINITION forbids targetPublicId, targetVersion and expectedObjectRevision.",
+        "policyConstants": {
+          "idempotencyPolicy": "REQUIRED_IDEMPOTENCY_KEY",
+          "stepUpPolicy": "OWNER_PEP_RISK_POLICY_DECISION_REQUIRED"
+        },
+        "targetRule": "All target IDs, versions, revisions and hrefs are built from the same server-loaded resource after authorization and field projection.",
+        "stepUpRule": "stepUpPolicy declares the command-time owner PEP/risk-policy decision. It never authorizes inventing a target, omitting target binding or exposing an otherwise ineligible action."
+      }
+    },
+    "actionProjectionRules": {
+      "collectionCreate": "Definition creation is a top-level exact POST action with no fabricated target ID.",
+      "resourceActions": "Version, schedule, run, retry and cancel actions are attached only to the exact server-loaded resource and lifecycle state.",
+      "intersectionRule": "availableActions is a subset of the executable lifecycle-state allowlist intersected with current persisted-domain eligibility, independently satisfied command authorization and visible target-binding facts. A false, stale, incomplete or unknown eligibility fact always omits the action; eligibility never requires exposure.",
+      "resolvedHref": "Server-built, contains the exact target public ID and version where required, and contains no template token, query-derived authority or fragment.",
+      "maximumActionsPerTransitionTarget": 1,
+      "queryGrantRule": "A query/view grant alone never authorizes a command and produces no command descriptor.",
+      "fieldRule": "If any field needed to identify or authorize the exact target is MASK or OMIT, the action is absent."
+    },
+    "actionKeys": [
+      "hris.action.sys.post.platform.v1.admin.hris.automations",
+      "hris.action.sys.post.platform.v1.admin.hris.automations.resource.runs",
+      "hris.action.sys.post.platform.v1.admin.hris.automation-runs.resource.retry",
+      "hris.action.sys.post.platform.v1.admin.hris.automations.resource.versions",
+      "hris.action.sys.post.platform.v1.admin.hris.automations.resource.versions.resource.validate",
+      "hris.action.sys.post.platform.v1.admin.hris.automations.resource.versions.resource.submit",
+      "hris.action.sys.post.platform.v1.admin.hris.automations.resource.versions.resource.approve",
+      "hris.action.sys.post.platform.v1.admin.hris.automations.resource.versions.resource.activate",
+      "hris.action.sys.post.platform.v1.admin.hris.automations.resource.schedules",
+      "hris.action.sys.post.platform.v1.admin.hris.automation-schedules.resource.submit",
+      "hris.action.sys.post.platform.v1.admin.hris.automation-schedules.resource.approve",
+      "hris.action.sys.post.platform.v1.admin.hris.automation-schedules.resource.activate",
+      "hris.action.sys.post.platform.v1.admin.hris.automation-schedules.resource.suspend",
+      "hris.action.sys.post.platform.v1.admin.hris.automation-runs.resource.cancel"
+    ],
+    "actionExposure": {
+      "CREATE_DEFINITION": "Top-level collection action after feature, entitlement, update capability, purpose and field-policy checks.",
+      "QUEUE_RUN": "Exact definition has an executable ACTIVE version and the caller has execute authority. Input schema/digest validation and the concurrency exclusion are command-time guards and are never guessed by the catalog projection.",
+      "RETRY_RUN": "RETRY_RUN is absent unless the run is PARTIAL or FAILED, retryBudgetRemaining and retryEligibleItemCount are positive, the current signed exact-match manifest is ACTIVE, retry mode is not NONE, both manifest maxAttempts and hard limit 20 have capacity, and at least one exact retryable failure exists. FAILED_ITEMS_ONLY additionally requires the frozen nonempty failed-item ID/count/digest set; WHOLE_INVOCATION requires the complete original set/digest and successful-effect dedupe evidence. Missing, substituted, stale or mismatched evidence omits the action.",
+      "CREATE_VERSION": "Definition state is DRAFT or ACTIVE in SYS-006 v1, expected definition revision matches and the next version number can be allocated under the tenant-composite definition lock. Existing pre-active candidates do not hide this action.",
+      "VALIDATE_VERSION": "Version state is DRAFT.",
+      "SUBMIT_VERSION": "Version state is VALIDATED.",
+      "APPROVE_VERSION": "Version state is PENDING_APPROVAL and current maker-checker, step-up and evidence rules pass.",
+      "ACTIVATE_VERSION": "Version state is APPROVED, its approval receipt is current and expected object revision matches.",
+      "CREATE_SCHEDULE": "Definition has an APPROVED or ACTIVE version eligible to be pinned into a DRAFT schedule.",
+      "SUBMIT_SCHEDULE": "Schedule state is DRAFT.",
+      "APPROVE_SCHEDULE": "Schedule state is PENDING_APPROVAL and current maker-checker, step-up and evidence rules pass.",
+      "ACTIVATE_SCHEDULE": "Schedule state is APPROVED, the pinned version remains executable and expected object revision matches.",
+      "SUSPEND_SCHEDULE": "Schedule state is ACTIVE.",
+      "CANCEL_RUN": "CANCEL_RUN is absent outside QUEUED, LEASED or RUNNING. QUEUED or LEASED requires the sealed no-effect-started invariant. RUNNING requires every effect to be NOT_STARTED or every PREPARED/RESULT_UNKNOWN effect to have a trusted reconciliation path and every COMMITTED effect to have an exact declared idempotent compensation path. A non-compensatable effect, missing policy, stale evidence or unknown path sets cancelEligibility INELIGIBLE and omits the action. Exposure does not imply immediate CANCELLED; accepted cancellation may remain RUNNING/RESULT_UNKNOWN until reconciliation and compensation complete."
+    }
+  },
+  "authorizationDecision": {
+    "commonChain": [
+      "APP.HCM:VIEW",
+      "GATEWAY_APP_ENTITLEMENT",
+      "OWNER_API_OPERATION",
+      "RESOURCE_POPULATION",
+      "REPOSITORY_TENANT_PREDICATE",
+      "FIELD_PROJECTION",
+      "PURPOSE_POLICY",
+      "AUDIT_DECISION"
+    ],
+    "purpose": "HRIS_SYSTEM_ADMIN",
+    "profiles": {
+      "definitionVersionAndScheduleAuthoring": {
+        "responsibility": "HRIS_CONFIG_AUTHOR>HRIS_DUTY_POLICY_AUTHOR",
+        "capability": "hcm.configuration.policy.update"
+      },
+      "versionAndScheduleApproval": {
+        "responsibility": "HRIS_CONFIG_PUBLISHER>HRIS_DUTY_POLICY_PUBLISHER",
+        "capability": "hcm.configuration.policy.publish",
+        "makerChecker": true,
+        "stepUp": true
+      },
+      "executeReadRetryActivateSuspendCancel": {
+        "responsibility": "HRIS_INTEGRATION_EXECUTOR>HRIS_DUTY_INTEGRATION_EXECUTOR",
+        "capability": "hcm.integration.execute"
+      }
+    },
+    "catalogGetProfileCorrection": "PEP-SYS-017 GET becomes a multi-profile owner query: author/update, publisher/publish and executor/execute are evaluated independently and projected without implicit union. This is an append-only central contract correction; PEP-SYS-018 POST remains author/update-only.",
+    "sharedPageRequirement": "UI child composition requires the existing SYS-002 page decision and the independent SYS-006 feature/API decision. Direct owner APIs still require their own route, feature and profile checks; possession of the base page view alone never authorizes or reveals SYS-006 data or actions.",
+    "featureKey": "HRIS_AUTOMATION_CONTROL_PLANE",
+    "defaultEnabled": false,
+    "enrolledTenants": [],
+    "directCallBypassForbidden": true,
+    "browserTenantOrAuthorityTrusted": false
+  },
+  "dependencyDecision": {
+    "required": [
+      {
+        "id": "DEP-001",
+        "contract": "HRIS_APP_ENTITLEMENT_AND_ACCESS_PACKAGE_V1",
+        "failure": "FAIL_CLOSED_NO_LEAF_DATA"
+      },
+      {
+        "id": "DEP-002",
+        "contract": "EFFECTIVE_PERMISSION_SCOPE_FIELD_REVISION_V1",
+        "failure": "403_AND_CACHE_PURGE"
+      },
+      {
+        "id": "DEP-003",
+        "contract": "EVENT_ENVELOPE_OUTBOX_INBOX_V1",
+        "failure": "SCHEMA_REJECT_AND_DLQ"
+      },
+      {
+        "id": "DEP-004",
+        "contract": "CONFIG_LIFECYCLE_POLICY_REF_V1",
+        "failure": "LAST_APPROVED_OR_FEATURE_DISABLED"
+      },
+      {
+        "id": "DEP-005",
+        "contract": "AUTOMATION_HANDLER_AND_RECEIPT_V1",
+        "failure": "NO_ARBITRARY_EXECUTION_AND_DURABLE_RETRY_RECEIPT"
+      },
+      {
+        "id": "DEP-016",
+        "contract": "AUDIT_OUTBOX_EVENT_V1",
+        "failure": "LOCAL_TRANSACTION_MUST_RECORD_OUTBOX_OR_ROLL_BACK"
+      }
+    ]
+  },
+  "centralSuccessorRequirements": {
+    "appendOnly": true,
+    "historicalMutation": false,
+    "requiredBeforeOwnerPacket": [
+      "append-only IAQ-059 correction preserving SYS-002 ownership and moving SYS-006 actions to exact owner projections",
+      "append-only transport correction for normalized SYS-API-017 POST and canonical string handlerContractVersion",
+      "closed typed request/response schemas for SYS-API-017 GET/POST and SYS-API-019, including authenticated cursor bindings and closed action descriptors",
+      "PEP-SYS-017 GET multi-profile correction evaluating author/update, publisher/publish and executor/execute independently while PEP-SYS-018 POST remains author-only",
+      "shared-page composition requiring both the existing SYS-002 page decision and the independent SYS-006 child/API feature decision with no PAGE recount or ownership change",
+      "closed SYS-EVT-004 schema and state/count/digest mapping",
+      "append the missing already-accepted v55 checksum/count pin to ProductAuthorizationReleaseLineage and its focused lineage/seed-loader tests before appending v56",
+      "product authorization bundle v56 with the exact sixteen HTTP operation bindings, sixteen sealed routeContractKeys and fourteen action keys",
+      "Auth V265 default-OFF HRIS_AUTOMATION_CONTROL_PLANE feature declaration with zero tenant enrollments and no broad grants",
+      "Gateway mappings for all browser APIs with trusted tenant, subject, scope, field, purpose, authorization revision and correlation reconstruction",
+      "frontend child-surface contract at the shared route without a second sidebar node or page ownership",
+      "bounded shared receipt bridge changes: add the automation feature condition to HrisCommandReceiptController and the exact fourteen actionKey-to-routeContractKey mappings to AuthHrisExplorerAuthorityEvidenceQuery without duplicating SYS-002 ownership",
+      "shared receipt transition and terminal guards plus current ACTIVE handler-registry revalidation at validate, activate, queue, fire, lease and pre-effect boundaries",
+      "exact V333 evidence, schedule-fire identity, concurrency-key, lease-expiry recovery and RFC-8785/JCS output-digest persistence requirements",
+      "negative matrices for query-only, field-masked, stale CAS, wrong tenant, self-approval, feature-OFF and direct-call bypass",
+      "exact package and source allocation rooted at com.dwp.services.platform.hrisconfiguration.automation",
+      "a separately admitted Platform V333 reservation only after the central successor and clean owner packet"
+    ],
+    "candidateVersions": {
+      "productAuthorizationBundle": "v56",
+      "authMigration": "V265",
+      "platformMigration": "V333"
+    },
+    "sourceImplementationAfterSemanticReview": "CENTRAL_SUCCESSOR_MUST_BE_AUTHORED_REVIEWED_IMPLEMENTED_TARGET_TESTED_COMMITTED_PUSHED_AND_ADMITTED_BEFORE_OWNER_PACKET_OR_V333_LEASE"
+  },
+  "acceptanceEvidencePlan": {
+    "goldenScenarios": [
+      "SYS-GOLD-003",
+      "SYS-GOLD-008",
+      "SYS-GOLD-015",
+      "SYS-GOLD-016",
+      "SYS-GOLD-017",
+      "SYS-GOLD-018",
+      "SYS-GOLD-019",
+      "SYS-GOLD-032",
+      "SYS-GOLD-040",
+      "SYS-GOLD-045",
+      "SYS-GOLD-049",
+      "SYS-GOLD-050",
+      "SYS-GOLD-051",
+      "SYS-GOLD-052",
+      "SYS-GOLD-053"
+    ],
+    "targetedProofThemes": [
+      "authorization negative and query-action separation",
+      "tenant isolation and forced RLS",
+      "signed allowlist with no arbitrary class method or SQL",
+      "four-eyes and stale CAS rejection",
+      "idempotent replay and digest mismatch",
+      "lease expiry, stale fence and checkpoint resume",
+      "failed-items-only exact retry",
+      "cancellation, compensation and result-unknown reconciliation",
+      "dead letter and immutable receipts",
+      "migration clean upgrade, constraints and RLS",
+      "atomic run-CAS/outbox ordering, one event per committed run revision and terminal-event immutability",
+      "exhaustive lifecycle-state action allowlist negatives, retry/cancel eligibility and hidden-field empty-action enforcement",
+      "accessible responsive loading, empty, complete, partial, unavailable, forbidden, retry and step-up UI states",
+      "telemetry, alerts, runbook, rollback and immutable append-only event evidence"
+    ],
+    "verificationPolicy": "Run only affected contract/schema/source tests at each step, then one bounded lane gate before admission; do not repeatedly execute repository-wide suites."
+  },
+  "acceptanceCriteria": [
+    "SYS006-AC01 dwp-platform-server is the only automation control-plane runtime and no dwp-sys-server is introduced.",
+    "SYS006-AC02 The exact primary API, PEP and event ownership is implemented while IAQ-059, SYS-API-035/036/038 and SYS-EVT-009 remain SYS-002 reuse-only with zero recount.",
+    "SYS006-AC03 SYS-API-017 POST creates definition identity and metadata only; version, schedule and activation concerns are rejected and delegated to their normalized APIs.",
+    "SYS006-AC04 PDX-004, PDX-005 and PDX-006 are reused with the sealed identity, schema-version, retry-mode, state and field mappings.",
+    "SYS006-AC05 V333 creates exactly eight sys_automation tables, reuses the shared receipt/outbox/inbox/audit facilities and enforces tenant-composite RLS boundaries.",
+    "SYS006-AC06 Only signed compatible allowlisted typed handlers execute; arbitrary class, method or SQL dispatch is impossible.",
+    "SYS006-AC07 Definition versions persist and revalidate exact signature, schema, policy, compatibility, validation and approval evidence, enforce maker-checker and CAS, allocate multiple independently target-bound pre-active candidates but only one ACTIVE version, and require a currently ACTIVE registry manifest at every sealed dispatch boundary.",
+    "SYS006-AC08 Schedules pin one approved version, timezone, expression, input template digest and concurrency-key template, cannot fire before activation, separate policy/object revisions from cursor-only fire revision, preserve approval evidence across cursor advancement and deduplicate each deterministic UTC fire with safe decimal-string JCS identity plus the sealed DST and SKIP_MISSED policy.",
+    "SYS006-AC09 Runs enforce caller/action-bound idempotency with target and handler in the request digest, server-resolved concurrency exclusion, mutually exclusive WORKER/OWNER_RECOVERY/RECONCILER fences, branch-complete worker, no-active-lease and reconciler recovery and immutable terminal facts.",
+    "SYS006-AC10 Retry creates new immutable attempts according to NONE, FAILED_ITEMS_ONLY or WHOLE_INVOCATION, freezes the exact selection, never repeats successful effects and resumes strictly after a monotonic fenced checkpoint.",
+    "SYS006-AC11 Cancellation after an original effect requires a separately fenced RECONCILER to execute only the approved idempotent compensation path with a distinct key and PREPARED to COMMITTED or RESULT_UNKNOWN receipt; after dispatch-fence loss a newly fenced RECONCILER may finalize that PREPARED only from matching trusted evidence without redispatch, shared command receipts enforce closed transitions and terminal guards, and RESULT_UNKNOWN remains separately reconciled without blind redispatch.",
+    "SYS006-AC12 SYS-EVT-004 uses the closed minimal payload and DEP-003 envelope with exact revision ordering, safe-number or canonical decimal-string integer encoding, counts, RFC-8785/JCS receipt-set digest, atomic one-event-per-run-revision outbox publication, immutable terminal events and no raw or personal payload.",
+    "SYS006-AC13 The existing settings operations route composes a separately authorized child surface, exposes only the intersection of lifecycle-state allowlist, current persisted eligibility, caller command authorization and visible target facts, and creates no second sidebar or page owner.",
+    "SYS006-AC14 The frontend covers accessible responsive loading, empty, complete, partial, unavailable, forbidden, retry and step-up states at 1440, 1280, 390 and 320 widths and 200 percent zoom.",
+    "SYS006-AC15 HRIS_AUTOMATION_CONTROL_PLANE remains default OFF with zero enrolled tenants, no mounted child surface, no production schedules or providers and zero business-completion credit until later activation authority."
+  ],
+  "activationBoundary": {
+    "featureKey": "HRIS_AUTOMATION_CONTROL_PLANE",
+    "defaultEnabled": false,
+    "enrolledTenants": [],
+    "productionSchedules": [],
+    "productionHandlerBindings": [],
+    "frontendChildSurfaceMounted": false,
+    "frontendSidebarNodeAdded": false,
+    "customerDataAuthorized": false,
+    "businessCompletionIncrement": 0
+  },
+  "authority": {
+    "semanticDispositionSealed": true,
+    "schemaDeltaProven": true,
+    "independentReviewRequired": true,
+    "boundedCentralContractSuccessorMayBeAuthoredAfterReview": true,
+    "centralSourceAuthoringAuthorizedNow": false,
+    "ownerPacketAuthorizedNow": false,
+    "moduleSourceAuthoringAuthorizedNow": false,
+    "migrationReservationAuthorizedNow": false,
+    "migrationAuthoringAuthorizedNow": false,
+    "worktreeMaterializationAuthorizedNow": false,
+    "startTokenAuthorizedNow": false,
+    "routeOrMenuMountAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nonClaims": [
+    "The historical registers, schemas or G2 evidence were mutated.",
+    "Product authorization v56, Auth V265 or Platform V333 has been reserved, authored or admitted.",
+    "A central successor, owner packet, token, lease, branch or worktree exists.",
+    "A module or central source change has started.",
+    "The automation child surface, route action or menu is mounted.",
+    "SYS-006, Batch-04, R7 or HRIS is complete."
+  ],
+  "nextGate": "INDEPENDENTLY_REVIEW_THIS_SEALED_DISPOSITION_THEN_AUTHOR_ONE_APPEND_ONLY_SYS006_IAQ_TRANSPORT_EVENT_AND_CENTRAL_AUTHORIZATION_SUCCESSOR_BEFORE_ANY_PACKET_TOKEN_LEASE_WORKTREE_OR_MODULE_SOURCE"
+}
