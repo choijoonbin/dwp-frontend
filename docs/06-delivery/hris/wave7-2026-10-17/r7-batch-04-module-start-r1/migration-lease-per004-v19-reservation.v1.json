@@ -1,0 +1,344 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-per004-migration-lease-reservation.v1",
+  "reservationId": "HRIS-WAVE7-R7-BATCH-04-MIGRATION-LEASE-RESERVATION-PER004-20261019-R1",
+  "recordedAt": "2026-10-19T18:11:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_RESERVATION_ID_AND_SHA256",
+    "historicalArtifactMutation": false
+  },
+  "state": "RESERVED_NOT_ACTIVE",
+  "sliceId": "BASE-TFR-PER-004",
+  "moduleSession": "HRIS-PER",
+  "moduleThreadId": "01a0f53e-9c6d-74e1-a11a-0dd4a4ab25a9",
+  "authorityBasis": {
+    "centralIntegrationReceipt": {
+      "path": "../r7-batch-04-central-admission-r1/per-004-central-integration-receipt.v1.json",
+      "sha256": "d2eb616c2a02ef3de57c7825964b8495a96e2a17b29489d74222852bbad2b640",
+      "bytes": 18344,
+      "requiredState": "EXACT_PER004_CENTRAL_BACKEND_COMMITTED_AND_PUSHED_V55_V264_V332_GATEWAY_TRUST_ADMITTED_DEFAULT_OFF_ZERO_ENROLLMENT_ZERO_PROVIDER_BINDING_OWNER_AUTHORITY_MAY_BE_PREPARED"
+    },
+    "semanticDisposition": {
+      "path": "semantic-dispositions/base-tfr-per-004.semantic-disposition.v1.json",
+      "sha256": "1e21d62336c7100877c16c16fdffec19e4352d9aedb9414a091b94df54362ce8",
+      "bytes": 30992,
+      "requiredState": "PER004_OWNER_PAYLOAD_SOR_AND_PLATFORM_LIFECYCLE_BOUNDARY_SEALED_V19_REQUIRED_CENTRAL_SUCCESSOR_BEFORE_SOURCE",
+      "jsonPointer": "/migrationDecision"
+    },
+    "semanticReview": {
+      "path": "semantic-dispositions/base-tfr-per-004.semantic-review.v1.json",
+      "sha256": "187c38cd0cc3e649262610a644bd59a0c7af4f1f55a0d6ee0e4edc1375e7c7cd",
+      "bytes": 2868,
+      "requiredState": "PER004_SEMANTIC_DISPOSITION_INDEPENDENTLY_REVIEWED_PASS_ZERO_P0_ZERO_P1_CENTRAL_SUCCESSOR_MAY_PROCEED"
+    },
+    "migrationSemanticClarificationV2": {
+      "path": "semantic-dispositions/base-tfr-per-004.migration-semantic-clarification-successor.v2.json",
+      "sha256": "85a2effba61f807b4859b025606cb0710eff35ce75569f994b8639b459d26d6c",
+      "bytes": 8503,
+      "requiredState": "SEALED_PER004_V19_EXACT_DATE_NULLABILITY_AND_CHECK_CLARIFICATION_REVIEW_REQUIRED",
+      "precedence": "SUPERSEDES_ONLY_/migrationDecision/exactDelta/prf_per_artifact_versions_FOR_V19_PHYSICAL_DATE_NULLABILITY_AND_CLOSED_CHECK_EXPRESSION"
+    },
+    "migrationSemanticClarificationReview": {
+      "path": "semantic-dispositions/base-tfr-per-004.migration-semantic-clarification-review.v1.json",
+      "sha256": "02000ca28a6dd68b46c3af57783fb298633a41f6906fd862cd5a9bef115355cf",
+      "bytes": 6091,
+      "requiredState": "PER004_V19_MIGRATION_SEMANTIC_CLARIFICATION_INDEPENDENTLY_REVIEWED_PASS_ZERO_P0_ZERO_P1_RESERVATION_AND_OWNER_PACKET_MAY_BIND"
+    },
+    "iaqProjectionAndLifecycleSuccessor": {
+      "path": "contract-successors/per-004-iaq-projection-and-lifecycle-successor.v1.json",
+      "sha256": "ff1be7ed1bb18dcc24b0f5acac05c6be36707e34c72f5a3bdcfa05671289a361",
+      "bytes": 27667,
+      "requiredState": "SEALED_PER004_IAQ020_READ_ONLY_IAQ056_EXACT_STATE_AWARE_PLATFORM_LIFECYCLE_AND_TYPED_OWNER_HANDSHAKE"
+    },
+    "centralAuthorizationSuccessor": {
+      "path": "per-004-central-contract-authorization-successor.v1.json",
+      "sha256": "09d5c2eb9a1bbc1eec01e8bf716a7bed2d81f17a3b4248d7b70b536aacdfc3ab",
+      "bytes": 30073,
+      "requiredState": "SEALED_EXACT_PER004_V55_V264_V332_GATEWAY_TYPED_OWNER_TRUST_AUTHORITY_DEFAULT_OFF_ZERO_ENROLLMENT"
+    },
+    "centralAuthorizationReview": {
+      "path": "per-004-central-contract-authorization-review.v1.json",
+      "sha256": "327929b8375f3529f24d19c4a1b1aca8f76c3f3b2b7757a619958669b92a9570",
+      "bytes": 3493,
+      "requiredState": "PER004_IAQ_AND_CENTRAL_CONTRACT_INDEPENDENTLY_REVIEWED_PASS_ZERO_P0_ZERO_P1_BOUNDED_CENTRAL_IMPLEMENTATION_MAY_PROCEED"
+    }
+  },
+  "priorInactiveCandidateDisposition": {
+    "historicalArtifact": {
+      "path": "../r7-batch-02-module-start-r1/migration-lease-activation.v1.json",
+      "sha256": "c13a87d949f518ce7ab8a6cd590a1373a2bd3e0fa17ee7d5591672d868b17175",
+      "bytes": 5475,
+      "requiredHistoricalState": "ZERO_ACTIVE_LEASES_PERFORMANCE_V19_CANDIDATE_RESERVED_NOT_ISSUED",
+      "immutableAndUnmodified": true
+    },
+    "historicalCandidate": {
+      "leaseId": "HRIS-WAVE7-R7-BATCH-02-PERFORMANCE-V19-20261017-R1",
+      "sliceId": "BASE-TFR-PER-002",
+      "version": "V19",
+      "exactPath": "dwp-people-server/src/main/resources/db/performance-migration/V19__per_base_tfr_per_002.sql",
+      "state": "RESERVED_NOT_ACTIVE_NO_AUTHORING_UNTIL_SEMANTIC_SUCCESSOR_AND_NEW_LEASE",
+      "activeLeaseCount": 0,
+      "wasIssuedAsActiveLease": false,
+      "sourceAuthoringOccurred": false
+    },
+    "appendOnlyDisposition": "SUPERSEDED_REALLOCATED_TO_PER004",
+    "reallocationReason": "The Batch-02 PER-002 candidate was explicitly inactive, issued no authoring authority and required a later semantic successor and new exclusive lease. PER-004 now has a sealed and independently reviewed owner contract plus admitted central prerequisites, while V19 remains absent at the observed Performance V18 high-water.",
+    "per002FutureRule": "BASE-TFR-PER-002 must perform a fresh semantic and migration preflight and select a new collision-free version candidate before any future lease or authoring request. It may not reuse this V19 reservation or the historical inactive candidate.",
+    "historicalFileEditAuthorized": false,
+    "authorityTransferFromHistoricalArtifact": false
+  },
+  "pinBasis": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "0cc02064bdec914dc4b8540a3b23faa5e3719ab0",
+      "tree": "4f4050b6336cf5663d475af07755045a9f3c23bf",
+      "originRef": "origin/dwp-dev",
+      "originExact": true,
+      "worktreeClean": true,
+      "observedPerformanceHighWater": "V18",
+      "candidatePathPresentAtReservation": false,
+      "migrationPredecessors": {
+        "v17TypedArtifactFoundation": {
+          "repository": "dwp-backend",
+          "path": "dwp-people-server/src/main/resources/db/performance-migration/V17__per_modern_compensation_planning.sql",
+          "sha256": "593e54e076c5607e07a35eae1d069862257b9dce6fbb6a54dbe09198810ea15a",
+          "bytes": 35370,
+          "requiredState": "EXECUTED_IMMUTABLE_SHARED_TYPED_ARTIFACT_FOUNDATION"
+        },
+        "v18HighWater": {
+          "repository": "dwp-backend",
+          "path": "dwp-people-server/src/main/resources/db/performance-migration/V18__per_base_tfr_per_013.sql",
+          "sha256": "f543b7a77f75e624edce1cb19d13c9d3c5fece0c2bab640ddb7a5e472bad7375",
+          "bytes": 8647,
+          "requiredState": "EXECUTED_IMMUTABLE_PERFORMANCE_HIGH_WATER"
+        },
+        "manifest": {
+          "sha256": "d3f3e5fd16c9e099cd7c531a7a57befbcb3de4be55820e89b34d1465ecbea344",
+          "bytes": 230,
+          "orderedBasenames": [
+            "V1__per_create_evaluation_cycle_foundation.sql",
+            "V2__per_create_population_freeze.sql",
+            "V3__per_harden_review_operation_capture.sql",
+            "V16__per_base_tfr_per_016.sql",
+            "V17__per_modern_compensation_planning.sql",
+            "V18__per_base_tfr_per_013.sql"
+          ],
+          "requiredState": "V18_HIGH_WATER_V19_ABSENT"
+        }
+      }
+    },
+    "frontendAuthorityCarrierBeforeReservation": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "697a576d1b8500f673a83d132759079b7aa4fd2a",
+      "tree": "3a52ed77c808bb638821b42e1a82f70618326e97",
+      "originRef": "origin/dwp-dev",
+      "originExact": true,
+      "worktreeClean": true,
+      "use": "AUTHORITY_CARRIER_BASE_ONLY"
+    },
+    "agentReadOnly": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "originRef": "origin/dwp-dev",
+      "originExact": true,
+      "worktreeClean": true
+    }
+  },
+  "lease": {
+    "leaseId": "HRIS-WAVE7-R7-BATCH-04-PERFORMANCE-V19-PER004-20261019-R1",
+    "stream": "PERFORMANCE",
+    "version": "V19",
+    "predecessorHighWater": "V18",
+    "exactPath": "dwp-people-server/src/main/resources/db/performance-migration/V19__per_base_tfr_per_004.sql",
+    "canonicalFeature": "HRIS_PERFORMANCE_CONFIGURATION",
+    "state": "RESERVED_NOT_ACTIVE",
+    "activeLeaseCountForPerformanceV19": 0,
+    "plannedBackendWorktree": {
+      "plannedAbsolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261019/r7-batch04/per-004/backend",
+      "plannedBranch": "codex/hris-wave7-r7-batch04-per-004-backend-20261019-r1",
+      "plannedPushTarget": "origin/codex/hris-wave7-r7-batch04-per-004-backend-20261019-r1",
+      "createFrom": "0cc02064bdec914dc4b8540a3b23faa5e3719ab0",
+      "expectedInitialTree": "4f4050b6336cf5663d475af07755045a9f3c23bf",
+      "expectedInitialPorcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "materializationStateAtReservation": "NOT_MATERIALIZED"
+    }
+  },
+  "resolvedExactMigrationManifest": {
+    "alterExactlyOneExistingTable": "hris_performance.prf_per_artifact_versions",
+    "alterOperations": [
+      "Drop the effective_from NOT NULL attribute so only the three new PERFORMANCE artifact mappings can store both effective_from and effective_to as NULL.",
+      "Replace only ck_prf_per_artifact_versions_type_schema, ck_prf_per_artifact_versions_owner and ck_prf_per_artifact_versions_dates with closed successor checks.",
+      "Preserve every other V17 column, key, index, append-only trigger, tenant policy and constraint byte-for-byte in effect."
+    ],
+    "preservedCompensationMappings": [
+      {
+        "artifactType": "COMPENSATION_GUIDELINES",
+        "schemaVersion": 1,
+        "ownerAggregateType": "COMPENSATION_CYCLE",
+        "dateRule": "effective_from IS NOT NULL AND (effective_to IS NULL OR effective_to > effective_from)"
+      },
+      {
+        "artifactType": "COMPENSATION_POPULATION",
+        "schemaVersion": 1,
+        "ownerAggregateType": "COMPENSATION_CYCLE",
+        "dateRule": "effective_from IS NOT NULL AND (effective_to IS NULL OR effective_to > effective_from)"
+      },
+      {
+        "artifactType": "COMPENSATION_PROPOSAL",
+        "schemaVersion": 1,
+        "ownerAggregateType": "COMPENSATION_PROPOSAL_REVISION",
+        "dateRule": "effective_from IS NOT NULL AND (effective_to IS NULL OR effective_to > effective_from)"
+      }
+    ],
+    "newPerformanceMappings": [
+      {
+        "artifactType": "PERFORMANCE_REVIEW_FORM",
+        "schemaKey": "dwp.hris.performance.review-form.v1",
+        "schemaVersion": 1,
+        "ownerAggregateType": "PERFORMANCE_CONFIGURATION_VERSION",
+        "dateRule": "effective_from IS NULL AND effective_to IS NULL"
+      },
+      {
+        "artifactType": "PERFORMANCE_RATING_SCALE",
+        "schemaKey": "dwp.hris.performance.rating-scale.v1",
+        "schemaVersion": 1,
+        "ownerAggregateType": "PERFORMANCE_CONFIGURATION_VERSION",
+        "dateRule": "effective_from IS NULL AND effective_to IS NULL"
+      },
+      {
+        "artifactType": "PERFORMANCE_POLICY",
+        "schemaKey": "dwp.hris.performance.policy.v1",
+        "schemaVersion": 1,
+        "ownerAggregateType": "PERFORMANCE_CONFIGURATION_VERSION",
+        "dateRule": "effective_from IS NULL AND effective_to IS NULL"
+      }
+    ],
+    "createExactlyThreeTables": [
+      "hris_performance.prf_per004_artifact_preparations",
+      "hris_performance.prf_per004_configuration_version_bindings",
+      "hris_performance.prf_per004_owner_evidence_receipts"
+    ],
+    "tableContracts": {
+      "prf_per004_artifact_preparations": "One CAS-governed PREPARED, FINALIZED or QUARANTINED handshake row per tenant, configurationId and Platform create subject/action/idempotency identity. It binds request digest, owner-local artifact revision, canonical artifact UUID, schema key/version, payload reference/digest, scope digest and one preparation receipt. Exact replay returns the same fact; a different request digest fails closed. QUARANTINED requires exact signed ABSENT_FINAL evidence under the Platform durable admission fence; UNKNOWN, timeout, in-flight or unfenced absence remains PREPARED.",
+      "prf_per004_configuration_version_bindings": "Exactly one immutable finalized binding per tenant, configurationId and Platform version and exactly one finalized binding per artifact public UUID. It stores the complete trusted binding tuple, exact preparation and finalization receipt identities and Platform create receipt reference. UPDATE, DELETE and TRUNCATE are rejected.",
+      "prf_per004_owner_evidence_receipts": "Append-only VALIDATION or SIMULATION evidence bound to one finalized tuple. SIMULATION references the exact VALIDATION receipt and immutable impact digest. Duplicate, conflicting, cross-tenant, stale or tuple-mismatched evidence is rejected. UPDATE, DELETE and TRUNCATE are rejected."
+    },
+    "artifactIdentity": {
+      "artifactPublicId": "server-generated canonical lowercase UUID",
+      "payloadReference": "ref_per_artifact_{artifactPublicId}",
+      "referenceRule": "The UUID suffix must equal the stored artifact public ID byte-for-byte after canonical lowercase UUID normalization; browser-authored references or digests are forbidden.",
+      "artifactRevisionRule": "artifact_revision is owner-local and monotonic. It is independent from the later Platform configuration version."
+    },
+    "rowLevelSecurityClaims": {
+      "tables": [
+        "hris_performance.prf_per_artifact_versions",
+        "hris_performance.prf_per004_artifact_preparations",
+        "hris_performance.prf_per004_configuration_version_bindings",
+        "hris_performance.prf_per004_owner_evidence_receipts"
+      ],
+      "rule": "The three new tables must ENABLE and FORCE RLS with USING and WITH CHECK tenant policies bound to the existing Performance tenant context. The existing V17 artifact table retains ENABLE and FORCE RLS. No RLS claim is made for any other reused table."
+    },
+    "existingStoresReusedWithoutSchemaOrRlsClaim": [
+      "hris_performance.prf_command_receipts for exact owner command idempotency",
+      "hris_performance.prf_outbox_events for atomic owner audit event publication",
+      "sys_domain_event_inbox as the existing durable People workload-proof replay ledger for jti and requestNonce reservation"
+    ],
+    "workloadReplayRule": "Reuse the existing durable People sys_domain_event_inbox with a dedicated PER-004 consumer identity. V19 creates no fourth PER-004 table and does not alter the inbox schema or claim its RLS posture. This replay reuse is not a Platform lifecycle event projection and does not reuse the closed workforce projection inbox allowlist.",
+    "sharedControls": [
+      "tenant-composite identities and references for all three new tables with no cross-context or cross-database foreign key",
+      "encrypted typed content remains only in prf_per_artifact_versions; preparation, binding, receipt, command-receipt and outbox rows contain no plaintext owner payload",
+      "canonical lowercase sha256 digests and canonical UUIDs with exact tuple equality",
+      "append-only artifacts, finalized bindings and owner evidence with deterministic replay and conflict outcomes",
+      "preparation, artifact and command receipt persistence is atomic in the owner transaction",
+      "finalization callback is idempotent and validation is impossible until the exact binding is FINALIZED",
+      "security-definer helpers, if unavoidable, use a locked search_path and are not executable by PUBLIC"
+    ],
+    "forbidden": [
+      "editing V1 through V18 or changing their bytes or checksums",
+      "a second V19 or any Performance migration outside the exact leased path",
+      "creating a fourth PER-004 table, a local Platform lifecycle table or a publication inbox",
+      "altering prf_command_receipts, prf_outbox_events, sys_domain_event_inbox or prf_workforce_projection_inbox",
+      "weakening any compensation artifact mapping, non-null effective_from rule or half-open date rule",
+      "making effective dates non-null for the three PERFORMANCE artifacts because Platform is their lifecycle and effective-window source of record",
+      "persisting, logging, auditing, echoing or placing plaintext ownerPayload in a problem response",
+      "data backfill, customer data, automatic grants, privilege elevation, feature enablement or tenant enrollment"
+    ]
+  },
+  "acceptanceCoverage": {
+    "criteriaCount": 12,
+    "criteriaIds": [
+      "PER004-AC01",
+      "PER004-AC02",
+      "PER004-AC03",
+      "PER004-AC04",
+      "PER004-AC05",
+      "PER004-AC06",
+      "PER004-AC07",
+      "PER004-AC08",
+      "PER004-AC09",
+      "PER004-AC10",
+      "PER004-AC11",
+      "PER004-AC12"
+    ],
+    "migrationDirectCriteria": [
+      "PER004-AC02",
+      "PER004-AC03",
+      "PER004-AC04",
+      "PER004-AC05"
+    ]
+  },
+  "verificationRequiredAfterActivation": {
+    "executionAuthorizedNow": false,
+    "static": [
+      "V19 is unique in the Performance migration stream, the exact leased path is the only new Performance migration and V1 through V18 bytes remain unchanged.",
+      "Only prf_per_artifact_versions is altered, only its NOT NULL date attribute plus exact type/schema, owner and date checks change, and every compensation mapping and half-open date rule remains effective.",
+      "The migration creates exactly the three sealed PER-004 tables and no fourth table, backfill, grant or second migration.",
+      "FORCE RLS claims are limited to the existing V17 artifact table and the three new PER-004 tables."
+    ],
+    "database": [
+      "real PostgreSQL clean Performance migration through V19",
+      "real PostgreSQL Performance V18-to-V19 upgrade",
+      "missing-context and cross-tenant denial for the existing artifact table and all three new tables",
+      "all six artifact type/schema/owner/date mappings including preserved compensation non-null half-open dates and PERFORMANCE null dates",
+      "same-key replay, conflicting digest, append-only, finalized binding uniqueness, exact validation-to-simulation receipt chain and quarantine fencing",
+      "transaction rollback leaves no partial artifact, preparation, binding, owner evidence, command receipt or outbox effect"
+    ],
+    "unavailableDatabaseRule": "Report BLOCKED, not PASS, if required real PostgreSQL verification cannot run.",
+    "targetedPolicy": "Run the PER-004 V19 contract group and fresh/upgrade PostgreSQL group once; after a failure rerun only the smallest affected target. Do not run a repository-wide suite for this lease."
+  },
+  "reservationSemantics": "This append-only artifact supersedes only the inactive Batch-02 PER-002 V19 candidate and reserves Performance V19 plus the exact PER-004 path. It is not an active lease and grants no migration write, source write, test, commit or push authority. A later append-only active-lease successor must hash-bind a materialized clean backend worktree, and a separate executable start token must bind that successor and the owner packet.",
+  "authority": {
+    "activeLeaseCount": 0,
+    "oneExactPerformanceV19PathReserved": true,
+    "historicalPer002CandidateSuperseded": true,
+    "v19AuthoringAuthorized": false,
+    "activeLeaseSuccessorMayBeConsideredAfterMaterializedCleanWorktreeProof": true,
+    "existingMigrationEditAuthorized": false,
+    "secondPerformanceMigrationAuthorized": false,
+    "fourthPer004TableAuthorized": false,
+    "dataBackfillAuthorized": false,
+    "automaticPrivilegeGrantAuthorized": false,
+    "moduleSourceAuthoringAuthorized": false,
+    "moduleBranchCommitAndPushAuthorizedByThisLeaseAlone": false,
+    "mergeToDwpDevAuthorized": false,
+    "routeOrMenuMountAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "customerDatabaseExecutionAuthorized": false,
+    "productionExecutionAuthorized": false
+  },
+  "invalidationConditions": [
+    "Performance V19 or the exact leased path exists from another owner before the first authorized edit.",
+    "Performance migration high-water differs from V18 at worktree materialization.",
+    "The planned backend worktree path or branch exists with a different head, tree, upstream or non-empty porcelain.",
+    "Any table, existing-table alteration, backfill, grant or schema change outside the resolved exact manifest is required.",
+    "An existing migration must change, a second Performance migration is required, or the old PER-002 candidate has been activated elsewhere.",
+    "The central default-off, zero-enrollment, zero-provider-binding or no-navigation boundary no longer holds."
+  ],
+  "nextAction": "HASH_BIND_THIS_RESERVED_NOT_ACTIVE_LEASE_IN_THE_EXACT_PER004_OWNER_PACKET; DO_NOT_ACTIVATE_OR_AUTHOR_UNTIL_FRESH_CLEAN_WORKTREE_EVIDENCE_AND_A_SEPARATE_ACTIVE_LEASE_SUCCESSOR_EXIST"
+}

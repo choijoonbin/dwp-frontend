@@ -1,0 +1,166 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-per004-migration-semantic-clarification-successor.v2",
+  "successorId": "HRIS-WAVE7-R7-BATCH-04-PER004-MIGRATION-SEMANTIC-CLARIFICATION-20261019-R2",
+  "recordedAt": "2026-10-19T18:14:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "immutability": {
+    "sealed": true,
+    "appendOnly": true,
+    "historicalMutation": false,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ID_AND_SHA256"
+  },
+  "state": "SEALED_PER004_V19_EXACT_DATE_NULLABILITY_AND_CHECK_CLARIFICATION_REVIEW_REQUIRED",
+  "sliceId": "BASE-TFR-PER-004",
+  "moduleSession": "HRIS-PER",
+  "moduleThreadId": "01a0f53e-9c6d-74e1-a11a-0dd4a4ab25a9",
+  "authorityBasis": {
+    "semanticDisposition": {
+      "path": "base-tfr-per-004.semantic-disposition.v1.json",
+      "sha256": "1e21d62336c7100877c16c16fdffec19e4352d9aedb9414a091b94df54362ce8",
+      "bytes": 30992,
+      "requiredState": "PER004_OWNER_PAYLOAD_SOR_AND_PLATFORM_LIFECYCLE_BOUNDARY_SEALED_V19_REQUIRED_CENTRAL_SUCCESSOR_BEFORE_SOURCE"
+    },
+    "semanticReview": {
+      "path": "base-tfr-per-004.semantic-review.v1.json",
+      "sha256": "187c38cd0cc3e649262610a644bd59a0c7af4f1f55a0d6ee0e4edc1375e7c7cd",
+      "bytes": 2868,
+      "requiredState": "PER004_SEMANTIC_DISPOSITION_INDEPENDENTLY_REVIEWED_PASS_ZERO_P0_ZERO_P1_CENTRAL_SUCCESSOR_MAY_PROCEED"
+    },
+    "centralIntegrationReceipt": {
+      "path": "../../r7-batch-04-central-admission-r1/per-004-central-integration-receipt.v1.json",
+      "sha256": "d2eb616c2a02ef3de57c7825964b8495a96e2a17b29489d74222852bbad2b640",
+      "bytes": 18344,
+      "requiredState": "EXACT_PER004_CENTRAL_BACKEND_COMMITTED_AND_PUSHED_V55_V264_V332_GATEWAY_TRUST_ADMITTED_DEFAULT_OFF_ZERO_ENROLLMENT_ZERO_PROVIDER_BINDING_OWNER_AUTHORITY_MAY_BE_PREPARED"
+    },
+    "backendPin": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "0cc02064bdec914dc4b8540a3b23faa5e3719ab0",
+      "tree": "4f4050b6336cf5663d475af07755045a9f3c23bf",
+      "originRef": "origin/dwp-dev",
+      "originExact": true,
+      "worktreeClean": true
+    },
+    "v17RuntimeEvidence": {
+      "repository": "dwp-backend",
+      "path": "dwp-people-server/src/main/resources/db/performance-migration/V17__per_modern_compensation_planning.sql",
+      "sha256": "593e54e076c5607e07a35eae1d069862257b9dce6fbb6a54dbe09198810ea15a",
+      "bytes": 35370,
+      "observedState": "EXECUTED_IMMUTABLE_TYPED_ARTIFACT_FOUNDATION_WITH_EFFECTIVE_FROM_NOT_NULL"
+    },
+    "v18HighWaterEvidence": {
+      "repository": "dwp-backend",
+      "path": "dwp-people-server/src/main/resources/db/performance-migration/V18__per_base_tfr_per_013.sql",
+      "sha256": "f543b7a77f75e624edce1cb19d13c9d3c5fece0c2bab640ddb7a5e472bad7375",
+      "bytes": 8647,
+      "observedState": "EXECUTED_IMMUTABLE_PERFORMANCE_HIGH_WATER_V19_ABSENT"
+    }
+  },
+  "supersededTerm": {
+    "artifact": "base-tfr-per-004.semantic-disposition.v1.json",
+    "jsonPointer": "/migrationDecision/exactDelta/prf_per_artifact_versions",
+    "exactHistoricalValue": "Replace only the closed artifact-type and owner check constraints so the three PER-004 artifact types are accepted with owner_aggregate_type PERFORMANCE_CONFIGURATION_VERSION; preserve all existing compensation values and constraints."
+  },
+  "precedence": {
+    "scope": "ONLY_THE_V19_PHYSICAL_DATE_NULLABILITY_AND_CLOSED_CHECK_EXPRESSION_FOR_HRIS_PERFORMANCE_PRF_PER_ARTIFACT_VERSIONS",
+    "rule": "This successor replaces only the exact historical value identified above. Every other field, acceptance criterion, ownership decision, lifecycle rule, security rule, activation boundary, non-claim and authority bit in the semantic disposition remains authoritative and unchanged.",
+    "doesNotSupersede": [
+      "/ownershipDecision",
+      "/trustedOwnerHandshake",
+      "/typedArtifactContract",
+      "/iaqDecision",
+      "/migrationDecision other than /exactDelta/prf_per_artifact_versions",
+      "/centralSuccessorRequirements",
+      "/activationBoundary",
+      "/acceptanceCriteria",
+      "/authority",
+      "/nonClaims"
+    ]
+  },
+  "resolvedSuccessorTerm": {
+    "table": "hris_performance.prf_per_artifact_versions",
+    "alterExactly": [
+      "DROP NOT NULL from effective_from",
+      "replace ck_prf_per_artifact_versions_type_schema",
+      "replace ck_prf_per_artifact_versions_owner",
+      "replace ck_prf_per_artifact_versions_dates"
+    ],
+    "newPerformanceMappings": [
+      {
+        "artifactType": "PERFORMANCE_REVIEW_FORM",
+        "schemaKey": "dwp.hris.performance.review-form.v1",
+        "schemaVersion": 1,
+        "ownerAggregateType": "PERFORMANCE_CONFIGURATION_VERSION",
+        "dateRule": "effective_from IS NULL AND effective_to IS NULL"
+      },
+      {
+        "artifactType": "PERFORMANCE_RATING_SCALE",
+        "schemaKey": "dwp.hris.performance.rating-scale.v1",
+        "schemaVersion": 1,
+        "ownerAggregateType": "PERFORMANCE_CONFIGURATION_VERSION",
+        "dateRule": "effective_from IS NULL AND effective_to IS NULL"
+      },
+      {
+        "artifactType": "PERFORMANCE_POLICY",
+        "schemaKey": "dwp.hris.performance.policy.v1",
+        "schemaVersion": 1,
+        "ownerAggregateType": "PERFORMANCE_CONFIGURATION_VERSION",
+        "dateRule": "effective_from IS NULL AND effective_to IS NULL"
+      }
+    ],
+    "preservedCompensationMappings": [
+      {
+        "artifactType": "COMPENSATION_GUIDELINES",
+        "schemaVersion": 1,
+        "ownerAggregateType": "COMPENSATION_CYCLE",
+        "dateRule": "effective_from IS NOT NULL AND (effective_to IS NULL OR effective_to > effective_from)"
+      },
+      {
+        "artifactType": "COMPENSATION_POPULATION",
+        "schemaVersion": 1,
+        "ownerAggregateType": "COMPENSATION_CYCLE",
+        "dateRule": "effective_from IS NOT NULL AND (effective_to IS NULL OR effective_to > effective_from)"
+      },
+      {
+        "artifactType": "COMPENSATION_PROPOSAL",
+        "schemaVersion": 1,
+        "ownerAggregateType": "COMPENSATION_PROPOSAL_REVISION",
+        "dateRule": "effective_from IS NOT NULL AND (effective_to IS NULL OR effective_to > effective_from)"
+      }
+    ],
+    "closedDateCheck": "Exactly the three PERFORMANCE mappings require both dates NULL; exactly the three existing COMPENSATION mappings require effective_from NOT NULL and preserve effective_to IS NULL OR effective_to > effective_from; every other type/schema/owner/date combination is rejected.",
+    "allOtherV17TableBehavior": "UNCHANGED"
+  },
+  "necessity": {
+    "conflict": "The executed V17 artifact table declares effective_from NOT NULL, while the sealed PER-004 ownership decision makes Platform the only lifecycle and effective-window source of record and forbids Performance from persisting a second effective window.",
+    "resolution": "Dropping the column-level NOT NULL is necessary only so the three new PERFORMANCE mappings can store both dates as NULL. The closed successor date check preserves the exact non-null and half-open behavior of all existing compensation rows.",
+    "domainSemanticChange": false,
+    "acceptanceCriteriaChange": false,
+    "dataMigrationOrBackfillRequired": false
+  },
+  "forbidden": [
+    "editing V17 or any V1 through V18 migration",
+    "altering any other V17 column attribute, key, index, trigger, RLS policy or constraint",
+    "allowing a null effective_from for any compensation artifact",
+    "allowing either effective date for a PERFORMANCE artifact",
+    "adding a fourth PERFORMANCE artifact mapping or another owner aggregate type",
+    "using this clarification as migration authoring, source authoring, worktree, commit, push, activation or production authority"
+  ],
+  "authority": {
+    "clarificationSealed": true,
+    "independentReviewRequired": true,
+    "reservationMayBindAfterIndependentReview": true,
+    "ownerPacketMayBindAfterIndependentReview": true,
+    "semanticDispositionOtherwiseUnchanged": true,
+    "historicalMutationAuthorized": false,
+    "migrationReservationIssuedByThisArtifact": false,
+    "migrationAuthoringAuthorized": false,
+    "moduleSourceAuthoringAuthorized": false,
+    "worktreeMaterializationAuthorized": false,
+    "startTokenAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextGate": "INDEPENDENTLY_REVIEW_THIS_NARROW_CLARIFICATION_THEN_HASH_BIND_IT_AND_ITS_REVIEW_IN_THE_PER004_RESERVED_NOT_ACTIVE_V19_LEASE_AND_OWNER_PACKET"
+}

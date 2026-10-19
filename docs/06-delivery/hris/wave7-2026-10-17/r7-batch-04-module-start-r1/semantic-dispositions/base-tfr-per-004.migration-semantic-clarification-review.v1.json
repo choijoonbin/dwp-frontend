@@ -1,0 +1,111 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-per004-migration-semantic-clarification-review.v1",
+  "reviewId": "HRIS-WAVE7-R7-BATCH-04-PER004-MIGRATION-SEMANTIC-CLARIFICATION-REVIEW-20261019-R1",
+  "recordedAt": "2026-10-19T18:23:00+09:00",
+  "recordedBy": "INDEPENDENT_PER004_MIGRATION_SEMANTIC_REVIEW",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_REVIEW_ID_AND_SHA256"
+  },
+  "state": "PER004_V19_MIGRATION_SEMANTIC_CLARIFICATION_INDEPENDENTLY_REVIEWED_PASS_ZERO_P0_ZERO_P1_RESERVATION_AND_OWNER_PACKET_MAY_BIND",
+  "sliceId": "BASE-TFR-PER-004",
+  "reviewedArtifact": {
+    "path": "base-tfr-per-004.migration-semantic-clarification-successor.v2.json",
+    "sha256": "85a2effba61f807b4859b025606cb0710eff35ce75569f994b8639b459d26d6c",
+    "bytes": 8503,
+    "requiredState": "SEALED_PER004_V19_EXACT_DATE_NULLABILITY_AND_CHECK_CLARIFICATION_REVIEW_REQUIRED"
+  },
+  "comparisonBasis": {
+    "semanticDisposition": {
+      "path": "base-tfr-per-004.semantic-disposition.v1.json",
+      "sha256": "1e21d62336c7100877c16c16fdffec19e4352d9aedb9414a091b94df54362ce8",
+      "bytes": 30992,
+      "jsonPointer": "/migrationDecision/exactDelta/prf_per_artifact_versions",
+      "exactHistoricalValue": "Replace only the closed artifact-type and owner check constraints so the three PER-004 artifact types are accepted with owner_aggregate_type PERFORMANCE_CONFIGURATION_VERSION; preserve all existing compensation values and constraints."
+    },
+    "backendPin": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "0cc02064bdec914dc4b8540a3b23faa5e3719ab0",
+      "tree": "4f4050b6336cf5663d475af07755045a9f3c23bf",
+      "originRef": "origin/dwp-dev",
+      "originExact": true,
+      "worktreeClean": true
+    },
+    "v17": {
+      "path": "dwp-people-server/src/main/resources/db/performance-migration/V17__per_modern_compensation_planning.sql",
+      "sha256": "593e54e076c5607e07a35eae1d069862257b9dce6fbb6a54dbe09198810ea15a",
+      "bytes": 35370,
+      "observedEffectiveFrom": "DATE NOT NULL",
+      "observedDateCheck": "effective_to IS NULL OR effective_to > effective_from"
+    },
+    "v18": {
+      "path": "dwp-people-server/src/main/resources/db/performance-migration/V18__per_base_tfr_per_013.sql",
+      "sha256": "f543b7a77f75e624edce1cb19d13c9d3c5fece0c2bab640ddb7a5e472bad7375",
+      "bytes": 8647,
+      "observedPerformanceHighWater": "V18",
+      "v19Present": false
+    }
+  },
+  "reviewMethod": {
+    "independentReviewer": true,
+    "jsonSyntax": "PASS",
+    "duplicateJsonKeys": "PASS_NONE",
+    "pathHashByteAndStatePins": "PASS",
+    "historicalJsonPointerAndExactValue": "PASS",
+    "actualV17ConstraintComparison": "PASS",
+    "actualV17AndV18HashByteComparison": "PASS",
+    "narrowPrecedenceAndNoDomainChange": "PASS",
+    "compensationMappingPreservation": "PASS",
+    "performanceBothNullDateRule": "PASS",
+    "existingMigrationImmutability": "PASS",
+    "authorityAndActivationNonClaim": "PASS",
+    "repositoryWideSuiteRun": false,
+    "unaffectedPassingTargetRerun": false
+  },
+  "acceptedClarification": {
+    "alterExactly": [
+      "DROP NOT NULL from effective_from",
+      "replace ck_prf_per_artifact_versions_type_schema",
+      "replace ck_prf_per_artifact_versions_owner",
+      "replace ck_prf_per_artifact_versions_dates"
+    ],
+    "performanceRule": "Exactly PERFORMANCE_REVIEW_FORM, PERFORMANCE_RATING_SCALE and PERFORMANCE_POLICY at schemaVersion 1 and ownerAggregateType PERFORMANCE_CONFIGURATION_VERSION require effective_from IS NULL AND effective_to IS NULL.",
+    "compensationRule": "Exactly COMPENSATION_GUIDELINES, COMPENSATION_POPULATION and COMPENSATION_PROPOSAL preserve their existing schemaVersion 1 owner mappings, require effective_from IS NOT NULL and preserve effective_to IS NULL OR effective_to > effective_from.",
+    "allOtherV17TableBehavior": "UNCHANGED",
+    "precedenceScope": "ONLY_THE_EXACT_HISTORICAL_VALUE_AT_/migrationDecision/exactDelta/prf_per_artifact_versions",
+    "domainSemanticChange": false,
+    "acceptanceCriteriaChange": false,
+    "dataMigrationOrBackfillRequired": false
+  },
+  "closedFindings": [
+    "The exact historical pointer and value are byte-for-byte represented and only that term is superseded.",
+    "The executed V17 DATE NOT NULL attribute conflicts with the already sealed rule that Platform alone owns lifecycle effective windows; the bounded nullability correction removes that physical duplication without changing domain semantics.",
+    "The successor closes all six allowed artifact type, schema-version, owner and date mappings and rejects every other combination.",
+    "All three compensation mappings retain a non-null effective_from and the existing half-open effective_to rule after the column-level NOT NULL is removed.",
+    "All three PERFORMANCE mappings require both owner-table dates to be null while Platform remains the sole effective-window source of record.",
+    "No V1 through V18 file edit, other V17 table change, fourth PERFORMANCE mapping, backfill, grant, feature activation, tenant enrollment or source-authoring authority is introduced."
+  ],
+  "findings": {
+    "remainingP0": 0,
+    "remainingP1": 0,
+    "remainingP2": 0
+  },
+  "authority": {
+    "clarificationReviewAccepted": true,
+    "reservedNotActiveV19LeaseMayHashBindClarification": true,
+    "ownerPacketMayHashBindClarification": true,
+    "historicalMutationAuthorized": false,
+    "migrationReservationIssuedByThisReview": false,
+    "migrationAuthoringAuthorized": false,
+    "moduleSourceAuthoringAuthorized": false,
+    "worktreeMaterializationAuthorized": false,
+    "startTokenAuthorized": false,
+    "routeOrMenuMountAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionProviderBindingAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextGate": "HASH_BIND_THIS_REVIEW_AND_THE_CLARIFICATION_SUCCESSOR_IN_THE_PER004_RESERVED_NOT_ACTIVE_V19_LEASE_AND_OWNER_PACKET; NO ACTIVE_LEASE_OR EXECUTABLE START TOKEN EXISTS YET"
+}
