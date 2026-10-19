@@ -1,0 +1,51 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-hrm011-semantic-disposition-successor.v5",
+  "dispositionId": "HRIS-WAVE7-R7-BATCH-04-HRM011-SEMANTIC-DISPOSITION-20261019-R5",
+  "recordedAt": "2026-10-19T10:14:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ID_AND_SHA256"
+  },
+  "state": "SEALED_PDX015_CONTENT_SCHEMA_VERSION_TYPE_CORRECTION_ALL_NONCONFLICTING_V4_TERMS_PRESERVED",
+  "sliceId": "BASE-TFR-HRM-011",
+  "successorOf": {
+    "path": "base-tfr-hrm-011.semantic-disposition-successor.v4.json",
+    "sha256": "b9f2e26619b71ccac3fc49fa34619533fffa1a8a4e8891b0c7bc2ffb49807fa1",
+    "bytes": 39766,
+    "supersession": "CORRECT_ONLY_PDX015_CONTENT_SCHEMA_VERSION_FROM_POSITIVE_INTEGER_PROSE_TO_THE_EXISTING_TYPED_SCHEMA_VERSION_STRING"
+  },
+  "problem": {
+    "rejectedV4Wording": "contentSchemaVersion positive integer",
+    "reason": "PDX-001 payloadSchemaVersion and the canonical platform dependency $defs/SchemaVersion are typed immutable schema-version strings, not numeric revisions. A numeric reinterpretation would break exact PDX-001 binding.",
+    "implementationObserved": "EmploymentContractTemplateSnapshotV1.contentSchemaVersion is generated as String from $defs/SchemaVersion."
+  },
+  "correctedPdx015Field": {
+    "field": "contentSchemaVersion",
+    "type": "string",
+    "pattern": "^[A-Za-z][A-Za-z0-9._-]{0,127}\\.v[1-9][0-9]*$",
+    "example": "EmploymentContractTemplateContent.v1",
+    "binding": "Must equal the exact immutable PDX-001 payloadSchemaVersion of the published template version.",
+    "numericCoercion": "FORBIDDEN",
+    "defaulting": "FORBIDDEN",
+    "caseNormalization": "FORBIDDEN"
+  },
+  "preservedTerms": [
+    "All four v4 P0 corrections",
+    "PDX-015 tenantId, sourceRevision and publishedAt additions",
+    "IAQ-008 v2 relationship grain, resourceVersion and JCS digest",
+    "external HR_LIFECYCLE to internal EMPLOYMENT_CONTRACT fixed mapping",
+    "People V59 four-table manifest and exact 12 acceptance criteria",
+    "default OFF, zero enrollment, fail-closed providers and DEFERRED_NO_PRODUCTION_TRIGGER boundaries"
+  ],
+  "authority": {
+    "semanticDispositionV5Sealed": true,
+    "centralCanonicalStringImplementationConforms": true,
+    "ownerPacketMustReferenceThisSuccessor": true,
+    "moduleSourceAuthoringAuthorizedNow": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextGate": "ISSUE_MATCHING_CENTRAL_SUCCESSOR_V5_THEN_COMPLETE_CENTRAL_ADMISSION_AND_OWNER_PACKET_CHAIN"
+}

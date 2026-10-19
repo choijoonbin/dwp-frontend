@@ -1,0 +1,67 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-hrm011-central-contract-authorization-successor.v5",
+  "successorId": "HRIS-WAVE7-R7-BATCH-04-HRM011-CENTRAL-CONTRACT-AUTHORIZATION-20261019-R5",
+  "recordedAt": "2026-10-19T10:15:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ID_AND_SHA256"
+  },
+  "state": "SEALED_PDX015_CONTENT_SCHEMA_VERSION_STRING_CORRECTION_ALL_NONCONFLICTING_CENTRAL_V4_TERMS_PRESERVED",
+  "sliceId": "BASE-TFR-HRM-011",
+  "successorOf": {
+    "path": "hrm-011-central-contract-authorization-successor.v4.json",
+    "sha256": "d58509ab6458f088a47ef538bce447f6a9ba03cdd8d8eab32ad56733d2dd43b9",
+    "bytes": 25140,
+    "supersession": "CORRECT_ONLY_THE_PDX015_CONTENT_SCHEMA_VERSION_FIELD_TYPE_AND_PDX001_EQUALITY_BINDING"
+  },
+  "semanticDispositionSuccessor": {
+    "path": "semantic-dispositions/base-tfr-hrm-011.semantic-disposition-successor.v5.json",
+    "sha256": "6e45fcb8a641f02a50e60dd365fc7638680e0c09e3bb64ebd535f87a8845864d",
+    "bytes": 2639,
+    "requiredState": "SEALED_PDX015_CONTENT_SCHEMA_VERSION_TYPE_CORRECTION_ALL_NONCONFLICTING_V4_TERMS_PRESERVED"
+  },
+  "canonicalCorrection": {
+    "contract": "PDX-015 EmploymentContractTemplateSnapshotV1",
+    "field": "contentSchemaVersion",
+    "canonicalDefinition": "platform-dependency-canonical-schemas.v1.json#/$defs/SchemaVersion",
+    "javaType": "java.lang.String",
+    "pattern": "^[A-Za-z][A-Za-z0-9._-]{0,127}\\.v[1-9][0-9]*$",
+    "equalityInvariant": "contentSchemaVersion equals the exact PDX-001 payloadSchemaVersion for the same immutable published template version",
+    "forbidden": [
+      "numeric revision interpretation",
+      "implicit integer-to-string conversion",
+      "case normalization",
+      "default schema version",
+      "mismatched PDX-001 payload schema version"
+    ]
+  },
+  "implementationDisposition": {
+    "canonicalSchemaChangeRequired": false,
+    "generatedJavaChangeRequired": false,
+    "existingCentralImplementationConforms": true,
+    "targetedTestRequirement": "HrisHrm011CanonicalContractTest must assert the typed string and PDX-001 equality semantics without weakening strict JSON.",
+    "productAuthorizationV53ChangeRequired": false,
+    "authV262ChangeRequired": false,
+    "asyncApiChangeRequired": false
+  },
+  "preservedCentralV4Terms": [
+    "XCON-023 through XCON-026 and PDX-015 canonical scope",
+    "product-authorization v53 and Auth V262 authorization scope",
+    "new hcm.operations.contract.issue responsibility and SoD boundary",
+    "Gateway and People fail-closed trusted-purpose, field-policy, population and step-up boundary",
+    "transport Problem 503 successor",
+    "owner packet, V59, worktree and token preconditions",
+    "default OFF, zero enrollment and no production provider or trigger claim"
+  ],
+  "authority": {
+    "centralV5CorrectionSealed": true,
+    "centralImplementationMayBeAdmittedAfterTargetedVerification": true,
+    "ownerPacketMustReferenceSemanticV5AndCentralV5": true,
+    "moduleOwnerSourceAuthorizedNow": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextGate": "COMPLETE_GATEWAY_AND_PEOPLE_P0_CORRECTIONS_RUN_TARGETED_CENTRAL_VERIFICATION_COMMIT_MERGE_AND_ISSUE_OWNER_PACKET_CHAIN"
+}
