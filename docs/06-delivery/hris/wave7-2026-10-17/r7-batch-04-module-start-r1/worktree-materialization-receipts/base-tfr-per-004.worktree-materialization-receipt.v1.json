@@ -1,0 +1,203 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-per004-worktree-materialization-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-04-PER004-WORKTREE-MATERIALIZATION-20261019-R1",
+  "recordedAt": "2026-10-19T18:28:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "MATERIALIZED_CLEAN_EXACT_AUTHORITY_CARRIER_PINS_NO_SOURCE_EDITS_NO_UPSTREAM_PERFORMANCE_V18_V19_ABSENT",
+  "purpose": "Record the actual clean backend and frontend PER-004 worktree identities required before the reserved Performance V19 lease can become active and an executable module start token can be issued. This receipt alone grants no write, test, commit or push authority.",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_RECEIPT_ID_AND_SHA256"
+  },
+  "sliceId": "BASE-TFR-PER-004",
+  "moduleSession": "HRIS-PER",
+  "moduleThreadId": "01a0f53e-9c6d-74e1-a11a-0dd4a4ab25a9",
+  "immutablePredecessorChain": [
+    {
+      "order": 1,
+      "kind": "BATCH04_PREFLIGHT",
+      "path": "../../r7-batch-04-preflight-r1/semantic-dependency-migration-preflight.v1.json",
+      "sha256": "3fe2cb0cab1aa65fbe75f1b0d8d4a74f136be457aa2c324d262eb7503789cc1c",
+      "bytes": 17214,
+      "requiredState": "PREFLIGHT_COMPLETE_FIXED_ORDER_FIVE_CONDITIONAL_LANES_NO_PACKETS_NO_TOKENS_NO_LEASES_NO_SOURCE"
+    },
+    {
+      "order": 2,
+      "kind": "SEMANTIC_DISPOSITION",
+      "path": "../semantic-dispositions/base-tfr-per-004.semantic-disposition.v1.json",
+      "sha256": "1e21d62336c7100877c16c16fdffec19e4352d9aedb9414a091b94df54362ce8",
+      "bytes": 30992,
+      "requiredState": "PER004_OWNER_PAYLOAD_SOR_AND_PLATFORM_LIFECYCLE_BOUNDARY_SEALED_V19_REQUIRED_CENTRAL_SUCCESSOR_BEFORE_SOURCE"
+    },
+    {
+      "order": 3,
+      "kind": "SEMANTIC_REVIEW",
+      "path": "../semantic-dispositions/base-tfr-per-004.semantic-review.v1.json",
+      "sha256": "187c38cd0cc3e649262610a644bd59a0c7af4f1f55a0d6ee0e4edc1375e7c7cd",
+      "bytes": 2868,
+      "requiredState": "PER004_SEMANTIC_DISPOSITION_INDEPENDENTLY_REVIEWED_PASS_ZERO_P0_ZERO_P1_CENTRAL_SUCCESSOR_MAY_PROCEED"
+    },
+    {
+      "order": 4,
+      "kind": "MIGRATION_SEMANTIC_CLARIFICATION",
+      "path": "../semantic-dispositions/base-tfr-per-004.migration-semantic-clarification-successor.v2.json",
+      "sha256": "85a2effba61f807b4859b025606cb0710eff35ce75569f994b8639b459d26d6c",
+      "bytes": 8503,
+      "requiredState": "SEALED_PER004_V19_EXACT_DATE_NULLABILITY_AND_CHECK_CLARIFICATION_REVIEW_REQUIRED"
+    },
+    {
+      "order": 5,
+      "kind": "MIGRATION_SEMANTIC_CLARIFICATION_REVIEW",
+      "path": "../semantic-dispositions/base-tfr-per-004.migration-semantic-clarification-review.v1.json",
+      "sha256": "02000ca28a6dd68b46c3af57783fb298633a41f6906fd862cd5a9bef115355cf",
+      "bytes": 6091,
+      "requiredState": "PER004_V19_MIGRATION_SEMANTIC_CLARIFICATION_INDEPENDENTLY_REVIEWED_PASS_ZERO_P0_ZERO_P1_RESERVATION_AND_OWNER_PACKET_MAY_BIND"
+    },
+    {
+      "order": 6,
+      "kind": "IAQ_AND_LIFECYCLE_SUCCESSOR",
+      "path": "../contract-successors/per-004-iaq-projection-and-lifecycle-successor.v1.json",
+      "sha256": "ff1be7ed1bb18dcc24b0f5acac05c6be36707e34c72f5a3bdcfa05671289a361",
+      "bytes": 27667,
+      "requiredState": "SEALED_PER004_IAQ020_READ_ONLY_IAQ056_EXACT_STATE_AWARE_PLATFORM_LIFECYCLE_AND_TYPED_OWNER_HANDSHAKE"
+    },
+    {
+      "order": 7,
+      "kind": "CENTRAL_AUTHORIZATION",
+      "path": "../per-004-central-contract-authorization-successor.v1.json",
+      "sha256": "09d5c2eb9a1bbc1eec01e8bf716a7bed2d81f17a3b4248d7b70b536aacdfc3ab",
+      "bytes": 30073,
+      "requiredState": "SEALED_EXACT_PER004_V55_V264_V332_GATEWAY_TYPED_OWNER_TRUST_AUTHORITY_DEFAULT_OFF_ZERO_ENROLLMENT"
+    },
+    {
+      "order": 8,
+      "kind": "CENTRAL_AUTHORIZATION_REVIEW",
+      "path": "../per-004-central-contract-authorization-review.v1.json",
+      "sha256": "327929b8375f3529f24d19c4a1b1aca8f76c3f3b2b7757a619958669b92a9570",
+      "bytes": 3493,
+      "requiredState": "PER004_IAQ_AND_CENTRAL_CONTRACT_INDEPENDENTLY_REVIEWED_PASS_ZERO_P0_ZERO_P1_BOUNDED_CENTRAL_IMPLEMENTATION_MAY_PROCEED"
+    },
+    {
+      "order": 9,
+      "kind": "CENTRAL_INTEGRATION_RECEIPT",
+      "path": "../../r7-batch-04-central-admission-r1/per-004-central-integration-receipt.v1.json",
+      "sha256": "d2eb616c2a02ef3de57c7825964b8495a96e2a17b29489d74222852bbad2b640",
+      "bytes": 18344,
+      "requiredState": "EXACT_PER004_CENTRAL_BACKEND_COMMITTED_AND_PUSHED_V55_V264_V332_GATEWAY_TRUST_ADMITTED_DEFAULT_OFF_ZERO_ENROLLMENT_ZERO_PROVIDER_BINDING_OWNER_AUTHORITY_MAY_BE_PREPARED"
+    },
+    {
+      "order": 10,
+      "kind": "HISTORICAL_INACTIVE_PER002_V19_CANDIDATE",
+      "path": "../../r7-batch-02-module-start-r1/migration-lease-activation.v1.json",
+      "sha256": "c13a87d949f518ce7ab8a6cd590a1373a2bd3e0fa17ee7d5591672d868b17175",
+      "bytes": 5475,
+      "requiredState": "ZERO_ACTIVE_LEASES_PERFORMANCE_V19_CANDIDATE_RESERVED_NOT_ISSUED",
+      "disposition": "SUPERSEDED_REALLOCATED_TO_PER004_NO_AUTHORITY_TRANSFER"
+    },
+    {
+      "order": 11,
+      "kind": "PER004_V19_RESERVATION",
+      "path": "../migration-lease-per004-v19-reservation.v1.json",
+      "sha256": "15fc6c516b6554f4c2dc2a60ccb759571e3e4ebabf37322bb4eba2dade509228",
+      "bytes": 20932,
+      "reservationId": "HRIS-WAVE7-R7-BATCH-04-MIGRATION-LEASE-RESERVATION-PER004-20261019-R1",
+      "leaseId": "HRIS-WAVE7-R7-BATCH-04-PERFORMANCE-V19-PER004-20261019-R1",
+      "requiredState": "RESERVED_NOT_ACTIVE"
+    },
+    {
+      "order": 12,
+      "kind": "PER004_OWNER_PACKET",
+      "path": "../owner-packets/base-tfr-per-004.owner-packet.v1.json",
+      "sha256": "2f7e4f1d10e83c4eb7b6e26d434c6d708ccb58beeecea98ed2faaedeae91b8c3",
+      "bytes": 39168,
+      "packetId": "HRIS-WAVE7-R7-BATCH-04-OWNER-BASE-TFR-PER-004-20261019-R1",
+      "requiredState": "SEALED_EXACT_PER004_OWNER_AUTHORITY_PACKET_READY_EXECUTABLE_TOKEN_WITHHELD_PENDING_FRESH_WORKTREES_AND_ACTIVE_V19_LEASE"
+    }
+  ],
+  "authorityCarrier": {
+    "repository": "dwp-frontend",
+    "branch": "dwp-dev",
+    "commit": "29d3993e769fc49a4692d79732b0c7d054c5b42f",
+    "tree": "a13b8d922211008570d88888e97367cef673146b",
+    "originRef": "origin/dwp-dev",
+    "originExactBeforeThisAppendOnlyReceipt": true,
+    "porcelainSha256BeforeThisAppendOnlyReceipt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "cleanBeforeThisAppendOnlyReceipt": true
+  },
+  "materializedWorktrees": {
+    "backend": {
+      "repository": "dwp-backend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261019/r7-batch04/per-004/backend",
+      "branch": "codex/hris-wave7-r7-batch04-per-004-backend-20261019-r1",
+      "head": "0cc02064bdec914dc4b8540a3b23faa5e3719ab0",
+      "tree": "4f4050b6336cf5663d475af07755045a9f3c23bf",
+      "expectedBaseCommit": "0cc02064bdec914dc4b8540a3b23faa5e3719ab0",
+      "expectedBaseTree": "4f4050b6336cf5663d475af07755045a9f3c23bf",
+      "headAndTreeExact": true,
+      "porcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "clean": true,
+      "upstream": null,
+      "sourceChangesAtReceipt": [],
+      "materialized": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261019/r7-batch04/per-004/frontend",
+      "branch": "codex/hris-wave7-r7-batch04-per-004-frontend-20261019-r1",
+      "head": "29d3993e769fc49a4692d79732b0c7d054c5b42f",
+      "tree": "a13b8d922211008570d88888e97367cef673146b",
+      "expectedBaseCommit": "29d3993e769fc49a4692d79732b0c7d054c5b42f",
+      "expectedBaseTree": "a13b8d922211008570d88888e97367cef673146b",
+      "headAndTreeExact": true,
+      "porcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "clean": true,
+      "upstream": null,
+      "sourceChangesAtReceipt": [],
+      "materialized": true
+    }
+  },
+  "migrationObservation": {
+    "stream": "PERFORMANCE",
+    "observedHighWater": "V18",
+    "candidateVersion": "V19",
+    "exactReservedPath": "dwp-people-server/src/main/resources/db/performance-migration/V19__per_base_tfr_per_004.sql",
+    "candidatePathPresent": false,
+    "competingV19Present": false,
+    "historicalMigrationsV1ThroughV18UnchangedByMaterialization": true
+  },
+  "acceptanceCoverage": {
+    "requiredCount": 12,
+    "requiredIds": [
+      "PER004-AC01",
+      "PER004-AC02",
+      "PER004-AC03",
+      "PER004-AC04",
+      "PER004-AC05",
+      "PER004-AC06",
+      "PER004-AC07",
+      "PER004-AC08",
+      "PER004-AC09",
+      "PER004-AC10",
+      "PER004-AC11",
+      "PER004-AC12"
+    ]
+  },
+  "authority": {
+    "receiptSealed": true,
+    "activePerformanceV19LeaseSuccessorMayBeIssued": true,
+    "executablePer004StartTokenMayBeIssuedOnlyAfterActiveLeaseSuccessor": true,
+    "sourceAuthoringAuthorizedByReceiptAlone": false,
+    "migrationAuthoringAuthorizedByReceiptAlone": false,
+    "testExecutionAuthorizedByReceiptAlone": false,
+    "moduleBranchCommitAuthorizedByReceiptAlone": false,
+    "moduleBranchPushAuthorizedByReceiptAlone": false,
+    "centralWriteAuthorized": false,
+    "directDwpDevMergeAuthorized": false,
+    "routeOrMenuMountAuthorized": false,
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionProviderBindingAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextGate": "ISSUE_ONE_APPEND_ONLY_ACTIVE_EXCLUSIVE_PERFORMANCE_V19_LEASE_SUCCESSOR_HASH_BOUND_TO_THIS_RECEIPT_THEN_ISSUE_ONE_EXECUTABLE_PER004_START_TOKEN"
+}
