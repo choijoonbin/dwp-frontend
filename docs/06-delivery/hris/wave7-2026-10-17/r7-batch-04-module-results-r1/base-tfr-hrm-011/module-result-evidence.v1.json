@@ -1,0 +1,171 @@
+{
+  "schema": "dwp.hris.wave7.module-result-evidence.v1",
+  "evidenceId": "HRIS-WAVE7-R7-BATCH-04-BASE-TFR-HRM-011-MODULE-RESULT-R1",
+  "issuedAt": "2026-10-19T12:14:08+09:00",
+  "issuedBy": "HRIS-HRM",
+  "sliceId": "BASE-TFR-HRM-011",
+  "resultState": "HRM011_EXACT_MODULE_SOURCE_AND_V59_COMPLETE_BRANCHES_PUSHED_TWELVE_OF_TWELVE_PASS_INDEPENDENT_REVIEW_GO_CENTRAL_CHAIN_AND_ADMISSION_PENDING_DEFAULT_OFF_ZERO_ENROLLMENT_ZERO_CREDIT",
+  "authority": {
+    "startToken": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-start-r1/tokens/base-tfr-hrm-011.start-token.v1.json",
+      "tokenId": "HRIS-WAVE7-R7-BATCH-04-START-BASE-TFR-HRM-011-20261019-R1",
+      "sha256": "74aee153132d07a86603f81723824e21cc163a746d8f1ab91942ab430b4c1db3",
+      "bytes": 15796,
+      "executable": true
+    },
+    "ownerPacket": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-start-r1/owner-packets/base-tfr-hrm-011.owner-packet.v1.json",
+      "sha256": "c5ea9afbb90c72d0c6a125be2f0a364a69364ef26c528900b514ef62d235ed18",
+      "bytes": 30411
+    },
+    "activeLease": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-start-r1/migration-lease-activation.v2.json",
+      "sha256": "8488d8adf558930a1abaa016370fe39f14b6d1ef03cd4683b72fc134e37b6f74",
+      "bytes": 6719,
+      "state": "ACTIVE_EXCLUSIVE_PEOPLE_V59"
+    },
+    "materializationReceipt": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-start-r1/worktree-materialization-receipts/base-tfr-hrm-011.worktree-materialization-receipt.v1.json",
+      "sha256": "3cc33880926b016b303a3cc65f21d96f8ce0c86c6364b6fa1453da24dcf92f98",
+      "bytes": 4916
+    },
+    "semanticDispositionV6": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-start-r1/semantic-dispositions/base-tfr-hrm-011.semantic-disposition-successor.v6.json",
+      "sha256": "8ab1b4dca5c5de37ad61f2fed8f688fbe73998ec428973d0c42ebf0f45f5ef1c",
+      "bytes": 3935
+    },
+    "centralAuthorizationV6": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-start-r1/hrm-011-central-contract-authorization-successor.v6.json",
+      "sha256": "4e9a342c4123b82bcc6cace47b31a3ced6ac0c2ee3ce1f5927ccf767e8577719",
+      "bytes": 4383
+    },
+    "authorityCarrierExclusion": {
+      "centralFrontendCommit": "87bee7d816144fb73ff92f47a054ae040968596d",
+      "centralFrontendTree": "07f767cab6a839c72d4df58ed4cabff9f73fae90",
+      "sourceBranchMergeBase": "8469afe5fc29d3703623ed358cd9a97549f22380",
+      "centralCarrierIsSourceAncestor": false,
+      "mergeRebaseOrCherryPickPerformed": false,
+      "reason": "The exact materialized module worktree intentionally started from the pinned pre-token source base; authority documents remain on the central carrier for later no-ff admission."
+    }
+  },
+  "sourcePins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "codex/hris-wave7-r7-batch04-hrm-011-backend-20261019-r1",
+      "base": "e0bfb2a767261da6941bcbe64a013fa722d32260",
+      "commit": "b114eac750ab9f413c5d0527a7b968d97e931f4f",
+      "tree": "7c42bf08a8e96d9938cbafd86f3ffab464b61f83",
+      "originExact": true,
+      "clean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "codex/hris-wave7-r7-batch04-hrm-011-frontend-20261019-r1",
+      "base": "8469afe5fc29d3703623ed358cd9a97549f22380",
+      "commits": [
+        "17f0ed68c61079b79971a4cf4a377338bcd1dadb",
+        "51b172255bc4efb9dc9883208ec8aa071c3bdb01"
+      ],
+      "sourceHeadBeforeEvidence": "51b172255bc4efb9dc9883208ec8aa071c3bdb01",
+      "sourceTree": "e053244a909d1b2107ba8066ef5dbbf90663ace7",
+      "originExactBeforeEvidence": true,
+      "cleanBeforeEvidence": true
+    }
+  },
+  "implementation": {
+    "backend": [
+      "IAQ-008 v2 relationship-grain compensation and contract workbench with closed request/response, deterministic SQL filtering, ordering and cursor binding",
+      "PEP-HRM-011 seven-layer authorization, trusted purpose mapping, population lock, SoD, HIGH step-up, version and idempotency recovery",
+      "PDX-015 and artifact fail-closed ports with no production-provider binding",
+      "SVC-PEP-HRM-003-R2 and SVC-PEP-HRM-005 workload ingress with exact minimized projections and transactional ten-field audit outbox",
+      "XCON-023 through XCON-026 deterministic closed event mapping and persistent outbox conflict protection",
+      "People V59 exact four-table migration with RLS and immutable guards"
+    ],
+    "frontend": [
+      "Unmounted contracts and compensation-basis list-detail workbench",
+      "Exact IAQ-008 and PEP-HRM-011 API boundary with HTTP 202 receipt fencing",
+      "Loading, empty, partial, unavailable, denied, stale and complete states",
+      "Immutable review snapshot, explicit retry, keyboard flow and responsive constrained layouts",
+      "Default-OFF and zero-call slice guard"
+    ]
+  },
+  "verification": {
+    "backend": {
+      "prescribedTargetsBeforeReview": "PASS",
+      "postReviewAffectedUnitTargets": {
+        "classes": 10,
+        "effectiveTests": 42,
+        "result": "PASS",
+        "finalSmallestRerun": "EmploymentContractAuthorizationTest and Hrm011QueryAuthorityTest passed after separating route field policy from V34 population policy"
+      },
+      "newPostgresqlTargets": {
+        "classes": 2,
+        "effectiveTests": 6,
+        "result": "PASS_ZERO_SKIPPED"
+      },
+      "migrationPostgresql": "Hrm011V59MigrationPostgresTest 7_OF_7_PASS_ZERO_SKIPPED_CARRIED_WITHOUT_REDUNDANT_RERUN",
+      "gitDiffCheck": "PASS",
+      "repositoryWideSuiteRun": false,
+      "broadPostCorrectionRerun": false
+    },
+    "frontend": {
+      "carriedSliceGuard": {
+        "files": 1,
+        "effectiveTests": 6,
+        "result": "PASS_CARRIED_WITHOUT_REDUNDANT_RERUN"
+      },
+      "postReviewAffectedTargets": {
+        "files": 2,
+        "effectiveTests": 22,
+        "result": "PASS"
+      },
+      "targetedLintAndTypeChecks": "PASS",
+      "independentReview": "GO_WITH_LOADING_EMPTY_PARTIAL_UNAVAILABLE_DENIED_STALE_COMPLETE_HTTP202_SNAPSHOT_FENCE_DOUBLE_SUBMIT_AND_RESPONSIVE_ACCESSIBILITY_CONFIRMED",
+      "browserRouteRun": false,
+      "browserRouteReason": "The token explicitly keeps the feature unmounted and default OFF pending central admission."
+    },
+    "independentReviews": {
+      "persistenceAndAudit": "GO_NO_OPEN_P0_OR_P1_AFTER_REAL_SECOND_TRANSACTION_RESERVATION_LATCH",
+      "coreAndQuery": "GO_NO_OPEN_P0_OR_P1_AFTER_READ_ACTION_AND_FIELD_POLICY_NAMESPACE_CORRECTIONS"
+    }
+  },
+  "subordinateEvidence": [
+    {
+      "path": "acceptance-results.v1.json",
+      "sha256": "3e51bcb982fb4a6808c4c83ef7f00d2c86510cee2040e0ea0271d88b3ef28572",
+      "bytes": 4787
+    },
+    {
+      "path": "changed-path-and-no-recount.v1.json",
+      "sha256": "c9871dd56a0a848e728698a6c6c6f21462e6602df245237a629ff814db4af3e3",
+      "bytes": 4201
+    },
+    {
+      "path": "people-v59-and-postgres-evidence.v1.json",
+      "sha256": "7c8c25c457456b3ddc3eea0e9276f5cd0181ae1d96a1c66cdb5ccd1ddd0600ef",
+      "bytes": 2705
+    }
+  ],
+  "residuals": [
+    {
+      "priority": "P2",
+      "finding": "A concurrent external update that changes a live sort value between cursor pages can move its position; activation should add an immutable query snapshot or tuple seek if stronger cross-write pagination is required.",
+      "admissionBlocking": false
+    },
+    {
+      "priority": "P2",
+      "finding": "A population containing many unsafe candidates is scanned in bounded batches of 100 and may require multiple database calls.",
+      "admissionBlocking": false
+    }
+  ],
+  "nonClaims": [
+    "PeopleSecurityFilter and the final SVC chain are unchanged by the module branches.",
+    "No authoritative payGroupPublicId source is admitted and SVC-PEP-HRM-003-R2 emits no fabricated XCON-002 item.",
+    "No production template provider, artifact provider or upstream mutation trigger is bound.",
+    "No route, shell, menu, i18n or tenant-visible page is mounted.",
+    "No feature activation, tenant enrollment, customer data, production release or full-slice completion is claimed.",
+    "No repository-wide test suite or redundant broad rerun is claimed."
+  ],
+  "decision": "MODULE_RESULT_READY_FOR_SEPARATE_CENTRAL_REVIEW_AND_DEFERRED_PEOPLE_SECURITY_CHAIN_ADMISSION",
+  "nextAction": "Commit and push this exact result bundle, then perform central source/evidence admission and only the separately authorized PeopleSecurityFilter integration before closing HRM-011 sequencing."
+}

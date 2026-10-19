@@ -1,0 +1,80 @@
+{
+  "schema": "dwp.hris.wave7.changed-path-and-no-recount.v1",
+  "evidenceId": "HRIS-WAVE7-R7-BATCH-04-BASE-TFR-HRM-011-CHANGED-PATH-R1",
+  "issuedAt": "2026-10-19T12:14:08+09:00",
+  "issuedBy": "HRIS-HRM",
+  "sliceId": "BASE-TFR-HRM-011",
+  "backendSource": {
+    "repository": "dwp-backend",
+    "baseCommit": "e0bfb2a767261da6941bcbe64a013fa722d32260",
+    "baseTree": "2fd87e5f6ed126170668c019a9c0c4ed82c354c9",
+    "branch": "codex/hris-wave7-r7-batch04-hrm-011-backend-20261019-r1",
+    "sourceCommit": "b114eac750ab9f413c5d0527a7b968d97e931f4f",
+    "sourceTree": "7c42bf08a8e96d9938cbafd86f3ffab464b61f83",
+    "remoteExact": true,
+    "worktreeClean": true,
+    "changedPathCount": 44,
+    "insertions": 9398,
+    "deletions": 0,
+    "sortedPathManifestSha256": "db6320d3d40f3a9033cad9d3494dd5978113bb30b4308ddadb474b33375bdd4f",
+    "sortedNameStatusManifestSha256": "72d5fc839d4d9c4d6763e7badec6abfa7ff81a0a3c0958e2590464d432fdee2a",
+    "authorizedRoots": [
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/hrm011/**",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/employmentcontract/**",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/workbench/hrm011/**",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/contracts/hrm011/**",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/employeeservice/employmentcontract/**",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/workbench/hrm011/**",
+      "dwp-people-server/src/main/resources/db/migration/V59__hrm_base_tfr_hrm_011.sql"
+    ],
+    "outsideAuthorizedRootCount": 0
+  },
+  "frontendSource": {
+    "repository": "dwp-frontend",
+    "baseCommit": "8469afe5fc29d3703623ed358cd9a97549f22380",
+    "baseTree": "5fbd9789cac77e1d9feaa04204dac5d6a9129195",
+    "branch": "codex/hris-wave7-r7-batch04-hrm-011-frontend-20261019-r1",
+    "sourceCommits": [
+      "17f0ed68c61079b79971a4cf4a377338bcd1dadb",
+      "51b172255bc4efb9dc9883208ec8aa071c3bdb01"
+    ],
+    "sourceHead": "51b172255bc4efb9dc9883208ec8aa071c3bdb01",
+    "sourceTree": "e053244a909d1b2107ba8066ef5dbbf90663ace7",
+    "remoteExactBeforeEvidence": true,
+    "worktreeCleanBeforeEvidence": true,
+    "changedPathCount": 9,
+    "insertions": 3067,
+    "deletions": 0,
+    "sortedPathManifestSha256": "0afb1c6111d51ff08029d650e6bb546f4794a80686aa2c19a65357bc4b48d2e7",
+    "sortedNameStatusManifestSha256": "0ad4e89059085fab1ad3587e588a94778b0ec86b5a72f3d459e4bd773fb0a248",
+    "paths": [
+      "apps/dwp/src/features/hris/people/__tests__/g3-slices/base-tfr-hrm-011.slice.test.tsx",
+      "apps/dwp/src/features/hris/people/contracts-compensation-basis/contracts-compensation-basis-api.ts",
+      "apps/dwp/src/features/hris/people/contracts-compensation-basis/contracts-compensation-basis-contract.ts",
+      "apps/dwp/src/features/hris/people/contracts-compensation-basis/contracts-compensation-basis-workbench.tsx",
+      "apps/dwp/src/features/hris/people/contracts-compensation-basis/index.ts",
+      "apps/dwp/src/features/hris/people/contracts-compensation-basis/testing/contracts-compensation-basis-api.test.ts",
+      "apps/dwp/src/features/hris/people/contracts-compensation-basis/testing/contracts-compensation-basis-fixtures.test-support.ts",
+      "apps/dwp/src/features/hris/people/contracts-compensation-basis/testing/contracts-compensation-basis-workbench.test.tsx",
+      "apps/dwp/src/features/hris/people/contracts-compensation-basis/use-contracts-compensation-basis.ts"
+    ],
+    "outsideAuthorizedRootCount": 0
+  },
+  "forbiddenChanges": {
+    "peopleSecurityFilter": false,
+    "centralAuthorization": false,
+    "gateway": false,
+    "routeOrShell": false,
+    "menu": false,
+    "i18n": false,
+    "generatedContract": false,
+    "historicalMigration": false,
+    "featureActivation": false,
+    "tenantEnrollment": false
+  },
+  "noRecount": {
+    "moduleSourceCompletionCreditBeforeCentralAdmission": 0,
+    "fullSliceBusinessCompletionCredit": 0,
+    "reason": "Module source and evidence require separate central admission; default OFF, zero enrollment and production-provider nonclaims remain."
+  }
+}
