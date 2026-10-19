@@ -1,0 +1,162 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-per004-central-integration-receipt-successor.v3",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-04-PER004-CENTRAL-INTEGRATION-20261019-R3",
+  "recordedAt": "2026-10-19T20:24:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "PER004_CORRECTED_CENTRAL_CONTRACT_AND_MODULE_SOURCE_INTEGRATED_PUSHED_DEFAULT_OFF_ZERO_ENROLLMENT_UNBOUND_UNMOUNTED",
+  "sliceId": "BASE-TFR-PER-004",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_RECEIPT_ID_AND_SHA256",
+    "supersedesOnlyTheRecordedIntegrationStateOf": {
+      "path": "per-004-central-integration-receipt-successor.v2.json",
+      "sha256": "08ddfb4dbfcdc4d000618e2886f926032d22f123546509050cab21a8373421f7",
+      "bytes": 10435
+    }
+  },
+  "authorityBasis": {
+    "correctedCentralContractIntegration": {
+      "path": "per-004-central-integration-receipt-successor.v2.json",
+      "sha256": "08ddfb4dbfcdc4d000618e2886f926032d22f123546509050cab21a8373421f7",
+      "bytes": 10435,
+      "carrierCommit": "9b8f46981a28e9dfa842353decb56b337d904430",
+      "carrierTree": "c10adc9f822dede86ef0c3f08f87fda6dcfcf3db",
+      "requiredState": "PER004_EXACT_MAPPER_ONLY_STATE_CORRECTION_INTEGRATED_PUSHED_DEFAULT_OFF_ZERO_ENROLLMENT_UNBOUND_UNMOUNTED_REPLACEMENT_TOKEN_PREPARATION_ONLY"
+    },
+    "moduleSourceIntegration": {
+      "path": "per-004-module-source-integration-receipt.v1.json",
+      "sha256": "2b3e2acd04c7ca57e73fc10c94a19308a9376eea4b8e124d0ee3e00da178a1fa",
+      "bytes": 6380,
+      "carrierCommit": "4a9294e5f7bc4867ec036b80144daa6f9a5e8612",
+      "carrierTree": "b68d6cd0797ae4e4a9fac38325db51764610ad46",
+      "requiredState": "EXACT_PER004_MODULE_HEADS_INTEGRATED_PUSHED_POST_MERGE_ACCEPTED_BLOB_IDENTICAL_V19_LEASE_CONSUMED_DEFAULT_OFF_ZERO_ENROLLMENT_UNBOUND_UNMOUNTED"
+    }
+  },
+  "integratedPins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "e709c080661e1ffcdba5e1e89c28ea49557cf50d",
+      "tree": "7076a081410fcf10cd4c6d5ece9ed3a882de1af4",
+      "originRef": "origin/dwp-dev",
+      "originExact": true,
+      "worktreeClean": true
+    },
+    "frontendAuthorityCarrierBeforeThisReceipt": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "4a9294e5f7bc4867ec036b80144daa6f9a5e8612",
+      "tree": "b68d6cd0797ae4e4a9fac38325db51764610ad46",
+      "originRef": "origin/dwp-dev",
+      "originExact": true,
+      "committedTreeCleanBeforeDraft": true,
+      "authorityCarrierAdvanceExpected": true
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "originExact": true,
+      "clean": true,
+      "readOnlyForThisSlice": true
+    }
+  },
+  "integratedCentralContract": {
+    "productAuthorizationBundle": "v55",
+    "authMigration": "V264",
+    "platformMigration": "V332",
+    "capabilityCount": 270,
+    "policyCount": 24,
+    "entitlementExpressionCount": 17,
+    "predicateCount": 82,
+    "routeCount": 1104,
+    "per004AdmittedQueryRouteContractCount": 4,
+    "sharedActionRouteCount": 6,
+    "gatewayCallerAuthorityHeadersStripped": true,
+    "typedOwnerTrustBoundaryAdmitted": true,
+    "correctionCommit": "0ef034f1e57380fec256095122297a6d8bc87d37",
+    "correctionTree": "2ce7e49f0b7a12f8cd2b6d55053e326bd97e424b",
+    "correctionScope": "EXACT_MAPPER_ONLY_WIRE_STATE_NORMALIZATION",
+    "rawTerminalStateMutation": false,
+    "migrationChangedByCorrection": false,
+    "replacementStartToken": {
+      "path": "../r7-batch-04-module-start-r1/tokens/base-tfr-per-004.start-token-replacement.v2.json",
+      "sha256": "93e6d485a8d30eeb1dbd23334641696c2713084e2bd8d753a0e636ffeb6c0c63",
+      "bytes": 13019,
+      "carrierCommit": "f989ee7736a5ef82dd1c6fcfe0a266822cb44a19",
+      "carrierTree": "59459e6e091169161dfe539d3e9673e383cc3098"
+    },
+    "ownerProvider": "UNBOUND",
+    "routeOrMenuMounted": false
+  },
+  "integratedModule": {
+    "backendSourceAndIntegratedHead": "e709c080661e1ffcdba5e1e89c28ea49557cf50d",
+    "frontendSourceTestHead": "cb07c4b922fd5376b3b19aa9d880976c2991aa2e",
+    "frontendEvidenceHead": "89e2bfb91104b75b258e800fc500ceece0ab5a68",
+    "frontendMergeCommit": "2cf88073b21a4171428ccdcff85d66d10ceee2ea",
+    "changedPathCount": 56,
+    "admittedBlobMismatchCount": 0,
+    "acceptanceCriteriaPassed": "12_OF_12",
+    "reviewFindingsClosed": "6_OF_6_NORMALIZED_P1",
+    "remainingP0": 0,
+    "remainingP1": 0,
+    "effectiveV19Sha256": "b6ceb78d2446adabebd6a204b10552bd1cd3252df80f4172733e2df156550156",
+    "effectiveV19Bytes": 13537,
+    "postgresEvidence": "PASS_NO_DATABASE_SKIPS"
+  },
+  "targetedVerification": {
+    "policy": "USE_EXISTING_REVIEWED_CENTRAL_AND_MODULE_EVIDENCE_AND_VERIFY_ONLY_GIT_IDENTITY_PROVENANCE_AND_RECEIPT_REFERENCES; DO_NOT_REPEAT_PASSING_TESTS",
+    "centralCorrectionVerification": "PREVIOUSLY_PASSED_AND_BOUND_BY_V2_RECEIPT",
+    "moduleBackendHistoricalPassed": 23,
+    "moduleBackendSuccessorTargetedPassed": 11,
+    "moduleFrontendHistoricalDeclaredCases": 13,
+    "moduleFrontendSuccessorTargetedPassed": 3,
+    "moduleFrontendSuccessorTargetedSkipped": 5,
+    "moduleDatabaseSkipped": 0,
+    "postMergeAncestryAndBlobIdentity": "PASS_56_OF_56",
+    "independentAdmissionDecisionReview": "GO_P0_0_P1_0",
+    "independentModuleIntegrationReceiptReview": "GO_P0_0_P1_0",
+    "repositoryWideSuiteRun": false,
+    "unaffectedPassingTargetRerun": false
+  },
+  "migrationLeaseClosure": {
+    "leaseId": "HRIS-WAVE7-R7-BATCH-04-PERFORMANCE-V19-PER004-20261019-R1",
+    "stream": "PERFORMANCE",
+    "version": "V19",
+    "state": "CONSUMED_CENTRALLY_INTEGRATED",
+    "activeLeaseCountAfterIntegration": 0,
+    "performanceMigrationHighWater": "V19"
+  },
+  "rolloutBoundary": {
+    "featureKey": "HRIS_PERFORMANCE_CONFIGURATION",
+    "runtimeDefault": "OFF",
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "tenantEnrollmentCount": 0,
+    "frontendMounted": false,
+    "customerDataAuthorized": false,
+    "productionProviderBindingAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionIncrement": 0
+  },
+  "authorityAfterReceipt": {
+    "correctedCentralContractIntegrated": true,
+    "moduleSourceIntegrated": true,
+    "additionalPer004CentralImplementationOpen": false,
+    "sequencingExitReceiptMayBeIssued": true,
+    "routeOrMenuMountAuthorized": false,
+    "productionProviderBindingAuthorized": false,
+    "featureOrTenantActivationAuthorized": false,
+    "fullPer004BusinessCompletionClaimed": false
+  },
+  "nonClaims": [
+    "A production owner or trusted field-decision provider is bound.",
+    "The frontend route, shell or menu is mounted.",
+    "Any feature or tenant is activated or enrolled.",
+    "TFR-PER-014 production provenance is available.",
+    "BASE-TFR-PER-004 is counted as a completed production business slice.",
+    "Batch-04, R7 or the HRIS product is complete."
+  ],
+  "nextAction": "Issue the PER-004 sequencing exit receipt, close lane order 3 without business completion credit, then begin only SYS-006 semantic closure before any packet, lease, worktree or source authoring."
+}
