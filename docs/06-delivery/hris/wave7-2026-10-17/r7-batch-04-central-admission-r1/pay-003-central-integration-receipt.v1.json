@@ -1,0 +1,203 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-pay003-central-integration-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-04-PAY003-CENTRAL-INTEGRATION-20261019-R1",
+  "recordedAt": "2026-10-19T14:10:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_RECEIPT_ID_AND_SHA256"
+  },
+  "state": "EXACT_PAY003_CENTRAL_BACKEND_COMMITTED_AND_PUSHED_V54_V263_GATEWAY_SHARED_SECURITY_ADMITTED_DEFAULT_OFF_ZERO_ENROLLMENT_OWNER_AUTHORITY_MAY_BE_PREPARED",
+  "sliceId": "BASE-TFR-PAY-003",
+  "moduleSession": "HRIS-PAY",
+  "authorityBasis": {
+    "semanticDispositionV1": {
+      "path": "../r7-batch-04-module-start-r1/semantic-dispositions/base-tfr-pay-003.semantic-disposition.v1.json",
+      "sha256": "28ae1a0cb22920dfb77913a17ea4d4340572c4b2d115d6b8ac6a53c6202610b7",
+      "bytes": 25694,
+      "requiredState": "PAY003_SEMANTIC_GAPS_RESOLVED_CENTRAL_SUCCESSOR_AND_EXACT_PACKET_MAY_BE_PREPARED_SOURCE_NO_GO_UNTIL_CENTRAL_ADMISSION_ACTIVE_EXCLUSIVE_V53_FRESH_WORKTREES_AND_TOKEN"
+    },
+    "semanticDispositionV2": {
+      "path": "../r7-batch-04-module-start-r1/semantic-dispositions/base-tfr-pay-003.semantic-disposition-successor.v2.json",
+      "sha256": "b8ad25700089048eca54142596d4eef41831878ce3de037da2e336ca32a9a9e2",
+      "bytes": 6496,
+      "requiredState": "PAY003_ACTION_TARGET_BOUND_TO_PACK_GRAIN_IAQ026_IAQ048_RESULT_ACTIONS_WITHHELD_CENTRAL_CONTRACT_SUCCESSOR_REQUIRED",
+      "precedence": "CONTROLS_ACTION_TARGET_AND_ACTION_EXPOSURE"
+    },
+    "iaqProjectionAndApiSuccessor": {
+      "path": "../r7-batch-04-module-start-r1/contract-successors/pay-003-iaq-projection-and-api-successor.v1.json",
+      "sha256": "40827c435fdf4117c91a2733f76a673ada45d09fb72680a2198c28d073ecd992",
+      "bytes": 6598,
+      "requiredState": "SEALED_PAY003_IAQ026_EXACT_PACK_ACTION_AND_IAQ048_EMPTY_ACTION_OVERLAY"
+    },
+    "centralAuthorizationV1": {
+      "path": "../r7-batch-04-module-start-r1/pay-003-central-contract-authorization-successor.v1.json",
+      "sha256": "8ed70922d6a3d1e241adbad23ddb1a91106191706f762e15c53b32e9d7732ef9",
+      "bytes": 13818,
+      "requiredState": "SEALED_EXACT_PAY003_BOUNDED_CENTRAL_V54_V263_GATEWAY_SHARED_SECURITY_AUTHORITY"
+    }
+  },
+  "pushedPins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "303a7e8598b1b45dc6d65411838647328504efc9",
+      "tree": "a2f347d366bb6a5d037e646063f9fa1ba515d357",
+      "parents": [
+        "21a4630a97b205b95ab9c59544afb92e2d49a242"
+      ],
+      "originRef": "origin/dwp-dev",
+      "originExact": true,
+      "worktreeClean": true
+    },
+    "frontendAuthorityCarrierBeforeThisReceipt": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "d1a5e6c47313811a0bbd0a6e71fa05ac32cf6bb3",
+      "tree": "4d4b4e64e54567a976a2ff6262a9ee0fb5c459c9",
+      "originRef": "origin/dwp-dev",
+      "originExact": true,
+      "worktreeCleanBeforeThisReceipt": true,
+      "authorityCarrierAdvanceExpected": true
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "originRef": "origin/dwp-dev",
+      "originExact": true,
+      "worktreeClean": true,
+      "readOnlyForThisSlice": true
+    }
+  },
+  "integratedBackend": {
+    "baseCommit": "21a4630a97b205b95ab9c59544afb92e2d49a242",
+    "admittedCommit": "303a7e8598b1b45dc6d65411838647328504efc9",
+    "admittedTree": "a2f347d366bb6a5d037e646063f9fa1ba515d357",
+    "commitSubject": "feat(hris): admit PAY-003 central authorization",
+    "changedPathCount": 48,
+    "nameStatusManifestSha256": "6edabca5abcd5ea04f47e3311e75bb102d5fcf4ff7b8d022b61aada96174e332",
+    "pathOnlyManifestSha256": "68e31047c49325c1aaf1eec56792fc6934349ecf980d1a9a226a0b30c77990d1",
+    "mergeConflicts": 0,
+    "automaticConflictResolution": false
+  },
+  "admittedArtifacts": {
+    "productAuthorizationV54": {
+      "sourcePath": "contracts/product-authorization/product-surfaces-v1.bundle-v54.json",
+      "sourceSha256": "e14c73dde48aecdac5cd2161085670b50bb339f1b9748f432d4ff358663faa6d",
+      "sourceBytes": 2623270,
+      "authGeneratedPath": "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v54.generated.json",
+      "authGeneratedSha256": "e14c73dde48aecdac5cd2161085670b50bb339f1b9748f432d4ff358663faa6d",
+      "authGeneratedBytes": 2623270,
+      "declaredRegistryChecksum": "1a199b3ec84b6d6c16aaec57c9be0b09092c5f81e0c5566f893c4dbe0e0deed4",
+      "counts": {
+        "capabilities": 270,
+        "accessPolicies": 24,
+        "entitlementExpressions": 17,
+        "predicatePolicies": 82,
+        "routes": 1100,
+        "PAGE": 154,
+        "DATA": 334,
+        "ACTION": 612,
+        "authorityEndpoints": 2
+      }
+    },
+    "authV263": {
+      "path": "dwp-auth-server/src/main/resources/db/migration/V263__declare_hris_r7_batch04_pay003_v54_authorization_seed.sql",
+      "sha256": "a09ae2c2285563a6daaf125894c9d816710ad90b7bb7e4d6500dc6be8195f154",
+      "bytes": 15944,
+      "featureKey": "HRIS_PAYROLL_STATUTORY_INSURANCE",
+      "minimumBundleVersion": 54,
+      "defaultState": "OFF",
+      "tenantEnrollmentCount": 0
+    },
+    "payrollPepV54": {
+      "path": "dwp-payroll-server/src/main/resources/product-authorization/hcm-payroll-pep-v54.generated.json",
+      "sha256": "992b231751755d39d74cff8fc1458b1583c822cb2c5d1e43e9e6958632d6920a",
+      "bytes": 106670,
+      "projectionChecksum": "c2850911d46683d39ec0701f310f0f11c3d84a58a4bab99e818540fd2840da4b",
+      "counts": {
+        "routes": 39,
+        "bindings": 39,
+        "capabilities": 17,
+        "predicatePolicies": 9,
+        "PAGE": 4,
+        "DATA": 13,
+        "ACTION": 22
+      }
+    }
+  },
+  "admittedBoundary": {
+    "featureKey": "HRIS_PAYROLL_STATUTORY_INSURANCE",
+    "runtimeDefault": "OFF",
+    "tenantEnrollmentCount": 0,
+    "productAuthorizationBundle": "v54",
+    "authMigration": "V263",
+    "newCapability": "hcm.operations.statutory.execute",
+    "newPredicate": "predicate.hcm-payroll-country-pack-authority.v1",
+    "routes": [
+      "route.hcm.configuration.statutory.page",
+      "route.hcm.configuration.statutory.data",
+      "route.hcm.operations.pay-tax-social-insurance.page",
+      "route.hcm.operations.pay-tax-social-insurance.data",
+      "route.hcm.operations.country-pack-activate.action"
+    ],
+    "gatewayPurposeBoundary": "IAQ-026 uses PAYROLL_CONFIGURATION, IAQ-048 uses PAYROLL_OPERATIONS, and the activation command uses one exact trusted STATUTORY_CONFIGURATION purpose.",
+    "gatewayAuthorityBoundary": "Caller authority headers are stripped. No caller-controlled tenant, legal-entity or pay-group header is introduced; Payroll resolves packId under RLS and compares the stored scope with trusted decision evidence.",
+    "actionVersionBoundary": "The action is HIGH risk and command-bound to canonical packId plus X-DWP-Expected-Object-Version. Missing or malformed preconditions are rejected, and weak or stale If-Match is a 409 owner contract before mutation.",
+    "peopleEligibilityBoundary": "PAYROLL_LEGAL_ENTITY_GROUP_SCOPE canonicalizes to existing PAY_TARGET_POPULATION evidence rather than creating a second population authority.",
+    "payrollStepUpBoundary": "The existing PayrollStepUpVerifier is conditionally enabled for HRIS_PAYROLL_STATUTORY_INSURANCE; no duplicate verifier is created.",
+    "navigationBoundary": "No Platform route, menu, sidebar or shell navigation mount is admitted by this central backend receipt."
+  },
+  "independentReview": {
+    "decision": "GO_FOR_EXACT_CENTRAL_ADMISSION_NO_GO_FOR_MODULE_SOURCE_OR_ACTIVATION",
+    "remainingP0": 0,
+    "remainingP1": 0,
+    "reviewedBackendCommit": "303a7e8598b1b45dc6d65411838647328504efc9",
+    "reviewedBackendTree": "a2f347d366bb6a5d037e646063f9fa1ba515d357",
+    "requiredCorrectionsClosed": [
+      "weak and noncanonical If-Match is classified as conflict rather than malformed-request success-path evidence",
+      "PAY-003 object-version reconstruction is route bounded and preserves existing HRM command header behavior",
+      "no legal-entity or pay-group caller authority header is invented"
+    ]
+  },
+  "targetedVerification": {
+    "policy": "RUN_EACH_AFFECTED_TARGET_GROUP_ONCE_AND_RERUN_ONLY_THE_SMALLEST_FAILED_CLASS_OR_NAMED_CASE; NO_REPOSITORY_WIDE_SUITE",
+    "passed": [
+      "product authorization v54 Python contract: 5/5",
+      "product authorization generator and fixture checks: PASS",
+      "Auth v54, V263, duty, SoD, authority and release-lineage targeted cluster: 68/68",
+      "Gateway V263 parity, generated catalog and PAY-003 context/filter targeted cluster: 95/95",
+      "Gateway reviewer correction minimum regression only: 6/6",
+      "People payroll legal-entity/pay-group eligibility adapter: 15/15",
+      "Payroll shared step-up conditional context: 7/7",
+      "git diff --check: PASS"
+    ],
+    "repositoryWideSuiteRun": false,
+    "alreadyPassingTargetsRepeated": false
+  },
+  "authority": {
+    "centralImplementationAdmittedToBackendDwpDev": true,
+    "exactPay003OwnerPacketMayBeIssued": true,
+    "payrollV53MayBeReservedNotActive": true,
+    "moduleWorktreeMaterialized": false,
+    "activePayrollV53LeaseIssued": false,
+    "executableModuleStartTokenIssued": false,
+    "moduleSourceAuthoringAuthorizedByThisReceipt": false,
+    "routeOrMenuMountAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionProviderBindingAuthorized": false,
+    "fullSliceCompletionAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nonClaims": [
+    "Payroll V53 exists or is active.",
+    "PAY-003 owner worktrees or an executable token exist.",
+    "The settings or operations workbench is mounted in the shell or visible in navigation.",
+    "A real signing-key, certified-pack, statutory-approval or country-rule provider is bound.",
+    "Any tenant is enrolled or BASE-TFR-PAY-003 is complete."
+  ],
+  "nextGate": "ISSUE_EXACT_OWNER_PACKET_AND_RESERVED_NOT_ACTIVE_PAYROLL_V53_LEASE_THEN_MATERIALIZE_FRESH_CLEAN_WORKTREES_BEFORE_ANY_ACTIVE_LEASE_OR_EXECUTABLE_START_TOKEN"
+}
