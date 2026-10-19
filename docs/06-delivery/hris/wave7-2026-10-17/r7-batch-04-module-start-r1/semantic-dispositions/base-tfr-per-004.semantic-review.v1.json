@@ -1,0 +1,59 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-per004-semantic-review.v1",
+  "reviewId": "HRIS-WAVE7-R7-BATCH-04-PER004-SEMANTIC-REVIEW-20261019-R1",
+  "recordedAt": "2026-10-19T16:49:00+09:00",
+  "recordedBy": "INDEPENDENT_PER004_SEMANTIC_REVIEW",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ID_AND_SHA256"
+  },
+  "state": "PER004_SEMANTIC_DISPOSITION_INDEPENDENTLY_REVIEWED_PASS_ZERO_P0_ZERO_P1_CENTRAL_SUCCESSOR_MAY_PROCEED",
+  "sliceId": "BASE-TFR-PER-004",
+  "reviewedArtifact": {
+    "path": "base-tfr-per-004.semantic-disposition.v1.json",
+    "sha256": "1e21d62336c7100877c16c16fdffec19e4352d9aedb9414a091b94df54362ce8",
+    "bytes": 30992,
+    "requiredState": "PER004_OWNER_PAYLOAD_SOR_AND_PLATFORM_LIFECYCLE_BOUNDARY_SEALED_V19_REQUIRED_CENTRAL_SUCCESSOR_BEFORE_SOURCE"
+  },
+  "reviewMethod": {
+    "independentReviewer": true,
+    "jsonSyntax": "PASS",
+    "canonicalPathHashAndBytePins": "PASS",
+    "runtimeEvidenceComparison": "PASS",
+    "ownershipAndLifecycleConsistency": "PASS",
+    "migrationDecisionConsistency": "PASS",
+    "actionAndAuthorizationConsistency": "PASS",
+    "crossSliceBoundaryConsistency": "PASS",
+    "activationBoundaryConsistency": "PASS",
+    "repositoryWideSuiteRun": false,
+    "unaffectedPassingTargetRerun": false
+  },
+  "closedFindings": [
+    "create-version now uses one PER-only discriminated opaque owner-payload saga while preserving every non-PER payload-reference contract",
+    "the create race is closed by a PER-only working-version database guard and exact idempotent owner preparation/finalization facts",
+    "publish exposure is clock-aware for APPROVED_DUE and SCHEDULED_DUE only",
+    "V19 storage is deterministic and separates owner-local artifact revision from Platform version",
+    "cycle commands/events are withheld to PER-005 and mutable template authoring is owned by PER-014",
+    "the six shared Platform actions require a separate domain-PER feature decision and cannot bypass default OFF",
+    "owner preparation quarantine requires an authoritative negative Platform lookup"
+  ],
+  "findings": {
+    "remainingP0": 0,
+    "remainingP1": 0,
+    "remainingP2": 0
+  },
+  "authority": {
+    "semanticReviewAccepted": true,
+    "appendOnlyIaqAndCentralContractSuccessorMayBeAuthored": true,
+    "ownerPacketAuthorizedNow": false,
+    "moduleSourceAuthoringAuthorizedNow": false,
+    "migrationReservationAuthorizedNow": false,
+    "migrationAuthoringAuthorizedNow": false,
+    "worktreeMaterializationAuthorizedNow": false,
+    "startTokenAuthorizedNow": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextGate": "AUTHOR_SEAL_AND_INDEPENDENTLY_REVIEW_ONE_APPEND_ONLY_PER004_IAQ_AND_CENTRAL_CONTRACT_SUCCESSOR_THEN_IMPLEMENT_ONLY_ITS_BOUNDED_CENTRAL_DELTA"
+}
