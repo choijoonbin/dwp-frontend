@@ -1,0 +1,169 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-pay003-module-source-admission-decision.v1",
+  "decisionId": "HRIS-WAVE7-R7-BATCH-04-PAY003-MODULE-SOURCE-ADMISSION-20261019-R1",
+  "issuedAt": "2026-10-19T15:40:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "EXACT_PAY003_ALREADY_MERGED_MODULE_HEADS_INDEPENDENTLY_ACCEPTED_POST_MERGE_DEFAULT_OFF_ZERO_ENROLLMENT",
+  "sliceId": "BASE-TFR-PAY-003",
+  "decisionMode": "POST_MERGE_ACCEPTANCE_OF_ALREADY_MERGED_EXACT_HEADS",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_DECISION_ID_AND_SHA256"
+  },
+  "authorityBasis": {
+    "centralContractIntegration": {
+      "path": "pay-003-central-integration-receipt.v1.json",
+      "sha256": "c2fc23a4b090ea44d2a0733c67c7bdf61545cb07206680a6120a905199083cab",
+      "bytes": 10284
+    },
+    "startToken": {
+      "path": "../r7-batch-04-module-start-r1/tokens/base-tfr-pay-003.start-token.v1.json",
+      "sha256": "d0b9b3d87c5378c56de298e2a94cf067de4964cea091efa5b1cb0d6e5b948c77",
+      "bytes": 17272,
+      "requiredState": "ISSUED_EXECUTABLE_EXACT_MATERIALIZED_WORKTREES_ACTIVE_EXCLUSIVE_V53_BOUNDED_SOURCE_TEST_COMMIT_PUSH_ONLY_DEFAULT_OFF_ZERO_ENROLLMENT"
+    },
+    "ownerPacket": {
+      "path": "../r7-batch-04-module-start-r1/owner-packets/base-tfr-pay-003.owner-packet.v1.json",
+      "sha256": "175901601a20c4a2fc690c812e3ced3ce1216198c07400b562262fd15cae7516",
+      "bytes": 29016
+    },
+    "activeMigrationLease": {
+      "path": "../r7-batch-04-module-start-r1/migration-lease-pay003-v53-activation.v2.json",
+      "sha256": "0c257aaddeefa9c3d177a09d09a405d0ee6010c0e0669dbd32a225c133d2dbff",
+      "bytes": 8176,
+      "leaseId": "HRIS-WAVE7-R7-BATCH-04-PAYROLL-MAIN-V53-PAY003-20261019-R1"
+    },
+    "materializationReceipt": {
+      "path": "../r7-batch-04-module-start-r1/worktree-materialization-receipts/base-tfr-pay-003.worktree-materialization-receipt.v1.json",
+      "sha256": "44a48f006ca9bc5d0affdeb911c8b816e90bf644c2552c4238eca7ccaaa7ddad",
+      "bytes": 5763
+    },
+    "effectiveEvidence": [
+      {
+        "path": "../r7-batch-04-module-results-r1/base-tfr-pay-003/acceptance-results.v1.json",
+        "sha256": "793325f459cf5f2beee491e83ded5d3d653d04d4fcd69d056c1d3a0867f46aed",
+        "bytes": 10835
+      },
+      {
+        "path": "../r7-batch-04-module-results-r1/base-tfr-pay-003/changed-path-and-no-recount.v1.json",
+        "sha256": "5543458cd8a8cca1d6d6d1d5f99b077c2c47cace9db3c0a8c2b6bc87161f9b2e",
+        "bytes": 6887
+      },
+      {
+        "path": "../r7-batch-04-module-results-r1/base-tfr-pay-003/control-review-corrections.v1.json",
+        "sha256": "b5fd00ad860ab7eca9251fc22c7ff5b686712896b003468e2399008dabe1f607",
+        "bytes": 8944,
+        "precedence": "CONTROLS_THE_FOUR_P1_CORRECTIONS_AND_CURRENT_SOURCE_PINS"
+      },
+      {
+        "path": "../r7-batch-04-module-results-r1/base-tfr-pay-003/module-result-evidence.v1.json",
+        "sha256": "76fdc71573a90a471a746085caf793148cd4559e184f2184abcf70392116f8f1",
+        "bytes": 16129
+      },
+      {
+        "path": "../r7-batch-04-module-results-r1/base-tfr-pay-003/payroll-v53-and-postgres-evidence.v1.json",
+        "sha256": "9efecf7e5d28666aa17d0dfb0dad7559819a8edf0e3176cb127efaaed0bdffb4",
+        "bytes": 3719,
+        "historicalV53DigestSupersededByCorrectionEvidence": true
+      }
+    ]
+  },
+  "observedIntegrationState": {
+    "backend": {
+      "repository": "dwp-backend",
+      "targetBranch": "dwp-dev",
+      "sourceBranch": "codex/hris-wave7-r7-batch04-pay-003-backend-20261019-r1",
+      "baseCommit": "303a7e8598b1b45dc6d65411838647328504efc9",
+      "sourceHead": "30bf9352efcb1add45c96271045acb38c209f1c2",
+      "sourceTree": "4af92687686d21048bab7111680b01287b31d77f",
+      "mergeCommit": "70e8125a173130637e3b432fa4dc034b853d77b2",
+      "mergeTree": "4af92687686d21048bab7111680b01287b31d77f",
+      "parents": [
+        "303a7e8598b1b45dc6d65411838647328504efc9",
+        "30bf9352efcb1add45c96271045acb38c209f1c2"
+      ],
+      "changedPathCount": 23,
+      "insertions": 6310,
+      "deletions": 0,
+      "pathOnlyManifestSha256": "18f971bf793aad3cb3f3dd1386f7b3805ab24259fc13d533876311d8278b8dea",
+      "nameStatusManifestSha256": "ac039ddcac45c6aaefacd20fa14151a6181721acf281f537b0f605cc7970321d",
+      "sourceIsAncestor": true,
+      "admittedBlobMismatchCount": 0,
+      "originExact": true,
+      "cleanBeforeDecisionDraft": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "targetBranch": "dwp-dev",
+      "sourceBranch": "codex/hris-wave7-r7-batch04-pay-003-frontend-20261019-r1",
+      "baseCommit": "fefedd7f0f4ea8f3696e8a0ea385c89e5d6c13bd",
+      "effectiveCorrectedSourceHead": "663d1a4c3c947ba94b5e58f0341e190245e22dbd",
+      "effectiveCorrectedSourceTree": "c355e0fb1b0878bf86fcf019acb378bf9c344b83",
+      "evidenceHead": "c664b3890065422ab9b67e782d290cba5b7fa704",
+      "evidenceTree": "3645ba8cfa65af0576e76f5da0fdcc11ae23ef70",
+      "mergeCommit": "bdbb8f6f6299280c7524b521ece1c966f689858d",
+      "mergeTree": "8d2ce73e2f53a40ce4a34546f744ef53a0921a72",
+      "parents": [
+        "229b461a822858c6321365db861fd9e220ad05d6",
+        "c664b3890065422ab9b67e782d290cba5b7fa704"
+      ],
+      "changedPathCount": 13,
+      "insertions": 5033,
+      "deletions": 0,
+      "pathOnlyManifestSha256": "f67c537387a15fc747cb980d1fecacf2923f4f606ef08c42951c0dc464fed87e",
+      "nameStatusManifestSha256": "57541fc9fb622f534cfbeb9a96ca2dcb7258da3f64ddb4e81328cddda3d6d163",
+      "sourceIsAncestor": true,
+      "admittedBlobMismatchCount": 0,
+      "originExact": true,
+      "cleanBeforeDecisionDraft": true
+    }
+  },
+  "independentReview": {
+    "decision": "GO_POST_MERGE_ACCEPTANCE",
+    "reportedP0": 0,
+    "reportedP1": 4,
+    "closedP1": 4,
+    "remainingP0": 0,
+    "remainingP1": 0,
+    "reviewedCorrections": [
+      "deferred closure activation actor equals receipt subject",
+      "PostgreSQL installer and statutory approver separation of duties",
+      "frontend filter token and minimum-maximum validation parity",
+      "closed unexpected-problem handling returns 503 RESULT_UNKNOWN"
+    ]
+  },
+  "verificationAccounting": {
+    "acceptanceCriteriaRequired": 14,
+    "acceptanceCriteriaPassed": 14,
+    "acceptanceCriteriaFailed": 0,
+    "acceptanceCriteriaSkipped": 0,
+    "backendEffectiveUniqueTestsBeforeControlCorrection": 27,
+    "backendNewCorrectionCases": 3,
+    "backendEffectivePassed": 30,
+    "frontendEffectiveUniqueTests": 12,
+    "frontendChangedCorrectionCasePassed": 1,
+    "databaseSkipped": 0,
+    "repositoryWideSuiteRerun": false,
+    "alreadyPassingTargetsRepeated": false
+  },
+  "rolloutBoundary": {
+    "runtimeDefault": "OFF",
+    "tenantEnrollmentCount": 0,
+    "frontendMounted": false,
+    "realProductionProviderBound": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionIncrement": 0
+  },
+  "decision": "ACCEPT_ONLY_THE_ALREADY_MERGED_EXACT_REVIEWED_PAY003_MODULE_HEADS_AND_EVIDENCE_AS_TECHNICAL_SOURCE_INTEGRATION",
+  "retroactivePreMergeAuthorizationClaimed": false,
+  "moduleTestRerunAuthorizedOrPerformed": false,
+  "nonClaims": [
+    "This decision existed before either merge or authorized those merges in advance.",
+    "The settings or operations workbench is mounted in the shell, route table or menu.",
+    "A real signature, statutory-approval, country-rule or decision provider is bound.",
+    "Any feature or tenant is activated or enrolled.",
+    "BASE-TFR-PAY-003 has production or full-business completion credit."
+  ],
+  "nextAction": "Commit and push this truthful post-merge acceptance decision, then issue the exact module-source integration receipt without rerunning module or repository-wide tests."
+}
