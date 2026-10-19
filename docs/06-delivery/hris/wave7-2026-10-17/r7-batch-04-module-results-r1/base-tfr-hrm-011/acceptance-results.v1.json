@@ -1,0 +1,87 @@
+{
+  "schema": "dwp.hris.wave7.module-acceptance-results.v1",
+  "evidenceId": "HRIS-WAVE7-R7-BATCH-04-BASE-TFR-HRM-011-ACCEPTANCE-R1",
+  "issuedAt": "2026-10-19T12:14:08+09:00",
+  "issuedBy": "HRIS-HRM",
+  "sliceId": "BASE-TFR-HRM-011",
+  "resultState": "HRM011_EXACT_MODULE_SOURCE_ACCEPTED_ALL_TWELVE_CRITERIA_PASS_BRANCHES_PUSHED_CENTRAL_ADMISSION_PENDING_DEFAULT_OFF_ZERO_ENROLLMENT",
+  "results": [
+    {
+      "id": "HRM011-AC-01",
+      "result": "PASS",
+      "evidence": "IAQ-008 v2 controller, closed request DTO, owner path, filters, sort allowlist, limit and relationship-grain projection are covered by Hrm011IaEntryQueryContractTest and the frontend slice/API contracts."
+    },
+    {
+      "id": "HRM011-AC-02",
+      "result": "PASS",
+      "evidence": "COMPLETE, EMPTY, PARTIAL and UNAVAILABLE states, cursor authority binding, exact field-decision summaries and locale/time-zone validation are covered by the IAQ and frontend workbench tests."
+    },
+    {
+      "id": "HRM011-AC-03",
+      "result": "PASS",
+      "evidence": "The owner selects one effective relationship, primary assignment, compensation basis and scope-matched PDX-015; ambiguous or incomplete candidates become typed non-actionable failures. PostgreSQL verifies filtering and deterministic order before limit."
+    },
+    {
+      "id": "HRM011-AC-04",
+      "result": "PASS",
+      "evidence": "PEP-HRM-011 accepts the sealed seven-field body, canonical strong If-Match, expected version, idempotency and correlation headers, rejects unknown input and returns only an exact HTTP 202 receipt."
+    },
+    {
+      "id": "HRM011-AC-05",
+      "result": "PASS",
+      "evidence": "Exact v53 route/capability, permission, trusted purpose mapping, HRM-AUTH-015, target population lock, NO_APPROVE_OWN_CHANGE and HIGH step-up are enforced. The route-specific field policy is correctly separated from the V34 workforce-population namespace."
+    },
+    {
+      "id": "HRM011-AC-06",
+      "result": "PASS",
+      "evidence": "Same-hash replay, different-hash conflict, canonical version checks and a real two-transaction PostgreSQL reservation race prove one provider invocation and one durable receipt."
+    },
+    {
+      "id": "HRM011-AC-07",
+      "result": "PASS",
+      "evidence": "V59 creates exactly four sealed tables and reuses receipt, audit and outbox stores. Static migration contracts and seven PostgreSQL migration cases passed with zero skips."
+    },
+    {
+      "id": "HRM011-AC-08",
+      "result": "PASS",
+      "evidence": "SVC-PEP-HRM-003-R2 accepts only the trusted payroll workload, never fabricates payGroupPublicId and returns an empty homogeneous page until a typed source is separately admitted; exact audit recording is transactional and fail closed."
+    },
+    {
+      "id": "HRM011-AC-09",
+      "result": "PASS",
+      "evidence": "SVC-PEP-HRM-005 authenticates the workload and cursor, emits one strict minimized projection type per request, excludes raw restricted values and writes the exact ten-field audit envelope transactionally."
+    },
+    {
+      "id": "HRM011-AC-10",
+      "result": "PASS",
+      "evidence": "XCON-023 through XCON-026 use closed deterministic envelopes and equality checks. Persistent outbox exact duplicate is idempotent while digest or content drift fails without overwrite; pre-existing XCON contracts are unchanged."
+    },
+    {
+      "id": "HRM011-AC-11",
+      "result": "PASS",
+      "evidence": "PDX-015 and artifact ports fail closed. Real PostgreSQL proves provider success followed by an outbox failure rolls back contract, receipt, audit and outbox, and retry reuses the deterministic artifactRequestId."
+    },
+    {
+      "id": "HRM011-AC-12",
+      "result": "PASS",
+      "evidence": "The unmounted frontend covers loading, empty, partial, unavailable, denied, stale and complete states, HTTP 202 fencing, immutable snapshot refresh, retry, keyboard flow, 1440/1280/390/320 and 200%-zoom-equivalent layouts, default-OFF and zero-call behavior."
+    }
+  ],
+  "summary": {
+    "required": 12,
+    "passed": 12,
+    "failed": 0,
+    "skipped": 0,
+    "openP0": 0,
+    "openP1": 0,
+    "centralAdmissionPending": true,
+    "businessCompletionCreditBeforeCentralAdmission": 0
+  },
+  "nonClaims": [
+    "The dedicated workload ingress is not yet admitted into PeopleSecurityFilter or the final People security chain.",
+    "No production template provider, artifact provider or XCON-007/XCON-023/XCON-024/XCON-025 mutation trigger is bound.",
+    "The frontend feature is not mounted into a route or menu.",
+    "The feature remains default OFF with zero enrolled tenants and no customer data.",
+    "This module result does not claim production activation, release or full-slice business completion before central admission."
+  ]
+}
