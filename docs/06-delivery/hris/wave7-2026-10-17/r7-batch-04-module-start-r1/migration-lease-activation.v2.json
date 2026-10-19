@@ -1,0 +1,121 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-migration-lease-activation.v2",
+  "activationId": "HRIS-WAVE7-R7-BATCH-04-MIGRATION-LEASE-ACTIVATION-20261019-R2",
+  "activatedAt": "2026-10-19T10:51:00+09:00",
+  "activatedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "ACTIVE_EXCLUSIVE_PEOPLE_V59",
+  "purpose": "Activate exactly one exclusive People main V59 authoring lease for the HRM-011 migration after actual clean pinned backend worktree materialization. The lease must be combined with the matching executable start token and grants no authority outside the resolved v1 manifest with the v6 TEXT correction.",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ACTIVATION_ID_AND_SHA256"
+  },
+  "successorOf": {
+    "path": "migration-lease-activation.v1.json",
+    "sha256": "e627cd4d9f41db6e3472c6db1c19927df561042af57c7dd2ee4af8c395119996",
+    "bytes": 8972,
+    "reservationId": "HRIS-WAVE7-R7-BATCH-04-MIGRATION-LEASE-RESERVATION-20261019-R1",
+    "requiredState": "RESERVED_NOT_ACTIVE",
+    "supersededField": "state and lease.state",
+    "supersession": "RESERVED_NOT_ACTIVE_TO_ACTIVE_EXCLUSIVE_AFTER_EXACT_CLEAN_WORKTREE_MATERIALIZATION"
+  },
+  "authorityBasis": {
+    "worktreeMaterializationReceipt": {
+      "path": "worktree-materialization-receipts/base-tfr-hrm-011.worktree-materialization-receipt.v1.json",
+      "sha256": "3cc33880926b016b303a3cc65f21d96f8ce0c86c6364b6fa1453da24dcf92f98",
+      "bytes": 4916,
+      "receiptId": "HRIS-WAVE7-R7-BATCH-04-HRM011-WORKTREE-MATERIALIZATION-20261019-R1",
+      "requiredState": "MATERIALIZED_CLEAN_EXACT_AUTHORITY_CARRIER_PINS_NO_SOURCE_EDITS_NO_UPSTREAM"
+    },
+    "ownerPacket": {
+      "path": "owner-packets/base-tfr-hrm-011.owner-packet.v1.json",
+      "sha256": "c5ea9afbb90c72d0c6a125be2f0a364a69364ef26c528900b514ef62d235ed18",
+      "bytes": 30411
+    },
+    "semanticCorrectionV6": {
+      "path": "semantic-dispositions/base-tfr-hrm-011.semantic-disposition-successor.v6.json",
+      "sha256": "8ab1b4dca5c5de37ad61f2fed8f688fbe73998ec428973d0c42ebf0f45f5ef1c",
+      "bytes": 3935
+    },
+    "centralCorrectionV6": {
+      "path": "hrm-011-central-contract-authorization-successor.v6.json",
+      "sha256": "4e9a342c4123b82bcc6cace47b31a3ced6ac0c2ee3ce1f5927ccf767e8577719",
+      "bytes": 4383
+    }
+  },
+  "lease": {
+    "leaseId": "HRIS-WAVE7-R7-BATCH-04-PEOPLE-MAIN-V59-HRM011-20261019-R1",
+    "moduleSession": "HRIS-HRM",
+    "moduleThreadId": "01a0f53e-9a75-7421-969f-473b0cfb9439",
+    "sliceId": "BASE-TFR-HRM-011",
+    "canonicalFeature": "HRIS_HRM_CONTRACT_COMPENSATION_WORKBENCH",
+    "stream": "PEOPLE_MAIN",
+    "version": "V59",
+    "predecessorHighWater": "V58",
+    "exactPath": "dwp-people-server/src/main/resources/db/migration/V59__hrm_base_tfr_hrm_011.sql",
+    "manifestAuthority": "migration-lease-activation.v1.json#/resolvedExactMigrationManifest",
+    "manifestAuthoritySha256": "e627cd4d9f41db6e3472c6db1c19927df561042af57c7dd2ee4af8c395119996",
+    "state": "ACTIVE_EXCLUSIVE",
+    "activeLeaseCountForPeopleV59": 1,
+    "secondMigrationAuthorized": false,
+    "existingMigrationEditAuthorized": false,
+    "dataBackfillAuthorized": false
+  },
+  "materializedBackendBinding": {
+    "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261019/r7-batch04/hrm-011/backend",
+    "branch": "codex/hris-wave7-r7-batch04-hrm-011-backend-20261019-r1",
+    "headAtActivation": "e0bfb2a767261da6941bcbe64a013fa722d32260",
+    "treeAtActivation": "2fd87e5f6ed126170668c019a9c0c4ed82c354c9",
+    "porcelainSha256AtActivation": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "upstreamAtActivation": null,
+    "exact": true,
+    "clean": true
+  },
+  "activationConditionsSatisfied": {
+    "materializedBackendWorktreeExactAndClean": true,
+    "peopleHighWaterIsV58": true,
+    "exactV59PathAbsent": true,
+    "competingPeopleV59Absent": true,
+    "reservedManifestUnchanged": true,
+    "activeLeaseCountAfterActivation": 1
+  },
+  "resolvedAuthoringBoundary": {
+    "allowed": [
+      "Create only dwp-people-server/src/main/resources/db/migration/V59__hrm_base_tfr_hrm_011.sql.",
+      "Create exactly ppl_compensation_basis, ppl_employment_contracts, ppl_worker_restricted_tokens and ppl_dependents with the keys, indexes, FORCE RLS, tenant predicates and immutable guards sealed by the v1 manifest.",
+      "Implement ppl_employment_contracts.template_content_schema_version as TEXT NOT NULL with check ^[A-Za-z][A-Za-z0-9._-]{0,127}\\.v[1-9][0-9]*$ and exact PDX-001/PDX-015 byte equality."
+    ],
+    "forbidden": [
+      "Any edit to People migrations V1 through V58",
+      "Any second People migration or path other than the exact V59 path",
+      "Any numeric coercion, defaulting or case normalization of template_content_schema_version",
+      "Any fifth table, new receipt/audit/outbox table, data backfill, deletion or automatic privilege elevation",
+      "Any central, Platform, Gateway, shell, provider, trigger, enrollment or production migration"
+    ],
+    "deviationAction": "STOP_AND_REQUEST_AN_APPEND_ONLY_LEASE_AND_TOKEN_SUCCESSOR"
+  },
+  "authority": {
+    "activeLeaseCount": 1,
+    "oneExactPeopleV59AuthoringLeaseActive": true,
+    "v59AuthoringAuthorizedByLeaseAlone": false,
+    "v59AuthoringAuthorizedOnlyWithMatchingExecutableTokenV1": true,
+    "sourceAuthoringOutsideExactV59Authorized": false,
+    "testExecutionAuthorizedByLeaseAlone": false,
+    "moduleBranchCommitAuthorizedByLeaseAlone": false,
+    "moduleBranchPushAuthorizedByLeaseAlone": false,
+    "centralWriteAuthorized": false,
+    "directDwpDevMergeAuthorized": false,
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionProviderOrTriggerAuthorized": false,
+    "productionExecutionAuthorized": false
+  },
+  "invalidationConditions": [
+    "The backend worktree path, branch, initial head, initial tree, upstream or initial porcelain digest differs.",
+    "People main high-water differs from V58 or any competing V59 path exists before this owner creates the exact leased path.",
+    "The v1 resolved manifest is insufficient, an existing migration must change, a second migration is required or a data backfill is needed.",
+    "template_content_schema_version cannot remain exact TEXT with the v6 pattern and PDX-001/PDX-015 byte equality.",
+    "The matching executable HRM-011 start token v1 is absent, invalid or hash-mismatched.",
+    "Any central, provider, trigger, mounting, activation, tenant, customer or production action is attempted."
+  ],
+  "nextGate": "ISSUE_ONE_EXECUTABLE_HRM011_START_TOKEN_V1_HASH_BOUND_TO_THIS_ACTIVE_EXCLUSIVE_LEASE_OWNER_PACKET_AND_MATERIALIZATION_RECEIPT"
+}
