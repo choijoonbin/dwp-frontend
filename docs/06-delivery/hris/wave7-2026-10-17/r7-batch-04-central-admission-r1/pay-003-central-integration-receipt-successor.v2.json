@@ -1,0 +1,144 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-pay003-central-integration-receipt-successor.v2",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-04-PAY003-CENTRAL-INTEGRATION-20261019-R2",
+  "recordedAt": "2026-10-19T15:49:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "PAY003_CENTRAL_CONTRACT_AND_MODULE_SOURCE_INTEGRATED_PUSHED_DEFAULT_OFF_ZERO_ENROLLMENT_UNMOUNTED_NO_PROVIDER_BINDING",
+  "sliceId": "BASE-TFR-PAY-003",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_RECEIPT_ID_AND_SHA256",
+    "supersedesOnlyTheRecordedIntegrationStateOf": {
+      "path": "pay-003-central-integration-receipt.v1.json",
+      "sha256": "c2fc23a4b090ea44d2a0733c67c7bdf61545cb07206680a6120a905199083cab",
+      "bytes": 10284
+    }
+  },
+  "authorityBasis": {
+    "centralContractIntegration": {
+      "path": "pay-003-central-integration-receipt.v1.json",
+      "sha256": "c2fc23a4b090ea44d2a0733c67c7bdf61545cb07206680a6120a905199083cab",
+      "bytes": 10284,
+      "requiredState": "EXACT_PAY003_CENTRAL_BACKEND_COMMITTED_AND_PUSHED_V54_V263_GATEWAY_SHARED_SECURITY_ADMITTED_DEFAULT_OFF_ZERO_ENROLLMENT_OWNER_AUTHORITY_MAY_BE_PREPARED"
+    },
+    "moduleSourceIntegration": {
+      "path": "pay-003-module-source-integration-receipt.v1.json",
+      "sha256": "9ffe6f4fdbaf119375597993751c2ec123dcc372e38477ad0947c82d24fc4c48",
+      "bytes": 6297,
+      "carrierCommit": "16f462a1217596955cf7cd9c19f0bf92e4e62202",
+      "carrierTree": "b4bd570f130fae1f902ba2bcafe0f9fefbea60c6",
+      "requiredState": "EXACT_PAY003_MODULE_HEADS_MERGED_PUSHED_POST_MERGE_ACCEPTED_BLOB_IDENTICAL_V53_LEASE_CONSUMED_DEFAULT_OFF_ZERO_ENROLLMENT"
+    }
+  },
+  "integratedPins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "70e8125a173130637e3b432fa4dc034b853d77b2",
+      "tree": "4af92687686d21048bab7111680b01287b31d77f",
+      "parents": [
+        "303a7e8598b1b45dc6d65411838647328504efc9",
+        "30bf9352efcb1add45c96271045acb38c209f1c2"
+      ],
+      "originRef": "origin/dwp-dev",
+      "originExact": true,
+      "worktreeClean": true
+    },
+    "frontendAuthorityCarrierBeforeThisReceipt": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "16f462a1217596955cf7cd9c19f0bf92e4e62202",
+      "tree": "b4bd570f130fae1f902ba2bcafe0f9fefbea60c6",
+      "originRef": "origin/dwp-dev",
+      "originExact": true,
+      "committedTreeCleanBeforeDraft": true,
+      "authorityCarrierAdvanceExpected": true
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "readOnlyForThisSlice": true
+    }
+  },
+  "integratedCentralContract": {
+    "productAuthorizationBundle": "v54",
+    "authMigration": "V263",
+    "payrollPepProjection": "v54",
+    "capabilityCount": 270,
+    "policyCount": 24,
+    "entitlementExpressionCount": 17,
+    "predicateCount": 82,
+    "routeCount": 1100,
+    "pay003AdmittedRouteCount": 5,
+    "gatewayCallerAuthorityHeadersStripped": true,
+    "payrollStepUpVerifierReusedConditionally": true,
+    "peoplePopulationAlias": "PAYROLL_LEGAL_ENTITY_GROUP_SCOPE_TO_PAY_TARGET_POPULATION",
+    "routeOrMenuMounted": false
+  },
+  "integratedModule": {
+    "backendSourceHead": "30bf9352efcb1add45c96271045acb38c209f1c2",
+    "frontendEvidenceHead": "c664b3890065422ab9b67e782d290cba5b7fa704",
+    "frontendEffectiveSourceHead": "663d1a4c3c947ba94b5e58f0341e190245e22dbd",
+    "changedPathCount": 36,
+    "admittedBlobMismatchCount": 0,
+    "acceptanceCriteriaPassed": "14_OF_14",
+    "reviewFindingsClosed": "4_OF_4_P1",
+    "remainingP0": 0,
+    "remainingP1": 0,
+    "effectiveV53Sha256": "28fbeb49531104a7fd5ace1136aff8b3f1e0d1d9fb7fe13ea2b238a0316081a5",
+    "effectiveV53Bytes": 34100,
+    "postgresCleanAndV52ToV53Upgrade": "PASS_NO_DATABASE_SKIPS"
+  },
+  "targetedVerification": {
+    "policy": "USE_EXISTING_REVIEWED_MODULE_EVIDENCE_AND_VERIFY_ONLY_GIT_IDENTITY_PROVENANCE_AND_RECEIPT_REFERENCES; DO_NOT_REPEAT_PASSING_TESTS",
+    "centralContractVerification": "PREVIOUSLY_PASSED_AND_BOUND_BY_V1_RECEIPT",
+    "moduleBackendEffectiveUniquePassed": 30,
+    "moduleFrontendEffectiveUniquePassed": 12,
+    "moduleDatabaseSkipped": 0,
+    "postMergeAncestryAndBlobIdentity": "PASS_36_OF_36",
+    "independentDecisionReview": "GO_P0_0_P1_0",
+    "independentIntegrationReceiptReview": "GO_AFTER_ONE_V53_PATH_CORRECTION_P0_0_P1_0",
+    "repositoryWideSuiteRun": false,
+    "unaffectedPassingTargetRerun": false
+  },
+  "migrationLeaseClosure": {
+    "leaseId": "HRIS-WAVE7-R7-BATCH-04-PAYROLL-MAIN-V53-PAY003-20261019-R1",
+    "stream": "PAYROLL_MAIN",
+    "version": "V53",
+    "state": "CONSUMED_CENTRALLY_INTEGRATED",
+    "activeLeaseCountAfterIntegration": 0,
+    "payrollMigrationHighWater": "V53"
+  },
+  "rolloutBoundary": {
+    "featureKey": "HRIS_PAYROLL_STATUTORY_INSURANCE",
+    "runtimeDefault": "OFF",
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "tenantEnrollmentCount": 0,
+    "frontendMounted": false,
+    "customerDataAuthorized": false,
+    "productionProviderBindingAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionIncrement": 0
+  },
+  "authorityAfterReceipt": {
+    "centralContractIntegrated": true,
+    "moduleSourceIntegrated": true,
+    "additionalPay003CentralImplementationOpen": false,
+    "sequencingExitReceiptMayBeIssued": true,
+    "routeOrMenuMountAuthorized": false,
+    "productionProviderBindingAuthorized": false,
+    "featureOrTenantActivationAuthorized": false,
+    "fullPay003BusinessCompletionClaimed": false
+  },
+  "nonClaims": [
+    "A production signature, statutory-approval, country-rule or decision provider is bound.",
+    "The frontend route, shell or menu is mounted.",
+    "Any feature or tenant is activated or enrolled.",
+    "BASE-TFR-PAY-003 is counted as a completed production business slice.",
+    "Batch-04, R7 or the HRIS product is complete."
+  ],
+  "nextAction": "Issue the PAY-003 sequencing exit receipt, close lane order 2 without business completion credit, then begin only PER-004 semantic closure before any packet, lease, worktree or source authoring."
+}
