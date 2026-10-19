@@ -1,0 +1,162 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-per004-module-source-admission-decision.v1",
+  "decisionId": "HRIS-WAVE7-R7-BATCH-04-PER004-MODULE-SOURCE-ADMISSION-20261019-R1",
+  "issuedAt": "2026-10-19T20:14:37+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "EXACT_PER004_PREMERGE_INDEPENDENTLY_ACCEPTED_THEN_INTEGRATED_DEFAULT_OFF_ZERO_ENROLLMENT_UNBOUND_UNMOUNTED",
+  "sliceId": "BASE-TFR-PER-004",
+  "decisionMode": "PREMERGE_INDEPENDENT_GO_RECORDED_AFTER_EXACT_INTEGRATION",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_DECISION_ID_AND_SHA256"
+  },
+  "authorityBasis": {
+    "correctedCentralIntegration": {
+      "path": "per-004-central-integration-receipt-successor.v2.json",
+      "sha256": "08ddfb4dbfcdc4d000618e2886f926032d22f123546509050cab21a8373421f7",
+      "bytes": 10435,
+      "requiredState": "PER004_EXACT_MAPPER_ONLY_STATE_CORRECTION_INTEGRATED_PUSHED_DEFAULT_OFF_ZERO_ENROLLMENT_UNBOUND_UNMOUNTED_REPLACEMENT_TOKEN_PREPARATION_ONLY"
+    },
+    "replacementStartToken": {
+      "path": "../r7-batch-04-module-start-r1/tokens/base-tfr-per-004.start-token-replacement.v2.json",
+      "sha256": "93e6d485a8d30eeb1dbd23334641696c2713084e2bd8d753a0e636ffeb6c0c63",
+      "bytes": 13019,
+      "requiredState": "ISSUED_EXECUTABLE_REPLACEMENT_AFTER_EXACT_MAPPER_ONLY_CENTRAL_CORRECTION_EXISTING_WIP_HASH_BOUND_ACTIVE_EXCLUSIVE_V19_DEFAULT_OFF_ZERO_ENROLLMENT"
+    },
+    "ownerPacket": {
+      "path": "../r7-batch-04-module-start-r1/owner-packets/base-tfr-per-004.owner-packet.v1.json",
+      "sha256": "2f7e4f1d10e83c4eb7b6e26d434c6d708ccb58beeecea98ed2faaedeae91b8c3",
+      "bytes": 39168
+    },
+    "activeMigrationLease": {
+      "path": "../r7-batch-04-module-start-r1/migration-lease-per004-v19-activation.v2.json",
+      "sha256": "fb1ba2f362862690ebbf5fc57a7e84fb9d92b71ed3098591c5dadfd89abde0a4",
+      "bytes": 14325,
+      "leaseId": "HRIS-WAVE7-R7-BATCH-04-PERFORMANCE-V19-PER004-20261019-R1",
+      "stateBeforeIntegration": "ACTIVE_EXCLUSIVE_PERFORMANCE_V19"
+    },
+    "effectiveResultEvidence": [
+      {
+        "path": "../r7-batch-04-module-results-r1/base-tfr-per-004/RESULT-successor.v2.md",
+        "sha256": "af268fa40ee650b4392cfb0588f31b760b9011462969fc042ddb655c77b161a5",
+        "bytes": 12123,
+        "precedence": "SUPERSEDES_RESULT_MD_FOR_CURRENT_SOURCE_TEST_STATE"
+      },
+      {
+        "path": "../r7-batch-04-module-results-r1/base-tfr-per-004/SHA256SUMS-successor.v2.md",
+        "sha256": "0e0e83a41df157993637424ca3dfaf0f4030e6ae8d37d6fd6bfbf1e66c0a1133",
+        "bytes": 4620,
+        "precedence": "SUPERSEDES_SHA256SUMS_MD_FOR_CURRENT_SOURCE_TEST_STATE"
+      }
+    ]
+  },
+  "admittedIntegrationState": {
+    "backend": {
+      "repository": "dwp-backend",
+      "targetBranch": "dwp-dev",
+      "sourceBranch": "codex/hris-wave7-r7-batch04-per-004-backend-20261019-r1",
+      "baseCommit": "0ef034f1e57380fec256095122297a6d8bc87d37",
+      "sourceAndIntegratedHead": "e709c080661e1ffcdba5e1e89c28ea49557cf50d",
+      "sourceAndIntegratedTree": "7076a081410fcf10cd4c6d5ece9ed3a882de1af4",
+      "strategy": "FAST_FORWARD_EXACT_SOURCE_HEAD",
+      "changedPathCount": 20,
+      "insertions": 3517,
+      "deletions": 0,
+      "pathOnlyManifestSha256": "62295945cd35fc19d29cb8e3882667ab4e85bd8ff30e56153c678fe6b7438764",
+      "nameStatusManifestSha256": "f3adf4fbf793c9de885d7cdec3de20f8532636e6983f8cf74b2abba64dee3fa0",
+      "sourceIsAncestor": true,
+      "admittedBlobMismatchCount": 0,
+      "originExact": true,
+      "cleanBeforeDecisionDraft": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "targetBranch": "dwp-dev",
+      "sourceBranch": "codex/hris-wave7-r7-batch04-per-004-frontend-20261019-r1",
+      "baseCommit": "29d3993e769fc49a4692d79732b0c7d054c5b42f",
+      "sourceTestHead": "cb07c4b922fd5376b3b19aa9d880976c2991aa2e",
+      "sourceTestTree": "acf070553a455eb2e3cb7c5c325b01c41d265965",
+      "evidenceHead": "89e2bfb91104b75b258e800fc500ceece0ab5a68",
+      "evidenceTree": "0842e5a614659dae21b1b8f7f39685c354b2afc2",
+      "mergeCommit": "2cf88073b21a4171428ccdcff85d66d10ceee2ea",
+      "mergeTree": "7f529f178d79b50e63f72e9aaddae6a466d121f7",
+      "parents": [
+        "f989ee7736a5ef82dd1c6fcfe0a266822cb44a19",
+        "89e2bfb91104b75b258e800fc500ceece0ab5a68"
+      ],
+      "strategy": "NO_FF_EXACT_EVIDENCE_HEAD",
+      "changedPathCount": 36,
+      "insertions": 1881,
+      "deletions": 0,
+      "pathOnlyManifestSha256": "86608d027cea25169f4a54d48b8472aa74c06f0a61aa7222a66395a69b22059f",
+      "nameStatusManifestSha256": "39a63c41ab3f603357e6f1637409b5f61d1ec85931aa1d13dd13e15244898b0f",
+      "sourceIsAncestor": true,
+      "admittedBlobMismatchCount": 0,
+      "originExact": true,
+      "cleanBeforeDecisionDraft": true
+    }
+  },
+  "independentReview": {
+    "preMergeDecision": "GO",
+    "initialNoGoReviewStreams": [
+      {"scope": "BACKEND", "reportedP0": 0, "reportedP1": 2},
+      {"scope": "FRONTEND_AND_EVIDENCE", "reportedP0": 0, "reportedP1": 3},
+      {"scope": "CROSS_CONTRACT", "reportedP0": 0, "reportedP1": 3}
+    ],
+    "normalizedUniqueP1": 6,
+    "closedP1": 6,
+    "remainingP0": 0,
+    "remainingP1": 0,
+    "closedFindings": [
+      "remove the null-metadata create candidate and restore the corrected same-row synthetic projection",
+      "implement the two required signed bounded People-to-Platform typed clients while keeping production binding absent",
+      "use exact per-configuration feature decisions for multi-item IAQ-056 results",
+      "reject nonexistent calendar dates in the closed frontend parser",
+      "accept the exact zero-second OffsetDateTime wire form without accepting malformed instants",
+      "replace incomplete and miscounted result evidence with an append-only verbatim-AC successor"
+    ],
+    "successorReviewStreams": [
+      {"scope": "BACKEND_DELTA", "remainingP0": 0, "remainingP1": 0, "decision": "GO"},
+      {"scope": "FRONTEND_AND_EVIDENCE_DELTA", "remainingP0": 0, "remainingP1": 0, "decision": "GO"},
+      {"scope": "CROSS_CONTRACT_DELTA", "remainingP0": 0, "remainingP1": 0, "decision": "GO"}
+    ],
+    "testsRerunByReviewers": false
+  },
+  "verificationAccounting": {
+    "acceptanceCriteriaRequired": 12,
+    "acceptanceCriteriaPassed": 12,
+    "acceptanceCriteriaFailed": 0,
+    "acceptanceCriteriaSkipped": 0,
+    "backendHistoricalClusterRun": {"tests": 23, "failures": 0, "errors": 0, "skipped": 0},
+    "backendSuccessorTargetedRun": {"tests": 11, "failures": 0, "errors": 0, "skipped": 0, "realPostgresIncluded": true},
+    "frontendHistoricalDeclaredCases": 13,
+    "frontendHistoricalExecutionAccounting": "15_CONTRACT_CLIENT_EXECUTIONS_INCLUDED_DUPLICATE_IMPORTED_MODULE_REGISTRATION_PLUS_3_G3_PLUS_1_VISUAL_HARNESS",
+    "frontendSuccessorTargetedRun": {"passed": 3, "skipped": 5},
+    "visualAssertionsNotRepeated": 64,
+    "repositoryWideSuiteRerun": false,
+    "unaffectedPassingTargetRerun": false
+  },
+  "rolloutBoundary": {
+    "featureKey": "HRIS_PERFORMANCE_CONFIGURATION",
+    "runtimeDefault": "OFF",
+    "tenantEnrollmentCount": 0,
+    "productionProviderBindingCount": 0,
+    "frontendMountedRouteCount": 0,
+    "frontendMountedMenuCount": 0,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionIncrement": 0
+  },
+  "decision": "ACCEPT_THE_EXACT_REVIEWED_PER004_MODULE_SOURCE_AND_EVIDENCE_AS_TECHNICALLY_INTEGRATED_ON_DWP_DEV_ONLY",
+  "preMergeAdmissionOccurred": true,
+  "moduleTestsRerunAfterMerge": false,
+  "nonClaims": [
+    "A production provider or trusted field-decision adapter is bound.",
+    "A route or menu is mounted.",
+    "Any feature or tenant is activated or enrolled.",
+    "TFR-PER-014 production provenance is available.",
+    "BASE-TFR-PER-004 has production or full-business completion credit.",
+    "Batch-04, R7 or HRIS is complete."
+  ],
+  "nextAction": "Commit and push this exact admission decision, then issue the exact module-source integration receipt without rerunning module or repository-wide tests."
+}
