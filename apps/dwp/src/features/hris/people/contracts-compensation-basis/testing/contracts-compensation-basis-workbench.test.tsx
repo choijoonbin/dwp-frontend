@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
-import { HttpError, HttpTransportError } from '@dwp-frontend/shared-utils';
+import { HttpError } from '@dwp-frontend/shared-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { ThemeProvider, createTheme } from '@mui/material/styles';
@@ -110,11 +110,42 @@ async function click(label: string) {
   });
 }
 
+async function keyboardActivate(target: HTMLButtonElement) {
+  await act(async () => {
+    target.focus();
+    expect(document.activeElement).toBe(target);
+    expect(target.dataset.focusRing).toBe('keyboard-visible');
+    target.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+    target.click();
+    target.dispatchEvent(new KeyboardEvent('keyup', { key: 'Enter', bubbles: true }));
+  });
+}
+
+function expectNoHorizontalOverflow() {
+  const assertContained = (element: HTMLElement) => {
+    const availableWidth = element.clientWidth || window.innerWidth;
+    expect(availableWidth).toBeGreaterThan(0);
+    expect(element.scrollWidth).toBeLessThanOrEqual(availableWidth);
+  };
+  assertContained(host);
+  for (const selector of [
+    '[data-testid="hrm-011-contracts-compensation-basis"]',
+    '[data-testid="hrm-011-work-list"]',
+    '[data-testid="hrm-011-work-detail"]',
+  ]) {
+    const element = document.querySelector<HTMLElement>(selector);
+    expect(element).not.toBeNull();
+    assertContained(element!);
+  }
+}
+
 async function renderWorkbench(
   source: Hrm011QueryAdapter,
   props: Partial<React.ComponentProps<typeof Hrm011ContractsCompensationBasisWorkbench>> = {},
   mode: 'light' | 'dark' = 'light'
 ) {
+  host.style.width = `${window.innerWidth}px`;
+  host.style.maxWidth = '100%';
   await act(async () => {
     root.render(
       <ThemeProvider theme={createTheme({ palette: { mode } })}>
@@ -140,6 +171,7 @@ describe('HRM-011 contracts and compensation basis workbench', () => {
 
   afterEach(async () => {
     await act(async () => root.unmount());
+    document.documentElement.style.fontSize = '';
     host.remove();
     vi.restoreAllMocks();
   });
@@ -220,6 +252,7 @@ describe('HRM-011 contracts and compensation basis workbench', () => {
     );
     expect(workbench?.getAttribute('data-runtime-state')).toBe('complete');
     expect(workbench?.getAttribute('data-layout-density')).toBe('compact');
+    expect(workbench?.getAttribute('data-workflow-layout')).toBe('stacked');
     expect(workbench?.getAttribute('data-color-scheme')).toBe('dark');
     expect(workbench?.getAttribute('data-forced-colors')).toBe('active');
     expect(workbench?.getAttribute('data-reduced-motion')).toBe('active');
@@ -227,12 +260,47 @@ describe('HRM-011 contracts and compensation basis workbench', () => {
     expect(document.querySelector('button[aria-pressed="true"]')).not.toBeNull();
     expect(document.body.textContent).toContain('125000.00 USD');
     expect(button('Review issuance').disabled).toBe(true);
+    expectNoHorizontalOverflow();
+  });
+
+  it.each([
+    [1440, 'fluid', 'split'],
+    [1280, 'fluid', 'split'],
+    [390, 'compact', 'stacked'],
+  ] as const)(
+    'keeps the bounded list-detail usable without horizontal overflow at %ipx',
+    async (width, density, workflowLayout) => {
+      installEnvironment({ width });
+      await renderWorkbench(adapter());
+      await shown('Global mobility employment relationship');
+
+      const workbench = document.querySelector(
+        '[data-testid="hrm-011-contracts-compensation-basis"]'
+      );
+      expect(workbench?.getAttribute('data-layout-density')).toBe(density);
+      expect(workbench?.getAttribute('data-workflow-layout')).toBe(workflowLayout);
+      expectNoHorizontalOverflow();
+    }
+  );
+
+  it('keeps a 200%-zoom-equivalent constrained viewport stacked and overflow-safe', async () => {
+    installEnvironment({ width: 720 });
+    document.documentElement.style.fontSize = '32px';
+    await renderWorkbench(adapter());
+    await shown('Global mobility employment relationship');
+
+    const workbench = document.querySelector(
+      '[data-testid="hrm-011-contracts-compensation-basis"]'
+    );
+    expect(getComputedStyle(document.documentElement).fontSize).toBe('32px');
+    expect(workbench?.getAttribute('data-workflow-layout')).toBe('stacked');
+    expectNoHorizontalOverflow();
   });
 
   it('reviews immutable fields and preserves one identity for an explicit 503 retry', async () => {
     const issue = vi
       .fn()
-      .mockRejectedValueOnce(new HttpTransportError('NETWORK'))
+      .mockRejectedValueOnce(new HttpError('artifact unavailable', 503))
       .mockResolvedValueOnce(hrm011Receipt());
     const createCommandIdentity = vi.fn().mockReturnValue({
       idempotencyKey: 'employment-contract-command-0001',
@@ -255,6 +323,138 @@ describe('HRM-011 contracts and compensation basis workbench', () => {
     expect(issue).toHaveBeenCalledTimes(2);
     expect(issue.mock.calls[1]?.[0]).toBe(originalDraft);
     expect(createCommandIdentity).toHaveBeenCalledOnce();
+  });
+
+  it('discards a prepared command when a refreshed immutable snapshot changes at the same resource version', async () => {
+    const first = hrm011ProjectionWire();
+    const refreshed = hrm011ProjectionWire();
+    const refreshedMetadata = refreshed.items[0]!.fieldGroups.CONTRACT_METADATA as {
+      decision: 'VIEW';
+      value: { key: string; version: string; digest: string };
+    };
+    const refreshedBasis = refreshed.items[0]!.fieldGroups.COMPENSATION_BASIS as {
+      decision: 'VIEW';
+      value: { amount: string; currency: string };
+    };
+    refreshedMetadata.value.key = '77777777-7777-4777-8777-777777777777';
+    refreshedMetadata.value.version = '4';
+    refreshedMetadata.value.digest = 'd'.repeat(64);
+    refreshedBasis.value.amount = '130000.00';
+    const query = vi
+      .fn<Hrm011QueryAdapter['query']>()
+      .mockResolvedValueOnce(first as unknown as Hrm011Projection)
+      .mockResolvedValueOnce(refreshed as unknown as Hrm011Projection);
+    const source: Hrm011QueryAdapter = Object.freeze({ kind: HRM011_ADAPTER_KIND, query });
+    const issue = vi.fn().mockResolvedValue(hrm011Receipt());
+    const createCommandIdentity = vi
+      .fn()
+      .mockReturnValueOnce({
+        idempotencyKey: 'employment-contract-command-old-0001',
+        correlationId: HRM011_TEST_CORRELATION_ID,
+      })
+      .mockReturnValueOnce({
+        idempotencyKey: 'employment-contract-command-new-0002',
+        correlationId: HRM011_TEST_CORRELATION_ID,
+      });
+    await renderWorkbench(source, { onIssueEmploymentContract: issue, createCommandIdentity });
+    await shown('Review issuance');
+    await click('Review issuance');
+    expect(document.body.textContent).toContain('125000.00 USD');
+    expect(document.body.textContent).toContain('Confirm immutable issuance snapshot');
+
+    await click('Refresh');
+    await shown('130000.00 USD');
+    expect(document.body.textContent).toContain('77777777-7777-4777-8777-777777777777');
+    expect(document.body.textContent).not.toContain('Confirm immutable issuance snapshot');
+    expect(issue).not.toHaveBeenCalled();
+
+    await click('Review issuance');
+    await click('Confirm and issue');
+    await shown('Employment contract command accepted');
+    expect(issue).toHaveBeenCalledOnce();
+    expect(issue.mock.calls[0]?.[0]).toMatchObject({
+      idempotencyKey: 'employment-contract-command-new-0002',
+      request: {
+        templatePublicId: '77777777-7777-4777-8777-777777777777',
+        templateVersion: 4,
+        snapshotDigest: 'd'.repeat(64),
+      },
+    });
+  });
+
+  it('fences the completed snapshot after one verified receipt and ignores later submits', async () => {
+    const issue = vi.fn().mockResolvedValue(hrm011Receipt());
+    await renderWorkbench(adapter(), {
+      onIssueEmploymentContract: issue,
+      createCommandIdentity: () => ({
+        idempotencyKey: 'employment-contract-command-0001',
+        correlationId: HRM011_TEST_CORRELATION_ID,
+      }),
+    });
+    await shown('Review issuance');
+    await click('Review issuance');
+    await click('Confirm and issue');
+    await shown('Employment contract command accepted');
+
+    const accepted = button('Issuance accepted');
+    expect(accepted.disabled).toBe(true);
+    expect(button('Back').disabled).toBe(true);
+    expect(document.body.textContent).toContain(`Receipt ${hrm011Receipt().receiptId} · ACCEPTED`);
+    const form = accepted.closest('form');
+    expect(form).not.toBeNull();
+    await act(async () => {
+      form!.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+      accepted.click();
+      await Promise.resolve();
+    });
+    expect(issue).toHaveBeenCalledOnce();
+  });
+
+  it('visibly disables prepared and review actions when a retained projection becomes stale', async () => {
+    const query = vi
+      .fn<Hrm011QueryAdapter['query']>()
+      .mockResolvedValueOnce(projection())
+      .mockRejectedValueOnce(new HttpError('temporarily unavailable', 503));
+    const source: Hrm011QueryAdapter = Object.freeze({ kind: HRM011_ADAPTER_KIND, query });
+    const issue = vi.fn().mockResolvedValue(hrm011Receipt());
+    await renderWorkbench(source, {
+      onIssueEmploymentContract: issue,
+      createCommandIdentity: () => ({
+        idempotencyKey: 'employment-contract-command-0001',
+        correlationId: HRM011_TEST_CORRELATION_ID,
+      }),
+    });
+    await shown('Review issuance');
+    await click('Review issuance');
+    await click('Refresh');
+    await shown('The disclosed snapshot is stale');
+
+    expect(button('Confirm and issue').disabled).toBe(true);
+    await click('Back');
+    expect(button('Review issuance').disabled).toBe(true);
+    expect(issue).not.toHaveBeenCalled();
+  });
+
+  it('supports the two-step issuance path using keyboard focus with visible focus hooks', async () => {
+    const issue = vi.fn().mockResolvedValue(hrm011Receipt());
+    await renderWorkbench(adapter(), {
+      onIssueEmploymentContract: issue,
+      createCommandIdentity: () => ({
+        idempotencyKey: 'employment-contract-command-0001',
+        correlationId: HRM011_TEST_CORRELATION_ID,
+      }),
+    });
+    await shown('Review issuance');
+    const selected = document.querySelector<HTMLButtonElement>('button[aria-pressed="true"]');
+    expect(selected).not.toBeNull();
+    selected!.focus();
+    expect(document.activeElement).toBe(selected);
+    expect(selected!.dataset.focusRing).toBe('keyboard-visible');
+
+    await keyboardActivate(button('Review issuance'));
+    await keyboardActivate(button('Confirm and issue'));
+    await shown('Employment contract command accepted');
+    expect(issue).toHaveBeenCalledOnce();
   });
 
   it('never auto-retries a 409 and requires a refreshed resource version', async () => {

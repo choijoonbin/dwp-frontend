@@ -19,6 +19,7 @@ import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
+import { parseHrisCommandReceipt } from '../command-receipts/model/command-receipt';
 import {
   HRM011_ADAPTER_KIND,
   HRM011_FEATURE,
@@ -33,10 +34,10 @@ import {
 } from './use-contracts-compensation-basis';
 
 import type { Hrm011QueryAdapter } from './contracts-compensation-basis-api';
+import type { HrisCommandReceipt } from '../command-receipts/model/command-receipt';
 import type {
   Hrm011FieldDecision,
   Hrm011IssueDraft,
-  Hrm011IssueResult,
   Hrm011Item,
   Hrm011MetadataValue,
   Hrm011MoneyValue,
@@ -60,9 +61,7 @@ export type Hrm011CommandIdentity = Readonly<{
   correlationId: string;
 }>;
 
-export type Hrm011IssueDelegate = (
-  draft: Hrm011IssueDraft
-) => Promise<Hrm011IssueResult> | Hrm011IssueResult;
+export type Hrm011IssueDelegate = (draft: Hrm011IssueDraft) => Promise<HrisCommandReceipt>;
 
 export type Hrm011ContractsCompensationBasisWorkbenchProps = Readonly<{
   gate?: Hrm011RuntimeGate;
@@ -122,6 +121,19 @@ function compensation(item: Hrm011Item): Hrm011MoneyValue | null {
   return decision?.decision === 'VIEW' ? (decision.value as Hrm011MoneyValue) : null;
 }
 
+function issueSnapshotIdentity(item: Hrm011Item, locale: string, asOf: string): string {
+  return JSON.stringify({
+    relationshipPublicId: item.itemPublicId,
+    relationshipVersion: item.resourceVersion,
+    statusCode: item.statusCode,
+    contractMetadata: item.fieldGroups.CONTRACT_METADATA ?? null,
+    compensationBasis: item.fieldGroups.COMPENSATION_BASIS ?? null,
+    issueAction: item.availableActions[0] ?? null,
+    locale,
+    asOf,
+  });
+}
+
 function decisionText(decision: Hrm011FieldDecision | undefined): string {
   if (!decision) return 'Not disclosed';
   if (decision.decision === 'MASK') return 'Restricted by field policy';
@@ -172,12 +184,13 @@ function IssueContractForm({
   refresh: () => void;
 }>) {
   const commandFence = useRef(false);
+  const completionFence = useRef(false);
   const [effectiveFrom, setEffectiveFrom] = useState(asOf.slice(0, 10));
   const [effectiveTo, setEffectiveTo] = useState('');
   const [prepared, setPrepared] = useState<Hrm011IssueDraft | null>(null);
   const [busy, setBusy] = useState(false);
   const [failure, setFailure] = useState<Hrm011IssueFailure | null>(null);
-  const [receipt, setReceipt] = useState<Exclude<Hrm011IssueResult, void> | null>(null);
+  const [receipt, setReceipt] = useState<HrisCommandReceipt | null>(null);
   const [blockedVersion, setBlockedVersion] = useState<number | null>(null);
   const contractMetadata = metadata(item);
   const compensationBasis = compensation(item);
@@ -191,6 +204,7 @@ function IssueContractForm({
   }, [blockedVersion, item.resourceVersion]);
 
   const resetReview = () => {
+    if (completionFence.current) return;
     setPrepared(null);
     setFailure(null);
     setReceipt(null);
@@ -200,6 +214,7 @@ function IssueContractForm({
     if (
       !enabled ||
       !canDelegate() ||
+      completionFence.current ||
       !onIssueEmploymentContract ||
       !hrm011ItemCanIssue(item) ||
       blockedVersion === item.resourceVersion
@@ -229,6 +244,7 @@ function IssueContractForm({
     event.preventDefault();
     if (
       commandFence.current ||
+      completionFence.current ||
       !prepared ||
       !enabled ||
       !canDelegate() ||
@@ -242,8 +258,15 @@ function IssueContractForm({
     setFailure(null);
     setReceipt(null);
     try {
-      const result = await onIssueEmploymentContract(prepared);
-      if (result) setReceipt(result);
+      const verifiedReceipt = parseHrisCommandReceipt(await onIssueEmploymentContract(prepared));
+      if (
+        verifiedReceipt.correlationId !== prepared.correlationId ||
+        verifiedReceipt.purposeCode !== 'HR_LIFECYCLE'
+      ) {
+        throw new Error('Employment-contract receipt does not match the prepared command.');
+      }
+      completionFence.current = true;
+      setReceipt(verifiedReceipt);
     } catch (error) {
       const nextFailure = hrm011IssueFailure(error);
       setFailure(nextFailure);
@@ -256,8 +279,14 @@ function IssueContractForm({
   };
 
   const blocked = blockedVersion === item.resourceVersion;
+  const completed = receipt !== null;
+  const delegationAvailable = enabled && canDelegate();
   const canPrepare =
-    enabled && Boolean(onIssueEmploymentContract) && hrm011ItemCanIssue(item) && !blocked;
+    delegationAvailable &&
+    Boolean(onIssueEmploymentContract) &&
+    hrm011ItemCanIssue(item) &&
+    !blocked &&
+    !completed;
   return (
     <Box component="form" onSubmit={issue} noValidate sx={{ mt: 2 }}>
       <Divider sx={{ mb: 2 }} />
@@ -282,7 +311,7 @@ function IssueContractForm({
           size="small"
           label="Effective from"
           value={effectiveFrom}
-          disabled={!onIssueEmploymentContract || busy}
+          disabled={!onIssueEmploymentContract || busy || completed || !delegationAvailable}
           onChange={(event) => {
             setEffectiveFrom(event.target.value);
             resetReview();
@@ -294,7 +323,7 @@ function IssueContractForm({
           size="small"
           label="Effective to (optional)"
           value={effectiveTo}
-          disabled={!onIssueEmploymentContract || busy}
+          disabled={!onIssueEmploymentContract || busy || completed || !delegationAvailable}
           onChange={(event) => {
             setEffectiveTo(event.target.value);
             resetReview();
@@ -308,6 +337,7 @@ function IssueContractForm({
           <ActionButton
             type="button"
             intent="primary"
+            data-focus-ring="keyboard-visible"
             disabled={!canPrepare || busy}
             onClick={prepare}
             sx={{ minHeight: 44, '&:focus-visible': { outline: '3px solid', outlineOffset: 2 } }}
@@ -349,18 +379,21 @@ function IssueContractForm({
             <ActionButton
               type="submit"
               intent="primary"
+              data-focus-ring="keyboard-visible"
               loading={busy}
-              disabled={busy || blocked}
+              disabled={busy || blocked || completed || !delegationAvailable}
               sx={{ minHeight: 44, '&:focus-visible': { outline: '3px solid', outlineOffset: 2 } }}
             >
-              {failure?.kind === 'RETRYABLE_UNAVAILABLE'
-                ? 'Retry same command'
-                : 'Confirm and issue'}
+              {completed
+                ? 'Issuance accepted'
+                : failure?.kind === 'RETRYABLE_UNAVAILABLE'
+                  ? 'Retry same command'
+                  : 'Confirm and issue'}
             </ActionButton>
             <ActionButton
               type="button"
               intent="quiet"
-              disabled={busy}
+              disabled={busy || completed}
               onClick={() => setPrepared(null)}
               sx={{ minHeight: 44 }}
             >
@@ -425,6 +458,7 @@ function WorkList({
               <Box
                 component="button"
                 type="button"
+                data-focus-ring="keyboard-visible"
                 aria-pressed={active}
                 onClick={() => onSelect(item)}
                 sx={{
@@ -527,7 +561,7 @@ function WorkDetail({
       </Box>
       {hrm011ItemCanIssue(item) && (
         <IssueContractForm
-          key={`${item.itemPublicId}:${item.resourceVersion}`}
+          key={issueSnapshotIdentity(item, scope.locale, asOf)}
           item={item}
           locale={scope.locale}
           asOf={asOf}
@@ -557,6 +591,7 @@ function ActiveWorkbench({
 }>) {
   const theme = useTheme();
   const compactViewport = useMediaQuery(theme.breakpoints.down('sm'), { noSsr: true });
+  const constrainedWorkflow = useMediaQuery(theme.breakpoints.down('lg'), { noSsr: true });
   const forcedColors = useMediaQuery('(forced-colors: active)', { noSsr: true });
   const reducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)', { noSsr: true });
   const query = useHrm011WorkbenchQuery({ adapter, scope });
@@ -632,6 +667,7 @@ function ActiveWorkbench({
       data-runtime-state={runtimeState}
       data-page-archetype={HRM011_QUERY_CONTRACT.framing.archetype}
       data-layout-density={compactViewport ? 'compact' : 'fluid'}
+      data-workflow-layout={constrainedWorkflow ? 'stacked' : 'split'}
       data-color-scheme={theme.palette.mode}
       data-forced-colors={forcedColors ? 'active' : 'inactive'}
       data-reduced-motion={reducedMotion ? 'active' : 'inactive'}

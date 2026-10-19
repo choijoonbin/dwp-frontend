@@ -157,7 +157,7 @@ export type Hrm011IssueDraft = Hrm011IssueCommand &
     action: Hrm011IssueAction;
   }>;
 
-export type Hrm011IssueResult = HrisCommandReceipt | void;
+export type Hrm011IssueResult = HrisCommandReceipt;
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu;
 const PUBLIC_ID = /^[A-Za-z0-9._:-]{1,128}$/u;

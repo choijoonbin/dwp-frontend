@@ -143,7 +143,7 @@ describe('HRM-011 IAQ-008 v2 and PEP-HRM-011 API contracts', () => {
   });
 
   it('uses the exact seven-field body, raw strong If-Match, and trusted purpose injection', async () => {
-    runtime.post.mockResolvedValue({ data: hrm011Receipt() });
+    runtime.post.mockResolvedValue({ status: 202, data: hrm011Receipt() });
 
     await expect(issueEmploymentContract(command, authority())).resolves.toEqual(hrm011Receipt());
 
@@ -174,6 +174,15 @@ describe('HRM-011 IAQ-008 v2 and PEP-HRM-011 API contracts', () => {
     expect(config.headers['X-Purpose-Code']).toBeUndefined();
   });
 
+  it('rejects a receipt-shaped payload unless the owner returns exact HTTP 202', async () => {
+    runtime.post.mockResolvedValue({ status: 200, data: hrm011Receipt() });
+
+    await expect(issueEmploymentContract(command, authority())).rejects.toThrow(
+      'did not return the required 202 status'
+    );
+    expect(runtime.post).toHaveBeenCalledOnce();
+  });
+
   it('fails closed before I/O for unknown body fields, authority mismatch, or receipt mismatch', async () => {
     expect(() =>
       assertHrm011EmploymentContractRequest({ ...command.request, tenantId: 'tenant-one' })
@@ -184,6 +193,7 @@ describe('HRM-011 IAQ-008 v2 and PEP-HRM-011 API contracts', () => {
     expect(runtime.post).not.toHaveBeenCalled();
 
     runtime.post.mockResolvedValue({
+      status: 202,
       data: { ...hrm011Receipt(), purposeCode: 'EMPLOYMENT_CONTRACT' },
     });
     await expect(issueEmploymentContract(command, authority())).rejects.toThrow(

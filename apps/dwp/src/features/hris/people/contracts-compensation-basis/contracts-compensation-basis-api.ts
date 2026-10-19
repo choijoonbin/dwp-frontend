@@ -157,6 +157,9 @@ export async function issueEmploymentContract(
     headers: { ...governed.headers, ...commandHeaders(command) },
     csrfReplay: 'NEVER',
   });
+  if ((response as Readonly<{ status?: unknown }>).status !== 202) {
+    throw new Error('Employment-contract command did not return the required 202 status.');
+  }
   const receipt = parseHrisCommandReceipt(response.data);
   if (receipt.correlationId !== command.correlationId || receipt.purposeCode !== 'HR_LIFECYCLE') {
     throw new Error('Employment-contract receipt does not match the submitted command.');
