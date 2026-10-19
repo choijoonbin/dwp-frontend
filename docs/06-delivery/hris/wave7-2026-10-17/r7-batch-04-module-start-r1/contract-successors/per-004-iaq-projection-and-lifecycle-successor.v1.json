@@ -1,0 +1,489 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-per004-iaq-projection-and-lifecycle-successor.v1",
+  "successorId": "HRIS-WAVE7-R7-BATCH-04-PER004-IAQ-LIFECYCLE-SUCCESSOR-20261019-R1",
+  "recordedAt": "2026-10-19T16:55:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ID_AND_SHA256"
+  },
+  "state": "SEALED_PER004_IAQ020_READ_ONLY_IAQ056_EXACT_STATE_AWARE_PLATFORM_LIFECYCLE_AND_TYPED_OWNER_HANDSHAKE",
+  "sliceId": "BASE-TFR-PER-004",
+  "authorityBasis": {
+    "semanticDisposition": {
+      "path": "../semantic-dispositions/base-tfr-per-004.semantic-disposition.v1.json",
+      "sha256": "1e21d62336c7100877c16c16fdffec19e4352d9aedb9414a091b94df54362ce8",
+      "bytes": 30992,
+      "requiredState": "PER004_OWNER_PAYLOAD_SOR_AND_PLATFORM_LIFECYCLE_BOUNDARY_SEALED_V19_REQUIRED_CENTRAL_SUCCESSOR_BEFORE_SOURCE"
+    },
+    "semanticReview": {
+      "path": "../semantic-dispositions/base-tfr-per-004.semantic-review.v1.json",
+      "sha256": "187c38cd0cc3e649262610a644bd59a0c7af4f1f55a0d6ee0e4edc1375e7c7cd",
+      "bytes": 2868,
+      "requiredState": "PER004_SEMANTIC_DISPOSITION_INDEPENDENTLY_REVIEWED_PASS_ZERO_P0_ZERO_P1_CENTRAL_SUCCESSOR_MAY_PROCEED"
+    }
+  },
+  "historicalInputs": {
+    "apiRegister": {
+      "path": "../../../recovery/exact-supplements/2026-10-06/accepted-successors/hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-api-contract-register.csv",
+      "sha256": "5f47efd33a1d5aa3d11a4d9fd5716cd4e35650e9fec0868ecb77c8c90a4cd988",
+      "bytes": 100020
+    },
+    "projectionSchema": {
+      "path": "../../../recovery/exact-supplements/2026-10-06/hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-projection-schemas.v1.json",
+      "sha256": "b185accd712216c39bf8a66f70cbbf0092a27a8c2c5e3d7457ecd4d511afa048",
+      "bytes": 1523618
+    },
+    "mutationAuthorized": false,
+    "overlayRule": "This append-only file controls only BASE-TFR-PER-004. Every historical field not explicitly superseded remains immutable."
+  },
+  "apiRegisterSuccessor": {
+    "IAQ-020": {
+      "method": "GET",
+      "browserPath": "/api/people/v1/hris/performance/workbench/forms-scales",
+      "ownerPath": "/v1/hris/performance/workbench/forms-scales",
+      "canonicalRoute": "/hr/operations/performance/forms-scales",
+      "capability": "hcm.operations.performance.view",
+      "profileKey": "full-management",
+      "targetBindingKinds": [
+        "TARGET_POPULATION"
+      ],
+      "fieldGroups": [
+        "FORM_VERSION",
+        "RATING_SCALE",
+        "POLICY_STATUS"
+      ],
+      "itemPublicId": "canonical lowercase UUID configurationId",
+      "actionKeys": [],
+      "supersededActionKeys": [
+        "hris.action.per.create-cycle",
+        "hris.action.per.update-cycle-draft",
+        "hris.action.per.validate-cycle"
+      ]
+    },
+    "IAQ-056": {
+      "method": "GET",
+      "browserPath": "/api/people/v1/hris/performance/workbench/settings-performance",
+      "ownerPath": "/v1/hris/performance/workbench/settings-performance",
+      "canonicalRoute": "/hr/settings/performance",
+      "capability": "hcm.configuration.workbench.view",
+      "profileKey": "configuration-workbench-reader",
+      "targetBindingKinds": [
+        "CONFIG_SCOPE"
+      ],
+      "fieldGroups": [
+        "POLICY_VERSION",
+        "PERFORMANCE_POLICY",
+        "EFFECTIVE_STATUS"
+      ],
+      "itemPublicId": "canonical lowercase UUID configurationId",
+      "actionKeys": [
+        "hris.action.sys.post.platform.v1.admin.hris.configurations.resource.versions",
+        "hris.action.sys.post.platform.v1.admin.hris.configurations.resource.versions.resource.validate",
+        "hris.action.sys.post.platform.v1.admin.hris.configurations.resource.versions.resource.simulate",
+        "hris.action.sys.post.platform.v1.admin.hris.configurations.resource.versions.resource.submit",
+        "hris.action.sys.post.platform.v1.admin.hris.configurations.resource.versions.resource.approve",
+        "hris.action.sys.post.platform.v1.admin.hris.configurations.resource.versions.resource.publish"
+      ],
+      "actionProvenance": {
+        "hris.action.sys.post.platform.v1.admin.hris.configurations.resource.versions": "SYS-API-012",
+        "hris.action.sys.post.platform.v1.admin.hris.configurations.resource.versions.resource.validate": "SYS-API-013",
+        "hris.action.sys.post.platform.v1.admin.hris.configurations.resource.versions.resource.simulate": "SYS-API-014",
+        "hris.action.sys.post.platform.v1.admin.hris.configurations.resource.versions.resource.submit": "SYS-API-042",
+        "hris.action.sys.post.platform.v1.admin.hris.configurations.resource.versions.resource.approve": "SYS-API-015",
+        "hris.action.sys.post.platform.v1.admin.hris.configurations.resource.versions.resource.publish": "SYS-API-016"
+      },
+      "supersededActionKeys": [
+        "hris.action.per.publish-cycle"
+      ],
+      "forbiddenActionFamilies": [
+        "hris.action.per.*cycle*",
+        "*.schedule",
+        "*.rollback",
+        "*.retire"
+      ]
+    }
+  },
+  "projectionSchemaSuccessor": {
+    "common": {
+      "projectionVersion": "2",
+      "closedResponse": true,
+      "queryStates": [
+        "COMPLETE",
+        "EMPTY",
+        "PARTIAL",
+        "UNAVAILABLE"
+      ],
+      "preservedInvariants": [
+        "QUERY_STATE_ITEM_CARDINALITY",
+        "PARTIAL_FAILURE_STATE_MATCH",
+        "CURSOR_SCOPE_REVISION_BINDING",
+        "PAGE_LIMIT_AND_STABLE_ORDER",
+        "FIELD_DECISION_SUMMARY_MATCH",
+        "DEEP_LINK_ACTION_ALLOWLIST",
+        "TRUSTED_TENANT_CONTEXT_NON_SERIALIZATION",
+        "LOCALE_TIMEZONE_CANONICALIZATION",
+        "FIELD_DECISION_VIEW_MASK_OMIT",
+        "PROBLEM_STATUS_AND_CORRELATION"
+      ],
+      "pageLimit": 100,
+      "unavailableRule": "items=[], nextCursor=null, freshness=UNAVAILABLE and availableActions are never synthesized",
+      "partialRule": "Every PARTIAL response contains at least one exact typed partial failure and no action whose lifecycle evidence is incomplete, stale or unavailable.",
+      "fieldDecisionEvidence": {
+        "port": "Per004FieldDecisionPort",
+        "productionDefault": "UNBOUND_FAIL_CLOSED",
+        "requiredBinding": [
+          "tenantId",
+          "subjectPrincipalPublicId",
+          "routeContractKey",
+          "scopeDigest",
+          "decisionRevision",
+          "fieldPolicyKey",
+          "fieldPolicyRevision",
+          "purpose",
+          "locale",
+          "timeZone",
+          "correlationId"
+        ],
+        "decisionValues": [
+          "VIEW",
+          "MASK",
+          "OMIT"
+        ],
+        "exactGroupsRule": "Return one decision for each of the three groups in the exact route field policy, with no missing, duplicate or extra groups.",
+        "forwardingRule": "Gateway verifies the binding and emits one trusted internal authority context containing the canonical field decisions. Missing, stale or unavailable evidence produces zero downstream query calls.",
+        "actionRule": "Any MASK or OMIT decision for a field required by an IAQ-056 target or transition suppresses its action.",
+        "configurationScopeRule": "The trusted Auth RESOURCE_SET scope is canonicalized to CONFIG_SCOPE only for the two settings-performance route contracts.",
+        "providerBindingAuthorized": false
+      }
+    },
+    "IAQ-020": {
+      "responseSchemaKey": "Per004FormsScalesProjectionV2",
+      "deepLink": {
+        "route": "/hr/operations/performance/forms-scales",
+        "resourcePublicId": "EXACT_ITEM_PUBLIC_ID"
+      },
+      "availableActions": {
+        "type": "array",
+        "maxItems": 0,
+        "items": false,
+        "const": []
+      },
+      "fieldPolicy": "FORM_VERSION, RATING_SCALE and POLICY_STATUS remain independent VIEW, MASK or OMIT groups. At least one serialized group is required.",
+      "per014Boundary": "Review-form and rating-scale authoring remains PER-014. PER-004 projects immutable governed snapshots only and returns EMPTY before a trusted PER-014 artifact exists."
+    },
+    "IAQ-056": {
+      "responseSchemaKey": "Per004SettingsPerformanceProjectionV2",
+      "deepLink": {
+        "route": "/hr/settings/performance",
+        "resourcePublicId": "EXACT_ITEM_PUBLIC_ID"
+      },
+      "availableActions": {
+        "type": "array",
+        "maxItems": 1,
+        "uniqueItems": true,
+        "closed": true,
+        "descriptorRequired": [
+          "actionKey",
+          "method",
+          "targetResourceType",
+          "targetConfigurationId",
+          "resolvedHref",
+          "idempotencyPolicy",
+          "stepUpPolicy"
+        ],
+        "versionTransitionAdditionalRequired": [
+          "targetVersion",
+          "expectedObjectVersion"
+        ],
+        "constants": {
+          "method": "POST",
+          "idempotencyPolicy": "REQUIRED_IDEMPOTENCY_KEY",
+          "stepUpPolicy": "OWNER_PEP_RISK_POLICY_DECISION_REQUIRED"
+        }
+      },
+      "actionVariants": {
+        "create-version": {
+          "actionKey": "hris.action.sys.post.platform.v1.admin.hris.configurations.resource.versions",
+          "targetResourceType": "REFERENCE_CONFIGURATION",
+          "resolvedHref": "/api/platform/v1/admin/hris/configurations/{targetConfigurationId}/versions",
+          "targetVersion": "FORBIDDEN",
+          "expectedObjectVersion": "FORBIDDEN"
+        },
+        "validate": {
+          "actionKey": "hris.action.sys.post.platform.v1.admin.hris.configurations.resource.versions.resource.validate",
+          "targetResourceType": "REFERENCE_CONFIGURATION_VERSION",
+          "resolvedHref": "/api/platform/v1/admin/hris/configurations/{targetConfigurationId}/versions/{targetVersion}/validate"
+        },
+        "simulate": {
+          "actionKey": "hris.action.sys.post.platform.v1.admin.hris.configurations.resource.versions.resource.simulate",
+          "targetResourceType": "REFERENCE_CONFIGURATION_VERSION",
+          "resolvedHref": "/api/platform/v1/admin/hris/configurations/{targetConfigurationId}/versions/{targetVersion}/simulate"
+        },
+        "submit": {
+          "actionKey": "hris.action.sys.post.platform.v1.admin.hris.configurations.resource.versions.resource.submit",
+          "targetResourceType": "REFERENCE_CONFIGURATION_VERSION",
+          "resolvedHref": "/api/platform/v1/admin/hris/configurations/{targetConfigurationId}/versions/{targetVersion}/submit"
+        },
+        "approve": {
+          "actionKey": "hris.action.sys.post.platform.v1.admin.hris.configurations.resource.versions.resource.approve",
+          "targetResourceType": "REFERENCE_CONFIGURATION_VERSION",
+          "resolvedHref": "/api/platform/v1/admin/hris/configurations/{targetConfigurationId}/versions/{targetVersion}/approve"
+        },
+        "publish": {
+          "actionKey": "hris.action.sys.post.platform.v1.admin.hris.configurations.resource.versions.resource.publish",
+          "targetResourceType": "REFERENCE_CONFIGURATION_VERSION",
+          "resolvedHref": "/api/platform/v1/admin/hris/configurations/{targetConfigurationId}/versions/{targetVersion}/publish"
+        }
+      },
+      "crossFieldEqualities": [
+        "itemPublicId equals targetConfigurationId byte-for-byte",
+        "deepLink.resourcePublicId equals itemPublicId byte-for-byte",
+        "resolvedHref contains targetConfigurationId exactly once",
+        "a version transition resolvedHref contains targetVersion exactly once",
+        "resolvedHref has no template token, query or fragment",
+        "expectedObjectVersion equals the owner-resolved current Platform aggregateVersion"
+      ],
+      "fieldVisibilityRule": "If POLICY_VERSION, PERFORMANCE_POLICY or EFFECTIVE_STATUS needed for the target or transition is MASK or OMIT, availableActions=[].",
+      "lifecycleEvidenceRule": "People obtains lifecycle and aggregateVersion from the trusted Platform projection port at the same asOf and never reconstructs a lifecycle from local state."
+    }
+  },
+  "lifecycleActionSuccessor": {
+    "maximumActionsPerItem": 1,
+    "stateMatrix": {
+      "NO_MUTABLE_VERSION_AND_CREATE_ELIGIBLE": "create-version",
+      "DRAFT": "validate",
+      "VALIDATED": "simulate",
+      "SIMULATED": "submit",
+      "PENDING_APPROVAL": "approve",
+      "APPROVED_DUE": "publish",
+      "APPROVED_NOT_DUE": "NONE",
+      "SCHEDULED_DUE": "publish",
+      "SCHEDULED_NOT_DUE": "NONE",
+      "PUBLISHED": "NONE",
+      "REJECTED": "NONE",
+      "RETIRED": "NONE",
+      "FAILED_ACTIVATION": "NONE",
+      "UNKNOWN_OR_STALE": "NONE"
+    },
+    "dueRules": {
+      "APPROVED_DUE": "now>=effectiveFrom",
+      "SCHEDULED_DUE": "now>=effectiveFrom AND scheduledAt is non-null AND now>=scheduledAt"
+    },
+    "authorizationMatrix": {
+      "create-version": "hcm.configuration.policy.update / CONFIG.HRIS_POLICY:UPDATE",
+      "validate": "hcm.configuration.policy.update / CONFIG.HRIS_POLICY:UPDATE",
+      "simulate": "hcm.configuration.policy.update / CONFIG.HRIS_POLICY:UPDATE",
+      "submit": "hcm.configuration.policy.update / CONFIG.HRIS_POLICY:UPDATE",
+      "approve": "hcm.configuration.policy.publish / ACTION.HRIS_POLICY_PUBLISH:PUBLISH plus maker-checker and step-up",
+      "publish": "hcm.configuration.policy.publish / ACTION.HRIS_POLICY_PUBLISH:PUBLISH plus maker-checker and step-up"
+    },
+    "independentAuthorizationRule": "PAGE or DATA access never grants an ACTION. availableActions is presentation evidence only; Gateway and Platform reload the target and re-evaluate feature, permission, predicate, state, clock, CAS, idempotency, maker-checker and step-up on every POST."
+  },
+  "typedOwnerHandshake": {
+    "create": {
+      "publicRoute": "existing Platform create-version action",
+      "requestUnion": "The closed requestVariants discriminator controls typed-owner admission. The extension applies only to the three sealed PER-004 schemas and preserves every legacy reference request outside that allowlist.",
+      "requestVariants": {
+        "per004Variant": "domain PER and schemaKey in the exact sealed three-key allowlist require ownerPayload and forbid payload.reference/digest.",
+        "legacyNonPerVariant": "domain other than PER preserves the existing payload.reference/digest contract and forbids ownerPayload.",
+        "legacyOtherPerVariant": "domain PER and schemaKey outside the sealed three-key allowlist preserves the existing payload.reference/digest behavior and forbids ownerPayload; no typed-owner extension, owner receipt requirement or PER-004 working-version uniqueness applies.",
+        "perFeatureGuard": "Every resolved PER create, validate, simulate, submit, approve or publish still requires the canonical feature guard.",
+        "sealedSchemaKeys": [
+          "dwp.hris.performance.review-form.v1",
+          "dwp.hris.performance.rating-scale.v1",
+          "dwp.hris.performance.policy.v1"
+        ],
+        "mixedOrInvalidVariant": "REJECT",
+        "ownerPayloadLimitUtf8Bytes": 262144,
+        "typedContentPersistenceLoggingAuditOrErrorEcho": "FORBIDDEN",
+        "nonPerBehavior": "UNCHANGED"
+      },
+      "ownerPayload": "closed opaque JSON, maximum 262144 UTF-8 bytes, transit-only in Platform and forbidden from persistence, logs, audit payloads and error echoes",
+      "flow": [
+        "Platform authorizes the exact PER create command and canonical feature decision.",
+        "Platform calls the trusted PER prepare port with ownerPayload and server-derived tenant, configuration, schema, scope and idempotency facts.",
+        "PER canonicalizes, validates, encrypts and stores the owner-local artifact and PREPARED receipt, returning only reference, digest and attestation.",
+        "Platform reloads the configuration, rechecks no PER-004 working version, verifies the attestation and inserts the version under a PER-only unique/CAS guard.",
+        "A committed Platform outbox callback finalizes the exact PER configuration-version binding idempotently.",
+        "Validation remains blocked until Platform stores the exact finalization acknowledgement."
+      ],
+      "finalizationAcknowledgement": {
+        "transaction": "Persist the exact immutable FINALIZATION receipt, bind its ID to the version, advance aggregateVersion by one through CAS, append the resulting version history and acknowledge outbox delivery atomically.",
+        "lifecycleState": "DRAFT_UNCHANGED",
+        "firstAcknowledgement": "Requires the exact PREPARATION receipt, Platform create receipt, tuple and current aggregateVersion.",
+        "sameAcknowledgementReplay": "Return the existing acknowledgement without another receipt, aggregateVersion increment or history row.",
+        "conflictRule": "A conflicting acknowledgement or receipt-chain mismatch produces zero version mutation.",
+        "historyRule": "Every owner evidence binding change has a distinct aggregateVersion history record containing owner receipt IDs and evidence digests, with no typed content.",
+        "validationRule": "Validation remains blocked until this exact committed acknowledgement is visible.",
+        "failureRule": "Retry or quarantine delivery metadata without rolling back the already committed DRAFT. Delivery quarantine never independently authorizes owner-artifact quarantine."
+      }
+    },
+    "validate": {
+      "ownerCall": "PER reloads the finalized binding and encrypted artifact under RLS, canonical-verifies the payload and returns one immutable typed validation receipt.",
+      "platformTransition": "DRAFT to VALIDATED only after exact tuple echo, success outcome and receipt persistence."
+    },
+    "simulate": {
+      "ownerCall": "PER resolves the exact validation receipt and trusted sample scope, produces deterministic impact evidence and returns one immutable simulation receipt.",
+      "platformTransition": "VALIDATED to SIMULATED only after exact tuple and receipt-chain equality, success outcome and receipt persistence."
+    },
+    "exactTuple": [
+      "tenantId",
+      "configurationId",
+      "version",
+      "schemaKey",
+      "schemaVersion",
+      "payloadReference",
+      "payloadDigest",
+      "scopeDigest"
+    ],
+    "failureRule": "Missing, unavailable, mismatched, stale, duplicate-claim or quarantined owner evidence fails closed with zero lifecycle transition.",
+    "quarantineRule": "A PREPARED artifact can be quarantined only after authoritativeCreateLookupPort returns ABSENT_FINAL with its exact durable admission fence; timeout, unavailable, in-flight, unfenced absence or UNKNOWN remains retryable PREPARED.",
+    "featureDecisionEvidence": {
+      "provider": "dwp-auth-server",
+      "consumer": "dwp-platform-server",
+      "method": "POST",
+      "path": "/internal/auth/v1/hris-performance-feature-decisions:query",
+      "featureKey": "HRIS_PERFORMANCE_CONFIGURATION",
+      "decisionRoute": "route.hcm.configuration.settings-performance.data",
+      "bindingPurpose": "FEATURE_POLICY_LOOKUP_ONLY",
+      "requestBinding": [
+        "serverDerivedTenantId",
+        "subjectPrincipalPublicId",
+        "exactSharedActionRouteContractKey",
+        "configurationId",
+        "resolvedDomain",
+        "scopeDigest",
+        "commandAuthorizationRevision",
+        "correlationId"
+      ],
+      "requiredResponse": [
+        "tenantId",
+        "subjectPrincipalPublicId",
+        "featureKey",
+        "decisionRoute",
+        "exactSharedActionRouteContractKey",
+        "featureState",
+        "decision",
+        "featureDecisionRevision",
+        "commandAuthorizationRevision",
+        "evaluatedAt",
+        "revalidateAt"
+      ],
+      "requiredFeatureState": "ACTIVE",
+      "requiredDecision": "ALLOWED",
+      "authorizationRule": "Auth independently verifies the exact shared ACTION authority and applies the feature policy selected by the fixed decisionRoute. The guard never requires PAGE or DATA capability and never grants ACTION authority.",
+      "freshnessRule": "Evaluate every command attempt, including same-key replay; require exact tenant, subject, route and revision binding and an unexpired response. Missing, stale or unavailable evidence fails before owner calls, receipt replay or mutation.",
+      "nonPerBehavior": "UNCHANGED"
+    }
+  },
+  "authoritativeCreateLookupPort": {
+    "owner": "dwp-platform-server",
+    "caller": "dwp-people-server",
+    "method": "POST",
+    "path": "/internal/hris-reference-configuration/v1/authoritative-create-lookups:query",
+    "domain": "PER_FIXED_SERVER_SIDE",
+    "identity": [
+      "tenantId",
+      "configurationId",
+      "createSubjectPrincipalPublicId",
+      "originatingAction",
+      "createIdempotencyKey",
+      "createRequestDigest",
+      "ownerPreparationReceiptId"
+    ],
+    "states": [
+      "BOUND",
+      "ABSENT_FINAL",
+      "UNKNOWN"
+    ],
+    "boundRule": "Return only the exact committed Platform version and create receipt for the supplied identity; conflicting identities fail closed.",
+    "absentFinalRule": "Require authoritative absence of both version and create receipt and a durable admission fence that prevents an in-flight or future create using that exact identity from committing.",
+    "unknownRule": "In-flight, unavailable, stale, unresolved or unfenced absence returns UNKNOWN.",
+    "quarantineRule": "Only ABSENT_FINAL with exact signed binding evidence permits owner preparation quarantine. UNKNOWN and timeout preserve retryable PREPARED.",
+    "productionBindingAuthorized": false
+  },
+  "platformLifecycleProjectionPort": {
+    "caller": "dwp-people-server",
+    "domain": "PER_FIXED_SERVER_SIDE",
+    "request": "trusted tenant and configuration scope, asOf, cursor, limit, schema-key allowlist, closed filters and sorts",
+    "response": "configurationId, key, version, lifecycleState, effectiveFrom/effectiveTo, scheduledAt, schemaKey/version, payloadReference/digest and aggregateVersion",
+    "rule": "People combines this trusted metadata with its local immutable payload projection. Platform unavailable produces PARTIAL or UNAVAILABLE and never a local lifecycle fallback."
+  },
+  "serviceSecurityContract": {
+    "profile": "HRIS_REFERENCE_CONFIGURATION_WORKLOAD_V1",
+    "authentication": "MTLS_OR_REGISTERED_CLIENT_CREDENTIAL_IDENTITY",
+    "proof": "RS256_SHORT_LIVED_SERVICE_JWT",
+    "maximumLifetimeSeconds": 30,
+    "minimumRsaBits": 2048,
+    "requiredClaims": [
+      "iss",
+      "aud",
+      "sub",
+      "iat",
+      "nbf",
+      "exp",
+      "jti",
+      "requestNonce",
+      "bindingId",
+      "purpose",
+      "method",
+      "path",
+      "tenantId",
+      "requestBodySha256",
+      "authn"
+    ],
+    "bindingRule": "Exact allowlisted caller, endpoint-specific audience, method, canonical path, purpose, signed tenant and exact request-body digest; authenticated workload identity must match issuer and subject.",
+    "duplicateRule": "Reject duplicate JSON security claims, duplicate security headers and conflicting identities.",
+    "replayRule": "Durably reserve jti and requestNonce; both are distinct canonical UUIDs.",
+    "browserRule": "Reject browser Authorization, Cookie, Origin, Referer, end-user identity and X-DWP tenant/authority/scope/field/purpose headers. Permit only the closed workload security header set.",
+    "transportRule": "Bounded timeout, redirects disabled, no TLS downgrade, no trust-all client and no static gateway token fallback.",
+    "platformAdmissionRule": "Exact internal endpoints use a dedicated workload verifier. PlatformSecurityFilter bypass is permitted only after successful verifier admission stored in a server request attribute; no blanket internal-prefix exemption.",
+    "contractIsolation": "Use a new reference-configuration endpoint/proof contract; preserve approval bridge endpoints and proof semantics.",
+    "productionProviderBindingCount": 0
+  },
+  "negativeRules": [
+    "A browser-authored tenant, authority, scope, payload reference, digest, lifecycle state, aggregate version or owner receipt is never trusted.",
+    "Masked fields, title, status, deep link, query input and hidden UI state never supply an action target.",
+    "No IAQ-020 cycle action or IAQ-056 publish-cycle action is exposed.",
+    "Schedule, rollback and retire are not exposed by PER-004.",
+    "No target href contains a template token, query, fragment, repeated configuration ID or mismatched version.",
+    "A read-only query grant, stale projection or disabled feature never produces an action.",
+    "No cross-database FK, repository import or physical Platform-to-PER join is permitted.",
+    "Platform never persists or logs the typed owner payload."
+  ],
+  "targetedContractTests": [
+    "IAQ-020 accepts only the exact paths, fields, deep link, invariant set and availableActions=[].",
+    "IAQ-056 accepts only the exact paths, fields and six action keys including submit.",
+    "Each lifecycle and due state yields zero or one exact action and unknown or stale state yields none.",
+    "Descriptor tests reject href templates, query, fragment, repeated or mismatched IDs, missing version/CAS and create descriptors carrying version fields.",
+    "Permission tests prove query-only, update-only and publish-only grants remain independent and maker cannot approve or publish own content.",
+    "Create union tests preserve non-PER reference requests and reject wrong domain/schema, mixed variants, oversized owner payload and payload leakage.",
+    "Competing PER creates admit one working version and return a deterministic conflict or same-key replay while non-PER parallel-version behavior is unchanged.",
+    "Owner create, validate and simulate mismatch or outage performs zero Platform transition.",
+    "Finalize callback retry is idempotent and validation is blocked before exact acknowledgement.",
+    "Quarantine is forbidden for timeout or unknown and allowed only after an authoritative negative Platform lookup.",
+    "Default OFF and zero enrollment produce no routes, actions, owner calls or mutations.",
+    "Platform projection outage produces PARTIAL or UNAVAILABLE with no local lifecycle fallback.",
+    "Submit provenance resolves to SYS-API-042 and every lifecycle action retains its exact historical contract.",
+    "Command-only grants remain valid without PAGE or DATA query grants; the feature policy lookup never grants an ACTION.",
+    "Definite create absence requires an exact durable admission fence; in-flight, unfenced or unknown lookup cannot quarantine PREPARED.",
+    "First finalization acknowledgement advances aggregateVersion and history exactly once; identical replay advances neither.",
+    "Legacy non-PER and other-PER reference requests preserve their existing behavior while ownerPayload is rejected outside the exact three-key allowlist.",
+    "Workload claim, caller, audience, header, path, body-digest or replay violations fail before any repository or provider use.",
+    "Field decisions contain exactly the declared groups; unavailable or stale evidence makes zero downstream query calls."
+  ],
+  "authority": {
+    "contractOverlaySealed": true,
+    "independentReviewRequired": true,
+    "boundedCentralProductAuthorizationGatewayPlatformAndTrustImplementationMayProceedAfterReview": true,
+    "historicalRegisterOrSchemaMutationAuthorized": false,
+    "ownerPacketAuthorizedNow": false,
+    "moduleSourceAuthoringAuthorized": false,
+    "migrationReservationAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextGate": "AUTHOR_AND_INDEPENDENTLY_REVIEW_THE_BOUNDED_PER004_V55_V264_V332_GATEWAY_AND_TRUST_AUTHORITY_THEN_IMPLEMENT_ONLY_THAT_CENTRAL_DELTA"
+}

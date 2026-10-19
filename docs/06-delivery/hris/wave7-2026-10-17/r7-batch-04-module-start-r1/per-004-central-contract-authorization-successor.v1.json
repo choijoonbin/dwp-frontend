@@ -1,0 +1,608 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-per004-central-contract-authorization-successor.v1",
+  "successorId": "HRIS-WAVE7-R7-BATCH-04-PER004-CENTRAL-CONTRACT-AUTHORIZATION-20261019-R1",
+  "recordedAt": "2026-10-19T16:57:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ID_AND_SHA256"
+  },
+  "state": "SEALED_EXACT_PER004_V55_V264_V332_GATEWAY_TYPED_OWNER_TRUST_AUTHORITY_DEFAULT_OFF_ZERO_ENROLLMENT",
+  "sliceId": "BASE-TFR-PER-004",
+  "authorityBasis": {
+    "semanticDisposition": {
+      "path": "semantic-dispositions/base-tfr-per-004.semantic-disposition.v1.json",
+      "sha256": "1e21d62336c7100877c16c16fdffec19e4352d9aedb9414a091b94df54362ce8",
+      "bytes": 30992
+    },
+    "semanticReview": {
+      "path": "semantic-dispositions/base-tfr-per-004.semantic-review.v1.json",
+      "sha256": "187c38cd0cc3e649262610a644bd59a0c7af4f1f55a0d6ee0e4edc1375e7c7cd",
+      "bytes": 2868
+    },
+    "iaqLifecycleSuccessor": {
+      "path": "contract-successors/per-004-iaq-projection-and-lifecycle-successor.v1.json",
+      "sha256": "ff1be7ed1bb18dcc24b0f5acac05c6be36707e34c72f5a3bdcfa05671289a361",
+      "bytes": 27667,
+      "requiredState": "SEALED_PER004_IAQ020_READ_ONLY_IAQ056_EXACT_STATE_AWARE_PLATFORM_LIFECYCLE_AND_TYPED_OWNER_HANDSHAKE"
+    },
+    "precedingLaneExit": {
+      "path": "../r7-batch-04-central-admission-r1/pay-003-sequencing-exit-receipt.v1.json",
+      "sha256": "253d970e53d0fcbd4e18964a2af65ee5220f799fc854756d949ebc0e62f8c75b",
+      "bytes": 8006,
+      "requiredNextLane": "BASE-TFR-PER-004"
+    }
+  },
+  "pinnedRepositories": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "70e8125a173130637e3b432fa4dc034b853d77b2",
+      "tree": "4af92687686d21048bab7111680b01287b31d77f",
+      "originExact": true,
+      "clean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "47713d231160b0fad28e4052cfc0ff7a23412533",
+      "tree": "d72ad715e870c0223bc36cd0c5ab4c8f85ac7507",
+      "originExactBeforeThisSuccessor": true,
+      "cleanBeforeThisSuccessor": true
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "originExact": true,
+      "readOnly": true
+    }
+  },
+  "productAuthorizationV55": {
+    "predecessor": "v54",
+    "candidate": "v55",
+    "appendOnlyCounts": {
+      "capabilities": 270,
+      "accessPolicies": 24,
+      "entitlementExpressions": 17,
+      "predicatePolicies": 82,
+      "routes": 1104,
+      "PAGE": 156,
+      "DATA": 336,
+      "ACTION": 612
+    },
+    "newCapabilities": [],
+    "newPredicates": [],
+    "newActions": [],
+    "capabilityRouteSuccessors": [
+      {
+        "contractKey": "hcm.operations.performance.view",
+        "appendRouteContractKeys": [
+          "route.hcm.operations.performance-forms-scales.page",
+          "route.hcm.operations.performance-forms-scales.data"
+        ]
+      },
+      {
+        "contractKey": "hcm.configuration.workbench.view",
+        "appendRouteContractKeys": [
+          "route.hcm.configuration.settings-performance.page",
+          "route.hcm.configuration.settings-performance.data"
+        ]
+      }
+    ],
+    "routes": [
+      {
+        "routeContractKey": "route.hcm.operations.performance-forms-scales.page",
+        "routeKind": "PAGE",
+        "navigationContextId": "hcm.operations",
+        "uiRouteId": "hcm.operations.performance-forms-scales",
+        "uiRoutePattern": "/hr/operations/performance/forms-scales",
+        "gatewayPath": "/api/people/v1/hris/performance/workbench/forms-scales",
+        "ownerPath": "/v1/hris/performance/workbench/forms-scales",
+        "serviceKey": "people",
+        "method": "GET",
+        "profileKey": "full-management",
+        "capability": "hcm.operations.performance.view",
+        "predicatePolicyKeys": [
+          "predicate.hcm-domain-target-population.v1"
+        ],
+        "targetBindingKinds": [
+          "TARGET_POPULATION"
+        ],
+        "projectionPolicyKey": "per004.iaq-020.fields.v1",
+        "responseSchemaKey": "Per004FormsScalesProjectionV2"
+      },
+      {
+        "routeContractKey": "route.hcm.operations.performance-forms-scales.data",
+        "routeKind": "DATA",
+        "navigationContextId": "hcm.operations",
+        "uiRouteId": null,
+        "uiRoutePattern": null,
+        "gatewayPath": "/api/people/v1/hris/performance/workbench/forms-scales",
+        "ownerPath": "/v1/hris/performance/workbench/forms-scales",
+        "serviceKey": "people",
+        "method": "GET",
+        "profileKey": "full-management",
+        "capability": "hcm.operations.performance.view",
+        "predicatePolicyKeys": [
+          "predicate.hcm-domain-target-population.v1"
+        ],
+        "targetBindingKinds": [
+          "TARGET_POPULATION"
+        ],
+        "projectionPolicyKey": "per004.iaq-020.fields.v1",
+        "responseSchemaKey": "Per004FormsScalesProjectionV2"
+      },
+      {
+        "routeContractKey": "route.hcm.configuration.settings-performance.page",
+        "routeKind": "PAGE",
+        "navigationContextId": "hcm.management",
+        "uiRouteId": "hcm.management.settings-performance",
+        "uiRoutePattern": "/hr/settings/performance",
+        "gatewayPath": "/api/people/v1/hris/performance/workbench/settings-performance",
+        "ownerPath": "/v1/hris/performance/workbench/settings-performance",
+        "serviceKey": "people",
+        "method": "GET",
+        "profileKey": "configuration-workbench-reader",
+        "capability": "hcm.configuration.workbench.view",
+        "predicatePolicyKeys": [
+          "predicate.hcm-configuration-scope.v1"
+        ],
+        "targetBindingKinds": [
+          "CONFIG_SCOPE"
+        ],
+        "projectionPolicyKey": "per004.iaq-056.fields.v1",
+        "responseSchemaKey": "Per004SettingsPerformanceProjectionV2"
+      },
+      {
+        "routeContractKey": "route.hcm.configuration.settings-performance.data",
+        "routeKind": "DATA",
+        "navigationContextId": "hcm.management",
+        "uiRouteId": null,
+        "uiRoutePattern": null,
+        "gatewayPath": "/api/people/v1/hris/performance/workbench/settings-performance",
+        "ownerPath": "/v1/hris/performance/workbench/settings-performance",
+        "serviceKey": "people",
+        "method": "GET",
+        "profileKey": "configuration-workbench-reader",
+        "capability": "hcm.configuration.workbench.view",
+        "predicatePolicyKeys": [
+          "predicate.hcm-configuration-scope.v1"
+        ],
+        "targetBindingKinds": [
+          "CONFIG_SCOPE"
+        ],
+        "projectionPolicyKey": "per004.iaq-056.fields.v1",
+        "responseSchemaKey": "Per004SettingsPerformanceProjectionV2"
+      }
+    ],
+    "reusedActionRoutes": [
+      "route.hcm.configuration.configuration-version-create.action",
+      "route.hcm.configuration.configuration-version-validate.action",
+      "route.hcm.configuration.configuration-version-simulate.action",
+      "route.hcm.configuration.configuration-version-submit.action",
+      "route.hcm.configuration.configuration-version-approve.action",
+      "route.hcm.configuration.configuration-version-publish.action"
+    ],
+    "forbiddenRouteChanges": [
+      "Do not duplicate, clone or change ownership of the six shared Platform ACTION routes.",
+      "Do not add schedule, rollback or retire to PER-004.",
+      "Do not change any non-PER route, profile, predicate or request contract."
+    ]
+  },
+  "authV264": {
+    "migration": "V264__declare_hris_r7_batch04_per004_v55_authorization_seed.sql",
+    "bundleRelease": {
+      "bundleKey": "product-surfaces",
+      "version": 55,
+      "intendedBundleStatus": "DRAFT",
+      "automaticImportEnabled": false
+    },
+    "feature": {
+      "featureKey": "HRIS_PERFORMANCE_CONFIGURATION",
+      "policyVersion": 1,
+      "productKey": "hcm",
+      "appResourceKey": "APP.HCM",
+      "minimumBundleVersion": 55,
+      "baselineState": "OFF",
+      "ownerKey": "PER"
+    },
+    "ownedRouteContracts": [
+      "route.hcm.operations.performance-forms-scales.page",
+      "route.hcm.operations.performance-forms-scales.data",
+      "route.hcm.configuration.settings-performance.page",
+      "route.hcm.configuration.settings-performance.data"
+    ],
+    "sharedActionOwnership": "The six Platform ACTION routes retain their existing global route owner. They are not inserted into sys_product_feature_route_owners or sys_product_feature_route_bindings a second time.",
+    "featureDecisionContract": {
+      "provider": "dwp-auth-server",
+      "consumer": "dwp-platform-server",
+      "method": "POST",
+      "path": "/internal/auth/v1/hris-performance-feature-decisions:query",
+      "featureKey": "HRIS_PERFORMANCE_CONFIGURATION",
+      "decisionRoute": "route.hcm.configuration.settings-performance.data",
+      "bindingPurpose": "FEATURE_POLICY_LOOKUP_ONLY",
+      "requestBinding": [
+        "serverDerivedTenantId",
+        "subjectPrincipalPublicId",
+        "exactSharedActionRouteContractKey",
+        "configurationId",
+        "resolvedDomain",
+        "scopeDigest",
+        "commandAuthorizationRevision",
+        "correlationId"
+      ],
+      "requiredResponse": [
+        "tenantId",
+        "subjectPrincipalPublicId",
+        "featureKey",
+        "decisionRoute",
+        "exactSharedActionRouteContractKey",
+        "featureState",
+        "decision",
+        "featureDecisionRevision",
+        "commandAuthorizationRevision",
+        "evaluatedAt",
+        "revalidateAt"
+      ],
+      "requiredFeatureState": "ACTIVE",
+      "requiredDecision": "ALLOWED",
+      "authorizationRule": "Auth independently verifies the exact shared ACTION authority and applies the feature policy selected by the fixed decisionRoute. The guard never requires PAGE or DATA capability and never grants ACTION authority.",
+      "freshnessRule": "Evaluate every command attempt, including same-key replay; require exact tenant, subject, route and revision binding and an unexpired response. Missing, stale or unavailable evidence fails before owner calls, receipt replay or mutation.",
+      "nonPerBehavior": "UNCHANGED"
+    },
+    "activationRowsInserted": 0,
+    "tenantEnrollmentRowsInserted": 0,
+    "roleGrantRowsInserted": 0,
+    "broadAdminGrantRowsInserted": 0
+  },
+  "gatewaySuccessor": {
+    "newGatewayBindings": [
+      "GET /api/people/v1/hris/performance/workbench/forms-scales",
+      "GET /api/people/v1/hris/performance/workbench/settings-performance"
+    ],
+    "routeKinds": "Each path has one PAGE and one DATA authorization candidate but one exact downstream People call.",
+    "trustedContext": [
+      "strip every inbound X-DWP-* authority, tenant, scope, field-policy, route and purpose header",
+      "derive tenant and subject from the authenticated session",
+      "resolve app entitlement and the exact route contract",
+      "derive TARGET_POPULATION for IAQ-020 and CONFIG_SCOPE for IAQ-056",
+      "evaluate field decisions and emit one signed or trusted internal authority context",
+      "bind scope, decision revision, field-policy revision, route contract, purpose, locale, time zone and correlation ID"
+    ],
+    "fieldPolicies": {
+      "per004.iaq-020.fields.v1": [
+        "FORM_VERSION",
+        "RATING_SCALE",
+        "POLICY_STATUS"
+      ],
+      "per004.iaq-056.fields.v1": [
+        "POLICY_VERSION",
+        "PERFORMANCE_POLICY",
+        "EFFECTIVE_STATUS"
+      ]
+    },
+    "fieldDecisionProvider": {
+      "port": "Per004FieldDecisionPort",
+      "productionDefault": "UNBOUND_FAIL_CLOSED",
+      "requiredBinding": [
+        "tenantId",
+        "subjectPrincipalPublicId",
+        "routeContractKey",
+        "scopeDigest",
+        "decisionRevision",
+        "fieldPolicyKey",
+        "fieldPolicyRevision",
+        "purpose",
+        "locale",
+        "timeZone",
+        "correlationId"
+      ],
+      "decisionValues": [
+        "VIEW",
+        "MASK",
+        "OMIT"
+      ],
+      "exactGroupsRule": "Return one decision for each of the three groups in the exact route field policy, with no missing, duplicate or extra groups.",
+      "forwardingRule": "Gateway verifies the binding and emits one trusted internal authority context containing the canonical field decisions. Missing, stale or unavailable evidence produces zero downstream query calls.",
+      "actionRule": "Any MASK or OMIT decision for a field required by an IAQ-056 target or transition suppresses its action.",
+      "configurationScopeRule": "The trusted Auth RESOURCE_SET scope is canonicalized to CONFIG_SCOPE only for the two settings-performance route contracts.",
+      "providerBindingAuthorized": false
+    },
+    "inboundHeaderRule": {
+      "scope": "EXACT_TWO_PER004_QUERY_PATHS",
+      "rule": "Before internal authority synthesis, remove every browser-origin X-DWP authority, identity, tenant, scope, route, field-policy and purpose header. Reject duplicate or conflicting authority-bearing inputs before proxying. Preserve session-derived identity in server attributes and synthesize the closed trusted context once."
+    },
+    "failureRule": "Missing feature, entitlement, capability, predicate, scope, purpose or field decision fails before proxying and emits no owner call."
+  },
+  "platformV332": {
+    "migration": "V332__bind_hris_reference_configuration_owner_evidence.sql",
+    "scope": "Only domain PER and the three sealed PER-004 schema keys receive the typed-owner extension. Every non-PER row and request remains unchanged.",
+    "versionColumns": [
+      "owner_preparation_receipt_id",
+      "owner_finalization_receipt_id",
+      "owner_validation_receipt_id",
+      "owner_simulation_receipt_id"
+    ],
+    "ownerReceiptLedger": {
+      "table": "hris_reference_configuration_owner_receipts",
+      "kinds": [
+        "PREPARATION",
+        "FINALIZATION",
+        "VALIDATION",
+        "SIMULATION"
+      ],
+      "exactBinding": [
+        "tenant_id",
+        "configuration_id",
+        "configuration_version when allocated",
+        "domain",
+        "schema_key",
+        "schema_version",
+        "payload_reference",
+        "payload_digest",
+        "scope_digest",
+        "owner_service",
+        "owner_receipt_id",
+        "prior_owner_receipt_id where required",
+        "evidence_digest",
+        "occurred_at"
+      ],
+      "controls": [
+        "ENABLE and FORCE RLS",
+        "tenant-composite unique receipt identity",
+        "append-only immutable rows",
+        "closed kind and receipt-chain checks",
+        "no typed payload column",
+        "no cross-database FK"
+      ],
+      "additionalControls": [
+        "Owner receipt bindings are immutable after first exact assignment.",
+        "PREPARATION precedes FINALIZATION; VALIDATION requires exact FINALIZATION; SIMULATION requires exact VALIDATION.",
+        "Where version-local receipt columns reference ledger rows, tenant, configuration, kind, schema, payload and scope facts must match.",
+        "Closed history snapshots include all four owner receipt IDs and associated evidence digests.",
+        "No owner receipt or outbox table stores typed payload or ownerPayload."
+      ]
+    },
+    "ownerFinalizeOutbox": {
+      "table": "hris_reference_configuration_owner_outbox",
+      "eventType": "dwp.hris.configuration.owner-binding-finalize-requested.v1",
+      "payload": "closed reference, digest, schema, scope, configuration version and Platform create receipt facts only; no typed payload",
+      "delivery": "idempotent bounded retry and quarantine without rolling back an already committed DRAFT version; validation remains blocked until acknowledgement"
+    },
+    "finalizationAcknowledgement": {
+      "transaction": "Persist the exact immutable FINALIZATION receipt, bind its ID to the version, advance aggregateVersion by one through CAS, append the resulting version history and acknowledge outbox delivery atomically.",
+      "lifecycleState": "DRAFT_UNCHANGED",
+      "firstAcknowledgement": "Requires the exact PREPARATION receipt, Platform create receipt, tuple and current aggregateVersion.",
+      "sameAcknowledgementReplay": "Return the existing acknowledgement without another receipt, aggregateVersion increment or history row.",
+      "conflictRule": "A conflicting acknowledgement or receipt-chain mismatch produces zero version mutation.",
+      "historyRule": "Every owner evidence binding change has a distinct aggregateVersion history record containing owner receipt IDs and evidence digests, with no typed content.",
+      "validationRule": "Validation remains blocked until this exact committed acknowledgement is visible.",
+      "failureRule": "Retry or quarantine delivery metadata without rolling back the already committed DRAFT. Delivery quarantine never independently authorizes owner-artifact quarantine."
+    },
+    "workingVersionGuard": {
+      "filter": "domain='PER' AND schema_key IN the three sealed PER-004 keys AND lifecycle_state IN (DRAFT,VALIDATED,SIMULATED,PENDING_APPROVAL,APPROVED,SCHEDULED)",
+      "uniqueness": "tenant_id, configuration_id",
+      "nonPerBehavior": "UNCHANGED"
+    },
+    "historyRule": "Owner receipt IDs and evidence digests are included in append-only version history; typed content is never included.",
+    "migrationHighWaterBefore": "V331",
+    "candidateVersion": "V332"
+  },
+  "platformRuntimeSuccessor": {
+    "featureGuard": {
+      "featureKey": "HRIS_PERFORMANCE_CONFIGURATION",
+      "decisionRoute": "route.hcm.configuration.settings-performance.data",
+      "bindingPurpose": "FEATURE_POLICY_LOOKUP_ONLY",
+      "evidenceContractRef": "#/authV264/featureDecisionContract",
+      "rule": "Before every shared create, validate, simulate, submit, approve or publish operation whose resolved configuration domain is PER, Platform requires the canonical Auth tuple for the exact tenant, subject, shared ACTION route and revision: featureKey HRIS_PERFORMANCE_CONFIGURATION, featureState ACTIVE and decision ALLOWED. UNGATED, wrong feature, OFF, unenrolled, unavailable, expired or stale yields zero replay disclosure, owner calls and mutation. The fixed DATA decisionRoute selects the feature policy only and never requires query capability or grants ACTION authority.",
+      "directRouteBypass": "FORBIDDEN"
+    },
+    "ownerPort": [
+      "prepare",
+      "finalize",
+      "validate",
+      "simulate"
+    ],
+    "createUnion": {
+      "per004Variant": "domain PER and schemaKey in the exact sealed three-key allowlist require ownerPayload and forbid payload.reference/digest.",
+      "legacyNonPerVariant": "domain other than PER preserves the existing payload.reference/digest contract and forbids ownerPayload.",
+      "legacyOtherPerVariant": "domain PER and schemaKey outside the sealed three-key allowlist preserves the existing payload.reference/digest behavior and forbids ownerPayload; no typed-owner extension, owner receipt requirement or PER-004 working-version uniqueness applies.",
+      "perFeatureGuard": "Every resolved PER create, validate, simulate, submit, approve or publish still requires the canonical feature guard.",
+      "sealedSchemaKeys": [
+        "dwp.hris.performance.review-form.v1",
+        "dwp.hris.performance.rating-scale.v1",
+        "dwp.hris.performance.policy.v1"
+      ],
+      "mixedOrInvalidVariant": "REJECT",
+      "ownerPayloadLimitUtf8Bytes": 262144,
+      "typedContentPersistenceLoggingAuditOrErrorEcho": "FORBIDDEN",
+      "nonPerBehavior": "UNCHANGED"
+    },
+    "authoritativeCreateLookup": {
+      "owner": "dwp-platform-server",
+      "caller": "dwp-people-server",
+      "method": "POST",
+      "path": "/internal/hris-reference-configuration/v1/authoritative-create-lookups:query",
+      "domain": "PER_FIXED_SERVER_SIDE",
+      "identity": [
+        "tenantId",
+        "configurationId",
+        "createSubjectPrincipalPublicId",
+        "originatingAction",
+        "createIdempotencyKey",
+        "createRequestDigest",
+        "ownerPreparationReceiptId"
+      ],
+      "states": [
+        "BOUND",
+        "ABSENT_FINAL",
+        "UNKNOWN"
+      ],
+      "boundRule": "Return only the exact committed Platform version and create receipt for the supplied identity; conflicting identities fail closed.",
+      "absentFinalRule": "Require authoritative absence of both version and create receipt and a durable admission fence that prevents an in-flight or future create using that exact identity from committing.",
+      "unknownRule": "In-flight, unavailable, stale, unresolved or unfenced absence returns UNKNOWN.",
+      "quarantineRule": "Only ABSENT_FINAL with exact signed binding evidence permits owner preparation quarantine. UNKNOWN and timeout preserve retryable PREPARED.",
+      "productionBindingAuthorized": false
+    },
+    "transitionRules": [
+      "create reloads scope and configuration, prepares owner payload, verifies attestation and inserts under the PER-only working-version guard",
+      "validate requires exact finalization acknowledgement and owner validation receipt before DRAFT to VALIDATED",
+      "simulate requires the exact owner validation chain and owner simulation receipt before VALIDATED to SIMULATED",
+      "submit remains mandatory before approval",
+      "approve and publish preserve maker-checker, step-up, CAS, idempotency and clock checks",
+      "all mismatch, stale, unavailable, duplicate or quarantined owner facts fail closed"
+    ],
+    "actionProjection": "The settings projection emits at most one exact target-bound action after state, clock, field, permission and feature evaluation. IAQ-020 always emits none.",
+    "projectionIsolation": "PER-004 uses separate V2 target-bound action descriptors and state-aware selection. Existing non-PER workbench response fields, hrefTemplate behavior and lifecycle actions remain unchanged."
+  },
+  "trustedServiceContracts": {
+    "platformToPeople": [
+      "POST /internal/hris-performance/v1/configuration-artifacts:prepare",
+      "POST /internal/hris-performance/v1/configuration-artifacts/{artifactPublicId}:finalize",
+      "POST /internal/hris-performance/v1/configuration-artifacts/{artifactPublicId}/validation-receipts",
+      "POST /internal/hris-performance/v1/configuration-artifacts/{artifactPublicId}/simulation-receipts"
+    ],
+    "peopleToPlatform": [
+      "POST /internal/hris-reference-configuration/v1/owner-projections:query",
+      "POST /internal/hris-reference-configuration/v1/authoritative-create-lookups:query"
+    ],
+    "platformToAuth": [
+      "POST /internal/auth/v1/hris-performance-feature-decisions:query"
+    ],
+    "transport": [
+      "mTLS or equivalent workload identity",
+      "audience-pinned short-lived service JWT",
+      "exact caller service allowlist",
+      "no browser authorization or X-DWP trust headers",
+      "duplicate or conflicting security claims rejected",
+      "bounded timeout, no redirect, no downgrade and fail closed"
+    ],
+    "workloadProofProfile": {
+      "profile": "HRIS_REFERENCE_CONFIGURATION_WORKLOAD_V1",
+      "authentication": "MTLS_OR_REGISTERED_CLIENT_CREDENTIAL_IDENTITY",
+      "proof": "RS256_SHORT_LIVED_SERVICE_JWT",
+      "maximumLifetimeSeconds": 30,
+      "minimumRsaBits": 2048,
+      "requiredClaims": [
+        "iss",
+        "aud",
+        "sub",
+        "iat",
+        "nbf",
+        "exp",
+        "jti",
+        "requestNonce",
+        "bindingId",
+        "purpose",
+        "method",
+        "path",
+        "tenantId",
+        "requestBodySha256",
+        "authn"
+      ],
+      "bindingRule": "Exact allowlisted caller, endpoint-specific audience, method, canonical path, purpose, signed tenant and exact request-body digest; authenticated workload identity must match issuer and subject.",
+      "duplicateRule": "Reject duplicate JSON security claims, duplicate security headers and conflicting identities.",
+      "replayRule": "Durably reserve jti and requestNonce; both are distinct canonical UUIDs.",
+      "browserRule": "Reject browser Authorization, Cookie, Origin, Referer, end-user identity and X-DWP tenant/authority/scope/field/purpose headers. Permit only the closed workload security header set.",
+      "transportRule": "Bounded timeout, redirects disabled, no TLS downgrade, no trust-all client and no static gateway token fallback.",
+      "platformAdmissionRule": "Exact internal endpoints use a dedicated workload verifier. PlatformSecurityFilter bypass is permitted only after successful verifier admission stored in a server request attribute; no blanket internal-prefix exemption.",
+      "contractIsolation": "Use a new reference-configuration endpoint/proof contract; preserve approval bridge endpoints and proof semantics.",
+      "productionProviderBindingCount": 0
+    },
+    "endpointIdentityBindings": {
+      "ownerArtifactEndpoints": {
+        "caller": "dwp-platform-server",
+        "audience": "dwp-people-server"
+      },
+      "platformProjectionAndLookupEndpoints": {
+        "caller": "dwp-people-server",
+        "audience": "dwp-platform-server"
+      },
+      "canonicalFeatureDecisionEndpoint": {
+        "caller": "dwp-platform-server",
+        "audience": "dwp-auth-server"
+      }
+    },
+    "providerBinding": "The Platform client and contract may be centrally admitted, but the production PER provider remains unbound until module result admission."
+  },
+  "targetedVerification": {
+    "productAuthorization": [
+      "v54 to v55 append-only diff proves exactly four new routes and no new capability, predicate or action",
+      "all four routes have exact PAGE/DATA shape, People owner, capability, predicate, scope and projection bindings",
+      "the six shared ACTION routes are unchanged"
+    ],
+    "auth": [
+      "V264 clean migration and v55 seed checksum",
+      "feature baseline OFF, four query route owners only, zero activation and enrollment",
+      "shared ACTION route owner uniqueness preserved",
+      "command-only grants remain valid without PAGE or DATA query grants and the feature policy lookup never grants ACTION authority",
+      "feature OFF, wrong key, UNGATED, unavailable, expired or stale evidence prevents same-key replay disclosure, owner calls and mutation"
+    ],
+    "gateway": [
+      "exact route selection and downstream People path",
+      "spoofed or duplicate tenant, authority, scope, field and purpose headers rejected",
+      "OFF or unauthorized requests make zero downstream calls",
+      "unknown X-DWP authority suffixes and duplicate authority-bearing header occurrences fail before proxying",
+      "VIEW, MASK and OMIT are bound for every exact group and missing, stale or unavailable decisions make zero downstream calls"
+    ],
+    "platform": [
+      "V332 clean and upgrade migration, FORCE RLS, append-only ledger and exact history",
+      "PER-only working-version race admits one; same-key replay returns same receipt; non-PER parallel versions still pass",
+      "wrong domain/schema union, oversized payload and payload logging are rejected",
+      "prepare/finalize/validate/simulate mismatch or outage makes zero transition",
+      "validation before finalize acknowledgement is rejected",
+      "feature OFF, unenrolled, unavailable or stale makes zero owner calls and zero mutation",
+      "state-aware target-bound actions include submit and exclude cycle, schedule, rollback and retire",
+      "definite create absence requires an exact durable admission fence; in-flight, unfenced or unknown lookup never quarantines PREPARED",
+      "first finalization acknowledgement advances aggregateVersion and history exactly once while identical replay advances neither",
+      "legacy non-PER and other-PER reference requests preserve existing behavior and ownerPayload is rejected outside the exact three-key allowlist",
+      "workload claim, caller, audience, header, path, body-digest or replay violations fail before repository or provider use"
+    ],
+    "historicalMigrationTests": {
+      "rule": "Historical Auth feature migration tests pin Flyway to their own version when asserting historical clean-install totals. Preserve their existing expected counts.",
+      "pinnedTargets": {
+        "TenantFeatureActivationV259PostgresTest": "259",
+        "TenantFeatureActivationV261PostgresTest": "261",
+        "TenantFeatureActivationV262PostgresTest": "262",
+        "TenantFeatureActivationV263PostgresTest": "263"
+      },
+      "newV264Tests": {
+        "cleanInstallTarget": "264",
+        "upgradeFrom": "263",
+        "expectedPolicyCount": 10,
+        "expectedRouteOwnerCount": 41,
+        "expectedRouteBindingCount": 41,
+        "activationAndEnrollmentCount": 0
+      },
+      "postgresExecution": "Docker-backed PostgreSQL 16 tests must execute; disabledWithoutDocker skips are not migration verification.",
+      "repositoryWideSuiteRequired": false
+    },
+    "repositoryWideSuiteRequired": false
+  },
+  "activationBoundary": {
+    "featureKey": "HRIS_PERFORMANCE_CONFIGURATION",
+    "defaultEnabled": false,
+    "enrolledTenants": [],
+    "productionProviderBindingCount": 0,
+    "frontendRouteMounted": false,
+    "frontendMenuMounted": false,
+    "customerDataAuthorized": false,
+    "businessCompletionIncrement": 0
+  },
+  "authority": {
+    "centralAuthoritySealed": true,
+    "independentReviewRequired": true,
+    "boundedCentralImplementationMayProceedAfterReview": true,
+    "ownerPacketBeforeCentralIntegrationReceipt": false,
+    "moduleSourceAuthoringAuthorized": false,
+    "performanceV19ReservationAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "routeOrMenuMountAuthorized": false,
+    "productionProviderBindingAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextGate": "PIN_THE_IAQ_SUCCESSOR_HASH_AND_BYTES_IN_THIS_FILE_VALIDATE_BOTH_JSON_FILES_THEN_INDEPENDENTLY_REVIEW_AND_IMPLEMENT_ONLY_V55_V264_V332_GATEWAY_AND_TRUST_DELTA"
+}
