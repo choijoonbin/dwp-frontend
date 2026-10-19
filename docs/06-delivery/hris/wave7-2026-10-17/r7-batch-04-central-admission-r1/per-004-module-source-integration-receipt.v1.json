@@ -1,0 +1,148 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-per004-module-source-integration-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-04-PER004-MODULE-SOURCE-INTEGRATION-20261019-R1",
+  "recordedAt": "2026-10-19T20:20:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "EXACT_PER004_MODULE_HEADS_INTEGRATED_PUSHED_POST_MERGE_ACCEPTED_BLOB_IDENTICAL_V19_LEASE_CONSUMED_DEFAULT_OFF_ZERO_ENROLLMENT_UNBOUND_UNMOUNTED",
+  "sliceId": "BASE-TFR-PER-004",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_RECEIPT_ID_AND_SHA256"
+  },
+  "authority": {
+    "postMergeAcceptanceDecision": {
+      "path": "per-004-module-source-admission-decision.v1.json",
+      "sha256": "dddf87a8ddad53cf1721008bbb546cbb22cfb7f9971dceb51dfeb35a1fd0cb2b",
+      "bytes": 8075,
+      "carrierCommit": "01a4e0d09babfd12c730315ec540e76f9745790c",
+      "carrierTree": "9dd6d1d6eb5000ac7fb18bc4ea3abbf05e233213",
+      "decisionMode": "PREMERGE_INDEPENDENT_GO_RECORDED_AFTER_EXACT_INTEGRATION"
+    }
+  },
+  "integratedHeads": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "historyBase": "0ef034f1e57380fec256095122297a6d8bc87d37",
+      "sourceAndIntegratedHead": "e709c080661e1ffcdba5e1e89c28ea49557cf50d",
+      "sourceAndIntegratedTree": "7076a081410fcf10cd4c6d5ece9ed3a882de1af4",
+      "immediateParent": "451aed20c3c0a90bed2f877142cbcecd38a57263",
+      "strategy": "FAST_FORWARD_EXACT_SOURCE_HEAD",
+      "sourceIsAncestor": true,
+      "admittedPathCount": 20,
+      "admittedBlobMismatchCount": 0,
+      "pathOnlyManifestSha256": "62295945cd35fc19d29cb8e3882667ab4e85bd8ff30e56153c678fe6b7438764",
+      "nameStatusManifestSha256": "f3adf4fbf793c9de885d7cdec3de20f8532636e6983f8cf74b2abba64dee3fa0",
+      "mergeConflicts": 0,
+      "automaticConflictResolution": false,
+      "originExact": true,
+      "clean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "sourceTestHead": "cb07c4b922fd5376b3b19aa9d880976c2991aa2e",
+      "sourceTestTree": "acf070553a455eb2e3cb7c5c325b01c41d265965",
+      "evidenceHead": "89e2bfb91104b75b258e800fc500ceece0ab5a68",
+      "evidenceTree": "0842e5a614659dae21b1b8f7f39685c354b2afc2",
+      "mergeCommit": "2cf88073b21a4171428ccdcff85d66d10ceee2ea",
+      "mergeTree": "7f529f178d79b50e63f72e9aaddae6a466d121f7",
+      "parents": [
+        "f989ee7736a5ef82dd1c6fcfe0a266822cb44a19",
+        "89e2bfb91104b75b258e800fc500ceece0ab5a68"
+      ],
+      "strategy": "NO_FF_EXACT_EVIDENCE_HEAD",
+      "sourceIsAncestor": true,
+      "admittedPathCount": 36,
+      "admittedBlobMismatchCount": 0,
+      "pathOnlyManifestSha256": "86608d027cea25169f4a54d48b8472aa74c06f0a61aa7222a66395a69b22059f",
+      "nameStatusManifestSha256": "39a63c41ab3f603357e6f1637409b5f61d1ec85931aa1d13dd13e15244898b0f",
+      "mergeConflicts": 0,
+      "automaticConflictResolution": false,
+      "originExactAtMergePush": true,
+      "centralCarrierAfterAcceptanceDecision": {
+        "commit": "01a4e0d09babfd12c730315ec540e76f9745790c",
+        "tree": "9dd6d1d6eb5000ac7fb18bc4ea3abbf05e233213",
+        "originExact": true,
+        "cleanBeforeReceiptDraft": true
+      }
+    }
+  },
+  "postMergeVerification": {
+    "gitIdentityAndAncestry": "PASS",
+    "exactAdmittedBlobComparison": "56_OF_56_MATCH",
+    "backendIntegratedTreeEqualsExactSourceTree": true,
+    "frontendCentralReplacementTokenCarrierPreservedWithZeroCandidatePathConflict": true,
+    "independentPostMergeReview": "GO_P0_0_P1_0",
+    "moduleTestsRerun": false,
+    "repositoryWideSuiteRun": false,
+    "reason": "This receipt records exact Git identity, provenance and independently reviewed evidence only; passing module targets were not repeated."
+  },
+  "effectiveModuleResult": {
+    "acceptanceCriteria": {
+      "required": 12,
+      "passed": 12,
+      "failed": 0,
+      "skipped": 0
+    },
+    "reviewFindings": {
+      "normalizedUniqueP1": 6,
+      "closedP1": 6,
+      "remainingP0": 0,
+      "remainingP1": 0
+    },
+    "tests": {
+      "backendHistoricalPassed": 23,
+      "backendSuccessorTargetedPassed": 11,
+      "frontendHistoricalDeclaredCases": 13,
+      "frontendSuccessorTargetedPassed": 3,
+      "frontendSuccessorTargetedSkipped": 5,
+      "databaseSkipped": 0
+    },
+    "effectiveV19": {
+      "path": "dwp-people-server/src/main/resources/db/performance-migration/V19__per_base_tfr_per_004.sql",
+      "sha256": "b6ceb78d2446adabebd6a204b10552bd1cd3252df80f4172733e2df156550156",
+      "bytes": 13537,
+      "precedence": "ADMITTED_MODULE_SOURCE"
+    }
+  },
+  "migrationLeaseClosure": {
+    "leaseId": "HRIS-WAVE7-R7-BATCH-04-PERFORMANCE-V19-PER004-20261019-R1",
+    "stream": "PERFORMANCE",
+    "version": "V19",
+    "sliceId": "BASE-TFR-PER-004",
+    "state": "CONSUMED_CENTRALLY_INTEGRATED",
+    "activeLeaseCountAfterIntegration": 0,
+    "performanceMigrationHighWater": "V19"
+  },
+  "rolloutBoundary": {
+    "featureKey": "HRIS_PERFORMANCE_CONFIGURATION",
+    "runtimeDefault": "OFF",
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "tenantEnrollmentCount": 0,
+    "frontendMounted": false,
+    "productionProviderBindingAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionIncrement": 0
+  },
+  "authorityAfterReceipt": {
+    "moduleSourceIntegrated": true,
+    "correctedCentralContractAlreadyIntegrated": true,
+    "additionalCentralCodeGateRequired": false,
+    "centralIntegrationSuccessorMayBeIssued": true,
+    "sequencingExitMayBeIssuedAfterSuccessor": false,
+    "routeOrMenuMountAuthorized": false,
+    "featureOrTenantActivationAuthorized": false,
+    "fullSliceCompletionAuthorized": false
+  },
+  "nonClaims": [
+    "A pre-merge admission decision file existed before the exact module heads were integrated.",
+    "The performance configuration workbench is mounted in the shell, route table or menu.",
+    "A real production provider or trusted field-decision adapter is bound.",
+    "Any feature or tenant is activated or enrolled.",
+    "BASE-TFR-PER-004, Batch-04 or R7 is complete."
+  ],
+  "nextAction": "Issue one append-only central integration successor joining the corrected mapper-only central receipt with this exact module integration; then independently review PER-004 sequencing exit eligibility."
+}
