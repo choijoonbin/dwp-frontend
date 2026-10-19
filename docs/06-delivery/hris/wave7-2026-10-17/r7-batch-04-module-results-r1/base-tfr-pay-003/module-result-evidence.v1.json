@@ -1,0 +1,246 @@
+{
+  "schema": "dwp.hris.wave7.module-result-evidence.v1",
+  "evidenceId": "HRIS-WAVE7-R7-BATCH-04-BASE-TFR-PAY-003-MODULE-RESULT-R1",
+  "issuedAt": "2026-10-19T15:01:00+09:00",
+  "issuedBy": "HRIS-PAY",
+  "sliceId": "BASE-TFR-PAY-003",
+  "resultState": "PAY003_EXACT_MODULE_SOURCE_AND_V53_COMPLETE_BRANCHES_PUSHED_FOURTEEN_OF_FOURTEEN_PASS_CONTROL_REVIEW_PENDING_DEFAULT_OFF_ZERO_ENROLLMENT_ZERO_CREDIT",
+  "authority": {
+    "startToken": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-start-r1/tokens/base-tfr-pay-003.start-token.v1.json",
+      "tokenId": "HRIS-WAVE7-R7-BATCH-04-START-BASE-TFR-PAY-003-20261019-R1",
+      "sha256": "d0b9b3d87c5378c56de298e2a94cf067de4964cea091efa5b1cb0d6e5b948c77",
+      "bytes": 17272,
+      "executable": true
+    },
+    "centralIntegrationReceipt": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-central-admission-r1/pay-003-central-integration-receipt.v1.json",
+      "sha256": "c2fc23a4b090ea44d2a0733c67c7bdf61545cb07206680a6120a905199083cab",
+      "bytes": 10284
+    },
+    "ownerPacket": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-start-r1/owner-packets/base-tfr-pay-003.owner-packet.v1.json",
+      "sha256": "175901601a20c4a2fc690c812e3ced3ce1216198c07400b562262fd15cae7516",
+      "bytes": 29016,
+      "packetId": "HRIS-WAVE7-R7-BATCH-04-OWNER-BASE-TFR-PAY-003-20261019-R1"
+    },
+    "worktreeMaterializationReceipt": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-start-r1/worktree-materialization-receipts/base-tfr-pay-003.worktree-materialization-receipt.v1.json",
+      "sha256": "44a48f006ca9bc5d0affdeb911c8b816e90bf644c2552c4238eca7ccaaa7ddad",
+      "bytes": 5763,
+      "receiptId": "HRIS-WAVE7-R7-BATCH-04-PAY003-WORKTREE-MATERIALIZATION-20261019-R1"
+    },
+    "activeExclusiveMigrationLease": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-start-r1/migration-lease-pay003-v53-activation.v2.json",
+      "sha256": "0c257aaddeefa9c3d177a09d09a405d0ee6010c0e0669dbd32a225c133d2dbff",
+      "bytes": 8176,
+      "activationId": "HRIS-WAVE7-R7-BATCH-04-MIGRATION-LEASE-ACTIVATION-PAY003-20261019-R2",
+      "requiredState": "ACTIVE_EXCLUSIVE_PAYROLL_V53"
+    },
+    "semanticDispositionV1": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-start-r1/semantic-dispositions/base-tfr-pay-003.semantic-disposition.v1.json",
+      "sha256": "28ae1a0cb22920dfb77913a17ea4d4340572c4b2d115d6b8ac6a53c6202610b7",
+      "bytes": 25694
+    },
+    "semanticDispositionV2": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-start-r1/semantic-dispositions/base-tfr-pay-003.semantic-disposition-successor.v2.json",
+      "sha256": "b8ad25700089048eca54142596d4eef41831878ce3de037da2e336ca32a9a9e2",
+      "bytes": 6496,
+      "precedence": "CONTROLS_IAQ026_PACK_ACTION_IAQ048_EMPTY_ACTIONS_AND_PAY003_AC11_ACTION_EXPOSURE"
+    },
+    "centralAuthorizationV1": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-start-r1/pay-003-central-contract-authorization-successor.v1.json",
+      "sha256": "8ed70922d6a3d1e241adbad23ddb1a91106191706f762e15c53b32e9d7732ef9",
+      "bytes": 13818
+    },
+    "authorityCarrierNote": "The exact materialized frontend source starts at the pinned pre-token source base. Sealed authority was verified from the central carrier without copying, merging, rebasing or modifying that carrier."
+  },
+  "sourcePins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "codex/hris-wave7-r7-batch04-pay-003-backend-20261019-r1",
+      "base": "303a7e8598b1b45dc6d65411838647328504efc9",
+      "baseTree": "a2f347d366bb6a5d037e646063f9fa1ba515d357",
+      "commit": "07fd9dde6577fc2429d14f474f38cf16e9ab8379",
+      "tree": "75e4ded796af1d57df07c07171b5b6245ba69908",
+      "originExact": true,
+      "clean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "codex/hris-wave7-r7-batch04-pay-003-frontend-20261019-r1",
+      "base": "fefedd7f0f4ea8f3696e8a0ea385c89e5d6c13bd",
+      "baseTree": "5aa01bc2a3a822d157575cd12064e3fd2ab7a12f",
+      "sourceHeadBeforeEvidence": "401a9e90d5dc04e9f44f39d41cb9901a9e4c2b8b",
+      "sourceTree": "9c023391f4181762adce4c1ae6b2b42c55fe93ca",
+      "originExactBeforeEvidence": true,
+      "cleanBeforeEvidence": true
+    }
+  },
+  "implementation": {
+    "backend": [
+      "Exact admitted owner routes, trusted request context, singleton legal-entity/pay-group scope resolution and closed problems with correlation.",
+      "IAQ-026 v2 exact pack-action projection and IAQ-048 v1 immutable worker-result projection with typed missing-tax PARTIAL state and no action.",
+      "PEP-PAY-028 exact four-field activation, strong CAS, HIGH step-up, SoD, evidence/provider gates, subject/action idempotency and durable original receipt replay.",
+      "Append-only V53 full lifecycle, atomic activation/receipt/audit outbox closure and typed V50 social-insurance lineage publisher.",
+      "Runtime and publisher privileges remain split; immutable sources need no runtime UPDATE privilege."
+    ],
+    "frontend": [
+      "Separate unmounted settings and operations workbenches with typed closed query/projection/command validation.",
+      "Exact resolved pack action, immutable review, command binding, double-submit fencing, step-up progress and exact unknown-outcome retry.",
+      "Accessible loading/empty/complete/partial/unavailable/forbidden/retry states and responsive split/stack layout.",
+      "Default-OFF empty enrollment and zero owner calls for hidden or unenrolled surfaces."
+    ]
+  },
+  "verification": {
+    "backend": {
+      "initialTarget": "./gradlew :dwp-payroll-server:test --tests 'com.dwp.services.payroll.statutory.pay003.*'",
+      "initial": {
+        "total": 24,
+        "passed": 19,
+        "failed": 5,
+        "skipped": 0
+      },
+      "failureRecovery": "Only the exact five failed methods were rerun (4 pass, 1 fixture mismatch), then only the remaining failed historical-read method passed.",
+      "changedOrNeverRunTargets": [
+        {
+          "methods": [
+            "Pay003ContractTest.canonicalHashesIgnoreMapAndProviderSourceOrdering",
+            "Pay003ContractTest.activationBodyIsExactlyFourRequiredFieldsEvenWithLenientMapper",
+            "Pay003PostgresContractTest.fullLifecycleCasAndDeferredClosureRejectIllegalAndCrossWiredRows",
+            "Pay003ServiceTest.iaq026ProjectsExactRevisionAndOneFrozenDecisionSet"
+          ],
+          "passed": 4,
+          "failed": 0,
+          "skipped": 0
+        },
+        {
+          "methods": [
+            "Pay003PostgresContractTest.runtimeCommandRollbackReplayAndAllFiveTenantPolicies"
+          ],
+          "passed": 1,
+          "failed": 0,
+          "skipped": 0
+        },
+        {
+          "methods": [
+            "Pay003ContractTest.authorityNegativeMatrixRejectsCallerClaimsBeforeController",
+            "Pay003ServiceTest.signatureApprovalStaleCasAndCrossScopeNegativesHaveNoEffects"
+          ],
+          "passed": 2,
+          "failed": 0,
+          "skipped": 0
+        }
+      ],
+      "effectiveUniqueTests": 27,
+      "effectivePassed": 27,
+      "effectiveFailed": 0,
+      "databaseSkipped": 0,
+      "compileJavaAndCompileTestJava": "PASS",
+      "gitDiffCheck": "PASS",
+      "fullTargetGroupRerun": false,
+      "repositoryWideSuiteRun": false
+    },
+    "frontend": {
+      "target": "apps/dwp/src/features/hris/payroll/__tests__/g3-slices/base-tfr-pay-003.slice.test.tsx",
+      "environmentRecovery": "The prescribed Yarn command stopped before discovery because this isolated worktree has no Yarn node_modules state file. Vitest 4.1.10 and dependencies from the already-installed main checkout were resolved in memory; no install/lockfile/source-boundary changes.",
+      "initialLoadedRun": {
+        "total": 12,
+        "passed": 10,
+        "failed": 2,
+        "reason": "Two assertions used toBeVisible without jest-dom."
+      },
+      "smallestFailureRerun": {
+        "passed": 2,
+        "failed": 0,
+        "intentionallyFiltered": 10
+      },
+      "finalChangedNamedCases": {
+        "names": [
+          "enforces canonical identifiers, PostedMoney NUMERIC(19,4), and positive receipt revisions",
+          "validates closed queries, stable tiebreaks, bounded filters, cursor, locale, and time zone",
+          "serializes the accepted nested query wire and replays an opaque next cursor without authority fields",
+          "renders responsive settings and operations workbenches with action only on safe IAQ-026",
+          "fails closed before I/O on body, context, revision, and receipt binding mismatches"
+        ],
+        "passed": 5,
+        "failed": 0,
+        "intentionallyFiltered": 7
+      },
+      "effectiveUniqueTests": 12,
+      "effectivePassed": 12,
+      "effectiveFailed": 0,
+      "changedRootLint": {
+        "files": 8,
+        "errors": 0,
+        "warnings": 0
+      },
+      "changedRootTypecheck": {
+        "roots": 8,
+        "changedDiagnostics": 0,
+        "dependencyDiagnostics": 0,
+        "method": "TypeScript compiler host resolves the already-installed runtime and declaration files virtually; no dependency installation."
+      },
+      "sourceSize": {
+        "changedFilesBelow1000": true,
+        "maxChangedLines": 999,
+        "carriedRepositoryRatchet": "The one source-size ratchet run reported five unrelated pre-existing violations; only PAY-003 overflow was corrected and bounded counts pass."
+      },
+      "responsiveEvidence": "jsdom keyboard/focus and layout-contract assertions at 1440/1280/390/320 and 200%-zoom equivalent. Browser route execution is not claimed because the feature remains unmounted.",
+      "gitDiffCheck": "PASS",
+      "repositoryWideSuiteRun": false
+    },
+    "review": {
+      "knownFindingsResolved": [
+        "receipt population_scope_digest schema/insert/replay",
+        "table-specific deferred NEW-field access",
+        "non-final transactional service and scope resolver",
+        "distinct scope and authorization decision revisions",
+        "closed body under lenient Jackson configuration",
+        "exact immutable IAQ request filters",
+        "positive response revisions without fabrication",
+        "runtime-role persistence without UPDATE grants"
+      ],
+      "finalMethod": "Scoped primary-agent source review and exact affected/never-run verification after existing agents hit model capacity.",
+      "independentFinalGoClaimed": false
+    }
+  },
+  "rollout": {
+    "featureKey": "HRIS_PAYROLL_STATUTORY_INSURANCE",
+    "defaultEnabled": false,
+    "enrolledTenants": [],
+    "frontendMounted": false,
+    "ownerCallsWhenOff": 0,
+    "realProductionProviderBound": false
+  },
+  "subordinateEvidence": [
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-results-r1/base-tfr-pay-003/acceptance-results.v1.json",
+      "sha256": "793325f459cf5f2beee491e83ded5d3d653d04d4fcd69d056c1d3a0867f46aed",
+      "bytes": 10835
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-results-r1/base-tfr-pay-003/changed-path-and-no-recount.v1.json",
+      "sha256": "5543458cd8a8cca1d6d6d1d5f99b077c2c47cace9db3c0a8c2b6bc87161f9b2e",
+      "bytes": 6887
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-results-r1/base-tfr-pay-003/payroll-v53-and-postgres-evidence.v1.json",
+      "sha256": "9efecf7e5d28666aa17d0dfb0dad7559819a8edf0e3176cb127efaaed0bdffb4",
+      "bytes": 3719
+    }
+  ],
+  "decision": "READY_FOR_CONTROL_INTEGRATION",
+  "residuals": [
+    "Central control must review/admit these exact module source and evidence commits.",
+    "Feature enablement, tenant enrollment, shell/route/menu mounting, real production-provider admission and production release require separate authority."
+  ],
+  "nonClaims": [
+    "Feature remains default OFF with zero enrolled tenants and no customer data.",
+    "Settings and operations components remain unmounted; no shell, route, menu or i18n integration was performed.",
+    "Signature, statutory-approval, country-rule, projection-decision and activation-decision production providers remain fail closed and unbound.",
+    "No dwp-dev merge, central module admission, production activation, release or full-slice business-completion claim is made.",
+    "Existing PEP-PAY-012, PEP-PAY-014, PayrollCalculated.v1 and PAY-005 ownership are reused or preserved without new completion credit."
+  ],
+  "nextAction": "Push this exact evidence commit and verify both origin heads and clean worktrees; hand off READY_FOR_CONTROL_INTEGRATION without dwp-dev merge."
+}
