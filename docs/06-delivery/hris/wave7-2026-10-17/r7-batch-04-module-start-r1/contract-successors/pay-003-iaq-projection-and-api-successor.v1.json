@@ -1,0 +1,153 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-pay003-iaq-projection-and-api-successor.v1",
+  "successorId": "HRIS-WAVE7-R7-BATCH-04-PAY003-IAQ-CONTRACT-SUCCESSOR-20261019-R1",
+  "recordedAt": "2026-10-19T14:00:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ID_AND_SHA256"
+  },
+  "state": "SEALED_PAY003_IAQ026_EXACT_PACK_ACTION_AND_IAQ048_EMPTY_ACTION_OVERLAY",
+  "sliceId": "BASE-TFR-PAY-003",
+  "successorAuthority": {
+    "semanticV1": {
+      "path": "../semantic-dispositions/base-tfr-pay-003.semantic-disposition.v1.json",
+      "sha256": "28ae1a0cb22920dfb77913a17ea4d4340572c4b2d115d6b8ac6a53c6202610b7",
+      "bytes": 25694
+    },
+    "semanticV2": {
+      "path": "../semantic-dispositions/base-tfr-pay-003.semantic-disposition-successor.v2.json",
+      "sha256": "b8ad25700089048eca54142596d4eef41831878ce3de037da2e336ca32a9a9e2",
+      "bytes": 6496,
+      "precedence": "CONTROLS_ALL_ACTION_TARGET_AND_ACTION_EXPOSURE_TERMS"
+    }
+  },
+  "historicalInputs": {
+    "apiRegister": "../../../recovery/exact-supplements/2026-10-06/accepted-successors/hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-api-contract-register.csv",
+    "projectionSchema": "../../../recovery/exact-supplements/2026-10-06/hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-projection-schemas.v1.json",
+    "mutationAuthorized": false,
+    "overlayRule": "This file is the only PAY-003 action overlay. All historical fields not explicitly superseded remain immutable."
+  },
+  "apiRegisterSuccessor": {
+    "IAQ-026": {
+      "method": "GET",
+      "browserPath": "/api/payroll/v1/workbench/configuration/statutory",
+      "ownerPath": "/v1/workbench/configuration/statutory",
+      "capability": "hcm.configuration.workbench.view",
+      "itemPublicId": "canonical lowercase UUID packId",
+      "actionKeys": [
+        "hris.action.pay.country.pack.activate"
+      ],
+      "actionProvenance": [
+        "PEP-PAY-028"
+      ]
+    },
+    "IAQ-048": {
+      "method": "GET",
+      "browserPath": "/api/payroll/v1/workbench/pay-tax-social-insurance",
+      "ownerPath": "/v1/workbench/pay-tax-social-insurance",
+      "capability": "hcm.operations.payroll-support.view",
+      "itemPublicId": "existing immutable workerResultId",
+      "pay003ActionKeys": [],
+      "forbiddenPay003ActionKeys": [
+        "hris.action.pay.country.pack.activate"
+      ]
+    }
+  },
+  "projectionSchemaSuccessor": {
+    "IAQ-026": {
+      "responseItemAvailableActions": {
+        "type": "array",
+        "maxItems": 1,
+        "uniqueItems": true,
+        "closed": true,
+        "allowedItem": {
+          "additionalProperties": false,
+          "required": [
+            "actionKey",
+            "method",
+            "targetResourceType",
+            "targetResourcePublicId",
+            "resolvedHref",
+            "idempotencyPolicy",
+            "stepUpPolicy"
+          ],
+          "properties": {
+            "actionKey": {
+              "const": "hris.action.pay.country.pack.activate"
+            },
+            "method": {
+              "const": "POST"
+            },
+            "targetResourceType": {
+              "const": "COUNTRY_PACK"
+            },
+            "targetResourcePublicId": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            },
+            "resolvedHref": {
+              "type": "string",
+              "pattern": "^/api/payroll/v1/country-packs/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/activate$"
+            },
+            "idempotencyPolicy": {
+              "const": "REQUIRED_IDEMPOTENCY_KEY"
+            },
+            "stepUpPolicy": {
+              "const": "OWNER_PEP_RISK_POLICY_DECISION_REQUIRED"
+            }
+          }
+        }
+      },
+      "crossFieldEqualities": [
+        "itemPublicId equals targetResourcePublicId byte-for-byte",
+        "resolvedHref equals '/api/payroll/v1/country-packs/' plus itemPublicId plus '/activate'",
+        "resolvedHref contains itemPublicId exactly once and has no query or fragment"
+      ],
+      "exposurePreconditions": [
+        "COUNTRY_PACK_METADATA decision is VIEW",
+        "STATUTORY_RULE decision is VIEW",
+        "ACTIVATION_STATUS decision is VIEW",
+        "lifecycle state is APPROVED or SUSPENDED",
+        "one current nonnegative activation revision is present for strong If-Match",
+        "preliminary PEP-PAY-028 allows the exact owner-resolved population"
+      ],
+      "otherwise": "availableActions is an empty array"
+    },
+    "IAQ-048": {
+      "pay003ResponseItemAvailableActions": {
+        "type": "array",
+        "maxItems": 0,
+        "items": false,
+        "const": []
+      },
+      "itemIdentityPreserved": "workerResultId",
+      "taxOwnerBoundary": "PAY-005 action and field ownership remains untouched; PAY-003 emits no action on this result plane."
+    }
+  },
+  "negativeRules": [
+    "workerResultId can never be used as packId",
+    "POLICY_VERSION.policyKey can never be parsed, substituted or compared as packId",
+    "masked fields, title, status, deep link, hidden UI state, query input and caller headers can never supply packId",
+    "a cross-tenant or owner-unresolved identifier can never produce an action",
+    "the activation projection is presentation evidence only; the POST owner reloads and reauthorizes packId"
+  ],
+  "targetedContractTests": [
+    "IAQ-026 accepts zero actions and one exact resolved COUNTRY_PACK action only",
+    "IAQ-026 rejects href templates, query strings, fragments, noncanonical UUIDs, mismatched targetResourcePublicId and repeated identifiers",
+    "IAQ-026 proves targetResourcePublicId=itemPublicId and resolvedHref uses that same UUID exactly once",
+    "IAQ-048 rejects every PAY-003 available action and preserves workerResultId",
+    "negative fixtures prove policyKey, masked values, workerResultId and caller input never become packId"
+  ],
+  "authority": {
+    "contractOverlaySealed": true,
+    "boundedCentralProductAuthorizationAndGatewayImplementationMayProceed": true,
+    "ownerPacketBeforeCentralAdmission": false,
+    "moduleSourceAuthoringAuthorized": false,
+    "historicalRegisterOrSchemaMutationAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextGate": "SEAL_AND_REVIEW_PAY003_CENTRAL_CONTRACT_AUTHORIZATION_SUCCESSOR_THEN_IMPLEMENT_V54_V263_GATEWAY_SHARED_SECURITY_AND_ADMIT_IT"
+}

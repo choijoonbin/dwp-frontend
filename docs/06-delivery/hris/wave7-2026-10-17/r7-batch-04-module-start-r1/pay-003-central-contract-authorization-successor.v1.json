@@ -1,0 +1,311 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-pay003-central-contract-authorization-successor.v1",
+  "successorId": "HRIS-WAVE7-R7-BATCH-04-PAY003-CENTRAL-CONTRACT-AUTHORIZATION-20261019-R1",
+  "recordedAt": "2026-10-19T14:01:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ID_AND_SHA256"
+  },
+  "state": "SEALED_EXACT_PAY003_BOUNDED_CENTRAL_V54_V263_GATEWAY_SHARED_SECURITY_AUTHORITY",
+  "sliceId": "BASE-TFR-PAY-003",
+  "authorityBasis": {
+    "semanticV1": {
+      "path": "semantic-dispositions/base-tfr-pay-003.semantic-disposition.v1.json",
+      "sha256": "28ae1a0cb22920dfb77913a17ea4d4340572c4b2d115d6b8ac6a53c6202610b7",
+      "bytes": 25694
+    },
+    "semanticV2": {
+      "path": "semantic-dispositions/base-tfr-pay-003.semantic-disposition-successor.v2.json",
+      "sha256": "b8ad25700089048eca54142596d4eef41831878ce3de037da2e336ca32a9a9e2",
+      "bytes": 6496,
+      "precedence": "CONTROLS_ACTION_TARGET_AND_ACTION_EXPOSURE"
+    },
+    "iaqContractSuccessor": {
+      "path": "contract-successors/pay-003-iaq-projection-and-api-successor.v1.json",
+      "sha256": "40827c435fdf4117c91a2733f76a673ada45d09fb72680a2198c28d073ecd992",
+      "bytes": 6598
+    },
+    "precedingLaneExit": {
+      "path": "../r7-batch-04-central-admission-r1/hrm-011-sequencing-exit-receipt.v1.json",
+      "sha256": "1271581067af67de5a71b53c89ef1e4170756d61010e9b2b01c1167aa07fd994",
+      "bytes": 7353,
+      "requiredNextLane": "BASE-TFR-PAY-003"
+    }
+  },
+  "pinnedRepositories": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "21a4630a97b205b95ab9c59544afb92e2d49a242",
+      "tree": "a4913e683909c04f96c896c25ea464e10a3e69f0",
+      "originExact": true,
+      "clean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "9bf3d86bf4b975231eb784b918206c165a8f56c5",
+      "tree": "b98bb8c762308f5a01134637aa0a187059898494",
+      "originExactBeforeThisSuccessor": true,
+      "cleanBeforeThisSuccessor": true
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "originExact": true,
+      "readOnly": true
+    }
+  },
+  "productAuthorizationV54": {
+    "predecessor": "v53",
+    "candidate": "v54",
+    "appendOnlyCounts": {
+      "capabilities": 270,
+      "accessPolicies": 24,
+      "entitlementExpressions": 17,
+      "predicatePolicies": 82,
+      "routes": 1100,
+      "PAGE": 154,
+      "DATA": 334,
+      "ACTION": 612
+    },
+    "newCapability": {
+      "contractKey": "hcm.operations.statutory.execute",
+      "resolvedCapabilityCode": "ACTION.HRIS_STATUTORY_FILING:EXECUTE",
+      "resourceKey": "ACTION.HRIS_STATUTORY_FILING",
+      "action": "EXECUTE",
+      "authorityMode": "PERMISSION_AND_RELATIONSHIP",
+      "scopeResolver": "PAYROLL_LEGAL_ENTITY_GROUP_SCOPE",
+      "riskTier": "HIGH",
+      "activationPolicy": "STEPUP-MGMT-HIGH-V1",
+      "responsibilityRequirement": "REQUIRED",
+      "requiredResponsibilityCode": "HRIS_DUTY_STATUTORY_OPERATOR",
+      "sodPolicyId": "PACK_INSTALLER_NE_STATUTORY_APPROVER"
+    },
+    "newPredicate": {
+      "predicatePolicyKey": "predicate.hcm-payroll-country-pack-authority.v1",
+      "inputEvidenceSchemaKey": "HcmPayrollCountryPackAuthorityEvidenceV1",
+      "ownerServiceKey": "payroll",
+      "targetBindingKinds": [
+        "OBJECT",
+        "TARGET_POPULATION"
+      ],
+      "parameterSchemaKey": "predicate.hcm-payroll-country-pack-authority.v1.parameters.v1",
+      "parameterSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {}
+      },
+      "routeContractKeys": [
+        "route.hcm.operations.country-pack-activate.action"
+      ]
+    },
+    "routes": [
+      {
+        "routeContractKey": "route.hcm.configuration.statutory.page",
+        "kind": "PAGE",
+        "method": "GET",
+        "browserPath": "/api/payroll/v1/workbench/configuration/statutory",
+        "ownerPath": "/v1/workbench/configuration/statutory",
+        "uiRoutePattern": "/hr/settings/statutory",
+        "capability": "hcm.configuration.workbench.view",
+        "profileKey": "configuration-workbench-reader",
+        "targetBindingKinds": [
+          "CONFIG_SCOPE"
+        ],
+        "predicatePolicyKeys": [
+          "predicate.hcm-payroll-configuration-authority.v1"
+        ],
+        "projectionPolicyKey": "pay003.iaq-026.fields.v1",
+        "responseSchemaKey": "Pay003StatutoryConfigurationProjectionV2"
+      },
+      {
+        "routeContractKey": "route.hcm.configuration.statutory.data",
+        "kind": "DATA",
+        "method": "GET",
+        "browserPath": "/api/payroll/v1/workbench/configuration/statutory",
+        "ownerPath": "/v1/workbench/configuration/statutory",
+        "capability": "hcm.configuration.workbench.view",
+        "profileKey": "configuration-workbench-reader",
+        "targetBindingKinds": [
+          "CONFIG_SCOPE"
+        ],
+        "predicatePolicyKeys": [
+          "predicate.hcm-payroll-configuration-authority.v1"
+        ],
+        "projectionPolicyKey": "pay003.iaq-026.fields.v1",
+        "responseSchemaKey": "Pay003StatutoryConfigurationProjectionV2"
+      },
+      {
+        "routeContractKey": "route.hcm.operations.pay-tax-social-insurance.page",
+        "kind": "PAGE",
+        "method": "GET",
+        "browserPath": "/api/payroll/v1/workbench/pay-tax-social-insurance",
+        "ownerPath": "/v1/workbench/pay-tax-social-insurance",
+        "uiRoutePattern": "/hr/operations/payroll/tax-social-insurance",
+        "capability": "hcm.operations.payroll-support.view",
+        "profileKey": "payroll-support-viewer",
+        "targetBindingKinds": [
+          "TARGET_POPULATION"
+        ],
+        "predicatePolicyKeys": [
+          "predicate.hcm-payroll-population-authority.v1"
+        ],
+        "projectionPolicyKey": "pay003.iaq-048.fields.v1",
+        "responseSchemaKey": "Pay003TaxSocialInsuranceProjectionV1"
+      },
+      {
+        "routeContractKey": "route.hcm.operations.pay-tax-social-insurance.data",
+        "kind": "DATA",
+        "method": "GET",
+        "browserPath": "/api/payroll/v1/workbench/pay-tax-social-insurance",
+        "ownerPath": "/v1/workbench/pay-tax-social-insurance",
+        "capability": "hcm.operations.payroll-support.view",
+        "profileKey": "payroll-support-viewer",
+        "targetBindingKinds": [
+          "TARGET_POPULATION"
+        ],
+        "predicatePolicyKeys": [
+          "predicate.hcm-payroll-population-authority.v1"
+        ],
+        "projectionPolicyKey": "pay003.iaq-048.fields.v1",
+        "responseSchemaKey": "Pay003TaxSocialInsuranceProjectionV1"
+      },
+      {
+        "routeContractKey": "route.hcm.operations.country-pack-activate.action",
+        "kind": "ACTION",
+        "method": "POST",
+        "browserPath": "/api/payroll/v1/country-packs/{packId}/activate",
+        "ownerPath": "/v1/country-packs/{packId}/activate",
+        "capability": "hcm.operations.statutory.execute",
+        "profileKey": "statutory-operator",
+        "targetBindingKinds": [
+          "OBJECT",
+          "TARGET_POPULATION"
+        ],
+        "predicatePolicyKeys": [
+          "predicate.hcm-payroll-country-pack-authority.v1"
+        ],
+        "stepUpCommandBinding": {
+          "targetType": "COUNTRY_PACK",
+          "targetIdPathParameter": "packId",
+          "expectedObjectVersionSource": "COMMAND_HEADER",
+          "expectedObjectVersionName": "X-DWP-Expected-Object-Version",
+          "ownerServiceKey": "payroll",
+          "audience": "dwp-payroll-server"
+        }
+      }
+    ],
+    "payrollProjectionExpected": {
+      "routes": 39,
+      "bindings": 39,
+      "routeKinds": {
+        "ACTION": 22,
+        "DATA": 13,
+        "PAGE": 4
+      },
+      "capabilities": 17,
+      "accessPolicies": 0,
+      "entitlementExpressions": 0,
+      "predicatePolicies": 9
+    }
+  },
+  "authV263": {
+    "exactPath": "dwp-auth-server/src/main/resources/db/migration/V263__declare_hris_r7_batch04_pay003_v54_authorization_seed.sql",
+    "featureKey": "HRIS_PAYROLL_STATUTORY_INSURANCE",
+    "ownerModule": "PAY",
+    "minimumBundleVersion": 54,
+    "defaultState": "OFF",
+    "tenantEnrollmentCount": 0,
+    "mayCreate": [
+      "ACTION.HRIS_STATUTORY_FILING resource and EXECUTE permission mapping",
+      "HRIS_DUTY_STATUTORY_OPERATOR responsibility and exact resource-set grant",
+      "HRIS_STATUTORY_OPERATOR preset/catalog capability",
+      "the v54 release and exactly five feature route bindings"
+    ],
+    "mustNotCreate": [
+      "feature activation change",
+      "tenant enrollment change",
+      "tenant assignment",
+      "broad role grant",
+      "static fake actor conflict to replace owner-enforced installer-versus-approver SoD"
+    ]
+  },
+  "gatewayBoundary": {
+    "featureGovernedRoutes": "exactly the five v54 PAY-003 routes",
+    "purposeByPlane": {
+      "IAQ-026": "PAYROLL_CONFIGURATION",
+      "IAQ-048": "PAYROLL_OPERATIONS",
+      "PEP-PAY-028": "STATUTORY_CONFIGURATION"
+    },
+    "callerPurpose": "For the action only, absent or one exact STATUTORY_CONFIGURATION is accepted; all caller purpose and authority headers are stripped before trusted values are emitted.",
+    "population": "IAQ-026 canonicalizes the existing configuration scope to CONFIG_SCOPE. IAQ-048 and the action require trusted payroll target-population evidence. No new caller or trusted legal-entity/pay-group header is invented.",
+    "ownerResolution": "Payroll loads packId under RLS, resolves the server-owned context scope to exactly one LEGAL_ENTITY and one PAY_GROUP, and compares it with the current authorization decision before disclosure or mutation.",
+    "actionTarget": "The route must be state-changing, HIGH step-up and command-bound to canonical packId from the path. X-DWP-Expected-Object-Version is server-bound decision evidence; the owner requires it equal one strong quoted canonical If-Match revision.",
+    "fieldPolicies": {
+      "IAQ-026": "pay003.iaq-026.fields.v1",
+      "IAQ-048": "pay003.iaq-048.fields.v1"
+    }
+  },
+  "sharedSecurityPrerequisites": {
+    "peopleEligibility": "PAYROLL_LEGAL_ENTITY_GROUP_SCOPE canonicalizes to the existing PAY_TARGET_POPULATION material; no second population authority is created.",
+    "payrollStepUpVerifier": "The existing PayrollStepUpVerifier bean condition includes HRIS_PAYROLL_STATUTORY_INSURANCE; no duplicate verifier is created.",
+    "dynamicSoD": "PACK_INSTALLER_NE_STATUTORY_APPROVER descriptor is exact and the Payroll owner evaluates the recorded installer against the approved statutory approver before activation."
+  },
+  "exactWritableBoundary": {
+    "backend": [
+      "contracts/product-authorization/product-surfaces-v1.yaml",
+      "contracts/product-authorization/product-surfaces-v1.bundle-v54.json",
+      "contracts/product-authorization/product-surfaces-v1.json",
+      "contracts/product-authorization/product-surfaces-v1.index.json",
+      "generated v54 Auth and HCM People Time Platform Payroll PEP artifacts",
+      "scripts/generate-product-authorization-contracts.py",
+      "scripts/tests/test_product_authorization_v54.py",
+      "bounded dwp-auth-server v54/V263 policy, migration and tests",
+      "bounded dwp-gateway PAY-003 route enforcement and tests",
+      "bounded People payroll-population eligibility seam and test",
+      "PayrollStepUpVerifier conditional activation and its bounded test"
+    ],
+    "frontend": [
+      "this append-only central successor and its review/admission evidence only"
+    ],
+    "outsideBoundaryAction": "STOP_AND_ISSUE_AN_APPEND_ONLY_SUCCESSOR_BEFORE_EDITING"
+  },
+  "targetedVerification": {
+    "policy": "Run each bounded target group once. After a failure, rerun only the smallest affected test class or named case. Never repeat already-passing targets and never run a repository-wide suite for a local correction.",
+    "groups": [
+      "product authorization v54 generator and exact v54 contract test",
+      "Auth v54 authority/step-up/duty/SoD tests",
+      "Auth V263 contract and fresh/V262-to-V263 PostgreSQL tests",
+      "Gateway V263 route parity, generated catalog and PAY-003 filter cases",
+      "People payroll legal-entity/pay-group eligibility adapter test",
+      "Payroll shared step-up verifier conditional-context test"
+    ],
+    "fullSuiteAuthorized": false
+  },
+  "withheld": [
+    "module owner source, test and Payroll V53 authoring until central admission, owner packet, active exclusive lease, fresh worktrees and executable token",
+    "frontend shell route, menu, navigation policy, i18n and shared UI integration until reviewed module results",
+    "feature enablement and tenant enrollment",
+    "real signing keys, certified packs, statutory approval source or country-rule provider",
+    "customer data, production release and full business-completion claim"
+  ],
+  "authority": {
+    "centralSuccessorSealed": true,
+    "boundedCentralBackendImplementationAuthorized": true,
+    "targetedVerificationAuthorized": true,
+    "centralBackendCommitAndPushAuthorizedAfterReview": true,
+    "centralIntegrationReceiptMayBeIssuedAfterExactAdmission": true,
+    "ownerPacketBeforeCentralAdmission": false,
+    "moduleSourceAuthoringAuthorized": false,
+    "payrollV53LeaseActivationAuthorized": false,
+    "routeOrMenuMountAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextGate": "HASH_PIN_THE_IAQ_SUCCESSOR_RUN_INDEPENDENT_REVIEW_IMPLEMENT_AND_ADMIT_EXACT_CENTRAL_V54_V263_GATEWAY_SHARED_SECURITY_DELTA_THEN_ISSUE_PAY003_OWNER_PACKET"
+}
