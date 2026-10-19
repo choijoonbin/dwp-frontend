@@ -1,0 +1,109 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-hrm011-module-source-integration-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-04-HRM011-MODULE-SOURCE-INTEGRATION-20261019-R1",
+  "recordedAt": "2026-10-19T12:30:36+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "EXACT_HRM011_MODULE_HEADS_NO_FF_MERGED_PUSHED_BLOB_IDENTICAL_V59_LEASE_CONSUMED_SVC_CHAIN_AUTHORITY_NEXT",
+  "sliceId": "BASE-TFR-HRM-011",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_RECEIPT_ID_AND_SHA256"
+  },
+  "authority": {
+    "sourceAdmissionDecision": {
+      "path": "hrm-011-module-source-admission-decision.v1.json",
+      "sha256": "a78535326039d7972a4e35e007650e20d4a6136cbaf16a711831dfa8563e5d87",
+      "bytes": 9898,
+      "carrierCommit": "6b8fd0b13fb8b87f890e586d62d881e37adc4505",
+      "carrierTree": "5cffe8aed4a5103e2805c2c56fe840f069ca13b9"
+    }
+  },
+  "integratedHeads": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "sourceHead": "b114eac750ab9f413c5d0527a7b968d97e931f4f",
+      "sourceTree": "7c42bf08a8e96d9938cbafd86f3ffab464b61f83",
+      "mergeCommit": "43774879addb5b22d595de42237f14656fd890d1",
+      "mergeTree": "7c42bf08a8e96d9938cbafd86f3ffab464b61f83",
+      "parents": [
+        "e0bfb2a767261da6941bcbe64a013fa722d32260",
+        "b114eac750ab9f413c5d0527a7b968d97e931f4f"
+      ],
+      "strategy": "NO_FF_EXACT_BRANCH_HEAD",
+      "sourceIsAncestor": true,
+      "admittedPathCount": 44,
+      "admittedBlobMismatchCount": 0,
+      "mergeConflicts": 0,
+      "automaticConflictResolution": false,
+      "originExact": true,
+      "clean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "sourceHead": "7c29ce86b6a9e9b3e3696f1a540416ef901ee165",
+      "sourceTree": "77f7d01b3827cd8ac974c2fb54e36c549b2551b8",
+      "mergeCommit": "f04c8eb8a186b4ab68464c7cbfe2a14feb72b2e6",
+      "mergeTree": "046bffe499002289e6613ab707f6c6f81c968415",
+      "parents": [
+        "6b8fd0b13fb8b87f890e586d62d881e37adc4505",
+        "7c29ce86b6a9e9b3e3696f1a540416ef901ee165"
+      ],
+      "strategy": "NO_FF_EXACT_BRANCH_HEAD",
+      "sourceIsAncestor": true,
+      "admittedPathCount": 13,
+      "admittedBlobMismatchCount": 0,
+      "totalPathOnlyManifestSha256": "0df06ef8925551e83122d2ec10fda5af2066978fd7ef1b2e08c57239855ed48b",
+      "totalNameStatusManifestSha256": "84d66b80ae34668aafc7de1f475a61045513c2543a7d849479d794e11d00cbd3",
+      "mergeConflicts": 0,
+      "automaticConflictResolution": false,
+      "originExact": true,
+      "cleanBeforeReceiptDraft": true
+    }
+  },
+  "postMergeVerification": {
+    "gitIdentityAndAncestry": "PASS",
+    "exactAdmittedBlobComparison": "57_OF_57_MATCH",
+    "backendTreeEqualsSourceTree": true,
+    "frontendCentralAuthorityPreservedWithZeroCandidatePathOverlap": true,
+    "moduleTestsRerun": false,
+    "repositoryWideSuiteRun": false,
+    "reason": "This admission was a conflict-free Git identity and provenance operation over already reviewed module heads."
+  },
+  "migrationLeaseClosure": {
+    "leaseId": "HRIS-WAVE7-R7-BATCH-04-PEOPLE-MAIN-V59-HRM011-20261019-R1",
+    "stream": "PEOPLE_MAIN",
+    "version": "V59",
+    "sliceId": "BASE-TFR-HRM-011",
+    "state": "CONSUMED_CENTRALLY_INTEGRATED",
+    "activeLeaseCountAfterIntegration": 0,
+    "peopleMigrationHighWater": "V59"
+  },
+  "rolloutBoundary": {
+    "runtimeDefault": "OFF",
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "tenantEnrollmentCount": 0,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionIncrement": 0
+  },
+  "authorityAfterReceipt": {
+    "moduleSourceIntegrated": true,
+    "svcSecurityChainImplementationAuthorizedByThisReceipt": false,
+    "separateSvcSecurityChainExecutionAuthorityRequired": true,
+    "routeOrMenuMountAuthorized": false,
+    "productionProviderBindingAuthorized": false,
+    "fullSliceCompletionAuthorized": false
+  },
+  "nonClaims": [
+    "The dedicated SVC ingress is admitted into PeopleSecurityFilter or the final People security chain.",
+    "A production template, artifact or payroll worker-fact provider is bound.",
+    "A production mutation trigger is wired.",
+    "The frontend route, shell or menu is mounted.",
+    "Any feature or tenant is activated or enrolled.",
+    "BASE-TFR-HRM-011, Batch-04 or R7 is complete."
+  ],
+  "nextAction": "Issue and independently review the exact HRM-011 SVC security-chain execution authority, then implement only its bounded central paths and targeted tests."
+}

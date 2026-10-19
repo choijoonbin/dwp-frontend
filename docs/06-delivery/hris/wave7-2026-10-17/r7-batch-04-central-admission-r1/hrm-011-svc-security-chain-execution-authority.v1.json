@@ -1,0 +1,231 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-hrm011-svc-security-chain-execution-authority.v1",
+  "authorityId": "HRIS-WAVE7-R7-BATCH-04-HRM011-SVC-SECURITY-CHAIN-20261019-R1",
+  "issuedAt": "2026-10-19T12:30:36+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "EXACT_TRUST_PROFILE_AND_CENTRAL_PATHS_AUTHORIZED_DEFAULT_OFF_ZERO_ENROLLMENT_NO_PROVIDER_BINDING",
+  "sliceId": "BASE-TFR-HRM-011",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_AUTHORITY_ID_AND_SHA256"
+  },
+  "preconditions": {
+    "sourceAdmissionDecision": {
+      "path": "hrm-011-module-source-admission-decision.v1.json",
+      "sha256": "a78535326039d7972a4e35e007650e20d4a6136cbaf16a711831dfa8563e5d87",
+      "bytes": 9898,
+      "carrierCommit": "6b8fd0b13fb8b87f890e586d62d881e37adc4505"
+    },
+    "moduleSourceIntegrationReceipt": {
+      "path": "hrm-011-module-source-integration-receipt.v1.json",
+      "resolution": "SAME_CARRIER_COMMIT_AS_THIS_AUTHORITY",
+      "requiredState": "EXACT_HRM011_MODULE_HEADS_NO_FF_MERGED_PUSHED_BLOB_IDENTICAL_V59_LEASE_CONSUMED_SVC_CHAIN_AUTHORITY_NEXT"
+    },
+    "backendBaseline": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "43774879addb5b22d595de42237f14656fd890d1",
+      "tree": "7c42bf08a8e96d9938cbafd86f3ffab464b61f83",
+      "originExact": true,
+      "clean": true
+    },
+    "frontendAuthorityCarrierBeforeDraft": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "f04c8eb8a186b4ab68464c7cbfe2a14feb72b2e6",
+      "tree": "046bffe499002289e6613ab707f6c6f81c968415",
+      "originExact": true,
+      "clean": true
+    }
+  },
+  "transportAndIdentityProfile": {
+    "tls": {
+      "secureRequestRequired": true,
+      "protocol": "TLSv1.3",
+      "protocolSource": "org.apache.tomcat.util.net.secure_protocol_version",
+      "certificateSource": "jakarta.servlet.request.X509Certificate",
+      "certificateCurrentValidityRequired": true,
+      "exactUriSanSet": [
+        "spiffe://dwp/service/dwp-payroll-server"
+      ],
+      "callerSuppliedSpiffeOrTlsHeadersTrusted": false
+    },
+    "jose": {
+      "compactJwsRequired": true,
+      "algorithm": "RS256",
+      "type": "JWT",
+      "minimumRsaBits": 2048,
+      "keyUse": "sig",
+      "exactHeaderFields": [
+        "alg",
+        "typ",
+        "kid"
+      ],
+      "canonicalBase64UrlWithoutPadding": true,
+      "duplicateFieldsForbidden": true
+    },
+    "claims": {
+      "exactClosedFields": [
+        "iss",
+        "aud",
+        "sub",
+        "iat",
+        "nbf",
+        "exp",
+        "jti",
+        "correlationId",
+        "scope",
+        "bindingId",
+        "tenantId",
+        "tenantGrantRevision",
+        "policyRevision",
+        "purpose",
+        "projection",
+        "consumerSession",
+        "method",
+        "path",
+        "asOf",
+        "limit",
+        "cursor"
+      ],
+      "audience": "dwp-people",
+      "subject": "dwp-payroll-server",
+      "scope": "hris.internal",
+      "consumerSession": "HRIS-PAY",
+      "method": "GET",
+      "issuedAtEqualsNotBefore": true,
+      "futureIssueForbidden": true,
+      "maximumLifetimeSeconds": 30,
+      "jti": "SEPARATE_CANONICAL_UUID_ATTEMPT_ID",
+      "correlationId": "EXACTLY_ONE_CANONICAL_X_CORRELATION_ID_AND_SIGNED_EQUALITY_REQUIRED",
+      "cursor": "EXPLICIT_JSON_NULL_WHEN_ABSENT_OR_EXACT_QUERY_STRING_WHEN_PRESENT"
+    },
+    "tenantAuthority": {
+      "grantConfigurationSyntax": "tenantId:tenantGrantRevision:policyRevision[,..]",
+      "blankDuplicateOrNonpositiveInvalidatesWholeConfiguration": true,
+      "signedGrantAndPolicyRevisionMustEqualCurrentConfiguration": true,
+      "employmentContractRolloutTenantEnrollmentRequired": true,
+      "callerTenantHeaderForbidden": true
+    }
+  },
+  "exactBindings": [
+    {
+      "bindingId": "SVC-PEP-HRM-003-R2",
+      "path": "/internal/hris-people/v1/compensation-basis-snapshots",
+      "purpose": "HRIS_COMPENSATION_BASIS_SNAPSHOT_BOOTSTRAP",
+      "projections": [
+        "COMPENSATION_BASIS_V1"
+      ]
+    },
+    {
+      "bindingId": "SVC-PEP-HRM-005",
+      "path": "/internal/hris-people/v1/payroll-worker-fact-snapshots",
+      "purpose": "HRIS_PAYROLL_WORKER_FACT_SNAPSHOT_BOOTSTRAP",
+      "projections": [
+        "DEPENDENT_ELIGIBILITY_V1",
+        "TAX_IDENTITY_V1",
+        "BANK_ACCOUNT_TOKEN_V1"
+      ]
+    }
+  ],
+  "canonicalRequestBinding": {
+    "exactQueryFields": [
+      "purposeCode",
+      "asOf",
+      "projection",
+      "limit",
+      "cursor"
+    ],
+    "requiredExactlyOnce": [
+      "purposeCode",
+      "asOf",
+      "projection",
+      "limit"
+    ],
+    "cursorCardinality": "ZERO_OR_ONE",
+    "asOf": "CANONICAL_JAVA_INSTANT_TEXT",
+    "limit": "CANONICAL_BASE10_INTEGER_1_THROUGH_500",
+    "contextBinding": "METHOD_EXACT_PATH_AND_CANONICAL_QUERY_FINGERPRINT",
+    "requestBodyForbidden": true,
+    "transferEncodingForbidden": true,
+    "unknownDuplicateOrNoncanonicalFieldsForbidden": true
+  },
+  "securityChain": {
+    "dedicatedFilterOrder": "Ordered.HIGHEST_PRECEDENCE + 15",
+    "genericFilterOrder": "Ordered.HIGHEST_PRECEDENCE + 20",
+    "peopleSecuritySkipRule": "ONLY_Hrm011WorkloadRequestContext_isVerifiedRequest",
+    "typedRequestContextRequired": true,
+    "requestContextClearedInFinally": true,
+    "rawPathBypassForbidden": true,
+    "headerPresenceBypassForbidden": true,
+    "arbitraryRequestAttributeBypassForbidden": true,
+    "browserUserTenantForwardedAndUnexpectedXDwpHeadersForbidden": true,
+    "durableReplayProtectionClaimed": false,
+    "replayBoundary": "NO_EXISTING_TABLE_REUSE; 30_SECOND_TOKEN_PLUS_PER_TENANT_RATE_AND_CONCURRENCY_ONLY; ANY_DURABLE_REPLAY_STORE_REQUIRES_SEPARATE_MIGRATION_AUTHORITY"
+  },
+  "configuration": {
+    "prefix": "dwp.hris.contract-compensation-workbench.workload-service",
+    "properties": [
+      "enabled",
+      "jwt-public-jwk",
+      "jwt-issuer",
+      "payroll-tenant-grants",
+      "max-concurrent-per-tenant",
+      "requests-per-minute"
+    ],
+    "defaultEnabled": false,
+    "missingInvalidOrIncompleteTrustMaterial": "FAIL_STARTUP_WHEN_ENABLED_OTHERWISE_503_FAIL_CLOSED",
+    "mainFeatureAndTenantEnrollmentRemainSeparateGates": true
+  },
+  "exactWritableBoundary": {
+    "backend": [
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/hrm011/Hrm011WorkloadTrustProfile.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/hrm011/Hrm011WorkloadIngressFilter.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/hrm011/Hrm011WorkloadRequestContext.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/hrm011/Hrm011WorkloadAdmissionControl.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/hrm011/Hrm011WorkloadController.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/hrm011/Hrm011WorkloadIngress.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/hrm011/FailClosedHrm011WorkloadAdapters.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/security/PeopleSecurityFilter.java",
+      "dwp-people-server/src/main/resources/application.yml",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/contracts/hrm011/**",
+      "dwp-people-server/src/test/java/com/dwp/services/people/security/PeopleSecurityFilterTest.java"
+    ],
+    "frontend": [],
+    "migration": "NONE_AUTHORIZED",
+    "outsideBoundaryAction": "STOP_AND_ISSUE_APPEND_ONLY_SUCCESSOR"
+  },
+  "targetedVerification": {
+    "runOnce": [
+      "Hrm011WorkloadIngressFilterTest",
+      "Hrm011WorkloadControllerSecurityTest",
+      "PeopleSecurityFilterTest",
+      "ApprovedCompensationSnapshotIngressFilterTest",
+      "SvcHrm003CompensationSnapshotProviderContractTest",
+      "SvcHrm005PayrollWorkerFactSnapshotProviderContractTest",
+      "Hrm011WorkloadAuditContractTest"
+    ],
+    "negativeRequirements": [
+      "TLS certificate SPIFFE JWT claim grant enrollment correlation header route method query body and caller-header failures all fail closed",
+      "raw path headers or arbitrary attributes cannot bypass PeopleSecurityFilter",
+      "disabled or incomplete trust never reaches the controller",
+      "verified context is cleared after sync and async completion"
+    ],
+    "afterFailure": "DIAGNOSE_AND_RERUN_ONLY_THE_SMALLEST_FAILED_CLASS_OR_NAMED_CASE",
+    "repositoryWideSuiteAuthorized": false,
+    "unaffectedPassingTargetRerunAuthorized": false
+  },
+  "rolloutBoundary": {
+    "runtimeDefault": "OFF",
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "tenantEnrollmentCount": 0,
+    "productionDataProviderBindingAuthorized": false,
+    "productionTemplateOrArtifactProviderBindingAuthorized": false,
+    "productionMutationTriggerAuthorized": false,
+    "frontendRouteOrMenuMountAuthorized": false,
+    "businessCompletionIncrement": 0
+  },
+  "decision": "AUTHORIZE_EXACT_BACKEND_SECURITY_CHAIN_IMPLEMENTATION_AND_TARGETED_VERIFICATION_ONLY",
+  "nextAction": "Commit and push this authority, implement only the exact writable boundary on backend dwp-dev, run each named target group once and return exact source and verification evidence for independent review."
+}
