@@ -1,0 +1,151 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-pay003-module-source-integration-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-04-PAY003-MODULE-SOURCE-INTEGRATION-20261019-R1",
+  "recordedAt": "2026-10-19T15:44:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "EXACT_PAY003_MODULE_HEADS_MERGED_PUSHED_POST_MERGE_ACCEPTED_BLOB_IDENTICAL_V53_LEASE_CONSUMED_DEFAULT_OFF_ZERO_ENROLLMENT",
+  "sliceId": "BASE-TFR-PAY-003",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_RECEIPT_ID_AND_SHA256"
+  },
+  "authority": {
+    "postMergeAcceptanceDecision": {
+      "path": "pay-003-module-source-admission-decision.v1.json",
+      "sha256": "72574a5f0a5e6a11307e5f5a87834e2cc73697ba006a2a7abe06ed9562fdf081",
+      "bytes": 7781,
+      "carrierCommit": "6e0b7fd1b998b10568da0c31917ac6a202599567",
+      "carrierTree": "34802527a6ec5109a95d59af7017914a5c1b6ab7",
+      "decisionMode": "POST_MERGE_ACCEPTANCE_OF_ALREADY_MERGED_EXACT_HEADS"
+    }
+  },
+  "integratedHeads": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "sourceHead": "30bf9352efcb1add45c96271045acb38c209f1c2",
+      "sourceTree": "4af92687686d21048bab7111680b01287b31d77f",
+      "mergeCommit": "70e8125a173130637e3b432fa4dc034b853d77b2",
+      "mergeTree": "4af92687686d21048bab7111680b01287b31d77f",
+      "parents": [
+        "303a7e8598b1b45dc6d65411838647328504efc9",
+        "30bf9352efcb1add45c96271045acb38c209f1c2"
+      ],
+      "strategy": "NO_FF_EXACT_BRANCH_HEAD",
+      "sourceIsAncestor": true,
+      "admittedPathCount": 23,
+      "admittedBlobMismatchCount": 0,
+      "pathOnlyManifestSha256": "18f971bf793aad3cb3f3dd1386f7b3805ab24259fc13d533876311d8278b8dea",
+      "nameStatusManifestSha256": "ac039ddcac45c6aaefacd20fa14151a6181721acf281f537b0f605cc7970321d",
+      "mergeConflicts": 0,
+      "automaticConflictResolution": false,
+      "originExact": true,
+      "clean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "sourceHead": "c664b3890065422ab9b67e782d290cba5b7fa704",
+      "sourceTree": "3645ba8cfa65af0576e76f5da0fdcc11ae23ef70",
+      "effectiveCorrectedSourceHead": "663d1a4c3c947ba94b5e58f0341e190245e22dbd",
+      "effectiveCorrectedSourceTree": "c355e0fb1b0878bf86fcf019acb378bf9c344b83",
+      "mergeCommit": "bdbb8f6f6299280c7524b521ece1c966f689858d",
+      "mergeTree": "8d2ce73e2f53a40ce4a34546f744ef53a0921a72",
+      "parents": [
+        "229b461a822858c6321365db861fd9e220ad05d6",
+        "c664b3890065422ab9b67e782d290cba5b7fa704"
+      ],
+      "strategy": "NO_FF_EXACT_BRANCH_HEAD",
+      "sourceIsAncestor": true,
+      "admittedPathCount": 13,
+      "admittedBlobMismatchCount": 0,
+      "pathOnlyManifestSha256": "f67c537387a15fc747cb980d1fecacf2923f4f606ef08c42951c0dc464fed87e",
+      "nameStatusManifestSha256": "57541fc9fb622f534cfbeb9a96ca2dcb7258da3f64ddb4e81328cddda3d6d163",
+      "mergeConflicts": 0,
+      "automaticConflictResolution": false,
+      "originExactAtMergePush": true,
+      "centralCarrierAfterAcceptanceDecision": {
+        "commit": "6e0b7fd1b998b10568da0c31917ac6a202599567",
+        "tree": "34802527a6ec5109a95d59af7017914a5c1b6ab7",
+        "originExact": true,
+        "cleanBeforeReceiptDraft": true
+      }
+    }
+  },
+  "postMergeVerification": {
+    "gitIdentityAndAncestry": "PASS",
+    "exactAdmittedBlobComparison": "36_OF_36_MATCH",
+    "backendMergeTreeEqualsSourceTree": true,
+    "frontendCentralStartTokenCarrierPreservedWithZeroCandidatePathConflict": true,
+    "independentPostMergeReview": "GO_P0_0_P1_0",
+    "moduleTestsRerun": false,
+    "repositoryWideSuiteRun": false,
+    "reason": "This receipt records Git identity, provenance and reviewed evidence only; already passing module targets were not repeated."
+  },
+  "effectiveModuleResult": {
+    "acceptanceCriteria": {
+      "required": 14,
+      "passed": 14,
+      "failed": 0,
+      "skipped": 0
+    },
+    "reviewFindings": {
+      "reportedP0": 0,
+      "reportedP1": 4,
+      "closedP1": 4,
+      "remainingP0": 0,
+      "remainingP1": 0
+    },
+    "tests": {
+      "backendEffectiveUniquePassed": 30,
+      "frontendEffectiveUniquePassed": 12,
+      "frontendChangedCorrectionCasePassed": 1,
+      "databaseSkipped": 0
+    },
+    "effectiveV53": {
+      "path": "dwp-payroll-server/src/main/resources/db/migration/V53__pay_base_tfr_pay_003_statutory_insurance.sql",
+      "sha256": "28fbeb49531104a7fd5ace1136aff8b3f1e0d1d9fb7fe13ea2b238a0316081a5",
+      "bytes": 34100,
+      "precedence": "CONTROL_REVIEW_CORRECTION_EVIDENCE"
+    }
+  },
+  "migrationLeaseClosure": {
+    "leaseId": "HRIS-WAVE7-R7-BATCH-04-PAYROLL-MAIN-V53-PAY003-20261019-R1",
+    "stream": "PAYROLL_MAIN",
+    "version": "V53",
+    "sliceId": "BASE-TFR-PAY-003",
+    "state": "CONSUMED_CENTRALLY_INTEGRATED",
+    "activeLeaseCountAfterIntegration": 0,
+    "payrollMigrationHighWater": "V53"
+  },
+  "rolloutBoundary": {
+    "featureKey": "HRIS_PAYROLL_STATUTORY_INSURANCE",
+    "runtimeDefault": "OFF",
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "tenantEnrollmentCount": 0,
+    "frontendMounted": false,
+    "productionProviderBindingAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionIncrement": 0
+  },
+  "authorityAfterReceipt": {
+    "moduleSourceIntegrated": true,
+    "centralContractAlreadyIntegrated": true,
+    "additionalCentralCodeGateRequired": false,
+    "centralIntegrationSuccessorMayBeIssued": true,
+    "sequencingExitMayBeIssuedAfterSuccessor": false,
+    "routeOrMenuMountAuthorized": false,
+    "featureOrTenantActivationAuthorized": false,
+    "fullSliceCompletionAuthorized": false
+  },
+  "nonClaims": [
+    "A pre-merge admission decision existed.",
+    "The settings or operations workbench is mounted in the shell, route table or menu.",
+    "A real production provider is bound.",
+    "Any feature or tenant is activated or enrolled.",
+    "BASE-TFR-PAY-003, Batch-04 or R7 is complete."
+  ],
+  "nextAction": "Issue one append-only central integration successor joining the prior v54/V263/Gateway/shared-security receipt with this exact module integration; then independently review sequencing exit eligibility."
+}
