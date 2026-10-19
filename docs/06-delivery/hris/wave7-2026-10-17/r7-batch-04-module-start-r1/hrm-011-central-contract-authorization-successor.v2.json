@@ -1,0 +1,62 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-hrm011-central-contract-authorization-successor.v2",
+  "successorId": "HRIS-WAVE7-R7-BATCH-04-HRM011-CENTRAL-CONTRACT-AUTHORIZATION-20261019-R2",
+  "recordedAt": "2026-10-19T10:52:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ID_AND_SHA256"
+  },
+  "state": "SEALED_CORRECTION_CENTRAL_SUCCESSOR_EXECUTION_SCOPE_READY_DEFAULT_OFF_ZERO_ENROLLMENT",
+  "sliceId": "BASE-TFR-HRM-011",
+  "successorOf": {
+    "path": "hrm-011-central-contract-authorization-successor.v1.json",
+    "sha256": "d00cb83e4a53d27e711e4b107cb276074261eeea1f6f5971beb65f377c41dc96",
+    "bytes": 7620,
+    "supersession": "REPLACE_ONLY_IAQ008_PAGE_DATA_RESPONSE_SCHEMA_AND_ACTION_STEP_UP_TARGET"
+  },
+  "semanticDispositionSuccessor": {
+    "path": "semantic-dispositions/base-tfr-hrm-011.semantic-disposition-successor.v2.json",
+    "sha256": "7fb568114f695ca3ee117a0dde628a1aad0f0039598f9c1c3f585b2ef9e3518f",
+    "requiredState": "SEALED_CORRECTION_IAQ008_PROJECTION_V2_RESOURCE_VERSION_AND_WORK_RELATIONSHIP_STEP_UP_ALL_OTHER_R1_TERMS_PRESERVED"
+  },
+  "centralContractDelta": "UNCHANGED_FROM_V1",
+  "authorizationCorrections": {
+    "pageRouteContract": "route.hcm.operations.contracts-compensation-basis.page",
+    "dataRouteContract": "route.hcm.operations.contracts-compensation-basis.data",
+    "responseSchemaKey": "Hrm011ContractsCompensationBasisProjectionV2",
+    "projectionVersion": "2",
+    "requiredItemField": "resourceVersion",
+    "actionRouteContract": "route.hcm.operations.employment-contract-issue.action",
+    "stepUpCommandBinding": {
+      "targetType": "WORK_RELATIONSHIP",
+      "targetIdBodyFields": ["relationshipPublicId"],
+      "expectedObjectVersionSource": "COMMAND_HEADER",
+      "expectedObjectVersionName": "X-DWP-Expected-Object-Version",
+      "ownerServiceKey": "people",
+      "audience": "dwp-people-server"
+    },
+    "rejectedBinding": "EMPLOYMENT_CONTRACT_TEMPLATE/templatePublicId with templateVersion",
+    "allOtherV1AuthorizationTerms": "PRESERVED"
+  },
+  "requiredVerification": [
+    "IAQ-008 v2 response schema rejects a missing resourceVersion",
+    "IAQ-008 v2 response schema rejects unknown fields",
+    "PAGE and DATA use the identical Hrm011ContractsCompensationBasisProjectionV2 schema",
+    "ACTION binding extracts relationshipPublicId and numeric expected object version",
+    "stale relationship version fails before artifact, receipt, audit or outbox mutation",
+    "product authorization remains default OFF with zero enrolled tenants"
+  ],
+  "authority": {
+    "centralContractSourceAuthorized": true,
+    "centralAuthorizationSourceAuthorized": true,
+    "productAuthorizationV53Authorized": true,
+    "authV262Authorized": true,
+    "r1TemplateStepUpBindingAuthorized": false,
+    "moduleOwnerSourceAuthorized": false,
+    "frontendRouteAdmissionAuthorizedNow": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionReleaseAuthorized": false
+  }
+}

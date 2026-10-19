@@ -1,0 +1,100 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-hrm011-semantic-disposition-successor.v2",
+  "dispositionId": "HRIS-WAVE7-R7-BATCH-04-HRM011-SEMANTIC-DISPOSITION-20261019-R2",
+  "recordedAt": "2026-10-19T10:48:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ID_AND_SHA256"
+  },
+  "state": "SEALED_CORRECTION_IAQ008_PROJECTION_V2_RESOURCE_VERSION_AND_WORK_RELATIONSHIP_STEP_UP_ALL_OTHER_R1_TERMS_PRESERVED",
+  "sliceId": "BASE-TFR-HRM-011",
+  "successorOf": {
+    "path": "base-tfr-hrm-011.semantic-disposition.v1.json",
+    "sha256": "abc66db8920ced6a501e1f765400de27edd53fc72d96959f58c6f66b47b3a57b",
+    "bytes": 12475,
+    "supersession": "CORRECT_INVALID_TEMPLATE_VERSION_ETAG_BINDING_BEFORE_IMPLEMENTATION"
+  },
+  "decision": "REPLACE_ONLY_IAQ008_RESPONSE_AND_CONCURRENCY_BINDING_WITH_PROJECTION_V2_ALL_EVENT_SERVICE_ARTIFACT_MIGRATION_AND_ACTIVATION_TERMS_IN_R1_REMAIN_IN_FORCE",
+  "problem": {
+    "rejectedR1Binding": "If-Match quoted templateVersion with step-up target EMPLOYMENT_CONTRACT_TEMPLATE/templatePublicId",
+    "reason": "The existing People high-risk command guard binds X-DWP-Expected-Object-Version to the mutable target resource version. A template version is definition metadata and cannot prove the current work-relationship version.",
+    "safetyImpactIfUncorrected": "A relationship could change after the entry query while the unchanged template version still passes optimistic concurrency."
+  },
+  "projectionSuccessor": {
+    "queryId": "IAQ-008",
+    "priorResponseSchemaVersion": "1",
+    "priorState": "SUPERSEDED_BEFORE_IMPLEMENTATION",
+    "responseSchemaVersion": "2",
+    "variantKey": "CONTRACTS_COMPENSATION_BASIS",
+    "itemAdditions": {
+      "resourceVersion": {
+        "type": "integer",
+        "minimum": 0,
+        "required": true,
+        "source": "ppl_work_relationships.version"
+      }
+    },
+    "closedItemFields": [
+      "itemPublicId",
+      "resourceVersion",
+      "title",
+      "statusCode",
+      "fieldGroups",
+      "deepLink",
+      "availableActions"
+    ],
+    "identity": {
+      "itemPublicId": "relationshipPublicId",
+      "deepLink.resourcePublicId": "relationshipPublicId"
+    },
+    "unchangedFieldGroups": {
+      "CONTRACT_METADATA": "MetadataValue(key=templatePublicId,version=templateVersion,digest=generationSnapshotDigest)",
+      "COMPENSATION_BASIS": "MoneyValue(amount,currency)"
+    },
+    "additionalProperties": false
+  },
+  "correctedActionBinding": {
+    "actionKey": "hris.action.hrm.issue-employment-contract",
+    "pepId": "PEP-HRM-011",
+    "requestBodyTargetField": "relationshipPublicId",
+    "ifMatch": "quoted resourceVersion",
+    "stepUp": {
+      "targetType": "WORK_RELATIONSHIP",
+      "targetIdBodyField": "relationshipPublicId",
+      "expectedObjectVersionSource": "COMMAND_HEADER",
+      "expectedObjectVersion": "resourceVersion"
+    },
+    "ownerOrder": [
+      "resolve trusted tenant and actor",
+      "lock the same-tenant work relationship row",
+      "compare relationship.version to If-Match and X-DWP-Expected-Object-Version",
+      "return 409 with currentVersion and no side effect on mismatch",
+      "lock and revalidate the unique primary assignment and effective compensation basis",
+      "resolve the published effective locale template",
+      "recompute generationSnapshotDigest",
+      "compare the request snapshot digest",
+      "re-evaluate population, field policy, purpose, SoD and HIGH step-up",
+      "only then invoke EmploymentContractArtifactPort"
+    ]
+  },
+  "preservedR1Terms": [
+    "XCON-023 through XCON-026 strict event successor",
+    "SVC-PEP-HRM-003-R2 strict XCON-002 and SVC-PEP-HRM-005 payment separation",
+    "EmploymentContractArtifactPort fail-closed production binding",
+    "People V59 four-table migration decision",
+    "explicit CONTRACT_METADATA and COMPENSATION_BASIS field policy",
+    "default OFF, zero tenant enrollment and no production provider authorization"
+  ],
+  "authority": {
+    "r1SemanticDispositionOtherwiseEffective": true,
+    "r1IaEntryQueryConcurrencyBindingEffective": false,
+    "projectionV2Required": true,
+    "ownerPacketMustReferenceThisSuccessor": true,
+    "centralAuthorizationSuccessorMustReferenceThisSuccessor": true,
+    "moduleSourceAuthoringAuthorizedNow": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false
+  },
+  "nextGate": "ISSUE_A_CENTRAL_CONTRACT_AUTHORIZATION_SUCCESSOR_V2_THAT_REPLACES_THE_R1_TEMPLATE_STEP_UP_BINDING_WITH_THE_EXACT_WORK_RELATIONSHIP_RESOURCE_VERSION_BINDING"
+}

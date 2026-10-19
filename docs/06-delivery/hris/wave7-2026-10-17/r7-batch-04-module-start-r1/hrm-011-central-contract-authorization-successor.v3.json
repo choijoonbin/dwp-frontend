@@ -1,0 +1,81 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-hrm011-central-contract-authorization-successor.v3",
+  "successorId": "HRIS-WAVE7-R7-BATCH-04-HRM011-CENTRAL-CONTRACT-AUTHORIZATION-20261019-R3",
+  "recordedAt": "2026-10-19T11:06:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ID_AND_SHA256"
+  },
+  "state": "SEALED_FINAL_HRM011_CENTRAL_EXECUTION_SCOPE_XCON023_026_PDX015_IAQ008V2_AUTHV262_DEFAULT_OFF",
+  "sliceId": "BASE-TFR-HRM-011",
+  "successorOf": {
+    "path": "hrm-011-central-contract-authorization-successor.v2.json",
+    "sha256": "645bf92082d4cbc347dd8e8351fbaaeeff68f389a101d5bf0322b9cb5578e076",
+    "bytes": 3090,
+    "supersession": "ADD_PDX015_AND_DEP004_TO_THE_ALREADY_CORRECTED_V2_SCOPE"
+  },
+  "semanticDispositionSuccessor": {
+    "path": "semantic-dispositions/base-tfr-hrm-011.semantic-disposition-successor.v3.json",
+    "sha256": "2bb396f203b43c36dc5c2232374bc76e66d75e092df8da2195f9584711d354ee",
+    "requiredState": "SEALED_TEMPLATE_AUTHORITY_DEP004_PDX015_SUCCESSOR_ALL_R1_AND_R2_NONCONFLICTING_TERMS_PRESERVED"
+  },
+  "effectiveCentralContractScope": {
+    "crossModuleContracts": ["XCON-023", "XCON-024", "XCON-025", "XCON-026"],
+    "platformDependencyContracts": ["PDX-015 EmploymentContractTemplateSnapshotV1"],
+    "canonicalPaths": [
+      "contracts/hris/canonical/schemas/cross-module-canonical-schemas.v1.json",
+      "contracts/hris/canonical/schemas/platform-dependency-canonical-schemas.v1.json",
+      "contracts/hris/canonical/hris-contract-codegen-manifest.v1.json"
+    ],
+    "generatedTypes": [
+      "com.dwp.contracts.hris.xcon.v1.Xcon023WorkerDependentEligibilityChangedV1",
+      "com.dwp.contracts.hris.xcon.v1.Xcon024WorkerTaxIdentityChangedV1",
+      "com.dwp.contracts.hris.xcon.v1.Xcon025WorkerBankAccountTokenChangedV1",
+      "com.dwp.contracts.hris.xcon.v1.Xcon026EmploymentContractIssuedV1",
+      "com.dwp.platform.contracts.hris.generated.EmploymentContractTemplateSnapshotV1"
+    ],
+    "tests": "exact schema, strict JSON, envelope invariant, forbidden-field and generated-artifact freshness tests",
+    "existingContractMutation": "FORBIDDEN"
+  },
+  "effectiveAuthorizationScope": {
+    "productAuthorizationBundle": "v53",
+    "authMigration": "V262",
+    "pageAndDataResponseSchema": "Hrm011ContractsCompensationBasisProjectionV2",
+    "requiredItemField": "resourceVersion",
+    "actionStepUpTarget": "WORK_RELATIONSHIP/relationshipPublicId",
+    "expectedObjectVersion": "resourceVersion from command header",
+    "capabilityReuse": [
+      "hcm.operations.people.view",
+      "hcm.operations.contract.issue"
+    ],
+    "featureKey": "HRIS_HRM_CONTRACT_COMPENSATION_WORKBENCH",
+    "defaultEnabled": false,
+    "enrolledTenants": []
+  },
+  "dependencyCorrection": {
+    "added": "DEP-004 CONFIG_LIFECYCLE_POLICY_REF_V1",
+    "reason": "Published and effective employment-contract templates are Platform-owned immutable configuration versions.",
+    "directDatabaseRead": false
+  },
+  "verification": [
+    "python3 scripts/generate-hris-contracts.py --check",
+    "targeted dwp-platform-contracts XCON-023..026 and PDX-015 tests",
+    "targeted product authorization v53 generator and immutable predecessor tests",
+    "targeted Auth V262 migration contract test",
+    "negative proof that no tenant is enrolled and no feature is enabled"
+  ],
+  "authority": {
+    "centralContractSourceAuthorized": true,
+    "centralAuthorizationSourceAuthorized": true,
+    "productAuthorizationV53Authorized": true,
+    "authV262Authorized": true,
+    "moduleOwnerSourceAuthorized": false,
+    "frontendRouteAdmissionAuthorizedNow": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionTemplateProviderBindingAuthorized": false,
+    "productionArtifactProviderBindingAuthorized": false,
+    "productionReleaseAuthorized": false
+  }
+}

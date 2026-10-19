@@ -1,0 +1,112 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-hrm011-semantic-disposition-successor.v3",
+  "dispositionId": "HRIS-WAVE7-R7-BATCH-04-HRM011-SEMANTIC-DISPOSITION-20261019-R3",
+  "recordedAt": "2026-10-19T11:02:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ID_AND_SHA256"
+  },
+  "state": "SEALED_TEMPLATE_AUTHORITY_DEP004_PDX015_SUCCESSOR_ALL_R1_AND_R2_NONCONFLICTING_TERMS_PRESERVED",
+  "sliceId": "BASE-TFR-HRM-011",
+  "successorOf": {
+    "path": "base-tfr-hrm-011.semantic-disposition-successor.v2.json",
+    "sha256": "7fb568114f695ca3ee117a0dde628a1aad0f0039598f9c1c3f585b2ef9e3518f",
+    "bytes": 4624,
+    "supersession": "ADD_MISSING_PUBLISHED_EFFECTIVE_TEMPLATE_AUTHORITY_BEFORE_IMPLEMENTATION"
+  },
+  "problem": {
+    "gap": "The accepted PEP-HRM-011 rule requires a published and effective employment-contract template, but no typed registry/query binding exists. The artifact adapter is not a configuration authority.",
+    "preflightCorrection": "Add DEP-004 CONFIG_LIFECYCLE_POLICY_REF_V1 to BASE-TFR-HRM-011 dependencies.",
+    "unsafeFallbacks": [
+      "caller supplied contract type or template status",
+      "artifact-provider supplied template authority",
+      "locally invented default template",
+      "direct Platform database read"
+    ]
+  },
+  "platformDependencySuccessor": {
+    "contractId": "PDX-015",
+    "name": "EmploymentContractTemplateSnapshotV1",
+    "producer": "SYS_PLATFORM",
+    "consumers": ["HRIS-HRM"],
+    "deliveryMode": "SYNC_QUERY_WITH_REFERENCE_CONFIGURATION_LIFECYCLE_EVENT_INVALIDATION",
+    "closedFields": [
+      "templatePublicId",
+      "templateVersion",
+      "templateType",
+      "contractType",
+      "locale",
+      "scopeType",
+      "scopeId",
+      "state",
+      "effectiveFrom",
+      "effectiveTo",
+      "templateContentReference",
+      "payloadDigest",
+      "approvalReceiptId"
+    ],
+    "constants": {
+      "templateType": "EMPLOYMENT_CONTRACT",
+      "state": "PUBLISHED"
+    },
+    "templateContentReferenceClosedFields": [
+      "objectPublicId",
+      "objectVersion",
+      "contentSha256"
+    ],
+    "rules": [
+      "templatePublicId and templateVersion identify exactly one immutable published version",
+      "effective interval is half-open and contains the request effectiveFrom",
+      "locale is an exact canonical match; no silent locale fallback",
+      "scopeType and scopeId must match the trusted relationship/legal-employer scope",
+      "payloadDigest equals the Platform PDX-001 configuration payload digest",
+      "template public ID/version/state/effectivity/digest exactly match the PDX-001 published reference",
+      "approvalReceiptId proves maker-checker approval",
+      "document bytes and unrestricted URLs are forbidden"
+    ]
+  },
+  "peopleTemplatePort": {
+    "interface": "EmploymentContractTemplateQueryPort",
+    "productionBinding": "FailClosedEmploymentContractTemplateQueryAdapter",
+    "testBinding": "EmploymentContractTemplateConformanceDouble",
+    "input": [
+      "trusted tenant",
+      "relationshipPublicId",
+      "legalEmployerPublicId",
+      "templatePublicId",
+      "templateVersion",
+      "locale",
+      "effectiveFrom"
+    ],
+    "output": "PDX-015 EmploymentContractTemplateSnapshotV1",
+    "ownerRule": "IAQ-008 and PEP-HRM-011 trust only this port result for template publication, effectivity, locale, scope, contractType, content reference and approval receipt.",
+    "failureRule": "Unavailable, stale, mismatched or ambiguous template authority produces UNAVAILABLE for the query component and a fail-closed command rejection before artifact invocation or mutation."
+  },
+  "artifactBoundaryCorrection": {
+    "contractTypeSource": "PDX-015 only",
+    "templateContentReferenceSource": "PDX-015 only",
+    "artifactPortRole": "Render/seal the already authorized immutable template and generation snapshot; never determine publication, effectivity, scope, locale or contract type."
+  },
+  "activationBoundary": {
+    "sourceAndConformanceTestsMayUseTestDouble": true,
+    "productionPortMayFailClosed": true,
+    "tenantEnrollmentWithoutApprovedPlatformProviderBinding": false,
+    "fullSliceCompletionWithoutApprovedPlatformProviderBinding": false
+  },
+  "preservedTerms": [
+    "R1 XCON-023 through XCON-026, service split, artifact result, V59 and default-OFF boundaries",
+    "R2 IAQ-008 projection v2 resourceVersion and WORK_RELATIONSHIP optimistic-concurrency/step-up binding"
+  ],
+  "authority": {
+    "pdx015CentralContractMayBeAuthored": true,
+    "dep004AddedToHrm011": true,
+    "peopleFailClosedTemplatePortMayBeAuthoredAfterPacket": true,
+    "directPlatformDatabaseReadAuthorized": false,
+    "moduleSourceAuthoringAuthorizedNow": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "fullSliceCompletionAuthorized": false
+  },
+  "nextGate": "ISSUE_CENTRAL_SUCCESSOR_V3_WITH_PDX015_THEN_OWNER_PACKET_V59_LEASE_WORKTREE_RECEIPT_AND_EXECUTABLE_TOKEN"
+}
