@@ -1,0 +1,151 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-hrm011-central-integration-receipt-successor.v2",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-04-HRM011-CENTRAL-INTEGRATION-20261019-R2",
+  "recordedAt": "2026-10-19T12:55:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "HRM011_MODULE_SOURCE_AND_EXACT_SVC_SECURITY_CHAIN_INTEGRATED_PUSHED_DEFAULT_OFF_ZERO_ENROLLMENT_NO_PROVIDER_BINDING",
+  "sliceId": "BASE-TFR-HRM-011",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_RECEIPT_ID_AND_SHA256",
+    "supersedesOnlyTheRecordedIntegrationStateOf": {
+      "path": "hrm-011-central-integration-receipt.v1.json",
+      "sha256": "10aeac3c0328d639a496c1ba5807d4428d0f46faef0203d27770e4dca29d9701",
+      "bytes": 7784
+    }
+  },
+  "authorityBasis": {
+    "moduleSourceIntegrationReceipt": {
+      "path": "hrm-011-module-source-integration-receipt.v1.json",
+      "sha256": "6c7bd79acff7a29cadd1447ab3547082ed833f670f1a8fff8c6175a0680dda25",
+      "bytes": 4613,
+      "carrierCommit": "2593a49afcd85e107622f2061f4685f833e17f97"
+    },
+    "svcSecurityExecutionAuthority": {
+      "path": "hrm-011-svc-security-chain-execution-authority.v1.json",
+      "sha256": "8825ac945421055cd0cfe156bfce4640e9cc321f91da41c2f72955cf0ba072a0",
+      "bytes": 9321,
+      "carrierCommit": "2593a49afcd85e107622f2061f4685f833e17f97",
+      "requiredState": "EXACT_TRUST_PROFILE_AND_CENTRAL_PATHS_AUTHORIZED_DEFAULT_OFF_ZERO_ENROLLMENT_NO_PROVIDER_BINDING"
+    }
+  },
+  "integratedPins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "21a4630a97b205b95ab9c59544afb92e2d49a242",
+      "tree": "a4913e683909c04f96c896c25ea464e10a3e69f0",
+      "parent": "43774879addb5b22d595de42237f14656fd890d1",
+      "originRef": "origin/dwp-dev",
+      "originExact": true,
+      "worktreeClean": true
+    },
+    "frontendAuthorityCarrierBeforeThisReceipt": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "2593a49afcd85e107622f2061f4685f833e17f97",
+      "tree": "b3641b94a11c40539ecb3d45bc47ea0db275a15e",
+      "originRef": "origin/dwp-dev",
+      "originExact": true,
+      "committedTreeCleanBeforeDraft": true,
+      "authorityCarrierAdvanceExpected": true
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "originRef": "origin/dwp-dev",
+      "originExact": true,
+      "worktreeClean": true,
+      "readOnlyForThisSlice": true
+    }
+  },
+  "integratedSecurityChain": {
+    "commit": "21a4630a97b205b95ab9c59544afb92e2d49a242",
+    "changedPathCount": 15,
+    "insertions": 1668,
+    "deletions": 177,
+    "pathOnlyManifestSha256": "674e776caded453c4b1c524facae01a93db6d8799411693f77a49afff5644a3c",
+    "nameStatusManifestSha256": "bd2785fe72c352c59f77433c02890bc94fa9503e1ba415484e2bc21eb4f0a73b",
+    "authorityBoundaryMatch": true,
+    "rawAuthorityBridgeRemoved": true,
+    "dedicatedFilterOrder": "Ordered.HIGHEST_PRECEDENCE + 15",
+    "genericPeopleFilterOrder": "Ordered.HIGHEST_PRECEDENCE + 20",
+    "genericSkipCondition": "ONLY_VALID_Hrm011WorkloadRequestContext",
+    "transportIdentity": "TLS_1_3_REAL_SERVLET_ATTRIBUTES_X509_EXACT_PAYROLL_SPIFFE_URI_SAN",
+    "workloadIdentity": "RS256_CLOSED_JOSE_AND_21_CLOSED_CLAIMS_EXACT_ROUTE_QUERY_CORRELATION_BINDING",
+    "tenantAuthority": "CURRENT_VERSIONED_GRANT_AND_EmploymentContractRolloutGate_ENROLLMENT_BOTH_REQUIRED",
+    "admissionControl": "AUTHENTICATE_FIRST_THEN_PER_TENANT_RATE_AND_CONCURRENCY_WITH_SYNC_ASYNC_RELEASE",
+    "durableReplayStoreAdded": false,
+    "migrationAdded": false,
+    "productionProviderBound": false
+  },
+  "targetedVerification": {
+    "policy": "RUN_AUTHORIZED_AFFECTED_CLASSES_ONCE_AND_RERUN_ONLY_THE_SMALLEST_FAILED_METHOD; NO_REPOSITORY_WIDE_SUITE",
+    "initialAggregate": {
+      "classCount": 7,
+      "tests": 39,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "result": "BUILD_SUCCESSFUL"
+    },
+    "independentReview": {
+      "firstDecision": "ONE_P1_SIGNED_LONG_JWT_LIFETIME_OVERFLOW",
+      "correction": "Math.subtractExact_FAIL_CLOSED_PLUS_LONG_MIN_MAX_BOUNDARY_CASE",
+      "finalDecision": "GO",
+      "remainingP0": 0,
+      "remainingP1": 0
+    },
+    "smallestCorrectionRerun": {
+      "target": "Hrm011WorkloadIngressFilterTest.rejectsAWorkloadLifetimeThatOverflowsSignedLongArithmetic",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "result": "BUILD_SUCCESSFUL"
+    },
+    "gitDiffCheck": "PASS",
+    "repositoryWideSuiteRun": false,
+    "unaffectedPassingTargetRerun": false
+  },
+  "migrationLeaseClosure": {
+    "leaseId": "HRIS-WAVE7-R7-BATCH-04-PEOPLE-MAIN-V59-HRM011-20261019-R1",
+    "stream": "PEOPLE_MAIN",
+    "version": "V59",
+    "state": "CONSUMED_CENTRALLY_INTEGRATED",
+    "activeLeaseCountAfterIntegration": 0,
+    "peopleMigrationHighWater": "V59",
+    "securityChainMigrationDelta": "NONE"
+  },
+  "rolloutBoundary": {
+    "runtimeDefault": "OFF",
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "tenantEnrollmentCount": 0,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionIncrement": 0
+  },
+  "authorityAfterReceipt": {
+    "moduleSourceIntegrated": true,
+    "svcSecurityChainIntegrated": true,
+    "centralSecurityImplementationOpen": false,
+    "routeOrMenuMountAuthorized": false,
+    "productionProviderBindingAuthorized": false,
+    "productionMutationTriggerAuthorized": false,
+    "featureOrTenantActivationAuthorized": false,
+    "fullHrm011BusinessCompletionClaimed": false,
+    "sequencingExitReceiptMayBeIssued": true
+  },
+  "nonClaims": [
+    "A production template, artifact or payroll worker-fact provider is bound.",
+    "A production mutation trigger is wired.",
+    "The frontend route, shell or menu is mounted.",
+    "Any feature or tenant is activated or enrolled.",
+    "Durable replay protection or an additional schema migration was added by the SVC security-chain commit.",
+    "BASE-TFR-HRM-011 is counted as a completed business slice or production release."
+  ],
+  "nextAction": "Issue the HRM-011 sequencing exit receipt, close lane order 1 without business completion credit, then begin only PAY-003 semantic closure before any packet, lease, worktree or source authoring."
+}
