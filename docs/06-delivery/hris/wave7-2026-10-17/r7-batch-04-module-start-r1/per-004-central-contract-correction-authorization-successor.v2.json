@@ -1,0 +1,38 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-per004-central-contract-correction-authorization-successor.v2",
+  "successorId": "HRIS-WAVE7-R7-BATCH-04-PER004-CENTRAL-CONTRACT-CORRECTION-AUTHORIZATION-20261019-R2",
+  "recordedAt": "2026-10-19T19:08:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "immutability": {"sealed": true, "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ID_AND_SHA256"},
+  "state": "SEALED_EXACT_PER004_MAPPER_ONLY_CENTRAL_STATE_CORRECTION_AUTHORIZED_DEFAULT_OFF_ZERO_ENROLLMENT_NO_DATABASE_CHANGE",
+  "sliceId": "BASE-TFR-PER-004",
+  "authorityBasis": {
+    "lifecycleV1": {"path": "contract-successors/per-004-iaq-projection-and-lifecycle-successor.v1.json", "sha256": "ff1be7ed1bb18dcc24b0f5acac05c6be36707e34c72f5a3bdcfa05671289a361", "bytes": 27667},
+    "centralAuthorizationV1": {"path": "per-004-central-contract-authorization-successor.v1.json", "sha256": "09d5c2eb9a1bbc1eec01e8bf716a7bed2d81f17a3b4248d7b70b536aacdfc3ab", "bytes": 30073},
+    "centralReviewV1": {"path": "per-004-central-contract-authorization-review.v1.json", "sha256": "327929b8375f3529f24d19c4a1b1aca8f76c3f3b2b7757a619958669b92a9570", "bytes": 3493},
+    "lifecycleV2": {"path": "contract-successors/per-004-iaq-projection-and-lifecycle-successor.v2.json", "sha256": "b9e20fd44834d0ee38fb3e8307dba3e0361b9eedd98715b29978ae5b4fb8dc6d", "bytes": 5310, "requiredState": "SEALED_PER004_IAQ056_WIRE_ONLY_SYNTHETIC_CREATE_ELIGIBLE_PROJECTION_TERMINAL_ACTION_DENIAL_ALL_OTHER_R1_TERMS_PRESERVED"},
+    "ownerPacket": {"path": "owner-packets/base-tfr-per-004.owner-packet.v1.json", "sha256": "2f7e4f1d10e83c4eb7b6e26d434c6d708ccb58beeecea98ed2faaedeae91b8c3", "bytes": 39168},
+    "startToken": {"path": "tokens/base-tfr-per-004.start-token.v1.json", "sha256": "f9055e3e32423f95e3462b55b7acd21c51dfbd2eca8cb7cbdd22b44c58a6b6a6", "bytes": 27716, "ownerResumePolicy": "WITHHELD_UNTIL_CENTRAL_CORRECTION_INTEGRATION_RECEIPT_AND_HASH_BOUND_REPLACEMENT_START_TOKEN"},
+    "ownerBlocker": {"worktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261019/r7-batch04/per-004/frontend", "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-results-r1/base-tfr-per-004/BLOCKED-central-state-matrix.md", "sha256": "badb714cad2cabed53faf9627f617503d9ccdaccb216e24aa6e24b1e52fe08d0", "bytes": 4101}
+  },
+  "pinnedBackend": {"repository": "dwp-backend", "branch": "dwp-dev", "commit": "0cc02064bdec914dc4b8540a3b23faa5e3719ab0", "tree": "4f4050b6336cf5663d475af07755045a9f3c23bf", "originExact": true, "clean": true},
+  "plannedWorktree": {"absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261019/r7-batch04/per-004-state-correction/backend", "branch": "codex/hris-wave7-r7-batch04-per004-state-correction-20261019-r1", "createFromCommit": "0cc02064bdec914dc4b8540a3b23faa5e3719ab0", "createFromTree": "4f4050b6336cf5663d475af07755045a9f3c23bf", "requiredInitialPorcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", "requiredInitialUpstream": null},
+  "exactWritable": {
+    "required": [
+      {"path": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/referenceconfiguration/Per004TargetActionsV2.java", "sha256Before": "7b8595a6898606a7abd82328ccead1f11acb05d4156e3751193304e0302e6dcb", "bytesBefore": 4790},
+      {"path": "dwp-platform-contracts/src/test/java/com/dwp/platform/contracts/hris/referenceconfiguration/Per004TargetActionsV2Test.java", "sha256Before": "a68658749d8d36d19742b772fcef112d813ada7c61aeaed17ad879c01f6c4f1a", "bytesBefore": 4615},
+      {"path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/JdbcPer004OwnerEvidenceStore.java", "sha256Before": "55c0e8a1733f819050379fd0d132a003cba46172c65a1763aa20355b8dbfaaf9", "bytesBefore": 24556},
+      {"path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/Per004OwnerEvidencePostgresTest.java", "sha256Before": "d46790326a70d473ef9148b5be1aca419697248e59598367f3dde4ec8e8e5676", "bytesBefore": 26818}
+    ],
+    "assertionsOnlyIfNeeded": [
+      {"path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/Per004ProjectionQueryTest.java", "sha256Before": "f0572e62da5b3c5cfe09fa60444e13f674631a187998a35fcf3e483a35199d66", "bytesBefore": 5312},
+      {"path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/Per004ConfigurationRuntimeTest.java", "sha256Before": "1e06ec97a3883c214279b86d0f6240258ac6f7d3b857307c0744391cbc274426", "bytesBefore": 7569}
+    ]
+  },
+  "implementationContract": {"projection": "Mapper-only normalization of each asOf latest eligible terminal snapshot to one synthetic configuration-root row with metadata preserved.", "action": "Create only for synthetic plus createEligible; raw terminal plus createEligible still returns [].", "invariants": "No duplicate sentinel; SQL shape, cursor, cardinality, persisted terminal bytes, enum and migrations unchanged.", "livePost": "checkCreateEligible, feature, permission, predicate, target, scope, CAS and idempotency reauthorization remain required."},
+  "noTouch": [{"path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/ReferenceConfigurationDtos.java", "sha256": "5fc471bea08c2670ed045bcf1ca4a1bee1f3a12f745b0252a618b34e4d48b5cb", "bytes": 12324}, "all migrations", "all other backend, owner, frontend, route, menu and i18n source"],
+  "targetedVerification": {"required": ["./gradlew :dwp-platform-contracts:test --tests 'com.dwp.platform.contracts.hris.referenceconfiguration.Per004TargetActionsV2Test'", "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.hrisconfiguration.referenceconfiguration.Per004OwnerEvidencePostgresTest'"], "conditionalOnlyIfChanged": ["./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.hrisconfiguration.referenceconfiguration.Per004ProjectionQueryTest'", "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.hrisconfiguration.referenceconfiguration.Per004ConfigurationRuntimeTest'"], "smallestFailedRerunOnly": true, "repositoryWideSuiteAuthorized": false},
+  "rollout": {"default": "OFF", "tenantEnrollmentCount": 0, "ownerProvider": "UNBOUND", "routeOrMenuMount": "ABSENT"},
+  "authority": {"materializeImplementTargetTestCommitPushCorrectionBranch": true, "mergeToDwpDevAuthorizedByThisDocument": false, "ownerResumeAuthorizedByThisDocument": false, "ownerResumeRequiresCentralIntegrationReceiptAndHashBoundReplacementStartToken": true, "databaseMigrationEnumOrDtoChangeAuthorized": false, "activationEnrollmentBindingOrReleaseAuthorized": false},
+  "nextGate": "INDEPENDENT_REVIEW_ZERO_P0_ZERO_P1_THEN_COMMIT_PUSH_THE_AUTHORITY_FILES_MATERIALIZE_AND_IMPLEMENT_THE_CORRECTION_ADMIT_IT_AND_ISSUE_A_HASH_BOUND_REPLACEMENT_START_TOKEN_BEFORE_OWNER_RESUME"
+}

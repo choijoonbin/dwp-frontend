@@ -1,0 +1,163 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-per004-central-contract-correction-review.v2",
+  "reviewId": "HRIS-WAVE7-R7-BATCH-04-PER004-CENTRAL-CONTRACT-CORRECTION-REVIEW-20261019-R2",
+  "recordedAt": "2026-10-19T19:14:47+09:00",
+  "recordedBy": "INDEPENDENT_PER004_CENTRAL_CONTRACT_CORRECTION_REVIEW",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ID_AND_SHA256"
+  },
+  "state": "PER004_MAPPER_ONLY_CENTRAL_CORRECTION_INDEPENDENTLY_REVIEWED_PASS_ZERO_P0_ZERO_P1_CORRECTION_WORKTREE_MAY_PROCEED_OWNER_RESUME_WITHHELD",
+  "sliceId": "BASE-TFR-PER-004",
+  "reviewedArtifacts": [
+    {
+      "path": "contract-successors/per-004-iaq-projection-and-lifecycle-successor.v2.json",
+      "sha256": "b9e20fd44834d0ee38fb3e8307dba3e0361b9eedd98715b29978ae5b4fb8dc6d",
+      "bytes": 5310,
+      "requiredState": "SEALED_PER004_IAQ056_WIRE_ONLY_SYNTHETIC_CREATE_ELIGIBLE_PROJECTION_TERMINAL_ACTION_DENIAL_ALL_OTHER_R1_TERMS_PRESERVED"
+    },
+    {
+      "path": "per-004-central-contract-correction-authorization-successor.v2.json",
+      "sha256": "08c379e30438735761fc470ffdb2904d42240ca5990343d8d5063f5f468c49b3",
+      "bytes": 6955,
+      "requiredState": "SEALED_EXACT_PER004_MAPPER_ONLY_CENTRAL_STATE_CORRECTION_AUTHORIZED_DEFAULT_OFF_ZERO_ENROLLMENT_NO_DATABASE_CHANGE"
+    }
+  ],
+  "verifiedAuthorityBasis": {
+    "lifecycleV1": {
+      "path": "contract-successors/per-004-iaq-projection-and-lifecycle-successor.v1.json",
+      "sha256": "ff1be7ed1bb18dcc24b0f5acac05c6be36707e34c72f5a3bdcfa05671289a361",
+      "bytes": 27667,
+      "state": "SEALED_PER004_IAQ020_READ_ONLY_IAQ056_EXACT_STATE_AWARE_PLATFORM_LIFECYCLE_AND_TYPED_OWNER_HANDSHAKE"
+    },
+    "centralAuthorizationV1": {
+      "path": "per-004-central-contract-authorization-successor.v1.json",
+      "sha256": "09d5c2eb9a1bbc1eec01e8bf716a7bed2d81f17a3b4248d7b70b536aacdfc3ab",
+      "bytes": 30073,
+      "state": "SEALED_EXACT_PER004_V55_V264_V332_GATEWAY_TYPED_OWNER_TRUST_AUTHORITY_DEFAULT_OFF_ZERO_ENROLLMENT"
+    },
+    "centralReviewV1": {
+      "path": "per-004-central-contract-authorization-review.v1.json",
+      "sha256": "327929b8375f3529f24d19c4a1b1aca8f76c3f3b2b7757a619958669b92a9570",
+      "bytes": 3493,
+      "state": "PER004_IAQ_AND_CENTRAL_CONTRACT_INDEPENDENTLY_REVIEWED_PASS_ZERO_P0_ZERO_P1_BOUNDED_CENTRAL_IMPLEMENTATION_MAY_PROCEED"
+    },
+    "ownerPacket": {
+      "path": "owner-packets/base-tfr-per-004.owner-packet.v1.json",
+      "sha256": "2f7e4f1d10e83c4eb7b6e26d434c6d708ccb58beeecea98ed2faaedeae91b8c3",
+      "bytes": 39168
+    },
+    "originalStartToken": {
+      "path": "tokens/base-tfr-per-004.start-token.v1.json",
+      "sha256": "f9055e3e32423f95e3462b55b7acd21c51dfbd2eca8cb7cbdd22b44c58a6b6a6",
+      "bytes": 27716,
+      "state": "ISSUED_EXECUTABLE_EXACT_MATERIALIZED_WORKTREES_ACTIVE_EXCLUSIVE_V19_BOUNDED_SOURCE_TEST_COMMIT_PUSH_ONLY_DEFAULT_OFF_ZERO_ENROLLMENT",
+      "resumeAuthority": "SUPERSEDED_FOR_RESUME_BY_BLOCKER; NOT_USABLE_UNTIL_A_CENTRAL_CORRECTION_INTEGRATION_RECEIPT_AND_HASH_BOUND_REPLACEMENT_START_TOKEN_EXIST"
+    },
+    "ownerBlocker": {
+      "worktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261019/r7-batch04/per-004/frontend",
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-results-r1/base-tfr-per-004/BLOCKED-central-state-matrix.md",
+      "sha256": "badb714cad2cabed53faf9627f617503d9ccdaccb216e24aa6e24b1e52fe08d0",
+      "bytes": 4101,
+      "state": "BLOCKED_NO_COMMIT_NO_PUSH_NO_ACTIVATION"
+    }
+  },
+  "pinnedBackendEvidence": {
+    "repository": "dwp-backend",
+    "branch": "dwp-dev",
+    "commit": "0cc02064bdec914dc4b8540a3b23faa5e3719ab0",
+    "tree": "4f4050b6336cf5663d475af07755045a9f3c23bf",
+    "originExact": true,
+    "clean": true,
+    "sourcePins": [
+      {
+        "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/JdbcPer004OwnerEvidenceStore.java",
+        "sha256": "55c0e8a1733f819050379fd0d132a003cba46172c65a1763aa20355b8dbfaaf9",
+        "bytes": 24556
+      },
+      {
+        "path": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/referenceconfiguration/Per004TargetActionsV2.java",
+        "sha256": "7b8595a6898606a7abd82328ccead1f11acb05d4156e3751193304e0302e6dcb",
+        "bytes": 4790
+      },
+      {
+        "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/ReferenceConfigurationDtos.java",
+        "sha256": "5fc471bea08c2670ed045bcf1ca4a1bee1f3a12f745b0252a618b34e4d48b5cb",
+        "bytes": 12324,
+        "noTouch": true
+      }
+    ]
+  },
+  "reviewMethod": {
+    "independentReviewer": true,
+    "jsonSyntax": "PASS",
+    "predecessorHashByteAndStatePins": "PASS",
+    "ownerBlockerHashByteAndStatePin": "PASS",
+    "protectedSourceHashAndBytePins": "PASS",
+    "mapperOnlyWireSyntheticSemantics": "PASS",
+    "rawTerminalActionDenial": "PASS",
+    "sqlAsOfOrderingLimitCursorAndCardinalityNoTouch": "PASS",
+    "persistedLifecycleEnumAndMigrationNoTouch": "PASS",
+    "exactWritablePathsAndTargetedTests": "PASS",
+    "plannedWorktreePinAndInitialState": "PASS",
+    "defaultOffZeroEnrollmentUnboundAndUnmounted": "PASS",
+    "ownerResumeReceiptAndReplacementTokenGate": "PASS",
+    "sourceImplementationPerformed": false,
+    "testsExecuted": false,
+    "repositoryWideSuiteRun": false
+  },
+  "acceptedCorrectionBoundary": {
+    "projection": "The existing latest eligible terminal snapshot at request.asOf is normalized in the mapper to exactly one wire-only NO_MUTABLE_VERSION_AND_CREATE_ELIGIBLE row with createEligible=true and all other row metadata preserved.",
+    "actions": "Only the synthetic state with createEligible=true may produce create-version; PUBLISHED, REJECTED, RETIRED and FAILED_ACTIVATION always produce no action even if presented with createEligible=true.",
+    "unchanged": [
+      "projection SQL text, asOf predicate, ordering and LIMIT 1",
+      "cursor binding and response cardinality",
+      "persisted lifecycle_state bytes and LifecycleState enum",
+      "all database migrations and ReferenceConfigurationDtos.java",
+      "live POST create-eligibility reload and feature, permission, predicate, target, scope, CAS and idempotency reauthorization"
+    ],
+    "implementationScope": "Only the four required writable files and, when necessary, the two conditionally writable assertion files declared by the reviewed authorization may change.",
+    "verificationScope": "Run the two required targeted test classes and only conditionally run the two query/runtime classes if changed; use the smallest failed rerun and no repository-wide suite."
+  },
+  "plannedWorktree": {
+    "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261019/r7-batch04/per-004-state-correction/backend",
+    "branch": "codex/hris-wave7-r7-batch04-per004-state-correction-20261019-r1",
+    "createFromCommit": "0cc02064bdec914dc4b8540a3b23faa5e3719ab0",
+    "createFromTree": "4f4050b6336cf5663d475af07755045a9f3c23bf",
+    "requiredInitialPorcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "requiredInitialUpstream": null,
+    "confirmedAbsentBeforeMaterialization": true
+  },
+  "findings": {
+    "initialP0": 0,
+    "initialP1": 1,
+    "closedP1": [
+      "The first reviewed draft gated owner resume only on the central integration receipt. Both final reviewed successors now require that receipt plus a hash-bound replacement start token."
+    ],
+    "remainingP0": 0,
+    "remainingP1": 0,
+    "remainingP2": 0
+  },
+  "rollout": {
+    "default": "OFF",
+    "tenantEnrollmentCount": 0,
+    "ownerProvider": "UNBOUND",
+    "routeOrMenuMount": "ABSENT",
+    "activationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "authority": {
+    "centralCorrectionReviewAccepted": true,
+    "correctionWorktreeMaterializationAuthorized": true,
+    "boundedMapperOnlyImplementationAndTargetedTestAuthorized": true,
+    "correctionBranchCommitAndPushAuthorized": true,
+    "mergeToDwpDevAuthorizedByThisReview": false,
+    "ownerResumeAuthorizedByThisReview": false,
+    "originalStartTokenAuthorizesResume": false,
+    "ownerResumeRequiresCentralCorrectionIntegrationReceipt": true,
+    "ownerResumeRequiresHashBoundReplacementStartToken": true,
+    "databaseMigrationEnumOrDtoChangeAuthorized": false,
+    "activationEnrollmentBindingOrReleaseAuthorized": false
+  },
+  "nextGate": "COMMIT_AND_PUSH_THE_THREE_AUTHORITY_FILES_THEN_MATERIALIZE_THE_EXACT_CORRECTION_WORKTREE_IMPLEMENT_AND_TARGET_VERIFY_ONLY_THE_REVIEWED_DELTA_ADMIT_THE_EXACT_CORRECTION_TO_DWP_DEV_AND_ISSUE_A_HASH_BOUND_REPLACEMENT_START_TOKEN_BEFORE_ANY_OWNER_RESUME"
+}

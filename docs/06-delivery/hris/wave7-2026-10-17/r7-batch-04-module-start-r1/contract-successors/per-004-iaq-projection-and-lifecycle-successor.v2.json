@@ -1,0 +1,40 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-per004-iaq-projection-and-lifecycle-successor.v2",
+  "successorId": "HRIS-WAVE7-R7-BATCH-04-PER004-IAQ-LIFECYCLE-SUCCESSOR-20261019-R2",
+  "recordedAt": "2026-10-19T19:06:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "immutability": {"sealed": true, "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ID_AND_SHA256"},
+  "state": "SEALED_PER004_IAQ056_WIRE_ONLY_SYNTHETIC_CREATE_ELIGIBLE_PROJECTION_TERMINAL_ACTION_DENIAL_ALL_OTHER_R1_TERMS_PRESERVED",
+  "sliceId": "BASE-TFR-PER-004",
+  "authorityBasis": {
+    "lifecycleV1": {"path": "per-004-iaq-projection-and-lifecycle-successor.v1.json", "sha256": "ff1be7ed1bb18dcc24b0f5acac05c6be36707e34c72f5a3bdcfa05671289a361", "bytes": 27667, "requiredState": "SEALED_PER004_IAQ020_READ_ONLY_IAQ056_EXACT_STATE_AWARE_PLATFORM_LIFECYCLE_AND_TYPED_OWNER_HANDSHAKE"},
+    "centralAuthorizationV1": {"path": "../per-004-central-contract-authorization-successor.v1.json", "sha256": "09d5c2eb9a1bbc1eec01e8bf716a7bed2d81f17a3b4248d7b70b536aacdfc3ab", "bytes": 30073, "requiredState": "SEALED_EXACT_PER004_V55_V264_V332_GATEWAY_TYPED_OWNER_TRUST_AUTHORITY_DEFAULT_OFF_ZERO_ENROLLMENT"},
+    "centralReviewV1": {"path": "../per-004-central-contract-authorization-review.v1.json", "sha256": "327929b8375f3529f24d19c4a1b1aca8f76c3f3b2b7757a619958669b92a9570", "bytes": 3493, "requiredState": "PER004_IAQ_AND_CENTRAL_CONTRACT_INDEPENDENTLY_REVIEWED_PASS_ZERO_P0_ZERO_P1_BOUNDED_CENTRAL_IMPLEMENTATION_MAY_PROCEED"},
+    "ownerPacket": {"path": "../owner-packets/base-tfr-per-004.owner-packet.v1.json", "sha256": "2f7e4f1d10e83c4eb7b6e26d434c6d708ccb58beeecea98ed2faaedeae91b8c3", "bytes": 39168},
+    "startToken": {"path": "../tokens/base-tfr-per-004.start-token.v1.json", "sha256": "f9055e3e32423f95e3462b55b7acd21c51dfbd2eca8cb7cbdd22b44c58a6b6a6", "bytes": 27716, "requiredState": "ISSUED_EXECUTABLE_EXACT_MATERIALIZED_WORKTREES_ACTIVE_EXCLUSIVE_V19_BOUNDED_SOURCE_TEST_COMMIT_PUSH_ONLY_DEFAULT_OFF_ZERO_ENROLLMENT"},
+    "ownerBlocker": {"worktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261019/r7-batch04/per-004/frontend", "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-results-r1/base-tfr-per-004/BLOCKED-central-state-matrix.md", "sha256": "badb714cad2cabed53faf9627f617503d9ccdaccb216e24aa6e24b1e52fe08d0", "bytes": 4101, "requiredState": "BLOCKED_NO_COMMIT_NO_PUSH_NO_ACTIVATION"}
+  },
+  "correction": {
+    "persistedTerminalStates": ["PUBLISHED", "REJECTED", "RETIRED", "FAILED_ACTIVATION"],
+    "persistenceRule": "Persisted lifecycle_state bytes, LifecycleState enum and every migration remain unchanged; NO_MUTABLE_VERSION_AND_CREATE_ELIGIBLE is wire-only.",
+    "projectionRule": "At request.asOf, map the existing latest eligible terminal snapshot in place to lifecycleState=NO_MUTABLE_VERSION_AND_CREATE_ELIGIBLE and createEligible=true while preserving every other field from that same row.",
+    "singleRowRule": "Return the same single configuration-root row; never append a sentinel or return both raw terminal and synthetic rows.",
+    "queryInvariant": "SQL shape, asOf predicate, ordering, LIMIT 1, cursor binding and cardinality remain unchanged.",
+    "actionRule": "Per004TargetActionsV2 returns create-version only for NO_MUTABLE_VERSION_AND_CREATE_ELIGIBLE with createEligible=true; raw terminal states return [] even when createEligible=true.",
+    "postRule": "Live POST still reloads checkCreateEligible and re-evaluates feature, permission, predicate, target, scope, CAS and idempotency."
+  },
+  "protectedSourcePins": [
+    {"path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/JdbcPer004OwnerEvidenceStore.java", "sha256": "55c0e8a1733f819050379fd0d132a003cba46172c65a1763aa20355b8dbfaaf9", "bytes": 24556},
+    {"path": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/referenceconfiguration/Per004TargetActionsV2.java", "sha256": "7b8595a6898606a7abd82328ccead1f11acb05d4156e3751193304e0302e6dcb", "bytes": 4790},
+    {"path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/ReferenceConfigurationDtos.java", "sha256": "5fc471bea08c2670ed045bcf1ca4a1bee1f3a12f745b0252a618b34e4d48b5cb", "bytes": 12324, "noTouch": true}
+  ],
+  "acceptance": [
+    "Each eligible latest terminal snapshot projects exactly one synthetic row with metadata preserved.",
+    "Synthetic plus createEligible yields at most one create action; synthetic ineligible and every raw terminal yield none.",
+    "SQL, cursor, cardinality, enum, stored state and migrations are unchanged.",
+    "Live POST reauthorization remains intact."
+  ],
+  "rollout": {"default": "OFF", "tenantEnrollmentCount": 0, "ownerProvider": "UNBOUND", "routeOrMenuMount": "ABSENT"},
+  "authority": {"mapperOnlyCorrectionAuthorized": true, "persistentStateEnumDatabaseOrMigrationChangeAuthorized": false, "ownerResumeAuthorizedNow": false, "ownerResumeRequiresCentralIntegrationReceiptAndHashBoundReplacementStartToken": true, "activationEnrollmentBindingOrReleaseAuthorized": false},
+  "nextGate": "SEAL_AND_REVIEW_THE_EXACT_CENTRAL_CORRECTION_AUTHORIZATION_IMPLEMENT_AND_ADMIT_THE_CORRECTION_THEN_ISSUE_A_HASH_BOUND_REPLACEMENT_START_TOKEN_BEFORE_OWNER_RESUME"
+}
