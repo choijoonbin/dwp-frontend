@@ -1,0 +1,92 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-pay003-semantic-disposition-successor.v2",
+  "dispositionId": "HRIS-WAVE7-R7-BATCH-04-PAY003-SEMANTIC-DISPOSITION-20261019-R2",
+  "recordedAt": "2026-10-19T13:42:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ID_AND_SHA256"
+  },
+  "state": "PAY003_ACTION_TARGET_BOUND_TO_PACK_GRAIN_IAQ026_IAQ048_RESULT_ACTIONS_WITHHELD_CENTRAL_CONTRACT_SUCCESSOR_REQUIRED",
+  "sliceId": "BASE-TFR-PAY-003",
+  "successorOf": {
+    "path": "base-tfr-pay-003.semantic-disposition.v1.json",
+    "sha256": "28ae1a0cb22920dfb77913a17ea4d4340572c4b2d115d6b8ac6a53c6202610b7",
+    "bytes": 25694,
+    "carrierCommit": "1e32370e33fa3a7e9c23f862d31601aaec9b4cf3",
+    "supersession": "CORRECT_THE_UNBOUND_PACK_ID_IN_IAQ048_ACTION_EXPOSURE_WITHOUT_MUTATING_THE_ACCEPTED_HISTORICAL_REGISTERS"
+  },
+  "problem": {
+    "unsafePriorTerm": "The v1 disposition allowed hris.action.pay.country.pack.activate on an IAQ-048 item whose itemPublicId is workerResultId, while the action URL requires packId and the closed response has no action-target packId.",
+    "forbiddenWorkaround": "POLICY_VERSION.policyKey is display and policy metadata, may be masked or omitted, and has no canonical equality or substitution rule with packId. Parsing it as an identifier would create an undeclared authority channel.",
+    "decision": "Never emit PEP-PAY-028 from an IAQ-048 PAY-003 result item. Bind the activation action to an IAQ-026 installed-pack item where itemPublicId is already the exact owner-resolved packId."
+  },
+  "iaq026ActionSuccessor": {
+    "queryId": "IAQ-026",
+    "itemIdentity": "canonical lowercase UUID packId",
+    "itemPublicIdEquality": "targetResourcePublicId equals itemPublicId and both equal the owner-resolved packId",
+    "availableActions": [
+      {
+        "actionKey": "hris.action.pay.country.pack.activate",
+        "method": "POST",
+        "targetResourceType": "COUNTRY_PACK",
+        "targetResourcePublicId": "EXACT_ITEM_PUBLIC_ID",
+        "resolvedHrefRule": "/api/payroll/v1/country-packs/{itemPublicId}/activate with one canonical lowercase UUID path segment and no query string",
+        "idempotencyPolicy": "REQUIRED_IDEMPOTENCY_KEY",
+        "stepUpPolicy": "OWNER_PEP_RISK_POLICY_DECISION_REQUIRED"
+      }
+    ],
+    "exposureRule": "Expose exactly one action only when COUNTRY_PACK_METADATA, STATUTORY_RULE and ACTIVATION_STATUS are VIEW, lifecycle state is APPROVED or SUSPENDED, the current row revision is available for strong If-Match, and a preliminary current PEP-PAY-028 decision allows the exact pack population. Otherwise availableActions is empty.",
+    "ownerRevalidation": "The POST owner ignores the projection as authority, reloads packId under RLS, proves its stored legal-entity/pay-group scope equals the trusted decision scope, and re-evaluates version, lifecycle, evidence, SoD and step-up before mutation.",
+    "historicalAcceptedRegisterTerm": "IAQ-026 action_keys=NONE is superseded only for BASE-TFR-PAY-003 by the central contract successor authorized below."
+  },
+  "iaq048ActionBoundary": {
+    "queryId": "IAQ-048",
+    "itemIdentity": "workerResultId remains unchanged",
+    "pay003AvailableActions": [],
+    "countryPackActivationAction": "FORBIDDEN",
+    "otherAcceptedActionKeys": "PEP-PAY-004, PEP-PAY-005 and PEP-PAY-012 are related owners and are not emitted, implemented or recounted by PAY-003.",
+    "futureRule": "Any future result-row action with a path variable requires its own explicit targetResourcePublicId and resolvedHref equality contract before exposure."
+  },
+  "centralContractSuccessorRequirements": {
+    "mode": "APPEND_ONLY_NO_HISTORICAL_REGISTER_OR_SCHEMA_MUTATION",
+    "requiredArtifacts": [
+      "a PAY-003 IAQ-026 projection-schema successor allowing only the exact resolved COUNTRY_PACK action shape",
+      "a PAY-003 IAQ-026 API-register successor changing action_keys from NONE to only hris.action.pay.country.pack.activate with provenance PEP-PAY-028",
+      "a PAY-003 IAQ-048 projection overlay requiring availableActions empty for this slice",
+      "targeted schema tests proving targetResourcePublicId=itemPublicId and resolvedHref uses the same canonical packId exactly once",
+      "negative tests proving workerResultId, policyKey, masked fields, caller input and cross-tenant identifiers can never supply packId"
+    ],
+    "centralAdmissionRequiredBeforeOwnerPacket": true
+  },
+  "acceptanceCorrection": {
+    "supersedes": "PAY003-AC11 action-exposure portion only",
+    "PAY003-AC11": "The IAQ-026 settings workbench exposes the exact resolved country-pack activation action only for a safe owner-resolved pack item and renders loading, empty, complete, partial, unavailable, forbidden, retry and step-up states accessibly and responsively. IAQ-048 renders the same non-action states for result data and exposes no PAY-003 action.",
+    "additionalNegativeProof": "No frontend code derives packId from POLICY_VERSION, title, status, deep link, hidden state or workerResultId."
+  },
+  "preservedTerms": [
+    "All nonconflicting v1 semantic, scope, idempotency, lifecycle, SoD, result, V53, rollout and authority terms",
+    "IAQ-048 stable workerResultId and TAX_RESULT partial/omit boundary",
+    "PEP-PAY-028 exact activation endpoint and owner-side opaque 404 revalidation",
+    "default OFF, zero enrollment, zero business-completion credit and no production provider binding"
+  ],
+  "authority": {
+    "semanticDispositionV2Sealed": true,
+    "boundedCentralContractAndAuthorizationSuccessorMayBeAuthored": true,
+    "ownerPacketBeforeCentralAdmission": false,
+    "moduleSourceAuthoringAuthorizedNow": false,
+    "migrationAuthoringAuthorizedNow": false,
+    "frontendActionExposureAuthorizedNow": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nonClaims": [
+    "The historical accepted IAQ register or projection schema was mutated.",
+    "IAQ-048 can supply or derive packId.",
+    "The IAQ-026 action successor is implemented or centrally admitted by this disposition.",
+    "An owner packet, V53 lease, worktree or executable token exists.",
+    "Any feature or tenant is activated or enrolled."
+  ],
+  "nextGate": "INDEPENDENTLY_REVIEW_V2_THEN_AUTHOR_AND_ADMIT_ONE_BOUNDED_CENTRAL_CONTRACT_AUTHORIZATION_SUCCESSOR_BEFORE_OWNER_PACKET_OR_SOURCE_START"
+}
