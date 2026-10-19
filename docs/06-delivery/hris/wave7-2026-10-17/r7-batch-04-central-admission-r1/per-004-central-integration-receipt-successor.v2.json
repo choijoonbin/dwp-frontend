@@ -1,0 +1,208 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-per004-central-integration-receipt-successor.v2",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-04-PER004-CENTRAL-INTEGRATION-20261019-R2",
+  "recordedAt": "2026-10-19T19:21:43+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "PER004_EXACT_MAPPER_ONLY_STATE_CORRECTION_INTEGRATED_PUSHED_DEFAULT_OFF_ZERO_ENROLLMENT_UNBOUND_UNMOUNTED_REPLACEMENT_TOKEN_PREPARATION_ONLY",
+  "sliceId": "BASE-TFR-PER-004",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_RECEIPT_ID_AND_SHA256",
+    "supersedesOnlyTheRecordedIntegrationStateOf": {
+      "path": "per-004-central-integration-receipt.v1.json",
+      "sha256": "d2eb616c2a02ef3de57c7825964b8495a96e2a17b29489d74222852bbad2b640",
+      "bytes": 18344
+    }
+  },
+  "authorityBasis": {
+    "lifecycleCorrectionSuccessor": {
+      "path": "../r7-batch-04-module-start-r1/contract-successors/per-004-iaq-projection-and-lifecycle-successor.v2.json",
+      "sha256": "b9e20fd44834d0ee38fb3e8307dba3e0361b9eedd98715b29978ae5b4fb8dc6d",
+      "bytes": 5310,
+      "requiredState": "SEALED_PER004_IAQ056_WIRE_ONLY_SYNTHETIC_CREATE_ELIGIBLE_PROJECTION_TERMINAL_ACTION_DENIAL_ALL_OTHER_R1_TERMS_PRESERVED"
+    },
+    "correctionAuthorizationSuccessor": {
+      "path": "../r7-batch-04-module-start-r1/per-004-central-contract-correction-authorization-successor.v2.json",
+      "sha256": "08c379e30438735761fc470ffdb2904d42240ca5990343d8d5063f5f468c49b3",
+      "bytes": 6955,
+      "requiredState": "SEALED_EXACT_PER004_MAPPER_ONLY_CENTRAL_STATE_CORRECTION_AUTHORIZED_DEFAULT_OFF_ZERO_ENROLLMENT_NO_DATABASE_CHANGE"
+    },
+    "independentCorrectionReview": {
+      "path": "../r7-batch-04-module-start-r1/per-004-central-contract-correction-review.v2.json",
+      "sha256": "62eef66658ad0099c460ad8c1d914986aa85b5aae94f79db847be6c25e056625",
+      "bytes": 8733,
+      "requiredState": "PER004_MAPPER_ONLY_CENTRAL_CORRECTION_INDEPENDENTLY_REVIEWED_PASS_ZERO_P0_ZERO_P1_CORRECTION_WORKTREE_MAY_PROCEED_OWNER_RESUME_WITHHELD",
+      "remainingP0": 0,
+      "remainingP1": 0
+    }
+  },
+  "supersededOwnerExecutionEvidence": {
+    "originalStartToken": {
+      "path": "../r7-batch-04-module-start-r1/tokens/base-tfr-per-004.start-token.v1.json",
+      "sha256": "f9055e3e32423f95e3462b55b7acd21c51dfbd2eca8cb7cbdd22b44c58a6b6a6",
+      "bytes": 27716,
+      "state": "ISSUED_EXECUTABLE_EXACT_MATERIALIZED_WORKTREES_ACTIVE_EXCLUSIVE_V19_BOUNDED_SOURCE_TEST_COMMIT_PUSH_ONLY_DEFAULT_OFF_ZERO_ENROLLMENT",
+      "usableForModuleResume": false,
+      "disposition": "SUPERSEDED_FOR_RESUME_BY_OWNER_BLOCKER_AND_THIS_CORRECTED_CENTRAL_STATE; RETAINED_AS_IMMUTABLE_HISTORY"
+    },
+    "activeMigrationLease": {
+      "path": "../r7-batch-04-module-start-r1/migration-lease-per004-v19-activation.v2.json",
+      "sha256": "fb1ba2f362862690ebbf5fc57a7e84fb9d92b71ed3098591c5dadfd89abde0a4",
+      "bytes": 14325,
+      "state": "ACTIVE_EXCLUSIVE_PERFORMANCE_V19",
+      "leaseId": "HRIS-WAVE7-R7-BATCH-04-PERFORMANCE-V19-PER004-20261019-R1",
+      "stream": "PERFORMANCE",
+      "version": "V19",
+      "disposition": "REMAINS_ACTIVE_AND_UNCONSUMED; THIS MAPPER_ONLY_CORRECTION ADDS OR MODIFIES NO MIGRATION"
+    },
+    "ownerBlocker": {
+      "worktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261019/r7-batch04/per-004/frontend",
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-results-r1/base-tfr-per-004/BLOCKED-central-state-matrix.md",
+      "sha256": "badb714cad2cabed53faf9627f617503d9ccdaccb216e24aa6e24b1e52fe08d0",
+      "bytes": 4101,
+      "state": "BLOCKED_NO_COMMIT_NO_PUSH_NO_ACTIVATION",
+      "resolvedCentralCause": true,
+      "moduleResumeAuthorizedByThisReceiptAlone": false
+    }
+  },
+  "integratedPins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "0ef034f1e57380fec256095122297a6d8bc87d37",
+      "tree": "2ce7e49f0b7a12f8cd2b6d55053e326bd97e424b",
+      "parent": "0cc02064bdec914dc4b8540a3b23faa5e3719ab0",
+      "originRef": "origin/dwp-dev",
+      "originExact": true,
+      "worktreeClean": true
+    },
+    "frontendAuthorityCarrierBeforeThisReceipt": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "890c79065c541e0e26fe49c242eb361626de2d5f",
+      "tree": "35cd3b4916ef2e54d5565ae154ba3fa2eccfd9d5",
+      "originRef": "origin/dwp-dev",
+      "originExact": true,
+      "committedTreeCleanBeforeDraft": true,
+      "authorityCarrierAdvanceExpected": true
+    }
+  },
+  "integratedCorrection": {
+    "commit": "0ef034f1e57380fec256095122297a6d8bc87d37",
+    "subject": "fix(platform): align PER-004 create projection state",
+    "changedPathCount": 4,
+    "insertions": 60,
+    "deletions": 34,
+    "pathOnlyManifestSha256": "ae66c66443affdcd737ae39ec0114544015dcba92d7bcf27c052df565efbc633",
+    "nameStatusManifestSha256": "65cce807956c065c85f5ae7228a9ae702f62cdf0217d2283b286508139fc9817",
+    "exactChangedPaths": [
+      {
+        "path": "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/referenceconfiguration/Per004TargetActionsV2.java",
+        "sha256": "ba8aa24cedf85f213201bfc3650f177db1ee8cec7c29de52cdc3739ee745d83d",
+        "bytes": 4559
+      },
+      {
+        "path": "dwp-platform-contracts/src/test/java/com/dwp/platform/contracts/hris/referenceconfiguration/Per004TargetActionsV2Test.java",
+        "sha256": "8699cd3d312081a5b6e271e5266ddaaa2e7b8bd6ce4aa50f49b6ac9aa9a30b18",
+        "bytes": 5997
+      },
+      {
+        "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/JdbcPer004OwnerEvidenceStore.java",
+        "sha256": "abe175b2242cee0008a2acdc4f1f40ee507821366fbd20e24d6d401a40f78",
+        "bytes": 24656
+      },
+      {
+        "path": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/Per004OwnerEvidencePostgresTest.java",
+        "sha256": "1a3da2ddc08427510352276c1ca49b540350d71078812d5669e02064e5bdccd8",
+        "bytes": 27888
+      }
+    ],
+    "semantics": {
+      "persistedTerminalState": "RAW_TERMINAL_STATE_BYTES_REMAIN_UNCHANGED",
+      "wireProjection": "LATEST_ELIGIBLE_TERMINAL_SNAPSHOT_IS_NORMALIZED_ONLY_AT_THE_MAPPER_TO_EXACTLY_ONE_SYNTHETIC_NO_MUTABLE_VERSION_AND_CREATE_ELIGIBLE_ROW",
+      "actionRule": "CREATE_VERSION_ONLY_FOR_THE_SYNTHETIC_CREATE_ELIGIBLE_WIRE_STATE; RAW_PUBLISHED_REJECTED_RETIRED_AND_FAILED_ACTIVATION_RETURN_NO_ACTION",
+      "createAdmission": "EXACT_CREATE_PATH_RELOAD_AND_FEATURE_PERMISSION_PREDICATE_TARGET_SCOPE_CAS_AND_IDEMPOTENCY_REAUTHORIZATION_REMAIN_REQUIRED",
+      "sqlCursorCardinality": "UNCHANGED"
+    }
+  },
+  "protectedUnchangedEvidence": {
+    "referenceConfigurationDtos": {
+      "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/referenceconfiguration/ReferenceConfigurationDtos.java",
+      "sha256BeforeAndAfter": "5fc471bea08c2670ed045bcf1ca4a1bee1f3a12f745b0252a618b34e4d48b5cb",
+      "bytesBeforeAndAfter": 12324
+    },
+    "migrations": {
+      "changed": false,
+      "newMigrationCount": 0,
+      "authV264": {
+        "path": "dwp-auth-server/src/main/resources/db/migration/V264__declare_hris_r7_batch04_per004_v55_authorization_seed.sql",
+        "sha256BeforeAndAfter": "ef96150721feaf388584e5241f2a782a8a4d96bd2e7e54350e26634744169b08",
+        "bytesBeforeAndAfter": 2060
+      },
+      "platformV332": {
+        "path": "dwp-platform-server/src/main/resources/db/migration/V332__bind_hris_reference_configuration_owner_evidence.sql",
+        "sha256BeforeAndAfter": "6374af4b31590aa9aaa3dfbcbf6c028476d6c2e31e645df3ec3470511cbb61bf",
+        "bytesBeforeAndAfter": 16290
+      },
+      "performanceV19Lease": "ACTIVE_UNCONSUMED_AND_NOT_AUTHORED_BY_THIS_CORRECTION"
+    }
+  },
+  "targetedVerification": {
+    "policy": "RUN_ONLY_THE_TWO_AUTHORIZED_AFFECTED_TEST_CLASSES_ONCE; NO_REPOSITORY_WIDE_SUITE_AND_NO_UNAFFECTED_PASSING_RERUN",
+    "contracts": {
+      "command": "./gradlew :dwp-platform-contracts:test --tests 'com.dwp.platform.contracts.hris.referenceconfiguration.Per004TargetActionsV2Test'",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "result": "BUILD_SUCCESSFUL"
+    },
+    "postgres": {
+      "command": "./gradlew :dwp-platform-server:test --tests 'com.dwp.services.platform.hrisconfiguration.referenceconfiguration.Per004OwnerEvidencePostgresTest'",
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "result": "BUILD_SUCCESSFUL"
+    },
+    "independentCodeReview": {
+      "testsRerunByReviewer": false,
+      "remainingP0": 0,
+      "remainingP1": 0,
+      "decision": "GO"
+    },
+    "repositoryWideSuiteRun": false
+  },
+  "rolloutBoundary": {
+    "featureKey": "HRIS_PERFORMANCE_CONFIGURATION",
+    "runtimeDefault": "OFF",
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "tenantEnrollmentCount": 0,
+    "ownerProvider": "UNBOUND",
+    "frontendRouteOrMenuMounted": false,
+    "productionReleaseAuthorized": false
+  },
+  "authorityAfterReceipt": {
+    "correctedCentralStateIntegrated": true,
+    "originalStartTokenAuthorizesResume": false,
+    "hashBoundReplacementStartTokenPreparationAuthorized": true,
+    "moduleResumeAuthorizedByThisReceiptAlone": false,
+    "moduleResumeRequiresHashBoundReplacementStartToken": true,
+    "moduleSourceAuthoringResumeBeforeReplacementToken": false,
+    "migrationAuthoringResumeBeforeReplacementToken": false,
+    "routeOrMenuMountAuthorized": false,
+    "productionProviderBindingAuthorized": false,
+    "featureOrTenantActivationAuthorized": false
+  },
+  "nonClaims": [
+    "The original start token is usable for owner resume.",
+    "The owner module may resume before a replacement token binds this receipt by exact SHA-256 and bytes.",
+    "The PERFORMANCE V19 lease was consumed or any migration changed during the central correction.",
+    "A production owner or field-decision provider is bound.",
+    "The frontend route or menu is mounted.",
+    "Any feature or tenant is activated or enrolled.",
+    "BASE-TFR-PER-004 or the HRIS product is complete."
+  ],
+  "nextAction": "Compute and independently verify this receipt hash, then issue exactly one hash-bound replacement PER-004 start token. Only that replacement token may authorize the existing HRIS-PER owner worktrees to resume."
+}
