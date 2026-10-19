@@ -1,0 +1,125 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-pay003-worktree-materialization-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-04-PAY003-WORKTREE-MATERIALIZATION-20261019-R1",
+  "recordedAt": "2026-10-19T14:13:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "MATERIALIZED_CLEAN_EXACT_AUTHORITY_CARRIER_PINS_NO_SOURCE_EDITS_NO_UPSTREAM",
+  "purpose": "Record the actual clean backend and frontend PAY-003 worktree identities required before the reserved Payroll V53 lease can become active and an executable module start token can be issued. This receipt alone grants no write, test, commit or push authority.",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_RECEIPT_ID_AND_SHA256"
+  },
+  "sliceId": "BASE-TFR-PAY-003",
+  "moduleSession": "HRIS-PAY",
+  "moduleThreadId": "01a0f53d-d1c4-7c22-b69d-f4039003a430",
+  "immutablePredecessors": {
+    "centralIntegrationReceipt": {
+      "path": "../../r7-batch-04-central-admission-r1/pay-003-central-integration-receipt.v1.json",
+      "sha256": "c2fc23a4b090ea44d2a0733c67c7bdf61545cb07206680a6120a905199083cab",
+      "bytes": 10284,
+      "requiredState": "EXACT_PAY003_CENTRAL_BACKEND_COMMITTED_AND_PUSHED_V54_V263_GATEWAY_SHARED_SECURITY_ADMITTED_DEFAULT_OFF_ZERO_ENROLLMENT_OWNER_AUTHORITY_MAY_BE_PREPARED"
+    },
+    "reservedLeaseV1": {
+      "path": "../migration-lease-pay003-v53-reservation.v1.json",
+      "sha256": "22d7c39579e5468a5bce336e770081bb6ea7e9e584b032fb14800e56783f32fb",
+      "bytes": 10363,
+      "reservationId": "HRIS-WAVE7-R7-BATCH-04-MIGRATION-LEASE-RESERVATION-PAY003-20261019-R1",
+      "leaseId": "HRIS-WAVE7-R7-BATCH-04-PAYROLL-MAIN-V53-PAY003-20261019-R1",
+      "requiredState": "RESERVED_NOT_ACTIVE"
+    },
+    "ownerPacket": {
+      "path": "../owner-packets/base-tfr-pay-003.owner-packet.v1.json",
+      "sha256": "175901601a20c4a2fc690c812e3ced3ce1216198c07400b562262fd15cae7516",
+      "bytes": 29016,
+      "packetId": "HRIS-WAVE7-R7-BATCH-04-OWNER-BASE-TFR-PAY-003-20261019-R1",
+      "requiredState": "SEALED_EXACT_PAY003_OWNER_AUTHORITY_PACKET_READY_EXECUTABLE_TOKEN_WITHHELD_PENDING_FRESH_WORKTREES_AND_ACTIVE_V53_LEASE"
+    }
+  },
+  "authorityCarrier": {
+    "repository": "dwp-frontend",
+    "branch": "dwp-dev",
+    "commit": "fefedd7f0f4ea8f3696e8a0ea385c89e5d6c13bd",
+    "tree": "5aa01bc2a3a822d157575cd12064e3fd2ab7a12f",
+    "originRef": "origin/dwp-dev",
+    "originExactBeforeThisAppendOnlyReceipt": true,
+    "porcelainSha256BeforeThisAppendOnlyReceipt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "cleanBeforeThisAppendOnlyReceipt": true
+  },
+  "materializedWorktrees": {
+    "backend": {
+      "repository": "dwp-backend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261019/r7-batch04/pay-003/backend",
+      "branch": "codex/hris-wave7-r7-batch04-pay-003-backend-20261019-r1",
+      "head": "303a7e8598b1b45dc6d65411838647328504efc9",
+      "tree": "a2f347d366bb6a5d037e646063f9fa1ba515d357",
+      "expectedBaseCommit": "303a7e8598b1b45dc6d65411838647328504efc9",
+      "expectedBaseTree": "a2f347d366bb6a5d037e646063f9fa1ba515d357",
+      "headAndTreeExact": true,
+      "porcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "clean": true,
+      "upstream": null,
+      "sourceChangesAtReceipt": [],
+      "materialized": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261019/r7-batch04/pay-003/frontend",
+      "branch": "codex/hris-wave7-r7-batch04-pay-003-frontend-20261019-r1",
+      "head": "fefedd7f0f4ea8f3696e8a0ea385c89e5d6c13bd",
+      "tree": "5aa01bc2a3a822d157575cd12064e3fd2ab7a12f",
+      "expectedBaseCommit": "fefedd7f0f4ea8f3696e8a0ea385c89e5d6c13bd",
+      "expectedBaseTree": "5aa01bc2a3a822d157575cd12064e3fd2ab7a12f",
+      "headAndTreeExact": true,
+      "porcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "clean": true,
+      "upstream": null,
+      "sourceChangesAtReceipt": [],
+      "materialized": true
+    }
+  },
+  "migrationObservation": {
+    "stream": "PAYROLL_MAIN",
+    "observedHighWater": "V52",
+    "candidateVersion": "V53",
+    "exactReservedPath": "dwp-payroll-server/src/main/resources/db/migration/V53__pay_base_tfr_pay_003_statutory_insurance.sql",
+    "candidatePathPresent": false,
+    "competingV53Present": false
+  },
+  "acceptanceCoverage": {
+    "requiredCount": 14,
+    "requiredIds": [
+      "PAY003-AC01",
+      "PAY003-AC02",
+      "PAY003-AC03",
+      "PAY003-AC04",
+      "PAY003-AC05",
+      "PAY003-AC06",
+      "PAY003-AC07",
+      "PAY003-AC08",
+      "PAY003-AC09",
+      "PAY003-AC10",
+      "PAY003-AC11",
+      "PAY003-AC12",
+      "PAY003-AC13",
+      "PAY003-AC14"
+    ]
+  },
+  "authority": {
+    "receiptSealed": true,
+    "activePayrollV53LeaseSuccessorMayBeIssued": true,
+    "executablePay003StartTokenMayBeIssuedOnlyAfterActiveLeaseSuccessor": true,
+    "sourceAuthoringAuthorizedByReceiptAlone": false,
+    "migrationAuthoringAuthorizedByReceiptAlone": false,
+    "testExecutionAuthorizedByReceiptAlone": false,
+    "moduleBranchCommitAuthorizedByReceiptAlone": false,
+    "moduleBranchPushAuthorizedByReceiptAlone": false,
+    "centralWriteAuthorized": false,
+    "directDwpDevMergeAuthorized": false,
+    "routeOrMenuMountAuthorized": false,
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionProviderBindingAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextGate": "ISSUE_ONE_APPEND_ONLY_ACTIVE_EXCLUSIVE_PAYROLL_V53_LEASE_SUCCESSOR_HASH_BOUND_TO_THIS_RECEIPT_THEN_ISSUE_ONE_EXECUTABLE_PAY003_START_TOKEN"
+}

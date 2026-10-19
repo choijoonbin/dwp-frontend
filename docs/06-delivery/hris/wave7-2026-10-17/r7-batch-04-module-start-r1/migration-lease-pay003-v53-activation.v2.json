@@ -1,0 +1,155 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-pay003-migration-lease-activation.v2",
+  "activationId": "HRIS-WAVE7-R7-BATCH-04-MIGRATION-LEASE-ACTIVATION-PAY003-20261019-R2",
+  "activatedAt": "2026-10-19T14:14:00+09:00",
+  "activatedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "ACTIVE_EXCLUSIVE_PAYROLL_V53",
+  "purpose": "Activate exactly one exclusive Payroll main V53 authoring lease for PAY-003 after actual clean pinned backend worktree materialization. The lease must be combined with the matching executable start token and grants no authority outside the reserved exact five-table V53 manifest.",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ACTIVATION_ID_AND_SHA256"
+  },
+  "successorOf": {
+    "path": "migration-lease-pay003-v53-reservation.v1.json",
+    "sha256": "22d7c39579e5468a5bce336e770081bb6ea7e9e584b032fb14800e56783f32fb",
+    "bytes": 10363,
+    "reservationId": "HRIS-WAVE7-R7-BATCH-04-MIGRATION-LEASE-RESERVATION-PAY003-20261019-R1",
+    "requiredState": "RESERVED_NOT_ACTIVE",
+    "supersededField": "state and lease.state",
+    "supersession": "RESERVED_NOT_ACTIVE_TO_ACTIVE_EXCLUSIVE_AFTER_EXACT_CLEAN_WORKTREE_MATERIALIZATION"
+  },
+  "authorityBasis": {
+    "worktreeMaterializationReceipt": {
+      "path": "worktree-materialization-receipts/base-tfr-pay-003.worktree-materialization-receipt.v1.json",
+      "sha256": "44a48f006ca9bc5d0affdeb911c8b816e90bf644c2552c4238eca7ccaaa7ddad",
+      "bytes": 5763,
+      "receiptId": "HRIS-WAVE7-R7-BATCH-04-PAY003-WORKTREE-MATERIALIZATION-20261019-R1",
+      "requiredState": "MATERIALIZED_CLEAN_EXACT_AUTHORITY_CARRIER_PINS_NO_SOURCE_EDITS_NO_UPSTREAM"
+    },
+    "ownerPacket": {
+      "path": "owner-packets/base-tfr-pay-003.owner-packet.v1.json",
+      "sha256": "175901601a20c4a2fc690c812e3ced3ce1216198c07400b562262fd15cae7516",
+      "bytes": 29016,
+      "packetId": "HRIS-WAVE7-R7-BATCH-04-OWNER-BASE-TFR-PAY-003-20261019-R1"
+    },
+    "centralIntegrationReceipt": {
+      "path": "../r7-batch-04-central-admission-r1/pay-003-central-integration-receipt.v1.json",
+      "sha256": "c2fc23a4b090ea44d2a0733c67c7bdf61545cb07206680a6120a905199083cab",
+      "bytes": 10284
+    },
+    "semanticDispositionV1": {
+      "path": "semantic-dispositions/base-tfr-pay-003.semantic-disposition.v1.json",
+      "sha256": "28ae1a0cb22920dfb77913a17ea4d4340572c4b2d115d6b8ac6a53c6202610b7",
+      "bytes": 25694
+    },
+    "semanticDispositionV2": {
+      "path": "semantic-dispositions/base-tfr-pay-003.semantic-disposition-successor.v2.json",
+      "sha256": "b8ad25700089048eca54142596d4eef41831878ce3de037da2e336ca32a9a9e2",
+      "bytes": 6496,
+      "precedence": "CONTROLS_IAQ026_PACK_ACTION_IAQ048_EMPTY_ACTIONS_AND_PAY003_AC11_ACTION_EXPOSURE"
+    }
+  },
+  "lease": {
+    "leaseId": "HRIS-WAVE7-R7-BATCH-04-PAYROLL-MAIN-V53-PAY003-20261019-R1",
+    "moduleSession": "HRIS-PAY",
+    "moduleThreadId": "01a0f53d-d1c4-7c22-b69d-f4039003a430",
+    "sliceId": "BASE-TFR-PAY-003",
+    "canonicalFeature": "HRIS_PAYROLL_STATUTORY_INSURANCE",
+    "stream": "PAYROLL_MAIN",
+    "version": "V53",
+    "predecessorHighWater": "V52",
+    "exactPath": "dwp-payroll-server/src/main/resources/db/migration/V53__pay_base_tfr_pay_003_statutory_insurance.sql",
+    "manifestAuthority": "migration-lease-pay003-v53-reservation.v1.json#/resolvedExactMigrationManifest",
+    "manifestAuthoritySha256": "22d7c39579e5468a5bce336e770081bb6ea7e9e584b032fb14800e56783f32fb",
+    "state": "ACTIVE_EXCLUSIVE",
+    "activeLeaseCountForPayrollV53": 1,
+    "secondMigrationAuthorized": false,
+    "existingMigrationEditAuthorized": false,
+    "dataBackfillAuthorized": false
+  },
+  "materializedBackendBinding": {
+    "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261019/r7-batch04/pay-003/backend",
+    "branch": "codex/hris-wave7-r7-batch04-pay-003-backend-20261019-r1",
+    "headAtActivation": "303a7e8598b1b45dc6d65411838647328504efc9",
+    "treeAtActivation": "a2f347d366bb6a5d037e646063f9fa1ba515d357",
+    "porcelainSha256AtActivation": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "upstreamAtActivation": null,
+    "exact": true,
+    "clean": true
+  },
+  "activationConditionsSatisfied": {
+    "materializedBackendWorktreeExactAndClean": true,
+    "payrollHighWaterIsV52": true,
+    "exactV53PathAbsent": true,
+    "competingPayrollV53Absent": true,
+    "reservedManifestUnchanged": true,
+    "activeLeaseCountAfterActivation": 1
+  },
+  "resolvedAuthoringBoundary": {
+    "allowed": [
+      "Create only dwp-payroll-server/src/main/resources/db/migration/V53__pay_base_tfr_pay_003_statutory_insurance.sql.",
+      "Create exactly pay_country_pack_version_snapshots, pay_country_pack_activation_versions, pay_country_pack_command_receipts, pay_country_pack_audit_outbox_events and pay_social_insurance_result_facts.",
+      "Enforce ENABLE and FORCE RLS, exact same-tenant foreign keys, immutable append-only guards, half-open activation-period overlap protection, installer-versus-statutory-approver SoD, subject-and-action idempotency, atomic activation/receipt/outbox persistence and exact V50 result lineage/reconciliation."
+    ],
+    "forbidden": [
+      "Any edit to Payroll migrations V1 through V52",
+      "Any second Payroll migration or path other than the exact V53 path",
+      "Any sixth table, data backfill, deletion or automatic privilege elevation",
+      "Any change to run-bound pay_command_receipts, pay_outbox_events, PayrollCalculated.v1 or V50 control-total semantics",
+      "Any production provider binding, route or menu mounting, feature enablement, tenant enrollment, direct dwp-dev merge or production execution"
+    ],
+    "deviationAction": "STOP_AND_REQUEST_AN_APPEND_ONLY_LEASE_AND_TOKEN_SUCCESSOR"
+  },
+  "acceptanceCoverage": {
+    "requiredCount": 14,
+    "requiredIds": [
+      "PAY003-AC01",
+      "PAY003-AC02",
+      "PAY003-AC03",
+      "PAY003-AC04",
+      "PAY003-AC05",
+      "PAY003-AC06",
+      "PAY003-AC07",
+      "PAY003-AC08",
+      "PAY003-AC09",
+      "PAY003-AC10",
+      "PAY003-AC11",
+      "PAY003-AC12",
+      "PAY003-AC13",
+      "PAY003-AC14"
+    ],
+    "weakeningOrOmissionAuthorized": false
+  },
+  "verificationPolicy": {
+    "executionAuthorizedByLeaseAlone": false,
+    "minimalTargetRule": "Run the new PAY-003 bounded cluster once. After a failure, diagnose and rerun only the smallest affected class, file or named case; never repeat passing targets or run a repository-wide suite per correction.",
+    "realPostgresRequired": true,
+    "databaseUnavailableRule": "BLOCKED_NOT_PASS",
+    "repositoryWideSuiteAuthorized": false
+  },
+  "authority": {
+    "activeLeaseCount": 1,
+    "oneExactPayrollV53AuthoringLeaseActive": true,
+    "v53AuthoringAuthorizedByLeaseAlone": false,
+    "v53AuthoringAuthorizedOnlyWithMatchingExecutableTokenV1": true,
+    "sourceAuthoringOutsideExactV53Authorized": false,
+    "testExecutionAuthorizedByLeaseAlone": false,
+    "moduleBranchCommitAuthorizedByLeaseAlone": false,
+    "moduleBranchPushAuthorizedByLeaseAlone": false,
+    "centralWriteAuthorized": false,
+    "directDwpDevMergeAuthorized": false,
+    "routeOrMenuMountAuthorized": false,
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionProviderBindingAuthorized": false,
+    "productionExecutionAuthorized": false
+  },
+  "invalidationConditions": [
+    "The backend worktree path, branch, initial head, initial tree, upstream or initial porcelain digest differs.",
+    "Payroll main high-water differs from V52 or any competing V53 path exists before this owner creates the exact leased path.",
+    "The reserved five-table manifest is insufficient, an existing migration must change, a second migration is required or a data backfill is needed.",
+    "The matching executable PAY-003 start token v1 is absent, invalid or hash-mismatched.",
+    "Any central, provider-binding, route/menu mounting, activation, tenant, customer or production action is attempted."
+  ],
+  "nextGate": "ISSUE_ONE_EXECUTABLE_PAY003_START_TOKEN_V1_HASH_BOUND_TO_THIS_ACTIVE_EXCLUSIVE_LEASE_OWNER_PACKET_AND_MATERIALIZATION_RECEIPT"
+}
