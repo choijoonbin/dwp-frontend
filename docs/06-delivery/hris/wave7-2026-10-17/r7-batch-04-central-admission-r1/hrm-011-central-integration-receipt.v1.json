@@ -1,0 +1,149 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-hrm011-central-integration-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-04-HRM011-CENTRAL-INTEGRATION-20261019-R1",
+  "recordedAt": "2026-10-19T10:40:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_RECEIPT_ID_AND_SHA256"
+  },
+  "state": "EXACT_HRM011_CENTRAL_BACKEND_MERGED_AND_PUSHED_V6_CORRECTIONS_ADMITTED_DEFAULT_OFF_ZERO_ENROLLMENT_OWNER_AUTHORITY_MAY_BE_PREPARED",
+  "sliceId": "BASE-TFR-HRM-011",
+  "authorityBasis": {
+    "semanticDispositionV6": {
+      "path": "../r7-batch-04-module-start-r1/semantic-dispositions/base-tfr-hrm-011.semantic-disposition-successor.v6.json",
+      "sha256": "8ab1b4dca5c5de37ad61f2fed8f688fbe73998ec428973d0c42ebf0f45f5ef1c",
+      "bytes": 3935,
+      "requiredState": "SEALED_XCON007_ENVELOPE_OWNED_EXCEPTION_NEW_EVENT_EQUALITY_AND_V59_SCHEMA_VERSION_STORAGE_CORRECTION"
+    },
+    "centralAuthorizationV6": {
+      "path": "../r7-batch-04-module-start-r1/hrm-011-central-contract-authorization-successor.v6.json",
+      "sha256": "4e9a342c4123b82bcc6cace47b31a3ced6ac0c2ee3ce1f5927ccf767e8577719",
+      "bytes": 4383,
+      "requiredState": "SEALED_XCON007_ENVELOPE_EXCEPTION_NEW_EVENT_EQUALITY_METADATA_AND_V59_STRING_STORAGE"
+    }
+  },
+  "pushedPins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "e0bfb2a767261da6941bcbe64a013fa722d32260",
+      "tree": "2fd87e5f6ed126170668c019a9c0c4ed82c354c9",
+      "parents": [
+        "f9d2556294fe92a26090ab26781d74dc861062cd",
+        "61a47da17d5fcd8a62a4e0d2fb0e61d0b2ad1893"
+      ],
+      "originRef": "origin/dwp-dev",
+      "originExact": true,
+      "worktreeClean": true
+    },
+    "frontendAuthorityCarrierBeforeThisReceipt": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "3d5ef5444810d0b776a5d5d6f3f9d1ded7ef3989",
+      "tree": "293a3031058c3a1deca68fab7856bdfbc1d2575b",
+      "originRef": "origin/dwp-dev",
+      "originExact": true,
+      "authorityCarrierAdvanceExpected": true
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "originRef": "origin/dwp-dev",
+      "originExact": true,
+      "worktreeClean": true,
+      "readOnlyForThisSlice": true
+    }
+  },
+  "integratedBackend": {
+    "sourceBranch": "codex/hris-wave7-r7-batch04-hrm011-central-backend-20261019-r1",
+    "sourceHead": "61a47da17d5fcd8a62a4e0d2fb0e61d0b2ad1893",
+    "sourceTree": "2fd87e5f6ed126170668c019a9c0c4ed82c354c9",
+    "sourceBase": "f9d2556294fe92a26090ab26781d74dc861062cd",
+    "sourceOriginExact": true,
+    "mergeStrategy": "NO_FF_EXACT_REVIEWED_HEAD",
+    "mergeCommit": "e0bfb2a767261da6941bcbe64a013fa722d32260",
+    "mergeTree": "2fd87e5f6ed126170668c019a9c0c4ed82c354c9",
+    "sourceIsMergeAncestor": true,
+    "changedPathCount": 57,
+    "nameStatusManifestSha256": "cb5e25e9dc5c4e39cffb9c769c71875e10dcae631ef5800458543c721615cf46",
+    "pathOnlyManifestSha256": "d81d59ee938ed545f0b0bf6c61c8cacdd30664a18d711b6771baa7bf37d67806",
+    "mergeConflicts": 0,
+    "automaticConflictResolution": false
+  },
+  "admittedBoundary": {
+    "canonicalContracts": [
+      "XCON-023 WorkerDependentEligibilityChanged.v1",
+      "XCON-024 WorkerTaxIdentityChanged.v1",
+      "XCON-025 WorkerBankAccountTokenChanged.v1",
+      "XCON-026 EmploymentContractIssued.v1",
+      "PDX-015 EmploymentContractTemplateSnapshotV1"
+    ],
+    "asyncApi": {
+      "XCON-007": "LEGACY_ENVELOPE_OWNED_XCON_007_UNCHANGED; its immutable data has no common event metadata and no outer-to-data equality is claimed",
+      "XCON-023-through-XCON-026": "All eight outer/data equalities are explicit and closed: id/eventId, tenantId/tenantId, aggregateId/aggregateId, aggregateSequence/aggregateVersion, correlationId/correlationId, causationId/causationId, time/occurredAt and schemaVersion/schemaVersion"
+    },
+    "platformSnapshot": "PDX-015 contentSchemaVersion is the typed SchemaVersion string and equals PDX-001 payloadSchemaVersion without numeric coercion, defaulting or case normalization.",
+    "authorization": {
+      "productAuthorizationBundle": "v53",
+      "productAuthorizationChecksum": "c655a850ae2ac01466edb37f2e1c69f9e269dd2a4a529c3a87b1610c0561a359",
+      "authMigration": "V262",
+      "featureKey": "HRIS_HRM_CONTRACT_COMPENSATION_WORKBENCH",
+      "newCapability": "hcm.operations.contract.issue",
+      "routes": [
+        "route.hcm.operations.contracts-compensation-basis.page",
+        "route.hcm.operations.contracts-compensation-basis.data",
+        "route.hcm.operations.employment-contract-issue.action"
+      ],
+      "gatewayPurposeBoundary": "PAGE and DATA derive trusted HR_OPERATIONS; ACTION accepts an absent or exact single HR_LIFECYCLE external purpose, strips caller authority and injects trusted HR_LIFECYCLE before the owner maps it one-way to EMPLOYMENT_CONTRACT.",
+      "gatewayPopulationAndVersionBoundary": "Trusted target population is canonicalized and HIGH-risk ACTION remains command-bound to relationshipPublicId and X-DWP-Expected-Object-Version.",
+      "peopleResponsibilityBoundary": "HRIS_DUTY_CONTRACT_ISSUER is proven from the trusted signed responsibility evidence with its actual authorized resource-set key; WORKFORCE_TARGET_POPULATION is a resolver name and is not treated as a literal resource-set key."
+    },
+    "runtimeDefault": "OFF",
+    "tenantEnrollmentCount": 0
+  },
+  "targetedVerification": {
+    "policy": "RUN_EACH_AFFECTED_TARGET_GROUP_ONCE_AND_RERUN_ONLY_THE_SMALLEST_FAILED_TARGET; NO_REPOSITORY_WIDE_SUITE",
+    "passed": [
+      "python3 scripts/generate-hris-contracts.py --check: 43 sources / 41 mappings",
+      "HrisHrm011CanonicalContractTest: 4 tests",
+      "HrisHrm011AsyncApiContractTest: 2 tests",
+      "product authorization v52/v53 Python contracts: 10 tests",
+      "Auth v53, V262 and release-lineage targeted contracts",
+      "Gateway V262 route parity: 1 test",
+      "People HcmV3PepRegistry targeted registry: 18 tests",
+      "product authorization latest-v53 seed loader",
+      "PostgreSQL V262 fresh and upgrade: 2 tests with zero skips",
+      "Gateway HRM-011 purpose, spoof, population and command-binding targeted tests",
+      "People realistic responsibility/resource-set evidence targeted tests",
+      "git diff --check"
+    ],
+    "repositoryWideSuiteRun": false
+  },
+  "authority": {
+    "centralImplementationAdmittedToBackendDwpDev": true,
+    "exactHrm011OwnerPacketMayBeIssued": true,
+    "peopleV59MayBeReservedNotActive": true,
+    "moduleWorktreeMaterialized": false,
+    "activePeopleV59LeaseIssued": false,
+    "executableModuleStartTokenIssued": false,
+    "moduleSourceAuthoringAuthorizedByThisReceipt": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionTemplateProviderBindingAuthorized": false,
+    "productionArtifactProviderBindingAuthorized": false,
+    "productionMutationTriggerAuthorized": false,
+    "fullSliceCompletionAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nonClaims": [
+    "People V59 exists or is active.",
+    "HRM-011 owner worktrees or an executable token exist.",
+    "A production PDX-015 template provider or employment-contract artifact provider is bound.",
+    "Production XCON-007, XCON-023, XCON-024 or XCON-025 mutation triggers are wired.",
+    "Any tenant is enrolled or BASE-TFR-HRM-011 is complete."
+  ],
+  "nextGate": "ISSUE_EXACT_OWNER_PACKET_AND_RESERVED_NOT_ACTIVE_PEOPLE_V59_LEASE_THEN_MATERIALIZE_FRESH_CLEAN_WORKTREES_BEFORE_ANY_ACTIVE_LEASE_OR_EXECUTABLE_START_TOKEN"
+}

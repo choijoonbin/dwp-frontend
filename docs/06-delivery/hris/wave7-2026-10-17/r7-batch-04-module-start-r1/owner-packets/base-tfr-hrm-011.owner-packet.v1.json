@@ -1,0 +1,595 @@
+{
+  "schema": "dwp.hris.wave7.r7-owner-packet.v1",
+  "packetId": "HRIS-WAVE7-R7-BATCH-04-OWNER-BASE-TFR-HRM-011-20261019-R1",
+  "revision": 1,
+  "issuedAt": "2026-10-19T10:42:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_PACKET_ID_AND_SHA256"
+  },
+  "state": "SEALED_EXACT_HRM011_OWNER_AUTHORITY_PACKET_READY_EXECUTABLE_TOKEN_WITHHELD_PENDING_FRESH_WORKTREES_AND_ACTIVE_V59_LEASE_SUCCESSOR",
+  "module": "HRM",
+  "moduleSession": "HRIS-HRM",
+  "moduleThreadId": "01a0f53e-9a75-7421-969f-473b0cfb9439",
+  "sliceId": "BASE-TFR-HRM-011",
+  "sourceRef": "TFR-HRM-011",
+  "semanticLineage": "TFR-HRM-011::hr-contracts-compensation-basis::IAQ-008|PEP-HRM-011|SVC-PEP-HRM-003-R2|SVC-PEP-HRM-005|XCON-002|XCON-007|XCON-017|XCON-018|XCON-019|XCON-023|XCON-024|XCON-025|XCON-026|PDX-015",
+  "immutableAuthorityBasis": {
+    "batch04Preflight": {
+      "path": "../../r7-batch-04-preflight-r1/semantic-dependency-migration-preflight.v1.json",
+      "sha256": "3fe2cb0cab1aa65fbe75f1b0d8d4a74f136be457aa2c324d262eb7503789cc1c",
+      "bytes": 17214,
+      "requiredDecision": "CONDITIONAL_GO_FOR_SEPARATE_EXACT_PACKET_SOURCE_START_NO_GO"
+    },
+    "semanticDispositionV4": {
+      "path": "../semantic-dispositions/base-tfr-hrm-011.semantic-disposition-successor.v4.json",
+      "sha256": "b9f2e26619b71ccac3fc49fa34619533fffa1a8a4e8891b0c7bc2ffb49807fa1",
+      "bytes": 39766,
+      "use": "FULL_IMPLEMENTABLE_SCOPE_AND_TWELVE_ACCEPTANCE_CRITERIA_EXCEPT_WHERE_V6_EXPLICITLY_CORRECTS_IT"
+    },
+    "semanticDispositionV6": {
+      "path": "../semantic-dispositions/base-tfr-hrm-011.semantic-disposition-successor.v6.json",
+      "sha256": "8ab1b4dca5c5de37ad61f2fed8f688fbe73998ec428973d0c42ebf0f45f5ef1c",
+      "bytes": 3935,
+      "requiredState": "SEALED_XCON007_ENVELOPE_OWNED_EXCEPTION_NEW_EVENT_EQUALITY_AND_V59_SCHEMA_VERSION_STORAGE_CORRECTION",
+      "precedence": "CONTROLS_XCON007_EQUALITY_XCON023_THROUGH_XCON026_EQUALITY_AND_V59_TEMPLATE_CONTENT_SCHEMA_VERSION_STORAGE"
+    },
+    "centralAuthorizationV4": {
+      "path": "../hrm-011-central-contract-authorization-successor.v4.json",
+      "sha256": "d58509ab6458f088a47ef538bce447f6a9ba03cdd8d8eab32ad56733d2dd43b9",
+      "bytes": 25140,
+      "use": "FULL_CENTRAL_AND_MODULE_BOUNDARY_EXCEPT_WHERE_V6_EXPLICITLY_CORRECTS_IT"
+    },
+    "centralAuthorizationV6": {
+      "path": "../hrm-011-central-contract-authorization-successor.v6.json",
+      "sha256": "4e9a342c4123b82bcc6cace47b31a3ced6ac0c2ee3ce1f5927ccf767e8577719",
+      "bytes": 4383,
+      "requiredState": "SEALED_XCON007_ENVELOPE_EXCEPTION_NEW_EVENT_EQUALITY_METADATA_AND_V59_STRING_STORAGE"
+    },
+    "centralIntegrationReceipt": {
+      "path": "../../r7-batch-04-central-admission-r1/hrm-011-central-integration-receipt.v1.json",
+      "sha256": "10aeac3c0328d639a496c1ba5807d4428d0f46faef0203d27770e4dca29d9701",
+      "bytes": 7784,
+      "requiredState": "EXACT_HRM011_CENTRAL_BACKEND_MERGED_AND_PUSHED_V6_CORRECTIONS_ADMITTED_DEFAULT_OFF_ZERO_ENROLLMENT_OWNER_AUTHORITY_MAY_BE_PREPARED"
+    },
+    "migrationLeaseReservation": {
+      "path": "../migration-lease-activation.v1.json",
+      "sha256": "e627cd4d9f41db6e3472c6db1c19927df561042af57c7dd2ee4af8c395119996",
+      "bytes": 8972,
+      "reservationId": "HRIS-WAVE7-R7-BATCH-04-MIGRATION-LEASE-RESERVATION-20261019-R1",
+      "leaseId": "HRIS-WAVE7-R7-BATCH-04-PEOPLE-MAIN-V59-HRM011-20261019-R1",
+      "requiredState": "RESERVED_NOT_ACTIVE"
+    }
+  },
+  "basePins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "e0bfb2a767261da6941bcbe64a013fa722d32260",
+      "tree": "2fd87e5f6ed126170668c019a9c0c4ed82c354c9",
+      "requiredRemote": "origin/dwp-dev",
+      "requiredRemoteExact": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "3d5ef5444810d0b776a5d5d6f3f9d1ded7ef3989",
+      "tree": "293a3031058c3a1deca68fab7856bdfbc1d2575b",
+      "requiredRemote": "origin/dwp-dev",
+      "requiredCommitReachable": true,
+      "requiredRemoteExactBeforeAuthorityCarrier": true,
+      "authorityCarrierAdvanceAllowed": true
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "requiredRemote": "origin/dwp-dev",
+      "requiredRemoteExact": true,
+      "readOnly": true
+    }
+  },
+  "businessAndExperienceBoundary": {
+    "businessMeaning": "Provide an HR operations workbench that deterministically joins effective work relationships, primary assignments, compensation bases and immutable employment-contract templates, then submits one guarded employment-contract issuance command with an immutable generation snapshot.",
+    "primaryUser": "HR operations specialist with the required workforce population and HRIS_DUTY_CONTRACT_ISSUER responsibility",
+    "operationalQuestion": "Which current work relationships have one authoritative compensation basis and one valid published employment-contract template, and which can safely issue a contract now?",
+    "primaryAction": "Issue an employment contract for the selected relationship after preview, current-version, authorization, step-up and snapshot-digest validation.",
+    "pageArchetype": "LIST_DETAIL_WORKFLOW",
+    "canonicalRoute": "/hr/operations/people/contracts-compensation-basis",
+    "visibility": "The frontend feature may be authored in its bounded root, but shell route and navigation admission remain central-control work after module result review. With the feature default OFF and zero enrolled tenants, the page makes zero owner calls and is not visible."
+  },
+  "exactCentralBaseline": {
+    "productAuthorizationBundle": "v53",
+    "productAuthorizationChecksum": "c655a850ae2ac01466edb37f2e1c69f9e269dd2a4a529c3a87b1610c0561a359",
+    "authMigration": "V262",
+    "featureKey": "HRIS_HRM_CONTRACT_COMPENSATION_WORKBENCH",
+    "defaultEnabled": false,
+    "enrolledTenants": [],
+    "capability": {
+      "contractKey": "hcm.operations.contract.issue",
+      "resolvedCapabilityCode": "ACTION.HRIS_EMPLOYMENT_CONTRACT:ISSUE",
+      "scopeResolver": "WORKFORCE_TARGET_POPULATION",
+      "riskTier": "HIGH",
+      "activationPolicy": "STEPUP-MGMT-HIGH-V1",
+      "requiredResponsibilityCode": "HRIS_DUTY_CONTRACT_ISSUER",
+      "sodPolicyId": "NO_APPROVE_OWN_CHANGE"
+    },
+    "routeContractKeys": [
+      "route.hcm.operations.contracts-compensation-basis.page",
+      "route.hcm.operations.contracts-compensation-basis.data",
+      "route.hcm.operations.employment-contract-issue.action"
+    ],
+    "admittedBackendCommit": "e0bfb2a767261da6941bcbe64a013fa722d32260"
+  },
+  "ownerWritableBoundary": {
+    "backendWritable": [
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/workbench/hrm011/**",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/employmentcontract/**",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/hrm011/**",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/workbench/hrm011/**",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/employeeservice/employmentcontract/**",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/contracts/hrm011/**",
+      "dwp-people-server/src/main/resources/db/migration/V59__hrm_base_tfr_hrm_011.sql"
+    ],
+    "frontendWritable": [
+      "apps/dwp/src/features/hris/people/contracts-compensation-basis/**",
+      "apps/dwp/src/features/hris/people/__tests__/g3-slices/base-tfr-hrm-011.slice.test.tsx",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-results-r1/base-tfr-hrm-011/**"
+    ],
+    "readOnlyReuse": [
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/employeechange/**",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/certificate/**",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/workforce/v1/**",
+      "dwp-people-server/src/main/java/com/dwp/services/people/security/**",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/experience/**",
+      "existing People audit, outbox and envelope-encryption foundations",
+      "dwp-people-server/src/main/resources/db/migration/V1__create_workforce_projection.sql",
+      "dwp-people-server/src/main/resources/db/migration/V54__create_employee_change_request_lifecycle.sql",
+      "dwp-people-server/src/main/resources/db/migration/V58__hrm_base_tfr_hrm_009_stage_a.sql",
+      "apps/dwp/src/features/hris/people/command-receipts/**",
+      "apps/dwp/src/features/hris/shell/**"
+    ],
+    "controlOwnedNoTouch": [
+      "contracts/hris/canonical/**",
+      "contracts/asyncapi/**",
+      "contracts/product-authorization/**",
+      "dwp-platform-contracts/**",
+      "dwp-auth-server/**",
+      "dwp-gateway/**",
+      "dwp-platform-server/**",
+      "frontend architecture, routes, integration, shell catalog and i18n"
+    ],
+    "outsideBoundaryAction": "STOP_AND_REQUEST_EXACT_CONTROL_REALLOCATION"
+  },
+  "entryQuery": {
+    "id": "IAQ-008",
+    "operationId": "IAQ.OP.008",
+    "variantKey": "CONTRACTS_COMPENSATION_BASIS",
+    "iaNodeId": "BASE:hr-contracts-compensation-basis",
+    "method": "GET",
+    "browserPath": "/api/people/v1/hris/workbench/operations/contracts/compensation/basis",
+    "ownerPath": "/v1/hris/workbench/operations/contracts/compensation/basis",
+    "canonicalRoute": "/hr/operations/people/contracts-compensation-basis",
+    "deepLinkTemplate": "/hr/operations/people/contracts-compensation-basis?tab=overview&focus={resourcePublicId}",
+    "capability": "hcm.operations.people.view",
+    "profileAndDuty": "HRIS_HR_BUSINESS_PARTNER>HRIS_DUTY_CORE_VIEWER",
+    "purpose": "HR_OPERATIONS",
+    "filters": [
+      "contractMetadata",
+      "compensationBasis",
+      "effectiveOn"
+    ],
+    "sorts": [
+      "contractMetadata:ASC",
+      "compensationBasis:ASC",
+      "contractMetadata:DESC",
+      "compensationBasis:DESC",
+      "itemPublicId:ASC",
+      "itemPublicId:DESC"
+    ],
+    "defaultSort": "itemPublicId:ASC",
+    "pageLimit": 100,
+    "itemGrain": "ONE_EFFECTIVE_WORK_RELATIONSHIP_PER_ITEM",
+    "itemPublicId": "relationshipPublicId",
+    "requiredResourceVersion": "nonnegative ppl_work_relationships.version",
+    "fieldGroups": [
+      "CONTRACT_METADATA",
+      "COMPENSATION_BASIS"
+    ],
+    "queryStates": [
+      "COMPLETE",
+      "EMPTY",
+      "PARTIAL",
+      "UNAVAILABLE"
+    ],
+    "runtimeInvariants": [
+      "QUERY_STATE_ITEM_CARDINALITY",
+      "PARTIAL_FAILURE_STATE_MATCH",
+      "CURSOR_SCOPE_REVISION_BINDING",
+      "PAGE_LIMIT_AND_STABLE_ORDER",
+      "FIELD_DECISION_SUMMARY_MATCH",
+      "DEEP_LINK_ACTION_ALLOWLIST",
+      "TRUSTED_TENANT_CONTEXT_NON_SERIALIZATION",
+      "LOCALE_TIMEZONE_CANONICALIZATION",
+      "FIELD_DECISION_VIEW_MASK_OMIT",
+      "PROBLEM_STATUS_AND_CORRELATION"
+    ],
+    "deterministicSelection": "Require exactly one same-tenant effective relationship, active primary assignment, effective compensation basis across all basis types and matching PDX-015 PUBLISHED template. Zero or multiple authority produces a typed partial failure and never an actionable item; if no safe item remains, return UNAVAILABLE with zero items.",
+    "actionExposure": "Expose hris.action.hrm.issue-employment-contract only when both field groups are VIEW, all authoritative rows are unique and current, item status is READY_TO_ISSUE and preliminary PEP-HRM-011 allows it."
+  },
+  "command": {
+    "id": "PEP-HRM-011",
+    "method": "POST",
+    "browserPath": "/api/people/v1/hris/employment-contracts",
+    "ownerPath": "/v1/hris/employment-contracts",
+    "requestBodyClosedSet": [
+      "relationshipPublicId",
+      "templatePublicId",
+      "templateVersion",
+      "locale",
+      "effectiveFrom",
+      "effectiveTo",
+      "snapshotDigest"
+    ],
+    "requiredBodyFields": [
+      "relationshipPublicId",
+      "templatePublicId",
+      "templateVersion",
+      "locale",
+      "effectiveFrom",
+      "snapshotDigest"
+    ],
+    "requiredHeaders": [
+      "Authorization",
+      "Idempotency-Key",
+      "If-Match",
+      "X-Correlation-ID",
+      "X-DWP-Expected-Object-Version"
+    ],
+    "purposeRule": "X-Purpose-Code may be absent, in which case trusted HR_LIFECYCLE is injected. If supplied, exactly one canonical value equal to HR_LIFECYCLE is required. Caller headers are stripped as authority; only the owner maps trusted HR_LIFECYCLE one-way to internal EMPLOYMENT_CONTRACT.",
+    "optimisticConcurrency": "If-Match is a strong quoted canonical nonnegative relationship resourceVersion and must equal X-DWP-Expected-Object-Version; stale or mismatched input returns 409 with currentVersion before authorization side effects, artifact invocation or business mutation.",
+    "authorization": {
+      "capability": "hcm.operations.contract.issue",
+      "resourceAction": "ACTION.HRIS_EMPLOYMENT_CONTRACT:ISSUE",
+      "profileAndDuty": "HRIS_HR_BUSINESS_PARTNER>HRIS_DUTY_CONTRACT_ISSUER",
+      "populations": [
+        "LEGAL_ENTITY",
+        "NAMED_POPULATION",
+        "ORG_TREE",
+        "ORG_UNIT"
+      ],
+      "fieldGroups": [
+        "COMPENSATION",
+        "DOCUMENT_CONTENT",
+        "EMPLOYMENT"
+      ],
+      "riskAndStepUp": "HIGH and STEPUP-MGMT-HIGH-V1 bound to WORK_RELATIONSHIP/relationshipPublicId and expected object version",
+      "sod": "NO_APPROVE_OWN_CHANGE",
+      "pepLayers": [
+        "GATEWAY_APP_ENTITLEMENT",
+        "OWNER_API_OPERATION",
+        "RESOURCE_POPULATION",
+        "REPOSITORY_TENANT_PREDICATE",
+        "FIELD_PROJECTION",
+        "PURPOSE_POLICY",
+        "AUDIT_DECISION"
+      ],
+      "responsibilityEvidence": "Require HRIS_DUTY_CONTRACT_ISSUER in the trusted signed responsibility evidence paired with an actual authorized resource-set key. Never require the literal resolver name WORKFORCE_TARGET_POPULATION as that key."
+    },
+    "idempotency": "Scope by trusted tenant, command type and Idempotency-Key. Hash the exact body, If-Match, expected object version and trusted purpose. Same hash replays the original receipt; different hash is 409; concurrent reservation has one winner.",
+    "success": "202 CommandReceiptV1",
+    "ownerOrder": [
+      "resolve trusted tenant and actor and the fixed purpose mapping",
+      "reserve or replay the idempotency receipt",
+      "lock same-tenant relationship and compare resourceVersion",
+      "revalidate unique assignment, compensation basis and PDX-015 template",
+      "recompute and compare generationSnapshotDigest",
+      "re-evaluate population, field policy, purpose, responsibility, SoD and HIGH step-up",
+      "invoke EmploymentContractArtifactPort",
+      "atomically persist ISSUED contract, receipt result, audit pointer and XCON-026 outbox"
+    ]
+  },
+  "snapshotAndArtifactBoundary": {
+    "templateSnapshot": "Exact generated PDX-015 EmploymentContractTemplateSnapshotV1. contentSchemaVersion is the typed SchemaVersion string matching ^[A-Za-z][A-Za-z0-9._-]{0,127}\\.v[1-9][0-9]*$ and equals PDX-001 payloadSchemaVersion byte-for-byte.",
+    "generationSnapshotDigest": "SHA-256 over the exact RFC-8785/JCS closed field set sealed in semantic v4; canonical decimals use no exponent, float, negative zero, implicit rounding or locale formatting and nullable fields are explicit JSON null.",
+    "artifactInterface": "EmploymentContractArtifactPort",
+    "productionBinding": "FailClosedEmploymentContractArtifactAdapter",
+    "testBinding": "EmploymentContractArtifactConformanceDouble",
+    "artifactRequestClosedSet": [
+      "artifactRequestId",
+      "contractPublicId",
+      "trustedTenantId",
+      "correlationId",
+      "relationshipSnapshot",
+      "assignmentSnapshot",
+      "compensationBasisSnapshot",
+      "templateSnapshot",
+      "locale",
+      "effectiveFrom",
+      "effectiveTo",
+      "generationSnapshotDigest"
+    ],
+    "artifactResultClosedSet": [
+      "artifactRequestId",
+      "contractPublicId",
+      "templatePublicId",
+      "templateVersion",
+      "generationSnapshotDigest",
+      "providerReceiptId",
+      "documentReference",
+      "issuedAt"
+    ],
+    "documentReferenceClosedSet": [
+      "objectPublicId",
+      "objectVersion",
+      "contentSha256"
+    ],
+    "failClosedRule": "Null, unavailable, malformed or mismatched provider results fail before ISSUED state, success receipt, success audit or outbox. Retry after provider success and database rollback reuses the same deterministic artifactRequestId and must receive the same result.",
+    "productionProviderActive": false
+  },
+  "serviceWorkloadIngress": {
+    "common": {
+      "browserRoute": "FORBIDDEN",
+      "caller": "dwp-payroll-server",
+      "authentication": [
+        "TLS_1_3",
+        "MTLS_SPIFFE_WORKLOAD_IDENTITY",
+        "OAUTH2_CLIENT_CREDENTIAL_JWT_AUD_DWP_PEOPLE"
+      ],
+      "tenantAuthority": "SIGNED_TENANT_CLAIM plus owner tenant-grant revalidation and target-tenant match; caller tenant override is forbidden",
+      "requiredHeaders": [
+        "Authorization bearer workload JWT",
+        "X-Correlation-ID UUID"
+      ],
+      "requestClosedSet": [
+        "purposeCode",
+        "asOf",
+        "projection",
+        "limit",
+        "cursor"
+      ],
+      "limit": "1 through 500",
+      "cursorAndDigest": "Authenticate trusted tenant, caller workload, purpose, projection, asOf, ownerRevision and canonical position; verify SHA-256 over the JCS canonical page."
+    },
+    "SVC-PEP-HRM-003-R2": {
+      "path": "/internal/hris-people/v1/compensation-basis-snapshots",
+      "purposeCode": "HRIS_COMPENSATION_BASIS_SNAPSHOT_BOOTSTRAP",
+      "projection": "COMPENSATION_BASIS_V1",
+      "items": "homogeneous exact XCON-002 only",
+      "paymentInstrumentFields": "FORBIDDEN"
+    },
+    "SVC-PEP-HRM-005": {
+      "path": "/internal/hris-people/v1/payroll-worker-fact-snapshots",
+      "purposeCode": "HRIS_PAYROLL_WORKER_FACT_SNAPSHOT_BOOTSTRAP",
+      "projectionEnum": [
+        "DEPENDENT_ELIGIBILITY_V1",
+        "TAX_IDENTITY_V1",
+        "BANK_ACCOUNT_TOKEN_V1"
+      ],
+      "items": "one homogeneous exact XCON-017, XCON-018 or XCON-019 projection per request",
+      "rawRestrictedValues": "FORBIDDEN"
+    }
+  },
+  "eventBoundary": {
+    "XCON-007": {
+      "eventType": "CompensationBasisChanged.v1",
+      "mode": "LEGACY_ENVELOPE_OWNED_XCON_007_UNCHANGED",
+      "dataContractMutation": "FORBIDDEN",
+      "outerEnvelopeAuthority": [
+        "id",
+        "tenantId",
+        "aggregateId",
+        "aggregateSequence",
+        "correlationId",
+        "causationId",
+        "time",
+        "schemaVersion"
+      ],
+      "dataIdentityBindings": {
+        "aggregateId": "compensationBasisPublicId",
+        "aggregateSequence": "newAggregateVersion"
+      },
+      "forbiddenClaim": "Do not claim outer-to-data equality or common event-data fields that are absent from immutable XCON-007."
+    },
+    "XCON-023-through-XCON-026": {
+      "strictClosedSchemas": true,
+      "exactOuterDataEquality": {
+        "id": "eventId",
+        "tenantId": "tenantId",
+        "aggregateId": "aggregateId",
+        "aggregateSequence": "aggregateVersion",
+        "correlationId": "correlationId",
+        "causationId": "causationId",
+        "time": "occurredAt",
+        "schemaVersion": "schemaVersion"
+      },
+      "producerRule": "Prove all eight equalities before atomic outbox publication.",
+      "determinism": "eventId is deterministic for tenant, event type, aggregateId and positive persisted aggregateVersion; payloadDigest is SHA-256 over the JCS business payload.",
+      "consumerRule": "Same-id same-hash is duplicate, hash conflict is quarantined, stale versions are ignored and a gap blocks PAY input until exact SVC-005 refetch."
+    },
+    "productionTriggerBoundary": {
+      "deferredNoProductionTrigger": [
+        "XCON-007",
+        "XCON-023",
+        "XCON-024",
+        "XCON-025"
+      ],
+      "authorizedNow": [
+        "strict canonical mapper and serializer",
+        "atomic outbox append port",
+        "provider and consumer contract tests",
+        "replay, stale, gap and forbidden-field tests"
+      ],
+      "forbiddenNow": [
+        "inventing a mutation endpoint",
+        "wiring an unowned database trigger",
+        "claiming production event emission",
+        "claiming full-slice completion"
+      ],
+      "XCON-026": "PEP-HRM-011 is its only admitted trigger, but production success remains unavailable while the template or artifact provider is fail closed."
+    }
+  },
+  "migration": {
+    "reservationState": "RESERVED_NOT_ACTIVE",
+    "stream": "PEOPLE_MAIN",
+    "predecessor": "V58",
+    "version": "V59",
+    "exactPath": "dwp-people-server/src/main/resources/db/migration/V59__hrm_base_tfr_hrm_011.sql",
+    "newTablesExactly": [
+      "ppl_compensation_basis",
+      "ppl_employment_contracts",
+      "ppl_worker_restricted_tokens",
+      "ppl_dependents"
+    ],
+    "resolvedManifest": "Apply semantic v4 /peopleV59 in full, with semantic and central v6 replacing only the conflicting template_content_schema_version numeric wording.",
+    "exactCorrectedColumn": "ppl_employment_contracts.template_content_schema_version TEXT NOT NULL",
+    "exactCorrectedCheckPattern": "^[A-Za-z][A-Za-z0-9._-]{0,127}\\.v[1-9][0-9]*$",
+    "exactCorrectedBinding": "PDX-001 payloadSchemaVersion equals PDX-015 contentSchemaVersion equals the stored value without numeric coercion, defaulting or case normalization.",
+    "reuse": [
+      "ppl_command_receipts",
+      "sys_people_audit_events",
+      "sys_people_outbox_events"
+    ],
+    "authoringAuthorizedNow": false
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "HRM011-AC-01",
+      "criterion": "IAQ-008 v2 exposes only the sealed browser and owner GET paths, exact filters, sorts, page limit, relationship item grain and required resourceVersion, and rejects unknown fields."
+    },
+    {
+      "id": "HRM011-AC-02",
+      "criterion": "IAQ-008 enforces COMPLETE, EMPTY, PARTIAL and UNAVAILABLE cardinality, the ten accepted runtime invariants, cursor scope/revision binding and exact VIEW, MASK or OMIT accounting."
+    },
+    {
+      "id": "HRM011-AC-03",
+      "criterion": "Relationship, primary assignment, compensation basis and PDX-015 selection is deterministic and unique; snapshotDigest verifies the exact JCS field set and ambiguous or unavailable authority never exposes an action."
+    },
+    {
+      "id": "HRM011-AC-04",
+      "criterion": "PEP-HRM-011 accepts only the seven sealed body fields and required command headers, binds If-Match to relationship resourceVersion, rejects unknown fields and returns durable 202 CommandReceiptV1."
+    },
+    {
+      "id": "HRM011-AC-05",
+      "criterion": "The owner enforces all seven PEP layers, new v53 capability, fixed HR_LIFECYCLE to EMPLOYMENT_CONTRACT purpose mapping, population, field groups, HIGH step-up and NO_APPROVE_OWN_CHANGE without fallback."
+    },
+    {
+      "id": "HRM011-AC-06",
+      "criterion": "Idempotency serialization, same-hash replay, different-hash 409, stale-version 409 with currentVersion and concurrent reservation are proven before artifact invocation or business mutation."
+    },
+    {
+      "id": "HRM011-AC-07",
+      "criterion": "People V59 creates exactly the four sealed tables, columns, keys, indexes, RLS policies and immutable guards, reuses existing receipt/audit/outbox stores and preserves V1 through V58."
+    },
+    {
+      "id": "HRM011-AC-08",
+      "criterion": "SVC-PEP-HRM-003-R2 admits only the authenticated payroll workload and returns homogeneous strict XCON-002 pages with no payment-instrument extension."
+    },
+    {
+      "id": "HRM011-AC-09",
+      "criterion": "SVC-PEP-HRM-005 admits only the authenticated payroll workload, returns one homogeneous exact XCON-017, XCON-018 or XCON-019 projection per request, authenticates cursors and excludes raw restricted values."
+    },
+    {
+      "id": "HRM011-AC-10",
+      "criterion": "XCON-023 through XCON-026 enforce strict closed schemas, outer/data equality, deterministic IDs and digests, positive persisted versions, atomic outbox behavior and stale, duplicate, conflict and gap handling; XCON-002, 007, 017, 018 and 019 remain unchanged."
+    },
+    {
+      "id": "HRM011-AC-11",
+      "criterion": "PDX-015 and artifact ports fail closed; exact request and result echoes, immutable document reference, retryable 503, provider retry and database rollback are proven without any production provider claim."
+    },
+    {
+      "id": "HRM011-AC-12",
+      "criterion": "The frontend proves loading, empty, partial, unavailable, denied, stale and complete states, responsive and accessibility coverage, default-OFF zero calls and exact changed paths; XCON-007 and XCON-023 through XCON-025 production triggers, tenant enrollment, provider activation and full-slice completion remain explicit non-claims."
+    }
+  ],
+  "targetedVerification": {
+    "policy": "RUN_EACH_NEW_TARGET_GROUP_ONCE_THEN_RERUN_ONLY_THE_SMALLEST_FAILED_TARGET; DO_NOT_RUN_A_REPOSITORY_WIDE_SUITE_PER_CORRECTION",
+    "backend": [
+      "Hrm011IaEntryQueryContractTest",
+      "EmploymentContractAuthorizationTest",
+      "EmploymentContractIdempotencyRecoveryTest",
+      "EmploymentContractTemplateQueryPortContractTest",
+      "EmploymentContractArtifactPortConformanceTest",
+      "SvcHrm003CompensationSnapshotProviderContractTest",
+      "SvcHrm005PayrollWorkerFactSnapshotProviderContractTest",
+      "Hrm011EventOutboxTest",
+      "Hrm011V59MigrationContractTest",
+      "Hrm011V59MigrationPostgresTest"
+    ],
+    "frontend": [
+      "apps/dwp/src/features/hris/people/__tests__/g3-slices/base-tfr-hrm-011.slice.test.tsx",
+      "changed-root component tests for loading, empty, partial, unavailable, denied, stale and complete states",
+      "default-OFF zero-call assertion",
+      "1440px, 1280px, 390px, 320px and 200 percent zoom",
+      "light, dark, high contrast, reduced motion, keyboard-only, visible focus and long Korean/English labels",
+      "Playwright screenshots only for the changed HRM-011 journey after route admission is separately authorized"
+    ],
+    "databaseUnavailableRule": "Required real PostgreSQL checks report BLOCKED rather than PASS when unavailable.",
+    "changedPathProofRequired": true,
+    "gitDiffCheckRequired": true
+  },
+  "plannedWorktrees": {
+    "backend": {
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261019/r7-batch04/hrm-011/backend",
+      "branch": "codex/hris-wave7-r7-batch04-hrm-011-backend-20261019-r1",
+      "createFrom": "e0bfb2a767261da6941bcbe64a013fa722d32260",
+      "expectedTree": "2fd87e5f6ed126170668c019a9c0c4ed82c354c9"
+    },
+    "frontend": {
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261019/r7-batch04/hrm-011/frontend",
+      "branch": "codex/hris-wave7-r7-batch04-hrm-011-frontend-20261019-r1",
+      "createFrom": "AUTHORITY_CARRIER_COMMIT_THAT_INCLUDES_THIS_PACKET_AND_LEASE",
+      "expectedTree": "TO_BE_RECORDED_IN_MATERIALIZATION_RECEIPT"
+    },
+    "state": "NOT_MATERIALIZED"
+  },
+  "startPreconditions": [
+    "This packet and reserved lease are committed and pushed on frontend dwp-dev and their final authority-carrier commit is pinned.",
+    "Fresh backend and frontend worktrees are materialized from the exact admitted dwp-dev heads with clean porcelain and no unexpected upstream.",
+    "An append-only lease successor activates the exact People V59 reservation against the clean backend worktree.",
+    "A separate executable start token hash-binds this packet, the active lease successor and both worktree receipts.",
+    "No invalidation condition has occurred."
+  ],
+  "deferredAndForbiddenClaims": [
+    "A production PDX-015 template provider exists or is bound.",
+    "A production employment-contract artifact provider exists or is active.",
+    "Production XCON-007, XCON-023, XCON-024 or XCON-025 mutation ingress or triggers are wired.",
+    "The shell route, navigation or tenant-visible feature is admitted.",
+    "Any tenant is enrolled or feature activation is authorized.",
+    "BASE-TFR-HRM-011, Batch-04 or R7 is complete.",
+    "Any source outside the exact writable boundary may change."
+  ],
+  "authority": {
+    "packetSealed": true,
+    "centralPrerequisitesAdmitted": true,
+    "peopleV59ReservedNotActive": true,
+    "moduleSourceAuthoringAuthorizedNow": false,
+    "migrationAuthoringAuthorizedNow": false,
+    "executableStartTokenIssued": false,
+    "moduleWorktreesMaterialized": false,
+    "featureDefaultOff": true,
+    "tenantEnrollmentCount": 0,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionTemplateProviderBindingAuthorized": false,
+    "productionArtifactProviderBindingAuthorized": false,
+    "productionMutationTriggerAuthorized": false,
+    "fullSliceCompletionAuthorized": false,
+    "mergeToDwpDevAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "invalidationConditions": [
+    "Any base pin or origin exactness differs before worktree materialization.",
+    "People V59 or its exact path is claimed by another owner, or People high-water no longer equals V58.",
+    "Any XCON-001 through XCON-022 or PDX-001 through PDX-014 data contract is mutated.",
+    "XCON-007 is given fabricated common event-data fields or outer-to-data equality.",
+    "Any of the eight XCON-023 through XCON-026 outer/data equalities is weakened or omitted.",
+    "template_content_schema_version is implemented as numeric, normalized, defaulted or without the exact v6 pattern.",
+    "Caller-selected internal purpose, purpose fallback, literal WORKFORCE_TARGET_POPULATION resource-set matching or responsibility widening is introduced.",
+    "The V59 four-table manifest changes, a second migration is needed or historical migrations must change.",
+    "A writable path outside the exact boundary, production provider, production trigger, route admission or tenant activation is required."
+  ],
+  "nextAction": "COMMIT_AND_PUSH_THIS_AUTHORITY_CARRIER_THEN_MATERIALIZE_FRESH_CLEAN_BACKEND_AND_FRONTEND_WORKTREES; ONLY_AFTER_EXACT_RECEIPTS_ISSUE_AN_ACTIVE_V59_LEASE_SUCCESSOR_AND_EXECUTABLE_START_TOKEN"
+}
