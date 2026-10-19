@@ -1,0 +1,121 @@
+.per004-workspace {
+  box-sizing: border-box;
+  width: min(100%, 80rem);
+  min-width: 0;
+  margin-inline: auto;
+  padding: clamp(1rem, 2.5vw, 2rem);
+  color: var(--mui-palette-text-primary, CanvasText);
+  background: var(--mui-palette-background-default, Canvas);
+}
+
+.per004-workspace *,
+.per004-workspace *::before,
+.per004-workspace *::after {
+  box-sizing: border-box;
+}
+
+.per004-workspace__header h1 {
+  margin: 0 0 1.5rem;
+  font-size: clamp(1.5rem, 2.5vw, 2.1rem);
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.per004-workspace__notice,
+.per004-workspace__item {
+  min-width: 0;
+  padding: clamp(1rem, 2vw, 1.5rem);
+  border: 1px solid var(--mui-palette-divider, #8a8a8a);
+  border-radius: 0.75rem;
+  background: var(--mui-palette-background-paper, Canvas);
+}
+
+.per004-workspace__notice p,
+.per004-workspace__item p {
+  margin-block: 0 1rem;
+  overflow-wrap: anywhere;
+}
+
+.per004-workspace__items {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr));
+  gap: 1rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.per004-workspace__item h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1.125rem;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.per004-workspace__fields {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0 0 1.25rem;
+}
+
+.per004-workspace__fields div,
+.per004-workspace__fields dd {
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.per004-workspace__fields dt {
+  margin-bottom: 0.15rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: none;
+}
+
+.per004-workspace button {
+  min-height: 2.75rem;
+  max-width: 100%;
+  padding: 0.5rem 1rem;
+  border: 1px solid currentColor;
+  border-radius: 0.4rem;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  overflow-wrap: anywhere;
+}
+
+.per004-workspace button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.per004-workspace button:focus-visible {
+  outline: 3px solid var(--mui-palette-primary-main, Highlight);
+  outline-offset: 3px;
+}
+
+@media (max-width: 390px) {
+  .per004-workspace { padding: 0.75rem; }
+  .per004-workspace__items { grid-template-columns: minmax(0, 1fr); }
+  .per004-workspace__notice,
+  .per004-workspace__item { padding: 0.75rem; }
+  .per004-workspace button { width: 100%; font-size: 0.875rem; }
+}
+
+@media (forced-colors: active) {
+  .per004-workspace__notice,
+  .per004-workspace__item { border-color: CanvasText; }
+  .per004-workspace button:focus-visible { outline-color: Highlight; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .per004-workspace *,
+  .per004-workspace *::before,
+  .per004-workspace *::after {
+    animation-duration: 0s !important;
+    transition-duration: 0s !important;
+    scroll-behavior: auto !important;
+  }
+}
