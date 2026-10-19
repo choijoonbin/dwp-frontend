@@ -1,0 +1,86 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-hrm011-semantic-disposition-successor.v6",
+  "dispositionId": "HRIS-WAVE7-R7-BATCH-04-HRM011-SEMANTIC-DISPOSITION-20261019-R6",
+  "recordedAt": "2026-10-19T10:28:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ID_AND_SHA256"
+  },
+  "state": "SEALED_XCON007_ENVELOPE_OWNED_EXCEPTION_NEW_EVENT_EQUALITY_AND_V59_SCHEMA_VERSION_STORAGE_CORRECTION",
+  "sliceId": "BASE-TFR-HRM-011",
+  "successorOf": {
+    "path": "base-tfr-hrm-011.semantic-disposition-successor.v5.json",
+    "sha256": "6e45fcb8a641f02a50e60dd365fc7638680e0c09e3bb64ebd535f87a8845864d",
+    "bytes": 2639,
+    "supersession": "RESOLVE_THE_INTERNALLY_UNSATISFIABLE_XCON007_OUTER_DATA_EQUALITY_TERM_AND_MAKE_THE_V59_PERSISTENCE_TYPE_FOLLOW_THE_V5_STRING_CORRECTION"
+  },
+  "xcon007Disposition": {
+    "canonicalContract": "XCON-007 CompensationBasisChanged.v1",
+    "canonicalDataMutation": "FORBIDDEN",
+    "reason": "The immutable accepted XCON-007 data contract has no eventId, tenantId, aggregateId, aggregateVersion, correlationId, causationId, occurredAt or schemaVersion fields. Requiring those outer envelope fields to equal absent data fields is unsatisfiable without illegally mutating XCON-007.",
+    "authorizedEnvelopeMode": "LEGACY_ENVELOPE_OWNED_XCON_007_UNCHANGED",
+    "outerEnvelopeAuthority": [
+      "id",
+      "tenantId",
+      "aggregateId",
+      "aggregateSequence",
+      "correlationId",
+      "causationId",
+      "time",
+      "schemaVersion"
+    ],
+    "dataIdentityBindings": {
+      "aggregateId": "compensationBasisPublicId",
+      "aggregateSequence": "newAggregateVersion"
+    },
+    "forbiddenClaims": [
+      "outer-to-data equality for fields absent from XCON-007",
+      "XCON-007 common event metadata fields",
+      "mutation of XCON-007"
+    ]
+  },
+  "newEventEnvelopeEquality": {
+    "appliesExactlyTo": [
+      "XCON-023",
+      "XCON-024",
+      "XCON-025",
+      "XCON-026"
+    ],
+    "requiredMappings": {
+      "id": "eventId",
+      "tenantId": "tenantId",
+      "aggregateId": "aggregateId",
+      "aggregateSequence": "aggregateVersion",
+      "correlationId": "correlationId",
+      "causationId": "causationId",
+      "time": "occurredAt",
+      "schemaVersion": "schemaVersion"
+    },
+    "metadataRequirement": "AsyncAPI must carry this exact closed mapping on each new typed envelope and targeted tests must assert all eight mappings.",
+    "runtimeRequirement": "Producer mapping and owner tests must prove equality before outbox publication."
+  },
+  "peopleV59PersistenceCorrection": {
+    "supersededV4Column": "template_content_schema_version INTEGER NOT NULL",
+    "exactColumn": "template_content_schema_version TEXT NOT NULL",
+    "checkPattern": "^[A-Za-z][A-Za-z0-9._-]{0,127}\\.v[1-9][0-9]*$",
+    "binding": "The persisted value equals the exact immutable PDX-001 payloadSchemaVersion and PDX-015 contentSchemaVersion with no numeric coercion, defaulting or case normalization."
+  },
+  "preservedTerms": [
+    "All nonconflicting v4 terms and all v5 PDX-015 typed-string terms",
+    "XCON-023 through XCON-026 strict closed event data and equality",
+    "PDX-015 tenant, source revision, publication instant and content reference",
+    "People V59 exact four-table boundary with the one corrected schema-version column",
+    "default OFF, zero enrollment and deferred production provider and mutation triggers"
+  ],
+  "authority": {
+    "semanticDispositionV6Sealed": true,
+    "centralSuccessorV6MayBeAuthored": true,
+    "ownerPacketMustReferenceV6": true,
+    "moduleSourceAuthoringAuthorizedNow": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextGate": "ISSUE_MATCHING_CENTRAL_SUCCESSOR_V6_COMPLETE_TARGETED_CENTRAL_REVIEW_AND_ONLY_THEN_ISSUE_OWNER_PACKET"
+}

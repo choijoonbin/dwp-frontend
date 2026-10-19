@@ -1,0 +1,81 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-hrm011-central-contract-authorization-successor.v6",
+  "successorId": "HRIS-WAVE7-R7-BATCH-04-HRM011-CENTRAL-CONTRACT-AUTHORIZATION-20261019-R6",
+  "recordedAt": "2026-10-19T10:29:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ID_AND_SHA256"
+  },
+  "state": "SEALED_XCON007_ENVELOPE_EXCEPTION_NEW_EVENT_EQUALITY_METADATA_AND_V59_STRING_STORAGE",
+  "sliceId": "BASE-TFR-HRM-011",
+  "successorOf": {
+    "path": "hrm-011-central-contract-authorization-successor.v5.json",
+    "sha256": "1992cdc51ac855aadeb4bbf1797f03a893bdf72340c566d397b7f5c49ae6ca38",
+    "bytes": 3372,
+    "supersession": "AUTHORIZE_THE_SEMANTIC_V6_XCON007_EXCEPTION_EXACT_NEW_EVENT_EQUALITY_METADATA_AND_EXPLICIT_V59_STRING_STORAGE"
+  },
+  "semanticDispositionSuccessor": {
+    "path": "semantic-dispositions/base-tfr-hrm-011.semantic-disposition-successor.v6.json",
+    "sha256": "8ab1b4dca5c5de37ad61f2fed8f688fbe73998ec428973d0c42ebf0f45f5ef1c",
+    "bytes": 3935,
+    "requiredState": "SEALED_XCON007_ENVELOPE_OWNED_EXCEPTION_NEW_EVENT_EQUALITY_AND_V59_SCHEMA_VERSION_STORAGE_CORRECTION"
+  },
+  "asyncApiDisposition": {
+    "XCON-007": {
+      "mode": "LEGACY_ENVELOPE_OWNED_XCON_007_UNCHANGED",
+      "dataContractMutation": false,
+      "requiredMetadata": {
+        "x-dwp-envelope-data-equality-mode": "LEGACY_ENVELOPE_OWNED_XCON_007_UNCHANGED",
+        "x-dwp-envelope-data-equality-exception": "XCON_007_HAS_NO_COMMON_EVENT_DATA_FIELDS_AND_REMAINS_IMMUTABLE"
+      }
+    },
+    "XCON-023-through-XCON-026": {
+      "requiredMetadataKey": "x-dwp-envelope-data-equality",
+      "exactMappings": {
+        "id": "eventId",
+        "tenantId": "tenantId",
+        "aggregateId": "aggregateId",
+        "aggregateSequence": "aggregateVersion",
+        "correlationId": "correlationId",
+        "causationId": "causationId",
+        "time": "occurredAt",
+        "schemaVersion": "schemaVersion"
+      },
+      "closed": true
+    }
+  },
+  "predecessorImmutabilityProof": {
+    "XCON-001-through-XCON-022-normalizedSha256": "1b3199f8383a54b9873bbbb6569bbe1adfe8a521f623a6c4b9225d99c9c8ab89",
+    "PDX-001-through-PDX-014-normalizedSha256": "51631855d3c8a0ffd0f726caa901f7cf516025d0ab6ecdd00476203299291848",
+    "wholeFileHashPolicy": "Append-only document and manifest hashes may advance; predecessor tests must pin normalized predecessor definitions rather than stale whole-file hashes."
+  },
+  "peopleV59Correction": {
+    "column": "template_content_schema_version TEXT NOT NULL",
+    "checkPattern": "^[A-Za-z][A-Za-z0-9._-]{0,127}\\.v[1-9][0-9]*$",
+    "exactBinding": "PDX-001 payloadSchemaVersion equals PDX-015 contentSchemaVersion equals the stored employment-contract snapshot value.",
+    "ownerPacketRequirement": "The owner packet and migration manifest must explicitly identify this as the v6 correction of the v4 INTEGER wording."
+  },
+  "targetedVerification": [
+    "HrisHrm011AsyncApiContractTest asserts the XCON-007 authorized exception and all eight equality mappings for XCON-023 through XCON-026.",
+    "HrisHrm011CanonicalContractTest asserts typed PDX-001 and PDX-015 SchemaVersion equality semantics.",
+    "test_generate_hris_contracts asserts normalized predecessor hashes and all 41 current mappings.",
+    "Tim007 predecessor tests assert normalized definitions rather than append-only whole-file hashes."
+  ],
+  "preservedCentralTerms": [
+    "All nonconflicting central v4 and v5 contract and authorization terms",
+    "product-authorization v53, Auth V262, Gateway and People fail-closed boundaries",
+    "owner packet, People V59 lease, clean worktrees and executable token preconditions",
+    "default OFF, zero tenant enrollment, no production template or artifact provider and no deferred mutation trigger claim"
+  ],
+  "authority": {
+    "centralV6Sealed": true,
+    "centralImplementationMayBeAdmittedAfterTargetedReview": true,
+    "ownerPacketMustReferenceSemanticV6AndCentralV6": true,
+    "moduleOwnerSourceAuthorizedNow": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextGate": "CLOSE_AUTH_GATEWAY_PEOPLE_AND_V262_P0S_RUN_TARGETED_VERIFICATION_COMMIT_MERGE_AND_ISSUE_HRM011_OWNER_PACKET_V59_LEASE_WORKTREES_AND_TOKEN"
+}
