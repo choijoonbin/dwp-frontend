@@ -1,0 +1,157 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-hrm011-central-contract-authorization-successor.v1",
+  "successorId": "HRIS-WAVE7-R7-BATCH-04-HRM011-CENTRAL-CONTRACT-AUTHORIZATION-20261019-R1",
+  "recordedAt": "2026-10-19T10:35:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ID_AND_SHA256"
+  },
+  "state": "SEALED_EXACT_CENTRAL_SUCCESSOR_SCOPE_DEFAULT_OFF_ZERO_ENROLLMENT_IMPLEMENTATION_REQUIRED_BEFORE_MODULE_SOURCE",
+  "sliceId": "BASE-TFR-HRM-011",
+  "semanticDisposition": {
+    "path": "semantic-dispositions/base-tfr-hrm-011.semantic-disposition.v1.json",
+    "sha256": "abc66db8920ced6a501e1f765400de27edd53fc72d96959f58c6f66b47b3a57b",
+    "bytes": 12475
+  },
+  "decision": "AUTHORIZE_ONE_CENTRAL_BACKEND_SUCCESSOR_FOR_TYPED_XCON_023_TO_026_AND_ONE_AUTHORIZATION_SUCCESSOR_FOR_IAQ_008_PEP_HRM_011_DEFAULT_OFF",
+  "centralContractDelta": {
+    "allowedPaths": [
+      "contracts/hris/canonical/schemas/cross-module-canonical-schemas.v1.json",
+      "contracts/hris/canonical/hris-contract-codegen-manifest.v1.json",
+      "dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/Xcon023WorkerDependentEligibilityChangedV1.java",
+      "dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/Xcon024WorkerTaxIdentityChangedV1.java",
+      "dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/Xcon025WorkerBankAccountTokenChangedV1.java",
+      "dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/Xcon026EmploymentContractIssuedV1.java",
+      "dwp-platform-contracts/src/test/java/com/dwp/contracts/hris/xcon/v1/**",
+      "contracts/asyncapi/hris/**",
+      "scripts/generate-hris-contracts.py"
+    ],
+    "contracts": [
+      "XCON-023 WorkerDependentEligibilityChanged.v1",
+      "XCON-024 WorkerTaxIdentityChanged.v1",
+      "XCON-025 WorkerBankAccountTokenChanged.v1",
+      "XCON-026 EmploymentContractIssued.v1"
+    ],
+    "generationRule": "Canonical JSON schema and manifest are edited first; generated Java is produced only by scripts/generate-hris-contracts.py; generator check must pass with no manual generated-file edit.",
+    "compatibility": "XCON-001 through XCON-022 are byte-for-byte unchanged. The additions are append-only and do not relax additionalProperties=false.",
+    "verification": [
+      "python3 scripts/generate-hris-contracts.py --check",
+      "./gradlew :dwp-platform-contracts:test --tests '*Xcon02*ContractTest' --no-daemon --max-workers=1"
+    ]
+  },
+  "authorizationDelta": {
+    "predecessor": {
+      "productAuthorizationBundle": "v52",
+      "authMigration": "V261"
+    },
+    "successor": {
+      "productAuthorizationBundle": "v53",
+      "authMigration": "V262",
+      "featureKey": "HRIS_HRM_CONTRACT_COMPENSATION_WORKBENCH",
+      "defaultEnabled": false,
+      "enrolledTenants": []
+    },
+    "capabilityReuse": [
+      "hcm.operations.people.view",
+      "hcm.operations.contract.issue"
+    ],
+    "newRouteContracts": [
+      {
+        "routeContractKey": "route.hcm.operations.contracts-compensation-basis.page",
+        "routeKind": "PAGE",
+        "uiRouteId": "hcm.operations.contracts-compensation-basis",
+        "uiRoutePattern": "/hr/operations/people/contracts-compensation-basis",
+        "capability": "hcm.operations.people.view",
+        "profile": "people-operations-reader",
+        "fieldGroups": ["CONTRACT_METADATA", "COMPENSATION_BASIS"]
+      },
+      {
+        "routeContractKey": "route.hcm.operations.contracts-compensation-basis.data",
+        "routeKind": "DATA",
+        "browserBinding": "GET /api/people/v1/hris/workbench/operations/contracts/compensation/basis",
+        "ownerBinding": "GET /v1/hris/workbench/operations/contracts/compensation/basis",
+        "capability": "hcm.operations.people.view",
+        "profile": "people-operations-reader",
+        "fieldGroups": ["CONTRACT_METADATA", "COMPENSATION_BASIS"]
+      },
+      {
+        "routeContractKey": "route.hcm.operations.employment-contract-issue.action",
+        "routeKind": "ACTION",
+        "browserBinding": "POST /api/people/v1/hris/employment-contracts",
+        "ownerBinding": "POST /v1/hris/employment-contracts",
+        "capability": "hcm.operations.contract.issue",
+        "profile": "employment-contract-issuer",
+        "targetBindingKinds": ["OBJECT", "TARGET_POPULATION"],
+        "stepUp": {
+          "riskTier": "HIGH",
+          "policy": "STEPUP-MGMT-HIGH-V1",
+          "targetType": "EMPLOYMENT_CONTRACT_TEMPLATE",
+          "targetIdBodyField": "templatePublicId",
+          "expectedObjectVersionSource": "COMMAND_HEADER"
+        }
+      }
+    ],
+    "fieldPolicySuccessor": {
+      "policy": "HRM-AUTH-007",
+      "explicitAdditions": ["CONTRACT_METADATA", "COMPENSATION_BASIS"],
+      "implicitExpansionForbidden": true
+    },
+    "requiredArtifacts": [
+      "contracts/product-authorization/product-surfaces-v1.yaml",
+      "contracts/product-authorization/product-surfaces-v1.json",
+      "contracts/product-authorization/product-surfaces-v1.bundle-v53.json",
+      "contracts/product-authorization/auth-seed/product-surfaces-v1.bundle-v53.generated.json",
+      "contracts/product-authorization/product-surfaces-v1.index.json",
+      "dwp-auth-server/src/main/resources/db/migration/V262__declare_hris_r7_batch04_hrm011_v53_authorization_seed.sql",
+      "scripts/tests/test_product_authorization_v53.py"
+    ],
+    "forbidden": [
+      "new capability aliases",
+      "changing semantics of an existing v52 route",
+      "tenant enrollment",
+      "feature activation",
+      "weakening HIGH step-up",
+      "caller supplied tenant, role, duty, population or field policy"
+    ]
+  },
+  "frontendCentralBoundary": {
+    "moduleSourceFirst": true,
+    "laterAdmissionPaths": [
+      "apps/dwp/src/features/hris/integration/**",
+      "apps/dwp/src/app/(workspace)/hr/**",
+      "apps/dwp/src/features/hris/shell/model/**",
+      "apps/dwp/src/i18n/**"
+    ],
+    "admissionRule": "The route and navigation node remain absent unless the v53 route contract, feature state and tenant enrollment decision all authorize visibility. No module worktree may edit these paths."
+  },
+  "sequencing": [
+    "commit and push this control record",
+    "implement and admit the central XCON-023 through XCON-026 successor",
+    "implement and admit product authorization v53 and Auth V262",
+    "issue exact HRM-011 owner packet and V59 lease",
+    "materialize clean HRM backend and frontend worktrees from admitted dwp-dev heads",
+    "issue executable start token",
+    "implement and verify module source",
+    "perform a separate default-OFF route admission after module result review"
+  ],
+  "authority": {
+    "centralContractSourceAuthorized": true,
+    "centralAuthorizationSourceAuthorized": true,
+    "moduleOwnerSourceAuthorized": false,
+    "productAuthorizationV53Authorized": true,
+    "authV262Authorized": true,
+    "gatewaySemanticChangeAuthorized": false,
+    "frontendRouteAdmissionAuthorizedNow": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "invalidationConditions": [
+    "Any XCON-001 through XCON-022 schema or binding changes.",
+    "Any new event field contains raw tax, dependent, bank, routing, token, document byte or URL content.",
+    "Any route or field group differs from the sealed IAQ-008 and PEP-HRM-011 contract.",
+    "The authorization bundle is not an append-only v53 successor of v52.",
+    "Feature activation or tenant enrollment is attempted."
+  ]
+}

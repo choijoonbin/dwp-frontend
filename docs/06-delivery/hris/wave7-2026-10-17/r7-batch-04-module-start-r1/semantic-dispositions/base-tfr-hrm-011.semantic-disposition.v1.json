@@ -1,0 +1,307 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-hrm011-semantic-disposition.v1",
+  "dispositionId": "HRIS-WAVE7-R7-BATCH-04-HRM011-SEMANTIC-DISPOSITION-20261019-R1",
+  "recordedAt": "2026-10-19T10:20:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ID_AND_SHA256"
+  },
+  "state": "SEMANTIC_GAPS_RESOLVED_EXACT_PACKET_AND_CENTRAL_CONTRACT_SUCCESSOR_MAY_BE_PREPARED_SOURCE_NO_GO_UNTIL_ACTIVE_V59_LEASE_AND_EXECUTABLE_TOKEN",
+  "sliceId": "BASE-TFR-HRM-011",
+  "sourceRef": "TFR-HRM-011",
+  "module": "HRM",
+  "moduleSession": "HRIS-HRM",
+  "decision": "GO_FOR_EXACT_OWNER_PACKET_CENTRAL_CONTRACT_SUCCESSOR_AND_PEOPLE_V59_LEASE_PREPARATION_SOURCE_START_WITHHELD",
+  "authorityBasis": {
+    "batch04Preflight": {
+      "path": "../../r7-batch-04-preflight-r1/semantic-dependency-migration-preflight.v1.json",
+      "sha256": "3fe2cb0cab1aa65fbe75f1b0d8d4a74f136be457aa2c324d262eb7503789cc1c",
+      "bytes": 17214,
+      "requiredDecision": "CONDITIONAL_GO_FOR_SEPARATE_EXACT_PACKET_SOURCE_START_NO_GO"
+    },
+    "reclassification": {
+      "path": "../../r7-c0-reclassification-r1/base-slice-reclassification.v1.json",
+      "sha256": "73c02c6d945f2b62ae716d2dbbf76e5123a2863f50d19de51e27085943291de8"
+    },
+    "acceptedContracts": [
+      {
+        "path": "../../../recovery/hris-porting-blueprint-2026-09-09/session-evidence/hrm/g2-readiness/api-event-contracts.v1.json",
+        "sha256": "0c3ec58b29dcf534d1b887fed5678e878e4a514cf3f943165e47dd7a486355bb",
+        "bytes": 25944
+      },
+      {
+        "path": "../../../recovery/hris-porting-blueprint-2026-09-09/coding-readiness/hrm-transport-schema-supplement.v1.json",
+        "sha256": "85d29729961f4348b595f9773c76afd7232e4b92c5f198351afb4d8ac0dcf404",
+        "bytes": 20613
+      },
+      {
+        "path": "../../../recovery/hris-porting-blueprint-2026-09-09/session-evidence/hrm/g2-readiness/physical-schema-blueprint.sql",
+        "sha256": "dbe18b0a2700bac21088391d2d9c13d155d30058b44843aeed033d3333896969"
+      },
+      {
+        "path": "../../../recovery/exact-supplements/2026-10-06/accepted-successors/hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-api-contract-register.csv",
+        "sha256": "5f47efd33a1d5aa3d11a4d9fd5716cd4e35650e9fec0868ecb77c8c90a4cd988"
+      },
+      {
+        "path": "../../../recovery/exact-supplements/2026-10-06/hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-projection-schemas.v1.json",
+        "sha256": "b185accd712216c39bf8a66f70cbbf0092a27a8c2c5e3d7457ecd4d511afa048"
+      },
+      {
+        "path": "../../../recovery/hris-porting-blueprint-2026-09-09/coding-readiness/api-pep-binding-register.csv",
+        "sha256": "0e38d724516a8b271069241ffa0fb6400984dc703758767de53cbaffb4f93da3"
+      }
+    ],
+    "pinnedRepositories": {
+      "backend": {
+        "repository": "dwp-backend",
+        "branch": "dwp-dev",
+        "commit": "f9d2556294fe92a26090ab26781d74dc861062cd",
+        "tree": "c4cb353f1fd314c054f4094b36927d99897180da",
+        "clean": true,
+        "originExact": true
+      },
+      "frontend": {
+        "repository": "dwp-frontend",
+        "branch": "dwp-dev",
+        "commit": "c03ff6767a8e80894d903ce0d2d0e22c2cad7737",
+        "clean": true,
+        "originExact": true
+      },
+      "agent": {
+        "repository": "dwp_agent",
+        "branch": "dwp-dev",
+        "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+        "clean": true,
+        "originExact": true
+      }
+    }
+  },
+  "semanticLineage": "TFR-HRM-011::hr-contracts-compensation-basis::PEP-HRM-011|SVC-PEP-HRM-003-R2|SVC-PEP-HRM-005|XCON-002|XCON-007|XCON-017|XCON-018|XCON-019|XCON-023|XCON-024|XCON-025|XCON-026",
+  "eventSuccessor": {
+    "commonEnvelope": {
+      "closedFields": [
+        "aggregateId",
+        "aggregateVersion",
+        "causationId",
+        "correlationId",
+        "eventId",
+        "occurredAt",
+        "payloadDigest",
+        "schemaVersion",
+        "tenantId"
+      ],
+      "schemaVersion": 1,
+      "rules": [
+        "aggregateId equals the fact public ID",
+        "aggregateVersion equals newAggregateVersion",
+        "eventId is deterministic for aggregate/version/event type",
+        "payloadDigest is SHA-256 over RFC-8785/JCS canonical payload",
+        "duplicate same-hash events are ignored; hash conflicts are quarantined",
+        "stale versions are ignored; gaps block PAY input and require SVC-005 refetch"
+      ]
+    },
+    "contracts": [
+      {
+        "xconId": "XCON-023",
+        "eventType": "WorkerDependentEligibilityChanged.v1",
+        "producer": "HRIS-HRM",
+        "consumers": ["HRIS-PAY"],
+        "payloadClosedSet": [
+          "dependentPublicId",
+          "workerId",
+          "effectiveFrom",
+          "effectiveTo",
+          "newAggregateVersion"
+        ]
+      },
+      {
+        "xconId": "XCON-024",
+        "eventType": "WorkerTaxIdentityChanged.v1",
+        "producer": "HRIS-HRM",
+        "consumers": ["HRIS-PAY"],
+        "payloadClosedSet": [
+          "taxIdentityPublicId",
+          "workerId",
+          "effectiveFrom",
+          "effectiveTo",
+          "newAggregateVersion"
+        ]
+      },
+      {
+        "xconId": "XCON-025",
+        "eventType": "WorkerBankAccountTokenChanged.v1",
+        "producer": "HRIS-HRM",
+        "consumers": ["HRIS-PAY"],
+        "payloadClosedSet": [
+          "paymentDestinationPublicId",
+          "workerId",
+          "effectiveFrom",
+          "effectiveTo",
+          "newAggregateVersion"
+        ]
+      },
+      {
+        "xconId": "XCON-026",
+        "eventType": "EmploymentContractIssued.v1",
+        "producer": "HRIS-HRM",
+        "consumers": ["HRIS-HRM"],
+        "payloadClosedSet": [
+          "contractPublicId",
+          "workerPublicId",
+          "contractType",
+          "validFrom",
+          "validTo",
+          "documentReference"
+        ],
+        "documentReferenceClosedSet": [
+          "objectPublicId",
+          "objectVersion",
+          "contentSha256"
+        ]
+      }
+    ],
+    "forbiddenEventContent": [
+      "raw dependent profile",
+      "raw tax identifier",
+      "tax token",
+      "raw bank or routing value",
+      "bank account token",
+      "document bytes",
+      "object URL",
+      "download URL"
+    ]
+  },
+  "serviceProjectionSuccessor": {
+    "SVC-PEP-HRM-003": {
+      "priorState": "SUPERSEDED_BEFORE_IMPLEMENTATION",
+      "successorId": "SVC-PEP-HRM-003-R2",
+      "method": "GET",
+      "ownerPath": "/internal/hris-people/v1/compensation-basis-snapshots",
+      "response": "STRICT_XCON_002_COMPENSATION_BASIS_SNAPSHOT_V1_ONLY",
+      "paymentInstrumentFields": "FORBIDDEN_AND_OWNED_EXCLUSIVELY_BY_SVC_PEP_HRM_005_XCON_019"
+    },
+    "SVC-PEP-HRM-005": {
+      "method": "GET",
+      "ownerPath": "/internal/hris-people/v1/payroll-worker-fact-snapshots",
+      "responseContracts": ["XCON-017", "XCON-018", "XCON-019"],
+      "rawRestrictedValues": "FORBIDDEN"
+    }
+  },
+  "employmentContractArtifactBinding": {
+    "interface": "EmploymentContractArtifactPort",
+    "productionBinding": "FailClosedEmploymentContractArtifactAdapter",
+    "testBinding": "EmploymentContractArtifactConformanceDouble",
+    "requestClosedSet": [
+      "artifactRequestId",
+      "contractPublicId",
+      "tenantId",
+      "relationshipPublicId",
+      "workerPublicId",
+      "templatePublicId",
+      "templateVersion",
+      "locale",
+      "effectiveFrom",
+      "effectiveTo",
+      "generationSnapshotDigest"
+    ],
+    "resultClosedSet": [
+      "artifactRequestId",
+      "contractPublicId",
+      "templatePublicId",
+      "templateVersion",
+      "generationSnapshotDigest",
+      "providerReceiptId",
+      "documentReference",
+      "issuedAt"
+    ],
+    "rules": [
+      "provider idempotency is keyed by artifactRequestId",
+      "all request echoes and digests must match exactly",
+      "a missing, mismatched or unavailable artifact result fails closed before any ISSUED state, success receipt, audit or outbox write",
+      "on success the contract row, command receipt, audit pointer and XCON-026 outbox append commit atomically",
+      "production success remains unavailable until a separate provider-binding authority exists"
+    ]
+  },
+  "entryQueryAndAction": {
+    "queryId": "IAQ-008",
+    "variantKey": "CONTRACTS_COMPENSATION_BASIS",
+    "browserPath": "/api/people/v1/hris/workbench/operations/contracts/compensation/basis",
+    "ownerPath": "/v1/hris/workbench/operations/contracts/compensation/basis",
+    "canonicalRoute": "/hr/operations/people/contracts-compensation-basis",
+    "itemIdentity": "relationshipPublicId",
+    "deepLinkResource": "relationshipPublicId",
+    "eligibleItem": "relationship is effective at asOf and has exactly one eligible primary assignment, one effective compensation basis and one PUBLISHED effective locale template",
+    "fieldGroupMapping": {
+      "CONTRACT_METADATA": "MetadataValue(key=templatePublicId,version=templateVersion,digest=generationSnapshotDigest)",
+      "COMPENSATION_BASIS": "MoneyValue(amount,currency)"
+    },
+    "action": {
+      "actionKey": "hris.action.hrm.issue-employment-contract",
+      "pepId": "PEP-HRM-011",
+      "method": "POST",
+      "browserPath": "/api/people/v1/hris/employment-contracts",
+      "ownerPath": "/v1/hris/employment-contracts",
+      "capability": "hcm.operations.contract.issue",
+      "exposureRule": "Expose only for READY_TO_ISSUE items when both field groups are VIEW and a preliminary PEP-HRM-011 decision allows the action.",
+      "ifMatch": "quoted templateVersion",
+      "stepUpTarget": "EMPLOYMENT_CONTRACT_TEMPLATE/templatePublicId",
+      "ownerRevalidation": "lock relationship, primary assignment, compensation basis and published template; recompute generationSnapshotDigest; stale state returns 409 before mutation",
+      "authorization": "Gateway entitlement plus owner operation, population, tenant predicate, field projection, purpose, audit and HIGH step-up are re-evaluated for POST"
+    }
+  },
+  "migrationDecision": {
+    "required": true,
+    "stream": "PEOPLE_MAIN",
+    "predecessorHighWater": "V58",
+    "version": "V59",
+    "exactPath": "dwp-people-server/src/main/resources/db/migration/V59__hrm_base_tfr_hrm_011.sql",
+    "tables": [
+      "ppl_compensation_basis",
+      "ppl_employment_contracts",
+      "ppl_worker_restricted_tokens",
+      "ppl_dependents"
+    ],
+    "reuse": [
+      "ppl_command_receipts",
+      "sys_people_audit_events",
+      "sys_people_outbox_events"
+    ],
+    "requiredControls": [
+      "forced RLS and tenant predicates",
+      "composite same-tenant foreign keys",
+      "half-open effective periods and overlap guards",
+      "immutable contract/artifact snapshot",
+      "strict lifecycle transitions",
+      "opaque restricted-token references only"
+    ],
+    "forbidden": [
+      "editing V1 through V58",
+      "a second V59 path",
+      "new receipt, audit or outbox tables",
+      "clear tax, bank, routing or dependent profile values"
+    ]
+  },
+  "centralSuccessorRequirements": {
+    "contract": "Add XCON-023 through XCON-026 canonical schemas, generated Java bindings and exact provider/consumer tests before HRM owner source compiles against them.",
+    "authorization": "Add IAQ-008 PAGE and DATA plus PEP-HRM-011 ACTION; explicitly project CONTRACT_METADATA and COMPENSATION_BASIS under HRM-AUTH-007; no implicit field expansion.",
+    "asyncApi": "Publish the four exact event envelopes with closed payloads and no forbidden data.",
+    "activation": "Keep feature default OFF with zero tenant enrollment."
+  },
+  "authority": {
+    "semanticDispositionSealed": true,
+    "centralContractSuccessorMayBeAuthored": true,
+    "centralAuthorizationSuccessorMayBeAuthored": true,
+    "ownerPacketMayBeIssued": true,
+    "exclusivePeopleV59LeaseMayBeIssued": true,
+    "freshWorktreesMayBeMaterializedAfterPacketAndLease": true,
+    "executableStartTokenMayBeIssuedAfterExactWorktreeReceipt": true,
+    "moduleSourceAuthoringAuthorizedNow": false,
+    "migrationAuthoringAuthorizedNow": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionArtifactProviderAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextGate": "ISSUE_HASH_BOUND_CENTRAL_CONTRACT_AND_AUTHORIZATION_SUCCESSOR_OWNER_PACKET_EXCLUSIVE_V59_LEASE_MATERIALIZE_FRESH_WORKTREES_THEN_EXECUTABLE_START_TOKEN"
+}
