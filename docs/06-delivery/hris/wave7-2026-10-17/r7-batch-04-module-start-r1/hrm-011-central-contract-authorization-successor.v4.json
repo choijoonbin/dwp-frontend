@@ -1,0 +1,539 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-hrm011-central-contract-authorization-successor.v4",
+  "successorId": "HRIS-WAVE7-R7-BATCH-04-HRM011-CENTRAL-CONTRACT-AUTHORIZATION-20261019-R4",
+  "recordedAt": "2026-10-19T11:25:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ID_AND_SHA256"
+  },
+  "state": "SEALED_IMPLEMENTABLE_CENTRAL_SCOPE_FOUR_P0_CORRECTIONS_DEFAULT_OFF_ZERO_ENROLLMENT",
+  "sliceId": "BASE-TFR-HRM-011",
+  "successorOf": {
+    "path": "hrm-011-central-contract-authorization-successor.v3.json",
+    "sha256": "f134f5d3d39fad0b7be5ba014bc1b0e6e852a909080b4ba9a94367dc7fc6eba7",
+    "bytes": 3943,
+    "supersession": "CORRECT_THE_FOUR_REMAINING_P0_TERMS_AND_AUTHORIZE_THE_EXACT_IMPLEMENTABLE_OWNER_PACKET_BOUNDARY"
+  },
+  "semanticDispositionSuccessor": {
+    "path": "semantic-dispositions/base-tfr-hrm-011.semantic-disposition-successor.v4.json",
+    "sha256": "b9f2e26619b71ccac3fc49fa34619533fffa1a8a4e8891b0c7bc2ffb49807fa1",
+    "bytes": 39766,
+    "requiredState": "SEALED_IMPLEMENTABLE_OWNER_PACKET_SCOPE_FOUR_P0_CORRECTIONS_V59_AND_DEFERRED_PRODUCTION_TRIGGERS"
+  },
+  "decision": "AUTHORIZE_ONE_APPEND_ONLY_CENTRAL_V4_IMPLEMENTATION_THAT_ADDS_THE_MISSING_CAPABILITY_CORRECTS_PURPOSE_ARTIFACT_ERROR_AND_XCON026_BINDINGS_AND_PRESERVES_DEFAULT_OFF_ZERO_ENROLLMENT",
+  "p0Corrections": {
+    "capability": "Declare hcm.operations.contract.issue as a new v53 capability; the v3 capabilityReuse classification is superseded.",
+    "purpose": "Bind external HR_LIFECYCLE to internal HRM-AUTH-015 EMPLOYMENT_CONTRACT by one owner-controlled mapping.",
+    "artifactAndProblem": "Correct PDX-015 with tenantId, contentSchemaVersion, sourceRevision and publishedAt, authorize the exact artifact request/result v2 boundary and append retryable 503 to a Problem successor without changing prior statuses.",
+    "xcon026": "Remove XCON-026 from the newAggregateVersion equality rule and bind its envelope aggregate version to the persisted positive contract version."
+  },
+  "centralContractDelta": {
+    "allowedPaths": [
+      "contracts/hris/canonical/schemas/cross-module-canonical-schemas.v1.json",
+      "contracts/hris/canonical/schemas/platform-dependency-canonical-schemas.v1.json",
+      "contracts/hris/canonical/hris-contract-codegen-manifest.v1.json",
+      "dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/Xcon023WorkerDependentEligibilityChangedV1.java",
+      "dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/Xcon024WorkerTaxIdentityChangedV1.java",
+      "dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/Xcon025WorkerBankAccountTokenChangedV1.java",
+      "dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/Xcon026EmploymentContractIssuedV1.java",
+      "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/generated/EmploymentContractTemplateSnapshotV1.java",
+      "dwp-platform-contracts/src/test/java/com/dwp/platform/contract/HrisHrm011CanonicalContractTest.java",
+      "dwp-platform-contracts/src/test/java/com/dwp/platform/contract/HrisHrm011AsyncApiContractTest.java",
+      "contracts/asyncapi/domain-events.yaml",
+      "scripts/generate-hris-contracts.py",
+      "scripts/tests/test_generate_hris_contracts.py"
+    ],
+    "canonicalContracts": [
+      "XCON-023 WorkerDependentEligibilityChanged.v1",
+      "XCON-024 WorkerTaxIdentityChanged.v1",
+      "XCON-025 WorkerBankAccountTokenChanged.v1",
+      "XCON-026 EmploymentContractIssued.v1",
+      "PDX-015 EmploymentContractTemplateSnapshotV1"
+    ],
+    "existingContractsImmutable": [
+      "XCON-001 through XCON-022",
+      "PDX-001 through PDX-014"
+    ],
+    "generatedArtifactRule": "Canonical schema and manifest change first; generated Java changes only through scripts/generate-hris-contracts.py and freshness checks.",
+    "strictness": "All five new schemas are objects with additionalProperties=false, exact required fields, typed nullability and no permissive map.",
+    "xcon023": {
+      "eventType": "WorkerDependentEligibilityChanged.v1",
+      "aggregateId": "dependentPublicId",
+      "aggregateVersion": "newAggregateVersion",
+      "payload": [
+        "dependentPublicId UUID",
+        "workerId UUID",
+        "effectiveFrom date",
+        "effectiveTo date or null",
+        "newAggregateVersion positive integer"
+      ]
+    },
+    "xcon024": {
+      "eventType": "WorkerTaxIdentityChanged.v1",
+      "aggregateId": "taxIdentityPublicId",
+      "aggregateVersion": "newAggregateVersion",
+      "payload": [
+        "taxIdentityPublicId UUID",
+        "workerId UUID",
+        "effectiveFrom date",
+        "effectiveTo date or null",
+        "newAggregateVersion positive integer"
+      ]
+    },
+    "xcon025": {
+      "eventType": "WorkerBankAccountTokenChanged.v1",
+      "aggregateId": "paymentDestinationPublicId",
+      "aggregateVersion": "newAggregateVersion",
+      "payload": [
+        "paymentDestinationPublicId UUID",
+        "workerId UUID",
+        "effectiveFrom date",
+        "effectiveTo date or null",
+        "newAggregateVersion positive integer"
+      ]
+    },
+    "xcon026": {
+      "eventType": "EmploymentContractIssued.v1",
+      "aggregateId": "contractPublicId",
+      "aggregateVersion": "persisted positive employment-contract version",
+      "newAggregateVersion": "ABSENT_BY_DESIGN",
+      "payload": [
+        "contractPublicId UUID",
+        "workerPublicId UUID",
+        "contractType Code",
+        "validFrom date",
+        "validTo date or null",
+        "documentReference strict object"
+      ],
+      "documentReference": [
+        "objectPublicId UUID",
+        "objectVersion positive integer",
+        "contentSha256 lowercase 64-character SHA-256"
+      ]
+    },
+    "eventDataCommonClosedSet": [
+      "aggregateId",
+      "aggregateVersion",
+      "causationId",
+      "correlationId",
+      "eventId",
+      "occurredAt",
+      "payloadDigest",
+      "schemaVersion",
+      "tenantId"
+    ],
+    "asyncApi": {
+      "publishEnvelopes": [
+        "CompensationBasisChanged.v1 using unchanged XCON-007 data",
+        "WorkerDependentEligibilityChanged.v1 using XCON-023 data",
+        "WorkerTaxIdentityChanged.v1 using XCON-024 data",
+        "WorkerBankAccountTokenChanged.v1 using XCON-025 data",
+        "EmploymentContractIssued.v1 using XCON-026 data"
+      ],
+      "wrapperEquality": "DomainEventEnvelope id, tenantId, aggregateId, aggregateSequence, correlationId, causationId, time and schemaVersion equal the corresponding typed event-data fields.",
+      "forbiddenContent": "No restricted raw value, eligibility fact, token, masked account display, document byte, URL, storage key or download token."
+    },
+    "pdx015": {
+      "title": "EmploymentContractTemplateSnapshotV1",
+      "producer": "SYS_PLATFORM",
+      "consumer": "HRIS-HRM",
+      "closedFields": [
+        "tenantId positive integer",
+        "templatePublicId UUID",
+        "templateVersion positive integer",
+        "templateType constant EMPLOYMENT_CONTRACT",
+        "contractType Code",
+        "locale canonical locale",
+        "scopeType platform ScopeType",
+        "scopeId UUID or null under the existing GLOBAL scope invariant",
+        "state constant PUBLISHED",
+        "effectiveFrom date",
+        "effectiveTo date or null",
+        "contentSchemaVersion positive integer",
+        "templateContentReference strict object",
+        "payloadDigest lowercase SHA-256",
+        "approvalReceiptId UUID",
+        "sourceRevision positive integer",
+        "publishedAt RFC-3339 instant"
+      ],
+      "templateContentReference": [
+        "objectPublicId UUID",
+        "objectVersion positive integer",
+        "contentSha256 lowercase SHA-256"
+      ],
+      "binding": "tenantId equals trusted tenant; templatePublicId, templateVersion, state, effectivity, scope, contentSchemaVersion, payloadDigest and approval receipt bind exactly to PDX-001; sourceRevision and publishedAt bind exactly to PDX-002 eventSequence and publishedAt."
+    },
+    "verification": [
+      "python3 scripts/generate-hris-contracts.py --check",
+      "targeted strict schema and generated Java tests for XCON-023 through XCON-026 and PDX-015",
+      "targeted outer/data equality and forbidden-field AsyncAPI tests for XCON-007 and XCON-023 through XCON-026",
+      "byte-for-byte or normalized-hash proof that XCON-001 through XCON-022 and PDX-001 through PDX-014 did not change"
+    ]
+  },
+  "authorizationDelta": {
+    "predecessor": {
+      "productAuthorizationBundle": "v52",
+      "authMigration": "V261"
+    },
+    "successor": {
+      "productAuthorizationBundle": "v53",
+      "authMigration": "V262",
+      "featureKey": "HRIS_HRM_CONTRACT_COMPENSATION_WORKBENCH",
+      "defaultEnabled": false,
+      "enrolledTenants": []
+    },
+    "newCapability": {
+      "contractKey": "hcm.operations.contract.issue",
+      "productKey": "hcm",
+      "surfaceKey": "hcm.operations",
+      "resolvedCapabilityCode": "ACTION.HRIS_EMPLOYMENT_CONTRACT:ISSUE",
+      "resourceKey": "ACTION.HRIS_EMPLOYMENT_CONTRACT",
+      "action": "ISSUE",
+      "mappingVersion": 1,
+      "requiresProductEntitlement": false,
+      "authorityMode": "PERMISSION_AND_RELATIONSHIP",
+      "scopeResolver": "WORKFORCE_TARGET_POPULATION",
+      "riskTier": "HIGH",
+      "activationPolicy": "STEPUP-MGMT-HIGH-V1",
+      "responsibilityRequirement": "REQUIRED",
+      "requiredResponsibilityCode": "HRIS_DUTY_CONTRACT_ISSUER",
+      "sodPolicyId": "NO_APPROVE_OWN_CHANGE",
+      "owner": "People + HCM + Security",
+      "policyVersion": 1,
+      "lifecycleState": "ACTIVE"
+    },
+    "reusedCapability": "hcm.operations.people.view",
+    "routes": [
+      {
+        "routeContractKey": "route.hcm.operations.contracts-compensation-basis.page",
+        "routeKind": "PAGE",
+        "authorizationEquivalenceKey": "wire-authority.hcm.operations.contracts-compensation-basis.v1",
+        "uiRouteId": "hcm.operations.contracts-compensation-basis",
+        "uiRoutePattern": "/hr/operations/people/contracts-compensation-basis",
+        "purposeCode": "HR_OPERATIONS",
+        "profileKey": "people-operations-reader",
+        "capability": "hcm.operations.people.view",
+        "targetBindingKinds": [
+          "TARGET_POPULATION"
+        ],
+        "predicatePolicyKeys": [
+          "predicate.hcm-workforce-visible-person.v1"
+        ],
+        "projectionPolicyKey": "route.hcm.operations.contracts-compensation-basis.page.people-operations-reader.projection.v1",
+        "responseSchemaKey": "Hrm011ContractsCompensationBasisProjectionV2",
+        "fieldGroups": [
+          "CONTRACT_METADATA",
+          "COMPENSATION_BASIS"
+        ]
+      },
+      {
+        "routeContractKey": "route.hcm.operations.contracts-compensation-basis.data",
+        "routeKind": "DATA",
+        "authorizationEquivalenceKey": "wire-authority.hcm.operations.contracts-compensation-basis.v1",
+        "browserBinding": "GET /api/people/v1/hris/workbench/operations/contracts/compensation/basis",
+        "ownerBinding": "GET /v1/hris/workbench/operations/contracts/compensation/basis",
+        "purposeCode": "HR_OPERATIONS",
+        "profileKey": "people-operations-reader",
+        "capability": "hcm.operations.people.view",
+        "targetBindingKinds": [
+          "TARGET_POPULATION"
+        ],
+        "predicatePolicyKeys": [
+          "predicate.hcm-workforce-visible-person.v1"
+        ],
+        "projectionPolicyKey": "route.hcm.operations.contracts-compensation-basis.data.people-operations-reader.projection.v1",
+        "responseSchemaKey": "Hrm011ContractsCompensationBasisProjectionV2",
+        "fieldGroups": [
+          "CONTRACT_METADATA",
+          "COMPENSATION_BASIS"
+        ]
+      },
+      {
+        "routeContractKey": "route.hcm.operations.employment-contract-issue.action",
+        "routeKind": "ACTION",
+        "browserBinding": "POST /api/people/v1/hris/employment-contracts",
+        "ownerBinding": "POST /v1/hris/employment-contracts",
+        "purposeCode": "HR_LIFECYCLE",
+        "internalFieldPolicyPurpose": "EMPLOYMENT_CONTRACT",
+        "purposeMapping": "OWNER_FIXED_ONE_WAY_MAPPING",
+        "profileKey": "employment-contract-issuer",
+        "capability": "hcm.operations.contract.issue",
+        "targetBindingKinds": [
+          "OBJECT",
+          "TARGET_POPULATION"
+        ],
+        "predicatePolicyKeys": [
+          "predicate.hcm-workforce-visible-person.v1",
+          "predicate.people.object-version.v1"
+        ],
+        "stepUp": {
+          "riskTier": "HIGH",
+          "policy": "STEPUP-MGMT-HIGH-V1",
+          "targetType": "WORK_RELATIONSHIP",
+          "targetIdBodyFields": [
+            "relationshipPublicId"
+          ],
+          "expectedObjectVersionSource": "COMMAND_HEADER",
+          "expectedObjectVersionName": "X-DWP-Expected-Object-Version",
+          "ownerServiceKey": "people",
+          "audience": "dwp-people-server"
+        }
+      }
+    ],
+    "projectionV2": {
+      "responseSchemaKey": "Hrm011ContractsCompensationBasisProjectionV2",
+      "itemClosedSet": [
+        "itemPublicId",
+        "resourceVersion",
+        "title",
+        "statusCode",
+        "fieldGroups",
+        "deepLink",
+        "availableActions"
+      ],
+      "itemGrain": "WORK_RELATIONSHIP",
+      "itemPublicId": "relationshipPublicId",
+      "resourceVersion": "required nonnegative ppl_work_relationships.version",
+      "pageDataEquality": "PAGE and DATA use the identical response schema and authorizationEquivalenceKey"
+    },
+    "fieldPolicy": {
+      "HRM-AUTH-007": "Append CONTRACT_METADATA and COMPENSATION_BASIS only for the exact HR_OPERATIONS PAGE and DATA route profiles; no global field-group widening.",
+      "HRM-AUTH-015": "Preserve EMPLOYMENT, COMPENSATION and DOCUMENT_CONTENT with internal purpose EMPLOYMENT_CONTRACT and NO_APPROVE_OWN_CHANGE.",
+      "implicitExpansion": "FORBIDDEN"
+    },
+    "requiredPaths": [
+      "contracts/product-authorization/product-surfaces-v1.yaml",
+      "contracts/product-authorization/product-surfaces-v1.json",
+      "contracts/product-authorization/product-surfaces-v1.bundle-v53.json",
+      "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v53.generated.json",
+      "contracts/product-authorization/product-surfaces-v1.index.json",
+      "dwp-auth-server/src/main/resources/db/migration/V262__declare_hris_r7_batch04_hrm011_v53_authorization_seed.sql",
+      "scripts/tests/test_product_authorization_v53.py"
+    ],
+    "verification": [
+      "v53 is an immutable append-only successor of v52",
+      "hcm.operations.contract.issue did not exist in v52 and exists exactly once in v53",
+      "PAGE and DATA wire authority and Hrm011ContractsCompensationBasisProjectionV2 are identical",
+      "missing or unknown resourceVersion fails strict projection validation",
+      "ACTION extracts relationshipPublicId and numeric expected object version",
+      "external HR_LIFECYCLE maps only to internal EMPLOYMENT_CONTRACT",
+      "feature is default OFF and enrolled tenant set is empty"
+    ]
+  },
+  "transportProblemSuccessor": {
+    "id": "HRM-TRANSPORT-PROBLEM-R2",
+    "predecessor": "hrm-transport-schema-supplement.v1.json Problem",
+    "mode": "APPEND_ONLY_NEW_SCHEMA_REFERENCE_NO_V1_MUTATION",
+    "commandHeadersV2": {
+      "addedRequiredHeader": "X-DWP-Expected-Object-Version",
+      "type": "canonical nonnegative decimal integer",
+      "ifMatch": "strong quoted canonical nonnegative integer only; weak W/ validators are rejected",
+      "gatewayRule": "derive from quoted If-Match resourceVersion",
+      "ownerRule": "require If-Match and X-DWP-Expected-Object-Version to resolve to the same relationship resourceVersion before authorization or mutation"
+    },
+    "preservedStatuses": [
+      400,
+      401,
+      403,
+      404,
+      409,
+      422,
+      423,
+      429,
+      500
+    ],
+    "addedStatus": 503,
+    "addedCase": {
+      "code": "EMPLOYMENT_CONTRACT_ARTIFACT_UNAVAILABLE",
+      "retryable": true,
+      "correlationIdRequired": true,
+      "safeDetailOnly": true
+    },
+    "ownerBinding": "PEP-HRM-011 only",
+    "unknownStatusForbidden": true
+  },
+  "moduleContractBoundary": {
+    "artifactRequestV2": {
+      "closedSet": [
+        "artifactRequestId",
+        "contractPublicId",
+        "trustedTenantId",
+        "correlationId",
+        "relationshipSnapshot",
+        "assignmentSnapshot",
+        "compensationBasisSnapshot",
+        "templateSnapshot",
+        "locale",
+        "effectiveFrom",
+        "effectiveTo",
+        "generationSnapshotDigest"
+      ],
+      "templateSnapshot": "Exact generated PDX-015",
+      "contractTypeSource": "PDX-015 only"
+    },
+    "artifactResultV2": {
+      "closedSet": [
+        "artifactRequestId",
+        "contractPublicId",
+        "templatePublicId",
+        "templateVersion",
+        "generationSnapshotDigest",
+        "providerReceiptId",
+        "documentReference",
+        "issuedAt"
+      ],
+      "documentReference": "objectPublicId, positive objectVersion and contentSha256 only"
+    },
+    "peopleV59": {
+      "leaseVersion": "V59",
+      "exactPath": "dwp-people-server/src/main/resources/db/migration/V59__hrm_base_tfr_hrm_011.sql",
+      "newTables": [
+        "ppl_compensation_basis",
+        "ppl_employment_contracts",
+        "ppl_worker_restricted_tokens",
+        "ppl_dependents"
+      ],
+      "manifestAuthority": "semantic disposition v4 peopleV59 section",
+      "existingStoresReused": [
+        "ppl_command_receipts",
+        "sys_people_audit_events",
+        "sys_people_outbox_events"
+      ],
+      "secondV59OrHistoricalEdit": "FORBIDDEN"
+    },
+    "serviceWorkloadIngress": {
+      "productAuthorizationRoute": "NONE",
+      "browserRoute": "FORBIDDEN",
+      "requiredCaller": "dwp-payroll-server",
+      "requiredSecurity": "TLS 1.3 plus mTLS SPIFFE plus OAuth2 client credential JWT audience dwp-people plus signed trusted tenant and owner grant revalidation",
+      "requiredHeaders": "Authorization bearer workload JWT and X-Correlation-ID UUID; caller-supplied tenant header is forbidden",
+      "SVC-PEP-HRM-003-R2": "fixed COMPENSATION_BASIS_V1 projection with exact XCON-002 homogeneous items",
+      "SVC-PEP-HRM-005": "one of DEPENDENT_ELIGIBILITY_V1, TAX_IDENTITY_V1 or BANK_ACCOUNT_TOKEN_V1 with exact homogeneous XCON-017, XCON-018 or XCON-019 items",
+      "cursorAndDigest": "bind and verify tenant, caller, purpose, projection, asOf, ownerRevision, canonical position and canonical page digest"
+    },
+    "productionTriggerBoundary": {
+      "state": "DEFERRED_NO_PRODUCTION_TRIGGER",
+      "events": [
+        "XCON-007",
+        "XCON-023",
+        "XCON-024",
+        "XCON-025"
+      ],
+      "sourceStartMayImplement": "strict mapper, serializer, atomic outbox port and bounded contract/replay/gap tests",
+      "sourceStartMayNotImplement": "invented mutation ingress, unowned database trigger or production publisher wiring",
+      "productionAndFullSliceClaim": false
+    }
+  },
+  "ownerPacketAdmissionRequirements": {
+    "requiredReferences": [
+      "this central successor v4 by path, SHA-256 and byte count",
+      "semantic disposition successor v4 by path, SHA-256 and byte count",
+      "admitted central XCON-023 through XCON-026 and PDX-015 result commit",
+      "admitted product-authorization v53 and Auth V262 result commit"
+    ],
+    "backendWritable": [
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/workbench/hrm011/**",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/employmentcontract/**",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/hrm011/**",
+      "matching three backend test roots",
+      "dwp-people-server/src/main/resources/db/migration/V59__hrm_base_tfr_hrm_011.sql"
+    ],
+    "frontendWritable": [
+      "apps/dwp/src/features/hris/people/contracts-compensation-basis/**",
+      "apps/dwp/src/features/hris/people/__tests__/g3-slices/base-tfr-hrm-011.slice.test.tsx",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-results-r1/base-tfr-hrm-011/**"
+    ],
+    "acceptance": "All HRM011-AC-01 through HRM011-AC-12 from semantic disposition v4 are mandatory and may not be weakened in the owner packet.",
+    "startPreconditions": [
+      "central v4 implementation admitted to dwp-dev",
+      "exclusive People V59 lease active",
+      "fresh backend and frontend worktrees materialized from admitted dwp-dev heads",
+      "clean porcelain and exact base ancestry recorded",
+      "executable start token hash-bound to packet, lease and worktree receipts"
+    ]
+  },
+  "targetedVerification": {
+    "policy": "RUN_EACH_NEW_TARGET_GROUP_ONCE_THEN_RERUN_ONLY_THE_SMALLEST_FAILED_TARGET_NO_REPOSITORY_WIDE_SUITE",
+    "centralContracts": [
+      "generator freshness",
+      "XCON-023 through XCON-026 strict JSON and normalized schema hashes",
+      "PDX-015 strict JSON and PDX-001 binding invariants",
+      "AsyncAPI wrapper equality and forbidden content",
+      "unchanged predecessor hashes"
+    ],
+    "authorization": [
+      "product authorization v53 generator and immutable v52 predecessor",
+      "Auth V262 migration contract",
+      "new capability uniqueness",
+      "PAGE and DATA equivalence",
+      "ACTION resource-version and purpose mapping",
+      "default-OFF and zero-enrollment proof"
+    ],
+    "moduleAfterToken": [
+      "Hrm011IaEntryQueryContractTest",
+      "EmploymentContractAuthorizationTest",
+      "EmploymentContractIdempotencyRecoveryTest",
+      "EmploymentContractTemplateQueryPortContractTest",
+      "EmploymentContractArtifactPortConformanceTest",
+      "SvcHrm003CompensationSnapshotProviderContractTest",
+      "SvcHrm005PayrollWorkerFactSnapshotProviderContractTest",
+      "Hrm011EventOutboxTest",
+      "Hrm011V59MigrationContractTest",
+      "Hrm011V59MigrationPostgresTest",
+      "frontend HRM-011 slice and changed-root component tests"
+    ]
+  },
+  "frontendCentralBoundary": {
+    "moduleSourceFirst": true,
+    "routeAdmissionNow": false,
+    "laterAdmissionPaths": [
+      "apps/dwp/src/features/hris/integration/**",
+      "apps/dwp/src/app/(workspace)/hr/**",
+      "apps/dwp/src/features/hris/shell/model/**",
+      "apps/dwp/src/i18n/**"
+    ],
+    "admissionRule": "The page and navigation node remain absent unless central v53, module result review, a separate route admission and an explicit tenant enrollment decision all authorize visibility."
+  },
+  "sequencing": [
+    "commit and push this control successor",
+    "implement and admit central XCON-023 through XCON-026, PDX-015, AsyncAPI and generator changes",
+    "implement and admit product authorization v53 and Auth V262",
+    "issue the exact HRM-011 owner packet and exclusive People V59 lease",
+    "materialize fresh clean module worktrees from the admitted dwp-dev heads",
+    "issue the executable start token",
+    "implement and verify bounded module source",
+    "review module results before any separate default-OFF route admission",
+    "keep provider binding, production triggers, tenant enrollment and release under later explicit authority"
+  ],
+  "authority": {
+    "centralContractSourceAuthorized": true,
+    "centralAuthorizationSourceAuthorized": true,
+    "productAuthorizationV53Authorized": true,
+    "authV262Authorized": true,
+    "problemSuccessorAuthorized": true,
+    "ownerPacketAuthorizedAfterCentralAdmission": true,
+    "peopleV59LeaseAuthorizedAfterCentralAdmission": true,
+    "moduleOwnerSourceAuthorizedNow": false,
+    "frontendRouteAdmissionAuthorizedNow": false,
+    "productionMutationTriggerAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionTemplateProviderBindingAuthorized": false,
+    "productionArtifactProviderBindingAuthorized": false,
+    "fullSliceCompletionAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "invalidationConditions": [
+    "Any mutation of XCON-001 through XCON-022 or PDX-001 through PDX-014.",
+    "Treating hcm.operations.contract.issue as pre-existing or substituting an alias capability.",
+    "Allowing caller-selected internal purpose, purpose fallback or a purpose other than the fixed mapping.",
+    "Removing an artifact snapshot field, accepting a non-closed result or returning an unregistered status.",
+    "Applying newAggregateVersion equality to XCON-026 or emitting a non-positive persisted aggregate version.",
+    "Adding a browser path or caller-tenant override to SVC-PEP-HRM-003-R2 or SVC-PEP-HRM-005.",
+    "Changing the four-table V59 manifest, adding another V59 or editing V1 through V58.",
+    "Wiring or claiming a production XCON-007, XCON-023, XCON-024 or XCON-025 trigger.",
+    "Feature activation, tenant enrollment, provider activation, full-slice completion or production release claim."
+  ],
+  "nextGate": "COMMIT_AND_ADMIT_CENTRAL_V4_IMPLEMENTATION_THEN_ISSUE_EXACT_OWNER_PACKET_PEOPLE_V59_LEASE_FRESH_WORKTREE_RECEIPT_AND_EXECUTABLE_START_TOKEN"
+}

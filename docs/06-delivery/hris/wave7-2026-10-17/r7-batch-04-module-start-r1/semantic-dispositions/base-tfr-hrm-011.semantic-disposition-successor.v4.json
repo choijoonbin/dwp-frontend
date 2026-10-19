@@ -1,0 +1,824 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-hrm011-semantic-disposition-successor.v4",
+  "dispositionId": "HRIS-WAVE7-R7-BATCH-04-HRM011-SEMANTIC-DISPOSITION-20261019-R4",
+  "recordedAt": "2026-10-19T11:20:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ID_AND_SHA256"
+  },
+  "state": "SEALED_IMPLEMENTABLE_OWNER_PACKET_SCOPE_FOUR_P0_CORRECTIONS_V59_AND_DEFERRED_PRODUCTION_TRIGGERS",
+  "sliceId": "BASE-TFR-HRM-011",
+  "successorOf": {
+    "path": "base-tfr-hrm-011.semantic-disposition-successor.v3.json",
+    "sha256": "2bb396f203b43c36dc5c2232374bc76e66d75e092df8da2195f9584711d354ee",
+    "bytes": 5052,
+    "supersession": "CORRECT_FOUR_REMAINING_P0_CONTRADICTIONS_AND_SEAL_THE_IMPLEMENTABLE_OWNER_PACKET_BOUNDARY"
+  },
+  "decision": "REPLACE_ONLY_THE_CONFLICTING_CAPABILITY_PURPOSE_ARTIFACT_ERROR_AND_XCON026_TERMS_AND_ADD_EXACT_IAQ_V59_SVC_AND_TRIGGER_BOUNDARIES_ALL_NONCONFLICTING_R1_R2_R3_TERMS_REMAIN_IN_FORCE",
+  "resolvedP0": [
+    {
+      "id": "HRM011-P0-01",
+      "problem": "hcm.operations.contract.issue is absent from the admitted product-authorization v52 bundle and therefore cannot be reused.",
+      "resolution": "Product authorization v53 must append one new exact capability contract and the ACTION route must reference that new contract. No alias or fallback capability is permitted."
+    },
+    {
+      "id": "HRM011-P0-02",
+      "problem": "PEP-HRM-011 declares HR_LIFECYCLE while HRM-AUTH-015 declares EMPLOYMENT_CONTRACT.",
+      "resolution": "Seal a one-way trusted purpose mapping from external HR_LIFECYCLE to internal field-policy purpose EMPLOYMENT_CONTRACT. Caller-selected internal purpose and arbitrary purpose fallback are forbidden."
+    },
+    {
+      "id": "HRM011-P0-03",
+      "problem": "The R1 artifact request cannot carry the authoritative PDX-015 content reference or the immutable relationship, assignment and compensation snapshots; the V3 PDX-015 set omits tenantId, contentSchemaVersion, sourceRevision and publishedAt; and the accepted Problem status enum omits retryable 503.",
+      "resolution": "Replace the artifact request closed set with the exact snapshot-bearing request below, correct PDX-015 with the four missing authority fields, bind the result to one closed document reference, and add an append-only Problem successor that admits only the new retryable 503 case while preserving all prior statuses."
+    },
+    {
+      "id": "HRM011-P0-04",
+      "problem": "The R1 common event rule requires aggregateVersion to equal newAggregateVersion even though XCON-026 has no newAggregateVersion payload field.",
+      "resolution": "Apply the newAggregateVersion equality rule only to XCON-023 through XCON-025. XCON-026 binds aggregateId to contractPublicId and aggregateVersion to the persisted positive employment-contract version."
+    }
+  ],
+  "capabilityDeclaration": {
+    "bundle": "product-authorization v53",
+    "mode": "APPEND_NEW_CAPABILITY_NOT_REUSE",
+    "contractKey": "hcm.operations.contract.issue",
+    "productKey": "hcm",
+    "surfaceKey": "hcm.operations",
+    "resolvedCapabilityCode": "ACTION.HRIS_EMPLOYMENT_CONTRACT:ISSUE",
+    "resourceKey": "ACTION.HRIS_EMPLOYMENT_CONTRACT",
+    "action": "ISSUE",
+    "mappingVersion": 1,
+    "requiresProductEntitlement": false,
+    "authorityMode": "PERMISSION_AND_RELATIONSHIP",
+    "scopeResolver": "WORKFORCE_TARGET_POPULATION",
+    "riskTier": "HIGH",
+    "activationPolicy": "STEPUP-MGMT-HIGH-V1",
+    "responsibilityRequirement": "REQUIRED",
+    "requiredResponsibilityCode": "HRIS_DUTY_CONTRACT_ISSUER",
+    "sodPolicyId": "NO_APPROVE_OWN_CHANGE",
+    "owner": "People + HCM + Security",
+    "policyVersion": 1,
+    "lifecycleState": "ACTIVE"
+  },
+  "purposeResolution": {
+    "entryQueryPurpose": "HR_OPERATIONS",
+    "commandExternalPurpose": "HR_LIFECYCLE",
+    "commandInternalFieldPolicyPurpose": "EMPLOYMENT_CONTRACT",
+    "headerRule": "X-Purpose-Code may be absent; the owner then injects trusted HR_LIFECYCLE. If present it must equal HR_LIFECYCLE exactly or the request is rejected before authorization and mutation.",
+    "mappingRule": "Only the owner maps trusted HR_LIFECYCLE to HRM-AUTH-015 purpose EMPLOYMENT_CONTRACT.",
+    "auditRule": "Audit purposeCode remains HR_LIFECYCLE and the recorded HRM-AUTH-015 fieldPolicyRevision proves the fixed internal mapping.",
+    "forbidden": [
+      "caller supplied EMPLOYMENT_CONTRACT as an internal policy selector",
+      "arbitrary purpose pass-through",
+      "purpose fallback",
+      "purpose widening"
+    ]
+  },
+  "pdx015AuthorityCorrection": {
+    "supersedesV3ClosedFieldSet": true,
+    "reason": "People must bind the template to the trusted tenant, exact content schema, monotonic Platform publication revision and publication time; template ID/version/digest alone cannot prove those authorities.",
+    "closedFields": [
+      "tenantId",
+      "templatePublicId",
+      "templateVersion",
+      "templateType",
+      "contractType",
+      "locale",
+      "scopeType",
+      "scopeId",
+      "state",
+      "effectiveFrom",
+      "effectiveTo",
+      "contentSchemaVersion",
+      "templateContentReference",
+      "payloadDigest",
+      "approvalReceiptId",
+      "sourceRevision",
+      "publishedAt"
+    ],
+    "types": {
+      "tenantId": "positive integer equal to the trusted request tenant",
+      "templatePublicId": "UUID equal to PDX-001 configurationId",
+      "templateVersion": "positive integer equal to PDX-001 version",
+      "templateType": "constant EMPLOYMENT_CONTRACT",
+      "contractType": "Code",
+      "locale": "canonical locale",
+      "scopeType": "existing Platform ScopeType",
+      "scopeId": "UUID or null under the existing GLOBAL scope invariant",
+      "state": "constant PUBLISHED",
+      "effectiveFrom": "date",
+      "effectiveTo": "date or null",
+      "contentSchemaVersion": "positive integer equal to PDX-001 payloadSchemaVersion",
+      "templateContentReference": "strict object with objectPublicId UUID, positive objectVersion and lowercase contentSha256",
+      "payloadDigest": "lowercase SHA-256 equal to PDX-001 payloadDigest",
+      "approvalReceiptId": "UUID equal to the immutable publication approval receipt",
+      "sourceRevision": "positive monotonic Platform configuration publication revision equal to the PDX-002 publication eventSequence",
+      "publishedAt": "RFC-3339 instant equal to PDX-002 publishedAt"
+    },
+    "ownerVerification": "People rejects a missing, cross-tenant, stale, unpublished, schema-mismatched, revision-mismatched, digest-mismatched, scope-mismatched, locale-mismatched, ambiguously resolved or future-published snapshot before action exposure or artifact invocation."
+  },
+  "iaq008ProjectionV2": {
+    "itemGrain": "ONE_EFFECTIVE_WORK_RELATIONSHIP_PER_ITEM",
+    "itemPublicId": "relationshipPublicId",
+    "resourceVersion": "ppl_work_relationships.version and integer minimum zero",
+    "effectiveSelection": {
+      "relationship": "same-tenant relationship whose half-open effective interval contains effectiveOn",
+      "assignment": "exactly one same-tenant active primary assignment for the relationship at effectiveOn",
+      "compensationBasis": "exactly one same-tenant effective compensation-basis row across all basis types for the selected assignment at effectiveOn, with non-null canonical amount, currency and frequency",
+      "template": "exactly one PDX-015 PUBLISHED immutable version matching requested template ID/version, canonical locale, trusted scope and effectiveFrom"
+    },
+    "nonDeterminismRule": "Zero or multiple authoritative assignment, compensation-basis or template matches never choose a row by database order. The affected candidate is not serialized as an actionable item, availableActions is never fabricated, and the component produces a typed partial failure; if no safe item remains the projection is UNAVAILABLE with zero items.",
+    "fieldGroups": {
+      "CONTRACT_METADATA": "MetadataValue(key=templatePublicId,version=templateVersion,digest=generationSnapshotDigest)",
+      "COMPENSATION_BASIS": "MoneyValue(amount,currency)"
+    },
+    "actionExposure": "Expose hris.action.hrm.issue-employment-contract only when both field groups are VIEW, all authoritative rows are unique and current, the item is READY_TO_ISSUE and preliminary PEP-HRM-011 allows it.",
+    "snapshotDigest": {
+      "algorithm": "SHA-256 over RFC-8785/JCS canonical JSON",
+      "closedOrderedFields": [
+        "relationshipPublicId",
+        "relationshipVersion",
+        "relationshipEffectiveFrom",
+        "relationshipEffectiveTo",
+        "assignmentPublicId",
+        "assignmentVersion",
+        "assignmentEffectiveFrom",
+        "assignmentEffectiveTo",
+        "compensationBasisPublicId",
+        "compensationBasisVersion",
+        "basisType",
+        "amountCanonicalDecimal",
+        "currency",
+        "frequency",
+        "basisEffectiveFrom",
+        "basisEffectiveTo",
+        "templatePublicId",
+        "templateVersion",
+        "templateTenantId",
+        "templateContentSchemaVersion",
+        "templateSourceRevision",
+        "templatePublishedAt",
+        "templatePayloadDigest",
+        "templateContentObjectPublicId",
+        "templateContentObjectVersion",
+        "templateContentSha256",
+        "templateScopeType",
+        "templateScopeId",
+        "templateEffectiveFrom",
+        "templateEffectiveTo",
+        "locale"
+      ],
+      "decimalRule": "Plain canonical decimal, no exponent, binary float, negative zero, implicit rounding or locale formatting.",
+      "nullableRule": "Nullable values are present as JSON null; fields are never omitted from the digest object."
+    },
+    "optimisticConcurrency": {
+      "ifMatch": "quoted resourceVersion",
+      "stepUpTargetType": "WORK_RELATIONSHIP",
+      "stepUpTargetId": "relationshipPublicId",
+      "expectedObjectVersion": "resourceVersion from X-DWP-Expected-Object-Version",
+      "staleResult": "409 with currentVersion and zero artifact, receipt-success, audit-success, contract or outbox side effects"
+    }
+  },
+  "pepHrm011": {
+    "method": "POST",
+    "browserPath": "/api/people/v1/hris/employment-contracts",
+    "ownerPath": "/v1/hris/employment-contracts",
+    "requestBodyClosedSet": [
+      "relationshipPublicId",
+      "templatePublicId",
+      "templateVersion",
+      "locale",
+      "effectiveFrom",
+      "effectiveTo",
+      "snapshotDigest"
+    ],
+    "requiredBodyFields": [
+      "relationshipPublicId",
+      "templatePublicId",
+      "templateVersion",
+      "locale",
+      "effectiveFrom",
+      "snapshotDigest"
+    ],
+    "requiredHeaders": [
+      "Authorization",
+      "Idempotency-Key",
+      "If-Match",
+      "X-Correlation-ID",
+      "X-DWP-Expected-Object-Version"
+    ],
+    "optionalHeaderWithFixedSemantics": "X-Purpose-Code",
+    "success": "202 CommandReceiptV1",
+    "authorization": {
+      "capability": "hcm.operations.contract.issue",
+      "resourceAction": "ACTION.HRIS_EMPLOYMENT_CONTRACT:ISSUE",
+      "profile": "HRIS_HR_BUSINESS_PARTNER>HRIS_DUTY_CONTRACT_ISSUER",
+      "populations": [
+        "LEGAL_ENTITY",
+        "NAMED_POPULATION",
+        "ORG_TREE",
+        "ORG_UNIT"
+      ],
+      "fieldGroups": [
+        "COMPENSATION",
+        "DOCUMENT_CONTENT",
+        "EMPLOYMENT"
+      ],
+      "pepLayers": [
+        "GATEWAY_APP_ENTITLEMENT",
+        "OWNER_API_OPERATION",
+        "RESOURCE_POPULATION",
+        "REPOSITORY_TENANT_PREDICATE",
+        "FIELD_PROJECTION",
+        "PURPOSE_POLICY",
+        "AUDIT_DECISION"
+      ],
+      "stepUp": "HIGH WORK_RELATIONSHIP target binding",
+      "duty": "HRIS_DUTY_CONTRACT_ISSUER is enforced by the capability responsibility, access profile and owner PEP",
+      "sod": "NO_APPROVE_OWN_CHANGE is enforced by capability sodPolicyId, HRM-AUTH-015 and the owner PEP"
+    },
+    "idempotency": "Scope by trusted tenant, command type and Idempotency-Key; request hash includes the exact body, If-Match, expected object version and trusted purpose. Same hash replays the original receipt, different hash returns 409, and concurrent reservation has one winner.",
+    "ownerOrder": [
+      "resolve trusted tenant actor and fixed purpose mapping",
+      "reserve or replay the idempotency receipt",
+      "lock same-tenant relationship and compare resourceVersion",
+      "revalidate unique assignment, basis and PDX-015 template",
+      "recompute and compare generationSnapshotDigest",
+      "re-evaluate population, field policy, purpose, SoD and HIGH step-up",
+      "invoke EmploymentContractArtifactPort",
+      "atomically persist ISSUED contract, receipt result, audit pointer and XCON-026 outbox"
+    ]
+  },
+  "employmentContractArtifactBindingV2": {
+    "supersedesR1RequestClosedSet": true,
+    "interface": "EmploymentContractArtifactPort",
+    "productionBinding": "FailClosedEmploymentContractArtifactAdapter",
+    "testBinding": "EmploymentContractArtifactConformanceDouble",
+    "requestClosedSet": [
+      "artifactRequestId",
+      "contractPublicId",
+      "trustedTenantId",
+      "correlationId",
+      "relationshipSnapshot",
+      "assignmentSnapshot",
+      "compensationBasisSnapshot",
+      "templateSnapshot",
+      "locale",
+      "effectiveFrom",
+      "effectiveTo",
+      "generationSnapshotDigest"
+    ],
+    "relationshipSnapshotClosedSet": [
+      "relationshipPublicId",
+      "resourceVersion",
+      "workerPublicId",
+      "legalEmployerPublicId",
+      "effectiveFrom",
+      "effectiveTo"
+    ],
+    "assignmentSnapshotClosedSet": [
+      "assignmentPublicId",
+      "assignmentVersion",
+      "effectiveFrom",
+      "effectiveTo"
+    ],
+    "compensationBasisSnapshotClosedSet": [
+      "compensationBasisPublicId",
+      "compensationBasisVersion",
+      "basisType",
+      "amountCanonicalDecimal",
+      "currency",
+      "frequency",
+      "effectiveFrom",
+      "effectiveTo"
+    ],
+    "templateSnapshot": "Exact PDX-015 EmploymentContractTemplateSnapshotV1 with no field addition, removal or reinterpretation",
+    "resultClosedSet": [
+      "artifactRequestId",
+      "contractPublicId",
+      "templatePublicId",
+      "templateVersion",
+      "generationSnapshotDigest",
+      "providerReceiptId",
+      "documentReference",
+      "issuedAt"
+    ],
+    "documentReferenceClosedSet": [
+      "objectPublicId",
+      "objectVersion",
+      "contentSha256"
+    ],
+    "rules": [
+      "contractType and template content reference come only from PDX-015",
+      "artifactRequestId is deterministic for trusted tenant plus command idempotency reservation and contractPublicId",
+      "the provider is idempotent by artifactRequestId",
+      "all echoed IDs, versions and digests must match exactly",
+      "document objectVersion is positive and contentSha256 is lowercase SHA-256",
+      "URL, bytes, storage key, download token and caller-provided contractType are forbidden",
+      "unavailable, null, malformed or mismatched result fails before ISSUED, success receipt, success audit or outbox",
+      "a retry after provider success and database rollback uses the same artifactRequestId and must receive the same result"
+    ]
+  },
+  "problemSuccessor": {
+    "id": "HRM-TRANSPORT-PROBLEM-R2",
+    "mode": "APPEND_ONLY_SUCCESSOR",
+    "commandHeadersV2": {
+      "priorHeadersPreserved": [
+        "Authorization",
+        "Idempotency-Key",
+        "If-Match",
+        "X-Correlation-ID",
+        "X-Purpose-Code"
+      ],
+      "addedRequiredHeader": "X-DWP-Expected-Object-Version",
+      "type": "integer encoded as a canonical nonnegative decimal header value",
+      "ifMatchTightening": "PEP-HRM-011 accepts only a strong quoted canonical nonnegative integer ETag and rejects W/ weak validators.",
+      "binding": "The Gateway derives it from quoted If-Match resourceVersion; the owner requires both values and rejects any mismatch before authorization or mutation."
+    },
+    "priorStatusesPreserved": [
+      400,
+      401,
+      403,
+      404,
+      409,
+      422,
+      423,
+      429,
+      500
+    ],
+    "addedStatus": 503,
+    "employmentContractArtifactUnavailable": {
+      "status": 503,
+      "code": "EMPLOYMENT_CONTRACT_ARTIFACT_UNAVAILABLE",
+      "retryable": true,
+      "safeDetailOnly": true
+    },
+    "unknownStatusForbidden": true
+  },
+  "serviceWorkloadIngress": {
+    "common": {
+      "browserRoute": "FORBIDDEN",
+      "authentication": [
+        "TLS_1_3",
+        "MTLS_SPIFFE_WORKLOAD_IDENTITY",
+        "OAUTH2_CLIENT_CREDENTIAL_JWT_AUD_DWP_PEOPLE"
+      ],
+      "caller": "dwp-payroll-server",
+      "requiredHeaders": [
+        "Authorization bearer workload JWT",
+        "X-Correlation-ID UUID"
+      ],
+      "tenantAuthority": [
+        "SIGNED_TENANT_CLAIM",
+        "OWNER_TENANT_GRANT_REVALIDATION",
+        "TARGET_TENANT_MATCH",
+        "NO_CALLER_TENANT_OVERRIDE"
+      ],
+      "requestClosedSet": [
+        "purposeCode",
+        "asOf",
+        "projection",
+        "limit",
+        "cursor"
+      ],
+      "pageClosedSet": [
+        "schemaVersion",
+        "asOf",
+        "projection",
+        "ownerRevision",
+        "items",
+        "nextCursor",
+        "pageDigest"
+      ],
+      "schemaVersion": 1,
+      "callerTenantHeader": "FORBIDDEN",
+      "limit": "1 through 500",
+      "cursorBinding": "trusted tenant, caller workload, purpose, projection, asOf, ownerRevision and last canonical item key",
+      "pageDigest": "SHA-256 over JCS canonical page header, canonically ordered exact items and nextCursor",
+      "audit": "AuditEventEnvelope.v1 with workload, trusted tenant, operation, purpose, projection, policy revision, correlation, outcome, row count and payload digest"
+    },
+    "SVC-PEP-HRM-003-R2": {
+      "path": "/internal/hris-people/v1/compensation-basis-snapshots",
+      "purposeCode": "HRIS_COMPENSATION_BASIS_SNAPSHOT_BOOTSTRAP",
+      "projection": "COMPENSATION_BASIS_V1",
+      "items": "XCON-002 CompensationBasisSnapshot.v1 exact closed fields only",
+      "canonicalOrder": "compensationBasisPublicId ascending",
+      "incompleteRowRule": "A row missing any required XCON-002 field, including amount, currency or frequency, is never serialized and makes the owner projection fail closed rather than inventing a value.",
+      "paymentInstrumentFields": "FORBIDDEN"
+    },
+    "SVC-PEP-HRM-005": {
+      "path": "/internal/hris-people/v1/payroll-worker-fact-snapshots",
+      "purposeCode": "HRIS_PAYROLL_WORKER_FACT_SNAPSHOT_BOOTSTRAP",
+      "projectionEnum": [
+        "DEPENDENT_ELIGIBILITY_V1",
+        "TAX_IDENTITY_V1",
+        "BANK_ACCOUNT_TOKEN_V1"
+      ],
+      "itemsByProjection": {
+        "DEPENDENT_ELIGIBILITY_V1": "XCON-017 exact homogeneous items",
+        "TAX_IDENTITY_V1": "XCON-018 exact homogeneous items",
+        "BANK_ACCOUNT_TOKEN_V1": "XCON-019 exact homogeneous items"
+      },
+      "canonicalOrder": "workerId ascending then snapshotId ascending",
+      "mixedProjectionPage": "FORBIDDEN",
+      "rawRestrictedValues": "FORBIDDEN"
+    }
+  },
+  "eventRulesV2": {
+    "existingCanonicalContracts": {
+      "immutable": [
+        "XCON-002",
+        "XCON-007",
+        "XCON-017",
+        "XCON-018",
+        "XCON-019"
+      ],
+      "mutation": "FORBIDDEN"
+    },
+    "newEventDataCommonClosedSet": [
+      "aggregateId",
+      "aggregateVersion",
+      "causationId",
+      "correlationId",
+      "eventId",
+      "occurredAt",
+      "payloadDigest",
+      "schemaVersion",
+      "tenantId"
+    ],
+    "XCON-023": {
+      "eventType": "WorkerDependentEligibilityChanged.v1",
+      "payloadClosedSet": [
+        "dependentPublicId",
+        "workerId",
+        "effectiveFrom",
+        "effectiveTo",
+        "newAggregateVersion"
+      ],
+      "aggregateId": "dependentPublicId",
+      "aggregateVersion": "newAggregateVersion and persisted ppl_dependents.version greater than zero"
+    },
+    "XCON-024": {
+      "eventType": "WorkerTaxIdentityChanged.v1",
+      "payloadClosedSet": [
+        "taxIdentityPublicId",
+        "workerId",
+        "effectiveFrom",
+        "effectiveTo",
+        "newAggregateVersion"
+      ],
+      "aggregateId": "taxIdentityPublicId",
+      "aggregateVersion": "newAggregateVersion and persisted TAX_IDENTITY ppl_worker_restricted_tokens.version greater than zero"
+    },
+    "XCON-025": {
+      "eventType": "WorkerBankAccountTokenChanged.v1",
+      "payloadClosedSet": [
+        "paymentDestinationPublicId",
+        "workerId",
+        "effectiveFrom",
+        "effectiveTo",
+        "newAggregateVersion"
+      ],
+      "aggregateId": "paymentDestinationPublicId",
+      "aggregateVersion": "newAggregateVersion and persisted PAYMENT_DESTINATION ppl_worker_restricted_tokens.version greater than zero"
+    },
+    "XCON-026": {
+      "eventType": "EmploymentContractIssued.v1",
+      "payloadClosedSet": [
+        "contractPublicId",
+        "workerPublicId",
+        "contractType",
+        "validFrom",
+        "validTo",
+        "documentReference"
+      ],
+      "documentReferenceClosedSet": [
+        "objectPublicId",
+        "objectVersion",
+        "contentSha256"
+      ],
+      "aggregateId": "contractPublicId",
+      "aggregateVersion": "persisted ppl_employment_contracts.version greater than zero",
+      "newAggregateVersionPayloadField": "ABSENT_BY_DESIGN"
+    },
+    "envelopeEquality": "Outer DomainEventEnvelope id, tenantId, aggregateId, aggregateSequence, correlationId, causationId, time and schemaVersion equal the corresponding event-data fields eventId, tenantId, aggregateId, aggregateVersion, correlationId, causationId, occurredAt and schemaVersion.",
+    "determinism": "eventId is deterministic for tenant, event type, aggregateId and aggregateVersion; payloadDigest is SHA-256 over the JCS business payload; same eventId and same hash is a duplicate, while a hash conflict is quarantined.",
+    "consumerPolicy": "Stale versions are ignored; gaps block PAY input and require the exact SVC-005 projection refetch.",
+    "forbidden": [
+      "raw dependent profile",
+      "eligibility facts in change events",
+      "raw tax identifier or token",
+      "raw bank or routing data, bank token or masked account display",
+      "document bytes, URL, storage key or download token"
+    ]
+  },
+  "productionTriggerBoundary": {
+    "state": "DEFERRED_NO_PRODUCTION_TRIGGER",
+    "reason": "The admitted owner API and current People source contain no canonical mutation ingress for compensation basis, dependent eligibility, tax identity or payment-destination changes.",
+    "deferredEvents": [
+      "XCON-007 CompensationBasisChanged.v1",
+      "XCON-023 WorkerDependentEligibilityChanged.v1",
+      "XCON-024 WorkerTaxIdentityChanged.v1",
+      "XCON-025 WorkerBankAccountTokenChanged.v1"
+    ],
+    "authorizedNow": [
+      "strict canonical mapper and serializer",
+      "atomic outbox append port",
+      "provider and consumer contract tests",
+      "replay, stale, gap and forbidden-field tests"
+    ],
+    "forbiddenNow": [
+      "inventing a mutation endpoint",
+      "wiring an unowned database trigger",
+      "claiming production event emission",
+      "claiming full-slice completion"
+    ],
+    "xcon026": "The admitted PEP-HRM-011 command is the only source trigger, but production success remains unavailable while the template or artifact provider is fail-closed."
+  },
+  "peopleV59": {
+    "required": true,
+    "stream": "PEOPLE_MAIN",
+    "predecessor": "V58",
+    "path": "dwp-people-server/src/main/resources/db/migration/V59__hrm_base_tfr_hrm_011.sql",
+    "newTablesOnly": [
+      {
+        "name": "ppl_compensation_basis",
+        "columns": [
+          "compensation_basis_id BIGSERIAL PRIMARY KEY",
+          "public_id UUID NOT NULL DEFAULT gen_random_uuid()",
+          "tenant_id BIGINT NOT NULL",
+          "assignment_id BIGINT NOT NULL",
+          "basis_type VARCHAR(40) NOT NULL",
+          "amount NUMERIC(19,6)",
+          "currency_code CHAR(3)",
+          "frequency_code VARCHAR(40)",
+          "grade_public_id UUID",
+          "source_event_public_id UUID",
+          "valid_from DATE NOT NULL",
+          "valid_to DATE",
+          "version BIGINT NOT NULL DEFAULT 0",
+          "created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP",
+          "created_by BIGINT NOT NULL",
+          "updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP",
+          "updated_by BIGINT NOT NULL"
+        ],
+        "keysAndGuards": [
+          "UNIQUE public_id",
+          "UNIQUE tenant_id plus compensation_basis_id",
+          "same-tenant assignment foreign key",
+          "amount and currency both null or amount nonnegative and ISO currency",
+          "half-open valid period",
+          "GiST exclusion for tenant, assignment, basis_type and overlapping period",
+          "version nonnegative and incremented to a positive persisted value before any XCON-007 publication"
+        ],
+        "indexes": [
+          "tenant_id, assignment_id, valid_from, valid_to",
+          "tenant_id, public_id"
+        ]
+      },
+      {
+        "name": "ppl_employment_contracts",
+        "columns": [
+          "employment_contract_id BIGSERIAL PRIMARY KEY",
+          "public_id UUID NOT NULL",
+          "tenant_id BIGINT NOT NULL",
+          "work_relationship_id BIGINT NOT NULL",
+          "relationship_version BIGINT NOT NULL",
+          "assignment_id BIGINT NOT NULL",
+          "assignment_version BIGINT NOT NULL",
+          "compensation_basis_id BIGINT NOT NULL",
+          "compensation_basis_version BIGINT NOT NULL",
+          "contract_type VARCHAR(40) NOT NULL",
+          "lifecycle_state VARCHAR(24) NOT NULL",
+          "locale VARCHAR(35) NOT NULL",
+          "template_public_id UUID NOT NULL",
+          "template_version BIGINT NOT NULL",
+          "template_content_schema_version INTEGER NOT NULL",
+          "template_source_revision BIGINT NOT NULL",
+          "template_published_at TIMESTAMPTZ NOT NULL",
+          "template_payload_digest CHAR(64) NOT NULL",
+          "template_content_object_public_id UUID NOT NULL",
+          "template_content_object_version BIGINT NOT NULL",
+          "template_content_sha256 CHAR(64) NOT NULL",
+          "template_approval_receipt_id UUID NOT NULL",
+          "snapshot_basis_type VARCHAR(40) NOT NULL",
+          "snapshot_amount NUMERIC(19,6) NOT NULL",
+          "snapshot_currency_code CHAR(3) NOT NULL",
+          "snapshot_frequency_code VARCHAR(40)",
+          "generation_snapshot_digest CHAR(64) NOT NULL",
+          "artifact_request_id UUID",
+          "artifact_provider_receipt_id UUID",
+          "document_object_public_id UUID",
+          "document_object_version BIGINT",
+          "document_content_sha256 CHAR(64)",
+          "signature_case_public_id UUID",
+          "valid_from DATE NOT NULL",
+          "valid_to DATE",
+          "supersedes_contract_id BIGINT",
+          "retention_class VARCHAR(40) NOT NULL DEFAULT 'EMPLOYMENT_CONTRACT'",
+          "retention_until DATE",
+          "legal_hold BOOLEAN NOT NULL DEFAULT FALSE",
+          "correlation_id UUID NOT NULL",
+          "version BIGINT NOT NULL",
+          "issued_at TIMESTAMPTZ",
+          "signed_at TIMESTAMPTZ",
+          "created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP",
+          "created_by BIGINT NOT NULL",
+          "updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP",
+          "updated_by BIGINT NOT NULL"
+        ],
+        "keysAndGuards": [
+          "UNIQUE public_id",
+          "UNIQUE tenant_id plus employment_contract_id",
+          "UNIQUE tenant_id plus correlation_id",
+          "UNIQUE tenant_id plus artifact_request_id",
+          "same-tenant relationship, assignment, compensation-basis and supersedes foreign keys",
+          "relationship_version is nonnegative; assignment, basis, template, content-schema, source, content and contract versions are positive; document version is positive when present",
+          "all SHA-256 columns are lowercase hexadecimal",
+          "amount is nonnegative and currency is ISO",
+          "half-open valid period",
+          "lifecycle is one of DRAFT, ISSUED, SIGNED, ACTIVE, DECLINED, SUPERSEDED, EXPIRED, REVOKED",
+          "artifact request, provider receipt, document object ID, document version, document digest and issued_at are all absent or all present; ISSUED, SIGNED, ACTIVE, SUPERSEDED, EXPIRED and REVOKED require all present",
+          "snapshot, template, artifact and document columns are immutable after insert",
+          "only sealed lifecycle transitions are allowed",
+          "the initial committed ISSUED row uses positive version and the same version in XCON-026"
+        ],
+        "indexes": [
+          "tenant_id, work_relationship_id, valid_from, valid_to",
+          "tenant_id, assignment_id",
+          "tenant_id, compensation_basis_id",
+          "tenant_id, lifecycle_state, issued_at",
+          "tenant_id, public_id"
+        ]
+      },
+      {
+        "name": "ppl_worker_restricted_tokens",
+        "columns": [
+          "worker_restricted_token_id BIGSERIAL PRIMARY KEY",
+          "public_id UUID NOT NULL DEFAULT gen_random_uuid()",
+          "tenant_id BIGINT NOT NULL",
+          "worker_id BIGINT NOT NULL",
+          "token_kind VARCHAR(40) NOT NULL",
+          "purpose_code VARCHAR(60) NOT NULL",
+          "jurisdiction_code VARCHAR(40) NOT NULL",
+          "vault_provider_key VARCHAR(80) NOT NULL",
+          "vault_token_ref VARCHAR(255) NOT NULL",
+          "token_revision BIGINT NOT NULL",
+          "masked_display VARCHAR(32)",
+          "currency_code CHAR(3)",
+          "payment_priority SMALLINT",
+          "residency_status VARCHAR(40)",
+          "verification_state VARCHAR(24) NOT NULL DEFAULT 'UNVERIFIED'",
+          "primary_for_purpose BOOLEAN NOT NULL DEFAULT FALSE",
+          "valid_from DATE NOT NULL",
+          "valid_to DATE",
+          "version BIGINT NOT NULL DEFAULT 0",
+          "created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP",
+          "created_by BIGINT NOT NULL",
+          "updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP",
+          "updated_by BIGINT NOT NULL"
+        ],
+        "keysAndGuards": [
+          "UNIQUE public_id",
+          "UNIQUE tenant_id plus worker_restricted_token_id",
+          "UNIQUE tenant_id plus vault_provider_key plus vault_token_ref plus token_revision",
+          "same-tenant worker foreign key",
+          "token_kind is TAX_IDENTITY or PAYMENT_DESTINATION",
+          "token_revision is positive",
+          "payment shape is closed by token kind",
+          "half-open valid period",
+          "GiST exclusion for one primary row per tenant, worker, token kind, purpose and period",
+          "raw tax, bank, account-holder and routing values are forbidden"
+        ],
+        "indexes": [
+          "tenant_id, worker_id, token_kind, valid_from, valid_to",
+          "tenant_id, public_id"
+        ]
+      },
+      {
+        "name": "ppl_dependents",
+        "columns": [
+          "dependent_id BIGSERIAL PRIMARY KEY",
+          "public_id UUID NOT NULL DEFAULT gen_random_uuid()",
+          "tenant_id BIGINT NOT NULL",
+          "person_id BIGINT NOT NULL",
+          "related_person_public_id UUID",
+          "relationship_type VARCHAR(40) NOT NULL",
+          "encrypted_profile BYTEA NOT NULL",
+          "profile_schema_version INTEGER NOT NULL",
+          "key_reference VARCHAR(255) NOT NULL",
+          "valid_from DATE NOT NULL",
+          "valid_to DATE",
+          "version BIGINT NOT NULL DEFAULT 0",
+          "created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP",
+          "created_by BIGINT NOT NULL",
+          "updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP",
+          "updated_by BIGINT NOT NULL"
+        ],
+        "keysAndGuards": [
+          "UNIQUE public_id",
+          "UNIQUE tenant_id plus dependent_id",
+          "same-tenant person foreign key",
+          "profile_schema_version is positive",
+          "half-open valid period",
+          "encrypted_profile uses the existing fail-closed People envelope-encryption boundary",
+          "raw dependent profile is never serialized in an event or audit payload"
+        ],
+        "indexes": [
+          "tenant_id, person_id, valid_from, valid_to",
+          "tenant_id, public_id"
+        ]
+      }
+    ],
+    "sharedControls": [
+      "ENABLE and FORCE row-level security on all four tables",
+      "USING and WITH CHECK tenant policy bound to dwp.tenant_id on all four tables",
+      "reuse ppl_command_receipts, sys_people_audit_events and sys_people_outbox_events",
+      "atomic employment-contract row, receipt result, audit pointer and XCON-026 outbox commit",
+      "clean migration through V59 and V58-to-V59 upgrade verification",
+      "historical V1 through V58 checksum preservation"
+    ],
+    "forbidden": [
+      "editing V1 through V58",
+      "a second V59 migration",
+      "new receipt, audit or outbox tables",
+      "object_reference VARCHAR encoding of DocumentReferenceV1",
+      "clear tax, bank, routing or dependent-profile values"
+    ]
+  },
+  "ownerPacketBoundary": {
+    "backendWritable": [
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/workbench/hrm011/**",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/employmentcontract/**",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/hrm011/**",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/workbench/hrm011/**",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/employeeservice/employmentcontract/**",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/contracts/hrm011/**",
+      "dwp-people-server/src/main/resources/db/migration/V59__hrm_base_tfr_hrm_011.sql"
+    ],
+    "frontendWritable": [
+      "apps/dwp/src/features/hris/people/contracts-compensation-basis/**",
+      "apps/dwp/src/features/hris/people/__tests__/g3-slices/base-tfr-hrm-011.slice.test.tsx",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-results-r1/base-tfr-hrm-011/**"
+    ],
+    "readOnlyReuse": [
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/employeechange/**",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/certificate/**",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/workforce/v1/**",
+      "dwp-people-server/src/main/java/com/dwp/services/people/security/**",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/experience/**",
+      "existing People audit, outbox and envelope-encryption foundations",
+      "dwp-people-server/src/main/resources/db/migration/V1__create_workforce_projection.sql",
+      "dwp-people-server/src/main/resources/db/migration/V54__create_employee_change_request_lifecycle.sql",
+      "dwp-people-server/src/main/resources/db/migration/V58__hrm_base_tfr_hrm_009_stage_a.sql",
+      "apps/dwp/src/features/hris/people/command-receipts/**",
+      "apps/dwp/src/features/hris/shell/**"
+    ],
+    "controlOwned": [
+      "contracts/hris/canonical/**",
+      "contracts/asyncapi/**",
+      "contracts/product-authorization/**",
+      "dwp-platform-contracts/**",
+      "dwp-auth-server/**",
+      "dwp-gateway/**",
+      "dwp-platform-server/**",
+      "frontend architecture, routes, integration, shell catalog and i18n"
+    ],
+    "outsideBoundaryAction": "STOP_AND_REQUEST_EXACT_CONTROL_REALLOCATION"
+  },
+  "acceptanceCriteria": [
+    {"id": "HRM011-AC-01", "criterion": "IAQ-008 v2 exposes only the sealed browser and owner GET paths, exact filters, sorts, page limit, relationship item grain and required resourceVersion, and rejects unknown fields."},
+    {"id": "HRM011-AC-02", "criterion": "IAQ-008 enforces COMPLETE, EMPTY, PARTIAL and UNAVAILABLE cardinality, the ten accepted runtime invariants, cursor scope/revision binding and exact VIEW, MASK or OMIT accounting."},
+    {"id": "HRM011-AC-03", "criterion": "Relationship, primary assignment, compensation basis and PDX-015 selection is deterministic and unique; snapshotDigest verifies the exact JCS field set and ambiguous or unavailable authority never exposes an action."},
+    {"id": "HRM011-AC-04", "criterion": "PEP-HRM-011 accepts only the seven sealed body fields and required command headers, binds If-Match to relationship resourceVersion, rejects unknown fields and returns durable 202 CommandReceiptV1."},
+    {"id": "HRM011-AC-05", "criterion": "The owner enforces all seven PEP layers, new v53 capability, fixed HR_LIFECYCLE to EMPLOYMENT_CONTRACT purpose mapping, population, field groups, HIGH step-up and NO_APPROVE_OWN_CHANGE without fallback."},
+    {"id": "HRM011-AC-06", "criterion": "Idempotency serialization, same-hash replay, different-hash 409, stale-version 409 with currentVersion and concurrent reservation are proven before artifact invocation or business mutation."},
+    {"id": "HRM011-AC-07", "criterion": "People V59 creates exactly the four sealed tables, columns, keys, indexes, RLS policies and immutable guards, reuses existing receipt/audit/outbox stores and preserves V1 through V58."},
+    {"id": "HRM011-AC-08", "criterion": "SVC-PEP-HRM-003-R2 admits only the authenticated payroll workload and returns homogeneous strict XCON-002 pages with no payment-instrument extension."},
+    {"id": "HRM011-AC-09", "criterion": "SVC-PEP-HRM-005 admits only the authenticated payroll workload, returns one homogeneous exact XCON-017, XCON-018 or XCON-019 projection per request, authenticates cursors and excludes raw restricted values."},
+    {"id": "HRM011-AC-10", "criterion": "XCON-023 through XCON-026 enforce strict closed schemas, outer/data equality, deterministic IDs and digests, positive persisted versions, atomic outbox behavior and stale, duplicate, conflict and gap handling; XCON-002, 007, 017, 018 and 019 remain unchanged."},
+    {"id": "HRM011-AC-11", "criterion": "PDX-015 and artifact ports fail closed; exact request and result echoes, immutable document reference, retryable 503, provider retry and database rollback are proven without any production provider claim."},
+    {"id": "HRM011-AC-12", "criterion": "The frontend proves loading, empty, partial, unavailable, denied, stale and complete states, responsive and accessibility coverage, default-OFF zero calls and exact changed paths; XCON-007 and XCON-023 through XCON-025 production triggers, tenant enrollment, provider activation and full-slice completion remain explicit non-claims."}
+  ],
+  "authority": {
+    "semanticDispositionSealed": true,
+    "centralSuccessorV4MayBeAuthored": true,
+    "ownerPacketMayBeIssuedAfterCentralV4Admission": true,
+    "exclusivePeopleV59LeaseMayBeIssuedAfterCentralV4Admission": true,
+    "executableStartTokenRequiresExactPacketLeaseAndFreshWorktreeReceipt": true,
+    "moduleSourceAuthoringAuthorizedNow": false,
+    "productionMutationTriggerAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionTemplateProviderBindingAuthorized": false,
+    "productionArtifactProviderBindingAuthorized": false,
+    "fullSliceCompletionAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "preservedTerms": [
+    "R1 service split, XCON allocation, four-table migration decision and default-OFF boundary except where explicitly corrected above",
+    "R2 IAQ-008 projection v2 resourceVersion and WORK_RELATIONSHIP optimistic-concurrency binding",
+    "R3 DEP-004, PDX-015 template authority and fail-closed template query port"
+  ],
+  "nextGate": "ISSUE_AND_ADMIT_CENTRAL_SUCCESSOR_V4_THEN_ISSUE_EXACT_OWNER_PACKET_PEOPLE_V59_LEASE_FRESH_WORKTREE_RECEIPT_AND_EXECUTABLE_START_TOKEN"
+}
