@@ -304,6 +304,7 @@ describe('HRIS progressive task navigation', () => {
       expect(onNavigate).not.toHaveBeenCalled();
       const resolveTarget = onNavigateToTarget.mock.calls[0]![0] as () => HTMLElement | null;
       expect(resolveTarget).toBe(resolveHrisTaskNavigationFocusTarget);
+      expect(onNavigateToTarget.mock.calls[0]![1]).toBe('/hr/me');
       const nextHeading = document.createElement('h1');
       nextHeading.textContent = '새 화면';
       previousHeading.replaceWith(nextHeading);

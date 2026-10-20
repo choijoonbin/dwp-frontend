@@ -1,17 +1,19 @@
-# HRIS 98-node information architecture contract
+# HRIS base IA 및 99-node runtime navigation successor 계약
 
 ## 판정 범위
 
-`hris-information-architecture-register.csv`는 기존 76개 목표 메뉴와 최신 HRIS capability가 추가한 22개 메뉴를 하나의 탐색 정본으로 합친다. `hris-shell-navigation-register.csv`는 이 98개 노드를 고정 HRIS 홈, 7개 workbench, 비사이드바 `/hr/explore` utility에 전량·단일 배정하는 shell 정본이다. `hris-workbench-task-group-register.csv`는 홈을 제외한 97개 노드를 7개 workbench 안의 46개 업무지향 그룹에 중복 없이 전량 배정한다. `ia-node-access-contract-register.csv`는 각 노드의 initial query/visibility/action/persona access path를 명시하고, 66개 신규 query는 `ia-entry-query-projection-register.csv`와 `ia-entry-query-projection-schemas.v1.json`에 닫힌 wire 계약으로 귀속한다. 이 산출물들은 G3 구현 입력이며 화면 구현 완료나 G6 운영 승인을 뜻하지 않는다.
+`hris-information-architecture-register.csv`는 기존 76개 목표 메뉴와 최신 HRIS capability가 추가한 22개 메뉴를 하나의 **base IA 정본**으로 합친다. `hris-shell-navigation-register.csv`는 이 98개 노드(홈 1 + 하위 97)를 고정 HRIS 홈, 7개 workbench, 비사이드바 `/hr/explore` utility에 전량·단일 배정하는 shell 정본이다. `hris-workbench-task-group-register.csv`는 홈을 제외한 97개 노드를 7개 workbench 안의 46개 업무지향 그룹에 중복 없이 전량 배정한다. `ia-node-access-contract-register.csv`는 각 노드의 initial query/visibility/action/persona access path를 명시하고, 66개 신규 query는 `ia-entry-query-projection-register.csv`와 `ia-entry-query-projection-schemas.v1.json`에 닫힌 wire 계약으로 귀속한다. 이 산출물들은 G3 구현 입력이며 화면 구현 완료나 G6 운영 승인을 뜻하지 않는다.
 
-사용자에게 98개 항목을 한 번에 펼치지 않는다. 왼쪽 사이드바는 `내 HR`, `팀`, `인사 운영`, `근태`, `급여`, `성과`, `설정`의 workbench entry만 유지하고, 각 workbench 안에서 overview tab, task-oriented sub-navigation, 검색/최근 항목, deep link를 제공한다. HRIS 홈은 메뉴 목록이 아니라 HRM·TIM·PAY·PER의 권한·범위·필드 정책을 재평가한 핵심 위젯 조합 화면이다.
+현재 frontend runtime은 base IA를 수정하지 않고 `HRIS-IA-99-WB7-G46-N98-R6` successor를 적용한다. 이 successor는 `MODERN:hcm.management.controlled-export` 1개를 `SET-08`에 append하므로 **현재 runtime 기준은 99개 노드(홈 1 + 하위 98)** 이며, shell entry 9개와 task group 46개는 그대로다. 아래에서 `base IA`는 98/97 기준을, `현재 runtime successor`는 99/98 기준을 뜻한다.
+
+사용자에게 base IA 98개 또는 현재 runtime successor 99개 항목을 한 번에 펼치지 않는다. 왼쪽 사이드바는 `내 HR`, `팀`, `인사 운영`, `근태`, `급여`, `성과`, `설정`의 workbench entry만 유지하고, 각 workbench 안에서 overview tab, task-oriented sub-navigation, 검색/최근 항목, deep link를 제공한다. HRIS 홈은 메뉴 목록이 아니라 HRM·TIM·PAY·PER의 권한·범위·필드 정책을 재평가한 핵심 위젯 조합 화면이다.
 
 Shell 순서는 `HRIS 홈` 고정 entry 다음에 위 7개 workbench이며, 업무 탐색은 사이드바 tree가 아니라 별도 `/hr/explore` utility다. 각 workbench는 `APP.HCM` entitlement와 허용된 descendant가 하나 이상일 때만 보인다. 기본 노드 권한이 없으면 첫 번째 허용 descendant로 이동하고, 허용 descendant가 없으면 entry 자체를 생략한다. deep link 진입과 widget 조회는 서버가 atomic duty·population·field(`VIEW/MASK/OMIT`)·purpose·SoD를 다시 판정한다.
 
 ## Sidebar 표현 결정 (2026-10-20)
 
 아래 명칭은 사용자에게 보이는 **표현 계층**이며 기존 workbench ID, canonical route, owner와
-98-node IA 권한 사실을 바꾸지 않는다. `인사 운영`은 HRM 운영 workbench의 봉인된 이름이고,
+base 98-node IA 및 append-only runtime successor의 권한 사실을 바꾸지 않는다. `인사 운영`은 HRM 운영 workbench의 봉인된 이름이고,
 근태·급여·성과는 상위 `HR 운영` 그룹과 2차 업무 그룹에서 운영 문맥이 이미 드러나므로
 `운영`을 반복하지 않는다. 개인·팀·운영·관리 화면을 한 `업무 영역` 아래 섞지 않는다.
 
@@ -28,15 +30,18 @@ route만 보이며 아직 구현·등록·허가되지 않은 목표 route를 pl
 Product Surface가 허가한 compatibility route만 같은 그룹 구조로 보여준다. projection 오류나
 stale context는 fail-closed이며 빈 disclosure 화살표를 남기지 않는다.
 
-| 1차 항목 | 봉인된 2차 업무 그룹 | 목표 노드 수 |
-|---|---|---:|
-| 내 HR | 내 정보 / 고용·문서 / 근태·휴가 / 급여·복리후생 / 목표·성장·커리어 / 신청·서비스·도움 | 14 |
-| 팀 | 팀 현황 / 팀 근태·휴가 / 인사 변경 / 목표·평가 / 권한 위임 | 7 |
-| 인사 운영 | 운영 현황·구성원 / 고용·발령·계약 / 조직·인력 계획 / 직원 서비스·문서 / 입사·이동·퇴직 / 채용·외부인력 / 데이터 품질·분석 | 17 |
-| 근태 | 근태 운영 현황 / 근무제·스케줄 / 타각·판정 / 예외·보정 / 휴가·발생 / 마감·리포트 | 11 |
-| 급여 | 급여 운영 현황 / 입력·계산 / 검증·결과 / 소급·정정 / 지급·회계 / 세금·보험·퇴직·연말정산 / 명세서·리포트 | 14 |
-| 성과 | 성과 운영·주기·양식 / 평가 운영 / 다면·피드백·면담 / 캘리브레이션·결과 / 학습 운영 / 기회·승계 / 보상 계획 | 12 |
-| 설정 | 기업·기준·인사 / 근태·휴가 정책 / 급여·법정 정책 / 성과·스킬·리스닝 / 워크플로·문서 / 연계·커넥터 / 확장·AI 거버넌스 / DWP 플랫폼 통제 | 23 |
+| 1차 항목 | 봉인된 2차 업무 그룹 | base IA 하위 노드 | 현재 runtime successor 하위 노드 |
+|---|---|---:|---:|
+| 내 HR | 내 정보 / 고용·문서 / 근태·휴가 / 급여·복리후생 / 목표·성장·커리어 / 신청·서비스·도움 | 14 | 14 |
+| 팀 | 팀 현황 / 팀 근태·휴가 / 인사 변경 / 목표·평가 / 권한 위임 | 7 | 7 |
+| 인사 운영 | 운영 현황·구성원 / 고용·발령·계약 / 조직·인력 계획 / 직원 서비스·문서 / 입사·이동·퇴직 / 채용·외부인력 / 데이터 품질·분석 | 17 | 17 |
+| 근태 | 근태 운영 현황 / 근무제·스케줄 / 타각·판정 / 예외·보정 / 휴가·발생 / 마감·리포트 | 11 | 11 |
+| 급여 | 급여 운영 현황 / 입력·계산 / 검증·결과 / 소급·정정 / 지급·회계 / 세금·보험·퇴직·연말정산 / 명세서·리포트 | 14 | 14 |
+| 성과 | 성과 운영·주기·양식 / 평가 운영 / 다면·피드백·면담 / 캘리브레이션·결과 / 학습 운영 / 기회·승계 / 보상 계획 | 12 | 12 |
+| 설정 | 기업·기준·인사 / 근태·휴가 정책 / 급여·법정 정책 / 성과·스킬·리스닝 / 워크플로·문서 / 연계·커넥터 / 확장·AI 거버넌스 / DWP 플랫폼 통제 | 22 | 23 |
+| **합계** | **46개 그룹** | **97** | **98** |
+
+현재 runtime successor의 유일한 증분은 `설정 > DWP 플랫폼 통제(SET-08) > 통제형 반출`이다. 따라서 홈을 합치면 base IA는 98개, 현재 runtime successor는 99개이며, 다른 workbench의 합계는 변하지 않는다.
 
 메뉴 가시성은 `APP.HCM` 제품 접근, 현재 PAGE/route 권한, persona·관계·대상 범위,
 설치 capability/country pack/feature rollout, tenant 및 legal-entity navigation policy의
@@ -53,7 +58,7 @@ stale context는 fail-closed이며 빈 disclosure 화살표를 남기지 않는�
 
 ## 행 계약
 
-각 98개 행은 다음을 동시에 봉인한다.
+base IA register의 각 98개 행은 다음을 동시에 봉인한다. 현재 runtime의 99번째 행은 위 append-only successor가 별도로 봉인한다.
 
 - 소스: base 76은 pinned frontend catalog와 target-family register, modern 22는 modern capability/menu contract에서 생성한다.
 - 책임: 단일 owner session과 실제 runtime owner를 명시한다.
@@ -80,4 +85,4 @@ python3 coding-readiness/validate_ia_node_access_contracts.py --compact
 python3 coding-readiness/validate_ia_node_access_contracts.py --self-test --compact
 ```
 
-generator는 98-node register, 9-row shell navigation register, 46-group task register와 66개 projection schema를 재현한다. IA validator는 pinned source에서 생성한 navigation register의 byte-for-byte 동일성과 route/shell/task closure를 검증한다. 독립 access validator는 generator를 import하지 않고 node별 GET/action 분리, projection/PEP/modern/shared contract resolution, owner/slice, 5 canonical persona, 31 package, 128 duty, 29 SoD, trusted tenant 비노출과 closed response schema를 검증한다. IA 30개 및 access/schema 54개 변조 중 하나라도 통과하면 중앙 G3 Gate는 열리지 않는다.
+generator는 base 98-node register, 9-row shell navigation register, 46-group task register와 66개 projection schema를 재현한다. IA validator는 pinned source에서 생성한 base navigation register의 byte-for-byte 동일성과 route/shell/task closure를 검증한다. 현재 99-node runtime successor의 append 및 98개 하위 노드 closure는 `hris-runtime-navigation-manifest.test.ts`와 `seven-workbench-navigation-policy.test.ts`가 별도로 검증한다. 독립 access validator는 generator를 import하지 않고 node별 GET/action 분리, projection/PEP/modern/shared contract resolution, owner/slice, 5 canonical persona, 31 package, 128 duty, 29 SoD, trusted tenant 비노출과 closed response schema를 검증한다. IA 30개 및 access/schema 54개 변조 중 하나라도 통과하면 중앙 G3 Gate는 열리지 않는다.

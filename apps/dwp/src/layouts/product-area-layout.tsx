@@ -82,7 +82,7 @@ export type ProductAreaNavigationItemChildrenContext = Readonly<{
   selected: boolean;
   compact: boolean;
   onNavigate?: () => void;
-  onNavigateToTarget?: (resolveTarget: () => HTMLElement | null) => void;
+  onNavigateToTarget?: (resolveTarget: () => HTMLElement | null, expectedLocation?: string) => void;
 }>;
 
 export type ProductAreaMobileShellContext = Readonly<{
@@ -333,7 +333,11 @@ export function ProductAreaLayout({
   const focusLocation = `${location.pathname}${location.search}${location.hash}`;
   const focusIdentityKey = `${auth.user?.identityPlane ?? 'anonymous'}:${auth.user?.tenantId ?? ''}:${auth.user?.userId ?? ''}`;
   const shellRef = useRef<HTMLDivElement>(null);
-  const mobileNavigationTargetRef = useRef<(() => HTMLElement | null) | null>(null);
+  const mobileNavigationTargetRef = useRef<{
+    resolveTarget: () => HTMLElement | null;
+    originLocation: string;
+    expectedLocation?: string;
+  } | null>(null);
   const focusLocationRef = useRef(focusLocation);
   const focusIdentityRef = useRef(focusIdentityKey);
   focusLocationRef.current = focusLocation;
@@ -377,14 +381,29 @@ export function ProductAreaLayout({
     clearProductSurfaceFocus();
     mobileNavigation.navigate();
   };
-  const navigateMobileNavigationToTarget = (resolveTarget: () => HTMLElement | null) => {
-    mobileNavigationTargetRef.current = resolveTarget;
+  const navigateMobileNavigationToTarget = (
+    resolveTarget: () => HTMLElement | null,
+    expectedLocation?: string
+  ) => {
+    mobileNavigationTargetRef.current = {
+      resolveTarget,
+      originLocation: focusLocationRef.current,
+      expectedLocation,
+    };
     clearProductSurfaceFocus();
     mobileNavigation.navigate();
   };
   const focusMobileNavigationTarget = useCallback(() => {
-    const resolveTarget = mobileNavigationTargetRef.current;
-    const target = resolveTarget?.();
+    const pendingTarget = mobileNavigationTargetRef.current;
+    if (
+      !pendingTarget ||
+      (pendingTarget.expectedLocation
+        ? pendingTarget.expectedLocation !== focusLocationRef.current
+        : pendingTarget.originLocation === focusLocationRef.current)
+    ) {
+      return false;
+    }
+    const target = pendingTarget.resolveTarget();
     if (!target?.isConnected) return false;
     target.focus({ preventScroll: true });
     if (document.activeElement !== target) return false;
@@ -392,7 +411,8 @@ export function ProductAreaLayout({
     return true;
   }, []);
   useEffect(() => {
-    if (mobileNavigation.open || !mobileNavigationTargetRef.current) return undefined;
+    const pendingTarget = mobileNavigationTargetRef.current;
+    if (mobileNavigation.open || !pendingTarget) return undefined;
     let frame = 0;
     let remainingFrames = 120;
     const transferFocus = () => {
@@ -406,7 +426,7 @@ export function ProductAreaLayout({
     };
     frame = window.requestAnimationFrame(transferFocus);
     return () => window.cancelAnimationFrame(frame);
-  }, [focusMobileNavigationTarget, mobileNavigation.open]);
+  }, [focusLocation, focusMobileNavigationTarget, mobileNavigation.open]);
   const productLabel = t(`shell.${areaKey}.name`);
   const headerContextLabel =
     presentationPlane === 'management'

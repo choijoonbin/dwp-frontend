@@ -55,6 +55,7 @@ export function HrisTaskNavigation({
             <Stack component="ul" gap={0.25} sx={{ p: 0, m: 0, listStyle: 'none' }}>
               {group.nodes.map((node) => {
                 const route = node.routeAliases[0]!;
+                const targetLocation = resolveTaskLocationHref(route, location.search);
                 const active = node.routeAliases.some(
                   (candidate) => currentPath === normalizePath(candidate)
                 );
@@ -63,7 +64,7 @@ export function HrisTaskNavigation({
                   <Box component="li" key={node.nodeId} minWidth={0}>
                     <ActionButton
                       component={Link}
-                      to={resolveTaskLocationHref(route, location.search)}
+                      to={targetLocation}
                       data-testid={`hris-task-node-${node.nodeId}`}
                       aria-current={childIsCurrent ? 'page' : undefined}
                       intent="quiet"
@@ -71,7 +72,7 @@ export function HrisTaskNavigation({
                       size="small"
                       onClick={() => {
                         if (onNavigateToTarget) {
-                          onNavigateToTarget(resolveHrisTaskNavigationFocusTarget);
+                          onNavigateToTarget(resolveHrisTaskNavigationFocusTarget, targetLocation);
                         } else {
                           onNavigate?.();
                         }
