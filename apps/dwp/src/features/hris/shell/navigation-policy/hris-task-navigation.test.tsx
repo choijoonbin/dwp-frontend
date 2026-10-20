@@ -166,6 +166,101 @@ describe('HRIS progressive task navigation', () => {
     expect(html).toContain('HR 요청');
   });
 
+  it('falls back to the exact legacy shell paths when static compatibility authority is absent', () => {
+    runtime.policy = {
+      mode: 'STATIC',
+      schemaVersion: null,
+      revisionPin: 'static',
+      authorityFreshUntil: null,
+      workbenches: [],
+      orderedNodeIds: [],
+      denialReason: null,
+    };
+    const html = renderToStaticMarkup(
+      createElement(
+        MemoryRouter,
+        { initialEntries: ['/hr/me'] },
+        <HrisTaskNavigation
+          item={{
+            path: '/hr/me',
+            view: 'workbench-my-hr',
+            icon: BriefcaseBusiness,
+            activePathPrefixes: ['/hr/me', '/hr/me/requests'],
+          }}
+          selected
+          compact={false}
+        />
+      )
+    );
+
+    expect(html).toContain('내 프로필');
+    expect(html).toContain('HR 요청');
+    expect(html).not.toContain('내 근태');
+    expect(html).not.toContain('급여 및 세무');
+  });
+
+  it('does not widen an explicit empty compatibility authority in static mode', () => {
+    runtime.policy = {
+      mode: 'STATIC',
+      schemaVersion: null,
+      revisionPin: 'static',
+      authorityFreshUntil: null,
+      workbenches: [],
+      orderedNodeIds: [],
+      denialReason: null,
+    };
+    const html = renderToStaticMarkup(
+      createElement(
+        MemoryRouter,
+        { initialEntries: ['/hr/me'] },
+        <ProductAreaAuthorizedNavigationPathsProvider paths={new Set()}>
+          <HrisTaskNavigation
+            item={{
+              path: '/hr/me',
+              view: 'workbench-my-hr',
+              icon: BriefcaseBusiness,
+              activePathPrefixes: ['/hr/me', '/hr/me/requests'],
+            }}
+            selected
+            compact={false}
+          />
+        </ProductAreaAuthorizedNavigationPathsProvider>
+      )
+    );
+
+    expect(html).toBe('');
+  });
+
+  it('keeps fail-closed task navigation hidden even without compatibility authority', () => {
+    runtime.policy = {
+      mode: 'FAIL_CLOSED',
+      schemaVersion: null,
+      revisionPin: 'authority-unavailable',
+      authorityFreshUntil: null,
+      workbenches: [],
+      orderedNodeIds: [],
+      denialReason: 'NAVIGATION_PROJECTION_UNAVAILABLE',
+    };
+    const html = renderToStaticMarkup(
+      createElement(
+        MemoryRouter,
+        { initialEntries: ['/hr/me'] },
+        <HrisTaskNavigation
+          item={{
+            path: '/hr/me',
+            view: 'workbench-my-hr',
+            icon: BriefcaseBusiness,
+            activePathPrefixes: ['/hr/me', '/hr/me/requests'],
+          }}
+          selected
+          compact={false}
+        />
+      )
+    );
+
+    expect(html).toBe('');
+  });
+
   it('leaves aria-current on the active inline child instead of its workbench parent', () => {
     runtime.policy = {
       mode: 'STATIC',

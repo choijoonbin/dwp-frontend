@@ -200,6 +200,12 @@ const hcmRegisteredPageRoutes = hcmPageRoutes.map((route) => ({
   routeKind: 'PAGE' as const,
 }));
 
+export function resolveHcmAuthorizedNavigationPaths(
+  targets: ReadonlyMap<string, unknown> | undefined
+): ReadonlySet<string> | null {
+  return targets === undefined ? null : new Set(targets.keys());
+}
+
 function HcmNavigationPolicyRuntimeRoot() {
   const authority = useProductSurfaceCanaryAuthority();
   const authorizedPaths = useMemo(() => {
@@ -209,13 +215,18 @@ function HcmNavigationPolicyRuntimeRoot() {
       registeredRoutes: hcmRegisteredPageRoutes,
       rolloutMode: resolveProductSurfaceRolloutMode(resolveCanaryProductFlags(authority, 'hcm')),
     });
-    return new Set(targets?.keys() ?? []);
+    return resolveHcmAuthorizedNavigationPaths(targets);
   }, [authority]);
-  return (
+  const runtime = (
+    <HrisNavigationPolicyRuntimeProvider>
+      <Outlet />
+    </HrisNavigationPolicyRuntimeProvider>
+  );
+  return authorizedPaths === null ? (
+    runtime
+  ) : (
     <ProductAreaAuthorizedNavigationPathsProvider paths={authorizedPaths}>
-      <HrisNavigationPolicyRuntimeProvider>
-        <Outlet />
-      </HrisNavigationPolicyRuntimeProvider>
+      {runtime}
     </ProductAreaAuthorizedNavigationPathsProvider>
   );
 }

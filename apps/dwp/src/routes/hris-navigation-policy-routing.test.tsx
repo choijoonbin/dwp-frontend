@@ -5,6 +5,7 @@ import {
   HCM_CONFIGURED_TASK_NAVIGATION_LAYOUT_PROPS,
   HrisWorkbenchPolicyIndex,
   hcmRoutes,
+  resolveHcmAuthorizedNavigationPaths,
   resolveHrisWorkbenchPolicyAccessState,
 } from './hcm-routes';
 import { ProductCanaryRoot } from './product-surface-canary-routes';
@@ -19,6 +20,19 @@ describe('HRIS aggregate landing route wiring', () => {
     expect(HCM_LEGACY_TASK_NAVIGATION_LAYOUT_PROPS).toBe(HRIS_TASK_NAVIGATION_LAYOUT_PROPS);
     expect(HCM_CONFIGURED_TASK_NAVIGATION_LAYOUT_PROPS).toBe(HRIS_TASK_NAVIGATION_LAYOUT_PROPS);
     expect(HRIS_TASK_NAVIGATION_LAYOUT_PROPS.navigationChildrenPresentation).toBe('inline');
+  });
+
+  it('distinguishes an unavailable compatibility projection from an explicit empty projection', () => {
+    expect(resolveHcmAuthorizedNavigationPaths(undefined)).toBeNull();
+    expect(resolveHcmAuthorizedNavigationPaths(new Map())).toEqual(new Set());
+    expect(
+      resolveHcmAuthorizedNavigationPaths(
+        new Map([
+          ['/hr/me', { state: 'allowed' }],
+          ['/hr/me/requests', { state: 'allowed' }],
+        ])
+      )
+    ).toEqual(new Set(['/hr/me', '/hr/me/requests']));
   });
 
   it('keeps /hr on the exact shell Home resolver', () => {
