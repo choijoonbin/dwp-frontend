@@ -1,0 +1,279 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-sys006-central-integration-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-04-SYS006-CENTRAL-INTEGRATION-20261020-R1",
+  "recordedAt": "2026-10-20T15:10:35+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_RECEIPT_ID_AND_SHA256"
+  },
+  "state": "EXACT_SYS006_CENTRAL_DELTA_COMMITTED_PUSHED_AND_ADMITTED_V56_V265_GATEWAY_TYPED_CONTRACT_SHARED_BRIDGE_UNMOUNTED_CHILD_DEFAULT_OFF_ZERO_ENROLLMENT_OWNER_PACKET_AND_RESERVED_NOT_ACTIVE_V333_MAY_BE_PREPARED",
+  "sliceId": "BASE-TFR-SYS-006",
+  "moduleSession": "HRIS-SYS",
+  "authorityBasis": {
+    "semanticDisposition": {
+      "path": "../r7-batch-04-module-start-r1/semantic-dispositions/base-tfr-sys-006.semantic-disposition.v1.json",
+      "sha256": "e5f8ecc7db70737ae5cfb6d3ccc8879b30f0395febc35db3de4455baf1a1825f",
+      "bytes": 192503,
+      "requiredState": "SYS006_AUTOMATION_CONTROL_PLANE_BOUNDARY_SEALED_V333_REQUIRED_CENTRAL_SUCCESSOR_BEFORE_SOURCE"
+    },
+    "semanticReview": {
+      "path": "../r7-batch-04-module-start-r1/semantic-dispositions/base-tfr-sys-006.semantic-review.v1.json",
+      "sha256": "bc261e69873c84427c8d70b39f2e9466044c4e0d743bf2c83ac7cb9c1c8b028c",
+      "bytes": 3448,
+      "requiredState": "SYS006_SEMANTIC_DISPOSITION_INDEPENDENTLY_REVIEWED_PASS_ZERO_P0_ZERO_P1_ZERO_P2_CENTRAL_SUCCESSOR_MAY_PROCEED"
+    },
+    "centralSuccessor": {
+      "path": "../r7-batch-04-module-start-r1/sys-006-iaq-transport-event-and-central-authorization-successor.v1.json",
+      "sha256": "e4001e41b76c9bb440dc6ca4d46e541e72f588d4d10eb35bc3b1b30fdbe46a55",
+      "bytes": 34099,
+      "requiredState": "SEALED_EXACT_SYS006_IAQ059_TRANSPORT_SYSEVT004_V56_V265_V333_GATEWAY_SHARED_BRIDGE_CHILD_SURFACE_AUTHORITY_DEFAULT_OFF_ZERO_ENROLLMENT"
+    },
+    "centralSuccessorReview": {
+      "path": "../r7-batch-04-module-start-r1/sys-006-iaq-transport-event-and-central-authorization-review.v1.json",
+      "sha256": "4f778ee46dd56db529447502ced4e6dd0e04303085e26432255a8f461a1e15a7",
+      "bytes": 6088,
+      "requiredState": "SYS006_IAQ_TRANSPORT_EVENT_AND_CENTRAL_AUTHORIZATION_INDEPENDENTLY_REVIEWED_PASS_ZERO_P0_ZERO_P1_ZERO_P2_BOUNDED_CENTRAL_IMPLEMENTATION_MAY_PROCEED"
+    }
+  },
+  "pushedPins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "1e936437d9318c5b80a0e1e411ad1a87ab28ee7a",
+      "tree": "a6c695f6518e843b3cb4a195f7bf7fc1c6afb8ab",
+      "parent": "4dc200ac8e79169bbf19863abbfbf1a3ca2567a7",
+      "subject": "feat(hris): admit SYS-006 central authorization boundary",
+      "originRef": "origin/dwp-dev",
+      "originExact": true,
+      "worktreeClean": true
+    },
+    "frontendImplementationBeforeThisReceipt": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "89a09951a35a32b29f9a0c24f10add86e68b9024",
+      "tree": "f0e93bd13f01160cae87f3574aa334d64a6f5c6e",
+      "parent": "1c1f5ccbd6f6cd8da6948827629c0602df06599a",
+      "subject": "feat(hris): add unmounted SYS-006 child contract",
+      "originRef": "origin/dwp-dev",
+      "originExact": true,
+      "worktreeCleanBeforeThisReceipt": true,
+      "authorityCarrierAdvanceExpected": true
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "originRef": "origin/dwp-dev",
+      "originExact": true,
+      "worktreeClean": true,
+      "readOnlyForThisSlice": true
+    }
+  },
+  "integratedCentralDelta": {
+    "backend": {
+      "baseCommit": "4dc200ac8e79169bbf19863abbfbf1a3ca2567a7",
+      "admittedCommit": "1e936437d9318c5b80a0e1e411ad1a87ab28ee7a",
+      "admittedTree": "a6c695f6518e843b3cb4a195f7bf7fc1c6afb8ab",
+      "changedPathCount": 41,
+      "nameStatusManifestSha256": "a7c627d6cb0ba36244e1fbbd95b1c042d8f711dd5ae5a0c3e97efc73ddf69a11",
+      "pathOnlyManifestSha256": "5e2a1dabc51ce80b35a9b499268af20099aa7b9cf84a543e5754eba18ebd5643"
+    },
+    "frontend": {
+      "baseCommit": "1c1f5ccbd6f6cd8da6948827629c0602df06599a",
+      "admittedImplementationCommit": "89a09951a35a32b29f9a0c24f10add86e68b9024",
+      "admittedImplementationTree": "f0e93bd13f01160cae87f3574aa334d64a6f5c6e",
+      "changedPathCount": 4,
+      "nameStatusManifestSha256": "e813f5b269733bbd804af287038ade99d75d75f38e7665a997909bf2c8e133cc",
+      "pathOnlyManifestSha256": "6cf04f2c93b00a3e96600beebe71066340ba346bd67f196a94687d01dfb3d64f"
+    },
+    "mergeConflicts": 0,
+    "automaticConflictResolution": false
+  },
+  "admittedArtifacts": {
+    "productAuthorizationV56": {
+      "sourcePath": "dwp-backend/contracts/product-authorization/product-surfaces-v1.bundle-v56.json",
+      "sourceSha256": "85c7e23115f0befce4b9b909bf789e14a6a02370f47a236cefa56b80f901adf5",
+      "sourceBytes": 2669858,
+      "declaredRegistryChecksum": "4c1e82c4ac70f7bbc4aba7a41d77b8fd238da0478501cbdfed97ebd4b5dd0930",
+      "counts": {
+        "capabilities": 270,
+        "accessPolicies": 24,
+        "entitlementExpressions": 17,
+        "predicatePolicies": 82,
+        "routes": 1120,
+        "PAGE": 156,
+        "DATA": 338,
+        "ACTION": 626
+      },
+      "appendOnlyDeltaFromV55": {
+        "routes": 16,
+        "PAGE": 0,
+        "DATA": 2,
+        "ACTION": 14,
+        "capabilities": 0,
+        "accessPolicies": 0,
+        "entitlementExpressions": 0,
+        "predicatePolicies": 0
+      },
+      "bundleStatus": "DRAFT",
+      "automaticImportEnabled": false
+    },
+    "authV265": {
+      "path": "dwp-backend/dwp-auth-server/src/main/resources/db/migration/V265__declare_hris_sys006_v56_authorization_seed.sql",
+      "sha256": "af2ad20db5df5892132235e108cde7a85f864613df78b73ddaa62246d97622fa",
+      "bytes": 5219,
+      "featureKey": "HRIS_AUTOMATION_CONTROL_PLANE",
+      "minimumBundleVersion": 56,
+      "defaultState": "OFF",
+      "ownedRouteCount": 16,
+      "routeOwnersAfterMigration": 57,
+      "featureRouteBindingsAfterMigration": 57,
+      "featurePoliciesAfterMigration": 11,
+      "tenantActivationRowsInserted": 0,
+      "tenantEnrollmentRowsInserted": 0,
+      "newBroadGrants": 0
+    },
+    "gatewayBoundary": {
+      "routeContractPath": "dwp-backend/dwp-gateway/src/main/java/com/dwp/gateway/productsurface/Sys006GatewayRoutes.java",
+      "routeContractSha256": "eb33961d4ca2758f8ce39784ebb648999df791e90470fc8de417f11f4449664d",
+      "inboundGuardPath": "dwp-backend/dwp-gateway/src/main/java/com/dwp/gateway/filter/Sys006InboundAuthorityFilter.java",
+      "inboundGuardSha256": "92fab9ee11c8cd15614350e5642d148813c6a1fbb8eecc4f3dde486a0402a970",
+      "exactOperationBindings": 16,
+      "dataRoutes": 2,
+      "actionRoutes": 14,
+      "resourceActionsWithStrongIfMatch": 13,
+      "actionsWithRequiredIdempotencyKey": 14,
+      "purpose": "HRIS_SYSTEM_ADMIN",
+      "trustedContextReconstructed": true,
+      "directOwnerBypass": "FAIL_CLOSED"
+    },
+    "platformTypedContract": {
+      "packageRoot": "com.dwp.services.platform.hrisconfiguration.automation",
+      "handlerRegistryPath": "dwp-backend/dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/automation/AutomationHandlerRegistryPort.java",
+      "handlerRegistrySha256": "e19aad277f3bf48224af763a181c76cc98beb79ce627fdd9a46f2846d4623eca",
+      "canonicalTypedArtifactsReused": [
+        "PDX_004 AutomationHandlerManifestV1",
+        "PDX_005 AutomationInvocationV1",
+        "PDX_006 AutomationRunItemReceiptV1"
+      ],
+      "closedSchemaSourcePointer": "/contractDecision/closedTransportSchemas",
+      "closedSchemaCanonicalSha256": "414aa96f4f9a0bfffe6a506c208e62c94834d96f656e0551f64c67255335c0df",
+      "frozenTestFixturePath": "dwp-backend/dwp-platform-server/src/test/resources/contracts/hris/sys006-closed-transport-schemas.v1.json",
+      "frozenTestFixtureSha256": "92ca34483b447d87616c0023d770d5d073c200976a199769cc3af866966e5c1e",
+      "closedSchemaCount": 6,
+      "productionRuntimeBindingCount": 0
+    },
+    "sharedReceiptBridge": {
+      "soleControllerReused": "HrisCommandReceiptController",
+      "boundedChangedComponents": [
+        "HrisCommandReceiptController",
+        "AuthHrisExplorerAuthorityEvidenceQuery"
+      ],
+      "originatingActionRouteMappingsAdded": 14,
+      "totalPlatformOriginatingActionRouteMappings": 31,
+      "duplicateMappingPolicy": "FAIL_CLOSED",
+      "HrisExplorerOwnerEvidenceFilterChanged": false,
+      "secondReceiptTableOrControllerCreated": false
+    },
+    "frontendChildSurface": {
+      "root": "dwp-frontend/apps/dwp/src/features/hris/administration/automation-control-plane",
+      "contractPath": "dwp-frontend/apps/dwp/src/features/hris/administration/automation-control-plane/automation-control-plane-contract.ts",
+      "contractSha256": "ae6d24d86c2144b1cc5357851eb39db4f27b1968a3e5a0350f7d46fa129c28a1",
+      "componentPath": "dwp-frontend/apps/dwp/src/features/hris/administration/automation-control-plane/automation-control-plane-child-surface.tsx",
+      "componentSha256": "c8f5038ee698f2c573a6d80424fbfe32f91d9a41285b657e923bd4b36a86bb69",
+      "sharedRoute": "/hr/settings/operations",
+      "primaryPageOwner": "SYS-002",
+      "secondSidebarNode": false,
+      "secondPageOwner": false,
+      "mounted": false,
+      "defaultEnabled": false,
+      "tenantEnrollmentCount": 0,
+      "outsideDirectoryImportOrRegistrationCount": 0,
+      "stateCount": 8,
+      "viewports": [1440, 1280, 390, 320],
+      "zoomPercent": 200
+    }
+  },
+  "independentReview": {
+    "decision": "GO_FOR_EXACT_SYS006_OWNER_PACKET_AND_RESERVED_NOT_ACTIVE_PLATFORM_V333_PREPARATION_NO_GO_FOR_MODULE_RUNTIME_SOURCE_OR_ACTIVATION",
+    "reviewedBackendCommit": "1e936437d9318c5b80a0e1e411ad1a87ab28ee7a",
+    "reviewedBackendTree": "a6c695f6518e843b3cb4a195f7bf7fc1c6afb8ab",
+    "reviewedFrontendImplementationCommit": "89a09951a35a32b29f9a0c24f10add86e68b9024",
+    "reviewedFrontendImplementationTree": "f0e93bd13f01160cae87f3574aa334d64a6f5c6e",
+    "findings": {
+      "remainingP0": 0,
+      "remainingP1": 0,
+      "remainingP2": 0
+    },
+    "closedCorrections": [
+      "The two exact elevated read-only DATA routes were added to the sealed generic-session topology instead of weakening the global validator.",
+      "All fourteen commands now require one safe idempotency key and the thirteen resource commands require a bounded strong If-Match reconstructed as trusted object-revision evidence before Auth or owner access.",
+      "The typed contract and tests were moved to the exact sealed com.dwp.services.platform.hrisconfiguration.automation package root.",
+      "The shared-bridge change was narrowed to the two explicitly permitted SYS-002 files; HrisExplorerOwnerEvidenceFilter remains unchanged.",
+      "The frontend responsive contract is consumed by the component and all eight states render under each required viewport at 200 percent zoom without a fixed child width."
+    ]
+  },
+  "targetedVerification": {
+    "policy": "RUN_EACH_AFFECTED_TARGET_GROUP_ONCE_AND_RERUN_ONLY_THE_SMALLEST_FAILED_CLASS_OR_NAMED_CASE_AFTER_A_MATERIAL_CORRECTION; NO_REPOSITORY_WIDE_SUITE",
+    "passed": [
+      "Product authorization v56 generator --check: PASS",
+      "Product authorization fixture generator --check: PASS",
+      "Product authorization v56 Python contract tests: 4/4",
+      "Auth v56 lineage, seed alias and V265 contract/PostgreSQL targets: 13/13",
+      "Gateway SYS-006 final authority and command-precondition class: 14/14",
+      "Gateway directly affected existing filter, identity and catalog cluster: 109/109",
+      "Platform closed schema, typed registry and shared receipt focused classes: 27/27",
+      "Frontend unmounted child, states, accessibility and responsive matrix: 16/16",
+      "Frontend exact changed-file ESLint: PASS",
+      "git cached diff and final diff checks: PASS"
+    ],
+    "sumOfDistinctNumericallyReportedPassingTests": 183,
+    "failures": 0,
+    "repositoryWideSuiteRun": false,
+    "unaffectedPassingTargetRerun": false
+  },
+  "admittedBoundary": {
+    "runtimeOwner": "dwp-platform-server",
+    "forbiddenService": "dwp-sys-server",
+    "featureKey": "HRIS_AUTOMATION_CONTROL_PLANE",
+    "runtimeDefault": "OFF",
+    "tenantEnrollmentCount": 0,
+    "productAuthorizationBundle": "v56 DRAFT",
+    "authMigration": "V265",
+    "platformMigration": "V333 NOT_RESERVED_NOT_AUTHORED",
+    "newPageRouteCount": 0,
+    "sharedPageOwnerChanged": false,
+    "frontendChildMount": "ABSENT",
+    "productionProviderBindingCount": 0,
+    "productionScheduleCount": 0,
+    "businessCompletionIncrement": 0
+  },
+  "authority": {
+    "centralImplementationAdmittedToBackendDwpDev": true,
+    "unmountedChildContractAdmittedToFrontendDwpDev": true,
+    "exactSys006OwnerPacketMayBeIssued": true,
+    "platformV333MayBeReservedNotActive": true,
+    "moduleWorktreeMaterialized": false,
+    "activePlatformV333LeaseIssued": false,
+    "executableModuleStartTokenIssued": false,
+    "moduleRuntimeSourceAuthorizedByThisReceipt": false,
+    "routeOrMenuMountAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionProviderOrScheduleAuthorized": false,
+    "fullSliceCompletionAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nonClaims": [
+    "Platform V333 exists, is reserved or is active.",
+    "An HRIS-SYS owner worktree or executable module start token exists.",
+    "The SYS-006 child is mounted in the settings operations page or visible in navigation.",
+    "HRIS_AUTOMATION_CONTROL_PLANE is enabled or any tenant is enrolled.",
+    "A production automation handler, provider or schedule is bound.",
+    "Any customer data is authorized or BASE-TFR-SYS-006 is complete."
+  ],
+  "nextGate": "ISSUE_THE_EXACT_SYS006_OWNER_PACKET_AND_RESERVED_NOT_ACTIVE_PLATFORM_V333_LEASE_THEN_MATERIALIZE_FRESH_CLEAN_HRIS_SYS_WORKTREES_AND_INDEPENDENTLY_REVIEW_THE_PACKET_BEFORE_ANY_ACTIVE_LEASE_EXECUTABLE_START_TOKEN_OR_MODULE_RUNTIME_SOURCE"
+}
