@@ -6,13 +6,12 @@ import {
   useRef,
   useState,
   type FocusEvent,
-  type ReactNode,
+  type MouseEvent,
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, ChevronDown, ChevronRight, Home, LifeBuoy, Settings2 } from 'lucide-react';
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAppearance } from '@dwp-frontend/design-system/appearance';
-import { ActionButton } from '@dwp-frontend/design-system/components/actions/action-button';
 import {
   PRODUCT_EXPERIENCE_SELECTION_OPACITY,
   PRODUCT_EXPERIENCE_SOFT_OPACITY,
@@ -61,122 +60,29 @@ import {
   ProductSurfaceTelemetryExposure,
   useProductSurfaceTelemetry,
 } from '../observability/product-surface-telemetry-context';
-import type {
-  ProductNavigationGroup as ProductAreaNavigationGroup,
-  ProductNavigationItem as ProductAreaNavigationItem,
-  ProductShellNavigationProjection,
-  ProductSurfaceManifest,
-  ProductSurfaceNavigationItem,
-} from '../components/product-manifest';
 import {
   normalizeProductPath,
   resolveProductNavigationSelection,
 } from '../components/product-manifest';
-import type { ProductSurfaceLayoutRuntime } from '../components/product-surface-controls';
 import { canAccessProductAreaNavigationItem } from './product-area-permissions';
+import { ProductAreaMobileContextRail } from './product-area-mobile-context-rail';
+import {
+  isProductAreaSurfaceNavigationItem,
+  resolveProductAreaParentAriaCurrent,
+  type ProductAreaLayoutProps,
+  type ProductAreaNavigationItem,
+} from './product-area-layout-contract';
+import {
+  ProductAreaDesktopTaskNavigator,
+  ProductAreaMobileTaskNavigator,
+  ProductAreaNavigationReturnAction,
+  taskNavigatorContextKey as contextKey,
+  useProductAreaNavigationLocationResolver,
+  useProductAreaTaskNavigator,
+  useProductAreaTaskNavigatorLifecycle,
+} from './product-area-task-navigator';
 
-export type { ProductAreaNavigationGroup, ProductAreaNavigationItem };
-
-export type ProductAreaNavigationItemChildrenContext = Readonly<{
-  item: ProductAreaNavigationItem;
-  selected: boolean;
-  compact: boolean;
-  onNavigate?: () => void;
-  onNavigateToTarget?: (resolveTarget: () => HTMLElement | null, expectedLocation?: string) => void;
-}>;
-
-export type ProductAreaMobileShellContext = Readonly<{
-  pathname: string;
-  search: string;
-  visibleNavigationPaths: readonly string[];
-  navigation: Readonly<{
-    controlsId: string;
-    expanded: boolean;
-    label: string;
-    testId: string;
-    onOpen: (trigger: HTMLButtonElement) => void;
-  }>;
-  onNavigate: (path: string) => void;
-}>;
-
-export type ProductAreaMobileShellPresentation = Readonly<{
-  header: ReactNode;
-  footer?: ReactNode;
-}>;
-
-export type ProductAreaLayoutProps = {
-  areaKey:
-    | 'dwaion'
-    | 'work'
-    | 'activity'
-    | 'communications'
-    | 'services'
-    | 'hcm'
-    | 'calendar'
-    | 'rooms'
-    | 'approvals'
-    | 'mail'
-    | 'meetings'
-    | 'messaging'
-    | 'notifications'
-    | 'spaces';
-  navigation: readonly ProductAreaNavigationGroup[];
-  manifest?: ProductSurfaceManifest;
-  translationNamespace?:
-    | 'workforce'
-    | 'work'
-    | 'communications'
-    | 'services'
-    | 'hcm'
-    | 'calendar'
-    | 'rooms'
-    | 'approvals'
-    | 'mail'
-    | 'meetings'
-    | 'messaging'
-    | 'notifications'
-    | 'spaces';
-  surface?: ProductSurfaceLayoutRuntime;
-  shellNavigationProjection?: ProductShellNavigationProjection;
-  canAccessLegacySurface?: (surface: ProductSurfaceManifest['surfaces'][number]) => boolean;
-  renderNavigationItemChildren?: (
-    context: ProductAreaNavigationItemChildrenContext
-  ) => React.ReactNode;
-  navigationChildrenPresentation?: 'disclosure' | 'inline';
-  mobileSurfaceNavigation?: 'header' | 'drawer';
-  resolveMobileShell?: (
-    context: ProductAreaMobileShellContext
-  ) => ProductAreaMobileShellPresentation;
-};
-
-export function resolveProductAreaParentAriaCurrent({
-  selected,
-  pathname,
-  item,
-  hasInlineChildren,
-}: Readonly<{
-  selected: boolean;
-  pathname: string;
-  item: ProductAreaNavigationItem;
-  hasInlineChildren: boolean;
-}>): 'page' | undefined {
-  if (!selected || !hasInlineChildren) return selected ? 'page' : undefined;
-
-  const currentPath = normalizeProductPath(pathname);
-  const parentPath = normalizeProductPath(item.path);
-  if (currentPath === parentPath) return 'page';
-
-  const hasActiveChild = item.activePathPrefixes?.some(
-    (candidate) => normalizeProductPath(candidate) === currentPath
-  );
-  return hasActiveChild ? undefined : 'page';
-}
-
-function isSurfaceNavigationItem(
-  item: ProductAreaNavigationItem
-): item is ProductSurfaceNavigationItem {
-  return 'access' in item && 'taskKind' in item;
-}
+export * from './product-area-layout-contract';
 
 export function ProductAreaLayout({
   areaKey,
@@ -215,16 +121,17 @@ export function ProductAreaLayout({
   const location = useLocation();
   const navigate = useNavigate();
   const { pathname } = location;
+  const navigationContextKey = contextKey(location, auth.user, supportSession, surface);
   const navigationDisclosureId = useId();
   const [collapsedNavigationPath, setCollapsedNavigationPath] = useState<string | null>(null);
-  useEffect(() => {
-    setCollapsedNavigationPath(null);
-  }, [pathname]);
+  const taskNavigator = useProductAreaTaskNavigator();
+  useEffect(() => setCollapsedNavigationPath(null), [navigationContextKey]);
   const mobileNavigation = useShellMobileNavigation({
     headerTestId: `${areaKey}-header`,
   });
   const mobileNavigationId = `${areaKey}-mobile-navigation`;
   const telemetry = useProductSurfaceTelemetry();
+  const resolveChildNavigationLocation = useProductAreaNavigationLocationResolver(surface);
   const {
     compact,
     collapsible,
@@ -289,10 +196,10 @@ export function ProductAreaLayout({
         if (shellNavigationProjection) {
           return authorizedShellPaths.has(normalizeProductPath(item.path));
         }
-        if (surface?.compatibilityNavigationTargets && isSurfaceNavigationItem(item)) {
+        if (surface?.compatibilityNavigationTargets && isProductAreaSurfaceNavigationItem(item)) {
           return surface.compatibilityNavigationTargets?.has(item.path) === true;
         }
-        if (surface && isSurfaceNavigationItem(item)) {
+        if (surface && isProductAreaSurfaceNavigationItem(item)) {
           return canContextAccessNavigation(
             item.access,
             surface.decision.context,
@@ -381,7 +288,7 @@ export function ProductAreaLayout({
     clearProductSurfaceFocus();
     mobileNavigation.navigate();
   };
-  const navigateMobileNavigationToTarget = (
+  const queueNavigationTarget = (
     resolveTarget: () => HTMLElement | null,
     expectedLocation?: string
   ) => {
@@ -391,6 +298,12 @@ export function ProductAreaLayout({
       expectedLocation,
     };
     clearProductSurfaceFocus();
+  };
+  const navigateMobileNavigationToTarget = (
+    resolveTarget: () => HTMLElement | null,
+    expectedLocation?: string
+  ) => {
+    queueNavigationTarget(resolveTarget, expectedLocation);
     mobileNavigation.navigate();
   };
   const focusMobileNavigationTarget = useCallback(() => {
@@ -426,7 +339,7 @@ export function ProductAreaLayout({
     };
     frame = window.requestAnimationFrame(transferFocus);
     return () => window.cancelAnimationFrame(frame);
-  }, [focusLocation, focusMobileNavigationTarget, mobileNavigation.open]);
+  }, [focusLocation, focusMobileNavigationTarget, mobileNavigation.open, taskNavigator.path]);
   const productLabel = t(`shell.${areaKey}.name`);
   const headerContextLabel =
     presentationPlane === 'management'
@@ -449,6 +362,13 @@ export function ProductAreaLayout({
   );
   const compactWorkSurfaceRail = useMediaQuery('(max-width:599.95px)', { noSsr: true });
   const compactSpecializedMobileShell = useMediaQuery('(max-width:1199.95px)', { noSsr: true });
+  useProductAreaTaskNavigatorLifecycle({
+    areaKey,
+    compactShell: compactSpecializedMobileShell,
+    contextKey: navigationContextKey,
+    dismiss: taskNavigator.dismiss,
+    path: taskNavigator.path,
+  });
   const drawerSurfaceNavigation =
     mobileSurfaceNavigation === 'drawer' && presentationPlane === 'work';
   const showMobileSurfaceContextRail = Boolean(
@@ -482,224 +402,326 @@ export function ProductAreaLayout({
     compactNavigation: boolean,
     onNavigate?: () => void,
     onDismiss?: () => void
-  ) => (
-    <Box sx={{ height: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
-      <DesktopNavigationHeader
-        compact={compactNavigation}
-        collapsible={collapsible}
-        controlsId={`${areaKey}-desktop-navigation`}
-        onDismiss={onDismiss}
-        onToggle={toggleDesktopNavigation}
-      />
-      <Divider />
-      <Box sx={{ px: 2.5, pt: 2.25, pb: 1, display: compactNavigation ? 'none' : 'block' }}>
-        <Typography component="p" variant="overline" sx={{ color: 'var(--dwp-product-accent)' }}>
-          {presentationLabel ?? t(`shell.${areaKey}.context`)}
-        </Typography>
-        <Typography variant="body2" fontWeight="fontWeightBold" noWrap>
-          {tenantName}
-        </Typography>
-      </Box>
-      <Box
-        component="nav"
-        aria-label={t(`shell.${areaKey}.navigationLabel`)}
-        sx={{ flex: 1, minHeight: 0, overflowY: 'auto', overscrollBehavior: 'contain' }}
-      >
-        {visibleNavigation.map((group) => (
-          <Box key={group.id} sx={{ pb: 1.25 }}>
-            {!compactNavigation && (
-              <Typography
-                component="p"
-                variant="overline"
-                color="text.secondary"
-                sx={{ px: 2.5, py: 0.75 }}
+  ) => {
+    const openedPanelItem =
+      navigationChildrenPresentation === 'panel' && taskNavigator.path
+        ? visibleNavigation
+            .flatMap((group) => group.items)
+            .find((item) => item.path === taskNavigator.path)
+        : undefined;
+    const navigateFromPanel = () => {
+      taskNavigator.dismiss(false);
+      onNavigate?.();
+    };
+    const navigateFromPanelToTarget = (
+      resolveTarget: () => HTMLElement | null,
+      expectedLocation?: string
+    ) => {
+      taskNavigator.dismiss(false);
+      if (onDismiss) {
+        navigateMobileNavigationToTarget(resolveTarget, expectedLocation);
+      } else {
+        queueNavigationTarget(resolveTarget, expectedLocation);
+      }
+    };
+    const openedPanelChildren = openedPanelItem
+      ? renderNavigationItemChildren?.({
+          item: openedPanelItem,
+          selected: true,
+          compact: false,
+          onNavigate: navigateFromPanel,
+          onNavigateToTarget: navigateFromPanelToTarget,
+          resolveNavigationLocation: resolveChildNavigationLocation,
+        })
+      : null;
+    const openedPanelLabel = openedPanelItem
+      ? t(`navigation.items.${areaKey}.${openedPanelItem.view}.label`)
+      : undefined;
+    const openedPanelId = openedPanelItem
+      ? `${navigationDisclosureId}-${onDismiss ? 'mobile' : 'desktop'}-${openedPanelItem.view}`
+      : undefined;
+
+    if (onDismiss && openedPanelChildren && openedPanelLabel && openedPanelId) {
+      return (
+        <ProductAreaMobileTaskNavigator
+          areaKey={areaKey}
+          collapsible={collapsible}
+          controlsId={openedPanelId}
+          label={openedPanelLabel}
+          onBack={() => taskNavigator.dismiss()}
+          onDismiss={onDismiss}
+          onToggle={toggleDesktopNavigation}
+        >
+          {openedPanelChildren}
+        </ProductAreaMobileTaskNavigator>
+      );
+    }
+
+    return (
+      <Box sx={{ height: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
+        <DesktopNavigationHeader
+          compact={compactNavigation}
+          collapsible={collapsible}
+          controlsId={`${areaKey}-desktop-navigation`}
+          onDismiss={onDismiss}
+          onToggle={toggleDesktopNavigation}
+        />
+        <Divider />
+        <Box sx={{ px: 2.5, pt: 2.25, pb: 1, display: compactNavigation ? 'none' : 'block' }}>
+          <Typography component="p" variant="overline" sx={{ color: 'var(--dwp-product-accent)' }}>
+            {presentationLabel ?? t(`shell.${areaKey}.context`)}
+          </Typography>
+          <Typography variant="body2" fontWeight="fontWeightBold" noWrap>
+            {tenantName}
+          </Typography>
+        </Box>
+        <Box
+          component="nav"
+          aria-label={t(`shell.${areaKey}.navigationLabel`)}
+          sx={{ flex: 1, minHeight: 0, overflowY: 'auto', overscrollBehavior: 'contain' }}
+        >
+          {visibleNavigation.map((group) => (
+            <Box key={group.id} sx={{ pb: 1.25 }}>
+              {!compactNavigation && (
+                <Typography
+                  component="p"
+                  variant="overline"
+                  color="text.secondary"
+                  sx={{ px: 2.5, py: 0.75 }}
+                >
+                  {t(`navigation.groups.${areaKey}.${group.id}`)}
+                </Typography>
+              )}
+              <List
+                disablePadding
+                sx={{ display: 'grid', gap: 0.35, px: compactNavigation ? 1 : 1.25 }}
               >
-                {t(`navigation.groups.${areaKey}.${group.id}`)}
-              </Typography>
-            )}
-            <List
-              disablePadding
-              sx={{ display: 'grid', gap: 0.35, px: compactNavigation ? 1 : 1.25 }}
-            >
-              {group.items.map((item) => {
-                const Icon = item.icon;
-                const selected = shellNavigationProjection?.resolveSelectedView
-                  ? projectedSelectedView === item.view
-                  : selectedNavigationItem === item;
-                const label = t(`navigation.items.${areaKey}.${item.view}.label`);
-                const exactNavigationTarget = surface?.compatibilityNavigationTargets?.get(
-                  item.path
-                );
-                const itemChildren = !compactNavigation
-                  ? renderNavigationItemChildren?.({
-                      item,
-                      selected,
-                      compact: compactNavigation,
-                      onNavigate,
-                      onNavigateToTarget: onDismiss ? navigateMobileNavigationToTarget : undefined,
-                    })
-                  : null;
-                const disclosureChildren =
-                  Boolean(itemChildren) && navigationChildrenPresentation === 'disclosure';
-                const inlineChildren =
-                  Boolean(itemChildren) && navigationChildrenPresentation === 'inline';
-                const expanded =
-                  Boolean(itemChildren) &&
-                  (!disclosureChildren || collapsedNavigationPath !== item.path);
-                const childrenId = `${navigationDisclosureId}-${onDismiss ? 'mobile' : 'desktop'}-${item.view}`;
-                const DisclosureIcon = expanded ? ChevronDown : ChevronRight;
-                return (
-                  <Box component="li" key={item.path} sx={{ display: 'block' }}>
-                    <Tooltip title={compactNavigation ? label : ''} placement="right">
-                      <ListItemButton
-                        data-testid={`${areaKey}-navigation-item-${item.view}`}
-                        component={
-                          disclosureChildren
-                            ? 'button'
-                            : shellNavigationProjection?.resolveSelectedView
-                              ? Link
-                              : NavLink
-                        }
-                        type={disclosureChildren ? 'button' : undefined}
-                        to={
-                          disclosureChildren
-                            ? undefined
-                            : exactNavigationTarget
-                              ? resolveProductCompatibilityNavigationLocation(
-                                  item.path,
-                                  exactNavigationTarget,
-                                  location
-                                )
-                              : {
-                                  pathname: item.path,
-                                  search: surface ? location.search : '',
-                                  hash: surface ? location.hash : '',
-                                }
-                        }
-                        selected={selected}
-                        aria-label={compactNavigation ? label : undefined}
-                        aria-current={resolveProductAreaParentAriaCurrent({
-                          selected,
-                          pathname,
+                {group.items.map((item) => {
+                  const Icon = item.icon;
+                  const selected = shellNavigationProjection?.resolveSelectedView
+                    ? projectedSelectedView === item.view
+                    : selectedNavigationItem === item;
+                  const label = t(`navigation.items.${areaKey}.${item.view}.label`);
+                  const exactNavigationTarget = surface?.compatibilityNavigationTargets?.get(
+                    item.path
+                  );
+                  const itemChildren =
+                    !compactNavigation && navigationChildrenPresentation !== 'panel'
+                      ? renderNavigationItemChildren?.({
                           item,
-                          hasInlineChildren: inlineChildren,
-                        })}
-                        aria-expanded={disclosureChildren ? expanded : undefined}
-                        aria-controls={disclosureChildren ? childrenId : undefined}
-                        onClick={
-                          disclosureChildren
-                            ? () => setCollapsedNavigationPath(expanded ? item.path : null)
-                            : onNavigate
-                        }
-                        sx={{
-                          width: 1,
-                          minHeight: 42,
-                          justifyContent: compactNavigation ? 'center' : 'flex-start',
-                          px: compactNavigation ? 1 : 1.25,
-                          borderRadius: (theme) => Number(theme.shape.borderRadius) * 1 + 'px',
-                          position: 'relative',
-                          color: selected ? 'var(--dwp-product-accent)' : 'text.secondary',
-                          '&.Mui-selected': { bgcolor: 'var(--dwp-product-selection)' },
-                          '&.Mui-selected:hover': { bgcolor: 'var(--dwp-product-selection)' },
-                          '&.Mui-selected::before': {
-                            content: '""',
-                            position: 'absolute',
-                            inset: '8px auto 8px 0',
-                            width: 3,
-                            borderRadius: (theme) =>
-                              `0 ${Number(theme.shape.borderRadius) * 0.5}px ${Number(theme.shape.borderRadius) * 0.5}px 0`,
-                            bgcolor: 'var(--dwp-product-accent)',
-                          },
-                          '@media (forced-colors: active)': {
-                            '&.Mui-selected': {
-                              outline: '2px solid Highlight',
-                              outlineOffset: -2,
-                            },
-                          },
-                        }}
-                      >
-                        <ListItemIcon
+                          selected,
+                          compact: compactNavigation,
+                          onNavigate,
+                          onNavigateToTarget: onDismiss
+                            ? navigateMobileNavigationToTarget
+                            : undefined,
+                          resolveNavigationLocation: resolveChildNavigationLocation,
+                        })
+                      : null;
+                  const panelCandidate =
+                    navigationChildrenPresentation === 'panel'
+                      ? renderNavigationItemChildren?.({
+                          item,
+                          selected: true,
+                          compact: false,
+                          resolveNavigationLocation: resolveChildNavigationLocation,
+                        })
+                      : null;
+                  const panelChildren = Boolean(panelCandidate);
+                  const panelOpen = panelChildren && taskNavigator.path === item.path;
+                  const disclosureChildren =
+                    Boolean(itemChildren) && navigationChildrenPresentation === 'disclosure';
+                  const inlineChildren =
+                    Boolean(itemChildren) && navigationChildrenPresentation === 'inline';
+                  const expanded =
+                    Boolean(itemChildren) &&
+                    (!disclosureChildren || collapsedNavigationPath !== item.path);
+                  const childrenId = `${navigationDisclosureId}-${onDismiss ? 'mobile' : 'desktop'}-${item.view}`;
+                  const DisclosureIcon = expanded ? ChevronDown : ChevronRight;
+                  return (
+                    <Box component="li" key={item.path} sx={{ display: 'block' }}>
+                      <Tooltip title={compactNavigation ? label : ''} placement="right">
+                        <ListItemButton
+                          data-testid={`${areaKey}-navigation-item-${item.view}`}
+                          component={
+                            disclosureChildren || panelChildren
+                              ? 'button'
+                              : shellNavigationProjection?.resolveSelectedView
+                                ? Link
+                                : NavLink
+                          }
+                          type={disclosureChildren || panelChildren ? 'button' : undefined}
+                          to={
+                            disclosureChildren || panelChildren
+                              ? undefined
+                              : exactNavigationTarget
+                                ? resolveProductCompatibilityNavigationLocation(
+                                    item.path,
+                                    exactNavigationTarget,
+                                    location
+                                  )
+                                : {
+                                    pathname: item.path,
+                                    search: surface ? location.search : '',
+                                    hash: surface ? location.hash : '',
+                                  }
+                          }
+                          selected={selected}
+                          aria-label={compactNavigation ? label : undefined}
+                          aria-current={
+                            panelChildren
+                              ? selected && !panelOpen
+                                ? 'page'
+                                : undefined
+                              : resolveProductAreaParentAriaCurrent({
+                                  selected,
+                                  pathname,
+                                  item,
+                                  hasInlineChildren: inlineChildren,
+                                })
+                          }
+                          aria-expanded={
+                            disclosureChildren ? expanded : panelChildren ? panelOpen : undefined
+                          }
+                          aria-controls={
+                            disclosureChildren || panelChildren ? childrenId : undefined
+                          }
+                          data-navigation-panel-trigger={panelChildren ? 'true' : undefined}
+                          data-navigation-panel-open={panelOpen ? 'true' : undefined}
+                          onClick={
+                            disclosureChildren
+                              ? () => setCollapsedNavigationPath(expanded ? item.path : null)
+                              : panelChildren
+                                ? (event: MouseEvent<HTMLButtonElement>) => {
+                                    taskNavigator.toggle(
+                                      item.path,
+                                      event.currentTarget as HTMLButtonElement
+                                    );
+                                  }
+                                : onNavigate
+                          }
                           sx={{
-                            minWidth: compactNavigation ? 0 : 34,
-                            justifyContent: 'center',
-                            color: 'inherit',
+                            width: 1,
+                            minHeight: 42,
+                            justifyContent: compactNavigation ? 'center' : 'flex-start',
+                            px: compactNavigation ? 1 : 1.25,
+                            borderRadius: (theme) => Number(theme.shape.borderRadius) * 1 + 'px',
+                            position: 'relative',
+                            color: selected ? 'var(--dwp-product-accent)' : 'text.secondary',
+                            '&[data-navigation-panel-open="true"]': {
+                              color: 'var(--dwp-product-accent)',
+                              bgcolor: 'action.hover',
+                            },
+                            '&.Mui-selected': { bgcolor: 'var(--dwp-product-selection)' },
+                            '&.Mui-selected:hover': { bgcolor: 'var(--dwp-product-selection)' },
+                            '&.Mui-selected::before': {
+                              content: '""',
+                              position: 'absolute',
+                              inset: '8px auto 8px 0',
+                              width: 3,
+                              borderRadius: (theme) =>
+                                `0 ${Number(theme.shape.borderRadius) * 0.5}px ${Number(theme.shape.borderRadius) * 0.5}px 0`,
+                              bgcolor: 'var(--dwp-product-accent)',
+                            },
+                            '@media (forced-colors: active)': {
+                              '&.Mui-selected': {
+                                outline: '2px solid Highlight',
+                                outlineOffset: -2,
+                              },
+                              '&[data-navigation-panel-open="true"]': {
+                                outline: '2px solid Highlight',
+                                outlineOffset: -2,
+                              },
+                            },
                           }}
                         >
-                          <Icon size={18} strokeWidth={1.8} aria-hidden="true" />
-                        </ListItemIcon>
-                        {!compactNavigation && (
-                          <ListItemText
-                            primary={label}
-                            primaryTypographyProps={{
-                              variant: 'body2',
-                              fontWeight: selected ? 'fontWeightBold' : 'subtitle1.fontWeight',
+                          <ListItemIcon
+                            sx={{
+                              minWidth: compactNavigation ? 0 : 34,
+                              justifyContent: 'center',
+                              color: 'inherit',
                             }}
-                          />
-                        )}
-                        {disclosureChildren && (
-                          <DisclosureIcon size={16} strokeWidth={1.8} aria-hidden="true" />
-                        )}
-                      </ListItemButton>
-                    </Tooltip>
-                    {itemChildren && (
-                      <Box id={childrenId} hidden={!expanded}>
-                        {expanded ? itemChildren : null}
-                      </Box>
-                    )}
-                  </Box>
-                );
-              })}
-            </List>
-          </Box>
-        ))}
-      </Box>
-      <Box sx={{ p: compactNavigation ? 1 : 1.5, borderTop: 1, borderColor: 'divider' }}>
-        <Tooltip title={compactNavigation ? returnTarget.label : ''} placement="right">
-          <ActionButton
-            data-testid={`${areaKey}-surface-return`}
-            component={NavLink}
-            to={returnTarget.path}
-            fullWidth
-            intent="quiet"
-            aria-label={compactNavigation ? returnTarget.label : undefined}
-            startIcon={
-              supportSession ? (
-                <LifeBuoy size={17} strokeWidth={1.8} />
-              ) : surface || legacyPresentation ? (
-                <ArrowLeft size={17} strokeWidth={1.8} />
-              ) : (
-                <Home size={17} strokeWidth={1.8} />
-              )
-            }
-            onClick={() => {
-              if (surface && returnSurface) {
-                telemetry.captureReturn(
-                  surface.decision.context.productKey,
-                  surface.decision.context.surfaceKey,
-                  returnSurface.surfaceId
-                );
-              } else if (legacyPresentation && legacyReturnSurface) {
-                telemetry.captureReturn(
-                  legacyManifest!.id,
-                  legacyPresentation.currentSurface.id,
-                  legacyReturnSurface.surfaceId
-                );
-              }
-              onNavigate?.();
-            }}
-            sx={{
-              justifyContent: compactNavigation ? 'center' : 'flex-start',
-              minWidth: 0,
-              px: compactNavigation ? 1 : undefined,
-              '& .MuiButton-startIcon': { m: compactNavigation ? 0 : undefined },
-            }}
+                          >
+                            <Icon size={18} strokeWidth={1.8} aria-hidden="true" />
+                          </ListItemIcon>
+                          {!compactNavigation && (
+                            <ListItemText
+                              primary={label}
+                              primaryTypographyProps={{
+                                variant: 'body2',
+                                fontWeight: selected ? 'fontWeightBold' : 'subtitle1.fontWeight',
+                              }}
+                            />
+                          )}
+                          {disclosureChildren && (
+                            <DisclosureIcon size={16} strokeWidth={1.8} aria-hidden="true" />
+                          )}
+                          {panelChildren && !compactNavigation && (
+                            <ChevronRight size={16} strokeWidth={1.8} aria-hidden="true" />
+                          )}
+                        </ListItemButton>
+                      </Tooltip>
+                      {itemChildren && (
+                        <Box id={childrenId} hidden={!expanded}>
+                          {expanded ? itemChildren : null}
+                        </Box>
+                      )}
+                    </Box>
+                  );
+                })}
+              </List>
+            </Box>
+          ))}
+        </Box>
+        {!onDismiss &&
+        !compactSpecializedMobileShell &&
+        openedPanelChildren &&
+        openedPanelLabel &&
+        openedPanelId ? (
+          <ProductAreaDesktopTaskNavigator
+            areaKey={areaKey}
+            controlsId={openedPanelId}
+            label={openedPanelLabel}
+            left={sidebarWidth}
+            onDismiss={(restoreFocus) => taskNavigator.dismiss(restoreFocus)}
           >
-            {!compactNavigation && returnTarget.label}
-          </ActionButton>
-        </Tooltip>
+            {openedPanelChildren}
+          </ProductAreaDesktopTaskNavigator>
+        ) : null}
+        <ProductAreaNavigationReturnAction
+          compact={compactNavigation}
+          label={returnTarget.label}
+          testId={`${areaKey}-surface-return`}
+          to={returnTarget.path}
+          startIcon={
+            supportSession ? (
+              <LifeBuoy size={17} strokeWidth={1.8} />
+            ) : surface || legacyPresentation ? (
+              <ArrowLeft size={17} strokeWidth={1.8} />
+            ) : (
+              <Home size={17} strokeWidth={1.8} />
+            )
+          }
+          onActivate={() => {
+            if (surface && returnSurface) {
+              telemetry.captureReturn(
+                surface.decision.context.productKey,
+                surface.decision.context.surfaceKey,
+                returnSurface.surfaceId
+              );
+            } else if (legacyPresentation && legacyReturnSurface) {
+              telemetry.captureReturn(
+                legacyManifest!.id,
+                legacyPresentation.currentSurface.id,
+                legacyReturnSurface.surfaceId
+              );
+            }
+            onNavigate?.();
+          }}
+        />
       </Box>
-    </Box>
-  );
+    );
+  };
 
   return (
     <Box
@@ -897,62 +919,18 @@ export function ProductAreaLayout({
             ) : undefined
           }
           mobileContextRail={
-            showMobileSurfaceContextRail ? (
-              <Box
-                sx={{
-                  width: 1,
-                  minWidth: 0,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 0.25,
-                }}
-              >
-                {presentationEntries && currentSurfaceId ? (
-                  <Box
-                    data-testid={`${areaKey}-mobile-surface-switcher`}
-                    sx={{ flex: '0 0 auto', minWidth: 0 }}
-                  >
-                    <ProductSurfaceHeaderControls
-                      variant="compact"
-                      currentSurfaceId={currentSurfaceId}
-                      entries={presentationEntries}
-                      label={tCommon('productSurface.labels.surfaceNavigation')}
-                      productLabel={productLabel}
-                      resolveLabel={(labelKey) => t(labelKey)}
-                    />
-                  </Box>
-                ) : undefined}
-                {presentationPlane === 'management' ? (
-                  surface ? (
-                    <ProductSurfaceContextBarSlot
-                      runtime={surface}
-                      variant="mobile-rail"
-                      tenantLabel={tenantName}
-                    />
-                  ) : (
-                    <Box
-                      component="span"
-                      data-testid="product-surface-compatibility-tenant"
-                      title={tenantName}
-                      sx={{
-                        flex: '1 1 auto',
-                        minWidth: 40,
-                        ml: 0.5,
-                        pl: 1,
-                        overflow: 'hidden',
-                        borderLeft: 1,
-                        borderColor: 'divider',
-                        color: 'text.secondary',
-                        typography: 'caption',
-                        whiteSpace: 'nowrap',
-                        textOverflow: 'ellipsis',
-                      }}
-                    >
-                      {tenantName}
-                    </Box>
-                  )
-                ) : undefined}
-              </Box>
+            showMobileSurfaceContextRail && presentationEntries && currentSurfaceId ? (
+              <ProductAreaMobileContextRail
+                areaKey={areaKey}
+                currentSurfaceId={currentSurfaceId}
+                entries={presentationEntries}
+                label={tCommon('productSurface.labels.surfaceNavigation')}
+                presentationPlane={presentationPlane}
+                productLabel={productLabel}
+                resolveLabel={(labelKey) => t(labelKey)}
+                surface={surface}
+                tenantName={tenantName}
+              />
             ) : undefined
           }
           contextControls={surface ? <ProductSurfaceContextBarSlot runtime={surface} /> : undefined}

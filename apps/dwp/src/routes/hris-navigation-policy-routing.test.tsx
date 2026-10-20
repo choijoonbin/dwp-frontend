@@ -16,10 +16,10 @@ import type { HrisWorkbenchId } from '../features/hris/shell/navigation-policy';
 import type { RouteObject } from 'react-router-dom';
 
 describe('HRIS aggregate landing route wiring', () => {
-  it('uses one inline task-navigation presentation in legacy and configured shells', () => {
+  it('uses one adjacent task-navigation panel in legacy and configured shells', () => {
     expect(HCM_LEGACY_TASK_NAVIGATION_LAYOUT_PROPS).toBe(HRIS_TASK_NAVIGATION_LAYOUT_PROPS);
     expect(HCM_CONFIGURED_TASK_NAVIGATION_LAYOUT_PROPS).toBe(HRIS_TASK_NAVIGATION_LAYOUT_PROPS);
-    expect(HRIS_TASK_NAVIGATION_LAYOUT_PROPS.navigationChildrenPresentation).toBe('inline');
+    expect(HRIS_TASK_NAVIGATION_LAYOUT_PROPS.navigationChildrenPresentation).toBe('panel');
   });
 
   it('distinguishes an unavailable compatibility projection from an explicit empty projection', () => {

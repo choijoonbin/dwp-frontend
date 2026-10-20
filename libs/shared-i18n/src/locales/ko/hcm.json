@@ -349,6 +349,24 @@
   "navigation": {
     "policyStatus": "HRIS 메뉴 접근 상태",
     "policyLoading": "적용된 HRIS 업무 메뉴 정책을 확인하는 중입니다",
+    "taskPanel": {
+      "eyebrow": "업무 메뉴",
+      "description": "현재 권한으로 열 수 있는 업무만 표시합니다.",
+      "allowedCount": "허용 업무 {{count}}개",
+      "filteredCount": "{{count}}개 업무 표시",
+      "groupCount": "{{count}}개 업무",
+      "searchLabel": "{{workbench}} 업무 검색",
+      "searchPlaceholder": "업무 또는 메뉴 이름 검색",
+      "emptyTitle": "검색 결과가 없습니다",
+      "emptyDescription": "다른 업무 이름이나 그룹을 검색해 보세요.",
+      "clearSearch": "검색 지우기",
+      "noAccessTitle": "현재 열 수 있는 업무가 없습니다",
+      "noAccessDescription": "이 영역의 업무가 필요하면 회사의 HRIS 관리자에게 역할 또는 메뉴 정책을 확인해 주세요.",
+      "unavailableTitle": "업무 메뉴를 확인할 수 없습니다",
+      "unavailableDescription": "권한 정보를 안전하게 확인하지 못했습니다. 잠시 후 다시 시도해 주세요.",
+      "explorerLabel": "전체 HR 업무 찾기",
+      "explorerDescription": "즐겨찾기, 최근 업무와 진행 중 업무를 함께 확인합니다."
+    },
     "groups": {
       "hcm": {
         "shell-home": "시작",

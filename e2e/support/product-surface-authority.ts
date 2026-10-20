@@ -5,11 +5,7 @@ import { PRODUCT_SURFACE_HIGH_RISK_COMMAND_CATALOG } from '../../apps/dwp/src/co
 
 type SurfaceId = 'approvals.work' | 'approvals.admin';
 type HcmSurfaceId =
-  | 'hcm.personal'
-  | 'hcm.team'
-  | 'hcm.utility'
-  | 'hcm.operations'
-  | 'hcm.management';
+  'hcm.personal' | 'hcm.team' | 'hcm.utility' | 'hcm.operations' | 'hcm.management';
 
 export type ApprovalAuthorityOptions = {
   work?: boolean;
@@ -30,6 +26,8 @@ export type ApprovalAuthorityOptions = {
 export type HcmAuthorityOptions = {
   deniedRouteKeys?: readonly string[];
   surfaceIds?: readonly HcmSurfaceId[];
+  generatedAt?: string;
+  revalidateAt?: string;
 };
 
 const GENERATED_AT = '2026-08-24T00:00:00Z';
@@ -489,7 +487,8 @@ function hcmContext(
   plane: 'work' | 'management',
   scope: { key: string; kind: 'SELF' | 'TEAM' | 'TARGET_POPULATION' | 'RESOURCE_SET' },
   policies: readonly string[],
-  capabilities: readonly string[]
+  capabilities: readonly string[],
+  revalidateAt: string
 ) {
   return {
     contextKey: `ctx:${surfaceKey}`,
@@ -512,7 +511,7 @@ function hcmContext(
         validUntil: null,
       },
     ],
-    revalidateAt: REVALIDATE_AT,
+    revalidateAt,
   } as const;
 }
 
@@ -525,26 +524,18 @@ const HCM_ACTION_CAPABILITY = {
     'hcm.operations.assignment-proposal.submit',
   'route.hcm.operations.assignment-proposal-cancel.action':
     'hcm.operations.assignment-proposal.cancel',
-  'route.hcm.operations.assignment-event-create.action':
-    'hcm.operations.assignment.manage',
-  'route.hcm.operations.assignment-event-validate.action':
-    'hcm.operations.assignment.manage',
-  'route.hcm.operations.assignment-event-submit.action':
-    'hcm.operations.assignment.manage',
-  'route.hcm.operations.assignment-event-publish.action':
-    'hcm.operations.people-change.approve',
-  'route.hcm.operations.time-interpretation-run.action':
-    'hcm.operations.time.update',
+  'route.hcm.operations.assignment-event-create.action': 'hcm.operations.assignment.manage',
+  'route.hcm.operations.assignment-event-validate.action': 'hcm.operations.assignment.manage',
+  'route.hcm.operations.assignment-event-submit.action': 'hcm.operations.assignment.manage',
+  'route.hcm.operations.assignment-event-publish.action': 'hcm.operations.people-change.approve',
+  'route.hcm.operations.time-interpretation-run.action': 'hcm.operations.time.update',
   'route.hcm.configuration.payroll-element-version-create.action':
     'hcm.operations.payroll-inputs.update',
   'route.hcm.configuration.payroll-formula-version-create.action':
     'hcm.operations.payroll-inputs.update',
-  'route.hcm.configuration.payroll-formula-validate.action':
-    'hcm.operations.payroll-inputs.update',
-  'route.hcm.configuration.payroll-formula-simulate.action':
-    'hcm.operations.payroll-inputs.update',
-  'route.hcm.configuration.payroll-formula-publish.action':
-    'hcm.configuration.policy.publish',
+  'route.hcm.configuration.payroll-formula-validate.action': 'hcm.operations.payroll-inputs.update',
+  'route.hcm.configuration.payroll-formula-simulate.action': 'hcm.operations.payroll-inputs.update',
+  'route.hcm.configuration.payroll-formula-publish.action': 'hcm.configuration.policy.publish',
 } as const;
 
 /** Server-authoritative HCM fixture used by the four-surface browser acceptance suite. */
@@ -553,6 +544,8 @@ export async function mockHcmProductSurfaceAuthority(
   options: HcmAuthorityOptions = {}
 ) {
   const deniedRouteKeys = new Set(options.deniedRouteKeys ?? []);
+  const generatedAt = options.generatedAt ?? GENERATED_AT;
+  const revalidateAt = options.revalidateAt ?? REVALIDATE_AT;
   const contexts = [
     hcmContext(
       'hcm.personal',
@@ -564,21 +557,24 @@ export async function mockHcmProductSurfaceAuthority(
         'hcm.personal-services-access.v1',
         'hcm.directory-access.v1',
       ],
-      ['hcm.personal.profile.view']
+      ['hcm.personal.profile.view'],
+      revalidateAt
     ),
     hcmContext(
       'hcm.team',
       'work',
       { key: 'scope:hcm:team', kind: 'TEAM' },
       ['hcm.team-access.v1'],
-      ['hcm.team.time.read', 'hcm.team.absence.read']
+      ['hcm.team.time.read', 'hcm.team.absence.read'],
+      revalidateAt
     ),
     hcmContext(
       'hcm.utility',
       'work',
       { key: 'scope:hcm:utility', kind: 'SELF' },
       [],
-      ['hcm.app.shell.view']
+      ['hcm.app.shell.view'],
+      revalidateAt
     ),
     hcmContext(
       'hcm.operations',
@@ -599,6 +595,7 @@ export async function mockHcmProductSurfaceAuthority(
         'hcm.operations.absence.read',
         'hcm.operations.benefits.read',
         'hcm.operations.pay.read',
+        'hcm.operations.payroll-support.view',
         'hcm.operations.talent.read',
         'hcm.operations.performance.view',
         'hcm.compensation.plan.view',
@@ -606,7 +603,8 @@ export async function mockHcmProductSurfaceAuthority(
         'hcm.operations.assignment-proposal.validate',
         'hcm.operations.assignment-proposal.submit',
         'hcm.operations.assignment-proposal.cancel',
-      ]
+      ],
+      revalidateAt
     ),
     hcmContext(
       'hcm.management',
@@ -621,22 +619,26 @@ export async function mockHcmProductSurfaceAuthority(
         'hcm.reference.read',
         'hcm.integration.read',
         'hcm.controlled-export.read',
-      ]
+      ],
+      revalidateAt
     ),
   ].filter((context) => !options.surfaceIds || options.surfaceIds.includes(context.surfaceKey));
   const contextBySurface = new Map(contexts.map((context) => [context.surfaceKey, context]));
 
   await page.route('**/api/auth/product-surface-contexts', (route) =>
     success(route, {
-      contractVersion: 'product-surfaces/v3',
+      contractVersion: '2',
       decisionRevision: 'e2e-hcm-authority-1',
       sourceRevisions: {
         auth: 'auth-hcm-1',
         policy: 'policy-hcm-1',
         productRelationship: 'relationship-hcm-1',
+        targetPopulation: 'target-population-hcm-1',
+        support: null,
+        tenantControl: 'tenant-control-hcm-1',
       },
       activeAccessMode: 'NORMAL',
-      generatedAt: GENERATED_AT,
+      generatedAt,
       contexts,
       rollouts: GOVERNED_PRODUCT_KEYS.map((productKey) =>
         productKey === 'hcm'
@@ -683,9 +685,7 @@ export async function mockHcmProductSurfaceAuthority(
       context.scopes.find((candidate) => candidate.key === body.contextScopeKey) ??
       context.scopes[0];
     const actionCapability =
-      HCM_ACTION_CAPABILITY[
-        routeContractKey as keyof typeof HCM_ACTION_CAPABILITY
-      ];
+      HCM_ACTION_CAPABILITY[routeContractKey as keyof typeof HCM_ACTION_CAPABILITY];
     const evaluatedContext = actionCapability
       ? {
           ...context,
@@ -704,7 +704,7 @@ export async function mockHcmProductSurfaceAuthority(
       scope,
       effectiveReadOnly: false,
       validUntil: null,
-      revalidateAt: REVALIDATE_AT,
+      revalidateAt,
     });
   });
 }

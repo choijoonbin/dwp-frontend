@@ -349,6 +349,24 @@
   "navigation": {
     "policyStatus": "HRIS navigation access status",
     "policyLoading": "Verifying the effective HRIS task navigation policy",
+    "taskPanel": {
+      "eyebrow": "Task navigation",
+      "description": "Only work you can open with your current access is shown.",
+      "allowedCount": "Allowed: {{count}}",
+      "filteredCount": "Showing: {{count}}",
+      "groupCount": "Tasks: {{count}}",
+      "searchLabel": "Search {{workbench}}",
+      "searchPlaceholder": "Search tasks or menu names",
+      "emptyTitle": "No matching tasks",
+      "emptyDescription": "Try another task or group name.",
+      "clearSearch": "Clear search",
+      "noAccessTitle": "No tasks are available to you",
+      "noAccessDescription": "If you need work in this area, ask your company's HRIS administrator to review your role or menu policy.",
+      "unavailableTitle": "Task navigation is unavailable",
+      "unavailableDescription": "We could not verify your access safely. Please try again in a moment.",
+      "explorerLabel": "Find all HR work",
+      "explorerDescription": "Open favorites, recent work, and work in progress."
+    },
     "groups": {
       "hcm": {
         "shell-home": "Start",
