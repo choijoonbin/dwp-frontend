@@ -1,0 +1,143 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-sys006-owner-packet-reservation-review.v1",
+  "reviewId": "HRIS-WAVE7-R7-BATCH-04-SYS006-OWNER-PACKET-V333-RESERVATION-REVIEW-20261020-R1",
+  "recordedAt": "2026-10-20T15:39:00+09:00",
+  "recordedBy": "INDEPENDENT_SYS006_PACKET_LEASE_AND_WORKTREE_REVIEW",
+  "state": "SYS006_OWNER_PACKET_AND_RESERVED_V333_INDEPENDENTLY_REVIEWED_PASS_ZERO_P0_ZERO_P1_ZERO_P2_AUTHORITY_CARRIER_MAY_BE_PUSHED",
+  "sliceId": "BASE-TFR-SYS-006",
+  "moduleSession": "HRIS-SYS",
+  "moduleThreadId": "01a0f53d-d62d-7971-81f7-1822b513ccb4",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_REVIEW_ID_AND_SHA256",
+    "historicalArtifactMutation": false
+  },
+  "reviewedArtifacts": {
+    "ownerPacket": {
+      "path": "owner-packets/base-tfr-sys-006.owner-packet.v1.json",
+      "sha256": "17d5612d745ea418ef873601a29fd78d582838b4621e3a9cfc4e772022ba4b2a",
+      "bytes": 26992,
+      "packetId": "HRIS-WAVE7-R7-BATCH-04-OWNER-BASE-TFR-SYS-006-20261020-R1",
+      "requiredState": "SEALED_EXACT_SYS006_OWNER_AUTHORITY_PACKET_READY_FOR_INDEPENDENT_REVIEW_AND_FRESH_WORKTREES_EXECUTABLE_TOKEN_WITHHELD_PENDING_ACTIVE_V333_LEASE"
+    },
+    "v333Reservation": {
+      "path": "migration-lease-sys006-v333-reservation.v1.json",
+      "sha256": "d86bc138bc8c26412be265f57175574c1000dc228e8b7dd25bfeee4052f22a0b",
+      "bytes": 25225,
+      "reservationId": "HRIS-WAVE7-R7-BATCH-04-MIGRATION-LEASE-RESERVATION-SYS006-20261020-R1",
+      "leaseId": "HRIS-WAVE7-R7-BATCH-04-PLATFORM-MAIN-V333-SYS006-20261020-R1",
+      "requiredState": "RESERVED_NOT_ACTIVE"
+    },
+    "centralIntegrationReceipt": {
+      "path": "../r7-batch-04-central-admission-r1/sys-006-central-integration-receipt.v1.json",
+      "sha256": "5522b16f9af9972aa0e3e3359cc527b8801555de8022e9863544c15d9f50794b",
+      "bytes": 14114,
+      "requiredState": "EXACT_SYS006_CENTRAL_DELTA_COMMITTED_PUSHED_AND_ADMITTED_V56_V265_GATEWAY_TYPED_CONTRACT_SHARED_BRIDGE_UNMOUNTED_CHILD_DEFAULT_OFF_ZERO_ENROLLMENT_OWNER_PACKET_AND_RESERVED_NOT_ACTIVE_V333_MAY_BE_PREPARED"
+    }
+  },
+  "reviewers": [
+    {
+      "id": "SYS006_OWNER_PACKET_AUDITOR",
+      "scope": "semantic, lifecycle, typed-artifact, IAQ, operation, acceptance and authority fidelity",
+      "finalResult": "PASS_ZERO_P0_ZERO_P1_ZERO_P2"
+    },
+    {
+      "id": "SYS006_V333_LEASE_AUDITOR",
+      "scope": "Platform high-water, exact migration manifest, shared receipt physical contract and inactive authority",
+      "finalResult": "PASS_ZERO_P0_ZERO_P1_ZERO_P2"
+    },
+    {
+      "id": "SYS006_WORKTREE_READINESS_AUDITOR",
+      "scope": "repository pins, path and branch collision, carrier sequencing and no accidental executable authority",
+      "finalResult": "PASS_ZERO_P0_ZERO_P1_ZERO_P2"
+    }
+  ],
+  "resolvedReviewHistory": [
+    {
+      "severity": "P1",
+      "finding": "Definition-version lifecycle used non-authoritative SUPERSEDED and REVOKED labels.",
+      "resolution": "Replaced with the exact seven-state semantic contract and exact main, pre-active and reserved/derived rules."
+    },
+    {
+      "severity": "P1",
+      "finding": "Typed PDX identities were described with non-authoritative display names.",
+      "resolution": "Bound PDX-004 AutomationHandlerManifestV1, PDX-005 AutomationInvocationV1 and PDX-006 AutomationRunItemReceiptV1 exactly."
+    },
+    {
+      "severity": "P1",
+      "finding": "The shared-page rule named only the route contract and omitted the independent SYS-006 child/API decision.",
+      "resolution": "Separated the SYS-002 page route key, required hcm.configuration.workbench.view decision and independent feature plus owner-operation decision."
+    },
+    {
+      "severity": "P1",
+      "finding": "The exact V333 manifest did not carry the complete shared command-receipt physical contract.",
+      "resolution": "Added the authoritative receiptDecision value-for-value, including the six-state field matrix, terminal six-field guard, V327 nineteen-column identity seal, storage mapping and transition audit/outbox atomicity."
+    },
+    {
+      "severity": "P2",
+      "finding": "The Gateway component was named dwp-api-gateway and the DATA header rule was over-broad.",
+      "resolution": "Corrected the component to dwp-gateway and limited DATA rejection to command-only Idempotency-Key and If-Match while retaining verified session identity and trusted context reconstruction."
+    },
+    {
+      "severity": "P2",
+      "finding": "One copied reserved/derived lifecycle sentence omitted the word version.",
+      "resolution": "Restored exact value equality with the sealed semantic sentence."
+    }
+  ],
+  "verification": {
+    "jsonSyntax": "PASS",
+    "authorityPathHashByteStateChain": "PASS",
+    "repositoryPinsCleanAndOriginExact": "PASS",
+    "platformMigrationManifest": {
+      "fileCount": 283,
+      "sha256": "113eca8ef7ceae299d1be31e53269b39a77b1e7a553f8e36afa5c3730e7fa384",
+      "bytes": 13709,
+      "highWater": "V332",
+      "v333Present": false
+    },
+    "operationCardinality": {
+      "total": 16,
+      "data": 2,
+      "action": 14,
+      "page": 0,
+      "receiptActionMappings": 14,
+      "result": "PASS"
+    },
+    "migrationCardinality": {
+      "newTables": 8,
+      "reusedStores": 5,
+      "physicalControls": 25,
+      "forbiddenRules": 6,
+      "ninthTable": 0,
+      "result": "PASS"
+    },
+    "acceptanceCriteria": {
+      "count": 15,
+      "semanticValueEquality": true,
+      "result": "PASS"
+    },
+    "defaultOffZeroEnrollmentUnmounted": "PASS",
+    "activeLeaseTokenSourceTestCommitPushMountActivationAuthority": "ABSENT",
+    "plannedWorktreeLocalAndRemoteCollision": "ABSENT",
+    "diffCheck": "PASS"
+  },
+  "findings": {
+    "p0": [],
+    "p1": [],
+    "p2": []
+  },
+  "coCarrierSemantics": "The reservation and owner packet were authored in order but acquire authority only together with this independent review in one exact committed and pushed dwp-frontend dwp-dev authority carrier. No reservation, worktree or source authority exists from an uncommitted artifact in isolation.",
+  "authority": {
+    "authorityCarrierCommitAndPushAuthorized": true,
+    "freshCleanWorktreeMaterializationAfterOriginExactCarrierAuthorized": true,
+    "activeV333LeaseAuthorized": false,
+    "executableStartTokenAuthorized": false,
+    "migrationOrSourceAuthoringAuthorized": false,
+    "testExecutionAuthorized": false,
+    "moduleBranchCommitOrPushAuthorized": false,
+    "routeMenuOrChildMountAuthorized": false,
+    "featureEnablementOrTenantEnrollmentAuthorized": false,
+    "productionProviderScheduleOrReleaseAuthorized": false
+  },
+  "nextGate": "COMMIT_AND_PUSH_THE_EXACT_THREE_DOCUMENT_AUTHORITY_CARRIER_VERIFY_ORIGIN_EXACT_RECHECK_V333_AND_BRANCH_PATH_COLLISIONS_THEN_MATERIALIZE_THE_TWO_FRESH_CLEAN_NO_UPSTREAM_HRIS_SYS_WORKTREES_AND_HASH_BIND_ONE_APPEND_ONLY_MATERIALIZATION_RECEIPT; STOP_BEFORE_ACTIVE_V333_TOKEN_OR_SOURCE"
+}

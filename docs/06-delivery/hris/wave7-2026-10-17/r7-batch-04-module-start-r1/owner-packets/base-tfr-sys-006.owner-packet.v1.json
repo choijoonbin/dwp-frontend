@@ -1,0 +1,456 @@
+{
+  "schema": "dwp.hris.wave7.r7-owner-packet.v1",
+  "packetId": "HRIS-WAVE7-R7-BATCH-04-OWNER-BASE-TFR-SYS-006-20261020-R1",
+  "revision": 1,
+  "issuedAt": "2026-10-20T15:31:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_PACKET_ID_AND_SHA256",
+    "historicalArtifactMutation": false
+  },
+  "state": "SEALED_EXACT_SYS006_OWNER_AUTHORITY_PACKET_READY_FOR_INDEPENDENT_REVIEW_AND_FRESH_WORKTREES_EXECUTABLE_TOKEN_WITHHELD_PENDING_ACTIVE_V333_LEASE",
+  "module": "SYS",
+  "moduleSession": "HRIS-SYS",
+  "moduleThreadId": "01a0f53d-d62d-7971-81f7-1822b513ccb4",
+  "sliceId": "BASE-TFR-SYS-006",
+  "sourceRef": "TFR-SYS-006",
+  "semanticLineage": "TFR-SYS-006::DWP.AUTOMATION.CONTROL_PLANE::SYS-API-017|SYS-API-018|SYS-API-019|SYS-API-020|SYS-API-046|SYS-API-047|SYS-API-048|SYS-API-049|SYS-API-050|SYS-API-051|SYS-API-052|SYS-API-053|SYS-API-054|SYS-API-055|SYS-API-056|SYS-EVT-004",
+  "immutableAuthorityBasis": {
+    "batch04Preflight": {
+      "path": "../../r7-batch-04-preflight-r1/semantic-dependency-migration-preflight.v1.json",
+      "sha256": "3fe2cb0cab1aa65fbe75f1b0d8d4a74f136be457aa2c324d262eb7503789cc1c",
+      "bytes": 17214,
+      "requiredState": "PREFLIGHT_COMPLETE_FIXED_ORDER_FIVE_CONDITIONAL_LANES_NO_PACKETS_NO_TOKENS_NO_LEASES_NO_SOURCE"
+    },
+    "semanticDisposition": {
+      "path": "../semantic-dispositions/base-tfr-sys-006.semantic-disposition.v1.json",
+      "sha256": "e5f8ecc7db70737ae5cfb6d3ccc8879b30f0395febc35db3de4455baf1a1825f",
+      "bytes": 192503,
+      "requiredState": "SYS006_AUTOMATION_CONTROL_PLANE_BOUNDARY_SEALED_V333_REQUIRED_CENTRAL_SUCCESSOR_BEFORE_SOURCE",
+      "use": "FULL_IMPLEMENTABLE_SCOPE_AND_FIFTEEN_ACCEPTANCE_CRITERIA"
+    },
+    "semanticReview": {
+      "path": "../semantic-dispositions/base-tfr-sys-006.semantic-review.v1.json",
+      "sha256": "bc261e69873c84427c8d70b39f2e9466044c4e0d743bf2c83ac7cb9c1c8b028c",
+      "bytes": 3448,
+      "requiredState": "SYS006_SEMANTIC_DISPOSITION_INDEPENDENTLY_REVIEWED_PASS_ZERO_P0_ZERO_P1_ZERO_P2_CENTRAL_SUCCESSOR_MAY_PROCEED"
+    },
+    "centralSuccessor": {
+      "path": "../sys-006-iaq-transport-event-and-central-authorization-successor.v1.json",
+      "sha256": "e4001e41b76c9bb440dc6ca4d46e541e72f588d4d10eb35bc3b1b30fdbe46a55",
+      "bytes": 34099,
+      "requiredState": "SEALED_EXACT_SYS006_IAQ059_TRANSPORT_SYSEVT004_V56_V265_V333_GATEWAY_SHARED_BRIDGE_CHILD_SURFACE_AUTHORITY_DEFAULT_OFF_ZERO_ENROLLMENT"
+    },
+    "centralSuccessorReview": {
+      "path": "../sys-006-iaq-transport-event-and-central-authorization-review.v1.json",
+      "sha256": "4f778ee46dd56db529447502ced4e6dd0e04303085e26432255a8f461a1e15a7",
+      "bytes": 6088,
+      "requiredState": "SYS006_IAQ_TRANSPORT_EVENT_AND_CENTRAL_AUTHORIZATION_INDEPENDENTLY_REVIEWED_PASS_ZERO_P0_ZERO_P1_ZERO_P2_BOUNDED_CENTRAL_IMPLEMENTATION_MAY_PROCEED"
+    },
+    "centralIntegrationReceipt": {
+      "path": "../../r7-batch-04-central-admission-r1/sys-006-central-integration-receipt.v1.json",
+      "sha256": "5522b16f9af9972aa0e3e3359cc527b8801555de8022e9863544c15d9f50794b",
+      "bytes": 14114,
+      "requiredState": "EXACT_SYS006_CENTRAL_DELTA_COMMITTED_PUSHED_AND_ADMITTED_V56_V265_GATEWAY_TYPED_CONTRACT_SHARED_BRIDGE_UNMOUNTED_CHILD_DEFAULT_OFF_ZERO_ENROLLMENT_OWNER_PACKET_AND_RESERVED_NOT_ACTIVE_V333_MAY_BE_PREPARED"
+    },
+    "migrationLeaseReservation": {
+      "path": "../migration-lease-sys006-v333-reservation.v1.json",
+      "sha256": "d86bc138bc8c26412be265f57175574c1000dc228e8b7dd25bfeee4052f22a0b",
+      "bytes": 25225,
+      "reservationId": "HRIS-WAVE7-R7-BATCH-04-MIGRATION-LEASE-RESERVATION-SYS006-20261020-R1",
+      "leaseId": "HRIS-WAVE7-R7-BATCH-04-PLATFORM-MAIN-V333-SYS006-20261020-R1",
+      "requiredState": "RESERVED_NOT_ACTIVE"
+    }
+  },
+  "basePins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "1e936437d9318c5b80a0e1e411ad1a87ab28ee7a",
+      "tree": "a6c695f6518e843b3cb4a195f7bf7fc1c6afb8ab",
+      "requiredRemote": "origin/dwp-dev",
+      "requiredRemoteExact": true,
+      "requiredWorktreeClean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "5f3e2675cb507549f539df3e6db27b218e907171",
+      "tree": "8259f5a5bb467c1c5bd354e8d3552943df401d09",
+      "requiredRemote": "origin/dwp-dev",
+      "requiredCommitReachable": true,
+      "requiredRemoteExactBeforeAuthorityCarrier": true,
+      "authorityCarrierAdvanceAllowed": true
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "requiredRemote": "origin/dwp-dev",
+      "requiredRemoteExact": true,
+      "readOnly": true
+    }
+  },
+  "exactCentralBaseline": {
+    "productAuthorization": {
+      "bundle": "v56",
+      "state": "DRAFT",
+      "declaredChecksum": "4c1e82c4ac70f7bbc4aba7a41d77b8fd238da0478501cbdfed97ebd4b5dd0930",
+      "operationDelta": {
+        "total": 16,
+        "page": 0,
+        "data": 2,
+        "action": 14
+      }
+    },
+    "auth": {
+      "migration": "V265",
+      "feature": "HRIS_AUTOMATION_CONTROL_PLANE",
+      "defaultEnabled": false,
+      "tenantEnrollmentCount": 0,
+      "broadGrantCount": 0
+    },
+    "gateway": {
+      "operationCount": 16,
+      "trustedContextReconstructed": true,
+      "callerAuthorityHeadersTrusted": false,
+      "actionIdempotencyKeyRequired": true,
+      "existingAggregateStrongIfMatchRequired": true
+    },
+    "platformTypedArtifact": {
+      "packageRoot": "com.dwp.services.platform.hrisconfiguration.automation",
+      "closedSchemaCount": 6,
+      "canonicalSchemaDigest": "414aa96f4f9a0bfffe6a506c208e62c94834d96f656e0551f64c67255335c0df",
+      "receiptActionMappingCount": 14,
+      "sharedReceiptMappingTotal": 31
+    },
+    "frontend": {
+      "root": "apps/dwp/src/features/hris/administration/automation-control-plane",
+      "sharedRoute": "/hr/settings/operations",
+      "stateCount": 8,
+      "viewportWidths": [
+        1440,
+        1280,
+        390,
+        320
+      ],
+      "zoomPercent": 200,
+      "mounted": false,
+      "secondSidebarNode": false,
+      "secondPageOwner": false
+    }
+  },
+  "businessAndExperienceBoundary": {
+    "businessMeaning": "A tenant-scoped HRIS configuration operator governs signed typed automation definitions, versions and schedules and observes immutable run evidence without permitting arbitrary code, method or SQL execution.",
+    "primaryUsers": [
+      "HRIS_CONFIG_AUTHOR with hcm.configuration.policy.update for definition, version and schedule authoring",
+      "HRIS_CONFIG_PUBLISHER with hcm.configuration.policy.publish plus maker-checker and target-bound step-up for approvals",
+      "HRIS_INTEGRATION_EXECUTOR with hcm.integration.execute for queue, read, retry, activate, suspend and cancel operations"
+    ],
+    "sharedPageComposition": {
+      "route": "/hr/settings/operations",
+      "parentOwner": "SYS-002",
+      "childOwner": "SYS-006",
+      "requiredBasePageRouteContractKey": "route.hcm.configuration.settings-operations.page",
+      "requiredBasePageDecision": "SYS-002 page decision with hcm.configuration.workbench.view",
+      "requiredIndependentChildApiDecision": "HRIS_AUTOMATION_CONTROL_PLANE feature plus the exact SYS-006 owner API operation decision",
+      "requiredFeature": "HRIS_AUTOMATION_CONTROL_PLANE",
+      "secondPageOrSidebar": false,
+      "mountedNow": false
+    },
+    "requiredStates": [
+      "loading",
+      "empty",
+      "complete",
+      "partial",
+      "unavailable",
+      "forbidden",
+      "retry",
+      "step-up"
+    ]
+  },
+  "operationContract": {
+    "count": 16,
+    "dataCount": 2,
+    "actionCount": 14,
+    "pageCount": 0,
+    "bindings": [
+      {"api": "SYS-API-017.GET", "pep": "PEP-SYS-017", "method": "GET", "path": "/api/platform/v1/admin/hris/automations", "route": "route.hcm.configuration.automation-catalog.data", "kind": "DATA"},
+      {"api": "SYS-API-017.POST", "pep": "PEP-SYS-018", "method": "POST", "path": "/api/platform/v1/admin/hris/automations", "route": "route.hcm.configuration.automation-definition-create.action", "kind": "ACTION"},
+      {"api": "SYS-API-018", "pep": "PEP-SYS-019", "method": "POST", "path": "/api/platform/v1/admin/hris/automations/{automationId}/runs", "route": "route.hcm.configuration.automation-run-queue.action", "kind": "ACTION"},
+      {"api": "SYS-API-019", "pep": "PEP-SYS-020", "method": "GET", "path": "/api/platform/v1/admin/hris/automation-runs/{runId}", "route": "route.hcm.configuration.automation-run-detail.data", "kind": "DATA"},
+      {"api": "SYS-API-020", "pep": "PEP-SYS-021", "method": "POST", "path": "/api/platform/v1/admin/hris/automation-runs/{runId}/retry", "route": "route.hcm.configuration.automation-run-retry.action", "kind": "ACTION"},
+      {"api": "SYS-API-046", "pep": "PEP-SYS-048", "method": "POST", "path": "/api/platform/v1/admin/hris/automations/{automationId}/versions", "route": "route.hcm.configuration.automation-version-create.action", "kind": "ACTION"},
+      {"api": "SYS-API-047", "pep": "PEP-SYS-049", "method": "POST", "path": "/api/platform/v1/admin/hris/automations/{automationId}/versions/{version}/validate", "route": "route.hcm.configuration.automation-version-validate.action", "kind": "ACTION"},
+      {"api": "SYS-API-048", "pep": "PEP-SYS-050", "method": "POST", "path": "/api/platform/v1/admin/hris/automations/{automationId}/versions/{version}/submit", "route": "route.hcm.configuration.automation-version-submit.action", "kind": "ACTION"},
+      {"api": "SYS-API-049", "pep": "PEP-SYS-051", "method": "POST", "path": "/api/platform/v1/admin/hris/automations/{automationId}/versions/{version}/approve", "route": "route.hcm.configuration.automation-version-approve.action", "kind": "ACTION"},
+      {"api": "SYS-API-050", "pep": "PEP-SYS-052", "method": "POST", "path": "/api/platform/v1/admin/hris/automations/{automationId}/versions/{version}/activate", "route": "route.hcm.configuration.automation-version-activate.action", "kind": "ACTION"},
+      {"api": "SYS-API-051", "pep": "PEP-SYS-053", "method": "POST", "path": "/api/platform/v1/admin/hris/automations/{automationId}/schedules", "route": "route.hcm.configuration.automation-schedule-create.action", "kind": "ACTION"},
+      {"api": "SYS-API-052", "pep": "PEP-SYS-054", "method": "POST", "path": "/api/platform/v1/admin/hris/automation-schedules/{scheduleId}/submit", "route": "route.hcm.configuration.automation-schedule-submit.action", "kind": "ACTION"},
+      {"api": "SYS-API-053", "pep": "PEP-SYS-055", "method": "POST", "path": "/api/platform/v1/admin/hris/automation-schedules/{scheduleId}/approve", "route": "route.hcm.configuration.automation-schedule-approve.action", "kind": "ACTION"},
+      {"api": "SYS-API-054", "pep": "PEP-SYS-056", "method": "POST", "path": "/api/platform/v1/admin/hris/automation-schedules/{scheduleId}/activate", "route": "route.hcm.configuration.automation-schedule-activate.action", "kind": "ACTION"},
+      {"api": "SYS-API-055", "pep": "PEP-SYS-057", "method": "POST", "path": "/api/platform/v1/admin/hris/automation-schedules/{scheduleId}/suspend", "route": "route.hcm.configuration.automation-schedule-suspend.action", "kind": "ACTION"},
+      {"api": "SYS-API-056", "pep": "PEP-SYS-058", "method": "POST", "path": "/api/platform/v1/admin/hris/automation-runs/{runId}/cancel", "route": "route.hcm.configuration.automation-run-cancel.action", "kind": "ACTION"}
+    ],
+    "commandHeaders": {
+      "allActions": [
+        "Authorization",
+        "X-Correlation-Id",
+        "X-Purpose-Code",
+        "Idempotency-Key"
+      ],
+      "existingAggregateMutations": "one strong quoted If-Match, reconstructed as trusted X-DWP-Expected-Object-Version",
+      "collectionCreate": "If-Match forbidden",
+      "dataRoutes": "Reject only command headers Idempotency-Key and If-Match; verified Cookie or Authorization session identity remains valid and trusted correlation/context is reconstructed."
+    }
+  },
+  "implementationShape": {
+    "runtimeOwner": "dwp-platform-server",
+    "forbiddenService": "dwp-sys-server",
+    "typedHandlersOnly": true,
+    "arbitraryClassMethodOrSqlDispatch": false,
+    "domainHandlerOwnership": "HRM, PER, TIM or PAY owners implement later separately allocated typed handlers; SYS-006 owns only the control plane and signed manifest enforcement.",
+    "lifecycle": {
+      "definitionVersion": [
+        "DRAFT",
+        "VALIDATED",
+        "PENDING_APPROVAL",
+        "APPROVED",
+        "ACTIVE",
+        "SUSPENDED",
+        "RETIRED"
+      ],
+      "definitionVersionStateRules": {
+        "mainPath": "DRAFT_TO_VALIDATED_TO_PENDING_APPROVAL_TO_APPROVED_TO_ACTIVE",
+        "preActiveCandidateStates": [
+          "DRAFT",
+          "VALIDATED",
+          "PENDING_APPROVAL",
+          "APPROVED"
+        ],
+        "reservedAndDerivedStates": "SUSPENDED has no SYS-006 v1 transition and is unreachable. RETIRED is reachable only as the atomic system disposition of the prior ACTIVE version when a replacement version activates; there is no direct retire action."
+      },
+      "schedule": [
+        "DRAFT",
+        "PENDING_APPROVAL",
+        "APPROVED",
+        "ACTIVE",
+        "SUSPENDED"
+      ],
+      "run": [
+        "QUEUED",
+        "LEASED",
+        "RUNNING",
+        "SUCCEEDED",
+        "PARTIAL",
+        "FAILED",
+        "CANCELLED",
+        "DEAD_LETTER"
+      ],
+      "authorityKinds": [
+        "WORKER",
+        "OWNER_RECOVERY",
+        "RECONCILER"
+      ]
+    },
+    "typedArtifacts": [
+      "PDX-004 AutomationHandlerManifestV1",
+      "PDX-005 AutomationInvocationV1",
+      "PDX-006 AutomationRunItemReceiptV1"
+    ],
+    "primaryEvent": "SYS-EVT-004",
+    "eventRule": "Publish one closed minimal event per committed run revision atomically with run CAS, shared receipt and audit evidence; terminal events are immutable and contain no raw or personal payload."
+  },
+  "ownerWritableBoundary": {
+    "effectiveOnlyAfterSeparateActiveLeaseAndExecutableStartToken": true,
+    "backend": {
+      "migrationExactPath": "dwp-platform-server/src/main/resources/db/migration/V333__create_hris_automation_control_plane.sql",
+      "additionsUnder": [
+        "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/automation/**",
+        "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/automation/**"
+      ],
+      "preserveExactCentralContractFiles": [
+        "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/automation/AutomationHandlerRegistryPort.java",
+        "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/automation/Sys006ClosedTransportSchemaReference.java",
+        "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/automation/Sys006TypedArtifactContract.java",
+        "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/automation/Sys006AutomationContractTest.java",
+        "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/automation/Sys006ClosedTransportSchemaTest.java"
+      ],
+      "sharedCentralNoTouch": [
+        "dwp-auth-server product authorization and V265",
+        "dwp-gateway route and trusted-context mappings",
+        "HrisCommandReceiptController",
+        "AuthHrisExplorerAuthorityEvidenceQuery",
+        "all Platform migrations V1 through V332"
+      ]
+    },
+    "frontend": {
+      "additionsUnder": [
+        "apps/dwp/src/features/hris/administration/automation-control-plane/**"
+      ],
+      "preserveExactCentralContractFiles": [
+        "apps/dwp/src/features/hris/administration/automation-control-plane/automation-control-plane-contract.ts",
+        "apps/dwp/src/features/hris/administration/automation-control-plane/automation-control-plane-child-surface.tsx",
+        "apps/dwp/src/features/hris/administration/automation-control-plane/automation-control-plane-child-surface.test.tsx",
+        "apps/dwp/src/features/hris/administration/automation-control-plane/index.ts"
+      ],
+      "forbidden": [
+        "route registration",
+        "sidebar or menu registration",
+        "shared SYS-002 page ownership change",
+        "i18n or shell edits",
+        "changing mounted, defaultEnabled or tenantEnrollmentCount"
+      ]
+    },
+    "evidenceOnly": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-results-r1/base-tfr-sys-006/**",
+    "agentRepository": "OUT_OF_SCOPE"
+  },
+  "migration": {
+    "stream": "PLATFORM_MAIN",
+    "version": "V333",
+    "predecessorHighWater": "V332",
+    "path": "dwp-platform-server/src/main/resources/db/migration/V333__create_hris_automation_control_plane.sql",
+    "state": "RESERVED_NOT_ACTIVE",
+    "createExactlyEightTables": [
+      "sys_automation_definitions",
+      "sys_automation_versions",
+      "sys_automation_schedules",
+      "sys_automation_runs",
+      "sys_automation_run_attempts",
+      "sys_automation_run_items",
+      "sys_automation_item_attempts",
+      "sys_automation_run_checkpoints"
+    ],
+    "reuseExactlyFiveStores": [
+      "sys_hris_command_receipts",
+      "sys_domain_event_outbox",
+      "sys_domain_event_inbox",
+      "sys_audit_outbox",
+      "sys_audit_events"
+    ],
+    "sharedReceiptException": "V333 may augment only the V327-owned closed transition, terminal immutability and all-null/all-present positive aggregate tuple controls on sys_hris_command_receipts.",
+    "ninthTableForbidden": true,
+    "authoringAllowedNow": false,
+    "activationCondition": "A later append-only active-lease successor must hash-bind this independently reviewed packet, the reservation and the fresh clean backend worktree receipt before an executable start token is issued."
+  },
+  "rollout": {
+    "feature": "HRIS_AUTOMATION_CONTROL_PLANE",
+    "defaultEnabled": false,
+    "enrolledTenants": [],
+    "productionHandlerBindings": [],
+    "productionSchedules": [],
+    "frontendChildMounted": false,
+    "frontendSidebarNodeAdded": false,
+    "customerDataAuthorized": false,
+    "businessCompletionIncrement": 0
+  },
+  "plannedWorktrees": {
+    "backend": {
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261020/r7-batch04/sys-006/backend",
+      "branch": "codex/hris-wave7-r7-batch04-sys-006-backend-20261020-r1",
+      "createFromCommit": "1e936437d9318c5b80a0e1e411ad1a87ab28ee7a",
+      "expectedInitialTree": "a6c695f6518e843b3cb4a195f7bf7fc1c6afb8ab"
+    },
+    "frontend": {
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261020/r7-batch04/sys-006/frontend",
+      "branch": "codex/hris-wave7-r7-batch04-sys-006-frontend-20261020-r1",
+      "createFromCommit": "TO_BE_REPLACED_BY_THE_PUSHED_AUTHORITY_CARRIER_COMMIT_IN_THE_WORKTREE_RECEIPT",
+      "expectedInitialTree": "TO_BE_REPLACED_BY_THE_PUSHED_AUTHORITY_CARRIER_TREE_IN_THE_WORKTREE_RECEIPT"
+    },
+    "materializedNow": false,
+    "requiredInitialPorcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "requiredUpstreamAtMaterialization": null,
+    "branchPushAuthorizedNow": false
+  },
+  "acceptanceCriteria": [
+    "SYS006-AC01 dwp-platform-server is the only automation control-plane runtime and no dwp-sys-server is introduced.",
+    "SYS006-AC02 The exact primary API, PEP and event ownership is implemented while IAQ-059, SYS-API-035/036/038 and SYS-EVT-009 remain SYS-002 reuse-only with zero recount.",
+    "SYS006-AC03 SYS-API-017 POST creates definition identity and metadata only; version, schedule and activation concerns are rejected and delegated to their normalized APIs.",
+    "SYS006-AC04 PDX-004, PDX-005 and PDX-006 are reused with the sealed identity, schema-version, retry-mode, state and field mappings.",
+    "SYS006-AC05 V333 creates exactly eight sys_automation tables, reuses the shared receipt/outbox/inbox/audit facilities and enforces tenant-composite RLS boundaries.",
+    "SYS006-AC06 Only signed compatible allowlisted typed handlers execute; arbitrary class, method or SQL dispatch is impossible.",
+    "SYS006-AC07 Definition versions persist and revalidate exact signature, schema, policy, compatibility, validation and approval evidence, enforce maker-checker and CAS, allocate multiple independently target-bound pre-active candidates but only one ACTIVE version, and require a currently ACTIVE registry manifest at every sealed dispatch boundary.",
+    "SYS006-AC08 Schedules pin one approved version, timezone, expression, input template digest and concurrency-key template, cannot fire before activation, separate policy/object revisions from cursor-only fire revision, preserve approval evidence across cursor advancement and deduplicate each deterministic UTC fire with safe decimal-string JCS identity plus the sealed DST and SKIP_MISSED policy.",
+    "SYS006-AC09 Runs enforce caller/action-bound idempotency with target and handler in the request digest, server-resolved concurrency exclusion, mutually exclusive WORKER/OWNER_RECOVERY/RECONCILER fences, branch-complete worker, no-active-lease and reconciler recovery and immutable terminal facts.",
+    "SYS006-AC10 Retry creates new immutable attempts according to NONE, FAILED_ITEMS_ONLY or WHOLE_INVOCATION, freezes the exact selection, never repeats successful effects and resumes strictly after a monotonic fenced checkpoint.",
+    "SYS006-AC11 Cancellation after an original effect requires a separately fenced RECONCILER to execute only the approved idempotent compensation path with a distinct key and PREPARED to COMMITTED or RESULT_UNKNOWN receipt; after dispatch-fence loss a newly fenced RECONCILER may finalize that PREPARED only from matching trusted evidence without redispatch, shared command receipts enforce closed transitions and terminal guards, and RESULT_UNKNOWN remains separately reconciled without blind redispatch.",
+    "SYS006-AC12 SYS-EVT-004 uses the closed minimal payload and DEP-003 envelope with exact revision ordering, safe-number or canonical decimal-string integer encoding, counts, RFC-8785/JCS receipt-set digest, atomic one-event-per-run-revision outbox publication, immutable terminal events and no raw or personal payload.",
+    "SYS006-AC13 The existing settings operations route composes a separately authorized child surface, exposes only the intersection of lifecycle-state allowlist, current persisted eligibility, caller command authorization and visible target facts, and creates no second sidebar or page owner.",
+    "SYS006-AC14 The frontend covers accessible responsive loading, empty, complete, partial, unavailable, forbidden, retry and step-up states at 1440, 1280, 390 and 320 widths and 200 percent zoom.",
+    "SYS006-AC15 HRIS_AUTOMATION_CONTROL_PLANE remains default OFF with zero enrolled tenants, no mounted child surface, no production schedules or providers and zero business-completion credit until later activation authority."
+  ],
+  "evidenceContract": {
+    "goldenScenarios": [
+      "SYS-GOLD-003",
+      "SYS-GOLD-008",
+      "SYS-GOLD-015",
+      "SYS-GOLD-016",
+      "SYS-GOLD-017",
+      "SYS-GOLD-018",
+      "SYS-GOLD-019",
+      "SYS-GOLD-032",
+      "SYS-GOLD-040",
+      "SYS-GOLD-045",
+      "SYS-GOLD-049",
+      "SYS-GOLD-050",
+      "SYS-GOLD-051",
+      "SYS-GOLD-052",
+      "SYS-GOLD-053"
+    ],
+    "requiredResultPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-results-r1/base-tfr-sys-006",
+    "requiredEvidence": [
+      "exact changed-path and no-touch manifests with hashes",
+      "V333 clean and V332-to-V333 real PostgreSQL evidence or explicit BLOCKED status",
+      "RLS missing-context and cross-tenant denial",
+      "lifecycle, maker-checker, CAS, signature and current-registry negative matrices",
+      "idempotency, concurrency, retry, fence expiry, owner recovery, reconciliation and compensation evidence",
+      "shared receipt transition/terminal and SYS-EVT-004 atomicity evidence",
+      "frontend eight-state accessibility and responsive matrices while remaining unmounted",
+      "default-OFF, zero-enrollment, zero-provider, zero-schedule and zero-navigation proof"
+    ],
+    "completionRule": "The module result may claim implementation only after every acceptance criterion is evidenced. Activation, enrollment, mount and release remain separate central decisions."
+  },
+  "targetedVerification": {
+    "executionAuthorizedNow": false,
+    "afterExecutableToken": [
+      "V333 static contract plus real PostgreSQL clean and V332-to-V333 upgrade groups",
+      "automation package unit, repository, transaction and API contract groups",
+      "authorization, tenant, field visibility, purpose, step-up, maker-checker and direct-call negative groups",
+      "worker/recovery/reconciler fence, retry, cancel, compensation and event-outbox groups",
+      "frontend automation-control-plane exact tests and changed-file lint"
+    ],
+    "policy": "Run each affected group once. After a failure rerun only the smallest affected target. Do not repeatedly run repository-wide suites."
+  },
+  "authority": {
+    "packetSealed": true,
+    "centralPrerequisiteAdmitted": true,
+    "reservedNotActiveV333Bound": true,
+    "independentPacketReviewComplete": false,
+    "worktreeMaterializationMayProceedAfterPacketReservationAndReviewCarrierIsPushed": true,
+    "sourceImplementationAuthorizedNow": false,
+    "testExecutionAuthorizedNow": false,
+    "migrationAuthoringAuthorizedNow": false,
+    "activeLeaseIssued": false,
+    "executableStartTokenIssued": false,
+    "moduleBranchCommitAndPushAuthorizedNow": false,
+    "mergeToDwpDevAuthorized": false,
+    "routeMenuOrChildMountAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionProviderOrScheduleAuthorized": false,
+    "customerDataOrDatabaseExecutionAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nonClaims": [
+    "Fresh SYS-006 backend or frontend worktrees exist.",
+    "Platform V333 exists, is active or may be authored from this packet alone.",
+    "A SYS-006 executable start token has been issued or source, test, commit or push authority exists.",
+    "The automation child is mounted in the settings page or exposed through navigation.",
+    "HRIS_AUTOMATION_CONTROL_PLANE is enabled or any tenant is enrolled.",
+    "A production handler, provider or schedule is bound.",
+    "Any customer data is authorized or BASE-TFR-SYS-006 is implemented, integrated or complete."
+  ],
+  "nextGate": "INDEPENDENTLY_REVIEW_THIS_PACKET_AND_THE_RESERVED_NOT_ACTIVE_V333_LEASE_WITH_ZERO_P0_ZERO_P1_ZERO_P2_PUSH_THE_EXACT_AUTHORITY_CARRIER_THEN_MATERIALIZE_FRESH_CLEAN_PINNED_BACKEND_AND_FRONTEND_WORKTREES_AND_HASH_BIND_THEIR_RECEIPT_BEFORE_ANY_ACTIVE_V333_LEASE_EXECUTABLE_START_TOKEN_OR_MODULE_SOURCE"
+}

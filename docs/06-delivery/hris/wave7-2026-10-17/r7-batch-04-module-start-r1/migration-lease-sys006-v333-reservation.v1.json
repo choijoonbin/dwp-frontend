@@ -1,0 +1,352 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-sys006-migration-lease-reservation.v1",
+  "reservationId": "HRIS-WAVE7-R7-BATCH-04-MIGRATION-LEASE-RESERVATION-SYS006-20261020-R1",
+  "recordedAt": "2026-10-20T15:27:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_RESERVATION_ID_AND_SHA256",
+    "historicalArtifactMutation": false
+  },
+  "state": "RESERVED_NOT_ACTIVE",
+  "sliceId": "BASE-TFR-SYS-006",
+  "moduleSession": "HRIS-SYS",
+  "moduleThreadId": "01a0f53d-d62d-7971-81f7-1822b513ccb4",
+  "authorityBasis": {
+    "semanticDisposition": {
+      "path": "semantic-dispositions/base-tfr-sys-006.semantic-disposition.v1.json",
+      "sha256": "e5f8ecc7db70737ae5cfb6d3ccc8879b30f0395febc35db3de4455baf1a1825f",
+      "bytes": 192503,
+      "requiredState": "SYS006_AUTOMATION_CONTROL_PLANE_BOUNDARY_SEALED_V333_REQUIRED_CENTRAL_SUCCESSOR_BEFORE_SOURCE",
+      "jsonPointer": "/migrationDecision"
+    },
+    "semanticReceiptDecision": {
+      "path": "semantic-dispositions/base-tfr-sys-006.semantic-disposition.v1.json",
+      "sha256": "e5f8ecc7db70737ae5cfb6d3ccc8879b30f0395febc35db3de4455baf1a1825f",
+      "bytes": 192503,
+      "requiredState": "SYS006_AUTOMATION_CONTROL_PLANE_BOUNDARY_SEALED_V333_REQUIRED_CENTRAL_SUCCESSOR_BEFORE_SOURCE",
+      "jsonPointer": "/receiptDecision"
+    },
+    "semanticReview": {
+      "path": "semantic-dispositions/base-tfr-sys-006.semantic-review.v1.json",
+      "sha256": "bc261e69873c84427c8d70b39f2e9466044c4e0d743bf2c83ac7cb9c1c8b028c",
+      "bytes": 3448,
+      "requiredState": "SYS006_SEMANTIC_DISPOSITION_INDEPENDENTLY_REVIEWED_PASS_ZERO_P0_ZERO_P1_ZERO_P2_CENTRAL_SUCCESSOR_MAY_PROCEED"
+    },
+    "centralSuccessor": {
+      "path": "sys-006-iaq-transport-event-and-central-authorization-successor.v1.json",
+      "sha256": "e4001e41b76c9bb440dc6ca4d46e541e72f588d4d10eb35bc3b1b30fdbe46a55",
+      "bytes": 34099,
+      "requiredState": "SEALED_EXACT_SYS006_IAQ059_TRANSPORT_SYSEVT004_V56_V265_V333_GATEWAY_SHARED_BRIDGE_CHILD_SURFACE_AUTHORITY_DEFAULT_OFF_ZERO_ENROLLMENT"
+    },
+    "centralSuccessorReview": {
+      "path": "sys-006-iaq-transport-event-and-central-authorization-review.v1.json",
+      "sha256": "4f778ee46dd56db529447502ced4e6dd0e04303085e26432255a8f461a1e15a7",
+      "bytes": 6088,
+      "requiredState": "SYS006_IAQ_TRANSPORT_EVENT_AND_CENTRAL_AUTHORIZATION_INDEPENDENTLY_REVIEWED_PASS_ZERO_P0_ZERO_P1_ZERO_P2_BOUNDED_CENTRAL_IMPLEMENTATION_MAY_PROCEED"
+    },
+    "centralIntegrationReceipt": {
+      "path": "../r7-batch-04-central-admission-r1/sys-006-central-integration-receipt.v1.json",
+      "sha256": "5522b16f9af9972aa0e3e3359cc527b8801555de8022e9863544c15d9f50794b",
+      "bytes": 14114,
+      "requiredState": "EXACT_SYS006_CENTRAL_DELTA_COMMITTED_PUSHED_AND_ADMITTED_V56_V265_GATEWAY_TYPED_CONTRACT_SHARED_BRIDGE_UNMOUNTED_CHILD_DEFAULT_OFF_ZERO_ENROLLMENT_OWNER_PACKET_AND_RESERVED_NOT_ACTIVE_V333_MAY_BE_PREPARED"
+    }
+  },
+  "pinBasis": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "1e936437d9318c5b80a0e1e411ad1a87ab28ee7a",
+      "tree": "a6c695f6518e843b3cb4a195f7bf7fc1c6afb8ab",
+      "originRef": "origin/dwp-dev",
+      "originExact": true,
+      "worktreeClean": true,
+      "observedPlatformHighWater": "V332",
+      "candidatePathPresentAtReservation": false,
+      "platformMigrationPredecessors": {
+        "v331": {
+          "path": "dwp-platform-server/src/main/resources/db/migration/V331__create_hris_operational_exception_projection.sql",
+          "sha256": "ca4ba4733960e684921bb4e5ba5aebe6adfe50dff30c848e1af5c158982ae3c1",
+          "bytes": 9671
+        },
+        "v332HighWater": {
+          "path": "dwp-platform-server/src/main/resources/db/migration/V332__bind_hris_reference_configuration_owner_evidence.sql",
+          "sha256": "6374af4b31590aa9aaa3dfbcbf6c028476d6c2e31e645df3ec3470511cbb61bf",
+          "bytes": 16290,
+          "requiredState": "EXECUTED_IMMUTABLE_PLATFORM_HIGH_WATER"
+        },
+        "manifest": {
+          "sha256": "113eca8ef7ceae299d1be31e53269b39a77b1e7a553f8e36afa5c3730e7fa384",
+          "bytes": 13709,
+          "fileCount": 283,
+          "sort": "LC_ALL=C sort -V over migration basenames with one trailing newline",
+          "requiredState": "V332_HIGH_WATER_V333_ABSENT"
+        }
+      }
+    },
+    "frontendAuthorityCarrierBeforeReservation": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "5f3e2675cb507549f539df3e6db27b218e907171",
+      "tree": "8259f5a5bb467c1c5bd354e8d3552943df401d09",
+      "originRef": "origin/dwp-dev",
+      "originExact": true,
+      "worktreeClean": true,
+      "use": "AUTHORITY_CARRIER_BASE_ONLY"
+    },
+    "agentReadOnly": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "originRef": "origin/dwp-dev",
+      "originExact": true,
+      "worktreeClean": true
+    }
+  },
+  "lease": {
+    "leaseId": "HRIS-WAVE7-R7-BATCH-04-PLATFORM-MAIN-V333-SYS006-20261020-R1",
+    "stream": "PLATFORM_MAIN",
+    "version": "V333",
+    "predecessorHighWater": "V332",
+    "exactPath": "dwp-platform-server/src/main/resources/db/migration/V333__create_hris_automation_control_plane.sql",
+    "canonicalFeature": "HRIS_AUTOMATION_CONTROL_PLANE",
+    "state": "RESERVED_NOT_ACTIVE",
+    "activeLeaseCountForPlatformV333": 0,
+    "plannedBackendWorktree": {
+      "plannedAbsolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261020/r7-batch04/sys-006/backend",
+      "plannedBranch": "codex/hris-wave7-r7-batch04-sys-006-backend-20261020-r1",
+      "plannedPushTarget": "origin/codex/hris-wave7-r7-batch04-sys-006-backend-20261020-r1",
+      "createFrom": "1e936437d9318c5b80a0e1e411ad1a87ab28ee7a",
+      "expectedInitialTree": "a6c695f6518e843b3cb4a195f7bf7fc1c6afb8ab",
+      "expectedInitialPorcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "materializationStateAtReservation": "NOT_MATERIALIZED"
+    }
+  },
+  "resolvedExactMigrationManifest": {
+    "createExactlyEightTables": [
+      "sys_automation_definitions",
+      "sys_automation_versions",
+      "sys_automation_schedules",
+      "sys_automation_runs",
+      "sys_automation_run_attempts",
+      "sys_automation_run_items",
+      "sys_automation_item_attempts",
+      "sys_automation_run_checkpoints"
+    ],
+    "reuseOnlyStores": [
+      "sys_hris_command_receipts",
+      "sys_domain_event_outbox",
+      "sys_domain_event_inbox",
+      "sys_audit_outbox",
+      "sys_audit_events"
+    ],
+    "sharedReceiptSchemaException": {
+      "table": "sys_hris_command_receipts",
+      "rule": "Reuse the V327-owned table and identity seal. V333 may augment only its transition/terminal guard and SYS-006 aggregate tuple constraints; it must not create a second receipt store, controller or route.",
+      "allowedTransitions": [
+        "ACCEPTED_TO_RUNNING",
+        "ACCEPTED_TO_REJECTED",
+        "RUNNING_TO_SUCCEEDED",
+        "RUNNING_TO_FAILED",
+        "RUNNING_TO_RESULT_UNKNOWN",
+        "RESULT_UNKNOWN_TO_RUNNING",
+        "RESULT_UNKNOWN_TO_SUCCEEDED",
+        "RESULT_UNKNOWN_TO_FAILED"
+      ],
+      "terminalStates": [
+        "SUCCEEDED",
+        "REJECTED",
+        "FAILED"
+      ],
+      "aggregateTuple": "aggregate_public_id, aggregate_revision and result_ref are all-null or all-present; aggregate_revision is positive when present",
+      "resultUnknownRule": "Evidence-reconciliation CAS only; never infer a run transition or authorize blind redispatch.",
+      "otherReusedStoreSchemaChangeAuthorized": false
+    },
+    "sharedReceiptDecision": {
+      "sharedStore": "sys_hris_command_receipts",
+      "commandReceiptStates": [
+        "ACCEPTED",
+        "RUNNING",
+        "SUCCEEDED",
+        "REJECTED",
+        "FAILED",
+        "RESULT_UNKNOWN"
+      ],
+      "runStateSeparation": "RESULT_UNKNOWN is a command receipt state and never an automation run state.",
+      "identityImmutability": "V327's existing seal remains authoritative and exhaustively keeps these nineteen physical columns immutable: public_id, tenant_id, command_type, originating_action, subject_principal_public_id, population_scope_digest, authority_population_scope_digest, field_policy_revision, authority_field_policy_revision, purpose_code, authorization_revision, authority_authorization_revision, origin_route_contract_key, origin_context_key, origin_context_scope_key, origin_decision_revision, idempotency_key, request_digest and correlation_id. SYS-006 neither weakens nor replaces that trigger.",
+      "allowedTransitions": [
+        "ACCEPTED_TO_RUNNING",
+        "ACCEPTED_TO_REJECTED",
+        "RUNNING_TO_SUCCEEDED",
+        "RUNNING_TO_FAILED",
+        "RUNNING_TO_RESULT_UNKNOWN",
+        "RESULT_UNKNOWN_TO_RUNNING",
+        "RESULT_UNKNOWN_TO_SUCCEEDED",
+        "RESULT_UNKNOWN_TO_FAILED"
+      ],
+      "storageMapping": {
+        "aggregatePublicId": "sys_hris_command_receipts.aggregate_public_id",
+        "aggregateRevision": "sys_hris_command_receipts.aggregate_revision; this is the physical mapping for the historical public Receipt.aggregateVersion field",
+        "resultRef": "sys_hris_command_receipts.result_ref"
+      },
+      "terminalGuard": "SUCCEEDED, REJECTED and FAILED are terminal; V333 augments the shared receipt trigger or an equivalent database constraint so status, aggregate_public_id, aggregate_revision, result_ref, error_code and completed_at cannot change after those states. RESULT_UNKNOWN is quiescent but nonterminal and may advance only through evidence reconciliation CAS. Every allowed transition writes an immutable audit/outbox fact in the same transaction.",
+      "statusFieldRules": {
+        "ACCEPTED": "resultRef, aggregatePublicId, aggregateRevision, error and completedAt are null.",
+        "RUNNING": "resultRef, aggregatePublicId and aggregateRevision are either all present after aggregate allocation or all null before allocation; error and completedAt are null.",
+        "REJECTED": "resultRef, aggregatePublicId and aggregateRevision are null; error and completedAt are required.",
+        "SUCCEEDED": "resultRef, aggregatePublicId, positive aggregateRevision and completedAt are required; error is null.",
+        "FAILED": "completedAt and error are required; resultRef, aggregatePublicId and positive aggregateRevision are either all present for an allocated aggregate or all null when failure preceded allocation.",
+        "RESULT_UNKNOWN": "completedAt is null; resultRef, aggregatePublicId and positive aggregateRevision are either all present for an allocated aggregate or all null when allocation itself is uncertain; error is required and identifies the reconciliation class."
+      },
+      "pairing": "For SYS-006, resultRef, aggregatePublicId and aggregateRevision are an all-null or all-present tuple. When present, resultRef resolves the exact definition, version, schedule or run identified by aggregatePublicId and aggregateRevision is the positive revision observed by the receipt; the three physical columns are never populated independently.",
+      "reconciliation": "A RESULT_UNKNOWN receipt triggers an authorized aggregate reload and external evidence reconciliation; it never changes the run by inference and never authorizes blind redispatch.",
+      "immutabilityClaim": "The shared receipt is identity-sealed and terminal-guarded current state. Immutable audit/outbox records and immutable terminal item-attempt receipts retain its transition history; the mutable current row is never described as a wholly immutable ledger."
+    },
+    "exactEvidencePersistence": {
+      "sys_automation_versions": [
+        "definition_payload canonical JSON and definition_digest",
+        "execution_policy canonical JSON and execution_policy_digest including manualConcurrencyKeyTemplate",
+        "compensation_policy_ref and compensation_policy_digest",
+        "handler_owner_service, handler_key, handler_contract_version, handler_manifest_revision and handler_manifest_digest",
+        "handler_signature_key_id, handler_signature and handler_signature_digest",
+        "input_schema_ref, input_schema_digest, receipt_schema_ref and receipt_schema_digest",
+        "validation_state, validated_by_actor_ref, validated_at, validation_receipt_id and validation_evidence_digest",
+        "compatibility_baseline_version and compatibility_baseline_digest",
+        "submitted_by_actor_ref, submitted_at, submitted_subject_revision, submission_receipt_id and submission_evidence_digest",
+        "approved_by_actor_ref, approved_at, approved_subject_revision, approval_receipt_id, approval_evidence_digest and approval_step_up_evidence_digest",
+        "activated_by_actor_ref, activated_at, activation_receipt_id and activation_evidence_digest",
+        "author_actor_ref, object_revision and immutable created_at"
+      ],
+      "sys_automation_schedules": [
+        "pinned_version identity, expression, IANA timezone, timezone_database_revision and SKIP_MISSED policy",
+        "input_template_ref, input_template_digest and concurrency_key_template",
+        "submitted_by_actor_ref, submitted_at, submitted_subject_revision, submission_receipt_id and submission_evidence_digest",
+        "approved_by_actor_ref, approved_at, approved_subject_revision, approval_receipt_id, approval_evidence_digest and approval_step_up_evidence_digest",
+        "activated_by_actor_ref, activated_at, activation_receipt_id and activation_evidence_digest",
+        "subject_revision, object_revision and immutable schedule_policy_digest",
+        "next_fire_at, last_scheduled_instant_utc and monotonically increasing fire_cursor_revision"
+      ],
+      "freshnessRules": "A signed definition, version or schedule subject mutation increments subject_revision and object_revision, changes the corresponding digest and invalidates validation, submission and approval evidence. Lifecycle transitions increment object_revision only and consume or preserve evidence only while the exact subject_revision and digest remain current. Approval requires approver != author, approved_subject_revision == current submitted_subject_revision == current subject_revision and a current target-bound step-up fact. Scheduler cursor advancement changes only next_fire_at, last_scheduled_instant_utc and fire_cursor_revision; it never changes subject_revision, object_revision or approval evidence. Activation requires approved_subject_revision == current subject_revision and the exact current schedule_policy_digest.",
+      "signatureTrust": "Validation resolves signature_key_id against the current trusted-key registry, verifies signature over the RFC-8785/JCS closed version document and stores the key revision and evidence digest. Activation repeats trust, revocation and digest verification; snapshot evidence never overrides a revoked key.",
+      "noAdditionalTables": "All evidence columns live in the declared eight tables and reference the reused shared command receipt/audit/outbox stores by public ID; no ninth SYS-006 table is permitted."
+    },
+    "requiredPhysicalControls": [
+      "tenant-composite primary and foreign keys",
+      "unique automation key per tenant",
+      "unique version number per tenant and definition",
+      "tenant-composite definition lock plus serialized monotonic version-number allocation; multiple pre-active candidates are permitted",
+      "partial unique or equivalent exclusion for one ACTIVE definition version",
+      "partial unique or equivalent exclusion for one active QUEUED, LEASED or RUNNING execution per tenant and concurrency-key digest; quiescent PARTIAL or FAILED runs do not retain the slot and retry must reacquire it",
+      "unique scheduled fire identity per tenant, schedule and schedule fire key",
+      "schedule policy subject_revision and command object_revision are independent from monotonically increasing fire_cursor_revision; cursor-only updates may change only next_fire_at, last_scheduled_instant_utc and fire_cursor_revision",
+      "scheduled fire CAS compares exact tenant, schedule, ACTIVE state, object_revision, approved subject_revision, schedule policy digest, due next_fire_at and fire_cursor_revision; it never invalidates approval evidence",
+      "four-eyes author and approver inequality checks",
+      "canonical SchemaVersion VARCHAR storage",
+      "maximum attempt check at 20 plus manifest-bound runtime guard",
+      "all JSON-number-backed revisions, versions and ordinals are database-checked within 0..9007199254740991 (positive where required); expected/materialized/selected/processed item counts and item_sequence are within 0..1000000000 (item_sequence positive), attempts within 1..20, and item-attempt run_revision_snapshot is positive and no greater than the locked run revision",
+      "immutable final SUCCEEDED, CANCELLED and DEAD_LETTER run facts; immutable completed run-attempt and item-attempt facts; immutable SUCCEEDED, FAILED_FINAL, CANCELLED and DEAD_LETTER item facts",
+      "distinct WORKER, OWNER_RECOVERY and RECONCILER fence enforcement: non-null monotonic worker and reconciliation fence counters are separate from nullable core lease tuples token + leased_until + authority-fence snapshot + control-fence snapshot; each tuple is all-NULL or all-present, revoked_at is NULL while active and set when revocation clears the tuple, and worker/reconciler tuples cannot both be present; OWNER_RECOVERY selects exactly NO_ACTIVE_LEASE, WORKER_LEASE or RECONCILER_LEASE, always increments the control fence and increments/revokes only the selected lease authority",
+      "monotonic checkpoints record writer_authority_kind WORKER or RECONCILER and the matching fence snapshots; RECONCILER checkpoints may fold only already committed verified original-effect receipt evidence and do not themselves authorize an effect",
+      "external-effect authority trigger permits authority_kind WORKER only with effect_kind ORIGINAL and permits authority_kind RECONCILER only with effect_kind COMPENSATION, exact approved compensation-policy evidence, a distinct compensation idempotency key and an active reconciliation/control fence; compensation DISPATCH_FINALIZE requires the immutable PREPARED dispatch fence to equal the same live fence, while EVIDENCE_RECONCILE requires a different newly active resolution fence, the existing PREPARED key/digest and trusted external receipt and is database-blocked from external dispatch; OWNER_RECOVERY dispatch is always rejected",
+      "effect-idempotency uniqueness",
+      "atomic cancel marker plus lease revocation and fence-epoch invalidation",
+      "cancel acceptance atomically derives reconciliation eligibility: PREPARED or RESULT_UNKNOWN original effects write CANCEL_EFFECT_EVIDENCE_REQUIRED, and COMMITTED original effects write compensation PENDING plus CANCEL_COMPENSATION_REQUIRED; a COMMITTED non-compensatable effect rejects the whole transaction",
+      "shared command receipt allowed-transition and terminal-state guard",
+      "SYS-006 shared receipt aggregate_public_id, aggregate_revision and result_ref all-null or all-present constraint with positive aggregate_revision when present",
+      "exact effect-state and compensation policy, key, digest, state and receipt linkage within the eight-table model",
+      "forced row-level security using verified SET LOCAL dwp.tenant_id",
+      "atomic shared outbox and audit publication: the exact SYS-EVT-004 row is inserted with the run CAS, one logical event identity exists per committed run revision, terminal events have no synthetic correction revision and validation failure rolls back the transition"
+    ],
+    "forbidden": [
+      "NINTH_SYS006_RECEIPT_TABLE",
+      "SECOND_COMMAND_RECEIPT_CONTROLLER_OR_ROUTE",
+      "CROSS_SERVICE_DATABASE_FOREIGN_KEY",
+      "CROSS_SERVICE_REPOSITORY_ACCESS",
+      "COPY_G2_BLUEPRINT_WHOLESALE",
+      "RESERVE_OR_AUTHOR_V333_BEFORE_CENTRAL_SUCCESSOR_ADMISSION_AND_OWNER_PACKET"
+    ]
+  },
+  "acceptanceCoverage": {
+    "criteriaCount": 15,
+    "criteriaIds": [
+      "SYS006-AC01",
+      "SYS006-AC02",
+      "SYS006-AC03",
+      "SYS006-AC04",
+      "SYS006-AC05",
+      "SYS006-AC06",
+      "SYS006-AC07",
+      "SYS006-AC08",
+      "SYS006-AC09",
+      "SYS006-AC10",
+      "SYS006-AC11",
+      "SYS006-AC12",
+      "SYS006-AC13",
+      "SYS006-AC14",
+      "SYS006-AC15"
+    ],
+    "migrationDirectCriteria": [
+      "SYS006-AC05",
+      "SYS006-AC07",
+      "SYS006-AC08",
+      "SYS006-AC09",
+      "SYS006-AC10",
+      "SYS006-AC11",
+      "SYS006-AC12",
+      "SYS006-AC15"
+    ]
+  },
+  "verificationRequiredAfterActivation": {
+    "executionAuthorizedNow": false,
+    "static": [
+      "V333 is unique in PLATFORM_MAIN, the exact reserved path is the only new Platform migration, and V1 through V332 bytes remain unchanged.",
+      "Exactly eight SYS-006 tables are created; no ninth automation or duplicate receipt table exists.",
+      "Only the sealed shared-receipt transition, terminal and aggregate tuple controls alter a reused store; the other four reused stores receive no schema change.",
+      "No backfill, customer data, automatic grant, feature activation, tenant enrollment, production handler or production schedule is introduced."
+    ],
+    "database": [
+      "real PostgreSQL clean Platform migration through V333",
+      "real PostgreSQL Platform V332-to-V333 upgrade",
+      "missing-context and cross-tenant denial on all eight tables with ENABLE and FORCE RLS",
+      "all physical uniqueness, safe-number, lifecycle, maker-checker, signature, schedule-fire, concurrency, fence, checkpoint, compensation and terminal immutability controls",
+      "closed shared-receipt transitions, the exact six-state field matrix, terminal six-field guard, aggregate tuple pairing and RESULT_UNKNOWN evidence reconciliation",
+      "preservation of the V327 nineteen-column identity seal and atomic immutable audit/outbox facts for every allowed shared-receipt transition",
+      "atomic run CAS, shared receipt, SYS-EVT-004 outbox and audit publication with rollback on validation failure"
+    ],
+    "unavailableDatabaseRule": "Report BLOCKED, not PASS, if required real PostgreSQL verification cannot run.",
+    "targetedPolicy": "Run the SYS-006 V333 contract group and fresh/upgrade PostgreSQL group once; after a failure rerun only the smallest affected target. Do not run a repository-wide suite for this lease."
+  },
+  "reservationSemantics": "This append-only artifact reserves only Platform main V333 and the exact SYS-006 path. It is not an active lease and grants no migration, source, test, commit, push, worktree, token, activation, enrollment or release authority. A later append-only active-lease successor must hash-bind an independently reviewed owner packet and a materialized clean backend worktree receipt; a separate executable start token must bind that successor before any source is authored.",
+  "authority": {
+    "activeLeaseCount": 0,
+    "oneExactPlatformV333PathReserved": true,
+    "v333AuthoringAuthorized": false,
+    "activeLeaseSuccessorMayBeConsideredAfterIndependentPacketReviewAndMaterializedCleanWorktreeProof": true,
+    "existingMigrationEditAuthorized": false,
+    "secondPlatformMigrationAuthorized": false,
+    "ninthSys006TableAuthorized": false,
+    "dataBackfillAuthorized": false,
+    "automaticPrivilegeGrantAuthorized": false,
+    "worktreeMaterializationAuthorizedByThisLeaseAlone": false,
+    "moduleSourceAuthoringAuthorized": false,
+    "testExecutionAuthorized": false,
+    "moduleBranchCommitAndPushAuthorizedByThisLeaseAlone": false,
+    "mergeToDwpDevAuthorized": false,
+    "routeOrMenuMountAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionProviderOrScheduleAuthorized": false,
+    "customerDatabaseExecutionAuthorized": false,
+    "productionExecutionAuthorized": false
+  },
+  "invalidationConditions": [
+    "Platform V333 or the exact reserved path exists from another owner before the first authorized edit.",
+    "PLATFORM_MAIN high-water differs from V332 at worktree materialization.",
+    "The planned backend worktree path or branch exists with a different head, tree, upstream or non-empty porcelain.",
+    "Any ninth SYS-006 table, second receipt store, unsealed reused-store alteration, backfill, grant or schema change outside the exact manifest is required.",
+    "An existing migration must change, a second Platform migration is required, or the central default-OFF, zero-enrollment, unmounted-child and zero-provider/schedule boundary no longer holds.",
+    "The owner packet or its independent review is absent, invalid, hash-mismatched or grants broader authority than this reservation."
+  ],
+  "nextAction": "HASH_BIND_THIS_RESERVED_NOT_ACTIVE_LEASE_IN_THE_EXACT_SYS006_OWNER_PACKET_AND_INDEPENDENTLY_REVIEW_BOTH; THEN_PUSH_THE_AUTHORITY_CARRIER_AND_MATERIALIZE_FRESH_CLEAN_WORKTREES; DO_NOT_ACTIVATE_OR_AUTHOR_UNTIL_A_SEPARATE_ACTIVE_LEASE_SUCCESSOR_AND_EXECUTABLE_START_TOKEN_EXIST"
+}
