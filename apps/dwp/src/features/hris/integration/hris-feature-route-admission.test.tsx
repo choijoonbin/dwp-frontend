@@ -99,7 +99,7 @@ function authoritySnapshot(revalidateAt = FUTURE) {
         policy: 'policy-r7',
         productRelationship: 'relationship-r7',
         targetPopulation: 'population-r7',
-        support: 'support-r7',
+        support: null,
         tenantControl: 'tenant-control-r7',
       },
       activeAccessMode: 'NORMAL',

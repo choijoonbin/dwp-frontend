@@ -277,8 +277,8 @@ function array(value: unknown, maximum: number): unknown[] {
 
 const ownerRouteKeySet = new Set<string>(HRIS_OPERATION_OWNER_ROUTE_KEYS);
 const ownerRoutePatterns = (() => {
-  if (PRODUCT_AUTHORIZATION_REGISTRY_REVISION.version !== 49) {
-    return invalid('HRIS operations requires the exact product authorization v49 registry.');
+  if (PRODUCT_AUTHORIZATION_REGISTRY_REVISION.version !== 52) {
+    return invalid('HRIS operations requires the exact product authorization v52 registry.');
   }
   const patterns = new Map<HrisOperationOwnerRouteKey, string>();
   for (const projection of PRODUCT_AUTHORIZATION_PAGE_PROJECTIONS) {

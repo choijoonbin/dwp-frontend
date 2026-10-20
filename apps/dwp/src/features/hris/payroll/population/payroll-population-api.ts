@@ -178,7 +178,7 @@ export async function preparePayrollRun(
     prepareConfig(command, authority)
   );
   try {
-    if (response.status !== 202) {
+    if ((response as Readonly<{ status?: unknown }>).status !== 202) {
       throw new Error('Payroll preparation did not return the sealed 202 receipt transport.');
     }
     const receipt = parsePayrollRunPreparedReceipt(response.data);

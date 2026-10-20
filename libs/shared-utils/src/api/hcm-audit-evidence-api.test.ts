@@ -114,7 +114,7 @@ describe('HCM audit evidence client', () => {
     expect(() => parseHcmAuditEvidence(evidence({ severity: 'LOW' }))).toThrow('severity');
     expect(() => parseHcmAuditEvidence(evidence({ severity: 'MEDIUM' }))).toThrow('severity');
     await expect(
-      listHcmAuditEvidence({ severity: 'LOW' } as Parameters<typeof listHcmAuditEvidence>[0])
+      Reflect.apply(listHcmAuditEvidence, undefined, [{ severity: 'LOW' }])
     ).rejects.toThrow('filters.severity');
     expect(fetch).toHaveBeenCalledOnce();
   });

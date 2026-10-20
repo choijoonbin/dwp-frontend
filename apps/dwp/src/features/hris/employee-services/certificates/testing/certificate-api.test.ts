@@ -18,7 +18,10 @@ import {
   hrm009Receipt,
 } from './certificate-fixtures.test-support';
 
-import type { ProductSurfaceGovernedMutationAuthority } from '@dwp-frontend/shared-utils';
+import type {
+  ProductSurfaceGovernedMutationAuthority,
+  ProductSurfaceSecureMutationAuthority,
+} from '@dwp-frontend/shared-utils';
 import type { Hrm009RequestCertificateCommand } from '../certificate-api';
 
 const IDEMPOTENCY_KEY = 'certificate-command-key-0001';
@@ -36,7 +39,7 @@ const command: Hrm009RequestCertificateCommand = Object.freeze({
   }),
 });
 
-function authority(): ProductSurfaceGovernedMutationAuthority {
+function authority(): ProductSurfaceSecureMutationAuthority {
   return {
     mode: 'SECURE',
     rolloutState: '111',

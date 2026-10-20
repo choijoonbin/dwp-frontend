@@ -190,7 +190,7 @@ function command(): PayrollRunPrepareCommand {
 }
 
 function receiptWire(
-  correlationId = ids.commandCorrelation,
+  correlationId: string = ids.commandCorrelation,
   status: PayrollRunPreparedReceipt['status'] = 'ACCEPTED'
 ) {
   return {

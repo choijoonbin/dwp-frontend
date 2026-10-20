@@ -71,8 +71,12 @@ type QueryField = Readonly<{
   minimum?: number;
 }>;
 
+function queryFields(fields: readonly QueryField[]): readonly QueryField[] {
+  return Object.freeze(fields);
+}
+
 const QUERY_FIELDS: Readonly<Record<Hrm007QueryId, readonly QueryField[]>> = Object.freeze({
-  'IAQ-005': Object.freeze([
+  'IAQ-005': queryFields([
     {
       searchKey: 'filter[changeRequestSummary][minimumItemCount]',
       group: 'changeRequestSummary',
@@ -113,7 +117,7 @@ const QUERY_FIELDS: Readonly<Record<Hrm007QueryId, readonly QueryField[]>> = Obj
     },
     { searchKey: 'filter[effectiveOn]', group: 'effectiveOn', kind: 'civil-date' },
   ]),
-  'IAQ-007': Object.freeze([
+  'IAQ-007': queryFields([
     {
       searchKey: 'filter[appointment][startFrom]',
       group: 'appointment',
@@ -160,7 +164,7 @@ const QUERY_FIELDS: Readonly<Record<Hrm007QueryId, readonly QueryField[]>> = Obj
     { searchKey: 'filter[employment][to]', group: 'employment', field: 'to', kind: 'civil-date' },
     { searchKey: 'filter[effectiveOn]', group: 'effectiveOn', kind: 'civil-date' },
   ]),
-  'IAQ-013': Object.freeze([
+  'IAQ-013': queryFields([
     {
       searchKey: 'filter[policyMetadata][policyKeys]',
       group: 'policyMetadata',
@@ -355,7 +359,12 @@ function effectiveEnvelope(
   return {
     contractVersion: snapshot.envelope.contractVersion,
     decisionRevision: snapshot.envelope.decisionRevision,
-    sourceRevisions: snapshot.envelope.sourceRevisions,
+    sourceRevisions: Object.fromEntries(
+      Object.entries(snapshot.envelope.sourceRevisions).filter(
+        (entry): entry is [string, string] =>
+          typeof entry[1] === 'string' && Boolean(entry[1].trim())
+      )
+    ),
     activeAccessMode: snapshot.envelope.activeAccessMode,
     generatedAt: snapshot.envelope.generatedAt,
     contexts: snapshot.envelope.contexts.map(effectiveContext),

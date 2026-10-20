@@ -377,7 +377,7 @@ describe('R7 HRM-009 central read-only admission', () => {
         tenantEnrolled: false,
       })
     );
-    expect(state.renderedProps?.scope).toBeUndefined();
+    expect(Reflect.get(state.renderedProps ?? {}, 'scope')).toBeUndefined();
     expect(state.renderedProps).not.toHaveProperty('adapter');
   });
 
@@ -445,7 +445,7 @@ describe('R7 HRM-009 central read-only admission', () => {
     );
 
     expect(state.evaluateProduct).toHaveBeenCalledTimes(2);
-    expect(state.renderedProps?.scope).toBeUndefined();
+    expect(Reflect.get(state.renderedProps ?? {}, 'scope')).toBeUndefined();
     expect(state.renderedProps).not.toHaveProperty('adapter');
     expect(state.ownerQuery).not.toHaveBeenCalled();
   });

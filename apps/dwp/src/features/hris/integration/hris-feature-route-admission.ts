@@ -266,7 +266,12 @@ function effectiveEnvelope(
   return {
     contractVersion: snapshot.envelope.contractVersion,
     decisionRevision: snapshot.envelope.decisionRevision,
-    sourceRevisions: snapshot.envelope.sourceRevisions,
+    sourceRevisions: Object.fromEntries(
+      Object.entries(snapshot.envelope.sourceRevisions).filter(
+        (entry): entry is [string, string] =>
+          typeof entry[1] === 'string' && Boolean(entry[1].trim())
+      )
+    ),
     activeAccessMode: snapshot.envelope.activeAccessMode,
     generatedAt: snapshot.envelope.generatedAt,
     contexts: snapshot.envelope.contexts.map(effectiveContext),

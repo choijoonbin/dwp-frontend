@@ -365,6 +365,23 @@ const FIELD_PARSERS = Object.freeze({
   DOCUMENT_METADATA: documentMetadataValue,
 });
 
+function fieldParser(group: string): typeof aggregateValue {
+  switch (group) {
+    case 'REQUEST_SUMMARY':
+      return FIELD_PARSERS.REQUEST_SUMMARY;
+    case 'REQUEST_STATUS':
+      return FIELD_PARSERS.REQUEST_STATUS;
+    case 'COMMAND_RECEIPT':
+      return FIELD_PARSERS.COMMAND_RECEIPT;
+    case 'CERTIFICATE_METADATA':
+      return FIELD_PARSERS.CERTIFICATE_METADATA;
+    case 'DOCUMENT_METADATA':
+      return FIELD_PARSERS.DOCUMENT_METADATA;
+    default:
+      return invalid('fieldGroups');
+  }
+}
+
 function fieldDecision(value: unknown, path: string, parseValue: typeof aggregateValue) {
   const candidate = record(value, path);
   if (candidate.decision === 'VIEW') {
@@ -439,7 +456,7 @@ function items(
         omitted += 1;
         return;
       }
-      const result = fieldDecision(decision, `${path}.fieldGroups.${group}`, FIELD_PARSERS[group]);
+      const result = fieldDecision(decision, `${path}.fieldGroups.${group}`, fieldParser(group));
       if (result === 'VIEW') view += 1;
       else masked += 1;
     });

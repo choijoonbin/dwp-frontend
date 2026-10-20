@@ -183,7 +183,7 @@ function authorityFixture(testCase: (typeof CASES)[number]): {
         policy: 'product-authorization-v51',
         productRelationship: 'relationship-v51',
         targetPopulation: 'population-v51',
-        support: 'support-v51',
+        support: null,
         tenantControl: 'tenant-control-v51',
       },
       activeAccessMode: 'NORMAL' as const,

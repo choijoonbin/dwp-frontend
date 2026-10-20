@@ -45,7 +45,7 @@ const secureExecution = (input: {
 });
 
 function commandRunner(
-  spy: ReturnType<typeof vi.fn>,
+  spy: (input: Parameters<HrisApprovalCommandRunner>[0]) => unknown,
   contextScopeKey: string
 ): HrisApprovalCommandRunner {
   return async <T,>(input: Parameters<HrisApprovalCommandRunner>[0]) => {

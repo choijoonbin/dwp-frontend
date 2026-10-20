@@ -28,6 +28,7 @@ import type {
   TimeCloseEntryMode,
   TimeCloseHttpClient,
   TimeCloseOwnerBinding,
+  TimeClosePageRouteContractKey,
   TimeCloseScope,
 } from '../../close';
 import type { ProductSurfaceGovernedMutationAuthority } from '@dwp-frontend/shared-utils';
@@ -302,13 +303,15 @@ function ownerBinding(entryMode: TimeCloseEntryMode = 'DAILY_CLOSE'): TimeCloseO
     (highRisk: boolean): TimeCloseCommandAuthorityExecutor =>
     (run, binding) =>
       run(authority(binding, highRisk));
+  const pageRouteByEntryMode: Readonly<Record<TimeCloseEntryMode, TimeClosePageRouteContractKey>> =
+    {
+      COMMAND_CENTER: 'route.hcm.operations.time-command-center.page',
+      DAILY_CLOSE: 'route.hcm.operations.time-daily-close.page',
+      MONTHLY_CLOSE: 'route.hcm.operations.time-monthly-close.page',
+    };
   return {
     page: {
-      routeContractKey: {
-        COMMAND_CENTER: 'route.hcm.operations.time-command-center.page',
-        DAILY_CLOSE: 'route.hcm.operations.time-daily-close.page',
-        MONTHLY_CLOSE: 'route.hcm.operations.time-monthly-close.page',
-      }[entryMode],
+      routeContractKey: pageRouteByEntryMode[entryMode],
     },
     commands: {
       validate: {
@@ -544,7 +547,7 @@ describe('[SLICE:BASE-TFR-TIM-007] canonical time close and payroll handoff', ()
   it('honors an authorized monthly close action without inventing absent blocker evidence', () => {
     const monthly = structuredClone(projection('MONTHLY_CLOSE'));
     monthly.items[0]!.statusCode = 'OPEN';
-    monthly.items[0]!.fieldGroups.CLOSE_STATUS = {
+    (monthly.items[0]!.fieldGroups as Record<string, unknown>).CLOSE_STATUS = {
       decision: 'VIEW',
       value: { code: 'OPEN', revision: 7 },
     };
@@ -554,7 +557,7 @@ describe('[SLICE:BASE-TFR-TIM-007] canonical time close and payroll handoff', ()
   });
 
   it('binds raw projection cache authority and fails closed on non-200 or missing status', async () => {
-    const get = vi.fn(async () => ({
+    const get = vi.fn<TimeCloseHttpClient['get']>(async () => ({
       data: projection('DAILY_CLOSE'),
       status: 200,
       headers: successHeaders(),
@@ -609,7 +612,7 @@ describe('[SLICE:BASE-TFR-TIM-007] canonical time close and payroll handoff', ()
   });
 
   it('binds CAS, purpose, idempotency and fresh challenge only to close and reopen', async () => {
-    const post = vi.fn(async (url: string) => ({
+    const post = vi.fn<TimeCloseHttpClient['post']>(async (url) => ({
       data: receipt(
         url.endsWith('/validations')
           ? 'VALIDATE'
@@ -739,7 +742,7 @@ describe('[SLICE:BASE-TFR-TIM-007] canonical time close and payroll handoff', ()
 
   it('retains only a receipt id bound by an exact authoritative 202 Location', async () => {
     const malformed = receipt('VALIDATE', 'ACCEPTED', { requestDigest: 'not-a-digest' });
-    const post = vi.fn(async () => ({
+    const post = vi.fn<TimeCloseHttpClient['post']>(async () => ({
       data: malformed,
       status: 202,
       headers: successHeaders({
@@ -823,7 +826,7 @@ describe('[SLICE:BASE-TFR-TIM-007] canonical time close and payroll handoff', ()
       )
     ).toThrow('progression');
 
-    const get = vi.fn(async () => ({
+    const get = vi.fn<TimeCloseHttpClient['get']>(async () => ({
       data: receipt('CLOSE'),
       status: 200,
       headers: { 'Cache-Control': 'no-store' },
@@ -875,7 +878,7 @@ describe('[SLICE:BASE-TFR-TIM-007] canonical time close and payroll handoff', ()
       parsePayrollTimeHandoffStatus({ ...handoff('ACKNOWLEDGED'), workerCount: 1_000_001 }, '"2"')
     ).toThrow('handoff count');
 
-    const get = vi.fn(async () => ({
+    const get = vi.fn<TimeCloseHttpClient['get']>(async () => ({
       data: handoff('ACKNOWLEDGED'),
       status: 200,
       headers: successHeaders({ ETag: '"2"' }),

@@ -86,7 +86,12 @@ function effectiveEnvelope(
   return {
     contractVersion: snapshot.envelope.contractVersion,
     decisionRevision: snapshot.envelope.decisionRevision,
-    sourceRevisions: snapshot.envelope.sourceRevisions,
+    sourceRevisions: Object.fromEntries(
+      Object.entries(snapshot.envelope.sourceRevisions).filter(
+        (entry): entry is [string, string] =>
+          typeof entry[1] === 'string' && Boolean(entry[1].trim())
+      )
+    ),
     activeAccessMode: snapshot.envelope.activeAccessMode,
     generatedAt: snapshot.envelope.generatedAt,
     contexts: snapshot.envelope.contexts.map(effectiveContext),
@@ -260,10 +265,12 @@ function HrisSys003RouteAdmission({ workspace }: Readonly<{ workspace: Sys003Wor
   const tenantId = String(auth.user?.tenantId ?? '');
   const actorId = String(auth.user?.userId ?? '');
   const snapshot = authority.status === 'ready' ? authority.snapshot : undefined;
+  const serverNowMs = authority.status === 'ready' ? authority.serverNowMs : undefined;
   const pageEvidence = useMemo<HcmPageEvidence | null>(() => {
     if (
       !runtimeEnabled ||
       !snapshot ||
+      serverNowMs === undefined ||
       !pageDecision ||
       !requestGoverned ||
       !requestReady ||
@@ -280,7 +287,7 @@ function HrisSys003RouteAdmission({ workspace }: Readonly<{ workspace: Sys003Wor
       pageDecision.scope.readOnly !== true ||
       pageDecision.effectiveReadOnly !== true ||
       !isAllowedCanaryDecisionTrusted(
-        { envelope: effectiveEnvelope(snapshot), serverNowMs: authority.serverNowMs },
+        { envelope: effectiveEnvelope(snapshot), serverNowMs },
         pageDecision,
         { productId: 'hcm', surfaceId: contract.hcmSurfaceId }
       )
@@ -305,7 +312,7 @@ function HrisSys003RouteAdmission({ workspace }: Readonly<{ workspace: Sys003Wor
     const deadlines = deadlineValues.map(Date.parse);
     if (
       deadlines.length < 2 ||
-      deadlines.some((deadline) => !Number.isFinite(deadline) || deadline <= authority.serverNowMs)
+      deadlines.some((deadline) => !Number.isFinite(deadline) || deadline <= serverNowMs)
     ) {
       return null;
     }
@@ -318,7 +325,6 @@ function HrisSys003RouteAdmission({ workspace }: Readonly<{ workspace: Sys003Wor
     });
   }, [
     actorId,
-    authority.serverNowMs,
     contract.hcmCapability,
     contract.hcmSurfaceId,
     pageDecision,
@@ -331,15 +337,16 @@ function HrisSys003RouteAdmission({ workspace }: Readonly<{ workspace: Sys003Wor
     requestSurfaceId,
     requestTenantId,
     runtimeEnabled,
+    serverNowMs,
     snapshot,
     tenantId,
   ]);
   const ownerContextScopeKey = useMemo(
     () =>
-      pageEvidence && snapshot
-        ? resolveSys003ApprovalOwnerScopeKey(workspace, snapshot, authority.serverNowMs)
+      pageEvidence && snapshot && serverNowMs !== undefined
+        ? resolveSys003ApprovalOwnerScopeKey(workspace, snapshot, serverNowMs)
         : undefined,
-    [authority.serverNowMs, pageEvidence, snapshot, workspace]
+    [pageEvidence, serverNowMs, snapshot, workspace]
   );
   const identity =
     pageEvidence && ownerContextScopeKey
