@@ -1,0 +1,844 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-sys006-iaq-transport-event-and-central-authorization-successor.v1",
+  "successorId": "HRIS-WAVE7-R7-BATCH-04-SYS006-IAQ-TRANSPORT-EVENT-CENTRAL-AUTHORIZATION-20261020-R1",
+  "recordedAt": "2026-10-20T12:10:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ID_AND_SHA256",
+    "historicalArtifactsModified": false
+  },
+  "state": "SEALED_EXACT_SYS006_IAQ059_TRANSPORT_SYSEVT004_V56_V265_V333_GATEWAY_SHARED_BRIDGE_CHILD_SURFACE_AUTHORITY_DEFAULT_OFF_ZERO_ENROLLMENT",
+  "sliceId": "BASE-TFR-SYS-006",
+  "capability": "DWP.AUTOMATION.CONTROL_PLANE",
+  "boundedContext": "DWP_PLATFORM_AUTOMATION",
+  "authorityBasis": {
+    "semanticDisposition": {
+      "path": "semantic-dispositions/base-tfr-sys-006.semantic-disposition.v1.json",
+      "sha256": "e5f8ecc7db70737ae5cfb6d3ccc8879b30f0395febc35db3de4455baf1a1825f",
+      "bytes": 192503,
+      "requiredState": "SYS006_AUTOMATION_CONTROL_PLANE_BOUNDARY_SEALED_V333_REQUIRED_CENTRAL_SUCCESSOR_BEFORE_SOURCE"
+    },
+    "semanticReview": {
+      "path": "semantic-dispositions/base-tfr-sys-006.semantic-review.v1.json",
+      "sha256": "bc261e69873c84427c8d70b39f2e9466044c4e0d743bf2c83ac7cb9c1c8b028c",
+      "bytes": 3448,
+      "requiredState": "SYS006_SEMANTIC_DISPOSITION_INDEPENDENTLY_REVIEWED_PASS_ZERO_P0_ZERO_P1_ZERO_P2_CENTRAL_SUCCESSOR_MAY_PROCEED"
+    },
+    "precedingLaneExit": {
+      "path": "../r7-batch-04-central-admission-r1/per-004-sequencing-exit-receipt.v1.json",
+      "sha256": "a25b77fe2030f1245f78ef05f4d2eecace04234c358d8e3482c32fad424ea2e0",
+      "bytes": 8720,
+      "requiredState": "BATCH04_LANE_3_PER004_SEQUENCING_EXIT_ACCEPTED_DEFAULT_OFF_ZERO_ENROLLMENT_ZERO_BUSINESS_CREDIT_SYS006_SEMANTIC_CLOSURE_NEXT",
+      "requiredNextLane": "BASE-TFR-SYS-006"
+    }
+  },
+  "pinnedRepositories": {
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "4cb284f0dc9c04c3d382afaa5d4393542eca0344",
+      "tree": "21f4788f29aa4595ab6937b6be4a70875efe2549",
+      "originExactBeforeThisSuccessor": true,
+      "cleanBeforeThisSuccessor": true
+    },
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "4dc200ac8e79169bbf19863abbfbf1a3ca2567a7",
+      "tree": "54dcd534da2e8bd5789f21b40fd7add4c17c0546",
+      "originExact": true,
+      "clean": true
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "originExact": true,
+      "clean": true,
+      "readOnly": true
+    }
+  },
+  "semanticSectionSeals": {
+    "incorporationMode": "HASH_PINNED_JSON_POINTER_INCORPORATION_BY_REFERENCE",
+    "canonicalization": "JQ_COMPACT_SORTED_KEYS_UTF8_WITH_TRAILING_LF_SHA256",
+    "source": "semantic-dispositions/base-tfr-sys-006.semantic-disposition.v1.json",
+    "rule": "Every listed section is incorporated without semantic narrowing. An implementation or review must fail closed if the pinned source artifact or any canonical section digest differs.",
+    "sections": [
+      {
+        "jsonPointer": "/iaqDecision",
+        "sha256": "fdf292c929f9ae51c098bb8505438ec6630295af9260356831efaa234d60f90d"
+      },
+      {
+        "jsonPointer": "/contractDecision",
+        "sha256": "34c164b5fa0d986f230958c9e7d1d9b50b44007bfe7a128064202037310c33d2"
+      },
+      {
+        "jsonPointer": "/contractDecision/closedTransportSchemas",
+        "sha256": "414aa96f4f9a0bfffe6a506c208e62c94834d96f656e0551f64c67255335c0df"
+      },
+      {
+        "jsonPointer": "/lifecycleDecision",
+        "sha256": "912388b9dcef80476bd443864de20dddc8bb63700435a31c25e54164bd99723f"
+      },
+      {
+        "jsonPointer": "/migrationDecision",
+        "sha256": "3e0ad506b4a307e7025e94c04814a9e8edae1ef8b7adbd1ac875b8bc110a17f6"
+      },
+      {
+        "jsonPointer": "/eventDecision",
+        "sha256": "bb4939d4c36af00d13a5a371c057d13a10cb7574709dbc6a4198915dc7d09b77"
+      },
+      {
+        "jsonPointer": "/receiptDecision",
+        "sha256": "ea11deaa368716ebf071ab7409d78635dc272570021f182b7678a076e31cc056"
+      },
+      {
+        "jsonPointer": "/authorizationDecision",
+        "sha256": "2933c311365da8a231ce0a290cafd23051a77d3d5bbf26d43ea802a5d26c829c"
+      },
+      {
+        "jsonPointer": "/typedArtifactContract",
+        "sha256": "a17bf3212324e3513acbf48c3672289a0775e40a940aaa276d29e9cb5666f398"
+      },
+      {
+        "jsonPointer": "/acceptanceCriteria",
+        "sha256": "b5a7455931d3c74bc4322e5e9afcd97d507224614bffe11aa8dd51051e5df6f0"
+      },
+      {
+        "jsonPointer": "/acceptanceEvidencePlan",
+        "sha256": "25482a349f5d50f909a28b76ce0c444a4040437036ed87d5bf4eba9232810a59"
+      }
+    ]
+  },
+  "observedClosedPrecursor": {
+    "decision": "The semantic disposition observed a v55 lineage gap that was closed on dwp-dev by backend commit 54344add before this successor. That historical requirement is satisfied and must not be reimplemented.",
+    "productAuthorizationV55": {
+      "path": "dwp-backend/contracts/product-authorization/product-surfaces-v1.bundle-v55.json",
+      "sha256": "8e74e483cac14d28d40a44f3017782d33d2e5894df6943efcd9b66ecdfbe0a3b",
+      "bytes": 2632213,
+      "contractChecksum": "7fb2121a1209b87234bcb389a9bd4c4addca3c4e8c8776a9aac70d278c74d4e6",
+      "counts": {
+        "capabilities": 270,
+        "accessPolicies": 24,
+        "entitlementExpressions": 17,
+        "predicatePolicies": 82,
+        "routes": 1104,
+        "PAGE": 156,
+        "DATA": 336,
+        "ACTION": 612
+      }
+    },
+    "releaseLineage": {
+      "path": "dwp-backend/dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationReleaseLineage.java",
+      "sha256": "4df9bad452d959d837f4badd4037226e301c9e2e77399d894dbde3707747e1b0",
+      "bytes": 14454,
+      "containsExactV55Pin": true,
+      "repeatV55CorrectionForbidden": true
+    },
+    "platformHighWater": {
+      "migration": "V332__bind_hris_reference_configuration_owner_evidence.sql",
+      "sha256": "6374af4b31590aa9aaa3dfbcbf6c028476d6c2e31e645df3ec3470511cbb61bf",
+      "bytes": 16290
+    },
+    "authHighWater": {
+      "migration": "V264__declare_hris_r7_batch04_per004_v55_authorization_seed.sql",
+      "sha256": "ef96150721feaf388584e5241f2a782a8a4d96bd2e7e54350e26634744169b08",
+      "bytes": 2060
+    }
+  },
+  "iaq059Successor": {
+    "entryQuery": "IAQ-059",
+    "iaNodeId": "BASE:settings-operations",
+    "canonicalRoute": "/hr/settings/operations",
+    "primaryOwner": "BASE-TFR-SYS-002",
+    "relationship": "SHARED_ROUTE_CHILD_COMPOSITION_REUSE_ONLY_NO_OWNERSHIP_OR_RECOUNT",
+    "childSections": [
+      "AUTOMATION_DEFINITIONS",
+      "AUTOMATION_SCHEDULES",
+      "AUTOMATION_RUNS"
+    ],
+    "requiredDecisions": [
+      "the existing SYS-002 page decision with hcm.configuration.workbench.view",
+      "an independent SYS-006 HRIS_AUTOMATION_CONTROL_PLANE child and API decision"
+    ],
+    "historicalAutomationHrefTemplates": "SUPERSEDED_AND_FORBIDDEN",
+    "actionProjectionOwner": "SYS-API-017 GET catalog and SYS-API-019 run detail return exact target-bound state-aware actions only after their own owner authorization and visible target facts.",
+    "newPageRouteCount": 0,
+    "newSidebarNode": false,
+    "pageOwnershipChanged": false,
+    "iaqRecount": false,
+    "currentMountState": "UNMOUNTED_DEFAULT_OFF"
+  },
+  "transportAndAuthorizationContract": {
+    "cardinality": {
+      "apis": 16,
+      "peps": 16,
+      "httpOperationBindings": 16,
+      "routeContractKeys": 16,
+      "dataRoutes": 2,
+      "actionRoutes": 14,
+      "actionKeys": 14,
+      "receiptBridgeMappings": 14
+    },
+    "operationBindings": [
+      {
+        "api": "SYS-API-017.GET",
+        "pep": "PEP-SYS-017",
+        "method": "GET",
+        "browserPath": "/api/platform/v1/admin/hris/automations",
+        "routeContractKey": "route.hcm.configuration.automation-catalog.data",
+        "routeKind": "DATA",
+        "meaning": "DEFINITION_CATALOG"
+      },
+      {
+        "api": "SYS-API-017.POST",
+        "pep": "PEP-SYS-018",
+        "method": "POST",
+        "browserPath": "/api/platform/v1/admin/hris/automations",
+        "routeContractKey": "route.hcm.configuration.automation-definition-create.action",
+        "routeKind": "ACTION",
+        "meaning": "CREATE_DEFINITION_DRAFT"
+      },
+      {
+        "api": "SYS-API-018",
+        "pep": "PEP-SYS-019",
+        "method": "POST",
+        "browserPath": "/api/platform/v1/admin/hris/automations/{automationId}/runs",
+        "routeContractKey": "route.hcm.configuration.automation-run-queue.action",
+        "routeKind": "ACTION",
+        "meaning": "QUEUE_RUN"
+      },
+      {
+        "api": "SYS-API-019",
+        "pep": "PEP-SYS-020",
+        "method": "GET",
+        "browserPath": "/api/platform/v1/admin/hris/automation-runs/{runId}",
+        "routeContractKey": "route.hcm.configuration.automation-run-detail.data",
+        "routeKind": "DATA",
+        "meaning": "RUN_ATTEMPT_ITEM_CHECKPOINT_RECEIPT"
+      },
+      {
+        "api": "SYS-API-020",
+        "pep": "PEP-SYS-021",
+        "method": "POST",
+        "browserPath": "/api/platform/v1/admin/hris/automation-runs/{runId}/retry",
+        "routeContractKey": "route.hcm.configuration.automation-run-retry.action",
+        "routeKind": "ACTION",
+        "meaning": "CREATE_RETRY_ATTEMPT"
+      },
+      {
+        "api": "SYS-API-046",
+        "pep": "PEP-SYS-048",
+        "method": "POST",
+        "browserPath": "/api/platform/v1/admin/hris/automations/{automationId}/versions",
+        "routeContractKey": "route.hcm.configuration.automation-version-create.action",
+        "routeKind": "ACTION",
+        "meaning": "CREATE_SIGNED_DRAFT_VERSION"
+      },
+      {
+        "api": "SYS-API-047",
+        "pep": "PEP-SYS-049",
+        "method": "POST",
+        "browserPath": "/api/platform/v1/admin/hris/automations/{automationId}/versions/{version}/validate",
+        "routeContractKey": "route.hcm.configuration.automation-version-validate.action",
+        "routeKind": "ACTION",
+        "meaning": "DRAFT_TO_VALIDATED"
+      },
+      {
+        "api": "SYS-API-048",
+        "pep": "PEP-SYS-050",
+        "method": "POST",
+        "browserPath": "/api/platform/v1/admin/hris/automations/{automationId}/versions/{version}/submit",
+        "routeContractKey": "route.hcm.configuration.automation-version-submit.action",
+        "routeKind": "ACTION",
+        "meaning": "VALIDATED_TO_PENDING_APPROVAL"
+      },
+      {
+        "api": "SYS-API-049",
+        "pep": "PEP-SYS-051",
+        "method": "POST",
+        "browserPath": "/api/platform/v1/admin/hris/automations/{automationId}/versions/{version}/approve",
+        "routeContractKey": "route.hcm.configuration.automation-version-approve.action",
+        "routeKind": "ACTION",
+        "meaning": "PENDING_APPROVAL_TO_APPROVED"
+      },
+      {
+        "api": "SYS-API-050",
+        "pep": "PEP-SYS-052",
+        "method": "POST",
+        "browserPath": "/api/platform/v1/admin/hris/automations/{automationId}/versions/{version}/activate",
+        "routeContractKey": "route.hcm.configuration.automation-version-activate.action",
+        "routeKind": "ACTION",
+        "meaning": "APPROVED_TO_ACTIVE"
+      },
+      {
+        "api": "SYS-API-051",
+        "pep": "PEP-SYS-053",
+        "method": "POST",
+        "browserPath": "/api/platform/v1/admin/hris/automations/{automationId}/schedules",
+        "routeContractKey": "route.hcm.configuration.automation-schedule-create.action",
+        "routeKind": "ACTION",
+        "meaning": "CREATE_DRAFT_SCHEDULE"
+      },
+      {
+        "api": "SYS-API-052",
+        "pep": "PEP-SYS-054",
+        "method": "POST",
+        "browserPath": "/api/platform/v1/admin/hris/automation-schedules/{scheduleId}/submit",
+        "routeContractKey": "route.hcm.configuration.automation-schedule-submit.action",
+        "routeKind": "ACTION",
+        "meaning": "SCHEDULE_DRAFT_TO_PENDING_APPROVAL"
+      },
+      {
+        "api": "SYS-API-053",
+        "pep": "PEP-SYS-055",
+        "method": "POST",
+        "browserPath": "/api/platform/v1/admin/hris/automation-schedules/{scheduleId}/approve",
+        "routeContractKey": "route.hcm.configuration.automation-schedule-approve.action",
+        "routeKind": "ACTION",
+        "meaning": "SCHEDULE_PENDING_APPROVAL_TO_APPROVED"
+      },
+      {
+        "api": "SYS-API-054",
+        "pep": "PEP-SYS-056",
+        "method": "POST",
+        "browserPath": "/api/platform/v1/admin/hris/automation-schedules/{scheduleId}/activate",
+        "routeContractKey": "route.hcm.configuration.automation-schedule-activate.action",
+        "routeKind": "ACTION",
+        "meaning": "SCHEDULE_APPROVED_TO_ACTIVE"
+      },
+      {
+        "api": "SYS-API-055",
+        "pep": "PEP-SYS-057",
+        "method": "POST",
+        "browserPath": "/api/platform/v1/admin/hris/automation-schedules/{scheduleId}/suspend",
+        "routeContractKey": "route.hcm.configuration.automation-schedule-suspend.action",
+        "routeKind": "ACTION",
+        "meaning": "SCHEDULE_ACTIVE_TO_SUSPENDED"
+      },
+      {
+        "api": "SYS-API-056",
+        "pep": "PEP-SYS-058",
+        "method": "POST",
+        "browserPath": "/api/platform/v1/admin/hris/automation-runs/{runId}/cancel",
+        "routeContractKey": "route.hcm.configuration.automation-run-cancel.action",
+        "routeKind": "ACTION",
+        "meaning": "CANCEL_PRE_EFFECT_OR_COMPENSATE_POST_EFFECT"
+      }
+    ],
+    "receiptOriginatingActionRouteBindings": [
+      {
+        "originatingAction": "hris.action.sys.post.platform.v1.admin.hris.automations",
+        "routeContractKey": "route.hcm.configuration.automation-definition-create.action"
+      },
+      {
+        "originatingAction": "hris.action.sys.post.platform.v1.admin.hris.automations.resource.runs",
+        "routeContractKey": "route.hcm.configuration.automation-run-queue.action"
+      },
+      {
+        "originatingAction": "hris.action.sys.post.platform.v1.admin.hris.automation-runs.resource.retry",
+        "routeContractKey": "route.hcm.configuration.automation-run-retry.action"
+      },
+      {
+        "originatingAction": "hris.action.sys.post.platform.v1.admin.hris.automations.resource.versions",
+        "routeContractKey": "route.hcm.configuration.automation-version-create.action"
+      },
+      {
+        "originatingAction": "hris.action.sys.post.platform.v1.admin.hris.automations.resource.versions.resource.validate",
+        "routeContractKey": "route.hcm.configuration.automation-version-validate.action"
+      },
+      {
+        "originatingAction": "hris.action.sys.post.platform.v1.admin.hris.automations.resource.versions.resource.submit",
+        "routeContractKey": "route.hcm.configuration.automation-version-submit.action"
+      },
+      {
+        "originatingAction": "hris.action.sys.post.platform.v1.admin.hris.automations.resource.versions.resource.approve",
+        "routeContractKey": "route.hcm.configuration.automation-version-approve.action"
+      },
+      {
+        "originatingAction": "hris.action.sys.post.platform.v1.admin.hris.automations.resource.versions.resource.activate",
+        "routeContractKey": "route.hcm.configuration.automation-version-activate.action"
+      },
+      {
+        "originatingAction": "hris.action.sys.post.platform.v1.admin.hris.automations.resource.schedules",
+        "routeContractKey": "route.hcm.configuration.automation-schedule-create.action"
+      },
+      {
+        "originatingAction": "hris.action.sys.post.platform.v1.admin.hris.automation-schedules.resource.submit",
+        "routeContractKey": "route.hcm.configuration.automation-schedule-submit.action"
+      },
+      {
+        "originatingAction": "hris.action.sys.post.platform.v1.admin.hris.automation-schedules.resource.approve",
+        "routeContractKey": "route.hcm.configuration.automation-schedule-approve.action"
+      },
+      {
+        "originatingAction": "hris.action.sys.post.platform.v1.admin.hris.automation-schedules.resource.activate",
+        "routeContractKey": "route.hcm.configuration.automation-schedule-activate.action"
+      },
+      {
+        "originatingAction": "hris.action.sys.post.platform.v1.admin.hris.automation-schedules.resource.suspend",
+        "routeContractKey": "route.hcm.configuration.automation-schedule-suspend.action"
+      },
+      {
+        "originatingAction": "hris.action.sys.post.platform.v1.admin.hris.automation-runs.resource.cancel",
+        "routeContractKey": "route.hcm.configuration.automation-run-cancel.action"
+      }
+    ],
+    "profileDecision": {
+      "commonChain": [
+        "APP.HCM:VIEW",
+        "GATEWAY_APP_ENTITLEMENT",
+        "OWNER_API_OPERATION",
+        "RESOURCE_POPULATION",
+        "REPOSITORY_TENANT_PREDICATE",
+        "FIELD_PROJECTION",
+        "PURPOSE_POLICY",
+        "AUDIT_DECISION"
+      ],
+      "purpose": "HRIS_SYSTEM_ADMIN",
+      "author": {
+        "responsibility": "HRIS_CONFIG_AUTHOR>HRIS_DUTY_POLICY_AUTHOR",
+        "capability": "hcm.configuration.policy.update",
+        "commands": [
+          "CREATE_DEFINITION",
+          "CREATE_VERSION",
+          "VALIDATE_VERSION",
+          "SUBMIT_VERSION",
+          "CREATE_SCHEDULE",
+          "SUBMIT_SCHEDULE"
+        ]
+      },
+      "publisher": {
+        "responsibility": "HRIS_CONFIG_PUBLISHER>HRIS_DUTY_POLICY_PUBLISHER",
+        "capability": "hcm.configuration.policy.publish",
+        "makerChecker": true,
+        "stepUp": true,
+        "commands": [
+          "APPROVE_VERSION",
+          "APPROVE_SCHEDULE"
+        ]
+      },
+      "executor": {
+        "responsibility": "HRIS_INTEGRATION_EXECUTOR>HRIS_DUTY_INTEGRATION_EXECUTOR",
+        "capability": "hcm.integration.execute",
+        "commands": [
+          "QUEUE_RUN",
+          "READ_RUN",
+          "RETRY_RUN",
+          "ACTIVATE_VERSION",
+          "ACTIVATE_SCHEDULE",
+          "SUSPEND_SCHEDULE",
+          "CANCEL_RUN"
+        ]
+      },
+      "catalogGetRule": "PEP-SYS-017 evaluates author/update, publisher/publish and executor/execute independently and projects only the satisfied profile set; no implicit union.",
+      "createPostRule": "PEP-SYS-018 remains author/update-only.",
+      "queryOnlyNeverGrantsCommand": true
+    },
+    "sysApi017PostNormalization": {
+      "meaning": "CREATE_DEFINITION_IDENTITY_AND_NON_EXECUTABLE_METADATA_IN_DRAFT_ONLY",
+      "allowedFields": [
+        "automationKey",
+        "displayName",
+        "description",
+        "ownerDomain"
+      ],
+      "forbiddenFields": [
+        "handlerKey",
+        "handlerContractVersion",
+        "schedule",
+        "concurrencyKey",
+        "enabled",
+        "activationState"
+      ],
+      "delegatedTo": {
+        "version": "SYS-API-046",
+        "schedule": "SYS-API-051",
+        "activation": "SYS-API-050_OR_SYS-API-054"
+      }
+    },
+    "closedTransportSchemas": {
+      "sourceJsonPointer": "/contractDecision/closedTransportSchemas",
+      "sourceSectionSha256": "414aa96f4f9a0bfffe6a506c208e62c94834d96f656e0551f64c67255335c0df",
+      "dialect": "https://json-schema.org/draft/2020-12/schema",
+      "schemas": [
+        "SYS_API_017_GET_QUERY",
+        "SYS_API_017_GET_RESPONSE",
+        "SYS_API_017_POST_REQUEST",
+        "SYS_API_017_POST_RESPONSE",
+        "SYS_API_019_GET_QUERY",
+        "SYS_API_019_GET_RESPONSE"
+      ],
+      "additionalProperties": false,
+      "authenticatedCursorBindings": true,
+      "closedActionDescriptors": true,
+      "handlerContractVersion": "CANONICAL_SCHEMA_VERSION_STRING_NOT_INTEGER",
+      "jsonNumberMax": 9007199254740991,
+      "countAndItemMax": 1000000000,
+      "attemptMax": 20,
+      "implementationRule": "The six schemas and their common definitions, action descriptors, cursor bindings, nullable rules and stable ordering are incorporated exactly by the pinned JSON pointer and digest; local weakening or widening is forbidden."
+    },
+    "commandRules": {
+      "successStatus": 202,
+      "receipt": "DURABLE_SHARED_SYS_HRIS_COMMAND_RECEIPT",
+      "requiredHeaders": [
+        "Authorization",
+        "X-Correlation-Id",
+        "X-Purpose-Code",
+        "Idempotency-Key"
+      ],
+      "casHeaderForExistingAggregateMutation": "If-Match",
+      "closedProblemStatuses": [
+        400,
+        401,
+        403,
+        404,
+        409,
+        422,
+        429,
+        503
+      ]
+    }
+  },
+  "productAuthorizationV56": {
+    "predecessor": "v55",
+    "candidate": "v56",
+    "appendOnlyCounts": {
+      "capabilities": 270,
+      "accessPolicies": 24,
+      "entitlementExpressions": 17,
+      "predicatePolicies": 82,
+      "routes": 1120,
+      "PAGE": 156,
+      "DATA": 338,
+      "ACTION": 626
+    },
+    "delta": {
+      "capabilities": 0,
+      "accessPolicies": 0,
+      "entitlementExpressions": 0,
+      "predicatePolicies": 0,
+      "routes": 16,
+      "PAGE": 0,
+      "DATA": 2,
+      "ACTION": 14
+    },
+    "reusedCapabilities": [
+      "hcm.configuration.policy.update",
+      "hcm.configuration.policy.publish",
+      "hcm.integration.execute"
+    ],
+    "newPageRoutes": [],
+    "routeContractKeys": [
+      "route.hcm.configuration.automation-catalog.data",
+      "route.hcm.configuration.automation-definition-create.action",
+      "route.hcm.configuration.automation-run-queue.action",
+      "route.hcm.configuration.automation-run-detail.data",
+      "route.hcm.configuration.automation-run-retry.action",
+      "route.hcm.configuration.automation-version-create.action",
+      "route.hcm.configuration.automation-version-validate.action",
+      "route.hcm.configuration.automation-version-submit.action",
+      "route.hcm.configuration.automation-version-approve.action",
+      "route.hcm.configuration.automation-version-activate.action",
+      "route.hcm.configuration.automation-schedule-create.action",
+      "route.hcm.configuration.automation-schedule-submit.action",
+      "route.hcm.configuration.automation-schedule-approve.action",
+      "route.hcm.configuration.automation-schedule-activate.action",
+      "route.hcm.configuration.automation-schedule-suspend.action",
+      "route.hcm.configuration.automation-run-cancel.action"
+    ],
+    "deterministicChecksum": "TO_BE_GENERATED_AND_PINNED_BY_THE_BOUNDED_IMPLEMENTATION_RECEIPT",
+    "forbidden": [
+      "mutating v55 or any historical bundle",
+      "adding a PAGE route",
+      "reowning route.hcm.configuration.settings-operations.page",
+      "adding a broad capability, grant or predicate",
+      "activating the DRAFT bundle in this gate"
+    ]
+  },
+  "authV265": {
+    "candidateMigration": "V265",
+    "leaseState": "NOT_REQUIRED_FOR_AUTH_STREAM_BUT_SOURCE_NOT_YET_AUTHORED",
+    "bundleRelease": {
+      "bundleKey": "product-surfaces",
+      "version": 56,
+      "intendedBundleStatus": "DRAFT",
+      "automaticImportEnabled": false
+    },
+    "feature": {
+      "featureKey": "HRIS_AUTOMATION_CONTROL_PLANE",
+      "policyVersion": 1,
+      "productKey": "hcm",
+      "appResourceKey": "APP.HCM",
+      "minimumBundleVersion": 56,
+      "baselineState": "OFF",
+      "ownerKey": "SYS"
+    },
+    "ownedRouteContracts": 16,
+    "routeOwnersAfterMigration": 57,
+    "featureRouteBindingsAfterMigration": 57,
+    "featurePoliciesAfterMigration": 11,
+    "tenantActivationRows": 0,
+    "tenantEnrollmentRows": 0,
+    "newBroadGrants": 0,
+    "activationAuthorized": false
+  },
+  "gatewayBoundary": {
+    "browserApis": 16,
+    "mappingsRequired": "ONE_EXACT_MAPPING_PER_OPERATION_BINDING",
+    "trustedReconstruction": [
+      "tenant",
+      "subject",
+      "scope",
+      "field decision context",
+      "purpose HRIS_SYSTEM_ADMIN",
+      "authorization revision",
+      "correlation ID"
+    ],
+    "untrustedInputs": [
+      "browser tenant headers",
+      "browser role or capability claims",
+      "browser field decisions",
+      "browser purpose substitution",
+      "browser authorization revision"
+    ],
+    "directOwnerBypass": "FORBIDDEN"
+  },
+  "sharedReceiptBridge": {
+    "reuseOnly": "SYS-002 shared command receipt controller, store and route remain the sole bridge.",
+    "boundedChanges": [
+      {
+        "component": "HrisCommandReceiptController",
+        "change": "Add the HRIS_AUTOMATION_CONTROL_PLANE feature condition without duplicating the controller, route or SYS-002 ownership."
+      },
+      {
+        "component": "AuthHrisExplorerAuthorityEvidenceQuery",
+        "change": "Add exactly the fourteen originatingAction to routeContractKey mappings sealed in transportAndAuthorizationContract."
+      }
+    ],
+    "transitionGuards": "Reuse and strengthen the shared receipt allowed-transition and terminal-state guards.",
+    "authorizationRevalidation": "Validate current authorization, feature, target, revision, ACTIVE handler registry and fence evidence at validate, activate, queue, schedule fire, lease and pre-effect boundaries.",
+    "secondReceiptTableOrController": "FORBIDDEN"
+  },
+  "typedArtifactBoundary": {
+    "canonicalSchema": {
+      "path": "dwp-backend/contracts/hris/canonical/schemas/platform-dependency-canonical-schemas.v1.json",
+      "sha256": "5674845a3ba00928e8c5e05dc99a7869d3dae7ba2cc48f360c8b16db47ec3d8f",
+      "bytes": 28109
+    },
+    "reuseOnly": [
+      "PDX_004 AutomationHandlerManifestV1",
+      "PDX_005 AutomationInvocationV1",
+      "PDX_006 AutomationRunItemReceiptV1"
+    ],
+    "handlerContractVersion": "CANONICAL_SCHEMA_VERSION_STRING_AND_VARCHAR_STORAGE",
+    "numericInterop": "JSON-number revisions and versions are bounded to 1..9007199254740991; counts and item sequence are bounded to 1000000000; attempts are bounded to 20."
+  },
+  "sysEvt004": {
+    "eventId": "SYS-EVT-004",
+    "eventType": "dwp.hris.automation.run.state-changed.v1",
+    "envelope": "DEP-003_EVENT_ENVELOPE_OUTBOX_INBOX_V1",
+    "payloadFields": [
+      "runPublicId",
+      "state",
+      "itemTotal",
+      "itemSucceeded",
+      "itemFailed",
+      "outputDigest"
+    ],
+    "states": [
+      "QUEUED",
+      "LEASED",
+      "RUNNING",
+      "SUCCEEDED",
+      "PARTIAL",
+      "FAILED",
+      "CANCELLED",
+      "DEAD_LETTER"
+    ],
+    "closedPayload": true,
+    "countMapping": "EXACT_SERVER_DERIVED_MAPPING_IN_PINNED_EVENT_DECISION",
+    "outputDigest": "LOWERCASE_HEX_SHA256_OF_UTF8_RFC8785_JCS_CANONICAL_RECEIPT_SET",
+    "terminalDigestRequiredFor": [
+      "SUCCEEDED",
+      "CANCELLED",
+      "DEAD_LETTER"
+    ],
+    "eventIdentity": "ONE_LOGICAL_EVENT_IDENTITY_PER_COMMITTED_RUN_REVISION_REUSED_ON_PUBLICATION_RETRY",
+    "atomicity": "APPEND_IN_THE_SAME_TRANSACTION_AS_THE_AUTHORIZED_RUN_CAS_OR_ROLL_BACK_BOTH",
+    "terminalEventsImmutable": true,
+    "eventOnlyCorrection": false,
+    "rawInputOutputItemListPiiTokenOrSecret": "FORBIDDEN",
+    "exactRulesSource": {
+      "jsonPointer": "/eventDecision",
+      "sha256": "bb4939d4c36af00d13a5a371c057d13a10cb7574709dbc6a4198915dc7d09b77"
+    }
+  },
+  "platformV333": {
+    "stream": "PLATFORM_MAIN",
+    "observedHighWater": "V332",
+    "candidateVersion": "V333",
+    "leaseState": "NOT_ISSUED",
+    "sourceState": "NOT_AUTHORED",
+    "exactNewTables": [
+      "sys_automation_definitions",
+      "sys_automation_versions",
+      "sys_automation_schedules",
+      "sys_automation_runs",
+      "sys_automation_run_attempts",
+      "sys_automation_run_items",
+      "sys_automation_item_attempts",
+      "sys_automation_run_checkpoints"
+    ],
+    "reuseOnly": [
+      "sys_hris_command_receipts",
+      "sys_domain_event_outbox",
+      "sys_domain_event_inbox",
+      "sys_audit_outbox",
+      "sys_audit_events"
+    ],
+    "requiredRulesSource": {
+      "jsonPointer": "/migrationDecision",
+      "sha256": "3e0ad506b4a307e7025e94c04814a9e8edae1ef8b7adbd1ac875b8bc110a17f6"
+    },
+    "exactRules": [
+      "tenant-composite keys and forced RLS using verified SET LOCAL dwp.tenant_id",
+      "one ACTIVE version and one active concurrency-key slot",
+      "deterministic scheduled-fire identity and independent object, subject and fire-cursor revisions",
+      "four-eyes author and approver inequality",
+      "separate WORKER, OWNER_RECOVERY and RECONCILER fences with lease-expiry recovery",
+      "immutable terminal run, attempt, item and receipt facts",
+      "effect idempotency, compensation evidence and no blind redispatch",
+      "atomic shared receipt, event outbox and audit publication",
+      "RFC-8785/JCS output-digest persistence with interoperable numeric bounds"
+    ],
+    "ninthSys006Table": "FORBIDDEN",
+    "reservationAndAuthoringGate": "ONLY_AFTER_THIS_SUCCESSOR_IS_IMPLEMENTED_REVIEWED_ADMITTED_AND_A_CLEAN_OWNER_PACKET_EXISTS_WITH_A_SEPARATE_PLATFORM_MIGRATION_LEASE"
+  },
+  "frontendChildSurface": {
+    "sharedRoute": "/hr/settings/operations",
+    "composition": "SEPARATELY_AUTHORIZED_CHILD_WITHIN_EXISTING_SYS002_PAGE",
+    "requiredFeature": "HRIS_AUTOMATION_CONTROL_PLANE",
+    "requiredBasePageDecision": "SYS002_EXISTING_PAGE_DECISION",
+    "secondSidebarNode": false,
+    "secondPageOwner": false,
+    "mounted": false,
+    "defaultEnabled": false,
+    "tenantEnrollmentCount": 0,
+    "requiredStates": [
+      "loading",
+      "empty",
+      "complete",
+      "partial",
+      "unavailable",
+      "forbidden",
+      "retry",
+      "step-up"
+    ],
+    "requiredViewportWidths": [
+      1440,
+      1280,
+      390,
+      320
+    ],
+    "requiredZoomPercent": 200
+  },
+  "implementationBoundary": {
+    "runtimeOwner": "dwp-platform-server",
+    "forbiddenNewService": "dwp-sys-server",
+    "packageRoot": "com.dwp.services.platform.hrisconfiguration.automation",
+    "centralDeltaOnly": [
+      "append product authorization v56 and its deterministic generated copies and index",
+      "append Auth V265 default-OFF feature seed and focused tests",
+      "add the sixteen gateway route mappings and trusted-context reconstruction",
+      "add the closed typed platform contracts and schema tests",
+      "add the bounded shared receipt feature condition and fourteen evidence-query mappings",
+      "add the unmounted frontend child-surface contract and focused tests",
+      "prepare Platform V333 source only after the separately admitted lease gate"
+    ],
+    "negativeMatrices": [
+      "query-only authority cannot create an action",
+      "masked or omitted target fields remove actions",
+      "stale CAS fails closed",
+      "wrong tenant fails closed",
+      "self-approval fails closed",
+      "feature OFF returns no SYS-006 data or command authority",
+      "direct owner bypass fails closed"
+    ],
+    "sourceImplementationPerformedByThisSuccessor": false,
+    "migrationReservedOrAuthoredByThisSuccessor": false
+  },
+  "targetedVerification": {
+    "preImplementationStructuralChecks": [
+      "jq syntax and immutable authority pin verification",
+      "canonical semantic-section digest verification",
+      "exact 16 API, 16 PEP, 16 route, 2 DATA, 14 ACTION and 14 action-map cardinality and bijection",
+      "Draft 2020-12 execution of the six closed transport schemas from the pinned semantic source",
+      "v55 lineage and count pin verification without source mutation",
+      "zero PAGE, zero ownership recount, default-OFF, zero-enrollment and unmounted-child checks"
+    ],
+    "implementationTests": [
+      "one deterministic product-authorization v56 generation and --check run",
+      "one focused product-authorization v56 contract and lineage test",
+      "one focused Auth V265 migration contract and zero-enrollment test",
+      "one focused Gateway sixteen-route parity and trusted-header reconstruction test",
+      "focused closed transport, handler registry and shared receipt bridge tests",
+      "focused V333 clean-upgrade, RLS, constraints, lifecycle, fence, compensation and event-outbox tests after a separate lease",
+      "focused frontend child composition and accessible responsive state tests"
+    ],
+    "goldenScenarios": [
+      "SYS-GOLD-003",
+      "SYS-GOLD-008",
+      "SYS-GOLD-015",
+      "SYS-GOLD-016",
+      "SYS-GOLD-017",
+      "SYS-GOLD-018",
+      "SYS-GOLD-019",
+      "SYS-GOLD-032",
+      "SYS-GOLD-040",
+      "SYS-GOLD-045",
+      "SYS-GOLD-049",
+      "SYS-GOLD-050",
+      "SYS-GOLD-051",
+      "SYS-GOLD-052",
+      "SYS-GOLD-053"
+    ],
+    "smallestFailedTargetRerunOnly": true,
+    "repositoryWideSuiteAuthorized": false,
+    "unaffectedPassingTargetRerunAuthorized": false
+  },
+  "activationBoundary": {
+    "featureDefault": "OFF",
+    "tenantEnrollmentCount": 0,
+    "providerBindingCount": 0,
+    "productionScheduleCount": 0,
+    "childSurfaceMount": "ABSENT",
+    "customerDataAuthorized": false,
+    "businessCompletionIncrement": 0
+  },
+  "authority": {
+    "successorSealed": true,
+    "independentReviewRequiredBeforeImplementation": true,
+    "boundedCentralImplementationAuthorizedByThisDocumentAlone": false,
+    "ownerPacketAuthorized": false,
+    "moduleRuntimeSourceAuthorized": false,
+    "platformV333ReservationOrAuthoringAuthorized": false,
+    "moduleWorktreeAuthorized": false,
+    "startTokenAuthorized": false,
+    "routeOrMenuMountAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": false
+  },
+  "nonClaims": [
+    "This successor does not claim that product authorization v56, Auth V265, Gateway mappings, Platform V333, shared receipt changes or the frontend child surface are implemented.",
+    "This successor does not issue an owner packet, start token, worktree, migration lease, activation, enrollment or release.",
+    "This successor does not alter SYS-002 page ownership, IAQ counts, historical bundles, historical migrations or the accepted v55 lineage.",
+    "This successor does not mount a menu or expose a production automation provider or schedule."
+  ],
+  "nextGate": "INDEPENDENTLY_REVIEW_THIS_EXACT_SUCCESSOR_WITH_ZERO_P0_ZERO_P1_ZERO_P2_THEN_IMPLEMENT_AND_TARGET_VERIFY_ONLY_THE_SEALED_BOUNDED_CENTRAL_DELTA_BEFORE_ANY_OWNER_PACKET_OR_V333_LEASE"
+}
