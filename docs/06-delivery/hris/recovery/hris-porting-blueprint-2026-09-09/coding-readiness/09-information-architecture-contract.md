@@ -8,6 +8,49 @@
 
 Shell 순서는 `HRIS 홈` 고정 entry 다음에 위 7개 workbench이며, 업무 탐색은 사이드바 tree가 아니라 별도 `/hr/explore` utility다. 각 workbench는 `APP.HCM` entitlement와 허용된 descendant가 하나 이상일 때만 보인다. 기본 노드 권한이 없으면 첫 번째 허용 descendant로 이동하고, 허용 descendant가 없으면 entry 자체를 생략한다. deep link 진입과 widget 조회는 서버가 atomic duty·population·field(`VIEW/MASK/OMIT`)·purpose·SoD를 다시 판정한다.
 
+## Sidebar 표현 결정 (2026-10-20)
+
+아래 명칭은 사용자에게 보이는 **표현 계층**이며 기존 workbench ID, canonical route, owner와
+98-node IA 권한 사실을 바꾸지 않는다. `인사 운영`은 HRM 운영 workbench의 봉인된 이름이고,
+근태·급여·성과는 상위 `HR 운영` 그룹과 2차 업무 그룹에서 운영 문맥이 이미 드러나므로
+`운영`을 반복하지 않는다. 개인·팀·운영·관리 화면을 한 `업무 영역` 아래 섞지 않는다.
+
+| 표시 그룹 | 1차 항목 | 의미 |
+|---|---|---|
+| 시작 | `HRIS 홈` | 권한이 재평가된 개인·팀·운영 신호와 다음 행동 |
+| 나와 팀 | `내 HR`, `팀` | 전 직원 self-service와 관계 기반 manager 업무를 분리 |
+| HR 운영 | `인사 운영`, `근태`, `급여`, `성과` | HRM·TIM·PAY·PER 운영 workbench. 개인 근태·급여·성과는 여기가 아니라 `내 HR`에 속함 |
+| 시스템 관리 | `설정` | HRIS 기준정보, 정책, workflow, 연계와 DWP 통제. 일반 Account 설정과 구분 |
+
+2차 탐색은 선택된 workbench 하나에만 inline으로 표시한다. 현재 권한으로 갈 수 있는 실제
+route만 보이며 아직 구현·등록·허가되지 않은 목표 route를 placeholder 메뉴로 만들지 않는다.
+서버 navigation policy가 시행 중이면 서버 projection을 사용하고, 미가입/OFF 상태에서는 기존
+Product Surface가 허가한 compatibility route만 같은 그룹 구조로 보여준다. projection 오류나
+stale context는 fail-closed이며 빈 disclosure 화살표를 남기지 않는다.
+
+| 1차 항목 | 봉인된 2차 업무 그룹 | 목표 노드 수 |
+|---|---|---:|
+| 내 HR | 내 정보 / 고용·문서 / 근태·휴가 / 급여·복리후생 / 목표·성장·커리어 / 신청·서비스·도움 | 14 |
+| 팀 | 팀 현황 / 팀 근태·휴가 / 인사 변경 / 목표·평가 / 권한 위임 | 7 |
+| 인사 운영 | 운영 현황·구성원 / 고용·발령·계약 / 조직·인력 계획 / 직원 서비스·문서 / 입사·이동·퇴직 / 채용·외부인력 / 데이터 품질·분석 | 17 |
+| 근태 | 근태 운영 현황 / 근무제·스케줄 / 타각·판정 / 예외·보정 / 휴가·발생 / 마감·리포트 | 11 |
+| 급여 | 급여 운영 현황 / 입력·계산 / 검증·결과 / 소급·정정 / 지급·회계 / 세금·보험·퇴직·연말정산 / 명세서·리포트 | 14 |
+| 성과 | 성과 운영·주기·양식 / 평가 운영 / 다면·피드백·면담 / 캘리브레이션·결과 / 학습 운영 / 기회·승계 / 보상 계획 | 12 |
+| 설정 | 기업·기준·인사 / 근태·휴가 정책 / 급여·법정 정책 / 성과·스킬·리스닝 / 워크플로·문서 / 연계·커넥터 / 확장·AI 거버넌스 / DWP 플랫폼 통제 | 23 |
+
+메뉴 가시성은 `APP.HCM` 제품 접근, 현재 PAGE/route 권한, persona·관계·대상 범위,
+설치 capability/country pack/feature rollout, tenant 및 legal-entity navigation policy의
+교집합이다. Tenant policy는 기존 권한을 좁힐 수만 있고 새 권한을 만들 수 없다. URL 직접
+진입과 API 호출도 같은 서버 권한 판정을 다시 거치므로 메뉴 숨김을 보안 경계로 사용하지 않는다.
+
+반응형 계약은 다음과 같다.
+
+- `1200px` 이상은 고정 sidebar, 사용자 compact 설정에서는 icon-only와 tooltip을 사용한다.
+- `1200px` 미만은 focus 복원과 inert background를 가진 drawer를 사용한다.
+- 320/390px 및 200% zoom에서도 선택 workbench의 2차 그룹을 한 열로 wrap하고 sidebar 자체를
+  세로 scroll한다. 모바일에서 다른 화면으로 이동하면 drawer를 닫고 이동한 업무에 focus를 넘긴다.
+- 긴 한국어·영어 명칭은 줄바꿈하며 색만으로 선택 상태를 전달하지 않는다.
+
 ## 행 계약
 
 각 98개 행은 다음을 동시에 봉인한다.

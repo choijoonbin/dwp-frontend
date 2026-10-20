@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { NavLink, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { ActionButton } from '@dwp-frontend/design-system/components/actions';
 import { foundationTokens } from '@dwp-frontend/design-system/foundation/tokens';
 import Box from '@mui/material/Box';
@@ -11,6 +11,7 @@ import {
   useHrisRuntimeNavigationPolicy,
 } from './hris-navigation-policy-runtime';
 import { selectHrisLegalEntitySelector } from './hris-legal-entity-selector';
+import { useProductAreaAuthorizedNavigationPaths } from '../../../../components/product-area-authorized-navigation-context';
 
 import type { ProductAreaNavigationItemChildrenContext } from '../../../../layouts/product-area-layout';
 
@@ -18,13 +19,16 @@ export function HrisTaskNavigation({
   item,
   selected,
   onNavigate,
+  onNavigateToTarget,
 }: ProductAreaNavigationItemChildrenContext) {
   const { i18n } = useTranslation('hcm');
   const location = useLocation();
   const policy = useHrisRuntimeNavigationPolicy();
-  if (!selected || policy.mode !== 'ENFORCED') return null;
+  const productAreaAuthorizedPaths = useProductAreaAuthorizedNavigationPaths();
+  if (!selected || policy.mode === 'FAIL_CLOSED') return null;
 
-  const authorizedPaths = new Set([item.path, ...(item.activePathPrefixes ?? [])]);
+  const authorizedPaths =
+    productAreaAuthorizedPaths ?? new Set([item.path, ...(item.activePathPrefixes ?? [])]);
   const groups = projectHrisWorkbenchTaskNavigation(policy, item.view, authorizedPaths);
   if (!groups.length) return null;
   const locale = i18n.resolvedLanguage?.startsWith('ko') ? 'ko' : 'en';
@@ -51,18 +55,27 @@ export function HrisTaskNavigation({
             <Stack component="ul" gap={0.25} sx={{ p: 0, m: 0, listStyle: 'none' }}>
               {group.nodes.map((node) => {
                 const route = node.routeAliases[0]!;
-                const active = currentPath === normalizePath(route);
+                const active = node.routeAliases.some(
+                  (candidate) => currentPath === normalizePath(candidate)
+                );
+                const childIsCurrent = active && currentPath !== normalizePath(item.path);
                 return (
                   <Box component="li" key={node.nodeId} minWidth={0}>
                     <ActionButton
-                      component={NavLink}
+                      component={Link}
                       to={resolveTaskLocationHref(route, location.search)}
                       data-testid={`hris-task-node-${node.nodeId}`}
-                      aria-current={active ? 'page' : undefined}
+                      aria-current={childIsCurrent ? 'page' : undefined}
                       intent="quiet"
                       fullWidth
                       size="small"
-                      onClick={onNavigate}
+                      onClick={() => {
+                        if (onNavigateToTarget) {
+                          onNavigateToTarget(resolveHrisTaskNavigationFocusTarget);
+                        } else {
+                          onNavigate?.();
+                        }
+                      }}
                       sx={{
                         justifyContent: 'flex-start',
                         minHeight: 40,
@@ -96,6 +109,20 @@ export function renderHrisTaskNavigation(context: ProductAreaNavigationItemChild
   return context.selected && context.item.view.startsWith('workbench-') ? (
     <HrisTaskNavigation {...context} />
   ) : null;
+}
+
+export const HRIS_TASK_NAVIGATION_LAYOUT_PROPS = Object.freeze({
+  renderNavigationItemChildren: renderHrisTaskNavigation,
+  navigationChildrenPresentation: 'inline' as const,
+});
+
+export function resolveHrisTaskNavigationFocusTarget(): HTMLElement | null {
+  const main = document.getElementById('dwp-main-content');
+  const target = main?.querySelector<HTMLElement>('h1') ?? main;
+  if (target && !target.matches('a, button, input, select, textarea, [tabindex]')) {
+    target.tabIndex = -1;
+  }
+  return target;
 }
 
 function normalizePath(value: string) {

@@ -20,6 +20,16 @@ function selectedVisibleViews(pathname: string, authorizedPaths: readonly string
 describe('canonical HRIS shell navigation projection', () => {
   it('renders fixed home and seven workbenches in canonical order from authorized descendants', () => {
     const allCandidates = HRIS_SHELL_ENTRIES.flatMap((entry) => entry.candidates);
+    const projected = projectHrisShellNavigation(new Set(allCandidates));
+    expect(projected.map((group) => [group.id, group.items.map((item) => item.view)])).toEqual([
+      ['shell-home', ['shell-home']],
+      ['people-work', ['workbench-my-hr', 'workbench-team']],
+      [
+        'operations-work',
+        ['workbench-hr-operations', 'workbench-time', 'workbench-payroll', 'workbench-performance'],
+      ],
+      ['administration', ['workbench-settings']],
+    ]);
     expect(views(allCandidates)).toEqual([
       'shell-home',
       'workbench-my-hr',

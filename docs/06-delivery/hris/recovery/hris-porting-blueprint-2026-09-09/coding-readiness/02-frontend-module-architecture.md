@@ -38,7 +38,7 @@ libs/shared-utils/       # domain-neutral auth/API/error/idempotency helpers onl
 
 ### Shell과 navigation
 
-- 사이드바는 IA 정본의 7개 workbench인 `내 HR / 팀 / 인사 운영 / 근태 / 급여 / 성과 / 설정`을 권한에 따라 투영한다. HRIS Home은 별도 고정 진입점이며 메뉴 카탈로그로 사용하지 않는다.
+- 사이드바는 IA 정본의 안정적인 7개 workbench ID를 권한에 따라 투영한다. 사용자 표현은 `09-information-architecture-contract.md`의 2026-10-20 결정에 따라 `나와 팀 / HR 운영 / 시스템 관리`로 묶고 봉인된 명칭 `내 HR / 팀 / 인사 운영 / 근태 / 급여 / 성과 / 설정`을 유지한다. HRIS Home은 별도 고정 진입점이며 메뉴 카탈로그로 사용하지 않는다.
 - 각 작업면은 5~8개의 journey 수준 항목만 노출하고, 레거시 leaf route는 workspace 내부 tab·filter·detail로 흡수한다.
 - 선택 상태는 route pattern으로 결정하고 새로고침·deep link·browser back을 보존한다.
 - 앱 권한만 있고 leaf capability가 없으면 홈/탐색의 허용된 개인 정보만 표시한다.

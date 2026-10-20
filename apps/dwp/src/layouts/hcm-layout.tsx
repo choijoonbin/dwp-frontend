@@ -2,12 +2,14 @@ import { visibleHcmNavigation } from '../features/hcm/hcm-navigation';
 import { HCM_PRODUCT_MANIFEST } from '../features/hcm/hcm-product-manifest';
 import { canAccessLegacyHcmSurface, useHcmAccess } from '../features/hcm/hcm-surface-access';
 import {
-  renderHrisTaskNavigation,
+  HRIS_TASK_NAVIGATION_LAYOUT_PROPS,
   useHrisNavigationPolicyShellProjection,
 } from '../features/hris/shell/navigation-policy';
 import { ProductAreaLayout } from './product-area-layout';
 
 import type { HcmLegacySurfaceId } from '../features/hcm/hcm-surface-access';
+
+export const HCM_LEGACY_TASK_NAVIGATION_LAYOUT_PROPS = HRIS_TASK_NAVIGATION_LAYOUT_PROPS;
 
 export function HcmLayout() {
   const access = useHcmAccess();
@@ -33,7 +35,7 @@ export function HcmLayout() {
       manifest={HCM_PRODUCT_MANIFEST}
       navigation={navigation}
       shellNavigationProjection={shellNavigationProjection}
-      renderNavigationItemChildren={renderHrisTaskNavigation}
+      {...HCM_LEGACY_TASK_NAVIGATION_LAYOUT_PROPS}
       translationNamespace="hcm"
       canAccessLegacySurface={(surface) =>
         canAccessLegacyHcmSurface(surface.id as HcmLegacySurfaceId, {

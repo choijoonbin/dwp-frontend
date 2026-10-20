@@ -352,7 +352,9 @@
     "groups": {
       "hcm": {
         "shell-home": "시작",
-        "workbenches": "업무 영역",
+        "people-work": "나와 팀",
+        "operations-work": "HR 운영",
+        "administration": "시스템 관리",
         "start": "HRIS 홈",
         "personal": "내 HR",
         "organization": "내 HR · 조직",

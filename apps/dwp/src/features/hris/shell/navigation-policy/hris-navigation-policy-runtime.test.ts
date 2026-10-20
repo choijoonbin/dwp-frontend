@@ -63,6 +63,7 @@ import {
   HRIS_WORKBENCH_VIEW_BY_ID,
   isHrisRuntimeEffectiveRouteAlias,
 } from './seven-workbench-navigation-policy';
+import { HRIS_R7_GOVERNED_PAGE_CATALOG } from '../../../hcm/hcm-navigation';
 
 import type { HrisWorkbenchId } from './seven-workbench-navigation-policy';
 
@@ -88,6 +89,78 @@ describe('server-owned HRIS seven-workbench navigation runtime', () => {
       expect(items.map((item) => item.path)).toEqual(['/hr/operations/home']);
       expect(items).toHaveLength(1);
     }
+  });
+
+  it('projects only already-authorized compatibility descendants in static mode', () => {
+    const policy = resolveHrisRuntimeNavigationPolicyEvidence({
+      runtimeEnabled: false,
+      governed: false,
+      requestReady: false,
+      selectorState: 'TENANT',
+      queryPending: false,
+      queryError: false,
+    });
+    const groups = projectHrisWorkbenchTaskNavigation(
+      policy,
+      'workbench-my-hr',
+      new Set(['/hr/me', '/hr/time', '/hr/pay'])
+    );
+
+    expect(groups.map((group) => group.groupId)).toEqual(['MY-01', 'MY-03', 'MY-04']);
+    expect(
+      groups.flatMap((group) => group.nodes.map((node) => [node.nodeId, node.routeAliases[0]]))
+    ).toEqual([
+      ['BASE:my-hr-profile', '/hr/me'],
+      ['BASE:my-time', '/hr/time'],
+      ['BASE:my-pay-tax', '/hr/pay'],
+    ]);
+  });
+
+  it('projects every authorized mounted R7 PAGE from the static shell into its task group', () => {
+    const mountedR7Pages = [
+      ['BASE:my-hr-requests', '/hr/me/requests'],
+      ['BASE:team-people-changes', '/hr/team/people-changes'],
+      ['BASE:team-delegation', '/hr/team/delegation'],
+      ['BASE:hr-appointments', '/hr/operations/people/appointments'],
+      ['BASE:hr-organization-positions', '/hr/operations/people/organization-positions'],
+      ['BASE:hr-certificates-documents', '/hr/operations/people/certificates-documents'],
+      ['BASE:pay-population', '/hr/operations/payroll/population'],
+      ['BASE:settings-people-employment', '/hr/settings/people-employment'],
+      ['BASE:settings-workflow', '/hr/settings/workflow'],
+      ['BASE:settings-operations', '/hr/settings/operations'],
+    ] as const;
+    expect(mountedR7Pages.map(([, path]) => path).sort()).toEqual(
+      HRIS_R7_GOVERNED_PAGE_CATALOG.filter((page) => page.state === 'ADMISSION_MOUNTED')
+        .map((page) => page.path)
+        .sort()
+    );
+    const authorized = new Set<string>(mountedR7Pages.map(([, path]) => path));
+    const policy = resolveHrisRuntimeNavigationPolicyEvidence({
+      runtimeEnabled: false,
+      governed: false,
+      requestReady: false,
+      selectorState: 'TENANT',
+      queryPending: false,
+      queryError: false,
+    });
+    const shellItems = createHrisPolicyShellNavigationProjection(policy)
+      .project(authorized)
+      .flatMap((group) => group.items);
+    const taskNodes = shellItems.flatMap((item) =>
+      projectHrisWorkbenchTaskNavigation(policy, item.view, authorized).flatMap((group) =>
+        group.nodes.map((node) => [node.nodeId, node.routeAliases[0]] as const)
+      )
+    );
+
+    expect(shellItems.map((item) => item.view)).toEqual([
+      'workbench-my-hr',
+      'workbench-team',
+      'workbench-hr-operations',
+      'workbench-payroll',
+      'workbench-settings',
+    ]);
+    expect(taskNodes).toEqual(mountedR7Pages);
+    expect(taskNodes.every(([, path]) => authorized.has(path))).toBe(true);
   });
 
   it('uses one aggregate revision pin for sidebar, selected task groups, landing, and deep links', () => {
@@ -156,10 +229,14 @@ describe('server-owned HRIS seven-workbench navigation runtime', () => {
         )
       )
     );
-    const items = createHrisPolicyShellNavigationProjection(policy)
-      .project(authorized)
-      .flatMap((group) => group.items);
+    const shellGroups = createHrisPolicyShellNavigationProjection(policy).project(authorized);
+    const items = shellGroups.flatMap((group) => group.items);
 
+    expect(shellGroups.map((group) => group.id)).toEqual([
+      'people-work',
+      'operations-work',
+      'administration',
+    ]);
     expect(items.map((item) => item.view)).toEqual(
       HRIS_WORKBENCH_IDS.map((workbenchId) => HRIS_WORKBENCH_VIEW_BY_ID[workbenchId])
     );

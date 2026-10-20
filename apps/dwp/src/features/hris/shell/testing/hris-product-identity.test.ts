@@ -23,6 +23,7 @@ describe('HRIS visible product identity', () => {
     const hcm = locale(`libs/shared-i18n/src/locales/${language}/hcm.json`) as {
       shell: { hcm: { name: string; context: string } };
       navigation: {
+        groups: { hcm: Record<string, string> };
         items: {
           hcm: Record<string, { label: string }>;
         };
@@ -42,6 +43,21 @@ describe('HRIS visible product identity', () => {
       navigationLabel: language === 'ko' ? 'HRIS 메뉴' : 'HRIS navigation',
     });
     expect(hcm.navigation.items.hcm.home.label).toBe(language === 'ko' ? 'HRIS 홈' : 'HRIS home');
+    expect(hcm.navigation.groups.hcm).toMatchObject(
+      language === 'ko'
+        ? {
+            'shell-home': '시작',
+            'people-work': '나와 팀',
+            'operations-work': 'HR 운영',
+            administration: '시스템 관리',
+          }
+        : {
+            'shell-home': 'Start',
+            'people-work': 'Me & team',
+            'operations-work': 'HR operations',
+            administration: 'System administration',
+          }
+    );
     expect(
       [
         'shell-home',

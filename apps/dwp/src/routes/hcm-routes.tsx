@@ -16,8 +16,8 @@ import { HCM_PRODUCT_MANIFEST } from '../features/hcm/hcm-product-manifest';
 import { canAccessLegacyHcmSurface, useHcmAccess } from '../features/hcm/hcm-surface-access';
 import {
   HrisNavigationPolicyDeepLinkGuard,
+  HRIS_TASK_NAVIGATION_LAYOUT_PROPS,
   HrisNavigationPolicyRuntimeProvider,
-  renderHrisTaskNavigation,
   resolveHrisRuntimePolicyLanding,
   resolveTaskLocation,
   useHrisNavigationPolicyShellProjection,
@@ -64,6 +64,8 @@ const HrisWorkExplorer = lazy(() => import('../features/hris/explorer'));
 const HcmLayout = lazy(() =>
   import('../layouts/hcm-layout').then((module) => ({ default: module.HcmLayout }))
 );
+
+export const HCM_CONFIGURED_TASK_NAVIGATION_LAYOUT_PROPS = HRIS_TASK_NAVIGATION_LAYOUT_PROPS;
 
 export function resolveLegacyHcmShellAccess({
   providerRole,
@@ -258,8 +260,7 @@ function HcmConfiguredSurfaceShell({
       translationNamespace="hcm"
       legacy={legacy}
       shellNavigationProjection={shellNavigationProjection}
-      renderNavigationItemChildren={renderHrisTaskNavigation}
-      navigationChildrenPresentation="disclosure"
+      {...HCM_CONFIGURED_TASK_NAVIGATION_LAYOUT_PROPS}
     />
   );
 }

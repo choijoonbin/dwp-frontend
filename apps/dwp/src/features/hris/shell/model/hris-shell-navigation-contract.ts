@@ -22,10 +22,19 @@ import type {
 
 type HrisShellEntry = Readonly<{
   view: string;
-  groupId: 'shell-home' | 'workbenches';
+  groupId: HrisShellGroupId;
   candidates: readonly [string, ...string[]];
   icon: ProductNavigationItem['icon'];
 }>;
+
+export const HRIS_SHELL_GROUP_IDS = [
+  'shell-home',
+  'people-work',
+  'operations-work',
+  'administration',
+] as const;
+
+export type HrisShellGroupId = (typeof HRIS_SHELL_GROUP_IDS)[number];
 
 /**
  * Static candidates are deliberately finite and unique. Canonical R6-C PAGEs own presentation;
@@ -41,10 +50,11 @@ export const HRIS_SHELL_ENTRIES: readonly HrisShellEntry[] = [
   },
   {
     view: 'workbench-my-hr',
-    groupId: 'workbenches',
+    groupId: 'people-work',
     candidates: [
       '/hr/me',
       '/hr/me/employment-documents',
+      '/hr/me/requests',
       '/hr/time',
       '/hr/absence',
       '/hr/pay',
@@ -57,18 +67,27 @@ export const HRIS_SHELL_ENTRIES: readonly HrisShellEntry[] = [
   },
   {
     view: 'workbench-team',
-    groupId: 'workbenches',
-    candidates: ['/hr/team', '/hr/team/time', '/hr/team/leave'],
+    groupId: 'people-work',
+    candidates: [
+      '/hr/team',
+      '/hr/team/time',
+      '/hr/team/leave',
+      '/hr/team/people-changes',
+      '/hr/team/delegation',
+    ],
     icon: UsersRound,
   },
   {
     view: 'workbench-hr-operations',
-    groupId: 'workbenches',
+    groupId: 'operations-work',
     candidates: [
       '/hr/operations/home',
       '/hr/operations/people',
       '/hr/operations/people/employee-change-requests',
       '/hr/operations/people/employment-assignments',
+      '/hr/operations/people/appointments',
+      '/hr/operations/people/certificates-documents',
+      '/hr/operations/people/organization-positions',
       '/hr/operations/assignments',
       '/hr/design/organization',
     ],
@@ -76,7 +95,7 @@ export const HRIS_SHELL_ENTRIES: readonly HrisShellEntry[] = [
   },
   {
     view: 'workbench-time',
-    groupId: 'workbenches',
+    groupId: 'operations-work',
     candidates: [
       '/hr/operations/time',
       '/hr/operations/time/work-plans',
@@ -89,13 +108,13 @@ export const HRIS_SHELL_ENTRIES: readonly HrisShellEntry[] = [
   },
   {
     view: 'workbench-payroll',
-    groupId: 'workbenches',
-    candidates: ['/hr/operations/pay'],
+    groupId: 'operations-work',
+    candidates: ['/hr/operations/pay', '/hr/operations/payroll/population'],
     icon: ReceiptText,
   },
   {
     view: 'workbench-performance',
-    groupId: 'workbenches',
+    groupId: 'operations-work',
     candidates: [
       '/hr/operations/talent',
       '/hr/operations/performance/goal-cycles',
@@ -106,12 +125,15 @@ export const HRIS_SHELL_ENTRIES: readonly HrisShellEntry[] = [
   },
   {
     view: 'workbench-settings',
-    groupId: 'workbenches',
+    groupId: 'administration',
     candidates: [
       '/hr/manage/system',
       '/hr/settings/reference-data',
       '/hr/settings/payroll',
       '/hr/settings/navigation-policy',
+      '/hr/settings/people-employment',
+      '/hr/settings/operations',
+      '/hr/settings/workflow',
       '/hr/data/reference',
       '/hr/data/integrations',
       '/hr/data/exports',
@@ -164,9 +186,29 @@ export function projectHrisShellNavigation(
       : [];
   });
 
-  return (['shell-home', 'workbenches'] as const).flatMap((groupId) => {
+  return HRIS_SHELL_GROUP_IDS.flatMap((groupId) => {
     const items = entries.filter((entry) => entry.groupId === groupId).map((entry) => entry.item);
     return items.length ? [{ id: groupId, items }] : [];
+  });
+}
+
+/**
+ * Reapplies the same persona-oriented grouping to a server-projected workbench list. The server
+ * still decides which workbenches and descendants are visible; this function controls only stable
+ * presentation order and never adds a route that was absent from the projection.
+ */
+export function groupHrisShellNavigationItems(
+  items: readonly ProductNavigationItem[]
+): readonly ProductNavigationGroup[] {
+  const itemByView = new Map(items.map((item) => [item.view, item]));
+  return HRIS_SHELL_GROUP_IDS.flatMap((groupId) => {
+    const groupItems = HRIS_SHELL_ENTRIES.filter((entry) => entry.groupId === groupId).flatMap(
+      (entry) => {
+        const item = itemByView.get(entry.view);
+        return item ? [item] : [];
+      }
+    );
+    return groupItems.length ? [{ id: groupId, items: Object.freeze(groupItems) }] : [];
   });
 }
 

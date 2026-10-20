@@ -149,6 +149,29 @@ export type ProductAreaLayoutProps = {
   ) => ProductAreaMobileShellPresentation;
 };
 
+export function resolveProductAreaParentAriaCurrent({
+  selected,
+  pathname,
+  item,
+  hasInlineChildren,
+}: Readonly<{
+  selected: boolean;
+  pathname: string;
+  item: ProductAreaNavigationItem;
+  hasInlineChildren: boolean;
+}>): 'page' | undefined {
+  if (!selected || !hasInlineChildren) return selected ? 'page' : undefined;
+
+  const currentPath = normalizeProductPath(pathname);
+  const parentPath = normalizeProductPath(item.path);
+  if (currentPath === parentPath) return 'page';
+
+  const hasActiveChild = item.activePathPrefixes?.some(
+    (candidate) => normalizeProductPath(candidate) === currentPath
+  );
+  return hasActiveChild ? undefined : 'page';
+}
+
 function isSurfaceNavigationItem(
   item: ProductAreaNavigationItem
 ): item is ProductSurfaceNavigationItem {
@@ -498,6 +521,8 @@ export function ProductAreaLayout({
                   : null;
                 const disclosureChildren =
                   Boolean(itemChildren) && navigationChildrenPresentation === 'disclosure';
+                const inlineChildren =
+                  Boolean(itemChildren) && navigationChildrenPresentation === 'inline';
                 const expanded =
                   Boolean(itemChildren) &&
                   (!disclosureChildren || collapsedNavigationPath !== item.path);
@@ -533,7 +558,12 @@ export function ProductAreaLayout({
                         }
                         selected={selected}
                         aria-label={compactNavigation ? label : undefined}
-                        aria-current={selected ? 'page' : undefined}
+                        aria-current={resolveProductAreaParentAriaCurrent({
+                          selected,
+                          pathname,
+                          item,
+                          hasInlineChildren: inlineChildren,
+                        })}
                         aria-expanded={disclosureChildren ? expanded : undefined}
                         aria-controls={disclosureChildren ? childrenId : undefined}
                         onClick={

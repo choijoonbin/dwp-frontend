@@ -16,6 +16,7 @@ import {
 } from '../../../../components/product-surface-canary-runtime';
 import { resolveProductSurfaceRequestScope } from '../../../../components/use-product-surface-request-scope';
 import {
+  groupHrisShellNavigationItems,
   HRIS_SHELL_ENTRIES,
   projectHrisShellNavigation,
   resolveHrisShellSelectedView,
@@ -482,26 +483,33 @@ export function projectHrisWorkbenchTaskNavigation(
   view: string,
   authorizedPaths: ReadonlySet<string>
 ): readonly HrisTaskNavigationGroup[] {
-  if (policy.mode !== 'ENFORCED' || !isRuntimePolicyFresh(policy)) return Object.freeze([]);
   const workbenchId = hrisWorkbenchIdForView(view);
-  const workbench = policy.workbenches.find((candidate) => candidate.workbenchId === workbenchId);
+  if (!workbenchId || policy.mode === 'FAIL_CLOSED') return Object.freeze([]);
+  const workbench =
+    policy.mode === 'STATIC'
+      ? canonicalHrisWorkbench(workbenchId)
+      : policy.workbenches.find((candidate) => candidate.workbenchId === workbenchId);
   if (!workbench) return Object.freeze([]);
+  if (policy.mode === 'ENFORCED' && !isRuntimePolicyFresh(policy)) return Object.freeze([]);
   const normalizedAuthorized = new Set([...authorizedPaths].map(normalizePath));
   return Object.freeze(
     workbench.groups.flatMap((group) => {
       const nodes = group.nodes.flatMap((node) => {
         const authorizedAliases = node.routeAliases.filter(
           (route) =>
-            isRuntimeEffectiveRouteAlias(policy.schemaVersion, node.nodeId, route) &&
+            (policy.mode === 'STATIC' ||
+              isRuntimeEffectiveRouteAlias(policy.schemaVersion, node.nodeId, route)) &&
             normalizedAuthorized.has(normalizePath(route))
         );
         const menuTarget =
-          authorizedAliases.find((route) =>
-            Boolean(currentHrisV52PageAuthorityRouteBinding(node.nodeId, route))
-          ) ??
-          authorizedAliases.find((route) =>
-            isRuntimeMenuRouteAlias(policy.schemaVersion, node.nodeId, route)
-          );
+          policy.mode === 'STATIC'
+            ? authorizedAliases[0]
+            : (authorizedAliases.find((route) =>
+                Boolean(currentHrisV52PageAuthorityRouteBinding(node.nodeId, route))
+              ) ??
+              authorizedAliases.find((route) =>
+                isRuntimeMenuRouteAlias(policy.schemaVersion, node.nodeId, route)
+              ));
         const routeAliases = menuTarget
           ? [menuTarget, ...authorizedAliases.filter((route) => route !== menuTarget)]
           : [];
@@ -787,10 +795,7 @@ function projectAggregateShell(
       }),
     ];
   });
-  return Object.freeze([
-    ...home,
-    ...(items.length ? [{ id: 'workbenches', items: Object.freeze(items) }] : []),
-  ]);
+  return Object.freeze([...home, ...groupHrisShellNavigationItems(items)]);
 }
 
 function resolveAggregateSelectedView(policy: HrisRuntimeNavigationPolicy, pathname: string) {

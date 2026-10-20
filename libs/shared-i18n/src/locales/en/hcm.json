@@ -352,7 +352,9 @@
     "groups": {
       "hcm": {
         "shell-home": "Start",
-        "workbenches": "Work areas",
+        "people-work": "Me & team",
+        "operations-work": "HR operations",
+        "administration": "System administration",
         "start": "HRIS home",
         "personal": "My HR",
         "organization": "My HR · Organization",

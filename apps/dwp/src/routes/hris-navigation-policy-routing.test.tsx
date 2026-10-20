@@ -2,16 +2,25 @@ import { isValidElement, type ReactElement, type ReactNode } from 'react';
 import { describe, expect, it } from 'vitest';
 
 import {
+  HCM_CONFIGURED_TASK_NAVIGATION_LAYOUT_PROPS,
   HrisWorkbenchPolicyIndex,
   hcmRoutes,
   resolveHrisWorkbenchPolicyAccessState,
 } from './hcm-routes';
 import { ProductCanaryRoot } from './product-surface-canary-routes';
+import { HCM_LEGACY_TASK_NAVIGATION_LAYOUT_PROPS } from '../layouts/hcm-layout';
+import { HRIS_TASK_NAVIGATION_LAYOUT_PROPS } from '../features/hris/shell/navigation-policy';
 
 import type { HrisWorkbenchId } from '../features/hris/shell/navigation-policy';
 import type { RouteObject } from 'react-router-dom';
 
 describe('HRIS aggregate landing route wiring', () => {
+  it('uses one inline task-navigation presentation in legacy and configured shells', () => {
+    expect(HCM_LEGACY_TASK_NAVIGATION_LAYOUT_PROPS).toBe(HRIS_TASK_NAVIGATION_LAYOUT_PROPS);
+    expect(HCM_CONFIGURED_TASK_NAVIGATION_LAYOUT_PROPS).toBe(HRIS_TASK_NAVIGATION_LAYOUT_PROPS);
+    expect(HRIS_TASK_NAVIGATION_LAYOUT_PROPS.navigationChildrenPresentation).toBe('inline');
+  });
+
   it('keeps /hr on the exact shell Home resolver', () => {
     const index = hrisRoot().children?.find((route) => route.index);
     expect(isValidElement(index?.element)).toBe(true);
