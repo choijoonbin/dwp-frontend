@@ -140,6 +140,7 @@ function DeferredRouteChild({
   return (
     <button
       data-testid="deferred-mobile-child"
+      data-navigation-initial-focus="true"
       type="button"
       onClick={() => {
         onNavigateToTarget?.(() => {
@@ -161,6 +162,10 @@ function renderChildren(context: ProductAreaNavigationItemChildrenContext) {
   return context.selected ? (
     <DeferredRouteChild onNavigateToTarget={context.onNavigateToTarget} />
   ) : null;
+}
+
+function renderEmptyChildren(context: ProductAreaNavigationItemChildrenContext) {
+  return context.selected ? <div data-testid="empty-task-panel">No available tasks</div> : null;
 }
 
 function OldRoute() {
@@ -191,9 +196,13 @@ function NewRoute() {
 function Application({
   navigationChildrenPresentation = 'inline',
   includeSecondaryPanel = false,
+  emptyPanel = false,
+  hidePrimaryPanel = false,
 }: {
   navigationChildrenPresentation?: 'inline' | 'panel';
   includeSecondaryPanel?: boolean;
+  emptyPanel?: boolean;
+  hidePrimaryPanel?: boolean;
 } = {}) {
   return (
     <MemoryRouter initialEntries={['/hr/old']}>
@@ -207,12 +216,16 @@ function Application({
                 {
                   id: 'work',
                   items: [
-                    {
-                      path: '/hr/old',
-                      view: 'old',
-                      icon: BriefcaseBusiness,
-                      activePathPrefixes: ['/hr/old', '/hr/new'],
-                    },
+                    ...(hidePrimaryPanel
+                      ? []
+                      : [
+                          {
+                            path: '/hr/old',
+                            view: 'old',
+                            icon: BriefcaseBusiness,
+                            activePathPrefixes: ['/hr/old', '/hr/new'],
+                          },
+                        ]),
                     ...(includeSecondaryPanel
                       ? [
                           {
@@ -226,7 +239,7 @@ function Application({
                   ],
                 },
               ]}
-              renderNavigationItemChildren={renderChildren}
+              renderNavigationItemChildren={emptyPanel ? renderEmptyChildren : renderChildren}
               navigationChildrenPresentation={navigationChildrenPresentation}
             />
           }
@@ -299,6 +312,13 @@ describe('ProductAreaLayout child navigation focus contracts', () => {
     expect(scrollBody!.contains(toolbar!)).toBe(false);
     expect(trigger.getAttribute('aria-expanded')).toBe('true');
     expect(trigger.getAttribute('aria-current')).toBeNull();
+    expect(trigger.classList.contains('Mui-selected')).toBe(true);
+    const firstTask = panel?.querySelector<HTMLButtonElement>(
+      '[data-testid="deferred-mobile-child"]'
+    );
+    expect(firstTask).not.toBeNull();
+    flushScheduledFramesUntil(() => document.activeElement === firstTask);
+    expect(document.activeElement).toBe(firstTask);
 
     await act(async () =>
       document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
@@ -310,6 +330,62 @@ describe('ProductAreaLayout child navigation focus contracts', () => {
     expect(trigger.getAttribute('aria-current')).toBe('page');
     expect(document.activeElement).toBe(trigger);
     expect(host.querySelector('[data-testid="old-heading"]')).not.toBeNull();
+  });
+
+  it('does not leave pointer focus on the workbench trigger after opening its panel', async () => {
+    await act(async () => root.render(<Application navigationChildrenPresentation="panel" />));
+    const trigger = host.querySelector<HTMLButtonElement>(
+      '[data-testid="hcm-navigation-item-old"]'
+    )!;
+    trigger.focus();
+
+    await act(async () =>
+      trigger.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, detail: 1 }))
+    );
+
+    expect(host.querySelector('[data-testid="hcm-desktop-task-navigator"]')).not.toBeNull();
+    expect(document.activeElement).not.toBe(trigger);
+  });
+
+  it('focuses the close action when a keyboard-opened panel has no tasks', async () => {
+    await act(async () =>
+      root.render(<Application navigationChildrenPresentation="panel" emptyPanel={true} />)
+    );
+    const trigger = host.querySelector<HTMLButtonElement>(
+      '[data-testid="hcm-navigation-item-old"]'
+    )!;
+    await act(async () => trigger.click());
+    const close = host.querySelector<HTMLButtonElement>(
+      '[data-testid="hcm-desktop-task-navigator-toolbar"] button'
+    )!;
+    flushScheduledFramesUntil(() => document.activeElement === close);
+
+    expect(document.activeElement).toBe(close);
+    expect(host.querySelector('[data-testid="empty-task-panel"]')).not.toBeNull();
+  });
+
+  it('dismisses a revoked workbench panel, moves focus safely, and does not reopen it', async () => {
+    await act(async () => root.render(<Application navigationChildrenPresentation="panel" />));
+    const trigger = host.querySelector<HTMLButtonElement>(
+      '[data-testid="hcm-navigation-item-old"]'
+    )!;
+    await act(async () => trigger.click());
+    expect(host.querySelector('[data-testid="hcm-desktop-task-navigator"]')).not.toBeNull();
+
+    await act(async () =>
+      root.render(<Application navigationChildrenPresentation="panel" hidePrimaryPanel={true} />)
+    );
+    const heading = host.querySelector<HTMLElement>('[data-testid="old-heading"]')!;
+    flushScheduledFramesUntil(() => document.activeElement === heading);
+
+    expect(host.querySelector('[data-testid="hcm-desktop-task-navigator"]')).toBeNull();
+    expect(document.activeElement).toBe(heading);
+
+    await act(async () => root.render(<Application navigationChildrenPresentation="panel" />));
+    expect(host.querySelector('[data-testid="hcm-desktop-task-navigator"]')).toBeNull();
+    expect(
+      host.querySelector('[data-testid="hcm-navigation-item-old"]')?.getAttribute('aria-expanded')
+    ).toBe('false');
   });
 
   it('keeps the current route visible while another workbench panel is open', async () => {

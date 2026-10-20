@@ -282,9 +282,13 @@ describe('HRIS progressive task navigation', () => {
     const sevenTaskHtml = renderWithTaskCount(7);
     expect(sixTaskHtml).toContain('data-authorized-task-count="6"');
     expect(sixTaskHtml).toContain('data-navigation-density="sparse"');
+    expect(sixTaskHtml).toContain('data-navigation-group-treatment="flat"');
+    expect(sixTaskHtml).not.toContain('data-testid="hris-task-group-count-');
     expect(sixTaskHtml).not.toContain('업무 또는 메뉴 이름 검색');
     expect(sevenTaskHtml).toContain('data-authorized-task-count="7"');
     expect(sevenTaskHtml).toContain('data-navigation-density="dense"');
+    expect(sevenTaskHtml).toContain('data-navigation-group-treatment="card"');
+    expect(sevenTaskHtml).toContain('data-testid="hris-task-group-count-');
     expect(sevenTaskHtml).toContain('업무 또는 메뉴 이름 검색');
   });
 

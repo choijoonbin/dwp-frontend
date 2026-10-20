@@ -154,19 +154,21 @@ card를 추가하지 않는다. `/hr/explore`만 탐색·재개 질문을 해결
 
 workbench trigger를 누르면 왼쪽 rail 바로 오른쪽에 task navigator를 연다.
 
-- desktop navigator는 shell header 아래에서 rail에 붙고, sparse에서는
-  `clamp(420px, 32vw, 480px)`, dense에서는 `clamp(500px, 38vw, 560px)`를 사용한다.
+- desktop navigator는 shell header 바로 아래에서 rail에 붙고, sparse에서는
+  `clamp(392px, 29vw, 440px)`, dense에서는 `clamp(500px, 38vw, 560px)`를 사용한다.
 - navigator header는 workbench icon, 이름, 설명, 단일 task-count chip, 닫기 control을 하나의
   tinted surface로 제공한다. 닫기 전용 빈 toolbar는 만들지 않는다.
 - search는 7개 이상의 허용 node가 있을 때만 표시하고, 선택한 workbench의 이미 허용된 node만
   client-side로 필터링한다.
-- body는 soft group surface, group별 task 수, 44px leaf row, hover/active marker와 이동 affordance를
-  제공한다.
+- 1~6개의 sparse body는 group label과 평면적인 44px leaf row만 사용하고 group별 count/card를
+  반복하지 않는다. 7개 이상의 dense body만 soft group surface와 group별 task 수를 제공한다.
 - 8개 이상의 task와 4개 이상의 group이 있고 panel 내부 유효 폭이 470px 이상일 때만 2열을
   사용한다. sparse, constrained desktop, mobile은 1열이다.
 - 검색 결과가 없으면 빈 panel이 아니라 query를 지울 수 있는 명시적 empty state를 표시한다.
-- effective descendant가 0개이거나 projection이 fail-closed이면 각각 안전한 zero/unavailable state를
-  표시하며, fail-closed 상태에서는 explorer shortcut도 노출하지 않는다.
+- shell projection에서 effective descendant가 0개인 workbench는 trigger 자체를 노출하지 않는다.
+  열린 workbench가 권한 소실 또는 fail-closed projection으로 제거되면 panel 상태도 즉시 폐기하고
+  현재 navigation 또는 본문 제목으로 focus를 안전하게 이동한다. 권한이 복구되어도 panel은 사용자
+  조작 없이 다시 열리지 않는다.
 - footer는 권한이 있을 때만 `전체 HR 업무 보기`를 노출하고 `/hr/explore`로 연결한다.
 - panel 열기·닫기는 navigation policy를 재조회하지 않는다.
 - panel은 content detail inspector가 아니라 navigation surface이므로 rail에 붙은 leading overlay로 유지한다.
@@ -191,9 +193,11 @@ explorer projection과 권한 cache를 사용해야 하며 별도의 client cata
 
 - 전체 높이의 흰 sheet가 아니라 content-fit navigation flyout으로 표현하고, viewport를 초과할 때만
   내부 body가 scroll한다.
-- route current는 accent selection과 leading marker, workbench open은 soft surface와 border/chevron,
-  keyboard focus는 `:focus-visible` ring으로 서로 구분한다.
+- route current는 투명 배경의 accent text와 leading marker, workbench open은 soft surface와
+  border/chevron, keyboard focus는 `:focus-visible` ring으로 서로 구분한다.
 - pointer click은 keyboard focus ring을 남기지 않으며 forced-colors에서는 outline으로 의미를 보존한다.
+- keyboard로 panel을 열면 첫 task로 focus를 넘기고 task가 없으면 close control로 보낸다. Escape와
+  close는 원래 workbench trigger로 focus를 복원한다.
 - desktop flyout은 180ms 이내의 짧은 slide/fade만 사용하고 reduced-motion에서는 제거한다.
 - mobile task view는 `뒤로가기 · workbench 이름 · 닫기`의 단일 header를 사용한다. desktop brand header와
   별도 Back toolbar를 중복하지 않는다.

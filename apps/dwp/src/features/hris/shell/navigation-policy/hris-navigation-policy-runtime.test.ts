@@ -91,6 +91,55 @@ describe('server-owned HRIS seven-workbench navigation runtime', () => {
     }
   });
 
+  it('omits static workbenches without tasks while retaining home and task-backed workbenches', () => {
+    for (const enforcementState of ['NOT_ENROLLED', 'OFF', 'SHADOW'] as const) {
+      const policy = selectHrisRuntimeNavigationPolicy(
+        selectRuntimeHrisNavigationPolicyProjection(projection(enforcementState))
+      );
+      const shell = createHrisPolicyShellNavigationProjection(policy);
+      const shellOnlyItems = shell
+        .project(new Set(['/hr/home', '/hr/manage/system']))
+        .flatMap((group) => group.items);
+
+      expect(shellOnlyItems.map((item) => item.view)).toEqual(['shell-home']);
+      expect(
+        projectHrisWorkbenchTaskNavigation(
+          policy,
+          'workbench-settings',
+          new Set(['/hr/manage/system'])
+        )
+      ).toEqual([]);
+
+      const taskBackedPaths = new Set(['/hr/home', '/hr/settings/operations']);
+      const taskBackedItems = shell.project(taskBackedPaths).flatMap((group) => group.items);
+
+      expect(taskBackedItems.map((item) => item.view)).toEqual([
+        'shell-home',
+        'workbench-settings',
+      ]);
+      expect(taskBackedItems[1]).toMatchObject({ path: '/hr/settings/operations' });
+      expect(
+        projectHrisWorkbenchTaskNavigation(policy, 'workbench-settings', taskBackedPaths).flatMap(
+          (group) => group.nodes.map((node) => node.nodeId)
+        )
+      ).toEqual(['BASE:settings-operations']);
+
+      const combinedPaths = new Set(['/hr/home', '/hr/manage/system', '/hr/settings/operations']);
+      const combinedSettings = shell
+        .project(combinedPaths)
+        .flatMap((group) => group.items)
+        .find((item) => item.view === 'workbench-settings');
+
+      expect(combinedSettings).toMatchObject({ path: '/hr/manage/system' });
+      expect(
+        projectHrisWorkbenchTaskNavigation(policy, 'workbench-settings', combinedPaths).flatMap(
+          (group) => group.nodes.map((node) => node.nodeId)
+        )
+      ).toEqual(['BASE:settings-operations']);
+      expect(shell.resolveSelectedView?.('/hr/manage/system')).toBe('workbench-settings');
+    }
+  });
+
   it('projects only already-authorized compatibility descendants in static mode', () => {
     const policy = resolveHrisRuntimeNavigationPolicyEvidence({
       runtimeEnabled: false,

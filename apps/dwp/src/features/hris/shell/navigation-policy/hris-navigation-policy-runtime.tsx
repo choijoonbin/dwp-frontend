@@ -291,6 +291,15 @@ const STATIC_POLICY: HrisRuntimeNavigationPolicy = Object.freeze({
   denialReason: null,
 });
 
+/**
+ * `/hr/manage/system` remains a finite shell compatibility candidate for direct-route selection,
+ * but it is not an executable task in the seven-workbench navigation contract. Keeping it out of
+ * the static task projection prevents OFF/SHADOW tenants from receiving an empty Settings flyout.
+ */
+const HRIS_STATIC_SHELL_ONLY_COMPATIBILITY_PATHS: ReadonlySet<string> = new Set([
+  '/hr/manage/system',
+]);
+
 function failClosedPolicy(revisionPin: string, denialReason: string) {
   return Object.freeze({
     mode: 'FAIL_CLOSED' as const,
@@ -497,8 +506,9 @@ export function projectHrisWorkbenchTaskNavigation(
       const nodes = group.nodes.flatMap((node) => {
         const authorizedAliases = node.routeAliases.filter(
           (route) =>
-            (policy.mode === 'STATIC' ||
-              isRuntimeEffectiveRouteAlias(policy.schemaVersion, node.nodeId, route)) &&
+            (policy.mode === 'STATIC'
+              ? !HRIS_STATIC_SHELL_ONLY_COMPATIBILITY_PATHS.has(normalizePath(route))
+              : isRuntimeEffectiveRouteAlias(policy.schemaVersion, node.nodeId, route)) &&
             normalizedAuthorized.has(normalizePath(route))
         );
         const menuTarget =
@@ -533,7 +543,7 @@ export function createHrisPolicyShellNavigationProjection(
   if (policy.mode === 'STATIC') {
     return Object.freeze({
       hideSurfaceNavigation: true,
-      project: projectHrisShellNavigation,
+      project: (authorizedPaths) => projectStaticShell(policy, authorizedPaths),
       resolveSelectedView: resolveHrisShellSelectedView,
     });
   }
@@ -796,6 +806,23 @@ function projectAggregateShell(
     ];
   });
   return Object.freeze([...home, ...groupHrisShellNavigationItems(items)]);
+}
+
+function projectStaticShell(
+  policy: HrisRuntimeNavigationPolicy,
+  authorizedPaths: ReadonlySet<string>
+): readonly ProductNavigationGroup[] {
+  const groups = projectHrisShellNavigation(authorizedPaths);
+  return Object.freeze(
+    groups.flatMap((group) => {
+      const items = group.items.filter(
+        (item) =>
+          item.view === 'shell-home' ||
+          projectHrisWorkbenchTaskNavigation(policy, item.view, authorizedPaths).length > 0
+      );
+      return items.length ? [Object.freeze({ ...group, items: Object.freeze(items) })] : [];
+    })
+  );
 }
 
 function resolveAggregateSelectedView(policy: HrisRuntimeNavigationPolicy, pathname: string) {

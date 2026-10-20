@@ -43,8 +43,10 @@ export function useProductAreaNavigationLocationResolver(
 export function useProductAreaTaskNavigator() {
   const [path, setPath] = useState<string | null>(null);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
+  const focusPanelOnOpenRef = useRef(false);
   const dismiss = useCallback((restoreFocus = true) => {
     setPath(null);
+    focusPanelOnOpenRef.current = false;
     if (restoreFocus) {
       const triggerTestId = triggerRef.current?.getAttribute('data-testid');
       const triggerControls = triggerRef.current?.getAttribute('aria-controls');
@@ -60,14 +62,38 @@ export function useProductAreaTaskNavigator() {
                 candidate.getAttribute('aria-controls') === triggerControls &&
                 isVisibleNavigationTrigger(candidate)
             ) ?? candidateTriggers.find(isVisibleNavigationTrigger));
-        trigger?.focus();
+        const currentNavigation = [
+          ...document.querySelectorAll<HTMLElement>(
+            '[id$="-desktop-navigation"] [aria-current="page"], [data-testid$="-mobile-sidebar"] [aria-current="page"]'
+          ),
+        ].find(isVisibleNavigationElement);
+        const mobileFallback = [
+          ...document.querySelectorAll<HTMLElement>(
+            '[data-testid$="-mobile-sidebar"] button:not([disabled])'
+          ),
+        ].find(isVisibleNavigationElement);
+        const main = document.getElementById('dwp-main-content');
+        const target =
+          trigger ??
+          currentNavigation ??
+          mobileFallback ??
+          main?.querySelector<HTMLElement>('h1') ??
+          main;
+        if (target && !target.matches('a, button, input, select, textarea, [tabindex]')) {
+          target.tabIndex = -1;
+        }
+        target?.focus({ preventScroll: true });
       });
     }
   }, []);
-  const toggle = useCallback((nextPath: string, trigger: HTMLButtonElement) => {
-    triggerRef.current = trigger;
-    setPath((current) => (current === nextPath ? null : nextPath));
-  }, []);
+  const toggle = useCallback(
+    (nextPath: string, trigger: HTMLButtonElement, focusPanelOnOpen = false) => {
+      triggerRef.current = trigger;
+      focusPanelOnOpenRef.current = focusPanelOnOpen;
+      setPath((current) => (current === nextPath ? null : nextPath));
+    },
+    []
+  );
 
   useEffect(() => {
     if (!path) return undefined;
@@ -80,7 +106,7 @@ export function useProductAreaTaskNavigator() {
     return () => document.removeEventListener('keydown', dismissOnEscape);
   }, [dismiss, path]);
 
-  return { path, dismiss, toggle } as const;
+  return { path, dismiss, toggle, focusPanelOnOpen: focusPanelOnOpenRef.current } as const;
 }
 
 export function taskNavigatorContextKey(
@@ -143,17 +169,23 @@ export function useProductAreaTaskNavigatorLifecycle({
   }, [areaKey, compactShell, dismiss, path]);
 }
 
-export function isVisibleNavigationTrigger(
-  trigger: HTMLButtonElement | null | undefined
-): trigger is HTMLButtonElement {
-  if (!trigger?.isConnected || trigger.hidden || trigger.closest('[hidden],[aria-hidden="true"]')) {
+function isVisibleNavigationElement(
+  element: HTMLElement | null | undefined
+): element is HTMLElement {
+  if (!element?.isConnected || element.hidden || element.closest('[hidden],[aria-hidden="true"]')) {
     return false;
   }
-  for (let element: HTMLElement | null = trigger; element; element = element.parentElement) {
-    const style = window.getComputedStyle(element);
+  for (let ancestor: HTMLElement | null = element; ancestor; ancestor = ancestor.parentElement) {
+    const style = window.getComputedStyle(ancestor);
     if (style.display === 'none' || style.visibility === 'hidden') return false;
   }
   return true;
+}
+
+export function isVisibleNavigationTrigger(
+  trigger: HTMLButtonElement | null | undefined
+): trigger is HTMLButtonElement {
+  return isVisibleNavigationElement(trigger);
 }
 
 export function ProductAreaMobileTaskNavigator({
@@ -242,6 +274,7 @@ export function ProductAreaDesktopTaskNavigator({
   areaKey,
   children,
   controlsId,
+  focusOnOpen,
   label,
   left,
   onDismiss,
@@ -249,11 +282,36 @@ export function ProductAreaDesktopTaskNavigator({
   areaKey: string;
   children: ReactNode;
   controlsId: string;
+  focusOnOpen: boolean;
   label: string;
   left: number;
   onDismiss: (restoreFocus?: boolean) => void;
 }>) {
   const { t } = useTranslation('common');
+  const panelRef = useRef<HTMLDivElement | null>(null);
+
+  useLayoutEffect(() => {
+    if (!focusOnOpen) return undefined;
+    const frame = window.requestAnimationFrame(() => {
+      const panel = panelRef.current;
+      const scrollBody = panel?.querySelector<HTMLElement>(
+        `[data-testid="${areaKey}-desktop-task-navigator-scroll"]`
+      );
+      const task =
+        scrollBody?.querySelector<HTMLElement>(
+          '[data-navigation-initial-focus="true"]:not([disabled]):not([aria-disabled="true"])'
+        ) ??
+        scrollBody?.querySelector<HTMLElement>(
+          '[role="menuitem"]:not([aria-disabled="true"]), section ul a[href]:not([aria-disabled="true"]), section ul button:not([disabled]):not([aria-disabled="true"])'
+        );
+      const close = panel?.querySelector<HTMLElement>(
+        `[data-testid="${areaKey}-desktop-task-navigator-toolbar"] button:not([disabled])`
+      );
+      (task ?? close)?.focus({ preventScroll: true });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [areaKey, controlsId, focusOnOpen]);
+
   return (
     <ClickAwayListener
       mouseEvent="onMouseDown"
@@ -266,6 +324,7 @@ export function ProductAreaDesktopTaskNavigator({
       }}
     >
       <Paper
+        ref={panelRef}
         id={controlsId}
         data-testid={`${areaKey}-desktop-task-navigator`}
         role="region"
@@ -273,12 +332,12 @@ export function ProductAreaDesktopTaskNavigator({
         elevation={0}
         sx={{
           position: 'fixed',
-          top: shellHeaderHeight + 10,
+          top: shellHeaderHeight,
           left,
           zIndex: (theme) => theme.zIndex.drawer + 2,
-          width: 'clamp(420px, 32vw, 480px)',
-          maxWidth: `calc(100vw - ${left}px - 16px)`,
-          maxHeight: `calc(100dvh - ${shellHeaderHeight + 22}px)`,
+          width: 'clamp(392px, 29vw, 440px)',
+          maxWidth: `calc(100vw - ${left}px - 8px)`,
+          maxHeight: `calc(100dvh - ${shellHeaderHeight}px)`,
           minWidth: 0,
           display: { xs: 'none', lg: 'flex' },
           flexDirection: 'column',
@@ -286,18 +345,17 @@ export function ProductAreaDesktopTaskNavigator({
           border: 1,
           borderLeft: 0,
           borderColor: 'divider',
-          borderRadius: (theme) =>
-            `0 ${Number(theme.shape.borderRadius) * 2.5}px ${Number(theme.shape.borderRadius) * 2.5}px 0`,
-          boxShadow: (theme) => theme.shadows[12],
+          borderRadius: (theme) => `0 0 ${Number(theme.shape.borderRadius) * 1.5}px 0`,
+          boxShadow: (theme) => theme.shadows[4],
           overflow: 'hidden',
           transformOrigin: 'top left',
-          animation: 'dwp-task-navigator-enter 180ms cubic-bezier(0.2, 0, 0, 1)',
+          animation: 'dwp-task-navigator-enter 150ms cubic-bezier(0.2, 0, 0, 1)',
           '&:has([data-navigation-density="dense"])': {
             width: 'clamp(500px, 38vw, 560px)',
           },
           '@keyframes dwp-task-navigator-enter': {
-            from: { opacity: 0, transform: 'translateX(-8px) scale(0.992)' },
-            to: { opacity: 1, transform: 'translateX(0) scale(1)' },
+            from: { opacity: 0, transform: 'translateX(-4px)' },
+            to: { opacity: 1, transform: 'translateX(0)' },
           },
           '@media (prefers-reduced-motion: reduce)': {
             animation: 'none',
@@ -313,8 +371,8 @@ export function ProductAreaDesktopTaskNavigator({
           data-testid={`${areaKey}-desktop-task-navigator-toolbar`}
           sx={{
             position: 'absolute',
-            top: 12,
-            right: 12,
+            top: 14,
+            right: 14,
             zIndex: 3,
             display: 'flex',
             alignItems: 'center',
@@ -327,16 +385,19 @@ export function ProductAreaDesktopTaskNavigator({
             size="small"
             onClick={() => onDismiss(true)}
             sx={{
-              width: 36,
-              height: 36,
+              width: 32,
+              height: 32,
               pointerEvents: 'auto',
               color: 'text.secondary',
-              bgcolor: 'background.paper',
-              border: 1,
-              borderColor: 'divider',
-              boxShadow: (theme) => theme.shadows[3],
-              '&:hover': { color: 'text.primary', bgcolor: 'action.hover' },
-              '@media (forced-colors: active)': { border: '1px solid ButtonText' },
+              bgcolor: 'transparent',
+              border: '1px solid transparent',
+              boxShadow: 'none',
+              '&:hover': {
+                color: 'text.primary',
+                bgcolor: 'action.hover',
+                borderColor: 'divider',
+              },
+              '@media (forced-colors: active)': { borderColor: 'ButtonText' },
             }}
           >
             <X size={18} aria-hidden="true" />

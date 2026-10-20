@@ -108,6 +108,7 @@ export function HrisTaskNavigation({
   const hasAuthorizedTasks = groups.length > 0;
   const authorizedTaskCount = groups.reduce((count, group) => count + group.nodes.length, 0);
   const showSearch = authorizedTaskCount >= 7;
+  const sparseNavigation = !showSearch;
   const effectiveQuery = showSearch ? query : '';
   const filteredGroups = filterHrisTaskNavigationGroups(groups, effectiveQuery, locale);
   const filteredTaskCount = filteredGroups.reduce((count, group) => count + group.nodes.length, 0);
@@ -304,9 +305,9 @@ export function HrisTaskNavigation({
           sx={{
             display: 'grid',
             gridTemplateColumns: 'minmax(0, 1fr)',
-            gap: 1.25,
+            gap: sparseNavigation ? 0.5 : 1.25,
             px: { xs: 2, sm: 2.5 },
-            py: 2,
+            py: sparseNavigation ? 1.25 : 2,
             ...(columnCount === 2
               ? {
                   '@container (min-width: 470px)': {
@@ -320,23 +321,35 @@ export function HrisTaskNavigation({
             <Box
               component="section"
               key={group.groupId}
+              data-navigation-group-treatment={sparseNavigation ? 'flat' : 'card'}
               minWidth={0}
               aria-labelledby={`${titleId}-${group.groupId}`}
-              sx={{
-                alignSelf: 'start',
-                p: 0.75,
-                border: 1,
-                borderColor: 'divider',
-                borderRadius: `${foundationTokens.radius.surface}px`,
-                bgcolor: 'action.hover',
-              }}
+              sx={
+                sparseNavigation
+                  ? {
+                      alignSelf: 'start',
+                      py: 0.5,
+                      '&:not(:last-of-type)': {
+                        borderBottom: 1,
+                        borderColor: 'divider',
+                      },
+                    }
+                  : {
+                      alignSelf: 'start',
+                      p: 0.75,
+                      border: 1,
+                      borderColor: 'divider',
+                      borderRadius: `${foundationTokens.radius.surface}px`,
+                      bgcolor: 'action.hover',
+                    }
+              }
             >
               <Stack
                 direction="row"
                 alignItems="center"
                 justifyContent="space-between"
                 gap={1}
-                sx={{ px: 0.5, pt: 0.2 }}
+                sx={sparseNavigation ? { px: 1, pt: 0.25, pb: 0.15 } : { px: 0.5, pt: 0.2 }}
               >
                 <Typography
                   id={`${titleId}-${group.groupId}`}
@@ -347,19 +360,26 @@ export function HrisTaskNavigation({
                 >
                   {group.label[locale]}
                 </Typography>
-                <Typography
-                  component="span"
-                  variant="caption"
-                  color="text.secondary"
-                  aria-label={t('navigation.taskPanel.groupCount', {
-                    count: group.nodes.length,
-                  })}
-                  sx={{ flexShrink: 0, fontVariantNumeric: 'tabular-nums' }}
-                >
-                  {group.nodes.length}
-                </Typography>
+                {sparseNavigation ? null : (
+                  <Typography
+                    component="span"
+                    variant="caption"
+                    color="text.secondary"
+                    data-testid={`hris-task-group-count-${group.groupId}`}
+                    aria-label={t('navigation.taskPanel.groupCount', {
+                      count: group.nodes.length,
+                    })}
+                    sx={{ flexShrink: 0, fontVariantNumeric: 'tabular-nums' }}
+                  >
+                    {group.nodes.length}
+                  </Typography>
+                )}
               </Stack>
-              <Stack component="ul" gap={0.25} sx={{ p: 0, mt: 0.55, mb: 0, listStyle: 'none' }}>
+              <Stack
+                component="ul"
+                gap={sparseNavigation ? 0 : 0.25}
+                sx={{ p: 0, mt: sparseNavigation ? 0.15 : 0.55, mb: 0, listStyle: 'none' }}
+              >
                 {group.nodes.map((node) => {
                   const route = node.routeAliases[0]!;
                   const unresolvedTarget = resolveTaskLocation(route, location.search);
@@ -413,7 +433,11 @@ export function HrisTaskNavigation({
                             transition: 'opacity 140ms ease, transform 140ms ease',
                           },
                           '&:hover': {
-                            bgcolor: active ? 'var(--dwp-product-selection)' : 'background.paper',
+                            bgcolor: active
+                              ? 'var(--dwp-product-selection)'
+                              : sparseNavigation
+                                ? 'action.hover'
+                                : 'background.paper',
                             '&::before': { height: 18 },
                             '& .MuiButton-endIcon': { opacity: 0.9, transform: 'translateX(2px)' },
                           },

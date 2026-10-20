@@ -369,6 +369,27 @@ export function ProductAreaLayout({
     dismiss: taskNavigator.dismiss,
     path: taskNavigator.path,
   });
+  const taskNavigatorPath = taskNavigator.path;
+  const dismissTaskNavigator = taskNavigator.dismiss;
+  const openedTaskNavigatorPathVisible = Boolean(
+    taskNavigatorPath &&
+    visibleNavigation.some((group) => group.items.some((item) => item.path === taskNavigatorPath))
+  );
+  useEffect(() => {
+    if (
+      navigationChildrenPresentation !== 'panel' ||
+      !taskNavigatorPath ||
+      openedTaskNavigatorPathVisible
+    ) {
+      return;
+    }
+    dismissTaskNavigator();
+  }, [
+    dismissTaskNavigator,
+    navigationChildrenPresentation,
+    openedTaskNavigatorPathVisible,
+    taskNavigatorPath,
+  ]);
   const drawerSurfaceNavigation =
     mobileSurfaceNavigation === 'drawer' && presentationPlane === 'work';
   const showMobileSurfaceContextRail = Boolean(
@@ -527,7 +548,7 @@ export function ProductAreaLayout({
                       : null;
                   const panelChildren = Boolean(panelCandidate);
                   const panelOpen = panelChildren && taskNavigator.path === item.path;
-                  const visuallyCurrent = selected && !panelOpen;
+                  const visuallyCurrent = selected;
                   const disclosureChildren =
                     Boolean(itemChildren) && navigationChildrenPresentation === 'disclosure';
                   const inlineChildren =
@@ -593,10 +614,13 @@ export function ProductAreaLayout({
                               ? () => setCollapsedNavigationPath(expanded ? item.path : null)
                               : panelChildren
                                 ? (event: MouseEvent<HTMLButtonElement>) => {
+                                    const keyboardInitiated = event.detail === 0;
                                     taskNavigator.toggle(
                                       item.path,
-                                      event.currentTarget as HTMLButtonElement
+                                      event.currentTarget as HTMLButtonElement,
+                                      keyboardInitiated
                                     );
+                                    if (!keyboardInitiated) event.currentTarget.blur();
                                   }
                                 : onNavigate
                           }
@@ -608,26 +632,21 @@ export function ProductAreaLayout({
                             borderRadius: (theme) => Number(theme.shape.borderRadius) * 1 + 'px',
                             border: '1px solid transparent',
                             position: 'relative',
-                            color:
-                              visuallyCurrent || panelOpen
-                                ? 'var(--dwp-product-accent)'
+                            color: visuallyCurrent
+                              ? 'var(--dwp-product-accent)'
+                              : panelOpen
+                                ? 'text.primary'
                                 : 'text.secondary',
                             transition: (theme) =>
                               theme.transitions.create(
                                 ['background-color', 'border-color', 'color', 'transform'],
                                 { duration: theme.transitions.duration.shortest }
                               ),
-                            '&[data-navigation-panel-open="true"]': {
+                            '&.Mui-selected': {
                               color: 'var(--dwp-product-accent)',
-                              bgcolor: 'var(--dwp-product-soft)',
-                              borderColor: 'var(--dwp-product-accent-border)',
-                              transform: compactNavigation ? undefined : 'translateX(2px)',
+                              bgcolor: 'transparent',
                             },
-                            '&[data-navigation-panel-open="true"]:hover': {
-                              bgcolor: 'var(--dwp-product-selection)',
-                            },
-                            '&.Mui-selected': { bgcolor: 'var(--dwp-product-selection)' },
-                            '&.Mui-selected:hover': { bgcolor: 'var(--dwp-product-selection)' },
+                            '&.Mui-selected:hover': { bgcolor: 'action.hover' },
                             '&.Mui-selected::before': {
                               content: '""',
                               position: 'absolute',
@@ -636,6 +655,13 @@ export function ProductAreaLayout({
                               borderRadius: (theme) =>
                                 `0 ${Number(theme.shape.borderRadius) * 0.5}px ${Number(theme.shape.borderRadius) * 0.5}px 0`,
                               bgcolor: 'var(--dwp-product-accent)',
+                            },
+                            '&[data-navigation-panel-open="true"]': {
+                              bgcolor: 'var(--dwp-product-soft)',
+                              borderColor: 'var(--dwp-product-accent-border)',
+                            },
+                            '&[data-navigation-panel-open="true"]:hover': {
+                              bgcolor: 'var(--dwp-product-selection)',
                             },
                             '&.Mui-focusVisible': {
                               outline: '2px solid var(--dwp-product-accent)',
@@ -726,6 +752,7 @@ export function ProductAreaLayout({
           <ProductAreaDesktopTaskNavigator
             areaKey={areaKey}
             controlsId={openedPanelId}
+            focusOnOpen={taskNavigator.focusPanelOnOpen}
             label={openedPanelLabel}
             left={sidebarWidth}
             onDismiss={(restoreFocus) => taskNavigator.dismiss(restoreFocus)}
@@ -848,7 +875,11 @@ export function ProductAreaLayout({
         onExited={focusMobileNavigationTarget}
         open={mobileNavigation.open}
         testId={`${areaKey}-mobile-sidebar`}
-        width={shell.desktopNavigationWidth}
+        width={
+          navigationChildrenPresentation === 'panel'
+            ? Math.max(shell.desktopNavigationWidth, 320)
+            : shell.desktopNavigationWidth
+        }
       >
         <Box
           onFocusCapture={recordSurfaceFocus}
