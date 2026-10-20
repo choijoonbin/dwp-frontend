@@ -353,6 +353,8 @@
       "eyebrow": "업무 메뉴",
       "description": "현재 권한으로 열 수 있는 업무만 표시합니다.",
       "allowedCount": "허용 업무 {{count}}개",
+      "taskCount_one": "{{count}}개 업무",
+      "taskCount_other": "{{count}}개 업무",
       "filteredCount": "{{count}}개 업무 표시",
       "groupCount": "{{count}}개 업무",
       "searchLabel": "{{workbench}} 업무 검색",

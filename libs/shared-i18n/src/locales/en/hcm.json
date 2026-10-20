@@ -353,6 +353,8 @@
       "eyebrow": "Task navigation",
       "description": "Only work you can open with your current access is shown.",
       "allowedCount": "Allowed: {{count}}",
+      "taskCount_one": "{{count}} task",
+      "taskCount_other": "{{count}} tasks",
       "filteredCount": "Showing: {{count}}",
       "groupCount": "Tasks: {{count}}",
       "searchLabel": "Search {{workbench}}",

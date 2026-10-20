@@ -16,6 +16,7 @@ import {
   renderHrisTaskNavigation,
   resolveActiveHrisTaskNodeId,
   resolveHrisTaskNavigationFocusTarget,
+  resolveHrisTaskNavigationColumnCount,
   resolveTaskLocation,
 } from './hris-task-navigation';
 import {
@@ -35,6 +36,7 @@ vi.mock('react-i18next', () => ({
         'navigation.taskPanel.eyebrow': '업무 메뉴',
         'navigation.taskPanel.description': '현재 권한으로 열 수 있는 업무만 표시합니다.',
         'navigation.taskPanel.allowedCount': '허용 업무 {{count}}개',
+        'navigation.taskPanel.taskCount': '{{count}}개 업무',
         'navigation.taskPanel.filteredCount': '{{count}}개 업무 표시',
         'navigation.taskPanel.groupCount': '{{count}}개 업무',
         'navigation.taskPanel.searchLabel': '{{workbench}} 업무 검색',
@@ -127,6 +129,18 @@ describe('HRIS progressive task navigation', () => {
     expect(resolveActiveHrisTaskNodeId(groups, '/hr/unmapped')).toBeUndefined();
   });
 
+  it('uses two columns only when both the group and task volume justify it', () => {
+    const groups = canonicalHrisWorkbench('HRIS-WB-MY-HR')!.groups;
+
+    expect(resolveHrisTaskNavigationColumnCount(groups)).toBe(2);
+    expect(resolveHrisTaskNavigationColumnCount(groups.slice(0, 2))).toBe(1);
+    expect(
+      resolveHrisTaskNavigationColumnCount(
+        groups.slice(0, 4).map((group) => ({ ...group, nodes: group.nodes.slice(0, 1) }))
+      )
+    ).toBe(1);
+  });
+
   it('renders only the selected effective workbench and carries the aggregate pin', () => {
     const canonical = canonicalHrisWorkbench('HRIS-WB-HR-OPERATIONS')!;
     const group = canonical.groups[0]!;
@@ -175,13 +189,103 @@ describe('HRIS progressive task navigation', () => {
     expect(html).toContain(group.label.ko);
     expect(html).toContain(node.label.ko);
     expect(html).toContain('허용 업무 1개');
-    expect(html).toContain('업무 또는 메뉴 이름 검색');
+    expect(html).toContain('1개 업무');
+    expect(html).not.toContain('업무 또는 메뉴 이름 검색');
+    expect(html).not.toContain('>업무 메뉴<');
+    expect(html).toContain('data-testid="hris-task-navigation-workbench-icon"');
     expect(html).toContain('전체 HR 업무 찾기');
     expect(html).toContain('href="/hr/explore"');
     expect(html).toContain('scope=scope%3Ahcm%2Fpeople');
     expect(html).toContain('navigationScope=LEGAL_ENTITY');
     expect(html).toContain('legalEntityPublicId=6d07e952-2f5f-4dc1-8be7-6d7e210d23af');
     expect(html).not.toContain('privateFilter');
+  });
+
+  it('keeps the compact mobile content header descriptive without repeating its parent title', () => {
+    const canonical = canonicalHrisWorkbench('HRIS-WB-HR-OPERATIONS')!;
+    const group = canonical.groups[0]!;
+    const node = group.nodes[0]!;
+    runtime.policy = {
+      mode: 'ENFORCED',
+      revisionPin: `nav-v2-${'c'.repeat(64)}`,
+      denialReason: null,
+      orderedNodeIds: [node.nodeId],
+      workbenches: [
+        {
+          ...canonical,
+          landingNodeId: node.nodeId,
+          groups: [{ ...group, defaultNodeId: node.nodeId, nodes: [node] }],
+        },
+      ],
+    };
+
+    const html = renderToStaticMarkup(
+      <MemoryRouter>
+        <HrisTaskNavigation
+          item={{
+            path: node.routeAliases[0]!,
+            view: 'workbench-hr-operations',
+            icon: BriefcaseBusiness,
+            activePathPrefixes: node.routeAliases,
+          }}
+          selected
+          compact
+        />
+      </MemoryRouter>
+    );
+    const parsed = new DOMParser().parseFromString(html, 'text/html');
+    const section = parsed.querySelector(
+      '[data-testid="hris-task-navigation-workbench-hr-operations"]'
+    );
+    const labelledBy = section?.getAttribute('aria-labelledby');
+
+    expect(html).not.toContain('data-testid="hris-task-navigation-workbench-icon"');
+    expect(html).not.toContain('<h2');
+    expect(html).toContain('현재 권한으로 열 수 있는 업무만 표시합니다.');
+    expect(html).toContain('허용 업무 1개');
+    expect(labelledBy).toBeTruthy();
+    expect(parsed.getElementById(labelledBy!)).not.toBeNull();
+  });
+
+  it('discloses task search only when at least seven tasks are authorized', () => {
+    runtime.policy = {
+      mode: 'STATIC',
+      schemaVersion: null,
+      revisionPin: 'static',
+      authorityFreshUntil: null,
+      workbenches: [],
+      orderedNodeIds: [],
+      denialReason: null,
+    };
+    const nodes = canonicalHrisWorkbench('HRIS-WB-MY-HR')!.groups.flatMap((group) => group.nodes);
+    const renderWithTaskCount = (count: number) => {
+      const paths = nodes.slice(0, count).map((node) => node.routeAliases[0]!);
+      return renderToStaticMarkup(
+        <MemoryRouter initialEntries={['/hr/me']}>
+          <ProductAreaAuthorizedNavigationPathsProvider paths={new Set(paths)}>
+            <HrisTaskNavigation
+              item={{
+                path: '/hr/me',
+                view: 'workbench-my-hr',
+                icon: BriefcaseBusiness,
+                activePathPrefixes: paths,
+              }}
+              selected
+              compact={false}
+            />
+          </ProductAreaAuthorizedNavigationPathsProvider>
+        </MemoryRouter>
+      );
+    };
+
+    const sixTaskHtml = renderWithTaskCount(6);
+    const sevenTaskHtml = renderWithTaskCount(7);
+    expect(sixTaskHtml).toContain('data-authorized-task-count="6"');
+    expect(sixTaskHtml).toContain('data-navigation-density="sparse"');
+    expect(sixTaskHtml).not.toContain('업무 또는 메뉴 이름 검색');
+    expect(sevenTaskHtml).toContain('data-authorized-task-count="7"');
+    expect(sevenTaskHtml).toContain('data-navigation-density="dense"');
+    expect(sevenTaskHtml).toContain('업무 또는 메뉴 이름 검색');
   });
 
   it('preserves sealed target query and hash while copying only a valid legal selector', () => {
@@ -515,6 +619,10 @@ describe('HRIS progressive task navigation', () => {
     const mount = document.createElement('div');
     document.body.append(mount);
     const root = createRoot(mount);
+    const searchPaths = canonicalHrisWorkbench('HRIS-WB-MY-HR')!
+      .groups.flatMap((group) => group.nodes)
+      .slice(0, 7)
+      .map((node) => node.routeAliases[0]!);
 
     try {
       await act(async () => {
@@ -522,13 +630,13 @@ describe('HRIS progressive task navigation', () => {
           createElement(
             MemoryRouter,
             { initialEntries: ['/hr/me'] },
-            <ProductAreaAuthorizedNavigationPathsProvider paths={new Set(['/hr/me'])}>
+            <ProductAreaAuthorizedNavigationPathsProvider paths={new Set(searchPaths)}>
               <HrisTaskNavigation
                 item={{
                   path: '/hr/me',
                   view: 'workbench-my-hr',
                   icon: BriefcaseBusiness,
-                  activePathPrefixes: ['/hr/me'],
+                  activePathPrefixes: searchPaths,
                 }}
                 selected
                 compact={false}
@@ -555,7 +663,7 @@ describe('HRIS progressive task navigation', () => {
         mount
           .querySelector('[data-testid="hris-task-navigation-workbench-my-hr"]')
           ?.getAttribute('data-authorized-task-count')
-      ).toBe('1');
+      ).toBe('7');
       expect(
         mount
           .querySelector('[data-testid="hris-task-navigation-workbench-my-hr"]')

@@ -7,12 +7,12 @@ import { ActionIconButton } from '@dwp-frontend/design-system/components/actions
 
 import Box from '@mui/material/Box';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
-import Divider from '@mui/material/Divider';
 import Paper from '@mui/material/Paper';
 import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
 
-import { DesktopNavigationHeader } from '../components/desktop-navigation-header';
 import { normalizeProductPath } from '../components/product-manifest';
+import { shellHeaderHeight } from '../features/shell/shell-registry';
 import { resolveProductCompatibilityNavigationLocation } from '../features/shell/product-surface-compatibility-navigation';
 
 import type {
@@ -159,21 +159,17 @@ export function isVisibleNavigationTrigger(
 export function ProductAreaMobileTaskNavigator({
   areaKey,
   children,
-  collapsible,
   controlsId,
   label,
   onBack,
   onDismiss,
-  onToggle,
 }: Readonly<{
   areaKey: string;
   children: ReactNode;
-  collapsible: boolean;
   controlsId: string;
   label: string;
   onBack: () => void;
   onDismiss: () => void;
-  onToggle: () => void;
 }>) {
   const { t } = useTranslation('common');
   return (
@@ -181,30 +177,60 @@ export function ProductAreaMobileTaskNavigator({
       data-testid={`${areaKey}-mobile-task-navigator`}
       sx={{ height: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}
     >
-      <DesktopNavigationHeader
-        compact={false}
-        collapsible={collapsible}
-        controlsId={controlsId}
-        onDismiss={onDismiss}
-        onToggle={onToggle}
-      />
-      <Divider />
-      <Box sx={{ px: 1.5, py: 1, borderBottom: 1, borderColor: 'divider' }}>
-        <ActionButton
-          intent="quiet"
-          size="small"
-          startIcon={<ArrowLeft size={17} aria-hidden="true" />}
+      <Box
+        component="header"
+        data-testid={`${areaKey}-mobile-task-navigator-header`}
+        sx={{
+          minHeight: 56,
+          px: 1,
+          display: 'grid',
+          gridTemplateColumns: '44px minmax(0, 1fr) 44px',
+          alignItems: 'center',
+          gap: 0.5,
+          borderBottom: 1,
+          borderColor: 'divider',
+          bgcolor: 'var(--dwp-product-sidebar, var(--mui-palette-background-paper))',
+          boxShadow: (theme) => theme.shadows[2],
+          zIndex: 2,
+        }}
+      >
+        <ActionIconButton
+          label={t('actions.back')}
+          tooltipPlacement="bottom"
           onClick={onBack}
-          sx={{ minHeight: 44 }}
+          sx={{ width: 44, height: 44, color: 'text.secondary' }}
         >
-          {t('actions.back')}
-        </ActionButton>
+          <ArrowLeft size={19} strokeWidth={1.9} aria-hidden="true" />
+        </ActionIconButton>
+        <Typography
+          component="h2"
+          variant="subtitle2"
+          title={label}
+          noWrap
+          sx={{ minWidth: 0, px: 0.5, textAlign: 'center', fontWeight: 700 }}
+        >
+          {label}
+        </Typography>
+        <ActionIconButton
+          label={t('actions.close')}
+          tooltipPlacement="bottom"
+          onClick={onDismiss}
+          sx={{ width: 44, height: 44, color: 'text.secondary' }}
+        >
+          <X size={19} strokeWidth={1.9} aria-hidden="true" />
+        </ActionIconButton>
       </Box>
       <Box
         id={controlsId}
         role="region"
         aria-label={label}
-        sx={{ flex: 1, minHeight: 0, overflowY: 'auto', overscrollBehavior: 'contain' }}
+        sx={{
+          flex: 1,
+          minHeight: 0,
+          overflowY: 'auto',
+          overscrollBehavior: 'contain',
+          scrollbarGutter: 'stable',
+        }}
       >
         {children}
       </Box>
@@ -244,22 +270,41 @@ export function ProductAreaDesktopTaskNavigator({
         data-testid={`${areaKey}-desktop-task-navigator`}
         role="region"
         aria-label={label}
-        elevation={10}
-        square
+        elevation={0}
         sx={{
           position: 'fixed',
-          inset: `0 auto 0 ${left}px`,
+          top: shellHeaderHeight + 10,
+          left,
           zIndex: (theme) => theme.zIndex.drawer + 2,
-          width: 'clamp(380px, 34vw, 560px)',
+          width: 'clamp(420px, 32vw, 480px)',
+          maxWidth: `calc(100vw - ${left}px - 16px)`,
+          maxHeight: `calc(100dvh - ${shellHeaderHeight + 22}px)`,
           minWidth: 0,
           display: { xs: 'none', lg: 'flex' },
           flexDirection: 'column',
           bgcolor: 'background.paper',
-          borderRight: 1,
+          border: 1,
+          borderLeft: 0,
           borderColor: 'divider',
+          borderRadius: (theme) =>
+            `0 ${Number(theme.shape.borderRadius) * 2.5}px ${Number(theme.shape.borderRadius) * 2.5}px 0`,
+          boxShadow: (theme) => theme.shadows[12],
           overflow: 'hidden',
+          transformOrigin: 'top left',
+          animation: 'dwp-task-navigator-enter 180ms cubic-bezier(0.2, 0, 0, 1)',
+          '&:has([data-navigation-density="dense"])': {
+            width: 'clamp(500px, 38vw, 560px)',
+          },
+          '@keyframes dwp-task-navigator-enter': {
+            from: { opacity: 0, transform: 'translateX(-8px) scale(0.992)' },
+            to: { opacity: 1, transform: 'translateX(0) scale(1)' },
+          },
+          '@media (prefers-reduced-motion: reduce)': {
+            animation: 'none',
+          },
           '@media (forced-colors: active)': {
             border: '1px solid CanvasText',
+            borderLeft: 0,
             boxShadow: 'none',
           },
         }}
@@ -267,24 +312,46 @@ export function ProductAreaDesktopTaskNavigator({
         <Box
           data-testid={`${areaKey}-desktop-task-navigator-toolbar`}
           sx={{
+            position: 'absolute',
+            top: 12,
+            right: 12,
+            zIndex: 3,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'flex-end',
-            flex: '0 0 auto',
-            minHeight: 52,
-            px: 1.5,
-            borderBottom: 1,
-            borderColor: 'divider',
-            bgcolor: 'background.paper',
+            pointerEvents: 'none',
           }}
         >
-          <ActionIconButton label={t('actions.close')} size="small" onClick={() => onDismiss(true)}>
+          <ActionIconButton
+            label={t('actions.close')}
+            size="small"
+            onClick={() => onDismiss(true)}
+            sx={{
+              width: 36,
+              height: 36,
+              pointerEvents: 'auto',
+              color: 'text.secondary',
+              bgcolor: 'background.paper',
+              border: 1,
+              borderColor: 'divider',
+              boxShadow: (theme) => theme.shadows[3],
+              '&:hover': { color: 'text.primary', bgcolor: 'action.hover' },
+              '@media (forced-colors: active)': { border: '1px solid ButtonText' },
+            }}
+          >
             <X size={18} aria-hidden="true" />
           </ActionIconButton>
         </Box>
         <Box
           data-testid={`${areaKey}-desktop-task-navigator-scroll`}
-          sx={{ flex: 1, minHeight: 0, overflowY: 'auto', overscrollBehavior: 'contain' }}
+          sx={{
+            flex: '1 1 auto',
+            minHeight: 0,
+            overflowY: 'auto',
+            overscrollBehavior: 'contain',
+            scrollbarGutter: 'stable',
+            scrollbarWidth: 'thin',
+          }}
         >
           {children}
         </Box>

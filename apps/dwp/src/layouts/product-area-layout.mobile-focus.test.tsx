@@ -190,8 +190,10 @@ function NewRoute() {
 
 function Application({
   navigationChildrenPresentation = 'inline',
+  includeSecondaryPanel = false,
 }: {
   navigationChildrenPresentation?: 'inline' | 'panel';
+  includeSecondaryPanel?: boolean;
 } = {}) {
   return (
     <MemoryRouter initialEntries={['/hr/old']}>
@@ -211,6 +213,16 @@ function Application({
                       icon: BriefcaseBusiness,
                       activePathPrefixes: ['/hr/old', '/hr/new'],
                     },
+                    ...(includeSecondaryPanel
+                      ? [
+                          {
+                            path: '/hr/other',
+                            view: 'other',
+                            icon: BriefcaseBusiness,
+                            activePathPrefixes: ['/hr/other'],
+                          },
+                        ]
+                      : []),
                   ],
                 },
               ]}
@@ -298,6 +310,30 @@ describe('ProductAreaLayout child navigation focus contracts', () => {
     expect(trigger.getAttribute('aria-current')).toBe('page');
     expect(document.activeElement).toBe(trigger);
     expect(host.querySelector('[data-testid="old-heading"]')).not.toBeNull();
+  });
+
+  it('keeps the current route visible while another workbench panel is open', async () => {
+    await act(async () =>
+      root.render(
+        <Application navigationChildrenPresentation="panel" includeSecondaryPanel={true} />
+      )
+    );
+    const currentTrigger = host.querySelector<HTMLButtonElement>(
+      '[data-testid="hcm-navigation-item-old"]'
+    )!;
+    const otherTrigger = host.querySelector<HTMLButtonElement>(
+      '[data-testid="hcm-navigation-item-other"]'
+    )!;
+
+    expect(currentTrigger.getAttribute('aria-current')).toBe('page');
+    expect(currentTrigger.classList.contains('Mui-selected')).toBe(true);
+    await act(async () => otherTrigger.click());
+
+    expect(currentTrigger.getAttribute('aria-current')).toBe('page');
+    expect(currentTrigger.classList.contains('Mui-selected')).toBe(true);
+    expect(otherTrigger.getAttribute('aria-expanded')).toBe('true');
+    expect(otherTrigger.getAttribute('aria-current')).toBeNull();
+    expect(otherTrigger.classList.contains('Mui-selected')).toBe(false);
   });
 
   it('closes an open panel when another surface changes the route', async () => {
@@ -456,9 +492,19 @@ describe('ProductAreaLayout child navigation focus contracts', () => {
     expect(navigator).not.toBeNull();
     expect(host.querySelector('[data-testid="hcm-desktop-task-navigator"]')).toBeNull();
     expect(navigator.querySelector('[data-testid="deferred-mobile-child"]')).not.toBeNull();
-    const back = [...navigator.querySelectorAll<HTMLButtonElement>('button')].find(
-      (button) => button.textContent === 'actions.back'
+    const header = navigator.querySelector<HTMLElement>(
+      '[data-testid="hcm-mobile-task-navigator-header"]'
     )!;
+    expect(header).not.toBeNull();
+    expect(header.querySelector('h2')?.textContent).toBe('navigation.items.hcm.old.label');
+    const back = header.querySelector<HTMLButtonElement>('[aria-label="actions.back"]')!;
+    const close = header.querySelector<HTMLButtonElement>('[aria-label="actions.close"]')!;
+    expect(back).not.toBeNull();
+    expect(close).not.toBeNull();
+    expect(window.getComputedStyle(back).width).toBe('44px');
+    expect(window.getComputedStyle(back).height).toBe('44px');
+    expect(window.getComputedStyle(close).width).toBe('44px');
+    expect(window.getComputedStyle(close).height).toBe('44px');
     await act(async () => back.click());
 
     const remountedTrigger = drawer.querySelector<HTMLButtonElement>(
@@ -467,6 +513,29 @@ describe('ProductAreaLayout child navigation focus contracts', () => {
     flushScheduledFramesUntil(() => document.activeElement === remountedTrigger);
     expect(drawer.querySelector('[data-testid="hcm-mobile-task-navigator"]')).toBeNull();
     expect(document.activeElement).toBe(remountedTrigger);
+  });
+
+  it('closes the mobile drill-in from its compact header and restores the drawer trigger', async () => {
+    compactSpecializedMobileShell = true;
+    await act(async () => root.render(<Application navigationChildrenPresentation="panel" />));
+    const drawerTrigger = host.querySelector<HTMLButtonElement>(
+      '[data-testid="hcm-mobile-navigation-trigger"]'
+    )!;
+    await act(async () => drawerTrigger.click());
+
+    const drawer = document.querySelector<HTMLElement>('[data-testid="hcm-mobile-sidebar"]')!;
+    const workbenchTrigger = drawer.querySelector<HTMLButtonElement>(
+      '[data-testid="hcm-navigation-item-old"]'
+    )!;
+    await act(async () => workbenchTrigger.click());
+    const close = drawer.querySelector<HTMLButtonElement>(
+      '[data-testid="hcm-mobile-task-navigator-header"] [aria-label="actions.close"]'
+    )!;
+    await act(async () => close.click());
+    flushScheduledFramesUntil(() => document.activeElement === drawerTrigger);
+
+    expect(document.querySelector('[data-testid="hcm-mobile-sidebar"]')).toBeNull();
+    expect(document.activeElement).toBe(drawerTrigger);
   });
 
   it('waits for the route commit before focusing the replacement heading', async () => {

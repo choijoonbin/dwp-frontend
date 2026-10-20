@@ -154,11 +154,16 @@ card를 추가하지 않는다. `/hr/explore`만 탐색·재개 질문을 해결
 
 workbench trigger를 누르면 왼쪽 rail 바로 오른쪽에 task navigator를 연다.
 
-- desktop 폭은 `clamp(380px, 34vw, 560px)` 범위를 사용한다.
-- navigator header는 workbench 이름, 설명, 현재 허용 task 수, 닫기 control을 제공한다.
-- search는 선택한 workbench의 이미 허용된 node만 client-side로 필터링한다.
-- body는 group heading, group별 task 수, text leaf link를 제공한다.
-- 충분한 폭에서는 2열, 작은 panel 또는 mobile에서는 1열로 배치한다.
+- desktop navigator는 shell header 아래에서 rail에 붙고, sparse에서는
+  `clamp(420px, 32vw, 480px)`, dense에서는 `clamp(500px, 38vw, 560px)`를 사용한다.
+- navigator header는 workbench icon, 이름, 설명, 단일 task-count chip, 닫기 control을 하나의
+  tinted surface로 제공한다. 닫기 전용 빈 toolbar는 만들지 않는다.
+- search는 7개 이상의 허용 node가 있을 때만 표시하고, 선택한 workbench의 이미 허용된 node만
+  client-side로 필터링한다.
+- body는 soft group surface, group별 task 수, 44px leaf row, hover/active marker와 이동 affordance를
+  제공한다.
+- 8개 이상의 task와 4개 이상의 group이 있고 panel 내부 유효 폭이 470px 이상일 때만 2열을
+  사용한다. sparse, constrained desktop, mobile은 1열이다.
 - 검색 결과가 없으면 빈 panel이 아니라 query를 지울 수 있는 명시적 empty state를 표시한다.
 - effective descendant가 0개이거나 projection이 fail-closed이면 각각 안전한 zero/unavailable state를
   표시하며, fail-closed 상태에서는 explorer shortcut도 노출하지 않는다.
@@ -181,6 +186,20 @@ workbench trigger를 누르면 왼쪽 rail 바로 오른쪽에 task navigator를
 task navigator 안에 이 기능을 별도로 복제하지 않는다. navigator는 빠른 workbench 탐색을,
 `/hr/explore`는 cross-module 검색과 재개를 담당한다. 향후 command palette를 제공하더라도 같은
 explorer projection과 권한 cache를 사용해야 하며 별도의 client catalog를 만들지 않는다.
+
+### 5.4 visual hardening 기준
+
+- 전체 높이의 흰 sheet가 아니라 content-fit navigation flyout으로 표현하고, viewport를 초과할 때만
+  내부 body가 scroll한다.
+- route current는 accent selection과 leading marker, workbench open은 soft surface와 border/chevron,
+  keyboard focus는 `:focus-visible` ring으로 서로 구분한다.
+- pointer click은 keyboard focus ring을 남기지 않으며 forced-colors에서는 outline으로 의미를 보존한다.
+- desktop flyout은 180ms 이내의 짧은 slide/fade만 사용하고 reduced-motion에서는 제거한다.
+- mobile task view는 `뒤로가기 · workbench 이름 · 닫기`의 단일 header를 사용한다. desktop brand header와
+  별도 Back toolbar를 중복하지 않는다.
+- 시각 기준은 외형 복제가 아니라 Atlassian Navigation의 progressive disclosure, Oracle Redwood의
+  Suggestions/Product Map 분리, Workday의 categorized/Saved navigation, SAP Fiori의 navigation과
+  contextual side panel 구분, Fluent 2 drawer anatomy를 DWP token 체계에 맞게 적용한다.
 
 ## 6. interaction 계약
 

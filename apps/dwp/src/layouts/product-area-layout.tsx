@@ -428,7 +428,7 @@ export function ProductAreaLayout({
       ? renderNavigationItemChildren?.({
           item: openedPanelItem,
           selected: true,
-          compact: false,
+          compact: Boolean(onDismiss),
           onNavigate: navigateFromPanel,
           onNavigateToTarget: navigateFromPanelToTarget,
           resolveNavigationLocation: resolveChildNavigationLocation,
@@ -445,12 +445,10 @@ export function ProductAreaLayout({
       return (
         <ProductAreaMobileTaskNavigator
           areaKey={areaKey}
-          collapsible={collapsible}
           controlsId={openedPanelId}
           label={openedPanelLabel}
           onBack={() => taskNavigator.dismiss()}
           onDismiss={onDismiss}
-          onToggle={toggleDesktopNavigation}
         >
           {openedPanelChildren}
         </ProductAreaMobileTaskNavigator>
@@ -529,6 +527,7 @@ export function ProductAreaLayout({
                       : null;
                   const panelChildren = Boolean(panelCandidate);
                   const panelOpen = panelChildren && taskNavigator.path === item.path;
+                  const visuallyCurrent = selected && !panelOpen;
                   const disclosureChildren =
                     Boolean(itemChildren) && navigationChildrenPresentation === 'disclosure';
                   const inlineChildren =
@@ -566,7 +565,7 @@ export function ProductAreaLayout({
                                     hash: surface ? location.hash : '',
                                   }
                           }
-                          selected={selected}
+                          selected={visuallyCurrent}
                           aria-label={compactNavigation ? label : undefined}
                           aria-current={
                             panelChildren
@@ -588,6 +587,7 @@ export function ProductAreaLayout({
                           }
                           data-navigation-panel-trigger={panelChildren ? 'true' : undefined}
                           data-navigation-panel-open={panelOpen ? 'true' : undefined}
+                          data-navigation-route-current={selected ? 'true' : undefined}
                           onClick={
                             disclosureChildren
                               ? () => setCollapsedNavigationPath(expanded ? item.path : null)
@@ -602,15 +602,29 @@ export function ProductAreaLayout({
                           }
                           sx={{
                             width: 1,
-                            minHeight: 42,
+                            minHeight: 44,
                             justifyContent: compactNavigation ? 'center' : 'flex-start',
                             px: compactNavigation ? 1 : 1.25,
                             borderRadius: (theme) => Number(theme.shape.borderRadius) * 1 + 'px',
+                            border: '1px solid transparent',
                             position: 'relative',
-                            color: selected ? 'var(--dwp-product-accent)' : 'text.secondary',
+                            color:
+                              visuallyCurrent || panelOpen
+                                ? 'var(--dwp-product-accent)'
+                                : 'text.secondary',
+                            transition: (theme) =>
+                              theme.transitions.create(
+                                ['background-color', 'border-color', 'color', 'transform'],
+                                { duration: theme.transitions.duration.shortest }
+                              ),
                             '&[data-navigation-panel-open="true"]': {
                               color: 'var(--dwp-product-accent)',
-                              bgcolor: 'action.hover',
+                              bgcolor: 'var(--dwp-product-soft)',
+                              borderColor: 'var(--dwp-product-accent-border)',
+                              transform: compactNavigation ? undefined : 'translateX(2px)',
+                            },
+                            '&[data-navigation-panel-open="true"]:hover': {
+                              bgcolor: 'var(--dwp-product-selection)',
                             },
                             '&.Mui-selected': { bgcolor: 'var(--dwp-product-selection)' },
                             '&.Mui-selected:hover': { bgcolor: 'var(--dwp-product-selection)' },
@@ -622,6 +636,14 @@ export function ProductAreaLayout({
                               borderRadius: (theme) =>
                                 `0 ${Number(theme.shape.borderRadius) * 0.5}px ${Number(theme.shape.borderRadius) * 0.5}px 0`,
                               bgcolor: 'var(--dwp-product-accent)',
+                            },
+                            '&.Mui-focusVisible': {
+                              outline: '2px solid var(--dwp-product-accent)',
+                              outlineOffset: 2,
+                            },
+                            '@media (prefers-reduced-motion: reduce)': {
+                              transition: 'none',
+                              transform: 'none',
                             },
                             '@media (forced-colors: active)': {
                               '&.Mui-selected': {
@@ -649,7 +671,10 @@ export function ProductAreaLayout({
                               primary={label}
                               primaryTypographyProps={{
                                 variant: 'body2',
-                                fontWeight: selected ? 'fontWeightBold' : 'subtitle1.fontWeight',
+                                fontWeight:
+                                  visuallyCurrent || panelOpen
+                                    ? 'fontWeightBold'
+                                    : 'subtitle1.fontWeight',
                               }}
                             />
                           )}
@@ -657,7 +682,27 @@ export function ProductAreaLayout({
                             <DisclosureIcon size={16} strokeWidth={1.8} aria-hidden="true" />
                           )}
                           {panelChildren && !compactNavigation && (
-                            <ChevronRight size={16} strokeWidth={1.8} aria-hidden="true" />
+                            <Box
+                              component="span"
+                              sx={{
+                                width: 24,
+                                height: 24,
+                                ml: 0.5,
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                flexShrink: 0,
+                                borderRadius: '50%',
+                                bgcolor: panelOpen ? 'var(--dwp-product-selection)' : 'transparent',
+                                transform: panelOpen ? 'rotate(180deg)' : undefined,
+                                transition: 'transform 150ms ease',
+                                '@media (prefers-reduced-motion: reduce)': {
+                                  transition: 'none',
+                                },
+                              }}
+                            >
+                              <ChevronRight size={15} strokeWidth={2} aria-hidden="true" />
+                            </Box>
                           )}
                         </ListItemButton>
                       </Tooltip>
