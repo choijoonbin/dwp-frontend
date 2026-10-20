@@ -134,6 +134,21 @@ describe('People 360 owner projection boundary', () => {
     expect(() => selectPeople360Detail(missingAsOf, personId)).toThrowError(People360PayloadError);
   });
 
+  it('accepts canonical PostgreSQL UUID text regardless of version and variant bits', () => {
+    const deterministicPersonId = 'aaaaaaaa-aaaa-0aaa-0aaa-aaaaaaaaaaaa';
+    expect(
+      selectPeople360Detail(
+        people360Snapshot({ personId: deterministicPersonId }),
+        deterministicPersonId
+      ).person.personId
+    ).toBe(deterministicPersonId);
+
+    const malformed = 'aaaaaaaa-aaaa-0aaa-0aaa-aaaaaaaaaaa';
+    expect(() =>
+      selectPeople360Detail(people360Snapshot({ personId: malformed }), malformed)
+    ).toThrowError(People360PayloadError);
+  });
+
   it('keeps owner PARTIAL separate from policy MASK and OMIT', () => {
     const partial = selectPeople360Detail(
       people360Snapshot({

@@ -333,7 +333,10 @@ export type People360DetailPresentation = Readonly<{
 }>;
 
 const own = (source: object, key: PropertyKey) => Object.prototype.hasOwnProperty.call(source, key);
-const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu;
+// People public IDs are PostgreSQL UUID values. Deterministic imported/seeded IDs may
+// use arbitrary version and variant bits, while PostgreSQL still emits this canonical
+// 8-4-4-4-12 representation.
+const UUID = /^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/iu;
 
 const hasControlCharacter = (value: string) =>
   Array.from(value).some((character) => {
