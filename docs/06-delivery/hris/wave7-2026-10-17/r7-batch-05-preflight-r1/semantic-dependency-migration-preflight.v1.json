@@ -1,0 +1,793 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-05-semantic-dependency-migration-preflight.v1",
+  "preflightId": "HRIS-WAVE7-R7-BATCH-05-PREFLIGHT-20261021-R1",
+  "recordedAt": "2026-10-21T18:51:12+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "PREFLIGHT_COMPLETE_FIXED_ORDER_FIVE_CONDITIONAL_LANES_NO_PACKETS_NO_TOKENS_NO_WORKTREES_NO_LEASES_NO_SOURCE",
+  "purpose": "Classify only the Batch-05 semantic, dependency, entry-query, no-recount and migration boundaries for HRM-012, PAY-004, PER-008, SYS-008 and TIM-004 in fixed order. Record five conditional lanes for future separate exact owner packets while issuing no packet, token, worktree, migration lease, central authorization or source authority.",
+  "immutability": {
+    "sealed": true,
+    "appendOnly": true,
+    "predecessorMutation": "FORBIDDEN",
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_PREFLIGHT_ID_AND_SHA256"
+  },
+  "authorityBasis": {
+    "roadmapV19": {
+      "path": "../execution-roadmap-successor.v19.json",
+      "sha256": "7fd14919598aadf20ea083dd11d693f4774fe803224b799935e284b858525ed0",
+      "bytes": 18404,
+      "carrierCommit": "fb633659fc89bb7d7f28ed097f66086cd134e092",
+      "carrierTree": "5429619a263dfcad3b245540902cc1bd67fd3332",
+      "requiredState": "R7_BATCH_04_SEQUENCING_CLOSED_DEFAULT_OFF_ZERO_BUSINESS_CREDIT_BATCH_05_PREFLIGHT_NEXT_ZERO_TENANT_ENROLLMENT",
+      "requiredNextExecutable": "R7-BATCH-05-SEMANTIC-DEPENDENCY-MIGRATION-PREFLIGHT"
+    },
+    "batch04SequencingExit": {
+      "path": "../r7-batch-04-sequencing-exit-r1/sequencing-exit-receipt.v1.json",
+      "sha256": "d437e9c56ac988b131e83da0d60b6508b71be84cfe84a1e7355f2dffa4a92c4d",
+      "bytes": 13743,
+      "carrierCommit": "adbb1713a1cb0a16adb61d98df4d359494faaa78",
+      "carrierTree": "3d36a15f521c5a781cb79ed568ca12225a3e642f",
+      "requiredState": "BATCH04_OVERALL_SEQUENCING_EXIT_ACCEPTED_DEFAULT_OFF_ZERO_ENROLLMENT_ZERO_BUSINESS_CREDIT_EXECUTION_ROADMAP_SUCCESSOR_V19_NEXT",
+      "requiredDecision": "CLOSE_BATCH04_SEQUENCING_ONLY_WITH_ZERO_BUSINESS_CREDIT_DEFAULT_OFF_ZERO_ENROLLMENT_ZERO_ACTIVE_LEASES_AND_AUTHORIZE_ONLY_EXECUTION_ROADMAP_SUCCESSOR_V19"
+    },
+    "r7C0Reclassification": {
+      "path": "../r7-c0-reclassification-r1/base-slice-reclassification.v1.json",
+      "sha256": "73c02c6d945f2b62ae716d2dbbf76e5123a2863f50d19de51e27085943291de8",
+      "bytes": 141708,
+      "carrierCommit": "53c5bfbbede7f2dd417a38ba0bce6301a2617347",
+      "carrierTree": "74c8af3eff1fbfd9bab8cceeebf0a8c0fce130f6",
+      "requiredBatch": "R7-BATCH-05",
+      "requiredFixedOrder": [
+        "BASE-TFR-HRM-012",
+        "BASE-TFR-PAY-004",
+        "BASE-TFR-PER-008",
+        "BASE-TFR-SYS-008",
+        "BASE-TFR-TIM-004"
+      ]
+    }
+  },
+  "pinBasis": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "8f8087736e59413c60ddcdcd081ed42f1915bc91",
+      "tree": "7020953515319688b998777ed73cae166dd678be",
+      "originExact": true,
+      "clean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "fb633659fc89bb7d7f28ed097f66086cd134e092",
+      "tree": "5429619a263dfcad3b245540902cc1bd67fd3332",
+      "originExact": true,
+      "cleanBeforeThisPreflightDraft": true,
+      "expectedUntrackedOnlyAfterDraft": [
+        "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-05-preflight-r1/semantic-dependency-migration-preflight.v1.json"
+      ]
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "originExact": true,
+      "clean": true
+    }
+  },
+  "canonicalEvidence": {
+    "overlay": {
+      "path": "../../wave3-2026-10-13/successor-slice-overlay.v2.csv",
+      "sha256": "94440f01043eabc4530fb5e3f25c58763e30e0a006559f41503c792e7282092b",
+      "bytes": 160160
+    },
+    "dependencyRegister": {
+      "path": "../../recovery/hris-porting-blueprint-2026-09-09/coding-readiness/module-dependency-register.csv",
+      "sha256": "b8f1a11d1a32cf6f5a9a99ff73066b7e65787319ac18cf0d2b4891d22587c348",
+      "bytes": 3652
+    },
+    "targetFamilyResolutionRegister": {
+      "path": "../../recovery/exact-supplements/2026-10-06/hris-porting-blueprint-2026-09-09/coding-readiness/target-family-resolution-register.csv",
+      "sha256": "3e3618ff3ac150da8c9c7cbd3b1018e30e69652f28f3dbd8c87edb7df6a83819",
+      "bytes": 38399
+    },
+    "acceptedEntryQueryRegister": {
+      "path": "../../recovery/exact-supplements/2026-10-06/accepted-successors/hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-api-contract-register.csv",
+      "sha256": "5f47efd33a1d5aa3d11a4d9fd5716cd4e35650e9fec0868ecb77c8c90a4cd988",
+      "bytes": 100020
+    },
+    "g3SliceRegisterSemanticEvidenceOnly": {
+      "path": "../../recovery/hris-porting-blueprint-2026-09-09/coding-readiness/g3-slice-code-go-register.csv",
+      "sha256": "fb646668329e93ca0b83b74e2a3e43619954cec1cb2f6770029677edbc8d5725",
+      "bytes": 305301,
+      "authorityRule": "USE_FOR_SEMANTIC_AND_PRIMARY_RELATED_IA_EVIDENCE_ONLY; HISTORICAL_CODE_GO_TOKENS_MIGRATION_RANGES_AND_PLANNED_VERSIONS_ARE_NOT_CURRENT_AUTHORITY"
+    },
+    "informationArchitectureRegister": {
+      "path": "../../recovery/hris-porting-blueprint-2026-09-09/coding-readiness/hris-information-architecture-register.csv",
+      "sha256": "ab506a2bb2f80c8ab81a4b9d575374d6bda83b312d11dce07495d4812bdf4686",
+      "bytes": 103877
+    },
+    "iaNodeAccessRegister": {
+      "path": "../../recovery/hris-porting-blueprint-2026-09-09/coding-readiness/ia-node-access-contract-register.csv",
+      "sha256": "3fc33ce63642c337c9cf8dc6cfbd3b9287d9b1202c5b709e137744c7b28494bf",
+      "bytes": 46496
+    },
+    "apiPepBindingRegister": {
+      "path": "../../recovery/hris-porting-blueprint-2026-09-09/coding-readiness/api-pep-binding-register.csv",
+      "sha256": "0e38d724516a8b271069241ffa0fb6400984dc703758767de53cbaffb4f93da3",
+      "bytes": 126576
+    }
+  },
+  "sourceContractEvidence": {
+    "hrm": {
+      "path": "../../recovery/hris-porting-blueprint-2026-09-09/session-evidence/hrm/g2-readiness/api-event-contracts.v1.json",
+      "sha256": "0c3ec58b29dcf534d1b887fed5678e878e4a514cf3f943165e47dd7a486355bb",
+      "bytes": 25944
+    },
+    "pay": {
+      "path": "../../recovery/hris-porting-blueprint-2026-09-09/session-evidence/pay/g2-api-event-contracts.json",
+      "sha256": "040e64703871582aaff04f102495592f405a603f690ed4f8a20029981eee3a21",
+      "bytes": 26314
+    },
+    "per": {
+      "path": "../../recovery/hris-porting-blueprint-2026-09-09/session-evidence/per/g2-readiness/api-event-contracts.yaml",
+      "sha256": "559c345053d205902613f502be18dcbc22577e9286686827ad6383a5d2211f5a",
+      "bytes": 47246
+    },
+    "sys": {
+      "path": "../../recovery/hris-porting-blueprint-2026-09-09/session-evidence/sys/g2-contract-catalog.csv",
+      "sha256": "1251cd627675b07563c340c8a87ed50723ebc6bfe4dd447f34dc41f113891206",
+      "bytes": 17102
+    },
+    "tim": {
+      "path": "../../recovery/hris-porting-blueprint-2026-09-09/session-evidence/tim/g2-api-event-contracts.json",
+      "sha256": "1251365481d7063bf3fcf0e3e5bfaeca148554da354ac60fe29d2e67d1c1cb7f",
+      "bytes": 19564
+    }
+  },
+  "globalRules": {
+    "fixedLaneOrder": [
+      "BASE-TFR-HRM-012",
+      "BASE-TFR-PAY-004",
+      "BASE-TFR-PER-008",
+      "BASE-TFR-SYS-008",
+      "BASE-TFR-TIM-004"
+    ],
+    "laneDecision": "CONDITIONAL_GO_FOR_SEPARATE_EXACT_PACKET_SOURCE_START_NO_GO",
+    "sourceStartRequiresSeparateExactOwnerPacketAndHashBoundExecutableToken": true,
+    "worktreeMaterializationRequiresSeparateAuthority": true,
+    "migrationRequiresProvenOwnerSchemaDeltaAndSeparateExclusiveLease": true,
+    "sharedAuthorizationChangeRequiresSeparateCentralSuccessor": true,
+    "sharedIaBoundaryDoesNotTransferPrimaryOwnershipOrCompletionCredit": true,
+    "defaultOff": true,
+    "tenantEnrollmentCount": 0,
+    "activeMigrationLeaseCount": 0,
+    "businessCompletionIncrement": 0,
+    "sourceTestsRequiredForThisDocumentOnlyPreflight": false,
+    "repositoryWideSuitePerCorrection": false
+  },
+  "dependencySnapshot": [
+    {
+      "dependencyId": "DEP-001",
+      "producer": "SYS_AUTH",
+      "consumer": "ALL",
+      "contract": "HRIS_APP_ENTITLEMENT_AND_ACCESS_PACKAGE_V1",
+      "deliveryMode": "SYNC_DECISION",
+      "registerStatus": "READY",
+      "failureGuard": "fail closed; no leaf data"
+    },
+    {
+      "dependencyId": "DEP-002",
+      "producer": "SYS_AUTH",
+      "consumer": "ALL",
+      "contract": "EFFECTIVE_PERMISSION_SCOPE_FIELD_REVISION_V1",
+      "deliveryMode": "SYNC_DECISION",
+      "registerStatus": "READY",
+      "failureGuard": "403 and cache purge"
+    },
+    {
+      "dependencyId": "DEP-003",
+      "producer": "SYS_PLATFORM",
+      "consumer": "ALL",
+      "contract": "EVENT_ENVELOPE_OUTBOX_INBOX_V1",
+      "deliveryMode": "ASYNC",
+      "registerStatus": "READY",
+      "failureGuard": "schema reject and DLQ"
+    },
+    {
+      "dependencyId": "DEP-004",
+      "producer": "SYS_PLATFORM",
+      "consumer": "ALL",
+      "contract": "CONFIG_LIFECYCLE_POLICY_REF_V1",
+      "deliveryMode": "SYNC_AND_EVENT",
+      "registerStatus": "READY",
+      "failureGuard": "last approved version or feature disabled"
+    },
+    {
+      "dependencyId": "DEP-005",
+      "producer": "SYS_PLATFORM",
+      "consumer": "HRM|PER|TIM|PAY",
+      "contract": "AUTOMATION_HANDLER_AND_RECEIPT_V1",
+      "deliveryMode": "ASYNC",
+      "registerStatus": "READY",
+      "failureGuard": "no arbitrary execution; retry receipt"
+    },
+    {
+      "dependencyId": "DEP-006",
+      "producer": "SYS_PLATFORM",
+      "consumer": "HRM|PER|TIM|PAY",
+      "contract": "CONNECTOR_PORT_MAPPING_RECEIPT_V1",
+      "deliveryMode": "ASYNC",
+      "registerStatus": "READY",
+      "failureGuard": "connector disabled until configured"
+    },
+    {
+      "dependencyId": "DEP-016",
+      "producer": "DWP_AUDIT",
+      "consumer": "ALL",
+      "contract": "AUDIT_OUTBOX_EVENT_V1",
+      "deliveryMode": "ASYNC",
+      "registerStatus": "READY",
+      "failureGuard": "domain transaction records local outbox"
+    }
+  ],
+  "laneDecisions": [
+    {
+      "order": 1,
+      "sliceId": "BASE-TFR-HRM-012",
+      "moduleSession": "HRIS-HRM",
+      "boundedContext": "HRIS_INTEGRATION",
+      "classificationAtR7C0": "NO_CURRENT_SLICE_RESULT",
+      "decision": "CONDITIONAL_GO_FOR_SEPARATE_EXACT_PACKET_SOURCE_START_NO_GO",
+      "sourceFamily": {
+        "sourceRef": "TFR-HRM-012",
+        "sourceFamilySha256": "045228002731f170aa64cc37b82e02ff85a49873efaed9998486dcfbe8e99739",
+        "sourceRowCount": 49
+      },
+      "businessMeaning": "Data-quality screens consolidate into governed workforce ingestion with schema validation, reconciliation count digest and quarantine outcome.",
+      "semanticLineage": "TFR-HRM-012::hr-data-quality::PEP-HRM-015|EVT-HRM:WorkforceIngestionReconciled.v1",
+      "dependencies": [
+        "DEP-001",
+        "DEP-002",
+        "DEP-003",
+        "DEP-016"
+      ],
+      "entryQueries": [
+        {
+          "id": "IAQ-012",
+          "role": "PRIMARY",
+          "method": "GET",
+          "browserPath": "/api/people/v1/hris/workbench/operations/data/quality",
+          "canonicalRoute": "/hr/operations/people/data-quality",
+          "actionKeys": "NONE",
+          "decision": "READ_ONLY_DATA_QUALITY_WORKBENCH_DO_NOT_INVENT_INGESTION_ACTION_ON_IAQ_012",
+          "implementationState": "REQUIRED_G3_ENTRY_QUERY_NOT_IMPLEMENTED"
+        }
+      ],
+      "ownerContracts": [
+        "PEP-HRM-015:initiateWorkforceIngestion",
+        "EVT-HRM:WorkforceIngestionReconciled.v1"
+      ],
+      "sealedSemanticRequirements": [
+        "Connector and mapping versions are published references and tenant-scoped; no raw secret enters People persistence or browser projection.",
+        "The input envelope and mapping version are validated before restricted-field mapping; rejected inputs and quarantined-after-acceptance records remain distinct.",
+        "Command authorization fails closed before ingestion starts, and cursor progression occurs only after accepted effects and receipts commit.",
+        "WorkforceIngestionReconciled.v1 contains run, connector, mapping-version, source, accepted, rejected, duplicate, quarantined and applied counts plus result digest.",
+        "No raw source payload, credential or rejected restricted value is published in the event.",
+        "The IAQ-012 visibility capability remains hcm.operations.people.view while PEP-HRM-015 execution authorization remains a separate owner command boundary."
+      ],
+      "migration": {
+        "stream": "PEOPLE_MAIN",
+        "observedHighWater": "V59",
+        "candidateVersionIfOwnerSchemaDeltaProven": "V60",
+        "defaultIfNoOwnerSchemaDelta": "NONE",
+        "leaseState": "NOT_ISSUED"
+      },
+      "conditionsBeforeSeparatePacket": [
+        "Hash-pin the exact IAQ-012 projection, PEP-HRM-015 command, reconciliation event, quarantine, replay, idempotency, field-policy and audit boundaries.",
+        "Prove a People-owned persistence delta beyond V59 before any V60 reservation.",
+        "Seal any new PAGE, DATA or ACTION authorization through a separate central successor rather than this preflight."
+      ],
+      "futureSeparateExactPacketEligible": true,
+      "packetAuthorizedByThisReceipt": false,
+      "startTokenAuthorizedByThisReceipt": false,
+      "worktreeAuthorizedByThisReceipt": false,
+      "migrationLeaseAuthorizedByThisReceipt": false,
+      "sourceAuthorizedByThisReceipt": false
+    },
+    {
+      "order": 2,
+      "sliceId": "BASE-TFR-PAY-004",
+      "moduleSession": "HRIS-PAY",
+      "boundedContext": "PAYROLL_STATUTORY",
+      "classificationAtR7C0": "NO_CURRENT_SLICE_RESULT",
+      "decision": "CONDITIONAL_GO_FOR_SEPARATE_EXACT_PACKET_SOURCE_START_NO_GO",
+      "sourceFamily": {
+        "sourceRef": "TFR-PAY-004",
+        "sourceFamilySha256": "e3907422f10a20d8e186c1aada2e540f8d23a901b34b55205f61bca235679465",
+        "sourceRowCount": 119
+      },
+      "businessMeaning": "Country-specific retirement screens collapse into signed country-pack activation plus generic immutable calculation and result projection.",
+      "semanticLineage": "TFR-PAY-004::PAY-RETIREMENT::PEP-PAY-028|PEP-PAY-012|PEP-PAY-014|EVT-PAY:PayrollCalculated",
+      "dependencies": [
+        "DEP-001",
+        "DEP-002",
+        "DEP-003",
+        "DEP-016"
+      ],
+      "entryQueries": [
+        {
+          "id": "IAQ-049",
+          "role": "PRIMARY",
+          "method": "GET",
+          "browserPath": "/api/payroll/v1/workbench/pay-retirement",
+          "canonicalRoute": "/hr/operations/payroll/retirement",
+          "actionProvenance": [
+            "PEP-PAY-012",
+            "PEP-PAY-028"
+          ],
+          "implementationState": "REQUIRED_G3_ENTRY_QUERY_NOT_IMPLEMENTED"
+        },
+        {
+          "id": "IAQ-026",
+          "role": "RELATED_SHARED_REUSE",
+          "primarySliceId": "BASE-TFR-PAY-003",
+          "method": "GET",
+          "browserPath": "/api/payroll/v1/workbench/configuration/statutory",
+          "canonicalRoute": "/hr/settings/statutory",
+          "decision": "REUSE_ONLY_NO_DUPLICATE_IMPLEMENTATION_NO_PAY004_COMPLETION_RECOUNT"
+        }
+      ],
+      "ownerContracts": [
+        "PEP-PAY-028:country.pack.activate",
+        "PEP-PAY-012:run.calculate",
+        "PEP-PAY-014:run.results",
+        "EVT-PAY:PayrollCalculated"
+      ],
+      "sealedSemanticRequirements": [
+        "Country-pack activation is idempotent, expected-version guarded, step-up protected and enforces PACK_INSTALLER_NE_STATUTORY_APPROVER.",
+        "Activation evidence includes official reference set, effective date, golden pack and statutory approval.",
+        "Calculation attempts and result projections remain immutable and are scoped by legal payroll entity, pay group and period.",
+        "PayrollCalculated contains run, attempt, worker-count, result-digest and control-total facts without becoming a retirement-specific parallel engine.",
+        "IAQ-049 owns retirement result, policy version and case state; IAQ-026 remains shared PAY-003 settings authority with no duplicate completion credit.",
+        "Official formula, report and provider evidence remains an activation gate and is not satisfied by this preflight."
+      ],
+      "migration": {
+        "stream": "PAYROLL_MAIN",
+        "observedHighWater": "V54",
+        "candidateVersionIfOwnerSchemaDeltaProven": "V55",
+        "defaultIfNoOwnerSchemaDelta": "NONE",
+        "leaseState": "NOT_ISSUED"
+      },
+      "conditionsBeforeSeparatePacket": [
+        "Seal country-pack signature, maker-checker, immutable calculation, result projection, reconciliation and PayrollCalculated semantics.",
+        "Prove a Payroll-owned persistence delta beyond V54 before any V55 reservation.",
+        "Preserve IAQ-026 primary ownership and do not release BASE-TFR-PAY-002 connector semantics from generic control-plane availability."
+      ],
+      "futureSeparateExactPacketEligible": true,
+      "packetAuthorizedByThisReceipt": false,
+      "startTokenAuthorizedByThisReceipt": false,
+      "worktreeAuthorizedByThisReceipt": false,
+      "migrationLeaseAuthorizedByThisReceipt": false,
+      "sourceAuthorizedByThisReceipt": false
+    },
+    {
+      "order": 3,
+      "sliceId": "BASE-TFR-PER-008",
+      "moduleSession": "HRIS-PER",
+      "boundedContext": "PERFORMANCE",
+      "classificationAtR7C0": "NO_CURRENT_SLICE_RESULT",
+      "decision": "CONDITIONAL_GO_FOR_SEPARATE_EXACT_PACKET_SOURCE_START_NO_GO",
+      "sourceFamily": {
+        "sourceRef": "TFR-PER-008",
+        "sourceFamilySha256": "1e93491c7430eb638dc8f4be92cc053a74e3f2088bdb005e5645019675288735",
+        "sourceRowCount": 14
+      },
+      "businessMeaning": "Feedback screens consolidate into scoped requests with explicit anonymity and minimum-release policy, minimized submission events and protected narrative fields.",
+      "semanticLineage": "TFR-PER-008::PER-FEEDBACK-001::PEP-PER-015|EVT-PER:PerformanceFeedbackSubmitted.v1",
+      "dependencies": [
+        "DEP-001",
+        "DEP-002",
+        "DEP-003",
+        "DEP-016"
+      ],
+      "entryQueries": [
+        {
+          "id": "IAQ-038",
+          "role": "PRIMARY",
+          "method": "GET",
+          "browserPath": "/api/people/v1/hris/performance/workbench/team-performance",
+          "canonicalRoute": "/hr/team/performance",
+          "per008ActionBoundary": "PEP-PER-015_ONLY",
+          "decision": "DO_NOT_EXPAND_PER008_OWNERSHIP_TO_OTHER_IAQ038_ACTIONS_OR_SLICES",
+          "implementationState": "REQUIRED_G3_ENTRY_QUERY_NOT_IMPLEMENTED"
+        },
+        {
+          "id": "IAQ-023",
+          "role": "RELATED_SHARED_REUSE",
+          "primarySliceId": "BASE-TFR-PER-003",
+          "method": "GET",
+          "browserPath": "/api/people/v1/hris/performance/workbench/conversations-feedback",
+          "canonicalRoute": "/hr/operations/performance/conversations-feedback",
+          "decision": "READ_ONLY_SHARED_BOUNDARY_NO_PER003_RELEASE_NO_PER008_COMPLETION_RECOUNT"
+        }
+      ],
+      "ownerContracts": [
+        "PEP-PER-015:createFeedbackRequest",
+        "EVT-PER:PerformanceFeedbackSubmitted.v1"
+      ],
+      "sealedSemanticRequirements": [
+        "Feedback requests are idempotent and bind cycle version, subject worker, template version, opens-at and closes-at.",
+        "Anonymity mode is closed to IDENTIFIED, MASKED or ANONYMOUS_AGGREGATE and minimumReleaseCount is at least one.",
+        "Protected narrative content is never serialized in PerformanceFeedbackSubmitted.v1; the event is minimized to request, assignment and submitted-at facts.",
+        "IAQ-038 team-workbench visibility, population and field projection remain distinct from the PEP-PER-015 create action.",
+        "IAQ-023 remains a shared read-only operator surface whose BASE-TFR-PER-003 schedule, hold, complete, acknowledge and cancel semantics remain NO-GO."
+      ],
+      "migration": {
+        "stream": "PERFORMANCE",
+        "observedHighWater": "V19",
+        "candidateVersionIfOwnerSchemaDeltaProven": "V20",
+        "defaultIfNoOwnerSchemaDelta": "NONE",
+        "leaseState": "NOT_ISSUED",
+        "forbiddenHistoricalPlannedPath": "dwp-people-server/src/main/resources/db/performance-migration/V8__per_base_tfr_per_008.sql"
+      },
+      "conditionsBeforeSeparatePacket": [
+        "Seal request lifecycle, subject and audience scope, anonymity threshold, narrative protection, receipt and minimized event semantics.",
+        "Prove a Performance-owned persistence delta beyond V19 before any V20 reservation; never create or mutate the stale historical V8 path.",
+        "Preserve IAQ-023 and PER-003 semantic NO-GO without borrowing its unsealed transaction meanings."
+      ],
+      "futureSeparateExactPacketEligible": true,
+      "packetAuthorizedByThisReceipt": false,
+      "startTokenAuthorizedByThisReceipt": false,
+      "worktreeAuthorizedByThisReceipt": false,
+      "migrationLeaseAuthorizedByThisReceipt": false,
+      "sourceAuthorizedByThisReceipt": false
+    },
+    {
+      "order": 4,
+      "sliceId": "BASE-TFR-SYS-008",
+      "moduleSession": "HRIS-SYS",
+      "boundedContext": "DWP_PLATFORM_INTEGRATION",
+      "classificationAtR7C0": "NO_CURRENT_SLICE_RESULT",
+      "decision": "CONDITIONAL_GO_FOR_SEPARATE_EXACT_PACKET_SOURCE_START_NO_GO",
+      "sourceFamily": {
+        "sourceRef": "TFR-SYS-008",
+        "sourceFamilySha256": "8fd5277d423ee42f21b1cb551b06aa2ff73fa058352ba4e8433f0a6eebd7f6ce",
+        "sourceRowCount": 19
+      },
+      "businessMeaning": "Connector source screens resolve to central definitions, tests, mapping validation and dry-runs, maker-checker lifecycle, executions, reconciliation and immutable state events.",
+      "semanticLineage": "TFR-SYS-008::DWP.INTEGRATION.CONTROL_PLANE::SYS-API-021|SYS-API-022|SYS-API-023|SYS-API-024|SYS-API-025|SYS-API-057|SYS-API-058|SYS-API-059|SYS-API-060|SYS-API-061|SYS-API-062|SYS-API-063|SYS-API-064|SYS-API-065|SYS-API-066|SYS-API-067|SYS-API-068|SYS-EVT-005",
+      "dependencies": [
+        "DEP-001",
+        "DEP-002",
+        "DEP-003",
+        "DEP-006",
+        "DEP-016"
+      ],
+      "entryQueries": [
+        {
+          "id": "IAQ-057",
+          "role": "PRIMARY_HRIS_SETTINGS",
+          "method": "GET",
+          "browserPath": "/api/platform/v1/hris/workbench/settings-integrations",
+          "canonicalRoute": "/hr/settings/integrations",
+          "implementationState": "REQUIRED_G3_ENTRY_QUERY_NOT_IMPLEMENTED"
+        },
+        {
+          "id": "IAQ-062",
+          "role": "PRIMARY_DWP_CONTROL",
+          "method": "GET",
+          "browserPath": "/api/platform/v1/hris/workbench/dwp-integrations",
+          "canonicalRoute": "/admin/integrations/productivity?product=HCM",
+          "implementationState": "REQUIRED_G3_ENTRY_QUERY_NOT_IMPLEMENTED"
+        }
+      ],
+      "ownerContracts": [
+        "SYS-API-021",
+        "SYS-API-022",
+        "SYS-API-023",
+        "SYS-API-024",
+        "SYS-API-025",
+        "SYS-API-057",
+        "SYS-API-058",
+        "SYS-API-059",
+        "SYS-API-060",
+        "SYS-API-061",
+        "SYS-API-062",
+        "SYS-API-063",
+        "SYS-API-064",
+        "SYS-API-065",
+        "SYS-API-066",
+        "SYS-API-067",
+        "SYS-API-068",
+        "SYS-EVT-005",
+        "PEP-SYS-022",
+        "PEP-SYS-023",
+        "PEP-SYS-024",
+        "PEP-SYS-025",
+        "PEP-SYS-026",
+        "PEP-SYS-027",
+        "PEP-SYS-059",
+        "PEP-SYS-060",
+        "PEP-SYS-061",
+        "PEP-SYS-062",
+        "PEP-SYS-063",
+        "PEP-SYS-064",
+        "PEP-SYS-065",
+        "PEP-SYS-066",
+        "PEP-SYS-067",
+        "PEP-SYS-068",
+        "PEP-SYS-069",
+        "PEP-SYS-070"
+      ],
+      "sealedSemanticRequirements": [
+        "Connector and mapping definitions use immutable versions and explicit validate, submit, approve and activate lifecycle transitions.",
+        "Author and approver duties remain separated and activation cannot bypass validation, connection test or approval evidence.",
+        "Connection tests, mapping dry-runs and executions issue tenant-bound idempotent receipts without returning or persisting raw secret values.",
+        "Execution reconcile, retry and cancel transitions are state guarded and preserve attempt lineage, failure counts and reconciliation digest.",
+        "SYS-EVT-005 contains only execution public ID, state, counts and reconciliation digest through the outbox/inbox envelope.",
+        "IAQ-057 and IAQ-062 project one owner truth to two distinct authorized surfaces without duplicate implementation or completion credit.",
+        "DEP-006 binds connector port, mapping and receipt contracts but generic SYS-008 availability does not release BASE-TFR-PAY-002 owner-specific semantic NO-GO."
+      ],
+      "migration": {
+        "stream": "PLATFORM_MAIN",
+        "observedHighWater": "V333",
+        "candidateVersionIfOwnerSchemaDeltaProven": "V334",
+        "defaultIfNoOwnerSchemaDelta": "NONE",
+        "leaseState": "NOT_ISSUED"
+      },
+      "conditionsBeforeSeparatePacket": [
+        "Seal the full connector definition, mapping, test, dry-run, maker-checker, execution, reconcile, retry, cancel, receipt and state-event boundary.",
+        "Prove a Platform-owned persistence delta beyond V333 before any V334 reservation.",
+        "Seal exact ownership and projection consistency between IAQ-057 and IAQ-062 and keep product authorization default OFF."
+      ],
+      "futureSeparateExactPacketEligible": true,
+      "packetAuthorizedByThisReceipt": false,
+      "startTokenAuthorizedByThisReceipt": false,
+      "worktreeAuthorizedByThisReceipt": false,
+      "migrationLeaseAuthorizedByThisReceipt": false,
+      "sourceAuthorizedByThisReceipt": false
+    },
+    {
+      "order": 5,
+      "sliceId": "BASE-TFR-TIM-004",
+      "moduleSession": "HRIS-TIM",
+      "boundedContext": "TIME_LEAVE",
+      "classificationAtR7C0": "NO_CURRENT_SLICE_RESULT",
+      "decision": "CONDITIONAL_GO_FOR_SEPARATE_EXACT_PACKET_SOURCE_START_NO_GO",
+      "sourceFamily": {
+        "sourceRef": "TFR-TIM-004",
+        "sourceFamilySha256": "7bec2dd1d923fff59069e8b842f0ad7d23393eda506b5afe2f5443df741c65fa",
+        "sourceRowCount": 5
+      },
+      "businessMeaning": "Time scheduling reuses the central allowlisted automation definition, run, attempt, retry and receipt contracts without duplicating Platform control-plane ownership.",
+      "semanticLineage": "TFR-TIM-004::TIM-PLATFORM-AUTOMATION::SYS-API-017|SYS-API-018|SYS-API-019|SYS-API-020",
+      "dependencies": [
+        "DEP-001",
+        "DEP-002",
+        "DEP-003",
+        "DEP-004",
+        "DEP-005",
+        "DEP-016"
+      ],
+      "informationArchitectureBoundary": {
+        "classification": "NON_UI_SUPPORTING_SLICE",
+        "timeOwnedPrimaryEntryQuery": "NONE",
+        "timeOwnedCanonicalRoute": "NONE",
+        "centralSupportingQuery": "IAQ-059",
+        "centralSupportingRoute": "/hr/settings/operations",
+        "centralPrimarySliceId": "BASE-TFR-SYS-002",
+        "platformAutomationTechnicalOwnerSlice": "BASE-TFR-SYS-006",
+        "decision": "CENTRAL_REUSE_ONLY_NO_TIM_ROUTE_INVENTION_NO_SYS_PRIMARY_OWNERSHIP_TRANSFER_NO_COMPLETION_RECOUNT"
+      },
+      "ownerContracts": [
+        "SYS-API-017:automation definitions",
+        "SYS-API-018:queue run",
+        "SYS-API-019:run attempt item receipt",
+        "SYS-API-020:new retry attempt"
+      ],
+      "sealedSemanticRequirements": [
+        "The Time domain binds only an exact allowlisted handler key, owner-defined payload schema, tenant, purpose and job manifest.",
+        "Platform owns automation definitions, versions, runs, attempts and control-plane receipts; Time owns only the bounded domain action and its owner result.",
+        "Lease, idempotency, retry, attempt and DLQ behavior is explicit and arbitrary handler execution is forbidden.",
+        "No Time frontend route or menu is invented for this non-UI supporting slice; any future UI requires separate IA authority.",
+        "No production provider, handler or schedule is bound and no end-to-end execution is claimed by this preflight.",
+        "Both inherited TIM P0 gates remain open and continue to block activation, tenant enrollment and live Time-to-Payroll claims."
+      ],
+      "migration": {
+        "stream": "TIME_MAIN",
+        "observedHighWater": "V14",
+        "candidateVersionIfTimeOwnedSchemaDeltaProven": "V15",
+        "defaultIfPlatformAndExistingTimePersistenceReuseOnly": "NONE",
+        "leaseState": "NOT_ISSUED"
+      },
+      "conditionsBeforeSeparatePacket": [
+        "Seal the exact Time handler, job manifest, payload, owner result, idempotency, retry, attempt and receipt boundary against the admitted Platform automation control plane.",
+        "Prove a Time-owned persistence delta beyond V14 before any V15 reservation.",
+        "Preserve SYS-002 and SYS-006 IA and control-plane ownership and carry both TIM P0 gates without reinterpretation."
+      ],
+      "futureSeparateExactPacketEligible": true,
+      "packetAuthorizedByThisReceipt": false,
+      "startTokenAuthorizedByThisReceipt": false,
+      "worktreeAuthorizedByThisReceipt": false,
+      "migrationLeaseAuthorizedByThisReceipt": false,
+      "sourceAuthorizedByThisReceipt": false
+    }
+  ],
+  "migrationHighWater": {
+    "PEOPLE_MAIN": "V59",
+    "PERFORMANCE": "V19",
+    "PAYROLL_MAIN": "V54",
+    "PLATFORM_MAIN": "V333",
+    "TIME_MAIN": "V14",
+    "AUTH_MAIN": "V265",
+    "NOTIFICATION_MAIN": "V35",
+    "APPROVAL_MAIN": "V58",
+    "PRODUCT_AUTHORIZATION_BUNDLE": {
+      "version": 56,
+      "status": "DRAFT",
+      "automaticImportEnabled": false
+    }
+  },
+  "staleMigrationAuthorityWarnings": [
+    {
+      "scope": "ALL_BATCH05_LANES",
+      "warning": "Historical code-go tokens and historical migration allocation ranges in the overlay and G3 slice register are evidence only and are not current packet, token or lease authority."
+    },
+    {
+      "scope": "BASE-TFR-HRM-012",
+      "historicalAllocation": "MIG-HRM-PEOPLE-51-73",
+      "decision": "NOT_A_CURRENT_LEASE; ONLY_V60_MAY_BE_CONSIDERED_AFTER_CURRENT_SCHEMA_DELTA_PROOF"
+    },
+    {
+      "scope": "BASE-TFR-PAY-004",
+      "historicalAllocation": "MIG-PAY-PAYROLL-1-49",
+      "decision": "NOT_A_CURRENT_LEASE; ONLY_V55_MAY_BE_CONSIDERED_AFTER_CURRENT_SCHEMA_DELTA_PROOF"
+    },
+    {
+      "scope": "BASE-TFR-PER-008",
+      "historicalAllocation": "MIG-PER-PERFORMANCE-1-63",
+      "historicalPlannedPath": "dwp-people-server/src/main/resources/db/performance-migration/V8__per_base_tfr_per_008.sql",
+      "decision": "NOT_A_CURRENT_LEASE_AND_V8_IS_FORBIDDEN; ONLY_V20_MAY_BE_CONSIDERED_AFTER_CURRENT_SCHEMA_DELTA_PROOF"
+    },
+    {
+      "scope": "BASE-TFR-SYS-008",
+      "historicalAllocation": "MIG-SYS-PLATFORM-261-289",
+      "decision": "SUPERSEDED_NOT_A_CURRENT_LEASE; ONLY_V334_MAY_BE_CONSIDERED_AFTER_CURRENT_SCHEMA_DELTA_PROOF"
+    },
+    {
+      "scope": "BASE-TFR-TIM-004",
+      "historicalAllocation": "MIG-TIM-TIME-1-39",
+      "decision": "NOT_A_CURRENT_LEASE; ONLY_V15_MAY_BE_CONSIDERED_AFTER_CURRENT_SCHEMA_DELTA_PROOF"
+    },
+    {
+      "scope": "CARRIED_SEMANTIC_NO_GO_LANES",
+      "warning": "Historical PER-003 V19, PAY-002 V53 and TIM-002 V13 not-issued labels are superseded by later admitted migrations and must not be copied as current candidates. These lanes claim no migration version."
+    },
+    {
+      "scope": "SCHEMA_DELTA_ONLY_CANDIDATES",
+      "warning": "V60, V55, V20, V334 and V15 are conditional next-version candidates only; this preflight neither reserves nor activates any of them."
+    }
+  ],
+  "carriedSemanticNoGoLanes": [
+    {
+      "sliceId": "BASE-TFR-PER-003",
+      "moduleSession": "HRIS-PER",
+      "state": "SEMANTIC_NO_GO_NO_PACKET_NO_TOKEN_NO_WORKTREE_NO_LEASE_NO_SOURCE",
+      "missingAuthority": "Schedule, hold, complete, acknowledge and cancel owner-route transaction semantics.",
+      "stream": "PERFORMANCE",
+      "observedHighWater": "V19",
+      "migrationAuthorityState": "NO_SLICE_LEASE_OR_MIGRATION_AUTHORITY",
+      "candidateVersionClaim": "NONE"
+    },
+    {
+      "sliceId": "BASE-TFR-PAY-002",
+      "moduleSession": "HRIS-PAY",
+      "state": "SEMANTIC_NO_GO_NO_PACKET_NO_TOKEN_NO_WORKTREE_NO_LEASE_NO_SOURCE",
+      "missingAuthority": "Exact connector target, mapping, idempotency, reconciliation and owner binding.",
+      "stream": "PAYROLL_MAIN",
+      "observedHighWater": "V54",
+      "migrationAuthorityState": "NO_SLICE_LEASE_OR_MIGRATION_AUTHORITY",
+      "candidateVersionClaim": "NONE"
+    },
+    {
+      "sliceId": "BASE-TFR-TIM-002",
+      "moduleSession": "HRIS-TIM",
+      "state": "SEMANTIC_NO_GO_NO_PACKET_NO_TOKEN_NO_WORKTREE_NO_LEASE_NO_SOURCE",
+      "missingAuthority": "Notification trigger, type key, recipient, template version, variables, deep link, opt-out, masking and receipt contract.",
+      "stream": "TIME_MAIN",
+      "observedHighWater": "V14",
+      "migrationAuthorityState": "NO_SLICE_LEASE_OR_MIGRATION_AUTHORITY",
+      "candidateVersionClaim": "NONE"
+    }
+  ],
+  "carriedOpenP0Gates": [
+    {
+      "gateId": "TIM_CLOSE_PERIOD_DEFINITION_PRODUCER",
+      "severity": "P0",
+      "state": "OPEN_EXTERNAL_SOURCE_AUTHORITY_GATE",
+      "blocks": [
+        "TIM feature activation",
+        "TIM business-completion credit",
+        "live TIM-to-Payroll end-to-end claim"
+      ],
+      "doesNotBlock": [
+        "Batch-05 document-only semantic dependency and migration preflight"
+      ]
+    },
+    {
+      "gateId": "TIM_CLOSE_TRUSTED_OWNER_HEADER_ISSUER",
+      "severity": "P0",
+      "state": "OPEN_BEFORE_ANY_TENANT_ENROLLMENT",
+      "blocks": [
+        "TIM tenant enrollment",
+        "TIM production activation"
+      ],
+      "doesNotBlock": [
+        "Batch-05 document-only semantic dependency and migration preflight"
+      ]
+    }
+  ],
+  "portfolioAccounting": {
+    "universe": 86,
+    "retired": 2,
+    "active": 84,
+    "completedBeforeBatch05Preflight": 26,
+    "batch05PreflightBusinessCompletionIncrement": 0,
+    "completedAfterThisPreflight": 26,
+    "activeIncompleteAfterThisPreflight": 58
+  },
+  "verificationPolicyApplied": {
+    "documentOnlyPreflight": true,
+    "sourceChangedByThisReceipt": false,
+    "sourceTestsRun": false,
+    "repositoryWideSuiteRun": false,
+    "jsonSyntaxCheckRequired": true,
+    "directReferenceHashByteAndCarrierCheckRequired": true,
+    "repositoryPinCheckRequired": true,
+    "fixedOrderAndMigrationHighWaterCheckRequired": true,
+    "closedAuthorityBooleanCheckRequired": true,
+    "independentDocumentReviewRequiredBeforeCommit": true,
+    "afterFailure": "Correct and rerun only the smallest failing document or direct-reference check."
+  },
+  "authority": {
+    "preflightComplete": true,
+    "fixedOrderPreserved": true,
+    "conditionalLaneCount": 5,
+    "semanticNoGoLanesReleased": false,
+    "timP0GatesClosed": false,
+    "ownerPacketIssuedByThisReceipt": false,
+    "ownerPacketIssuanceAuthorizedByThisReceipt": false,
+    "startTokenIssuedByThisReceipt": false,
+    "startTokenIssuanceAuthorizedByThisReceipt": false,
+    "worktreeCreatedByThisReceipt": false,
+    "worktreeMaterializationAuthorizedByThisReceipt": false,
+    "migrationLeaseReservedOrActivatedByThisReceipt": false,
+    "migrationAuthoringAuthorizedByThisReceipt": false,
+    "centralAuthorizationAuthoringAuthorizedByThisReceipt": false,
+    "moduleOrCentralSourceAuthoringAuthorizedByThisReceipt": false,
+    "moduleBranchCommitAndPushAuthorizedByThisReceipt": false,
+    "directDwpDevMergeAuthorized": false,
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionBindingAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0,
+    "r7Complete": false,
+    "hrisComplete": false
+  },
+  "nonClaims": [
+    "Any Batch-05 owner packet, start token, worktree, migration lease, central authorization or source artifact exists or is authorized by this preflight.",
+    "Any schema delta is proven or V60, V55, V20, V334 or V15 is reserved or active.",
+    "Any historical migration allocation, code-go token or planned V8 path is current authority.",
+    "BASE-TFR-PER-003, BASE-TFR-PAY-002 or BASE-TFR-TIM-002 received semantic GO or a migration candidate claim.",
+    "Either inherited TIM P0 gate is closed.",
+    "Any shared IAQ transfers primary ownership or creates duplicate business-completion credit.",
+    "The product-authorization v56 DRAFT bundle is active or automatically imported.",
+    "Any production provider, handler, scheduler, broker, route, menu, feature, consumer, worker or tenant is activated, bound, mounted or enrolled.",
+    "Customer data, production execution or release is authorized.",
+    "Batch-05, R7 or HRIS is complete."
+  ],
+  "nextAction": "Independently review this exact preflight and commit it only after zero P0, P1 and P2 findings. Then begin only BASE-TFR-HRM-012 by issuing a separate append-only exact owner packet and migration decision on the pinned canon; do not create a token, worktree, lease or source artifact from this preflight and do not advance to PAY-004 until the separately authorized HRM-012 lane reaches its required sequencing boundary."
+}
