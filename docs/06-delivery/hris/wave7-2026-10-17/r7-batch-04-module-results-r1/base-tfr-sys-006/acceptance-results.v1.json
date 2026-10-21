@@ -1,0 +1,101 @@
+{
+  "schema": "dwp.hris.wave7.module-acceptance-results.v1",
+  "evidenceId": "HRIS-WAVE7-R7-BATCH-04-BASE-TFR-SYS-006-ACCEPTANCE-R2",
+  "issuedAt": "2026-10-21T12:40:00+09:00",
+  "issuedBy": "HRIS-SYS",
+  "sliceId": "BASE-TFR-SYS-006",
+  "resultState": "SYS006_MODULE_SOURCE_PUSHED_FIFTEEN_OF_FIFTEEN_ACCEPTANCE_AND_GOLDEN_PASS_INDEPENDENT_SOURCE_AUDIT_ZERO_P0_P1_P2_CENTRAL_ADMISSION_PENDING_DEFAULT_OFF_ZERO_ENROLLMENT",
+  "summary": {
+    "requiredAcceptanceCriteria": 15,
+    "passedAcceptanceCriteria": 15,
+    "failedAcceptanceCriteria": 0,
+    "skippedAcceptanceCriteria": 0,
+    "requiredGoldenScenarios": 15,
+    "passedGoldenScenarios": 15,
+    "failedGoldenScenarios": 0,
+    "skippedGoldenScenarios": 0,
+    "openP0": 0,
+    "openP1": 0,
+    "openP2": 0,
+    "centralAdmissionPending": true,
+    "businessCompletionCreditBeforeCentralAdmission": 0
+  },
+  "results": [
+    {"id": "SYS006-AC01", "result": "PASS", "evidence": "The module delta is confined to the automation package, its tests and exact Platform V333; the shared inbox timestamp correction is separately owned by central backend dwp-dev commit 02c6901d53b7bd5c131189e76d3661ff0d13ee13."},
+    {"id": "SYS006-AC02", "result": "PASS", "evidence": "AutomationController exposes exactly two GET and fourteen POST owner operations; carried SYS-002 IAQ, API and SYS-EVT-009 assets are reused without route, page-owner or recount changes."},
+    {"id": "SYS006-AC03", "result": "PASS", "evidence": "Definition creation is identity and metadata only, and closed DTO tests reject unknown fields while version, schedule and activation commands retain separate normalized bodies."},
+    {"id": "SYS006-AC04", "result": "PASS", "evidence": "Preserved PDX-004, PDX-005 and PDX-006 contract tests plus API and domain-policy tests pin closed fields, safe integers, scope values and retry modes."},
+    {"id": "SYS006-AC05", "result": "PASS", "evidence": "V333 SHA-256 213a3cbde404b056b7d60b7791b59b0c8a0581248e7d775382f7092940d63c2d creates exactly eight automation tables, reuses five shared stores and installs tenant-composite FORCE RLS; clean install and real V332-to-V333 PostgreSQL upgrade passed."},
+    {"id": "SYS006-AC06", "result": "PASS", "evidence": "Only signed compatible allowlisted TypedAutomationHandlerPort implementations execute; the canonical closed PDX decoder rejects arbitrary class, method and SQL fields and no production handler is bound."},
+    {"id": "SYS006-AC07", "result": "PASS", "evidence": "Definition and version lifecycle tests cover validation, target-bound CAS, maker-checker approval, single ACTIVE retirement and current-manifest revalidation with fail-closed stale or mismatched evidence."},
+    {"id": "SYS006-AC08", "result": "PASS", "evidence": "Schedules pin version, timezone and tzdb, input template reference and digest, concurrency template and policy digest; fire compares both persisted input facts and passes only persisted values to run creation. GOLD-050 proves same-digest/different-reference substitution is denied."},
+    {"id": "SYS006-AC09", "result": "PASS", "evidence": "Command replay is caller, action, target and handler bound; server-derived concurrency and mutually exclusive WORKER, OWNER_RECOVERY and RECONCILER fence tuples are persisted and enforced."},
+    {"id": "SYS006-AC10", "result": "PASS", "evidence": "NONE, FAILED_ITEMS_ONLY and WHOLE_INVOCATION retry modes use immutable selections, new attempts and monotonic checkpoints; the submitted processed digest must equal the current-attempt completed receipt subset."},
+    {"id": "SYS006-AC11", "result": "PASS", "evidence": "Cancellation and compensation require separately fenced reconciler authority, persist PREPARED, COMMITTED or RESULT_UNKNOWN evidence and prevent owner-recovery dispatch or blind redispatch. Independent worker and reconciler fence namespaces are enforced by their authority trigger rather than an invalid numeric inequality."},
+    {"id": "SYS006-AC12", "result": "PASS", "evidence": "Run CAS, shared receipt, closed SYS-EVT-004 outbox and audit facts commit or roll back atomically; terminal and checkpoint facts are immutable and canonical receipt-set digests are verified."},
+    {"id": "SYS006-AC13", "result": "PASS", "evidence": "The frontend adds no route, sidebar, menu or page owner; visible actions are the intersection of lifecycle allowlist, persisted eligibility, caller authorization, visible facts and current manifest."},
+    {"id": "SYS006-AC14", "result": "PASS", "evidence": "Frontend targeted reports passed model 8/8, client 11/11 and workbench 15/15, including loading, empty, complete, partial, unavailable, forbidden, retry and step-up states at 1440, 1280, 390 and 320 widths and 200 percent zoom."},
+    {"id": "SYS006-AC15", "result": "PASS", "evidence": "The child remains unmounted, HRIS_AUTOMATION_CONTROL_PLANE remains default OFF, tenant enrollment is zero and production handler/provider/schedule counts remain zero; unmounted tests prove zero owner fetches."}
+  ],
+  "goldenScenarios": [
+    {"id": "SYS-GOLD-003", "result": "PASS", "evidence": "AutomationGoldenAuthorizationEvidenceTest exercises owner filter to controller, service and JDBC with a non-superuser, non-BYPASSRLS application role; tenant B sees an opaque NOT_FOUND and zero rows."},
+    {"id": "SYS-GOLD-008", "result": "PASS", "evidence": "AutomationGoldenAuthorizationEvidenceTest permits disjoint maker/checker scopes and rejects effective-user overlap through real Auth SoD tables."},
+    {"id": "SYS-GOLD-015", "result": "PASS", "evidence": "AutomationGoldenExecutionEvidenceTest performs signed typed execution and durable reload while canonical closed decoding rejects extra class, method and SQL fields."},
+    {"id": "SYS-GOLD-016", "result": "PASS", "evidence": "Two execution tests prove same-payload idempotent replay and exact RESOURCE_CONFLICT HTTP 409 for a changed digest."},
+    {"id": "SYS-GOLD-017", "result": "PASS", "evidence": "The real lease repository reloads after expiry with a higher fence and rejects stale renew, checkpoint and finalize operations."},
+    {"id": "SYS-GOLD-018", "result": "PASS", "evidence": "The real worker invoke, finalize and checkpoint path retries only the FAILED_ITEMS_ONLY selection."},
+    {"id": "SYS-GOLD-019", "result": "PASS", "evidence": "AutomationGoldenLifecycleEvidenceTest blocks terminal cancellation while an original side effect is unresolved and requires separately fenced reconciliation."},
+    {"id": "SYS-GOLD-032", "result": "PASS", "evidence": "The production DomainEventInboxRepository on PostgreSQL deduplicates duplicate and out-of-order permission events and keeps revision 2 REVOKED after late revision 1. The PgJDBC timestamptz correction is central dwp-dev commit 02c6901d53b7bd5c131189e76d3661ff0d13ee13 and the exact method passed again after synchronization."},
+    {"id": "SYS-GOLD-040", "result": "PASS", "evidence": "Purpose-only, scope-only, cross-tenant, revision and revoked-entitlement receipt lookups all fail closed with opaque 404 behavior."},
+    {"id": "SYS-GOLD-045", "result": "PASS", "evidence": "Replay is subject-bound, changed payload conflicts and all nineteen sealed shared-receipt identity fields plus delete immutability are enforced."},
+    {"id": "SYS-GOLD-049", "result": "PASS", "evidence": "The definition/version lifecycle accepts only signed, current, compatible and four-eyes-approved evidence."},
+    {"id": "SYS-GOLD-050", "result": "PASS", "evidence": "The PostgreSQL lifecycle test covers pre-activation and suspended denial, exact CAS, pinned version/timezone/tzdb/concurrency, digest mismatch and same-digest/different-reference denial, then persists only the approved input reference and digest."},
+    {"id": "SYS-GOLD-051", "result": "PASS", "evidence": "Three execution tests prove durable checkpoint resume, no repeat of successful effects, stale-fence/regression denial and current-attempt processed-digest equality."},
+    {"id": "SYS-GOLD-052", "result": "PASS", "evidence": "Four execution tests prove the exact FAILED_ITEMS_ONLY frozen identity set and reject all-items substitution, empty selection and digest mismatch without creating another attempt."},
+    {"id": "SYS-GOLD-053", "result": "PASS", "evidence": "Pre-effect cancellation and post-effect approved compensation are separated, audited and deduplicated; unproven or blind redispatch is rejected."}
+  ],
+  "verification": {
+    "backend": {
+      "sourceCommit": "75ac11873e6e4a6c070d47e849d81063aaa88800",
+      "sourceTree": "cb02f8d3b09eed67762fb03e57af6badd8568fe4",
+      "originExact": true,
+      "compileJava": "PASS",
+      "compileTestJava": "PASS",
+      "goldenAuthorization": "5_OF_5_PASS",
+      "goldenExecution": "12_OF_12_PASS",
+      "goldenLifecycle": "4_OF_4_PASS",
+      "migrationContractFinalFailedMethodRerun": "PASS",
+      "cleanV333AndV332UpgradeTargets": "PASS",
+      "gold032AfterCentralSync": "PASS",
+      "gold050AfterPinnedReferenceCorrection": "PASS",
+      "gitDiffCheck": "PASS",
+      "repositoryWideSuiteRun": false
+    },
+    "frontend": {
+      "sourceHeadBeforeEvidence": "3495162540ef92a2eccc51ea2449c0a287c0ff85",
+      "sourceTreeBeforeEvidence": "b34ce99cb5f5a1a93cb78e2d29746741f633619a",
+      "model": "8_OF_8_PASS",
+      "client": "11_OF_11_PASS",
+      "workbench": "15_OF_15_PASS",
+      "changedFileEslint": "PASS",
+      "targetedTypeScriptRoots": "PASS",
+      "browserRouteRun": false,
+      "browserRouteReason": "The child is intentionally unmounted and default OFF pending central admission."
+    },
+    "independentAudit": {
+      "sourceOpenP0": 0,
+      "sourceOpenP1": 0,
+      "sourceOpenP2": 0,
+      "acceptance": "15_OF_15_PASS",
+      "goldenScenarios": "15_OF_15_PASS"
+    }
+  },
+  "nonClaims": [
+    "The SYS-006 module commits are not yet centrally admitted or merged to dwp-dev by this evidence.",
+    "No route, shell, sidebar, menu, shared SYS-002 page ownership or child mount is changed.",
+    "HRIS_AUTOMATION_CONTROL_PLANE remains default OFF and no tenant is enrolled.",
+    "No production handler, provider or schedule is authored, bound or active.",
+    "No customer data or customer database is used.",
+    "No repository-wide suite or redundant broad rerun is claimed."
+  ]
+}

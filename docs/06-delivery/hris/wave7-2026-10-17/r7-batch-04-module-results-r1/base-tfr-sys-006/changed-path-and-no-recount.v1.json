@@ -1,0 +1,101 @@
+{
+  "schema": "dwp.hris.wave7.changed-path-and-no-recount.v1",
+  "evidenceId": "HRIS-WAVE7-R7-BATCH-04-BASE-TFR-SYS-006-CHANGED-PATH-R2",
+  "issuedAt": "2026-10-21T12:40:00+09:00",
+  "issuedBy": "HRIS-SYS",
+  "sliceId": "BASE-TFR-SYS-006",
+  "backendSource": {
+    "repository": "dwp-backend",
+    "branch": "codex/hris-wave7-r7-batch04-sys-006-backend-20261020-r1",
+    "centralBaseline": "02c6901d53b7bd5c131189e76d3661ff0d13ee13",
+    "moduleCommit": "75ac11873e6e4a6c070d47e849d81063aaa88800",
+    "moduleTree": "cb02f8d3b09eed67762fb03e57af6badd8568fe4",
+    "originExact": true,
+    "changedPathCountAgainstCentralBaseline": 25,
+    "outsideAuthorizedRootCount": 0,
+    "paths": [
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/automation/AutomationCanonicalJson.java",
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/automation/AutomationController.java",
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/automation/AutomationCursorCodec.java",
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/automation/AutomationDomainPolicy.java",
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/automation/AutomationDtos.java",
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/automation/AutomationExecutionRepository.java",
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/automation/AutomationOwnerAuthorityFilter.java",
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/automation/AutomationRepository.java",
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/automation/AutomationRuntimePorts.java",
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/automation/AutomationRuntimeService.java",
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/automation/AutomationService.java",
+      "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/automation/JdbcAutomationRepository.java",
+      "dwp-platform-server/src/main/resources/db/migration/V333__create_hris_automation_control_plane.sql",
+      "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/automation/AutomationApiContractTest.java",
+      "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/automation/AutomationControllerContractTest.java",
+      "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/automation/AutomationDomainPolicyTest.java",
+      "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/automation/AutomationGoldenAuthorizationEvidenceTest.java",
+      "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/automation/AutomationGoldenExecutionEvidenceTest.java",
+      "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/automation/AutomationGoldenLifecycleEvidenceTest.java",
+      "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/automation/AutomationMigrationContractTest.java",
+      "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/automation/AutomationMigrationPostgresTest.java",
+      "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/automation/AutomationOwnerAuthorityFilterTest.java",
+      "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/automation/AutomationRequiredDatabaseEvidenceTest.java",
+      "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/automation/AutomationRuntimeServiceTest.java",
+      "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/automation/AutomationServiceSecurityTest.java"
+    ],
+    "centralPrerequisite": {
+      "commit": "02c6901d53b7bd5c131189e76d3661ff0d13ee13",
+      "path": "dwp-core/src/main/java/com/dwp/core/event/DomainEventInboxRepository.java",
+      "ownership": "CENTRAL_DWP_DEV_NOT_SYS006_MODULE_DELTA",
+      "reason": "PgJDBC maps PostgreSQL timestamptz through OffsetDateTime rather than Instant typed getObject."
+    }
+  },
+  "frontendSource": {
+    "repository": "dwp-frontend",
+    "branch": "codex/hris-wave7-r7-batch04-sys-006-frontend-20261020-r1",
+    "centralBaseline": "08da1ba272978182185c83da0751ae2b70660c81",
+    "sourceHeadBeforeEvidence": "3495162540ef92a2eccc51ea2449c0a287c0ff85",
+    "sourceTreeBeforeEvidence": "b34ce99cb5f5a1a93cb78e2d29746741f633619a",
+    "changedPathCountAgainstCentralBaseline": 8,
+    "outsideAuthorizedRootCount": 0,
+    "paths": [
+      "apps/dwp/src/features/hris/administration/automation-control-plane/automation-control-plane-client.test.ts",
+      "apps/dwp/src/features/hris/administration/automation-control-plane/automation-control-plane-client.ts",
+      "apps/dwp/src/features/hris/administration/automation-control-plane/automation-control-plane-fixtures.test-support.ts",
+      "apps/dwp/src/features/hris/administration/automation-control-plane/automation-control-plane-model.test.ts",
+      "apps/dwp/src/features/hris/administration/automation-control-plane/automation-control-plane-model.ts",
+      "apps/dwp/src/features/hris/administration/automation-control-plane/automation-control-plane-types.ts",
+      "apps/dwp/src/features/hris/administration/automation-control-plane/automation-control-plane-workbench.test.tsx",
+      "apps/dwp/src/features/hris/administration/automation-control-plane/automation-control-plane-workbench.tsx"
+    ],
+    "preserveExactCentralFiles": [
+      {"path": "apps/dwp/src/features/hris/administration/automation-control-plane/automation-control-plane-contract.ts", "sha256": "ae6d24d86c2144b1cc5357851eb39db4f27b1968a3e5a0350f7d46fa129c28a1"},
+      {"path": "apps/dwp/src/features/hris/administration/automation-control-plane/automation-control-plane-child-surface.tsx", "sha256": "c8f5038ee698f2c573a6d80424fbfe32f91d9a41285b657e923bd4b36a86bb69"},
+      {"path": "apps/dwp/src/features/hris/administration/automation-control-plane/automation-control-plane-child-surface.test.tsx", "sha256": "f01041774bb4252d9d06c583af9846a13bb65769ef94f7763b7031c24b09825b"},
+      {"path": "apps/dwp/src/features/hris/administration/automation-control-plane/index.ts", "sha256": "18ca356e7657d47176559afb3667122ac623a860b6d49ff06c19918b3b7c1144"}
+    ]
+  },
+  "forbiddenChanges": {
+    "route": false,
+    "shell": false,
+    "sidebar": false,
+    "menu": false,
+    "sharedSys002PageOwnership": false,
+    "childMount": false,
+    "featureEnablement": false,
+    "tenantEnrollment": false,
+    "productionHandlerBinding": false,
+    "productionProviderBinding": false,
+    "productionSchedule": false,
+    "customerData": false,
+    "agentRepository": false
+  },
+  "noRecount": {
+    "existingSys002AssetsReused": ["IAQ-059", "SYS-API-035", "SYS-API-036", "SYS-API-038", "SYS-EVT-009"],
+    "newOwnerOperations": 16,
+    "newGetOperations": 2,
+    "newPostOperations": 14,
+    "createdAutomationTables": 8,
+    "reusedSharedStores": 5,
+    "frontendAddedSourcePaths": 8,
+    "backendAddedOrChangedModulePaths": 25,
+    "duplicateBusinessOwnershipClaimed": false
+  }
+}

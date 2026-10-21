@@ -1,0 +1,132 @@
+{
+  "schema": "dwp.hris.wave7.module-result-evidence.v1",
+  "evidenceId": "HRIS-WAVE7-R7-BATCH-04-BASE-TFR-SYS-006-MODULE-RESULT-R2",
+  "issuedAt": "2026-10-21T12:40:00+09:00",
+  "issuedBy": "HRIS-SYS",
+  "sliceId": "BASE-TFR-SYS-006",
+  "resultState": "SYS006_EXACT_MODULE_SOURCE_BRANCHES_PUSHED_FIFTEEN_OF_FIFTEEN_ACCEPTANCE_AND_GOLDEN_PASS_INDEPENDENT_SOURCE_AUDIT_ZERO_P0_P1_P2_CENTRAL_ADMISSION_PENDING_DEFAULT_OFF_ZERO_ENROLLMENT_ZERO_CREDIT",
+  "authority": {
+    "startToken": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-start-r1/tokens/base-tfr-sys-006.start-token.v1.json",
+      "tokenId": "HRIS-WAVE7-R7-BATCH-04-START-BASE-TFR-SYS-006-20261021-R1",
+      "sha256": "865ce29c7e22fe4c0196fea84da3f0b49a6efd4ad116bd4d240e806ce3e443a5",
+      "bytes": 25347
+    },
+    "ownerPacket": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-start-r1/owner-packets/base-tfr-sys-006.owner-packet.v1.json",
+      "sha256": "17d5612d745ea418ef873601a29fd78d582838b4621e3a9cfc4e772022ba4b2a",
+      "bytes": 26992
+    },
+    "activeLease": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-start-r1/migration-lease-sys006-v333-activation.v2.json",
+      "activationId": "HRIS-WAVE7-R7-BATCH-04-MIGRATION-LEASE-ACTIVATION-SYS006-20261021-R2",
+      "sha256": "5ae4d08e8d9f5061f7970736e5334133b5f0f16ca46aba2d60b970281b5a3560",
+      "bytes": 25565,
+      "state": "ACTIVE_EXCLUSIVE_PLATFORM_V333"
+    },
+    "centralInboxCorrection": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "02c6901d53b7bd5c131189e76d3661ff0d13ee13",
+      "path": "dwp-core/src/main/java/com/dwp/core/event/DomainEventInboxRepository.java",
+      "reason": "Separate central ownership of the PgJDBC timestamptz mapping correction exposed by GOLD-032."
+    }
+  },
+  "sourcePins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "codex/hris-wave7-r7-batch04-sys-006-backend-20261020-r1",
+      "commit": "75ac11873e6e4a6c070d47e849d81063aaa88800",
+      "tree": "cb02f8d3b09eed67762fb03e57af6badd8568fe4",
+      "originExact": true,
+      "clean": true,
+      "moduleChangedPathsAgainstCentralBaseline": 25,
+      "outsideAuthorizedRootCount": 0
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "codex/hris-wave7-r7-batch04-sys-006-frontend-20261020-r1",
+      "sourceCommits": [
+        "81bcbb3649dafa9b2f557896dd7707ee072e0673",
+        "c506b9693dded9b61c241e342e467f5914e8f1f3",
+        "3495162540ef92a2eccc51ea2449c0a287c0ff85"
+      ],
+      "sourceHeadBeforeEvidence": "3495162540ef92a2eccc51ea2449c0a287c0ff85",
+      "sourceTreeBeforeEvidence": "b34ce99cb5f5a1a93cb78e2d29746741f633619a",
+      "moduleChangedPathsAgainstCentralBaseline": 8,
+      "outsideAuthorizedRootCount": 0
+    }
+  },
+  "implementation": {
+    "backend": [
+      "Two closed GET and fourteen closed POST owner operations",
+      "Owner-local fail-closed authority filter using trusted Gateway facts, target-bound CAS and elevated high-risk mode",
+      "Definition, signed version, schedule and run lifecycle with maker-checker, idempotency and current-manifest revalidation",
+      "Typed PDX-004, PDX-005 and PDX-006 orchestration without arbitrary class, method or SQL dispatch",
+      "WORKER, OWNER_RECOVERY and RECONCILER leases, fences, retry selection, checkpoints, cancellation, reconciliation and approved compensation",
+      "Exact V333 eight-table Platform migration with tenant-composite FORCE RLS and five shared stores reused"
+    ],
+    "frontend": [
+      "Unmounted automation-control-plane list-detail workbench inside the existing SYS-002 composition boundary",
+      "Typed catalog, definition, version, schedule and run clients for the sixteen owner operations",
+      "Lifecycle, persisted eligibility, caller authorization, visible-fact and current-manifest action intersection",
+      "Accessible loading, empty, complete, partial, unavailable, forbidden, retry and step-up states across the sealed responsive matrix",
+      "Default OFF, zero enrollment, unmounted and zero-owner-call behavior"
+    ]
+  },
+  "verification": {
+    "acceptanceCriteria": "15_OF_15_PASS",
+    "goldenScenarios": "15_OF_15_PASS",
+    "backendGoldenGroups": {
+      "authorization": "5_OF_5_PASS",
+      "executionAndRecovery": "12_OF_12_PASS",
+      "lifecycle": "4_OF_4_PASS"
+    },
+    "postgresql": "PASS_ZERO_DATABASE_SKIP",
+    "frontend": {
+      "model": "8_OF_8_PASS",
+      "client": "11_OF_11_PASS",
+      "workbench": "15_OF_15_PASS",
+      "eslint": "PASS",
+      "targetedTypeScriptRoots": "PASS"
+    },
+    "independentSourceAudit": {
+      "openP0": 0,
+      "openP1": 0,
+      "openP2": 0
+    },
+    "repositoryWideSuiteRun": false,
+    "redundantBroadRerun": false
+  },
+  "subordinateEvidence": [
+    {
+      "path": "acceptance-results.v1.json",
+      "sha256": "b2225175957626a8aa42ddb5f1cb0314449732f03acbdc552193045efa4dd8f0",
+      "bytes": 10266
+    },
+    {
+      "path": "changed-path-and-no-recount.v1.json",
+      "sha256": "9fbc27c6815cc5c357c290e045539a036907cfa50ec12c981823a94e9bcb3ab5",
+      "bytes": 7346
+    },
+    {
+      "path": "platform-v333-and-postgres-evidence.v1.json",
+      "sha256": "74b6741024d6fe27d78b4d0da33deb739d573c60439c0a37a629dc5744862907",
+      "bytes": 5994
+    }
+  ],
+  "residuals": [
+    "Separate central source and evidence admission is required before either module source branch is merged to dwp-dev.",
+    "Feature activation, tenant enrollment, child mounting and production provider or schedule binding require later authority."
+  ],
+  "nonClaims": [
+    "The module source branches are pushed but not yet centrally admitted or merged to dwp-dev by this result.",
+    "No route, shell, sidebar, menu, shared SYS-002 page ownership, child mount or i18n surface is changed.",
+    "HRIS_AUTOMATION_CONTROL_PLANE remains default OFF and no tenant is enrolled.",
+    "No production handler, provider or schedule is authored, bound or active.",
+    "No customer data, production activation, release or full-slice business-completion credit is claimed.",
+    "No repository-wide suite or redundant broad rerun is claimed."
+  ],
+  "decision": "MODULE_RESULT_READY_FOR_EXACT_EVIDENCE_COMMIT_AND_PUSH_THEN_SEPARATE_CENTRAL_SOURCE_AND_EVIDENCE_ADMISSION",
+  "nextAction": "Commit and push this exact four-file evidence bundle on the SYS-006 frontend module branch, independently audit its hashes and claims, then perform central source/evidence admission while keeping the feature default OFF, unmounted and unenrolled."
+}

@@ -1,0 +1,118 @@
+{
+  "schema": "dwp.hris.wave7.platform-v333-and-postgres-evidence.v1",
+  "evidenceId": "HRIS-WAVE7-R7-BATCH-04-BASE-TFR-SYS-006-PLATFORM-V333-POSTGRES-R2",
+  "issuedAt": "2026-10-21T12:40:00+09:00",
+  "issuedBy": "HRIS-SYS",
+  "sliceId": "BASE-TFR-SYS-006",
+  "source": {
+    "repository": "dwp-backend",
+    "branch": "codex/hris-wave7-r7-batch04-sys-006-backend-20261020-r1",
+    "commit": "75ac11873e6e4a6c070d47e849d81063aaa88800",
+    "tree": "cb02f8d3b09eed67762fb03e57af6badd8568fe4",
+    "originExact": true,
+    "centralInboxPrerequisiteCommit": "02c6901d53b7bd5c131189e76d3661ff0d13ee13"
+  },
+  "migration": {
+    "stream": "PLATFORM_MAIN",
+    "predecessor": "V332",
+    "version": "V333",
+    "path": "dwp-platform-server/src/main/resources/db/migration/V333__create_hris_automation_control_plane.sql",
+    "sha256": "213a3cbde404b056b7d60b7791b59b0c8a0581248e7d775382f7092940d63c2d",
+    "bytes": 76604,
+    "createdTables": [
+      "sys_automation_definitions",
+      "sys_automation_versions",
+      "sys_automation_schedules",
+      "sys_automation_runs",
+      "sys_automation_run_attempts",
+      "sys_automation_run_items",
+      "sys_automation_item_attempts",
+      "sys_automation_run_checkpoints"
+    ],
+    "reusedStores": [
+      "sys_hris_command_receipts",
+      "sys_domain_event_outbox",
+      "sys_domain_event_inbox",
+      "sys_audit_outbox",
+      "sys_audit_events"
+    ],
+    "forceRlsTableCount": 8,
+    "historicalMigrationModified": false,
+    "secondMigrationCreated": false,
+    "ninthAutomationTableCreated": false,
+    "backfillPerformed": false,
+    "automaticPrivilegeGrantAdded": false,
+    "workerAndReconcilerFenceRule": "Independent monotonic namespaces; authority trigger and exact fence tuple enforce separation. No invalid cross-namespace numeric inequality remains."
+  },
+  "compileVerification": {
+    "compileJava": "PASS",
+    "compileTestJava": "PASS",
+    "gitDiffCheck": "PASS"
+  },
+  "testInventory": {
+    "finalAutomationPackageTestMethodCount": 73,
+    "singleAggregateRunClaimed": false,
+    "classes": [
+      {"class": "AutomationApiContractTest", "methods": 6},
+      {"class": "AutomationControllerContractTest", "methods": 2},
+      {"class": "AutomationDomainPolicyTest", "methods": 6},
+      {"class": "AutomationGoldenAuthorizationEvidenceTest", "methods": 5},
+      {"class": "AutomationGoldenExecutionEvidenceTest", "methods": 12},
+      {"class": "AutomationGoldenLifecycleEvidenceTest", "methods": 4},
+      {"class": "AutomationMigrationContractTest", "methods": 4},
+      {"class": "AutomationMigrationPostgresTest", "methods": 1},
+      {"class": "AutomationOwnerAuthorityFilterTest", "methods": 4},
+      {"class": "AutomationRequiredDatabaseEvidenceTest", "methods": 11},
+      {"class": "AutomationRuntimeServiceTest", "methods": 10},
+      {"class": "AutomationServiceSecurityTest", "methods": 3},
+      {"class": "Sys006AutomationContractTest", "methods": 4, "preserveExact": true},
+      {"class": "Sys006ClosedTransportSchemaTest", "methods": 1, "preserveExact": true}
+    ],
+    "executedEvidence": [
+      {"scope": "initial bounded module targets", "result": "PASS", "repositoryWide": false},
+      {"scope": "required PostgreSQL database evidence", "passed": 11, "failed": 0, "skipped": 0},
+      {"scope": "Golden authorization", "passed": 5, "failed": 0, "skipped": 0},
+      {"scope": "Golden execution and recovery", "passed": 12, "failed": 0, "skipped": 0},
+      {"scope": "Golden lifecycle", "passed": 4, "failed": 0, "skipped": 0},
+      {"scope": "V333 final change validation", "result": "clean install and V332 upgrade passed in the six-target run; one stale static length expectation failed, then only that static method was corrected and rerun PASS"},
+      {"scope": "GOLD-032 after central inbox synchronization", "passed": 1, "failed": 0, "skipped": 0},
+      {"scope": "GOLD-050 after pinned input-reference correction", "passed": 1, "failed": 0, "skipped": 0}
+    ],
+    "executionPolicy": "Run changed or newly exposed targets once; after a failure rerun only the smallest failed method. No repository-wide suite and no redundant broad rerun."
+  },
+  "postgresqlVerification": {
+    "engine": "PostgreSQL 16 via Testcontainers",
+    "databaseUnavailable": false,
+    "result": "PASS_ZERO_DATABASE_SKIP",
+    "cleanPlatformMigrationReachesV333AndInstallsTheEightTables": "PASS",
+    "realV332ToV333UpgradePreservesExistingSharedReceiptEvidence": "PASS",
+    "allEightTablesDenyMissingContextAndHideCrossTenantRows": "PASS",
+    "runCasReceiptSysEvt004AndAuditOutboxRollbackAtomically": "PASS",
+    "scheduleActivationInitializesDeterministicFirstFutureUtcWithoutMovingCursor": "PASS",
+    "terminalReceiptCapturesTheSameLockedRunRevisionAsCancellationCas": "PASS",
+    "v333EnforcesExactPdx004BoundsAndRejectsFutureReceiptRevision": "PASS",
+    "resultUnknownDeadLetterReconcilesWithoutMutatingTerminalReceipt": "PASS",
+    "committedEvidenceWithoutATerminalReceiptCannotEnterCompensation": "PASS",
+    "catalogActionsAreThePersistedAuthorizationVisibilityAndCurrentManifestIntersection": "PASS",
+    "retryActionRequiresExactRetryableSelectionDedupeEvidenceAndCurrentManifest": "PASS",
+    "gold032ProductionInboxPostgresqlPath": "PASS_AFTER_CENTRAL_COMMIT_02c6901d",
+    "gold050PinnedInputReferenceAndDigestPath": "PASS"
+  },
+  "audit": {
+    "sourceOpenP0": 0,
+    "sourceOpenP1": 0,
+    "sourceOpenP2": 0,
+    "acceptanceCriteriaPassed": 15,
+    "acceptanceCriteriaRequired": 15,
+    "goldenScenariosPassed": 15,
+    "goldenScenariosRequired": 15,
+    "result": "PASS"
+  },
+  "nonClaims": [
+    "The 73 methods are an inventory, not a claim that one aggregate run was executed.",
+    "No repository-wide suite or repeated broad rerun is claimed.",
+    "No customer or production database was used.",
+    "No production handler, provider or schedule is bound.",
+    "The module source is pushed to its branch but is not centrally admitted to backend dwp-dev by this evidence."
+  ]
+}
