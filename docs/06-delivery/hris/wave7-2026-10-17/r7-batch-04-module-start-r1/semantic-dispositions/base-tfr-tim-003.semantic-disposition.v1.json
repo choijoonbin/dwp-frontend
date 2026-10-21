@@ -1,0 +1,1055 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-tim003-semantic-disposition.v1",
+  "dispositionId": "HRIS-WAVE7-R7-BATCH-04-TIM003-SEMANTIC-DISPOSITION-20261021-R1",
+  "recordedAt": "2026-10-21T13:11:26+09:00",
+  "recordedBy": "TIM_HRM_CROSS_MODULE_CONTROL",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ID_AND_SHA256"
+  },
+  "state": "TIM003_EMPLOYMENT_ABSENCE_BOUNDARY_SEALED_V14_REQUIRED_HRM_CANONICAL_PUBLICATION_AND_OWNER_QUERY_SUCCESSOR_BEFORE_TIM_SOURCE",
+  "sliceId": "BASE-TFR-TIM-003",
+  "moduleSession": "HRIS-TIM",
+  "sliceKind": "NON_UI_SUPPORTING_SLICE",
+  "boundedContext": "TIME_ABSENCE_EMPLOYMENT_PROJECTION",
+  "capability": "TIM.LEAVE.ABSENCE.EMPLOYMENT_FACT_INGESTION",
+  "disposition": "REBUILD_FROM_CANONICAL_CONTRACTS_NO_SKKF_CODE_REUSE",
+  "purpose": "Seal the exact People-owned EmploymentChanged.v1 publication, trusted workforce owner-query recovery, Time-owned derivative projection, stale/gap/idempotency behavior and V14 schema boundary before any HRIS-HRM or HRIS-TIM source authority is issued.",
+  "sequenceAuthority": {
+    "precedingExit": {
+      "path": "../../r7-batch-04-central-admission-r1/sys-006-sequencing-exit-receipt.v1.json",
+      "sha256": "4dce61355a0070aa46ffd3b95fe5923fb770769f902bc4ae38d9090ced0e259f",
+      "bytes": 8539,
+      "requiredState": "BATCH04_LANE_4_SYS006_SEQUENCING_EXIT_ACCEPTED_DEFAULT_OFF_ZERO_ENROLLMENT_ZERO_BUSINESS_CREDIT_TIM003_SEMANTIC_CLOSURE_NEXT"
+    },
+    "order": 5,
+    "closedBeforeThisLane": [
+      "BASE-TFR-HRM-011",
+      "BASE-TFR-PAY-003",
+      "BASE-TFR-PER-004",
+      "BASE-TFR-SYS-006"
+    ],
+    "remainingAfterThisLane": [],
+    "reorderingAuthorized": false,
+    "allowedNow": "TIM003_APPEND_ONLY_SEMANTIC_DISPOSITION_AND_INDEPENDENT_REVIEW_ONLY",
+    "notAllowedNow": [
+      "HRM_PRODUCER_OR_OWNER_QUERY_SOURCE",
+      "TIM_CONSUMER_OR_PROJECTION_SOURCE",
+      "OWNER_PACKET",
+      "START_TOKEN",
+      "WORKTREE_MATERIALIZATION",
+      "TIME_V14_RESERVATION_OR_AUTHORING",
+      "ROUTE_OR_MENU_WORK",
+      "FEATURE_OR_TENANT_ENROLLMENT",
+      "PRODUCTION_BROKER_OR_CUSTOMER_DATA"
+    ]
+  },
+  "canonicalInputs": {
+    "batch04Preflight": {
+      "repository": "dwp-frontend",
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-preflight-r1/semantic-dependency-migration-preflight.v1.json",
+      "sha256": "3fe2cb0cab1aa65fbe75f1b0d8d4a74f136be457aa2c324d262eb7503789cc1c",
+      "bytes": 17214,
+      "correctionRule": "Its historical TIME_MAIN V12 high-water and V13 candidate are superseded by the admitted V13 audit-outbox migration; the only candidate after proof is V14."
+    },
+    "targetFamilyRegister": {
+      "repository": "dwp-frontend",
+      "path": "docs/06-delivery/hris/recovery/exact-supplements/2026-10-06/hris-porting-blueprint-2026-09-09/coding-readiness/target-family-resolution-register.csv",
+      "sha256": "3e3618ff3ac150da8c9c7cbd3b1018e30e69652f28f3dbd8c87edb7df6a83819",
+      "bytes": 38399,
+      "targetFamilyRef": "TFR-TIM-003",
+      "sourceFamilyRef": "3cb545db297f41345d7e91267e5dfb2ca69ee7b3203fb99e4a9772a2382fbcc0",
+      "sourceParentCount": 14,
+      "businessMeaning": "Employment absence facts remain People owned and enter Time through the canonical minimized change contract."
+    },
+    "crossModuleContractRegister": {
+      "repository": "dwp-frontend",
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/cross-module-contract-register.csv",
+      "sha256": "783bd3f6c6fdcf5d35da73020b2cc01f0c59cfd6e9fe9d56ffa75a3cd380f725",
+      "bytes": 13108,
+      "contract": "XCON-004",
+      "dependency": "DEP-007",
+      "owner": "HRIS-HRM",
+      "consumers": [
+        "HRIS-PER",
+        "HRIS-TIM",
+        "HRIS-PAY"
+      ],
+      "gapPolicy": "GAP_QUARANTINES_SUBJECT_AND_OWNER_SNAPSHOT_REPLAY_IS_REQUIRED"
+    },
+    "serviceApiAuthBindingRegister": {
+      "repository": "dwp-frontend",
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/service-api-auth-binding-register.csv",
+      "sha256": "a54272429e70d0e2494e082b214615a4befe2354d5ab72bf7619500e2b0fdcaa",
+      "bytes": 14356,
+      "observedBootstrapBinding": {
+        "binding": "SVC-PEP-HRM-002",
+        "owner": "HRIS-HRM",
+        "networkConsumers": [
+          "dwp-time-server",
+          "dwp-payroll-server"
+        ],
+        "internalPath": "/internal/hris-people/v1/workforce-snapshots",
+        "purpose": "HRIS_WORKFORCE_SNAPSHOT_BOOTSTRAP",
+        "decision": "HISTORICAL_ROW_REMAINS_BYTE_FOR_BYTE_UNCHANGED_AND_IS_NOT_THE_TIM003_RECOVERY_BINDING"
+      },
+      "requiredAppendOnlyBinding": {
+        "binding": "SVC-PEP-HRM-007",
+        "method": "GET",
+        "owner": "HRIS-HRM",
+        "consumer": "dwp-time-server",
+        "internalPath": "/internal/hris-people/v1/employment-absence-snapshots/{relationshipPublicId}",
+        "purpose": "TIM_LEAVE_EMPLOYMENT_RECOVERY",
+        "projection": "TIME_ABSENCE_V1"
+      }
+    },
+    "moduleDependencyRegister": {
+      "repository": "dwp-frontend",
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/module-dependency-register.csv",
+      "sha256": "b8f1a11d1a32cf6f5a9a99ff73066b7e65787319ac18cf0d2b4891d22587c348",
+      "bytes": 3652,
+      "dependency": "DEP-007",
+      "rule": "STALE_GUARD_AND_OWNER_QUERY"
+    },
+    "requiredDependencies": [
+      "DEP-001",
+      "DEP-002",
+      "DEP-003",
+      "DEP-007",
+      "DEP-016"
+    ]
+  },
+  "observedRuntimeEvidence": {
+    "repositoryPins": {
+      "backend": {
+        "branch": "dwp-dev",
+        "commit": "75ac11873e6e4a6c070d47e849d81063aaa88800",
+        "tree": "cb02f8d3b09eed67762fb03e57af6badd8568fe4",
+        "originExact": true,
+        "clean": true
+      },
+      "frontendBeforeThisDisposition": {
+        "branch": "dwp-dev",
+        "commit": "287f6dfa2229048b4cc7258579294407314bf40a",
+        "tree": "a0871dabac1211d0e48fbcf3e59c5fe49a5ed329",
+        "originExact": true,
+        "clean": true
+      },
+      "agent": {
+        "branch": "dwp-dev",
+        "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+        "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+        "originExact": true,
+        "clean": true,
+        "decision": "NO_TIM003_AGENT_REPOSITORY_CHANGE"
+      }
+    },
+    "canonicalSchema": {
+      "repository": "dwp-backend",
+      "path": "contracts/hris/canonical/schemas/cross-module-canonical-schemas.v1.json",
+      "sha256": "e1128a49da65d6f9498c38905dc9144611ae2dfa31bea9c0b6ab21806a6554a5",
+      "bytes": 35569,
+      "definitions": [
+        "XCON_001",
+        "XCON_004"
+      ],
+      "limitation": "XCON-001 has a snapshotVersion but no relationshipRevision or assignmentRevision, so it cannot prove or baseline XCON-004 relationship ordering for exact TIM-003 recovery.",
+      "currentHighestContractId": "XCON-026",
+      "requiredAppendOnlySuccessor": "XCON-027 EmploymentAbsenceSnapshot.v1"
+    },
+    "generatedXcon004": {
+      "repository": "dwp-backend",
+      "path": "dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/Xcon004EmploymentChangedV1.java",
+      "sha256": "db71f1919d741c38453ca715d3a18ac1cf54d606975c9095d9a2d83be082c8aa",
+      "bytes": 6913,
+      "fact": "The generated type rejects unknown, duplicate, missing and noncanonical fields and has exactly four business fields."
+    },
+    "sharedDomainEventLedger": {
+      "repository": "dwp-backend",
+      "path": "dwp-core/src/main/resources/db/migration/R__create_domain_event_delivery_ledger.sql",
+      "sha256": "e7123a27e6d35c991f8f49045f0f92205ff417bfbcf89a2b9a32f9ad0f479e42",
+      "bytes": 7426,
+      "reuse": [
+        "sys_domain_event_inbox",
+        "sys_domain_event_offsets",
+        "sys_domain_event_replay_audit",
+        "sys_domain_event_dead_letters"
+      ],
+      "decision": "REUSE_NO_SECOND_EVENT_INBOX_OFFSET_RETRY_DLQ_OR_REPLAY_TABLE"
+    },
+    "currentTimeHighWater": {
+      "repository": "dwp-backend",
+      "path": "dwp-time-server/src/main/resources/db/migration/V13__tim_add_service_audit_outbox.sql",
+      "sha256": "e86d2ddf28a32e458bfb13512b7f5f913557e9b70a4da4a039f2f7355e203b0f",
+      "bytes": 2197,
+      "fact": "V13 creates only the Time service audit outbox and no employment-absence projection."
+    },
+    "currentPeoplePublication": {
+      "repository": "dwp-backend",
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/employment/EmploymentEventPublicationEvidence.java",
+      "sha256": "8686c61125f815b39d510a91b592d84690c08aa5e96d758a28ae5ad32dea3014",
+      "bytes": 9322,
+      "facts": [
+        "It writes logical EmploymentChanged.v1 into sys_people_outbox_events.",
+        "Its legacy aggregate_type is EMPLOYMENT_EVENT.",
+        "Its legacy aggregate_id is the employment event public id rather than relationshipPublicId.",
+        "It does not carry aggregateSequence into the shared DomainEventEnvelope ledger."
+      ],
+      "decision": "NOT_A_LIVE_CANONICAL_DEP003_HANDOFF"
+    },
+    "domainEventRegistryConstraint": {
+      "repository": "dwp-backend",
+      "path": "dwp-core/src/main/java/com/dwp/core/event/DomainEventContractRegistry.java",
+      "sha256": "4a3f1a4efd8ac848a568937d6392187d39046e125024629ca57f5b65bd85f00e",
+      "bytes": 4336,
+      "eventTypePattern": "^[a-z][a-z0-9]*(\\.[a-z][a-z0-9-]*){2,15}$",
+      "fact": "The logical schema title EmploymentChanged.v1 is not a valid transport event type and requires an explicit namespaced mapping."
+    },
+    "currentWorkforceQueryRuntime": {
+      "files": [
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/workforce/v1/WorkforceSnapshotQuery.java",
+          "sha256": "eeb37c8b186a6a1cf44ea4f88ccf5c1297fb78f0b0102ec89006df737eaae970",
+          "bytes": 2399
+        },
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/workforce/v1/WorkforceSnapshotQueryPort.java",
+          "sha256": "e27dff1c02ccb0daaf096544529610f2a4d342670994da0da5ab81a03a3dd591",
+          "bytes": 1048
+        },
+        {
+          "path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/workforce/v1/WorkforceSnapshotPage.java",
+          "sha256": "a2d20e725e789025b2ee6b945cdba2913fcbb527d478e81927f6ca3f11916f7c",
+          "bytes": 9232
+        }
+      ],
+      "fact": "The current final in-process port is fixed to HRIS-PER and PERFORMANCE_V1; no TIM workload endpoint or exact relationship recovery mode exists."
+    },
+    "historicalTimeProposal": {
+      "files": [
+        {
+          "path": "dwp-time-server/src/main/java/com/dwp/services/time/absence/ports/AbsOwnerSnapshotRefetchPortV4.java",
+          "sha256": "81c88efdb6e01e1c998bb015bd9c89e9a8e87b5a27fffc814cb469b067915ecc",
+          "bytes": 12752
+        },
+        {
+          "path": "dwp-time-server/src/main/java/com/dwp/services/time/absence/source/EntitlementInputAssemblerV4.java",
+          "sha256": "21d04ab963ff8763c34ff98aa5a5a028699937dd95b35bf155d99108b6b043be",
+          "bytes": 27873
+        }
+      ],
+      "decision": "UNWIRED_PROPOSAL_ONLY_NO_SPRING_ADAPTER_NO_FLYWAY_TABLE_NO_COMPLETION_RECOUNT"
+    },
+    "schemaDeltaProof": {
+      "existingTimeEmploymentAbsenceProjectionTableCount": 0,
+      "existingTimeXcon004LiveConsumerCount": 0,
+      "requiredNewTimeTableCount": 1,
+      "decision": "TIME_OWNED_SCHEMA_DELTA_PROVEN_V14_REQUIRED_BUT_NOT_RESERVED"
+    }
+  },
+  "businessBoundary": {
+    "meaning": "Employment and absence-authority facts remain People-owned. Time stores only a minimized, revision-bound derivative required to fail closed while evaluating absence eligibility and freshness.",
+    "peopleSystemOfRecord": true,
+    "timeSystemOfRecordForEmployment": false,
+    "timeMayMutatePeopleEmployment": false,
+    "timeDerivativeMayBeUsedOnlyWhenCurrent": true,
+    "skkfBehaviorPorted": "BUSINESS_INTENT_ONLY_WITH_DWP_TENANCY_AUTHORIZATION_AUDIT_AND_TYPED_CONTRACTS",
+    "forbiddenData": [
+      "person name",
+      "personal contact",
+      "leave reason",
+      "medical information",
+      "compensation amount",
+      "tax identity",
+      "bank account or payment token"
+    ]
+  },
+  "eventContractDecision": {
+    "contractId": "XCON-004",
+    "logicalSchemaName": "EmploymentChanged.v1",
+    "logicalOwner": "HRIS-HRM",
+    "logicalConsumer": "HRIS-TIM",
+    "schemaVersion": 1,
+    "payload": {
+      "additionalProperties": false,
+      "requiredInCanonicalOrder": [
+        "changeType",
+        "effectiveDate",
+        "newAggregateVersion",
+        "relationshipPublicId"
+      ],
+      "changeTypeRule": "Any value accepted by the canonical Code schema is an opaque invalidation reason; Time must not infer or execute an employment mutation from it.",
+      "newAggregateVersionRule": "Positive relationship revision and the only event ordering authority.",
+      "relationshipPublicIdRule": "Public relationship identity and no internal database key."
+    },
+    "transport": {
+      "specVersion": "1.0",
+      "type": "dwp.hris.people.employment-changed.v1",
+      "source": "urn:dwp:people:hris:employment",
+      "subjectTemplate": "WORK_RELATIONSHIP/{relationshipPublicId}",
+      "aggregateType": "WORK_RELATIONSHIP",
+      "aggregateId": "payload.relationshipPublicId",
+      "aggregateSequence": "payload.newAggregateVersion",
+      "tenantId": "TRUSTED_SERVER_CONTEXT_ONLY_NOT_A_PAYLOAD_FIELD",
+      "eventId": "Exactly UUID.nameUUIDFromBytes((lowercase canonical employmentEventPublicId UUID string + :EmploymentChanged.v1).getBytes(StandardCharsets.UTF_8)), reusing the current EmploymentEventPublicationEvidence algorithm byte-for-byte",
+      "causationId": "EMPLOYMENT_EVENT_PUBLIC_ID",
+      "correlationId": "SEALED_ORIGINATING_EMPLOYMENT_COMMAND_CORRELATION_ID",
+      "time": "ONE_APPLICATION_CAPTURED_PUBLICATION_INSTANT_SHARED_WITH_LEGACY_OCCURRED_AT",
+      "profileMetadata": {
+        "xcon": "XCON-004",
+        "profile": "EmploymentChanged.v1"
+      },
+      "equalityGuards": [
+        "envelope.aggregateId equals payload.relationshipPublicId",
+        "envelope.aggregateSequence equals payload.newAggregateVersion",
+        "envelope.type equals dwp.hris.people.employment-changed.v1",
+        "envelope.schemaVersion equals 1",
+        "envelope.source equals urn:dwp:people:hris:employment",
+        "envelope.subject equals WORK_RELATIONSHIP/{payload.relationshipPublicId}",
+        "trusted tenant is positive and never accepted from payload or browser headers"
+      ],
+      "unknownTypeOrMajor": "FAIL_CLOSED_TO_SHARED_DLQ",
+      "invalidPayloadOrEquality": "FAIL_CLOSED_TO_SHARED_DLQ"
+    },
+    "publicationRule": "In the existing HRM employment publication transaction, the HRIS-HRM successor registers dwp.hris.people.employment-changed.v1 schema major 1 exactly once, validates Xcon004EmploymentChangedV1 and records the canonical shared DomainEventEnvelope through DomainEventRecorder while retaining the legacy row as compatibility evidence. One application Clock Instant truncated to microseconds is bound as a JDBC TIMESTAMPTZ parameter for legacy occurred_at and serialized as the exact same instant in envelope.time; legacy SQL may not call clock_timestamp for this row. The canonical local handoff must not set the legacy published_at flag: that column remains owned by the pre-existing legacy delivery lifecycle. No polling bridge or direct broker I/O is introduced.",
+    "producerCurrentLimit": "The current admitted HRM employment command authors HIRE and CONCURRENT_EMPLOYMENT only. This slice does not claim that leave, return or termination command production exists."
+  },
+  "trustedOwnerQueryDecision": {
+    "binding": "SVC-PEP-HRM-007",
+    "owner": "dwp-people-server",
+    "consumer": "dwp-time-server",
+    "method": "GET",
+    "transport": "INTERNAL_WORKLOAD_ONLY_NO_BROWSER_ROUTE",
+    "path": "/internal/hris-people/v1/employment-absence-snapshots/{relationshipPublicId}",
+    "projection": "TIME_ABSENCE_V1",
+    "purpose": "TIM_LEAVE_EMPLOYMENT_RECOVERY",
+    "request": {
+      "identityAndTokenRequirements": {
+        "mtlsSpiffeSan": "spiffe://dwp/service/dwp-time-server",
+        "mtlsTransportProfile": "TLS 1.3 only with a currently valid client certificate chain to the configured DWP internal workload CA; revocation and validity checks fail closed. The leaf certificate URI-SAN set contains exactly one value equal to spiffe://dwp/service/dwp-time-server, and the base64url-without-padding SHA-256 thumbprint of the complete DER-encoded leaf certificate must match cnf.x5t#S256. Renegotiation, plaintext, untrusted chain, expired/not-yet-valid certificate, an absent or additional URI SAN, and any forwarded browser client-certificate header are rejected.",
+        "jwtWireFormat": "Exactly one Authorization header containing Bearer plus a compact three-segment JWS not exceeding 16384 encoded bytes",
+        "jwtProtectedHeader": "Closed JSON object with exactly alg=RS256, typ=JWT and kid resolving to the active dwp-time-server workload public key in the People trust store; the key is assigned exclusively to the same workload identity as the verified mTLS SPIFFE SAN and its RSA modulus is at least 2048 bits",
+        "jwtIssuer": "ONE_NONEMPTY_CONFIGURED_ALLOWLIST_VALUE_FAIL_CLOSED_IF_ABSENT",
+        "jwtAudience": "dwp-people-server",
+        "jwtClientId": "dwp-time-server",
+        "jwtSubject": "dwp-time-server",
+        "requiredJwtClaims": [
+          "iss",
+          "aud",
+          "client_id",
+          "sub",
+          "iat",
+          "nbf",
+          "exp",
+          "jti",
+          "nonce",
+          "cnf",
+          "bindingId",
+          "method",
+          "requestPath",
+          "tenantId",
+          "tenantGrantRevision",
+          "relationshipPublicId",
+          "minimumRelationshipRevision",
+          "effectiveOn",
+          "businessTimeZone",
+          "purpose",
+          "projection",
+          "authorizationRevision",
+          "fieldPolicyRevision"
+        ],
+        "claimRules": "The claim object is closed to the listed fields. iat equals nbf, exp is later than iat by at most 30 seconds, and validation permits at most five seconds of clock skew. jti and nonce are distinct canonical lowercase UUIDs durably reserved for the token validity window. cnf is a closed object containing exactly x5t#S256 equal to the base64url-without-padding SHA-256 thumbprint of the verified mTLS client certificate. bindingId is SVC-PEP-HRM-007, method is GET, requestPath is the exact normalized concrete path containing the same lowercase relationshipPublicId, and all signed path and query claims equal the once-decoded wire values. X-Correlation-ID equals jti. tenantId is positive and equals the owner grant; businessTimeZone is at most 80 characters and either UTC or an exact member of ZoneRulesProvider.getAvailableZoneIds(), comes from the versioned Time tenant grant and must equal current People tenant configuration. effectiveOn equals LocalDate(Instant.ofEpochSecond(iat), businessTimeZone). tenantGrantRevision, authorizationRevision and fieldPolicyRevision are positive and revalidated against current People owner authority before reading facts."
+      },
+      "requiredHeader": "X-Correlation-ID containing one UUID; absent, repeated or invalid values fail closed and the exact UUID is bound into owner audit and workload response evidence",
+      "queryShapeRule": "The raw query contains exactly one minimumRelationshipRevision and exactly one effectiveOn parameter and no others. Each value is decoded once, its canonical representation is byte-equal to the corresponding signed JWT claim, minimumRelationshipRevision is nonnegative int64 and effectiveOn is an ISO-8601 date. Repetition, alternate encoding, duplicate keys, empty values or an unsigned wire value fails closed.",
+      "requestExecutionOrder": "Before any owner fact read, validate mTLS identity, its cnf certificate binding, JWS structure and signature, the closed protected header and claim set, issuer, audience, client, subject, token times, canonical zone, effectiveOn-at-iat, tenant, purpose, projection, revision and field-policy claim shapes, X-Correlation-ID equality, exact method, normalized concrete path and the closed duplicate-free query shape. Only a structurally and cryptographically valid request may enter the REQUIRES_NEW atomic jti-plus-nonce reservation. Only after that reservation commits may People revalidate current tenant grant, businessTimeZone, authorization and field-policy revisions, open the repeatable-read owner snapshot transaction, capture asOf and require effectiveOn to equal asOf in that authoritative tenant zone before reading facts. Every pre-reservation denial, reservation collision or post-reservation authority/date denial returns zero owner facts and appends negative audit evidence; a reservation collision performs zero owner-fact reads.",
+      "durableReplayReservation": {
+        "store": "existing sys_domain_event_inbox; no People migration or private replay table",
+        "transaction": "REQUIRES_NEW inserts jti and nonce as two rows atomically with ON CONFLICT DO NOTHING; exactly two inserts succeeds, otherwise the reservation transaction rolls back and the request is denied",
+        "consumerName": "dwp-tim003-owner-query-proof-v1",
+        "eventSource": "/dwp-people-server/hris/employment-absence/svc-007",
+        "eventType": "dwp.hris.people.tim003-workload-proof-reserved.v1",
+        "schemaVersion": 1,
+        "aggregateType": "TIM003_WORKLOAD_PROOF",
+        "eventId": "the respective canonical jti UUID or nonce UUID",
+        "aggregateId": "the respective lowercase jti or nonce UUID",
+        "aggregateSequence": 1,
+        "correlationId": "jti UUID string for both rows",
+        "status": "SUCCEEDED",
+        "rowLifecycleFields": "attempt_count=0, replay_count=0, available_at=processed_at=created_at=updated_at equal one database transaction instant, locked_by, lock_token, locked_until, dead_lettered_at, last_error, causation_id and trace_parent all null",
+        "payload": "RFC-8785 canonical JSON with exactly bindingId=SVC-PEP-HRM-007, businessTimeZone, effectiveOn, expiresAt equal to JWT exp, minimumRelationshipRevision, relationshipPublicId and tenantId",
+        "payloadSha256": "lowercase SHA-256 of the exact UTF-8 RFC-8785 payload bytes and equal for both rows",
+        "retentionRule": "The shared inbox cleanup policy must retain both reservation rows through at least JWT exp plus the sealed five-second clock skew. The issuer must never reuse a jti or nonce; after the mandatory retention horizon, the shared lifecycle may remove rows and this contract makes no impossible forever-retention claim."
+      },
+      "pathField": "relationshipPublicId UUID",
+      "queryFields": [
+        "minimumRelationshipRevision nonnegative int64",
+        "effectiveOn ISO-8601 date"
+      ],
+      "serverConstants": [
+        "projection=TIME_ABSENCE_V1",
+        "purpose=TIM_LEAVE_EMPLOYMENT_RECOVERY"
+      ],
+      "forbidden": [
+        "caller-provided tenant override",
+        "browser identity or browser token",
+        "unbounded all-worker recovery query",
+        "HRIS_WORKFORCE_SNAPSHOT_BOOTSTRAP purpose",
+        "PERFORMANCE_V1 projection substitution"
+      ]
+    },
+    "authoritySourceDecision": {
+      "closedCurrentRecord": "TIM003OwnerGrantV1 contains exactly tenantId, lifecycleState ACTIVE or REVOKED, callerSpiffeId, requestSigningKeyId, purposeCode, projectionId, businessTimeZone, tenantGrantRevision, authorizationRevision and fieldPolicyRevision. The three revisions are positive and monotonic; tenantGrantRevision changes on lifecycle, workload identity, signing key, purpose, projection or business-zone change, authorizationRevision changes on workload authorization or revocation, and fieldPolicyRevision changes on the allowed XCON-027 field set.",
+      "timeIssuerPort": "TimeAbsenceOwnerGrantIssuerAuthority performs an independent current lookup before every token issue and supplies all signed grant, revision and zone values. The same port is used by the Time read guard; missing, unavailable, non-ACTIVE or revoked state fails closed.",
+      "peopleVerifierPort": "TimeAbsenceOwnerGrantVerifierAuthority independently resolves the current admitted grant in People before owner facts are read and also requires businessTimeZone to equal current sys_service_tenants.configuration.hrisBusinessTimeZone at the same tenantGrantRevision. Missing, unavailable, non-ACTIVE, revoked or mismatched state returns zero facts.",
+      "antiCircularity": "Neither port may derive current authority from the request JWT, a stored Time owner projection, startup-only configuration, browser context or the other service's response. Both consume independently materialized views of one later-admitted control-plane grant and compare the exact revisions and values.",
+      "currentImplementationBoundary": "No admitted backing grant projection or issuer exists in this slice. HRM and TIM may implement the ports and fail-closed adapters only; carried gate TIM_CLOSE_TRUSTED_OWNER_HEADER_ISSUER continues to block every tenant enrollment and feature activation until a separately reviewed control-plane authority binds both views and key lifecycle."
+    },
+    "response": {
+      "canonicalBusinessBody": "XCON-027 EmploymentAbsenceSnapshot.v1",
+      "assignmentBodyRule": "assignments contains nested XCON-027 Assignment objects, never nested complete XCON-027 documents",
+      "workloadResponseEvidence": {
+        "additionalProperties": false,
+        "fields": [
+          "tenantId positive int64",
+          "callerSpiffeId constant spiffe://dwp/service/dwp-time-server",
+          "audience constant dwp-people-server",
+          "tenantGrantRevision positive int64",
+          "businessTimeZone valid IANA name equal to the authenticated request and current People tenant configuration",
+          "purposeCode constant TIM_LEAVE_EMPLOYMENT_RECOVERY",
+          "projectionId constant TIME_ABSENCE_V1",
+          "authorizationRevision positive int64",
+          "fieldPolicyRevision positive int64",
+          "correlationId UUID",
+          "issuedAt RFC3339 UTC instant exactly equal to asOf at microsecond precision",
+          "asOf RFC3339 instant equal to XCON-027.asOf",
+          "validUntil RFC3339 instant equal to XCON-027.validUntil",
+          "scopeDigest lowercase 64-hex equal to XCON-027.scopeDigest",
+          "contentSha256 lowercase 64-hex equal to XCON-027.contentSha256",
+          "evidenceDigest lowercase 64-hex",
+          "keyId nonblank maximum 160 characters",
+          "signature compact three-segment JWS maximum 4096 characters"
+        ],
+        "digestAndSignatureRule": "evidenceDigest is SHA-256 over RFC-8785 canonical JSON of all evidence fields except evidenceDigest and signature, so keyId is itself digest-bound. People signs with the active private key dedicated exclusively to the dwp-people-server workload and SVC-PEP-HRM-007 response purpose. signature is a compact three-segment RS256 JWS whose closed protected header has exactly alg=RS256, typ=dwp-workload-response+jws and kid equal to the evidence keyId, and whose payload is the lowercase ASCII evidenceDigest. Time requires that kid resolve in its trust store to the active dwp-people-server SVC-PEP-HRM-007 response-signing public key; unknown, inactive, cross-workload or cross-purpose keys fail closed, and both keys use an RSA modulus of at least 2048 bits. This binds caller and authorization context without creating a contentSha256 cycle."
+      },
+      "wireWrapper": "The HTTP 200 application/json body is a closed object with exactly data and evidence in generated typed artifacts: data is one XCON-027 body and evidence is the workloadResponseEvidence object. No body field may be supplied by headers or vice versa.",
+      "responseHeaders": "Every success and error response sets Cache-Control: no-store and Pragma: no-cache. Success Content-Type is application/json; signed errors use application/problem+json. Duplicate Content-Type, Cache-Control or Pragma headers, any redirect, and any cacheable response directive fail closed in Time.",
+      "errorWireContract": {
+        "shape": "A People-authenticated non-2xx application/problem+json body is closed with exactly status, code, retryable, correlationId, issuedAt, errorDigest, keyId and signature and contains no owner facts or sensitive detail. errorDigest is lowercase SHA-256 over RFC-8785 canonical JSON of the first five fields plus keyId. signature uses the same dedicated response-signing trust mapping as success evidence, with protected typ=dwp-workload-error+jws and payload equal to lowercase errorDigest.",
+        "verification": "Time trusts a classification only when status equals the actual HTTP status, correlationId equals request jti, issuedAt is no later than verification time plus five seconds and no older than 35 seconds, errorDigest and signature verify, and keyId is active for dwp-people-server/SVC-PEP-HRM-007. Otherwise no facts are used and the response becomes generic retryable UNTRUSTED_OWNER_ERROR under the normal bounded-attempt policy.",
+        "closedMappings": [
+          "409 DATE_ROLLED retryable=true",
+          "409 OWNER_AUTHORITY_STALE retryable=true",
+          "409 OWNER_REVISION_BELOW_MINIMUM retryable=true",
+          "429 OWNER_RATE_LIMITED retryable=true",
+          "503 OWNER_TEMPORARILY_UNAVAILABLE retryable=true",
+          "400 INVALID_REQUEST_BINDING retryable=false",
+          "401 INVALID_WORKLOAD_PROOF retryable=false",
+          "403 FORBIDDEN_OWNER_SCOPE retryable=false",
+          "404 OWNER_RELATIONSHIP_NOT_FOUND retryable=false",
+          "422 OWNER_CONFIGURATION_INVALID retryable=false",
+          "422 OWNER_CONTRACT_INVALID retryable=false"
+        ],
+        "transportFallback": "Connection failure, timeout, empty response, proxy-generated 429/5xx and every unknown status, code, content type or unverified error body are fail-closed with zero facts and classified only as generic retryable transport failure; they never directly authorize permanent quarantine from untrusted bytes."
+      },
+      "fieldProjectionRule": "XCON-027 is a purpose-built minimized relationship snapshot. It excludes person identity details and all compensation, tax, bank, medical and leave-reason fields instead of carrying them as nullable placeholders.",
+      "minimumRevisionRule": "A response below minimumRelationshipRevision is stale and must not make the Time projection CURRENT.",
+      "auditRule": "Every success and every authentication, tenant, purpose, projection, field-policy, revision, digest, expiry or signature denial appends structured owner audit evidence with no returned owner facts on denial."
+    },
+    "contractEvolutionDecision": "Append XCON-027 EmploymentAbsenceSnapshot.v1 and SVC-PEP-HRM-007 as new canonical register rows plus generated typed artifacts. SVC-PEP-HRM-002 and XCON-001 remain byte-for-byte unchanged for their historical bootstrap consumers.",
+    "failureRule": "Timeout, unavailable owner, wrong tenant, wrong workload, stale revision, invalid scope/content/evidence digest, invalid signature, expired validUntil or field-policy mismatch leaves Time fail-closed in REFETCH_PENDING, GAP or QUARANTINED."
+  },
+  "xcon027RecoverySnapshotContract": {
+    "contractId": "XCON-027",
+    "logicalSchemaName": "EmploymentAbsenceSnapshot.v1",
+    "schemaVersion": 1,
+    "owner": "HRIS-HRM",
+    "consumer": "HRIS-TIM",
+    "additionalProperties": false,
+    "requiredTopLevelFields": [
+      "relationshipPublicId",
+      "relationshipRevision",
+      "workerPublicId",
+      "workerStatus",
+      "relationshipType",
+      "relationshipStatus",
+      "legalEntityPublicId",
+      "relationshipEffectiveFrom",
+      "relationshipEffectiveTo",
+      "effectiveOn",
+      "assignments",
+      "ownerRevision",
+      "asOf",
+      "validUntil",
+      "ownerContractId",
+      "ownerService",
+      "purposeCode",
+      "scopeDigest",
+      "contentSha256"
+    ],
+    "fieldTypesAndNullability": {
+      "relationshipPublicId": "required UUID string",
+      "relationshipRevision": "required nonnegative int64",
+      "workerPublicId": "required UUID string",
+      "workerStatus": "required closed enum",
+      "relationshipType": "required canonical Code pattern ^[A-Z0-9][A-Z0-9._-]{0,79}$",
+      "relationshipStatus": "required closed enum derived by the sealed rule",
+      "legalEntityPublicId": "required UUID string",
+      "relationshipEffectiveFrom": "required ISO-8601 date",
+      "relationshipEffectiveTo": "required nullable ISO-8601 date with half-open semantics",
+      "effectiveOn": "required ISO-8601 date exactly equal to the authenticated request effectiveOn and the tenant current business date at asOf",
+      "assignments": "required array of nested Assignment objects",
+      "ownerRevision": "required nonnegative int64 equal to relationshipRevision in schema v1",
+      "asOf": "required RFC3339 UTC instant",
+      "validUntil": "required RFC3339 UTC instant",
+      "ownerContractId": "required constant string maximum 80 characters",
+      "ownerService": "required constant string maximum 80 characters",
+      "purposeCode": "required canonical Code",
+      "scopeDigest": "required lowercase 64-hex",
+      "contentSha256": "required lowercase 64-hex"
+    },
+    "enums": {
+      "workerStatus": [
+        "PENDING",
+        "ACTIVE",
+        "LEAVE",
+        "TERMINATED"
+      ],
+      "relationshipStatus": [
+        "PENDING",
+        "ACTIVE",
+        "INACTIVE",
+        "TERMINATED"
+      ],
+      "assignmentStatus": [
+        "PENDING",
+        "ACTIVE",
+        "SUSPENDED",
+        "ENDED"
+      ]
+    },
+    "sourceDerivation": {
+      "ownerSnapshot": "The relationship, worker, legal employer and returned assignment rows are read from one PostgreSQL repeatable-read owner transaction.",
+      "relationshipRevision": "Map exactly from the nonnegative ppl_work_relationships.version; negative values fail closed. Zero is a valid pre-change owner revision and never a canonical event aggregateSequence.",
+      "assignmentRevision": "Map exactly from the nonnegative ppl_assignments.version, never effective_sequence; negative values fail closed.",
+      "workerStatusBoundary": "ppl_workers.worker_status is a current-only source. XCON-027 schema v1 may expose it only for effectiveOn equal to the tenant current business date at asOf and makes no historical or future worker-status claim.",
+      "relationshipStatus": "Because effectiveOn is current-only, TERMINATED when current workerStatus is TERMINATED; otherwise PENDING when current workerStatus is PENDING or effectiveOn is before relationshipEffectiveFrom; otherwise INACTIVE when relationshipEffectiveTo is nonnull and effectiveOn is on or after that exclusive date; otherwise ACTIVE. Historical or future effectiveOn is denied rather than applying current workerStatus to another date.",
+      "effectiveTo": "People ppl_work_relationships.end_date and ppl_assignments.effective_end_date are inclusive. XCON-027 converts a nonnull source end date to exclusive effectiveTo by adding one calendar day; null remains null.",
+      "effectiveOn": "Echo the authenticated request date exactly after proving it equals LocalDate(asOf, businessTimeZone), where businessTimeZone is the current nonempty valid IANA value at sys_service_tenants.configuration.hrisBusinessTimeZone and is revision-bound to the tenant grant. Missing or invalid configuration and any past or future date fail closed with zero owner facts and no UTC or server-default fallback.",
+      "ownerRevision": "Schema v1 sets ownerRevision exactly equal to relationshipRevision. It is owner snapshot evidence only and is never event-ordering authority.",
+      "assignmentMembership": "Return only rows owned by the requested relationship whose half-open effective interval contains effectiveOn.",
+      "snapshotClock": "At repeatable-read transaction start capture one application Clock UTC Instant truncated to microseconds as asOf; validUntil is exactly asOf plus 300 seconds in schema v1. The same two values appear in XCON-027 and response evidence."
+    },
+    "assignments": {
+      "minimumItems": 0,
+      "maximumItems": 1000,
+      "uniqueBy": "assignmentPublicId",
+      "canonicalOrder": "lowercase assignmentPublicId lexical ascending",
+      "additionalProperties": false,
+      "fieldTypesAndNullability": {
+        "assignmentPublicId": "required UUID string",
+        "assignmentRevision": "required nonnegative int64",
+        "assignmentStatus": "required closed enum",
+        "legalEntityPublicId": "required UUID string equal to the enclosing legalEntityPublicId",
+        "organizationPublicId": "required nullable UUID string because People organization_id is nullable",
+        "locationPublicId": "required nullable UUID string because People location_id is nullable",
+        "timeZone": "required nullable canonical zone identifier of at most 80 characters; null exactly when locationPublicId is null. A nonnull value is valid only when it is UTC or an exact member of ZoneRulesProvider.getAvailableZoneIds(); fixed offsets, unknown slash-shaped strings and normalized aliases differing from the stored value are rejected, while canonical UTC is explicitly allowed. The provider fails closed if a nonnull source location lacks such a zone.",
+        "effectiveFrom": "required ISO-8601 date",
+        "effectiveTo": "required nullable ISO-8601 date with half-open semantics"
+      },
+      "requiredFields": [
+        "assignmentPublicId",
+        "assignmentRevision",
+        "assignmentStatus",
+        "legalEntityPublicId",
+        "organizationPublicId",
+        "locationPublicId",
+        "timeZone",
+        "effectiveFrom",
+        "effectiveTo"
+      ]
+    },
+    "constants": {
+      "ownerContractId": "SVC-PEP-HRM-007/TIME_ABSENCE_V1",
+      "ownerService": "dwp-people-server",
+      "purposeCode": "TIM_LEAVE_EMPLOYMENT_RECOVERY"
+    },
+    "revisionRules": [
+      "relationshipRevision, ownerRevision and each assignmentRevision are nonnegative int64 values; canonical XCON-004 event newAggregateVersion remains positive",
+      "ownerRevision equals relationshipRevision in schema v1",
+      "relationshipRevision is at least the request minimumRelationshipRevision",
+      "event ordering uses only the shared aggregate offset, never ownerRevision or assignmentRevision"
+    ],
+    "validityRules": [
+      "relationshipEffectiveTo is null or after relationshipEffectiveFrom",
+      "each assignment effectiveTo is null or after effectiveFrom",
+      "validUntil is later than asOf and later than the consumer verification instant",
+      "validUntil equals asOf plus exactly 300 seconds in schema v1; both instants are UTC and microsecond precision"
+    ],
+    "scopeDigestRule": {
+      "algorithm": "lowercase SHA-256 of RFC-8785 canonical JSON",
+      "exactObjectFields": [
+        "tenantId as positive int64",
+        "callerSpiffeId as spiffe://dwp/service/dwp-time-server",
+        "audience as dwp-people-server",
+        "tenantGrantRevision as positive int64",
+        "businessTimeZone as the current authoritative IANA zone",
+        "relationshipPublicId as lowercase UUID",
+        "minimumRelationshipRevision as nonnegative int64",
+        "effectiveOn as ISO-8601 date",
+        "purposeCode as TIM_LEAVE_EMPLOYMENT_RECOVERY",
+        "projectionId as TIME_ABSENCE_V1",
+        "authorizationRevision as positive int64",
+        "fieldPolicyRevision as positive int64"
+      ],
+      "databaseMapping": "XCON-027.scopeDigest maps exactly to abs_employment_relationship_projections.owner_scope_digest."
+    },
+    "contentDigestRule": "contentSha256 is lowercase SHA-256 over the RFC-8785 canonical representation of every XCON-027 field except contentSha256, including effectiveOn. scopeDigest is already computed from request authority and introduces no digest cycle.",
+    "privacyRule": "No name, personPublicId, contact, leave reason, medical, compensation, tax, bank, free-text or internal database identifier is present."
+  },
+  "consumerStateDecision": {
+    "consumerName": "dwp-time-server.tim003-employment-absence.v1",
+    "states": [
+      "CURRENT",
+      "STALE",
+      "REFETCH_PENDING",
+      "GAP",
+      "QUARANTINED"
+    ],
+    "eventOutcomes": {
+      "sameEventIdSameDigest": "RETURN_EXISTING_STATE; ONLY_SUCCEEDED_OR_DUPLICATE_IS_TERMINAL_NOOP; RECEIVED_FAILED_EXPIRED_PROCESSING_DEFERRED_OR_REPLAY_PENDING_REENTERS_THE_NORMAL_STRICT_STATE_MACHINE",
+      "sameEventIdDifferentDigest": "ATOMICALLY_DEAD_WITH_PAYLOAD_CONFLICT_AND_QUARANTINE_ALL_SAFE_SAME_TENANT_RELATIONSHIP_CANDIDATES",
+      "sequenceLessThanOrEqualToSharedOffsetWatermark": "STALE_OR_DUPLICATE_NO_OWNER_FACT_REGRESSION",
+      "sequenceEqualsSharedOffsetWatermarkPlusOneAndCoveredByCurrentOwnerSnapshot": "NO_REFETCH_FAST_PATH_ATOMICALLY_RECORD_EVENT_EVIDENCE_COMPLETE_INBOX_AND_ADVANCE_OFFSET",
+      "sequenceEqualsSharedOffsetWatermarkPlusOneButNotCoveredByCurrentOwnerSnapshot": "MARK_REFETCH_PENDING_WITH_EVENT_EVIDENCE_THEN_OWNER_REFETCH",
+      "sequenceGreaterThanSharedOffsetWatermarkPlusOne": "SHARED_INBOX_DEFERRED_THEN_RECONCILER_MARKS_GAP_AND_REQUIRES_OWNER_RECOVERY",
+      "unknownTransportTypeOrVersion": "ATOMICALLY_DEAD_AND_QUARANTINE_ALL_SAFE_SAME_TENANT_RELATIONSHIP_CANDIDATES",
+      "envelopePayloadMismatch": "ATOMICALLY_DEAD_AND_QUARANTINE_ALL_SAFE_SAME_TENANT_RELATIONSHIP_CANDIDATES"
+    },
+    "orderingAuthorities": {
+      "eventDuplicateNextGap": "Only sys_domain_event_offsets.last_sequence for the exact consumer, tenant, source, aggregate type and aggregate id tuple.",
+      "ownerRelationshipRevision": "Determines whether the current owner snapshot already covers an event revision or requires refetch; it never replaces the shared event-order watermark except through the sealed gap-recovery CAS API.",
+      "assignmentRevision": "Validates nested assignment freshness only and never orders relationship events."
+    },
+    "ownerQuerySelection": {
+      "currentDateOnlyBoundary": "SVC-PEP-HRM-007 schema v1 serves only the tenant current business date proven from one asOf instant and the authoritative sys_service_tenants.configuration.hrisBusinessTimeZone. Event effectiveDate remains signed invalidation evidence but is never passed as a historical owner-query date. Historical or future absence evaluation requires a later effective-dated worker-status owner contract and is fail-closed in TIM-003.",
+      "sequentialEvent": "effectiveOn equals the tenant current business date at the owner request asOf, not the canonical XCON-004 effectiveDate.",
+      "gapRecovery": "effectiveOn equals the tenant current business date at the owner request asOf; last_invalidation_effective_date remains highest-event audit evidence only.",
+      "dateOrTtlRefresh": "Only a downstream request for the tenant current business date may trigger refresh, and effectiveOn equals that date. A past or future requested evaluation date is denied without an owner query.",
+      "minimumRelationshipRevision": "Every query uses max(required_relationship_revision, existing owner_relationship_revision or zero, triggering event sequence or greatest observed sequence). A lower owner response never replaces the projection.",
+      "singleDateCache": "The one table stores only the current-business-date cache row per tenant and relationship. At a tenant-date boundary the old row fails closed and may be replaced under projection CAS; historical and future multi-date caching is outside TIM-003 and no second table is created.",
+      "refreshTransaction": "For tenant-current-date mismatch after midnight or TTL expiry, perform the remote query outside a database transaction. The final transaction rechecks the exact claimed projection version and absence of every unresolved matching inbox row, validates the signed businessTimeZone and effectiveOn evidence, replaces the owner bundle and owner_effective_on, sets freshness_state=CURRENT, recovery_outcome=SUCCEEDED, gap_expected_sequence=null and success evidence, and appends audit. It never changes inbox, shared offset, required revision or last invalidation evidence.",
+      "failureTransitions": "A retryable sequential or date refresh stays REFETCH_PENDING/RETRYABLE_FAILURE; a retryable gap recovery stays GAP/RETRYABLE_FAILURE. A permanent failure becomes QUARANTINED/PERMANENT_FAILURE. None advances inbox or offset."
+    },
+    "ownerRecoveryClaimPolicy": {
+      "fence": "No second table or lease column is added. A claim is the exact projection_version produced by a successful projection CAS.",
+      "sequential": "The shared inbox lock token remains the primary lease; projection CAS is an additional fence.",
+      "projectionMissBaseline": "When no projection exists and the exact consumer tuple has no inbox row in any status, insert under expected version zero a REFETCH_PENDING/PENDING placeholder with last_observed_event_sequence=0, required_relationship_revision=0, shared_offset_sequence equal to the locked shared offset zero, a null invalidation bundle and the claim timestamp. This version-one row is the sole owner-baseline claim; a concurrent insert loses and must re-evaluate. The owner call is outside the transaction, and finalization is fenced by that projection version plus offset zero and a repeated no-inbox-row check.",
+      "gapOrDateTtlClaim": "Before remote I/O, CAS the row to GAP/PENDING or REFETCH_PENDING/PENDING, set last_recovery_at to one database claim instant, clear last_recovery_error_code and let the trigger increment projection_version. The returned version is the sole completion fence.",
+      "activeClaimWindow": "For 30 seconds after last_recovery_at no second gap or date/TTL worker may claim the same row.",
+      "reclaim": "After 30 seconds, a fresh worker may reclaim only by CAS on the current projection_version, writes a new last_recovery_at and receives the new version; any late earlier worker then affects zero rows and rolls back all final writes.",
+      "retryBackoff": "RETRYABLE_FAILURE is eligible for a new CAS claim only at or after last_recovery_at plus 15 seconds; no busy-loop or concurrent owner-query stampede is permitted.",
+      "finalization": "Success or failure requires the exact claimed projection_version and, for sequential work, the exact inbox lock token. Remote I/O occurs outside transactions; zero-row final CAS rolls back audit, inbox and offset changes and discards the stale response."
+    },
+    "sequentialRecovery": [
+      "Validate the envelope, acquire the shared inbox lease and atomically move the relationship projection to REFETCH_PENDING without completing the inbox or advancing the offset.",
+      "Perform the bounded People owner query outside the database transaction and within the inbox lease deadline.",
+      "On success, one transaction replaces the minimized projection under tenant and projection-version CAS, records the audit outbox event, moves to CURRENT, completes the leased inbox row, advances the shared ledger offset exactly to the incoming event aggregateSequence and writes projection.shared_offset_sequence to that same incoming sequence. required_relationship_revision and highest event evidence are updated monotonically; an owner response revision ahead of the event does not fast-forward either offset.",
+      "On failure, one transaction first calls inbox.fail with the same lock token and then CAS-records the projection state from its returned FailureState: ordinary RETRYABLE uses the configured maximum attempts and maps to REFETCH_PENDING/RETRYABLE_FAILURE until exhaustion returns DEAD and QUARANTINED/PERMANENT_FAILURE. DATE_ROLLED and OWNER_AUTHORITY_STALE are exhaustion-exempt context refreshes: call the same fenced fail operation with effectiveMaximumAttempts strictly greater than the current attempt so it must return RETRYABLE, retain REFETCH_PENDING or GAP with RETRYABLE_FAILURE, issue a new proof on the next bounded attempt and never create DEAD by repetition alone. An explicitly permanent classification invokes the fenced fail path with effectiveMaximumAttempts equal to the current attempt so it returns DEAD; no unfenced quarantine update is allowed. Lost lease or projection CAS failure rolls back both changes and the offset never advances.",
+      "A crash or lease expiry leaves no SUCCEEDED inbox fact and can be safely reacquired by the bounded coordinator."
+    ],
+    "failureClassification": {
+      "retryable": "Verified OWNER_REVISION_BELOW_MINIMUM, owner timeout, connection refusal, generic untrusted error, verified 429/5xx, temporary key or authority backend unavailability and response expiry before finalization use inbox.fail with the configured normal maximum attempts and map its returned RETRYABLE state to REFETCH_PENDING/RETRYABLE_FAILURE or GAP/RETRYABLE_FAILURE until normal exhaustion. An otherwise valid request whose effectiveOn equaled its signed iat date but no longer equals the owner asOf date returns zero facts with signed DATE_ROLLED. A stale tenantGrantRevision, authorizationRevision, fieldPolicyRevision or business-zone configuration revision returns zero facts with signed OWNER_AUTHORITY_STALE after one bounded current-authority refresh. These two context-refresh codes consume the reserved proof, retry only with a newly signed current token/date/zone/revisions, always use an effective maximum greater than the current attempt and must not create DEAD or QUARANTINED by repetition alone.",
+      "permanent": "Wrong workload, mTLS or cnf mismatch, wrong tenant, issuer, audience, client, subject, binding, method, path, purpose or projection, a field-policy value inconsistent with the claimed current revision, malformed or duplicate query, noncanonical zone, effectiveOn differing from the local date at signed iat, closed-shape/type failure, invalid digest/signature, missing authoritative tenant business-zone configuration and any envelope/payload contract violation are permanent. While holding the same inbox lock token, call the lease-fenced inbox.fail with effectiveMaximumAttempts equal to the current attempt so it returns DEAD, and in the same transaction CAS the projection to QUARANTINED/PERMANENT_FAILURE and append audit.",
+      "fence": "No classification may call the unfenced quarantine method for an already leased sequential row. The inbox.fail result is authoritative; lost lease or projection CAS failure rolls back inbox, projection, offset and audit together."
+    },
+    "quarantineReleasePolicy": "A QUARANTINED projection cannot self-release. A blocker with REGISTERED_EVENT_CONTRACT_VIOLATION or PAYLOAD_CONFLICT, and any projection with a related sequential DEAD row, can be released only through the strict shared-inbox remediation/replay path. For an owner-baseline, date/TTL or stored-integrity recovery whose canonical error code is on the separate operator-recoverable allowlist and for which no blocking DEAD or payload-conflict inbox row exists, a separately authenticated service operation with capability HRIS_TIM_EMPLOYMENT_PROJECTION_RECOVER, positive tenant, canonical reason and correlation id may under projection-version CAS change only QUARANTINED/PERMANENT_FAILURE to REFETCH_PENDING/PENDING, clear last_recovery_error_code, stamp last_recovery_at and append structured audit. It may not change owner facts, revisions, invalidation evidence, inbox or offset, and no browser route or automatic release is authorized in TIM-003.",
+    "ownerBaselineRecovery": {
+      "eligibility": "A projection miss for a tenant-current-business-date absence evaluation may start baseline recovery only when the exact TIM-003 consumer, tenant, source, WORK_RELATIONSHIP and relationship tuple has zero inbox rows in every status and the exact shared offset is absent or zero.",
+      "request": "Call SVC-PEP-HRM-007 with minimumRelationshipRevision=0 and the tenant current business date after winning the insert-only placeholder claim.",
+      "atomicFinalization": "Lock or create the exact shared offset at zero, recheck that no matching inbox row exists in any status, require the claimed projection version and a verified nonnegative XCON-027 relationshipRevision, then in one transaction replace the owner bundle, set CURRENT/SUCCEEDED, preserve last_observed_event_sequence=0 and required_relationship_revision=0, CAS the offset checkpoint from zero to relationshipRevision, including a valid zero-to-zero checkpoint, with last_event_id null, mirror that value to shared_offset_sequence and append paired replay/service audit with reasonCode TIM003_OWNER_BASELINE. Any row, nonzero prior offset, stale claim or CAS mismatch rolls back all writes and forces fresh decision evaluation.",
+      "meaning": "The baseline is a trusted owner checkpoint, not a fabricated event. All last_invalidation fields remain null, historical event sequences at or below the checkpoint converge only as duplicates, and the next canonical event must be relationshipRevision+1.",
+      "failure": "Retryable and permanent owner-baseline failures use the projection-version fence and the same closed error classification but have no inbox row to mutate; they atomically persist REFETCH_PENDING/RETRYABLE_FAILURE or QUARANTINED/PERMANENT_FAILURE plus structured audit only."
+    },
+    "contiguousCoveredFastPath": "When incoming aggregateSequence equals the exact shared offset plus one, the projection is CURRENT and unexpired, and owner_relationship_revision is at least incoming aggregateSequence, one transaction updates required_relationship_revision, the highest invalidation evidence and projection.shared_offset_sequence to the incoming sequence under projection-version CAS, appends structured audit evidence, completes the leased inbox row and advances the shared ledger offset to exactly the same incoming sequence. It performs no owner query, does not regress or rewrite the owner bundle and never advances either offset to an ahead owner revision.",
+    "gapBackfillContiguousPath": "When a missing contiguous event arrives while the projection is GAP and already records a greater last_observed_event_sequence or required_relationship_revision, one transaction completes that leased inbox row, advances the shared offset by exactly that event sequence and preserves the highest observed revision and entire invalidation-evidence bundle without an owner query. If newOffset+1 is strictly less than last_observed_event_sequence, it preserves GAP and sets shared_offset_sequence=newOffset and gap_expected_sequence=newOffset+1. If newOffset+1 equals last_observed_event_sequence, the same transaction sets shared_offset_sequence=newOffset, transitions to REFETCH_PENDING/PENDING, clears gap_expected_sequence and makes only the exact strictly validated DEFERRED row at last_observed_event_sequence immediately eligible by setting available_at=CURRENT_TIMESTAMP without changing its DEFERRED status; exactly one matching row is required or the transaction rolls back. The normal coordinator then acquires and processes that final event. This path never marks CURRENT. If a matching DEAD or payload-conflict row exists, quarantine precedence applies instead and no successful lower sequence may erase QUARANTINED/PERMANENT_FAILURE.",
+    "observedEvidenceMonotonicity": "required_relationship_revision becomes max(existing, incoming aggregateSequence). last_observed_event_sequence and the entire last_invalidation event-id/change-type/effective-date/payload-digest/correlation bundle change only when incoming aggregateSequence is greater than the stored value; lower backfill events never overwrite the highest observed evidence.",
+    "gapRecovery": [
+      "The shared inbox defers the out-of-order event; a retry-safe reconciler observes the exact unresolved row and moves the relationship projection to GAP without advancing employment facts.",
+      "A bounded owner-recovery worker queries the exact relationship and minimum observed revision.",
+      "One transaction replaces the projection under projection-version CAS, writes structured sys_audit_outbox evidence, advances the exact shared aggregate offset from the expected prior offset to the verified XCON-027 relationshipRevision, settles only matching DEFERRED inbox rows at or below that revision as DUPLICATE, and appends sys_domain_event_replay_audit through the required strict recovery API.",
+      "Snapshot-only offset fast-forward writes sys_domain_event_offsets.last_event_id as null because no real event exists at the recovered checkpoint.",
+      "DEAD or payload-conflict rows are never settled by snapshot recovery; only the next contiguous event above the recovered relationship revision may mutate freshness."
+    ],
+    "coordinatorRule": "TIM uses a bounded coordinator over DomainEventInboxRepository rather than placing the remote People query inside IdempotentDomainEventConsumer.handler. After bounded generic CloudEvent parsing but before semantic validation, it invokes the allowlisted digest-registration primitive so same-id/different-digest conflict detection cannot be bypassed by an invalid second payload. It then validates the registered transport major, strict XCON-004 body and every envelope/payload equality before inbox.begin; a registered invalid row is atomically marked DEAD and relation blockers are persisted before shared-offset handling, while a replayed invalid row returns to DEAD. No network call is made while a database transaction is open, and every final success or failure is fenced by the acquired inbox lock token.",
+    "inboxProjectionReconciler": {
+      "scope": "A retry-safe bounded reconciler scans only this consumer's exact positive-tenant, source and WORK_RELATIONSHIP tuples; every listed unresolved status remains read-blocking.",
+      "activeProcessing": "PROCESSING with nonnull lock token and locked_until later than now is owned by the live coordinator: block reads but do not mutate the projection.",
+      "expiredOrUnleased": "RECEIVED, FAILED, or PROCESSING with absent or expired lease is strictly revalidated. If sequence equals shared offset plus one, an existing or safely insert-CAS row becomes REFETCH_PENDING/PENDING or RETRYABLE_FAILURE. If sequence is greater than offset plus one, it becomes GAP with gap_expected_sequence=offset+1. If sequence is at or below offset, ordinary duplicate convergence is scheduled without regressing a projection.",
+      "deferred": "A strictly valid DEFERRED row is reclassified against the current shared offset because predecessor processing may have changed the relation after deferral. Sequence greater than offset plus one maps to GAP. Sequence equal to offset plus one is normal catch-up: make the exact row immediately eligible for normal coordinator acquisition; when this is the terminal recorded GAP sequence, atomically transition GAP to REFETCH_PENDING/PENDING and clear gap_expected_sequence, otherwise preserve GAP. Sequence at or below the offset uses ordinary DUPLICATE convergence without regressing the projection. None of these expected catch-up relations is ledger corruption.",
+      "replayPending": "REPLAY_PENDING never changes a projection until the normal coordinator repeats strict validation. A valid replay then maps by the same offset comparison; an invalid replay returns to DEAD.",
+      "deadOrConflict": "Strict DEAD or payload-conflict evidence changes an existing projection only to QUARANTINED/PERMANENT_FAILURE under CAS and preserves its last valid canonical invalidation and owner evidence. For each safely identified candidate relationship—the preserved stored envelope aggregate id and any independently valid XCON-004 body relationshipPublicId—an absent projection receives an insert-only QUARANTINED/PERMANENT_FAILURE blocker with observed and required revision zero, null owner and invalidation bundles and structured audit; no event fact is fabricated. Envelope/payload mismatch quarantines both distinct candidates atomically with the DEAD row. If no relationship UUID can be safely identified, only the DEAD ledger and audit are written.",
+      "quarantinePrecedence": "Before any contiguous-backfill or DEFERRED catch-up state transition, check the exact consumer tuple for DEAD or canonical payload-conflict evidence. Such evidence wins: a valid lower contiguous event may still complete and advance only its exact shared offset under the normal lease, but the projection remains QUARANTINED/PERMANENT_FAILURE with the highest evidence and error preserved; it cannot become GAP, REFETCH_PENDING or CURRENT until the separate strict replay path lawfully resolves the blocker.",
+      "atomicity": "Every repair uses projection-version CAS and structured audit evidence, never edits DEAD/conflict rows, and is idempotent after a crash between shared-inbox and projection writes."
+    },
+    "readRule": "A downstream absence evaluation may read only for the tenant current business date derived from the enrolled authoritative businessTimeZone and only from a projection that is CURRENT, whose owner_effective_on and owner_business_time_zone equal that current grant context, whose stored tenant_grant_revision, authorization_revision and field_policy_revision exactly equal the current Time authority projection, whose owner_valid_until is later than the verification instant, and for which no sys_domain_event_inbox row exists with consumer_name dwp-time-server.tim003-employment-absence.v1, the same positive tenant, source urn:dwp:people:hris:employment, aggregate_type WORK_RELATIONSHIP and aggregate id, in RECEIVED, PROCESSING, FAILED, DEFERRED, DEAD or REPLAY_PENDING. Authority lookup unavailability or any zone/revision mismatch fails closed immediately, schedules a bounded current-context refetch and never consumes stale facts through the remaining TTL. Only SUCCEEDED and DUPLICATE inbox rows are read-safe. An eligible projection miss fails the triggering read closed and schedules the fenced ownerBaselineRecovery instead of remaining permanently absent. A past or future evaluation date fails closed without an owner query; a tenant-date boundary invalidates the previous date and schedules one bounded current-date refetch. Expiry is effective immediately even before a TTL sweeper persists STALE.",
+    "readIntegrityRule": "Every read reconstructs the generated XCON-027 value from the stored owner bundle, reruns the closed schema, digest, assignment ordering/uniqueness and canonical zone validators, and compares the recomputed content and scope digests before returning facts. Any corruption fails the triggering read closed and under projection-version CAS changes the row to QUARANTINED/PERMANENT_FAILURE with code STORED_PROJECTION_INTEGRITY_FAILURE and structured audit; a stale CAS affects zero rows and cannot return data."
+  },
+  "migrationDecision": {
+    "stream": "TIME_MAIN",
+    "observedHighWater": "V13",
+    "candidate": "V14",
+    "decision": "V14_REQUIRED_NOT_RESERVED",
+    "exactPathAfterSeparateLease": "dwp-time-server/src/main/resources/db/migration/V14__tim_base_tfr_tim_003_employment_absence_projection.sql",
+    "newTables": [
+      {
+        "name": "abs_employment_relationship_projections",
+        "purpose": "One Time-owned relationship-level operational derivative; ordered assignment facts may be stored as a closed JSONB array because this slice has no assignment-row query requirement.",
+        "primaryKey": [
+          "tenant_id",
+          "relationship_public_id"
+        ],
+        "requiredColumns": [
+          "tenant_id BIGINT NOT NULL CHECK tenant_id > 0",
+          "relationship_public_id UUID NOT NULL",
+          "worker_public_id UUID NULL",
+          "freshness_state VARCHAR(24) NOT NULL",
+          "last_observed_event_sequence BIGINT NOT NULL DEFAULT 0 CHECK last_observed_event_sequence >= 0",
+          "required_relationship_revision BIGINT NOT NULL DEFAULT 0 CHECK required_relationship_revision >= 0",
+          "shared_offset_sequence BIGINT NOT NULL DEFAULT 0 CHECK shared_offset_sequence >= 0",
+          "gap_expected_sequence BIGINT NULL",
+          "owner_relationship_revision BIGINT NULL",
+          "worker_status VARCHAR(16) NULL",
+          "relationship_type VARCHAR(80) NULL",
+          "relationship_status VARCHAR(16) NULL",
+          "legal_entity_public_id UUID NULL",
+          "relationship_effective_from DATE NULL",
+          "relationship_effective_to DATE NULL",
+          "owner_effective_on DATE NULL",
+          "assignment_snapshots JSONB NOT NULL DEFAULT '[]'::jsonb",
+          "owner_contract_id VARCHAR(80) NULL",
+          "owner_schema_version INTEGER NULL",
+          "owner_revision BIGINT NULL",
+          "owner_as_of TIMESTAMPTZ NULL",
+          "owner_valid_until TIMESTAMPTZ NULL",
+          "owner_content_sha256 CHAR(64) NULL",
+          "owner_service VARCHAR(80) NULL",
+          "purpose_code VARCHAR(80) NULL",
+          "owner_scope_digest CHAR(64) NULL",
+          "owner_business_time_zone VARCHAR(80) NULL",
+          "owner_minimum_relationship_revision BIGINT NULL",
+          "tenant_grant_revision BIGINT NULL",
+          "authorization_revision BIGINT NULL",
+          "field_policy_revision BIGINT NULL",
+          "owner_issued_at TIMESTAMPTZ NULL",
+          "owner_evidence_digest CHAR(64) NULL",
+          "owner_key_id VARCHAR(160) NULL",
+          "last_invalidation_event_id UUID NULL",
+          "last_invalidation_change_type VARCHAR(80) NULL",
+          "last_invalidation_effective_date DATE NULL",
+          "last_invalidation_payload_sha256 CHAR(64) NULL",
+          "last_correlation_id VARCHAR(160) NULL",
+          "recovery_outcome VARCHAR(32) NOT NULL DEFAULT 'NOT_ATTEMPTED'",
+          "last_recovery_error_code VARCHAR(120) NULL",
+          "last_recovery_at TIMESTAMPTZ NULL",
+          "projection_version BIGINT NOT NULL DEFAULT 1 CHECK projection_version > 0",
+          "created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP",
+          "updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP"
+        ],
+        "supportingFunctions": [
+          "tim003_assignment_snapshots_structurally_valid(JSONB, UUID) returns BOOLEAN, is IMMUTABLE, STRICT and SECURITY INVOKER, uses a fixed pg_catalog search path and validates the closed nested Assignment storage invariant without reading tables or configuration",
+          "the function returns false rather than throwing for malformed scalar types, UUID text, revisions or dates; it accepts [] when the owner bundle permits it and never attempts IANA registry resolution, which remains a mandatory generated-Java write-and-read validation"
+        ],
+        "constraints": [
+          "freshness_state is exactly CURRENT, STALE, REFETCH_PENDING, GAP or QUARANTINED",
+          "recovery_outcome is exactly NOT_ATTEMPTED, PENDING, SUCCEEDED, RETRYABLE_FAILURE or PERMANENT_FAILURE",
+          "required_relationship_revision is greater than or equal to last_observed_event_sequence; both are event-derived nonnegative values, both remain zero until a canonical event is adopted as projection invalidation evidence, including after OWNER_BASELINE and after checkpoint-or-older deliveries converge only as duplicates, and neither is an owner ordering watermark",
+          "shared_offset_sequence mirrors the exact shared ledger offset at the row's last successful transaction; CURRENT requires it to be at least required_relationship_revision",
+          "worker_status is null before first trusted recovery or exactly PENDING, ACTIVE, LEAVE or TERMINATED",
+          "relationship_status is null before first trusted recovery or exactly PENDING, ACTIVE, INACTIVE or TERMINATED",
+          "gap_expected_sequence is nonnull if and only if freshness_state is GAP; in GAP it equals shared_offset_sequence plus one and last_observed_event_sequence is greater than gap_expected_sequence",
+          "the allowed freshness_state and recovery_outcome pairs are CURRENT/SUCCEEDED, STALE/SUCCEEDED, REFETCH_PENDING/PENDING, REFETCH_PENDING/RETRYABLE_FAILURE, GAP/NOT_ATTEMPTED, GAP/PENDING, GAP/RETRYABLE_FAILURE and QUARANTINED/PERMANENT_FAILURE",
+          "the owner bundle is exactly worker_public_id, owner_relationship_revision, worker_status, relationship_type, relationship_status, legal_entity_public_id, relationship_effective_from, owner_effective_on, owner_contract_id, owner_schema_version, owner_revision, owner_as_of, owner_valid_until, owner_content_sha256, owner_service, purpose_code, owner_scope_digest, owner_business_time_zone, owner_minimum_relationship_revision, tenant_grant_revision, authorization_revision, field_policy_revision, owner_issued_at, owner_evidence_digest and owner_key_id; every member is null before first trusted recovery or every member is nonnull after recovery",
+          "when the owner bundle is absent, nullable companion relationship_effective_to is null and assignment_snapshots equals the empty JSON array; when the owner bundle is present, relationship_effective_to may be null and assignment_snapshots may be empty only under the typed XCON-027 rules",
+          "when the owner bundle exists, owner_relationship_revision, owner_revision and owner_minimum_relationship_revision are nonnegative, owner_minimum_relationship_revision is at most owner_relationship_revision, tenant_grant_revision, authorization_revision and field_policy_revision are positive, and owner_revision equals owner_relationship_revision",
+          "owner_contract_id equals SVC-PEP-HRM-007/TIME_ABSENCE_V1, owner_schema_version equals 1, owner_service equals dwp-people-server, purpose_code equals TIM_LEAVE_EMPLOYMENT_RECOVERY and owner_business_time_zone is UTC or a canonical registered IANA zone whenever the owner bundle is present",
+          "owner_content_sha256, owner_scope_digest, owner_evidence_digest and last_invalidation_payload_sha256 are lowercase 64-hex whenever present",
+          "relationship_effective_to is null or after relationship_effective_from",
+          "owner_valid_until is after owner_as_of when both are present",
+          "jsonb_typeof(assignment_snapshots) equals array, jsonb_array_length(assignment_snapshots) is at most 1000 and the V14 immutable SECURITY INVOKER tim003_assignment_snapshots_structurally_valid function CHECK enforces exact keys, JSON types, canonical lowercase UUID encodings, nonnegative int64 assignmentRevision values including zero while rejecting negative, fractional and out-of-int64 values, closed assignment status, enclosing legal-entity equality, nullable identifier pairing, unique assignmentPublicId and lexical order; generated XCON-027 validation additionally resolves every nonnull timeZone against the Java zone registry before write and on every read",
+          "CURRENT and STALE require the complete owner bundle, typed nullable companions, shared_offset_sequence greater than or equal to required_relationship_revision and owner_relationship_revision greater than or equal to both required_relationship_revision and shared_offset_sequence",
+          "NOT_ATTEMPTED requires last_recovery_at and last_recovery_error_code null; PENDING and SUCCEEDED require nonnull last_recovery_at and null error; RETRYABLE_FAILURE and PERMANENT_FAILURE require both nonnull last_recovery_at and a nonblank canonical Code error",
+          "owner_valid_until later than the current verification instant is a transition-time validation and mandatory read predicate, never a volatile SQL CHECK; a row at or past that instant is effectively STALE even before the bounded TTL sweeper persists STALE/SUCCEEDED",
+          "last_invalidation_event_id, last_invalidation_change_type, last_invalidation_effective_date, last_invalidation_payload_sha256 and last_correlation_id are all null if and only if last_observed_event_sequence is zero, otherwise all are nonnull and accompany that greatest sequence monotonically; lower contiguous backfill never overwrites them, and snapshot-only offset recovery never fabricates an event id or overwrites them with the recovered checkpoint",
+          "expected projection_version zero means insert-only INSERT ON CONFLICT DO NOTHING that creates version one; zero affected rows aborts the transaction and retries only after a fresh read and full decision re-evaluation",
+          "expected projection_version at least one means UPDATE by tenant, relationship and exact expected version; the sealed BEFORE UPDATE trigger increments projection_version by exactly one and stamps updated_at from the database clock; a result other than exactly one affected row rolls back projection, inbox, offset, replay audit and service audit work"
+        ],
+        "indexes": [
+          "partial tenant_id plus worker_public_id where worker_public_id is not null",
+          "tenant_id plus freshness_state plus owner_valid_until"
+        ],
+        "tenantControls": [
+          "ENABLE ROW LEVEL SECURITY",
+          "FORCE ROW LEVEL SECURITY",
+          "tenant policy uses both USING and WITH CHECK with tenant_id = NULLIF(current_setting('dwp.tenant_id', true), '')::BIGINT",
+          "PUBLIC receives no privileges",
+          "the ${timeRuntimeRole} role must exist and migration verification rejects rolcanlogin inheritance paths that are SUPERUSER or BYPASSRLS; the table owner is a distinct non-runtime migration role",
+          "runtime receives table-level SELECT only; column-level INSERT is exactly tenant_id, relationship_public_id, worker_public_id, freshness_state, last_observed_event_sequence, required_relationship_revision, shared_offset_sequence, gap_expected_sequence, owner_relationship_revision, worker_status, relationship_type, relationship_status, legal_entity_public_id, relationship_effective_from, relationship_effective_to, owner_effective_on, assignment_snapshots, owner_contract_id, owner_schema_version, owner_revision, owner_as_of, owner_valid_until, owner_content_sha256, owner_service, purpose_code, owner_scope_digest, owner_business_time_zone, owner_minimum_relationship_revision, tenant_grant_revision, authorization_revision, field_policy_revision, owner_issued_at, owner_evidence_digest, owner_key_id, last_invalidation_event_id, last_invalidation_change_type, last_invalidation_effective_date, last_invalidation_payload_sha256, last_correlation_id, recovery_outcome, last_recovery_error_code and last_recovery_at; projection_version, created_at and updated_at therefore use database defaults 1, CURRENT_TIMESTAMP and CURRENT_TIMESTAMP and future columns receive no implicit privilege",
+          "runtime receives column-level UPDATE only on worker_public_id, freshness_state, last_observed_event_sequence, required_relationship_revision, shared_offset_sequence, gap_expected_sequence, owner_relationship_revision, worker_status, relationship_type, relationship_status, legal_entity_public_id, relationship_effective_from, relationship_effective_to, owner_effective_on, assignment_snapshots, owner_contract_id, owner_schema_version, owner_revision, owner_as_of, owner_valid_until, owner_content_sha256, owner_service, purpose_code, owner_scope_digest, owner_business_time_zone, owner_minimum_relationship_revision, tenant_grant_revision, authorization_revision, field_policy_revision, owner_issued_at, owner_evidence_digest, owner_key_id, last_invalidation_event_id, last_invalidation_change_type, last_invalidation_effective_date, last_invalidation_payload_sha256, last_correlation_id, recovery_outcome, last_recovery_error_code and last_recovery_at",
+          "PUBLIC receives no EXECUTE on tim003_assignment_snapshots_structurally_valid; only the migration owner and ${timeRuntimeRole} receive EXECUTE, the function is SECURITY INVOKER with a fixed pg_catalog search path, and runtime receives no ALTER or ownership capability on it",
+          "runtime receives no INSERT or UPDATE privilege on projection_version, created_at or updated_at, no UPDATE on tenant_id or relationship_public_id, and no DELETE, TRUNCATE, REFERENCES, TRIGGER or table-owner privilege",
+          "a sealed SECURITY DEFINER-free BEFORE UPDATE trigger rejects tenant_id, relationship_public_id or created_at change, sets NEW.projection_version=OLD.projection_version+1 and NEW.updated_at=clock_timestamp(); first insert relies on the server-owned defaults",
+          "missing or wrong dwp.tenant_id makes both reads and writes return or affect zero rows; WITH CHECK prevents cross-tenant inserts and updates"
+        ]
+      }
+    ],
+    "reusedPersistence": {
+      "tables": [
+        "sys_domain_event_inbox",
+        "sys_domain_event_offsets",
+        "sys_domain_event_replay_audit",
+        "sys_audit_outbox"
+      ],
+      "readOnlyView": "sys_domain_event_dead_letters",
+      "rule": "The dead-letter view is diagnostic only; persistence remains in the shared inbox and outbox tables."
+    },
+    "forbiddenNewPersistence": [
+      "second event inbox",
+      "second aggregate offset ledger",
+      "second retry or DLQ ledger",
+      "People source-of-record tables",
+      "leave request, leave balance or approval aggregates",
+      "assignment child table without a separately proven query requirement"
+    ],
+    "leaseRule": "Reserve V14 only after the HRIS-HRM producer/query successor is admitted and the HRIS-TIM owner packet explicitly binds this one-table delta."
+  },
+  "ownershipDecision": {
+    "hrisHrmOwns": [
+      "XCON-004 business payload production",
+      "XCON-027 EmploymentAbsenceSnapshot.v1 provider contract and generated artifact",
+      "same-transaction canonical DomainEventEnvelope publication while retaining legacy People outbox compatibility evidence",
+      "new SVC-PEP-HRM-007 TIME_ABSENCE_V1 exact-relationship owner query while leaving SVC-PEP-HRM-002 unchanged",
+      "workload identity, tenant grant, purpose, field projection and owner audit enforcement"
+    ],
+    "hrisTimOwns": [
+      "XCON-004 consumer registration and strict envelope equality validation",
+      "shared inbox orchestration and Time projection state transitions",
+      "People owner-query client and fail-closed recovery worker",
+      "V14 Time-owned derivative projection",
+      "targeted consumer, migration, tenancy, stale, gap, recovery and DLQ tests"
+    ],
+    "requiredSharedCoreChangeRequiringExactPacketPermission": {
+      "reason": "TIM-003 requires bounded shared-ledger primitives for prevalidation digest-conflict registration, first-observed gap recovery and eventless owner-baseline checkpointing; the existing begin/quarantine APIs cannot provide those semantics without conflict or atomicity gaps.",
+      "allowlist": "Only consumer dwp-time-server.tim003-employment-absence.v1 may invoke these additions. Recovery and successful processing require source urn:dwp:people:hris:employment, event type dwp.hris.people.employment-changed.v1 and aggregate type WORK_RELATIONSHIP. The prevalidation registration operation necessarily accepts bounded claimed source, type and aggregate values so it can persist and quarantine an invalid envelope, but it grants them no recovery or domain-processing authority.",
+      "prevalidationDigestRegistration": "Add an allowlisted transaction-joining registerForStrictValidation operation over a bounded generic DomainEventEnvelope. It must call the existing DomainEventJson.serialize with the same injected ObjectMapper, persist exactly that returned string as payload and call the existing DomainEventJson.sha256 over its UTF-8 bytes; RFC-8785, raw-wire hashing or any alternate serializer is forbidden. It INSERTs RECEIVED when absent. On (consumer_name,event_id) conflict it locks the stored row: equal digest returns the existing state without rewriting; different digest preserves the original payload, digest, source and aggregate identity, clears any lease, changes status to DEAD with the immutable canonical payload-conflict marker, stamps dead-letter time, appends structured audit and returns both the preserved stored tuple and incoming digest/claimed identity. Every insert/update requires exactly one affected row. DomainEventInboxRepository.begin reuses this exact helper so byte and hash semantics cannot diverge.",
+      "registeredInvalidFinalization": "After registration and before inbox.begin, strict type, major, closed XCON-004 and envelope/body equality validation runs. A new or same-digest invalid row is moved to DEAD only through an expected-digest guarded operation that never overwrites a payload-conflict marker. For invalid or different-digest conflict, the same transaction derives relationship candidates independently from the preserved stored envelope and body plus the incoming envelope and independently valid body; under the authoritative stored tenant it CAS-quarantines or insert-only creates zero-evidence blocker projections for every distinct safely parsed UUID, and a cross-tenant incoming claim is audited but never granted authority to mutate that other tenant. The audit binds both digests and both claimed tenant/source/type/aggregate identities. Thus a same-tenant incoming relationship differing from the stored relationship is blocked rather than silently lost. DEAD, blockers and sys_audit_outbox evidence commit together or all roll back.",
+      "atomicRule": "In the same transaction as projection-version CAS replacement and structured sys_audit_outbox evidence, compare-and-set the exact consumer, positive tenant, source, aggregate type and aggregate id offset from expectedPriorOffset to recoveredOffset equal to the verified XCON-027 relationshipRevision; gap recovery settles only matching DEFERRED inbox rows with sequence at or below recoveredOffset as DUPLICATE, while OWNER_BASELINE requires zero matching inbox rows in every status and settles none; neither mode settles REPLAY_PENDING, DEAD or payload-conflict rows. Append replay audit and require exactly one projection CAS row and one offset CAS row or roll back everything.",
+      "payloadConflictReplayGuard": "The same required core change makes payload conflict a named constant and, only for this allowlisted consumer, locks the DEAD inbox row before replay. If last_error equals the exact payload-conflict reason Event id was reused with a different payload hash., replayDead leaves status DEAD and the error unchanged, appends a denied sys_domain_event_replay_audit reason, and returns false. This closes the information loss in the existing DEAD to REPLAY_PENDING transition without a schema change.",
+      "payloadConflictMarkerPreservation": "For the exact TIM-003 consumer, once last_error equals the named payload-conflict constant, quarantine and every other same-row core mutation preserve both DEAD and that marker with a CASE or conditional update. A later same-hash quarantine, retry or replay request cannot overwrite conflict provenance; denied replay is audited.",
+      "replayPendingRule": "Snapshot recovery never settles REPLAY_PENDING. Payload conflicts are prevented from entering REPLAY_PENDING by the exact pre-transition guard. Other replay rows pass prevalidation digest registration, registered transport-major, strict XCON-004 and envelope/payload validation before inbox.begin; failures return to DEAD with relation blockers, while a valid replay at or below the recovered offset may converge through ordinary shared-offset DUPLICATE handling.",
+      "lastEventIdRule": "Set sys_domain_event_offsets.last_event_id to null for a snapshot-only recovered checkpoint; it must never identify an event that does not exist at recoveredOffset.",
+      "existingReplayAuditEncoding": {
+        "replayRequestId": "One random UUID generated once for the recovery transaction and written identically into sys_domain_event_replay_audit.replay_request_id and the paired sys_audit_outbox structured payload as replayRequestId",
+        "direction": "INBOX",
+        "consumerName": "dwp-time-server.tim003-employment-absence.v1",
+        "targetId": "TIM003|{tenantId}|WORK_RELATIONSHIP|{lowercaseRelationshipPublicId}",
+        "requestedBy": "service:dwp-time-server:tim003-owner-recovery",
+        "requestedAt": "One database transaction instant written explicitly to sys_domain_event_replay_audit.requested_at and identically into the paired sys_audit_outbox payload",
+        "reason": "RFC-8785 compact JSON with exactly actor, expectedPriorOffset, ownerContentSha256, ownerScopeDigest, reasonCode, recoveredOffset and source; actor exactly equals requestedBy, and reasonCode is exactly TIM003_OWNER_SNAPSHOT_RECOVERY for GAP recovery or TIM003_OWNER_BASELINE for an eventless first checkpoint",
+        "pairedAudit": "sys_audit_outbox carries replayRequestId, requestedAt, the full authorization, projection CAS, settled-row count and correlation evidence, providing the exact join because sys_domain_event_replay_audit intentionally remains sparse; no core schema migration is authorized."
+      }
+    },
+    "frontendOwns": [],
+    "agentRepositoryOwns": [],
+    "newServiceForbidden": "DO_NOT_CREATE_A_NEW_HRIS_TIM_OR_HRIS_HRM_SERVICE"
+  },
+  "centralSuccessorRequirements": {
+    "appendOnly": true,
+    "historicalMutation": false,
+    "phase1HrmSuccessorBeforeTimPacket": [
+      "seal the exact logical XCON-004 to namespaced transport mapping and source",
+      "append XCON-027 EmploymentAbsenceSnapshot.v1 and SVC-PEP-HRM-007 to the canonical schema, generated artifact tests and append-only registers without changing XCON-001 or SVC-PEP-HRM-002",
+      "implement HRIS-HRM-owned same-transaction publication of validated EmploymentChanged.v1 to the shared DEP-003 outbox with relationship aggregate identity and sequence while retaining the legacy row as compatibility evidence",
+      "implement SVC-PEP-HRM-007 TIME_ABSENCE_V1 exact relationship recovery returning XCON-027",
+      "enforce workload identity, audience, signed tenant grant, purpose, field projection, digest and expiry",
+      "prove wrong-workload, wrong-tenant, stale-revision, expired, over-projected-field and payload-equality negatives",
+      "keep publication and query feature switches default OFF with zero tenant enrollment and no production broker"
+    ],
+    "phase2TimPacketAfterHrmAdmission": [
+      "issue a fresh exact HRIS-TIM owner packet on the admitted HRM carrier",
+      "reserve exactly TIME_MAIN V14 and no other migration stream",
+      "materialize a fresh HRIS-TIM backend worktree from current dwp-dev",
+      "issue a start token binding the V14 lease, allowed source roots, the required allowlisted shared-core recovery change and targeted tests",
+      "implement consumer, projection, recovery and focused evidence only in the HRIS-TIM module worktree"
+    ],
+    "sessionRouting": {
+      "centralControl": "SEMANTIC_REVIEW_PACKET_LEASE_TOKEN_ADMISSION_ONLY",
+      "hrisHrmModuleSession": "CANONICAL_PUBLICATION_XCON027_AND_OWNER_QUERY_IMPLEMENTATION",
+      "hrisTimModuleSession": "CONSUMER_V14_PROJECTION_AND_RECOVERY_IMPLEMENTATION"
+    }
+  },
+  "acceptanceCriteria": [
+    "TIM003-AC01 XCON-004 remains the four-field closed EmploymentChanged.v1 business contract and no sensitive or Time-owned fact is added.",
+    "TIM003-AC02 The transport type is dwp.hris.people.employment-changed.v1 with source urn:dwp:people:hris:employment, WORK_RELATIONSHIP aggregate identity and relationship revision ordering.",
+    "TIM003-AC03 Envelope subject, aggregate id and sequence exactly equal WORK_RELATIONSHIP/{relationshipPublicId}, relationshipPublicId and newAggregateVersion; mismatch, unknown type or unsupported major fails closed to the shared DLQ.",
+    "TIM003-AC04 HRIS-HRM registers the canonical event major, captures one publication Instant, and writes both canonical envelope and legacy compatibility evidence in one transaction without changing legacy published_at, direct broker I/O or treating legacy aggregate metadata as canonical.",
+    "TIM003-AC05 XCON-027 provides exact typed, minimized current-business-date relationship and nested assignment revisions for recovery, and new SVC-PEP-HRM-007 exposes it only through workload-authenticated TIME_ABSENCE_V1 exact relationship recovery while SVC-PEP-HRM-002 remains unchanged; historical or future dates fail closed until an effective-dated worker-status owner exists.",
+    "TIM003-AC06 Wrong workload, tenant, issuer, audience, client, subject, mTLS confirmation, method, path, query, token time, replay id, correlation, purpose, projection, field set, business zone/date, scope/content/evidence digest, signature, revision or expiry returns no usable owner facts and produces owner audit evidence.",
+    "TIM003-AC07 HRIS-TIM reuses the shared inbox, offset, retry, replay and DLQ ledger and creates no competing delivery ledger.",
+    "TIM003-AC08 Same-id same-digest delivery is idempotent, same-id different-digest delivery is quarantined, older shared-offset revision is a no-op, a covered contiguous revision uses the no-refetch fast path, and any unresolved or gap inbox row blocks current reads until reconciled and trusted recovery succeeds.",
+    "TIM003-AC09 V14 creates exactly one tenant-isolated abs_employment_relationship_projections table with forced RLS, closed states, deterministic assignment facts and projection-version CAS.",
+    "TIM003-AC10 Owner recovery never regresses a relationship revision and atomically binds projection CAS replacement, required exact offset CAS, GAP-mode DEFERRED-only settlement or eventless OWNER_BASELINE zero-row settlement, replay audit and structured audit evidence; REPLAY_PENDING, DEAD and payload conflicts are never snapshot-settled, and snapshot-only recovery stores no fabricated last event id.",
+    "TIM003-AC11 Non-CURRENT, expired, inbox-blocked or non-current-date projections fail closed for absence evaluation; an eligible eventless projection miss schedules a fenced trusted owner baseline, a retry-safe reconciler repairs gap/quarantine state after crashes, and no direct People database access, leave request mutation, balance mutation or approval behavior is introduced.",
+    "TIM003-AC12 Producer, query and consumer remain default OFF with zero enrolled tenants, no route or menu, no production broker and zero business-completion credit until later admission and activation authority."
+  ],
+  "targetedVerificationPlan": {
+    "hrm": [
+      "Xcon004EmploymentChangedV1ProviderContractTest",
+      "Xcon027EmploymentAbsenceSnapshotV1ProviderContractTest",
+      "EmploymentChangedDomainEventPublicationTest",
+      "TimeAbsenceWorkforceSnapshotOwnerContractTest",
+      "TimeAbsenceWorkforceSnapshotErrorContractTest",
+      "TimeAbsenceWorkforceSnapshotTenantPurposeFieldNegativeTest"
+    ],
+    "tim": [
+      "Xcon004EmploymentChangedV1ConsumerContractTest",
+      "EmploymentAbsenceProjectionMigrationPostgresTest",
+      "EmploymentAbsenceProjectionTenantIsolationTest",
+      "EmploymentAbsenceProjectionOrderingTest",
+      "EmploymentAbsenceOwnerRecoveryTest",
+      "EmploymentAbsenceOwnerErrorClassificationTest",
+      "EmploymentAbsenceOwnerBaselineTest",
+      "EmploymentAbsenceGapOffsetRecoveryTest",
+      "EmploymentAbsenceUnresolvedInboxReadGuardTest",
+      "EmploymentAbsenceInboxProjectionReconcilerTest"
+    ],
+    "requiredSharedCore": [
+      "DomainEventInboxOffsetRecoveryTest",
+      "DomainEventInboxStrictRegistrationTest"
+    ],
+    "requiredAssertions": [
+      "a crash or owner-query failure after inbox acquisition does not complete the inbox or advance the offset",
+      "sequential success atomically commits projection CAS, sys_audit_outbox evidence, inbox completion and the exact offset advance",
+      "a stale projection-version CAS affecting zero rows rolls back projection, inbox, offset, replay audit and service audit work",
+      "a CURRENT row at or after owner_valid_until is denied before a TTL sweeper updates its stored state",
+      "current-business-date reads may reuse only an unexpired CURRENT owner_effective_on match; a past or future requested date fails closed without an owner call, while a tenant-date change across midnight fails closed and triggers one bounded current-date refetch",
+      "sequential, gap and tenant-current-date-or-TTL owner queries always use the authoritative tenant current business date rather than event effectiveDate, while preserving event effectiveDate only as signed invalidation evidence, and use the maximum non-regressing relationship revision",
+      "the People provider rejects missing or invalid sys_service_tenants.configuration.hrisBusinessTimeZone, a signed zone differing from current tenant configuration, and any effectiveOn not equal to LocalDate(asOf, businessTimeZone), with zero owner facts and no UTC fallback",
+      "a token validly signed just before tenant midnight but received with owner asOf just after midnight returns zero facts with DATE_ROLLED and no DEAD or quarantine; a newly signed next-date token succeeds and the event offset advances exactly once",
+      "DATE_ROLLED and OWNER_AUTHORITY_STALE at or beyond the normal maximum attempt still use a lease-fenced effective maximum greater than the current attempt, remain retryable with offset unchanged and cannot become DEAD solely by repetition",
+      "current-date refresh coalesces by CAS, a midnight-boundary stale response loses its CAS/date recheck, and a current-date-or-TTL refresh never changes inbox, shared offset, required revision or last event evidence",
+      "assignment JSON with extra or missing fields, wrong types, duplicate identifiers, noncanonical order, unknown zone, fixed offset or 1001 elements is rejected; canonical UTC is accepted",
+      "the V14 assignment JSON CHECK accepts assignmentRevision zero and rejects negative, fractional and out-of-int64 revision values",
+      "a malformed assignment JSON row injected through direct SQL cannot pass the V14 structural CHECK, and any storage corruption not expressible in that CHECK is rejected by read-time generated validation and CAS-quarantined before facts are returned",
+      "GAP requires gap_expected_sequence equal to shared_offset_sequence plus one and last_observed_event_sequence greater than that expected sequence",
+      "an absent owner bundle forces null relationship_effective_to and an empty assignment array; CURRENT and STALE require a complete bundle and offset coverage",
+      "first-writer insert races and stale update CAS values cannot overwrite a winner and are retried only after fresh decision evaluation",
+      "recovery outcome, error code and recovery timestamp nullability is enforced for every closed state pair",
+      "retry exhaustion and explicitly permanent sequential failures atomically produce inbox DEAD plus projection QUARANTINED/PERMANENT_FAILURE, while a retryable failure remains FAILED plus REFETCH_PENDING/RETRYABLE_FAILURE; lost lease rolls back both",
+      "missing or wrong tenant context is denied by both RLS USING and WITH CHECK",
+      "the runtime privilege matrix denies identity-column UPDATE plus DELETE, TRUNCATE, REFERENCES, TRIGGER, ownership, SUPERUSER and BYPASSRLS paths",
+      "runtime explicit projection_version, created_at or updated_at INSERT and UPDATE is denied; omitted values become version one and database timestamps, and a future added column has no inherited INSERT privilege",
+      "gap recovery rejects wrong consumer, tenant, source, event type, aggregate type, aggregate id, expected prior offset, recovered revision or owner evidence",
+      "gap recovery settles only DEFERRED rows, never REPLAY_PENDING, DEAD or payload-conflict evidence, and writes last_event_id null for a snapshot-only checkpoint",
+      "an eventless projection miss atomically inserts one REFETCH_PENDING baseline claim, makes one current-date owner call with minimum revision zero, requires zero inbox rows and prior offset zero at finalization, writes a CURRENT owner bundle with observed and required revisions zero, checkpoints the shared offset to the nonnegative owner relationship revision with last_event_id null and emits TIM003_OWNER_BASELINE audit",
+      "a baseline owner revision zero performs a valid zero-to-zero checkpoint and the later first canonical event sequence one follows the normal contiguous path; relationship and assignment source revision zero round-trip without normalization or synthetic ordering",
+      "a baseline race with event arrival, another baseline claimant or a changed offset has exactly one winner; the loser performs no partial projection, offset or audit commit, while retryable and permanent baseline failures remain projection-version fenced without fabricating inbox or invalidation evidence",
+      "payload conflict is permanently DEAD and cannot enter replay; an unknown-invalid replay remains read-blocking until the normal coordinator strictly revalidates it and returns it to DEAD; owner recovery cannot launder either to DUPLICATE",
+      "for the exact TIM-003 consumer replayDead returns false for the canonical payload-conflict error while preserving DEAD and last_error and appending denied replay audit evidence",
+      "payload conflict followed by same-hash quarantine, retry or replay preserves the named DEAD marker and remains non-replayable",
+      "prevalidation registration and inbox.begin both hash the exact existing DomainEventJson.serialize ObjectMapper output through DomainEventJson.sha256 UTF-8 bytes, and pre-existing inbox rows remain same-digest rather than false conflict",
+      "a valid first delivery followed by the same event id with an invalid different-digest envelope is detected by prevalidation registration, preserves the original stored payload and digest, becomes canonical payload-conflict DEAD and cannot remain SUCCEEDED or DUPLICATE",
+      "a same-tenant conflicting incoming delivery that safely identifies a different relationship atomically preserves the stored row, records both digests and identities, and quarantines or creates zero-evidence blockers for stored and incoming relationship candidates; a cross-tenant claim is audited but never gains mutation authority over the claimed other tenant",
+      "an independently valid XCON-004 body whose relationship id differs from the envelope aggregate id atomically DEAD-letters the registered row and quarantines or creates zero-evidence blockers for both distinct same-tenant relationship candidates before either can be read",
+      "a valid newer owner snapshot covers a contiguous event through the no-refetch fast path",
+      "the no-refetch fast path makes zero owner-client calls and leaves the serialized owner bundle byte-identical while advancing both shared ledger offset and projection.shared_offset_sequence only to the incoming event sequence",
+      "when a sequential owner response revision is ahead of the incoming event, ordinary completion advances both ledger offset and projection mirror only to the incoming sequence; only sealed gap recovery may fast-forward them to owner relationshipRevision",
+      "CURRENT and STALE reject owner_relationship_revision below shared_offset_sequence, including an eventless baseline row with required revision zero",
+      "gap recovery success commits projection replacement, exact offset CAS, DEFERRED-only settlement, replay audit and service audit atomically or rolls all of them back",
+      "after gap sequence five is observed, later processing of missing sequence one preserves required revision and last invalidation evidence at five while advancing only the contiguous shared offset",
+      "for gap sequence five followed by missing sequences one through four, each backfill makes zero owner-client calls and preserves GAP while the next expected sequence is below five; sequence four atomically transitions to REFETCH_PENDING, clears gap_expected_sequence and makes only the validated DEFERRED sequence-five row immediately eligible, after which the normal coordinator processes five without ever violating the GAP invariant",
+      "a gap-backfill worker racing the gap-recovery projection or offset CAS has exactly one winner and the loser rolls back inbox, projection, offset and audit changes",
+      "a DEAD or payload-conflict sequence five followed by a valid sequence one may advance only the valid contiguous offset and must preserve QUARANTINED/PERMANENT_FAILURE and its blocker evidence",
+      "a DEFERRED row is reconciled by its current relation to the offset: greater-than-next remains GAP, exact-next enters ordinary coordinator acquisition, and at-or-below converges as DUPLICATE without false corruption quarantine, including after snapshot fast-forward",
+      "unresolved inbox states deny reads and the crash-safe reconciler converges DEFERRED to GAP and DEAD or payload conflict to QUARANTINED",
+      "invalid authentication or closed-shape requests cannot reserve jti or nonce; method, concrete path, relationship id, query values and the mTLS certificate thumbprint are signature-bound, a caller signing key must map to the same dwp-time-server SPIFFE identity, and duplicate or unsigned query forms are denied",
+      "SVC-007 accepts only TLS 1.3 with a current trusted internal-CA client chain and the singleton expected URI SAN, rejects duplicate security headers, redirects and forwarded browser certificate identity, and emits no-store/no-cache on every success and error",
+      "cnf.x5t#S256 binds the complete DER-encoded leaf certificate rather than only its public key, so a reissued certificate with the same key but different DER bytes is rejected until a new matching proof is signed",
+      "Time token issue, People verification and Time read guard use independent current TIM003OwnerGrantV1 authority lookups; JWT claims, stored owner facts and startup snapshots cannot self-authorize, and missing, unavailable, revoked or revision-mismatched records fail closed",
+      "a reservation collision performs zero owner-fact reads, returns zero facts and writes negative audit evidence; only a committed atomic two-key reservation may precede owner authority and fact reads, and both rows are retained through exp plus five seconds",
+      "the atomic jti and nonce reservation rows set SUCCEEDED, attempts and replay count zero, one shared database instant for available, processed, created and updated timestamps, and null lease, dead-letter, error, causation and trace fields",
+      "DATE_ROLLED and stale tenant-grant, authorization, field-policy or zone revision return zero facts and retry with a new proof without DEAD; noncanonical zone, signed-iat date mismatch, missing authoritative zone configuration, identity, tenant, binding, purpose, projection, shape, digest, signature or contract tampering use the permanent lease-fenced DEAD and projection quarantine path",
+      "only a verified closed People error envelope may select a named retryable or permanent code; unknown, unsigned, stale, correlation-mismatched, proxy or malformed non-2xx responses return zero facts and enter generic bounded retry rather than immediate permanent quarantine",
+      "read-time unavailability or mismatch of current tenant-grant, authorization, field-policy revision or businessTimeZone denies facts immediately despite remaining TTL and schedules bounded current-context refetch",
+      "response evidence issuedAt equals asOf at microsecond precision, and stored owner_minimum_relationship_revision permits exact read-time recomputation of scopeDigest and is nonnegative and no greater than owner_relationship_revision",
+      "Time accepts response evidence only when keyId and protected kid resolve to the active dwp-people-server SVC-PEP-HRM-007-dedicated response-signing key; unknown, inactive, cross-workload, cross-purpose and undersized RSA keys are denied",
+      "the canonical event id exactly matches UUID.nameUUIDFromBytes over the lowercase employment event UUID, colon and EmploymentChanged.v1 UTF-8 bytes",
+      "after OWNER_BASELINE checkpoints offset N, deliveries at or below N converge as duplicates while last_observed_event_sequence, required_relationship_revision and the null invalidation bundle remain zero",
+      "unauthorized, automatic or stale-CAS quarantine release is denied; an authorized operator release changes only an allowlisted non-event quarantine to REFETCH_PENDING/PENDING and preserves owner facts, offset and invalidation evidence with audit",
+      "gap recovery writes one replayRequestId, requestedAt and requestedBy binding across sys_domain_event_replay_audit and sys_audit_outbox so the sparse and structured evidence are exactly joinable",
+      "SVC-PEP-HRM-007 rejects an absent or invalid correlation id and a nonnull location with a missing or invalid time zone"
+    ],
+    "policy": "Run only the affected contract, source and migration tests while implementing each phase, then one bounded TIM-003 lane gate before admission. Do not repeatedly execute repository-wide suites."
+  },
+  "carriedOpenGates": [
+    {
+      "gateId": "TIM_CLOSE_PERIOD_DEFINITION_PRODUCER",
+      "severity": "P0",
+      "state": "OPEN_EXTERNAL_SOURCE_AUTHORITY_GATE",
+      "effect": "BLOCKS_ACTIVATION_NOT_THIS_SEMANTIC_DOCUMENTATION"
+    },
+    {
+      "gateId": "TIM_CLOSE_TRUSTED_OWNER_HEADER_ISSUER",
+      "severity": "P0",
+      "state": "OPEN_BEFORE_ANY_TENANT_ENROLLMENT",
+      "effect": "BLOCKS_ENROLLMENT_NOT_THIS_SEMANTIC_DOCUMENTATION"
+    }
+  ],
+  "activationBoundary": {
+    "producerHandoffEnabledByDefault": false,
+    "ownerQueryEnabledByDefault": false,
+    "consumerEnabledByDefault": false,
+    "enrolledTenants": [],
+    "productionBrokerBindings": [],
+    "customerDataAuthorized": false,
+    "browserRouteAdded": false,
+    "frontendMenuAdded": false,
+    "businessCompletionIncrement": 0
+  },
+  "portfolioAccounting": {
+    "universe": 86,
+    "retired": 2,
+    "active": 84,
+    "completedBeforeThisDisposition": 26,
+    "tim003SemanticDispositionBusinessCompletionIncrement": 0,
+    "completedAfterThisDisposition": 26,
+    "activeIncompleteAfterThisDisposition": 58
+  },
+  "authority": {
+    "semanticDispositionSealed": true,
+    "schemaDeltaProven": true,
+    "independentReviewRequired": true,
+    "hrmSuccessorMayBePacketedOrAuthoredNow": false,
+    "timOwnerPacketAuthorizedNow": false,
+    "timSourceAuthoringAuthorizedNow": false,
+    "v14ReservationAuthorizedNow": false,
+    "v14AuthoringAuthorizedNow": false,
+    "worktreeMaterializationAuthorizedNow": false,
+    "startTokenAuthorizedNow": false,
+    "routeOrMenuWorkAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nonClaims": [
+    "The historical canon or recovery registers were mutated.",
+    "The current People legacy outbox is already a valid DEP-003 handoff.",
+    "The current workforce snapshot port serves HRIS-TIM, implements SVC-PEP-HRM-007, or changes the historical SVC-PEP-HRM-002 bootstrap binding.",
+    "Leave, return or termination command production exists in the admitted HRM employment command.",
+    "A TIM-003-specific V14 lease, HRIS-HRM or HRIS-TIM owner packet, start token, branch or fresh module worktree exists.",
+    "Any HRIS-HRM, HRIS-TIM, dwp-core, route, menu, feature, tenant or production source changed.",
+    "Either inherited TIM P0 activation gate is closed.",
+    "BASE-TFR-TIM-003, Batch-04, R7 or HRIS is complete."
+  ],
+  "nextGate": "INDEPENDENTLY_REVIEW_THIS_DISPOSITION_WITH_ZERO_P0_P1_P2_THEN_ISSUE_AND_EXECUTE_ONE_HRIS_HRM_MODULE_PACKET_FOR_XCON027_XCON004_SHARED_PUBLICATION_AND_SVC_PEP_HRM_007_TIME_ABSENCE_OWNER_QUERY_BEFORE_ANY_HRIS_TIM_PACKET_V14_LEASE_WORKTREE_TOKEN_OR_SOURCE"
+}

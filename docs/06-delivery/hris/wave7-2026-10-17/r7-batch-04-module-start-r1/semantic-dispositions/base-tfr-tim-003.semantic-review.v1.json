@@ -1,0 +1,69 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-tim003-semantic-review.v1",
+  "reviewId": "HRIS-WAVE7-R7-BATCH-04-TIM003-SEMANTIC-REVIEW-20261021-R1",
+  "recordedAt": "2026-10-21T14:15:57+09:00",
+  "recordedBy": "INDEPENDENT_TIM003_SEMANTIC_REVIEW",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ID_AND_SHA256"
+  },
+  "state": "TIM003_SEMANTIC_DISPOSITION_INDEPENDENTLY_REVIEWED_PASS_ZERO_P0_ZERO_P1_ZERO_P2_HRM_SUCCESSOR_MAY_PROCEED",
+  "sliceId": "BASE-TFR-TIM-003",
+  "reviewedArtifact": {
+    "path": "base-tfr-tim-003.semantic-disposition.v1.json",
+    "sha256": "60a21b6da8b97f2a30055404f167e52bb9fc813520d6c277c32a514494585ff9",
+    "bytes": 107850,
+    "requiredState": "TIM003_EMPLOYMENT_ABSENCE_BOUNDARY_SEALED_V14_REQUIRED_HRM_CANONICAL_PUBLICATION_AND_OWNER_QUERY_SUCCESSOR_BEFORE_TIM_SOURCE"
+  },
+  "reviewMethod": {
+    "independentReviewers": 3,
+    "jsonSyntax": "PASS",
+    "duplicateKeyCheck": "PASS",
+    "canonicalPathHashAndBytePins": "PASS",
+    "transportAndDeterministicEventIdentityConsistency": "PASS",
+    "workloadAuthenticationAndReplayProofConsistency": "PASS",
+    "signedSuccessAndErrorWireConsistency": "PASS",
+    "prevalidationDigestConflictAndAtomicBlockerConsistency": "PASS",
+    "ownerBaselineAndCurrentBusinessDateConsistency": "PASS",
+    "sharedInboxOffsetReplayAndOrderingConsistency": "PASS",
+    "v14StateRlsCasAndJsonIntegrityConsistency": "PASS",
+    "authorityFreshnessAndActivationBoundaryConsistency": "PASS",
+    "acceptanceCriteriaAndTargetedAssertionsConsistency": "PASS",
+    "repositoryWideSuiteRun": false,
+    "unaffectedPassingTargetRerun": false
+  },
+  "closedFindings": [
+    "XCON-004 remains a closed four-field business contract while the namespaced CloudEvent transport, source, aggregate identity, deterministic event id and dual-write timestamp are exact",
+    "XCON-027 and SVC-PEP-HRM-007 provide a minimized current-business-date owner snapshot with nonnegative source revisions and no mutation of historical XCON-001 or SVC-PEP-HRM-002",
+    "mTLS, DER-certificate confirmation, request target binding, atomic jti and nonce reservation, independent current authority and dedicated response signing fail closed",
+    "success and non-success responses have closed signed wire contracts, no-store controls and deterministic retryable versus permanent classification",
+    "prevalidation uses the existing DomainEventJson bytes and hash and atomically records conflicts or invalid envelopes with every safe same-tenant relationship blocker",
+    "eventless owner baseline supports source revision zero, offset zero-to-zero checkpointing and later sequence-one processing without synthetic event evidence",
+    "sequential, covered fast-path, gap backfill and owner snapshot recovery preserve one shared ordering authority and an exact projection mirror under fenced atomic CAS",
+    "V14 creates one forced-RLS projection table with closed state pairs, column privileges, version fencing, exact assignment JSON checks and read-time integrity validation",
+    "DATE_ROLLED and current-authority drift remain exhaustion-exempt retryable context refreshes while trusted permanent violations enter fenced quarantine",
+    "twelve acceptance criteria and sixty targeted assertions preserve default-OFF, zero enrollment, no route or menu, no production broker and zero business-completion credit"
+  ],
+  "findings": {
+    "remainingP0": 0,
+    "remainingP1": 0,
+    "remainingP2": 0,
+    "carriedActivationGates": [
+      "TIM_CLOSE_PERIOD_DEFINITION_PRODUCER",
+      "TIM_CLOSE_TRUSTED_OWNER_HEADER_ISSUER"
+    ]
+  },
+  "authority": {
+    "semanticReviewAccepted": true,
+    "hrmSuccessorOwnerPacketMayBeAuthored": true,
+    "hrmModuleSourceAuthoringAuthorizedNow": false,
+    "timOwnerPacketAuthorizedNow": false,
+    "timModuleSourceAuthoringAuthorizedNow": false,
+    "v14ReservationAuthorizedNow": false,
+    "v14AuthoringAuthorizedNow": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextGate": "AUTHOR_AND_SEAL_ONE_EXACT_HRIS_HRM_SUCCESSOR_OWNER_PACKET_WORKTREE_LEASE_AND_START_TOKEN_THEN_IMPLEMENT_CANONICAL_PUBLICATION_XCON027_AND_SVC_PEP_HRM_007_ONLY_IN_THE_HRIS_HRM_MODULE_WORKTREE"
+}
