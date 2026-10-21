@@ -404,11 +404,22 @@ function hasExactGatewayBinding(
   );
 }
 
+function includesAuthorizationRegistryRevision(
+  current: Readonly<{ version: number; checksum: string }>,
+  required: Readonly<{ version: number; checksum: string }>
+) {
+  return (
+    current.version > required.version ||
+    (current.version === required.version && current.checksum === required.checksum)
+  );
+}
+
 function assertHrisOperationsV52ContractCompatibility() {
   if (
-    PRODUCT_AUTHORIZATION_REGISTRY_REVISION.version < 52 ||
-    (PRODUCT_AUTHORIZATION_REGISTRY_REVISION.version === 52 &&
-      PRODUCT_AUTHORIZATION_REGISTRY_REVISION.checksum !== HRIS_OPERATIONS_V52_REGISTRY_SHA256)
+    !includesAuthorizationRegistryRevision(PRODUCT_AUTHORIZATION_REGISTRY_REVISION, {
+      version: 52,
+      checksum: HRIS_OPERATIONS_V52_REGISTRY_SHA256,
+    })
   ) {
     return invalid('HRIS operations requires a compatible product authorization registry.');
   }

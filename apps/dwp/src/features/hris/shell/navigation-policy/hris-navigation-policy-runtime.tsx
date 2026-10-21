@@ -89,6 +89,16 @@ export const HRIS_NAVIGATION_RUNTIME_OWNER_OVERLAY_SHA256 =
   '42ed206e45fab76f77725ba5d37543e06b8df62da7aa142bb620b032bf552dbd' as const;
 export { HRIS_LEGAL_ENTITY_SELECTOR_PARAM, selectHrisLegalEntitySelector };
 
+function includesAuthorizationRegistryRevision(
+  current: Readonly<{ version: number; checksum: string }>,
+  required: Readonly<{ version: number; checksum: string }>
+) {
+  return (
+    current.version > required.version ||
+    (current.version === required.version && current.checksum === required.checksum)
+  );
+}
+
 function currentHrisV52PageAuthorityRouteBinding(nodeId: string, route: string) {
   const binding = hrisV52PageAuthorityRouteBinding(nodeId, route);
   const expectedRouteId =
@@ -104,9 +114,10 @@ function currentHrisV52PageAuthorityRouteBinding(nodeId: string, route: string) 
     : [];
   if (
     !binding ||
-    PRODUCT_AUTHORIZATION_REGISTRY_REVISION.version < binding.minimumBundleVersion ||
-    (PRODUCT_AUTHORIZATION_REGISTRY_REVISION.version === binding.minimumBundleVersion &&
-      PRODUCT_AUTHORIZATION_REGISTRY_REVISION.checksum !== binding.authorizationRegistryChecksum) ||
+    !includesAuthorizationRegistryRevision(PRODUCT_AUTHORIZATION_REGISTRY_REVISION, {
+      version: binding.minimumBundleVersion,
+      checksum: binding.authorizationRegistryChecksum,
+    }) ||
     binding.authorizationRegistryChecksum !==
       'b33fbf968e71f97b09fa497fdfad7d2f6854199170b79fd1602a0ea604977346' ||
     exactProjection.length !== 1 ||
