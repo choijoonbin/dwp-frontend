@@ -1,0 +1,402 @@
+{
+  "schema": "dwp.hris.wave7-execution-roadmap-successor.v19",
+  "roadmapId": "HRIS-WAVE7-EXECUTION-ROADMAP-SUCCESSOR-20261021-R19",
+  "issuedAt": "2026-10-21T18:46:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "R7_BATCH_04_SEQUENCING_CLOSED_DEFAULT_OFF_ZERO_BUSINESS_CREDIT_BATCH_05_PREFLIGHT_NEXT_ZERO_TENANT_ENROLLMENT",
+  "supersedes": {
+    "path": "execution-roadmap-successor.v18.json",
+    "sha256": "b2bf071c6012d464d4e38faa5516c020ec9ccd1aae501fd1a1f0fbf934b68e23",
+    "bytes": 10861,
+    "carrierCommit": "c03ff6767a8e80894d903ce0d2d0e22c2cad7737",
+    "carrierTree": "e8a5d325e852dcf5c63ecab95fcfe7eaaed22257",
+    "reason": "R18 predates the five fixed-order Batch-04 technical lane exits, their zero-business-credit overall sequencing closure, and the resulting V59, V19, V54, V333, V14, V265 and product-authorization v56 high-water state."
+  },
+  "authorityBasis": {
+    "r7C0Reclassification": {
+      "path": "r7-c0-reclassification-r1/base-slice-reclassification.v1.json",
+      "sha256": "73c02c6d945f2b62ae716d2dbbf76e5123a2863f50d19de51e27085943291de8",
+      "bytes": 141708,
+      "carrierCommit": "53c5bfbbede7f2dd417a38ba0bce6301a2617347",
+      "carrierTree": "74c8af3eff1fbfd9bab8cceeebf0a8c0fce130f6",
+      "requiredBatch05Order": [
+        "BASE-TFR-HRM-012",
+        "BASE-TFR-PAY-004",
+        "BASE-TFR-PER-008",
+        "BASE-TFR-SYS-008",
+        "BASE-TFR-TIM-004"
+      ]
+    },
+    "batch04Preflight": {
+      "path": "r7-batch-04-preflight-r1/semantic-dependency-migration-preflight.v1.json",
+      "sha256": "3fe2cb0cab1aa65fbe75f1b0d8d4a74f136be457aa2c324d262eb7503789cc1c",
+      "bytes": 17214,
+      "carrierCommit": "c03ff6767a8e80894d903ce0d2d0e22c2cad7737",
+      "carrierTree": "e8a5d325e852dcf5c63ecab95fcfe7eaaed22257",
+      "requiredState": "PREFLIGHT_COMPLETE_FIXED_ORDER_FIVE_CONDITIONAL_LANES_NO_PACKETS_NO_TOKENS_NO_LEASES_NO_SOURCE"
+    },
+    "batch04SequencingExit": {
+      "path": "r7-batch-04-sequencing-exit-r1/sequencing-exit-receipt.v1.json",
+      "sha256": "d437e9c56ac988b131e83da0d60b6508b71be84cfe84a1e7355f2dffa4a92c4d",
+      "bytes": 13743,
+      "carrierCommit": "adbb1713a1cb0a16adb61d98df4d359494faaa78",
+      "carrierTree": "3d36a15f521c5a781cb79ed568ca12225a3e642f",
+      "requiredState": "BATCH04_OVERALL_SEQUENCING_EXIT_ACCEPTED_DEFAULT_OFF_ZERO_ENROLLMENT_ZERO_BUSINESS_CREDIT_EXECUTION_ROADMAP_SUCCESSOR_V19_NEXT",
+      "requiredDecision": "CLOSE_BATCH04_SEQUENCING_ONLY_WITH_ZERO_BUSINESS_CREDIT_DEFAULT_OFF_ZERO_ENROLLMENT_ZERO_ACTIVE_LEASES_AND_AUTHORIZE_ONLY_EXECUTION_ROADMAP_SUCCESSOR_V19"
+    }
+  },
+  "observedPinsBeforeRoadmapArtifact": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "8f8087736e59413c60ddcdcd081ed42f1915bc91",
+      "tree": "7020953515319688b998777ed73cae166dd678be",
+      "originExact": true,
+      "clean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "adbb1713a1cb0a16adb61d98df4d359494faaa78",
+      "tree": "3d36a15f521c5a781cb79ed568ca12225a3e642f",
+      "originExact": true,
+      "cleanBeforeRoadmapDraft": true,
+      "expectedUntrackedOnlyAfterDraft": [
+        "docs/06-delivery/hris/wave7-2026-10-17/execution-roadmap-successor.v19.json"
+      ]
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "originExact": true,
+      "clean": true
+    }
+  },
+  "closedMilestones": [
+    "R6A",
+    "R6B",
+    "R6C",
+    "R6 integrated default-OFF closure",
+    "R7 C0 reclassification",
+    "R7 activation infrastructure integrated default OFF with zero tenant enrollment",
+    "R7 Batch-01 sequencing exit accepted with zero business-completion credit",
+    "R7 Batch-02 central integration closed with zero business-completion credit",
+    "R7 Batch-03 sequencing exit accepted with zero business-completion credit",
+    "R7 Batch-04 semantic dependency and migration preflight",
+    "R7 Batch-04 HRM-011, PAY-003, PER-004, SYS-006 and TIM-003 fixed-order technical lane exits",
+    "R7 Batch-04 overall sequencing exit accepted with zero business-completion credit"
+  ],
+  "batch04Closure": {
+    "sequencingExitReceipt": {
+      "path": "r7-batch-04-sequencing-exit-r1/sequencing-exit-receipt.v1.json",
+      "sha256": "d437e9c56ac988b131e83da0d60b6508b71be84cfe84a1e7355f2dffa4a92c4d",
+      "bytes": 13743,
+      "carrierCommit": "adbb1713a1cb0a16adb61d98df4d359494faaa78",
+      "carrierTree": "3d36a15f521c5a781cb79ed568ca12225a3e642f"
+    },
+    "laneExitReceipts": [
+      {
+        "order": 1,
+        "sliceId": "BASE-TFR-HRM-011",
+        "path": "r7-batch-04-central-admission-r1/hrm-011-sequencing-exit-receipt.v1.json",
+        "sha256": "1271581067af67de5a71b53c89ef1e4170756d61010e9b2b01c1167aa07fd994",
+        "bytes": 7353,
+        "carrierCommit": "15827ad8cffe6ce681eddadf8aee0dd175259671",
+        "carrierTree": "b020f4812a93cab17f0ca8b670549be0a07c4809"
+      },
+      {
+        "order": 2,
+        "sliceId": "BASE-TFR-PAY-003",
+        "path": "r7-batch-04-central-admission-r1/pay-003-sequencing-exit-receipt.v1.json",
+        "sha256": "253d970e53d0fcbd4e18964a2af65ee5220f799fc854756d949ebc0e62f8c75b",
+        "bytes": 8006,
+        "carrierCommit": "58fe96e762342aaafa32ff1a8420eb2d1626a7d1",
+        "carrierTree": "33ebd2952c8a42eae9fe412f7d194e6ba5499fd4"
+      },
+      {
+        "order": 3,
+        "sliceId": "BASE-TFR-PER-004",
+        "path": "r7-batch-04-central-admission-r1/per-004-sequencing-exit-receipt.v1.json",
+        "sha256": "a25b77fe2030f1245f78ef05f4d2eecace04234c358d8e3482c32fad424ea2e0",
+        "bytes": 8720,
+        "carrierCommit": "9f6fa831cb72dde11f9370a80ee8dee7c126d882",
+        "carrierTree": "d13c29904fe31f86bc1ff0c2007b9d891ec9ef95"
+      },
+      {
+        "order": 4,
+        "sliceId": "BASE-TFR-SYS-006",
+        "path": "r7-batch-04-central-admission-r1/sys-006-sequencing-exit-receipt.v1.json",
+        "sha256": "4dce61355a0070aa46ffd3b95fe5923fb770769f902bc4ae38d9090ced0e259f",
+        "bytes": 8539,
+        "carrierCommit": "287f6dfa2229048b4cc7258579294407314bf40a",
+        "carrierTree": "a0871dabac1211d0e48fbcf3e59c5fe49a5ed329"
+      },
+      {
+        "order": 5,
+        "sliceId": "BASE-TFR-TIM-003",
+        "path": "r7-batch-04-central-admission-r1/tim-003-sequencing-exit-receipt.v1.json",
+        "sha256": "6c488766f8853a05b8809f908822677324c03de1c978c2e1bab380d4d8b32a8a",
+        "bytes": 11189,
+        "carrierCommit": "4747da70661029715a685cabca21d05a947145d3",
+        "carrierTree": "2a416d857069afe9d630da35b9b2d146f3192df1"
+      }
+    ],
+    "fixedOrderTechnicalLanes": [
+      "BASE-TFR-HRM-011",
+      "BASE-TFR-PAY-003",
+      "BASE-TFR-PER-004",
+      "BASE-TFR-SYS-006",
+      "BASE-TFR-TIM-003"
+    ],
+    "allFiveTechnicalLanesExited": true,
+    "fullBusinessSliceCompletionCount": 0,
+    "businessCompletionIncrement": 0,
+    "runtimeDefault": "OFF",
+    "tenantEnrollmentCount": 0,
+    "activeMigrationLeaseCount": 0,
+    "authorizationBundle": 56,
+    "authorizationStatus": "DRAFT",
+    "authorizationContractChecksum": "4c1e82c4ac70f7bbc4aba7a41d77b8fd238da0478501cbdfed97ebd4b5dd0930"
+  },
+  "tenantFeatureActivationLane": {
+    "state": "INTEGRATED_DEFAULT_OFF_ZERO_TENANT_ENROLLMENT",
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "globalActiveSeeds": 0,
+    "tenantEnrollmentSeeds": 0,
+    "openP0Gates": [
+      {
+        "gateId": "TIM_CLOSE_PERIOD_DEFINITION_PRODUCER",
+        "state": "OPEN_EXTERNAL_SOURCE_AUTHORITY_GATE"
+      },
+      {
+        "gateId": "TIM_CLOSE_TRUSTED_OWNER_HEADER_ISSUER",
+        "state": "OPEN_BEFORE_ANY_TENANT_ENROLLMENT"
+      }
+    ]
+  },
+  "migrationHighWater": {
+    "PEOPLE_MAIN": "V59",
+    "PERFORMANCE": "V19",
+    "PAYROLL_MAIN": "V54",
+    "PLATFORM_MAIN": "V333",
+    "TIME_MAIN": "V14",
+    "AUTH_MAIN": "V265",
+    "NOTIFICATION_MAIN": "V35",
+    "APPROVAL_MAIN": "V58",
+    "PRODUCT_AUTHORIZATION_BUNDLE": "v56"
+  },
+  "portfolioAggregate": {
+    "universe": 86,
+    "retired": 2,
+    "active": 84,
+    "completed": 26,
+    "activeIncomplete": 58,
+    "batch04TechnicalLaneExitCount": 5,
+    "batch04BusinessCompletionIncrement": 0
+  },
+  "carriedSemanticNoGoLanes": [
+    {
+      "sliceId": "BASE-TFR-PER-003",
+      "moduleSession": "HRIS-PER",
+      "state": "SEMANTIC_NO_GO_NO_PACKET_NO_TOKEN_NO_LEASE_NO_SOURCE",
+      "missingAuthority": "Schedule, hold, complete, acknowledge and cancel owner-route transaction semantics.",
+      "stream": "PERFORMANCE",
+      "observedHighWater": "V19",
+      "migrationAuthorityState": "NO_SLICE_LEASE_OR_MIGRATION_AUTHORITY"
+    },
+    {
+      "sliceId": "BASE-TFR-PAY-002",
+      "moduleSession": "HRIS-PAY",
+      "state": "SEMANTIC_NO_GO_NO_PACKET_NO_TOKEN_NO_LEASE_NO_SOURCE",
+      "missingAuthority": "Exact connector target, mapping, idempotency, reconciliation and owner binding.",
+      "stream": "PAYROLL_MAIN",
+      "observedHighWater": "V54",
+      "migrationAuthorityState": "NO_SLICE_LEASE_OR_MIGRATION_AUTHORITY"
+    },
+    {
+      "sliceId": "BASE-TFR-TIM-002",
+      "moduleSession": "HRIS-TIM",
+      "state": "SEMANTIC_NO_GO_NO_PACKET_NO_TOKEN_NO_LEASE_NO_SOURCE",
+      "missingAuthority": "Notification trigger, type key, recipient, template version, variables, deep link, opt-out, masking and receipt contract.",
+      "stream": "TIME_MAIN",
+      "observedHighWater": "V14",
+      "migrationAuthorityState": "NO_SLICE_LEASE_OR_MIGRATION_AUTHORITY"
+    }
+  ],
+  "batch05CandidateSet": {
+    "state": "PREFLIGHT_REQUIRED_NO_SOURCE_AUTHORITY_NO_PACKETS_NO_TOKENS_NO_WORKTREES_NO_ACTIVE_MIGRATION_LEASES",
+    "fixedOrderAuthority": {
+      "path": "r7-c0-reclassification-r1/base-slice-reclassification.v1.json",
+      "sha256": "73c02c6d945f2b62ae716d2dbbf76e5123a2863f50d19de51e27085943291de8",
+      "bytes": 141708,
+      "rule": "START_ONLY_AFTER_PREDECESSOR_BATCH_EVIDENCE_IS_ACCEPTED_AND_DEPENDENCIES_REMAIN_SATISFIED"
+    },
+    "fixedOrder": [
+      {
+        "order": 1,
+        "sliceId": "BASE-TFR-HRM-012",
+        "moduleSession": "HRIS-HRM",
+        "classificationAtR7C0": "NO_CURRENT_SLICE_RESULT",
+        "semanticLineage": "TFR-HRM-012::hr-data-quality::PEP-HRM-015|EVT-HRM:WorkforceIngestionReconciled.v1",
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "requiredPreflight": "Seal IAQ-012, PEP-HRM-015 and WorkforceIngestionReconciled.v1 ownership, reconciliation, quality-finding and command-receipt semantics; prove schema delta beyond People V59.",
+        "migrationStream": "PEOPLE_MAIN",
+        "observedHighWater": "V59",
+        "candidateVersionIfSchemaDeltaProven": "V60",
+        "migrationDefault": "NONE_UNLESS_SCHEMA_DELTA_PROVEN"
+      },
+      {
+        "order": 2,
+        "sliceId": "BASE-TFR-PAY-004",
+        "moduleSession": "HRIS-PAY",
+        "classificationAtR7C0": "NO_CURRENT_SLICE_RESULT",
+        "semanticLineage": "TFR-PAY-004::PAY-RETIREMENT::PEP-PAY-028|PEP-PAY-012|PEP-PAY-014|EVT-PAY:PayrollCalculated",
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "requiredPreflight": "Seal IAQ-049, retirement result, policy-version and case-state ownership against PEP-PAY-028, PEP-PAY-012, PEP-PAY-014 and PayrollCalculated; prove schema delta beyond Payroll V54.",
+        "migrationStream": "PAYROLL_MAIN",
+        "observedHighWater": "V54",
+        "candidateVersionIfSchemaDeltaProven": "V55",
+        "migrationDefault": "NONE_UNLESS_SCHEMA_DELTA_PROVEN"
+      },
+      {
+        "order": 3,
+        "sliceId": "BASE-TFR-PER-008",
+        "moduleSession": "HRIS-PER",
+        "classificationAtR7C0": "NO_CURRENT_SLICE_RESULT",
+        "semanticLineage": "TFR-PER-008::PER-FEEDBACK-001::PEP-PER-015|EVT-PER:PerformanceFeedbackSubmitted.v1",
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-016"
+        ],
+        "requiredPreflight": "Seal IAQ-038, PEP-PER-015, feedback request and PerformanceFeedbackSubmitted.v1 ownership, audience, masking, receipt and team-workbench projection semantics; prove schema delta beyond Performance V19.",
+        "migrationStream": "PERFORMANCE",
+        "observedHighWater": "V19",
+        "candidateVersionIfSchemaDeltaProven": "V20",
+        "migrationDefault": "NONE_UNLESS_SCHEMA_DELTA_PROVEN"
+      },
+      {
+        "order": 4,
+        "sliceId": "BASE-TFR-SYS-008",
+        "moduleSession": "HRIS-SYS",
+        "classificationAtR7C0": "NO_CURRENT_SLICE_RESULT",
+        "semanticLineage": "TFR-SYS-008::DWP.INTEGRATION.CONTROL_PLANE::SYS-API-021|SYS-API-022|SYS-API-023|SYS-API-024|SYS-API-025|SYS-API-057|SYS-API-058|SYS-API-059|SYS-API-060|SYS-API-061|SYS-API-062|SYS-API-063|SYS-API-064|SYS-API-065|SYS-API-066|SYS-API-067|SYS-API-068|SYS-EVT-005",
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-006",
+          "DEP-016"
+        ],
+        "requiredPreflight": "Seal IAQ-057 and IAQ-062 plus connector definition, mapping, validation, approval, activation, execution, retry, cancel, reconciliation and immutable SYS-EVT-005 boundaries; prove schema delta beyond Platform V333.",
+        "migrationStream": "PLATFORM_MAIN",
+        "observedHighWater": "V333",
+        "candidateVersionIfSchemaDeltaProven": "V334",
+        "migrationDefault": "NONE_UNLESS_SCHEMA_DELTA_PROVEN"
+      },
+      {
+        "order": 5,
+        "sliceId": "BASE-TFR-TIM-004",
+        "moduleSession": "HRIS-TIM",
+        "classificationAtR7C0": "NO_CURRENT_SLICE_RESULT",
+        "semanticLineage": "TFR-TIM-004::TIM-PLATFORM-AUTOMATION::SYS-API-017|SYS-API-018|SYS-API-019|SYS-API-020",
+        "dependencies": [
+          "DEP-001",
+          "DEP-002",
+          "DEP-003",
+          "DEP-004",
+          "DEP-005",
+          "DEP-016"
+        ],
+        "requiredPreflight": "Seal Time-owned use of the Platform automation control plane without duplicating or recounting SYS-006 ownership, including handler allowlisting, run, attempt, retry and receipt boundaries; prove whether any Time-owned schema delta exists beyond V14.",
+        "migrationStream": "TIME_MAIN",
+        "observedHighWater": "V14",
+        "candidateVersionIfSchemaDeltaProven": "V15",
+        "migrationDefault": "NONE_UNLESS_SCHEMA_DELTA_PROVEN"
+      }
+    ]
+  },
+  "nextExecutable": {
+    "id": "R7-BATCH-05-SEMANTIC-DEPENDENCY-MIGRATION-PREFLIGHT",
+    "documentOnly": true,
+    "steps": [
+      "Hash-pin the Batch-04 overall sequencing exit and the current backend, frontend and agent dwp-dev states.",
+      "Process Batch-05 only in the fixed order HRM-012, PAY-004, PER-008, SYS-008 and TIM-004.",
+      "For each candidate, verify exact overlay lineage, dependency rows, entry-query or reuse boundary, owner contracts, events and no-recount constraints.",
+      "Classify each lane as conditional GO or semantic NO-GO for a future separate authority; do not issue an owner packet or start token from the preflight.",
+      "Prove migration necessity against V59, V54, V19, V333 and V14 respectively and issue no speculative migration lease.",
+      "Carry PER-003, PAY-002 and TIM-002 as semantic NO-GO lanes and carry both TIM P0 gates unchanged.",
+      "Require independent document review before admitting the preflight evidence."
+    ],
+    "forbiddenByThisRoadmap": [
+      "owner packet issuance",
+      "start token issuance",
+      "worktree materialization",
+      "migration lease reservation or activation",
+      "central authorization authoring",
+      "module or central source authoring",
+      "feature activation",
+      "tenant enrollment",
+      "production binding or release"
+    ],
+    "validationPolicy": {
+      "initial": "Validate JSON syntax, exact direct-reference SHA-256 and byte counts, carrier ancestry, repository pins, fixed order, high-water and closed authority booleans once.",
+      "afterFailure": "Correct and rerun only the smallest failing document or direct-reference check.",
+      "sourceTestRunForRoadmapOrPreflight": false,
+      "repositoryWideSuite": false,
+      "fullSuite": "Only at an explicitly authorized central release gate or proven cross-cutting source risk."
+    }
+  },
+  "authority": {
+    "r6Complete": true,
+    "batch04SequencingClosed": true,
+    "batch04FullBusinessCompletionClaimed": false,
+    "batch04BusinessCompletionIncrement": 0,
+    "batch04Complete": false,
+    "batch05PreflightAuthorized": true,
+    "batch05PreflightDocumentOnly": true,
+    "batch05PreflightCompletedByThisRoadmap": false,
+    "batch05OwnerPacketAuthorized": false,
+    "batch05StartTokenAuthorized": false,
+    "batch05WorktreeMaterializationAuthorized": false,
+    "batch05MigrationLeaseAuthorized": false,
+    "batch05CentralAuthorizationAuthoringAuthorized": false,
+    "batch05SourceAuthoringAuthorized": false,
+    "moduleBranchCommitAndPushAuthorizedByThisRoadmap": false,
+    "directDwpDevMergeAuthorized": false,
+    "semanticNoGoLanesReleased": false,
+    "timP0GatesClosed": false,
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "businessCompletionCredit": 0,
+    "customerDataAuthorized": false,
+    "productionBindingAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "r7Complete": false,
+    "hrisComplete": false
+  },
+  "nonClaims": [
+    "Any Batch-04 technical lane is a fully complete production business slice or receives business-completion credit.",
+    "Batch-04, R7 or HRIS is complete.",
+    "BASE-TFR-PER-003, BASE-TFR-PAY-002 or BASE-TFR-TIM-002 received semantic GO, a packet, token, worktree, migration lease or source authority.",
+    "Either inherited TIM P0 gate is closed.",
+    "Any Batch-05 owner packet, start token, worktree, migration lease, central authorization or source artifact exists or is authorized by this roadmap.",
+    "The product-authorization v56 DRAFT bundle is active or automatically imported.",
+    "Any production provider, handler, scheduler, broker, route, menu, feature, consumer, worker or tenant is activated, bound, mounted or enrolled.",
+    "Customer data, production execution or release is authorized."
+  ]
+}
