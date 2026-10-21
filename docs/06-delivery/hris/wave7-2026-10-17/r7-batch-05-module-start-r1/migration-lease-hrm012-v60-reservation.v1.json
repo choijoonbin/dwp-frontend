@@ -1,0 +1,133 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-05-hrm012-v60-migration-lease-reservation.v1",
+  "reservationId": "HRIS-WAVE7-R7-BATCH-05-MIGRATION-LEASE-RESERVATION-HRM012-V60-20261021-R1",
+  "recordedAt": "2026-10-21T23:59:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "RESERVED_NOT_ACTIVE",
+  "immutability": {
+    "sealed": true,
+    "appendOnly": true,
+    "predecessorMutation": "FORBIDDEN"
+  },
+  "sliceId": "BASE-TFR-HRM-012",
+  "module": "HRM",
+  "moduleSession": "HRIS-HRM",
+  "semanticAuthority": {
+    "path": "semantic-dispositions/base-tfr-hrm-012.semantic-disposition.v1.json",
+    "sha256": "bc7371c37459efa104c5d1239eae326fb2585fdd8d1b59b094046b6b02393519",
+    "bytes": 33226,
+    "decision": "PEOPLE_V60_REQUIRED_RESERVE_SEPARATELY_NOT_ACTIVE"
+  },
+  "canonicalEvidence": {
+    "transportSchemaSupplement": {
+      "path": "../../recovery/hris-porting-blueprint-2026-09-09/coding-readiness/hrm-transport-schema-supplement.v1.json",
+      "sha256": "85d29729961f4348b595f9773c76afd7232e4b92c5f198351afb4d8ac0dcf404",
+      "bytes": 20613
+    },
+    "stateGuardIdempotencyRecovery": {
+      "path": "../../recovery/hris-porting-blueprint-2026-09-09/session-evidence/hrm/g2-readiness/state-guard-idempotency-recovery.md",
+      "sha256": "72e72be66fa7aba49c945ab9eb503fb69d3b2fffc838096a4b20d6c6a52f58a6",
+      "bytes": 14892
+    }
+  },
+  "basePin": {
+    "repository": "dwp-backend",
+    "branch": "dwp-dev",
+    "commit": "8f8087736e59413c60ddcdcd081ed42f1915bc91",
+    "tree": "7020953515319688b998777ed73cae166dd678be",
+    "requiredRemote": "origin/dwp-dev",
+    "requiredRemoteExact": true,
+    "clean": true
+  },
+  "observedMigrationState": {
+    "peopleHighWater": "V59",
+    "candidateV60Absent": true,
+    "v1ThroughV59ManifestSha256": "6629d1817a36b0b4a7d32a17925d3804d8fd2e55ff9912b84bef349f3d1276c5",
+    "manifestBytes": 9496,
+    "migrationCount": 59,
+    "sqlBytes": 419829,
+    "requiredPreservation": "V1_THROUGH_V59_BYTE_FOR_BYTE"
+  },
+  "reservation": {
+    "server": "dwp-people-server",
+    "version": "V60",
+    "exactPath": "dwp-people-server/src/main/resources/db/migration/V60__hrm_base_tfr_hrm_012.sql",
+    "reservedFor": "BASE-TFR-HRM-012",
+    "createExactlyTwoTables": [
+      "ppl_workforce_ingestion_runs",
+      "ppl_workforce_ingestion_items"
+    ],
+    "reuseWithoutRecreation": [
+      "int_connector_instances",
+      "int_mapping_profiles",
+      "int_connector_cursors",
+      "ppl_command_receipts",
+      "sys_people_audit_events",
+      "sys_people_outbox_events"
+    ],
+    "requiredDatabaseControls": [
+      "same-tenant composite foreign keys",
+      "nonnegative six-count checks enforcing source = accepted + rejected + duplicate and accepted = applied + quarantined_after_acceptance",
+      "lowercase 64-hex digest checks and positive object and mapping versions",
+      "unique run item sequence and deterministic duplicate lookup index",
+      "forward-only lifecycle and immutable source, connector, mapping and outcome trigger guards",
+      "worker lease, immutable linked-replay lineage and IAQ-012 stable-order indexes",
+      "ENABLE and FORCE row-level security with tenant-bound USING and WITH CHECK on both tables"
+    ],
+    "forbiddenDatabaseWork": [
+      "editing V1 through V59",
+      "creating a third HRM-012 table",
+      "recreating an existing connector, cursor, receipt, audit or outbox store",
+      "seed or backfill",
+      "automatic privilege elevation",
+      "customer or production database execution"
+    ]
+  },
+  "necessityProof": {
+    "v60IsRequired": true,
+    "reason": "Existing integration stores do not bind one immutable command receipt and canonical object/schema command to server-resolved connector and mapping revisions, six reconciled counters, result digest and cursor compare-and-set evidence, and do not provide the item ledger needed for rejected-versus-duplicate-versus-quarantined-after-acceptance classification, the two canonical conservation equations, crash-safe worker recovery and new-receipt replay lineage without history rewrite.",
+    "legacyIntSyncRunsSufficient": false,
+    "legacyIntSyncErrorsSufficient": false,
+    "newConnectorOrOutboxTablesRequired": false
+  },
+  "plannedMaterialization": {
+    "backendWorktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261021/r7-batch05/hrm-012/backend",
+    "backendBranch": "codex/hris-wave7-r7-batch05-hrm-012-backend-20261021-r1",
+    "worktreeExistsNow": false,
+    "branchExistsNow": false,
+    "activationPrerequisites": [
+      "this reservation is carried by a committed and pushed frontend authority commit",
+      "independent review records zero unresolved P0, P1 or P2 findings for the semantic disposition, reservation and owner packet",
+      "the backend worktree is freshly materialized at the exact base pin and is clean",
+      "the three required central product-authorization route contracts and new narrow hcm.integration.workforce-ingestion.execute capability are admitted by a separate append-only successor without redefining hcm.integration.execute",
+      "an append-only active-lease successor binds the materialized worktree HEAD and this exact reserved path",
+      "a separate executable HRM-012 start token is issued"
+    ]
+  },
+  "invalidation": [
+    "People high-water is no longer V59 before activation",
+    "the exact V60 path exists or is reserved by any other slice",
+    "backend base commit or tree differs from the sealed pin",
+    "semantic authority SHA-256 or byte count differs",
+    "the active successor expands beyond the exact two-table manifest",
+    "the backend worktree is dirty before activation"
+  ],
+  "authority": {
+    "activeLeaseCount": 0,
+    "oneExactPeopleV60PathReserved": true,
+    "leaseActive": false,
+    "v60AuthoringAuthorized": false,
+    "existingMigrationEditAuthorized": false,
+    "secondPeopleMigrationAuthorized": false,
+    "worktreeMaterializationAuthorizedByThisReservationAlone": false,
+    "moduleSourceAuthoringAuthorized": false,
+    "testExecutionAuthorized": false,
+    "branchCommitAndPushAuthorizedByThisReservationAlone": false,
+    "mergeToDwpDevAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "customerDatabaseExecutionAuthorized": false,
+    "productionExecutionAuthorized": false
+  },
+  "nextAction": "AFTER_AUTHORITY_CARRIER_PUSH_AND_INDEPENDENT_REVIEW_MATERIALIZE_THE_EXACT_CLEAN_BACKEND_WORKTREE_AND_ISSUE_ONE_HASH_BOUND_ACTIVE_V60_LEASE_SUCCESSOR; DO_NOT_AUTHOR_V60_UNDER_THIS_RESERVATION"
+}

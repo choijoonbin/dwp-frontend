@@ -1,0 +1,376 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-05-hrm012-owner-packet.v1",
+  "packetId": "HRIS-WAVE7-R7-BATCH-05-OWNER-BASE-TFR-HRM-012-20261021-R1",
+  "recordedAt": "2026-10-21T23:59:30+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "SEALED_INDEPENDENT_REVIEW_READY_EXECUTABLE_TOKEN_WITHHELD",
+  "immutability": {
+    "sealed": true,
+    "appendOnly": true,
+    "predecessorMutation": "FORBIDDEN"
+  },
+  "sliceId": "BASE-TFR-HRM-012",
+  "module": "HRM",
+  "moduleSession": "HRIS-HRM",
+  "boundedContext": "HRIS_INTEGRATION",
+  "authorityChain": {
+    "batch05Preflight": {
+      "path": "../../r7-batch-05-preflight-r1/semantic-dependency-migration-preflight.v1.json",
+      "sha256": "8f7a0d38c4dc86873e4930e5a21dcc0a269c39512508d86dd529b40015237e0f",
+      "bytes": 37443
+    },
+    "semanticDisposition": {
+      "path": "../semantic-dispositions/base-tfr-hrm-012.semantic-disposition.v1.json",
+      "sha256": "bc7371c37459efa104c5d1239eae326fb2585fdd8d1b59b094046b6b02393519",
+      "bytes": 33226
+    },
+    "migrationReservation": {
+      "path": "../migration-lease-hrm012-v60-reservation.v1.json",
+      "sha256": "318df1fc3473fd408788e571bcf2884c1b07887003a38cb6f2bc366b715da422",
+      "bytes": 6555,
+      "state": "RESERVED_NOT_ACTIVE"
+    },
+    "canonicalTransportSchemaSupplement": {
+      "path": "../../../recovery/hris-porting-blueprint-2026-09-09/coding-readiness/hrm-transport-schema-supplement.v1.json",
+      "sha256": "85d29729961f4348b595f9773c76afd7232e4b92c5f198351afb4d8ac0dcf404",
+      "bytes": 20613,
+      "operation": "initiateWorkforceIngestion"
+    },
+    "stateGuardIdempotencyRecovery": {
+      "path": "../../../recovery/hris-porting-blueprint-2026-09-09/session-evidence/hrm/g2-readiness/state-guard-idempotency-recovery.md",
+      "sha256": "72e72be66fa7aba49c945ab9eb503fb69d3b2fffc838096a4b20d6c6a52f58a6",
+      "bytes": 14892
+    }
+  },
+  "basePins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "8f8087736e59413c60ddcdcd081ed42f1915bc91",
+      "tree": "7020953515319688b998777ed73cae166dd678be",
+      "requiredRemote": "origin/dwp-dev",
+      "requiredRemoteExact": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "e00a6e9a38c1270f8a0f08aa5d3536421091e9a3",
+      "tree": "9f834e7b3e2d98b1928aa7fd4039256756bb2cc8",
+      "requiredRemote": "origin/dwp-dev",
+      "requiredRemoteExactBeforeAuthorityCarrier": true,
+      "authorityCarrierAdvanceAllowed": true
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "requiredRemote": "origin/dwp-dev",
+      "requiredRemoteExact": true,
+      "readOnly": true
+    }
+  },
+  "implementationContract": {
+    "page": {
+      "route": "/hr/operations/people/data-quality",
+      "archetype": "COMMAND_CENTER_WITH_LIST_DETAIL_INSPECTOR",
+      "featureKey": "HRIS_HRM_DATA_QUALITY_WORKBENCH",
+      "defaultEnabled": false,
+      "tenantEnrollmentCount": 0,
+      "states": [
+        "LOADING",
+        "COMPLETE",
+        "EMPTY",
+        "PARTIAL",
+        "UNAVAILABLE",
+        "DENIED",
+        "STALE"
+      ],
+      "rule": "Default-OFF performs zero HRM-012 data calls; IAQ-012 displays only authorized redacted run, finding and receipt projections and exposes no action."
+    },
+    "iaq012": {
+      "method": "GET",
+      "browserPath": "/api/people/v1/hris/workbench/operations/data/quality",
+      "ownerPath": "/v1/hris/workbench/operations/data/quality",
+      "capability": "hcm.operations.people.view",
+      "profileAndDuty": "HRIS_HR_BUSINESS_PARTNER>HRIS_DUTY_CORE_VIEWER",
+      "fieldGroups": [
+        "INGESTION_STATUS",
+        "QUALITY_FINDING",
+        "COMMAND_RECEIPT"
+      ],
+      "availableActions": [],
+      "pageLimit": 100
+    },
+    "pepHrm015": {
+      "canonicalMeaning": "initiateWorkforceIngestion",
+      "method": "POST",
+      "browserPath": "/api/people/v1/hris/integrations/workforce-ingestions",
+      "ownerPath": "/v1/hris/integrations/workforce-ingestions",
+      "capability": "hcm.integration.workforce-ingestion.execute",
+      "forbiddenLegacyAuthority": "hcm.integration.execute",
+      "requiredResponsibilityCode": "HRIS_DUTY_INTEGRATION_EXECUTOR",
+      "populationTypes": [
+        "CONNECTOR_SET",
+        "LEGAL_ENTITY"
+      ],
+      "purpose": "HRIS_INTEGRATION",
+      "requestBodyExactly": [
+        "objectRef",
+        "objectDigest",
+        "schemaKey",
+        "schemaVersion",
+        "mode",
+        "effectiveDate"
+      ],
+      "requiredHeadersExactly": [
+        "Authorization",
+        "Idempotency-Key",
+        "If-Match",
+        "X-Correlation-ID"
+      ],
+      "optionalHeadersExactly": [
+        "X-Purpose-Code"
+      ],
+      "modesExactly": [
+        "VALIDATE_ONLY",
+        "APPLY"
+      ],
+      "schemaConstraints": {
+        "additionalProperties": false,
+        "objectRefPattern": "^obj_[A-Za-z0-9_-]{16,128}$",
+        "objectDigestPattern": "^[a-f0-9]{64}$",
+        "schemaKeyLength": "1..128",
+        "schemaVersionMinimum": 1,
+        "effectiveDate": "RFC3339 full-date YYYY-MM-DD"
+      },
+      "forbiddenRequestAuthority": [
+        "connectorPublicId",
+        "connectorVersion",
+        "mappingPublicId",
+        "mappingVersion",
+        "sourceArtifact",
+        "requestedCursorDigest",
+        "X-DWP-Expected-Object-Version",
+        "REPLAY command mode"
+      ],
+      "replayRule": "Authorized terminal replay creates a new linked receipt and new evidence; it is never an IngestionCommand mode and never rewrites the original receipt, run, item outcome or history.",
+      "idempotency": {
+        "receiptScopeExactly": [
+          "trusted tenant",
+          "on-behalf-of subject",
+          "originating action",
+          "Idempotency-Key"
+        ],
+        "immutableReceiptMetadata": [
+          "canonical request hash",
+          "actor",
+          "authorization revision",
+          "population revision",
+          "field-policy revision",
+          "purpose",
+          "correlation ID"
+        ],
+        "outcomes": "Same tuple and same hash returns the original receipt without rerunning terminal work; same tuple and different hash returns 409; concurrent reservation has one winner."
+      },
+      "success": "202 Receipt"
+    },
+    "event": {
+      "type": "WorkforceIngestionReconciled.v1",
+      "payloadExactly": [
+        "runPublicId",
+        "connectorPublicId",
+        "mappingVersion",
+        "sourceCount",
+        "acceptedCount",
+        "rejectedCount",
+        "duplicateCount",
+        "quarantinedCount",
+        "appliedCount",
+        "resultDigest"
+      ]
+    },
+    "conservation": [
+      "sourceCount = acceptedCount + rejectedCount + duplicateCount",
+      "acceptedCount = appliedCount + quarantinedCount",
+      "quarantinedCount means quarantined_after_acceptance only"
+    ],
+    "database": {
+      "exactMigrationPath": "dwp-people-server/src/main/resources/db/migration/V60__hrm_base_tfr_hrm_012.sql",
+      "createExactly": [
+        "ppl_workforce_ingestion_runs",
+        "ppl_workforce_ingestion_items"
+      ],
+      "reuseExistingConnectorCursorReceiptAuditOutboxStores": true,
+      "requiredCountConstraints": [
+        "source_count = accepted_count + rejected_count + duplicate_count",
+        "accepted_count = applied_count + quarantined_count"
+      ],
+      "requiredModeConstraint": "mode IN ('VALIDATE_ONLY','APPLY'); REPLAY is not a stored command mode",
+      "terminalHistoryRule": "Worker retry may resume the same nonterminal receipt by lease; terminal replay uses a new linked receipt/run/item lineage and cannot update original terminal outcomes.",
+      "forceTenantRls": true,
+      "seedOrBackfill": false
+    }
+  },
+  "exactBoundedHrm008Correction": {
+    "reason": "PEP-HRM-015 is canonically and exclusively initiateWorkforceIngestion; the HRM-008 EVENT_DETAIL_BINDING_ID constant is stale test metadata, not runtime authority.",
+    "allowedChange": "Remove only EmploymentEventAuthority.EVENT_DETAIL_BINDING_ID and the two assertions that expect it.",
+    "exactPaths": [
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/employment/EmploymentEventAuthority.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/employment/EmploymentEventAuthorityTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/employment/HrmG3SliceContractTest.java"
+    ],
+    "forbiddenChanges": [
+      "HRM-008 route identifiers",
+      "HRM-008 capability requirements",
+      "HRM-008 controller, service, repository or response behavior",
+      "PEP-HRM-014 receipt binding",
+      "any replacement binding ID for HRM-008 event detail"
+    ],
+    "requiredRegression": [
+      "EmploymentEventAuthorityTest",
+      "HrmG3SliceContractTest"
+    ]
+  },
+  "plannedWorktrees": {
+    "backend": {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261021/r7-batch05/hrm-012/backend",
+      "branch": "codex/hris-wave7-r7-batch05-hrm-012-backend-20261021-r1",
+      "baseCommit": "8f8087736e59413c60ddcdcd081ed42f1915bc91"
+    },
+    "frontend": {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261021/r7-batch05/hrm-012/frontend",
+      "branch": "codex/hris-wave7-r7-batch05-hrm-012-frontend-20261021-r1",
+      "base": "THE_COMMITTED_AND_PUSHED_AUTHORITY_CARRIER_DESCENDING_FROM_E00A6E9A"
+    },
+    "materializedNow": false
+  },
+  "allowedTouchPathsAfterSeparateExecutableToken": {
+    "backendCreateOrModify": [
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/workbench/hrm012/**",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/hrm012/**",
+      "dwp-people-server/src/main/java/com/dwp/services/people/integration/Hrm012*.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/workbench/hrm012/**",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/contracts/hrm012/**",
+      "dwp-people-server/src/test/java/com/dwp/services/people/integration/Hrm012*.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/integration/WorkforceIngestion*.java",
+      "dwp-people-server/src/main/resources/db/migration/V60__hrm_base_tfr_hrm_012.sql"
+    ],
+    "backendBoundedCorrectionOnly": [
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/employment/EmploymentEventAuthority.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/employment/EmploymentEventAuthorityTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/employment/HrmG3SliceContractTest.java"
+    ],
+    "frontendCreateOrModify": [
+      "apps/dwp/src/features/hris/people/data-quality/**",
+      "apps/dwp/src/features/hris/people/__tests__/g3-slices/base-tfr-hrm-012.slice.test.tsx"
+    ],
+    "evidenceCreateOnly": [
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-05-results/hrm-012/**"
+    ]
+  },
+  "readOnlyDependencies": [
+    "existing People connector, mapping, cursor, command-receipt, audit, outbox and workforce projection implementations",
+    "accepted IAQ-012 query and projection contracts",
+    "canonical PEP-HRM-015 binding register",
+    "HRIS application shell, navigation, route catalog and product authorization files",
+    "all dwp_agent source",
+    "all V1 through V59 People migrations"
+  ],
+  "forbiddenTouchPathsAndExpansion": [
+    "any central product-authorization bundle or generated projection",
+    "any application-shell route, navigation catalog, menu seed or tenant enrollment",
+    "any source outside the exact allowed touch paths",
+    "any existing People migration V1 through V59",
+    "any production object provider, scheduler, broker or credential binding",
+    "any new capability, route ID, duty, population type, purpose, field group or event field inside the module worktrees; the separately reviewed central successor is the only authority allowed to issue the one named narrow capability and three named routes",
+    "any raw source payload, credential, endpoint URI, rejected restricted value, quarantine ciphertext, key reference, numeric database key or raw cursor in API, audit, log or event output"
+  ],
+  "centralPrerequisite": {
+    "admittedNow": false,
+    "currentBundle": "product-surfaces-v1.bundle-v56.json DRAFT",
+    "requiredSeparateAppendOnlySuccessor": [
+      "route.hcm.operations.people-data-quality.page",
+      "route.hcm.operations.people-data-quality.data",
+      "route.hcm.operations.workforce-ingestion.action",
+      "hcm.integration.workforce-ingestion.execute"
+    ],
+    "existingCapabilityPreservation": "hcm.integration.execute retains its current ACTION.WORKFORCE_DATA_OPERATIONS and APP_CONFIG_ADMIN management-integration meaning and must not be redefined, aliased or accepted as fallback authority for PEP-HRM-015.",
+    "rule": "The central successor is authored and reviewed outside this module packet and must admit the three routes plus the new narrow capability before an executable module token. It does not authorize menu mounting, feature enablement or tenant enrollment."
+  },
+  "targetedVerification": {
+    "rerunPolicy": "Run each new target group once; after a failure rerun only the smallest affected target. Do not run a repository-wide suite after each correction.",
+    "backend": [
+      "Hrm012IaEntryQueryContractTest",
+      "WorkforceIngestionTransportSchemaContractTest",
+      "WorkforceIngestionAuthorizationTest",
+      "WorkforceIngestionIdempotencyTest",
+      "WorkforceInputEnvelopeValidationTest",
+      "WorkforceIngestionOutcomeClassificationTest",
+      "WorkforceIngestionLinkedReplayReceiptTest",
+      "WorkforceIngestionConservationContractTest",
+      "WorkforceIngestionReconciliationTest",
+      "WorkforceIngestionEventOutboxTest",
+      "Hrm012V60MigrationContractTest",
+      "Hrm012V60MigrationPostgresTest",
+      "EmploymentEventAuthorityTest",
+      "HrmG3SliceContractTest"
+    ],
+    "frontend": [
+      "apps/dwp/src/features/hris/people/__tests__/g3-slices/base-tfr-hrm-012.slice.test.tsx",
+      "changed-root tests for loading, empty, partial, unavailable, denied, stale and complete states",
+      "default-OFF zero-call assertion",
+      "1440px, 1280px, 390px, 320px and 200 percent zoom",
+      "light, dark, high contrast, reduced motion, keyboard-only, visible focus and long Korean and English labels"
+    ],
+    "requiredAssertions": [
+      "exact six-field IngestionCommand and five-header closed schema with X-Purpose-Code optional",
+      "VALIDATE_ONLY and APPLY are the only modes; REPLAY is rejected",
+      "receipt reservation uses exactly trusted tenant, on-behalf-of subject, originating action and Idempotency-Key and freezes canonical request hash, actor, authorization/population/field-policy revisions, purpose and correlation ID",
+      "duplicates are outside accepted and both canonical conservation equations are database enforced",
+      "worker recovery keeps the same nonterminal receipt while terminal replay creates a new linked receipt and does not mutate original history",
+      "WorkforceIngestionReconciled.v1 is emitted only for terminal APPLY and has the exact ten-field payload"
+    ],
+    "database": "Real PostgreSQL validates V60 tables, constraints, triggers, indexes, FORCE RLS, cross-tenant denial, lifecycle guards, source = accepted + rejected + duplicate, accepted = applied + quarantined_after_acceptance, cursor atomicity, same-receipt worker recovery and immutable new-linked-receipt replay; report BLOCKED rather than PASS if PostgreSQL is unavailable.",
+    "evidence": [
+      "changed-path allowlist proof",
+      "git diff --check",
+      "test command, exit code and focused result for every required target",
+      "V1 through V59 byte-preservation proof",
+      "default-OFF zero-call proof",
+      "no-secret and exact-event-payload proof"
+    ]
+  },
+  "tokenEligibilityPrerequisites": [
+    "these three exact authority artifacts are independently reviewed with zero unresolved P0, P1 or P2 findings",
+    "the frontend authority carrier is committed and pushed to origin/dwp-dev",
+    "the three central route contracts and hcm.integration.workforce-ingestion.execute are admitted by a separate hash-bound append-only authorization successor without redefining hcm.integration.execute",
+    "both planned module worktrees are freshly materialized at their exact required bases and are clean",
+    "one append-only active V60 lease binds this reservation, backend worktree HEAD and exact migration path",
+    "a separate executable start token binds all preceding hashes, worktree HEADs and path allowlists"
+  ],
+  "authority": {
+    "packetSealed": true,
+    "independentReviewReady": true,
+    "semanticDispositionSealed": true,
+    "peopleV60ReservedNotActive": true,
+    "centralPrerequisitesAdmitted": false,
+    "moduleSourceAuthoringAuthorizedNow": false,
+    "migrationAuthoringAuthorizedNow": false,
+    "worktreeMaterializationAuthorizedNow": false,
+    "testExecutionAuthorizedNow": false,
+    "executableStartTokenIssued": false,
+    "featureDefaultOff": true,
+    "tenantEnrollmentCount": 0,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionArtifactProviderBindingAuthorized": false,
+    "productionSchedulerBindingAuthorized": false,
+    "productionBrokerBindingAuthorized": false,
+    "branchCommitAndPushAuthorizedByThisPacketAlone": false,
+    "mergeToDwpDevAuthorized": false,
+    "businessCompletionCredit": 0,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "INDEPENDENTLY_REVIEW_ONLY_THE_THREE_FINAL_HRM012_AUTHORITY_ARTIFACTS; AFTER_ZERO_P0_P1_P2 COMMIT AND PUSH THE AUTHORITY CARRIER, ADMIT THE SEPARATE CENTRAL ROUTE AND NARROW CAPABILITY SUCCESSOR WITHOUT REDEFINING HCM.INTEGRATION.EXECUTE, MATERIALIZE CLEAN WORKTREES, ACTIVATE V60 AND THEN ISSUE ONE EXECUTABLE TOKEN"
+}

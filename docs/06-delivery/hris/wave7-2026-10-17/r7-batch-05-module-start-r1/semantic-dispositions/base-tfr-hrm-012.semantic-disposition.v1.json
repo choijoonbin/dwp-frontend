@@ -1,0 +1,551 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-05-hrm012-semantic-disposition.v1",
+  "dispositionId": "HRIS-WAVE7-R7-BATCH-05-HRM012-SEMANTIC-DISPOSITION-20261021-R1",
+  "recordedAt": "2026-10-21T23:57:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "SEALED_EXACT_HRM012_SEMANTICS_PEOPLE_V60_PROVEN_REQUIRED_PACKET_ELIGIBLE_SOURCE_START_WITHHELD",
+  "immutability": {
+    "sealed": true,
+    "appendOnly": true,
+    "predecessorMutation": "FORBIDDEN",
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_DISPOSITION_ID_AND_SHA256"
+  },
+  "sliceId": "BASE-TFR-HRM-012",
+  "module": "HRM",
+  "moduleSession": "HRIS-HRM",
+  "boundedContext": "HRIS_INTEGRATION",
+  "sourceRef": "TFR-HRM-012",
+  "semanticLineage": "TFR-HRM-012::hr-data-quality::IAQ-012|PEP-HRM-015|EVT-HRM:WorkforceIngestionReconciled.v1",
+  "authorityBasis": {
+    "batch05Preflight": {
+      "path": "../../r7-batch-05-preflight-r1/semantic-dependency-migration-preflight.v1.json",
+      "sha256": "8f7a0d38c4dc86873e4930e5a21dcc0a269c39512508d86dd529b40015237e0f",
+      "bytes": 37443,
+      "carrierCommit": "e00a6e9a38c1270f8a0f08aa5d3536421091e9a3",
+      "carrierTree": "9f834e7b3e2d98b1928aa7fd4039256756bb2cc8",
+      "requiredDecision": "CONDITIONAL_GO_FOR_SEPARATE_EXACT_PACKET_SOURCE_START_NO_GO"
+    },
+    "executionRoadmapV19": {
+      "path": "../../execution-roadmap-successor.v19.json",
+      "sha256": "7fd14919598aadf20ea083dd11d693f4774fe803224b799935e284b858525ed0",
+      "bytes": 18404,
+      "requiredFirstBatch05Lane": "BASE-TFR-HRM-012"
+    },
+    "sourceContract": {
+      "path": "../../../recovery/hris-porting-blueprint-2026-09-09/session-evidence/hrm/g2-readiness/api-event-contracts.v1.json",
+      "sha256": "0c3ec58b29dcf534d1b887fed5678e878e4a514cf3f943165e47dd7a486355bb",
+      "bytes": 25944
+    },
+    "canonicalTransportSchemaSupplement": {
+      "path": "../../../recovery/hris-porting-blueprint-2026-09-09/coding-readiness/hrm-transport-schema-supplement.v1.json",
+      "sha256": "85d29729961f4348b595f9773c76afd7232e4b92c5f198351afb4d8ac0dcf404",
+      "bytes": 20613,
+      "operation": "initiateWorkforceIngestion",
+      "requestSchema": "#/$defs/IngestionCommand",
+      "headerSchema": "#/$defs/CommandHeaders",
+      "responseSchema": "#/$defs/Receipt"
+    },
+    "stateGuardIdempotencyRecovery": {
+      "path": "../../../recovery/hris-porting-blueprint-2026-09-09/session-evidence/hrm/g2-readiness/state-guard-idempotency-recovery.md",
+      "sha256": "72e72be66fa7aba49c945ab9eb503fb69d3b2fffc838096a4b20d6c6a52f58a6",
+      "bytes": 14892,
+      "selectors": [
+        "2. Guard order",
+        "4. Idempotency protocol",
+        "6. Batch and bulk recovery",
+        "7. Integration ingestion and reconciliation"
+      ]
+    },
+    "acceptedEntryQueryRegister": {
+      "path": "../../../recovery/exact-supplements/2026-10-06/accepted-successors/hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-api-contract-register.csv",
+      "sha256": "5f47efd33a1d5aa3d11a4d9fd5716cd4e35650e9fec0868ecb77c8c90a4cd988",
+      "bytes": 100020,
+      "selector": "IAQ-012"
+    },
+    "acceptedProjectionSchema": {
+      "path": "../../../recovery/exact-supplements/2026-10-06/hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-projection-schemas.v1.json",
+      "sha256": "b185accd712216c39bf8a66f70cbbf0092a27a8c2c5e3d7457ecd4d511afa048",
+      "bytes": 1523618,
+      "jsonPointer": "/projections/IAQ-012"
+    },
+    "iaNodeAccessRegister": {
+      "path": "../../../recovery/hris-porting-blueprint-2026-09-09/coding-readiness/ia-node-access-contract-register.csv",
+      "sha256": "3fc33ce63642c337c9cf8dc6cfbd3b9287d9b1202c5b709e137744c7b28494bf",
+      "bytes": 46496,
+      "selector": "BASE:hr-data-quality"
+    },
+    "apiPepBindingRegister": {
+      "path": "../../../recovery/hris-porting-blueprint-2026-09-09/coding-readiness/api-pep-binding-register.csv",
+      "sha256": "0e38d724516a8b271069241ffa0fb6400984dc703758767de53cbaffb4f93da3",
+      "bytes": 126576,
+      "selector": "PEP-HRM-015"
+    },
+    "g3SliceSemanticEvidenceOnly": {
+      "path": "../../../recovery/hris-porting-blueprint-2026-09-09/coding-readiness/g3-slice-code-go-register.csv",
+      "sha256": "fb646668329e93ca0b83b74e2a3e43619954cec1cb2f6770029677edbc8d5725",
+      "bytes": 305301,
+      "selector": "BASE-TFR-HRM-012",
+      "rule": "USE_FOR_SEMANTICS_AND_NAMED_TEST_LINEAGE_ONLY; HISTORICAL_CODE_GO_AND_MIGRATION_ALLOCATIONS_ARE_NOT_CURRENT_AUTHORITY"
+    }
+  },
+  "basePins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "8f8087736e59413c60ddcdcd081ed42f1915bc91",
+      "tree": "7020953515319688b998777ed73cae166dd678be",
+      "originExact": true,
+      "clean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "e00a6e9a38c1270f8a0f08aa5d3536421091e9a3",
+      "tree": "9f834e7b3e2d98b1928aa7fd4039256756bb2cc8",
+      "originExact": true,
+      "cleanBeforeThisDraft": true
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "originExact": true,
+      "clean": true,
+      "readOnly": true
+    }
+  },
+  "businessAndExperienceBoundary": {
+    "businessMeaning": "Provide a governed data-quality command center over immutable workforce-ingestion runs, rejected inputs, accepted-after-validation quarantines, duplicate evidence, applied effects and reconciliation receipts without exposing source payloads or credentials.",
+    "primaryUser": "HR operations data-quality analyst with hcm.operations.people.view; PEP-HRM-015 remains a separate API command for an HRIS integration executor with HRIS_DUTY_INTEGRATION_EXECUTOR and the narrow hcm.integration.workforce-ingestion.execute capability.",
+    "operationalQuestion": "Which ingestion runs or quality findings need attention, what was safely applied, and can every source record and committed cursor be reconciled without viewing restricted source values?",
+    "primaryAction": "Inspect a selected run or quality finding and its authorized command receipt; IAQ-012 exposes no ingestion action.",
+    "pageArchetype": "COMMAND_CENTER_WITH_LIST_DETAIL_INSPECTOR",
+    "canonicalRoute": "/hr/operations/people/data-quality",
+    "featureKey": "HRIS_HRM_DATA_QUALITY_WORKBENCH",
+    "defaultEnabled": false,
+    "tenantEnrollmentCount": 0
+  },
+  "iaq012": {
+    "id": "IAQ-012",
+    "operationId": "IAQ.OP.012",
+    "variantKey": "DATA_QUALITY",
+    "iaNodeId": "BASE:hr-data-quality",
+    "method": "GET",
+    "browserPath": "/api/people/v1/hris/workbench/operations/data/quality",
+    "ownerPath": "/v1/hris/workbench/operations/data/quality",
+    "capability": "hcm.operations.people.view",
+    "profileAndDuty": "HRIS_HR_BUSINESS_PARTNER>HRIS_DUTY_CORE_VIEWER",
+    "purpose": "HR_OPERATIONS",
+    "fieldGroups": [
+      "INGESTION_STATUS",
+      "QUALITY_FINDING",
+      "COMMAND_RECEIPT"
+    ],
+    "filters": [
+      "ingestionStatus",
+      "qualityFinding",
+      "commandReceipt",
+      "effectiveOn"
+    ],
+    "sorts": [
+      "ingestionStatus:ASC",
+      "qualityFinding:ASC",
+      "commandReceipt:ASC",
+      "ingestionStatus:DESC",
+      "qualityFinding:DESC",
+      "commandReceipt:DESC",
+      "itemPublicId:ASC",
+      "itemPublicId:DESC"
+    ],
+    "defaultSort": "itemPublicId:ASC",
+    "pageLimit": 100,
+    "queryStates": [
+      "COMPLETE",
+      "EMPTY",
+      "PARTIAL",
+      "UNAVAILABLE"
+    ],
+    "availableActions": [],
+    "actionRule": "IAQ-012 is strictly read-only. It never invents, embeds or deep-links an ingestion command action; PEP-HRM-015 authorization is evaluated only at its own API boundary.",
+    "runtimeInvariants": [
+      "QUERY_STATE_ITEM_CARDINALITY",
+      "PARTIAL_FAILURE_STATE_MATCH",
+      "CURSOR_SCOPE_REVISION_BINDING",
+      "PAGE_LIMIT_AND_STABLE_ORDER",
+      "FIELD_DECISION_SUMMARY_MATCH",
+      "DEEP_LINK_ACTION_ALLOWLIST",
+      "TRUSTED_TENANT_CONTEXT_NON_SERIALIZATION",
+      "LOCALE_TIMEZONE_CANONICALIZATION",
+      "FIELD_DECISION_VIEW_MASK_OMIT",
+      "PROBLEM_STATUS_AND_CORRELATION"
+    ],
+    "projectionRule": "One item represents one ingestion run or one redacted quality finding with a stable public identifier. Command-receipt fields are projected only through the more-restrictive current-and-originating receipt decision; restricted source values, credentials, ciphertext, key references, internal numeric keys and raw cursors are never serialized."
+  },
+  "pepHrm015": {
+    "bindingId": "PEP-HRM-015",
+    "canonicalMeaning": "initiateWorkforceIngestion",
+    "method": "POST",
+    "browserPath": "/api/people/v1/hris/integrations/workforce-ingestions",
+    "ownerPath": "/v1/hris/integrations/workforce-ingestions",
+    "requestType": "IngestionCommand",
+    "responseType": "Receipt",
+    "requestBodyClosedSet": [
+      "objectRef",
+      "objectDigest",
+      "schemaKey",
+      "schemaVersion",
+      "mode",
+      "effectiveDate"
+    ],
+    "requestSchemaConstraints": {
+      "additionalProperties": false,
+      "objectRefPattern": "^obj_[A-Za-z0-9_-]{16,128}$",
+      "objectDigestPattern": "^[a-f0-9]{64}$",
+      "schemaKeyLength": "1..128",
+      "schemaVersionMinimum": 1,
+      "effectiveDate": "RFC3339 full-date YYYY-MM-DD"
+    },
+    "requiredHeaders": [
+      "Authorization",
+      "Idempotency-Key",
+      "If-Match",
+      "X-Correlation-ID"
+    ],
+    "optionalHeaders": [
+      "X-Purpose-Code"
+    ],
+    "closedEnums": {
+      "mode": [
+        "VALIDATE_ONLY",
+        "APPLY"
+      ]
+    },
+    "authorization": {
+      "capability": "hcm.integration.workforce-ingestion.execute",
+      "historicalBroadCapability": "hcm.integration.execute",
+      "historicalBroadCapabilityRule": "The existing management-integration key keeps its current ACTION.WORKFORCE_DATA_OPERATIONS and APP_CONFIG_ADMIN meaning and is never redefined, aliased or accepted as PEP-HRM-015 authority. A separate append-only authorization successor must issue the new narrow capability before source start.",
+      "canonicalResourceAction": "ACTION.HRIS_INTEGRATION_EXECUTE:EXECUTE",
+      "requiredResponsibilityCode": "HRIS_DUTY_INTEGRATION_EXECUTOR",
+      "populationTypes": [
+        "CONNECTOR_SET",
+        "LEGAL_ENTITY"
+      ],
+      "fieldGroups": [
+        "INTEGRATION_METADATA",
+        "REDACTED_PAYLOAD"
+      ],
+      "purpose": "HRIS_INTEGRATION",
+      "riskTier": "HIGH",
+      "stepUpPolicy": "STEPUP-MGMT-HIGH-V1",
+      "pepLayers": [
+        "GATEWAY_APP_ENTITLEMENT",
+        "OWNER_API_OPERATION",
+        "RESOURCE_POPULATION",
+        "REPOSITORY_TENANT_PREDICATE",
+        "FIELD_PROJECTION",
+        "PURPOSE_POLICY",
+        "AUDIT_DECISION"
+      ]
+    },
+    "optimisticConcurrency": "If-Match is the only request version header. After receipt reservation and authorization, load the owner aggregate or versioned configuration in trusted tenant scope and compare the canonical expected version; no client connectorVersion, mappingVersion or X-DWP-Expected-Object-Version is accepted.",
+    "idempotency": "Reserve or read ppl_command_receipts by the exact tuple (trusted tenant, on-behalf-of subject, originating action, Idempotency-Key). The canonical request hash, actor, authorization revision, population revision, field-policy revision, purpose and correlation ID are immutable on that receipt. The request hash covers method, path, target objectRef, relevant non-Authorization headers, schemaVersion and normalized exact body; it excludes transport timestamps and the bearer token. Same tuple and same hash returns the original receipt without rerunning terminal work, same tuple and different hash returns 409, and concurrent reservation has one winner.",
+    "success": "202 Receipt",
+    "ownerOrder": [
+      "authenticate and resolve trusted tenant, actor and fixed HRIS_INTEGRATION purpose; optional X-Purpose-Code may only equal the binding purpose",
+      "validate the exact closed IngestionCommand and CommandHeaders schemas without fetching object content",
+      "reserve or read the durable receipt by (trusted tenant, on-behalf-of subject, originating action, Idempotency-Key), freeze actor, authorization/population/field-policy revisions, purpose and correlation ID, and compare the canonical request hash",
+      "evaluate entitlement, operation, connector-set and legal-entity population, field policy, duty and HIGH step-up",
+      "load the tenant-scoped owner aggregate or configuration and compare If-Match",
+      "server-resolve and snapshot the active connector and published mapping applicable to schemaKey, schemaVersion and effectiveDate",
+      "persist one RECEIVED ingestion-run identity bound to the receipt and immutable objectRef, objectDigest, schemaKey, schemaVersion, mode and effectiveDate",
+      "return 202 without cursor advance or applied-effect claim"
+    ],
+    "modeSemantics": {
+      "VALIDATE_ONLY": "Produces only durable validation receipt and redacted findings; it performs no domain apply, cursor advance or WorkforceIngestionReconciled.v1 success claim.",
+      "APPLY": "May process the immutable object and complete reconciled effects only after all guards, classifications and atomicity conditions pass."
+    },
+    "forbiddenRequestFields": [
+      "connectorPublicId",
+      "connectorVersion",
+      "mappingPublicId",
+      "mappingVersion",
+      "sourceArtifact",
+      "requestedCursorDigest",
+      "X-DWP-Expected-Object-Version"
+    ],
+    "forbiddenRequestContent": [
+      "endpoint URI",
+      "credential or secret reference",
+      "raw credential",
+      "raw source payload",
+      "caller-selected tenant",
+      "caller-selected internal purpose"
+    ]
+  },
+  "inputEnvelopeAndProcessing": {
+    "artifactPort": "WorkforceIngestionArtifactPort",
+    "fetchRule": "After durable receipt reservation, authorization and If-Match, fetch the immutable objectRef through the owner port and verify bytes against objectDigest. A production provider is not bound by this slice; null, unavailable, digest-mismatched or schema-unknown results fail closed.",
+    "validationOrder": [
+      "verify objectRef syntax, lowercase objectDigest, nonempty schemaKey, positive schemaVersion, closed mode and effectiveDate",
+      "verify fetched bytes against objectDigest",
+      "parse a closed WorkforceInputEnvelopeV1 and reject unknown envelope or record fields",
+      "classify schema-invalid input as REJECTED before restricted-field mapping and never persist its restricted value",
+      "map only schema-accepted records with the exact published mapping revision",
+      "classify a prior identical connector, source-record-key, source-version and input digest as DUPLICATE",
+      "for APPLY only, apply valid idempotent domain effects or store an encrypted QUARANTINED_AFTER_ACCEPTANCE record with redacted reason",
+      "reconcile item outcomes and counts before cursor commit",
+      "atomically complete the run, receipt, audit, exact event outbox and cursor compare-and-set"
+    ],
+    "classificationConservation": [
+      "sourceCount = acceptedCount + rejectedCount + duplicateCount",
+      "acceptedCount = appliedCount + quarantinedCount",
+      "quarantinedCount means quarantined_after_acceptance only",
+      "all counts are nonnegative and equal the immutable item-outcome evidence"
+    ],
+    "replay": "REPLAY is not an IngestionCommand mode. An authorized replay creates a new receipt and new linked run/item evidence referencing the original receipt and immutable object/outcome lineage; the original receipt, run, item outcomes and history remain unchanged. Worker retry after crash or lease expiry may continue the same nonterminal receipt, but terminal replay always uses the new linked receipt.",
+    "cursorRule": "The existing tenant-scoped int_connector_cursors row is updated by version compare-and-set only in the same transaction that commits all applied effects, reconciled counters, result digest, successful receipt, minimized audit and event outbox. Rejected, failed, unreconciled or partially committed work never advances the cursor."
+  },
+  "workforceIngestionReconciledEvent": {
+    "contractId": "EVT-HRM:WorkforceIngestionReconciled.v1",
+    "eventType": "WorkforceIngestionReconciled.v1",
+    "aggregate": "WorkforceIngestionRun",
+    "requiredPayloadClosedSet": [
+      "runPublicId",
+      "connectorPublicId",
+      "mappingVersion",
+      "sourceCount",
+      "acceptedCount",
+      "rejectedCount",
+      "duplicateCount",
+      "quarantinedCount",
+      "appliedCount",
+      "resultDigest"
+    ],
+    "resultDigest": "Lowercase SHA-256 over RFC-8785/JCS canonical runPublicId, server-resolved connectorPublicId and mappingVersion, objectRef, objectDigest, schemaKey, schemaVersion, APPLY mode, effectiveDate, the six counts under source = accepted + rejected + duplicate and accepted = applied + quarantined_after_acceptance, sorted immutable item outcome digests and committed cursor digest.",
+    "publication": "Only a terminal APPLY reconciliation inserts exactly one deterministic event into the existing People outbox in the same successful reconciliation transaction. VALIDATE_ONLY emits no WorkforceIngestionReconciled.v1 success event. Same deterministic event ID and same payload digest is an idempotent re-publication; any hash conflict fails closed and is audited.",
+    "forbiddenPayload": [
+      "raw source payload",
+      "credential or secret reference",
+      "endpoint URI",
+      "rejected restricted value",
+      "quarantine ciphertext or key reference",
+      "internal numeric database key",
+      "raw cursor"
+    ],
+    "productionBrokerBindingAuthorized": false
+  },
+  "peopleV60NecessityProof": {
+    "decision": "PEOPLE_V60_REQUIRED_RESERVE_SEPARATELY_NOT_ACTIVE",
+    "observedPeopleHighWater": "V59",
+    "candidatePathAbsent": true,
+    "currentReusableStores": [
+      "int_connector_instances",
+      "int_mapping_profiles",
+      "int_connector_cursors",
+      "ppl_command_receipts",
+      "sys_people_audit_events",
+      "sys_people_outbox_events",
+      "existing People workforce projection tables"
+    ],
+    "provenGapsBeyondV59": [
+      "No durable HRM-012 run store binds command receipt, immutable objectRef/objectDigest/schema snapshot, server-resolved connector and mapping revisions, counts, result digest and cursor compare-and-set evidence.",
+      "Legacy int_sync_runs lacks acceptedCount, duplicateCount, quarantinedCount, appliedCount, resultDigest and the sealed canonical command snapshot required by WorkforceIngestionReconciled.v1.",
+      "Legacy int_sync_errors does not distinguish schema rejection before acceptance from quarantine after acceptance and cannot retain immutable linked replay lineage without rewriting terminal history.",
+      "No HRM-012 item-outcome ledger proves source = accepted + rejected + duplicate and accepted = applied + quarantined_after_acceptance or same-digest worker recovery across crashes.",
+      "IAQ-012 needs stable tenant-scoped run and redacted finding rows with FORCE RLS; deriving them from mutable legacy operational rows cannot prove immutable reconciliation semantics."
+    ],
+    "minimalManifest": {
+      "exactPath": "dwp-people-server/src/main/resources/db/migration/V60__hrm_base_tfr_hrm_012.sql",
+      "createExactlyTwoTables": [
+        "ppl_workforce_ingestion_runs",
+        "ppl_workforce_ingestion_items"
+      ],
+      "runTablePurpose": "One immutable run identity and canonical object/schema/mode/effective-date plus server-resolved connector/mapping snapshot, durable receipt and linked-replay lineage, forward-only lifecycle, worker lease, six reconciled counts, result digest and before/after cursor digests.",
+      "itemTablePurpose": "One immutable source occurrence with REJECTED, DUPLICATE, APPLIED or QUARANTINED_AFTER_ACCEPTANCE redacted classification evidence; original terminal outcomes never change and a replay writes new linked receipt/run/item evidence.",
+      "requiredControls": [
+        "same-tenant composite foreign keys to connector, mapping, command receipt and run",
+        "count and lifecycle checks enforcing source = accepted + rejected + duplicate and accepted = applied + quarantined_after_acceptance",
+        "closed mode check permits only VALIDATE_ONLY or APPLY and contains no REPLAY mode",
+        "lowercase 64-hex digest checks and positive schema and server-resolved mapping versions",
+        "unique run item sequence and deterministic lookup index for duplicate detection",
+        "forward-only and immutable identity/source/mapping/outcome trigger guards",
+        "work-queue and IAQ-012 stable-order indexes",
+        "ENABLE and FORCE row-level security with USING and WITH CHECK bound to dwp.tenant_id on both tables",
+        "no seed, backfill, deletion, historical migration edit or privilege elevation"
+      ],
+      "existingStoresReusedNotRecreated": [
+        "int_connector_instances",
+        "int_mapping_profiles",
+        "int_connector_cursors",
+        "ppl_command_receipts",
+        "sys_people_audit_events",
+        "sys_people_outbox_events"
+      ]
+    }
+  },
+  "canonicalIdentifierCorrection": {
+    "finding": "The pinned HRM-008 EmploymentEventAuthority declares the stale constant EVENT_DETAIL_BINDING_ID = PEP-HRM-015 and two tests assert it, while the canonical register assigns PEP-HRM-015 only to initiateWorkforceIngestion.",
+    "decision": "REMOVE_ONLY_THE_STALE_EVENT_DETAIL_BINDING_ID_CONSTANT_AND_ITS_TWO_ASSERTIONS_IN_THE_HRM012_MODULE_CHANGESET",
+    "runtimeBehaviorChangeAuthorized": false,
+    "mustRemainExact": [
+      "EVENT_DETAIL_ROUTE = route.hcm.operations.assignment-event-detail.data",
+      "EVENT_DETAIL continues to require GET, readOnly true and either hcm.operations.people.view or hcm.operations.assignment.manage",
+      "RECEIPT_BINDING_ID = PEP-HRM-014 remains unchanged",
+      "all HRM-008 controller, service, repository, route, capability and response behavior remains unchanged"
+    ],
+    "exactFiles": [
+      {
+        "path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/employment/EmploymentEventAuthority.java",
+        "preChangeSha256": "22b80643f1ea69e943fde152c89c3bba17072fc9817ea98a9473da551144b1ee",
+        "preChangeBytes": 4717
+      },
+      {
+        "path": "dwp-people-server/src/test/java/com/dwp/services/people/hris/employment/EmploymentEventAuthorityTest.java",
+        "preChangeSha256": "2651e56bf2dd943819f1133d79554f800c1adb8232ee75473cb7c727c51f1096",
+        "preChangeBytes": 6558
+      },
+      {
+        "path": "dwp-people-server/src/test/java/com/dwp/services/people/hris/employment/HrmG3SliceContractTest.java",
+        "preChangeSha256": "0df4be23df73c4ad05af710c37529f2b9dda21909791b4f8f0f9b6ee37adb20a",
+        "preChangeBytes": 5562
+      }
+    ]
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "HRM012-AC-01",
+      "criterion": "IAQ-012 implements only the accepted GET paths, filters, sorts, stable item grain, page limit, field groups, deep link and COMPLETE, EMPTY, PARTIAL and UNAVAILABLE invariants; availableActions is always empty."
+    },
+    {
+      "id": "HRM012-AC-02",
+      "criterion": "IAQ-012 fails closed through all seven PEP layers, applies VIEW, MASK and OMIT before serialization, binds cursor to tenant, scope and revision and never exposes raw source, credential, ciphertext, key reference, numeric key or raw cursor data."
+    },
+    {
+      "id": "HRM012-AC-03",
+      "criterion": "PEP-HRM-015 is the sole canonical meaning of that identifier, accepts only {objectRef, objectDigest, schemaKey, schemaVersion, mode, effectiveDate}, modes VALIDATE_ONLY or APPLY, the four required headers and optional X-Purpose-Code, and enforces HRIS_INTEGRATION purpose, connector/legal-entity population, HRIS_DUTY_INTEGRATION_EXECUTOR, the narrow hcm.integration.workforce-ingestion.execute capability and HIGH step-up before durable 202 Receipt; connector/mapping request fields, REPLAY mode and the existing hcm.integration.execute authority are rejected."
+    },
+    {
+      "id": "HRM012-AC-04",
+      "criterion": "Command idempotency uses exactly (trusted tenant, on-behalf-of subject, originating action, Idempotency-Key), freezes canonical request hash, actor, authorization/population/field-policy revisions, purpose and correlation ID, proves same-tuple/same-hash original-receipt return, different-hash 409 and concurrent one-winner reservation, and prevents object fetch, run creation, cursor advance or business mutation before receipt reservation, authorization and If-Match."
+    },
+    {
+      "id": "HRM012-AC-05",
+      "criterion": "The objectRef bytes match objectDigest and the closed envelope matches schemaKey/schemaVersion before restricted-field mapping; invalid input is REJECTED, duplicates are counted outside accepted, and only failures after acceptance become QUARANTINED_AFTER_ACCEPTANCE."
+    },
+    {
+      "id": "HRM012-AC-06",
+      "criterion": "Duplicate detection is deterministic across retry and crash recovery, applied effects are idempotent, quarantined payloads are envelope encrypted, and no raw secret or rejected restricted value enters persistence, logs, audit, IAQ or event output."
+    },
+    {
+      "id": "HRM012-AC-07",
+      "criterion": "People V60 creates exactly the two sealed tables, constraints, indexes, triggers and FORCE RLS policies, reuses the six existing stores, preserves V1 through V59 byte-for-byte and performs no seed or backfill."
+    },
+    {
+      "id": "HRM012-AC-08",
+      "criterion": "Every terminal APPLY run proves sourceCount = acceptedCount + rejectedCount + duplicateCount and acceptedCount = appliedCount + quarantinedCount, where quarantinedCount is only quarantined_after_acceptance, from immutable item evidence before resultDigest is accepted."
+    },
+    {
+      "id": "HRM012-AC-09",
+      "criterion": "Cursor compare-and-set advances only in the same transaction as reconciled run completion, applied effects, successful receipt, minimized audit and one WorkforceIngestionReconciled.v1 outbox row; rollback or mismatch leaves all success state and cursor unchanged."
+    },
+    {
+      "id": "HRM012-AC-10",
+      "criterion": "WorkforceIngestionReconciled.v1 contains exactly the ten required business fields, uses the sealed JCS result digest and deterministic event identity, and excludes every forbidden payload field."
+    },
+    {
+      "id": "HRM012-AC-11",
+      "criterion": "Worker recovery uses one lease winner for the same nonterminal receipt; authorized terminal replay is never a command mode and instead creates a new linked receipt and new evidence while preserving every original receipt, run and item outcome unchanged."
+    },
+    {
+      "id": "HRM012-AC-12",
+      "criterion": "The frontend proves loading, empty, partial, unavailable, denied, stale and complete states, list-detail inspection, responsive and accessibility coverage, and default-OFF zero calls; production object provider, scheduler, broker, route admission, tenant enrollment and full-slice completion remain explicit non-claims."
+    },
+    {
+      "id": "HRM012-AC-13",
+      "criterion": "The stale HRM-008 EVENT_DETAIL_BINDING_ID constant and only its two assertions are removed, PEP-HRM-015 has one canonical meaning, and focused HRM-008 authority and slice regression tests prove no runtime route or capability behavior changed."
+    }
+  ],
+  "targetedVerification": {
+    "policy": "RUN_EACH_NEW_TARGET_GROUP_ONCE; AFTER_FAILURE_RERUN_ONLY_THE_SMALLEST_AFFECTED_TARGET; NO_REPOSITORY_WIDE_SUITE_PER_CORRECTION",
+    "backend": [
+      "Hrm012IaEntryQueryContractTest",
+      "WorkforceIngestionTransportSchemaContractTest",
+      "WorkforceIngestionAuthorizationTest",
+      "WorkforceIngestionIdempotencyTest",
+      "WorkforceInputEnvelopeValidationTest",
+      "WorkforceIngestionOutcomeClassificationTest",
+      "WorkforceIngestionLinkedReplayReceiptTest",
+      "WorkforceIngestionConservationContractTest",
+      "WorkforceIngestionReconciliationTest",
+      "WorkforceIngestionEventOutboxTest",
+      "Hrm012V60MigrationContractTest",
+      "Hrm012V60MigrationPostgresTest",
+      "EmploymentEventAuthorityTest",
+      "HrmG3SliceContractTest"
+    ],
+    "requiredAssertions": [
+      "IngestionCommand accepts exactly objectRef, objectDigest, schemaKey, schemaVersion, mode and effectiveDate and rejects connector, mapping, sourceArtifact, requestedCursorDigest and unknown fields",
+      "CommandHeaders require Authorization, Idempotency-Key, If-Match and X-Correlation-ID; X-Purpose-Code is the sole optional header and is binding-constrained",
+      "mode accepts exactly VALIDATE_ONLY and APPLY and rejects REPLAY",
+      "receipt reservation scope is exactly trusted tenant plus on-behalf-of subject plus originating action plus Idempotency-Key, and actor, authorization/population/field-policy revisions, purpose and correlation ID remain immutable",
+      "same-tuple and same-hash terminal retry returns the original receipt while authorized replay creates a new linked receipt and leaves original history byte-stable",
+      "sourceCount equals acceptedCount plus rejectedCount plus duplicateCount and acceptedCount equals appliedCount plus quarantinedCount where quarantine is after acceptance"
+    ],
+    "frontend": [
+      "apps/dwp/src/features/hris/people/__tests__/g3-slices/base-tfr-hrm-012.slice.test.tsx",
+      "changed-root tests for loading, empty, partial, unavailable, denied, stale and complete states",
+      "default-OFF zero-call assertion",
+      "1440px, 1280px, 390px, 320px and 200 percent zoom",
+      "light, dark, high contrast, reduced motion, keyboard-only, visible focus and long Korean/English labels",
+      "Playwright screenshots only after separate shell route admission"
+    ],
+    "databaseUnavailableRule": "Required real PostgreSQL checks report BLOCKED rather than PASS when unavailable.",
+    "changedPathProofRequired": true,
+    "gitDiffCheckRequired": true
+  },
+  "centralAuthorizationPrerequisite": {
+    "currentProductAuthorizationBundle": "v56 DRAFT",
+    "currentBundleChecksum": "4c1e82c4ac70f7bbc4aba7a41d77b8fd238da0478501cbdfed97ebd4b5dd0930",
+    "currentBundleFileSha256": "85c7e23115f0befce4b9b909bf789e14a6a02370f47a236cefa56b80f901adf5",
+    "requiredNewRouteContracts": [
+      "route.hcm.operations.people-data-quality.page",
+      "route.hcm.operations.people-data-quality.data",
+      "route.hcm.operations.workforce-ingestion.action"
+    ],
+    "requiredNewNarrowCapability": "hcm.integration.workforce-ingestion.execute",
+    "existingCapabilityPreservation": "hcm.integration.execute remains byte-for-byte and semantically bound to its current management integration authorities; no redefinition, alias or fallback is permitted.",
+    "decision": "A separate central append-only authorization successor must admit the exact PAGE, DATA and ACTION bindings and issue the narrow capability before any executable module start token. This disposition does not authorize central source edits."
+  },
+  "authority": {
+    "semanticDispositionSealed": true,
+    "ownerPacketMayBeIssued": true,
+    "peopleV60ReservationMayBeIssued": true,
+    "peopleV60Required": true,
+    "moduleSourceAuthoringAuthorizedNow": false,
+    "migrationAuthoringAuthorizedNow": false,
+    "worktreeMaterializationAuthorizedNow": false,
+    "executableStartTokenIssued": false,
+    "centralAuthorizationAdmitted": false,
+    "featureDefaultOff": true,
+    "tenantEnrollmentCount": 0,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionArtifactProviderBindingAuthorized": false,
+    "productionSchedulerBindingAuthorized": false,
+    "productionBrokerBindingAuthorized": false,
+    "mergeToDwpDevAuthorized": false,
+    "businessCompletionCredit": 0,
+    "productionReleaseAuthorized": false
+  },
+  "nonClaims": [
+    "Any source, token, worktree, active lease or central authorization is created by this disposition.",
+    "The historical V59 proposal for HRM-012 is current; People V59 is already owned by HRM-011 and remains immutable.",
+    "The legacy integration execution API already satisfies IAQ-012, PEP-HRM-015 or WorkforceIngestionReconciled.v1.",
+    "The product-authorization v56 DRAFT bundle already contains the three HRM-012 route contracts.",
+    "The existing hcm.integration.execute capability can be redefined, aliased or used as fallback authority for PEP-HRM-015.",
+    "A production object provider, scheduler, broker, route, menu, feature or tenant is bound, mounted, enabled or enrolled.",
+    "BASE-TFR-HRM-012, Batch-05, R7 or HRIS is complete."
+  ],
+  "nextAction": "INDEPENDENTLY_REVIEW_THIS_EXACT_DISPOSITION_WITH_ZERO_P0_P1_P2; THEN_ISSUE_ONLY_THE_HASH_BOUND_RESERVED_NOT_ACTIVE_PEOPLE_V60_DECISION_AND_HRM012_OWNER_PACKET; BEFORE_ANY_SOURCE_TOKEN SEPARATELY ADMIT THE THREE CENTRAL ROUTE CONTRACTS AND NEW NARROW HCM.INTEGRATION.WORKFORCE-INGESTION.EXECUTE CAPABILITY WITHOUT REDEFINING HCM.INTEGRATION.EXECUTE, MATERIALIZE CLEAN WORKTREES AND ACTIVATE THE EXACT V60 LEASE"
+}
