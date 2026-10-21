@@ -1,0 +1,86 @@
+{
+  "schema": "dwp.hris.wave7.acceptance-results.v1",
+  "evidenceId": "HRIS-WAVE7-R7-BATCH-04-BASE-TFR-TIM-003-HRM-ACCEPTANCE-R1",
+  "issuedAt": "2026-10-21T15:07:54+09:00",
+  "issuedBy": "HRIS-HRM",
+  "sliceId": "BASE-TFR-TIM-003",
+  "phase": "HRM_SUCCESSOR_BEFORE_TIM_PACKET",
+  "authority": {
+    "ownerPacketPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-start-r1/owner-packets/base-tfr-tim-003.hrm-successor.owner-packet.v1.json",
+    "ownerPacketSha256": "9b61721b2dc17648ea175f583713d40065fa789cb986fd409d0100a6d0aa22dd",
+    "startTokenPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-start-r1/tokens/base-tfr-tim-003.hrm-successor.start-token.v1.json",
+    "startTokenSha256": "752ac27e1b3bfaccf9fec7b58cb997de4c66485dcfaa1b7a91e64b89c0b806af",
+    "acceptanceCount": 12,
+    "weakeningOrOmission": false
+  },
+  "results": [
+    {
+      "id": "TIM003-AC01",
+      "phaseResult": "PASS",
+      "evidence": "XCON-004 remains a byte-identical generated four-field closed business contract; its normalized schema digest remains 42a913558210550a24550e55a2719d0f6002193a54a701feb135f6a0da3979c7."
+    },
+    {
+      "id": "TIM003-AC02",
+      "phaseResult": "PASS",
+      "evidence": "AsyncAPI and publisher bind type dwp.hris.people.employment-changed.v1, source urn:dwp:people:hris:employment, WORK_RELATIONSHIP identity and positive relationship-version ordering."
+    },
+    {
+      "id": "TIM003-AC03",
+      "phaseResult": "HRM_PRODUCER_PASS_TIM_CONSUMER_DEFERRED",
+      "evidence": "The HRM envelope subject, aggregate id and sequence equality is sealed and tested. Consumer mismatch and shared-DLQ enforcement remain in the separately authorized HRIS-TIM phase."
+    },
+    {
+      "id": "TIM003-AC04",
+      "phaseResult": "PASS",
+      "evidence": "Canonical and legacy compatibility evidence share the deterministic id, originating persisted correlation id and one microsecond Instant in the existing publication transaction; legacy published_at is not changed. Canonical recording requires both the default-false switch and explicit tenant enrollment."
+    },
+    {
+      "id": "TIM003-AC05",
+      "phaseResult": "PASS_FAIL_CLOSED_BINDINGS_CARRIED",
+      "evidence": "Generated XCON-027 and SVC-PEP-HRM-007 implement the closed current-business-date relationship snapshot, exact assignment projection and 300-second validity. SVC-PEP-HRM-002 is unchanged. Unadmitted trust, signing and audit backings remain fail closed."
+    },
+    {
+      "id": "TIM003-AC06",
+      "phaseResult": "PASS_FAIL_CLOSED_PORT_BOUNDARY",
+      "evidence": "Exact route, method, query, correlation, tenant grant, purpose, projection, business-zone/date, replay, digest and JWS structural bindings are enforced before usable facts. Pre-auth denials attempt sanitized audit with an explicitly unverified presented correlation id; authenticated outcomes fail closed when audit evidence cannot be appended."
+    },
+    {
+      "id": "TIM003-AC07",
+      "phaseResult": "DEFERRED_TO_HRIS_TIM",
+      "evidence": "The HRM owner query reuses sys_domain_event_inbox for jti-plus-nonce reservation and adds no private ledger. HRIS-TIM delivery-ledger reuse is outside this HRM token."
+    },
+    {
+      "id": "TIM003-AC08",
+      "phaseResult": "DEFERRED_TO_HRIS_TIM",
+      "evidence": "Consumer idempotency, digest conflict, shared offset, gap and DLQ behavior require the next HRIS-TIM packet and are not claimed here."
+    },
+    {
+      "id": "TIM003-AC09",
+      "phaseResult": "DEFERRED_TO_HRIS_TIM_V14",
+      "evidence": "No migration was authorized or added in this phase. TIME_MAIN V14 remains reserved for the fresh HRIS-TIM implementation packet after central HRM admission."
+    },
+    {
+      "id": "TIM003-AC10",
+      "phaseResult": "DEFERRED_TO_HRIS_TIM",
+      "evidence": "Projection CAS, offset CAS and snapshot settlement semantics remain outside the HRM writable boundary."
+    },
+    {
+      "id": "TIM003-AC11",
+      "phaseResult": "DEFERRED_TO_HRIS_TIM",
+      "evidence": "Time read guards, recovery scheduling and reconciliation remain outside the HRM writable boundary; no leave, balance or approval mutation was introduced."
+    },
+    {
+      "id": "TIM003-AC12",
+      "phaseResult": "PASS",
+      "evidence": "Publication and owner query are default OFF, enrolled tenants are empty, no production broker binding, migration, browser route, menu, customer data or business-completion credit was introduced."
+    }
+  ],
+  "phaseSummary": {
+    "pass": 4,
+    "passWithFailClosedCarriedBindings": 2,
+    "producerPassConsumerDeferred": 1,
+    "deferredToHrisTim": 5,
+    "failed": 0,
+    "claim": "HRM_SUCCESSOR_OBLIGATIONS_COMPLETE_NOT_TIM_SLICE_COMPLETE"
+  }
+}

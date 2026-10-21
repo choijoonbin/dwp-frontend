@@ -1,0 +1,48 @@
+{
+  "schema": "dwp.hris.wave7.changed-path-and-no-recount.v1",
+  "evidenceId": "HRIS-WAVE7-R7-BATCH-04-BASE-TFR-TIM-003-HRM-PATHS-R1",
+  "issuedAt": "2026-10-21T15:07:54+09:00",
+  "issuedBy": "HRIS-HRM",
+  "sliceId": "BASE-TFR-TIM-003",
+  "backend": {
+    "branch": "codex/hris-wave7-r7-batch04-tim-003-hrm-backend-20261021-r1",
+    "baseCommit": "75ac11873e6e4a6c070d47e849d81063aaa88800",
+    "baseTree": "cb02f8d3b09eed67762fb03e57af6badd8568fe4",
+    "resultCommit": "1895c1a24ab01ebd11f1e63f531a95e05f21c41b",
+    "resultTree": "5d8667a5bf810c80d7c9a688688dd1f4d41151cf",
+    "originExact": true,
+    "clean": true,
+    "changedPathCount": 29,
+    "outsideWritableBoundaryCount": 0,
+    "changeGroups": [
+      "canonical schema, code generator, generated XCON-027 and focused contract tests",
+      "EmploymentChanged canonical publication and persisted originating correlation",
+      "SVC-PEP-HRM-007 exact owner query, replay reservation, fail-closed ports and tests",
+      "PeopleSecurityFilter exact typed-context integration"
+    ]
+  },
+  "frontend": {
+    "branch": "codex/hris-wave7-r7-batch04-tim-003-hrm-frontend-20261021-r1",
+    "baseCommit": "713be24c166139209c37688744fd27b3b4fe1fd7",
+    "baseTree": "52dd20833df9b5a5d12449e63a2247c2ef1ad841",
+    "registerCommit": "fa17b6b3ca8456f48173543889ff2b7e99b1da64",
+    "registerTree": "fd60522d1dd0aef58ef9bf79817260e0720947de",
+    "originExactBeforeEvidence": true,
+    "cleanBeforeEvidence": true,
+    "appendOnlyRows": [
+      "XCON-027",
+      "SVC-PEP-HRM-007"
+    ],
+    "csvColumnWidths": {
+      "crossModuleContractRegister": 15,
+      "serviceApiAuthBindingRegister": 24
+    },
+    "historicalRowsRewritten": false
+  },
+  "noRecount": {
+    "businessCompletionIncrement": 0,
+    "portfolioStateChanged": false,
+    "reason": "This phase delivers an unactivated HRM producer and owner-query prerequisite only. HRIS-TIM V14, consumer projection, recovery, activation and tenant enrollment remain pending."
+  },
+  "forbiddenChangesObserved": []
+}

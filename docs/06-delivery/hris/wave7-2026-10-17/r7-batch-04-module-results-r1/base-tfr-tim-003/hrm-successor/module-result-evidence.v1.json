@@ -1,0 +1,137 @@
+{
+  "schema": "dwp.hris.wave7.module-result-evidence.v1",
+  "evidenceId": "HRIS-WAVE7-R7-BATCH-04-BASE-TFR-TIM-003-HRM-MODULE-RESULT-R1",
+  "issuedAt": "2026-10-21T15:07:54+09:00",
+  "issuedBy": "HRIS-HRM",
+  "sliceId": "BASE-TFR-TIM-003",
+  "resultState": "TIM003_HRM_SUCCESSOR_SOURCE_COMPLETE_BRANCHES_PUSHED_INDEPENDENT_REVIEWS_GO_CENTRAL_ADMISSION_PENDING_TIM_PHASE_NOT_STARTED_DEFAULT_OFF_ZERO_ENROLLMENT_ZERO_CREDIT",
+  "authority": {
+    "semanticDisposition": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-start-r1/semantic-dispositions/base-tfr-tim-003.semantic-disposition.v1.json",
+      "sha256": "60a21b6da8b97f2a30055404f167e52bb9fc813520d6c277c32a514494585ff9",
+      "bytes": 107850
+    },
+    "semanticReview": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-start-r1/semantic-dispositions/base-tfr-tim-003.semantic-review.v1.json",
+      "sha256": "25dd051cf12ba433f572e83dd1f090018cf25534a8f997c57166827ca6d3f01d",
+      "bytes": 4292
+    },
+    "ownerPacket": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-start-r1/owner-packets/base-tfr-tim-003.hrm-successor.owner-packet.v1.json",
+      "sha256": "9b61721b2dc17648ea175f583713d40065fa789cb986fd409d0100a6d0aa22dd",
+      "bytes": 17173
+    },
+    "materializationReceipt": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-start-r1/worktree-materialization-receipts/base-tfr-tim-003.hrm-successor.worktree-materialization-receipt.v1.json",
+      "sha256": "749e27a9ea3a79e223258fe355de0299a605cde07060f357aa7704eb6733c726",
+      "bytes": 4384
+    },
+    "startToken": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-start-r1/tokens/base-tfr-tim-003.hrm-successor.start-token.v1.json",
+      "sha256": "752ac27e1b3bfaccf9fec7b58cb997de4c66485dcfaa1b7a91e64b89c0b806af",
+      "bytes": 16405,
+      "executable": true
+    },
+    "authorityCarrierExclusion": {
+      "centralFrontendCommit": "06ef68d5e9d61f9f496bbcb4bd07670b959a9c0a",
+      "centralFrontendTree": "3cd4c1a375368a6d0e439c101b9039590c92f05c",
+      "moduleFrontendBase": "713be24c166139209c37688744fd27b3b4fe1fd7",
+      "centralCarrierIsModuleSourceAncestor": false,
+      "mergeRebaseOrCherryPickPerformedBeforeResult": false,
+      "reason": "The materialized module worktree is intentionally pinned before receipt and start-token carrier commits; central admission will combine the authority carrier and module result after review."
+    }
+  },
+  "sourcePins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "codex/hris-wave7-r7-batch04-tim-003-hrm-backend-20261021-r1",
+      "base": "75ac11873e6e4a6c070d47e849d81063aaa88800",
+      "baseTree": "cb02f8d3b09eed67762fb03e57af6badd8568fe4",
+      "commit": "1895c1a24ab01ebd11f1e63f531a95e05f21c41b",
+      "tree": "5d8667a5bf810c80d7c9a688688dd1f4d41151cf",
+      "originExact": true,
+      "clean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "codex/hris-wave7-r7-batch04-tim-003-hrm-frontend-20261021-r1",
+      "base": "713be24c166139209c37688744fd27b3b4fe1fd7",
+      "baseTree": "52dd20833df9b5a5d12449e63a2247c2ef1ad841",
+      "registerCommit": "fa17b6b3ca8456f48173543889ff2b7e99b1da64",
+      "registerTree": "fd60522d1dd0aef58ef9bf79817260e0720947de",
+      "originExactBeforeEvidence": true,
+      "cleanBeforeEvidence": true
+    }
+  },
+  "implementation": {
+    "canonicalContracts": [
+      "XCON-004 remains the exact closed four-field EmploymentChanged.v1 business body.",
+      "XCON-027 adds the exact closed 19-field relationship snapshot and closed 9-field nested assignment artifact.",
+      "Generated validation enforces nonnegative revisions, canonical assignment order, microsecond timestamps, exact 300-second validity and UTC-or-non-fixed canonical named zones.",
+      "AsyncAPI seals the namespaced type, source, WORK_RELATIONSHIP identity and XCON-004 profile metadata."
+    ],
+    "publication": [
+      "EmploymentChanged canonical and legacy evidence use one deterministic event id, one microsecond publication Instant and the persisted originating command correlation id.",
+      "Canonical recording participates in the existing publication transaction and does not set legacy published_at.",
+      "The canonical producer requires both a default-false feature switch and explicit tenant enrollment; the default enrollment set is empty."
+    ],
+    "ownerQuery": [
+      "SVC-PEP-HRM-007 implements the exact internal relationship-only GET boundary with typed XCON-027 data plus signed evidence or a closed signed problem.",
+      "The ingress is default OFF and delegates through PeopleSecurityFilter only for an exact typed verified context.",
+      "Replay jti and nonce use two atomic REQUIRES_NEW inserts in the shared inbox and roll back together on collision.",
+      "Current grant revalidation precedes a REQUIRES_NEW repeatable-read owner snapshot; trusted tenant set_config is established before People RLS reads.",
+      "Missing proof, grant, signing or audit backing remains fail closed and no tenant is enrolled."
+    ],
+    "migration": "NONE_AUTHORIZED_NONE_ADDED",
+    "frontendRuntime": "NO_ROUTE_NO_MENU_NO_COMPONENT_CHANGE"
+  },
+  "verification": {
+    "generatorTests": "15_OF_15_PASS",
+    "generatorCheck": "44_SOURCES_42_MAPPINGS_PASS",
+    "platformContractTests": "6_OF_6_PASS",
+    "exactProviderContractTests": "6_OF_6_PASS",
+    "publicationTests": "3_OF_3_PASS",
+    "ownerQueryTests": "15_OF_15_PASS",
+    "peopleSecurityFilterTests": "13_OF_13_PASS_INCLUDING_TWO_TIM003_CASES",
+    "gitDiffCheck": "PASS",
+    "changedPathBoundary": "29_CHANGED_0_OUTSIDE",
+    "generatedSourceSize": "687_OF_700_LINES_PASS",
+    "repositoryWideSuiteRun": false,
+    "independentReview": "THREE_SCOPES_GO_P0_0_P1_0_P2_0"
+  },
+  "subordinateEvidence": [
+    {
+      "path": "acceptance-results.v1.json",
+      "sha256": "06132a32667255bba373952aa5df07cd412f66f02ff41e35feb81ec53e59dcd1",
+      "bytes": 4717
+    },
+    {
+      "path": "changed-path-and-no-recount.v1.json",
+      "sha256": "46a5769dd5ef57dda4d0ace8da52d879f31e2052aec8537f7b5dbe29b5d99879",
+      "bytes": 2022
+    },
+    {
+      "path": "targeted-verification.v1.json",
+      "sha256": "1c4955a8627acda6c1078bbcda8a9c0e860f954f8ded5b851ae10e2d5ea67eab",
+      "bytes": 2827
+    }
+  ],
+  "openGates": [
+    "TIM_CLOSE_TRUSTED_OWNER_HEADER_ISSUER",
+    "TIM_CLOSE_PERIOD_DEFINITION_PRODUCER",
+    "CENTRAL_HRM_SOURCE_AND_EVIDENCE_ADMISSION",
+    "FRESH_HRIS_TIM_OWNER_PACKET_AND_TIME_MAIN_V14_LEASE",
+    "HRIS_TIM_CONSUMER_PROJECTION_AND_RECOVERY_IMPLEMENTATION",
+    "SEPARATE_ACTIVATION_AND_TENANT_ENROLLMENT_AUTHORITY"
+  ],
+  "nonClaims": [
+    "BASE-TFR-TIM-003, Batch-04, R7 or HRIS is complete.",
+    "A control-plane-backed TIM003OwnerGrantV1 issuer, verifier, response-signing key or durable pre-auth audit backing is admitted.",
+    "Any publication, query or consumer switch is enabled or any tenant is enrolled.",
+    "A production broker, customer data path, browser route, menu or UI is admitted.",
+    "HRIS-TIM source, TIME_MAIN V14 or consumer behavior is implemented in this result.",
+    "A repository-wide test suite or broad post-correction rerun was performed."
+  ],
+  "decision": "HRM_MODULE_RESULT_READY_FOR_SEPARATE_CENTRAL_REVIEW_AND_ADMISSION",
+  "nextAction": "Commit and push this exact evidence bundle, centrally admit the exact backend result commit and the final frontend module head including its register and evidence commits into dwp-dev, verify clean origin parity, then issue a fresh HRIS-TIM owner packet and exclusive TIME_MAIN V14 lease before any consumer implementation."
+}

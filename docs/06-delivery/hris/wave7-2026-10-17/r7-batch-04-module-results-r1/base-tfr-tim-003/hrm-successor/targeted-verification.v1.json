@@ -1,0 +1,102 @@
+{
+  "schema": "dwp.hris.wave7.targeted-verification.v1",
+  "evidenceId": "HRIS-WAVE7-R7-BATCH-04-BASE-TFR-TIM-003-HRM-VERIFY-R1",
+  "issuedAt": "2026-10-21T15:07:54+09:00",
+  "issuedBy": "HRIS-HRM",
+  "policy": "Run each affected named target once and rerun only the smallest target after a correction; no repository-wide suite.",
+  "results": [
+    {
+      "target": "python3 -m unittest scripts.tests.test_generate_hris_contracts",
+      "tests": 15,
+      "failures": 0,
+      "result": "PASS"
+    },
+    {
+      "target": "python3 scripts/generate-hris-contracts.py --check",
+      "sources": 44,
+      "mappings": 42,
+      "result": "PASS"
+    },
+    {
+      "target": "Tim003HrmCanonicalContractTest",
+      "tests": 4,
+      "failures": 0,
+      "result": "PASS"
+    },
+    {
+      "target": "Tim003HrmAsyncApiContractTest",
+      "tests": 2,
+      "failures": 0,
+      "result": "PASS"
+    },
+    {
+      "target": "Xcon004EmploymentChangedV1ProviderContractTest and Xcon027EmploymentAbsenceSnapshotV1ProviderContractTest",
+      "tests": 6,
+      "failures": 0,
+      "result": "PASS"
+    },
+    {
+      "target": "EmploymentChangedDomainEventPublicationTest",
+      "tests": 3,
+      "failures": 0,
+      "result": "PASS"
+    },
+    {
+      "target": "TimeAbsenceWorkforceSnapshotOwnerContractTest, TimeAbsenceWorkforceSnapshotErrorContractTest and TimeAbsenceWorkforceSnapshotTenantPurposeFieldNegativeTest",
+      "tests": 15,
+      "failures": 0,
+      "result": "PASS"
+    },
+    {
+      "target": "PeopleSecurityFilterTest",
+      "tests": 13,
+      "failures": 0,
+      "result": "PASS",
+      "note": "Includes two TIM003 raw-bypass and exact typed-context tests."
+    },
+    {
+      "target": "git diff --check",
+      "result": "PASS"
+    },
+    {
+      "target": "exact writable-boundary path audit",
+      "changedPaths": 29,
+      "outsideBoundary": 0,
+      "result": "PASS"
+    },
+    {
+      "target": "generated XCON-027 source-size limit",
+      "actualLines": 687,
+      "maximumLines": 700,
+      "result": "PASS"
+    }
+  ],
+  "independentReviews": [
+    {
+      "scope": "contract, code generation, AsyncAPI and registers",
+      "p0": 0,
+      "p1": 0,
+      "p2": 0,
+      "result": "GO"
+    },
+    {
+      "scope": "EmploymentChanged publication",
+      "p0": 0,
+      "p1": 0,
+      "p2": 0,
+      "result": "GO"
+    },
+    {
+      "scope": "SVC-PEP-HRM-007 and People security integration",
+      "p0": 0,
+      "p1": 0,
+      "p2": 0,
+      "result": "GO"
+    }
+  ],
+  "repositoryWideSuiteRun": false,
+  "broadSourceSizeGate": {
+    "result": "NOT_USED_AS_SLICE_GATE",
+    "reason": "The repository-wide source-size script reports pre-existing and concurrently owned baseline violations outside this token. Every new TIM003 production and test source is within its applicable limit."
+  }
+}
