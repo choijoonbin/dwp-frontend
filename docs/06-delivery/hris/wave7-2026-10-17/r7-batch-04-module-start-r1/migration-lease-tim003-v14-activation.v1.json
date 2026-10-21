@@ -1,0 +1,202 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-tim003-v14-migration-lease-activation.v1",
+  "activationId": "HRIS-WAVE7-R7-BATCH-04-MIGRATION-LEASE-ACTIVATION-TIM003-V14-20261021-R1",
+  "activatedAt": "2026-10-21T15:41:00+09:00",
+  "activatedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "ACTIVE_EXCLUSIVE_TIME_MAIN_V14",
+  "sliceId": "BASE-TFR-TIM-003",
+  "moduleSession": "HRIS-TIM",
+  "phase": "PHASE_2_TIM_CONSUMER_PROJECTION_AND_RECOVERY",
+  "purpose": "Activate exactly one exclusive TIME_MAIN V14 lease for the sealed BASE-TFR-TIM-003 employment-absence projection after the reviewed reservation and exact clean backend worktree receipt. This lease authorizes no migration or source write unless a matching executable start token independently hash-binds this activation.",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ACTIVATION_ID_AND_SHA256",
+    "historicalArtifactMutation": false
+  },
+  "successorOf": {
+    "reservationId": "HRIS-WAVE7-R7-BATCH-04-MIGRATION-LEASE-RESERVATION-TIM003-V14-20261021-R1",
+    "priorState": "RESERVED_NOT_ACTIVE",
+    "newState": "ACTIVE_EXCLUSIVE_TIME_MAIN_V14",
+    "unchangedLeaseId": "HRIS-WAVE7-R7-BATCH-04-TIME-MAIN-V14-TIM003-20261021-R1"
+  },
+  "authorityBasis": {
+    "ownerPacket": {
+      "path": "owner-packets/base-tfr-tim-003.tim-consumer.owner-packet.v1.json",
+      "sha256": "51f1211d078ca98265a162548dec98d580c1d033a4cbafd9e9aa7e4861ffc5a1",
+      "bytes": 26264,
+      "packetId": "HRIS-WAVE7-R7-BATCH-04-OWNER-BASE-TFR-TIM-003-TIM-CONSUMER-20261021-R1",
+      "requiredState": "SEALED_EXACT_TIM003_TIM_CONSUMER_OWNER_PACKET_READY_FOR_INDEPENDENT_REVIEW_AND_FRESH_BACKEND_WORKTREE_EXECUTABLE_TOKEN_WITHHELD_PENDING_ACTIVE_V14_LEASE"
+    },
+    "reservation": {
+      "path": "migration-lease-tim003-v14-reservation.v1.json",
+      "sha256": "5e675e4c24107e0345b04ca02bf0568126cb50b777f951f869112ea2447e96e1",
+      "bytes": 12966,
+      "reservationId": "HRIS-WAVE7-R7-BATCH-04-MIGRATION-LEASE-RESERVATION-TIM003-V14-20261021-R1",
+      "requiredState": "RESERVED_NOT_ACTIVE"
+    },
+    "ownerPacketAndReservationReview": {
+      "path": "tim-003-tim-owner-packet-and-v14-reservation-review.v1.json",
+      "sha256": "9090d1fc9d43f31e32b098ff8f026e795761bb4f2a179334fb17bd4f8b6de244",
+      "bytes": 11016,
+      "reviewId": "HRIS-WAVE7-R7-BATCH-04-TIM003-TIM-OWNER-PACKET-V14-RESERVATION-REVIEW-20261021-R1",
+      "requiredState": "TIM003_TIM_OWNER_PACKET_AND_RESERVED_NOT_ACTIVE_V14_INDEPENDENTLY_REVIEWED_PASS_ZERO_P0_ZERO_P1_ZERO_P2_AUTHORITY_CARRIER_MAY_BE_COMMITTED_AND_PUSHED"
+    },
+    "worktreeMaterializationReceipt": {
+      "path": "worktree-materialization-receipts/base-tfr-tim-003.tim-consumer.worktree-materialization-receipt.v1.json",
+      "sha256": "599424225253b274b13a2741e0dea288b73f1fa789f27f9c7897ee7ef9481c46",
+      "bytes": 7378,
+      "receiptId": "HRIS-WAVE7-R7-BATCH-04-TIM003-TIM-CONSUMER-WORKTREE-MATERIALIZATION-20261021-R1",
+      "requiredState": "MATERIALIZED_CLEAN_EXACT_TIM003_TIM_BACKEND_WORKTREE_NO_UPSTREAM_UNPUSHED_RESERVED_V14_NOT_ACTIVE_NO_SOURCE_EDITS_NO_TOKEN"
+    },
+    "authorityCarrier": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "267e0f75fb05585b197d13fd0b5fc60de5d117e0",
+      "tree": "e2e335d8b68e41a77026823534c9ad72740e9e6e",
+      "originRef": "origin/dwp-dev",
+      "originExactBeforeThisAppendOnlyActivation": true,
+      "cleanBeforeThisAppendOnlyActivation": true
+    }
+  },
+  "pinRevalidation": {
+    "backendWorktree": {
+      "repository": "dwp-backend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261021/r7-batch04/tim-003-tim/backend",
+      "branch": "codex/hris-wave7-r7-batch04-tim-003-tim-backend-20261021-r1",
+      "head": "fd6aae41e3eec9569f8aa6451090beeade556703",
+      "tree": "5d8667a5bf810c80d7c9a688688dd1f4d41151cf",
+      "porcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "clean": true,
+      "upstream": null,
+      "remoteTrackingBranchPresent": false,
+      "branchPushed": false,
+      "sourceChanges": [],
+      "migrationChanges": [],
+      "testChanges": []
+    },
+    "timeMain": {
+      "observedHighWater": "V13",
+      "candidateVersion": "V14",
+      "exactCandidatePathPresentBeforeActivation": false,
+      "activeLeaseCountBeforeActivation": 0,
+      "activeLeaseCountAfterActivation": 1,
+      "v1ThroughV13Manifest": {
+        "fileCount": 13,
+        "bytes": 538,
+        "sha256": "777a24aa1cc6081010bb6512d9022cd319f5b3dce34dab7dd75f6ad281512924",
+        "construction": "LC_ALL=C sort -V over V*.sql basenames with one trailing newline",
+        "matchesReservation": true
+      },
+      "v13Predecessor": {
+        "path": "dwp-time-server/src/main/resources/db/migration/V13__tim_add_service_audit_outbox.sql",
+        "sha256": "e86d2ddf28a32e458bfb13512b7f5f913557e9b70a4da4a039f2f7355e203b0f",
+        "bytes": 2197
+      },
+      "historicalTentativeTim014V14IsCurrentAuthority": false,
+      "competingCurrentV14ClaimFound": false
+    }
+  },
+  "lease": {
+    "leaseId": "HRIS-WAVE7-R7-BATCH-04-TIME-MAIN-V14-TIM003-20261021-R1",
+    "moduleSession": "HRIS-TIM",
+    "sliceId": "BASE-TFR-TIM-003",
+    "canonicalFeature": "HRIS_TIM_EMPLOYMENT_ABSENCE_PROJECTION",
+    "stream": "TIME_MAIN",
+    "version": "V14",
+    "predecessorHighWater": "V13",
+    "exactPath": "dwp-time-server/src/main/resources/db/migration/V14__tim_base_tfr_tim_003_employment_absence_projection.sql",
+    "manifestAuthority": "migration-lease-tim003-v14-reservation.v1.json#/resolvedExactMigrationManifest",
+    "manifestAuthoritySha256": "5e675e4c24107e0345b04ca02bf0568126cb50b777f951f869112ea2447e96e1",
+    "state": "ACTIVE_EXCLUSIVE_TIME_MAIN_V14",
+    "activeLeaseCountForTimeMainV14": 1,
+    "authoringCondition": "MATCHING_EXECUTABLE_BASE_TFR_TIM_003_TIM_CONSUMER_START_TOKEN_REQUIRED",
+    "authoringAuthorizedByLeaseAlone": false,
+    "secondMigrationAuthorized": false,
+    "existingMigrationEditAuthorized": false,
+    "secondTim003TableAuthorized": false,
+    "assignmentChildTableAuthorized": false,
+    "dataBackfillAuthorized": false,
+    "sharedLedgerSchemaChangeAuthorized": false,
+    "automaticBroadRuntimeGrantAuthorized": false
+  },
+  "resolvedAuthoringBoundary": {
+    "allowed": {
+      "exactMigrationPath": "dwp-time-server/src/main/resources/db/migration/V14__tim_base_tfr_tim_003_employment_absence_projection.sql",
+      "createExactlyOneTable": "abs_employment_relationship_projections",
+      "createExactlyOneValidationFunction": "public.tim003_assignment_snapshots_structurally_valid(jsonb,uuid)",
+      "createExactlyOneIdentityAndVersionTrigger": true,
+      "createExactlyTwoIndexes": true,
+      "forcedRlsWithUsingAndWithCheck": true,
+      "narrowColumnPrivileges": true,
+      "semanticManifestSource": "semantic-dispositions/base-tfr-tim-003.semantic-disposition.v1.json#/migrationDecision"
+    },
+    "reuseOnly": [
+      "sys_domain_event_inbox",
+      "sys_domain_event_offsets",
+      "sys_domain_event_replay_audit",
+      "sys_audit_outbox",
+      "sys_domain_event_dead_letters read-only view"
+    ],
+    "forbidden": [
+      "any existing Time migration edit",
+      "a second migration or second TIM-003 table",
+      "a second event inbox, offset, retry, replay or DLQ ledger",
+      "an assignment child table",
+      "People source-of-record, leave request, balance or approval persistence",
+      "data backfill",
+      "shared-ledger schema change",
+      "broad runtime grants or runtime object ownership"
+    ]
+  },
+  "activationConditionsSatisfied": [
+    "The reviewed owner packet and RESERVED_NOT_ACTIVE reservation are committed and pushed on the exact frontend authority carrier.",
+    "The zero-finding owner-packet and reservation review is committed and pushed.",
+    "The exact clean backend worktree with null upstream and no source, test or migration changes is materialized and its receipt is committed and pushed.",
+    "TIME_MAIN remains exactly V1 through V13 with the reserved manifest and exact V14 path absent.",
+    "No competing current TIME_MAIN V14 reservation, activation, path or lease exists.",
+    "The historical tentative TIM-014 V14 allocation remains non-authoritative and unmodified."
+  ],
+  "verificationPolicy": {
+    "migrationOrSourceTestsAuthorizedByLeaseAlone": false,
+    "matchingExecutableTokenRequired": true,
+    "afterToken": "Run each bounded affected target once and rerun only the smallest failed target; no repository-wide or full-module suite per correction.",
+    "databaseExecutionBoundary": "Isolated ephemeral PostgreSQL only; no customer or production database."
+  },
+  "authority": {
+    "activeLeaseCount": 1,
+    "oneExactTimeMainV14LeaseActive": true,
+    "v14AuthoringAuthorizedByLeaseAlone": false,
+    "v14AuthoringAuthorizedOnlyWithMatchingExecutableToken": true,
+    "sourceAuthoringAuthorizedByLeaseAlone": false,
+    "testExecutionAuthorizedByLeaseAlone": false,
+    "moduleBranchCommitAuthorizedByLeaseAlone": false,
+    "moduleBranchPushAuthorizedByLeaseAlone": false,
+    "centralWriteAuthorizedBeyondMatchingToken": false,
+    "directDwpDevMergeAuthorized": false,
+    "frontendSourceAuthorized": false,
+    "routeOrMenuAuthorized": false,
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionBrokerBindingAuthorized": false,
+    "customerDataOrDatabaseAuthorized": false,
+    "productionExecutionOrReleaseAuthorized": false,
+    "fullSliceCompletionAuthorized": false
+  },
+  "invalidationConditions": [
+    "Any authority artifact path, hash, byte count, required state, carrier commit or worktree identity differs.",
+    "The backend worktree is relocated, merged, rebased, prepopulated, gains an upstream or differs from its sealed initial head, tree or clean porcelain before the first authorized edit.",
+    "TIME_MAIN high-water or the V1-to-V13 manifest changes, the exact V14 path appears outside this lease, or another current V14 claim exists before first authoring.",
+    "The exact one-table, one-function, one-trigger and two-index manifest is insufficient, or an existing migration, second migration, second table, backfill, shared-ledger schema change or broader privilege is required.",
+    "A matching executable start token that hash-binds this exact activation is absent, invalid or mismatched.",
+    "Any frontend, route, menu, activation, enrollment, production broker, customer data, direct dwp-dev merge or production action is attempted."
+  ],
+  "nonClaims": [
+    "This activation references or issues a start token.",
+    "The active lease alone authorizes the V14 file, source, test, commit or push.",
+    "The V14 file or any source or test has been authored.",
+    "The module branch has been pushed or has an upstream.",
+    "Any feature, tenant, broker, route, menu, customer database or production execution is active.",
+    "BASE-TFR-TIM-003, Batch-04, R7 or HRIS is complete."
+  ],
+  "nextGate": "ISSUE_ONE_EXECUTABLE_BASE_TFR_TIM_003_TIM_CONSUMER_START_TOKEN_THAT_HASH_BINDS_THIS_EXACT_ACTIVE_LEASE_AND_THE_REVIEWED_PACKET_RESERVATION_AND_WORKTREE_RECEIPT; NO_SOURCE_TEST_MIGRATION_COMMIT_OR_PUSH_BEFORE_THAT_TOKEN"
+}
