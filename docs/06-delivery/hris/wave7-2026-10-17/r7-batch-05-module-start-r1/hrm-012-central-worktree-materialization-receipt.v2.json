@@ -1,0 +1,49 @@
+{
+  "schema": "hris.central-worktree-materialization-receipt.v2",
+  "receiptId": "HRIS-WAVE7-R7-BATCH05-HRM012-CENTRAL-WORKTREES-20261022-R2",
+  "recordedAt": "2026-10-21T16:09:24Z",
+  "state": "MATERIALIZED_NOT_EXECUTABLE_ALONE",
+  "sliceId": "BASE-TFR-HRM-012",
+  "module": "HRIS-HRM",
+  "authority": {
+    "path": "hrm-012-central-authorization-successor.v2.json",
+    "sha256": "40472bfea3260712dcef9669741f6c05bbf9d30667e684fe3a532285487ba257",
+    "bytes": 56160,
+    "carrierCommit": "a8f338cb2cdb52aeaefb340f4113d52dd50e72f1",
+    "review": {
+      "p0": 0,
+      "p1": 0,
+      "p2": 0
+    }
+  },
+  "repositories": {
+    "backend": {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261022/batch05/hrm012-central/backend",
+      "branch": "codex/hris-wave7-batch05-hrm012-central-backend-20261022-r1",
+      "head": "8f8087736e59413c60ddcdcd081ed42f1915bc91",
+      "tree": "7020953515319688b998777ed73cae166dd678be",
+      "baseDwpDev": "8f8087736e59413c60ddcdcd081ed42f1915bc91",
+      "baseOriginDwpDev": "8f8087736e59413c60ddcdcd081ed42f1915bc91",
+      "clean": true,
+      "upstream": null
+    },
+    "frontend": {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261022/batch05/hrm012-central/frontend",
+      "branch": "codex/hris-wave7-batch05-hrm012-central-frontend-20261022-r1",
+      "head": "a8f338cb2cdb52aeaefb340f4113d52dd50e72f1",
+      "tree": "ce442660624dc759157a409f81b2d414603abd7b",
+      "baseDwpDev": "a8f338cb2cdb52aeaefb340f4113d52dd50e72f1",
+      "baseOriginDwpDev": "a8f338cb2cdb52aeaefb340f4113d52dd50e72f1",
+      "clean": true,
+      "upstream": null
+    }
+  },
+  "invariants": [
+    "Both worktrees are clean and based on the exact current dwp-dev/origin/dwp-dev heads.",
+    "The backend worktree may change only backend paths authorized by the exact v2 authority.",
+    "The frontend worktree may change only frontend paths authorized by the exact v2 authority.",
+    "No People V60 module source, HRM-012 page/menu content, tenant enrollment, activation or production release is authorized by this receipt."
+  ],
+  "authorityGranted": false,
+  "nextAction": "ISSUE_ONE_HASH_BOUND_CENTRAL_IMPLEMENTATION_TOKEN"
+}

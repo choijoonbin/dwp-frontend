@@ -1,0 +1,63 @@
+{
+  "schema": "hris.central-implementation-token.v2",
+  "tokenId": "HRIS-WAVE7-R7-BATCH05-HRM012-CENTRAL-IMPLEMENT-20261022-R2",
+  "issuedAt": "2026-10-21T16:09:24Z",
+  "state": "EXECUTABLE",
+  "sliceId": "BASE-TFR-HRM-012",
+  "module": "HRIS-HRM",
+  "authority": {
+    "successor": {
+      "path": "hrm-012-central-authorization-successor.v2.json",
+      "sha256": "40472bfea3260712dcef9669741f6c05bbf9d30667e684fe3a532285487ba257",
+      "bytes": 56160,
+      "carrierCommit": "a8f338cb2cdb52aeaefb340f4113d52dd50e72f1"
+    },
+    "worktreeReceipt": {
+      "path": "hrm-012-central-worktree-materialization-receipt.v2.json",
+      "sha256": "803b77b1105533c17c5a6c73577a3d726a1f766472a89efb94caf84714b64fb7",
+      "bytes": 2197
+    },
+    "independentReview": {
+      "p0": 0,
+      "p1": 0,
+      "p2": 0
+    }
+  },
+  "execution": {
+    "backendWorktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261022/batch05/hrm012-central/backend",
+    "frontendWorktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261022/batch05/hrm012-central/frontend",
+    "changedPathAuthority": "Exactly the path arrays under exactImplementationPathAllowlistAfterNewV2Token in the pinned successor; no implicit sibling path authority exists.",
+    "requiredOutcomes": [
+      "Generate immutable product-authorization v57 with the exact one-capability, one-predicate and three-route HRM-012 delta.",
+      "Add dwp-auth-server V266 catalog-only readiness, feature baseline OFF and zero assignment, enrollment, activation and grant rows.",
+      "Implement the exact signed OWNER_RECEIPT_AUTH_REQUIRED central handoff and People-only receipt-first verification client/API boundary without module controller or business mutation.",
+      "Synchronize frontend registry versions 53 through 57, six PAGE tuples, exact v52 successor compatibility and HCM firewall count 64 without mounting HRM-012 content.",
+      "Run each pinned focused target group once and rerun only the smallest failed target.",
+      "Obtain independent source review with zero unresolved P0, P1 or P2 before no-ff admission to dwp-dev."
+    ],
+    "verificationCommands": "Exactly targetedVerificationCommands in the pinned successor; commands may be narrowed after a failure but not broadened without evidence.",
+    "branchPolicy": "Commit and push each central worktree branch, then no-ff merge reviewed results into each repository dwp-dev and push origin/dwp-dev."
+  },
+  "forbidden": [
+    "People V60 migration or HRM-012 ingestion/workbench module implementation",
+    "HRM-012 sidebar/menu/page mounting or tenant feature enablement",
+    "tenant enrollment, activation, assignment, broad permission or production release",
+    "redefinition or fallback use of legacy hcm.integration.execute",
+    "repository-wide test repetition without a focused failure proving it necessary",
+    "source changes outside the pinned exact path allowlist"
+  ],
+  "invalidation": [
+    "Either worktree base head or tree differs before its first source change.",
+    "The successor or receipt SHA/byte tuple differs.",
+    "A V57, dwp-auth V266 or generated-output collision is found.",
+    "Default-OFF or zero-enrollment can issue the marker or enter an HRM-012 controller.",
+    "Any unresolved P0, P1 or P2 remains at admission time."
+  ],
+  "sourceAuthoringAuthorized": true,
+  "moduleAuthoringAuthorized": false,
+  "peopleV60LeaseActive": false,
+  "featureEnablementAuthorized": false,
+  "tenantEnrollmentAuthorized": false,
+  "productionReleaseAuthorized": false,
+  "nextAction": "IMPLEMENT_FOCUSED_REVIEW_COMMIT_PUSH_BRANCHES_THEN_NO_FF_ADMIT_TO_DWP_DEV"
+}
