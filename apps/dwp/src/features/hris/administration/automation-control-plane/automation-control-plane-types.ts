@@ -40,6 +40,16 @@ export const AUTOMATION_CATALOG_FIELDS = [
 ] as const;
 export type AutomationCatalogField = (typeof AUTOMATION_CATALOG_FIELDS)[number];
 
+export const AUTOMATION_SCOPE_TYPES = [
+  'GLOBAL',
+  'TENANT',
+  'LEGAL_ENTITY',
+  'ORGANIZATION',
+  'POPULATION',
+  'SUBJECT',
+] as const;
+export type AutomationScopeType = (typeof AUTOMATION_SCOPE_TYPES)[number];
+
 export type MaskedField = Readonly<{ decision: 'MASK'; displayValue: '••••' }>;
 export type OmittedField = Readonly<{ decision: 'OMIT' }>;
 export type ProjectedValue<T> = T | MaskedField | OmittedField;
@@ -283,7 +293,7 @@ export type CreateAutomationDefinitionBody = Readonly<{
   ownerDomain: 'HRM' | 'PER' | 'TIM' | 'PAY';
 }>;
 export type QueueAutomationRunBody = Readonly<{
-  scopeType: string;
+  scopeType: AutomationScopeType;
   scopeId: string | null;
   inputReference: string;
   inputDigest: string;
@@ -312,7 +322,7 @@ export type CreateAutomationVersionBody = Readonly<{
   inputSchemaDigest: string;
   receiptSchemaRef: string;
   receiptSchemaDigest: string;
-  allowedScopeTypes: readonly string[];
+  allowedScopeTypes: readonly AutomationScopeType[];
   retryMode: 'NONE' | 'FAILED_ITEMS_ONLY' | 'WHOLE_INVOCATION';
   maxAttempts: number;
 }>;

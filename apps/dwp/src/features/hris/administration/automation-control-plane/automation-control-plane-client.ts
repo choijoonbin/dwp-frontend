@@ -13,6 +13,7 @@ import {
 import {
   AUTOMATION_ACTION_KEYS,
   AUTOMATION_CATALOG_FIELDS,
+  AUTOMATION_SCOPE_TYPES,
 } from './automation-control-plane-types';
 
 import type { ApiResponse } from '@dwp-frontend/shared-utils';
@@ -25,6 +26,7 @@ import type {
   AutomationReadContext,
   AutomationRunProjection,
   AutomationRunQuery,
+  AutomationScopeType,
 } from './automation-control-plane-types';
 
 const AUTOMATION_BASE_PATH = '/api/platform/v1/admin/hris/automations' as const;
@@ -218,18 +220,23 @@ function closeAutomationCommandBody(command: AutomationCommand): Readonly<Record
         'description',
         'ownerDomain',
       ]);
-    case 'QUEUE_RUN':
-      return exactBody(command.body, [
+    case 'QUEUE_RUN': {
+      const body = exactBody(command.body, [
         'scopeType',
         'scopeId',
         'inputReference',
         'inputDigest',
         'expectedItemCount',
       ]);
+      if (!isCanonicalScopeType(body.scopeType)) {
+        throw new Error('Automation queue scope type is outside the PDX-004 contract.');
+      }
+      return body;
+    }
     case 'RETRY_RUN':
       return exactBody(command.body, ['evidenceDigest']);
-    case 'CREATE_VERSION':
-      return exactBody(command.body, [
+    case 'CREATE_VERSION': {
+      const body = exactBody(command.body, [
         'definitionPayload',
         'definitionDigest',
         'executionPolicy',
@@ -253,6 +260,17 @@ function closeAutomationCommandBody(command: AutomationCommand): Readonly<Record
         'retryMode',
         'maxAttempts',
       ]);
+      if (
+        !Array.isArray(body.allowedScopeTypes) ||
+        body.allowedScopeTypes.length < 1 ||
+        body.allowedScopeTypes.length > AUTOMATION_SCOPE_TYPES.length ||
+        new Set(body.allowedScopeTypes).size !== body.allowedScopeTypes.length ||
+        !body.allowedScopeTypes.every(isCanonicalScopeType)
+      ) {
+        throw new Error('Automation allowed scope types are outside the PDX-004 contract.');
+      }
+      return body;
+    }
     case 'VALIDATE_VERSION':
     case 'SUBMIT_VERSION':
     case 'APPROVE_VERSION':
@@ -291,6 +309,10 @@ function exactBody(
     throw new Error('Automation command body does not match the closed owner contract.');
   }
   return Object.freeze(Object.fromEntries(orderedKeys.map((key) => [key, body[key]])));
+}
+
+function isCanonicalScopeType(value: unknown): value is AutomationScopeType {
+  return AUTOMATION_SCOPE_TYPES.some((scopeType) => scopeType === value);
 }
 
 function resolveCommand(command: AutomationCommand): ResolvedAutomationCommand {

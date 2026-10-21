@@ -24,7 +24,7 @@ import {
   automationCommandFixtures,
   automationRunFixture,
 } from './automation-control-plane-fixtures.test-support';
-import { AUTOMATION_ACTION_KEYS } from './automation-control-plane-types';
+import { AUTOMATION_ACTION_KEYS, AUTOMATION_SCOPE_TYPES } from './automation-control-plane-types';
 
 describe('SYS-006 automation-control-plane typed client', () => {
   beforeEach(() => {
@@ -231,6 +231,77 @@ describe('SYS-006 automation-control-plane typed client', () => {
       'closed owner contract'
     );
     expect(transport.post).toHaveBeenCalledTimes(14);
+  });
+
+  it('closes queue and signed-version scopes to the six canonical PDX-004 values', async () => {
+    expect(AUTOMATION_SCOPE_TYPES).toEqual([
+      'GLOBAL',
+      'TENANT',
+      'LEGAL_ENTITY',
+      'ORGANIZATION',
+      'POPULATION',
+      'SUBJECT',
+    ]);
+
+    const commands = automationCommandFixtures().map(({ command }) => command);
+    const queue = commands.find(
+      (command): command is Extract<AutomationCommand, { kind: 'QUEUE_RUN' }> =>
+        command.kind === 'QUEUE_RUN'
+    );
+    const createVersion = commands.find(
+      (command): command is Extract<AutomationCommand, { kind: 'CREATE_VERSION' }> =>
+        command.kind === 'CREATE_VERSION'
+    );
+    if (!queue || !createVersion) throw new Error('fixture mismatch');
+    expect(createVersion.body.allowedScopeTypes).toEqual(['LEGAL_ENTITY', 'ORGANIZATION']);
+
+    await expect(
+      executeAutomationCommand(
+        {
+          ...queue,
+          body: { ...queue.body, scopeType: 'PAY_GROUP' },
+        } as unknown as AutomationCommand,
+        authority(true, true)
+      )
+    ).rejects.toThrow('queue scope type is outside the PDX-004 contract');
+    await expect(
+      executeAutomationCommand(
+        {
+          ...createVersion,
+          body: {
+            ...createVersion.body,
+            allowedScopeTypes: [...AUTOMATION_SCOPE_TYPES, 'GLOBAL'],
+          },
+        } as unknown as AutomationCommand,
+        authority(false, true)
+      )
+    ).rejects.toThrow('allowed scope types are outside the PDX-004 contract');
+    expect(transport.post).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ['an empty list', []],
+    ['a duplicate within the six-item limit', ['LEGAL_ENTITY', 'LEGAL_ENTITY']],
+    ['a non-canonical value within the six-item limit', ['LEGAL_ENTITY', 'PAY_GROUP']],
+  ])('rejects create-version allowedScopeTypes with %s', async (_case, allowedScopeTypes) => {
+    const createVersion = automationCommandFixtures()
+      .map(({ command }) => command)
+      .find(
+        (command): command is Extract<AutomationCommand, { kind: 'CREATE_VERSION' }> =>
+          command.kind === 'CREATE_VERSION'
+      );
+    if (!createVersion) throw new Error('fixture mismatch');
+
+    await expect(
+      executeAutomationCommand(
+        {
+          ...createVersion,
+          body: { ...createVersion.body, allowedScopeTypes },
+        } as unknown as AutomationCommand,
+        authority(false, true)
+      )
+    ).rejects.toThrow('allowed scope types are outside the PDX-004 contract');
+    expect(transport.post).not.toHaveBeenCalled();
   });
 
   it('rejects substituted authority before dispatch and treats an unbound receipt as outcome unknown', async () => {

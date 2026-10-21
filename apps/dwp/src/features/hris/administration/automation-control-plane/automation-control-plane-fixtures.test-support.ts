@@ -251,7 +251,7 @@ export function automationCommandFixtures(): readonly AutomationCommandFixture[]
           inputSchemaDigest: '1'.repeat(64),
           receiptSchemaRef: 'schema://automation/payroll-receipt.v1',
           receiptSchemaDigest: '2'.repeat(64),
-          allowedScopeTypes: ['LEGAL_ENTITY', 'PAY_GROUP'],
+          allowedScopeTypes: ['LEGAL_ENTITY', 'ORGANIZATION'],
           retryMode: 'FAILED_ITEMS_ONLY',
           maxAttempts: 3,
         },
