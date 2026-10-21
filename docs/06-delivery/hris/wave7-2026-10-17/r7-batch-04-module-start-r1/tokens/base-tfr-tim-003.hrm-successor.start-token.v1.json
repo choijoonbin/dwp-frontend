@@ -1,0 +1,228 @@
+{
+  "schema": "dwp.hris.module-start-token.v1",
+  "tokenId": "HRIS-WAVE7-R7-BATCH-04-START-BASE-TFR-TIM-003-HRM-SUCCESSOR-20261021-R1",
+  "issuedAt": "2026-10-21T14:27:31+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "ISSUED_EXECUTABLE_EXACT_MATERIALIZED_WORKTREES_BOUNDED_HRM_SOURCE_TEST_COMMIT_PUSH_ONLY_NO_MIGRATION_DEFAULT_OFF_ZERO_ENROLLMENT",
+  "executable": true,
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_TOKEN_ID_AND_SHA256"
+  },
+  "module": "HRM",
+  "moduleSession": "HRIS-HRM",
+  "sliceId": "BASE-TFR-TIM-003",
+  "phase": "PHASE_1_HRM_SUCCESSOR",
+  "authorityBasis": {
+    "ownerPacket": {
+      "path": "../owner-packets/base-tfr-tim-003.hrm-successor.owner-packet.v1.json",
+      "sha256": "9b61721b2dc17648ea175f583713d40065fa789cb986fd409d0100a6d0aa22dd",
+      "bytes": 17173,
+      "packetId": "HRIS-WAVE7-R7-BATCH-04-OWNER-BASE-TFR-TIM-003-HRM-SUCCESSOR-20261021-R1",
+      "requiredState": "SEALED_TIM003_HRM_SUCCESSOR_OWNER_PACKET_WORKTREE_RECEIPTS_AND_EXECUTABLE_START_TOKEN_PENDING"
+    },
+    "worktreeMaterializationReceipt": {
+      "path": "../worktree-materialization-receipts/base-tfr-tim-003.hrm-successor.worktree-materialization-receipt.v1.json",
+      "sha256": "749e27a9ea3a79e223258fe355de0299a605cde07060f357aa7704eb6733c726",
+      "bytes": 4384,
+      "receiptId": "HRIS-WAVE7-R7-BATCH-04-TIM003-HRM-WORKTREE-MATERIALIZATION-20261021-R1",
+      "requiredState": "MATERIALIZED_CLEAN_EXACT_AUTHORITY_CARRIER_PINS_NO_SOURCE_EDITS_NO_UPSTREAM_NO_MIGRATION_LEASE_REQUIRED"
+    }
+  },
+  "centralBaseline": {
+    "frontendAuthorityCarrierCommitBeforeToken": "6de3619443228feea888d49230a7dec7abc82102",
+    "frontendAuthorityCarrierTreeBeforeToken": "854d55809bd90effd504e814d9b7d52185c8aea8",
+    "frontendAuthorityCarrierBranch": "dwp-dev",
+    "frontendAuthorityCarrierOrigin": "origin/dwp-dev",
+    "frontendAuthorityCarrierOriginExact": true,
+    "backendAdmittedCommit": "75ac11873e6e4a6c070d47e849d81063aaa88800",
+    "backendAdmittedTree": "cb02f8d3b09eed67762fb03e57af6badd8568fe4",
+    "defaultEnabled": false,
+    "tenantEnrollmentCount": 0
+  },
+  "materializedWorktrees": {
+    "backend": {
+      "repository": "dwp-backend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261021/r7-batch04/tim-003-hrm/backend",
+      "branch": "codex/hris-wave7-r7-batch04-tim-003-hrm-backend-20261021-r1",
+      "initialHead": "75ac11873e6e4a6c070d47e849d81063aaa88800",
+      "initialTree": "cb02f8d3b09eed67762fb03e57af6badd8568fe4",
+      "initialPorcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "initialUpstream": null,
+      "firstPushTarget": "origin/codex/hris-wave7-r7-batch04-tim-003-hrm-backend-20261021-r1"
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261021/r7-batch04/tim-003-hrm/frontend",
+      "branch": "codex/hris-wave7-r7-batch04-tim-003-hrm-frontend-20261021-r1",
+      "initialHead": "713be24c166139209c37688744fd27b3b4fe1fd7",
+      "initialTree": "52dd20833df9b5a5d12449e63a2247c2ef1ad841",
+      "initialPorcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "initialUpstream": null,
+      "firstPushTarget": "origin/codex/hris-wave7-r7-batch04-tim-003-hrm-frontend-20261021-r1"
+    }
+  },
+  "exactWritableBoundary": {
+    "backend": [
+      "contracts/asyncapi/domain-events.yaml",
+      "contracts/hris/canonical/README.md",
+      "contracts/hris/canonical/hris-contract-codegen-manifest.v1.json",
+      "contracts/hris/canonical/schemas/cross-module-canonical-schemas.v1.json",
+      "scripts/generate-hris-contracts.py",
+      "scripts/tests/test_generate_hris_contracts.py",
+      "dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/Xcon027EmploymentAbsenceSnapshotV1.java",
+      "dwp-platform-contracts/src/test/java/com/dwp/platform/contract/Tim003HrmCanonicalContractTest.java",
+      "dwp-platform-contracts/src/test/java/com/dwp/platform/contract/Tim003HrmAsyncApiContractTest.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/employment/EmploymentEventPublicationEvidence.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/employment/EmploymentEventRepository.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/tim003/**",
+      "dwp-people-server/src/main/java/com/dwp/services/people/security/PeopleSecurityFilter.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/employment/EmploymentChangedDomainEventPublicationTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/contracts/tim003/**",
+      "dwp-people-server/src/test/java/com/dwp/services/people/security/PeopleSecurityFilterTest.java"
+    ],
+    "frontend": [
+      "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/cross-module-contract-register.csv",
+      "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/service-api-auth-binding-register.csv",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-results-r1/base-tfr-tim-003/hrm-successor/**"
+    ],
+    "outsideBoundaryAction": "STOP_AND_REQUEST_EXACT_APPEND_ONLY_CONTROL_REALLOCATION"
+  },
+  "authorizedImplementation": {
+    "xcon004Publication": [
+      "Preserve the closed four-field XCON-004 body unchanged.",
+      "Register type dwp.hris.people.employment-changed.v1 at major 1 and source urn:dwp:people:hris:employment.",
+      "Use WORK_RELATIONSHIP aggregate identity, relationshipPublicId aggregate id and positive newAggregateVersion ordering.",
+      "Capture one application Instant, truncate to microseconds and use it for both canonical envelope time and legacy occurred_at.",
+      "Record the validated canonical DomainEventEnvelope in the same employment publication transaction while retaining the legacy row as compatibility evidence and without setting legacy published_at.",
+      "Reuse the existing deterministic event-id algorithm byte-for-byte; no polling bridge or direct broker I/O."
+    ],
+    "xcon027Contract": [
+      "Append XCON-027 and its nested assignment contract to the canonical schema, codegen manifest, generated immutable Java artifact and focused contract tests.",
+      "Append XCON-027 and SVC-PEP-HRM-007 rows to the two exact canonical frontend registers without rewriting historical rows.",
+      "Keep relationshipRevision, minimumRelationshipRevision and assignmentRevision nonnegative; keep event aggregate sequence positive.",
+      "Use closed shapes, canonical ordering, minimized current-business-date facts, strict digest fields and no sensitive placeholders.",
+      "Append the canonical event/query declarations only; do not mutate XCON-001 through XCON-026 or SVC-PEP-HRM-002 semantics."
+    ],
+    "svcPepHrm007": [
+      "Implement the exact relationship-only TIME_ABSENCE_V1 GET contract and typed data-plus-evidence or signed problem response.",
+      "Fail closed before fact reads on wrong workload, mTLS/JWT binding, issuer, audience, client, subject, tenant, method, path, query, correlation, purpose, projection, grant revision, business zone/date, digest, signature or expiry.",
+      "Reuse sys_domain_event_inbox for the atomic jti-plus-nonce reservation; add no private replay table and no migration.",
+      "Read current People relationship and assignment facts only after committed replay reservation and current owner-authority revalidation.",
+      "Provide current authority ports and fail-closed adapters only; no admitted backing grant projection or issuer is claimed in this phase.",
+      "Keep publication and query switches default OFF with zero enrolled tenants."
+    ]
+  },
+  "migrationAuthority": {
+    "migrationRequired": false,
+    "migrationLeaseRequired": false,
+    "migrationAuthoringAuthorized": false,
+    "historicalMigrationEditAuthorized": false,
+    "newPeopleMigrationAuthorized": false,
+    "timeV14Authorized": false,
+    "rule": "Reuse existing People stores only. TIME_MAIN V14 belongs to the later HRIS-TIM packet after this HRM phase is admitted."
+  },
+  "acceptanceCriteria": [
+    "TIM003-AC01 XCON-004 remains the four-field closed EmploymentChanged.v1 business contract and no sensitive or Time-owned fact is added.",
+    "TIM003-AC02 The transport type is dwp.hris.people.employment-changed.v1 with source urn:dwp:people:hris:employment, WORK_RELATIONSHIP aggregate identity and relationship revision ordering.",
+    "TIM003-AC03 Envelope subject, aggregate id and sequence exactly equal WORK_RELATIONSHIP/{relationshipPublicId}, relationshipPublicId and newAggregateVersion; mismatch, unknown type or unsupported major fails closed to the shared DLQ.",
+    "TIM003-AC04 HRIS-HRM registers the canonical event major, captures one publication Instant, and writes both canonical envelope and legacy compatibility evidence in one transaction without changing legacy published_at, direct broker I/O or treating legacy aggregate metadata as canonical.",
+    "TIM003-AC05 XCON-027 provides exact typed, minimized current-business-date relationship and nested assignment revisions for recovery, and new SVC-PEP-HRM-007 exposes it only through workload-authenticated TIME_ABSENCE_V1 exact relationship recovery while SVC-PEP-HRM-002 remains unchanged; historical or future dates fail closed until an effective-dated worker-status owner exists.",
+    "TIM003-AC06 Wrong workload, tenant, issuer, audience, client, subject, mTLS confirmation, method, path, query, token time, replay id, correlation, purpose, projection, field set, business zone/date, scope/content/evidence digest, signature, revision or expiry returns no usable owner facts and produces owner audit evidence.",
+    "TIM003-AC07 HRIS-TIM reuses the shared inbox, offset, retry, replay and DLQ ledger and creates no competing delivery ledger.",
+    "TIM003-AC08 Same-id same-digest delivery is idempotent, same-id different-digest delivery is quarantined, older shared-offset revision is a no-op, a covered contiguous revision uses the no-refetch fast path, and any unresolved or gap inbox row blocks current reads until reconciled and trusted recovery succeeds.",
+    "TIM003-AC09 V14 creates exactly one tenant-isolated abs_employment_relationship_projections table with forced RLS, closed states, deterministic assignment facts and projection-version CAS.",
+    "TIM003-AC10 Owner recovery never regresses a relationship revision and atomically binds projection CAS replacement, required exact offset CAS, GAP-mode DEFERRED-only settlement or eventless OWNER_BASELINE zero-row settlement, replay audit and structured audit evidence; REPLAY_PENDING, DEAD and payload conflicts are never snapshot-settled, and snapshot-only recovery stores no fabricated last event id.",
+    "TIM003-AC11 Non-CURRENT, expired, inbox-blocked or non-current-date projections fail closed for absence evaluation; an eligible eventless projection miss schedules a fenced trusted owner baseline, a retry-safe reconciler repairs gap/quarantine state after crashes, and no direct People database access, leave request mutation, balance mutation or approval behavior is introduced.",
+    "TIM003-AC12 Producer, query and consumer remain default OFF with zero enrolled tenants, no route or menu, no production broker and zero business-completion credit until later admission and activation authority."
+  ],
+  "acceptanceAuthority": {
+    "source": "owner-packets/base-tfr-tim-003.hrm-successor.owner-packet.v1.json#/acceptanceCriteria",
+    "sourceSha256": "9b61721b2dc17648ea175f583713d40065fa789cb986fd409d0100a6d0aa22dd",
+    "requiredCount": 12,
+    "weakeningOrOmissionAuthorized": false
+  },
+  "targetedVerification": {
+    "executionAuthorizedNow": true,
+    "policy": "Run each affected HRM target once, then rerun only the smallest failed target; do not run repository-wide suites per correction.",
+    "hrm": [
+      "Xcon004EmploymentChangedV1ProviderContractTest",
+      "Xcon027EmploymentAbsenceSnapshotV1ProviderContractTest",
+      "EmploymentChangedDomainEventPublicationTest",
+      "TimeAbsenceWorkforceSnapshotOwnerContractTest",
+      "TimeAbsenceWorkforceSnapshotErrorContractTest",
+      "TimeAbsenceWorkforceSnapshotTenantPurposeFieldNegativeTest"
+    ],
+    "codegen": [
+      "python3 scripts/generate-hris-contracts.py --check",
+      "python3 -m unittest scripts.tests.test_generate_hris_contracts"
+    ],
+    "requiredNegativeProofs": [
+      "wrong workload, tenant, issuer, audience, client, subject, certificate binding, method, path, query and correlation",
+      "past or future effectiveOn, stale owner revision and invalid current tenant business zone",
+      "unknown, missing or over-projected XCON-027 fields",
+      "scope, content, evidence and signature mismatch or expiry",
+      "default-OFF performs no owner fact read and zero tenant enrollment"
+    ],
+    "changedPathProofRequired": true,
+    "gitDiffCheckRequired": true,
+    "repositoryWideSuitePerCorrection": false,
+    "fullSuiteAuthorized": false
+  },
+  "activationBoundary": {
+    "publicationEnabledByDefault": false,
+    "ownerQueryEnabledByDefault": false,
+    "tenantEnrollmentCount": 0,
+    "productionBrokerBindings": [],
+    "customerDataAuthorized": false,
+    "browserRouteAdded": false,
+    "frontendMenuAdded": false,
+    "businessCompletionIncrement": 0,
+    "carriedOpenGates": [
+      "TIM_CLOSE_PERIOD_DEFINITION_PRODUCER",
+      "TIM_CLOSE_TRUSTED_OWNER_HEADER_ISSUER"
+    ]
+  },
+  "explicitNonClaims": [
+    "A current control-plane-backed TIM003OwnerGrantV1 projection or issuer exists.",
+    "Any tenant is enrolled or either feature switch is enabled.",
+    "A production broker binding, route, menu or UI is admitted.",
+    "HRIS-TIM source, dwp-core source or TIME_MAIN V14 is authorized by this token.",
+    "Leave, return or termination command production exists.",
+    "BASE-TFR-TIM-003, Batch-04, R7 or HRIS is complete."
+  ],
+  "authority": {
+    "useExactMaterializedWorktreesAuthorized": true,
+    "additionalWorktreeMaterializationAuthorized": false,
+    "tim003HrmSuccessorImplementationAuthorized": true,
+    "backendSourceAndTestAuthoringAuthorized": true,
+    "frontendRegisterAndResultAuthoringAuthorized": true,
+    "boundedVerificationExecutionAuthorized": true,
+    "moduleBranchCommitAuthorized": true,
+    "moduleBranchPushAuthorized": true,
+    "migrationAuthoringAuthorized": false,
+    "dwpCoreWriteAuthorized": false,
+    "hrisTimSourceAuthoringAuthorized": false,
+    "frontendUiRouteMenuShellOrI18nWriteAuthorized": false,
+    "directDwpDevMergeAuthorized": false,
+    "centralAdmissionAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionBrokerBindingAuthorized": false,
+    "customerDataAuthorized": false,
+    "fullSliceCompletionAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "invalidationConditions": [
+    "Any authority hash, byte count, worktree path, branch, initial head, initial tree, initial upstream or initial porcelain digest differs.",
+    "Either exact worktree is reused, relocated, merged, rebased or populated from a different base before the first authorized edit.",
+    "XCON-004 gains fields or changes its existing four-field semantics.",
+    "SVC-PEP-HRM-002, XCON-001 through XCON-026 or a historical migration is changed beyond the exact XCON-004 transport registration authorized here.",
+    "A People or Time migration, dwp-core change, direct People database access from Time, browser route, menu, tenant enrollment or production broker is required.",
+    "Historical or future effectiveOn is served from current-only worker status.",
+    "Current authority is derived from the request JWT, stored Time projection, startup-only configuration or the other service response.",
+    "Any path outside the exact writable boundary is required or changed.",
+    "Direct dwp-dev merge, feature activation, tenant enrollment, customer data use, full-slice completion or production release is attempted."
+  ],
+  "nextAction": "HRIS_HRM_MAY_IMPLEMENT_VERIFY_COMMIT_AND_PUSH_ONLY_THE_EXACT_BOUNDED_MODULE_BRANCHES; THEN_RETURN_HASHED_RESULT_EVIDENCE_FOR_SEPARATE_CENTRAL_REVIEW_BEFORE_ANY_HRIS_TIM_PACKET_OR_V14_LEASE"
+}
