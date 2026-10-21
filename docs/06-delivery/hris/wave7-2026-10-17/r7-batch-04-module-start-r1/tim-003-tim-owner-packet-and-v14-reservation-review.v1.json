@@ -1,0 +1,142 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-tim003-tim-owner-packet-v14-reservation-review.v1",
+  "reviewId": "HRIS-WAVE7-R7-BATCH-04-TIM003-TIM-OWNER-PACKET-V14-RESERVATION-REVIEW-20261021-R1",
+  "recordedAt": "2026-10-21T15:36:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL_INDEPENDENT_REVIEW",
+  "state": "TIM003_TIM_OWNER_PACKET_AND_RESERVED_NOT_ACTIVE_V14_INDEPENDENTLY_REVIEWED_PASS_ZERO_P0_ZERO_P1_ZERO_P2_AUTHORITY_CARRIER_MAY_BE_COMMITTED_AND_PUSHED",
+  "sliceId": "BASE-TFR-TIM-003",
+  "moduleSession": "HRIS-TIM",
+  "phase": "PHASE_2_TIM_CONSUMER_PROJECTION_AND_RECOVERY_PRE_WORKTREE_REVIEW",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_REVIEW_ID_AND_SHA256",
+    "historicalArtifactMutation": false
+  },
+  "reviewedArtifacts": {
+    "ownerPacket": {
+      "path": "owner-packets/base-tfr-tim-003.tim-consumer.owner-packet.v1.json",
+      "sha256": "51f1211d078ca98265a162548dec98d580c1d033a4cbafd9e9aa7e4861ffc5a1",
+      "bytes": 26264,
+      "packetId": "HRIS-WAVE7-R7-BATCH-04-OWNER-BASE-TFR-TIM-003-TIM-CONSUMER-20261021-R1",
+      "requiredState": "SEALED_EXACT_TIM003_TIM_CONSUMER_OWNER_PACKET_READY_FOR_INDEPENDENT_REVIEW_AND_FRESH_BACKEND_WORKTREE_EXECUTABLE_TOKEN_WITHHELD_PENDING_ACTIVE_V14_LEASE"
+    },
+    "v14Reservation": {
+      "path": "migration-lease-tim003-v14-reservation.v1.json",
+      "sha256": "5e675e4c24107e0345b04ca02bf0568126cb50b777f951f869112ea2447e96e1",
+      "bytes": 12966,
+      "reservationId": "HRIS-WAVE7-R7-BATCH-04-MIGRATION-LEASE-RESERVATION-TIM003-V14-20261021-R1",
+      "leaseId": "HRIS-WAVE7-R7-BATCH-04-TIME-MAIN-V14-TIM003-20261021-R1",
+      "requiredState": "RESERVED_NOT_ACTIVE"
+    },
+    "semanticDisposition": {
+      "path": "semantic-dispositions/base-tfr-tim-003.semantic-disposition.v1.json",
+      "sha256": "60a21b6da8b97f2a30055404f167e52bb9fc813520d6c277c32a514494585ff9",
+      "bytes": 107850,
+      "requiredState": "TIM003_EMPLOYMENT_ABSENCE_BOUNDARY_SEALED_V14_REQUIRED_HRM_CANONICAL_PUBLICATION_AND_OWNER_QUERY_SUCCESSOR_BEFORE_TIM_SOURCE"
+    },
+    "semanticReview": {
+      "path": "semantic-dispositions/base-tfr-tim-003.semantic-review.v1.json",
+      "sha256": "25dd051cf12ba433f572e83dd1f090018cf25534a8f997c57166827ca6d3f01d",
+      "bytes": 4292,
+      "requiredDecision": "P0_0_P1_0_P2_0"
+    },
+    "hrmSuccessorIntegrationReceipt": {
+      "path": "../r7-batch-04-central-admission-r1/tim-003-hrm-successor-module-source-integration-receipt.v1.json",
+      "sha256": "0ff3ea822aa8d9e47fadd05852e59d718598e0a17f472f55e2d7ff26828b56ae",
+      "bytes": 6986,
+      "carrierCommit": "db7e67c2b089c155bdd4abb77fdfdd4a4127a815",
+      "requiredState": "EXACT_TIM003_HRM_SUCCESSOR_HEADS_NO_FF_MERGED_PUSHED_35_OF_35_BLOBS_MATCH_HRM_PREREQUISITE_INTEGRATED_TIM_PHASE_NOT_STARTED"
+    }
+  },
+  "reviewMethod": {
+    "authorityChain": [
+      "Verified the semantic disposition and zero-finding semantic review hashes and byte counts.",
+      "Verified the exact HRM successor integration receipt hash, carrier commit and state authorize a fresh TIM owner packet but no TIM source or V14 authoring by themselves.",
+      "Verified the owner packet and reservation bind each other by exact identity and the reservation hash-binds the owner packet without a circular digest claim."
+    ],
+    "repositoryPins": [
+      "Verified backend dwp-dev and origin/dwp-dev are exact at fd6aae41e3eec9569f8aa6451090beeade556703 with tree 5d8667a5bf810c80d7c9a688688dd1f4d41151cf and clean porcelain before drafting.",
+      "Verified frontend dwp-dev and origin/dwp-dev are exact at db7e67c2b089c155bdd4abb77fdfdd4a4127a815 with tree 844ed82d2229cac689b6248558b5ef6bdaf7750d and clean porcelain before drafting.",
+      "Verified dwp_agent remains read-only and origin-exact at 9beb5439cad065e7d919a98c9f9becb44481508a."
+    ],
+    "migrationCollisionAndManifest": [
+      "Verified the physical Time migration directory contains exactly V1 through V13 and no V14 file.",
+      "Verified the sorted V1-to-V13 basename manifest has 13 files, 538 bytes and SHA-256 777a24aa1cc6081010bb6512d9022cd319f5b3dce34dab7dd75f6ad281512924.",
+      "Verified V13__tim_add_service_audit_outbox.sql is the immutable current high-water at SHA-256 e86d2ddf28a32e458bfb13512b7f5f913557e9b70a4da4a039f2f7355e203b0f and 2197 bytes.",
+      "Verified no current TIME_MAIN V14 reservation or active lease exists; the historical tentative TIM-014 V14 proposal is explicitly non-authoritative and is not mutated."
+    ],
+    "worktreeAndBranchCollision": [
+      "Verified the planned backend worktree path is absent.",
+      "Verified the planned local branch and observed origin remote-tracking branch are absent.",
+      "Verified neither peer claims that the worktree has been materialized or that an upstream exists."
+    ],
+    "writableBoundary": [
+      "Verified new Time source and tests are isolated under absence/employment, V14 is the sole migration path, and the exact Time migration runtime routine allowlist files are the only existing Time files granted bounded edits outside that package.",
+      "Verified the shared-core exception is limited to DomainEventInboxRepository, two named additions-only support files and two exact focused tests.",
+      "Verified XCON-004, XCON-027, DomainEventJson, DomainEventContractRegistry, the repeatable delivery-ledger migration and all People TIM-003 provider source remain read-only or preserve-exact.",
+      "Verified no frontend application, route, menu, i18n, Auth, Gateway, Platform, Payroll, Agent, build, application configuration, historical Time migration or existing absence v4 proposal path is writable."
+    ],
+    "schemaBoundary": [
+      "Verified V14 is restricted to exactly one abs_employment_relationship_projections table, one immutable strict security-invoker assignment validator, one identity/version trigger and two indexes.",
+      "Verified the full required column list and the semantic disposition pointers for exact types, defaults, checks, state pairs and tenant controls are preserved.",
+      "Verified forced RLS USING and WITH CHECK, narrow column privileges, function EXECUTE allowlisting and runtime denial of identity, version, timestamp, delete, truncate, reference, trigger, ownership, superuser and bypass-RLS capabilities are mandatory.",
+      "Verified existing inbox, offset, replay audit, dead-letter view and service audit stores are reuse-only and a second table, ledger, assignment child table, backfill or shared-ledger schema change is forbidden."
+    ],
+    "consumerAndRecoveryBoundary": [
+      "Verified the exact consumer, source, type, aggregate and generated XCON-004 equality contract.",
+      "Verified prevalidation registration uses the existing DomainEventJson serialization and digest path before semantic validation, preserves immutable payload-conflict evidence and is allowlisted only to TIM-003.",
+      "Verified contiguous no-refetch, sequential recovery, GAP/backfill, OWNER_BASELINE, reconciliation, quarantine precedence, projection CAS, exact offset CAS and replay/audit atomicity remain closed and no network call is authorized inside a database transaction.",
+      "Verified the current-date SVC-PEP-HRM-007 client, generated XCON-027 read validation, independent current authority lookups and every TLS, key-purpose, digest, signature, date, zone, revision, expiry and unresolved-inbox fail-closed guard are required."
+    ],
+    "acceptanceAndVerification": [
+      "Verified all twelve TIM003 acceptance criteria are carried without weakening and the HRM prerequisite criteria are marked preserve-exact rather than recounted.",
+      "Verified the ten exact TIM tests and two exact shared-core tests match the semantic disposition.",
+      "Verified database evidence covers clean and V13-to-V14 PostgreSQL migration, RLS, privileges, closed constraints and CAS.",
+      "Verified the execution policy runs bounded affected targets once, reruns only the smallest failed target and forbids repository-wide or full-module loops."
+    ],
+    "activationAndClaims": [
+      "Verified producer handoff, owner query and consumer remain default OFF, enrolled tenants and production broker bindings remain empty, and route, menu, customer data and business-completion increments remain absent.",
+      "Verified both inherited P0 activation gates remain open and TIM_CLOSE_TRUSTED_OWNER_HEADER_ISSUER permits only fail-closed ports, adapters and test doubles.",
+      "Verified neither artifact claims an active lease, worktree, executable token, source authoring, migration authoring, admission, activation, enrollment, production release or slice completion."
+    ]
+  },
+  "findings": {
+    "p0": [],
+    "p1": [],
+    "p2": []
+  },
+  "decision": {
+    "result": "PASS_ZERO_P0_ZERO_P1_ZERO_P2",
+    "ownerPacketAcceptedForCarrierCommit": true,
+    "v14ReservationAcceptedForCarrierCommit": true,
+    "reservationStateAfterReview": "RESERVED_NOT_ACTIVE",
+    "authorityCarrierMayBeCommittedAndPushed": true,
+    "freshBackendWorktreeMayBeMaterializedOnlyAfterCarrierPush": true,
+    "sourceAuthoringAuthorized": false,
+    "migrationAuthoringAuthorized": false,
+    "leaseActivationAuthorizedBeforeWorktreeReceipt": false,
+    "startTokenIssued": false,
+    "directDwpDevMergeAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "featureActivationAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "fullSliceCompletionAuthorized": false
+  },
+  "requiredNextSequence": [
+    "Commit and push only this review, the exact owner packet and the exact RESERVED_NOT_ACTIVE V14 reservation on frontend dwp-dev.",
+    "Reconfirm origin exactness and no unexpected working-tree changes after the carrier push.",
+    "Materialize only the exact planned fresh backend worktree from fd6aae41e3eec9569f8aa6451090beeade556703 and verify its tree, null upstream and empty porcelain.",
+    "Record, validate, commit and push one worktree-materialization receipt on the central frontend authority carrier.",
+    "Recheck TIME_MAIN V13 high-water and V14 collision absence, then issue a separate ACTIVE_EXCLUSIVE_TIME_MAIN_V14 activation and hash-bound executable start token.",
+    "Begin bounded TIM source and V14 authoring only after every token binding validates."
+  ],
+  "nonClaims": [
+    "This review commits or pushes any artifact.",
+    "This review materializes a worktree or branch.",
+    "This review activates the V14 lease or authorizes the V14 file to be authored.",
+    "This review issues an executable start token or authorizes source edits.",
+    "This review changes a feature switch, tenant enrollment, production broker, route, menu, customer data or business-completion count.",
+    "BASE-TFR-TIM-003, Batch-04, R7 or HRIS is complete."
+  ],
+  "nextAction": "COMMIT_AND_PUSH_ONLY_THE_THREE_ZERO_FINDING_PRE_WORKTREE_AUTHORITY_ARTIFACTS; THEN_MATERIALIZE_THE_EXACT_FRESH_BACKEND_WORKTREE_AND_RECORD_ITS_RECEIPT_WITHOUT_SOURCE_OR_V14_AUTHORING"
+}

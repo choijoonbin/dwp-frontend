@@ -1,0 +1,399 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-tim003-tim-consumer-owner-packet.v1",
+  "packetId": "HRIS-WAVE7-R7-BATCH-04-OWNER-BASE-TFR-TIM-003-TIM-CONSUMER-20261021-R1",
+  "revision": 1,
+  "issuedAt": "2026-10-21T15:30:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "SEALED_EXACT_TIM003_TIM_CONSUMER_OWNER_PACKET_READY_FOR_INDEPENDENT_REVIEW_AND_FRESH_BACKEND_WORKTREE_EXECUTABLE_TOKEN_WITHHELD_PENDING_ACTIVE_V14_LEASE",
+  "sliceId": "BASE-TFR-TIM-003",
+  "module": "TIM",
+  "moduleSession": "HRIS-TIM",
+  "phase": "PHASE_2_TIM_CONSUMER_PROJECTION_AND_RECOVERY",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_PACKET_ID_AND_SHA256",
+    "historicalArtifactMutation": false
+  },
+  "immutableAuthorityBasis": {
+    "semanticDisposition": {
+      "path": "../semantic-dispositions/base-tfr-tim-003.semantic-disposition.v1.json",
+      "sha256": "60a21b6da8b97f2a30055404f167e52bb9fc813520d6c277c32a514494585ff9",
+      "bytes": 107850,
+      "requiredState": "TIM003_EMPLOYMENT_ABSENCE_BOUNDARY_SEALED_V14_REQUIRED_HRM_CANONICAL_PUBLICATION_AND_OWNER_QUERY_SUCCESSOR_BEFORE_TIM_SOURCE"
+    },
+    "independentSemanticReview": {
+      "path": "../semantic-dispositions/base-tfr-tim-003.semantic-review.v1.json",
+      "sha256": "25dd051cf12ba433f572e83dd1f090018cf25534a8f997c57166827ca6d3f01d",
+      "bytes": 4292,
+      "requiredDecision": "P0_0_P1_0_P2_0"
+    },
+    "hrmSuccessorIntegrationReceipt": {
+      "path": "../../r7-batch-04-central-admission-r1/tim-003-hrm-successor-module-source-integration-receipt.v1.json",
+      "sha256": "0ff3ea822aa8d9e47fadd05852e59d718598e0a17f472f55e2d7ff26828b56ae",
+      "bytes": 6986,
+      "carrierCommit": "db7e67c2b089c155bdd4abb77fdfdd4a4127a815",
+      "carrierTree": "844ed82d2229cac689b6248558b5ef6bdaf7750d",
+      "requiredState": "EXACT_TIM003_HRM_SUCCESSOR_HEADS_NO_FF_MERGED_PUSHED_35_OF_35_BLOBS_MATCH_HRM_PREREQUISITE_INTEGRATED_TIM_PHASE_NOT_STARTED"
+    }
+  },
+  "basePins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "fd6aae41e3eec9569f8aa6451090beeade556703",
+      "tree": "5d8667a5bf810c80d7c9a688688dd1f4d41151cf",
+      "requiredRemote": "origin/dwp-dev",
+      "requiredRemoteExact": true,
+      "requiredClean": true
+    },
+    "frontendAuthorityCarrier": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "db7e67c2b089c155bdd4abb77fdfdd4a4127a815",
+      "tree": "844ed82d2229cac689b6248558b5ef6bdaf7750d",
+      "requiredRemote": "origin/dwp-dev",
+      "requiredRemoteExactBeforeThisPacket": true,
+      "authorityCarrierAdvanceAllowed": true
+    },
+    "agentReadOnly": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "requiredRemote": "origin/dwp-dev",
+      "requiredRemoteExact": true,
+      "requiredClean": true,
+      "readOnly": true
+    }
+  },
+  "plannedWorktree": {
+    "repository": "dwp-backend",
+    "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261021/r7-batch04/tim-003-tim/backend",
+    "branch": "codex/hris-wave7-r7-batch04-tim-003-tim-backend-20261021-r1",
+    "pushTarget": "origin/codex/hris-wave7-r7-batch04-tim-003-tim-backend-20261021-r1",
+    "createFrom": "fd6aae41e3eec9569f8aa6451090beeade556703",
+    "expectedInitialTree": "5d8667a5bf810c80d7c9a688688dd1f4d41151cf",
+    "expectedInitialPorcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "expectedInitialUpstream": null,
+    "state": "NOT_MATERIALIZED"
+  },
+  "ownerWritableBoundary": {
+    "backendAdditionsOnly": [
+      "dwp-time-server/src/main/java/com/dwp/services/time/absence/employment/**",
+      "dwp-time-server/src/test/java/com/dwp/services/time/absence/employment/**",
+      "dwp-core/src/main/java/com/dwp/core/event/DomainEventInboxStrictValidationSupport.java",
+      "dwp-core/src/main/java/com/dwp/core/event/DomainEventInboxOffsetRecoverySupport.java",
+      "dwp-core/src/test/java/com/dwp/core/event/DomainEventInboxStrictRegistrationTest.java",
+      "dwp-core/src/test/java/com/dwp/core/event/DomainEventInboxOffsetRecoveryTest.java"
+    ],
+    "backendExactMigrationOnly": "dwp-time-server/src/main/resources/db/migration/V14__tim_base_tfr_tim_003_employment_absence_projection.sql",
+    "backendExactBoundedUpdates": [
+      {
+        "path": "dwp-core/src/main/java/com/dwp/core/event/DomainEventInboxRepository.java",
+        "allowedChange": "Delegate to the exact TIM003-allowlisted strict-registration and offset-recovery primitives; make begin reuse the identical serializer and digest path; preserve all other consumers."
+      },
+      {
+        "path": "dwp-time-server/src/main/java/com/dwp/services/time/TimeDatabaseMigrationConfiguration.java",
+        "allowedChange": "Replace only the empty runtime routine allowlist with the exact public.tim003_assignment_snapshots_structurally_valid(jsonb,uuid) allowlist required by V14."
+      },
+      {
+        "path": "dwp-time-server/src/test/java/com/dwp/services/time/TimeDatabaseMigrationConfigurationTest.java",
+        "allowedChange": "Prove the exact one-routine runtime EXECUTE allowlist and reject any additional routine surface."
+      }
+    ],
+    "centralEvidenceOnlyAfterModuleResult": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-results-r1/base-tfr-tim-003/tim-consumer/**",
+    "readOnlyReuse": [
+      "dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/Xcon004EmploymentChangedV1.java",
+      "dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/Xcon027EmploymentAbsenceSnapshotV1.java",
+      "dwp-core/src/main/java/com/dwp/core/event/DomainEventJson.java",
+      "dwp-core/src/main/java/com/dwp/core/event/DomainEventContractRegistry.java",
+      "dwp-core/src/main/java/com/dwp/core/event/IdempotentDomainEventConsumer.java",
+      "dwp-core/src/main/resources/db/migration/R__create_domain_event_delivery_ledger.sql",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/tim003/**",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/employment/**",
+      "existing sys_domain_event_inbox, sys_domain_event_offsets, sys_domain_event_replay_audit, sys_domain_event_dead_letters and sys_audit_outbox stores"
+    ],
+    "preserveExactPins": [
+      {
+        "path": "dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/Xcon004EmploymentChangedV1.java",
+        "sha256": "db71f1919d741c38453ca715d3a18ac1cf54d606975c9095d9a2d83be082c8aa"
+      },
+      {
+        "path": "dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/Xcon027EmploymentAbsenceSnapshotV1.java",
+        "sha256": "4890a268933a7853442d01ee801782c029c9ebaa7447168a82dee4a613bb928d"
+      },
+      {
+        "path": "dwp-core/src/main/java/com/dwp/core/event/DomainEventJson.java",
+        "sha256": "d0c72499e8ae888e30756d4cb49c0ca18151195edc468b293f023c2bfeb48f77"
+      },
+      {
+        "path": "dwp-core/src/main/java/com/dwp/core/event/DomainEventContractRegistry.java",
+        "sha256": "4a3f1a4efd8ac848a568937d6392187d39046e125024629ca57f5b65bd85f00e"
+      },
+      {
+        "path": "dwp-core/src/main/resources/db/migration/R__create_domain_event_delivery_ledger.sql",
+        "sha256": "e7123a27e6d35c991f8f49045f0f92205ff417bfbcf89a2b9a32f9ad0f479e42"
+      }
+    ],
+    "controlOwnedNoTouch": [
+      "contracts/** and generated contract source",
+      "dwp-people-server/**",
+      "dwp-auth-server/**",
+      "dwp-gateway/**",
+      "dwp-platform-server/**",
+      "dwp-payroll-server/**",
+      "dwp-time-server/src/main/java/com/dwp/services/time/absence/contracts/v4/**",
+      "dwp-time-server/src/main/java/com/dwp/services/time/absence/ports/**",
+      "dwp-time-server/src/main/java/com/dwp/services/time/absence/source/**",
+      "dwp-time-server/src/main/resources/application.yml and build files",
+      "all existing Time migrations V1 through V13",
+      "apps/dwp/**, frontend routes, menus, shell catalogs and i18n",
+      "tenant activation, enrollment and production broker configuration",
+      "dwp_agent/**"
+    ],
+    "outsideBoundaryAction": "STOP_AND_REQUEST_EXACT_APPEND_ONLY_CONTROL_REALLOCATION"
+  },
+  "migration": {
+    "required": true,
+    "stream": "TIME_MAIN",
+    "predecessorHighWater": "V13",
+    "version": "V14",
+    "exactPath": "dwp-time-server/src/main/resources/db/migration/V14__tim_base_tfr_tim_003_employment_absence_projection.sql",
+    "reservationPeer": "HRIS-WAVE7-R7-BATCH-04-MIGRATION-LEASE-RESERVATION-TIM003-V14-20261021-R1",
+    "leaseStateRequiredBeforeAuthoring": "ACTIVE_EXCLUSIVE_TIME_MAIN_V14",
+    "authoringAuthorizedByThisPacketAlone": false,
+    "historicalMigrationEditAuthorized": false,
+    "secondMigrationAuthorized": false,
+    "dataBackfillAuthorized": false,
+    "schemaAuthoritySource": "../semantic-dispositions/base-tfr-tim-003.semantic-disposition.v1.json#/migrationDecision",
+    "createExactlyOneTable": "abs_employment_relationship_projections",
+    "primaryKey": [
+      "tenant_id",
+      "relationship_public_id"
+    ],
+    "createExactlyOneValidationFunction": "public.tim003_assignment_snapshots_structurally_valid(jsonb,uuid)",
+    "requiredControls": [
+      "the exact required columns, closed freshness and recovery state pairs, owner-bundle all-null-or-all-present constraints and digest rules sealed in the semantic disposition",
+      "assignment_snapshots is a closed, ordered, unique JSONB array of at most 1000 generated XCON-027 Assignment values; assignmentRevision zero is valid and negative, fractional and out-of-int64 values are rejected",
+      "insert-only expected version zero and exact projection-version update CAS; a SECURITY DEFINER-free trigger seals identity, increments projection_version exactly once and stamps updated_at",
+      "ENABLE and FORCE RLS with tenant USING and WITH CHECK based only on SET LOCAL dwp.tenant_id",
+      "table-level SELECT plus exact column-level INSERT and UPDATE grants; no runtime identity-column update, projection_version or timestamp write, DELETE, TRUNCATE, REFERENCES, TRIGGER, ownership, SUPERUSER or BYPASSRLS path",
+      "PUBLIC receives no table or function privileges; only the migration owner and exact Time runtime role receive function EXECUTE",
+      "partial tenant-worker index and tenant-freshness-validUntil index"
+    ],
+    "reuseOnly": [
+      "sys_domain_event_inbox",
+      "sys_domain_event_offsets",
+      "sys_domain_event_replay_audit",
+      "sys_audit_outbox",
+      "sys_domain_event_dead_letters read-only view"
+    ],
+    "forbiddenPersistence": [
+      "second event inbox, aggregate offset, retry, replay or DLQ ledger",
+      "People source-of-record tables",
+      "leave request, leave balance or approval aggregates",
+      "assignment child table",
+      "any second TIM-003 table"
+    ]
+  },
+  "authorizedImplementation": {
+    "consumerContract": [
+      "Use consumer name dwp-time-server.tim003-employment-absence.v1 and register only dwp.hris.people.employment-changed.v1 major 1 from source urn:dwp:people:hris:employment with aggregate type WORK_RELATIONSHIP.",
+      "Strictly validate generated XCON-004 and envelope subject, aggregate id, aggregate sequence, tenant, source, type and major equality before domain handling.",
+      "Call transaction-joining prevalidation digest registration before semantic validation so an invalid second payload cannot bypass same-id different-digest conflict detection.",
+      "Use exactly DomainEventJson.serialize with the repository ObjectMapper and DomainEventJson.sha256 over those UTF-8 bytes; raw-wire hashing, RFC-8785 substitution or another serializer is forbidden."
+    ],
+    "sharedLedgerExtension": [
+      "Only the exact TIM-003 consumer may use strict registration, expected-digest invalid finalization and snapshot offset-recovery primitives.",
+      "Same-id same-digest re-enters the existing state machine unless already SUCCEEDED or DUPLICATE; same-id different-digest preserves the original stored tuple, becomes immutable canonical payload-conflict DEAD and cannot replay.",
+      "Gap or owner-baseline recovery atomically binds projection CAS, exact offset CAS, allowed DEFERRED-only settlement, replay audit and sys_audit_outbox evidence; REPLAY_PENDING, DEAD and payload-conflict rows are never snapshot-settled.",
+      "Snapshot-only checkpoint writes last_event_id null; no core schema migration or competing ledger is allowed."
+    ],
+    "projectionAndRecovery": [
+      "Implement the five closed states CURRENT, STALE, REFETCH_PENDING, GAP and QUARANTINED with monotonic required and observed event evidence.",
+      "Implement contiguous covered no-refetch, ordinary refetch, missing-sequence backfill, bounded GAP recovery, eventless OWNER_BASELINE, retry-safe inbox projection reconciliation and explicit quarantine precedence.",
+      "No network call occurs inside a database transaction; final success and failure are fenced by inbox lock token and exact projection_version.",
+      "A trusted owner response ahead of an ordinary contiguous event never fast-forwards the shared offset; only sealed gap or baseline recovery may checkpoint to the verified owner relationship revision."
+    ],
+    "ownerClientAndReadGuard": [
+      "Call exact SVC-PEP-HRM-007 for the tenant current business date only, using generated XCON-027, minimum non-regressing relationship revision and independent current TIM003OwnerGrantV1 authority lookup.",
+      "Validate TLS 1.3 client/server identity, signed request binding, closed response or problem shape, dedicated RS256 key purpose, scope/content/evidence digest, issuedAt/asOf/validUntil, authoritative zone/date and every grant revision; unknown or unverified errors are generic retryable with zero facts.",
+      "Read only unexpired CURRENT current-date facts with exact current zone and authority revisions and no unresolved inbox row; reconstruct and revalidate generated XCON-027 plus digests before return.",
+      "Past or future dates, unavailable authority, expiry, corruption, unresolved inbox, direct People database access and self-authorizing JWT or stored facts fail closed."
+    ],
+    "activationGate": [
+      "Consumer, owner client and recovery workers are conditional on a default-false switch and an empty enrolled-tenant set.",
+      "Only fail-closed authority ports and adapters may exist while TIM_CLOSE_TRUSTED_OWNER_HEADER_ISSUER remains open.",
+      "No route, menu, UI, browser entry, production broker binding or customer-data execution is authorized."
+    ]
+  },
+  "startPreconditions": [
+    "This packet, its exact V14 RESERVED_NOT_ACTIVE peer and their independent zero-finding review are committed and pushed on frontend dwp-dev.",
+    "The exact fresh backend worktree is materialized from the pinned backend commit with the expected tree, empty porcelain and no upstream.",
+    "A worktree-materialization receipt hash-binds the exact path, branch, head, tree and porcelain digest.",
+    "A successor V14 activation proves the reservation is still collision-free and changes only that lease to ACTIVE_EXCLUSIVE_TIME_MAIN_V14.",
+    "One executable start token hash-binds this packet, reservation, independent review, worktree receipt and active lease.",
+    "No invalidation condition has occurred."
+  ],
+  "targetedVerification": {
+    "policy": "Run each affected TIM-003 class or bounded database group once; diagnose and rerun only the smallest failed target; run one bounded TIM-003 lane gate before admission; never run a repository-wide or full-module suite per correction.",
+    "tim": [
+      "Xcon004EmploymentChangedV1ConsumerContractTest",
+      "EmploymentAbsenceProjectionMigrationPostgresTest",
+      "EmploymentAbsenceProjectionTenantIsolationTest",
+      "EmploymentAbsenceProjectionOrderingTest",
+      "EmploymentAbsenceOwnerRecoveryTest",
+      "EmploymentAbsenceOwnerErrorClassificationTest",
+      "EmploymentAbsenceOwnerBaselineTest",
+      "EmploymentAbsenceGapOffsetRecoveryTest",
+      "EmploymentAbsenceUnresolvedInboxReadGuardTest",
+      "EmploymentAbsenceInboxProjectionReconcilerTest"
+    ],
+    "sharedCore": [
+      "DomainEventInboxOffsetRecoveryTest",
+      "DomainEventInboxStrictRegistrationTest"
+    ],
+    "database": [
+      "V14 static contract and exact one-table manifest",
+      "real PostgreSQL clean migration through V14 and V13-to-V14 upgrade",
+      "forced-RLS missing-context and cross-tenant denial",
+      "exact runtime table, column and routine privilege matrix",
+      "closed state-pair, owner-bundle, JSON structure, projection CAS and identity-seal constraints"
+    ],
+    "requiredNegativeClusters": [
+      "same-id different-digest, invalid type or major and envelope/body mismatch become atomic DEAD plus same-tenant blockers without overwriting original evidence",
+      "stale CAS, lost lease, owner failure and crash roll back every coupled inbox, offset, projection, replay-audit and service-audit write",
+      "GAP recovery settles DEFERRED only and baseline requires zero inbox rows; neither launders replay, DEAD or payload-conflict evidence",
+      "wrong workload, tenant, certificate, issuer, audience, subject, key purpose, method, path, query, correlation, purpose, projection, date, zone, revision, digest, signature or expiry returns zero owner facts",
+      "non-CURRENT, expired, authority-mismatched, non-current-date, unresolved-inbox or structurally corrupt rows cannot return employment facts",
+      "feature OFF and empty enrollment perform zero owner calls, zero consumer work and zero production publication"
+    ],
+    "changedPathProofRequired": true,
+    "noTouchHashProofRequired": true,
+    "gitDiffCheckRequired": true,
+    "repositoryWideSuitePerCorrection": false,
+    "fullSuiteAuthorized": false
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "TIM003-AC01",
+      "criterion": "XCON-004 remains the four-field closed EmploymentChanged.v1 business contract and no sensitive or Time-owned fact is added.",
+      "phaseDisposition": "INTEGRATED_HRM_PREREQUISITE_PRESERVE_EXACT_NO_RECOUNT"
+    },
+    {
+      "id": "TIM003-AC02",
+      "criterion": "The transport type is dwp.hris.people.employment-changed.v1 with source urn:dwp:people:hris:employment, WORK_RELATIONSHIP aggregate identity and relationship revision ordering.",
+      "phaseDisposition": "INTEGRATED_HRM_PREREQUISITE_AND_TIM_CONSUMER_ENFORCEMENT"
+    },
+    {
+      "id": "TIM003-AC03",
+      "criterion": "Envelope subject, aggregate id and sequence exactly equal WORK_RELATIONSHIP/{relationshipPublicId}, relationshipPublicId and newAggregateVersion; mismatch, unknown type or unsupported major fails closed to the shared DLQ.",
+      "phaseDisposition": "TIM_CONSUMER_IMPLEMENT_AND_PROVE"
+    },
+    {
+      "id": "TIM003-AC04",
+      "criterion": "HRIS-HRM registers the canonical event major, captures one publication Instant, and writes both canonical envelope and legacy compatibility evidence in one transaction without changing legacy published_at, direct broker I/O or treating legacy aggregate metadata as canonical.",
+      "phaseDisposition": "INTEGRATED_HRM_PREREQUISITE_PRESERVE_EXACT_NO_RECOUNT"
+    },
+    {
+      "id": "TIM003-AC05",
+      "criterion": "XCON-027 provides exact typed, minimized current-business-date relationship and nested assignment revisions for recovery, and new SVC-PEP-HRM-007 exposes it only through workload-authenticated TIME_ABSENCE_V1 exact relationship recovery while SVC-PEP-HRM-002 remains unchanged; historical or future dates fail closed until an effective-dated worker-status owner exists.",
+      "phaseDisposition": "INTEGRATED_HRM_PROVIDER_PREREQUISITE_TIM_CLIENT_VALIDATION_REQUIRED"
+    },
+    {
+      "id": "TIM003-AC06",
+      "criterion": "Wrong workload, tenant, issuer, audience, client, subject, mTLS confirmation, method, path, query, token time, replay id, correlation, purpose, projection, field set, business zone/date, scope/content/evidence digest, signature, revision or expiry returns no usable owner facts and produces owner audit evidence.",
+      "phaseDisposition": "INTEGRATED_HRM_PROVIDER_NEGATIVES_TIM_CLIENT_AND_READ_GUARD_REQUIRED"
+    },
+    {
+      "id": "TIM003-AC07",
+      "criterion": "HRIS-TIM reuses the shared inbox, offset, retry, replay and DLQ ledger and creates no competing delivery ledger.",
+      "phaseDisposition": "TIM_IMPLEMENT_AND_PROVE"
+    },
+    {
+      "id": "TIM003-AC08",
+      "criterion": "Same-id same-digest delivery is idempotent, same-id different-digest delivery is quarantined, older shared-offset revision is a no-op, a covered contiguous revision uses the no-refetch fast path, and any unresolved or gap inbox row blocks current reads until reconciled and trusted recovery succeeds.",
+      "phaseDisposition": "TIM_IMPLEMENT_AND_PROVE"
+    },
+    {
+      "id": "TIM003-AC09",
+      "criterion": "V14 creates exactly one tenant-isolated abs_employment_relationship_projections table with forced RLS, closed states, deterministic assignment facts and projection-version CAS.",
+      "phaseDisposition": "TIM_IMPLEMENT_AND_PROVE_AFTER_ACTIVE_EXCLUSIVE_V14_LEASE"
+    },
+    {
+      "id": "TIM003-AC10",
+      "criterion": "Owner recovery never regresses a relationship revision and atomically binds projection CAS replacement, required exact offset CAS, GAP-mode DEFERRED-only settlement or eventless OWNER_BASELINE zero-row settlement, replay audit and structured audit evidence; REPLAY_PENDING, DEAD and payload conflicts are never snapshot-settled, and snapshot-only recovery stores no fabricated last event id.",
+      "phaseDisposition": "TIM_IMPLEMENT_AND_PROVE"
+    },
+    {
+      "id": "TIM003-AC11",
+      "criterion": "Non-CURRENT, expired, inbox-blocked or non-current-date projections fail closed for absence evaluation; an eligible eventless projection miss schedules a fenced trusted owner baseline, a retry-safe reconciler repairs gap/quarantine state after crashes, and no direct People database access, leave request mutation, balance mutation or approval behavior is introduced.",
+      "phaseDisposition": "TIM_IMPLEMENT_AND_PROVE"
+    },
+    {
+      "id": "TIM003-AC12",
+      "criterion": "Producer, query and consumer remain default OFF with zero enrolled tenants, no route or menu, no production broker and zero business-completion credit until later admission and activation authority.",
+      "phaseDisposition": "MANDATORY_PRESERVE_AND_PROVE_ZERO_ACTIVATION"
+    }
+  ],
+  "carriedActivationGates": [
+    {
+      "gateId": "TIM_CLOSE_PERIOD_DEFINITION_PRODUCER",
+      "severity": "P0",
+      "state": "OPEN_EXTERNAL_SOURCE_AUTHORITY_GATE",
+      "effect": "BLOCKS_ACTIVATION_NOT_DEFAULT_OFF_TIM_IMPLEMENTATION"
+    },
+    {
+      "gateId": "TIM_CLOSE_TRUSTED_OWNER_HEADER_ISSUER",
+      "severity": "P0",
+      "state": "OPEN_BEFORE_ANY_TENANT_ENROLLMENT",
+      "effect": "BLOCKS_ENROLLMENT_AND_ACTIVATION; ONLY_FAIL_CLOSED_PORTS_ADAPTERS_AND_TEST_DOUBLES_ARE_ALLOWED"
+    }
+  ],
+  "activationBoundary": {
+    "producerHandoffEnabledByDefault": false,
+    "ownerQueryEnabledByDefault": false,
+    "consumerEnabledByDefault": false,
+    "enrolledTenants": [],
+    "productionBrokerBindings": [],
+    "customerDataAuthorized": false,
+    "browserRouteAdded": false,
+    "frontendMenuAdded": false,
+    "businessCompletionIncrement": 0
+  },
+  "authority": {
+    "packetMayBeCommittedAndPushedAfterIndependentReview": true,
+    "worktreeMaterializationAuthorizedBeforeCarrierPush": false,
+    "sourceAuthoringAuthorizedByThisPacketAlone": false,
+    "v14ReservationAuthorizedByThisPacketAlone": false,
+    "v14AuthoringAuthorizedByThisPacketAlone": false,
+    "startTokenIssuanceAuthorizedBeforeReceiptAndLeaseActivation": false,
+    "moduleImplementationAuthorizedBeforeExecutableToken": false,
+    "directDwpDevMergeAuthorized": false,
+    "centralAdmissionAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "customerDataAuthorized": false,
+    "fullSliceCompletionAuthorized": false
+  },
+  "deferredAndForbiddenClaims": [
+    "The planned backend worktree exists or is clean merely because it is named here.",
+    "TIME_MAIN V14 is active or may be authored before a separate activation and executable start token.",
+    "A current control-plane-backed TIM003OwnerGrantV1 issuer or trusted production key binding exists.",
+    "Any tenant is enrolled or producer, query, consumer or recovery execution is enabled.",
+    "A production broker, route, menu, UI or browser entry is admitted.",
+    "A direct People database read, leave request, leave balance, approval or employment mutation is authorized.",
+    "BASE-TFR-TIM-003, Batch-04, R7 or HRIS is complete."
+  ],
+  "invalidationConditions": [
+    "Any authority artifact hash, byte count, required state or base pin differs before worktree materialization.",
+    "The planned path or branch exists, is reused, has an upstream, or is created from a head or tree other than the exact backend pin.",
+    "TIME_MAIN high-water is no longer V13, the exact V14 path exists, or another current V14 lease or candidate is found.",
+    "A path outside the exact writable boundary, an existing migration edit, second migration, second projection table or shared-ledger schema change is required.",
+    "XCON-004, XCON-027, DomainEventJson, DomainEventContractRegistry, the HRM provider or any preserve-exact pin changes.",
+    "The strict registration, payload-conflict preservation, offset recovery, replay, RLS, projection CAS, current-date, digest, signature or default-OFF contract must weaken.",
+    "A route, menu, frontend source, production authority binding, activation, enrollment, customer data, direct dwp-dev merge or full-suite loop is attempted."
+  ],
+  "nextAction": "INDEPENDENTLY_REVIEW_THIS_PACKET_AND_ITS_EXACT_RESERVED_NOT_ACTIVE_V14_PEER_WITH_ZERO_P0_P1_P2; COMMIT_AND_PUSH_THE_AUTHORITY_CARRIER; THEN_MATERIALIZE_ONLY_THE_EXACT_FRESH_BACKEND_WORKTREE_AND_RECORD_ITS_RECEIPT_BEFORE_ANY_LEASE_ACTIVATION_TOKEN_OR_SOURCE_AUTHORING"
+}

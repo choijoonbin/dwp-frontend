@@ -1,0 +1,263 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-tim003-v14-migration-lease-reservation.v1",
+  "reservationId": "HRIS-WAVE7-R7-BATCH-04-MIGRATION-LEASE-RESERVATION-TIM003-V14-20261021-R1",
+  "recordedAt": "2026-10-21T15:32:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "RESERVED_NOT_ACTIVE",
+  "sliceId": "BASE-TFR-TIM-003",
+  "moduleSession": "HRIS-TIM",
+  "phase": "PHASE_2_TIM_CONSUMER_PROJECTION_AND_RECOVERY",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_RESERVATION_ID_AND_SHA256",
+    "historicalArtifactMutation": false
+  },
+  "authorityBasis": {
+    "semanticDisposition": {
+      "path": "semantic-dispositions/base-tfr-tim-003.semantic-disposition.v1.json",
+      "sha256": "60a21b6da8b97f2a30055404f167e52bb9fc813520d6c277c32a514494585ff9",
+      "bytes": 107850,
+      "requiredState": "TIM003_EMPLOYMENT_ABSENCE_BOUNDARY_SEALED_V14_REQUIRED_HRM_CANONICAL_PUBLICATION_AND_OWNER_QUERY_SUCCESSOR_BEFORE_TIM_SOURCE",
+      "jsonPointer": "/migrationDecision"
+    },
+    "semanticReview": {
+      "path": "semantic-dispositions/base-tfr-tim-003.semantic-review.v1.json",
+      "sha256": "25dd051cf12ba433f572e83dd1f090018cf25534a8f997c57166827ca6d3f01d",
+      "bytes": 4292,
+      "requiredDecision": "P0_0_P1_0_P2_0"
+    },
+    "hrmSuccessorIntegrationReceipt": {
+      "path": "../r7-batch-04-central-admission-r1/tim-003-hrm-successor-module-source-integration-receipt.v1.json",
+      "sha256": "0ff3ea822aa8d9e47fadd05852e59d718598e0a17f472f55e2d7ff26828b56ae",
+      "bytes": 6986,
+      "carrierCommit": "db7e67c2b089c155bdd4abb77fdfdd4a4127a815",
+      "requiredState": "EXACT_TIM003_HRM_SUCCESSOR_HEADS_NO_FF_MERGED_PUSHED_35_OF_35_BLOBS_MATCH_HRM_PREREQUISITE_INTEGRATED_TIM_PHASE_NOT_STARTED"
+    },
+    "timConsumerOwnerPacket": {
+      "path": "owner-packets/base-tfr-tim-003.tim-consumer.owner-packet.v1.json",
+      "sha256": "51f1211d078ca98265a162548dec98d580c1d033a4cbafd9e9aa7e4861ffc5a1",
+      "bytes": 26264,
+      "packetId": "HRIS-WAVE7-R7-BATCH-04-OWNER-BASE-TFR-TIM-003-TIM-CONSUMER-20261021-R1",
+      "requiredState": "SEALED_EXACT_TIM003_TIM_CONSUMER_OWNER_PACKET_READY_FOR_INDEPENDENT_REVIEW_AND_FRESH_BACKEND_WORKTREE_EXECUTABLE_TOKEN_WITHHELD_PENDING_ACTIVE_V14_LEASE"
+    }
+  },
+  "pinBasis": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "fd6aae41e3eec9569f8aa6451090beeade556703",
+      "tree": "5d8667a5bf810c80d7c9a688688dd1f4d41151cf",
+      "originRef": "origin/dwp-dev",
+      "originExact": true,
+      "worktreeClean": true,
+      "observedTimeMainHighWater": "V13",
+      "candidatePathPresentAtReservation": false,
+      "timeMigrationManifest": {
+        "fileCount": 13,
+        "bytes": 538,
+        "sha256": "777a24aa1cc6081010bb6512d9022cd319f5b3dce34dab7dd75f6ad281512924",
+        "construction": "LC_ALL=C sort -V over V*.sql basenames with one trailing newline",
+        "requiredState": "V13_HIGH_WATER_V14_ABSENT"
+      },
+      "v13Predecessor": {
+        "path": "dwp-time-server/src/main/resources/db/migration/V13__tim_add_service_audit_outbox.sql",
+        "sha256": "e86d2ddf28a32e458bfb13512b7f5f913557e9b70a4da4a039f2f7355e203b0f",
+        "bytes": 2197,
+        "requiredState": "EXECUTED_IMMUTABLE_TIME_MAIN_HIGH_WATER"
+      }
+    },
+    "frontendAuthorityCarrierBeforeReservation": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "db7e67c2b089c155bdd4abb77fdfdd4a4127a815",
+      "tree": "844ed82d2229cac689b6248558b5ef6bdaf7750d",
+      "originRef": "origin/dwp-dev",
+      "originExact": true,
+      "worktreeCleanBeforeDraft": true,
+      "use": "AUTHORITY_CARRIER_BASE_ONLY"
+    },
+    "agentReadOnly": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "originRef": "origin/dwp-dev",
+      "originExact": true,
+      "worktreeClean": true,
+      "readOnly": true
+    }
+  },
+  "lease": {
+    "leaseId": "HRIS-WAVE7-R7-BATCH-04-TIME-MAIN-V14-TIM003-20261021-R1",
+    "canonicalFeature": "HRIS_TIM_EMPLOYMENT_ABSENCE_PROJECTION",
+    "stream": "TIME_MAIN",
+    "version": "V14",
+    "predecessorHighWater": "V13",
+    "exactPath": "dwp-time-server/src/main/resources/db/migration/V14__tim_base_tfr_tim_003_employment_absence_projection.sql",
+    "state": "RESERVED_NOT_ACTIVE",
+    "activeLeaseCountForTimeMainV14": 0,
+    "authoringAllowed": false,
+    "historicalAllocationResolution": {
+      "historicalTentativePath": "dwp-time-server/src/main/resources/db/migration/V14__tim_base_tfr_tim_014.sql",
+      "historicalSource": "recovery/hris-porting-blueprint-2026-09-09/coding-readiness/semantic-remediation/common-allocation-successor.v1.json",
+      "currentAuthority": "HISTORICAL_TENTATIVE_ALLOCATION_IS_NOT_A_CURRENT_LEASE_AND_IS_SUPERSEDED_BY_THE_SEALED_TIM003_SEMANTIC_DISPOSITION_AFTER_ADMITTED_V13",
+      "historicalArtifactMutationAuthorized": false,
+      "tim014AuthoringAuthorized": false
+    },
+    "plannedBackendWorktree": {
+      "plannedAbsolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261021/r7-batch04/tim-003-tim/backend",
+      "plannedBranch": "codex/hris-wave7-r7-batch04-tim-003-tim-backend-20261021-r1",
+      "plannedPushTarget": "origin/codex/hris-wave7-r7-batch04-tim-003-tim-backend-20261021-r1",
+      "createFrom": "fd6aae41e3eec9569f8aa6451090beeade556703",
+      "expectedInitialTree": "5d8667a5bf810c80d7c9a688688dd1f4d41151cf",
+      "expectedInitialPorcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expectedInitialUpstream": null,
+      "materializationStateAtReservation": "NOT_MATERIALIZED"
+    }
+  },
+  "resolvedExactMigrationManifest": {
+    "createExactlyOneTable": {
+      "name": "abs_employment_relationship_projections",
+      "primaryKey": [
+        "tenant_id",
+        "relationship_public_id"
+      ],
+      "requiredColumns": [
+        "tenant_id",
+        "relationship_public_id",
+        "worker_public_id",
+        "freshness_state",
+        "last_observed_event_sequence",
+        "required_relationship_revision",
+        "shared_offset_sequence",
+        "gap_expected_sequence",
+        "owner_relationship_revision",
+        "worker_status",
+        "relationship_type",
+        "relationship_status",
+        "legal_entity_public_id",
+        "relationship_effective_from",
+        "relationship_effective_to",
+        "owner_effective_on",
+        "assignment_snapshots",
+        "owner_contract_id",
+        "owner_schema_version",
+        "owner_revision",
+        "owner_as_of",
+        "owner_valid_until",
+        "owner_content_sha256",
+        "owner_service",
+        "purpose_code",
+        "owner_scope_digest",
+        "owner_business_time_zone",
+        "owner_minimum_relationship_revision",
+        "tenant_grant_revision",
+        "authorization_revision",
+        "field_policy_revision",
+        "owner_issued_at",
+        "owner_evidence_digest",
+        "owner_key_id",
+        "last_invalidation_event_id",
+        "last_invalidation_change_type",
+        "last_invalidation_effective_date",
+        "last_invalidation_payload_sha256",
+        "last_correlation_id",
+        "recovery_outcome",
+        "last_recovery_error_code",
+        "last_recovery_at",
+        "projection_version",
+        "created_at",
+        "updated_at"
+      ],
+      "exactColumnTypesDefaultsAndChecksSource": "semantic-dispositions/base-tfr-tim-003.semantic-disposition.v1.json#/migrationDecision/newTables/0/requiredColumns",
+      "closedConstraintSource": "semantic-dispositions/base-tfr-tim-003.semantic-disposition.v1.json#/migrationDecision/newTables/0/constraints",
+      "tenantControlSource": "semantic-dispositions/base-tfr-tim-003.semantic-disposition.v1.json#/migrationDecision/newTables/0/tenantControls"
+    },
+    "createExactlyOneValidationFunction": {
+      "identity": "public.tim003_assignment_snapshots_structurally_valid(jsonb,uuid)",
+      "returns": "boolean",
+      "properties": [
+        "IMMUTABLE",
+        "STRICT",
+        "SECURITY INVOKER",
+        "fixed pg_catalog search_path",
+        "no table or configuration reads",
+        "malformed scalar, UUID, date or revision returns false rather than throwing"
+      ],
+      "runtimeExecuteAuthorized": true,
+      "publicExecuteAuthorized": false,
+      "alterOrOwnershipAuthorizedForRuntime": false
+    },
+    "createExactlyOneIdentityAndVersionTrigger": {
+      "securityDefiner": false,
+      "rule": "Reject tenant_id, relationship_public_id or created_at change; set projection_version to OLD plus one and updated_at to clock_timestamp on every update."
+    },
+    "createExactlyTwoIndexes": [
+      "partial tenant_id plus worker_public_id where worker_public_id is not null",
+      "tenant_id plus freshness_state plus owner_valid_until"
+    ],
+    "rlsAndPrivileges": [
+      "ENABLE ROW LEVEL SECURITY",
+      "FORCE ROW LEVEL SECURITY",
+      "USING and WITH CHECK both require tenant_id equal to NULLIF(current_setting('dwp.tenant_id', true), '')::BIGINT",
+      "PUBLIC receives no table or function privileges",
+      "runtime receives table SELECT plus exact semantic-disposition column INSERT and UPDATE lists only",
+      "runtime cannot write tenant_id, relationship_public_id, projection_version, created_at or updated_at after insert defaults, and receives no DELETE, TRUNCATE, REFERENCES, TRIGGER, ownership, SUPERUSER or BYPASSRLS capability"
+    ],
+    "reuseOnly": [
+      "sys_domain_event_inbox",
+      "sys_domain_event_offsets",
+      "sys_domain_event_replay_audit",
+      "sys_audit_outbox",
+      "sys_domain_event_dead_letters read-only view"
+    ],
+    "forbidden": [
+      "SECOND_TIM003_TABLE",
+      "SECOND_EVENT_INBOX_OFFSET_RETRY_REPLAY_OR_DLQ_LEDGER",
+      "ASSIGNMENT_CHILD_TABLE",
+      "PEOPLE_SOURCE_OF_RECORD_TABLE",
+      "LEAVE_REQUEST_BALANCE_OR_APPROVAL_AGGREGATE",
+      "DATA_BACKFILL",
+      "HISTORICAL_MIGRATION_EDIT",
+      "SECOND_MIGRATION",
+      "SHARED_LEDGER_SCHEMA_CHANGE",
+      "AUTOMATIC_BROAD_RUNTIME_GRANT"
+    ]
+  },
+  "activationPreconditions": [
+    "This reservation, its exact owner packet and one independent review with zero P0, P1 and P2 findings are committed and pushed on frontend dwp-dev.",
+    "The exact planned backend worktree is freshly materialized from the pinned backend head and tree with empty porcelain, null upstream and absent pre-existing branch or path.",
+    "A sealed worktree-materialization receipt records the exact worktree path, branch, head, tree, porcelain digest and first push target.",
+    "TIME_MAIN remains at V13, the exact V14 path remains absent and no competing current V14 reservation or active lease exists immediately before activation.",
+    "The V1-to-V13 migration manifest remains byte-for-byte equal to the reserved manifest.",
+    "A successor activation artifact changes only this exact reservation to ACTIVE_EXCLUSIVE_TIME_MAIN_V14 and is hash-bound by the executable start token."
+  ],
+  "authority": {
+    "reservationMayBeCommittedAndPushedAfterIndependentReview": true,
+    "leaseActive": false,
+    "migrationAuthoringAuthorized": false,
+    "worktreeMaterializationAuthorizedBeforeCarrierPush": false,
+    "sourceAuthoringAuthorized": false,
+    "startTokenIssued": false,
+    "directDwpDevMergeAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "featureActivationAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "invalidationConditions": [
+    "Any authority path, hash, byte count, required state, base pin or origin exactness differs.",
+    "TIME_MAIN high-water changes from V13, the V1-to-V13 manifest changes, the exact V14 path appears or another current V14 claim exists.",
+    "The planned backend worktree path or branch exists, is reused, is based on another commit or tree, has nonempty porcelain or has an upstream before receipt.",
+    "The exact one-table, one-function, one-trigger and two-index manifest is insufficient or a second table, migration, backfill, shared-ledger schema change or broader privilege is required.",
+    "An existing migration, historical allocation artifact, XCON contract, HRM provider, route, menu, frontend source, activation or enrollment must change."
+  ],
+  "nonClaims": [
+    "The lease is active.",
+    "The V14 file exists or may be authored.",
+    "The backend worktree or branch has been materialized.",
+    "An executable start token exists.",
+    "Any source, test, migration, route, menu, feature switch, tenant or production binding changed.",
+    "BASE-TFR-TIM-003 or HRIS is complete."
+  ],
+  "nextAction": "INDEPENDENTLY_REVIEW_THIS_RESERVATION_WITH_ITS_EXACT_OWNER_PACKET; COMMIT_AND_PUSH_THE_ZERO_FINDING_AUTHORITY_CARRIER; THEN_MATERIALIZE_ONLY_THE_PLANNED_BACKEND_WORKTREE_AND_RECORD_ITS_RECEIPT_BEFORE_A_SEPARATE_V14_ACTIVATION_AND_EXECUTABLE_START_TOKEN"
+}
