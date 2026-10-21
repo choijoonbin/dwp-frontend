@@ -1,0 +1,151 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-tim003-hrm-successor-module-source-integration-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-04-TIM003-HRM-SUCCESSOR-MODULE-SOURCE-INTEGRATION-20261021-R1",
+  "recordedAt": "2026-10-21T15:22:30+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "EXACT_TIM003_HRM_SUCCESSOR_HEADS_NO_FF_MERGED_PUSHED_35_OF_35_BLOBS_MATCH_HRM_PREREQUISITE_INTEGRATED_TIM_PHASE_NOT_STARTED",
+  "sliceId": "BASE-TFR-TIM-003",
+  "moduleSession": "HRIS-HRM",
+  "phase": "PHASE_1_HRM_SUCCESSOR",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_RECEIPT_ID_AND_SHA256"
+  },
+  "authority": {
+    "admissionDecision": {
+      "path": "tim-003-hrm-successor-module-source-admission-decision.v1.json",
+      "sha256": "24ca753870b10ceb455f977bc50e6bfbb6c8a9aad7d75821c6d6bff1ae62a40a",
+      "bytes": 9389,
+      "carrierCommit": "d710503ee9abf77596e8df5c7eeb5d05dfd7737f",
+      "carrierTree": "eba2001c72fd3884ff94bd48db59d638249c71fe"
+    },
+    "moduleResult": {
+      "path": "../r7-batch-04-module-results-r1/base-tfr-tim-003/hrm-successor/module-result-evidence.v1.json",
+      "sha256": "de4dd5e8aed6e5dc88fbb88d8d3aeaa81747bd06295eb528d258f33cba0c34b2",
+      "bytes": 7719,
+      "carrierCommit": "54da5cf9adae59244f5f99d6cadf54b37c1aab12",
+      "carrierTree": "0d66e6630115d2cca1b34e34f108171fdf691ba3"
+    }
+  },
+  "integratedHeads": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "sourceBranch": "codex/hris-wave7-r7-batch04-tim-003-hrm-backend-20261021-r1",
+      "sourceHead": "1895c1a24ab01ebd11f1e63f531a95e05f21c41b",
+      "sourceTree": "5d8667a5bf810c80d7c9a688688dd1f4d41151cf",
+      "mergeCommit": "fd6aae41e3eec9569f8aa6451090beeade556703",
+      "mergeTree": "5d8667a5bf810c80d7c9a688688dd1f4d41151cf",
+      "parents": [
+        "75ac11873e6e4a6c070d47e849d81063aaa88800",
+        "1895c1a24ab01ebd11f1e63f531a95e05f21c41b"
+      ],
+      "strategy": "NO_FF_EXACT_BRANCH_HEAD",
+      "sourceIsAncestor": true,
+      "admittedPathCount": 29,
+      "pathOnlyManifestSha256": "004e2458f45965f96533f604c56754c1d7c388de72110cbff7287a55070bbfcc",
+      "nameStatusManifestSha256": "eb81d6668fac3bc5ce86422fa1a24680651c6cf63637333710f70ab6e54ea2be",
+      "admittedBlobMismatchCount": 0,
+      "mergeConflicts": 0,
+      "automaticConflictResolution": false,
+      "originExact": true,
+      "clean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "sourceBranch": "codex/hris-wave7-r7-batch04-tim-003-hrm-frontend-20261021-r1",
+      "sourceHead": "54da5cf9adae59244f5f99d6cadf54b37c1aab12",
+      "sourceTree": "0d66e6630115d2cca1b34e34f108171fdf691ba3",
+      "mergeCommit": "3a95660cdc334fe69a40fcd9fca24e88d67f08cf",
+      "mergeTree": "2380a10f116b2f051f6ae73bb36f8ca28a38f743",
+      "parents": [
+        "d710503ee9abf77596e8df5c7eeb5d05dfd7737f",
+        "54da5cf9adae59244f5f99d6cadf54b37c1aab12"
+      ],
+      "strategy": "NO_FF_EXACT_BRANCH_HEAD",
+      "sourceIsAncestor": true,
+      "admittedPathCount": 6,
+      "pathOnlyManifestSha256": "8b198c50b6e155de9a40860d8cde1924e4da57e03d531dc9acc1a34367633b01",
+      "nameStatusManifestSha256": "13ce4c205fa4a677282846688db1f17a043ebe0a20217757b25b87dc15629839",
+      "admittedBlobMismatchCount": 0,
+      "centralAuthorityPreserved": true,
+      "centralCandidatePathOverlapCount": 0,
+      "mergeConflicts": 0,
+      "automaticConflictResolution": false,
+      "originExact": true,
+      "cleanBeforeReceiptDraft": true
+    }
+  },
+  "postMergeVerification": {
+    "gitIdentityAndAncestry": "PASS",
+    "exactAdmittedBlobComparison": "35_OF_35_MATCH",
+    "backendTreeEqualsSourceTree": true,
+    "frontendCentralAuthorityPreservedWithZeroCandidatePathOverlap": true,
+    "moduleTestsRerun": false,
+    "repositoryWideSuiteRun": false,
+    "reason": "This was a conflict-free Git identity and provenance admission over independently reviewed, already tested exact module heads."
+  },
+  "effectiveHrmSuccessorResult": {
+    "acceptanceConditionCount": 12,
+    "pass": 4,
+    "passWithFailClosedCarriedBindings": 2,
+    "producerPassConsumerDeferred": 1,
+    "deferredToHrisTim": 5,
+    "failed": 0,
+    "claim": "HRM_SUCCESSOR_OBLIGATIONS_COMPLETE_NOT_TIM_SLICE_COMPLETE",
+    "completedCapabilities": [
+      "XCON-027 canonical relationship snapshot contract and code generation",
+      "XCON-004 byte-identical preservation and default-off canonical publication",
+      "SVC-PEP-HRM-007 owner snapshot boundary with fail-closed typed security",
+      "persisted originating correlation and deterministic publication evidence"
+    ],
+    "deferredCapabilities": [
+      "HRIS-TIM consumer enforcement and delivery-ledger reuse",
+      "idempotency digest conflict, offset, gap and DLQ processing",
+      "TIME_MAIN V14 projection persistence",
+      "projection and offset CAS settlement",
+      "read guards, recovery and reconciliation",
+      "TIM close-period definition producer",
+      "trusted owner-header issuer"
+    ]
+  },
+  "migrationBoundary": {
+    "hrmMigrationAdded": false,
+    "hrmMigrationLeaseRequired": false,
+    "timeMainHighWaterAfterIntegration": "V13",
+    "nextCandidate": "V14",
+    "timeMainV14LeaseState": "NOT_ISSUED",
+    "timeMainV14ConsumedByThisReceipt": false,
+    "timeMainV14AuthoringAuthorizedByThisReceipt": false,
+    "requiredBeforeAuthoring": "FRESH_HRIS_TIM_OWNER_PACKET_EXCLUSIVE_TIME_MAIN_V14_LEASE_FRESH_WORKTREE_AND_HASH_BOUND_START_TOKEN"
+  },
+  "rolloutBoundary": {
+    "runtimeDefault": "OFF",
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "tenantEnrollmentCount": 0,
+    "customerDataAuthorized": false,
+    "frontendMounted": false,
+    "productionProviderBindingAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionIncrement": 0
+  },
+  "authorityAfterReceipt": {
+    "hrmPrerequisiteIntegrated": true,
+    "freshHrisTimOwnerPacketMayBeIssued": true,
+    "directHrisTimSourceImplementationAuthorized": false,
+    "timeMainV14AuthoringAuthorizedBeforeExactPacketLeaseWorktreeToken": false,
+    "laneExitAuthorized": false,
+    "fullSliceCompletionAuthorized": false
+  },
+  "nonClaims": [
+    "HRIS-TIM consumer source or TIME_MAIN V14 is implemented or admitted.",
+    "The TIM close-period producer or trusted owner-header issuer is bound.",
+    "A frontend route, shell, menu or component is mounted.",
+    "Any feature or tenant is activated or enrolled.",
+    "A repository-wide or module-wide test suite was rerun during central admission.",
+    "BASE-TFR-TIM-003, Batch-04, R7 or HRIS is complete."
+  ],
+  "nextAction": "Issue and independently review a fresh HRIS-TIM owner packet on the admitted dwp-dev carrier, reserve exactly TIME_MAIN V14, materialize a fresh HRIS-TIM backend worktree, issue a hash-bound executable start token, and only then begin the bounded TIM consumer implementation."
+}
