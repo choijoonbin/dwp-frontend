@@ -1,0 +1,152 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-tim003-tim-consumer-module-source-integration-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-04-TIM003-TIM-CONSUMER-MODULE-SOURCE-INTEGRATION-20261021-R1",
+  "recordedAt": "2026-10-21T18:11:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "EXACT_TIM003_TIM_CONSUMER_BACKEND_HEAD_NO_FF_MERGED_PUSHED_45_OF_45_BLOBS_MATCH_TIME_MAIN_V14_INTEGRATED_DEFAULT_OFF_ZERO_ENROLLMENT",
+  "sliceId": "BASE-TFR-TIM-003",
+  "moduleSession": "HRIS-TIM",
+  "phase": "PHASE_2_TIM_CONSUMER_PROJECTION_AND_RECOVERY",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_RECEIPT_ID_AND_SHA256"
+  },
+  "authority": {
+    "admissionDecision": {
+      "path": "tim-003-tim-consumer-module-source-admission-decision.v1.json",
+      "sha256": "42f6c2a5b721c64095c5e3722a37b403ca2a798d9cf84e4fa6c317e93242fa12",
+      "bytes": 10423,
+      "carrierCommit": "302deeb215b023aefd22dcaa47ff9a3633eecb8c",
+      "carrierTree": "74a613aaed638d2d55a4a9f0b9ff2706bc77c4d1"
+    },
+    "moduleResult": {
+      "path": "../r7-batch-04-module-results-r1/base-tfr-tim-003/tim-consumer/module-result-evidence.v1.json",
+      "sha256": "85c6e2c71f527ec807faf6e881db6e23382985b82575b0fc9bd365e8d1577830",
+      "bytes": 9251,
+      "carrierCommit": "dfae5a12614404736a0056de948c39983eb22dd2",
+      "carrierTree": "9c19cbbe8ede654cb72b03f91e8b62024c5d2ad2"
+    }
+  },
+  "integratedHeads": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "sourceBranch": "codex/hris-wave7-r7-batch04-tim-003-tim-backend-20261021-r1",
+      "sourceHead": "92b0c59455288aa7abdacf4ba6976c0d0ff82a11",
+      "sourceTree": "7020953515319688b998777ed73cae166dd678be",
+      "mergeCommit": "8f8087736e59413c60ddcdcd081ed42f1915bc91",
+      "mergeTree": "7020953515319688b998777ed73cae166dd678be",
+      "parents": [
+        "fd6aae41e3eec9569f8aa6451090beeade556703",
+        "92b0c59455288aa7abdacf4ba6976c0d0ff82a11"
+      ],
+      "strategy": "NO_FF_EXACT_BRANCH_HEAD",
+      "sourceIsAncestor": true,
+      "admittedPathCount": 45,
+      "pathOnlyManifestSha256": "d100f255ac82c08d3762ba8961a19471bf5d5ff064383ff54862e779ef7dba84",
+      "nameStatusManifestSha256": "985e632b8e167740083883c2f3703b98a6c0412fc86e04f799fe64538e533292",
+      "admittedBlobMismatchCount": 0,
+      "mergeConflicts": 0,
+      "automaticConflictResolution": false,
+      "originExact": true,
+      "clean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "sourceMerge": "NOT_APPLICABLE_NO_FRONTEND_MODULE_SOURCE",
+      "decisionCarrierCommit": "302deeb215b023aefd22dcaa47ff9a3633eecb8c",
+      "decisionCarrierTree": "74a613aaed638d2d55a4a9f0b9ff2706bc77c4d1",
+      "originExact": true,
+      "cleanBeforeReceiptDraft": true
+    }
+  },
+  "postMergeVerification": {
+    "gitIdentityAndAncestry": "PASS",
+    "exactAdmittedBlobComparison": "45_OF_45_MATCH",
+    "backendTreeEqualsSourceTree": true,
+    "backendOriginParity": "PASS_0_AHEAD_0_BEHIND",
+    "frontendDecisionCarrierOriginParity": "PASS_0_AHEAD_0_BEHIND",
+    "timeMainV14Sha256": "d442c9f6315cf01d60601694499d0cf79eff1d9f7d784b0fb162ec2a3aef66eb",
+    "timeMainV14Bytes": 18812,
+    "timeMainHistoricalMigrationsUnchanged": true,
+    "moduleTestsRerunDuringMerge": false,
+    "repositoryWideSuiteRunDuringMerge": false,
+    "reason": "This was a conflict-free Git identity and provenance admission over the independently reviewed and targeted-tested exact backend module head."
+  },
+  "effectiveTimConsumerResult": {
+    "acceptanceConditionCount": 12,
+    "pass": 10,
+    "preservedIntegratedHrmPrerequisite": 2,
+    "failed": 0,
+    "claim": "TIM_CONSUMER_SOURCE_OBLIGATIONS_INTEGRATED_ACTIVATION_AND_EXTERNAL_GATES_DEFERRED",
+    "verification": {
+      "boundedGateBeforeAdmissionReview": "COMMIT_2F0D929D_14_CLASSES_63_OF_63_PASS",
+      "admissionBoundaryCorrection": "COMMIT_92B0C594_COMPILE_TEST_JAVA_PASS_2_CLASSES_23_OF_23_PASS",
+      "currentNamedTestInventory": "14_CLASSES_68_TESTS",
+      "independentReview": "P0_0_P1_0_P2_0_ADMIT"
+    },
+    "completedCapabilities": [
+      "strict XCON-004 consumer validation and immutable digest-conflict handling",
+      "shared inbox and offset recovery reuse without a competing delivery ledger",
+      "TIME_MAIN V14 tenant-isolated projection persistence with forced RLS and CAS",
+      "current-authority owner snapshot recovery, read guard, reconciliation and audit",
+      "allowlisted operator quarantine recovery with event and replay evidence protection",
+      "default-off runtime assembly with empty tenant enrollment"
+    ],
+    "deferredCapabilities": [
+      "TIM close-period definition producer",
+      "trusted owner-header issuer and production owner authority bindings",
+      "production recovery scheduler and broker binding",
+      "feature activation and tenant enrollment",
+      "frontend route, menu and user-facing workflow",
+      "production release and business-completion credit"
+    ]
+  },
+  "migrationLeaseClosure": {
+    "leaseId": "HRIS-WAVE7-R7-BATCH-04-TIME-MAIN-V14-TIM003-20261021-R1",
+    "stream": "TIME_MAIN",
+    "version": "V14",
+    "predecessorHighWater": "V13",
+    "integratedHighWater": "V14",
+    "exactPath": "dwp-time-server/src/main/resources/db/migration/V14__tim_base_tfr_tim_003_employment_absence_projection.sql",
+    "sha256": "d442c9f6315cf01d60601694499d0cf79eff1d9f7d784b0fb162ec2a3aef66eb",
+    "bytes": 18812,
+    "state": "CONSUMED_BY_EXACT_CENTRALLY_INTEGRATED_SOURCE",
+    "timeMainV14ActiveLeaseCountAfterReceipt": 0,
+    "secondV14OrAdditionalMigrationAuthorized": false
+  },
+  "rolloutBoundary": {
+    "runtimeDefault": "OFF",
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "tenantEnrollmentCount": 0,
+    "customerDataAuthorized": false,
+    "frontendMounted": false,
+    "productionOwnerAuthorityBound": false,
+    "productionSchedulerBound": false,
+    "productionBrokerBound": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionIncrement": 0
+  },
+  "authorityAfterReceipt": {
+    "hrmPrerequisiteIntegrated": true,
+    "timConsumerSourceIntegrated": true,
+    "timeMainHighWater": "V14",
+    "directActivationAuthorized": false,
+    "directTenantEnrollmentAuthorized": false,
+    "productionBindingAuthorized": false,
+    "laneExitAuthorized": false,
+    "fullSliceCompletionAuthorized": false
+  },
+  "nonClaims": [
+    "The TIM close-period definition producer or trusted owner-header issuer is implemented or bound.",
+    "A production control-plane owner grant issuer, response key authority, scheduler or broker binding is active.",
+    "A frontend route, shell, menu or component is mounted.",
+    "Any feature, consumer, worker or tenant is activated or enrolled.",
+    "Customer data, production execution or release is authorized.",
+    "A repository-wide or module-wide test suite was rerun during central admission.",
+    "BASE-TFR-TIM-003, Batch-04, R7 or HRIS is complete."
+  ],
+  "nextAction": "Use the new backend dwp-dev baseline 8f8087736e59413c60ddcdcd081ed42f1915bc91 and this receipt carrier to re-evaluate the Batch-04 roadmap, then issue the next exact module owner packet and worktree from current dwp-dev. Do not activate TIM-003 until separate production authority, scheduler, broker, feature and tenant-enrollment gates are authorized."
+}
