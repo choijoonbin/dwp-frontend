@@ -1,0 +1,28 @@
+{
+  "schema": "hris.central-implementation-token.v3",
+  "tokenId": "HRIS-WAVE7-R7-BATCH05-HRM012-CENTRAL-IMPLEMENT-20261022-R3",
+  "issuedAt": "2026-10-21T16:14:00Z",
+  "state": "EXECUTABLE_APPEND_ONLY_AMENDMENT",
+  "sliceId": "BASE-TFR-HRM-012",
+  "predecessorToken": {
+    "path": "hrm-012-central-implementation-token.v2.json",
+    "sha256": "18d05003c733d25598cb810ea73c055e0a147d7f091d0c0a9ecc66ad96ab9f06",
+    "bytes": 3636,
+    "carrierCommit": "a6cc789871563fd15df33e80d41c797978284337"
+  },
+  "authorityAmendment": {
+    "path": "hrm-012-central-authorization-successor.v3.json",
+    "sha256": "cdbe2f6324ff76663b4aa668dd3568567c785c174f45f870ed93d729d1eedfe8",
+    "bytes": 2158
+  },
+  "additionalChangedPathExactly": "contracts/product-authorization/pilot-fixtures.v1.schema.json",
+  "allowedChangeExactly": "Advance only the version lineage constraints needed for immutable v56 and v57 fixture entries while preserving all other schema rules.",
+  "requiredProof": "python3 -m unittest scripts.tests.test_product_authorization_fixture_schema",
+  "inheritance": "All v2 token worktree pins, source paths, commands, branch policy, forbidden scope and invalidation rules remain in force. No other path or semantic authority is added.",
+  "sourceAuthoringAuthorized": true,
+  "moduleAuthoringAuthorized": false,
+  "peopleV60LeaseActive": false,
+  "featureEnablementAuthorized": false,
+  "tenantEnrollmentAuthorized": false,
+  "productionReleaseAuthorized": false
+}

@@ -1,0 +1,37 @@
+{
+  "schema": "hris.central-authorization-successor.v3",
+  "successorId": "HRIS-WAVE7-R7-BATCH05-HRM012-CENTRAL-AUTHORIZATION-20261022-R3",
+  "recordedAt": "2026-10-21T16:14:00Z",
+  "state": "AUTHORIZED_APPEND_ONLY_PATH_CORRECTION",
+  "sliceId": "BASE-TFR-HRM-012",
+  "predecessor": {
+    "path": "hrm-012-central-authorization-successor.v2.json",
+    "sha256": "40472bfea3260712dcef9669741f6c05bbf9d30667e684fe3a532285487ba257",
+    "bytes": 56160,
+    "carrierCommit": "a8f338cb2cdb52aeaefb340f4113d52dd50e72f1",
+    "review": "P0=0;P1=0;P2=0"
+  },
+  "correction": {
+    "reason": "The v57 fixture generator necessarily updates the existing closed lineage schema from the v55 ceiling to v57. The v2 allowlist included the generated fixture, generator and fixture-schema test but accidentally omitted their existing schema input.",
+    "addExactlyOneBackendPath": "contracts/product-authorization/pilot-fixtures.v1.schema.json",
+    "allowedChange": "Advance only the product-authorization lineage version const/minimum/maximum/enum constraints required for immutable versions 56 and 57; preserve every other schema rule.",
+    "requiredFocusedProof": "python3 -m unittest scripts.tests.test_product_authorization_fixture_schema",
+    "forbidden": [
+      "any second path expansion",
+      "loosening additionalProperties or another schema constraint",
+      "changing fixture business data beyond the already-authorized v57 deterministic generation",
+      "People V60 or module source authoring",
+      "feature enablement, tenant enrollment or production release"
+    ]
+  },
+  "inheritance": "Every v2 semantic, protocol, allowlist, command, default-OFF, zero-enrollment and non-claim remains authoritative unchanged. This v3 adds exactly one backend path and one already-listed focused proof.",
+  "authority": {
+    "centralSourceAuthoringAuthorized": true,
+    "moduleSourceAuthoringAuthorized": false,
+    "peopleV60LeaseActive": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "REVIEW_HASH_COMMIT_PUSH_AND_ISSUE_HASH_BOUND_V3_TOKEN_AMENDMENT"
+}
