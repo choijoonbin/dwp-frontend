@@ -1,0 +1,49 @@
+{
+  "schema": "hris.central-authorization-successor.v4",
+  "successorId": "HRIS-WAVE7-R7-BATCH05-HRM012-CENTRAL-AUTHORIZATION-20261022-R4",
+  "recordedAt": "2026-10-21T16:26:51Z",
+  "state": "AUTHORIZED_APPEND_ONLY_PATH_CORRECTION",
+  "sliceId": "BASE-TFR-HRM-012",
+  "predecessor": {
+    "path": "hrm-012-central-authorization-successor.v3.json",
+    "sha256": "cdbe2f6324ff76663b4aa668dd3568567c785c174f45f870ed93d729d1eedfe8",
+    "bytes": 2158,
+    "carrierCommit": "1dcd2b07aadd2b8a9f16b59fa455cee7c5507b46",
+    "review": "P0=0;P1=0;P2=0"
+  },
+  "correction": {
+    "reason": "The cumulative immutable v1 through v57 frontend authorization snapshot is 115236774 bytes with the existing two-space serializer, so GitHub correctly rejects the generated artifact above its 100 MiB single-file limit. The snapshot payload and every pinned authorization checksum are valid; only the deterministic presentation format must change.",
+    "addExactlyOneFrontendPath": "scripts/sync-product-surface-authorization.mjs",
+    "allowedChange": "Introduce one snapshot-only indentation constant of one space and use it only for writing and exact checking of architecture/product-surface-authorization.v1.json. Preserve the two-space canonical serialization used for official backend bundle checksum verification and preserve generated TypeScript formatting, validation, counts, ordering and all authorization semantics.",
+    "expectedArtifact": {
+      "path": "architecture/product-surface-authorization.v1.json",
+      "maximumBytesExclusive": 104857600,
+      "measuredOneSpaceBytes": 96208807,
+      "semanticRule": "JSON deep equality with the already-reviewed v57 snapshot; formatting-only delta beyond the authorized v57 append"
+    },
+    "requiredFocusedProof": [
+      "node scripts/sync-product-surface-authorization.mjs --sync <materialized-central-backend>/contracts/product-authorization",
+      "node scripts/sync-product-surface-authorization.mjs --check <materialized-central-backend>/contracts/product-authorization",
+      "test $(wc -c < architecture/product-surface-authorization.v1.json) -lt 104857600"
+    ],
+    "forbidden": [
+      "changing official backend bundle canonicalization or checksum rules",
+      "changing generated TypeScript presentation or runtime behavior",
+      "removing immutable v1 through v57 bundles from the snapshot",
+      "using Git LFS, index filters or a non-reproducible push-only transform",
+      "any second path expansion",
+      "HRM-012 UI, menu or module source authoring",
+      "feature enablement, tenant enrollment or production release"
+    ]
+  },
+  "inheritance": "Every v2 semantic, protocol, allowlist, command, default-OFF, zero-enrollment and non-claim plus the v3 backend schema correction remains authoritative unchanged. This v4 adds exactly one frontend generator path and a deterministic snapshot-only one-space serialization correction.",
+  "authority": {
+    "centralSourceAuthoringAuthorized": true,
+    "moduleSourceAuthoringAuthorized": false,
+    "peopleV60LeaseActive": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "REVIEW_HASH_COMMIT_PUSH_AND_ISSUE_HASH_BOUND_V4_TOKEN_AMENDMENT"
+}

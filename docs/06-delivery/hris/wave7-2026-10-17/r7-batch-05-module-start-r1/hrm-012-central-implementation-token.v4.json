@@ -1,0 +1,32 @@
+{
+  "schema": "hris.central-implementation-token.v4",
+  "tokenId": "HRIS-WAVE7-R7-BATCH05-HRM012-CENTRAL-IMPLEMENT-20261022-R4",
+  "issuedAt": "2026-10-21T16:26:51Z",
+  "state": "EXECUTABLE_APPEND_ONLY_AMENDMENT",
+  "sliceId": "BASE-TFR-HRM-012",
+  "predecessorToken": {
+    "path": "hrm-012-central-implementation-token.v3.json",
+    "sha256": "d51330249d14c1477704e19aa945083928597c99dc563c48ef2c12e353451902",
+    "bytes": 1473,
+    "carrierCommit": "1dcd2b07aadd2b8a9f16b59fa455cee7c5507b46"
+  },
+  "authorityAmendment": {
+    "path": "hrm-012-central-authorization-successor.v4.json",
+    "sha256": "838fbdcf534c1820d52a221df9802f8c7727ed24d4a3d4cf5a4dd065bc815034",
+    "bytes": 3267
+  },
+  "additionalChangedPathExactly": "scripts/sync-product-surface-authorization.mjs",
+  "allowedChangeExactly": "Use deterministic one-space indentation only for the cumulative frontend JSON snapshot writer and equality check. Do not change official bundle checksum serialization, generated TypeScript, validation, ordering, counts or authorization semantics.",
+  "requiredProof": [
+    "regenerate and check the snapshot against the materialized central backend v57 artifacts",
+    "architecture/product-surface-authorization.v1.json is valid JSON and smaller than 104857600 bytes",
+    "the previously reviewed frontend focused tests remain applicable because runtime TypeScript and semantic payload are unchanged"
+  ],
+  "inheritance": "All v2 token worktree pins, source paths, commands, branch policy, forbidden scope and invalidation rules plus the v3 schema amendment remain in force. No other path or semantic authority is added.",
+  "sourceAuthoringAuthorized": true,
+  "moduleAuthoringAuthorized": false,
+  "peopleV60LeaseActive": false,
+  "featureEnablementAuthorized": false,
+  "tenantEnrollmentAuthorized": false,
+  "productionReleaseAuthorized": false
+}
