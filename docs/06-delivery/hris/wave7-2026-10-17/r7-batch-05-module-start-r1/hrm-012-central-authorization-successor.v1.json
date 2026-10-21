@@ -1,0 +1,577 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-05-hrm012-central-authorization-successor.v1",
+  "successorId": "HRIS-WAVE7-R7-BATCH-05-HRM012-CENTRAL-AUTHORIZATION-20261022-R1",
+  "recordedAt": "2026-10-22T00:09:36+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "SEALED_EXACT_V57_AND_AUTH_V266_RESERVATION_INDEPENDENT_REVIEW_REQUIRED_SOURCE_WITHHELD",
+  "immutability": {
+    "sealed": true,
+    "appendOnly": true,
+    "predecessorMutation": "FORBIDDEN",
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ID_AND_SHA256"
+  },
+  "sliceId": "BASE-TFR-HRM-012",
+  "module": "HRM",
+  "moduleSession": "HRIS-HRM",
+  "authorityBasis": {
+    "semanticDisposition": {
+      "path": "semantic-dispositions/base-tfr-hrm-012.semantic-disposition.v1.json",
+      "sha256": "bc7371c37459efa104c5d1239eae326fb2585fdd8d1b59b094046b6b02393519",
+      "bytes": 33226
+    },
+    "ownerPacket": {
+      "path": "owner-packets/base-tfr-hrm-012.owner-packet.v1.json",
+      "sha256": "2e9d7bdac2623a5aa417d14c5721e0cf19c0ba289bb17b52727076ecd83460cf",
+      "bytes": 18059
+    },
+    "peopleV60Reservation": {
+      "path": "migration-lease-hrm012-v60-reservation.v1.json",
+      "sha256": "318df1fc3473fd408788e571bcf2884c1b07887003a38cb6f2bc366b715da422",
+      "bytes": 6555,
+      "state": "RESERVED_NOT_ACTIVE"
+    }
+  },
+  "decision": "RESERVE_ONE_IMMUTABLE_PRODUCT_AUTHORIZATION_V57_SUCCESSOR_AND_AUTH_V266_SEED_FOR_THE_EXACT_HRM012_PAGE_DATA_ACTION_BOUNDARY; PRESERVE_THE_LEGACY_INTEGRATION_CAPABILITY_AND_WITHHOLD_ALL_SOURCE_UNTIL_THE_REVIEW_CARRIER_WORKTREE_AND_TOKEN_GATES_CLOSE",
+  "capabilityCollisionResolution": {
+    "preservedLegacyCapability": {
+      "contractKey": "hcm.integration.execute",
+      "v56CanonicalDescriptorSha256": "b918a1487e14a3c87c925536ec7f8f4a4fc5d280004fcd7babce1f3f9bea087d",
+      "v56CanonicalDescriptorBytes": 1150,
+      "resourceKey": "ACTION.WORKFORCE_DATA_OPERATIONS",
+      "action": "EXECUTE",
+      "surfaceKey": "hcm.management",
+      "requiredResponsibilityCode": "APP_CONFIG_ADMIN",
+      "scopeResolver": "APP_RESOURCE_SET:RS_HCM_CONFIG",
+      "rule": "The complete v56 descriptor, including every existing routeContractKey, remains byte-for-byte canonical after normalization. It is not redefined, aliased, widened or accepted as fallback authority for PEP-HRM-015."
+    },
+    "newNarrowCapability": {
+      "contractKey": "hcm.integration.workforce-ingestion.execute",
+      "productKey": "hcm",
+      "surfaceKey": "hcm.operations",
+      "resolvedCapabilityCode": "ACTION.HRIS_INTEGRATION_EXECUTE:EXECUTE",
+      "resourceKey": "ACTION.HRIS_INTEGRATION_EXECUTE",
+      "action": "EXECUTE",
+      "mappingVersion": 1,
+      "requiresProductEntitlement": true,
+      "canonicalAppEntitlement": "APP.HCM:VIEW",
+      "acceptedAppEntitlementsAnyOf": [
+        "APP.HCM:VIEW",
+        "APP.HRIS:VIEW"
+      ],
+      "appEntitlementRule": "The exact canonical APP.HCM:VIEW entitlement or the registered same-product APP.HRIS:VIEW compatibility alias satisfies the product gate. Possessing both is not required. Absence of both, an implied entitlement, an unregistered alias or a wrong-product alias denies.",
+      "authorityMode": "PERMISSION_AND_RELATIONSHIP",
+      "scopeResolver": "CONNECTOR_OR_LEGAL_ENTITY_SCOPE",
+      "riskTier": "HIGH",
+      "activationPolicy": "STEPUP-MGMT-HIGH-V1",
+      "responsibilityRequirement": "REQUIRED",
+      "requiredResponsibilityCode": "HRIS_DUTY_INTEGRATION_EXECUTOR",
+      "sodPolicyId": null,
+      "owner": "People + HCM + Security",
+      "policyVersion": 1,
+      "lifecycleState": "ACTIVE",
+      "routeContractKeys": [
+        "route.hcm.operations.workforce-ingestion.action"
+      ]
+    },
+    "separationRule": "hcm.operations.people.view authorizes only IAQ-012 PAGE and DATA reads; hcm.integration.workforce-ingestion.execute authorizes only PEP-HRM-015; neither capability implies the other."
+  },
+  "exactRouteContracts": [
+    {
+      "routeContractKey": "route.hcm.operations.people-data-quality.page",
+      "routeKind": "PAGE",
+      "navigationContextId": "hcm.operations",
+      "uiRouteId": "hcm.operations.people-data-quality",
+      "uiRoutePattern": "/hr/operations/people/data-quality",
+      "gatewayBinding": "GET /api/people/v1/hris/workbench/operations/data/quality",
+      "servicePepBinding": "GET /v1/hris/workbench/operations/data/quality",
+      "serviceKey": "people",
+      "authorizationEquivalenceKey": "wire-authority.hcm.operations.people-data-quality.v1",
+      "profileKey": "people-data-quality-reader",
+      "canonicalProfile": "HRIS_HR_BUSINESS_PARTNER>HRIS_DUTY_CORE_VIEWER",
+      "requiredCapability": "hcm.operations.people.view",
+      "purposeCode": "HR_OPERATIONS",
+      "populationResolver": "WORKFORCE_TARGET_POPULATION",
+      "populationTypes": [
+        "ORG_UNIT",
+        "LEGAL_ENTITY"
+      ],
+      "targetBindingKinds": [
+        "TARGET_POPULATION"
+      ],
+      "predicatePolicyKeys": [
+        "predicate.hcm-workforce-ingestion-scope.v1"
+      ],
+      "responseProjection": {
+        "projectionPolicyKey": "route.hcm.operations.people-data-quality.page.people-data-quality-reader.projection.v1",
+        "responseSchemaKey": "Hrm012DataQualityProjectionV1",
+        "fieldGroups": [
+          "INGESTION_STATUS",
+          "QUALITY_FINDING",
+          "COMMAND_RECEIPT"
+        ],
+        "availableActions": []
+      },
+      "readOnly": true,
+      "activeAccessModes": [
+        "NORMAL",
+        "ELEVATED"
+      ]
+    },
+    {
+      "routeContractKey": "route.hcm.operations.people-data-quality.data",
+      "routeKind": "DATA",
+      "gatewayBinding": "GET /api/people/v1/hris/workbench/operations/data/quality",
+      "servicePepBinding": "GET /v1/hris/workbench/operations/data/quality",
+      "serviceKey": "people",
+      "authorizationEquivalenceKey": "wire-authority.hcm.operations.people-data-quality.v1",
+      "profileKey": "people-data-quality-reader",
+      "canonicalProfile": "HRIS_HR_BUSINESS_PARTNER>HRIS_DUTY_CORE_VIEWER",
+      "requiredCapability": "hcm.operations.people.view",
+      "purposeCode": "HR_OPERATIONS",
+      "populationResolver": "WORKFORCE_TARGET_POPULATION",
+      "populationTypes": [
+        "ORG_UNIT",
+        "LEGAL_ENTITY"
+      ],
+      "targetBindingKinds": [
+        "TARGET_POPULATION"
+      ],
+      "predicatePolicyKeys": [
+        "predicate.hcm-workforce-ingestion-scope.v1"
+      ],
+      "responseProjection": {
+        "projectionPolicyKey": "route.hcm.operations.people-data-quality.data.people-data-quality-reader.projection.v1",
+        "responseSchemaKey": "Hrm012DataQualityProjectionV1",
+        "fieldGroups": [
+          "INGESTION_STATUS",
+          "QUALITY_FINDING",
+          "COMMAND_RECEIPT"
+        ],
+        "availableActions": []
+      },
+      "readOnly": true,
+      "sideEffectFree": true,
+      "activeAccessModes": [
+        "NORMAL",
+        "ELEVATED"
+      ]
+    },
+    {
+      "routeContractKey": "route.hcm.operations.workforce-ingestion.action",
+      "routeKind": "ACTION",
+      "gatewayBinding": "POST /api/people/v1/hris/integrations/workforce-ingestions",
+      "servicePepBinding": "POST /v1/hris/integrations/workforce-ingestions",
+      "serviceKey": "people",
+      "profileKey": "workforce-ingestion-executor",
+      "canonicalProfile": "HRIS_INTEGRATION_EXECUTOR>HRIS_DUTY_INTEGRATION_EXECUTOR",
+      "requiredCapability": "hcm.integration.workforce-ingestion.execute",
+      "purposeCode": "HRIS_INTEGRATION",
+      "populationResolver": "CONNECTOR_OR_LEGAL_ENTITY_SCOPE",
+      "populationTypes": [
+        "CONNECTOR_SET",
+        "LEGAL_ENTITY"
+      ],
+      "fieldGroups": [
+        "INTEGRATION_METADATA",
+        "REDACTED_PAYLOAD"
+      ],
+      "targetBindingKinds": [
+        "OBJECT",
+        "TARGET_POPULATION"
+      ],
+      "predicatePolicyKeys": [
+        "predicate.hcm-workforce-ingestion-scope.v1",
+        "predicate.people.object-version.v1"
+      ],
+      "readOnly": false,
+      "activeAccessModes": [
+        "ELEVATED"
+      ],
+      "stepUp": {
+        "riskTier": "HIGH",
+        "policy": "STEPUP-MGMT-HIGH-V1",
+        "bindingKey": "route.hcm.operations.workforce-ingestion.action.binding.01",
+        "targetType": "WORKFORCE_INGESTION_OBJECT",
+        "targetIdBodyFields": [
+          "objectRef"
+        ],
+        "expectedObjectVersionSource": "COMMAND_HEADER",
+        "expectedObjectVersionName": "If-Match",
+        "ownerServiceKey": "people",
+        "audience": "dwp-people-server",
+        "identityVersionBinding": "objectRef is the exact step-up target identity and trusted metadata lookup key; If-Match is the sole target version. Metadata resolution must return that same objectRef and version or deny."
+      },
+      "uiRouteId": null,
+      "uiRoutePattern": null
+    }
+  ],
+  "canonicalCommandTransportAndAccounting": {
+    "requestType": "IngestionCommand",
+    "responseType": "Receipt",
+    "requestBodyExactly": [
+      "objectRef",
+      "objectDigest",
+      "schemaKey",
+      "schemaVersion",
+      "mode",
+      "effectiveDate"
+    ],
+    "requiredHeadersExactly": [
+      "Authorization",
+      "Idempotency-Key",
+      "If-Match",
+      "X-Correlation-ID"
+    ],
+    "optionalHeadersExactly": [
+      "X-Purpose-Code"
+    ],
+    "modesExactly": [
+      "VALIDATE_ONLY",
+      "APPLY"
+    ],
+    "forbiddenRequestAuthority": [
+      "connectorPublicId",
+      "connectorVersion",
+      "mappingPublicId",
+      "mappingVersion",
+      "sourceArtifact",
+      "requestedCursorDigest",
+      "X-DWP-Expected-Object-Version",
+      "REPLAY command mode"
+    ],
+    "optimisticConcurrency": "If-Match is the only request version header. After durable receipt reservation and authorization, the owner loads the trusted-tenant aggregate or versioned configuration and compares its canonical expected version. Client connectorVersion, mappingVersion and X-DWP-Expected-Object-Version are rejected.",
+    "idempotency": {
+      "receiptScopeExactly": [
+        "trusted tenant",
+        "on-behalf-of subject",
+        "originating action",
+        "Idempotency-Key"
+      ],
+      "immutableReceiptMetadata": [
+        "canonical request hash",
+        "actor",
+        "authorization revision",
+        "population revision",
+        "field-policy revision",
+        "purpose",
+        "correlation ID"
+      ],
+      "hashRule": "Hash method, path, target objectRef, relevant non-Authorization headers, schemaVersion and normalized exact body; exclude transport timestamps and bearer token.",
+      "outcomes": "Same tuple and same hash returns the original receipt without rerunning terminal work; same tuple and different hash returns 409; concurrent reservation has one winner."
+    },
+    "conservation": [
+      "sourceCount = acceptedCount + rejectedCount + duplicateCount",
+      "acceptedCount = appliedCount + quarantinedCount",
+      "quarantinedCount means quarantined_after_acceptance only"
+    ],
+    "modeAndReplayRule": "VALIDATE_ONLY produces durable validation receipt and redacted findings without apply, cursor advance or WorkforceIngestionReconciled.v1 success event. Only terminal APPLY may emit that event. REPLAY is not an IngestionCommand mode; authorized terminal replay creates a new linked receipt and new evidence and never rewrites prior receipt, run, item outcome or history."
+  },
+  "twoStageFailClosedActionGuard": {
+    "stageOnePreResolution": {
+      "order": [
+        "at Gateway and the People pre-controller boundary authenticate and resolve trusted tenant plus on-behalf-of subject; require exact POST plus route.hcm.operations.workforce-ingestion.action, APP.HCM:VIEW or the registered APP.HRIS:VIEW compatibility alias, fixed HRIS_INTEGRATION purpose and valid HIGH STEPUP-MGMT-HIGH-V1 evidence bound to objectRef and If-Match; validate the exact closed transport without reading object metadata or content",
+        "inside the People owner service reserve or read the durable receipt by exactly trusted tenant, on-behalf-of subject, originating action and Idempotency-Key; freeze and compare the canonical request hash plus actor, authorization revision, population revision, field-policy revision, purpose and correlation ID",
+        "only after that same-tuple receipt reserve-or-read and hash comparison require the exact hcm.integration.workforce-ingestion.execute capability and HRIS_DUTY_INTEGRATION_EXECUTOR; no Gateway or People pre-controller exact-capability denial is permitted for this one ACTION route"
+      ],
+      "receiptFirstOption": "B",
+      "preControllerExceptionScope": "The exact-capability and duty denial deferral is mandatory and applies only to POST /v1/hris/integrations/workforce-ingestions bound to route.hcm.operations.workforce-ingestion.action. Every other Gateway and People route retains its existing pre-controller capability and duty behavior unchanged. Missing or invalid trusted identity, accepted app entitlement, exact route or method, fixed purpose, or target-bound HIGH step-up denies before the controller and before any receipt, metadata, artifact, payload or business access.",
+      "legacyCapabilityRule": "A request holding only hcm.integration.execute and otherwise-valid pre-controller evidence enters the owner service, creates or reads the exact same-tuple durable receipt and completes the canonical hash comparison, then is denied by the exact hcm.integration.workforce-ingestion.execute capability check. It performs no object metadata resolution, artifact or payload fetch, run creation, cursor advance, mapping or business mutation.",
+      "hashRule": "Stage one uses the canonical request and receipt hash sealed above. A same-tuple hash conflict returns 409 before exact-capability and duty evaluation or metadata resolution; no alternate receipt key or post-resolution rehash is allowed."
+    },
+    "trustedMetadataResolution": {
+      "allowedRead": "After stage one passes, the People owner may resolve only immutable authorization metadata for the exact trusted-tenant objectRef: object identity, canonical version, connector-set identity and derived legal-entity set. This metadata-only read is not an artifact or payload fetch.",
+      "identityVersionRule": "The resolved identity must equal request objectRef, the step-up target identity must equal that same objectRef, and the resolved canonical version must equal the sole If-Match version used by step-up and optimistic concurrency.",
+      "forbiddenBeforeStageTwo": [
+        "artifact bytes or source payload fetch",
+        "mapping lookup or restricted-field mapping",
+        "ingestion run or item creation",
+        "cursor read-for-update or advance",
+        "domain or business mutation"
+      ]
+    },
+    "stageTwoResolvedAuthority": {
+      "order": [
+        "evaluate predicate.hcm-workforce-ingestion-scope.v1 against the metadata-resolved connector set and every derived legal entity in the trusted tenant",
+        "evaluate INTEGRATION_METADATA and REDACTED_PAYLOAD field decisions under the population and field-policy revisions already frozen on the reserved receipt",
+        "deny on empty, stale, mixed-tenant, unknown or partially covered scope, any non-VIEW required metadata field, or any receipt revision conflict"
+      ],
+      "completionRule": "Only after stage two passes may the owner fetch artifact bytes or payload, resolve the published mapping, create a run, classify records, advance a cursor or perform a business mutation."
+    },
+    "gatewayBoundary": "Gateway enforces trusted identity, exact route and method, APP.HCM:VIEW or the registered APP.HRIS:VIEW compatibility alias, fixed purpose, target-bound HIGH step-up evidence and caller-header stripping. For this exact HRM-012 ACTION only, Gateway must forward otherwise-valid requests without denying on the exact narrow capability or duty; the People owner service performs the receipt-first exact-capability and duty decision. Gateway does not invent, reconstruct or attest unresolved connector population, derived legal entities or final field decisions.",
+    "peoplePreControllerBoundary": "HcmProductSurfacePepFilter and HcmV3PepRegistry preserve all existing route behavior, but for this exact HRM-012 POST ACTION only they must admit a receipt-first controller handoff after trusted identity, accepted app entitlement, route/method, fixed purpose and target-bound HIGH step-up validation without treating hcm.integration.execute as authority. They must neither allow nor deny the exact narrow capability before the owner-service receipt operation; the controller authority must require the post-receipt decision before metadata, artifact, payload or business access."
+  },
+  "predicateDecision": {
+    "newPredicate": {
+      "predicatePolicyKey": "predicate.hcm-workforce-ingestion-scope.v1",
+      "inputEvidenceSchemaKey": "HcmWorkforceIngestionScopeEvidenceV1",
+      "parameterSchemaKey": "predicate.hcm-workforce-ingestion-scope.v1.parameters.v1",
+      "parameterSchema": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      },
+      "owner": "People + HCM + Security",
+      "ownerServiceKey": "people",
+      "policyVersion": 1,
+      "lifecycleState": "ACTIVE",
+      "routeContractKeys": [
+        "route.hcm.operations.people-data-quality.page",
+        "route.hcm.operations.people-data-quality.data",
+        "route.hcm.operations.workforce-ingestion.action"
+      ],
+      "targetBindingKinds": [
+        "OBJECT",
+        "TARGET_POPULATION"
+      ],
+      "rule": "Resolve tenant only from trusted context; for PAGE and DATA intersect every run and finding with authorized ORG_UNIT or LEGAL_ENTITY workforce scope. For ACTION, stage one must pass before the People owner performs a metadata-only lookup of the exact objectRef; the predicate then requires the resolved connector to belong to an authorized CONNECTOR_SET and every derived LEGAL_ENTITY to be inside the same trusted-tenant grant. Client connector or mapping identifiers and gateway-invented population are forbidden. Empty, stale, mixed-tenant, unknown or partially covered scope denies."
+    },
+    "reusedPredicate": "predicate.people.object-version.v1 is appended only with the ACTION route key and binds the owner aggregate or versioned configuration canonical expected version to If-Match, the sole accepted request version header.",
+    "implicitOrFallbackPredicate": "FORBIDDEN"
+  },
+  "v57LineageReservation": {
+    "predecessor": {
+      "bundle": "product-surfaces-v1.bundle-v56.json",
+      "version": 56,
+      "bundleStatus": "DRAFT",
+      "checksum": "4c1e82c4ac70f7bbc4aba7a41d77b8fd238da0478501cbdfed97ebd4b5dd0930",
+      "fileSha256": "85c7e23115f0befce4b9b909bf789e14a6a02370f47a236cefa56b80f901adf5",
+      "bytes": 2669858,
+      "counts": {
+        "capabilities": 270,
+        "accessPolicies": 24,
+        "entitlementExpressions": 17,
+        "predicatePolicies": 82,
+        "routes": 1120,
+        "PAGE": 156,
+        "DATA": 338,
+        "ACTION": 626
+      }
+    },
+    "successor": {
+      "bundle": "product-surfaces-v1.bundle-v57.json",
+      "version": 57,
+      "bundleStatus": "DRAFT",
+      "counts": {
+        "capabilities": 271,
+        "accessPolicies": 24,
+        "entitlementExpressions": 17,
+        "predicatePolicies": 83,
+        "routes": 1123,
+        "PAGE": 157,
+        "DATA": 339,
+        "ACTION": 627
+      },
+      "deltaExactly": "one narrow capability, one People-owned predicate, three route contracts, exact route-key appendages to hcm.operations.people.view and predicate.people.object-version.v1, and no other semantic delta",
+      "checksumRule": "Generate the v57 checksum from canonical content; placeholders, hand-edited generated bytes and mutation of v1 through v56 are forbidden."
+    }
+  },
+  "authV266Reservation": {
+    "state": "RESERVED_NOT_ACTIVE",
+    "predecessor": "dwp-auth-server/src/main/resources/db/migration/V265__declare_hris_sys006_v56_authorization_seed.sql",
+    "predecessorSha256": "af2ad20db5df5892132235e108cde7a85f864613df78b73ddaa62246d97622fa",
+    "exactPath": "dwp-auth-server/src/main/resources/db/migration/V266__declare_hris_hrm012_v57_authorization_seed.sql",
+    "bundleVersion": 57,
+    "intendedBundleStatus": "DRAFT",
+    "automaticImportEnabled": false,
+    "feature": {
+      "featureKey": "HRIS_HRM_DATA_QUALITY_WORKBENCH",
+      "policyVersion": 1,
+      "productKey": "hcm",
+      "appResourceKey": "APP.HCM",
+      "minimumBundleVersion": 57,
+      "baselineState": "OFF",
+      "ownerKey": "HRM",
+      "routeOwnersAndBindings": [
+        "route.hcm.operations.people-data-quality.page",
+        "route.hcm.operations.people-data-quality.data",
+        "route.hcm.operations.workforce-ingestion.action"
+      ],
+      "tenantEnrollmentRows": 0
+    },
+    "rule": "V266 may register only the generated v57 checksum, the default-OFF feature and the three exact route owner/binding rows. It inserts no tenant enrollment, grant, activation, seed business data or automatic import."
+  },
+  "exactImplementationPathsAfterSeparateExecutableCentralToken": {
+    "backendCanonicalAndGenerator": [
+      "contracts/product-authorization/product-surfaces-v1.yaml",
+      "scripts/generate-product-authorization-contracts.py",
+      "scripts/tests/test_product_authorization_v57.py"
+    ],
+    "backendGenerated": [
+      "contracts/product-authorization/product-surfaces-v1.bundle-v57.json",
+      "contracts/product-authorization/product-surfaces-v1.json",
+      "contracts/product-authorization/product-surfaces-v1.index.json",
+      "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v57.generated.json",
+      "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.generated.json",
+      "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.index.generated.json",
+      "dwp-people-server/src/main/resources/product-authorization/hcm-people-pep-v57.generated.json",
+      "dwp-time-server/src/main/resources/product-authorization/hcm-time-pep-v57.generated.json",
+      "dwp-platform-server/src/main/resources/product-authorization/hcm-platform-pep-v57.generated.json",
+      "dwp-payroll-server/src/main/resources/product-authorization/hcm-payroll-pep-v57.generated.json"
+    ],
+    "auth": [
+      "dwp-auth-server/src/main/resources/db/migration/V266__declare_hris_hrm012_v57_authorization_seed.sql",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/repository/TenantFeatureActivationV266MigrationContractTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/tenantfeatureactivation/TenantFeatureActivationV266PostgresTest.java"
+    ],
+    "gatewayRequired": [
+      "dwp-gateway/src/main/java/com/dwp/gateway/filter/ProductSurfaceDecisionContextFilter.java",
+      "dwp-gateway/src/test/java/com/dwp/gateway/ProductSurfaceDecisionContextFilterTest.java",
+      "dwp-gateway/src/test/java/com/dwp/gateway/Hrm012GatewayAuthorityTest.java"
+    ],
+    "peopleRegistrySource": [
+      "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmV3PepRegistry.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmScopeSelectionValidator.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmProductSurfacePepFilter.java"
+    ],
+    "peopleRegistryGeneratedAndTests": [
+      "dwp-people-server/src/main/resources/product-authorization/hcm-people-pep-v57.generated.json",
+      "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmV3PepRegistryTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmScopeSelectionValidatorHrm012Test.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmProductSurfacePepFilterTest.java"
+    ],
+    "moduleOwnerReceiptFirstPathsAfterSeparateModuleToken": [
+      "dwp-people-server/src/main/java/com/dwp/services/people/integration/Hrm012WorkforceIngestionController.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/integration/Hrm012WorkforceIngestionAuthority.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/integration/Hrm012WorkforceIngestionService.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/integration/WorkforceIngestionControllerAuthorityTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/integration/WorkforceIngestionAuthorizationTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/integration/WorkforceIngestionIdempotencyTest.java"
+    ],
+    "frontendSourceAndGenerated": [
+      "scripts/product-authorization-fixture-versions.mjs",
+      "architecture/product-surface-authorization.v1.json",
+      "architecture/product-page-routes.v1.json",
+      "apps/dwp/src/routes/product-surface-authorization.generated.ts",
+      "apps/dwp/src/routes/product-route-contract-source.test.ts",
+      "apps/dwp/src/routes/product-route-contracts.generated.test.ts"
+    ]
+  },
+  "sourceGeneratedSynchronization": {
+    "backendRule": "Edit only canonical YAML and the deterministic generator/version declarations, generate v57 once, and require latest contract alias, auth alias, both indexes and all four service PEP v57 projections to carry the identical v57 checksum and registry reference. People contains exactly the three new routes; Time, Platform and Payroll contain none of them.",
+    "gatewayRule": "Gateway processResources consumes the canonical latest alias and index, strips caller authority headers and enforces only the stage-one evidence it can prove. ProductSurfaceDecisionContextFilter must implement the mandatory receipt-first exception only for the exact HRM-012 ACTION: it validates trusted identity, accepted app entitlement, exact route/method, fixed purpose and target-bound HIGH step-up, but defers exact-capability and duty denial to the owner service after receipt reserve-or-read and hash comparison. Every other route is unchanged. Gateway must not reconstruct or forward unresolved connector population, derived legal entities or final field decisions as trusted authority.",
+    "peopleRule": "The People PEP registry loads only hcm-people-pep-v57.generated.json for these routes. HcmV3PepRegistry, HcmScopeSelectionValidator and HcmProductSurfacePepFilter are the exact central source allowlist for v57 pinning, the one-route receipt-first handoff, If-Match-only target binding and metadata-resolved connector/legal-entity closure. The filter and registry must defer exact-capability and duty denial only for the exact HRM-012 ACTION while rejecting missing or invalid trusted identity, accepted app entitlement, route/method, fixed purpose or target-bound HIGH step-up before the controller. The later module controller authority owns receipt reserve-or-read, canonical hash comparison and then exact-capability plus duty denial. No shadow registry, caller population or broad-capability fallback is allowed.",
+    "frontendRule": "Synchronize immutable backend bundles v1 through v57 into architecture/product-surface-authorization.v1.json, append v53 through v57 expected checksums and counts to the frontend version source, generate TypeScript from the synchronized snapshot, and require the PAGE/DATA/ACTION projections to match v57 exactly. The governed PAGE route contract and authorization boundary are registered, but no HRM-012 menu entry, content component or tenant enrollment is admitted; default OFF performs zero HRM-012 browser or owner data calls.",
+    "commandsAfterAuthorization": [
+      "python3 scripts/generate-product-authorization-contracts.py",
+      "python3 scripts/generate-product-authorization-contracts.py --check",
+      "yarn authorization:sync",
+      "yarn authorization:check ../dwp-backend/contracts/product-authorization"
+    ]
+  },
+  "requiredNegativeCases": [
+    "APP.HCM:VIEW or the registered same-product APP.HRIS:VIEW compatibility alias is accepted. Absence of both, an implied entitlement, an unregistered alias or a wrong-product alias is denied before the controller; capability, duty or route possession never substitutes for one of the two accepted values.",
+    "PEP-HRM-015 with only hcm.integration.execute and otherwise-valid pre-controller evidence enters the owner service, creates or reads the exact same-tuple receipt and compares the canonical hash, then is denied before object metadata resolution, artifact or payload fetch, run creation, cursor advance, mapping or business mutation.",
+    "The receipt-first capability and duty deferral applies only to exact POST /v1/hris/integrations/workforce-ingestions with route.hcm.operations.workforce-ingestion.action; every other route preserves its existing pre-controller denial behavior.",
+    "Missing or invalid trusted identity, APP.HCM:VIEW or registered APP.HRIS:VIEW alias, exact route/method, fixed HRIS_INTEGRATION purpose, or objectRef-and-If-Match-bound HIGH step-up is denied by Gateway or the People pre-controller boundary before controller entry and before any receipt, metadata, artifact, payload or business access.",
+    "hcm.integration.workforce-ingestion.execute never authorizes route.hcm.management.integration-execute.action or another legacy management route.",
+    "hcm.operations.people.view never authorizes the ACTION; the narrow ACTION capability never makes IAQ-012 visible.",
+    "Missing both accepted app entitlements, required duty, HIGH step-up, connector scope, legal-entity scope, trusted purpose, object revision or field policy denies at the sealed boundary order; exact capability and duty denial alone occurs only after receipt reserve-or-read and hash comparison for the HRM-012 ACTION.",
+    "Caller tenant, purpose, population, field-decision, authorization-revision and step-up headers are ignored or stripped; duplicate or conflicting values deny.",
+    "Gateway-supplied or caller-supplied unresolved connector population, derived legal entities or final field decisions never satisfy stage two; only People metadata resolution for the exact objectRef may produce its inputs.",
+    "Missing, weak, malformed or stale If-Match denies; connectorVersion, mappingVersion and X-DWP-Expected-Object-Version are rejected rather than reconciled.",
+    "Resolved object identity different from objectRef, step-up target identity different from objectRef, or resolved canonical version different from the sole If-Match value denies before artifact or payload fetch.",
+    "Unknown request fields, connectorPublicId, mappingPublicId, sourceArtifact, requestedCursorDigest and REPLAY command mode are rejected before object fetch or mutation.",
+    "Idempotency scope other than the exact trusted-tenant, on-behalf-of-subject, originating-action and Idempotency-Key tuple, same tuple with a different canonical request hash, or mutable receipt authority metadata fails closed.",
+    "Any terminal APPLY count that violates source = accepted + rejected + duplicate or accepted = applied + quarantined_after_acceptance cannot complete, advance cursor or emit the reconciliation event.",
+    "Wrong method, near-match path, trailing path, unknown route, unsupported profile or support-mode substitution denies.",
+    "PAGE and DATA with mixed-tenant or partially covered run populations return no leaked item; PARTIAL is a query-state result only after authorized projection, not an authorization bypass.",
+    "IAQ-012 availableActions is always empty and exposes no command deep link.",
+    "Default-OFF performs zero HRM-012 browser and owner data calls; zero tenant enrollments remain zero.",
+    "Raw source payload, credential, endpoint URI, rejected restricted value, quarantine ciphertext, key reference, numeric database key and raw cursor never enter gateway context, registry projection, response, audit or log.",
+    "Any v1 through v56 byte mutation, second v57, second Auth V266 or v57 delta beyond the sealed counts and descriptors fails review."
+  ],
+  "targetedVerification": {
+    "policy": "RUN_EACH_NEW_TARGET_GROUP_ONCE; AFTER_A_FAILURE_RERUN_ONLY_THE_SMALLEST_AFFECTED_TARGET; DO_NOT_RUN_A_REPOSITORY_WIDE_SUITE_PER_CORRECTION",
+    "backendRegistry": [
+      "python3 scripts/generate-product-authorization-contracts.py --check",
+      "python3 -m unittest scripts.tests.test_product_authorization_v57",
+      "v1 through v56 byte-preservation hashes",
+      "exact v57 count, checksum pin, capability-collision and service-PEP partition assertions",
+      "requiresProductEntitlement true; exact APP.HCM:VIEW and registered APP.HRIS:VIEW alias success; absence-of-both, implied, unregistered-alias and wrong-product-alias denials"
+    ],
+    "auth": [
+      "TenantFeatureActivationV266MigrationContractTest",
+      "TenantFeatureActivationV266PostgresTest",
+      "fresh and V265-to-V266 PostgreSQL paths",
+      "default-OFF, automatic-import false and zero-enrollment assertions"
+    ],
+    "gateway": [
+      "ProductSurfaceDecisionContextFilterTest focused exact-route receipt-first deferral, accepted APP.HCM:VIEW or APP.HRIS:VIEW alias, pre-controller identity/app/purpose/step-up denials and unchanged non-HRM-012 routes",
+      "Hrm012GatewayAuthorityTest",
+      "GeneratedProductRouteCatalog exact GET and POST matches",
+      "trusted-context spoof, duplicate-header, exact HRIS_INTEGRATION purpose, HIGH step-up and absence-of-both app-entitlement negatives before controller; proof that exact capability and duty denial is deferred only on the exact HRM-012 ACTION",
+      "proof that gateway never reconstructs unresolved population or final field decisions"
+    ],
+    "people": [
+      "HcmV3PepRegistryTest focused v57 registry checksum pin, exact HRM-012 route/method recognition, receipt-first deferral marker and unchanged authority decisions for every other route",
+      "HcmProductSurfacePepFilterTest proves that only the exact HRM-012 ACTION defers exact-capability and duty denial, while missing or invalid trusted identity, accepted app entitlement, route/method, fixed purpose or target-bound HIGH step-up denies before controller entry",
+      "HcmScopeSelectionValidatorHrm012Test focused objectRef metadata resolution, same-identity If-Match-only exception, connector-set plus all-derived-legal-entity closure and predicate.hcm-workforce-ingestion-scope.v1 fail-closed cases",
+      "WorkforceIngestionControllerAuthorityTest proves the controller accepts only the trusted receipt-first handoff and cannot access metadata, artifact, payload or business state before owner-service post-receipt authority passes",
+      "WorkforceIngestionAuthorizationTest proves a legacy-only hcm.integration.execute request creates or reads the same-tuple receipt, compares the canonical hash and then denies; exact narrow capability plus duty succeeds only after that point",
+      "WorkforceIngestionIdempotencyTest proves same-tuple same-hash reuse, different-hash 409 precedence before capability denial and no post-denial business effects",
+      "unchanged legacy management-route and all non-HRM-012 pre-controller authorization regressions"
+    ],
+    "frontend": [
+      "yarn authorization:check ../dwp-backend/contracts/product-authorization",
+      "apps/dwp/src/routes/product-route-contract-source.test.ts",
+      "apps/dwp/src/routes/product-route-contracts.generated.test.ts",
+      "v57 governed PAGE route-contract registration without menu, content or enrollment and default-OFF zero-call assertion"
+    ],
+    "evidence": [
+      "git diff --check",
+      "exact changed-path allowlist",
+      "command, exit code and focused result per target",
+      "generated freshness and source/generated checksum parity",
+      "unresolved P0/P1/P2 count"
+    ]
+  },
+  "implementationGate": {
+    "requiredOrder": [
+      "independent review of this exact file and the three pinned HRM-012 authority artifacts records zero unresolved P0, P1 or P2 findings",
+      "commit and push the reviewed authority carrier to frontend origin/dwp-dev",
+      "materialize fresh clean central backend and frontend worktrees at the exact post-carrier dwp-dev heads",
+      "issue one hash-bound executable central-implementation token restricted to the exact paths above",
+      "implement and independently admit v57, Auth V266, Gateway, People registry and frontend synchronization",
+      "only then materialize the separate HRIS-HRM module worktrees, activate People V60 and issue the module executable token"
+    ],
+    "invalidation": [
+      "any pinned artifact hash or byte count changes",
+      "backend dwp-dev no longer has v56 and Auth V265 as the exact high-water lineage before the central worktree",
+      "v57 or Auth V266 already exists or is reserved by another slice",
+      "a worktree is dirty or based on a different carrier head",
+      "a route, capability, predicate, feature, population, purpose, step-up or path expands beyond this sealed file"
+    ]
+  },
+  "authority": {
+    "centralDesignSealed": true,
+    "productAuthorizationV57Reserved": true,
+    "authV266Reserved": true,
+    "independentReviewComplete": false,
+    "authorityCarrierCommittedAndPushed": false,
+    "centralWorktreesMaterialized": false,
+    "centralExecutableTokenIssued": false,
+    "centralSourceAuthoringAuthorizedNow": false,
+    "moduleWorktreeMaterializationAuthorizedNow": false,
+    "moduleSourceAuthoringAuthorizedNow": false,
+    "peopleV60LeaseActive": false,
+    "featureDefaultOff": true,
+    "tenantEnrollmentCount": 0,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionArtifactProviderBindingAuthorized": false,
+    "productionSchedulerBindingAuthorized": false,
+    "productionBrokerBindingAuthorized": false,
+    "mergeToDwpDevAuthorized": false,
+    "businessCompletionCredit": 0,
+    "productionReleaseAuthorized": false
+  },
+  "nonClaims": [
+    "This successor implements, generates, commits or pushes any source artifact.",
+    "The authorized central implementation registers the governed PAGE route contract and authorization boundary only; this successor does not activate Auth V266 or People V60, mount an HRM-012 menu or content component, enroll a tenant, or bind an artifact provider, scheduler or broker.",
+    "Governed PAGE contract registration is not feature enablement: baseline OFF and zero enrollment must yield zero HRM-012 browser and owner data calls.",
+    "The legacy hcm.integration.execute capability authorizes PEP-HRM-015.",
+    "An owner packet, reservation or this central design alone is an executable source token.",
+    "BASE-TFR-HRM-012, Batch-05, R7 or HRIS is complete."
+  ],
+  "nextAction": "INDEPENDENTLY_REVIEW_THIS_EXACT_SUCCESSOR_AND_THE_THREE_PINNED_HRM012_AUTHORITY_ARTIFACTS; ONLY_AFTER_ZERO_UNRESOLVED_P0_P1_P2_COMMIT_AND_PUSH_THE_AUTHORITY_CARRIER, MATERIALIZE_CLEAN_CENTRAL_WORKTREES_AND_ISSUE_ONE_HASH_BOUND_CENTRAL_IMPLEMENTATION_TOKEN"
+}
