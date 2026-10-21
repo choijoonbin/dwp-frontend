@@ -1,0 +1,88 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-tim003-hrm-worktree-materialization-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-04-TIM003-HRM-WORKTREE-MATERIALIZATION-20261021-R1",
+  "recordedAt": "2026-10-21T14:26:19+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "MATERIALIZED_CLEAN_EXACT_AUTHORITY_CARRIER_PINS_NO_SOURCE_EDITS_NO_UPSTREAM_NO_MIGRATION_LEASE_REQUIRED",
+  "purpose": "Record the exact clean backend and frontend HRM successor worktree identities required before the BASE-TFR-TIM-003 HRM executable start token is issued. This receipt alone grants no source write, migration, test, commit or push authority.",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_RECEIPT_ID_AND_SHA256"
+  },
+  "sliceId": "BASE-TFR-TIM-003",
+  "moduleSession": "HRIS-HRM",
+  "phase": "PHASE_1_HRM_SUCCESSOR",
+  "immutablePredecessor": {
+    "ownerPacket": {
+      "path": "../owner-packets/base-tfr-tim-003.hrm-successor.owner-packet.v1.json",
+      "sha256": "9b61721b2dc17648ea175f583713d40065fa789cb986fd409d0100a6d0aa22dd",
+      "bytes": 17173,
+      "requiredState": "SEALED_TIM003_HRM_SUCCESSOR_OWNER_PACKET_WORKTREE_RECEIPTS_AND_EXECUTABLE_START_TOKEN_PENDING"
+    }
+  },
+  "authorityCarrier": {
+    "repository": "dwp-frontend",
+    "branch": "dwp-dev",
+    "commit": "713be24c166139209c37688744fd27b3b4fe1fd7",
+    "tree": "52dd20833df9b5a5d12449e63a2247c2ef1ad841",
+    "originRef": "origin/dwp-dev",
+    "originExactBeforeThisAppendOnlyReceipt": true,
+    "porcelainSha256BeforeThisAppendOnlyReceipt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "cleanBeforeThisAppendOnlyReceipt": true
+  },
+  "materializedWorktrees": {
+    "backend": {
+      "repository": "dwp-backend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261021/r7-batch04/tim-003-hrm/backend",
+      "branch": "codex/hris-wave7-r7-batch04-tim-003-hrm-backend-20261021-r1",
+      "head": "75ac11873e6e4a6c070d47e849d81063aaa88800",
+      "tree": "cb02f8d3b09eed67762fb03e57af6badd8568fe4",
+      "expectedBaseCommit": "75ac11873e6e4a6c070d47e849d81063aaa88800",
+      "expectedBaseTree": "cb02f8d3b09eed67762fb03e57af6badd8568fe4",
+      "headAndTreeExact": true,
+      "porcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "clean": true,
+      "upstream": null,
+      "sourceChangesAtReceipt": [],
+      "materialized": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261021/r7-batch04/tim-003-hrm/frontend",
+      "branch": "codex/hris-wave7-r7-batch04-tim-003-hrm-frontend-20261021-r1",
+      "head": "713be24c166139209c37688744fd27b3b4fe1fd7",
+      "tree": "52dd20833df9b5a5d12449e63a2247c2ef1ad841",
+      "expectedBaseCommit": "713be24c166139209c37688744fd27b3b4fe1fd7",
+      "expectedBaseTree": "52dd20833df9b5a5d12449e63a2247c2ef1ad841",
+      "headAndTreeExact": true,
+      "porcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "clean": true,
+      "upstream": null,
+      "sourceChangesAtReceipt": [],
+      "materialized": true
+    }
+  },
+  "migrationObservation": {
+    "migrationRequiredForThisHrmPhase": false,
+    "migrationLeaseRequired": false,
+    "migrationAuthoringAuthorized": false,
+    "rule": "The HRM successor reuses existing People stores. TIME_MAIN V14 remains outside this receipt and requires a later HRIS-TIM owner packet and lease after HRM admission."
+  },
+  "authority": {
+    "receiptSealed": true,
+    "executableTim003HrmStartTokenMayBeIssued": true,
+    "sourceAuthoringAuthorizedByReceiptAlone": false,
+    "migrationAuthoringAuthorizedByReceiptAlone": false,
+    "testExecutionAuthorizedByReceiptAlone": false,
+    "moduleBranchCommitAuthorizedByReceiptAlone": false,
+    "moduleBranchPushAuthorizedByReceiptAlone": false,
+    "centralWriteAuthorized": false,
+    "directDwpDevMergeAuthorized": false,
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionBrokerBindingAuthorized": false,
+    "routeOrMenuWorkAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextGate": "ISSUE_ONE_EXECUTABLE_TIM003_HRM_START_TOKEN_HASH_BOUND_TO_THE_OWNER_PACKET_AND_THIS_RECEIPT; NO_MIGRATION_LEASE_PREDECESSOR_IS_REQUIRED"
+}
