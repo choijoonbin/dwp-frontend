@@ -22,6 +22,7 @@ const generatedPath = path.join(
 const INDEX_FILE = 'product-surfaces-v1.index.json';
 const LATEST_ALIAS_FILE = 'product-surfaces-v1.json';
 const LATEST_VERSION = VERSIONS.at(-1);
+const SNAPSHOT_JSON_INDENT = 1;
 const SNAPSHOT_FIELDS = [
   'bundles',
   'index',
@@ -959,7 +960,7 @@ function readOfficialSnapshot(artifactDirectory) {
 }
 
 async function writeOrCheck(snapshot, generated, mode) {
-  const serialized = `${JSON.stringify(snapshot, null, 2)}\n`;
+  const serialized = `${JSON.stringify(snapshot, null, SNAPSHOT_JSON_INDENT)}\n`;
   if (mode === 'sync') {
     fs.mkdirSync(path.dirname(snapshotPath), { recursive: true });
     fs.writeFileSync(snapshotPath, serialized, 'utf8');
@@ -987,7 +988,7 @@ async function main() {
       const officialSnapshot = readOfficialSnapshot(args.officialDirectory);
       validateSnapshot(officialSnapshot);
       const expectedOfficialBytes = Buffer.from(
-        `${JSON.stringify(officialSnapshot, null, 2)}\n`,
+        `${JSON.stringify(officialSnapshot, null, SNAPSHOT_JSON_INDENT)}\n`,
         'utf8'
       );
       if (!fs.readFileSync(snapshotPath).equals(expectedOfficialBytes)) {

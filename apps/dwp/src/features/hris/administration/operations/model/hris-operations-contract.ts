@@ -1,6 +1,7 @@
 import {
   PRODUCT_AUTHORIZATION_PAGE_PROJECTIONS,
   PRODUCT_AUTHORIZATION_REGISTRY_REVISION,
+  PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS,
 } from '../../../../../routes/product-surface-authorization.generated';
 
 export const HRIS_OPERATIONS_FEATURE = 'HRIS_OPERATIONS_EXCEPTION_CENTER' as const;
@@ -18,7 +19,10 @@ export const HRIS_OPERATIONS_API_CONTRACTS = Object.freeze({
     method: 'GET',
     path: HRIS_OPERATIONS_ENTRY_PATH,
     routeContractKey: 'route.hcm.configuration.settings-operations.page',
+    surfaceId: 'hcm.management',
+    capability: 'hcm.configuration.workbench.view',
     purpose: 'HRIS_CONFIGURATION',
+    responseSchemaKey: 'route.hcm.configuration.settings-operations.page.response.v1',
     targetBindingKinds: Object.freeze(['CONFIG_SCOPE'] as const),
   }),
   list: Object.freeze({
@@ -26,7 +30,10 @@ export const HRIS_OPERATIONS_API_CONTRACTS = Object.freeze({
     method: 'GET',
     path: HRIS_OPERATION_EXCEPTIONS_PATH,
     routeContractKey: 'route.hcm.operations.exception.data',
+    surfaceId: 'hcm.operations',
+    capability: 'hcm.operations.exception.view',
     purpose: 'HRIS_OPERATIONS',
+    responseSchemaKey: 'route.hcm.operations.exception.data.response.v1',
     targetBindingKinds: Object.freeze(['TARGET_POPULATION'] as const),
   }),
   detail: Object.freeze({
@@ -34,7 +41,10 @@ export const HRIS_OPERATIONS_API_CONTRACTS = Object.freeze({
     method: 'GET',
     path: `${HRIS_OPERATION_EXCEPTIONS_PATH}/{exceptionId}`,
     routeContractKey: 'route.hcm.operations.exception-detail.data',
+    surfaceId: 'hcm.operations',
+    capability: 'hcm.operations.exception.view',
     purpose: 'HRIS_OPERATIONS',
+    responseSchemaKey: 'route.hcm.operations.exception-detail.data.response.v1',
     targetBindingKinds: Object.freeze(['TARGET_POPULATION', 'OBJECT'] as const),
   }),
   receipt: Object.freeze({
@@ -276,28 +286,203 @@ function array(value: unknown, maximum: number): unknown[] {
 }
 
 const ownerRouteKeySet = new Set<string>(HRIS_OPERATION_OWNER_ROUTE_KEYS);
-const ownerRoutePatterns = (() => {
-  if (PRODUCT_AUTHORIZATION_REGISTRY_REVISION.version !== 52) {
-    return invalid('HRIS operations requires the exact product authorization v52 registry.');
+const HRIS_OPERATIONS_V52_REGISTRY_SHA256 =
+  'b33fbf968e71f97b09fa497fdfad7d2f6854199170b79fd1602a0ea604977346' as const;
+
+const HRIS_OPERATIONS_OWNER_PAGE_TUPLES = Object.freeze({
+  'route.hcm.operations.employee-change-requests.page': Object.freeze({
+    routeId: 'hcm.operations.employee-change-requests',
+    pattern: '/hr/operations/people/employee-change-requests',
+    surfaceId: 'hcm.operations',
+  }),
+  'route.hcm.operations.employment-assignments.page': Object.freeze({
+    routeId: 'hcm.operations.employment-assignments',
+    pattern: '/hr/operations/people/employment-assignments',
+    surfaceId: 'hcm.operations',
+  }),
+  'route.hcm.operations.organization-positions.page': Object.freeze({
+    routeId: 'hcm.operations.organization-positions',
+    pattern: '/hr/operations/people/organization-positions',
+    surfaceId: 'hcm.operations',
+  }),
+  'route.hcm.operations.compensation-planning.page': Object.freeze({
+    routeId: 'hcm.operations.compensation-planning',
+    pattern: '/hr/operations/performance/compensation-planning',
+    surfaceId: 'hcm.operations',
+  }),
+  'route.hcm.operations.performance-goal-cycles.page': Object.freeze({
+    routeId: 'hcm.operations.performance-goal-cycles',
+    pattern: '/hr/operations/performance/goal-cycles',
+    surfaceId: 'hcm.operations',
+  }),
+  'route.hcm.operations.performance-multirater-surveys.page': Object.freeze({
+    routeId: 'hcm.operations.performance-multirater-surveys',
+    pattern: '/hr/operations/performance/multirater-surveys',
+    surfaceId: 'hcm.operations',
+  }),
+  'route.hcm.operations.performance-review-operations.page': Object.freeze({
+    routeId: 'hcm.operations.performance-review-operations',
+    pattern: '/hr/operations/performance/review-operations',
+    surfaceId: 'hcm.operations',
+  }),
+  'route.hcm.configuration.payroll.page': Object.freeze({
+    routeId: 'hcm.configuration.payroll',
+    pattern: '/hr/settings/payroll',
+    surfaceId: 'hcm.management',
+  }),
+  'route.hcm.operations.pay.page': Object.freeze({
+    routeId: 'hcm.operations.pay',
+    pattern: '/hr/operations/pay',
+    surfaceId: 'hcm.operations',
+  }),
+  'route.hcm.operations.payroll-population.page': Object.freeze({
+    routeId: 'hcm.operations.payroll-population',
+    pattern: '/hr/operations/payroll/population',
+    surfaceId: 'hcm.operations',
+  }),
+  'route.hcm.configuration.navigation-policy-workspace.page': Object.freeze({
+    routeId: 'hcm.configuration.navigation-policy',
+    pattern: '/hr/settings/navigation-policy',
+    surfaceId: 'hcm.management',
+  }),
+  'route.hcm.configuration.settings-operations.page': Object.freeze({
+    routeId: 'hcm.management.settings-operations',
+    pattern: '/hr/settings/operations',
+    surfaceId: 'hcm.management',
+  }),
+  'route.hcm.configuration.settings-reference.page': Object.freeze({
+    routeId: 'hcm.management.settings-reference',
+    pattern: '/hr/settings/reference-data',
+    surfaceId: 'hcm.management',
+  }),
+  'route.hcm.management.controlled-export.page': Object.freeze({
+    routeId: 'hcm.management.controlled-export',
+    pattern: '/hr/data/exports',
+    surfaceId: 'hcm.management',
+  }),
+  'route.hcm.operations.time-command-center.page': Object.freeze({
+    routeId: 'hcm.operations.time-command-center',
+    pattern: '/hr/operations/time/command-center',
+    surfaceId: 'hcm.operations',
+  }),
+  'route.hcm.operations.time-daily-close.page': Object.freeze({
+    routeId: 'hcm.operations.time-daily-close',
+    pattern: '/hr/operations/time/daily-close',
+    surfaceId: 'hcm.operations',
+  }),
+  'route.hcm.operations.time-exceptions.page': Object.freeze({
+    routeId: 'hcm.operations.time-exceptions',
+    pattern: '/hr/operations/time/exceptions',
+    surfaceId: 'hcm.operations',
+  }),
+  'route.hcm.operations.time-interpretation.page': Object.freeze({
+    routeId: 'hcm.operations.time-interpretation',
+    pattern: '/hr/operations/time/interpretation',
+    surfaceId: 'hcm.operations',
+  }),
+  'route.hcm.operations.time-monthly-close.page': Object.freeze({
+    routeId: 'hcm.operations.time-monthly-close',
+    pattern: '/hr/operations/time/monthly-close',
+    surfaceId: 'hcm.operations',
+  }),
+} satisfies Readonly<
+  Record<
+    HrisOperationOwnerRouteKey,
+    Readonly<{ routeId: string; pattern: string; surfaceId: 'hcm.management' | 'hcm.operations' }>
+  >
+>);
+
+function hasExactGatewayBinding(
+  projection: (typeof PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS)[number],
+  method: string,
+  path: string
+) {
+  return (
+    projection.gatewayBindings.length === 1 &&
+    projection.gatewayBindings[0]?.method === method &&
+    projection.gatewayBindings[0]?.path === path
+  );
+}
+
+function assertHrisOperationsV52ContractCompatibility() {
+  if (
+    PRODUCT_AUTHORIZATION_REGISTRY_REVISION.version < 52 ||
+    (PRODUCT_AUTHORIZATION_REGISTRY_REVISION.version === 52 &&
+      PRODUCT_AUTHORIZATION_REGISTRY_REVISION.checksum !== HRIS_OPERATIONS_V52_REGISTRY_SHA256)
+  ) {
+    return invalid('HRIS operations requires a compatible product authorization registry.');
   }
-  const patterns = new Map<HrisOperationOwnerRouteKey, string>();
-  for (const projection of PRODUCT_AUTHORIZATION_PAGE_PROJECTIONS) {
-    if (!ownerRouteKeySet.has(projection.routeContractKey)) continue;
+
+  const expected = [
+    {
+      contract: HRIS_OPERATIONS_API_CONTRACTS.entry,
+      routeKind: 'PAGE',
+      navigationContextId: 'hcm.management',
+      routeId: 'hcm.management.settings-operations',
+      pattern: HRIS_OPERATIONS_ROUTE,
+    },
+    {
+      contract: HRIS_OPERATIONS_API_CONTRACTS.list,
+      routeKind: 'DATA',
+      navigationContextId: 'hcm.operations',
+      routeId: null,
+      pattern: null,
+    },
+    {
+      contract: HRIS_OPERATIONS_API_CONTRACTS.detail,
+      routeKind: 'DATA',
+      navigationContextId: 'hcm.operations',
+      routeId: null,
+      pattern: null,
+    },
+  ] as const;
+
+  for (const tuple of expected) {
+    const matches = PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS.filter(
+      (projection) => projection.routeContractKey === tuple.contract.routeContractKey
+    );
+    const projection = matches[0];
     if (
-      projection.routeKind !== 'PAGE' ||
+      matches.length !== 1 ||
+      !projection ||
+      projection.routeKind !== tuple.routeKind ||
+      projection.navigationContextId !== tuple.navigationContextId ||
+      projection.subjectType !== 'PRODUCT' ||
       projection.productId !== 'hcm' ||
-      !projection.pattern ||
-      !projection.pattern.startsWith('/hr/') ||
-      projection.pattern.includes('?') ||
-      projection.pattern.includes('#') ||
-      patterns.has(projection.routeContractKey as HrisOperationOwnerRouteKey)
+      projection.surfaceId !== tuple.contract.surfaceId ||
+      projection.routeId !== tuple.routeId ||
+      projection.pattern !== tuple.pattern ||
+      !hasExactGatewayBinding(projection, tuple.contract.method, tuple.contract.path)
+    ) {
+      return invalid('HRIS operations authorization tuple is not exact.');
+    }
+  }
+}
+
+assertHrisOperationsV52ContractCompatibility();
+
+const ownerRoutePatterns = (() => {
+  const patterns = new Map<HrisOperationOwnerRouteKey, string>();
+  for (const routeKey of HRIS_OPERATION_OWNER_ROUTE_KEYS) {
+    const expected = HRIS_OPERATIONS_OWNER_PAGE_TUPLES[routeKey];
+    const matches = PRODUCT_AUTHORIZATION_PAGE_PROJECTIONS.filter(
+      (projection) => projection.routeContractKey === routeKey
+    );
+    const projection = matches[0];
+    if (
+      matches.length !== 1 ||
+      !projection ||
+      projection.routeKind !== 'PAGE' ||
+      projection.subjectType !== 'PRODUCT' ||
+      projection.productId !== 'hcm' ||
+      projection.navigationContextId !== expected.surfaceId ||
+      projection.surfaceId !== expected.surfaceId ||
+      projection.routeId !== expected.routeId ||
+      projection.pattern !== expected.pattern
     ) {
       return invalid('HRIS operations owner PAGE registry is not exact.');
     }
-    patterns.set(projection.routeContractKey as HrisOperationOwnerRouteKey, projection.pattern);
-  }
-  if (patterns.size !== HRIS_OPERATION_OWNER_ROUTE_KEYS.length) {
-    return invalid('HRIS operations owner PAGE registry is incomplete.');
+    patterns.set(routeKey, expected.pattern);
   }
   return patterns;
 })();

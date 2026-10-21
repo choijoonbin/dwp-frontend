@@ -129,6 +129,51 @@ const R7_BATCH_03_HCM_PAGE_ROUTES = [
   },
 ] as const;
 
+const R7_BATCH_04_05_HCM_PAGE_ROUTES = [
+  {
+    routeContractKey: 'route.hcm.configuration.settings-performance.page',
+    routeId: 'hcm.management.settings-performance',
+    pattern: '/hr/settings/performance',
+    productId: 'hcm',
+    surfaceId: 'hcm.management',
+  },
+  {
+    routeContractKey: 'route.hcm.configuration.statutory.page',
+    routeId: 'hcm.configuration.statutory',
+    pattern: '/hr/settings/statutory',
+    productId: 'hcm',
+    surfaceId: 'hcm.management',
+  },
+  {
+    routeContractKey: 'route.hcm.operations.contracts-compensation-basis.page',
+    routeId: 'hcm.operations.contracts-compensation-basis',
+    pattern: '/hr/operations/people/contracts-compensation-basis',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+  },
+  {
+    routeContractKey: 'route.hcm.operations.pay-tax-social-insurance.page',
+    routeId: 'hcm.operations.pay-tax-social-insurance',
+    pattern: '/hr/operations/payroll/tax-social-insurance',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+  },
+  {
+    routeContractKey: 'route.hcm.operations.people-data-quality.page',
+    routeId: 'hcm.operations.people-data-quality',
+    pattern: '/hr/operations/people/data-quality',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+  },
+  {
+    routeContractKey: 'route.hcm.operations.performance-forms-scales.page',
+    routeId: 'hcm.operations.performance-forms-scales',
+    pattern: '/hr/operations/performance/forms-scales',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+  },
+] as const;
+
 const authorizationSnapshot = JSON.parse(
   fs.readFileSync(
     path.resolve(process.cwd(), 'architecture/product-surface-authorization.v1.json'),
@@ -197,7 +242,7 @@ describe('generated product route authorization contracts', () => {
       'spaces',
       'workplace',
     ]);
-    expect(router).toHaveLength(151);
+    expect(router).toHaveLength(157);
     expect(registry).toEqual(router);
     expect(
       router.filter((route) =>
@@ -220,6 +265,13 @@ describe('generated product route authorization contracts', () => {
         )
       )
     ).toEqual([...R7_BATCH_03_HCM_PAGE_ROUTES]);
+    expect(
+      router.filter((route) =>
+        R7_BATCH_04_05_HCM_PAGE_ROUTES.some(
+          (expected) => expected.routeContractKey === route.routeContractKey
+        )
+      )
+    ).toEqual([...R7_BATCH_04_05_HCM_PAGE_ROUTES]);
     expect(() =>
       buildProductPageRouteContractSource(
         [HCM_PRODUCT_MANIFEST],
@@ -260,8 +312,8 @@ describe('generated product route authorization contracts', () => {
     );
     expect(nonPages.every((route) => route.routeId === null && route.pattern === null)).toBe(true);
     expect(DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(71);
-    expect(ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(222);
-    expect(REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG).toHaveLength(222);
+    expect(ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(228);
+    expect(REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG).toHaveLength(228);
     expect(REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG.every((route) => route.routeKind === 'PAGE')).toBe(
       true
     );

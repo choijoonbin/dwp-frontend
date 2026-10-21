@@ -155,7 +155,7 @@ function officialHcmPageContracts(source) {
     fail('official product PAGE source is not the exact v1 document');
   }
   const hcm = source.pageRoutes.filter((route) => route?.productId === 'hcm');
-  if (hcm.length !== 56) fail(`official HCM PAGE count is ${hcm.length}, expected 56`);
+  if (hcm.length !== 64) fail(`official HCM PAGE count is ${hcm.length}, expected 64`);
   const seen = new Set();
   for (const route of hcm) {
     const routeNamespace = route?.routeContractKey?.split('.')[2];

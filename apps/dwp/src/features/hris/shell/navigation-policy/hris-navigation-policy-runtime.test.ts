@@ -20,6 +20,8 @@ vi.mock('../../../../routes/product-surface-authorization.generated', async (imp
   PRODUCT_AUTHORIZATION_REGISTRY_REVISION: generatedAuthorizationRegistry.revision,
 }));
 
+import { PRODUCT_AUTHORIZATION_PAGE_PROJECTIONS } from '../../../../routes/product-surface-authorization.generated';
+
 import {
   createHrisPolicyShellNavigationProjection,
   HRIS_NAVIGATION_AUTHORIZATION_REGISTRY_SHA256,
@@ -67,8 +69,18 @@ import { HRIS_R7_GOVERNED_PAGE_CATALOG } from '../../../hcm/hcm-navigation';
 
 import type { HrisWorkbenchId } from './seven-workbench-navigation-policy';
 
+const mutableAuthorizationPageProjections = PRODUCT_AUTHORIZATION_PAGE_PROJECTIONS as unknown as {
+  routeContractKey: string;
+}[];
+const sealedAuthorizationPageProjections = [...mutableAuthorizationPageProjections];
+
 describe('server-owned HRIS seven-workbench navigation runtime', () => {
   beforeEach(() => {
+    mutableAuthorizationPageProjections.splice(
+      0,
+      mutableAuthorizationPageProjections.length,
+      ...sealedAuthorizationPageProjections
+    );
     transport.get.mockReset();
     generatedAuthorizationRegistry.revision.version = 52;
     generatedAuthorizationRegistry.revision.checksum =
@@ -894,8 +906,26 @@ describe('server-owned HRIS seven-workbench navigation runtime', () => {
       /route alias is not sealed/u
     );
 
+    generatedAuthorizationRegistry.revision.version = 57;
     generatedAuthorizationRegistry.revision.checksum =
-      'b33fbf968e71f97b09fa497fdfad7d2f6854199170b79fd1602a0ea604977346';
+      'f7d6e2ef92f563747ed062e496638ea83498a33414fc12586c794f517e626d6e';
+    const missingPersonalRequestsIndex = mutableAuthorizationPageProjections.findIndex(
+      (projection) => projection.routeContractKey === 'route.hcm.personal.requests.page'
+    );
+    expect(missingPersonalRequestsIndex).toBeGreaterThanOrEqual(0);
+    const [missingPersonalRequests] = mutableAuthorizationPageProjections.splice(
+      missingPersonalRequestsIndex,
+      1
+    );
+    expect(() => selectRuntimeHrisNavigationPolicyProjection(successorProjection)).toThrow(
+      /route alias is not sealed/u
+    );
+    mutableAuthorizationPageProjections.splice(
+      missingPersonalRequestsIndex,
+      0,
+      missingPersonalRequests!
+    );
+
     const policy = selectHrisRuntimeNavigationPolicy(
       selectRuntimeHrisNavigationPolicyProjection(successorProjection)
     );
