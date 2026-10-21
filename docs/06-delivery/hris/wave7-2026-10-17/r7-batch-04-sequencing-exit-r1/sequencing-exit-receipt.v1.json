@@ -1,0 +1,313 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-sequencing-exit-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-04-SEQUENCING-EXIT-20261021-R1",
+  "recordedAt": "2026-10-21T18:33:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "BATCH04_OVERALL_SEQUENCING_EXIT_ACCEPTED_DEFAULT_OFF_ZERO_ENROLLMENT_ZERO_BUSINESS_CREDIT_EXECUTION_ROADMAP_SUCCESSOR_V19_NEXT",
+  "purpose": "Close only the Batch-04 fixed-order sequencing after exact exit of HRM-011, PAY-003, PER-004, SYS-006 and TIM-003 as default-OFF technical lanes. Preserve zero business-completion credit, zero tenant enrollment, zero active migration leases, all three carried semantic NO-GO lanes and both inherited TIM P0 gates. Authorize only an append-only execution-roadmap successor v19; do not authorize Batch-05 preflight, any packet, token, worktree, lease, source authoring, activation, production binding or release.",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_RECEIPT_ID_AND_SHA256",
+    "predecessorMutation": "FORBIDDEN"
+  },
+  "authorityBasis": {
+    "roadmapV18": {
+      "path": "../execution-roadmap-successor.v18.json",
+      "sha256": "b2bf071c6012d464d4e38faa5516c020ec9ccd1aae501fd1a1f0fbf934b68e23",
+      "bytes": 10861,
+      "carrierCommit": "c03ff6767a8e80894d903ce0d2d0e22c2cad7737",
+      "carrierTree": "e8a5d325e852dcf5c63ecab95fcfe7eaaed22257",
+      "requiredState": "R7_BATCH_03_SEQUENCING_CLOSED_DEFAULT_OFF_ZERO_BUSINESS_CREDIT_BATCH_04_PREFLIGHT_NEXT_ZERO_TENANT_ENROLLMENT"
+    },
+    "batch04Preflight": {
+      "path": "../r7-batch-04-preflight-r1/semantic-dependency-migration-preflight.v1.json",
+      "sha256": "3fe2cb0cab1aa65fbe75f1b0d8d4a74f136be457aa2c324d262eb7503789cc1c",
+      "bytes": 17214,
+      "carrierCommit": "c03ff6767a8e80894d903ce0d2d0e22c2cad7737",
+      "carrierTree": "e8a5d325e852dcf5c63ecab95fcfe7eaaed22257",
+      "requiredState": "PREFLIGHT_COMPLETE_FIXED_ORDER_FIVE_CONDITIONAL_LANES_NO_PACKETS_NO_TOKENS_NO_LEASES_NO_SOURCE"
+    },
+    "laneExitReceipts": [
+      {
+        "order": 1,
+        "sliceId": "BASE-TFR-HRM-011",
+        "moduleSession": "HRIS-HRM",
+        "path": "../r7-batch-04-central-admission-r1/hrm-011-sequencing-exit-receipt.v1.json",
+        "sha256": "1271581067af67de5a71b53c89ef1e4170756d61010e9b2b01c1167aa07fd994",
+        "bytes": 7353,
+        "carrierCommit": "15827ad8cffe6ce681eddadf8aee0dd175259671",
+        "carrierTree": "b020f4812a93cab17f0ca8b670549be0a07c4809",
+        "requiredState": "BATCH04_LANE_1_HRM011_SEQUENCING_EXIT_ACCEPTED_DEFAULT_OFF_ZERO_ENROLLMENT_ZERO_BUSINESS_CREDIT_PAY003_SEMANTIC_CLOSURE_NEXT"
+      },
+      {
+        "order": 2,
+        "sliceId": "BASE-TFR-PAY-003",
+        "moduleSession": "HRIS-PAY",
+        "path": "../r7-batch-04-central-admission-r1/pay-003-sequencing-exit-receipt.v1.json",
+        "sha256": "253d970e53d0fcbd4e18964a2af65ee5220f799fc854756d949ebc0e62f8c75b",
+        "bytes": 8006,
+        "carrierCommit": "58fe96e762342aaafa32ff1a8420eb2d1626a7d1",
+        "carrierTree": "33ebd2952c8a42eae9fe412f7d194e6ba5499fd4",
+        "requiredState": "BATCH04_LANE_2_PAY003_SEQUENCING_EXIT_ACCEPTED_DEFAULT_OFF_ZERO_ENROLLMENT_ZERO_BUSINESS_CREDIT_PER004_SEMANTIC_CLOSURE_NEXT"
+      },
+      {
+        "order": 3,
+        "sliceId": "BASE-TFR-PER-004",
+        "moduleSession": "HRIS-PER",
+        "path": "../r7-batch-04-central-admission-r1/per-004-sequencing-exit-receipt.v1.json",
+        "sha256": "a25b77fe2030f1245f78ef05f4d2eecace04234c358d8e3482c32fad424ea2e0",
+        "bytes": 8720,
+        "carrierCommit": "9f6fa831cb72dde11f9370a80ee8dee7c126d882",
+        "carrierTree": "d13c29904fe31f86bc1ff0c2007b9d891ec9ef95",
+        "requiredState": "BATCH04_LANE_3_PER004_SEQUENCING_EXIT_ACCEPTED_DEFAULT_OFF_ZERO_ENROLLMENT_ZERO_BUSINESS_CREDIT_SYS006_SEMANTIC_CLOSURE_NEXT"
+      },
+      {
+        "order": 4,
+        "sliceId": "BASE-TFR-SYS-006",
+        "moduleSession": "HRIS-SYS",
+        "path": "../r7-batch-04-central-admission-r1/sys-006-sequencing-exit-receipt.v1.json",
+        "sha256": "4dce61355a0070aa46ffd3b95fe5923fb770769f902bc4ae38d9090ced0e259f",
+        "bytes": 8539,
+        "carrierCommit": "287f6dfa2229048b4cc7258579294407314bf40a",
+        "carrierTree": "a0871dabac1211d0e48fbcf3e59c5fe49a5ed329",
+        "requiredState": "BATCH04_LANE_4_SYS006_SEQUENCING_EXIT_ACCEPTED_DEFAULT_OFF_ZERO_ENROLLMENT_ZERO_BUSINESS_CREDIT_TIM003_SEMANTIC_CLOSURE_NEXT"
+      },
+      {
+        "order": 5,
+        "sliceId": "BASE-TFR-TIM-003",
+        "moduleSession": "HRIS-TIM",
+        "path": "../r7-batch-04-central-admission-r1/tim-003-sequencing-exit-receipt.v1.json",
+        "sha256": "6c488766f8853a05b8809f908822677324c03de1c978c2e1bab380d4d8b32a8a",
+        "bytes": 11189,
+        "carrierCommit": "4747da70661029715a685cabca21d05a947145d3",
+        "carrierTree": "2a416d857069afe9d630da35b9b2d146f3192df1",
+        "requiredState": "BATCH04_LANE_5_TIM003_SEQUENCING_EXIT_ACCEPTED_DEFAULT_OFF_ZERO_ENROLLMENT_ZERO_BUSINESS_CREDIT_BATCH04_OVERALL_SEQUENCING_CLOSURE_NEXT"
+      }
+    ]
+  },
+  "acceptedBatch04Sequence": {
+    "fixedOrder": [
+      "BASE-TFR-HRM-011",
+      "BASE-TFR-PAY-003",
+      "BASE-TFR-PER-004",
+      "BASE-TFR-SYS-006",
+      "BASE-TFR-TIM-003"
+    ],
+    "allFiveLaneExitsPresent": true,
+    "allFiveLaneExitsHashPinned": true,
+    "allFiveLaneExitCarriersPinned": true,
+    "fixedOrderPreserved": true,
+    "remainingBatch04ModuleLanes": [],
+    "technicalLaneExitCount": 5,
+    "fullBusinessSliceCompletionCount": 0,
+    "businessCompletionIncrement": 0,
+    "runtimeDefault": "OFF",
+    "tenantEnrollmentCount": 0,
+    "activeMigrationLeaseCount": 0,
+    "acceptedState": "FIVE_FIXED_ORDER_TECHNICAL_LANES_EXITED_BATCH04_SEQUENCING_ONLY_CLOSED_DEFAULT_OFF_ZERO_ENROLLMENT_ZERO_BUSINESS_CREDIT"
+  },
+  "laneAccounting": [
+    {
+      "order": 1,
+      "sliceId": "BASE-TFR-HRM-011",
+      "moduleSession": "HRIS-HRM",
+      "technicalLaneExited": true,
+      "fullBusinessSliceComplete": false,
+      "businessCompletionIncrement": 0
+    },
+    {
+      "order": 2,
+      "sliceId": "BASE-TFR-PAY-003",
+      "moduleSession": "HRIS-PAY",
+      "technicalLaneExited": true,
+      "fullBusinessSliceComplete": false,
+      "businessCompletionIncrement": 0
+    },
+    {
+      "order": 3,
+      "sliceId": "BASE-TFR-PER-004",
+      "moduleSession": "HRIS-PER",
+      "technicalLaneExited": true,
+      "fullBusinessSliceComplete": false,
+      "businessCompletionIncrement": 0
+    },
+    {
+      "order": 4,
+      "sliceId": "BASE-TFR-SYS-006",
+      "moduleSession": "HRIS-SYS",
+      "technicalLaneExited": true,
+      "fullBusinessSliceComplete": false,
+      "businessCompletionIncrement": 0
+    },
+    {
+      "order": 5,
+      "sliceId": "BASE-TFR-TIM-003",
+      "moduleSession": "HRIS-TIM",
+      "technicalLaneExited": true,
+      "fullBusinessSliceComplete": false,
+      "businessCompletionIncrement": 0
+    }
+  ],
+  "migrationAndAuthorizationClosure": {
+    "activeMigrationLeaseCountAfterExit": 0,
+    "migrationHighWater": {
+      "PEOPLE_MAIN": "V59",
+      "PERFORMANCE": "V19",
+      "PAYROLL_MAIN": "V54",
+      "PLATFORM_MAIN": "V333",
+      "TIME_MAIN": "V14",
+      "AUTH_MAIN": "V265",
+      "NOTIFICATION_MAIN": "V35",
+      "APPROVAL_MAIN": "V58",
+      "PRODUCT_AUTHORIZATION_BUNDLE": "v56"
+    },
+    "productAuthorization": {
+      "version": 56,
+      "status": "DRAFT",
+      "checksum": "4c1e82c4ac70f7bbc4aba7a41d77b8fd238da0478501cbdfed97ebd4b5dd0930",
+      "runtimeDefault": "OFF",
+      "automaticImportEnabled": false,
+      "persistentFeatureActivationCount": 0,
+      "persistentTenantEnrollmentCount": 0
+    },
+    "nextLeaseIssued": false
+  },
+  "preservedSemanticNoGoLanes": [
+    {
+      "sliceId": "BASE-TFR-PER-003",
+      "moduleSession": "HRIS-PER",
+      "state": "SEMANTIC_NO_GO_NO_PACKET_NO_TOKEN_NO_LEASE_NO_SOURCE",
+      "missingAuthority": "Schedule, hold, complete, acknowledge and cancel owner-route transaction semantics.",
+      "stream": "PERFORMANCE",
+      "observedHighWater": "V19",
+      "migrationAuthorityState": "NO_SLICE_LEASE_OR_MIGRATION_AUTHORITY"
+    },
+    {
+      "sliceId": "BASE-TFR-PAY-002",
+      "moduleSession": "HRIS-PAY",
+      "state": "SEMANTIC_NO_GO_NO_PACKET_NO_TOKEN_NO_LEASE_NO_SOURCE",
+      "missingAuthority": "Exact connector target, mapping, idempotency, reconciliation and owner binding.",
+      "stream": "PAYROLL_MAIN",
+      "observedHighWater": "V54",
+      "migrationAuthorityState": "NO_SLICE_LEASE_OR_MIGRATION_AUTHORITY"
+    },
+    {
+      "sliceId": "BASE-TFR-TIM-002",
+      "moduleSession": "HRIS-TIM",
+      "state": "SEMANTIC_NO_GO_NO_PACKET_NO_TOKEN_NO_LEASE_NO_SOURCE",
+      "missingAuthority": "Notification trigger, type key, recipient, template version, variables, deep link, opt-out, masking and receipt contract.",
+      "stream": "TIME_MAIN",
+      "observedHighWater": "V14",
+      "migrationAuthorityState": "NO_SLICE_LEASE_OR_MIGRATION_AUTHORITY"
+    }
+  ],
+  "preservedOpenGates": [
+    {
+      "gateId": "TIM_CLOSE_PERIOD_DEFINITION_PRODUCER",
+      "severity": "P0",
+      "state": "OPEN_EXTERNAL_SOURCE_AUTHORITY_GATE",
+      "blocks": [
+        "TIM feature activation",
+        "TIM business-completion credit",
+        "live TIM-to-Payroll end-to-end claim"
+      ],
+      "doesNotBlock": [
+        "Batch-04 overall sequencing closure",
+        "append-only execution-roadmap successor v19"
+      ]
+    },
+    {
+      "gateId": "TIM_CLOSE_TRUSTED_OWNER_HEADER_ISSUER",
+      "severity": "P0",
+      "state": "OPEN_BEFORE_ANY_TENANT_ENROLLMENT",
+      "blocks": [
+        "TIM tenant enrollment",
+        "TIM production activation"
+      ],
+      "doesNotBlock": [
+        "Batch-04 overall sequencing closure",
+        "append-only execution-roadmap successor v19"
+      ]
+    }
+  ],
+  "observedRepositoryPinsBeforeClosureDraft": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "8f8087736e59413c60ddcdcd081ed42f1915bc91",
+      "tree": "7020953515319688b998777ed73cae166dd678be",
+      "originExact": true,
+      "clean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "4747da70661029715a685cabca21d05a947145d3",
+      "tree": "2a416d857069afe9d630da35b9b2d146f3192df1",
+      "originExact": true,
+      "cleanBeforeClosureDraft": true,
+      "expectedUntrackedOnlyAfterDraft": [
+        "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-sequencing-exit-r1/sequencing-exit-receipt.v1.json"
+      ]
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "originExact": true,
+      "clean": true
+    }
+  },
+  "portfolioAccounting": {
+    "universe": 86,
+    "retired": 2,
+    "active": 84,
+    "completedBeforeBatch04": 26,
+    "batch04TechnicalLaneExitCount": 5,
+    "batch04BusinessCompletionIncrement": 0,
+    "completedAfterBatch04SequencingExit": 26,
+    "activeIncompleteAfterBatch04SequencingExit": 58,
+    "technicalLaneExitDoesNotIncrementBusinessCompletion": true
+  },
+  "verificationPolicyApplied": {
+    "documentOnlyClosure": true,
+    "sourceChangedByThisReceipt": false,
+    "testsRerunForThisReceipt": false,
+    "repositoryWideSuiteRun": false,
+    "jsonSyntaxCheckRequired": true,
+    "directReferenceHashByteAndCarrierCheckRequired": true,
+    "independentDocumentReviewRequiredBeforeCommit": true
+  },
+  "authority": {
+    "batch04OverallSequencingExitAccepted": true,
+    "allFiveFixedOrderTechnicalLanesExited": true,
+    "batch04BusinessCompletionIncrement": 0,
+    "batch04FullBusinessCompletionClaimed": false,
+    "batch04Complete": false,
+    "executionRoadmapSuccessorV19MayBeIssued": true,
+    "batch05PreflightAuthorizedByThisReceipt": false,
+    "batch05PacketTokenWorktreeLeaseOrSourceAuthorizedByThisReceipt": false,
+    "semanticNoGoLanesReleasedByThisReceipt": false,
+    "timP0GatesClosedByThisReceipt": false,
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionBindingAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "r7Complete": false,
+    "hrisComplete": false
+  },
+  "decision": "CLOSE_BATCH04_SEQUENCING_ONLY_WITH_ZERO_BUSINESS_CREDIT_DEFAULT_OFF_ZERO_ENROLLMENT_ZERO_ACTIVE_LEASES_AND_AUTHORIZE_ONLY_EXECUTION_ROADMAP_SUCCESSOR_V19",
+  "nonClaims": [
+    "Any Batch-04 technical lane is a fully complete production business slice or receives business-completion credit.",
+    "BASE-TFR-PER-003, BASE-TFR-PAY-002 or BASE-TFR-TIM-002 received semantic GO, a packet, token, worktree, migration lease or source authority.",
+    "Either inherited TIM P0 gate is closed.",
+    "A production provider, handler, scheduler, broker, route, menu, feature, consumer, worker or tenant is activated, bound, mounted or enrolled.",
+    "The product-authorization v56 DRAFT bundle is activated or automatically imported.",
+    "Customer data, production execution or release is authorized.",
+    "Batch-05 preflight, packet, token, worktree, migration lease, central authorization or source authoring is authorized.",
+    "R7 or HRIS is complete."
+  ],
+  "nextAction": "Issue exactly one append-only execution-roadmap successor v19 that hash-pins this Batch-04 sequencing-exit receipt and the exact backend, frontend and agent dwp-dev repository states. The v19 successor must separately decide the next executable planning action; do not issue or begin Batch-05 preflight, packet, token, worktree, migration lease, central authorization, source authoring or activation from this receipt."
+}
