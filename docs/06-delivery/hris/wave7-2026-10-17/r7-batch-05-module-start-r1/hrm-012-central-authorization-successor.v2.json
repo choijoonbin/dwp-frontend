@@ -1,0 +1,704 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-05-hrm012-central-authorization-successor.v2",
+  "successorId": "HRIS-WAVE7-R7-BATCH-05-HRM012-CENTRAL-AUTHORIZATION-20261022-R2",
+  "recordedAt": "2026-10-22T00:41:36+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "SEALED_APPEND_ONLY_IMPLEMENTATION_PATH_AND_RECEIPT_FIRST_PROTOCOL_CORRECTION_REVIEW_REQUIRED_SOURCE_WITHHELD",
+  "sliceId": "BASE-TFR-HRM-012",
+  "module": "HRM",
+  "moduleSession": "HRIS-HRM",
+  "immutability": {
+    "sealed": true,
+    "appendOnly": true,
+    "predecessorMutation": "FORBIDDEN",
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ID_AND_SHA256"
+  },
+  "supersession": {
+    "predecessor": {
+      "path": "hrm-012-central-authorization-successor.v1.json",
+      "successorId": "HRIS-WAVE7-R7-BATCH-05-HRM012-CENTRAL-AUTHORIZATION-20261022-R1",
+      "sha256": "0c3241a66757e579dd2e29b06f92d6f140e9f92958a6ddb99e75cace0fcba3b8",
+      "bytes": 38912,
+      "commit": "369890701da5a43ae06be31e7a2323ffcecdc347"
+    },
+    "scopeExactly": [
+      "implementation path allowlist",
+      "executable verification command allowlist",
+      "the exact HRM-012 ACTION receipt-first handoff protocol",
+      "PEP-HRM-015 client header and purpose transport semantics",
+      "the exact Auth V266 catalog-only delta, replacing the narrower v1 V266 rule",
+      "the implementation-gate status needed to replace invalid uncommitted v1-based receipt and token drafts"
+    ],
+    "semanticInheritance": "Every v1 semantic decision not explicitly replaced below remains authoritative byte-pinned context. In particular the capability collision resolution, three route descriptors, IAQ-012 read semantics, PEP-HRM-015 exact request body and conservation/idempotency accounting, predicate meanings, V57 delta/count reservation, Auth V266 number, feature key, default-OFF state, zero enrollment, People V60 reservation, no-production-binding rules and all non-claims remain unchanged. The v1 PEP-HRM-015 header and purpose ordering is not inherited; it is replaced below.",
+    "precedence": "For implementation paths, verification commands, PEP-HRM-015 client headers and purpose ordering, pre-controller checks, signed handoff evidence, post-receipt ordering and the exact Auth V266 catalog-only delta, this v2 replaces v1. The v1 sentence limiting V266 to only checksum, feature and route rows is superseded by the exact catalog readiness rows below. For every other field, v1 is inherited without reinterpretation.",
+    "forbidden": [
+      "editing or replacing the committed v1 file",
+      "using a v1 path omission as implicit source authority",
+      "treating this correction as feature enablement, tenant enrollment, module source authority or production release"
+    ]
+  },
+  "finalAuthorityChain": {
+    "batch05Preflight": {
+      "path": "../r7-batch-05-preflight-r1/semantic-dependency-migration-preflight.v1.json",
+      "sha256": "8f7a0d38c4dc86873e4930e5a21dcc0a269c39512508d86dd529b40015237e0f",
+      "bytes": 37443,
+      "commit": "e00a6e9a38c1270f8a0f08aa5d3536421091e9a3"
+    },
+    "semanticDisposition": {
+      "path": "semantic-dispositions/base-tfr-hrm-012.semantic-disposition.v1.json",
+      "sha256": "bc7371c37459efa104c5d1239eae326fb2585fdd8d1b59b094046b6b02393519",
+      "bytes": 33226,
+      "commit": "fea8fd9e641b3f06745aeb1b00c4345836bf10f5"
+    },
+    "ownerPacket": {
+      "path": "owner-packets/base-tfr-hrm-012.owner-packet.v1.json",
+      "sha256": "2e9d7bdac2623a5aa417d14c5721e0cf19c0ba289bb17b52727076ecd83460cf",
+      "bytes": 18059,
+      "commit": "fea8fd9e641b3f06745aeb1b00c4345836bf10f5"
+    },
+    "peopleV60Reservation": {
+      "path": "migration-lease-hrm012-v60-reservation.v1.json",
+      "sha256": "318df1fc3473fd408788e571bcf2884c1b07887003a38cb6f2bc366b715da422",
+      "bytes": 6555,
+      "commit": "fea8fd9e641b3f06745aeb1b00c4345836bf10f5",
+      "state": "RESERVED_NOT_ACTIVE"
+    },
+    "v1CentralAuthorization": {
+      "path": "hrm-012-central-authorization-successor.v1.json",
+      "sha256": "0c3241a66757e579dd2e29b06f92d6f140e9f92958a6ddb99e75cace0fcba3b8",
+      "bytes": 38912,
+      "commit": "369890701da5a43ae06be31e7a2323ffcecdc347"
+    },
+    "carrierHeadsBeforeV2": {
+      "frontendDwpDev": "369890701da5a43ae06be31e7a2323ffcecdc347",
+      "frontendOriginDwpDev": "369890701da5a43ae06be31e7a2323ffcecdc347",
+      "backendDwpDev": "8f8087736e59413c60ddcdcd081ed42f1915bc91",
+      "backendOriginDwpDev": "8f8087736e59413c60ddcdcd081ed42f1915bc91"
+    }
+  },
+  "invalidatedUncommittedDrafts": [
+    {
+      "path": "hrm-012-central-worktree-materialization-receipt.v1.json",
+      "sha256": "a0bcf2f53ae816dbebed539ac6479cbd71ac95bd0d20271789bb35a1cd5f73c8",
+      "bytes": 7056,
+      "status": "SUPERSEDED_NOT_VALID_NOT_EXECUTABLE",
+      "reason": "It was drafted against the incomplete v1 implementation path and protocol boundary and was never committed or pushed."
+    },
+    {
+      "path": "hrm-012-central-implementation-token.v1.json",
+      "sha256": "5c41d77ba9e277241c5c126ce90cd455835cb17bdfe39434b1a4b10b066f67d5",
+      "bytes": 19549,
+      "status": "SUPERSEDED_NOT_VALID_NOT_EXECUTABLE",
+      "reason": "It was drafted against the incomplete v1 implementation path and protocol boundary and was never committed or pushed."
+    }
+  ],
+  "correctedPepHrm015ClientTransport": {
+    "requestBody": "The v1 six-field exact body remains unchanged: objectRef, objectDigest, schemaKey, schemaVersion, mode and effectiveDate; unknown fields reject.",
+    "requiredHeadersExactly": [
+      "Authorization",
+      "Idempotency-Key",
+      "If-Match",
+      "X-Correlation-ID"
+    ],
+    "optionalHeadersExactly": [
+      "X-Purpose-Code",
+      "X-DWP-Step-Up-Challenge"
+    ],
+    "purposeHeaderRule": "X-Purpose-Code is optional transport. If present it must occur exactly once and equal HRIS_INTEGRATION byte-for-byte; blank, duplicate or any other value rejects before controller as closed-schema syntax only. Its absence does not establish purpose. The trusted fixed-purpose authorization decision always occurs after receipt reserve/hash in Auth.",
+    "opaqueChallengeHeaderRule": "X-DWP-Step-Up-Challenge is optional transport so a missing, blank or semantically or cryptographically malformed challenge cannot be rejected before the receipt boundary. If present it must occur exactly once and satisfy only generic transport safety: at most 8192 bytes with no control or comma-folding characters. Gateway copies its raw value as an opaque reference without trimming, parsing or validating challenge meaning. A usable challenge is required for the later Auth verification to return ALLOWED; missing, blank, malformed, stale or wrong-target evidence is denied only after receipt/hash.",
+    "forbiddenHeaders": [
+      "X-DWP-Expected-Object-Version",
+      "X-DWP-HRM012-Owner-Receipt-Authority",
+      "X-DWP-Expected-Decision-Revision",
+      "caller tenant authority headers",
+      "caller subject authority headers",
+      "caller route authority headers",
+      "caller population or scope authority headers",
+      "caller field-policy or field-decision authority headers",
+      "caller authorization or feature revision headers"
+    ],
+    "versionRule": "If-Match is the sole client object-version transport. Missing, weak, malformed or duplicate If-Match rejects under closed transport; no other expected-version header is accepted or reconciled.",
+    "cardinalityRule": "Every required or present optional header is exactly one value. Comma folding, conflicting case variants, duplicate values, surrounding whitespace and CR/LF reject.",
+    "gatewayTransformation": "Gateway consumes the optional X-DWP-Step-Up-Challenge only as opaque input to the Auth marker request, strips it and every forbidden authority header, preserves Authorization, Idempotency-Key, If-Match and X-Correlation-ID, preserves syntactically valid optional X-Purpose-Code, and forwards only the Auth-signed owner-receipt marker."
+  },
+  "correctedReceiptFirstProtocol": {
+    "exactException": {
+      "routeContractKey": "route.hcm.operations.workforce-ingestion.action",
+      "gatewayBinding": "POST /api/people/v1/hris/integrations/workforce-ingestions",
+      "servicePepBinding": "POST /v1/hris/integrations/workforce-ingestions",
+      "scope": "This is the only route allowed to defer target-bound step-up, exact narrow capability, duty and purpose decisions until after durable receipt reserve-or-read and canonical hash comparison. Every other route retains its existing pre-controller decision order and behavior."
+    },
+    "preControllerRequiredChecksInOrder": [
+      "authenticate and resolve the trusted tenant plus on-behalf-of subject from trusted service identity; caller identity or tenant headers never satisfy this check",
+      "require exactly POST and the exact HRM-012 ACTION route; wrong method, near-match path, trailing path, unknown route or wrong service binding denies",
+      "validate the complete corrected PEP-HRM-015 client header set and cardinality; treat a present exact HRIS_INTEGRATION purpose only as transport syntax and the optional X-DWP-Step-Up-Challenge only as opaque marker input",
+      "require exactly APP.HCM:VIEW or the registered same-product APP.HRIS:VIEW compatibility alias; absence of both, an implied entitlement, an unregistered alias or a wrong-product alias denies",
+      "require the HRIS_HRM_DATA_QUALITY_WORKBENCH feature decision to be enabled for this trusted tenant; baseline OFF, missing enrollment, inactive enrollment, missing activation, stale decision or decision unavailable denies before controller entry",
+      "strip or reject caller-supplied marker, tenant, subject, route, population, field and revision authority headers; consume then strip the opaque challenge while preserving a syntactically valid optional X-Purpose-Code without treating it as trusted purpose authority",
+      "issue and verify signed OWNER_RECEIPT_AUTH_REQUIRED evidence bound to trusted tenant, on-behalf-of subject, exact route, method, app-entitlement decision, feature decision revision, correlation ID and expiry"
+    ],
+    "preControllerForbiddenChecksForExactException": [
+      "target-bound HIGH step-up decision",
+      "hcm.integration.workforce-ingestion.execute decision",
+      "HRIS_DUTY_INTEGRATION_EXECUTOR decision",
+      "HRIS_INTEGRATION purpose decision",
+      "object metadata or content lookup",
+      "connector-set or legal-entity population resolution",
+      "field-policy decision",
+      "artifact, payload, mapping, run, item or cursor access"
+    ],
+    "exactMarkerFlow": {
+      "authEvaluateRequestExtension": "ProductSurfaceAuthorityDtos.EvaluateRequest adds nullable correlationId, idempotencyKeySha256, opaqueStepUpChallengeRef, commandMethod and commandPath. They may be non-null only for the exact HRM-012 ACTION; every other route rejects them. Gateway supplies trusted correlation and the SHA-256 of the exact raw Idempotency-Key, and treats the client challenge as opaque.",
+      "authAuthorityResultExtension": "ProductSurfaceAuthorityDtos.AuthorityResult adds nullable ownerReceiptAuthority. It is non-null only with state OWNER_RECEIPT_AUTH_REQUIRED after trusted identity, accepted app entitlement, exact route/method and enabled feature pass for this exact ACTION. It is null for every other route and never coexists with an ALLOWED command decision.",
+      "gatewayPropagation": "ProductSurfaceContextDtos, ProductSurfaceAuthorityClient and ProductSurfaceContextAggregationService preserve the marker byte-for-byte. ProductSurfaceDecisionContextFilter removes caller challenge/marker and authority headers, sends the exact extension fields to Auth, and forwards exactly one returned X-DWP-HRM012-Owner-Receipt-Authority marker to People.",
+      "peopleEarlyBranch": "HcmProductSurfacePepFilter has one exact early HRM-012 POST branch. It keeps trusted identity, accepted app and enabled-feature checks, verifies the marker with the shared contract verifier, and admits only an Hrm012OwnerReceiptAuthorityContext. It bypasses only the normal pre-controller capability and scope decision for this route, creates no HcmPepContext authority claim and cannot authorize metadata or business access.",
+      "otherRoutes": "All other Gateway and People filter paths reject ownerReceiptAuthority input and preserve existing capability, scope, purpose, step-up and HcmPepContext behavior."
+    },
+    "signedOwnerReceiptEvidence": {
+      "statusExactly": "OWNER_RECEIPT_AUTH_REQUIRED",
+      "wire": {
+        "header": "X-DWP-HRM012-Owner-Receipt-Authority",
+        "cardinality": "exactly one compact JWS; comma-folded, duplicate, blank or whitespace-altered values deny",
+        "protectedHeader": {
+          "typ": "dwp-hrm012-owner-receipt-auth+jwt",
+          "alg": "RS256",
+          "kid": "required exact configured key identifier; embedded jwk, jku, x5u, crit and unknown protected fields deny"
+        },
+        "canonicalClaimsExactly": [
+          "iss",
+          "aud",
+          "iat",
+          "nbf",
+          "exp",
+          "jti",
+          "state",
+          "tenant_id",
+          "on_behalf_of_subject",
+          "route_contract_key",
+          "command_method",
+          "command_path",
+          "accepted_app_entitlement",
+          "feature_key",
+          "feature_decision_revision",
+          "correlation_id",
+          "idempotency_key_sha256",
+          "opaque_step_up_challenge_ref"
+        ],
+        "canonicalClaimValues": {
+          "iss": "dwp-auth-server/hrm012-owner-receipt/v1",
+          "aud": "dwp-people-server",
+          "state": "OWNER_RECEIPT_AUTH_REQUIRED",
+          "route_contract_key": "route.hcm.operations.workforce-ingestion.action",
+          "command_method": "POST",
+          "command_path": "/v1/hris/integrations/workforce-ingestions",
+          "accepted_app_entitlement": "enum APP.HCM:VIEW or APP.HRIS:VIEW; when both are present Auth writes canonical APP.HCM:VIEW",
+          "feature_key": "HRIS_HRM_DATA_QUALITY_WORKBENCH"
+        }
+      },
+      "keySourceAndRotation": {
+        "authIssuer": "dwp-auth-server/hrm012-owner-receipt/v1",
+        "authActiveKidProperty": "dwp.auth.hrm012-owner-receipt.active-key-id",
+        "authActivePrivateKeyProperty": "dwp.auth.hrm012-owner-receipt.active-private-key-pem",
+        "peopleCurrentKidProperty": "dwp.people.hrm012-owner-receipt.current-key-id",
+        "peopleCurrentPublicKeyProperty": "dwp.people.hrm012-owner-receipt.current-public-key-pem",
+        "acceptedVerificationKeysExactly": 1,
+        "rule": "Auth signs only with the active private key from the configured non-source secret/key provider. This slice permits People to verify only the single exact current kid/public key; previous-key overlap and automatic key discovery are not authorized. Rotation is an atomic configuration replacement coordinated outside this slice. Unknown kid, missing current key, a second accepted key, algorithm drift or fail-open key lookup denies. Key material, opaque challenge content and signatures never enter logs."
+      },
+      "issuerAndVerifierPaths": {
+        "issuer": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/Hrm012OwnerReceiptAuthorityEvidenceService.java",
+        "authorityDto": "dwp-auth-server/src/main/java/com/dwp/services/auth/dto/ProductSurfaceAuthorityDtos.java",
+        "gatewayWireDto": "dwp-gateway/src/main/java/com/dwp/gateway/productsurface/ProductSurfaceContextDtos.java",
+        "gatewayFilter": "dwp-gateway/src/main/java/com/dwp/gateway/filter/ProductSurfaceDecisionContextFilter.java",
+        "peopleVerifier": "dwp-people-server/src/main/java/com/dwp/services/people/security/Hrm012OwnerReceiptAuthorityEvidenceVerifier.java",
+        "peopleContext": "dwp-people-server/src/main/java/com/dwp/services/people/security/Hrm012OwnerReceiptAuthorityContext.java"
+      },
+      "timeAndReplay": {
+        "maximumTtlSeconds": 30,
+        "maximumClockSkewSeconds": 5,
+        "preReceiptRule": "Before receipt reserve-or-read, the shared verifier checks only compact-JWS structure, protected-header exactness, signature, canonical claim schema, issuer, audience, time bounds and equality to trusted request identity/route/method/correlation/Idempotency-Key digest. It performs no duplicate or replay judgment and makes no database read.",
+        "postReceiptRule": "After same-tuple receipt reserve-or-read and canonical hash equality, the module repository atomically compare-and-sets the marker jti, exp and marker digest into the reserved result_reference.hrm012Authority.authorityEvidence array. Different-hash 409 always precedes marker replay evaluation.",
+        "safeRetryRule": "A terminal same-tuple same-hash receipt is returned unchanged without binding or consuming a new marker and without an Auth verification call. For a nonterminal same-tuple same-hash receipt, the same unexpired jti may retry. A different fresh jti may replace the current entry only by atomic receipt-version CAS when the prior entry is expired or has state UNVERIFIED, DENIED or TRANSIENT_UNAVAILABLE and no metadata, artifact, payload, mapping, run, cursor or business effect has occurred. A VERIFIED_ALLOWED entry is immutable and no fresh jti may replace it. Cross-tuple, different-hash, expired-current-use, CAS loss or any second terminal use denies.",
+        "boundedStorage": "result_reference preserves all unrelated existing keys and reserves only hrm012Authority. authorityEvidence is an ordered array of at most two entries: the current full {jti, exp, markerSha256, state, boundAt, authDecisionRevision} and, only after replacement, one immediately previous redacted {jtiSha256, exp, state, replacedAt}. No raw marker or opaque challenge is stored. No new replay table is authorized."
+      },
+      "opaqueChallengeRule": "The exact client header X-DWP-Step-Up-Challenge is treated as an opaque string and carried only as the nullable opaque_step_up_challenge_ref claim inside the Auth-signed marker. Auth does not validate it before controller entry and the Gateway cannot inspect or attest it. A missing value is signed as JSON null; missing or malformed opaque reference is therefore a post-receipt step-up denial, not a pre-controller denial.",
+      "gatewayRule": "Gateway removes every caller-supplied X-DWP-HRM012-Owner-Receipt-Authority, X-DWP-Step-Up-Challenge, X-DWP-Expected-Decision-Revision and X-DWP-Expected-Object-Version header before forwarding. It preserves the sole ordinary If-Match transport header and forwards only the single Auth-issued marker; it never reconstructs, re-signs or changes claims.",
+      "trustRule": "Only server-authenticated Auth evidence relayed unchanged by Gateway and verified by People may reach the controller. The marker proves only trusted identity, accepted app entitlement, exact route/method and enabled feature decision plus a sealed opaque challenge reference. It is never an allow decision and never proof of purpose, step-up, narrow capability, duty, population or field authority.",
+      "replayRule": "Missing, invalid, expired, wrong-audience, wrong-route, wrong-method, cross-tenant, cross-subject, wrong-feature or caller-forged evidence denies before receipt. Duplicate and replay judgments occur only after receipt/hash under the atomic rules above.",
+      "defaultOffRule": "Default OFF is evaluated before this evidence is issued. The evidence cannot be produced, accepted or used to bypass OFF, zero enrollment, inactive enrollment or missing activation."
+    },
+    "trustedPostReceiptStepUpVerification": {
+      "endpoint": "POST /internal/auth/v1/hris/hrm012/receipt-first-step-up/verify",
+      "implementationBindings": {
+        "authController": "dwp-auth-server/src/main/java/com/dwp/services/auth/controller/Hrm012ReceiptFirstStepUpVerificationController.java",
+        "authDto": "dwp-auth-server/src/main/java/com/dwp/services/auth/dto/Hrm012ReceiptFirstStepUpDtos.java",
+        "authService": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/Hrm012ReceiptFirstStepUpVerificationService.java",
+        "peopleClient": "dwp-people-server/src/main/java/com/dwp/services/people/security/Hrm012ReceiptFirstStepUpClient.java",
+        "peopleDto": "dwp-people-server/src/main/java/com/dwp/services/people/security/Hrm012ReceiptFirstStepUpDtos.java"
+      },
+      "callerAllowlist": "Only authenticated service identity dwp-people-server with exactly one X-DWP-Hris-Origin-Authority-Token may call this exact method/path. Gateway, Platform, browser, support identities and every other service are denied; generic product-surface and meeting tokens must be absent.",
+      "requestFieldsExactly": [
+        "tenantId",
+        "onBehalfOfSubject",
+        "routeContractKey",
+        "commandMethod",
+        "publicCommandPath",
+        "serviceCommandPath",
+        "objectRef",
+        "ifMatch",
+        "purposeCode",
+        "opaqueStepUpChallengeRef",
+        "idempotencyKey",
+        "contextKey",
+        "scopeRef",
+        "payloadSha256",
+        "decisionRevision",
+        "receiptPublicId",
+        "receiptRequestHash",
+        "correlationId"
+      ],
+      "fixedValues": {
+        "routeContractKey": "route.hcm.operations.workforce-ingestion.action",
+        "commandMethod": "POST",
+        "publicCommandPath": "/api/people/v1/hris/integrations/workforce-ingestions",
+        "serviceCommandPath": "/v1/hris/integrations/workforce-ingestions",
+        "purposeCode": "HRIS_INTEGRATION"
+      },
+      "canonicalBodyHashRule": "payloadSha256 is lowercase SHA-256 of the canonicalized exact six-field PEP-HRM-015 command body, using the same canonical bytes frozen in receiptRequestHash. It is not a hash of the envelope, headers or marker.",
+      "trustedEqualityRule": "Auth derives the current trusted tenant/subject, contextKey, scopeRef, authorization decisionRevision and feature revision from current evidence and requires exact equality to the DTO. ProductSurfaceStepUpRouteResolver and the signed ProductSurfaceStepUpChallengeContract bind publicCommandPath exactly to /api/people/v1/hris/integrations/workforce-ingestions; the trusted People caller and owner-route check bind serviceCommandPath exactly to /v1/hris/integrations/workforce-ingestions. Neither path is silently translated or used in place of the other. The challenge also binds objectRef target, numeric If-Match version, raw Idempotency-Key and payloadSha256. Client or People cannot invent context, scope or revision.",
+      "decisionOrder": "Auth verifies the trusted People caller and exact closed DTO, re-evaluates the enabled feature plus canonical accepted app entitlement, then requires exact hcm.integration.workforce-ingestion.execute, HRIS_DUTY_INTEGRATION_EXECUTOR and fixed HRIS_INTEGRATION purpose, and only then validates target-bound HIGH STEPUP-MGMT-HIGH-V1 against objectRef, If-Match, raw Idempotency-Key and canonical payloadSha256. Unavailable, malformed, stale, missing or denied evidence fails closed.",
+      "receiptPrecedence": "People may call this endpoint only after the durable same-tuple receipt reserve-or-read and canonical request-hash comparison has succeeded. Same-tuple different-hash 409 is returned without an Auth call. Tests must prove zero Auth calls on schema failure and receipt hash conflict.",
+      "responseFieldsExactly": [
+        "decision",
+        "authorizationRevision",
+        "dutyEvidenceRevision",
+        "featureDecisionRevision",
+        "stepUpChallengeId",
+        "stepUpExpiresAt"
+      ],
+      "allowedDecision": "ALLOWED only; every other value or extra/missing field denies",
+      "noMetadataRule": "The endpoint neither receives nor returns connector, mapping, legal-entity, field-decision, artifact, payload, run or cursor data."
+    },
+    "v57NormalChallengeCandidateException": {
+      "routeContractKey": "route.hcm.operations.workforce-ingestion.action",
+      "profileKey": "workforce-ingestion-executor",
+      "profileActiveAccessModes": [
+        "ELEVATED"
+      ],
+      "rule": "Only for this exact v57 route/profile, ProductSurfaceStepUpRouteResolver, ProductAuthorizationAuthorityAdapter and ProductSurfaceStepUpChallengeService may resolve an ELEVATED-only profile as a NORMAL-session challenge candidate so the user can obtain or refresh step-up evidence. Candidate resolution is not command authorization, does not return ALLOWED, does not bypass feature/app/capability/duty/purpose requirements and cannot populate owner HcmPepContext authority.",
+      "finalDecision": "The receipt-first verification endpoint re-evaluates current authority and requires ELEVATED plus fresh HIGH assurance before returning ALLOWED.",
+      "isolation": "Every other route/profile retains its current access-mode selection and challenge behavior byte-for-byte semantically; no generic ELEVATED-from-NORMAL fallback is allowed."
+    },
+    "controllerAndOwnerOrderExactly": [
+      "verify the signed OWNER_RECEIPT_AUTH_REQUIRED handoff evidence and parse the exact closed request body and exact allowed headers; reject unknown fields and forbidden authority inputs without receipt, Auth verification, object, artifact or payload access",
+      "reserve or read the durable receipt by exactly trusted tenant, on-behalf-of subject, originating action and Idempotency-Key; freeze the canonical request hash and immutable receipt authority metadata; same tuple plus different hash returns 409",
+      "if the same-hash receipt is terminal, return the immutable original receipt immediately without marker replay binding, new marker consumption or Auth call; otherwise atomically bind or safely replace marker evidence in result_reference.hrm012Authority by the sealed CAS rules",
+      "after the receipt and hash outcome is durable and marker replay CAS passes, call the exact trusted Auth verification endpoint; re-evaluate feature plus app first, exact hcm.integration.workforce-ingestion.execute plus HRIS_DUTY_INTEGRATION_EXECUTOR second, fixed HRIS_INTEGRATION purpose third and target-bound HIGH STEPUP-MGMT-HIGH-V1 last against objectRef, If-Match, raw Idempotency-Key and canonical body SHA-256; require its closed ALLOWED result",
+      "only after those decisions pass, resolve immutable trusted-tenant metadata for the exact objectRef and require resolved identity plus version to match objectRef, step-up target and If-Match",
+      "evaluate predicate.hcm-workforce-ingestion-scope.v1 over the resolved connector set and every derived legal entity; empty, stale, mixed-tenant, unknown or partial coverage denies",
+      "evaluate INTEGRATION_METADATA and REDACTED_PAYLOAD field decisions using the revisions frozen on the receipt",
+      "only after all prior stages pass may the owner fetch artifact or payload bytes, resolve a published mapping, create a run or item, advance a cursor or perform a business mutation"
+    ],
+    "stepUpFailureRule": "For the exact HRM-012 ACTION, missing, weak, malformed, stale, wrong-target or wrong-version step-up is returned by the trusted post-receipt Auth verification call only after durable same-tuple receipt reserve-or-read and canonical hash comparison, and always before trusted metadata resolution, artifact or payload fetch, mapping lookup, run creation, cursor access or business mutation.",
+    "legacyCapabilityRule": "A request holding only legacy hcm.integration.execute may reach the receipt boundary only when every pre-controller check passes. It reserves or reads the same-tuple receipt and compares the hash, then fails the exact narrow capability decision before step-up validation and before metadata, artifact, payload, run, cursor or business access. Legacy authority is never accepted as fallback.",
+    "readRouteRule": "The PAGE and DATA routes retain their v1 read-only hcm.operations.people.view and workforce population/field projection semantics. Feature default-OFF applies before their controller or browser data call and availableActions remains empty."
+  },
+  "v57AndV266Expectations": {
+    "v57": {
+      "predecessorVersion": 56,
+      "predecessorChecksum": "4c1e82c4ac70f7bbc4aba7a41d77b8fd238da0478501cbdfed97ebd4b5dd0930",
+      "expectedCounts": {
+        "capabilities": 271,
+        "accessPolicies": 24,
+        "entitlementExpressions": 17,
+        "predicatePolicies": 83,
+        "routes": 1123,
+        "PAGE": 157,
+        "DATA": 339,
+        "ACTION": 627
+      },
+      "deltaExactly": "one narrow capability, one People-owned predicate, three route contracts and only the v1-sealed route-key appendages; v1 through v56 remain byte-preserved",
+      "checksum": "GENERATE_FROM_CANONICAL_CONTENT_AND_PIN_IN_REVIEW_EVIDENCE"
+    },
+    "authV266": {
+      "namespace": "dwp-auth-server only",
+      "exactPath": "dwp-auth-server/src/main/resources/db/migration/V266__declare_hris_hrm012_v57_authorization_seed.sql",
+      "supersedesV1NarrowRule": true,
+      "catalogOnlyExactDelta": {
+        "permission": {
+          "capabilityContractKey": "hcm.integration.workforce-ingestion.execute",
+          "permissionCode": "EXECUTE",
+          "permissionResourceKey": "ACTION.HRIS_INTEGRATION_EXECUTE",
+          "resolvedCapabilityCode": "ACTION.HRIS_INTEGRATION_EXECUTE:EXECUTE",
+          "action": "EXECUTE"
+        },
+        "tenantResourceTemplate": {
+          "resourceKey": "ACTION.HRIS_INTEGRATION_EXECUTE",
+          "resourceType": "ACTION",
+          "requiredEntitlement": "core.people",
+          "lifecycleState": "ACTIVE"
+        },
+        "responsibilityCatalog": {
+          "responsibilityCode": "HRIS_DUTY_INTEGRATION_EXECUTOR",
+          "displayName": "HRIS workforce ingestion executor",
+          "description": "Executes governed workforce ingestion only for an independently assigned connector and legal-entity population.",
+          "labelI18n": {
+            "ko": "인사 데이터 연계 실행 담당자",
+            "en": "HRIS workforce ingestion executor"
+          },
+          "sortOrder": 130,
+          "resourceType": "APP",
+          "riskTier": "L3",
+          "allowedPrincipalTypes": [
+            "USER",
+            "GROUP"
+          ],
+          "lifecycleState": "ACTIVE"
+        },
+        "scopedDutyCatalog": {
+          "dutyCode": "HRIS_DUTY_INTEGRATION_EXECUTOR",
+          "productKey": "hcm",
+          "legacyRoleCode": "HR_ADMIN",
+          "productResourceKey": "APP.HCM",
+          "resourceKey": "ACTION.HRIS_INTEGRATION_EXECUTE",
+          "auditPolicyException": false,
+          "riskTier": "HIGH",
+          "lifecycleState": "ACTIVE"
+        },
+        "scopedDutyCapability": {
+          "dutyCode": "HRIS_DUTY_INTEGRATION_EXECUTOR",
+          "capabilityContractKey": "hcm.integration.workforce-ingestion.execute",
+          "permissionResourceKey": "ACTION.HRIS_INTEGRATION_EXECUTE",
+          "permissionCode": "EXECUTE"
+        },
+        "appPreset": {
+          "presetCode": "HRIS_INTEGRATION_EXECUTOR",
+          "productKey": "hcm",
+          "productResourceKey": "APP.HCM",
+          "responsibilityCode": "APP_CONFIG_ADMIN",
+          "riskTier": "HIGH",
+          "lifecycleState": "ACTIVE",
+          "version": 1,
+          "dutyCode": "HRIS_DUTY_INTEGRATION_EXECUTOR",
+          "sortOrder": 10
+        },
+        "effectiveDutyView": "CREATE OR REPLACE auth_effective_scoped_duties by preserving every V265 branch and predicate exactly and adding only one OR branch whose complete tuple is duty HRIS_DUTY_INTEGRATION_EXECUTOR, product hcm, product resource APP.HCM, resource ACTION.HRIS_INTEGRATION_EXECUTE, capability hcm.integration.workforce-ingestion.execute and resolved code ACTION.HRIS_INTEGRATION_EXECUTE:EXECUTE. No broad HRIS duty, role, app or action wildcard is allowed.",
+        "tenantResources": "Materialize com_resources only from the active ACTION.HRIS_INTEGRATION_EXECUTE tenant resource template for existing tenants, using the established catalog-resource pattern. This is resource availability, not a permission grant, responsibility, duty assignment, preset assignment, feature enrollment or activation.",
+        "authorizationRelease": "one product-surfaces v57 DRAFT seed-release row with generated checksum and automatic_import_enabled FALSE",
+        "featurePolicy": "one HRIS_HRM_DATA_QUALITY_WORKBENCH policy at minimum bundle v57, baseline OFF, owner HRM, plus only the three v1-sealed PAGE/DATA/ACTION route owner and binding rows",
+        "canonicalAppSelection": "For accepted app entitlement evidence use APP.HCM:VIEW when both APP.HCM:VIEW and APP.HRIS:VIEW are accepted; otherwise use the single accepted enum value. This selection is deterministic and does not broaden either entitlement."
+      },
+      "preservationRule": "All existing com_permissions rows, resource templates, responsibility and duty catalogs, preset catalogs, auth_effective_scoped_duties branches, seed releases, feature policies and route bindings remain semantically unchanged. V266 is idempotent catalog readiness and adds no wildcard, legacy hcm.integration.execute mapping or second V266 outside dwp-auth-server.",
+      "featureBaseline": "OFF",
+      "automaticImportEnabled": false,
+      "tenantAssignmentRows": 0,
+      "tenantEnrollmentRows": 0,
+      "tenantActivationRows": 0,
+      "grants": 0,
+      "rule": "V266 creates catalog and policy readiness only. It creates no scoped-duty assignment, responsibility assignment, preset assignment, tenant enrollment, tenant activation, grant or business data."
+    },
+    "isolatedFixtureClarification": "Implementation and migration tests may create transaction-scoped isolated test fixtures for allowed/denied cases and must remove or roll them back. Such fixtures are not production enrollment, do not alter the artifact tenantEnrollmentRows value of zero and cannot be emitted by V266."
+  },
+  "exactImplementationPathAllowlistAfterNewV2Token": {
+    "backendCanonicalGeneratorFixtureAndTests": [
+      "contracts/product-authorization/product-surfaces-v1.yaml",
+      "contracts/product-authorization/pilot-fixtures.v1.yaml",
+      "contracts/product-authorization/product-surfaces-v1.bundle-v57.json",
+      "contracts/product-authorization/product-surfaces-v1.json",
+      "contracts/product-authorization/product-surfaces-v1.index.json",
+      "contracts/product-authorization/pilot-fixtures.v1.generated.json",
+      "scripts/generate-product-authorization-contracts.py",
+      "scripts/generate-product-authorization-fixtures.py",
+      "scripts/tests/test_product_authorization_v57.py",
+      "scripts/tests/test_product_authorization_fixture_schema.py"
+    ],
+    "backendGeneratedServiceProjections": [
+      "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v57.generated.json",
+      "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.generated.json",
+      "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.index.generated.json",
+      "dwp-people-server/src/main/resources/product-authorization/hcm-people-pep-v57.generated.json",
+      "dwp-time-server/src/main/resources/product-authorization/hcm-time-pep-v57.generated.json",
+      "dwp-platform-server/src/main/resources/product-authorization/hcm-platform-pep-v57.generated.json",
+      "dwp-payroll-server/src/main/resources/product-authorization/hcm-payroll-pep-v57.generated.json"
+    ],
+    "coreOwnerReceiptContractAndTests": [
+      "dwp-core/src/main/java/com/dwp/core/security/Hrm012OwnerReceiptAuthorityContract.java",
+      "dwp-core/src/main/java/com/dwp/core/security/Hrm012OwnerReceiptAuthorityVerifier.java",
+      "dwp-core/src/test/java/com/dwp/core/security/Hrm012OwnerReceiptAuthorityVerifierTest.java"
+    ],
+    "authCatalogRuntimeDecisionEvidenceAndTests": [
+      "dwp-auth-server/src/main/resources/db/migration/V266__declare_hris_hrm012_v57_authorization_seed.sql",
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/config/ProductSurfaceInternalSecurityConfig.java",
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/controller/ProductSurfaceAuthorityController.java",
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/controller/Hrm012ReceiptFirstStepUpVerificationController.java",
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/dto/ProductSurfaceAuthorityDtos.java",
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/dto/Hrm012ReceiptFirstStepUpDtos.java",
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationReleaseLineage.java",
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationContractValidator.java",
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationGateTopologyValidator.java",
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationIdentityEvidenceService.java",
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ScopedAdminDutyEvidenceService.java",
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationAuthoritySupport.java",
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationDecisionSupport.java",
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationAuthorityAdapter.java",
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductSurfaceAuthorityService.java",
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductSurfaceStepUpRouteResolver.java",
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductSurfaceStepUpChallengeService.java",
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/service/Hrm012OwnerReceiptAuthorityEvidenceService.java",
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/service/Hrm012ReceiptFirstStepUpVerificationService.java",
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/tenantfeatureactivation/TenantFeatureActivationRepository.java",
+      "dwp-auth-server/src/main/resources/application.yml",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/config/ProductAuthorizationSeedLoaderTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/config/ProductSurfaceInternalSecurityConfigTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/controller/ProductSurfaceAuthorityControllerTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/controller/Hrm012ReceiptFirstStepUpVerificationControllerTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/repository/TenantFeatureActivationV266MigrationContractTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/tenantfeatureactivation/TenantFeatureActivationV266PostgresTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationContractReleaseLineageTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationReleaseLineageTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationV57ContractTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationHcmAuthorityAdapterTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationAuthorityAdapterTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductSurfaceAuthorityServiceTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductSurfaceStepUpRouteResolverTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductSurfaceStepUpChallengeServiceTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationIdentityEvidenceServiceHrm012Test.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ScopedAdminDutyEvidenceServiceHrm012Test.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/Hrm012OwnerReceiptAuthorityEvidenceServiceTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/Hrm012ReceiptFirstStepUpVerificationServiceTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationTenantFeatureActivationTest.java"
+    ],
+    "gatewayDecisionAggregationFilterAndTests": [
+      "dwp-gateway/src/main/java/com/dwp/gateway/productsurface/ProductSurfaceAuthorityClient.java",
+      "dwp-gateway/src/main/java/com/dwp/gateway/productsurface/ProductSurfaceContextAggregationService.java",
+      "dwp-gateway/src/main/java/com/dwp/gateway/productsurface/ProductSurfaceContextDtos.java",
+      "dwp-gateway/src/main/java/com/dwp/gateway/productsurface/GeneratedProductSurfaceCandidateCatalog.java",
+      "dwp-gateway/src/main/java/com/dwp/gateway/filter/ProductSurfaceDecisionContextFilter.java",
+      "dwp-gateway/src/test/java/com/dwp/gateway/productsurface/ProductSurfaceContextAggregationServiceTest.java",
+      "dwp-gateway/src/test/java/com/dwp/gateway/productsurface/GeneratedProductSurfaceCandidateCatalogTest.java",
+      "dwp-gateway/src/test/java/com/dwp/gateway/ProductSurfaceDecisionContextFilterTest.java",
+      "dwp-gateway/src/test/java/com/dwp/gateway/Hrm012GatewayAuthorityTest.java",
+      "dwp-gateway/src/test/java/com/dwp/gateway/productsurface/TenantFeatureActivationV266RouteParityTest.java"
+    ],
+    "peopleRegistryFilterScopeAndFocusedTests": [
+      "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmV3PepRegistry.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmScopeSelectionValidator.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmProductSurfacePepFilter.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/security/Hrm012OwnerReceiptAuthorityContext.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/security/Hrm012OwnerReceiptAuthorityEvidenceVerifier.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/security/Hrm012ReceiptFirstStepUpDtos.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/security/Hrm012ReceiptFirstStepUpClient.java",
+      "dwp-people-server/src/main/resources/application.yml",
+      "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmV3PepRegistryTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmScopeSelectionValidatorHrm012Test.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmProductSurfacePepFilterTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/security/Hrm012OwnerReceiptAuthorityEvidenceVerifierTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/security/Hrm012ReceiptFirstStepUpClientTest.java"
+    ],
+    "frontendExistingSixSynchronizationPaths": [
+      "scripts/product-authorization-fixture-versions.mjs",
+      "architecture/product-surface-authorization.v1.json",
+      "architecture/product-page-routes.v1.json",
+      "apps/dwp/src/routes/product-surface-authorization.generated.ts",
+      "apps/dwp/src/routes/product-route-contract-source.test.ts",
+      "apps/dwp/src/routes/product-route-contracts.generated.test.ts"
+    ],
+    "frontendPilotFixtureGeneratedPaths": [
+      "architecture/pilot-fixtures.v1.generated.json",
+      "libs/shared-utils/src/test-utils/pilot-authorization-fixtures.generated.ts"
+    ],
+    "frontendExactV52ConsumerRuntimeAndTests": [
+      "apps/dwp/src/features/hris/administration/operations/model/hris-operations-contract.ts",
+      "apps/dwp/src/features/hris/administration/operations/testing/hris-operations-contract.test.ts",
+      "apps/dwp/src/features/hris/shell/navigation-policy/hris-navigation-policy-runtime.tsx",
+      "apps/dwp/src/features/hris/shell/navigation-policy/hris-navigation-policy-runtime.test.ts"
+    ],
+    "frontendBrowserFirewallSourceAndTest": [
+      "e2e/support/hris-w1-browser-firewall-contract.mjs",
+      "apps/dwp/src/routes/hris-w1-browser-firewall-contract.test.ts"
+    ]
+  },
+  "futureModuleOwnerPathReservationNotInCentralAllowlist": {
+    "requiredAuthority": "A separate HRIS-HRM worktree receipt, active People V60 lease and executable module token issued only after central admission",
+    "paths": [
+      "dwp-people-server/src/main/java/com/dwp/services/people/integration/Hrm012WorkforceIngestionController.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/integration/Hrm012WorkforceIngestionDtos.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/integration/Hrm012WorkforceIngestionAuthority.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/integration/Hrm012CommandReceiptRepository.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/integration/Hrm012WorkforceIngestionService.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/integration/WorkforceIngestionControllerAuthorityTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/integration/WorkforceIngestionAuthorizationTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/integration/WorkforceIngestionIdempotencyTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/integration/WorkforceIngestionReceiptReplayTest.java"
+    ],
+    "authorizedNow": false
+  },
+  "frontendExpectedSynchronization": {
+    "registryVersions": "append 53, 54, 55, 56 and 57 while preserving 1 through 52 checksums and counts",
+    "latestVersion": 57,
+    "latestRouteCounts": {
+      "all": 1123,
+      "PAGE": 157,
+      "DATA": 339,
+      "ACTION": 627
+    },
+    "officialFrontendPageRoutes": 157,
+    "draftFrontendPageRoutes": 71,
+    "registeredFrontendPageRoutes": 228,
+    "officialHcmPageRoutes": 64,
+    "browserFirewallHcmPageRoutes": 64,
+    "sixSuccessorHcmPageTuplesExactly": [
+      {
+        "bundleVersion": 53,
+        "routeContractKey": "route.hcm.operations.contracts-compensation-basis.page",
+        "routeId": "hcm.operations.contracts-compensation-basis",
+        "pattern": "/hr/operations/people/contracts-compensation-basis",
+        "productId": "hcm",
+        "surfaceId": "hcm.operations"
+      },
+      {
+        "bundleVersion": 54,
+        "routeContractKey": "route.hcm.configuration.statutory.page",
+        "routeId": "hcm.configuration.statutory",
+        "pattern": "/hr/settings/statutory",
+        "productId": "hcm",
+        "surfaceId": "hcm.management"
+      },
+      {
+        "bundleVersion": 54,
+        "routeContractKey": "route.hcm.operations.pay-tax-social-insurance.page",
+        "routeId": "hcm.operations.pay-tax-social-insurance",
+        "pattern": "/hr/operations/payroll/tax-social-insurance",
+        "productId": "hcm",
+        "surfaceId": "hcm.operations"
+      },
+      {
+        "bundleVersion": 55,
+        "routeContractKey": "route.hcm.configuration.settings-performance.page",
+        "routeId": "hcm.management.settings-performance",
+        "pattern": "/hr/settings/performance",
+        "productId": "hcm",
+        "surfaceId": "hcm.management"
+      },
+      {
+        "bundleVersion": 55,
+        "routeContractKey": "route.hcm.operations.performance-forms-scales.page",
+        "routeId": "hcm.operations.performance-forms-scales",
+        "pattern": "/hr/operations/performance/forms-scales",
+        "productId": "hcm",
+        "surfaceId": "hcm.operations"
+      },
+      {
+        "bundleVersion": 57,
+        "routeContractKey": "route.hcm.operations.people-data-quality.page",
+        "routeId": "hcm.operations.people-data-quality",
+        "pattern": "/hr/operations/people/data-quality",
+        "productId": "hcm",
+        "surfaceId": "hcm.operations"
+      }
+    ],
+    "routeParityRule": "All six v53-v57 HCM PAGE tuples above, including exactly one HRM-012 tuple and no v56 PAGE delta, are present exactly once in the synchronized registry, official page source and router source. The firewall contains all 64 official HCM PAGE tuples. DATA and ACTION never become browser routes.",
+    "v52ConsumerCompatibilityRule": "Both HRIS operations and HRIS navigation-policy runtimes replace hard-coded registry version equality with version >= 52 compatibility while preserving their exact v52 route tuple, capability, purpose, surface, projection and checksum-derived invariants. Tests prove the HRM-009 personal requests and operations certificates-documents PAGE tuples remain exact at v57; no latest-version upgrade may widen either tuple or treat a missing tuple as compatible.",
+    "retainedHrm009TuplesExactly": [
+      {
+        "routeContractKey": "route.hcm.personal.requests.page",
+        "routeId": "hcm.personal.requests",
+        "pattern": "/hr/me/requests",
+        "productId": "hcm",
+        "surfaceId": "hcm.personal"
+      },
+      {
+        "routeContractKey": "route.hcm.operations.certificates-documents.page",
+        "routeId": "hcm.operations.certificates-documents",
+        "pattern": "/hr/operations/people/certificates-documents",
+        "productId": "hcm",
+        "surfaceId": "hcm.operations"
+      }
+    ],
+    "defaultOffBrowserRule": "Registry and firewall recognition do not mount an HRM-012 menu or content page. Without an enabled feature decision the browser performs zero HRM-012 PAGE, DATA or ACTION calls."
+  },
+  "targetedVerificationCommands": {
+    "policy": "RUN_EACH_NEW_TARGET_GROUP_ONCE; AFTER_A_FAILURE RERUN ONLY THE SMALLEST AFFECTED TARGET; NO REPOSITORY-WIDE SUITE UNLESS A FOCUSED RESULT PROVES IT NECESSARY",
+    "backendGenerator": [
+      "python3 scripts/generate-product-authorization-contracts.py --check",
+      "python3 scripts/generate-product-authorization-fixtures.py --check",
+      "python3 -m unittest scripts.tests.test_product_authorization_v57 scripts.tests.test_product_authorization_fixture_schema"
+    ],
+    "core": [
+      "./gradlew :dwp-core:test --tests '*Hrm012OwnerReceiptAuthorityVerifierTest'"
+    ],
+    "auth": [
+      "./gradlew :dwp-auth-server:test --tests '*TenantFeatureActivationV266MigrationContractTest' --tests '*TenantFeatureActivationV266PostgresTest' --tests '*ProductAuthorizationSeedLoaderTest' --tests '*ProductAuthorizationV57ContractTest' --tests '*ProductAuthorizationHcmAuthorityAdapterTest' --tests '*ProductAuthorizationAuthorityAdapterTest' --tests '*ProductAuthorizationContractReleaseLineageTest' --tests '*ProductAuthorizationReleaseLineageTest' --tests '*ProductAuthorizationIdentityEvidenceServiceHrm012Test' --tests '*ScopedAdminDutyEvidenceServiceHrm012Test' --tests '*ProductAuthorizationTenantFeatureActivationTest' --tests '*ProductSurfaceInternalSecurityConfigTest' --tests '*ProductSurfaceAuthorityControllerTest' --tests '*ProductSurfaceAuthorityServiceTest' --tests '*ProductSurfaceStepUpRouteResolverTest' --tests '*ProductSurfaceStepUpChallengeServiceTest' --tests '*Hrm012OwnerReceiptAuthorityEvidenceServiceTest' --tests '*Hrm012ReceiptFirstStepUpVerificationControllerTest' --tests '*Hrm012ReceiptFirstStepUpVerificationServiceTest'"
+    ],
+    "gateway": [
+      "./gradlew :dwp-gateway:test --tests '*Hrm012GatewayAuthorityTest' --tests '*ProductSurfaceDecisionContextFilterTest' --tests '*ProductSurfaceContextAggregationServiceTest' --tests '*GeneratedProductSurfaceCandidateCatalogTest' --tests '*TenantFeatureActivationV266RouteParityTest'"
+    ],
+    "people": [
+      "./gradlew :dwp-people-server:test --tests '*HcmV3PepRegistryTest' --tests '*HcmScopeSelectionValidatorHrm012Test' --tests '*HcmProductSurfacePepFilterTest' --tests '*Hrm012OwnerReceiptAuthorityEvidenceVerifierTest' --tests '*Hrm012ReceiptFirstStepUpClientTest'"
+    ],
+    "frontendSynchronization": [
+      "yarn authorization:sync",
+      "yarn fixtures:sync",
+      "yarn authorization:check ../dwp-backend/contracts/product-authorization",
+      "yarn fixtures:check",
+      "yarn vitest run apps/dwp/src/routes/product-route-contract-source.test.ts apps/dwp/src/routes/product-route-contracts.generated.test.ts apps/dwp/src/routes/hris-w1-browser-firewall-contract.test.ts apps/dwp/src/features/hris/administration/operations/testing/hris-operations-contract.test.ts apps/dwp/src/features/hris/shell/navigation-policy/hris-navigation-policy-runtime.test.ts"
+    ],
+    "evidence": [
+      "git diff --check",
+      "exact changed-path allowlist",
+      "v1 through v56 byte-preservation hashes",
+      "v57 source/generated checksum and count parity",
+      "Auth V266 fresh plus V265-to-V266 catalog-only default-OFF and zero assignment/enrollment/activation proof",
+      "exact HRM-012 signed OWNER_RECEIPT_AUTH_REQUIRED handoff and receipt-first negative matrix",
+      "frontend route count, router, firewall and default-OFF zero-call parity",
+      "unresolved P0/P1/P2 count"
+    ]
+  },
+  "implementationGate": {
+    "requiredOrder": [
+      "independent review this exact v2 plus inherited v1 and all pinned authorities with zero unresolved P0, P1 or P2",
+      "commit and push the reviewed v2 authority carrier to frontend origin/dwp-dev without the invalidated uncommitted receipt or token drafts",
+      "materialize fresh clean central backend and frontend worktrees at the exact post-v2-carrier dwp-dev heads",
+      "issue a new hash-bound receipt and executable central implementation token that name v2 and include every exact path and command above",
+      "implement, focus-test, independently review and no-ff admit the central v57, Auth V266, Gateway, People registry and frontend synchronization changes",
+      "only then materialize separate HRIS-HRM module worktrees, activate People V60 and issue the module executable token"
+    ],
+    "invalidation": [
+      "any authority hash, byte count, carrier commit or worktree base differs",
+      "either invalidated uncommitted v1-based draft is presented as executable authority",
+      "V57, Auth V266 or People V60 has another owner or high-water collision",
+      "a changed source or test path is outside this v2 allowlist",
+      "pre-controller logic evaluates step-up, narrow capability, duty or purpose for the exact exception route",
+      "default-OFF or zero-enrollment can enter the controller or issue the signed handoff marker",
+      "the signed marker is treated as an allow decision or bypasses post-receipt owner decisions",
+      "a production assignment, enrollment, activation, artifact provider, scheduler or broker is added"
+    ]
+  },
+  "authority": {
+    "centralDesignCorrectionSealed": true,
+    "v1SemanticsInherited": true,
+    "v1ImplementationPathAndProtocolSuperseded": true,
+    "invalidV1BasedDraftReceiptAndTokenMayExecute": false,
+    "independentReviewComplete": false,
+    "authorityCarrierCommittedAndPushed": false,
+    "centralWorktreesMaterialized": false,
+    "newV2ExecutableTokenIssued": false,
+    "centralSourceAuthoringAuthorizedNow": false,
+    "moduleSourceAuthoringAuthorizedNow": false,
+    "peopleV60LeaseActive": false,
+    "featureDefaultOff": true,
+    "tenantEnrollmentCount": 0,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0
+  },
+  "nonClaims": [
+    "This v2 implements, generates, tests, commits or pushes source.",
+    "This v2 activates V266 or People V60, mounts an HRM-012 menu or page, enrolls a tenant or creates any production assignment.",
+    "Isolated test fixtures change the sealed production tenantEnrollmentCount of zero.",
+    "OWNER_RECEIPT_AUTH_REQUIRED is an authorization allow decision.",
+    "Missing or invalid step-up may pass artifact, payload, metadata, mapping, run, cursor or business access.",
+    "BASE-TFR-HRM-012, Batch-05, R7 or HRIS is complete."
+  ],
+  "nextAction": "INDEPENDENTLY_REVIEW_THIS_EXACT_V2_AND_INHERITED_V1_AUTHORITIES; AFTER_ZERO_UNRESOLVED_P0_P1_P2_COMMIT_AND_PUSH_ONLY_THE_V2_AUTHORITY_CARRIER, REMOVE_OR_EXCLUDE_THE_INVALIDATED_UNCOMMITTED_V1_BASED_DRAFTS, MATERIALIZE_FRESH_CLEAN_CENTRAL_WORKTREES_AND_ISSUE_NEW_V2_HASH_BOUND_RECEIPT_AND_EXECUTABLE_TOKEN"
+}
