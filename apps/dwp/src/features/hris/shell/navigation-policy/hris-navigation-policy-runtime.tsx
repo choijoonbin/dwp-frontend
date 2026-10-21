@@ -25,7 +25,10 @@ import {
   HRIS_NAVIGATION_TOPOLOGY_SUCCESSOR_REVISION,
   HRIS_NAVIGATION_TOPOLOGY_SUCCESSOR_SHA256,
 } from '../model/hris-navigation-topology-successor';
-import { PRODUCT_AUTHORIZATION_REGISTRY_REVISION } from '../../../../routes/product-surface-authorization.generated';
+import {
+  PRODUCT_AUTHORIZATION_PAGE_PROJECTIONS,
+  PRODUCT_AUTHORIZATION_REGISTRY_REVISION,
+} from '../../../../routes/product-surface-authorization.generated';
 import {
   canonicalHrisWorkbench,
   hrisWorkbenchIdForView,
@@ -88,10 +91,32 @@ export { HRIS_LEGAL_ENTITY_SELECTOR_PARAM, selectHrisLegalEntitySelector };
 
 function currentHrisV52PageAuthorityRouteBinding(nodeId: string, route: string) {
   const binding = hrisV52PageAuthorityRouteBinding(nodeId, route);
+  const expectedRouteId =
+    binding?.routeContractKey === 'route.hcm.personal.requests.page'
+      ? 'hcm.personal.requests'
+      : binding?.routeContractKey === 'route.hcm.operations.certificates-documents.page'
+        ? 'hcm.operations.certificates-documents'
+        : undefined;
+  const exactProjection = binding
+    ? PRODUCT_AUTHORIZATION_PAGE_PROJECTIONS.filter(
+        (projection) => projection.routeContractKey === binding.routeContractKey
+      )
+    : [];
   if (
     !binding ||
-    PRODUCT_AUTHORIZATION_REGISTRY_REVISION.version !== binding.minimumBundleVersion ||
-    PRODUCT_AUTHORIZATION_REGISTRY_REVISION.checksum !== binding.authorizationRegistryChecksum
+    PRODUCT_AUTHORIZATION_REGISTRY_REVISION.version < binding.minimumBundleVersion ||
+    (PRODUCT_AUTHORIZATION_REGISTRY_REVISION.version === binding.minimumBundleVersion &&
+      PRODUCT_AUTHORIZATION_REGISTRY_REVISION.checksum !== binding.authorizationRegistryChecksum) ||
+    binding.authorizationRegistryChecksum !==
+      'b33fbf968e71f97b09fa497fdfad7d2f6854199170b79fd1602a0ea604977346' ||
+    exactProjection.length !== 1 ||
+    exactProjection[0]?.routeKind !== 'PAGE' ||
+    exactProjection[0]?.subjectType !== 'PRODUCT' ||
+    exactProjection[0]?.productId !== 'hcm' ||
+    exactProjection[0]?.navigationContextId !== binding.surfaceId ||
+    exactProjection[0]?.surfaceId !== binding.surfaceId ||
+    exactProjection[0]?.routeId !== expectedRouteId ||
+    exactProjection[0]?.pattern !== binding.path
   ) {
     return undefined;
   }

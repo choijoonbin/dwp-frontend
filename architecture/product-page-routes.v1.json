@@ -402,6 +402,20 @@
       "surfaceId": "hcm.management"
     },
     {
+      "routeContractKey": "route.hcm.configuration.settings-performance.page",
+      "routeId": "hcm.management.settings-performance",
+      "pattern": "/hr/settings/performance",
+      "productId": "hcm",
+      "surfaceId": "hcm.management"
+    },
+    {
+      "routeContractKey": "route.hcm.configuration.statutory.page",
+      "routeId": "hcm.configuration.statutory",
+      "pattern": "/hr/settings/statutory",
+      "productId": "hcm",
+      "surfaceId": "hcm.management"
+    },
+    {
       "routeContractKey": "route.hcm.configuration.workflow.page",
       "routeId": "hcm.management.workflow",
       "pattern": "/hr/settings/workflow",
@@ -472,6 +486,13 @@
       "surfaceId": "hcm.operations"
     },
     {
+      "routeContractKey": "route.hcm.operations.contracts-compensation-basis.page",
+      "routeId": "hcm.operations.contracts-compensation-basis",
+      "pattern": "/hr/operations/people/contracts-compensation-basis",
+      "productId": "hcm",
+      "surfaceId": "hcm.operations"
+    },
+    {
       "routeContractKey": "route.hcm.operations.certificates-documents.page",
       "routeId": "hcm.operations.certificates-documents",
       "pattern": "/hr/operations/people/certificates-documents",
@@ -528,6 +549,13 @@
       "surfaceId": "hcm.operations"
     },
     {
+      "routeContractKey": "route.hcm.operations.pay-tax-social-insurance.page",
+      "routeId": "hcm.operations.pay-tax-social-insurance",
+      "pattern": "/hr/operations/payroll/tax-social-insurance",
+      "productId": "hcm",
+      "surfaceId": "hcm.operations"
+    },
+    {
       "routeContractKey": "route.hcm.operations.people-appointments.page",
       "routeId": "hcm.operations.people-appointments",
       "pattern": "/hr/operations/people/appointments",
@@ -535,9 +563,23 @@
       "surfaceId": "hcm.operations"
     },
     {
+      "routeContractKey": "route.hcm.operations.people-data-quality.page",
+      "routeId": "hcm.operations.people-data-quality",
+      "pattern": "/hr/operations/people/data-quality",
+      "productId": "hcm",
+      "surfaceId": "hcm.operations"
+    },
+    {
       "routeContractKey": "route.hcm.operations.people.page",
       "routeId": "hcm.operations.people",
       "pattern": "/hr/operations/people",
+      "productId": "hcm",
+      "surfaceId": "hcm.operations"
+    },
+    {
+      "routeContractKey": "route.hcm.operations.performance-forms-scales.page",
+      "routeId": "hcm.operations.performance-forms-scales",
+      "pattern": "/hr/operations/performance/forms-scales",
       "productId": "hcm",
       "surfaceId": "hcm.operations"
     },

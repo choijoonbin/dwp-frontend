@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  PRODUCT_AUTHORIZATION_PAGE_PROJECTIONS,
+  PRODUCT_AUTHORIZATION_REGISTRY_REVISION,
+  PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS,
+} from '../../../../../routes/product-surface-authorization.generated';
+
+import {
   HRIS_OPERATIONS_API_CONTRACTS,
   HRIS_OPERATIONS_FEATURE,
   hrisOperationOwnerDeepLink,
@@ -29,7 +35,10 @@ describe('SYS-002 HRIS operations contract', () => {
         method: 'GET',
         path: '/api/platform/v1/hris/workbench/settings-operations',
         routeContractKey: 'route.hcm.configuration.settings-operations.page',
+        surfaceId: 'hcm.management',
+        capability: 'hcm.configuration.workbench.view',
         purpose: 'HRIS_CONFIGURATION',
+        responseSchemaKey: 'route.hcm.configuration.settings-operations.page.response.v1',
         targetBindingKinds: ['CONFIG_SCOPE'],
       },
       list: {
@@ -37,7 +46,10 @@ describe('SYS-002 HRIS operations contract', () => {
         method: 'GET',
         path: '/api/platform/v1/admin/hris/operations/exceptions',
         routeContractKey: 'route.hcm.operations.exception.data',
+        surfaceId: 'hcm.operations',
+        capability: 'hcm.operations.exception.view',
         purpose: 'HRIS_OPERATIONS',
+        responseSchemaKey: 'route.hcm.operations.exception.data.response.v1',
         targetBindingKinds: ['TARGET_POPULATION'],
       },
       detail: {
@@ -45,7 +57,10 @@ describe('SYS-002 HRIS operations contract', () => {
         method: 'GET',
         path: '/api/platform/v1/admin/hris/operations/exceptions/{exceptionId}',
         routeContractKey: 'route.hcm.operations.exception-detail.data',
+        surfaceId: 'hcm.operations',
+        capability: 'hcm.operations.exception.view',
         purpose: 'HRIS_OPERATIONS',
+        responseSchemaKey: 'route.hcm.operations.exception-detail.data.response.v1',
         targetBindingKinds: ['TARGET_POPULATION', 'OBJECT'],
       },
       receipt: {
@@ -56,6 +71,79 @@ describe('SYS-002 HRIS operations contract', () => {
       },
     });
     expect(JSON.stringify(HRIS_OPERATIONS_API_CONTRACTS)).not.toMatch(/POST|PUT|PATCH|DELETE/u);
+  });
+
+  it('retains the exact v52 operations and HRM-009 PAGE tuples on a successor registry', () => {
+    const operationContractKeys = new Set<string>([
+      HRIS_OPERATIONS_API_CONTRACTS.entry.routeContractKey,
+      HRIS_OPERATIONS_API_CONTRACTS.list.routeContractKey,
+      HRIS_OPERATIONS_API_CONTRACTS.detail.routeContractKey,
+    ]);
+    expect(PRODUCT_AUTHORIZATION_REGISTRY_REVISION.version).toBeGreaterThanOrEqual(52);
+    expect(
+      PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS.filter((projection) =>
+        operationContractKeys.has(projection.routeContractKey)
+      ).map((projection) => ({
+        routeContractKey: projection.routeContractKey,
+        routeKind: projection.routeKind,
+        navigationContextId: projection.navigationContextId,
+        surfaceId: projection.surfaceId,
+        routeId: projection.routeId,
+        pattern: projection.pattern,
+        gatewayBindings: projection.gatewayBindings,
+      }))
+    ).toEqual([
+      {
+        routeContractKey: 'route.hcm.configuration.settings-operations.page',
+        routeKind: 'PAGE',
+        navigationContextId: 'hcm.management',
+        surfaceId: 'hcm.management',
+        routeId: 'hcm.management.settings-operations',
+        pattern: '/hr/settings/operations',
+        gatewayBindings: [
+          { method: 'GET', path: '/api/platform/v1/hris/workbench/settings-operations' },
+        ],
+      },
+      {
+        routeContractKey: 'route.hcm.operations.exception-detail.data',
+        routeKind: 'DATA',
+        navigationContextId: 'hcm.operations',
+        surfaceId: 'hcm.operations',
+        routeId: null,
+        pattern: null,
+        gatewayBindings: [
+          {
+            method: 'GET',
+            path: '/api/platform/v1/admin/hris/operations/exceptions/{exceptionId}',
+          },
+        ],
+      },
+      {
+        routeContractKey: 'route.hcm.operations.exception.data',
+        routeKind: 'DATA',
+        navigationContextId: 'hcm.operations',
+        surfaceId: 'hcm.operations',
+        routeId: null,
+        pattern: null,
+        gatewayBindings: [
+          { method: 'GET', path: '/api/platform/v1/admin/hris/operations/exceptions' },
+        ],
+      },
+    ]);
+    expect(
+      PRODUCT_AUTHORIZATION_PAGE_PROJECTIONS.filter(
+        (projection) =>
+          projection.routeContractKey === 'route.hcm.operations.certificates-documents.page'
+      )
+    ).toEqual([
+      expect.objectContaining({
+        navigationContextId: 'hcm.operations',
+        productId: 'hcm',
+        surfaceId: 'hcm.operations',
+        routeId: 'hcm.operations.certificates-documents',
+        pattern: '/hr/operations/people/certificates-documents',
+      }),
+    ]);
   });
 
   it('accepts the closed entry, list and redacted detail projections', () => {
@@ -84,7 +172,7 @@ describe('SYS-002 HRIS operations contract', () => {
     });
   });
 
-  it('derives an owner deep link only from the exact v49 PAGE registry', () => {
+  it('derives an owner deep link only from exact PAGE tuples retained by a successor registry', () => {
     expect(hrisOperationOwnerDeepLink(OWNER_ROUTE_KEY, EXCEPTION_ID)).toBe(
       `/hr/settings/reference-data?focus=${EXCEPTION_ID}`
     );
