@@ -1,0 +1,148 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-sys006-module-source-integration-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-04-SYS006-MODULE-SOURCE-INTEGRATION-20261021-R1",
+  "recordedAt": "2026-10-21T12:51:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "EXACT_SYS006_MODULE_SOURCE_AND_EVIDENCE_INTEGRATED_PUSHED_V333_CONSUMED_DEFAULT_OFF_ZERO_ENROLLMENT_UNBOUND_UNMOUNTED",
+  "sliceId": "BASE-TFR-SYS-006",
+  "moduleSession": "HRIS-SYS",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_RECEIPT_ID_AND_SHA256"
+  },
+  "authority": {
+    "preRuntimeCentralIntegration": {
+      "path": "sys-006-central-integration-receipt.v1.json",
+      "sha256": "5522b16f9af9972aa0e3e3359cc527b8801555de8022e9863544c15d9f50794b",
+      "bytes": 14114,
+      "carrierCommit": "5f3e2675cb507549f539df3e6db27b218e907171",
+      "carrierTree": "8259f5a5bb467c1c5bd354e8d3552943df401d09",
+      "scope": "CENTRAL_CONTRACT_AND_AUTHORIZATION_PREREQUISITE_ONLY"
+    },
+    "moduleResult": {
+      "path": "../r7-batch-04-module-results-r1/base-tfr-sys-006/module-result-evidence.v1.json",
+      "sha256": "d3bfb203f683640c58c6d2bcd68d9c0e0fabdd6ecff64becdf93a33302c9ae4a",
+      "bytes": 6603,
+      "carrierCommit": "4013b1888b69b0babee13c00e0053ce145f9b466",
+      "carrierTree": "7fda22b6074584b97640c42d390420b8a65d9a61",
+      "requiredState": "SYS006_EXACT_MODULE_SOURCE_BRANCHES_PUSHED_FIFTEEN_OF_FIFTEEN_ACCEPTANCE_AND_GOLDEN_PASS_INDEPENDENT_SOURCE_AUDIT_ZERO_P0_P1_P2_CENTRAL_ADMISSION_PENDING_DEFAULT_OFF_ZERO_ENROLLMENT_ZERO_CREDIT"
+    }
+  },
+  "integratedHeads": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "centralPrerequisiteHead": "02c6901d53b7bd5c131189e76d3661ff0d13ee13",
+      "sourceAndIntegratedHead": "75ac11873e6e4a6c070d47e849d81063aaa88800",
+      "sourceAndIntegratedTree": "cb02f8d3b09eed67762fb03e57af6badd8568fe4",
+      "strategy": "FAST_FORWARD_EXACT_SOURCE_HEAD",
+      "sourceIsAncestor": true,
+      "admittedPathCount": 25,
+      "outsideAuthorizedRootCount": 0,
+      "admittedBlobMismatchCount": 0,
+      "mergeConflicts": 0,
+      "automaticConflictResolution": false,
+      "originExact": true,
+      "clean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "centralBaseline": "08da1ba272978182185c83da0751ae2b70660c81",
+      "sourceHeadBeforeEvidence": "3495162540ef92a2eccc51ea2449c0a287c0ff85",
+      "sourceTreeBeforeEvidence": "b34ce99cb5f5a1a93cb78e2d29746741f633619a",
+      "sourceAndEvidenceIntegratedHead": "4013b1888b69b0babee13c00e0053ce145f9b466",
+      "sourceAndEvidenceIntegratedTree": "7fda22b6074584b97640c42d390420b8a65d9a61",
+      "strategy": "FAST_FORWARD_EXACT_EVIDENCE_HEAD",
+      "sourceIsAncestor": true,
+      "sourcePathCount": 8,
+      "evidencePathCount": 4,
+      "admittedPathCount": 12,
+      "outsideAuthorizedRootCount": 0,
+      "admittedBlobMismatchCount": 0,
+      "mergeConflicts": 0,
+      "automaticConflictResolution": false,
+      "originExactBeforeReceiptDraft": true,
+      "cleanBeforeReceiptDraft": true
+    }
+  },
+  "postMergeVerification": {
+    "gitIdentityAndAncestry": "PASS",
+    "backendIntegratedTreeEqualsExactSourceTree": true,
+    "frontendIntegratedTreeEqualsExactEvidenceTree": true,
+    "independentModuleResultReview": "GO_P0_0_P1_0_P2_0",
+    "moduleTestsRerun": false,
+    "repositoryWideSuiteRun": false,
+    "reason": "The exact source and evidence heads were already independently reviewed and pushed. This receipt verifies Git identity, provenance and bounded rollout state without repeating passing tests."
+  },
+  "effectiveModuleResult": {
+    "acceptanceCriteria": {
+      "required": 15,
+      "passed": 15,
+      "failed": 0,
+      "skipped": 0
+    },
+    "goldenScenarios": {
+      "required": 15,
+      "passed": 15,
+      "failed": 0,
+      "skipped": 0
+    },
+    "reviewFindings": {
+      "remainingP0": 0,
+      "remainingP1": 0,
+      "remainingP2": 0
+    },
+    "effectiveV333": {
+      "path": "dwp-platform-server/src/main/resources/db/migration/V333__create_hris_automation_control_plane.sql",
+      "sha256": "213a3cbde404b056b7d60b7791b59b0c8a0581248e7d775382f7092940d63c2d",
+      "bytes": 76604,
+      "createdTables": 8,
+      "forceRlsTables": 8,
+      "reusedSharedStores": 5,
+      "precedence": "ADMITTED_MODULE_SOURCE"
+    }
+  },
+  "migrationLeaseClosure": {
+    "leaseId": "HRIS-WAVE7-R7-BATCH-04-PLATFORM-MAIN-V333-SYS006-20261020-R1",
+    "stream": "PLATFORM_MAIN",
+    "version": "V333",
+    "sliceId": "BASE-TFR-SYS-006",
+    "state": "CONSUMED_CENTRALLY_INTEGRATED",
+    "activeLeaseCountAfterIntegration": 0,
+    "platformMigrationHighWater": "V333"
+  },
+  "rolloutBoundary": {
+    "featureKey": "HRIS_AUTOMATION_CONTROL_PLANE",
+    "runtimeDefault": "OFF",
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "tenantEnrollmentCount": 0,
+    "frontendMounted": false,
+    "productionHandlerBindingCount": 0,
+    "productionProviderBindingCount": 0,
+    "productionScheduleCount": 0,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionIncrement": 0
+  },
+  "authorityAfterReceipt": {
+    "centralPrerequisiteIntegrated": true,
+    "moduleSourceAndEvidenceIntegrated": true,
+    "additionalCentralCodeGateRequired": false,
+    "sequencingExitMayBeIssued": true,
+    "routeOrMenuMountAuthorized": false,
+    "featureOrTenantActivationAuthorized": false,
+    "fullBusinessSliceCompletionAuthorized": false,
+    "laterLaneSourceAuthoringAuthorized": false
+  },
+  "nonClaims": [
+    "BASE-TFR-SYS-006 is fully complete as a production business slice.",
+    "The automation child is mounted in the shell, route table, sidebar or menu.",
+    "HRIS_AUTOMATION_CONTROL_PLANE is enabled or any tenant is enrolled.",
+    "A production handler, provider or schedule is bound or active.",
+    "BASE-TFR-TIM-003 has an owner packet, worktree, start token, migration lease or source authority.",
+    "Batch-04, R7 or HRIS is complete."
+  ],
+  "nextAction": "Independently review this exact source/evidence admission, commit and push it, then issue a separate SYS-006 sequencing-exit receipt before beginning only TIM-003 semantic closure."
+}
