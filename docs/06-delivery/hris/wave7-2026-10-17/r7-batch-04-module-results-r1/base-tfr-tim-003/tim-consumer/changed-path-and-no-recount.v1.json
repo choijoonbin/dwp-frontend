@@ -1,0 +1,58 @@
+{
+  "schema": "dwp.hris.wave7.changed-path-and-no-recount.v1",
+  "evidenceId": "HRIS-WAVE7-R7-BATCH-04-BASE-TFR-TIM-003-TIM-PATHS-R1",
+  "issuedAt": "2026-10-21T17:36:00+09:00",
+  "issuedBy": "HRIS-TIM",
+  "sliceId": "BASE-TFR-TIM-003",
+  "backend": {
+    "branch": "codex/hris-wave7-r7-batch04-tim-003-tim-backend-20261021-r1",
+    "baseCommit": "fd6aae41e3eec9569f8aa6451090beeade556703",
+    "baseTree": "5d8667a5bf810c80d7c9a688688dd1f4d41151cf",
+    "resultCommit": "92b0c59455288aa7abdacf4ba6976c0d0ff82a11",
+    "resultTree": "7020953515319688b998777ed73cae166dd678be",
+    "originExact": true,
+    "clean": true,
+    "changedPathCount": 45,
+    "addedPathCount": 42,
+    "modifiedPathCount": 3,
+    "insertions": 9082,
+    "deletions": 9,
+    "pathOnlyManifestSha256": "d100f255ac82c08d3762ba8961a19471bf5d5ff064383ff54862e779ef7dba84",
+    "nameStatusManifestSha256": "985e632b8e167740083883c2f3703b98a6c0412fc86e04f799fe64538e533292",
+    "outsideWritableBoundaryCount": 0,
+    "changeGroups": [
+      "shared inbox strict registration and owner-snapshot offset recovery primitives with focused tests",
+      "TIM-003 employment/absence consumer, owner client, projection CAS store, read guard, reconciler, deferred activation and operator recovery",
+      "exact TIME_MAIN V14 projection migration plus isolated PostgreSQL and contract tests",
+      "exact bounded Time runtime routine allowlist update and test"
+    ]
+  },
+  "frontend": {
+    "moduleWorktree": null,
+    "sourceChangesAuthorized": false,
+    "sourceChangedPathCount": 0,
+    "routeMenuShellOrI18nChanged": false
+  },
+  "migration": {
+    "stream": "TIME_MAIN",
+    "version": "V14",
+    "exactPath": "dwp-time-server/src/main/resources/db/migration/V14__tim_base_tfr_tim_003_employment_absence_projection.sql",
+    "sha256": "d442c9f6315cf01d60601694499d0cf79eff1d9f7d784b0fb162ec2a3aef66eb",
+    "bytes": 18812,
+    "predecessorManifest": {
+      "files": 13,
+      "bytes": 538,
+      "sha256": "777a24aa1cc6081010bb6512d9022cd319f5b3dce34dab7dd75f6ad281512924"
+    },
+    "historicalMigrationChanged": false,
+    "secondMigrationAdded": false,
+    "sharedLedgerSchemaChanged": false,
+    "dataBackfillAdded": false
+  },
+  "noRecount": {
+    "businessCompletionIncrement": 0,
+    "portfolioStateChanged": false,
+    "reason": "This result is default-off, has zero enrolled tenants and is not centrally admitted or activated. It supplies tested TIM source and V14 only."
+  },
+  "forbiddenChangesObserved": []
+}

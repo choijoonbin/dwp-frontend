@@ -1,0 +1,85 @@
+{
+  "schema": "dwp.hris.wave7.acceptance-results.v1",
+  "evidenceId": "HRIS-WAVE7-R7-BATCH-04-BASE-TFR-TIM-003-TIM-ACCEPTANCE-R1",
+  "issuedAt": "2026-10-21T17:36:00+09:00",
+  "issuedBy": "HRIS-TIM",
+  "sliceId": "BASE-TFR-TIM-003",
+  "phase": "TIM_CONSUMER_PROJECTION_AND_RECOVERY",
+  "authority": {
+    "ownerPacketPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-start-r1/owner-packets/base-tfr-tim-003.tim-consumer.owner-packet.v1.json",
+    "ownerPacketSha256": "51f1211d078ca98265a162548dec98d580c1d033a4cbafd9e9aa7e4861ffc5a1",
+    "startTokenPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-start-r1/tokens/base-tfr-tim-003.tim-consumer.start-token.v1.json",
+    "startTokenSha256": "2b62b3ca67859d5971f58335f7e3de2c22f65d360b11bc97c77029daa6adfdc1",
+    "acceptanceCount": 12,
+    "hrmIntegratedCriteriaPreservedWithoutRecount": true,
+    "weakeningOrOmission": false
+  },
+  "results": [
+    {
+      "id": "TIM003-AC01",
+      "phaseResult": "PRESERVED_INTEGRATED_HRM_PREREQUISITE",
+      "evidence": "XCON-004 remains byte-identical at SHA-256 db71f1919d741c38453ca715d3a18ac1cf54d606975c9095d9a2d83be082c8aa; the TIM phase adds no field or sensitive fact."
+    },
+    {
+      "id": "TIM003-AC02",
+      "phaseResult": "PASS",
+      "evidence": "The consumer enforces the exact dwp.hris.people.employment-changed.v1 type, urn:dwp:people:hris:employment source, WORK_RELATIONSHIP aggregate identity and relationship-revision ordering."
+    },
+    {
+      "id": "TIM003-AC03",
+      "phaseResult": "PASS",
+      "evidence": "Envelope subject, aggregate id and sequence must equal the XCON-004 relationship id and new aggregate version. Invalid type, unsupported major, malformed correlation or envelope/body mismatch is atomically finalized DEAD without releasing relationship blockers."
+    },
+    {
+      "id": "TIM003-AC04",
+      "phaseResult": "PRESERVED_INTEGRATED_HRM_PREREQUISITE",
+      "evidence": "The admitted HRM canonical publication and legacy compatibility evidence are unchanged; all five preserve-exact source pins match the executable token."
+    },
+    {
+      "id": "TIM003-AC05",
+      "phaseResult": "PASS",
+      "evidence": "The fail-closed Time owner client consumes the exact XCON-027 current-business-date relationship snapshot, validates nested assignment revisions and refuses revision regression or non-current owner facts."
+    },
+    {
+      "id": "TIM003-AC06",
+      "phaseResult": "PASS",
+      "evidence": "Workload, tenant, grant, context, issuer, audience, subject, key purpose, method, path, query, correlation, purpose, projection, date, zone, revision, digest, JWS and expiry bindings are closed and current-authority revalidation occurs after owner I/O and again before transactional finalization."
+    },
+    {
+      "id": "TIM003-AC07",
+      "phaseResult": "PASS",
+      "evidence": "The implementation reuses sys_domain_event_inbox, sys_domain_event_offsets, sys_domain_event_replay_audit, sys_audit_outbox and the dead-letter view; it creates no private delivery ledger and makes no shared-ledger schema change."
+    },
+    {
+      "id": "TIM003-AC08",
+      "phaseResult": "PASS",
+      "evidence": "Strict digest registration preserves same-id/same-digest idempotency, quarantines same-id/different-digest evidence, handles older offsets as no-ops, supports covered contiguous fast paths only for current eligible authority, and blocks reads for unresolved or gap inbox state."
+    },
+    {
+      "id": "TIM003-AC09",
+      "phaseResult": "PASS",
+      "evidence": "TIME_MAIN V14 creates exactly one abs_employment_relationship_projections table, one structural-validation function, one identity/version trigger and two indexes with forced RLS, exact least privilege, closed state pairs, bounded generated assignment JSON and projection-version CAS."
+    },
+    {
+      "id": "TIM003-AC10",
+      "phaseResult": "PASS",
+      "evidence": "Owner recovery never regresses relationship revision and atomically couples projection CAS, exact offset recovery, GAP DEFERRED-only or zero-inbox baseline settlement, replay audit and service audit. Replay-pending, DEAD, payload-conflict and gap-origin quarantine evidence cannot be snapshot-laundered."
+    },
+    {
+      "id": "TIM003-AC11",
+      "phaseResult": "PASS",
+      "evidence": "The read guard rejects non-CURRENT, expired, non-current-date, authority-mismatched, unresolved-inbox or structurally corrupt facts; fenced baseline/refresh scheduling, malformed-row isolation, reconciliation and allowlisted operator quarantine recovery are covered without leave, balance or approval mutation."
+    },
+    {
+      "id": "TIM003-AC12",
+      "phaseResult": "PASS",
+      "evidence": "Runtime assembly is conditional on a default-false switch, enrollment defaults to the empty set, fail-closed adapters are used, and no route, menu, production broker binding, tenant activation, customer database execution or business-completion credit is introduced."
+    }
+  ],
+  "phaseSummary": {
+    "pass": 10,
+    "preservedIntegratedHrmPrerequisite": 2,
+    "failed": 0,
+    "claim": "TIM_CONSUMER_SOURCE_OBLIGATIONS_COMPLETE_CENTRAL_ADMISSION_PENDING_ACTIVATION_DEFERRED"
+  }
+}

@@ -1,0 +1,171 @@
+{
+  "schema": "dwp.hris.wave7.targeted-verification.v1",
+  "evidenceId": "HRIS-WAVE7-R7-BATCH-04-BASE-TFR-TIM-003-TIM-VERIFY-R1",
+  "issuedAt": "2026-10-21T17:36:00+09:00",
+  "issuedBy": "HRIS-TIM",
+  "policy": "Run each affected TIM-003 target once, rerun only the smallest failed target, and execute one final bounded 14-class lane gate; do not rerun a repository-wide suite per correction.",
+  "boundedGateBeforeAdmissionReview": {
+    "commit": "2f0d929d016f5c6831da8418e95cfb750c3e9700",
+    "classes": 14,
+    "tests": 63,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "result": "PASS"
+  },
+  "admissionBoundaryCorrectionVerification": {
+    "commit": "92b0c59455288aa7abdacf4ba6976c0d0ff82a11",
+    "changedProductionAndTestPaths": 5,
+    "compileTestJava": "DWP_CORE_AND_DWP_TIME_SERVER_PASS",
+    "classes": 2,
+    "tests": 23,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "result": "PASS",
+    "reason": "The admission correction only restores generic complete/fail/quarantine semantics and moves TIM-003 active-lease and payload-conflict preservation into allowlisted strict primitives; only the two directly affected named classes were rerun."
+  },
+  "results": [
+    {
+      "target": "DomainEventInboxOffsetRecoveryTest",
+      "tests": 5,
+      "result": "PASS"
+    },
+    {
+      "target": "DomainEventInboxStrictRegistrationTest",
+      "tests": 11,
+      "passCommit": "92b0c59455288aa7abdacf4ba6976c0d0ff82a11",
+      "result": "PASS"
+    },
+    {
+      "target": "TimeDatabaseMigrationConfigurationTest",
+      "tests": 2,
+      "result": "PASS"
+    },
+    {
+      "target": "Xcon004EmploymentChangedV1ConsumerContractTest",
+      "tests": 4,
+      "result": "PASS"
+    },
+    {
+      "target": "EmploymentAbsenceProjectionMigrationContractTest",
+      "tests": 1,
+      "result": "PASS"
+    },
+    {
+      "target": "EmploymentAbsenceProjectionMigrationPostgresTest",
+      "tests": 3,
+      "result": "PASS"
+    },
+    {
+      "target": "EmploymentAbsenceProjectionTenantIsolationTest",
+      "tests": 1,
+      "result": "PASS"
+    },
+    {
+      "target": "EmploymentAbsenceProjectionOrderingTest",
+      "tests": 12,
+      "passCommit": "92b0c59455288aa7abdacf4ba6976c0d0ff82a11",
+      "result": "PASS"
+    },
+    {
+      "target": "EmploymentAbsenceOwnerRecoveryTest",
+      "tests": 4,
+      "result": "PASS"
+    },
+    {
+      "target": "EmploymentAbsenceOwnerErrorClassificationTest",
+      "tests": 3,
+      "result": "PASS"
+    },
+    {
+      "target": "EmploymentAbsenceOwnerBaselineTest",
+      "tests": 6,
+      "result": "PASS"
+    },
+    {
+      "target": "EmploymentAbsenceGapOffsetRecoveryTest",
+      "tests": 3,
+      "result": "PASS"
+    },
+    {
+      "target": "EmploymentAbsenceUnresolvedInboxReadGuardTest",
+      "tests": 7,
+      "result": "PASS"
+    },
+    {
+      "target": "EmploymentAbsenceInboxProjectionReconcilerTest",
+      "tests": 6,
+      "result": "PASS"
+    },
+    {
+      "target": "dwp-core and dwp-time-server compileTestJava",
+      "result": "PASS"
+    },
+    {
+      "target": "isolated PostgreSQL clean V14 and V13-to-V14 upgrade",
+      "result": "PASS"
+    },
+    {
+      "target": "forced RLS, missing-context and cross-tenant denial",
+      "result": "PASS"
+    },
+    {
+      "target": "exact runtime table, column and routine privilege matrix",
+      "result": "PASS"
+    },
+    {
+      "target": "closed state, owner bundle, assignment JSON, CAS and identity-seal constraints",
+      "result": "PASS"
+    },
+    {
+      "target": "git diff --check",
+      "result": "PASS"
+    },
+    {
+      "target": "exact writable-boundary path audit",
+      "changedPaths": 45,
+      "outsideBoundary": 0,
+      "result": "PASS"
+    },
+    {
+      "target": "five preserve-exact source pins",
+      "mismatches": 0,
+      "result": "PASS"
+    }
+  ],
+  "independentReviews": [
+    {
+      "scope": "Time consumer, owner trust, projection, read guard, reconciliation and operator recovery",
+      "p0": 0,
+      "p1": 0,
+      "p2": 0,
+      "result": "GO"
+    },
+    {
+      "scope": "shared-core strict registration and offset recovery",
+      "p0": 0,
+      "p1": 0,
+      "p2": 0,
+      "result": "GO"
+    },
+    {
+      "scope": "TIME_MAIN V14, RLS, grants, CAS and migration configuration",
+      "p0": 0,
+      "p1": 0,
+      "p2": 0,
+      "result": "GO"
+    }
+  ],
+  "nonGateExecution": {
+    "observed": true,
+    "description": "One combined Gradle command applied the test filter incorrectly to the dwp-core task and executed 115 core tests. One unrelated pre-existing CoreMessageBundleTest failed.",
+    "tim003ChangedPathFailure": false,
+    "usedForAcceptance": false,
+    "sourceChangedInResponse": false,
+    "rerunPerformed": false,
+    "correctiveAction": "Commands were split and all subsequent verification was limited to the exact affected classes."
+  },
+  "repositoryWideSuiteRun": false,
+  "fullModuleSuiteUsedAsGate": false
+}

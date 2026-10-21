@@ -1,0 +1,168 @@
+{
+  "schema": "dwp.hris.wave7.module-result-evidence.v1",
+  "evidenceId": "HRIS-WAVE7-R7-BATCH-04-BASE-TFR-TIM-003-TIM-MODULE-RESULT-R1",
+  "issuedAt": "2026-10-21T17:36:00+09:00",
+  "issuedBy": "HRIS-TIM",
+  "sliceId": "BASE-TFR-TIM-003",
+  "resultState": "TIM003_TIM_CONSUMER_SOURCE_COMPLETE_BACKEND_BRANCH_PUSHED_V14_AUTHORED_TARGETED_GATE_PASS_INDEPENDENT_REVIEW_GO_CENTRAL_ADMISSION_PENDING_DEFAULT_OFF_ZERO_ENROLLMENT_ZERO_CREDIT",
+  "authority": {
+    "semanticDisposition": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-start-r1/semantic-dispositions/base-tfr-tim-003.semantic-disposition.v1.json",
+      "sha256": "60a21b6da8b97f2a30055404f167e52bb9fc813520d6c277c32a514494585ff9",
+      "bytes": 107850
+    },
+    "semanticReview": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-start-r1/semantic-dispositions/base-tfr-tim-003.semantic-review.v1.json",
+      "sha256": "25dd051cf12ba433f572e83dd1f090018cf25534a8f997c57166827ca6d3f01d",
+      "bytes": 4292
+    },
+    "ownerPacket": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-start-r1/owner-packets/base-tfr-tim-003.tim-consumer.owner-packet.v1.json",
+      "sha256": "51f1211d078ca98265a162548dec98d580c1d033a4cbafd9e9aa7e4861ffc5a1",
+      "bytes": 26264
+    },
+    "materializationReceipt": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-start-r1/worktree-materialization-receipts/base-tfr-tim-003.tim-consumer.worktree-materialization-receipt.v1.json",
+      "sha256": "599424225253b274b13a2741e0dea288b73f1fa789f27f9c7897ee7ef9481c46",
+      "bytes": 7378
+    },
+    "activeMigrationLease": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-start-r1/migration-lease-tim003-v14-activation.v1.json",
+      "sha256": "29684ada3b578aac2cc58a9efe9f16d33d5d5cca3fc07f8f4a80c17843e1689f",
+      "bytes": 11237,
+      "state": "ACTIVE_EXCLUSIVE_TIME_MAIN_V14"
+    },
+    "startToken": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-start-r1/tokens/base-tfr-tim-003.tim-consumer.start-token.v1.json",
+      "sha256": "2b62b3ca67859d5971f58335f7e3de2c22f65d360b11bc97c77029daa6adfdc1",
+      "bytes": 28131,
+      "executable": true
+    },
+    "centralEvidenceCarrierBeforeDraft": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "454a1b1f2dabd80ad3f43c661c45484256c2db2f",
+      "tree": "723f0026bbfe6010fc14a57c1a9f767d1785c035",
+      "originExact": true,
+      "committedTreeCleanBeforeDraft": true
+    }
+  },
+  "sourcePins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "codex/hris-wave7-r7-batch04-tim-003-tim-backend-20261021-r1",
+      "base": "fd6aae41e3eec9569f8aa6451090beeade556703",
+      "baseTree": "5d8667a5bf810c80d7c9a688688dd1f4d41151cf",
+      "commit": "92b0c59455288aa7abdacf4ba6976c0d0ff82a11",
+      "tree": "7020953515319688b998777ed73cae166dd678be",
+      "originExact": true,
+      "clean": true,
+      "upstreamAhead": 0,
+      "upstreamBehind": 0
+    },
+    "frontend": null
+  },
+  "implementation": {
+    "sharedLedger": [
+      "Strict registration uses the identical canonical serializer and digest path for begin, preserves original payload evidence on conflict and finalizes invalid input atomically.",
+      "Owner-snapshot offset recovery supports only exact GAP DEFERRED settlement or zero-inbox OWNER_BASELINE settlement with CAS and replay-audit binding.",
+      "No competing delivery ledger or shared-ledger schema change is introduced."
+    ],
+    "timeConsumer": [
+      "The XCON-004 consumer enforces the exact transport, aggregate identity, subject, sequence, closed profile metadata and malformed-correlation rejection.",
+      "Projection processing covers idempotency, conflict quarantine, ordering, gap/backfill, current covered fast path, current refresh and crash-safe reconciliation.",
+      "Read fencing combines tenant advisory locking, projection version stability and unresolved-inbox checks; corrupt stored data is quarantined without exposing facts.",
+      "Allowlisted operator recovery requires HRIS_TIM_EMPLOYMENT_PROJECTION_RECOVER, exact CAS and structured audit and cannot release event, replay, conflict, DEAD or gap-origin evidence."
+    ],
+    "ownerTrust": [
+      "SVC-PEP-HRM-007 calls are bound to current workload grant and tenant context, exact request proof, current business date, minimum revision and closed no-cache responses.",
+      "Content, scope and evidence digests, RS256 JWS, response key, dates, TTL and current authority are revalidated after remote I/O and before transactional finalization.",
+      "Missing production authorities, proof issuer, transport, response keys, audit backing or recovery scheduling remains fail closed."
+    ],
+    "migration": {
+      "stream": "TIME_MAIN",
+      "version": "V14",
+      "path": "dwp-time-server/src/main/resources/db/migration/V14__tim_base_tfr_tim_003_employment_absence_projection.sql",
+      "sha256": "d442c9f6315cf01d60601694499d0cf79eff1d9f7d784b0fb162ec2a3aef66eb",
+      "bytes": 18812,
+      "tableCount": 1,
+      "validationFunctionCount": 1,
+      "identityAndVersionTriggerCount": 1,
+      "indexCount": 2,
+      "forcedRls": true,
+      "historicalMigrationEdit": false
+    },
+    "frontendRuntime": "NO_FRONTEND_WORKTREE_NO_ROUTE_NO_MENU_NO_COMPONENT_CHANGE",
+    "activation": "DEFAULT_OFF_ZERO_ENROLLED_TENANTS"
+  },
+  "verification": {
+    "boundedGateBeforeAdmissionReview": "COMMIT_2F0D929D_14_CLASSES_63_OF_63_PASS_FAILURE_ERROR_SKIP_0",
+    "admissionBoundaryCorrection": "COMMIT_92B0C594_COMPILE_TEST_JAVA_PASS_STRICT_REGISTRATION_11_OF_11_ORDERING_12_OF_12_PASS",
+    "currentNamedTestInventory": "14_CLASSES_68_TESTS_WITH_23_DIRECTLY_AFFECTED_TESTS_RERUN_ON_EXACT_FINAL_HEAD",
+    "compileTestJava": "DWP_CORE_AND_DWP_TIME_SERVER_PASS",
+    "isolatedPostgresql": "CLEAN_V14_AND_V13_TO_V14_RLS_PRIVILEGE_JSON_CAS_IDENTITY_PASS",
+    "gitDiffCheck": "PASS",
+    "changedPathBoundary": "45_CHANGED_0_OUTSIDE",
+    "preserveExactPins": "5_OF_5_MATCH",
+    "repositoryWideSuiteRun": false,
+    "fullModuleSuiteUsedAsGate": false,
+    "independentReview": "LATEST_COMPLETE_REVIEW_GO_P0_0_P1_0_P2_0",
+    "nonGateExecutionDisclosure": "ONE_MISFILTERED_CORE_COMMAND_EXECUTED_115_TESTS_WITH_ONE_UNRELATED_FAILURE_NOT_RERUN_NOT_USED_FOR_ACCEPTANCE_NO_SOURCE_RESPONSE"
+  },
+  "preserveExactPins": [
+    {
+      "path": "dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/Xcon004EmploymentChangedV1.java",
+      "sha256": "db71f1919d741c38453ca715d3a18ac1cf54d606975c9095d9a2d83be082c8aa"
+    },
+    {
+      "path": "dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/Xcon027EmploymentAbsenceSnapshotV1.java",
+      "sha256": "4890a268933a7853442d01ee801782c029c9ebaa7447168a82dee4a613bb928d"
+    },
+    {
+      "path": "dwp-core/src/main/java/com/dwp/core/event/DomainEventJson.java",
+      "sha256": "d0c72499e8ae888e30756d4cb49c0ca18151195edc468b293f023c2bfeb48f77"
+    },
+    {
+      "path": "dwp-core/src/main/java/com/dwp/core/event/DomainEventContractRegistry.java",
+      "sha256": "4a3f1a4efd8ac848a568937d6392187d39046e125024629ca57f5b65bd85f00e"
+    },
+    {
+      "path": "dwp-core/src/main/resources/db/migration/R__create_domain_event_delivery_ledger.sql",
+      "sha256": "e7123a27e6d35c991f8f49045f0f92205ff417bfbcf89a2b9a32f9ad0f479e42"
+    }
+  ],
+  "subordinateEvidence": [
+    {
+      "path": "acceptance-results.v1.json",
+      "sha256": "a56d65d63d57683f3007604654ea44ebfdab07da56f273c7f7043d6e51cb21ed",
+      "bytes": 5209
+    },
+    {
+      "path": "changed-path-and-no-recount.v1.json",
+      "sha256": "42d653e29b9d79bff3ab949264da232df8aab6972f1a0c804dcdb5ffb8866022",
+      "bytes": 2491
+    },
+    {
+      "path": "targeted-verification.v1.json",
+      "sha256": "ed304049902ff4cb89804e8e797b62e752d50bbe234689cdc1f8e83e448f7340",
+      "bytes": 4936
+    }
+  ],
+  "openGates": [
+    "CENTRAL_TIM_SOURCE_AND_EVIDENCE_ADMISSION",
+    "TIM_CLOSE_PERIOD_DEFINITION_PRODUCER",
+    "TIM_CLOSE_TRUSTED_OWNER_HEADER_ISSUER",
+    "PRODUCTION_OWNER_AUTHORITIES_SCHEDULER_AND_BROKER_BINDING",
+    "SEPARATE_FEATURE_ACTIVATION_AND_TENANT_ENROLLMENT_AUTHORITY"
+  ],
+  "nonClaims": [
+    "The exact backend candidate has been merged to dwp-dev by this evidence itself.",
+    "A frontend source worktree, route, shell, menu or component is implemented or admitted.",
+    "A production control-plane owner grant issuer, trusted header issuer, key binding, scheduler or broker binding exists.",
+    "Any producer, owner query, consumer or recovery worker is enabled or any tenant is enrolled.",
+    "Customer data, a customer database, production execution or release is authorized.",
+    "BASE-TFR-TIM-003, Batch-04, R7 or HRIS is complete."
+  ],
+  "decision": "TIM_MODULE_RESULT_READY_FOR_SEPARATE_CENTRAL_REVIEW_AND_ADMISSION",
+  "nextAction": "Commit and push this exact central evidence bundle, issue and commit a separate admission decision for backend commit 92b0c59455288aa7abdacf4ba6976c0d0ff82a11, then perform a conflict-free no-ff backend dwp-dev merge, verify all 45 admitted blobs and record a central integration receipt without rerunning module suites."
+}
