@@ -1,0 +1,205 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-04-sys006-sequencing-exit-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-04-SYS006-SEQUENCING-EXIT-20261021-R1",
+  "recordedAt": "2026-10-21T12:58:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "BATCH04_LANE_4_SYS006_SEQUENCING_EXIT_ACCEPTED_DEFAULT_OFF_ZERO_ENROLLMENT_ZERO_BUSINESS_CREDIT_TIM003_SEMANTIC_CLOSURE_NEXT",
+  "sliceId": "BASE-TFR-SYS-006",
+  "moduleSession": "HRIS-SYS",
+  "purpose": "Close only fixed Batch-04 lane order 4 after exact central prerequisite and module source/evidence integration. Preserve every activation, navigation, production binding and business-completion boundary, then permit only TIM-003 semantic closure as lane order 5.",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_RECEIPT_ID_AND_SHA256",
+    "predecessorMutation": "FORBIDDEN"
+  },
+  "authorityBasis": {
+    "batch04Preflight": {
+      "path": "../r7-batch-04-preflight-r1/semantic-dependency-migration-preflight.v1.json",
+      "sha256": "3fe2cb0cab1aa65fbe75f1b0d8d4a74f136be457aa2c324d262eb7503789cc1c",
+      "bytes": 17214,
+      "requiredState": "PREFLIGHT_COMPLETE_FIXED_ORDER_FIVE_CONDITIONAL_LANES_NO_PACKETS_NO_TOKENS_NO_LEASES_NO_SOURCE"
+    },
+    "per004SequencingExit": {
+      "path": "per-004-sequencing-exit-receipt.v1.json",
+      "sha256": "a25b77fe2030f1245f78ef05f4d2eecace04234c358d8e3482c32fad424ea2e0",
+      "bytes": 8720,
+      "carrierCommit": "9f6fa831cb72dde11f9370a80ee8dee7c126d882",
+      "carrierTree": "d13c29904fe31f86bc1ff0c2007b9d891ec9ef95",
+      "requiredState": "BATCH04_LANE_3_PER004_SEQUENCING_EXIT_ACCEPTED_DEFAULT_OFF_ZERO_ENROLLMENT_ZERO_BUSINESS_CREDIT_SYS006_SEMANTIC_CLOSURE_NEXT"
+    },
+    "moduleSourceIntegration": {
+      "path": "sys-006-module-source-integration-receipt.v1.json",
+      "sha256": "9f58af4b70a59f29faafa47ff687df5270304e2e5d93aff1d0f979246355ae0c",
+      "bytes": 6299,
+      "carrierCommit": "93ed2da0cf3ebbed6662ca735d0335bbca312dd7",
+      "carrierTree": "8cab2f6d41ed3472459e757e96af913b1dfe0a24",
+      "requiredState": "EXACT_SYS006_MODULE_SOURCE_AND_EVIDENCE_INTEGRATED_PUSHED_V333_CONSUMED_DEFAULT_OFF_ZERO_ENROLLMENT_UNBOUND_UNMOUNTED"
+    }
+  },
+  "acceptedLaneResult": {
+    "order": 4,
+    "sliceId": "BASE-TFR-SYS-006",
+    "moduleSession": "HRIS-SYS",
+    "centralPrerequisiteIntegrated": true,
+    "moduleSourceAndEvidenceIntegrated": true,
+    "centralAndModuleCommitsPushed": true,
+    "acceptanceCriteriaPassed": "15_OF_15",
+    "goldenScenariosPassed": "15_OF_15",
+    "remainingP0": 0,
+    "remainingP1": 0,
+    "remainingP2": 0,
+    "runtimeDefault": "OFF",
+    "tenantEnrollmentCount": 0,
+    "productionHandlerBindingCount": 0,
+    "productionProviderBindingCount": 0,
+    "productionScheduleCount": 0,
+    "frontendMountedRouteCount": 0,
+    "frontendMountedMenuCount": 0,
+    "fullBusinessSliceComplete": false,
+    "businessCompletionIncrement": 0,
+    "acceptedState": "INTEGRATED_DEFAULT_OFF_TECHNICAL_SLICE_WITH_EXPLICIT_ACTIVATION_NAVIGATION_PROVIDER_SCHEDULE_AND_BUSINESS_RESIDUALS"
+  },
+  "migrationClosure": {
+    "consumedLease": {
+      "leaseId": "HRIS-WAVE7-R7-BATCH-04-PLATFORM-MAIN-V333-SYS006-20261020-R1",
+      "stream": "PLATFORM_MAIN",
+      "version": "V333",
+      "sliceId": "BASE-TFR-SYS-006",
+      "state": "CONSUMED_CENTRALLY_INTEGRATED"
+    },
+    "activeMigrationLeaseCountAfterExit": 0,
+    "migrationHighWater": {
+      "PEOPLE_MAIN": "V59",
+      "PERFORMANCE": "V19",
+      "PAYROLL_MAIN": "V54",
+      "PLATFORM_MAIN": "V333",
+      "TIME_MAIN": "V13",
+      "AUTH_MAIN": "V265",
+      "NOTIFICATION_MAIN": "V35",
+      "APPROVAL_MAIN": "V58",
+      "PRODUCT_AUTHORIZATION_BUNDLE": "v56"
+    },
+    "nextLeaseIssued": false
+  },
+  "fixedOrderAfterExit": {
+    "closed": [
+      "BASE-TFR-HRM-011",
+      "BASE-TFR-PAY-003",
+      "BASE-TFR-PER-004",
+      "BASE-TFR-SYS-006"
+    ],
+    "next": "BASE-TFR-TIM-003",
+    "remainingAfterNext": [],
+    "reorderingAuthorized": false
+  },
+  "tim003NextBoundary": {
+    "order": 5,
+    "moduleSession": "HRIS-TIM",
+    "sliceKind": "NON_UI_SUPPORTING_SLICE",
+    "businessMeaning": "Employment absence facts remain People-owned and enter Time through the canonical minimized change contract.",
+    "semanticLineage": "TFR-TIM-003::TIM-LEAVE-ABSENCE::XCON-004|EVT-TIM:EmploymentChanged.v1",
+    "requiredDependencies": [
+      "DEP-001",
+      "DEP-002",
+      "DEP-003",
+      "DEP-007",
+      "DEP-016"
+    ],
+    "allowedNextWork": [
+      "seal XCON-004 and EmploymentChanged.v1 field minimization and versioning",
+      "seal stale-event rejection and owner-query recovery semantics",
+      "prove whether a Time-owned persistence delta exists beyond V13 before any separately authorized V14 reservation",
+      "independently review the semantic disposition before any packet, token, worktree, lease or source authority"
+    ],
+    "observedTimeMigrationHighWater": "V13",
+    "candidateVersionOnlyIfTimeOwnedSchemaDeltaIsProven": "V14",
+    "packetIssued": false,
+    "startTokenIssued": false,
+    "migrationLeaseIssued": false,
+    "worktreeMaterialized": false,
+    "sourceAuthoringAuthorized": false,
+    "requiredNextArtifact": "TIM003_APPEND_ONLY_SEMANTIC_DISPOSITION"
+  },
+  "carriedOpenGates": [
+    {
+      "gateId": "TIM_CLOSE_PERIOD_DEFINITION_PRODUCER",
+      "severity": "P0",
+      "state": "OPEN_EXTERNAL_SOURCE_AUTHORITY_GATE",
+      "effect": "BLOCKS_ACTIVATION_NOT_SEMANTIC_DOCUMENTATION"
+    },
+    {
+      "gateId": "TIM_CLOSE_TRUSTED_OWNER_HEADER_ISSUER",
+      "severity": "P0",
+      "state": "OPEN_BEFORE_ANY_TENANT_ENROLLMENT",
+      "effect": "BLOCKS_ENROLLMENT_NOT_SEMANTIC_DOCUMENTATION"
+    }
+  ],
+  "observedRepositoryPinsBeforeExitCarrier": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "75ac11873e6e4a6c070d47e849d81063aaa88800",
+      "tree": "cb02f8d3b09eed67762fb03e57af6badd8568fe4",
+      "originExact": true,
+      "clean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "93ed2da0cf3ebbed6662ca735d0335bbca312dd7",
+      "tree": "8cab2f6d41ed3472459e757e96af913b1dfe0a24",
+      "originExact": true,
+      "committedTreeCleanBeforeDraft": true,
+      "expectedUntrackedOnly": [
+        "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-central-admission-r1/sys-006-sequencing-exit-receipt.v1.json"
+      ]
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "originExact": true,
+      "clean": true
+    }
+  },
+  "portfolioAccounting": {
+    "universe": 86,
+    "retired": 2,
+    "active": 84,
+    "completedBeforeBatch04": 26,
+    "sys006BusinessCompletionIncrement": 0,
+    "completedAfterSys006Exit": 26,
+    "activeIncompleteAfterSys006Exit": 58
+  },
+  "verificationPolicyApplied": {
+    "boundedChecksOnly": true,
+    "repositoryWideSuiteRun": false,
+    "unaffectedPassingTargetRerun": false,
+    "jsonSyntaxCheckRequired": true,
+    "independentDocumentReviewRequiredBeforeCommit": true
+  },
+  "authority": {
+    "sys006SequencingExitAccepted": true,
+    "sys006FullBusinessSliceComplete": false,
+    "sys006BusinessCompletionIncrement": 0,
+    "tim003SemanticClosureMayBegin": true,
+    "tim003PacketTokenWorktreeLeaseOrSourceAuthorizedByThisReceipt": false,
+    "laterLaneWorkMayBeginBeforeTim003Exit": false,
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "batch04Complete": false,
+    "r7Complete": false
+  },
+  "decision": "CLOSE_ONLY_SYS006_SEQUENCE_LANE_WITH_ZERO_BUSINESS_CREDIT_AND_ADVANCE_ONLY_TO_TIM003_SEMANTIC_CLOSURE_WITH_V14_CONDITIONAL_ON_PROVEN_TIME_SCHEMA_DELTA",
+  "nonClaims": [
+    "BASE-TFR-SYS-006 is fully complete as a production business slice.",
+    "A production automation handler, provider, schedule, route, menu, feature or tenant was activated or enrolled.",
+    "BASE-TFR-TIM-003 received an owner packet, token, worktree, V14 lease or source authority.",
+    "Either inherited TIM P0 activation gate is closed.",
+    "Batch-04, R7 or HRIS is complete."
+  ],
+  "nextAction": "Perform one bounded TIM-003 semantic closure on the pinned canon and independently review it. Issue no packet, token, worktree, V14 lease or source authority until the disposition is separately admitted."
+}
