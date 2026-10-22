@@ -54,7 +54,7 @@ const HRIS_SHELL_WORKBENCHES = {
   'shell-home': 'HRIS home',
   'workbench-my-hr': 'My HR',
   'workbench-team': 'Team',
-  'workbench-hr-operations': 'People operations',
+  'workbench-hr-operations': 'People',
   'workbench-time': 'Time',
   'workbench-payroll': 'Payroll',
   'workbench-performance': 'Performance',

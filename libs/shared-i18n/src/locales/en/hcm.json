@@ -390,7 +390,7 @@
         "shell-home": { "label": "HRIS home" },
         "workbench-my-hr": { "label": "My HR" },
         "workbench-team": { "label": "Team" },
-        "workbench-hr-operations": { "label": "People operations" },
+        "workbench-hr-operations": { "label": "People" },
         "workbench-time": { "label": "Time" },
         "workbench-payroll": { "label": "Payroll" },
         "workbench-performance": { "label": "Performance" },

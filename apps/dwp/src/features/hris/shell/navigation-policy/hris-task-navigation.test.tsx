@@ -53,6 +53,8 @@ vi.mock('react-i18next', () => ({
         'navigation.taskPanel.explorerLabel': '전체 HR 업무 찾기',
         'navigation.taskPanel.explorerDescription':
           '즐겨찾기, 최근 업무와 진행 중 업무를 함께 확인합니다.',
+        'navigation.items.hcm.workbench-hr-operations.label': '인사',
+        'navigation.items.hcm.workbench-my-hr.label': '내 HR',
       };
       return Object.entries(variables ?? {}).reduce(
         (message, [name, value]) => message.replace(`{{${name}}}`, String(value)),
@@ -193,6 +195,9 @@ describe('HRIS progressive task navigation', () => {
     expect(html).not.toContain('업무 또는 메뉴 이름 검색');
     expect(html).not.toContain('>업무 메뉴<');
     expect(html).toContain('data-testid="hris-task-navigation-workbench-icon"');
+    expect(
+      new DOMParser().parseFromString(html, 'text/html').querySelector('h2')?.textContent
+    ).toBe('인사');
     expect(html).toContain('전체 HR 업무 찾기');
     expect(html).toContain('href="/hr/explore"');
     expect(html).toContain('scope=scope%3Ahcm%2Fpeople');
@@ -290,6 +295,43 @@ describe('HRIS progressive task navigation', () => {
     expect(sevenTaskHtml).toContain('data-navigation-group-treatment="card"');
     expect(sevenTaskHtml).toContain('data-testid="hris-task-group-count-');
     expect(sevenTaskHtml).toContain('업무 또는 메뉴 이름 검색');
+  });
+
+  it('uses the governed presentation label for both the panel title and search name', () => {
+    runtime.policy = {
+      mode: 'STATIC',
+      schemaVersion: null,
+      revisionPin: 'static',
+      authorityFreshUntil: null,
+      workbenches: [],
+      orderedNodeIds: [],
+      denialReason: null,
+    };
+    const nodes = canonicalHrisWorkbench('HRIS-WB-HR-OPERATIONS')!.groups.flatMap(
+      (group) => group.nodes
+    );
+    const paths = nodes.slice(0, 7).map((node) => node.routeAliases[0]!);
+    const html = renderToStaticMarkup(
+      <MemoryRouter initialEntries={[paths[0]!]}>
+        <ProductAreaAuthorizedNavigationPathsProvider paths={new Set(paths)}>
+          <HrisTaskNavigation
+            item={{
+              path: paths[0]!,
+              view: 'workbench-hr-operations',
+              icon: BriefcaseBusiness,
+              activePathPrefixes: paths,
+            }}
+            selected
+            compact={false}
+          />
+        </ProductAreaAuthorizedNavigationPathsProvider>
+      </MemoryRouter>
+    );
+    const parsed = new DOMParser().parseFromString(html, 'text/html');
+
+    expect(parsed.querySelector('h2')?.textContent).toBe('인사');
+    expect(parsed.querySelector('input')?.getAttribute('aria-label')).toBe('인사 업무 검색');
+    expect(html).not.toContain('>인사 운영<');
   });
 
   it('preserves sealed target query and hash while copying only a valid legal selector', () => {

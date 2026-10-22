@@ -54,6 +54,9 @@ test('R6 successor drives the seven-workbench shell and adjacent enterprise task
   await page.goto('/hr/operations');
   await expect(page.getByTestId('hcm-navigation-item-shell-home')).toBeVisible();
   await expect(page.locator('[data-testid^="hcm-navigation-item-workbench-"]')).toHaveCount(7);
+  const peopleOperationsTrigger = page.getByTestId('hcm-navigation-item-workbench-hr-operations');
+  await expect(peopleOperationsTrigger).toContainText('People');
+  await expect(peopleOperationsTrigger).not.toContainText('People operations');
   await expect(page.getByTestId('hcm-desktop-task-navigator')).toHaveCount(0);
   await expect(page.locator('[data-testid^="hris-task-navigation-workbench-"]')).toHaveCount(0);
   await expect(page.locator('a[href^="/hr/explore"]')).toHaveCount(0);
@@ -65,6 +68,11 @@ test('R6 successor drives the seven-workbench shell and adjacent enterprise task
     const representativePanel = page.getByTestId('hcm-desktop-task-navigator');
     await expect(representativePanel).toBeVisible();
     await expect(representativePanel.getByTestId(`hris-task-navigation-${view}`)).toBeVisible();
+    if (view === 'workbench-hr-operations') {
+      await expect(
+        representativePanel.getByRole('heading', { name: 'People', exact: true })
+      ).toBeVisible();
+    }
     await expect(
       representativePanel.locator('[data-testid^="hris-task-node-"]').first()
     ).toBeVisible();

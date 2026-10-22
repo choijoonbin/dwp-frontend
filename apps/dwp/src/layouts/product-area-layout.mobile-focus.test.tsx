@@ -572,7 +572,10 @@ describe('ProductAreaLayout child navigation focus contracts', () => {
       '[data-testid="hcm-mobile-task-navigator-header"]'
     )!;
     expect(header).not.toBeNull();
-    expect(header.querySelector('h2')?.textContent).toBe('navigation.items.hcm.old.label');
+    const mobileTitle = header.querySelector<HTMLElement>('h2')!;
+    expect(mobileTitle.textContent).toBe('navigation.items.hcm.old.label');
+    expect(window.getComputedStyle(mobileTitle).whiteSpace).toBe('normal');
+    expect(window.getComputedStyle(mobileTitle).overflowWrap).toBe('anywhere');
     const back = header.querySelector<HTMLButtonElement>('[aria-label="actions.back"]')!;
     const close = header.querySelector<HTMLButtonElement>('[aria-label="actions.close"]')!;
     expect(back).not.toBeNull();

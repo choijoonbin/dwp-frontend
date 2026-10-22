@@ -238,8 +238,16 @@ export function ProductAreaMobileTaskNavigator({
           component="h2"
           variant="subtitle2"
           title={label}
-          noWrap
-          sx={{ minWidth: 0, px: 0.5, textAlign: 'center', fontWeight: 700 }}
+          sx={{
+            minWidth: 0,
+            px: 0.5,
+            py: 0.75,
+            textAlign: 'center',
+            fontWeight: 700,
+            lineHeight: 1.25,
+            whiteSpace: 'normal',
+            overflowWrap: 'anywhere',
+          }}
         >
           {label}
         </Typography>

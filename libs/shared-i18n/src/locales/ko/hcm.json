@@ -390,7 +390,7 @@
         "shell-home": { "label": "HRIS 홈" },
         "workbench-my-hr": { "label": "내 HR" },
         "workbench-team": { "label": "팀" },
-        "workbench-hr-operations": { "label": "인사 운영" },
+        "workbench-hr-operations": { "label": "인사" },
         "workbench-time": { "label": "근태" },
         "workbench-payroll": { "label": "급여" },
         "workbench-performance": { "label": "성과" },

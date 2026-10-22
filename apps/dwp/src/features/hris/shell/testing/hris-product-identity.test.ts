@@ -71,17 +71,8 @@ describe('HRIS visible product identity', () => {
       ].map((key) => hcm.navigation.items.hcm[key]?.label)
     ).toEqual(
       language === 'ko'
-        ? ['HRIS 홈', '내 HR', '팀', '인사 운영', '근태', '급여', '성과', '설정']
-        : [
-            'HRIS home',
-            'My HR',
-            'Team',
-            'People operations',
-            'Time',
-            'Payroll',
-            'Performance',
-            'Settings',
-          ]
+        ? ['HRIS 홈', '내 HR', '팀', '인사', '근태', '급여', '성과', '설정']
+        : ['HRIS home', 'My HR', 'Team', 'People', 'Time', 'Payroll', 'Performance', 'Settings']
     );
     expect(shell.navigation.items).toMatchObject({ hcm: 'HRIS', hris: 'HRIS' });
     expect(home.apps.items['ref-app-people']).toMatchObject({ name: 'HRIS', shortName: 'HRIS' });

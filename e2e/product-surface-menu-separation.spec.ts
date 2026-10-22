@@ -554,7 +554,7 @@ const HCM_CANONICAL_NAVIGATION = [
   { view: 'shell-home', label: 'HRIS 홈' },
   { view: 'workbench-my-hr', label: '내 HR' },
   { view: 'workbench-team', label: '팀' },
-  { view: 'workbench-hr-operations', label: '인사 운영' },
+  { view: 'workbench-hr-operations', label: '인사' },
   { view: 'workbench-time', label: '근태' },
   { view: 'workbench-payroll', label: '급여' },
   { view: 'workbench-performance', label: '성과' },

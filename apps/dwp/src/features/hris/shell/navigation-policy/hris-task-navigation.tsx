@@ -101,6 +101,7 @@ export function HrisTaskNavigation({
   const workbenchId = hrisWorkbenchIdForView(item.view);
   const workbench = workbenchId ? canonicalHrisWorkbench(workbenchId) : undefined;
   if (!workbench) return null;
+  const workbenchPresentationLabel = t(`navigation.items.hcm.${item.view}.label`);
   const policyUnavailable = policy.mode === 'FAIL_CLOSED';
   const groups = policyUnavailable
     ? []
@@ -178,7 +179,7 @@ export function HrisTaskNavigation({
         {compact ? (
           <>
             <Box component="span" id={titleId} sx={visuallyHidden}>
-              {workbench.label[locale]}
+              {workbenchPresentationLabel}
             </Box>
             <Stack direction="row" alignItems="flex-start" justifyContent="space-between" gap={1}>
               <Typography variant="body2" color="text.secondary" sx={{ minWidth: 0 }}>
@@ -216,7 +217,7 @@ export function HrisTaskNavigation({
                   fontWeight={820}
                   sx={{ minWidth: 0, overflowWrap: 'anywhere' }}
                 >
-                  {workbench.label[locale]}
+                  {workbenchPresentationLabel}
                 </Typography>
                 {taskCountBadge}
               </Stack>
@@ -238,7 +239,7 @@ export function HrisTaskNavigation({
               htmlInput: {
                 maxLength: 120,
                 'aria-label': t('navigation.taskPanel.searchLabel', {
-                  workbench: workbench.label[locale],
+                  workbench: workbenchPresentationLabel,
                 }),
               },
               input: {
