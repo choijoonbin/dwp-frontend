@@ -139,4 +139,34 @@ describe('HRM-012 IAQ-012 contract', () => {
     unavailable.queryState.freshness = 'CURRENT';
     expect(() => selectHrm012Projection(unavailable)).toThrow('queryState.cardinality');
   });
+
+  it('rejects calendar-invalid instants without JavaScript date normalization', () => {
+    const invalidCalendarDate = hrm012ProjectionWire();
+    invalidCalendarDate.asOf = '2026-02-30T00:00:00Z';
+    expect(() => selectHrm012Projection(invalidCalendarDate)).toThrow('asOf');
+
+    const invalidClockTime = hrm012ProjectionWire();
+    invalidClockTime.asOf = '2026-10-22T24:00:00Z';
+    expect(() => selectHrm012Projection(invalidClockTime)).toThrow('asOf');
+  });
+
+  it('accepts an unavailable projection with a typed source failure', () => {
+    const unavailable = hrm012ProjectionWire('UNAVAILABLE');
+    unavailable.queryState.partialFailures = [
+      {
+        componentKey: 'quality.projection',
+        errorCode: 'OWNER_COMPONENT_UNAVAILABLE',
+        correlationId: HRM012_TEST_SCOPE.correlationId,
+        retryable: true,
+      },
+    ];
+
+    expect(selectHrm012Projection(unavailable).queryState).toEqual(
+      expect.objectContaining({
+        state: 'UNAVAILABLE',
+        freshness: 'UNAVAILABLE',
+        partialFailures: unavailable.queryState.partialFailures,
+      })
+    );
+  });
 });

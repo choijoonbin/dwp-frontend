@@ -148,12 +148,13 @@ export function DataQualityCommandCenter({
   );
   const columns = useMemo<GridColDef<Hrm012Item>[]>(
     () => [
-      { field: 'title', headerName: copy.title, minWidth: 220, flex: 1.5 },
+      { field: 'title', headerName: copy.title, minWidth: 220, flex: 1.5, sortable: false },
       {
         field: 'statusCode',
         headerName: copy.state,
         minWidth: 150,
         flex: 0.8,
+        sortable: false,
         valueFormatter: (value: string) => value.replaceAll('_', ' '),
       },
       {

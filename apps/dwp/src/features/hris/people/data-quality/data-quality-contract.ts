@@ -146,7 +146,8 @@ const COMPONENT_KEY = /^[a-z][a-z0-9._-]{0,127}$/u;
 const DIGEST = /^[0-9a-f]{64}$/u;
 const CURSOR = /^[A-Za-z0-9_-]{16,1024}$/u;
 const CIVIL_DATE = /^\d{4}-\d{2}-\d{2}$/u;
-const INSTANT = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,9})?(?:Z|[+-]\d{2}:\d{2})$/u;
+const INSTANT =
+  /^\d{4}-\d{2}-\d{2}T(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:\.\d{1,9})?(?:Z|[+-](?:[01]\d|2[0-3]):[0-5]\d)$/u;
 
 export class Hrm012ContractError extends Error {
   readonly kind = 'HRM012_CONTRACT_OR_REVISION_ERROR' as const;
@@ -206,6 +207,7 @@ function uuid(value: unknown, path: string): string {
 
 function instant(value: unknown, path: string): string {
   const candidate = text(value, path, 64, INSTANT);
+  civilDate(candidate.slice(0, 10), path);
   if (!Number.isFinite(Date.parse(candidate))) return invalid(path);
   return candidate;
 }
@@ -399,7 +401,8 @@ export function selectHrm012Projection(value: unknown): Hrm012Projection {
       : text(query.nextCursor, 'queryState.nextCursor', 1024, CURSOR);
   if (
     ((state === 'EMPTY' || state === 'UNAVAILABLE') && items.length !== 0) ||
-    (state === 'PARTIAL') !== partialFailures.length > 0 ||
+    (state === 'PARTIAL' && partialFailures.length === 0) ||
+    ((state === 'COMPLETE' || state === 'EMPTY') && partialFailures.length > 0) ||
     (state === 'UNAVAILABLE') !== (freshness === 'UNAVAILABLE') ||
     (state === 'UNAVAILABLE' && nextCursor !== null)
   ) {

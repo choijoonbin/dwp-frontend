@@ -43,22 +43,44 @@
     },
     "targetPolicy": "Passing targets were not repeated; after a failure only the smallest affected file or named case was rerun.",
     "logicalCoverage": {
-      "contractTests": 5,
+      "contractTests": 7,
       "apiTests": 3,
       "workbenchTests": 14,
       "sliceTests": 5,
-      "total": 27,
+      "total": 29,
       "result": "PASS_ACROSS_BOUNDED_TARGET_RUNS"
     },
-    "finalAffectedCase": {
-      "command": "PATH=/opt/homebrew/opt/node@24/bin:$PATH corepack yarn vitest run apps/dwp/src/features/hris/people/data-quality/testing/data-quality-workbench.test.tsx -t 'supports long Korean copy and keyboard-only inspection on the compact layout'",
-      "exitCode": 0,
-      "result": "1 passed, 13 skipped"
+    "postReviewAffectedTargets": [
+      {
+        "command": "PATH=/opt/homebrew/opt/node@24/bin:$PATH corepack yarn vitest run apps/dwp/src/features/hris/people/data-quality/testing/data-quality-contract.test.ts",
+        "exitCode": 0,
+        "result": "1 file passed; 7 tests passed"
+      },
+      {
+        "command": "PATH=/opt/homebrew/opt/node@24/bin:$PATH corepack yarn vitest run apps/dwp/src/features/hris/people/data-quality/testing/data-quality-workbench.test.tsx",
+        "exitCode": 0,
+        "result": "1 file passed; 14 tests passed"
+      }
+    ],
+    "postReviewCorrections": [
+      "calendar-invalid or 24:00 instants fail closed instead of relying on Date normalization",
+      "UNAVAILABLE accepts a typed source failure while COMPLETE and EMPTY continue to reject failures and PARTIAL continues to require one",
+      "all cursor-page grid columns disable client-side sorting"
+    ],
+    "changedRootTypecheck": {
+      "command": "PATH=/opt/homebrew/opt/node@24/bin:$PATH corepack yarn typecheck",
+      "result": "PASS"
     },
-    "changedRootTypecheck": "PASS",
-    "changedRootEslint": "PASS",
-    "changedRootPrettier": "PASS",
-    "gitDiffCheck": "PASS",
+    "changedRootEslint": {
+      "scope": "three post-review changed TypeScript and TSX files",
+      "result": "PASS"
+    },
+    "changedRootPrettier": {
+      "scope": "five post-review changed source, test and evidence files",
+      "result": "PASS"
+    },
+    "gitDiffCheck": "PASS_POST_REVIEW",
+    "independentReview": "P0_0_P1_0_P2_0_AFTER_EVIDENCE_CORRECTION",
     "repositoryWideSuiteRun": false,
     "browserRouteRun": false,
     "browserRouteReason": "The authorized component remains unmounted, default OFF, and zero-enrollment pending separate central admission."
