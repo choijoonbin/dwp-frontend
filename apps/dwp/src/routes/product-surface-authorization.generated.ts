@@ -14,9 +14,9 @@ export type ProductAuthorizationRouteProjection = Readonly<{
 
 export const PRODUCT_AUTHORIZATION_REGISTRY_REVISION = {
   bundleKey: 'product-surfaces',
-  version: 57,
-  checksum: 'f7d6e2ef92f563747ed062e496638ea83498a33414fc12586c794f517e626d6e',
-  indexChecksum: 'b3c4fe3079264a4ddf0f196d95ce6de84ad7654c624a3efb14d3689ede7253fd',
+  version: 58,
+  checksum: '556f2cc1554f0aaab6f88e50c34d64ca5cdd95af9b2d55072f6e6745f4652cc2',
+  indexChecksum: 'f9f97ba0841aece9001423e247b7508662f25843ae7cdc7f7271bad6a726cfbf',
 } as const;
 
 export const PRODUCT_SURFACE_ROLLOUT_INVENTORY_REVISION = {
@@ -9880,6 +9880,38 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
       {
         method: 'GET',
         path: '/api/people/v1/workforce/operations/overview',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.pay-retirement.data',
+    routeKind: 'DATA',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/payroll/v1/workbench/pay-retirement',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.pay-retirement.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: 'hcm.operations.pay-retirement',
+    pattern: '/hr/operations/payroll/retirement',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/payroll/v1/workbench/pay-retirement',
       },
     ],
   },
