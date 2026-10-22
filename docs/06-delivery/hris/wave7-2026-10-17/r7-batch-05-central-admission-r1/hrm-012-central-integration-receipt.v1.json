@@ -1,0 +1,126 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-05-hrm012-central-integration-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-05-HRM012-CENTRAL-INTEGRATION-20261022-R1",
+  "recordedAt": "2026-10-22T09:20:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "EXACT_HRM012_CENTRAL_PREREQUISITE_MERGED_PUSHED_DEFAULT_OFF_ZERO_ENROLLMENT_MODULE_AUTHORITY_MAY_BE_REISSUED",
+  "immutability": {
+    "sealed": true,
+    "appendOnly": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_RECEIPT_ID_AND_SHA256"
+  },
+  "sliceId": "BASE-TFR-HRM-012",
+  "module": "HRM",
+  "moduleSession": "HRIS-HRM",
+  "authorityBasis": {
+    "centralAuthorizationV4": {
+      "path": "../r7-batch-05-module-start-r1/hrm-012-central-authorization-successor.v4.json",
+      "sha256": "838fbdcf534c1820d52a221df9802f8c7727ed24d4a3d4cf5a4dd065bc815034",
+      "bytes": 3267,
+      "carrierCommit": "e011e3c516b4f6b1459c124e0e3dc43c92d197a5"
+    },
+    "centralImplementationTokenV4": {
+      "path": "../r7-batch-05-module-start-r1/hrm-012-central-implementation-token.v4.json",
+      "sha256": "8a5da036564d531700c9f2a6dba192e671e6e1902c859ca9fae2972486c24701",
+      "bytes": 1861,
+      "carrierCommit": "e011e3c516b4f6b1459c124e0e3dc43c92d197a5"
+    },
+    "semanticDisposition": {
+      "path": "../r7-batch-05-module-start-r1/semantic-dispositions/base-tfr-hrm-012.semantic-disposition.v1.json",
+      "sha256": "bc7371c37459efa104c5d1239eae326fb2585fdd8d1b59b094046b6b02393519",
+      "bytes": 33226
+    },
+    "ownerPacketV1": {
+      "path": "../r7-batch-05-module-start-r1/owner-packets/base-tfr-hrm-012.owner-packet.v1.json",
+      "sha256": "2e9d7bdac2623a5aa417d14c5721e0cf19c0ba289bb17b52727076ecd83460cf",
+      "bytes": 18059
+    },
+    "v60ReservationV1": {
+      "path": "../r7-batch-05-module-start-r1/migration-lease-hrm012-v60-reservation.v1.json",
+      "sha256": "318df1fc3473fd408788e571bcf2884c1b07887003a38cb6f2bc366b715da422",
+      "bytes": 6555,
+      "requiredState": "RESERVED_NOT_ACTIVE"
+    }
+  },
+  "centralSourceAdmission": {
+    "backend": {
+      "repository": "dwp-backend",
+      "sourceBranchCommit": "dc9fd5617adbf2ff3bd57d67fa62c4e2067171b3",
+      "admissionMergeCommit": "17aac02ef68af6bd4a86c794ed9ff8057724803d",
+      "currentDwpDevCommit": "c43a98698a9cee140fb11ebc248bdbbbe9214a7d",
+      "currentDwpDevTree": "964b7e313c7187bf7bfca5bb5a517f6bc384f67a",
+      "originRef": "origin/dwp-dev",
+      "originExact": true,
+      "clean": true,
+      "postAdmissionStartupFix": "c43a98698a9cee140fb11ebc248bdbbbe9214a7d"
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "sourceBranchCommit": "fbbfe68e76e1c86d73cf2a39082d4ca416f30da9",
+      "admissionMergeCommit": "9e812fe9ddcc53751f778b26c3807e6b42a3fbce",
+      "currentDwpDevCommit": "9a826b9a156b2986a155d09d02b4b8112bb0bc56",
+      "currentDwpDevTree": "eba1cd2162905939bdf6a39d575d93a8c9dabcb5",
+      "originRef": "origin/dwp-dev",
+      "originExact": true,
+      "cleanBeforeThisReceipt": true,
+      "postAdmissionRegistryCompatibilityFix": "9a826b9a156b2986a155d09d02b4b8112bb0bc56"
+    },
+    "independentReview": {
+      "unresolvedP0": 0,
+      "unresolvedP1": 0,
+      "unresolvedP2": 0
+    }
+  },
+  "admittedBaseline": {
+    "productAuthorization": {
+      "version": 57,
+      "checksumAlgorithm": "SHA-256",
+      "checksum": "f7d6e2ef92f563747ed062e496638ea83498a33414fc12586c794f517e626d6e",
+      "counts": {
+        "capabilities": 271,
+        "accessPolicies": 24,
+        "entitlementExpressions": 17,
+        "predicatePolicies": 83,
+        "routes": 1123,
+        "pageRoutes": 157,
+        "dataRoutes": 339,
+        "actionRoutes": 627
+      }
+    },
+    "authMigration": "V266",
+    "featureKey": "HRIS_HRM_DATA_QUALITY_WORKBENCH",
+    "featureDefault": "OFF",
+    "tenantEnrollmentCount": 0,
+    "newNarrowCapability": "hcm.integration.workforce-ingestion.execute",
+    "legacyCapabilityPreservedWithoutFallback": "hcm.integration.execute",
+    "routes": [
+      "route.hcm.operations.people-data-quality.page",
+      "route.hcm.operations.people-data-quality.data",
+      "route.hcm.operations.workforce-ingestion.action"
+    ]
+  },
+  "admissionClaims": {
+    "centralPrerequisiteMergedAndPushed": true,
+    "moduleSourceIncluded": false,
+    "peopleV60Included": false,
+    "hrm012PageMounted": false,
+    "featureEnabled": false,
+    "tenantEnrollmentCount": 0,
+    "productionProviderSchedulerOrBrokerBound": false,
+    "businessSliceComplete": false,
+    "productionReleaseAuthorized": false
+  },
+  "authority": {
+    "freshModuleOwnerAndReservationSuccessorsMayBeIssued": true,
+    "freshCleanModuleWorktreesMayBeHashBound": true,
+    "activeExclusivePeopleV60LeaseMayBeIssuedOnlyAfterReceipt": true,
+    "executableModuleStartTokenMayBeIssuedOnlyAfterActiveLease": true,
+    "moduleSourceAuthoringAuthorizedByThisReceiptAlone": false,
+    "migrationAuthoringAuthorizedByThisReceiptAlone": false,
+    "directDwpDevMergeAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextGate": "ISSUE_CURRENT_BASE_OWNER_AND_V60_RESERVATION_SUCCESSORS_BIND_THE_FRESH_CLEAN_MODULE_WORKTREES_ACTIVATE_ONE_EXCLUSIVE_PEOPLE_V60_LEASE_AND_ONLY_THEN_ISSUE_ONE_EXECUTABLE_HRM012_MODULE_START_TOKEN"
+}

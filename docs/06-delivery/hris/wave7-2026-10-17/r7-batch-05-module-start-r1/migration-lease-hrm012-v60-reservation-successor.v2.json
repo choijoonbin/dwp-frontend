@@ -1,0 +1,139 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-05-hrm012-v60-migration-lease-reservation-successor.v2",
+  "reservationId": "HRIS-WAVE7-R7-BATCH-05-MIGRATION-LEASE-RESERVATION-HRM012-V60-20261022-R2",
+  "recordedAt": "2026-10-22T09:22:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "RESERVED_NOT_ACTIVE_CURRENT_BASE",
+  "immutability": {
+    "sealed": true,
+    "appendOnly": true,
+    "predecessorMutation": "FORBIDDEN"
+  },
+  "sliceId": "BASE-TFR-HRM-012",
+  "module": "HRM",
+  "moduleSession": "HRIS-HRM",
+  "successorOf": {
+    "path": "migration-lease-hrm012-v60-reservation.v1.json",
+    "sha256": "318df1fc3473fd408788e571bcf2884c1b07887003a38cb6f2bc366b715da422",
+    "bytes": 6555,
+    "reservationId": "HRIS-WAVE7-R7-BATCH-05-MIGRATION-LEASE-RESERVATION-HRM012-V60-20261021-R1",
+    "requiredState": "RESERVED_NOT_ACTIVE",
+    "supersessionReason": "The central HRM-012 prerequisite and post-admission startup fixes necessarily advanced backend dwp-dev from the sealed v1 pin while leaving People migrations V1 through V59 byte-for-byte unchanged and V60 absent."
+  },
+  "authorityBasis": {
+    "centralIntegrationReceipt": {
+      "path": "../r7-batch-05-central-admission-r1/hrm-012-central-integration-receipt.v1.json",
+      "sha256": "46533c4a70b3c7d2c490513510621049fd9423d4616eb2d0af6a8278b38063d7",
+      "bytes": 5322
+    },
+    "ownerPacketSuccessorV2": {
+      "path": "owner-packets/base-tfr-hrm-012.owner-packet-successor.v2.json",
+      "sha256": "32c8e213c4eb226626dffe7e8c07cedad027b0973efa7c3cfc0f9a1fd62b07a1",
+      "bytes": 8348
+    },
+    "semanticDisposition": {
+      "path": "semantic-dispositions/base-tfr-hrm-012.semantic-disposition.v1.json",
+      "sha256": "bc7371c37459efa104c5d1239eae326fb2585fdd8d1b59b094046b6b02393519",
+      "bytes": 33226
+    }
+  },
+  "currentBasePin": {
+    "repository": "dwp-backend",
+    "branch": "dwp-dev",
+    "commit": "c43a98698a9cee140fb11ebc248bdbbbe9214a7d",
+    "tree": "964b7e313c7187bf7bfca5bb5a517f6bc384f67a",
+    "requiredRemote": "origin/dwp-dev",
+    "requiredRemoteExact": true,
+    "clean": true
+  },
+  "observedMigrationState": {
+    "peopleHighWater": "V59",
+    "migrationCount": 59,
+    "sqlBytes": 419829,
+    "candidateV60Absent": true,
+    "competingV60ReservationOrPathObserved": false,
+    "v1ThroughV59UnchangedFromSealedV1Base": true,
+    "sealedV1BaseCommit": "8f8087736e59413c60ddcdcd081ed42f1915bc91",
+    "requiredPreservation": "V1_THROUGH_V59_BYTE_FOR_BYTE"
+  },
+  "reservation": {
+    "leaseId": "HRIS-WAVE7-R7-BATCH-05-PEOPLE-MAIN-V60-HRM012-20261022-R2",
+    "stream": "PEOPLE_MAIN",
+    "version": "V60",
+    "predecessorHighWater": "V59",
+    "exactPath": "dwp-people-server/src/main/resources/db/migration/V60__hrm_base_tfr_hrm_012.sql",
+    "reservedFor": "BASE-TFR-HRM-012",
+    "canonicalFeature": "HRIS_HRM_DATA_QUALITY_WORKBENCH",
+    "state": "RESERVED_NOT_ACTIVE",
+    "activeLeaseCountForPeopleV60": 0,
+    "createExactlyTwoTables": [
+      "ppl_workforce_ingestion_runs",
+      "ppl_workforce_ingestion_items"
+    ],
+    "reuseWithoutRecreation": [
+      "int_connector_instances",
+      "int_mapping_profiles",
+      "int_connector_cursors",
+      "ppl_command_receipts",
+      "sys_people_audit_events",
+      "sys_people_outbox_events"
+    ],
+    "requiredDatabaseControls": [
+      "same-tenant composite foreign keys",
+      "nonnegative six-count checks enforcing source = accepted + rejected + duplicate and accepted = applied + quarantined_after_acceptance",
+      "lowercase 64-hex digest checks and positive object and mapping versions",
+      "unique run item sequence and deterministic duplicate lookup index",
+      "forward-only lifecycle and immutable source, connector, mapping and outcome trigger guards",
+      "worker lease, immutable linked-replay lineage and IAQ-012 stable-order indexes",
+      "ENABLE and FORCE row-level security with tenant-bound USING and WITH CHECK on both tables"
+    ],
+    "forbiddenDatabaseWork": [
+      "editing V1 through V59",
+      "creating a third HRM-012 table",
+      "recreating an existing connector, mapping, cursor, receipt, audit or outbox store",
+      "seed or backfill",
+      "automatic privilege elevation",
+      "customer or production database execution"
+    ]
+  },
+  "plannedMaterializedBackend": {
+    "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261022/r7-batch05/hrm-012/backend",
+    "branch": "codex/hris-wave7-r7-batch05-hrm-012-backend-20261022-r1",
+    "requiredInitialHead": "c43a98698a9cee140fb11ebc248bdbbbe9214a7d",
+    "requiredInitialTree": "964b7e313c7187bf7bfca5bb5a517f6bc384f67a",
+    "requiredInitialPorcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "requiredInitialUpstream": null
+  },
+  "activationPrerequisites": [
+    "the current-base owner packet successor and this reservation successor are committed in one append-only authority carrier",
+    "the backend and frontend module worktrees are recorded clean at the exact current pins",
+    "the worktree receipt hash-binds this reservation successor",
+    "one append-only active exclusive V60 lease binds that receipt, this lease ID and the exact migration path",
+    "one executable HRM-012 module start token binds all preceding artifact hashes, worktree identities and writable boundaries"
+  ],
+  "authority": {
+    "activeLeaseCount": 0,
+    "oneExactPeopleV60PathReserved": true,
+    "leaseActive": false,
+    "v60AuthoringAuthorized": false,
+    "existingMigrationEditAuthorized": false,
+    "secondPeopleMigrationAuthorized": false,
+    "worktreeReceiptMayBeIssued": true,
+    "moduleSourceAuthoringAuthorized": false,
+    "testExecutionAuthorized": false,
+    "moduleBranchCommitAndPushAuthorizedByThisReservationAlone": false,
+    "directDwpDevMergeAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionExecutionAuthorized": false
+  },
+  "invalidation": [
+    "People high-water is no longer V59 before activation",
+    "the exact V60 path exists or is reserved by another slice",
+    "the current backend base commit or tree differs before the worktree receipt",
+    "V1 through V59 differ from the sealed predecessor state",
+    "the exact two-table manifest is insufficient or a second migration, backfill or existing migration edit is required",
+    "the backend worktree is dirty before the receipt"
+  ],
+  "nextGate": "HASH_BIND_THE_EXACT_CLEAN_BACKEND_AND_FRONTEND_WORKTREES_THEN_ISSUE_ONE_ACTIVE_EXCLUSIVE_PEOPLE_V60_LEASE_SUCCESSOR"
+}

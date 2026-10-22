@@ -1,0 +1,136 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-05-hrm012-v60-migration-lease-activation.v1",
+  "activationId": "HRIS-WAVE7-R7-BATCH-05-MIGRATION-LEASE-ACTIVATION-HRM012-V60-20261022-R1",
+  "activatedAt": "2026-10-22T09:26:00+09:00",
+  "activatedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "ACTIVE_EXCLUSIVE_PEOPLE_V60",
+  "purpose": "Activate exactly one exclusive People main V60 authoring lease for HRM-012 after current-base owner correction, semantic correction and clean worktree materialization. The lease grants migration authority only when combined with the matching executable module start token.",
+  "immutability": {
+    "sealed": true,
+    "appendOnly": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ACTIVATION_ID_AND_SHA256"
+  },
+  "sliceId": "BASE-TFR-HRM-012",
+  "module": "HRM",
+  "moduleSession": "HRIS-HRM",
+  "authorityBasis": {
+    "currentBaseReservation": {
+      "path": "migration-lease-hrm012-v60-reservation-successor.v2.json",
+      "sha256": "4af959afdc0fbbfd5f78ffb645f722d607951621f60bf006e8b757be63d99529",
+      "bytes": 6561,
+      "reservationId": "HRIS-WAVE7-R7-BATCH-05-MIGRATION-LEASE-RESERVATION-HRM012-V60-20261022-R2",
+      "requiredState": "RESERVED_NOT_ACTIVE_CURRENT_BASE"
+    },
+    "worktreeMaterializationReceipt": {
+      "path": "worktree-materialization-receipts/base-tfr-hrm-012.worktree-materialization-receipt.v1.json",
+      "sha256": "c877ec570f4309c8d66bebafcb4fc56cb1ec2e698edae28f9fd4a470829fc72f",
+      "bytes": 5369,
+      "receiptId": "HRIS-WAVE7-R7-BATCH-05-HRM012-WORKTREE-MATERIALIZATION-20261022-R1",
+      "requiredState": "MATERIALIZED_CLEAN_EXACT_CURRENT_BASES_NO_SOURCE_EDITS_NO_UPSTREAM"
+    },
+    "ownerPacketCorrectionV3": {
+      "path": "owner-packets/base-tfr-hrm-012.owner-packet-correction-successor.v3.json",
+      "sha256": "21eb0b002a2f1565ef95a7587e3520a6fb09cb2a0c89e38983a24291b14a8c4c",
+      "bytes": 8189
+    },
+    "semanticCorrectionV2": {
+      "path": "semantic-dispositions/base-tfr-hrm-012.semantic-disposition-successor.v2.json",
+      "sha256": "70df5e8ce5c0af297494e6befb0f961d7b497e0130a421952c61d885f9bc2905",
+      "bytes": 10763
+    }
+  },
+  "lease": {
+    "leaseId": "HRIS-WAVE7-R7-BATCH-05-PEOPLE-MAIN-V60-HRM012-20261022-R2",
+    "stream": "PEOPLE_MAIN",
+    "version": "V60",
+    "predecessorHighWater": "V59",
+    "exactPath": "dwp-people-server/src/main/resources/db/migration/V60__hrm_base_tfr_hrm_012.sql",
+    "canonicalFeature": "HRIS_HRM_DATA_QUALITY_WORKBENCH",
+    "state": "ACTIVE_EXCLUSIVE",
+    "activeLeaseCountForPeopleV60": 1,
+    "secondMigrationAuthorized": false,
+    "existingMigrationEditAuthorized": false,
+    "dataBackfillAuthorized": false
+  },
+  "materializedBackendBinding": {
+    "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261022/r7-batch05/hrm-012/backend",
+    "branch": "codex/hris-wave7-r7-batch05-hrm-012-backend-20261022-r1",
+    "headAtActivation": "c43a98698a9cee140fb11ebc248bdbbbe9214a7d",
+    "treeAtActivation": "964b7e313c7187bf7bfca5bb5a517f6bc384f67a",
+    "porcelainSha256AtActivation": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "upstreamAtActivation": null,
+    "exact": true,
+    "clean": true
+  },
+  "activationConditionsSatisfied": {
+    "materializedBackendWorktreeExactAndClean": true,
+    "peopleHighWaterIsV59": true,
+    "migrationCountIs59": true,
+    "exactV60PathAbsent": true,
+    "competingPeopleV60Absent": true,
+    "v1ThroughV59Unchanged": true,
+    "currentBaseReservationUnchanged": true,
+    "ownerAndSemanticCorrectionsBound": true,
+    "activeLeaseCountAfterActivation": 1
+  },
+  "resolvedAuthoringBoundary": {
+    "allowed": [
+      "Create only dwp-people-server/src/main/resources/db/migration/V60__hrm_base_tfr_hrm_012.sql.",
+      "Create exactly ppl_workforce_ingestion_runs and ppl_workforce_ingestion_items with the keys, indexes, lifecycle guards, ENABLE/FORCE RLS and tenant predicates sealed by the owner and semantic authorities.",
+      "Reuse without recreation int_connector_instances, int_mapping_profiles, int_connector_cursors, ppl_command_receipts, sys_people_audit_events and sys_people_outbox_events.",
+      "Add VALIDATED to the closed item outcome set and enforce VALIDATE_ONLY source = derived validated items + rejected + duplicate with accepted/applied/quarantined all zero.",
+      "For APPLY forbid VALIDATED and enforce source = accepted + rejected + duplicate and accepted = applied + quarantined_after_acceptance."
+    ],
+    "forbidden": [
+      "Any edit to People migrations V1 through V59",
+      "Any second People migration or path other than the exact V60 path",
+      "Any third HRM-012 table or validated_count aggregate column",
+      "Any recreation of connector, mapping, cursor, receipt, audit or outbox stores",
+      "Any caller-supplied identity, context, scope or revision persistence",
+      "Any placeholder, sentinel or invented authorization revision",
+      "Any seed, backfill, deletion, automatic privilege elevation, tenant enrollment or production execution"
+    ],
+    "deviationAction": "STOP_AND_REQUEST_AN_APPEND_ONLY_LEASE_AND_TOKEN_SUCCESSOR"
+  },
+  "verificationRequired": {
+    "static": [
+      "V60 is unique and the exact leased path is the only new People migration.",
+      "V1 through V59 bytes remain unchanged.",
+      "Exactly two tables are created and the six existing stores are not recreated.",
+      "Mode-specific VALIDATE_ONLY and APPLY outcomes and equations match semantic successor v2."
+    ],
+    "database": [
+      "real PostgreSQL clean People migration through V60",
+      "real PostgreSQL V59-to-V60 upgrade",
+      "FORCE RLS missing-context and cross-tenant denial for both tables",
+      "VALIDATE_ONLY VALIDATED/rejected/duplicate accounting and zero accepted/applied/quarantined counts",
+      "APPLY two-equation conservation and VALIDATED rejection",
+      "immutable identity, source, mapping, outcome and linked-replay guards",
+      "cursor and terminal transaction rollback leaves no partial success state"
+    ],
+    "databaseUnavailableRule": "BLOCKED_NOT_PASS",
+    "targetedPolicy": "Run each migration target group once and rerun only the smallest failed target."
+  },
+  "authority": {
+    "activeLeaseCount": 1,
+    "oneExactPeopleV60AuthoringLeaseActive": true,
+    "v60AuthoringAuthorizedByLeaseAlone": false,
+    "v60AuthoringAuthorizedOnlyWithMatchingExecutableTokenV1": true,
+    "sourceAuthoringOutsideExactV60Authorized": false,
+    "testExecutionAuthorizedByLeaseAlone": false,
+    "moduleBranchCommitAndPushAuthorizedByLeaseAlone": false,
+    "centralMarkerOrAuthProtocolWriteAuthorized": false,
+    "directDwpDevMergeAuthorized": false,
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionExecutionAuthorized": false
+  },
+  "invalidation": [
+    "The backend worktree identity or clean initial state differs.",
+    "People high-water differs from V59 or a competing V60 path exists before the first authorized edit.",
+    "The two-table corrected manifest is insufficient, an existing migration must change, a second migration is required or a backfill is needed.",
+    "The matching executable HRM-012 start token is absent or hash-mismatched.",
+    "Any marker-v1 fallback, untrusted selector, provisional revision, direct dwp-dev merge, activation, enrollment or production action is attempted."
+  ],
+  "nextGate": "ISSUE_ONE_EXECUTABLE_HRM012_START_TOKEN_HASH_BOUND_TO_THIS_ACTIVE_EXCLUSIVE_LEASE_THE_CORRECTED_OWNER_PACKET_AND_BOTH_EXACT_MODULE_WORKTREES"
+}

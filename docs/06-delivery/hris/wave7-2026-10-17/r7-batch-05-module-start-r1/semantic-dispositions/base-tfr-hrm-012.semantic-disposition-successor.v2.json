@@ -1,0 +1,201 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-05-hrm012-semantic-disposition-successor.v2",
+  "dispositionId": "HRIS-WAVE7-R7-BATCH-05-SEMANTIC-BASE-TFR-HRM-012-20261022-R2",
+  "recordedAt": "2026-10-22T09:24:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "SEALED_VALIDATE_ONLY_ACCOUNTING_AND_TRUSTED_RECEIPT_CONTEXT_CORRECTION",
+  "immutability": {
+    "sealed": true,
+    "appendOnly": true,
+    "predecessorMutation": "FORBIDDEN"
+  },
+  "sliceId": "BASE-TFR-HRM-012",
+  "sourceRef": "TFR-HRM-012",
+  "module": "HRM",
+  "moduleSession": "HRIS-HRM",
+  "successorOf": {
+    "path": "base-tfr-hrm-012.semantic-disposition.v1.json",
+    "sha256": "bc7371c37459efa104c5d1239eae326fb2585fdd8d1b59b094046b6b02393519",
+    "bytes": 33226,
+    "inheritance": "Every v1 semantic, protocol, route, field, security, migration, event, acceptance, non-claim and verification rule remains authoritative except the two ambiguities explicitly replaced by this successor."
+  },
+  "reviewFindingsClosed": [
+    {
+      "severity": "P1",
+      "finding": "A valid VALIDATE_ONLY item had no sealed terminal item outcome and could not satisfy the APPLY-only accepted/applied conservation model.",
+      "resolution": "Add immutable VALIDATED item evidence and mode-specific terminal accounting without adding a seventh aggregate count or a third table."
+    },
+    {
+      "severity": "P1",
+      "finding": "The origin of context, scope and authorization, population and field-policy revisions before immutable receipt reservation, and the mapping from numeric marker subject to UUID receipt subject, were not sealed.",
+      "resolution": "Bind them exclusively to verified identity plus an Auth-issued signed or trusted server-side pre-receipt authority snapshot, then require exact equality from the final post-receipt Auth decision."
+    }
+  ],
+  "validateOnlyAccountingCorrection": {
+    "itemOutcomeClosedSet": [
+      "VALIDATED",
+      "REJECTED",
+      "DUPLICATE",
+      "APPLIED",
+      "QUARANTINED_AFTER_ACCEPTANCE"
+    ],
+    "validateOnly": {
+      "allowedTerminalItemOutcomes": [
+        "VALIDATED",
+        "REJECTED",
+        "DUPLICATE"
+      ],
+      "forbiddenTerminalItemOutcomes": [
+        "APPLIED",
+        "QUARANTINED_AFTER_ACCEPTANCE"
+      ],
+      "requiredRunCounts": {
+        "acceptedCount": 0,
+        "appliedCount": 0,
+        "quarantinedCount": 0
+      },
+      "validatedCount": "DERIVED_ONLY_AS_COUNT_OF_IMMUTABLE_ITEMS_WITH_OUTCOME_VALIDATED; NO_SEVENTH_RUN_AGGREGATE_COLUMN",
+      "terminalEquation": "sourceCount = derivedValidatedItemCount + rejectedCount + duplicateCount",
+      "effects": "No workforce mutation, cursor advance or WorkforceIngestionReconciled.v1 event is permitted. A terminal validation result digest may cover only the immutable redacted validation evidence."
+    },
+    "apply": {
+      "allowedTerminalItemOutcomes": [
+        "REJECTED",
+        "DUPLICATE",
+        "APPLIED",
+        "QUARANTINED_AFTER_ACCEPTANCE"
+      ],
+      "forbiddenTerminalItemOutcomes": [
+        "VALIDATED"
+      ],
+      "terminalEquations": [
+        "sourceCount = acceptedCount + rejectedCount + duplicateCount",
+        "acceptedCount = appliedCount + quarantinedCount"
+      ],
+      "quarantinedMeaning": "QUARANTINED_AFTER_ACCEPTANCE_ONLY",
+      "eventRule": "Only a terminal reconciled APPLY may emit exactly one WorkforceIngestionReconciled.v1 after both equations are proven from immutable item evidence."
+    },
+    "databaseEnforcement": [
+      "The V60 item outcome check includes VALIDATED in addition to the four v1 outcomes.",
+      "A deferred terminalization guard or equivalent transactionally safe database control proves the mode-specific item-outcome set and equation before accepting a terminal result digest.",
+      "VALIDATE_ONLY forces accepted_count, applied_count and quarantined_count to zero and derives validated cardinality from immutable item rows.",
+      "APPLY retains both v1 conservation equations unchanged and forbids VALIDATED items.",
+      "The correction creates no third table, no validated_count run column, no seed and no backfill."
+    ]
+  },
+  "receiptIdentityAndAuthorityCorrection": {
+    "publicRequestSelectorsForbidden": [
+      "tenantId",
+      "actorPublicId",
+      "subjectPrincipalPublicId",
+      "contextKey",
+      "scopeRef",
+      "populationScopeDigest",
+      "authorizationRevision",
+      "populationRevision",
+      "fieldPolicyRevision"
+    ],
+    "identityBinding": {
+      "markerNumericSubject": "The signed marker on_behalf_of_subject is canonical positive decimal text and must equal the verified PeopleRequestContext.userId for the same trusted tenant.",
+      "receiptUuidSubject": "The command receipt actor_public_id and subject_principal_public_id are both the non-null PeopleRequestContext.personPublicId resolved by the verified identity filter for that exact user and tenant; no caller value or numeric-to-UUID conversion is permitted.",
+      "missingOrMismatchedIdentity": "FAIL_CLOSED_BEFORE_RECEIPT_WITH_NO_OBJECT_FETCH_RUN_CREATION_CURSOR_ADVANCE_OR_BUSINESS_MUTATION"
+    },
+    "preReceiptAuthoritySnapshot": {
+      "allowedSources": [
+        "exact verified Auth-issued owner marker claims from an append-only closed marker successor",
+        "an authenticated People-to-Auth server-side pre-receipt authority resolution bound to the verified marker jti, marker SHA-256, trusted tenant, trusted numeric user, trusted personPublicId, route, method, canonical path, request hash, correlation ID and idempotency-key digest"
+      ],
+      "requiredValues": [
+        "contextKey",
+        "scopeRef",
+        "populationScopeDigest",
+        "authorizationRevision",
+        "populationRevision",
+        "fieldPolicyRevision",
+        "featureDecisionRevision"
+      ],
+      "requirements": [
+        "Every revision is positive or a canonical nonblank revision token as required by its persisted type.",
+        "contextKey and scopeRef are canonical and identify the server-authorized connector-set or legal-entity population only.",
+        "The snapshot is signed or returned over the authenticated People-to-Auth workload boundary and is never accepted from browser headers, request body, object payload or query parameters.",
+        "No placeholder, sentinel, truncated hash, locally invented numeric revision or later mutation of receipt-originating authorization fields is permitted.",
+        "The admitted v1 marker fields alone are insufficient for these values; absence of an allowed complete snapshot is AUTHORITY_RESOLUTION_UNAVAILABLE and must fail closed."
+      ]
+    },
+    "correctedOwnerOrder": [
+      "authenticate and load the verified People identity; validate exact tenant, numeric user and non-null personPublicId",
+      "verify the closed signed owner marker and bind its tenant, numeric subject, route, method, path, feature, correlation and idempotency digest to that identity and request",
+      "validate the closed six-field command and required headers and compute the canonical request hash without fetching object content",
+      "obtain the complete trusted pre-receipt authority snapshot from an allowed source and bind it to marker jti and marker SHA-256",
+      "reserve or read ppl_command_receipts by exactly (trusted tenant, trusted personPublicId, originating action, Idempotency-Key), freezing request hash, actor/subject UUID, context/scope digest, authorization/population/field-policy revisions, purpose and correlation ID",
+      "after the durable receipt exists, request the final Auth ELEVATED decision with receiptPublicId, receiptRequestHash and the exact frozen snapshot",
+      "require the final decision to bind the same tenant, numeric user, personPublicId, context, scope, population digest and every frozen revision and to prove the narrow capability, duty, fixed purpose, current feature state and HIGH step-up",
+      "on denial, unavailability, stale or unequal evidence, terminally reject or leave retryable only according to the sealed failure taxonomy without object fetch, run creation, cursor advance or business mutation",
+      "only after exact final authority and If-Match success may the owner resolve connector and mapping, fetch and verify the object envelope, create the ingestion run and return the durable 202 receipt"
+    ],
+    "postReceiptExactEquality": [
+      "tenant",
+      "numeric user",
+      "personPublicId",
+      "route and originating action",
+      "contextKey",
+      "scopeRef",
+      "populationScopeDigest",
+      "authorizationRevision",
+      "populationRevision",
+      "fieldPolicyRevision",
+      "featureDecisionRevision",
+      "purpose",
+      "correlation ID",
+      "idempotency-key digest",
+      "canonical request hash",
+      "receiptPublicId"
+    ]
+  },
+  "migrationManifestCorrection": {
+    "exactPath": "dwp-people-server/src/main/resources/db/migration/V60__hrm_base_tfr_hrm_012.sql",
+    "createExactlyTwoTables": [
+      "ppl_workforce_ingestion_runs",
+      "ppl_workforce_ingestion_items"
+    ],
+    "replaceOnly": "The v1 item outcome closed set and unconditional conservation wording are replaced by validateOnlyAccountingCorrection. Every other v1 V60 table, column, key, index, trigger, FORCE RLS, reuse, immutability, no-seed and no-backfill requirement is inherited unchanged."
+  },
+  "acceptanceBinding": {
+    "businessAcceptanceIds": [
+      "HRM012-AC-01",
+      "HRM012-AC-02",
+      "HRM012-AC-03",
+      "HRM012-AC-04",
+      "HRM012-AC-05",
+      "HRM012-AC-06",
+      "HRM012-AC-07",
+      "HRM012-AC-08",
+      "HRM012-AC-09",
+      "HRM012-AC-10",
+      "HRM012-AC-11",
+      "HRM012-AC-12"
+    ],
+    "mandatoryCorrectiveAcceptanceIds": [
+      "HRM012-AC-13"
+    ],
+    "clarifications": [
+      "HRM012-AC-05 and HRM012-AC-08 use the mode-specific accounting rules in this successor.",
+      "HRM012-AC-04 requires the trusted identity and authority snapshot binding and exact post-receipt equality in this successor."
+    ],
+    "requiredTotalCount": 13,
+    "weakeningOrOmissionAuthorized": false
+  },
+  "authority": {
+    "semanticCorrectionSealed": true,
+    "ownerCorrectionSuccessorRequired": true,
+    "activeLeaseMayBindThisCorrectionOnlyAfterOwnerCorrection": true,
+    "sourceAuthoringAuthorizedByThisDispositionAlone": false,
+    "markerV1FallbackAuthorized": false,
+    "untrustedSelectorFallbackAuthorized": false,
+    "directDwpDevMergeAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextGate": "ISSUE_AN_APPEND_ONLY_OWNER_PACKET_CORRECTION_THAT_HASH_BINDS_THIS_SEMANTIC_SUCCESSOR_THEN_BIND_BOTH_IN_THE_ACTIVE_V60_LEASE_AND_EXECUTABLE_START_TOKEN"
+}

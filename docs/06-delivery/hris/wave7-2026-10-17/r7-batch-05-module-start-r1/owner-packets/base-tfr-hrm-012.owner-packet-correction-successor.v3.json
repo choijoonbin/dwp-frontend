@@ -1,0 +1,162 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-05-hrm012-owner-packet-correction-successor.v3",
+  "packetId": "HRIS-WAVE7-R7-BATCH-05-OWNER-BASE-TFR-HRM-012-20261022-R3",
+  "recordedAt": "2026-10-22T09:25:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "SEALED_CURRENT_BASE_OWNER_AUTHORITY_WITH_VALIDATE_ONLY_AND_TRUSTED_RECEIPT_CONTEXT_CORRECTIONS_TOKEN_WITHHELD",
+  "immutability": {
+    "sealed": true,
+    "appendOnly": true,
+    "predecessorMutation": "FORBIDDEN"
+  },
+  "sliceId": "BASE-TFR-HRM-012",
+  "sourceRef": "TFR-HRM-012",
+  "module": "HRM",
+  "moduleSession": "HRIS-HRM",
+  "successorOf": {
+    "path": "base-tfr-hrm-012.owner-packet-successor.v2.json",
+    "sha256": "32c8e213c4eb226626dffe7e8c07cedad027b0973efa7c3cfc0f9a1fd62b07a1",
+    "bytes": 8348,
+    "inheritance": "Inherit the exact current repository pins, worktree identities, writable boundaries, V60 two-table manifest, twelve business acceptance IDs plus mandatory AC-13, default-OFF baseline, non-claims and authority gates. Replace only the two P1 semantic ambiguities with the correction below."
+  },
+  "semanticCorrection": {
+    "path": "../semantic-dispositions/base-tfr-hrm-012.semantic-disposition-successor.v2.json",
+    "sha256": "70df5e8ce5c0af297494e6befb0f961d7b497e0130a421952c61d885f9bc2905",
+    "bytes": 10763,
+    "requiredState": "SEALED_VALIDATE_ONLY_ACCOUNTING_AND_TRUSTED_RECEIPT_CONTEXT_CORRECTION"
+  },
+  "correctedImplementationContract": {
+    "validateOnly": {
+      "itemOutcome": "VALIDATED for a valid non-duplicate item",
+      "acceptedAppliedAndQuarantinedCounts": 0,
+      "equation": "sourceCount = derivedValidatedItemCount + rejectedCount + duplicateCount",
+      "validatedCountStorage": "Derived from immutable item rows; no run aggregate column",
+      "cursorAdvance": false,
+      "workforceMutation": false,
+      "reconciledEvent": false
+    },
+    "apply": {
+      "equations": [
+        "sourceCount = acceptedCount + rejectedCount + duplicateCount",
+        "acceptedCount = appliedCount + quarantinedCount"
+      ],
+      "validatedItemOutcomeAllowed": false,
+      "reconciledEvent": "Exactly one WorkforceIngestionReconciled.v1 only after atomic successful terminal reconciliation"
+    },
+    "trustedReceiptIdentity": {
+      "numericMarkerBinding": "signed on_behalf_of_subject equals verified PeopleRequestContext.userId",
+      "uuidReceiptBinding": "actor_public_id and subject_principal_public_id equal the same verified identity's non-null PeopleRequestContext.personPublicId",
+      "callerSuppliedIdentityAllowed": false,
+      "numericToUuidConversionAllowed": false
+    },
+    "trustedPreReceiptAuthoritySnapshot": {
+      "required": true,
+      "values": [
+        "contextKey",
+        "scopeRef",
+        "populationScopeDigest",
+        "authorizationRevision",
+        "populationRevision",
+        "fieldPolicyRevision",
+        "featureDecisionRevision"
+      ],
+      "source": "A closed Auth-signed marker successor or authenticated People-to-Auth pre-receipt resolution bound to marker jti/SHA, trusted identity and canonical request hash only",
+      "browserOrObjectSelectorAllowed": false,
+      "markerV1AloneSufficient": false,
+      "missingSnapshotBehavior": "AUTHORITY_RESOLUTION_UNAVAILABLE before receipt and before object fetch"
+    },
+    "postReceiptFinalAuthority": {
+      "order": "Only after durable receipt reservation",
+      "required": "Current ELEVATED Auth decision proving exact snapshot equality, narrow capability, duty, connector-set or legal-entity population, fixed purpose, current feature state and HIGH step-up",
+      "receiptBinding": [
+        "receiptPublicId",
+        "receiptRequestHash"
+      ],
+      "mismatchBehavior": "No object fetch, run creation, cursor advance or business mutation; fail closed under the sealed terminal/retryable taxonomy",
+      "provisionalOrInventedRevisionAllowed": false
+    }
+  },
+  "exactWritableBoundary": {
+    "backendCreateOrModify": [
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/workbench/hrm012/**",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/hrm012/**",
+      "dwp-people-server/src/main/java/com/dwp/services/people/integration/Hrm012*.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/workbench/hrm012/**",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/contracts/hrm012/**",
+      "dwp-people-server/src/test/java/com/dwp/services/people/integration/Hrm012*.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/integration/WorkforceIngestion*.java",
+      "dwp-people-server/src/main/resources/db/migration/V60__hrm_base_tfr_hrm_012.sql"
+    ],
+    "backendBoundedHrm008CorrectionOnly": [
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/employment/EmploymentEventAuthority.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/employment/EmploymentEventAuthorityTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/employment/HrmG3SliceContractTest.java"
+    ],
+    "frontendCreateOrModify": [
+      "apps/dwp/src/features/hris/people/data-quality/**",
+      "apps/dwp/src/features/hris/people/__tests__/g3-slices/base-tfr-hrm-012.slice.test.tsx"
+    ],
+    "evidenceCreateOnly": [
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-05-results/hrm-012/**"
+    ],
+    "centralMarkerOrAuthProtocolPathsWritable": false,
+    "outsideBoundaryAction": "STOP_AND_REQUEST_A_SEPARATE_APPEND_ONLY_CONTROL_REALLOCATION"
+  },
+  "targetedVerificationCorrection": {
+    "backendAdditions": [
+      "WorkforceIngestionValidateOnlyAccountingTest",
+      "WorkforceIngestionReceiptIdentityBindingTest",
+      "WorkforceIngestionTrustedAuthoritySnapshotTest",
+      "WorkforceIngestionPostReceiptExactEqualityTest"
+    ],
+    "requiredAssertions": [
+      "VALIDATE_ONLY valid items persist immutable VALIDATED evidence, all three apply-side counts are zero and the derived validation equation holds",
+      "APPLY rejects VALIDATED outcome and retains both canonical conservation equations",
+      "numeric marker subject and UUID receipt subject bind to one verified tenant identity without caller input or conversion",
+      "missing, stale, untrusted or unequal context, scope or revision evidence fails closed before object access and mutation",
+      "receiptPublicId and receiptRequestHash are bound into the final post-receipt Auth decision",
+      "the admitted marker v1 alone is never treated as a complete receipt authority snapshot"
+    ],
+    "rerunPolicy": "Run each new target group once; after failure rerun only the smallest affected target and never repeat already passing repository-wide work."
+  },
+  "acceptanceAuthority": {
+    "businessAcceptanceCount": 12,
+    "businessAcceptanceIds": [
+      "HRM012-AC-01",
+      "HRM012-AC-02",
+      "HRM012-AC-03",
+      "HRM012-AC-04",
+      "HRM012-AC-05",
+      "HRM012-AC-06",
+      "HRM012-AC-07",
+      "HRM012-AC-08",
+      "HRM012-AC-09",
+      "HRM012-AC-10",
+      "HRM012-AC-11",
+      "HRM012-AC-12"
+    ],
+    "mandatoryCorrectiveAcceptanceIds": [
+      "HRM012-AC-13"
+    ],
+    "requiredTotalCount": 13,
+    "semanticClarificationsRequired": true,
+    "weakeningOrOmissionAuthorized": false
+  },
+  "authority": {
+    "ownerCorrectionSealed": true,
+    "activeLeaseMayBindThisPacket": true,
+    "executableStartTokenMayBindThisPacketOnlyAfterActiveLease": true,
+    "moduleMayImplementFailClosedTrustedSnapshotPortsInsideExactBoundaryAfterToken": true,
+    "centralMarkerOrAuthProtocolWriteAuthorized": false,
+    "markerV1FallbackAuthorized": false,
+    "moduleSourceAuthoringAuthorizedNow": false,
+    "migrationAuthoringAuthorizedNow": false,
+    "testExecutionAuthorizedNow": false,
+    "moduleBranchCommitAndPushAuthorizedNow": false,
+    "directDwpDevMergeAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextGate": "BIND_THIS_OWNER_CORRECTION_AND_ITS_SEMANTIC_SUCCESSOR_IN_THE_ACTIVE_V60_LEASE_AND_EXECUTABLE_START_TOKEN_WITH_NO_MARKER_V1_OR_UNTRUSTED_SELECTOR_FALLBACK"
+}

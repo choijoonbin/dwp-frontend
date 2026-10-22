@@ -1,0 +1,110 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-05-hrm012-worktree-materialization-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-05-HRM012-WORKTREE-MATERIALIZATION-20261022-R1",
+  "recordedAt": "2026-10-22T09:23:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "MATERIALIZED_CLEAN_EXACT_CURRENT_BASES_NO_SOURCE_EDITS_NO_UPSTREAM",
+  "purpose": "Record the fresh clean backend and frontend HRM-012 module worktree identities required before the current-base People V60 reservation may become active and an executable module start token may be issued. This receipt alone grants no write, test, commit or push authority.",
+  "immutability": {
+    "sealed": true,
+    "appendOnly": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_RECEIPT_ID_AND_SHA256"
+  },
+  "sliceId": "BASE-TFR-HRM-012",
+  "module": "HRM",
+  "moduleSession": "HRIS-HRM",
+  "authorityBasis": {
+    "centralIntegrationReceipt": {
+      "path": "../../r7-batch-05-central-admission-r1/hrm-012-central-integration-receipt.v1.json",
+      "sha256": "46533c4a70b3c7d2c490513510621049fd9423d4616eb2d0af6a8278b38063d7",
+      "bytes": 5322
+    },
+    "ownerPacketSuccessorV2": {
+      "path": "../owner-packets/base-tfr-hrm-012.owner-packet-successor.v2.json",
+      "sha256": "32c8e213c4eb226626dffe7e8c07cedad027b0973efa7c3cfc0f9a1fd62b07a1",
+      "bytes": 8348,
+      "requiredState": "SEALED_CURRENT_BASE_EXACT_HRM012_OWNER_AUTHORITY_EXECUTABLE_TOKEN_WITHHELD"
+    },
+    "currentBaseV60Reservation": {
+      "path": "../migration-lease-hrm012-v60-reservation-successor.v2.json",
+      "sha256": "4af959afdc0fbbfd5f78ffb645f722d607951621f60bf006e8b757be63d99529",
+      "bytes": 6561,
+      "reservationId": "HRIS-WAVE7-R7-BATCH-05-MIGRATION-LEASE-RESERVATION-HRM012-V60-20261022-R2",
+      "requiredState": "RESERVED_NOT_ACTIVE_CURRENT_BASE"
+    }
+  },
+  "authorityCarrierBeforeAppendOnlyDocuments": {
+    "repository": "dwp-frontend",
+    "branch": "dwp-dev",
+    "commit": "9a826b9a156b2986a155d09d02b4b8112bb0bc56",
+    "tree": "eba1cd2162905939bdf6a39d575d93a8c9dabcb5",
+    "originRef": "origin/dwp-dev",
+    "originExact": true,
+    "porcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "clean": true
+  },
+  "materializedWorktrees": {
+    "backend": {
+      "repository": "dwp-backend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261022/r7-batch05/hrm-012/backend",
+      "branch": "codex/hris-wave7-r7-batch05-hrm-012-backend-20261022-r1",
+      "head": "c43a98698a9cee140fb11ebc248bdbbbe9214a7d",
+      "tree": "964b7e313c7187bf7bfca5bb5a517f6bc384f67a",
+      "expectedBaseCommit": "c43a98698a9cee140fb11ebc248bdbbbe9214a7d",
+      "expectedBaseTree": "964b7e313c7187bf7bfca5bb5a517f6bc384f67a",
+      "headAndTreeExact": true,
+      "porcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "clean": true,
+      "upstream": null,
+      "sourceChangesAtReceipt": [],
+      "materialized": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261022/r7-batch05/hrm-012/frontend",
+      "branch": "codex/hris-wave7-r7-batch05-hrm-012-frontend-20261022-r1",
+      "head": "9a826b9a156b2986a155d09d02b4b8112bb0bc56",
+      "tree": "eba1cd2162905939bdf6a39d575d93a8c9dabcb5",
+      "expectedBaseCommit": "9a826b9a156b2986a155d09d02b4b8112bb0bc56",
+      "expectedBaseTree": "eba1cd2162905939bdf6a39d575d93a8c9dabcb5",
+      "headAndTreeExact": true,
+      "porcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "clean": true,
+      "upstream": null,
+      "sourceChangesAtReceipt": [],
+      "materialized": true
+    }
+  },
+  "migrationObservation": {
+    "stream": "PEOPLE_MAIN",
+    "observedHighWater": "V59",
+    "migrationCount": 59,
+    "sqlBytes": 419829,
+    "candidateVersion": "V60",
+    "exactReservedPath": "dwp-people-server/src/main/resources/db/migration/V60__hrm_base_tfr_hrm_012.sql",
+    "candidatePathPresent": false,
+    "competingV60Present": false,
+    "v1ThroughV59UnchangedFromSealedReservationBase": true
+  },
+  "authority": {
+    "receiptSealed": true,
+    "activePeopleV60LeaseMayBeIssued": true,
+    "executableHrm012StartTokenMayBeIssuedOnlyAfterActiveLease": true,
+    "sourceAuthoringAuthorizedByReceiptAlone": false,
+    "migrationAuthoringAuthorizedByReceiptAlone": false,
+    "testExecutionAuthorizedByReceiptAlone": false,
+    "moduleBranchCommitAndPushAuthorizedByReceiptAlone": false,
+    "directDwpDevMergeAuthorized": false,
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionProviderSchedulerOrBrokerAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "invalidation": [
+    "Either worktree path, branch, initial head, initial tree, upstream or initial porcelain digest differs.",
+    "Either worktree is reused, relocated, merged, rebased or edited before the active lease and executable token are issued.",
+    "People high-water differs from V59 or a competing V60 path exists before the first authorized edit.",
+    "Any referenced authority SHA-256 or byte count differs."
+  ],
+  "nextGate": "ISSUE_ONE_APPEND_ONLY_ACTIVE_EXCLUSIVE_PEOPLE_V60_LEASE_HASH_BOUND_TO_THIS_RECEIPT_THEN_ISSUE_ONE_EXECUTABLE_HRM012_MODULE_START_TOKEN"
+}

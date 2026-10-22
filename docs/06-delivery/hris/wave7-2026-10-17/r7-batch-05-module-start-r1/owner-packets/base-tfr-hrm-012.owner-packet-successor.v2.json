@@ -1,0 +1,184 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-05-hrm012-owner-packet-successor.v2",
+  "packetId": "HRIS-WAVE7-R7-BATCH-05-OWNER-BASE-TFR-HRM-012-20261022-R2",
+  "recordedAt": "2026-10-22T09:21:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "SEALED_CURRENT_BASE_EXACT_HRM012_OWNER_AUTHORITY_EXECUTABLE_TOKEN_WITHHELD",
+  "immutability": {
+    "sealed": true,
+    "appendOnly": true,
+    "predecessorMutation": "FORBIDDEN"
+  },
+  "sliceId": "BASE-TFR-HRM-012",
+  "sourceRef": "TFR-HRM-012",
+  "module": "HRM",
+  "moduleSession": "HRIS-HRM",
+  "successorOf": {
+    "path": "base-tfr-hrm-012.owner-packet.v1.json",
+    "sha256": "2e9d7bdac2623a5aa417d14c5721e0cf19c0ba289bb17b52727076ecd83460cf",
+    "bytes": 18059,
+    "inheritance": "Inherit every semantic, implementation, protocol, field, migration-manifest, verification, non-claim and forbidden-expansion rule except the stale repository base pins, planned worktree identities, central-prerequisite admission state and evidence-root convention explicitly replaced here."
+  },
+  "authorityBasis": {
+    "centralIntegrationReceipt": {
+      "path": "../../r7-batch-05-central-admission-r1/hrm-012-central-integration-receipt.v1.json",
+      "sha256": "46533c4a70b3c7d2c490513510621049fd9423d4616eb2d0af6a8278b38063d7",
+      "bytes": 5322,
+      "requiredState": "EXACT_HRM012_CENTRAL_PREREQUISITE_MERGED_PUSHED_DEFAULT_OFF_ZERO_ENROLLMENT_MODULE_AUTHORITY_MAY_BE_REISSUED"
+    },
+    "semanticDisposition": {
+      "path": "../semantic-dispositions/base-tfr-hrm-012.semantic-disposition.v1.json",
+      "sha256": "bc7371c37459efa104c5d1239eae326fb2585fdd8d1b59b094046b6b02393519",
+      "bytes": 33226
+    },
+    "v60ReservationV1": {
+      "path": "../migration-lease-hrm012-v60-reservation.v1.json",
+      "sha256": "318df1fc3473fd408788e571bcf2884c1b07887003a38cb6f2bc366b715da422",
+      "bytes": 6555,
+      "disposition": "SUPERSEDED_ONLY_FOR_STALE_BACKEND_BASE_PIN_BY_A_SEPARATE_APPEND_ONLY_RESERVATION_SUCCESSOR"
+    }
+  },
+  "currentBasePins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "c43a98698a9cee140fb11ebc248bdbbbe9214a7d",
+      "tree": "964b7e313c7187bf7bfca5bb5a517f6bc384f67a",
+      "requiredRemote": "origin/dwp-dev",
+      "requiredRemoteExact": true,
+      "clean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "9a826b9a156b2986a155d09d02b4b8112bb0bc56",
+      "tree": "eba1cd2162905939bdf6a39d575d93a8c9dabcb5",
+      "requiredRemote": "origin/dwp-dev",
+      "requiredRemoteExactBeforeThisAppendOnlyCarrier": true,
+      "cleanBeforeThisAppendOnlyCarrier": true
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "requiredRemote": "origin/dwp-dev",
+      "requiredRemoteExact": true,
+      "readOnly": true
+    }
+  },
+  "plannedExactWorktrees": {
+    "backend": {
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261022/r7-batch05/hrm-012/backend",
+      "branch": "codex/hris-wave7-r7-batch05-hrm-012-backend-20261022-r1",
+      "requiredInitialHead": "c43a98698a9cee140fb11ebc248bdbbbe9214a7d",
+      "requiredInitialTree": "964b7e313c7187bf7bfca5bb5a517f6bc384f67a",
+      "requiredInitialPorcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "requiredInitialUpstream": null,
+      "firstPushTarget": "origin/codex/hris-wave7-r7-batch05-hrm-012-backend-20261022-r1"
+    },
+    "frontend": {
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261022/r7-batch05/hrm-012/frontend",
+      "branch": "codex/hris-wave7-r7-batch05-hrm-012-frontend-20261022-r1",
+      "requiredInitialHead": "9a826b9a156b2986a155d09d02b4b8112bb0bc56",
+      "requiredInitialTree": "eba1cd2162905939bdf6a39d575d93a8c9dabcb5",
+      "requiredInitialPorcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "requiredInitialUpstream": null,
+      "firstPushTarget": "origin/codex/hris-wave7-r7-batch05-hrm-012-frontend-20261022-r1"
+    }
+  },
+  "exactWritableBoundaryAfterExecutableToken": {
+    "backendCreateOrModify": [
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/workbench/hrm012/**",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/hrm012/**",
+      "dwp-people-server/src/main/java/com/dwp/services/people/integration/Hrm012*.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/workbench/hrm012/**",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/contracts/hrm012/**",
+      "dwp-people-server/src/test/java/com/dwp/services/people/integration/Hrm012*.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/integration/WorkforceIngestion*.java",
+      "dwp-people-server/src/main/resources/db/migration/V60__hrm_base_tfr_hrm_012.sql"
+    ],
+    "backendBoundedHrm008CorrectionOnly": [
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/employment/EmploymentEventAuthority.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/employment/EmploymentEventAuthorityTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/employment/HrmG3SliceContractTest.java"
+    ],
+    "frontendCreateOrModify": [
+      "apps/dwp/src/features/hris/people/data-quality/**",
+      "apps/dwp/src/features/hris/people/__tests__/g3-slices/base-tfr-hrm-012.slice.test.tsx"
+    ],
+    "evidenceCreateOnly": [
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-05-results/hrm-012/**"
+    ],
+    "outsideBoundaryAction": "STOP_AND_REQUEST_AN_APPEND_ONLY_OWNER_AND_TOKEN_SUCCESSOR"
+  },
+  "v60Manifest": {
+    "stream": "PEOPLE_MAIN",
+    "version": "V60",
+    "predecessorHighWater": "V59",
+    "exactPath": "dwp-people-server/src/main/resources/db/migration/V60__hrm_base_tfr_hrm_012.sql",
+    "createExactlyTwoTables": [
+      "ppl_workforce_ingestion_runs",
+      "ppl_workforce_ingestion_items"
+    ],
+    "reuseExactlyTheseExistingStores": [
+      "int_connector_instances",
+      "int_mapping_profiles",
+      "int_connector_cursors",
+      "ppl_command_receipts",
+      "sys_people_audit_events",
+      "sys_people_outbox_events"
+    ],
+    "historicalMigrationEditAuthorized": false,
+    "secondPeopleMigrationAuthorized": false,
+    "seedOrBackfillAuthorized": false
+  },
+  "acceptanceAuthority": {
+    "businessAcceptanceCount": 12,
+    "businessAcceptanceIds": [
+      "HRM012-AC-01",
+      "HRM012-AC-02",
+      "HRM012-AC-03",
+      "HRM012-AC-04",
+      "HRM012-AC-05",
+      "HRM012-AC-06",
+      "HRM012-AC-07",
+      "HRM012-AC-08",
+      "HRM012-AC-09",
+      "HRM012-AC-10",
+      "HRM012-AC-11",
+      "HRM012-AC-12"
+    ],
+    "mandatoryCorrectiveAcceptanceIds": [
+      "HRM012-AC-13"
+    ],
+    "requiredTotalCount": 13,
+    "source": "../semantic-dispositions/base-tfr-hrm-012.semantic-disposition.v1.json#/acceptanceCriteria",
+    "sourceSha256": "bc7371c37459efa104c5d1239eae326fb2585fdd8d1b59b094046b6b02393519",
+    "weakeningOrOmissionAuthorized": false
+  },
+  "centralBaseline": {
+    "productAuthorizationVersion": 57,
+    "productAuthorizationChecksum": "f7d6e2ef92f563747ed062e496638ea83498a33414fc12586c794f517e626d6e",
+    "authMigration": "V266",
+    "featureKey": "HRIS_HRM_DATA_QUALITY_WORKBENCH",
+    "defaultEnabled": false,
+    "tenantEnrollmentCount": 0
+  },
+  "authority": {
+    "ownerSuccessorSealed": true,
+    "centralPrerequisiteAdmitted": true,
+    "worktreeReceiptMayBeIssued": true,
+    "activeV60LeaseMayBeIssuedOnlyAfterCurrentReservationAndReceipt": true,
+    "executableStartTokenMayBeIssuedOnlyAfterActiveLease": true,
+    "moduleSourceAuthoringAuthorizedNow": false,
+    "migrationAuthoringAuthorizedNow": false,
+    "testExecutionAuthorizedNow": false,
+    "moduleBranchCommitAndPushAuthorizedNow": false,
+    "directDwpDevMergeAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextGate": "ISSUE_A_CURRENT_BASE_RESERVED_NOT_ACTIVE_V60_SUCCESSOR_RECORD_THE_EXACT_CLEAN_WORKTREES_ACTIVATE_ONE_EXCLUSIVE_V60_LEASE_AND_ISSUE_ONE_HASH_BOUND_EXECUTABLE_START_TOKEN"
+}
