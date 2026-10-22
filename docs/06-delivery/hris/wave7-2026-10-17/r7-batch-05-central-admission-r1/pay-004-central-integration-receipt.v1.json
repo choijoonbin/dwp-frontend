@@ -1,0 +1,172 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-05-pay004-central-integration-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-05-PAY004-CENTRAL-INTEGRATION-20261022-R1",
+  "recordedAt": "2026-10-22T07:03:53Z",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "EXACT_PAY004_CENTRAL_PREREQUISITE_MERGED_PUSHED_DEFAULT_OFF_ZERO_ENROLLMENT_OWNER_PACKET_AND_V55_RESERVATION_MAY_PROCEED",
+  "immutability": {
+    "sealed": true,
+    "appendOnly": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_RECEIPT_ID_AND_SHA256"
+  },
+  "sliceId": "BASE-TFR-PAY-004",
+  "module": "PAY",
+  "moduleSession": "HRIS-PAY",
+  "authorityBasis": {
+    "centralAuthorizationSuccessor": {
+      "path": "../r7-batch-05-module-start-r1/pay-004-iaq049-and-central-authorization-successor.v1.json",
+      "sha256": "cfc1a96ec8b581d61f2f310cb76d19f7107f7cb1e78607097651f6496317d4d6",
+      "bytes": 44345,
+      "carrierCommit": "e2766d8936366b089187d08024ad95ce783ba3c7"
+    },
+    "centralWorktreeReceipt": {
+      "path": "../r7-batch-05-module-start-r1/pay-004-central-worktree-materialization-receipt.v1.json",
+      "sha256": "2d80e295b552bc3e97a93e8cddd24ecda579092d6340905004f83e2502222394",
+      "bytes": 2433,
+      "carrierCommit": "61f0d61eba174d9b8477efc47365796ee6223238"
+    },
+    "centralImplementationToken": {
+      "path": "../r7-batch-05-module-start-r1/pay-004-central-implementation-token.v1.json",
+      "sha256": "67d980f72dcef47c594a624ee567650f8c971c54878e7574b64126fa0b0ed0a3",
+      "bytes": 4602,
+      "carrierCommit": "61f0d61eba174d9b8477efc47365796ee6223238"
+    },
+    "semanticDisposition": {
+      "path": "../r7-batch-05-module-start-r1/semantic-dispositions/base-tfr-pay-004.semantic-disposition.v1.json",
+      "sha256": "809553ec0a88fba5cbfdec7708715c274939e8015217bfe7c38ecc9c4c1601fe",
+      "bytes": 40507,
+      "carrierCommit": "774394b288f47f2eedf71bf0af724681f578fec1"
+    }
+  },
+  "centralSourceAdmission": {
+    "backend": {
+      "repository": "dwp-backend",
+      "baseDwpDevCommit": "0c47fe5c7b38bab5c26a7c35cf032f131ebb46c1",
+      "sourceBranch": "codex/hris-wave7-batch05-pay004-central-backend-20261022-r1",
+      "sourceBranchCommit": "e24dcddfecb8a03279a1bd494e6246a54c978c85",
+      "sourceBranchTree": "9058f39498d511646045b34a2fcb7775bd541298",
+      "admissionMergeCommit": "c69e8d52ba1950f920323e35ec598c2ff328c69c",
+      "currentDwpDevCommit": "c69e8d52ba1950f920323e35ec598c2ff328c69c",
+      "currentDwpDevTree": "9058f39498d511646045b34a2fcb7775bd541298",
+      "originRef": "origin/dwp-dev",
+      "originExact": true,
+      "clean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "baseCarrierCommit": "e2766d8936366b089187d08024ad95ce783ba3c7",
+      "controlCommit": "61f0d61eba174d9b8477efc47365796ee6223238",
+      "sourceBranch": "codex/hris-wave7-batch05-pay004-central-frontend-20261022-r1",
+      "sourceBranchCommit": "e7b8532d8c87590666d686ae61badae334e9689c",
+      "sourceBranchTree": "7494b1f099c8fafa97c42623425d9f4b465a76de",
+      "admissionMergeCommit": "67c973d90b04e884fce9f653a9e12391dbcb070d",
+      "currentDwpDevCommitBeforeThisReceipt": "67c973d90b04e884fce9f653a9e12391dbcb070d",
+      "currentDwpDevTreeBeforeThisReceipt": "835a748463a0dfe5a8269009ce9db3d0b77dae1b",
+      "originRef": "origin/dwp-dev",
+      "originExactBeforeThisReceipt": true,
+      "cleanBeforeThisReceipt": true
+    },
+    "independentReview": {
+      "backend": {
+        "unresolvedP0": 0,
+        "unresolvedP1": 0,
+        "unresolvedP2": 0
+      },
+      "frontend": {
+        "unresolvedP0": 0,
+        "unresolvedP1": 0,
+        "unresolvedP2": 0
+      }
+    }
+  },
+  "admittedBaseline": {
+    "productAuthorization": {
+      "version": 58,
+      "bundleStatus": "DRAFT",
+      "checksumAlgorithm": "SHA-256",
+      "checksum": "556f2cc1554f0aaab6f88e50c34d64ca5cdd95af9b2d55072f6e6745f4652cc2",
+      "counts": {
+        "capabilities": 271,
+        "accessPolicies": 24,
+        "entitlementExpressions": 17,
+        "predicatePolicies": 83,
+        "routes": 1125,
+        "pageRoutes": 158,
+        "dataRoutes": 340,
+        "actionRoutes": 627
+      },
+      "payrollProjection": {
+        "routes": 41,
+        "bindings": 41,
+        "pageRoutes": 5,
+        "dataRoutes": 14,
+        "actionRoutes": 22,
+        "capabilities": 17,
+        "predicatePolicies": 9
+      }
+    },
+    "fixture": {
+      "registryLineage": "1..58",
+      "checksum": "904b24c806114a6bdae1d7a8c9dfebed743b8724f7db750f23a456ae12f9fdb8"
+    },
+    "authMigration": "V267",
+    "featureKey": "HRIS_PAY_RETIREMENT_WORKBENCH",
+    "featureDefault": "OFF",
+    "tenantEnrollmentCount": 0,
+    "routes": [
+      "route.hcm.operations.pay-retirement.page",
+      "route.hcm.operations.pay-retirement.data"
+    ],
+    "newActionRouteCount": 0,
+    "frontend": {
+      "officialHcmPageCount": 65,
+      "registeredPageCount": 229,
+      "draftPageCount": 71,
+      "authorizationSnapshotBytes": 98719140,
+      "authorizationSnapshotSha256": "8d24cfc9c4fb20aee36069b31966bf62514f81c039f1e24462c702c8b9502444"
+    }
+  },
+  "verificationEvidence": {
+    "backendContractAndFixtureTests": 5,
+    "authFocusedTests": 20,
+    "authRealPostgresTests": 4,
+    "gatewayFocusedTests": 132,
+    "frontendFocusedFiles": 3,
+    "frontendFocusedTests": 19,
+    "skippedTests": 0,
+    "backendChangedPaths": 33,
+    "frontendChangedPaths": 9,
+    "allowlistViolations": 0,
+    "priorVersionByteDrift": 0,
+    "repositoryWideSuiteExecuted": false,
+    "reason": "All bounded target groups passed; merge trees were byte-identical to the independently reviewed source branches outside the two prior control artifacts."
+  },
+  "admissionClaims": {
+    "centralPrerequisiteMergedAndPushed": true,
+    "moduleSourceIncluded": false,
+    "payrollV55Included": false,
+    "retirementWorkbenchMounted": false,
+    "menuMounted": false,
+    "featureEnabled": false,
+    "tenantEnrollmentCount": 0,
+    "productionCountryPackOrProviderBound": false,
+    "businessSliceComplete": false,
+    "productionReleaseAuthorized": false
+  },
+  "authority": {
+    "freshOwnerPacketMayBeIssued": true,
+    "freshPayrollV55ReservationMayBeIssued": true,
+    "freshCleanModuleWorktreesMayBeHashBoundAfterPacketAndReservation": true,
+    "activeExclusivePayrollV55LeaseMayBeIssuedOnlyAfterReservation": true,
+    "executableModuleStartTokenMayBeIssuedOnlyAfterActiveLease": true,
+    "moduleSourceAuthoringAuthorizedByThisReceiptAlone": false,
+    "migrationAuthoringAuthorizedByThisReceiptAlone": false,
+    "directDwpDevModuleMergeAuthorized": false,
+    "routeMountAuthorized": false,
+    "menuMountAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextGate": "ISSUE_ONE_CURRENT_BASE_PAY004_OWNER_PACKET_AND_ONE_RESERVED_NOT_ACTIVE_PAYROLL_V55_DECISION; THEN_MATERIALIZE_FRESH_CLEAN_MODULE_WORKTREES_ACTIVATE_ONE_EXCLUSIVE_V55_LEASE_AND_ONLY_THEN_ISSUE_ONE_EXECUTABLE_PAY004_MODULE_START_TOKEN"
+}
