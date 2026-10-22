@@ -1,0 +1,83 @@
+{
+  "schema": "dwp.hris.module-start-token-correction.v2",
+  "tokenId": "HRIS-WAVE7-R7-BATCH-05-START-CORRECTION-BASE-TFR-HRM-012-20261022-R2",
+  "issuedAt": "2026-10-22T10:23:41+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "ISSUED_EXECUTABLE_APPEND_ONLY_QUARANTINE_PERSISTENCE_SCOPE_CORRECTION_ALL_OTHER_AUTHORITY_INHERITED",
+  "module": "HRM",
+  "moduleSession": "HRIS-HRM",
+  "sliceId": "BASE-TFR-HRM-012",
+  "sourceRef": "TFR-HRM-012",
+  "immutability": {
+    "sealed": true,
+    "appendOnly": true,
+    "predecessorMutation": "FORBIDDEN",
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_TOKEN_ID_AND_SHA256"
+  },
+  "predecessorToken": {
+    "path": "base-tfr-hrm-012.start-token.v1.json",
+    "sha256": "0592ca8b606236f0e36c639c547a94387dd517754fbb4a3ada091bbca19b662d",
+    "bytes": 15043,
+    "state": "ISSUED_EXECUTABLE_EXACT_CURRENT_WORKTREES_ACTIVE_EXCLUSIVE_V60_CORRECTED_BOUNDED_SOURCE_TEST_COMMIT_PUSH_ONLY_DEFAULT_OFF_ZERO_ENROLLMENT"
+  },
+  "correctionReason": {
+    "finding": "The predecessor targetedVerification.negative sentence applied the words ciphertext, key reference and numeric database key to persistence as well as output. Read literally, that sentence contradicts the same token's authorized encrypted quarantine-after-acceptance implementation and the sealed semantic requirement to store an encrypted QUARANTINED_AFTER_ACCEPTANCE record.",
+    "classification": "CONTROL_PLANE_TEXT_CONFLICT_NO_SOURCE_SCOPE_EXPANSION",
+    "resolution": "Replace only that one negative sentence with the exact persistence and output boundaries below. Do not edit the sealed predecessor."
+  },
+  "authorityBasis": {
+    "semanticDispositionV1": {
+      "path": "../semantic-dispositions/base-tfr-hrm-012.semantic-disposition.v1.json",
+      "sha256": "bc7371c37459efa104c5d1239eae326fb2585fdd8d1b59b094046b6b02393519",
+      "bytes": 33226,
+      "inheritedRule": "For APPLY only, an accepted item that cannot be applied is stored as an encrypted QUARANTINED_AFTER_ACCEPTANCE record with a redacted reason. Quarantine ciphertext and key reference are forbidden from event payloads."
+    },
+    "ownerPacketV1": {
+      "path": "../owner-packets/base-tfr-hrm-012.owner-packet.v1.json",
+      "sha256": "2e9d7bdac2623a5aa417d14c5721e0cf19c0ba289bb17b52727076ecd83460cf",
+      "bytes": 18059,
+      "inheritedRule": "Raw source payload, credentials, endpoint URI, rejected restricted values, quarantine ciphertext, key references, numeric database keys and raw cursors are forbidden in API, audit, log or event output."
+    },
+    "centralCarrierAtIssue": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "c2479f42da52c1ee3bbb124914c66726ceabc29c",
+      "tree": "1af6eb7864a8e918f04b93be2ba402554d8bb134",
+      "originExact": true,
+      "cleanBeforeDraft": true
+    }
+  },
+  "replacementForPredecessorTargetedVerificationNegativeLine221": {
+    "persistenceBoundary": [
+      "Raw source payload, credentials, endpoint URIs and rejected restricted values must never be persisted.",
+      "Only envelope-encrypted quarantine ciphertext, its non-secret opaque key reference, its envelope digest and a redacted reason may be persisted for QUARANTINED_AFTER_ACCEPTANCE evidence in the exact V60 item ledger.",
+      "Plaintext quarantine content, raw encryption keys, credentials and rejected restricted values must never be persisted.",
+      "Internal tenant and relational identifiers required by the exact V60 schema remain authorized only inside tenant-isolated database rows and must never be serialized to module API, audit, log or event output.",
+      "A committed raw connector cursor remains only in the already-authorized int_connector_cursors owner store; V60 run and item evidence persists only cursor digests."
+    ],
+    "outputBoundary": "No raw source payload, credential, endpoint URI, rejected restricted value, quarantine ciphertext, quarantine key reference, internal numeric database key or raw cursor may appear in API, log, audit, IAQ or event output.",
+    "cryptographicBoundary": "The module stores quarantine material only after QuarantineProtectorPort returns a nonempty ciphertext, a canonical non-secret opaque key reference and a lowercase SHA-256 envelope digest. No production protector, credential provider or key-management binding is authorized by this correction.",
+    "testExpectation": "Targeted tests must prove that persisted quarantine evidence is encrypted and redacted, while every API, audit, log, IAQ and event projection omits ciphertext, key reference, internal identifiers and raw cursor data."
+  },
+  "inheritance": {
+    "rule": "Every predecessor token worktree pin, exact writable boundary, active exclusive People V60 lease, thirteen acceptance criteria, targeted-test policy, default-OFF state, zero enrollment, branch commit-and-push authority, non-claim and forbidden scope remains authoritative unchanged except the single corrected negative sentence.",
+    "sourceExpansion": false,
+    "migrationExpansion": false,
+    "testExpansion": false,
+    "productionBindingExpansion": false
+  },
+  "authority": {
+    "correctionExecutable": true,
+    "existingBoundedModuleAuthoringContinues": true,
+    "existingPeopleV60LeaseContinues": true,
+    "moduleBranchCommitAndPushContinues": true,
+    "directDwpDevMergeAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "frontendRouteOrMenuMountAuthorized": false,
+    "productionProviderOrCredentialBindingAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextGate": "COMPLETE_ONLY_THE_ALREADY_AUTHORIZED_HRM012_MODULE_SOURCE_AND_TARGETED_VERIFICATION_THEN_REQUIRE_INDEPENDENT_CENTRAL_SOURCE_ADMISSION"
+}
