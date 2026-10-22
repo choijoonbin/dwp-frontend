@@ -1,0 +1,177 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-05-pay004-module-source-integration-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-05-PAY004-MODULE-SOURCE-INTEGRATION-20261022-R1",
+  "recordedAt": "2026-10-22T20:22:02+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "EXACT_PAY004_MODULE_HEADS_NO_FF_MERGED_PUSHED_44_OF_44_BLOB_IDENTICAL_V55_LEASE_CONSUMED_DEFAULT_OFF_ZERO_ENROLLMENT",
+  "module": "PAY",
+  "moduleSession": "HRIS-PAY",
+  "sliceId": "BASE-TFR-PAY-004",
+  "immutability": {
+    "sealed": true,
+    "appendOnly": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_RECEIPT_ID_AND_SHA256"
+  },
+  "authority": {
+    "sourceAdmissionDecision": {
+      "path": "pay-004-module-source-admission-decision.v1.json",
+      "sha256": "5d53966c73a7a827ed0dea46199f383cc02140145b029292b9ead79f6cb64cd6",
+      "bytes": 19438,
+      "gitBlob": "e1907b9d9486a84b47a52d924423bb0e1dd7cb88",
+      "carrierCommit": "9c7942201c2a6228abe39dd96b979f7d5a18cf9a",
+      "carrierTree": "af594dc50e1194a150a90b2c4c9b33aa2b451b97"
+    },
+    "decisionConstraintsObserved": {
+      "exactHeadsOnly": true,
+      "noFfOnly": true,
+      "stopOnConflict": true,
+      "moduleTestRerunAuthorized": false,
+      "repositoryWideSuiteAuthorized": false
+    }
+  },
+  "integratedHeads": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "sourceHead": "4d9da191afc926c0e744aadf2df45ee42f497301",
+      "sourceTree": "3f83136fabb7b3dc09b179109fb81a98d3b7bfe0",
+      "mergeCommit": "8bec85dab5ee816b12a922c51e369046714c007f",
+      "mergeTree": "3f83136fabb7b3dc09b179109fb81a98d3b7bfe0",
+      "parents": [
+        "c69e8d52ba1950f920323e35ec598c2ff328c69c",
+        "4d9da191afc926c0e744aadf2df45ee42f497301"
+      ],
+      "strategy": "NO_FF_EXACT_BRANCH_HEAD",
+      "sourceIsSecondParent": true,
+      "sourceIsAncestor": true,
+      "mergeTreeEqualsSourceTree": true,
+      "admittedPathCount": 28,
+      "admittedBlobMismatchCount": 0,
+      "pathOnlyManifestSha256": "fb53b2e41640f31598ed7d05b75559d57dec9f764781bb8cdf2a3cedd651eb65",
+      "nameStatusManifestSha256": "363108b35644e0e629fe901f7650d643374346937c8466f10599a259d6210ccc",
+      "mergeConflicts": 0,
+      "automaticConflictResolution": false,
+      "manualConflictResolution": false,
+      "payrollV55FileCount": 1,
+      "pay004TableCount": 5,
+      "originExact": true,
+      "clean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "sourceHead": "fc0b54c82d2c211e262145fbe914b1b2fdbd5df8",
+      "sourceTree": "8e6813834f3f0fb5c5da4ab1875da2e19d7f43a8",
+      "requiredSourceCommits": [
+        "6afa09f1eb32fac9c0ee355e78cdf5340f6f81a8"
+      ],
+      "mergeCommit": "41783b21d832912ad623d1c1c976acb96a16e5f0",
+      "mergeTree": "fe3ca9929459ac7c745692bf06b85cffad3057fc",
+      "parents": [
+        "9c7942201c2a6228abe39dd96b979f7d5a18cf9a",
+        "fc0b54c82d2c211e262145fbe914b1b2fdbd5df8"
+      ],
+      "strategy": "NO_FF_EXACT_BRANCH_HEAD",
+      "decisionCarrierIsFirstParent": true,
+      "sourceIsSecondParent": true,
+      "sourceIsAncestor": true,
+      "decisionCarrierIsAncestor": true,
+      "centralAuthorityCandidatePathOverlapCount": 0,
+      "admittedPathCount": 16,
+      "admittedBlobMismatchCount": 0,
+      "pathOnlyManifestSha256": "7b4c11e70acdd47da4b429e37907c5afc3fb631fa016191c5c940807cc08b0be",
+      "nameStatusManifestSha256": "aff75eba321a0ffa4189ed1250e1221751a71b7f8fe4926a98b706f0798cac23",
+      "mergeConflicts": 0,
+      "automaticConflictResolution": false,
+      "manualConflictResolution": false,
+      "originExactBeforeReceiptDraft": true,
+      "cleanBeforeReceiptDraft": true
+    }
+  },
+  "postMergeVerification": {
+    "gitIdentityParentsAndAncestry": "PASS",
+    "exactAdmittedBlobComparison": "44_OF_44_MATCH",
+    "frontendCentralAuthorityPreservedWithZeroCandidatePathOverlap": true,
+    "backendAdmittedBlobs": {
+      "expected": 28,
+      "matched": 28,
+      "mismatched": 0
+    },
+    "frontendAdmittedBlobs": {
+      "expected": 16,
+      "matched": 16,
+      "mismatched": 0
+    },
+    "totalAdmittedBlobs": {
+      "expected": 44,
+      "matched": 44,
+      "mismatched": 0
+    },
+    "payrollMigrationBoundary": "PASS_ONE_V55_FILE_EXACTLY_FIVE_PAY004_TABLES",
+    "gitDiffCheck": "PASS",
+    "mergeConflicts": 0,
+    "automaticConflictResolution": false,
+    "manualConflictResolution": false,
+    "moduleTestsRerun": false,
+    "repositoryWideSuiteRun": false,
+    "reason": "Both admissions were conflict-free Git identity and provenance operations over exact, independently reviewed and already targeted-tested module heads. Only affected merge identity, blob parity and V55 static boundaries were rechecked."
+  },
+  "migrationLeaseClosure": {
+    "activationPath": "../r7-batch-05-module-start-r1/migration-lease-pay004-v55-activation.v1.json",
+    "activationSha256": "ed90e3c4c08dd02fcdf16a5a0d0442d031b063a3f3170c8b0d31824e6b833b07",
+    "activationBytes": 7655,
+    "leaseId": "HRIS-WAVE7-R7-BATCH-05-PAYROLL-MAIN-V55-PAY004-20261022-R1",
+    "stream": "PAYROLL_MAIN",
+    "version": "V55",
+    "sliceId": "BASE-TFR-PAY-004",
+    "exactPath": "dwp-payroll-server/src/main/resources/db/migration/V55__pay_base_tfr_pay_004_retirement.sql",
+    "state": "CONSUMED_CENTRALLY_INTEGRATED",
+    "activeLeaseCountAfterIntegration": 0,
+    "payrollMigrationHighWater": "V55",
+    "secondMigrationAuthorized": false,
+    "existingMigrationEditAuthorized": false
+  },
+  "rolloutBoundary": {
+    "featureKey": "HRIS_PAY_RETIREMENT_WORKBENCH",
+    "activationProperty": "dwp.features.HRIS_PAY_RETIREMENT_WORKBENCH.enabled",
+    "runtimeDefault": "OFF",
+    "matchIfMissing": false,
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "tenantEnrollmentCount": 0,
+    "runtimeCallsWhenDisabled": 0,
+    "routeMounted": false,
+    "menuMounted": false,
+    "shellNodeMounted": false,
+    "productionCountryPackBound": false,
+    "productionObjectProviderBound": false,
+    "productionMappingOrEffectProviderBound": false,
+    "productionCredentialOrKeyProviderBound": false,
+    "schedulerBound": false,
+    "brokerBound": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionIncrement": 0
+  },
+  "authorityAfterReceipt": {
+    "moduleSourceIntegrated": true,
+    "migrationLeaseConsumed": true,
+    "runtimeActivationAuthorizedByThisReceipt": false,
+    "routeOrMenuMountAuthorized": false,
+    "productionCountryPackBindingAuthorized": false,
+    "productionProviderBindingAuthorized": false,
+    "schedulerOrBrokerBindingAuthorized": false,
+    "fullSliceCompletionAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nonClaims": [
+    "The frontend route, shell node, menu or tenant-visible page is mounted.",
+    "A production country pack, object, mapping, effect, credential or key provider is bound.",
+    "A production scheduler or broker is active.",
+    "The feature is enabled or any tenant is enrolled.",
+    "Customer data, full-slice completion or production release is authorized.",
+    "BASE-TFR-PAY-004, Batch-05 or R7 is complete.",
+    "Module tests or a repository-wide suite were rerun during the identity-only integration."
+  ],
+  "nextAction": "Return control to the Batch-05 roadmap authority. Record a separate PAY-004 sequencing-exit receipt before opening PER-008; any runtime mount, country-pack or provider binding, tenant enrollment or production release requires separate explicit authority."
+}
