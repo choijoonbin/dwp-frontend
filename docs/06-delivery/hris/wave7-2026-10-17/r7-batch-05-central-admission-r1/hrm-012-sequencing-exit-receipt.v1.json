@@ -1,0 +1,246 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-05-hrm012-sequencing-exit-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-05-HRM012-SEQUENCING-EXIT-20261022-R1",
+  "recordedAt": "2026-10-22T13:00:57+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "BATCH05_LANE_1_HRM012_SEQUENCING_EXIT_ACCEPTED_DEFAULT_OFF_ZERO_ENROLLMENT_ZERO_BUSINESS_CREDIT_PAY004_SEMANTIC_CLOSURE_NEXT",
+  "sliceId": "BASE-TFR-HRM-012",
+  "moduleSession": "HRIS-HRM",
+  "purpose": "Close only fixed Batch-05 lane order 1 after exact central prerequisite and module-source integration. Preserve all route, menu, provider, scheduler, broker, activation, enrollment and full-business-completion boundaries, then permit only PAY-004 semantic closure as lane order 2.",
+  "immutability": {
+    "sealed": true,
+    "appendOnly": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_RECEIPT_ID_AND_SHA256",
+    "predecessorMutation": "FORBIDDEN"
+  },
+  "authorityBasis": {
+    "batch05Preflight": {
+      "path": "../r7-batch-05-preflight-r1/semantic-dependency-migration-preflight.v1.json",
+      "sha256": "8f7a0d38c4dc86873e4930e5a21dcc0a269c39512508d86dd529b40015237e0f",
+      "bytes": 37443,
+      "requiredState": "PREFLIGHT_COMPLETE_FIXED_ORDER_FIVE_CONDITIONAL_LANES_NO_PACKETS_NO_TOKENS_NO_WORKTREES_NO_LEASES_NO_SOURCE"
+    },
+    "centralPrerequisiteIntegration": {
+      "path": "hrm-012-central-integration-receipt.v1.json",
+      "sha256": "46533c4a70b3c7d2c490513510621049fd9423d4616eb2d0af6a8278b38063d7",
+      "bytes": 5322,
+      "carrierCommit": "c2479f42da52c1ee3bbb124914c66726ceabc29c",
+      "carrierTree": "1af6eb7864a8e918f04b93be2ba402554d8bb134",
+      "requiredState": "EXACT_HRM012_CENTRAL_PREREQUISITE_MERGED_PUSHED_DEFAULT_OFF_ZERO_ENROLLMENT_MODULE_AUTHORITY_MAY_BE_REISSUED"
+    },
+    "moduleSourceIntegration": {
+      "path": "hrm-012-module-source-integration-receipt.v1.json",
+      "sha256": "e915ea3676109259ff24d837fafc7823f1d87c811541748bc7c259d13d0399dd",
+      "bytes": 7246,
+      "carrierCommit": "90488d5c4379c9df0b54f0efb2ece151b222b668",
+      "carrierTree": "c4aa9b7484185c5d5a51744f5cafcf5ccd0f9725",
+      "requiredState": "EXACT_HRM012_MODULE_HEADS_NO_FF_MERGED_PUSHED_61_OF_61_BLOB_IDENTICAL_V60_LEASE_CONSUMED_DEFAULT_OFF_ZERO_ENROLLMENT"
+    },
+    "backendModuleResult": {
+      "path": "../r7-batch-05-results/hrm-012/backend-module-result.v1.json",
+      "sha256": "4461470e638f299b8b3cb8f18e180091572fdc3d03f39ff6c41f420cf840c51e",
+      "bytes": 29150,
+      "requiredDecision": "BACKEND_MODULE_SOURCE_COMMITTED_PUSHED_AND_READY_FOR_SEPARATE_CENTRAL_ADMISSION"
+    },
+    "frontendModuleResult": {
+      "path": "../r7-batch-05-results/hrm-012/frontend-module-result.v1.json",
+      "sha256": "193b6775d7042f824d8927b7c515217c3bfcf25962ec013cd50a3411c1ada4a1",
+      "bytes": 6544,
+      "requiredDecision": "FRONTEND_MODULE_SOURCE_READY_FOR_MODULE_BRANCH_COMMIT_PUSH_AND_SEPARATE_CENTRAL_REVIEW"
+    }
+  },
+  "acceptedLaneResult": {
+    "order": 1,
+    "sliceId": "BASE-TFR-HRM-012",
+    "moduleSession": "HRIS-HRM",
+    "centralPrerequisiteIntegrated": true,
+    "moduleSourceIntegrated": true,
+    "centralAndModuleCommitsPushed": true,
+    "acceptanceCriteriaPassed": "13_OF_13",
+    "independentReviewFindings": {
+      "p0": 0,
+      "p1": 0,
+      "p2": 0,
+      "decision": "GO"
+    },
+    "admittedBlobIdentity": "61_OF_61_MATCH",
+    "mergeConflicts": 0,
+    "runtimeDefault": "OFF",
+    "tenantEnrollmentCount": 0,
+    "productionObjectProviderBindingCount": 0,
+    "productionMappingOrEffectProviderBindingCount": 0,
+    "productionCredentialOrKeyProviderBindingCount": 0,
+    "productionSchedulerBindingCount": 0,
+    "productionBrokerBindingCount": 0,
+    "frontendMountedRouteCount": 0,
+    "frontendMountedMenuCount": 0,
+    "fullBusinessSliceComplete": false,
+    "businessCompletionIncrement": 0,
+    "acceptedState": "INTEGRATED_DEFAULT_OFF_TECHNICAL_SLICE_WITH_EXPLICIT_PRODUCTION_AND_BUSINESS_RESIDUALS"
+  },
+  "integratedHeads": {
+    "backend": {
+      "sourceHead": "b5e71940ba96d6d6daec2eaacc4ac00954089efa",
+      "mergeCommit": "0c47fe5c7b38bab5c26a7c35cf032f131ebb46c1",
+      "admittedBlobCount": 44,
+      "admittedBlobMismatchCount": 0
+    },
+    "frontend": {
+      "sourceHead": "0ce690d94e1b8fd0776f021cd6ee45c953f98f47",
+      "mergeCommit": "9c97931046036ad5fac42705a3e9901190ddff6a",
+      "admittedBlobCount": 17,
+      "admittedBlobMismatchCount": 0
+    }
+  },
+  "migrationClosure": {
+    "consumedLease": {
+      "leaseId": "HRIS-WAVE7-R7-BATCH-05-PEOPLE-MAIN-V60-HRM012-20261022-R2",
+      "stream": "PEOPLE_MAIN",
+      "version": "V60",
+      "sliceId": "BASE-TFR-HRM-012",
+      "state": "CONSUMED_CENTRALLY_INTEGRATED"
+    },
+    "activeMigrationLeaseCountAfterExit": 0,
+    "migrationHighWater": {
+      "PEOPLE_MAIN": "V60",
+      "PERFORMANCE": "V19",
+      "PAYROLL_MAIN": "V54",
+      "PLATFORM_MAIN": "V333",
+      "TIME_MAIN": "V14",
+      "AUTH_MAIN": "V266",
+      "NOTIFICATION_MAIN": "V35",
+      "APPROVAL_MAIN": "V58",
+      "PRODUCT_AUTHORIZATION_BUNDLE": "v57"
+    },
+    "nextLeaseIssued": false
+  },
+  "fixedOrderAfterExit": {
+    "closed": [
+      "BASE-TFR-HRM-012"
+    ],
+    "next": "BASE-TFR-PAY-004",
+    "remainingAfterNext": [
+      "BASE-TFR-PER-008",
+      "BASE-TFR-SYS-008",
+      "BASE-TFR-TIM-004"
+    ],
+    "reorderingAuthorized": false
+  },
+  "pay004NextBoundary": {
+    "order": 2,
+    "moduleSession": "HRIS-PAY",
+    "businessMeaning": "Country-specific retirement screens collapse into signed country-pack activation plus generic immutable calculation and result projection.",
+    "semanticLineage": "TFR-PAY-004::PAY-RETIREMENT::PEP-PAY-028|PEP-PAY-012|PEP-PAY-014|EVT-PAY:PayrollCalculated",
+    "entryQuery": {
+      "id": "IAQ-049",
+      "method": "GET",
+      "browserPath": "/api/payroll/v1/workbench/pay-retirement",
+      "canonicalRoute": "/hr/operations/payroll/retirement",
+      "fieldGroups": [
+        "RETIREMENT_RESULT",
+        "POLICY_VERSION",
+        "CASE_STATUS"
+      ]
+    },
+    "allowedNextWork": [
+      "seal country-pack signature, maker-checker and PACK_INSTALLER_NE_STATUTORY_APPROVER semantics",
+      "seal immutable calculation, retirement result projection, reconciliation and PayrollCalculated.v1 reuse boundaries",
+      "seal IAQ-049 ownership of retirement result, policy version and case state",
+      "preserve IAQ-026 primary ownership in PAY-003 without duplicate implementation or completion credit",
+      "prove the exact Payroll-owned persistence delta beyond V54 before any V55 reservation"
+    ],
+    "observedPayrollMigrationHighWater": "V54",
+    "candidateVersionOnlyIfPayrollOwnedSchemaDeltaIsProven": "V55",
+    "defaultMigrationIfNoOwnerSchemaDelta": "NONE",
+    "packetIssued": false,
+    "startTokenIssued": false,
+    "migrationLeaseIssued": false,
+    "worktreeMaterialized": false,
+    "sourceAuthoringAuthorized": false,
+    "centralAuthorizationAuthoringAuthorized": false,
+    "requiredNextArtifact": "PAY004_APPEND_ONLY_SEMANTIC_DISPOSITION"
+  },
+  "carriedOpenGates": [
+    {
+      "gateId": "TIM_CLOSE_PERIOD_DEFINITION_PRODUCER",
+      "severity": "P0",
+      "state": "OPEN_EXTERNAL_SOURCE_AUTHORITY_GATE"
+    },
+    {
+      "gateId": "TIM_CLOSE_TRUSTED_OWNER_HEADER_ISSUER",
+      "severity": "P0",
+      "state": "OPEN_BEFORE_ANY_TENANT_ENROLLMENT"
+    }
+  ],
+  "observedRepositoryPinsBeforeExitCarrier": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "0c47fe5c7b38bab5c26a7c35cf032f131ebb46c1",
+      "tree": "5b14cee170175f194387492ed4ecb26cb6fc8cd7",
+      "originExact": true,
+      "clean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "eb05b84831ee9eb0f7a6d18b11b599016ee0c5aa",
+      "tree": "e463048ac775acd3ea76ada7fe708809934c30cc",
+      "originExact": true,
+      "committedTreeCleanBeforeDraft": true,
+      "expectedUntrackedOnly": [
+        "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-05-central-admission-r1/hrm-012-sequencing-exit-receipt.v1.json"
+      ]
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "originExact": true,
+      "clean": true
+    }
+  },
+  "portfolioAccounting": {
+    "universe": 86,
+    "retired": 2,
+    "active": 84,
+    "completedBeforeBatch05": 26,
+    "hrm012BusinessCompletionIncrement": 0,
+    "completedAfterHrm012Exit": 26,
+    "activeIncompleteAfterHrm012Exit": 58
+  },
+  "verificationPolicyApplied": {
+    "boundedChecksOnly": true,
+    "repositoryWideSuiteRun": false,
+    "unaffectedPassingTargetRerun": false,
+    "jsonSyntaxCheckRequired": true,
+    "directReferenceHashAndByteCheckRequired": true,
+    "carrierAncestryAndRepositoryPinCheckRequired": true,
+    "independentDocumentReviewRequiredBeforeCommit": true
+  },
+  "authority": {
+    "hrm012SequencingExitAccepted": true,
+    "hrm012FullBusinessSliceComplete": false,
+    "hrm012BusinessCompletionIncrement": 0,
+    "pay004SemanticClosureMayBegin": true,
+    "pay004PacketTokenWorktreeLeaseOrSourceAuthorizedByThisReceipt": false,
+    "laterLaneWorkMayBeginBeforePay004Exit": false,
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "batch05Complete": false,
+    "r7Complete": false
+  },
+  "decision": "CLOSE_ONLY_HRM012_SEQUENCE_LANE_WITH_ZERO_BUSINESS_CREDIT_AND_ADVANCE_ONLY_TO_PAY004_SEMANTIC_CLOSURE",
+  "nonClaims": [
+    "BASE-TFR-HRM-012 is fully complete as a production business slice.",
+    "A production provider, scheduler, broker, route, menu, feature or tenant was activated, mounted, bound or enrolled.",
+    "BASE-TFR-PAY-004 received an owner packet, token, worktree, V55 lease, central authorization or source authority.",
+    "BASE-TFR-PER-008, BASE-TFR-SYS-008 or BASE-TFR-TIM-004 may begin out of order.",
+    "Either inherited TIM P0 gate is closed.",
+    "Batch-05, R7 or HRIS is complete."
+  ],
+  "nextAction": "Perform one bounded PAY-004 semantic closure on the pinned canon. Issue no packet, token, worktree, V55 lease, central authorization or source authority until that disposition is independently reviewed and separately admitted."
+}
