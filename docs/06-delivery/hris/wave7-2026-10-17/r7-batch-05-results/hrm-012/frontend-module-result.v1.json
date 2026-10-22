@@ -1,0 +1,139 @@
+{
+  "schema": "dwp.hris.wave7.frontend-module-result.v1",
+  "evidenceId": "HRIS-WAVE7-R7-BATCH-05-HRM-012-FRONTEND-RESULT-20261022-R1",
+  "recordedAt": "2026-10-22T09:41:32+09:00",
+  "recordedBy": "HRIS-HRM",
+  "sliceId": "BASE-TFR-HRM-012",
+  "authority": {
+    "startToken": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-05-module-start-r1/tokens/base-tfr-hrm-012.start-token.v1.json",
+      "tokenId": "HRIS-WAVE7-R7-BATCH-05-START-BASE-TFR-HRM-012-20261022-R1",
+      "sha256": "0592ca8b606236f0e36c639c547a94387dd517754fbb4a3ada091bbca19b662d",
+      "executable": true
+    },
+    "initialHead": "9a826b9a156b2986a155d09d02b4b8112bb0bc56",
+    "branch": "codex/hris-wave7-r7-batch05-hrm-012-frontend-20261022-r1"
+  },
+  "implementation": {
+    "featureKey": "HRIS_HRM_DATA_QUALITY_WORKBENCH",
+    "defaultEnabled": false,
+    "tenantEnrollmentCount": 0,
+    "runtimeCallCountWhenDisabled": 0,
+    "routeMounted": false,
+    "ownerContract": {
+      "method": "GET",
+      "browserPath": "/api/people/v1/hris/workbench/operations/data/quality",
+      "projectionVersion": "1",
+      "variant": "DATA_QUALITY",
+      "availableActions": []
+    },
+    "states": ["LOADING", "COMPLETE", "EMPTY", "PARTIAL", "UNAVAILABLE", "DENIED", "STALE"],
+    "fieldPolicy": {
+      "view": "typed authorized value only",
+      "mask": "safe policy copy only",
+      "omit": "field group absent from projection and DOM"
+    },
+    "scopeReset": "tenant, scope key, or decision revision change clears prior projection, cursor history, and as-of before the next query",
+    "interaction": "read-only responsive list-detail inspector; no POST, action, retry, or replay control"
+  },
+  "verification": {
+    "environment": {
+      "node": "v24.22.0",
+      "packageManager": "yarn@4.17.1"
+    },
+    "targetPolicy": "Passing targets were not repeated; after a failure only the smallest affected file or named case was rerun.",
+    "logicalCoverage": {
+      "contractTests": 5,
+      "apiTests": 3,
+      "workbenchTests": 14,
+      "sliceTests": 5,
+      "total": 27,
+      "result": "PASS_ACROSS_BOUNDED_TARGET_RUNS"
+    },
+    "finalAffectedCase": {
+      "command": "PATH=/opt/homebrew/opt/node@24/bin:$PATH corepack yarn vitest run apps/dwp/src/features/hris/people/data-quality/testing/data-quality-workbench.test.tsx -t 'supports long Korean copy and keyboard-only inspection on the compact layout'",
+      "exitCode": 0,
+      "result": "1 passed, 13 skipped"
+    },
+    "changedRootTypecheck": "PASS",
+    "changedRootEslint": "PASS",
+    "changedRootPrettier": "PASS",
+    "gitDiffCheck": "PASS",
+    "repositoryWideSuiteRun": false,
+    "browserRouteRun": false,
+    "browserRouteReason": "The authorized component remains unmounted, default OFF, and zero-enrollment pending separate central admission."
+  },
+  "acceptanceMapping": [
+    {
+      "id": "HRM012-AC-01",
+      "frontendResult": "PASS_FRONTEND_CONTRACT_BOUNDARY",
+      "evidence": "Strict GET request/projection parsers seal accepted filters, sorts, item grain, page limit, field groups, deep link, state invariants, and empty actions."
+    },
+    {
+      "id": "HRM012-AC-02",
+      "frontendResult": "PASS_FRONTEND_DISCLOSURE_BOUNDARY",
+      "evidence": "VIEW and MASK are typed, OMIT is absent from the inspector DOM, raw cursor is not rendered, and scope or revision changes reset paging and prior data."
+    },
+    {
+      "id": "HRM012-AC-03",
+      "frontendResult": "NOT_ASSESSED_BACKEND_SCOPE"
+    },
+    {
+      "id": "HRM012-AC-04",
+      "frontendResult": "NOT_ASSESSED_BACKEND_SCOPE"
+    },
+    {
+      "id": "HRM012-AC-05",
+      "frontendResult": "NOT_ASSESSED_BACKEND_SCOPE"
+    },
+    {
+      "id": "HRM012-AC-06",
+      "frontendResult": "NOT_ASSESSED_BACKEND_SCOPE"
+    },
+    {
+      "id": "HRM012-AC-07",
+      "frontendResult": "NOT_ASSESSED_BACKEND_SCOPE"
+    },
+    {
+      "id": "HRM012-AC-08",
+      "frontendResult": "NOT_ASSESSED_BACKEND_SCOPE"
+    },
+    {
+      "id": "HRM012-AC-09",
+      "frontendResult": "NOT_ASSESSED_BACKEND_SCOPE"
+    },
+    {
+      "id": "HRM012-AC-10",
+      "frontendResult": "NOT_ASSESSED_BACKEND_SCOPE"
+    },
+    {
+      "id": "HRM012-AC-11",
+      "frontendResult": "NOT_ASSESSED_BACKEND_SCOPE"
+    },
+    {
+      "id": "HRM012-AC-12",
+      "frontendResult": "PASS",
+      "evidence": "All seven states, list-detail behavior, 1440/1280/390/320 layouts, 200 percent text sizing, light/dark, forced colors, reduced motion, keyboard focus, long Korean/English copy, and default-OFF zero calls are covered."
+    },
+    {
+      "id": "HRM012-AC-13",
+      "frontendResult": "NOT_ASSESSED_BOUNDED_BACKEND_CORRECTION"
+    }
+  ],
+  "changedPathBoundary": {
+    "sourceAndTests": [
+      "apps/dwp/src/features/hris/people/data-quality/**",
+      "apps/dwp/src/features/hris/people/__tests__/g3-slices/base-tfr-hrm-012.slice.test.tsx"
+    ],
+    "evidenceCreateOnly": ["docs/06-delivery/hris/wave7-2026-10-17/r7-batch-05-results/hrm-012/**"],
+    "outsideBoundaryChanges": 0
+  },
+  "nonClaims": [
+    "No application route, shell node, menu, global i18n file, or tenant-visible page is mounted.",
+    "No feature enablement or tenant enrollment is performed.",
+    "No command, retry, replay, production object provider, scheduler, or broker is introduced.",
+    "No backend, database, direct dwp-dev merge, central admission, full-slice completion, or production release is claimed.",
+    "No repository-wide test suite or redundant broad rerun is claimed."
+  ],
+  "decision": "FRONTEND_MODULE_SOURCE_READY_FOR_MODULE_BRANCH_COMMIT_PUSH_AND_SEPARATE_CENTRAL_REVIEW"
+}
