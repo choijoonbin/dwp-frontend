@@ -1,0 +1,70 @@
+{
+  "schema": "hris.central-implementation-token.v1",
+  "tokenId": "HRIS-WAVE7-R7-BATCH05-PAY004-CENTRAL-IMPLEMENT-20261022-R1",
+  "issuedAt": "2026-10-22T06:41:54Z",
+  "state": "EXECUTABLE",
+  "sliceId": "BASE-TFR-PAY-004",
+  "module": "HRIS-PAY",
+  "authority": {
+    "successor": {
+      "path": "pay-004-iaq049-and-central-authorization-successor.v1.json",
+      "sha256": "cfc1a96ec8b581d61f2f310cb76d19f7107f7cb1e78607097651f6496317d4d6",
+      "bytes": 44345,
+      "carrierCommit": "e2766d8936366b089187d08024ad95ce783ba3c7",
+      "carrierTree": "fc07481b1f9fa33c19a87a7ce09ae512ae2f6916"
+    },
+    "worktreeReceipt": {
+      "path": "pay-004-central-worktree-materialization-receipt.v1.json",
+      "sha256": "2d80e295b552bc3e97a93e8cddd24ecda579092d6340905004f83e2502222394",
+      "bytes": 2433
+    },
+    "independentReview": {
+      "p0": 0,
+      "p1": 0,
+      "p2": 0
+    }
+  },
+  "execution": {
+    "backendWorktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261022/batch05/pay004-central/backend",
+    "frontendWorktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261022/batch05/pay004-central/frontend",
+    "changedPathAuthority": "Exactly the arrays under exactImplementationPathsAfterSeparateExecutableCentralToken in the pinned successor, plus this receipt and token; no implicit sibling path authority exists.",
+    "requiredOutcomes": [
+      "Generate immutable product-authorization v58 with exactly the two read-only IAQ-049 PAGE and DATA routes, reused payroll-support capability and population predicate, and no ACTION delta.",
+      "Advance backend and frontend fixture registryLineage to exact versions 1 through 58 without changing fixture semantics.",
+      "Advance Auth release lineage and closed payroll read topology, and add Auth V267 catalog-only default-OFF readiness with zero assignment, enrollment, activation and grant rows.",
+      "Add the exact two Gateway route topologies, explicit pre-v58 removal gate, IAQ-049 field policy, PAYROLL_OPERATIONS purpose and PAY_TARGET_POPULATION validation without widening unrelated routes.",
+      "Synchronize frontend authorization, fixture and PAGE projections through v58 and advance the official HCM PAGE firewall count from 64 to 65 without mounting PAY-004 content.",
+      "Run each pinned focused target group once, rerun only the smallest failed target, and obtain independent source review with zero unresolved P0, P1 or P2 before admission to dwp-dev."
+    ],
+    "verificationCommands": "Exactly the bounded command and test groups under sourceGeneratedSynchronization.commandsAfterAuthorization and targetedVerification in the pinned successor; commands may be narrowed after a failure but not broadened without evidence.",
+    "branchPolicy": "Commit and push each central worktree branch, independently review the exact commits, then no-ff merge the admitted results into each repository dwp-dev and push origin/dwp-dev."
+  },
+  "forbidden": [
+    "Payroll V55 migration or PAY-004 owner-module controller, service, repository or retirement workbench implementation",
+    "PAY-004 sidebar, menu, shell route, page component or tenant feature enablement",
+    "tenant enrollment, activation, assignment, broad permission or production release",
+    "new capability, predicate, permission, duty, responsibility, preset, access package or ACTION route",
+    "repository-wide test repetition without a focused failure proving it necessary",
+    "source changes outside the pinned exact path allowlist"
+  ],
+  "invalidation": [
+    "Either worktree base head or tree differs before its first authorized source change.",
+    "The successor or receipt SHA and byte tuple differs.",
+    "A conflicting product-authorization v58, Auth-stream V267 or Payroll V55 reservation appears.",
+    "Default OFF or zero enrollment can reach a PAY-004 browser or owner call.",
+    "Any route, capability, predicate, purpose, scope, projection, action or changed path expands beyond the pinned successor.",
+    "Any unresolved P0, P1 or P2 remains at admission time."
+  ],
+  "sourceAuthoringAuthorized": true,
+  "centralProductAuthorizationV58AuthoringAuthorized": true,
+  "authV267AuthoringAuthorized": true,
+  "moduleAuthoringAuthorized": false,
+  "payrollV55LeaseActive": false,
+  "ownerPacketAuthorized": false,
+  "routeMountAuthorized": false,
+  "menuMountAuthorized": false,
+  "featureEnablementAuthorized": false,
+  "tenantEnrollmentAuthorized": false,
+  "productionReleaseAuthorized": false,
+  "nextAction": "IMPLEMENT_FOCUSED_REVIEW_COMMIT_PUSH_BRANCHES_THEN_NO_FF_ADMIT_TO_DWP_DEV"
+}

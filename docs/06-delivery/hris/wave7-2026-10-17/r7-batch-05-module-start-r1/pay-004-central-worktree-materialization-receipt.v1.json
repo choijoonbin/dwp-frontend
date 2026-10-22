@@ -1,0 +1,50 @@
+{
+  "schema": "hris.central-worktree-materialization-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH05-PAY004-CENTRAL-WORKTREES-20261022-R1",
+  "recordedAt": "2026-10-22T06:41:54Z",
+  "state": "MATERIALIZED_NOT_EXECUTABLE_ALONE",
+  "sliceId": "BASE-TFR-PAY-004",
+  "module": "HRIS-PAY",
+  "authority": {
+    "path": "pay-004-iaq049-and-central-authorization-successor.v1.json",
+    "sha256": "cfc1a96ec8b581d61f2f310cb76d19f7107f7cb1e78607097651f6496317d4d6",
+    "bytes": 44345,
+    "carrierCommit": "e2766d8936366b089187d08024ad95ce783ba3c7",
+    "carrierTree": "fc07481b1f9fa33c19a87a7ce09ae512ae2f6916",
+    "review": {
+      "p0": 0,
+      "p1": 0,
+      "p2": 0
+    }
+  },
+  "repositories": {
+    "backend": {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261022/batch05/pay004-central/backend",
+      "branch": "codex/hris-wave7-batch05-pay004-central-backend-20261022-r1",
+      "head": "0c47fe5c7b38bab5c26a7c35cf032f131ebb46c1",
+      "tree": "5b14cee170175f194387492ed4ecb26cb6fc8cd7",
+      "baseDwpDev": "0c47fe5c7b38bab5c26a7c35cf032f131ebb46c1",
+      "baseOriginDwpDev": "0c47fe5c7b38bab5c26a7c35cf032f131ebb46c1",
+      "clean": true,
+      "upstream": null
+    },
+    "frontend": {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261022/batch05/pay004-central/frontend",
+      "branch": "codex/hris-wave7-batch05-pay004-central-frontend-20261022-r1",
+      "head": "e2766d8936366b089187d08024ad95ce783ba3c7",
+      "tree": "fc07481b1f9fa33c19a87a7ce09ae512ae2f6916",
+      "baseDwpDev": "e2766d8936366b089187d08024ad95ce783ba3c7",
+      "baseOriginDwpDev": "e2766d8936366b089187d08024ad95ce783ba3c7",
+      "clean": true,
+      "upstream": null
+    }
+  },
+  "invariants": [
+    "Both worktrees were clean and based on the exact current dwp-dev and origin/dwp-dev heads before any source change.",
+    "The backend worktree may change only backend paths authorized by the exact PAY-004 central successor.",
+    "The frontend worktree may change only frontend paths authorized by the exact PAY-004 central successor plus this receipt and its one hash-bound token.",
+    "No Payroll V55 module migration, retirement workbench component, route or menu mount, tenant enrollment, feature activation, owner packet or production release is authorized by this receipt."
+  ],
+  "authorityGranted": false,
+  "nextAction": "ISSUE_ONE_HASH_BOUND_PAY004_CENTRAL_IMPLEMENTATION_TOKEN"
+}
