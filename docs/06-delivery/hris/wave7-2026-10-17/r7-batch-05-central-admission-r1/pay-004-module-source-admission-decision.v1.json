@@ -1,0 +1,385 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-05-pay004-module-source-admission-decision.v1",
+  "decisionId": "HRIS-WAVE7-R7-BATCH-05-PAY004-MODULE-SOURCE-ADMISSION-20261022-R1",
+  "issuedAt": "2026-10-22T20:16:22+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "EXACT_PAY004_MODULE_RESULT_INDEPENDENTLY_ACCEPTED_NO_FF_EXACT_HEAD_SOURCE_ADMISSION_AUTHORIZED_DEFAULT_OFF_ZERO_ENROLLMENT",
+  "sliceId": "BASE-TFR-PAY-004",
+  "module": "PAY",
+  "moduleSession": "HRIS-PAY",
+  "immutability": {
+    "sealed": true,
+    "appendOnly": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_DECISION_ID_AND_SHA256"
+  },
+  "authorityBasis": {
+    "batch05Preflight": {
+      "path": "../r7-batch-05-preflight-r1/semantic-dependency-migration-preflight.v1.json",
+      "sha256": "8f7a0d38c4dc86873e4930e5a21dcc0a269c39512508d86dd529b40015237e0f",
+      "bytes": 37443,
+      "requiredState": "PREFLIGHT_COMPLETE_FIXED_ORDER_FIVE_CONDITIONAL_LANES_NO_PACKETS_NO_TOKENS_NO_WORKTREES_NO_LEASES_NO_SOURCE"
+    },
+    "semanticDisposition": {
+      "path": "../r7-batch-05-module-start-r1/semantic-dispositions/base-tfr-pay-004.semantic-disposition.v1.json",
+      "sha256": "809553ec0a88fba5cbfdec7708715c274939e8015217bfe7c38ecc9c4c1601fe",
+      "bytes": 40507,
+      "requiredState": "PAY004_RETIREMENT_CASE_RESULT_ACTION_TARGET_AND_NO_RECOUNT_BOUNDARIES_SEALED_V55_REQUIRED_CENTRAL_SUCCESSOR_BEFORE_PACKET_OR_SOURCE"
+    },
+    "ownerPacket": {
+      "path": "../r7-batch-05-module-start-r1/owner-packets/base-tfr-pay-004.owner-packet.v1.json",
+      "packetId": "HRIS-WAVE7-R7-BATCH-05-OWNER-BASE-TFR-PAY-004-20261022-R1",
+      "sha256": "25ee9e11432c0daedeea6bb31b0a30202db944e02eb206275809fab0d763d84e",
+      "bytes": 20164,
+      "requiredState": "SEALED_EXACT_PAY004_OWNER_AUTHORITY_PACKET_READY_EXECUTABLE_TOKEN_WITHHELD_PENDING_FRESH_WORKTREES_AND_ACTIVE_V55_LEASE"
+    },
+    "centralPrerequisiteIntegration": {
+      "path": "pay-004-central-integration-receipt.v1.json",
+      "sha256": "84c41f2824c5495f432a6fb8287ddbeae4b538585b247984e06f238c04778d32",
+      "bytes": 7027,
+      "requiredState": "EXACT_PAY004_CENTRAL_PREREQUISITE_MERGED_PUSHED_DEFAULT_OFF_ZERO_ENROLLMENT_OWNER_PACKET_AND_V55_RESERVATION_MAY_PROCEED"
+    },
+    "centralAuthorizationSuccessor": {
+      "path": "../r7-batch-05-module-start-r1/pay-004-iaq049-and-central-authorization-successor.v1.json",
+      "sha256": "cfc1a96ec8b581d61f2f310cb76d19f7107f7cb1e78607097651f6496317d4d6",
+      "bytes": 44345,
+      "requiredState": "SEALED_EXACT_IAQ049_READ_ONLY_V58_AND_AUTH_V267_RESERVATION_INDEPENDENTLY_REVIEWED_PASS_ZERO_P0_P1_P2_CARRIER_COMMIT_REQUIRED_SOURCE_WITHHELD"
+    },
+    "startToken": {
+      "path": "../r7-batch-05-module-start-r1/tokens/base-tfr-pay-004.start-token.v1.json",
+      "tokenId": "HRIS-WAVE7-R7-BATCH-05-START-BASE-TFR-PAY-004-20261022-R1",
+      "sha256": "1c4e40718496f12d6d0b8f82c1b913a40c14040d18c966228cc3e072466063d3",
+      "bytes": 18709,
+      "requiredState": "ISSUED_EXECUTABLE_EXACT_MATERIALIZED_WORKTREES_ACTIVE_EXCLUSIVE_V55_BOUNDED_SOURCE_TEST_COMMIT_PUSH_ONLY_DEFAULT_OFF_ZERO_ENROLLMENT",
+      "resolvedAtCarrierCommit": "2f3bdf93024570c31b7832a82b9e098e0eec0b4b"
+    },
+    "activeMigrationLease": {
+      "path": "../r7-batch-05-module-start-r1/migration-lease-pay004-v55-activation.v1.json",
+      "sha256": "ed90e3c4c08dd02fcdf16a5a0d0442d031b063a3f3170c8b0d31824e6b833b07",
+      "bytes": 7655,
+      "requiredState": "ACTIVE_EXCLUSIVE_PAYROLL_V55"
+    },
+    "materializationReceipt": {
+      "path": "../r7-batch-05-module-start-r1/worktree-materialization-receipts/base-tfr-pay-004.worktree-materialization-receipt.v1.json",
+      "sha256": "c9b9ab9835ffc3cd4b2b716ad2b0d4a3edb2ad9e2726c2f1e9acb17e2924e3e1",
+      "bytes": 5920,
+      "requiredState": "MATERIALIZED_CLEAN_EXACT_AUTHORITY_CARRIER_PINS_NO_SOURCE_EDITS_NO_UPSTREAM"
+    },
+    "centralCarrierBeforeDecision": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "2f3bdf93024570c31b7832a82b9e098e0eec0b4b",
+      "tree": "b9a8d71dda2b2ec9d7a5bf5d3ca93e4b987caab4",
+      "originExact": true,
+      "committedTreeCleanBeforeDraft": true,
+      "worktreeCleanAfterDraft": false,
+      "expectedUntrackedOnly": [
+        "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-05-central-admission-r1/pay-004-module-source-admission-decision.v1.json"
+      ]
+    }
+  },
+  "targetStateBeforeDecision": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "c69e8d52ba1950f920323e35ec598c2ff328c69c",
+      "tree": "9058f39498d511646045b34a2fcb7775bd541298",
+      "originExact": true,
+      "clean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "2f3bdf93024570c31b7832a82b9e098e0eec0b4b",
+      "tree": "b9a8d71dda2b2ec9d7a5bf5d3ca93e4b987caab4",
+      "originExact": true,
+      "committedTreeCleanBeforeDraft": true
+    }
+  },
+  "candidateAdmission": {
+    "backend": {
+      "repository": "dwp-backend",
+      "targetBranch": "dwp-dev",
+      "sourceBranch": "codex/hris-wave7-r7-batch05-pay-004-backend-20261022-r1",
+      "baseCommit": "c69e8d52ba1950f920323e35ec598c2ff328c69c",
+      "baseTree": "9058f39498d511646045b34a2fcb7775bd541298",
+      "mergeBaseWithTarget": "c69e8d52ba1950f920323e35ec598c2ff328c69c",
+      "exactHead": "4d9da191afc926c0e744aadf2df45ee42f497301",
+      "exactTree": "3f83136fabb7b3dc09b179109fb81a98d3b7bfe0",
+      "commitCount": 1,
+      "changedPathCount": 28,
+      "addedPathCount": 28,
+      "modifiedPathCount": 0,
+      "deletedPathCount": 0,
+      "insertions": 6599,
+      "deletions": 0,
+      "pathManifest": {
+        "range": "c69e8d52ba1950f920323e35ec598c2ff328c69c..4d9da191afc926c0e744aadf2df45ee42f497301",
+        "pathOnlyCommand": "git diff --name-only <base>..<head>",
+        "pathOnlySha256": "fb53b2e41640f31598ed7d05b75559d57dec9f764781bb8cdf2a3cedd651eb65",
+        "nameStatusCommand": "git diff --name-status <base>..<head>",
+        "nameStatusSha256": "363108b35644e0e629fe901f7650d643374346937c8466f10599a259d6210ccc"
+      },
+      "authorizedPathClasses": [
+        "dwp-payroll-server/src/main/java/com/dwp/services/payroll/statutory/pay004/**",
+        "dwp-payroll-server/src/test/java/com/dwp/services/payroll/statutory/pay004/**",
+        "dwp-payroll-server/src/main/resources/db/migration/V55__pay_base_tfr_pay_004_retirement.sql"
+      ],
+      "outsideAuthorizedBoundaryChanges": 0,
+      "originExact": true,
+      "clean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "targetBranch": "dwp-dev",
+      "sourceBranch": "codex/hris-wave7-r7-batch05-pay-004-frontend-20261022-r1",
+      "baseCommit": "5e132ac7326b4745aafb165ad4bb1a4448a03a11",
+      "baseTree": "bec498f739a86241ea94df763b75d5791a81c256",
+      "mergeBaseWithCurrentTarget": "5e132ac7326b4745aafb165ad4bb1a4448a03a11",
+      "sourceCommits": [
+        {
+          "commit": "6afa09f1eb32fac9c0ee355e78cdf5340f6f81a8",
+          "parent": "5e132ac7326b4745aafb165ad4bb1a4448a03a11",
+          "tree": "96cdf04f70bd1ef140a220540bbd381035d21242",
+          "subject": "feat(hris): add PAY-004 retirement workbench UI",
+          "changedPathCount": 14,
+          "insertions": 3738,
+          "deletions": 0
+        }
+      ],
+      "sourceHeadBeforeResultEvidence": "6afa09f1eb32fac9c0ee355e78cdf5340f6f81a8",
+      "sourceHeadBeforeResultEvidenceTree": "96cdf04f70bd1ef140a220540bbd381035d21242",
+      "exactEvidenceHead": "fc0b54c82d2c211e262145fbe914b1b2fdbd5df8",
+      "exactEvidenceHeadParent": "6afa09f1eb32fac9c0ee355e78cdf5340f6f81a8",
+      "exactTree": "8e6813834f3f0fb5c5da4ab1875da2e19d7f43a8",
+      "sourceAndFrontendResult": {
+        "range": "5e132ac7326b4745aafb165ad4bb1a4448a03a11..6afa09f1eb32fac9c0ee355e78cdf5340f6f81a8",
+        "changedPathCount": 14,
+        "addedPathCount": 14,
+        "modifiedPathCount": 0,
+        "deletedPathCount": 0,
+        "insertions": 3738,
+        "deletions": 0,
+        "pathOnlyManifestSha256": "bfbccffe46cf0bc0cb7e0b5a3fa3006772ef03b321b51c0dd8722626afe2201a",
+        "nameStatusManifestSha256": "503e6691e91f657849ec99c91371e432d7ecb08e98983ce72348aa0ef1934267"
+      },
+      "resultEvidence": {
+        "range": "6afa09f1eb32fac9c0ee355e78cdf5340f6f81a8..fc0b54c82d2c211e262145fbe914b1b2fdbd5df8",
+        "changedPathCount": 2,
+        "addedPathCount": 2,
+        "modifiedPathCount": 0,
+        "deletedPathCount": 0,
+        "insertions": 244,
+        "deletions": 0,
+        "pathOnlyManifestSha256": "dee6f897f445f42ababcad67bd1c36a26b748bbe9a2b111f06f8a43489ad25cf",
+        "nameStatusManifestSha256": "e31d2bfebd00b8b7df2cc3a375581556426f9ccdb370245477077ab80a5ee698"
+      },
+      "totalCandidate": {
+        "range": "5e132ac7326b4745aafb165ad4bb1a4448a03a11..fc0b54c82d2c211e262145fbe914b1b2fdbd5df8",
+        "changedPathCount": 16,
+        "addedPathCount": 16,
+        "modifiedPathCount": 0,
+        "deletedPathCount": 0,
+        "insertions": 3982,
+        "deletions": 0,
+        "pathOnlyManifestSha256": "7b4c11e70acdd47da4b429e37907c5afc3fb631fa016191c5c940807cc08b0be",
+        "nameStatusManifestSha256": "aff75eba321a0ffa4189ed1250e1221751a71b7f8fe4926a98b706f0798cac23"
+      },
+      "sourcePathBoundary": [
+        "apps/dwp/src/features/hris/payroll/retirement/**",
+        "apps/dwp/src/features/hris/payroll/__tests__/g3-slices/base-tfr-pay-004.slice.test.tsx"
+      ],
+      "evidencePathBoundary": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-05-results/pay-004/**",
+      "outsideAuthorizedBoundaryChanges": 0,
+      "targetChangesAfterCandidateBase": {
+        "changedPathCount": 3,
+        "candidatePathOverlapCount": 0,
+        "mergeTreeConflictCount": 0
+      },
+      "originExact": true,
+      "clean": true
+    }
+  },
+  "evidenceResolution": {
+    "repository": "dwp-frontend",
+    "commit": "fc0b54c82d2c211e262145fbe914b1b2fdbd5df8",
+    "tree": "8e6813834f3f0fb5c5da4ab1875da2e19d7f43a8",
+    "mode": "GIT_OBJECT_AT_EXACT_EVIDENCE_HEAD",
+    "effectiveEvidence": [
+      {
+        "kind": "MODULE_RESULT_JSON",
+        "path": "../r7-batch-05-results/pay-004/module-result-evidence.v1.json",
+        "sha256": "018ea2def0e65b32532db0e0b6e32ed4ca633a775511a1aae919540c1e139877",
+        "bytes": 10011,
+        "gitBlob": "d88d15197d6dc8504ecf6aee39e10b403edebfa5"
+      },
+      {
+        "kind": "MODULE_RESULT_MD",
+        "path": "../r7-batch-05-results/pay-004/module-result-evidence.md",
+        "sha256": "d7776b8d35af77af221716360d1953097e775e4651f051afcd6b5dce83e35249",
+        "bytes": 2753,
+        "gitBlob": "8edef3cd6c3e680f7b5807c21f3d5101e58f92ce"
+      }
+    ]
+  },
+  "independentReview": {
+    "backendDomainAuthorizationAndState": {
+      "decision": "GO",
+      "p0": 0,
+      "p1": 0,
+      "p2": 0
+    },
+    "backendCanonicalDigestAndRealPostgres": {
+      "decision": "GO_AFTER_NAMED_POST_REVIEW_TARGETS_PASSED",
+      "p0": 0,
+      "p1": 0,
+      "p2": 0,
+      "resolvedP2": {
+        "issue": "PAST_REVISION_ATTACHMENT_ERROR_BRANCH",
+        "target": "Pay004V55MigrationPostgresTest.attachmentsRejectPastRevisionAndTerminalAggregateHeads",
+        "tests": 1,
+        "passed": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "sourceHead": "4d9da191afc926c0e744aadf2df45ee42f497301",
+        "artifactPath": "dwp-payroll-server/build/test-results/test/TEST-com.dwp.services.payroll.statutory.pay004.Pay004V55MigrationPostgresTest.xml",
+        "artifactSha256": "a0b93408119a8acb193bdbfb1898c392e9a85d70c1e59d39953c24594b975abf",
+        "artifactBytes": 11701,
+        "artifactGitTracked": false,
+        "worktreeHead": "4d9da191afc926c0e744aadf2df45ee42f497301",
+        "originExact": true,
+        "result": "PASS_PRESERVED_GRADLE_XML_AT_EXACT_CLEAN_ORIGIN_EXACT_WORKTREE_HEAD"
+      }
+    },
+    "frontendContractAndExperience": {
+      "decision": "GO",
+      "p0": 0,
+      "p1": 0,
+      "p2": 0
+    },
+    "resultEvidence": {
+      "decision": "GO_EXACT_HASHED_EVIDENCE_RESOLVED_FROM_GIT_OBJECT",
+      "p0": 0,
+      "p1": 0,
+      "p2": 0
+    },
+    "unresolvedTotals": {
+      "p0": 0,
+      "p1": 0,
+      "p2": 0
+    }
+  },
+  "verificationAccounting": {
+    "frontend": {
+      "logicalTests": 38,
+      "passed": 38,
+      "latestAffectedContractTarget": "retirement-contract.test.ts 8/8 PASS",
+      "typecheck": "PASS",
+      "eslint": "PASS_CHANGED_ROOT",
+      "gitDiffCheck": "PASS",
+      "browserRouteRun": false,
+      "browserRouteReason": "TOKEN_REQUIRES_UNMOUNTED_DEFAULT_OFF_ZERO_ENROLLMENT"
+    },
+    "backend": {
+      "compileTestJava": "PASS",
+      "nonPostgresLogicalTests": 37,
+      "nonPostgresPassed": 37,
+      "realPostgresLogicalTests": 19,
+      "realPostgresPassed": 19,
+      "boundedCrossContract": "PASS_WITH_DOCUMENTED_UNCHANGED_BASELINE_FIXTURE_FAILURE_EXCLUDED",
+      "gitDiffCheck": "PASS"
+    },
+    "policyConclusion": "PASS_BY_RETAINING_UNAFFECTED_PASSING_TARGETS_AND_RERUNNING_ONLY_FAILED_OR_CHANGED_TARGETS; NO_REPOSITORY_WIDE_SUITE"
+  },
+  "acceptanceDisposition": {
+    "requiredCount": 12,
+    "passedCount": 12,
+    "failedCount": 0,
+    "criteria": [
+      { "id": "PAY004-AC-01", "result": "PASS_ADMITTED", "evidence": "Exact GET, RETIREMENT variant, four filter groups, eight sorts, stable tie-break, bounded limit and closed query states." },
+      { "id": "PAY004-AC-02", "result": "PASS_ADMITTED", "evidence": "Seven-layer PEP, trusted tenant and population, pre-serialization VIEW/MASK/OMIT, exact counts and revision-bound cursor." },
+      { "id": "PAY004-AC-03", "result": "PASS_ADMITTED", "evidence": "Case UUID is the sole item identity; actions are empty and internal run or pack identifiers are absent." },
+      { "id": "PAY004-AC-04", "result": "PASS_ADMITTED_REUSE_ONLY", "evidence": "PAY-003 signed-pack state and action ownership remain unchanged; only immutable pack facts are bound." },
+      { "id": "PAY004-AC-05", "result": "PASS_ADMITTED_REUSE_ONLY", "evidence": "V50 calculation and PayrollCalculated.v1 remain unchanged with no retirement calculation command or event." },
+      { "id": "PAY004-AC-06", "result": "PASS_ADMITTED", "evidence": "Closed append-only state machine, terminal immutability, maker-checker separation and linked correction are enforced." },
+      { "id": "PAY004-AC-07", "result": "PASS_ADMITTED", "evidence": "Payroll V55 creates exactly five leased tables and no receipt, outbox, audit, seed or backfill." },
+      { "id": "PAY004-AC-08", "result": "PASS_ADMITTED", "evidence": "All five tables have tenant-first identity, PUBLIC revocation, least privilege, FORCE RLS and mutation rejection." },
+      { "id": "PAY004-AC-09", "result": "PASS_ADMITTED", "evidence": "Exact worker-result and policy lineage fail closed for stale, cross-scope, cross-worker, mutable-latest or missing facts." },
+      { "id": "PAY004-AC-10", "result": "PASS_ADMITTED", "evidence": "Canonical NUMERIC(19,4), currency, mode, stage and equivalent Java/SQL digests prohibit database rounding and floating point." },
+      { "id": "PAY004-AC-11", "result": "PASS_ADMITTED_REUSE_ONLY", "evidence": "Owner receipt, CAS, audit and outbox stores remain unchanged; blocked packs cannot produce a result or fallback." },
+      { "id": "PAY004-AC-12", "result": "PASS_ADMITTED_UNMOUNTED_COMPONENT", "evidence": "Seven UI states, accessibility, responsive widths, zoom, themes, reduced motion and default-OFF zero-call behavior are covered." }
+    ]
+  },
+  "runtimeBoundary": {
+    "featureKey": "HRIS_PAY_RETIREMENT_WORKBENCH",
+    "runtimeDefault": "OFF",
+    "tenantEnrollmentAuthorized": false,
+    "tenantEnrollmentCount": 0,
+    "runtimeCallsWhenDisabled": 0,
+    "frontendRouteMounted": false,
+    "frontendMenuMounted": false,
+    "shellNodeMounted": false,
+    "productionCountryPackBound": false,
+    "productionObjectProviderBound": false,
+    "productionMappingOrEffectProviderBound": false,
+    "productionCredentialOrKeyProviderBound": false,
+    "schedulerBound": false,
+    "brokerBound": false,
+    "fallbackBehavior": "FAIL_CLOSED_ONLY",
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionIncrement": 0
+  },
+  "mergeAuthorization": {
+    "authorizedActor": "SYS_COMMON_INTEGRATION_CONTROL",
+    "strategy": "NO_FF_EXACT_HEAD_ONLY",
+    "fastForwardMergeAuthorized": false,
+    "squashAuthorized": false,
+    "cherryPickAuthorized": false,
+    "rebaseAuthorized": false,
+    "automaticConflictResolutionAuthorized": false,
+    "conflictPolicy": "STOP_ON_CONFLICT_NO_AUTOMATIC_OR_MANUAL_RESOLUTION_UNDER_THIS_DECISION",
+    "headDriftPolicy": "ANY_SOURCE_BRANCH_HEAD_OR_TREE_DRIFT_INVALIDATES_THIS_DECISION",
+    "backend": {
+      "targetBranch": "dwp-dev",
+      "targetHeadBeforeMerge": "c69e8d52ba1950f920323e35ec598c2ff328c69c",
+      "exactSourceHead": "4d9da191afc926c0e744aadf2df45ee42f497301",
+      "exactSourceTree": "3f83136fabb7b3dc09b179109fb81a98d3b7bfe0"
+    },
+    "frontend": {
+      "targetBranch": "dwp-dev",
+      "targetHeadBeforeDecisionCarrier": "2f3bdf93024570c31b7832a82b9e098e0eec0b4b",
+      "requiredAncestorBeforeMerge": "2f3bdf93024570c31b7832a82b9e098e0eec0b4b",
+      "requiredTargetHeadAtMerge": "THIS_DECISION_CARRIER_COMMIT_ON_DWP_DEV",
+      "decisionCarrierMustBeCurrentOriginExactDwpDevHead": true,
+      "exactSourceHead": "fc0b54c82d2c211e262145fbe914b1b2fdbd5df8",
+      "exactSourceTree": "8e6813834f3f0fb5c5da4ab1875da2e19d7f43a8",
+      "requiredSourceCommits": [
+        "6afa09f1eb32fac9c0ee355e78cdf5340f6f81a8"
+      ]
+    },
+    "moduleTestRerunAuthorized": false,
+    "repositoryWideSuiteAuthorized": false,
+    "postMergeChecks": [
+      "prove each exact admitted source HEAD is an ancestor of the corresponding no-ff dwp-dev merge commit",
+      "prove all 44 admitted candidate paths retain the exact admitted blobs after merge",
+      "prove the frontend target-only path overlap with the admitted candidate is zero",
+      "prove the frontend no-ff merge first parent is this decision carrier and that carrier is current origin-exact dwp-dev immediately before merge",
+      "prove exact Payroll V55 remains the only new Payroll migration and contains exactly five PAY-004 tables",
+      "prove both dwp-dev worktrees are clean and origin exact after push",
+      "record a separate append-only PAY-004 module source integration receipt"
+    ]
+  },
+  "decision": "AUTHORIZE_ONLY_BACKEND_4D9DA191_AND_FRONTEND_FC0B54C8_FOR_NO_FF_EXACT_HEAD_DWP_DEV_SOURCE_ADMISSION_STOP_ON_CONFLICT_NO_TEST_RERUN",
+  "nonClaims": [
+    "The exact module candidate heads have been merged by this decision itself.",
+    "A PAY-004 module source integration receipt exists before the authorized merges complete.",
+    "The frontend route, shell node, menu or tenant-visible page is mounted.",
+    "A production country pack, object, mapping, effect, credential or key provider is bound.",
+    "A production scheduler or broker is active.",
+    "The feature is enabled or any tenant is enrolled.",
+    "Customer data, full-slice completion or production release is authorized.",
+    "A repository-wide or redundant module test rerun is authorized during admission."
+  ],
+  "nextAction": "COMMIT_AND_PUSH_THIS_EXACT_DECISION_THEN_MERGE_ONLY_THE_TWO_PINNED_HEADS_WITH_NO_FF_STOP_ON_ANY_CONFLICT_DO_NOT_RERUN_MODULE_TESTS_AND_RECORD_A_SEPARATE_INTEGRATION_RECEIPT"
+}
