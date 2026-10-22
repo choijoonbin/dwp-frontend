@@ -1,0 +1,197 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-05-pay004-v55-migration-lease-reservation.v1",
+  "reservationId": "HRIS-WAVE7-R7-BATCH-05-MIGRATION-LEASE-RESERVATION-PAY004-V55-20261022-R1",
+  "recordedAt": "2026-10-22T16:24:06+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_RESERVATION_ID_AND_SHA256"
+  },
+  "state": "RESERVED_NOT_ACTIVE",
+  "sliceId": "BASE-TFR-PAY-004",
+  "module": "PAY",
+  "moduleSession": "HRIS-PAY",
+  "authorityBasis": {
+    "centralIntegrationReceipt": {
+      "path": "../r7-batch-05-central-admission-r1/pay-004-central-integration-receipt.v1.json",
+      "sha256": "84c41f2824c5495f432a6fb8287ddbeae4b538585b247984e06f238c04778d32",
+      "bytes": 7027,
+      "requiredState": "EXACT_PAY004_CENTRAL_PREREQUISITE_MERGED_PUSHED_DEFAULT_OFF_ZERO_ENROLLMENT_OWNER_PACKET_AND_V55_RESERVATION_MAY_PROCEED"
+    },
+    "semanticDisposition": {
+      "path": "semantic-dispositions/base-tfr-pay-004.semantic-disposition.v1.json",
+      "sha256": "809553ec0a88fba5cbfdec7708715c274939e8015217bfe7c38ecc9c4c1601fe",
+      "bytes": 40507,
+      "requiredState": "PAY004_RETIREMENT_CASE_RESULT_ACTION_TARGET_AND_NO_RECOUNT_BOUNDARIES_SEALED_V55_REQUIRED_CENTRAL_SUCCESSOR_BEFORE_PACKET_OR_SOURCE",
+      "jsonPointer": "/payrollV55NecessityProof"
+    },
+    "centralAuthorizationSuccessor": {
+      "path": "pay-004-iaq049-and-central-authorization-successor.v1.json",
+      "sha256": "cfc1a96ec8b581d61f2f310cb76d19f7107f7cb1e78607097651f6496317d4d6",
+      "bytes": 44345
+    }
+  },
+  "pinBasis": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "c69e8d52ba1950f920323e35ec598c2ff328c69c",
+      "tree": "9058f39498d511646045b34a2fcb7775bd541298",
+      "originRef": "origin/dwp-dev",
+      "originExact": true,
+      "worktreeClean": true,
+      "observedPayrollHighWater": "V54",
+      "candidatePathPresentAtReservation": false
+    },
+    "frontendAuthorityCarrierBeforeReservation": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "200b0426f90d521ea9bdcdbffedcf1662d812c19",
+      "tree": "7c8ff1d3db5cda36970d0acd578c6f752fae388f",
+      "originRef": "origin/dwp-dev",
+      "originExact": true,
+      "worktreeClean": true,
+      "use": "AUTHORITY_CARRIER_BASE_ONLY"
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "originExact": true,
+      "worktreeClean": true,
+      "use": "READ_ONLY_NO_SOURCE_DELTA"
+    }
+  },
+  "predecessorManifest": {
+    "range": "V1_THROUGH_V54_EXISTING_FILES_ONLY_GAPS_INTENTIONAL",
+    "fileCount": 12,
+    "manifestSha256": "d0bd4cd337214d51ed8e760dfdfc91a89e2cf09d06a6c90c58adee40220928be",
+    "manifestBytes": 1917,
+    "sqlBytes": 273560,
+    "preservation": "BYTE_FOR_BYTE_NO_EDIT"
+  },
+  "lease": {
+    "leaseId": "HRIS-WAVE7-R7-BATCH-05-PAYROLL-MAIN-V55-PAY004-20261022-R1",
+    "stream": "PAYROLL_MAIN",
+    "version": "V55",
+    "predecessorHighWater": "V54",
+    "exactPath": "dwp-payroll-server/src/main/resources/db/migration/V55__pay_base_tfr_pay_004_retirement.sql",
+    "canonicalFeature": "HRIS_PAY_RETIREMENT_WORKBENCH",
+    "state": "RESERVED_NOT_ACTIVE",
+    "activeLeaseCountForPayrollV55": 0,
+    "plannedBackendWorktree": {
+      "plannedAbsolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261022/r7-batch05/pay-004/backend",
+      "plannedBranch": "codex/hris-wave7-r7-batch05-pay-004-backend-20261022-r1",
+      "plannedPushTarget": "origin/codex/hris-wave7-r7-batch05-pay-004-backend-20261022-r1",
+      "createFrom": "c69e8d52ba1950f920323e35ec598c2ff328c69c",
+      "expectedInitialTree": "9058f39498d511646045b34a2fcb7775bd541298",
+      "expectedInitialPorcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "materializationStateAtReservation": "NOT_MATERIALIZED"
+    }
+  },
+  "resolvedExactMigrationManifest": {
+    "createExactlyFiveTables": [
+      "pay_statutory_cases",
+      "pay_case_basis_refs",
+      "pay_case_evidence",
+      "pay_case_results",
+      "pay_case_corrections"
+    ],
+    "reuseNotRecreate": [
+      "V50 pay_payroll_runs, pay_payroll_run_attempts, pay_worker_results, pay_result_lines, pay_calculation_trace_nodes, pay_command_receipts and pay_outbox_events",
+      "V53 country-pack snapshots, activation versions, activation command receipts, pack audit outbox and social-insurance result facts",
+      "V54 sys_audit_outbox"
+    ],
+    "sharedControls": [
+      "UUID public identities and same-tenant composite primary or unique keys for every new owner row",
+      "same-tenant composite foreign keys for all intra-Payroll references, including (tenant_id, run_id, attempt_no, worker_result_id) to V50 pay_worker_results; external HRM identities remain immutable public references plus owner, schema, source revision and digest rather than cross-database foreign keys",
+      "REVOKE ALL FROM PUBLIC on every new table and least-privilege grants only to the resolved non-BYPASSRLS Payroll application role",
+      "ENABLE and FORCE row-level security on every new table with USING and WITH CHECK bound only to trusted dwp.payroll_tenant_id",
+      "append-only revision, state-transition, identity, basis, result and correction trigger guards; UPDATE and DELETE cannot rewrite terminal or historical evidence",
+      "closed state and transition checks exactly matching RetirementYearEndCase",
+      "lowercase 64-hex digest checks, case-worker equals worker-result ownership guards and exact run-attempt-worker-result-policy lineage consistency",
+      "conditional pack-lineage checks: ACTIVE requires matching V53 pack snapshot and ACTIVE activation revision for the exact scope and effective date; NOT_REQUIRED requires null pack references plus one explicit non-pack Payroll foundation or policy public ID, revision and digest; NOT_INSTALLED or DISABLED cannot produce a result",
+      "PostedMoney NUMERIC(19,4), explicit currency code and application-side declared rounding with no PostgreSQL coercion rounding",
+      "stable IAQ-049 sort and case-state indexes scoped first by tenant",
+      "no seed, backfill, historical migration mutation, privilege elevation, law/rate/provider content, new generic audit table, new receipt table or new outbox table"
+    ],
+    "forbidden": [
+      "editing V1 through V54 or adding any second Payroll migration",
+      "creating a sixth table, seed or backfill",
+      "creating a duplicate generic audit, receipt or outbox store",
+      "hardcoding law, rates, formulas, credentials, providers or tenant data",
+      "cross-tenant, cross-worker, mutable-latest or stale lineage",
+      "route or menu mounting, feature enablement, tenant enrollment or production binding"
+    ]
+  },
+  "acceptanceCoverage": {
+    "criteriaCount": 12,
+    "criteriaIds": [
+      "PAY004-AC-01",
+      "PAY004-AC-02",
+      "PAY004-AC-03",
+      "PAY004-AC-04",
+      "PAY004-AC-05",
+      "PAY004-AC-06",
+      "PAY004-AC-07",
+      "PAY004-AC-08",
+      "PAY004-AC-09",
+      "PAY004-AC-10",
+      "PAY004-AC-11",
+      "PAY004-AC-12"
+    ],
+    "migrationDirectCriteria": [
+      "PAY004-AC-06",
+      "PAY004-AC-07",
+      "PAY004-AC-08",
+      "PAY004-AC-09",
+      "PAY004-AC-10",
+      "PAY004-AC-11"
+    ]
+  },
+  "verificationRequiredAfterActivation": {
+    "executionAuthorizedNow": false,
+    "static": [
+      "V55 is unique in Payroll main and the exact leased path is the only new Payroll migration.",
+      "V1 through V54 bytes and checksums remain unchanged.",
+      "V55 creates exactly the five sealed tables and reuses existing generic outbox and audit stores.",
+      "All five tables have tenant-first identity, enabled and forced RLS, explicit same-tenant constraints and immutable guards."
+    ],
+    "database": [
+      "real PostgreSQL clean Payroll migration through V55",
+      "real PostgreSQL Payroll V54-to-V55 upgrade",
+      "missing-context and cross-tenant denial for all five tables",
+      "case transition, pack-state, immutability, monetary and exact lineage guards",
+      "transaction rollback leaves no partial result, correction, event or audit state"
+    ],
+    "unavailableDatabaseRule": "REPORT_BLOCKED_NOT_PASS",
+    "targetedPolicy": "RUN_EACH_NEW_TARGET_GROUP_ONCE; AFTER_FAILURE_RERUN_ONLY_THE_SMALLEST_AFFECTED_TARGET; NO_REPOSITORY_WIDE_SUITE_PER_CORRECTION"
+  },
+  "reservationSemantics": "This document reserves only Payroll main V55 and the exact path. It is not an active lease and grants no migration write, source write, test, commit or push authority. A later append-only active-lease artifact must bind a materialized clean backend worktree, and a separate executable start token must bind that activation, the owner packet and both module worktrees.",
+  "authority": {
+    "activeLeaseCount": 0,
+    "oneExactPayrollV55PathReserved": true,
+    "v55AuthoringAuthorized": false,
+    "activeLeaseMayBeIssuedAfterOwnerPacketAndCleanWorktreeReceipt": true,
+    "existingMigrationEditAuthorized": false,
+    "secondPayrollMigrationAuthorized": false,
+    "moduleSourceAuthoringAuthorized": false,
+    "testExecutionAuthorized": false,
+    "moduleBranchCommitAndPushAuthorized": false,
+    "mergeToDwpDevAuthorized": false,
+    "routeOrMenuMountAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "customerDatabaseExecutionAuthorized": false,
+    "productionExecutionAuthorized": false
+  },
+  "invalidationConditions": [
+    "Payroll V55 or the exact leased path exists from another owner before the first authorized edit.",
+    "Payroll main high-water differs from V54 at backend worktree materialization.",
+    "The planned backend worktree path or branch exists with a different head, tree, upstream or non-empty porcelain.",
+    "Any table, key, index, policy or guard outside the resolved exact manifest is required.",
+    "An existing migration must change, a second Payroll migration is required or a data backfill becomes necessary."
+  ],
+  "nextAction": "HASH_BIND_THIS_RESERVED_NOT_ACTIVE_LEASE_IN_THE_EXACT_PAY004_OWNER_PACKET; COMMIT_AND_PUSH_BOTH_AUTHORITY_ARTIFACTS; DO_NOT_ACTIVATE_OR_AUTHOR_UNTIL_FRESH_CLEAN_WORKTREE_EVIDENCE_EXISTS"
+}

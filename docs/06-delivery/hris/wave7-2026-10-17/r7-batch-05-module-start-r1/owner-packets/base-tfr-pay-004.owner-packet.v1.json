@@ -1,0 +1,431 @@
+{
+  "schema": "dwp.hris.wave7.r7-owner-packet.v1",
+  "packetId": "HRIS-WAVE7-R7-BATCH-05-OWNER-BASE-TFR-PAY-004-20261022-R1",
+  "issuedAt": "2026-10-22T16:24:06+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "revision": 1,
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_PACKET_ID_AND_SHA256"
+  },
+  "state": "SEALED_EXACT_PAY004_OWNER_AUTHORITY_PACKET_READY_EXECUTABLE_TOKEN_WITHHELD_PENDING_FRESH_WORKTREES_AND_ACTIVE_V55_LEASE",
+  "sliceId": "BASE-TFR-PAY-004",
+  "module": "PAY",
+  "moduleSession": "HRIS-PAY",
+  "sourceRef": "TFR-PAY-004",
+  "boundedContext": "PAYROLL_STATUTORY",
+  "immutableAuthorityBasis": {
+    "batch05Preflight": {
+      "path": "../../r7-batch-05-preflight-r1/semantic-dependency-migration-preflight.v1.json",
+      "sha256": "8f7a0d38c4dc86873e4930e5a21dcc0a269c39512508d86dd529b40015237e0f",
+      "bytes": 37443,
+      "requiredDecision": "CONDITIONAL_GO_FOR_SEPARATE_EXACT_PACKET_SOURCE_START_NO_GO"
+    },
+    "semanticDisposition": {
+      "path": "../semantic-dispositions/base-tfr-pay-004.semantic-disposition.v1.json",
+      "sha256": "809553ec0a88fba5cbfdec7708715c274939e8015217bfe7c38ecc9c4c1601fe",
+      "bytes": 40507,
+      "requiredState": "PAY004_RETIREMENT_CASE_RESULT_ACTION_TARGET_AND_NO_RECOUNT_BOUNDARIES_SEALED_V55_REQUIRED_CENTRAL_SUCCESSOR_BEFORE_PACKET_OR_SOURCE"
+    },
+    "centralAuthorizationSuccessor": {
+      "path": "../pay-004-iaq049-and-central-authorization-successor.v1.json",
+      "sha256": "cfc1a96ec8b581d61f2f310cb76d19f7107f7cb1e78607097651f6496317d4d6",
+      "bytes": 44345
+    },
+    "centralIntegrationReceipt": {
+      "path": "../../r7-batch-05-central-admission-r1/pay-004-central-integration-receipt.v1.json",
+      "sha256": "84c41f2824c5495f432a6fb8287ddbeae4b538585b247984e06f238c04778d32",
+      "bytes": 7027,
+      "requiredState": "EXACT_PAY004_CENTRAL_PREREQUISITE_MERGED_PUSHED_DEFAULT_OFF_ZERO_ENROLLMENT_OWNER_PACKET_AND_V55_RESERVATION_MAY_PROCEED"
+    },
+    "payrollV55Reservation": {
+      "path": "../migration-lease-pay004-v55-reservation.v1.json",
+      "sha256": "fe7a261e99497d187894ccf0103d4430eeb37cac4a02f93cd021a1ef7f4ec16a",
+      "bytes": 10397,
+      "requiredState": "RESERVED_NOT_ACTIVE"
+    }
+  },
+  "basePins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "c69e8d52ba1950f920323e35ec598c2ff328c69c",
+      "tree": "9058f39498d511646045b34a2fcb7775bd541298",
+      "originRef": "origin/dwp-dev",
+      "originExact": true,
+      "worktreeClean": true
+    },
+    "frontendAuthorityCarrierBeforeThisPacket": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "200b0426f90d521ea9bdcdbffedcf1662d812c19",
+      "tree": "7c8ff1d3db5cda36970d0acd578c6f752fae388f",
+      "originRef": "origin/dwp-dev",
+      "originExact": true,
+      "worktreeClean": true
+    },
+    "agentReadOnly": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "originExact": true,
+      "worktreeClean": true
+    }
+  },
+  "semanticLineage": {
+    "canonical": "TFR-PAY-004::PAY-RETIREMENT::PEP-PAY-028|PEP-PAY-012|PEP-PAY-014|EVT-PAY:PayrollCalculated",
+    "acceptanceCriteriaSourceJsonPointer": "/acceptanceCriteria",
+    "skkfFamilyRowCount": 119,
+    "skkfFamilyDigest": "e3907422f10a20d8e186c1aada2e540f8d23a901b34b55205f61bca235679465",
+    "productShape": "PROVIDER_NEUTRAL_RETIREMENT_YEAR_END_CASE_PLUS_IMMUTABLE_RESULT_WITH_SIGNED_JURISDICTION_PACK_ONLY_WHEN_REQUIRED",
+    "retireFromCore": [
+      "ADDSK retirement proxy",
+      "ADDSK retirement trigger",
+      "ADDSK retirement DTO",
+      "ADDSK retirement list and service artifacts"
+    ],
+    "forbiddenSemanticImport": "NO_ADDSK_PROXY_TRIGGER_DTO_API_TYPE_OR_FORMULA_BECOMES_CORE"
+  },
+  "exactCentralBaseline": {
+    "productAuthorizationVersion": "v58",
+    "productAuthorizationChecksum": "556f2cc1554f0aaab6f88e50c34d64ca5cdd95af9b2d55072f6e6745f4652cc2",
+    "authMigration": "V267",
+    "featureFlag": "HRIS_PAY_RETIREMENT_WORKBENCH",
+    "featureDefault": "OFF",
+    "tenantEnrollmentCount": 0,
+    "pay004RouteShape": {
+      "page": 1,
+      "data": 1,
+      "action": 0
+    },
+    "sourceSynchronizationState": "CENTRAL_MERGED_AND_PUSHED"
+  },
+  "migration": {
+    "required": true,
+    "version": "V55",
+    "predecessorHighWater": "V54",
+    "exactPath": "dwp-payroll-server/src/main/resources/db/migration/V55__pay_base_tfr_pay_004_retirement.sql",
+    "stateAtPacketIssue": "RESERVED_NOT_ACTIVE",
+    "createExactlyFiveTables": [
+      "pay_statutory_cases",
+      "pay_case_basis_refs",
+      "pay_case_evidence",
+      "pay_case_results",
+      "pay_case_corrections"
+    ],
+    "reuse": [
+      "V50 run, attempt, worker result, result line, trace, receipt and pay_outbox lineage",
+      "V53 signed country-pack snapshot and activation lineage",
+      "V54 sys_audit_outbox"
+    ],
+    "noNewGenericReceiptAuditOrOutbox": true,
+    "noSeedOrBackfill": true,
+    "preserveV1ThroughV54ByteForByte": true
+  },
+  "plannedWorktrees": {
+    "backend": {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261022/r7-batch05/pay-004/backend",
+      "branch": "codex/hris-wave7-r7-batch05-pay-004-backend-20261022-r1",
+      "baseCommit": "c69e8d52ba1950f920323e35ec598c2ff328c69c",
+      "baseTree": "9058f39498d511646045b34a2fcb7775bd541298",
+      "expectedInitialPorcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expectedUpstream": null
+    },
+    "frontend": {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261022/r7-batch05/pay-004/frontend",
+      "branch": "codex/hris-wave7-r7-batch05-pay-004-frontend-20261022-r1",
+      "base": "THE_COMMITTED_AND_PUSHED_PACKET_AND_RESERVATION_AUTHORITY_CARRIER_DESCENDING_FROM_200B0426",
+      "expectedInitialPorcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expectedUpstream": null
+    },
+    "materializedNow": false
+  },
+  "ownerWritableBoundary": {
+    "effectiveOnlyAfterExecutableStartToken": true,
+    "backendCreateOrModify": [
+      "dwp-payroll-server/src/main/java/com/dwp/services/payroll/statutory/pay004/**",
+      "dwp-payroll-server/src/test/java/com/dwp/services/payroll/statutory/pay004/**",
+      "dwp-payroll-server/src/main/resources/db/migration/V55__pay_base_tfr_pay_004_retirement.sql"
+    ],
+    "frontendCreateOrModify": [
+      "apps/dwp/src/features/hris/payroll/retirement/**",
+      "apps/dwp/src/features/hris/payroll/__tests__/g3-slices/base-tfr-pay-004.slice.test.tsx"
+    ],
+    "evidenceCreateOnly": [
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-05-results/pay-004/**"
+    ],
+    "readOnlyReuse": [
+      "PAY-003 signed-pack activation seams",
+      "PAY-011 calculation and PayrollCalculated.v1 seams",
+      "PAY-012 immutable result seams",
+      "product authorization v58, Auth V267 and Gateway route ownership"
+    ],
+    "explicitNoTouch": [
+      "existing Payroll migrations V1 through V54",
+      "central authorization, Auth, Gateway, shell, routes, menu and i18n sources",
+      "all PAY-003, PAY-011 and PAY-012 source and tests; only execution of the named smallest existing regressions is allowed"
+    ],
+    "outsideBoundaryRule": "STOP_AND_REQUEST_APPEND_ONLY_REALLOCATION_BEFORE_EDIT"
+  },
+  "implementationShape": {
+    "aggregate": "RetirementYearEndCase",
+    "states": [
+      "DRAFT",
+      "VALIDATED",
+      "BLOCKED_PACK_REQUIRED",
+      "CALCULATED",
+      "APPROVED",
+      "FINALIZED",
+      "CORRECTED",
+      "CANCELLED"
+    ],
+    "terminalStates": [
+      "FINALIZED",
+      "CORRECTED",
+      "CANCELLED"
+    ],
+    "exactTransitions": [
+      "create -> DRAFT",
+      "validate DRAFT -> VALIDATED | BLOCKED_PACK_REQUIRED",
+      "calculate VALIDATED -> CALCULATED",
+      "approve CALCULATED -> APPROVED",
+      "finalize APPROVED -> FINALIZED",
+      "correct FINALIZED -> CORRECTED",
+      "cancel DRAFT | VALIDATED | BLOCKED_PACK_REQUIRED -> CANCELLED"
+    ],
+    "appendOnlyRevisionedState": true,
+    "terminalEvidenceImmutable": true,
+    "correctionCreatesLinkedNewRevision": true,
+    "publicCommandConstraint": "NO_UNCONTRACTED_PUBLIC_CASE_COMMAND_ACTION_RECEIPT_OR_EVENT"
+  },
+  "entryQueries": {
+    "contract": "IAQ-049",
+    "browserMethodAndPath": "GET /api/payroll/v1/workbench/pay-retirement",
+    "ownerMethodAndPath": "GET /v1/workbench/pay-retirement",
+    "canonicalRoute": "/hr/operations/payroll/retirement",
+    "variant": "RETIREMENT",
+    "filters": [
+      "retirementResult:MoneyFilter",
+      "policyVersion:PolicyFilter",
+      "caseStatus:StatusFilter",
+      "effectiveOn:date"
+    ],
+    "sorts": [
+      "retirementResult:ASC",
+      "retirementResult:DESC",
+      "policyVersion:ASC",
+      "policyVersion:DESC",
+      "caseStatus:ASC",
+      "caseStatus:DESC",
+      "itemPublicId:ASC",
+      "itemPublicId:DESC"
+    ],
+    "defaultSort": "itemPublicId:ASC",
+    "limit": {
+      "minimum": 1,
+      "maximum": 100
+    },
+    "states": [
+      "COMPLETE",
+      "EMPTY",
+      "PARTIAL",
+      "UNAVAILABLE"
+    ],
+    "fieldGroups": [
+      "RETIREMENT_RESULT:MoneyValue",
+      "POLICY_VERSION:PolicyValue",
+      "CASE_STATUS:StatusValue"
+    ],
+    "requiredItemFields": [
+      "itemPublicId",
+      "title",
+      "statusCode",
+      "fieldGroups",
+      "deepLink",
+      "availableActions"
+    ],
+    "availableActions": [],
+    "actionAuthorityConferred": false,
+    "runIdOrPackIdInferenceAllowed": false
+  },
+  "calculationAndResultBoundary": {
+    "reuseUnchanged": [
+      "PEP-PAY-012",
+      "PEP-PAY-014",
+      "V50 generic calculation engine",
+      "PayrollCalculated.v1 five-field payload"
+    ],
+    "noRetirementSpecificCalculationEndpoint": true,
+    "noRetirementSpecificCalculationEvent": true,
+    "noResultDerivationFromGenericDeductionOrControlTotals": true,
+    "money": {
+      "storage": "NUMERIC(19,4)",
+      "currency": "ONE_EXPLICIT_CURRENCY",
+      "rounding": "APPLICATION_DECLARED_ONLY",
+      "floatingPointForbidden": true,
+      "databaseRoundingForbidden": true,
+      "crossCurrencyArithmeticForbidden": true
+    }
+  },
+  "signedPackAndProviderBoundary": {
+    "reuseUnchanged": [
+      "PEP-PAY-028",
+      "PAY-003 signed-pack snapshots and activations"
+    ],
+    "activePackRequires": "EXACT_V53_PACK_SNAPSHOT_AND_ACTIVE_ACTIVATION_REVISION_FOR_SAME_SCOPE_AND_EFFECTIVE_DATE",
+    "notRequiredRequires": "NULL_PACK_REFERENCES_AND_EXPLICIT_NON_PACK_PAYROLL_FOUNDATION_OR_POLICY_PUBLIC_ID_REVISION_AND_DIGEST",
+    "notInstalledOrDisabledProducesResult": false,
+    "productionCountryPackBindingAuthorized": false,
+    "productionProviderBindingAuthorized": false
+  },
+  "businessAndExperienceBoundary": {
+    "providerNeutral": true,
+    "countrySpecificContentLivesInSignedPackWhenRequired": true,
+    "routeMountAuthorized": false,
+    "menuMountAuthorized": false,
+    "futureMenuNode": "BASE:pay-retirement",
+    "futureMenuLabelKo": "퇴직급여",
+    "futurePayrollTaskGroup": "PAY-06 세금·보험·퇴직·연말정산",
+    "futureVisibility": "ANY_AUTHORIZED_MEMBER_PROGRESSIVE_DISCLOSURE",
+    "futureMenuTermsAreInformationalOnly": true
+  },
+  "evidenceContract": {
+    "required": true,
+    "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-05-results/pay-004/**",
+    "mustRecord": [
+      "changed-path proof and no-recount result",
+      "acceptance result for PAY004-AC-01 through PAY004-AC-12",
+      "V55 static and real PostgreSQL clean plus upgrade evidence",
+      "targeted backend and frontend test commands, exit codes and counts",
+      "module branch commits, trees, clean porcelain and pushed refs",
+      "default-OFF zero-call and zero-enrollment proof",
+      "known blockers reported as BLOCKED rather than PASS"
+    ],
+    "mayNotClaim": [
+      "route or menu admission",
+      "feature enablement or tenant enrollment",
+      "production country-pack or provider binding",
+      "central dwp-dev merge",
+      "production release"
+    ]
+  },
+  "targetedVerification": {
+    "policy": "RUN_EACH_NEW_TARGET_GROUP_ONCE; AFTER_FAILURE_RERUN_ONLY_THE_SMALLEST_AFFECTED_TARGET; RUN_ONE_BOUNDED_CROSS_CONTRACT_CHECK_AFTER_TARGETS_PASS; NO_REPOSITORY_WIDE_SUITE_PER_CORRECTION",
+    "backendTargets": [
+      "Pay004IaEntryQueryContractTest",
+      "Pay004RetirementAuthorizationTest",
+      "Pay004ActionTargetAbsenceTest",
+      "Pay004RetirementCaseStateTest",
+      "Pay004RetirementResultLineageTest",
+      "Pay004SignedPackReuseContractTest",
+      "Pay004CalculationReuseContractTest",
+      "Pay004V55MigrationContractTest",
+      "Pay004V55MigrationPostgresTest",
+      "smallest PAY-003 country-pack activation regression",
+      "smallest PAY-011 calculation and PayrollCalculated regression",
+      "smallest PAY-012 immutable result regression"
+    ],
+    "frontendTargets": [
+      "apps/dwp/src/features/hris/payroll/__tests__/g3-slices/base-tfr-pay-004.slice.test.tsx",
+      "changed-root IAQ-049 API and workbench contract tests",
+      "loading, empty, partial, unavailable, denied, stale and complete states",
+      "default-OFF zero-call assertion",
+      "1440px, 1280px, 390px, 320px and 200 percent zoom",
+      "light, dark, high contrast, reduced motion, keyboard-only, visible focus and long Korean or English labels"
+    ],
+    "playwrightScreenshotsBeforeShellRouteAdmission": false,
+    "databaseUnavailableRule": "REPORT_BLOCKED_NOT_PASS"
+  },
+  "rollout": {
+    "featureFlag": "HRIS_PAY_RETIREMENT_WORKBENCH",
+    "default": "OFF",
+    "tenantEnrollmentCount": 0,
+    "networkCallsWhenOff": 0,
+    "routeMounted": false,
+    "menuMounted": false,
+    "productionBinding": false
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "PAY004-AC-01",
+      "criterion": "IAQ-049 implements exactly the accepted GET browser and owner paths, RETIREMENT variant, four filters, eight sorts, itemPublicId default sort, limit 1 through 100, canonical route and COMPLETE, EMPTY, PARTIAL and UNAVAILABLE cardinality rules."
+    },
+    {
+      "id": "PAY004-AC-02",
+      "criterion": "IAQ-049 enforces all seven PEP layers, trusted-tenant and authorized-population scope, VIEW, MASK and OMIT before serialization, exact field-decision counts, scope and authorization revision-bound opaque cursors and problem correlation."
+    },
+    {
+      "id": "PAY004-AC-03",
+      "criterion": "Every IAQ-049 item has one retirement-case itemPublicId and availableActions is empty; runId or packId is never inferred from any item, field, deep link, filter, result, title, policy value, mask or browser state, and IAQ access never confers PEP action authority."
+    },
+    {
+      "id": "PAY004-AC-04",
+      "criterion": "PEP-PAY-028 and PAY-003 signed-pack state are reused unchanged with expected-version CAS, HIGH step-up, official references, effective date, golden-pack digest, same-scope statutory approval and exactly PACK_INSTALLER_NE_STATUTORY_APPROVER; no duplicate action, receipt, migration or completion credit exists."
+    },
+    {
+      "id": "PAY004-AC-05",
+      "criterion": "PEP-PAY-012, PEP-PAY-014, the V50 generic engine and PayrollCalculated.v1 are reused unchanged; PAY-004 creates no retirement-specific calculation endpoint or event, does not change the five-field event payload and never derives a retirement result from generic deduction lines or control totals."
+    },
+    {
+      "id": "PAY004-AC-06",
+      "criterion": "The RetirementYearEndCase states, terminal states and transitions are exact, every transition is append-only, terminal evidence is immutable, correction links a new revision, and no uncontracted public case command, action, receipt or event is introduced."
+    },
+    {
+      "id": "PAY004-AC-07",
+      "criterion": "Payroll V55 creates exactly the five sealed retirement case tables, reuses V50 pay_outbox_events and V54 sys_audit_outbox, preserves V1 through V54 byte-for-byte and adds no generic receipt, audit or outbox duplicate, seed or backfill."
+    },
+    {
+      "id": "PAY004-AC-08",
+      "criterion": "Every V55 table has tenant-first composite identity and intra-Payroll foreign keys, UUID public IDs, PUBLIC revocation, least-privilege non-BYPASSRLS grants, ENABLE plus FORCE RLS using trusted dwp.payroll_tenant_id and immutable UPDATE and DELETE guards."
+    },
+    {
+      "id": "PAY004-AC-09",
+      "criterion": "Case, basis, evidence, result and correction facts are immutable monotonic revisions; each result references the exact V50 (tenant, run, attempt, worker-result) identity and proves the same case worker. ACTIVE cases bind the exact V53 pack snapshot and ACTIVE activation revision effective at calculation time; NOT_REQUIRED cases have null pack references and bind an explicit non-pack Payroll foundation or policy public ID, revision and digest. Mutable latest, cross-tenant, cross-worker, cross-scope, stale or missing references fail closed."
+    },
+    {
+      "id": "PAY004-AC-10",
+      "criterion": "Retirement results use PostedMoney NUMERIC(19,4), one explicit currency and declared application rounding, canonical decimal and digest rules, prohibit floating point, database rounding and cross-currency arithmetic, and contain no hardcoded law, rate, report, provider or tenant-specific content."
+    },
+    {
+      "id": "PAY004-AC-11",
+      "criterion": "Existing owner idempotency, expected-version, original-receipt replay, different-digest 409, minimized audit, maker-checker and atomic outbox guarantees remain exact; PAY-004 adds no parallel command receipt store and pack-required cases fail closed without silent fallback."
+    },
+    {
+      "id": "PAY004-AC-12",
+      "criterion": "The future frontend proves loading, empty, partial, unavailable, denied, stale and complete list-detail states, keyboard and screen-reader operation, responsive 1440, 1280, 390 and 320 widths, 200 percent zoom, light, dark, high contrast and reduced motion, plus default-OFF zero network calls; route mount, menu exposure, feature enablement, tenant enrollment and production provider binding remain non-claims."
+    }
+  ],
+  "authority": {
+    "packetSealed": true,
+    "semanticDispositionSealed": true,
+    "centralPrerequisitesAdmitted": true,
+    "payrollV55ReservedNotActive": true,
+    "worktreeMaterializationMayProceedAfterThisPacketAndReservationAreCommittedAndPushed": true,
+    "activeLeaseMayBeIssuedOnlyAfterCleanWorktreeReceipt": true,
+    "executableStartTokenMayBeIssuedOnlyAfterActiveLease": true,
+    "moduleSourceAuthoringAuthorizedNow": false,
+    "migrationAuthoringAuthorizedNow": false,
+    "testExecutionAuthorizedNow": false,
+    "moduleBranchCommitAndPushAuthorizedNow": false,
+    "mergeToDwpDevAuthorized": false,
+    "routeMountAuthorized": false,
+    "menuMountAuthorized": false,
+    "featureDefaultOff": true,
+    "tenantEnrollmentCount": 0,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionCountryPackBindingAuthorized": false,
+    "productionProviderBindingAuthorized": false,
+    "businessCompletionCredit": 0,
+    "productionReleaseAuthorized": false
+  },
+  "nonClaims": [
+    "This packet alone is not an executable module start token.",
+    "This packet alone does not activate Payroll V55.",
+    "No module source, migration authoring, test execution, module-branch commit or push, merge, route, menu, enablement, enrollment or production authority is granted yet; only this packet and reservation authority-carrier commit and push may proceed.",
+    "No retirement calculation formula or country-specific legal content has been imported from SKKF."
+  ],
+  "activationCommand": "AFTER_THIS_PACKET_AND_RESERVATION_ARE_COMMITTED_AND_PUSHED: MATERIALIZE_THE_TWO_EXACT_CLEAN_WORKTREES; ISSUE_ONE_HASH_BOUND_WORKTREE_RECEIPT; ACTIVATE_ONE_EXCLUSIVE_PAYROLL_V55_LEASE; THEN_ISSUE_ONE_HASH_BOUND_EXECUTABLE_PAY004_START_TOKEN",
+  "nextGate": "FRESH_CLEAN_MODULE_WORKTREE_MATERIALIZATION_AND_HASH_BOUND_RECEIPT; NO_SOURCE_AUTHORING_BEFORE_ACTIVE_V55_LEASE_AND_EXECUTABLE_TOKEN"
+}
