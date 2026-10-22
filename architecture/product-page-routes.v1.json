@@ -549,6 +549,13 @@
       "surfaceId": "hcm.operations"
     },
     {
+      "routeContractKey": "route.hcm.operations.pay-retirement.page",
+      "routeId": "hcm.operations.pay-retirement",
+      "pattern": "/hr/operations/payroll/retirement",
+      "productId": "hcm",
+      "surfaceId": "hcm.operations"
+    },
+    {
       "routeContractKey": "route.hcm.operations.pay-tax-social-insurance.page",
       "routeId": "hcm.operations.pay-tax-social-insurance",
       "pattern": "/hr/operations/payroll/tax-social-insurance",

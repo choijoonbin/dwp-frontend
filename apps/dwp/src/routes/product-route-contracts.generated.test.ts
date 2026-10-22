@@ -152,6 +152,13 @@ const R7_BATCH_04_05_HCM_PAGE_ROUTES = [
     surfaceId: 'hcm.operations',
   },
   {
+    routeContractKey: 'route.hcm.operations.pay-retirement.page',
+    routeId: 'hcm.operations.pay-retirement',
+    pattern: '/hr/operations/payroll/retirement',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+  },
+  {
     routeContractKey: 'route.hcm.operations.pay-tax-social-insurance.page',
     routeId: 'hcm.operations.pay-tax-social-insurance',
     pattern: '/hr/operations/payroll/tax-social-insurance',
@@ -242,7 +249,7 @@ describe('generated product route authorization contracts', () => {
       'spaces',
       'workplace',
     ]);
-    expect(router).toHaveLength(157);
+    expect(router).toHaveLength(158);
     expect(registry).toEqual(router);
     expect(
       router.filter((route) =>
@@ -312,8 +319,8 @@ describe('generated product route authorization contracts', () => {
     );
     expect(nonPages.every((route) => route.routeId === null && route.pattern === null)).toBe(true);
     expect(DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(71);
-    expect(ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(228);
-    expect(REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG).toHaveLength(228);
+    expect(ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE).toHaveLength(229);
+    expect(REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG).toHaveLength(229);
     expect(REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG.every((route) => route.routeKind === 'PAGE')).toBe(
       true
     );
