@@ -1,0 +1,487 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-05-hrm012-module-source-admission-decision.v1",
+  "decisionId": "HRIS-WAVE7-R7-BATCH-05-HRM012-MODULE-SOURCE-ADMISSION-20261022-R1",
+  "issuedAt": "2026-10-22T11:14:46+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "EXACT_HRM012_MODULE_RESULTS_INDEPENDENTLY_ACCEPTED_NO_FF_EXACT_HEAD_SOURCE_ADMISSION_AUTHORIZED_DEFAULT_OFF_ZERO_ENROLLMENT",
+  "sliceId": "BASE-TFR-HRM-012",
+  "module": "HRM",
+  "moduleSession": "HRIS-HRM",
+  "immutability": {
+    "sealed": true,
+    "appendOnly": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_DECISION_ID_AND_SHA256"
+  },
+  "authorityBasis": {
+    "batch05Preflight": {
+      "path": "../r7-batch-05-preflight-r1/semantic-dependency-migration-preflight.v1.json",
+      "sha256": "8f7a0d38c4dc86873e4930e5a21dcc0a269c39512508d86dd529b40015237e0f",
+      "bytes": 37443,
+      "requiredState": "PREFLIGHT_COMPLETE_FIXED_ORDER_FIVE_CONDITIONAL_LANES_NO_PACKETS_NO_TOKENS_NO_WORKTREES_NO_LEASES_NO_SOURCE"
+    },
+    "semanticDispositionV2": {
+      "path": "../r7-batch-05-module-start-r1/semantic-dispositions/base-tfr-hrm-012.semantic-disposition-successor.v2.json",
+      "sha256": "70df5e8ce5c0af297494e6befb0f961d7b497e0130a421952c61d885f9bc2905",
+      "bytes": 10763,
+      "requiredState": "SEALED_VALIDATE_ONLY_ACCOUNTING_AND_TRUSTED_RECEIPT_CONTEXT_CORRECTION"
+    },
+    "ownerPacketV3": {
+      "path": "../r7-batch-05-module-start-r1/owner-packets/base-tfr-hrm-012.owner-packet-correction-successor.v3.json",
+      "sha256": "21eb0b002a2f1565ef95a7587e3520a6fb09cb2a0c89e38983a24291b14a8c4c",
+      "bytes": 8189,
+      "requiredState": "SEALED_CURRENT_BASE_OWNER_AUTHORITY_WITH_VALIDATE_ONLY_AND_TRUSTED_RECEIPT_CONTEXT_CORRECTIONS_TOKEN_WITHHELD"
+    },
+    "centralPrerequisiteIntegration": {
+      "path": "hrm-012-central-integration-receipt.v1.json",
+      "sha256": "46533c4a70b3c7d2c490513510621049fd9423d4616eb2d0af6a8278b38063d7",
+      "bytes": 5322,
+      "requiredState": "EXACT_HRM012_CENTRAL_PREREQUISITE_MERGED_PUSHED_DEFAULT_OFF_ZERO_ENROLLMENT_MODULE_AUTHORITY_MAY_BE_REISSUED"
+    },
+    "startToken": {
+      "path": "../r7-batch-05-module-start-r1/tokens/base-tfr-hrm-012.start-token.v1.json",
+      "tokenId": "HRIS-WAVE7-R7-BATCH-05-START-BASE-TFR-HRM-012-20261022-R1",
+      "sha256": "0592ca8b606236f0e36c639c547a94387dd517754fbb4a3ada091bbca19b662d",
+      "bytes": 15043,
+      "requiredState": "ISSUED_EXECUTABLE_EXACT_CURRENT_WORKTREES_ACTIVE_EXCLUSIVE_V60_CORRECTED_BOUNDED_SOURCE_TEST_COMMIT_PUSH_ONLY_DEFAULT_OFF_ZERO_ENROLLMENT",
+      "resolvedAtCarrierCommit": "aadf12379fc71defc02cad94491132428fbbd5dd"
+    },
+    "startTokenCorrectionV2": {
+      "path": "../r7-batch-05-module-start-r1/tokens/base-tfr-hrm-012.start-token-correction.v2.json",
+      "tokenId": "HRIS-WAVE7-R7-BATCH-05-START-CORRECTION-BASE-TFR-HRM-012-20261022-R2",
+      "sha256": "c6ff15bdad9f14695d02f69fa5e840c9c6ba631fb7b65d8366acc038b888dcdd",
+      "bytes": 5791,
+      "requiredState": "ISSUED_EXECUTABLE_APPEND_ONLY_QUARANTINE_PERSISTENCE_SCOPE_CORRECTION_ALL_OTHER_AUTHORITY_INHERITED",
+      "carrierCommit": "aadf12379fc71defc02cad94491132428fbbd5dd",
+      "carrierTree": "d38a88c963811794b55eeb2b717326989faf891a",
+      "carrierBranch": "dwp-dev",
+      "originExact": true,
+      "independentReview": {
+        "decision": "GO",
+        "p0": 0,
+        "p1": 0,
+        "p2": 0
+      }
+    },
+    "activeMigrationLease": {
+      "path": "../r7-batch-05-module-start-r1/migration-lease-hrm012-v60-activation.v1.json",
+      "sha256": "001353d9d0d0cdccbc4191887805b365cd5ee02f7e63952761f1955452a0e928",
+      "bytes": 7568,
+      "requiredState": "ACTIVE_EXCLUSIVE_PEOPLE_V60"
+    },
+    "materializationReceipt": {
+      "path": "../r7-batch-05-module-start-r1/worktree-materialization-receipts/base-tfr-hrm-012.worktree-materialization-receipt.v1.json",
+      "sha256": "c877ec570f4309c8d66bebafcb4fc56cb1ec2e698edae28f9fd4a470829fc72f",
+      "bytes": 5369,
+      "requiredState": "MATERIALIZED_CLEAN_EXACT_CURRENT_BASES_NO_SOURCE_EDITS_NO_UPSTREAM"
+    },
+    "centralCarrierBeforeDecision": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "aadf12379fc71defc02cad94491132428fbbd5dd",
+      "tree": "d38a88c963811794b55eeb2b717326989faf891a",
+      "originExact": true,
+      "committedTreeCleanBeforeDraft": true,
+      "worktreeCleanAfterDraft": false,
+      "expectedUntrackedOnly": [
+        "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-05-central-admission-r1/hrm-012-module-source-admission-decision.v1.json"
+      ]
+    }
+  },
+  "targetStateBeforeDecision": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "c43a98698a9cee140fb11ebc248bdbbbe9214a7d",
+      "tree": "964b7e313c7187bf7bfca5bb5a517f6bc384f67a",
+      "originExact": true,
+      "clean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "aadf12379fc71defc02cad94491132428fbbd5dd",
+      "tree": "d38a88c963811794b55eeb2b717326989faf891a",
+      "originExact": true,
+      "committedTreeCleanBeforeDraft": true
+    }
+  },
+  "candidateAdmission": {
+    "backend": {
+      "repository": "dwp-backend",
+      "targetBranch": "dwp-dev",
+      "sourceBranch": "codex/hris-wave7-r7-batch05-hrm-012-backend-20261022-r1",
+      "baseCommit": "c43a98698a9cee140fb11ebc248bdbbbe9214a7d",
+      "baseTree": "964b7e313c7187bf7bfca5bb5a517f6bc384f67a",
+      "mergeBaseWithTarget": "c43a98698a9cee140fb11ebc248bdbbbe9214a7d",
+      "exactHead": "b5e71940ba96d6d6daec2eaacc4ac00954089efa",
+      "exactTree": "5b14cee170175f194387492ed4ecb26cb6fc8cd7",
+      "commitCount": 1,
+      "changedPathCount": 44,
+      "addedPathCount": 41,
+      "modifiedPathCount": 3,
+      "deletedPathCount": 0,
+      "insertions": 11393,
+      "deletions": 3,
+      "pathManifest": {
+        "range": "c43a98698a9cee140fb11ebc248bdbbbe9214a7d..b5e71940ba96d6d6daec2eaacc4ac00954089efa",
+        "pathOnlyCommand": "git diff --name-only <base>..<head>",
+        "pathOnlySha256": "5f4a94f48bbdaf615753bc5b2cdace8649c03be9a5dd2aaf3999fad17cb8db61",
+        "nameStatusCommand": "git diff --name-status <base>..<head>",
+        "nameStatusSha256": "ba27039855cae296f5db2c378a3c968cb99c46572c7d38068f73a86cc5926435"
+      },
+      "authorizedPathClasses": [
+        "dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/hrm012/**",
+        "dwp-people-server/src/main/java/com/dwp/services/people/hris/workbench/hrm012/**",
+        "dwp-people-server/src/main/java/com/dwp/services/people/integration/Hrm012*.java",
+        "dwp-people-server/src/test/java/com/dwp/services/people/hris/workbench/hrm012/**",
+        "dwp-people-server/src/test/java/com/dwp/services/people/integration/Hrm012*.java",
+        "dwp-people-server/src/test/java/com/dwp/services/people/integration/WorkforceIngestion*.java",
+        "dwp-people-server/src/main/resources/db/migration/V60__hrm_base_tfr_hrm_012.sql",
+        "three exact bounded HRM-008 stale-binding correction files"
+      ],
+      "outsideAuthorizedBoundaryChanges": 0,
+      "originExact": true,
+      "clean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "targetBranch": "dwp-dev",
+      "sourceBranch": "codex/hris-wave7-r7-batch05-hrm-012-frontend-20261022-r1",
+      "baseCommit": "9a826b9a156b2986a155d09d02b4b8112bb0bc56",
+      "baseTree": "eba1cd2162905939bdf6a39d575d93a8c9dabcb5",
+      "mergeBaseWithCurrentTarget": "9a826b9a156b2986a155d09d02b4b8112bb0bc56",
+      "sourceCommits": [
+        {
+          "commit": "0e1e74b8190df9220430e8662c1a9751c91d868f",
+          "parent": "9a826b9a156b2986a155d09d02b4b8112bb0bc56",
+          "tree": "513b6ba4daacc35881e6a13f62b3e0ca930ee302",
+          "subject": "feat(hris): add HRM-012 data quality workbench",
+          "changedPathCount": 15,
+          "insertions": 2868,
+          "deletions": 0
+        },
+        {
+          "commit": "a2d9320d5d9b9c7b846832aea79877b0242e1c75",
+          "parent": "0e1e74b8190df9220430e8662c1a9751c91d868f",
+          "tree": "0398e721c1e3c92a1c8b110804646e9f60af7da3",
+          "subject": "fix(hris): harden HRM-012 workbench contract",
+          "changedPathCount": 5,
+          "insertions": 71,
+          "deletions": 14
+        }
+      ],
+      "sourceHeadBeforeBackendEvidence": "a2d9320d5d9b9c7b846832aea79877b0242e1c75",
+      "sourceHeadBeforeBackendEvidenceTree": "0398e721c1e3c92a1c8b110804646e9f60af7da3",
+      "exactEvidenceHead": "0ce690d94e1b8fd0776f021cd6ee45c953f98f47",
+      "exactEvidenceHeadParent": "a2d9320d5d9b9c7b846832aea79877b0242e1c75",
+      "exactTree": "047fc71ae16cf612daf3fad299656331638aa57b",
+      "sourceAndFrontendResult": {
+        "range": "9a826b9a156b2986a155d09d02b4b8112bb0bc56..a2d9320d5d9b9c7b846832aea79877b0242e1c75",
+        "changedPathCount": 15,
+        "addedPathCount": 15,
+        "modifiedPathCount": 0,
+        "deletedPathCount": 0,
+        "insertions": 2925,
+        "deletions": 0,
+        "pathOnlyManifestSha256": "4113325c26bbb1b337638920328183a586a3678b4f6da74bfd8e00a866b3a975",
+        "nameStatusManifestSha256": "66b7581b8cd085dc009f6157c2a6a4a3dfc693708962f8116fa4a9d3a8b58dd2"
+      },
+      "backendResultEvidence": {
+        "range": "a2d9320d5d9b9c7b846832aea79877b0242e1c75..0ce690d94e1b8fd0776f021cd6ee45c953f98f47",
+        "changedPathCount": 2,
+        "addedPathCount": 2,
+        "modifiedPathCount": 0,
+        "deletedPathCount": 0,
+        "insertions": 550,
+        "deletions": 0,
+        "pathOnlyManifestSha256": "a20cf3846e183f4a5bf89f19373b4e94d6d030747346f086b6308e6520512f58",
+        "nameStatusManifestSha256": "01a5b4c3c69b6f8d8c92c9009517f3d1dad4b17f56198f6ad5ff1bf72a1cee2e"
+      },
+      "totalCandidate": {
+        "range": "9a826b9a156b2986a155d09d02b4b8112bb0bc56..0ce690d94e1b8fd0776f021cd6ee45c953f98f47",
+        "changedPathCount": 17,
+        "addedPathCount": 17,
+        "modifiedPathCount": 0,
+        "deletedPathCount": 0,
+        "insertions": 3475,
+        "deletions": 0,
+        "pathOnlyManifestSha256": "6e78f7f230a8b0fa4bcb055149c680884273ddea602e4462a260c4b525ff40ca",
+        "nameStatusManifestSha256": "2f0bffdc624f19ba332a6dfd039e570fc0d9c7869b5c761f33e000264df166de"
+      },
+      "sourcePathBoundary": [
+        "apps/dwp/src/features/hris/people/data-quality/**",
+        "apps/dwp/src/features/hris/people/__tests__/g3-slices/base-tfr-hrm-012.slice.test.tsx"
+      ],
+      "evidencePathBoundary": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-05-results/hrm-012/**",
+      "outsideAuthorizedBoundaryChanges": 0,
+      "originExact": true,
+      "clean": true
+    }
+  },
+  "evidenceResolution": {
+    "repository": "dwp-frontend",
+    "commit": "0ce690d94e1b8fd0776f021cd6ee45c953f98f47",
+    "tree": "047fc71ae16cf612daf3fad299656331638aa57b",
+    "mode": "GIT_OBJECT_AT_EXACT_EVIDENCE_HEAD",
+    "effectiveEvidence": [
+      {
+        "kind": "FRONTEND_RESULT_JSON",
+        "path": "../r7-batch-05-results/hrm-012/frontend-module-result.v1.json",
+        "sha256": "193b6775d7042f824d8927b7c515217c3bfcf25962ec013cd50a3411c1ada4a1",
+        "bytes": 6544,
+        "gitBlob": "02acae13c2e02c50ceb22dad3561bdbdc9c7319b"
+      },
+      {
+        "kind": "FRONTEND_RESULT_MD",
+        "path": "../r7-batch-05-results/hrm-012/frontend-module-result.md",
+        "sha256": "b1611a6bdbefa73db2050d6c99cb4066548c060d7f9300503fe84da79fdeb33a",
+        "bytes": 2185,
+        "gitBlob": "39b3e798771366372149093c21b388833b8e16c8"
+      },
+      {
+        "kind": "BACKEND_RESULT_JSON",
+        "path": "../r7-batch-05-results/hrm-012/backend-module-result.v1.json",
+        "sha256": "4461470e638f299b8b3cb8f18e180091572fdc3d03f39ff6c41f420cf840c51e",
+        "bytes": 29150,
+        "gitBlob": "5f74f4ad8f7b73ddb41aa1ce1c2377e4ad36c509"
+      },
+      {
+        "kind": "BACKEND_RESULT_MD",
+        "path": "../r7-batch-05-results/hrm-012/backend-module-result.md",
+        "sha256": "232a127856d3e2f6c33c96f965837c1b0059257274a7d67d2d9ddb15c917169d",
+        "bytes": 5443,
+        "gitBlob": "f35d6b1d6a5b7efaf7dfc6b0ca172f6ec0b91121"
+      }
+    ]
+  },
+  "independentReview": {
+    "backendReceiptIaAndSecurity": {
+      "decision": "GO",
+      "p0": 0,
+      "p1": 0,
+      "p2": 0
+    },
+    "backendV60AndRealPostgres": {
+      "decision": "GO_AFTER_FINAL_REVISION_REQUIRED_FIVE_CASE_CLOSURE",
+      "p0": 0,
+      "p1": 0,
+      "p2": 0
+    },
+    "frontendContractAndExperience": {
+      "decision": "GO_AFTER_AFFECTED_TARGET_CORRECTION",
+      "p0": 0,
+      "p1": 0,
+      "p2": 0
+    },
+    "resultEvidence": {
+      "decision": "GO_AFTER_COMPLETE_NON_REDUNDANT_TEST_ACCOUNTING",
+      "p0": 0,
+      "p1": 0,
+      "p2": 0
+    },
+    "unresolvedTotals": {
+      "p0": 0,
+      "p1": 0,
+      "p2": 0
+    }
+  },
+  "verificationAccounting": {
+    "frontend": {
+      "logicalTests": 29,
+      "contract": 7,
+      "api": 3,
+      "workbench": 14,
+      "slice": 5,
+      "affectedPostReviewRuns": [
+        "contract 7/7 PASS",
+        "workbench 14/14 PASS"
+      ],
+      "typecheck": "PASS",
+      "eslint": "PASS_CHANGED_ROOT",
+      "prettier": "PASS_CHANGED_ROOT",
+      "gitDiffCheck": "PASS"
+    },
+    "backend": {
+      "initialBroadDiagnostic": "49 total; 37 PASS; 12 FAIL; not repeated as a broad bundle",
+      "postReviewDiagnostic": "43 total; 42 PASS; 1 stale safe-retry expectation FAIL; not repeated as a bundle",
+      "affectedJavaRuns": [
+        "six-class bundle 36/36 PASS",
+        "authorization 2/2 PASS",
+        "reconciliation plus outcome 12/12 PASS"
+      ],
+      "v60CorrectionChain": [
+        "contract full class 6/6 PASS",
+        "initial real PostgreSQL full class 9/10 PASS plus sole failed terminal assertion named rerun 1/1 PASS",
+        "direct-impact contract plus real PostgreSQL 10/10 PASS",
+        "expired-RUNNING contract plus real PostgreSQL 2/2 PASS"
+      ],
+      "finalRequiredRealPostgres": {
+        "backendHead": "b5e71940ba96d6d6daec2eaacc4ac00954089efa",
+        "tests": 5,
+        "passed": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "build": "SUCCESSFUL",
+        "durationSeconds": 28,
+        "cases": [
+          "upgradeFromV59PreservesRowsAndEveryHistoricalChecksum",
+          "forceRlsHidesAndRejectsBothTablesWithoutMatchingTenantContext",
+          "failedTerminalizationRollsBackCursorOutboxAndRunThenExactRetryWins",
+          "lifecycleVersionAndLeaseNegativeTransitionsFailInPostgres",
+          "linkedReplayRequiresTerminalSameTenantExactImmutableLineage"
+        ]
+      },
+      "jcs": "4/4 PASS",
+      "compileJava": "PASS",
+      "compileTestJava": "PASS",
+      "gitDiffCheck": "PASS"
+    },
+    "policyConclusion": "PASS_BY_RETAINING_UNAFFECTED_PASSING_TARGETS_AND_RERUNNING_ONLY_FAILED_OR_CHANGED_TARGETS; NO_REPOSITORY_WIDE_SUITE"
+  },
+  "acceptanceDisposition": {
+    "requiredCount": 13,
+    "passedCount": 13,
+    "failedCount": 0,
+    "criteria": [
+      {
+        "id": "HRM012-AC-01",
+        "result": "PASS_ADMITTED",
+        "evidence": "Exact IAQ GET schema, filters, sorts, stable item grain, state invariants and empty actions."
+      },
+      {
+        "id": "HRM012-AC-02",
+        "result": "PASS_ADMITTED",
+        "evidence": "Seven-layer PEP, legal-entity population closure, VIEW/MASK/OMIT before serialization and bound opaque cursor."
+      },
+      {
+        "id": "HRM012-AC-03",
+        "result": "PASS_ADMITTED",
+        "evidence": "Canonical PEP-HRM-015 command, closed modes and headers, narrow capability, duty, purpose, population and HIGH step-up."
+      },
+      {
+        "id": "HRM012-AC-04",
+        "result": "PASS_ADMITTED",
+        "evidence": "Receipt-first four-part idempotency, complete frozen authority, safe retry and post-receipt exact equality before object access."
+      },
+      {
+        "id": "HRM012-AC-05",
+        "result": "PASS_ADMITTED",
+        "evidence": "Object digest and closed envelope validation with pre-acceptance rejection and post-acceptance quarantine classification."
+      },
+      {
+        "id": "HRM012-AC-06",
+        "result": "PASS_ADMITTED",
+        "evidence": "Deterministic duplicate handling, idempotent effects, encrypted quarantine persistence and forbidden-output non-leakage."
+      },
+      {
+        "id": "HRM012-AC-07",
+        "result": "PASS_ADMITTED",
+        "evidence": "Exact People V60 two-table ledger, reused owner stores, historical migration preservation, FORCE RLS and no seed/backfill."
+      },
+      {
+        "id": "HRM012-AC-08",
+        "result": "PASS_ADMITTED",
+        "evidence": "Mode-specific closed outcome accounting and APPLY conservation from immutable item evidence."
+      },
+      {
+        "id": "HRM012-AC-09",
+        "result": "PASS_ADMITTED",
+        "evidence": "Atomic cursor, run, receipt, audit and one outbox reconciliation with rollback and mismatch denial."
+      },
+      {
+        "id": "HRM012-AC-10",
+        "result": "PASS_ADMITTED",
+        "evidence": "Exact ten-field WorkforceIngestionReconciled.v1 with sealed JCS digest, deterministic identity and no forbidden payload."
+      },
+      {
+        "id": "HRM012-AC-11",
+        "result": "PASS_ADMITTED",
+        "evidence": "Single-winner lease recovery, expired-RUNNING takeover controls and immutable linked replay evidence."
+      },
+      {
+        "id": "HRM012-AC-12",
+        "result": "PASS_ADMITTED",
+        "evidence": "Seven frontend states, list-detail, responsive/accessibility coverage and default-OFF zero-call behavior."
+      },
+      {
+        "id": "HRM012-AC-13",
+        "result": "PASS_ADMITTED",
+        "evidence": "Only the stale HRM-008 binding constant and two assertions were removed with focused authority and slice regression proof."
+      }
+    ]
+  },
+  "runtimeBoundary": {
+    "featureKey": "HRIS_HRM_DATA_QUALITY_WORKBENCH",
+    "activationProperty": "dwp.hris.data-quality-workbench.enabled",
+    "runtimeDefault": "OFF",
+    "matchIfMissing": false,
+    "tenantEnrollmentAuthorized": false,
+    "tenantEnrollmentCount": 0,
+    "runtimeCallsWhenDisabled": 0,
+    "frontendRouteMounted": false,
+    "frontendMenuMounted": false,
+    "shellNodeMounted": false,
+    "productionObjectProviderBound": false,
+    "productionMappingOrEffectProviderBound": false,
+    "productionCredentialOrKeyProviderBound": false,
+    "schedulerBound": false,
+    "brokerBound": false,
+    "fallbackBehavior": "FAIL_CLOSED_ONLY",
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionIncrement": 0
+  },
+  "mergeAuthorization": {
+    "authorizedActor": "SYS_COMMON_INTEGRATION_CONTROL",
+    "strategy": "NO_FF_EXACT_HEAD_ONLY",
+    "fastForwardMergeAuthorized": false,
+    "squashAuthorized": false,
+    "cherryPickAuthorized": false,
+    "rebaseAuthorized": false,
+    "automaticConflictResolutionAuthorized": false,
+    "conflictPolicy": "STOP_ON_CONFLICT_NO_AUTOMATIC_OR_MANUAL_RESOLUTION_UNDER_THIS_DECISION",
+    "headDriftPolicy": "ANY_SOURCE_BRANCH_HEAD_OR_TREE_DRIFT_INVALIDATES_THIS_DECISION",
+    "backend": {
+      "targetBranch": "dwp-dev",
+      "targetHeadBeforeMerge": "c43a98698a9cee140fb11ebc248bdbbbe9214a7d",
+      "exactSourceHead": "b5e71940ba96d6d6daec2eaacc4ac00954089efa",
+      "exactSourceTree": "5b14cee170175f194387492ed4ecb26cb6fc8cd7"
+    },
+    "frontend": {
+      "targetBranch": "dwp-dev",
+      "targetHeadBeforeDecisionCarrier": "aadf12379fc71defc02cad94491132428fbbd5dd",
+      "requiredAncestorBeforeMerge": "aadf12379fc71defc02cad94491132428fbbd5dd",
+      "requiredTargetHeadAtMerge": "THIS_DECISION_CARRIER_COMMIT_ON_DWP_DEV",
+      "decisionCarrierMustBeCurrentOriginExactDwpDevHead": true,
+      "exactSourceHead": "0ce690d94e1b8fd0776f021cd6ee45c953f98f47",
+      "exactSourceTree": "047fc71ae16cf612daf3fad299656331638aa57b",
+      "requiredSourceCommits": [
+        "0e1e74b8190df9220430e8662c1a9751c91d868f",
+        "a2d9320d5d9b9c7b846832aea79877b0242e1c75"
+      ]
+    },
+    "moduleTestRerunAuthorized": false,
+    "repositoryWideSuiteAuthorized": false,
+    "postMergeChecks": [
+      "prove each exact admitted source HEAD is an ancestor of the corresponding no-ff dwp-dev merge commit",
+      "prove every candidate path manifest is unchanged and each admitted path retains the exact admitted blob or exact admitted content",
+      "prove the frontend merge retains start-token correction commit aadf12379fc71defc02cad94491132428fbbd5dd",
+      "prove the frontend no-ff merge first parent is this decision's carrier commit and that carrier is the current origin-exact dwp-dev head immediately before merge",
+      "prove both dwp-dev worktrees are clean and origin exact after push",
+      "record a separate append-only HRM-012 module source integration receipt"
+    ]
+  },
+  "decision": "AUTHORIZE_ONLY_BACKEND_B5E71940_AND_FRONTEND_0CE690D9_FOR_NO_FF_EXACT_HEAD_DWP_DEV_SOURCE_ADMISSION_STOP_ON_CONFLICT_NO_TEST_RERUN",
+  "nonClaims": [
+    "The exact module candidate heads have been merged by this decision itself.",
+    "An HRM-012 module source integration receipt exists before the authorized merges complete.",
+    "The frontend route, shell node, menu or tenant-visible page is mounted.",
+    "A production object, mapping, effect, quarantine, credential or key provider is bound.",
+    "A production scheduler or broker is active.",
+    "The feature is enabled or any tenant is enrolled.",
+    "Customer data, full-slice completion or production release is authorized.",
+    "A repository-wide or redundant module test rerun is authorized during admission."
+  ],
+  "nextAction": "COMMIT_AND_PUSH_THIS_EXACT_DECISION_THEN_MERGE_ONLY_THE_TWO_PINNED_HEADS_WITH_NO_FF_STOP_ON_ANY_CONFLICT_DO_NOT_RERUN_MODULE_TESTS_AND_RECORD_A_SEPARATE_INTEGRATION_RECEIPT"
+}
