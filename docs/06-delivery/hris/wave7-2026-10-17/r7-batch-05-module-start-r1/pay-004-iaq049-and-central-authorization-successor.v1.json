@@ -1,0 +1,699 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-05-pay004-iaq049-and-central-authorization-successor.v1",
+  "successorId": "HRIS-WAVE7-R7-BATCH-05-PAY004-IAQ049-CENTRAL-AUTHORIZATION-20261022-R1",
+  "recordedAt": "2026-10-22T15:18:52+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "SEALED_EXACT_IAQ049_READ_ONLY_V58_AND_AUTH_V267_RESERVATION_INDEPENDENTLY_REVIEWED_PASS_ZERO_P0_P1_P2_CARRIER_COMMIT_REQUIRED_SOURCE_WITHHELD",
+  "immutability": {
+    "sealed": true,
+    "appendOnly": true,
+    "predecessorMutation": "FORBIDDEN",
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_SUCCESSOR_ID_AND_SHA256"
+  },
+  "sliceId": "BASE-TFR-PAY-004",
+  "module": "PAY",
+  "moduleSession": "HRIS-PAY",
+  "boundedContext": "PAYROLL_STATUTORY",
+  "decision": "RESERVE_ONE_APPEND_ONLY_PRODUCT_AUTHORIZATION_V58_AND_AUTH_V267_CATALOG_DECLARATION_FOR_EXACTLY_TWO_READ_ONLY_IAQ049_ROUTE_CONTRACTS; REUSE_EXISTING_PAYROLL_SUPPORT_CAPABILITY_AND_POPULATION_PREDICATE; EXPOSE_NO_ACTION; WITHHOLD_ALL_SOURCE_UNTIL_REVIEW_CARRIER_WORKTREE_AND_TOKEN_GATES_CLOSE",
+  "authorityBasis": {
+    "pay004SemanticDisposition": {
+      "path": "semantic-dispositions/base-tfr-pay-004.semantic-disposition.v1.json",
+      "sha256": "809553ec0a88fba5cbfdec7708715c274939e8015217bfe7c38ecc9c4c1601fe",
+      "bytes": 40507,
+      "carrierCommit": "774394b288f47f2eedf71bf0af724681f578fec1",
+      "carrierTree": "a179f0680b42cafb06c07545b5ea1e0055add863",
+      "requiredReviewState": "PAY004_SEMANTIC_DISPOSITION_INDEPENDENTLY_REVIEWED_PASS_ZERO_P0_ZERO_P1_ZERO_P2_CENTRAL_SUCCESSOR_MAY_PROCEED"
+    },
+    "currentCanonicalBundle": {
+      "path": "dwp-backend/contracts/product-authorization/product-surfaces-v1.bundle-v57.json",
+      "sha256": "c773cd7e28b570799348befc9def9ec5111a289f483316089209f7eade19da9a",
+      "bytes": 2678265,
+      "version": 57,
+      "bundleStatus": "DRAFT",
+      "checksum": "f7d6e2ef92f563747ed062e496638ea83498a33414fc12586c794f517e626d6e"
+    },
+    "currentCanonicalSource": {
+      "path": "dwp-backend/contracts/product-authorization/product-surfaces-v1.yaml",
+      "sha256": "10fe1e34c91ccd3867afa3ef97fd8af161b5aa11dceb2b5ed33c1fc692aa15e7",
+      "bytes": 2535705
+    },
+    "currentBundleIndex": {
+      "path": "dwp-backend/contracts/product-authorization/product-surfaces-v1.index.json",
+      "sha256": "41153961a9cdb66cd51ac6e111d9b3a74cc6b6c03c571d55892e8282b1ab9a99",
+      "bytes": 26709
+    },
+    "currentGenerator": {
+      "path": "dwp-backend/scripts/generate-product-authorization-contracts.py",
+      "sha256": "25eebfe632d048bbcea206d8c18124da74b4cffac804521ec5ad8404d3e14602",
+      "bytes": 261385
+    },
+    "currentVersionTest": {
+      "path": "dwp-backend/scripts/tests/test_product_authorization_v57.py",
+      "sha256": "579cdd3155cebd029647f2f1726367020abc2180e1172c42061ce710ae39d8fa",
+      "bytes": 11875
+    },
+    "currentPayrollProjection": {
+      "path": "dwp-backend/dwp-payroll-server/src/main/resources/product-authorization/hcm-payroll-pep-v57.generated.json",
+      "sha256": "d5ea3b948fd60d0811ae5df5c37d2b476ae97a5a4c4dc0e0feb66d5fcb9959ac",
+      "bytes": 107464,
+      "projectionChecksum": "2757b2403653323171c065c2ba6f674c9a5db9ef6f6ba080afb032345d1b9dca"
+    },
+    "currentAuthDeclaration": {
+      "path": "dwp-backend/dwp-auth-server/src/main/resources/db/migration/V266__declare_hris_hrm012_v57_authorization_seed.sql",
+      "sha256": "5908000aaaf7093d4288f256f8029b67c9e4ee15e78ae6485af61ca95174fab5",
+      "bytes": 22682,
+      "authStreamHighWater": "V266",
+      "automaticImportEnabled": false
+    },
+    "currentGatewayDecisionContext": {
+      "path": "dwp-backend/dwp-gateway/src/main/java/com/dwp/gateway/filter/ProductSurfaceDecisionContextFilter.java",
+      "sha256": "e2a851f9d36486ab78e578c48c988534caad1b4218ab750b7c3b6ded7920044c",
+      "bytes": 74994,
+      "requiredDelta": "Append exactly the two PAY-004 route keys to the tenant-feature route set, IAQ-049 field-policy map, PAYROLL_OPERATIONS purpose map and existing PAY_TARGET_POPULATION read validation without changing any other route."
+    },
+    "currentGatewayRouteCatalog": {
+      "path": "dwp-backend/dwp-gateway/src/main/java/com/dwp/gateway/productsurface/GeneratedProductRouteCatalog.java",
+      "sha256": "84205568d298b73346100f634b6fd66ed0c31fc8ff58053be199f52ade311fd6",
+      "bytes": 44219,
+      "requiredDelta": "Append the exact PAGE and DATA GET topologies and no ACTION route, place both keys in one V58_GENERIC_SESSION_STEP_UP_ROUTE_KEYS closed set, and remove that set from the expected topology when bundleVersion is below 58 so v57 remains loadable while v58 fails closed on either missing or extra topology."
+    },
+    "currentFrontendAuthorizationSnapshot": {
+      "path": "dwp-frontend/architecture/product-surface-authorization.v1.json",
+      "sha256": "718ed733f811f7be00cdf7da0a35a83b29704a3c3c28052a57c9dc1d7f8a51ad",
+      "bytes": 96208807
+    },
+    "currentFrontendPageRouteSnapshot": {
+      "path": "dwp-frontend/architecture/product-page-routes.v1.json",
+      "sha256": "9b7cf0b662a9955d0176c78a5a38f76f6b131dfb4cd39aa14fd6d4d883fa7769",
+      "bytes": 42425
+    },
+    "currentFrontendVersionPins": {
+      "path": "dwp-frontend/scripts/product-authorization-fixture-versions.mjs",
+      "sha256": "72269fab2ae21299aec47f7cc87d4fa975817d773a6230015ee5a633bb54e7cd",
+      "bytes": 7634
+    }
+  },
+  "basePins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "0c47fe5c7b38bab5c26a7c35cf032f131ebb46c1",
+      "tree": "5b14cee170175f194387492ed4ecb26cb6fc8cd7",
+      "originExact": true,
+      "clean": true,
+      "readOnlyForThisSuccessor": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "774394b288f47f2eedf71bf0af724681f578fec1",
+      "tree": "a179f0680b42cafb06c07545b5ea1e0055add863",
+      "originExact": true,
+      "cleanBeforeThisDraft": true
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "originExact": true,
+      "clean": true,
+      "readOnly": true
+    }
+  },
+  "iaq049ContractOverlay": {
+    "id": "IAQ-049",
+    "operationId": "IAQ.OP.049",
+    "variantKey": "RETIREMENT",
+    "iaNodeId": "BASE:pay-retirement",
+    "method": "GET",
+    "browserPath": "/api/payroll/v1/workbench/pay-retirement",
+    "ownerPath": "/v1/workbench/pay-retirement",
+    "canonicalUiRoute": "/hr/operations/payroll/retirement",
+    "capability": "hcm.operations.payroll-support.view",
+    "profileKey": "payroll-support-viewer",
+    "canonicalProfileAndDuty": "HRIS_PAYROLL_SUPPORT_VIEWER>HRIS_DUTY_PAYROLL_SUPPORT_VIEWER",
+    "purposeCode": "PAYROLL_OPERATIONS",
+    "scopeResolver": "PAY_TARGET_POPULATION",
+    "predicatePolicyKey": "predicate.hcm-payroll-population-authority.v1",
+    "targetBindingKinds": [
+      "TARGET_POPULATION"
+    ],
+    "fieldGroups": [
+      "RETIREMENT_RESULT",
+      "POLICY_VERSION",
+      "CASE_STATUS"
+    ],
+    "projectionPolicyKey": "pay004.iaq-049.fields.v1",
+    "responseSchemaKey": "Pay004RetirementProjectionV1",
+    "queryStates": [
+      "COMPLETE",
+      "EMPTY",
+      "PARTIAL",
+      "UNAVAILABLE"
+    ],
+    "filters": [
+      "retirementResult",
+      "policyVersion",
+      "caseStatus",
+      "effectiveOn"
+    ],
+    "sorts": [
+      "retirementResult:ASC",
+      "policyVersion:ASC",
+      "caseStatus:ASC",
+      "retirementResult:DESC",
+      "policyVersion:DESC",
+      "caseStatus:DESC",
+      "itemPublicId:ASC",
+      "itemPublicId:DESC"
+    ],
+    "defaultSort": "itemPublicId:ASC",
+    "pageLimit": 100,
+    "availableActions": [],
+    "readOnly": true,
+    "sideEffectFree": true,
+    "actionTargetRule": "No IAQ-049 item exposes or derives a calculate or country-pack activation action. itemPublicId and deepLink.resourcePublicId are one retirement-case public ID and are never runId or packId. Any future action requires a separate append-only contract with an explicit owner-resolved targetResourceType, targetResourcePublicId and resolvedHref equality rule plus independent PEP authorization.",
+    "projectionRule": "Apply VIEW, MASK or OMIT before serialization; fieldDecisionSummary, cursor scope and authorization revision must match the serialized result. Tenant, internal keys, raw cursor, formula, rate, provider secret, run authority and pack authority are never accepted from projection fields or caller headers.",
+    "noActionContractDelta": true
+  },
+  "actionTargetDisposition": {
+    "state": "WITHHELD_NO_SAFE_ITEM_TO_RUN_OR_PACK_TARGET_EQUALITY",
+    "historicalActionProvenance": [
+      "hris.action.pay.run.calculate -> PEP-PAY-012 -> /api/payroll/v1/runs/{runId}/attempts",
+      "hris.action.pay.country.pack.activate -> PEP-PAY-028 -> /api/payroll/v1/country-packs/{packId}/activate"
+    ],
+    "finding": "The accepted IAQ-049 item contains one retirement-case itemPublicId but no owner-resolved runId, packId, targetResourceType, targetResourcePublicId or resolvedHref equality contract.",
+    "decision": "Both PAGE and DATA projections emit availableActions=[] for every item and v58 adds zero ACTION routes.",
+    "forbidden": [
+      "parse or substitute itemPublicId or deepLink.resourcePublicId as runId or packId",
+      "derive an action target from retirement result, policy version, case status, title, masked field, query filter, cursor or browser state",
+      "treat hcm.operations.payroll-support.view or IAQ entry visibility as PEP-PAY-012 or PEP-PAY-028 authority",
+      "reuse an href template without exact owner-resolved target equality"
+    ],
+    "futureRule": "Only a later append-only IAQ and owner contract with exact targetResourceType, targetResourcePublicId and resolvedHref equality plus separate action PEP authorization may reconsider action exposure."
+  },
+  "reuseAndNoRecount": {
+    "IAQ-026": "Primary owner BASE-TFR-PAY-003. Reuse only; no route, UI, migration, test or PAY-004 completion recount.",
+    "IAQ-048": "Primary owner BASE-TFR-PAY-003. Its tax/social-insurance PAGE and DATA routes remain unchanged and receive no PAY-004 completion credit.",
+    "PEP-PAY-028": "Primary owner BASE-TFR-PAY-003. Preserve country-pack activation, step-up, SoD, receipt and route descriptor unchanged; do not link it to IAQ-049.",
+    "PEP-PAY-012": "Primary owner BASE-TFR-PAY-011. Preserve generic run calculation and its ACTION route unchanged; do not link it to IAQ-049.",
+    "PEP-PAY-014": "Primary owner BASE-TFR-PAY-012. Preserve generic immutable result access unchanged; do not create a duplicate retirement result endpoint.",
+    "EVT-PAY:PayrollCalculated": "Primary owner BASE-TFR-PAY-011. Preserve the exact event and producer unchanged; v58 creates no event contract and claims no producer credit.",
+    "noRecountRule": "The two IAQ-049 route registrations are the only PAY-004 central-contract credit. Existing capability, predicate, action, query, calculation, result and event contracts remain reuse evidence only."
+  },
+  "exactRouteContracts": [
+    {
+      "routeContractKey": "route.hcm.operations.pay-retirement.page",
+      "routeKind": "PAGE",
+      "navigationContextId": "hcm.operations",
+      "uiRouteId": "hcm.operations.pay-retirement",
+      "uiRoutePattern": "/hr/operations/payroll/retirement",
+      "gatewayBinding": "GET /api/payroll/v1/workbench/pay-retirement",
+      "servicePepBinding": "GET /v1/workbench/pay-retirement",
+      "serviceKey": "payroll",
+      "authorizationEquivalenceKey": "wire-authority.hcm.operations.pay-retirement.v1",
+      "profileKey": "payroll-support-viewer",
+      "canonicalProfileAndDuty": "HRIS_PAYROLL_SUPPORT_VIEWER>HRIS_DUTY_PAYROLL_SUPPORT_VIEWER",
+      "requiredCapability": "hcm.operations.payroll-support.view",
+      "purposeCode": "PAYROLL_OPERATIONS",
+      "scopeResolver": "PAY_TARGET_POPULATION",
+      "targetBindingKinds": [
+        "TARGET_POPULATION"
+      ],
+      "predicatePolicyKeys": [
+        "predicate.hcm-payroll-population-authority.v1"
+      ],
+      "responseProjection": {
+        "projectionPolicyKey": "pay004.iaq-049.fields.v1",
+        "responseSchemaKey": "Pay004RetirementProjectionV1",
+        "fieldGroups": [
+          "RETIREMENT_RESULT",
+          "POLICY_VERSION",
+          "CASE_STATUS"
+        ],
+        "availableActions": []
+      },
+      "readOnly": true,
+      "activeAccessModes": [
+        "NORMAL",
+        "ELEVATED"
+      ]
+    },
+    {
+      "routeContractKey": "route.hcm.operations.pay-retirement.data",
+      "routeKind": "DATA",
+      "gatewayBinding": "GET /api/payroll/v1/workbench/pay-retirement",
+      "servicePepBinding": "GET /v1/workbench/pay-retirement",
+      "serviceKey": "payroll",
+      "authorizationEquivalenceKey": "wire-authority.hcm.operations.pay-retirement.v1",
+      "profileKey": "payroll-support-viewer",
+      "canonicalProfileAndDuty": "HRIS_PAYROLL_SUPPORT_VIEWER>HRIS_DUTY_PAYROLL_SUPPORT_VIEWER",
+      "requiredCapability": "hcm.operations.payroll-support.view",
+      "purposeCode": "PAYROLL_OPERATIONS",
+      "scopeResolver": "PAY_TARGET_POPULATION",
+      "targetBindingKinds": [
+        "TARGET_POPULATION"
+      ],
+      "predicatePolicyKeys": [
+        "predicate.hcm-payroll-population-authority.v1"
+      ],
+      "responseProjection": {
+        "projectionPolicyKey": "pay004.iaq-049.fields.v1",
+        "responseSchemaKey": "Pay004RetirementProjectionV1",
+        "fieldGroups": [
+          "RETIREMENT_RESULT",
+          "POLICY_VERSION",
+          "CASE_STATUS"
+        ],
+        "availableActions": []
+      },
+      "readOnly": true,
+      "sideEffectFree": true,
+      "activeAccessModes": [
+        "NORMAL",
+        "ELEVATED"
+      ]
+    }
+  ],
+  "reusedAuthorizationDescriptors": {
+    "capability": {
+      "contractKey": "hcm.operations.payroll-support.view",
+      "v57CanonicalDescriptorSha256": "c13a8be62ba9b800f778ce985007744ccb993dacc63ef43d3ecda554c7456b00",
+      "v57CanonicalDescriptorBytes": 852,
+      "resolvedCapabilityCode": "DATA.HRIS_PAYROLL_STATUS:VIEW",
+      "scopeResolver": "PAY_TARGET_POPULATION",
+      "rule": "Preserve every v57 semantic field and append only the two PAY-004 routeContractKeys. Do not create a new capability, change risk, entitlement, resource, action, responsibility or scope semantics, or let IAQ visibility imply an ACTION capability."
+    },
+    "predicate": {
+      "predicatePolicyKey": "predicate.hcm-payroll-population-authority.v1",
+      "v57CanonicalDescriptorSha256": "670586cb606a4ae8cd375a8c90da9e41e8c66c9753dad9582da005a38c271bc7",
+      "v57CanonicalDescriptorBytes": 671,
+      "ownerServiceKey": "payroll",
+      "inputEvidenceSchemaKey": "HcmPayrollPopulationAuthorityEvidenceV1",
+      "targetBindingKinds": [
+        "TARGET_POPULATION"
+      ],
+      "rule": "Preserve the v57 predicate schema and semantics and append only the two PAY-004 routeContractKeys. Trusted Payroll owner evidence intersects every case with the authorized population; empty, stale, mixed-tenant, unknown or partially covered evidence denies without leaking an item."
+    },
+    "existingActionRoutesPreservedButNotLinked": [
+      "route.hcm.operations.country-pack-activate.action",
+      "route.hcm.operations.payroll-run-calculate.action",
+      "route.hcm.operations.payroll-run.data"
+    ],
+    "actionSeparationRule": "The v58 IAQ-049 PAGE and DATA descriptors contain no ACTION route, step-up command binding or action descriptor. PEP-PAY-012 and PEP-PAY-028 remain separately authorized existing owner routes and are never appended to the IAQ-049 response projection."
+  },
+  "productAuthorizationV58Reservation": {
+    "state": "RESERVED_NOT_ACTIVE",
+    "predecessor": {
+      "version": 57,
+      "bundleStatus": "DRAFT",
+      "checksum": "f7d6e2ef92f563747ed062e496638ea83498a33414fc12586c794f517e626d6e",
+      "fileSha256": "c773cd7e28b570799348befc9def9ec5111a289f483316089209f7eade19da9a",
+      "bytes": 2678265,
+      "counts": {
+        "capabilities": 271,
+        "accessPolicies": 24,
+        "entitlementExpressions": 17,
+        "predicatePolicies": 83,
+        "routes": 1123,
+        "PAGE": 157,
+        "DATA": 339,
+        "ACTION": 627
+      }
+    },
+    "successor": {
+      "version": 58,
+      "bundle": "product-surfaces-v1.bundle-v58.json",
+      "bundleStatus": "DRAFT",
+      "expectedCounts": {
+        "capabilities": 271,
+        "accessPolicies": 24,
+        "entitlementExpressions": 17,
+        "predicatePolicies": 83,
+        "routes": 1125,
+        "PAGE": 158,
+        "DATA": 340,
+        "ACTION": 627
+      },
+      "deltaExactly": [
+        "add route.hcm.operations.pay-retirement.page",
+        "add route.hcm.operations.pay-retirement.data",
+        "append both route keys to hcm.operations.payroll-support.view",
+        "append both route keys to predicate.hcm-payroll-population-authority.v1",
+        "no other semantic delta"
+      ],
+      "checksumRule": "Generate the checksum from canonical v58 content. Placeholder checksum, manual generated-file edit, second v58, or any mutation of v1 through v57 is forbidden."
+    },
+    "currentHighWaterConflictChecked": true,
+    "v58ArtifactExistsNow": false,
+    "sourceAuthoringAuthorizedNow": false
+  },
+  "payrollV58ProjectionExpectation": {
+    "expectedRoutes": 41,
+    "expectedBindings": 41,
+    "expectedRouteKinds": {
+      "ACTION": 22,
+      "DATA": 14,
+      "PAGE": 5
+    },
+    "expectedCapabilities": 17,
+    "expectedAccessPolicies": 0,
+    "expectedEntitlementExpressions": 0,
+    "expectedPredicatePolicies": 9,
+    "newRouteCount": 2,
+    "newActionRouteCount": 0,
+    "partitionRule": "Only the Payroll service projection contains the two new routes. People, Time and Platform projections contain neither. All projections reference the same canonical v58 bundle checksum."
+  },
+  "authV267Reservation": {
+    "state": "RESERVED_NOT_ACTIVE",
+    "authDatabaseStreamHighWater": "V266",
+    "exactPath": "dwp-auth-server/src/main/resources/db/migration/V267__declare_hris_pay004_v58_authorization_seed.sql",
+    "bundleVersion": 58,
+    "intendedBundleStatus": "DRAFT",
+    "automaticImportEnabled": false,
+    "feature": {
+      "featureKey": "HRIS_PAY_RETIREMENT_WORKBENCH",
+      "policyVersion": 1,
+      "productKey": "hcm",
+      "appResourceKey": "APP.HCM",
+      "minimumBundleVersion": 58,
+      "baselineState": "OFF",
+      "ownerKey": "PAY",
+      "routeOwnersAndBindings": [
+        "route.hcm.operations.pay-retirement.page",
+        "route.hcm.operations.pay-retirement.data"
+      ],
+      "tenantEnrollmentRows": 0
+    },
+    "mayCreateExactly": [
+      "one immutable product-authorization v58 DRAFT release declaration with the generated checksum and automatic import false",
+      "one HRIS_PAY_RETIREMENT_WORKBENCH policy-version-1 feature declaration with baseline OFF",
+      "exactly two feature route-owner rows",
+      "exactly two feature route-binding rows"
+    ],
+    "mustNotCreate": [
+      "a new capability, permission, resource, duty, responsibility, preset or access package",
+      "feature activation, tenant enrollment, assignment or broad grant",
+      "menu, shell route, page component or module API",
+      "automatic bundle import or DRAFT-to-ACTIVE transition"
+    ],
+    "conflictRule": "Every ON CONFLICT path accepts only a byte-equivalent immutable tuple and raises on semantic drift; reapplication is a no-op.",
+    "sourceAuthoringAuthorizedNow": false
+  },
+  "gatewayAndOwnerBoundary": {
+    "gateway": "Match only exact GET and normalized paths, strip caller authority headers, resolve trusted tenant and product context, require the exact registered route contract and hcm.operations.payroll-support.view, and forward only trusted decision context. The later central token may append only the two route keys to the existing feature-governed route set, field-policy map, PAYROLL_OPERATIONS purpose map, PAY_TARGET_POPULATION read validation and generated route catalog; no new Gateway security model or unrelated route change is authorized.",
+    "purpose": "PAYROLL_OPERATIONS is fixed. An absent caller purpose resolves to the route purpose; one exact supported purpose may be validated, while conflicting, duplicate or unsupported caller purpose values deny. Caller purpose never becomes trusted merely because it was supplied.",
+    "population": "Payroll resolves PAY_TARGET_POPULATION from trusted owner evidence and applies tenant and population intersection before item existence or field disclosure. No caller legal-entity, pay-group, named-population, run or pack authority is accepted.",
+    "owner": "Payroll applies IAQ-049 request schema validation, stable filtering and ordering, cursor revision binding, VIEW/MASK/OMIT projection and query-state rules. itemPublicId resolves only a retirement case under RLS and authorized population.",
+    "actions": "The owner returns availableActions=[] for every item. It never tests, calls, aliases or embeds the separate run-calculate or country-pack-activate routes while serving IAQ-049."
+  },
+  "exactImplementationPathsAfterSeparateExecutableCentralToken": {
+    "backendCanonicalGeneratorAndVersionTest": [
+      "contracts/product-authorization/product-surfaces-v1.yaml",
+      "contracts/product-authorization/pilot-fixtures.v1.schema.json",
+      "scripts/generate-product-authorization-contracts.py",
+      "scripts/generate-product-authorization-fixtures.py",
+      "scripts/tests/test_product_authorization_v58.py",
+      "scripts/tests/test_product_authorization_fixture_schema.py"
+    ],
+    "backendGenerated": [
+      "contracts/product-authorization/product-surfaces-v1.bundle-v58.json",
+      "contracts/product-authorization/product-surfaces-v1.json",
+      "contracts/product-authorization/product-surfaces-v1.index.json",
+      "contracts/product-authorization/pilot-fixtures.v1.generated.json",
+      "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v58.generated.json",
+      "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.generated.json",
+      "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.index.generated.json",
+      "dwp-people-server/src/main/resources/product-authorization/hcm-people-pep-v58.generated.json",
+      "dwp-time-server/src/main/resources/product-authorization/hcm-time-pep-v58.generated.json",
+      "dwp-platform-server/src/main/resources/product-authorization/hcm-platform-pep-v58.generated.json",
+      "dwp-payroll-server/src/main/resources/product-authorization/hcm-payroll-pep-v58.generated.json"
+    ],
+    "auth": [
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationReleaseLineage.java",
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationGateTopologyValidator.java",
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/service/PayrollV49ElevatedAuthorityPolicy.java",
+      "dwp-auth-server/src/main/resources/db/migration/V267__declare_hris_pay004_v58_authorization_seed.sql",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/config/ProductAuthorizationSeedLoaderTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationContractReleaseLineageTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationReleaseLineageTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/PayrollV49ElevatedAuthorityPolicyTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationV58ContractTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/repository/TenantFeatureActivationV267MigrationContractTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/tenantfeatureactivation/TenantFeatureActivationV267PostgresTest.java"
+    ],
+    "gatewayCentral": [
+      "dwp-gateway/src/main/java/com/dwp/gateway/filter/ProductSurfaceDecisionContextFilter.java",
+      "dwp-gateway/src/main/java/com/dwp/gateway/productsurface/GeneratedProductRouteCatalog.java",
+      "dwp-gateway/src/test/java/com/dwp/gateway/ProductSurfaceDecisionContextFilterTest.java",
+      "dwp-gateway/src/test/java/com/dwp/gateway/ProductSurfaceFeatureRolloutContractTest.java",
+      "dwp-gateway/src/test/java/com/dwp/gateway/productsurface/GeneratedProductRouteCatalogTest.java",
+      "dwp-gateway/src/test/java/com/dwp/gateway/productsurface/TenantFeatureActivationV267RouteParityTest.java"
+    ],
+    "frontendSynchronization": [
+      "scripts/product-authorization-fixture-versions.mjs",
+      "scripts/sync-product-surface-authorization.mjs",
+      "scripts/sync-product-authorization-fixtures.mjs",
+      "architecture/product-surface-authorization.v1.json",
+      "architecture/product-page-routes.v1.json",
+      "architecture/pilot-fixtures.v1.generated.json",
+      "libs/shared-utils/src/test-utils/pilot-authorization-fixtures.generated.ts",
+      "apps/dwp/src/routes/product-surface-authorization.generated.ts",
+      "apps/dwp/src/routes/product-route-contract-source.test.ts",
+      "apps/dwp/src/routes/product-route-contracts.generated.test.ts",
+      "apps/dwp/src/routes/hris-w1-browser-firewall-contract.test.ts",
+      "e2e/support/hris-w1-browser-firewall-contract.mjs"
+    ],
+    "explicitlyExcluded": [
+      "Payroll module controllers, services, repositories, migrations and tests",
+      "frontend retirement workbench component, API client, route mount, menu and i18n",
+      "Gateway source outside the exact existing decision-context and generated-catalog paths listed above, or any owner-service security source",
+      "owner packet, V55 migration lease, module worktree or module token"
+    ]
+  },
+  "sourceGeneratedSynchronization": {
+    "backendRule": "Edit only the canonical YAML, deterministic contract and fixture generator version declarations, the fixture lineage schema and focused v58/fixture tests; generate v58 once and require the latest aliases, both indexes, Auth artifact and all four service PEP projections to carry the same canonical v58 checksum. Preserve v1 through v57 byte-for-byte.",
+    "fixtureRule": "Advance registryLineage to exactly versions 1 through 58 with latestAliasVersion 58 and the immutable v58 checksum. Deterministically regenerate the backend fixture plus both frontend fixture projections; do not edit pilot-fixtures.v1.yaml, fixture cases, catalogs, context cases, negative cases, risk policies or override semantics.",
+    "payrollRule": "The Payroll v58 projection contains the exact two PAGE/DATA descriptors with one shared authorization-equivalence key, the reused capability and predicate, the new projection/schema keys and no new ACTION or step-up binding.",
+    "otherServiceRule": "People, Time and Platform v58 projections contain neither PAY-004 route but still carry the same bundle lineage reference; no service-specific semantic delta is introduced there.",
+    "authRule": "Advance the immutable release-lineage checksum/count map and latest/index assertions to exactly v58, admit only the two exact PAY-004 generic-session read topologies under the existing high-risk support capability, and keep all unrelated Auth topology closed. Auth V267 declares only the generated v58 checksum and default-OFF two-route feature catalog; it performs no automatic import, activation, enrollment, grant or role mutation.",
+    "gatewayRule": "Add the exact PAGE and DATA topologies to the generated catalog and an explicit v58 introduction gate: v57 removes both keys from the expected generic-session topology, while v58 requires both and rejects an incomplete or widened set. Feature rollout remains default OFF and proves zero downstream invocation.",
+    "frontendRule": "Synchronize immutable backend bundles and fixture lineage through v58, append the exact v58 checksum and counts to the version source, generate route TypeScript from the synchronized snapshot, and advance the exact official HCM PAGE firewall count from 64 to 65 for the governed PAGE contract. Do not mount the PAY-004 screen or menu. Default OFF yields zero PAY-004 browser and owner calls. The cumulative architecture/product-surface-authorization.v1.json must remain strictly below the GitHub 100 MiB limit of 104857600 bytes after deterministic synchronization.",
+    "commandsAfterAuthorization": [
+      "python3 scripts/generate-product-authorization-contracts.py",
+      "python3 scripts/generate-product-authorization-contracts.py --check",
+      "python3 scripts/generate-product-authorization-fixtures.py --write",
+      "python3 scripts/generate-product-authorization-fixtures.py --check",
+      "yarn authorization:sync",
+      "yarn authorization:check ../dwp-backend/contracts/product-authorization",
+      "yarn fixtures:sync",
+      "yarn fixtures:check"
+    ]
+  },
+  "requiredNegativeCases": [
+    "Wrong method, near-match path, trailing path, unknown route, unsupported profile or support-mode substitution denies.",
+    "Missing or invalid trusted tenant, route contract, hcm.operations.payroll-support.view, PAY_TARGET_POPULATION, PAYROLL_OPERATIONS purpose or field decision denies before item existence disclosure.",
+    "Caller tenant, legal entity, pay group, named population, worker, run, pack, purpose, field-decision or authorization-revision authority is ignored or stripped; duplicate or conflicting values deny.",
+    "Mixed-tenant, empty, stale, unknown or partially covered population evidence returns no leaked item; PARTIAL is a post-authorization query state and never an authorization bypass.",
+    "VIEW, MASK and OMIT are applied before serialization and counts match; a MASK or OMIT decision never leaks the underlying value through title, sort, filter, deep link, cursor, problem, audit or log.",
+    "itemPublicId and deepLink.resourcePublicId are one authorized retirement-case public ID and are never parsed or substituted as runId, workerResultId or packId.",
+    "availableActions is always an empty array; neither existing calculate nor country-pack activation action is returned, tested for visibility or appended to the PAGE/DATA descriptor.",
+    "A PAGE and DATA descriptor mismatch in path, capability, predicate, profile, purpose, projection, field groups, access modes or authorization-equivalence key fails generation.",
+    "Any new capability, access policy, entitlement expression, predicate, ACTION route or step-up binding makes the v58 count and delta assertion fail.",
+    "Any v1 through v57 byte mutation, fixture registryLineage other than exact 1 through 58, second v58, second Auth V267 in the Auth database stream, placeholder checksum or generated-source divergence fails review.",
+    "Auth V267 creates no activation, enrollment, assignment, resource, permission, duty, responsibility, preset or grant; baseline OFF and zero enrollment remain zero.",
+    "Default OFF performs zero PAY-004 browser and owner calls and shows no PAY-004 menu or content surface.",
+    "Existing PEP-PAY-012, PEP-PAY-014, PEP-PAY-028, PayrollCalculated.v1, IAQ-026 and IAQ-048 descriptors remain semantically unchanged and receive no PAY-004 completion credit.",
+    "No owner packet, V55 file or reservation, central or module worktree, token, route mount, menu, provider binding, feature enablement or tenant enrollment is created by this successor."
+  ],
+  "acceptanceCriteria": [
+    {
+      "id": "PAY004-CENTRAL-AC-01",
+      "criterion": "IAQ-049 preserves the exact GET browser and owner paths, RETIREMENT variant, four filters, eight sorts, itemPublicId default sort, page limit 100, four query states and canonical UI route."
+    },
+    {
+      "id": "PAY004-CENTRAL-AC-02",
+      "criterion": "Exactly one PAGE and one DATA route share wire-authority.hcm.operations.pay-retirement.v1 and match on method, path, capability, profile, purpose, scope resolver, predicate, projection, field groups and NORMAL plus ELEVATED access modes."
+    },
+    {
+      "id": "PAY004-CENTRAL-AC-03",
+      "criterion": "Both route projections expose RETIREMENT_RESULT, POLICY_VERSION and CASE_STATUS through pay004.iaq-049.fields.v1 and Pay004RetirementProjectionV1 with availableActions always empty and no ACTION or step-up binding."
+    },
+    {
+      "id": "PAY004-CENTRAL-AC-04",
+      "criterion": "hcm.operations.payroll-support.view and predicate.hcm-payroll-population-authority.v1 are reused unchanged except for the exact two route-key appendages; no capability, predicate, permission, duty, responsibility or scope authority is created or widened."
+    },
+    {
+      "id": "PAY004-CENTRAL-AC-05",
+      "criterion": "Trusted tenant, exact route, PAYROLL_OPERATIONS purpose and PAY_TARGET_POPULATION are resolved before item disclosure; Payroll then applies RLS, VIEW/MASK/OMIT, stable cursor revision and field-decision accounting fail closed."
+    },
+    {
+      "id": "PAY004-CENTRAL-AC-06",
+      "criterion": "No runId or packId is inferred from itemPublicId, deep link, policy, result, case status, title, masked field, filter or browser state, and IAQ entry never confers PEP-PAY-012 or PEP-PAY-028 action authority."
+    },
+    {
+      "id": "PAY004-CENTRAL-AC-07",
+      "criterion": "Product authorization v58 is an append-only DRAFT with exactly 271 capabilities, 24 access policies, 17 entitlement expressions, 83 predicates and 1125 routes split 158 PAGE, 340 DATA and 627 ACTION; its only semantic delta is the two routes and two exact descriptor appendages."
+    },
+    {
+      "id": "PAY004-CENTRAL-AC-08",
+      "criterion": "The Payroll v58 projection has exactly 41 routes and bindings split 5 PAGE, 14 DATA and 22 ACTION with 17 capabilities and 9 predicates; other service projections contain no PAY-004 route, and every artifact carries the same canonical v58 lineage."
+    },
+    {
+      "id": "PAY004-CENTRAL-AC-09",
+      "criterion": "Auth V267 declares only the immutable generated v58 checksum, automatic import false, default-OFF HRIS_PAY_RETIREMENT_WORKBENCH policy and exactly two route owner and binding rows with zero activation, enrollment, assignment or grant."
+    },
+    {
+      "id": "PAY004-CENTRAL-AC-10",
+      "criterion": "Backend contract and fixture generation, Auth release-lineage and closed payroll topology, the bounded Gateway route-set, explicit v58 topology introduction gate, field-policy, purpose-map and route-catalog appendages, and frontend synchronization preserve all unrelated behavior and v1 through v57 byte-for-byte; fixture lineage is exactly v1 through v58, generated bytes are never hand-edited, the cumulative authorization snapshot remains below 104857600 bytes, the official HCM PAGE firewall count becomes exactly 65, and no menu, screen, module API or feature enrollment is mounted."
+    },
+    {
+      "id": "PAY004-CENTRAL-AC-11",
+      "criterion": "Focused contract and fixture generators, bundle, projection, Auth release-lineage, payroll topology, seed loader and PostgreSQL, generated route catalog, v58 introduction gate, rollout zero-invocation, frontend fixture synchronization and browser-firewall tests cover the required negatives once; after failure only the smallest affected target is rerun and unavailable real PostgreSQL reports BLOCKED rather than PASS."
+    },
+    {
+      "id": "PAY004-CENTRAL-AC-12",
+      "criterion": "This carrier alone authorizes no source. Only after zero-P0/P1/P2 review, commit and push, fresh clean central worktrees and one hash-bound central token may the exact allowlist be implemented; owner packet and V55 reservation remain withheld until exact central admission."
+    }
+  ],
+  "targetedVerification": {
+    "currentSuccessorVerification": "DOCUMENT_ONLY_JSON_HASH_BYTE_COUNT_HIGH_WATER_ROUTE_PARITY_DELTA_ARITHMETIC_AND_AUTHORITY_BOOLEAN_CHECKS; NO_SOURCE_TEST_OR_REPOSITORY_WIDE_SUITE",
+    "futurePolicy": "RUN_EACH_BOUNDED_TARGET_GROUP_ONCE; AFTER_FAILURE RERUN_ONLY_THE_SMALLEST_AFFECTED_TARGET; DO_NOT_REPEAT_PASSING_TARGETS_OR_RUN_A_REPOSITORY_WIDE_SUITE_PER_CORRECTION",
+    "backendRegistry": [
+      "python3 scripts/generate-product-authorization-contracts.py --check",
+      "python3 scripts/generate-product-authorization-fixtures.py --check",
+      "python3 -m unittest scripts.tests.test_product_authorization_v58",
+      "python3 -m unittest scripts.tests.test_product_authorization_fixture_schema",
+      "v1 through v57 byte-preservation hashes",
+      "exact v58 count, checksum, two-route delta, PAGE/DATA parity, service-projection partition and fixture registryLineage 1-through-58 assertions"
+    ],
+    "auth": [
+      "ProductAuthorizationV58ContractTest",
+      "ProductAuthorizationReleaseLineageTest",
+      "ProductAuthorizationContractReleaseLineageTest",
+      "ProductAuthorizationSeedLoaderTest",
+      "PayrollV49ElevatedAuthorityPolicyTest",
+      "TenantFeatureActivationV267MigrationContractTest",
+      "TenantFeatureActivationV267PostgresTest",
+      "fresh and V266-to-V267 PostgreSQL paths",
+      "exact v58 checksum/count/latest/index admission, exact two retirement read topologies, unchanged prior topology, default-OFF, automatic-import false, exact two bindings and zero-enrollment or grant assertions"
+    ],
+    "gatewayGeneratedCatalog": [
+      "GeneratedProductRouteCatalogTest focused exact GET PAGE/DATA route recognition",
+      "ProductSurfaceDecisionContextFilterTest focused tenant-feature governance, pay004.iaq-049.fields.v1, PAYROLL_OPERATIONS and PAY_TARGET_POPULATION with unchanged non-PAY-004 routes",
+      "TenantFeatureActivationV267RouteParityTest focused the exact two route keys and projection policy",
+      "ProductSurfaceFeatureRolloutContractTest focused default-OFF denial and zero backend invocation",
+      "GeneratedProductRouteCatalogTest proves v57 omits both expected PAY-004 topologies, v58 requires both and rejects either missing or widened topology",
+      "no Gateway source delta outside the two listed existing production files"
+    ],
+    "frontend": [
+      "yarn authorization:check ../dwp-backend/contracts/product-authorization",
+      "yarn fixtures:check",
+      "apps/dwp/src/routes/product-route-contract-source.test.ts",
+      "apps/dwp/src/routes/product-route-contracts.generated.test.ts",
+      "apps/dwp/src/routes/hris-w1-browser-firewall-contract.test.ts",
+      "v58 fixture lineage parity, governed PAGE registration and exact official HCM PAGE firewall count 65 without menu, component or enrollment, default-OFF zero-call assertion and synchronized snapshot size below 104857600 bytes"
+    ],
+    "databaseUnavailableRule": "Required real PostgreSQL checks report BLOCKED rather than PASS when unavailable.",
+    "changedPathAllowlistRequired": true,
+    "gitDiffCheckRequired": true
+  },
+  "implementationGate": {
+    "requiredOrder": [
+      "independent review of this exact successor records zero unresolved P0, P1 or P2 findings",
+      "commit and push only this reviewed authority carrier to frontend origin/dwp-dev",
+      "reconfirm v57 and Auth V266 as the current exact backend high-water and absence of conflicting v58 or Auth V267 reservation",
+      "materialize fresh clean central backend and frontend worktrees at the exact post-carrier dwp-dev heads",
+      "issue one hash-bound executable central implementation token restricted to the exact paths in this successor",
+      "implement, verify, commit, push and independently admit exact v58, Auth V267 and frontend synchronization",
+      "only after exact central admission issue the PAY-004 owner packet and RESERVED_NOT_ACTIVE Payroll V55 decision",
+      "only after packet, active exclusive V55 lease, fresh module worktrees and a separate module token may PAY-004 module source start"
+    ],
+    "invalidation": [
+      "any pinned artifact hash or byte count changes",
+      "backend dwp-dev no longer has v57 and Auth V266 as the exact high-water before central worktree materialization",
+      "v58 or Auth V267 exists or is reserved by another slice",
+      "a central worktree is dirty or based on a different carrier head",
+      "a route, capability, predicate, feature, population, purpose, action, path or writable file expands beyond this sealed successor"
+    ]
+  },
+  "independentReview": {
+    "required": true,
+    "status": "PASS_ZERO_P0_ZERO_P1_ZERO_P2",
+    "completedAt": "2026-10-22T15:34:33+09:00",
+    "reviewedDraft": {
+      "sha256": "8018c39e69027cb00fc204a7d9479e85b0a85e767ed51ccb226170083c8b9e23",
+      "bytes": 43494
+    },
+    "reviewers": [
+      "roadmap_sequence_independent_review",
+      "next_module_readiness_audit"
+    ],
+    "finalFindingCounts": {
+      "P0": 0,
+      "P1": 0,
+      "P2": 0
+    },
+    "closedPriorFindings": [
+      "backend fixture registryLineage source, generated output, schema, command and focused-test closure",
+      "Auth v58 release lineage, exact payroll read topology, seed loader and focused-test closure",
+      "Gateway exact PAGE/DATA topology with explicit pre-v58 removal gate and default-OFF zero-invocation proof",
+      "frontend fixture projections and exact official HCM PAGE firewall advancement from 64 to 65"
+    ],
+    "requiredFindingCounts": {
+      "P0": 0,
+      "P1": 0,
+      "P2": 0
+    },
+    "reviewScope": [
+      "IAQ-049 contract fidelity and action-target absence",
+      "PAGE and DATA authorization equivalence",
+      "reuse-only capability, predicate and action-route boundaries",
+      "v58 and Auth V267 high-water, count and no-grant arithmetic",
+      "default-OFF zero-call and no-route-mount boundary",
+      "authority booleans, exact writable allowlist and next-gate sequencing"
+    ],
+    "stateAfterPass": "PAY004_IAQ049_CENTRAL_SUCCESSOR_INDEPENDENTLY_REVIEWED_PASS_ZERO_P0_ZERO_P1_ZERO_P2_CENTRAL_WORKTREE_AND_TOKEN_PREPARATION_MAY_PROCEED"
+  },
+  "authority": {
+    "centralContractSuccessorSealed": true,
+    "iaq049ReadOnlyOverlaySealed": true,
+    "productAuthorizationV58Reserved": true,
+    "authV267Reserved": true,
+    "independentReviewRequired": true,
+    "independentReviewComplete": true,
+    "centralWorktreeAndTokenPreparationEligibleAfterZeroReview": true,
+    "centralWorktreeAndTokenPreparationAuthorizedNow": false,
+    "authorityCarrierCommittedAndPushed": false,
+    "centralWorktreesMaterialized": false,
+    "centralExecutableTokenIssued": false,
+    "centralSourceAuthoringAuthorizedNow": false,
+    "ownerPacketMayBeIssuedNow": false,
+    "payrollV55ReservationMayBeIssuedNow": false,
+    "payrollV55LeaseActive": false,
+    "moduleWorktreeMaterializationAuthorizedNow": false,
+    "moduleSourceAuthoringAuthorizedNow": false,
+    "routeMountAuthorized": false,
+    "menuMountAuthorized": false,
+    "featureDefaultOff": true,
+    "tenantEnrollmentCount": 0,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionCountryPackBindingAuthorized": false,
+    "productionProviderBindingAuthorized": false,
+    "mergeCentralSourceToDwpDevAuthorized": false,
+    "businessCompletionCredit": 0,
+    "productionReleaseAuthorized": false
+  },
+  "nonClaims": [
+    "This successor implements, generates, tests, commits or pushes a v58, Auth V267, central source or module source artifact.",
+    "The v58 or Auth V267 reservation is an executable source token, active bundle import, feature activation or tenant enrollment.",
+    "IAQ-049 exposes a calculate or country-pack activation action or safely contains runId or packId.",
+    "The PAGE contract is mounted as a shell route, menu item or retirement workbench component.",
+    "An owner packet, V55 reservation or file, central or module worktree, execution token, provider binding, production country pack or customer data is created.",
+    "PEP-PAY-012, PEP-PAY-014, PEP-PAY-028, PayrollCalculated.v1, IAQ-026 or IAQ-048 is modified, re-owned or completed again.",
+    "BASE-TFR-PAY-004, Batch-05, R7 or HRIS is complete."
+  ],
+  "nextAction": "COMMIT_AND_PUSH_ONLY_THIS_INDEPENDENTLY_REVIEWED_AUTHORITY_CARRIER; THEN RECONFIRM_THE_PINNED_HIGH_WATER, MATERIALIZE_FRESH_CLEAN_CENTRAL_WORKTREES_AND_ISSUE_ONE_HASH_BOUND_CENTRAL_IMPLEMENTATION_TOKEN; DO_NOT_ISSUE_OWNER_PACKET_RESERVE_V55_OR_AUTHOR_MODULE_SOURCE_BEFORE_EXACT_V58_AUTH_V267_CENTRAL_ADMISSION"
+}
