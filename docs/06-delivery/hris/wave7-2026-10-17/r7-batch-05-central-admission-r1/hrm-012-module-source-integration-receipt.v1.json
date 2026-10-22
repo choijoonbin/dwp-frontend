@@ -1,0 +1,174 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-05-hrm012-module-source-integration-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-05-HRM012-MODULE-SOURCE-INTEGRATION-20261022-R1",
+  "recordedAt": "2026-10-22T11:20:08+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "EXACT_HRM012_MODULE_HEADS_NO_FF_MERGED_PUSHED_61_OF_61_BLOB_IDENTICAL_V60_LEASE_CONSUMED_DEFAULT_OFF_ZERO_ENROLLMENT",
+  "module": "HRM",
+  "moduleSession": "HRIS-HRM",
+  "sliceId": "BASE-TFR-HRM-012",
+  "immutability": {
+    "sealed": true,
+    "appendOnly": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_RECEIPT_ID_AND_SHA256"
+  },
+  "authority": {
+    "sourceAdmissionDecision": {
+      "path": "hrm-012-module-source-admission-decision.v1.json",
+      "sha256": "47a8d1a0d7023bbcde782e3f01efb28087163b119454fdcb3f093c1310dfecb0",
+      "bytes": 21851,
+      "gitBlob": "719c837bf87eb7a2e82e30b4957f76c0ea6cfa13",
+      "carrierCommit": "a1b97e4f7785cc8ac9a20d66d8d33a528e004f29",
+      "carrierTree": "443cb5920e81355091a50619b5d23f37cc4a7d6d"
+    },
+    "decisionConstraintsObserved": {
+      "exactHeadsOnly": true,
+      "noFfOnly": true,
+      "stopOnConflict": true,
+      "moduleTestRerunAuthorized": false,
+      "repositoryWideSuiteAuthorized": false
+    }
+  },
+  "integratedHeads": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "sourceHead": "b5e71940ba96d6d6daec2eaacc4ac00954089efa",
+      "sourceTree": "5b14cee170175f194387492ed4ecb26cb6fc8cd7",
+      "mergeCommit": "0c47fe5c7b38bab5c26a7c35cf032f131ebb46c1",
+      "mergeTree": "5b14cee170175f194387492ed4ecb26cb6fc8cd7",
+      "parents": [
+        "c43a98698a9cee140fb11ebc248bdbbbe9214a7d",
+        "b5e71940ba96d6d6daec2eaacc4ac00954089efa"
+      ],
+      "strategy": "NO_FF_EXACT_BRANCH_HEAD",
+      "sourceIsSecondParent": true,
+      "sourceIsAncestor": true,
+      "mergeTreeEqualsSourceTree": true,
+      "admittedPathCount": 44,
+      "admittedBlobMismatchCount": 0,
+      "pathOnlyManifestSha256": "5f4a94f48bbdaf615753bc5b2cdace8649c03be9a5dd2aaf3999fad17cb8db61",
+      "nameStatusManifestSha256": "ba27039855cae296f5db2c378a3c968cb99c46572c7d38068f73a86cc5926435",
+      "mergeConflicts": 0,
+      "automaticConflictResolution": false,
+      "manualConflictResolution": false,
+      "originExact": true,
+      "clean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "sourceHead": "0ce690d94e1b8fd0776f021cd6ee45c953f98f47",
+      "sourceTree": "047fc71ae16cf612daf3fad299656331638aa57b",
+      "requiredSourceCommits": [
+        "0e1e74b8190df9220430e8662c1a9751c91d868f",
+        "a2d9320d5d9b9c7b846832aea79877b0242e1c75"
+      ],
+      "mergeCommit": "9c97931046036ad5fac42705a3e9901190ddff6a",
+      "mergeTree": "dac1662392eca6ac2f2973c726e531e48818a9ae",
+      "parents": [
+        "a1b97e4f7785cc8ac9a20d66d8d33a528e004f29",
+        "0ce690d94e1b8fd0776f021cd6ee45c953f98f47"
+      ],
+      "strategy": "NO_FF_EXACT_BRANCH_HEAD",
+      "decisionCarrierIsFirstParent": true,
+      "sourceIsSecondParent": true,
+      "sourceIsAncestor": true,
+      "decisionCarrierIsAncestor": true,
+      "startTokenCorrectionCommit": "aadf12379fc71defc02cad94491132428fbbd5dd",
+      "startTokenCorrectionIsAncestor": true,
+      "centralAuthorityCandidatePathOverlapCount": 0,
+      "admittedPathCount": 17,
+      "admittedBlobMismatchCount": 0,
+      "pathOnlyManifestSha256": "6e78f7f230a8b0fa4bcb055149c680884273ddea602e4462a260c4b525ff40ca",
+      "nameStatusManifestSha256": "2f0bffdc624f19ba332a6dfd039e570fc0d9c7869b5c761f33e000264df166de",
+      "mergeConflicts": 0,
+      "automaticConflictResolution": false,
+      "manualConflictResolution": false,
+      "originExactBeforeReceiptDraft": true,
+      "cleanBeforeReceiptDraft": true
+    }
+  },
+  "postMergeVerification": {
+    "gitIdentityParentsAndAncestry": "PASS",
+    "exactAdmittedBlobComparison": "61_OF_61_MATCH",
+    "frontendCentralAuthorityPreservedWithZeroCandidatePathOverlap": true,
+    "backendAdmittedBlobs": {
+      "expected": 44,
+      "matched": 44,
+      "mismatched": 0
+    },
+    "frontendAdmittedBlobs": {
+      "expected": 17,
+      "matched": 17,
+      "mismatched": 0
+    },
+    "totalAdmittedBlobs": {
+      "expected": 61,
+      "matched": 61,
+      "mismatched": 0
+    },
+    "mergeConflicts": 0,
+    "automaticConflictResolution": false,
+    "manualConflictResolution": false,
+    "moduleTestsRerun": false,
+    "repositoryWideSuiteRun": false,
+    "reason": "Both admissions were conflict-free Git identity and provenance operations over exact, already reviewed and tested module heads."
+  },
+  "migrationLeaseClosure": {
+    "activationPath": "../r7-batch-05-module-start-r1/migration-lease-hrm012-v60-activation.v1.json",
+    "activationSha256": "001353d9d0d0cdccbc4191887805b365cd5ee02f7e63952761f1955452a0e928",
+    "activationBytes": 7568,
+    "leaseId": "HRIS-WAVE7-R7-BATCH-05-PEOPLE-MAIN-V60-HRM012-20261022-R2",
+    "stream": "PEOPLE_MAIN",
+    "version": "V60",
+    "sliceId": "BASE-TFR-HRM-012",
+    "exactPath": "dwp-people-server/src/main/resources/db/migration/V60__hrm_base_tfr_hrm_012.sql",
+    "state": "CONSUMED_CENTRALLY_INTEGRATED",
+    "activeLeaseCountAfterIntegration": 0,
+    "peopleMigrationHighWater": "V60",
+    "secondMigrationAuthorized": false,
+    "existingMigrationEditAuthorized": false
+  },
+  "rolloutBoundary": {
+    "featureKey": "HRIS_HRM_DATA_QUALITY_WORKBENCH",
+    "activationProperty": "dwp.hris.data-quality-workbench.enabled",
+    "runtimeDefault": "OFF",
+    "matchIfMissing": false,
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "tenantEnrollmentCount": 0,
+    "runtimeCallsWhenDisabled": 0,
+    "routeMounted": false,
+    "menuMounted": false,
+    "shellNodeMounted": false,
+    "productionObjectProviderBound": false,
+    "productionMappingOrEffectProviderBound": false,
+    "productionCredentialOrKeyProviderBound": false,
+    "schedulerBound": false,
+    "brokerBound": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionIncrement": 0
+  },
+  "authorityAfterReceipt": {
+    "moduleSourceIntegrated": true,
+    "migrationLeaseConsumed": true,
+    "runtimeActivationAuthorizedByThisReceipt": false,
+    "routeOrMenuMountAuthorized": false,
+    "productionProviderBindingAuthorized": false,
+    "schedulerOrBrokerBindingAuthorized": false,
+    "fullSliceCompletionAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nonClaims": [
+    "The frontend route, shell node, menu or tenant-visible page is mounted.",
+    "A production object, mapping, effect, quarantine, credential or key provider is bound.",
+    "A production scheduler or broker is active.",
+    "The feature is enabled or any tenant is enrolled.",
+    "Customer data, full-slice completion or production release is authorized.",
+    "BASE-TFR-HRM-012, Batch-05 or R7 is complete.",
+    "Module tests or a repository-wide suite were rerun during the identity-only integration."
+  ],
+  "nextAction": "Return control to the Batch-05 roadmap authority. Any runtime mount, provider binding, tenant enrollment or production release requires separate explicit authority."
+}
