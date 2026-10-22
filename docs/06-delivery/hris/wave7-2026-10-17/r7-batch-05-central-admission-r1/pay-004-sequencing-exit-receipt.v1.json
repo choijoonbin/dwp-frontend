@@ -1,0 +1,250 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-05-pay004-sequencing-exit-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-05-PAY004-SEQUENCING-EXIT-20261022-R1",
+  "recordedAt": "2026-10-22T20:24:44+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "BATCH05_LANE_2_PAY004_SEQUENCING_EXIT_ACCEPTED_DEFAULT_OFF_ZERO_ENROLLMENT_ZERO_BUSINESS_CREDIT_PER008_SEMANTIC_CLOSURE_NEXT",
+  "sliceId": "BASE-TFR-PAY-004",
+  "moduleSession": "HRIS-PAY",
+  "purpose": "Close only fixed Batch-05 lane order 2 after exact central prerequisite and module-source integration. Preserve all route, menu, country-pack, provider, scheduler, broker, activation, enrollment and full-business-completion boundaries, then permit only PER-008 semantic closure as lane order 3.",
+  "immutability": {
+    "sealed": true,
+    "appendOnly": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_RECEIPT_ID_AND_SHA256",
+    "predecessorMutation": "FORBIDDEN"
+  },
+  "authorityBasis": {
+    "batch05Preflight": {
+      "path": "../r7-batch-05-preflight-r1/semantic-dependency-migration-preflight.v1.json",
+      "sha256": "8f7a0d38c4dc86873e4930e5a21dcc0a269c39512508d86dd529b40015237e0f",
+      "bytes": 37443,
+      "requiredState": "PREFLIGHT_COMPLETE_FIXED_ORDER_FIVE_CONDITIONAL_LANES_NO_PACKETS_NO_TOKENS_NO_WORKTREES_NO_LEASES_NO_SOURCE"
+    },
+    "centralPrerequisiteIntegration": {
+      "path": "pay-004-central-integration-receipt.v1.json",
+      "sha256": "84c41f2824c5495f432a6fb8287ddbeae4b538585b247984e06f238c04778d32",
+      "bytes": 7027,
+      "carrierCommit": "200b0426f90d521ea9bdcdbffedcf1662d812c19",
+      "carrierTree": "7c8ff1d3db5cda36970d0acd578c6f752fae388f",
+      "requiredState": "EXACT_PAY004_CENTRAL_PREREQUISITE_MERGED_PUSHED_DEFAULT_OFF_ZERO_ENROLLMENT_OWNER_PACKET_AND_V55_RESERVATION_MAY_PROCEED"
+    },
+    "moduleSourceIntegration": {
+      "path": "pay-004-module-source-integration-receipt.v1.json",
+      "sha256": "12f98d98b786c33bf0605f0997a56212d9f2c8d97f554934fd6f06be2abebc06",
+      "bytes": 7554,
+      "carrierCommit": "b03287bab578039fc9612edb0119af3059833529",
+      "carrierTree": "bdf25407d2d8a82625da8d7c95aa927fe5a33796",
+      "requiredState": "EXACT_PAY004_MODULE_HEADS_NO_FF_MERGED_PUSHED_44_OF_44_BLOB_IDENTICAL_V55_LEASE_CONSUMED_DEFAULT_OFF_ZERO_ENROLLMENT"
+    },
+    "moduleResult": {
+      "path": "../r7-batch-05-results/pay-004/module-result-evidence.v1.json",
+      "sha256": "018ea2def0e65b32532db0e0b6e32ed4ca633a775511a1aae919540c1e139877",
+      "bytes": 10011,
+      "requiredDecision": "MODULE_BRANCHES_COMMITTED_PUSHED_AND_READY_FOR_SEPARATE_CENTRAL_REVIEW"
+    }
+  },
+  "acceptedLaneResult": {
+    "order": 2,
+    "sliceId": "BASE-TFR-PAY-004",
+    "moduleSession": "HRIS-PAY",
+    "centralPrerequisiteIntegrated": true,
+    "moduleSourceIntegrated": true,
+    "centralAndModuleCommitsPushed": true,
+    "acceptanceCriteriaPassed": "12_OF_12",
+    "independentReviewFindings": {
+      "p0": 0,
+      "p1": 0,
+      "p2": 0,
+      "decision": "GO"
+    },
+    "admittedBlobIdentity": "44_OF_44_MATCH",
+    "mergeConflicts": 0,
+    "runtimeDefault": "OFF",
+    "tenantEnrollmentCount": 0,
+    "productionCountryPackBindingCount": 0,
+    "productionObjectProviderBindingCount": 0,
+    "productionMappingOrEffectProviderBindingCount": 0,
+    "productionCredentialOrKeyProviderBindingCount": 0,
+    "productionSchedulerBindingCount": 0,
+    "productionBrokerBindingCount": 0,
+    "frontendMountedRouteCount": 0,
+    "frontendMountedMenuCount": 0,
+    "fullBusinessSliceComplete": false,
+    "businessCompletionIncrement": 0,
+    "acceptedState": "INTEGRATED_DEFAULT_OFF_TECHNICAL_SLICE_WITH_EXPLICIT_PRODUCTION_AND_BUSINESS_RESIDUALS"
+  },
+  "integratedHeads": {
+    "backend": {
+      "sourceHead": "4d9da191afc926c0e744aadf2df45ee42f497301",
+      "mergeCommit": "8bec85dab5ee816b12a922c51e369046714c007f",
+      "admittedBlobCount": 28,
+      "admittedBlobMismatchCount": 0
+    },
+    "frontend": {
+      "sourceHead": "fc0b54c82d2c211e262145fbe914b1b2fdbd5df8",
+      "mergeCommit": "41783b21d832912ad623d1c1c976acb96a16e5f0",
+      "admittedBlobCount": 16,
+      "admittedBlobMismatchCount": 0
+    }
+  },
+  "migrationClosure": {
+    "consumedLease": {
+      "leaseId": "HRIS-WAVE7-R7-BATCH-05-PAYROLL-MAIN-V55-PAY004-20261022-R1",
+      "stream": "PAYROLL_MAIN",
+      "version": "V55",
+      "sliceId": "BASE-TFR-PAY-004",
+      "state": "CONSUMED_CENTRALLY_INTEGRATED"
+    },
+    "activeMigrationLeaseCountAfterExit": 0,
+    "migrationHighWater": {
+      "PEOPLE_MAIN": "V60",
+      "PERFORMANCE": "V19",
+      "PAYROLL_MAIN": "V55",
+      "PLATFORM_MAIN": "V333",
+      "TIME_MAIN": "V14",
+      "AUTH_MAIN": "V267",
+      "NOTIFICATION_MAIN": "V35",
+      "APPROVAL_MAIN": "V58",
+      "PRODUCT_AUTHORIZATION_BUNDLE": "v58"
+    },
+    "nextLeaseIssued": false
+  },
+  "fixedOrderAfterExit": {
+    "closed": [
+      "BASE-TFR-HRM-012",
+      "BASE-TFR-PAY-004"
+    ],
+    "next": "BASE-TFR-PER-008",
+    "remainingAfterNext": [
+      "BASE-TFR-SYS-008",
+      "BASE-TFR-TIM-004"
+    ],
+    "reorderingAuthorized": false
+  },
+  "per008NextBoundary": {
+    "order": 3,
+    "moduleSession": "HRIS-PER",
+    "businessMeaning": "Feedback screens consolidate into scoped requests with explicit anonymity and minimum-release policy, minimized submission events and protected narrative fields.",
+    "semanticLineage": "TFR-PER-008::PER-FEEDBACK-001::PEP-PER-015|EVT-PER:PerformanceFeedbackSubmitted.v1",
+    "entryQueries": [
+      {
+        "id": "IAQ-038",
+        "role": "PRIMARY",
+        "method": "GET",
+        "browserPath": "/api/people/v1/hris/performance/workbench/team-performance",
+        "canonicalRoute": "/hr/team/performance",
+        "per008ActionBoundary": "PEP-PER-015_ONLY"
+      },
+      {
+        "id": "IAQ-023",
+        "role": "RELATED_SHARED_REUSE",
+        "primarySliceId": "BASE-TFR-PER-003",
+        "method": "GET",
+        "browserPath": "/api/people/v1/hris/performance/workbench/conversations-feedback",
+        "canonicalRoute": "/hr/operations/performance/conversations-feedback"
+      }
+    ],
+    "allowedNextWork": [
+      "seal feedback request lifecycle, cycle and template version, subject and audience scope",
+      "seal IDENTIFIED, MASKED and ANONYMOUS_AGGREGATE modes plus minimum-release-count behavior",
+      "seal protected narrative handling and minimized PerformanceFeedbackSubmitted.v1 payload",
+      "seal IAQ-038 visibility separately from the PEP-PER-015 create action",
+      "preserve IAQ-023 and PER-003 shared read-only and semantic NO-GO boundaries",
+      "prove the exact Performance-owned persistence delta beyond V19 before any V20 reservation"
+    ],
+    "observedPerformanceMigrationHighWater": "V19",
+    "candidateVersionOnlyIfPerformanceOwnedSchemaDeltaIsProven": "V20",
+    "defaultMigrationIfNoOwnerSchemaDelta": "NONE",
+    "forbiddenHistoricalPlannedPath": "dwp-people-server/src/main/resources/db/performance-migration/V8__per_base_tfr_per_008.sql",
+    "packetIssued": false,
+    "startTokenIssued": false,
+    "migrationLeaseIssued": false,
+    "worktreeMaterialized": false,
+    "sourceAuthoringAuthorized": false,
+    "centralAuthorizationAuthoringAuthorized": false,
+    "requiredNextArtifact": "PER008_APPEND_ONLY_SEMANTIC_DISPOSITION"
+  },
+  "carriedOpenGates": [
+    {
+      "gateId": "TIM_CLOSE_PERIOD_DEFINITION_PRODUCER",
+      "severity": "P0",
+      "state": "OPEN_EXTERNAL_SOURCE_AUTHORITY_GATE"
+    },
+    {
+      "gateId": "TIM_CLOSE_TRUSTED_OWNER_HEADER_ISSUER",
+      "severity": "P0",
+      "state": "OPEN_BEFORE_ANY_TENANT_ENROLLMENT"
+    }
+  ],
+  "observedRepositoryPinsBeforeExitCarrier": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "8bec85dab5ee816b12a922c51e369046714c007f",
+      "tree": "3f83136fabb7b3dc09b179109fb81a98d3b7bfe0",
+      "originExact": true,
+      "clean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "b03287bab578039fc9612edb0119af3059833529",
+      "tree": "bdf25407d2d8a82625da8d7c95aa927fe5a33796",
+      "originExact": true,
+      "committedTreeCleanBeforeDraft": true,
+      "expectedUntrackedOnly": [
+        "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-05-central-admission-r1/pay-004-sequencing-exit-receipt.v1.json"
+      ]
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "originExact": true,
+      "clean": true
+    }
+  },
+  "portfolioAccounting": {
+    "universe": 86,
+    "retired": 2,
+    "active": 84,
+    "completedBeforeBatch05": 26,
+    "pay004BusinessCompletionIncrement": 0,
+    "completedAfterPay004Exit": 26,
+    "activeIncompleteAfterPay004Exit": 58
+  },
+  "verificationPolicyApplied": {
+    "boundedChecksOnly": true,
+    "repositoryWideSuiteRun": false,
+    "unaffectedPassingTargetRerun": false,
+    "jsonSyntaxCheckRequired": true,
+    "directReferenceHashAndByteCheckRequired": true,
+    "carrierAncestryAndRepositoryPinCheckRequired": true,
+    "independentDocumentReviewRequiredBeforeCommit": true
+  },
+  "authority": {
+    "pay004SequencingExitAccepted": true,
+    "pay004FullBusinessSliceComplete": false,
+    "pay004BusinessCompletionIncrement": 0,
+    "per008SemanticClosureMayBegin": true,
+    "per008PacketTokenWorktreeLeaseOrSourceAuthorizedByThisReceipt": false,
+    "laterLaneWorkMayBeginBeforePer008Exit": false,
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "batch05Complete": false,
+    "r7Complete": false
+  },
+  "decision": "CLOSE_ONLY_PAY004_SEQUENCE_LANE_WITH_ZERO_BUSINESS_CREDIT_AND_ADVANCE_ONLY_TO_PER008_SEMANTIC_CLOSURE",
+  "nonClaims": [
+    "BASE-TFR-PAY-004 is fully complete as a production business slice.",
+    "A production country pack, provider, scheduler, broker, route, menu, feature or tenant was activated, mounted, bound or enrolled.",
+    "BASE-TFR-PER-008 received an owner packet, token, worktree, V20 lease, central authorization or source authority.",
+    "BASE-TFR-SYS-008 or BASE-TFR-TIM-004 may begin out of order.",
+    "Either inherited TIM P0 gate is closed.",
+    "Batch-05, R7 or HRIS is complete."
+  ],
+  "nextAction": "Perform one bounded PER-008 semantic closure on the pinned canon. Issue no packet, token, worktree, V20 lease, central authorization or source authority until that disposition is independently reviewed and separately admitted."
+}
