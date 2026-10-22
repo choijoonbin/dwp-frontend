@@ -1,0 +1,150 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-05-pay004-v55-migration-lease-activation.v1",
+  "activationId": "HRIS-WAVE7-R7-BATCH-05-MIGRATION-LEASE-ACTIVATION-PAY004-V55-20261022-R1",
+  "activatedAt": "2026-10-22T16:32:30+09:00",
+  "activatedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "ACTIVE_EXCLUSIVE_PAYROLL_V55",
+  "purpose": "Activate exactly one exclusive Payroll main V55 authoring lease for PAY-004 after actual clean pinned backend worktree materialization. This lease must be combined with the matching executable start token and grants no authority outside the reserved exact five-table V55 manifest.",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ACTIVATION_ID_AND_SHA256"
+  },
+  "successorOf": {
+    "path": "migration-lease-pay004-v55-reservation.v1.json",
+    "sha256": "fe7a261e99497d187894ccf0103d4430eeb37cac4a02f93cd021a1ef7f4ec16a",
+    "bytes": 10397,
+    "reservationId": "HRIS-WAVE7-R7-BATCH-05-MIGRATION-LEASE-RESERVATION-PAY004-V55-20261022-R1",
+    "requiredState": "RESERVED_NOT_ACTIVE",
+    "supersededField": "state and lease.state",
+    "supersession": "RESERVED_NOT_ACTIVE_TO_ACTIVE_EXCLUSIVE_AFTER_EXACT_CLEAN_WORKTREE_MATERIALIZATION"
+  },
+  "authorityBasis": {
+    "worktreeMaterializationReceipt": {
+      "path": "worktree-materialization-receipts/base-tfr-pay-004.worktree-materialization-receipt.v1.json",
+      "sha256": "c9b9ab9835ffc3cd4b2b716ad2b0d4a3edb2ad9e2726c2f1e9acb17e2924e3e1",
+      "bytes": 5920,
+      "receiptId": "HRIS-WAVE7-R7-BATCH-05-PAY004-WORKTREE-MATERIALIZATION-20261022-R1",
+      "requiredState": "MATERIALIZED_CLEAN_EXACT_AUTHORITY_CARRIER_PINS_NO_SOURCE_EDITS_NO_UPSTREAM"
+    },
+    "ownerPacket": {
+      "path": "owner-packets/base-tfr-pay-004.owner-packet.v1.json",
+      "sha256": "25ee9e11432c0daedeea6bb31b0a30202db944e02eb206275809fab0d763d84e",
+      "bytes": 20164,
+      "packetId": "HRIS-WAVE7-R7-BATCH-05-OWNER-BASE-TFR-PAY-004-20261022-R1"
+    },
+    "centralIntegrationReceipt": {
+      "path": "../r7-batch-05-central-admission-r1/pay-004-central-integration-receipt.v1.json",
+      "sha256": "84c41f2824c5495f432a6fb8287ddbeae4b538585b247984e06f238c04778d32",
+      "bytes": 7027
+    },
+    "semanticDisposition": {
+      "path": "semantic-dispositions/base-tfr-pay-004.semantic-disposition.v1.json",
+      "sha256": "809553ec0a88fba5cbfdec7708715c274939e8015217bfe7c38ecc9c4c1601fe",
+      "bytes": 40507
+    }
+  },
+  "lease": {
+    "leaseId": "HRIS-WAVE7-R7-BATCH-05-PAYROLL-MAIN-V55-PAY004-20261022-R1",
+    "module": "PAY",
+    "moduleSession": "HRIS-PAY",
+    "sliceId": "BASE-TFR-PAY-004",
+    "canonicalFeature": "HRIS_PAY_RETIREMENT_WORKBENCH",
+    "stream": "PAYROLL_MAIN",
+    "version": "V55",
+    "predecessorHighWater": "V54",
+    "exactPath": "dwp-payroll-server/src/main/resources/db/migration/V55__pay_base_tfr_pay_004_retirement.sql",
+    "manifestAuthority": "migration-lease-pay004-v55-reservation.v1.json#/resolvedExactMigrationManifest",
+    "manifestAuthoritySha256": "fe7a261e99497d187894ccf0103d4430eeb37cac4a02f93cd021a1ef7f4ec16a",
+    "state": "ACTIVE_EXCLUSIVE",
+    "activeLeaseCountForPayrollV55": 1,
+    "secondMigrationAuthorized": false,
+    "existingMigrationEditAuthorized": false,
+    "dataBackfillAuthorized": false
+  },
+  "materializedBackendBinding": {
+    "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261022/r7-batch05/pay-004/backend",
+    "branch": "codex/hris-wave7-r7-batch05-pay-004-backend-20261022-r1",
+    "headAtActivation": "c69e8d52ba1950f920323e35ec598c2ff328c69c",
+    "treeAtActivation": "9058f39498d511646045b34a2fcb7775bd541298",
+    "porcelainSha256AtActivation": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "upstreamAtActivation": null,
+    "exact": true,
+    "clean": true
+  },
+  "activationConditionsSatisfied": {
+    "packetAndReservationCarrierCommittedAndPushed": true,
+    "materializedBackendWorktreeExactAndClean": true,
+    "materializedFrontendWorktreeExactAndClean": true,
+    "payrollHighWaterIsV54": true,
+    "exactV55PathAbsent": true,
+    "competingPayrollV55Absent": true,
+    "reservedManifestUnchanged": true,
+    "activeLeaseCountAfterActivation": 1
+  },
+  "resolvedAuthoringBoundary": {
+    "allowed": [
+      "Create only dwp-payroll-server/src/main/resources/db/migration/V55__pay_base_tfr_pay_004_retirement.sql.",
+      "Create exactly pay_statutory_cases, pay_case_basis_refs, pay_case_evidence, pay_case_results and pay_case_corrections.",
+      "Enforce every control in the hash-bound reservation resolvedExactMigrationManifest without weakening or omission."
+    ],
+    "forbidden": [
+      "Any edit to Payroll migrations V1 through V54",
+      "Any second Payroll migration or path other than the exact V55 path",
+      "Any sixth table, seed, backfill, deletion, privilege elevation or duplicate generic receipt, audit or outbox store",
+      "Any hardcoded law, rate, formula, credential, provider or tenant content",
+      "Any production country-pack or provider binding, route or menu mounting, feature enablement, tenant enrollment, direct dwp-dev merge or production execution"
+    ],
+    "deviationAction": "STOP_AND_REQUEST_AN_APPEND_ONLY_LEASE_AND_TOKEN_SUCCESSOR"
+  },
+  "acceptanceCoverage": {
+    "requiredCount": 12,
+    "requiredIds": [
+      "PAY004-AC-01",
+      "PAY004-AC-02",
+      "PAY004-AC-03",
+      "PAY004-AC-04",
+      "PAY004-AC-05",
+      "PAY004-AC-06",
+      "PAY004-AC-07",
+      "PAY004-AC-08",
+      "PAY004-AC-09",
+      "PAY004-AC-10",
+      "PAY004-AC-11",
+      "PAY004-AC-12"
+    ],
+    "weakeningOrOmissionAuthorized": false
+  },
+  "verificationPolicy": {
+    "executionAuthorizedByLeaseAlone": false,
+    "minimalTargetRule": "RUN_EACH_NEW_PAY004_TARGET_GROUP_ONCE; AFTER_FAILURE_RERUN_ONLY_THE_SMALLEST_AFFECTED_TARGET; RUN_ONE_BOUNDED_CROSS_CONTRACT_CHECK_AFTER_TARGETS_PASS; NO_REPOSITORY_WIDE_SUITE_PER_CORRECTION",
+    "realPostgresRequired": true,
+    "databaseUnavailableRule": "BLOCKED_NOT_PASS",
+    "repositoryWideSuiteAuthorized": false
+  },
+  "authority": {
+    "activeLeaseCount": 1,
+    "oneExactPayrollV55AuthoringLeaseActive": true,
+    "v55AuthoringAuthorizedByLeaseAlone": false,
+    "v55AuthoringAuthorizedOnlyWithMatchingExecutableTokenV1": true,
+    "sourceAuthoringOutsideExactV55Authorized": false,
+    "testExecutionAuthorizedByLeaseAlone": false,
+    "moduleBranchCommitAuthorizedByLeaseAlone": false,
+    "moduleBranchPushAuthorizedByLeaseAlone": false,
+    "centralWriteAuthorized": false,
+    "directDwpDevMergeAuthorized": false,
+    "routeOrMenuMountAuthorized": false,
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionCountryPackBindingAuthorized": false,
+    "productionProviderBindingAuthorized": false,
+    "productionExecutionAuthorized": false
+  },
+  "invalidationConditions": [
+    "The backend worktree path, branch, initial head, initial tree, upstream or initial porcelain digest differs.",
+    "Payroll main high-water differs from V54 or any competing V55 path exists before the owner creates the exact leased path.",
+    "The reserved five-table manifest is insufficient, an existing migration must change, a second migration is required or a seed or backfill is needed.",
+    "The matching executable PAY-004 start token v1 is absent, invalid or hash-mismatched.",
+    "Any central, route, menu, feature, tenant, country-pack, provider, customer or production action is attempted."
+  ],
+  "nextGate": "ISSUE_ONE_EXECUTABLE_PAY004_START_TOKEN_V1_HASH_BOUND_TO_THIS_ACTIVE_EXCLUSIVE_LEASE_OWNER_PACKET_RESERVATION_AND_MATERIALIZATION_RECEIPT"
+}
