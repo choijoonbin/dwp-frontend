@@ -1,0 +1,209 @@
+{
+  "schema": "dwp.hris.wave7.module-result-evidence.v1",
+  "evidenceId": "HRIS-WAVE7-R7-BATCH-05-PAY-004-MODULE-RESULT-20261022-R1",
+  "recordedAt": "2026-10-22T17:58:23+09:00",
+  "recordedBy": "HRIS-PAY",
+  "sliceId": "BASE-TFR-PAY-004",
+  "sourceRef": "TFR-PAY-004",
+  "module": "PAY",
+  "authority": {
+    "startToken": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-05-module-start-r1/tokens/base-tfr-pay-004.start-token.v1.json",
+      "tokenId": "HRIS-WAVE7-R7-BATCH-05-START-BASE-TFR-PAY-004-20261022-R1",
+      "sha256": "1c4e40718496f12d6d0b8f82c1b913a40c14040d18c966228cc3e072466063d3",
+      "executable": true
+    },
+    "writableBoundaryRespected": true,
+    "directDwpDevMergeAuthorized": false,
+    "centralAdmissionAuthorized": false
+  },
+  "repositories": {
+    "backend": {
+      "name": "dwp-backend",
+      "branch": "codex/hris-wave7-r7-batch05-pay-004-backend-20261022-r1",
+      "initialHead": "c69e8d52ba1950f920323e35ec598c2ff328c69c",
+      "sourceCommit": "4d9da191afc926c0e744aadf2df45ee42f497301",
+      "sourceTree": "3f83136fabb7b3dc09b179109fb81a98d3b7bfe0",
+      "originSourceCommit": "4d9da191afc926c0e744aadf2df45ee42f497301",
+      "originExactAtEvidenceTime": true,
+      "sourceFiles": 28,
+      "outsideWritableBoundaryChanges": 0,
+      "diffCheck": "PASS"
+    },
+    "frontend": {
+      "name": "dwp-frontend",
+      "branch": "codex/hris-wave7-r7-batch05-pay-004-frontend-20261022-r1",
+      "initialHead": "5e132ac7326b4745aafb165ad4bb1a4448a03a11",
+      "sourceCommit": "6afa09f1eb32fac9c0ee355e78cdf5340f6f81a8",
+      "sourceTree": "96cdf04f70bd1ef140a220540bbd381035d21242",
+      "originSourceCommit": "6afa09f1eb32fac9c0ee355e78cdf5340f6f81a8",
+      "originExactAtEvidenceTime": true,
+      "sourceFiles": 14,
+      "outsideWritableBoundaryChanges": 0,
+      "diffCheck": "PASS"
+    }
+  },
+  "implementation": {
+    "featureKey": "HRIS_PAY_RETIREMENT_WORKBENCH",
+    "defaultEnabled": false,
+    "tenantEnrollmentCount": 0,
+    "runtimeOwnerCallsWhenDisabled": 0,
+    "routeMounted": false,
+    "menuMounted": false,
+    "publicOperations": {
+      "get": ["/v1/workbench/pay-retirement"],
+      "actions": []
+    },
+    "frontend": [
+      "Unmounted provider-neutral retirement list-detail workbench",
+      "Strict IAQ-049 request and response parsing with four filters, eight sorts and stable itemPublicId tie-break",
+      "Loading, complete, empty, partial, unavailable, denied and stale states",
+      "VIEW, MASK and OMIT projection without restricted-value materialization",
+      "Keyboard, screen-reader, 1440/1280/390/320, 200 percent zoom, light, dark, high-contrast and reduced-motion coverage"
+    ],
+    "backend": [
+      "Seven-layer trusted-tenant and authorized-population enforcement with revision-bound opaque cursors",
+      "RetirementYearEndCase exact append-only state machine and maker-checker closure",
+      "Exact V50 worker-result and V53 ACTIVE pack or immutable NOT_REQUIRED Foundation lineage",
+      "PostedMoney NUMERIC(19,4), application rounding and Java/PostgreSQL canonical digest equivalence",
+      "Database-derived policy, case-input and result digests with attachment-to-result-to-approval chronology",
+      "Exactly five V55 tables with tenant-first identity, FORCE RLS, append-only guards and least privilege"
+    ],
+    "keySourceSha256": [
+      {
+        "path": "dwp-payroll-server/src/main/resources/db/migration/V55__pay_base_tfr_pay_004_retirement.sql",
+        "sha256": "7596e52c968d8a754f2fa8336260fc5aa790be8d02b97e6edd9aae56fd3f1f84"
+      },
+      {
+        "path": "dwp-payroll-server/src/main/java/com/dwp/services/payroll/statutory/pay004/RetirementYearEndCase.java",
+        "sha256": "114d40d57be36419a918f17cec3ac0724571ed0bda9097df8d41948da1257be7"
+      },
+      {
+        "path": "apps/dwp/src/features/hris/payroll/retirement/retirement-contract.ts",
+        "sha256": "9ad59bb2f16b93768da87176619d497cdb8303f0bc28c24cff13e2d601158c89"
+      }
+    ]
+  },
+  "verification": {
+    "policy": "Passing targets were retained. After a failure or review correction, only the smallest affected class or named method was rerun. No repository-wide suite or repeated full bundle was run.",
+    "backend": {
+      "compileTestJava": "PASS",
+      "pay004NonPostgresLogical": {
+        "tests": 37,
+        "passed": 37,
+        "result": "PASS_ACROSS_BOUNDED_TARGET_RUNS"
+      },
+      "pay004RealPostgresLogical": {
+        "tests": 19,
+        "passed": 19,
+        "result": "PASS_ACROSS_ONE_FULL_CLASS_RUN_AND_POST_REVIEW_NAMED_TARGETS",
+        "coverage": [
+          "clean migration through V55",
+          "V54 to V55 upgrade without data loss",
+          "all five tables FORCE RLS missing-context and cross-tenant denial",
+          "state transition, immutability, rollback, maker-checker and correction closure",
+          "V50 worker-result, V53 ACTIVE pack and NOT_REQUIRED Foundation exact lineage",
+          "database-derived canonical policy, input and result digests",
+          "canonical money, rounding, time ordering and PAY-003 policy-key fallback"
+        ]
+      },
+      "boundedCrossContract": {
+        "pay003Pay011Pay012Targets": "PASS",
+        "preExistingUnrelatedFixtureFailure": "PayrollWorkerRecoveryTest.lostCompletionAcknowledgement... seeds revision 2 while asserting expectedVersion 1; unchanged from baseline and not counted as PASS",
+        "realPostgresSubstitute": "PayrollMigrationCleanUpgradeTest.postCommitAcknowledgementLossProbesCommittedOutcomeWithoutDuplicates PASS"
+      },
+      "initialCorrections": [
+        "One stale calculation-reuse assertion was corrected and only that named method was rerun.",
+        "The first V55 PostgreSQL initialization exposed a reserved SQL parameter name; only that name was corrected, then the full V55 class passed.",
+        "Post-review chronology, rounding and policy-key changes were verified with only their named PostgreSQL targets."
+      ]
+    },
+    "frontend": {
+      "logicalTests": {
+        "tests": 38,
+        "passed": 38,
+        "result": "PASS_ACROSS_BOUNDED_TARGET_RUNS"
+      },
+      "latestAffectedContractTarget": "retirement-contract.test.ts 8/8 PASS",
+      "typecheck": "PASS",
+      "changedRootEslint": "PASS",
+      "browserRouteRun": false,
+      "browserRouteReason": "The token requires the route and menu to remain unmounted, default OFF and zero-enrollment until separate central admission."
+    },
+    "independentReview": {
+      "backend": { "p0": 0, "p1": 0, "decision": "GO" },
+      "canonicalDigestAndPostgres": { "p0": 0, "p1": 0, "decision": "GO" },
+      "frontend": { "p0": 0, "p1": 0, "decision": "GO" },
+      "knownP2": "The past-revision attachment error branch was corrected and its named PostgreSQL target passed."
+    }
+  },
+  "acceptanceMapping": [
+    {
+      "id": "PAY004-AC-01",
+      "result": "PASS",
+      "evidence": "Exact GET paths, RETIREMENT variant, four filter groups, eight sorts, stable default tie-break, limit 1..100 and four query cardinality states are sealed in both layers."
+    },
+    {
+      "id": "PAY004-AC-02",
+      "result": "PASS",
+      "evidence": "Seven-layer PEP, trusted tenant/population, pre-serialization VIEW/MASK/OMIT, exact counts, revision-bound cursor and correlated problems are covered."
+    },
+    {
+      "id": "PAY004-AC-03",
+      "result": "PASS",
+      "evidence": "One case UUID is the item identity, availableActions is always empty and runId/packId are absent from the projection and UI."
+    },
+    {
+      "id": "PAY004-AC-04",
+      "result": "PASS_REUSE_ONLY",
+      "evidence": "PAY-003 signed-pack state and action ownership remain unchanged; PAY-004 only binds exact immutable pack facts."
+    },
+    {
+      "id": "PAY004-AC-05",
+      "result": "PASS_REUSE_ONLY",
+      "evidence": "V50 calculation and PayrollCalculated.v1 remain unchanged; no retirement calculation endpoint, command or event exists."
+    },
+    {
+      "id": "PAY004-AC-06",
+      "result": "PASS",
+      "evidence": "Exact append-only states, legal transitions, terminal immutability, maker-checker and linked correction are enforced in domain and PostgreSQL."
+    },
+    {
+      "id": "PAY004-AC-07",
+      "result": "PASS",
+      "evidence": "V55 creates exactly the five leased tables and introduces no receipt, outbox, audit, seed or backfill."
+    },
+    {
+      "id": "PAY004-AC-08",
+      "result": "PASS",
+      "evidence": "All five tables have tenant-first identities, PUBLIC revocation, least privilege, ENABLE/FORCE RLS and mutation rejection."
+    },
+    {
+      "id": "PAY004-AC-09",
+      "result": "PASS",
+      "evidence": "Exact same-worker V50 and exact ACTIVE/NOT_REQUIRED policy lineage fail closed for stale, cross-scope, cross-worker, mutable-latest or missing facts."
+    },
+    {
+      "id": "PAY004-AC-10",
+      "result": "PASS",
+      "evidence": "Canonical NUMERIC(19,4), explicit currency, Foundation-bound mode, closed application stage and equivalent Java/SQL digests prevent database rounding and floating-point use."
+    },
+    {
+      "id": "PAY004-AC-11",
+      "result": "PASS_REUSE_ONLY",
+      "evidence": "Owner receipts, CAS, audit and outbox stores remain unchanged; blocked pack states cannot produce a result or fall back."
+    },
+    {
+      "id": "PAY004-AC-12",
+      "result": "PASS_UNMOUNTED_COMPONENT",
+      "evidence": "All seven UI states, accessibility, responsive widths, 200 percent zoom, themes, reduced motion and default-OFF zero-call behavior are covered without mounting the route."
+    }
+  ],
+  "nonClaims": [
+    "No direct dwp-dev merge or central admission is claimed.",
+    "No application route, shell node, sidebar, menu or shared i18n entry is mounted.",
+    "No feature enablement, tenant enrollment, customer data or production provider/country pack is introduced.",
+    "No production release or full HRIS completion is claimed."
+  ],
+  "decision": "MODULE_BRANCHES_COMMITTED_PUSHED_AND_READY_FOR_SEPARATE_CENTRAL_REVIEW"
+}
