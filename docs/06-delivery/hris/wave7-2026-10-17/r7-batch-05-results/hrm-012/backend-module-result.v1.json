@@ -1,0 +1,501 @@
+{
+  "schema": "dwp.hris.wave7.backend-module-result.v1",
+  "evidenceId": "HRIS-WAVE7-R7-BATCH-05-HRM-012-BACKEND-RESULT-20261022-R1",
+  "recordedAt": "2026-10-22T11:08:19+09:00",
+  "recordedBy": "HRIS-HRM-INDEPENDENT-REVIEW",
+  "sliceId": "BASE-TFR-HRM-012",
+  "module": "HRM",
+  "authority": {
+    "startToken": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-05-module-start-r1/tokens/base-tfr-hrm-012.start-token.v1.json",
+      "tokenId": "HRIS-WAVE7-R7-BATCH-05-START-BASE-TFR-HRM-012-20261022-R1",
+      "sha256": "0592ca8b606236f0e36c639c547a94387dd517754fbb4a3ada091bbca19b662d",
+      "state": "ISSUED_EXECUTABLE"
+    },
+    "appendOnlyCorrection": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-05-module-start-r1/tokens/base-tfr-hrm-012.start-token-correction.v2.json",
+      "tokenId": "HRIS-WAVE7-R7-BATCH-05-START-CORRECTION-BASE-TFR-HRM-012-20261022-R2",
+      "sha256": "c6ff15bdad9f14695d02f69fa5e840c9c6ba631fb7b65d8366acc038b888dcdd",
+      "carrierCommit": "aadf12379fc71defc02cad94491132428fbbd5dd",
+      "carrierTree": "d38a88c963811794b55eeb2b717326989faf891a",
+      "carrierBranch": "dwp-dev",
+      "carrierOriginExact": true,
+      "independentReview": {
+        "p0": 0,
+        "p1": 0,
+        "p2": 0,
+        "decision": "GO"
+      },
+      "effect": "Only the predecessor negative sentence is corrected: encrypted quarantine-after-acceptance evidence may be persisted in the exact V60 item ledger, while plaintext, secrets, rejected restricted values and all forbidden API/log/audit/IAQ/event output remain prohibited. All other authority remains inherited without scope expansion."
+    },
+    "existingFrontendResult": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-05-results/hrm-012/frontend-module-result.v1.json",
+      "evidenceId": "HRIS-WAVE7-R7-BATCH-05-HRM-012-FRONTEND-RESULT-20261022-R1",
+      "sha256": "193b6775d7042f824d8927b7c515217c3bfcf25962ec013cd50a3411c1ada4a1",
+      "carrierCommit": "a2d9320d5d9b9c7b846832aea79877b0242e1c75",
+      "carrierTree": "0398e721c1e3c92a1c8b110804646e9f60af7da3",
+      "unchangedByThisEvidenceCommit": true
+    }
+  },
+  "repository": {
+    "backend": {
+      "name": "dwp-backend",
+      "branch": "codex/hris-wave7-r7-batch05-hrm-012-backend-20261022-r1",
+      "initialHead": "c43a98698a9cee140fb11ebc248bdbbbe9214a7d",
+      "initialTree": "964b7e313c7187bf7bfca5bb5a517f6bc384f67a",
+      "head": "b5e71940ba96d6d6daec2eaacc4ac00954089efa",
+      "tree": "5b14cee170175f194387492ed4ecb26cb6fc8cd7",
+      "originHead": "b5e71940ba96d6d6daec2eaacc4ac00954089efa",
+      "originTree": "5b14cee170175f194387492ed4ecb26cb6fc8cd7",
+      "originExact": true,
+      "clean": true,
+      "diffCheck": "PASS",
+      "commitStats": {
+        "files": 44,
+        "added": 41,
+        "modified": 3,
+        "insertions": 11393,
+        "deletions": 3
+      },
+      "outsideWritableBoundaryChanges": 0
+    },
+    "evidenceCarrierBeforeThisCommit": {
+      "name": "dwp-frontend",
+      "branch": "codex/hris-wave7-r7-batch05-hrm-012-frontend-20261022-r1",
+      "head": "a2d9320d5d9b9c7b846832aea79877b0242e1c75",
+      "tree": "0398e721c1e3c92a1c8b110804646e9f60af7da3",
+      "originExact": true,
+      "clean": true
+    }
+  },
+  "implementation": {
+    "featureKey": "HRIS_HRM_DATA_QUALITY_WORKBENCH",
+    "activationProperty": "dwp.hris.data-quality-workbench.enabled",
+    "defaultEnabled": false,
+    "activationCondition": "havingValue=true; matchIfMissing=false",
+    "tenantEnrollmentCount": 0,
+    "runtimeEntryWhenDisabled": false,
+    "frontendRouteMounted": false,
+    "frontendMenuMounted": false,
+    "productionObjectProviderBound": false,
+    "productionCredentialOrKeyProviderBound": false,
+    "schedulerBound": false,
+    "brokerBound": false,
+    "fallbackAdapters": "FAIL_CLOSED_ONLY",
+    "sourceAreas": [
+      "IAQ-012 exact read-only GET projection with population closure, seven-layer PEP, VIEW/MASK/OMIT, stable sort and opaque fixed-digest cursor",
+      "PEP-HRM-015 exact workforce-ingestion command and canonical receipt-first lifecycle",
+      "trusted identity and complete authority snapshot binding, post-receipt exact equality and object-access ordering",
+      "idempotency, immutable retry evidence, linked replay, deterministic duplicate handling and encrypted quarantine-after-acceptance",
+      "VALIDATE_ONLY/APPLY accounting, transactional cursor/run/receipt/audit/outbox reconciliation and deterministic JCS result/event identity",
+      "People V60 exact two-table ledger with FORCE RLS, immutable evidence and expired-RUNNING lease recovery",
+      "bounded HRM-008 stale constant and two-assertion removal with focused regression coverage"
+    ],
+    "keySourceSha256": [
+      {
+        "path": "dwp-people-server/src/main/java/com/dwp/services/people/integration/Hrm012WorkforceIngestionRepository.java",
+        "sha256": "c82999a678ab77b9d0b8a673daff9d95049a2cefa4fa5e81d354bbc42c9e2f29"
+      },
+      {
+        "path": "dwp-people-server/src/main/java/com/dwp/services/people/integration/Hrm012WorkforceIngestionProcessor.java",
+        "sha256": "1d89eb7b45b4ef81ed940fdeaf0ce0a938dff27e5a0fb204640aa3b8fabf6648"
+      },
+      {
+        "path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/hrm012/Hrm012WorkforceIngestionContract.java",
+        "sha256": "bf8f9a6cc9b283f4788f9284e03497f2ea7cf39ad2a920a48a6fa21cd1246d31"
+      },
+      {
+        "path": "dwp-people-server/src/main/resources/db/migration/V60__hrm_base_tfr_hrm_012.sql",
+        "sha256": "bb94ad7cea87c59aaf60ac40ec234a39d69f4302741ab17def3beb4d4eea77dd"
+      }
+    ]
+  },
+  "verification": {
+    "policy": "Passing targets were retained. A failing bundle was diagnosed once and only its smallest affected classes or named cases were rerun. No repository-wide suite and no broad-bundle repetition was performed.",
+    "evidenceProvenance": {
+      "ownerExecutionRecord": "TRANSCRIPT_REVIEWED_NOT_REPOSITORY_ARTIFACT",
+      "v60AndJcsExecutionRecord": "TRANSCRIPT_AND_GRADLE_XML_REVIEWED_NOT_REPOSITORY_ARTIFACT",
+      "latestXml": [
+        {
+          "path": "dwp-people-server/build/test-results/test/TEST-com.dwp.services.people.integration.Hrm012V60MigrationPostgresTest.xml",
+          "sha256": "4b346a0016e0d4325b9821173998d950ffdedf3113fb05cfa7d91823ca52928c",
+          "repositoryArtifact": false,
+          "tests": 5,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "suiteSeconds": 10.822,
+          "backendHead": "b5e71940ba96d6d6daec2eaacc4ac00954089efa"
+        }
+      ]
+    },
+    "executionAccounting": [
+      {
+        "sequence": 1,
+        "kind": "INITIAL_BROAD_BOUNDED_DIAGNOSTIC",
+        "command": "./gradlew :dwp-people-server:test --no-daemon --tests 'com.dwp.services.people.hris.workbench.hrm012.Hrm012IaEntryQueryContractTest' --tests 'com.dwp.services.people.integration.WorkforceIngestionTransportSchemaContractTest' --tests 'com.dwp.services.people.integration.WorkforceIngestionAuthorizationTest' --tests 'com.dwp.services.people.integration.WorkforceIngestionIdempotencyTest' --tests 'com.dwp.services.people.integration.WorkforceInputEnvelopeValidationTest' --tests 'com.dwp.services.people.integration.WorkforceIngestionOutcomeClassificationTest' --tests 'com.dwp.services.people.integration.WorkforceIngestionValidateOnlyAccountingTest' --tests 'com.dwp.services.people.integration.WorkforceIngestionLinkedReplayReceiptTest' --tests 'com.dwp.services.people.integration.WorkforceIngestionConservationContractTest' --tests 'com.dwp.services.people.integration.WorkforceIngestionReconciliationTest' --tests 'com.dwp.services.people.integration.WorkforceIngestionEventOutboxTest' --tests 'com.dwp.services.people.integration.WorkforceIngestionReceiptIdentityBindingTest' --tests 'com.dwp.services.people.integration.WorkforceIngestionTrustedAuthoritySnapshotTest' --tests 'com.dwp.services.people.integration.WorkforceIngestionPostReceiptExactEqualityTest' --tests 'com.dwp.services.people.security.HcmScopeSelectionValidatorHrm012Test' --tests 'com.dwp.services.people.hris.employment.EmploymentEventAuthorityTest' --tests 'com.dwp.services.people.hris.employment.HrmG3SliceContractTest'",
+        "tests": 49,
+        "passed": 37,
+        "failed": 12,
+        "build": "FAILED",
+        "durationSeconds": 18,
+        "finalProof": false,
+        "rerunAsBundle": false
+      },
+      {
+        "sequence": 2,
+        "kind": "INITIAL_SMALLEST_AFFECTED_CORRECTIONS",
+        "runs": [
+          {
+            "target": "Hrm012IaEntryQueryContractTest",
+            "command": "./gradlew :dwp-people-server:test --no-daemon --tests 'com.dwp.services.people.hris.workbench.hrm012.Hrm012IaEntryQueryContractTest'",
+            "tests": 6,
+            "passed": 6,
+            "build": "SUCCESSFUL",
+            "durationSeconds": 12
+          },
+          {
+            "target": "WorkforceIngestionIdempotencyTest",
+            "command": "./gradlew :dwp-people-server:test --no-daemon --tests 'com.dwp.services.people.integration.WorkforceIngestionIdempotencyTest'",
+            "tests": null,
+            "result": "CLASS_TOTAL_PASS; exact historical count overwritten by later Gradle XML",
+            "build": "SUCCESSFUL",
+            "durationSeconds": 11
+          },
+          {
+            "target": "WorkforceIngestionLinkedReplayReceiptTest",
+            "command": "./gradlew :dwp-people-server:test --no-daemon --tests 'com.dwp.services.people.integration.WorkforceIngestionLinkedReplayReceiptTest'",
+            "tests": null,
+            "result": "CLASS_TOTAL_PASS; exact historical count overwritten by later Gradle XML",
+            "build": "SUCCESSFUL",
+            "durationSeconds": 11
+          },
+          {
+            "target": "WorkforceIngestionTransportSchemaContractTest",
+            "command": "./gradlew :dwp-people-server:test --no-daemon --tests 'com.dwp.services.people.integration.WorkforceIngestionTransportSchemaContractTest'",
+            "tests": null,
+            "result": "CLASS_TOTAL_PASS; exact historical count overwritten by later Gradle XML",
+            "build": "SUCCESSFUL",
+            "durationSeconds": 10
+          }
+        ]
+      },
+      {
+        "sequence": 3,
+        "kind": "POST_REVIEW_BOUNDED_DIAGNOSTIC",
+        "command": "./gradlew --no-daemon :dwp-people-server:test --tests 'com.dwp.services.people.integration.Hrm012CanonicalJsonTest' --tests 'com.dwp.services.people.integration.WorkforceIngestionOutcomeClassificationTest' --tests 'com.dwp.services.people.integration.WorkforceIngestionIdempotencyTest' --tests 'com.dwp.services.people.integration.WorkforceIngestionPostReceiptExactEqualityTest' --tests 'com.dwp.services.people.integration.WorkforceIngestionAuthorizationTest' --tests 'com.dwp.services.people.integration.WorkforceIngestionReceiptIdentityBindingTest' --tests 'com.dwp.services.people.integration.WorkforceIngestionTrustedAuthoritySnapshotTest' --tests 'com.dwp.services.people.integration.WorkforceIngestionLinkedReplayReceiptTest' --tests 'com.dwp.services.people.integration.WorkforceInputEnvelopeValidationTest' --tests 'com.dwp.services.people.integration.WorkforceIngestionTransportSchemaContractTest' --tests 'com.dwp.services.people.hris.workbench.hrm012.Hrm012IaEntryQueryContractTest'",
+        "tests": 43,
+        "passed": 42,
+        "failed": 1,
+        "failure": "atomicAdmission... stale expectation conflicted with the sealed safeRetryRule",
+        "build": "FAILED",
+        "durationSeconds": 16,
+        "finalProof": false,
+        "rerunAsBundle": false
+      },
+      {
+        "sequence": 4,
+        "kind": "FINAL_AFFECTED_ONLY_RUNS",
+        "runs": [
+          {
+            "target": "WorkforceIngestionIdempotencyTest",
+            "command": "git diff --check && ./gradlew --no-daemon :dwp-people-server:test --tests 'com.dwp.services.people.integration.WorkforceIngestionIdempotencyTest'",
+            "result": "CLASS_TOTAL_PASS; compileJava and compileTestJava PASS",
+            "build": "SUCCESSFUL",
+            "durationSeconds": 18
+          },
+          {
+            "target": "six-class affected bundle",
+            "command": "./gradlew --no-daemon :dwp-people-server:test --tests 'com.dwp.services.people.integration.WorkforceIngestionIdempotencyTest' --tests 'com.dwp.services.people.integration.WorkforceIngestionLinkedReplayReceiptTest' --tests 'com.dwp.services.people.integration.WorkforceIngestionTransportSchemaContractTest' --tests 'com.dwp.services.people.integration.WorkforceIngestionOutcomeClassificationTest' --tests 'com.dwp.services.people.hris.workbench.hrm012.Hrm012IaEntryQueryContractTest' --tests 'com.dwp.services.people.integration.Hrm012CanonicalJsonTest'",
+            "tests": 36,
+            "passed": 36,
+            "classCounts": [9, 3, 4, 7, 9, 4],
+            "build": "SUCCESSFUL",
+            "durationSeconds": 19
+          },
+          {
+            "target": "WorkforceIngestionAuthorizationTest",
+            "command": "./gradlew --no-daemon :dwp-people-server:test --tests 'com.dwp.services.people.integration.WorkforceIngestionAuthorizationTest'",
+            "tests": 2,
+            "passed": 2,
+            "build": "SUCCESSFUL",
+            "durationSeconds": 12
+          },
+          {
+            "target": "lease and quarantine key-reference boundary",
+            "command": "git diff --check && ./gradlew --no-daemon :dwp-people-server:test --tests 'com.dwp.services.people.integration.WorkforceIngestionReconciliationTest' --tests 'com.dwp.services.people.integration.WorkforceIngestionOutcomeClassificationTest'",
+            "tests": 12,
+            "passed": 12,
+            "classCounts": [4, 8],
+            "build": "SUCCESSFUL",
+            "durationSeconds": 18
+          }
+        ]
+      },
+      {
+        "sequence": 5,
+        "kind": "V60_INITIAL_FULL_DIAGNOSTIC_AND_SMALLEST_CORRECTION",
+        "runs": [
+          {
+            "target": "Hrm012V60MigrationContractTest full class",
+            "command": "./gradlew :dwp-people-server:test --tests com.dwp.services.people.integration.Hrm012V60MigrationContractTest --no-daemon",
+            "tests": 6,
+            "passed": 6,
+            "build": "SUCCESSFUL",
+            "durationSeconds": 12
+          },
+          {
+            "target": "Hrm012V60MigrationPostgresTest full class at the initial ten-case baseline",
+            "command": "./gradlew :dwp-people-server:test --tests com.dwp.services.people.integration.Hrm012V60MigrationPostgresTest --no-daemon",
+            "tests": 10,
+            "passed": 9,
+            "failed": 1,
+            "failure": "terminalApplyRejectsMissingStaleAndDigestMismatchedCursorState assertion wording",
+            "build": "FAILED",
+            "durationSeconds": 42,
+            "initialPassingMethods": [
+              "cleanMigrationThroughV60BuildsOnlyTheTwoTablesAndLockedControls",
+              "upgradeFromV59PreservesRowsAndEveryHistoricalChecksum",
+              "forceRlsHidesAndRejectsBothTablesWithoutMatchingTenantContext",
+              "modeSpecificOutcomesAccountingEventsAndTerminalImmutabilityFailClosed",
+              "failedTerminalizationRollsBackCursorOutboxAndRunThenExactRetryWins",
+              "precommittedOutboxCannotSatisfyAtomicTerminalizationAndHashConflictFails",
+              "itemInsertLocksParentAgainstTerminalizationAndDeferredRecountIsExact",
+              "lifecycleVersionAndLeaseNegativeTransitionsFailInPostgres",
+              "linkedReplayRequiresTerminalSameTenantExactImmutableLineage"
+            ],
+            "rerunAsFullClass": false
+          },
+          {
+            "target": "terminalApplyRejectsMissingStaleAndDigestMismatchedCursorState",
+            "command": "./gradlew :dwp-people-server:test --tests 'com.dwp.services.people.integration.Hrm012V60MigrationPostgresTest.terminalApplyRejectsMissingStaleAndDigestMismatchedCursorState' --no-daemon",
+            "tests": 1,
+            "passed": 1,
+            "build": "SUCCESSFUL",
+            "durationSeconds": 21
+          }
+        ],
+        "retainedRequiredRealPostgresCoverage": [
+          "V59_TO_V60_UPGRADE_AND_HISTORICAL_CHECKSUMS",
+          "FORCE_RLS_MISSING_CONTEXT_AND_CROSS_TENANT_DENIAL_FOR_BOTH_TABLES",
+          "FAILED_TERMINALIZATION_ROLLBACK_AND_EXACT_RETRY",
+          "LIFECYCLE_VERSION_AND_LEASE_NEGATIVE_TRANSITIONS",
+          "LINKED_REPLAY_TERMINAL_SAME_TENANT_IMMUTABLE_LINEAGE"
+        ],
+        "retentionBasis": "The five listed required cases passed in the initial full PostgreSQL class. Later SQL changes were reviewed as localized to newly added receipt/marker/terminal/shared-cursor/item-lock/expired-lease controls; every changed control received a later named direct-impact PostgreSQL or contract run, and the latest V60 received an independent static review."
+      },
+      {
+        "sequence": 6,
+        "kind": "V60_REAL_POSTGRES_AND_CONTRACT",
+        "runs": [
+          {
+            "target": "one contract method plus nine named real PostgreSQL methods",
+            "command": "./gradlew :dwp-people-server:test --no-daemon --tests 'com.dwp.services.people.integration.Hrm012V60MigrationContractTest.validateOnlyAndApplyHaveDistinctClosedAccountingContracts' --tests 'com.dwp.services.people.integration.Hrm012V60MigrationPostgresTest.cleanMigrationThroughV60BuildsOnlyTheTwoTablesAndLockedControls' --tests 'com.dwp.services.people.integration.Hrm012V60MigrationPostgresTest.receiptFrozenAuthorityRequiresClosedShapeAndIsImmutableOnlyAtItsSubtree' --tests 'com.dwp.services.people.integration.Hrm012V60MigrationPostgresTest.markerAuthorityEvidenceIsBoundedOrderedAndTransitionSafe' --tests 'com.dwp.services.people.integration.Hrm012V60MigrationPostgresTest.runInsertRequiresExactSameTenantHrm012ReceiptIdentity' --tests 'com.dwp.services.people.integration.Hrm012V60MigrationPostgresTest.modeSpecificOutcomesAccountingEventsAndTerminalImmutabilityFailClosed' --tests 'com.dwp.services.people.integration.Hrm012V60MigrationPostgresTest.terminalApplyRejectsMissingStaleAndDigestMismatchedCursorState' --tests 'com.dwp.services.people.integration.Hrm012V60MigrationPostgresTest.unrelatedSharedCursorWriteIgnoresPendingHrmRunFromPriorTransaction' --tests 'com.dwp.services.people.integration.Hrm012V60MigrationPostgresTest.separatedSuccessEvidenceFailsAndOnlyOneAtomicTransactionCommits' --tests 'com.dwp.services.people.integration.Hrm012V60MigrationPostgresTest.itemInsertLocksParentAgainstTerminalizationAndDeferredRecountIsExact'",
+            "tests": 10,
+            "passed": 10,
+            "contractPassed": 1,
+            "realPostgresPassed": 9,
+            "build": "SUCCESSFUL",
+            "durationSeconds": 37
+          },
+          {
+            "target": "expired RUNNING lease recovery",
+            "command": "./gradlew :dwp-people-server:test --no-daemon --tests 'com.dwp.services.people.integration.Hrm012V60MigrationContractTest.lifecycleIdentityReplayAndEvidenceAreForwardOnlyAndImmutable' --tests 'com.dwp.services.people.integration.Hrm012V60MigrationPostgresTest.expiredRunningLeaseRequiresExactNewOwnerTakeover'",
+            "tests": 2,
+            "passed": 2,
+            "contractPassed": 1,
+            "realPostgresPassed": 1,
+            "build": "SUCCESSFUL",
+            "durationSeconds": 20,
+            "xmlConfirmedAtRunTime": true,
+            "xmlOverwrittenByLaterAuthorizedRun": true
+          }
+        ]
+      },
+      {
+        "sequence": 7,
+        "kind": "FINAL_JCS_NAMED_RUN",
+        "command": "./gradlew :dwp-people-server:test --no-daemon --tests 'com.dwp.services.people.integration.Hrm012CanonicalJsonTest'",
+        "tests": 4,
+        "passed": 4,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "build": "SUCCESSFUL",
+        "durationSeconds": 11
+      },
+      {
+        "sequence": 8,
+        "kind": "COMPILE",
+        "runs": [
+          {
+            "command": "./gradlew :dwp-people-server:compileJava --no-daemon",
+            "build": "SUCCESSFUL",
+            "durationSeconds": 4
+          },
+          {
+            "command": "./gradlew :dwp-people-server:compileTestJava --no-daemon",
+            "build": "SUCCESSFUL",
+            "durationSeconds": 9
+          }
+        ],
+        "alsoConfirmedByLaterAffectedRuns": true
+      },
+      {
+        "sequence": 9,
+        "kind": "FINAL_REVISION_REQUIRED_REAL_POSTGRES_GAP_CLOSURE",
+        "backendHead": "b5e71940ba96d6d6daec2eaacc4ac00954089efa",
+        "backendOriginExact": true,
+        "backendCleanBeforeAndAfter": true,
+        "command": "./gradlew :dwp-people-server:test --no-daemon --tests 'com.dwp.services.people.integration.Hrm012V60MigrationPostgresTest.upgradeFromV59PreservesRowsAndEveryHistoricalChecksum' --tests 'com.dwp.services.people.integration.Hrm012V60MigrationPostgresTest.forceRlsHidesAndRejectsBothTablesWithoutMatchingTenantContext' --tests 'com.dwp.services.people.integration.Hrm012V60MigrationPostgresTest.failedTerminalizationRollsBackCursorOutboxAndRunThenExactRetryWins' --tests 'com.dwp.services.people.integration.Hrm012V60MigrationPostgresTest.lifecycleVersionAndLeaseNegativeTransitionsFailInPostgres' --tests 'com.dwp.services.people.integration.Hrm012V60MigrationPostgresTest.linkedReplayRequiresTerminalSameTenantExactImmutableLineage'",
+        "tests": 5,
+        "passed": 5,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "build": "SUCCESSFUL",
+        "durationSeconds": 28,
+        "suiteSeconds": 10.822,
+        "caseSeconds": {
+          "upgradeFromV59PreservesRowsAndEveryHistoricalChecksum": 2.523,
+          "forceRlsHidesAndRejectsBothTablesWithoutMatchingTenantContext": 1.820,
+          "failedTerminalizationRollsBackCursorOutboxAndRunThenExactRetryWins": 1.852,
+          "lifecycleVersionAndLeaseNegativeTransitionsFailInPostgres": 2.689,
+          "linkedReplayRequiresTerminalSameTenantExactImmutableLineage": 1.936
+        },
+        "sourceChanges": 0,
+        "broadSuiteRun": false,
+        "result": "FINAL_COMMIT_EXACT_REQUIRED_DATABASE_TARGETS_PASS"
+      }
+    ],
+    "accountingConclusion": {
+      "initialBroadBundleWasGreen": false,
+      "postReviewBundleWasGreen": false,
+      "failedBundlesRepeated": false,
+      "unaffectedPassingTargetsRetained": true,
+      "failedAndChangedTargetsClosedByAffectedOnlyRuns": true,
+      "finalRevisionRequiredDatabaseCasesClosed": true,
+      "finalRevisionExactNamedPostgresTests": 5,
+      "allAuthorizedTargetAreasAccounted": true,
+      "repositoryWideSuiteRun": false,
+      "testsRerunByIndependentReviewer": false,
+      "finalResult": "PASS_BY_NON_REDUNDANT_CORRECTION_CHAIN_AND_LATEST_SOURCE_REVIEW"
+    },
+    "independentReviews": [
+      {
+        "scope": "latest HRM-012 Java, IAQ, receipt lifecycle, sensitive-data and writable-boundary review",
+        "method": "READ_ONLY_STATIC_REVIEW_WITH_EXISTING_TARGET_EVIDENCE",
+        "p0": 0,
+        "p1": 0,
+        "p2": 0,
+        "decision": "GO"
+      },
+      {
+        "scope": "People V60 lifecycle, atomicity, RLS, cursor isolation, terminal insert and expired-RUNNING recovery review",
+        "method": "INDEPENDENT_MIGRATION_REVIEW_WITH_REAL_POSTGRES_EVIDENCE",
+        "p0": 0,
+        "p1": 0,
+        "p2": 0,
+        "decision": "GO"
+      }
+    ]
+  },
+  "acceptanceMapping": [
+    {
+      "id": "HRM012-AC-01",
+      "result": "PASS_COMBINED",
+      "evidence": "Backend IAQ exact schema, accepted filters/sorts, stable grain, page limit, deep link and state invariants; existing frontend result seals request/projection parsing and empty actions."
+    },
+    {
+      "id": "HRM012-AC-02",
+      "result": "PASS_COMBINED",
+      "evidence": "Backend seven-layer fail-closed PEP, trusted legal-entity population closure, VIEW/MASK/OMIT before serialization and tenant/scope/revision fixed-digest cursor; frontend proves OMIT absence and scope reset."
+    },
+    {
+      "id": "HRM012-AC-03",
+      "result": "PASS",
+      "evidence": "Exact PEP-HRM-015 six-field command, closed modes and headers, receipt-first capability/duty/purpose/population/HIGH-step-up ordering are covered by contract and authorization targets."
+    },
+    {
+      "id": "HRM012-AC-04",
+      "result": "PASS",
+      "evidence": "Trusted four-part idempotency tuple, frozen complete authority snapshot, same-hash safe retry, different-hash conflict, terminal race short-circuit and post-receipt exact equality precede metadata/object access."
+    },
+    {
+      "id": "HRM012-AC-05",
+      "result": "PASS",
+      "evidence": "Digest and closed envelope validation precede restricted mapping; pre-acceptance invalid input remains rejected and only protectable post-acceptance failure becomes encrypted quarantine."
+    },
+    {
+      "id": "HRM012-AC-06",
+      "result": "PASS",
+      "evidence": "Deterministic duplicate and crash-recovery behavior, idempotent effects, 255-character opaque key-reference limit and correction-authorized encrypted quarantine persistence are covered without forbidden output leakage."
+    },
+    {
+      "id": "HRM012-AC-07",
+      "result": "PASS",
+      "evidence": "V60 creates exactly the two sealed tables, reuses the six named owner stores, preserves V1-V59, applies FORCE RLS and performs no seed or backfill."
+    },
+    {
+      "id": "HRM012-AC-08",
+      "result": "PASS",
+      "evidence": "Mode-specific closed item states and immutable evidence enforce APPLY conservation before accepting resultDigest."
+    },
+    {
+      "id": "HRM012-AC-09",
+      "result": "PASS",
+      "evidence": "Transactional reconciliation binds cursor CAS, run terminalization, applied effects, receipt, audit and one outbox row; V60 guards terminal direct insert and shared-cursor cross-run mutation."
+    },
+    {
+      "id": "HRM012-AC-10",
+      "result": "PASS",
+      "evidence": "The exact ten-field WorkforceIngestionReconciled.v1 payload uses deterministic identity and the sealed JCS result digest while excluding forbidden fields."
+    },
+    {
+      "id": "HRM012-AC-11",
+      "result": "PASS",
+      "evidence": "Atomic claim permits one winner, rejects unexpired RUNNING takeover, recovers only expired leases with a new owner/future lease/version and attempt increments, and creates immutable linked replay evidence."
+    },
+    {
+      "id": "HRM012-AC-12",
+      "result": "PASS_COMBINED_WITH_EXISTING_FRONTEND_RESULT",
+      "evidence": "Existing frontend result proves seven UI states, responsive/accessibility and zero calls while this backend remains conditional default OFF, zero-enrollment, unmounted and without production provider/scheduler/broker bindings."
+    },
+    {
+      "id": "HRM012-AC-13",
+      "result": "PASS",
+      "evidence": "Only the stale HRM-008 EVENT_DETAIL_BINDING_ID and its two assertions changed; focused EmploymentEventAuthority and HrmG3Slice regressions were retained from the passing initial bounded run."
+    }
+  ],
+  "changedPathBoundary": {
+    "authorizedBackendRoots": [
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/workbench/hrm012/**",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/contracts/hrm012/**",
+      "dwp-people-server/src/main/java/com/dwp/services/people/integration/Hrm012*.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/workbench/hrm012/**",
+      "dwp-people-server/src/test/java/com/dwp/services/people/integration/Hrm012*.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/integration/WorkforceIngestion*.java",
+      "dwp-people-server/src/main/resources/db/migration/V60__hrm_base_tfr_hrm_012.sql"
+    ],
+    "authorizedBoundedHrm008Correction": [
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/employment/EmploymentEventAuthority.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/employment/EmploymentEventAuthorityTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/employment/HrmG3SliceContractTest.java"
+    ],
+    "evidenceCreateOnly": [
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-05-results/hrm-012/backend-module-result.v1.json",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-05-results/hrm-012/backend-module-result.md"
+    ],
+    "outsideBoundaryChanges": 0
+  },
+  "nonClaims": [
+    "No feature enablement or tenant enrollment is performed.",
+    "No frontend route, shell node, menu, global i18n entry or tenant-visible page is mounted.",
+    "No production object, mapping, effect, quarantine, credential or key provider is bound; fallback adapters fail closed.",
+    "No scheduler or broker is activated.",
+    "No central marker/Auth/product-authorization protocol is edited by the backend module.",
+    "No direct dwp-dev merge, central admission, full-slice completion, customer-data use or production release is claimed.",
+    "No repository-wide suite or single all-green repetition of the initial 49-test diagnostic bundle is claimed."
+  ],
+  "decision": "BACKEND_MODULE_SOURCE_COMMITTED_PUSHED_AND_READY_FOR_SEPARATE_CENTRAL_ADMISSION"
+}
