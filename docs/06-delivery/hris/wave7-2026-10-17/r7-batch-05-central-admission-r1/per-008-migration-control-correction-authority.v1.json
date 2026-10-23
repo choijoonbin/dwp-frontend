@@ -1,0 +1,136 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-05-per008-migration-control-correction-authority.v1",
+  "decisionId": "HRIS-WAVE7-R7-BATCH-05-PER008-MIGRATION-CONTROL-CORRECTION-AUTHORITY-20261023-R1",
+  "issuedAt": "2026-10-23T15:14:36+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "AUTHORIZED_EXACT_DESCENDANT_CENTRAL_MIGRATION_CONTROL_CORRECTION_SOURCE_AND_ADMISSION_WITHHELD",
+  "purpose": "Authorize one bounded central correction descendant of the rejected PER-008 backend candidate so the official People fresh and adoption-or-upgrade paths stage Performance V20 only after an explicitly attested runtime grant and preserve the V20 least-privilege ACL after generic domain normalization. This authority does not approve module admission, route or menu mounting, feature activation, tenant enrollment, production release, or edits to V1 through V20 migration sources.",
+  "immutability": {
+    "sealed": true,
+    "appendOnly": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_DECISION_ID_AND_SHA256",
+    "predecessorMutation": "FORBIDDEN"
+  },
+  "pinnedAuthorityCarrier": {
+    "repository": "dwp-frontend",
+    "branch": "dwp-dev",
+    "commitBeforeDecision": "c18b60bf4f12f9f6e82894c32e6062fd2d6629ad",
+    "treeBeforeDecision": "91dd3eaffb498bbd11187fd994905a6f7b2ac151",
+    "originExact": true,
+    "cleanBeforeDecision": true
+  },
+  "rejectedCandidate": {
+    "repository": "dwp-backend",
+    "branch": "codex/hris-wave7-r7-batch05-per-008-backend-20261023-r1",
+    "baseCommit": "01468a404033c2a7247475f481f37c2ac40b3e3e",
+    "baseTree": "d06ffe06eb7e6a1fbb18ef4ed93b3ffce3401f67",
+    "exactHead": "4f051e00e63525cb688fc69159a5197939e73696",
+    "exactTree": "a091c6a2a2dc687a60704feec60a4d44975c0247",
+    "decision": "NO_GO_PENDING_EXACT_DESCENDANT_CORRECTION",
+    "preservation": "ORIGINAL_BRANCH_AND_COMMITS_REMAIN_IMMUTABLE_AND_MUST_NOT_BE_MERGED_SEPARATELY"
+  },
+  "independentReview": {
+    "p0": 0,
+    "p1": 2,
+    "p2": 0,
+    "decision": "NO_GO",
+    "findings": [
+      {
+        "id": "PER008-MC-P1-01",
+        "severity": "P1",
+        "summary": "The official People fresh flow migrates Performance V20 before DomainPrivilegeControl.normalize establishes the runtime role's direct DML grants, so V20 fails closed with zero safe common V1 DML grantees.",
+        "reproduction": {
+          "selector": "com.dwp.migration.control.PeopleMigrationControlPostgresTest.peopleFreshRunSealsBothStreamsAndMetadataReader",
+          "result": "FAIL",
+          "sqlState": "42501",
+          "message": "PER008_RUNTIME_ROLE_RESOLUTION_FAILED: expected one safe common V1 DML grantee, found 0",
+          "artifactPath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261023/r7-batch05/per-008/backend/dwp-migration-control/build/test-results/test/TEST-com.dwp.migration.control.PeopleMigrationControlPostgresTest.xml",
+          "artifactSha256": "95a21c1586d406ee44e1f25f64efbe16ecc237a9804d6f6fe961b44ee377ee1f",
+          "artifactBytes": 33027
+        }
+      },
+      {
+        "id": "PER008-MC-P1-02",
+        "severity": "P1",
+        "summary": "DomainPrivilegeControl.normalize broadens the runtime role back to CRUD on all People tables and UPDATE on all sequences, overriding the exact V20 request, assignment, response, snapshot, and identity-sequence least-privilege ACL."
+      }
+    ]
+  },
+  "correctionWorktree": {
+    "repository": "dwp-backend",
+    "baseCommit": "4f051e00e63525cb688fc69159a5197939e73696",
+    "branch": "codex/hris-wave7-r7-batch05-per-008-migration-control-correction-backend-20261023-r1",
+    "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261023/r7-batch05/per-008-migration-control-correction/backend",
+    "relationship": "EXACT_DESCENDANT_OF_REJECTED_CANDIDATE",
+    "finalMergeRule": "MERGE_ONLY_THE_CORRECTED_DESCENDANT_HEAD_WITH_NO_FF_AFTER_SEPARATE_ADMISSION;_DO_NOT_MERGE_4F051E00_SEPARATELY"
+  },
+  "exactWritableBoundary": {
+    "production": [
+      "dwp-migration-control/src/main/java/com/dwp/migration/control/MigrationControlMain.java",
+      "dwp-migration-control/src/main/java/com/dwp/migration/control/PeoplePerformanceV20BoundaryControl.java"
+    ],
+    "tests": [
+      "dwp-migration-control/src/test/java/com/dwp/migration/control/PeopleMigrationControlPostgresTest.java",
+      "dwp-migration-control/src/test/java/com/dwp/migration/control/MigrationControlMainTest.java"
+    ],
+    "evidenceCreateOnly": [
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-05-results/per-008/per-008-migration-control-correction-result.v1.json"
+    ],
+    "migrationSourceEditsAuthorized": false,
+    "otherBackendFilesAuthorized": false,
+    "frontendSourceEditsAuthorizedByThisDecision": false,
+    "agentFilesAuthorized": false,
+    "packageOrLockfileEditsAuthorized": false
+  },
+  "requiredBehavior": {
+    "staging": [
+      "For People only, migrate the Performance stream through the predecessor of exact V20 before V20 is applied.",
+      "Under the bootstrap authority, verify that the configured runtime principal exists, is LOGIN, and is not SUPERUSER, CREATEDB, CREATEROLE, REPLICATION, BYPASSRLS, or a member of another role.",
+      "Grant the configured runtime principal direct SELECT, INSERT, UPDATE, DELETE on exactly prf_cycles, prf_cycle_versions, prf_command_receipts, and prf_outbox_events.",
+      "Attest that the V20 common-DML candidate query resolves exactly one safe candidate and that it equals environment.runtimePrincipal(), then run V20 and any future pending Performance migrations. Runtime role-name guessing is forbidden."
+    ],
+    "finalization": [
+      "Run the existing DomainPrivilegeControl.normalize first.",
+      "If Performance V20 is applied, overlay the exact PER-008 runtime table and identity-sequence ACL after generic normalization.",
+      "Requests and assignments retain SELECT, INSERT, UPDATE and no DELETE, TRUNCATE, REFERENCES, or TRIGGER.",
+      "Responses and release snapshots retain SELECT, INSERT and no UPDATE, DELETE, TRUNCATE, REFERENCES, or TRIGGER.",
+      "The four PER-008 identity sequences retain USAGE, SELECT and no UPDATE.",
+      "PUBLIC has zero privilege on those objects; all eight tables retain ENABLE and FORCE RLS; verification fails closed before receipt creation."
+    ],
+    "flows": [
+      "PEOPLE_FRESH",
+      "PEOPLE_ADOPT_OR_UPGRADE_WHEN_V20_IS_PENDING",
+      "PEOPLE_ALREADY_AT_OR_AFTER_V20_FINAL_ACL_RECONCILIATION"
+    ],
+    "historicalMigrationMutation": "FORBIDDEN",
+    "v20Weakening": "FORBIDDEN"
+  },
+  "targetedVerification": {
+    "policy": "RUN_EACH_AFFECTED_TARGET_ONCE;AFTER_FAILURE_RERUN_ONLY_THE_SMALLEST_AFFECTED_SELECTOR;DO_NOT_RUN_REPOSITORY_WIDE_SUITES",
+    "required": [
+      "com.dwp.migration.control.PeopleMigrationControlPostgresTest.peopleFreshRunSealsBothStreamsAndMetadataReader",
+      "new People fresh final PER-008 exact ACL assertion in PeopleMigrationControlPostgresTest",
+      "new People adoption-or-upgrade pending-V20 staging assertion if supported by the bounded fixture",
+      "com.dwp.services.people.hris.performance.per008.Per008V20MigrationPostgresTest",
+      "com.dwp.services.people.hr.performance.compensationplanning.PerformanceSharedRlsReadinessPostgresTest.forceRlsReadinessCoversCatalogRefetchDispatcherLifecycleAndToctou",
+      "bounded migration-control unit/contract selectors covering explicit runtime role use and no-op behavior when V20 is absent"
+    ]
+  },
+  "admissionGates": {
+    "correctionSourceCommitAndPushRequired": true,
+    "appendOnlyCorrectionResultRequired": true,
+    "independentReviewRequired": true,
+    "requiredIndependentFindingCounts": {
+      "p0": 0,
+      "p1": 0,
+      "p2": 0
+    },
+    "moduleSourceAdmissionDecisionRequired": true,
+    "directDwpDevMergeAuthorized": false,
+    "routeMountAuthorized": false,
+    "menuMountAuthorized": false,
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionReleaseAuthorized": false
+  }
+}
