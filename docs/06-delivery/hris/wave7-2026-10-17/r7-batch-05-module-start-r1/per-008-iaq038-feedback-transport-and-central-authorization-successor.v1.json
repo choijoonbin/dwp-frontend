@@ -1,0 +1,1622 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-05-per008-iaq038-feedback-and-central-authorization-successor.v1",
+  "successorId": "HRIS-WAVE7-R7-BATCH-05-PER008-IAQ038-FEEDBACK-CENTRAL-AUTHORIZATION-20261023-R1",
+  "sliceId": "BASE-TFR-PER-008",
+  "module": "HRIS-PER",
+  "moduleSession": "HRIS-PER",
+  "recordedAt": "2026-10-23T09:40:48+09:00",
+  "recordedBy": "central-control",
+  "state": "SEALED_EXACT_IAQ038_FEEDBACK_TRANSPORT_V59_AUTH_V268_AND_PEP_PER_022_RESERVATION_INDEPENDENTLY_REVIEWED_PASS_ZERO_P0_P1_P2_RLS_READINESS_PACKET_ELIGIBLE_AFTER_CARRIER_COMMIT_SOURCE_WITHHELD",
+  "decision": "RESERVE_ONE_APPEND_ONLY_PRODUCT_AUTHORIZATION_V59_AND_AUTH_V268_DECLARATION_FOR_EXACTLY_NINE_PER008_ROUTE_CONTRACTS; ALLOCATE_PEP_PER_022_ONLY_TO_ASSIGNED_RESPONSE_SUBMISSION; CORRECT_IAQ038_ACTION_TARGET_AND_FEEDBACK_TRANSPORT_WITHOUT_MUTATING_RECOVERY_EVIDENCE; WITHHOLD_RLS_PACKET_SOURCE_V20_WORKTREES_TOKENS_ROUTES_MENUS_AND_ENROLLMENT_UNTIL_THEIR_SEPARATE_GATES",
+  "boundedContext": "PERFORMANCE_FEEDBACK",
+  "basePins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "8bec85dab5ee816b12a922c51e369046714c007f",
+      "tree": "3f83136fabb7b3dc09b179109fb81a98d3b7bfe0",
+      "originExact": true,
+      "clean": true,
+      "readOnlyForThisSuccessor": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "6697466e14205ca4f4d520fc4bfe2407a5829451",
+      "tree": "aa555a5eacd73115bdea7d9da891648d504b939c",
+      "originExact": true,
+      "cleanBeforeThisDraft": true
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "originExact": true,
+      "clean": true,
+      "readOnly": true
+    }
+  },
+  "authorityBasis": {
+    "per008SemanticDisposition": {
+      "path": "semantic-dispositions/base-tfr-per-008.semantic-disposition.v1.json",
+      "sha256": "b97eba63703d040e6526ec9280d13ca18b7a74d875da3508d25331c444d6f016",
+      "bytes": 60642,
+      "carrierCommit": "6697466e14205ca4f4d520fc4bfe2407a5829451",
+      "carrierTree": "aa555a5eacd73115bdea7d9da891648d504b939c",
+      "requiredReviewState": "PER008_SEMANTIC_DISPOSITION_INDEPENDENTLY_REVIEWED_PASS_ZERO_P0_ZERO_P1_ZERO_P2_CENTRAL_SUCCESSOR_MAY_PROCEED"
+    },
+    "currentCanonicalBundle": {
+      "path": "dwp-backend/contracts/product-authorization/product-surfaces-v1.bundle-v58.json",
+      "sha256": "994d47f164e015cbc737da4620addd27ccbd78630790f547e6f8e004912f1589",
+      "bytes": 2682541,
+      "version": 58,
+      "bundleStatus": "DRAFT",
+      "checksum": "556f2cc1554f0aaab6f88e50c34d64ca5cdd95af9b2d55072f6e6745f4652cc2"
+    },
+    "currentCanonicalSource": {
+      "path": "dwp-backend/contracts/product-authorization/product-surfaces-v1.yaml",
+      "sha256": "700a3793fec95b71c686d947dbc50180cc570cfc1f04caeb44f6a37fa2e13f8c",
+      "bytes": 2538689
+    },
+    "currentBundleIndex": {
+      "path": "dwp-backend/contracts/product-authorization/product-surfaces-v1.index.json",
+      "sha256": "6256eae6df89e4061e851349810aca93e5948407351fc6d2cde56bf506f63856",
+      "bytes": 27171
+    },
+    "currentGenerator": {
+      "path": "dwp-backend/scripts/generate-product-authorization-contracts.py",
+      "sha256": "b9902f04e6efb57967d71295ecfe485b2e7c6b88a88eb5fe3d345ee75da1aa94",
+      "bytes": 266219
+    },
+    "currentVersionTest": {
+      "path": "dwp-backend/scripts/tests/test_product_authorization_v58.py",
+      "sha256": "31428032810efcf28e2b0b0e8a2e66529a36747a0b6eb55ba1f3376e2afa27b9",
+      "bytes": 9651
+    },
+    "currentPeopleProjection": {
+      "path": "dwp-backend/dwp-people-server/src/main/resources/product-authorization/hcm-people-pep-v58.generated.json",
+      "sha256": "f48d9f6834f3ce9b89323d9c537ab36d56c03ed5b1b168aa20006dc049309ec8",
+      "bytes": 359813,
+      "projectionChecksum": "008d27991394e440437742833331678f4d47806b84169cc3348945a5125eff89",
+      "projectedRouteContractCount": 124,
+      "routeKindCounts": {
+        "PAGE": 44,
+        "DATA": 29,
+        "ACTION": 51
+      }
+    },
+    "currentAuthDeclaration": {
+      "path": "dwp-backend/dwp-auth-server/src/main/resources/db/migration/V267__declare_hris_pay004_v58_authorization_seed.sql",
+      "sha256": "a4ad2c169e98676c04b8b9daebd2931d5cd5040f3e1e5a00c7a5cfe05133cf61",
+      "bytes": 5812,
+      "authStreamHighWater": "V267",
+      "automaticImportEnabled": false
+    },
+    "currentGatewayDecisionContext": {
+      "path": "dwp-backend/dwp-gateway/src/main/java/com/dwp/gateway/filter/ProductSurfaceDecisionContextFilter.java",
+      "sha256": "cd1fbf5354a01998cc269839063af87f1edd951d1ad80b17d8cfb1c51f9a3fb1",
+      "bytes": 76600
+    },
+    "currentGatewayRouteCatalog": {
+      "path": "dwp-backend/dwp-gateway/src/main/java/com/dwp/gateway/productsurface/GeneratedProductRouteCatalog.java",
+      "sha256": "d8c2123d8eb11f4c40b031411d8421e822224e4adfa8b0a6483d958a283d5a36",
+      "bytes": 45425
+    },
+    "currentFrontendAuthorizationSnapshot": {
+      "path": "dwp-frontend/architecture/product-surface-authorization.v1.json",
+      "sha256": "8d24cfc9c4fb20aee36069b31966bf62514f81c039f1e24462c702c8b9502444",
+      "bytes": 98719140,
+      "maximumAllowedBytes": 104857600
+    },
+    "currentFrontendPageRouteSnapshot": {
+      "path": "dwp-frontend/architecture/product-page-routes.v1.json",
+      "sha256": "8c5d8af58a3daf2fd5cc09275ccc5730d7698477bd0907e46b680a88237fe05b",
+      "bytes": 42674
+    },
+    "currentFrontendVersionPins": {
+      "path": "dwp-frontend/scripts/product-authorization-fixture-versions.mjs",
+      "sha256": "945c4f1de6629dad391e0208f4ef26566025679c6034e4ba0a56bb83172b298e",
+      "bytes": 7762
+    },
+    "acceptedIaqAndPepEvidence": {
+      "inheritedThrough": "authorityBasis.per008SemanticDisposition",
+      "acceptedEntryQueryRegister": {
+        "path": "../../recovery/exact-supplements/2026-10-06/hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-api-contract-register.csv",
+        "sha256": "cb8d5b5ff815ab5de960025c491d8ac0b565cfda644898dee019967a0fd85bbe",
+        "bytes": 99982,
+        "selector": "IAQ-038"
+      },
+      "acceptedProjectionSchema": {
+        "path": "../../recovery/exact-supplements/2026-10-06/hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-projection-schemas.v1.json",
+        "sha256": "b185accd712216c39bf8a66f70cbbf0092a27a8c2c5e3d7457ecd4d511afa048",
+        "bytes": 1523618,
+        "jsonPointer": "/projections/IAQ-038"
+      },
+      "acceptedProjectionRegister": {
+        "path": "../../recovery/hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-projection-register.csv",
+        "sha256": "86c55b9d4be19056fcb550b8ea05ff662c88684a8da85c7a2d2b17423329fb6f",
+        "bytes": 28935,
+        "selector": "IAQ-038",
+        "expectedPurposeCode": "TEAM_MANAGEMENT"
+      },
+      "actionKeyRegister": {
+        "path": "../../recovery/exact-supplements/2026-10-06/hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-action-key-register.csv",
+        "sha256": "19a12600eb11e4d6c7c6098ad7f44f8afb544a1d9c698c3d2305e9e8150b5b7e",
+        "bytes": 78170,
+        "selector": "hris.action.per.create-feedback-request"
+      },
+      "iaNodeAccessRegister": {
+        "path": "../../recovery/hris-porting-blueprint-2026-09-09/coding-readiness/ia-node-access-contract-register.csv",
+        "sha256": "3fc33ce63642c337c9cf8dc6cfbd3b9287d9b1202c5b709e137744c7b28494bf",
+        "bytes": 46496,
+        "selector": "BASE:team-performance"
+      },
+      "apiPepBindingRegister": {
+        "path": "../../recovery/hris-porting-blueprint-2026-09-09/coding-readiness/api-pep-binding-register.csv",
+        "sha256": "0e38d724516a8b271069241ffa0fb6400984dc703758767de53cbaffb4f93da3",
+        "bytes": 126576,
+        "selector": "PEP-PER-015"
+      },
+      "primaryOwnershipRegister": {
+        "path": "../../g3-successors/2026-10-07/g3-contract-primary-ownership-register.csv",
+        "sha256": "2ef33aaf3534859b92a5d68267ddadf3aab1fe94c8dab4fe321992740b3c3629",
+        "bytes": 180380,
+        "selectors": [
+          "PEP-PER-015",
+          "EVT-PER:PerformanceFeedbackSubmitted.v1"
+        ]
+      }
+    }
+  },
+  "collisionAndAllocation": {
+    "observedCurrentHighWater": {
+      "productAuthorizationVersion": 58,
+      "authMigration": "V267",
+      "performanceMigration": "V19",
+      "publicPerformancePepIds": "PEP-PER-001_THROUGH_PEP-PER-021"
+    },
+    "absenceProof": {
+      "requiredApiPathMatchesInPeopleV58": 0,
+      "newCapabilityMatchesInPeopleV58": {
+        "capabilityContractKeys": [
+          "hcm.team.workbench.view",
+          "hcm.personal.performance.view",
+          "per.feedback.request.create",
+          "per.feedback.assigned.submit",
+          "per.feedback.aggregate.view"
+        ],
+        "matchCount": 0
+      },
+      "reusedManagerCapabilityMatchesInPeopleV58": {
+        "capabilityContractKey": "hcm.team.performance.review",
+        "matchCount": 1
+      },
+      "productAuthorizationV59Exists": false,
+      "authV268Exists": false,
+      "pepPer022Exists": false
+    },
+    "reservedProductAuthorizationVersion": 59,
+    "reservedAuthMigration": "V268",
+    "allocatedSubmissionPep": {
+      "pepId": "PEP-PER-022",
+      "operationId": "submitFeedbackResponse",
+      "actionKey": "hris.action.per.submit-feedback-response",
+      "method": "POST",
+      "browserPath": "/api/people/v1/hris/performance/feedback-assignments/{feedbackAssignmentId}/responses",
+      "ownerPath": "/v1/hris/performance/feedback-assignments/{feedbackAssignmentId}/responses",
+      "capability": "per.feedback.assigned.submit",
+      "purposeCode": "PERFORMANCE_FEEDBACK",
+      "rule": "PEP-PER-022 owns only immutable assigned-response submission and PerformanceFeedbackSubmitted.v1. PEP-PER-015 remains create-request-only and cannot be reused, aliased or treated as event authority."
+    }
+  },
+  "iaq038ContractOverlay": {
+    "id": "IAQ-038",
+    "operationId": "IAQ.OP.038",
+    "variantKey": "PERFORMANCE",
+    "iaNodeId": "BASE:team-performance",
+    "method": "GET",
+    "browserPath": "/api/people/v1/hris/performance/workbench/team-performance",
+    "ownerPath": "/v1/hris/performance/workbench/team-performance",
+    "canonicalUiRoute": "/hr/team/performance",
+    "capability": "hcm.team.workbench.view",
+    "canonicalProfileAndDuty": "HRIS_LINE_MANAGER>HRIS_DUTY_TEAM_WORKBENCH_READER",
+    "purposeCode": "TEAM_MANAGEMENT",
+    "scopeResolver": "TEAM_TARGET_POPULATION",
+    "fieldGroups": [
+      "PERFORMANCE_ASSIGNMENT",
+      "DUE_STATUS",
+      "LIMITED_PROFILE",
+      "PERFORMANCE_FEEDBACK_ACTION_TARGET"
+    ],
+    "projectionPolicyKey": "per008.iaq-038.fields.v2",
+    "responseSchemaKey": "Per008TeamPerformanceProjectionV2",
+    "queryStates": [
+      "COMPLETE",
+      "EMPTY",
+      "PARTIAL",
+      "UNAVAILABLE"
+    ],
+    "filters": [
+      "performanceAssignment",
+      "dueStatus",
+      "limitedProfile",
+      "effectiveOn"
+    ],
+    "sorts": [
+      "performanceAssignment:ASC",
+      "dueStatus:ASC",
+      "limitedProfile:ASC",
+      "performanceAssignment:DESC",
+      "dueStatus:DESC",
+      "limitedProfile:DESC",
+      "itemPublicId:ASC",
+      "itemPublicId:DESC"
+    ],
+    "defaultSort": "itemPublicId:ASC",
+    "pageLimit": 100,
+    "typedActionTarget": {
+      "targetResourceType": "PERFORMANCE_FEEDBACK_SUBJECT_ASSIGNMENT",
+      "requiredFields": [
+        "cycleVersionId",
+        "subjectWorkerPublicId",
+        "subjectAssignmentPublicId",
+        "scopeDecisionRevision",
+        "authorizationDecisionRevision"
+      ],
+      "serializationRule": "Serialize hris.action.per.create-feedback-request only when every required target field is owner-resolved, VIEW-authorized and bound to the same IAQ-038 item and current authorization decision. If any target field is masked, omitted, stale, ambiguous or unauthorized, omit the action descriptor as a whole.",
+      "forbiddenSources": [
+        "itemPublicId",
+        "title",
+        "statusCode",
+        "display text",
+        "limitedProfile",
+        "filter",
+        "cursor",
+        "deep link",
+        "browser state"
+      ]
+    },
+    "noRecountRule": "Existing goal and review action keys remain owned by their prior slices. This overlay changes only the create-feedback target contract and grants no PEP-PER-010, PEP-PER-011, PEP-PER-013 or PEP-PER-014 authority."
+  },
+  "feedbackTransportCorrection": {
+    "requestStateClosedSet": [
+      "DRAFT",
+      "OPEN",
+      "CLOSED",
+      "AGGREGATED",
+      "RELEASED",
+      "CANCELLED"
+    ],
+    "requestTransitions": [
+      "create:->DRAFT",
+      "open:DRAFT->OPEN",
+      "close:OPEN->CLOSED",
+      "aggregate:CLOSED->AGGREGATED",
+      "release:AGGREGATED->RELEASED",
+      "cancel:DRAFT|OPEN|CLOSED|AGGREGATED->CANCELLED"
+    ],
+    "assignmentStateClosedSet": [
+      "ASSIGNED",
+      "SUBMITTED",
+      "DECLINED",
+      "CANCELLED"
+    ],
+    "losslessStateRule": "AGGREGATED is a first-class public FeedbackRequest state. Mapping it to CLOSED, RELEASED or an unknown value is forbidden.",
+    "clockRule": "opensAt and closesAt are guards only. They never perform an autonomous transition; every open, close, aggregate, release or cancel operation requires the sealed owner lifecycle authority, expected version and deterministic receipt.",
+    "createCommand": {
+      "schemaKey": "Per008CreateFeedbackRequestCommandV1",
+      "closedSet": [
+        "cycleVersionId",
+        "subjectWorkerPublicId",
+        "subjectAssignmentPublicId",
+        "templateVersionId",
+        "anonymityMode",
+        "minimumReleaseCount",
+        "opensAt",
+        "closesAt"
+      ],
+      "correction": "The semantic predecessor listed seven client fields but also required exact worker-plus-assignment action binding. This successor resolves that internal conflict by adding subjectAssignmentPublicId as the eighth required command field. Selecting an assignment implicitly from worker identity is forbidden.",
+      "selfRule": "subjectWorkerPublicId equals the authenticated worker and subjectAssignmentPublicId equals one exact V16 assignment owned by that worker at the bound projection revision.",
+      "managerRule": "cycleVersionId, subjectWorkerPublicId and subjectAssignmentPublicId equal the VIEW-authorized typed IAQ-038 action target and still pass an independent PEP-PER-015 manager population decision at command time."
+    },
+    "requestOptionsQuery": {
+      "schemaKey": "Per008FeedbackRequestOptionsQueryV1",
+      "requiredFields": [
+        "cycleVersionId",
+        "subjectWorkerPublicId",
+        "subjectAssignmentPublicId"
+      ],
+      "selfRule": "The worker and assignment tuple must equal authenticated SELF at the exact V16 revision resolved for the cycle.",
+      "managerRule": "The tuple must equal one exact currently authorized IAQ-038 typed target; target-free, worker-only, ambiguous-assignment and cross-cycle option lookup deny.",
+      "responseRule": "Return only eligible FINALIZED V19 PERFORMANCE_REVIEW_FORM public identities, localized labels, schema version, template content hash, frozen anonymity choices, threshold limits and date-window limits. Protected template payload, audience, provider identity and narrative are absent."
+    },
+    "audienceAndTemplateRule": "At first create acceptance the People owner binds the exact V16 projection head, local revision, subject tuple and server-derived provider tuples, derives the closed relationship type, freezes audienceScopeDigest, and validates the exact FINALIZED V19 PERFORMANCE_REVIEW_FORM plus configuration-version binding. The caller never supplies provider identities, relationship types, projection revision or template payload.",
+    "thresholdRule": "An empty audience or one below the effective release threshold fails with 422 FEEDBACK_AUDIENCE_BELOW_RELEASE_THRESHOLD and exposes no audience size or deficit. Only distinct immutable valid SUBMITTED assignments count; duplicate, declined, cancelled and unsubmitted assignments count zero.",
+    "releaseRule": "CLOSED to AGGREGATED creates one immutable always-encrypted threshold-passed snapshot. AGGREGATED to RELEASED changes visibility of that exact snapshot without mutation. Every v1 release projection is contributor-identity-free in IDENTIFIED, MASKED and ANONYMOUS_AGGREGATE modes and exposes no response-level item, provider identity, count, near-threshold signal or digest.",
+    "submissionCommand": {
+      "schemaKey": "Per008FeedbackResponseCommandV1",
+      "closedSet": [
+        "expectedRequestVersion",
+        "templateContentHash",
+        "response"
+      ],
+      "response": {
+        "schemaKey": "PerformanceFeedbackResponse.v1",
+        "closedSet": [
+          "schemaKey",
+          "answers"
+        ],
+        "answerClosedSet": [
+          "questionPublicId",
+          "answerType",
+          "textValue",
+          "numberValue",
+          "choiceOptionPublicIds"
+        ],
+        "answerTypes": [
+          "TEXT",
+          "NUMBER",
+          "SINGLE_CHOICE",
+          "MULTI_CHOICE"
+        ],
+        "typedValueRule": "Each answer carries exactly one value representation allowed by answerType and by the exact frozen V19 template question. questionPublicId is unique, choice IDs are unique and sorted for canonicalization, unknown questions and additional fields deny."
+      },
+      "routeBoundFields": [
+        "feedbackAssignmentId"
+      ],
+      "ownerResolvedFields": [
+        "feedbackRequestId",
+        "providerWorkerPublicId",
+        "providerAssignmentPublicId",
+        "templateVersionId",
+        "digestKeyVersionPublicId"
+      ],
+      "forbiddenCallerFields": [
+        "tenantId",
+        "feedbackRequestId",
+        "providerWorkerPublicId",
+        "providerAssignmentPublicId",
+        "subjectWorkerPublicId",
+        "subjectAssignmentPublicId",
+        "relationshipType",
+        "audience",
+        "anonymityMode",
+        "minimumReleaseCount",
+        "contentHash",
+        "contentHmac",
+        "digestKeyVersionPublicId",
+        "encryptionKeyVersionPublicId",
+        "nonce",
+        "authenticationTag",
+        "ciphertext"
+      ],
+      "clientIntentDigestRule": "Bind the trusted tenant and actor, PEP-PER-022, feedbackAssignmentId, owner-resolved feedbackRequestId, expectedRequestVersion, templateContentHash, canonical PerformanceFeedbackResponse.v1 content HMAC and digestKeyVersionPublicId. The client supplies no raw digest or encryption metadata."
+    },
+    "encryptionRule": "Responses and release snapshots use authenticated AES-256-GCM envelope version 1, a UUID encryption-key version, 12-byte nonce, 16-byte tag, non-empty ciphertext and tenant-keyed HMAC-SHA-256 with a UUID digest-key version. Narrative, answer, score, plaintext hash and identity-bearing search data are forbidden outside the encrypted owner payload."
+  },
+  "exactRouteContracts": [
+    {
+      "routeContractKey": "route.hcm.team.performance.page",
+      "routeKind": "PAGE",
+      "navigationContextId": "hcm.team",
+      "surfaceKey": "hcm.team",
+      "uiRouteId": "hcm.team.performance",
+      "uiRoutePattern": "/hr/team/performance",
+      "gatewayBinding": "GET /api/people/v1/hris/performance/workbench/team-performance",
+      "servicePepBinding": "GET /v1/hris/performance/workbench/team-performance",
+      "serviceKey": "people",
+      "authorizationEquivalenceKey": "wire-authority.hcm.team.performance.v1",
+      "profiles": [
+        {
+          "profileKey": "team-performance-reader",
+          "canonicalProfileAndDuty": "HRIS_LINE_MANAGER>HRIS_DUTY_TEAM_WORKBENCH_READER",
+          "requiredCapability": "hcm.team.workbench.view",
+          "purposeCode": "TEAM_MANAGEMENT",
+          "scopeResolver": "TEAM_TARGET_POPULATION",
+          "targetBindingKinds": [
+            "TARGET_POPULATION"
+          ],
+          "predicatePolicyKeys": [
+            "predicate.team-target-population.v1"
+          ],
+          "projectionPolicyKey": "per008.iaq-038.fields.v2",
+          "responseSchemaKey": "Per008TeamPerformanceProjectionV2",
+          "fieldGroupKeys": [
+            "PERFORMANCE_ASSIGNMENT",
+            "DUE_STATUS",
+            "LIMITED_PROFILE",
+            "PERFORMANCE_FEEDBACK_ACTION_TARGET"
+          ]
+        }
+      ],
+      "readOnly": true,
+      "activeAccessModes": [
+        "NORMAL",
+        "ELEVATED"
+      ]
+    },
+    {
+      "routeContractKey": "route.hcm.team.performance.data",
+      "routeKind": "DATA",
+      "surfaceKey": "hcm.team",
+      "gatewayBinding": "GET /api/people/v1/hris/performance/workbench/team-performance",
+      "servicePepBinding": "GET /v1/hris/performance/workbench/team-performance",
+      "serviceKey": "people",
+      "authorizationEquivalenceKey": "wire-authority.hcm.team.performance.v1",
+      "profiles": [
+        {
+          "profileKey": "team-performance-reader",
+          "canonicalProfileAndDuty": "HRIS_LINE_MANAGER>HRIS_DUTY_TEAM_WORKBENCH_READER",
+          "requiredCapability": "hcm.team.workbench.view",
+          "purposeCode": "TEAM_MANAGEMENT",
+          "scopeResolver": "TEAM_TARGET_POPULATION",
+          "targetBindingKinds": [
+            "TARGET_POPULATION"
+          ],
+          "predicatePolicyKeys": [
+            "predicate.team-target-population.v1"
+          ],
+          "projectionPolicyKey": "per008.iaq-038.fields.v2",
+          "responseSchemaKey": "Per008TeamPerformanceProjectionV2",
+          "fieldGroupKeys": [
+            "PERFORMANCE_ASSIGNMENT",
+            "DUE_STATUS",
+            "LIMITED_PROFILE",
+            "PERFORMANCE_FEEDBACK_ACTION_TARGET"
+          ]
+        }
+      ],
+      "readOnly": true,
+      "sideEffectFree": true,
+      "activeAccessModes": [
+        "NORMAL",
+        "ELEVATED"
+      ]
+    },
+    {
+      "routeContractKey": "route.hcm.personal.performance-feedback.page",
+      "routeKind": "PAGE",
+      "navigationContextId": "hcm.personal",
+      "surfaceKey": "hcm.personal",
+      "uiRouteId": "hcm.personal.performance-feedback",
+      "uiRoutePattern": "/hr/me/performance/feedback",
+      "gatewayBinding": "GET /api/people/v1/hris/performance/feedback-assignments/mine",
+      "servicePepBinding": "GET /v1/hris/performance/feedback-assignments/mine",
+      "serviceKey": "people",
+      "authorizationEquivalenceKey": "wire-authority.hcm.personal.performance-feedback-inbox.v1",
+      "profiles": [
+        {
+          "profileKey": "self-performance-reader",
+          "canonicalProfileAndDuty": "HRIS_EMPLOYEE>HRIS_DUTY_SELF_PERFORMANCE_READER",
+          "requiredCapability": "hcm.personal.performance.view",
+          "purposeCode": "PERFORMANCE_FEEDBACK",
+          "scopeResolver": "SELF",
+          "targetBindingKinds": [
+            "SELF",
+            "TARGET_POPULATION"
+          ],
+          "predicatePolicyKeys": [
+            "predicate.self-person.v1",
+            "predicate.hcm-performance-feedback-assignment.v1"
+          ],
+          "projectionPolicyKey": "per008.feedback-assigned-list.fields.v1",
+          "responseSchemaKey": "Per008AssignedFeedbackListV1",
+          "fieldGroupKeys": [
+            "PERFORMANCE_FEEDBACK_ASSIGNED"
+          ]
+        }
+      ],
+      "readOnly": true,
+      "activeAccessModes": [
+        "NORMAL",
+        "ELEVATED"
+      ]
+    },
+    {
+      "routeContractKey": "route.hcm.performance.feedback-request-options.data",
+      "routeKind": "DATA",
+      "surfaceKey": "hcm.operations",
+      "gatewayBinding": "GET /api/people/v1/hris/performance/feedback-request-options",
+      "servicePepBinding": "GET /v1/hris/performance/feedback-request-options",
+      "serviceKey": "people",
+      "requiredQueryParameters": [
+        "cycleVersionId",
+        "subjectWorkerPublicId",
+        "subjectAssignmentPublicId"
+      ],
+      "profiles": [
+        {
+          "profileKey": "manager-feedback-requester",
+          "canonicalProfileAndDuty": "HRIS_LINE_MANAGER>HRIS_DUTY_MANAGER_PERFORMANCE_REVIEWER",
+          "requiredCapability": "hcm.team.performance.review",
+          "purposeCode": "PERFORMANCE_FEEDBACK",
+          "scopeResolver": "ASSIGNED_REVIEW_POPULATION",
+          "targetBindingKinds": [
+            "OBJECT",
+            "TARGET_POPULATION"
+          ],
+          "predicatePolicyKeys": [
+            "predicate.team-target-population.v1",
+            "predicate.hcm-performance-feedback-request.v1"
+          ],
+          "projectionPolicyKey": "per008.feedback-request-options.fields.v1",
+          "responseSchemaKey": "Per008FeedbackRequestOptionsV1",
+          "fieldGroupKeys": [
+            "PERFORMANCE_FEEDBACK_TEMPLATE_OPTION",
+            "PERFORMANCE_FEEDBACK_POLICY_LIMIT"
+          ]
+        },
+        {
+          "profileKey": "self-feedback-requester",
+          "canonicalProfileAndDuty": "HRIS_EMPLOYEE>HRIS_DUTY_FEEDBACK_REQUESTER",
+          "requiredCapability": "per.feedback.request.create",
+          "purposeCode": "PERFORMANCE_FEEDBACK",
+          "scopeResolver": "SELF",
+          "targetBindingKinds": [
+            "SELF",
+            "OBJECT"
+          ],
+          "predicatePolicyKeys": [
+            "predicate.self-person.v1",
+            "predicate.hcm-performance-feedback-request.v1"
+          ],
+          "projectionPolicyKey": "per008.feedback-request-options.fields.v1",
+          "responseSchemaKey": "Per008FeedbackRequestOptionsV1",
+          "fieldGroupKeys": [
+            "PERFORMANCE_FEEDBACK_TEMPLATE_OPTION",
+            "PERFORMANCE_FEEDBACK_POLICY_LIMIT"
+          ]
+        }
+      ],
+      "readOnly": true,
+      "sideEffectFree": true,
+      "activeAccessModes": [
+        "NORMAL",
+        "ELEVATED"
+      ]
+    },
+    {
+      "routeContractKey": "route.hcm.performance.feedback-request-create.action",
+      "routeKind": "ACTION",
+      "surfaceKey": "hcm.operations",
+      "pepId": "PEP-PER-015",
+      "actionKey": "hris.action.per.create-feedback-request",
+      "gatewayBinding": "POST /api/people/v1/hris/performance/feedback-requests",
+      "servicePepBinding": "POST /v1/hris/performance/feedback-requests",
+      "serviceKey": "people",
+      "profiles": [
+        {
+          "profileKey": "manager-feedback-requester",
+          "canonicalProfileAndDuty": "HRIS_LINE_MANAGER>HRIS_DUTY_MANAGER_PERFORMANCE_REVIEWER",
+          "requiredCapability": "hcm.team.performance.review",
+          "purposeCode": "PERFORMANCE_FEEDBACK",
+          "scopeResolver": "ASSIGNED_REVIEW_POPULATION",
+          "targetBindingKinds": [
+            "OBJECT",
+            "TARGET_POPULATION"
+          ],
+          "predicatePolicyKeys": [
+            "predicate.team-target-population.v1",
+            "predicate.hcm-performance-feedback-request.v1"
+          ],
+          "fieldGroupKeys": [
+            "LIMITED_PROFILE",
+            "PERFORMANCE_ASSIGNED",
+            "PERFORMANCE_FEEDBACK_ASSIGNED"
+          ]
+        },
+        {
+          "profileKey": "self-feedback-requester",
+          "canonicalProfileAndDuty": "HRIS_EMPLOYEE>HRIS_DUTY_FEEDBACK_REQUESTER",
+          "requiredCapability": "per.feedback.request.create",
+          "purposeCode": "PERFORMANCE_FEEDBACK",
+          "scopeResolver": "SELF",
+          "targetBindingKinds": [
+            "SELF",
+            "OBJECT"
+          ],
+          "predicatePolicyKeys": [
+            "predicate.self-person.v1",
+            "predicate.hcm-performance-feedback-request.v1"
+          ],
+          "fieldGroupKeys": [
+            "LIMITED_PROFILE",
+            "PERFORMANCE_ASSIGNED",
+            "PERFORMANCE_FEEDBACK_ASSIGNED"
+          ]
+        }
+      ],
+      "commandSchemaKey": "Per008CreateFeedbackRequestCommandV1",
+      "receiptSchemaKey": "Per008FeedbackRequestReceiptV1",
+      "idempotencyKeyRequired": true,
+      "stepUpPolicy": "OWNER_PEP_RISK_POLICY_DECISION_REQUIRED",
+      "readOnly": false,
+      "activeAccessModes": [
+        "NORMAL",
+        "ELEVATED"
+      ]
+    },
+    {
+      "routeContractKey": "route.hcm.personal.feedback-assignments-mine.data",
+      "routeKind": "DATA",
+      "surfaceKey": "hcm.personal",
+      "gatewayBinding": "GET /api/people/v1/hris/performance/feedback-assignments/mine",
+      "servicePepBinding": "GET /v1/hris/performance/feedback-assignments/mine",
+      "serviceKey": "people",
+      "authorizationEquivalenceKey": "wire-authority.hcm.personal.performance-feedback-inbox.v1",
+      "profiles": [
+        {
+          "profileKey": "self-performance-reader",
+          "canonicalProfileAndDuty": "HRIS_EMPLOYEE>HRIS_DUTY_SELF_PERFORMANCE_READER",
+          "requiredCapability": "hcm.personal.performance.view",
+          "purposeCode": "PERFORMANCE_FEEDBACK",
+          "scopeResolver": "SELF",
+          "targetBindingKinds": [
+            "SELF",
+            "TARGET_POPULATION"
+          ],
+          "predicatePolicyKeys": [
+            "predicate.self-person.v1",
+            "predicate.hcm-performance-feedback-assignment.v1"
+          ],
+          "projectionPolicyKey": "per008.feedback-assigned-list.fields.v1",
+          "responseSchemaKey": "Per008AssignedFeedbackListV1",
+          "fieldGroupKeys": [
+            "PERFORMANCE_FEEDBACK_ASSIGNED"
+          ]
+        }
+      ],
+      "readOnly": true,
+      "sideEffectFree": true,
+      "activeAccessModes": [
+        "NORMAL",
+        "ELEVATED"
+      ]
+    },
+    {
+      "routeContractKey": "route.hcm.personal.feedback-assignment-detail.data",
+      "routeKind": "DATA",
+      "surfaceKey": "hcm.personal",
+      "gatewayBinding": "GET /api/people/v1/hris/performance/feedback-assignments/{feedbackAssignmentId}",
+      "servicePepBinding": "GET /v1/hris/performance/feedback-assignments/{feedbackAssignmentId}",
+      "serviceKey": "people",
+      "profiles": [
+        {
+          "profileKey": "assigned-feedback-reader",
+          "canonicalProfileAndDuty": "HRIS_EMPLOYEE>HRIS_DUTY_SELF_PERFORMANCE_READER",
+          "requiredCapability": "hcm.personal.performance.view",
+          "purposeCode": "PERFORMANCE_FEEDBACK",
+          "scopeResolver": "FEEDBACK_ASSIGNMENT",
+          "targetBindingKinds": [
+            "OBJECT",
+            "TARGET_POPULATION"
+          ],
+          "predicatePolicyKeys": [
+            "predicate.hcm-performance-feedback-assignment.v1"
+          ],
+          "projectionPolicyKey": "per008.feedback-assignment-detail.fields.v1",
+          "responseSchemaKey": "Per008AssignedFeedbackDetailV1",
+          "fieldGroupKeys": [
+            "PERFORMANCE_FEEDBACK_ASSIGNED"
+          ]
+        }
+      ],
+      "readOnly": true,
+      "sideEffectFree": true,
+      "activeAccessModes": [
+        "NORMAL",
+        "ELEVATED"
+      ]
+    },
+    {
+      "routeContractKey": "route.hcm.personal.feedback-response-submit.action",
+      "routeKind": "ACTION",
+      "surfaceKey": "hcm.personal",
+      "pepId": "PEP-PER-022",
+      "actionKey": "hris.action.per.submit-feedback-response",
+      "gatewayBinding": "POST /api/people/v1/hris/performance/feedback-assignments/{feedbackAssignmentId}/responses",
+      "servicePepBinding": "POST /v1/hris/performance/feedback-assignments/{feedbackAssignmentId}/responses",
+      "serviceKey": "people",
+      "profiles": [
+        {
+          "profileKey": "assigned-feedback-provider",
+          "canonicalProfileAndDuty": "HRIS_EMPLOYEE>HRIS_DUTY_FEEDBACK_PROVIDER",
+          "requiredCapability": "per.feedback.assigned.submit",
+          "purposeCode": "PERFORMANCE_FEEDBACK",
+          "scopeResolver": "FEEDBACK_ASSIGNMENT",
+          "targetBindingKinds": [
+            "OBJECT",
+            "TARGET_POPULATION"
+          ],
+          "predicatePolicyKeys": [
+            "predicate.hcm-performance-feedback-assignment.v1"
+          ],
+          "fieldGroupKeys": [
+            "PERFORMANCE_FEEDBACK_ASSIGNED"
+          ]
+        }
+      ],
+      "commandSchemaKey": "Per008FeedbackResponseCommandV1",
+      "receiptSchemaKey": "Per008FeedbackSubmissionReceiptV1",
+      "idempotencyKeyRequired": true,
+      "stepUpPolicy": "OWNER_PEP_RISK_POLICY_DECISION_REQUIRED",
+      "readOnly": false,
+      "activeAccessModes": [
+        "NORMAL",
+        "ELEVATED"
+      ]
+    },
+    {
+      "routeContractKey": "route.hcm.performance.feedback-release.data",
+      "routeKind": "DATA",
+      "surfaceKey": "hcm.operations",
+      "gatewayBinding": "GET /api/people/v1/hris/performance/feedback-requests/{feedbackRequestId}/release",
+      "servicePepBinding": "GET /v1/hris/performance/feedback-requests/{feedbackRequestId}/release",
+      "serviceKey": "people",
+      "profiles": [
+        {
+          "profileKey": "self-feedback-release-reader",
+          "canonicalProfileAndDuty": "HRIS_EMPLOYEE>HRIS_DUTY_FEEDBACK_AGGREGATE_READER",
+          "requiredCapability": "per.feedback.aggregate.view",
+          "purposeCode": "PERFORMANCE_FEEDBACK",
+          "scopeResolver": "SELF",
+          "targetBindingKinds": [
+            "SELF",
+            "OBJECT"
+          ],
+          "predicatePolicyKeys": [
+            "predicate.hcm-performance-feedback-release.v1"
+          ],
+          "projectionPolicyKey": "per008.feedback-release.fields.v1",
+          "responseSchemaKey": "Per008FeedbackReleaseV1",
+          "fieldGroupKeys": [
+            "PERFORMANCE_FEEDBACK_AGGREGATE"
+          ]
+        },
+        {
+          "profileKey": "manager-feedback-release-reader",
+          "canonicalProfileAndDuty": "HRIS_LINE_MANAGER>HRIS_DUTY_FEEDBACK_AGGREGATE_READER",
+          "requiredCapability": "per.feedback.aggregate.view",
+          "purposeCode": "PERFORMANCE_FEEDBACK",
+          "scopeResolver": "TEAM_TARGET_POPULATION",
+          "targetBindingKinds": [
+            "OBJECT",
+            "TARGET_POPULATION"
+          ],
+          "predicatePolicyKeys": [
+            "predicate.hcm-performance-feedback-release.v1"
+          ],
+          "projectionPolicyKey": "per008.feedback-release.fields.v1",
+          "responseSchemaKey": "Per008FeedbackReleaseV1",
+          "fieldGroupKeys": [
+            "PERFORMANCE_FEEDBACK_AGGREGATE"
+          ]
+        },
+        {
+          "profileKey": "operator-feedback-release-reader",
+          "canonicalProfileAndDuty": "HRIS_PERFORMANCE_OPERATOR>HRIS_DUTY_FEEDBACK_AGGREGATE_READER",
+          "requiredCapability": "per.feedback.aggregate.view",
+          "purposeCode": "PERFORMANCE_FEEDBACK",
+          "scopeResolver": "NAMED_POPULATION",
+          "targetBindingKinds": [
+            "OBJECT",
+            "TARGET_POPULATION"
+          ],
+          "predicatePolicyKeys": [
+            "predicate.hcm-performance-feedback-release.v1"
+          ],
+          "projectionPolicyKey": "per008.feedback-release.fields.v1",
+          "responseSchemaKey": "Per008FeedbackReleaseV1",
+          "fieldGroupKeys": [
+            "PERFORMANCE_FEEDBACK_AGGREGATE"
+          ]
+        }
+      ],
+      "readOnly": true,
+      "sideEffectFree": true,
+      "activeAccessModes": [
+        "NORMAL",
+        "ELEVATED"
+      ]
+    }
+  ],
+  "authorizationDescriptorDelta": {
+    "newCapabilities": [
+      {
+        "contractKey": "hcm.team.workbench.view",
+        "productKey": "hcm",
+        "resolvedCapabilityCode": "DATA.HRIS_TEAM_WORKBENCH:VIEW",
+        "resourceKey": "DATA.HRIS_TEAM_WORKBENCH",
+        "action": "VIEW",
+        "surfaceKey": "hcm.team",
+        "authorityMode": "PERMISSION_AND_RELATIONSHIP",
+        "scopeResolver": "TEAM_TARGET_POPULATION",
+        "riskTier": "HIGH",
+        "requiresProductEntitlement": true,
+        "mappingVersion": 1,
+        "activationPolicy": null,
+        "responsibilityRequirement": "NOT_REQUIRED",
+        "sodPolicyId": null,
+        "owner": "People + HCM + Security",
+        "policyVersion": 1,
+        "lifecycleState": "ACTIVE",
+        "routeContractKeys": [
+          "route.hcm.team.performance.page",
+          "route.hcm.team.performance.data"
+        ]
+      },
+      {
+        "contractKey": "hcm.personal.performance.view",
+        "productKey": "hcm",
+        "resolvedCapabilityCode": "DATA.HR_TALENT:VIEW",
+        "resourceKey": "DATA.HR_TALENT",
+        "action": "VIEW",
+        "surfaceKey": "hcm.personal",
+        "authorityMode": "PERMISSION_AND_RELATIONSHIP",
+        "scopeResolver": "SELF",
+        "riskTier": "MEDIUM",
+        "requiresProductEntitlement": true,
+        "mappingVersion": 1,
+        "activationPolicy": null,
+        "responsibilityRequirement": "NOT_REQUIRED",
+        "sodPolicyId": null,
+        "owner": "People + HCM + Security",
+        "policyVersion": 1,
+        "lifecycleState": "ACTIVE",
+        "routeContractKeys": [
+          "route.hcm.personal.performance-feedback.page",
+          "route.hcm.personal.feedback-assignments-mine.data",
+          "route.hcm.personal.feedback-assignment-detail.data"
+        ]
+      },
+      {
+        "contractKey": "per.feedback.request.create",
+        "productKey": "hcm",
+        "resolvedCapabilityCode": "ACTION.HRIS_PERFORMANCE_FEEDBACK:CREATE",
+        "resourceKey": "ACTION.HRIS_PERFORMANCE_FEEDBACK",
+        "action": "CREATE",
+        "surfaceKey": "hcm.personal",
+        "authorityMode": "PERMISSION_AND_RELATIONSHIP",
+        "scopeResolver": "SELF",
+        "riskTier": "MEDIUM",
+        "requiresProductEntitlement": true,
+        "mappingVersion": 1,
+        "activationPolicy": null,
+        "responsibilityRequirement": "NOT_REQUIRED",
+        "sodPolicyId": null,
+        "owner": "People + HCM + Security",
+        "policyVersion": 1,
+        "lifecycleState": "ACTIVE",
+        "routeContractKeys": [
+          "route.hcm.performance.feedback-request-options.data",
+          "route.hcm.performance.feedback-request-create.action"
+        ]
+      },
+      {
+        "contractKey": "per.feedback.assigned.submit",
+        "productKey": "hcm",
+        "resolvedCapabilityCode": "ACTION.HRIS_PERFORMANCE_FEEDBACK:UPDATE",
+        "resourceKey": "ACTION.HRIS_PERFORMANCE_FEEDBACK",
+        "action": "UPDATE",
+        "surfaceKey": "hcm.personal",
+        "authorityMode": "PERMISSION_AND_RELATIONSHIP",
+        "scopeResolver": "FEEDBACK_ASSIGNMENT",
+        "riskTier": "HIGH",
+        "requiresProductEntitlement": true,
+        "mappingVersion": 1,
+        "activationPolicy": null,
+        "responsibilityRequirement": "NOT_REQUIRED",
+        "sodPolicyId": "NO_FEEDBACK_OUTSIDE_ASSIGNMENT",
+        "owner": "People + HCM + Security",
+        "policyVersion": 1,
+        "lifecycleState": "ACTIVE",
+        "routeContractKeys": [
+          "route.hcm.personal.feedback-response-submit.action"
+        ]
+      },
+      {
+        "contractKey": "per.feedback.aggregate.view",
+        "productKey": "hcm",
+        "resolvedCapabilityCode": "DATA.HRIS_PERFORMANCE_FEEDBACK:VIEW",
+        "resourceKey": "DATA.HRIS_PERFORMANCE_FEEDBACK",
+        "action": "VIEW",
+        "surfaceKey": "hcm.personal",
+        "authorityMode": "PERMISSION_AND_RELATIONSHIP",
+        "scopeResolver": "FEEDBACK_RELEASE_POPULATION",
+        "riskTier": "HIGH",
+        "requiresProductEntitlement": true,
+        "mappingVersion": 1,
+        "activationPolicy": null,
+        "responsibilityRequirement": "NOT_REQUIRED",
+        "sodPolicyId": "NO_FEEDBACK_RELEASE_OUTSIDE_POLICY",
+        "owner": "People + HCM + Security",
+        "policyVersion": 1,
+        "lifecycleState": "ACTIVE",
+        "routeContractKeys": [
+          "route.hcm.performance.feedback-release.data"
+        ]
+      }
+    ],
+    "reusedCapabilities": [
+      {
+        "contractKey": "hcm.team.performance.review",
+        "routeContractKeysToAppend": [
+          "route.hcm.performance.feedback-request-options.data",
+          "route.hcm.performance.feedback-request-create.action"
+        ],
+        "rule": "Preserve every v58 semantic field and existing route key, and append only the two listed route keys for the exact manager profile. IAQ visibility alone never grants this capability."
+      }
+    ],
+    "newPredicatePolicies": [
+      {
+        "predicatePolicyKey": "predicate.hcm-performance-feedback-request.v1",
+        "ownerServiceKey": "people",
+        "inputEvidenceSchemaKey": "PerformanceFeedbackRequestAuthorityEvidenceV1",
+        "routeContractKeys": [
+          "route.hcm.performance.feedback-request-options.data",
+          "route.hcm.performance.feedback-request-create.action"
+        ],
+        "targetBindingKinds": [
+          "SELF",
+          "OBJECT",
+          "TARGET_POPULATION"
+        ],
+        "rule": "Bind exact cycleVersionId, subjectWorkerPublicId and subjectAssignmentPublicId to authenticated SELF or one explicit manager-authorized IAQ-038 target and the exact V16 member revision; deny ambiguity, stale revision, cross-tenant, cross-cycle or worker-only selection."
+      },
+      {
+        "predicatePolicyKey": "predicate.hcm-performance-feedback-assignment.v1",
+        "ownerServiceKey": "people",
+        "inputEvidenceSchemaKey": "PerformanceFeedbackAssignmentAuthorityEvidenceV1",
+        "routeContractKeys": [
+          "route.hcm.personal.performance-feedback.page",
+          "route.hcm.personal.feedback-assignments-mine.data",
+          "route.hcm.personal.feedback-assignment-detail.data",
+          "route.hcm.personal.feedback-response-submit.action"
+        ],
+        "targetBindingKinds": [
+          "OBJECT",
+          "TARGET_POPULATION"
+        ],
+        "modes": {
+          "COLLECTION": "For the personal PAGE and mine DATA, resolve the authenticated provider's tenant-scoped assignment population without a caller assignment ID, require every returned request to be OPEN and ownerAcceptedAt within [opensAt, closesAt), apply PERFORMANCE_FEEDBACK_ASSIGNED before serialization, and return an authorized EMPTY result when no row qualifies.",
+          "DETAIL": "Bind feedbackAssignmentId to the authenticated provider worker and assignment in the same tenant and request, and require OPEN plus ownerAcceptedAt within [opensAt, closesAt) before PERFORMANCE_FEEDBACK_ASSIGNED detail disclosure.",
+          "SUBMIT": "Apply DETAIL and additionally require assignment ASSIGNED, no response, expected request version, exact templateContentHash and PERFORMANCE_FEEDBACK_ASSIGNED before accepting the command."
+        },
+        "rule": "COLLECTION, DETAIL and SUBMIT are closed modes. No read or submit route can select a different provider, closed window, non-OPEN request or field group."
+      },
+      {
+        "predicatePolicyKey": "predicate.hcm-performance-feedback-release.v1",
+        "ownerServiceKey": "people",
+        "inputEvidenceSchemaKey": "PerformanceFeedbackReleaseAuthorityEvidenceV1",
+        "routeContractKeys": [
+          "route.hcm.performance.feedback-release.data"
+        ],
+        "targetBindingKinds": [
+          "OBJECT",
+          "TARGET_POPULATION"
+        ],
+        "populationBranches": {
+          "SELF": "Authenticated worker equals the released request subject worker and exact subject assignment under the frozen V16 revision.",
+          "TEAM_TARGET_POPULATION": "Authenticated manager independently resolves the exact released subject worker and assignment inside the current authorized team population.",
+          "NAMED_POPULATION": "Authenticated performance operator holds an explicitly assigned named population containing the exact released subject tuple."
+        },
+        "rule": "Exactly one branch must pass. Bind feedbackRequestId to one immutable RELEASED snapshot, enforce threshold and privacy revision plus PERFORMANCE_FEEDBACK_AGGREGATE, and serialize no contributor identity, response item or count."
+      }
+    ],
+    "reusedPredicates": [
+      {
+        "predicatePolicyKey": "predicate.self-person.v1",
+        "routeContractKeysToAppend": [
+          "route.hcm.personal.performance-feedback.page",
+          "route.hcm.personal.feedback-assignments-mine.data",
+          "route.hcm.performance.feedback-request-options.data",
+          "route.hcm.performance.feedback-request-create.action"
+        ],
+        "rule": "Preserve v58 semantics and append only the listed personal PAGE, mine DATA and SELF options/create profiles."
+      },
+      {
+        "predicatePolicyKey": "predicate.team-target-population.v1",
+        "routeContractKeysToAppend": [
+          "route.hcm.team.performance.page",
+          "route.hcm.team.performance.data",
+          "route.hcm.performance.feedback-request-options.data",
+          "route.hcm.performance.feedback-request-create.action"
+        ],
+        "rule": "Preserve v58 semantics and append only the listed IAQ-038 PAGE/DATA plus manager options/create profiles; it never substitutes for the feedback-specific predicate."
+      }
+    ],
+    "separationRule": "Read, create, assigned submit and released aggregate capabilities are non-transitive. PAGE or DATA visibility never implies ACTION authority; PEP-PER-015 never implies PEP-PER-022; manager review authority never discloses provider identity or protected narrative."
+  },
+  "receiptEventAndLifecycleBoundary": {
+    "createIdempotency": "Require Idempotency-Key and reserve the V1 receipt by trusted tenant, authenticated actor principal, PEP-PER-015 and key. Compare clientIntentDigest over actor, capability, purpose and all eight client fields before re-resolving mutable policy or audience; identical retry returns the frozen original result, different digest returns 409.",
+    "submissionIdempotency": "On every call first reauthorize tenant, actor, app entitlement and per.feedback.assigned.submit; then compare receipt and clientIntentDigest using the stored HMAC and digest-key version before mutable state checks. Identical retry returns the original outcome after state/window/key change; different digest returns 409. Only a missing receipt evaluates current OPEN window, exact provider, ASSIGNED state, response absence, request version and template hash.",
+    "submissionAtomicity": "One transaction persists one immutable encrypted response, assignment SUBMITTED state, success receipt and exactly one logical PerformanceFeedbackSubmitted.v1 outbox row or persists none.",
+    "eventContract": {
+      "eventType": "PerformanceFeedbackSubmitted.v1",
+      "closedSet": [
+        "feedbackRequestId",
+        "feedbackAssignmentId",
+        "submittedAt"
+      ],
+      "forbidden": [
+        "narrative",
+        "responsePayload",
+        "contentHash",
+        "providerWorkerPublicId",
+        "subjectWorkerPublicId",
+        "templateVersionId",
+        "score",
+        "answer",
+        "anonymityMode",
+        "minimumReleaseCount",
+        "submittedCount"
+      ],
+      "delivery": "One logical outbox row, at-least-once delivery and consumer deduplication by trusted tenant plus eventId."
+    },
+    "ownerLifecycleCommands": {
+      "publicProductRoutesAdded": 0,
+      "authorityKey": "owner.people.performance-feedback.lifecycle.v1",
+      "invocationPrincipalKey": "people.performance-feedback-lifecycle-owner",
+      "invocationMode": "IN_PROCESS_OWNER_ONLY",
+      "networkEndpoint": null,
+      "invocationAuthorizedNow": false,
+      "operations": [
+        "openFeedbackRequest",
+        "closeFeedbackRequest",
+        "aggregateFeedbackRequest",
+        "releaseFeedbackRequest",
+        "cancelFeedbackRequest"
+      ],
+      "rule": "These are owner-internal tenant-scoped commands, not caller-facing v59 product routes. The exact principal is resolved from trusted in-process People execution context and never from a caller JWT, header, URL or body. Each invocation requires the sealed authority key, exact tenant, request ID, expected aggregate version, command receipt and state transition guard. A later module packet must separately admit the handler and invocation source; no production scheduler, broker consumer or provider is bound or authorized now."
+    },
+    "observabilityRule": "Narrative, answer, score, contributor identity, plaintext hash, ciphertext, nonce, authentication tag, raw digest and threshold count never enter problem details, audit payload, generic log, trace span, metric label, cache key or unrestricted export."
+  },
+  "gatewayAndOwnerBoundary": {
+    "gateway": "Match only exact method and normalized path, strip caller authority headers, resolve trusted tenant, product and feature state, require the registered route and accepted app entitlement, and forward only trusted decision context. It does not resolve V16 membership, template eligibility, assignment ownership, threshold or release identity.",
+    "owner": "People independently validates the exact route operation, capability, purpose, target predicate, current authorization revision, RLS tenant, state, receipt and field projection before existence or payload disclosure. Tenant is never read from URL, query or body.",
+    "purpose": "TEAM_MANAGEMENT is fixed only for IAQ-038 PAGE/DATA. PERFORMANCE_FEEDBACK is fixed for options, create, inbox, detail, submit and release. Missing caller purpose resolves to the fixed route purpose; conflicting, duplicate or unsupported values deny.",
+    "defaultOff": "HRIS_PER_TEAM_PERFORMANCE_FEEDBACK baseline OFF or absent enrollment denies all nine route contracts before downstream invocation and yields zero People calls.",
+    "problemRule": "Stable 401, 403, 404, 409 and 422 problem codes expose correlation only and never reveal cross-tenant existence, subject/provider identity, template eligibility, audience size, threshold deficit, response state or release count."
+  },
+  "productAuthorizationV59Reservation": {
+    "state": "RESERVED_NOT_ACTIVE",
+    "predecessor": {
+      "version": 58,
+      "bundleStatus": "DRAFT",
+      "checksum": "556f2cc1554f0aaab6f88e50c34d64ca5cdd95af9b2d55072f6e6745f4652cc2",
+      "fileSha256": "994d47f164e015cbc737da4620addd27ccbd78630790f547e6f8e004912f1589",
+      "bytes": 2682541,
+      "counts": {
+        "capabilities": 271,
+        "accessPolicies": 24,
+        "entitlementExpressions": 17,
+        "predicatePolicies": 83,
+        "routes": 1125,
+        "PAGE": 158,
+        "DATA": 340,
+        "ACTION": 627
+      }
+    },
+    "successor": {
+      "version": 59,
+      "bundle": "product-surfaces-v1.bundle-v59.json",
+      "bundleStatus": "DRAFT",
+      "expectedCounts": {
+        "capabilities": 276,
+        "accessPolicies": 24,
+        "entitlementExpressions": 17,
+        "predicatePolicies": 86,
+        "routes": 1134,
+        "PAGE": 160,
+        "DATA": 345,
+        "ACTION": 629
+      },
+      "peopleProjectionExpectedCounts": {
+        "capabilities": 64,
+        "accessPolicies": 5,
+        "entitlementExpressions": 3,
+        "predicatePolicies": 22,
+        "routes": 133,
+        "PAGE": 46,
+        "DATA": 34,
+        "ACTION": 53
+      },
+      "deltaExactly": [
+        "add five named capabilities",
+        "add three named predicate policies",
+        "add exactly nine named route contracts split two PAGE, five DATA and two ACTION",
+        "append exact named route keys only to hcm.team.performance.review, predicate.self-person.v1 and predicate.team-target-population.v1",
+        "add per008.iaq-038.fields.v2 and the named options, assignment and release projection/schema bindings",
+        "no access-policy or entitlement-expression count change",
+        "no other semantic delta"
+      ],
+      "checksumRule": "Generate checksum from canonical v59 content. Placeholder checksum, manual generated-file edit, second v59 or any mutation of v1 through v58 is forbidden."
+    },
+    "v59ArtifactExistsNow": false,
+    "sourceAuthoringAuthorizedNow": false
+  },
+  "authV268Reservation": {
+    "state": "RESERVED_NOT_ACTIVE",
+    "authDatabaseStreamHighWater": "V267",
+    "exactPath": "dwp-auth-server/src/main/resources/db/migration/V268__declare_hris_per008_v59_authorization_seed.sql",
+    "bundleVersion": 59,
+    "intendedBundleStatus": "DRAFT",
+    "automaticImportEnabled": false,
+    "feature": {
+      "featureKey": "HRIS_PER_TEAM_PERFORMANCE_FEEDBACK",
+      "policyVersion": 1,
+      "productKey": "hcm",
+      "appResourceKey": "APP.HCM",
+      "minimumBundleVersion": 59,
+      "baselineState": "OFF",
+      "ownerKey": "PER",
+      "routeOwnersAndBindings": [
+        "route.hcm.team.performance.page",
+        "route.hcm.team.performance.data",
+        "route.hcm.personal.performance-feedback.page",
+        "route.hcm.performance.feedback-request-options.data",
+        "route.hcm.performance.feedback-request-create.action",
+        "route.hcm.personal.feedback-assignments-mine.data",
+        "route.hcm.personal.feedback-assignment-detail.data",
+        "route.hcm.personal.feedback-response-submit.action",
+        "route.hcm.performance.feedback-release.data"
+      ],
+      "exactRouteBindingManifest": [
+        {
+          "routeContractKey": "route.hcm.team.performance.page",
+          "featureKey": "HRIS_PER_TEAM_PERFORMANCE_FEEDBACK",
+          "policyVersion": 1,
+          "productKey": "hcm",
+          "appResourceKey": "APP.HCM",
+          "minimumBundleVersion": 59,
+          "routeKind": "PAGE",
+          "subjectType": "PRODUCT",
+          "surfaceKey": "hcm.team"
+        },
+        {
+          "routeContractKey": "route.hcm.team.performance.data",
+          "featureKey": "HRIS_PER_TEAM_PERFORMANCE_FEEDBACK",
+          "policyVersion": 1,
+          "productKey": "hcm",
+          "appResourceKey": "APP.HCM",
+          "minimumBundleVersion": 59,
+          "routeKind": "DATA",
+          "subjectType": "PRODUCT",
+          "surfaceKey": "hcm.team"
+        },
+        {
+          "routeContractKey": "route.hcm.personal.performance-feedback.page",
+          "featureKey": "HRIS_PER_TEAM_PERFORMANCE_FEEDBACK",
+          "policyVersion": 1,
+          "productKey": "hcm",
+          "appResourceKey": "APP.HCM",
+          "minimumBundleVersion": 59,
+          "routeKind": "PAGE",
+          "subjectType": "PRODUCT",
+          "surfaceKey": "hcm.personal"
+        },
+        {
+          "routeContractKey": "route.hcm.performance.feedback-request-options.data",
+          "featureKey": "HRIS_PER_TEAM_PERFORMANCE_FEEDBACK",
+          "policyVersion": 1,
+          "productKey": "hcm",
+          "appResourceKey": "APP.HCM",
+          "minimumBundleVersion": 59,
+          "routeKind": "DATA",
+          "subjectType": "PRODUCT",
+          "surfaceKey": "hcm.operations"
+        },
+        {
+          "routeContractKey": "route.hcm.performance.feedback-request-create.action",
+          "featureKey": "HRIS_PER_TEAM_PERFORMANCE_FEEDBACK",
+          "policyVersion": 1,
+          "productKey": "hcm",
+          "appResourceKey": "APP.HCM",
+          "minimumBundleVersion": 59,
+          "routeKind": "ACTION",
+          "subjectType": "PRODUCT",
+          "surfaceKey": "hcm.operations"
+        },
+        {
+          "routeContractKey": "route.hcm.personal.feedback-assignments-mine.data",
+          "featureKey": "HRIS_PER_TEAM_PERFORMANCE_FEEDBACK",
+          "policyVersion": 1,
+          "productKey": "hcm",
+          "appResourceKey": "APP.HCM",
+          "minimumBundleVersion": 59,
+          "routeKind": "DATA",
+          "subjectType": "PRODUCT",
+          "surfaceKey": "hcm.personal"
+        },
+        {
+          "routeContractKey": "route.hcm.personal.feedback-assignment-detail.data",
+          "featureKey": "HRIS_PER_TEAM_PERFORMANCE_FEEDBACK",
+          "policyVersion": 1,
+          "productKey": "hcm",
+          "appResourceKey": "APP.HCM",
+          "minimumBundleVersion": 59,
+          "routeKind": "DATA",
+          "subjectType": "PRODUCT",
+          "surfaceKey": "hcm.personal"
+        },
+        {
+          "routeContractKey": "route.hcm.personal.feedback-response-submit.action",
+          "featureKey": "HRIS_PER_TEAM_PERFORMANCE_FEEDBACK",
+          "policyVersion": 1,
+          "productKey": "hcm",
+          "appResourceKey": "APP.HCM",
+          "minimumBundleVersion": 59,
+          "routeKind": "ACTION",
+          "subjectType": "PRODUCT",
+          "surfaceKey": "hcm.personal"
+        },
+        {
+          "routeContractKey": "route.hcm.performance.feedback-release.data",
+          "featureKey": "HRIS_PER_TEAM_PERFORMANCE_FEEDBACK",
+          "policyVersion": 1,
+          "productKey": "hcm",
+          "appResourceKey": "APP.HCM",
+          "minimumBundleVersion": 59,
+          "routeKind": "DATA",
+          "subjectType": "PRODUCT",
+          "surfaceKey": "hcm.operations"
+        }
+      ],
+      "tenantEnrollmentRows": 0
+    },
+    "catalogOnlyDutyMappings": [
+      "HRIS_DUTY_TEAM_WORKBENCH_READER -> hcm.team.workbench.view -> DATA.HRIS_TEAM_WORKBENCH:VIEW",
+      "HRIS_DUTY_SELF_PERFORMANCE_READER -> hcm.personal.performance.view -> DATA.HR_TALENT:VIEW",
+      "HRIS_DUTY_FEEDBACK_REQUESTER -> per.feedback.request.create -> ACTION.HRIS_PERFORMANCE_FEEDBACK:CREATE",
+      "HRIS_DUTY_FEEDBACK_PROVIDER -> per.feedback.assigned.submit -> ACTION.HRIS_PERFORMANCE_FEEDBACK:UPDATE",
+      "HRIS_DUTY_FEEDBACK_AGGREGATE_READER -> per.feedback.aggregate.view -> DATA.HRIS_PERFORMANCE_FEEDBACK:VIEW"
+    ],
+    "mayCreateExactly": [
+      "one immutable product-authorization v59 DRAFT release declaration with generated checksum and automatic import false",
+      "one HRIS_PER_TEAM_PERFORMANCE_FEEDBACK policy-version-1 feature declaration with baseline OFF",
+      "exactly nine feature route-owner rows and nine feature route-binding rows",
+      "only the permissions, tenant resource templates, scoped-duty catalog rows and duty-capability mappings required by the five catalogOnlyDutyMappings",
+      "tenant resource instances for the exact new resource templates without any principal assignment"
+    ],
+    "mustNotCreate": [
+      "feature activation or tenant enrollment",
+      "user, group, role, preset, duty, responsibility or population assignment",
+      "broad permission grant, compatibility alias or implied cross-capability grant",
+      "menu, shell mount, page component or module API",
+      "automatic bundle import or DRAFT-to-ACTIVE transition"
+    ],
+    "conflictRule": "Every ON CONFLICT path accepts only a byte-equivalent immutable tuple, including exact route key, feature, policy version, product, app resource, minimum bundle version, route kind, subject type and surface; semantic drift raises and exact reapplication is a no-op.",
+    "sourceAuthoringAuthorizedNow": false
+  },
+  "sourceGeneratedSynchronization": {
+    "backendRule": "After a separate token, edit only canonical YAML, deterministic generator/version declarations, fixture lineage and focused v59 tests; generate v59 once and require latest aliases, indexes, Auth artifact and all four service projections to carry the same canonical checksum. Preserve v1 through v58 byte-for-byte.",
+    "peopleRule": "People v59 contains the exact nine routes, five new capabilities, three new predicates, exact reused-descriptor appendages and no other semantic delta. Time, Platform and Payroll contain no PER-008 route and only advance common lineage.",
+    "authRule": "Advance immutable release lineage to v59, declare only the exact catalog-only resources/duties, default-OFF feature and nine route bindings, and keep automatic import, activation, enrollment, assignment and grant counts zero.",
+    "gatewayRule": "Add only the exact nine normalized topologies, fixed purpose mapping, v59 introduction gate and feature-owner parity. v58 omits all nine from its expected topology; v59 requires all nine and rejects a missing, duplicate, near-match or widened set. Gateway never treats IAQ visibility as action authority.",
+    "frontendRule": "Synchronize immutable bundles and fixture lineage through v59, register exactly two governed PAGE contracts, advance the official HCM PAGE firewall count from 65 to 67, and mount no component or menu. The cumulative authorization snapshot must remain below 104857600 bytes; failure requires an independently reviewed storage rollover rather than truncation or history mutation.",
+    "commandsAfterAuthorization": [
+      "python3 scripts/generate-product-authorization-contracts.py",
+      "python3 scripts/generate-product-authorization-contracts.py --check",
+      "python3 scripts/generate-product-authorization-fixtures.py --write",
+      "python3 scripts/generate-product-authorization-fixtures.py --check",
+      "yarn authorization:sync",
+      "yarn authorization:check ../dwp-backend/contracts/product-authorization",
+      "yarn fixtures:sync",
+      "yarn fixtures:check"
+    ]
+  },
+  "exactImplementationPathsAfterSeparateExecutableCentralToken": {
+    "backendCanonicalGeneratorAndVersionTest": [
+      "contracts/product-authorization/product-surfaces-v1.yaml",
+      "contracts/product-authorization/pilot-fixtures.v1.schema.json",
+      "scripts/generate-product-authorization-contracts.py",
+      "scripts/generate-product-authorization-fixtures.py",
+      "scripts/tests/test_product_authorization_v59.py",
+      "scripts/tests/test_product_authorization_fixture_schema.py"
+    ],
+    "backendGenerated": [
+      "contracts/product-authorization/product-surfaces-v1.bundle-v59.json",
+      "contracts/product-authorization/product-surfaces-v1.json",
+      "contracts/product-authorization/product-surfaces-v1.index.json",
+      "contracts/product-authorization/pilot-fixtures.v1.generated.json",
+      "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v59.generated.json",
+      "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.generated.json",
+      "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.index.generated.json",
+      "dwp-people-server/src/main/resources/product-authorization/hcm-people-pep-v59.generated.json",
+      "dwp-time-server/src/main/resources/product-authorization/hcm-time-pep-v59.generated.json",
+      "dwp-platform-server/src/main/resources/product-authorization/hcm-platform-pep-v59.generated.json",
+      "dwp-payroll-server/src/main/resources/product-authorization/hcm-payroll-pep-v59.generated.json"
+    ],
+    "auth": [
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationReleaseLineage.java",
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationGateTopologyValidator.java",
+      "dwp-auth-server/src/main/resources/db/migration/V268__declare_hris_per008_v59_authorization_seed.sql",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/config/ProductAuthorizationSeedLoaderTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationContractReleaseLineageTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationReleaseLineageTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationV59ContractTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/repository/TenantFeatureActivationV268MigrationContractTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/tenantfeatureactivation/TenantFeatureActivationV268PostgresTest.java"
+    ],
+    "gatewayCentral": [
+      "dwp-gateway/src/main/java/com/dwp/gateway/filter/ProductSurfaceDecisionContextFilter.java",
+      "dwp-gateway/src/main/java/com/dwp/gateway/productsurface/GeneratedProductRouteCatalog.java",
+      "dwp-gateway/src/test/java/com/dwp/gateway/ProductSurfaceDecisionContextFilterTest.java",
+      "dwp-gateway/src/test/java/com/dwp/gateway/ProductSurfaceFeatureRolloutContractTest.java",
+      "dwp-gateway/src/test/java/com/dwp/gateway/productsurface/GeneratedProductRouteCatalogTest.java",
+      "dwp-gateway/src/test/java/com/dwp/gateway/productsurface/TenantFeatureActivationV268RouteParityTest.java"
+    ],
+    "peopleCentralSecurity": [
+      "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmV3PepRegistry.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmScopeSelectionValidator.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/security/HcmProductSurfacePepFilter.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmV3PepRegistryTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmProductSurfacePepFilterTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/security/HcmScopeSelectionValidatorPer008Test.java"
+    ],
+    "frontendSynchronization": [
+      "scripts/product-authorization-fixture-versions.mjs",
+      "scripts/sync-product-surface-authorization.mjs",
+      "scripts/sync-product-authorization-fixtures.mjs",
+      "architecture/product-surface-authorization.v1.json",
+      "architecture/product-page-routes.v1.json",
+      "architecture/pilot-fixtures.v1.generated.json",
+      "libs/shared-utils/src/test-utils/pilot-authorization-fixtures.generated.ts",
+      "apps/dwp/src/routes/product-surface-authorization.generated.ts",
+      "apps/dwp/src/routes/product-route-contract-source.test.ts",
+      "apps/dwp/src/routes/product-route-contracts.generated.test.ts",
+      "apps/dwp/src/routes/hris-w1-browser-firewall-contract.test.ts",
+      "e2e/support/hris-w1-browser-firewall-contract.mjs"
+    ],
+    "explicitlyExcluded": [
+      "People feedback controllers, application services, repositories, domain entities, V20 migration and module tests",
+      "frontend team-performance or personal-feedback page component, API client, route mount, menu, i18n and visual test",
+      "performance shared-RLS readiness source, which requires its own packet and token",
+      "owner packet, V20 lease, module worktree or module token"
+    ]
+  },
+  "performanceSharedRlsReadinessPrerequisite": {
+    "state": "REQUIRED_SEPARATE_NO_MIGRATION_PACKET_NOT_ISSUED",
+    "reusedTablesLaterHardenedByV20": [
+      "prf_cycles",
+      "prf_cycle_versions",
+      "prf_command_receipts",
+      "prf_outbox_events"
+    ],
+    "knownBlockingRuntimePath": {
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/compensationplanning/CompensationPlanningEventHandoffRepository.java",
+      "sha256": "ac07bf5802b309ac89d2543c24255fda87c0357fd766f7663145e7ae06a1a0cf",
+      "bytes": 11129,
+      "method": "claim",
+      "finding": "The current dispatcher scans and updates prf_outbox_events across tenants without dwp.tenant_id and therefore cannot pass FORCE RLS unchanged."
+    },
+    "packetRule": "Only after this exact successor passes independent review and its carrier is committed and pushed may central control issue one separate PERFORMANCE_SHARED_RLS_READINESS packet. It reserves no Performance migration, must enumerate every reused-table reader, writer, dispatcher, replay and maintenance path, requires non-BYPASSRLS roles and tenant-scoped transactions, and proves a dispatcher enumerates admitted tenant IDs outside protected tables before SET LOCAL dwp.tenant_id and claim.",
+    "admissionRule": "The readiness packet must be independently admitted with zero unresolved P0, P1 or P2. Until then the PER-008 owner packet, V20 reservation, worktrees, source token and source remain NO-GO.",
+    "issuedNow": false,
+    "completeNow": false
+  },
+  "implementationGate": {
+    "requiredOrder": [
+      "independent security, authorization, transport and reference review of this exact successor records zero unresolved P0, P1 or P2 findings",
+      "commit and push only this reviewed authority carrier to frontend origin/dwp-dev",
+      "issue, execute and centrally admit one separate no-migration PERFORMANCE_SHARED_RLS_READINESS packet",
+      "reconfirm product authorization v58 and Auth V267 as the exact implemented high-water and v59 plus V268 as this slice's non-conflicting reservations",
+      "materialize fresh clean central backend and frontend worktrees and issue one hash-bound central implementation token restricted to the exact central paths in this successor",
+      "implement, verify, commit, push and independently admit exact v59, Auth V268, Gateway, People registry and frontend synchronization",
+      "only after both shared-RLS readiness and central contract admission issue the distinct PER-008 owner packet and RESERVED_NOT_ACTIVE V20 decision",
+      "only after packet, active exclusive V20 lease, fresh module worktrees and separate module token may PER-008 module source start"
+    ],
+    "invalidation": [
+      "any pinned artifact hash or byte count changes",
+      "backend dwp-dev no longer has v58 and Auth V267 as the exact implemented high-water before central worktree materialization",
+      "v59, Auth V268 or PEP-PER-022 is reserved by another slice",
+      "a worktree is dirty or based on a different reviewed carrier head",
+      "a route, capability, predicate, purpose, field group, action target, feature, population, migration or writable path expands beyond this sealed successor",
+      "shared-RLS readiness is skipped, merged into V20 or reported PASS without a real non-BYPASSRLS tenant-scoped dispatcher test"
+    ]
+  },
+  "requiredNegativeCases": [
+    "Wrong method, near-match path, trailing segment, unknown route, wrong profile or support-mode substitution denies.",
+    "Missing or invalid trusted tenant, app entitlement, route, capability, purpose, population, object or authorization revision denies before existence disclosure.",
+    "Caller tenant, provider, relationship type, projection revision, audience, threshold policy, field decision or release identity is ignored or rejected; duplicate or conflicting authority inputs deny.",
+    "IAQ-038 itemPublicId, title, status, display field, deep link, filter, cursor and browser state are never parsed as subjectWorkerPublicId or subjectAssignmentPublicId.",
+    "A masked, omitted, stale or ambiguous IAQ-038 target serializes no create-feedback action descriptor.",
+    "Request options without the exact cycle, worker and assignment tuple, or for a mismatched SELF or manager target, deny without template or policy disclosure.",
+    "PEP-PER-015 creates only DRAFT plus server-derived assignments and emits no PerformanceFeedbackSubmitted.v1.",
+    "Assigned collection, detail or submit outside the exact provider assignment, OPEN request state, owner-accepted [opensAt, closesAt) window or PERFORMANCE_FEEDBACK_ASSIGNED field policy denies without existence disclosure; PEP-PER-022 cannot create a second response or event on retry.",
+    "AGGREGATED is never collapsed into CLOSED or RELEASED; clock passage never performs an autonomous transition.",
+    "Audience below threshold exposes no count, deficit, provider identity, timing distinction or aggregate snapshot.",
+    "Release in every v1 anonymity mode contains no contributor identity, response item, narrative, answer, score, raw count, digest or encryption metadata.",
+    "Any v1 through v58 byte mutation, second v59, second Auth V268, second PEP-PER-022, placeholder checksum or generated-source divergence fails review.",
+    "Any capability count other than plus five, predicate count other than plus three, or route delta other than exactly two PAGE, five DATA and two ACTION fails generation.",
+    "Auth V268 creates no activation, enrollment, principal assignment, preset assignment, broad grant or automatic import; baseline OFF yields zero downstream calls.",
+    "This successor issues no RLS packet, owner packet, V20 lease, worktree, token, route mount, menu, provider, scheduler, broker, tenant enrollment or source."
+  ],
+  "acceptanceCriteria": [
+    {
+      "id": "PER008-CENTRAL-AC-01",
+      "criterion": "Exactly nine route contracts are sealed: two PAGE, five DATA and two ACTION, with exact browser and owner methods and paths and no near-match topology."
+    },
+    {
+      "id": "PER008-CENTRAL-AC-02",
+      "criterion": "IAQ-038 preserves its accepted filters, sorts, default sort, page limit, query states and three original field groups while v2 adds only a typed cycle-worker-assignment action target; item or display fields never become an action target."
+    },
+    {
+      "id": "PER008-CENTRAL-AC-03",
+      "criterion": "The create command has exactly eight fields including subjectAssignmentPublicId, and request-options requires exact cycleVersionId, subjectWorkerPublicId and subjectAssignmentPublicId with separate SELF and manager equality checks."
+    },
+    {
+      "id": "PER008-CENTRAL-AC-04",
+      "criterion": "PEP-PER-015 remains create-only; PEP-PER-022 and hris.action.per.submit-feedback-response exclusively own immutable assigned-response submission with per.feedback.assigned.submit, exact assignment population, OPEN owner-accepted [opensAt, closesAt) window, PERFORMANCE_FEEDBACK_ASSIGNED field policy and PERFORMANCE_FEEDBACK purpose."
+    },
+    {
+      "id": "PER008-CENTRAL-AC-05",
+      "criterion": "FeedbackRequest transports DRAFT, OPEN, CLOSED, AGGREGATED, RELEASED and CANCELLED losslessly, assignment states are closed, and every transition uses expected version plus deterministic receipt rather than automatic clock transition."
+    },
+    {
+      "id": "PER008-CENTRAL-AC-06",
+      "criterion": "Audience and relationship types are server-derived from the exact frozen V16 revision, and templates are read-only exact FINALIZED V19 PERFORMANCE_REVIEW_FORM authorities with no invented template table or caller provider list."
+    },
+    {
+      "id": "PER008-CENTRAL-AC-07",
+      "criterion": "Responses and release snapshots are immutable authenticated-encrypted payloads; threshold failure leaks no count, and PERFORMANCE_FEEDBACK_AGGREGATE release projections are contributor-identity-free in IDENTIFIED, MASKED and ANONYMOUS_AGGREGATE modes."
+    },
+    {
+      "id": "PER008-CENTRAL-AC-08",
+      "criterion": "Create and submit receipt ordering, client-intent digests, key versions, one-response uniqueness and the three-field PerformanceFeedbackSubmitted.v1 event prevent duplicate side effects and protected-data leakage."
+    },
+    {
+      "id": "PER008-CENTRAL-AC-09",
+      "criterion": "Product authorization v59 is a DRAFT with exactly 276 capabilities, 24 access policies, 17 entitlement expressions, 86 predicates and 1134 routes split 160 PAGE, 345 DATA and 629 ACTION; the People projection is exactly 64 capabilities, 5 policies, 3 expressions, 22 predicates and 133 routes split 46 PAGE, 34 DATA and 53 ACTION."
+    },
+    {
+      "id": "PER008-CENTRAL-AC-10",
+      "criterion": "Auth V268 declares only the immutable v59 checksum, catalog-only exact duty/resource mappings, default-OFF HRIS_PER_TEAM_PERFORMANCE_FEEDBACK and exactly nine route owners and bindings with automatic import false and zero activation, enrollment, assignment or grant."
+    },
+    {
+      "id": "PER008-CENTRAL-AC-11",
+      "criterion": "Backend generation, service projection partition, Auth lineage and PostgreSQL migration, Gateway exact topology and zero-invocation, People registry and target guards, frontend synchronization, PAGE firewall count 67 and snapshot-size bound are verified once by focused targets; only a failing target is rerun and unavailable real PostgreSQL reports BLOCKED."
+    },
+    {
+      "id": "PER008-CENTRAL-AC-12",
+      "criterion": "This carrier authorizes no source. After zero-P0/P1/P2 review and commit/push, only the separate no-migration shared-RLS readiness packet may proceed; PER-008 packet, V20, worktrees and token remain withheld until readiness and central contract admission both pass."
+    }
+  ],
+  "targetedVerification": {
+    "currentSuccessorVerification": "DOCUMENT_ONLY_JSON_HASH_BYTE_COUNT_HIGH_WATER_ROUTE_CAPABILITY_PREDICATE_COUNT_ARITHMETIC_ACTION_TARGET_AND_AUTHORITY_BOOLEAN_CHECKS; NO_SOURCE_TEST_OR_REPOSITORY_WIDE_SUITE",
+    "futurePolicy": "RUN_EACH_BOUNDED_TARGET_GROUP_ONCE; AFTER_FAILURE RERUN_ONLY_THE_SMALLEST_AFFECTED_TARGET; DO_NOT_REPEAT_PASSING_TARGETS_OR_RUN_A_REPOSITORY_WIDE_SUITE_PER_CORRECTION",
+    "backendRegistry": [
+      "python3 scripts/generate-product-authorization-contracts.py --check",
+      "python3 scripts/generate-product-authorization-fixtures.py --check",
+      "python3 -m unittest scripts.tests.test_product_authorization_v59",
+      "python3 -m unittest scripts.tests.test_product_authorization_fixture_schema",
+      "v1 through v58 byte-preservation hashes and exact v59 five-capability, three-predicate, nine-route delta assertions"
+    ],
+    "auth": [
+      "ProductAuthorizationV59ContractTest",
+      "ProductAuthorizationReleaseLineageTest",
+      "ProductAuthorizationContractReleaseLineageTest",
+      "ProductAuthorizationSeedLoaderTest",
+      "TenantFeatureActivationV268MigrationContractTest",
+      "TenantFeatureActivationV268PostgresTest",
+      "fresh and V267-to-V268 PostgreSQL paths with exact checksum, catalog-only duty/resource rows, default OFF, zero enrollment, zero assignment and zero grant"
+    ],
+    "gatewayAndPeopleCentral": [
+      "GeneratedProductRouteCatalogTest exact nine topologies and v58-omit/v59-require introduction gate",
+      "ProductSurfaceDecisionContextFilterTest exact purpose, feature and caller-authority stripping with unchanged unrelated routes",
+      "TenantFeatureActivationV268RouteParityTest exact nine owners and bindings",
+      "ProductSurfaceFeatureRolloutContractTest default-OFF denial and zero People invocation",
+      "focused People v59 registry tests for SELF, manager target, assigned provider, release population, field policy, purpose and problem non-disclosure"
+    ],
+    "frontend": [
+      "yarn authorization:check ../dwp-backend/contracts/product-authorization",
+      "yarn fixtures:check",
+      "apps/dwp/src/routes/product-route-contract-source.test.ts",
+      "apps/dwp/src/routes/product-route-contracts.generated.test.ts",
+      "apps/dwp/src/routes/hris-w1-browser-firewall-contract.test.ts",
+      "exact two PAGE registration, official HCM PAGE firewall count 67, no menu or component mount, default-OFF zero call and snapshot below 104857600 bytes"
+    ],
+    "databaseUnavailableRule": "Required real PostgreSQL checks report BLOCKED rather than PASS when unavailable.",
+    "changedPathAllowlistRequired": true,
+    "gitDiffCheckRequired": true
+  },
+  "independentReview": {
+    "required": true,
+    "status": "PASS_ZERO_P0_ZERO_P1_ZERO_P2",
+    "reviewedAt": "2026-10-23T09:57:09+09:00",
+    "reviewedArtifact": {
+      "sha256": "4a46b5243db3e089eb5b5f07b929f9f8349174d17eb5b1714f368cf4d31b7d64",
+      "bytes": 82419
+    },
+    "reviewers": [
+      "per008_successor_security_review",
+      "per008_successor_authority_audit",
+      "per008_contract_delta_audit"
+    ],
+    "findingCounts": {
+      "P0": 0,
+      "P1": 0,
+      "P2": 0
+    },
+    "closedPriorFindings": [
+      "restore IAQ-038 selector-exact TEAM_MANAGEMENT purpose and pin its authoritative projection register",
+      "seal exact assigned collection, detail and submit OPEN-window plus PERFORMANCE_FEEDBACK_ASSIGNED policy",
+      "seal three independent release populations and contributor-identity-free IDENTIFIED, MASKED and ANONYMOUS_AGGREGATE projections",
+      "close Per008FeedbackResponseCommandV1, PEP-PER-015 versus PEP-PER-022 ownership and deterministic digest boundaries",
+      "enumerate exact Auth V268 nine-route immutable binding tuples and exact People central-security test allowlist",
+      "expand accepted IAQ and PEP evidence to self-contained path, hash, byte-count and selector pins"
+    ],
+    "requiredFindingCounts": {
+      "P0": 0,
+      "P1": 0,
+      "P2": 0
+    },
+    "reviewScope": [
+      "exact nine-route and v59/V268 count arithmetic",
+      "IAQ-038 typed action target and eight-field create command",
+      "SELF, manager, assigned provider and release population separation",
+      "PEP-PER-015 versus PEP-PER-022 authority and event ownership",
+      "state, receipt, encryption, threshold and anonymity safety",
+      "shared-RLS readiness sequencing and all withheld authority booleans",
+      "external reference path, hash, byte count and repository pin integrity"
+    ],
+    "stateAfterPass": "PER008_IAQ038_FEEDBACK_CENTRAL_SUCCESSOR_INDEPENDENTLY_REVIEWED_PASS_ZERO_P0_ZERO_P1_ZERO_P2_RLS_READINESS_PACKET_MAY_PROCEED_AFTER_CARRIER_COMMIT",
+    "reviewMetadataFinalization": "COMPLETE_METADATA_ONLY_AFTER_THREE_INDEPENDENT_ZERO_FINDING_REVIEWS"
+  },
+  "authority": {
+    "centralContractSuccessorSealed": true,
+    "iaq038TypedActionTargetSealed": true,
+    "feedbackTransportCorrectionsSealed": true,
+    "productAuthorizationV59Reserved": true,
+    "authV268Reserved": true,
+    "pepPer022Allocated": true,
+    "independentReviewRequired": true,
+    "independentReviewComplete": true,
+    "authorityCarrierCommittedAndPushed": false,
+    "performanceSharedRlsReadinessPacketEligibleAfterReviewAndCarrierCommit": true,
+    "performanceSharedRlsReadinessPacketIssued": false,
+    "performanceSharedRlsReadinessComplete": false,
+    "centralWorktreeAndTokenPreparationEligibleAfterReadinessAdmission": false,
+    "centralWorktreesMaterialized": false,
+    "centralExecutableTokenIssued": false,
+    "centralSourceAuthoringAuthorizedNow": false,
+    "ownerPacketMayBeIssuedNow": false,
+    "performanceV20ReservationMayBeIssuedNow": false,
+    "moduleWorktreeMaterializationAuthorizedNow": false,
+    "moduleSourceAuthoringAuthorizedNow": false,
+    "routeMountAuthorized": false,
+    "menuMountAuthorized": false,
+    "featureDefaultOff": true,
+    "tenantEnrollmentCount": 0,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionProviderBindingAuthorized": false,
+    "productionSchedulerBindingAuthorized": false,
+    "productionBrokerBindingAuthorized": false,
+    "mergeCentralSourceToDwpDevAuthorized": false,
+    "mergeModuleSourceToDwpDevAuthorized": false,
+    "laterLaneAuthorized": false,
+    "businessCompletionCredit": 0,
+    "productionReleaseAuthorized": false
+  },
+  "nonClaims": [
+    "This successor implements, generates, tests, commits or pushes product authorization v59, Auth V268, Gateway, People, frontend or module source.",
+    "The v59, Auth V268 or PEP-PER-022 reservation is an executable token, active import, route mount, feature activation or tenant enrollment.",
+    "IAQ-038 itemPublicId or display data is a valid subject worker or assignment action target.",
+    "PEP-PER-015 authorizes response submission or emits PerformanceFeedbackSubmitted.v1.",
+    "AGGREGATED may be hidden, mapped away or inferred from time passage.",
+    "IDENTIFIED mode exposes contributor identity in any v1 subject, manager, operator or generic release projection.",
+    "A performance shared-RLS readiness packet, owner packet, V20 reservation, worktree, central token, module token, source, route, menu, provider, scheduler, broker or customer enrollment is created here.",
+    "IAQ-023, PER-003, goal, review, check-in or broader performance transaction semantics are re-owned or completed again.",
+    "BASE-TFR-PER-008, Batch-05, R7 or HRIS is complete."
+  ],
+  "immutability": {
+    "sealed": true,
+    "appendOnly": true,
+    "predecessorMutation": "FORBIDDEN",
+    "recoveryEvidenceMutation": "FORBIDDEN",
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_SUCCESSOR_ID_AND_SHA256"
+  },
+  "nextAction": "COMMIT_AND_PUSH_ONLY_THIS_INDEPENDENTLY_REVIEWED_AUTHORITY_CARRIER; THEN_ISSUE_ONE_SEPARATE_NO_MIGRATION_PERFORMANCE_SHARED_RLS_READINESS_PACKET; DO_NOT_AUTHOR_V59_V268_OR_PER008_MODULE_SOURCE_RESERVE_V20_CREATE_WORKTREES_OR_ISSUE_TOKENS_UNTIL_THEIR_SEPARATE_GATES"
+}
