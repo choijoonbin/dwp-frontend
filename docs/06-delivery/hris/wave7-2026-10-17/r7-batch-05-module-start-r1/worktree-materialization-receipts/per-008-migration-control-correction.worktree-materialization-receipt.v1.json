@@ -1,0 +1,32 @@
+{
+  "schema": "dwp.hris.worktree-materialization-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-05-PER008-MIGRATION-CONTROL-CORRECTION-WORKTREE-20261023-R1",
+  "issuedAt": "2026-10-23T15:15:53+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "MATERIALIZED_CLEAN_EXACT_REJECTED_CANDIDATE_DESCENDANT_NO_SOURCE_EDITS_NO_UPSTREAM",
+  "authority": {
+    "path": "../../r7-batch-05-central-admission-r1/per-008-migration-control-correction-authority.v1.json",
+    "sha256": "4b9a43eac9be9991413e884e4120a27b0441192e4e52165f24e1a4aef3e3108e",
+    "bytes": 7993,
+    "carrierCommit": "b3b6911e99e98614bd6b86755a58d1f12dbb4edc",
+    "carrierTree": "4738d3a0f477ab8bfe392e9c2f6529cd6cab73ac"
+  },
+  "worktree": {
+    "repository": "dwp-backend",
+    "remote": "https://github.com/choijoonbin/dwp-backend.git",
+    "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261023/r7-batch05/per-008-migration-control-correction/backend",
+    "branch": "codex/hris-wave7-r7-batch05-per-008-migration-control-correction-backend-20261023-r1",
+    "initialHead": "4f051e00e63525cb688fc69159a5197939e73696",
+    "initialTree": "a091c6a2a2dc687a60704feec60a4d44975c0247",
+    "initialPorcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "initialClean": true,
+    "initialUpstream": null,
+    "firstPushTarget": "origin/codex/hris-wave7-r7-batch05-per-008-migration-control-correction-backend-20261023-r1"
+  },
+  "invariants": {
+    "baseIsExactRejectedCandidate": true,
+    "originalPer008ModuleBranchMustRemainUnchanged": true,
+    "correctionBranchMustRemainDescendantOf4f051e00": true,
+    "directDwpDevMergeAuthorized": false
+  }
+}

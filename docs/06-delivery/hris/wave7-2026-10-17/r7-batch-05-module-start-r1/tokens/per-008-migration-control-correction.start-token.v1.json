@@ -1,0 +1,83 @@
+{
+  "schema": "dwp.hris.central-correction-start-token.v1",
+  "tokenId": "HRIS-WAVE7-R7-BATCH-05-START-PER008-MIGRATION-CONTROL-CORRECTION-20261023-R1",
+  "issuedAt": "2026-10-23T15:15:53+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "ISSUED_EXECUTABLE_EXACT_DESCENDANT_BOUNDED_CENTRAL_CORRECTION_TEST_COMMIT_PUSH_ONLY",
+  "executable": true,
+  "immutability": {
+    "sealed": true,
+    "appendOnly": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_TOKEN_ID_AND_SHA256"
+  },
+  "authorityBasis": {
+    "correctionAuthority": {
+      "path": "../../r7-batch-05-central-admission-r1/per-008-migration-control-correction-authority.v1.json",
+      "sha256": "4b9a43eac9be9991413e884e4120a27b0441192e4e52165f24e1a4aef3e3108e",
+      "bytes": 7993,
+      "carrierCommit": "b3b6911e99e98614bd6b86755a58d1f12dbb4edc"
+    },
+    "materializationReceipt": {
+      "path": "../worktree-materialization-receipts/per-008-migration-control-correction.worktree-materialization-receipt.v1.json",
+      "receiptId": "HRIS-WAVE7-R7-BATCH-05-PER008-MIGRATION-CONTROL-CORRECTION-WORKTREE-20261023-R1"
+    }
+  },
+  "worktree": {
+    "repository": "dwp-backend",
+    "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261023/r7-batch05/per-008-migration-control-correction/backend",
+    "branch": "codex/hris-wave7-r7-batch05-per-008-migration-control-correction-backend-20261023-r1",
+    "initialHead": "4f051e00e63525cb688fc69159a5197939e73696",
+    "initialTree": "a091c6a2a2dc687a60704feec60a4d44975c0247",
+    "firstPushTarget": "origin/codex/hris-wave7-r7-batch05-per-008-migration-control-correction-backend-20261023-r1"
+  },
+  "exactWritableBoundary": {
+    "production": [
+      "dwp-migration-control/src/main/java/com/dwp/migration/control/MigrationControlMain.java",
+      "dwp-migration-control/src/main/java/com/dwp/migration/control/PeoplePerformanceV20BoundaryControl.java"
+    ],
+    "tests": [
+      "dwp-migration-control/src/test/java/com/dwp/migration/control/PeopleMigrationControlPostgresTest.java",
+      "dwp-migration-control/src/test/java/com/dwp/migration/control/MigrationControlMainTest.java"
+    ],
+    "evidenceCreateOnly": [
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-05-results/per-008/per-008-migration-control-correction-result.v1.json"
+    ],
+    "outsideBoundaryAction": "STOP_AND_REQUEST_EXACT_APPEND_ONLY_CONTROL_REALLOCATION"
+  },
+  "requiredImplementation": [
+    "Stage the People Performance stream through V19 when V20 exists and is pending.",
+    "Attest the configured runtime principal and direct V1 seam DML before V20 without role-name guessing.",
+    "Apply V20 and future pending migrations without changing V1 through V20 sources.",
+    "After DomainPrivilegeControl.normalize, restore and verify the exact V20 table and sequence least-privilege ACL before a receipt can be created.",
+    "Apply the same pending-V20 phase to People adoption-or-upgrade and preserve no-op behavior for services or classpaths without V20."
+  ],
+  "targetedVerification": {
+    "policy": "RUN_EACH_AFFECTED_TARGET_ONCE_AND_RERUN_ONLY_THE_SMALLEST_FAILED_SELECTOR_AFTER_A_FIX",
+    "selectors": [
+      "com.dwp.migration.control.PeopleMigrationControlPostgresTest.peopleFreshRunSealsBothStreamsAndMetadataReader",
+      "com.dwp.services.people.hris.performance.per008.Per008V20MigrationPostgresTest",
+      "com.dwp.services.people.hr.performance.compensationplanning.PerformanceSharedRlsReadinessPostgresTest.forceRlsReadinessCoversCatalogRefetchDispatcherLifecycleAndToctou",
+      "new bounded migration-control unit and PostgreSQL selectors for explicit runtime identity, final ACL, and pending-V20 adoption behavior"
+    ]
+  },
+  "forbidden": [
+    "editing any migration source V1 through V20",
+    "weakening the V20 fail-closed role resolver or RLS",
+    "merging the rejected 4f051e00 candidate separately",
+    "direct dwp-dev merge",
+    "route or menu mounting",
+    "feature activation or tenant enrollment",
+    "repository-wide test execution"
+  ],
+  "completion": {
+    "commitAndPushRequired": true,
+    "appendOnlyResultRequired": true,
+    "independentReviewRequired": true,
+    "requiredFindingCounts": {
+      "p0": 0,
+      "p1": 0,
+      "p2": 0
+    },
+    "centralAdmissionRequired": true
+  }
+}
