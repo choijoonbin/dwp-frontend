@@ -1,0 +1,195 @@
+{
+  "schema": "dwp.hris.wave7.performance-shared-rls-readiness-integration-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-05-PERFORMANCE-SHARED-RLS-READINESS-INTEGRATION-20261023-R1",
+  "recordedAt": "2026-10-23T12:18:10+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "EXACT_BACKEND_HEAD_NO_FF_MERGED_PUSHED_8_OF_8_BLOBS_IDENTICAL_READINESS_COMPLETE",
+  "scope": "PERFORMANCE_SHARED_RLS_READINESS",
+  "module": "PER",
+  "moduleSession": "HRIS-PER",
+  "immutability": {
+    "sealed": true,
+    "appendOnly": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_RECEIPT_ID_AND_SHA256"
+  },
+  "authority": {
+    "sourceAdmissionDecision": {
+      "path": "performance-shared-rls-readiness-admission-decision.v1.json",
+      "sha256": "ad1d7a7fbecdba3dae1e3bf8e0a15e4108634e13eba714bcd6b31073f59df73a",
+      "bytes": 10460,
+      "gitBlob": "71a9b75a62778a24ad57d0a1b60259d15896e0d0",
+      "carrierCommit": "9e45e189e64104bdac37f76e0eeaff1458bbc105",
+      "carrierTree": "346c5018f8a5879fd7c2e808a2c09e36856730c3",
+      "decision": "GO",
+      "strategy": "NO_FF_EXACT_HEAD_ONLY"
+    },
+    "decisionConstraintsObserved": {
+      "exactHeadOnly": true,
+      "noFfOnly": true,
+      "stopOnConflict": true,
+      "headDriftObserved": false,
+      "moduleTestRerunAuthorized": false,
+      "repositoryWideSuiteAuthorized": false
+    }
+  },
+  "integratedHead": {
+    "repository": "dwp-backend",
+    "branch": "dwp-dev",
+    "sourceBranch": "codex/hris-wave7-r7-batch05-performance-shared-rls-backend-20261023-r1",
+    "sourceHead": "02ef507a7faafa878a23b7eac161134846d74536",
+    "sourceTree": "fd6931db4515492846bd521bbdadcf99ada4e9d3",
+    "mergeCommit": "628492a176e61c13218db7d900e938a3789bf696",
+    "mergeTree": "fd6931db4515492846bd521bbdadcf99ada4e9d3",
+    "parents": [
+      "8bec85dab5ee816b12a922c51e369046714c007f",
+      "02ef507a7faafa878a23b7eac161134846d74536"
+    ],
+    "strategy": "NO_FF_EXACT_BRANCH_HEAD",
+    "sourceIsSecondParent": true,
+    "sourceIsAncestor": true,
+    "mergeTreeEqualsSourceTree": true,
+    "admittedPathCount": 8,
+    "admittedBlobMismatchCount": 0,
+    "pathOnlyManifestSha256": "c3f983d4a2ba22deea189db33c8016dd44206b4904f73ef97f9e32899915c6af",
+    "nameStatusManifestSha256": "158071422e5d198e27bda468ec0dd246fd048978181e112e2519c9c312be5dc1",
+    "mergeConflicts": 0,
+    "automaticConflictResolution": false,
+    "manualConflictResolution": false,
+    "originExact": true,
+    "clean": true
+  },
+  "admittedBlobs": {
+    "expected": 8,
+    "matched": 8,
+    "mismatched": 0,
+    "entries": [
+      {
+        "path": "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/PerformanceCycleQueryRepository.java",
+        "blob": "bc3696d1f1c9e760336668b122760f17a33274ae"
+      },
+      {
+        "path": "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/PerformanceCycleService.java",
+        "blob": "26e35e9b6d948e6158922b5930a7f105cd2cf486"
+      },
+      {
+        "path": "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/compensationplanning/CompensationPlanningEventHandoffRepository.java",
+        "blob": "caf18625897e6fd0cafa2ff778f343ce96bb95a7"
+      },
+      {
+        "path": "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/compensationplanning/CompensationPlanningEventHandoffWorker.java",
+        "blob": "02d91d383441da22b382cd133cbd72f3bf2b9962"
+      },
+      {
+        "path": "dwp-people-server/src/test/java/com/dwp/services/people/hr/performance/PerformanceCyclePostgresTest.java",
+        "blob": "c78099e3c512a0dcef956ab69087ff6d76e2f08a"
+      },
+      {
+        "path": "dwp-people-server/src/test/java/com/dwp/services/people/hr/performance/PerformanceCycleServiceTest.java",
+        "blob": "3cbf0d116e34ae9fd57a0e4a2427d54d47a0cf49"
+      },
+      {
+        "path": "dwp-people-server/src/test/java/com/dwp/services/people/hr/performance/compensationplanning/CompensationPlanningEventHandoffWorkerPostgresTest.java",
+        "blob": "2bd6ebf6665fd5a2c255776bda4fbec18bc8edb4"
+      },
+      {
+        "path": "dwp-people-server/src/test/java/com/dwp/services/people/hr/performance/compensationplanning/PerformanceSharedRlsReadinessPostgresTest.java",
+        "blob": "3a3c69ffb8ce25541339725633c7a9d7aa8e370f"
+      }
+    ]
+  },
+  "verificationEvidence": {
+    "preMergeBoundedRun": {
+      "selectorCount": 10,
+      "suiteCount": 10,
+      "tests": 59,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "gradleResult": "BUILD_SUCCESSFUL_IN_36_SECONDS"
+    },
+    "preMergeFocusedFinalRun": {
+      "selector": "PerformanceSharedRlsReadinessPostgresTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "gradleResult": "BUILD_SUCCESSFUL_IN_13_SECONDS",
+      "realPostgresContainer": true
+    },
+    "independentSourceSecurityReview": {
+      "decision": "GO",
+      "p0": 0,
+      "p1": 0,
+      "p2": 0
+    },
+    "independentProvenanceReview": {
+      "decision": "GO",
+      "p0": 0,
+      "p1": 0,
+      "p2": 0
+    },
+    "independentTestEvidenceReview": {
+      "decision": "GO",
+      "p0": 0,
+      "p1": 0,
+      "p2": 0
+    },
+    "postMergeIdentityReview": {
+      "decision": "GO",
+      "p0": 0,
+      "p1": 0,
+      "p2": 0,
+      "mergeTreeEqualsSourceTree": true,
+      "exactBlobComparison": "8_OF_8_MATCH"
+    },
+    "moduleTestsRerunDuringMerge": false,
+    "repositoryWideSuiteRunDuringMerge": false,
+    "reason": "The no-conflict merge is a Git identity and provenance operation over the exact reviewed and tested source head."
+  },
+  "securityAndOperationalConclusion": {
+    "performanceCycleTenantBinding": "INTEGRATED",
+    "activeTenantDispatcherAndClaimRevalidation": "INTEGRATED",
+    "globalBatchBudget": "INTEGRATED",
+    "tenantEventAttemptFencing": "INTEGRATED",
+    "actualForceRlsEvidence": "PASS",
+    "registryLockAclDependency": {
+      "requiredPrivileges": [
+        "SELECT",
+        "UPDATE"
+      ],
+      "satisfiedByExistingProductionAcl": true,
+      "newGrantIntroduced": false
+    }
+  },
+  "rolloutBoundary": {
+    "sharedRlsReadinessIntegrated": true,
+    "centralProductMigrationV59Authorized": false,
+    "authMigrationV268Authorized": false,
+    "per008OwnerSourceAuthorized": false,
+    "performanceMigrationV20Authorized": false,
+    "frontendSourceAuthorized": false,
+    "routeMounted": false,
+    "menuMounted": false,
+    "featureActivated": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionIncrement": 0
+  },
+  "authorityAfterReceipt": {
+    "performanceSharedRlsReadinessComplete": true,
+    "centralV59OrAuthV268SourceMayStartWithoutSeparateAuthority": false,
+    "per008ModuleSourceMayStart": false,
+    "routeOrMenuMountAuthorized": false,
+    "fullModuleCompletionAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nonClaims": [
+    "Central product migration V59 or Auth V268 is implemented or authorized by this receipt.",
+    "PER-008 owner source or Performance V20 is implemented or authorized by this receipt.",
+    "Any frontend page, route, shell node or menu is mounted.",
+    "Any feature is enabled or tenant is enrolled.",
+    "The Performance module, Batch-05, R7 or HRIS is complete.",
+    "Module tests or a repository-wide suite were rerun during the identity-only merge."
+  ],
+  "nextAction": "RETURN_TO_BATCH_05_ROADMAP_AUTHORITY_AND_PREPARE_FRESH_POST_READINESS_CENTRAL_V59_AUTH_V268_WORKTREES_MATERIALIZATION_RECEIPT_AND_HASH_BOUND_IMPLEMENTATION_TOKEN"
+}
