@@ -1,0 +1,302 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-05-per008-central-admission-decision.v1",
+  "decisionId": "HRIS-WAVE7-R7-BATCH-05-PER008-CENTRAL-ADMISSION-20261023-R1",
+  "issuedAt": "2026-10-23T13:08:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "EXACT_TWO_REPOSITORY_HEADS_INDEPENDENTLY_ACCEPTED_NO_FF_EXACT_HEAD_ONLY",
+  "scope": "PER_008_FEEDBACK_TRANSPORT_AND_CENTRAL_AUTHORIZATION",
+  "module": "PER",
+  "moduleSession": "HRIS-PER",
+  "immutability": {
+    "sealed": true,
+    "appendOnly": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_DECISION_ID_AND_SHA256"
+  },
+  "authorityBasis": {
+    "successor": {
+      "path": "../r7-batch-05-module-start-r1/per-008-iaq038-feedback-transport-and-central-authorization-successor.v1.json",
+      "sha256": "d62b43cb0fcc7d37563a09d5f28dcd09587b03fa91d78cf15298d7c801a7a955",
+      "bytes": 83353,
+      "carrierCommit": "d6bf7e5a719c4a0ae06154f23710e5829d39fec3"
+    },
+    "worktreeMaterializationReceipt": {
+      "path": "../r7-batch-05-module-start-r1/per-008-central-worktree-materialization-receipt.v1.json",
+      "sha256": "a8a9ef47a144428f5dd6af652de767b9a956d236b76f33ce97b5112f479d6270",
+      "bytes": 4805,
+      "carrierCommit": "7b9adcf0abaa596a69811097e6fb054a025513f3"
+    },
+    "implementationToken": {
+      "path": "../r7-batch-05-module-start-r1/per-008-central-implementation-token.v1.json",
+      "sha256": "e367df0834dfd296aad2d4b6eafd15c4484f7547cc617bc1e221245be21ded8d",
+      "bytes": 13375,
+      "carrierCommit": "7b9adcf0abaa596a69811097e6fb054a025513f3"
+    },
+    "correctionV2": {
+      "path": "../r7-batch-05-module-start-r1/per-008-central-implementation-token-correction.v2.json",
+      "sha256": "a60e81543ff6023f5596d4342ed73f1476d2aa06942d4cbb78d392fd16fb020b",
+      "bytes": 4661,
+      "carrierCommit": "393150e90c61b1b80148879ddc98cca9694ce23a",
+      "effect": "RELEASE_PREDICATE_TARGET_KINDS_SELF_OBJECT_TARGET_POPULATION_WHILE_SELF_RELEASE_ROUTE_PROFILE_REMAINS_SELF_OBJECT"
+    },
+    "correctionV3": {
+      "path": "../r7-batch-05-module-start-r1/per-008-central-implementation-token-correction.v3.json",
+      "sha256": "00df2f2f17796b844b75a4b939b998bbe13c0fe4fe32f5e4d39e64528b97d126",
+      "bytes": 9029,
+      "carrierCommit": "47ca45a55a95d55834e3d0f26a428274d97795aa",
+      "effect": "AUTHORIZATION_PAGE_CATALOG_IS_SEPARATE_FROM_RUNTIME_ROUTER"
+    },
+    "centralCarrierBeforeDecision": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "47ca45a55a95d55834e3d0f26a428274d97795aa",
+      "tree": "6edc4cee6c3f59078a9346fa912574abead09f5d",
+      "originExact": true,
+      "cleanBeforeDraft": true
+    }
+  },
+  "targetStateBeforeDecision": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "628492a176e61c13218db7d900e938a3789bf696",
+      "tree": "fd6931db4515492846bd521bbdadcf99ada4e9d3",
+      "originExact": true,
+      "clean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "47ca45a55a95d55834e3d0f26a428274d97795aa",
+      "tree": "6edc4cee6c3f59078a9346fa912574abead09f5d",
+      "originExact": true,
+      "cleanBeforeDecisionDraft": true
+    }
+  },
+  "candidateAdmission": {
+    "backend": {
+      "repository": "dwp-backend",
+      "targetBranch": "dwp-dev",
+      "sourceBranch": "codex/hris-wave7-r7-batch05-per008-central-backend-20261023-r1",
+      "baseCommit": "628492a176e61c13218db7d900e938a3789bf696",
+      "baseTree": "fd6931db4515492846bd521bbdadcf99ada4e9d3",
+      "mergeBaseWithTarget": "628492a176e61c13218db7d900e938a3789bf696",
+      "exactHead": "e8901f8297022b7b9b2fcbb0efc8a40c8da29528",
+      "exactTree": "d06ffe06eb7e6a1fbb18ef4ed93b3ffce3401f67",
+      "commitCount": 1,
+      "changedPathCount": 38,
+      "addedPathCount": 13,
+      "modifiedPathCount": 25,
+      "deletedPathCount": 0,
+      "insertions": 189363,
+      "deletions": 68,
+      "pathManifest": {
+        "range": "628492a176e61c13218db7d900e938a3789bf696..e8901f8297022b7b9b2fcbb0efc8a40c8da29528",
+        "pathOnlySha256": "87eac8486ea0a2dadfba77736874c49aa4b9d36658c530f188a9580ea799cf6e",
+        "nameStatusSha256": "48315cbe60fae85980120f4288b69b4018eefa30c2694a4161ff6010a1d81743",
+        "binaryPatchSha256": "785c6a4ade2e67d6d5568110c6cb88147029b542b10d99f50bacfc9b2b67bb4b"
+      },
+      "outsideAuthorizedBoundaryChanges": 0,
+      "originExact": true,
+      "clean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "targetBranch": "dwp-dev",
+      "sourceBranch": "codex/hris-wave7-r7-batch05-per008-central-frontend-20261023-r1",
+      "baseCommit": "24ca1a8d389e89290e9a331102fcfce0265e8a2a",
+      "baseTree": "aa43f6cb8deae4fc572ac3eb02f9bc61e006758a",
+      "mergeBaseWithTarget": "24ca1a8d389e89290e9a331102fcfce0265e8a2a",
+      "exactHead": "68c3c17c32ae13c17d56e3e7d3acd79d656fefd8",
+      "exactTree": "b815657c7a4d45b3d0893b0c7b4318e5e686ab75",
+      "commitCount": 1,
+      "changedPathCount": 10,
+      "addedPathCount": 0,
+      "modifiedPathCount": 10,
+      "deletedPathCount": 0,
+      "insertions": 88006,
+      "deletions": 6050,
+      "pathManifest": {
+        "range": "24ca1a8d389e89290e9a331102fcfce0265e8a2a..68c3c17c32ae13c17d56e3e7d3acd79d656fefd8",
+        "pathOnlySha256": "6bbff8b8a07d9aeb4822a6552b5836b500125fa117cfa3cb0f4a3937f9daefb7",
+        "nameStatusSha256": "6222bc3b14c2c5f8ed47e76f2bbe61e28cd5eac17ed530ba93975f48f224c061",
+        "binaryPatchSha256": "a958ffc0821019ed5d7b3ff2bd30507299fbc8d0d5b55469051e66417429edcd"
+      },
+      "outsideAuthorizedBoundaryChanges": 0,
+      "originExact": true,
+      "clean": true
+    }
+  },
+  "admittedContractShape": {
+    "productAuthorizationVersion": 59,
+    "lifecycle": "DRAFT",
+    "canonicalChecksumSha256": "56582749cebf382c5c2669d83a30fb4c81fcb532db2878b15e6a83ced6898094",
+    "rawBundleSha256": "bc9d253166c2ccfae1a95b2f9772742d321cf4784bceecb9fb228ae1ce5165b7",
+    "previousV58RawSha256": "994d47f164e015cbc737da4620addd27ccbd78630790f547e6f8e004912f1589",
+    "counts": {
+      "capabilities": 276,
+      "accessPolicies": 24,
+      "entitlementExpressions": 17,
+      "predicatePolicies": 86,
+      "routes": 1134,
+      "pageRoutes": 160,
+      "dataRoutes": 345,
+      "actionRoutes": 629
+    },
+    "peopleProjection": {
+      "capabilities": 64,
+      "accessPolicies": 5,
+      "entitlementExpressions": 3,
+      "predicatePolicies": 22,
+      "routes": 133,
+      "pageRoutes": 46,
+      "dataRoutes": 34,
+      "actionRoutes": 53,
+      "bindings": 160
+    },
+    "authMigration": "V268",
+    "authMigrationDefault": "OFF",
+    "authMigrationAutomaticImport": false,
+    "tenantEnrollmentCount": 0,
+    "frontend": {
+      "runtimePageRoutes": 158,
+      "runtimeHcmPageRoutes": 65,
+      "catalogOnlyPageContracts": 2,
+      "authorizationPageContracts": 160,
+      "hcmFirewallPageContracts": 67,
+      "per008RuntimeRouteMounted": false,
+      "per008HcmRouteTreeMounted": false
+    }
+  },
+  "verificationAccounting": {
+    "policy": "TARGETED_ONLY_NO_REPOSITORY_WIDE_RERUN",
+    "pythonContractTests": {
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "authTargetedTests": {
+      "tests": 17,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "gatewayTargetedTests": {
+      "tests": 136,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "peopleTargetedTests": {
+      "tests": 42,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "frontendTargetedTests": {
+      "tests": 20,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "totals": {
+      "tests": 220,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "gitDiffCheck": "PASS_BOTH_REPOSITORIES",
+    "sourceChangedAfterFinalTargetedVerification": false,
+    "testsRerunAfterCommit": false,
+    "repositoryWideSuiteRun": false
+  },
+  "independentReview": {
+    "canonicalRegistryAndGeneratedArtifacts": {
+      "decision": "GO",
+      "p0": 0,
+      "p1": 0,
+      "p2": 0
+    },
+    "authMigrationAndPostgres": {
+      "decision": "GO_AFTER_CUSTOM_BUILTIN_ROLE_FIX",
+      "p0": 0,
+      "p1": 0,
+      "p2": 0
+    },
+    "gateway": {
+      "decision": "GO",
+      "p0": 0,
+      "p1": 0,
+      "p2": 0
+    },
+    "peoplePep": {
+      "decision": "GO",
+      "p0": 0,
+      "p1": 0,
+      "p2": 0
+    },
+    "frontendCatalogOnlyBoundary": {
+      "decision": "GO",
+      "p0": 0,
+      "p1": 0,
+      "p2": 0
+    },
+    "backendExactCommit": {
+      "decision": "GO",
+      "commit": "e8901f8297022b7b9b2fcbb0efc8a40c8da29528",
+      "p0": 0,
+      "p1": 0,
+      "p2": 0
+    },
+    "frontendExactCommit": {
+      "decision": "GO",
+      "commit": "68c3c17c32ae13c17d56e3e7d3acd79d656fefd8",
+      "p0": 0,
+      "p1": 0,
+      "p2": 0
+    },
+    "unresolvedFindings": 0
+  },
+  "admissionDecision": {
+    "decision": "GO",
+    "strategy": "NO_FF_EXACT_HEAD_ONLY",
+    "authorizedBackendSourceHead": "e8901f8297022b7b9b2fcbb0efc8a40c8da29528",
+    "authorizedBackendSourceTree": "d06ffe06eb7e6a1fbb18ef4ed93b3ffce3401f67",
+    "authorizedFrontendSourceHead": "68c3c17c32ae13c17d56e3e7d3acd79d656fefd8",
+    "authorizedFrontendSourceTree": "b815657c7a4d45b3d0893b0c7b4318e5e686ab75",
+    "requiredBackendTargetHeadBeforeMerge": "628492a176e61c13218db7d900e938a3789bf696",
+    "requiredFrontendTargetLineageBeforeMerge": {
+      "baseHead": "47ca45a55a95d55834e3d0f26a428274d97795aa",
+      "onlyPermittedAdditionalCommit": "THE_COMMIT_THAT_ADDS_ONLY_THIS_DECISION_FILE"
+    },
+    "conflictPolicy": "STOP_NO_AUTOMATIC_OR_MANUAL_CONFLICT_RESOLUTION",
+    "headDriftPolicy": "INVALIDATE_AND_REVIEW_AGAIN",
+    "testRerunDuringIdentityMergeAuthorized": false,
+    "repositoryWideSuiteAuthorized": false,
+    "pushTarget": "origin/dwp-dev"
+  },
+  "rolloutBoundary": {
+    "centralProductMigrationV59AuthorizedForAdmission": true,
+    "authMigrationV268AuthorizedForAdmission": true,
+    "gatewayAndPeoplePepAuthorizedForAdmission": true,
+    "frontendCatalogOnlyContractsAuthorizedForAdmission": true,
+    "per008ModuleOwnerSourceAuthorized": false,
+    "performanceMigrationV20Authorized": false,
+    "frontendRuntimePageSourceAuthorized": false,
+    "routeMounted": false,
+    "menuMounted": false,
+    "featureActivated": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionIncrement": 0
+  },
+  "nonClaims": [
+    "This decision authorizes only the exact central prerequisite source heads and does not claim that either has already been merged.",
+    "This decision does not authorize PER-008 module domain, controller, service, repository or frontend page implementation.",
+    "This decision does not authorize Performance V20 authoring, route or menu mounting, feature activation or tenant enrollment.",
+    "The two PER-008 PAGE contracts are authorization-catalog and firewall entries only; they are intentionally absent from the runtime Router and HCM route tree.",
+    "This decision does not claim PER-008, Batch-05, R7 or HRIS is complete.",
+    "This decision does not authorize rerunning targeted or repository-wide suites during an identity-only merge."
+  ],
+  "nextAction": "COMMIT_AND_PUSH_THIS_DECISION_CARRIER_TO_FRONTEND_DWP_DEV_THEN_RECHECK_EXACT_HEADS_AND_NO_FF_MERGE_BACKEND_AND_FRONTEND_EXACT_SOURCE_HEADS_STOPPING_ON_ANY_DRIFT_OR_CONFLICT"
+}
