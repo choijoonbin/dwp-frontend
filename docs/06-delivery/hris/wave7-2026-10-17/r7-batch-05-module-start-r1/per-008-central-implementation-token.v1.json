@@ -1,0 +1,250 @@
+{
+  "schema": "hris.central-implementation-token.v1",
+  "tokenId": "HRIS-WAVE7-R7-BATCH05-PER008-CENTRAL-IMPLEMENT-20261023-R1",
+  "issuedAt": "2026-10-23T12:23:41+09:00",
+  "state": "SEALED_EXECUTABLE_ONLY_AFTER_RECEIPT_AND_TOKEN_CARRIER_COMMIT_AND_PUSH",
+  "sliceId": "BASE-TFR-PER-008",
+  "module": "HRIS-PER",
+  "authority": {
+    "successor": {
+      "path": "per-008-iaq038-feedback-transport-and-central-authorization-successor.v1.json",
+      "sha256": "d62b43cb0fcc7d37563a09d5f28dcd09587b03fa91d78cf15298d7c801a7a955",
+      "bytes": 83353,
+      "carrierCommit": "d6bf7e5a719c4a0ae06154f23710e5829d39fec3",
+      "carrierTree": "d1a6340ecf8de4470515ed2702211ebdfad2a458"
+    },
+    "sharedRlsIntegration": {
+      "path": "../r7-batch-05-central-admission-r1/performance-shared-rls-readiness-integration-receipt.v1.json",
+      "sha256": "d2006453117a6ace2ce726faf53b22115c4035f0e3f21c33071210e09e863e5b",
+      "bytes": 7572,
+      "carrierCommit": "24ca1a8d389e89290e9a331102fcfce0265e8a2a",
+      "backendMergeCommit": "628492a176e61c13218db7d900e938a3789bf696"
+    },
+    "worktreeReceipt": {
+      "path": "per-008-central-worktree-materialization-receipt.v1.json",
+      "sha256": "a8a9ef47a144428f5dd6af652de767b9a956d236b76f33ce97b5112f479d6270",
+      "bytes": 4805
+    },
+    "independentReviewRequiredBeforeCarrierCommit": true,
+    "independentReview": {
+      "contractAndSequencing": {
+        "decision": "GO",
+        "p0": 0,
+        "p1": 0,
+        "p2": 0
+      },
+      "backendSecurityAndSchema": {
+        "decision": "GO",
+        "p0": 0,
+        "p1": 0,
+        "p2": 0
+      },
+      "frontendSynchronizationBoundary": {
+        "decision": "GO",
+        "p0": 0,
+        "p1": 0,
+        "p2": 0
+      },
+      "unresolvedFindings": 0
+    }
+  },
+  "execution": {
+    "backendWorktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261023/r7-batch05/per008-central/backend",
+    "backendBranch": "codex/hris-wave7-r7-batch05-per008-central-backend-20261023-r1",
+    "backendBaseHead": "628492a176e61c13218db7d900e938a3789bf696",
+    "backendBaseTree": "fd6931db4515492846bd521bbdadcf99ada4e9d3",
+    "frontendWorktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261023/r7-batch05/per008-central/frontend",
+    "frontendBranch": "codex/hris-wave7-r7-batch05-per008-central-frontend-20261023-r1",
+    "frontendBaseHead": "24ca1a8d389e89290e9a331102fcfce0265e8a2a",
+    "frontendBaseTree": "aa43f6cb8deae4fc572ac3eb02f9bc61e006758a",
+    "changedPathAuthority": "Exactly the 38 backend and 12 frontend paths under exactImplementationPathsAfterSeparateExecutableCentralToken in the pinned successor; no sibling, formatting-spill, module or documentation paths are authorized in the implementation worktrees.",
+    "dependencyOrder": [
+      "Generate and verify canonical backend v59 plus fixtures first.",
+      "Implement Auth V268, Gateway and People central security against the exact v59 artifacts.",
+      "Synchronize frontend only from the generated backend v59 artifacts.",
+      "Run each pinned focused target group once and rerun only a smallest failing selector after a correction.",
+      "Commit and push each central branch, independently review exact commits, then require a separate central admission decision before no-ff merges."
+    ],
+    "requiredOutcomes": [
+      "Create immutable DRAFT product authorization v59 with exactly five new capabilities, three new predicates and nine new route contracts while preserving v1 through v58 byte-for-byte.",
+      "Produce exact v59 totals 276 capabilities, 24 access policies, 17 entitlement expressions, 86 predicates and 1134 routes split 160 PAGE, 345 DATA and 629 ACTION.",
+      "Produce exact People projection totals 64 capabilities, 5 policies, 3 expressions, 22 predicates and 133 routes split 46 PAGE, 34 DATA and 53 ACTION.",
+      "Add Auth V268 catalog-only declaration for default-OFF HRIS_PER_TEAM_PERFORMANCE_FEEDBACK with exact nine owners and bindings, automatic import false and zero activation, enrollment, assignment and broad grant.",
+      "Add only the exact nine Gateway topologies with fixed purpose, feature-owner parity and pre-v59 omission/v59 requirement gates; default OFF must produce zero People invocation.",
+      "Add People PEP-PER-022 and exact v59 registry, scope and target guards without implementing module controllers, services, repositories or V20.",
+      "Synchronize frontend authorization and fixtures through v59, register exactly two PAGE contracts, advance HCM PAGE firewall 65 to 67, remain under 104857600 bytes, and mount no component, runtime route or menu."
+    ],
+    "authV268CatalogTupleResolution": {
+      "resolutionBasis": "The successor's exact capability/resource/action/risk tuples plus explicit FK-compatible legacy-role adapters, the accepted HRIS atomic-duty matrix and the admitted V266 catalog-only insertion pattern. Canonical HRIS profiles remain the authorization meaning.",
+      "permissions": {
+        "requiredExistingCodes": [
+          "VIEW",
+          "CREATE",
+          "UPDATE"
+        ],
+        "newPermissionCodesAuthorized": 0
+      },
+      "newResourceTemplates": [
+        {
+          "resourceKey": "DATA.HRIS_TEAM_WORKBENCH",
+          "resourceType": "DATA",
+          "displayName": "HRIS team workbench data",
+          "requiredEntitlement": "core.people"
+        },
+        {
+          "resourceKey": "ACTION.HRIS_PERFORMANCE_FEEDBACK",
+          "resourceType": "ACTION",
+          "displayName": "HRIS performance feedback actions",
+          "requiredEntitlement": "core.people"
+        },
+        {
+          "resourceKey": "DATA.HRIS_PERFORMANCE_FEEDBACK",
+          "resourceType": "DATA",
+          "displayName": "HRIS performance feedback data",
+          "requiredEntitlement": "core.people"
+        }
+      ],
+      "reusedResourceTemplates": [
+        {
+          "resourceKey": "DATA.HR_TALENT",
+          "requiredExactExistingTuple": "DATA|Talent, learning, and employee journeys|core.people"
+        }
+      ],
+      "scopedDutyCatalog": [
+        {
+          "dutyCode": "HRIS_DUTY_TEAM_WORKBENCH_READER",
+          "legacyRoleCode": "TALENT_ADMIN",
+          "resourceKey": "DATA.HRIS_TEAM_WORKBENCH",
+          "riskTier": "HIGH"
+        },
+        {
+          "dutyCode": "HRIS_DUTY_SELF_PERFORMANCE_READER",
+          "legacyRoleCode": "WORKSPACE_MEMBER",
+          "resourceKey": "DATA.HR_TALENT",
+          "riskTier": "MEDIUM"
+        },
+        {
+          "dutyCode": "HRIS_DUTY_FEEDBACK_REQUESTER",
+          "legacyRoleCode": "WORKSPACE_MEMBER",
+          "resourceKey": "ACTION.HRIS_PERFORMANCE_FEEDBACK",
+          "riskTier": "MEDIUM"
+        },
+        {
+          "dutyCode": "HRIS_DUTY_FEEDBACK_PROVIDER",
+          "legacyRoleCode": "WORKSPACE_MEMBER",
+          "resourceKey": "ACTION.HRIS_PERFORMANCE_FEEDBACK",
+          "riskTier": "HIGH"
+        },
+        {
+          "dutyCode": "HRIS_DUTY_FEEDBACK_AGGREGATE_READER",
+          "legacyRoleCode": "TALENT_ADMIN",
+          "resourceKey": "DATA.HRIS_PERFORMANCE_FEEDBACK",
+          "riskTier": "HIGH"
+        }
+      ],
+      "commonDutyTuple": {
+        "productKey": "hcm",
+        "productResourceKey": "APP.HCM",
+        "auditPolicyException": false,
+        "lifecycleState": "ACTIVE"
+      },
+      "legacyRoleResolution": {
+        "semantics": "FK-compatible catalog metadata only; legacyRoleCode is not an authorization source and MUST NOT seed or imply any principal assignment, role permission, preset duty, population assignment or grant.",
+        "canonicalBuiltinsAbsent": [
+          "HRIS_EMPLOYEE",
+          "HRIS_LINE_MANAGER",
+          "HRIS_PERFORMANCE_OPERATOR",
+          "EMPLOYEE",
+          "MANAGER"
+        ],
+        "adapters": [
+          {
+            "dutyCode": "HRIS_DUTY_TEAM_WORKBENCH_READER",
+            "legacyRoleCode": "TALENT_ADMIN",
+            "basis": "Closest existing performance-domain catalog role for schema compatibility; canonical authority remains HRIS_LINE_MANAGER plus TEAM_TARGET_POPULATION."
+          },
+          {
+            "dutyCode": "HRIS_DUTY_SELF_PERFORMANCE_READER",
+            "legacyRoleCode": "WORKSPACE_MEMBER",
+            "basis": "Least-privilege existing employee baseline; canonical authority remains HRIS_EMPLOYEE plus SELF."
+          },
+          {
+            "dutyCode": "HRIS_DUTY_FEEDBACK_REQUESTER",
+            "legacyRoleCode": "WORKSPACE_MEMBER",
+            "basis": "Least-privilege existing employee baseline; canonical authority remains HRIS_EMPLOYEE plus SELF/OBJECT predicates."
+          },
+          {
+            "dutyCode": "HRIS_DUTY_FEEDBACK_PROVIDER",
+            "legacyRoleCode": "WORKSPACE_MEMBER",
+            "basis": "Least-privilege existing employee baseline; canonical authority remains assignment-bound HRIS_EMPLOYEE and PEP-PER-022."
+          },
+          {
+            "dutyCode": "HRIS_DUTY_FEEDBACK_AGGREGATE_READER",
+            "legacyRoleCode": "TALENT_ADMIN",
+            "basis": "Single-column compatibility adapter for a duty shared by HRIS_EMPLOYEE, HRIS_LINE_MANAGER and HRIS_PERFORMANCE_OPERATOR; actual authority is the scoped-duty assignment plus SELF/TEAM_TARGET_POPULATION/NAMED_POPULATION and release predicates, never this legacy code."
+          }
+        ],
+        "requiredZeroEffectAssertions": [
+          "rolePermissionTemplates",
+          "rolePermissions",
+          "dutyAssignments",
+          "presetDuties",
+          "populationAssignments",
+          "grants",
+          "legacyRoleBackfills"
+        ]
+      },
+      "dutyCapabilities": [
+        "HRIS_DUTY_TEAM_WORKBENCH_READER|hcm.team.workbench.view|DATA.HRIS_TEAM_WORKBENCH|VIEW",
+        "HRIS_DUTY_SELF_PERFORMANCE_READER|hcm.personal.performance.view|DATA.HR_TALENT|VIEW",
+        "HRIS_DUTY_FEEDBACK_REQUESTER|per.feedback.request.create|ACTION.HRIS_PERFORMANCE_FEEDBACK|CREATE",
+        "HRIS_DUTY_FEEDBACK_PROVIDER|per.feedback.assigned.submit|ACTION.HRIS_PERFORMANCE_FEEDBACK|UPDATE",
+        "HRIS_DUTY_FEEDBACK_AGGREGATE_READER|per.feedback.aggregate.view|DATA.HRIS_PERFORMANCE_FEEDBACK|VIEW"
+      ],
+      "tenantResourceInstanceRule": "Create or exact-no-op tenant resource instances only for the three new resource templates; create no role-permission template, role permission, responsibility, preset, duty assignment, population assignment or grant.",
+      "immutableConflictRule": "Every existing resource template, duty, capability, release, feature, owner and binding key must match this token and the successor exactly or abort the entire V268 migration."
+    },
+    "verificationPolicy": {
+      "commands": "Exactly sourceGeneratedSynchronization.commandsAfterAuthorization and targetedVerification in the pinned successor.",
+      "runPassingGroupOnce": true,
+      "rerunOnlySmallestFailedSelector": true,
+      "repositoryWideSuiteAuthorized": false,
+      "realPostgresRequired": true,
+      "databaseUnavailableDisposition": "BLOCKED_NOT_PASS",
+      "changedPathAllowlistRequired": true,
+      "gitDiffCheckRequired": true
+    },
+    "branchPolicy": "Commit and push only these two central worktree branches; independently review their exact commits with zero unresolved P0, P1 or P2 before a separate no-ff central admission."
+  },
+  "forbidden": [
+    "Performance V20 or PER-008 controller, application service, repository, domain entity or module test",
+    "team-performance or personal-feedback page component, API client, runtime route, shell node, sidebar menu, i18n or visual test",
+    "feature activation, tenant enrollment, automatic import, assignment, broad permission or production release",
+    "new capabilities, predicates, routes, duties, resources, purposes or projections beyond the exact sealed successor",
+    "manual edits to generated artifacts instead of deterministic generation and synchronization",
+    "repository-wide test repetition without a focused failure proving it necessary",
+    "source changes outside the exact pinned path allowlists"
+  ],
+  "invalidation": [
+    "The receipt hash or byte tuple is unresolved or differs at carrier commit time.",
+    "Either worktree base head or tree differs before its first authorized source change.",
+    "A conflicting product authorization v59, Auth V268, Performance V20 or PEP-PER-022 appears.",
+    "Shared-RLS integration no longer remains an ancestor of the backend base.",
+    "Default OFF or absent enrollment can reach a People owner call.",
+    "Any route, capability, predicate, purpose, scope, projection, action, generated artifact or changed path expands beyond the pinned successor.",
+    "Any unresolved P0, P1 or P2 remains at admission time."
+  ],
+  "sourceAuthoringAuthorizedBeforeCarrierPush": false,
+  "sourceAuthoringAuthorizedAfterCarrierPush": true,
+  "centralProductAuthorizationV59AuthoringAuthorizedAfterCarrierPush": true,
+  "authV268AuthoringAuthorizedAfterCarrierPush": true,
+  "moduleAuthoringAuthorized": false,
+  "performanceV20LeaseActive": false,
+  "ownerPacketAuthorized": false,
+  "runtimeRouteMountAuthorized": false,
+  "menuMountAuthorized": false,
+  "featureEnablementAuthorized": false,
+  "tenantEnrollmentAuthorized": false,
+  "productionReleaseAuthorized": false,
+  "nextAction": "OBTAIN_ZERO_P0_P1_P2_REVIEW_COMMIT_AND_PUSH_RECEIPT_AND_TOKEN_CARRIER_THEN_IMPLEMENT_ONLY_THE_PINNED_CENTRAL_SOURCE"
+}

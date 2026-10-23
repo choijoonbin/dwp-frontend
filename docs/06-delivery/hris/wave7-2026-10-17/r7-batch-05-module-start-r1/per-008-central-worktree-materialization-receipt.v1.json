@@ -1,0 +1,101 @@
+{
+  "schema": "hris.central-worktree-materialization-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH05-PER008-CENTRAL-WORKTREES-20261023-R1",
+  "recordedAt": "2026-10-23T12:23:41+09:00",
+  "state": "MATERIALIZED_NOT_EXECUTABLE_ALONE",
+  "sliceId": "BASE-TFR-PER-008",
+  "module": "HRIS-PER",
+  "authority": {
+    "successor": {
+      "path": "per-008-iaq038-feedback-transport-and-central-authorization-successor.v1.json",
+      "sha256": "d62b43cb0fcc7d37563a09d5f28dcd09587b03fa91d78cf15298d7c801a7a955",
+      "bytes": 83353,
+      "carrierCommit": "d6bf7e5a719c4a0ae06154f23710e5829d39fec3",
+      "carrierTree": "d1a6340ecf8de4470515ed2702211ebdfad2a458",
+      "requiredState": "SEALED_EXACT_IAQ038_FEEDBACK_TRANSPORT_V59_AUTH_V268_AND_PEP_PER_022_RESERVATION_INDEPENDENTLY_REVIEWED_PASS_ZERO_P0_P1_P2_RLS_READINESS_PACKET_ELIGIBLE_AFTER_CARRIER_COMMIT_SOURCE_WITHHELD"
+    },
+    "sharedRlsIntegration": {
+      "path": "../r7-batch-05-central-admission-r1/performance-shared-rls-readiness-integration-receipt.v1.json",
+      "sha256": "d2006453117a6ace2ce726faf53b22115c4035f0e3f21c33071210e09e863e5b",
+      "bytes": 7572,
+      "carrierCommit": "24ca1a8d389e89290e9a331102fcfce0265e8a2a",
+      "carrierTree": "aa43f6cb8deae4fc572ac3eb02f9bc61e006758a",
+      "backendMergeCommit": "628492a176e61c13218db7d900e938a3789bf696",
+      "requiredState": "EXACT_BACKEND_HEAD_NO_FF_MERGED_PUSHED_8_OF_8_BLOBS_IDENTICAL_READINESS_COMPLETE"
+    },
+    "independentPreMaterializationReview": {
+      "decision": "GO",
+      "p0": 0,
+      "p1": 0,
+      "p2": 0
+    }
+  },
+  "collisionRecheck": {
+    "productAuthorization": {
+      "implementedHighWater": 58,
+      "v58BundleSha256": "994d47f164e015cbc737da4620addd27ccbd78630790f547e6f8e004912f1589",
+      "v58BundleBytes": 2682541,
+      "v58CanonicalChecksum": "556f2cc1554f0aaab6f88e50c34d64ca5cdd95af9b2d55072f6e6745f4652cc2",
+      "reservedVersion": 59,
+      "v59Exists": false
+    },
+    "authMigration": {
+      "implementedHighWater": "V267",
+      "v267Sha256": "a4ad2c169e98676c04b8b9daebd2931d5cd5040f3e1e5a00c7a5cfe05133cf61",
+      "v267Bytes": 5812,
+      "reservedVersion": "V268",
+      "authV268Exists": false
+    },
+    "performanceMigration": {
+      "implementedHighWater": "V19",
+      "reservedVersion": "V20",
+      "v20Exists": false,
+      "v20AuthoringAuthorized": false
+    },
+    "performancePep": {
+      "implementedRange": "PEP-PER-001_THROUGH_PEP-PER-021",
+      "reservedPep": "PEP-PER-022",
+      "pepPer022Exists": false
+    },
+    "conflicts": 0
+  },
+  "repositories": {
+    "backend": {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261023/r7-batch05/per008-central/backend",
+      "branch": "codex/hris-wave7-r7-batch05-per008-central-backend-20261023-r1",
+      "head": "628492a176e61c13218db7d900e938a3789bf696",
+      "tree": "fd6931db4515492846bd521bbdadcf99ada4e9d3",
+      "baseDwpDev": "628492a176e61c13218db7d900e938a3789bf696",
+      "baseOriginDwpDev": "628492a176e61c13218db7d900e938a3789bf696",
+      "clean": true,
+      "upstream": null
+    },
+    "frontend": {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261023/r7-batch05/per008-central/frontend",
+      "branch": "codex/hris-wave7-r7-batch05-per008-central-frontend-20261023-r1",
+      "head": "24ca1a8d389e89290e9a331102fcfce0265e8a2a",
+      "tree": "aa43f6cb8deae4fc572ac3eb02f9bc61e006758a",
+      "baseDwpDev": "24ca1a8d389e89290e9a331102fcfce0265e8a2a",
+      "baseOriginDwpDev": "24ca1a8d389e89290e9a331102fcfce0265e8a2a",
+      "clean": true,
+      "upstream": null
+    }
+  },
+  "implementationBoundary": {
+    "backendAllowedPathCount": 38,
+    "frontendAllowedPathCount": 12,
+    "authoritySource": "Only exactImplementationPathsAfterSeparateExecutableCentralToken in the pinned successor.",
+    "backendModuleSourceAuthorized": false,
+    "performanceV20Authorized": false,
+    "frontendPageOrApiClientAuthorized": false,
+    "runtimeRouteOrMenuMountAuthorized": false
+  },
+  "invariants": [
+    "Both worktrees are clean and based on the exact current dwp-dev and origin/dwp-dev heads after shared-RLS integration.",
+    "This receipt grants no source authority by itself; the separate hash-bound token must first be committed and pushed on frontend dwp-dev.",
+    "Product authorization v59, Auth V268, Gateway, People central security and frontend synchronization are the only future source classes in this central step.",
+    "PER-008 module source, Performance V20, page component, runtime route, menu, feature activation, tenant enrollment and production release remain unauthorized."
+  ],
+  "authorityGranted": false,
+  "nextAction": "ISSUE_ONE_HASH_BOUND_PER008_CENTRAL_IMPLEMENTATION_TOKEN_COMMIT_AND_PUSH_RECEIPT_AND_TOKEN_CARRIER_THEN_BEGIN_ONLY_THE_PINNED_CENTRAL_SOURCE"
+}
