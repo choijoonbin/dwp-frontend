@@ -1,0 +1,94 @@
+{
+  "schema": "hris.central-implementation-token-correction.v2",
+  "correctionId": "HRIS-WAVE7-R7-BATCH05-PER008-CENTRAL-IMPLEMENT-20261023-R2",
+  "issuedAt": "2026-10-23T12:34:00+09:00",
+  "state": "SEALED_EXECUTABLE_ONLY_AFTER_CORRECTION_CARRIER_COMMIT_AND_PUSH",
+  "sliceId": "BASE-TFR-PER-008",
+  "module": "HRIS-PER",
+  "immutability": {
+    "appendOnly": true,
+    "mutatesPinnedSuccessor": false,
+    "mutatesOriginalToken": false,
+    "amendmentPolicy": "THIS_EXACT_OVERRIDE_SUPERSEDES_ONLY_THE_NAMED_PREDICATE_FIELD_ALL_OTHER_AUTHORITY_INHERITED"
+  },
+  "authority": {
+    "successor": {
+      "path": "per-008-iaq038-feedback-transport-and-central-authorization-successor.v1.json",
+      "sha256": "d62b43cb0fcc7d37563a09d5f28dcd09587b03fa91d78cf15298d7c801a7a955",
+      "bytes": 83353,
+      "carrierCommit": "d6bf7e5a719c4a0ae06154f23710e5829d39fec3"
+    },
+    "originalImplementationToken": {
+      "path": "per-008-central-implementation-token.v1.json",
+      "sha256": "e367df0834dfd296aad2d4b6eafd15c4484f7547cc617bc1e221245be21ded8d",
+      "bytes": 13375,
+      "carrierCommit": "7b9adcf0abaa596a69811097e6fb054a025513f3",
+      "carrierTree": "ddd1516c7759e0ee4b3238996e3cabb94fff3695"
+    }
+  },
+  "contradiction": {
+    "predicatePolicyKey": "predicate.hcm-performance-feedback-release.v1",
+    "successorTargetBindingKinds": [
+      "OBJECT",
+      "TARGET_POPULATION"
+    ],
+    "selfReleaseProfile": {
+      "profileKey": "self-feedback-release-reader",
+      "scopeResolver": "SELF",
+      "targetBindingKinds": [
+        "SELF",
+        "OBJECT"
+      ],
+      "predicatePolicyKeys": [
+        "predicate.hcm-performance-feedback-release.v1"
+      ]
+    },
+    "existingPredicatePopulationBranch": "SELF",
+    "generatorInvariant": "Every profile target binding kind must be covered by each named predicate used by that profile.",
+    "uncoveredTargetBindingKind": "SELF",
+    "unsafeAlternativeRejected": "Do not weaken the generator invariant and do not add predicate.self-person.v1 to the exact release profile because that changes the sealed route profile."
+  },
+  "exactCorrection": {
+    "jsonAuthorityPath": "authorizationDescriptorDelta.newPredicatePolicies[predicatePolicyKey=predicate.hcm-performance-feedback-release.v1].targetBindingKinds",
+    "effectiveTargetBindingKinds": [
+      "SELF",
+      "OBJECT",
+      "TARGET_POPULATION"
+    ],
+    "delta": "ADD_SELF_ONLY",
+    "newCapabilityCount": 0,
+    "newPredicateCount": 0,
+    "newRouteCount": 0,
+    "newProfileCount": 0,
+    "newPopulationBranchCount": 0,
+    "pathAllowlistChangeCount": 0,
+    "securityEffect": "Restores fail-closed generator coverage for the already-authorized SELF release branch; it does not grant authority without the exact capability, scoped duty, SELF subject equality, released snapshot, threshold, privacy, tenant, purpose and field projection checks."
+  },
+  "authorityAfterCorrection": {
+    "allOriginalTokenAuthorityInherited": true,
+    "sourceAuthoringAuthorizedBeforeCorrectionCarrierPush": false,
+    "sourceAuthoringAuthorizedAfterCorrectionCarrierPush": true,
+    "generatorInvariantMayBeWeakened": false,
+    "successorMayBeEditedInPlace": false,
+    "moduleSourceAuthorized": false,
+    "performanceV20Authorized": false,
+    "runtimeRouteOrMenuMountAuthorized": false,
+    "featureActivationOrTenantEnrollmentAuthorized": false
+  },
+  "implementationRule": "Materialize the v59 predicate with exact targetBindingKinds [SELF, OBJECT, TARGET_POPULATION]. Preserve every other successor and original-token field, count, route, path and negative boundary exactly.",
+  "verification": {
+    "required": [
+      "The canonical generator accepts the self-feedback-release-reader without relaxing predicate coverage.",
+      "The v59 contract test asserts exact release predicate targetBindingKinds [SELF, OBJECT, TARGET_POPULATION].",
+      "No other v59 capability, predicate, route or profile changes relative to the original sealed successor.",
+      "All original focused verification and zero-P admission requirements remain mandatory."
+    ],
+    "independentReviewRequiredBeforeCarrierCommit": true
+  },
+  "nonClaims": [
+    "This correction adds a new route, capability, predicate, profile, population branch, source path or migration.",
+    "This correction authorizes PER-008 module source, Performance V20, a page, runtime route, menu, feature activation or tenant enrollment.",
+    "This correction permits weakening or bypassing the generator's predicate target coverage invariant."
+  ],
+  "nextAction": "OBTAIN_ZERO_P0_P1_P2_REVIEW_COMMIT_AND_PUSH_THIS_CORRECTION_CARRIER_THEN_RESUME_EXACT_CENTRAL_IMPLEMENTATION"
+}
