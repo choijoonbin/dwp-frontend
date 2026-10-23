@@ -1,0 +1,86 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-05-per008-migration-control-correction-authority.v2",
+  "decisionId": "HRIS-WAVE7-R7-BATCH-05-PER008-MIGRATION-CONTROL-CORRECTION-AUTHORITY-20261023-R2",
+  "issuedAt": "2026-10-23T15:20:09+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "AUTHORIZED_TEST_ONLY_CURRENT_HEAD_PERFORMANCE_RUNTIME_FIXTURE_SUCCESSOR_SOURCE_AND_ADMISSION_WITHHELD",
+  "purpose": "Extend the sealed v1 correction authority only to the exact current-head Performance PostgreSQL tests that directly execute V20 outside Migration Control. One shared test-only fixture may establish a strict unique direct-DML role before Flyway creates V1 tables so these tests model the V20 deployment precondition. Production code and migration sources remain governed by v1 and unchanged.",
+  "immutability": {
+    "sealed": true,
+    "appendOnly": true,
+    "predecessorMutation": "FORBIDDEN",
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_DECISION_ID_AND_SHA256"
+  },
+  "predecessor": {
+    "path": "per-008-migration-control-correction-authority.v1.json",
+    "sha256": "4b9a43eac9be9991413e884e4120a27b0441192e4e52165f24e1a4aef3e3108e",
+    "bytes": 7993,
+    "carrierCommit": "b3b6911e99e98614bd6b86755a58d1f12dbb4edc",
+    "preservation": "IMMUTABLE_AND_FULLY_INHERITED_EXCEPT_FOR_THE_TEST_ONLY_ALLOWLIST_EXTENSION"
+  },
+  "inventory": {
+    "method": "READ_ONLY_STATIC_INVENTORY_OF_TESTS_THAT_EXECUTE_CLASSPATH_DB_PERFORMANCE_MIGRATION_TO_CURRENT_HEAD",
+    "affectedTestFileCount": 14,
+    "excludedAsAlreadySafe": [
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/migrationstream/PeopleMigrationStreamStartupPostgresTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/performance/per008/Per008V20MigrationPostgresTest.java"
+    ],
+    "excludedAsNonExecuting": "Static migration contract, configuration, and mocked-Flyway tests that do not execute V20"
+  },
+  "testOnlyWritableBoundary": {
+    "sharedHelperCreateOnly": "dwp-people-server/src/test/java/com/dwp/services/people/hris/performance/support/PerformanceMigrationRuntimeRoleFixture.java",
+    "exactConsumers": [
+      "dwp-people-server/src/test/java/com/dwp/services/people/hr/performance/PerformanceCyclePostgresTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hr/performance/compensationplanning/ApprovedCompensationPlanSnapshotPublicationPostgresTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hr/performance/compensationplanning/CompensationPlanningBudgetInvariantPostgresTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hr/performance/compensationplanning/CompensationPlanningEventHandoffWorkerPostgresTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hr/performance/compensationplanning/CompensationPlanningMigrationContractTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hr/performance/compensationplanning/PerformanceSharedRlsReadinessPostgresTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hr/performance/populationfreeze/PopulationFreezePostgresTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hr/performance/typedartifact/PerTypedArtifactRepositoryPostgresTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/performance/per004/Per004MigrationContractTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/performance/per004/Per004OwnerPostgresTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/performance/review/PerformanceReviewMigrationContractTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/performance/review/PerformanceReviewPostgresTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/performance/workforce/PerformanceMigrationCleanUpgradeTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/performance/workforce/PerformanceWorkerRecoveryTest.java"
+    ],
+    "productionFilesAdded": 0,
+    "migrationFilesAddedOrModified": 0,
+    "otherTestFilesAuthorized": false
+  },
+  "fixtureContract": {
+    "timing": "INVOKE_AFTER_HRIS_PERFORMANCE_SCHEMA_EXISTS_AND_BEFORE_THE_FIRST_FLYWAY_MIGRATE_THAT_CREATES_V1_TABLES",
+    "role": "ONE_DETERMINISTIC_TEST_LOCAL_UNIQUE_ROLE_PER_DATABASE_OR_TEST_CLASS",
+    "requiredAttributes": [
+      "NOLOGIN",
+      "NOSUPERUSER",
+      "NOCREATEDB",
+      "NOCREATEROLE",
+      "NOINHERIT",
+      "NOREPLICATION",
+      "NOBYPASSRLS"
+    ],
+    "grantShape": "ALTER_DEFAULT_PRIVILEGES_FOR_THE_ACTUAL_FLYWAY_OWNER_IN_HRIS_PERFORMANCE_GRANT_DIRECT_SELECT_INSERT_UPDATE_DELETE_ON_TABLES",
+    "multipleCandidatePrevention": "IDEMPOTENT_REUSE_OF_THE_SAME_ROLE_WITHIN_ONE_DATABASE_AND_NO_ACCUMULATING_DEFAULT_GRANTEES",
+    "runtimeApplicationUse": false,
+    "testOnly": true,
+    "roleNameGuessingInProduction": false
+  },
+  "verification": {
+    "required": [
+      "PerformanceSharedRlsReadinessPostgresTest.forceRlsReadinessCoversCatalogRefetchDispatcherLifecycleAndToctou",
+      "one grouped execution of the 14 exact current-head consumer test classes after the helper is wired",
+      "Per008V20MigrationPostgresTest remains passing without conversion to the shared helper"
+    ],
+    "executionPolicy": "RUN_ONCE_AFTER_MECHANICAL_WIRING;RERUN_ONLY_THE_SMALLEST_FAILED_CLASS_AFTER_A_FIX",
+    "repositoryWideSuiteAuthorized": false
+  },
+  "unchangedProhibitions": [
+    "no V1 through V20 migration edit",
+    "no production behavior change beyond v1 authority",
+    "no direct dwp-dev merge",
+    "no route or menu mount",
+    "no feature activation or tenant enrollment"
+  ]
+}

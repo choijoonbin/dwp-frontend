@@ -1,0 +1,54 @@
+{
+  "schema": "dwp.hris.central-correction-start-token.v2",
+  "tokenId": "HRIS-WAVE7-R7-BATCH-05-START-PER008-MIGRATION-CONTROL-CORRECTION-20261023-R2",
+  "issuedAt": "2026-10-23T15:20:09+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "ISSUED_EXECUTABLE_V1_INHERITED_TEST_ONLY_PERFORMANCE_RUNTIME_FIXTURE_EXTENSION",
+  "executable": true,
+  "predecessorToken": {
+    "path": "per-008-migration-control-correction.start-token.v1.json",
+    "sha256": "498ab47468f369fc0117b22907691cf30fc90140251194b9cbbf3cf5ee310bdf",
+    "bytes": 4296,
+    "carrierCommit": "bd1138de2e2e443874a1234ff3df43ef34e6116b",
+    "inheritance": "ALL_V1_TERMS_REMAIN_EFFECTIVE"
+  },
+  "successorAuthority": {
+    "path": "../../r7-batch-05-central-admission-r1/per-008-migration-control-correction-authority-successor.v2.json",
+    "requiredState": "AUTHORIZED_TEST_ONLY_CURRENT_HEAD_PERFORMANCE_RUNTIME_FIXTURE_SUCCESSOR_SOURCE_AND_ADMISSION_WITHHELD"
+  },
+  "effectiveWritableBoundary": {
+    "inheritsV1ProductionAndMigrationControlTests": true,
+    "addsExactly": [
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/performance/support/PerformanceMigrationRuntimeRoleFixture.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hr/performance/PerformanceCyclePostgresTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hr/performance/compensationplanning/ApprovedCompensationPlanSnapshotPublicationPostgresTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hr/performance/compensationplanning/CompensationPlanningBudgetInvariantPostgresTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hr/performance/compensationplanning/CompensationPlanningEventHandoffWorkerPostgresTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hr/performance/compensationplanning/CompensationPlanningMigrationContractTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hr/performance/compensationplanning/PerformanceSharedRlsReadinessPostgresTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hr/performance/populationfreeze/PopulationFreezePostgresTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hr/performance/typedartifact/PerTypedArtifactRepositoryPostgresTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/performance/per004/Per004MigrationContractTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/performance/per004/Per004OwnerPostgresTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/performance/review/PerformanceReviewMigrationContractTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/performance/review/PerformanceReviewPostgresTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/performance/workforce/PerformanceMigrationCleanUpgradeTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/performance/workforce/PerformanceWorkerRecoveryTest.java"
+    ],
+    "outsideBoundaryAction": "STOP_AND_REQUEST_EXACT_APPEND_ONLY_CONTROL_REALLOCATION"
+  },
+  "execution": {
+    "worktreeAndBranchRemainThosePinnedByV1": true,
+    "sharedHelperMustBeTestOnly": true,
+    "consumerChangesMustBeMechanicalFixtureWiringOnly": true,
+    "commitAndPushRequired": true,
+    "appendOnlyV1CorrectionResultRequired": true,
+    "independentReviewP0P1P2Required": 0
+  },
+  "forbidden": [
+    "production or migration source changes beyond the v1 token",
+    "converting Per008V20MigrationPostgresTest away from its sealed exact fixture",
+    "repository-wide suite execution",
+    "direct dwp-dev merge or runtime activation"
+  ]
+}
