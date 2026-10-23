@@ -1,0 +1,271 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-05-per008-v20-migration-lease-reservation.v1",
+  "reservationId": "HRIS-WAVE7-R7-BATCH-05-MIGRATION-LEASE-RESERVATION-PER008-V20-20261023-R1",
+  "recordedAt": "2026-10-23T13:16:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "immutability": {
+    "sealed": true,
+    "appendOnly": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_RESERVATION_ID_AND_SHA256"
+  },
+  "state": "RESERVED_NOT_ACTIVE",
+  "sliceId": "BASE-TFR-PER-008",
+  "module": "PER",
+  "moduleSession": "HRIS-PER",
+  "authorityBasis": {
+    "semanticDisposition": {
+      "path": "semantic-dispositions/base-tfr-per-008.semantic-disposition.v1.json",
+      "sha256": "b97eba63703d040e6526ec9280d13ca18b7a74d875da3508d25331c444d6f016",
+      "bytes": 60642,
+      "carrierCommit": "6697466e14205ca4f4d520fc4bfe2407a5829451",
+      "requiredState": "PER008_REQUEST_ASSIGNMENT_SUBMISSION_RELEASE_BOUNDARIES_SEALED_V20_REQUIRED_CENTRAL_SUCCESSOR_BEFORE_PACKET_OR_SOURCE",
+      "jsonPointer": "/performanceV20NecessityProof"
+    },
+    "centralSuccessor": {
+      "path": "per-008-iaq038-feedback-transport-and-central-authorization-successor.v1.json",
+      "sha256": "d62b43cb0fcc7d37563a09d5f28dcd09587b03fa91d78cf15298d7c801a7a955",
+      "bytes": 83353,
+      "carrierCommit": "d6bf7e5a719c4a0ae06154f23710e5829d39fec3"
+    },
+    "performanceSharedRlsReadinessReceipt": {
+      "path": "../r7-batch-05-central-admission-r1/performance-shared-rls-readiness-integration-receipt.v1.json",
+      "sha256": "d2006453117a6ace2ce726faf53b22115c4035f0e3f21c33071210e09e863e5b",
+      "bytes": 7572,
+      "carrierCommit": "24ca1a8d389e89290e9a331102fcfce0265e8a2a",
+      "requiredState": "EXACT_BACKEND_HEAD_NO_FF_MERGED_PUSHED_8_OF_8_BLOBS_IDENTICAL_READINESS_COMPLETE"
+    },
+    "centralIntegrationReceipt": {
+      "path": "../r7-batch-05-central-admission-r1/per-008-central-integration-receipt.v1.json",
+      "sha256": "584a8ee0a3ff548ea07fface28f2c5d534bb22efe4609766fa64769a7a7790a6",
+      "bytes": 8439,
+      "carrierCommit": "17241df6c66f12ae347c8d96288fbffbbd13184c",
+      "requiredState": "EXACT_PER008_CENTRAL_PREREQUISITES_MERGED_PUSHED_DEFAULT_OFF_ZERO_ENROLLMENT_MODULE_AUTHORITY_MAY_BE_ISSUED"
+    }
+  },
+  "pinBasis": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "01468a404033c2a7247475f481f37c2ac40b3e3e",
+      "tree": "d06ffe06eb7e6a1fbb18ef4ed93b3ffce3401f67",
+      "originRef": "origin/dwp-dev",
+      "originExact": true,
+      "worktreeClean": true,
+      "observedPerformanceHighWater": "V19",
+      "candidatePathPresentAtReservation": false,
+      "competingV20PresentAtReservation": false
+    },
+    "frontendAuthorityCarrierBeforeReservation": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "17241df6c66f12ae347c8d96288fbffbbd13184c",
+      "tree": "0598170b6a039312c5adefde0fd02b313defbbb4",
+      "originRef": "origin/dwp-dev",
+      "originExact": true,
+      "worktreeClean": true,
+      "use": "AUTHORITY_CARRIER_BASE_ONLY"
+    },
+    "agentReadOnly": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "originRef": "origin/dwp-dev",
+      "originExact": true,
+      "worktreeClean": true
+    }
+  },
+  "predecessorManifest": {
+    "stream": "PERFORMANCE",
+    "range": "V1_THROUGH_V19_EXISTING_FILES_ONLY_GAPS_INTENTIONAL",
+    "fileCount": 7,
+    "orderedBasenamesSha256": "c44c2eb291be130a8345712a872989de26b5218ac28ae921ee41303d0c835c4b",
+    "orderedBasenamesBytes": 260,
+    "sqlBytes": 105258,
+    "preservation": "BYTE_FOR_BYTE_NO_EDIT",
+    "files": [
+      {
+        "version": "V1",
+        "basename": "V1__per_create_evaluation_cycle_foundation.sql",
+        "sha256": "2d2eea050731bbc580d7002adec8aacc64020ea2f8edd319955ac96d35630aba",
+        "bytes": 13106
+      },
+      {
+        "version": "V2",
+        "basename": "V2__per_create_population_freeze.sql",
+        "sha256": "f5dd1b9309bf53b1a35b5f7dcb42edaed5fb110f7c2aa3a330f57c3a41d09c3b",
+        "bytes": 16273
+      },
+      {
+        "version": "V3",
+        "basename": "V3__per_harden_review_operation_capture.sql",
+        "sha256": "1f9e2416cbbb8abd768d99dfc70cb0c2fc8766009d588c61a80df38dc02b6960",
+        "bytes": 4938
+      },
+      {
+        "version": "V16",
+        "basename": "V16__per_base_tfr_per_016.sql",
+        "sha256": "43ed98a593884082ec729c4443a333dfc364553333fabadcfc6e296850fb3884",
+        "bytes": 13387
+      },
+      {
+        "version": "V17",
+        "basename": "V17__per_modern_compensation_planning.sql",
+        "sha256": "593e54e076c5607e07a35eae1d069862257b9dce6fbb6a54dbe09198810ea15a",
+        "bytes": 35370
+      },
+      {
+        "version": "V18",
+        "basename": "V18__per_base_tfr_per_013.sql",
+        "sha256": "f543b7a77f75e624edce1cb19d13c9d3c5fece0c2bab640ddb7a5e472bad7375",
+        "bytes": 8647
+      },
+      {
+        "version": "V19",
+        "basename": "V19__per_base_tfr_per_004.sql",
+        "sha256": "b6ceb78d2446adabebd6a204b10552bd1cd3252df80f4172733e2df156550156",
+        "bytes": 13537
+      }
+    ]
+  },
+  "lease": {
+    "leaseId": "HRIS-WAVE7-R7-BATCH-05-PERFORMANCE-V20-PER008-20261023-R1",
+    "stream": "PERFORMANCE",
+    "version": "V20",
+    "predecessorHighWater": "V19",
+    "exactPath": "dwp-people-server/src/main/resources/db/performance-migration/V20__per_base_tfr_per_008.sql",
+    "canonicalFeature": "HRIS_PER_TEAM_PERFORMANCE_FEEDBACK",
+    "state": "RESERVED_NOT_ACTIVE",
+    "activeLeaseCountForPerformanceV20": 0,
+    "plannedBackendWorktree": {
+      "plannedAbsolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261023/r7-batch05/per-008/backend",
+      "plannedBranch": "codex/hris-wave7-r7-batch05-per-008-backend-20261023-r1",
+      "plannedPushTarget": "origin/codex/hris-wave7-r7-batch05-per-008-backend-20261023-r1",
+      "createFrom": "01468a404033c2a7247475f481f37c2ac40b3e3e",
+      "expectedInitialTree": "d06ffe06eb7e6a1fbb18ef4ed93b3ffce3401f67",
+      "expectedInitialPorcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "materializationStateAtReservation": "NOT_MATERIALIZED"
+    }
+  },
+  "resolvedExactMigrationManifest": {
+    "createExactlyFourTables": [
+      "prf_feedback_requests",
+      "prf_feedback_assignments",
+      "prf_feedback_responses",
+      "prf_feedback_release_snapshots"
+    ],
+    "hardenExactlyFourExistingTables": [
+      "prf_cycles",
+      "prf_cycle_versions",
+      "prf_command_receipts",
+      "prf_outbox_events"
+    ],
+    "reuseNotRecreate": [
+      "V1 cycle-version, command-receipt and outbox foundations",
+      "V16 workforce projection revision and digest evidence",
+      "V19 FINALIZED PERFORMANCE_REVIEW_FORM artifact and configuration-version binding",
+      "existing People audit recorder and sys_audit_outbox"
+    ],
+    "tablePurposes": {
+      "prf_feedback_requests": "Tenant-scoped request aggregate with distinct authorization principal and feedback subject, exact cycle/version, V16 subject member, FINALIZED V19 template authority, frozen audience and threshold policy, lifecycle state and version.",
+      "prf_feedback_assignments": "Server-derived immutable provider worker and assignment identities with one closed relationship type and one assignment state per request-provider-assignment tuple.",
+      "prf_feedback_responses": "One immutable authenticated-envelope encrypted response per exact assignment with key versions, canonical HMAC and submission receipt; no plaintext narrative column.",
+      "prf_feedback_release_snapshots": "One immutable threshold-passed encrypted aggregate snapshot with source-set digest and privacy revisions; RELEASED only opens the existing snapshot."
+    },
+    "requiredControls": [
+      "tenant-first composite identities and same-tenant foreign keys for every intra-Performance reference",
+      "exact composite bindings to V1 cycle version, V16 subject/provider member revisions and FINALIZED V19 PERFORMANCE_REVIEW_FORM authority",
+      "closed request, assignment, relationship and anonymity modes with half-open open and close window checks",
+      "REVOKE ALL FROM PUBLIC and least-privilege grants only to resolved non-BYPASSRLS roles",
+      "ENABLE and FORCE RLS on all four new tables and exactly the four reused V1 tables using trusted dwp.tenant_id USING and WITH CHECK policies",
+      "response and release-snapshot INSERT-only immutability with UPDATE, DELETE and TRUNCATE denial",
+      "AES_256_GCM authenticated envelope version 1 with UUID encryption-key version, 12-byte nonce, 16-byte tag and non-empty ciphertext",
+      "tenant-keyed canonical HMAC-SHA-256 with UUID digest-key version and no raw plaintext hash",
+      "stable tenant-first IAQ-038, assignment inbox and release indexes without anonymity-breaking contributor-count indexes",
+      "no seed, backfill, provider, scheduler, broker, route, menu, feature activation or tenant enrollment"
+    ],
+    "forbidden": [
+      "editing any V1 through V19 migration or creating historical V8",
+      "a second V20 or any Performance migration outside the exact leased path",
+      "creating a fifth feedback table or a new generic receipt, outbox or audit table",
+      "reusing V2 population, V17/V19 typed artifact or V18 review tables as feedback response ownership",
+      "plaintext response, narrative, contributor identity or threshold count in events, audits, logs, traces, indexes or unrestricted exports",
+      "data seed, backfill, privilege elevation, feature enablement, tenant enrollment or production binding"
+    ]
+  },
+  "acceptanceCoverage": {
+    "criteriaCount": 12,
+    "criteriaIds": [
+      "PER008-AC-01",
+      "PER008-AC-02",
+      "PER008-AC-03",
+      "PER008-AC-04",
+      "PER008-AC-05",
+      "PER008-AC-06",
+      "PER008-AC-07",
+      "PER008-AC-08",
+      "PER008-AC-09",
+      "PER008-AC-10",
+      "PER008-AC-11",
+      "PER008-AC-12"
+    ],
+    "migrationDirectCriteria": [
+      "PER008-AC-03",
+      "PER008-AC-04",
+      "PER008-AC-05",
+      "PER008-AC-06",
+      "PER008-AC-07",
+      "PER008-AC-08",
+      "PER008-AC-09",
+      "PER008-AC-10"
+    ]
+  },
+  "verificationRequiredAfterActivation": {
+    "executionAuthorizedNow": false,
+    "static": [
+      "V20 is unique in the Performance stream and the exact leased path is its only new migration.",
+      "V1 through V19 bytes and checksums remain unchanged and historical V8 remains absent.",
+      "V20 creates exactly four feedback tables and hardens exactly four reused V1 tables.",
+      "All eight tables have trusted tenant FORCE RLS and the four new tables have tenant-first identities, exact references and immutability guards."
+    ],
+    "database": [
+      "real PostgreSQL clean Performance migration through V20",
+      "real PostgreSQL Performance V19-to-V20 upgrade",
+      "missing-context, cross-tenant, stale, missing and out-of-population denial",
+      "request, assignment, response, aggregate, threshold, encryption and lifecycle invariant checks",
+      "transaction rollback leaves no partial request, assignment, response, receipt, event, snapshot or audit effect"
+    ],
+    "unavailableDatabaseRule": "REPORT_BLOCKED_NOT_PASS",
+    "targetedPolicy": "RUN_EACH_NEW_TARGET_GROUP_ONCE; AFTER_FAILURE_RERUN_ONLY_THE_SMALLEST_AFFECTED_TARGET; RUN_ONE_BOUNDED_CROSS_CONTRACT_CHECK_AFTER_TARGETS_PASS; NO_REPOSITORY_WIDE_SUITE"
+  },
+  "reservationSemantics": "This document reserves only Performance V20 and the exact PER-008 path. It is not an active lease and grants no migration write, source write, test, commit or push authority. A later active lease must bind a materialized clean backend worktree, and a separate executable start token must bind that activation, this reservation, the owner packet and both clean module worktrees.",
+  "authority": {
+    "performanceSharedRlsReadinessComplete": true,
+    "activeLeaseCount": 0,
+    "oneExactPerformanceV20PathReserved": true,
+    "v20AuthoringAuthorized": false,
+    "activeLeaseMayBeIssuedAfterOwnerPacketAndCleanWorktreeReceipt": true,
+    "existingMigrationEditAuthorized": false,
+    "secondPerformanceMigrationAuthorized": false,
+    "fifthFeedbackTableAuthorized": false,
+    "dataBackfillAuthorized": false,
+    "moduleSourceAuthoringAuthorized": false,
+    "testExecutionAuthorized": false,
+    "moduleBranchCommitAndPushAuthorized": false,
+    "mergeToDwpDevAuthorized": false,
+    "routeOrMenuMountAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "customerDatabaseExecutionAuthorized": false,
+    "productionExecutionAuthorized": false
+  },
+  "invalidationConditions": [
+    "Performance V20 or the exact leased path exists from another owner before the first authorized edit.",
+    "Performance high-water differs from V19 at backend worktree materialization.",
+    "The planned backend worktree path or branch exists with a different head, tree, upstream or non-empty porcelain.",
+    "Shared-RLS readiness is no longer an admitted ancestor of the backend base.",
+    "Any table, existing-table hardening, seed, backfill, grant or schema change outside the sealed manifest is required.",
+    "An existing migration must change, a second Performance migration is required or the default-OFF zero-enrollment boundary changes."
+  ],
+  "nextAction": "HASH_BIND_THIS_RESERVED_NOT_ACTIVE_LEASE_IN_THE_EXACT_PER008_OWNER_PACKET_COMMIT_AND_PUSH_BOTH_AUTHORITY_ARTIFACTS_THEN_MATERIALIZE_FRESH_CLEAN_MODULE_WORKTREES"
+}

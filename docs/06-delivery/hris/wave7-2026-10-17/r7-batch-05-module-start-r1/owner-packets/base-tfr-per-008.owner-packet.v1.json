@@ -1,0 +1,449 @@
+{
+  "schema": "dwp.hris.wave7.r7-owner-packet.v1",
+  "packetId": "HRIS-WAVE7-R7-BATCH-05-OWNER-BASE-TFR-PER-008-20261023-R1",
+  "issuedAt": "2026-10-23T13:16:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "SEALED_EXACT_PER008_OWNER_AUTHORITY_PACKET_READY_EXECUTABLE_TOKEN_WITHHELD_PENDING_FRESH_WORKTREES_AND_ACTIVE_V20_LEASE",
+  "revision": 1,
+  "sliceId": "BASE-TFR-PER-008",
+  "module": "PER",
+  "moduleSession": "HRIS-PER",
+  "moduleThreadId": null,
+  "sourceRef": "TFR-PER-008",
+  "immutability": {
+    "sealed": true,
+    "appendOnly": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_PACKET_ID_AND_SHA256"
+  },
+  "basePins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "01468a404033c2a7247475f481f37c2ac40b3e3e",
+      "tree": "d06ffe06eb7e6a1fbb18ef4ed93b3ffce3401f67",
+      "originRef": "origin/dwp-dev",
+      "originExact": true,
+      "worktreeClean": true
+    },
+    "frontendAuthorityCarrierBeforeThisPacket": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "17241df6c66f12ae347c8d96288fbffbbd13184c",
+      "tree": "0598170b6a039312c5adefde0fd02b313defbbb4",
+      "originRef": "origin/dwp-dev",
+      "originExact": true,
+      "worktreeClean": true
+    },
+    "agentReadOnly": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "originRef": "origin/dwp-dev",
+      "originExact": true,
+      "worktreeClean": true
+    }
+  },
+  "immutableAuthorityBasis": {
+    "batch05Preflight": {
+      "path": "../../r7-batch-05-preflight-r1/semantic-dependency-migration-preflight.v1.json",
+      "sha256": "8f7a0d38c4dc86873e4930e5a21dcc0a269c39512508d86dd529b40015237e0f",
+      "bytes": 37443,
+      "requiredDecision": "CONDITIONAL_GO_FOR_SEPARATE_EXACT_PACKET_SOURCE_START_NO_GO"
+    },
+    "executionRoadmapV19": {
+      "path": "../../execution-roadmap-successor.v19.json",
+      "sha256": "7fd14919598aadf20ea083dd11d693f4774fe803224b799935e284b858525ed0",
+      "bytes": 18404,
+      "requiredCurrentLane": "BASE-TFR-PER-008"
+    },
+    "semanticDisposition": {
+      "path": "../semantic-dispositions/base-tfr-per-008.semantic-disposition.v1.json",
+      "sha256": "b97eba63703d040e6526ec9280d13ca18b7a74d875da3508d25331c444d6f016",
+      "bytes": 60642,
+      "carrierCommit": "6697466e14205ca4f4d520fc4bfe2407a5829451",
+      "requiredState": "PER008_REQUEST_ASSIGNMENT_SUBMISSION_RELEASE_BOUNDARIES_SEALED_V20_REQUIRED_CENTRAL_SUCCESSOR_BEFORE_PACKET_OR_SOURCE"
+    },
+    "centralSuccessor": {
+      "path": "../per-008-iaq038-feedback-transport-and-central-authorization-successor.v1.json",
+      "sha256": "d62b43cb0fcc7d37563a09d5f28dcd09587b03fa91d78cf15298d7c801a7a955",
+      "bytes": 83353,
+      "carrierCommit": "d6bf7e5a719c4a0ae06154f23710e5829d39fec3"
+    },
+    "performanceSharedRlsReadinessReceipt": {
+      "path": "../../r7-batch-05-central-admission-r1/performance-shared-rls-readiness-integration-receipt.v1.json",
+      "sha256": "d2006453117a6ace2ce726faf53b22115c4035f0e3f21c33071210e09e863e5b",
+      "bytes": 7572,
+      "carrierCommit": "24ca1a8d389e89290e9a331102fcfce0265e8a2a",
+      "requiredState": "EXACT_BACKEND_HEAD_NO_FF_MERGED_PUSHED_8_OF_8_BLOBS_IDENTICAL_READINESS_COMPLETE"
+    },
+    "centralIntegrationReceipt": {
+      "path": "../../r7-batch-05-central-admission-r1/per-008-central-integration-receipt.v1.json",
+      "sha256": "584a8ee0a3ff548ea07fface28f2c5d534bb22efe4609766fa64769a7a7790a6",
+      "bytes": 8439,
+      "carrierCommit": "17241df6c66f12ae347c8d96288fbffbbd13184c",
+      "requiredState": "EXACT_PER008_CENTRAL_PREREQUISITES_MERGED_PUSHED_DEFAULT_OFF_ZERO_ENROLLMENT_MODULE_AUTHORITY_MAY_BE_ISSUED"
+    },
+    "performanceV20Reservation": {
+      "path": "../migration-lease-per008-v20-reservation.v1.json",
+      "sha256": "0626db623e286f3debf29581f1826ff7e7f3aa89482744ae1391bfddda8c5bec",
+      "bytes": 13660,
+      "requiredState": "RESERVED_NOT_ACTIVE"
+    }
+  },
+  "semanticLineage": {
+    "canonical": "TFR-PER-008::PER-FEEDBACK-001::PEP-PER-015|PEP-PER-022|EVT-PER:PerformanceFeedbackSubmitted.v1",
+    "acceptanceCriteriaSourceJsonPointer": "/acceptanceCriteria",
+    "productShape": "PROVIDER_NEUTRAL_FEEDBACK_REQUEST_ASSIGNMENT_ENCRYPTED_RESPONSE_AND_THRESHOLD_RELEASE",
+    "sharedReadOnlyBoundary": "IAQ-023_AND_BASE_TFR_PER_003_NO_RECOUNT",
+    "forbiddenSemanticImport": "NO_LEGACY_SCREEN_TABLE_ROUTE_PROVIDER_OR_PLAINTEXT_NARRATIVE_BECOMES_CORE"
+  },
+  "plannedWorktrees": {
+    "backend": {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261023/r7-batch05/per-008/backend",
+      "branch": "codex/hris-wave7-r7-batch05-per-008-backend-20261023-r1",
+      "baseCommit": "01468a404033c2a7247475f481f37c2ac40b3e3e",
+      "baseTree": "d06ffe06eb7e6a1fbb18ef4ed93b3ffce3401f67",
+      "expectedInitialPorcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expectedUpstream": null
+    },
+    "frontend": {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261023/r7-batch05/per-008/frontend",
+      "branch": "codex/hris-wave7-r7-batch05-per-008-frontend-20261023-r1",
+      "base": "THE_COMMITTED_AND_PUSHED_PACKET_AND_RESERVATION_AUTHORITY_CARRIER_DESCENDING_FROM_17241DF6",
+      "expectedInitialPorcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expectedUpstream": null
+    },
+    "materializedNow": false
+  },
+  "migration": {
+    "required": true,
+    "stream": "PERFORMANCE",
+    "version": "V20",
+    "predecessorHighWater": "V19",
+    "exactPath": "dwp-people-server/src/main/resources/db/performance-migration/V20__per_base_tfr_per_008.sql",
+    "stateAtPacketIssue": "RESERVED_NOT_ACTIVE",
+    "createExactlyFourTables": [
+      "prf_feedback_requests",
+      "prf_feedback_assignments",
+      "prf_feedback_responses",
+      "prf_feedback_release_snapshots"
+    ],
+    "hardenExactlyFourExistingTables": [
+      "prf_cycles",
+      "prf_cycle_versions",
+      "prf_command_receipts",
+      "prf_outbox_events"
+    ],
+    "preserveV1ThroughV19ByteForByte": true,
+    "historicalV8Forbidden": true,
+    "noSeedOrBackfill": true,
+    "noNewGenericReceiptAuditOrOutbox": true
+  },
+  "ownerWritableBoundary": {
+    "effectiveOnlyAfterExecutableStartToken": true,
+    "backendCreateOrModify": [
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/performance/per008/**",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/performance/per008/**",
+      "dwp-people-server/src/main/resources/db/performance-migration/V20__per_base_tfr_per_008.sql"
+    ],
+    "frontendCreateOrModify": [
+      "apps/dwp/src/features/hris/performance/feedback/**",
+      "apps/dwp/src/features/hris/performance/__tests__/g3-slices/base-tfr-per-008.slice.test.tsx"
+    ],
+    "evidenceCreateOnly": [
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-05-results/per-008/**"
+    ],
+    "readOnlyReuse": [
+      "V1 cycle version, command receipt and outbox foundations",
+      "V16 workforce projection membership and revision evidence",
+      "V19 FINALIZED PERFORMANCE_REVIEW_FORM typed-artifact authority",
+      "central v59, Auth V268, Gateway routes and People PEP registry",
+      "Performance shared-RLS trusted-tenant seams",
+      "existing People audit recorder and sys_audit_outbox"
+    ],
+    "explicitNoTouch": [
+      "Performance migrations V1 through V19 and historical V8",
+      "central product authorization, Auth, Gateway and People security registry sources",
+      "runtime Router, HCM route tree, shell, sidebar menu, navigation policy and i18n sources",
+      "existing IAQ-023, PER-003, goal, review, compensation and PER-004 implementation or tests except execution of the named smallest regressions"
+    ],
+    "outsideBoundaryRule": "STOP_AND_REQUEST_APPEND_ONLY_REALLOCATION_BEFORE_EDIT"
+  },
+  "entryQueries": {
+    "iaq038": {
+      "method": "GET",
+      "browserPath": "/api/people/v1/hris/performance/workbench/team-performance",
+      "ownerPath": "/v1/hris/performance/workbench/team-performance",
+      "uiRoute": "/hr/team/performance",
+      "states": [
+        "COMPLETE",
+        "EMPTY",
+        "PARTIAL",
+        "UNAVAILABLE"
+      ],
+      "filters": [
+        "performanceAssignment",
+        "dueStatus",
+        "limitedProfile",
+        "effectiveOn"
+      ],
+      "defaultSort": "itemPublicId:ASC",
+      "pageLimitRange": "1_THROUGH_100",
+      "typedActionTarget": "PERFORMANCE_FEEDBACK_SUBJECT_ASSIGNMENT"
+    },
+    "iaq023": {
+      "owner": "BASE-TFR-PER-003",
+      "use": "RELATED_SHARED_READ_ONLY_REUSE_ONLY",
+      "completionCredit": 0
+    }
+  },
+  "implementationShape": {
+    "publicPages": [
+      "/hr/team/performance",
+      "/hr/me/performance/feedback"
+    ],
+    "ownerEndpoints": [
+      "GET /v1/hris/performance/workbench/team-performance",
+      "GET /v1/hris/performance/feedback-request-options",
+      "POST /v1/hris/performance/feedback-requests",
+      "GET /v1/hris/performance/feedback-assignments/mine",
+      "GET /v1/hris/performance/feedback-assignments/{feedbackAssignmentId}",
+      "POST /v1/hris/performance/feedback-assignments/{feedbackAssignmentId}/responses",
+      "GET /v1/hris/performance/feedback-requests/{feedbackRequestId}/release"
+    ],
+    "ownerInternalLifecycleOnly": [
+      "openFeedbackRequest",
+      "closeFeedbackRequest",
+      "aggregateFeedbackRequest",
+      "releaseFeedbackRequest",
+      "cancelFeedbackRequest"
+    ],
+    "requestStates": [
+      "DRAFT",
+      "OPEN",
+      "CLOSED",
+      "AGGREGATED",
+      "RELEASED",
+      "CANCELLED"
+    ],
+    "assignmentStates": [
+      "ASSIGNED",
+      "SUBMITTED",
+      "DECLINED",
+      "CANCELLED"
+    ],
+    "anonymityModes": [
+      "IDENTIFIED",
+      "MASKED",
+      "ANONYMOUS_AGGREGATE"
+    ],
+    "submissionEvent": {
+      "eventType": "PerformanceFeedbackSubmitted.v1",
+      "closedPayload": [
+        "feedbackRequestId",
+        "feedbackAssignmentId",
+        "submittedAt"
+      ]
+    },
+    "defaultOffZeroCall": true
+  },
+  "typedArtifactAndPayloadBoundary": {
+    "templateAuthority": "EXACT_FINALIZED_V19_PERFORMANCE_REVIEW_FORM_AND_CONFIGURATION_VERSION_BINDING",
+    "responseSchema": "PerformanceFeedbackResponse.v1",
+    "aggregateSchema": "PerformanceFeedbackAggregate.v1",
+    "encryption": "AES_256_GCM_AUTHENTICATED_ENVELOPE_VERSION_1",
+    "contentIntegrity": "TENANT_KEYED_CANONICAL_HMAC_SHA256_WITH_UUID_DIGEST_KEY_VERSION",
+    "plaintextNarrativeStorageAuthorized": false,
+    "contributorIdentityInReleaseAuthorized": false,
+    "thresholdCountDisclosureAuthorized": false
+  },
+  "lifecycleAndActionBoundary": {
+    "createPep": "PEP-PER-015",
+    "submitPep": "PEP-PER-022",
+    "requestCreateOnlyCreatesDraftAndAssignments": true,
+    "responseSubmitOnlyEmitsSubmissionEvent": true,
+    "clockPerformsAutonomousTransition": false,
+    "releaseMutatesAggregateSnapshot": false,
+    "ownerLifecycleNetworkEndpointAuthorized": false,
+    "productionSchedulerOrBrokerBindingAuthorized": false
+  },
+  "businessAndExperienceBoundary": {
+    "businessMeaning": "Legacy multi-rater, reverse, competency and ad-hoc feedback collapse into one provider-neutral request, immutable audience assignment, protected response and thresholded release model.",
+    "primaryUsers": [
+      "authorized employee requesting feedback for SELF",
+      "authorized line manager requesting feedback for one explicit owner-resolved team subject",
+      "assigned contributor submitting one immutable protected response"
+    ],
+    "pageArchetype": "TEAM_PERFORMANCE_LIST_DETAIL_WITH_FEEDBACK_REQUEST_COMPOSER_AND_PERSONAL_FEEDBACK_INBOX",
+    "protectedStates": [
+      "loading",
+      "empty",
+      "partial",
+      "unavailable",
+      "denied",
+      "stale",
+      "complete",
+      "suppressed"
+    ]
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "PER008-AC-01",
+      "criterion": "IAQ-038 implements exactly the accepted GET paths, PERFORMANCE variant, four filters, eight sorts, itemPublicId default sort, limit 1 through 100, canonical route and COMPLETE, EMPTY, PARTIAL and UNAVAILABLE cardinality rules."
+    },
+    {
+      "id": "PER008-AC-02",
+      "criterion": "IAQ-038 enforces all seven PEP layers, trusted tenant and authorized team population, VIEW, MASK and OMIT before serialization, exact decision counts, revision-bound opaque cursors and problem correlation; its manager-only PEP-PER-015 overlay is independently authorized for one explicit owner-returned subject worker and assignment and never inferred from itemPublicId or display fields. SELF PEP-PER-015 requires target worker equality with the authenticated worker and is not derived from IAQ-038."
+    },
+    {
+      "id": "PER008-AC-03",
+      "criterion": "PEP-PER-015 idempotently creates exactly one DRAFT request and server-derived immutable audience assignments bound to cycle version, authorization principal separate from feedback subject, an exact FINALIZED V19 PERFORMANCE_REVIEW_FORM artifact and configuration-version binding, exact V16 revision and worker-assignment members, server-derived closed relationship types, audience scope digest, mode, effective threshold-policy revision, opensAt and closesAt; caller-supplied providers or relationships are rejected and empty or below-threshold audiences fail with count-free 422. clientIntentDigest is checked before re-resolution and the first resolved execution bindings remain frozen on replay."
+    },
+    {
+      "id": "PER008-AC-04",
+      "criterion": "Request and assignment states and transitions match the sealed graphs; clocks alone do not mutate state; AGGREGATED is represented losslessly in transport; threshold failure remains CLOSED with no snapshot; CLOSED to AGGREGATED creates the immutable encrypted snapshot and aggregatedAt; AGGREGATED to RELEASED opens that same snapshot and records releasedAt without mutation; pre-release cancellation never deletes collected evidence and uncontracted public lifecycle commands do not appear."
+    },
+    {
+      "id": "PER008-AC-05",
+      "criterion": "IDENTIFIED, MASKED and ANONYMOUS_AGGREGATE are the only modes; every release meets the frozen effective threshold computed only from distinct immutable valid SUBMITTED assignments, excluding declined, cancelled, unsubmitted and duplicate attempts. The v1 subject and manager release projection never exposes contributor identity in any mode; masked labels are request-scoped and non-linkable, and below-threshold output exposes only a stable reason with no identity, exact count, near-threshold or timing inference."
+    },
+    {
+      "id": "PER008-AC-06",
+      "criterion": "One logical PerformanceFeedbackSubmitted.v1 outbox row is recorded only with feedbackRequestId, feedbackAssignmentId and submittedAt after an authorized OPEN-window immutable assigned response submission; request creation never records it, broker delivery may be at-least-once, consumers deduplicate by tenant and eventId, and narrative, identity, score, answer, content hash, threshold and counts never enter the event."
+    },
+    {
+      "id": "PER008-AC-07",
+      "criterion": "Protected response and aggregate content always use the sealed versioned authenticated-encryption envelope and tenant-keyed canonical HMAC; plaintext response JSONB, business event or audit payloads, logs, traces, search indexes, telemetry labels, unrestricted exports and authorization-before-filter counts contain no protected content or contributor identity, while actor identity is restricted to the accountability audit envelope."
+    },
+    {
+      "id": "PER008-AC-08",
+      "criterion": "After the separate no-migration shared-RLS readiness evidence passes, Performance V20 creates exactly the four sealed feedback owner tables, explicitly hardens the exact four reused V1 tables, reuses their receipt and outbox plus existing People audit, preserves V1 through V19 files byte-for-byte, never creates historical V8 and adds no generic receipt, outbox, audit, provider, scheduler, seed or backfill."
+    },
+    {
+      "id": "PER008-AC-09",
+      "criterion": "All four V20 tables use tenant-first composite identity and intra-owner references, including exact V1 cycle-version and V16 revision/member foreign keys, UUID public IDs, closed checks, PUBLIC revocation, least-privilege non-BYPASSRLS grants, ENABLE plus FORCE RLS and trusted tenant policies; responses and aggregate snapshots are insert-only and cross-tenant, stale, missing or out-of-population references fail closed."
+    },
+    {
+      "id": "PER008-AC-10",
+      "criterion": "Existing command receipt, outbox and audit contracts provide client-intent replay before dynamic re-resolution, different-intent 409, frozen execution bindings, atomic effects and minimized audit; before the PER-008 packet, the separate PERFORMANCE_SHARED_RLS_READINESS source packet converts every reader, writer, dispatcher, replay and maintenance path to trusted per-tenant operation and passes bounded regressions, after which V20 hardens prf_cycles, prf_cycle_versions, prf_command_receipts and prf_outbox_events."
+    },
+    {
+      "id": "PER008-AC-11",
+      "criterion": "IAQ-023 and BASE-TFR-PER-003 remain shared read-only no-recount boundaries; IAQ-038 goal and review actions, their PEPs and events remain with existing owners; PER-008 creates no duplicate route, query, migration, UI, test or completion credit for them."
+    },
+    {
+      "id": "PER008-AC-12",
+      "criterion": "The future frontend implements /hr/team/performance for manager requests and /hr/me/performance/feedback for SELF request, request options, assigned inbox/detail submission and released aggregate views, and proves loading, empty, partial, unavailable, denied, stale and complete states; without both pages and every bounded GET, POST and release contract it claims no end-to-end completion. Below-threshold and protected-field states do not leak; keyboard and screen-reader operation, responsive 1440, 1280, 390 and 320 widths, 200 percent zoom, light, dark, high contrast and reduced motion pass; default-OFF performs zero PER-008 calls and no route, menu, tenant or feature is activated by this disposition."
+    }
+  ],
+  "targetedVerification": {
+    "policy": "RUN_EACH_NEW_TARGET_GROUP_ONCE; AFTER_FAILURE_RERUN_ONLY_THE_SMALLEST_AFFECTED_TARGET; RUN_ONE_BOUNDED_CROSS_CONTRACT_CHECK_AFTER_TARGETS_PASS; NO_REPOSITORY_WIDE_SUITE",
+    "backendTargets": [
+      "Per008IaEntryQueryContractTest",
+      "Per008FeedbackRequestAuthorizationTest",
+      "Per008SelfAndManagerSubjectBindingTest",
+      "Per008ExplicitSubjectActionBindingTest",
+      "Per008ServerDerivedAudienceTest",
+      "Per008RelationshipDerivationTest",
+      "Per008V19FinalizedTemplateAuthorityTest",
+      "Per008ClientIntentReplayFrozenBindingTest",
+      "Per008FeedbackLifecycleTest",
+      "Per008AnonymityThresholdTest",
+      "Per008ProtectedNarrativeTest",
+      "Per008AssignedSubmissionGuardTest",
+      "Per008SubmissionReplayAfterCloseAndKeyRotationTest",
+      "Per008SubmissionEventContractTest",
+      "Per008ReleasedAggregateReadContractTest",
+      "Per008IdempotencyRecoveryTest",
+      "PerformanceSharedRlsReadinessTest",
+      "Per008V20MigrationContractTest",
+      "Per008V20MigrationPostgresTest",
+      "smallest PER-003 IAQ-023 read-only regression",
+      "smallest V1 receipt and outbox producer tenant-isolation regression",
+      "smallest V18 review ownership non-reuse regression"
+    ],
+    "frontendTargets": [
+      "apps/dwp/src/features/hris/performance/__tests__/g3-slices/base-tfr-per-008.slice.test.tsx",
+      "changed-root IAQ-038 API, SELF and manager subject binding, V19 options, assigned inbox/detail submission and release tests",
+      "loading, empty, partial, unavailable, denied, stale, complete and suppressed states",
+      "default-OFF zero-call assertion",
+      "1440px, 1280px, 390px, 320px and 200 percent zoom",
+      "light, dark, high contrast, reduced motion, keyboard-only, visible focus and long Korean or English labels"
+    ],
+    "playwrightScreenshotsBeforeShellRouteAdmission": false,
+    "databaseUnavailableRule": "REPORT_BLOCKED_NOT_PASS"
+  },
+  "evidenceContract": {
+    "required": true,
+    "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-05-results/per-008/**",
+    "mustRecord": [
+      "changed-path allowlist proof and no-recount result",
+      "acceptance result for PER008-AC-01 through PER008-AC-12",
+      "V20 static and real PostgreSQL clean plus upgrade evidence",
+      "targeted backend and frontend commands, exit codes and counts",
+      "module branch commits, trees, clean porcelain and pushed refs",
+      "default-OFF zero-call, zero-enrollment and protected-data non-disclosure proof",
+      "known blockers reported as BLOCKED rather than PASS"
+    ],
+    "mayNotClaim": [
+      "runtime route or sidebar menu admission",
+      "feature enablement or tenant enrollment",
+      "production provider, scheduler, broker or encryption-key binding",
+      "central dwp-dev module merge",
+      "production release"
+    ]
+  },
+  "rollout": {
+    "featureFlag": "HRIS_PER_TEAM_PERFORMANCE_FEEDBACK",
+    "default": "OFF",
+    "tenantEnrollmentCount": 0,
+    "networkCallsWhenOff": 0,
+    "routeMounted": false,
+    "menuMounted": false,
+    "productionBinding": false
+  },
+  "trustedOwnerHandshake": {
+    "centralAuthorizationVersion": 59,
+    "authMigration": "V268",
+    "routeContractCount": 9,
+    "peoplePepRegistryReady": true,
+    "performanceSharedRlsReady": true,
+    "moduleOwnerMustReauthorizeEveryOperation": true,
+    "tenantFromUrlQueryOrBodyAuthorized": false
+  },
+  "authority": {
+    "packetSealed": true,
+    "semanticDispositionSealed": true,
+    "centralPrerequisitesAdmitted": true,
+    "performanceSharedRlsReadinessComplete": true,
+    "performanceV20ReservedNotActive": true,
+    "worktreeMaterializationMayProceedAfterThisPacketAndReservationAreCommittedAndPushed": true,
+    "activeLeaseMayBeIssuedOnlyAfterCleanWorktreeReceipt": true,
+    "executableStartTokenMayBeIssuedOnlyAfterActiveLease": true,
+    "moduleSourceAuthoringAuthorizedNow": false,
+    "migrationAuthoringAuthorizedNow": false,
+    "testExecutionAuthorizedNow": false,
+    "moduleBranchCommitAndPushAuthorizedNow": false,
+    "mergeToDwpDevAuthorized": false,
+    "routeMountAuthorized": false,
+    "menuMountAuthorized": false,
+    "featureDefaultOff": true,
+    "tenantEnrollmentCount": 0,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionProviderBindingAuthorized": false,
+    "productionSchedulerBindingAuthorized": false,
+    "productionBrokerBindingAuthorized": false,
+    "businessCompletionCredit": 0,
+    "productionReleaseAuthorized": false
+  },
+  "nextGate": "COMMIT_AND_PUSH_THIS_PACKET_WITH_THE_V20_RESERVATION_THEN_MATERIALIZE_FRESH_CLEAN_MODULE_WORKTREES_AND_HASH_BIND_ONE_ACTIVE_EXCLUSIVE_V20_LEASE_AND_EXECUTABLE_START_TOKEN",
+  "nonClaims": [
+    "This packet alone is not an executable module start token and does not activate Performance V20.",
+    "No module source, migration authoring, test execution, module-branch commit or push, dwp-dev merge, route, menu, feature enablement, tenant enrollment or production authority is granted yet.",
+    "The catalog-only PAGE contracts are not runtime Router or sidebar entries.",
+    "No provider, scheduler, broker, encryption key, privacy policy or customer audience is bound.",
+    "PER-008, Batch-05, R7 and HRIS are not complete."
+  ]
+}
