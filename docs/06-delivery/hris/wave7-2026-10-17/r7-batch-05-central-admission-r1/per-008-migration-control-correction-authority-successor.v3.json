@@ -1,0 +1,56 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-05-per008-migration-control-correction-authority.v3",
+  "decisionId": "HRIS-WAVE7-R7-BATCH-05-PER008-MIGRATION-CONTROL-CORRECTION-AUTHORITY-20261023-R3",
+  "issuedAt": "2026-10-23T15:31:23+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "AUTHORIZED_TWO_EXACT_HISTORICAL_UPGRADE_TARGET_ASSERTION_CORRECTIONS_ONLY",
+  "purpose": "Correct two stale historical upgrade tests exposed by the v2 current-head run. Each test must keep its original one-step semantic scope by targeting the migration it names instead of unintentionally running every later migration through V20. This is not authority to change production code, migration files, assertions, or any other test behavior.",
+  "immutability": {
+    "sealed": true,
+    "appendOnly": true,
+    "predecessorMutation": "FORBIDDEN"
+  },
+  "predecessor": {
+    "path": "per-008-migration-control-correction-authority-successor.v2.json",
+    "sha256": "e3e546b497e8e696cad2238dd374bb28fdcf39af5cb1cbdc0c7fcfbf20968d00",
+    "bytes": 5729,
+    "carrierCommit": "3e48ae27488b6e4816f8ea1b511ab9edfe3adafd",
+    "inheritance": "V1_AND_V2_REMAIN_FULLY_EFFECTIVE"
+  },
+  "observedTargetedRun": {
+    "classes": 14,
+    "tests": 58,
+    "passed": 56,
+    "failed": 2,
+    "failureClass": "STALE_LATEST_HEAD_MIGRATION_COUNT_NOT_RUNTIME_OR_FIXTURE_FAILURE"
+  },
+  "exactCorrections": [
+    {
+      "path": "dwp-people-server/src/test/java/com/dwp/services/people/hris/performance/per004/Per004MigrationContractTest.java",
+      "selector": "v18UpgradePreservesCompensationAndEnforcesPerDateMappingsAndImmutability",
+      "current": "flyway(source, null).migrate() executes V19 and V20 while the test asserts one migration",
+      "authorized": "change only that invocation target from null/latest to exact version 19; retain the one-migration assertion and all checksum/data assertions"
+    },
+    {
+      "path": "dwp-people-server/src/test/java/com/dwp/services/people/hris/performance/review/PerformanceReviewMigrationContractTest.java",
+      "selector": "upgradesV17ToV18WithoutChangingV17ChecksumOrCompensationData",
+      "current": "flyway(dataSource, null).migrate() executes V18, V19, and V20 while the test asserts one migration",
+      "authorized": "change only that invocation target from null/latest to exact version 18; retain the one-migration assertion and all checksum/data assertions"
+    }
+  ],
+  "verification": {
+    "rerunOnly": [
+      "Per004MigrationContractTest.v18UpgradePreservesCompensationAndEnforcesPerDateMappingsAndImmutability",
+      "PerformanceReviewMigrationContractTest.upgradesV17ToV18WithoutChangingV17ChecksumOrCompensationData"
+    ],
+    "passing56TestsMustNotBeRepeated": true,
+    "repositoryWideSuiteAuthorized": false
+  },
+  "forbidden": [
+    "changing expected migration counts",
+    "changing checksum or data preservation assertions",
+    "editing production or migration sources",
+    "running the already passing 56 tests again",
+    "direct dwp-dev merge or runtime activation"
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "schema": "dwp.hris.central-correction-start-token.v3",
+  "tokenId": "HRIS-WAVE7-R7-BATCH-05-START-PER008-MIGRATION-CONTROL-CORRECTION-20261023-R3",
+  "issuedAt": "2026-10-23T15:31:23+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "ISSUED_EXECUTABLE_TWO_EXACT_TEST_INVOCATION_TARGET_CORRECTIONS_ONLY",
+  "executable": true,
+  "predecessorToken": {
+    "path": "per-008-migration-control-correction.start-token-successor.v2.json",
+    "sha256": "720c48c081a68a06f8c8958d233d3384355f4aaf7317d1dc4b5662f4f449bd57",
+    "bytes": 3769,
+    "carrierCommit": "3e48ae27488b6e4816f8ea1b511ab9edfe3adafd",
+    "inheritance": "ALL_V1_AND_V2_TERMS_REMAIN_EFFECTIVE"
+  },
+  "successorAuthority": {
+    "path": "../../r7-batch-05-central-admission-r1/per-008-migration-control-correction-authority-successor.v3.json",
+    "requiredState": "AUTHORIZED_TWO_EXACT_HISTORICAL_UPGRADE_TARGET_ASSERTION_CORRECTIONS_ONLY"
+  },
+  "authorizedEdits": [
+    "Per004MigrationContractTest exact named selector: null target to version 19 only",
+    "PerformanceReviewMigrationContractTest exact named selector: null target to version 18 only"
+  ],
+  "verification": {
+    "rerunExactlyTwoFailedMethodsOnly": true,
+    "alreadyPassingTestsMustNotBeRepeated": true
+  },
+  "completion": {
+    "commitAndPushOnTheV1PinnedCorrectionBranch": true,
+    "appendOnlyCorrectionResultRequired": true,
+    "independentReviewP0P1P2Required": 0,
+    "centralAdmissionStillRequired": true
+  }
+}
