@@ -1,0 +1,190 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-05-per008-module-source-integration-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-05-PER008-MODULE-SOURCE-INTEGRATION-20261023-R1",
+  "recordedAt": "2026-10-23T15:52:27+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "EXACT_CORRECTED_PER008_MODULE_HEADS_NO_FF_MERGED_PUSHED_71_OF_71_BLOB_IDENTICAL_V20_LEASE_CONSUMED_DEFAULT_OFF_ZERO_ENROLLMENT",
+  "module": "PER",
+  "moduleSession": "HRIS-PER",
+  "sliceId": "BASE-TFR-PER-008",
+  "immutability": {
+    "sealed": true,
+    "appendOnly": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_RECEIPT_ID_AND_SHA256"
+  },
+  "authority": {
+    "sourceAdmissionDecision": {
+      "path": "per-008-module-source-admission-decision.v1.json",
+      "sha256": "4b27de1f47aef6c98b5c67f4b8196ec2c911c99ec285ec21f37f0171c575a69d",
+      "bytes": 14347,
+      "gitBlob": "3eab93ac08c9eeb22221a0b6f472dd8a5cbcddde",
+      "carrierCommit": "fbc95e59e35dc9dc3ef4aabb606eae8f8ba35ada",
+      "carrierTree": "5185279de6648554d82d6798a3cddcac3e506722"
+    },
+    "decisionConstraintsObserved": {
+      "exactHeadsOnly": true,
+      "noFfOnly": true,
+      "stopOnConflict": true,
+      "rejectedBackendAncestorMergedSeparately": false,
+      "squashUsed": false,
+      "cherryPickUsed": false,
+      "rebaseUsed": false,
+      "moduleTestRerunAuthorized": false,
+      "repositoryWideSuiteAuthorized": false
+    }
+  },
+  "integratedHeads": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "sourceBranch": "codex/hris-wave7-r7-batch05-per-008-migration-control-correction-backend-20261023-r1",
+      "sourceHead": "2f4eb2417d4551d53ed364d951faf4abc32ded4c",
+      "sourceTree": "4a7da7c23df837f7fa9ef9653c0e23f6322a7e76",
+      "requiredSourceLineage": [
+        "4f051e00e63525cb688fc69159a5197939e73696",
+        "27a86fa70f03b3b3e2e31de53a7f57db83ce4695",
+        "2f4eb2417d4551d53ed364d951faf4abc32ded4c"
+      ],
+      "mergeCommit": "40ed8e8431388db6a38fb22714682be046582362",
+      "mergeTree": "4a7da7c23df837f7fa9ef9653c0e23f6322a7e76",
+      "parents": [
+        "01468a404033c2a7247475f481f37c2ac40b3e3e",
+        "2f4eb2417d4551d53ed364d951faf4abc32ded4c"
+      ],
+      "strategy": "NO_FF_EXACT_BRANCH_HEAD",
+      "sourceIsSecondParent": true,
+      "sourceIsAncestor": true,
+      "mergeTreeEqualsSourceTree": true,
+      "admittedPathCount": 55,
+      "admittedBlobMatchedCount": 55,
+      "admittedBlobMismatchCount": 0,
+      "pathOnlyManifestSha256": "f957345db269e45d684e8049ef6fa99c772c80dff9e1d5a9a1d48af21c13b17b",
+      "nameStatusManifestSha256": "13ec4e23e4dc67f8586eee2cebb412d8fc29be55d29fb4f68a6231703132255e",
+      "mergeConflicts": 0,
+      "automaticConflictResolution": false,
+      "manualConflictResolution": false,
+      "originExact": true,
+      "clean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "sourceBranch": "codex/hris-wave7-r7-batch05-per-008-frontend-20261023-r1",
+      "sourceHead": "56c714f64dc6c9e5405a37c3ec6df20c8b617195",
+      "sourceTree": "f611301178544d1c4dc03d50bea63a864868be0a",
+      "mergeCommit": "dd8d0abcefe80ebe00c5a1534e5d65fa53946f12",
+      "mergeTree": "9f57687a91ab8a3331a25119a8a7b77222d0f6c3",
+      "parents": [
+        "fbc95e59e35dc9dc3ef4aabb606eae8f8ba35ada",
+        "56c714f64dc6c9e5405a37c3ec6df20c8b617195"
+      ],
+      "strategy": "NO_FF_EXACT_BRANCH_HEAD",
+      "decisionCarrierIsFirstParent": true,
+      "sourceIsSecondParent": true,
+      "sourceIsAncestor": true,
+      "decisionCarrierIsAncestor": true,
+      "centralAuthorityCandidatePathOverlapCount": 0,
+      "admittedPathCount": 16,
+      "admittedBlobMatchedCount": 16,
+      "admittedBlobMismatchCount": 0,
+      "pathOnlyManifestSha256": "d9f5d60e9ba8c55a7f2f671001e355e54c25cc6692e8bd7cfbb6978e2a5e19a6",
+      "nameStatusManifestSha256": "5a86c560e5a6c786452e7384fffc96e1fed544cda27061f2600f11f360beaea8",
+      "mergeConflicts": 0,
+      "automaticConflictResolution": false,
+      "manualConflictResolution": false,
+      "originExactBeforeReceiptDraft": true,
+      "cleanBeforeReceiptDraft": true
+    }
+  },
+  "postMergeVerification": {
+    "gitIdentityParentsAndAncestry": "PASS",
+    "exactAdmittedBlobComparison": "71_OF_71_MATCH",
+    "backendAdmittedBlobs": {
+      "expected": 55,
+      "matched": 55,
+      "mismatched": 0
+    },
+    "frontendAdmittedBlobs": {
+      "expected": 16,
+      "matched": 16,
+      "mismatched": 0
+    },
+    "totalAdmittedBlobs": {
+      "expected": 71,
+      "matched": 71,
+      "mismatched": 0
+    },
+    "centralAuthorityPreservedWithZeroCandidatePathOverlap": true,
+    "iaq023Per003Disposition": {
+      "result": "PASS_ADMITTED_STATIC_NO_DUPLICATE_NO_RECOUNT",
+      "candidateNonDocumentSourceReferences": 0,
+      "implementationOrRegressionCompletionClaimed": false,
+      "completionCredit": 0
+    },
+    "performanceV20Boundary": "PASS_ONE_EXACT_V20_FILE_WITH_CORRECTED_MIGRATION_CONTROL_AND_UNCHANGED_V1_TO_V20_MIGRATION_SOURCES_DURING_CORRECTION",
+    "gitDiffCheck": "PASS",
+    "mergeConflicts": 0,
+    "automaticConflictResolution": false,
+    "manualConflictResolution": false,
+    "moduleTestsRerun": false,
+    "repositoryWideSuiteRun": false,
+    "reason": "Both integrations were conflict-free Git identity and provenance operations over exact independently reviewed and already targeted-tested heads. Only merge identity, ancestry, admitted blob parity and rollout boundaries were rechecked."
+  },
+  "migrationLeaseClosure": {
+    "activationPath": "../r7-batch-05-module-start-r1/migration-lease-per008-v20-activation.v1.json",
+    "activationSha256": "042f95c5db5d9c7be77d4cf013eb450ee51485d7a7eda888976241dd96de4795",
+    "activationBytes": 9157,
+    "leaseId": "HRIS-WAVE7-R7-BATCH-05-PERFORMANCE-V20-PER008-20261023-R1",
+    "stream": "PERFORMANCE",
+    "version": "V20",
+    "sliceId": "BASE-TFR-PER-008",
+    "exactPath": "dwp-people-server/src/main/resources/db/performance-migration/V20__per_base_tfr_per_008.sql",
+    "state": "CONSUMED_CENTRALLY_INTEGRATED",
+    "activeLeaseCountAfterIntegration": 0,
+    "performanceMigrationHighWater": "V20",
+    "secondMigrationAuthorized": false,
+    "existingMigrationEditAuthorized": false
+  },
+  "rolloutBoundary": {
+    "featureKey": "HRIS_PER_TEAM_PERFORMANCE_FEEDBACK",
+    "runtimeDefault": "OFF",
+    "matchIfMissing": false,
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "tenantEnrollmentCount": 0,
+    "providerBound": false,
+    "runtimeCallsWhenDisabled": 0,
+    "teamWorkspaceMounted": false,
+    "personalWorkspaceMounted": false,
+    "routeMounted": false,
+    "menuMounted": false,
+    "shellNodeMounted": false,
+    "productionLifecycleProviderBound": false,
+    "productionSchedulerBound": false,
+    "productionBrokerBound": false,
+    "productionKeyProviderBound": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionIncrement": 0
+  },
+  "authorityAfterReceipt": {
+    "moduleSourceIntegrated": true,
+    "migrationLeaseConsumed": true,
+    "runtimeActivationAuthorizedByThisReceipt": false,
+    "routeOrMenuMountAuthorized": false,
+    "providerBindingAuthorized": false,
+    "schedulerOrBrokerBindingAuthorized": false,
+    "fullSliceCompletionAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nonClaims": [
+    "The frontend route, shell node, menu or tenant-visible page is mounted.",
+    "A production lifecycle, scheduler, broker or key provider is bound.",
+    "The feature is enabled or any tenant is enrolled.",
+    "IAQ-023 or BASE-TFR-PER-003 was implemented, retested or newly completed.",
+    "Customer data, full-slice completion or production release is authorized.",
+    "BASE-TFR-PER-008, Batch-05, R7 or HRIS is complete.",
+    "Module tests or a repository-wide suite were rerun during identity-only integration."
+  ],
+  "nextAction": "Commit and push this receipt, then record a separate PER-008 sequencing-exit receipt before opening the fixed-order SYS-008 lane. Keep route/menu/feature/tenant/browser activation deferred to separate explicit authority."
+}
