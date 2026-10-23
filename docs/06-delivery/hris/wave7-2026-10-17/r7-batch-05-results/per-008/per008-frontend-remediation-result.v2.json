@@ -1,0 +1,221 @@
+{
+  "schema": "dwp.hris.wave7.frontend-remediation-result.v2",
+  "evidenceId": "HRIS-WAVE7-R7-BATCH-05-PER-008-FRONTEND-REMEDIATION-20261023-R2",
+  "recordedAt": "2026-10-23T15:31:16+09:00",
+  "recordedBy": "HRIS-PER",
+  "sliceId": "BASE-TFR-PER-008",
+  "module": "PER",
+  "status": "FRONTEND_REMEDIATION_VERIFIED_READY_FOR_CENTRAL_SOURCE_REVIEW",
+  "successorOf": [
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-05-results/per-008/frontend-verification-fragment.v1.json",
+      "sha256": "1fb7455e844717bee88824b579993de9bd0c40af23e38d6f4a6015f72862b6d4",
+      "bytes": 15182,
+      "disposition": "PRESERVED_UNCHANGED_HISTORICAL_FRONTEND_EVIDENCE"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-05-results/per-008/per008-module-result.v1.json",
+      "sha256": "a7275dfe40853eba2ef1ac2558746f781394144866412dcd4b83e71c4d8c6429",
+      "bytes": 16819,
+      "disposition": "PRESERVED_UNCHANGED_MODULE_RESULT_FRONTEND_PORTION_AMENDED_ONLY_BY_THIS_SUCCESSOR"
+    }
+  ],
+  "authority": {
+    "repository": "dwp-frontend",
+    "branch": "codex/hris-wave7-r7-batch05-per-008-frontend-20261023-r1",
+    "startingHead": "dc14a93bf26ed1c3c0b24edf42bdc505d21846db",
+    "sourceCommit": "640b1e0e5950a18db8a1e5036ac108bfe924a8f0",
+    "sourceTree": "b6fa48af62c346651534ac88a86c35ba12389d33",
+    "originSourceCommitBeforeEvidence": "640b1e0e5950a18db8a1e5036ac108bfe924a8f0",
+    "originExactBeforeEvidence": true,
+    "writableBoundary": [
+      "apps/dwp/src/features/hris/performance/feedback/**",
+      "apps/dwp/src/features/hris/performance/__tests__/g3-slices/base-tfr-per-008.slice.test.tsx",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-05-results/per-008/**"
+    ],
+    "outsideBoundaryChanges": 0,
+    "runtimeRouteOrMenuChange": false,
+    "sharedDesignSystemChange": false,
+    "featureEnablementOrTenantEnrollmentChange": false
+  },
+  "reviewDisposition": {
+    "initialDecision": "NO_GO_FOUR_P1_FINDINGS",
+    "finalDecision": "GO_FOR_CENTRAL_SOURCE_REVIEW",
+    "unresolvedP0": 0,
+    "unresolvedP1": 0,
+    "unresolvedFeasibleP2WithinAuthorizedBoundary": 0,
+    "runtimeAdmissionDecision": "DEFERRED_SEPARATE_ROUTE_MENU_FEATURE_AND_BROWSER_ADMISSION_REQUIRED"
+  },
+  "remediation": [
+    {
+      "priority": "P1",
+      "id": "BLOCKING_STATE_AND_ACTION_ERROR_ISOLATION",
+      "result": "PASS",
+      "implementation": [
+        "Blocking full-view states never render seeded team, inbox, detail or release evidence.",
+        "Request and submit failures use context-bound action state and never replace successful read authority state.",
+        "Definitive action failures close option state and clear obsolete unknown-outcome replay evidence."
+      ],
+      "files": [
+        "apps/dwp/src/features/hris/performance/feedback/per008-team-workspace.tsx",
+        "apps/dwp/src/features/hris/performance/feedback/per008-personal-workspace.tsx",
+        "apps/dwp/src/features/hris/performance/feedback/per008-ui.tsx"
+      ],
+      "focusedTests": [
+        "PER008-AC-12 hides seeded protected evidence in blocking full-view states",
+        "PER008-AC-12 keeps read authority state separate from request-action denial",
+        "PER008-AC-05 renders release metadata only in COMPLETE release state"
+      ]
+    },
+    {
+      "priority": "P1",
+      "id": "POST_DISPATCH_UNKNOWN_OUTCOME_REPLAY",
+      "result": "PASS",
+      "implementation": [
+        "Command input, header and body failures remain explicit pre-dispatch client errors.",
+        "Explicit non-2xx owner problems remain typed Per008ClientError failures.",
+        "Transport failures and 2xx receipt parse or identity failures become same-idempotency-key unknown outcomes."
+      ],
+      "files": [
+        "apps/dwp/src/features/hris/performance/feedback/per008-client.ts",
+        "apps/dwp/src/features/hris/performance/feedback/per008-contract-client.test.ts"
+      ],
+      "focusedTests": [
+        "preserves same-key replay when a 2xx create receipt cannot be verified",
+        "preserves same-key replay when a 2xx submission receipt cannot be verified",
+        "PER008-AC-03 replays an accepted-but-unverified create with the frozen command context and key",
+        "PER008-AC-04/06 replays an unknown immutable submit with the frozen answer snapshot and key"
+      ]
+    },
+    {
+      "priority": "P1",
+      "id": "LANDMARK_AND_MODAL_INTEGRITY",
+      "result": "PASS",
+      "implementation": [
+        "Both feature roots are sections inside the shell-owned main landmark.",
+        "Immutable response confirmation uses the shared FormDialog portal, focus trap, backdrop, inert background behavior, mobile full-screen behavior and focus restoration.",
+        "The frozen command is captured before the modal closes and dispatches once."
+      ],
+      "files": [
+        "apps/dwp/src/features/hris/performance/feedback/per008-personal-workspace.tsx",
+        "apps/dwp/src/features/hris/performance/feedback/per008-team-workspace.tsx"
+      ],
+      "focusedTests": [
+        "PER008-AC-12 contributes no nested main landmark inside the DWP shell",
+        "PER008-AC-12 makes immutable confirmation truly modal and blocks background interaction"
+      ]
+    },
+    {
+      "priority": "P1",
+      "id": "CURSOR_PAGINATION_AND_SCOPE_RESET",
+      "result": "PASS",
+      "implementation": [
+        "Team navigation follows owner nextCursor, replaces rather than appends page evidence, keeps an in-memory previous-cursor trail and resets to null on query change.",
+        "Personal inbox navigation follows owner nextCursor, replaces page and detail evidence, and clears cursor history synchronously on authority context change.",
+        "Raw opaque cursors are never rendered."
+      ],
+      "files": [
+        "apps/dwp/src/features/hris/performance/feedback/per008-personal-workspace.tsx",
+        "apps/dwp/src/features/hris/performance/feedback/per008-team-workspace.tsx",
+        "apps/dwp/src/features/hris/performance/feedback/per008-workspace.css"
+      ],
+      "focusedTests": [
+        "PER008-AC-01 follows the team nextCursor and resets it on query change",
+        "PER008-AC-12 follows the personal inbox nextCursor without retaining another page or scope"
+      ]
+    },
+    {
+      "priority": "P2",
+      "id": "BOUNDED_UI_COMPLETENESS",
+      "result": "PASS",
+      "implementation": [
+        "All displayed instants and composer values use an explicit IANA display time zone instead of the browser default.",
+        "Composer defaults produce a valid maximum-duration-bounded response window.",
+        "Status and anonymity labels are localized in Korean and English.",
+        "Exact-code filter inputs expose shared instructions through aria-describedby and disable during command dispatch."
+      ],
+      "files": [
+        "apps/dwp/src/features/hris/performance/feedback/per008-ui.tsx",
+        "apps/dwp/src/features/hris/performance/feedback/per008-ui.test.tsx",
+        "apps/dwp/src/features/hris/performance/feedback/per008-personal-workspace.tsx",
+        "apps/dwp/src/features/hris/performance/feedback/per008-team-workspace.tsx"
+      ],
+      "focusedTests": [
+        "formats instants and privacy modes with the explicit locale and display time zone",
+        "starts with a maximum-duration-bounded valid window in the explicit display time zone",
+        "PER008-AC-03/05 enforces maximum response window and does not invent target data"
+      ]
+    }
+  ],
+  "changedSourcePaths": [
+    "apps/dwp/src/features/hris/performance/__tests__/g3-slices/base-tfr-per-008.slice.test.tsx",
+    "apps/dwp/src/features/hris/performance/feedback/per008-client.ts",
+    "apps/dwp/src/features/hris/performance/feedback/per008-contract-client.test.ts",
+    "apps/dwp/src/features/hris/performance/feedback/per008-personal-workspace.tsx",
+    "apps/dwp/src/features/hris/performance/feedback/per008-team-workspace.tsx",
+    "apps/dwp/src/features/hris/performance/feedback/per008-ui.test.tsx",
+    "apps/dwp/src/features/hris/performance/feedback/per008-ui.tsx",
+    "apps/dwp/src/features/hris/performance/feedback/per008-workspace.css"
+  ],
+  "verification": {
+    "policy": "Only changed PER-008 frontend targets were run. Passing unrelated suites were not repeated.",
+    "finalRuns": [
+      {
+        "kind": "TARGETED_VITEST",
+        "command": "./node_modules/.bin/vitest run apps/dwp/src/features/hris/performance/feedback/per008-ui.test.tsx apps/dwp/src/features/hris/performance/feedback/per008-contract-client.test.ts apps/dwp/src/features/hris/performance/__tests__/g3-slices/base-tfr-per-008.slice.test.tsx",
+        "result": "PASS_3_FILES_25_TESTS"
+      },
+      {
+        "kind": "MINIMUM_POST_UX_DELTA_VITEST",
+        "command": "./node_modules/.bin/vitest run apps/dwp/src/features/hris/performance/__tests__/g3-slices/base-tfr-per-008.slice.test.tsx",
+        "result": "PASS_1_FILE_16_TESTS"
+      },
+      {
+        "kind": "CHANGED_FILE_ESLINT",
+        "command": "./node_modules/.bin/eslint apps/dwp/src/features/hris/performance/feedback/per008-client.ts apps/dwp/src/features/hris/performance/feedback/per008-contract-client.test.ts apps/dwp/src/features/hris/performance/feedback/per008-personal-workspace.tsx apps/dwp/src/features/hris/performance/feedback/per008-team-workspace.tsx apps/dwp/src/features/hris/performance/feedback/per008-ui.tsx apps/dwp/src/features/hris/performance/feedback/per008-ui.test.tsx apps/dwp/src/features/hris/performance/__tests__/g3-slices/base-tfr-per-008.slice.test.tsx",
+        "result": "PASS_NO_OUTPUT"
+      },
+      {
+        "kind": "BOUNDED_TYPESCRIPT",
+        "command": "./node_modules/.bin/tsc --project tsconfig.per008-remediation.json --pretty false",
+        "result": "PASS_NO_OUTPUT_TEMPORARY_INCLUDE_ONLY_CONFIG_REMOVED"
+      },
+      {
+        "kind": "DIFF_CHECK",
+        "command": "git diff --check",
+        "result": "PASS_NO_OUTPUT"
+      }
+    ],
+    "correctionHistory": [
+      "The first integrated slice run exposed five stale assertions for the new localized label, valid default window and portal dialog; only those assertions were corrected.",
+      "The next run exposed two test-driver issues: a controlled datetime value setter and a portal transition close assertion; only those test mechanics were corrected.",
+      "The integrated 25-test target then passed, followed by one minimum 16-test slice rerun after the final action-message and modal-close UX delta."
+    ],
+    "repositoryWideSuiteRun": false,
+    "fullBuildRun": false,
+    "playwrightOrScreenshotRun": false,
+    "browserRouteRun": false,
+    "browserRouteReason": "The workspaces remain default-OFF and unmounted; route, menu, feature enrollment and browser visual admission are separate authorized work."
+  },
+  "latestDwpDevCompatibility": {
+    "originDwpDev": "3e48ae27488b6e4816f8ea1b511ab9edfe3adafd",
+    "mergeBase": "7352b1ec4cd1fe4ddaf797a985cfe38a84d90a01",
+    "mergeTreeConflictMarkers": 0,
+    "conflictingPaths": [],
+    "runtimeRoutePresent": false,
+    "catalogOnlyPageContractsPresent": true,
+    "result": "CLEAN_FOR_SEPARATE_CENTRAL_MERGE_REVIEW"
+  },
+  "residualDeferredItems": [
+    "A separate central admission must mount the authorized team and personal runtime routes, menu policy, provider binding, feature flag and tenant enrollment.",
+    "After that admission, run real browser keyboard, screen-reader and visual checks at 1440, 1280, 390 and 320 widths, 200 percent zoom, light, dark, forced-colors and reduced-motion modes.",
+    "No deferred item is a P0, P1 or feasible P2 defect within the currently authorized feedback source and slice-test boundary."
+  ],
+  "nonClaims": [
+    "No runtime Router, HCM route tree, sidebar, menu, shared design-system source or shared i18n source was changed.",
+    "No feature was enabled and no tenant was enrolled.",
+    "No dwp-dev merge, central admission, end-to-end completion or production readiness is claimed.",
+    "No repository-wide suite, full build or unavailable browser route was run."
+  ],
+  "decision": "GO_FOR_CENTRAL_SOURCE_REVIEW_ROUTE_MENU_AND_BROWSER_ADMISSION_REMAIN_SEPARATE"
+}
