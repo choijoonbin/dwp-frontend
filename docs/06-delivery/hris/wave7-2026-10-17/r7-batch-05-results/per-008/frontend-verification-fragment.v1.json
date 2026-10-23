@@ -1,0 +1,286 @@
+{
+  "schema": "dwp.hris.wave7.frontend-verification-fragment.v1",
+  "evidenceId": "HRIS-WAVE7-R7-BATCH-05-PER-008-FRONTEND-VERIFICATION-20261023-R1",
+  "recordedAt": "2026-10-23T14:07:07+09:00",
+  "recordedBy": "HRIS-PER",
+  "sliceId": "BASE-TFR-PER-008",
+  "module": "PER",
+  "status": "FRONTEND_BOUNDED_IMPLEMENTATION_VERIFIED_BACKEND_PENDING",
+  "authority": {
+    "startToken": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-05-module-start-r1/tokens/base-tfr-per-008.start-token.v1.json",
+      "tokenId": "HRIS-WAVE7-R7-BATCH-05-START-BASE-TFR-PER-008-20261023-R1",
+      "sha256": "2962ac0e4a043c82a15bf96f68a86c3370230f4c4c2356b9c9b59ca517152d7b",
+      "bytes": 22979,
+      "executable": true
+    },
+    "repository": "dwp-frontend",
+    "branch": "codex/hris-wave7-r7-batch05-per-008-frontend-20261023-r1",
+    "initialHead": "7352b1ec4cd1fe4ddaf797a985cfe38a84d90a01",
+    "initialTree": "3837b064171716be40d3c2c276a2ad6e15c3afeb",
+    "commitAndPushState": "NOT_YET_PERFORMED_AWAITING_FINAL_INTEGRATION_REVIEW"
+  },
+  "implementation": {
+    "featureKey": "HRIS_PER_TEAM_PERFORMANCE_FEEDBACK",
+    "defaultEnabled": false,
+    "tenantEnrollmentCount": 0,
+    "runtimeCallCountWhenDisabled": 0,
+    "runtimeRouteMounted": false,
+    "menuMounted": false,
+    "frontendShape": [
+      "unmounted team-performance list-detail workspace and manager request composer",
+      "unmounted explicit-SELF assigned inbox, detail, immutable response confirmation and release-availability workspace",
+      "seven closed typed owner operations with standard ApiResponse exact-once unwrap",
+      "shared read-scope and governed-mutation adapter with unknown-outcome same-key replay seams",
+      "contextScopeKey-bound projection, detail, options, release, busy, message and replay evidence",
+      "loading, empty, partial, unavailable, denied, stale, complete and suppressed protected states"
+    ],
+    "releaseProjection": {
+      "shape": "METADATA_ONLY",
+      "allowed": [
+        "schemaKey",
+        "aggregateSchemaKey",
+        "feedbackRequestId",
+        "requestState",
+        "anonymityMode",
+        "policyRevision",
+        "aggregatedAt",
+        "releasedAt",
+        "title",
+        "correlationId"
+      ],
+      "structurallyForbidden": [
+        "contributor identity",
+        "response item",
+        "narrative",
+        "answer",
+        "score",
+        "raw count",
+        "digest",
+        "encryption metadata"
+      ]
+    }
+  },
+  "changedPathAllowlist": {
+    "authorized": [
+      "apps/dwp/src/features/hris/performance/feedback/**",
+      "apps/dwp/src/features/hris/performance/__tests__/g3-slices/base-tfr-per-008.slice.test.tsx",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-05-results/per-008/**"
+    ],
+    "changed": [
+      "apps/dwp/src/features/hris/performance/feedback/index.ts",
+      "apps/dwp/src/features/hris/performance/feedback/per008-axios-adapter.test.ts",
+      "apps/dwp/src/features/hris/performance/feedback/per008-axios-adapter.ts",
+      "apps/dwp/src/features/hris/performance/feedback/per008-client.ts",
+      "apps/dwp/src/features/hris/performance/feedback/per008-contract-client.test.ts",
+      "apps/dwp/src/features/hris/performance/feedback/per008-contract.ts",
+      "apps/dwp/src/features/hris/performance/feedback/per008-model.ts",
+      "apps/dwp/src/features/hris/performance/feedback/per008-personal-workspace.tsx",
+      "apps/dwp/src/features/hris/performance/feedback/per008-team-workspace.tsx",
+      "apps/dwp/src/features/hris/performance/feedback/per008-ui.tsx",
+      "apps/dwp/src/features/hris/performance/feedback/per008-workspace.css",
+      "apps/dwp/src/features/hris/performance/__tests__/g3-slices/base-tfr-per-008.slice.test.tsx",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-05-results/per-008/frontend-verification-fragment.v1.json"
+    ],
+    "outsideBoundaryChanges": 0,
+    "existingFileModifiedUnderEvidenceCreateOnlyPath": false
+  },
+  "verification": {
+    "policy": "Passing targets were not broadly repeated. After a failure, only the smallest affected target was rerun. Later reruns were limited to files or named cases affected by the independently supplied release-contract correction and the real-adapter type correction.",
+    "dependencyReuse": "The worktree reused the existing /Users/a10697/Work/DWP/dwp-frontend/node_modules through a gitignored node_modules symlink; no install or full build was run.",
+    "runs": [
+      {
+        "sequence": 1,
+        "kind": "TARGETED_VITEST",
+        "command": "/Users/a10697/Work/DWP/dwp-frontend/node_modules/.bin/vitest run apps/dwp/src/features/hris/performance/feedback/per008-contract-client.test.ts apps/dwp/src/features/hris/performance/__tests__/g3-slices/base-tfr-per-008.slice.test.tsx",
+        "exitCode": 1,
+        "result": "2 files: 1 passed, 1 failed; 15 tests: 14 passed, 1 failed",
+        "failure": "The maximum-duration test supplied a local datetime earlier than the browser min value, so native validation correctly prevented the custom submit handler. This was a test-fixture error, not a product defect."
+      },
+      {
+        "sequence": 2,
+        "kind": "MINIMUM_FAILED_CASE_RERUN",
+        "command": "/Users/a10697/Work/DWP/dwp-frontend/node_modules/.bin/vitest run apps/dwp/src/features/hris/performance/__tests__/g3-slices/base-tfr-per-008.slice.test.tsx -t \"PER008-AC-03/05 enforces maximum response window\"",
+        "exitCode": 0,
+        "result": "1 test passed; 9 skipped"
+      },
+      {
+        "sequence": 3,
+        "kind": "POST_REVIEW_RELEASE_CONTRACT_TARGET",
+        "command": "/Users/a10697/Work/DWP/dwp-frontend/node_modules/.bin/vitest run apps/dwp/src/features/hris/performance/feedback/per008-contract-client.test.ts",
+        "exitCode": 0,
+        "result": "1 file passed; 5 tests passed"
+      },
+      {
+        "sequence": 4,
+        "kind": "POST_REVIEW_RELEASE_UI_CASE",
+        "command": "/Users/a10697/Work/DWP/dwp-frontend/node_modules/.bin/vitest run apps/dwp/src/features/hris/performance/__tests__/g3-slices/base-tfr-per-008.slice.test.tsx -t \"PER008-AC-05 exposes release availability metadata\"",
+        "exitCode": 0,
+        "result": "1 test passed; 10 skipped"
+      },
+      {
+        "sequence": 5,
+        "kind": "REAL_AXIOS_ADAPTER_TARGET",
+        "command": "/Users/a10697/Work/DWP/dwp-frontend/node_modules/.bin/vitest run apps/dwp/src/features/hris/performance/feedback/per008-axios-adapter.test.ts",
+        "exitCode": 0,
+        "result": "1 file passed; 3 tests passed"
+      },
+      {
+        "sequence": 6,
+        "kind": "CHANGED_FILE_ESLINT",
+        "command": "/Users/a10697/Work/DWP/dwp-frontend/node_modules/.bin/eslint apps/dwp/src/features/hris/performance/feedback/index.ts apps/dwp/src/features/hris/performance/feedback/per008-axios-adapter.ts apps/dwp/src/features/hris/performance/feedback/per008-client.ts apps/dwp/src/features/hris/performance/feedback/per008-contract-client.test.ts apps/dwp/src/features/hris/performance/feedback/per008-contract.ts apps/dwp/src/features/hris/performance/feedback/per008-model.ts apps/dwp/src/features/hris/performance/feedback/per008-personal-workspace.tsx apps/dwp/src/features/hris/performance/feedback/per008-team-workspace.tsx apps/dwp/src/features/hris/performance/feedback/per008-ui.tsx apps/dwp/src/features/hris/performance/__tests__/g3-slices/base-tfr-per-008.slice.test.tsx",
+        "exitCode": 0,
+        "result": "0 errors; 1 consistent-type-import warning, corrected before final delta checks"
+      },
+      {
+        "sequence": 7,
+        "kind": "POST_REVIEW_CHANGED_FILE_ESLINT",
+        "command": "/Users/a10697/Work/DWP/dwp-frontend/node_modules/.bin/eslint apps/dwp/src/features/hris/performance/feedback/per008-model.ts apps/dwp/src/features/hris/performance/feedback/per008-contract.ts apps/dwp/src/features/hris/performance/feedback/per008-personal-workspace.tsx apps/dwp/src/features/hris/performance/feedback/per008-contract-client.test.ts apps/dwp/src/features/hris/performance/__tests__/g3-slices/base-tfr-per-008.slice.test.tsx",
+        "exitCode": 0,
+        "result": "PASS; no output"
+      },
+      {
+        "sequence": 8,
+        "kind": "FINAL_ADAPTER_DELTA_ESLINT",
+        "command": "/Users/a10697/Work/DWP/dwp-frontend/node_modules/.bin/eslint apps/dwp/src/features/hris/performance/feedback/per008-axios-adapter.ts apps/dwp/src/features/hris/performance/feedback/per008-axios-adapter.test.ts apps/dwp/src/features/hris/performance/feedback/per008-contract.ts apps/dwp/src/features/hris/performance/feedback/per008-personal-workspace.tsx apps/dwp/src/features/hris/performance/feedback/per008-team-workspace.tsx apps/dwp/src/features/hris/performance/feedback/per008-contract-client.test.ts",
+        "exitCode": 0,
+        "result": "PASS; no output"
+      },
+      {
+        "sequence": 9,
+        "kind": "BOUNDED_TYPESCRIPT_FINAL",
+        "command": "/Users/a10697/Work/DWP/dwp-frontend/node_modules/.bin/tsc --project apps/dwp/src/features/hris/performance/feedback/tsconfig.per008.json --pretty false",
+        "exitCode": 0,
+        "result": "PASS; no output; temporary include-only tsconfig removed after the run",
+        "attempts": [
+          {
+            "attempt": 1,
+            "exitCode": 2,
+            "result": "Detected actual shared-client timeout/status API mismatches, strict parser cast/narrowing issues and missing temporary Node/Vite type includes."
+          },
+          {
+            "attempt": 2,
+            "exitCode": 2,
+            "result": "Minimum affected retry detected a multiline TypeScript assertion parse error."
+          },
+          {
+            "attempt": 3,
+            "exitCode": 2,
+            "result": "Minimum affected syntax retry detected the remaining assertion delimiter error."
+          },
+          {
+            "attempt": 4,
+            "exitCode": 0,
+            "result": "Corrected bounded source root passed."
+          },
+          {
+            "attempt": 5,
+            "exitCode": 0,
+            "result": "Same bounded source root passed after the real axios adapter test was added."
+          }
+        ],
+        "failureHistory": [
+          "The first bounded run exposed actual shared-client timeout/status API mismatches, strict parser cast/narrowing issues, and missing temporary Node/Vite type includes; only reported files were corrected.",
+          "Two minimal syntax-only reruns exposed and then corrected a multiline TypeScript assertion parse error.",
+          "The corrected bounded root passed, and the same bounded root passed once more after the newly required real axios adapter test was added."
+        ]
+      }
+    ],
+    "logicalCoverage": {
+      "contractAndClientTests": 5,
+      "realAxiosAdapterTests": 3,
+      "sliceDomContractTests": 11,
+      "total": 19,
+      "result": "PASS_ACROSS_BOUNDED_TARGET_AND_MINIMUM_AFFECTED_RERUNS"
+    },
+    "defaultOffZeroCall": "PASS",
+    "contextSwapNoProtectedDataOrCrossContextAction": "PASS_TEAM_AND_PERSONAL",
+    "unknownOutcomeSameKeyReplay": "PASS_CREATE_AND_SUBMIT",
+    "threshold422Mapping": "PASS_BOTH_FEEDBACK_AUDIENCE_BELOW_RELEASE_THRESHOLD_AND_FEEDBACK_RELEASE_THRESHOLD_NOT_MET",
+    "apiResponseEnvelope": "PASS_STANDARD_SUCCESS_AND_ERROR_EXACT_ONCE_UNWRAP",
+    "protectedReleaseNoLeak": "PASS_CLOSED_METADATA_ONLY_TYPE_PARSER_UI_AND_NEGATIVE_KEYS",
+    "responsiveAndAccessibility": "PASS_BOUNDED_DOM_CSS_CONTRACT_ONLY_NO_SCREENSHOT_CLAIM",
+    "repositoryWideSuiteRun": false,
+    "fullBuildRun": false,
+    "playwrightOrScreenshotRun": false,
+    "browserRouteRun": false,
+    "browserRouteReason": "The pages remain unmounted and the start token forbids Playwright screenshots before separate shell/route admission."
+  },
+  "acceptanceMapping": [
+    {
+      "id": "PER008-AC-01",
+      "frontendResult": "PASS_FRONTEND_IAQ038_CLOSED_QUERY_AND_PROJECTION_BOUNDARY",
+      "backendFinalResult": "PENDING_BACKEND_FINAL_REVIEW"
+    },
+    {
+      "id": "PER008-AC-02",
+      "frontendResult": "PASS_FRONTEND_EXPLICIT_TARGET_SELF_AND_CONTEXT_ISOLATION_BOUNDARY",
+      "backendFinalResult": "PENDING_BACKEND_FINAL_REVIEW"
+    },
+    {
+      "id": "PER008-AC-03",
+      "frontendResult": "PASS_FRONTEND_OPTIONS_CREATE_COMMAND_AND_SAME_KEY_REPLAY_BOUNDARY",
+      "backendFinalResult": "PENDING_BACKEND_FINAL_REVIEW"
+    },
+    {
+      "id": "PER008-AC-04",
+      "frontendResult": "PASS_FRONTEND_STATE_AND_IMMUTABLE_SUBMIT_TRANSPORT_BOUNDARY",
+      "backendFinalResult": "PENDING_BACKEND_FINAL_REVIEW"
+    },
+    {
+      "id": "PER008-AC-05",
+      "frontendResult": "PASS_FRONTEND_METADATA_ONLY_RELEASE_AND_THRESHOLD_NON_DISCLOSURE_BOUNDARY",
+      "backendFinalResult": "PENDING_BACKEND_FINAL_REVIEW"
+    },
+    {
+      "id": "PER008-AC-06",
+      "frontendResult": "PASS_FRONTEND_NO_EVENT_OR_PROTECTED_PAYLOAD_REPRESENTATION_BOUNDARY",
+      "backendFinalResult": "PENDING_BACKEND_FINAL_REVIEW"
+    },
+    {
+      "id": "PER008-AC-07",
+      "frontendResult": "PASS_FRONTEND_PROTECTED_CONTENT_STRUCTURAL_EXCLUSION_BOUNDARY",
+      "backendFinalResult": "PENDING_BACKEND_FINAL_REVIEW"
+    },
+    {
+      "id": "PER008-AC-08",
+      "frontendResult": "NOT_ASSESSED_MIGRATION_SCOPE",
+      "backendFinalResult": "PENDING_BACKEND_FINAL_REVIEW"
+    },
+    {
+      "id": "PER008-AC-09",
+      "frontendResult": "NOT_ASSESSED_DATABASE_SCOPE",
+      "backendFinalResult": "PENDING_BACKEND_FINAL_REVIEW"
+    },
+    {
+      "id": "PER008-AC-10",
+      "frontendResult": "PASS_FRONTEND_COMMAND_CONTEXT_AND_REPLAY_SEAM_ONLY",
+      "backendFinalResult": "PENDING_BACKEND_FINAL_REVIEW"
+    },
+    {
+      "id": "PER008-AC-11",
+      "frontendResult": "PASS_NO_ROUTE_QUERY_UI_OR_COMPLETION_RECOUNT",
+      "backendFinalResult": "PENDING_BACKEND_FINAL_REVIEW"
+    },
+    {
+      "id": "PER008-AC-12",
+      "frontendResult": "PASS_BOUNDED_UNMOUNTED_DOM_CONTRACT_WITH_ROUTE_VISUAL_ADMISSION_DEFERRED",
+      "backendFinalResult": "PENDING_BACKEND_FINAL_REVIEW"
+    }
+  ],
+  "backendAndOverall": {
+    "backendFinalResult": "PENDING_BACKEND_FINAL_REVIEW",
+    "databaseFinalResult": "PENDING_BACKEND_FINAL_REVIEW",
+    "allAcceptanceCriteriaFinalResult": "PENDING_BACKEND_FINAL_REVIEW",
+    "endToEndCompletionClaimed": false
+  },
+  "nonClaims": [
+    "No frontend runtime Router, HCM route tree, shell node, sidebar, menu, navigation policy or shared i18n entry is mounted or changed.",
+    "No feature is enabled and no tenant is enrolled; default OFF remains authoritative.",
+    "No customer data, production provider, scheduler, broker, encryption key or privacy-policy binding is introduced.",
+    "No backend, Performance V20, PostgreSQL, RLS, event or audit result is completed by this frontend fragment; each remains PENDING_BACKEND_FINAL_REVIEW.",
+    "No module commit, push, dwp-dev merge, central admission, full-slice completion, end-to-end completion or production release is claimed.",
+    "No repository-wide suite, full build, browser route run, Playwright run or screenshot evidence is claimed."
+  ],
+  "decision": "FRONTEND_BOUNDED_SOURCE_AND_TARGETED_VERIFICATION_READY_FOR_FINAL_INTEGRATION_REVIEW_BACKEND_PENDING"
+}
