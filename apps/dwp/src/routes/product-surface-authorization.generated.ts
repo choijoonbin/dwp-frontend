@@ -14,9 +14,9 @@ export type ProductAuthorizationRouteProjection = Readonly<{
 
 export const PRODUCT_AUTHORIZATION_REGISTRY_REVISION = {
   bundleKey: 'product-surfaces',
-  version: 58,
-  checksum: '556f2cc1554f0aaab6f88e50c34d64ca5cdd95af9b2d55072f6e6745f4652cc2',
-  indexChecksum: 'f9f97ba0841aece9001423e247b7508662f25843ae7cdc7f7271bad6a726cfbf',
+  version: 59,
+  checksum: '56582749cebf382c5c2669d83a30fb4c81fcb532db2878b15e6a83ced6898094',
+  indexChecksum: 'adff47a686995d4a6e5084be02d4345437c0106da417a375f588df32542cec82',
 } as const;
 
 export const PRODUCT_SURFACE_ROLLOUT_INVENTORY_REVISION = {
@@ -11104,6 +11104,54 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
     ],
   },
   {
+    routeContractKey: 'route.hcm.performance.feedback-release.data',
+    routeKind: 'DATA',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/people/v1/hris/performance/feedback-requests/{feedbackRequestId}/release',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.performance.feedback-request-create.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/people/v1/hris/performance/feedback-requests',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.performance.feedback-request-options.data',
+    routeKind: 'DATA',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/people/v1/hris/performance/feedback-request-options',
+      },
+    ],
+  },
+  {
     routeContractKey: 'route.hcm.personal.absence-create.action',
     routeKind: 'ACTION',
     navigationContextId: 'hcm.personal',
@@ -11236,6 +11284,54 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
     ],
   },
   {
+    routeContractKey: 'route.hcm.personal.feedback-assignment-detail.data',
+    routeKind: 'DATA',
+    navigationContextId: 'hcm.personal',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.personal',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/people/v1/hris/performance/feedback-assignments/{feedbackAssignmentId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.personal.feedback-assignments-mine.data',
+    routeKind: 'DATA',
+    navigationContextId: 'hcm.personal',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.personal',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/people/v1/hris/performance/feedback-assignments/mine',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.personal.feedback-response-submit.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.personal',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.personal',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/people/v1/hris/performance/feedback-assignments/{feedbackAssignmentId}/responses',
+      },
+    ],
+  },
+  {
     routeContractKey: 'route.hcm.personal.home-preference-update.action',
     routeKind: 'ACTION',
     navigationContextId: 'hcm.personal',
@@ -11344,6 +11440,22 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
       {
         method: 'GET',
         path: '/api/people/v1/hr/home',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.personal.performance-feedback.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'hcm.personal',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.personal',
+    routeId: 'hcm.personal.performance-feedback',
+    pattern: '/hr/me/performance/feedback',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/people/v1/hris/performance/feedback-assignments/mine',
       },
     ],
   },
@@ -11727,6 +11839,38 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
       {
         method: 'GET',
         path: '/api/people/v1/hr/team',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.team.performance.data',
+    routeKind: 'DATA',
+    navigationContextId: 'hcm.team',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.team',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/people/v1/hris/performance/workbench/team-performance',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.team.performance.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'hcm.team',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.team',
+    routeId: 'hcm.team.performance',
+    pattern: '/hr/team/performance',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/people/v1/hris/performance/workbench/team-performance',
       },
     ],
   },
