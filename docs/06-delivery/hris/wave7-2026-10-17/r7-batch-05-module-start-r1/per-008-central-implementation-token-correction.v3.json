@@ -1,0 +1,149 @@
+{
+  "schema": "hris.central-implementation-token-correction.v3",
+  "correctionId": "HRIS-WAVE7-R7-BATCH05-PER008-CENTRAL-IMPLEMENT-20261023-R3",
+  "issuedAt": "2026-10-23T12:52:54+09:00",
+  "state": "SEALED_EXECUTABLE_ONLY_AFTER_CORRECTION_CARRIER_COMMIT_AND_PUSH",
+  "sliceId": "BASE-TFR-PER-008",
+  "module": "HRIS-PER",
+  "immutability": {
+    "appendOnly": true,
+    "mutatesPinnedSuccessor": false,
+    "mutatesOriginalToken": false,
+    "mutatesCorrectionV2": false,
+    "amendmentPolicy": "THIS_EXACT_OVERRIDE_SUPERSEDES_ONLY_THE_FRONTEND_PAGE_REGISTRATION_AND_RUNTIME_MOUNT_INTERPRETATION; CORRECTION_V2_AND_ALL_OTHER_AUTHORITY_ARE_INHERITED"
+  },
+  "authority": {
+    "successor": {
+      "path": "per-008-iaq038-feedback-transport-and-central-authorization-successor.v1.json",
+      "sha256": "d62b43cb0fcc7d37563a09d5f28dcd09587b03fa91d78cf15298d7c801a7a955",
+      "bytes": 83353,
+      "carrierCommit": "d6bf7e5a719c4a0ae06154f23710e5829d39fec3"
+    },
+    "originalImplementationToken": {
+      "path": "per-008-central-implementation-token.v1.json",
+      "sha256": "e367df0834dfd296aad2d4b6eafd15c4484f7547cc617bc1e221245be21ded8d",
+      "bytes": 13375,
+      "carrierCommit": "7b9adcf0abaa596a69811097e6fb054a025513f3"
+    },
+    "correctionV2": {
+      "path": "per-008-central-implementation-token-correction.v2.json",
+      "sha256": "a60e81543ff6023f5596d4342ed73f1476d2aa06942d4cbb78d392fd16fb020b",
+      "bytes": 4661,
+      "carrierCommit": "393150e90c61b1b80148879ddc98cca9694ce23a",
+      "carrierTree": "2a02ad0698356dac42114349d22768175942a863"
+    }
+  },
+  "contradiction": {
+    "requiredAuthorizationCatalogPages": [
+      {
+        "routeContractKey": "route.hcm.team.performance.page",
+        "routeId": "hcm.team.performance",
+        "pattern": "/hr/team/performance",
+        "productId": "hcm",
+        "surfaceId": "hcm.team"
+      },
+      {
+        "routeContractKey": "route.hcm.personal.performance-feedback.page",
+        "routeId": "hcm.personal.performance-feedback",
+        "pattern": "/hr/me/performance/feedback",
+        "productId": "hcm",
+        "surfaceId": "hcm.personal"
+      }
+    ],
+    "originalFrontendPhrase": "register exactly two PAGE contracts and advance the HCM PAGE firewall from 65 to 67 while mounting no component, runtime route or menu",
+    "currentArchitectureInvariant": "architecture/product-page-routes.v1.json is the executable Router source; every local /hr official PAGE record is consumed by hcm-routes.tsx as a runtime route.",
+    "failure": "Synchronizing the two PER-008 PAGE records into the executable Router source mounts them before module admission and the personal path also fails the sealed HCM manifest boundary.",
+    "unsafeAlternativesRejected": [
+      "Do not add an HCM manifest matcher or edit hcm-routes.tsx before module mount admission.",
+      "Do not weaken the surface-boundary test.",
+      "Do not omit either PAGE from the authorization catalog or the HCM authorization firewall.",
+      "Do not create a page component, API client, menu, navigation item, i18n entry or visual test."
+    ]
+  },
+  "exactCorrection": {
+    "registrationMeaning": "The two PER-008 PAGE contracts are registered in the immutable product-authorization v59 catalog, generated frontend authorization projection and authorization firewall only. They are catalog-only and are not Router registrations in this central step.",
+    "authorizationCatalog": {
+      "totalPageRoutes": 160,
+      "hcmPageRoutes": 67,
+      "requiredCatalogOnlyDelta": [
+        "route.hcm.team.performance.page",
+        "route.hcm.personal.performance-feedback.page"
+      ]
+    },
+    "runtimeRouterSource": {
+      "path": "architecture/product-page-routes.v1.json",
+      "preCorrectionSha256": "8c5d8af58a3daf2fd5cc09275ccc5730d7698477bd0907e46b680a88237fe05b",
+      "preCorrectionBytes": 42674,
+      "pageRoutesTotal": 158,
+      "pageRoutesHcm": 65,
+      "forbiddenRouteContractKeys": [
+        "route.hcm.team.performance.page",
+        "route.hcm.personal.performance-feedback.page"
+      ]
+    },
+    "catalogOnlyRouterMetadata": {
+      "field": "catalogOnlyPageContracts",
+      "schemaRule": "Add one top-level array beside pageRoutes and legacyRedirects. Existing runtime readers continue to consume pageRoutes only.",
+      "records": [
+        {
+          "routeContractKey": "route.hcm.team.performance.page",
+          "routeId": "hcm.team.performance",
+          "pattern": "/hr/team/performance",
+          "productId": "hcm",
+          "surfaceId": "hcm.team"
+        },
+        {
+          "routeContractKey": "route.hcm.personal.performance-feedback.page",
+          "routeId": "hcm.personal.performance-feedback",
+          "pattern": "/hr/me/performance/feedback",
+          "productId": "hcm",
+          "surfaceId": "hcm.personal"
+        }
+      ],
+      "transitionRule": "A later separately admitted module mount moves an exact record from catalogOnlyPageContracts to pageRoutes; it never duplicates the record in both arrays."
+    },
+    "synchronizationRule": "The v59 synchronization check must require pageRoutes and catalogOnlyPageContracts to be disjoint and their union to equal the latest registry PAGE set exactly. catalogOnlyPageContracts must equal only the two sealed PER-008 records, while pageRoutes remains the unchanged 158-record executable Router set.",
+    "firewallRule": "The HCM browser authorization firewall must derive all 67 official HCM PAGE tuples from the lightweight union of pageRoutes (65 HCM) and catalogOnlyPageContracts (2 HCM), not from the 101 MB authorization snapshot and not from runtime pageRoutes alone.",
+    "runtimeRule": "The two catalog-only PAGE keys must be absent from PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE, ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE, REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG and the HCM Router tree until a separately admitted module mount step.",
+    "pathAllowlistChangeCount": 0,
+    "newCapabilityCount": 0,
+    "newPredicateCount": 0,
+    "newRouteCount": 0,
+    "newRuntimeRouteCount": 0,
+    "newMenuCount": 0,
+    "securityEffect": "Preserves fail-closed default-OFF authorization visibility for both future pages without creating an executable browser entry point before module source and mount admission."
+  },
+  "authorityAfterCorrection": {
+    "allOriginalTokenAuthorityInheritedExceptNamedFrontendInterpretation": true,
+    "correctionV2Inherited": true,
+    "sourceAuthoringAuthorizedBeforeCorrectionCarrierPush": false,
+    "sourceAuthoringAuthorizedAfterCorrectionCarrierPush": true,
+    "existingFrontendPathAllowlistUnchanged": true,
+    "hcmManifestChangeAuthorized": false,
+    "hcmRouterChangeAuthorized": false,
+    "moduleSourceAuthorized": false,
+    "performanceV20Authorized": false,
+    "runtimeRouteOrMenuMountAuthorized": false,
+    "featureActivationOrTenantEnrollmentAuthorized": false
+  },
+  "implementationRule": "Keep the 158 executable pageRoutes records unchanged, add only the exact two-record catalogOnlyPageContracts metadata array in architecture/product-page-routes.v1.json, enforce disjoint exact-union closure in the existing synchronization script and generated-route test, and derive the 67-entry HCM authorization firewall from the lightweight two-array union. Preserve every other successor, token and correction-v2 field and boundary.",
+  "verification": {
+    "required": [
+      "authorization:check succeeds against backend v59 with exactly 160 catalog PAGE routes and the exact two-key catalog-only delta",
+      "fixtures:check succeeds with latest fixture version 59",
+      "product-route-contracts.generated.test.ts proves pageRoutes 158, catalogOnlyPageContracts 2, their exact registry union 160, HCM Router 65, HCM firewall 67 and exclusion of both PER-008 PAGE keys from every runtime route catalog",
+      "hris-w1-browser-firewall-contract.test.ts proves the 67 HCM authorization tuples remain exact and below the snapshot ceiling",
+      "architecture/product-page-routes.v1.json pageRoutes and legacyRedirects remain value-identical to the pre-correction source and catalogOnlyPageContracts contains only the two sealed full tuples",
+      "No source outside the original 12-path frontend synchronization allowlist changes",
+      "All original focused verification and zero-P admission requirements remain mandatory"
+    ],
+    "independentReviewRequiredBeforeCarrierCommit": true
+  },
+  "nonClaims": [
+    "This correction authorizes a manifest matcher, Router object, page component, API client, navigation item, sidebar menu, i18n or visual test.",
+    "This correction removes either PER-008 PAGE contract from product authorization or the browser authorization firewall.",
+    "This correction authorizes PER-008 module source, Performance V20, feature activation or tenant enrollment.",
+    "This correction expands the original frontend path allowlist."
+  ],
+  "nextAction": "OBTAIN_ZERO_P0_P1_P2_REVIEW_COMMIT_AND_PUSH_THIS_CORRECTION_CARRIER_THEN_RESUME_ONLY_THE_PINNED_FRONTEND_SYNCHRONIZATION"
+}
