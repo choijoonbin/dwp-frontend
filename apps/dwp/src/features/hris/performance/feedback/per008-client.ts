@@ -199,14 +199,18 @@ export function createPer008Client(transport: Per008Transport) {
     async createFeedbackRequest(command: Per008CreateFeedbackRequestCommand, context: Per008CommandContext):
       Promise<Per008FeedbackRequestReceipt> {
       const parsed = parsePer008CreateCommand(command);
-      let response: Awaited<ReturnType<Per008Transport>>;
+      const headers = commandHeaders(context);
+      const body = JSON.stringify(parsed);
       try {
-        response = await transport(PER008_ROUTES.createRequest, {
-          method: 'POST', headers: commandHeaders(context), body: JSON.stringify(parsed),
+        const response = await transport(PER008_ROUTES.createRequest, {
+          method: 'POST', headers, body,
         });
-      } catch (error) { throw new Per008CommandOutcomeUnknownError(context.idempotencyKey, error); }
-      expectStatus(response.status, response.data, [200, 201, 202]);
-      return parsePer008RequestReceipt(response.data);
+        expectStatus(response.status, response.data, [200, 201, 202]);
+        return parsePer008RequestReceipt(response.data);
+      } catch (error) {
+        if (error instanceof Per008ClientError) throw error;
+        throw new Per008CommandOutcomeUnknownError(context.idempotencyKey, error);
+      }
     },
 
     async loadMyAssignments(cursor?: string): Promise<Per008AssignedFeedbackList> {
@@ -232,16 +236,20 @@ export function createPer008Client(transport: Per008Transport) {
       context: Per008CommandContext): Promise<Per008FeedbackSubmissionReceipt> {
       const id = objectId(feedbackAssignmentId);
       const parsed = parsePer008ResponseCommand(command);
-      let response: Awaited<ReturnType<Per008Transport>>;
+      const headers = commandHeaders(context);
+      const body = JSON.stringify(parsed);
       try {
-        response = await transport(PER008_ROUTES.submitResponse(id), {
-          method: 'POST', headers: commandHeaders(context), body: JSON.stringify(parsed),
+        const response = await transport(PER008_ROUTES.submitResponse(id), {
+          method: 'POST', headers, body,
         });
-      } catch (error) { throw new Per008CommandOutcomeUnknownError(context.idempotencyKey, error); }
-      expectStatus(response.status, response.data, [200, 201, 202]);
-      const receipt = parsePer008SubmissionReceipt(response.data);
-      if (receipt.assignmentId !== id) clientInvalid();
-      return receipt;
+        expectStatus(response.status, response.data, [200, 201, 202]);
+        const receipt = parsePer008SubmissionReceipt(response.data);
+        if (receipt.assignmentId !== id) clientInvalid();
+        return receipt;
+      } catch (error) {
+        if (error instanceof Per008ClientError) throw error;
+        throw new Per008CommandOutcomeUnknownError(context.idempotencyKey, error);
+      }
     },
 
     async loadRelease(feedbackRequestId: string): Promise<Per008FeedbackRelease> {

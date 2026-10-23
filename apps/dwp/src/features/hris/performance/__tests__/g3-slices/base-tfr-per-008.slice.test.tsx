@@ -6,7 +6,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { Per008CommandOutcomeUnknownError } from '../../feedback/per008-client';
+import { Per008ClientError, Per008CommandOutcomeUnknownError } from '../../feedback/per008-client';
 import {
   PER008_CREATE_ACTION_KEY,
   PER008_FEATURE_DEFAULT_ENABLED,
@@ -35,8 +35,10 @@ const ID = {
   cycle: '22222222-2222-4222-8222-222222222222',
   worker: '33333333-3333-4333-8333-333333333333',
   assignment: '44444444-4444-4444-8444-444444444444',
+  assignment2: '44444444-4444-4444-8444-444444444445',
   template: '55555555-5555-4555-8555-555555555555',
   request: '66666666-6666-4666-8666-666666666666',
+  request2: '66666666-6666-4666-8666-666666666667',
   question: '77777777-7777-4777-8777-777777777777',
   optional: '88888888-8888-4888-8888-888888888888',
   choice: '99999999-9999-4999-8999-999999999999',
@@ -89,6 +91,10 @@ function teamProjection(title = 'Tenant A team member'): Per008TeamProjection {
     }],
   };
 }
+function teamPage(title: string, nextCursor: string | null): Per008TeamProjection {
+  const projection = teamProjection(title);
+  return { ...projection, queryState: { ...projection.queryState, nextCursor } };
+}
 const options: Per008RequestOptions = {
   schemaKey: 'Per008FeedbackRequestOptionsV1', cycleVersionId: ID.cycle,
   subjectWorkerPublicId: ID.worker, subjectAssignmentPublicId: ID.assignment,
@@ -104,6 +110,14 @@ const inbox: Per008AssignedFeedbackList = {
     requestTitle: 'Tenant A assigned feedback', requestState: 'OPEN', assignmentState: 'ASSIGNED',
     opensAt: NOW, closesAt: LATER }],
 };
+function inboxPage(title: string, feedbackAssignmentId: string, feedbackRequestId: string,
+  nextCursor: string | null): Per008AssignedFeedbackList {
+  return {
+    ...inbox,
+    nextCursor,
+    items: [{ ...inbox.items[0]!, feedbackAssignmentId, feedbackRequestId, requestTitle: title }],
+  };
+}
 const detail: Per008AssignedFeedbackDetail = {
   schemaKey: 'Per008AssignedFeedbackDetailV1', feedbackAssignmentId: ID.assignment,
   feedbackRequestId: ID.request, requestTitle: 'Tenant A assigned feedback', requestState: 'OPEN',
@@ -174,17 +188,44 @@ describe('BASE-TFR-PER-008 unmounted feedback slice', () => {
     expect(renderToStaticMarkup(<Per008ProtectedNotice state="COMPLETE" />)).toBe('');
   });
 
-  it('PER008-AC-05 exposes release availability metadata without protected aggregate content', () => {
+  it('PER008-AC-12 hides seeded protected evidence in blocking full-view states', () => {
+    for (const state of ['LOADING', 'EMPTY', 'UNAVAILABLE', 'DENIED', 'SUPPRESSED'] as const) {
+      const teamHtml = renderToStaticMarkup(<Per008TeamPerformanceView state={state}
+        projection={teamProjection('Seeded protected team evidence')} />);
+      const personalHtml = renderToStaticMarkup(<Per008PersonalFeedbackView state={state}
+        detailState="COMPLETE" inbox={inbox} detail={detail}
+        selectedAssignmentId={ID.assignment} />);
+      expect(teamHtml).not.toContain('Seeded protected team evidence');
+      expect(personalHtml).not.toContain('Tenant A assigned feedback');
+    }
+  });
+
+  it('PER008-AC-12 contributes no nested main landmark inside the DWP shell', () => {
+    const html = renderToStaticMarkup(<main id="dwp-main-content">
+      <Per008TeamPerformanceView state="COMPLETE" projection={teamProjection()} />
+      <Per008PersonalFeedbackView state="COMPLETE" inbox={inbox} />
+    </main>);
+    expect(html.match(/<main(?:\s|>)/g)).toHaveLength(1);
+  });
+
+  it('PER008-AC-05 renders release metadata only in COMPLETE release state', () => {
+    const release = { schemaKey: 'Per008FeedbackReleaseV1' as const,
+      aggregateSchemaKey: 'PerformanceFeedbackAggregate.v1' as const, feedbackRequestId: ID.request,
+      requestState: 'RELEASED' as const, anonymityMode: 'ANONYMOUS_AGGREGATE' as const,
+      policyRevision: 'policy-3', aggregatedAt: NOW, releasedAt: LATER,
+      title: 'Released feedback available', correlationId: ID.correlation };
+    const releaseTarget = { contextScopeKey: SCOPE_A, feedbackRequestId: ID.request,
+      authorizationDecisionRevision: 'auth-1', provenance: 'OWNER_AUTHORIZED_RELEASE_REFERENCE' as const };
+    for (const releaseState of ['LOADING', 'DENIED', 'SUPPRESSED', 'UNAVAILABLE'] as const) {
+      const blocked = renderToStaticMarkup(<Per008PersonalFeedbackView state="EMPTY"
+        releaseState={releaseState} releaseTarget={releaseTarget} release={release} />);
+      expect(blocked).not.toContain('Released feedback available');
+    }
     const html = renderToStaticMarkup(<Per008PersonalFeedbackView state="EMPTY" releaseState="COMPLETE"
-      releaseTarget={{ contextScopeKey: SCOPE_A, feedbackRequestId: ID.request,
-        authorizationDecisionRevision: 'auth-1', provenance: 'OWNER_AUTHORIZED_RELEASE_REFERENCE' }}
-      release={{ schemaKey: 'Per008FeedbackReleaseV1',
-        aggregateSchemaKey: 'PerformanceFeedbackAggregate.v1', feedbackRequestId: ID.request,
-        requestState: 'RELEASED', anonymityMode: 'ANONYMOUS_AGGREGATE', policyRevision: 'policy-3',
-        aggregatedAt: NOW, releasedAt: LATER, title: 'Released feedback available',
-        correlationId: ID.correlation }} />);
+      releaseTarget={releaseTarget} release={release} displayTimeZone="Asia/Seoul" />);
     expect(html).toContain('Released feedback available');
-    expect(html).toContain('ANONYMOUS AGGREGATE');
+    expect(html).toContain('익명 집계');
+    expect(html).toContain('Asia/Seoul');
     expect(html).not.toMatch(/narrative|answer|score|contributor|raw count|digest|encrypt/i);
   });
 
@@ -207,6 +248,22 @@ describe('BASE-TFR-PER-008 unmounted feedback slice', () => {
     expect(mount.textContent).not.toContain('피드백 요청');
     expect(clientA.loadRequestOptions).not.toHaveBeenCalled();
     expect(clientB.loadRequestOptions).not.toHaveBeenCalled();
+  });
+
+  it('PER008-AC-12 keeps read authority state separate from request-action denial', async () => {
+    const client = { loadTeamPerformance: vi.fn().mockResolvedValue(teamProjection()),
+      loadRequestOptions: vi.fn().mockRejectedValue(new Per008ClientError('DENIED', 403)),
+      createFeedbackRequest: vi.fn() };
+    await act(async () => root.render(<Per008TeamPerformanceWorkspace mounted featureEnabled enrolled providerBound
+      contextScopeKey={SCOPE_A} client={client} initialQuery={query}
+      commandContextFactory={() => ({ idempotencyKey: 'per008-command-key-1',
+        expectedDecisionRevision: 'auth-1' })} />));
+    const begin = [...mount.querySelectorAll<HTMLButtonElement>('button')]
+      .find((button) => button.textContent === '피드백 요청')!;
+    await act(async () => begin.click());
+    expect(mount.textContent).toContain('Tenant A team member');
+    expect(mount.textContent).toContain('이 피드백 작업을 수행할 권한이 없습니다.');
+    expect(mount.querySelector('.per008-composer')).toBeNull();
   });
 
   it('PER008-AC-02/12 hides SELF, detail and release authority across context changes', async () => {
@@ -236,11 +293,69 @@ describe('BASE-TFR-PER-008 unmounted feedback slice', () => {
     expect(clientA.loadRelease).not.toHaveBeenCalled();
   });
 
+  it('PER008-AC-01 follows the team nextCursor and resets it on query change', async () => {
+    const nextCursor = 'team_next_cursor_0001';
+    const client = { loadTeamPerformance: vi.fn()
+      .mockResolvedValueOnce(teamPage('Team page one', nextCursor))
+      .mockResolvedValueOnce(teamPage('Team page two', null))
+      .mockResolvedValueOnce(teamPage('Filtered team page', null)),
+    loadRequestOptions: vi.fn(), createFeedbackRequest: vi.fn() };
+    await act(async () => root.render(<Per008TeamPerformanceWorkspace mounted featureEnabled enrolled providerBound
+      contextScopeKey={SCOPE_A} client={client} initialQuery={query} />));
+    const next = [...mount.querySelectorAll<HTMLButtonElement>('button')]
+      .find((button) => button.textContent === '다음 페이지')!;
+    await act(async () => next.click());
+    expect(client.loadTeamPerformance).toHaveBeenNthCalledWith(2,
+      expect.objectContaining({ cursor: nextCursor }));
+    expect(mount.textContent).toContain('Team page two');
+    expect(mount.textContent).not.toContain('Team page one');
+    await act(async () => (mount.querySelector('[role="search"]') as HTMLFormElement).requestSubmit());
+    expect(client.loadTeamPerformance).toHaveBeenNthCalledWith(3,
+      expect.objectContaining({ cursor: null }));
+    expect(mount.textContent).toContain('Filtered team page');
+    expect(mount.textContent).not.toContain('Team page two');
+  });
+
+  it('PER008-AC-12 follows the personal inbox nextCursor without retaining another page or scope', async () => {
+    const nextCursor = 'inbox_next_cursor_01';
+    const firstPage = inboxPage('Personal page one', ID.assignment, ID.request, nextCursor);
+    const secondPage = inboxPage('Personal page two', ID.assignment2, ID.request2, null);
+    const clientA = { loadMyAssignments: vi.fn().mockResolvedValueOnce(firstPage).mockResolvedValueOnce(secondPage),
+      loadAssignment: vi.fn().mockImplementation((assignmentId: string) => Promise.resolve({ ...detail,
+        feedbackAssignmentId: assignmentId, feedbackRequestId: assignmentId === ID.assignment2
+          ? ID.request2 : ID.request, requestTitle: assignmentId === ID.assignment2
+          ? 'Personal page two' : 'Personal page one' })),
+      loadRequestOptions: vi.fn(), createFeedbackRequest: vi.fn(), submitResponse: vi.fn(),
+      loadRelease: vi.fn() };
+    await act(async () => root.render(<Per008PersonalFeedbackWorkspace mounted featureEnabled enrolled providerBound
+      contextScopeKey={SCOPE_A} client={clientA} displayTimeZone="Asia/Seoul" />));
+    const next = [...mount.querySelectorAll<HTMLButtonElement>('button')]
+      .find((button) => button.textContent === '다음 페이지')!;
+    await act(async () => next.click());
+    expect(clientA.loadMyAssignments).toHaveBeenNthCalledWith(2, nextCursor);
+    expect(mount.textContent).toContain('Personal page two');
+    expect(mount.textContent).not.toContain('Personal page one');
+
+    const pendingScope = deferred<Per008AssignedFeedbackList>();
+    const clientB = { loadMyAssignments: vi.fn().mockReturnValue(pendingScope.promise),
+      loadAssignment: vi.fn(), loadRequestOptions: vi.fn(), createFeedbackRequest: vi.fn(),
+      submitResponse: vi.fn(), loadRelease: vi.fn() };
+    await act(async () => root.render(<Per008PersonalFeedbackWorkspace mounted featureEnabled enrolled providerBound
+      contextScopeKey={SCOPE_B} client={clientB} displayTimeZone="Asia/Seoul" />));
+    expect(clientB.loadMyAssignments).toHaveBeenCalledWith(undefined);
+    expect(mount.textContent).not.toContain('Personal page two');
+    expect(mount.textContent).not.toContain('Personal page one');
+  });
+
   it('PER008-AC-03/05 enforces maximum response window and does not invent target data', async () => {
     const submit = vi.fn();
     await act(async () => root.render(<Per008RequestComposer options={options} locale="en"
-      onCancel={vi.fn()} onSubmit={submit} />));
+      timeZone="UTC" onCancel={vi.fn()} onSubmit={submit} />));
+    const closesAt = mount.querySelectorAll<HTMLInputElement>('input[type="datetime-local"]')[1]!;
     await act(async () => {
+      Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')?.set
+        ?.call(closesAt, '2026-10-29T01:00');
+      closesAt.dispatchEvent(new Event('input', { bubbles: true }));
       (mount.querySelector('form') as HTMLFormElement).requestSubmit();
     });
     expect(submit).not.toHaveBeenCalled();
@@ -261,18 +376,20 @@ describe('BASE-TFR-PER-008 unmounted feedback slice', () => {
       requiredChoice.click();
       (mount.querySelector('.per008-response-form') as HTMLFormElement).requestSubmit();
     });
-    const dialog = mount.querySelector<HTMLElement>('[role="alertdialog"]');
+    const dialog = document.querySelector<HTMLElement>('[role="dialog"]');
     expect(dialog?.textContent).toContain('Kept the team aligned');
     expect(dialog?.textContent).toContain('Collaboration');
     expect(dialog?.textContent).not.toContain('Optional score0');
-    await act(async () => (dialog?.querySelectorAll('button')[1] as HTMLButtonElement).click());
+    const confirm = [...dialog!.querySelectorAll<HTMLButtonElement>('button')]
+      .find((button) => button.textContent === '확인 후 제출')!;
+    await act(async () => confirm.click());
     expect(submit).toHaveBeenCalledTimes(1);
     expect(submit.mock.calls[0]?.[0].response.answers).toHaveLength(2);
     expect(submit.mock.calls[0]?.[0].response.answers.some((answer: { questionPublicId: string }) =>
       answer.questionPublicId === ID.optional)).toBe(false);
   });
 
-  it('PER008-AC-03 replays an unknown create outcome with the frozen command, context and key', async () => {
+  it('PER008-AC-03 replays an accepted-but-unverified create with the frozen command context and key', async () => {
     const context = { idempotencyKey: 'per008-create-key-0001', expectedDecisionRevision: 'auth-1' };
     const create = vi.fn()
       .mockRejectedValueOnce(new Per008CommandOutcomeUnknownError(context.idempotencyKey, new Error('timeout')))
@@ -316,7 +433,9 @@ describe('BASE-TFR-PER-008 unmounted feedback slice', () => {
       textarea.dispatchEvent(new Event('input', { bubbles: true }));
       (mount.querySelector('.per008-response-form') as HTMLFormElement).requestSubmit();
     });
-    await act(async () => (mount.querySelectorAll<HTMLButtonElement>('[role="alertdialog"] button')[1]!).click());
+    const confirm = [...document.querySelectorAll<HTMLButtonElement>('[role="dialog"] button')]
+      .find((button) => button.textContent === '확인 후 제출')!;
+    await act(async () => confirm.click());
     expect(mount.querySelector('.per008-response-form')).toBeNull();
     const replay = [...mount.querySelectorAll<HTMLButtonElement>('button')]
       .find((button) => button.textContent === '동일 키로 재실행')!;
@@ -326,7 +445,7 @@ describe('BASE-TFR-PER-008 unmounted feedback slice', () => {
     expect(contextFactory).toHaveBeenCalledTimes(1);
   });
 
-  it('PER008-AC-12 supports confirmation Escape/focus and bounded responsive accessibility modes', async () => {
+  it('PER008-AC-12 makes immutable confirmation truly modal and blocks background interaction', async () => {
     await act(async () => root.render(<Per008PersonalFeedbackView state="COMPLETE" detailState="COMPLETE"
       inbox={inbox} detail={{ ...detail, questions: [detail.questions[0]!] }}
       selectedAssignmentId={ID.assignment} onSubmitResponse={vi.fn()} />));
@@ -338,10 +457,18 @@ describe('BASE-TFR-PER-008 unmounted feedback slice', () => {
       review.focus();
       review.click();
     });
-    expect(mount.querySelector('[role="alertdialog"]')).not.toBeNull();
-    expect(document.activeElement?.textContent).toContain('수정으로 돌아가기');
-    await act(async () => document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true })));
-    expect(mount.querySelector('[role="alertdialog"]')).toBeNull();
+    const dialog = document.querySelector<HTMLElement>('[role="dialog"]');
+    expect(dialog).not.toBeNull();
+    expect(dialog?.getAttribute('aria-modal')).toBe('true');
+    expect(mount.getAttribute('aria-hidden')).toBe('true');
+    expect(dialog?.contains(document.activeElement)).toBe(true);
+    const cancel = [...dialog!.querySelectorAll<HTMLButtonElement>('button')]
+      .find((button) => button.textContent === '수정으로 돌아가기')!;
+    await act(async () => {
+      cancel.click();
+      await new Promise((resolveDelay) => setTimeout(resolveDelay, 300));
+    });
+    expect(document.querySelector('[role="dialog"]')).toBeNull();
     expect(document.activeElement).toBe(review);
     const css = readFileSync(resolve(process.cwd(),
       'apps/dwp/src/features/hris/performance/feedback/per008-workspace.css'), 'utf8');

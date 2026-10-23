@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+import { FormDialog } from '@dwp-frontend/design-system';
+
 import { Per008ClientError, Per008CommandOutcomeUnknownError } from './per008-client';
 import type { Per008Client } from './per008-client';
 import {
@@ -22,8 +24,10 @@ import type {
   Per008RequestSubject,
 } from './per008-model';
 import {
+  formatPer008AnonymityMode,
   formatPer008Instant,
   per008Copy,
+  Per008ActionNotice,
   Per008ProtectedNotice,
   Per008RequestComposer,
 } from './per008-ui';
@@ -46,7 +50,7 @@ const personalCopy = {
     release: 'Released feedback', openRelease: 'Open release status',
     privacy: 'Privacy mode', releasedAt: 'Released', selfUnavailable: 'SELF request is unavailable.',
     outcomeUnknown: 'The command outcome is unknown. Replay with the same request key to confirm it safely.',
-    replay: 'Replay safely',
+    replay: 'Replay safely', previous: 'Previous page', next: 'Next page', page: 'Page',
   },
   ko: {
     eyebrow: '나의 성과', title: '피드백 받은 편지함',
@@ -62,9 +66,28 @@ const personalCopy = {
     release: '공개된 피드백', openRelease: '공개 상태 열기',
     privacy: '개인정보 보호 방식', releasedAt: '공개 시각', selfUnavailable: 'SELF 요청을 사용할 수 없습니다.',
     outcomeUnknown: '명령 결과를 확인할 수 없습니다. 동일한 요청 키로 안전하게 재실행해 확인하세요.',
-    replay: '동일 키로 재실행',
+    replay: '동일 키로 재실행', previous: '이전 페이지', next: '다음 페이지', page: '페이지',
   },
 } as const;
+
+const localizedCodes: Record<Per008Locale, Readonly<Record<string, string>>> = {
+  en: {
+    ASSIGNED: 'Assigned', SUBMITTED: 'Submitted', DECLINED: 'Declined', CANCELLED: 'Cancelled',
+    DRAFT: 'Draft', OPEN: 'Open', CLOSED: 'Closed', AGGREGATED: 'Aggregated', RELEASED: 'Released',
+  },
+  ko: {
+    ASSIGNED: '배정됨', SUBMITTED: '제출됨', DECLINED: '거절됨', CANCELLED: '취소됨',
+    DRAFT: '초안', OPEN: '진행 중', CLOSED: '마감됨', AGGREGATED: '집계 완료', RELEASED: '공개됨',
+  },
+};
+
+function localizedCode(value: string, locale: Per008Locale): string {
+  return localizedCodes[locale][value] ?? value.replaceAll('_', ' ');
+}
+
+function showsProtectedRows(state: Per008ProtectedState): boolean {
+  return state === 'COMPLETE' || state === 'PARTIAL' || state === 'STALE';
+}
 
 function stateFromError(error: unknown): Per008ProtectedState {
   if (!(error instanceof Per008ClientError)) return 'UNAVAILABLE';
@@ -85,38 +108,6 @@ function Per008ResponseForm({ detail, locale, busy = false, onSubmit }: Response
   const labels = personalCopy[locale];
   const [pending, setPending] = useState<Per008FeedbackResponseCommand>();
   const [validationMessage, setValidationMessage] = useState<string>();
-  const confirmationRef = useRef<HTMLElement>(null);
-  const returnFocusRef = useRef<HTMLElement | null>(null);
-
-  useEffect(() => {
-    if (!pending) return;
-    returnFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-    const confirmation = confirmationRef.current;
-    const focusable = confirmation?.querySelectorAll<HTMLElement>('button:not(:disabled)');
-    focusable?.[0]?.focus();
-    const keydown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        event.preventDefault();
-        setPending(undefined);
-        return;
-      }
-      if (event.key !== 'Tab' || !focusable?.length) return;
-      const first = focusable[0]!;
-      const last = focusable[focusable.length - 1]!;
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
-      }
-    };
-    document.addEventListener('keydown', keydown);
-    return () => {
-      document.removeEventListener('keydown', keydown);
-      returnFocusRef.current?.focus();
-    };
-  }, [pending]);
 
   const answerText = (answer: Per008FeedbackAnswer): string => {
     if (answer.textValue !== null) return answer.textValue;
@@ -125,7 +116,7 @@ function Per008ResponseForm({ detail, locale, busy = false, onSubmit }: Response
     return answer.choiceOptionPublicIds.map((id) =>
       question?.choiceOptions.find((option) => option.choiceOptionPublicId === id)?.label ?? id).join(', ');
   };
-  return (
+  return <>
     <form className="per008-response-form" aria-labelledby="per008-response-heading"
       onSubmit={(event) => {
         event.preventDefault();
@@ -191,32 +182,27 @@ function Per008ResponseForm({ detail, locale, busy = false, onSubmit }: Response
           {busy ? labels.submitting : labels.reviewSubmit}
         </button>
       </div>
-      {pending && (
-        <section ref={confirmationRef} className="per008-confirmation" role="alertdialog" aria-modal="true"
-          aria-labelledby="per008-confirm-title" aria-describedby="per008-confirm-impact">
-          <h4 id="per008-confirm-title">{labels.confirmTitle}</h4>
-          <p id="per008-confirm-impact">{labels.confirmImpact}</p>
-          <ol className="per008-confirmation__answers">
-            {pending.response.answers.map((answer) => (
-              <li key={answer.questionPublicId}>
-                <strong>{detail.questions.find((question) =>
-                  question.questionPublicId === answer.questionPublicId)?.prompt}</strong>
-                <span>{answerText(answer)}</span>
-              </li>
-            ))}
-          </ol>
-          <div className="per008-actions">
-            <button className="per008-button per008-button--quiet" type="button"
-              onClick={() => setPending(undefined)} disabled={busy}>{labels.backToEdit}</button>
-            <button className="per008-button per008-button--primary" type="button"
-              onClick={() => onSubmit(pending)} disabled={busy}>
-              {busy ? labels.submitting : labels.confirmSubmit}
-            </button>
-          </div>
-        </section>
-      )}
     </form>
-  );
+    <FormDialog open={!!pending} title={labels.confirmTitle} description={labels.confirmImpact}
+      cancelLabel={labels.backToEdit} submitLabel={labels.confirmSubmit}
+      submittingLabel={labels.submitting} busy={busy} submitIntent="danger" mobileFullScreen
+      onClose={() => setPending(undefined)} onSubmit={() => {
+        if (!pending) return;
+        const command = pending;
+        setPending(undefined);
+        onSubmit(command);
+      }}>
+      <ol className="per008-confirmation__answers">
+        {pending?.response.answers.map((answer) => (
+          <li key={answer.questionPublicId}>
+            <strong>{detail.questions.find((question) =>
+              question.questionPublicId === answer.questionPublicId)?.prompt}</strong>
+            <span>{answerText(answer)}</span>
+          </li>
+        ))}
+      </ol>
+    </FormDialog>
+  </>;
 }
 
 type PersonalViewProps = Readonly<{
@@ -231,7 +217,12 @@ type PersonalViewProps = Readonly<{
   requestOptions?: Per008RequestOptions;
   canRequestSelf?: boolean;
   actionMessage?: string;
+  actionState?: Per008ProtectedState;
   actionBusy?: boolean;
+  displayTimeZone?: string;
+  pageNumber?: number;
+  canPreviousPage?: boolean;
+  canNextPage?: boolean;
   locale?: Per008Locale;
   onRetry?: () => void;
   onSelect?: (assignmentId: string) => void;
@@ -241,18 +232,24 @@ type PersonalViewProps = Readonly<{
   onSubmitResponse?: (command: Per008FeedbackResponseCommand) => void;
   onLoadRelease?: (feedbackRequestId: string) => void;
   onReplay?: () => void;
+  onPreviousPage?: () => void;
+  onNextPage?: () => void;
 }>;
 
 export function Per008PersonalFeedbackView({ state, detailState = 'EMPTY', releaseState = 'EMPTY', inbox,
   detail, release, releaseTarget,
-  selectedAssignmentId, requestOptions, canRequestSelf = false, actionMessage, actionBusy = false,
+  selectedAssignmentId, requestOptions, canRequestSelf = false, actionMessage, actionState,
+  actionBusy = false, displayTimeZone = 'UTC', pageNumber = 1, canPreviousPage = false,
+  canNextPage = false,
   locale = 'ko', onRetry, onSelect, onBeginSelfRequest, onCancelRequest, onCreateRequest,
-  onSubmitResponse, onLoadRelease, onReplay }: PersonalViewProps) {
+  onSubmitResponse, onLoadRelease, onReplay, onPreviousPage, onNextPage }: PersonalViewProps) {
   const labels = personalCopy[locale];
   const common = per008Copy[locale];
-  const canRespond = detail?.requestState === 'OPEN' && detail.assignmentState === 'ASSIGNED';
+  const visibleInbox = showsProtectedRows(state) ? inbox : undefined;
+  const canRespond = state === 'COMPLETE' && detailState === 'COMPLETE' &&
+    detail?.requestState === 'OPEN' && detail.assignmentState === 'ASSIGNED';
   return (
-    <main className="per008-workspace" aria-labelledby="per008-personal-title">
+    <section className="per008-workspace" aria-labelledby="per008-personal-title">
       <header className="per008-page-header">
         <div>
           <p className="per008-eyebrow">{labels.eyebrow}</p>
@@ -268,25 +265,26 @@ export function Per008PersonalFeedbackView({ state, detailState = 'EMPTY', relea
       </header>
 
       <Per008ProtectedNotice state={state} locale={locale} onRetry={onRetry} />
+      {actionState && <Per008ActionNotice state={actionState} locale={locale} />}
       {actionMessage && <p className="per008-success" role="status">{actionMessage}</p>}
       {onReplay && <button className="per008-button per008-button--secondary" type="button"
         disabled={actionBusy} onClick={onReplay}>{labels.replay}</button>}
 
-      {inbox && inbox.items.length > 0 && (
+      {visibleInbox && visibleInbox.items.length > 0 && (
         <div className="per008-list-detail">
           <section className="per008-list-pane" aria-labelledby="per008-inbox-heading">
             <div className="per008-pane-heading">
-              <h2 id="per008-inbox-heading">{labels.inbox}</h2><span>{inbox.items.length}</span>
+              <h2 id="per008-inbox-heading">{labels.inbox}</h2><span>{visibleInbox.items.length}</span>
             </div>
             <ul className="per008-record-list">
-              {inbox.items.map((item) => (
+              {visibleInbox.items.map((item) => (
                 <li key={item.feedbackAssignmentId}>
                   <button type="button" className="per008-record-button"
                     aria-current={selectedAssignmentId === item.feedbackAssignmentId ? 'true' : undefined}
                     onClick={() => onSelect?.(item.feedbackAssignmentId)}>
                     <strong>{item.requestTitle}</strong>
-                    <span>{item.assignmentState.replaceAll('_', ' ')}</span>
-                    <small>{formatPer008Instant(item.closesAt, locale)}</small>
+                    <span>{localizedCode(item.assignmentState, locale)}</span>
+                    <small>{formatPer008Instant(item.closesAt, locale, displayTimeZone)} ({displayTimeZone})</small>
                     <span className="per008-visually-hidden">{labels.select}</span>
                   </button>
                 </li>
@@ -301,9 +299,10 @@ export function Per008PersonalFeedbackView({ state, detailState = 'EMPTY', relea
               <div className="per008-detail-content">
                 <h3>{detail.requestTitle}</h3>
                 <dl className="per008-definition-list">
-                  <div><dt>{labels.status}</dt><dd>{detail.assignmentState.replaceAll('_', ' ')}</dd></div>
-                  <div><dt>{labels.window}</dt><dd>{formatPer008Instant(detail.opensAt, locale)} –<br />
-                    {formatPer008Instant(detail.closesAt, locale)}</dd></div>
+                  <div><dt>{labels.status}</dt><dd>{localizedCode(detail.assignmentState, locale)}</dd></div>
+                  <div><dt>{labels.window}</dt><dd>{formatPer008Instant(detail.opensAt, locale,
+                    displayTimeZone)} –<br />
+                    {formatPer008Instant(detail.closesAt, locale, displayTimeZone)} ({displayTimeZone})</dd></div>
                 </dl>
                 {canRespond && onSubmitResponse
                   ? <Per008ResponseForm detail={detail} locale={locale} busy={actionBusy}
@@ -313,6 +312,16 @@ export function Per008PersonalFeedbackView({ state, detailState = 'EMPTY', relea
             )}
           </section>
         </div>
+      )}
+
+      {(canPreviousPage || canNextPage) && (
+        <nav className="per008-pagination" aria-label={`${labels.inbox} ${labels.page} ${pageNumber}`}>
+          <button className="per008-button per008-button--quiet" type="button"
+            disabled={actionBusy || !canPreviousPage} onClick={onPreviousPage}>{labels.previous}</button>
+          <span aria-current="page">{labels.page} {pageNumber}</span>
+          <button className="per008-button per008-button--quiet" type="button"
+            disabled={actionBusy || !canNextPage} onClick={onNextPage}>{labels.next}</button>
+        </nav>
       )}
 
       {releaseTarget && (
@@ -325,12 +334,14 @@ export function Per008PersonalFeedbackView({ state, detailState = 'EMPTY', relea
           </div>
           {releaseState !== 'EMPTY' && releaseState !== 'COMPLETE' &&
             <Per008ProtectedNotice state={releaseState} locale={locale} />}
-          {release?.feedbackRequestId === releaseTarget.feedbackRequestId && (
+          {releaseState === 'COMPLETE' && release?.feedbackRequestId === releaseTarget.feedbackRequestId && (
             <div className="per008-detail-content">
               <h3>{release.title}</h3>
               <dl className="per008-definition-list">
-                <div><dt>{labels.privacy}</dt><dd>{release.anonymityMode.replaceAll('_', ' ')}</dd></div>
-                <div><dt>{labels.releasedAt}</dt><dd>{formatPer008Instant(release.releasedAt, locale)}</dd></div>
+                <div><dt>{labels.privacy}</dt><dd>{formatPer008AnonymityMode(release.anonymityMode,
+                  locale)}</dd></div>
+                <div><dt>{labels.releasedAt}</dt><dd>{formatPer008Instant(release.releasedAt, locale,
+                  displayTimeZone)} ({displayTimeZone})</dd></div>
               </dl>
             </div>
           )}
@@ -339,9 +350,9 @@ export function Per008PersonalFeedbackView({ state, detailState = 'EMPTY', relea
 
       {requestOptions && onCancelRequest && onCreateRequest && (
         <Per008RequestComposer options={requestOptions} locale={locale} busy={actionBusy}
-          onCancel={onCancelRequest} onSubmit={onCreateRequest} />
+          timeZone={displayTimeZone} onCancel={onCancelRequest} onSubmit={onCreateRequest} />
       )}
-    </main>
+    </section>
   );
 }
 
@@ -360,6 +371,7 @@ export type Per008PersonalFeedbackWorkspaceProps = Readonly<{
   client?: PersonalClient;
   commandContextFactory?: (actionKey: typeof PER008_CREATE_ACTION_KEY | typeof PER008_SUBMIT_ACTION_KEY) =>
     Per008CommandContext;
+  displayTimeZone?: string;
   locale?: Per008Locale;
 }>;
 
@@ -367,7 +379,8 @@ export type Per008PersonalFeedbackWorkspaceProps = Readonly<{
 export function Per008PersonalFeedbackWorkspace({ mounted = false,
   featureEnabled = PER008_FEATURE_DEFAULT_ENABLED, enrolled = false,
   providerBound = PER008_PROVIDER_BOUND, contextScopeKey, selfSubject, selfSubjectContextScopeKey,
-  releaseTarget, client, commandContextFactory, locale = 'ko' }: Per008PersonalFeedbackWorkspaceProps) {
+  releaseTarget, client, commandContextFactory, displayTimeZone = 'UTC',
+  locale = 'ko' }: Per008PersonalFeedbackWorkspaceProps) {
   const active = mounted && featureEnabled && enrolled && providerBound && !!client &&
     !!contextScopeKey?.trim();
   const [state, setState] = useState<Per008ProtectedState>('LOADING');
@@ -388,6 +401,11 @@ export function Per008PersonalFeedbackWorkspace({ mounted = false,
   const [actionBusyContextKey, setActionBusyContextKey] = useState<string>();
   const [actionMessage, setActionMessage] = useState<string>();
   const [actionMessageContextKey, setActionMessageContextKey] = useState<string>();
+  const [actionState, setActionState] = useState<Per008ProtectedState>();
+  const [actionStateContextKey, setActionStateContextKey] = useState<string>();
+  const [inboxCursor, setInboxCursor] = useState<string | null>(null);
+  const [inboxCursorContextKey, setInboxCursorContextKey] = useState<string | undefined>(contextScopeKey);
+  const [inboxCursorTrail, setInboxCursorTrail] = useState<readonly (string | null)[]>([null]);
   const [unknownCommand, setUnknownCommand] = useState<
     | Readonly<{ kind: 'CREATE'; contextScopeKey: string; command: Per008CreateFeedbackRequestCommand;
       context: Per008CommandContext }>
@@ -402,11 +420,28 @@ export function Per008PersonalFeedbackWorkspace({ mounted = false,
   const releaseTargetKey = releaseTarget && contextScopeKey
     ? `${releaseTarget.contextScopeKey}\u0000${releaseTarget.feedbackRequestId}\u0000${releaseTarget.authorizationDecisionRevision}`
     : undefined;
+  const effectiveInboxCursor = inboxCursorContextKey === contextScopeKey ? inboxCursor : null;
+
+  useEffect(() => {
+    actionSequence.current += 1;
+    setUnknownCommand(undefined);
+    setActionMessage(undefined);
+    setActionMessageContextKey(undefined);
+    setActionState(undefined);
+    setActionStateContextKey(undefined);
+    setActionBusy(false);
+    setActionBusyContextKey(undefined);
+    setInboxCursor(null);
+    setInboxCursorContextKey(contextScopeKey);
+    setInboxCursorTrail([null]);
+  }, [contextScopeKey]);
 
   useEffect(() => {
     optionsSequence.current += 1;
     setOptions(undefined);
     setOptionsContextKey(undefined);
+    setActionState(undefined);
+    setActionStateContextKey(undefined);
   }, [selfSubject?.cycleVersionId, selfSubject?.subjectAssignmentPublicId,
     selfSubject?.subjectWorkerPublicId, contextScopeKey]);
 
@@ -418,7 +453,7 @@ export function Per008PersonalFeedbackWorkspace({ mounted = false,
     setInboxContextKey(undefined);
     setState('LOADING');
     setStateContextKey(requestedContextKey);
-    client.loadMyAssignments().then((next) => {
+    client.loadMyAssignments(effectiveInboxCursor ?? undefined).then((next) => {
       if (cancelled || currentContextScopeKey.current !== requestedContextKey) return;
       setInbox(next);
       setInboxContextKey(requestedContextKey);
@@ -434,7 +469,7 @@ export function Per008PersonalFeedbackWorkspace({ mounted = false,
       setStateContextKey(requestedContextKey);
     });
     return () => { cancelled = true; };
-  }, [active, client, contextScopeKey, retryCount]);
+  }, [active, client, contextScopeKey, effectiveInboxCursor, retryCount]);
 
   useEffect(() => {
     if (!active || !client || !selectedId || !contextScopeKey ||
@@ -484,6 +519,11 @@ export function Per008PersonalFeedbackWorkspace({ mounted = false,
     setDetail(undefined);
     setDetailContextKey(undefined);
     setDetailState('EMPTY');
+    setActionState(undefined);
+    setActionStateContextKey(undefined);
+    setUnknownCommand(undefined);
+    setActionMessage(undefined);
+    setActionMessageContextKey(undefined);
     setState('LOADING');
     setStateContextKey(contextScopeKey);
     setRetryCount((count) => count + 1);
@@ -498,6 +538,8 @@ export function Per008PersonalFeedbackWorkspace({ mounted = false,
     setActionBusyContextKey(requestedContextKey);
     setActionMessage(undefined);
     setActionMessageContextKey(undefined);
+    setActionState(undefined);
+    setActionStateContextKey(undefined);
     setOptions(undefined);
     setOptionsContextKey(undefined);
     client.loadRequestOptions(selfSubject).then((next) => {
@@ -510,8 +552,10 @@ export function Per008PersonalFeedbackWorkspace({ mounted = false,
       .catch((error: unknown) => {
         if (sequence !== optionsSequence.current ||
             currentContextScopeKey.current !== requestedContextKey) return;
-        setState(stateFromError(error));
-        setStateContextKey(requestedContextKey);
+        setOptions(undefined);
+        setOptionsContextKey(undefined);
+        setActionState(stateFromError(error));
+        setActionStateContextKey(requestedContextKey);
       })
       .finally(() => {
         if (sequence === optionsSequence.current &&
@@ -528,12 +572,16 @@ export function Per008PersonalFeedbackWorkspace({ mounted = false,
     const sequence = ++actionSequence.current;
     setActionBusy(true);
     setActionBusyContextKey(requestedContextKey);
+    setActionState(undefined);
+    setActionStateContextKey(undefined);
     client.createFeedbackRequest(command, context).then(() => {
       if (sequence !== actionSequence.current ||
           currentContextScopeKey.current !== requestedContextKey) return;
       setUnknownCommand(undefined);
       setOptions(undefined);
       setOptionsContextKey(undefined);
+      setActionState(undefined);
+      setActionStateContextKey(undefined);
       setActionMessage(per008Copy[locale].requestCreated);
       setActionMessageContextKey(requestedContextKey);
     }).catch((error: unknown) => {
@@ -546,8 +594,13 @@ export function Per008PersonalFeedbackWorkspace({ mounted = false,
         setActionMessage(personalCopy[locale].outcomeUnknown);
         setActionMessageContextKey(requestedContextKey);
       } else {
-        setState(stateFromError(error));
-        setStateContextKey(requestedContextKey);
+        setUnknownCommand(undefined);
+        setActionMessage(undefined);
+        setActionMessageContextKey(undefined);
+        setOptions(undefined);
+        setOptionsContextKey(undefined);
+        setActionState(stateFromError(error));
+        setActionStateContextKey(requestedContextKey);
       }
     }).finally(() => {
       if (sequence === actionSequence.current &&
@@ -565,7 +618,13 @@ export function Per008PersonalFeedbackWorkspace({ mounted = false,
         command.subjectAssignmentPublicId !== selfSubject.subjectAssignmentPublicId) return;
     let context: Per008CommandContext;
     try { context = commandContextFactory(PER008_CREATE_ACTION_KEY); }
-    catch { setState('DENIED'); return; }
+    catch {
+      setOptions(undefined);
+      setOptionsContextKey(undefined);
+      setActionState('DENIED');
+      setActionStateContextKey(contextScopeKey);
+      return;
+    }
     executeCreate(command, context, contextScopeKey);
   }, [active, client, commandContextFactory, contextScopeKey, executeCreate, options,
     optionsContextKey, selfSubject, selfSubjectContextScopeKey]);
@@ -575,6 +634,8 @@ export function Per008PersonalFeedbackWorkspace({ mounted = false,
     const sequence = ++actionSequence.current;
     setActionBusy(true);
     setActionBusyContextKey(requestedContextKey);
+    setActionState(undefined);
+    setActionStateContextKey(undefined);
     client.submitResponse(assignmentId, command, context).then(() => {
       if (sequence !== actionSequence.current ||
           currentContextScopeKey.current !== requestedContextKey) return;
@@ -583,6 +644,8 @@ export function Per008PersonalFeedbackWorkspace({ mounted = false,
         ? { ...current, assignmentState: 'SUBMITTED' } : current);
       setActionMessage(personalCopy[locale].submitted);
       setActionMessageContextKey(requestedContextKey);
+      setActionState(undefined);
+      setActionStateContextKey(undefined);
     }).catch((error: unknown) => {
       if (sequence !== actionSequence.current ||
           currentContextScopeKey.current !== requestedContextKey) return;
@@ -592,8 +655,11 @@ export function Per008PersonalFeedbackWorkspace({ mounted = false,
         setActionMessage(personalCopy[locale].outcomeUnknown);
         setActionMessageContextKey(requestedContextKey);
       } else {
-        setDetailState(stateFromError(error));
-        setDetailContextKey(requestedContextKey);
+        setUnknownCommand(undefined);
+        setActionMessage(undefined);
+        setActionMessageContextKey(undefined);
+        setActionState(stateFromError(error));
+        setActionStateContextKey(requestedContextKey);
       }
     }).finally(() => {
       if (sequence === actionSequence.current &&
@@ -609,7 +675,11 @@ export function Per008PersonalFeedbackWorkspace({ mounted = false,
         detail.feedbackAssignmentId !== selectedId || !commandContextFactory) return;
     let context: Per008CommandContext;
     try { context = commandContextFactory(PER008_SUBMIT_ACTION_KEY); }
-    catch { setDetailState('DENIED'); return; }
+    catch {
+      setActionState('DENIED');
+      setActionStateContextKey(contextScopeKey);
+      return;
+    }
     executeSubmit(detail.feedbackAssignmentId, command, context, contextScopeKey);
   }, [active, client, commandContextFactory, contextScopeKey, detail, detailContextKey,
     detailState, executeSubmit, selectedId]);
@@ -664,8 +734,38 @@ export function Per008PersonalFeedbackWorkspace({ mounted = false,
         visibleUnknown.contextScopeKey)
       : undefined;
   const visibleBusy = actionBusyContextKey === contextScopeKey && actionBusy;
+  const visibleState = stateContextKey === contextScopeKey ? state : 'LOADING';
+  const visibleActionState = actionStateContextKey === contextScopeKey ? actionState : undefined;
+  const activeCursorTrail = inboxCursorContextKey === contextScopeKey ? inboxCursorTrail : [null];
+  const nextCursor = inboxMatches && showsProtectedRows(visibleState) ? inbox?.nextCursor : null;
+  const preparePageChange = (cursor: string | null, trail: readonly (string | null)[]) => {
+    optionsSequence.current += 1;
+    setOptions(undefined);
+    setOptionsContextKey(undefined);
+    setActionState(undefined);
+    setActionStateContextKey(undefined);
+    setUnknownCommand(undefined);
+    setActionMessage(undefined);
+    setActionMessageContextKey(undefined);
+    setInbox(undefined);
+    setInboxContextKey(undefined);
+    setSelectedId(undefined);
+    setDetail(undefined);
+    setDetailContextKey(undefined);
+    setDetailState('EMPTY');
+    setState('LOADING');
+    setStateContextKey(contextScopeKey);
+    setInboxCursor(cursor);
+    setInboxCursorContextKey(contextScopeKey);
+    setInboxCursorTrail(trail);
+  };
+  const selectAssignment = (assignmentId: string) => {
+    setActionState(undefined);
+    setActionStateContextKey(undefined);
+    setSelectedId(assignmentId);
+  };
   return <Per008PersonalFeedbackView
-    state={stateContextKey === contextScopeKey ? state : 'LOADING'}
+    state={visibleState}
     detailState={detailMatches ? detailState : 'EMPTY'}
     releaseState={visibleReleaseTarget && releaseEvidenceKey === releaseTargetKey ? releaseState : 'EMPTY'}
     inbox={inboxMatches ? inbox : undefined}
@@ -675,18 +775,30 @@ export function Per008PersonalFeedbackWorkspace({ mounted = false,
     selectedAssignmentId={inboxMatches ? selectedId : undefined}
     requestOptions={optionsContextKey === contextScopeKey ? options : undefined}
     canRequestSelf={!!selfSubject && selfSubjectContextScopeKey === contextScopeKey && !visibleUnknown}
+    actionState={visibleActionState}
     actionMessage={actionMessageContextKey === contextScopeKey
       ? actionMessage : undefined} actionBusy={visibleBusy}
-    locale={locale} onRetry={retry} onSelect={inboxMatches ? setSelectedId : undefined}
+    displayTimeZone={displayTimeZone} pageNumber={activeCursorTrail.length}
+    canPreviousPage={activeCursorTrail.length > 1} canNextPage={!!nextCursor}
+    locale={locale} onRetry={retry} onSelect={inboxMatches ? selectAssignment : undefined}
     onBeginSelfRequest={selfSubject && selfSubjectContextScopeKey === contextScopeKey && !visibleUnknown
       ? beginSelfRequest : undefined}
     onCancelRequest={() => {
       optionsSequence.current += 1;
       setOptions(undefined);
       setOptionsContextKey(undefined);
+      setActionState(undefined);
+      setActionStateContextKey(undefined);
     }}
     onCreateRequest={commandContextFactory ? createRequest : undefined}
     onSubmitResponse={commandContextFactory && visibleUnknown?.kind !== 'SUBMIT'
       ? submitResponse : undefined} onLoadRelease={loadRelease}
-    onReplay={replay} />;
+    onReplay={replay}
+    onPreviousPage={activeCursorTrail.length > 1 ? () => {
+      const previousTrail = activeCursorTrail.slice(0, -1);
+      preparePageChange(previousTrail.at(-1) ?? null, previousTrail);
+    } : undefined}
+    onNextPage={nextCursor ? () => {
+      preparePageChange(nextCursor, [...activeCursorTrail, nextCursor]);
+    } : undefined} />;
 }

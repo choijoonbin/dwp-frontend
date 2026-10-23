@@ -25,6 +25,11 @@ export const per008Copy = {
     opensAt: 'Opens at', closesAt: 'Closes at', cancel: 'Cancel', create: 'Create draft request',
     saving: 'Saving…', requestCreated: 'Draft feedback request created.',
     windowInvalid: 'Choose a valid response window within the allowed duration.',
+    timeZone: 'Display time zone',
+    actionDenied: 'You do not have permission to complete this feedback action.',
+    actionStale: 'The action authorization changed. Refresh the evidence before continuing.',
+    actionSuppressed: 'The current privacy policy does not allow this feedback action.',
+    actionUnavailable: 'This feedback action is temporarily unavailable.',
   },
   ko: {
     retry: '다시 시도', loading: '보호된 피드백 정보를 불러오는 중입니다…',
@@ -41,8 +46,26 @@ export const per008Copy = {
     opensAt: '응답 시작', closesAt: '응답 마감', cancel: '취소', create: '초안 요청 만들기',
     saving: '저장 중…', requestCreated: '피드백 요청 초안을 만들었습니다.',
     windowInvalid: '허용된 최대 기간 안에서 유효한 응답 기간을 선택하세요.',
+    timeZone: '표시 시간대',
+    actionDenied: '이 피드백 작업을 수행할 권한이 없습니다.',
+    actionStale: '작업 권한 근거가 변경되었습니다. 계속하기 전에 정보를 새로 고쳐 주세요.',
+    actionSuppressed: '현재 개인정보 보호 정책에서는 이 피드백 작업을 수행할 수 없습니다.',
+    actionUnavailable: '피드백 작업을 일시적으로 수행할 수 없습니다.',
   },
 } as const;
+
+const anonymityLabels: Record<Per008Locale, Record<Per008AnonymityMode, string>> = {
+  en: {
+    IDENTIFIED: 'Identified',
+    MASKED: 'Masked',
+    ANONYMOUS_AGGREGATE: 'Anonymous aggregate',
+  },
+  ko: {
+    IDENTIFIED: '실명',
+    MASKED: '가명 처리',
+    ANONYMOUS_AGGREGATE: '익명 집계',
+  },
+};
 
 type NoticeProps = Readonly<{
   state: Per008ProtectedState;
@@ -70,53 +93,136 @@ export function Per008ProtectedNotice({ state, locale = 'ko', onRetry }: NoticeP
   );
 }
 
-export function formatPer008Instant(value: string, locale: Per008Locale): string {
+export function Per008ActionNotice({ state, locale = 'ko' }: Omit<NoticeProps, 'onRetry'>) {
+  const labels = per008Copy[locale];
+  const message = state === 'DENIED' ? labels.actionDenied
+    : state === 'STALE' ? labels.actionStale
+    : state === 'SUPPRESSED' ? labels.actionSuppressed : labels.actionUnavailable;
+  return (
+    <div className={`per008-notice per008-notice--${state.toLowerCase()}`} role="alert" aria-live="assertive">
+      <p>{message}</p>
+    </div>
+  );
+}
+
+export function formatPer008Instant(value: string, locale: Per008Locale, timeZone: string): string {
   return new Intl.DateTimeFormat(locale === 'ko' ? 'ko-KR' : 'en-US', {
-    dateStyle: 'medium', timeStyle: 'short',
+    dateStyle: 'medium', timeStyle: 'short', timeZone,
   }).format(new Date(value));
 }
 
-function inputValue(value: string): string {
-  const date = new Date(value);
-  const part = (number: number) => String(number).padStart(2, '0');
-  return `${date.getFullYear()}-${part(date.getMonth() + 1)}-${part(date.getDate())}` +
-    `T${part(date.getHours())}:${part(date.getMinutes())}`;
+export function formatPer008AnonymityMode(mode: Per008AnonymityMode, locale: Per008Locale): string {
+  return anonymityLabels[locale][mode];
 }
-function inputInstant(value: string): string | null {
-  if (!value) return null;
-  const date = new Date(value);
-  return Number.isFinite(date.valueOf()) ? date.toISOString() : null;
+
+type Per008ZonedParts = Readonly<{
+  year: string;
+  month: string;
+  day: string;
+  hour: string;
+  minute: string;
+  second: string;
+}>;
+
+function zonedParts(value: string | number, timeZone: string): Per008ZonedParts {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hourCycle: 'h23',
+  }).formatToParts(new Date(value));
+  const part = (type: Intl.DateTimeFormatPartTypes) => parts.find((item) => item.type === type)?.value ?? '';
+  return {
+    year: part('year'),
+    month: part('month'),
+    day: part('day'),
+    hour: part('hour'),
+    minute: part('minute'),
+    second: part('second'),
+  };
+}
+
+function inputValue(value: string | number, timeZone: string): string {
+  const parts = zonedParts(value, timeZone);
+  return `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}`;
+}
+
+function zonedOffsetAt(value: number, timeZone: string): number {
+  const parts = zonedParts(value, timeZone);
+  const represented = Date.UTC(Number(parts.year), Number(parts.month) - 1, Number(parts.day),
+    Number(parts.hour), Number(parts.minute), Number(parts.second));
+  return represented - Math.floor(value / 1_000) * 1_000;
+}
+
+function inputInstant(value: string, timeZone: string): string | null {
+  const match = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/.exec(value);
+  if (!match) return null;
+  const [, year, month, day, hour, minute] = match;
+  const localAsUtc = Date.UTC(Number(year), Number(month) - 1, Number(day), Number(hour), Number(minute));
+  if (!Number.isFinite(localAsUtc)) return null;
+  const canonical = `${year}-${month}-${day}T${hour}:${minute}`;
+  const offsets = new Set([
+    zonedOffsetAt(localAsUtc - 86_400_000, timeZone),
+    zonedOffsetAt(localAsUtc, timeZone),
+    zonedOffsetAt(localAsUtc + 86_400_000, timeZone),
+  ]);
+  const candidates = [...offsets]
+    .map((offset) => localAsUtc - offset)
+    .filter((candidate) => inputValue(candidate, timeZone) === canonical)
+    .sort((left, right) => left - right);
+  return candidates[0] === undefined ? null : new Date(candidates[0]).toISOString();
+}
+
+function requestWindowDefaults(options: Per008RequestOptions, timeZone: string) {
+  const minute = 60_000;
+  const earliest = Math.ceil(Date.parse(options.windowLimits.earliestOpensAt) / minute) * minute;
+  const latest = Math.floor(Date.parse(options.windowLimits.latestClosesAt) / minute) * minute;
+  const maximumClose = earliest + options.windowLimits.maximumDurationDays * 86_400_000;
+  const closes = Math.min(latest, maximumClose);
+  return {
+    opensAt: inputValue(earliest, timeZone),
+    closesAt: inputValue(closes, timeZone),
+  };
 }
 
 type RequestComposerProps = Readonly<{
   options: Per008RequestOptions;
   locale?: Per008Locale;
+  timeZone: string;
   busy?: boolean;
   onCancel: () => void;
   onSubmit: (command: Per008CreateFeedbackRequestCommand) => void;
 }>;
 
-export function Per008RequestComposer({ options, locale = 'ko', busy = false, onCancel,
+export function Per008RequestComposer({ options, locale = 'ko', timeZone, busy = false, onCancel,
   onSubmit }: RequestComposerProps) {
   const labels = per008Copy[locale];
   const titleId = useId();
+  const timeZoneId = useId();
+  const windowErrorId = useId();
   const headingRef = useRef<HTMLHeadingElement>(null);
+  const initialWindow = requestWindowDefaults(options, timeZone);
   const [templateVersionId, setTemplateVersionId] = useState(options.templates[0]!.templateVersionId);
   const [anonymityMode, setAnonymityMode] = useState<Per008AnonymityMode>(options.anonymityModes[0]!);
   const [minimumReleaseCount, setMinimumReleaseCount] = useState(options.thresholdLimits.minimum);
-  const [opensAt, setOpensAt] = useState(inputValue(options.windowLimits.earliestOpensAt));
-  const [closesAt, setClosesAt] = useState(inputValue(options.windowLimits.latestClosesAt));
+  const [opensAt, setOpensAt] = useState(initialWindow.opensAt);
+  const [closesAt, setClosesAt] = useState(initialWindow.closesAt);
   const [windowError, setWindowError] = useState(false);
 
   useEffect(() => {
     setTemplateVersionId(options.templates[0]!.templateVersionId);
     setAnonymityMode(options.anonymityModes[0]!);
     setMinimumReleaseCount(options.thresholdLimits.minimum);
-    setOpensAt(inputValue(options.windowLimits.earliestOpensAt));
-    setClosesAt(inputValue(options.windowLimits.latestClosesAt));
+    const nextWindow = requestWindowDefaults(options, timeZone);
+    setOpensAt(nextWindow.opensAt);
+    setClosesAt(nextWindow.closesAt);
     setWindowError(false);
     headingRef.current?.focus();
-  }, [options]);
+  }, [options, timeZone]);
 
   return (
     <section className="per008-composer" aria-labelledby={titleId}>
@@ -124,14 +230,15 @@ export function Per008RequestComposer({ options, locale = 'ko', busy = false, on
         <div>
           <h2 id={titleId} ref={headingRef} tabIndex={-1}>{labels.requestHeading}</h2>
           <p>{labels.requestHint}</p>
+          <p id={timeZoneId} className="per008-muted">{labels.timeZone}: {timeZone}</p>
         </div>
         <button className="per008-button per008-button--quiet" type="button" onClick={onCancel}
           disabled={busy}>{labels.cancel}</button>
       </header>
       <form onSubmit={(event) => {
         event.preventDefault();
-        const opensAtInstant = inputInstant(opensAt);
-        const closesAtInstant = inputInstant(closesAt);
+        const opensAtInstant = inputInstant(opensAt, timeZone);
+        const closesAtInstant = inputInstant(closesAt, timeZone);
         const duration = opensAtInstant && closesAtInstant
           ? Date.parse(closesAtInstant) - Date.parse(opensAtInstant) : Number.NaN;
         const invalidWindow = !opensAtInstant || !closesAtInstant || duration <= 0 ||
@@ -166,7 +273,9 @@ export function Per008RequestComposer({ options, locale = 'ko', busy = false, on
           <label>{labels.anonymity}
             <select value={anonymityMode} disabled={busy}
               onChange={(event) => setAnonymityMode(event.target.value as Per008AnonymityMode)}>
-              {options.anonymityModes.map((mode) => <option key={mode} value={mode}>{mode.replaceAll('_', ' ')}</option>)}
+              {options.anonymityModes.map((mode) => (
+                <option key={mode} value={mode}>{formatPer008AnonymityMode(mode, locale)}</option>
+              ))}
             </select>
           </label>
           <label>{labels.threshold}
@@ -175,13 +284,18 @@ export function Per008RequestComposer({ options, locale = 'ko', busy = false, on
               onChange={(event) => setMinimumReleaseCount(event.currentTarget.valueAsNumber)} />
           </label>
           <label>{labels.opensAt}
-            <input type="datetime-local" min={inputValue(options.windowLimits.earliestOpensAt)}
-              max={inputValue(options.windowLimits.latestClosesAt)} value={opensAt} disabled={busy}
-              required onChange={(event) => setOpensAt(event.target.value)} />
+            <input type="datetime-local" min={inputValue(options.windowLimits.earliestOpensAt, timeZone)}
+              max={inputValue(options.windowLimits.latestClosesAt, timeZone)} value={opensAt} disabled={busy}
+              required aria-invalid={windowError} aria-describedby={timeZoneId}
+              aria-errormessage={windowError ? windowErrorId : undefined}
+              onChange={(event) => { setOpensAt(event.target.value); setWindowError(false); }} />
           </label>
           <label>{labels.closesAt}
-            <input type="datetime-local" min={opensAt} max={inputValue(options.windowLimits.latestClosesAt)}
-              value={closesAt} required disabled={busy} onChange={(event) => setClosesAt(event.target.value)} />
+            <input type="datetime-local" min={opensAt}
+              max={inputValue(options.windowLimits.latestClosesAt, timeZone)} value={closesAt}
+              required disabled={busy} aria-invalid={windowError} aria-describedby={timeZoneId}
+              aria-errormessage={windowError ? windowErrorId : undefined}
+              onChange={(event) => { setClosesAt(event.target.value); setWindowError(false); }} />
           </label>
         </div>
         <div className="per008-actions">
@@ -189,7 +303,9 @@ export function Per008RequestComposer({ options, locale = 'ko', busy = false, on
             {busy ? labels.saving : labels.create}
           </button>
         </div>
-        {windowError && <p className="per008-validation" role="alert">{labels.windowInvalid}</p>}
+        {windowError && <p id={windowErrorId} className="per008-validation" role="alert">
+          {labels.windowInvalid}
+        </p>}
       </form>
     </section>
   );

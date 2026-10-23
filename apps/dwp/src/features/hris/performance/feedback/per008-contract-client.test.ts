@@ -204,4 +204,33 @@ describe('PER-008 closed contract and seven typed clients', () => {
       idempotencyKey: 'per008-command-key-0003',
     });
   });
+
+  it('preserves same-key replay when a 2xx create receipt cannot be verified', async () => {
+    const key = 'per008-command-key-0004';
+    const client = createPer008Client(vi.fn().mockResolvedValue({
+      status: 201,
+      data: { receiptId: ID.receipt, requestId: ID.request, state: 'DRAFT' },
+    }));
+
+    await expect(client.createFeedbackRequest(createCommand, {
+      idempotencyKey: key, expectedDecisionRevision: 'auth-9',
+    })).rejects.toMatchObject({
+      name: 'Per008CommandOutcomeUnknownError', idempotencyKey: key,
+    });
+  });
+
+  it('preserves same-key replay when a 2xx submission receipt cannot be verified', async () => {
+    const key = 'per008-command-key-0005';
+    const client = createPer008Client(vi.fn().mockResolvedValue({
+      status: 200,
+      data: { receiptId: ID.receipt, requestId: ID.request, assignmentId: ID.worker,
+        assignmentState: 'SUBMITTED', version: 3, submittedAt: NOW, replayed: false },
+    }));
+
+    await expect(client.submitResponse(ID.assignment, responseCommand, {
+      idempotencyKey: key, expectedDecisionRevision: 'auth-9',
+    })).rejects.toMatchObject({
+      name: 'Per008CommandOutcomeUnknownError', idempotencyKey: key,
+    });
+  });
 });

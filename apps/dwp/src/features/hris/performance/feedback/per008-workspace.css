@@ -98,6 +98,20 @@
 }
 .per008-filter-actions,
 .per008-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+.per008-filter-hint {
+  grid-column: 1 / -1;
+  color: var(--per008-muted);
+  line-height: 1.45;
+}
+
+.per008-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+.per008-pagination > span { color: var(--per008-muted); font-size: 0.85rem; font-weight: 750; }
 
 .per008-workspace input,
 .per008-workspace select,
@@ -313,7 +327,8 @@
   .per008-composer form { padding: 1rem; }
   .per008-actions .per008-button,
   .per008-composer > header .per008-button { width: 100%; }
-  .per008-confirmation { padding: 0.85rem; }
+  .per008-pagination { justify-content: stretch; }
+  .per008-pagination .per008-button { flex: 1 1 0; }
 }
 
 @media (forced-colors: active) {
