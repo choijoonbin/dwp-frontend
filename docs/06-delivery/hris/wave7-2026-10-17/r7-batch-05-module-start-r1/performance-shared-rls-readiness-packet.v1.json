@@ -1,0 +1,625 @@
+{
+  "schema": "dwp.hris.wave7.performance-shared-rls-readiness-packet.v1",
+  "packetId": "HRIS-WAVE7-PERFORMANCE-SHARED-RLS-READINESS-20261023-R1",
+  "scopeId": "PERFORMANCE_SHARED_RLS_READINESS",
+  "module": "HRIS-PER",
+  "recordedAt": "2026-10-23T10:30:19+09:00",
+  "recordedBy": "central-control",
+  "state": "SEALED_NO_MIGRATION_READINESS_PACKET_INDEPENDENTLY_REVIEWED_PASS_ZERO_P0_P1_P2_CARRIER_COMMIT_REQUIRED_SOURCE_WITHHELD",
+  "decision": "SEAL_ONE_NO_MIGRATION_SOURCE_PREREQUISITE_FOR_THE_FOUR_REUSED_PERFORMANCE_V1_TABLES; CLOSE_ONLY_THE_PERFORMANCE_CYCLE_AND_EVENT_HANDOFF_TENANT_SCOPE_GAPS; PRESERVE_ALREADY_COMPLIANT_PATHS; REQUIRE_REAL_POSTGRESQL_NOBYPASSRLS_EVIDENCE_BEFORE_ADMISSION; WITHHOLD_V20_PER008_SOURCE_ROUTES_MENUS_AND_FEATURE_ENROLLMENT",
+  "basePins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "8bec85dab5ee816b12a922c51e369046714c007f",
+      "tree": "3f83136fabb7b3dc09b179109fb81a98d3b7bfe0",
+      "originExact": true,
+      "clean": true,
+      "readOnlyUntilSeparateToken": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "d6bf7e5a719c4a0ae06154f23710e5829d39fec3",
+      "tree": "d1a6340ecf8de4470515ed2702211ebdfad2a458",
+      "originExact": true,
+      "cleanBeforeThisPacket": true
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "originExact": true,
+      "clean": true,
+      "readOnly": true
+    }
+  },
+  "authorityBasis": {
+    "per008SemanticDisposition": {
+      "path": "semantic-dispositions/base-tfr-per-008.semantic-disposition.v1.json",
+      "sha256": "b97eba63703d040e6526ec9280d13ca18b7a74d875da3508d25331c444d6f016",
+      "bytes": 60642,
+      "carrierCommit": "6697466e14205ca4f4d520fc4bfe2407a5829451",
+      "requiredState": "PER008_SEMANTIC_DISPOSITION_INDEPENDENTLY_REVIEWED_PASS_ZERO_P0_ZERO_P1_ZERO_P2_CENTRAL_SUCCESSOR_MAY_PROCEED"
+    },
+    "per008CentralSuccessor": {
+      "path": "per-008-iaq038-feedback-transport-and-central-authorization-successor.v1.json",
+      "sha256": "d62b43cb0fcc7d37563a09d5f28dcd09587b03fa91d78cf15298d7c801a7a955",
+      "bytes": 83353,
+      "carrierCommit": "d6bf7e5a719c4a0ae06154f23710e5829d39fec3",
+      "carrierTree": "d1a6340ecf8de4470515ed2702211ebdfad2a458",
+      "requiredState": "SEALED_EXACT_IAQ038_FEEDBACK_TRANSPORT_V59_AUTH_V268_AND_PEP_PER_022_RESERVATION_INDEPENDENTLY_REVIEWED_PASS_ZERO_P0_P1_P2_RLS_READINESS_PACKET_ELIGIBLE_AFTER_CARRIER_COMMIT_SOURCE_WITHHELD"
+    }
+  },
+  "observedHighWater": {
+    "performanceMigration": {
+      "version": 19,
+      "path": "dwp-people-server/src/main/resources/db/performance-migration/V19__per_base_tfr_per_004.sql",
+      "sha256": "b6ceb78d2446adabebd6a204b10552bd1cd3252df80f4172733e2df156550156",
+      "bytes": 13537
+    },
+    "performanceMigrationReadme": {
+      "path": "dwp-people-server/src/main/resources/db/performance-migration/README.md",
+      "sha256": "874186a76a818c658a117bfc4c9e917d133dcab6e714e38685de0ff608071cdc",
+      "bytes": 256
+    },
+    "performanceV20Exists": false,
+    "migrationReservationMadeByThisPacket": false,
+    "v1Foundation": {
+      "path": "dwp-people-server/src/main/resources/db/performance-migration/V1__per_create_evaluation_cycle_foundation.sql",
+      "sha256": "2d2eea050731bbc580d7002adec8aacc64020ea2f8edd319955ac96d35630aba",
+      "bytes": 13106,
+      "finding": "The four reused tables exist, but V1 through V19 contain no ENABLE RLS, FORCE RLS or tenant policy for them. V20 remains the only later schema-hardening owner."
+    },
+    "serviceTenantRegistry": {
+      "path": "dwp-people-server/src/main/resources/db/migration/V3__add_provider_tenant_registry.sql",
+      "sha256": "b832033f62e71be74c4031111e9c0dc571745232f48457a3ac9b05f9c6274a0b",
+      "bytes": 1519,
+      "table": "public.sys_service_tenants",
+      "selector": "lifecycle_state = 'ACTIVE'",
+      "rule": "Dispatcher tenant enumeration occurs only here, outside the protected hris_performance tables."
+    }
+  },
+  "reusedTableInventory": [
+    {
+      "table": "hris_performance.prf_cycles",
+      "introducedBy": "Performance V1",
+      "currentRlsState": "NOT_ENABLED_THROUGH_V19",
+      "laterV20Action": "ENABLE_AND_FORCE_RLS_WITH_EXACT_TENANT_POLICY",
+      "directAccessOwners": [
+        "PerformanceCycleCommandRepository",
+        "PerformanceCycleQueryRepository",
+        "PopulationFreezeRepository"
+      ]
+    },
+    {
+      "table": "hris_performance.prf_cycle_versions",
+      "introducedBy": "Performance V1",
+      "currentRlsState": "NOT_ENABLED_THROUGH_V19",
+      "laterV20Action": "ENABLE_AND_FORCE_RLS_WITH_EXACT_TENANT_POLICY",
+      "directAccessOwners": [
+        "PerformanceCycleCommandRepository",
+        "PerformanceCycleQueryRepository",
+        "PopulationFreezeRepository"
+      ]
+    },
+    {
+      "table": "hris_performance.prf_command_receipts",
+      "introducedBy": "Performance V1",
+      "currentRlsState": "NOT_ENABLED_THROUGH_V19",
+      "laterV20Action": "ENABLE_AND_FORCE_RLS_WITH_EXACT_TENANT_POLICY",
+      "directAccessOwners": [
+        "PerformanceCycleCommandRepository",
+        "PerformanceCycleQueryRepository",
+        "CompensationPlanningRepository",
+        "PopulationFreezeRepository",
+        "Per004OwnerService",
+        "PerformanceReviewRepository"
+      ]
+    },
+    {
+      "table": "hris_performance.prf_outbox_events",
+      "introducedBy": "Performance V1",
+      "currentRlsState": "NOT_ENABLED_THROUGH_V19",
+      "laterV20Action": "ENABLE_AND_FORCE_RLS_WITH_EXACT_TENANT_POLICY",
+      "directAccessOwners": [
+        "PerformanceCycleCommandRepository",
+        "PerformanceCycleQueryRepository",
+        "CompensationPlanningEventHandoffRepository",
+        "CompensationPlanningRepository",
+        "PopulationFreezeRepository",
+        "Per004OwnerService",
+        "PerformanceReviewRepository"
+      ]
+    }
+  ],
+  "directAccessInventory": [
+    {
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/PerformanceCycleCommandRepository.java",
+      "sha256": "7fa436db714b3859017e2f2c6142451d25ef346738497a240c529b97b7fbc5a9",
+      "bytes": 26970,
+      "tables": [
+        "prf_cycles",
+        "prf_cycle_versions",
+        "prf_command_receipts",
+        "prf_outbox_events"
+      ],
+      "classification": "MISSING_TRANSACTION_TENANT_CONTEXT_IN_CALLING_SERVICE"
+    },
+    {
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/PerformanceCycleQueryRepository.java",
+      "sha256": "64d955c59679396aec2f93a4b9ac98f42b138742bad6938c581d042a78f75550",
+      "bytes": 16082,
+      "tables": [
+        "prf_cycles",
+        "prf_cycle_versions",
+        "prf_command_receipts",
+        "prf_outbox_events"
+      ],
+      "classification": "MISSING_TRANSACTION_TENANT_CONTEXT_BINDER"
+    },
+    {
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/compensationplanning/CompensationPlanningEventHandoffRepository.java",
+      "sha256": "ac07bf5802b309ac89d2543c24255fda87c0357fd766f7663145e7ae06a1a0cf",
+      "bytes": 11129,
+      "tables": [
+        "prf_outbox_events"
+      ],
+      "classification": "BLOCKING_CROSS_TENANT_CLAIM_AND_UNSCOPED_OUTCOME_WRITES"
+    },
+    {
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/compensationplanning/CompensationPlanningRepository.java",
+      "sha256": "632b8065db81791b1a5bd77e72c028e833c315560d1c28f7c888f8cc7f329073",
+      "bytes": 65704,
+      "tables": [
+        "prf_command_receipts",
+        "prf_outbox_events"
+      ],
+      "classification": "COMPLIANT_TRANSACTIONAL_BIND_EXISTING_REGRESSION_ONLY"
+    },
+    {
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/populationfreeze/PopulationFreezeRepository.java",
+      "sha256": "a972cd60632736b523ebfe745e986d2f4d8cacec16cc704f0151a095a958c3cb",
+      "bytes": 23280,
+      "tables": [
+        "prf_cycles",
+        "prf_cycle_versions",
+        "prf_command_receipts",
+        "prf_outbox_events"
+      ],
+      "classification": "COMPLIANT_TRANSACTIONAL_BIND_EXISTING_REGRESSION_ONLY"
+    },
+    {
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/performance/per004/Per004OwnerService.java",
+      "sha256": "2e600986d09d422bd90c077a66f53c6551e28f0d6067574685692e58d96e91aa",
+      "bytes": 31999,
+      "tables": [
+        "prf_command_receipts",
+        "prf_outbox_events"
+      ],
+      "classification": "COMPLIANT_TRANSACTIONAL_BIND_EXISTING_REGRESSION_ONLY"
+    },
+    {
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/performance/review/PerformanceReviewRepository.java",
+      "sha256": "1bc003d58396cf0e4a4ac349fb6e4a44d963f6e75bd15570374629eeb3605903",
+      "bytes": 21251,
+      "tables": [
+        "prf_command_receipts",
+        "prf_outbox_events"
+      ],
+      "classification": "COMPLIANT_TRANSACTIONAL_BIND_EXISTING_REGRESSION_ONLY"
+    }
+  ],
+  "transactionAndRuntimeInventory": [
+    {
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/PerformanceCycleService.java",
+      "sha256": "7ae47f0c6ebf0ff562a29b7bf2470fb4854e7c4e49a378a14a1e5dad0c5f0580",
+      "bytes": 32404,
+      "classification": "EIGHT_TRANSACTIONAL_ENTRY_POINTS_REQUIRE_ONE_POST_AUTHORITY_TENANT_BIND_BEFORE_ANY_V1_TABLE_ACCESS"
+    },
+    {
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/compensationplanning/CompensationPlanningService.java",
+      "sha256": "7cf59b56316d2e931e0c3d84a7700252a02a9dfc75881083b028111d11753dad",
+      "bytes": 100806,
+      "classification": "COMPLIANT_EXISTING_BIND_REGRESSION_ONLY"
+    },
+    {
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/compensationplanning/ApprovedCompensationPlanSnapshotProvider.java",
+      "sha256": "25d0e17adf924ca7067a054997ca9648dc49f623f2243132264ab6b2d1bd8320",
+      "bytes": 7833,
+      "classification": "INDIRECT_PRF_COMMAND_RECEIPT_READER_WITH_EXISTING_TRANSACTION_LOCAL_TENANT_BIND_REGRESSION_ONLY"
+    },
+    {
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/compensationplanning/ApprovedCompensationSnapshotRefetchService.java",
+      "sha256": "504d5b1ff31fcf9b51af08b66edfde19af37dacfa18baa81b4a5c1bfd8df284e",
+      "bytes": 1696,
+      "classification": "OUTER_REFETCH_TRANSACTION_DELEGATES_TO_TENANT_BOUND_SNAPSHOT_PROVIDER_REGRESSION_ONLY"
+    },
+    {
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/compensationplanning/CompensationPlanningEventHandoffWorker.java",
+      "sha256": "f47aa22f7eb7c4ade6cbce9565d7346b0d8e9ad5068907763717a0e176a9b439",
+      "bytes": 21236,
+      "classification": "GLOBAL_DISPATCH_LOOP_MUST_ENUMERATE_ACTIVE_TENANTS_OUTSIDE_PROTECTED_TABLES_AND_CLAIM_PER_TENANT"
+    },
+    {
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/compensationplanning/CompensationPlanningEventHandoffReplayService.java",
+      "sha256": "21f60b122c332b160c5675ea525f8ec4e76bcc7a727b14a0e3268ef872668c58",
+      "bytes": 5324,
+      "classification": "REPLAY_TRANSACTION_MUST_BE_SCOPED_BY_THE_REPOSITORY_TO_THE_AUTHENTICATED_TENANT"
+    },
+    {
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/populationfreeze/PopulationFreezeService.java",
+      "sha256": "810ed8591d3c1219bb56036175282b5133113451d3834a03996798f03f81505e",
+      "bytes": 19317,
+      "classification": "COMPLIANT_EXISTING_BIND_REGRESSION_ONLY"
+    },
+    {
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/performance/review/PerformanceReviewService.java",
+      "sha256": "ace094c606c4a2dc5423ac7c92e40766751bba65034cdd32887dc64ba7d571e6",
+      "bytes": 18386,
+      "classification": "COMPLIANT_EXISTING_BIND_REGRESSION_ONLY"
+    },
+    {
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/performance/per004/Per004WorkloadEndpoints.java",
+      "sha256": "8bae877fd42c4953b57b8ae9ddb8d1d1577fc4a94c50f23ab41dfef70df661cd",
+      "bytes": 7105,
+      "classification": "COMPLIANT_EXISTING_BIND_REGRESSION_ONLY"
+    },
+    {
+      "path": "dwp-people-server/src/main/resources/db/performance-migration/V2__per_create_population_freeze.sql",
+      "sha256": "f5dd1b9309bf53b1a35b5f7dcb42edaed5fb110f7c2aa3a330f57c3a41d09c3b",
+      "bytes": 16273,
+      "classification": "READ_ONLY_RUNTIME_INVENTORY_PRF_SERIALIZE_POPULATION_PREVIEW_AND_REVIEW_OPERATION_TRIGGER_STACK_MUST_RUN_UNDER_CALLER_TENANT_CONTEXT"
+    },
+    {
+      "path": "dwp-people-server/src/main/resources/db/performance-migration/V3__per_harden_review_operation_capture.sql",
+      "sha256": "1f9e2416cbbb8abd768d99dfc70cb0c2fc8766009d588c61a80df38dc02b6960",
+      "bytes": 4938,
+      "classification": "READ_ONLY_RUNTIME_INVENTORY_HARDENED_SECURITY_DEFINER_TRIGGER_STACK_MUST_REMAIN_FORCE_RLS_COMPATIBLE"
+    }
+  ],
+  "safeDispatcherPrecedent": {
+    "relay": {
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/employeechange/approvalbridge/EmployeeChangeApprovalRequestRelay.java",
+      "sha256": "f8a9c9436a15c6710ea75ae1f073aaa930fabf6f18dfbb694cddef4232625f01",
+      "bytes": 19884
+    },
+    "tenantScope": {
+      "path": "dwp-people-server/src/main/java/com/dwp/services/people/hris/employeeservice/employeechange/approvalbridge/EmployeeChangeTenantScope.java",
+      "sha256": "b86950208fc67635a26cacf872c25b521127272361a072032319d8f8b69639ab",
+      "bytes": 891
+    },
+    "reuseRule": "Reuse the pattern, not the HRM class: enumerate ACTIVE sys_service_tenants outside protected tables, open one transaction per tenant, verify transaction-local dwp.tenant_id, then claim and finish only that tenant's rows. These HRM files remain read-only."
+  },
+  "closedGapSet": [
+    {
+      "gapId": "PERF-RLS-GAP-001",
+      "severity": "P0_BEFORE_V20",
+      "owner": "PERFORMANCE_EVENT_HANDOFF",
+      "finding": "claim scans and updates prf_outbox_events across tenants; completion and failure omit tenant predicates; existing tests use owner or superuser connections and cannot prove FORCE RLS behavior.",
+      "requiredResolution": "ACTIVE tenant enumeration outside protected tables plus tenant-scoped claim, completion, failure, quarantine and replay under real NOBYPASSRLS non-owner PostgreSQL role."
+    },
+    {
+      "gapId": "PERF-RLS-GAP-002",
+      "severity": "P1_BEFORE_V20",
+      "owner": "PERFORMANCE_CYCLE",
+      "finding": "Eight transactional PerformanceCycleService entry points filter tenant_id but never establish transaction-local dwp.tenant_id.",
+      "requiredResolution": "After canonical authority succeeds and before any V1 table read or write, verify SET LOCAL dwp.tenant_id once in the same transaction."
+    }
+  ],
+  "tenantTransactionContract": {
+    "setting": "dwp.tenant_id",
+    "statement": "SELECT set_config('dwp.tenant_id', CAST(:tenantId AS VARCHAR), TRUE)",
+    "localToTransaction": true,
+    "positiveTenantRequired": true,
+    "returnedValueMustEqualRequestedTenant": true,
+    "callerHeadersAndPayloadNeverSupplyTenant": true,
+    "whereTenantPredicateIsDefenseInDepthNotRlsAuthority": true,
+    "missingContextRule": "A protected-table read returns zero rows and a protected-table write affects zero rows or fails closed; it never falls back to cross-tenant access.",
+    "differentTenantRule": "A context for tenant A cannot read, claim, complete, fail, quarantine, replay or mutate tenant B rows even when IDs are known."
+  },
+  "dispatcherContract": {
+    "tenantEnumerator": "SELECT tenant_id FROM public.sys_service_tenants WHERE lifecycle_state = 'ACTIVE' ORDER BY tenant_id",
+    "enumeratorRunsOutsideProtectedTables": true,
+    "oneTransactionPerTenant": true,
+    "claimSignature": "claim(long tenantId, String workerId, int batchSize, Duration visibilityLease, Set<String> supportedAggregateTypes)",
+    "claimTimeEligibilityLock": "Inside the same claim transaction and before tenant binding or protected-table access, SELECT tenant_id FROM public.sys_service_tenants WHERE tenant_id = :tenantId AND lifecycle_state = 'ACTIVE' FOR SHARE; no matching row returns zero claims, and the lock is held through claim commit.",
+    "claimPredicate": "candidate.tenant_id = :tenantId after the same transaction has acquired the ACTIVE sys_service_tenants row lock",
+    "ordering": [
+      "tenant_id ascending from registry",
+      "available_at ascending inside tenant",
+      "internal_id ascending inside tenant"
+    ],
+    "batchRule": "The worker never claims more than its configured total batch size in one handoff pass; remaining capacity is carried across tenants in registry order.",
+    "outcomeRule": "markDelivered and markFailed bind event.tenantId and match both tenant_id and event_id plus delivery attempt in the same transaction.",
+    "replayRule": "releaseQuarantined binds the authenticated actor tenant and matches tenant_id plus event_id before updating; audit does not widen protected-table authority.",
+    "inactiveTenantRule": "PROVISIONING, SUSPENDED and RETIRED tenants are never scheduled or claimed; an ACTIVE enumeration result is only a candidate and claim-time locked revalidation is authoritative.",
+    "emptyRegistryRule": "No active tenant means zero protected-table call and zero delivery."
+  },
+  "runtimeRoleContract": {
+    "database": "real PostgreSQL through Testcontainers",
+    "runtimeRole": "a dedicated application-test role distinct from the migration owner and every protected-table owner",
+    "roleAttributes": [
+      "LOGIN",
+      "NOSUPERUSER",
+      "NOCREATEDB",
+      "NOCREATEROLE",
+      "NOINHERIT",
+      "NOBYPASSRLS"
+    ],
+    "mustNotOwnProtectedTables": true,
+    "migrationAndRoutineOwner": {
+      "productionIdentityModeled": "dwp_people_migration",
+      "fixtureIdentity": "a dedicated migration-owner test role, never the Testcontainers postgres superuser",
+      "requiredAttributes": [
+        "NOSUPERUSER",
+        "NOBYPASSRLS"
+      ],
+      "ownershipRequired": [
+        "all four protected V1 tables",
+        "hris_performance.prf_serialize_population_preview()",
+        "hris_performance.prf_capture_review_operation_trigger()"
+      ],
+      "directRuntimeExecuteRemainsRevoked": true
+    },
+    "testOnlyFuturePolicySimulation": true,
+    "futurePolicyExpression": "tenant_id = NULLIF(current_setting('dwp.tenant_id', TRUE), '')::BIGINT",
+    "fixtureDdlPerProtectedTable": [
+      "ALTER TABLE <exact_protected_table> OWNER TO <nonsuperuser_nobypassrls_migration_owner>",
+      "ALTER TABLE <exact_protected_table> ENABLE ROW LEVEL SECURITY",
+      "ALTER TABLE <exact_protected_table> FORCE ROW LEVEL SECURITY",
+      "CREATE POLICY <test_policy> ON <exact_protected_table> USING (tenant_id = NULLIF(current_setting('dwp.tenant_id', TRUE), '')::BIGINT) WITH CHECK (tenant_id = NULLIF(current_setting('dwp.tenant_id', TRUE), '')::BIGINT)"
+    ],
+    "fixtureRoutineOwnerDdl": [
+      "ALTER FUNCTION hris_performance.prf_serialize_population_preview() OWNER TO <nonsuperuser_nobypassrls_migration_owner>",
+      "ALTER FUNCTION hris_performance.prf_capture_review_operation_trigger() OWNER TO <nonsuperuser_nobypassrls_migration_owner>"
+    ],
+    "requiredCatalogAssertions": [
+      "pg_class.relrowsecurity is true and pg_class.relforcerowsecurity is true for each exact protected table",
+      "pg_policies.qual and pg_policies.with_check both resolve to the exact tenant expression for each protected table",
+      "pg_roles.rolsuper is false and pg_roles.rolbypassrls is false for both runtime and migration-owner test roles",
+      "pg_proc.proowner resolves to the migration-owner test role and pg_proc.prosecdef is true for both relevant V2/V3 SECURITY DEFINER routines",
+      "the runtime role has no direct EXECUTE privilege on either sealed SECURITY DEFINER routine"
+    ],
+    "databaseUnavailableResult": "BLOCKED_NOT_PASS"
+  },
+  "exactTouchBoundaryAfterSeparateHashBoundToken": {
+    "backendWritable": [
+      "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/PerformanceCycleQueryRepository.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/PerformanceCycleService.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/compensationplanning/CompensationPlanningEventHandoffRepository.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/compensationplanning/CompensationPlanningEventHandoffWorker.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hr/performance/PerformanceCycleServiceTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hr/performance/PerformanceCyclePostgresTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hr/performance/compensationplanning/CompensationPlanningEventHandoffWorkerPostgresTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hr/performance/compensationplanning/PerformanceSharedRlsReadinessPostgresTest.java"
+    ],
+    "baselineTests": {
+      "performanceCycleServiceTest": {
+        "path": "dwp-people-server/src/test/java/com/dwp/services/people/hr/performance/PerformanceCycleServiceTest.java",
+        "sha256": "e02f25dcc028438c569421ac5eca833408826ad82c18bc9c6a163af5d71eaa23",
+        "bytes": 25182
+      },
+      "handoffPostgresTest": {
+        "path": "dwp-people-server/src/test/java/com/dwp/services/people/hr/performance/compensationplanning/CompensationPlanningEventHandoffWorkerPostgresTest.java",
+        "sha256": "8f248db73b86423775b4f16f3dc536774c131c43325f95ee8a76d3c5e313704c",
+        "bytes": 38793
+      },
+      "performanceCyclePostgresRlsEvidence": {
+        "path": "dwp-people-server/src/test/java/com/dwp/services/people/hr/performance/PerformanceCyclePostgresTest.java",
+        "sha256": "794b51eb6a70e924c22953f507126d423569cd667ad8eb88ee8c50dba55577e2",
+        "bytes": 15682
+      },
+      "approvedSnapshotPublicationPostgresRegression": {
+        "path": "dwp-people-server/src/test/java/com/dwp/services/people/hr/performance/compensationplanning/ApprovedCompensationPlanSnapshotPublicationPostgresTest.java",
+        "sha256": "a289e1df2e53fb7ae2dc9b1e4597e9354cd6036295a45480fb199c2bf86f896a",
+        "bytes": 27582
+      },
+      "approvedSnapshotRefetchServiceRegression": {
+        "path": "dwp-people-server/src/test/java/com/dwp/services/people/hr/performance/compensationplanning/ApprovedCompensationSnapshotRefetchServiceTest.java",
+        "sha256": "9c59a5440f731744874ea0213fcae8619427b7f8cee9df04ad0d2473e0215bc9",
+        "bytes": 4048
+      }
+    },
+    "readOnlyRegressionOwners": [
+      "CompensationPlanningRepository and CompensationPlanningService",
+      "ApprovedCompensationPlanSnapshotProvider and ApprovedCompensationSnapshotRefetchService",
+      "PopulationFreezeRepository and PopulationFreezeService",
+      "PerformanceReviewRepository and PerformanceReviewService",
+      "Per004OwnerService and Per004WorkloadEndpoints",
+      "Performance V2/V3 prf_serialize_population_preview and review-operation function/trigger stack",
+      "EmployeeChangeApprovalRequestRelay and EmployeeChangeTenantScope precedent"
+    ],
+    "forbidden": [
+      "any file under dwp-people-server/src/main/resources/db/performance-migration",
+      "any file under dwp-people-server/src/main/resources/db/migration",
+      "Performance V20 reservation or source",
+      "PER-008 feedback domain, controller, repository, migration or UI source",
+      "product authorization v59, Auth V268, Gateway or frontend authorization source",
+      "route, menu, navigation catalog, feature enrollment or tenant seed",
+      "unlisted refactor, dependency upgrade or formatting sweep"
+    ],
+    "changedPathRule": "Every changed backend path must equal one backendWritable entry; no directory wildcard or generated spill is accepted."
+  },
+  "targetedVerification": {
+    "sourceContract": [
+      "PerformanceCycleServiceTest proves one tenant bind occurs after valid authority and before the first repository read; invalid authority performs no V1 table access.",
+      "CompensationPlanningEventHandoffWorkerPostgresTest preserves crash rollback, fencing, retry, quarantine, replay, ordering and exactly-once durable record behavior after tenant-scoped signature changes.",
+      "ApprovedCompensationPlanSnapshotProvider and ApprovedCompensationSnapshotRefetchService remain source-unchanged; their existing unit and PostgreSQL publication/refetch regressions remain green."
+    ],
+    "realPostgres": [
+      "The two package-local PostgreSQL tests migrate Performance V1 through V19, transfer the exact four table owners and the two relevant V2/V3 SECURITY DEFINER routine owners away from Testcontainers postgres to a NOSUPERUSER NOBYPASSRLS migration-owner fixture role, then install ENABLE plus FORCE ROW LEVEL SECURITY with identical USING and WITH CHECK policies on the four tables. PerformanceCyclePostgresTest proves Cycle access plus the V2/V3 population-preview and review-operation trigger stack, while PerformanceSharedRlsReadinessPostgresTest proves the dispatcher lifecycle plus the existing snapshot provider/refetch receipt-read path through a distinct non-owner NOBYPASSRLS runtime role.",
+      "The PostgreSQL fixture asserts pg_class.relrowsecurity and relforcerowsecurity for all four tables, both role attributes, both SECURITY DEFINER routine owners and prosecdef flags, and revoked direct runtime EXECUTE before functional assertions; missing or wrong tenant context cannot gain a protected-table read or trigger-side effect, while same-tenant runtime trigger paths remain functional.",
+      "No context and wrong context cannot read or mutate protected rows.",
+      "ACTIVE tenants are enumerated outside protected tables and two tenants are claimed in separate tenant-scoped transactions without mixing.",
+      "If a tenant is enumerated ACTIVE but a SUSPENDED or RETIRED transition commits before its claim-time eligibility lock, the worker claims zero rows for that tenant.",
+      "delivered, failed, quarantined and replay transitions remain bound to the event or authenticated tenant.",
+      "Performance Cycle read and command paths establish the transaction-local tenant before touching V1 tables."
+    ],
+    "commandsRunOnce": [
+      "./gradlew :dwp-people-server:test --tests '*PerformanceCycleServiceTest' --tests '*PerformanceCyclePostgresTest' --tests '*CompensationPlanningEventHandoffWorkerPostgresTest' --tests '*PerformanceSharedRlsReadinessPostgresTest' --tests '*ApprovedCompensationPlanSnapshotPublicationPostgresTest' --tests '*ApprovedCompensationSnapshotRefetchServiceTest' --tests '*CompensationPlanningBudgetInvariantPostgresTest' --tests '*PopulationFreezePostgresTest' --tests '*PerformanceReviewPostgresTest' --tests '*Per004OwnerPostgresTest'",
+      "git diff --check"
+    ],
+    "rerunPolicy": "Run the bounded target group once. If it fails, rerun only the smallest affected test after the corresponding correction; do not run the repository-wide suite.",
+    "databaseUnavailableRule": "If Docker or real PostgreSQL is unavailable, the readiness result is BLOCKED and cannot be recorded as PASS."
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "PERF-RLS-AC-01",
+      "criterion": "The direct Java SQL inventory contains exactly seven production files, and the transaction/runtime inventory additionally covers every indirect service, provider, refetch, database-function and trigger path that reaches the four reused V1 tables."
+    },
+    {
+      "id": "PERF-RLS-AC-02",
+      "criterion": "Performance Cycle establishes one verified transaction-local tenant scope after canonical authority and before every V1 table read or write."
+    },
+    {
+      "id": "PERF-RLS-AC-03",
+      "criterion": "The dispatcher enumerates only ACTIVE tenants from public.sys_service_tenants outside protected tables, opens one tenant-scoped claim transaction per tenant, and revalidates ACTIVE under a held row lock immediately before protected-table access."
+    },
+    {
+      "id": "PERF-RLS-AC-04",
+      "criterion": "Claim, delivery, failure, quarantine and replay operations include exact trusted tenant binding and tenant predicates; the configured total batch size is not exceeded."
+    },
+    {
+      "id": "PERF-RLS-AC-05",
+      "criterion": "A real PostgreSQL runtime role that is non-owner, NOSUPERUSER and NOBYPASSRLS plus a distinct NOSUPERUSER NOBYPASSRLS migration/routine owner prove default deny, same-tenant access, cross-tenant denial and V2/V3 SECURITY DEFINER trigger behavior under actual ENABLE and FORCE RLS policies whose USING and WITH CHECK expressions are identical."
+    },
+    {
+      "id": "PERF-RLS-AC-06",
+      "criterion": "Existing crash rollback, fencing generation, aggregate ordering, retry, quarantine, replay and exactly-once durable record behavior remain unchanged."
+    },
+    {
+      "id": "PERF-RLS-AC-07",
+      "criterion": "Already compliant Compensation Planning including snapshot provider/refetch, Population Freeze, Performance Review, PER-004 and Performance V2/V3 database-function/trigger paths remain source-unchanged and pass bounded regressions or the FORCE-RLS proof."
+    },
+    {
+      "id": "PERF-RLS-AC-08",
+      "criterion": "No migration is authored, V1 through V19 remain byte-identical, V20 remains absent and unreserved, and the test-only policies never ship in production resources."
+    },
+    {
+      "id": "PERF-RLS-AC-09",
+      "criterion": "Only the exact eight backendWritable paths change after a separate reviewed hash-bound token, and PostgreSQL unavailability records BLOCKED rather than PASS."
+    },
+    {
+      "id": "PERF-RLS-AC-10",
+      "criterion": "Admission grants readiness completion only; product authorization v59/Auth V268 central work and the later PER-008 owner packet/V20/module/UI gates remain separate."
+    }
+  ],
+  "requiredNegativeCases": [
+    "No dwp.tenant_id context exposes or mutates any row from the four protected tables.",
+    "Tenant A context cannot read, claim, complete, fail, quarantine or replay tenant B rows even with known identifiers.",
+    "A caller-supplied tenant header, payload field, event payload or worker ID cannot override the trusted tenant binding.",
+    "PROVISIONING, SUSPENDED and RETIRED registry rows are never scheduled or claimed.",
+    "A tenant enumerated while ACTIVE but committed SUSPENDED or RETIRED before claim-time eligibility locking yields zero claims.",
+    "A claimed event cannot be marked delivered or failed with a stale delivery attempt or a different tenant.",
+    "One handoff pass cannot exceed the configured total batch size across all active tenants.",
+    "The dispatcher cannot enumerate tenant IDs from prf_outbox_events or another protected table.",
+    "A runtime role that owns the tables, is superuser or has BYPASSRLS cannot satisfy the evidence requirement.",
+    "A migration or SECURITY DEFINER routine owner that is superuser or has BYPASSRLS, including the Testcontainers postgres role, cannot satisfy the evidence requirement.",
+    "A unit test, H2 test, mock-only test or unavailable PostgreSQL cannot substitute for the real non-BYPASSRLS proof.",
+    "Any migration, V20 lease, PER-008 source, route, menu, feature enrollment or unlisted file change invalidates the packet."
+  ],
+  "executionSequence": [
+    "independent review of this exact packet records zero unresolved P0, P1 or P2 findings",
+    "commit and push only this reviewed packet carrier to frontend origin/dwp-dev",
+    "materialize one fresh clean backend worktree at the pinned backend dwp-dev head",
+    "record the exact worktree receipt and issue one separate hash-bound readiness token restricted to backendWritable",
+    "implement only the two closed gaps and run the bounded target group once",
+    "commit and push the readiness branch, independently review its exact diff and PostgreSQL evidence, then centrally admit and merge it to backend dwp-dev",
+    "only after readiness admission re-confirm the implemented product authorization high-water v58 and Auth high-water V267, and re-confirm that reserved v59/V268 remain conflict-free; only then prepare the distinct product authorization v59/Auth V268 central worktrees and token",
+    "only after both readiness and central contract admission may PER-008 receive an owner packet and V20 reservation"
+  ],
+  "independentReview": {
+    "required": true,
+    "status": "PASS_ZERO_P0_ZERO_P1_ZERO_P2",
+    "reviewedAt": "2026-10-23T10:47:24+09:00",
+    "reviewedArtifact": {
+      "sha256": "6c5eabba6ac3a57957d0480944c9c72a808fca159d765d1277651932e789b650",
+      "bytes": 35733,
+      "binding": "PRE_REVIEW_METADATA_FINALIZATION_CANDIDATE"
+    },
+    "reviewers": [
+      {
+        "agent": "/root/rls_packet_inventory_review",
+        "lane": "DIRECT_INDIRECT_RUNTIME_INVENTORY_AND_HASH_BOUNDARY",
+        "verdict": "PASS_ZERO_P0_ZERO_P1_ZERO_P2"
+      },
+      {
+        "agent": "/root/rls_packet_security_review",
+        "lane": "TENANT_SCOPE_DISPATCHER_FORCE_RLS_AND_SECURITY_DEFINER",
+        "verdict": "PASS_ZERO_P0_ZERO_P1_ZERO_P2"
+      },
+      {
+        "agent": "/root/rls_packet_sequence_review",
+        "lane": "AUTHORITY_SEQUENCE_ALLOWLIST_AND_ACCEPTANCE_MAPPING",
+        "verdict": "PASS_ZERO_P0_ZERO_P1_ZERO_P2"
+      }
+    ],
+    "findingCounts": {
+      "P0": 0,
+      "P1": 0,
+      "P2": 0
+    },
+    "requiredFindingCounts": {
+      "P0": 0,
+      "P1": 0,
+      "P2": 0
+    },
+    "reviewScope": [
+      "complete four-table reader, writer, dispatcher, replay and maintenance inventory",
+      "tenant transaction and active-tenant enumeration authority",
+      "exact minimal source and test allowlist",
+      "real PostgreSQL non-owner NOBYPASSRLS evidence design",
+      "no-migration, no-V20, no-PER008-source and no-menu boundary",
+      "repository pins and path, hash and byte-count integrity"
+    ],
+    "stateAfterPass": "PERFORMANCE_SHARED_RLS_READINESS_PACKET_INDEPENDENTLY_REVIEWED_PASS_ZERO_P0_ZERO_P1_ZERO_P2_FRESH_BACKEND_WORKTREE_MATERIALIZATION_MAY_PROCEED_AFTER_CARRIER_COMMIT",
+    "closedPriorFindings": [
+      "separated carrier commit, fresh worktree receipt and later hash-bound token eligibility",
+      "restored v58 and Auth V267 high-water plus reserved v59/V268 conflict recheck before central authorization work",
+      "completed indirect snapshot provider/refetch and V2/V3 database function/trigger runtime inventory",
+      "aligned compliant-path bounded regressions with acceptance criterion PERF-RLS-AC-07",
+      "closed active-tenant enumeration-to-claim TOCTOU with same-transaction FOR SHARE revalidation",
+      "eliminated SECURITY DEFINER false positives with distinct NOSUPERUSER NOBYPASSRLS migration/routine ownership and actual ENABLE plus FORCE RLS catalog assertions"
+    ],
+    "reviewMetadataFinalization": "COMPLETE_HASH_BOUND_TO_PRE_METADATA_FINALIZATION_CANDIDATE"
+  },
+  "authority": {
+    "packetSealed": true,
+    "independentReviewRequired": true,
+    "independentReviewComplete": true,
+    "authorityCarrierCommittedAndPushed": false,
+    "freshBackendWorktreeMaterializationEligibleAfterZeroReviewAndCarrierCommit": true,
+    "backendWorktreeMaterialized": false,
+    "exactWorktreeReceiptSealed": false,
+    "readinessTokenEligibleOnlyAfterExactWorktreeReceipt": false,
+    "readinessTokenIssued": false,
+    "sourceAuthoringAuthorizedNow": false,
+    "testAuthoringAuthorizedNow": false,
+    "migrationAuthoringAuthorized": false,
+    "performanceV20ReservationAuthorized": false,
+    "frontendSourceAuthoringAuthorized": false,
+    "productAuthorizationV59AuthoringAuthorized": false,
+    "authV268AuthoringAuthorized": false,
+    "per008OwnerPacketAuthorized": false,
+    "per008ModuleSourceAuthorized": false,
+    "routeMountAuthorized": false,
+    "menuMountAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "mergeToDwpDevAuthorized": false,
+    "readinessComplete": false,
+    "businessCompletionCredit": 0,
+    "productionReleaseAuthorized": false
+  },
+  "nonClaims": [
+    "The four reused V1 tables are already protected by production RLS.",
+    "Performance V20 exists, is reserved or may be authored now.",
+    "PER-008 feedback source, APIs, UI, routes or menus may be authored now.",
+    "Product authorization v59, Auth V268 or feature enrollment may be authored now.",
+    "An owner, superuser, BYPASSRLS, mock or unavailable-database test proves readiness.",
+    "This packet completes a business slice or makes a customer-visible menu available."
+  ],
+  "nextGate": "COMMIT_AND_PUSH_ONLY_THIS_INDEPENDENTLY_REVIEWED_PACKET_CARRIER; THEN_MATERIALIZE_ONE_FRESH_BACKEND_WORKTREE_AT_THE_PINNED_DWP_DEV_HEAD_AND_SEAL_ITS_EXACT_RECEIPT; ONLY_AFTER_THAT_RECEIPT_ISSUE_ONE_SEPARATE_HASH_BOUND_READINESS_TOKEN; DO_NOT_AUTHOR_SOURCE_TEST_MIGRATION_V20_PER008_ROUTES_OR_MENUS_BEFORE_THAT_TOKEN"
+}
