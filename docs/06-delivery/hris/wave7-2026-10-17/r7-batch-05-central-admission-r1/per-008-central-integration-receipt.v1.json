@@ -1,0 +1,205 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-05-per008-central-integration-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-05-PER008-CENTRAL-INTEGRATION-20261023-R1",
+  "recordedAt": "2026-10-23T13:12:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "EXACT_PER008_CENTRAL_PREREQUISITES_MERGED_PUSHED_DEFAULT_OFF_ZERO_ENROLLMENT_MODULE_AUTHORITY_MAY_BE_ISSUED",
+  "scope": "PER_008_FEEDBACK_TRANSPORT_AND_CENTRAL_AUTHORIZATION",
+  "module": "PER",
+  "moduleSession": "HRIS-PER",
+  "immutability": {
+    "sealed": true,
+    "appendOnly": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_RECEIPT_ID_AND_SHA256"
+  },
+  "authority": {
+    "sourceAdmissionDecision": {
+      "path": "per-008-central-admission-decision.v1.json",
+      "sha256": "e9a0077067920662f529f8df94e245bb17e870c4a15dfde87c207f8758c28f67",
+      "bytes": 11452,
+      "blob": "07525609b867a9936cd8c2ded46a9a976678c14a",
+      "carrierCommit": "f8b072dcf2f0ee4fe422fafed54f439c767baecb",
+      "carrierTree": "b2e70f2bbf9533c4bfdece57182c23aa7d5c4864",
+      "decision": "GO",
+      "strategy": "NO_FF_EXACT_HEAD_ONLY"
+    }
+  },
+  "integratedHeads": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "sourceBranch": "codex/hris-wave7-r7-batch05-per008-central-backend-20261023-r1",
+      "sourceHead": "e8901f8297022b7b9b2fcbb0efc8a40c8da29528",
+      "sourceTree": "d06ffe06eb7e6a1fbb18ef4ed93b3ffce3401f67",
+      "mergeCommit": "01468a404033c2a7247475f481f37c2ac40b3e3e",
+      "mergeTree": "d06ffe06eb7e6a1fbb18ef4ed93b3ffce3401f67",
+      "parents": [
+        "628492a176e61c13218db7d900e938a3789bf696",
+        "e8901f8297022b7b9b2fcbb0efc8a40c8da29528"
+      ],
+      "sourceIsExactSecondParent": true,
+      "sourceIsAncestor": true,
+      "mergeTreeEqualsSourceTree": true,
+      "conflicts": 0,
+      "admittedPathCount": 38,
+      "admittedBlobMatchCount": 38,
+      "outsideAdmittedPathCount": 0,
+      "pathOnlySha256": "87eac8486ea0a2dadfba77736874c49aa4b9d36658c530f188a9580ea799cf6e",
+      "nameStatusSha256": "48315cbe60fae85980120f4288b69b4018eefa30c2694a4161ff6010a1d81743",
+      "binaryPatchSha256": "785c6a4ade2e67d6d5568110c6cb88147029b542b10d99f50bacfc9b2b67bb4b",
+      "originRef": "origin/dwp-dev",
+      "originExact": true,
+      "clean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "sourceBranch": "codex/hris-wave7-r7-batch05-per008-central-frontend-20261023-r1",
+      "sourceHead": "68c3c17c32ae13c17d56e3e7d3acd79d656fefd8",
+      "sourceTree": "b815657c7a4d45b3d0893b0c7b4318e5e686ab75",
+      "decisionCarrierHead": "f8b072dcf2f0ee4fe422fafed54f439c767baecb",
+      "mergeCommit": "6a60144943c31b130e5c742e94a98ee4ebc8adb5",
+      "mergeTree": "33006df58f8474e19288b8121ffd0926fa365557",
+      "parents": [
+        "f8b072dcf2f0ee4fe422fafed54f439c767baecb",
+        "68c3c17c32ae13c17d56e3e7d3acd79d656fefd8"
+      ],
+      "decisionCarrierIsExactFirstParent": true,
+      "sourceIsExactSecondParent": true,
+      "decisionCarrierIsAncestor": true,
+      "sourceIsAncestor": true,
+      "mergeTreeEqualsSourceTree": false,
+      "mergeTreeDifferenceReason": "THE_MERGE_TREE_PRESERVES_THE_ADMISSION_DECISION_AND_PRIOR_TOKEN_CORRECTION_CARRIERS_WHILE_IMPORTING_THE_EXACT_TEN_SOURCE_BLOBS",
+      "conflicts": 0,
+      "admittedPathCount": 10,
+      "admittedBlobMatchCount": 10,
+      "outsideAdmittedPathCount": 0,
+      "pathOnlySha256": "6bbff8b8a07d9aeb4822a6552b5836b500125fa117cfa3cb0f4a3937f9daefb7",
+      "nameStatusSha256": "6222bc3b14c2c5f8ed47e76f2bbe61e28cd5eac17ed530ba93975f48f224c061",
+      "binaryPatchSha256": "a958ffc0821019ed5d7b3ff2bd30507299fbc8d0d5b55469051e66417429edcd",
+      "originRef": "origin/dwp-dev",
+      "originExactBeforeReceipt": true,
+      "cleanBeforeReceipt": true
+    }
+  },
+  "postMergeVerification": {
+    "mode": "IDENTITY_ANCESTRY_PATH_AND_BLOB_ONLY",
+    "backend": {
+      "exactParents": true,
+      "exactSourceTree": true,
+      "exactPathManifest": true,
+      "originExact": true,
+      "clean": true
+    },
+    "frontend": {
+      "exactParents": true,
+      "decisionCarrierPreserved": true,
+      "exactTenSourceBlobs": true,
+      "exactPathManifest": true,
+      "originExactBeforeReceipt": true,
+      "cleanBeforeReceipt": true
+    },
+    "testsRerunDuringMerge": false,
+    "repositoryWideSuiteRun": false,
+    "reasonNoRerun": "THE_ADMITTED_SOURCE_HEADS_WERE_IMMUTABLE_AND_FULLY_TARGET_VERIFIED;_THE_NO_FF_MERGES_WERE_IDENTITY_CHECKED_WITH_ZERO_CONFLICTS"
+  },
+  "preMergeEvidence": {
+    "targetedTests": {
+      "pythonContractTests": 5,
+      "auth": 17,
+      "gateway": 136,
+      "people": 42,
+      "frontend": 20,
+      "total": 220,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "independentReviews": {
+      "canonicalRegistryAndGeneratedArtifacts": "P0_0_P1_0_P2_0",
+      "authMigrationAndPostgres": "P0_0_P1_0_P2_0",
+      "gateway": "P0_0_P1_0_P2_0",
+      "peoplePep": "P0_0_P1_0_P2_0",
+      "frontendCatalogOnlyBoundary": "P0_0_P1_0_P2_0",
+      "backendExactCommit": "P0_0_P1_0_P2_0",
+      "frontendExactCommit": "P0_0_P1_0_P2_0",
+      "unresolvedFindings": 0
+    }
+  },
+  "admittedBaseline": {
+    "productAuthorization": {
+      "version": 59,
+      "lifecycle": "DRAFT",
+      "checksumAlgorithm": "SHA-256",
+      "canonicalChecksum": "56582749cebf382c5c2669d83a30fb4c81fcb532db2878b15e6a83ced6898094",
+      "rawBundleSha256": "bc9d253166c2ccfae1a95b2f9772742d321cf4784bceecb9fb228ae1ce5165b7",
+      "previousV58RawSha256": "994d47f164e015cbc737da4620addd27ccbd78630790f547e6f8e004912f1589",
+      "counts": {
+        "capabilities": 276,
+        "accessPolicies": 24,
+        "entitlementExpressions": 17,
+        "predicatePolicies": 86,
+        "routes": 1134,
+        "pageRoutes": 160,
+        "dataRoutes": 345,
+        "actionRoutes": 629
+      }
+    },
+    "authMigration": "V268",
+    "featureKey": "HRIS_PER_TEAM_PERFORMANCE_FEEDBACK",
+    "featureDefault": "OFF",
+    "automaticImport": false,
+    "tenantEnrollmentCount": 0,
+    "routeContractCount": 9,
+    "frontendAuthorization": {
+      "runtimePageRoutes": 158,
+      "runtimeHcmPageRoutes": 65,
+      "catalogOnlyPageContracts": [
+        {
+          "routeContractKey": "route.hcm.team.performance.page",
+          "pattern": "/hr/team/performance"
+        },
+        {
+          "routeContractKey": "route.hcm.personal.performance-feedback.page",
+          "pattern": "/hr/me/performance/feedback"
+        }
+      ],
+      "authorizationPageContracts": 160,
+      "hcmFirewallPageContracts": 67
+    }
+  },
+  "admissionClaims": {
+    "centralProductAuthorizationV59MergedAndPushed": true,
+    "authV268MergedAndPushed": true,
+    "gatewayAndPeoplePepMergedAndPushed": true,
+    "frontendCatalogOnlyContractsMergedAndPushed": true,
+    "moduleSourceIncluded": false,
+    "performanceV20Included": false,
+    "runtimePageMounted": false,
+    "menuMounted": false,
+    "featureEnabled": false,
+    "tenantEnrollmentCount": 0,
+    "businessSliceComplete": false,
+    "productionReleaseAuthorized": false
+  },
+  "authorityAfterReceipt": {
+    "freshPer008OwnerPacketMayBeIssued": true,
+    "performanceV20ReservationMayBeIssuedAsReservedNotActive": true,
+    "freshCleanModuleWorktreesMayBeHashBound": true,
+    "activeExclusivePerformanceV20LeaseMayBeIssuedOnlyAfterReservationAndWorktreeReceipt": true,
+    "executableModuleStartTokenMayBeIssuedOnlyAfterActiveLease": true,
+    "moduleSourceAuthoringAuthorizedByThisReceiptAlone": false,
+    "migrationAuthoringAuthorizedByThisReceiptAlone": false,
+    "directDwpDevModuleMergeAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nonClaims": [
+    "This receipt does not claim PER-008 module source or Performance V20 exists.",
+    "The two PAGE contracts remain catalog-only and are intentionally not mounted in the runtime Router, HCM route tree or sidebar menu.",
+    "The default-OFF feature has zero tenant enrollments and grants no runtime access.",
+    "This receipt does not claim PER-008, Batch-05, R7 or HRIS is complete."
+  ],
+  "nextGate": "ISSUE_A_CURRENT_BASE_PER008_OWNER_PACKET_AND_RESERVED_NOT_ACTIVE_PERFORMANCE_V20_RESERVATION_BIND_FRESH_CLEAN_HRIS_PER_MODULE_WORKTREES_ACTIVATE_ONE_EXCLUSIVE_V20_LEASE_AND_ONLY_THEN_ISSUE_ONE_EXECUTABLE_PER008_MODULE_START_TOKEN"
+}
