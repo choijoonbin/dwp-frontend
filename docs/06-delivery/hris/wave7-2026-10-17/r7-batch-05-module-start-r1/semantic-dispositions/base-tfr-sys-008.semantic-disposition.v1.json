@@ -1,0 +1,1485 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-05-sys008-semantic-disposition.v1",
+  "dispositionId": "HRIS-WAVE7-R7-BATCH-05-SYS008-SEMANTIC-DISPOSITION-20261023-R1",
+  "recordedAt": "2026-10-23T16:12:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ID_AND_SHA256"
+  },
+  "state": "SYS008_INTEGRATION_CONTROL_PLANE_BOUNDARY_SEALED_V334_REQUIRED_CENTRAL_SUCCESSOR_BEFORE_SOURCE",
+  "sliceId": "BASE-TFR-SYS-008",
+  "moduleSession": "HRIS-SYS",
+  "boundedContext": "DWP_PLATFORM_INTEGRATION",
+  "capability": "DWP.INTEGRATION.CONTROL_PLANE",
+  "decision": "DEC-SYS-005",
+  "disposition": "REBUILD",
+  "purpose": "Seal the exact SYS-008 connector definition, immutable version, test, mapping, dry-run, maker-checker, execution, reconciliation, retry, cancellation, receipt, event, dual-surface and authorization semantics without issuing a packet, token, worktree or migration lease and without starting source or activation work.",
+  "sequenceAuthority": {
+    "precedingExit": {
+      "path": "../../r7-batch-05-central-admission-r1/per-008-sequencing-exit-receipt.v1.json",
+      "sha256": "5064dac89748331fe1ee2ed84637abf74cb9f1c147ebfb4e43aa85faee41c2a1",
+      "bytes": 10943,
+      "requiredState": "BATCH05_LANE_3_PER008_SEQUENCING_EXIT_ACCEPTED_DEFAULT_OFF_ZERO_ENROLLMENT_ZERO_BUSINESS_CREDIT_SYS008_SEMANTIC_CLOSURE_NEXT"
+    },
+    "order": 4,
+    "laterLanesWithheld": [
+      "BASE-TFR-TIM-004"
+    ],
+    "allowedNow": "SYS008_APPEND_ONLY_SEMANTIC_DISPOSITION_AND_INDEPENDENT_REVIEW_ONLY",
+    "notAllowedNow": [
+      "CENTRAL_AUTHORIZATION_OR_CONTRACT_SOURCE",
+      "OWNER_PACKET",
+      "START_TOKEN",
+      "WORKTREE_MATERIALIZATION",
+      "V334_RESERVATION_OR_AUTHORING",
+      "MODULE_SOURCE",
+      "ROUTE_OR_MENU_ACTIVATION",
+      "FEATURE_OR_TENANT_ENROLLMENT",
+      "REAL_PROVIDER_OR_CUSTOMER_DATA_BINDING"
+    ]
+  },
+  "canonicalInputs": {
+    "batch05Preflight": {
+      "path": "../../r7-batch-05-preflight-r1/semantic-dependency-migration-preflight.v1.json",
+      "sha256": "8f7a0d38c4dc86873e4930e5a21dcc0a269c39512508d86dd529b40015237e0f",
+      "bytes": 37443,
+      "role": "SEQUENCE_SEMANTIC_DEPENDENCY_AND_MIGRATION_PREFLIGHT"
+    },
+    "roadmap": {
+      "path": "../../execution-roadmap-successor.v19.json",
+      "sha256": "7fd14919598aadf20ea083dd11d693f4774fe803224b799935e284b858525ed0",
+      "bytes": 18404,
+      "role": "CURRENT_APPEND_ONLY_EXECUTION_ROADMAP"
+    },
+    "targetFamilyRegister": {
+      "path": "../../../recovery/exact-supplements/2026-10-06/hris-porting-blueprint-2026-09-09/coding-readiness/target-family-resolution-register.csv",
+      "sha256": "3e3618ff3ac150da8c9c7cbd3b1018e30e69652f28f3dbd8c87edb7df6a83819",
+      "bytes": 38399,
+      "targetFamilyId": "TFR-SYS-008",
+      "sourceFamilySha256": "8fd5277d423ee42f21b1cb551b06aa2ff73fa058352ba4e8433f0a6eebd7f6ce",
+      "sourceRowCount": 19
+    },
+    "g3SliceCodeGoRegister": {
+      "path": "../../../recovery/hris-porting-blueprint-2026-09-09/coding-readiness/g3-slice-code-go-register.csv",
+      "sha256": "fb646668329e93ca0b83b74e2a3e43619954cec1cb2f6770029677edbc8d5725",
+      "bytes": 305301,
+      "interpretation": "IMMUTABLE_RECOVERY_EVIDENCE_NOT_CURRENT_SOURCE_AUTHORITY"
+    },
+    "sysExactBusinessStartSuccessor": {
+      "path": "../../../recovery/hris-porting-blueprint-2026-09-09/coding-readiness/sys-exact-business-start-successor.v1.json",
+      "sha256": "aa4f82925a5a34132ed69844ca088111d551b7effbe1d70d8104846db82c44be",
+      "bytes": 31406
+    },
+    "sysSourceCoverage": {
+      "path": "../../../recovery/hris-porting-blueprint-2026-09-09/session-registers/hris-sys-source-coverage.csv",
+      "sha256": "88e23e9b2356bd40b23ddd1bdc8602aa6a0e439081d26f474e98aef3cdb9a294",
+      "bytes": 154062
+    },
+    "g2ContractCatalog": {
+      "path": "../../../recovery/hris-porting-blueprint-2026-09-09/session-evidence/sys/g2-contract-catalog.csv",
+      "sha256": "1251cd627675b07563c340c8a87ed50723ebc6bfe4dd447f34dc41f113891206",
+      "bytes": 17102
+    },
+    "g2GoldenScenarios": {
+      "path": "../../../recovery/hris-porting-blueprint-2026-09-09/session-evidence/sys/g2-golden-scenarios.csv",
+      "sha256": "2476313506b65294ae8d67a052bb854b22d07c4101cceb144d0c45f3e34de76d",
+      "bytes": 16979
+    },
+    "g2ImplementationContract": {
+      "path": "../../../recovery/hris-porting-blueprint-2026-09-09/session-evidence/sys/g2-implementation-contract.v2.md",
+      "sha256": "fd4c05cc6dd836441e9a0786484103deafa0a7375d3c1b8124d16dabafd149a7",
+      "bytes": 18920
+    },
+    "g2PlatformPhysicalBlueprint": {
+      "path": "../../../recovery/hris-porting-blueprint-2026-09-09/session-evidence/sys/g2-platform-physical-schema.sql",
+      "sha256": "5bd0fe6877ea0fb5a545f701dba7847c173a52dbe415a2b642d2a6a138594aa8",
+      "bytes": 58299,
+      "status": "NON_EXECUTABLE_DESIGN_INPUT_REQUIRING_IMMUTABLE_DEFINITION_VERSION_CORRECTION"
+    },
+    "g2StateMachines": {
+      "path": "../../../recovery/hris-porting-blueprint-2026-09-09/session-evidence/sys/g2-state-machines.md",
+      "sha256": "7ee14c1369945498029b00b119679f3f6dd9c1285df1f176b186bbd1b45b8f10",
+      "bytes": 11847
+    },
+    "g2TransportSchemas": {
+      "path": "../../../recovery/hris-porting-blueprint-2026-09-09/session-evidence/sys/g2-transport-schemas.v1.json",
+      "sha256": "7067a7adad828d4918220fcde54fc0fa9a2add5db1d5745e0a4acb0a50698cf7",
+      "bytes": 95808,
+      "gap": "SYS_EVT_005_CLOSED_TYPED_EVENT_SCHEMA_NOT_PRESENT"
+    },
+    "apiPepBindings": {
+      "path": "../../../recovery/hris-porting-blueprint-2026-09-09/coding-readiness/api-pep-binding-register.csv",
+      "sha256": "0e38d724516a8b271069241ffa0fb6400984dc703758767de53cbaffb4f93da3",
+      "bytes": 126576
+    },
+    "acceptedIaqApiRegister": {
+      "path": "../../../recovery/exact-supplements/2026-10-06/accepted-successors/hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-api-contract-register.csv",
+      "sha256": "5f47efd33a1d5aa3d11a4d9fd5716cd4e35650e9fec0868ecb77c8c90a4cd988",
+      "bytes": 100020,
+      "authority": "ACCEPTED_SUCCESSOR"
+    },
+    "validExactIaqProjectionSchemas": {
+      "path": "../../../recovery/exact-supplements/2026-10-06/hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-projection-schemas.v1.json",
+      "sha256": "b185accd712216c39bf8a66f70cbbf0092a27a8c2c5e3d7457ecd4d511afa048",
+      "bytes": 1523618
+    },
+    "acceptedRuntimeInvariantRegister": {
+      "path": "../../../recovery/exact-supplements/2026-10-06/accepted-successors/hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-runtime-invariant-register.csv",
+      "sha256": "fcdfd1a26d8fca2c8d9a2a8279a3c5a99844ba827aefe47cbac2210b8753f77a",
+      "bytes": 51783
+    },
+    "actionKeyRegister": {
+      "path": "../../../recovery/exact-supplements/2026-10-06/hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-action-key-register.csv",
+      "sha256": "19a12600eb11e4d6c7c6098ad7f44f8afb544a1d9c698c3d2305e9e8150b5b7e",
+      "bytes": 78170
+    },
+    "dependencyRegister": {
+      "path": "../../../recovery/hris-porting-blueprint-2026-09-09/coding-readiness/module-dependency-register.csv",
+      "sha256": "b8f1a11d1a32cf6f5a9a99ff73066b7e65787319ac18cf0d2b4891d22587c348",
+      "bytes": 3652
+    },
+    "dependencySchemaBindings": {
+      "path": "../../../recovery/hris-porting-blueprint-2026-09-09/coding-readiness/platform-dependency-schema-binding-register.csv",
+      "sha256": "de29f3968c16eb2afe118af71c9e1e3bd3efb66533f4661ee441c75a4669fd7c",
+      "bytes": 21005
+    }
+  },
+  "observedRuntimeEvidence": {
+    "frontendRepositoryPinBeforeThisDisposition": {
+      "branch": "dwp-dev",
+      "head": "9d76480cf0d2918af0192f802d8d747870f1e7b3",
+      "tree": "a5185aa8c164dce93813e1bceea55362bfdf623b",
+      "clean": true,
+      "originExact": true
+    },
+    "backendRepositoryPin": {
+      "branch": "dwp-dev",
+      "head": "40ed8e8431388db6a38fb22714682be046582362",
+      "tree": "4a7da7c23df837f7fa9ef9653c0e23f6322a7e76",
+      "clean": true,
+      "originExact": true
+    },
+    "agentRepositoryPin": {
+      "branch": "dwp-dev",
+      "head": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "clean": true,
+      "originExact": true
+    },
+    "currentPlatformHighWater": {
+      "version": "V333",
+      "path": "../../../../../../../dwp-backend/dwp-platform-server/src/main/resources/db/migration/V333__create_hris_automation_control_plane.sql",
+      "sha256": "213a3cbde404b056b7d60b7791b59b0c8a0581248e7d775382f7092940d63c2d",
+      "bytes": 76604
+    },
+    "currentAuthHighWater": {
+      "version": "V268",
+      "path": "../../../../../../../dwp-backend/dwp-auth-server/src/main/resources/db/migration/V268__declare_hris_per008_v59_authorization_seed.sql",
+      "sha256": "349e8f042216446462f21e5849b86869e3bf11107c625d831dad75e8f6018bc3",
+      "bytes": 20236
+    },
+    "currentAuthorizationBundle": {
+      "version": 59,
+      "path": "../../../../../../../dwp-backend/contracts/product-authorization/product-surfaces-v1.bundle-v59.json",
+      "sha256": "bc9d253166c2ccfae1a95b2f9772742d321cf4784bceecb9fb228ae1ce5165b7",
+      "bytes": 2711811,
+      "sys008ExactRoutesPresent": 0,
+      "decision": "APPEND_ONLY_AUTHORIZATION_SUCCESSOR_REQUIRED"
+    },
+    "platformPepBundle": {
+      "path": "../../../../../../../dwp-backend/dwp-platform-server/src/main/resources/product-authorization/hcm-platform-pep-v59.generated.json",
+      "sha256": "3b305200b308246a72b39955f57f064c98d38ea44222acd6e9ee6c75602d9f89",
+      "bytes": 194192
+    },
+    "canonicalTypedSchema": {
+      "path": "../../../../../../../dwp-backend/contracts/hris/canonical/schemas/platform-dependency-canonical-schemas.v1.json",
+      "sha256": "5674845a3ba00928e8c5e05dc99a7869d3dae7ba2cc48f360c8b16db47ec3d8f",
+      "bytes": 28109
+    },
+    "generatedTypedArtifacts": [
+      {
+        "type": "ConnectorMappingVersion.v1",
+        "class": "com.dwp.platform.contracts.hris.generated.ConnectorMappingVersionV1",
+        "path": "../../../../../../../dwp-backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/generated/ConnectorMappingVersionV1.java",
+        "sha256": "8583203c4caf26514fe3c925863f0dfb4ea428acc8aab1adb0828e7c99a74afe",
+        "bytes": 18338,
+        "bindingSchemaSha256": "216a9a290840175afaa0def23527a61086aee0d1d54dbd059c7940bdf78235bf",
+        "deliveryState": "NOT_STARTED_G3"
+      },
+      {
+        "type": "ConnectorExecutionRequest.v1",
+        "class": "com.dwp.platform.contracts.hris.generated.ConnectorExecutionRequestV1",
+        "path": "../../../../../../../dwp-backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/generated/ConnectorExecutionRequestV1.java",
+        "sha256": "6327d564cb4c11847bb4a3487d609c1c8e5dcdee3b8e3afd4f94adba78cae20b",
+        "bytes": 16897,
+        "bindingSchemaSha256": "851dcf0693edddbebff1023cf458dbb5d237fbbeedc466934b0499555f2a327d",
+        "deliveryState": "NOT_STARTED_G3"
+      },
+      {
+        "type": "ConnectorReconciliationReceipt.v1",
+        "class": "com.dwp.platform.contracts.hris.generated.ConnectorReconciliationReceiptV1",
+        "path": "../../../../../../../dwp-backend/dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/generated/ConnectorReconciliationReceiptV1.java",
+        "sha256": "e1502162e1e9863e014e6c6a8c0eb756a2d80799d47745c868f751d2ebb7e7e4",
+        "bytes": 18062,
+        "bindingSchemaSha256": "23a06397d889d9bf62bab6e22ab453124ccef1473640c9bf50fedbfd12b1f5a4",
+        "deliveryState": "NOT_STARTED_G3"
+      }
+    ],
+    "sharedCommandReceipt": {
+      "migration": "V327__create_hris_work_explorer.sql",
+      "path": "../../../../../../../dwp-backend/dwp-platform-server/src/main/resources/db/migration/V327__create_hris_work_explorer.sql",
+      "sha256": "8586a323808e902533e073c83bc6fb83f456173a9f626801bfbe611f19e7d9d7",
+      "bytes": 12932,
+      "table": "sys_hris_command_receipts",
+      "decision": "REUSE_NO_DUPLICATE_GENERIC_RECEIPT_TABLE"
+    },
+    "frontendCatalog": {
+      "settingsCatalog": {
+        "path": "../../../../../../apps/dwp/src/features/hris/shell/model/catalog/settings.ts",
+        "sha256": "761f15dfe1bb367fa9d81bbed09fbb1f7115aded9e81991d0f4f43dbcd935eae",
+        "bytes": 4843
+      },
+      "dwpControlCatalog": {
+        "path": "../../../../../../apps/dwp/src/features/hris/shell/model/catalog/dwp-control.ts",
+        "sha256": "d5ec29c2ce6f593e0a5bdd06043b6d07c7909d30ae0c57decc131e58b784bb0b",
+        "bytes": 4176
+      },
+      "generatedInformationArchitecture": {
+        "path": "../../../../../../apps/dwp/src/features/hris/shell/model/hris-information-architecture.generated.ts",
+        "sha256": "584cc32f845720ad06fb1bdcea7c967026c0e3a648f70e0215fd8a95a6b055bd",
+        "bytes": 116635
+      }
+    },
+    "existingGenericProductivitySurface": {
+      "path": "../../../../../../apps/dwp/src/features/admin/productivity-connector-manager.tsx",
+      "sha256": "aa3a73014ca182841535f9fe0cdb93827195066e124f6840dcc4269e3ad885e3",
+      "bytes": 36953,
+      "decision": "GENERAL_MICROSOFT_365_ADMIN_SURFACE_NOT_SYS008_OWNER_TRUTH_DO_NOT_DELETE_OR_COUNT_AS_SYS008"
+    },
+    "schemaDeltaProof": {
+      "canonicalSys008RoutesInCurrentPlatformSource": 0,
+      "canonicalSysConnectorTablesInCurrentPlatformMigrations": 0,
+      "legacyProductivityTablesAreEquivalent": false,
+      "required": true,
+      "candidateVersion": "V334",
+      "leaseState": "NOT_ISSUED"
+    },
+    "authorizationConflict": {
+      "detected": true,
+      "existingKey": "hcm.integration.execute",
+      "existingV59Meaning": "SYS006_AUTOMATION_AND_EXISTING_WORKFORCE_DATA_OPERATIONS_BINDING",
+      "proposedHistoricalSys008Meaning": "SYS008_CONNECTOR_APPROVE_ACTIVATE_EXECUTE_RECONCILE_RETRY_CANCEL",
+      "decision": "DO_NOT_OVERWRITE_EXISTING_KEY_SEAL_NEW_SYS008_EXECUTION_CAPABILITY_OR_APPEND_ONLY_EXACT_PEP_CORRECTION_IN_CENTRAL_SUCCESSOR"
+    }
+  },
+  "sourceDerivation": {
+    "sourceArtifacts": [
+      "PORTAL_DATA_SYNC_AND_PROCESSING",
+      "FILE_STATUS_AND_FILE_TYPE_ADMINISTRATION",
+      "FTP_SEND_SETUP_AND_HISTORY",
+      "FORMAT_DEFINITION",
+      "BULK_UPLOAD_AND_RESULT_HANDLING"
+    ],
+    "sourceRowCount": 19,
+    "sourceReuse": "NO_SOURCE_CODE_REUSE_BEHAVIORAL_REIMPLEMENTATION_ONLY",
+    "targetBehavior": [
+      "PROVIDER_NEUTRAL_CONNECTOR_REGISTRY",
+      "OPAQUE_SECRET_REFERENCE_AND_EGRESS_POLICY",
+      "IMMUTABLE_CONNECTOR_DEFINITION_VERSIONS",
+      "IMMUTABLE_MAPPING_VERSIONS_AND_DRY_RUN_EVIDENCE",
+      "MAKER_CHECKER_APPROVAL_AND_ACTIVATION",
+      "RECEIPT_FIRST_EXECUTION_AND_RECONCILIATION",
+      "FAILED_ITEM_ONLY_RETRY_AND_ATTEMPT_LINEAGE",
+      "QUARANTINE_AND_OPERATIONAL_EXCEPTION_EVIDENCE",
+      "MINIMAL_IMMUTABLE_STATE_EVENTS"
+    ],
+    "forbiddenExecution": [
+      "COPY_OR_WRAP_LEGACY_FTP_SCREEN_OR_PROTOCOL_AS_THE_DOMAIN_MODEL",
+      "STORE_RAW_CREDENTIAL_OR_PROVIDER_PAYLOAD",
+      "LET_THE_BROWSER_SELECT_A_TENANT_OR_ASSERT_OWNER_AUTHORITY",
+      "EQUATE_GENERIC_SYS008_AVAILABILITY_WITH_PAY002_SEMANTIC_RELEASE"
+    ]
+  },
+  "ownershipDecision": {
+    "runtimeOwner": "dwp-platform-server",
+    "javaPackageRoot": "com.dwp.services.platform.hrisconfiguration.integration",
+    "sourceRoot": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/integration",
+    "testRoot": "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/integration",
+    "migrationRoot": "dwp-platform-server/src/main/resources/db/migration",
+    "newServiceForbidden": true,
+    "platformOwns": [
+      "LOGICAL_CONNECTOR_AGGREGATE_AND_ACTIVE_VERSION_POINTER",
+      "IMMUTABLE_DEFINITION_AND_MAPPING_VERSION_ENVELOPES",
+      "ENDPOINT_POLICY_SECRET_REFERENCE_AND_EGRESS_VALIDATION",
+      "CONNECTION_TEST_AND_MAPPING_DRY_RUN_RECEIPTS",
+      "MAKER_CHECKER_LIFECYCLE",
+      "GENERIC_EXECUTION_ENVELOPE_ATTEMPT_AND_RECONCILIATION",
+      "SYS008_IAQ_OWNER_QUERY_AND_TWO_POLICY_PROJECTIONS",
+      "SYS_EVT_005_PUBLICATION"
+    ],
+    "domainOwnersOwn": [
+      "SOURCE_BUSINESS_DATA_SELECTION",
+      "DOMAIN_SPECIFIC_INPUT_VALIDATION",
+      "TYPED_COMMAND_CONSUMPTION_AND_BUSINESS_EFFECT",
+      "DOMAIN_EFFECT_IDEMPOTENCY",
+      "DOMAIN_SPECIFIC_RECONCILIATION_AND_QUARANTINE_MEANING"
+    ],
+    "peopleOverlapRule": "EXISTING_PEOPLE_WORKFORCE_DATA_OPERATIONS_CONNECTOR_INGESTION_REMAINS_HRM_OWNER_BEHAVIOR_AND_MUST_NOT_BE_REPLACED_RECOUNTED_OR_DIRECTLY_PERSISTED_BY_SYS008",
+    "sharedBridgeRule": "DEP006_TYPED_ARTIFACTS_ONLY_NO_CROSS_SERVICE_DATABASE_ACCESS_FOREIGN_KEY_OR_REPOSITORY",
+    "sharedBridgeExceptions": [],
+    "agentRepository": "NO_SYS008_RUNTIME_OWNERSHIP"
+  },
+  "dependencyDecision": {
+    "required": [
+      {
+        "id": "DEP-001",
+        "contract": "HRIS_APP_ENTITLEMENT_AND_ACCESS_PACKAGE_V1",
+        "failureGuard": "FAIL_CLOSED_NO_LEAF_DATA"
+      },
+      {
+        "id": "DEP-002",
+        "contract": "EFFECTIVE_PERMISSION_SCOPE_FIELD_REVISION_V1",
+        "failureGuard": "FORBIDDEN_AND_CACHE_PURGE"
+      },
+      {
+        "id": "DEP-003",
+        "contract": "EVENT_ENVELOPE_OUTBOX_INBOX_V1",
+        "failureGuard": "SCHEMA_REJECT_AND_DLQ"
+      },
+      {
+        "id": "DEP-006",
+        "contract": "CONNECTOR_PORT_MAPPING_RECEIPT_V1",
+        "failureGuard": "CONNECTOR_DISABLED_UNTIL_CONFIGURED"
+      },
+      {
+        "id": "DEP-016",
+        "contract": "AUDIT_OUTBOX_EVENT_V1",
+        "failureGuard": "DOMAIN_TRANSACTION_RECORDS_LOCAL_OUTBOX"
+      }
+    ],
+    "pay002Guard": "GENERIC_SYS008_DELIVERY_DOES_NOT_RELEASE_BASE_TFR_PAY_002_OWNER_SPECIFIC_SEMANTIC_NO_GO"
+  },
+  "contractDecision": {
+    "primaryApis": [
+      {
+        "id": "SYS-API-021",
+        "method": "GET|POST",
+        "path": "/api/platform/v1/admin/hris/connectors",
+        "meaning": "LIST_CONNECTORS_OR_CREATE_DEFINITION_DRAFT"
+      },
+      {
+        "id": "SYS-API-022",
+        "method": "POST",
+        "path": "/api/platform/v1/admin/hris/connectors/{connectorId}/test",
+        "meaning": "ISSUE_CONNECTION_TEST_RECEIPT"
+      },
+      {
+        "id": "SYS-API-023",
+        "method": "POST",
+        "path": "/api/platform/v1/admin/hris/connectors/{connectorId}/mappings/{version}/dry-runs",
+        "meaning": "ISSUE_TRANSFORM_VALIDATION_RECEIPT_WITHOUT_PROVIDER_DISPATCH_OR_DOMAIN_WRITE"
+      },
+      {
+        "id": "SYS-API-024",
+        "method": "POST",
+        "path": "/api/platform/v1/admin/hris/connectors/{connectorId}/executions",
+        "meaning": "CREATE_RECEIPT_FIRST_EXECUTION"
+      },
+      {
+        "id": "SYS-API-025",
+        "method": "GET",
+        "path": "/api/platform/v1/admin/hris/connector-executions/{executionId}",
+        "meaning": "READ_EXECUTION_AND_RECONCILIATION_RECEIPT"
+      },
+      {
+        "id": "SYS-API-057",
+        "method": "POST",
+        "path": "/api/platform/v1/admin/hris/connectors/{connectorId}/validate",
+        "meaning": "VALIDATE_DEFINITION_VERSION"
+      },
+      {
+        "id": "SYS-API-058",
+        "method": "POST",
+        "path": "/api/platform/v1/admin/hris/connectors/{connectorId}/submit",
+        "meaning": "SUBMIT_TESTED_DEFINITION_VERSION"
+      },
+      {
+        "id": "SYS-API-059",
+        "method": "POST",
+        "path": "/api/platform/v1/admin/hris/connectors/{connectorId}/approve",
+        "meaning": "APPROVE_DEFINITION_VERSION_BY_SEPARATE_ACTOR"
+      },
+      {
+        "id": "SYS-API-060",
+        "method": "POST",
+        "path": "/api/platform/v1/admin/hris/connectors/{connectorId}/activate",
+        "meaning": "ACTIVATE_APPROVED_DEFINITION_VERSION"
+      },
+      {
+        "id": "SYS-API-061",
+        "method": "POST",
+        "path": "/api/platform/v1/admin/hris/connectors/{connectorId}/mappings",
+        "meaning": "CREATE_IMMUTABLE_MAPPING_VERSION_DRAFT"
+      },
+      {
+        "id": "SYS-API-062",
+        "method": "POST",
+        "path": "/api/platform/v1/admin/hris/connectors/{connectorId}/mappings/{version}/validate",
+        "meaning": "VALIDATE_MAPPING_VERSION"
+      },
+      {
+        "id": "SYS-API-063",
+        "method": "POST",
+        "path": "/api/platform/v1/admin/hris/connectors/{connectorId}/mappings/{version}/submit",
+        "meaning": "SUBMIT_VALIDATED_MAPPING_VERSION"
+      },
+      {
+        "id": "SYS-API-064",
+        "method": "POST",
+        "path": "/api/platform/v1/admin/hris/connectors/{connectorId}/mappings/{version}/approve",
+        "meaning": "APPROVE_MAPPING_VERSION_BY_SEPARATE_ACTOR"
+      },
+      {
+        "id": "SYS-API-065",
+        "method": "POST",
+        "path": "/api/platform/v1/admin/hris/connectors/{connectorId}/mappings/{version}/activate",
+        "meaning": "ACTIVATE_APPROVED_MAPPING_VERSION"
+      },
+      {
+        "id": "SYS-API-066",
+        "method": "POST",
+        "path": "/api/platform/v1/admin/hris/connector-executions/{executionId}/reconcile",
+        "meaning": "RECONCILE_WITH_ORIGINAL_PROVIDER_KEY_AND_RECEIPT_EVIDENCE"
+      },
+      {
+        "id": "SYS-API-067",
+        "method": "POST",
+        "path": "/api/platform/v1/admin/hris/connector-executions/{executionId}/retry",
+        "meaning": "CREATE_NEW_ATTEMPTS_FOR_EXACT_RETRYABLE_FAILED_ITEM_SET_ONLY"
+      },
+      {
+        "id": "SYS-API-068",
+        "method": "POST",
+        "path": "/api/platform/v1/admin/hris/connector-executions/{executionId}/cancel",
+        "meaning": "CANCEL_PRE_DISPATCH_OR_REQUIRE_EXPLICIT_POST_DISPATCH_COMPENSATION"
+      }
+    ],
+    "primaryEvent": {
+      "id": "SYS-EVT-005",
+      "type": "dwp.hris.connector.execution.state-changed.v1",
+      "owner": "dwp-platform-server"
+    },
+    "primaryPepBindings": [
+      "PEP-SYS-022",
+      "PEP-SYS-023",
+      "PEP-SYS-024",
+      "PEP-SYS-025",
+      "PEP-SYS-026",
+      "PEP-SYS-027",
+      "PEP-SYS-059",
+      "PEP-SYS-060",
+      "PEP-SYS-061",
+      "PEP-SYS-062",
+      "PEP-SYS-063",
+      "PEP-SYS-064",
+      "PEP-SYS-065",
+      "PEP-SYS-066",
+      "PEP-SYS-067",
+      "PEP-SYS-068",
+      "PEP-SYS-069",
+      "PEP-SYS-070"
+    ],
+    "commandRules": {
+      "queryHeaders": [
+        "Authorization",
+        "X-Correlation-Id",
+        "X-Purpose-Code"
+      ],
+      "asyncCommandHeaders": [
+        "Authorization",
+        "Idempotency-Key",
+        "X-Correlation-Id",
+        "X-Purpose-Code"
+      ],
+      "casCommandAdditionalHeaders": [
+        "If-Match"
+      ],
+      "synchronousGetStatus": 200,
+      "asyncCommandAcceptedStatus": 202,
+      "asyncCommandAcceptedBody": "SHARED_TYPED_RECEIPT",
+      "errorBody": "RFC7807_PROBLEM",
+      "sameKeySameDigest": "RETURN_ORIGINAL_RECEIPT",
+      "sameKeyDifferentDigest": "HTTP_409",
+      "tenantSource": "TRUSTED_GATEWAY_CONTEXT_ONLY",
+      "browserTenantHeaderOrBody": "FORBIDDEN"
+    },
+    "closedTransportSchemas": {
+      "connectorCommand": [
+        "connectorKey",
+        "type",
+        "endpoint",
+        "secretRef",
+        "egressPolicyKey"
+      ],
+      "connectorTestCommand": [
+        "testMode",
+        "sampleRef",
+        "sampleDigest"
+      ],
+      "mappingDryRunCommand": [
+        "sampleRef",
+        "sampleDigest",
+        "maxRows",
+        "asOf"
+      ],
+      "executionCommand": [
+        "operation",
+        "payloadRef",
+        "payloadDigest",
+        "asOf"
+      ],
+      "definitionValidationCommand": [
+        "definitionDigest",
+        "endpointPolicyRevision",
+        "secretRevision"
+      ],
+      "mappingCommand": [
+        "sourceSchemaVersion",
+        "targetSchemaVersion",
+        "mappingRef",
+        "mappingDigest",
+        "compatibilityMode",
+        "effectiveFrom",
+        "effectiveTo"
+      ],
+      "mappingValidationCommand": [
+        "mappingDigest",
+        "sourceSchemaDigest",
+        "targetSchemaDigest"
+      ],
+      "approvalRequest": [
+        "approvalWorkflowKey",
+        "subjectRevision",
+        "payloadDigest"
+      ],
+      "approvalDecision": [
+        "approvalReceiptId",
+        "decisionDigest"
+      ],
+      "activationCommand": [
+        "approvalReceiptId",
+        "effectiveAt"
+      ],
+      "reconcileCommand": [
+        "providerReceiptRef",
+        "providerReceiptDigest",
+        "expectedSourceCount",
+        "asOf"
+      ],
+      "retryCommand": [
+        "failedItemIds",
+        "failedItemSetDigest",
+        "expectedRejectedCount",
+        "reasonCode"
+      ],
+      "cancelCommand": [
+        "reasonCode",
+        "compensationPolicyRef"
+      ],
+      "executionRead": [
+        "executionId",
+        "mappingVersion",
+        "state",
+        "sourceCount",
+        "acceptedCount",
+        "rejectedCount",
+        "selectedItemCount",
+        "selectedItemDigest",
+        "reconciliationDigest",
+        "aggregateVersion"
+      ]
+    },
+    "opaqueReferenceResolution": {
+      "references": [
+        "secretRef",
+        "sampleRef",
+        "mappingRef",
+        "payloadRef",
+        "providerReceiptRef",
+        "compensationPolicyRef",
+        "resultRef",
+        "errorReportRef"
+      ],
+      "resolution": "SERVER_SIDE_OWNER_PORT_ONLY_AFTER_AUTHENTICATION_TRUSTED_TENANT_CONNECTOR_SCOPE_PURPOSE_AND_AUTHORIZATION_REVISION_VERIFICATION",
+      "binding": "EVERY_REFERENCE_IS_BOUND_TO_TENANT_CONNECTOR_SUBJECT_TYPE_NAMESPACE_AND_CANONICAL_DIGEST_BEFORE_VALIDATION_TEST_DRY_RUN_DISPATCH_RECONCILE_RETRY_OR_COMPENSATION",
+      "secretRule": "SECRET_REF_RESOLVES_ONLY_TO_A_NON_EXPORTABLE_CONNECTOR_OWNED_SECRET_OF_THE_EXPECTED_PROVIDER_AND_USAGE_TYPE_AND_THE_VALUE_NEVER_RETURNS_TO_APPLICATION_MEMORY_LOG_DB_EVENT_OR_BROWSER_WHEN_A_PROVIDER_HANDLE_CAN_BE_USED",
+      "providerReceiptRule": "PROVIDER_RECEIPT_REF_AND_DIGEST_MUST_BELONG_TO_THE_SAME_EXECUTION_CONNECTOR_PROVIDER_AND_ORIGINAL_PROVIDER_IDEMPOTENCY_KEY",
+      "compensationRule": "COMPENSATION_POLICY_REF_MUST_BE_AN_APPROVED_POLICY_PINNED_TO_THE_EXECUTED_DEFINITION_VERSION_AND_PROVIDER_OPERATION",
+      "uriRule": "OPAQUE_REFERENCES_ARE_NOT_BROWSER_DEREFERENCEABLE_URLS_AND_CANNOT_SELECT_AN_ARBITRARY_VAULT_OBJECT_STORE_OR_NETWORK_LOCATION",
+      "digestRule": "REFERENCE_CONTENT_OR_METADATA_DIGEST_MISMATCH_FAILS_BEFORE_STATE_MUTATION_OR_PROVIDER_DISPATCH",
+      "denialRule": "CROSS_TENANT_WRONG_CONNECTOR_WRONG_NAMESPACE_WRONG_TYPE_STALE_REVISION_AND_UNAUTHORIZED_REFERENCE_SUBSTITUTION_FAIL_CLOSED_WITHOUT_EXISTENCE_DISCLOSURE"
+    },
+    "receiptBridgeRule": "COMMAND_RECEIPTS_BIND_ORIGINATING_ACTION_SUBJECT_PRINCIPAL_POPULATION_DIGEST_FIELD_AND_AUTHORIZATION_REVISION_PURPOSE_STATUS_CORRELATION_REQUEST_DIGEST_AND_SAFE_RESULT_REFERENCE",
+    "sharedReuseOnly": [
+      "sys_hris_command_receipts",
+      "DOMAIN_EVENT_OUTBOX_AND_INBOX",
+      "AUDIT_OUTBOX_AND_AUDIT_EVENT",
+      "OPERATIONS_EXCEPTION_PROJECTION_AND_DEEP_LINK"
+    ]
+  },
+  "iaqDecision": {
+    "primaryOwner": "SYS008_SINGLE_OWNER_QUERY",
+    "sharedPageComposition": "ONE_OWNER_TRUTH_TWO_POLICY_PROJECTIONS_NO_DUPLICATE_PERSISTENCE_CONTROLLER_DOMAIN_OR_COMPLETION_CREDIT",
+    "entryQueries": [
+      {
+        "id": "IAQ-057",
+        "variant": "INTEGRATIONS",
+        "role": "PRIMARY_HRIS_SETTINGS",
+        "method": "GET",
+        "api": "/api/platform/v1/hris/workbench/settings-integrations",
+        "route": "/hr/settings/integrations",
+        "fieldGroups": [
+          "CONNECTOR_METADATA",
+          "POLICY_VERSION",
+          "EFFECTIVE_STATUS"
+        ],
+        "filters": [
+          "connectorMetadata",
+          "policyVersion",
+          "effectiveStatus",
+          "effectiveOn"
+        ],
+        "sorts": [
+          "connectorMetadata:ASC",
+          "policyVersion:ASC",
+          "effectiveStatus:ASC",
+          "connectorMetadata:DESC",
+          "policyVersion:DESC",
+          "effectiveStatus:DESC",
+          "itemPublicId:ASC",
+          "itemPublicId:DESC"
+        ]
+      },
+      {
+        "id": "IAQ-062",
+        "variant": "INTEGRATIONS",
+        "role": "PRIMARY_DWP_CONTROL",
+        "method": "GET",
+        "api": "/api/platform/v1/hris/workbench/dwp-integrations",
+        "route": "/admin/integrations/productivity?product=HCM",
+        "fieldGroups": [
+          "CONNECTOR_METADATA",
+          "EXECUTION_POLICY",
+          "EFFECTIVE_STATUS"
+        ],
+        "filters": [
+          "connectorMetadata",
+          "executionPolicy",
+          "effectiveStatus",
+          "effectiveOn"
+        ],
+        "sorts": [
+          "connectorMetadata:ASC",
+          "executionPolicy:ASC",
+          "effectiveStatus:ASC",
+          "connectorMetadata:DESC",
+          "executionPolicy:DESC",
+          "effectiveStatus:DESC",
+          "itemPublicId:ASC",
+          "itemPublicId:DESC"
+        ]
+      }
+    ],
+    "commonContract": {
+      "capability": "hcm.configuration.workbench.view",
+      "accessPackage": "HRIS_CONFIG_AUTHOR>HRIS_DUTY_CONFIGURATION_WORKBENCH_READER",
+      "sortCount": 8,
+      "defaultSort": "itemPublicId:ASC",
+      "limitMinimum": 1,
+      "limitMaximum": 100,
+      "queryStates": [
+        "COMPLETE",
+        "EMPTY",
+        "PARTIAL",
+        "UNAVAILABLE"
+      ],
+      "fieldDecisions": [
+        "VIEW",
+        "MASK",
+        "OMIT"
+      ],
+      "cursorBinding": [
+        "tenant",
+        "actor",
+        "queryVariant",
+        "filters",
+        "sort",
+        "asOf",
+        "locale",
+        "timeZone",
+        "scopeRevision",
+        "fieldPolicyRevision",
+        "authorizationRevision"
+      ],
+      "stableIdentity": "SAME_ITEM_PUBLIC_ID_AND_EFFECTIVE_STATUS_REVISION_FROM_ONE_OWNER_TRUTH_ON_BOTH_SURFACES",
+      "internalLineage": "OWNER_RECEIPT_REMAINS_SERVER_SIDE_NON_SERIALIZED_LINEAGE_AND_IS_NOT_ADDED_TO_THE_CLOSED_IAQ_ITEM_SCHEMA",
+      "trustedTenantSerialization": "FORBIDDEN",
+      "availableActionSource": "SERVER_SIDE_ITEM_LEVEL_PEP_INTERSECTION_ONLY",
+      "actionCount": 16,
+      "actionKeys": [
+        "hris.action.sys.post.platform.v1.admin.hris.connectors",
+        "hris.action.sys.post.platform.v1.admin.hris.connectors.resource.test",
+        "hris.action.sys.post.platform.v1.admin.hris.connectors.resource.mappings.resource.dry-runs",
+        "hris.action.sys.post.platform.v1.admin.hris.connectors.resource.executions",
+        "hris.action.sys.post.platform.v1.admin.hris.connectors.resource.validate",
+        "hris.action.sys.post.platform.v1.admin.hris.connectors.resource.submit",
+        "hris.action.sys.post.platform.v1.admin.hris.connectors.resource.approve",
+        "hris.action.sys.post.platform.v1.admin.hris.connectors.resource.activate",
+        "hris.action.sys.post.platform.v1.admin.hris.connectors.resource.mappings",
+        "hris.action.sys.post.platform.v1.admin.hris.connectors.resource.mappings.resource.validate",
+        "hris.action.sys.post.platform.v1.admin.hris.connectors.resource.mappings.resource.submit",
+        "hris.action.sys.post.platform.v1.admin.hris.connectors.resource.mappings.resource.approve",
+        "hris.action.sys.post.platform.v1.admin.hris.connectors.resource.mappings.resource.activate",
+        "hris.action.sys.post.platform.v1.admin.hris.connector-executions.resource.reconcile",
+        "hris.action.sys.post.platform.v1.admin.hris.connector-executions.resource.retry",
+        "hris.action.sys.post.platform.v1.admin.hris.connector-executions.resource.cancel"
+      ]
+    },
+    "actionProjectionRules": [
+      "DO_NOT_INFER_COMMAND_AUTHORITY_FROM_PAGE_VISIBILITY",
+      "APPLY_VIEW_MASK_OMIT_BEFORE_SERIALIZATION",
+      "PARTIAL_OR_STALE_EVIDENCE_DISPLAYS_VERIFIED_FACTS_ONLY_AND_EXPOSES_ZERO_COMMANDS",
+      "UNAVAILABLE_OR_FORBIDDEN_NEVER_RERENDERS_PRIOR_SCOPE_PROTECTED_DATA",
+      "SCOPE_CHANGE_CLEARS_SELECTION_CURSOR_AND_CACHED_ROWS"
+    ],
+    "legacyRouteRule": "/hr/data/integrations_IS_COMPATIBILITY_ONLY_AND_MUST_NOT_BECOME_A_SECOND_CANONICAL_OWNER",
+    "implementationState": "REQUIRED_G3_ENTRY_QUERY_NOT_IMPLEMENTED"
+  },
+  "typedArtifactContract": {
+    "PDX_007": {
+      "type": "ConnectorMappingVersion.v1",
+      "schemaSha256": "216a9a290840175afaa0def23527a61086aee0d1d54dbd059c7940bdf78235bf",
+      "requiredSemantics": "IMMUTABLE_MAPPING_VERSION_WITH_AUTHOR_APPROVER_APPROVAL_RECEIPT_EFFECTIVE_PERIOD_COMPATIBILITY_AND_DRY_RUN_EVIDENCE"
+    },
+    "PDX_008": {
+      "type": "ConnectorExecutionRequest.v1",
+      "schemaSha256": "851dcf0693edddbebff1023cf458dbb5d237fbbeedc466934b0499555f2a327d",
+      "requiredSemantics": "EXECUTION_ID_CONNECTOR_MAPPING_VERSION_SCOPE_SOURCE_DIGEST_ACTOR_IDEMPOTENCY_AND_CORRELATION_ARE_FROZEN"
+    },
+    "PDX_009": {
+      "type": "ConnectorReconciliationReceipt.v1",
+      "schemaSha256": "23a06397d889d9bf62bab6e22ab453124ccef1473640c9bf50fedbfd12b1f5a4",
+      "requiredSemantics": "STATE_COUNTS_SOURCE_RESULT_ERROR_REPORT_RECONCILIATION_DIGEST_COMPLETION_AND_CORRELATION_ARE_IMMUTABLE"
+    },
+    "ownerToDep006StateProjection": {
+      "mappingVersion": {
+        "DRAFT": "DRAFT",
+        "VALIDATED": "VALIDATED",
+        "PENDING_APPROVAL": "PENDING_APPROVAL",
+        "APPROVED": "APPROVED",
+        "ACTIVE": "ACTIVE",
+        "SUSPENDED": "SUSPENDED",
+        "RETIRED": "REVOKED"
+      },
+      "executionReceipt": {
+        "ACCEPTED": "ACCEPTED",
+        "TRANSFORMING": "RUNNING",
+        "DISPATCHED": "RUNNING",
+        "RESULT_UNKNOWN": "RESULT_UNKNOWN",
+        "ACKNOWLEDGED": "RUNNING",
+        "RECONCILING": "RUNNING",
+        "RECONCILED": "SUCCEEDED",
+        "PARTIAL": "PARTIAL",
+        "FAILED": "FAILED",
+        "DEAD_LETTER": "FAILED",
+        "CANCELLED": "CANCELED"
+      },
+      "rule": "TOTAL_OWNER_TO_DEP006_PROJECTION_WITH_OWNER_DETAIL_RETAINED_IN_PLATFORM_PERSISTENCE",
+      "reverseMapping": "FORBIDDEN_DEP006_RUNNING_FAILED_AND_REVOKED_ARE_COARSER_PROJECTIONS_AND_MUST_NOT_RECONSTRUCT_OWNER_STATE"
+    },
+    "ownerCommandToPdx008Projection": {
+      "SYS_API_023_MAPPING_DRY_RUN": {
+        "mode": "DRY_RUN",
+        "direction": "PINNED_MAPPING_VERSION_DIRECTION",
+        "sourceRef": "MappingDryRunCommand.sampleRef",
+        "sourceDigest": "MappingDryRunCommand.sampleDigest",
+        "dispatchRule": "NO_PRODUCTION_PROVIDER_DISPATCH_AND_NO_DOMAIN_WRITE"
+      },
+      "SYS_API_024_IMPORT": {
+        "mode": "EXECUTE",
+        "direction": "INBOUND",
+        "sourceRef": "ExecutionCommand.payloadRef",
+        "sourceDigest": "ExecutionCommand.payloadDigest"
+      },
+      "SYS_API_024_EXPORT": {
+        "mode": "EXECUTE",
+        "direction": "OUTBOUND",
+        "sourceRef": "ExecutionCommand.payloadRef",
+        "sourceDigest": "ExecutionCommand.payloadDigest"
+      },
+      "SYS_API_024_DISPATCH": {
+        "mode": "EXECUTE",
+        "direction": "OUTBOUND",
+        "sourceRef": "ExecutionCommand.payloadRef",
+        "sourceDigest": "ExecutionCommand.payloadDigest"
+      },
+      "SYS_API_024_RECONCILE": {
+        "mode": "RECONCILE",
+        "direction": "INHERIT_FROZEN_ORIGINAL_EXECUTION_DIRECTION",
+        "sourceRef": "ORIGINAL_EXECUTION_SOURCE_REF",
+        "sourceDigest": "ORIGINAL_EXECUTION_SOURCE_DIGEST",
+        "callerDirectionOverride": "FORBIDDEN"
+      },
+      "scopeProjection": {
+        "authorizationPopulationRule": "CONNECTOR_SET_AND_LEGAL_ENTITY_ARE_PEP_POPULATION_CONSTRAINTS_AND_ARE_NEVER_COPIED_DIRECTLY_INTO_PDX008_SCOPE_TYPE",
+        "dryRun": {
+          "scopeType": "TENANT",
+          "scopeId": null
+        },
+        "tenantExecution": {
+          "scopeType": "TENANT",
+          "scopeId": null,
+          "guard": "VERIFIED_CONNECTOR_SET_AUTHORIZATION_AND_NO_LEGAL_ENTITY_TARGET"
+        },
+        "legalEntityExecution": {
+          "scopeType": "LEGAL_ENTITY",
+          "scopeId": "VERIFIED_LEGAL_ENTITY_PUBLIC_ID_FROM_THE_TYPED_SOURCE_ENVELOPE",
+          "guard": "ID_IS_IN_THE_CURRENT_AUTHORIZED_LEGAL_ENTITY_POPULATION_AND_BOUND_TO_SOURCE_DIGEST"
+        },
+        "reconcile": "INHERIT_EXACT_FROZEN_ORIGINAL_SCOPE_TYPE_AND_SCOPE_ID",
+        "unsupportedV1": [
+          "GLOBAL",
+          "ORGANIZATION",
+          "POPULATION",
+          "SUBJECT"
+        ],
+        "nullability": "SCOPE_ID_IS_NULL_IFF_SCOPE_TYPE_IS_TENANT_AND_NON_NULL_IFF_SCOPE_TYPE_IS_LEGAL_ENTITY",
+        "callerOverride": "FORBIDDEN"
+      },
+      "commonDerivedFields": "executionId connectorId mappingId mappingVersion scopeType scopeId requestedByActorRef requestedAt idempotencyKey and correlationId come from the verified owner aggregate typed source envelope authorization context and command context rather than caller-redeclared DEP006 fields",
+      "totalityRule": "EVERY_OWNER_OPERATION_AND_DRY_RUN_HAS_ONE_EXACT_PDX008_PROJECTION_BEFORE_PROVIDER_OR_DOMAIN_OWNER_DISPATCH",
+      "reverseMapping": "FORBIDDEN_PDX008_EXECUTE_OUTBOUND_CANNOT_DISTINGUISH_EXPORT_FROM_DISPATCH_AND_PDX008_NEVER_RECONSTRUCTS_OWNER_COMMAND_INTENT"
+    },
+    "providerConsumerRule": "PLATFORM_PUBLISHES_EXACT_GENERATED_TYPES_DOMAIN_SERVICES_CONSUME_WITHOUT_REDECLARATION",
+    "realProviderBinding": "WITHHELD_UNTIL_G6_AND_EXPLICIT_TENANT_ENROLLMENT"
+  },
+  "lifecycleDecision": {
+    "definitionAggregate": {
+      "logicalStates": [
+        "INACTIVE",
+        "ACTIVE",
+        "SUSPENDED",
+        "RETIRED"
+      ],
+      "activeVersionPointer": "CAS_GUARDED_SINGLE_ACTIVE_VERSION_PER_TENANT_AND_LOGICAL_CONNECTOR"
+    },
+    "definitionVersion": {
+      "states": [
+        "DRAFT",
+        "VALIDATED",
+        "TESTED",
+        "PENDING_APPROVAL",
+        "APPROVED",
+        "ACTIVE",
+        "SUSPENDED",
+        "RETIRED"
+      ],
+      "immutability": "SUBJECT_FIELDS_NEVER_UPDATED_NEW_VERSION_FOR_ANY_DEFINITION_ENDPOINT_POLICY_OR_SECRET_REFERENCE_CHANGE",
+      "activationPreconditions": [
+        "CURRENT_DEFINITION_DIGEST",
+        "CURRENT_ENDPOINT_POLICY_REVISION",
+        "CURRENT_SECRET_REVISION",
+        "SUCCESSFUL_CONNECTION_TEST_RECEIPT",
+        "SEPARATE_APPROVER_RECEIPT",
+        "EXPECTED_REVISION_CAS"
+      ]
+    },
+    "mappingVersion": {
+      "states": [
+        "DRAFT",
+        "VALIDATED",
+        "PENDING_APPROVAL",
+        "APPROVED",
+        "ACTIVE",
+        "SUSPENDED",
+        "RETIRED"
+      ],
+      "direction": "INBOUND_OR_OUTBOUND_DERIVED_ONCE_FROM_SERVER_RESOLVED_MAPPING_REF_METADATA_AND_BOUND_TO_MAPPING_DIGEST",
+      "immutability": "MAPPING_BODY_REF_DIGEST_SOURCE_TARGET_SCHEMA_AND_EFFECTIVE_PERIOD_NEVER_MUTATE_AFTER_VERSION_CREATION",
+      "activationPreconditions": [
+        "CURRENT_SCHEMA_DIGESTS",
+        "SUCCESSFUL_DRY_RUN_RECEIPT",
+        "COMPATIBILITY_VALIDATION",
+        "SEPARATE_APPROVER_RECEIPT",
+        "EXPECTED_REVISION_CAS"
+      ]
+    },
+    "execution": {
+      "states": [
+        "ACCEPTED",
+        "TRANSFORMING",
+        "DISPATCHED",
+        "RESULT_UNKNOWN",
+        "ACKNOWLEDGED",
+        "RECONCILING",
+        "RECONCILED",
+        "PARTIAL",
+        "FAILED",
+        "DEAD_LETTER",
+        "CANCELLED"
+      ],
+      "freezeAtAcceptance": [
+        "DEFINITION_VERSION",
+        "MAPPING_VERSION",
+        "ENDPOINT_POLICY_REVISION",
+        "SECRET_REVISION",
+        "SOURCE_ITEM_SET_AND_DIGEST",
+        "AUTHORIZATION_REVISION",
+        "PROVIDER_IDEMPOTENCY_KEY"
+      ],
+      "resultUnknown": "DURABLE_NON_TERMINAL_EVIDENCE_STATE_NEVER_AUTO_CLASSIFIED_AS_FAILED_AND_NEVER_BLINDLY_REDISPATCHED",
+      "reconcile": "USE_ORIGINAL_PROVIDER_IDEMPOTENCY_KEY_AND_RECEIPT_REFERENCE_AND_DIGEST",
+      "retry": "CREATE_NEW_ATTEMPTS_FOR_EXACT_RETRYABLE_REJECTED_ITEM_SET_ONLY_NO_SUCCESS_REPLAY_NO_REMAPPING_DRIFT",
+      "cancel": "DIRECT_ONLY_BEFORE_DISPATCH_AFTER_DISPATCH_REQUIRES_EXPLICIT_COMPENSATION_CONTRACT_AND_RECEIPT_OR_OPERATIONS_EXCEPTION"
+    },
+    "executionTransitionMatrix": {
+      "ACCEPTED": [
+        "TRANSFORMING",
+        "CANCELLED"
+      ],
+      "TRANSFORMING": [
+        "DISPATCHED",
+        "FAILED",
+        "CANCELLED"
+      ],
+      "DISPATCHED": [
+        "ACKNOWLEDGED",
+        "RESULT_UNKNOWN",
+        "FAILED",
+        "CANCELLED"
+      ],
+      "ACKNOWLEDGED": [
+        "RECONCILING",
+        "CANCELLED"
+      ],
+      "RESULT_UNKNOWN": [
+        "RECONCILING",
+        "CANCELLED"
+      ],
+      "RECONCILING": [
+        "RECONCILED",
+        "PARTIAL",
+        "FAILED",
+        "RESULT_UNKNOWN",
+        "CANCELLED"
+      ],
+      "FAILED": [
+        "ACCEPTED",
+        "DEAD_LETTER",
+        "CANCELLED"
+      ],
+      "PARTIAL": [
+        "ACCEPTED",
+        "DEAD_LETTER",
+        "CANCELLED"
+      ],
+      "edgeGuards": {
+        "ACCEPTED->CANCELLED": "PRE_DISPATCH_ONLY",
+        "TRANSFORMING->CANCELLED": "PRE_DISPATCH_ONLY",
+        "DISPATCHED->ACKNOWLEDGED": "CONCLUSIVE_RESPONSE_BOUND_TO_THE_ORIGINAL_PROVIDER_IDEMPOTENCY_KEY_AND_REQUEST_DIGEST",
+        "DISPATCHED->RESULT_UNKNOWN": "PROVIDER_OUTCOME_IS_TIMEOUT_AMBIGUOUS_MISSING_OR_NOT_CONCLUSIVELY_BOUND_TO_THE_ORIGINAL_KEY_AND_DIGEST",
+        "DISPATCHED->FAILED": "CONCLUSIVE_SAME_KEY_PROVIDER_EVIDENCE_PROVES_FAILURE_AND_PROVES_THERE_IS_NO_UNRESOLVED_EXTERNAL_EFFECT_OTHERWISE_RESULT_UNKNOWN_IS_MANDATORY",
+        "DISPATCHED->CANCELLED": "PINNED_COMPENSATION_POLICY_AND_TERMINAL_COMPENSATION_RECEIPT_REQUIRED",
+        "ACKNOWLEDGED->CANCELLED": "PINNED_COMPENSATION_POLICY_AND_TERMINAL_COMPENSATION_RECEIPT_REQUIRED",
+        "RESULT_UNKNOWN->RECONCILING": "ORIGINAL_PROVIDER_IDEMPOTENCY_KEY_AND_RECEIPT_REF_DIGEST_REQUIRED",
+        "RESULT_UNKNOWN->CANCELLED": "PINNED_COMPENSATION_POLICY_AND_TERMINAL_COMPENSATION_RECEIPT_REQUIRED",
+        "RECONCILING->RECONCILED": "CONCLUSIVE_SAME_KEY_RECONCILIATION_EVIDENCE_AND_COUNT_DIGEST_MATCH_REQUIRED",
+        "RECONCILING->PARTIAL": "CONCLUSIVE_SAME_KEY_RECONCILIATION_EVIDENCE_WITH_EXACT_ACCEPTED_REJECTED_AND_QUARANTINED_COUNTS_AND_DIGEST_REQUIRED",
+        "RECONCILING->FAILED": "CONCLUSIVE_SAME_KEY_RECONCILIATION_EVIDENCE_PROVES_FAILURE_AND_PROVES_THERE_IS_NO_UNRESOLVED_EXTERNAL_EFFECT_OTHERWISE_RESULT_UNKNOWN_IS_MANDATORY",
+        "RECONCILING->RESULT_UNKNOWN": "ONLY_WHEN_CONCLUSIVE_PROVIDER_EVIDENCE_REMAINS_UNAVAILABLE_AND_AN_OPERATIONS_EXCEPTION_IS_RECORDED",
+        "RECONCILING->CANCELLED": "PINNED_COMPENSATION_POLICY_AND_TERMINAL_COMPENSATION_RECEIPT_REQUIRED",
+        "FAILED->ACCEPTED": "RETRY_COMMAND_ATOMICALLY_CREATES_NEW_ATTEMPTS_FOR_THE_FROZEN_FAILED_SET_AND_ADVANCES_RETRY_GENERATION",
+        "FAILED->DEAD_LETTER": "RETRY_NOT_ALLOWED_OR_BUDGET_EXHAUSTED",
+        "FAILED->CANCELLED": "NO_EXTERNAL_EFFECT_OR_PINNED_COMPENSATION_POLICY_AND_TERMINAL_COMPENSATION_RECEIPT_REQUIRED",
+        "PARTIAL->ACCEPTED": "RETRY_COMMAND_ATOMICALLY_CREATES_NEW_ATTEMPTS_FOR_THE_FROZEN_RETRYABLE_FAILED_SET_AND_ADVANCES_RETRY_GENERATION",
+        "PARTIAL->DEAD_LETTER": "RETRY_NOT_ALLOWED_OR_BUDGET_EXHAUSTED_AND_EVERY_RETRYABLE_CHILD_ITEM_ATOMICALLY_TRANSITIONS_TO_REJECTED_FINAL_WITH_NO_NEW_ATTEMPT",
+        "PARTIAL->CANCELLED": "PINNED_COMPENSATION_POLICY_AND_TERMINAL_COMPENSATION_RECEIPT_REQUIRED"
+      },
+      "terminalStates": [
+        "RECONCILED",
+        "DEAD_LETTER",
+        "CANCELLED"
+      ],
+      "terminalRule": "TERMINAL_EXECUTION_ROW_STATE_COUNTS_SELECTED_SET_DIGESTS_VERSION_BINDINGS_PROVIDER_KEY_RECONCILIATION_DIGEST_AND_COMPENSATION_EVIDENCE_CANNOT_BE_UPDATED_OR_DELETED",
+      "resultUnknownRule": "EVIDENCE_MISMATCH_LEAVES_STATE_RESULT_UNKNOWN_AND_CREATES_AN_OPERATIONS_EXCEPTION_WITHOUT_PROVIDER_REDISPATCH",
+      "retryRule": "THE_PARENT_EXECUTION_CAS_REVISION_AND_RETRY_GENERATION_ADVANCE_ONLY_IN_THE_TRANSACTION_THAT_INSERTS_NEW_ATTEMPTS_PRIOR_ATTEMPTS_AND_SUCCESSFUL_ITEMS_NEVER_MUTATE",
+      "cancelRule": "POST_DISPATCH_CANCEL_CANNOT_REACH_CANCELLED_UNLESS_THE_PINNED_COMPENSATION_POLICY_AND_TERMINAL_COMPENSATION_RECEIPT_PROVE_THE_EXTERNAL_EFFECT_WAS_RESOLVED",
+      "postDispatchFailureRule": "EVERY_FAILED_EDGE_AFTER_DISPATCH_REQUIRES_CONCLUSIVE_EVIDENCE_BOUND_TO_THE_ORIGINAL_PROVIDER_KEY_REQUEST_DIGEST_AND_RECEIPT_AND_PROOF_NO_EXTERNAL_EFFECT_REMAINS_UNRESOLVED_AMBIGUOUS_OR_MISSING_EVIDENCE_MUST_ENTER_OR_REMAIN_RESULT_UNKNOWN"
+    },
+    "executionItemTransitionMatrix": {
+      "PENDING": [
+        "TRANSFORMED",
+        "REJECTED_RETRYABLE",
+        "REJECTED_FINAL",
+        "CANCELLED"
+      ],
+      "TRANSFORMED": [
+        "DISPATCHED",
+        "CANCELLED"
+      ],
+      "DISPATCHED": [
+        "RESULT_UNKNOWN",
+        "ACCEPTED",
+        "REJECTED_RETRYABLE",
+        "REJECTED_FINAL",
+        "CANCELLED"
+      ],
+      "RESULT_UNKNOWN": [
+        "ACCEPTED",
+        "REJECTED_RETRYABLE",
+        "REJECTED_FINAL",
+        "RECONCILED",
+        "CANCELLED"
+      ],
+      "ACCEPTED": [
+        "RECONCILED",
+        "CANCELLED"
+      ],
+      "REJECTED_RETRYABLE": [
+        "DISPATCHED",
+        "REJECTED_FINAL",
+        "CANCELLED"
+      ],
+      "edgeGuards": {
+        "PENDING->CANCELLED": "PRE_DISPATCH_ONLY",
+        "TRANSFORMED->CANCELLED": "PRE_DISPATCH_ONLY",
+        "DISPATCHED->RESULT_UNKNOWN": "PROVIDER_ITEM_OUTCOME_IS_AMBIGUOUS_MISSING_OR_NOT_BOUND_TO_THE_ORIGINAL_ATTEMPT_KEY_AND_DIGEST",
+        "DISPATCHED->ACCEPTED": "CONCLUSIVE_SAME_KEY_PROVIDER_ITEM_ACCEPTANCE_EVIDENCE_REQUIRED",
+        "DISPATCHED->REJECTED_RETRYABLE": "CONCLUSIVE_SAME_KEY_PROVIDER_ITEM_REJECTION_EVIDENCE_AND_RETRYABLE_CLASSIFICATION_REQUIRED",
+        "DISPATCHED->REJECTED_FINAL": "CONCLUSIVE_SAME_KEY_PROVIDER_ITEM_REJECTION_EVIDENCE_AND_FINAL_CLASSIFICATION_REQUIRED",
+        "DISPATCHED->CANCELLED": "PARENT_TERMINAL_COMPENSATION_RECEIPT_COVERS_THIS_ITEM_EFFECT",
+        "RESULT_UNKNOWN->ACCEPTED": "SAME_KEY_RECONCILIATION_ONLY",
+        "RESULT_UNKNOWN->REJECTED_RETRYABLE": "SAME_KEY_RECONCILIATION_ONLY",
+        "RESULT_UNKNOWN->REJECTED_FINAL": "SAME_KEY_RECONCILIATION_ONLY",
+        "RESULT_UNKNOWN->RECONCILED": "SAME_KEY_RECONCILIATION_ONLY",
+        "RESULT_UNKNOWN->CANCELLED": "TERMINAL_COMPENSATION_RECEIPT_REQUIRED",
+        "ACCEPTED->CANCELLED": "TERMINAL_COMPENSATION_RECEIPT_REQUIRED",
+        "REJECTED_RETRYABLE->DISPATCHED": "NEW_MONOTONIC_ATTEMPT_WITH_IDENTICAL_ITEM_MAPPING_AND_SOURCE_DIGESTS_REQUIRED",
+        "REJECTED_RETRYABLE->REJECTED_FINAL": "RETRY_NOT_ALLOWED_OR_BUDGET_EXHAUSTED",
+        "REJECTED_RETRYABLE->CANCELLED": "PARENT_EXECUTION_CANCEL_ACCEPTED_AND_NO_UNRESOLVED_PROVIDER_EFFECT"
+      },
+      "terminalStates": [
+        "REJECTED_FINAL",
+        "RECONCILED",
+        "CANCELLED"
+      ],
+      "terminalRule": "TERMINAL_ITEM_STATE_SOURCE_KEY_SOURCE_DIGEST_TRANSFORMED_DIGEST_PROVIDER_ITEM_KEY_PROVIDER_RECEIPT_AND_FAILURE_CLASS_CANNOT_BE_UPDATED_OR_DELETED"
+    },
+    "executionAttemptTransitionMatrix": {
+      "READY": [
+        "DISPATCHED",
+        "CANCELLED"
+      ],
+      "DISPATCHED": [
+        "RESULT_UNKNOWN",
+        "ACKNOWLEDGED",
+        "FAILED",
+        "CANCELLED"
+      ],
+      "RESULT_UNKNOWN": [
+        "RECONCILED",
+        "FAILED",
+        "CANCELLED"
+      ],
+      "ACKNOWLEDGED": [
+        "RECONCILED",
+        "FAILED",
+        "CANCELLED"
+      ],
+      "edgeGuards": {
+        "READY->CANCELLED": "PRE_DISPATCH_ONLY",
+        "DISPATCHED->RESULT_UNKNOWN": "PROVIDER_OUTCOME_IS_TIMEOUT_AMBIGUOUS_MISSING_OR_NOT_CONCLUSIVELY_BOUND_TO_THIS_ATTEMPT_KEY_AND_REQUEST_DIGEST",
+        "DISPATCHED->ACKNOWLEDGED": "CONCLUSIVE_RESPONSE_BOUND_TO_THIS_ATTEMPT_PROVIDER_KEY_AND_REQUEST_DIGEST",
+        "DISPATCHED->FAILED": "CONCLUSIVE_SAME_KEY_PROVIDER_EVIDENCE_PROVES_FAILURE_AND_PROVES_THERE_IS_NO_UNRESOLVED_EXTERNAL_EFFECT_OTHERWISE_RESULT_UNKNOWN_IS_MANDATORY",
+        "DISPATCHED->CANCELLED": "PARENT_TERMINAL_COMPENSATION_RECEIPT_COVERS_THIS_ATTEMPT_EFFECT",
+        "RESULT_UNKNOWN->RECONCILED": "ORIGINAL_PROVIDER_KEY_AND_RECEIPT_REF_DIGEST_RECONCILIATION_ONLY",
+        "RESULT_UNKNOWN->FAILED": "CONCLUSIVE_SAME_KEY_RECONCILIATION_ONLY",
+        "RESULT_UNKNOWN->CANCELLED": "TERMINAL_COMPENSATION_RECEIPT_REQUIRED",
+        "ACKNOWLEDGED->CANCELLED": "TERMINAL_COMPENSATION_RECEIPT_REQUIRED"
+      },
+      "terminalStates": [
+        "RECONCILED",
+        "FAILED",
+        "CANCELLED"
+      ],
+      "newAttemptRule": "RETRY_INSERTS_ATTEMPT_NUMBER_PREVIOUS_PLUS_ONE_WITH_A_NEW_PUBLIC_ID_AND_FENCE_BUT_THE_SAME_EXECUTION_ITEM_MAPPING_SOURCE_DIGEST_AND_FAILED_SET_MEMBERSHIP_PRIOR_ATTEMPTS_NEVER_REOPEN",
+      "terminalRule": "TERMINAL_ATTEMPT_STATE_REQUEST_DIGEST_PROVIDER_KEY_PROVIDER_RECEIPT_RESPONSE_DIGEST_RECONCILIATION_DIGEST_FENCE_AND_TIMESTAMPS_CANNOT_BE_UPDATED_OR_DELETED",
+      "postDispatchFailureRule": "AMBIGUOUS_OR_UNBOUND_PROVIDER_EVIDENCE_CANNOT_SELECT_FAILED_AND_MUST_SELECT_RESULT_UNKNOWN"
+    },
+    "transitionEnforcement": {
+      "application": "EXPECTED_AGGREGATE_REVISION_AND_MONOTONIC_ATTEMPT_FENCE_CAS",
+      "database": "V334_TRIGGER_REJECTS_ANY_TRANSITION_NOT_LISTED_ABOVE_ANY_TERMINAL_UPDATE_OR_DELETE_ANY_FROZEN_DIGEST_OR_VERSION_MUTATION_AND_ANY_POST_DISPATCH_CANCEL_WITHOUT_COMPENSATION_EVIDENCE",
+      "transaction": "STATE_CHANGE_ITEM_CHANGE_ATTEMPT_INSERT_OR_UPDATE_COMMAND_RECEIPT_AUDIT_OUTBOX_AND_SYS_EVT_005_OUTBOX_COMMIT_ATOMICALLY",
+      "cancelCascade": "WHEN_A_PARENT_CANCEL_REACHES_CANCELLED_THE_SAME_TRANSACTION_CLOSES_EVERY_NONTERMINAL_ITEM_IN_PENDING_TRANSFORMED_DISPATCHED_RESULT_UNKNOWN_ACCEPTED_OR_REJECTED_RETRYABLE_AND_EVERY_NONTERMINAL_ATTEMPT_IN_READY_DISPATCHED_RESULT_UNKNOWN_OR_ACKNOWLEDGED_AS_CANCELLED_USING_PREDISPATCH_PROOF_OR_THE_TERMINAL_COMPENSATION_RECEIPT_AS_REQUIRED_ALREADY_TERMINAL_REJECTED_FINAL_RECONCILED_FAILED_OR_CANCELLED_HISTORY_REMAINS_IMMUTABLE_AND_NO_CHILD_IS_LEFT_RUNNABLE_RETRYABLE_OR_UNKNOWN",
+      "workerRecovery": "A_STALE_OR_CRASHED_WORKER_CANNOT_REUSE_A_FENCE_DISPATCH_PROVIDER_EFFECT_OR_COMMIT_A_RESULT",
+      "directSql": "TARGETED_NEGATIVE_TESTS_EXECUTE_INVALID_REGRESSION_TERMINAL_OVERWRITE_TERMINAL_DELETE_SUCCESS_ITEM_REPLAY_STALE_FENCE_AND_COMPENSATION_BYPASS_AS_THE_RUNTIME_ROLE"
+    },
+    "separationOfDuties": {
+      "authorRole": "HRIS_INTEGRATION_AUTHOR",
+      "approvalAndExecutionRole": "HRIS_INTEGRATION_EXECUTOR",
+      "forbidden": [
+        "AUTHOR_APPROVES_OWN_DEFINITION_OR_MAPPING",
+        "AUTHOR_ACTIVATES_OWN_VERSION",
+        "AUTHOR_EXECUTES_OWN_MAPPING",
+        "APPROVER_AND_AUTHOR_SHARE_THE_SAME_ACTOR_FOR_THE_SAME_SUBJECT_REVISION"
+      ]
+    }
+  },
+  "receiptDecision": {
+    "sharedStore": "sys_hris_command_receipts",
+    "newGenericReceiptTable": false,
+    "identityImmutability": "TENANT_COMMAND_TYPE_IDEMPOTENCY_KEY_REQUEST_DIGEST_AND_SUBJECT_BINDING_ARE_IMMUTABLE",
+    "statusEnum": [
+      "ACCEPTED",
+      "RUNNING",
+      "SUCCEEDED",
+      "REJECTED",
+      "FAILED",
+      "RESULT_UNKNOWN"
+    ],
+    "allowedTransitions": [
+      "ACCEPTED_TO_RUNNING",
+      "RUNNING_TO_SUCCEEDED_OR_REJECTED_OR_FAILED_OR_RESULT_UNKNOWN"
+    ],
+    "resultUnknownResolution": "ORIGINAL_RESULT_UNKNOWN_RECEIPT_IS_TERMINAL_AND_IMMUTABLE_A_NEW_RECONCILE_COMMAND_RECEIPT_RESOLVES_EXECUTION_STATE_WITHOUT_MUTATING_THE_ORIGINAL_RECEIPT",
+    "sameKeySameDigest": "RETURN_EXISTING_RECEIPT_WITHOUT_REEXECUTION",
+    "sameKeyDifferentDigest": "HTTP_409_WITHOUT_MUTATION",
+    "readAuthorization": "RECHECK_ORIGINAL_AUTHORITY_CURRENT_AUTHORITY_TENANT_SCOPE_POPULATION_PURPOSE_AND_FIELD_POLICY",
+    "opaqueDeniedRead": "HTTP_404",
+    "terminalGuard": "TERMINAL_RECEIPTS_AND_RECONCILED_DEAD_LETTER_OR_CANCELLED_EXECUTION_FACTS_AND_ALL_TERMINAL_ITEM_AND_ATTEMPT_FACTS_ARE_IMMUTABLE",
+    "safeStorageOnly": [
+      "OPAQUE_SECRET_REFERENCE",
+      "POLICY_REFERENCE_AND_REVISION",
+      "CANONICAL_DIGEST",
+      "COUNT",
+      "SAFE_RECEIPT_REFERENCE_AND_DIGEST",
+      "CORRELATION_AND_AUTHORIZATION_REVISION"
+    ],
+    "forbiddenStorage": [
+      "PLAINTEXT_SECRET_OR_TOKEN",
+      "CERTIFICATE_PRIVATE_MATERIAL",
+      "RAW_PROVIDER_REQUEST_OR_RESPONSE",
+      "RAW_MAPPING_BODY",
+      "RAW_SOURCE_PAYLOAD",
+      "EMPLOYEE_ITEM_IDENTITY_IN_GENERIC_AUDIT_OR_EVENT"
+    ]
+  },
+  "eventDecision": {
+    "eventId": "SYS-EVT-005",
+    "eventType": "dwp.hris.connector.execution.state-changed.v1",
+    "schemaDialect": "JSON_SCHEMA_DRAFT_2020_12",
+    "envelope": "DEP003_EVENT_ENVELOPE_OUTBOX_INBOX_V1",
+    "payload": [
+      "executionPublicId",
+      "state",
+      "sourceCount",
+      "acceptedCount",
+      "rejectedCount",
+      "quarantinedCount",
+      "reconciliationDigest"
+    ],
+    "forbiddenPayload": [
+      "TENANT_FROM_UNTRUSTED_INPUT",
+      "CONNECTOR_ENDPOINT",
+      "SECRET_REFERENCE_OR_VALUE",
+      "MAPPING_BODY",
+      "PROVIDER_RAW_PAYLOAD",
+      "EMPLOYEE_ITEM_IDENTITY",
+      "ACTOR_DISPLAY_DATA"
+    ],
+    "ordering": "PER_EXECUTION_REVISION_MONOTONIC",
+    "dedupe": "EVENT_ID",
+    "atomicity": "VALIDATE_AND_APPEND_OUTBOX_IN_SAME_TRANSACTION_AS_STATE_TRANSITION",
+    "gap": "CLOSED_TYPED_SYS_EVT_005_SCHEMA_MUST_BE_AUTHORED_IN_THE_NEXT_APPEND_ONLY_CENTRAL_SUCCESSOR_BEFORE_SOURCE"
+  },
+  "migrationDecision": {
+    "stream": "PLATFORM_MAIN",
+    "observedHighWater": "V333",
+    "required": true,
+    "reason": "NO_CANONICAL_SYS008_ROUTE_IMPLEMENTATION_OR_SYS_CONNECTOR_PERSISTENCE_EXISTS_AND_LEGACY_PRODUCTIVITY_TABLES_HAVE_DIFFERENT_MICROSOFT_365_OWNERSHIP",
+    "candidateVersion": "V334",
+    "leaseState": "NOT_ISSUED",
+    "blueprintCorrection": {
+      "historicalFiveTableBlueprint": [
+        "sys_connector_definitions",
+        "sys_connector_mapping_versions",
+        "sys_connector_executions",
+        "sys_connector_execution_items",
+        "sys_connector_execution_attempts"
+      ],
+      "problem": "HISTORICAL_SYS_CONNECTOR_DEFINITIONS_ROW_IS_MUTABLE_AND_CANNOT_PROVE_IMMUTABLE_DEFINITION_VERSIONS",
+      "sealedSixTableModel": [
+        "sys_connector_definitions",
+        "sys_connector_definition_versions",
+        "sys_connector_mapping_versions",
+        "sys_connector_executions",
+        "sys_connector_execution_items",
+        "sys_connector_execution_attempts"
+      ],
+      "resolution": "LOGICAL_AGGREGATE_AND_ACTIVE_VERSION_POINTER_STAY_IN_SYS_CONNECTOR_DEFINITIONS_WHILE_ALL_DEFINITION_SUBJECT_FIELDS_AND_LIFECYCLE_EVIDENCE_ARE_VERSIONED_IN_SYS_CONNECTOR_DEFINITION_VERSIONS"
+    },
+    "requiredPhysicalControls": [
+      "TENANT_FIRST_COMPOSITE_PRIMARY_AND_FOREIGN_KEYS",
+      "ENABLE_AND_FORCE_ROW_LEVEL_SECURITY",
+      "PUBLIC_PRIVILEGES_REVOKED",
+      "RUNTIME_ROLE_NOINHERIT_AND_NOBYPASSRLS",
+      "TRUSTED_GATEWAY_TENANT_CONTEXT_ONLY",
+      "ONE_ACTIVE_DEFINITION_VERSION_PER_LOGICAL_CONNECTOR",
+      "ONE_ACTIVE_MAPPING_VERSION_PER_CONNECTOR_AND_MAPPING_KEY",
+      "CHECKED_STATE_COUNT_AND_DIGEST_CONSTRAINTS",
+      "CAS_REVISION_ON_MUTABLE_AGGREGATE_POINTER_AND_LIFECYCLE_EVIDENCE",
+      "NO_RAW_SECRET_MAPPING_OR_PROVIDER_PAYLOAD_COLUMNS",
+      "DATABASE_TRIGGER_REJECTS_DELETE_OR_SUBJECT_COLUMN_UPDATE_ON_DEFINITION_AND_MAPPING_VERSION_ROWS",
+      "TENANT_CONNECTOR_PROVIDER_OPERATION_AND_PROVIDER_IDEMPOTENCY_KEY_UNIQUE_BINDING_WITH_REQUEST_DIGEST_MATCH",
+      "MONOTONIC_ATTEMPT_FENCE_REJECTS_STALE_WORKER_DISPATCH_AND_RECEIPT_COMMIT",
+      "SHARED_COMMAND_RECEIPT_TRIGGER_REJECTS_ILLEGAL_STATUS_TRANSITIONS_AND_ANY_TERMINAL_ROW_UPDATE",
+      "EXECUTION_ITEM_AND_ATTEMPT_TRIGGERS_ENFORCE_THE_SEALED_TRANSITION_MATRICES_CAS_FENCES_FROZEN_FIELDS_TERMINAL_IMMUTABILITY_AND_COMPENSATION_GUARDS"
+    ],
+    "exactEvidencePersistence": {
+      "definitionAggregate": "LOGICAL_IDENTITY_ACTIVE_VERSION_POINTER_AND_AGGREGATE_REVISION_ONLY",
+      "definitionVersion": "IMMUTABLE_DEFINITION_ENDPOINT_POLICY_SECRET_REF_AND_DIGEST_PLUS_APPEND_ONLY_LIFECYCLE_EVIDENCE",
+      "mappingVersion": "IMMUTABLE_SCHEMA_MAPPING_DIRECTION_INBOUND_OR_OUTBOUND_AND_DRY_RUN_EVIDENCE_DIRECTION_IS_DERIVED_FROM_VERIFIED_MAPPING_REF_METADATA_BOUND_TO_MAPPING_DIGEST_AND_CANNOT_BE_CHANGED_AFTER_VERSION_CREATION",
+      "execution": "FROZEN_VERSIONS_SOURCE_DIGEST_PROVIDER_KEY_COUNTS_STATE_AND_RECONCILIATION_DIGEST",
+      "executionItem": "OPAQUE_ITEM_PUBLIC_ID_DIGEST_STATE_AND_FAILURE_CLASS_WITHOUT_RAW_DOMAIN_VALUE",
+      "attempt": "ATTEMPT_NUMBER_FENCE_PROVIDER_RECEIPT_REF_DIGEST_STATE_AND_TIMESTAMPS"
+    },
+    "reuseOnly": [
+      "sys_hris_command_receipts",
+      "SHARED_EVENT_OUTBOX_AND_INBOX",
+      "SHARED_AUDIT_OUTBOX_AND_EVENTS",
+      "SHARED_OPERATIONS_EXCEPTION_PROJECTION"
+    ],
+    "sharedReceiptHardening": {
+      "sourceMigration": "V327",
+      "existingFunction": "sys_hris_guard_command_receipt_seal",
+      "existingTrigger": "trg_sys_hris_command_receipt_seal",
+      "gap": "IDENTITY_FIELDS_AND_DELETE_ARE_GUARDED_BUT_STATUS_RESULT_ERROR_AGGREGATE_AND_COMPLETION_FIELDS_CAN_BE_REWRITTEN_OR_ROLLED_BACK",
+      "requiredV334Action": "APPEND_ONLY_CREATE_OR_REPLACE_GUARD_FUNCTION_WITHOUT_EDITING_V327_CHECKSUM",
+      "allowedReceiptTransitions": [
+        "ACCEPTED_TO_RUNNING",
+        "RUNNING_TO_SUCCEEDED",
+        "RUNNING_TO_REJECTED",
+        "RUNNING_TO_FAILED",
+        "RUNNING_TO_RESULT_UNKNOWN"
+      ],
+      "terminalStatuses": [
+        "SUCCEEDED",
+        "REJECTED",
+        "FAILED",
+        "RESULT_UNKNOWN"
+      ],
+      "terminalRule": "NO_UPDATE_OR_DELETE_OF_ANY_TERMINAL_ROW_AND_NO_STATUS_ROLLBACK",
+      "compatibilityRule": "TARGETED_EXISTING_RECEIPT_PRODUCER_TRANSITION_TESTS_MUST_PASS_BEFORE_V334_ADMISSION"
+    },
+    "forbidden": [
+      "AUTHOR_V334_BEFORE_EXCLUSIVE_LEASE",
+      "COPY_HISTORICAL_FIVE_TABLE_SQL_WITH_MUTABLE_DEFINITION_ROW",
+      "CREATE_PARALLEL_RECEIPT_AUDIT_OR_EVENT_LEDGER",
+      "CREATE_CROSS_SERVICE_FOREIGN_KEYS",
+      "ALTER_PRIOR_MIGRATION_CHECKSUM"
+    ]
+  },
+  "authorizationDecision": {
+    "commonChain": [
+      "GATEWAY_APP_ENTITLEMENT",
+      "OWNER_API_OPERATION",
+      "RESOURCE_POPULATION",
+      "REPOSITORY_TENANT_PREDICATE",
+      "FIELD_PROJECTION",
+      "PURPOSE_POLICY",
+      "AUDIT_DECISION"
+    ],
+    "pageCapability": "hcm.configuration.workbench.view",
+    "pageAccessPackage": "HRIS_CONFIG_AUTHOR>HRIS_DUTY_CONFIGURATION_WORKBENCH_READER",
+    "definitionAuthoringHistoricalBinding": "hcm.integration.definition.update",
+    "definitionAuthoringMissingInV59": true,
+    "executionHistoricalBinding": "hcm.integration.execute",
+    "executionKeyConflictInV59": true,
+    "conflictResolution": "NEXT_CENTRAL_SUCCESSOR_MUST_NOT_CHANGE_EXISTING_HCM_INTEGRATION_EXECUTE_MEANING_AND_MUST_EITHER_SEAL_A_NEW_SYS008_EXECUTION_CAPABILITY_KEY_OR_APPEND_ONLY_CORRECT_ALL_EXACT_PEP_BINDINGS",
+    "candidateBundleVersion": 60,
+    "candidateAuthMigration": "V269",
+    "candidateOnlyNotReserved": true,
+    "directCallBypassForbidden": true,
+    "browserTenantOrAuthorityTrusted": false,
+    "featureKey": "HRIS_INTEGRATION_CONTROL_PLANE",
+    "defaultEnabled": false,
+    "enrolledTenants": 0,
+    "providerBindings": 0
+  },
+  "acceptanceCriteria": [
+    {
+      "id": "SYS008-AC-01",
+      "statement": "SYS-API-021 through 025 and 057 through 068 use the exact closed request response Problem receipt headers status and route contracts without browser-supplied tenant authority."
+    },
+    {
+      "id": "SYS008-AC-02",
+      "statement": "IAQ-057 and IAQ-062 derive from one owner query and persistence truth, return the same itemPublicId and EFFECTIVE_STATUS revision, retain owner receipt only as non-serialized server lineage, and receive no duplicate implementation or completion credit."
+    },
+    {
+      "id": "SYS008-AC-03",
+      "statement": "Both IAQs enforce their distinct field groups, exact filters, eight sorts, limit 1 through 100, stable itemPublicId order, revision-bound cursor and COMPLETE EMPTY PARTIAL UNAVAILABLE state invariants."
+    },
+    {
+      "id": "SYS008-AC-04",
+      "statement": "The seven-layer PEP chain and field-policy decision execute before serialization; VIEW MASK OMIT and server action descriptors cannot be bypassed by direct calls or client inference."
+    },
+    {
+      "id": "SYS008-AC-05",
+      "statement": "Connector and mapping subject data are immutable versions and validate test or dry-run submit approve activate transitions require current digest evidence separate actors and expected-revision CAS."
+    },
+    {
+      "id": "SYS008-AC-06",
+      "statement": "Static and dynamic separation of duties reject self approval self activation and execution of an own unapproved mapping across the same tenant connector set and legal entity."
+    },
+    {
+      "id": "SYS008-AC-07",
+      "statement": "Connection tests and dry-runs neither dispatch production provider effects nor write domain data; endpoint allowlisting SSRF and DNS-rebinding defenses plus tenant connector purpose type namespace digest and authorization binding reject cross-tenant or arbitrary opaque-reference substitution without secret or provider payload exposure."
+    },
+    {
+      "id": "SYS008-AC-08",
+      "statement": "Execution acceptance atomically freezes definition version mapping version endpoint policy secret revision source item-set digest provider idempotency key authorization revision and the original command receipt; a tenant connector provider-operation unique key and monotonic attempt fence prevent duplicate or stale-worker provider effects."
+    },
+    {
+      "id": "SYS008-AC-09",
+      "statement": "A provider timeout becomes durable RESULT_UNKNOWN and may be reconciled only with the original provider key and receipt evidence; blind redispatch and a new provider key are rejected."
+    },
+    {
+      "id": "SYS008-AC-10",
+      "statement": "Retry creates new attempts for the exact retryable failed-item set only and never replays successful items or changes their mapping; cancel is direct only before dispatch and otherwise requires explicit compensation."
+    },
+    {
+      "id": "SYS008-AC-11",
+      "statement": "SYS-EVT-005 is validated and appended atomically with the execution transition, uses eventId dedupe, exposes only public execution state counts and reconciliation digest, and excludes secrets raw payload and employee identity."
+    },
+    {
+      "id": "SYS008-AC-12",
+      "statement": "The six Platform-owned tables pass V333-to-V334 and clean-V334 migration checks, tenant RLS and ACL negatives, composite-FK tests, direct-SQL immutable-version and execution-item-attempt invalid-transition terminal-overwrite delete result-unknown-regression success-replay compensation-bypass negatives, provider-key uniqueness and stale-fence negatives, append-only shared-receipt terminal-transition guards, checksum preservation and forbidden-column scanning."
+    },
+    {
+      "id": "SYS008-AC-13",
+      "statement": "The HRIS Settings and DWP Control UI variants use the same workbench owner truth, preserve product HCM deep links, separate read and command errors, and render no commands for stale partial unavailable or denied evidence."
+    },
+    {
+      "id": "SYS008-AC-14",
+      "statement": "The UI passes keyboard screen-reader 1440 1280 390 and 320 pixel layouts 200 percent zoom light dark forced-colors and reduced-motion checks without nested main landmarks."
+    },
+    {
+      "id": "SYS008-AC-15",
+      "statement": "The feature remains default OFF with zero enrolled tenants zero real providers zero route or menu activation and zero SYS-008 API calls when not authorized or not mounted."
+    }
+  ],
+  "acceptanceEvidencePlan": {
+    "goldenScenarios": [
+      "SYS-GOLD-003",
+      "SYS-GOLD-008",
+      "SYS-GOLD-020",
+      "SYS-GOLD-021",
+      "SYS-GOLD-022",
+      "SYS-GOLD-023",
+      "SYS-GOLD-024",
+      "SYS-GOLD-032",
+      "SYS-GOLD-040",
+      "SYS-GOLD-045",
+      "SYS-GOLD-054",
+      "SYS-GOLD-055",
+      "SYS-GOLD-056"
+    ],
+    "targetedProofThemes": [
+      "MIGRATION_CONTRACT_AND_CLEAN_AND_UPGRADE_POSTGRESQL",
+      "TENANT_RLS_COMPOSITE_KEY_AND_ACL_NEGATIVE_TESTS",
+      "DEFINITION_AND_MAPPING_IMMUTABILITY_LIFECYCLE_AND_SOD",
+      "ENDPOINT_EGRESS_SSRF_DNS_REBINDING_AND_SECRET_NON_DISCLOSURE",
+      "OPAQUE_REFERENCE_TENANT_CONNECTOR_PURPOSE_TYPE_NAMESPACE_DIGEST_AND_AUTHORIZATION_SUBSTITUTION_NEGATIVES",
+      "RECEIPT_IDEMPOTENCY_RESULT_UNKNOWN_AND_SAME_KEY_RECOVERY",
+      "FAILED_ONLY_RETRY_CANCEL_COMPENSATION_AND_WORKER_CRASH_RECOVERY",
+      "EXECUTION_ITEM_ATTEMPT_TRANSITION_MATRIX_CAS_TERMINAL_AND_DIRECT_SQL_NEGATIVES",
+      "SYS_EVT_005_EXACT_PAYLOAD_ATOMIC_OUTBOX_AND_INBOX_DEDUPE",
+      "IAQ_057_AND_IAQ_062_SINGLE_OWNER_QUERY_CONTRACT",
+      "VIEW_MASK_OMIT_CURSOR_ACTION_AND_SCOPE_CHANGE_NEGATIVE_TESTS",
+      "FRONTEND_STATE_ACCESSIBILITY_RESPONSIVE_AND_DEFAULT_OFF_TESTS",
+      "LOG_DATABASE_DOM_AND_EVENT_FORBIDDEN_SECRET_PAYLOAD_SCAN"
+    ],
+    "verificationPolicy": "RUN_CHANGED_SURFACE_TARGETS_AND_CONTRACT_NEGATIVES_FIRST_EXPAND_ONLY_IF_A_TARGETED_FAILURE_PROVES_BROADER_IMPACT_NO_REPEATED_REPOSITORY_WIDE_LOOP"
+  },
+  "centralSuccessorRequirements": {
+    "appendOnly": true,
+    "requiredBeforeOwnerPacket": [
+      "CLOSE_SYS_EVT_005_DRAFT_2020_12_TRANSPORT_SCHEMA",
+      "SEAL_THE_SIX_TABLE_IMMUTABLE_DEFINITION_VERSION_MODEL_AND_EXPLICITLY_SUPERSEDE_THE_MUTABLE_FIVE_TABLE_BLUEPRINT",
+      "SEAL_SERVER_SIDE_TENANT_CONNECTOR_PURPOSE_TYPE_NAMESPACE_DIGEST_AND_AUTHORIZATION_BINDING_FOR_EVERY_OPAQUE_REFERENCE_WITH_SUBSTITUTION_NEGATIVES",
+      "SEAL_DIRECT_SQL_IMMUTABLE_VERSION_GUARDS_PROVIDER_IDEMPOTENCY_UNIQUENESS_MONOTONIC_DISPATCH_FENCES_AND_APPEND_ONLY_SHARED_RECEIPT_TERMINAL_GUARDS",
+      "SEAL_EXECUTION_ITEM_AND_ATTEMPT_ALLOWED_TRANSITION_MATRICES_TERMINAL_SETS_FROZEN_FIELDS_CAS_RETRY_GENERATION_AND_POST_DISPATCH_COMPENSATION_GUARDS",
+      "SEAL_DEP006_PROVIDER_AND_CONSUMER_TYPED_ARTIFACT_TEST_BINDINGS_WITHOUT_DUPLICATE_DOMAIN_TYPES",
+      "SEAL_THE_EXACT_TOTAL_OWNER_TO_DEP006_STATE_PROJECTION_AND_FORBID_REVERSE_INFERENCE_FROM_COARSER_DEP006_ENUMS",
+      "SEAL_THE_EXACT_TOTAL_SYS_API_023_AND_SYS_API_024_TO_PDX008_MODE_DIRECTION_SOURCE_PROJECTION_AND_FORBID_REVERSE_INTENT_INFERENCE",
+      "SEAL_IMMUTABLE_MAPPING_DIRECTION_PROVENANCE_FROM_VERIFIED_MAPPING_REF_METADATA_AND_THE_EXACT_TENANT_OR_LEGAL_ENTITY_PDX008_SCOPE_PROJECTION_WITH_NULLABILITY_AND_INHERITANCE_RULES",
+      "SEAL_IAQ057_AND_IAQ062_SINGLE_OWNER_QUERY_AND_TWO_POLICY_PROJECTIONS",
+      "RESOLVE_HCM_INTEGRATION_EXECUTE_COLLISION_WITHOUT_MUTATING_ITS_EXISTING_V59_MEANING",
+      "DECLARE_EXACT_PAGE_DATA_ACTION_ACCESS_PACKAGE_ROUTE_AND_PEP_BINDINGS_DEFAULT_OFF",
+      "SUPERSEDE_STALE_ATOMIC_DUTY_REFERENCES_TO_DWP_PEOPLE_SERVER_AND_V31_WITH_DWP_PLATFORM_SERVER_AND_V334_CANDIDATE",
+      "REQUIRE_AN_INDEPENDENT_ZERO_P0_ZERO_P1_ZERO_P2_REVIEW_AND_CENTRAL_ADMISSION"
+    ],
+    "candidateVersions": {
+      "productAuthorizationBundle": 60,
+      "authMigration": "V269",
+      "platformMigration": "V334"
+    },
+    "candidateVersionsAreReservations": false,
+    "historicalMutation": "FORBIDDEN",
+    "sourceImplementationAfterSemanticReview": "CENTRAL_SUCCESSOR_ONLY_NO_OWNER_SOURCE_UNTIL_SUCCESSOR_ADMISSION_PACKET_TOKEN_WORKTREES_AND_EXCLUSIVE_V334_LEASE"
+  },
+  "activationBoundary": {
+    "featureKey": "HRIS_INTEGRATION_CONTROL_PLANE",
+    "defaultEnabled": false,
+    "enrolledTenants": 0,
+    "frontendChildSurfaceMounted": false,
+    "frontendSidebarNodeAdded": false,
+    "routeAdmission": false,
+    "productionProviderBindings": 0,
+    "customerEndpointOrSecretBindings": 0,
+    "businessCompletionIncrement": 0,
+    "customerDataAuthorized": false
+  },
+  "authority": {
+    "semanticDispositionSealed": true,
+    "schemaDeltaProven": true,
+    "independentReviewRequired": true,
+    "boundedCentralContractSuccessorMayBeAuthoredAfterReview": true,
+    "centralSourceAuthoringAuthorizedNow": false,
+    "ownerPacketAuthorizedNow": false,
+    "moduleSourceAuthoringAuthorizedNow": false,
+    "migrationReservationAuthorizedNow": false,
+    "migrationAuthoringAuthorizedNow": false,
+    "worktreeMaterializationAuthorizedNow": false,
+    "startTokenAuthorizedNow": false,
+    "routeOrMenuMountAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "realProviderBindingAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nonClaims": [
+    "The historical registers schemas G2 evidence or prior migration checksums were mutated.",
+    "Product authorization v60 Auth V269 or Platform V334 has been reserved authored admitted or executed.",
+    "A central successor owner packet token lease branch or worktree exists.",
+    "A module or central source change has started.",
+    "IAQ-057 IAQ-062 SYS-EVT-005 or DEP-006 is implemented or complete.",
+    "The existing generic ProductivityConnectorManager is a SYS-008 owner surface or completion evidence.",
+    "The Settings or DWP Control child surface route action or menu is mounted.",
+    "A real provider endpoint secret mapping customer payload or tenant is enrolled.",
+    "Generic SYS-008 availability releases BASE-TFR-PAY-002.",
+    "SYS-008 Batch-05 R7 or HRIS is complete."
+  ],
+  "nextGate": "INDEPENDENTLY_REVIEW_THIS_SEALED_DISPOSITION_THEN_AUTHOR_SEAL_AND_INDEPENDENTLY_REVIEW_ONE_APPEND_ONLY_SYS008_IAQ_TRANSPORT_EVENT_AND_CENTRAL_AUTHORIZATION_SUCCESSOR_BEFORE_ANY_PACKET_TOKEN_LEASE_WORKTREE_OR_MODULE_SOURCE"
+}

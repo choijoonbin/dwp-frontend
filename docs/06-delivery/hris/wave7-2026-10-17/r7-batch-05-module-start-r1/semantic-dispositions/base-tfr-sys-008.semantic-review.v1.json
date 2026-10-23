@@ -1,0 +1,80 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-05-sys008-semantic-review.v1",
+  "reviewId": "HRIS-WAVE7-R7-BATCH-05-SYS008-SEMANTIC-REVIEW-20261023-R1",
+  "recordedAt": "2026-10-23T16:29:30+09:00",
+  "recordedBy": "INDEPENDENT_SYS008_SEMANTIC_REVIEW",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ID_AND_SHA256"
+  },
+  "state": "SYS008_SEMANTIC_DISPOSITION_INDEPENDENTLY_REVIEWED_PASS_ZERO_P0_ZERO_P1_ZERO_P2_CENTRAL_SUCCESSOR_MAY_PROCEED",
+  "sliceId": "BASE-TFR-SYS-008",
+  "reviewedArtifact": {
+    "path": "base-tfr-sys-008.semantic-disposition.v1.json",
+    "sha256": "35e8b1ad256ad16ca8a653f0770366e5f58818a38f8da78c15774fd186eff65c",
+    "bytes": 68721,
+    "requiredState": "SYS008_INTEGRATION_CONTROL_PLANE_BOUNDARY_SEALED_V334_REQUIRED_CENTRAL_SUCCESSOR_BEFORE_SOURCE"
+  },
+  "reviewMethod": {
+    "independentReviewer": true,
+    "independentReviewerRoles": [
+      "SYS008_CANON_AND_DOMAIN_EXPERT",
+      "SYS008_BACKEND_AND_SECURITY_EXPERT",
+      "PIN_INTEGRITY_AUDITOR"
+    ],
+    "jsonSyntax": "PASS",
+    "canonicalPathHashAndBytePins": "PASS_33_OF_33",
+    "structureAndCardinalityConsistency": "PASS_API_17_PEP_18_IAQ_2_ACTION_16_DEPENDENCY_5_TABLE_6_GOLDEN_13_ACCEPTANCE_15",
+    "apiPepRouteAndActionConsistency": "PASS",
+    "transportHeaderRequiredFieldAndEnumDirectComparison": "PASS",
+    "iaqFilterSortFieldGroupActionAndClosedProjectionConsistency": "PASS",
+    "immutableDefinitionMappingAndSixTablePersistenceConsistency": "PASS",
+    "opaqueReferenceTenantConnectorPurposeTypeNamespaceDigestAndAuthorizationConsistency": "PASS",
+    "dep006StateModeDirectionScopeProjectionTotalityAndReverseInferenceGuard": "PASS",
+    "receiptIdempotencyResultUnknownAndTerminalConsistency": "PASS",
+    "executionItemAttemptTransitionMatrixAndEdgeGuardTotality": "PASS",
+    "retryDeadLetterCancellationCompensationAndChildCascadeConsistency": "PASS",
+    "eventMinimumPayloadAndAtomicOutboxConsistency": "PASS",
+    "migrationRlsAclFenceAndSharedReceiptHardeningConsistency": "PASS",
+    "authorizationCollisionAndActivationBoundaryConsistency": "PASS",
+    "repositoryWideSuiteRun": false,
+    "unaffectedPassingTargetRerun": false
+  },
+  "closedFindings": [
+    "the historical mutable connector-definition row is superseded semantically by a six-table model that separates the logical connector aggregate from immutable definition versions",
+    "every canonical command/query header, transport required field, response field and owner execution enum is exact, while receipt state and execution state remain separate",
+    "IAQ-057 and IAQ-062 project one owner truth with exact distinct filters, sorts and field groups; owner receipt lineage stays server-side because the closed item schema does not serialize it",
+    "all opaque secret, mapping, sample, payload, provider-receipt, compensation, result and error-report references are resolved server-side and bound to trusted tenant, connector, purpose, type, namespace, digest and authorization evidence",
+    "PDX-007 and PDX-009 use explicit total coarse-state projections with reverse inference forbidden, and PDX-008 has total dry-run, import, export, dispatch, reconcile, direction and TENANT-or-LEGAL_ENTITY scope provenance",
+    "the shared V327 receipt store is reused and its guard must be append-only hardened in V334 so terminal receipts and illegal status transitions cannot be rewritten without changing the V327 checksum",
+    "definition and mapping subject columns are immutable, provider keys are tenant-connector-operation unique, and monotonic attempt fences prevent stale-worker or duplicate dispatch",
+    "execution, item and attempt matrices name exact enum targets plus guarded edges; every post-dispatch failure requires conclusive same-key evidence and ambiguous evidence enters or remains RESULT_UNKNOWN",
+    "retry creates only new monotonic attempts for the frozen retryable failed-item set; PARTIAL or FAILED exhausts to DEAD_LETTER without reopening prior attempts or successful items",
+    "post-dispatch cancellation requires terminal compensation evidence and atomically closes every nonterminal child item and attempt while preserving all terminal history",
+    "SYS-EVT-005 remains an atomic minimal outbox event containing public execution identity, state, counts and reconciliation digest without secrets, raw payload or employee item identity",
+    "the existing hcm.integration.execute meaning remains immutable; the SYS-008 execution capability collision can be resolved only in the next append-only central authorization successor",
+    "the feature remains default OFF with zero tenant, provider, route, menu and business-completion activation and no packet, token, worktree, lease or source authority"
+  ],
+  "findings": {
+    "remainingP0": 0,
+    "remainingP1": 0,
+    "remainingP2": 0
+  },
+  "authority": {
+    "semanticReviewAccepted": true,
+    "appendOnlyIaqTransportEventAndCentralAuthorizationSuccessorMayBeAuthored": true,
+    "ownerPacketAuthorizedNow": false,
+    "centralSourceAuthoringAuthorizedNow": false,
+    "moduleSourceAuthoringAuthorizedNow": false,
+    "migrationReservationAuthorizedNow": false,
+    "migrationAuthoringAuthorizedNow": false,
+    "worktreeMaterializationAuthorizedNow": false,
+    "startTokenAuthorizedNow": false,
+    "routeOrMenuMountAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "realProviderBindingAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextGate": "AUTHOR_SEAL_AND_INDEPENDENTLY_REVIEW_ONE_APPEND_ONLY_SYS008_IAQ_TRANSPORT_EVENT_AND_CENTRAL_AUTHORIZATION_SUCCESSOR_THEN_ADMIT_ITS_BOUNDED_CENTRAL_DELTA_BEFORE_ANY_OWNER_PACKET_TOKEN_V334_LEASE_WORKTREE_OR_MODULE_SOURCE"
+}
