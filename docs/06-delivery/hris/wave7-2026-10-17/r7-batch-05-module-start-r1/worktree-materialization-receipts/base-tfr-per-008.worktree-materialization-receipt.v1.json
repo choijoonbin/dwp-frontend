@@ -1,0 +1,142 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-05-per008-worktree-materialization-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-05-PER008-WORKTREE-MATERIALIZATION-20261023-R1",
+  "recordedAt": "2026-10-23T13:21:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "MATERIALIZED_CLEAN_EXACT_AUTHORITY_CARRIER_PINS_NO_SOURCE_EDITS_NO_UPSTREAM",
+  "purpose": "Record the actual clean Backend and Frontend PER-008 module worktree identities required before reserved Performance V20 can become active and an executable module start token can be issued. This receipt alone grants no source, migration, test, module commit or module push authority.",
+  "immutability": {
+    "sealed": true,
+    "appendOnly": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_RECEIPT_ID_AND_SHA256"
+  },
+  "sliceId": "BASE-TFR-PER-008",
+  "module": "PER",
+  "moduleSession": "HRIS-PER",
+  "immutablePredecessors": {
+    "centralIntegrationReceipt": {
+      "path": "../../r7-batch-05-central-admission-r1/per-008-central-integration-receipt.v1.json",
+      "sha256": "584a8ee0a3ff548ea07fface28f2c5d534bb22efe4609766fa64769a7a7790a6",
+      "bytes": 8439,
+      "carrierCommit": "17241df6c66f12ae347c8d96288fbffbbd13184c",
+      "requiredState": "EXACT_PER008_CENTRAL_PREREQUISITES_MERGED_PUSHED_DEFAULT_OFF_ZERO_ENROLLMENT_MODULE_AUTHORITY_MAY_BE_ISSUED"
+    },
+    "performanceSharedRlsReadinessReceipt": {
+      "path": "../../r7-batch-05-central-admission-r1/performance-shared-rls-readiness-integration-receipt.v1.json",
+      "sha256": "d2006453117a6ace2ce726faf53b22115c4035f0e3f21c33071210e09e863e5b",
+      "bytes": 7572,
+      "carrierCommit": "24ca1a8d389e89290e9a331102fcfce0265e8a2a",
+      "requiredState": "EXACT_BACKEND_HEAD_NO_FF_MERGED_PUSHED_8_OF_8_BLOBS_IDENTICAL_READINESS_COMPLETE"
+    },
+    "reservedLease": {
+      "path": "../migration-lease-per008-v20-reservation.v1.json",
+      "sha256": "0626db623e286f3debf29581f1826ff7e7f3aa89482744ae1391bfddda8c5bec",
+      "bytes": 13660,
+      "blob": "f0b994cd668793031215cb74ffc40560a79cb993",
+      "reservationId": "HRIS-WAVE7-R7-BATCH-05-MIGRATION-LEASE-RESERVATION-PER008-V20-20261023-R1",
+      "leaseId": "HRIS-WAVE7-R7-BATCH-05-PERFORMANCE-V20-PER008-20261023-R1",
+      "requiredState": "RESERVED_NOT_ACTIVE"
+    },
+    "ownerPacket": {
+      "path": "../owner-packets/base-tfr-per-008.owner-packet.v1.json",
+      "sha256": "456c4fc00c06ff6ef729a6a81e9e249b3b5fdbb1ac481ded0e80866e0623676d",
+      "bytes": 23664,
+      "blob": "aaf75bf229509951bcffb2c311c25420cc75785f",
+      "packetId": "HRIS-WAVE7-R7-BATCH-05-OWNER-BASE-TFR-PER-008-20261023-R1",
+      "requiredState": "SEALED_EXACT_PER008_OWNER_AUTHORITY_PACKET_READY_EXECUTABLE_TOKEN_WITHHELD_PENDING_FRESH_WORKTREES_AND_ACTIVE_V20_LEASE"
+    }
+  },
+  "authorityCarrier": {
+    "repository": "dwp-frontend",
+    "branch": "dwp-dev",
+    "commit": "7352b1ec4cd1fe4ddaf797a985cfe38a84d90a01",
+    "tree": "3837b064171716be40d3c2c276a2ad6e15c3afeb",
+    "originRef": "origin/dwp-dev",
+    "originExactBeforeThisAppendOnlyReceipt": true,
+    "porcelainSha256BeforeThisAppendOnlyReceipt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "cleanBeforeThisAppendOnlyReceipt": true
+  },
+  "materializedWorktrees": {
+    "backend": {
+      "repository": "dwp-backend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261023/r7-batch05/per-008/backend",
+      "branch": "codex/hris-wave7-r7-batch05-per-008-backend-20261023-r1",
+      "head": "01468a404033c2a7247475f481f37c2ac40b3e3e",
+      "tree": "d06ffe06eb7e6a1fbb18ef4ed93b3ffce3401f67",
+      "expectedBaseCommit": "01468a404033c2a7247475f481f37c2ac40b3e3e",
+      "expectedBaseTree": "d06ffe06eb7e6a1fbb18ef4ed93b3ffce3401f67",
+      "headAndTreeExact": true,
+      "porcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "clean": true,
+      "upstream": null,
+      "sourceChangesAtReceipt": [],
+      "materialized": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261023/r7-batch05/per-008/frontend",
+      "branch": "codex/hris-wave7-r7-batch05-per-008-frontend-20261023-r1",
+      "head": "7352b1ec4cd1fe4ddaf797a985cfe38a84d90a01",
+      "tree": "3837b064171716be40d3c2c276a2ad6e15c3afeb",
+      "expectedBaseCommit": "7352b1ec4cd1fe4ddaf797a985cfe38a84d90a01",
+      "expectedBaseTree": "3837b064171716be40d3c2c276a2ad6e15c3afeb",
+      "headAndTreeExact": true,
+      "porcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "clean": true,
+      "upstream": null,
+      "sourceChangesAtReceipt": [],
+      "materialized": true
+    }
+  },
+  "migrationObservation": {
+    "stream": "PERFORMANCE",
+    "observedHighWater": "V19",
+    "candidateVersion": "V20",
+    "exactReservedPath": "dwp-people-server/src/main/resources/db/performance-migration/V20__per_base_tfr_per_008.sql",
+    "candidatePathPresent": false,
+    "competingV20Present": false,
+    "predecessorManifestSha256": "c44c2eb291be130a8345712a872989de26b5218ac28ae921ee41303d0c835c4b",
+    "predecessorManifestBytes": 260,
+    "predecessorSqlFileCount": 7,
+    "predecessorSqlBytes": 105258,
+    "v1ThroughV19PreservedAtReceipt": true,
+    "historicalV8Absent": true
+  },
+  "acceptanceCoverage": {
+    "requiredCount": 12,
+    "requiredIds": [
+      "PER008-AC-01",
+      "PER008-AC-02",
+      "PER008-AC-03",
+      "PER008-AC-04",
+      "PER008-AC-05",
+      "PER008-AC-06",
+      "PER008-AC-07",
+      "PER008-AC-08",
+      "PER008-AC-09",
+      "PER008-AC-10",
+      "PER008-AC-11",
+      "PER008-AC-12"
+    ]
+  },
+  "authority": {
+    "receiptSealed": true,
+    "activePerformanceV20LeaseMayBeIssued": true,
+    "executablePer008StartTokenMayBeIssuedOnlyAfterActiveLease": true,
+    "sourceAuthoringAuthorizedByReceiptAlone": false,
+    "migrationAuthoringAuthorizedByReceiptAlone": false,
+    "testExecutionAuthorizedByReceiptAlone": false,
+    "moduleBranchCommitAuthorizedByReceiptAlone": false,
+    "moduleBranchPushAuthorizedByReceiptAlone": false,
+    "centralWriteAuthorized": false,
+    "directDwpDevMergeAuthorized": false,
+    "routeOrMenuMountAuthorized": false,
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionProviderBindingAuthorized": false,
+    "productionSchedulerBindingAuthorized": false,
+    "productionBrokerBindingAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextGate": "ISSUE_ONE_APPEND_ONLY_ACTIVE_EXCLUSIVE_PERFORMANCE_V20_LEASE_HASH_BOUND_TO_THIS_RECEIPT_THEN_ISSUE_ONE_EXECUTABLE_PER008_START_TOKEN"
+}

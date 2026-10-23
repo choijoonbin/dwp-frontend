@@ -1,0 +1,174 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-05-per008-v20-migration-lease-activation.v1",
+  "activationId": "HRIS-WAVE7-R7-BATCH-05-MIGRATION-LEASE-ACTIVATION-PER008-V20-20261023-R1",
+  "activatedAt": "2026-10-23T13:21:00+09:00",
+  "activatedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "ACTIVE_EXCLUSIVE_PERFORMANCE_V20",
+  "purpose": "Activate exactly one exclusive Performance V20 authoring lease for PER-008 after clean pinned Backend and Frontend worktree materialization. This lease must be combined with the matching executable start token and grants no authority outside the reserved four-new-table and four-existing-table V20 manifest.",
+  "immutability": {
+    "sealed": true,
+    "appendOnly": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ACTIVATION_ID_AND_SHA256"
+  },
+  "successorOf": {
+    "path": "migration-lease-per008-v20-reservation.v1.json",
+    "sha256": "0626db623e286f3debf29581f1826ff7e7f3aa89482744ae1391bfddda8c5bec",
+    "bytes": 13660,
+    "blob": "f0b994cd668793031215cb74ffc40560a79cb993",
+    "reservationId": "HRIS-WAVE7-R7-BATCH-05-MIGRATION-LEASE-RESERVATION-PER008-V20-20261023-R1",
+    "requiredState": "RESERVED_NOT_ACTIVE",
+    "supersededField": "state and lease.state",
+    "supersession": "RESERVED_NOT_ACTIVE_TO_ACTIVE_EXCLUSIVE_AFTER_EXACT_CLEAN_WORKTREE_MATERIALIZATION"
+  },
+  "authorityBasis": {
+    "worktreeMaterializationReceipt": {
+      "path": "worktree-materialization-receipts/base-tfr-per-008.worktree-materialization-receipt.v1.json",
+      "sha256": "363698d70e0f8c34451cc302414bae82d753f0eeaf16edbece63af3223e00de6",
+      "bytes": 6682,
+      "receiptId": "HRIS-WAVE7-R7-BATCH-05-PER008-WORKTREE-MATERIALIZATION-20261023-R1",
+      "requiredState": "MATERIALIZED_CLEAN_EXACT_AUTHORITY_CARRIER_PINS_NO_SOURCE_EDITS_NO_UPSTREAM"
+    },
+    "ownerPacket": {
+      "path": "owner-packets/base-tfr-per-008.owner-packet.v1.json",
+      "sha256": "456c4fc00c06ff6ef729a6a81e9e249b3b5fdbb1ac481ded0e80866e0623676d",
+      "bytes": 23664,
+      "blob": "aaf75bf229509951bcffb2c311c25420cc75785f",
+      "packetId": "HRIS-WAVE7-R7-BATCH-05-OWNER-BASE-TFR-PER-008-20261023-R1"
+    },
+    "centralIntegrationReceipt": {
+      "path": "../r7-batch-05-central-admission-r1/per-008-central-integration-receipt.v1.json",
+      "sha256": "584a8ee0a3ff548ea07fface28f2c5d534bb22efe4609766fa64769a7a7790a6",
+      "bytes": 8439,
+      "carrierCommit": "17241df6c66f12ae347c8d96288fbffbbd13184c"
+    },
+    "performanceSharedRlsReadinessReceipt": {
+      "path": "../r7-batch-05-central-admission-r1/performance-shared-rls-readiness-integration-receipt.v1.json",
+      "sha256": "d2006453117a6ace2ce726faf53b22115c4035f0e3f21c33071210e09e863e5b",
+      "bytes": 7572,
+      "carrierCommit": "24ca1a8d389e89290e9a331102fcfce0265e8a2a"
+    },
+    "semanticDisposition": {
+      "path": "semantic-dispositions/base-tfr-per-008.semantic-disposition.v1.json",
+      "sha256": "b97eba63703d040e6526ec9280d13ca18b7a74d875da3508d25331c444d6f016",
+      "bytes": 60642
+    }
+  },
+  "lease": {
+    "leaseId": "HRIS-WAVE7-R7-BATCH-05-PERFORMANCE-V20-PER008-20261023-R1",
+    "module": "PER",
+    "moduleSession": "HRIS-PER",
+    "sliceId": "BASE-TFR-PER-008",
+    "canonicalFeature": "HRIS_PER_TEAM_PERFORMANCE_FEEDBACK",
+    "stream": "PERFORMANCE",
+    "version": "V20",
+    "predecessorHighWater": "V19",
+    "exactPath": "dwp-people-server/src/main/resources/db/performance-migration/V20__per_base_tfr_per_008.sql",
+    "manifestAuthority": "migration-lease-per008-v20-reservation.v1.json#/resolvedExactMigrationManifest",
+    "manifestAuthoritySha256": "0626db623e286f3debf29581f1826ff7e7f3aa89482744ae1391bfddda8c5bec",
+    "state": "ACTIVE_EXCLUSIVE",
+    "activeLeaseCountForPerformanceV20": 1,
+    "secondMigrationAuthorized": false,
+    "existingMigrationEditAuthorized": false,
+    "historicalV8Authorized": false,
+    "dataSeedOrBackfillAuthorized": false
+  },
+  "materializedBackendBinding": {
+    "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261023/r7-batch05/per-008/backend",
+    "branch": "codex/hris-wave7-r7-batch05-per-008-backend-20261023-r1",
+    "headAtActivation": "01468a404033c2a7247475f481f37c2ac40b3e3e",
+    "treeAtActivation": "d06ffe06eb7e6a1fbb18ef4ed93b3ffce3401f67",
+    "porcelainSha256AtActivation": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "upstreamAtActivation": null,
+    "exact": true,
+    "clean": true
+  },
+  "materializedFrontendBinding": {
+    "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261023/r7-batch05/per-008/frontend",
+    "branch": "codex/hris-wave7-r7-batch05-per-008-frontend-20261023-r1",
+    "headAtActivation": "7352b1ec4cd1fe4ddaf797a985cfe38a84d90a01",
+    "treeAtActivation": "3837b064171716be40d3c2c276a2ad6e15c3afeb",
+    "porcelainSha256AtActivation": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "upstreamAtActivation": null,
+    "exact": true,
+    "clean": true
+  },
+  "activationConditionsSatisfied": {
+    "packetAndReservationCarrierCommittedAndPushed": true,
+    "materializedBackendWorktreeExactAndClean": true,
+    "materializedFrontendWorktreeExactAndClean": true,
+    "performanceSharedRlsReadinessComplete": true,
+    "performanceHighWaterIsV19": true,
+    "exactV20PathAbsent": true,
+    "competingPerformanceV20Absent": true,
+    "reservedManifestUnchanged": true,
+    "activeLeaseCountAfterActivation": 1
+  },
+  "resolvedAuthoringBoundary": {
+    "allowed": [
+      "Create only dwp-people-server/src/main/resources/db/performance-migration/V20__per_base_tfr_per_008.sql.",
+      "Create exactly prf_feedback_requests, prf_feedback_assignments, prf_feedback_responses and prf_feedback_release_snapshots.",
+      "Harden exactly prf_cycles, prf_cycle_versions, prf_command_receipts and prf_outbox_events with trusted tenant ENABLE and FORCE RLS.",
+      "Enforce every control in the hash-bound reservation resolvedExactMigrationManifest without weakening or omission."
+    ],
+    "forbidden": [
+      "Any edit to Performance migrations V1 through V19 or creation of historical V8",
+      "Any second Performance migration or path other than the exact V20 path",
+      "Any fifth feedback table, seed, backfill, privilege elevation or duplicate generic receipt, audit or outbox store",
+      "Any plaintext protected narrative, response, aggregate, contributor identity or threshold count outside sealed encrypted owner payloads",
+      "Any route or menu mount, feature enablement, tenant enrollment, production provider, scheduler, broker or encryption-key binding, direct dwp-dev merge or production execution"
+    ],
+    "deviationAction": "STOP_AND_REQUEST_AN_APPEND_ONLY_LEASE_AND_TOKEN_SUCCESSOR"
+  },
+  "acceptanceCoverage": {
+    "requiredCount": 12,
+    "requiredIds": [
+      "PER008-AC-01",
+      "PER008-AC-02",
+      "PER008-AC-03",
+      "PER008-AC-04",
+      "PER008-AC-05",
+      "PER008-AC-06",
+      "PER008-AC-07",
+      "PER008-AC-08",
+      "PER008-AC-09",
+      "PER008-AC-10",
+      "PER008-AC-11",
+      "PER008-AC-12"
+    ],
+    "weakeningOrOmissionAuthorized": false
+  },
+  "verificationPolicy": {
+    "executionAuthorizedByLeaseAlone": false,
+    "minimalTargetRule": "RUN_EACH_NEW_PER008_TARGET_GROUP_ONCE; AFTER_FAILURE_RERUN_ONLY_THE_SMALLEST_AFFECTED_TARGET; RUN_ONE_BOUNDED_CROSS_CONTRACT_CHECK_AFTER_TARGETS_PASS; NO_REPOSITORY_WIDE_SUITE",
+    "realPostgresRequired": true,
+    "databaseUnavailableRule": "BLOCKED_NOT_PASS",
+    "repositoryWideSuiteAuthorized": false
+  },
+  "authority": {
+    "activeLeaseCount": 1,
+    "oneExactPerformanceV20AuthoringLeaseActive": true,
+    "v20AuthoringAuthorizedByLeaseAlone": false,
+    "v20AuthoringAuthorizedOnlyWithMatchingExecutableTokenV1": true,
+    "sourceAuthoringOutsideExactV20Authorized": false,
+    "testExecutionAuthorizedByLeaseAlone": false,
+    "moduleBranchCommitAuthorizedByLeaseAlone": false,
+    "moduleBranchPushAuthorizedByLeaseAlone": false,
+    "centralWriteAuthorized": false,
+    "directDwpDevMergeAuthorized": false,
+    "routeOrMenuMountAuthorized": false,
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionProviderBindingAuthorized": false,
+    "productionSchedulerBindingAuthorized": false,
+    "productionBrokerBindingAuthorized": false,
+    "productionExecutionAuthorized": false
+  },
+  "invalidationConditions": [
+    "Either module worktree path, branch, initial head, tree, upstream or initial porcelain digest differs.",
+    "Performance high-water differs from V19 or any competing V20 path exists before the owner creates the exact leased path.",
+    "The reserved manifest is insufficient, an existing migration must change, a second migration is required or a seed or backfill is needed.",
+    "The matching executable PER-008 start token v1 is absent, invalid or hash-mismatched.",
+    "Any central, route, menu, feature, tenant, provider, scheduler, broker, customer or production action is attempted."
+  ],
+  "nextGate": "ISSUE_ONE_EXECUTABLE_PER008_START_TOKEN_V1_HASH_BOUND_TO_THIS_ACTIVE_EXCLUSIVE_LEASE_OWNER_PACKET_RESERVATION_AND_MATERIALIZATION_RECEIPT"
+}
