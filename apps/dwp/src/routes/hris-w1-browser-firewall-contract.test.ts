@@ -1,4 +1,6 @@
 import { describe, expect, it } from 'vitest';
+import fs from 'node:fs';
+import path from 'node:path';
 
 import { PRODUCT_AUTHORIZATION_PAGE_PROJECTIONS } from './product-surface-authorization.generated';
 
@@ -37,6 +39,17 @@ const activeContracts = [
     contextScopeKey: 'hcm-scope-active',
   },
 ] as const;
+
+const productPageSource = JSON.parse(
+  fs.readFileSync(path.resolve(process.cwd(), 'architecture/product-page-routes.v1.json'), 'utf8')
+) as {
+  pageRoutes: Array<{ routeContractKey: string; productId: string; surfaceId: string }>;
+  catalogOnlyPageContracts: Array<{
+    routeContractKey: string;
+    productId: string;
+    surfaceId: string;
+  }>;
+};
 
 function evaluationBody(routeContractKey: string, surfaceKey: string, contextScopeKey?: string) {
   return {
@@ -93,9 +106,22 @@ describe('HRIS W1 browser firewall contract', () => {
     const firewall = [...HRIS_W1_OFFICIAL_HCM_PAGE_EVALUATION_CONTRACTS].sort((left, right) =>
       left.routeContractKey.localeCompare(right.routeContractKey)
     );
+    const runtimeHcm = productPageSource.pageRoutes.filter((route) => route.productId === 'hcm');
+    const catalogOnlyHcm = productPageSource.catalogOnlyPageContracts.filter(
+      (route) => route.productId === 'hcm'
+    );
 
-    expect(firewall).toHaveLength(65);
+    expect(runtimeHcm).toHaveLength(65);
+    expect(catalogOnlyHcm.map((route) => route.routeContractKey)).toEqual([
+      'route.hcm.team.performance.page',
+      'route.hcm.personal.performance-feedback.page',
+    ]);
+    expect(firewall).toHaveLength(67);
     expect(firewall).toEqual(generated);
+    expect(
+      fs.statSync(path.resolve(process.cwd(), 'architecture/product-surface-authorization.v1.json'))
+        .size
+    ).toBeLessThan(104_857_600);
   });
 
   it('separates active PAGE/HIGH tuples from exact official background PAGE tuples', () => {

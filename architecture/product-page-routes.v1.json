@@ -1109,6 +1109,22 @@
       "routeContractKey": "route.workplace.work.wayfinding.page"
     }
   ],
+  "catalogOnlyPageContracts": [
+    {
+      "routeContractKey": "route.hcm.team.performance.page",
+      "routeId": "hcm.team.performance",
+      "pattern": "/hr/team/performance",
+      "productId": "hcm",
+      "surfaceId": "hcm.team"
+    },
+    {
+      "routeContractKey": "route.hcm.personal.performance-feedback.page",
+      "routeId": "hcm.personal.performance-feedback",
+      "pattern": "/hr/me/performance/feedback",
+      "productId": "hcm",
+      "surfaceId": "hcm.personal"
+    }
+  ],
   "legacyRedirects": [
     {
       "redirectId": "communications-management-announcements-v1",

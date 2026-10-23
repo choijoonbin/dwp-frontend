@@ -50,6 +50,22 @@ const OFFICIAL_PAGE_KEYS = Object.freeze([
   'routeId',
   'surfaceId',
 ]);
+const PER008_CATALOG_ONLY_PAGE_CONTRACTS = Object.freeze([
+  Object.freeze({
+    routeContractKey: 'route.hcm.team.performance.page',
+    routeId: 'hcm.team.performance',
+    pattern: '/hr/team/performance',
+    productId: 'hcm',
+    surfaceId: 'hcm.team',
+  }),
+  Object.freeze({
+    routeContractKey: 'route.hcm.personal.performance-feedback.page',
+    routeId: 'hcm.personal.performance-feedback',
+    pattern: '/hr/me/performance/feedback',
+    productId: 'hcm',
+    surfaceId: 'hcm.personal',
+  }),
+]);
 const HCM_PAGE_SURFACE_BY_ROUTE_NAMESPACE = Object.freeze({
   audit: 'hcm.management',
   configuration: 'hcm.management',
@@ -143,6 +159,7 @@ export function resolveHrisW1HcmPageSurfaceKey(routeContractKey) {
 function officialHcmPageContracts(source) {
   if (
     !hasExactKeys(valueRecord(source), [
+      'catalogOnlyPageContracts',
       'legacyRedirects',
       'pageRoutes',
       'schemaVersion',
@@ -150,13 +167,26 @@ function officialHcmPageContracts(source) {
     ]) ||
     source.schemaVersion !== 1 ||
     source.sourceKey !== 'product-page-routes.v1' ||
-    !Array.isArray(source.pageRoutes)
+    !Array.isArray(source.pageRoutes) ||
+    !Array.isArray(source.catalogOnlyPageContracts)
   ) {
     fail('official product PAGE source is not the exact v1 document');
   }
-  const hcm = source.pageRoutes.filter((route) => route?.productId === 'hcm');
-  if (hcm.length !== 65) fail(`official HCM PAGE count is ${hcm.length}, expected 65`);
-  const seen = new Set();
+  const runtimeHcm = source.pageRoutes.filter((route) => route?.productId === 'hcm');
+  if (runtimeHcm.length !== 65) {
+    fail(`runtime HCM PAGE count is ${runtimeHcm.length}, expected 65`);
+  }
+  if (
+    JSON.stringify(source.catalogOnlyPageContracts) !==
+    JSON.stringify(PER008_CATALOG_ONLY_PAGE_CONTRACTS)
+  ) {
+    fail('PER-008 catalog-only PAGE contracts changed');
+  }
+  const hcm = [...runtimeHcm, ...source.catalogOnlyPageContracts];
+  if (hcm.length !== 67) fail(`official HCM PAGE count is ${hcm.length}, expected 67`);
+  const seenKeys = new Set();
+  const seenIds = new Set();
+  const seenPatterns = new Set();
   for (const route of hcm) {
     const routeNamespace = route?.routeContractKey?.split('.')[2];
     if (
@@ -171,11 +201,15 @@ function officialHcmPageContracts(source) {
       !/^hcm\.[a-z0-9-]+\.[a-z0-9-]+$/u.test(route.routeId) ||
       typeof route.pattern !== 'string' ||
       !/^(?:\/hr|\/admin\/governance\/audit-overview)(?:\/|$)/u.test(route.pattern) ||
-      seen.has(route.routeContractKey)
+      seenKeys.has(route.routeContractKey) ||
+      seenIds.has(route.routeId) ||
+      seenPatterns.has(route.pattern)
     ) {
       fail('official HCM PAGE tuple is malformed or duplicated');
     }
-    seen.add(route.routeContractKey);
+    seenKeys.add(route.routeContractKey);
+    seenIds.add(route.routeId);
+    seenPatterns.add(route.pattern);
   }
   return Object.freeze(
     hcm.map((route) =>

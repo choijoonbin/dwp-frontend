@@ -31,6 +31,33 @@ const SNAPSHOT_FIELDS = [
   'schemaVersion',
   'snapshotKey',
 ];
+const ROUTER_SOURCE_FIELDS = [
+  'catalogOnlyPageContracts',
+  'legacyRedirects',
+  'pageRoutes',
+  'schemaVersion',
+  'sourceKey',
+];
+const V59_RUNTIME_PAGE_ROUTES_SHA256 =
+  'f630bbc8b371bfb0d64ef993a2cfca1bd72fa7ab0edf7b3a29382ab5922a3606';
+const V59_LEGACY_REDIRECTS_SHA256 =
+  '6d60f36244b1bc6daeb41f7a8135c94d070cdcb4de0d09f1a32fbd0a9aba9187';
+const V59_CATALOG_ONLY_PAGE_CONTRACTS = Object.freeze([
+  Object.freeze({
+    routeContractKey: 'route.hcm.team.performance.page',
+    routeId: 'hcm.team.performance',
+    pattern: '/hr/team/performance',
+    productId: 'hcm',
+    surfaceId: 'hcm.team',
+  }),
+  Object.freeze({
+    routeContractKey: 'route.hcm.personal.performance-feedback.page',
+    routeId: 'hcm.personal.performance-feedback',
+    pattern: '/hr/me/performance/feedback',
+    productId: 'hcm',
+    surfaceId: 'hcm.personal',
+  }),
+]);
 const BUNDLE_FIELDS = new Set([
   'accessPolicies',
   'authorityEndpoints',
@@ -714,22 +741,41 @@ function validateSnapshot(value) {
 
 function validateRouterSource(value, latestBundle) {
   const source = requireRecord(value, 'router source');
-  if (source.schemaVersion !== 1 || source.sourceKey !== 'product-page-routes.v1') {
+  if (
+    source.schemaVersion !== 1 ||
+    source.sourceKey !== 'product-page-routes.v1' ||
+    canonicalJson(Object.keys(source).sort()) !== canonicalJson(ROUTER_SOURCE_FIELDS)
+  ) {
     fail('router source identity is invalid');
   }
   const routes = requireArray(source.pageRoutes, 'router source pageRoutes');
+  const catalogOnlyRoutes = requireArray(
+    source.catalogOnlyPageContracts,
+    'router source catalogOnlyPageContracts'
+  );
   const redirects = requireArray(source.legacyRedirects, 'router source legacyRedirects');
-  validateUnique(routes, 'routeContractKey', 'router source pageRoutes');
-  validateUnique(routes, 'routeId', 'router source pageRoutes');
-  validateUnique(routes, 'pattern', 'router source pageRoutes');
+  if (
+    routes.length !== 158 ||
+    sha256(routes) !== V59_RUNTIME_PAGE_ROUTES_SHA256 ||
+    sha256(redirects) !== V59_LEGACY_REDIRECTS_SHA256
+  ) {
+    fail('v59 executable Router source or legacy redirects changed');
+  }
+  if (canonicalJson(catalogOnlyRoutes) !== canonicalJson(V59_CATALOG_ONLY_PAGE_CONTRACTS)) {
+    fail('v59 catalog-only PAGE contracts changed');
+  }
+  const catalogRoutes = [...routes, ...catalogOnlyRoutes];
+  validateUnique(catalogRoutes, 'routeContractKey', 'router source PAGE catalog');
+  validateUnique(catalogRoutes, 'routeId', 'router source PAGE catalog');
+  validateUnique(catalogRoutes, 'pattern', 'router source PAGE catalog');
   validateUnique(redirects, 'redirectId', 'router source legacyRedirects');
   validateUnique(redirects, 'sourcePath', 'router source legacyRedirects');
   const registryPages = latestBundle.routes.filter((route) => route.routeKind === 'PAGE');
   const registryByKey = new Map(registryPages.map((route) => [route.routeContractKey, route]));
-  const routerByKey = new Map(routes.map((route) => [route.routeContractKey, route]));
-  for (const route of routes) {
+  const catalogByKey = new Map(catalogRoutes.map((route) => [route.routeContractKey, route]));
+  for (const route of catalogRoutes) {
     const registry = registryByKey.get(route.routeContractKey);
-    if (!registry) fail(`router source has stale PAGE ${route.routeContractKey}`);
+    if (!registry) fail(`router source catalog has stale PAGE ${route.routeContractKey}`);
     const subject = registry.subject;
     if (
       route.routeId !== registry.uiRouteId ||
@@ -738,7 +784,7 @@ function validateRouterSource(value, latestBundle) {
       route.surfaceId !== subject.surfaceKey ||
       route.surfaceId !== registry.navigationContextId
     ) {
-      fail(`router source PAGE metadata differs from registry ${route.routeContractKey}`);
+      fail(`router source PAGE catalog metadata differs from registry ${route.routeContractKey}`);
     }
     const forbidden = [
       'accessProfiles',
@@ -749,12 +795,14 @@ function validateRouterSource(value, latestBundle) {
       'capabilityContractKey',
     ];
     if (forbidden.some((field) => field in route)) {
-      fail(`router source must not own authorization or API binding: ${route.routeContractKey}`);
+      fail(
+        `router source PAGE catalog must not own authorization or API binding: ${route.routeContractKey}`
+      );
     }
   }
   for (const route of registryPages) {
-    if (!routerByKey.has(route.routeContractKey)) {
-      fail(`registry PAGE is missing from router source ${route.routeContractKey}`);
+    if (!catalogByKey.has(route.routeContractKey)) {
+      fail(`registry PAGE is missing from router source catalog ${route.routeContractKey}`);
     }
   }
   const routeByKey = new Map(routes.map((route) => [route.routeContractKey, route]));
@@ -1007,7 +1055,8 @@ async function main() {
   await writeOrCheck(validated.snapshot, generated, args.mode);
   console.log(
     `PASS product surface authorization v1-v${validated.index.latestVersion} ` +
-      `(${validated.index.latestChecksum}); ${routerSource.pageRoutes.length} PAGE routes closed` +
+      `(${validated.index.latestChecksum}); ${routerSource.pageRoutes.length} runtime PAGE routes + ` +
+      `${routerSource.catalogOnlyPageContracts.length} catalog-only PAGE contracts closed` +
       `${args.mode === 'check' && args.officialDirectory ? '; official backend artifacts matched.' : '.'}`
   );
 }

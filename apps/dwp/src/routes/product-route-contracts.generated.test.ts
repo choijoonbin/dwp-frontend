@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import fs from 'node:fs';
 import path from 'node:path';
+import type { RouteObject } from 'react-router-dom';
 
 import { HCM_PRODUCT_MANIFEST } from '../features/hcm/hcm-product-manifest';
 import { MESSAGING_PRODUCT_MANIFEST } from '../features/messaging/messaging-product-manifest';
@@ -13,6 +14,7 @@ import {
 } from './product-page-route-contracts';
 import { DRAFT_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE } from './draft-product-page-route-contracts';
 import { buildProductPageRouteContractSource } from './draft-product-page-route-contract-source';
+import { hcmRoutes } from './hcm-routes';
 import {
   PRODUCT_AUTHORIZATION_PAGE_PROJECTIONS,
   PRODUCT_AUTHORIZATION_REGISTRY_REVISION,
@@ -181,6 +183,48 @@ const R7_BATCH_04_05_HCM_PAGE_ROUTES = [
   },
 ] as const;
 
+const R7_BATCH_05_PER008_HCM_PAGE_ROUTES = [
+  {
+    routeContractKey: 'route.hcm.personal.performance-feedback.page',
+    routeId: 'hcm.personal.performance-feedback',
+    pattern: '/hr/me/performance/feedback',
+    productId: 'hcm',
+    surfaceId: 'hcm.personal',
+  },
+  {
+    routeContractKey: 'route.hcm.team.performance.page',
+    routeId: 'hcm.team.performance',
+    pattern: '/hr/team/performance',
+    productId: 'hcm',
+    surfaceId: 'hcm.team',
+  },
+] as const;
+
+type PageRouteTuple = {
+  routeContractKey: string;
+  routeId: string;
+  pattern: string;
+  productId: string;
+  surfaceId: string;
+};
+
+const pageRouterSource = JSON.parse(
+  fs.readFileSync(path.resolve(process.cwd(), 'architecture/product-page-routes.v1.json'), 'utf8')
+) as {
+  pageRoutes: PageRouteTuple[];
+  catalogOnlyPageContracts: PageRouteTuple[];
+};
+
+function mountedRouteContractKeys(routes: readonly RouteObject[]): string[] {
+  return routes.flatMap((route) => {
+    const handle = route.handle as { routeContractKey?: string } | undefined;
+    return [
+      ...(handle?.routeContractKey ? [handle.routeContractKey] : []),
+      ...mountedRouteContractKeys(route.children ?? []),
+    ];
+  });
+}
+
 const authorizationSnapshot = JSON.parse(
   fs.readFileSync(
     path.resolve(process.cwd(), 'architecture/product-surface-authorization.v1.json'),
@@ -217,8 +261,11 @@ if (latestAuthorizationBundles.length !== 1) {
 const latestAuthorizationBundle = latestAuthorizationBundles[0]!;
 
 describe('generated product route authorization contracts', () => {
-  it('closes PAGE Router source and Registry projections in both directions', () => {
+  it('closes the PAGE authorization catalog over runtime and catalog-only metadata', () => {
     const router = [...PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE].sort((left, right) =>
+      left.routeContractKey.localeCompare(right.routeContractKey)
+    );
+    const catalogOnly = [...pageRouterSource.catalogOnlyPageContracts].sort((left, right) =>
       left.routeContractKey.localeCompare(right.routeContractKey)
     );
     const registry = PRODUCT_AUTHORIZATION_PAGE_PROJECTIONS.map((route) => ({
@@ -250,7 +297,12 @@ describe('generated product route authorization contracts', () => {
       'workplace',
     ]);
     expect(router).toHaveLength(158);
-    expect(registry).toEqual(router);
+    expect(catalogOnly).toEqual([...R7_BATCH_05_PER008_HCM_PAGE_ROUTES]);
+    expect(registry).toEqual(
+      [...router, ...catalogOnly].sort((left, right) =>
+        left.routeContractKey.localeCompare(right.routeContractKey)
+      )
+    );
     expect(
       router.filter((route) =>
         R7_BATCH_01_HCM_PAGE_ROUTES.some(
@@ -279,6 +331,13 @@ describe('generated product route authorization contracts', () => {
         )
       )
     ).toEqual([...R7_BATCH_04_05_HCM_PAGE_ROUTES]);
+    expect(
+      catalogOnly.filter((route) =>
+        R7_BATCH_05_PER008_HCM_PAGE_ROUTES.some(
+          (expected) => expected.routeContractKey === route.routeContractKey
+        )
+      )
+    ).toEqual([...R7_BATCH_05_PER008_HCM_PAGE_ROUTES]);
     expect(() =>
       buildProductPageRouteContractSource(
         [HCM_PRODUCT_MANIFEST],
@@ -295,6 +354,38 @@ describe('generated product route authorization contracts', () => {
         )
       )
     ).toThrow(/outside its surface boundary/u);
+  });
+
+  it('keeps both PER-008 PAGE contracts out of every executable Router catalog', () => {
+    const catalogOnlyKeys = new Set(
+      R7_BATCH_05_PER008_HCM_PAGE_ROUTES.map((route) => route.routeContractKey)
+    );
+    const mountedKeys = new Set(mountedRouteContractKeys(hcmRoutes));
+
+    expect(
+      PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.filter((route) => route.productId === 'hcm')
+    ).toHaveLength(65);
+    for (const routeContractKey of catalogOnlyKeys) {
+      expect(
+        pageRouterSource.pageRoutes.some((route) => route.routeContractKey === routeContractKey)
+      ).toBe(false);
+      expect(
+        PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.some(
+          (route) => route.routeContractKey === routeContractKey
+        )
+      ).toBe(false);
+      expect(
+        ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.some(
+          (route) => route.routeContractKey === routeContractKey
+        )
+      ).toBe(false);
+      expect(
+        REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG.some(
+          (route) => route.routeContractKey === routeContractKey
+        )
+      ).toBe(false);
+      expect(mountedKeys.has(routeContractKey)).toBe(false);
+    }
   });
 
   it('never turns DATA or ACTION registry records into browser routes', () => {
