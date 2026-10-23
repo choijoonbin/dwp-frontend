@@ -1,0 +1,941 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-05-sys008-iaq-transport-event-and-central-authorization-successor.v1",
+  "successorId": "HRIS-WAVE7-R7-BATCH-05-SYS008-IAQ-TRANSPORT-EVENT-CENTRAL-AUTHORIZATION-20261023-R1",
+  "recordedAt": "2026-10-23T16:45:00+09:00",
+  "recordedBy": "CENTRAL_HRIS_SYS008_IAQ_TRANSPORT_EVENT_AUTHORIZATION_SUCCESSOR",
+  "immutability": {
+    "mode": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ID_AND_SHA256",
+    "historicalMutation": "FORBIDDEN",
+    "supersessionRule": "A later correction must be a separately identified append-only artifact that pins this exact artifact by SHA-256."
+  },
+  "state": "SEALED_EXACT_SYS008_IAQ057_IAQ062_TRANSPORT_SYSEVT005_V60_V269_V334_GATEWAY_SHARED_BRIDGE_DUAL_PROJECTION_AUTHORITY_DEFAULT_OFF_ZERO_ENROLLMENT",
+  "sliceId": "BASE-TFR-SYS-008",
+  "boundedContext": "DWP_PLATFORM_INTEGRATION",
+  "capability": "DWP.INTEGRATION.CONTROL_PLANE",
+  "authorityBasis": {
+    "semanticDisposition": {
+      "path": "semantic-dispositions/base-tfr-sys-008.semantic-disposition.v1.json",
+      "sha256": "35e8b1ad256ad16ca8a653f0770366e5f58818a38f8da78c15774fd186eff65c",
+      "bytes": 68721,
+      "requiredState": "SYS008_INTEGRATION_CONTROL_PLANE_BOUNDARY_SEALED_V334_REQUIRED_CENTRAL_SUCCESSOR_BEFORE_SOURCE"
+    },
+    "semanticReview": {
+      "path": "semantic-dispositions/base-tfr-sys-008.semantic-review.v1.json",
+      "sha256": "b4f341d6b8642693577f6cda8053ed5dfd02a90ed2d1b8001138a26d15060438",
+      "bytes": 5767,
+      "requiredState": "SYS008_SEMANTIC_DISPOSITION_INDEPENDENTLY_REVIEWED_PASS_ZERO_P0_ZERO_P1_ZERO_P2_CENTRAL_SUCCESSOR_MAY_PROCEED"
+    },
+    "precedingLaneExit": {
+      "path": "../r7-batch-05-central-admission-r1/per-008-sequencing-exit-receipt.v1.json",
+      "sha256": "5064dac89748331fe1ee2ed84637abf74cb9f1c147ebfb4e43aa85faee41c2a1",
+      "bytes": 10943,
+      "requiredState": "BATCH05_LANE_3_PER008_SEQUENCING_EXIT_ACCEPTED_DEFAULT_OFF_ZERO_ENROLLMENT_ZERO_BUSINESS_CREDIT_SYS008_SEMANTIC_CLOSURE_NEXT",
+      "requiredNextLane": "BASE-TFR-SYS-008"
+    }
+  },
+  "pinnedRepositories": {
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "70b899445a333756bca1163a43783f1551969649",
+      "tree": "86519b3a26ac30dfebdb603fc4ac757f065b25e7",
+      "originExactBeforeThisSuccessor": true,
+      "cleanBeforeThisSuccessor": true
+    },
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "40ed8e8431388db6a38fb22714682be046582362",
+      "tree": "4a7da7c23df837f7fa9ef9653c0e23f6322a7e76",
+      "originExact": true,
+      "clean": true
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "originExact": true,
+      "clean": true,
+      "readOnly": true
+    }
+  },
+  "semanticSectionSeals": {
+    "incorporationMode": "HASH_PINNED_JSON_POINTER_INCORPORATION_BY_REFERENCE",
+    "canonicalization": "JQ_COMPACT_SORTED_KEYS_UTF8_WITH_TRAILING_LF_SHA256",
+    "source": "semantic-dispositions/base-tfr-sys-008.semantic-disposition.v1.json",
+    "rule": "Every listed section is incorporated without semantic narrowing. An implementation or review must fail closed if the pinned source artifact or any canonical section digest differs.",
+    "sections": [
+      {"jsonPointer": "/iaqDecision", "sha256": "204bc6984c4f3817c3aed08684d9d4ee7741d1b8ea9f161805c163939b2aa7ea"},
+      {"jsonPointer": "/contractDecision", "sha256": "59a0c82e1ce0587ef89fa9b47b198ae4212bd750dfb56963597ce7b6e5fdad71"},
+      {"jsonPointer": "/contractDecision/closedTransportSchemas", "sha256": "9f4cffe7a433445c5b054f10cec4573127cdcad52e94934956802d25cc9535f2"},
+      {"jsonPointer": "/lifecycleDecision", "sha256": "50cfba8de5469249d44ac149f24f45f7f2a6f40194e2df001b857fac632d6ec3"},
+      {"jsonPointer": "/migrationDecision", "sha256": "7fab341eb6df545024dcc7383d467e4b04b5ec90fc02e88616086290240114f5"},
+      {"jsonPointer": "/eventDecision", "sha256": "c061acbecfc73657b8e1f32be331b81b2ec2e94151753591162820b3e98383f5"},
+      {"jsonPointer": "/receiptDecision", "sha256": "797da5b2dd0ee45b755b1b547881e596f1b59e607442286ce8f385df893e7ea7"},
+      {"jsonPointer": "/authorizationDecision", "sha256": "4c69b137e17dcb3129f13ee42738e1d4d34abd4ba8738b30142ce2cd8d5b1986"},
+      {"jsonPointer": "/typedArtifactContract", "sha256": "274ec6554d4b691528d50d27053ea9816a0bff3bc6283ed414e0f91c82f16ff2"},
+      {"jsonPointer": "/acceptanceCriteria", "sha256": "3062813c9eb06ad98031b8df32bca44d52eb7187f407914e08d26c60cbd12c95"},
+      {"jsonPointer": "/acceptanceEvidencePlan", "sha256": "2834728b2706f732c5f3a0e0ad80f29d596047fdc1cf6cca741b2c22cc9f5c81"}
+    ]
+  },
+  "observedClosedPrecursor": {
+    "productAuthorizationV59": {
+      "path": "dwp-backend/contracts/product-authorization/product-surfaces-v1.bundle-v59.json",
+      "sha256": "bc9d253166c2ccfae1a95b2f9772742d321cf4784bceecb9fb228ae1ce5165b7",
+      "bytes": 2711811,
+      "contractChecksum": "56582749cebf382c5c2669d83a30fb4c81fcb532db2878b15e6a83ced6898094",
+      "counts": {
+        "capabilities": 276,
+        "accessPolicies": 24,
+        "entitlementExpressions": 17,
+        "predicatePolicies": 86,
+        "routes": 1134,
+        "PAGE": 160,
+        "DATA": 345,
+        "ACTION": 629
+      },
+      "exactSys008RoutesPresent": 0
+    },
+    "platformHighWater": {
+      "migration": "V333__create_hris_automation_control_plane.sql",
+      "sha256": "213a3cbde404b056b7d60b7791b59b0c8a0581248e7d775382f7092940d63c2d",
+      "bytes": 76604
+    },
+    "authHighWater": {
+      "migration": "V268__declare_hris_per008_v59_authorization_seed.sql",
+      "sha256": "349e8f042216446462f21e5849b86869e3bf11107c625d831dad75e8f6018bc3",
+      "bytes": 20236
+    },
+    "workforceIngestionAuthorizationBoundary": {
+      "migration": "V266__declare_hris_hrm012_v57_authorization_seed.sql",
+      "sha256": "5908000aaaf7093d4288f256f8029b67c9e4ee15e78ae6485af61ca95174fab5",
+      "bytes": 22682,
+      "rule": "ACTION.HRIS_INTEGRATION_EXECUTE, HRIS_INTEGRATION_EXECUTOR and HRIS_DUTY_INTEGRATION_EXECUTOR are workforce-ingestion-only and cannot carry SYS008 control-plane meaning."
+    },
+    "canonicalTypedSchema": {
+      "path": "dwp-backend/contracts/hris/canonical/schemas/platform-dependency-canonical-schemas.v1.json",
+      "sha256": "5674845a3ba00928e8c5e05dc99a7869d3dae7ba2cc48f360c8b16db47ec3d8f",
+      "bytes": 28109
+    },
+    "historicalConflictsClosedByThisSuccessor": [
+      "hcm.integration.execute retains its v59 WORKFORCE_DATA_OPERATIONS and SYS-006 meaning; SYS-008 receives a new narrow execution capability.",
+      "The mutable five-table blueprint is superseded by an immutable six-table definition-version model.",
+      "SYS-EVT-005 receives a closed Draft 2020-12 payload contract instead of a field-list-only draft.",
+      "Stale People/V31 ownership is replaced by Platform ownership and a candidate V334 boundary without reserving it.",
+      "Owner states project one-way to coarser DEP-006 states and never reverse-infer owner intent.",
+      "IAQ-057, IAQ-062, the generic productivity page and the compatibility route remain projections of one SYS-008 owner truth, not duplicate owners."
+    ]
+  },
+  "iaq057AndIaq062Successor": {
+    "primaryOwner": "SYS008_SINGLE_OWNER_QUERY",
+    "relationship": "ONE_OWNER_TRUTH_TWO_POLICY_PROJECTIONS_NO_DUPLICATE_PERSISTENCE_CONTROLLER_DOMAIN_OR_COMPLETION_CREDIT",
+    "projections": [
+      {
+        "entryQuery": "IAQ-057",
+        "iaNodeId": "BASE:settings-integrations",
+        "role": "PRIMARY_HRIS_SETTINGS",
+        "method": "GET",
+        "browserApi": "/api/platform/v1/hris/workbench/settings-integrations",
+        "serviceApi": "/v1/hris/workbench/settings-integrations",
+        "canonicalRoute": "/hr/settings/integrations",
+        "routeContractKey": "route.hcm.configuration.settings-integrations.page",
+        "routeKind": "PAGE",
+        "fieldGroups": ["CONNECTOR_METADATA", "POLICY_VERSION", "EFFECTIVE_STATUS"],
+        "filters": ["connectorMetadata", "policyVersion", "effectiveStatus", "effectiveOn"]
+      },
+      {
+        "entryQuery": "IAQ-062",
+        "iaNodeId": "BASE:dwp-integrations",
+        "role": "PRIMARY_DWP_CONTROL",
+        "method": "GET",
+        "browserApi": "/api/platform/v1/hris/workbench/dwp-integrations",
+        "serviceApi": "/v1/hris/workbench/dwp-integrations",
+        "canonicalRoute": "/admin/integrations/productivity?product=HCM",
+        "routeContractKey": "route.hcm.configuration.dwp-integrations.data",
+        "routeKind": "DATA",
+        "fieldGroups": ["CONNECTOR_METADATA", "EXECUTION_POLICY", "EFFECTIVE_STATUS"],
+        "filters": ["connectorMetadata", "executionPolicy", "effectiveStatus", "effectiveOn"],
+        "pageOwnership": "EXISTING_DWP_ADMIN_PRODUCTIVITY_PAGE_EXTERNAL_OWNER_NOT_REOWNED_BY_SYS008"
+      }
+    ],
+    "commonContract": {
+      "capability": "hcm.configuration.workbench.view",
+      "accessPackage": "HRIS_CONFIG_AUTHOR>HRIS_DUTY_CONFIGURATION_WORKBENCH_READER",
+      "sortCountPerProjection": 8,
+      "defaultSort": "itemPublicId:ASC",
+      "limit": {"minimum": 1, "maximum": 100},
+      "queryStates": ["COMPLETE", "EMPTY", "PARTIAL", "UNAVAILABLE"],
+      "fieldDecisions": ["VIEW", "MASK", "OMIT"],
+      "cursorBindings": ["tenant", "actor", "queryVariant", "filters", "sort", "asOf", "locale", "timeZone", "scopeRevision", "fieldPolicyRevision", "authorizationRevision"],
+      "stableIdentity": "SAME_ITEM_PUBLIC_ID_AND_EFFECTIVE_STATUS_REVISION_FROM_ONE_OWNER_TRUTH_ON_BOTH_SURFACES",
+      "ownerReceipt": "SERVER_SIDE_NON_SERIALIZED_LINEAGE_ONLY",
+      "availableActions": "SERVER_SIDE_ITEM_LEVEL_PEP_INTERSECTION_ONLY",
+      "stalePartialUnavailableOrDeniedActionCount": 0,
+      "scopeChange": "CLEAR_SELECTION_CURSOR_AND_CACHED_ROWS"
+    },
+    "legacyRouteRule": "/hr/data/integrations_IS_COMPATIBILITY_ONLY_AND_MUST_NOT_BECOME_A_SECOND_CANONICAL_OWNER",
+    "genericProductivitySurfaceRule": "THE_EXISTING_MICROSOFT_365_PRODUCTIVITY_CONNECTOR_MANAGER_IS_NOT_SYS008_OWNER_EVIDENCE_AND_IS_NOT_REMOVED_OR_RECOUNTED",
+    "newPageRouteCount": 1,
+    "newSidebarNode": false,
+    "duplicateOwnerCount": 0,
+    "currentMountState": "UNMOUNTED_DEFAULT_OFF"
+  },
+  "transportAndAuthorizationContract": {
+    "cardinality": {
+      "apiIds": 17,
+      "sysHttpOperationBindings": 18,
+      "sysPepBindings": 18,
+      "iaqOwnerQueryOperations": 2,
+      "gatewayAndServiceOperationMappings": 20,
+      "routeContractKeys": 20,
+      "pageRoutes": 1,
+      "dataRoutes": 3,
+      "actionRoutes": 16,
+      "actionKeys": 16,
+      "receiptBridgeMappings": 16
+    },
+    "operationBindings": [
+      {"api": "IAQ-057", "pep": "IAQ.OP.057", "method": "GET", "browserPath": "/api/platform/v1/hris/workbench/settings-integrations", "servicePath": "/v1/hris/workbench/settings-integrations", "routeContractKey": "route.hcm.configuration.settings-integrations.page", "routeKind": "PAGE", "capability": "hcm.configuration.workbench.view", "meaning": "HRIS_SETTINGS_POLICY_PROJECTION"},
+      {"api": "IAQ-062", "pep": "IAQ.OP.062", "method": "GET", "browserPath": "/api/platform/v1/hris/workbench/dwp-integrations", "servicePath": "/v1/hris/workbench/dwp-integrations", "routeContractKey": "route.hcm.configuration.dwp-integrations.data", "routeKind": "DATA", "capability": "hcm.configuration.workbench.view", "meaning": "DWP_CONTROL_POLICY_PROJECTION"},
+      {"api": "SYS-API-021.GET", "pep": "PEP-SYS-022", "method": "GET", "browserPath": "/api/platform/v1/admin/hris/connectors", "servicePath": "/v1/admin/hris/connectors", "routeContractKey": "route.hcm.configuration.connector-catalog.data", "routeKind": "DATA", "capability": "hcm.integration.definition.update", "meaning": "LIST_CONNECTORS"},
+      {"api": "SYS-API-021.POST", "pep": "PEP-SYS-023", "method": "POST", "browserPath": "/api/platform/v1/admin/hris/connectors", "servicePath": "/v1/admin/hris/connectors", "routeContractKey": "route.hcm.configuration.connector-definition-create.action", "routeKind": "ACTION", "capability": "hcm.integration.definition.update", "meaning": "CREATE_DEFINITION_DRAFT"},
+      {"api": "SYS-API-022", "pep": "PEP-SYS-024", "method": "POST", "browserPath": "/api/platform/v1/admin/hris/connectors/{connectorId}/test", "servicePath": "/v1/admin/hris/connectors/{connectorId}/test", "routeContractKey": "route.hcm.configuration.connector-test.action", "routeKind": "ACTION", "capability": "hcm.integration.definition.update", "meaning": "ISSUE_CONNECTION_TEST_RECEIPT"},
+      {"api": "SYS-API-023", "pep": "PEP-SYS-025", "method": "POST", "browserPath": "/api/platform/v1/admin/hris/connectors/{connectorId}/mappings/{version}/dry-runs", "servicePath": "/v1/admin/hris/connectors/{connectorId}/mappings/{version}/dry-runs", "routeContractKey": "route.hcm.configuration.connector-mapping-dry-run.action", "routeKind": "ACTION", "capability": "hcm.integration.definition.update", "meaning": "VALIDATE_TRANSFORM_WITHOUT_PROVIDER_OR_DOMAIN_EFFECT"},
+      {"api": "SYS-API-024", "pep": "PEP-SYS-026", "method": "POST", "browserPath": "/api/platform/v1/admin/hris/connectors/{connectorId}/executions", "servicePath": "/v1/admin/hris/connectors/{connectorId}/executions", "routeContractKey": "route.hcm.configuration.connector-execution-create.action", "routeKind": "ACTION", "capability": "hcm.integration.control-plane.execute", "meaning": "CREATE_RECEIPT_FIRST_EXECUTION"},
+      {"api": "SYS-API-025", "pep": "PEP-SYS-027", "method": "GET", "browserPath": "/api/platform/v1/admin/hris/connector-executions/{executionId}", "servicePath": "/v1/admin/hris/connector-executions/{executionId}", "routeContractKey": "route.hcm.configuration.connector-execution-detail.data", "routeKind": "DATA", "capability": "hcm.integration.control-plane.execute", "meaning": "READ_EXECUTION_AND_RECONCILIATION_RECEIPT"},
+      {"api": "SYS-API-057", "pep": "PEP-SYS-059", "method": "POST", "browserPath": "/api/platform/v1/admin/hris/connectors/{connectorId}/validate", "servicePath": "/v1/admin/hris/connectors/{connectorId}/validate", "routeContractKey": "route.hcm.configuration.connector-definition-validate.action", "routeKind": "ACTION", "capability": "hcm.integration.definition.update", "meaning": "VALIDATE_DEFINITION_VERSION"},
+      {"api": "SYS-API-058", "pep": "PEP-SYS-060", "method": "POST", "browserPath": "/api/platform/v1/admin/hris/connectors/{connectorId}/submit", "servicePath": "/v1/admin/hris/connectors/{connectorId}/submit", "routeContractKey": "route.hcm.configuration.connector-definition-submit.action", "routeKind": "ACTION", "capability": "hcm.integration.definition.update", "meaning": "SUBMIT_TESTED_DEFINITION_VERSION"},
+      {"api": "SYS-API-059", "pep": "PEP-SYS-061", "method": "POST", "browserPath": "/api/platform/v1/admin/hris/connectors/{connectorId}/approve", "servicePath": "/v1/admin/hris/connectors/{connectorId}/approve", "routeContractKey": "route.hcm.configuration.connector-definition-approve.action", "routeKind": "ACTION", "capability": "hcm.integration.control-plane.execute", "meaning": "APPROVE_DEFINITION_BY_SEPARATE_ACTOR"},
+      {"api": "SYS-API-060", "pep": "PEP-SYS-062", "method": "POST", "browserPath": "/api/platform/v1/admin/hris/connectors/{connectorId}/activate", "servicePath": "/v1/admin/hris/connectors/{connectorId}/activate", "routeContractKey": "route.hcm.configuration.connector-definition-activate.action", "routeKind": "ACTION", "capability": "hcm.integration.control-plane.execute", "meaning": "ACTIVATE_APPROVED_DEFINITION"},
+      {"api": "SYS-API-061", "pep": "PEP-SYS-063", "method": "POST", "browserPath": "/api/platform/v1/admin/hris/connectors/{connectorId}/mappings", "servicePath": "/v1/admin/hris/connectors/{connectorId}/mappings", "routeContractKey": "route.hcm.configuration.connector-mapping-version-create.action", "routeKind": "ACTION", "capability": "hcm.integration.definition.update", "meaning": "CREATE_IMMUTABLE_MAPPING_VERSION_DRAFT"},
+      {"api": "SYS-API-062", "pep": "PEP-SYS-064", "method": "POST", "browserPath": "/api/platform/v1/admin/hris/connectors/{connectorId}/mappings/{version}/validate", "servicePath": "/v1/admin/hris/connectors/{connectorId}/mappings/{version}/validate", "routeContractKey": "route.hcm.configuration.connector-mapping-version-validate.action", "routeKind": "ACTION", "capability": "hcm.integration.definition.update", "meaning": "VALIDATE_MAPPING_VERSION"},
+      {"api": "SYS-API-063", "pep": "PEP-SYS-065", "method": "POST", "browserPath": "/api/platform/v1/admin/hris/connectors/{connectorId}/mappings/{version}/submit", "servicePath": "/v1/admin/hris/connectors/{connectorId}/mappings/{version}/submit", "routeContractKey": "route.hcm.configuration.connector-mapping-version-submit.action", "routeKind": "ACTION", "capability": "hcm.integration.definition.update", "meaning": "SUBMIT_VALIDATED_MAPPING_VERSION"},
+      {"api": "SYS-API-064", "pep": "PEP-SYS-066", "method": "POST", "browserPath": "/api/platform/v1/admin/hris/connectors/{connectorId}/mappings/{version}/approve", "servicePath": "/v1/admin/hris/connectors/{connectorId}/mappings/{version}/approve", "routeContractKey": "route.hcm.configuration.connector-mapping-version-approve.action", "routeKind": "ACTION", "capability": "hcm.integration.control-plane.execute", "meaning": "APPROVE_MAPPING_BY_SEPARATE_ACTOR"},
+      {"api": "SYS-API-065", "pep": "PEP-SYS-067", "method": "POST", "browserPath": "/api/platform/v1/admin/hris/connectors/{connectorId}/mappings/{version}/activate", "servicePath": "/v1/admin/hris/connectors/{connectorId}/mappings/{version}/activate", "routeContractKey": "route.hcm.configuration.connector-mapping-version-activate.action", "routeKind": "ACTION", "capability": "hcm.integration.control-plane.execute", "meaning": "ACTIVATE_APPROVED_MAPPING"},
+      {"api": "SYS-API-066", "pep": "PEP-SYS-068", "method": "POST", "browserPath": "/api/platform/v1/admin/hris/connector-executions/{executionId}/reconcile", "servicePath": "/v1/admin/hris/connector-executions/{executionId}/reconcile", "routeContractKey": "route.hcm.configuration.connector-execution-reconcile.action", "routeKind": "ACTION", "capability": "hcm.integration.control-plane.execute", "meaning": "RECONCILE_WITH_ORIGINAL_PROVIDER_KEY"},
+      {"api": "SYS-API-067", "pep": "PEP-SYS-069", "method": "POST", "browserPath": "/api/platform/v1/admin/hris/connector-executions/{executionId}/retry", "servicePath": "/v1/admin/hris/connector-executions/{executionId}/retry", "routeContractKey": "route.hcm.configuration.connector-execution-retry.action", "routeKind": "ACTION", "capability": "hcm.integration.control-plane.execute", "meaning": "RETRY_EXACT_RETRYABLE_FAILED_ITEM_SET"},
+      {"api": "SYS-API-068", "pep": "PEP-SYS-070", "method": "POST", "browserPath": "/api/platform/v1/admin/hris/connector-executions/{executionId}/cancel", "servicePath": "/v1/admin/hris/connector-executions/{executionId}/cancel", "routeContractKey": "route.hcm.configuration.connector-execution-cancel.action", "routeKind": "ACTION", "capability": "hcm.integration.control-plane.execute", "meaning": "PRE_DISPATCH_CANCEL_OR_EXPLICIT_COMPENSATION"}
+    ],
+    "receiptOriginatingActionRouteBindings": [
+      {"originatingAction": "hris.action.sys.post.platform.v1.admin.hris.connectors", "routeContractKey": "route.hcm.configuration.connector-definition-create.action"},
+      {"originatingAction": "hris.action.sys.post.platform.v1.admin.hris.connectors.resource.test", "routeContractKey": "route.hcm.configuration.connector-test.action"},
+      {"originatingAction": "hris.action.sys.post.platform.v1.admin.hris.connectors.resource.mappings.resource.dry-runs", "routeContractKey": "route.hcm.configuration.connector-mapping-dry-run.action"},
+      {"originatingAction": "hris.action.sys.post.platform.v1.admin.hris.connectors.resource.executions", "routeContractKey": "route.hcm.configuration.connector-execution-create.action"},
+      {"originatingAction": "hris.action.sys.post.platform.v1.admin.hris.connectors.resource.validate", "routeContractKey": "route.hcm.configuration.connector-definition-validate.action"},
+      {"originatingAction": "hris.action.sys.post.platform.v1.admin.hris.connectors.resource.submit", "routeContractKey": "route.hcm.configuration.connector-definition-submit.action"},
+      {"originatingAction": "hris.action.sys.post.platform.v1.admin.hris.connectors.resource.approve", "routeContractKey": "route.hcm.configuration.connector-definition-approve.action"},
+      {"originatingAction": "hris.action.sys.post.platform.v1.admin.hris.connectors.resource.activate", "routeContractKey": "route.hcm.configuration.connector-definition-activate.action"},
+      {"originatingAction": "hris.action.sys.post.platform.v1.admin.hris.connectors.resource.mappings", "routeContractKey": "route.hcm.configuration.connector-mapping-version-create.action"},
+      {"originatingAction": "hris.action.sys.post.platform.v1.admin.hris.connectors.resource.mappings.resource.validate", "routeContractKey": "route.hcm.configuration.connector-mapping-version-validate.action"},
+      {"originatingAction": "hris.action.sys.post.platform.v1.admin.hris.connectors.resource.mappings.resource.submit", "routeContractKey": "route.hcm.configuration.connector-mapping-version-submit.action"},
+      {"originatingAction": "hris.action.sys.post.platform.v1.admin.hris.connectors.resource.mappings.resource.approve", "routeContractKey": "route.hcm.configuration.connector-mapping-version-approve.action"},
+      {"originatingAction": "hris.action.sys.post.platform.v1.admin.hris.connectors.resource.mappings.resource.activate", "routeContractKey": "route.hcm.configuration.connector-mapping-version-activate.action"},
+      {"originatingAction": "hris.action.sys.post.platform.v1.admin.hris.connector-executions.resource.reconcile", "routeContractKey": "route.hcm.configuration.connector-execution-reconcile.action"},
+      {"originatingAction": "hris.action.sys.post.platform.v1.admin.hris.connector-executions.resource.retry", "routeContractKey": "route.hcm.configuration.connector-execution-retry.action"},
+      {"originatingAction": "hris.action.sys.post.platform.v1.admin.hris.connector-executions.resource.cancel", "routeContractKey": "route.hcm.configuration.connector-execution-cancel.action"}
+    ],
+    "profileDecision": {
+      "commonChain": ["APP.HCM:VIEW", "GATEWAY_APP_ENTITLEMENT", "OWNER_API_OPERATION", "RESOURCE_POPULATION", "REPOSITORY_TENANT_PREDICATE", "FIELD_PROJECTION", "PURPOSE_POLICY", "AUDIT_DECISION"],
+      "purpose": "HRIS_INTEGRATION_ADMIN",
+      "reader": {
+        "responsibility": "HRIS_CONFIG_AUTHOR>HRIS_DUTY_CONFIGURATION_WORKBENCH_READER",
+        "capability": "hcm.configuration.workbench.view",
+        "routeContractKeys": ["route.hcm.configuration.settings-integrations.page", "route.hcm.configuration.dwp-integrations.data"]
+      },
+      "author": {
+        "responsibility": "HRIS_INTEGRATION_AUTHOR>HRIS_DUTY_INTEGRATION_AUTHOR",
+        "capability": "hcm.integration.definition.update",
+        "resolvedCapabilityCode": "CONFIG.HRIS_INTEGRATION:UPDATE",
+        "routeCount": 9,
+        "commands": ["LIST_CONNECTORS", "CREATE_DEFINITION", "TEST_CONNECTION", "DRY_RUN_MAPPING", "VALIDATE_DEFINITION", "SUBMIT_DEFINITION", "CREATE_MAPPING_VERSION", "VALIDATE_MAPPING_VERSION", "SUBMIT_MAPPING_VERSION"]
+      },
+      "executor": {
+        "responsibility": "HRIS_INTEGRATION_CONTROL_PLANE_EXECUTOR>HRIS_DUTY_INTEGRATION_CONTROL_PLANE_EXECUTOR",
+        "capability": "hcm.integration.control-plane.execute",
+        "resolvedCapabilityCode": "ACTION.HRIS_INTEGRATION_CONTROL_PLANE:EXECUTE",
+        "routeCount": 9,
+        "stepUp": true,
+        "commands": ["CREATE_EXECUTION", "READ_EXECUTION", "APPROVE_DEFINITION", "ACTIVATE_DEFINITION", "APPROVE_MAPPING_VERSION", "ACTIVATE_MAPPING_VERSION", "RECONCILE_EXECUTION", "RETRY_EXECUTION", "CANCEL_OR_COMPENSATE_EXECUTION"]
+      },
+      "makerChecker": "AUTHOR_AND_APPROVER_MUST_BE_DIFFERENT_ACTORS_FOR_THE_SAME_SUBJECT_REVISION",
+      "authorExecutionGuard": "AUTHOR_CANNOT_ACTIVATE_OR_EXECUTE_OWN_UNAPPROVED_DEFINITION_OR_MAPPING",
+      "queryOnlyNeverGrantsCommand": true
+    },
+    "collisionResolution": {
+      "existingKey": "hcm.integration.execute",
+      "existingMeaning": "ACTION.WORKFORCE_DATA_OPERATIONS:EXECUTE_AND_ACCEPTED_SYS006_AUTOMATION_BINDINGS",
+      "newSys008Key": "hcm.integration.control-plane.execute",
+      "newSys008Meaning": "ACTION.HRIS_INTEGRATION_CONTROL_PLANE:EXECUTE_FOR_SYS008_CONTROL_PLANE_ONLY",
+      "existingKeyMutationOrRouteAppend": "FORBIDDEN",
+      "workforceIngestionKeyReuse": "FORBIDDEN_hcm.integration.workforce-ingestion.execute_REMAINS_HRM012_ONLY"
+    },
+    "closedTransportSchemas": {
+      "sourceJsonPointer": "/contractDecision/closedTransportSchemas",
+      "sourceSectionSha256": "9f4cffe7a433445c5b054f10cec4573127cdcad52e94934956802d25cc9535f2",
+      "sourceArtifact": {
+        "path": "../../recovery/hris-porting-blueprint-2026-09-09/session-evidence/sys/g2-transport-schemas.v1.json",
+        "sha256": "7067a7adad828d4918220fcde54fc0fa9a2add5db1d5745e0a4acb0a50698cf7",
+        "bytes": 95808,
+        "reuseRule": "REUSE_EXACT_EXECUTABLE_HEADER_PATH_REQUEST_RESPONSE_AND_PROBLEM_SCHEMAS;SYS_EVT_005_WAS_THE_ONLY_IDENTIFIED_EVENT_SCHEMA_GAP_AND_IS_CLOSED_BY_sysEvt005.payloadSchema"
+      },
+      "dialect": "https://json-schema.org/draft/2020-12/schema",
+      "schemaCount": 14,
+      "additionalProperties": false,
+      "authenticatedCursorBindings": true,
+      "sharedReceiptResponse": true,
+      "implementationRule": "All request, read, count, digest, reference, nullable, cursor and ordering rules are incorporated exactly by the pinned semantic JSON pointer; local weakening or widening is forbidden."
+    },
+    "opaqueReferenceAndEgressBoundary": {
+      "references": ["secretRef", "sampleRef", "mappingRef", "payloadRef", "providerReceiptRef", "compensationPolicyRef", "resultRef", "errorReportRef"],
+      "binding": ["tenant", "connector", "subject", "purpose", "type", "namespace", "canonicalDigest", "authorizationRevision"],
+      "resolution": "SERVER_SIDE_OWNER_PORT_ONLY_AFTER_AUTHENTICATION_AND_SCOPE_AUTHORIZATION",
+      "secretRule": "USE_NON_EXPORTABLE_PROVIDER_HANDLE_WHEN_AVAILABLE_AND_NEVER_RETURN_OR_PERSIST_SECRET_VALUE",
+      "endpointRule": "SCHEME_HOST_PORT_AND_RESOLVED_DESTINATION_MUST_PASS_ALLOWLIST_SSRF_PRIVATE_OR_METADATA_RANGE_DNS_REBINDING_REDIRECT_USERINFO_AND_QUERY_SECRET_GUARDS",
+      "substitutionDenial": "CROSS_TENANT_WRONG_CONNECTOR_WRONG_PURPOSE_WRONG_NAMESPACE_WRONG_TYPE_STALE_REVISION_OR_DIGEST_MISMATCH_FAILS_CLOSED_WITHOUT_EXISTENCE_DISCLOSURE"
+    },
+    "routeDescriptorSeal": {
+      "common": {
+        "owner": "Platform + HCM + Security",
+        "subject": {"type": "PRODUCT", "productKey": "hcm", "surfaceKey": "hcm.management"},
+        "navigationContextId": "hcm.management",
+        "policyVersion": 1,
+        "lifecycleState": "ACTIVE",
+        "bindingKey": "<routeContractKey>.binding.01",
+        "gatewayBindingCount": 1,
+        "servicePepBindingCount": 1,
+        "serviceKey": "platform",
+        "gatewayAndServiceMethodPathSource": "transportAndAuthorizationContract.operationBindings",
+        "pathParameterConstraints": {},
+        "ownerPathValidationSource": "transportAndAuthorizationContract.closedTransportSchemas.sourceArtifact operation pathSchema",
+        "fallbackOrImplicitProfile": "FORBIDDEN"
+      },
+      "predicateAppendages": {
+        "predicate.hcm-settings-operations-authority.v1": {
+          "routeContractKeysSource": "/productAuthorizationV60/routeContractKeys",
+          "appendCount": 20
+        },
+        "predicate.hcm-reference-configuration-authority.v1": {
+          "appendCount": 16,
+          "routeContractKeys": [
+            "route.hcm.configuration.connector-execution-detail.data",
+            "route.hcm.configuration.connector-test.action",
+            "route.hcm.configuration.connector-mapping-dry-run.action",
+            "route.hcm.configuration.connector-execution-create.action",
+            "route.hcm.configuration.connector-definition-validate.action",
+            "route.hcm.configuration.connector-definition-submit.action",
+            "route.hcm.configuration.connector-definition-approve.action",
+            "route.hcm.configuration.connector-definition-activate.action",
+            "route.hcm.configuration.connector-mapping-version-create.action",
+            "route.hcm.configuration.connector-mapping-version-validate.action",
+            "route.hcm.configuration.connector-mapping-version-submit.action",
+            "route.hcm.configuration.connector-mapping-version-approve.action",
+            "route.hcm.configuration.connector-mapping-version-activate.action",
+            "route.hcm.configuration.connector-execution-reconcile.action",
+            "route.hcm.configuration.connector-execution-retry.action",
+            "route.hcm.configuration.connector-execution-cancel.action"
+          ]
+        },
+        "newPredicateCount": 0,
+        "ownerPepRule": "Connector, legal-entity, object-version, purpose and dynamic maker-checker evidence remains evaluated by the Platform owner PEP; predicate reuse never weakens those checks."
+      },
+      "profiles": {
+        "configuration-reader": {
+          "precedence": 300,
+          "activeAccessModes": ["NORMAL", "ELEVATED"],
+          "requiredAccess": {"type": "CAPABILITY", "capabilityContractKey": "hcm.configuration.workbench.view"},
+          "targetBindingKinds": ["CONFIG_SCOPE"],
+          "predicatePolicyKeys": ["predicate.hcm-settings-operations-authority.v1"],
+          "readOnly": true
+        },
+        "integration-author-config": {
+          "profileKey": "integration-author",
+          "precedence": 300,
+          "activeAccessModes": ["NORMAL", "ELEVATED"],
+          "requiredAccess": {"type": "CAPABILITY", "capabilityContractKey": "hcm.integration.definition.update"},
+          "targetBindingKinds": ["CONFIG_SCOPE"],
+          "predicatePolicyKeys": ["predicate.hcm-settings-operations-authority.v1"]
+        },
+        "integration-author-object": {
+          "profileKey": "integration-author",
+          "precedence": 300,
+          "activeAccessModes": ["NORMAL", "ELEVATED"],
+          "requiredAccess": {"type": "CAPABILITY", "capabilityContractKey": "hcm.integration.definition.update"},
+          "targetBindingKinds": ["CONFIG_SCOPE", "OBJECT"],
+          "predicatePolicyKeys": ["predicate.hcm-settings-operations-authority.v1", "predicate.hcm-reference-configuration-authority.v1"]
+        },
+        "integration-control-plane-executor": {
+          "precedence": 300,
+          "activeAccessModesForRead": ["NORMAL", "ELEVATED"],
+          "activeAccessModesForAction": ["ELEVATED"],
+          "requiredAccess": {"type": "CAPABILITY", "capabilityContractKey": "hcm.integration.control-plane.execute"},
+          "targetBindingKinds": ["CONFIG_SCOPE", "OBJECT"],
+          "predicatePolicyKeys": ["predicate.hcm-settings-operations-authority.v1", "predicate.hcm-reference-configuration-authority.v1"]
+        }
+      },
+      "readRoutes": [
+        {
+          "routeContractKey": "route.hcm.configuration.settings-integrations.page",
+          "routeKind": "PAGE",
+          "profileKey": "configuration-reader",
+          "profileSource": "routeDescriptorSeal.profiles.configuration-reader",
+          "sideEffectFree": null,
+          "uiRouteId": "hcm.management.settings-integrations",
+          "uiRoutePattern": "/hr/settings/integrations",
+          "authorizationEquivalenceKey": "wire-authority.hcm.configuration.integration-control-plane.v1",
+          "projectionPolicyKey": "sys008.iaq-057.fields.v1",
+          "responseSchemaKey": "SysIaq057ResponseV1"
+        },
+        {
+          "routeContractKey": "route.hcm.configuration.dwp-integrations.data",
+          "routeKind": "DATA",
+          "profileKey": "configuration-reader",
+          "profileSource": "routeDescriptorSeal.profiles.configuration-reader",
+          "sideEffectFree": true,
+          "uiRouteId": null,
+          "uiRoutePattern": null,
+          "authorizationEquivalenceKey": "wire-authority.hcm.configuration.integration-control-plane.v1",
+          "projectionPolicyKey": "sys008.iaq-062.fields.v1",
+          "responseSchemaKey": "SysIaq062ResponseV1"
+        },
+        {
+          "routeContractKey": "route.hcm.configuration.connector-catalog.data",
+          "routeKind": "DATA",
+          "profileKey": "integration-author",
+          "profileSource": "routeDescriptorSeal.profiles.integration-author-config",
+          "readOnly": true,
+          "sideEffectFree": true,
+          "uiRouteId": null,
+          "uiRoutePattern": null,
+          "projectionPolicyKey": "sys008.sys-api-021.catalog.fields.v1",
+          "responseSchemaKey": "SysApi021GetResponseV1"
+        },
+        {
+          "routeContractKey": "route.hcm.configuration.connector-execution-detail.data",
+          "routeKind": "DATA",
+          "profileKey": "integration-control-plane-executor",
+          "profileSource": "routeDescriptorSeal.profiles.integration-control-plane-executor",
+          "activeAccessModes": ["NORMAL", "ELEVATED"],
+          "readOnly": true,
+          "sideEffectFree": true,
+          "uiRouteId": null,
+          "uiRoutePattern": null,
+          "projectionPolicyKey": "sys008.sys-api-025.execution-detail.fields.v1",
+          "responseSchemaKey": "SysApi025GetResponseV1"
+        }
+      ],
+      "authorActionRoutes": {
+        "common": {
+          "routeKind": "ACTION",
+          "profileKey": "integration-author",
+          "readOnly": false,
+          "sideEffectFree": null,
+          "responseProjectionBindings": [],
+          "stepUpCommandBindings": []
+        },
+        "configScopeOnly": [
+          "route.hcm.configuration.connector-definition-create.action"
+        ],
+        "configScopeProfileSource": "routeDescriptorSeal.profiles.integration-author-config",
+        "objectBound": [
+          "route.hcm.configuration.connector-test.action",
+          "route.hcm.configuration.connector-mapping-dry-run.action",
+          "route.hcm.configuration.connector-definition-validate.action",
+          "route.hcm.configuration.connector-definition-submit.action",
+          "route.hcm.configuration.connector-mapping-version-create.action",
+          "route.hcm.configuration.connector-mapping-version-validate.action",
+          "route.hcm.configuration.connector-mapping-version-submit.action"
+        ],
+        "objectProfileSource": "routeDescriptorSeal.profiles.integration-author-object"
+      },
+      "executorActionRoutes": {
+        "common": {
+          "routeKind": "ACTION",
+          "profileKey": "integration-control-plane-executor",
+          "profileSource": "routeDescriptorSeal.profiles.integration-control-plane-executor",
+          "activeAccessModes": ["ELEVATED"],
+          "readOnly": false,
+          "sideEffectFree": null,
+          "responseProjectionBindings": []
+        },
+        "elevatedOwnerPepWithoutIfMatch": {
+          "routeContractKey": "route.hcm.configuration.connector-execution-create.action",
+          "reason": "SYS-API-024 is sealed to CommandHeaders rather than CasCommandHeaders; the elevated session and owner PEP bind connector, mapping, segregation-of-duties and frozen revision evidence without fabricating an object-version header.",
+          "stepUpCommandBindings": []
+        },
+        "objectBoundStepUp": [
+          {"routeContractKey": "route.hcm.configuration.connector-definition-approve.action", "targetType": "HRIS_CONNECTOR_DEFINITION", "targetIdPathParameter": "connectorId"},
+          {"routeContractKey": "route.hcm.configuration.connector-definition-activate.action", "targetType": "HRIS_CONNECTOR_DEFINITION", "targetIdPathParameter": "connectorId"},
+          {"routeContractKey": "route.hcm.configuration.connector-mapping-version-approve.action", "targetType": "HRIS_CONNECTOR_MAPPING_VERSION", "targetIdPathParameter": "connectorId"},
+          {"routeContractKey": "route.hcm.configuration.connector-mapping-version-activate.action", "targetType": "HRIS_CONNECTOR_MAPPING_VERSION", "targetIdPathParameter": "connectorId"},
+          {"routeContractKey": "route.hcm.configuration.connector-execution-reconcile.action", "targetType": "HRIS_CONNECTOR_EXECUTION", "targetIdPathParameter": "executionId"},
+          {"routeContractKey": "route.hcm.configuration.connector-execution-retry.action", "targetType": "HRIS_CONNECTOR_EXECUTION", "targetIdPathParameter": "executionId"},
+          {"routeContractKey": "route.hcm.configuration.connector-execution-cancel.action", "targetType": "HRIS_CONNECTOR_EXECUTION", "targetIdPathParameter": "executionId"}
+        ],
+        "stepUpBindingTemplate": {
+          "bindingKey": "<routeContractKey>.binding.01",
+          "expectedObjectVersionSource": "COMMAND_HEADER",
+          "expectedObjectVersionName": "If-Match",
+          "ownerServiceKey": "platform",
+          "audience": "dwp-platform-server"
+        },
+        "dynamicSod": "Maker differs from approver, and the author cannot activate or execute the author's own unapproved subject revision; owner PEP enforcement is mandatory."
+      }
+    },
+    "commandRules": {
+      "queryHeaders": ["Authorization", "X-Correlation-Id", "X-Purpose-Code"],
+      "asyncCommandHeaders": ["Authorization", "Idempotency-Key", "X-Correlation-Id", "X-Purpose-Code"],
+      "casCommandAdditionalHeader": "If-Match",
+      "casOperations": ["SYS-API-023", "SYS-API-057", "SYS-API-058", "SYS-API-059", "SYS-API-060", "SYS-API-062", "SYS-API-063", "SYS-API-064", "SYS-API-065", "SYS-API-066", "SYS-API-067", "SYS-API-068"],
+      "synchronousGetStatus": 200,
+      "asyncCommandAcceptedStatus": 202,
+      "acceptedBody": "SHARED_TYPED_RECEIPT",
+      "errorBody": "RFC7807_PROBLEM",
+      "sameKeySameDigest": "RETURN_ORIGINAL_RECEIPT_WITHOUT_REEXECUTION",
+      "sameKeyDifferentDigest": "HTTP_409_WITHOUT_MUTATION",
+      "browserTenantHeaderOrBody": "FORBIDDEN"
+    }
+  },
+  "productAuthorizationV60": {
+    "predecessor": "v59",
+    "candidate": "v60",
+    "appendOnlyCounts": {
+      "capabilities": 278,
+      "accessPolicies": 24,
+      "entitlementExpressions": 17,
+      "predicatePolicies": 86,
+      "routes": 1154,
+      "PAGE": 161,
+      "DATA": 348,
+      "ACTION": 645
+    },
+    "delta": {
+      "capabilities": 2,
+      "accessPolicies": 0,
+      "entitlementExpressions": 0,
+      "predicatePolicies": 0,
+      "routes": 20,
+      "PAGE": 1,
+      "DATA": 3,
+      "ACTION": 16
+    },
+    "reusedCapabilities": ["hcm.configuration.workbench.view"],
+    "newCapabilities": [
+      {
+        "contractKey": "hcm.integration.definition.update",
+        "productKey": "hcm",
+        "surfaceKey": "hcm.management",
+        "owner": "Platform + HCM + Security",
+        "resolvedCapabilityCode": "CONFIG.HRIS_INTEGRATION:UPDATE",
+        "resourceKey": "CONFIG.HRIS_INTEGRATION",
+        "action": "UPDATE",
+        "authorityMode": "PERMISSION_AND_RELATIONSHIP",
+        "scopeResolver": "CONNECTOR_OR_LEGAL_ENTITY_SCOPE",
+        "riskTier": "HIGH",
+        "activationPolicy": null,
+        "responsibilityRequirement": "REQUIRED",
+        "requiredResponsibilityCode": "HRIS_DUTY_INTEGRATION_AUTHOR",
+        "requiresProductEntitlement": true,
+        "mappingVersion": 1,
+        "policyVersion": 1,
+        "lifecycleState": "ACTIVE",
+        "legacySource": null,
+        "sodPolicyId": null,
+        "sunsetAt": null,
+        "routeContractKeys": [
+          "route.hcm.configuration.connector-catalog.data",
+          "route.hcm.configuration.connector-definition-create.action",
+          "route.hcm.configuration.connector-test.action",
+          "route.hcm.configuration.connector-mapping-dry-run.action",
+          "route.hcm.configuration.connector-definition-validate.action",
+          "route.hcm.configuration.connector-definition-submit.action",
+          "route.hcm.configuration.connector-mapping-version-create.action",
+          "route.hcm.configuration.connector-mapping-version-validate.action",
+          "route.hcm.configuration.connector-mapping-version-submit.action"
+        ]
+      },
+      {
+        "contractKey": "hcm.integration.control-plane.execute",
+        "productKey": "hcm",
+        "surfaceKey": "hcm.management",
+        "owner": "Platform + HCM + Security",
+        "resolvedCapabilityCode": "ACTION.HRIS_INTEGRATION_CONTROL_PLANE:EXECUTE",
+        "resourceKey": "ACTION.HRIS_INTEGRATION_CONTROL_PLANE",
+        "action": "EXECUTE",
+        "authorityMode": "PERMISSION_AND_RELATIONSHIP",
+        "scopeResolver": "CONNECTOR_OR_LEGAL_ENTITY_SCOPE",
+        "riskTier": "CRITICAL",
+        "activationPolicy": "STEPUP-MGMT-HIGH-V1",
+        "responsibilityRequirement": "REQUIRED",
+        "requiredResponsibilityCode": "HRIS_DUTY_INTEGRATION_CONTROL_PLANE_EXECUTOR",
+        "requiresProductEntitlement": true,
+        "mappingVersion": 1,
+        "policyVersion": 1,
+        "lifecycleState": "ACTIVE",
+        "legacySource": null,
+        "sodPolicyId": null,
+        "sunsetAt": null,
+        "routeContractKeys": [
+          "route.hcm.configuration.connector-execution-detail.data",
+          "route.hcm.configuration.connector-execution-create.action",
+          "route.hcm.configuration.connector-definition-approve.action",
+          "route.hcm.configuration.connector-definition-activate.action",
+          "route.hcm.configuration.connector-mapping-version-approve.action",
+          "route.hcm.configuration.connector-mapping-version-activate.action",
+          "route.hcm.configuration.connector-execution-reconcile.action",
+          "route.hcm.configuration.connector-execution-retry.action",
+          "route.hcm.configuration.connector-execution-cancel.action"
+        ]
+      }
+    ],
+    "routeContractKeys": [
+      "route.hcm.configuration.settings-integrations.page",
+      "route.hcm.configuration.dwp-integrations.data",
+      "route.hcm.configuration.connector-catalog.data",
+      "route.hcm.configuration.connector-definition-create.action",
+      "route.hcm.configuration.connector-test.action",
+      "route.hcm.configuration.connector-mapping-dry-run.action",
+      "route.hcm.configuration.connector-execution-create.action",
+      "route.hcm.configuration.connector-execution-detail.data",
+      "route.hcm.configuration.connector-definition-validate.action",
+      "route.hcm.configuration.connector-definition-submit.action",
+      "route.hcm.configuration.connector-definition-approve.action",
+      "route.hcm.configuration.connector-definition-activate.action",
+      "route.hcm.configuration.connector-mapping-version-create.action",
+      "route.hcm.configuration.connector-mapping-version-validate.action",
+      "route.hcm.configuration.connector-mapping-version-submit.action",
+      "route.hcm.configuration.connector-mapping-version-approve.action",
+      "route.hcm.configuration.connector-mapping-version-activate.action",
+      "route.hcm.configuration.connector-execution-reconcile.action",
+      "route.hcm.configuration.connector-execution-retry.action",
+      "route.hcm.configuration.connector-execution-cancel.action"
+    ],
+    "predicateRule": "No new broad predicate is introduced. Existing generated reverse route indexes may be append-only, while tenant, connector, legal-entity, object-version, purpose and dynamic segregation-of-duties evidence remains owner-service evaluated and fail closed.",
+    "deterministicChecksum": "TO_BE_GENERATED_AND_PINNED_BY_THE_BOUNDED_IMPLEMENTATION_RECEIPT",
+    "forbidden": [
+      "mutating v59 or any historical bundle",
+      "changing or appending SYS008 routes to hcm.integration.execute",
+      "reusing hcm.integration.workforce-ingestion.execute",
+      "reowning the external DWP productivity page",
+      "adding a second SYS008 owner query or duplicate persistence",
+      "activating the DRAFT bundle in this gate"
+    ]
+  },
+  "authV269": {
+    "candidateMigration": "V269",
+    "leaseState": "NOT_REQUIRED_FOR_AUTH_STREAM_BUT_SOURCE_NOT_YET_AUTHORED",
+    "bundleRelease": {"bundleKey": "product-surfaces", "version": 60, "intendedBundleStatus": "DRAFT", "automaticImportEnabled": false},
+    "feature": {"featureKey": "HRIS_INTEGRATION_CONTROL_PLANE", "policyVersion": 1, "productKey": "hcm", "appResourceKey": "APP.HCM", "minimumBundleVersion": 60, "baselineState": "OFF", "ownerKey": "SYS"},
+    "catalogTuples": {
+      "permissions": [
+        {"code": "UPDATE", "name": "Update"},
+        {"code": "EXECUTE", "name": "Execute"}
+      ],
+      "resourceTemplates": [
+        {"resourceKey": "CONFIG.HRIS_INTEGRATION", "resourceType": "CONFIG", "displayName": "HRIS integration configuration", "requiredEntitlement": "core.people", "lifecycleState": "ACTIVE"},
+        {"resourceKey": "ACTION.HRIS_INTEGRATION_CONTROL_PLANE", "resourceType": "ACTION", "displayName": "HRIS integration control-plane execution", "requiredEntitlement": "core.people", "lifecycleState": "ACTIVE"}
+      ],
+      "responsibilityCatalog": [
+        {
+          "responsibilityCode": "HRIS_DUTY_INTEGRATION_AUTHOR",
+          "displayName": "HRIS integration author",
+          "description": "Authors and validates immutable connector definitions and mapping versions for independently assigned connector and legal-entity populations.",
+          "resourceType": "APP",
+          "riskTier": "L3",
+          "allowedPrincipalTypes": ["USER", "GROUP"],
+          "labelI18n": {"ko": "HRIS 연계 작성 담당자", "en": "HRIS integration author"},
+          "sortOrder": 140,
+          "lifecycleState": "ACTIVE"
+        },
+        {
+          "responsibilityCode": "HRIS_DUTY_INTEGRATION_CONTROL_PLANE_EXECUTOR",
+          "displayName": "HRIS integration control-plane executor",
+          "description": "Independently approves, activates, executes, reconciles, retries, cancels, or compensates governed HRIS connector work for assigned connector and legal-entity populations.",
+          "resourceType": "APP",
+          "riskTier": "L3",
+          "allowedPrincipalTypes": ["USER", "GROUP"],
+          "labelI18n": {"ko": "HRIS 연계 통제 실행 담당자", "en": "HRIS integration control-plane executor"},
+          "sortOrder": 150,
+          "lifecycleState": "ACTIVE"
+        }
+      ],
+      "scopedDuties": [
+        {"dutyCode": "HRIS_DUTY_INTEGRATION_AUTHOR", "productKey": "hcm", "legacyRoleCode": "HR_ADMIN", "productResourceKey": "APP.HCM", "resourceKey": "CONFIG.HRIS_INTEGRATION", "auditPolicyException": false, "riskTier": "HIGH", "lifecycleState": "ACTIVE"},
+        {"dutyCode": "HRIS_DUTY_INTEGRATION_CONTROL_PLANE_EXECUTOR", "productKey": "hcm", "legacyRoleCode": "HR_ADMIN", "productResourceKey": "APP.HCM", "resourceKey": "ACTION.HRIS_INTEGRATION_CONTROL_PLANE", "auditPolicyException": false, "riskTier": "HIGH", "lifecycleState": "ACTIVE"}
+      ],
+      "dutyCapabilityBindings": [
+        {"dutyCode": "HRIS_DUTY_INTEGRATION_AUTHOR", "capabilityContractKey": "hcm.integration.definition.update", "permissionResourceKey": "CONFIG.HRIS_INTEGRATION", "permissionCode": "UPDATE"},
+        {"dutyCode": "HRIS_DUTY_INTEGRATION_CONTROL_PLANE_EXECUTOR", "capabilityContractKey": "hcm.integration.control-plane.execute", "permissionResourceKey": "ACTION.HRIS_INTEGRATION_CONTROL_PLANE", "permissionCode": "EXECUTE"}
+      ],
+      "presets": [
+        {
+          "presetCode": "HRIS_INTEGRATION_AUTHOR",
+          "productKey": "hcm",
+          "productResourceKey": "APP.HCM",
+          "displayName": "HRIS integration author",
+          "description": "Authors and validates immutable connector definitions and mapping versions for independently assigned connector and legal-entity populations.",
+          "responsibilityCode": "APP_CONFIG_ADMIN",
+          "riskTier": "HIGH",
+          "lifecycleState": "ACTIVE",
+          "version": 1,
+          "dutyCode": "HRIS_DUTY_INTEGRATION_AUTHOR",
+          "dutySortOrder": 10
+        },
+        {
+          "presetCode": "HRIS_INTEGRATION_CONTROL_PLANE_EXECUTOR",
+          "productKey": "hcm",
+          "productResourceKey": "APP.HCM",
+          "displayName": "HRIS integration control-plane executor",
+          "description": "Independently approves, activates, executes, reconciles, retries, cancels, or compensates governed HRIS connector work for assigned connector and legal-entity populations.",
+          "responsibilityCode": "APP_CONFIG_ADMIN",
+          "riskTier": "HIGH",
+          "lifecycleState": "ACTIVE",
+          "version": 1,
+          "dutyCode": "HRIS_DUTY_INTEGRATION_CONTROL_PLANE_EXECUTOR",
+          "dutySortOrder": 10
+        }
+      ],
+      "effectiveScopedDutyView": {
+        "base": "PRESERVE_EVERY_V268_BRANCH_BYTE_SEMANTICALLY",
+        "appendOnlyBranches": [
+          {"dutyCode": "HRIS_DUTY_INTEGRATION_AUTHOR", "productKey": "hcm", "productResourceKey": "APP.HCM", "resourceKey": "CONFIG.HRIS_INTEGRATION", "capabilityContractKey": "hcm.integration.definition.update", "resolvedCapabilityCode": "CONFIG.HRIS_INTEGRATION:UPDATE"},
+          {"dutyCode": "HRIS_DUTY_INTEGRATION_CONTROL_PLANE_EXECUTOR", "productKey": "hcm", "productResourceKey": "APP.HCM", "resourceKey": "ACTION.HRIS_INTEGRATION_CONTROL_PLANE", "capabilityContractKey": "hcm.integration.control-plane.execute", "resolvedCapabilityCode": "ACTION.HRIS_INTEGRATION_CONTROL_PLANE:EXECUTE"}
+        ],
+        "aliasToHistoricalIntegrationExecuteOrWorkforceIngestion": "FORBIDDEN"
+      },
+      "tenantResourceAvailability": {
+        "materializeActiveTemplatesForExistingTenants": ["CONFIG.HRIS_INTEGRATION", "ACTION.HRIS_INTEGRATION_CONTROL_PLANE"],
+        "permissionGrantOrAssignmentCreated": false
+      },
+      "conflictRule": "EVERY_ON_CONFLICT_MUST_VALIDATE_THE_COMPLETE_EXACT_TUPLE_AND_BE_A_NO_OP_OR_RAISE_DRIFT;SILENT_PARTIAL_REUSE_IS_FORBIDDEN"
+    },
+    "newResourceTemplates": 2,
+    "newResponsibilityCatalogRows": 2,
+    "newScopedDuties": 2,
+    "newDutyCapabilityBindings": 2,
+    "newPresets": 2,
+    "ownedRouteContracts": 20,
+    "routeOwnersAfterMigration": 91,
+    "featureRouteBindingsAfterMigration": 91,
+    "featurePoliciesAfterMigration": 15,
+    "tenantActivationRows": 0,
+    "tenantEnrollmentRows": 0,
+    "providerAssignmentRows": 0,
+    "newBroadGrants": 0,
+    "activationAuthorized": false
+  },
+  "gatewayBoundary": {
+    "browserApis": 20,
+    "mappingsRequired": "ONE_EXACT_GATEWAY_AND_SERVICE_BINDING_PER_OPERATION_BINDING",
+    "trustedReconstruction": ["tenant", "actor", "connector and legal-entity scope", "field decision context", "purpose HRIS_INTEGRATION_ADMIN", "authorization revision", "correlation ID"],
+    "untrustedInputs": ["browser tenant headers", "browser role or capability claims", "browser connector or legal-entity authority", "browser field decisions", "browser purpose substitution", "browser authorization revision"],
+    "pathParameters": "UUID_OR_CANONICAL_VERSION_CONSTRAINTS_MUST_MATCH_AT_GATEWAY_AND_OWNER_PEP",
+    "directOwnerBypass": "FORBIDDEN"
+  },
+  "sharedReceiptBridge": {
+    "reuseOnly": "The existing SYS-002 shared command receipt controller and sys_hris_command_receipts store remain the sole generic bridge.",
+    "boundedChanges": [
+      {"component": "HrisCommandReceiptController", "change": "Add HRIS_INTEGRATION_CONTROL_PLANE feature condition without duplicating controller, route, store or SYS-002 ownership."},
+      {"component": "AuthHrisExplorerAuthorityEvidenceQuery", "change": "Add exactly the sixteen originatingAction to routeContractKey mappings sealed in transportAndAuthorizationContract."},
+      {"component": "sys_hris_guard_command_receipt_seal", "change": "Append-only strengthen in V334 without editing V327 so only ACCEPTED_TO_RUNNING and RUNNING_TO_SUCCEEDED_OR_REJECTED_OR_FAILED_OR_RESULT_UNKNOWN are legal and every terminal row is update-delete immutable."}
+    ],
+    "resultUnknownRule": "The original RESULT_UNKNOWN receipt is terminal and immutable; a new reconcile command receipt may resolve execution state without mutating the original receipt.",
+    "authorizationRevalidation": "Recheck original and current authority, tenant, connector population, legal entity, purpose, field policy and authorization revision at every receipt read and pre-effect boundary.",
+    "secondReceiptTableOrController": "FORBIDDEN"
+  },
+  "typedArtifactBoundary": {
+    "canonicalSchema": {"path": "dwp-backend/contracts/hris/canonical/schemas/platform-dependency-canonical-schemas.v1.json", "sha256": "5674845a3ba00928e8c5e05dc99a7869d3dae7ba2cc48f360c8b16db47ec3d8f", "bytes": 28109},
+    "reuseOnly": [
+      {"id": "PDX-007", "type": "ConnectorMappingVersion.v1", "schemaSha256": "216a9a290840175afaa0def23527a61086aee0d1d54dbd059c7940bdf78235bf"},
+      {"id": "PDX-008", "type": "ConnectorExecutionRequest.v1", "schemaSha256": "851dcf0693edddbebff1023cf458dbb5d237fbbeedc466934b0499555f2a327d"},
+      {"id": "PDX-009", "type": "ConnectorReconciliationReceipt.v1", "schemaSha256": "23a06397d889d9bf62bab6e22ab453124ccef1473640c9bf50fedbfd12b1f5a4"}
+    ],
+    "ownerToDep006StateProjection": "INCORPORATED_EXACTLY_FROM_/typedArtifactContract_OWNER_DETAIL_RETAINED_REVERSE_INFERENCE_FORBIDDEN",
+    "cancelSpelling": "OWNER_CANCELLED_PROJECTS_TO_DEP006_CANCELED_ONLY",
+    "pdx008Projection": {
+      "SYS_API_023": "DRY_RUN_WITH_SERVER_DERIVED_IMMUTABLE_MAPPING_DIRECTION_AND_SAMPLE_REF_DIGEST_NO_PROVIDER_OR_DOMAIN_EFFECT",
+      "SYS_API_024_IMPORT": "EXECUTE_INBOUND",
+      "SYS_API_024_EXPORT_OR_DISPATCH": "EXECUTE_OUTBOUND",
+      "SYS_API_024_RECONCILE": "RECONCILE_INHERITING_ORIGINAL_DIRECTION_SCOPE_SOURCE_REF_AND_DIGEST",
+      "scopeProjection": {
+        "authorizationPopulationRule": "CONNECTOR_SET_AND_LEGAL_ENTITY_ARE_PEP_POPULATION_CONSTRAINTS_AND_ARE_NEVER_COPIED_DIRECTLY_INTO_PDX008_SCOPE_TYPE",
+        "dryRun": {"scopeType": "TENANT", "scopeId": null},
+        "tenantExecution": {"scopeType": "TENANT", "scopeId": null, "guard": "VERIFIED_CONNECTOR_SET_AUTHORIZATION_AND_NO_LEGAL_ENTITY_TARGET"},
+        "legalEntityExecution": {"scopeType": "LEGAL_ENTITY", "scopeId": "VERIFIED_LEGAL_ENTITY_PUBLIC_ID_FROM_THE_TYPED_SOURCE_ENVELOPE", "guard": "ID_IS_IN_THE_CURRENT_AUTHORIZED_LEGAL_ENTITY_POPULATION_AND_BOUND_TO_SOURCE_DIGEST"},
+        "reconcile": "INHERIT_EXACT_FROZEN_ORIGINAL_SCOPE_TYPE_AND_SCOPE_ID",
+        "unsupportedV1": ["GLOBAL", "ORGANIZATION", "POPULATION", "SUBJECT"],
+        "nullability": "SCOPE_ID_IS_NULL_IFF_SCOPE_TYPE_IS_TENANT_AND_NON_NULL_IFF_SCOPE_TYPE_IS_LEGAL_ENTITY",
+        "callerOverride": "FORBIDDEN"
+      },
+      "callerDirectionScopeOrIntentOverride": "FORBIDDEN"
+    },
+    "providerAndConsumerVerification": "GENERATED_TYPE_HASH_AND_ROUNDTRIP_TESTS_REQUIRED_ON_BOTH_SIDES_NO_DUPLICATE_DOMAIN_CLASS_OR_CROSS_SERVICE_DATABASE_REFERENCE",
+    "realProviderBinding": "WITHHELD_UNTIL_G6_AND_EXPLICIT_TENANT_ENROLLMENT"
+  },
+  "sysEvt005": {
+    "eventId": "SYS-EVT-005",
+    "eventType": "dwp.hris.connector.execution.state-changed.v1",
+    "dialect": "https://json-schema.org/draft/2020-12/schema",
+    "envelope": "DEP-003_EVENT_ENVELOPE_OUTBOX_INBOX_V1",
+    "closedPayload": true,
+    "payloadSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "executionPublicId": {"type": "string", "format": "uuid"},
+        "state": {"type": "string", "enum": ["ACCEPTED", "TRANSFORMING", "DISPATCHED", "RESULT_UNKNOWN", "ACKNOWLEDGED", "RECONCILING", "RECONCILED", "PARTIAL", "FAILED", "DEAD_LETTER", "CANCELLED"]},
+        "sourceCount": {"type": "integer", "minimum": 0, "maximum": 1000000000},
+        "acceptedCount": {"type": "integer", "minimum": 0, "maximum": 1000000000},
+        "rejectedCount": {"type": "integer", "minimum": 0, "maximum": 1000000000},
+        "quarantinedCount": {"type": "integer", "minimum": 0, "maximum": 1000000000},
+        "reconciliationDigest": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"}
+      },
+      "required": ["executionPublicId", "state", "sourceCount", "acceptedCount", "rejectedCount", "quarantinedCount", "reconciliationDigest"],
+      "allOf": [
+        {
+          "if": {"properties": {"state": {"enum": ["RECONCILED", "PARTIAL"]}}, "required": ["state"]},
+          "then": {"properties": {"reconciliationDigest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}}
+        }
+      ]
+    },
+    "countGuards": ["acceptedCount + rejectedCount <= sourceCount", "quarantinedCount <= rejectedCount"],
+    "digestRule": "reconciliationDigest is non-null for RECONCILED and PARTIAL and otherwise follows the exact pinned eventDecision.",
+    "eventIdentity": "ONE_EVENT_ID_PER_COMMITTED_EXECUTION_REVISION_REUSED_ON_PUBLICATION_RETRY",
+    "ordering": "PER_EXECUTION_REVISION_MONOTONIC",
+    "dedupe": "EVENT_ID",
+    "atomicity": "VALIDATE_AND_APPEND_OUTBOX_IN_THE_SAME_TRANSACTION_AS_THE_AUTHORIZED_EXECUTION_TRANSITION_OR_ROLL_BACK_BOTH",
+    "forbiddenPayload": ["tenant from untrusted input", "connector endpoint", "secret reference or value", "mapping body", "provider raw payload", "employee item identity", "actor display data"],
+    "exactRulesSource": {"jsonPointer": "/eventDecision", "sha256": "c061acbecfc73657b8e1f32be331b81b2ec2e94151753591162820b3e98383f5"}
+  },
+  "platformV334": {
+    "stream": "PLATFORM_MAIN",
+    "observedHighWater": "V333",
+    "candidateVersion": "V334",
+    "leaseState": "NOT_ISSUED",
+    "sourceState": "NOT_AUTHORED",
+    "exactNewTables": ["sys_connector_definitions", "sys_connector_definition_versions", "sys_connector_mapping_versions", "sys_connector_executions", "sys_connector_execution_items", "sys_connector_execution_attempts"],
+    "fiveTableBlueprint": "SUPERSEDED_MUTABLE_DEFINITION_ROW_FORBIDDEN",
+    "definitionSplit": "sys_connector_definitions stores logical identity, active-version pointer and CAS aggregate revision only; sys_connector_definition_versions stores immutable definition subject fields and append-only lifecycle evidence.",
+    "reuseOnly": ["sys_hris_command_receipts", "sys_domain_event_outbox", "sys_domain_event_inbox", "sys_audit_outbox", "sys_audit_events", "shared operations exception projection"],
+    "requiredRulesSource": {"jsonPointer": "/migrationDecision", "sha256": "7fab341eb6df545024dcc7383d467e4b04b5ec90fc02e88616086290240114f5"},
+    "exactControls": [
+      "tenant-first composite primary and foreign keys with ENABLE and FORCE RLS",
+      "PUBLIC privileges revoked and runtime roles NOINHERIT and NOBYPASSRLS",
+      "trusted gateway SET LOCAL tenant context only",
+      "one active definition version per logical connector and one active mapping version per connector and mapping key",
+      "database guards reject delete or subject-column update of definition and mapping version rows",
+      "tenant connector provider operation and provider idempotency key uniqueness with request digest match",
+      "monotonic attempt fences reject stale worker dispatch and receipt commits",
+      "exact execution item and attempt transition matrices, frozen fields, CAS revisions and terminal immutability",
+      "RESULT_UNKNOWN is durable and never blindly redispatched",
+      "retry creates attempts only for the frozen retryable failed item set and never replays success",
+      "post-dispatch cancellation requires pinned compensation policy and terminal compensation receipt",
+      "shared receipt terminal transitions are append-only strengthened without altering V327 checksum",
+      "event and audit outboxes are atomic with the authoritative transition"
+    ],
+    "reservationAndAuthoringGate": "ONLY_AFTER_THIS_SUCCESSOR_IS_INDEPENDENTLY_REVIEWED_IMPLEMENTED_TARGET_VERIFIED_AND_CENTRALLY_ADMITTED_AND_A_CLEAN_OWNER_PACKET_EXISTS_WITH_A_SEPARATE_EXCLUSIVE_V334_LEASE"
+  },
+  "frontendSurfaces": {
+    "primaryHrisRoute": "/hr/settings/integrations",
+    "dwpControlDeepLink": "/admin/integrations/productivity?product=HCM",
+    "composition": "ONE_SYS008_OWNER_QUERY_WITH_TWO_SEPARATELY_AUTHORIZED_POLICY_PROJECTIONS",
+    "requiredFeature": "HRIS_INTEGRATION_CONTROL_PLANE",
+    "secondSidebarNode": false,
+    "duplicatePageOwner": false,
+    "mounted": false,
+    "defaultEnabled": false,
+    "tenantEnrollmentCount": 0,
+    "requiredStates": ["loading", "empty", "complete", "partial", "unavailable", "forbidden", "retry", "step-up", "result-unknown"],
+    "errorSeparation": "READ_AND_COMMAND_ERRORS_HAVE_SEPARATE_LIFECYCLES_AND_ONE_NEVER_ERASES_VERIFIED_DATA_FROM_THE_OTHER",
+    "requiredViewportWidths": [1440, 1280, 390, 320],
+    "requiredZoomPercent": 200,
+    "requiredAccessibilityModes": ["keyboard", "screen-reader", "light", "dark", "forced-colors", "reduced-motion"],
+    "nestedMainLandmark": "FORBIDDEN"
+  },
+  "implementationBoundary": {
+    "runtimeOwner": "dwp-platform-server",
+    "forbiddenNewService": "dwp-sys-server",
+    "packageRoot": "com.dwp.services.platform.hrisconfiguration.integration",
+    "centralDeltaOnly": [
+      "append product authorization v60 and deterministic generated copies and index",
+      "append Auth V269 default-OFF seed and focused zero-enrollment checks",
+      "add the twenty gateway and service mappings with trusted-context reconstruction",
+      "add closed IAQ, transport, SYS-EVT-005 and DEP-006 typed contracts and focused tests",
+      "add bounded shared receipt feature condition, sixteen evidence-query mappings and terminal guard contract",
+      "add unmounted frontend owner/projection contracts and focused tests",
+      "do not prepare Platform V334 source until the separately admitted owner-packet and exclusive lease gate"
+    ],
+    "negativeMatrices": [
+      "query-only authority cannot create a command",
+      "masked omitted stale partial unavailable or denied evidence exposes zero commands",
+      "wrong tenant connector legal entity purpose namespace type digest or authorization revision fails closed",
+      "self approval activation or own-unapproved-mapping execution fails closed",
+      "provider timeout becomes RESULT_UNKNOWN and cannot blind redispatch",
+      "retry cannot replay successful items or change frozen mapping",
+      "post-dispatch cancel without compensation fails closed",
+      "feature OFF returns no SYS-008 data or command authority",
+      "direct owner bypass fails closed"
+    ],
+    "sourceImplementationPerformedByThisSuccessor": false,
+    "migrationReservedOrAuthoredByThisSuccessor": false
+  },
+  "targetedVerification": {
+    "preImplementationStructuralChecks": [
+      "jq syntax and immutable authority pin verification",
+      "canonical semantic-section digest verification for all eleven pointers",
+      "exact 17 API ID, 18 SYS HTTP/PEP, 2 IAQ, 20 route, 1 PAGE, 3 DATA, 16 ACTION and 16 receipt-map cardinality and bijection",
+      "v59 count, checksum, route absence and existing hcm.integration.execute semantic preservation",
+      "closed transport, event, lifecycle, receipt, opaque-reference and DEP-006 projection consistency",
+      "six-table V334 correction, default-OFF, zero-enrollment, zero-provider and unmounted-surface checks"
+    ],
+    "implementationTests": [
+      "one deterministic product-authorization v60 generation and --check run",
+      "one focused v60 contract, collision-preservation and release-lineage test",
+      "one focused Auth V269 seed, route-owner arithmetic and zero-enrollment test",
+      "one focused Gateway twenty-operation parity, path-constraint and trusted-context reconstruction test",
+      "focused IAQ single-owner, closed transport, opaque-reference, egress, SYS-EVT-005, DEP-006 and receipt-bridge tests",
+      "focused frontend dual-projection state, accessibility and responsive tests",
+      "V334 migration tests are withheld until the separate exclusive lease"
+    ],
+    "goldenScenarios": ["SYS-GOLD-003", "SYS-GOLD-008", "SYS-GOLD-020", "SYS-GOLD-021", "SYS-GOLD-022", "SYS-GOLD-023", "SYS-GOLD-024", "SYS-GOLD-032", "SYS-GOLD-040", "SYS-GOLD-045", "SYS-GOLD-054", "SYS-GOLD-055", "SYS-GOLD-056"],
+    "smallestFailedTargetRerunOnly": true,
+    "repositoryWideSuiteAuthorized": false,
+    "unaffectedPassingTargetRerunAuthorized": false
+  },
+  "activationBoundary": {
+    "featureDefault": "OFF",
+    "tenantEnrollmentCount": 0,
+    "providerBindingCount": 0,
+    "routeAdmission": false,
+    "primarySurfaceMount": "ABSENT",
+    "dwpControlProjectionMount": "ABSENT",
+    "customerEndpointOrSecretBindingCount": 0,
+    "customerDataAuthorized": false,
+    "businessCompletionIncrement": 0
+  },
+  "authority": {
+    "successorSealed": true,
+    "independentReviewRequiredBeforeImplementation": true,
+    "boundedCentralImplementationAuthorizedByThisDocumentAlone": false,
+    "ownerPacketAuthorized": false,
+    "moduleRuntimeSourceAuthorized": false,
+    "platformV334ReservationOrAuthoringAuthorized": false,
+    "moduleWorktreeAuthorized": false,
+    "startTokenAuthorized": false,
+    "routeOrMenuMountAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "realProviderBindingAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": false
+  },
+  "nonClaims": [
+    "This successor does not claim that product authorization v60, Auth V269, Gateway mappings, Platform V334, shared receipt hardening, SYS-EVT-005 or either frontend projection is implemented.",
+    "This successor does not issue an owner packet, start token, worktree, migration lease, activation, enrollment, provider binding or release.",
+    "This successor does not mutate v59, hcm.integration.execute, hcm.integration.workforce-ingestion.execute, V327, V333, the generic productivity page, the compatibility route or any historical artifact.",
+    "This successor does not mount a menu or expose a production connector, endpoint, secret, provider, customer payload or completion credit."
+  ],
+  "nextGate": "INDEPENDENTLY_REVIEW_THIS_EXACT_SUCCESSOR_WITH_ZERO_P0_ZERO_P1_ZERO_P2_THEN_IMPLEMENT_AND_TARGET_VERIFY_ONLY_THE_SEALED_BOUNDED_CENTRAL_DELTA_BEFORE_ANY_OWNER_PACKET_OR_V334_LEASE"
+}
