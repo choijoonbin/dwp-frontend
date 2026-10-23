@@ -1,0 +1,317 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-05-per008-module-source-admission-decision.v1",
+  "decisionId": "HRIS-WAVE7-R7-BATCH-05-PER008-MODULE-SOURCE-ADMISSION-20261023-R1",
+  "issuedAt": "2026-10-23T15:48:59+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "EXACT_CORRECTED_PER008_MODULE_RESULTS_INDEPENDENTLY_ACCEPTED_NO_FF_EXACT_HEAD_SOURCE_ADMISSION_AUTHORIZED_DEFAULT_OFF_ZERO_ENROLLMENT",
+  "sliceId": "BASE-TFR-PER-008",
+  "module": "PER",
+  "moduleSession": "HRIS-PER",
+  "immutability": {
+    "sealed": true,
+    "appendOnly": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_DECISION_ID_AND_SHA256"
+  },
+  "authorityBasis": {
+    "batch05Preflight": {
+      "path": "../r7-batch-05-preflight-r1/semantic-dependency-migration-preflight.v1.json",
+      "sha256": "8f7a0d38c4dc86873e4930e5a21dcc0a269c39512508d86dd529b40015237e0f",
+      "bytes": 37443
+    },
+    "semanticDisposition": {
+      "path": "../r7-batch-05-module-start-r1/semantic-dispositions/base-tfr-per-008.semantic-disposition.v1.json",
+      "sha256": "b97eba63703d040e6526ec9280d13ca18b7a74d875da3508d25331c444d6f016",
+      "bytes": 60642,
+      "requiredState": "PER008_REQUEST_ASSIGNMENT_SUBMISSION_RELEASE_BOUNDARIES_SEALED_V20_REQUIRED_CENTRAL_SUCCESSOR_BEFORE_PACKET_OR_SOURCE"
+    },
+    "ownerPacket": {
+      "path": "../r7-batch-05-module-start-r1/owner-packets/base-tfr-per-008.owner-packet.v1.json",
+      "packetId": "HRIS-WAVE7-R7-BATCH-05-OWNER-BASE-TFR-PER-008-20261023-R1",
+      "sha256": "456c4fc00c06ff6ef729a6a81e9e249b3b5fdbb1ac481ded0e80866e0623676d",
+      "bytes": 23664
+    },
+    "centralPrerequisiteIntegration": {
+      "path": "per-008-central-integration-receipt.v1.json",
+      "receiptId": "HRIS-WAVE7-R7-BATCH-05-PER008-CENTRAL-INTEGRATION-20261023-R1",
+      "sha256": "584a8ee0a3ff548ea07fface28f2c5d534bb22efe4609766fa64769a7a7790a6",
+      "bytes": 8439,
+      "requiredState": "EXACT_PER008_CENTRAL_PREREQUISITES_MERGED_PUSHED_DEFAULT_OFF_ZERO_ENROLLMENT_MODULE_AUTHORITY_MAY_BE_ISSUED"
+    },
+    "startToken": {
+      "path": "../r7-batch-05-module-start-r1/tokens/base-tfr-per-008.start-token.v1.json",
+      "tokenId": "HRIS-WAVE7-R7-BATCH-05-START-BASE-TFR-PER-008-20261023-R1",
+      "sha256": "2962ac0e4a043c82a15bf96f68a86c3370230f4c4c2356b9c9b59ca517152d7b",
+      "bytes": 22979,
+      "requiredState": "ISSUED_EXECUTABLE_EXACT_MATERIALIZED_WORKTREES_ACTIVE_EXCLUSIVE_V20_BOUNDED_SOURCE_TEST_COMMIT_PUSH_ONLY_DEFAULT_OFF_ZERO_ENROLLMENT"
+    },
+    "materializationReceipt": {
+      "path": "../r7-batch-05-module-start-r1/worktree-materialization-receipts/base-tfr-per-008.worktree-materialization-receipt.v1.json",
+      "sha256": "363698d70e0f8c34451cc302414bae82d753f0eeaf16edbece63af3223e00de6",
+      "bytes": 6682
+    },
+    "activeMigrationLease": {
+      "path": "../r7-batch-05-module-start-r1/migration-lease-per008-v20-activation.v1.json",
+      "leaseId": "HRIS-WAVE7-R7-BATCH-05-PERFORMANCE-V20-PER008-20261023-R1",
+      "sha256": "042f95c5db5d9c7be77d4cf013eb450ee51485d7a7eda888976241dd96de4795",
+      "bytes": 9157,
+      "requiredState": "ACTIVE_EXCLUSIVE_PERFORMANCE_V20"
+    },
+    "migrationControlCorrection": {
+      "v1": {
+        "authorityPath": "per-008-migration-control-correction-authority.v1.json",
+        "authoritySha256": "4b9a43eac9be9991413e884e4120a27b0441192e4e52165f24e1a4aef3e3108e",
+        "authorityBytes": 7993,
+        "tokenPath": "../r7-batch-05-module-start-r1/tokens/per-008-migration-control-correction.start-token.v1.json",
+        "tokenSha256": "498ab47468f369fc0117b22907691cf30fc90140251194b9cbbf3cf5ee310bdf",
+        "tokenBytes": 4296,
+        "carrierCommit": "bd1138de2e2e443874a1234ff3df43ef34e6116b"
+      },
+      "v2": {
+        "authorityPath": "per-008-migration-control-correction-authority-successor.v2.json",
+        "authoritySha256": "e3e546b497e8e696cad2238dd374bb28fdcf39af5cb1cbdc0c7fcfbf20968d00",
+        "authorityBytes": 5729,
+        "tokenPath": "../r7-batch-05-module-start-r1/tokens/per-008-migration-control-correction.start-token-successor.v2.json",
+        "tokenSha256": "720c48c081a68a06f8c8958d233d3384355f4aaf7317d1dc4b5662f4f449bd57",
+        "tokenBytes": 3769,
+        "carrierCommit": "3e48ae27488b6e4816f8ea1b511ab9edfe3adafd"
+      },
+      "v3": {
+        "authorityPath": "per-008-migration-control-correction-authority-successor.v3.json",
+        "authoritySha256": "98cd1cd54c83a84e40c9a96134a86fe58902af66e03efb52ba6fe0024bb9d939",
+        "authorityBytes": 3038,
+        "tokenPath": "../r7-batch-05-module-start-r1/tokens/per-008-migration-control-correction.start-token-successor.v3.json",
+        "tokenSha256": "94d33a78c150dc34779b15814dd9c688eab7bd6eb8fab7b6c99ba5328234c893",
+        "tokenBytes": 1476,
+        "carrierCommit": "3542f0719096dd91ba8e4b2f584b5df6ecd89de4"
+      }
+    },
+    "centralCarrierBeforeDecision": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "3542f0719096dd91ba8e4b2f584b5df6ecd89de4",
+      "tree": "cac7ea5f710cfbc25c9dd4011ac5d4e4bee78c15",
+      "originExact": true,
+      "committedTreeCleanBeforeDraft": true,
+      "expectedUntrackedOnly": [
+        "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-05-central-admission-r1/per-008-module-source-admission-decision.v1.json"
+      ]
+    }
+  },
+  "targetStateBeforeDecision": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "01468a404033c2a7247475f481f37c2ac40b3e3e",
+      "tree": "d06ffe06eb7e6a1fbb18ef4ed93b3ffce3401f67",
+      "originExact": true,
+      "clean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "3542f0719096dd91ba8e4b2f584b5df6ecd89de4",
+      "tree": "cac7ea5f710cfbc25c9dd4011ac5d4e4bee78c15",
+      "originExact": true,
+      "committedTreeCleanBeforeDraft": true
+    }
+  },
+  "candidateAdmission": {
+    "backend": {
+      "repository": "dwp-backend",
+      "targetBranch": "dwp-dev",
+      "sourceBranch": "codex/hris-wave7-r7-batch05-per-008-migration-control-correction-backend-20261023-r1",
+      "baseCommit": "01468a404033c2a7247475f481f37c2ac40b3e3e",
+      "baseTree": "d06ffe06eb7e6a1fbb18ef4ed93b3ffce3401f67",
+      "mergeBaseWithTarget": "01468a404033c2a7247475f481f37c2ac40b3e3e",
+      "sourceLineage": [
+        "4f051e00e63525cb688fc69159a5197939e73696",
+        "27a86fa70f03b3b3e2e31de53a7f57db83ce4695",
+        "2f4eb2417d4551d53ed364d951faf4abc32ded4c"
+      ],
+      "exactHead": "2f4eb2417d4551d53ed364d951faf4abc32ded4c",
+      "exactTree": "4a7da7c23df837f7fa9ef9653c0e23f6322a7e76",
+      "commitCount": 3,
+      "changedPathCount": 55,
+      "insertions": 9749,
+      "deletions": 2,
+      "pathOnlyManifestSha256": "f957345db269e45d684e8049ef6fa99c772c80dff9e1d5a9a1d48af21c13b17b",
+      "nameStatusManifestSha256": "13ec4e23e4dc67f8586eee2cebb412d8fc29be55d29fb4f68a6231703132255e",
+      "authorizedPathAccounting": {
+        "originalModulePaths": 35,
+        "correctionUniquePaths": 20,
+        "totalPaths": 55,
+        "outsideAuthorizedBoundaryChanges": 0,
+        "migrationV1ThroughV20ChangedByCorrection": 0,
+        "sealedPer008V20MigrationPostgresTestChangedByCorrection": false
+      },
+      "mergeTree": {
+        "conflictCount": 0,
+        "pathOverlapCount": 0,
+        "predictedTree": "4a7da7c23df837f7fa9ef9653c0e23f6322a7e76"
+      },
+      "originExact": true,
+      "clean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "targetBranch": "dwp-dev",
+      "sourceBranch": "codex/hris-wave7-r7-batch05-per-008-frontend-20261023-r1",
+      "baseCommit": "7352b1ec4cd1fe4ddaf797a985cfe38a84d90a01",
+      "mergeBaseWithCurrentTarget": "7352b1ec4cd1fe4ddaf797a985cfe38a84d90a01",
+      "implementationHead": "640b1e0e5950a18db8a1e5036ac108bfe924a8f0",
+      "implementationTree": "b6fa48af62c346651534ac88a86c35ba12389d33",
+      "exactEvidenceHead": "56c714f64dc6c9e5405a37c3ec6df20c8b617195",
+      "exactTree": "f611301178544d1c4dc03d50bea63a864868be0a",
+      "commitCount": 4,
+      "changedPathCount": 16,
+      "insertions": 4853,
+      "deletions": 0,
+      "pathOnlyManifestSha256": "d9f5d60e9ba8c55a7f2f671001e355e54c25cc6692e8bd7cfbb6978e2a5e19a6",
+      "nameStatusManifestSha256": "5a86c560e5a6c786452e7384fffc96e1fed544cda27061f2600f11f360beaea8",
+      "authorizedPathAccounting": {
+        "feedbackPaths": 12,
+        "sliceTestPaths": 1,
+        "evidencePaths": 3,
+        "totalPaths": 16,
+        "outsideAuthorizedBoundaryChanges": 0,
+        "runtimeRouterMenuSidebarOrSharedDesignSystemChanges": 0
+      },
+      "targetChangesAfterCandidateBase": {
+        "candidatePathOverlapCount": 0,
+        "mergeTreeConflictCount": 0,
+        "predictedTree": "c48a45154457ff3d0e4e2e2926dec33f0c8b59ec"
+      },
+      "originExact": true,
+      "clean": true
+    }
+  },
+  "evidenceResolution": {
+    "backend": {
+      "commit": "2f4eb2417d4551d53ed364d951faf4abc32ded4c",
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-05-results/per-008/per-008-migration-control-correction-result.v1.json",
+      "sha256": "4cfd4305e1485ec8dc0d77c4c1554cb1cccd9af78a2f3fb8661256aa473fb9f2",
+      "bytes": 16719,
+      "gitBlob": "bb81aaeba86b39a51b2dd29f3b550eb184e12af2"
+    },
+    "frontend": [
+      {
+        "kind": "ORIGINAL_MODULE_RESULT",
+        "commit": "56c714f64dc6c9e5405a37c3ec6df20c8b617195",
+        "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-05-results/per-008/per008-module-result.v1.json",
+        "sha256": "a7275dfe40853eba2ef1ac2558746f781394144866412dcd4b83e71c4d8c6429",
+        "bytes": 16819,
+        "gitBlob": "89801c7acd5207d5008016755217ae78ad43abeb"
+      },
+      {
+        "kind": "FRONTEND_REMEDIATION_RESULT",
+        "commit": "56c714f64dc6c9e5405a37c3ec6df20c8b617195",
+        "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-05-results/per-008/per008-frontend-remediation-result.v2.json",
+        "sha256": "c935b7b5dae4a79c50c02827f2627ed79c2969d80b6bb3cd9230fee5d2d0cead",
+        "bytes": 12144,
+        "gitBlob": "56f0d9c5937761484a0f5be2ec49aba55d3758d3"
+      }
+    ]
+  },
+  "independentReview": {
+    "backendSource": {
+      "decision": "GO",
+      "p0": 0,
+      "p1": 0,
+      "p2": 0
+    },
+    "frontendDesignAndFunction": {
+      "decision": "GO",
+      "p0": 0,
+      "p1": 0,
+      "p2": 0
+    },
+    "finalCentralAdmission": {
+      "decision": "GO_SOURCE_ADMISSION_ONLY",
+      "p0": 0,
+      "p1": 0,
+      "p2": 0,
+      "routeMenuFeatureTenantActivationReviewed": false
+    }
+  },
+  "verificationAccounting": {
+    "backend": {
+      "successfulTestExecutions": 81,
+      "uniquePassingTests": 80,
+      "intentionalSharedRlsSelectorOverlap": 1,
+      "result": "PASS"
+    },
+    "frontend": {
+      "targetedFiles": 3,
+      "uniquePassingTests": 25,
+      "minimumPostUxDeltaSliceTests": 16,
+      "changedFileEslint": "PASS",
+      "boundedTypeScript": "PASS",
+      "result": "PASS"
+    },
+    "repositoryWideSuiteRun": false,
+    "fullBuildRun": false,
+    "browserRouteRun": false,
+    "reason": "Source candidates were already tested and independently reviewed. Central admission rechecked only exact identity, evidence, authorized boundaries, default-off state and conflict-free mergeability."
+  },
+  "acceptanceDisposition": {
+    "definedCriteria": 12,
+    "acceptedCriteria": 12,
+    "items": [
+      {"id": "PER008-AC-01", "result": "PASS"},
+      {"id": "PER008-AC-02", "result": "PASS"},
+      {"id": "PER008-AC-03", "result": "PASS"},
+      {"id": "PER008-AC-04", "result": "PASS"},
+      {"id": "PER008-AC-05", "result": "PASS"},
+      {"id": "PER008-AC-06", "result": "PASS"},
+      {"id": "PER008-AC-07", "result": "PASS"},
+      {"id": "PER008-AC-08", "result": "PASS"},
+      {"id": "PER008-AC-09", "result": "PASS"},
+      {"id": "PER008-AC-10", "result": "PASS_AFTER_MIGRATION_CONTROL_CORRECTION"},
+      {
+        "id": "PER008-AC-11",
+        "result": "PASS_ADMITTED_STATIC_NO_DUPLICATE_NO_RECOUNT",
+        "disposition": "Candidate non-document source diffs contain zero IAQ-023 or PER-003 changes. The existing IAQ-023 definition remains byte-identical and still PLANNED/NOT_STARTED/NOT_AUTHORIZED. This is not an IAQ-023 or PER-003 implementation or regression-test completion claim.",
+        "completionCredit": 0
+      },
+      {"id": "PER008-AC-12", "result": "PASS_UNMOUNTED_COMPONENT"}
+    ],
+    "result": "12_OF_12_ACCEPTED_FOR_SOURCE_ADMISSION"
+  },
+  "runtimeBoundary": {
+    "featureKey": "HRIS_PER_TEAM_PERFORMANCE_FEEDBACK",
+    "runtimeDefault": "OFF",
+    "matchIfMissing": false,
+    "enrolledTenants": [],
+    "providerBound": false,
+    "teamWorkspaceMounted": false,
+    "personalWorkspaceMounted": false,
+    "routeMounted": false,
+    "menuMounted": false,
+    "shellNodeMounted": false,
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "browserAdmissionAuthorized": false,
+    "businessCompletionIncrement": 0
+  },
+  "mergeAuthorization": {
+    "strategy": "NO_FF_EXACT_HEAD_ONLY",
+    "backendExactHead": "2f4eb2417d4551d53ed364d951faf4abc32ded4c",
+    "frontendExactHead": "56c714f64dc6c9e5405a37c3ec6df20c8b617195",
+    "backendRejectedAncestorMustNotBeMergedSeparately": "4f051e00e63525cb688fc69159a5197939e73696",
+    "stopOnConflict": true,
+    "squashAuthorized": false,
+    "cherryPickAuthorized": false,
+    "rebaseAuthorized": false,
+    "moduleTestRerunAuthorized": false,
+    "repositoryWideSuiteAuthorized": false
+  },
+  "decision": "AUTHORIZE_ONLY_BACKEND_2F4EB241_AND_FRONTEND_56C714F6_FOR_NO_FF_EXACT_HEAD_DWP_DEV_SOURCE_ADMISSION_STOP_ON_CONFLICT_NO_TEST_RERUN",
+  "nonClaims": [
+    "The PER-008 route, menu, shell node, feature or tenant-visible page is activated or mounted.",
+    "IAQ-023 or BASE-TFR-PER-003 was implemented, retested or newly completed.",
+    "A production provider, scheduler, broker, key provider or customer-data flow is bound.",
+    "BASE-TFR-PER-008 is complete as a production business slice.",
+    "Batch-05, R7 or HRIS is complete."
+  ],
+  "nextAction": "Commit and push this decision carrier, then merge only the two exact candidate heads with --no-ff. Stop on conflict, verify admitted blob identity, record the module-source integration receipt, and keep route/menu/feature/tenant/browser activation deferred."
+}
