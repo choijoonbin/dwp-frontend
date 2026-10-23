@@ -1,0 +1,92 @@
+{
+  "schema": "hris.performance-shared-rls-readiness-implementation-token.v1",
+  "tokenId": "HRIS-WAVE7-R7-BATCH05-PERFORMANCE-SHARED-RLS-IMPLEMENT-20261023-R1",
+  "issuedAt": "2026-10-23T11:33:16+09:00",
+  "state": "SEALED_EXECUTABLE_ONLY_AFTER_RECEIPT_AND_TOKEN_CARRIER_COMMIT_AND_PUSH",
+  "scopeId": "PERFORMANCE_SHARED_RLS_READINESS",
+  "module": "HRIS-PER",
+  "authority": {
+    "packet": {
+      "path": "performance-shared-rls-readiness-packet.v1.json",
+      "sha256": "6a34667b6062caf0ce8ac41ccd31b8fd39c1581986d7114be40561d9beb9ddaa",
+      "bytes": 37255,
+      "carrierCommit": "425722f3c5b6bad06286e452fced9481038f16f8",
+      "carrierTree": "fa52499b66a43f7c46bd9f75704bdce49f098ae5"
+    },
+    "worktreeReceipt": {
+      "path": "performance-shared-rls-backend-worktree-materialization-receipt.v1.json",
+      "sha256": "d335a454070c525425da64f8f78e6e985f6739b1eea1036e41e0c3cfb52817f6",
+      "bytes": 2210
+    },
+    "independentPacketReview": {
+      "p0": 0,
+      "p1": 0,
+      "p2": 0
+    }
+  },
+  "execution": {
+    "backendWorktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261023/r7-batch05/performance-shared-rls/backend",
+    "backendBranch": "codex/hris-wave7-r7-batch05-performance-shared-rls-backend-20261023-r1",
+    "backendBaseHead": "8bec85dab5ee816b12a922c51e369046714c007f",
+    "backendBaseTree": "3f83136fabb7b3dc09b179109fb81a98d3b7bfe0",
+    "changedPathAuthority": "Exactly the eight backendWritable paths below; no sibling, generated, migration or formatting-spill authority exists.",
+    "backendWritable": [
+      "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/PerformanceCycleQueryRepository.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/PerformanceCycleService.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/compensationplanning/CompensationPlanningEventHandoffRepository.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hr/performance/compensationplanning/CompensationPlanningEventHandoffWorker.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hr/performance/PerformanceCycleServiceTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hr/performance/PerformanceCyclePostgresTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hr/performance/compensationplanning/CompensationPlanningEventHandoffWorkerPostgresTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hr/performance/compensationplanning/PerformanceSharedRlsReadinessPostgresTest.java"
+    ],
+    "requiredOutcomes": [
+      "Performance Cycle binds and verifies the trusted tenant once after canonical authority and before any V1 table read or write in every transactional entry point.",
+      "The event handoff enumerates ACTIVE tenants outside protected tables, revalidates and locks ACTIVE in each claim transaction, binds the tenant and claims only that tenant without exceeding one global batch budget.",
+      "Delivery, failure, quarantine and replay updates bind and predicate the exact trusted tenant, event and delivery attempt without widening existing fencing or idempotency behavior.",
+      "Actual PostgreSQL ENABLE plus FORCE RLS policies use identical USING and WITH CHECK expressions for the four tables, with distinct NOSUPERUSER NOBYPASSRLS runtime and migration/routine-owner roles and catalog assertions.",
+      "The V2/V3 SECURITY DEFINER trigger stack, snapshot provider/refetch path, crash rollback, ordering, retry, quarantine, replay and exactly-once behavior pass the bounded evidence group.",
+      "Run the bounded test command once; after a failure rerun only the smallest affected selector."
+    ],
+    "verificationCommands": [
+      "./gradlew :dwp-people-server:test --tests '*PerformanceCycleServiceTest' --tests '*PerformanceCyclePostgresTest' --tests '*CompensationPlanningEventHandoffWorkerPostgresTest' --tests '*PerformanceSharedRlsReadinessPostgresTest' --tests '*ApprovedCompensationPlanSnapshotPublicationPostgresTest' --tests '*ApprovedCompensationSnapshotRefetchServiceTest' --tests '*CompensationPlanningBudgetInvariantPostgresTest' --tests '*PopulationFreezePostgresTest' --tests '*PerformanceReviewPostgresTest' --tests '*Per004OwnerPostgresTest'",
+      "git diff --check"
+    ],
+    "branchPolicy": "Commit and push only this backend branch, independently review its exact commit and PostgreSQL evidence with zero unresolved P0, P1 or P2, then use a separate central admission decision before any no-ff merge to backend dwp-dev."
+  },
+  "forbidden": [
+    "any production migration or Performance V20 reservation",
+    "PER-008 feedback domain, controller, repository, migration, frontend, route or menu source",
+    "product authorization v59, Auth V268, Gateway or frontend authorization source",
+    "tenant enrollment, activation, assignment, broad permission or production release",
+    "source changes outside the exact eight-path allowlist",
+    "repository-wide test repetition without a focused failure proving it necessary"
+  ],
+  "invalidation": [
+    "The backend worktree base head, tree, branch or clean receipt differs before its first authorized change.",
+    "The packet or worktree receipt SHA and byte tuple differs.",
+    "Any changed path is outside backendWritable.",
+    "A production migration, V20 lease, PER-008 source, central v59/V268 source, route, menu or feature enrollment appears.",
+    "PostgreSQL is unavailable but evidence is recorded as PASS.",
+    "Any unresolved P0, P1 or P2 remains at admission time."
+  ],
+  "effectiveOnlyAfterReceiptAndTokenCarrierCommittedAndPushedToFrontendDwpDev": true,
+  "receiptAndTokenCarrierCommittedAndPushedAtIssuance": false,
+  "sourceAuthoringAuthorizedNow": false,
+  "testAuthoringAuthorizedNow": false,
+  "sourceAuthoringAuthorizedAfterCarrierCommitAndPush": true,
+  "testAuthoringAuthorizedAfterCarrierCommitAndPush": true,
+  "migrationAuthoringAuthorized": false,
+  "performanceV20ReservationAuthorized": false,
+  "per008ModuleSourceAuthorized": false,
+  "centralProductAuthorizationV59AuthoringAuthorized": false,
+  "authV268AuthoringAuthorized": false,
+  "routeMountAuthorized": false,
+  "menuMountAuthorized": false,
+  "featureEnablementAuthorized": false,
+  "tenantEnrollmentAuthorized": false,
+  "mergeToDwpDevAuthorized": false,
+  "readinessComplete": false,
+  "productionReleaseAuthorized": false,
+  "nextAction": "COMMIT_AND_PUSH_THE_EXACT_REVIEWED_RECEIPT_AND_TOKEN_CARRIER_TO_FRONTEND_DWP_DEV; ONLY_THEN_IMPLEMENT_BOUNDED_BACKEND_SOURCE_AND_TESTS_RUN_ONCE_REVIEW_COMMIT_AND_PUSH_BRANCH_THEN_SEPARATE_CENTRAL_ADMISSION"
+}

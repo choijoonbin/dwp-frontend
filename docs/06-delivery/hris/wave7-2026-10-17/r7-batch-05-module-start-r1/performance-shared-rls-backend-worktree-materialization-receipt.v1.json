@@ -1,0 +1,44 @@
+{
+  "schema": "hris.performance-shared-rls-backend-worktree-materialization-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH05-PERFORMANCE-SHARED-RLS-BACKEND-20261023-R1",
+  "recordedAt": "2026-10-23T11:32:38+09:00",
+  "state": "MATERIALIZED_NOT_EXECUTABLE_ALONE",
+  "scopeId": "PERFORMANCE_SHARED_RLS_READINESS",
+  "module": "HRIS-PER",
+  "authority": {
+    "path": "performance-shared-rls-readiness-packet.v1.json",
+    "sha256": "6a34667b6062caf0ce8ac41ccd31b8fd39c1581986d7114be40561d9beb9ddaa",
+    "bytes": 37255,
+    "carrierCommit": "425722f3c5b6bad06286e452fced9481038f16f8",
+    "carrierTree": "fa52499b66a43f7c46bd9f75704bdce49f098ae5",
+    "carrierOriginDwpDev": "425722f3c5b6bad06286e452fced9481038f16f8",
+    "review": {
+      "p0": 0,
+      "p1": 0,
+      "p2": 0
+    }
+  },
+  "repository": {
+    "name": "dwp-backend",
+    "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261023/r7-batch05/performance-shared-rls/backend",
+    "branch": "codex/hris-wave7-r7-batch05-performance-shared-rls-backend-20261023-r1",
+    "head": "8bec85dab5ee816b12a922c51e369046714c007f",
+    "tree": "3f83136fabb7b3dc09b179109fb81a98d3b7bfe0",
+    "baseDwpDev": "8bec85dab5ee816b12a922c51e369046714c007f",
+    "baseOriginDwpDev": "8bec85dab5ee816b12a922c51e369046714c007f",
+    "clean": true,
+    "upstream": null,
+    "sourceChangesAtReceipt": []
+  },
+  "invariants": [
+    "The backend worktree was clean and based on the exact current dwp-dev and origin/dwp-dev head before any source or test change.",
+    "The worktree may change only the exact eight backendWritable paths in the pinned readiness packet after one separate token binds this receipt.",
+    "No production migration, Performance V20 reservation, PER-008 module source, central product authorization, route, menu, feature enrollment, tenant activation or production release is authorized by this receipt.",
+    "The receipt grants no source or test authoring authority by itself."
+  ],
+  "authorityGranted": false,
+  "sourceAuthoringAuthorized": false,
+  "testAuthoringAuthorized": false,
+  "migrationAuthoringAuthorized": false,
+  "nextAction": "ISSUE_ONE_SEPARATE_HASH_BOUND_PERFORMANCE_SHARED_RLS_READINESS_IMPLEMENTATION_TOKEN"
+}
