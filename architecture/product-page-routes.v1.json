@@ -1130,6 +1130,13 @@
       "pattern": "/hr/settings/integrations",
       "productId": "hcm",
       "surfaceId": "hcm.management"
+    },
+    {
+      "routeContractKey": "route.hcm.operations.exit-return.page",
+      "routeId": "hcm.operations.exit-return",
+      "pattern": "/hr/operations/people/exit-return",
+      "productId": "hcm",
+      "surfaceId": "hcm.operations"
     }
   ],
   "legacyRedirects": [

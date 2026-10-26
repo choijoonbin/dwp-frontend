@@ -50,7 +50,7 @@ const OFFICIAL_PAGE_KEYS = Object.freeze([
   'routeId',
   'surfaceId',
 ]);
-const PER008_CATALOG_ONLY_PAGE_CONTRACTS = Object.freeze([
+const HCM_CATALOG_ONLY_PAGE_CONTRACTS = Object.freeze([
   Object.freeze({
     routeContractKey: 'route.hcm.team.performance.page',
     routeId: 'hcm.team.performance',
@@ -64,6 +64,20 @@ const PER008_CATALOG_ONLY_PAGE_CONTRACTS = Object.freeze([
     pattern: '/hr/me/performance/feedback',
     productId: 'hcm',
     surfaceId: 'hcm.personal',
+  }),
+  Object.freeze({
+    routeContractKey: 'route.hcm.configuration.settings-integrations.page',
+    routeId: 'hcm.management.settings-integrations',
+    pattern: '/hr/settings/integrations',
+    productId: 'hcm',
+    surfaceId: 'hcm.management',
+  }),
+  Object.freeze({
+    routeContractKey: 'route.hcm.operations.exit-return.page',
+    routeId: 'hcm.operations.exit-return',
+    pattern: '/hr/operations/people/exit-return',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
   }),
 ]);
 const HCM_PAGE_SURFACE_BY_ROUTE_NAMESPACE = Object.freeze({
@@ -178,12 +192,12 @@ function officialHcmPageContracts(source) {
   }
   if (
     JSON.stringify(source.catalogOnlyPageContracts) !==
-    JSON.stringify(PER008_CATALOG_ONLY_PAGE_CONTRACTS)
+    JSON.stringify(HCM_CATALOG_ONLY_PAGE_CONTRACTS)
   ) {
-    fail('PER-008 catalog-only PAGE contracts changed');
+    fail('HCM catalog-only PAGE contracts changed');
   }
   const hcm = [...runtimeHcm, ...source.catalogOnlyPageContracts];
-  if (hcm.length !== 67) fail(`official HCM PAGE count is ${hcm.length}, expected 67`);
+  if (hcm.length !== 69) fail(`official HCM PAGE count is ${hcm.length}, expected 69`);
   const seenKeys = new Set();
   const seenIds = new Set();
   const seenPatterns = new Set();

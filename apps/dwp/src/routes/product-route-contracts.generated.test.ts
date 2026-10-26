@@ -210,8 +210,19 @@ const SYS008_CATALOG_ONLY_HCM_PAGE_ROUTES = [
   },
 ] as const;
 
+const HRM013_CATALOG_ONLY_HCM_PAGE_ROUTES = [
+  {
+    routeContractKey: 'route.hcm.operations.exit-return.page',
+    routeId: 'hcm.operations.exit-return',
+    pattern: '/hr/operations/people/exit-return',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+  },
+] as const;
+
 const CATALOG_ONLY_HCM_PAGE_ROUTES = [
   ...SYS008_CATALOG_ONLY_HCM_PAGE_ROUTES,
+  ...HRM013_CATALOG_ONLY_HCM_PAGE_ROUTES,
   ...R7_BATCH_05_PER008_HCM_PAGE_ROUTES,
 ] as const;
 
@@ -409,6 +420,34 @@ describe('generated product route authorization contracts', () => {
 
     expect(pageRouterSource.catalogOnlyPageContracts).toContainEqual(
       SYS008_CATALOG_ONLY_HCM_PAGE_ROUTES[0]
+    );
+    expect(
+      pageRouterSource.pageRoutes.some((route) => route.routeContractKey === routeContractKey)
+    ).toBe(false);
+    expect(
+      PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.some(
+        (route) => route.routeContractKey === routeContractKey
+      )
+    ).toBe(false);
+    expect(
+      ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.some(
+        (route) => route.routeContractKey === routeContractKey
+      )
+    ).toBe(false);
+    expect(
+      REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG.some(
+        (route) => route.routeContractKey === routeContractKey
+      )
+    ).toBe(false);
+    expect(mountedKeys.has(routeContractKey)).toBe(false);
+  });
+
+  it('keeps the HRM-013 exit-return projection cataloged but unmounted', () => {
+    const routeContractKey = 'route.hcm.operations.exit-return.page';
+    const mountedKeys = new Set(mountedRouteContractKeys(hcmRoutes));
+
+    expect(pageRouterSource.catalogOnlyPageContracts).toContainEqual(
+      HRM013_CATALOG_ONLY_HCM_PAGE_ROUTES[0]
     );
     expect(
       pageRouterSource.pageRoutes.some((route) => route.routeContractKey === routeContractKey)
