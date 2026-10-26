@@ -1,0 +1,77 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-paired-prerequisite-worktree-materialization-receipt.v1",
+  "receiptId": "HRIS-WAVE7-BATCH06-HRM013-PAIRED-WORKTREE-RECEIPT-20261026-R1",
+  "recordedAt": "2026-10-26T10:45:26Z",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "PASS_EXACT_TWO_FRESH_BACKEND_WORKTREES_MATERIALIZED",
+  "phaseAAuthority": {
+    "path": "paired-prerequisite-execution-authority.v1.json",
+    "bytes": 10379,
+    "sha256": "0ee7f88c27d3fe7756ffca017b6126a41c92607ca23940d4c826d5f9d7049a90",
+    "carrierCommit": "06813924e3777fff2ebc52136741c4620d7aaa7d",
+    "carrierTree": "c09d01041bd3258ccaf6c9889d610ae660262593",
+    "carrierBranch": "dwp-dev",
+    "carrierOriginRef": "origin/dwp-dev",
+    "carrierOriginExact": true
+  },
+  "backendBaseline": {
+    "repository": "dwp-backend",
+    "path": "/Users/a10697/Work/DWP/dwp-backend",
+    "branch": "dwp-dev",
+    "head": "fe2842a36d13709e6aecc27011a8f0ad3c770ce8",
+    "tree": "190636f40e29126970aaf1b68b85a94eaf49402d",
+    "upstream": "origin/dwp-dev",
+    "clean": true,
+    "porcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "worktrees": {
+    "approval": {
+      "repository": "dwp-backend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-paired/approval",
+      "branch": "codex/hris-wave7-batch06-hrm013-approval-v59-prereq-backend-20261026-r1",
+      "head": "fe2842a36d13709e6aecc27011a8f0ad3c770ce8",
+      "tree": "190636f40e29126970aaf1b68b85a94eaf49402d",
+      "clean": true,
+      "porcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "upstream": null,
+      "upstreamAbsent": true,
+      "remoteBranchAbsent": true,
+      "remoteProbeOutputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "people": {
+      "repository": "dwp-backend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-paired/people",
+      "branch": "codex/hris-wave7-batch06-hrm013-people-v61-prereq-backend-20261026-r1",
+      "head": "fe2842a36d13709e6aecc27011a8f0ad3c770ce8",
+      "tree": "190636f40e29126970aaf1b68b85a94eaf49402d",
+      "clean": true,
+      "porcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "upstream": null,
+      "upstreamAbsent": true,
+      "remoteBranchAbsent": true,
+      "remoteProbeOutputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "assertions": {
+    "exactlyTwoPlannedWorktreesMaterialized": true,
+    "pathsDistinct": true,
+    "branchesDistinct": true,
+    "headsEqualPinnedBackendBaseline": true,
+    "treesEqualPinnedBackendBaseline": true,
+    "bothClean": true,
+    "bothWithoutUpstream": true,
+    "bothWithoutRemoteBranch": true,
+    "sourceOrMigrationChangedDuringMaterialization": false,
+    "commitOrPushPerformedDuringMaterialization": false
+  },
+  "authority": {
+    "worktreeMaterializationComplete": true,
+    "sourceAuthoringAuthorizedByThisReceipt": false,
+    "migrationSqlAuthoringAuthorizedByThisReceipt": false,
+    "testExecutionAuthorizedByThisReceipt": false,
+    "directDwpDevMergeAuthorized": false,
+    "runtimeActivationAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0
+  }
+}

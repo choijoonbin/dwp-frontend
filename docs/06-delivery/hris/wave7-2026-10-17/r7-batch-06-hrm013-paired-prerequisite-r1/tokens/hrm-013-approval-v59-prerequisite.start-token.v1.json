@@ -1,0 +1,72 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-approval-v59-prerequisite-start-token.v1",
+  "tokenId": "HRIS-WAVE7-HRM013-APPROVAL-V59-PREREQUISITE-TOKEN-20261026-R1",
+  "recordedAt": "2026-10-26T10:45:26Z",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "EXECUTABLE_BOUNDED_APPROVAL_PERSISTENCE_PREREQUISITE_ONLY",
+  "sliceId": "BASE-TFR-HRM-013",
+  "laneId": "HRM013-PREREQUISITE-APPROVAL-V59",
+  "executionToken": "HRM013-APPROVAL-V59-PREREQ-20261026-R1",
+  "pinnedAuthority": {
+    "phaseACarrier": {"commit": "06813924e3777fff2ebc52136741c4620d7aaa7d", "tree": "c09d01041bd3258ccaf6c9889d610ae660262593", "path": "../paired-prerequisite-execution-authority.v1.json", "bytes": 10379, "sha256": "0ee7f88c27d3fe7756ffca017b6126a41c92607ca23940d4c826d5f9d7049a90"},
+    "phaseAReview": {"path": "../independent-review.v1.json", "bytes": 4860, "sha256": "ad8b2470784823a300fdc14b546cc1526b4d0d05f108ad6abbdfee3883027927", "p0": 0, "p1": 0, "p2": 0},
+    "worktreeReceipt": {"path": "../worktree-materialization-receipt.v1.json", "bytes": 3355, "sha256": "5268a089401d06e7454368c194605d65b432d0d2e043d0a8a6e6bc9280e0f5aa"},
+    "contractClarification": {"path": "../paired-prerequisite-contract-clarification.v1.json", "bytes": 9244, "sha256": "a839368ec78f43b1b45d6d50f0a8a741fd19e106671b52b356586a36c776079a"},
+    "migrationLease": {"path": "../migration-lease-activation.v1.json", "bytes": 2868, "sha256": "6af2db4505d570908b3170b93d07c5fe181434a872689729fea747dfe9d3200e", "leaseId": "HRIS-WAVE7-HRM013-APPROVAL-MAIN-V59-20261026-R1"},
+    "manifest": {"path": "../../r7-batch-06-hrm013-callback-binding-r1/migration-manifests/hrm-013.approval-v59-schema-manifest.v1.json", "bytes": 25781, "sha256": "8bec7573ed5453e2ca83b665d2824ae763a93703483ddf59063315cc7a8eff50"}
+  },
+  "worktree": {
+    "repository": "dwp-backend",
+    "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-paired/approval",
+    "branch": "codex/hris-wave7-batch06-hrm013-approval-v59-prereq-backend-20261026-r1",
+    "baseHead": "fe2842a36d13709e6aecc27011a8f0ad3c770ce8",
+    "baseTree": "190636f40e29126970aaf1b68b85a94eaf49402d",
+    "cleanAtIssue": true,
+    "upstreamAbsentAtIssue": true,
+    "remoteBranchAbsentAtIssue": true
+  },
+  "migration": {
+    "stream": "APPROVAL_MAIN",
+    "highWater": "V58",
+    "candidate": "V59",
+    "exactPath": "dwp-approval-server/src/main/resources/db/migration/V59__bridge_hris_separation_task_waivers.sql",
+    "fullManifestRequired": true,
+    "historicalMigrationEditForbidden": true
+  },
+  "changedPathAllowlist": {
+    "new": [
+      "dwp-approval-server/src/main/resources/db/migration/V59__bridge_hris_separation_task_waivers.sql",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/hrisbridge/separation/**",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/hrisbridge/separation/**"
+    ],
+    "existingEditOnly": [
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/hrisbridge/HrisEmployeeChangeBridgeMigrationPostgresTest.java"
+    ],
+    "existingEditConstraint": "Only add .target(\"58\") to the second Flyway builder so the employee-change non-regression test remains pinned to V58, retains its V58 assertion and retains the expected three V58 employee-change tables; no V59 target/assertion or other behavioral edit is authorized."
+  },
+  "implementationScope": {
+    "allowed": ["V59 SQL for the complete four-table manifest", "RLS and same-tenant foreign keys", "tenant-grant, replay, request-binding and decision-outbox persistence models", "typed stores/repositories only", "PostgreSQL migration and persistence tests"],
+    "requiredContracts": ["idempotency_key equals canonical lowercase approvalRequestId", "grant_digest uses the clarified canonical length-prefixed encoding", "retry maximum is 10", "same-tenant supersedes chain", "sole terminal sink is apr_hrm013_waiver_decision_outbox", "APPROVED step-up freshness is at most 600 seconds and stored exactly as clarified", "HRM-010 initial and terminal owner/decision revision is 1"],
+    "forbidden": ["controller", "security filter", "HTTP endpoint", "relay", "scheduler", "runtime/native terminal wiring", "native approval workflow invocation", "production bean or credential binding", "existing employee-change bridge source edit", "frontend/UI/menu/route", "full HRM-013 module source"]
+  },
+  "targetedVerification": ["V59 static manifest parity", "clean PostgreSQL V59 migration", "V58 to V59 PostgreSQL upgrade", "four-table constraints/RLS/immutability/same-tenant FK tests", "canonical idempotency and conflict store tests", "grant digest vector tests", "terminal outbox/step-up/retry-bound persistence tests", "changed-path allowlist check"],
+  "authority": {
+    "tokenExecutable": true,
+    "migrationSqlAuthoringAuthorized": true,
+    "boundedSourceAuthoringAuthorized": true,
+    "targetedTestAuthoringAndExecutionAuthorized": true,
+    "laneBranchCommitAuthorized": true,
+    "laneBranchPushAuthorized": true,
+    "directDwpDevMergeAuthorized": false,
+    "centralAdmissionAuthorized": false,
+    "moduleOwnerPacketAuthorized": false,
+    "fullModuleSourceAuthorized": false,
+    "frontendSourceAuthorized": false,
+    "runtimeActivationAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionBindingAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0
+  }
+}

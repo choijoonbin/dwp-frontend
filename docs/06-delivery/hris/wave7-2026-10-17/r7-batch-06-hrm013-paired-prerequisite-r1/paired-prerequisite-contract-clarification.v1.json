@@ -1,0 +1,116 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-paired-prerequisite-contract-clarification.v1",
+  "clarificationId": "HRIS-WAVE7-BATCH06-HRM013-PAIRED-PREREQUISITE-CONTRACT-CLARIFICATION-20261026-R1",
+  "recordedAt": "2026-10-26T10:45:26Z",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "SEALED_NARROWING_CLARIFICATION",
+  "precedence": "This append-only clarification narrows implementation authority and resolves the listed ambiguities. It does not alter any other callback carrier or manifest rule and grants no full HRM-013 module authority.",
+  "pinnedInputs": {
+    "trustedCallbackAuthority": {"path": "../r7-batch-06-hrm013-callback-binding-r1/hrm-013-trusted-callback-service-binding-successor.v1.json", "bytes": 50694, "sha256": "56a27680c74e07967e4bf03c1984ac8d4786a1a0f4ef68c560363a41b1020be9"},
+    "approvalBridge": {"path": "../r7-batch-06-hrm013-callback-binding-r1/hrm-013-separation-waiver-approval-bridge-successor.v1.json", "bytes": 39005, "sha256": "43717d43a7aed49c56abe715188e5891d9c7da79d45125bfdc68acf0064ea7b5"},
+    "approvalV59Manifest": {"path": "../r7-batch-06-hrm013-callback-binding-r1/migration-manifests/hrm-013.approval-v59-schema-manifest.v1.json", "bytes": 25781, "sha256": "8bec7573ed5453e2ca83b665d2824ae763a93703483ddf59063315cc7a8eff50"},
+    "peopleV61Manifest": {"path": "../r7-batch-06-hrm013-callback-binding-r1/migration-manifests/base-tfr-hrm-013.people-v61-schema-manifest-successor.v2.json", "bytes": 42115, "sha256": "01aff4919302d2a5adc951f96b7dd513b752526c8e3066d4d0317d973c14d6a8"}
+  },
+  "approval": {
+    "idempotency": {
+      "idempotencyKey": "canonical lowercase 36-character UUID text of approvalRequestId",
+      "tenantIsSeparateKeyColumn": true,
+      "tenantOrOperationPrefixForbidden": true,
+      "sameTenantSameApprovalRequestIdSameExactRequestBytesAndDigests": "RETURN_ORIGINAL_STORED_202_RECEIPT_BYTES",
+      "sameTenantSameApprovalRequestIdDifferentBytesOrDigest": "HTTP_409_NO_SECOND_NATIVE_APPROVAL_REQUEST",
+      "remoteDraftStateForbidden": true,
+      "createAndSubmitAtomic": true
+    },
+    "grantDigest": {
+      "algorithm": "SHA-256",
+      "output": "lowercase hexadecimal length 64",
+      "orderedFields": ["tenant_id", "grant_revision", "tenant_grant_revision", "authorization_revision", "decision", "people_spiffe_id", "people_signing_key_id", "approval_spiffe_id", "approval_signing_key_id", "request_binding_id", "request_purpose_code", "callback_binding_id", "callback_purpose_code", "supersedes_grant_id", "recorded_at"],
+      "canonicalValues": "UUIDs are lowercase canonical text; positive integers are base-10 ASCII without sign or leading zero; decision and protocol constants retain their exact sealed ASCII spelling; recorded_at is UTC RFC3339 with exactly six fractional digits and Z; null supersedes_grant_id is encoded as a zero-length value and no other field may be null.",
+      "encoding": "For each ordered value, encode its canonical value as UTF-8, prefix it with an unsigned 32-bit big-endian byte length, then concatenate all fifteen length-value pairs with no delimiter or trailing bytes.",
+      "digestRule": "grant_digest is SHA-256 over exactly the resulting byte sequence. Platform-default charset, delimiter joining, JSON serialization and ambiguous null text are forbidden."
+    },
+    "grantChain": {
+      "supersedesForeignKey": "(tenant_id, supersedes_grant_id) REFERENCES apr_hrm013_tenant_grants(tenant_id, grant_id)",
+      "crossTenantSupersedesForbidden": true,
+      "revisionOneHasNullSupersedes": true,
+      "laterRevisionNamesImmediatePriorSameTenantGrant": true
+    },
+    "terminalSink": {
+      "soleTerminalSink": "apr_hrm013_waiver_decision_outbox",
+      "terminalStates": ["APPROVED", "REJECTED"],
+      "oneTerminalDecisionCreatesExactlyOneImmutableRowInSameTransaction": true,
+      "intermediateStateOrVoteCreatesCallback": false,
+      "otherSinkForbidden": ["employee-change outbox or relay", "generic webhook", "event bus", "second HRM-013 sink"]
+    },
+    "stepUp": {
+      "approvedExactFields": ["stepUpEvidenceId", "stepUpEvidenceAudience", "stepUpEvidencePurpose", "stepUpEvidenceNonce", "stepUpEvidenceDigest", "stepUpVerifiedAt", "stepUpConsumedAt"],
+      "rejectedRule": "All seven wire fields are absent and all seven storage columns are null; explicit null wire fields are invalid.",
+      "audience": "dwp-people-server",
+      "purpose": "HRIS_SEPARATION_TASK_WAIVER_DECISION",
+      "freshnessWindowSeconds": 600,
+      "freshnessEvidence": "Existing dwp-approval-server application.yml freezes dwp.approval.step-up.maximum-authentication-age-seconds default at 600; this prerequisite may consume that existing value but may not edit configuration.",
+      "freshnessRule": "stepUpVerifiedAt <= stepUpConsumedAt <= decision_occurred_at and decision_occurred_at minus stepUpVerifiedAt is at most 600 seconds.",
+      "storage": "Persist evidence identity, audience, purpose, SHA-256 of the nonce, evidence digest, verified time and consumed time in apr_hrm013_waiver_decision_outbox; raw nonce exists only in immutable exact_callback_body.",
+      "singleUse": "The tenant-scoped evidence identity and nonce digest are consumed atomically with the terminal APPROVED row."
+    },
+    "retry": {
+      "maximumAttempts": 10,
+      "attemptCountRange": "0..10 inclusive",
+      "stableAcrossRetries": ["callback path", "exact callback body", "callback_event_id", "originating payload digest", "callback payload digest", "callback body digest", "command digest"],
+      "refreshPerAttemptOnly": ["workload proof JWT", "jti", "requestNonce"],
+      "exhaustion": "RESULT_UNKNOWN when remote commit is ambiguous, otherwise DEAD"
+    },
+    "hrm010Revision": {
+      "initialDecisionRevision": 1,
+      "initialOwnerRevision": 1,
+      "terminalDecisionRevision": 1,
+      "terminalOwnerRevision": 1,
+      "rule": "One approvalRequestId is one terminal stream. APPROVED or REJECTED closes revision 1; a later attempt uses a new approvalRequestId and a new revision-one stream."
+    }
+  },
+  "people": {
+    "controlPlaneAuthorityPort": {
+      "requiredTypedPort": "Hrm013ServiceAuthorityPort",
+      "inputs": ["tenantId", "callerWorkloadId", "bindingId", "purpose", "signedTenantGrantRevision", "signedAuthorizationRevision"],
+      "admission": "Require one current authoritative ADMIT result with exact equality for both signed revisions before any business-row read.",
+      "failClosed": ["unavailable", "ambiguous", "missing", "REVOKE", "stale revision", "revision mismatch"],
+      "forbiddenFallbacks": ["environment property", "application configuration", "static map", "local cache", "configuration cache", "protocol-fence row as a substitute for current control-plane authority"],
+      "testDoubleRule": "A deterministic fake may exist only in test source; no production credential, provider implementation or bean binding is authorized."
+    },
+    "hrm010Revision": {
+      "authorityRevision": 1,
+      "expectedNextOwnerRevision": 1,
+      "decisionRevision": 1,
+      "ownerRevision": 1,
+      "terminal": true
+    },
+    "authorityChain": {
+      "supersedesForeignKey": "(tenant_id, supersedes_authority_public_id) REFERENCES ppl_separation_callback_authorities(tenant_id, public_id)",
+      "crossTenantSupersedesForbidden": true,
+      "revisionOneHasNullSupersedes": true,
+      "laterRevisionNamesImmediatePriorVersionOfExactSameTenantStream": true
+    },
+    "retry": {
+      "outbox": "ppl_separation_waiver_request_outbox",
+      "maximumAttempts": 10,
+      "attemptCountRange": "0..10 inclusive",
+      "stableAcrossRetries": ["approval_request_id", "exact_request_body", "request_body_sha256", "approval_request_payload_sha256", "command_digest", "correlation_id"],
+      "refreshPerAttemptOnly": ["workload proof JWT", "jti", "requestNonce"],
+      "exhaustion": "RESULT_UNKNOWN when remote commit is ambiguous, otherwise DEAD"
+    },
+    "v61Split": {
+      "sqlMustCreateFullEffectiveSixTableManifest": ["ppl_separation_cases", "ppl_separation_tasks", "ppl_hrm013_callback_proof_replays", "ppl_separation_waiver_request_outbox", "ppl_separation_callback_authorities", "ppl_separation_callbacks"],
+      "sqlIncludes": ["all manifest columns", "same-tenant foreign keys", "checks", "unique and claim indexes", "RLS enablement and policies", "immutability/CAS triggers"],
+      "runtimeSourceMayImplementOnly": ["bounded prerequisite persistence records and stores", "Hrm013ServiceAuthorityPort interface", "protocol-fence and replay persistence ports", "PostgreSQL adapters needed to prove V61 schema"],
+      "runtimeSourceForbidden": ["HTTP controller", "security filter", "relay or scheduler", "APR-002 publisher activation", "HRM-008/009/010 ingress activation", "public HRM-013 command/query", "case/task authoring workbench", "XCON-028 publisher/subscriber activation", "production authority provider binding", "application.yml edit", "feature or tenant enrollment", "UI/menu/route"]
+    }
+  },
+  "authority": {
+    "clarificationSealed": true,
+    "broadensModuleAuthority": false,
+    "runtimeActivationAuthorized": false,
+    "productionBindingAuthorized": false,
+    "directDwpDevMergeAuthorized": false,
+    "businessCompletionCredit": 0
+  }
+}

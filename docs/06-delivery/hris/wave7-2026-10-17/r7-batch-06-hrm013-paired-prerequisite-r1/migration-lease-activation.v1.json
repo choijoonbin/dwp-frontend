@@ -1,0 +1,59 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-paired-prerequisite-migration-lease-activation.v1",
+  "activationId": "HRIS-WAVE7-BATCH06-HRM013-PAIRED-MIGRATION-LEASE-ACTIVATION-20261026-R1",
+  "recordedAt": "2026-10-26T10:45:26Z",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "ACTIVE_EXCLUSIVE_TWO_DIFFERENT_STREAMS",
+  "phaseACarrier": {"commit": "06813924e3777fff2ebc52136741c4620d7aaa7d", "tree": "c09d01041bd3258ccaf6c9889d610ae660262593", "path": "paired-prerequisite-execution-authority.v1.json", "bytes": 10379, "sha256": "0ee7f88c27d3fe7756ffca017b6126a41c92607ca23940d4c826d5f9d7049a90"},
+  "leases": [
+    {
+      "leaseId": "HRIS-WAVE7-HRM013-APPROVAL-MAIN-V59-20261026-R1",
+      "state": "ACTIVE",
+      "stream": "APPROVAL_MAIN",
+      "service": "dwp-approval-server",
+      "highWaterAtActivation": "V58",
+      "candidateVersion": "V59",
+      "exactCandidatePath": "dwp-approval-server/src/main/resources/db/migration/V59__bridge_hris_separation_task_waivers.sql",
+      "candidateAbsentAtActivation": true,
+      "competingV59AbsentAtActivation": true,
+      "worktreePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-paired/approval",
+      "branch": "codex/hris-wave7-batch06-hrm013-approval-v59-prereq-backend-20261026-r1",
+      "baseHead": "fe2842a36d13709e6aecc27011a8f0ad3c770ce8",
+      "baseTree": "190636f40e29126970aaf1b68b85a94eaf49402d",
+      "exclusiveActiveLeaseCountForStream": 1
+    },
+    {
+      "leaseId": "HRIS-WAVE7-HRM013-PEOPLE-MAIN-V61-20261026-R1",
+      "state": "ACTIVE",
+      "stream": "PEOPLE_MAIN",
+      "service": "dwp-people-server",
+      "highWaterAtActivation": "V60",
+      "candidateVersion": "V61",
+      "exactCandidatePath": "dwp-people-server/src/main/resources/db/migration/V61__hrm_base_tfr_hrm_013.sql",
+      "candidateAbsentAtActivation": true,
+      "competingV61AbsentAtActivation": true,
+      "worktreePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-paired/people",
+      "branch": "codex/hris-wave7-batch06-hrm013-people-v61-prereq-backend-20261026-r1",
+      "baseHead": "fe2842a36d13709e6aecc27011a8f0ad3c770ce8",
+      "baseTree": "190636f40e29126970aaf1b68b85a94eaf49402d",
+      "exclusiveActiveLeaseCountForStream": 1
+    }
+  ],
+  "rules": {
+    "pairAllowedBecauseStreamsDiffer": true,
+    "sameStreamSecondLeaseAuthorized": false,
+    "historicalMigrationEditAuthorized": false,
+    "secondMigrationPerLaneAuthorized": false,
+    "dataBackfillAuthorized": false,
+    "leaseAloneAuthorizesSourceOrSql": false,
+    "matchingExecutableTokenRequired": true
+  },
+  "authority": {
+    "approvalV59LeaseActive": true,
+    "peopleV61LeaseActive": true,
+    "directDwpDevMergeAuthorized": false,
+    "runtimeActivationAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0
+  }
+}
