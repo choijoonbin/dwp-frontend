@@ -1,0 +1,548 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-05-tim004-semantic-disposition.v1",
+  "dispositionId": "HRIS-WAVE7-R7-BATCH-05-TIM004-SEMANTIC-DISPOSITION-20261026-R1",
+  "recordedAt": "2026-10-26T14:36:14+09:00",
+  "recordedBy": "HRIS_TIM_DOMAIN_CONTROL",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ID_AND_SHA256"
+  },
+  "state": "TIM004_PLATFORM_AUTOMATION_REUSE_BOUNDARY_SEALED_NO_TIM_HANDLER_NO_TIME_SCHEMA_DELTA",
+  "sliceId": "BASE-TFR-TIM-004",
+  "moduleSession": "HRIS-TIM",
+  "boundedContext": "TIME_LEAVE",
+  "classification": "NON_UI_SUPPORTING_SLICE",
+  "disposition": "REUSE_ONLY",
+  "purpose": "Seal TIM-004 as reuse of the admitted SYS-006 allowlisted automation control plane without inventing a Time business job, handler, API, event, receipt, route, menu or schema and without issuing a packet, token, worktree, migration lease or source authority.",
+  "sequenceAuthority": {
+    "precedingExit": {
+      "path": "../../r7-batch-05-central-admission-r1/sys-008-sequencing-exit-receipt.v1.json",
+      "sha256": "76ade6801c0eb5b56ecc0d1b25544042001adac3ac0fb402ffd6a1d4874ae0cf",
+      "bytes": 11813,
+      "requiredState": "BATCH05_LANE_4_SYS008_SEQUENCING_EXIT_ACCEPTED_DEFAULT_OFF_ZERO_ENROLLMENT_ZERO_PROVIDER_ZERO_BUSINESS_CREDIT_TIM004_SEMANTIC_CLOSURE_NEXT_P0_GATES_CARRIED"
+    },
+    "order": 5,
+    "closedBeforeThisLane": [
+      "BASE-TFR-HRM-012",
+      "BASE-TFR-PAY-004",
+      "BASE-TFR-PER-008",
+      "BASE-TFR-SYS-008"
+    ],
+    "remainingAfterThisLane": [],
+    "reorderingAuthorized": false,
+    "allowedNow": "TIM004_APPEND_ONLY_SEMANTIC_DISPOSITION_AND_INDEPENDENT_REVIEW_ONLY",
+    "notAllowedNow": [
+      "TIM_OWNER_PACKET",
+      "TIM_START_TOKEN",
+      "TIM_WORKTREE_MATERIALIZATION",
+      "TIME_V15_RESERVATION_OR_AUTHORING",
+      "TIM_HANDLER_OR_ADAPTER_SOURCE",
+      "CENTRAL_SHARED_CONTRACT_OR_AUTHORIZATION_SOURCE",
+      "ROUTE_MENU_PAGE_OR_ACTION_DESCRIPTOR",
+      "FEATURE_ACTIVATION_OR_TENANT_ENROLLMENT",
+      "PRODUCTION_HANDLER_SCHEDULE_PROVIDER_OR_CUSTOMER_DATA_BINDING"
+    ]
+  },
+  "canonicalInputs": {
+    "batch05Preflight": {
+      "path": "../../r7-batch-05-preflight-r1/semantic-dependency-migration-preflight.v1.json",
+      "sha256": "8f7a0d38c4dc86873e4930e5a21dcc0a269c39512508d86dd529b40015237e0f",
+      "bytes": 37443,
+      "role": "FIXED_SEQUENCE_SEMANTIC_DEPENDENCY_AND_MIGRATION_PREFLIGHT"
+    },
+    "roadmap": {
+      "path": "../../execution-roadmap-successor.v19.json",
+      "sha256": "7fd14919598aadf20ea083dd11d693f4774fe803224b799935e284b858525ed0",
+      "bytes": 18404,
+      "role": "CURRENT_APPEND_ONLY_EXECUTION_ROADMAP"
+    },
+    "targetFamilyRegister": {
+      "path": "../../../recovery/exact-supplements/2026-10-06/hris-porting-blueprint-2026-09-09/coding-readiness/target-family-resolution-register.csv",
+      "sha256": "3e3618ff3ac150da8c9c7cbd3b1018e30e69652f28f3dbd8c87edb7df6a83819",
+      "bytes": 38399,
+      "targetFamilyId": "TFR-TIM-004",
+      "sourceFamilySha256": "7bec2dd1d923fff59069e8b842f0ad7d23393eda506b5afe2f5443df741c65fa",
+      "sourceRowCount": 5,
+      "interpretation": "The five-row family proves consolidation to the four related SYS contracts, not five Time jobs or any exact executable Time handler."
+    },
+    "g3SliceRegister": {
+      "path": "../../../recovery/hris-porting-blueprint-2026-09-09/coding-readiness/g3-slice-code-go-register.csv",
+      "sha256": "fb646668329e93ca0b83b74e2a3e43619954cec1cb2f6770029677edbc8d5725",
+      "bytes": 305301,
+      "interpretation": "IMMUTABLE_RECOVERY_EVIDENCE_NOT_CURRENT_PACKET_TOKEN_LEASE_OR_SOURCE_AUTHORITY"
+    },
+    "timeAutomationDecision": {
+      "path": "../../../recovery/hris-porting-blueprint-2026-09-09/session-evidence/tim/g1-decision-log.csv",
+      "sha256": "1f4c8dcdae6115f73509eaf70f2f014c4141d15948b4d11d9524c34d0751c56e",
+      "bytes": 12660,
+      "decisionId": "TIM-DEC-008"
+    },
+    "timeServiceBoundary": {
+      "path": "../../../recovery/hris-porting-blueprint-2026-09-09/session-evidence/tim/g2-service-boundary.md",
+      "sha256": "4589b1412a8f6e8982c7870d063a0c4578ce3203a30610b25f54a1295fe28f14",
+      "bytes": 9315
+    },
+    "timeRuntimeControls": {
+      "path": "../../../recovery/hris-porting-blueprint-2026-09-09/session-evidence/tim/g2-runtime-controls.md",
+      "sha256": "9d55b28834fd018abe8af3cf66fa3ef035bd4ecb0d264cc72da1f5bde8eaabe5",
+      "bytes": 9038
+    },
+    "timeApiEventContracts": {
+      "path": "../../../recovery/hris-porting-blueprint-2026-09-09/session-evidence/tim/g2-api-event-contracts.json",
+      "sha256": "1251365481d7063bf3fcf0e3e5bfaeca148554da354ac60fe29d2e67d1c1cb7f",
+      "bytes": 19564,
+      "interpretation": "MODULE_WIDE_PROPOSAL_NOT_AN_EXACT_TIM004_HANDLER_OR_EVENT_CONTRACT"
+    },
+    "timeAuthorization": {
+      "path": "../../../recovery/hris-porting-blueprint-2026-09-09/session-evidence/tim/g2-authorization.md",
+      "sha256": "20577988f161e48d2e452b7fadf10e53ee0df9ff1ef04dc595e60f1239b701b0",
+      "bytes": 4977
+    },
+    "sys006SemanticDisposition": {
+      "path": "../../../wave7-2026-10-17/r7-batch-04-module-start-r1/semantic-dispositions/base-tfr-sys-006.semantic-disposition.v1.json",
+      "sha256": "e5f8ecc7db70737ae5cfb6d3ccc8879b30f0395febc35db3de4455baf1a1825f",
+      "bytes": 192503
+    },
+    "sys006SemanticReview": {
+      "path": "../../../wave7-2026-10-17/r7-batch-04-module-start-r1/semantic-dispositions/base-tfr-sys-006.semantic-review.v1.json",
+      "sha256": "bc261e69873c84427c8d70b39f2e9466044c4e0d743bf2c83ac7cb9c1c8b028c",
+      "bytes": 3448
+    },
+    "sys006SourceIntegrationReceipt": {
+      "path": "../../../wave7-2026-10-17/r7-batch-04-central-admission-r1/sys-006-module-source-integration-receipt.v1.json",
+      "sha256": "9f58af4b70a59f29faafa47ff687df5270304e2e5d93aff1d0f979246355ae0c",
+      "bytes": 6299
+    },
+    "sys006SequencingExitReceipt": {
+      "path": "../../../wave7-2026-10-17/r7-batch-04-central-admission-r1/sys-006-sequencing-exit-receipt.v1.json",
+      "sha256": "4dce61355a0070aa46ffd3b95fe5923fb770769f902bc4ae38d9090ced0e259f",
+      "bytes": 8539
+    },
+    "timP0GateCarrier": {
+      "path": "../../../wave7-2026-10-17/r7-batch-03-sequencing-exit-r1/sequencing-exit-receipt.v1.json",
+      "sha256": "e982b562569770246de25c6aae796797e3ececbe7811745be435df44993ca0dc",
+      "bytes": 11103
+    },
+    "platformTypedSchemas": {
+      "path": "../../../../../../../dwp-backend/contracts/hris/canonical/schemas/platform-dependency-canonical-schemas.v1.json",
+      "sha256": "5674845a3ba00928e8c5e05dc99a7869d3dae7ba2cc48f360c8b16db47ec3d8f",
+      "bytes": 28109,
+      "definitions": [
+        "PDX_004:AutomationHandlerManifest.v1",
+        "PDX_005:AutomationInvocation.v1",
+        "PDX_006:AutomationRunItemReceipt.v1"
+      ]
+    },
+    "platformAutomationMigration": {
+      "path": "../../../../../../../dwp-backend/dwp-platform-server/src/main/resources/db/migration/V333__create_hris_automation_control_plane.sql",
+      "sha256": "213a3cbde404b056b7d60b7791b59b0c8a0581248e7d775382f7092940d63c2d",
+      "bytes": 76604,
+      "gitBlob": "375f8e5f92f6b69b107d7ded4680380092323f8e"
+    },
+    "platformRuntimePort": {
+      "path": "../../../../../../../dwp-backend/dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/automation/AutomationRuntimePorts.java",
+      "sha256": "919ca582fe0b251204137b36eff0f0ff642f3cb7319718ed30f9262ed241ba54",
+      "bytes": 7834,
+      "gitBlob": "f7c7a540ed48b70f43a0df9cfcaa21151ea9e0e2"
+    },
+    "platformHandlerRegistryPort": {
+      "path": "../../../../../../../dwp-backend/dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/automation/AutomationHandlerRegistryPort.java",
+      "sha256": "e19aad277f3bf48224af763a181c76cc98beb79ce627fdd9a46f2846d4623eca",
+      "bytes": 4273,
+      "gitBlob": "f5912a2675c72eab93cc1e2b2dd8929f697bdff1"
+    },
+    "timeHighWaterMigration": {
+      "path": "../../../../../../../dwp-backend/dwp-time-server/src/main/resources/db/migration/V14__tim_base_tfr_tim_003_employment_absence_projection.sql",
+      "sha256": "d442c9f6315cf01d60601694499d0cf79eff1d9f7d784b0fb162ec2a3aef66eb",
+      "bytes": 18812,
+      "gitBlob": "3c616149924007b955b8b4eab47325901128da47"
+    }
+  },
+  "repositoryPinsBeforeThisDisposition": {
+    "frontend": {
+      "branch": "dwp-dev",
+      "head": "334c995027a319df979dbdebc76f879800ed5f27",
+      "tree": "d40337d8b74e62725cdad911e7b0a7bce1225190",
+      "clean": true,
+      "originExact": true
+    },
+    "backend": {
+      "branch": "dwp-dev",
+      "head": "d9f84f9f934cc196f8b06462bb3fa972115eea8c",
+      "tree": "130078cf93ec00996657ca8e0f361745e020cc45",
+      "clean": true,
+      "originExact": true
+    },
+    "agent": {
+      "branch": "dwp-dev",
+      "head": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "clean": true,
+      "originExact": true
+    }
+  },
+  "sourceSemanticsDecision": {
+    "semanticLineage": "TFR-TIM-004::TIM-PLATFORM-AUTOMATION::SYS-API-017|SYS-API-018|SYS-API-019|SYS-API-020",
+    "businessMeaning": "Time-related scheduling may use the central allowlisted automation definition, run, attempt, retry and receipt contracts, but TIM-004 itself owns no executable business job.",
+    "exactTimeAggregate": "NONE",
+    "exactTimeDomainCommand": "NONE",
+    "exactTimeHandlerIdentity": "NONE",
+    "exactTimeInputSchema": "NONE",
+    "exactTimeResultSchema": "NONE",
+    "exactTimePopulationSelector": "NONE",
+    "exactTimeCompensationPolicy": "NONE",
+    "exactTimePrimaryApi": "NONE",
+    "exactTimeEvent": "NONE",
+    "decision": "DO_NOT_INFER_FIVE_TIME_JOBS_FROM_FIVE_SOURCE_ROWS_AND_DO_NOT_INVENT_AN_EXECUTABLE_HANDLER"
+  },
+  "ownershipDecision": {
+    "sys002Owns": [
+      "IAQ-059 settings operations owner query",
+      "/hr/settings/operations canonical route",
+      "central primary page ownership and completion accounting"
+    ],
+    "sys006Owns": [
+      "automation logical definition and immutable versions",
+      "schedule lifecycle and maker-checker evidence",
+      "run, run attempt, item, item attempt and checkpoint state",
+      "lease, fence, concurrency, idempotency and cancellation coordination",
+      "failed-item retry, dead-letter and compensation coordination",
+      "control-plane command receipts, audit and outbox evidence",
+      "SYS-EVT-004 automation state publication",
+      "signed handler registry and typed runtime dispatch ports"
+    ],
+    "tim004OwnsNow": [],
+    "timeBusinessScheduleDistinction": "Time work-regime or roster schedules are domain business facts and are not SYS-006 automation schedules.",
+    "crossServiceRule": "No service may query or mutate another service database; any future Time execution bridge requires a separately sealed typed service or event contract.",
+    "completionRule": "Central reuse does not transfer SYS-002 or SYS-006 ownership and produces no TIM-004 business-completion credit."
+  },
+  "contractDecision": {
+    "relatedReuseOnlyContracts": [
+      {
+        "id": "SYS-API-017",
+        "owner": "BASE-TFR-SYS-006",
+        "meaning": "list or create central automation definition identity and metadata",
+        "tim004PrimaryContract": false
+      },
+      {
+        "id": "SYS-API-018",
+        "owner": "BASE-TFR-SYS-006",
+        "meaning": "queue a central automation run",
+        "tim004PrimaryContract": false
+      },
+      {
+        "id": "SYS-API-019",
+        "owner": "BASE-TFR-SYS-006",
+        "meaning": "read central run, attempt, item, checkpoint and receipt evidence",
+        "tim004PrimaryContract": false
+      },
+      {
+        "id": "SYS-API-020",
+        "owner": "BASE-TFR-SYS-006",
+        "meaning": "create a new retry attempt for the immutable eligible failed-item set",
+        "tim004PrimaryContract": false
+      }
+    ],
+    "newTimeApis": [],
+    "newTimeCommands": [],
+    "newTimeEvents": [],
+    "newTimeReceipts": [],
+    "newCentralContracts": [],
+    "decision": "NO_TIM004_PUBLIC_OR_INTERNAL_EXECUTION_CONTRACT_EXISTS_IN_CURRENT_AUTHORITY"
+  },
+  "typedArtifactDecision": {
+    "reused": [
+      "PDX_004 AutomationHandlerManifest.v1",
+      "PDX_005 AutomationInvocation.v1",
+      "PDX_006 AutomationRunItemReceipt.v1"
+    ],
+    "interpretation": "Their availability proves a generic closed central protocol only; it does not prove a TIM-004 provider, handler, business input or result.",
+    "currentTimeProvider": "NONE",
+    "currentTimeConsumerAdapter": "NONE",
+    "currentProductionHandlerRegistryBinding": "NONE",
+    "currentExecutionTopology": "UNALLOCATED_NO_SOURCE_START",
+    "forbidden": [
+      "FREE_FORM_MAP_PAYLOAD",
+      "ARBITRARY_CLASS_METHOD_SQL_OR_CALLBACK_URL_DISPATCH",
+      "BROWSER_ASSERTED_TENANT_PURPOSE_OR_OWNER_AUTHORITY",
+      "CROSS_SERVICE_DATABASE_OR_REPOSITORY_ACCESS",
+      "INFERRED_SUCCESS_FROM_RESULT_UNKNOWN"
+    ]
+  },
+  "futureHandlerSuccessorRequirements": {
+    "requiredOnlyIfARealTimeJobIsLaterRequested": true,
+    "mustSealBeforePacket": [
+      "one source-authoritative Time business command and aggregate boundary",
+      "the exact ownerService dwp-time-server, handlerKey and handlerContractVersion triple",
+      "a signed ACTIVE PDX-004 manifest, trusted key revision and exact allowed scopes",
+      "closed input and result schema refs and lowercase SHA-256 digests with unknown fields rejected",
+      "trusted tenant, purpose, scope and authorized population derivation",
+      "deterministic immutable item identity, order and expected cardinality",
+      "domain effect idempotency key and request-digest derivation",
+      "retry mode, maximum attempts and retryable versus final error mapping",
+      "RESULT_UNKNOWN reconciliation and lost-lease or stale-fence behavior",
+      "declared compensation policy or an explicit no-compensation decision",
+      "resultRef, resultDigest, errorCode and Time-owned event mapping",
+      "one explicitly authorized cross-service execution topology"
+    ],
+    "sharedChangeRule": "Any Platform, gateway, Auth or shared contract delta requires a separate central successor and cannot be hidden in a TIM owner token.",
+    "schemaRule": "A Time-owned durable business-result gap must be proven before requesting any TIME_MAIN migration lease."
+  },
+  "receiptRetryAndEventDecision": {
+    "controlPlaneReceiptOwner": "BASE-TFR-SYS-006",
+    "itemReceiptType": "PDX_006 AutomationRunItemReceipt.v1",
+    "sameIdempotencyAndSameDigest": "REPLAY_ORIGINAL_PLATFORM_RECEIPT",
+    "sameIdempotencyAndDifferentDigest": "CONFLICT_NO_EFFECT",
+    "retry": "NEW_IMMUTABLE_PLATFORM_ATTEMPT_FOR_ELIGIBLE_FAILED_ITEMS_ONLY",
+    "resultUnknown": "RECONCILE_WITH_TRUSTED_EVIDENCE_NO_BLIND_REDISPATCH_NO_INFERRED_SUCCESS",
+    "deadLetter": "PLATFORM_CONTROL_PLANE_ONLY",
+    "controlPlaneEvent": "SYS-EVT-004_REUSE_ONLY",
+    "timeEvent": "NONE",
+    "forbidden": [
+      "TIME_PRIVATE_AUTOMATION_RECEIPT_LEDGER",
+      "TIME_PRIVATE_RETRY_OR_DLQ_STORE",
+      "DUPLICATE_SYS_EVT_004",
+      "DOUBLE_WRITE_OF_PLATFORM_RUN_OR_ATTEMPT_STATE"
+    ]
+  },
+  "informationArchitectureDecision": {
+    "timeOwnedPrimaryEntryQuery": "NONE",
+    "timeOwnedCanonicalRoute": "NONE",
+    "timeOwnedSidebarNode": "NONE",
+    "timeOwnedPage": "NONE",
+    "timeOwnedActionDescriptor": "NONE",
+    "centralSupportingQuery": "IAQ-059",
+    "centralSupportingRoute": "/hr/settings/operations",
+    "centralPrimarySliceId": "BASE-TFR-SYS-002",
+    "platformAutomationTechnicalOwnerSlice": "BASE-TFR-SYS-006",
+    "decision": "CENTRAL_REUSE_ONLY_NO_TIM_ROUTE_MENU_PAGE_INVENTION_NO_OWNER_TRANSFER_NO_COMPLETION_RECOUNT"
+  },
+  "migrationDecision": {
+    "stream": "TIME_MAIN",
+    "observedHighWater": "V14",
+    "candidateMentionedByPreflight": "V15_ONLY_IF_TIME_OWNED_SCHEMA_DELTA_IS_PROVEN",
+    "timeOwnedSchemaDeltaProven": false,
+    "decision": "NONE_REUSE_PLATFORM_V333_AND_EXISTING_TIME_V14",
+    "leaseState": "NOT_REQUIRED_NOT_ISSUED",
+    "v15ReservationAuthorized": false,
+    "v15AuthoringAuthorized": false,
+    "platformPersistenceReused": [
+      "sys_automation_definitions",
+      "sys_automation_versions",
+      "sys_automation_schedules",
+      "sys_automation_runs",
+      "sys_automation_run_attempts",
+      "sys_automation_run_items",
+      "sys_automation_item_attempts",
+      "sys_automation_run_checkpoints"
+    ],
+    "timePersistenceRule": "Existing Time domain persistence remains owned by its respective admitted slices and is neither altered nor re-counted by TIM-004.",
+    "futureEscalation": "Stop and author an append-only semantic successor naming the exact missing Time-owned table or column, then obtain a separate exclusive V15 lease."
+  },
+  "carriedOpenP0Gates": [
+    {
+      "gateId": "TIM_CLOSE_PERIOD_DEFINITION_PRODUCER",
+      "severity": "P0",
+      "state": "OPEN_EXTERNAL_SOURCE_AUTHORITY_GATE",
+      "unchanged": true,
+      "blocks": [
+        "TIM_FEATURE_ACTIVATION",
+        "TIM_BUSINESS_COMPLETION_CREDIT",
+        "LIVE_TIM_TO_PAYROLL_END_TO_END_CLAIM"
+      ],
+      "doesNotBlock": [
+        "THIS_DOCUMENT_ONLY_REUSE_DISPOSITION_AND_REVIEW"
+      ]
+    },
+    {
+      "gateId": "TIM_CLOSE_TRUSTED_OWNER_HEADER_ISSUER",
+      "severity": "P0",
+      "state": "OPEN_BEFORE_ANY_TENANT_ENROLLMENT",
+      "unchanged": true,
+      "blocks": [
+        "TIM_TENANT_ENROLLMENT",
+        "TIM_PRODUCTION_ACTIVATION"
+      ],
+      "doesNotBlock": [
+        "THIS_DOCUMENT_ONLY_REUSE_DISPOSITION_AND_REVIEW"
+      ]
+    }
+  ],
+  "acceptanceCriteria": [
+    {
+      "id": "TIM004-AC-01",
+      "criterion": "TIM-004 remains a NON_UI_SUPPORTING_SLICE and adds no Time route, menu, page, action descriptor or frontend request."
+    },
+    {
+      "id": "TIM004-AC-02",
+      "criterion": "IAQ-059 and /hr/settings/operations remain owned by SYS-002, SYS-006 remains the automation technical owner, and neither ownership nor completion credit transfers to TIM-004."
+    },
+    {
+      "id": "TIM004-AC-03",
+      "criterion": "SYS-API-017 through SYS-API-020 remain related reuse-only Platform contracts and no primary TIM API, command, event or receipt is introduced."
+    },
+    {
+      "id": "TIM004-AC-04",
+      "criterion": "No Time scheduler, automation controller, registry provider, control-plane aggregate, run worker, retry worker, DLQ manager or cross-service database access is created."
+    },
+    {
+      "id": "TIM004-AC-05",
+      "criterion": "Arbitrary class, method, SQL, script or callback dispatch and any browser-asserted tenant, purpose or owner authority are rejected."
+    },
+    {
+      "id": "TIM004-AC-06",
+      "criterion": "No Time handler is registered or called unless a later separately admitted successor seals the exact ownerService, handlerKey and handlerContractVersion triple, signed ACTIVE manifest, closed schemas, scopes and execution topology."
+    },
+    {
+      "id": "TIM004-AC-07",
+      "criterion": "No Time payload, population selector, domain command, result or compensation contract is inferred from the five source rows or from generic PDX-004, PDX-005 and PDX-006 availability."
+    },
+    {
+      "id": "TIM004-AC-08",
+      "criterion": "SYS-006 and the shared Platform stores remain the only truth for automation definitions, runs, attempts, item receipts, retry, dead-letter and SYS-EVT-004; Time creates no parallel ledger or event."
+    },
+    {
+      "id": "TIM004-AC-09",
+      "criterion": "TIME_MAIN remains at V14, V15 is neither reserved nor authored, and any future V15 request requires a separately proven Time-owned durable business-result delta and exclusive lease."
+    },
+    {
+      "id": "TIM004-AC-10",
+      "criterion": "The central automation feature remains default OFF with zero TIM tenants, schedules, providers, handler bindings and Time handler calls."
+    },
+    {
+      "id": "TIM004-AC-11",
+      "criterion": "TIM_CLOSE_PERIOD_DEFINITION_PRODUCER and TIM_CLOSE_TRUSTED_OWNER_HEADER_ISSUER remain open unchanged and continue to block enrollment, activation, completion credit and live Time-to-Payroll claims as declared."
+    },
+    {
+      "id": "TIM004-AC-12",
+      "criterion": "This reuse-only closure grants zero business-completion increment and no packet, token, worktree, migration lease, central source or module source authority."
+    }
+  ],
+  "targetedGoldenScenarios": [
+    {
+      "id": "TIM004-GOLD-01",
+      "scenario": "The settings operations surface remains under SYS-002 and exposes no TIM-004 route, menu, page or action."
+    },
+    {
+      "id": "TIM004-GOLD-02",
+      "scenario": "With the central feature OFF and no enrolled tenant, zero call reaches any Time service."
+    },
+    {
+      "id": "TIM004-GOLD-03",
+      "scenario": "An unknown or arbitrary handler identity is rejected before dispatch and creates no domain effect."
+    },
+    {
+      "id": "TIM004-GOLD-04",
+      "scenario": "A missing schema digest, unsigned, inactive, revoked or identity-mismatched manifest is rejected without Time invocation."
+    },
+    {
+      "id": "TIM004-GOLD-05",
+      "scenario": "The same Platform idempotency key and digest replays the original receipt while a different digest conflicts, and no Time receipt ledger exists."
+    },
+    {
+      "id": "TIM004-GOLD-06",
+      "scenario": "Retry creates a new immutable Platform attempt for eligible failed items and never rewrites an earlier PDX-006 receipt."
+    },
+    {
+      "id": "TIM004-GOLD-07",
+      "scenario": "RESULT_UNKNOWN remains subject to trusted reconciliation and is never converted to success by inference or blind redispatch."
+    },
+    {
+      "id": "TIM004-GOLD-08",
+      "scenario": "Unavailable current handler authority or a lost lease or stale fence blocks effect execution."
+    },
+    {
+      "id": "TIM004-GOLD-09",
+      "scenario": "A proposed Time schema change without an exact Time-owned durable business-result delta receives no V15 lease."
+    },
+    {
+      "id": "TIM004-GOLD-10",
+      "scenario": "Zero production registry, provider, scheduler and handler binding results in zero Time effect."
+    },
+    {
+      "id": "TIM004-GOLD-11",
+      "scenario": "Either carried P0 gate remaining open blocks tenant enrollment, activation and live Time-to-Payroll claims."
+    },
+    {
+      "id": "TIM004-GOLD-12",
+      "scenario": "Any attempted TIM UI, event, automation table, private receipt, retry ledger or DLQ is rejected as an ownership breach."
+    }
+  ],
+  "targetedVerificationPlan": {
+    "documentOnly": true,
+    "checks": [
+      "JSON_SYNTAX",
+      "CANONICAL_PATH_SHA256_AND_BYTE_PINS",
+      "TIM004_ROW_AND_SOURCE_FAMILY_EXACT_MATCH",
+      "SYS002_SYS006_OWNER_AND_IA_BOUNDARY",
+      "NO_TIM_HANDLER_API_EVENT_RECEIPT_OR_UI_INVENTION",
+      "PDX004_PDX005_PDX006_REUSE_ONLY_INTERPRETATION",
+      "PLATFORM_V333_TABLE_OWNERSHIP_AND_NO_DUPLICATE_TIME_LEDGER",
+      "TIME_V14_HIGH_WATER_AND_MIGRATION_NONE",
+      "BOTH_TIM_P0_GATES_CARRIED_UNCHANGED",
+      "DEFAULT_OFF_ZERO_ENROLLMENT_ZERO_BINDING_ZERO_TIME_CALL",
+      "ZERO_BUSINESS_COMPLETION_AND_NO_SOURCE_AUTHORITY"
+    ],
+    "sourceTestsRequired": false,
+    "repositoryWideSuiteRun": false,
+    "policy": "Validate only the changed disposition and its pinned evidence; expand only if a targeted failure proves broader impact."
+  },
+  "activationBoundary": {
+    "centralFeatureKey": "HRIS_AUTOMATION_CONTROL_PLANE",
+    "defaultEnabled": false,
+    "timTenantEnrollmentCount": 0,
+    "timProductionScheduleCount": 0,
+    "timProductionProviderBindingCount": 0,
+    "timProductionHandlerBindingCount": 0,
+    "timHandlerCallCount": 0,
+    "timeRouteOrMenuAdded": false,
+    "customerDataAuthorized": false,
+    "businessCompletionIncrement": 0
+  },
+  "portfolioAccounting": {
+    "universe": 86,
+    "retired": 2,
+    "active": 84,
+    "completed": 26,
+    "activeIncomplete": 58,
+    "tim004Increment": 0,
+    "decision": "UNCHANGED"
+  },
+  "authority": {
+    "semanticDispositionSealed": true,
+    "independentReviewRequired": true,
+    "reuseOnlyNoHandlerDecisionSealed": true,
+    "timeSchemaDeltaProven": false,
+    "semanticCloseNoModulePacketMayBeConsideredAfterReview": true,
+    "ownerPacketAuthorizedNow": false,
+    "startTokenAuthorizedNow": false,
+    "worktreeMaterializationAuthorizedNow": false,
+    "centralSourceAuthoringAuthorizedNow": false,
+    "moduleSourceAuthoringAuthorizedNow": false,
+    "migrationReservationAuthorizedNow": false,
+    "migrationAuthoringAuthorizedNow": false,
+    "routeMenuPageOrActionAuthorizedNow": false,
+    "featureEnablementAuthorizedNow": false,
+    "tenantEnrollmentAuthorizedNow": false,
+    "productionBindingAuthorizedNow": false,
+    "businessCompletionCredit": 0,
+    "batch05Complete": false,
+    "r7Complete": false,
+    "hrisComplete": false,
+    "productionReleaseAuthorized": false
+  },
+  "nonClaims": [
+    "An executable Time automation job, handler, adapter, input, result, population or compensation contract exists.",
+    "The five source rows identify five Time jobs or authorize any inferred Time behavior.",
+    "PDX-004, PDX-005 or PDX-006 proves a TIM-004 provider or production binding.",
+    "A TIM API, event, receipt, route, menu, page, action descriptor, scheduler, worker or ledger was created.",
+    "TIME_MAIN V15 was reserved, authored or required.",
+    "A packet, token, worktree, lease, central source or module source authority was issued.",
+    "IAQ-059 or the settings operations route transferred from SYS-002 to TIM.",
+    "SYS-006 control-plane ownership or completion was counted again.",
+    "Either TIM P0 gate was closed or reinterpreted.",
+    "A feature or tenant was enabled or enrolled, or a provider, schedule, handler, broker or customer datum was bound.",
+    "BASE-TFR-TIM-004 is a completed business slice, or Batch-05, R7 or HRIS is complete."
+  ],
+  "nextGate": "INDEPENDENTLY_REVIEW_THIS_REUSE_ONLY_DISPOSITION_WITH_ZERO_P0_ZERO_P1_ZERO_P2_THEN_RECORD_ONE_CENTRAL_SEMANTIC_CLOSE_NO_MODULE_PACKET_DECISION;_IF_AN_EXECUTABLE_TIME_JOB_IS_DESIRED_STOP_AND_AUTHOR_A_NEW_SOURCE_AUTHORITATIVE_HANDLER_SUCCESSOR_BEFORE_ANY_PACKET_TOKEN_WORKTREE_V15_LEASE_OR_SOURCE"
+}
