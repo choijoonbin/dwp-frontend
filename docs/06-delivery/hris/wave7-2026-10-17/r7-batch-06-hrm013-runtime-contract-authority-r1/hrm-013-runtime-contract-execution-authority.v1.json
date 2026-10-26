@@ -1,0 +1,993 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-runtime-contract-execution-authority.v1",
+  "state": "INDEPENDENTLY_REVIEWED_HASH_BOUND_SHARED_CONTRACT_EXECUTION_AUTHORITY",
+  "lane": "SHARED_CONTRACT",
+  "predecessorCarrier": {
+    "repository": "dwp-frontend",
+    "branch": "dwp-dev",
+    "commit": "2d07c6a830d01b1702b08f44b372ec611bbc5d31",
+    "tree": "3215d5fd107c01410b7555f2254719ba371c1aac",
+    "artifactPins": [
+      {
+        "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-owner-runtime-binding-gate-r1/hrm-013-owner-runtime-binding-gate.v1.json",
+        "bytes": 170804,
+        "sha256": "aa88b6116f2fa8ca4e96d85204414a737e763afa4e1bb01372e31fdaa59deb47"
+      },
+      {
+        "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-owner-runtime-binding-gate-r1/validate_hrm013_owner_runtime_binding_gate.py",
+        "bytes": 105034,
+        "sha256": "47387b5fa0f27be3e6e4944d0439678fc0b4f516ba0d97966bb958c2a9eb637b"
+      },
+      {
+        "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-owner-runtime-binding-gate-r1/independent-review.v1.json",
+        "bytes": 8545,
+        "sha256": "18487992c6f20f9fa66b7e12b06791a5e074e4bf7e816e9a37956d5822075410"
+      },
+      {
+        "path": "package.json",
+        "bytes": 14566,
+        "sha256": "1bbf859f9f4078d678a2fea2eb9aaf2c64b331300e0653d30eafde60e16db38f"
+      }
+    ]
+  },
+  "authorizedSourcePaths": [
+    "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/separation/v1/Hrm013SeparationBridgeV1.java",
+    "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/separation/v1/Hrm013WorkloadProofV1.java",
+    "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/separation/v1/HrisServiceGrantAuthorityV1.java",
+    "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/separation/v1/Hrm013SafeErrorV1.java",
+    "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/separation/v1/Hrm013RequesterIdentityAuthorityV1.java",
+    "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/separation/v1/Hrm013TaskDispatchV1.java"
+  ],
+  "authorizedTestPaths": [
+    "dwp-platform-contracts/src/test/java/com/dwp/platform/contract/Hrm013SeparationBridgeV1Test.java",
+    "dwp-platform-contracts/src/test/java/com/dwp/platform/contract/Hrm013WorkloadProofV1Test.java",
+    "dwp-platform-contracts/src/test/java/com/dwp/platform/contract/HrisServiceGrantAuthorityV1Test.java",
+    "dwp-platform-contracts/src/test/java/com/dwp/platform/contract/Hrm013RequesterIdentityAuthorityV1Test.java",
+    "dwp-platform-contracts/src/test/java/com/dwp/platform/contract/Hrm013TaskDispatchV1Test.java"
+  ],
+  "sealedServiceBindingRegister": {
+    "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-owner-runtime-execution-r1/service-api-auth-binding-register.successor.v3.csv",
+    "predecessor": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-callback-binding-r1/service-api-auth-binding-register.successor.v2.csv",
+      "bytes": 10190,
+      "sha256": "15b52f3cd3867aefa79f02cdf83441d9d5220836344391574cc42a8bdbde7e37"
+    },
+    "appendCount": 8,
+    "appendedBindingIds": [
+      "SVC-AUT-HRM-011",
+      "SVC-AUT-HRM-012",
+      "SVC-AUT-HRM-013",
+      "SVC-PEP-TIM-004",
+      "SVC-PEP-PAY-002",
+      "SVC-AUT-HRM-014",
+      "SVC-AUT-HRM-015",
+      "SVC-AUT-HRM-016"
+    ],
+    "appendedRowsSha256": "720ac954b8f5f45b520900a1e078bc1cb5b5750dc79745f714fb994dab9765ea",
+    "bytes": 23958,
+    "sha256": "16e1401119b1bfff0cf6fa0383ec311e154db91e86df738fb9dffa5e4dd8bf1a"
+  },
+  "executionBoundary": {
+    "tokenPhase": "PHASE_1_SHARED_CONTRACT_EXECUTABLE_TOKEN",
+    "materializationEffectiveAfter": [
+      "THIS_AUTHORITY_CARRIER_IS_COMMITTED_AS_THE_EXACT_NON_MERGE_DIRECT_CHILD_OF_THE_PREDECESSOR_CARRIER",
+      "THIS_AUTHORITY_CARRIER_IS_PUSHED_AND_FRONTEND_DWP_DEV_EQUALS_ORIGIN_DWP_DEV",
+      "CURRENT_AUTHORITY_VALIDATOR_REVIEW_REGISTER_AND_PACKAGE_BYTES_EQUAL_THEIR_INTRODUCING_COMMIT_BLOBS",
+      "BACKEND_DWP_DEV_AND_ORIGIN_DWP_DEV_EQUAL_THE_PINNED_BASE_AND_THE_PRIMARY_CHECKOUT_IS_CLEAN",
+      "THE_EXACT_SHARED_BRANCH_AND_WORKTREE_PATH_ARE_ABSENT_BEFORE_FRESH_MATERIALIZATION"
+    ],
+    "sourceAuthoringEffectiveAfter": [
+      "EVERY_MATERIALIZATION_EFFECTIVE_AFTER_CONDITION_IS_TRUE",
+      "THE_EXACT_SHARED_WORKTREE_WAS_FRESHLY_MATERIALIZED_AT_THE_PINNED_BASE_COMMIT_AND_TREE",
+      "THE_EXACT_CLOSED_CLEAN_WORKTREE_RECEIPT_EXISTS_AND_PASSES_THE_TRUSTED_ISOLATED_VALIDATOR",
+      "THE_RECEIPT_PINS_THIS_AUTHORITY_CARRIER_COMMIT_TREE_AND_AUTHORITY_ARTIFACT_BYTES_AND_SHA256"
+    ],
+    "fixedAuthorityConjunction": {
+      "authorityAndReviewMapsAreNotStandaloneGrants": true,
+      "worktreeAuthorizedEffectiveOnlyWhen": "ALL_MATERIALIZATION_EFFECTIVE_AFTER_CONDITIONS",
+      "sharedContractImplementationAuthorizedEffectiveOnlyWhen": "ALL_SOURCE_AUTHORING_EFFECTIVE_AFTER_CONDITIONS",
+      "sourceAuthoringAuthorizedEffectiveOnlyWhen": "ALL_SOURCE_AUTHORING_EFFECTIVE_AFTER_CONDITIONS",
+      "reviewSharedContractImplementationAuthorizedAfterCarrierPushEffectiveOnlyWhen": "ALL_SOURCE_AUTHORING_EFFECTIVE_AFTER_CONDITIONS"
+    },
+    "backend": {
+      "repository": "dwp-backend",
+      "repositoryRoot": "/Users/a10697/Work/DWP/dwp-backend",
+      "repositoryRealRoot": "/Users/a10697/Work/DWP/dwp-backend",
+      "branch": "codex/hris-wave7-batch06-hrm013-runtime-contract-backend-20261026-r1",
+      "baseCommit": "c50b267e7b015758ab6f7acc7fdf353eee81e631",
+      "baseTree": "22bd6533ab340cfb91c6cf5ab5fd6991e501e6c4",
+      "worktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/shared",
+      "worktreeRealRoot": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/shared"
+    },
+    "cleanWorktreeReceiptContract": {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/receipts/shared-clean-worktree-receipt.v1.json",
+      "schema": "dwp.hris.wave7.hrm013-shared-contract-clean-worktree-receipt.v1",
+      "state": "HASH_BOUND_FRESH_CLEAN_SHARED_CONTRACT_WORKTREE_RECEIPT",
+      "requiredBeforeSourceAuthoring": true,
+      "closedTopLevelFields": [
+        "schema",
+        "state",
+        "authorityCarrierCommit",
+        "authorityCarrierTree",
+        "authorityCarrierCommittedAt",
+        "authorityCarrierPushObservedAt",
+        "authorityArtifact",
+        "repository",
+        "repositoryRoot",
+        "repositoryRealRoot",
+        "worktree",
+        "worktreeRealRoot",
+        "branch",
+        "baseCommit",
+        "baseTree",
+        "head",
+        "tree",
+        "originDwpDevAtMaterialization",
+        "upstreamAtMaterialization",
+        "remoteBranchPresentAtMaterialization",
+        "statusPorcelainV2Bytes",
+        "statusPorcelainV2Sha256",
+        "ignoredSourceTestShadowNulBytes",
+        "ignoredSourceTestShadowNulSha256",
+        "untrackedSourceTestShadowNulBytes",
+        "untrackedSourceTestShadowNulSha256",
+        "ignoredBuildShadowNulBytes",
+        "ignoredBuildShadowNulSha256",
+        "untrackedBuildShadowNulBytes",
+        "untrackedBuildShadowNulSha256",
+        "protections",
+        "verifiedAt",
+        "verifiedBy"
+      ],
+      "dynamicCarrierEvidence": {
+        "authorityCarrierCommit": "EXACT_UNIQUE_INTRODUCING_CARRIER_COMMIT",
+        "authorityCarrierTree": "EXACT_TREE_OF_THE_INTRODUCING_CARRIER_COMMIT",
+        "authorityCarrierCommittedAt": "STRICT_RFC3339_GIT_COMMITTER_TIMESTAMP_OF_THE_INTRODUCING_CARRIER_COMMIT",
+        "authorityCarrierPushObservedAt": "STRICT_RFC3339_TIME_WHEN_FRONTEND_HEAD_AND_ORIGIN_DWP_DEV_ARE_OBSERVED_EQUAL_TO_THE_CARRIER_COMMIT",
+        "authorityArtifact": {
+          "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-runtime-contract-authority-r1/hrm-013-runtime-contract-execution-authority.v1.json",
+          "bytes": "EXACT_INTRODUCING_COMMIT_BLOB_BYTES",
+          "sha256": "EXACT_INTRODUCING_COMMIT_BLOB_SHA256"
+        }
+      },
+      "fixedEvidence": {
+        "repository": "dwp-backend",
+        "repositoryRoot": "/Users/a10697/Work/DWP/dwp-backend",
+        "repositoryRealRoot": "/Users/a10697/Work/DWP/dwp-backend",
+        "worktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/shared",
+        "worktreeRealRoot": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/shared",
+        "branch": "codex/hris-wave7-batch06-hrm013-runtime-contract-backend-20261026-r1",
+        "baseCommit": "c50b267e7b015758ab6f7acc7fdf353eee81e631",
+        "baseTree": "22bd6533ab340cfb91c6cf5ab5fd6991e501e6c4",
+        "head": "c50b267e7b015758ab6f7acc7fdf353eee81e631",
+        "tree": "22bd6533ab340cfb91c6cf5ab5fd6991e501e6c4",
+        "originDwpDevAtMaterialization": "c50b267e7b015758ab6f7acc7fdf353eee81e631",
+        "upstreamAtMaterialization": null,
+        "remoteBranchPresentAtMaterialization": false,
+        "statusPorcelainV2Bytes": 0,
+        "statusPorcelainV2Sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "ignoredSourceTestShadowNulBytes": 0,
+        "ignoredSourceTestShadowNulSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "untrackedSourceTestShadowNulBytes": 0,
+        "untrackedSourceTestShadowNulSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "ignoredBuildShadowNulBytes": 0,
+        "ignoredBuildShadowNulSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "untrackedBuildShadowNulBytes": 0,
+        "untrackedBuildShadowNulSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "verifiedBy": "TRUSTED_HRM013_SHARED_CONTRACT_WORKTREE_CHECK"
+      },
+      "protections": {
+        "assumeUnchangedPaths": [],
+        "skipWorktreePaths": [],
+        "sparseCheckoutEnabled": false,
+        "fsmonitorConfigured": false,
+        "diffExternalConfigured": false,
+        "unsafeGitConfigEntries": [],
+        "unsafeGitConfigNulBytes": 0,
+        "unsafeGitConfigNulSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "graftFilePresent": false,
+        "replaceRefs": [],
+        "repositoryOrWorktreePathSymlinks": [],
+        "authorizedSourceOrTestPathSymlinks": []
+      },
+      "sourceTestShadowScanRoots": [
+        "dwp-platform-contracts/src"
+      ],
+      "buildShadowScanRoots": [
+        "dwp-platform-contracts/build",
+        "dwp-platform-contracts/.gradle",
+        "dwp-platform-contracts/gradle"
+      ],
+      "shadowInventoryEncoding": "SHA256_OF_RAW_NUL_TERMINATED_GIT_LS_FILES_OUTPUT",
+      "timestampField": "verifiedAt",
+      "fileSecurity": "validationPlan.validatorLifecycle.receiptFileSecurityContract"
+    },
+    "allowedScope": [
+      "CLOSED_SHARED_DTOS_AND_STRICT_JSON_CODECS",
+      "RFC_8785_PAYLOAD_AND_FIXED_COMMAND_DIGESTS",
+      "SEALED_APR_002_HRM_008_HRM_009_HRM_010_AND_RESOLVER_REQUESTER_TASK_DISPATCH_PROFILES",
+      "WORKLOAD_PROOF_VERIFICATION_PRIMITIVES",
+      "SAFE_ERROR_MAPPING",
+      "EXACT_SIX_SOURCE_AND_FIVE_TEST_PATHS_ONLY"
+    ],
+    "forbiddenScope": [
+      "DATABASE_OR_MIGRATION",
+      "HTTP_CLIENT_OR_CONTROLLER_OR_RELAY",
+      "SPRING_BEAN_OR_RUNTIME_CONFIGURATION",
+      "CREDENTIAL_OR_TENANT_GRANT_IMPLEMENTATION",
+      "AUTH_V62_GENERATION_OR_AUTH_V271_RESERVATION_OR_IMPLEMENTATION",
+      "APPROVAL_PEOPLE_TIME_PAYROLL_AUTH_RUNTIME_IMPLEMENTATION",
+      "CALLBACK_PRODUCER_OR_FRONTEND_UI_MENU_ROUTE",
+      "FEATURE_TENANT_PRODUCTION_BINDING_OR_RELEASE"
+    ],
+    "centralIntegrationHandoff": {
+      "directDwpDevMergeAuthorizedByThisCarrier": false,
+      "eligibilityEffectiveAfter": [
+        "A_SEPARATE_LATER_FRONTEND_HASH_BOUND_CENTRAL_INTEGRATION_AUTHORITY_VALIDATOR_INDEPENDENT_REVIEW_AND_PACKAGE_CARRIER_IS_COMMITTED_AND_PUSHED",
+        "THE_LATER_VALIDATOR_IS_APPENDED_IMMEDIATELY_AFTER_THIS_RUNTIME_CONTRACT_AUTHORITY_VALIDATOR_IN_HRIS_CURRENT_CONTRACTS_CHECK",
+        "THE_EXACT_EXTERNAL_CENTRAL_INTEGRATION_AUTHORITY_RECEIPT_EXISTS_AND_PASSES_THIS_TRUSTED_ISOLATED_VALIDATOR",
+        "THE_RECEIPT_PINS_ZERO_FINDING_TARGETED_TREE_AND_POST_IMPLEMENTATION_REVIEW_EVIDENCE"
+      ],
+      "laterFrontendAuthority": {
+        "repository": "dwp-frontend",
+        "branch": "dwp-dev",
+        "authorityPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-shared-contract-integration-r1/shared-contract-central-integration-authority.v1.json",
+        "validatorPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-shared-contract-integration-r1/validate_hrm013_shared_contract_integration.py",
+        "independentReviewPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-shared-contract-integration-r1/independent-review.v1.json",
+        "packagePath": "package.json",
+        "authoritySchema": "dwp.hris.wave7.hrm013-shared-contract-central-integration-authority.v1",
+        "authorityState": "INDEPENDENTLY_REVIEWED_HASH_BOUND_SHARED_CONTRACT_FAST_FORWARD_INTEGRATION_AUTHORITY",
+        "authorityLane": "SHARED_CONTRACT_CENTRAL_INTEGRATION",
+        "reviewSchema": "dwp.hris.wave7.hrm013-shared-contract-central-integration-authority-independent-review.v1",
+        "reviewer": "INDEPENDENT_HRM013_SHARED_CONTRACT_CENTRAL_INTEGRATION_REVIEW",
+        "reviewDecision": "GO_FOR_SHARED_CONTRACT_FAST_FORWARD_DWP_DEV_INTEGRATION_ONLY",
+        "exactCarrierChangedPaths": [
+          "package.json",
+          "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-shared-contract-integration-r1/shared-contract-central-integration-authority.v1.json",
+          "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-shared-contract-integration-r1/independent-review.v1.json",
+          "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-shared-contract-integration-r1/validate_hrm013_shared_contract_integration.py"
+        ],
+        "authorityClosedTopLevelFields": [
+          "schema",
+          "state",
+          "lane",
+          "predecessorCarrier",
+          "sharedLaneEvidence",
+          "centralIntegrationBoundary",
+          "historicalBackendDescendantGovernance",
+          "authority"
+        ],
+        "authorityMap": {
+          "centralIntegrationAuthorityPrepared": true,
+          "independentReviewComplete": true,
+          "sharedContractFastForwardIntegrationAuthorizedAfterExternalReceipt": true,
+          "historicalBackendDescendantGovernanceAssumed": true,
+          "sharedContractBlobMutationAuthorized": false,
+          "authGenerationAuthorized": false,
+          "migrationAuthoringAuthorized": false,
+          "runtimeImplementationAuthorized": false,
+          "productionBindingAuthorized": false,
+          "productionReleaseAuthorized": false,
+          "businessCompletionCredit": 0
+        },
+        "reviewClosedTopLevelFields": [
+          "schema",
+          "reviewedAt",
+          "reviewer",
+          "scope",
+          "findings",
+          "finalVerdict",
+          "authority",
+          "artifactPins"
+        ],
+        "reviewFinalVerdict": {
+          "p0": 0,
+          "p1": 0,
+          "p2": 0,
+          "decision": "GO_FOR_SHARED_CONTRACT_FAST_FORWARD_DWP_DEV_INTEGRATION_ONLY"
+        },
+        "reviewAuthorityMap": {
+          "independentReviewComplete": true,
+          "carrierCommitAndPushAuthorized": true,
+          "externalCentralIntegrationAttestationRequired": true,
+          "fastForwardIntegrationAuthorizedBeforeExternalAttestation": false,
+          "historicalBackendDescendantGovernanceReviewed": true,
+          "authGenerationAuthorized": false,
+          "migrationAuthoringAuthorized": false,
+          "runtimeImplementationAuthorized": false,
+          "productionReleaseAuthorized": false,
+          "businessCompletionCredit": 0
+        },
+        "nonCyclicArtifactPinContract": {
+          "laterAuthorityPredecessorPinPaths": [
+            "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-runtime-contract-authority-r1/hrm-013-runtime-contract-execution-authority.v1.json",
+            "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-runtime-contract-authority-r1/validate_hrm013_runtime_contract_authority.py"
+          ],
+          "laterReviewArtifactPinPaths": [
+            "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-shared-contract-integration-r1/shared-contract-central-integration-authority.v1.json",
+            "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-shared-contract-integration-r1/validate_hrm013_shared_contract_integration.py",
+            "package.json"
+          ],
+          "authorityMustNotPinItsOwnBlob": true,
+          "reviewMustNotPinItsOwnBlob": true,
+          "duplicateOrExtraPinAllowed": false
+        },
+        "validatorPosition": 6,
+        "predecessorValidatorPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-runtime-contract-authority-r1/validate_hrm013_runtime_contract_authority.py",
+        "assumesHistoricalBackendDescendantGovernance": true,
+        "currentValidatorHandoffRule": "THIS_FIFTH_VALIDATOR_VALIDATES_THE_CLOSED_LATER_CARRIER_AND_DELEGATION_ONCE_AND_NEVER_AUTHORIZES_DESCENDANTS_BY_VALIDATOR_COMMAND_COUNT",
+        "sixthValidatorOwnershipRule": "THE_IMMUTABLE_SIXTH_VALIDATOR_OWNS_ALL_LATER_BACKEND_DESCENDANT_GOVERNANCE_USING_ONE_REVIEWED_RECEIPT_AND_ORDERED_FRONTEND_GOVERNANCE_CARRIER_PER_DESCENDANT",
+        "packageAppendRule": "APPEND_THE_TRACKED_REGULAR_LATER_VALIDATOR_IMMEDIATELY_AFTER_THIS_RUNTIME_CONTRACT_AUTHORITY_VALIDATOR_WITH_LITERAL_SPACE_AMPERSAND_AMPERSAND_SPACE",
+        "mustBeHashBoundAndIndependentlyReviewed": true
+      },
+      "receiptContract": {
+        "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/receipts/shared-central-integration-authority.v1.json",
+        "schema": "dwp.hris.wave7.hrm013-shared-contract-central-integration-authority-receipt.v1",
+        "state": "HASH_BOUND_ZERO_FINDING_SHARED_CONTRACT_FAST_FORWARD_INTEGRATION_AUTHORITY",
+        "closedTopLevelFields": [
+          "schema",
+          "state",
+          "sharedExecutionCarrierCommit",
+          "sharedExecutionCarrierTree",
+          "sharedExecutionAuthorityArtifact",
+          "centralIntegrationAuthorityCarrierCommit",
+          "centralIntegrationAuthorityCarrierTree",
+          "centralIntegrationAuthorityCarrierCommittedAt",
+          "centralIntegrationAuthorityCarrierPushObservedAt",
+          "centralIntegrationAuthorityArtifact",
+          "centralIntegrationValidatorArtifact",
+          "centralIntegrationIndependentReviewArtifact",
+          "centralIntegrationPackageArtifact",
+          "backendBaseCommit",
+          "backendBaseTree",
+          "laneCommit",
+          "laneTree",
+          "changedPaths",
+          "targetedVerificationReceiptSha256",
+          "postImplementationReviewReceiptSha256",
+          "p0",
+          "p1",
+          "p2",
+          "decision",
+          "integrationMode",
+          "authGenerationAuthorized",
+          "migrationAuthoringAuthorized",
+          "runtimeImplementationAuthorized",
+          "recordedAt",
+          "recordedBy"
+        ],
+        "dynamicPinRequirements": {
+          "sharedExecutionCarrierCommit": "EXACT_UNIQUE_INTRODUCING_COMMIT_OF_THIS_AUTHORITY_CARRIER",
+          "sharedExecutionCarrierTree": "EXACT_TREE_OF_THE_SHARED_EXECUTION_CARRIER_COMMIT",
+          "sharedExecutionAuthorityArtifact": {
+            "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-runtime-contract-authority-r1/hrm-013-runtime-contract-execution-authority.v1.json",
+            "bytes": "EXACT_SHARED_EXECUTION_CARRIER_BLOB_BYTES",
+            "sha256": "EXACT_SHARED_EXECUTION_CARRIER_BLOB_SHA256"
+          },
+          "centralIntegrationAuthorityCarrierCommit": "EXACT_UNIQUE_INTRODUCING_COMMIT_OF_THE_LATER_CENTRAL_INTEGRATION_AUTHORITY_AND_VALIDATOR",
+          "centralIntegrationAuthorityCarrierTree": "EXACT_TREE_OF_THE_LATER_CENTRAL_INTEGRATION_AUTHORITY_CARRIER_COMMIT",
+          "centralIntegrationAuthorityCarrierCommittedAt": "STRICT_RFC3339_GIT_COMMITTER_TIMESTAMP_OF_THE_LATER_CENTRAL_INTEGRATION_AUTHORITY_CARRIER",
+          "centralIntegrationAuthorityCarrierPushObservedAt": "STRICT_RFC3339_TIME_WHEN_FRONTEND_HEAD_AND_ORIGIN_DWP_DEV_ARE_OBSERVED_EQUAL_TO_THE_LATER_CARRIER",
+          "centralIntegrationAuthorityArtifact": {
+            "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-shared-contract-integration-r1/shared-contract-central-integration-authority.v1.json",
+            "bytes": "EXACT_LATER_CENTRAL_INTEGRATION_AUTHORITY_BLOB_BYTES",
+            "sha256": "EXACT_LATER_CENTRAL_INTEGRATION_AUTHORITY_BLOB_SHA256"
+          },
+          "centralIntegrationValidatorArtifact": {
+            "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-shared-contract-integration-r1/validate_hrm013_shared_contract_integration.py",
+            "bytes": "EXACT_LATER_CENTRAL_INTEGRATION_VALIDATOR_BLOB_BYTES",
+            "sha256": "EXACT_LATER_CENTRAL_INTEGRATION_VALIDATOR_BLOB_SHA256"
+          },
+          "centralIntegrationIndependentReviewArtifact": {
+            "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-shared-contract-integration-r1/independent-review.v1.json",
+            "bytes": "EXACT_LATER_CENTRAL_INTEGRATION_INDEPENDENT_REVIEW_BLOB_BYTES",
+            "sha256": "EXACT_LATER_CENTRAL_INTEGRATION_INDEPENDENT_REVIEW_BLOB_SHA256"
+          },
+          "centralIntegrationPackageArtifact": {
+            "path": "package.json",
+            "bytes": "EXACT_LATER_CENTRAL_INTEGRATION_CARRIER_PACKAGE_BLOB_BYTES",
+            "sha256": "EXACT_LATER_CENTRAL_INTEGRATION_CARRIER_PACKAGE_BLOB_SHA256"
+          },
+          "laneCommit": "EXACT_SHARED_LANE_COMMIT_REVIEWED_AND_TESTED_BEFORE_PUSH",
+          "laneTree": "EXACT_TREE_OF_THE_SHARED_LANE_COMMIT",
+          "targetedVerificationReceiptSha256": "LOWERCASE_SHA256_OF_THE_EXACT_TARGETED_VERIFICATION_RECEIPT_BYTES",
+          "postImplementationReviewReceiptSha256": "LOWERCASE_SHA256_OF_THE_EXACT_POST_IMPLEMENTATION_REVIEW_RECEIPT_BYTES"
+        },
+        "fixedEvidence": {
+          "backendBaseCommit": "c50b267e7b015758ab6f7acc7fdf353eee81e631",
+          "backendBaseTree": "22bd6533ab340cfb91c6cf5ab5fd6991e501e6c4",
+          "changedPaths": [
+            "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/separation/v1/Hrm013SeparationBridgeV1.java",
+            "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/separation/v1/Hrm013WorkloadProofV1.java",
+            "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/separation/v1/HrisServiceGrantAuthorityV1.java",
+            "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/separation/v1/Hrm013SafeErrorV1.java",
+            "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/separation/v1/Hrm013RequesterIdentityAuthorityV1.java",
+            "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/separation/v1/Hrm013TaskDispatchV1.java",
+            "dwp-platform-contracts/src/test/java/com/dwp/platform/contract/Hrm013SeparationBridgeV1Test.java",
+            "dwp-platform-contracts/src/test/java/com/dwp/platform/contract/Hrm013WorkloadProofV1Test.java",
+            "dwp-platform-contracts/src/test/java/com/dwp/platform/contract/HrisServiceGrantAuthorityV1Test.java",
+            "dwp-platform-contracts/src/test/java/com/dwp/platform/contract/Hrm013RequesterIdentityAuthorityV1Test.java",
+            "dwp-platform-contracts/src/test/java/com/dwp/platform/contract/Hrm013TaskDispatchV1Test.java"
+          ],
+          "p0": 0,
+          "p1": 0,
+          "p2": 0,
+          "decision": "GO_FOR_SHARED_CONTRACT_FAST_FORWARD_DWP_DEV_INTEGRATION_ONLY",
+          "integrationMode": "DIRECT_FAST_FORWARD_ONLY",
+          "authGenerationAuthorized": false,
+          "migrationAuthoringAuthorized": false,
+          "runtimeImplementationAuthorized": false,
+          "recordedBy": "INDEPENDENT_HRM013_SHARED_CONTRACT_CENTRAL_INTEGRATION_REVIEW"
+        },
+        "timestampField": "recordedAt",
+        "fileSecurity": "validationPlan.validatorLifecycle.receiptFileSecurityContract"
+      },
+      "attestationIndependence": {
+        "emittedByThisRuntimeContractValidator": false,
+        "emittedByCleanOrTargetedIssuerMode": false,
+        "requiredAttestor": "INDEPENDENT_HRM013_SHARED_CONTRACT_CENTRAL_INTEGRATION_REVIEW",
+        "selfAttestationOrCopiedJsonClaimAccepted": false,
+        "targetMustBeAbsentBeforeAttestation": true,
+        "writeRule": "EXCLUSIVE_TEMP_FILE_FSYNC_ATOMIC_NO_OVERWRITE_HARD_LINK_PUBLICATION_UNLINK_TEMP_FSYNC_DIRECTORY"
+      },
+      "integrationRule": {
+        "laneCommitMustBeExactNonMergeDirectChildOfBackendBase": true,
+        "laneCommitChangedPathsMustEqualExactElevenPathAllowlist": true,
+        "allElevenPathsMustBeRegularMode100644AndSymlinkFreeAtLaneCommitAndIntegration": true,
+        "backendDwpDevMustEqualOriginDwpDevBeforeAndAfterIntegration": true,
+        "integrationMethod": "DIRECT_FAST_FORWARD_ONLY",
+        "mergeCommitAuthorized": false,
+        "rebaseOrSquashAuthorized": false,
+        "authGenerationAuthorized": false,
+        "migrationAuthoringAuthorized": false,
+        "runtimeImplementationAuthorized": false
+      },
+      "historicalValidationRule": {
+        "sharedIntegrationCommitDiscovery": "LOCATE_THE_UNIQUE_NON_MERGE_DIRECT_CHILD_OF_THE_PINNED_BACKEND_BASE_THAT_CHANGES_EXACTLY_THE_ELEVEN_AUTHORIZED_PATHS_AND_REQUIRE_IT_AS_AN_ANCESTOR_OF_BACKEND_HEAD_AND_ORIGIN_DWP_DEV",
+        "delegationOwner": "THE_IMMUTABLE_SIXTH_VALIDATE_HRM013_SHARED_CONTRACT_INTEGRATION_VALIDATOR",
+        "currentValidatorResponsibility": "VALIDATE_ONLY_THE_CLOSED_LATER_CENTRAL_AUTHORITY_REVIEW_VALIDATOR_PACKAGE_CARRIER_AND_EXPLICIT_GOVERNANCE_DELEGATION_WITHOUT_COMMAND_COUNT_INFERENCE",
+        "laterBackendDescendantsAllowedOnlyWhen": "EVERY_COMMIT_AFTER_THE_SHARED_INTEGRATION_COMMIT_HAS_ONE_EXACT_REVIEWED_DESCENDANT_GOVERNANCE_RECEIPT_AND_ONE_CORRESPONDING_ORDERED_FRONTEND_GOVERNANCE_CARRIER_VALIDATED_BY_THE_SIXTH_VALIDATOR",
+        "descendantGovernanceReceiptContract": {
+          "pathTemplate": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/receipts/backend-descendants/{descendantCommit}.hrm013-shared-contract-governance.v1.json",
+          "schema": "dwp.hris.wave7.hrm013-shared-contract-backend-descendant-governance-receipt.v1",
+          "state": "REVIEWED_ORDERED_BACKEND_DESCENDANT_GOVERNANCE_SHARED_ELEVEN_BLOBS_IMMUTABLE",
+          "closedTopLevelFields": [
+            "schema",
+            "state",
+            "sharedIntegrationCommit",
+            "sharedIntegrationTree",
+            "immediateParentCommit",
+            "descendantCommit",
+            "descendantTree",
+            "descendantChangedPaths",
+            "sharedElevenBlobPins",
+            "governingFrontendCarrierCommit",
+            "governingFrontendCarrierTree",
+            "governingAuthorityArtifact",
+            "governingValidatorArtifact",
+            "governingIndependentReviewArtifact",
+            "governingPackageArtifact",
+            "previousGovernanceReceiptSha256",
+            "p0",
+            "p1",
+            "p2",
+            "decision",
+            "recordedAt",
+            "recordedBy"
+          ],
+          "decision": "GO_FOR_EXACT_BACKEND_DESCENDANT_GOVERNANCE_ONLY",
+          "requiredFindings": {
+            "p0": 0,
+            "p1": 0,
+            "p2": 0
+          },
+          "recordedBy": "INDEPENDENT_HRM013_BACKEND_DESCENDANT_GOVERNANCE_REVIEW",
+          "fileSecurity": "validationPlan.validatorLifecycle.receiptFileSecurityContract",
+          "chainRule": "THE_FIRST_RECEIPT_PINS_THE_CENTRAL_INTEGRATION_RECEIPT_AND_EACH_LATER_RECEIPT_PINS_THE_IMMEDIATELY_PRECEDING_GOVERNANCE_RECEIPT; GAPS_FORKS_DUPLICATES_OR_OUT_OF_ORDER_FRONTEND_CARRIERS_FAIL_CLOSED"
+        },
+        "perDescendantFrontendGovernanceCarrier": {
+          "authorityPathTemplate": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-backend-descendant-governance/{descendantCommit}/authority.v1.json",
+          "independentReviewPathTemplate": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-backend-descendant-governance/{descendantCommit}/independent-review.v1.json",
+          "governingValidatorPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-shared-contract-integration-r1/validate_hrm013_shared_contract_integration.py",
+          "authoritySchema": "dwp.hris.wave7.hrm013-backend-descendant-governance-authority.v1",
+          "authorityState": "HASH_BOUND_REVIEWED_BACKEND_DESCENDANT_GOVERNANCE_SHARED_ELEVEN_BLOBS_IMMUTABLE",
+          "authorityClosedTopLevelFields": [
+            "schema",
+            "state",
+            "backendDescendant",
+            "predecessorGovernanceReceipt",
+            "sharedElevenBlobPins",
+            "governingValidatorArtifact",
+            "authority"
+          ],
+          "authorityMap": {
+            "backendDescendantGovernanceRecorded": true,
+            "sharedElevenBlobsVerifiedImmutable": true,
+            "sharedBlobMutationAuthorized": false,
+            "authGenerationAuthorized": false,
+            "migrationAuthoringAuthorized": false,
+            "runtimeImplementationAuthorized": false,
+            "productionReleaseAuthorized": false,
+            "businessCompletionCredit": 0
+          },
+          "reviewSchema": "dwp.hris.wave7.hrm013-backend-descendant-governance-independent-review.v1",
+          "reviewer": "INDEPENDENT_HRM013_BACKEND_DESCENDANT_GOVERNANCE_REVIEW",
+          "reviewDecision": "GO_FOR_EXACT_BACKEND_DESCENDANT_GOVERNANCE_ONLY",
+          "reviewClosedTopLevelFields": [
+            "schema",
+            "reviewedAt",
+            "reviewer",
+            "scope",
+            "findings",
+            "finalVerdict",
+            "authority",
+            "artifactPins"
+          ],
+          "reviewFinalVerdict": {
+            "p0": 0,
+            "p1": 0,
+            "p2": 0,
+            "decision": "GO_FOR_EXACT_BACKEND_DESCENDANT_GOVERNANCE_ONLY"
+          },
+          "reviewAuthorityMap": {
+            "independentReviewComplete": true,
+            "descendantGovernanceReceiptAuthorized": true,
+            "sharedElevenBlobsVerifiedImmutable": true,
+            "sharedBlobMutationAuthorized": false,
+            "productionReleaseAuthorized": false,
+            "businessCompletionCredit": 0
+          },
+          "exactChangedPathTemplates": [
+            "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-backend-descendant-governance/{descendantCommit}/authority.v1.json",
+            "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-backend-descendant-governance/{descendantCommit}/independent-review.v1.json"
+          ],
+          "orderedCarrierRule": "EACH_GOVERNANCE_CARRIER_IS_ONE_NON_MERGE_DIRECT_CHILD_OF_THE_PREVIOUS_GOVERNANCE_CARRIER_ON_FRONTEND_DWP_DEV_AND_HEAD_EQUALS_ORIGIN_AFTER_PUSH",
+          "authorityPinRule": "AUTHORITY_PINS_THE_IMMEDIATELY_PRECEDING_GOVERNANCE_RECEIPT_AND_THE_IMMUTABLE_SIXTH_VALIDATOR_BLOB_BUT_NOT_ITSELF_OR_ITS_REVIEW",
+          "reviewPinRule": "REVIEW_PINS_ITS_AUTHORITY_THE_IMMUTABLE_SIXTH_VALIDATOR_AND_THE_EXACT_PACKAGE_BLOB_BUT_NOT_ITSELF",
+          "validatorMutationOrAdditionalCommandRequired": false
+        },
+        "sharedElevenBlobImmutability": "ALL_ELEVEN_SHARED_SOURCE_AND_TEST_BLOBS_MUST_REMAIN_BYTE_IDENTICAL_TO_THE_DISCOVERED_SHARED_INTEGRATION_COMMIT_UNLESS_A_SEPARATE_APPEND_ONLY_HASH_BOUND_SUCCESSOR_EXPLICITLY_AUTHORIZES_THE_EXACT_BLOB_CHANGES",
+        "ungovernedDescendantAction": "FAIL_CLOSED"
+      }
+    },
+    "commitAndIntegration": {
+      "localLaneCommitAllowedAfterReceiptAndExactPathReview": true,
+      "localLaneCommitIsEvidenceCaptureNotIntegration": true,
+      "targetedTestsMustRunOnTheCommittedTreeBeforeBranchPush": true,
+      "branchPushAllowedOnlyAfterTestedTreeEvidenceAndPostImplementationReview": true,
+      "directDwpDevMergeAllowed": false,
+      "centralReviewRequiredBeforeMerge": true
+    }
+  },
+  "validationPlan": {
+    "trustedRunner": {
+      "python": {
+        "executable": "/usr/bin/python3",
+        "argvPrefix": [
+          "-I"
+        ],
+        "environmentMode": "ENV_I_EXACT_ALLOWLIST_ONLY",
+        "launchEnvironment": {
+          "PATH": "/usr/bin:/bin",
+          "HOME": "/var/empty",
+          "LC_ALL": "C",
+          "LANG": "C"
+        },
+        "allowedToolchainInjectedEnvironment": {
+          "CPATH": "/usr/local/include",
+          "LIBRARY_PATH": "/usr/local/lib",
+          "MANPATH": "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/share/man:/Library/Developer/CommandLineTools/usr/share/man:/Library/Developer/CommandLineTools/Toolchains/XcodeDefault.xctoolchain/usr/share/man:",
+          "SDKROOT": "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+          "__CF_USER_TEXT_ENCODING": "0x1F7:0x3:0x33"
+        },
+        "runtimeEnvironmentRule": "PYTHON_OS_ENVIRON_MUST_EQUAL_THE_EXACT_UNION_OF_LAUNCH_ENVIRONMENT_AND_ALLOWED_TOOLCHAIN_INJECTED_ENVIRONMENT",
+        "envUnsetRule": "ENV_I_STARTS_EMPTY_AND_NO_OTHER_KEY_INCLUDING_ANY_PYTHON_PREFIXED_KEY_IS_INHERITED_OR_ACCEPTED",
+        "envUnset": [
+          "PYTHONHOME",
+          "PYTHONPATH",
+          "PYTHONSTARTUP",
+          "PYTHONINSPECT",
+          "PYTHONBREAKPOINT",
+          "PYTHONWARNINGS",
+          "PYTHONUSERBASE"
+        ]
+      },
+      "git": {
+        "executable": "/usr/bin/git",
+        "environmentMode": "ENV_I_EXACT_ALLOWLIST_ONLY",
+        "environment": {
+          "PATH": "/usr/bin:/bin",
+          "LC_ALL": "C",
+          "LANG": "C",
+          "HOME": "/var/empty",
+          "GIT_CONFIG_NOSYSTEM": "1",
+          "GIT_CONFIG_GLOBAL": "/dev/null",
+          "GIT_NO_REPLACE_OBJECTS": "1"
+        },
+        "allowedEnvironmentKeys": [
+          "PATH",
+          "LC_ALL",
+          "LANG",
+          "HOME",
+          "GIT_CONFIG_NOSYSTEM",
+          "GIT_CONFIG_GLOBAL",
+          "GIT_NO_REPLACE_OBJECTS"
+        ],
+        "envUnset": [
+          "GIT_DIR",
+          "GIT_WORK_TREE",
+          "GIT_INDEX_FILE",
+          "GIT_OBJECT_DIRECTORY",
+          "GIT_ALTERNATE_OBJECT_DIRECTORIES",
+          "GIT_COMMON_DIR",
+          "GIT_CONFIG",
+          "GIT_CONFIG_COUNT",
+          "GIT_CONFIG_KEY_*",
+          "GIT_CONFIG_VALUE_*",
+          "GIT_CONFIG_PARAMETERS",
+          "GIT_CONFIG_SYSTEM",
+          "GIT_EXEC_PATH",
+          "GIT_CEILING_DIRECTORIES",
+          "GIT_DISCOVERY_ACROSS_FILESYSTEM",
+          "GIT_EXTERNAL_DIFF",
+          "GIT_ATTR_NOSYSTEM"
+        ]
+      }
+    },
+    "targetedCompile": {
+      "workingDirectory": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/shared",
+      "executable": "./gradlew",
+      "subprocessEnvironment": "validationPlan.gradleSubprocessEnvironment",
+      "argv": [
+        ":dwp-platform-contracts:compileJava",
+        "--no-daemon"
+      ]
+    },
+    "targetedTests": {
+      "workingDirectory": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/shared",
+      "executable": "./gradlew",
+      "subprocessEnvironment": "validationPlan.gradleSubprocessEnvironment",
+      "argv": [
+        ":dwp-platform-contracts:test",
+        "--no-daemon",
+        "--tests",
+        "com.dwp.platform.contract.Hrm013SeparationBridgeV1Test",
+        "--tests",
+        "com.dwp.platform.contract.Hrm013WorkloadProofV1Test",
+        "--tests",
+        "com.dwp.platform.contract.HrisServiceGrantAuthorityV1Test",
+        "--tests",
+        "com.dwp.platform.contract.Hrm013RequesterIdentityAuthorityV1Test",
+        "--tests",
+        "com.dwp.platform.contract.Hrm013TaskDispatchV1Test"
+      ],
+      "fqcnFilters": [
+        "com.dwp.platform.contract.Hrm013SeparationBridgeV1Test",
+        "com.dwp.platform.contract.Hrm013WorkloadProofV1Test",
+        "com.dwp.platform.contract.HrisServiceGrantAuthorityV1Test",
+        "com.dwp.platform.contract.Hrm013RequesterIdentityAuthorityV1Test",
+        "com.dwp.platform.contract.Hrm013TaskDispatchV1Test"
+      ],
+      "invocationRule": "ONE_BOUNDED_INVOCATION_AFTER_ONE_TARGETED_COMPILE"
+    },
+    "gradleSubprocessEnvironment": {
+      "baseEnvironment": "EXACT_VALIDATION_PLAN_TRUSTED_RUNNER_PYTHON_LAUNCH_ENVIRONMENT_FOUR_KEYS_ONLY",
+      "additions": {
+        "GRADLE_USER_HOME": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/gradle-user-home/{testedCommit}"
+      },
+      "exactChildEnvironmentKeys": [
+        "PATH",
+        "HOME",
+        "LC_ALL",
+        "LANG",
+        "GRADLE_USER_HOME"
+      ],
+      "finalEnvironmentRule": "EXACT_FOUR_KEY_PYTHON_LAUNCH_ENVIRONMENT_PLUS_ONLY_THE_RESOLVED_GRADLE_USER_HOME; CPATH_LIBRARY_PATH_MANPATH_SDKROOT_CF_USER_TEXT_ENCODING_AND_ALL_OTHER_KEYS_ARE_NOT_PROPAGATED",
+      "gradleUserHome": {
+        "pathTemplate": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/gradle-user-home/{testedCommit}",
+        "singleUseKey": "EXACT_LOWERCASE_40_HEX_TESTED_COMMIT",
+        "preparationRule": "RESOLVED_PATH_MUST_BE_ABSENT_THEN_CREATE_EXCLUSIVELY_AS_A_REAL_MODE_0700_DIRECTORY_THROUGH_REAL_NON_SYMLINK_PARENT_COMPONENTS_AND_REQUIRE_REALPATH_EQUALITY",
+        "beforeFirstExecution": "RESOLVED_PATH_WAS_ABSENT_FOR_THIS_TESTED_COMMIT_AND_NEW_DIRECTORY_IS_REAL_NON_SYMLINK_MODE_0700_CURRENT_UID_AND_EMPTY",
+        "forbiddenPaths": [
+          "init.gradle",
+          "init.gradle.kts",
+          "init.d",
+          "gradle.properties"
+        ],
+        "allowedTopLevelEntriesAfterExecution": [
+          ".tmp",
+          "caches",
+          "daemon",
+          "jdks",
+          "native",
+          "notifications",
+          "workers",
+          "wrapper"
+        ],
+        "allowedContentRule": "ONLY_REAL_NON_SYMLINK_GRADLE_CACHE_WRAPPER_DAEMON_NATIVE_JDK_WORKER_NOTIFICATION_AND_TEMP_ARTIFACTS_CREATED_BY_THE_EXACT_COMPILE_OR_TEST_INVOCATION; NO_INIT_SCRIPT_CONFIGURATION_OR_UNDECLARED_TOP_LEVEL_ENTRY",
+        "revalidateBeforeEachGradleInvocation": true,
+        "reuseAcrossTestedCommitsAuthorized": false
+      }
+    },
+    "securityCriterionMapping": {
+      "CLOSED_DTOS_STRICT_JSON_DUPLICATE_UNKNOWN_MISSING_NULL_COERCION_NONCANONICAL_AND_OVERSIZE_REJECTION": [
+        "com.dwp.platform.contract.Hrm013SeparationBridgeV1Test",
+        "com.dwp.platform.contract.HrisServiceGrantAuthorityV1Test",
+        "com.dwp.platform.contract.Hrm013RequesterIdentityAuthorityV1Test",
+        "com.dwp.platform.contract.Hrm013TaskDispatchV1Test"
+      ],
+      "RFC8785_CANONICAL_BODY_PAYLOAD_COMMAND_AND_RECEIPT_DIGESTS": [
+        "com.dwp.platform.contract.Hrm013SeparationBridgeV1Test",
+        "com.dwp.platform.contract.Hrm013WorkloadProofV1Test",
+        "com.dwp.platform.contract.Hrm013TaskDispatchV1Test"
+      ],
+      "RS256_CLOSED_HEADERS_CLAIMS_EXACT_FIVE_HEADER_ENVELOPE_METHOD_PATH_BODY_CNF_FRESHNESS_AND_AUTHORIZATION_FORBIDDEN": [
+        "com.dwp.platform.contract.Hrm013WorkloadProofV1Test"
+      ],
+      "EXACT_GRANT_USE_MODE_NEW_WORK_AND_CONDITIONAL_SEVEN_FIELD_DRAIN_EXISTING_REVISION_FAIL_CLOSED_RULES": [
+        "com.dwp.platform.contract.Hrm013WorkloadProofV1Test",
+        "com.dwp.platform.contract.HrisServiceGrantAuthorityV1Test"
+      ],
+      "REQUESTER_TENANT_APPROVAL_ROOT_AND_ACTOR_BINDING": [
+        "com.dwp.platform.contract.Hrm013RequesterIdentityAuthorityV1Test"
+      ],
+      "TIME_PAYROLL_AUTH_TASK_OWNER_PURPOSE_REVISION_AND_RECEIPT_BINDING": [
+        "com.dwp.platform.contract.Hrm013TaskDispatchV1Test"
+      ],
+      "SAFE_ERROR_ALLOWLIST_NO_SECRET_KEY_GRANT_OR_IDENTITY_DISCLOSURE": [
+        "com.dwp.platform.contract.Hrm013SeparationBridgeV1Test",
+        "com.dwp.platform.contract.HrisServiceGrantAuthorityV1Test",
+        "com.dwp.platform.contract.Hrm013RequesterIdentityAuthorityV1Test",
+        "com.dwp.platform.contract.Hrm013TaskDispatchV1Test"
+      ]
+    },
+    "testedTreeEvidence": {
+      "required": true,
+      "receiptPath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/receipts/shared-targeted-verification-receipt.v1.json",
+      "receiptSchema": "dwp.hris.wave7.hrm013-shared-contract-targeted-verification-receipt.v1",
+      "receiptState": "TRUSTED_RUNNER_EXACT_COMMITTED_TREE_TARGETED_COMPILE_AND_FIVE_TESTS_PASS",
+      "requiredVerifiedBy": "TRUSTED_HRM013_SHARED_CONTRACT_TARGETED_VERIFICATION",
+      "fileSecurity": "validationPlan.validatorLifecycle.receiptFileSecurityContract",
+      "closedTopLevelFields": [
+        "schema",
+        "state",
+        "authorityCarrierCommit",
+        "authorityCarrierTree",
+        "authorityArtifact",
+        "cleanWorktreeReceiptSha256",
+        "repository",
+        "branch",
+        "baseCommit",
+        "baseTree",
+        "testedCommit",
+        "testedTree",
+        "changedPaths",
+        "gradleSubprocessEnvironment",
+        "gradleUserHomePath",
+        "gradleUserHomeInitialNulBytes",
+        "gradleUserHomeInitialNulSha256",
+        "gradleUserHomeFinalInventorySha256",
+        "compileExecutable",
+        "compileArgv",
+        "compileExitCode",
+        "testExecutable",
+        "testArgv",
+        "testExitCode",
+        "securityCriteria",
+        "verifiedAt",
+        "verifiedBy"
+      ],
+      "gradleEvidenceRequirements": {
+        "gradleUserHomePath": "EXACT_PATH_TEMPLATE_RESOLVED_WITH_THE_RECEIPT_TESTED_COMMIT",
+        "gradleUserHomeInitialNulBytes": 0,
+        "gradleUserHomeInitialNulSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "gradleUserHomeFinalInventorySha256": "LOWERCASE_SHA256_OF_CANONICAL_SORTED_ALLOWED_FINAL_INVENTORY",
+        "gradleSubprocessEnvironment": "EXACT_FOUR_KEY_PYTHON_LAUNCH_ENVIRONMENT_PLUS_THE_RESOLVED_GRADLE_USER_HOME_ONLY"
+      },
+      "requirements": [
+        "THE_LOCAL_LANE_COMMIT_IS_CREATED_ONLY_TO_CAPTURE_ONE_IMMUTABLE_TEST_TREE_AND_DOES_NOT_AUTHORIZE_PUSH_OR_MERGE",
+        "TESTED_COMMIT_IS_THE_EXACT_NON_MERGE_SHARED_LANE_COMMIT_WITH_PINNED_BASE_AS_SOLE_PARENT",
+        "TESTED_TREE_EQUALS_THE_TREE_OF_TESTED_COMMIT_AND_CHANGED_PATHS_EQUAL_THE_EXACT_SIX_SOURCE_AND_FIVE_TEST_ALLOWLISTS",
+        "ALL_ELEVEN_TESTED_TREE_PATHS_ARE_GIT_MODE_100644_REGULAR_FILES_AND_EVERY_WORKTREE_PATH_COMPONENT_IS_SYMLINK_FREE",
+        "GRADLE_SUBPROCESS_ENVIRONMENT_AND_USER_HOME_EQUAL_THE_EXACT_CONTROLLED_CONTRACT_WITH_AN_EMPTY_INITIAL_INVENTORY_AND_A_FINAL_ALLOWLISTED_CACHE_WRAPPER_INVENTORY",
+        "COMPILE_AND_TEST_EXECUTABLES_AND_ARGV_EQUAL_THIS_VALIDATION_PLAN_AND_BOTH_EXIT_CODES_ARE_ZERO",
+        "EVERY_SECURITY_CRITERION_IS_RECORDED_PASS_WITH_THE_EXACT_FQCN_FILTER_SET",
+        "THE_SHARED_WORKTREE_IS_CLEAN_AT_THE_TESTED_COMMIT_AFTER_EVIDENCE_CAPTURE"
+      ]
+    },
+    "postImplementationReview": {
+      "required": true,
+      "requiredBeforeBranchPush": true,
+      "receiptPath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/receipts/shared-post-implementation-review.v1.json",
+      "receiptSchema": "dwp.hris.wave7.hrm013-shared-contract-post-implementation-review.v1",
+      "requiredState": "INDEPENDENTLY_REVIEWED_EXACT_TESTED_SHARED_CONTRACT_TREE_BRANCH_PUSH_ONLY",
+      "requiredReviewedBy": "INDEPENDENT_HRM013_SHARED_CONTRACT_POST_IMPLEMENTATION_REVIEW",
+      "fileSecurity": "validationPlan.validatorLifecycle.receiptFileSecurityContract",
+      "closedTopLevelFields": [
+        "schema",
+        "state",
+        "authorityCarrierCommit",
+        "authorityCarrierTree",
+        "authorityArtifact",
+        "cleanWorktreeReceiptSha256",
+        "targetedVerificationReceiptSha256",
+        "laneCommit",
+        "laneTree",
+        "p0",
+        "p1",
+        "p2",
+        "decision",
+        "reviewedAt",
+        "reviewedBy"
+      ],
+      "requiredDecision": "GO_FOR_SHARED_CONTRACT_LANE_BRANCH_PUSH_ONLY",
+      "requiredFindings": {
+        "p0": 0,
+        "p1": 0,
+        "p2": 0
+      },
+      "mustPin": [
+        "THIS_AUTHORITY_CARRIER_COMMIT_TREE_AND_AUTHORITY_ARTIFACT",
+        "EXACT_CLEAN_WORKTREE_RECEIPT",
+        "EXACT_TESTED_TREE_EVIDENCE",
+        "EXACT_SHARED_LANE_COMMIT_AND_TREE"
+      ],
+      "preseedAbsentPaths": [
+        "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/receipts/shared-post-implementation-review.v1.json",
+        "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/receipts/shared-central-integration-authority.v1.json"
+      ],
+      "writeRule": "EXCLUSIVE_TEMP_FILE_FSYNC_ATOMIC_NO_OVERWRITE_HARD_LINK_PUBLICATION_UNLINK_TEMP_FSYNC_DIRECTORY",
+      "directDwpDevMergeAuthorized": false,
+      "centralReviewRequiredBeforeMerge": true
+    },
+    "evidenceTimePolicy": {
+      "format": "STRICT_RFC3339_FULL_DATE_T_FULL_TIME_WITH_REQUIRED_NUMERIC_OFFSET_OR_Z_AND_WHOLE_SECONDS",
+      "parserRule": "CALENDAR_PARSE_REQUIRED_REGEX_ONLY_VALIDATION_FORBIDDEN_INVALID_DATE_TIME_OFFSET_OR_LEAP_SECOND_REJECTED",
+      "causalOrder": [
+        "AUTHORITY_CARRIER_COMMITTED_AT_LESS_THAN_OR_EQUAL_TO_AUTHORITY_CARRIER_PUSH_OBSERVED_AT",
+        "AUTHORITY_CARRIER_PUSH_OBSERVED_AT_LESS_THAN_OR_EQUAL_TO_CLEAN_WORKTREE_VERIFIED_AT",
+        "CLEAN_WORKTREE_VERIFIED_AT_LESS_THAN_OR_EQUAL_TO_TARGETED_VERIFICATION_VERIFIED_AT",
+        "TARGETED_VERIFICATION_VERIFIED_AT_LESS_THAN_OR_EQUAL_TO_POST_IMPLEMENTATION_REVIEWED_AT",
+        "POST_IMPLEMENTATION_REVIEWED_AT_LESS_THAN_OR_EQUAL_TO_CENTRAL_INTEGRATION_AUTHORITY_CARRIER_COMMITTED_AT",
+        "CENTRAL_INTEGRATION_AUTHORITY_CARRIER_COMMITTED_AT_LESS_THAN_OR_EQUAL_TO_CENTRAL_INTEGRATION_AUTHORITY_CARRIER_PUSH_OBSERVED_AT",
+        "CENTRAL_INTEGRATION_AUTHORITY_CARRIER_PUSH_OBSERVED_AT_LESS_THAN_OR_EQUAL_TO_CENTRAL_INTEGRATION_RECORDED_AT"
+      ],
+      "presentPrefixRule": "ABSENT_LATER_RECEIPTS_ARE_ALLOWED_BUT_EVERY_PRESENT_TIMESTAMP_MUST_FORM_THE_DECLARED_CAUSAL_PREFIX",
+      "maximumFutureSkewSeconds": 300,
+      "implicitExpiryAllowed": false,
+      "expiryRule": "NO_RECEIPT_EXPIRES_BY_ELAPSED_TIME; INVALIDATION_REQUIRES_PIN_BRANCH_TREE_OR_STATE_DRIFT_OR_AN_EXPLICIT_APPEND_ONLY_SUCCESSOR",
+      "mandatoryNegativeTests": [
+        "REJECT_CENTRAL_RECORDED_AT_BEFORE_LATER_CENTRAL_AUTHORITY_CARRIER_COMMITTED_AT",
+        "REJECT_CENTRAL_RECORDED_AT_BEFORE_LATER_CENTRAL_AUTHORITY_CARRIER_PUSH_OBSERVED_AT",
+        "REJECT_ANY_TRUE_CAUSAL_INVERSION_EVEN_WHEN_EACH_TIMESTAMP_IS_INDIVIDUALLY_VALID_RFC3339"
+      ]
+    },
+    "validatorLifecycle": {
+      "authoritativeInvocation": {
+        "workingDirectory": "/Users/a10697/Work/DWP/dwp-frontend",
+        "executable": "/usr/bin/python3",
+        "argvPrefix": [
+          "-I",
+          "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-runtime-contract-authority-r1/validate_hrm013_runtime_contract_authority.py"
+        ],
+        "launchEnvironment": "validationPlan.trustedRunner.python.launchEnvironment",
+        "requiredRuntimeEnvironment": "EXACT_UNION_OF_validationPlan.trustedRunner.python.launchEnvironment_AND_allowedToolchainInjectedEnvironment",
+        "environmentMode": "ENV_I_EXACT_ALLOWLIST_ONLY"
+      },
+      "normalValidation": {
+        "argvSuffix": [],
+        "mutatesFilesystem": false,
+        "claimRule": "JSON_PRESENCE_OR_SELF_ASSERTED_FIELDS_WITHOUT_SUCCESSFUL_TRUSTED_LIVE_VALIDATION_ARE_NOT_AUTHORIZATION_EVIDENCE"
+      },
+      "receiptFileSecurityContract": {
+        "owner": "CURRENT_EFFECTIVE_UID",
+        "mode": "0600",
+        "fileType": "REGULAR_FILE",
+        "hardLinkCount": 1,
+        "maximumBytes": 65536,
+        "contentEncoding": "UTF_8_JSON_WITH_DUPLICATE_KEYS_REJECTED",
+        "pathComponentsSymlinked": false,
+        "openRule": "OPEN_FINAL_COMPONENT_WITH_NOFOLLOW_READ_ONLY_THEN_FSTAT_REGULAR_CURRENT_UID_MODE_0600_NLINK_ONE_AND_SIZE_AT_MOST_65536_BEFORE_READING",
+        "readRule": "READ_EXACT_FSTAT_SIZE_TO_EOF_REJECT_GROWTH_TRUNCATION_TRAILING_BYTES_OR_INVALID_UTF8_THEN_FSTAT_AGAIN_AND_REQUIRE_SAME_DEVICE_INODE_MODE_UID_NLINK_SIZE_AND_MTIME_NS",
+        "publicationRule": "EXCLUSIVE_TEMP_FILE_FSYNC_ATOMIC_NO_OVERWRITE_HARD_LINK_PUBLICATION_UNLINK_TEMP_FSYNC_DIRECTORY",
+        "replacementOrOverwriteAuthorized": false
+      },
+      "issueCleanReceipt": {
+        "mode": "--issue-clean-receipt",
+        "argvSuffix": [
+          "--issue-clean-receipt"
+        ],
+        "receiptPath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/receipts/shared-clean-worktree-receipt.v1.json",
+        "receiptSchema": "dwp.hris.wave7.hrm013-shared-contract-clean-worktree-receipt.v1",
+        "preseedAbsentPaths": [
+          "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/receipts/shared-clean-worktree-receipt.v1.json",
+          "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/receipts/shared-targeted-verification-receipt.v1.json",
+          "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/receipts/shared-post-implementation-review.v1.json",
+          "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/receipts/shared-central-integration-authority.v1.json"
+        ],
+        "liveChecksBeforeEmission": [
+          "FRONTEND_CARRIER_COMMIT_IS_PUSHED_AND_HEAD_EQUALS_ORIGIN_DWP_DEV_AND_ALL_CARRIER_BLOBS_MATCH",
+          "BACKEND_PRIMARY_DWP_DEV_AND_ORIGIN_DWP_DEV_EQUAL_THE_PINNED_BASE_AND_PRIMARY_CHECKOUT_IS_CLEAN",
+          "EXACT_WORKTREE_REAL_ROOT_BRANCH_HEAD_TREE_BASE_AND_NO_UPSTREAM_OR_REMOTE_BRANCH",
+          "EMPTY_PORCELAIN_V2_STATUS_AND_EXACT_EMPTY_SHA256",
+          "EMPTY_IGNORED_AND_UNTRACKED_INVENTORY_ACROSS_ALL_DWP_PLATFORM_CONTRACTS_SRC_AND_DECLARED_BUILD_ROOTS",
+          "NO_ASSUME_UNCHANGED_SKIP_WORKTREE_SPARSE_FSMONITOR_DIFF_EXTERNAL_UNSAFE_CONFIG_GRAFT_REPLACE_OR_SYMLINK",
+          "NO_AUTHORIZED_SOURCE_OR_TEST_PATH_EXISTS_OR_HAS_BEEN_AUTHORED",
+          "CLEAN_TARGETED_POST_REVIEW_AND_CENTRAL_RECEIPT_PATHS_ARE_ALL_ABSENT_AND_EVERY_PARENT_COMPONENT_IS_REAL_NON_SYMLINK"
+        ],
+        "sourceAuthoringMustNotHaveStarted": true,
+        "writeRule": "EXCLUSIVE_TEMP_FILE_FSYNC_ATOMIC_NO_OVERWRITE_HARD_LINK_PUBLICATION_UNLINK_TEMP_FSYNC_DIRECTORY",
+        "postWriteRule": "REOPEN_WITH_NO_FOLLOW_REHASH_REPARSE_AND_REVALIDATE_EXACT_CLOSED_RECEIPT_BEFORE_SUCCESS"
+      },
+      "runTargetedVerification": {
+        "mode": "--run-targeted-verification",
+        "argvSuffix": [
+          "--run-targeted-verification"
+        ],
+        "receiptPath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/receipts/shared-targeted-verification-receipt.v1.json",
+        "receiptSchema": "dwp.hris.wave7.hrm013-shared-contract-targeted-verification-receipt.v1",
+        "subprocessEnvironment": "validationPlan.gradleSubprocessEnvironment",
+        "preseedAbsentPaths": [
+          "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/receipts/shared-targeted-verification-receipt.v1.json",
+          "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/receipts/shared-post-implementation-review.v1.json",
+          "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/receipts/shared-central-integration-authority.v1.json"
+        ],
+        "liveChecksBeforeExecution": [
+          "THE_CLEAN_WORKTREE_RECEIPT_IS_VALID_HASH_BOUND_AND_CAUSALLY_PRIOR",
+          "WORKTREE_IS_ON_THE_EXACT_SHARED_BRANCH_AT_ONE_CLEAN_LOCAL_NON_MERGE_COMMIT_WHOSE_SOLE_PARENT_IS_THE_PINNED_BASE",
+          "LANE_COMMIT_DIFF_EQUALS_THE_EXACT_SIX_SOURCE_AND_FIVE_TEST_PATHS_AND_ALL_ELEVEN_PATHS_ARE_REGULAR_NON_SYMLINK_FILES",
+          "NO_IGNORED_UNTRACKED_BUILD_SOURCE_TEST_OR_INDEX_FLAG_SHADOW_CAN_AFFECT_GRADLE_OR_JAVA_RESOLUTION",
+          "THE_REMOTE_SHARED_BRANCH_IS_ABSENT_AND_NO_PUSH_OR_DWP_DEV_INTEGRATION_HAS_OCCURRED",
+          "TARGETED_POST_REVIEW_AND_CENTRAL_RECEIPT_PATHS_ARE_ALL_ABSENT_WITH_REAL_NON_SYMLINK_PARENTS",
+          "PER_TESTED_COMMIT_GRADLE_USER_HOME_RESOLVED_PATH_IS_ABSENT_BEFORE_EXCLUSIVE_MODE_0700_CREATION_AND_CONTAINS_NO_INIT_GRADLE_INIT_GRADLE_KTS_INIT_D_OR_GRADLE_PROPERTIES"
+        ],
+        "execution": [
+          "CREATE_THE_RESOLVED_PER_TESTED_COMMIT_GRADLE_USER_HOME_EXCLUSIVELY_AS_REAL_NON_SYMLINK_MODE_0700_CURRENT_UID_AND_RUN_COMPILE_WITH_THE_EXACT_FIVE_KEY_CHILD_ENVIRONMENT",
+          "RUN_EXACT_TARGETED_COMPILE_EXECUTABLE_AND_ARGV_ON_THE_EXACT_CLEAN_LANE_COMMIT",
+          "REVALIDATE_GRADLE_USER_HOME_CONTAINS_ONLY_DECLARED_GRADLE_CACHE_OR_WRAPPER_ARTIFACTS_BEFORE_THE_TEST_INVOCATION",
+          "IF_COMPILE_PASSES_RUN_EXACT_TARGETED_TEST_EXECUTABLE_AND_FIVE_FQCN_FILTER_ARGV_ON_THE_SAME_UNCHANGED_COMMIT",
+          "FAIL_WITHOUT_RECEIPT_ON_NONZERO_EXIT_TIMEOUT_TREE_STATUS_OR_COMMAND_DRIFT"
+        ],
+        "writeRule": "EXCLUSIVE_TEMP_FILE_FSYNC_ATOMIC_NO_OVERWRITE_HARD_LINK_PUBLICATION_UNLINK_TEMP_FSYNC_DIRECTORY",
+        "postWriteRule": "REOPEN_WITH_NO_FOLLOW_REHASH_REPARSE_AND_REVALIDATE_RECEIPT_TESTED_COMMIT_TREE_ENVIRONMENT_GRADLE_USER_HOME_COMMANDS_RESULTS_AND_CAUSAL_TIME_BEFORE_SUCCESS"
+      },
+      "postImplementationReview": {
+        "emittedByThisValidator": false,
+        "rule": "SEPARATE_INDEPENDENT_REVIEW_ATTESTATION_MUST_PIN_THE_CLEAN_AND_TARGETED_RECEIPTS_AND_EXACT_LANE_COMMIT_TREE_BEFORE_BRANCH_PUSH"
+      },
+      "centralIntegrationAttestation": {
+        "emittedByThisValidator": false,
+        "rule": "SEPARATE_LATER_FRONTEND_AUTHORITY_VALIDATOR_AND_INDEPENDENT_EXTERNAL_ATTESTATION_ARE_REQUIRED; THIS_CARRIER_AND_ITS_ISSUER_MODES_NEVER_AUTHORIZE_DWP_DEV_INTEGRATION"
+      }
+    },
+    "failureRule": "RERUN_ONLY_THE_SMALLEST_FAILED_CLASS_OR_NAMED_CASE_AFTER_DIAGNOSIS",
+    "broadRepositoryRerunRequired": false,
+    "npmChainEvidenceRole": "SUPPLEMENTARY_COMPATIBILITY_ONLY_NOT_SECURITY_AUTHORITY"
+  },
+  "authority": {
+    "sharedContractExecutionAuthorityPrepared": true,
+    "independentReviewComplete": true,
+    "serviceBindingRegisterV3Sealed": true,
+    "sharedContractImplementationAuthorized": true,
+    "authV62GenerationPreparationAuthorized": false,
+    "authV271ReservationAuthorized": false,
+    "authV271ImplementationAuthorized": false,
+    "approvalRuntimeImplementationAuthorized": false,
+    "peopleOwnerRuntimeImplementationAuthorized": false,
+    "taskDispatchOwnerImplementationAuthorized": false,
+    "performanceConsumerImplementationAuthorized": false,
+    "grantRotationAuthorized": false,
+    "worktreeAuthorized": true,
+    "sourceAuthoringAuthorized": true,
+    "migrationAuthoringAuthorized": false,
+    "controllerOrRelayActivationAuthorized": false,
+    "callbackProducerImplementationAuthorized": false,
+    "frontendUiMenuOrRouteAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "runtimeCredentialBindingAuthorized": false,
+    "productionBindingAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0
+  }
+}

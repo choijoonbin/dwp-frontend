@@ -43,7 +43,7 @@
     "hris:ia:check": "node scripts/sync-hris-ia-runtime-manifest.mjs --check",
     "hris:ia:test": "node --test scripts/sync-hris-ia-runtime-manifest.test.mjs",
     "hris:cross-layer:check": "yarn hris:ia:check && yarn hris:current-contracts:check && vitest run apps/dwp/src/features/hris/shell/testing/hris-cross-layer-readiness.test.ts apps/dwp/src/features/hris/shell/testing/hris-product-map-catalog.test.ts",
-    "hris:current-contracts:check": "python3 docs/06-delivery/hris/tools/validate_current_authority.py && python3 docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-semantic-closure-r1/validate_hrm013_semantic_closure.py && python3 docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-callback-binding-r1/validate_hrm013_callback_binding.py && python3 docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-owner-runtime-binding-gate-r1/validate_hrm013_owner_runtime_binding_gate.py",
+    "hris:current-contracts:check": "python3 docs/06-delivery/hris/tools/validate_current_authority.py && python3 docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-semantic-closure-r1/validate_hrm013_semantic_closure.py && python3 docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-callback-binding-r1/validate_hrm013_callback_binding.py && python3 docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-owner-runtime-binding-gate-r1/validate_hrm013_owner_runtime_binding_gate.py && python3 docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-runtime-contract-authority-r1/validate_hrm013_runtime_contract_authority.py",
     "routes:sync": "node scripts/generate-route-composition.mjs --write",
     "routes:check": "node scripts/generate-route-composition.mjs --check",
     "source-size:check": "node scripts/check-source-size.mjs",
