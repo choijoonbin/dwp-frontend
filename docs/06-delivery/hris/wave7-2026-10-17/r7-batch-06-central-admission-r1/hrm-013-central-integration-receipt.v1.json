@@ -1,0 +1,225 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-06-hrm013-central-integration-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-06-HRM013-CENTRAL-INTEGRATION-20261026-R1",
+  "recordedAt": "2026-10-26T09:28:58Z",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "EXACT_HRM013_CENTRAL_PREREQUISITE_MERGED_PUSHED_RESERVED_NOT_ACTIVE_CALLBACK_BINDING_DESIGN_NEXT",
+  "immutability": {
+    "sealed": true,
+    "appendOnly": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_RECEIPT_ID_AND_SHA256"
+  },
+  "sliceId": "BASE-TFR-HRM-013",
+  "module": "HRM",
+  "moduleSession": "HRIS-HRM",
+  "authorityBasis": {
+    "centralAuthorizationV1": {
+      "path": "../r7-batch-06-hrm013-semantic-closure-r1/hrm-013-central-contract-authorization-successor.v1.json",
+      "sha256": "910cd09f670c80d8d2924996ec5180f6cf456c17500166c2eb3229d6fdff0797",
+      "bytes": 19948,
+      "carrierCommit": "f0180f4690bff57a4488662cea570bc6f1d1db42"
+    },
+    "centralAuthorizationV2": {
+      "path": "../r7-batch-06-hrm013-semantic-closure-r1/hrm-013-central-contract-authorization-successor.v2.json",
+      "sha256": "3d0ee60e5fc4e136f397cfd7602d4578ce796bd6597baf058387fcb3f8c2a7b7",
+      "bytes": 10814,
+      "carrierCommit": "53ce3f65190f5659469ceca0a7f623ad046e8bd7"
+    },
+    "independentReviewV2": {
+      "path": "../r7-batch-06-hrm013-semantic-closure-r1/independent-review.v2.json",
+      "sha256": "624c0bceb537ba981327a5f5b9cfa0b0aafe16b4ecced5f5740636747bd63ea9",
+      "bytes": 4889,
+      "carrierCommit": "53ce3f65190f5659469ceca0a7f623ad046e8bd7",
+      "review": "P0=0;P1=0;P2=0"
+    },
+    "worktreeReceipt": {
+      "path": "../r7-batch-06-hrm013-semantic-closure-r1/hrm-013-central-worktree-materialization-receipt.v1.json",
+      "sha256": "81d10ae6864f8c70a3b1f820b52cabd22168cba76327b9f8bb1cb3d743b1e908",
+      "bytes": 2566,
+      "carrierCommit": "53ce3f65190f5659469ceca0a7f623ad046e8bd7"
+    },
+    "implementationToken": {
+      "path": "../r7-batch-06-hrm013-semantic-closure-r1/hrm-013-central-implementation-token.v1.json",
+      "sha256": "5d2ad1f0f4ecfa793081ee5ec682a6061cc8a759d1f99a84e1b3c3e0478d2bd1",
+      "bytes": 8421,
+      "carrierCommit": "53ce3f65190f5659469ceca0a7f623ad046e8bd7"
+    }
+  },
+  "centralSourceAdmission": {
+    "backend": {
+      "repository": "dwp-backend",
+      "sourceBranch": "codex/hris-wave7-batch06-hrm013-central-backend-20261026-r1",
+      "sourceBranchCommit": "cc3542fb41a28a6da1e29c5afe5cf16180117092",
+      "sourceBranchTree": "190636f40e29126970aaf1b68b85a94eaf49402d",
+      "admissionMergeCommit": "fe2842a36d13709e6aecc27011a8f0ad3c770ce8",
+      "admissionTree": "190636f40e29126970aaf1b68b85a94eaf49402d",
+      "originRef": "origin/dwp-dev",
+      "originExact": true,
+      "clean": true,
+      "changedPathCount": 39
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "sourceBranch": "codex/hris-wave7-batch06-hrm013-central-frontend-20261026-r1",
+      "sourceBranchCommit": "fd18ba0312c634a0cc071ea09b52dce62d74c3da",
+      "sourceBranchTree": "ee535bdfb05dbbc886006c7e55f6d2c77cc11a7b",
+      "admissionMergeCommit": "69e900bf60d5a9c894c271e116aa1deb20ad86f5",
+      "admissionTreeBeforeThisReceipt": "e85b6f007b9d9e104bbab6fffb2ce9d90afe0e73",
+      "originRef": "origin/dwp-dev",
+      "originExact": true,
+      "cleanBeforeThisReceipt": true,
+      "changedPathCount": 10
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "currentDwpDevCommit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "originExact": true,
+      "clean": true,
+      "changedPathCount": 0
+    },
+    "independentSourceReview": {
+      "xcon028": "P0=0;P1=0;P2=0",
+      "backendAuthorizationV61AndV270": "P0=0;P1=0;P2=0",
+      "frontendAuthorizationMirror": "P0=0;P1=0;P2=0"
+    }
+  },
+  "admittedBaseline": {
+    "xcon028": {
+      "contractId": "XCON-028",
+      "eventType": "WorkerSeparated.v1",
+      "canonicalDataFieldCount": 14,
+      "businessPayloadFieldCount": 5,
+      "designConsumers": [
+        "HRIS-PER",
+        "HRIS-TIM",
+        "HRIS-PAY"
+      ],
+      "productionPublisherCount": 0,
+      "productionSubscriptionCount": 0,
+      "generatedJavaSha256": "48e1e55d3c804d935fa6d90f77b6f072f44df06b0e8effd13df0c9e3a30564a0",
+      "generatedJavaBytes": 16660
+    },
+    "productAuthorization": {
+      "version": 61,
+      "status": "DRAFT",
+      "reservationState": "RESERVED_NOT_ACTIVE",
+      "checksumAlgorithm": "SHA-256",
+      "checksum": "f7cf92a97f2fabf86f257010064a3183acf58f86cc2c9d7692a1555cab55aa24",
+      "artifactSha256": "c4f38d4f943ccc7c07135699b26aaef549d7c271b50683fe14341ada95b598d7",
+      "artifactBytes": 2765962,
+      "counts": {
+        "capabilities": 279,
+        "accessPolicies": 24,
+        "entitlementExpressions": 17,
+        "predicatePolicies": 87,
+        "routes": 1157,
+        "PAGE": 162,
+        "DATA": 349,
+        "ACTION": 646
+      },
+      "newCapability": "hcm.operations.separation.manage",
+      "newPredicate": "predicate.hcm-separation-case-scope.v1",
+      "newRoutes": [
+        "route.hcm.operations.exit-return.page",
+        "route.hcm.operations.exit-return.data",
+        "route.hcm.operations.separation-case.action"
+      ]
+    },
+    "authMigration": {
+      "version": "V270",
+      "path": "dwp-auth-server/src/main/resources/db/migration/V270__declare_hris_hrm013_v61_authorization_seed.sql",
+      "sha256": "d5b38620bb1cf483941fe4f07acd0bbe057365bcbcba6d4dba0d5846d72a1e9f",
+      "bytes": 24598,
+      "automaticImportEnabled": false
+    },
+    "feature": {
+      "featureKey": "HRIS_HRM_EXIT_RETURN_WORKBENCH",
+      "baselineState": "OFF",
+      "globalActiveRows": 0,
+      "tenantEnrollmentRows": 0,
+      "assignmentRows": 0,
+      "grantRows": 0,
+      "presetRows": 0,
+      "gatewayPreOwnerGate": true
+    },
+    "frontendMirror": {
+      "registryVersions": 61,
+      "runtimePageRoutes": 158,
+      "runtimeHcmPageRoutes": 65,
+      "catalogOnlyHcmPageRoutes": 4,
+      "officialHcmPageRoutes": 69,
+      "snapshotSha256": "b94225a99141cb57deb589dca97c40a4d5026878e01c50751dfe635ee888365e",
+      "snapshotBytes": 79834507,
+      "githubMaximumBytesExclusive": 104857600,
+      "runtimeRouteMounted": false,
+      "navigationOrMenuMounted": false
+    },
+    "fixtureLineage": {
+      "versions": 61,
+      "checksum": "8c53306abcaa6eb5dce2ec025dcae6b3e91b38a4fd89ef44139757c820b79180",
+      "frontendArtifactSha256": "c93395728ad8bce487db370a8c0b40651ed96d72e894ec6b08099977041ff712",
+      "frontendArtifactBytes": 116639
+    }
+  },
+  "verification": {
+    "xcon028": [
+      "HRIS generator --check PASS: 45 sources and 43 mappings",
+      "append-only generator focused unittest PASS",
+      "Xcon028WorkerSeparatedV1Test and Xcon028WorkerSeparatedAsyncApiContractTest PASS"
+    ],
+    "authorizationV61": [
+      "product authorization generator --check PASS",
+      "Python v61, pinned v60 and fixture tests PASS",
+      "Auth v61 contract, validator, release-lineage, seed-loader and fixture-adapter focused tests PASS"
+    ],
+    "authV270": [
+      "static migration contract PASS after the admitted SQL bytes were finalized",
+      "PostgreSQL clean install PASS",
+      "PostgreSQL V269-to-V270 upgrade PASS",
+      "PostgreSQL exact reapply no-op PASS",
+      "PostgreSQL conflicting tuple rollback PASS"
+    ],
+    "gateway": [
+      "rollout 000 and 100 default-OFF no-owner-call focused tests PASS",
+      "Gateway fixture adapter focused tests PASS"
+    ],
+    "frontend": [
+      "authorization sync and check PASS once each",
+      "fixture sync and check PASS once each",
+      "route-source, generated-route and browser-firewall focused tests PASS: 22",
+      "compact snapshot is below the GitHub 100 MiB hard limit"
+    ],
+    "policy": "Focused targets were run first; only the smallest failed frontend size target was corrected and rerun. No repository-wide suite was repeated."
+  },
+  "admissionClaims": {
+    "centralPrerequisiteMergedAndPushed": true,
+    "xcon028CatalogContractIncluded": true,
+    "productAuthorizationV61Included": true,
+    "authV270Included": true,
+    "frontendAuthorizationMirrorIncluded": true,
+    "moduleOwnerSourceIncluded": false,
+    "peopleV61SqlIncluded": false,
+    "trustedCallbackBindingIncluded": false,
+    "hrm013PageOrMenuMounted": false,
+    "featureEnabled": false,
+    "tenantEnrollmentCount": 0,
+    "productionPublisherOrSubscriberBound": false,
+    "businessSliceComplete": false,
+    "productionReleaseAuthorized": false
+  },
+  "authority": {
+    "trustedCallbackBindingSuccessorMayBePreparedAndReviewed": true,
+    "trustedCallbackBindingSourceAuthoringAuthorizedByThisReceiptAlone": false,
+    "moduleOwnerPacketAuthorized": false,
+    "moduleSourceAuthoringAuthorized": false,
+    "peopleV61ReservationAuthorized": false,
+    "peopleV61LeaseActive": false,
+    "peopleV61SqlAuthoringAuthorized": false,
+    "routeOrMenuMountAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionBindingAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextGate": "SEAL_AND_INDEPENDENTLY_REVIEW_THE_EXACT_TRUSTED_CALLBACK_SERVICE_BINDINGS_BEFORE_ANY_HRM013_OWNER_PACKET_PEOPLE_V61_LEASE_OR_MODULE_SOURCE_TOKEN"
+}
