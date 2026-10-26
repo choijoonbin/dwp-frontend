@@ -1,0 +1,91 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-approval-runtime-central-integration-authority.v1",
+  "state": "HASH_BOUND_ZERO_FINDING_APPROVAL_FIRST_INTEGRATION_AND_MISSING_DESCENDANT_GOVERNANCE_REPAIR",
+  "sliceId": "BASE-TFR-HRM-013",
+  "lane": "APPROVAL_RUNTIME_INTEGRATION",
+  "carrier": {
+    "repository": "dwp-frontend",
+    "branch": "codex/hris-wave7-batch06-hrm013-approval-runtime-integration-frontend-20261027-r1",
+    "baseCommit": "b2fa6d56f16ce5befe0e366ca55d34ef8f42f58e",
+    "baseTree": "13f7c1690864eb34b7ae317f7a2a7e25124be73f",
+    "requiredDirectChild": true,
+    "exactChangedPathCount": 9
+  },
+  "governanceRepair": {
+    "backendDescendantCommit": "bed31127123a318358f495f66edced7b024469d8",
+    "carrierBranch": "codex/hris-wave7-batch06-hrm013-bed31127-governance-frontend-20261027-r1",
+    "carrierCommit": "189bb49645515bbd3e4423cfb93dcc53ff40ed75",
+    "carrierTree": "6acc5bf2cece78655d8653071ac38a3b06647bc0",
+    "requiredParent": "54f312dd799570da659cbc438a40af5495aa153c",
+    "authority": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-backend-descendant-governance/bed31127123a318358f495f66edced7b024469d8/authority.v1.json",
+      "bytes": 5279,
+      "sha256": "9a8c12bd1d6135db15f842b163c5a35086420a080c50ff422b7b7e52353387f1"
+    },
+    "independentReview": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-backend-descendant-governance/bed31127123a318358f495f66edced7b024469d8/independent-review.v1.json",
+      "bytes": 2187,
+      "sha256": "134efd684222b107ac587418aaccbe0c04e115a723bd2c139b28089036718310"
+    },
+    "integrationMode": "NO_FF_MERGE_PRESERVING_THE_EXACT_CARRIER_COMMIT_AS_ANCESTOR",
+    "externalReceiptPath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/receipts/backend-descendants/bed31127123a318358f495f66edced7b024469d8.hrm013-shared-contract-governance.v1.json"
+  },
+  "backendIntegration": {
+    "repository": "dwp-backend",
+    "targetBranch": "dwp-dev",
+    "baseCommit": "bed31127123a318358f495f66edced7b024469d8",
+    "baseTree": "e5564ff7a81e5dd0a85d0e61f091ec0714a1f777",
+    "approvalBranch": "codex/hris-wave7-batch06-hrm013-approval-runtime-backend-20261026-r1",
+    "approvalCommit": "b9880ec6cf0ad65e08d86c6624ee2ac91a748716",
+    "approvalTree": "3b6033339058ae684dafe94361bc653d28d6fe75",
+    "requiredDirectChild": true,
+    "integrationMode": "DIRECT_FAST_FORWARD_ONLY",
+    "changedPathCount": 45
+  },
+  "evidence": {
+    "targetedVerificationReceipt": {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/receipts/approval-runtime-targeted-verification-receipt.v1.json",
+      "mode": "0600",
+      "bytes": 3217,
+      "sha256": "903abb7ffdbd7153a95f21144eda24b7978f8c4d1d50f36bcd6e02323f0d8d2b"
+    },
+    "postImplementationReview": {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/receipts/approval-runtime-post-implementation-review.v1.json",
+      "mode": "0600",
+      "bytes": 1992,
+      "sha256": "b0d52957d72e87f15797e41a043bda491a35ee63255f83d86e9dcbb6b5984e5e"
+    }
+  },
+  "peopleBoundary": {
+    "branch": "codex/hris-wave7-batch06-hrm013-people-owner-runtime-backend-20261026-r1",
+    "preRebaseCommit": "626e1de182678d28a82d6801855c039ed6f3f637",
+    "preRebaseTree": "4366c40e6c2bec1b5ab6cb2f09b28bdd72754c08",
+    "centralIntegrationAuthorized": false,
+    "requiredNext": "REBASE_ON_APPROVAL_INTEGRATED_DWP_DEV_AND_RUN_ONLY_COLLISION_SENSITIVE_VERIFICATION"
+  },
+  "validatorLifecycleCorrection": {
+    "appendOnlyPackagePrefixChecks": [
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-runtime-authority-r1/validate_hrm013_auth_runtime_authority.py",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-readiness-authority-r1/validate_hrm013_approval_readiness_authority.py",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-readiness-successor-r1/validate_hrm013_approval_readiness_successor.py"
+    ],
+    "approvalIntegrationStateChecks": [
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-owner-runtime-phase4-authority-r1/validate_hrm013_owner_runtime_phase4_authority.py",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-drain-clarification-r1/validate_hrm013_approval_drain_clarification.py"
+    ]
+  },
+  "authority": {
+    "independentReviewComplete": true,
+    "carrierCommitAndPushAuthorized": true,
+    "governanceRepairMergeAuthorizedAfterCarrierPush": true,
+    "governanceReceiptAuthoringAuthorizedAfterAncestryMerge": true,
+    "approvalDirectFastForwardIntegrationAuthorizedAfterGovernanceClosure": true,
+    "peopleIntegrationAuthorized": false,
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "runtimeCredentialProvisioningAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0
+  },
+  "next": "COMMIT_AND_PUSH_CARRIER_THEN_PRESERVE_GOVERNANCE_ANCESTRY_CREATE_RECEIPT_VALIDATE_CHAIN_AND_FAST_FORWARD_APPROVAL_ONLY"
+}

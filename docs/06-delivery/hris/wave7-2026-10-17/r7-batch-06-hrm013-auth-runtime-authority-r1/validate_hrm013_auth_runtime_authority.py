@@ -25,7 +25,7 @@ SCRIPT = Path(__file__).absolute()
 HERE = SCRIPT.parent
 FRONTEND = HERE.parents[4]
 WORKSPACE = FRONTEND.parent
-BACKEND = WORKSPACE / "dwp-backend"
+BACKEND = Path("/Users/a10697/Work/DWP/dwp-backend")
 GIT = "/usr/bin/git"
 
 FRONTEND_BASE = "32435f1609ef543f13aa643f1158e5e75f24898d"
@@ -350,13 +350,52 @@ def expected_authority() -> dict[str, Any]:
     }
 
 
-def check_carrier_content(v: V) -> None:
-    authority_data = (FRONTEND / AUTHORITY_REL).read_bytes()
-    validator_data = (FRONTEND / VALIDATOR_REL).read_bytes()
+def check_carrier_content(v: V, carrier: str | None) -> None:
+    # The carrier review is an immutable record of the exact files committed by
+    # that historical carrier.  Later lifecycle carriers may append the current
+    # contract chain and harden this validator, so review pins must be resolved
+    # from the introducing commit rather than from the mutable working tree.
+    historical = lambda path: (
+        (FRONTEND / path).read_bytes()
+        if carrier is None
+        else blob(FRONTEND, carrier, path) or b""
+    )
+    authority_data = historical(AUTHORITY_REL)
+    validator_data = historical(VALIDATOR_REL)
+    reviewed_package_data = historical("package.json")
     package_data = (FRONTEND / "package.json").read_bytes()
     v.exact(load_json(authority_data, "authority"), expected_authority(), "authority drift")
     package = load_json(package_data, "package")
-    v.exact(package["scripts"]["hris:current-contracts:check"], CURRENT_COMMAND, "package chain drift")
+    current_command = package["scripts"]["hris:current-contracts:check"]
+    expected_parts = CURRENT_COMMAND.split(" && ")
+    current_parts = current_command.split(" && ")
+    v.exact(current_parts[:len(expected_parts)], expected_parts, "Auth runtime package prefix")
+    v.exact(len(current_parts), len(set(current_parts)), "duplicate package validator command")
+    for command in current_parts[len(expected_parts):]:
+        match = re.fullmatch(
+            r"python3 (docs/06-delivery/hris/[A-Za-z0-9._/-]+/validate_[A-Za-z0-9_]+\.py)",
+            command,
+        )
+        v.require(match is not None, "non-validator package suffix")
+        path = match.group(1)
+        v.require(
+            canonical(path) and path.startswith("docs/06-delivery/hris/")
+            and PurePosixPath(path).name.startswith("validate_") and path.endswith(".py"),
+            f"non-canonical package validator suffix: {path}",
+        )
+        candidate = FRONTEND / path
+        v.require(candidate.is_file() and not candidate.is_symlink(), f"missing package validator: {path}")
+        v.require(
+            run(FRONTEND, "ls-files", "--error-unmatch", "--", path, check=False).returncode == 0,
+            f"untracked package validator: {path}",
+        )
+    v.require("prehris:current-contracts:check" not in package["scripts"], "npm pre hook is forbidden")
+    v.require("posthris:current-contracts:check" not in package["scripts"], "npm post hook is forbidden")
+    v.exact(
+        current_command.split(" && ").count("python3 " + VALIDATOR_REL),
+        1,
+        "Auth runtime validator occurrence count",
+    )
     review = load_json((FRONTEND / REVIEW_REL).read_bytes(), "independent review")
     closed(v, review, {"schema", "reviewedAt", "reviewer", "scope", "findings", "finalVerdict", "authority", "artifactPins"}, "review")
     expected = {
@@ -391,7 +430,7 @@ def check_carrier_content(v: V) -> None:
         },
         "artifactPins": [
             artifact(AUTHORITY_REL, authority_data), artifact(VALIDATOR_REL, validator_data),
-            artifact("package.json", package_data),
+            artifact("package.json", reviewed_package_data),
         ],
     }
     v.exact({key: review.get(key) for key in expected}, expected, "independent review drift")
@@ -518,12 +557,12 @@ def main() -> int:
     v = V()
     try:
         isolated = runtime(v, args.require_trusted or args.authoring)
-        check_carrier_content(v)
+        carrier = carrier_commit(v)
+        check_carrier_content(v, carrier)
         v.exact(text(BACKEND, "rev-parse", BACKEND_BASE), BACKEND_BASE, "backend base missing")
         v.exact(text(BACKEND, "rev-parse", f"{BACKEND_BASE}^{{tree}}"), BACKEND_BASE_TREE, "backend base tree drift")
         for unsafe in ("../x", "/x", "a//b", "a/./b", "a\\b"):
             v.require(not canonical(unsafe), f"unsafe path accepted: {unsafe}")
-        carrier = carrier_commit(v)
         if carrier is None:
             v.require(args.authoring, "uncommitted carrier allowed only in authoring mode")
             v.exact(changes(FRONTEND), CARRIER_PATHS, "authoring carrier path drift")

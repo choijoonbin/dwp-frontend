@@ -7,11 +7,12 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import stat
 import subprocess
 import sys
 from datetime import datetime
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any
 
 
@@ -194,9 +195,38 @@ def validate_content(c: Check, carrier: str | None) -> None:
         + " && python3 " + VALIDATOR
         + " && python3 " + INTEGRATION_VALIDATOR
     )
+    current_command = package["scripts"]["hris:current-contracts:check"]
+    expected_parts = expected_command.split(" && ")
+    current_parts = current_command.split(" && ")
+    c.exact(current_parts[:len(expected_parts)], expected_parts, "readiness successor package prefix")
+    c.exact(len(current_parts), len(set(current_parts)), "duplicate package validator command")
+    for command in current_parts[len(expected_parts):]:
+        match = re.fullmatch(
+            r"python3 (docs/06-delivery/hris/[A-Za-z0-9._/-]+/validate_[A-Za-z0-9_]+\.py)",
+            command,
+        )
+        c.require(match is not None, "non-validator package suffix")
+        path = match.group(1)
+        parsed = PurePosixPath(path)
+        c.require(
+            not parsed.is_absolute() and parsed.as_posix() == path
+            and all(part not in {"", ".", ".."} for part in parsed.parts)
+            and path.startswith("docs/06-delivery/hris/")
+            and parsed.name.startswith("validate_") and path.endswith(".py"),
+            f"non-canonical package validator suffix: {path}",
+        )
+        candidate = ROOT / path
+        c.require(candidate.is_file() and not candidate.is_symlink(), f"missing package validator: {path}")
+        c.require(
+            run(ROOT, "ls-files", "--error-unmatch", "--", path).returncode == 0,
+            f"untracked package validator: {path}",
+        )
+    c.require("prehris:current-contracts:check" not in package["scripts"], "npm pre hook is forbidden")
+    c.require("posthris:current-contracts:check" not in package["scripts"], "npm post hook is forbidden")
     c.exact(
-        package["scripts"]["hris:current-contracts:check"],
-        expected_command, "package successor chain",
+        current_command.split(" && ").count("python3 " + INTEGRATION_VALIDATOR),
+        1,
+        "readiness integration validator occurrence count",
     )
     c.exact(authority["lane"], "APPROVAL_PHASE4_READINESS_CORRECTION", "authority lane")
     c.exact(authority["predecessor"]["commit"], FRONTEND_BASE, "authority predecessor")

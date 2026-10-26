@@ -31,6 +31,8 @@ FRONTEND_BASE = "431564c02500d40c3a4a1443d91fdf1f37aad5c8"
 FRONTEND_TREE = "c008e4937ec1a9c228990e73fbc6d1f4a9665c58"
 BACKEND_BASE = "bed31127123a318358f495f66edced7b024469d8"
 BACKEND_TREE = "e5564ff7a81e5dd0a85d0e61f091ec0714a1f777"
+APPROVAL_COMMIT = "b9880ec6cf0ad65e08d86c6624ee2ac91a748716"
+APPROVAL_TREE = "3b6033339058ae684dafe94361bc653d28d6fe75"
 CARRIER_BRANCH = (
     "codex/hris-wave7-batch06-hrm013-approval-drain-"
     "clarification-frontend-20261027-r1"
@@ -203,9 +205,24 @@ def validate_prerequisites(checks: Checks) -> tuple[dict[str, Any], dict[str, An
 
 def validate_backend(checks: Checks, token: dict[str, Any]) -> None:
     checks.exact(text(BACKEND, "branch", "--show-current"), "dwp-dev", "backend branch")
-    checks.exact(text(BACKEND, "rev-parse", "HEAD"), BACKEND_BASE, "backend head")
-    checks.exact(text(BACKEND, "rev-parse", "origin/dwp-dev"), BACKEND_BASE, "backend origin")
-    checks.exact(text(BACKEND, "rev-parse", "HEAD^{tree}"), BACKEND_TREE, "backend tree")
+    backend_head = text(BACKEND, "rev-parse", "HEAD")
+    checks.require(
+        backend_head in {BACKEND_BASE, APPROVAL_COMMIT},
+        "backend head is outside the authorized Approval integration lifecycle",
+    )
+    checks.exact(text(BACKEND, "rev-parse", "origin/dwp-dev"), backend_head, "backend origin")
+    checks.exact(text(BACKEND, "rev-parse", f"{BACKEND_BASE}^{{tree}}"), BACKEND_TREE, "backend base tree")
+    if backend_head == APPROVAL_COMMIT:
+        checks.exact(
+            text(BACKEND, "rev-parse", f"{APPROVAL_COMMIT}^{{tree}}"),
+            APPROVAL_TREE,
+            "integrated Approval tree",
+        )
+        checks.exact(
+            text(BACKEND, "rev-list", "--parents", "-n", "1", APPROVAL_COMMIT).split(),
+            [APPROVAL_COMMIT, BACKEND_BASE],
+            "integrated Approval commit is not a direct child",
+        )
     checks.exact(changed(BACKEND), set(), "backend base dirty")
     checks.exact(text(APPROVAL, "branch", "--show-current"), APPROVAL_BRANCH, "approval branch")
     allowed = set(token["sourceScope"]["newSourcePaths"])
@@ -218,6 +235,8 @@ def validate_backend(checks: Checks, token: dict[str, Any]) -> None:
         checks.require(bool(dirty), "approval implementation has no candidate changes")
         actual = dirty
     else:
+        checks.exact(approval_head, APPROVAL_COMMIT, "unexpected Approval implementation commit")
+        checks.exact(text(APPROVAL, "rev-parse", "HEAD^{tree}"), APPROVAL_TREE, "Approval implementation tree")
         checks.exact(dirty, set(), "committed approval implementation is dirty")
         checks.exact(
             text(APPROVAL, "rev-list", "--parents", "-n", "1", approval_head).split(),

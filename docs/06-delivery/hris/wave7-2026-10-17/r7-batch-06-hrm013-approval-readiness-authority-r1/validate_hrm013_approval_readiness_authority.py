@@ -7,11 +7,12 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import stat
 import subprocess
 import sys
 from datetime import datetime
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any
 
 SCRIPT = Path(__file__).absolute()
@@ -22,6 +23,10 @@ FRONTEND_BASE = "3efa1e22243f37c9834a099dac32637191ac6f97"
 FRONTEND_TREE = "f4a984a6b20ce8b3bb1b18b4afa39d5c6d573278"
 BACKEND_BASE = "a1c0d8ecdbc959d378ef04dc401ee0ff2348ef6c"
 BACKEND_TREE = "b2173c7448d2e88b5a7f9278f0084d591c4462bf"
+GOVERNED_BACKEND_DESCENDANTS = {
+    "bed31127123a318358f495f66edced7b024469d8": "e5564ff7a81e5dd0a85d0e61f091ec0714a1f777",
+    "b9880ec6cf0ad65e08d86c6624ee2ac91a748716": "3b6033339058ae684dafe94361bc653d28d6fe75",
+}
 CARRIER_BRANCH = "codex/hris-wave7-batch06-hrm013-approval-readiness-authority-frontend-20261027-r1"
 LANE_BRANCH = "codex/hris-wave7-batch06-hrm013-approval-readiness-backend-20261027-r1"
 LANE_WORKTREE = Path("/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/approval-readiness")
@@ -151,10 +156,38 @@ def validate_content(c: Check, carrier: str | None):
     c.exact(token["exactTargetTestPaths"], TESTS, "token tests")
     c.exact(token["verificationCommands"], COMMANDS, "token commands")
     c.exact(token["securityBoundary"], {"newMigrationAuthorized": False, "runtimeImplementationAuthorized": False, "featureEnablementAuthorized": False, "tenantEnrollmentAuthorized": False, "runtimeCredentialBindingAuthorized": False, "directDwpDevIntegrationAuthorized": False, "productionReleaseAuthorized": False}, "token boundary")
+    current_command = package["scripts"]["hris:current-contracts:check"]
+    expected_parts = SUCCESSOR_CURRENT.split(" && ")
+    current_parts = current_command.split(" && ")
+    c.exact(current_parts[:len(expected_parts)], expected_parts, "readiness package prefix")
+    c.exact(len(current_parts), len(set(current_parts)), "duplicate package validator command")
+    for command in current_parts[len(expected_parts):]:
+        match = re.fullmatch(
+            r"python3 (docs/06-delivery/hris/[A-Za-z0-9._/-]+/validate_[A-Za-z0-9_]+\.py)",
+            command,
+        )
+        c.require(match is not None, "non-validator package suffix")
+        path = match.group(1)
+        parsed = PurePosixPath(path)
+        c.require(
+            not parsed.is_absolute() and parsed.as_posix() == path
+            and all(part not in {"", ".", ".."} for part in parsed.parts)
+            and path.startswith("docs/06-delivery/hris/")
+            and parsed.name.startswith("validate_") and path.endswith(".py"),
+            f"non-canonical package validator suffix: {path}",
+        )
+        candidate = ROOT / path
+        c.require(candidate.is_file() and not candidate.is_symlink(), f"missing package validator: {path}")
+        c.require(
+            raw_git(ROOT, "ls-files", "--error-unmatch", "--", path).returncode == 0,
+            f"untracked package validator: {path}",
+        )
+    c.require("prehris:current-contracts:check" not in package["scripts"], "npm pre hook is forbidden")
+    c.require("posthris:current-contracts:check" not in package["scripts"], "npm post hook is forbidden")
     c.exact(
-        package["scripts"]["hris:current-contracts:check"],
-        SUCCESSOR_CURRENT,
-        "package successor chain",
+        current_command.split(" && ").count("python3 " + SUCCESSOR_VALIDATOR),
+        1,
+        "readiness successor validator occurrence count",
     )
     source = lambda path: (ROOT / path).read_bytes() if carrier is None else raw_git(ROOT, "show", f"{carrier}:{path}").stdout
     expected_pins = [pin(path, source(path)) for path in (AUTHORITY, TOKEN, VALIDATOR, "package.json")]
@@ -184,8 +217,16 @@ def main() -> int:
             data = (ROOT / path).read_bytes(); c.exact(len(data), size, f"gate size {path}"); c.exact(sha(data), digest, f"gate hash {path}")
         carrier = carrier_commit(c); validate_content(c, carrier)
         c.exact(git(BACKEND, "branch", "--show-current"), "dwp-dev", "backend branch")
-        c.exact(git(BACKEND, "rev-parse", "HEAD"), BACKEND_BASE, "backend head")
-        c.exact(git(BACKEND, "rev-parse", "origin/dwp-dev"), BACKEND_BASE, "backend origin")
+        backend_head = git(BACKEND, "rev-parse", "HEAD")
+        backend_origin = git(BACKEND, "rev-parse", "origin/dwp-dev")
+        c.exact(backend_origin, backend_head, "backend origin")
+        allowed_heads = {BACKEND_BASE: BACKEND_TREE, **GOVERNED_BACKEND_DESCENDANTS}
+        c.require(backend_head in allowed_heads, "backend head is not an exact governed descendant")
+        c.exact(
+            git(BACKEND, "rev-parse", f"{backend_head}^{{tree}}"),
+            allowed_heads[backend_head],
+            "backend governed head tree",
+        )
         c.exact(changed(BACKEND), set(), "backend dirty")
         if carrier is None:
             c.require(args.authoring, "uncommitted carrier requires --authoring")

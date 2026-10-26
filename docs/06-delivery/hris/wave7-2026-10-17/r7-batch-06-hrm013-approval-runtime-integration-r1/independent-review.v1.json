@@ -1,0 +1,89 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-approval-runtime-integration-independent-review.v1",
+  "state": "INDEPENDENT_ZERO_FINDING_REVIEW_OF_GOVERNANCE_REPAIR_AND_APPROVAL_FIRST_INTEGRATION",
+  "reviewedAt": "2026-10-26T23:29:32Z",
+  "reviewer": "INDEPENDENT_HRM013_APPROVAL_RUNTIME_INTEGRATION_REVIEW",
+  "scope": {
+    "authorityPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-runtime-integration-r1/approval-runtime-central-integration-authority.v1.json",
+    "validatorPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-runtime-integration-r1/validate_hrm013_approval_runtime_integration.py",
+    "packagePath": "package.json",
+    "modifiedValidatorPaths": [
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-runtime-authority-r1/validate_hrm013_auth_runtime_authority.py",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-readiness-authority-r1/validate_hrm013_approval_readiness_authority.py",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-readiness-successor-r1/validate_hrm013_approval_readiness_successor.py",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-owner-runtime-phase4-authority-r1/validate_hrm013_owner_runtime_phase4_authority.py",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-drain-clarification-r1/validate_hrm013_approval_drain_clarification.py"
+    ],
+    "reviewedBoundaries": [
+      "EXACT_NINE_PATH_DIRECT_CHILD_CARRIER",
+      "MISSING_BED31127_DESCENDANT_GOVERNANCE_COMMIT_PRESERVED_BY_NO_FF_MERGE",
+      "EXTERNAL_DESCENDANT_RECEIPT_REQUIRED_BEFORE_BACKEND_MOVE",
+      "APPROVAL_EXACT_DIRECT_CHILD_AND_REVIEW_RECEIPTS",
+      "APPROVAL_FIRST_DIRECT_FAST_FORWARD_ONLY",
+      "PEOPLE_REMAINS_UNMERGED_AND_REBASE_REQUIRED",
+      "APPEND_ONLY_VALIDATOR_LIFECYCLE_WITH_NO_ACTIVATION_AUTHORITY"
+    ]
+  },
+  "findings": {
+    "p0": [],
+    "p1": [],
+    "p2": []
+  },
+  "finalVerdict": {
+    "p0": 0,
+    "p1": 0,
+    "p2": 0,
+    "decision": "GO_FOR_GOVERNANCE_ANCESTRY_REPAIR_THEN_APPROVAL_DIRECT_FAST_FORWARD_ONLY"
+  },
+  "authority": {
+    "independentReviewComplete": true,
+    "carrierCommitAndPushAuthorized": true,
+    "governanceAncestryMergeAuthorized": true,
+    "approvalDirectFastForwardAuthorizedAfterGovernanceClosure": true,
+    "peopleIntegrationAuthorized": false,
+    "activationOrProductionAuthority": false,
+    "businessCompletionCredit": 0
+  },
+  "artifactPins": [
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-runtime-integration-r1/approval-runtime-central-integration-authority.v1.json",
+      "bytes": 5131,
+      "sha256": "11fd746188dd954be11d5266ea04236bd00a1305bdc98f077640203dd8831e3a"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-runtime-integration-r1/validate_hrm013_approval_runtime_integration.py",
+      "bytes": 32664,
+      "sha256": "c999ceaca75cdc119bae5edff3819f62f47a972858a5c0cf86d3b420e48db7d6"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-runtime-authority-r1/validate_hrm013_auth_runtime_authority.py",
+      "bytes": 34031,
+      "sha256": "a84254807daebc854ae35c9c6388869d02ba4129deda3a94312a367fad117b1c"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-readiness-authority-r1/validate_hrm013_approval_readiness_authority.py",
+      "bytes": 19342,
+      "sha256": "15378f74a7b0c67258c13b1e6fda432a801011cfffc247af0bfb7e877a6fa014"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-readiness-successor-r1/validate_hrm013_approval_readiness_successor.py",
+      "bytes": 14640,
+      "sha256": "a4a8f41e01e0c2d0fd10e1fed608af6cf05d9ce280dbbd4e842656e195575678"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-owner-runtime-phase4-authority-r1/validate_hrm013_owner_runtime_phase4_authority.py",
+      "bytes": 34309,
+      "sha256": "9964ef667df99a3c1c5a5bdcebb91e7c7f570480d30769080e71a5cd99f06ad5"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-drain-clarification-r1/validate_hrm013_approval_drain_clarification.py",
+      "bytes": 18707,
+      "sha256": "1e207887c80cc367de3d7c7097c0e42db946a374b3b6530a6094c4c72e2fffd4"
+    },
+    {
+      "path": "package.json",
+      "bytes": 16469,
+      "sha256": "0e496cced22dbc11a4c9dfd7315f83d8ae6c905ec99c4cec166a6437b6a6e3ee"
+    }
+  ]
+}

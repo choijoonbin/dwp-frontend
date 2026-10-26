@@ -27,6 +27,8 @@ FRONTEND_BASE = "85d6a4f732fc41abad3c37475862c6eafe1ccca2"
 FRONTEND_TREE = "13bc5cc80a59cbea1cea1cce58a87f42a7217945"
 BACKEND_BASE = "bed31127123a318358f495f66edced7b024469d8"
 BACKEND_TREE = "e5564ff7a81e5dd0a85d0e61f091ec0714a1f777"
+APPROVAL_COMMIT = "b9880ec6cf0ad65e08d86c6624ee2ac91a748716"
+APPROVAL_TREE = "3b6033339058ae684dafe94361bc653d28d6fe75"
 CARRIER_BRANCH = (
     "codex/hris-wave7-batch06-hrm013-owner-runtime-"
     "phase4-authority-frontend-20261027-r1"
@@ -318,22 +320,41 @@ def validate_backend(checks: Checks) -> None:
     checks.exact(
         text(BACKEND, "branch", "--show-current"), "dwp-dev", "backend branch"
     )
-    checks.exact(text(BACKEND, "rev-parse", "HEAD"), BACKEND_BASE, "backend head")
-    checks.exact(
-        text(BACKEND, "rev-parse", "origin/dwp-dev"),
-        BACKEND_BASE,
-        "backend origin",
+    backend_head = text(BACKEND, "rev-parse", "HEAD")
+    checks.require(
+        backend_head in {BACKEND_BASE, APPROVAL_COMMIT},
+        "backend head is outside the authorized Approval integration lifecycle",
     )
+    checks.exact(text(BACKEND, "rev-parse", "origin/dwp-dev"), backend_head, "backend origin")
     checks.exact(
         text(BACKEND, "rev-parse", f"{BACKEND_BASE}^{{tree}}"),
         BACKEND_TREE,
         "backend tree",
     )
+    if backend_head == APPROVAL_COMMIT:
+        checks.exact(
+            text(BACKEND, "rev-parse", f"{APPROVAL_COMMIT}^{{tree}}"),
+            APPROVAL_TREE,
+            "Approval integrated tree",
+        )
+        checks.exact(
+            text(BACKEND, "rev-list", "--parents", "-n", "1", APPROVAL_COMMIT).split(),
+            [APPROVAL_COMMIT, BACKEND_BASE],
+            "Approval integration is not a direct child",
+        )
+        checks.exact(
+            text(BACKEND, "rev-parse", f"origin/{APPROVAL_BRANCH}"),
+            APPROVAL_COMMIT,
+            "Approval branch is not pushed",
+        )
     checks.exact(changed(BACKEND), set(), "backend worktree is dirty")
     for path, size, sha in BACKEND_PINS:
         data = output(BACKEND, "show", f"{BACKEND_BASE}:{path}")
         checks.exact(len(data), size, f"backend pin bytes: {path}")
         checks.exact(digest(data), sha, f"backend pin hash: {path}")
+        live_data = output(BACKEND, "show", f"{backend_head}:{path}")
+        checks.exact(len(live_data), size, f"live backend pin bytes: {path}")
+        checks.exact(digest(live_data), sha, f"live backend pin hash: {path}")
     approval_names = text(
         BACKEND,
         "ls-tree",
