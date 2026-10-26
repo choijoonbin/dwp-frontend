@@ -1,0 +1,198 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-05-sys008-module-source-integration-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-05-SYS008-MODULE-SOURCE-INTEGRATION-20261026-R1",
+  "recordedAt": "2026-10-26T14:24:33+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "EXACT_SYS008_MODULE_HEADS_NO_FF_MERGED_PUSHED_42_OF_42_BLOB_IDENTICAL_V334_LEASE_CONSUMED_DEFAULT_OFF_ZERO_ENROLLMENT_ZERO_PROVIDER",
+  "module": "SYS",
+  "moduleSession": "HRIS-SYS",
+  "sliceId": "BASE-TFR-SYS-008",
+  "immutability": {
+    "sealed": true,
+    "appendOnly": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_RECEIPT_ID_AND_SHA256"
+  },
+  "authority": {
+    "sourceAdmissionDecision": {
+      "path": "sys-008-module-source-admission-decision.v1.json",
+      "sha256": "09afcdf2421b384a59fdc138b184df65d1c04be96acffba6393dc952e5eeee23",
+      "bytes": 16196,
+      "gitBlob": "2da4f54a2c088458bfdd6d38a74e699616e35f24",
+      "carrierCommit": "4d54e8bb6afb162220af8a23457f470cdbe9d7fa",
+      "carrierTree": "6b0bc07221c40d73339742a264278657637603a7"
+    },
+    "decisionConstraintsObserved": {
+      "exactHeadsOnly": true,
+      "targetAndSourceHeadDriftRejected": true,
+      "noFfOnly": true,
+      "stopOnConflict": true,
+      "automaticConflictResolutionUsed": false,
+      "manualConflictResolutionUsed": false,
+      "squashUsed": false,
+      "cherryPickUsed": false,
+      "rebaseUsed": false,
+      "moduleTestRerunAuthorized": false,
+      "repositoryWideSuiteAuthorized": false
+    }
+  },
+  "integratedHeads": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "sourceBranch": "codex/hris-wave7-r7-batch05-sys-008-backend-20261026-r1",
+      "sourceHead": "57deb1c07b92c3f0cd80d445980e6af31c01847e",
+      "sourceTree": "130078cf93ec00996657ca8e0f361745e020cc45",
+      "mergeCommit": "d9f84f9f934cc196f8b06462bb3fa972115eea8c",
+      "mergeTree": "130078cf93ec00996657ca8e0f361745e020cc45",
+      "parents": [
+        "7406b9d6a4ba2c3f777fad3b9e9caa609ec9ff72",
+        "57deb1c07b92c3f0cd80d445980e6af31c01847e"
+      ],
+      "strategy": "NO_FF_EXACT_BRANCH_HEAD",
+      "sourceIsSecondParent": true,
+      "sourceIsAncestor": true,
+      "mergeTreeEqualsSourceTree": true,
+      "admittedPathCount": 30,
+      "admittedBlobMatchedCount": 30,
+      "admittedBlobMismatchCount": 0,
+      "pathOnlyManifestSha256": "ded5a9811eecc3f4adebd69333d8b925c253e0a2c5860869e518fcf2effa4623",
+      "nameStatusManifestSha256": "a25f3323dfca9910c180a99e2feae9cbf7d815baec93416cafae2de049d5b5a3",
+      "mergeConflicts": 0,
+      "automaticConflictResolution": false,
+      "manualConflictResolution": false,
+      "originExact": true,
+      "clean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "sourceBranch": "codex/hris-wave7-r7-batch05-sys-008-frontend-20261026-r1",
+      "sourceHead": "d7835dbd9388026070a360f7fe0e8fbf5c931933",
+      "sourceTree": "d6f95ec59db9ca42703a372f1efa834e03028a4e",
+      "mergeCommit": "3866bc13fffff441551cc76af1fe0f7d26bc25fa",
+      "mergeTree": "8d2d8f5cbac19ab6ee7cb4dbc93390d984bb5d4a",
+      "parents": [
+        "4d54e8bb6afb162220af8a23457f470cdbe9d7fa",
+        "d7835dbd9388026070a360f7fe0e8fbf5c931933"
+      ],
+      "strategy": "NO_FF_EXACT_BRANCH_HEAD",
+      "decisionCarrierIsFirstParent": true,
+      "sourceIsSecondParent": true,
+      "sourceIsAncestor": true,
+      "decisionCarrierIsAncestor": true,
+      "centralAuthorityCandidatePathOverlapCount": 0,
+      "admittedPathCount": 12,
+      "admittedBlobMatchedCount": 12,
+      "admittedBlobMismatchCount": 0,
+      "pathOnlyManifestSha256": "93e8ba1b9f73d81cd2cee35cd7ed7277ae1d187d0eb3f7afda6f2dce22e67d58",
+      "nameStatusManifestSha256": "28bb477f9744f6684c904e16c8809a9728a77aa7b8a4af01420044f861c0be4f",
+      "mergeConflicts": 0,
+      "automaticConflictResolution": false,
+      "manualConflictResolution": false,
+      "originExactBeforeReceiptDraft": true,
+      "cleanBeforeReceiptDraft": true
+    }
+  },
+  "postMergeVerification": {
+    "gitIdentityParentsAndAncestry": "PASS",
+    "exactAdmittedBlobComparison": "42_OF_42_MATCH",
+    "backendAdmittedBlobs": {
+      "expected": 30,
+      "matched": 30,
+      "mismatched": 0
+    },
+    "frontendAdmittedBlobs": {
+      "expected": 12,
+      "matched": 12,
+      "mismatched": 0
+    },
+    "totalAdmittedBlobs": {
+      "expected": 42,
+      "matched": 42,
+      "mismatched": 0
+    },
+    "centralAuthorityPreservedWithZeroCandidatePathOverlap": true,
+    "platformV334Boundary": "PASS_ONE_EXACT_V334_AFTER_V333_WITH_SIX_TABLES_AND_UNCHANGED_HISTORICAL_MIGRATIONS",
+    "v334Sha256": "d4c3750ade0e6925378c8a8aa5093605891d5afe01b91e926c6485afb2f092d4",
+    "preservedBackendSealCount": 8,
+    "preservedFrontendSealCount": 4,
+    "routeMenuSidebarShellI18nIndexOrMountChanges": 0,
+    "gitDiffCheck": "PASS",
+    "mergeConflicts": 0,
+    "automaticConflictResolution": false,
+    "manualConflictResolution": false,
+    "moduleTestsRerun": false,
+    "repositoryWideSuiteRun": false,
+    "fullBuildRun": false,
+    "browserRouteRun": false,
+    "reason": "Both integrations were conflict-free Git identity and provenance operations over exact independently reviewed and already targeted-tested heads. Only merge identity, ancestry, 42-of-42 blob parity, V334 and rollout boundaries were rechecked."
+  },
+  "migrationLeaseClosure": {
+    "activationPath": "../r7-batch-05-module-start-r1/migration-lease-sys008-v334-activation.v1.json",
+    "activationSha256": "32e6f83758de1bdf88b259c0608ed10799c1fea0ecd9a29794b631734e6a50ba",
+    "activationBytes": 15716,
+    "activationId": "HRIS-WAVE7-R7-BATCH-05-MIGRATION-LEASE-ACTIVATION-SYS008-20261026-R1",
+    "stream": "PLATFORM_MAIN",
+    "version": "V334",
+    "predecessor": "V333",
+    "sliceId": "BASE-TFR-SYS-008",
+    "exactPath": "dwp-platform-server/src/main/resources/db/migration/V334__create_hris_integration_control_plane.sql",
+    "exactSha256": "d4c3750ade0e6925378c8a8aa5093605891d5afe01b91e926c6485afb2f092d4",
+    "exactBytes": 131305,
+    "state": "CONSUMED_CENTRALLY_INTEGRATED",
+    "activeLeaseCountAfterIntegration": 0,
+    "platformMigrationHighWater": "V334",
+    "secondMigrationAuthorized": false,
+    "existingMigrationEditAuthorized": false
+  },
+  "acceptanceClosure": {
+    "acceptanceCriteria": "15_OF_15_ADMITTED",
+    "goldenScenarios": "13_OF_13_ADMITTED",
+    "independentReview": {
+      "openP0": 0,
+      "openP1": 0,
+      "openP2": 0
+    }
+  },
+  "rolloutBoundary": {
+    "featureKey": "HRIS_INTEGRATION_CONTROL_PLANE",
+    "runtimeDefault": "OFF",
+    "matchIfMissing": false,
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "tenantEnrollmentCount": 0,
+    "productionProviderBound": false,
+    "productionSecretBound": false,
+    "productionSchedulerBound": false,
+    "productionBrokerBound": false,
+    "runtimeCallsWhenDisabled": 0,
+    "hrisSettingsProjectionMounted": false,
+    "dwpControlProjectionMounted": false,
+    "routeMounted": false,
+    "menuMounted": false,
+    "shellNodeMounted": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "fallbackBehavior": "FAIL_CLOSED_ONLY",
+    "businessCompletionIncrement": 0
+  },
+  "authorityAfterReceipt": {
+    "moduleSourceIntegrated": true,
+    "migrationLeaseConsumed": true,
+    "runtimeActivationAuthorizedByThisReceipt": false,
+    "routeOrMenuMountAuthorized": false,
+    "providerOrSecretBindingAuthorized": false,
+    "schedulerOrBrokerBindingAuthorized": false,
+    "fullSliceCompletionAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nonClaims": [
+    "Either frontend projection, route, shell node, sidebar, menu or tenant-visible page is mounted.",
+    "A production provider, secret, scheduler or broker is bound.",
+    "The feature is enabled or any tenant is enrolled.",
+    "Customer data, full-slice completion, production release or business-completion credit is authorized.",
+    "BASE-TFR-SYS-008, Batch-05, R7 or HRIS is complete as a production business outcome.",
+    "Module tests, a repository-wide suite, full build or browser route were rerun during identity-only integration."
+  ],
+  "nextAction": "Commit and push this receipt, then record a separate SYS-008 sequencing-exit receipt before opening fixed-order BASE-TFR-TIM-004. Keep route, menu, feature, tenant, provider, secret and browser activation deferred to separate explicit authority."
+}
