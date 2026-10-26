@@ -1,0 +1,157 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-05-sys008-worktree-materialization-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-05-SYS008-WORKTREE-MATERIALIZATION-20261026-R1",
+  "recordedAt": "2026-10-26T10:02:22+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "MATERIALIZED_CLEAN_EXACT_REVIEWED_AUTHORITY_CARRIER_PINS_NO_SOURCE_EDITS_NO_UPSTREAM",
+  "purpose": "Record the actual clean backend and frontend SYS-008 worktree identities required before the reserved Platform V334 lease may be considered for activation and an executable module start token may be issued. This receipt alone grants no migration, source, test, commit or push authority.",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_RECEIPT_ID_AND_SHA256",
+    "historicalArtifactMutation": false
+  },
+  "sliceId": "BASE-TFR-SYS-008",
+  "moduleSession": "HRIS-SYS",
+  "moduleThreadId": "01a0f53d-d62d-7971-81f7-1822b513ccb4",
+  "immutablePredecessors": {
+    "centralIntegrationReceipt": {
+      "path": "../../r7-batch-05-central-admission-r1/sys-008-central-integration-receipt.v1.json",
+      "sha256": "93a72c373ef19a5474924547012a5c243ab330ae5eb0b5eb1eeed5c93d63f0bf",
+      "bytes": 17116,
+      "receiptId": "HRIS-WAVE7-R7-BATCH-05-SYS008-CENTRAL-INTEGRATION-20261026-R1",
+      "requiredState": "EXACT_SYS008_CENTRAL_DELTA_COMMITTED_PUSHED_AND_ADMITTED_V60_V269_GATEWAY_IAQ_TYPED_EVENT_OPAQUE_SHARED_BRIDGE_DUAL_PROJECTION_DEFAULT_OFF_ZERO_ENROLLMENT_OWNER_PACKET_AND_RESERVED_NOT_ACTIVE_V334_MAY_BE_PREPARED"
+    },
+    "reservedLeaseV1": {
+      "path": "../migration-lease-sys008-v334-reservation.v1.json",
+      "sha256": "73413bc7dbaa21f456949ecc0d96ad5ec65351ab8f38f3a95dd97b791414b27d",
+      "bytes": 14400,
+      "reservationId": "HRIS-WAVE7-R7-BATCH-05-MIGRATION-LEASE-RESERVATION-SYS008-20261026-R1",
+      "leaseId": "HRIS-WAVE7-R7-BATCH-05-PLATFORM-MAIN-V334-SYS008-20261026-R1",
+      "requiredState": "RESERVED_NOT_ACTIVE"
+    },
+    "ownerPacket": {
+      "path": "../owner-packets/base-tfr-sys-008.owner-packet.v1.json",
+      "sha256": "d4abf69765ab4435f38435ba531db06802294af947d3154fa62c584cd590302c",
+      "bytes": 27798,
+      "packetId": "HRIS-WAVE7-R7-BATCH-05-OWNER-BASE-TFR-SYS-008-20261026-R1",
+      "requiredState": "SEALED_EXACT_SYS008_OWNER_AUTHORITY_PACKET_READY_FOR_INDEPENDENT_REVIEW_AND_FRESH_WORKTREES_EXECUTABLE_TOKEN_WITHHELD_PENDING_ACTIVE_V334_LEASE"
+    },
+    "independentReview": {
+      "path": "../sys-008-owner-packet-and-v334-reservation-review.v1.json",
+      "sha256": "f39fdf2577584b7825d33c1128f5cc68685041ace45765968fb7a454e89c0bf2",
+      "bytes": 8568,
+      "reviewId": "HRIS-WAVE7-R7-BATCH-05-SYS008-OWNER-PACKET-V334-RESERVATION-REVIEW-20261026-R1",
+      "requiredState": "SYS008_OWNER_PACKET_AND_RESERVED_V334_INDEPENDENTLY_REVIEWED_PASS_ZERO_P0_ZERO_P1_ZERO_P2_AUTHORITY_CARRIER_MAY_BE_PUSHED"
+    }
+  },
+  "authorityCarrier": {
+    "repository": "dwp-frontend",
+    "branch": "dwp-dev",
+    "commit": "6dfbaa8f52954e53ca54a65c3f1e1fafca13c534",
+    "tree": "fdb2cc827bf4070d140684c1b88fa2477c3a0c32",
+    "parent": "bfe02047f91c6aedc00f9b2f507ff02843274032",
+    "subject": "docs(hris): issue SYS-008 owner preparation",
+    "originRef": "origin/dwp-dev",
+    "originExactBeforeThisAppendOnlyReceipt": true,
+    "porcelainSha256BeforeThisAppendOnlyReceipt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "cleanBeforeThisAppendOnlyReceipt": true,
+    "changedPathCount": 3,
+    "nameStatusManifestSha256": "4b0b6d13b9a0d953cb11a1c572b38b5271e451f4b14671d2fe02df58872eb0a7",
+    "pathOnlyManifestSha256": "aff6d99bda59622981f18ab08808f064b01d7aebb48bb7a72845b0fbdad5af8a"
+  },
+  "materializedWorktrees": {
+    "backend": {
+      "repository": "dwp-backend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/r7-batch05/sys-008/backend",
+      "branch": "codex/hris-wave7-r7-batch05-sys-008-backend-20261026-r1",
+      "head": "7406b9d6a4ba2c3f777fad3b9e9caa609ec9ff72",
+      "tree": "b701265b8b22c4a1ada559a702091344c0686b42",
+      "expectedBaseCommit": "7406b9d6a4ba2c3f777fad3b9e9caa609ec9ff72",
+      "expectedBaseTree": "b701265b8b22c4a1ada559a702091344c0686b42",
+      "headAndTreeExact": true,
+      "porcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "clean": true,
+      "upstream": null,
+      "branchPushed": false,
+      "sourceChangesAtReceipt": [],
+      "materialized": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/r7-batch05/sys-008/frontend",
+      "branch": "codex/hris-wave7-r7-batch05-sys-008-frontend-20261026-r1",
+      "head": "6dfbaa8f52954e53ca54a65c3f1e1fafca13c534",
+      "tree": "fdb2cc827bf4070d140684c1b88fa2477c3a0c32",
+      "expectedBaseCommit": "6dfbaa8f52954e53ca54a65c3f1e1fafca13c534",
+      "expectedBaseTree": "fdb2cc827bf4070d140684c1b88fa2477c3a0c32",
+      "headAndTreeExact": true,
+      "porcelainSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "clean": true,
+      "upstream": null,
+      "branchPushed": false,
+      "sourceChangesAtReceipt": [],
+      "materialized": true
+    }
+  },
+  "migrationObservation": {
+    "stream": "PLATFORM_MAIN",
+    "observedHighWater": "V333",
+    "observedManifestFileCount": 284,
+    "observedManifestBasenameNaturalSortSha256": "ca8b2e1ad89ea6031e8d74f018b21bb41cca0d4f6fdfd6b23c1a979f6a8dd338",
+    "observedManifestBytes": 13756,
+    "candidateVersion": "V334",
+    "exactReservedPath": "dwp-platform-server/src/main/resources/db/migration/V334__create_hris_integration_control_plane.sql",
+    "candidatePathPresent": false,
+    "competingV334Present": false,
+    "activeLeaseCount": 0,
+    "sourceAuthored": false
+  },
+  "sharedReceiptCompatibilitySeal": {
+    "sys008OriginatingActionCount": 16,
+    "sys008OriginalResultUnknownReceiptTerminalAndImmutable": true,
+    "newReconcileCommandReceiptRequired": true,
+    "sys006ResultUnknownRecoveryPreserved": true,
+    "allOtherAdmittedProducerContractsPreserved": true,
+    "unscopedGlobalNarrowingAuthorized": false,
+    "existingProducerTargetedRegressionRequiredAfterActivation": true
+  },
+  "acceptanceCoverage": {
+    "requiredCount": 15,
+    "requiredIds": [
+      "SYS008-AC-01",
+      "SYS008-AC-02",
+      "SYS008-AC-03",
+      "SYS008-AC-04",
+      "SYS008-AC-05",
+      "SYS008-AC-06",
+      "SYS008-AC-07",
+      "SYS008-AC-08",
+      "SYS008-AC-09",
+      "SYS008-AC-10",
+      "SYS008-AC-11",
+      "SYS008-AC-12",
+      "SYS008-AC-13",
+      "SYS008-AC-14",
+      "SYS008-AC-15"
+    ]
+  },
+  "authority": {
+    "receiptSealed": true,
+    "activePlatformV334LeaseSuccessorMayBeIssued": true,
+    "executableSys008StartTokenMayBeIssuedOnlyAfterActiveLeaseSuccessor": true,
+    "sourceAuthoringAuthorizedByReceiptAlone": false,
+    "migrationAuthoringAuthorizedByReceiptAlone": false,
+    "testExecutionAuthorizedByReceiptAlone": false,
+    "moduleBranchCommitAuthorizedByReceiptAlone": false,
+    "moduleBranchPushAuthorizedByReceiptAlone": false,
+    "additionalWorktreeAuthorized": false,
+    "centralWriteAuthorized": false,
+    "directDwpDevMergeAuthorized": false,
+    "routeMenuOrProjectionMountAuthorized": false,
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionProviderSecretOrCustomerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextGate": "ISSUE_ONE_APPEND_ONLY_ACTIVE_EXCLUSIVE_PLATFORM_V334_LEASE_SUCCESSOR_HASH_BOUND_TO_THE_RESERVATION_PACKET_REVIEW_AND_THIS_RECEIPT_THEN_ISSUE_ONE_EXECUTABLE_SYS008_START_TOKEN; DO_NOT_AUTHOR_SOURCE_BEFORE_BOTH"
+}
