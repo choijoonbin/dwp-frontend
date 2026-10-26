@@ -1,0 +1,107 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-paired-prerequisite-central-integration-receipt-successor.v2",
+  "successorId": "HRIS-WAVE7-BATCH06-HRM013-PAIRED-PREREQUISITE-CENTRAL-INTEGRATION-VALIDATION-CORRECTION-20261026-R2",
+  "recordedAt": "2026-10-26T11:43:28Z",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "APPEND_ONLY_VALIDATION_SEMANTICS_CORRECTION_INTEGRATION_RESULT_UNCHANGED",
+  "sliceId": "BASE-TFR-HRM-013",
+  "purpose": "Correct only the post-commit validation semantics of the immutable v1 integration receipt. The paired prerequisite integration evidence and authority outcome remain unchanged.",
+  "supersedesValidationSemanticsOnly": {
+    "v1Receipt": {"path": "paired-prerequisite-central-integration-receipt.v1.json", "bytes": 10335, "sha256": "4678544555e3747acd880f83571a05239e749d20933955b8efd38f117e9cb339"},
+    "v1Validator": {"path": "validate_hrm013_paired_prerequisite_central_integration.py", "bytes": 11429, "sha256": "90f49a7975b1c87321086ad6f67345cdf881e0063fd9d0397585a05c64a2ab1f"},
+    "preservation": "Both v1 files remain immutable historical evidence. This successor replaces only their unstable current-HEAD/current-XML validation behavior and incorrect error-count reporting."
+  },
+  "artifactPins": {
+    "successorValidator": {"path": "validate_hrm013_paired_prerequisite_central_integration_successor.py", "bytes": 12412, "sha256": "cece10486c25170ea07cd993c03438d7413ed5edfbfb74627151503d41260f84"}
+  },
+  "correctionReasons": [
+    {
+      "severity": "P1",
+      "finding": "The v1 validator required frontend HEAD and origin/dwp-dev to remain exactly at the earlier admission carrier 3ae4671e. Committing the valid v1 receipt advanced frontend dwp-dev to 6cbf4f1e, so the historical validator rejected its own append-only evidence commit."
+    },
+    {
+      "severity": "P1",
+      "finding": "The v1 result payload reported errorsCount from the JUnit aggregate instead of len(errors), which could display errorsCount=0 while validator failures were present."
+    },
+    {
+      "severity": "P2",
+      "finding": "The v1 validator made build-directory JUnit XML a permanent dependency even though those exact bytes are already sealed in the immutable receipt and build outputs may be legitimately cleaned later."
+    }
+  ],
+  "frontendEvidence": {
+    "repository": "dwp-frontend",
+    "branch": "dwp-dev",
+    "receiptCommit": "6cbf4f1e7ac9831c25edbaec4ff51df0641b4c51",
+    "tree": "0d74712da16d2ce746820acc133e4d4484ae0088",
+    "parent": "3ae4671e4d98c768a5426ae9eb2bb28ac2701f2f",
+    "commitObjectBytes": 250,
+    "commitObjectSha256": "2879926988458ff9bfdf94d1531e6b24a10b8add31d7eda78cd6ce188c61daf7",
+    "treeListingBytes": 1853886,
+    "treeListingSha256": "398327ead2348d8b9bf18ffab7128bae505dedc8e1f8afd9b8b948661e20df5b",
+    "originContainedAtCorrection": true,
+    "cleanBeforeSuccessorAuthoring": true
+  },
+  "backendEvidence": {
+    "repository": "dwp-backend",
+    "branch": "dwp-dev",
+    "integrationCommit": "c50b267e7b015758ab6f7acc7fdf353eee81e631",
+    "tree": "22bd6533ab340cfb91c6cf5ab5fd6991e501e6c4",
+    "commitObjectBytes": 307,
+    "commitObjectSha256": "f7d84b285438bb76131b7cbb4c1e9d41707292961b8b6989be762be1e49bc920",
+    "treeListingBytes": 1125946,
+    "treeListingSha256": "b63cf83ccc729181bc74498bdc52630793c3a42204f8c4cb2f0cc4a386bd35c3",
+    "originContainedAtCorrection": true,
+    "cleanAtCorrection": true
+  },
+  "validationSemantics": {
+    "currentHeadEqualityRequired": false,
+    "pinnedEvidenceMustBeAncestorOfCurrentHeadAndOrigin": true,
+    "laterDescendantCommitsAllowed": true,
+    "pinnedCommitTreeAndObjectHashStillExact": true,
+    "currentRemoteTrackingMustMatchLsRemote": true,
+    "currentRepositoryCleanRequiredAtStrictExecution": true,
+    "authoringMode": "Before this successor is committed, --authoring permits only these exact two untracked v2 carrier files; all other frontend changes and every backend change fail closed.",
+    "junitXmlFuturePresenceRequired": false,
+    "junitXmlRule": "The v1 receipt's exact XML byte/hash/count evidence remains authoritative. Any of the nine XML files that still exist are rehashed and parsed; absent cleaned build outputs do not invalidate historical integration evidence.",
+    "errorCountRule": "errorsCount and p0 both equal len(errors); they never reuse JUnit error counts.",
+    "descendantSemanticsSelfCheck": "The validator proves the earlier admission commit 3ae4671e is an ancestor of receipt commit 6cbf4f1e and uses the same predicate for future current HEAD and origin refs."
+  },
+  "sealedIntegrationResult": {
+    "unchanged": true,
+    "approvalMergeCommit": "7b5bf40d5af3a8875e353f07bb56c4ad40fe8e9b",
+    "peopleMergeCommit": "c50b267e7b015758ab6f7acc7fdf353eee81e631",
+    "combinedTree": "22bd6533ab340cfb91c6cf5ab5fd6991e501e6c4",
+    "compileTasks": 4,
+    "compileResult": "BUILD_SUCCESSFUL",
+    "aggregate": {"tests": 36, "failures": 0, "errors": 0, "skipped": 0},
+    "pairedPrerequisiteIntegrationComplete": true,
+    "runtimeOrFullModuleComplete": false,
+    "businessCompletionCredit": 0
+  },
+  "authority": {
+    "validationSemanticsCorrectionComplete": true,
+    "integrationResultChanged": false,
+    "pairedPrerequisiteIntegrationComplete": true,
+    "nextOwnerRuntimeBindingGatePreparationAuthorized": true,
+    "nextOwnerRuntimeBindingGateImplementationAuthorized": false,
+    "runtimeActivationAuthorized": false,
+    "controllerOrRelayActivationAuthorized": false,
+    "moduleOwnerPacketAuthorized": false,
+    "fullHrm013ModuleImplementationAuthorized": false,
+    "frontendUiMenuOrRouteAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "runtimeCredentialBindingAuthorized": false,
+    "productionBindingAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionClaimed": false,
+    "businessCompletionCredit": 0
+  },
+  "nonClaims": [
+    "The v1 receipt or validator was edited.",
+    "A new backend integration or source change occurred.",
+    "Runtime, module-owner, full HRM-013, UI, tenant or production work is authorized.",
+    "HRM-013 business implementation is complete."
+  ],
+  "nextAction": "PREPARE_AND_INDEPENDENTLY_REVIEW_THE_NEXT_OWNER_RUNTIME_BINDING_GATE_CARRIER_WITHOUT_STARTING_ITS_IMPLEMENTATION"
+}
