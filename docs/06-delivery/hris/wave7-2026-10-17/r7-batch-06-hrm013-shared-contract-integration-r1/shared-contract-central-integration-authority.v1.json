@@ -1,0 +1,76 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-shared-contract-central-integration-authority.v1",
+  "state": "INDEPENDENTLY_REVIEWED_HASH_BOUND_SHARED_CONTRACT_FAST_FORWARD_INTEGRATION_AUTHORITY",
+  "lane": "SHARED_CONTRACT_CENTRAL_INTEGRATION",
+  "predecessorCarrier": {
+    "repository": "dwp-frontend",
+    "branch": "dwp-dev",
+    "commit": "58cad5d0b1506cda5103dfe87a54b589bdebdc52",
+    "tree": "46e0a4f71fe1d545a9dbd9f4a25d9f1284c948cb",
+    "artifactPins": [
+      {
+        "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-runtime-contract-authority-r1/hrm-013-runtime-contract-execution-authority.v1.json",
+        "bytes": 55483,
+        "sha256": "9e0c0035b8364f68ff95dc934af8766034c02ddb64cca35255ae8a85eba39fff"
+      },
+      {
+        "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-runtime-contract-authority-r1/validate_hrm013_runtime_contract_authority.py",
+        "bytes": 141680,
+        "sha256": "4860f664184cb9afa4d6f4096777691302e4fcd2281afc8054bdb743579b2e32"
+      }
+    ]
+  },
+  "sharedLaneEvidence": {
+    "repository": "dwp-backend",
+    "branch": "codex/hris-wave7-batch06-hrm013-runtime-contract-backend-20261026-r1",
+    "baseCommit": "c50b267e7b015758ab6f7acc7fdf353eee81e631",
+    "baseTree": "22bd6533ab340cfb91c6cf5ab5fd6991e501e6c4",
+    "laneCommit": "3505cb2e84fc73f97d62de385cc347c5f8c81572",
+    "laneTree": "fa84a79668fd0f133d34c81d5a649747a6c527b6",
+    "changedPaths": [
+      "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/separation/v1/Hrm013SeparationBridgeV1.java",
+      "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/separation/v1/Hrm013WorkloadProofV1.java",
+      "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/separation/v1/HrisServiceGrantAuthorityV1.java",
+      "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/separation/v1/Hrm013SafeErrorV1.java",
+      "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/separation/v1/Hrm013RequesterIdentityAuthorityV1.java",
+      "dwp-platform-contracts/src/main/java/com/dwp/platform/contracts/hris/separation/v1/Hrm013TaskDispatchV1.java",
+      "dwp-platform-contracts/src/test/java/com/dwp/platform/contract/Hrm013SeparationBridgeV1Test.java",
+      "dwp-platform-contracts/src/test/java/com/dwp/platform/contract/Hrm013WorkloadProofV1Test.java",
+      "dwp-platform-contracts/src/test/java/com/dwp/platform/contract/HrisServiceGrantAuthorityV1Test.java",
+      "dwp-platform-contracts/src/test/java/com/dwp/platform/contract/Hrm013RequesterIdentityAuthorityV1Test.java",
+      "dwp-platform-contracts/src/test/java/com/dwp/platform/contract/Hrm013TaskDispatchV1Test.java"
+    ],
+    "targetedVerificationReceiptSha256": "49b03a307cf9364eab7dd35b0bb98a7b5611d68158e99d05c3f6af24904aa4c2",
+    "postImplementationReviewReceiptSha256": "c1fe5fe2c35fd240c8f765d8927b49f307234a968d68889e4b8fb7a0f248b981"
+  },
+  "centralIntegrationBoundary": {
+    "receiptPath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/receipts/shared-central-integration-authority.v1.json",
+    "receiptSchema": "dwp.hris.wave7.hrm013-shared-contract-central-integration-authority-receipt.v1",
+    "receiptState": "HASH_BOUND_ZERO_FINDING_SHARED_CONTRACT_FAST_FORWARD_INTEGRATION_AUTHORITY",
+    "requiredDecision": "GO_FOR_SHARED_CONTRACT_FAST_FORWARD_DWP_DEV_INTEGRATION_ONLY",
+    "integrationMode": "DIRECT_FAST_FORWARD_ONLY",
+    "externalAttestationRequired": true,
+    "directDwpDevMergeAuthorizedBeforeExternalAttestation": false
+  },
+  "historicalBackendDescendantGovernance": {
+    "assumesAllHistoricalBackendDescendantGovernance": true,
+    "governingValidatorPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-shared-contract-integration-r1/validate_hrm013_shared_contract_integration.py",
+    "predecessorValidatorPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-runtime-contract-authority-r1/validate_hrm013_runtime_contract_authority.py",
+    "oneReviewedReceiptPerBackendDescendantRequired": true,
+    "oneOrderedFrontendGovernanceCarrierPerBackendDescendantRequired": true,
+    "sharedElevenBlobMutationAuthorized": false
+  },
+  "authority": {
+    "centralIntegrationAuthorityPrepared": true,
+    "independentReviewComplete": true,
+    "sharedContractFastForwardIntegrationAuthorizedAfterExternalReceipt": true,
+    "historicalBackendDescendantGovernanceAssumed": true,
+    "sharedContractBlobMutationAuthorized": false,
+    "authGenerationAuthorized": false,
+    "migrationAuthoringAuthorized": false,
+    "runtimeImplementationAuthorized": false,
+    "productionBindingAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0
+  }
+}

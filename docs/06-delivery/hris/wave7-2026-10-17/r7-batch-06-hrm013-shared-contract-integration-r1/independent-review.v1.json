@@ -1,0 +1,63 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-shared-contract-central-integration-authority-independent-review.v1",
+  "reviewedAt": "2026-10-26T16:37:45Z",
+  "reviewer": "INDEPENDENT_HRM013_SHARED_CONTRACT_CENTRAL_INTEGRATION_REVIEW",
+  "scope": {
+    "authorityPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-shared-contract-integration-r1/shared-contract-central-integration-authority.v1.json",
+    "validatorPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-shared-contract-integration-r1/validate_hrm013_shared_contract_integration.py",
+    "packagePath": "package.json",
+    "reviewedBoundaries": [
+      "CURRENT_RUNTIME_CONTRACT_AUTHORITY_AND_VALIDATOR_PINS",
+      "EXACT_SHARED_LANE_COMMIT_TREE_AND_ELEVEN_PATHS",
+      "TARGETED_AND_POST_IMPLEMENTATION_RECEIPT_PINS",
+      "EXTERNAL_CENTRAL_INTEGRATION_ATTESTATION_REQUIRED",
+      "SIXTH_VALIDATOR_HISTORICAL_DESCENDANT_GOVERNANCE_ASSUMPTION",
+      "NO_SHARED_BLOB_MUTATION_RUNTIME_MIGRATION_AUTH_OR_PRODUCTION_AUTHORITY"
+    ]
+  },
+  "findings": {
+    "p0": [],
+    "p1": [],
+    "p2": [],
+    "notes": [
+      "The later carrier pins the current runtime-contract authority and validator and authorizes only externally attested direct fast-forward integration.",
+      "The immutable sixth validator assumes all historical backend descendant governance using one reviewed receipt and one ordered frontend governance carrier per descendant.",
+      "No shared-contract blob mutation, auth generation, migration authoring, runtime implementation or production release is authorized."
+    ]
+  },
+  "finalVerdict": {
+    "p0": 0,
+    "p1": 0,
+    "p2": 0,
+    "decision": "GO_FOR_SHARED_CONTRACT_FAST_FORWARD_DWP_DEV_INTEGRATION_ONLY"
+  },
+  "authority": {
+    "independentReviewComplete": true,
+    "carrierCommitAndPushAuthorized": true,
+    "externalCentralIntegrationAttestationRequired": true,
+    "fastForwardIntegrationAuthorizedBeforeExternalAttestation": false,
+    "historicalBackendDescendantGovernanceReviewed": true,
+    "authGenerationAuthorized": false,
+    "migrationAuthoringAuthorized": false,
+    "runtimeImplementationAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0
+  },
+  "artifactPins": [
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-shared-contract-integration-r1/shared-contract-central-integration-authority.v1.json",
+      "bytes": 4774,
+      "sha256": "a55181b2477c6a0d7edb6aaba42248e12709d39ab65bc9fa203838cc4000becc"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-shared-contract-integration-r1/validate_hrm013_shared_contract_integration.py",
+      "bytes": 78934,
+      "sha256": "d177b30ca101a1cc3fd69749ff064d5a8e73224ff308fe812f18690ef291d49e"
+    },
+    {
+      "path": "package.json",
+      "bytes": 14858,
+      "sha256": "ca2693e843d440191a84f29d417e553c8296b5b93a1dcdc8644b13d1a92eb1bb"
+    }
+  ]
+}
