@@ -1,0 +1,271 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-05-sys008-sequencing-exit-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH-05-SYS008-SEQUENCING-EXIT-20261026-R1",
+  "recordedAt": "2026-10-26T14:27:25+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "BATCH05_LANE_4_SYS008_SEQUENCING_EXIT_ACCEPTED_DEFAULT_OFF_ZERO_ENROLLMENT_ZERO_PROVIDER_ZERO_BUSINESS_CREDIT_TIM004_SEMANTIC_CLOSURE_NEXT_P0_GATES_CARRIED",
+  "sliceId": "BASE-TFR-SYS-008",
+  "moduleSession": "HRIS-SYS",
+  "purpose": "Close only fixed Batch-05 lane order 4 after exact central prerequisite, module-source integration and independent source, design and evidence review. Preserve all route, menu, provider, secret, scheduler, broker, activation, enrollment and full-business-completion boundaries, then permit only TIM-004 semantic closure as lane order 5 while carrying both TIM P0 gates unchanged.",
+  "immutability": {
+    "sealed": true,
+    "appendOnly": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_RECEIPT_ID_AND_SHA256",
+    "predecessorMutation": "FORBIDDEN"
+  },
+  "authorityBasis": {
+    "batch05Preflight": {
+      "path": "../r7-batch-05-preflight-r1/semantic-dependency-migration-preflight.v1.json",
+      "sha256": "8f7a0d38c4dc86873e4930e5a21dcc0a269c39512508d86dd529b40015237e0f",
+      "bytes": 37443
+    },
+    "centralPrerequisiteIntegration": {
+      "path": "sys-008-central-integration-receipt.v1.json",
+      "sha256": "93a72c373ef19a5474924547012a5c243ab330ae5eb0b5eb1eeed5c93d63f0bf",
+      "bytes": 17116,
+      "requiredState": "EXACT_SYS008_CENTRAL_DELTA_COMMITTED_PUSHED_AND_ADMITTED_V60_V269_GATEWAY_IAQ_TYPED_EVENT_OPAQUE_SHARED_BRIDGE_DUAL_PROJECTION_DEFAULT_OFF_ZERO_ENROLLMENT_OWNER_PACKET_AND_RESERVED_NOT_ACTIVE_V334_MAY_BE_PREPARED"
+    },
+    "moduleSourceIntegration": {
+      "path": "sys-008-module-source-integration-receipt.v1.json",
+      "sha256": "e309c5b67fdbc7400f575df81e39e8da12dada1eeb44f8ec334d5b66b54fa73e",
+      "bytes": 8488,
+      "gitBlob": "0ea50bfef7b3ac18b8ff344d0c56bc6ff4030b2b",
+      "carrierCommit": "e815b8ec112db73f1db157d8d489f8bdaeba4e21",
+      "carrierTree": "b13f7c3da9c1b14482b24aec5c8b68ec31ced1ce",
+      "requiredState": "EXACT_SYS008_MODULE_HEADS_NO_FF_MERGED_PUSHED_42_OF_42_BLOB_IDENTICAL_V334_LEASE_CONSUMED_DEFAULT_OFF_ZERO_ENROLLMENT_ZERO_PROVIDER"
+    },
+    "moduleResults": [
+      {
+        "path": "../r7-batch-05-module-results-r1/base-tfr-sys-008/acceptance-results.v1.json",
+        "sha256": "6ceaf13809ecf3d49c0c088cb10a5edf7fbfa83c884a844caa8a497b12bd200c",
+        "bytes": 13856,
+        "gitBlob": "1b9f2747464465d1df393cdb255dbe8a35218fcb"
+      },
+      {
+        "path": "../r7-batch-05-module-results-r1/base-tfr-sys-008/changed-path-and-no-recount.v1.json",
+        "sha256": "8940161ae261d0c904f4450fff6acc73feebb1f1c0a973605ec525cdf96c6701",
+        "bytes": 10777,
+        "gitBlob": "264da630809e1db55763e70a49681664fc6f4748"
+      },
+      {
+        "path": "../r7-batch-05-module-results-r1/base-tfr-sys-008/platform-v334-and-postgres-evidence.v1.json",
+        "sha256": "237d2f0912afcc9514bbaf922a076f78981334e9f81af669c5bab0f2b0d6c97b",
+        "bytes": 8736,
+        "gitBlob": "e96f4b40d16a796b192a41532e2c8c8038c88b40"
+      },
+      {
+        "path": "../r7-batch-05-module-results-r1/base-tfr-sys-008/module-result-evidence.v1.json",
+        "sha256": "096ef97f763567395aa9c30728e3e9cb6aac9584508bd18261271ecb99abd60e",
+        "bytes": 9419,
+        "gitBlob": "cdfe8bd7d766aee91562388af852ed98d9a783aa"
+      }
+    ]
+  },
+  "acceptedLaneResult": {
+    "order": 4,
+    "sliceId": "BASE-TFR-SYS-008",
+    "moduleSession": "HRIS-SYS",
+    "centralPrerequisiteIntegrated": true,
+    "moduleSourceIntegrated": true,
+    "centralAndModuleCommitsPushed": true,
+    "acceptanceCriteriaPassed": "15_OF_15_FOR_SOURCE_ADMISSION",
+    "goldenScenariosPassed": "13_OF_13_FOR_SOURCE_ADMISSION",
+    "independentReviewFindings": {
+      "p0": 0,
+      "p1": 0,
+      "p2": 0,
+      "decision": "GO"
+    },
+    "admittedBlobIdentity": "42_OF_42_MATCH",
+    "mergeConflicts": 0,
+    "runtimeDefault": "OFF",
+    "tenantEnrollmentCount": 0,
+    "providerBindingCount": 0,
+    "secretBindingCount": 0,
+    "schedulerBindingCount": 0,
+    "brokerBindingCount": 0,
+    "frontendMountedRouteCount": 0,
+    "frontendMountedMenuCount": 0,
+    "runtimeCallsWhenDisabled": 0,
+    "fullBusinessSliceComplete": false,
+    "businessCompletionIncrement": 0,
+    "acceptedState": "INTEGRATED_DEFAULT_OFF_TECHNICAL_SLICE_WITH_EXPLICIT_RUNTIME_AND_BUSINESS_RESIDUALS"
+  },
+  "integratedHeads": {
+    "backend": {
+      "sourceHead": "57deb1c07b92c3f0cd80d445980e6af31c01847e",
+      "mergeCommit": "d9f84f9f934cc196f8b06462bb3fa972115eea8c",
+      "mergeTree": "130078cf93ec00996657ca8e0f361745e020cc45",
+      "admittedBlobCount": 30,
+      "admittedBlobMismatchCount": 0
+    },
+    "frontend": {
+      "sourceHead": "d7835dbd9388026070a360f7fe0e8fbf5c931933",
+      "mergeCommit": "3866bc13fffff441551cc76af1fe0f7d26bc25fa",
+      "mergeTree": "8d2d8f5cbac19ab6ee7cb4dbc93390d984bb5d4a",
+      "admittedBlobCount": 12,
+      "admittedBlobMismatchCount": 0
+    }
+  },
+  "migrationClosure": {
+    "consumedLease": {
+      "activationId": "HRIS-WAVE7-R7-BATCH-05-MIGRATION-LEASE-ACTIVATION-SYS008-20261026-R1",
+      "stream": "PLATFORM_MAIN",
+      "version": "V334",
+      "sliceId": "BASE-TFR-SYS-008",
+      "state": "CONSUMED_CENTRALLY_INTEGRATED"
+    },
+    "activeMigrationLeaseCountAfterExit": 0,
+    "migrationHighWater": {
+      "PEOPLE_MAIN": "V60",
+      "PERFORMANCE": "V20",
+      "PAYROLL_MAIN": "V55",
+      "PLATFORM_MAIN": "V334",
+      "TIME_MAIN": "V14",
+      "AUTH_MAIN": "V269",
+      "NOTIFICATION_MAIN": "V35",
+      "APPROVAL_MAIN": "V58",
+      "PRODUCT_AUTHORIZATION_BUNDLE": "v60"
+    },
+    "nextLeaseIssued": false
+  },
+  "fixedOrderAfterExit": {
+    "closed": [
+      "BASE-TFR-HRM-012",
+      "BASE-TFR-PAY-004",
+      "BASE-TFR-PER-008",
+      "BASE-TFR-SYS-008"
+    ],
+    "next": "BASE-TFR-TIM-004",
+    "remainingAfterNext": [],
+    "reorderingAuthorized": false
+  },
+  "tim004NextBoundary": {
+    "order": 5,
+    "moduleSession": "HRIS-TIM",
+    "boundedContext": "TIME_LEAVE",
+    "businessMeaning": "Time scheduling reuses the central allowlisted automation definition, run, attempt, retry and receipt contracts without duplicating Platform control-plane ownership.",
+    "semanticLineage": "TFR-TIM-004::TIM-PLATFORM-AUTOMATION::SYS-API-017|SYS-API-018|SYS-API-019|SYS-API-020",
+    "sourceFamily": {
+      "sourceRef": "TFR-TIM-004",
+      "sourceFamilySha256": "7bec2dd1d923fff59069e8b842f0ad7d23393eda506b5afe2f5443df741c65fa",
+      "sourceRowCount": 5
+    },
+    "informationArchitectureBoundary": {
+      "classification": "NON_UI_SUPPORTING_SLICE",
+      "timeOwnedPrimaryEntryQuery": "NONE",
+      "timeOwnedCanonicalRoute": "NONE",
+      "centralSupportingQuery": "IAQ-059",
+      "centralSupportingRoute": "/hr/settings/operations",
+      "centralPrimarySliceId": "BASE-TFR-SYS-002",
+      "platformAutomationTechnicalOwnerSlice": "BASE-TFR-SYS-006",
+      "decision": "CENTRAL_REUSE_ONLY_NO_TIM_ROUTE_INVENTION_NO_SYS_PRIMARY_OWNERSHIP_TRANSFER_NO_COMPLETION_RECOUNT"
+    },
+    "ownerContracts": [
+      "SYS-API-017:automation definitions",
+      "SYS-API-018:queue run",
+      "SYS-API-019:run attempt item receipt",
+      "SYS-API-020:new retry attempt"
+    ],
+    "conditionsBeforeSeparatePacket": [
+      "Seal the exact Time handler, job manifest, payload, owner result, idempotency, retry, attempt and receipt boundary against the admitted Platform automation control plane.",
+      "Prove a Time-owned persistence delta beyond V14 before any V15 reservation.",
+      "Preserve SYS-002 and SYS-006 IA and control-plane ownership and carry both TIM P0 gates without reinterpretation."
+    ],
+    "observedTimeMigrationHighWater": "V14",
+    "candidateVersionOnlyIfTimeOwnedSchemaDeltaIsProven": "V15",
+    "defaultMigrationIfPlatformAndExistingTimePersistenceReuseOnly": "NONE",
+    "p0GatesMustRemainOpenDuringSemanticClosure": true,
+    "packetIssued": false,
+    "startTokenIssued": false,
+    "migrationLeaseIssued": false,
+    "worktreeMaterialized": false,
+    "sourceAuthoringAuthorized": false,
+    "requiredNextArtifact": "TIM004_APPEND_ONLY_SEMANTIC_DISPOSITION"
+  },
+  "carriedOpenGates": [
+    {
+      "gateId": "TIM_CLOSE_PERIOD_DEFINITION_PRODUCER",
+      "severity": "P0",
+      "state": "OPEN_EXTERNAL_SOURCE_AUTHORITY_GATE"
+    },
+    {
+      "gateId": "TIM_CLOSE_TRUSTED_OWNER_HEADER_ISSUER",
+      "severity": "P0",
+      "state": "OPEN_BEFORE_ANY_TENANT_ENROLLMENT"
+    }
+  ],
+  "observedRepositoryPinsBeforeExitCarrier": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "d9f84f9f934cc196f8b06462bb3fa972115eea8c",
+      "tree": "130078cf93ec00996657ca8e0f361745e020cc45",
+      "originExact": true,
+      "clean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "e815b8ec112db73f1db157d8d489f8bdaeba4e21",
+      "tree": "b13f7c3da9c1b14482b24aec5c8b68ec31ced1ce",
+      "originExact": true,
+      "committedTreeCleanBeforeDraft": true,
+      "expectedUntrackedOnly": [
+        "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-05-central-admission-r1/sys-008-sequencing-exit-receipt.v1.json"
+      ]
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "originExact": true,
+      "clean": true
+    }
+  },
+  "portfolioAccounting": {
+    "universe": 86,
+    "retired": 2,
+    "active": 84,
+    "completedBeforeBatch05": 26,
+    "sys008BusinessCompletionIncrement": 0,
+    "completedAfterSys008Exit": 26,
+    "activeIncompleteAfterSys008Exit": 58
+  },
+  "verificationPolicyApplied": {
+    "boundedChecksOnly": true,
+    "repositoryWideSuiteRun": false,
+    "unaffectedPassingTargetRerun": false,
+    "moduleTestRerun": false,
+    "jsonSyntaxCheckRequired": true,
+    "directReferenceHashAndByteCheckRequired": true,
+    "carrierAncestryAndRepositoryPinCheckRequired": true,
+    "independentDocumentReviewRequiredBeforeCommit": true
+  },
+  "authority": {
+    "sys008SequencingExitAccepted": true,
+    "sys008FullBusinessSliceComplete": false,
+    "sys008BusinessCompletionIncrement": 0,
+    "tim004SemanticClosureMayBegin": true,
+    "tim004PacketTokenWorktreeLeaseOrSourceAuthorizedByThisReceipt": false,
+    "timP0GatesClosed": false,
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "providerOrSecretBindingAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "batch05Complete": false,
+    "r7Complete": false
+  },
+  "decision": "CLOSE_ONLY_SYS008_SEQUENCE_LANE_WITH_ZERO_BUSINESS_CREDIT_AND_ADVANCE_ONLY_TO_TIM004_SEMANTIC_CLOSURE_WITH_P0_GATES_CARRIED",
+  "nonClaims": [
+    "BASE-TFR-SYS-008 is fully complete as a production business slice.",
+    "A provider, secret, scheduler, broker, route, menu, feature or tenant was activated, mounted, bound or enrolled.",
+    "BASE-TFR-TIM-004 received an owner packet, token, worktree, migration lease, central authorization or source authority.",
+    "Either inherited TIM P0 gate is closed or reinterpreted.",
+    "A Time-owned route, menu or duplicate Platform automation owner was introduced.",
+    "Batch-05, R7 or HRIS is complete."
+  ],
+  "nextAction": "Perform one bounded TIM-004 semantic closure on the pinned canon through an HRIS-TIM expert while carrying both TIM P0 gates unchanged. Issue no packet, token, worktree, V15 lease, central authorization or source authority until that disposition is independently reviewed and separately admitted."
+}
