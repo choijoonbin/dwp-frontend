@@ -1,0 +1,60 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-auth-v271-execution-authority-independent-review.v1",
+  "reviewedAt": "2026-10-26T18:04:08Z",
+  "reviewer": "INDEPENDENT_HRM013_AUTH_V271_AUTHORITY_REVIEW",
+  "scope": {
+    "authorityPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-v271-authority-r1/auth-v271-execution-authority.v1.json",
+    "validatorPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-v271-authority-r1/validate_hrm013_auth_v271_authority.py",
+    "packagePath": "package.json",
+    "reviewedBoundaries": [
+      "EXACT_AUTH_V62_INTEGRATION_CARRIER_AND_RECEIPT_PINS",
+      "EXACT_BACKEND_GENERATION_BASE_AND_V271_MIGRATION_PATH",
+      "DEDICATED_CLEAN_WORKTREE_AND_TARGETED_VERIFICATION_REQUIRED",
+      "NO_DIRECT_BACKEND_DWP_DEV_INTEGRATION",
+      "NO_RUNTIME_ACTIVATION_TENANT_OR_PRODUCTION_AUTHORITY"
+    ]
+  },
+  "findings": {
+    "p0": [],
+    "p1": [],
+    "p2": [],
+    "notes": [
+      "The carrier may authorize only one separately receipted Auth V271 migration lane from the exact integrated Auth v62 commit.",
+      "Backend dwp-dev integration remains forbidden until descendant governance and successor delegation receipts are complete.",
+      "No runtime, activation, tenant enrollment, production binding or release authority is granted."
+    ]
+  },
+  "finalVerdict": {
+    "p0": 0,
+    "p1": 0,
+    "p2": 0,
+    "decision": "GO_FOR_AUTH_V271_AUTHORITY_CARRIER_COMMIT_AND_PUSH_ONLY"
+  },
+  "authority": {
+    "independentReviewComplete": true,
+    "carrierCommitAndPushAuthorized": true,
+    "cleanWorktreeMaterializationAuthorizedAfterCarrierPush": true,
+    "authV271AuthoringAuthorizedAfterCleanReceipt": true,
+    "backendDwpDevIntegrationAuthorized": false,
+    "runtimeImplementationAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0
+  },
+  "artifactPins": [
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-v271-authority-r1/auth-v271-execution-authority.v1.json",
+      "bytes": 2286,
+      "sha256": "c59f8e3851e25903e040475c9572452872776d59f251a8489540b1d5c199b0da"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-v271-authority-r1/validate_hrm013_auth_v271_authority.py",
+      "bytes": 64903,
+      "sha256": "e99ea3a5b74f27917730493ca708678b9147534775ac6100195a8beb263567f1"
+    },
+    {
+      "path": "package.json",
+      "bytes": 15285,
+      "sha256": "72a0490893c3018cb3d30e31ea06b7af12c2a19dc4c80add1dd5ec3de522d655"
+    }
+  ]
+}

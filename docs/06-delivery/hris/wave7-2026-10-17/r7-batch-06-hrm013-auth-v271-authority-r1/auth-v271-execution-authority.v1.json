@@ -1,0 +1,45 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-auth-v271-execution-authority.v1",
+  "state": "INDEPENDENTLY_REVIEWED_HASH_BOUND_AUTH_V271_EXECUTION_AUTHORITY",
+  "lane": "AUTH_V271_EXCLUSIVE_MIGRATION",
+  "predecessorCarrier": {
+    "repository": "dwp-frontend",
+    "branch": "dwp-dev",
+    "commit": "4b24bdefb0f61d5cb61d89d08397975e45ac389e",
+    "tree": "cc7f9cfbf100a1460a0e711a8a6f121b3fbbac7c",
+    "v62IntegrationCarrierCommit": "4b24bdefb0f61d5cb61d89d08397975e45ac389e",
+    "v62IntegrationCarrierTree": "cc7f9cfbf100a1460a0e711a8a6f121b3fbbac7c",
+    "v62CentralIntegrationReceiptSha256": "ce2c972ca8bced36f9401a9d7d8c2e2f8e5d3d1e897ccdb8f7df693265007461"
+  },
+  "backendImplementation": {
+    "repository": "dwp-backend",
+    "branch": "codex/hris-wave7-batch06-hrm013-auth-v271-backend-20261027-r1",
+    "baseCommit": "d7a6ed8ae9ae2d91fd68c8d0a31a882e4da101f5",
+    "baseTree": "fdf087a186c3084fbca6fcad2c32b119d8865675",
+    "operation": "AUTHOR_VALIDATE_COMMIT_AND_PUSH_AUTH_V271_ONLY",
+    "requiredDirectChild": true,
+    "requiredMigrationPath": "dwp-auth-server/src/main/resources/db/migration/V271__create_hris_service_grant_authority.sql",
+    "databaseMigrationVersion": 271,
+    "directDwpDevIntegrationAuthorized": false
+  },
+  "delegationBoundary": {
+    "receiptPath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/receipts/auth-v271-successor-delegation-authority.v1.json",
+    "receiptSchema": "dwp.hris.wave7.hrm013-auth-v271-successor-delegation-authority-receipt.v1",
+    "receiptState": "HASH_BOUND_REVIEWED_AUTH_V271_SUCCESSOR_CONTROL_DELEGATION",
+    "requiredDecision": "GO_FOR_AUTH_V271_SUCCESSOR_CONTROL_DELEGATION_ONLY",
+    "externalAttestationRequired": true,
+    "currentV62AuthorityGrantsV271": false
+  },
+  "authority": {
+    "independentReviewComplete": true,
+    "authV271ReservationAuthorized": true,
+    "authV271ImplementationAuthorizedAfterSeparateCleanWorktreeReceipt": true,
+    "laneCommitAndPushAuthorizedAfterTargetedVerification": true,
+    "backendDwpDevIntegrationAuthorized": false,
+    "runtimeImplementationAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0
+  }
+}
