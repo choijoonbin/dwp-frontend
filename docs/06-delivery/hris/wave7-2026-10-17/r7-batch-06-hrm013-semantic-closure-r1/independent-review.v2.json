@@ -1,0 +1,91 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-06-hrm013-central-authority-amendment-independent-review.v2",
+  "reviewId": "HRIS-WAVE7-R7-BATCH-06-HRM013-CENTRAL-AUTHORITY-REVIEW-20261026-R2",
+  "recordedAt": "2026-10-26T08:47:41Z",
+  "recordedBy": "INDEPENDENT_HRM013_CENTRAL_AUTHORITY_REVIEWER",
+  "state": "INDEPENDENTLY_REVIEWED_PASS_ZERO_P0_ZERO_P1_ZERO_P2_EXECUTION_TOKEN_MAY_HASH_BIND",
+  "sliceId": "BASE-TFR-HRM-013",
+  "module": "HRIS-HRM",
+  "reviewedArtifacts": [
+    {
+      "path": "hrm-013-central-contract-authorization-successor.v1.json",
+      "sha256": "910cd09f670c80d8d2924996ec5180f6cf456c17500166c2eb3229d6fdff0797",
+      "bytes": 19948,
+      "carrierCommit": "f0180f4690bff57a4488662cea570bc6f1d1db42"
+    },
+    {
+      "path": "independent-review.v1.json",
+      "sha256": "f82db8500ce7985f9bdd80e0d8735b95c937eb741931e2f3414e2891f91a122c",
+      "bytes": 7410,
+      "carrierCommit": "f0180f4690bff57a4488662cea570bc6f1d1db42"
+    },
+    {
+      "path": "hrm-013-central-contract-authorization-successor.v2.json",
+      "sha256": "3d0ee60e5fc4e136f397cfd7602d4578ce796bd6597baf058387fcb3f8c2a7b7",
+      "bytes": 10814
+    },
+    {
+      "path": "hrm-013-central-worktree-materialization-receipt.v1.json",
+      "sha256": "81d10ae6864f8c70a3b1f820b52cabd22168cba76327b9f8bb1cb3d743b1e908",
+      "bytes": 2566
+    }
+  ],
+  "reviewMethod": [
+    "Compared the amendment against the sealed v1 successor and independent review.",
+    "Inspected the current backend and frontend generators, immutable lineage validators, fixture consumers, Gateway feature gate and browser firewall.",
+    "Required exact paths for every mechanical consumer that otherwise remains pinned to v60 while forbidding owner runtime activation."
+  ],
+  "resolvedFindings": [
+    {
+      "severity": "P1",
+      "finding": "The v1 allowlist omitted XCON expected-output tests, Auth v61 runtime lineage, immutable loader and lineage consumers.",
+      "resolution": "The v2 amendment authorizes only the exact validator, release-lineage and focused test paths needed to parse and prove the v61 DRAFT while preserving v1 through v60."
+    },
+    {
+      "severity": "P1",
+      "finding": "The product-authorization fixture generator, generated fixture and backend/frontend fixture consumers would remain stale after v61 generation.",
+      "resolution": "The v2 amendment closes the deterministic fixture generator/output and exact checksum, latest-version and lineage-size consumers without changing scenario semantics."
+    },
+    {
+      "severity": "P1",
+      "finding": "The frontend synchronizer and browser firewall were pinned to v60 and a PER-008-only catalog view.",
+      "resolution": "The v2 amendment authorizes the synchronizer plus exact runtime 65, catalog-only 4 and official HCM PAGE total 69 firewall assertions."
+    },
+    {
+      "severity": "P1",
+      "finding": "Default-OFF could not be proven before People owner dispatch for the three reserved HRM-013 routes.",
+      "resolution": "The v2 amendment permits only addition of those route keys to the Gateway tenant-feature-governed set and focused rollout-000/100 no-owner-call tests."
+    },
+    {
+      "severity": "P2",
+      "finding": "The browser firewall amendment initially described relative count movement rather than exact closed totals.",
+      "resolution": "Runtime 65, catalog-only 4 and official total 69 plus the exact four catalog-only keys are sealed."
+    }
+  ],
+  "postResolutionSeverityCounts": {
+    "P0": 0,
+    "P1": 0,
+    "P2": 0
+  },
+  "verifiedBoundaries": [
+    "Product authorization v61 and Auth V270 remain DRAFT or RESERVED_NOT_ACTIVE with automatic import disabled, baseline feature OFF and zero activation or enrollment.",
+    "The Gateway change only forces Auth evaluation before owner dispatch; it forwards no HRM-013 purpose, population, field or step-up evidence.",
+    "The generated People v61 PEP remains unmounted while HcmV3PepRegistry stays on v60.",
+    "No People V61 SQL, owner-domain source, callback binding, navigation, menu, page, event publisher, consumer or subscription is authorized.",
+    "All implementation and test paths are the union of the v1 successor and the exact append-only v2 amendment."
+  ],
+  "authority": {
+    "independentReviewComplete": true,
+    "boundedCentralImplementationTokenMayIssue": true,
+    "centralSourceAuthoringAuthorizedByReviewAlone": false,
+    "moduleSourceAuthoringAuthorized": false,
+    "peopleV61LeaseActive": false,
+    "callbackBindingAuthoringAuthorized": false,
+    "routeOrMenuMountAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionBindingAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "HASH_BIND_THIS_REVIEW_AND_V2_AMENDMENT_IN_THE_BOUNDED_CENTRAL_IMPLEMENTATION_TOKEN_THEN_IMPLEMENT_FOCUSED_REVIEW_AND_ADMIT"
+}

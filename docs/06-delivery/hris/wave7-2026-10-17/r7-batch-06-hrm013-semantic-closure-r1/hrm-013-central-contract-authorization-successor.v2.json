@@ -1,0 +1,159 @@
+{
+  "schema": "hris.central-authorization-successor.v2",
+  "successorId": "HRIS-WAVE7-R7-BATCH06-HRM013-CENTRAL-AUTHORIZATION-20261026-R2",
+  "recordedAt": "2026-10-26T08:26:23Z",
+  "state": "PENDING_INDEPENDENT_REVIEW_APPEND_ONLY_PATH_CLOSURE",
+  "sliceId": "BASE-TFR-HRM-013",
+  "module": "HRIS-HRM",
+  "predecessor": {
+    "path": "hrm-013-central-contract-authorization-successor.v1.json",
+    "sha256": "910cd09f670c80d8d2924996ec5180f6cf456c17500166c2eb3229d6fdff0797",
+    "bytes": 19948,
+    "carrierCommit": "f0180f4690bff57a4488662cea570bc6f1d1db42",
+    "reviewPath": "independent-review.v1.json",
+    "reviewSha256": "f82db8500ce7985f9bdd80e0d8735b95c937eb741931e2f3414e2891f91a122c",
+    "reviewBytes": 7410,
+    "review": "P0=0;P1=0;P2=0"
+  },
+  "correction": {
+    "reason": "Read-only pre-execution inspection proved that the v1 semantic delta cannot pass its own focused generators and immutable-lineage gates without a closed set of supporting runtime validator, lineage-test and frontend synchronizer paths. XCON generation adds one expected type and output; the Auth seed loader validates the new latest alias; and the frontend synchronizer and browser firewall retain exact v60 and PER-008-only constants. This amendment closes only those mechanical dependencies and does not add business or activation authority.",
+    "backendAdditions": [
+      {
+        "path": "scripts/tests/test_generate_hris_contracts.py",
+        "allowedChange": "Add the XCON-028 expected Java type and exact 14-field closure, update the aggregate contract and generated-output counts by one, and assert byte-preserving XCON-001 through XCON-027 lineage."
+      },
+      {
+        "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationContractValidator.java",
+        "allowedChange": "Recognize only hcm.operations.separation.manage with exact HRIS_DUTY_SEPARATION_MAKER and WORKFORCE_TARGET_POPULATION required-responsibility semantics so the immutable v61 draft can be parsed fail-closed."
+      },
+      {
+        "path": "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationReleaseLineage.java",
+        "allowedChange": "Append the exact v61 checksum and counts to the immutable release lineage so the generated latest alias and index are accepted as DRAFT only."
+      },
+      {
+        "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/config/ProductAuthorizationSeedLoaderTest.java",
+        "allowedChange": "Advance the immutable draft index and latest-alias expectations from v60 to v61 without authorizing approval or activation."
+      },
+      {
+        "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationContractReleaseLineageTest.java",
+        "allowedChange": "Append v61 to the exact immutable release lineage and retain all v1 through v60 meanings."
+      },
+      {
+        "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationReleaseLineageTest.java",
+        "allowedChange": "Append the exact reviewed v61 successor assertions to the existing recent-release lineage."
+      },
+      {
+        "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationV61ContractTest.java",
+        "allowedChange": "Add focused exact-delta, fail-closed capability, predicate, route and generated-artifact tests for v61."
+      },
+      {
+        "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/repository/TenantFeatureActivationV270MigrationContractTest.java",
+        "allowedChange": "Add static V270 catalog-only, checksum, default-OFF and zero-derived-authority proof."
+      },
+      {
+        "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/tenantfeatureactivation/TenantFeatureActivationV270PostgresTest.java",
+        "allowedChange": "Add clean and V269-to-V270 PostgreSQL proof with zero activation, enrollment, assignment and grant rows."
+      },
+      {
+        "path": "scripts/generate-product-authorization-fixtures.py",
+        "allowedChange": "Append v61 to the immutable fixture lineage while preserving the exact v1 through v60 fixture bindings."
+      },
+      {
+        "path": "contracts/product-authorization/pilot-fixtures.v1.generated.json",
+        "allowedChange": "Regenerate the deterministic v61 fixture lineage output only."
+      },
+      {
+        "path": "scripts/tests/test_product_authorization_v60.py",
+        "allowedChange": "Keep the v60 contract test pinned to the fixed v60 artifact rather than assuming v60 is the latest generated index entry."
+      },
+      {
+        "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/support/PilotAuthorizationFixtureAdapter.java",
+        "allowedChange": "Advance only the generated fixture checksum, latest alias version to 61, lineage size to 61 and exact v60/v61 terminal checksum pins; preserve all fixture authorization meanings."
+      },
+      {
+        "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/support/PilotAuthorizationFixtureAdapterTest.java",
+        "allowedChange": "Verify the exact v61 fixture lineage pins without changing any fixed authorization scenario semantics."
+      },
+      {
+        "path": "dwp-gateway/src/test/java/com/dwp/gateway/support/PilotAuthorizationFixtureAdapter.java",
+        "allowedChange": "Advance only the generated fixture checksum, latest alias version to 61, lineage size to 61 and exact v60/v61 terminal checksum pins; preserve all fixture authorization meanings."
+      },
+      {
+        "path": "dwp-gateway/src/test/java/com/dwp/gateway/support/PilotAuthorizationFixtureAdapterTest.java",
+        "allowedChange": "Verify the exact v61 fixture lineage pins without changing any fixed authorization scenario semantics."
+      },
+      {
+        "path": "dwp-gateway/src/main/java/com/dwp/gateway/filter/ProductSurfaceDecisionContextFilter.java",
+        "allowedChange": "Add only the three HRM-013 route keys to the tenant-feature-governed route set so baseline OFF and zero enrollment deny before any People owner call; do not add purpose, population or field forwarding."
+      },
+      {
+        "path": "dwp-gateway/src/test/java/com/dwp/gateway/ProductSurfaceDecisionContextFilterTest.java",
+        "allowedChange": "Add rollout-000 and rollout-100 proof that all three HRM-013 routes remain blocked before owner dispatch while the feature is OFF and unenrolled."
+      }
+    ],
+    "frontendAdditions": [
+      {
+        "path": "scripts/sync-product-surface-authorization.mjs",
+        "allowedChange": "Advance the exact latest mirror seal from v60 to v61, add only the HRM-013 catalog-only PAGE contract and preserve deterministic serialization and all v1 through v60 checksums."
+      },
+      {
+        "path": "e2e/support/hris-w1-browser-firewall-contract.mjs",
+        "allowedChange": "Seal runtime HCM PAGE count 65, catalog-only PAGE count 4 and official total 69 over exactly the two PER-008 keys, the SYS-008 settings-integrations key and the HRM-013 exit-return key."
+      },
+      {
+        "path": "apps/dwp/src/routes/hris-w1-browser-firewall-contract.test.ts",
+        "allowedChange": "Mirror runtime HCM PAGE count 65, catalog-only PAGE count 4, official total 69 and the exact four catalog-only route keys checked by the browser-firewall support contract."
+      },
+      {
+        "path": "architecture/pilot-fixtures.v1.generated.json",
+        "allowedChange": "Synchronize the deterministic v61 fixture mirror generated from the reviewed backend fixture lineage."
+      },
+      {
+        "path": "libs/shared-utils/src/test-utils/pilot-authorization-fixtures.generated.ts",
+        "allowedChange": "Synchronize the typed v61 fixture mirror without changing runtime navigation or application source."
+      }
+    ],
+    "existingAuthorizedTestPathsClarified": [
+      "dwp-platform-contracts/src/test/java/com/dwp/contracts/hris/xcon/v1/Xcon028WorkerSeparatedV1Test.java",
+      "dwp-platform-contracts/src/test/java/com/dwp/contracts/hris/xcon/v1/Xcon028WorkerSeparatedAsyncApiContractTest.java"
+    ],
+    "requiredFocusedProof": [
+      "python3 -m unittest scripts.tests.test_generate_hris_contracts.HrisContractGeneratorTest.test_append_only_sources_preserve_predecessors_and_exact_field_closure",
+      "python3 -m unittest scripts.tests.test_product_authorization_v61",
+      "dwp-auth-server v61 contract, seed-loader, release-lineage and V270 static tests",
+      "V270 PostgreSQL clean and V269-to-V270 tests when the repository-provided container gate is available",
+      "backend and frontend product-authorization fixture generation/check with v60 byte preservation and v61 append-only lineage",
+      "Gateway rollout-000 and rollout-100 default-OFF no-owner-call tests for all three HRM-013 routes",
+      "frontend authorization sync/check plus product-route and HRIS browser-firewall focused tests"
+    ],
+    "frozenRuntimeBindings": [
+      "dwp-people-server HcmV3PepRegistry remains bound to v60; the generated v61 People PEP is an unmounted artifact only.",
+      "ProductSurfaceStepUpRouteResolver and ProductSurfaceAuthorityService receive no HRM-013 runtime exception in this phase.",
+      "The Gateway adds only pre-owner feature gating for the three reserved routes and does not forward HRM-013 purpose, population, field or step-up evidence.",
+      "No gateway route, owner controller, navigation entry, menu item, publisher, consumer or subscription is added."
+    ],
+    "forbidden": [
+      "changing any v1 through v60 bundle or checksum",
+      "binding a service runtime registry to v61",
+      "making v61 active or automatically imported",
+      "adding a trusted callback binding or HRM-013 owner implementation",
+      "mounting the HRM-013 page, route or menu",
+      "feature enablement, tenant enrollment, assignment, grant or production release",
+      "any path expansion not enumerated by the v1 successor or this amendment"
+    ]
+  },
+  "inheritance": "Every v1 semantic, payload, route, authorization, default-OFF, zero-enrollment, sequencing and non-claim remains authoritative. This v2 adds only the exact supporting paths required to make the already-sealed central implementation self-consistent and testable.",
+  "authority": {
+    "centralSourceAuthoringAuthorized": false,
+    "independentReviewRequired": true,
+    "moduleSourceAuthoringAuthorized": false,
+    "peopleV61LeaseActive": false,
+    "callbackBindingAuthoringAuthorized": false,
+    "routeOrMenuMountAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionBindingAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nextAction": "INDEPENDENTLY_REVIEW_HASH_BIND_THEN_ISSUE_CORRECTED_EXECUTION_TOKEN"
+}

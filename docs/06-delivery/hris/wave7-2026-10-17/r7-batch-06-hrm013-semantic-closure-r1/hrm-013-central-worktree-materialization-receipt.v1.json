@@ -1,0 +1,53 @@
+{
+  "schema": "hris.central-worktree-materialization-receipt.v1",
+  "receiptId": "HRIS-WAVE7-R7-BATCH06-HRM013-CENTRAL-WORKTREES-20261026-R1",
+  "recordedAt": "2026-10-26T08:26:23Z",
+  "state": "MATERIALIZED_NOT_EXECUTABLE_ALONE",
+  "sliceId": "BASE-TFR-HRM-013",
+  "module": "HRIS-HRM",
+  "authorityGranted": false,
+  "authority": {
+    "path": "hrm-013-central-contract-authorization-successor.v1.json",
+    "sha256": "910cd09f670c80d8d2924996ec5180f6cf456c17500166c2eb3229d6fdff0797",
+    "bytes": 19948,
+    "carrierCommit": "f0180f4690bff57a4488662cea570bc6f1d1db42",
+    "carrierTree": "a1b3c251b6a5c046e1ec12df76c38e045e4e9af5",
+    "review": {
+      "path": "independent-review.v1.json",
+      "sha256": "f82db8500ce7985f9bdd80e0d8735b95c937eb741931e2f3414e2891f91a122c",
+      "bytes": 7410,
+      "p0": 0,
+      "p1": 0,
+      "p2": 0
+    }
+  },
+  "invariants": [
+    "Both worktrees are clean and based on the exact current dwp-dev and origin/dwp-dev heads recorded below.",
+    "The backend worktree may change only paths explicitly authorized by the separately issued HRM-013 central implementation token.",
+    "The frontend worktree may change only paths explicitly authorized by the separately issued HRM-013 central implementation token.",
+    "No People V61 migration, HRM-013 owner domain source, callback binding, route or menu mount, tenant enrollment, feature activation or production release is authorized by this receipt."
+  ],
+  "repositories": {
+    "backend": {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-central/backend",
+      "branch": "codex/hris-wave7-batch06-hrm013-central-backend-20261026-r1",
+      "head": "d9f84f9f934cc196f8b06462bb3fa972115eea8c",
+      "tree": "130078cf93ec00996657ca8e0f361745e020cc45",
+      "baseDwpDev": "d9f84f9f934cc196f8b06462bb3fa972115eea8c",
+      "baseOriginDwpDev": "d9f84f9f934cc196f8b06462bb3fa972115eea8c",
+      "clean": true,
+      "upstream": null
+    },
+    "frontend": {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-central/frontend",
+      "branch": "codex/hris-wave7-batch06-hrm013-central-frontend-20261026-r1",
+      "head": "f0180f4690bff57a4488662cea570bc6f1d1db42",
+      "tree": "a1b3c251b6a5c046e1ec12df76c38e045e4e9af5",
+      "baseDwpDev": "f0180f4690bff57a4488662cea570bc6f1d1db42",
+      "baseOriginDwpDev": "f0180f4690bff57a4488662cea570bc6f1d1db42",
+      "clean": true,
+      "upstream": null
+    }
+  },
+  "nextAction": "ISSUE_ONE_HASH_BOUND_HRM013_CENTRAL_IMPLEMENTATION_TOKEN"
+}

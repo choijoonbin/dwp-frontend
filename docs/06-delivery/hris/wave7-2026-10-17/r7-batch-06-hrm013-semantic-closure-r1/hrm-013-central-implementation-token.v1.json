@@ -1,0 +1,134 @@
+{
+  "schema": "hris.central-implementation-token.v1",
+  "tokenId": "HRIS-WAVE7-R7-BATCH06-HRM013-CENTRAL-IMPLEMENT-20261026-R1",
+  "issuedAt": "2026-10-26T08:26:23Z",
+  "state": "EXECUTABLE",
+  "sliceId": "BASE-TFR-HRM-013",
+  "module": "HRIS-HRM",
+  "authority": {
+    "successor": {
+      "path": "hrm-013-central-contract-authorization-successor.v1.json",
+      "sha256": "910cd09f670c80d8d2924996ec5180f6cf456c17500166c2eb3229d6fdff0797",
+      "bytes": 19948,
+      "carrierCommit": "f0180f4690bff57a4488662cea570bc6f1d1db42"
+    },
+    "successorAmendment": {
+      "path": "hrm-013-central-contract-authorization-successor.v2.json",
+      "sha256": "3d0ee60e5fc4e136f397cfd7602d4578ce796bd6597baf058387fcb3f8c2a7b7",
+      "bytes": 10814
+    },
+    "worktreeReceipt": {
+      "path": "hrm-013-central-worktree-materialization-receipt.v1.json",
+      "sha256": "81d10ae6864f8c70a3b1f820b52cabd22168cba76327b9f8bb1cb3d743b1e908",
+      "bytes": 2566
+    },
+    "independentReview": {
+      "path": "independent-review.v1.json",
+      "sha256": "f82db8500ce7985f9bdd80e0d8735b95c937eb741931e2f3414e2891f91a122c",
+      "bytes": 7410,
+      "p0": 0,
+      "p1": 0,
+      "p2": 0
+    },
+    "amendmentReview": {
+      "path": "independent-review.v2.json",
+      "sha256": "624c0bceb537ba981327a5f5b9cfa0b0aafe16b4ecced5f5740636747bd63ea9",
+      "bytes": 4889,
+      "p0": 0,
+      "p1": 0,
+      "p2": 0
+    }
+  },
+  "execution": {
+    "backendWorktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-central/backend",
+    "frontendWorktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-central/frontend",
+    "backendAllowedPaths": [
+      "contracts/hris/canonical/schemas/cross-module-canonical-schemas.v1.json",
+      "contracts/hris/canonical/hris-contract-codegen-manifest.v1.json",
+      "dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/Xcon028WorkerSeparatedV1.java",
+      "dwp-platform-contracts/src/test/java/com/dwp/contracts/hris/xcon/v1/**",
+      "contracts/asyncapi/domain-events.yaml",
+      "scripts/generate-hris-contracts.py",
+      "scripts/tests/test_generate_hris_contracts.py",
+      "contracts/product-authorization/product-surfaces-v1.yaml",
+      "scripts/generate-product-authorization-contracts.py",
+      "scripts/tests/test_product_authorization_v61.py",
+      "contracts/product-authorization/product-surfaces-v1.bundle-v61.json",
+      "contracts/product-authorization/product-surfaces-v1.json",
+      "contracts/product-authorization/product-surfaces-v1.index.json",
+      "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v61.generated.json",
+      "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.generated.json",
+      "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.index.generated.json",
+      "dwp-people-server/src/main/resources/product-authorization/hcm-people-pep-v61.generated.json",
+      "dwp-time-server/src/main/resources/product-authorization/hcm-time-pep-v61.generated.json",
+      "dwp-platform-server/src/main/resources/product-authorization/hcm-platform-pep-v61.generated.json",
+      "dwp-payroll-server/src/main/resources/product-authorization/hcm-payroll-pep-v61.generated.json",
+      "dwp-auth-server/src/main/resources/db/migration/V270__declare_hris_hrm013_v61_authorization_seed.sql",
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationContractValidator.java",
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationReleaseLineage.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/config/ProductAuthorizationSeedLoaderTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationContractReleaseLineageTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationReleaseLineageTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationV61ContractTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/repository/TenantFeatureActivationV270MigrationContractTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/tenantfeatureactivation/TenantFeatureActivationV270PostgresTest.java",
+      "scripts/generate-product-authorization-fixtures.py",
+      "contracts/product-authorization/pilot-fixtures.v1.generated.json",
+      "scripts/tests/test_product_authorization_v60.py",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/support/PilotAuthorizationFixtureAdapter.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/support/PilotAuthorizationFixtureAdapterTest.java",
+      "dwp-gateway/src/test/java/com/dwp/gateway/support/PilotAuthorizationFixtureAdapter.java",
+      "dwp-gateway/src/test/java/com/dwp/gateway/support/PilotAuthorizationFixtureAdapterTest.java",
+      "dwp-gateway/src/main/java/com/dwp/gateway/filter/ProductSurfaceDecisionContextFilter.java",
+      "dwp-gateway/src/test/java/com/dwp/gateway/ProductSurfaceDecisionContextFilterTest.java"
+    ],
+    "frontendAllowedPaths": [
+      "scripts/product-authorization-fixture-versions.mjs",
+      "architecture/product-surface-authorization.v1.json",
+      "architecture/product-page-routes.v1.json",
+      "apps/dwp/src/routes/product-surface-authorization.generated.ts",
+      "apps/dwp/src/routes/product-route-contract-source.test.ts",
+      "apps/dwp/src/routes/product-route-contracts.generated.test.ts",
+      "scripts/sync-product-surface-authorization.mjs",
+      "e2e/support/hris-w1-browser-firewall-contract.mjs",
+      "apps/dwp/src/routes/hris-w1-browser-firewall-contract.test.ts",
+      "architecture/pilot-fixtures.v1.generated.json",
+      "libs/shared-utils/src/test-utils/pilot-authorization-fixtures.generated.ts"
+    ],
+    "requiredOutcomes": [
+      "Generate XCON-028 WorkerSeparated.v1 from canonical schema and preserve XCON-001 through XCON-027 while keeping production publishers and subscriptions at zero.",
+      "Generate immutable product-authorization v61 with exactly one separation-manage capability, one closed separation-scope predicate and three route contracts over v60.",
+      "Add Auth V270 catalog-only readiness for HRIS_HRM_EXIT_RETURN_WORKBENCH with baseline OFF and zero global activation, tenant enrollment, assignment or grant rows.",
+      "Synchronize the frontend central authorization mirror for v61 and the exact three routes without adding HRM-013 navigation, page or feature source.",
+      "Run each focused target group once and rerun only the smallest failed target.",
+      "Obtain independent source review with zero unresolved P0, P1 or P2 before no-ff admission to dwp-dev."
+    ],
+    "branchPolicy": "Commit and push each central worktree branch, then no-ff merge reviewed results into each repository dwp-dev and push origin/dwp-dev."
+  },
+  "forbidden": [
+    "People V61 migration or HRM-013 owner-domain implementation",
+    "trusted callback service binding implementation before its separately sealed authority",
+    "HRM-013 sidebar, menu, route or page mounting",
+    "feature enablement, tenant enrollment, activation, assignment, broad permission or production release",
+    "production publisher or consumer subscription for XCON-028",
+    "repository-wide test repetition without a focused failure proving it necessary",
+    "source changes outside the exact backend and frontend path allowlists"
+  ],
+  "invalidation": [
+    "Either worktree base head or tree differs before its first source change.",
+    "The successor, independent review or worktree receipt SHA and byte tuple differs.",
+    "A product-authorization v61, Auth V270 or generated-output collision is found.",
+    "Default-OFF or zero-enrollment can expose HRM-013 UI or reach an owner controller.",
+    "Any unresolved P0, P1 or P2 remains at admission time."
+  ],
+  "sourceAuthoringAuthorized": true,
+  "moduleAuthoringAuthorized": false,
+  "peopleV61LeaseActive": false,
+  "callbackBindingAuthoringAuthorized": false,
+  "routeOrMenuMountAuthorized": false,
+  "featureEnablementAuthorized": false,
+  "tenantEnrollmentAuthorized": false,
+  "productionBindingAuthorized": false,
+  "productionReleaseAuthorized": false,
+  "nextAction": "IMPLEMENT_FOCUSED_REVIEW_COMMIT_PUSH_BRANCHES_THEN_NO_FF_ADMIT_TO_DWP_DEV"
+}
