@@ -14,9 +14,9 @@ export type ProductAuthorizationRouteProjection = Readonly<{
 
 export const PRODUCT_AUTHORIZATION_REGISTRY_REVISION = {
   bundleKey: 'product-surfaces',
-  version: 60,
-  checksum: '405ac7c88d30a5730faa40c730968fffc873bd1a3679e4997532f0ea9ff1c47c',
-  indexChecksum: '2a847f8d96422f1f39d9550960931e3ff1b92ae1849416f3d823ceb9aebc21ec',
+  version: 61,
+  checksum: 'f7cf92a97f2fabf86f257010064a3183acf58f86cc2c9d7692a1555cab55aa24',
+  indexChecksum: '383db99274809a32bebb7ce65b0762cb10525204ef457c1a8c7602edc58b9d19',
 } as const;
 
 export const PRODUCT_SURFACE_ROLLOUT_INVENTORY_REVISION = {
@@ -10124,6 +10124,38 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
     ],
   },
   {
+    routeContractKey: 'route.hcm.operations.exit-return.data',
+    routeKind: 'DATA',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/people/v1/hris/workbench/operations/exit/return',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.exit-return.page',
+    routeKind: 'PAGE',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: 'hcm.operations.exit-return',
+    pattern: '/hr/operations/people/exit-return',
+    gatewayBindings: [
+      {
+        method: 'GET',
+        path: '/api/people/v1/hris/workbench/operations/exit/return',
+      },
+    ],
+  },
+  {
     routeContractKey: 'route.hcm.operations.home.page',
     routeKind: 'PAGE',
     navigationContextId: 'hcm.operations',
@@ -10924,6 +10956,22 @@ export const PRODUCT_AUTHORIZATION_ROUTE_PROJECTIONS = [
       {
         method: 'GET',
         path: '/api/people/v1/workforce/people/{publicId}',
+      },
+    ],
+  },
+  {
+    routeContractKey: 'route.hcm.operations.separation-case.action',
+    routeKind: 'ACTION',
+    navigationContextId: 'hcm.operations',
+    subjectType: 'PRODUCT',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
+    routeId: null,
+    pattern: null,
+    gatewayBindings: [
+      {
+        method: 'POST',
+        path: '/api/people/v1/hris/separation-cases',
       },
     ],
   },

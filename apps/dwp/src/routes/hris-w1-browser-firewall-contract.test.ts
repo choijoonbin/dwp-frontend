@@ -115,8 +115,11 @@ describe('HRIS W1 browser firewall contract', () => {
     expect(catalogOnlyHcm.map((route) => route.routeContractKey)).toEqual([
       'route.hcm.team.performance.page',
       'route.hcm.personal.performance-feedback.page',
+      'route.hcm.configuration.settings-integrations.page',
+      'route.hcm.operations.exit-return.page',
     ]);
-    expect(firewall).toHaveLength(67);
+    expect(catalogOnlyHcm).toHaveLength(4);
+    expect(firewall).toHaveLength(69);
     expect(firewall).toEqual(generated);
     expect(
       fs.statSync(path.resolve(process.cwd(), 'architecture/product-surface-authorization.v1.json'))

@@ -22,7 +22,7 @@ const generatedPath = path.join(
 const INDEX_FILE = 'product-surfaces-v1.index.json';
 const LATEST_ALIAS_FILE = 'product-surfaces-v1.json';
 const LATEST_VERSION = VERSIONS.at(-1);
-const SNAPSHOT_JSON_INDENT = 1;
+const SNAPSHOT_JSON_INDENT = 0;
 const SNAPSHOT_FIELDS = [
   'bundles',
   'index',
@@ -38,11 +38,11 @@ const ROUTER_SOURCE_FIELDS = [
   'schemaVersion',
   'sourceKey',
 ];
-const V60_RUNTIME_PAGE_ROUTES_SHA256 =
+const V61_RUNTIME_PAGE_ROUTES_SHA256 =
   'f630bbc8b371bfb0d64ef993a2cfca1bd72fa7ab0edf7b3a29382ab5922a3606';
-const V60_LEGACY_REDIRECTS_SHA256 =
+const V61_LEGACY_REDIRECTS_SHA256 =
   '6d60f36244b1bc6daeb41f7a8135c94d070cdcb4de0d09f1a32fbd0a9aba9187';
-const V60_CATALOG_ONLY_PAGE_CONTRACTS = Object.freeze([
+const V61_CATALOG_ONLY_PAGE_CONTRACTS = Object.freeze([
   Object.freeze({
     routeContractKey: 'route.hcm.team.performance.page',
     routeId: 'hcm.team.performance',
@@ -63,6 +63,13 @@ const V60_CATALOG_ONLY_PAGE_CONTRACTS = Object.freeze([
     pattern: '/hr/settings/integrations',
     productId: 'hcm',
     surfaceId: 'hcm.management',
+  }),
+  Object.freeze({
+    routeContractKey: 'route.hcm.operations.exit-return.page',
+    routeId: 'hcm.operations.exit-return',
+    pattern: '/hr/operations/people/exit-return',
+    productId: 'hcm',
+    surfaceId: 'hcm.operations',
   }),
 ]);
 const BUNDLE_FIELDS = new Set([
@@ -763,13 +770,13 @@ function validateRouterSource(value, latestBundle) {
   const redirects = requireArray(source.legacyRedirects, 'router source legacyRedirects');
   if (
     routes.length !== 158 ||
-    sha256(routes) !== V60_RUNTIME_PAGE_ROUTES_SHA256 ||
-    sha256(redirects) !== V60_LEGACY_REDIRECTS_SHA256
+    sha256(routes) !== V61_RUNTIME_PAGE_ROUTES_SHA256 ||
+    sha256(redirects) !== V61_LEGACY_REDIRECTS_SHA256
   ) {
-    fail('v60 executable Router source or legacy redirects changed');
+    fail('v61 executable Router source or legacy redirects changed');
   }
-  if (canonicalJson(catalogOnlyRoutes) !== canonicalJson(V60_CATALOG_ONLY_PAGE_CONTRACTS)) {
-    fail('v60 catalog-only PAGE contracts changed');
+  if (canonicalJson(catalogOnlyRoutes) !== canonicalJson(V61_CATALOG_ONLY_PAGE_CONTRACTS)) {
+    fail('v61 catalog-only PAGE contracts changed');
   }
   const catalogRoutes = [...routes, ...catalogOnlyRoutes];
   validateUnique(catalogRoutes, 'routeContractKey', 'router source PAGE catalog');
