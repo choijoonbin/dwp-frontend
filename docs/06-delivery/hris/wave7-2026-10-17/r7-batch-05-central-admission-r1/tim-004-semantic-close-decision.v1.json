@@ -1,0 +1,243 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-05-tim004-semantic-close-decision.v1",
+  "decisionId": "HRIS-WAVE7-R7-BATCH-05-TIM004-SEMANTIC-CLOSE-20261026-R1",
+  "issuedAt": "2026-10-26T14:44:59+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "TIM004_REUSE_ONLY_SEMANTIC_CLOSE_INDEPENDENTLY_ACCEPTED_NO_MODULE_PACKET_NO_SOURCE_NO_MIGRATION_ZERO_BUSINESS_CREDIT_LANE_EXIT_MAY_PROCEED_P0_GATES_CARRIED",
+  "sliceId": "BASE-TFR-TIM-004",
+  "moduleSession": "HRIS-TIM",
+  "scope": "TIM004_REUSE_ONLY_SEMANTIC_CLOSE_NO_MODULE_PACKET",
+  "purpose": "Centrally admit the independently reviewed TIM-004 reuse-only semantic closure, explicitly issue no module packet, token, worktree, migration lease or source authority, preserve SYS-002 and SYS-006 ownership and both inherited TIM P0 gates, and permit only the fixed-order Batch-05 lane-5 sequencing exit.",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_DECISION_ID_AND_SHA256",
+    "predecessorMutation": "FORBIDDEN"
+  },
+  "authorityBasis": {
+    "roadmapV19": {
+      "path": "../execution-roadmap-successor.v19.json",
+      "sha256": "7fd14919598aadf20ea083dd11d693f4774fe803224b799935e284b858525ed0",
+      "bytes": 18404,
+      "requiredState": "R7_BATCH_04_SEQUENCING_CLOSED_DEFAULT_OFF_ZERO_BUSINESS_CREDIT_BATCH_05_PREFLIGHT_NEXT_ZERO_TENANT_ENROLLMENT"
+    },
+    "batch05Preflight": {
+      "path": "../r7-batch-05-preflight-r1/semantic-dependency-migration-preflight.v1.json",
+      "sha256": "8f7a0d38c4dc86873e4930e5a21dcc0a269c39512508d86dd529b40015237e0f",
+      "bytes": 37443,
+      "requiredState": "PREFLIGHT_COMPLETE_FIXED_ORDER_FIVE_CONDITIONAL_LANES_NO_PACKETS_NO_TOKENS_NO_WORKTREES_NO_LEASES_NO_SOURCE"
+    },
+    "sys008SequencingExit": {
+      "path": "sys-008-sequencing-exit-receipt.v1.json",
+      "sha256": "76ade6801c0eb5b56ecc0d1b25544042001adac3ac0fb402ffd6a1d4874ae0cf",
+      "bytes": 11813,
+      "requiredState": "BATCH05_LANE_4_SYS008_SEQUENCING_EXIT_ACCEPTED_DEFAULT_OFF_ZERO_ENROLLMENT_ZERO_PROVIDER_ZERO_BUSINESS_CREDIT_TIM004_SEMANTIC_CLOSURE_NEXT_P0_GATES_CARRIED"
+    },
+    "tim004SemanticDisposition": {
+      "path": "../r7-batch-05-module-start-r1/semantic-dispositions/base-tfr-tim-004.semantic-disposition.v1.json",
+      "sha256": "caaf238cda62c78a0a2715b6999a28f340d7fe405d1cee3b0b65013bcf20d2ca",
+      "bytes": 26175,
+      "gitBlob": "8653364eb0b97008a23eafacb06a7655a63a0cc8",
+      "requiredState": "TIM004_PLATFORM_AUTOMATION_REUSE_BOUNDARY_SEALED_NO_TIM_HANDLER_NO_TIME_SCHEMA_DELTA"
+    },
+    "tim004SemanticReview": {
+      "path": "../r7-batch-05-module-start-r1/semantic-dispositions/base-tfr-tim-004.semantic-review.v1.json",
+      "sha256": "6b4a1133a9c0c208a4d079203dec5434f6a4b2defb2cb31af56a211835be74a3",
+      "bytes": 5406,
+      "gitBlob": "a774de7bbdd6a1f1aee0d54bf6d2951d3b07f528",
+      "requiredState": "TIM004_SEMANTIC_DISPOSITION_INDEPENDENTLY_REVIEWED_PASS_ZERO_P0_ZERO_P1_ZERO_P2_SEMANTIC_CLOSE_NO_MODULE_PACKET_MAY_PROCEED"
+    },
+    "semanticCarrier": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "b03924d7e3c20b75d08999538a482240e8952b31",
+      "tree": "770bdff894086f09478fb82cb4a5b9ac8f781781",
+      "originExact": true,
+      "cleanBeforeDecisionDraft": true
+    }
+  },
+  "independentReview": {
+    "semanticDispositionReviewAccepted": true,
+    "remainingP0": 0,
+    "remainingP1": 0,
+    "remainingP2": 0,
+    "canonicalPathHashAndBytePins": "PASS_20_OF_20",
+    "acceptanceCriteria": "PASS_12_OF_12",
+    "targetedGoldenScenarios": "PASS_12_OF_12",
+    "sys002AndSys006OwnershipPreserved": true,
+    "unsupportedTimeHandlerOrJobInferred": false,
+    "timeV14HighWaterAndMigrationNoneVerified": true,
+    "timP0GatesCarriedUnchanged": true,
+    "repositoryWideSuiteRun": false,
+    "unaffectedPassingTargetRerun": false
+  },
+  "acceptedSemanticClosure": {
+    "classification": "NON_UI_SUPPORTING_SLICE",
+    "disposition": "REUSE_ONLY",
+    "semanticLineage": "TFR-TIM-004::TIM-PLATFORM-AUTOMATION::SYS-API-017|SYS-API-018|SYS-API-019|SYS-API-020",
+    "relatedPlatformContracts": [
+      "SYS-API-017",
+      "SYS-API-018",
+      "SYS-API-019",
+      "SYS-API-020"
+    ],
+    "currentTimeAggregate": "NONE",
+    "currentTimeDomainCommand": "NONE",
+    "currentTimeHandlerIdentity": "NONE",
+    "currentTimeInputSchema": "NONE",
+    "currentTimeResultSchema": "NONE",
+    "currentTimePrimaryApi": "NONE",
+    "currentTimeEvent": "NONE",
+    "currentTimeReceipt": "NONE",
+    "currentTimeUiSurface": "NONE",
+    "fullBusinessSliceComplete": false,
+    "businessCompletionIncrement": 0,
+    "acceptedState": "REUSE_ONLY_SEMANTIC_BOUNDARY_CLOSED_WITH_NO_EXECUTABLE_TIM_JOB_AND_NO_MODULE_IMPLEMENTATION"
+  },
+  "ownershipPreservation": {
+    "sys002": {
+      "owns": [
+        "IAQ-059",
+        "/hr/settings/operations",
+        "central primary page and completion accounting"
+      ],
+      "ownershipTransferredToTim": false
+    },
+    "sys006": {
+      "owns": [
+        "automation definition and immutable versions",
+        "schedule lifecycle",
+        "run, run attempt, item, item attempt and checkpoint",
+        "lease, fence, concurrency and idempotency",
+        "retry, dead-letter, cancellation and compensation coordination",
+        "control-plane receipt, audit, outbox and SYS-EVT-004"
+      ],
+      "ownershipTransferredToTim": false
+    },
+    "tim004": {
+      "executableOwnership": [],
+      "duplicateControlPlaneAllowed": false,
+      "completionRecountAllowed": false
+    }
+  },
+  "modulePacketDisposition": {
+    "decision": "NONE_SEMANTIC_CLOSE_ONLY",
+    "reason": "No source-authoritative Time job, aggregate, command, handler identity, input, result, population, compensation or execution topology exists to packet.",
+    "ownerPacketIssued": false,
+    "ownerPacketAuthorized": false,
+    "startTokenIssued": false,
+    "worktreeMaterialized": false,
+    "sourceAuthoringAuthorized": false,
+    "mergeAuthorizationIssued": false,
+    "futureExecutableJobRule": "A new source-authoritative append-only handler successor must first seal the complete Time business and cross-service execution contract."
+  },
+  "migrationClosure": {
+    "stream": "TIME_MAIN",
+    "observedHighWater": "V14",
+    "decision": "NONE_REUSE_PLATFORM_V333_AND_EXISTING_TIME_V14",
+    "timeOwnedSchemaDeltaProven": false,
+    "v15Required": false,
+    "v15Reserved": false,
+    "v15Authored": false,
+    "activeMigrationLeaseCountAfterDecision": 0,
+    "nextLeaseIssued": false
+  },
+  "activationBoundary": {
+    "centralFeatureKey": "HRIS_AUTOMATION_CONTROL_PLANE",
+    "runtimeDefault": "OFF",
+    "timTenantEnrollmentCount": 0,
+    "timProductionScheduleCount": 0,
+    "timProductionProviderBindingCount": 0,
+    "timProductionHandlerBindingCount": 0,
+    "timHandlerCallCount": 0,
+    "timRouteCountAdded": 0,
+    "timMenuCountAdded": 0,
+    "timPageCountAdded": 0,
+    "timActionDescriptorCountAdded": 0,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "carriedOpenGates": [
+    {
+      "gateId": "TIM_CLOSE_PERIOD_DEFINITION_PRODUCER",
+      "severity": "P0",
+      "state": "OPEN_EXTERNAL_SOURCE_AUTHORITY_GATE",
+      "unchanged": true,
+      "blocks": [
+        "TIM feature activation",
+        "TIM business-completion credit",
+        "live TIM-to-Payroll end-to-end claim"
+      ],
+      "doesNotBlock": [
+        "TIM-004 reuse-only semantic close",
+        "Batch-05 lane-5 sequencing exit"
+      ]
+    },
+    {
+      "gateId": "TIM_CLOSE_TRUSTED_OWNER_HEADER_ISSUER",
+      "severity": "P0",
+      "state": "OPEN_BEFORE_ANY_TENANT_ENROLLMENT",
+      "unchanged": true,
+      "blocks": [
+        "TIM tenant enrollment",
+        "TIM production activation"
+      ],
+      "doesNotBlock": [
+        "TIM-004 reuse-only semantic close",
+        "Batch-05 lane-5 sequencing exit"
+      ]
+    }
+  ],
+  "portfolioAccounting": {
+    "universe": 86,
+    "retired": 2,
+    "active": 84,
+    "completedBeforeDecision": 26,
+    "tim004BusinessCompletionIncrement": 0,
+    "completedAfterDecision": 26,
+    "activeIncompleteAfterDecision": 58
+  },
+  "verificationPolicyApplied": {
+    "documentOnlyDecision": true,
+    "sourceChangedByThisDecision": false,
+    "sourceTestsRequired": false,
+    "repositoryWideSuiteRun": false,
+    "unaffectedPassingTargetRerun": false,
+    "jsonSyntaxAndDirectPinChecksRequired": true,
+    "independentDecisionReviewRequiredBeforeCommit": true
+  },
+  "authority": {
+    "tim004SemanticCloseAccepted": true,
+    "tim004TechnicalSemanticLaneMayExit": true,
+    "tim004FullBusinessSliceComplete": false,
+    "tim004BusinessCompletionIncrement": 0,
+    "modulePacketRequired": false,
+    "modulePacketAuthorized": false,
+    "startTokenAuthorized": false,
+    "worktreeMaterializationAuthorized": false,
+    "migrationLeaseAuthorized": false,
+    "centralSourceAuthoringAuthorized": false,
+    "moduleSourceAuthoringAuthorized": false,
+    "routeMenuPageOrActionAuthorized": false,
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionBindingAuthorized": false,
+    "customerDataAuthorized": false,
+    "batch05Lane5SequencingExitMayBeRecorded": true,
+    "batch05OverallSequencingClosedByThisDecision": false,
+    "batch05Complete": false,
+    "r7Complete": false,
+    "hrisComplete": false,
+    "productionReleaseAuthorized": false
+  },
+  "decision": "ADMIT_TIM004_REUSE_ONLY_SEMANTIC_CLOSE_NO_MODULE_PACKET_AND_ADVANCE_ONLY_TO_BATCH05_LANE5_SEQUENCING_EXIT",
+  "nonClaims": [
+    "An executable Time automation job, handler, adapter, API, event, payload, result, receipt or UI exists.",
+    "A TIM-004 owner packet, token, worktree, V15 lease, source branch, source implementation or merge authorization was issued.",
+    "IAQ-059 or SYS-006 automation ownership transferred to TIM.",
+    "Either inherited TIM P0 gate is closed or reinterpreted.",
+    "A feature or tenant was enabled or enrolled, or a provider, schedule, handler, broker, route, menu or customer datum was bound.",
+    "BASE-TFR-TIM-004 is a fully complete business slice or receives business-completion credit.",
+    "Batch-05 sequencing is closed by this decision, or Batch-05, R7 or HRIS is complete."
+  ],
+  "nextAction": "Independently verify this exact central decision, commit it as an append-only carrier, then record one TIM-004 lane-5 sequencing-exit receipt that hash-pins this decision and advances only to Batch-05 overall sequencing closure. Do not issue a module packet, token, worktree, V15 lease or source authority."
+}
