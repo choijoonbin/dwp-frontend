@@ -1,0 +1,215 @@
+{
+  "schema": "dwp.hris.wave7.module-acceptance-results.v1",
+  "evidenceId": "HRIS-WAVE7-R7-BATCH-05-BASE-TFR-SYS-008-ACCEPTANCE-R1",
+  "issuedAt": "2026-10-26T14:15:00+09:00",
+  "issuedBy": "HRIS-SYS",
+  "sliceId": "BASE-TFR-SYS-008",
+  "resultState": "SYS008_MODULE_SOURCE_BRANCHES_PUSHED_FIFTEEN_OF_FIFTEEN_ACCEPTANCE_AND_THIRTEEN_OF_THIRTEEN_GOLDEN_PASS_INDEPENDENT_SOURCE_AUDIT_ZERO_P0_P1_P2_CENTRAL_ADMISSION_PENDING_DEFAULT_OFF_ZERO_ENROLLMENT",
+  "summary": {
+    "requiredAcceptanceCriteria": 15,
+    "passedAcceptanceCriteria": 15,
+    "failedAcceptanceCriteria": 0,
+    "skippedAcceptanceCriteria": 0,
+    "requiredGoldenScenarios": 13,
+    "passedGoldenScenarios": 13,
+    "failedGoldenScenarios": 0,
+    "skippedGoldenScenarios": 0,
+    "openP0": 0,
+    "openP1": 0,
+    "openP2": 0,
+    "centralAdmissionPending": true,
+    "businessCompletionCreditBeforeCentralAdmission": 0
+  },
+  "results": [
+    {
+      "id": "SYS008-AC-01",
+      "result": "PASS",
+      "evidence": "IntegrationOwnerSecurityContractTest and IntegrationApiContractTest pin the exact twenty closed owner operations, trusted Gateway authority, Problem/receipt behavior and rejection of browser-supplied tenant authority; integration-control-plane-client.test.ts covers the same four reads and sixteen commands."
+    },
+    {
+      "id": "SYS008-AC-02",
+      "result": "PASS",
+      "evidence": "IntegrationCursorOwnerQueryTest and the preserved Sys008ProjectionContractTest prove one owner query with two policy projections, stable itemPublicId and EFFECTIVE_STATUS revision, and non-serialized owner lineage; no second owner repository or completion credit is added."
+    },
+    {
+      "id": "SYS008-AC-03",
+      "result": "PASS",
+      "evidence": "IntegrationCursorOwnerQueryTest and IntegrationServiceTest bind the cursor to all eleven query axes, enforce projection-specific fields, filters, eight sealed sorts, limits 1 through 100, stable ordering and freshness; frontend model and client tests cover COMPLETE, EMPTY, PARTIAL and UNAVAILABLE handling."
+    },
+    {
+      "id": "SYS008-AC-04",
+      "result": "PASS",
+      "evidence": "IntegrationOwnerAuthorityFilter, IntegrationOwnerQueryService and their security/query tests apply trusted authority, scope, purpose, field policy and item eligibility before serialization; preserved projection tests plus frontend model tests prove VIEW, MASK and OMIT handling and zero client-inferred actions."
+    },
+    {
+      "id": "SYS008-AC-05",
+      "result": "PASS",
+      "evidence": "IntegrationDomainPolicyTest, IntegrationServiceTest and IntegrationRequiredDatabaseEvidenceTest cover immutable connector and mapping versions, validation/test or dry-run evidence, submit/approve/activate lifecycle, separate actors, current digests and expected-revision CAS."
+    },
+    {
+      "id": "SYS008-AC-06",
+      "result": "PASS",
+      "evidence": "IntegrationDomainPolicyTest rejects the same actor or overlapping population for maker/checker duties, IntegrationOwnerSecurityContractTest binds legal-entity population to trusted Gateway facts, and PostgreSQL direct-write evidence preserves the same separation."
+    },
+    {
+      "id": "SYS008-AC-07",
+      "result": "PASS",
+      "evidence": "The preserved Sys008OpaqueReferenceOwnerPortTest and Sys008EgressBoundary contract reject private, metadata, query-secret, redirect and DNS-rebinding targets and cross-boundary reference substitution; IntegrationServiceTest validates canonical endpoints only after allowlist resolution and no production provider is bound."
+    },
+    {
+      "id": "SYS008-AC-08",
+      "result": "PASS",
+      "evidence": "IntegrationServiceTest freezes the canonical multi-item source manifest and definition/mapping boundaries at receipt-first acceptance; JdbcIntegrationRepositoryPostgresTest proves atomic receipt, execution, initial item and attempt persistence, provider-key replay conflict and monotonic CAS/fence behavior."
+    },
+    {
+      "id": "SYS008-AC-09",
+      "result": "PASS",
+      "evidence": "IntegrationRuntimeServiceTest persists ambiguous or mismatched provider outcomes as RESULT_UNKNOWN, reconciles under a separate command receipt using the frozen original provider key and digest, and never recalls or blindly redispatches the provider; PostgreSQL evidence covers the same terminal receipt rule."
+    },
+    {
+      "id": "SYS008-AC-10",
+      "result": "PASS",
+      "evidence": "IntegrationDomainPolicyTest and IntegrationRuntimeServiceTest enforce the exact frozen retryable failed-item set, new attempts without remapping successful items, direct pre-dispatch cancellation, durable compensation claims and separately keyed post-dispatch compensation."
+    },
+    {
+      "id": "SYS008-AC-11",
+      "result": "PASS",
+      "evidence": "The preserved Sys008EventContractTest validates the closed SYS-EVT-005 payload and forbidden fields; IntegrationRequiredDatabaseEvidenceTest proves execution CAS, audit and event outbox rollback atomically, while deterministic event identity and public counts/digest exclude secrets, raw payload and employee identity."
+    },
+    {
+      "id": "SYS008-AC-12",
+      "result": "PASS",
+      "evidence": "V334 SHA-256 d4c3750ade0e6925378c8a8aa5093605891d5afe01b91e926c6485afb2f092d4 creates exactly six tenant-composite FORCE-RLS tables. IntegrationMigrationPostgresTest, IntegrationRequiredDatabaseEvidenceTest and JdbcIntegrationRepositoryPostgresTest cover clean and V333 upgrade paths, RLS/ACL, composite integrity, lifecycle and terminal guards, immutable snapshots, stale fences, provider-key uniqueness, compensation bypass, forbidden columns and SYS-006 receipt compatibility."
+    },
+    {
+      "id": "SYS008-AC-13",
+      "result": "PASS",
+      "evidence": "The preserved integration-control-plane surface plus the new model, client and workbench implement one owner truth for HRIS Settings and DWP Control projections, keep HCM deep-link ownership unchanged, separate read and command errors and expose zero commands for partial, masked, stale, unavailable or denied evidence."
+    },
+    {
+      "id": "SYS008-AC-14",
+      "result": "PASS",
+      "evidence": "The four targeted Vitest files passed 74 of 74 tests. jsdom and sealed contract assertions verify named controls, keyboard-focusable selection, screen-reader labels, no nested main landmark, flexible-width rules and declared viewport/zoom metadata. Source inspection confirms theme-token use and forced-colors/reduced-motion media rules are implemented; mode-specific browser rendering, visual appearance and overflow execution are not claimed."
+    },
+    {
+      "id": "SYS008-AC-15",
+      "result": "PASS",
+      "evidence": "IntegrationApiContractTest and the preserved unmounted surface contract keep HRIS_INTEGRATION_CONTROL_PLANE default OFF with no runtime scheduler or owner call; no route, sidebar, menu, shell, index export, tenant enrollment or production provider binding changed."
+    }
+  ],
+  "goldenScenarios": [
+    {
+      "id": "SYS-GOLD-003",
+      "result": "PASS",
+      "evidence": "IntegrationRequiredDatabaseEvidenceTest exercises missing-context and cross-tenant denial for every owned table under the runtime role, and IntegrationOwnerSecurityContractTest returns a bounded denial for untrusted tenant or widened legal-entity scope."
+    },
+    {
+      "id": "SYS-GOLD-008",
+      "result": "PASS",
+      "evidence": "IntegrationDomainPolicyTest rejects same-actor and overlapping maker/checker populations while allowing separately scoped actors; lifecycle commands also require current target-bound authority and CAS."
+    },
+    {
+      "id": "SYS-GOLD-020",
+      "result": "PASS",
+      "evidence": "IntegrationApiContractTest rejects literal secrets and unknown command properties; the preserved opaque-reference contract accepts only sealed references, and V334 forbidden-column scans prove literal secret or token material has no persistence column."
+    },
+    {
+      "id": "SYS-GOLD-021",
+      "result": "PASS",
+      "evidence": "Sys008OpaqueReferenceOwnerPortTest denies private and metadata addresses, query secrets, redirects and DNS rebinding before provider dispatch; IntegrationServiceTest requires a canonical allowlisted endpoint and no production provider is bound."
+    },
+    {
+      "id": "SYS-GOLD-022",
+      "result": "PASS",
+      "evidence": "IntegrationServiceTest keeps connection-test and mapping dry-run evidence separate from production execution, validates all frozen definition/mapping boundaries and passes only typed opaque artifacts; no production provider or domain owner is registered."
+    },
+    {
+      "id": "SYS-GOLD-023",
+      "result": "PASS",
+      "evidence": "IntegrationRuntimeServiceTest records a timeout or unbound response as durable RESULT_UNKNOWN and requires same-key reconciliation evidence; stale recovery records an operations exception and never invokes the provider again."
+    },
+    {
+      "id": "SYS-GOLD-024",
+      "result": "PASS",
+      "evidence": "IntegrationRuntimeServiceTest and IntegrationRequiredDatabaseEvidenceTest bind PARTIAL/reconciliation counts and digest to the exact frozen item set and create new attempts only for retryable rejected identities."
+    },
+    {
+      "id": "SYS-GOLD-032",
+      "result": "PASS",
+      "evidence": "The previously admitted SYS-006 proof in r7-batch-04-module-results-r1/base-tfr-sys-006/acceptance-results.v1.json remains the production inbox dedupe and highest-revision owner evidence; V334 does not modify sys_domain_event_inbox, and the clean plus V333-to-V334 PostgreSQL upgrade preserves shared-store evidence without recounting it as SYS-008 work."
+    },
+    {
+      "id": "SYS-GOLD-040",
+      "result": "PASS",
+      "evidence": "JdbcIntegrationRepositoryPostgresTest proves receipt authorization precedes digest disclosure and IntegrationOwnerSecurityContractTest rechecks trusted current tenant, subject, scope, purpose and revision so revoked, cross-tenant or caller-widened lookup fails closed."
+    },
+    {
+      "id": "SYS-GOLD-045",
+      "result": "PASS",
+      "evidence": "JdbcIntegrationRepositoryPostgresTest proves same-subject same-digest replay, changed-digest conflict and initial ledger atomicity; V334 limits immutable terminal receipt rules to the exact sixteen SYS-008 actions while retaining sealed subject/action/key/digest binding."
+    },
+    {
+      "id": "SYS-GOLD-054",
+      "result": "PASS",
+      "evidence": "IntegrationServiceTest, IntegrationDomainPolicyTest and PostgreSQL lifecycle negatives require current definition, mapping, endpoint-policy, secret and schema evidence plus distinct author/approver/executor identities before activation; self-approval and snapshot drift fail closed."
+    },
+    {
+      "id": "SYS-GOLD-055",
+      "result": "PASS",
+      "evidence": "IntegrationRuntimeServiceTest reconciles RESULT_UNKNOWN only from digest-bound evidence using the original provider idempotency key; mismatched counts or digest stay unknown and Sys008OperationsExceptionOutboxAdapter emits the sealed operational exception without redispatch."
+    },
+    {
+      "id": "SYS-GOLD-056",
+      "result": "PASS",
+      "evidence": "IntegrationDomainPolicyTest, IntegrationRuntimeServiceTest and database transition negatives prove failed-only retry, new attempts with unchanged mapping/source identity, preservation of successful items, pre-dispatch cancel and explicit post-dispatch compensation."
+    }
+  ],
+  "verification": {
+    "backend": {
+      "sourceCommit": "57deb1c07b92c3f0cd80d445980e6af31c01847e",
+      "sourceTree": "130078cf93ec00996657ca8e0f361745e020cc45",
+      "originExact": true,
+      "clean": true,
+      "compileTestJava": "PASS",
+      "boundedNonDatabaseContractTargets": "36_PASS_ZERO_FAILURE_ZERO_SKIP",
+      "service": "14_OF_14_PASS",
+      "runtime": "17_OF_17_PASS",
+      "worker": "7_OF_7_PASS",
+      "jdbcPostgresqlEarlierBoundedClass": "7_OF_7_PASS_ZERO_SKIP",
+      "jdbcPostgresqlFinalAffectedMethods": "3_OF_3_PASS_ZERO_SKIP",
+      "migrationPostgresqlCumulative": "2_OF_2_PASS_ZERO_SKIP",
+      "requiredDatabaseCumulative": "8_OF_8_PASS_ZERO_SKIP",
+      "gitDiffCheck": "PASS",
+      "repositoryWideSuiteRun": false
+    },
+    "frontend": {
+      "sourceCommit": "8dd154e9280cde3e8e8afb331529d95d82ef906c",
+      "sourceTree": "821b8581429f6fe5d2ca78339f9e898a184350b4",
+      "originExactBeforeEvidence": true,
+      "cleanBeforeEvidence": true,
+      "targetedVitest": "4_FILES_74_OF_74_PASS",
+      "changedFileEslint": "8_FILES_PASS",
+      "prettier": "PASS",
+      "boundedTypeScript": "PASS",
+      "gitDiffCheck": "PASS",
+      "browserRouteRun": false,
+      "browserRouteReason": "The projection remains intentionally unmounted and default OFF pending separate central admission."
+    },
+    "independentAudit": {
+      "sourceOpenP0": 0,
+      "sourceOpenP1": 0,
+      "sourceOpenP2": 0,
+      "acceptance": "15_OF_15_PASS",
+      "goldenScenarios": "13_OF_13_PASS"
+    },
+    "executionPolicy": "Targeted groups were run as affected; after corrections only the smallest affected class or named methods were rerun. Counts above are separate executions and are not represented as one aggregate run."
+  },
+  "nonClaims": [
+    "The SYS-008 module commits are not centrally admitted or merged to dwp-dev by this evidence.",
+    "No route, shell, sidebar, menu, i18n, shared page ownership, index export or child mount is changed.",
+    "HRIS_INTEGRATION_CONTROL_PLANE remains default OFF and no tenant is enrolled.",
+    "No production provider, secret, customer data or customer database is connected.",
+    "No repository-wide suite, redundant broad rerun or single aggregate backend run is claimed.",
+    "The reused permission-inbox behavior and shared stores receive no duplicate SYS-008 implementation or business credit."
+  ]
+}

@@ -1,0 +1,214 @@
+{
+  "schema": "dwp.hris.wave7.platform-v334-and-postgres-evidence.v1",
+  "evidenceId": "HRIS-WAVE7-R7-BATCH-05-BASE-TFR-SYS-008-PLATFORM-V334-POSTGRES-R1",
+  "issuedAt": "2026-10-26T14:15:00+09:00",
+  "issuedBy": "HRIS-SYS",
+  "sliceId": "BASE-TFR-SYS-008",
+  "source": {
+    "repository": "dwp-backend",
+    "branch": "codex/hris-wave7-r7-batch05-sys-008-backend-20261026-r1",
+    "baseCommit": "7406b9d6a4ba2c3f777fad3b9e9caa609ec9ff72",
+    "baseTree": "b701265b8b22c4a1ada559a702091344c0686b42",
+    "commit": "57deb1c07b92c3f0cd80d445980e6af31c01847e",
+    "tree": "130078cf93ec00996657ca8e0f361745e020cc45",
+    "originExact": true,
+    "clean": true
+  },
+  "migration": {
+    "stream": "PLATFORM_MAIN",
+    "predecessor": "V333",
+    "version": "V334",
+    "path": "dwp-platform-server/src/main/resources/db/migration/V334__create_hris_integration_control_plane.sql",
+    "sha256": "d4c3750ade0e6925378c8a8aa5093605891d5afe01b91e926c6485afb2f092d4",
+    "bytes": 131305,
+    "createdTables": [
+      "sys_connector_definitions",
+      "sys_connector_definition_versions",
+      "sys_connector_mapping_versions",
+      "sys_connector_executions",
+      "sys_connector_execution_items",
+      "sys_connector_execution_attempts"
+    ],
+    "reusedStores": [
+      "sys_hris_command_receipts",
+      "sys_domain_event_outbox",
+      "sys_domain_event_inbox",
+      "sys_audit_outbox",
+      "sys_audit_events"
+    ],
+    "reusedProjection": "shared operations exception projection",
+    "forceRlsTableCount": 6,
+    "tenantCompositePrimaryAndForeignKeys": true,
+    "sys008OriginatingActionCount": 16,
+    "sharedReceiptProducerActionCountAfterV334": 47,
+    "historicalMigrationModified": false,
+    "secondMigrationCreated": false,
+    "seventhConnectorTableCreated": false,
+    "backfillPerformed": false,
+    "automaticPrivilegeGrantAdded": false,
+    "globalReceiptNarrowingAdded": false,
+    "sys006ResultUnknownRecoveryPreserved": true
+  },
+  "compileVerification": {
+    "compileTestJava": "PASS",
+    "gitDiffCheck": "PASS"
+  },
+  "testInventory": {
+    "singleAggregateRunClaimed": false,
+    "classes": [
+      "IntegrationApiContractTest",
+      "IntegrationCursorOwnerQueryTest",
+      "IntegrationDispatchWorkerTest",
+      "IntegrationDomainPolicyTest",
+      "IntegrationFeatureTransactionProxyTest",
+      "IntegrationMigrationContractTest",
+      "IntegrationMigrationPostgresTest",
+      "IntegrationOwnerSecurityContractTest",
+      "IntegrationRequiredDatabaseEvidenceTest",
+      "IntegrationRuntimeServiceTest",
+      "IntegrationServiceTest",
+      "JdbcIntegrationRepositoryPostgresTest",
+      "Sys008ClosedTransportSchemaTest",
+      "Sys008EventContractTest",
+      "Sys008OpaqueReferenceOwnerPortTest",
+      "Sys008OperationsExceptionOutboxAdapterTest",
+      "Sys008ProjectionContractTest",
+      "Sys008TypedArtifactContractTest"
+    ],
+    "executedEvidence": [
+      {
+        "scope": "bounded non-database SYS-008 contract targets",
+        "passed": 36,
+        "failed": 0,
+        "skipped": 0,
+        "repositoryWide": false
+      },
+      {
+        "scope": "IntegrationServiceTest final affected class",
+        "passed": 14,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "scope": "IntegrationRuntimeServiceTest final affected class",
+        "passed": 17,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "scope": "IntegrationDispatchWorkerTest final affected class",
+        "passed": 7,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "scope": "JdbcIntegrationRepositoryPostgresTest earlier bounded class run",
+        "passed": 7,
+        "failed": 0,
+        "skipped": 0,
+        "engine": "PostgreSQL 16 via Testcontainers"
+      },
+      {
+        "scope": "JdbcIntegrationRepositoryPostgresTest final affected method set",
+        "passed": 3,
+        "failed": 0,
+        "skipped": 0,
+        "engine": "PostgreSQL 16 via Testcontainers",
+        "methods": [
+          "cancelAndOwnerPageUseProductionQueriesAndActionIntersection",
+          "compensationClaimProvidesDurableCasFenceAndUnknownMarker",
+          "workerMaterializesAcceptedExecutionUnderOriginalSubjectRls"
+        ]
+      },
+      {
+        "scope": "IntegrationMigrationPostgresTest cumulative targeted evidence",
+        "passed": 2,
+        "failed": 0,
+        "skipped": 0,
+        "engine": "PostgreSQL 16 via Testcontainers"
+      },
+      {
+        "scope": "IntegrationRequiredDatabaseEvidenceTest cumulative targeted evidence",
+        "passed": 8,
+        "failed": 0,
+        "skipped": 0,
+        "engine": "PostgreSQL 16 via Testcontainers"
+      }
+    ],
+    "executionPolicy": "Each bounded affected group was run once; after a correction only the smallest affected class or named method set was rerun. Passing groups were not broadly repeated and no repository-wide suite was run."
+  },
+  "postgresqlVerification": {
+    "engine": "PostgreSQL 16 via Testcontainers",
+    "databaseUnavailable": false,
+    "customerDatabaseUsed": false,
+    "result": "PASS_ZERO_DATABASE_SKIP",
+    "cleanPlatformMigrationReachesV334AndCreatesExactlySixTables": "PASS",
+    "realV333ToV334UpgradePreservesSharedEvidence": "PASS",
+    "allSixTablesForceRlsAndDenyMissingContextAndCrossTenantAccess": "PASS",
+    "runtimeRoleAclAndTenantCompositeIntegrity": "PASS",
+    "definitionAndMappingVersionSnapshotImmutability": "PASS",
+    "executionItemAndAttemptTransitionAndTerminalGuards": "PASS",
+    "providerKeyUniquenessAndStaleFenceDenial": "PASS",
+    "receiptFirstExecutionAndAtomicInitialLedger": "PASS",
+    "resultUnknownSameKeyReconciliationAndNoBlindRedispatch": "PASS",
+    "failedOnlyRetryAndSuccessfulItemReplayDenial": "PASS",
+    "preDispatchCancelAndPostDispatchCompensationGuard": "PASS",
+    "terminalExecutionReceiptItemAndAttemptImmutability": "PASS",
+    "sysEvt005AuditReceiptAndOutboxAtomicRollback": "PASS",
+    "sys008ReceiptTerminalRulesLimitedToExactSixteenActions": "PASS",
+    "sys006ResultUnknownRecoveryAfterV334": "PASS",
+    "forbiddenSecretRawPayloadMappingAndEmployeeColumnsAbsent": "PASS",
+    "workerOriginalSubjectBindsRlsBeforeReceiptJoin": "PASS"
+  },
+  "preservedContractHashes": [
+    {
+      "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/integration/Sys008ClosedTransportSchemaReference.java",
+      "sha256": "5b673ac13cd371363561499c2fef281fee503ac28f5c8ce5fc4dd2411de50cc6"
+    },
+    {
+      "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/integration/Sys008TypedArtifactContract.java",
+      "sha256": "be18e47450197092e27ed70afffbeab880d21c4b2c1fef0cd0798f6e58f3af79"
+    },
+    {
+      "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/integration/Sys008EventContract.java",
+      "sha256": "2b3ad3d12e79aeafde98880831493119b45d6d3c06ff9f458ba31fff64781907"
+    },
+    {
+      "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/integration/Sys008ProjectionContract.java",
+      "sha256": "80a00b6de7cea552d0b67d442351dadaee3bf0aa1826291ee85db0c28d11fc19"
+    },
+    {
+      "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/integration/Sys008OpaqueReferenceOwnerPort.java",
+      "sha256": "7d6f2028dc9533b8058c865a6f29757727b9a38bd9022edf0c52ddacc56cbd11"
+    },
+    {
+      "path": "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/integration/Sys008EgressBoundary.java",
+      "sha256": "c15dc10b132f8dff3d4c855fcfea11984c0fe1dc8506cc03588bd308dc43c931"
+    },
+    {
+      "path": "dwp-platform-server/src/main/resources/contracts/hris/sys008-event-payload.v1.schema.json",
+      "sha256": "de67053e8593b16fbdb5e63e88bca7b2615ea7d352d055d33817bcb08a9da718"
+    },
+    {
+      "path": "dwp-platform-server/src/test/resources/contracts/hris/sys008-g2-transport-schemas.v1.json",
+      "sha256": "7067a7adad828d4918220fcde54fc0fa9a2add5db1d5745e0a4acb0a50698cf7"
+    }
+  ],
+  "audit": {
+    "sourceOpenP0": 0,
+    "sourceOpenP1": 0,
+    "sourceOpenP2": 0,
+    "acceptanceCriteriaPassed": 15,
+    "acceptanceCriteriaRequired": 15,
+    "goldenScenariosPassed": 13,
+    "goldenScenariosRequired": 13,
+    "result": "PASS"
+  },
+  "nonClaims": [
+    "The executed counts are separate targeted runs and are not a claim that one aggregate test command ran every current method.",
+    "No repository-wide suite or repeated broad rerun is claimed.",
+    "No customer or production database was used.",
+    "No real provider, secret, tenant or customer data is bound.",
+    "The backend module source is pushed to its module branch but is not centrally admitted to dwp-dev by this evidence."
+  ]
+}

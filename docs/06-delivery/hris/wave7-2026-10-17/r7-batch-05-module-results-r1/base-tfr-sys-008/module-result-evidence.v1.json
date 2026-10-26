@@ -1,0 +1,172 @@
+{
+  "schema": "dwp.hris.wave7.module-result-evidence.v1",
+  "evidenceId": "HRIS-WAVE7-R7-BATCH-05-BASE-TFR-SYS-008-MODULE-RESULT-R1",
+  "issuedAt": "2026-10-26T14:15:00+09:00",
+  "issuedBy": "HRIS-SYS",
+  "sliceId": "BASE-TFR-SYS-008",
+  "resultState": "SYS008_EXACT_MODULE_SOURCE_BRANCHES_PUSHED_FIFTEEN_OF_FIFTEEN_ACCEPTANCE_THIRTEEN_OF_THIRTEEN_GOLDEN_PASS_INDEPENDENT_SOURCE_AUDIT_ZERO_P0_P1_P2_CENTRAL_ADMISSION_PENDING_DEFAULT_OFF_ZERO_ENROLLMENT_ZERO_PROVIDER_ZERO_CREDIT",
+  "authority": {
+    "authorityCarrier": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "502e4ad86b4b2badf519675e7b629efa88f88f26",
+      "tree": "d81058a8f5cb15eae02dd11936e25c727d777f5c",
+      "originExactAtIssuance": true
+    },
+    "startToken": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-05-module-start-r1/tokens/base-tfr-sys-008.start-token.v1.json",
+      "tokenId": "HRIS-WAVE7-R7-BATCH-05-START-BASE-TFR-SYS-008-20261026-R1",
+      "sha256": "c20d3101ead5aa8caf6460e28d4cf99c4d6b384c8ae3d69829c77e843cb1c067",
+      "bytes": 27322,
+      "state": "ISSUED_EXECUTABLE_EXACT_MATERIALIZED_WORKTREES_ACTIVE_EXCLUSIVE_V334_BOUNDED_SOURCE_TEST_COMMIT_PUSH_ONLY_DEFAULT_OFF_ZERO_ENROLLMENT"
+    },
+    "activeLease": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-05-module-start-r1/migration-lease-sys008-v334-activation.v1.json",
+      "activationId": "HRIS-WAVE7-R7-BATCH-05-MIGRATION-LEASE-ACTIVATION-SYS008-20261026-R1",
+      "sha256": "32e6f83758de1bdf88b259c0608ed10799c1fea0ecd9a29794b631734e6a50ba",
+      "bytes": 15716,
+      "state": "ACTIVE_EXCLUSIVE_PLATFORM_V334"
+    },
+    "ownerPacket": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-05-module-start-r1/owner-packets/base-tfr-sys-008.owner-packet.v1.json",
+      "sha256": "d4abf69765ab4435f38435ba531db06802294af947d3154fa62c584cd590302c",
+      "bytes": 27798
+    },
+    "semanticDisposition": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-05-module-start-r1/semantic-dispositions/base-tfr-sys-008.semantic-disposition.v1.json",
+      "sha256": "35e8b1ad256ad16ca8a653f0770366e5f58818a38f8da78c15774fd186eff65c",
+      "bytes": 68721
+    },
+    "iaqTransportEventAuthorizationSuccessor": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-05-module-start-r1/sys-008-iaq-transport-event-and-central-authorization-successor.v1.json",
+      "sha256": "1f88dd3999c6609451914c43ffdd2fafdfa83a1bd004e1fc0199ad925135836b",
+      "bytes": 66315
+    },
+    "worktreeMaterializationReceipt": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-05-module-start-r1/worktree-materialization-receipts/base-tfr-sys-008.worktree-materialization-receipt.v1.json",
+      "sha256": "bc01d6f9b09e4d5a004e11cb69eaeb8cc48ad4fb0f56570b2bc24c2688b45e34",
+      "bytes": 7727
+    }
+  },
+  "sourcePins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "codex/hris-wave7-r7-batch05-sys-008-backend-20261026-r1",
+      "baseCommit": "7406b9d6a4ba2c3f777fad3b9e9caa609ec9ff72",
+      "baseTree": "b701265b8b22c4a1ada559a702091344c0686b42",
+      "moduleCommit": "57deb1c07b92c3f0cd80d445980e6af31c01847e",
+      "moduleTree": "130078cf93ec00996657ca8e0f361745e020cc45",
+      "originExact": true,
+      "clean": true,
+      "moduleChangedPathsAgainstBaseline": 30,
+      "outsideAuthorizedRootCount": 0
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "codex/hris-wave7-r7-batch05-sys-008-frontend-20261026-r1",
+      "authorityCarrierBaseCommit": "6dfbaa8f52954e53ca54a65c3f1e1fafca13c534",
+      "authorityCarrierBaseTree": "fdb2cc827bf4070d140684c1b88fa2477c3a0c32",
+      "sourceCommitBeforeEvidence": "8dd154e9280cde3e8e8afb331529d95d82ef906c",
+      "sourceTreeBeforeEvidence": "821b8581429f6fe5d2ca78339f9e898a184350b4",
+      "originExactBeforeEvidence": true,
+      "cleanBeforeEvidence": true,
+      "moduleChangedPathsAgainstAuthorityCarrier": 8,
+      "outsideAuthorizedRootCount": 0
+    }
+  },
+  "implementation": {
+    "backend": [
+      "Exact four closed GET and sixteen closed POST owner operations under dwp-platform-server",
+      "Trusted owner authority filter, single owner query and IAQ-057/IAQ-062 policy projections with revision-bound cursors and VIEW/MASK/OMIT",
+      "Immutable connector and mapping versions with typed PDX-007/008/009 orchestration, maker-checker, expected-revision CAS and frozen boundary evidence",
+      "Opaque reference resolution, endpoint allowlisting, SSRF and DNS-rebinding denial without real provider or secret binding",
+      "Receipt-first execution, provider-key idempotency, monotonic attempt fences, durable RESULT_UNKNOWN, same-key reconciliation, failed-only retry, cancellation and compensation",
+      "Exact V334 six-table migration with tenant-composite FORCE RLS, five shared stores and the shared operations exception projection reused",
+      "SYS-EVT-005 and audit/outbox atomicity plus SYS-006 RESULT_UNKNOWN compatibility"
+    ],
+    "frontend": [
+      "Unmounted integration-control-plane model, client and workbench inside the existing sealed SYS-008 feature boundary",
+      "One owner truth rendered through HRIS Settings and DWP Control policy variants without changing route, menu, page ownership or index exports",
+      "Closed clients for four reads and sixteen commands with idempotency, twelve If-Match and seven step-up policies",
+      "Separate read and command errors, server-derived actions and fail-closed COMPLETE, EMPTY, PARTIAL, UNAVAILABLE and denied states",
+      "Accessible structure and flexible-width viewport/zoom metadata verified in jsdom; theme-token and forced-colors/reduced-motion rules confirmed by source inspection without claiming mode-specific browser rendering, visual or overflow execution",
+      "Default OFF, zero enrollment, unmounted and zero-owner-call behavior"
+    ]
+  },
+  "verification": {
+    "acceptanceCriteria": "15_OF_15_PASS",
+    "goldenScenarios": "13_OF_13_PASS",
+    "backend": {
+      "compileTestJava": "PASS",
+      "boundedNonDatabaseContracts": "36_PASS_ZERO_FAILURE_ZERO_SKIP",
+      "service": "14_OF_14_PASS",
+      "runtime": "17_OF_17_PASS",
+      "worker": "7_OF_7_PASS",
+      "jdbcPostgresqlEarlierBoundedClass": "7_OF_7_PASS_ZERO_SKIP",
+      "jdbcPostgresqlFinalAffectedMethods": "3_OF_3_PASS_ZERO_SKIP",
+      "migrationPostgresqlCumulative": "2_OF_2_PASS_ZERO_SKIP",
+      "requiredDatabaseCumulative": "8_OF_8_PASS_ZERO_SKIP"
+    },
+    "postgresql": "POSTGRESQL_16_TESTCONTAINERS_PASS_ZERO_DATABASE_SKIP",
+    "frontend": {
+      "targetedVitest": "4_FILES_74_OF_74_PASS",
+      "changedFileEslint": "8_FILES_PASS",
+      "prettier": "PASS",
+      "boundedTypeScript": "PASS"
+    },
+    "independentSourceAudit": {
+      "openP0": 0,
+      "openP1": 0,
+      "openP2": 0
+    },
+    "repositoryWideSuiteRun": false,
+    "redundantBroadRerun": false,
+    "singleAggregateBackendRunClaimed": false
+  },
+  "subordinateEvidence": [
+    {
+      "path": "acceptance-results.v1.json",
+      "sha256": "6ceaf13809ecf3d49c0c088cb10a5edf7fbfa83c884a844caa8a497b12bd200c",
+      "bytes": 13856
+    },
+    {
+      "path": "changed-path-and-no-recount.v1.json",
+      "sha256": "8940161ae261d0c904f4450fff6acc73feebb1f1c0a973605ec525cdf96c6701",
+      "bytes": 10777
+    },
+    {
+      "path": "platform-v334-and-postgres-evidence.v1.json",
+      "sha256": "237d2f0912afcc9514bbaf922a076f78981334e9f81af669c5bab0f2b0d6c97b",
+      "bytes": 8736
+    }
+  ],
+  "centralState": {
+    "centralContractAdmissionBaselinePresent": true,
+    "moduleSourceAdmission": false,
+    "moduleEvidenceAdmission": false,
+    "backendDwpDevMerge": false,
+    "frontendDwpDevMerge": false,
+    "routeMounted": false,
+    "sidebarOrMenuActivated": false,
+    "featureEnabled": false,
+    "tenantEnrollmentCount": 0,
+    "productionProviderBindingCount": 0,
+    "productionSecretBindingCount": 0,
+    "customerDataConnected": false,
+    "businessCompletionCredit": 0
+  },
+  "residuals": [
+    "A separate central source and evidence admission must independently review these exact module commits and hashes before either branch is merged to dwp-dev.",
+    "Feature enablement, tenant enrollment, projection mounting, route/menu activation and production provider or secret binding require later explicit authority."
+  ],
+  "nonClaims": [
+    "The module source branches are pushed but are not centrally admitted or merged to dwp-dev by this result.",
+    "No route, shell, sidebar, menu, i18n, shared page ownership, index export or projection mount is changed.",
+    "HRIS_INTEGRATION_CONTROL_PLANE remains default OFF and no tenant is enrolled.",
+    "No production provider, secret, customer data or customer database is connected.",
+    "No production release or full-slice business-completion credit is claimed.",
+    "No repository-wide suite, redundant broad rerun or one-shot aggregate backend run is claimed."
+  ],
+  "decision": "MODULE_RESULT_READY_FOR_EXACT_EVIDENCE_COMMIT_AND_PUSH_THEN_SEPARATE_CENTRAL_SOURCE_AND_EVIDENCE_ADMISSION",
+  "nextAction": "Validate and commit this exact four-file evidence bundle on the SYS-008 frontend module branch, push it, independently audit its hashes and claims, then perform separate central source/evidence admission while keeping the feature default OFF, unmounted, unenrolled and without production provider or secret bindings."
+}
