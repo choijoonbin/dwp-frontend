@@ -1,0 +1,62 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-approval-drain-review-metadata-seal.v1",
+  "state": "APPEND_ONLY_SUCCESSOR_SEAL_FOR_APPROVAL_DRAIN_REVIEW_METADATA",
+  "sliceId": "BASE-TFR-HRM-013",
+  "lane": "APPROVAL_RUNTIME_GOVERNANCE",
+  "carrier": {
+    "repository": "dwp-frontend",
+    "branch": "codex/hris-wave7-batch06-hrm013-approval-drain-review-seal-frontend-20261027-r1",
+    "baseCommit": "3f28c072b4a92c8607532ebf5fbed9967e6a6ccb",
+    "baseTree": "c14d44394bc4eae4d4ab2af4dac6b22ef24511c4",
+    "requiredDirectChild": true,
+    "exactChangedPathCount": 4
+  },
+  "predecessor": {
+    "commit": "3f28c072b4a92c8607532ebf5fbed9967e6a6ccb",
+    "tree": "c14d44394bc4eae4d4ab2af4dac6b22ef24511c4",
+    "authority": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-drain-clarification-r1/approval-drain-root-terminal-clarification.v1.json",
+      "bytes": 5363,
+      "sha256": "4b44a5994fee40f518c4dfdb31ecd5ff865bc269c9cdcc83f8b19326334a1958"
+    },
+    "validator": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-drain-clarification-r1/validate_hrm013_approval_drain_clarification.py",
+      "bytes": 17785,
+      "sha256": "f2dfcfe1180b13d6ab6c4aeb86bffbd59ea700c72a1965f802299b6b7d6f9f96"
+    },
+    "independentReview": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-drain-clarification-r1/independent-review.v1.json",
+      "bytes": 2334,
+      "sha256": "c7450dca0f1a6d1c267298653aa7c041db71ed9c009b688d201e9ad1f176ea13"
+    },
+    "package": {
+      "path": "package.json",
+      "bytes": 16175,
+      "sha256": "059b0a66e01b2dc14173deffb703d6eb8d8c59c1bf40314ae56303e2ae3f1f4e"
+    }
+  },
+  "defect": {
+    "severity": "P1",
+    "description": "The predecessor validator did not exact-check the independent review top-level key set, state, reviewScope or reviewedBy fields.",
+    "historyPolicy": "The shared predecessor commit remains immutable; this successor closes the validation gap without amend or force-push."
+  },
+  "correction": {
+    "topLevelKeySetExact": true,
+    "stateExact": "INDEPENDENT_ZERO_FINDING_REVIEW_OF_EXACT_APPEND_ONLY_CLARIFICATION_CARRIER",
+    "reviewScopeExact": true,
+    "reviewedByExact": "INDEPENDENT_HRM013_APPROVAL_RUNTIME_POST_REVIEW_AGENT",
+    "allPreviouslyValidatedReviewFieldsRechecked": true,
+    "predecessorSemanticsChanged": false
+  },
+  "authority": {
+    "independentReviewComplete": true,
+    "carrierCommitAndPushAuthorized": true,
+    "approvalImplementationMayContinueAfterCarrierPush": true,
+    "sourceOrTestScopeExpanded": false,
+    "migrationOrActivationAuthority": false,
+    "directBackendDwpDevIntegrationAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0
+  },
+  "next": "COMMIT_AND_PUSH_THIS_EXACT_FOUR_PATH_SUCCESSOR_SEAL_THEN_CONTINUE_APPROVAL_TARGETED_CORRECTION"
+}

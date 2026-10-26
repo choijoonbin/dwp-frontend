@@ -1,0 +1,54 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-approval-drain-review-metadata-seal-independent-review.v1",
+  "state": "INDEPENDENT_ZERO_FINDING_REVIEW_OF_APPEND_ONLY_METADATA_SEAL",
+  "reviewScope": {
+    "predecessor": [
+      "Pinned predecessor commit, tree and four artifact hashes are exact",
+      "Predecessor independent-review top-level key set, state, reviewScope and reviewedBy are exact",
+      "All predecessor review fields that were already enforced remain exact"
+    ],
+    "successor": [
+      "The carrier is one direct-child commit with exactly four changed paths",
+      "The package validation chain appends this successor validator once",
+      "No implementation, migration, activation or integration authority is added"
+    ]
+  },
+  "findings": {
+    "p0": [],
+    "p1": [],
+    "p2": []
+  },
+  "finalVerdict": {
+    "p0": 0,
+    "p1": 0,
+    "p2": 0,
+    "decision": "GO_FOR_APPROVAL_DRAIN_REVIEW_METADATA_SEAL_COMMIT_AND_PUSH_ONLY"
+  },
+  "authority": {
+    "independentReviewComplete": true,
+    "carrierCommitAndPushAuthorized": true,
+    "approvalImplementationMayContinueAfterCarrierPush": true,
+    "sourceOrTestScopeExpanded": false,
+    "migrationOrActivationAuthority": false,
+    "businessCompletionCredit": 0
+  },
+  "artifactPins": [
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-drain-review-seal-r1/approval-drain-review-metadata-seal.v1.json",
+      "bytes": 2894,
+      "sha256": "032e957dbf1a558e60b9db00cc6128395216d4765d423c995b101d4143845ba2"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-approval-drain-review-seal-r1/validate_hrm013_approval_drain_review_seal.py",
+      "bytes": 14716,
+      "sha256": "e8591350545cf2d5ece49e185da9261cfbdc8e1ebf8748dd112604180b241394"
+    },
+    {
+      "path": "package.json",
+      "bytes": 16320,
+      "sha256": "c6de54cd2e1c34ecf3b875edbd2f6b27d513c2ad1ddbee748c9258ced844aec9"
+    }
+  ],
+  "reviewedAt": "2026-10-26T22:31:42Z",
+  "reviewedBy": "INDEPENDENT_HRM013_APPROVAL_RUNTIME_POST_REVIEW_AGENT"
+}
