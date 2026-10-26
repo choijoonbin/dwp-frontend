@@ -1,0 +1,139 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-06-hrm013-semantic-closure-independent-review.v1",
+  "reviewId": "HRIS-WAVE7-R7-BATCH-06-HRM013-SEMANTIC-CLOSURE-REVIEW-20261026-R1",
+  "recordedAt": "2026-10-26T17:45:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ID_AND_SHA256"
+  },
+  "state": "INDEPENDENTLY_REVIEWED_PASS_ZERO_P0_ZERO_P1_ZERO_P2_CARRIER_MAY_COMMIT_AND_PUSH_CENTRAL_WORKTREE_TOKEN_PREPARATION_ELIGIBLE",
+  "sliceId": "BASE-TFR-HRM-013",
+  "module": "HRM",
+  "moduleSession": "HRIS-HRM",
+  "reviewedArtifacts": [
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-semantic-closure-r1/semantic-dispositions/base-tfr-hrm-013.semantic-disposition.v1.json",
+      "sha256": "725d66e394368dd71e3fe12f8308c1a481b2ff8169b43a91fc73f70557c023d4",
+      "bytes": 17314
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-semantic-closure-r1/contract-successors/base-tfr-hrm-013.contract-successor.v1.json",
+      "sha256": "a364170cd1adeda5f4e0a86402b0e60d3db2c9ab51c72c6adf44d7a839b58a11",
+      "bytes": 11737
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-semantic-closure-r1/migration-manifests/base-tfr-hrm-013.people-v61-schema-manifest.v1.json",
+      "sha256": "be999619fea5ee658d5f5dfd7df7663b4c0a2055d80d8382572e197a188c655e",
+      "bytes": 11926
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-semantic-closure-r1/hrm-013-central-contract-authorization-successor.v1.json",
+      "sha256": "910cd09f670c80d8d2924996ec5180f6cf456c17500166c2eb3229d6fdff0797",
+      "bytes": 19948
+    }
+  ],
+  "independentReviewers": [
+    {
+      "role": "HRM013_ARCHITECTURE_REVIEWER",
+      "scope": "semantic boundary, lifecycle, operation classification, event contract, acceptance and execution authority"
+    },
+    {
+      "role": "HRM013_SECURITY_MIGRATION_REVIEWER",
+      "scope": "authorization descriptors, purpose separation, action exposure, default-off, migration scope, RLS and lease authority"
+    }
+  ],
+  "resolvedFindings": [
+    {
+      "severity": "P1",
+      "finding": "IAQ-011 PAGE and DATA used lifecycle command purpose instead of the authoritative HR_OPERATIONS read purpose.",
+      "resolution": "PAGE and DATA now use HR_OPERATIONS at Gateway and owner; only the ACTION maps HR_LIFECYCLE to owner-fixed SEPARATION_CASE."
+    },
+    {
+      "severity": "P1",
+      "finding": "The IAQ action allowlist did not bind action visibility to item eligibility, field VIEW decisions and preliminary PEP-HRM-013.",
+      "resolution": "Both PAGE and DATA projections now omit the action unless all target, nonterminal-case, field-decision and preliminary-PEP guards pass."
+    },
+    {
+      "severity": "P1",
+      "finding": "Product authorization v61 and Auth V270 were described as reserved while their machine state remained candidate-only.",
+      "resolution": "Both central versions are RESERVED_NOT_ACTIVE with explicit true reservation booleans; People database V61 remains NOT_ISSUED."
+    },
+    {
+      "severity": "P1",
+      "finding": "XCON-028 had no design-time consumer set even though the codegen manifest requires one.",
+      "resolution": "Design consumers are sealed to HRIS-PER, HRIS-TIM and HRIS-PAY while production subscriptions and handlers remain zero."
+    },
+    {
+      "severity": "P1",
+      "finding": "The new capability and predicate descriptors omitted canonical fields needed for deterministic v61 generation.",
+      "resolution": "Responsibility requirement, owner, policy version, lifecycle, legacy and sunset values plus closed predicate evidence and parameter schemas are now exact and validator-checked."
+    },
+    {
+      "severity": "P2",
+      "finding": "REPLAY_NOOP was modeled as a persisted callback outcome despite append-only unique callback identity.",
+      "resolution": "Persisted outcomes are ACCEPTED, REJECTED or QUARANTINED; REPLAY_NOOP is response or telemetry disposition over the existing immutable row."
+    },
+    {
+      "severity": "P2",
+      "finding": "The five-field WorkerSeparated business payload was not explicitly separated from the common canonical event data required for envelope equality.",
+      "resolution": "The contract now seals five business fields and fourteen canonical data fields separately, with eight exact outer-data equalities and payload digest scope."
+    }
+  ],
+  "postResolutionSeverityCounts": {
+    "P0": 0,
+    "P1": 0,
+    "P2": 0
+  },
+  "verifiedBoundaries": [
+    "HRM-013 excludes general LEAVE, RETURN and ppl_employment_absence_periods.",
+    "Only createSeparationCase is a public PEP; every non-create transition remains trusted internal with no invented public route.",
+    "The exact six-state lifecycle, idempotency tuple, CAS, callback replay fence and twelve acceptance conditions are closed.",
+    "XCON-028 is append-only after XCON-027 with five business fields, closed canonical data and no production binding or subscription.",
+    "Product authorization v61 and Auth V270 are reserved but inactive; the feature is OFF with zero global activation and zero tenant enrollment.",
+    "People V61 is a named candidate with an exact manifest only; no reservation, lease, SQL or module source authority exists.",
+    "No owner packet, module worktree, module token, route mount, menu mount, production binding or later Batch-06 lane is authorized."
+  ],
+  "verification": {
+    "command": "python3 docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-semantic-closure-r1/validate_hrm013_semantic_closure.py",
+    "status": "PASS",
+    "documents": 4,
+    "acceptedEvidencePins": 10,
+    "states": 6,
+    "transitions": 6,
+    "acceptanceConditions": 12,
+    "eventBusinessPayloadFields": 5,
+    "eventCanonicalDataFields": 14,
+    "v61NewTables": 3,
+    "authorizationRoutes": 3,
+    "featureDefault": "OFF",
+    "tenantEnrollments": 0,
+    "peopleV61Lease": "NOT_ISSUED"
+  },
+  "nextAction": "COMMIT_AND_PUSH_THIS_AUTHORITY_CARRIER_THEN_PREPARE_SEPARATE_CLEAN_CENTRAL_BACKEND_AND_FRONTEND_WORKTREES_AND_A_BOUNDED_EXECUTABLE_TOKEN_FOR_XCON_028_PRODUCT_AUTHORIZATION_V61_AUTH_V270_AND_THE_UNMOUNTED_FRONTEND_MIRROR",
+  "authority": {
+    "independentReviewComplete": true,
+    "authorityCarrierCommitAndPushAuthorized": true,
+    "centralWorktreeAndTokenPreparationEligibleAfterCarrierCommit": true,
+    "boundedCentralImplementationEligibleAfterSeparateWorktreeAndToken": true,
+    "centralSourceAuthoringAuthorizedNow": false,
+    "moduleOwnerPacketAuthorized": false,
+    "moduleSourceAuthoringAuthorized": false,
+    "moduleWorktreeAuthorized": false,
+    "moduleStartTokenAuthorized": false,
+    "peopleV61ReservationAuthorized": false,
+    "peopleV61LeaseActive": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionBindingAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "laterBatch06LaneAuthorized": false
+  },
+  "nonClaims": [
+    "Central or module source has been authored, committed, pushed or admitted.",
+    "A central or module worktree or executable token exists.",
+    "People V61 is reserved or active.",
+    "Any route, menu, feature, tenant, event publisher or consumer is active.",
+    "HRM-013, Batch-06, R7 or HRIS is complete."
+  ]
+}

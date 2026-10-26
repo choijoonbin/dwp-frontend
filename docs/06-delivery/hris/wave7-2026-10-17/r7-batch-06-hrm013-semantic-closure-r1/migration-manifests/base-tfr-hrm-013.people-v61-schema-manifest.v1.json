@@ -1,0 +1,270 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-06-hrm013-people-v61-schema-manifest.v1",
+  "manifestId": "HRIS-WAVE7-R7-BATCH-06-HRM013-PEOPLE-V61-SCHEMA-MANIFEST-20261026-R1",
+  "recordedAt": "2026-10-26T17:10:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ID_AND_SHA256"
+  },
+  "state": "SEALED_EXACT_PEOPLE_V61_SCOPE_NOT_RESERVED_NOT_ACTIVE_SQL_AUTHORING_WITHHELD",
+  "sliceId": "BASE-TFR-HRM-013",
+  "module": "HRM",
+  "moduleSession": "HRIS-HRM",
+  "semanticDisposition": {
+    "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-semantic-closure-r1/semantic-dispositions/base-tfr-hrm-013.semantic-disposition.v1.json",
+    "sha256": "725d66e394368dd71e3fe12f8308c1a481b2ff8169b43a91fc73f70557c023d4",
+    "bytes": 17314
+  },
+  "migration": {
+    "repository": "dwp-backend",
+    "service": "dwp-people-server",
+    "stream": "PEOPLE_MAIN",
+    "observedHighWater": "V60",
+    "candidateVersion": "V61",
+    "candidatePath": "dwp-people-server/src/main/resources/db/migration/V61__hrm_base_tfr_hrm_013.sql",
+    "predecessor": {
+      "path": "dwp-people-server/src/main/resources/db/migration/V60__hrm_base_tfr_hrm_012.sql",
+      "sha256": "bb94ad7cea87c59aaf60ac40ec234a39d69f4302741ab17def3beb4d4eea77dd",
+      "bytes": 63593
+    },
+    "leaseState": "NOT_ISSUED",
+    "reservationAuthorized": false,
+    "activationAuthorized": false,
+    "sqlAuthoringAuthorized": false
+  },
+  "newTables": [
+    {
+      "name": "ppl_separation_cases",
+      "columns": [
+        "separation_case_id BIGSERIAL PRIMARY KEY",
+        "public_id UUID NOT NULL",
+        "tenant_id BIGINT NOT NULL",
+        "worker_id BIGINT NOT NULL",
+        "work_relationship_id BIGINT NOT NULL",
+        "separation_type VARCHAR(40) NOT NULL",
+        "reason_code VARCHAR(80) NOT NULL",
+        "effective_date DATE NOT NULL",
+        "last_working_date DATE NOT NULL",
+        "lifecycle_state VARCHAR(32) NOT NULL DEFAULT 'DRAFT'",
+        "input_snapshot_hash CHAR(64) NOT NULL",
+        "task_template_public_id UUID NOT NULL",
+        "task_template_revision BIGINT NOT NULL",
+        "task_template_hash CHAR(64) NOT NULL",
+        "approval_request_id UUID",
+        "approval_decision_event_id UUID",
+        "approval_decision_revision BIGINT",
+        "approval_payload_hash CHAR(64)",
+        "maker_principal_public_id UUID NOT NULL",
+        "approval_actor_public_id UUID",
+        "correlation_id UUID NOT NULL",
+        "version BIGINT NOT NULL DEFAULT 0",
+        "irreversible_at TIMESTAMPTZ",
+        "published_at TIMESTAMPTZ",
+        "created_at TIMESTAMPTZ NOT NULL",
+        "created_by BIGINT NOT NULL",
+        "updated_at TIMESTAMPTZ NOT NULL",
+        "updated_by BIGINT NOT NULL"
+      ],
+      "uniqueConstraints": [
+        "public_id",
+        "tenant_id,separation_case_id",
+        "tenant_id,correlation_id",
+        "tenant_id,approval_request_id WHERE approval_request_id IS NOT NULL"
+      ],
+      "foreignKeys": [
+        "tenant_id -> sys_service_tenants.tenant_id",
+        "tenant_id,worker_id -> ppl_workers.tenant_id,worker_id",
+        "tenant_id,work_relationship_id -> ppl_work_relationships.tenant_id,work_relationship_id"
+      ],
+      "checks": [
+        "separation_type IN RESIGNATION|TERMINATION|RETIREMENT|END_OF_CONTRACT",
+        "lifecycle_state IN DRAFT|TASKS_ACTIVE|READY_TO_PUBLISH|PUBLISHED|CORRECTION_REQUIRED|CANCELLED",
+        "last_working_date <= effective_date",
+        "version >= 0 and task_template_revision > 0",
+        "all SHA-256 columns are lowercase hexadecimal length 64",
+        "PUBLISHED requires approval evidence, approval actor, positive decision revision, published_at and irreversible_at",
+        "maker_principal_public_id differs from approval_actor_public_id when approval actor exists"
+      ]
+    },
+    {
+      "name": "ppl_separation_tasks",
+      "columns": [
+        "separation_task_id BIGSERIAL PRIMARY KEY",
+        "public_id UUID NOT NULL",
+        "tenant_id BIGINT NOT NULL",
+        "separation_case_id BIGINT NOT NULL",
+        "task_type VARCHAR(80) NOT NULL",
+        "owner_workload_id VARCHAR(120) NOT NULL",
+        "mandatory BOOLEAN NOT NULL",
+        "irreversible BOOLEAN NOT NULL",
+        "lifecycle_state VARCHAR(20) NOT NULL DEFAULT 'PENDING'",
+        "owner_revision BIGINT",
+        "external_receipt_public_id UUID",
+        "waiver_decision_event_id UUID",
+        "waiver_actor_public_id UUID",
+        "waiver_reason_code VARCHAR(80)",
+        "payload_hash CHAR(64)",
+        "version BIGINT NOT NULL DEFAULT 0",
+        "completed_at TIMESTAMPTZ",
+        "created_at TIMESTAMPTZ NOT NULL",
+        "created_by BIGINT NOT NULL",
+        "updated_at TIMESTAMPTZ NOT NULL",
+        "updated_by BIGINT NOT NULL"
+      ],
+      "uniqueConstraints": [
+        "public_id",
+        "tenant_id,separation_task_id",
+        "tenant_id,separation_case_id,task_type"
+      ],
+      "foreignKeys": [
+        "tenant_id -> sys_service_tenants.tenant_id",
+        "tenant_id,separation_case_id -> ppl_separation_cases.tenant_id,separation_case_id"
+      ],
+      "checks": [
+        "lifecycle_state IN PENDING|IN_PROGRESS|COMPLETED|WAIVED|FAILED",
+        "version >= 0 and owner_revision is null or positive",
+        "COMPLETED requires owner_revision, external_receipt_public_id, payload_hash and completed_at",
+        "WAIVED requires waiver decision, waiver actor, waiver reason, payload_hash and completed_at"
+      ]
+    },
+    {
+      "name": "ppl_separation_callbacks",
+      "columns": [
+        "separation_callback_id BIGSERIAL PRIMARY KEY",
+        "tenant_id BIGINT NOT NULL",
+        "separation_case_id BIGINT NOT NULL",
+        "separation_task_id BIGINT",
+        "callback_type VARCHAR(32) NOT NULL",
+        "caller_workload_id VARCHAR(120) NOT NULL",
+        "callback_event_id UUID NOT NULL",
+        "owner_revision BIGINT NOT NULL",
+        "payload_hash CHAR(64) NOT NULL",
+        "audience VARCHAR(120) NOT NULL",
+        "purpose_code VARCHAR(80) NOT NULL",
+        "correlation_id UUID NOT NULL",
+        "outcome VARCHAR(32) NOT NULL",
+        "occurred_at TIMESTAMPTZ NOT NULL",
+        "received_at TIMESTAMPTZ NOT NULL"
+      ],
+      "uniqueConstraints": [
+        "tenant_id,caller_workload_id,callback_event_id"
+      ],
+      "foreignKeys": [
+        "tenant_id -> sys_service_tenants.tenant_id",
+        "tenant_id,separation_case_id -> ppl_separation_cases.tenant_id,separation_case_id",
+        "tenant_id,separation_task_id -> ppl_separation_tasks.tenant_id,separation_task_id"
+      ],
+      "checks": [
+        "callback_type IN APPROVAL_DECISION|TASK_RECEIPT|RECONCILIATION_RESULT",
+        "owner_revision > 0",
+        "payload_hash is lowercase hexadecimal length 64",
+        "outcome IN ACCEPTED|REJECTED|QUARANTINED",
+        "TASK_RECEIPT requires separation_task_id"
+      ],
+      "retentionRule": "Append-only callback identity and digest evidence; raw callback payload and personal data are forbidden.",
+      "replayRule": "An exact replay returns the existing row and reports REPLAY_NOOP only as response or telemetry disposition; it inserts no second row and never updates persisted outcome. A conflicting digest is rejected and audited without mutating the existing row."
+    }
+  ],
+  "assignmentEventDelta": {
+    "table": "ppl_assignment_events",
+    "addColumns": [
+      "separation_case_id BIGINT",
+      "supersedes_assignment_event_id BIGINT",
+      "reverses_assignment_event_id BIGINT"
+    ],
+    "addForeignKeys": [
+      "tenant_id,separation_case_id -> ppl_separation_cases.tenant_id,separation_case_id",
+      "tenant_id,supersedes_assignment_event_id -> ppl_assignment_events.tenant_id,assignment_event_id",
+      "tenant_id,reverses_assignment_event_id -> ppl_assignment_events.tenant_id,assignment_event_id"
+    ],
+    "replaceEventTypeCheckWithExactSet": [
+      "HIRE",
+      "CONCURRENT_EMPLOYMENT",
+      "REHIRE",
+      "TERMINATION",
+      "CORRECTION"
+    ],
+    "lineageChecks": [
+      "TERMINATION requires separation_case_id and forbids supersedes_assignment_event_id and reverses_assignment_event_id",
+      "REHIRE requires separation_case_id and reverses_assignment_event_id and forbids supersedes_assignment_event_id",
+      "CORRECTION requires separation_case_id and supersedes_assignment_event_id and forbids reverses_assignment_event_id",
+      "HIRE and CONCURRENT_EMPLOYMENT require all three new lineage columns to be null",
+      "no assignment event can supersede or reverse itself"
+    ],
+    "forbiddenDiscriminators": [
+      "LEAVE",
+      "RETURN"
+    ]
+  },
+  "indexes": [
+    "ppl_separation_cases(tenant_id,lifecycle_state,effective_date,created_at) WHERE lifecycle_state IN DRAFT|TASKS_ACTIVE|READY_TO_PUBLISH|CORRECTION_REQUIRED",
+    "ppl_separation_cases(tenant_id,work_relationship_id,effective_date DESC,created_at DESC)",
+    "ppl_separation_tasks(tenant_id,separation_case_id,lifecycle_state,task_type)",
+    "ppl_separation_callbacks(tenant_id,separation_case_id,owner_revision,received_at)",
+    "ppl_assignment_events(tenant_id,separation_case_id,event_type) WHERE separation_case_id IS NOT NULL",
+    "sys_people_outbox_events unique semantic key for aggregate_type SEPARATION_CASE and event_type WorkerSeparated.v1"
+  ],
+  "rowLevelSecurity": {
+    "tables": [
+      "ppl_separation_cases",
+      "ppl_separation_tasks",
+      "ppl_separation_callbacks"
+    ],
+    "enable": true,
+    "force": true,
+    "predicate": "tenant_id equals NULLIF(current_setting('dwp.tenant_id', true), '')::BIGINT",
+    "withCheck": "same as predicate",
+    "bypassRoles": []
+  },
+  "immutabilityGuards": [
+    "PUBLISHED, CORRECTION_REQUIRED and CANCELLED separation cases cannot be deleted.",
+    "PUBLISHED source facts, approval evidence, task-template evidence and publication evidence cannot be updated.",
+    "Separation callbacks cannot be updated or deleted.",
+    "Published assignment events remain protected by the existing forward-correction-only guard."
+  ],
+  "reusedInfrastructure": [
+    "ppl_command_receipts",
+    "sys_people_audit_events",
+    "sys_people_outbox_events",
+    "existing tenant-context RLS convention",
+    "existing assignment-event terminal guard extended only for the admitted discriminators"
+  ],
+  "explicitlyExcluded": [
+    "ppl_employment_absence_periods",
+    "general LEAVE and RETURN persistence",
+    "new command receipt table",
+    "new audit table",
+    "new outbox table",
+    "raw callback payload retention",
+    "destructive correction of published rows"
+  ],
+  "requiredFutureVerificationAfterActiveLease": [
+    "V61 clean install from empty schema",
+    "V60-to-V61 upgrade",
+    "repeat migration conflict and checksum behavior",
+    "RLS cross-tenant deny and same-tenant allow",
+    "terminal and callback immutability",
+    "callback replay and digest conflict",
+    "assignment-event discriminator and lineage checks",
+    "atomic publish rollback with no partial receipt, audit or outbox success"
+  ],
+  "authority": {
+    "exactSchemaScopeSealed": true,
+    "peopleV61CandidateNamed": true,
+    "peopleV61Reserved": false,
+    "peopleV61LeaseActive": false,
+    "migrationSqlAuthoringAuthorized": false,
+    "moduleSourceAuthoringAuthorized": false,
+    "productionDatabaseExecutionAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "invalidationConditions": [
+    "V61 is reserved or authored before a separate exclusive lease is issued.",
+    "ppl_employment_absence_periods, LEAVE or RETURN is introduced by this slice.",
+    "Any new receipt, audit or outbox ledger duplicates existing People infrastructure.",
+    "Any callback row stores raw payload or personal data.",
+    "Any table lacks enabled and forced tenant RLS.",
+    "Any published separation or assignment fact can be destructively changed or deleted."
+  ]
+}

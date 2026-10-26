@@ -1,0 +1,332 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-06-hrm013-contract-successor.v1",
+  "successorId": "HRIS-WAVE7-R7-BATCH-06-HRM013-CONTRACT-SUCCESSOR-20261026-R1",
+  "recordedAt": "2026-10-26T17:05:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ID_AND_SHA256"
+  },
+  "state": "SEALED_IAQ011_PEP_HRM_013_XCON_028_AND_INTERNAL_RECEIPT_BOUNDARIES_CENTRAL_IMPLEMENTATION_NOT_YET_ADMITTED",
+  "sliceId": "BASE-TFR-HRM-013",
+  "module": "HRM",
+  "moduleSession": "HRIS-HRM",
+  "semanticDisposition": {
+    "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-semantic-closure-r1/semantic-dispositions/base-tfr-hrm-013.semantic-disposition.v1.json",
+    "sha256": "725d66e394368dd71e3fe12f8308c1a481b2ff8169b43a91fc73f70557c023d4",
+    "bytes": 17314
+  },
+  "decision": "AUTHORIZE_A_LATER_BOUNDED_CENTRAL_IMPLEMENTATION_OF_XCON_028_AND_EXISTING_IAQ011_PEP_HRM_013_DESCRIPTORS_WITHOUT_INVENTING_PUBLIC_NON_CREATE_ROUTES",
+  "entryQuery": {
+    "queryId": "IAQ-011",
+    "iaNodeId": "BASE:hr-exit-return",
+    "variantKey": "EXIT_RETURN",
+    "wireProjection": "Hrm013ExitReturnProjectionV1",
+    "method": "GET",
+    "browserPath": "/api/people/v1/hris/workbench/operations/exit/return",
+    "ownerPath": "/v1/hris/workbench/operations/exit/return",
+    "canonicalRoute": "/hr/operations/people/exit-return",
+    "capability": "hcm.operations.people.view",
+    "fieldGroups": [
+      "SEPARATION_CASE",
+      "RETURN_ELIGIBILITY",
+      "APPROVAL_STATUS"
+    ],
+    "allowedSorts": [
+      "separationCase:ASC",
+      "returnEligibility:ASC",
+      "approvalStatus:ASC",
+      "separationCase:DESC",
+      "returnEligibility:DESC",
+      "approvalStatus:DESC",
+      "itemPublicId:ASC",
+      "itemPublicId:DESC"
+    ],
+    "stableDefaultSort": "itemPublicId:ASC",
+    "maximumPageSize": 100,
+    "itemIdentity": "itemPublicId",
+    "actionAllowlist": [
+      "hris.action.hrm.create-separation-case"
+    ],
+    "actionExposureRule": "Expose create-separation-case only when the item has an active target relationship, no nonterminal separation case for the same relationship and effective intent, all required field decisions are VIEW, and a preliminary PEP-HRM-013 decision allows that exact target; otherwise omit the action.",
+    "returnEligibilityRule": "Only a PUBLISHED separation can expose eligibility for a new linked REHIRE or CORRECTION. General leave-return eligibility is forbidden.",
+    "tenantRule": "Tenant is resolved only from trusted context and is never accepted from query, path or body.",
+    "implementationState": "CENTRAL_DESCRIPTOR_AUTHORIZED_AFTER_CARRIER_MODULE_QUERY_SOURCE_WITHHELD"
+  },
+  "publicCommand": {
+    "pepId": "PEP-HRM-013",
+    "operationId": "createSeparationCase",
+    "actionKey": "hris.action.hrm.create-separation-case",
+    "method": "POST",
+    "browserPath": "/api/people/v1/hris/separation-cases",
+    "ownerPath": "/v1/hris/separation-cases",
+    "capability": "hcm.operations.separation.manage",
+    "requestSchema": {
+      "name": "SeparationCommand",
+      "closedFields": [
+        "relationshipPublicId",
+        "separationType",
+        "effectiveDate",
+        "reasonCode",
+        "lastWorkingDate"
+      ],
+      "separationTypeEnum": [
+        "RESIGNATION",
+        "TERMINATION",
+        "RETIREMENT",
+        "END_OF_CONTRACT"
+      ]
+    },
+    "requiredHeaders": [
+      "Idempotency-Key",
+      "If-Match",
+      "X-Correlation-ID"
+    ],
+    "successStatus": 202,
+    "responseSchema": "CommandReceiptV1",
+    "originatingAction": "hris.action.hrm.create-separation-case",
+    "tenantRule": "Tenant, duty, population, field policy and purpose are reconstructed from trusted authorization context and never accepted from the request.",
+    "implementationState": "CENTRAL_DESCRIPTOR_AUTHORIZED_AFTER_CARRIER_MODULE_HANDLER_SOURCE_WITHHELD"
+  },
+  "internalOperationBoundary": {
+    "publicOrBrowserRoutes": [],
+    "operations": [
+      {
+        "operation": "activate",
+        "transport": "LOCAL_OWNER_ORCHESTRATION_ONLY",
+        "bindingState": "NO_HTTP_BINDING_REQUIRED"
+      },
+      {
+        "operation": "task.receive",
+        "transport": "TRUSTED_WORKLOAD_CALLBACK",
+        "bindingState": "EXACT_SERVICE_BINDING_REQUIRED_AND_NOT_YET_AUTHORIZED"
+      },
+      {
+        "operation": "publish",
+        "transport": "LOCAL_OWNER_ORCHESTRATION_ONLY",
+        "bindingState": "NO_HTTP_BINDING_REQUIRED"
+      },
+      {
+        "operation": "reconcile",
+        "transport": "TRUSTED_WORKLOAD_CALLBACK",
+        "bindingState": "EXACT_SERVICE_BINDING_REQUIRED_AND_NOT_YET_AUTHORIZED"
+      },
+      {
+        "operation": "cancel",
+        "transport": "LOCAL_OWNER_ORCHESTRATION_ONLY",
+        "bindingState": "NO_HTTP_BINDING_REQUIRED"
+      },
+      {
+        "operation": "task.waive.evidence.receive",
+        "transport": "TRUSTED_APPROVAL_CALLBACK",
+        "bindingState": "EXACT_SERVICE_BINDING_REQUIRED_AND_NOT_YET_AUTHORIZED"
+      }
+    ],
+    "rule": "No module packet may invent a browser, gateway or owner HTTP route for these operations. Callback routes, caller workloads, audience and purpose require a separately reviewed append-only service-binding authority before module source."
+  },
+  "closedInternalSchemas": {
+    "SeparationTaskReceiptV1": {
+      "additionalProperties": false,
+      "trustedContextFields": [
+        "tenantId",
+        "callerWorkloadId",
+        "audience",
+        "purpose"
+      ],
+      "bodyFields": [
+        "callbackEventId",
+        "casePublicId",
+        "taskPublicId",
+        "taskType",
+        "status",
+        "ownerRevision",
+        "occurredAt",
+        "payloadSha256",
+        "correlationId"
+      ],
+      "statusEnum": [
+        "COMPLETED",
+        "FAILED"
+      ]
+    },
+    "SeparationWaiverDecisionV1": {
+      "additionalProperties": false,
+      "trustedContextFields": [
+        "tenantId",
+        "callerWorkloadId",
+        "audience",
+        "purpose"
+      ],
+      "bodyFields": [
+        "callbackEventId",
+        "approvalRequestId",
+        "casePublicId",
+        "taskPublicId",
+        "decisionActorPublicId",
+        "decisionRevision",
+        "reasonCode",
+        "stepUpEvidenceId",
+        "occurredAt",
+        "payloadSha256",
+        "correlationId"
+      ]
+    },
+    "SeparationReconciliationResultV1": {
+      "additionalProperties": false,
+      "trustedContextFields": [
+        "tenantId",
+        "callerWorkloadId",
+        "audience",
+        "purpose"
+      ],
+      "bodyFields": [
+        "callbackEventId",
+        "casePublicId",
+        "result",
+        "ownerRevision",
+        "occurredAt",
+        "payloadSha256",
+        "correlationId"
+      ],
+      "resultEnum": [
+        "CONSISTENT",
+        "CORRECTION_REQUIRED"
+      ]
+    }
+  },
+  "eventContract": {
+    "contractId": "XCON-028",
+    "eventType": "WorkerSeparated.v1",
+    "producer": "HRIS-HRM",
+    "consumers": [
+      "HRIS-PER",
+      "HRIS-TIM",
+      "HRIS-PAY"
+    ],
+    "source": "dwp-people-server",
+    "aggregateType": "SeparationCase",
+    "schemaVersion": 1,
+    "businessPayload": {
+      "additionalProperties": false,
+      "required": [
+        "casePublicId",
+        "workerPublicId",
+        "relationshipPublicId",
+        "separationType",
+        "effectiveDate"
+      ],
+      "separationTypeEnum": [
+        "RESIGNATION",
+        "TERMINATION",
+        "RETIREMENT",
+        "END_OF_CONTRACT"
+      ]
+    },
+    "canonicalData": {
+      "additionalProperties": false,
+      "required": [
+        "aggregateId",
+        "aggregateVersion",
+        "causationId",
+        "casePublicId",
+        "correlationId",
+        "effectiveDate",
+        "eventId",
+        "occurredAt",
+        "payloadDigest",
+        "relationshipPublicId",
+        "schemaVersion",
+        "separationType",
+        "tenantId",
+        "workerPublicId"
+      ],
+      "commonEnvelopeEqualityFields": [
+        "aggregateId",
+        "aggregateVersion",
+        "causationId",
+        "correlationId",
+        "eventId",
+        "occurredAt",
+        "schemaVersion",
+        "tenantId"
+      ],
+      "digestField": "payloadDigest",
+      "businessFields": [
+        "casePublicId",
+        "workerPublicId",
+        "relationshipPublicId",
+        "separationType",
+        "effectiveDate"
+      ]
+    },
+    "envelopeDataEqualities": {
+      "id": "eventId",
+      "tenantId": "tenantId",
+      "aggregateId": "casePublicId",
+      "aggregateSequence": "aggregateVersion",
+      "correlationId": "correlationId",
+      "causationId": "causationId",
+      "time": "occurredAt",
+      "schemaVersion": "schemaVersion"
+    },
+    "identityRules": [
+      "aggregateId equals casePublicId",
+      "aggregateVersion equals the positive persisted PUBLISHED case version",
+      "eventId is deterministic for tenantId, casePublicId, aggregateVersion and WorkerSeparated.v1",
+      "payloadDigest is lowercase SHA-256 over the RFC-8785 canonical five-field business payload"
+    ],
+    "forbiddenPayload": [
+      "reasonCode",
+      "lastWorkingDate",
+      "task details",
+      "callback details",
+      "document bytes or URLs",
+      "personal identifiers",
+      "authorization tokens"
+    ],
+    "productionPublishBindings": 0,
+    "consumerSubscriptions": 0,
+    "consumerRule": "The consumers are design-time invalidation-contract owners only. No production subscription, handler, inbox or business-completion credit is created by this carrier.",
+    "compatibility": "XCON-001 through XCON-027 remain unchanged; XCON-028 is append-only and closed."
+  },
+  "centralImplementationPaths": {
+    "backend": [
+      "contracts/hris/canonical/schemas/cross-module-canonical-schemas.v1.json",
+      "contracts/hris/canonical/hris-contract-codegen-manifest.v1.json",
+      "dwp-platform-contracts/src/main/java/com/dwp/contracts/hris/xcon/v1/Xcon028WorkerSeparatedV1.java",
+      "dwp-platform-contracts/src/test/java/com/dwp/contracts/hris/xcon/v1/**",
+      "contracts/asyncapi/domain-events.yaml",
+      "scripts/generate-hris-contracts.py"
+    ],
+    "verification": [
+      "python3 scripts/generate-hris-contracts.py --check",
+      "./gradlew :dwp-platform-contracts:test --tests '*Xcon028*' --no-daemon --max-workers=1",
+      "targeted AsyncAPI WorkerSeparated envelope, equality and forbidden-field contract test"
+    ]
+  },
+  "authority": {
+    "contractSuccessorSealed": true,
+    "xcon028CentralImplementationEligibleAfterCarrierCommit": true,
+    "iaq011DescriptorImplementationEligibleAfterCarrierCommit": true,
+    "pepHrm013DescriptorImplementationEligibleAfterCarrierCommit": true,
+    "internalCallbackServiceBindingAuthorized": false,
+    "internalCallbackHandlerSourceAuthorized": false,
+    "moduleHandlerSourceAuthorized": false,
+    "moduleQuerySourceAuthorized": false,
+    "publicNonCreateRouteAuthorized": false,
+    "productionPublishBindingAuthorized": false,
+    "consumerSubscriptionAuthorized": false,
+    "routeMountAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "invalidationConditions": [
+    "Any mutation of XCON-001 through XCON-027.",
+    "Any WorkerSeparated payload field outside the exact five-field closed set.",
+    "Any public or browser route for activate, task.receive, publish, reconcile, cancel or task waiver.",
+    "Any interpretation of RETURN_ELIGIBILITY as general leave-return eligibility.",
+    "Any caller-supplied tenant, duty, population, field policy or owner purpose.",
+    "Any production publish binding, consumer subscription, route mount, feature activation or tenant enrollment."
+  ]
+}

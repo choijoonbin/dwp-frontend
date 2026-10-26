@@ -1,0 +1,365 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-06-hrm013-semantic-disposition.v1",
+  "dispositionId": "HRIS-WAVE7-R7-BATCH-06-HRM013-SEMANTIC-DISPOSITION-20261026-R1",
+  "recordedAt": "2026-10-26T17:00:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ID_AND_SHA256"
+  },
+  "state": "SEMANTIC_SCOPE_LIFECYCLE_OPERATION_CLASSIFICATION_AND_V61_CONDITIONS_CLOSED_CENTRAL_SUCCESSOR_ONLY_MODULE_SOURCE_WITHHELD",
+  "sliceId": "BASE-TFR-HRM-013",
+  "sourceRef": "TFR-HRM-013",
+  "module": "HRM",
+  "moduleSession": "HRIS-HRM",
+  "boundedContext": "HRIS_EMPLOYMENT",
+  "decision": "GO_FOR_BOUNDED_CENTRAL_CONTRACT_AND_AUTHORIZATION_SUCCESSOR_NO_GO_FOR_MODULE_SOURCE_PACKET_TOKEN_WORKTREE_OR_V61_LEASE",
+  "authorityBasis": {
+    "batch06Preflight": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-preflight-r1/semantic-dependency-migration-preflight.v1.json",
+      "sha256": "33d95637c2887bfae43b2369370662c3a0d06d8e0420df05c868299da2b752dd",
+      "bytes": 58498,
+      "requiredDecision": "CONDITIONAL_GO_FOR_SEPARATE_EXACT_PACKET_SOURCE_START_NO_GO"
+    },
+    "r7c0Reclassification": {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-c0-reclassification-r1/base-slice-reclassification.v1.json",
+      "sha256": "73c02c6d945f2b62ae716d2dbbf76e5123a2863f50d19de51e27085943291de8",
+      "bytes": 141708
+    },
+    "acceptedEvidence": [
+      {
+        "path": "docs/06-delivery/hris/recovery/exact-supplements/2026-10-06/accepted-successors/hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-api-contract-register.csv",
+        "sha256": "5f47efd33a1d5aa3d11a4d9fd5716cd4e35650e9fec0868ecb77c8c90a4cd988",
+        "bytes": 100020
+      },
+      {
+        "path": "docs/06-delivery/hris/recovery/exact-supplements/2026-10-06/hris-porting-blueprint-2026-09-09/coding-readiness/ia-entry-query-action-key-register.csv",
+        "sha256": "19a12600eb11e4d6c7c6098ad7f44f8afb544a1d9c698c3d2305e9e8150b5b7e",
+        "bytes": 78170
+      },
+      {
+        "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/api-pep-binding-register.csv",
+        "sha256": "0e38d724516a8b271069241ffa0fb6400984dc703758767de53cbaffb4f93da3",
+        "bytes": 126576
+      },
+      {
+        "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/hrm-transport-schema-supplement.v1.json",
+        "sha256": "85d29729961f4348b595f9773c76afd7232e4b92c5f198351afb4d8ac0dcf404",
+        "bytes": 20613
+      },
+      {
+        "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/module-exact-business-start-canonical.v1.json",
+        "sha256": "483ae9f1aefaa59ed2758a0d0fb0e0280b7e961fb0e1340a60e75d1bbec81b36",
+        "bytes": 38400
+      },
+      {
+        "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/module-exact-business-schemas.v1.json",
+        "sha256": "aae9414546202ad8b80d4562bf634c2a3b6e4972c6210e8eb96a0828e7dfa31f",
+        "bytes": 23580
+      },
+      {
+        "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-evidence/hrm/g2-readiness/api-event-contracts.v1.json",
+        "sha256": "0c3ec58b29dcf534d1b887fed5678e878e4a514cf3f943165e47dd7a486355bb",
+        "bytes": 25944
+      },
+      {
+        "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-evidence/hrm/g2-readiness/state-guard-idempotency-recovery.md",
+        "sha256": "72e72be66fa7aba49c945ab9eb503fb69d3b2fffc838096a4b20d6c6a52f58a6",
+        "bytes": 14892
+      }
+    ],
+    "pinnedRepositories": {
+      "frontend": {
+        "repository": "dwp-frontend",
+        "branch": "dwp-dev",
+        "commit": "a94c6e178201a0a4a5ab0b610af785d231602151",
+        "tree": "9c045f6dda6e4d92e5f4e00a447c2787ddffa1ce",
+        "clean": true,
+        "originExact": true
+      },
+      "backend": {
+        "repository": "dwp-backend",
+        "branch": "dwp-dev",
+        "commit": "d9f84f9f934cc196f8b06462bb3fa972115eea8c",
+        "tree": "130078cf93ec00996657ca8e0f361745e020cc45",
+        "clean": true,
+        "originExact": true
+      },
+      "agent": {
+        "repository": "dwp_agent",
+        "branch": "dwp-dev",
+        "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+        "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+        "clean": true,
+        "originExact": true
+      }
+    }
+  },
+  "semanticLineage": "TFR-HRM-013::hr-exit-return::IAQ-011|PEP-HRM-013|EVT-HRM:WorkerSeparated.v1|XCON-028",
+  "scopeDecision": {
+    "code": "POST_SEPARATION_REHIRE_OR_CORRECTION_ONLY",
+    "included": [
+      "governed separation case creation and immutable lifecycle",
+      "mandatory downstream task and callback receipt orchestration",
+      "effective termination publication",
+      "post-separation REHIRE eligibility and linked corrective lineage",
+      "non-destructive CORRECTION after a published separation"
+    ],
+    "excluded": [
+      "general employee leave of absence",
+      "return from a leave of absence",
+      "LEAVE or RETURN employment-event authoring",
+      "ppl_employment_absence_periods",
+      "destructive edits to published separation or employment history"
+    ],
+    "returnEligibilityMeaning": "IAQ-011 RETURN_ELIGIBILITY means eligibility to create a new linked REHIRE or CORRECTION after a PUBLISHED separation. It never means return from an active-employment leave of absence.",
+    "reservedFutureMeaning": "General LEAVE and RETURN remain a separately governed employment-absence capability and require their own semantic disposition, persistence authority and packet."
+  },
+  "aggregate": {
+    "name": "SeparationCase",
+    "states": [
+      "DRAFT",
+      "TASKS_ACTIVE",
+      "READY_TO_PUBLISH",
+      "PUBLISHED",
+      "CORRECTION_REQUIRED",
+      "CANCELLED"
+    ],
+    "terminalStates": [
+      "PUBLISHED",
+      "CORRECTION_REQUIRED",
+      "CANCELLED"
+    ],
+    "transitions": [
+      "create:EMPTY->DRAFT",
+      "activate:DRAFT->TASKS_ACTIVE",
+      "task.receive:TASKS_ACTIVE->TASKS_ACTIVE|READY_TO_PUBLISH",
+      "publish:READY_TO_PUBLISH->PUBLISHED",
+      "reconcile:PUBLISHED->CORRECTION_REQUIRED",
+      "cancel:DRAFT|TASKS_ACTIVE->CANCELLED"
+    ],
+    "immutabilityRules": [
+      "PUBLISHED facts are immutable and cannot be cancelled or edited in place.",
+      "Reconcile records a forward-only inconsistency signal and never rewrites the published termination fact.",
+      "Resolution after publication creates a new linked REHIRE or CORRECTION assignment event.",
+      "Cancellation is rejected after any irreversible downstream receipt."
+    ]
+  },
+  "operationClassification": [
+    {
+      "operation": "create",
+      "classification": "PUBLIC_GATEWAY_PEP",
+      "pepId": "PEP-HRM-013",
+      "actionKey": "hris.action.hrm.create-separation-case",
+      "method": "POST",
+      "browserPath": "/api/people/v1/hris/separation-cases",
+      "ownerPath": "/v1/hris/separation-cases",
+      "capability": "hcm.operations.separation.manage",
+      "implementationAuthorizedNow": false
+    },
+    {
+      "operation": "activate",
+      "classification": "TRUSTED_INTERNAL_LOCAL_OWNER_TRANSITION",
+      "publicRoute": null,
+      "guard": "validated immutable input, exact template revision and accepted approval evidence",
+      "implementationAuthorizedNow": false
+    },
+    {
+      "operation": "task.receive",
+      "classification": "TRUSTED_INTERNAL_CALLBACK",
+      "publicRoute": null,
+      "guard": "admitted caller workload, tenant, audience, purpose, callback event identity, owner revision and payload digest",
+      "serviceBindingState": "REQUIRED_BEFORE_MODULE_SOURCE",
+      "implementationAuthorizedNow": false
+    },
+    {
+      "operation": "publish",
+      "classification": "TRUSTED_INTERNAL_LOCAL_OWNER_TRANSITION",
+      "publicRoute": null,
+      "guard": "all mandatory tasks completed or approval-authorized waived, accepted approval evidence, maker not equal approval actor, fresh step-up evidence and exact CAS",
+      "implementationAuthorizedNow": false
+    },
+    {
+      "operation": "reconcile",
+      "classification": "TRUSTED_INTERNAL_CALLBACK",
+      "publicRoute": null,
+      "guard": "admitted downstream caller, published case, monotonic owner revision and exact callback digest",
+      "serviceBindingState": "REQUIRED_BEFORE_MODULE_SOURCE",
+      "implementationAuthorizedNow": false
+    },
+    {
+      "operation": "cancel",
+      "classification": "TRUSTED_INTERNAL_LOCAL_OWNER_TRANSITION",
+      "publicRoute": null,
+      "guard": "DRAFT or TASKS_ACTIVE only, no irreversible callback and exact CAS",
+      "implementationAuthorizedNow": false
+    }
+  ],
+  "waiverClassification": {
+    "operation": "task.waive.evidence.receive",
+    "classification": "TRUSTED_INTERNAL_APPROVAL_CALLBACK",
+    "publicRoute": null,
+    "requirements": [
+      "authorized approval-owner decision",
+      "maker and waiver actor separation",
+      "reason code and approval revision",
+      "fresh step-up evidence",
+      "tenant, audience, purpose and digest binding"
+    ],
+    "implementationAuthorizedNow": false
+  },
+  "idempotencyAndConcurrency": {
+    "publicCommandKey": [
+      "tenantId",
+      "commandType",
+      "onBehalfOfSubjectPublicId",
+      "originatingAction",
+      "idempotencyKey"
+    ],
+    "requestBinding": "SHA-256 of canonical method, path, target, relevant headers, schema version and normalized body",
+    "sameKeySameHash": "RETURN_ORIGINAL_DURABLE_RECEIPT_WITHOUT_REEXECUTION",
+    "sameKeyDifferentHash": "409_IDEMPOTENCY_KEY_REUSED",
+    "cas": "Every case or task mutation requires exact expectedVersion; the public command also requires If-Match.",
+    "callbackUniqueness": [
+      "tenantId",
+      "callerWorkloadId",
+      "callbackEventId"
+    ],
+    "callbackBinding": [
+      "payloadSha256",
+      "ownerRevision",
+      "casePublicId",
+      "taskPublicId",
+      "audience",
+      "purpose"
+    ],
+    "callbackReplay": "same identity and digest is a no-op replay; any digest conflict is rejected and quarantined",
+    "guardOrder": "Reject spoofed tenant, caller, audience, purpose, stale revision, out-of-order revision or digest mismatch before business-row reads."
+  },
+  "publicationBoundary": {
+    "eventContractId": "XCON-028",
+    "eventType": "WorkerSeparated.v1",
+    "designConsumers": [
+      "HRIS-PER",
+      "HRIS-TIM",
+      "HRIS-PAY"
+    ],
+    "payloadClosedSet": [
+      "casePublicId",
+      "workerPublicId",
+      "relationshipPublicId",
+      "separationType",
+      "effectiveDate"
+    ],
+    "atomicWriteSet": [
+      "PUBLISHED separation case version",
+      "effective TERMINATION assignment event and relationship or assignment lineage",
+      "durable command receipt result",
+      "business audit pointer",
+      "WorkerSeparated.v1 outbox row"
+    ],
+    "forbiddenPayload": [
+      "reasonCode",
+      "lastWorkingDate",
+      "task or callback content",
+      "document content or URL",
+      "personal identifiers",
+      "authorization or access tokens"
+    ],
+    "republishRule": "A linked REHIRE or CORRECTION never republishes WorkerSeparated.v1 for the original separation version."
+  },
+  "migrationDecision": {
+    "stream": "PEOPLE_MAIN",
+    "observedHighWater": "V60",
+    "candidateVersion": "V61",
+    "manifestState": "EXACT_SCOPE_SEALED_NOT_RESERVED_NOT_ACTIVE_NOT_AUTHORIZED_FOR_SQL_AUTHORING",
+    "createTables": [
+      "ppl_separation_cases",
+      "ppl_separation_tasks",
+      "ppl_separation_callbacks"
+    ],
+    "alterTables": [
+      "ppl_assignment_events"
+    ],
+    "assignmentEventDiscriminatorDelta": [
+      "REHIRE",
+      "TERMINATION",
+      "CORRECTION"
+    ],
+    "reuseTables": [
+      "ppl_command_receipts",
+      "sys_people_audit_events",
+      "sys_people_outbox_events",
+      "ppl_workers",
+      "ppl_work_relationships",
+      "ppl_assignments"
+    ],
+    "forbiddenScope": [
+      "ppl_employment_absence_periods",
+      "LEAVE discriminator",
+      "RETURN discriminator",
+      "a second command receipt ledger",
+      "a second audit ledger",
+      "a second outbox ledger"
+    ],
+    "leaseState": "NOT_ISSUED"
+  },
+  "acceptanceConditions": [
+    {"id": "HRM013-AC-01", "criterion": "IAQ-011 exact query state, cursor, field-decision, action allowlist and post-separation RETURN_ELIGIBILITY semantics."},
+    {"id": "HRM013-AC-02", "criterion": "PEP-HRM-013 create uses the exact method, paths, schema, capability and trusted tenant context."},
+    {"id": "HRM013-AC-03", "criterion": "Caller-supplied tenant, duty, population, field policy, purpose or internal transition route is rejected or absent."},
+    {"id": "HRM013-AC-04", "criterion": "Same-key same-hash replay returns the original receipt and same-key different-hash returns 409 without mutation."},
+    {"id": "HRM013-AC-05", "criterion": "Stale If-Match or expectedVersion fails exact CAS before any aggregate, receipt-success, audit-success or outbox-success write."},
+    {"id": "HRM013-AC-06", "criterion": "The six-state lifecycle and six transitions are exact; published facts cannot be edited or cancelled."},
+    {"id": "HRM013-AC-07", "criterion": "Spoofed, stale, out-of-order or digest-conflicting callbacks fail before business reads; exact replay is a no-op."},
+    {"id": "HRM013-AC-08", "criterion": "Mandatory tasks require COMPLETED or approval-authorized WAIVED with maker-checker and fresh-step-up evidence."},
+    {"id": "HRM013-AC-09", "criterion": "An irreversible downstream receipt blocks cancellation and requires linked corrective intent."},
+    {"id": "HRM013-AC-10", "criterion": "Publish atomically commits the case, termination lineage, receipt, audit pointer and XCON-028 outbox with the exact five-field no-PII payload."},
+    {"id": "HRM013-AC-11", "criterion": "Post-publication return or correction creates linked REHIRE or CORRECTION history without destructive mutation or duplicate WorkerSeparated publication."},
+    {"id": "HRM013-AC-12", "criterion": "After a separate active lease, V61 proves clean install, V60-to-V61 upgrade, RLS, terminal immutability and feature-OFF zero-call behavior."}
+  ],
+  "acceptanceVerificationPlan": {
+    "HRM013-AC-01": ["Hrm013IaEntryQueryContractTest", "frontend IAQ-011 state, cursor, field-decision and action-exposure test"],
+    "HRM013-AC-02": ["Hrm013SeparationPepContractTest", "gateway and People exact create-route contract test"],
+    "HRM013-AC-03": ["Hrm013AuthorizationNegativeTest", "trusted-context spoof and public-non-create-route absence test"],
+    "HRM013-AC-04": ["Hrm013SeparationIdempotencyTest", "same-key replay and digest-mismatch 409 test"],
+    "HRM013-AC-05": ["Hrm013SeparationCasTest", "stale If-Match and rollback-without-partial-success test"],
+    "HRM013-AC-06": ["Hrm013SeparationLifecycleTest", "exact transition matrix and terminal immutability test"],
+    "HRM013-AC-07": ["Hrm013SeparationCallbackSecurityTest", "spoof, stale, out-of-order, replay and digest-conflict test"],
+    "HRM013-AC-08": ["Hrm013SeparationTaskWaiverTest", "mandatory task, authorized waiver, maker-checker and step-up test"],
+    "HRM013-AC-09": ["Hrm013IrreversibleCancellationTest", "irreversible receipt cancellation denial test"],
+    "HRM013-AC-10": ["Hrm013WorkerSeparatedOutboxTest", "atomic XCON-028 strict-envelope, five-field business payload and no-PII test"],
+    "HRM013-AC-11": ["Hrm013SeparationCorrectionLineageTest", "linked REHIRE and CORRECTION without destructive edit or duplicate event test"],
+    "HRM013-AC-12": ["Hrm013V61MigrationCleanUpgradeTest", "RLS, terminal guard and frontend default-OFF zero-call test"]
+  },
+  "nextAuthorizedAction": "AUTHOR_AND_ADMIT_ONLY_THE_BOUNDED_XCON_028_AND_PRODUCT_AUTHORIZATION_V61_AUTH_V270_CENTRAL_SUCCESSORS_AFTER_THIS_CARRIER_IS_INDEPENDENTLY_REVIEWED_COMMITTED_AND_PUSHED",
+  "authority": {
+    "semanticDispositionSealed": true,
+    "centralContractSuccessorDesignAuthorized": true,
+    "centralAuthorizationSuccessorDesignAuthorized": true,
+    "centralSourceAuthoringAuthorizedByThisDocumentAlone": false,
+    "moduleOwnerPacketAuthorized": false,
+    "moduleStartTokenAuthorized": false,
+    "moduleWorktreeAuthorized": false,
+    "moduleSourceAuthoringAuthorized": false,
+    "peopleV61ReservationAuthorized": false,
+    "peopleV61LeaseActive": false,
+    "peopleV61SqlAuthoringAuthorized": false,
+    "routeOrMenuMountAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionBindingAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0,
+    "laterBatch06LaneAuthorized": false
+  },
+  "nonClaims": [
+    "General LEAVE or RETURN is implemented by HRM-013.",
+    "A public activate, task-receive, publish, reconcile, cancel or waiver endpoint exists.",
+    "XCON-028, product authorization v61 or Auth V270 source is already implemented or admitted.",
+    "People V61 is reserved, active or authored.",
+    "An HRM-013 owner packet, executable token or worktree receipt exists.",
+    "The exit-return route or menu is mounted, enabled or tenant-enrolled.",
+    "HRM-013, Batch-06, R7 or HRIS is complete."
+  ]
+}
