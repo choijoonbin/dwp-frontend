@@ -1,0 +1,523 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-06-hrm013-people-v61-schema-manifest-successor.v2",
+  "manifestId": "HRIS-WAVE7-R7-BATCH-06-HRM013-PEOPLE-V61-SCHEMA-MANIFEST-20261026-R4",
+  "recordedAt": "2026-10-26T20:10:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "SEALED_CALLBACK_DURABILITY_AND_EVIDENCE_CORRECTION_NOT_RESERVED_NOT_ACTIVE_SQL_AUTHORING_WITHHELD",
+  "sliceId": "BASE-TFR-HRM-013",
+  "module": "HRM",
+  "moduleSession": "HRIS-HRM",
+  "immutability": {
+    "sealed": true,
+    "appendOnly": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ID_AND_SHA256",
+    "predecessorMutationAllowed": false
+  },
+  "predecessor": {
+    "path": "../../r7-batch-06-hrm013-semantic-closure-r1/migration-manifests/base-tfr-hrm-013.people-v61-schema-manifest.v1.json",
+    "sha256": "be999619fea5ee658d5f5dfd7df7663b4c0a2055d80d8382572e197a188c655e",
+    "bytes": 11926,
+    "carrierCommit": "f0180f4690bff57a4488662cea570bc6f1d1db42"
+  },
+  "decision": "SUPERSEDE_ONLY_THE_HRM013_PREREQUISITE_PERSISTENCE_CALLBACK_DURABILITY_EVIDENCE_AND_GUARD_ORDER_PORTIONS_OF_THE_V1_PEOPLE_V61_MANIFEST; PRESERVE_ITS_CANDIDATE_VERSION_ASSIGNMENT_EVENT_DELTA_AND_ZERO_AUTHORITY",
+  "reason": [
+    "The v1 callback row binds only payload_hash, so a replay that changes status, reason, occurrence time, correlation, path or other body fields can evade an exact full-command conflict test.",
+    "The v1 schema cannot return the original byte-identical safe receipt because it stores neither a command receipt reference nor exact response bytes and digest.",
+    "The v1 task and callback rows do not retain enough immutable Approval evidence to prove approval-authorized waiver, maker-checker separation and fresh step-up lineage.",
+    "The v1 guard-order sentence requires stale and out-of-order revision denial before any business-row read, although the current case or task revision can only be established from owner state. This successor separates pre-read protocol checks from the minimal locked owner identity-and-revision read and still forbids payload reads or mutation until every fence passes.",
+    "The existing V54 ppl_hris_bridge_proof_replays allowlist is employee-change-only for SVC-PEP-HRM-001 and cannot safely admit HRM-008, HRM-009 or HRM-010.",
+    "The prior candidate omitted the People-owned APR-002 immutable request fence and durable dispatch outbox required before Approval can return HRM-010.",
+    "The prior callback ledger did not retain externalReceiptPublicId, originating APR-002 payload lineage or conditional one-time step-up evidence needed for distinct FAILED-to-COMPLETED and waiver proof."
+  ],
+  "effectiveComposition": {
+    "rule": "Read the sealed v1 manifest unchanged, then apply only the exact replacement and additive clauses in this successor. Any unmentioned v1 clause remains authoritative.",
+    "candidateVersion": "V61",
+    "candidatePath": "dwp-people-server/src/main/resources/db/migration/V61__hrm_base_tfr_hrm_013.sql",
+    "effectiveTableSet": [
+      "ppl_separation_cases",
+      "ppl_separation_tasks",
+      "ppl_hrm013_callback_proof_replays",
+      "ppl_separation_waiver_request_outbox",
+      "ppl_separation_callback_authorities",
+      "ppl_separation_callbacks"
+    ],
+    "additionalTableDesign": "ppl_hrm013_callback_proof_replays is the isolated HRM-008 through HRM-010 jti/requestNonce namespace; ppl_separation_waiver_request_outbox is the People-owned APR-002 immutable fence plus durable dispatch outbox; ppl_separation_callback_authorities is the append-only/versioned protocol fence. This document seals design only and grants no SQL authority.",
+    "existingInfrastructureReused": [
+      "sys_people_audit_events"
+    ],
+    "protectedInfrastructureNotReused": [
+      "ppl_hris_bridge_proof_replays from V54 remains restricted to SVC-PEP-HRM-001",
+      "ppl_command_receipts retains its public-command correlation cardinality and is not used by HRM-008 through HRM-010 callbacks"
+    ]
+  },
+  "taskTableEvidenceDelta": {
+    "table": "ppl_separation_tasks",
+    "addColumns": [
+      "waiver_approval_request_id UUID",
+      "waiver_decision VARCHAR(16)",
+      "waiver_decision_revision BIGINT",
+      "waiver_step_up_evidence_id UUID"
+    ],
+    "replaceChecks": [
+      "waiver_decision is null or in APPROVED|REJECTED",
+      "WAIVED requires waiver_decision_event_id, waiver_approval_request_id, waiver_decision exactly APPROVED, positive waiver_decision_revision, waiver_actor_public_id, waiver_reason_code, waiver_step_up_evidence_id, payload_hash and completed_at",
+      "A REJECTED waiver decision never changes a task to WAIVED and is retained only in ppl_separation_callbacks plus sys_people_audit_events.",
+      "Non-WAIVED tasks have all waiver evidence columns null except that a pre-existing approved waiver cannot be erased or rewritten."
+    ],
+    "immutability": "Once a task is WAIVED, every waiver identity, revision, actor, reason, step-up reference, digest and completion timestamp is immutable."
+  },
+  "proofReplayTable": {
+    "table": "ppl_hrm013_callback_proof_replays",
+    "purpose": "Dedicated one-time jti and requestNonce digest namespace for the three HRM-013 inbound bindings before any People business-row access.",
+    "columns": [
+      "proof_replay_id BIGSERIAL PRIMARY KEY",
+      "tenant_id BIGINT NOT NULL",
+      "binding_id VARCHAR(40) NOT NULL",
+      "caller_workload_id VARCHAR(120) NOT NULL",
+      "token_kind VARCHAR(16) NOT NULL",
+      "token_digest CHAR(64) NOT NULL",
+      "expires_at TIMESTAMPTZ NOT NULL",
+      "reserved_at TIMESTAMPTZ NOT NULL"
+    ],
+    "uniqueConstraints": [
+      "tenant_id,token_digest"
+    ],
+    "foreignKeys": [
+      "tenant_id -> sys_service_tenants.tenant_id"
+    ],
+    "checks": [
+      "token_kind IN JTI|REQUEST_NONCE",
+      "token_digest is lowercase hexadecimal length 64 and only the digest, never the raw proof value, is persisted",
+      "the jti digest and requestNonce digest presented by one proof must differ",
+      "SVC-PEP-HRM-008 permits only dwp-time-server, dwp-payroll-server or dwp-auth-server",
+      "SVC-PEP-HRM-009 permits only dwp-time-server or dwp-payroll-server",
+      "SVC-PEP-HRM-010 permits only dwp-approval-server",
+      "expires_at > reserved_at and expires_at <= reserved_at plus 35 seconds"
+    ],
+    "reservationRule": "Require jti and requestNonce digests differ, then atomically insert both after transport and proof validation but before callback identity, protocol fence or owner reads. Unique tenant_id plus token_digest rejects reuse across token kinds, bindings and callers; any collision fails closed.",
+    "retentionRule": "Retain through proof expiry plus five seconds, then bounded cleanup. Cleanup cannot create an acceptance window before expiry.",
+    "v54IsolationRule": "Never reuse, alter or widen V54 ppl_hris_bridge_proof_replays, whose binding allowlist remains exactly SVC-PEP-HRM-001.",
+    "immutability": "Rows are insert-only until bounded expiry cleanup; update is rejected."
+  },
+  "v54NonRegression": {
+    "migrationPath": "dwp-people-server/src/main/resources/db/migration/V54__create_employee_change_request_lifecycle.sql",
+    "protectedTable": "ppl_hris_bridge_proof_replays",
+    "protectedBindingId": "SVC-PEP-HRM-001",
+    "rule": "V61 creates ppl_hrm013_callback_proof_replays. It does not alter a V54 column, check, index, policy, trigger, row, purpose, caller or the SVC-PEP-HRM-001-only allowlist."
+  },
+  "waiverRequestFenceAndOutbox": {
+    "table": "ppl_separation_waiver_request_outbox",
+    "purpose": "People-owned immutable APR-002 request fence and durable outbox. It exists before Approval dispatch and is the only lineage source admitted by an HRM-010 waiver callback.",
+    "columns": [
+      "separation_waiver_request_id BIGSERIAL PRIMARY KEY",
+      "public_id UUID NOT NULL",
+      "tenant_id BIGINT NOT NULL",
+      "separation_case_id BIGINT NOT NULL",
+      "separation_task_id BIGINT NOT NULL",
+      "approval_request_id UUID NOT NULL",
+      "case_public_id UUID NOT NULL",
+      "task_public_id UUID NOT NULL",
+      "request_revision BIGINT NOT NULL",
+      "case_maker_public_id UUID NOT NULL",
+      "requested_by_actor_public_id UUID NOT NULL",
+      "reason_code VARCHAR(80) NOT NULL",
+      "task_owner_revision BIGINT NOT NULL",
+      "task_version BIGINT NOT NULL",
+      "exact_request_body BYTEA NOT NULL",
+      "request_body_sha256 CHAR(64) NOT NULL",
+      "approval_request_payload_sha256 CHAR(64) NOT NULL",
+      "command_digest CHAR(64) NOT NULL",
+      "correlation_id UUID NOT NULL",
+      "dispatch_state VARCHAR(20) NOT NULL DEFAULT 'PENDING'",
+      "attempt_count INTEGER NOT NULL DEFAULT 0",
+      "available_at TIMESTAMPTZ NOT NULL",
+      "lease_token UUID",
+      "lease_owner VARCHAR(160)",
+      "lease_until TIMESTAMPTZ",
+      "exact_response_body BYTEA",
+      "response_body_sha256 CHAR(64)",
+      "accepted_at TIMESTAMPTZ",
+      "last_failure_code VARCHAR(80)",
+      "created_at TIMESTAMPTZ NOT NULL",
+      "updated_at TIMESTAMPTZ NOT NULL"
+    ],
+    "uniqueConstraints": [
+      "public_id",
+      "tenant_id,approval_request_id",
+      "tenant_id,case_public_id,task_public_id,request_revision"
+    ],
+    "foreignKeys": [
+      "tenant_id -> sys_service_tenants.tenant_id",
+      "tenant_id,separation_case_id -> ppl_separation_cases.tenant_id,separation_case_id",
+      "tenant_id,separation_task_id -> ppl_separation_tasks.tenant_id,separation_task_id"
+    ],
+    "checks": [
+      "request_revision and task_owner_revision are positive and task_version is non-negative",
+      "request_body_sha256, approval_request_payload_sha256 and command_digest are lowercase hexadecimal length 64",
+      "octet_length(exact_request_body) is between 1 and 32768 and SHA-256(exact_request_body) equals request_body_sha256",
+      "dispatch_state IN PENDING|CLAIMED|RETRY|ACCEPTED|DEAD|RESULT_UNKNOWN",
+      "attempt_count is between 0 and the sealed bounded retry maximum",
+      "CLAIMED requires lease_token, lease_owner and lease_until; every other state forbids a live lease",
+      "ACCEPTED requires exact_response_body, response_body_sha256 and accepted_at; every non-ACCEPTED state forbids them",
+      "when present octet_length(exact_response_body) is between 1 and 16384 and SHA-256(exact_response_body) equals response_body_sha256"
+    ],
+    "multipleWaiverRule": "A case may hold waiver requests for multiple tasks and a task may hold later request revisions. There is no uniqueness constraint on case or task alone; approval_request_id and the case/task request_revision stream provide exact identity.",
+    "creationRule": "People generates approval_request_id, snapshots maker, requester, reason, task owner revision and task version, serializes the closed non-PII SeparationWaiverApprovalRequestV1 body, and inserts the immutable fence plus PENDING outbox row in the same owner transaction before any APR-002 send.",
+    "dispatchRule": "Workers claim by bounded CAS lease and retry only stable exact_request_body bytes. Each attempt uses fresh proof values reserved by Approval. A byte-identical safe Approval response advances the row to ACCEPTED; ambiguous exhaustion becomes RESULT_UNKNOWN.",
+    "safeResponseRule": "exact_response_body contains only the closed non-PII SeparationWaiverApprovalSubmissionReceiptV1, is at most 16384 bytes, and its approval request, digest and correlation exactly match this row.",
+    "immutability": "All request identity, maker/requester, reason, owner revisions, exact safe request bytes, digests and correlation are immutable. Only dispatch lease, attempt, failure, response and terminal timestamps may advance through legal CAS transitions; update triggers reject every other change and delete."
+  },
+  "callbackAuthorityTable": {
+    "table": "ppl_separation_callback_authorities",
+    "purpose": "Append-only owner-issued dispatch authority and revision fence; callback verification reads this protocol table before any separation case or task row.",
+    "columns": [
+      "separation_callback_authority_id BIGSERIAL PRIMARY KEY",
+      "public_id UUID NOT NULL",
+      "tenant_id BIGINT NOT NULL",
+      "case_public_id UUID NOT NULL",
+      "task_public_id UUID",
+      "separation_case_id BIGINT NOT NULL",
+      "separation_task_id BIGINT",
+      "callback_type VARCHAR(32) NOT NULL",
+      "caller_workload_id VARCHAR(120) NOT NULL",
+      "binding_id VARCHAR(40) NOT NULL",
+      "audience VARCHAR(120) NOT NULL",
+      "purpose_code VARCHAR(80) NOT NULL",
+      "task_type VARCHAR(80)",
+      "approval_request_id UUID",
+      "consumer_event_id UUID",
+      "tenant_grant_revision BIGINT NOT NULL",
+      "authorization_revision BIGINT NOT NULL",
+      "expected_next_owner_revision BIGINT NOT NULL",
+      "correlation_id UUID NOT NULL",
+      "originating_payload_sha256 CHAR(64) NOT NULL",
+      "authority_revision BIGINT NOT NULL",
+      "decision VARCHAR(16) NOT NULL",
+      "supersedes_authority_public_id UUID",
+      "authority_digest CHAR(64) NOT NULL",
+      "created_at TIMESTAMPTZ NOT NULL",
+      "closed_at TIMESTAMPTZ"
+    ],
+    "uniqueConstraints": [
+      "public_id",
+      "tenant_id,separation_callback_authority_id",
+      "tenant_id,binding_id,caller_workload_id,case_public_id,task_public_id,purpose_code,approval_request_id,authority_revision NULLS NOT DISTINCT"
+    ],
+    "foreignKeys": [
+      "tenant_id -> sys_service_tenants.tenant_id",
+      "tenant_id,separation_case_id -> ppl_separation_cases.tenant_id,separation_case_id",
+      "tenant_id,separation_task_id -> ppl_separation_tasks.tenant_id,separation_task_id",
+      "tenant_id,approval_request_id -> ppl_separation_waiver_request_outbox.tenant_id,approval_request_id",
+      "supersedes_authority_public_id -> ppl_separation_callback_authorities.public_id"
+    ],
+    "checks": [
+      "callback_type IN APPROVAL_DECISION|TASK_RECEIPT|RECONCILIATION_RESULT",
+      "decision IN ADMIT|REVOKE",
+      "authority_revision > 0, expected_next_owner_revision > 0, tenant_grant_revision > 0 and authorization_revision > 0",
+      "originating_payload_sha256 and authority_digest are lowercase hexadecimal length 64",
+      "TASK_RECEIPT requires task_public_id, separation_task_id and task_type and forbids approval_request_id and consumer_event_id",
+      "APPROVAL_DECISION requires task_public_id, separation_task_id, task_type and approval_request_id and forbids consumer_event_id",
+      "RECONCILIATION_RESULT requires task_public_id, separation_task_id, task_type and approval_request_id all null and requires consumer_event_id",
+      "the accepted proof tenantGrantRevision and authorizationRevision equal this row's tenant_grant_revision and authorization_revision and the current service-grant fence",
+      "ADMIT requires closed_at null; REVOKE requires closed_at not null and closed_at >= created_at",
+      "authority_revision 1 has no supersedes authority and expected_next_owner_revision 1; every later revision names the immediately prior version of the exact seven-column immutable key",
+      "APPROVAL_DECISION authority streams are keyed by their non-null approval_request_id, start at authority_revision 1 with expected_next_owner_revision 1, and close terminally; a later waiver request uses a different approval_request_id and therefore a new revision-one stream"
+    ],
+    "immutableKey": [
+      "tenant_id",
+      "binding_id",
+      "caller_workload_id",
+      "case_public_id",
+      "task_public_id",
+      "purpose_code",
+      "approval_request_id"
+    ],
+    "requiredValues": [
+      "expected_next_owner_revision",
+      "correlation_id",
+      "originating_payload_sha256",
+      "task_type",
+      "consumer_event_id",
+      "tenant_grant_revision",
+      "authorization_revision",
+      "created_at",
+      "closed_at"
+    ],
+    "authorityDigestPreimage": [
+      "tenant_id",
+      "binding_id",
+      "caller_workload_id",
+      "case_public_id",
+      "task_public_id",
+      "purpose_code",
+      "approval_request_id",
+      "consumer_event_id",
+      "tenant_grant_revision",
+      "authorization_revision",
+      "expected_next_owner_revision",
+      "correlation_id",
+      "originating_payload_sha256",
+      "task_type",
+      "authority_revision",
+      "decision",
+      "created_at",
+      "closed_at"
+    ],
+    "lookupRule": "Select only the highest authority_revision for the exact seven-column immutable key, using NULLS NOT DISTINCT for the conditional approval_request_id. It must be ADMIT, not closed, and its expected next owner revision, audience, task type, optional consumer event, correlation, originating payload digest, tenant grant revision and authorization revision must exactly match the signed request and current service-grant fence.",
+    "sequenceRule": "The latest append-only authority version directly owns expected_next_owner_revision; it is never derived by scanning callback business evidence. On an accepted nonterminal callback, the same owner transaction appends an ADMIT successor with authority_revision plus one and expected_next_owner_revision plus one. On terminal completion or revocation it appends a REVOKE successor with closed_at. An APPROVAL_DECISION stream is terminal for one approval_request_id; each later waiver request has a different approval_request_id and begins a new authority_revision 1 and expected_next_owner_revision 1 stream without colliding with an earlier request for the same task. Existing versions are never updated.",
+    "creationRule": "The People owner creates revision-one ADMIT authority with expected_next_owner_revision one atomically with task activation, each APR-002 waiver-request outbox insertion, or XCON-028 case publication. It snapshots the current positive tenant_grant_revision and authorization_revision, already resolved public identities and exact service binding; callers cannot create authority rows.",
+    "revocationRule": "Explicit revocation or terminal closure appends a REVOKE successor carrying closed_at. No authority row is updated or deleted.",
+    "immutability": "Every authority row is append-only and immutable. A trigger rejects update and delete."
+  },
+  "callbackTableReplacement": {
+    "table": "ppl_separation_callbacks",
+    "columns": [
+      "separation_callback_id BIGSERIAL PRIMARY KEY",
+      "tenant_id BIGINT NOT NULL",
+      "separation_case_id BIGINT NOT NULL",
+      "separation_task_id BIGINT",
+      "callback_type VARCHAR(32) NOT NULL",
+      "callback_value VARCHAR(32) NOT NULL",
+      "caller_workload_id VARCHAR(120) NOT NULL",
+      "callback_event_id UUID NOT NULL",
+      "external_receipt_public_id UUID",
+      "owner_revision BIGINT NOT NULL",
+      "tenant_grant_revision BIGINT NOT NULL",
+      "authorization_revision BIGINT NOT NULL",
+      "payload_hash CHAR(64) NOT NULL",
+      "originating_payload_sha256 CHAR(64) NOT NULL",
+      "command_digest CHAR(64) NOT NULL",
+      "request_body_sha256 CHAR(64) NOT NULL",
+      "audience VARCHAR(120) NOT NULL",
+      "purpose_code VARCHAR(80) NOT NULL",
+      "correlation_id UUID NOT NULL",
+      "approval_request_id UUID",
+      "waiver_decision VARCHAR(16)",
+      "decision_revision BIGINT",
+      "decision_actor_public_id UUID",
+      "case_maker_public_id UUID",
+      "requested_by_actor_public_id UUID",
+      "reason_code VARCHAR(80)",
+      "step_up_evidence_id UUID",
+      "step_up_evidence_audience VARCHAR(120)",
+      "step_up_evidence_purpose VARCHAR(120)",
+      "step_up_evidence_nonce_sha256 CHAR(64)",
+      "step_up_evidence_sha256 CHAR(64)",
+      "step_up_verified_at TIMESTAMPTZ",
+      "step_up_consumed_at TIMESTAMPTZ",
+      "receipt_public_id UUID NOT NULL",
+      "exact_response_body BYTEA NOT NULL",
+      "response_body_sha256 CHAR(64) NOT NULL",
+      "outcome VARCHAR(32) NOT NULL",
+      "occurred_at TIMESTAMPTZ NOT NULL",
+      "received_at TIMESTAMPTZ NOT NULL"
+    ],
+    "uniqueConstraints": [
+      "tenant_id,caller_workload_id,callback_event_id",
+      "tenant_id,receipt_public_id",
+      "tenant_id,caller_workload_id,external_receipt_public_id WHERE callback_type = TASK_RECEIPT",
+      "tenant_id,step_up_evidence_id WHERE callback_type = APPROVAL_DECISION AND waiver_decision = APPROVED",
+      "tenant_id,step_up_evidence_nonce_sha256 WHERE callback_type = APPROVAL_DECISION AND waiver_decision = APPROVED"
+    ],
+    "foreignKeys": [
+      "tenant_id -> sys_service_tenants.tenant_id",
+      "tenant_id,separation_case_id -> ppl_separation_cases.tenant_id,separation_case_id",
+      "tenant_id,separation_task_id -> ppl_separation_tasks.tenant_id,separation_task_id",
+      "tenant_id,approval_request_id -> ppl_separation_waiver_request_outbox.tenant_id,approval_request_id"
+    ],
+    "checks": [
+      "callback_type IN APPROVAL_DECISION|TASK_RECEIPT|RECONCILIATION_RESULT",
+      "callback_value IN COMPLETED|FAILED|APPROVED|REJECTED|CONSISTENT|CORRECTION_REQUIRED",
+      "owner_revision > 0, tenant_grant_revision > 0 and authorization_revision > 0",
+      "payload_hash, originating_payload_sha256, command_digest, request_body_sha256 and response_body_sha256 are lowercase hexadecimal length 64",
+      "octet_length(exact_response_body) is between 1 and 16384 and SHA-256(exact_response_body) equals response_body_sha256",
+      "outcome IN ACCEPTED|REJECTED|QUARANTINED",
+      "TASK_RECEIPT requires separation_task_id, external_receipt_public_id and callback_value IN COMPLETED|FAILED and every Approval-only column null",
+      "APPROVAL_DECISION requires separation_task_id, callback_value and waiver_decision in APPROVED|REJECTED, approval_request_id, positive decision_revision, decision_actor_public_id, case_maker_public_id, requested_by_actor_public_id and reason_code; external_receipt_public_id is null",
+      "APPROVAL_DECISION requires owner_revision = decision_revision",
+      "every accepted row's tenant_grant_revision and authorization_revision equal the signed proof claims, current service-grant fence and selected callback authority row",
+      "APPROVAL_DECISION requires decision_actor_public_id differ from both immutable case_maker_public_id and requested_by_actor_public_id copied from the waiver-request fence",
+      "APPROVED requires all seven step-up columns non-null, step_up_evidence_audience = dwp-people-server, step_up_evidence_purpose = HRIS_SEPARATION_TASK_WAIVER_DECISION and step_up_consumed_at >= step_up_verified_at",
+      "REJECTED and every non-APPROVAL_DECISION row require all seven step-up columns null",
+      "step_up_evidence_nonce_sha256 and step_up_evidence_sha256 are lowercase hexadecimal length 64 when present",
+      "RECONCILIATION_RESULT requires separation_task_id and external_receipt_public_id null, callback_value IN CONSISTENT|CORRECTION_REQUIRED and every Approval-only column null",
+      "waiver_decision equals callback_value for APPROVAL_DECISION"
+    ],
+    "retentionRule": "Store callback protocol identity, semantic value, callback-self and originating payload digests, a callback-specific public receipt identity, external task receipt identity, typed waiver evidence and exact safe response bytes only. Raw callback request bytes, raw step-up nonce, authorization proof, certificate material, tokens, document content and personal data are forbidden.",
+    "exactReplayRule": "The uniqueness key is tenant_id, caller_workload_id and callback_event_id. An existing row with the same command_digest and request_body_sha256 returns its exact_response_body byte-for-byte and reports REPLAY_NOOP only in telemetry. It performs no case or task read and never inserts or updates business evidence.",
+    "conflictRule": "An existing uniqueness identity with a different command_digest or request_body_sha256 returns 409, leaves the original callback and receipt immutable, and appends a redacted QUARANTINED_CONFLICT audit event. The conflict attempt cannot insert a second callback row or mutate any case or task.",
+    "safeResponseRule": "exact_response_body contains only the closed non-PII SeparationCallbackReceiptV1 response admitted by the callback binding, is at most 16384 bytes, and is never a raw callback request; receipt_public_id is that response's stable receipt identity, and its bytes and digest are immutable.",
+    "genericReceiptSeparation": "Callback responses do not insert ppl_command_receipts. That table's tenant, command_type and correlation_id uniqueness is public-command oriented and may collide when several trusted callbacks share one business correlation. The callback row is the sole specialized protocol receipt ledger and no second callback receipt table is created."
+  },
+  "wireToStorageMapping": {
+    "common": {
+      "trusted tenantId": "tenant_id",
+      "trusted callerWorkloadId": "caller_workload_id",
+      "trusted audience": "audience",
+      "trusted purpose": "purpose_code",
+      "trusted tenantGrantRevision": "tenant_grant_revision; exact equality with the latest protocol authority and current service-grant fence",
+      "trusted authorizationRevision": "authorization_revision; exact equality with the latest protocol authority and current service-grant fence",
+      "body callbackEventId": "callback_event_id",
+      "body payloadSha256": "payload_hash",
+      "body originatingPayloadSha256": "originating_payload_sha256; never aliases callback-self payload_hash",
+      "body correlationId": "correlation_id",
+      "canonical full request bytes SHA-256": "request_body_sha256",
+      "bindingId, method, exact path, caller, audience, tenant, purpose, content type and request_body_sha256 digest": "command_digest"
+    },
+    "SeparationTaskReceiptV2": {
+      "body ownerRevision": "owner_revision",
+      "body status": "callback_value",
+      "body externalReceiptPublicId": "ppl_separation_callbacks.external_receipt_public_id for every accepted FAILED or COMPLETED proof and ppl_separation_tasks.external_receipt_public_id for the latest accepted task evidence",
+      "task identity": "separation_task_id resolved only after signed path and body identity equality passes"
+    },
+    "SeparationWaiverDecisionV2": {
+      "body decisionRevision": "owner_revision and decision_revision",
+      "body decision": "callback_value and waiver_decision",
+      "body approvalRequestId": "approval_request_id",
+      "body decisionActorPublicId": "decision_actor_public_id",
+      "body reasonCode": "reason_code",
+      "body originatingPayloadSha256": "originating_payload_sha256 and exact equality with ppl_separation_waiver_request_outbox.approval_request_payload_sha256 for approval_request_id",
+      "immutable request maker": "case_maker_public_id copied from ppl_separation_waiver_request_outbox and never accepted from callback input",
+      "immutable requester": "requested_by_actor_public_id copied from ppl_separation_waiver_request_outbox and never accepted from callback input",
+      "body stepUpEvidenceId": "step_up_evidence_id",
+      "body stepUpEvidenceAudience": "step_up_evidence_audience",
+      "body stepUpEvidencePurpose": "step_up_evidence_purpose",
+      "SHA-256 of body stepUpEvidenceNonce": "step_up_evidence_nonce_sha256; raw nonce is never persisted",
+      "body stepUpEvidenceDigest": "step_up_evidence_sha256",
+      "body stepUpVerifiedAt": "step_up_verified_at",
+      "body stepUpConsumedAt": "step_up_consumed_at"
+    },
+    "SeparationReconciliationResultV1": {
+      "body ownerRevision": "owner_revision",
+      "body result": "callback_value",
+      "task identity": "separation_task_id is null by contract"
+    }
+  },
+  "grantRevisionFence": {
+    "proofClaims": {
+      "tenantGrantRevision": "tenant_grant_revision",
+      "authorizationRevision": "authorization_revision"
+    },
+    "authorityRule": "The People owner snapshots both positive revisions from one current service-grant row into the callback authority. The two values participate in authority_digest and are immutable; neither is an alias of authority_revision or owner_revision.",
+    "admissionRule": "After cryptographic proof validation and before any business-row read, People revalidates one current service-grant row and requires the same pair of signed tenantGrantRevision and authorizationRevision to equal both that row and the latest callback authority. Accepted callback evidence copies the same pair. Values from different grant rows may never be mixed.",
+    "revocationRule": "A no-longer-current or revoked service-grant row fails closed before case/task access even when the callback authority row remains ADMIT."
+  },
+  "stepUpEvidenceVerification": {
+    "digestPreimage": [
+      "tenantId",
+      "approvalRequestId",
+      "decisionActorPublicId",
+      "stepUpEvidenceId",
+      "stepUpEvidenceAudience",
+      "stepUpEvidencePurpose",
+      "stepUpEvidenceNonce",
+      "stepUpVerifiedAt"
+    ],
+    "digestEncoding": "Encode the eight values in order as canonical UTF-8 with one LF delimiter and no trailing LF, then SHA-256 lowercase hexadecimal and compare with stepUpEvidenceDigest before hashing the raw nonce for storage.",
+    "approvedRule": "APPROVED requires exact body/proof equality, dwp-people-server audience, HRIS_SEPARATION_TASK_WAIVER_DECISION purpose, verifiedAt <= consumedAt <= occurredAt, freshness under the immutable request policy, unused tenant-scoped evidence identity and nonce digest, and decision actor unequal to immutable maker and requester.",
+    "rejectedRule": "REJECTED forbids every step-up field in body and proof and persists every step-up column null; explicit null wire values are invalid."
+  },
+  "rowLevelSecurityDelta": {
+    "tables": [
+      "ppl_hrm013_callback_proof_replays",
+      "ppl_separation_waiver_request_outbox",
+      "ppl_separation_callback_authorities",
+      "ppl_separation_callbacks"
+    ],
+    "enable": true,
+    "force": true,
+    "predicate": "tenant_id equals NULLIF(current_setting('dwp.tenant_id', true), '')::BIGINT",
+    "withCheck": "same as predicate",
+    "bypassRoles": [],
+    "requiredIndexes": [
+      "ppl_hrm013_callback_proof_replays(expires_at,proof_replay_id)",
+      "ppl_separation_waiver_request_outbox(tenant_id,dispatch_state,available_at,lease_until)",
+      "ppl_separation_callback_authorities(tenant_id,binding_id,caller_workload_id,case_public_id,task_public_id,purpose_code,approval_request_id,authority_revision DESC) NULLS NOT DISTINCT",
+      "ppl_separation_callbacks(tenant_id,callback_type,caller_workload_id,separation_case_id,separation_task_id,owner_revision DESC)",
+      "ppl_separation_callbacks(tenant_id,caller_workload_id,external_receipt_public_id) WHERE callback_type = TASK_RECEIPT",
+      "ppl_separation_callbacks(tenant_id,step_up_evidence_id) WHERE waiver_decision = APPROVED",
+      "ppl_separation_callbacks(tenant_id,step_up_evidence_nonce_sha256) WHERE waiver_decision = APPROVED"
+    ]
+  },
+  "revisionAndStateSemantics": {
+    "externalOwnerRevision": "owner_revision is a caller-owned protocol sequence and is never the People aggregate or task version. A new callback must equal the latest protocol-fence expected_next_owner_revision exactly.",
+    "peopleCasVersion": "People case and task version is owner-local, loaded and locked inside the mutation transaction, and used for exact CAS without accepting a caller-supplied expectedVersion.",
+    "taskSequence": "For TASK_RECEIPT the sequence scope is the exact protocol-fence key. FAILED leaves the case in TASKS_ACTIVE. A later COMPLETED is accepted only with a different callbackEventId, a different externalReceiptPublicId, exact next ownerRevision and a new callback-self digest; both immutable callback rows remain durable proof.",
+    "waiverSequence": "For APPROVAL_DECISION, the exact approvalRequestId is part of the protocol stream key, whose first authority and first decision revision are 1 and whose terminal decision closes that request stream. A later waiver request for the same task has a new approvalRequestId and independent revision-one stream. decisionRevision equals signed ownerRevision, persisted owner_revision and the exact protocol-fence expected_next_owner_revision. callback-self payload_hash remains distinct from originating_payload_sha256, which must equal the immutable APR-002 approval_request_payload_sha256. People copies maker/requester from that fence, rejects a decision actor equal to either, and consumes one unique audience/purpose-bound step-up evidence only for APPROVED. REJECTED records immutable evidence without step-up and leaves the task non-waived.",
+    "reconciliationSequence": "For RECONCILIATION_RESULT the sequence scope is tenantId, casePublicId and callerWorkloadId. The first accepted ownerRevision is 1 and each new event is exactly the previous accepted ownerRevision plus 1.",
+    "consistentEffect": "An accepted CONSISTENT result records receipt, callback and audit evidence but leaves the case PUBLISHED and changes no published fact.",
+    "correctionEffect": "An accepted CORRECTION_REQUIRED result performs exact owner-local CAS from PUBLISHED to CORRECTION_REQUIRED and never edits the published separation or assignment event.",
+    "waiverReadinessEffect": "After an APPROVED waiver atomically changes the task to WAIVED, the owner recomputes mandatory task readiness. If all mandatory tasks are COMPLETED or WAIVED, the case may CAS from TASKS_ACTIVE to READY_TO_PUBLISH; otherwise it remains TASKS_ACTIVE.",
+    "irreversibleEffect": "Only an accepted COMPLETED task receipt for a task whose immutable template snapshot has irreversible=true can set the case irreversible_at. FAILED, rejected, quarantined and waiver callbacks never set irreversible_at."
+  },
+  "guardOrderSuccessor": {
+    "supersedes": "Only the guardOrder sentence in the v1 semantic disposition that places state-derived stale or out-of-order checks before every business-row read.",
+    "steps": [
+      "Validate TLS 1.3, the exact mTLS SPIFFE identity, certificate binding, closed headers, canonical method and path, body size and media type without repository access.",
+      "Validate the closed RS256 proof, signature, issuer, subject, audience, binding, tenant, purpose, correlation, path/body identities, token time and body digest without business-row access.",
+      "Revalidate the current internal service grant from control-plane authority and atomically reserve the fresh jti digest plus requestNonce digest in ppl_hrm013_callback_proof_replays before any People business-row access; never query or widen the V54 HRM-001 replay table.",
+      "Lookup only the ppl_separation_callbacks callback identity ledger by tenant, caller and callback event. Exact replay returns stored safe response bytes; identity conflict returns 409 and appends redacted quarantine audit evidence. Neither path reads a case or task.",
+      "For a new callback, read the latest ppl_separation_callback_authorities version by the exact seven-column immutable protocol-fence key, with conditional approval_request_id compared using NULLS NOT DISTINCT, and require ADMIT, not closed, exact expected_next_owner_revision, correlation_id, originating_payload_sha256, task_type, consumer_event_id, tenant_grant_revision and authorization_revision before any case or task business-row read.",
+      "For a new callback, perform the minimum tenant-scoped locked owner identity-and-revision read needed to confirm case/task existence, state, registered owner_workload_id and immutable task type. HRM-010 additionally locks the immutable APR-002 waiver-request fence to compare approval request, maker, requester, reason, correlation, task revisions and approval request payload digest. No unrelated business payload or restricted worker data is selected.",
+      "Reject stale, gap, out-of-order, wrong-owner, wrong-state, wrong-approval, decision-actor equality, reused or misbound step-up evidence, or path/body substitution before any mutable business projection read or mutation.",
+      "Only then load the minimum domain fields and atomically persist callback evidence with its safe receipt bytes, audit and the exact CAS mutation. Any failure rolls back the entire success path."
+    ],
+    "nonDisclosure": "Every denial before admitted domain execution is no-store, count-free and exposes no tenant, case, task, worker, approval or revision existence.",
+    "reviewRequirement": "This implementability correction is material and must be independently reviewed with the trusted callback binding before an owner packet or People V61 reservation."
+  },
+  "immutabilityAndPrivacy": [
+    "ppl_separation_waiver_request_outbox preserves its closed non-PII APR-002 request bytes and lineage fields; only bounded delivery CAS fields can advance.",
+    "ppl_hrm013_callback_proof_replays stores one-time token digests only and cannot share the V54 employee-change allowlist.",
+    "ppl_separation_callbacks is append-only; no update or delete is permitted.",
+    "The callback-specific receipt_public_id, external receipt identity, maker/requester copy, step-up digest metadata and exact response bytes are immutable; trusted callbacks do not consume the public-command receipt correlation namespace.",
+    "Raw callback request bytes, JWS, certificate, authorization headers and secrets are never stored.",
+    "Conflict attempts append only redacted audit evidence and never overwrite the accepted identity row.",
+    "Approval evidence public IDs and revisions are retained as governance references, not resolved names or personal attributes."
+  ],
+  "requiredFutureVerificationAfterActiveLease": [
+    "V61 clean install and V60-to-V61 upgrade prove the effective v1 plus v2 composed schema.",
+    "HRM-008 through HRM-010 jti and requestNonce digests are single-use in the dedicated table; V54 ppl_hris_bridge_proof_replays and its SVC-PEP-HRM-001 allowlist remain byte-for-byte unchanged.",
+    "APR-002 creates one immutable People-owned request fence and durable exact-byte outbox per approval request while allowing independent waiver requests for multiple tasks in one case.",
+    "Exact replay returns byte-identical response without case or task reads.",
+    "Same callback identity with changed full command or request-body digest returns 409, appends quarantine audit and mutates no existing row.",
+    "APPROVED and REJECTED waiver decisions preserve complete immutable Approval evidence; only APPROVED requires and uniquely consumes audience/purpose-bound step-up metadata and can produce WAIVED.",
+    "People revalidates decisionActorPublicId differs from both case maker and waiver requester copied from the immutable APR-002 fence.",
+    "FAILED-to-COMPLETED task recovery requires a new callbackEventId, distinct externalReceiptPublicId, next exact ownerRevision and distinct proof without duplicating irreversible evidence.",
+    "CONSISTENT reconciliation is evidence-only while CORRECTION_REQUIRED is forward correction with exact CAS.",
+    "Cross-tenant access and every raw-request, token, certificate or personal-data persistence attempt fail.",
+    "Append-only callback authority lookup rejects wrong caller, binding, audience, purpose, task type, approval request, revoked authority and owner revision before reading a case or task.",
+    "Callback, receipt and terminal task/case immutability triggers reject destructive updates and deletes."
+  ],
+  "authority": {
+    "callbackDurabilityDesignSealed": true,
+    "peopleV61EffectiveManifestClarified": true,
+    "callbackAuthorityTableDesignSealed": true,
+    "boundedPeoplePrerequisitePersistencePreparationAuthorized": false,
+    "pairedApprovalAndPeoplePreparationAuthorized": false,
+    "callbackAuthorityTableSqlAuthorized": false,
+    "peopleV61Reserved": false,
+    "peopleV61LeaseActive": false,
+    "migrationSqlAuthoringAuthorized": false,
+    "callbackSourceAuthoringAuthorized": false,
+    "moduleSourceAuthoringAuthorized": false,
+    "ownerPacketAuthorized": false,
+    "productionDatabaseExecutionAuthorized": false,
+    "productionBindingAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0
+  },
+  "invalidationConditions": [
+    "Any implementation uses only payload_hash, rather than command_digest and request_body_sha256, to decide exact replay or conflict.",
+    "Raw request bytes, proof, certificate material, authorization token or personal content is stored in ppl_separation_callbacks.",
+    "A replay recomputes a response, reads a case or task, inserts another receipt, or changes the original callback outcome.",
+    "A digest conflict mutates the original callback or business state instead of appending redacted quarantine audit evidence.",
+    "A rejected waiver changes a task to WAIVED or an approved waiver lacks immutable request, decision, actor, reason and step-up evidence.",
+    "HRM-008, HRM-009 or HRM-010 reuses or widens V54 ppl_hris_bridge_proof_replays instead of the dedicated proof-replay namespace.",
+    "APR-002 is sent before its People-owned immutable request fence and exact-byte outbox are atomically persisted.",
+    "A task receipt omits externalReceiptPublicId or a FAILED-to-COMPLETED successor reuses callback, receipt, revision or proof identity.",
+    "A waiver callback aliases its self payload digest with the APR-002 originating digest, fails maker/requester comparison, or accepts missing, reused, wrong-audience or wrong-purpose step-up evidence.",
+    "External ownerRevision is treated as a People aggregate version or a caller supplies the People CAS version.",
+    "SQL is authored before a separate exclusive People V61 lease and hash-bound module token are issued."
+  ],
+  "nextAction": "INDEPENDENTLY_REVIEW_AND_HASH_BIND_THIS_MANIFEST_SUCCESSOR_WITH_THE_EXACT_TRUSTED_CALLBACK_AND_PAIRED_APPROVAL_REQUEST_CARRIER; AFTER_CARRIER_PUSH_A_SEPARATE_CENTRAL_GATE_MAY_PREPARE_PAIRED_BOUNDED_APPROVAL_AND_PEOPLE_PREREQUISITE_WORKTREES_WITH_EXCLUSIVE_APPROVAL_V59_AND_PEOPLE_V61_LEASES_AND_HASH_BOUND_TOKENS_FOR_ONLY_GRANT_REPLAY_FENCE_OUTBOX_AND_CALLBACK_INGRESS; ONLY_THE_PAIRED_INTEGRATION_RECEIPT_MAY_UNLOCK_THE_HRM013_OWNER_PACKET_OR_FULL_MODULE_SOURCE"
+}

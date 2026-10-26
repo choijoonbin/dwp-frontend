@@ -1,0 +1,167 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-06-hrm013-callback-binding-independent-review.v1",
+  "reviewId": "HRIS-WAVE7-R7-BATCH-06-HRM013-CALLBACK-BINDING-INDEPENDENT-REVIEW-20261026-R1",
+  "recordedAt": "2026-10-26T19:32:36+09:00",
+  "recordedBy": "INDEPENDENT_HRM013_CALLBACK_CONTRACT_REVIEW",
+  "sliceId": "BASE-TFR-HRM-013",
+  "module": "HRM",
+  "state": "INDEPENDENT_REVIEW_COMPLETE_ZERO_FINDINGS_CARRIER_COMMIT_PUSH_AUTHORIZED_SOURCE_AND_MIGRATION_WITHHELD",
+  "scope": "Independent read-only review of the HRM-013 trusted callback binding carrier, paired Approval waiver bridge, service-binding register, People V61 and Approval V59 candidate manifests, current authority index and both validators.",
+  "finalVerdict": {
+    "p0": 0,
+    "p1": 0,
+    "p2": 0,
+    "decision": "GO_FOR_CARRIER_COMMIT_AND_PUSH_ONLY",
+    "reason": "All initially reported and follow-up protocol, security, durability, sequence, hash and validator defects are closed. No module source, migration SQL, worktree, runtime, tenant or production authority is granted."
+  },
+  "initialIndependentFindings": {
+    "p0": 0,
+    "p1": 10,
+    "p2": 3,
+    "p1Findings": [
+      "The new service-binding rows described OAuth2 bearer JWT while the endpoint contract forbade Authorization and required X-DWP-Workload-Proof.",
+      "The HRM-010 closed claim sets differed between the callback authority and paired Approval bridge.",
+      "People V61 had no isolated durable jti and requestNonce replay namespace for HRM-008 through HRM-010.",
+      "People V61 lacked the immutable APR-002 request fence and exact-byte durable outbox required by the bridge.",
+      "externalReceiptPublicId was not retained in the callback ledger, so FAILED-to-COMPLETED evidence could be overwritten.",
+      "The main protocol-fence required values did not match the People V61 callback-authority table.",
+      "The callback self digest and originating request or event payload digest were not independently carried and persisted.",
+      "Fresh, single-use, audience-bound and purpose-bound step-up evidence could not be enforced by the sealed schemas.",
+      "Approval required the decision actor to differ from maker and requester while the People boundary could not independently repeat both checks.",
+      "The proposed sequencing attempted to complete APR-002 and HRM-010 before authorizing their bounded People V61 prerequisite persistence."
+    ],
+    "p2Findings": [
+      "APR-002 did not have an exact application-header allowlist and deny contract.",
+      "Operation identifiers and semantic operation names were not consistently separated across artifacts.",
+      "The sealed 16384-byte response limit and persistence limit were not consistently aligned."
+    ]
+  },
+  "correctionCycles": [
+    {
+      "cycle": 1,
+      "resultBeforeNextReview": {
+        "p0": 0,
+        "p1": 4,
+        "p2": 3
+      },
+      "closed": [
+        "Replaced bearer terminology with the exact X-DWP-Workload-Proof certificate-bound RS256 profile and aligned per-binding closed claims.",
+        "Added isolated People replay persistence, immutable APR-002 request fence and exact-byte outbox, durable external receipt evidence, separate origin and callback digests, and an exact callback protocol fence.",
+        "Added conditional seven-field step-up evidence, maker and requester separation, exact header contracts, operation mappings and response-size constraints.",
+        "Changed the next gate to paired Approval V59 and bounded People V61 prerequisite preparation before any HRM-013 owner packet."
+      ],
+      "followUpFindings": [
+        "Request byte limits still differed between endpoints and persistence.",
+        "Approval grant persistence did not yet provide same-row tenantGrantRevision and authorizationRevision verification.",
+        "ownerRevision and decisionRevision equality was not enforced by both database manifests.",
+        "The HRM-010 protocol-fence stream did not yet isolate approvalRequestId revision streams.",
+        "The standard npm gate did not invoke the dedicated validator, replay identity wording was ambiguous and the dedicated validator repository root was off by one parent."
+      ]
+    },
+    {
+      "cycle": 2,
+      "result": {
+        "p0": 0,
+        "p1": 0,
+        "p2": 0
+      },
+      "closed": [
+        "Aligned every request byte boundary at 32768 bytes and every safe response or receipt boundary at 16384 bytes.",
+        "Bound grant_id, tenant_grant_revision and authorization_revision to one current ADMIT row and persisted that identity through request and decision records.",
+        "Added typed owner_revision persistence and owner_revision equals decision_revision checks on Approval and People.",
+        "Added approval_request_id to the NULLS-NOT-DISTINCT seven-column callback-authority stream key so each waiver request starts and terminates its own revision-one stream.",
+        "Defined replay identity as two atomic digest-only rows uniquely keyed by tenant_id and token_digest in both services; raw jti and requestNonce persistence is forbidden.",
+        "Connected the dedicated callback validator to the standard npm gate, corrected its repository root and added exact assertions for the previously missed invariants.",
+        "Recomputed the current authority index pins after every material correction."
+      ]
+    }
+  ],
+  "artifactPins": [
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-callback-binding-r1/hrm-013-trusted-callback-service-binding-successor.v1.json",
+      "bytes": 50694,
+      "sha256": "56a27680c74e07967e4bf03c1984ac8d4786a1a0f4ef68c560363a41b1020be9"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-callback-binding-r1/hrm-013-separation-waiver-approval-bridge-successor.v1.json",
+      "bytes": 39005,
+      "sha256": "43717d43a7aed49c56abe715188e5891d9c7da79d45125bfdc68acf0064ea7b5"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-callback-binding-r1/service-api-auth-binding-register.successor.v2.csv",
+      "bytes": 10190,
+      "sha256": "15b52f3cd3867aefa79f02cdf83441d9d5220836344391574cc42a8bdbde7e37"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-callback-binding-r1/migration-manifests/base-tfr-hrm-013.people-v61-schema-manifest-successor.v2.json",
+      "bytes": 42115,
+      "sha256": "01aff4919302d2a5adc951f96b7dd513b752526c8e3066d4d0317d973c14d6a8"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-callback-binding-r1/migration-manifests/hrm-013.approval-v59-schema-manifest.v1.json",
+      "bytes": 25781,
+      "sha256": "8bec7573ed5453e2ca83b665d2824ae763a93703483ddf59063315cc7a8eff50"
+    },
+    {
+      "path": "docs/06-delivery/hris/current-authority-index.v2.json",
+      "bytes": 13753,
+      "sha256": "1033c2b68df9fdb387a31ce578fb0f608b366046b24b6da585556b4810b2deea"
+    },
+    {
+      "path": "docs/06-delivery/hris/tools/validate_current_authority.py",
+      "bytes": 55003,
+      "sha256": "322b9a80617b431fbb49b6e78c9e1b85b235dca3d9fced2ee85a4b387ceb0012"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-callback-binding-r1/validate_hrm013_callback_binding.py",
+      "bytes": 35013,
+      "sha256": "4f099a3238b2a677ebc73c452ac71e7097f8a5dd278107928d44ba9fedcbe609"
+    }
+  ],
+  "targetedValidation": {
+    "npmCommand": "npm run hris:current-contracts:check",
+    "npmStages": [
+      {
+        "validator": "docs/06-delivery/hris/tools/validate_current_authority.py",
+        "status": "PASS"
+      },
+      {
+        "validator": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-semantic-closure-r1/validate_hrm013_semantic_closure.py",
+        "status": "PASS"
+      },
+      {
+        "validator": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-callback-binding-r1/validate_hrm013_callback_binding.py",
+        "status": "PASS"
+      }
+    ],
+    "gitDiffCheck": "PASS",
+    "currentAuthorityIntegrityPinsVerified": 19,
+    "hashDriftCount": 0,
+    "broadRepositoryTestRerunPerformed": false
+  },
+  "authority": {
+    "independentReviewComplete": true,
+    "carrierCommitAndPushAuthorized": true,
+    "centralPairedApprovalPeoplePrerequisitePreparationEligibleAfterCarrierPush": true,
+    "moduleOwnerPacketAuthorized": false,
+    "peopleV61ReservationAuthorized": false,
+    "approvalV59ReservationAuthorized": false,
+    "sourceAuthoringAuthorized": false,
+    "migrationSqlAuthoringAuthorized": false,
+    "worktreeAuthorized": false,
+    "runtimeActivationAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "runtimeCredentialBindingAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionCredentialBindingAuthorized": false,
+    "productionBindingAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0
+  },
+  "nonClaims": [
+    "This review does not reserve Approval V59 or People V61.",
+    "This review does not authorize source, migration SQL, worktrees, runtime activation, tenant enrollment, production credentials, production binding or release.",
+    "This review does not authorize the HRM-013 module owner packet or claim HRM-013, Batch-06 or HRIS completion."
+  ],
+  "nextGate": "CARRIER_COMMIT_PUSH_THEN_SEPARATE_CENTRAL_PAIRED_APPROVAL_AND_BOUNDED_PEOPLE_PREREQUISITE_AUTHORITY_WORKTREES_EXCLUSIVE_APPROVAL_V59_AND_PEOPLE_V61_LEASES_AND_HASH_BOUND_TOKENS_THEN_ONE_PAIRED_INTEGRATION_RECEIPT_BEFORE_HRM013_OWNER_PACKET"
+}

@@ -1,0 +1,395 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-06-hrm013-approval-v59-schema-manifest.v1",
+  "manifestId": "HRIS-WAVE7-R7-BATCH-06-HRM013-APPROVAL-V59-SCHEMA-MANIFEST-20261026-R4",
+  "recordedAt": "2026-10-26T20:10:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "SEALED_CANDIDATE_ONLY_HRM013_WAIVER_BRIDGE_NOT_RESERVED_NOT_ACTIVE_SQL_AUTHORING_WITHHELD",
+  "sliceId": "BASE-TFR-HRM-013",
+  "providerModule": "APPROVAL",
+  "consumerModule": "HRM",
+  "immutability": {
+    "sealed": true,
+    "appendOnly": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ID_AND_SHA256"
+  },
+  "migration": {
+    "repository": "dwp-backend",
+    "service": "dwp-approval-server",
+    "stream": "APPROVAL_MAIN",
+    "observedHighWater": "V58",
+    "candidateVersion": "V59",
+    "candidatePath": "dwp-approval-server/src/main/resources/db/migration/V59__bridge_hris_separation_task_waivers.sql",
+    "predecessor": {
+      "path": "dwp-approval-server/src/main/resources/db/migration/V58__bridge_hris_employee_change_approvals.sql",
+      "sha256": "904ca4f8abff2d57b52ba3dc7efac89738b4fd84078f729ddeeb8c0d724eee31",
+      "bytes": 9928,
+      "carrierCommit": "2152531116731b678c79c3d13db139f18392ecd9"
+    },
+    "leaseState": "NOT_ISSUED",
+    "reservationAuthorized": false,
+    "activationAuthorized": false,
+    "sqlAuthoringAuthorized": false
+  },
+  "bindingAllocation": {
+    "request": {
+      "bindingId": "SVC-PEP-APR-002",
+      "operation": "createAndSubmitSeparationTaskWaiverRequest",
+      "callerWorkloadId": "dwp-people-server",
+      "ownerWorkloadId": "dwp-approval-server",
+      "method": "POST",
+      "exactPath": "/internal/hris-approval/v1/separation-task-waiver-requests",
+      "audience": "dwp-approval-server",
+      "purpose": "HRIS_SEPARATION_TASK_WAIVER_REQUEST"
+    },
+    "callback": {
+      "bindingId": "SVC-PEP-HRM-010",
+      "operation": "recordSeparationTaskWaiverDecision",
+      "callerWorkloadId": "dwp-approval-server",
+      "ownerWorkloadId": "dwp-people-server",
+      "method": "POST",
+      "exactPathTemplate": "/internal/hris-people/v1/separation-cases/{casePublicId}/tasks/{taskPublicId}/waiver-decisions",
+      "audience": "dwp-people-server",
+      "purpose": "HRIS_SEPARATION_TASK_WAIVER_DECISION"
+    },
+    "rule": "The request and callback form one purpose-separated handshake. SVC-PEP-APR-001 and SVC-PEP-HRM-001 remain employee-change-only and cannot be reused or widened."
+  },
+  "v58NonRegression": {
+    "unchangedTables": [
+      "apr_hris_bridge_proof_replays",
+      "apr_hris_employee_change_approval_bindings",
+      "apr_hris_employee_change_decision_outbox"
+    ],
+    "unchangedBindingIds": [
+      "SVC-PEP-APR-001",
+      "SVC-PEP-HRM-001"
+    ],
+    "unchangedPurposes": [
+      "HRIS_EMPLOYEE_CHANGE_APPROVAL_REQUEST_SUBMIT",
+      "HRIS_APPROVAL_DECISION_CALLBACK"
+    ],
+    "rule": "V59 creates HRM-013-specific tables and contracts. It does not alter a V58 column, constraint, trigger, row, purpose, proof namespace, request mapping, callback path or employee-change runtime."
+  },
+  "newTables": [
+    {
+      "name": "apr_hrm013_tenant_grants",
+      "purpose": "Append-only current grant revisions for the exact People-to-Approval waiver request and Approval-to-People decision callback pair.",
+      "columns": [
+        "grant_id UUID PRIMARY KEY",
+        "tenant_id BIGINT NOT NULL",
+        "grant_revision BIGINT NOT NULL",
+        "tenant_grant_revision BIGINT NOT NULL",
+        "authorization_revision BIGINT NOT NULL",
+        "decision VARCHAR(16) NOT NULL",
+        "people_spiffe_id VARCHAR(240) NOT NULL",
+        "people_signing_key_id VARCHAR(128) NOT NULL",
+        "approval_spiffe_id VARCHAR(240) NOT NULL",
+        "approval_signing_key_id VARCHAR(128) NOT NULL",
+        "request_binding_id VARCHAR(40) NOT NULL",
+        "request_purpose_code VARCHAR(80) NOT NULL",
+        "callback_binding_id VARCHAR(40) NOT NULL",
+        "callback_purpose_code VARCHAR(80) NOT NULL",
+        "supersedes_grant_id UUID",
+        "grant_digest CHAR(64) NOT NULL",
+        "recorded_at TIMESTAMPTZ NOT NULL"
+      ],
+      "uniqueConstraints": [
+        "tenant_id,grant_id",
+        "tenant_id,grant_id,tenant_grant_revision,authorization_revision",
+        "tenant_id,grant_revision"
+      ],
+      "foreignKeys": [
+        "tenant_id -> apr_tenants.tenant_id",
+        "supersedes_grant_id -> apr_hrm013_tenant_grants.grant_id"
+      ],
+      "checks": [
+        "grant_revision > 0, tenant_grant_revision > 0 and authorization_revision > 0",
+        "decision IN ADMIT|REVOKE",
+        "request_binding_id = SVC-PEP-APR-002 and request_purpose_code = HRIS_SEPARATION_TASK_WAIVER_REQUEST",
+        "callback_binding_id = SVC-PEP-HRM-010 and callback_purpose_code = HRIS_SEPARATION_TASK_WAIVER_DECISION",
+        "grant_digest is lowercase hexadecimal length 64"
+      ],
+      "grantDigestPreimage": [
+        "tenant_id",
+        "grant_revision",
+        "tenant_grant_revision",
+        "authorization_revision",
+        "decision",
+        "people_spiffe_id",
+        "people_signing_key_id",
+        "approval_spiffe_id",
+        "approval_signing_key_id",
+        "request_binding_id",
+        "request_purpose_code",
+        "callback_binding_id",
+        "callback_purpose_code",
+        "supersedes_grant_id",
+        "recorded_at"
+      ],
+      "immutability": "Append-only revisions; update and delete are rejected. grant_revision is only the ledger row version. tenant_grant_revision and authorization_revision are separate immutable signed-proof fence values and cannot be derived from or substituted for grant_revision. Current authority is the highest same-tenant grant_revision and must be ADMIT."
+    },
+    {
+      "name": "apr_hrm013_proof_replays",
+      "purpose": "Single-use replay namespace dedicated to the two HRM-013 bindings without widening V58 constraints.",
+      "columns": [
+        "proof_replay_id BIGSERIAL PRIMARY KEY",
+        "tenant_id BIGINT NOT NULL",
+        "binding_id VARCHAR(40) NOT NULL",
+        "caller_workload_id VARCHAR(120) NOT NULL",
+        "token_kind VARCHAR(16) NOT NULL",
+        "token_digest CHAR(64) NOT NULL",
+        "expires_at TIMESTAMPTZ NOT NULL",
+        "reserved_at TIMESTAMPTZ NOT NULL"
+      ],
+      "uniqueConstraints": [
+        "tenant_id,token_digest"
+      ],
+      "foreignKeys": [
+        "tenant_id -> apr_tenants.tenant_id"
+      ],
+      "checks": [
+        "token_kind IN JTI|REQUEST_NONCE",
+        "token_digest is lowercase hexadecimal length 64 and is SHA-256 of one canonical UUID proof value",
+        "the raw jti and requestNonce are canonical UUIDs, differ before hashing, and their token_digest values differ",
+        "binding_id and caller_workload_id equal SVC-PEP-APR-002/dwp-people-server or SVC-PEP-HRM-010/dwp-approval-server",
+        "expires_at > reserved_at and expires_at <= reserved_at plus 35 seconds"
+      ],
+      "reservationRule": "After transport and proof validation, SHA-256 each distinct canonical-UUID jti and requestNonce and atomically insert two separate JTI and REQUEST_NONCE rows. tenant_id plus token_digest is the only replay identity, so reuse fails closed even when binding_id, caller_workload_id or token_kind changes; those three columns are audit metadata only.",
+      "persistenceRule": "Persist only token_digest. Raw jti, raw requestNonce, JWT/JWS bytes, authorization values and certificate material are forbidden in this table.",
+      "retention": "Retain through proof expiry plus five seconds, then bounded cleanup; collision always fails closed.",
+      "immutability": "Rows are insert-only until bounded expiry cleanup; update is rejected."
+    },
+    {
+      "name": "apr_hrm013_waiver_request_bindings",
+      "purpose": "Immutable request, target, maker, policy and exact wire evidence for one separation-task waiver approval.",
+      "columns": [
+        "waiver_binding_id UUID PRIMARY KEY",
+        "tenant_id BIGINT NOT NULL",
+        "grant_id UUID NOT NULL",
+        "tenant_grant_revision BIGINT NOT NULL",
+        "authorization_revision BIGINT NOT NULL",
+        "approval_request_id UUID NOT NULL",
+        "case_public_id UUID NOT NULL",
+        "task_public_id UUID NOT NULL",
+        "task_type VARCHAR(80) NOT NULL",
+        "case_maker_public_id UUID NOT NULL",
+        "requested_by_actor_public_id UUID NOT NULL",
+        "reason_code VARCHAR(80) NOT NULL",
+        "requested_task_owner_revision BIGINT NOT NULL",
+        "requested_task_version BIGINT NOT NULL",
+        "workflow_version_id UUID NOT NULL",
+        "form_version_id UUID NOT NULL",
+        "frozen_policy_revision BIGINT NOT NULL",
+        "required_step_up_audience VARCHAR(120) NOT NULL",
+        "required_step_up_purpose VARCHAR(80) NOT NULL",
+        "original_correlation_id UUID NOT NULL",
+        "approval_request_payload_sha256 CHAR(64) NOT NULL",
+        "idempotency_key VARCHAR(128) NOT NULL",
+        "exact_request_body BYTEA NOT NULL",
+        "request_body_sha256 CHAR(64) NOT NULL",
+        "command_digest CHAR(64) NOT NULL",
+        "exact_response_body BYTEA NOT NULL",
+        "response_body_sha256 CHAR(64) NOT NULL",
+        "requested_at TIMESTAMPTZ NOT NULL",
+        "created_at TIMESTAMPTZ NOT NULL"
+      ],
+      "uniqueConstraints": [
+        "tenant_id,approval_request_id",
+        "tenant_id,approval_request_id,grant_id,tenant_grant_revision,authorization_revision",
+        "tenant_id,idempotency_key"
+      ],
+      "foreignKeys": [
+        "tenant_id -> apr_tenants.tenant_id",
+        "tenant_id,grant_id,tenant_grant_revision,authorization_revision -> apr_hrm013_tenant_grants.tenant_id,grant_id,tenant_grant_revision,authorization_revision",
+        "tenant_id,approval_request_id -> apr_requests.tenant_id,request_id",
+        "tenant_id,workflow_version_id -> apr_workflow_versions.tenant_id,workflow_version_id",
+        "tenant_id,form_version_id -> apr_form_versions.tenant_id,form_version_id"
+      ],
+      "checks": [
+        "tenant_grant_revision, authorization_revision, requested_task_owner_revision and frozen_policy_revision are positive and requested_task_version is non-negative",
+        "required_step_up_audience = dwp-people-server",
+        "required_step_up_purpose = HRIS_SEPARATION_TASK_WAIVER_DECISION",
+        "approval_request_payload_sha256, request_body_sha256, command_digest and response_body_sha256 are lowercase hexadecimal length 64",
+        "octet_length(exact_request_body) is between 1 and 32768 and SHA-256(exact_request_body) equals request_body_sha256",
+        "octet_length(exact_response_body) is between 1 and 16384 and SHA-256(exact_response_body) equals response_body_sha256"
+      ],
+      "multipleWaiverRule": "Neither case nor task is unique by itself. Distinct approval_request_id and idempotency_key values permit independent waiver requests for multiple tasks and later policy-authorized attempts for one task without weakening exact replay.",
+      "privacy": "The closed request contains only public IDs, reason code, positive revisions, digest and correlation. Worker names, identifiers, documents and unrestricted narrative are forbidden.",
+      "immutability": "Every column is immutable; update and delete are rejected."
+    },
+    {
+      "name": "apr_hrm013_waiver_decision_outbox",
+      "purpose": "Durable exact SeparationWaiverDecisionV2 delivery with bounded retry, fresh proof per attempt and exact safe receipt retention.",
+      "columns": [
+        "outbox_id UUID PRIMARY KEY",
+        "tenant_id BIGINT NOT NULL",
+        "grant_id UUID NOT NULL",
+        "tenant_grant_revision BIGINT NOT NULL",
+        "authorization_revision BIGINT NOT NULL",
+        "approval_request_id UUID NOT NULL",
+        "case_public_id UUID NOT NULL",
+        "task_public_id UUID NOT NULL",
+        "callback_event_id UUID NOT NULL",
+        "decision VARCHAR(16) NOT NULL",
+        "decision_revision BIGINT NOT NULL",
+        "owner_revision BIGINT NOT NULL",
+        "decision_actor_public_id UUID NOT NULL",
+        "case_maker_public_id UUID NOT NULL",
+        "requested_by_actor_public_id UUID NOT NULL",
+        "reason_code VARCHAR(80) NOT NULL",
+        "step_up_evidence_id UUID",
+        "step_up_evidence_audience VARCHAR(120)",
+        "step_up_evidence_purpose VARCHAR(120)",
+        "step_up_evidence_nonce_sha256 CHAR(64)",
+        "step_up_evidence_sha256 CHAR(64)",
+        "step_up_verified_at TIMESTAMPTZ",
+        "step_up_consumed_at TIMESTAMPTZ",
+        "decision_occurred_at TIMESTAMPTZ NOT NULL",
+        "callback_path VARCHAR(320) NOT NULL",
+        "original_correlation_id UUID NOT NULL",
+        "approval_request_payload_sha256 CHAR(64) NOT NULL",
+        "callback_payload_sha256 CHAR(64) NOT NULL",
+        "exact_callback_body BYTEA NOT NULL",
+        "callback_body_sha256 CHAR(64) NOT NULL",
+        "command_digest CHAR(64) NOT NULL",
+        "delivery_state VARCHAR(20) NOT NULL DEFAULT 'PENDING'",
+        "attempt_count INTEGER NOT NULL DEFAULT 0",
+        "available_at TIMESTAMPTZ NOT NULL",
+        "lease_token UUID",
+        "lease_owner VARCHAR(160)",
+        "lease_until TIMESTAMPTZ",
+        "exact_receipt_body BYTEA",
+        "receipt_body_sha256 CHAR(64)",
+        "last_failure_code VARCHAR(80)",
+        "delivered_at TIMESTAMPTZ",
+        "created_at TIMESTAMPTZ NOT NULL",
+        "updated_at TIMESTAMPTZ NOT NULL"
+      ],
+      "uniqueConstraints": [
+        "tenant_id,approval_request_id",
+        "tenant_id,callback_event_id",
+        "tenant_id,step_up_evidence_id WHERE decision = APPROVED",
+        "tenant_id,step_up_evidence_nonce_sha256 WHERE decision = APPROVED"
+      ],
+      "foreignKeys": [
+        "tenant_id,grant_id,tenant_grant_revision,authorization_revision -> apr_hrm013_tenant_grants.tenant_id,grant_id,tenant_grant_revision,authorization_revision",
+        "tenant_id,approval_request_id,grant_id,tenant_grant_revision,authorization_revision -> apr_hrm013_waiver_request_bindings.tenant_id,approval_request_id,grant_id,tenant_grant_revision,authorization_revision"
+      ],
+      "checks": [
+        "decision IN APPROVED|REJECTED, decision_revision > 0, owner_revision > 0 and owner_revision = decision_revision",
+        "tenant_grant_revision > 0 and authorization_revision > 0",
+        "decision_actor_public_id differs from both case_maker_public_id and requested_by_actor_public_id",
+        "callback_path exactly equals the sealed case/task waiver-decisions path",
+        "APPROVED requires all seven step-up columns non-null, step_up_evidence_audience = dwp-people-server, step_up_evidence_purpose = HRIS_SEPARATION_TASK_WAIVER_DECISION, step_up_consumed_at >= step_up_verified_at and step_up_consumed_at <= decision_occurred_at",
+        "REJECTED requires all seven step-up columns null",
+        "step_up_evidence_nonce_sha256 and step_up_evidence_sha256 are lowercase hexadecimal length 64 when present",
+        "step_up_verified_at is within the frozen workflow freshness window at decision_occurred_at and one nonce digest is consumed only once",
+        "delivery_state IN PENDING|CLAIMED|RETRY|DELIVERED|DEAD|RESULT_UNKNOWN",
+        "attempt_count is between 0 and the sealed bounded retry maximum",
+        "CLAIMED requires a complete lease and every other state forbids a live lease",
+        "approval_request_payload_sha256, callback_payload_sha256, callback_body_sha256, command_digest and present receipt_body_sha256 are lowercase hexadecimal length 64",
+        "octet_length(exact_callback_body) is between 1 and 32768 and SHA-256(exact_callback_body) equals callback_body_sha256",
+        "DELIVERED requires exact receipt bytes of 1 through 16384 octets, matching receipt digest and delivered_at; non-DELIVERED forbids them"
+      ],
+      "lineageRule": "approval_request_payload_sha256 is copied from the immutable APR-002 request binding and emitted as originatingPayloadSha256. callback_payload_sha256 is the HRM-010 body payloadSha256. These two values, callback_body_sha256 and command_digest are separate and may never alias by convention.",
+      "stableFields": "Every grant identity and its separate tenant/authorization revisions, request identity, decision, owner revision, maker, requester, actor, reason, conditional step-up evidence, callback path, correlation, originating request digest, callback-self digest, exact callback body and command digest is immutable. Only the bounded delivery lease, attempt, failure and terminal receipt fields may advance through legal CAS transitions."
+    }
+  ],
+  "grantRevisionContract": {
+    "ledgerRevision": "apr_hrm013_tenant_grants.grant_revision is the append-only per-tenant ledger row version only; it is never emitted as tenantGrantRevision or authorizationRevision.",
+    "inboundApr002Claims": {
+      "tenantGrantRevision": "exactly apr_hrm013_tenant_grants.tenant_grant_revision from the one current highest-grant_revision ADMIT row",
+      "authorizationRevision": "exactly apr_hrm013_tenant_grants.authorization_revision from that same current ADMIT row"
+    },
+    "outboundHrm010Claims": {
+      "tenantGrantRevision": "exactly apr_hrm013_waiver_decision_outbox.tenant_grant_revision copied from its immutable request binding and same grant_id current ADMIT row",
+      "authorizationRevision": "exactly apr_hrm013_waiver_decision_outbox.authorization_revision copied from its immutable request binding and same grant_id current ADMIT row",
+      "ownerRevision": "exactly apr_hrm013_waiver_decision_outbox.owner_revision and equal to decision_revision"
+    },
+    "admissionRule": "APR-002 selects exactly one highest grant_revision row for tenant_id and requires decision ADMIT, request binding/purpose, People SPIFFE/signing key and both signed tenantGrantRevision and authorizationRevision to equal that row. It atomically copies grant_id plus both revision values into the immutable request binding; mixing values from different grant rows is forbidden.",
+    "outboxRule": "The HRM-010 outbox copies the same grant_id, tenant_grant_revision and authorization_revision from the immutable APR-002 request binding. Outbox creation and each send attempt re-read that exact grant_id and require it is still the current highest-grant_revision ADMIT row with the same callback binding/purpose, Approval SPIFFE/signing key and both revision values; otherwise dispatch fails closed and no proof is minted.",
+    "proofRule": "Each HRM-010 proof emits tenantGrantRevision and authorizationRevision from that one revalidated current row and emits ownerRevision from the outbox. No proof may combine a ledger row version, tenant grant revision, authorization revision or signing identity from different rows."
+  },
+  "requestAndDecisionRules": [
+    "Approval revalidates the one current highest-grant_revision ADMIT HRM-013 tenant grant, exact People workload identity, signed tenantGrantRevision and authorizationRevision from that same row, binding, audience, purpose, path and body digest before native request creation.",
+    "The Approval request binds exactly one case, one task, one task type, one requested task-owner revision, one requested task version, the People maker and the requesting actor. Caller-supplied workflow, form, approver, quorum or step-up satisfaction is forbidden.",
+    "Approval resolves and freezes a published effective typed workflow and form, independent approver/quorum policy and required dwp-people-server step-up audience.",
+    "Only a terminal native APPROVED or REJECTED decision creates one outbox row. The terminal accepted vote actor is the callback decision actor and cannot equal either the immutable People maker or requester.",
+    "APPROVED consumes exactly one fresh step-up evidence identity and nonce with the sealed People audience and HRM-010 purpose; its audience, purpose, nonce digest, evidence digest, verified time and consumed time are copied into the exact callback. REJECTED carries none of those fields.",
+    "The callback body, callback-self payload digest and APR-002 originating payload digest are stable and distinct across retries. Each delivery attempt revalidates the same grant_id is the current ADMIT row, emits its exact tenantGrantRevision and authorizationRevision plus ownerRevision equal to decisionRevision, and uses a fresh workload proof while exact callback bytes and command digest remain unchanged.",
+    "408, 425, 429, transport failure and 5xx are bounded retry classes. Other 4xx are permanent. Retry exhaustion becomes RESULT_UNKNOWN or DEAD according to whether remote commit is ambiguous.",
+    "An exact People receipt of at most 16384 bytes completes delivery; a malformed, oversized, mismatched or digest-invalid receipt is never treated as success."
+  ],
+  "stepUpEvidenceContract": {
+    "wireToStorageMapping": {
+      "stepUpEvidenceId": "step_up_evidence_id",
+      "stepUpEvidenceAudience": "step_up_evidence_audience",
+      "stepUpEvidencePurpose": "step_up_evidence_purpose",
+      "SHA-256 of stepUpEvidenceNonce": "step_up_evidence_nonce_sha256; the raw nonce exists only inside immutable exact_callback_body",
+      "stepUpEvidenceDigest": "step_up_evidence_sha256",
+      "stepUpVerifiedAt": "step_up_verified_at",
+      "stepUpConsumedAt": "step_up_consumed_at"
+    },
+    "digestPreimage": [
+      "tenantId",
+      "approvalRequestId",
+      "decisionActorPublicId",
+      "stepUpEvidenceId",
+      "stepUpEvidenceAudience",
+      "stepUpEvidencePurpose",
+      "stepUpEvidenceNonce",
+      "stepUpVerifiedAt"
+    ],
+    "digestEncoding": "Encode the eight values in order as canonical UTF-8 with one LF delimiter and no trailing LF, then SHA-256 lowercase hexadecimal.",
+    "approvedRule": "Approval validates issuer, actor, audience, purpose and frozen freshness, atomically consumes the tenant-scoped evidence identity and nonce digest, and persists all seven values with the exact callback body in the terminal decision transaction.",
+    "rejectedRule": "REJECTED omits every step-up field from body and proof and stores every step-up column null; explicit null wire values are invalid."
+  },
+  "rowLevelSecurity": {
+    "tables": [
+      "apr_hrm013_tenant_grants",
+      "apr_hrm013_proof_replays",
+      "apr_hrm013_waiver_request_bindings",
+      "apr_hrm013_waiver_decision_outbox"
+    ],
+    "enable": true,
+    "force": true,
+    "predicate": "tenant_id equals NULLIF(current_setting('dwp.approval.hrm013.tenant', true), '')::BIGINT",
+    "withCheck": "same as predicate",
+    "bypassRoles": []
+  },
+  "requiredFutureVerificationAfterActiveLease": [
+    "V59 clean install and V58-to-V59 upgrade without any V58 object definition or behavior change.",
+    "Wrong tenant, caller, SPIFFE, signing key, binding, audience, purpose, path, digest, grant revision, jti or nonce fails before request or outbox reads.",
+    "Same request idempotency and bytes return the original exact response while changed bytes return conflict without another Approval request.",
+    "Maker-checker compares decision actor with both immutable maker and requester; published typed workflow/form and uniquely consumed audience/purpose-bound step-up evidence are mandatory only for APPROVED.",
+    "APPROVED and REJECTED each produce one immutable typed outbox event with exact retry bytes, separate APR-002 origin and HRM-010 self payload digests, and no personal payload.",
+    "Crash before send, after remote commit and before local receipt persistence recovers without duplicate Approval decision or People waiver mutation.",
+    "Cross-tenant RLS, terminal delivery immutability and bounded retry/lease fencing pass."
+  ],
+  "authority": {
+    "approvalV59CandidateDesignSealed": true,
+    "pairedWaiverHandshakeDesignSealed": true,
+    "pairedApprovalAndPeoplePreparationAuthorized": false,
+    "boundedPeoplePrerequisitePersistenceAuthorized": false,
+    "approvalV59Reserved": false,
+    "approvalV59LeaseActive": false,
+    "migrationSqlAuthoringAuthorized": false,
+    "approvalSourceAuthoringAuthorized": false,
+    "peopleCallbackSourceAuthoringAuthorized": false,
+    "moduleSourceAuthoringAuthorized": false,
+    "productionCredentialBindingAuthorized": false,
+    "tenantGrantEnrollmentAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0
+  },
+  "invalidationConditions": [
+    "SVC-PEP-APR-001, SVC-PEP-HRM-001 or any V58 employee-change table, constraint, trigger, purpose or runtime is widened for HRM-013.",
+    "The People maker selects the Approval workflow, form, approver, quorum or step-up result.",
+    "A callback decision actor equals the maker or an APPROVED decision lacks fresh owner-verified step-up evidence.",
+    "A callback decision actor equals the immutable requester, step-up evidence or nonce is reused, its audience or purpose differs, or REJECTED carries any step-up field.",
+    "The outbox aliases APR-002 approval_request_payload_sha256 with HRM-010 callback_payload_sha256 or fails to preserve either digest in exact callback bytes.",
+    "Retry changes callback bytes or command digest, reuses jti or requestNonce, or treats an invalid receipt as delivered.",
+    "Any HRM-013 table lacks enabled and forced tenant RLS.",
+    "V59 SQL or source is authored before a separate Approval lease and hash-bound executable token."
+  ],
+  "nextAction": "INDEPENDENTLY_REVIEW_AND_HASH_BIND_THIS_CANDIDATE_WITH_THE_HRM013_TRUSTED_CALLBACK_CARRIER; AFTER_CARRIER_PUSH_A_SEPARATE_CENTRAL_GATE_MAY_PREPARE_PAIRED_BOUNDED_APPROVAL_AND_PEOPLE_PREREQUISITE_WORKTREES_WITH_EXCLUSIVE_APPROVAL_V59_AND_PEOPLE_V61_LEASES_AND_HASH_BOUND_TOKENS_FOR_ONLY_GRANT_REPLAY_FENCE_OUTBOX_AND_CALLBACK_INGRESS; ONLY_THE_PAIRED_INTEGRATION_RECEIPT_MAY_UNLOCK_THE_HRM013_OWNER_PACKET_OR_FULL_MODULE_SOURCE"
+}

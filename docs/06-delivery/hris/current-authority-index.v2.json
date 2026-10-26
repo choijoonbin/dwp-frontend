@@ -1,0 +1,233 @@
+{
+  "schema": "dwp.hris.current-authority-index.v2",
+  "indexId": "HRIS-CURRENT-AUTHORITY-20261026-R2",
+  "recordedAt": "2026-10-26T19:20:00+09:00",
+  "state": "CURRENT_READ_AUTHORITY_CHAIN_HRM013_CALLBACK_AND_PAIRED_APPROVAL_DESIGN_SEALED_REVIEW_REQUIRED_ZERO_SOURCE_AUTHORITY",
+  "scope": "Read-only index over immutable base evidence and append-only successors. It recognizes the sealed HRM-013 callback and paired Approval design but grants no source, migration, worktree, activation, tenant-enrollment, production-binding or release authority.",
+  "predecessorIndex": {
+    "path": "docs/06-delivery/hris/current-authority-index.v1.json",
+    "sha256": "36f4afe666932803b6b7f2b038d73f3187c0076fdd3dd9a5a11e5192bfee0caf",
+    "bytes": 8308,
+    "rule": "v1 remains immutable; v2 supersedes only the current service-binding overlay and appends the HRM-013 callback authority chain."
+  },
+  "informationArchitecture": {
+    "immutableBaseRegister": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/hris-information-architecture-register.csv",
+    "expectedBaseNodes": 98,
+    "navigationPresentationSuccessors": [
+      "docs/06-delivery/hris/2026-10-20-hris-navigation-experience-successor.md",
+      "docs/06-delivery/hris/2026-10-22-hris-sidebar-presentation-successor.md"
+    ],
+    "runtimeManifest": "apps/dwp/src/features/hris/shell/model/hris-runtime-navigation-manifest.ts",
+    "expectedRuntimeNodes": 99,
+    "expectedShellEntries": 9,
+    "expectedTaskGroups": 46
+  },
+  "contractRegisterOverlays": [
+    {
+      "kind": "CROSS_MODULE_CONTRACT",
+      "immutableBase": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/cross-module-contract-register.csv",
+      "successor": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-central-admission-r1/cross-module-contract-register.successor.v1.csv",
+      "expectedSuccessorIds": [
+        "XCON-027"
+      ]
+    },
+    {
+      "kind": "SERVICE_API_AUTH_BINDING",
+      "immutableBase": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/service-api-auth-binding-register.csv",
+      "successor": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-callback-binding-r1/service-api-auth-binding-register.successor.v2.csv",
+      "expectedSuccessorIds": [
+        "SVC-PEP-HRM-007",
+        "SVC-PEP-APR-002",
+        "SVC-PEP-HRM-008",
+        "SVC-PEP-HRM-009",
+        "SVC-PEP-HRM-010"
+      ]
+    }
+  ],
+  "batch04ContractAuthority": {
+    "semanticDisposition": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-start-r1/semantic-dispositions/base-tfr-tim-003.semantic-disposition.v1.json",
+    "startToken": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-start-r1/tokens/base-tfr-tim-003.hrm-successor.start-token.v1.json",
+    "requiredContractIds": [
+      "XCON-027",
+      "SVC-PEP-HRM-007"
+    ]
+  },
+  "executionAuthority": {
+    "roadmap": "docs/06-delivery/hris/wave7-2026-10-17/execution-roadmap-successor.v20.json",
+    "requiredRoadmapState": "R7_BATCH_05_SEQUENCING_CLOSED_DEFAULT_OFF_ZERO_BUSINESS_CREDIT_BATCH_06_PREFLIGHT_NEXT_ZERO_TENANT_ENROLLMENT_ZERO_PRODUCTION_BINDING_P0_GATES_CARRIED",
+    "batch06Preflight": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-preflight-r1/semantic-dependency-migration-preflight.v1.json",
+    "requiredPreflightState": "PREFLIGHT_COMPLETE_FIXED_ORDER_FOUR_CONDITIONAL_SOURCE_LANES_ONE_REUSE_ONLY_AUDIT_NO_PACKETS_NO_TOKENS_NO_WORKTREES_NO_LEASES_NO_SOURCE"
+  },
+  "batch06Hrm013CallbackAuthority": {
+    "centralIntegrationReceipt": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-central-admission-r1/hrm-013-central-integration-receipt.v1.json",
+    "requiredCentralState": "EXACT_HRM013_CENTRAL_PREREQUISITE_MERGED_PUSHED_RESERVED_NOT_ACTIVE_CALLBACK_BINDING_DESIGN_NEXT",
+    "trustedCallbackSuccessor": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-callback-binding-r1/hrm-013-trusted-callback-service-binding-successor.v1.json",
+    "requiredCallbackState": "SEALED_EXACT_HRM013_TRUSTED_CALLBACK_DESIGN_SOURCE_OWNER_PACKET_PEOPLE_V61_LEASE_AND_ACTIVATION_WITHHELD",
+    "pairedApprovalBridge": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-callback-binding-r1/hrm-013-separation-waiver-approval-bridge-successor.v1.json",
+    "requiredApprovalBridgeState": "SEALED_EXACT_APR002_TO_HRM010_WAIVER_HANDSHAKE_CENTRAL_APPROVAL_AUTHORITY_WORKTREE_V59_LEASE_TOKEN_AND_SOURCE_WITHHELD",
+    "peopleV61ManifestSuccessor": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-callback-binding-r1/migration-manifests/base-tfr-hrm-013.people-v61-schema-manifest-successor.v2.json",
+    "requiredPeopleManifestState": "SEALED_CALLBACK_DURABILITY_AND_EVIDENCE_CORRECTION_NOT_RESERVED_NOT_ACTIVE_SQL_AUTHORING_WITHHELD",
+    "approvalV59Manifest": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-callback-binding-r1/migration-manifests/hrm-013.approval-v59-schema-manifest.v1.json",
+    "requiredApprovalManifestState": "SEALED_CANDIDATE_ONLY_HRM013_WAIVER_BRIDGE_NOT_RESERVED_NOT_ACTIVE_SQL_AUTHORING_WITHHELD",
+    "registerOverlay": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-callback-binding-r1/service-api-auth-binding-register.successor.v2.csv",
+    "requiredNewBindingIds": [
+      "SVC-PEP-APR-002",
+      "SVC-PEP-HRM-008",
+      "SVC-PEP-HRM-009",
+      "SVC-PEP-HRM-010"
+    ],
+    "independentReviewState": "REQUIRED_NOT_COMPLETE_AT_INDEX_SEAL",
+    "nextGate": "INDEPENDENT_REVIEW_THEN_CARRIER_COMMIT_PUSH_THEN_SEPARATE_CENTRAL_PAIRED_APPROVAL_AND_BOUNDED_PEOPLE_PREREQUISITE_AUTHORITY_WORKTREES_EXCLUSIVE_APPROVAL_V59_AND_PEOPLE_V61_LEASES_AND_HASH_BOUND_TOKENS_THEN_ONE_PAIRED_INTEGRATION_RECEIPT_BEFORE_HRM013_OWNER_PACKET"
+  },
+  "integrityPins": [
+    {
+      "path": "docs/06-delivery/hris/current-authority-index.v1.json",
+      "bytes": 8308,
+      "sha256": "36f4afe666932803b6b7f2b038d73f3187c0076fdd3dd9a5a11e5192bfee0caf"
+    },
+    {
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/cross-module-contract-register.csv",
+      "bytes": 13108,
+      "sha256": "783bd3f6c6fdcf5d35da73020b2cc01f0c59cfd6e9fe9d56ffa75a3cd380f725"
+    },
+    {
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/service-api-auth-binding-register.csv",
+      "bytes": 14356,
+      "sha256": "a54272429e70d0e2494e082b214615a4befe2354d5ab72bf7619500e2b0fdcaa"
+    },
+    {
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/coding-readiness/hris-information-architecture-register.csv",
+      "bytes": 103877,
+      "sha256": "ab506a2bb2f80c8ab81a4b9d575374d6bda83b312d11dce07495d4812bdf4686"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-central-admission-r1/cross-module-contract-register.successor.v1.csv",
+      "bytes": 1462,
+      "sha256": "9f9e5ee701ad4b0c9f1df53e80274ab4b4eaf0d56c4aeb5519de6132de95ffd9"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-callback-binding-r1/service-api-auth-binding-register.successor.v2.csv",
+      "bytes": 10190,
+      "sha256": "15b52f3cd3867aefa79f02cdf83441d9d5220836344391574cc42a8bdbde7e37"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-start-r1/semantic-dispositions/base-tfr-tim-003.semantic-disposition.v1.json",
+      "bytes": 107850,
+      "sha256": "60a21b6da8b97f2a30055404f167e52bb9fc813520d6c277c32a514494585ff9"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-04-module-start-r1/tokens/base-tfr-tim-003.hrm-successor.start-token.v1.json",
+      "bytes": 16405,
+      "sha256": "752ac27e1b3bfaccf9fec7b58cb997de4c66485dcfaa1b7a91e64b89c0b806af"
+    },
+    {
+      "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-registers/hris-sys-source-coverage.csv",
+      "bytes": 154062,
+      "sha256": "88e23e9b2356bd40b23ddd1bdc8602aa6a0e439081d26f474e98aef3cdb9a294"
+    },
+    {
+      "path": "docs/06-delivery/hris/2026-10-20-hris-navigation-experience-successor.md",
+      "bytes": 35932,
+      "sha256": "8d8c736c645ce4e12eadc20a0d882ca35550b14a2faec42f10676c0bff1f48d1"
+    },
+    {
+      "path": "docs/06-delivery/hris/2026-10-22-hris-sidebar-presentation-successor.md",
+      "bytes": 2484,
+      "sha256": "468a32025781100574db140a45242afc8f625a1cf2444fd71f32d035bb90b712"
+    },
+    {
+      "path": "apps/dwp/src/features/hris/shell/model/hris-runtime-navigation-manifest.ts",
+      "bytes": 5468,
+      "sha256": "626808212df87da9f22049512663a515cc50e741f66a25672bdaf4edf69add60"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/execution-roadmap-successor.v20.json",
+      "bytes": 20200,
+      "sha256": "c0bb60884e5d99758296ea6f4024bfc4bf557352bbffedf8aa9d8d0f19bacba1"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-preflight-r1/semantic-dependency-migration-preflight.v1.json",
+      "bytes": 58498,
+      "sha256": "33d95637c2887bfae43b2369370662c3a0d06d8e0420df05c868299da2b752dd"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-central-admission-r1/hrm-013-central-integration-receipt.v1.json",
+      "bytes": 9242,
+      "sha256": "488b11c28c39b8b80d47c57df8c963474583b6cdbedc281055d3d99c0cbebb6e"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-callback-binding-r1/hrm-013-trusted-callback-service-binding-successor.v1.json",
+      "bytes": 50694,
+      "sha256": "56a27680c74e07967e4bf03c1984ac8d4786a1a0f4ef68c560363a41b1020be9"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-callback-binding-r1/hrm-013-separation-waiver-approval-bridge-successor.v1.json",
+      "bytes": 39005,
+      "sha256": "43717d43a7aed49c56abe715188e5891d9c7da79d45125bfdc68acf0064ea7b5"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-callback-binding-r1/migration-manifests/base-tfr-hrm-013.people-v61-schema-manifest-successor.v2.json",
+      "bytes": 42115,
+      "sha256": "01aff4919302d2a5adc951f96b7dd513b752526c8e3066d4d0317d973c14d6a8"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-callback-binding-r1/migration-manifests/hrm-013.approval-v59-schema-manifest.v1.json",
+      "bytes": 25781,
+      "sha256": "8bec7573ed5453e2ca83b665d2824ae763a93703483ddf59063315cc7a8eff50"
+    }
+  ],
+  "historicalEvidenceNotCurrentRuntimeTruth": [
+    "docs/06-delivery/hris/current-slice-integration-status.v1.csv"
+  ],
+  "sourceCoverageRecovery": {
+    "state": "REFERENCE_ONLY_GAPS_NOT_SYNTHESIZED",
+    "preservedCoverage": [
+      {
+        "path": "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-registers/hris-sys-source-coverage.csv",
+        "rows": 189,
+        "sha256": "88e23e9b2356bd40b23ddd1bdc8602aa6a0e439081d26f474e98aef3cdb9a294"
+      }
+    ],
+    "referenceOnlyMissingCoverage": [
+      "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-registers/hris-hrm-source-coverage.csv",
+      "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-registers/hris-per-source-coverage.csv",
+      "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-registers/hris-pay-source-coverage.csv",
+      "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-registers/hris-tim-source-coverage.csv"
+    ],
+    "referenceOnlyMissingChildTraces": [
+      "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-evidence/hrm/g1-child-trace.csv",
+      "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-evidence/per/g1-child-trace.csv",
+      "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-evidence/pay/g1-child-trace.csv",
+      "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-evidence/tim/g1-child-trace.csv",
+      "docs/06-delivery/hris/recovery/hris-porting-blueprint-2026-09-09/session-evidence/sys/g1-child-trace.csv"
+    ],
+    "futureAction": "Generate independently reviewed v2 coverage and child traces from pinned SKKF source; never synthesize or overwrite the missing historical v1 evidence."
+  },
+  "authority": {
+    "callbackAndPairedRequestDesignSealed": true,
+    "independentReviewRequired": true,
+    "centralApprovalBridgePreparationEligibleNow": false,
+    "boundedPeoplePrerequisitePersistencePreparationEligibleNow": false,
+    "pairedApprovalAndPeoplePreparationEligibleNow": false,
+    "moduleOwnerPacketAuthorized": false,
+    "moduleOwnerPacketPreparationEligible": false,
+    "peopleV61ReservationAuthorized": false,
+    "approvalV59ReservationAuthorized": false,
+    "sourceAuthoringAuthorized": false,
+    "migrationSqlAuthoringAuthorized": false,
+    "worktreeAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionCredentialBindingAuthorized": false,
+    "productionBindingAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0
+  },
+  "nonClaims": [
+    "The immutable base registers, v1 authority index or sealed predecessor artifacts were edited in place.",
+    "The callback and Approval bridge design is independently reviewed or source-authorized by this index alone.",
+    "Approval V59 or People V61 is reserved, leased, authored or executed; paired prerequisite preparation still requires separate post-carrier authority, worktrees, exclusive leases and hash-bound tokens.",
+    "A callback route is browser-visible, gateway-mounted, enabled or tenant-enrolled.",
+    "HRM-013, Batch-06, HRIS or any module is complete."
+  ]
+}

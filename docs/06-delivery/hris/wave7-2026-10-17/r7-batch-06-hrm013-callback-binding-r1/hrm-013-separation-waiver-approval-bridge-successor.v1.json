@@ -1,0 +1,830 @@
+{
+  "schema": "dwp.hris.wave7.r7-batch-06-hrm013-separation-waiver-approval-bridge-successor.v1",
+  "successorId": "HRIS-WAVE7-R7-BATCH-06-HRM013-SEPARATION-WAIVER-APPROVAL-BRIDGE-20261026-R1",
+  "revision": 1,
+  "recordedAt": "2026-10-26T19:00:00+09:00",
+  "recordedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "state": "SEALED_EXACT_APR002_TO_HRM010_WAIVER_HANDSHAKE_CENTRAL_APPROVAL_AUTHORITY_WORKTREE_V59_LEASE_TOKEN_AND_SOURCE_WITHHELD",
+  "purpose": "Seal the People-to-Approval separation-task waiver request and Approval-to-People terminal decision as one purpose-separated atomic bridge so the HRM-013 waiver callback has a provable origin.",
+  "immutability": {
+    "sealed": true,
+    "appendOnly": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_ID_REVISION_AND_SHA256",
+    "predecessorMutationAllowed": false
+  },
+  "sliceId": "BASE-TFR-HRM-013",
+  "ownerModules": [
+    "HRIS-HRM",
+    "DWP-APPROVAL"
+  ],
+  "lineage": {
+    "centralIntegrationReceipt": {
+      "path": "../r7-batch-06-central-admission-r1/hrm-013-central-integration-receipt.v1.json",
+      "sha256": "488b11c28c39b8b80d47c57df8c963474583b6cdbedc281055d3d99c0cbebb6e",
+      "bytes": 9242
+    },
+    "semanticDisposition": {
+      "path": "../r7-batch-06-hrm013-semantic-closure-r1/semantic-dispositions/base-tfr-hrm-013.semantic-disposition.v1.json",
+      "sha256": "725d66e394368dd71e3fe12f8308c1a481b2ff8169b43a91fc73f70557c023d4",
+      "bytes": 17314
+    },
+    "callbackAuthority": {
+      "path": "hrm-013-trusted-callback-service-binding-successor.v1.json",
+      "requiredBinding": "SVC-PEP-HRM-010",
+      "hashBindingDeferredToIndependentReview": true
+    },
+    "approvalV59Manifest": {
+      "path": "migration-manifests/hrm-013.approval-v59-schema-manifest.v1.json",
+      "requiredState": "SEALED_CANDIDATE_ONLY_HRM013_WAIVER_BRIDGE_NOT_RESERVED_NOT_ACTIVE_SQL_AUTHORING_WITHHELD",
+      "hashBindingDeferredToIndependentReview": true
+    },
+    "existingBridgePattern": {
+      "backendContract": "contracts/in-process/hris/approval-employee-change-bridge.v2.json",
+      "approvalMigration": "dwp-approval-server/src/main/resources/db/migration/V58__bridge_hris_employee_change_approvals.sql",
+      "reuseRule": "Reuse the hardened proof, immutable byte, outbox, lease and receipt principles only. Employee-change endpoints, purpose, tables and workflow bindings are not reusable HRM-013 authority."
+    }
+  },
+  "decision": "ALLOCATE_SVC_PEP_APR_002_AND_PAIR_IT_EXCLUSIVELY_WITH_SVC_PEP_HRM_010_WITHOUT_REUSING_EMPLOYEE_CHANGE_PURPOSE_OR_AUTHORIZING_SOURCE",
+  "identity": {
+    "requestBindingId": "SVC-PEP-APR-002",
+    "decisionBindingId": "SVC-PEP-HRM-010",
+    "requestCaller": "dwp-people-server",
+    "requestCallerSpiffeId": "spiffe://dwp/service/dwp-people-server",
+    "requestOwner": "dwp-approval-server",
+    "requestAudience": "dwp-approval-server",
+    "requestPurpose": "HRIS_SEPARATION_TASK_WAIVER_REQUEST",
+    "decisionCaller": "dwp-approval-server",
+    "decisionCallerSpiffeId": "spiffe://dwp/service/dwp-approval-server",
+    "decisionOwner": "dwp-people-server",
+    "decisionAudience": "dwp-people-server",
+    "decisionPurpose": "HRIS_SEPARATION_TASK_WAIVER_DECISION",
+    "employeeChangeBindingReuseAllowed": false,
+    "forbiddenBindings": [
+      "SVC-PEP-APR-001",
+      "SVC-PEP-HRM-001"
+    ]
+  },
+  "operationNaming": {
+    "rule": "operationId is the exact implementation/API identifier; semanticOperation is the immutable HRM-013 contract vocabulary. The CSV source_operation_id, this bridge operationId and the callback authority sourceOperationId must match exactly.",
+    "exactMappings": [
+      {
+        "bindingId": "SVC-PEP-APR-002",
+        "semanticOperation": "task.waive.request.submit",
+        "operationId": "createAndSubmitSeparationTaskWaiverRequest"
+      },
+      {
+        "bindingId": "SVC-PEP-HRM-010",
+        "semanticOperation": "task.waive.evidence.receive",
+        "operationId": "recordSeparationTaskWaiverDecision"
+      }
+    ]
+  },
+  "requestEndpoint": {
+    "bindingId": "SVC-PEP-APR-002",
+    "semanticOperation": "task.waive.request.submit",
+    "operationId": "createAndSubmitSeparationTaskWaiverRequest",
+    "method": "POST",
+    "exactPath": "/internal/hris-approval/v1/separation-task-waiver-requests",
+    "requestSchema": "SeparationWaiverApprovalRequestV1",
+    "responseSchema": "SeparationWaiverApprovalSubmissionReceiptV1",
+    "successStatus": 202,
+    "browserRoute": null,
+    "gatewayRoute": null,
+    "queryAllowed": false,
+    "redirectAllowed": false,
+    "maximumRequestBytes": 32768,
+    "maximumResponseBytes": 16384,
+    "allowedApplicationHeaderNames": [
+      "Content-Type",
+      "Accept",
+      "X-DWP-Service-Identity",
+      "X-DWP-Workload-Proof",
+      "X-Correlation-ID"
+    ],
+    "requiredApplicationHeaders": {
+      "Content-Type": "exactly one application/json without parameters",
+      "Accept": "exactly one application/json",
+      "X-DWP-Service-Identity": "exactly one dwp-people-server",
+      "X-DWP-Workload-Proof": "exactly one compact certificate-bound RS256 JWS",
+      "X-Correlation-ID": "exactly one canonical lowercase UUID equal to body and signed claim"
+    },
+    "forbiddenApplicationHeaders": [
+      "Authorization",
+      "Cookie",
+      "Origin",
+      "Referer",
+      "Forwarded",
+      "X-Forwarded-*",
+      "Sec-*",
+      "X-DWP-Tenant-*",
+      "X-Tenant-*",
+      "X-DWP-User-*",
+      "X-DWP-Person-*",
+      "X-DWP-Roles",
+      "X-DWP-Permissions",
+      "X-DWP-Support-*",
+      "X-Purpose-Code",
+      "X-Projection-ID",
+      "any unregistered X-DWP-* header"
+    ],
+    "headerRules": [
+      "Authorization bearer authentication is forbidden; the only application proof carrier is X-DWP-Workload-Proof.",
+      "Duplicate, additional, transformed, joined, blank or noncanonical application headers fail before replay reservation.",
+      "Content-Encoding and Transfer-Encoding transformations are forbidden at the application boundary."
+    ],
+    "cachePolicy": "NO_STORE"
+  },
+  "decisionEndpoint": {
+    "bindingId": "SVC-PEP-HRM-010",
+    "semanticOperation": "task.waive.evidence.receive",
+    "operationId": "recordSeparationTaskWaiverDecision",
+    "method": "POST",
+    "exactPathTemplate": "/internal/hris-people/v1/separation-cases/{casePublicId}/tasks/{taskPublicId}/waiver-decisions",
+    "requestSchema": "SeparationWaiverDecisionV2",
+    "responseSchema": "SeparationCallbackReceiptV1",
+    "successStatus": 200,
+    "browserRoute": null,
+    "gatewayRoute": null,
+    "queryAllowed": false,
+    "redirectAllowed": false,
+    "maximumRequestBytes": 32768,
+    "maximumResponseBytes": 16384,
+    "headerAuthority": "hrm-013-trusted-callback-service-binding-successor.v1.json#/transportAuthentication",
+    "cachePolicy": "NO_STORE"
+  },
+  "persistenceSizeContract": {
+    "maximumAcceptedRequestBytes": 32768,
+    "maximumPersistedExactRequestBytes": 32768,
+    "maximumPersistedExactResponseBytes": 16384,
+    "rules": [
+      "APR-002 exact request bytes in People and Approval request persistence and HRM-010 exact callback body bytes in the Approval decision outbox are each capped at 32768 bytes.",
+      "APR-002 submission receipts, HRM-010 SeparationCallbackReceiptV1 receipts and every safe error response are independently capped at 16384 bytes.",
+      "A request persistence limit never authorizes a response larger than 16384 bytes, and an oversized request or response fails before its bytes are admitted as durable evidence."
+    ]
+  },
+  "closedSchemas": {
+    "commonRules": {
+      "additionalProperties": false,
+      "duplicatePropertiesAllowed": false,
+      "nullValuesAllowed": false,
+      "uuidFormat": "CANONICAL_LOWERCASE_UUID",
+      "instantFormat": "CANONICAL_UTC_RFC3339",
+      "digestFormat": "LOWERCASE_SHA256_HEX",
+      "codeFormat": "^[A-Z][A-Z0-9._-]{0,79}$"
+    },
+    "SeparationWaiverApprovalRequestV1": {
+      "requiredFields": [
+        "approvalRequestId",
+        "casePublicId",
+        "taskPublicId",
+        "taskType",
+        "caseMakerPublicId",
+        "requestedByActorPublicId",
+        "reasonCode",
+        "taskOwnerRevision",
+        "taskVersion",
+        "requestedAt",
+        "payloadSha256",
+        "correlationId"
+      ],
+      "fieldTypes": {
+        "approvalRequestId": "UUID",
+        "casePublicId": "UUID",
+        "taskPublicId": "UUID",
+        "taskType": "CODE_80",
+        "caseMakerPublicId": "UUID",
+        "requestedByActorPublicId": "UUID",
+        "reasonCode": "CODE_80",
+        "taskOwnerRevision": "POSITIVE_INT64",
+        "taskVersion": "NON_NEGATIVE_INT64",
+        "requestedAt": "INSTANT",
+        "payloadSha256": "SHA256",
+        "correlationId": "UUID"
+      },
+      "rules": [
+        "approvalRequestId is generated once by People and is the stable request idempotency identity.",
+        "caseMakerPublicId is the immutable case creator and requestedByActorPublicId is the waiver requester; Approval cannot replace either.",
+        "taskOwnerRevision and taskVersion are the exact People fence values at request creation and never become caller-supplied People authority.",
+        "payloadSha256 binds schemaName=SeparationWaiverApprovalRequestV1, schemaVersion=1 and every other body field under RFC 8785 and excludes only itself."
+      ]
+    },
+    "SeparationWaiverApprovalSubmissionReceiptV1": {
+      "maximumSerializedBytes": 16384,
+      "requiredFields": [
+        "approvalRequestId",
+        "requestRevision",
+        "state",
+        "requestDigest",
+        "correlationId",
+        "acceptedAt"
+      ],
+      "fieldTypes": {
+        "approvalRequestId": "UUID",
+        "requestRevision": "POSITIVE_INT64",
+        "state": "PENDING",
+        "requestDigest": "SHA256",
+        "correlationId": "UUID",
+        "acceptedAt": "INSTANT"
+      }
+    },
+    "SeparationWaiverDecisionV2": {
+      "authority": "hrm-013-trusted-callback-service-binding-successor.v1.json#/closedRequestSchemas/SeparationWaiverDecisionV2",
+      "requiredFields": [
+        "callbackEventId",
+        "approvalRequestId",
+        "casePublicId",
+        "taskPublicId",
+        "decision",
+        "decisionActorPublicId",
+        "ownerRevision",
+        "decisionRevision",
+        "reasonCode",
+        "originatingPayloadSha256",
+        "occurredAt",
+        "payloadSha256",
+        "correlationId"
+      ],
+      "fieldTypes": {
+        "callbackEventId": "UUID",
+        "approvalRequestId": "UUID",
+        "casePublicId": "UUID",
+        "taskPublicId": "UUID",
+        "decision": "APPROVED|REJECTED",
+        "decisionActorPublicId": "UUID",
+        "ownerRevision": "POSITIVE_INT64",
+        "decisionRevision": "POSITIVE_INT64",
+        "reasonCode": "CODE_80",
+        "originatingPayloadSha256": "SHA256",
+        "stepUpEvidenceId": "UUID",
+        "stepUpEvidenceAudience": "EXACT_ASCII_STRING_120",
+        "stepUpEvidencePurpose": "EXACT_ASCII_STRING_120",
+        "stepUpEvidenceNonce": "UUID",
+        "stepUpEvidenceDigest": "SHA256",
+        "stepUpVerifiedAt": "INSTANT",
+        "stepUpConsumedAt": "INSTANT",
+        "occurredAt": "INSTANT",
+        "payloadSha256": "SHA256",
+        "correlationId": "UUID"
+      },
+      "conditionalFields": {
+        "APPROVED": {
+          "requiredNonNull": [
+            "stepUpEvidenceId",
+            "stepUpEvidenceAudience",
+            "stepUpEvidencePurpose",
+            "stepUpEvidenceNonce",
+            "stepUpEvidenceDigest",
+            "stepUpVerifiedAt",
+            "stepUpConsumedAt"
+          ],
+          "constants": {
+            "stepUpEvidenceAudience": "dwp-people-server",
+            "stepUpEvidencePurpose": "HRIS_SEPARATION_TASK_WAIVER_DECISION"
+          }
+        },
+        "REJECTED": {
+          "mustBeAbsent": [
+            "stepUpEvidenceId",
+            "stepUpEvidenceAudience",
+            "stepUpEvidencePurpose",
+            "stepUpEvidenceNonce",
+            "stepUpEvidenceDigest",
+            "stepUpVerifiedAt",
+            "stepUpConsumedAt"
+          ],
+          "nullEncodingAllowed": false
+        }
+      },
+      "rules": [
+        "decisionRevision exactly equals ownerRevision in the body and the signed ownerRevision claim.",
+        "originatingPayloadSha256 exactly equals the People waiver-request outbox approval_request_payload_sha256 derived from APR-002 payloadSha256.",
+        "APPROVED requires exact body/proof/outbox equality for every step-up field, while REJECTED forbids all step-up fields and claims."
+      ]
+    }
+  },
+  "hrm010RevisionMapping": {
+    "wire": {
+      "SeparationWaiverDecisionV2.ownerRevision": "signed workload-proof ownerRevision and protocol-fence expected_next_owner_revision",
+      "SeparationWaiverDecisionV2.decisionRevision": "terminal Approval decision sequence for the same approvalRequestId"
+    },
+    "approvalPersistence": {
+      "table": "apr_hrm013_waiver_decision_outbox",
+      "ownerRevisionColumn": "owner_revision",
+      "decisionRevisionColumn": "decision_revision"
+    },
+    "peoplePersistence": {
+      "callbackTable": "ppl_separation_callbacks",
+      "ownerRevisionColumn": "owner_revision",
+      "decisionRevisionColumn": "decision_revision",
+      "fenceTable": "ppl_separation_callback_authorities",
+      "expectedRevisionColumn": "expected_next_owner_revision"
+    },
+    "equalityRule": "The two wire values, signed ownerRevision, Approval owner_revision, Approval decision_revision, People owner_revision, People decision_revision and the fence expected_next_owner_revision are all the same positive integer; any mismatch fails before task mutation.",
+    "databaseRule": "Both V59 and the bounded People V61 prerequisite persistence require an owner_revision = decision_revision check for HRM-010 rows in addition to application validation."
+  },
+  "handshake": {
+    "requestCreation": [
+      "People validates the case and task under trusted tenant context, exact task CAS and a published immutable task template.",
+      "People rejects a completed or waived task, an irreversible case, a self-approval policy violation and any missing reason before creating the request.",
+      "One People transaction persists ppl_separation_waiver_request_outbox with caseMakerPublicId, requestedByActorPublicId, reasonCode, taskOwnerRevision, taskVersion, exact APR-002 request bytes, requestBodySha256, approval_request_payload_sha256, commandDigest and correlationId under tenantId plus approvalRequestId.",
+      "The relay uses the immutable outbox bytes and rotates only its short-lived workload proof on retry."
+    ],
+    "approvalAdmission": [
+      "Approval verifies mTLS SPIFFE, closed RS256 claims, certificate confirmation, exact method/path/body hash, signed tenant and current caller grant before request lookup.",
+      "Approval atomically reserves jti and requestNonce and then reserves approvalRequestId with the exact command digest.",
+      "An exact replay returns the original byte-identical submission receipt; a changed digest returns 409 without creating another request.",
+      "Approval resolves an exact published separation-waiver workflow and form revision, freezes the policy revision, persists exact safe request and response bytes, and enters PENDING."
+    ],
+    "terminalDecision": [
+      "Only a native terminal APPROVED or REJECTED decision under the frozen workflow produces one immutable decision outbox row.",
+      "The terminal accepted vote actor is decisionActorPublicId; Approval proves that actor is different from both caseMakerPublicId and requestedByActorPublicId, and People independently repeats both comparisons from its immutable fence.",
+      "APPROVED requires stepUpEvidenceId, stepUpEvidenceAudience, stepUpEvidencePurpose, stepUpEvidenceNonce, stepUpEvidenceDigest, stepUpVerifiedAt and stepUpConsumedAt; Approval verifies freshness and audience/purpose binding and atomically consumes the one-time nonce before terminal decision.",
+      "REJECTED requires no step-up evidence and all seven step-up fields and claims are absent rather than null.",
+      "Each approvalRequestId has one terminal revision stream: decisionRevision and signed ownerRevision are both 1, callbackEventId is the stable decision event identity, delivery retries are exact no-ops, and a later waiver attempt requires a new approvalRequestId with a new revision-1 stream.",
+      "The outbox freezes exact HRM-010 path, body, body hash, command digest and correlation before any delivery attempt.",
+      "People admits the callback only when approvalRequestId, case, task, reason, correlation and originatingPayloadSha256 exactly match its immutable request fence, where originatingPayloadSha256 equals approval_request_payload_sha256 derived from APR-002 payloadSha256."
+    ],
+    "atomicity": [
+      "Approval terminal state and decision outbox insert commit in one transaction.",
+      "People callback evidence, task effect, receipt_public_id, exact safe SeparationCallbackReceiptV1 bytes and audit commit in one transaction.",
+      "APPROVED may set WAIVED and READY_TO_PUBLISH only under current task and case CAS; REJECTED records evidence and performs no waiver mutation.",
+      "Neither timeout nor ambiguous delivery creates success; RESULT_UNKNOWN requires reconciliation using the same immutable decision event."
+    ]
+  },
+  "workloadProofProfile": {
+    "transport": "TLS_1_3_MTLS_SPIFFE_AND_RS256_CLIENT_CREDENTIAL_JWT",
+    "proofHeader": "X-DWP-Workload-Proof",
+    "authorizationHeaderAllowed": false,
+    "mtls": {
+      "minimumAndExactProtocol": "TLS_1_3_ONLY",
+      "trustedCa": "CONFIGURED_DWP_INTERNAL_WORKLOAD_CA",
+      "certificateValidityAndRevocationFailClosed": true,
+      "uriSanCardinality": 1,
+      "exactUriSanByBinding": {
+        "SVC-PEP-APR-002": "spiffe://dwp/service/dwp-people-server",
+        "SVC-PEP-HRM-010": "spiffe://dwp/service/dwp-approval-server"
+      },
+      "forwardedClientCertificateAccepted": false,
+      "leafCertificateThumbprintClaim": "cnf.x5t#S256"
+    },
+    "jws": {
+      "serialization": "COMPACT_JWS_BASE64URL_WITHOUT_PADDING",
+      "algorithm": "RS256",
+      "type": "JWT",
+      "keyIdRequired": true,
+      "maximumJwtBytes": 16384,
+      "minimumRsaBits": 2048,
+      "maximumLifetimeSeconds": 30,
+      "maximumClockSkewSeconds": 5,
+      "issuedAtEqualsNotBefore": true,
+      "certificateConfirmation": "cnf.x5t#S256 exactly equals the SHA-256 thumbprint of the validated mTLS leaf certificate"
+    },
+    "rsaMinimumBits": 2048,
+    "maximumJwtBytes": 16384,
+    "jwtMaximumLifetimeSeconds": 30,
+    "maximumClockSkewSeconds": 5,
+    "issuedAtEqualsNotBefore": true,
+    "certificateConfirmationClaim": "cnf.x5t#S256",
+    "closedClaimsByBinding": {
+      "SVC-PEP-APR-002": {
+        "alwaysRequiredClaims": [
+          "iss",
+          "aud",
+          "sub",
+          "iat",
+          "nbf",
+          "exp",
+          "jti",
+          "requestNonce",
+          "bindingId",
+          "purpose",
+          "method",
+          "path",
+          "tenantId",
+          "tenantGrantRevision",
+          "authorizationRevision",
+          "correlationId",
+          "approvalRequestId",
+          "casePublicId",
+          "taskPublicId",
+          "requestBodySha256",
+          "authn",
+          "cnf"
+        ],
+        "additionalClaimsAllowed": false
+      },
+      "SVC-PEP-HRM-010": {
+        "alwaysRequiredClaims": [
+          "iss",
+          "aud",
+          "sub",
+          "iat",
+          "nbf",
+          "exp",
+          "jti",
+          "requestNonce",
+          "bindingId",
+          "purpose",
+          "method",
+          "path",
+          "tenantId",
+          "tenantGrantRevision",
+          "authorizationRevision",
+          "correlationId",
+          "callbackEventId",
+          "casePublicId",
+          "taskPublicId",
+          "approvalRequestId",
+          "ownerRevision",
+          "originatingPayloadSha256",
+          "requestBodySha256",
+          "authn",
+          "cnf"
+        ],
+        "conditionalClaims": {
+          "APPROVED": {
+            "requiredNonNull": [
+              "stepUpEvidenceId",
+              "stepUpEvidenceAudience",
+              "stepUpEvidencePurpose",
+              "stepUpEvidenceNonce",
+              "stepUpEvidenceDigest",
+              "stepUpVerifiedAt",
+              "stepUpConsumedAt"
+            ],
+            "constants": {
+              "stepUpEvidenceAudience": "dwp-people-server",
+              "stepUpEvidencePurpose": "HRIS_SEPARATION_TASK_WAIVER_DECISION"
+            },
+            "mustEqualBody": [
+              "stepUpEvidenceId",
+              "stepUpEvidenceAudience",
+              "stepUpEvidencePurpose",
+              "stepUpEvidenceNonce",
+              "stepUpEvidenceDigest",
+              "stepUpVerifiedAt",
+              "stepUpConsumedAt"
+            ]
+          },
+          "REJECTED": {
+            "mustBeAbsent": [
+              "stepUpEvidenceId",
+              "stepUpEvidenceAudience",
+              "stepUpEvidencePurpose",
+              "stepUpEvidenceNonce",
+              "stepUpEvidenceDigest",
+              "stepUpVerifiedAt",
+              "stepUpConsumedAt"
+            ],
+            "nullEncodingAllowed": false
+          }
+        },
+        "decisionRevisionRule": "decisionRevision is required in the body but deliberately not duplicated as a JWT claim; it must exactly equal the signed ownerRevision claim.",
+        "additionalClaimsAllowed": false
+      }
+    },
+    "requestConstants": {
+      "iss": "dwp-people-server",
+      "aud": "dwp-approval-server",
+      "sub": "dwp-people-server",
+      "bindingId": "SVC-PEP-APR-002",
+      "purpose": "HRIS_SEPARATION_TASK_WAIVER_REQUEST",
+      "method": "POST",
+      "path": "/internal/hris-approval/v1/separation-task-waiver-requests",
+      "authn": "MTLS_SPIFFE_RS256"
+    },
+    "decisionConstants": {
+      "iss": "dwp-approval-server",
+      "aud": "dwp-people-server",
+      "sub": "dwp-approval-server",
+      "bindingId": "SVC-PEP-HRM-010",
+      "purpose": "HRIS_SEPARATION_TASK_WAIVER_DECISION",
+      "method": "POST",
+      "authn": "MTLS_SPIFFE_RS256"
+    },
+    "tenantGrantAuthority": {
+      "table": "apr_hrm013_tenant_grants",
+      "currentRowRule": "Load the highest same-tenant grant_revision and require decision=ADMIT; unavailable, ambiguous, stale or revoked authority fails closed.",
+      "claimToColumnMapping": {
+        "tenantGrantRevision": "tenant_grant_revision",
+        "authorizationRevision": "authorization_revision"
+      },
+      "pairBindingRule": "One current grant_id row contains the exact APR-002 request binding/purpose and HRM-010 callback binding/purpose plus both workload SPIFFE identities and signing key ids; tenantGrantRevision and authorizationRevision must come from that same row and may never be mixed across revisions.",
+      "apr002AdmissionRule": "Approval verifies both signed revision claims against that current ADMIT row and persists its grant_id plus both revisions with the immutable waiver request binding.",
+      "hrm010OutboundRule": "Terminal decision and outbox creation reuse the same persisted grant_id row, require it still be the current ADMIT row, persist both revision values, and sign the HRM-010 proof with those exact values; delivery fails closed if the row is no longer current."
+    },
+    "replayPersistence": {
+      "table": "apr_hrm013_proof_replays",
+      "uniqueIdentity": [
+        "tenant_id",
+        "token_digest"
+      ],
+      "atomicRows": [
+        "JTI digest",
+        "REQUEST_NONCE digest"
+      ],
+      "metadataOnly": [
+        "token_kind",
+        "binding_id",
+        "caller_workload_id",
+        "expires_at",
+        "reserved_at"
+      ],
+      "rule": "The two distinct canonical UUID values are hashed separately and inserted atomically; tenant-scoped digest reuse fails even when binding, caller or token kind differs."
+    },
+    "replay": "jti and requestNonce are different fresh canonical UUIDs whose separate tenant-scoped token digests are atomically reserved as two rows in the receiving service's one durable replay namespace before owner business facts; reuse under another binding or caller is forbidden."
+  },
+  "idempotency": {
+    "requestIdentity": [
+      "tenantId",
+      "approvalRequestId"
+    ],
+    "requestDigest": "SHA-256 over bindingId, method, exact path, caller, audience, tenant, purpose, content type and exact body SHA-256 in fixed LF-delimited order.",
+    "sameRequestSameDigest": "Return the byte-identical original SeparationWaiverApprovalSubmissionReceiptV1 and do not create another approval request.",
+    "sameRequestDifferentDigest": "409_EMPTY_NO_STORE without workflow or target existence detail.",
+    "decisionIdentity": [
+      "tenantId",
+      "dwp-approval-server",
+      "callbackEventId"
+    ],
+    "sameDecisionSameDigest": "People returns the byte-identical stored SeparationCallbackReceiptV1 without owner aggregate reads.",
+    "sameDecisionDifferentDigest": "409_EMPTY_NO_STORE; preserve original callback row and append quarantine audit without aggregate reads."
+  },
+  "peoplePrerequisitePersistence": {
+    "stream": "PEOPLE_MAIN",
+    "candidateVersion": "V61",
+    "reservationState": "NOT_RESERVED_NOT_ACTIVE",
+    "requiredTables": [
+      "ppl_hrm013_callback_proof_replays",
+      "ppl_separation_waiver_request_outbox",
+      "ppl_separation_callback_authorities"
+    ],
+    "waiverRequestFence": {
+      "table": "ppl_separation_waiver_request_outbox",
+      "identity": [
+        "tenant_id",
+        "approval_request_id"
+      ],
+      "immutableEvidence": [
+        "case_maker_public_id",
+        "requested_by_actor_public_id",
+        "reason_code",
+        "task_owner_revision",
+        "task_version",
+        "exact_request_body",
+        "request_body_sha256",
+        "approval_request_payload_sha256",
+        "command_digest",
+        "correlation_id"
+      ],
+      "hrm010OriginRule": "SeparationWaiverDecisionV2.originatingPayloadSha256 and its signed claim exactly equal approval_request_payload_sha256."
+    },
+    "proofReplay": {
+      "table": "ppl_hrm013_callback_proof_replays",
+      "uniqueIdentity": [
+        "tenant_id",
+        "token_digest"
+      ],
+      "rule": "Derive distinct JTI and REQUEST_NONCE token digests and atomically insert both rows in one namespace before callback fence or aggregate reads; any tenant-scoped digest reuse fails even across binding or caller metadata."
+    },
+    "protocolFence": {
+      "table": "ppl_separation_callback_authorities",
+      "immutableStreamKeyColumns": [
+        "tenant_id",
+        "binding_id",
+        "caller_workload_id",
+        "case_public_id",
+        "task_public_id",
+        "purpose_code",
+        "approval_request_id"
+      ],
+      "streamNullSemantics": "NULLS NOT DISTINCT; approval_request_id is non-null for HRM-010 and null for HRM-008/009.",
+      "versionColumn": "authority_revision",
+      "requiredColumns": [
+        "expected_next_owner_revision",
+        "correlation_id",
+        "originating_payload_sha256",
+        "task_type",
+        "consumer_event_id",
+        "tenant_grant_revision",
+        "authorization_revision",
+        "created_at",
+        "closed_at"
+      ],
+      "hrm010Rule": "Each approval_request_id is an isolated revision stream: first ownerRevision=decisionRevision=1, its one terminal APPROVED or REJECTED decision closes the stream, and a later waiver request uses a new approvalRequestId and a new revision-1 stream.",
+      "grantRevisionRule": "tenant_grant_revision and authorization_revision are separate required values from the same current People service-grant row and exactly equal the two HRM-010 signed claims."
+    },
+    "sourceAuthoringAuthorized": false,
+    "migrationReservationAuthorized": false,
+    "leaseActive": false
+  },
+  "approvalPersistenceTouchManifest": {
+    "stream": "APPROVAL_MAIN",
+    "observedHighWater": "V58",
+    "candidateVersion": "V59",
+    "reservationState": "NOT_RESERVED_NOT_ACTIVE",
+    "manifestPath": "migration-manifests/hrm-013.approval-v59-schema-manifest.v1.json",
+    "requiredTables": [
+      "apr_hrm013_tenant_grants",
+      "apr_hrm013_proof_replays",
+      "apr_hrm013_waiver_request_bindings",
+      "apr_hrm013_waiver_decision_outbox"
+    ],
+    "requiredChanges": [
+      "Create apr_hrm013_tenant_grants with append-only ADMIT or REVOKE revisions for exactly APR-002 and HRM-010; do not widen V58 grant semantics.",
+      "Create apr_hrm013_proof_replays with tenant_id plus token_digest uniqueness and atomic separate JTI/REQUEST_NONCE rows for APR-002 and HRM-010; do not alter apr_hris_bridge_proof_replays or its V58 allowlist.",
+      "Create apr_hrm013_waiver_request_bindings with immutable request bytes capped at 32768, response bytes capped at 16384, their hashes, the exact current grant_id plus separate tenant_grant_revision and authorization_revision, case maker, waiver requester, reason, task revision/version, People identities, frozen workflow/form/policy and idempotency aliases.",
+      "Create apr_hrm013_waiver_decision_outbox with immutable callback path/body capped at 32768, receipt capped at 16384, digests, the same current grant_id and two revision values, originatingPayloadSha256, terminal actor, owner/decision revision equality, all seven conditional step-up evidence fields, bounded lease/retry and exact People receipt.",
+      "Apply tenant foreign keys, exact uniqueness, digest checks, immutable-source triggers and a bounded claim index.",
+      "Perform no seed, tenant enrollment, workflow activation, credential insertion or production binding."
+    ],
+    "reuse": [
+      "apr_tenants",
+      "apr_requests",
+      "apr_workflow_versions",
+      "apr_form_versions",
+      "apr_audit_events",
+      "no V58 HRIS bridge table is widened or reused as HRM-013 persistence"
+    ],
+    "forbidden": [
+      "editing Approval migrations V1 through V58",
+      "reusing employee-change bridge rows or purpose codes",
+      "runtime table creation",
+      "a second generic approval engine",
+      "customer or production data"
+    ],
+    "migrationLeaseRequired": true,
+    "migrationSqlAuthoringAuthorized": false
+  },
+  "stepUpEvidenceContract": {
+    "approvedRequiredFields": [
+      "stepUpEvidenceId",
+      "stepUpEvidenceAudience",
+      "stepUpEvidencePurpose",
+      "stepUpEvidenceNonce",
+      "stepUpEvidenceDigest",
+      "stepUpVerifiedAt",
+      "stepUpConsumedAt"
+    ],
+    "constants": {
+      "stepUpEvidenceAudience": "dwp-people-server",
+      "stepUpEvidencePurpose": "HRIS_SEPARATION_TASK_WAIVER_DECISION"
+    },
+    "digestPreimage": [
+      "tenantId",
+      "approvalRequestId",
+      "decisionActorPublicId",
+      "stepUpEvidenceId",
+      "stepUpEvidenceAudience",
+      "stepUpEvidencePurpose",
+      "stepUpEvidenceNonce",
+      "stepUpVerifiedAt"
+    ],
+    "digestEncoding": "The eight values are encoded in order as canonical UTF-8 with one LF delimiter and no trailing LF, then SHA-256 lowercase hexadecimal.",
+    "approvedRules": [
+      "Approval validates the evidence issuer, audience, purpose, decision actor and frozen freshness policy, then atomically consumes the unique tenantId plus stepUpEvidenceNonce before committing APPROVED and its outbox.",
+      "stepUpVerifiedAt is not after stepUpConsumedAt; stepUpConsumedAt is the terminal decision transaction time and is not after callback occurredAt.",
+      "The outbox, HRM-010 body and HRM-010 proof carry exactly the same seven values; People rejects any mismatch or prior use of the evidence identity, nonce or digest."
+    ],
+    "rejectedRule": "REJECTED does not require step-up; all seven fields and claims are absent, explicit null is invalid, and no synthetic evidence is created.",
+    "additionalFieldsAllowed": false
+  },
+  "durableOutbox": {
+    "stableFields": [
+      "tenantId",
+      "approvalRequestId",
+      "casePublicId",
+      "taskPublicId",
+      "callbackEventId",
+      "decision",
+      "decisionActorPublicId",
+      "ownerRevision",
+      "decisionRevision",
+      "reasonCode",
+      "stepUpEvidenceId",
+      "stepUpEvidenceAudience",
+      "stepUpEvidencePurpose",
+      "stepUpEvidenceNonce",
+      "stepUpEvidenceDigest",
+      "stepUpVerifiedAt",
+      "stepUpConsumedAt",
+      "callbackPath",
+      "correlationId",
+      "originatingPayloadSha256",
+      "exactCallbackBody",
+      "callbackBodySha256",
+      "commandDigest",
+      "createdAt"
+    ],
+    "mutableDeliveryFields": [
+      "deliveryState",
+      "attemptCount",
+      "availableAt",
+      "leaseToken",
+      "leaseOwner",
+      "leaseUntil",
+      "exactReceiptBody",
+      "receiptBodySha256",
+      "lastFailureCode",
+      "deliveredAt",
+      "updatedAt"
+    ],
+    "states": [
+      "PENDING",
+      "CLAIMED",
+      "RETRY",
+      "DELIVERED",
+      "DEAD",
+      "RESULT_UNKNOWN"
+    ],
+    "conditionalStepUpRule": "The seven step-up fields are immutable and non-null only for APPROVED; they are absent for REJECTED.",
+    "claim": "SKIP_LOCKED bounded batch with lease token and expiry; only the current lease holder may record an attempt outcome.",
+    "delivery": "Exact callback bytes, path, callbackEventId and command digest never change; every attempt uses a fresh proof. Every verified success or error response is capped at 16384 bytes.",
+    "receipt": "DELIVERED requires a closed valid SeparationCallbackReceiptV1 capped at 16384 bytes whose callbackEventId, type, case, task, revision, correlation and command digest equal the outbox row."
+  },
+  "retryContract": {
+    "retryable": [
+      "transport failure before verified response",
+      "408",
+      "425",
+      "429 with bounded Retry-After",
+      "500",
+      "502",
+      "503 with bounded Retry-After",
+      "504",
+      "invalid or mismatched receipt"
+    ],
+    "terminal": [
+      "400",
+      "401",
+      "403",
+      "404",
+      "409",
+      "422"
+    ],
+    "strategy": "EXPONENTIAL_BACKOFF_FULL_JITTER_BOUNDED_ATTEMPTS",
+    "attemptExhaustion": "RESULT_UNKNOWN",
+    "responseSizeRule": "Any response over 16384 bytes is unverifiable, is never interpreted as success and follows the bounded invalid-receipt retry path.",
+    "manualReplay": "Creates a new delivery attempt receipt linked to the same immutable decision event; it never rewrites decision source bytes."
+  },
+  "errorAndPrivacy": {
+    "maximumResponseBytes": 16384,
+    "authenticationFailure": "401_OR_403_EMPTY_NO_STORE",
+    "unknownOrCrossTenantTarget": "404_EMPTY_NO_STORE",
+    "idempotencyConflict": "409_EMPTY_NO_STORE",
+    "stateOrMakerCheckerFailure": "422_SAFE_CODE_WITHOUT_PERSON_OR_CURRENT_STATE",
+    "unavailable": "503_OPAQUE_CORRELATION_ONLY_NO_STORE",
+    "rawRequestOrCallbackBodyLogged": false,
+    "workerOrPersonFactsInMetrics": false,
+    "existenceDisclosureAllowed": false
+  },
+  "acceptanceConditions": [
+    "APR-002 and HRM-010 are a single purpose-separated handshake and neither reuses APR-001 or HRM-001 semantics, rows or purpose.",
+    "Only exact People and Approval SPIFFE identities with closed RS256 proofs, signed tenants and current grants cross the two private endpoints.",
+    "People creates one immutable ppl_separation_waiver_request_outbox fence under task CAS before submission and preserves case maker, requester, reason, task revision/version, exact request bytes, body digest, approval request payload digest, command digest and correlation.",
+    "Approval exact request replay returns the original bytes while a changed body under the same approvalRequestId returns 409.",
+    "Approval freezes the exact workflow, form, policy, actors, reason, task versions, payload digest and correlation.",
+    "The decision actor differs from both maker and requester; APPROVED requires seven fresh single-use step-up values bound to dwp-people-server and HRIS_SEPARATION_TASK_WAIVER_DECISION, while REJECTED carries none.",
+    "Terminal decision and immutable callback outbox commit atomically; request or callback timeouts never invent success.",
+    "Approval callback retries preserve exact path/body/event/digest and rotate only the proof; receipt mismatch remains retryable then RESULT_UNKNOWN.",
+    "People validates exact request lineage and originatingPayloadSha256 before WAIVED; decisionRevision equals signed ownerRevision, REJECTED never waives and APPROVED cannot override irreversible evidence.",
+    "Every APR-002 and HRM-010 success or error response is at most 16384 bytes.",
+    "Approval V59 and bounded People V61 prerequisite persistence remain unreserved and source remains withheld until separate authorities, worktree receipts, exclusive leases and hash-bound tokens."
+  ],
+  "authority": {
+    "waiverApprovalBridgeDesignSealed": true,
+    "apr002RequestBindingDefined": true,
+    "hrm010DecisionBindingDefined": true,
+    "independentReviewRequired": true,
+    "independentReviewComplete": false,
+    "centralApprovalAuthorityPreparationEligibleAfterIndependentReviewAndCarrierPush": false,
+    "centralApprovalWorktreeAuthorized": false,
+    "centralApprovalImplementationTokenIssued": false,
+    "approvalV59ReservationAuthorized": false,
+    "approvalV59LeaseActive": false,
+    "approvalV59SqlAuthoringAuthorized": false,
+    "approvalBridgeSourceAuthoringAuthorized": false,
+    "peopleCallbackSourceAuthoringAuthorized": false,
+    "moduleOwnerPacketAuthorized": false,
+    "peopleV61ReservationAuthorized": false,
+    "peopleV61LeaseActive": false,
+    "boundedPeoplePrerequisitePersistenceTokenIssued": false,
+    "boundedPeoplePrerequisitePersistenceSourceAuthoringAuthorized": false,
+    "moduleSourceAuthoringAuthorized": false,
+    "runtimeCredentialBindingAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionBindingAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0
+  },
+  "nonClaims": [
+    "SVC-PEP-APR-002 or SVC-PEP-HRM-010 source exists.",
+    "Approval V59 or the bounded People V61 prerequisite persistence is reserved, leased, authored or executed.",
+    "A production workflow, form, key, certificate, service grant, tenant or callback sender is configured.",
+    "The existing employee-change bridge authorizes separation waiver traffic.",
+    "The HRM-013 owner packet, People V61 lease, module worktree or module token is authorized.",
+    "A separation task can currently be waived through runtime Approval.",
+    "HRM-013 or HRIS is complete."
+  ],
+  "nextAction": "AFTER_ONE_INDEPENDENT_REVIEW_BINDS_THIS_FILE_THE_CALLBACK_AUTHORITY_THE_REGISTER_OVERLAY_AND_BOTH_MIGRATION_MANIFESTS_COMMIT_AND_PUSH_THE_CARRIER; THEN_PREPARE_SEPARATE_CENTRAL_APPROVAL_AUTHORITY_WORKTREES_EXCLUSIVE_APPROVAL_V59_LEASE_AND_HASH_BOUND_TOKEN_AND_A_SEPARATE_BOUNDED_PEOPLE_PREREQUISITE_PERSISTENCE_WORKTREE_EXCLUSIVE_PEOPLE_V61_LEASE_AND_HASH_BOUND_TOKEN; AUTHOR_ONLY_EACH_TOKEN_SCOPE_REQUIRE_ONE_INDEPENDENT_INTEGRATION_RECEIPT_AFTER_BOTH_MERGE_AND_PUSH_AND_ONLY_THEN_PREPARE_THE_HRM013_OWNER_PACKET"
+}
