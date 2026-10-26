@@ -1,0 +1,46 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-approval-readiness-successor-start-token.v1",
+  "state": "HASH_BOUND_APPROVAL_READINESS_TEST_FIXTURE_SUCCESSOR_TOKEN",
+  "lane": "APPROVAL_PHASE4_READINESS_CORRECTION",
+  "executionCondition": "EXECUTABLE_ONLY_AFTER_SUCCESSOR_CARRIER_IS_COMMITTED_AND_PUSHED_TO_FRONTEND_DWP_DEV",
+  "backend": {
+    "repository": "dwp-backend",
+    "branch": "codex/hris-wave7-batch06-hrm013-approval-readiness-backend-20261027-r1",
+    "worktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/approval-readiness",
+    "baseCommit": "a1c0d8ecdbc959d378ef04dc401ee0ff2348ef6c",
+    "baseTree": "b2173c7448d2e88b5a7f9278f0084d591c4462bf"
+  },
+  "exactChangedPathAllowlist": [
+    "dwp-approval-server/build.gradle",
+    "dwp-approval-server/src/main/java/com/dwp/services/approval/security/ApprovalPepProjectionLoader.java",
+    "dwp-approval-server/src/main/java/com/dwp/services/approval/security/ApprovalPepProjectionLineage.java",
+    "dwp-approval-server/src/main/java/com/dwp/services/approval/security/ApprovalPilotPepRegistry.java",
+    "dwp-approval-server/src/test/java/com/dwp/services/approval/security/ApprovalRelease62PepContractTest.java",
+    "dwp-approval-server/src/test/java/com/dwp/services/approval/security/ApprovalRelease31PepContractTest.java",
+    "dwp-approval-server/src/test/java/com/dwp/services/approval/security/ApprovalRelease32PepContractTest.java",
+    "dwp-approval-server/src/test/java/com/dwp/services/approval/security/ApprovalExtensionV9PepRegistryTest.java",
+    "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductSurfaceStepUpRuntimeSpringFixture.java"
+  ],
+  "additionalPathContract": {
+    "path": "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductSurfaceStepUpRuntimeSpringFixture.java",
+    "allowedChange": "IMPORT_TENANT_FEATURE_ACTIVATION_READER_AND_REPOSITORY_THEN_REGISTER_REAL_JDBC_REPOSITORY_BEAN",
+    "requiredImplementation": "new TenantFeatureActivationRepository(jdbc)",
+    "testOnly": true,
+    "productionSourceChangesForbidden": true,
+    "ungovernedOrUnavailableStubForbidden": true
+  },
+  "verificationCommands": [
+    "./gradlew :dwp-approval-server:compileJava :dwp-approval-server:compileTestJava :dwp-approval-server:compileCrossServiceTestJava",
+    "./gradlew :dwp-approval-server:test --tests com.dwp.services.approval.security.ApprovalRelease62PepContractTest --tests com.dwp.services.approval.security.ApprovalRelease31PepContractTest --tests com.dwp.services.approval.security.ApprovalRelease32PepContractTest --tests com.dwp.services.approval.security.ApprovalExtensionV9PepRegistryTest --tests com.dwp.services.approval.security.ApprovalPilotPepRegistryTest",
+    "./gradlew :dwp-approval-server:crossServiceTest --tests com.dwp.services.approval.workflowauthority.WorkflowRuntimeActualAuthHttpTest -Ddwp.workflow.cross-service-gate=true"
+  ],
+  "securityBoundary": {
+    "newMigrationAuthorized": false,
+    "productionSourceAuthorized": false,
+    "runtimeActivationAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "directBackendDwpDevIntegrationAuthorized": false,
+    "productionReleaseAuthorized": false
+  }
+}

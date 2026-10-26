@@ -1,0 +1,51 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-approval-readiness-allowlist-successor.v1",
+  "state": "INDEPENDENTLY_REVIEWED_HASH_BOUND_APPROVAL_READINESS_ALLOWLIST_SUCCESSOR",
+  "lane": "APPROVAL_PHASE4_READINESS_CORRECTION",
+  "predecessor": {
+    "repository": "dwp-frontend",
+    "commit": "81df5a94b625a155dd8b0c6bc9d8cfb54e1a1b20",
+    "tree": "1b30154e25a00a2bf2b2c910fb3a01d9861441fd",
+    "authorityBytes": 3840,
+    "authoritySha256": "e48b1ea5b4686139afafc3c92ac3d03410780a237d2b4351f591ba8f4cffc24f",
+    "cleanWorktreeReceiptBytes": 2405,
+    "cleanWorktreeReceiptSha256": "742f915679ae79abf00c0316afe19b3eb47b25fb48c69cbaf7f14bfe8a9eebf5"
+  },
+  "carrier": {
+    "repository": "dwp-frontend",
+    "branch": "codex/hris-wave7-batch06-hrm013-approval-readiness-successor-frontend-20261027-r1",
+    "baseCommit": "81df5a94b625a155dd8b0c6bc9d8cfb54e1a1b20",
+    "baseTree": "1b30154e25a00a2bf2b2c910fb3a01d9861441fd",
+    "requiredDirectChild": true,
+    "exactChangedPathCount": 6
+  },
+  "backendLane": {
+    "repository": "dwp-backend",
+    "branch": "codex/hris-wave7-batch06-hrm013-approval-readiness-backend-20261027-r1",
+    "worktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/approval-readiness",
+    "baseCommit": "a1c0d8ecdbc959d378ef04dc401ee0ff2348ef6c",
+    "baseTree": "b2173c7448d2e88b5a7f9278f0084d591c4462bf",
+    "reusePredecessorCleanWorktreeReceipt": true
+  },
+  "reason": {
+    "observedGateFailure": "WorkflowRuntimeActualAuthHttpTest expected ALLOWED but received AUTHORITY_UNAVAILABLE",
+    "rootCause": "The shared Auth test Spring fixture omitted the real TenantFeatureActivationReader after feature gating was introduced.",
+    "authorizedCorrection": "Register TenantFeatureActivationRepository as the test-only TenantFeatureActivationReader bean against the disposable migrated database.",
+    "forbiddenShortcut": "UNGOVERNED_LAMBDA_OR_HARNESS_LOCAL_BYPASS"
+  },
+  "authority": {
+    "independentReviewComplete": true,
+    "carrierCommitAndPushAuthorized": true,
+    "oneAdditionalTestFixturePathAuthorized": true,
+    "existingApprovalReadinessLaneMayContinue": true,
+    "newMigrationAuthorized": false,
+    "productionSourceAuthorized": false,
+    "approvalRuntimeImplementationAuthorized": false,
+    "peopleOwnerRuntimeImplementationAuthorized": false,
+    "directBackendDwpDevIntegrationAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0
+  }
+}

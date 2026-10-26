@@ -42,6 +42,11 @@ ALLOWLIST = [
     "dwp-approval-server/src/test/java/com/dwp/services/approval/security/ApprovalRelease32PepContractTest.java",
     "dwp-approval-server/src/test/java/com/dwp/services/approval/security/ApprovalExtensionV9PepRegistryTest.java",
 ]
+SUCCESSOR_FIXTURE = (
+    "dwp-auth-server/src/test/java/com/dwp/services/auth/service/"
+    "ProductSurfaceStepUpRuntimeSpringFixture.java"
+)
+EFFECTIVE_ALLOWLIST = ALLOWLIST + [SUCCESSOR_FIXTURE]
 TESTS = [
     "dwp-approval-server/src/test/java/com/dwp/services/approval/security/ApprovalRelease62PepContractTest.java",
     "dwp-approval-server/src/test/java/com/dwp/services/approval/security/ApprovalRelease31PepContractTest.java",
@@ -65,6 +70,12 @@ GATE_PINS = [
 ]
 PREVIOUS = "python3 docs/06-delivery/hris/tools/validate_current_authority.py && python3 docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-semantic-closure-r1/validate_hrm013_semantic_closure.py && python3 docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-callback-binding-r1/validate_hrm013_callback_binding.py && python3 docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-owner-runtime-binding-gate-r1/validate_hrm013_owner_runtime_binding_gate.py && python3 docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-runtime-contract-authority-r1/validate_hrm013_runtime_contract_authority.py && python3 docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-shared-contract-integration-r1/validate_hrm013_shared_contract_integration.py && python3 docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-v62-generation-r1/validate_hrm013_auth_v62_generation_authority.py && python3 docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-v62-generation-integration-r1/validate_hrm013_auth_v62_generation_integration.py && python3 docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-v271-authority-r1/validate_hrm013_auth_v271_authority.py && python3 docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-runtime-authority-r1/validate_hrm013_auth_runtime_authority.py"
 CURRENT = PREVIOUS + " && python3 " + VALIDATOR
+SUCCESSOR_VALIDATOR = (
+    "docs/06-delivery/hris/wave7-2026-10-17/"
+    "r7-batch-06-hrm013-approval-readiness-successor-r1/"
+    "validate_hrm013_approval_readiness_successor.py"
+)
+SUCCESSOR_CURRENT = CURRENT + " && python3 " + SUCCESSOR_VALIDATOR
 ENV = {"PATH": "/usr/bin:/bin", "LC_ALL": "C", "LANG": "C", "GIT_CONFIG_NOSYSTEM": "1", "GIT_CONFIG_GLOBAL": "/dev/null", "GIT_NO_REPLACE_OBJECTS": "1"}
 
 class Error(RuntimeError): pass
@@ -140,7 +151,11 @@ def validate_content(c: Check, carrier: str | None):
     c.exact(token["exactTargetTestPaths"], TESTS, "token tests")
     c.exact(token["verificationCommands"], COMMANDS, "token commands")
     c.exact(token["securityBoundary"], {"newMigrationAuthorized": False, "runtimeImplementationAuthorized": False, "featureEnablementAuthorized": False, "tenantEnrollmentAuthorized": False, "runtimeCredentialBindingAuthorized": False, "directDwpDevIntegrationAuthorized": False, "productionReleaseAuthorized": False}, "token boundary")
-    c.exact(package["scripts"]["hris:current-contracts:check"], CURRENT, "package chain")
+    c.exact(
+        package["scripts"]["hris:current-contracts:check"],
+        SUCCESSOR_CURRENT,
+        "package successor chain",
+    )
     source = lambda path: (ROOT / path).read_bytes() if carrier is None else raw_git(ROOT, "show", f"{carrier}:{path}").stdout
     expected_pins = [pin(path, source(path)) for path in (AUTHORITY, TOKEN, VALIDATOR, "package.json")]
     c.exact(review["artifactPins"], expected_pins, "review pins")
@@ -190,12 +205,19 @@ def main() -> int:
                 head = git(LANE_WORKTREE, "rev-parse", "HEAD")
                 committed = diff_paths(LANE_WORKTREE, BACKEND_BASE, head) if head != BACKEND_BASE else set()
                 current = changed(LANE_WORKTREE); paths = committed | current
-                c.require(paths.issubset(set(ALLOWLIST)), "lane path outside exact allowlist")
+                c.require(
+                    paths.issubset(set(EFFECTIVE_ALLOWLIST)),
+                    "lane path outside exact successor allowlist",
+                )
                 c.require(not any("/db/migration/" in path for path in paths), "migration authored")
                 if not paths: state = "CLEAN_WORKTREE_READY_FOR_APPROVAL_PHASE4_READINESS_CORRECTION"
                 elif current: state = "BOUNDED_APPROVAL_PHASE4_READINESS_CORRECTION_IN_PROGRESS"
                 else:
-                    c.exact(paths, set(ALLOWLIST), "committed correction must change exact eight paths")
+                    c.exact(
+                        paths,
+                        set(EFFECTIVE_ALLOWLIST),
+                        "committed correction must change exact nine successor paths",
+                    )
                     state = "COMMITTED_APPROVAL_PHASE4_READINESS_CORRECTION_REVIEW_REQUIRED"
         print(f"PASS state={state} checks={c.count} receipt_issuance=external-only"); return 0
     except (Error, OSError, KeyError, ValueError, json.JSONDecodeError) as exc:
