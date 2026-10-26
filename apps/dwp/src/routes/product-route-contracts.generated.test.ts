@@ -200,6 +200,21 @@ const R7_BATCH_05_PER008_HCM_PAGE_ROUTES = [
   },
 ] as const;
 
+const SYS008_CATALOG_ONLY_HCM_PAGE_ROUTES = [
+  {
+    routeContractKey: 'route.hcm.configuration.settings-integrations.page',
+    routeId: 'hcm.management.settings-integrations',
+    pattern: '/hr/settings/integrations',
+    productId: 'hcm',
+    surfaceId: 'hcm.management',
+  },
+] as const;
+
+const CATALOG_ONLY_HCM_PAGE_ROUTES = [
+  ...SYS008_CATALOG_ONLY_HCM_PAGE_ROUTES,
+  ...R7_BATCH_05_PER008_HCM_PAGE_ROUTES,
+] as const;
+
 type PageRouteTuple = {
   routeContractKey: string;
   routeId: string;
@@ -297,7 +312,7 @@ describe('generated product route authorization contracts', () => {
       'workplace',
     ]);
     expect(router).toHaveLength(158);
-    expect(catalogOnly).toEqual([...R7_BATCH_05_PER008_HCM_PAGE_ROUTES]);
+    expect(catalogOnly).toEqual([...CATALOG_ONLY_HCM_PAGE_ROUTES]);
     expect(registry).toEqual(
       [...router, ...catalogOnly].sort((left, right) =>
         left.routeContractKey.localeCompare(right.routeContractKey)
@@ -386,6 +401,34 @@ describe('generated product route authorization contracts', () => {
       ).toBe(false);
       expect(mountedKeys.has(routeContractKey)).toBe(false);
     }
+  });
+
+  it('keeps the SYS-008 settings projection cataloged but unmounted', () => {
+    const routeContractKey = 'route.hcm.configuration.settings-integrations.page';
+    const mountedKeys = new Set(mountedRouteContractKeys(hcmRoutes));
+
+    expect(pageRouterSource.catalogOnlyPageContracts).toContainEqual(
+      SYS008_CATALOG_ONLY_HCM_PAGE_ROUTES[0]
+    );
+    expect(
+      pageRouterSource.pageRoutes.some((route) => route.routeContractKey === routeContractKey)
+    ).toBe(false);
+    expect(
+      PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.some(
+        (route) => route.routeContractKey === routeContractKey
+      )
+    ).toBe(false);
+    expect(
+      ALL_PRODUCT_PAGE_ROUTE_CONTRACT_SOURCE.some(
+        (route) => route.routeContractKey === routeContractKey
+      )
+    ).toBe(false);
+    expect(
+      REGISTERED_PRODUCT_PAGE_ROUTE_CATALOG.some(
+        (route) => route.routeContractKey === routeContractKey
+      )
+    ).toBe(false);
+    expect(mountedKeys.has(routeContractKey)).toBe(false);
   });
 
   it('never turns DATA or ACTION registry records into browser routes', () => {

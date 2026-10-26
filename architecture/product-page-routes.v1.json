@@ -1123,6 +1123,13 @@
       "pattern": "/hr/me/performance/feedback",
       "productId": "hcm",
       "surfaceId": "hcm.personal"
+    },
+    {
+      "routeContractKey": "route.hcm.configuration.settings-integrations.page",
+      "routeId": "hcm.management.settings-integrations",
+      "pattern": "/hr/settings/integrations",
+      "productId": "hcm",
+      "surfaceId": "hcm.management"
     }
   ],
   "legacyRedirects": [

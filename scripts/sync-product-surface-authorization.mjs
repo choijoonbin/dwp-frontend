@@ -38,11 +38,11 @@ const ROUTER_SOURCE_FIELDS = [
   'schemaVersion',
   'sourceKey',
 ];
-const V59_RUNTIME_PAGE_ROUTES_SHA256 =
+const V60_RUNTIME_PAGE_ROUTES_SHA256 =
   'f630bbc8b371bfb0d64ef993a2cfca1bd72fa7ab0edf7b3a29382ab5922a3606';
-const V59_LEGACY_REDIRECTS_SHA256 =
+const V60_LEGACY_REDIRECTS_SHA256 =
   '6d60f36244b1bc6daeb41f7a8135c94d070cdcb4de0d09f1a32fbd0a9aba9187';
-const V59_CATALOG_ONLY_PAGE_CONTRACTS = Object.freeze([
+const V60_CATALOG_ONLY_PAGE_CONTRACTS = Object.freeze([
   Object.freeze({
     routeContractKey: 'route.hcm.team.performance.page',
     routeId: 'hcm.team.performance',
@@ -56,6 +56,13 @@ const V59_CATALOG_ONLY_PAGE_CONTRACTS = Object.freeze([
     pattern: '/hr/me/performance/feedback',
     productId: 'hcm',
     surfaceId: 'hcm.personal',
+  }),
+  Object.freeze({
+    routeContractKey: 'route.hcm.configuration.settings-integrations.page',
+    routeId: 'hcm.management.settings-integrations',
+    pattern: '/hr/settings/integrations',
+    productId: 'hcm',
+    surfaceId: 'hcm.management',
   }),
 ]);
 const BUNDLE_FIELDS = new Set([
@@ -756,13 +763,13 @@ function validateRouterSource(value, latestBundle) {
   const redirects = requireArray(source.legacyRedirects, 'router source legacyRedirects');
   if (
     routes.length !== 158 ||
-    sha256(routes) !== V59_RUNTIME_PAGE_ROUTES_SHA256 ||
-    sha256(redirects) !== V59_LEGACY_REDIRECTS_SHA256
+    sha256(routes) !== V60_RUNTIME_PAGE_ROUTES_SHA256 ||
+    sha256(redirects) !== V60_LEGACY_REDIRECTS_SHA256
   ) {
-    fail('v59 executable Router source or legacy redirects changed');
+    fail('v60 executable Router source or legacy redirects changed');
   }
-  if (canonicalJson(catalogOnlyRoutes) !== canonicalJson(V59_CATALOG_ONLY_PAGE_CONTRACTS)) {
-    fail('v59 catalog-only PAGE contracts changed');
+  if (canonicalJson(catalogOnlyRoutes) !== canonicalJson(V60_CATALOG_ONLY_PAGE_CONTRACTS)) {
+    fail('v60 catalog-only PAGE contracts changed');
   }
   const catalogRoutes = [...routes, ...catalogOnlyRoutes];
   validateUnique(catalogRoutes, 'routeContractKey', 'router source PAGE catalog');
