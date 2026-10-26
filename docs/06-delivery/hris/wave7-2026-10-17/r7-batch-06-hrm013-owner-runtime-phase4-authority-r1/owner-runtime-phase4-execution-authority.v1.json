@@ -1,0 +1,119 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-owner-runtime-phase4-execution-authority.v1",
+  "state": "INDEPENDENTLY_REVIEWED_HASH_BOUND_PARALLEL_APPROVAL_AND_PEOPLE_RUNTIME_EXECUTION_AUTHORITY",
+  "sliceId": "BASE-TFR-HRM-013",
+  "module": "HRM",
+  "moduleSession": "HRIS-HRM",
+  "lane": "OWNER_RUNTIME_PHASE4",
+  "carrier": {
+    "repository": "dwp-frontend",
+    "branch": "codex/hris-wave7-batch06-hrm013-owner-runtime-phase4-authority-frontend-20261027-r1",
+    "baseCommit": "85d6a4f732fc41abad3c37475862c6eafe1ccca2",
+    "baseTree": "13bc5cc80a59cbea1cea1cce58a87f42a7217945",
+    "requiredDirectChild": true,
+    "exactChangedPathCount": 6
+  },
+  "correctedBackendBase": {
+    "repository": "dwp-backend",
+    "branch": "dwp-dev",
+    "commit": "bed31127123a318358f495f66edced7b024469d8",
+    "tree": "e5564ff7a81e5dd0a85d0e61f091ec0714a1f777",
+    "originMustMatch": true,
+    "worktreeMustBeClean": true
+  },
+  "sealedPrerequisites": [
+    {
+      "kind": "EXTERNAL_OWNER_ONLY_RECEIPT",
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/receipts/approval-readiness-central-integration-receipt.v1.json",
+      "mode": "0600",
+      "bytes": 3042,
+      "sha256": "53b2bbee2dc7be38b3d61a4214b16f144ad78eecc3c1b0afe587727aef6de0a6"
+    },
+    {
+      "kind": "EXTERNAL_OWNER_ONLY_RECEIPT",
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/receipts/auth-runtime-successor-delegation-authority.v1.json",
+      "mode": "0600",
+      "bytes": 7234,
+      "sha256": "b39a7f825996291d5c50e03f6e2335649ca9b2fb9c7b509b0e4268fa0c5bd0d9"
+    },
+    {
+      "kind": "TRACKED_GATE",
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-owner-runtime-binding-gate-r1/hrm-013-owner-runtime-binding-gate.v1.json",
+      "bytes": 170804,
+      "sha256": "aa88b6116f2fa8ca4e96d85204414a737e763afa4e1bb01372e31fdaa59deb47"
+    },
+    {
+      "kind": "TRACKED_SERVICE_BINDING_REGISTER",
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-owner-runtime-execution-r1/service-api-auth-binding-register.successor.v3.csv",
+      "bytes": 23958,
+      "sha256": "16e1401119b1bfff0cf6fa0383ec311e154db91e86df738fb9dffa5e4dd8bf1a"
+    },
+    {
+      "kind": "IMMUTABLE_BACKEND_MIGRATION",
+      "path": "dwp-approval-server/src/main/resources/db/migration/V59__bridge_hris_separation_task_waivers.sql",
+      "bytes": 28589,
+      "sha256": "03ee5347e25631dd40f35b9a20bc056207ae98c80712a03f6daa69900c814c18"
+    },
+    {
+      "kind": "IMMUTABLE_BACKEND_MIGRATION",
+      "path": "dwp-people-server/src/main/resources/db/migration/V61__hrm_base_tfr_hrm_013.sql",
+      "bytes": 47156,
+      "sha256": "b77bbc5823b40e2c134d9dab396f040a9a90fe87fa71a1b634895aa3182c526f"
+    }
+  ],
+  "tokens": [
+    {
+      "lane": "APPROVAL_RUNTIME",
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-owner-runtime-phase4-authority-r1/tokens/hrm-013-approval-runtime.start-token.v1.json",
+      "schema": "dwp.hris.wave7.hrm013-approval-runtime-start-token.v1"
+    },
+    {
+      "lane": "PEOPLE_OWNER_AND_RUNTIME",
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-owner-runtime-phase4-authority-r1/tokens/hrm-013-people-owner-runtime.start-token.v1.json",
+      "schema": "dwp.hris.wave7.hrm013-people-owner-runtime-start-token.v1"
+    }
+  ],
+  "executionTopology": {
+    "parallelAuthoringFromSameCorrectedBase": true,
+    "authoringOrder": [
+      "MATERIALIZE_BOTH_CLEAN_WORKTREES_AFTER_CARRIER_PUSH",
+      "AUTHOR_AND_VERIFY_APPROVAL_AND_PEOPLE_IN_PARALLEL"
+    ],
+    "centralIntegrationOrder": [
+      "INDEPENDENTLY_REVIEW_COMMIT_AND_PUSH_APPROVAL_RUNTIME",
+      "FAST_FORWARD_APPROVAL_RUNTIME_TO_BACKEND_DWP_DEV",
+      "REBASE_PEOPLE_OWNER_AND_RUNTIME_ON_THE_LATEST_BACKEND_DWP_DEV",
+      "RERUN_ONLY_PEOPLE_COLLISION_SENSITIVE_COMPILE_AND_NAMED_TARGETS",
+      "INDEPENDENTLY_REVIEW_COMMIT_AND_PUSH_REBASED_PEOPLE_RUNTIME",
+      "FAST_FORWARD_REBASED_PEOPLE_RUNTIME_TO_BACKEND_DWP_DEV",
+      "RUN_ONE_BOUNDED_SHARED_AUTH_APPROVAL_PEOPLE_HANDSHAKE_MATRIX"
+    ],
+    "completeTwelveConditionCrossServiceMatrix": "DEFERRED_UNTIL_SEPARATELY_AUTHORIZED_PHASE6_TASK_OWNERS_ARE_INTEGRATED",
+    "broadRepositoryRerunRequired": false
+  },
+  "authority": {
+    "independentReviewComplete": true,
+    "carrierCommitAndPushAuthorized": true,
+    "approvalRuntimeImplementationAuthorizedAfterMatchingCleanReceipt": true,
+    "peopleOwnerRuntimeImplementationAuthorizedAfterMatchingCleanReceipt": true,
+    "parallelAuthoringAuthorized": true,
+    "newMigrationAuthorized": false,
+    "directBackendDwpDevIntegrationAuthorized": false,
+    "taskDispatchOwnerImplementationAuthorized": false,
+    "frontendUiMenuOrRouteAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "runtimeCredentialProvisioningAuthorized": false,
+    "productionBindingAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0
+  },
+  "nonClaims": [
+    "The two runtime worktrees, branches or clean-worktree receipts already exist.",
+    "Approval V60 or People V62 is reserved, authored or permitted.",
+    "The complete twelve-condition cross-service matrix is executable before Phase 6 task owners.",
+    "Any HRIS menu, feature, tenant, production credential or production route is enabled.",
+    "HRM-013 or HRIS is complete."
+  ],
+  "nextAction": "COMMIT_AND_PUSH_THIS_EXACT_SIX_PATH_FRONTEND_CARRIER_THEN_MATERIALIZE_BOTH_HASH_BOUND_BACKEND_WORKTREES_AND_EXTERNAL_0600_CLEAN_RECEIPTS"
+}

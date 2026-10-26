@@ -1,0 +1,154 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-people-owner-runtime-start-token.v1",
+  "state": "EXECUTABLE_AFTER_CARRIER_PUSH_AND_MATCHING_EXTERNAL_CLEAN_WORKTREE_RECEIPT",
+  "sliceId": "BASE-TFR-HRM-013",
+  "lane": "PEOPLE_OWNER_AND_RUNTIME",
+  "authorityCarrier": {
+    "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-owner-runtime-phase4-authority-r1/owner-runtime-phase4-execution-authority.v1.json",
+    "frontendBaseCommit": "85d6a4f732fc41abad3c37475862c6eafe1ccca2"
+  },
+  "backendBase": {
+    "repository": "dwp-backend",
+    "branch": "dwp-dev",
+    "commit": "bed31127123a318358f495f66edced7b024469d8",
+    "tree": "e5564ff7a81e5dd0a85d0e61f091ec0714a1f777",
+    "originMustMatch": true
+  },
+  "worktree": {
+    "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/people",
+    "branch": "codex/hris-wave7-batch06-hrm013-people-owner-runtime-backend-20261026-r1",
+    "baseHead": "bed31127123a318358f495f66edced7b024469d8",
+    "baseTree": "e5564ff7a81e5dd0a85d0e61f091ec0714a1f777",
+    "cleanReceiptPath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/receipts/people-owner-runtime-clean-worktree-receipt.v1.json",
+    "cleanReceiptSchema": "dwp.hris.wave7.hrm013-people-owner-runtime-clean-worktree-receipt.v1",
+    "cleanAtIssueRequired": true,
+    "upstreamAbsentAtIssueRequired": true,
+    "remoteBranchAbsentAtIssueRequired": true
+  },
+  "sourceScope": {
+    "newSourcePaths": [
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/separation/hrm013/Hrm013RuntimeConfiguration.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/separation/hrm013/Hrm013RuntimeProperties.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/separation/hrm013/Hrm013CallbackIngressFilter.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/separation/hrm013/Hrm013CallbackRequestContext.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/separation/hrm013/Hrm013WorkloadProofVerifier.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/separation/hrm013/Hrm013CallbackController.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/separation/hrm013/Hrm013CallbackService.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/separation/hrm013/Hrm013OwnerService.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/separation/hrm013/JdbcHrm013OwnerStore.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/separation/hrm013/Hrm013WaiverRequestRelay.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/separation/hrm013/Hrm013ApprovalClient.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/separation/hrm013/Hrm013TaskDispatchOutboxStore.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/separation/hrm013/Hrm013TaskDispatchRelay.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/separation/hrm013/Hrm013TaskDispatchClient.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/separation/hrm013/Hrm013GrantRotationReadiness.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/separation/hrm013/AuthHrm013ServiceAuthorityAdapter.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/separation/hrm013/Hrm013WorkloadCredentialProvider.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/separation/hrm013/Hrm013AdmissionControl.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/separation/hrm013/Hrm013RuntimeProblem.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/separation/hrm013/SeparationReconciliationPort.java"
+    ],
+    "existingMayModify": [
+      "dwp-people-server/src/main/java/com/dwp/services/people/security/PeopleSecurityFilter.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/separation/hrm013/Hrm013PersistencePorts.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/separation/hrm013/Hrm013PersistenceModels.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/separation/hrm013/Hrm013ServiceAuthorityPort.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/separation/hrm013/JdbcHrm013CallbackAuthorityStore.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/separation/hrm013/JdbcHrm013CallbackReceiptStore.java",
+      "dwp-people-server/src/main/java/com/dwp/services/people/hris/separation/hrm013/JdbcHrm013WaiverRequestOutboxStore.java",
+      "dwp-people-server/src/main/resources/application.yml"
+    ],
+    "authorizedSourcePathCount": 28,
+    "migrationAuthoringAuthorized": false,
+    "forbiddenMigrationPattern": "dwp-people-server/src/main/resources/db/migration/V62*",
+    "unrelatedModuleChangesAuthorized": false
+  },
+  "targetedVerification": {
+    "compileTasks": [
+      ":dwp-people-server:compileJava",
+      ":dwp-people-server:compileTestJava"
+    ],
+    "namedTestPaths": [
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/separation/hrm013/Hrm013RuntimeDefaultOffTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/separation/hrm013/Hrm013CallbackIngressFilterTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/separation/hrm013/Hrm013WorkloadProofVerifierTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/separation/hrm013/Hrm013CallbackServicePostgresTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/separation/hrm013/Hrm013OwnerServicePostgresTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/separation/hrm013/Hrm013TaskDispatchContractTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/separation/hrm013/Hrm013TaskDispatchAtomicityPostgresTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/separation/hrm013/Hrm013TaskDispatchCallbackGrantFencePostgresTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/separation/hrm013/Hrm013TaskDispatchOutboxPostgresTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/separation/hrm013/Hrm013TaskDispatchRelayTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/separation/hrm013/Hrm013WorkloadCredentialProviderTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/separation/hrm013/Hrm013OutboundTlsBoundaryTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/separation/hrm013/Hrm013GrantRotationReconciliationPostgresTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/separation/hrm013/Hrm013WaiverRequestRelayPostgresTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/separation/hrm013/Hrm013CallbackConcurrencyPostgresTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/separation/hrm013/Hrm013SeparationReconciliationInProcessContractTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/separation/hrm013/Hrm013ControlPlaneAuthorityAdapterTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/security/PeopleSecurityFilterTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/separation/hrm013/Hrm013V61MigrationContractTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/separation/hrm013/Hrm013V61MigrationPostgresTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/separation/hrm013/Hrm013PrerequisiteStoresPostgresTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/hris/separation/hrm013/Hrm013ServiceAuthorityPortTest.java",
+      "dwp-people-server/src/test/java/com/dwp/services/people/integration/Hrm012V60MigrationPostgresTest.java"
+    ],
+    "namedTestCount": 23,
+    "unitTestTask": ":dwp-people-server:test",
+    "unitTestSelectors": [
+      "com.dwp.services.people.hris.separation.hrm013.Hrm013RuntimeDefaultOffTest",
+      "com.dwp.services.people.hris.separation.hrm013.Hrm013CallbackIngressFilterTest",
+      "com.dwp.services.people.hris.separation.hrm013.Hrm013WorkloadProofVerifierTest",
+      "com.dwp.services.people.hris.separation.hrm013.Hrm013CallbackServicePostgresTest",
+      "com.dwp.services.people.hris.separation.hrm013.Hrm013OwnerServicePostgresTest",
+      "com.dwp.services.people.hris.separation.hrm013.Hrm013TaskDispatchContractTest",
+      "com.dwp.services.people.hris.separation.hrm013.Hrm013TaskDispatchAtomicityPostgresTest",
+      "com.dwp.services.people.hris.separation.hrm013.Hrm013TaskDispatchCallbackGrantFencePostgresTest",
+      "com.dwp.services.people.hris.separation.hrm013.Hrm013TaskDispatchOutboxPostgresTest",
+      "com.dwp.services.people.hris.separation.hrm013.Hrm013TaskDispatchRelayTest",
+      "com.dwp.services.people.hris.separation.hrm013.Hrm013WorkloadCredentialProviderTest",
+      "com.dwp.services.people.hris.separation.hrm013.Hrm013OutboundTlsBoundaryTest",
+      "com.dwp.services.people.hris.separation.hrm013.Hrm013GrantRotationReconciliationPostgresTest",
+      "com.dwp.services.people.hris.separation.hrm013.Hrm013WaiverRequestRelayPostgresTest",
+      "com.dwp.services.people.hris.separation.hrm013.Hrm013CallbackConcurrencyPostgresTest",
+      "com.dwp.services.people.hris.separation.hrm013.Hrm013SeparationReconciliationInProcessContractTest",
+      "com.dwp.services.people.hris.separation.hrm013.Hrm013ControlPlaneAuthorityAdapterTest",
+      "com.dwp.services.people.security.PeopleSecurityFilterTest",
+      "com.dwp.services.people.hris.separation.hrm013.Hrm013V61MigrationContractTest",
+      "com.dwp.services.people.hris.separation.hrm013.Hrm013V61MigrationPostgresTest",
+      "com.dwp.services.people.hris.separation.hrm013.Hrm013PrerequisiteStoresPostgresTest",
+      "com.dwp.services.people.hris.separation.hrm013.Hrm013ServiceAuthorityPortTest"
+    ],
+    "methodSelectors": [
+      "com.dwp.services.people.integration.Hrm012V60MigrationPostgresTest.cleanMigrationThroughV60BuildsOnlyTheTwoTablesAndLockedControls",
+      "com.dwp.services.people.integration.Hrm012V60MigrationPostgresTest.upgradeFromV59PreservesRowsAndEveryHistoricalChecksum"
+    ],
+    "broadRepositorySuiteAuthorized": false,
+    "rerunRule": "RERUN_ONLY_THE_SMALLEST_FAILED_TARGET_AFTER_A_BOUNDED_FIX"
+  },
+  "immutablePersistence": {
+    "migrationPath": "dwp-people-server/src/main/resources/db/migration/V61__hrm_base_tfr_hrm_013.sql",
+    "bytes": 47156,
+    "sha256": "b77bbc5823b40e2c134d9dab396f040a9a90fe87fa71a1b634895aa3182c526f",
+    "historicalEditAuthorized": false
+  },
+  "integration": {
+    "initialBranchCommitMustBeSingleDirectChildOfBase": true,
+    "independentPostImplementationReviewRequired": true,
+    "branchCommitAndPushAuthorizedAfterTargetedVerification": true,
+    "centralOrder": "SECOND_AFTER_REBASE_ON_APPROVAL_INTEGRATED_DWP_DEV",
+    "rebaseRequiredBeforeCentralIntegration": true,
+    "collisionSensitiveTargetedVerificationRequiredAfterRebase": true,
+    "directDwpDevIntegrationAuthorizedByThisToken": false
+  },
+  "authority": {
+    "peopleOwnerAndRuntimeSourceAuthoringAuthorized": true,
+    "approvalRuntimeSourceAuthoringAuthorized": false,
+    "phase6TaskOwnerSourceAuthoringAuthorized": false,
+    "migrationAuthoringAuthorized": false,
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0
+  }
+}

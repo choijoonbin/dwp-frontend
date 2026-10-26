@@ -1,0 +1,74 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-owner-runtime-phase4-authority-independent-review.v1",
+  "reviewedAt": "2026-10-26T21:18:15Z",
+  "reviewer": "INDEPENDENT_HRM013_OWNER_RUNTIME_PHASE4_AUTHORITY_REVIEW",
+  "scope": {
+    "authorityPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-owner-runtime-phase4-authority-r1/owner-runtime-phase4-execution-authority.v1.json",
+    "validatorPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-owner-runtime-phase4-authority-r1/validate_hrm013_owner_runtime_phase4_authority.py",
+    "approvalTokenPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-owner-runtime-phase4-authority-r1/tokens/hrm-013-approval-runtime.start-token.v1.json",
+    "peopleTokenPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-owner-runtime-phase4-authority-r1/tokens/hrm-013-people-owner-runtime.start-token.v1.json",
+    "packagePath": "package.json",
+    "reviewedBoundaries": [
+      "EXACT_CORRECTED_FRONTEND_AND_BACKEND_BASES",
+      "TWO_SEPARATE_HASH_BOUND_TOKENS_FROM_ONE_BACKEND_BASE",
+      "EXACT_APPROVAL_30_PATH_AND_PEOPLE_28_PATH_SOURCE_SCOPES",
+      "EXACT_23_NAMED_TARGETS_PER_LANE_AND_NO_BROAD_RERUN",
+      "NO_APPROVAL_V60_OR_PEOPLE_V62_MIGRATION",
+      "APPROVAL_FIRST_PEOPLE_REBASE_SECOND_AND_ONE_BOUNDED_HANDSHAKE",
+      "NO_PHASE6_UI_FEATURE_TENANT_CREDENTIAL_OR_PRODUCTION_AUTHORITY"
+    ]
+  },
+  "findings": {
+    "p0": [],
+    "p1": [],
+    "p2": [],
+    "notes": [
+      "Both executable tokens start from the exact corrected backend dwp-dev commit and require separate owner-only clean-worktree receipts after this carrier is pushed.",
+      "Approval and People are isolated by exact source allowlists and 23 named test files per lane; the People V60 regression is limited to two exact methods.",
+      "No new migration, direct backend integration, broad repository rerun, Phase 6 task owner, UI, feature, tenant, credential or production authority is granted."
+    ]
+  },
+  "finalVerdict": {
+    "p0": 0,
+    "p1": 0,
+    "p2": 0,
+    "decision": "GO_FOR_OWNER_RUNTIME_PHASE4_AUTHORITY_CARRIER_COMMIT_AND_PUSH_ONLY"
+  },
+  "authority": {
+    "independentReviewComplete": true,
+    "carrierCommitAndPushAuthorized": true,
+    "approvalAndPeopleWorktreeMaterializationAuthorizedAfterCarrierPush": true,
+    "runtimeAuthoringRequiresMatchingExternalCleanReceipts": true,
+    "newMigrationAuthorized": false,
+    "directBackendDwpDevIntegrationAuthorized": false,
+    "phase6OrProductionAuthority": false,
+    "businessCompletionCredit": 0
+  },
+  "artifactPins": [
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-owner-runtime-phase4-authority-r1/owner-runtime-phase4-execution-authority.v1.json",
+      "bytes": 5617,
+      "sha256": "2b76498078e9f438116479f339ad3e9059703fb5b7ee917f8bc98a83a454f9ea"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-owner-runtime-phase4-authority-r1/validate_hrm013_owner_runtime_phase4_authority.py",
+      "bytes": 33250,
+      "sha256": "251b1c31c5b9fc8cade58c28ac3d658f16a406355e6bca0be1effee972467d1c"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-owner-runtime-phase4-authority-r1/tokens/hrm-013-approval-runtime.start-token.v1.json",
+      "bytes": 11855,
+      "sha256": "402630c991fa01bbd5a0920769755764f9322f8fd30315ec32a464a48b06f6e4"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-owner-runtime-phase4-authority-r1/tokens/hrm-013-people-owner-runtime.start-token.v1.json",
+      "bytes": 11792,
+      "sha256": "2473b409e14a93188cb2f53ffb82c7466875e885d81f81f16473c8e8637d024d"
+    },
+    {
+      "path": "package.json",
+      "bytes": 16026,
+      "sha256": "4666fddc55fa5f9c16e7e3fc5ac43b980499e8ee7784febe373b3402cd1be74c"
+    }
+  ]
+}

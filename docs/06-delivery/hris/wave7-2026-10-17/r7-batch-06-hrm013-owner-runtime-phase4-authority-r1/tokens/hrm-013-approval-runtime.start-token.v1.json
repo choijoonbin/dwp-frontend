@@ -1,0 +1,155 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-approval-runtime-start-token.v1",
+  "state": "EXECUTABLE_AFTER_CARRIER_PUSH_AND_MATCHING_EXTERNAL_CLEAN_WORKTREE_RECEIPT",
+  "sliceId": "BASE-TFR-HRM-013",
+  "lane": "APPROVAL_RUNTIME",
+  "authorityCarrier": {
+    "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-owner-runtime-phase4-authority-r1/owner-runtime-phase4-execution-authority.v1.json",
+    "frontendBaseCommit": "85d6a4f732fc41abad3c37475862c6eafe1ccca2"
+  },
+  "backendBase": {
+    "repository": "dwp-backend",
+    "branch": "dwp-dev",
+    "commit": "bed31127123a318358f495f66edced7b024469d8",
+    "tree": "e5564ff7a81e5dd0a85d0e61f091ec0714a1f777",
+    "originMustMatch": true
+  },
+  "worktree": {
+    "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/approval",
+    "branch": "codex/hris-wave7-batch06-hrm013-approval-runtime-backend-20261026-r1",
+    "baseHead": "bed31127123a318358f495f66edced7b024469d8",
+    "baseTree": "e5564ff7a81e5dd0a85d0e61f091ec0714a1f777",
+    "cleanReceiptPath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/receipts/approval-runtime-clean-worktree-receipt.v1.json",
+    "cleanReceiptSchema": "dwp.hris.wave7.hrm013-approval-runtime-clean-worktree-receipt.v1",
+    "cleanAtIssueRequired": true,
+    "upstreamAbsentAtIssueRequired": true,
+    "remoteBranchAbsentAtIssueRequired": true
+  },
+  "sourceScope": {
+    "newSourcePaths": [
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationApprovalController.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationApprovalBridgeService.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationApprovalAuthorityResolver.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationTrustProfile.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationProtocolException.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationBridgeAdvice.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationStepUpEvidenceVerifier.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationDecisionRelay.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationGrantRotationBarrier.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/hrisbridge/separation/AuthHrm013ServiceAuthorityClient.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/hrisbridge/separation/Hrm013RequesterIdentityClient.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationWorkloadCredentialProvider.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/domain/ApprovalTerminalDecisionContext.java"
+    ],
+    "existingMayModify": [
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/security/ApprovalSecurityFilter.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/security/ApprovalStepUpVerifier.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/api/ApprovalController.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/domain/ApprovalService.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/domain/ApprovalWorkflowDecisionCommands.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/domain/ApprovalWorkflowQuorumFacade.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/domain/ApprovalWorkflowQuorumRuntime.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/domain/ApprovalWorkflowRuntimeSource.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/domain/ApprovalTerminalDecisionSink.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/domain/ApprovalCommandLifecycleRepository.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/workflowauthority/WorkflowRuntimeBindingContract.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/security/ApprovalWorkflowQuorumBodyFilter.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/security/ApprovalWorkflowQuorumCommandMetadata.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/hrisbridge/HrisApprovalDecisionOutbox.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationWaiverBindingStore.java",
+      "dwp-approval-server/src/main/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationDecisionOutboxStore.java",
+      "dwp-approval-server/src/main/resources/application.yml"
+    ],
+    "authorizedSourcePathCount": 30,
+    "migrationAuthoringAuthorized": false,
+    "forbiddenMigrationPattern": "dwp-approval-server/src/main/resources/db/migration/V60*",
+    "unrelatedModuleChangesAuthorized": false
+  },
+  "targetedVerification": {
+    "compileTasks": [
+      ":dwp-approval-server:compileJava",
+      ":dwp-approval-server:compileTestJava",
+      ":dwp-approval-server:compileCrossServiceTestJava"
+    ],
+    "namedTestPaths": [
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationApprovalControllerTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationTrustProfileTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationApprovalBridgePostgresTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationTerminalDecisionOutboxPostgresTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationDecisionRelayTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationFeatureGateTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationWorkloadCredentialProviderTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationOutboundTlsBoundaryTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationGrantRotationDrainPostgresTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationDrainContinuationOutboxPostgresTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/security/HrisApprovalSecurityBoundaryTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/security/Hrm013DedicatedApproveRouteContractTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/security/ApprovalWorkflowQuorumCommandMetadataTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/domain/ApprovalWorkflowQuorumRuntimePostgresTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/domain/ApprovalWorkflowRuntimeTargetPostgresTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/workflowauthority/WorkflowRuntimeTransportTest.java",
+      "dwp-approval-server/src/crossServiceTest/java/com/dwp/services/approval/workflowauthority/WorkflowRuntimeActualAuthHttpTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/hrisbridge/separation/Hrm013RequesterIdentityClientTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/domain/HrisApprovalTerminalDecisionOutboxPostgresTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/hrisbridge/separation/HrisSeparationWaiverStoresPostgresTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/hrisbridge/HrisApprovalBridgeControllerTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/hrisbridge/HrisApprovalDecisionRelayTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/hrisbridge/HrisApprovalTrustProfileTest.java"
+    ],
+    "namedTestCount": 23,
+    "unitTestTask": ":dwp-approval-server:test",
+    "unitTestSelectors": [
+      "com.dwp.services.approval.hrisbridge.separation.HrisSeparationApprovalControllerTest",
+      "com.dwp.services.approval.hrisbridge.separation.HrisSeparationTrustProfileTest",
+      "com.dwp.services.approval.hrisbridge.separation.HrisSeparationApprovalBridgePostgresTest",
+      "com.dwp.services.approval.hrisbridge.separation.HrisSeparationTerminalDecisionOutboxPostgresTest",
+      "com.dwp.services.approval.hrisbridge.separation.HrisSeparationDecisionRelayTest",
+      "com.dwp.services.approval.hrisbridge.separation.HrisSeparationFeatureGateTest",
+      "com.dwp.services.approval.hrisbridge.separation.HrisSeparationWorkloadCredentialProviderTest",
+      "com.dwp.services.approval.hrisbridge.separation.HrisSeparationOutboundTlsBoundaryTest",
+      "com.dwp.services.approval.hrisbridge.separation.HrisSeparationGrantRotationDrainPostgresTest",
+      "com.dwp.services.approval.hrisbridge.separation.HrisSeparationDrainContinuationOutboxPostgresTest",
+      "com.dwp.services.approval.security.HrisApprovalSecurityBoundaryTest",
+      "com.dwp.services.approval.security.Hrm013DedicatedApproveRouteContractTest",
+      "com.dwp.services.approval.security.ApprovalWorkflowQuorumCommandMetadataTest",
+      "com.dwp.services.approval.domain.ApprovalWorkflowQuorumRuntimePostgresTest",
+      "com.dwp.services.approval.domain.ApprovalWorkflowRuntimeTargetPostgresTest",
+      "com.dwp.services.approval.workflowauthority.WorkflowRuntimeTransportTest",
+      "com.dwp.services.approval.hrisbridge.separation.Hrm013RequesterIdentityClientTest",
+      "com.dwp.services.approval.domain.HrisApprovalTerminalDecisionOutboxPostgresTest",
+      "com.dwp.services.approval.hrisbridge.separation.HrisSeparationWaiverStoresPostgresTest",
+      "com.dwp.services.approval.hrisbridge.HrisApprovalBridgeControllerTest",
+      "com.dwp.services.approval.hrisbridge.HrisApprovalDecisionRelayTest",
+      "com.dwp.services.approval.hrisbridge.HrisApprovalTrustProfileTest"
+    ],
+    "crossServiceTestTask": ":dwp-approval-server:crossServiceTest",
+    "crossServiceTestSelectors": [
+      "com.dwp.services.approval.workflowauthority.WorkflowRuntimeActualAuthHttpTest"
+    ],
+    "broadRepositorySuiteAuthorized": false,
+    "rerunRule": "RERUN_ONLY_THE_SMALLEST_FAILED_TARGET_AFTER_A_BOUNDED_FIX"
+  },
+  "immutablePersistence": {
+    "migrationPath": "dwp-approval-server/src/main/resources/db/migration/V59__bridge_hris_separation_task_waivers.sql",
+    "bytes": 28589,
+    "sha256": "03ee5347e25631dd40f35b9a20bc056207ae98c80712a03f6daa69900c814c18",
+    "historicalEditAuthorized": false
+  },
+  "integration": {
+    "finalBranchCommitMustBeSingleDirectChildOfBase": true,
+    "independentPostImplementationReviewRequired": true,
+    "branchCommitAndPushAuthorizedAfterTargetedVerification": true,
+    "centralOrder": "FIRST",
+    "directDwpDevIntegrationAuthorizedByThisToken": false
+  },
+  "authority": {
+    "approvalRuntimeSourceAuthoringAuthorized": true,
+    "peopleRuntimeSourceAuthoringAuthorized": false,
+    "taskOwnerSourceAuthoringAuthorized": false,
+    "migrationAuthoringAuthorized": false,
+    "featureActivationAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0
+  }
+}
