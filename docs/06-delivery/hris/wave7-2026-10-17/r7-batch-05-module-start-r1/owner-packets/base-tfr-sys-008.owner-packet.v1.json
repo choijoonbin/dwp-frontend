@@ -1,0 +1,439 @@
+{
+  "schema": "dwp.hris.wave7.r7-owner-packet.v1",
+  "packetId": "HRIS-WAVE7-R7-BATCH-05-OWNER-BASE-TFR-SYS-008-20261026-R1",
+  "revision": 1,
+  "issuedAt": "2026-10-26T09:56:00+09:00",
+  "issuedBy": "SYS_COMMON_INTEGRATION_CONTROL",
+  "immutability": {
+    "sealed": true,
+    "amendmentPolicy": "APPEND_ONLY_SUCCESSOR_WITH_NEW_PACKET_ID_AND_SHA256",
+    "historicalArtifactMutation": false
+  },
+  "state": "SEALED_EXACT_SYS008_OWNER_AUTHORITY_PACKET_READY_FOR_INDEPENDENT_REVIEW_AND_FRESH_WORKTREES_EXECUTABLE_TOKEN_WITHHELD_PENDING_ACTIVE_V334_LEASE",
+  "module": "SYS",
+  "moduleSession": "HRIS-SYS",
+  "moduleThreadId": "01a0f53d-d62d-7971-81f7-1822b513ccb4",
+  "sliceId": "BASE-TFR-SYS-008",
+  "sourceRef": "TFR-SYS-008",
+  "semanticLineage": "TFR-SYS-008::DWP.HRIS.INTEGRATION.CONTROL_PLANE::IAQ-057|IAQ-062|SYS-API-021|SYS-API-022|SYS-API-023|SYS-API-024|SYS-API-025|SYS-API-057|SYS-API-058|SYS-API-059|SYS-API-060|SYS-API-061|SYS-API-062|SYS-API-063|SYS-API-064|SYS-API-065|SYS-API-066|SYS-API-067|SYS-API-068|SYS-EVT-005",
+  "immutableAuthorityBasis": {
+    "roadmap": {
+      "path": "../../execution-roadmap-successor.v19.json",
+      "sha256": "7fd14919598aadf20ea083dd11d693f4774fe803224b799935e284b858525ed0",
+      "bytes": 18404,
+      "requiredState": "R7_BATCH_04_SEQUENCING_CLOSED_DEFAULT_OFF_ZERO_BUSINESS_CREDIT_BATCH_05_PREFLIGHT_NEXT_ZERO_TENANT_ENROLLMENT"
+    },
+    "batch05Preflight": {
+      "path": "../../r7-batch-05-preflight-r1/semantic-dependency-migration-preflight.v1.json",
+      "sha256": "8f7a0d38c4dc86873e4930e5a21dcc0a269c39512508d86dd529b40015237e0f",
+      "bytes": 37443,
+      "requiredState": "PREFLIGHT_COMPLETE_FIXED_ORDER_FIVE_CONDITIONAL_LANES_NO_PACKETS_NO_TOKENS_NO_WORKTREES_NO_LEASES_NO_SOURCE"
+    },
+    "semanticDisposition": {
+      "path": "../semantic-dispositions/base-tfr-sys-008.semantic-disposition.v1.json",
+      "sha256": "35e8b1ad256ad16ca8a653f0770366e5f58818a38f8da78c15774fd186eff65c",
+      "bytes": 68721,
+      "requiredState": "SYS008_INTEGRATION_CONTROL_PLANE_BOUNDARY_SEALED_V334_REQUIRED_CENTRAL_SUCCESSOR_BEFORE_SOURCE",
+      "use": "FULL_IMPLEMENTABLE_SCOPE_AND_FIFTEEN_ACCEPTANCE_CRITERIA"
+    },
+    "semanticReview": {
+      "path": "../semantic-dispositions/base-tfr-sys-008.semantic-review.v1.json",
+      "sha256": "b4f341d6b8642693577f6cda8053ed5dfd02a90ed2d1b8001138a26d15060438",
+      "bytes": 5767,
+      "requiredState": "SYS008_SEMANTIC_DISPOSITION_INDEPENDENTLY_REVIEWED_PASS_ZERO_P0_ZERO_P1_ZERO_P2_CENTRAL_SUCCESSOR_MAY_PROCEED"
+    },
+    "centralSuccessor": {
+      "path": "../sys-008-iaq-transport-event-and-central-authorization-successor.v1.json",
+      "sha256": "1f88dd3999c6609451914c43ffdd2fafdfa83a1bd004e1fc0199ad925135836b",
+      "bytes": 66315,
+      "requiredState": "SEALED_EXACT_SYS008_IAQ057_IAQ062_TRANSPORT_SYSEVT005_V60_V269_V334_GATEWAY_SHARED_BRIDGE_DUAL_PROJECTION_AUTHORITY_DEFAULT_OFF_ZERO_ENROLLMENT"
+    },
+    "centralSuccessorReview": {
+      "path": "../sys-008-iaq-transport-event-and-central-authorization-review.v1.json",
+      "sha256": "6775e774a805eb9df8c82fce7a433f1c8fb828153f451a76fd691cd24f102a9d",
+      "bytes": 8705,
+      "requiredState": "SYS008_IAQ_TRANSPORT_EVENT_AND_CENTRAL_AUTHORIZATION_INDEPENDENTLY_REVIEWED_PASS_ZERO_P0_ZERO_P1_ZERO_P2_BOUNDED_CENTRAL_IMPLEMENTATION_MAY_PROCEED"
+    },
+    "centralIntegrationReceipt": {
+      "path": "../../r7-batch-05-central-admission-r1/sys-008-central-integration-receipt.v1.json",
+      "sha256": "93a72c373ef19a5474924547012a5c243ab330ae5eb0b5eb1eeed5c93d63f0bf",
+      "bytes": 17116,
+      "requiredState": "EXACT_SYS008_CENTRAL_DELTA_COMMITTED_PUSHED_AND_ADMITTED_V60_V269_GATEWAY_IAQ_TYPED_EVENT_OPAQUE_SHARED_BRIDGE_DUAL_PROJECTION_DEFAULT_OFF_ZERO_ENROLLMENT_OWNER_PACKET_AND_RESERVED_NOT_ACTIVE_V334_MAY_BE_PREPARED"
+    },
+    "migrationLeaseReservation": {
+      "path": "../migration-lease-sys008-v334-reservation.v1.json",
+      "sha256": "73413bc7dbaa21f456949ecc0d96ad5ec65351ab8f38f3a95dd97b791414b27d",
+      "bytes": 14400,
+      "reservationId": "HRIS-WAVE7-R7-BATCH-05-MIGRATION-LEASE-RESERVATION-SYS008-20261026-R1",
+      "leaseId": "HRIS-WAVE7-R7-BATCH-05-PLATFORM-MAIN-V334-SYS008-20261026-R1",
+      "requiredState": "RESERVED_NOT_ACTIVE"
+    }
+  },
+  "basePins": {
+    "backend": {
+      "repository": "dwp-backend",
+      "branch": "dwp-dev",
+      "commit": "7406b9d6a4ba2c3f777fad3b9e9caa609ec9ff72",
+      "tree": "b701265b8b22c4a1ada559a702091344c0686b42",
+      "requiredRemote": "origin/dwp-dev",
+      "requiredRemoteExact": true,
+      "requiredWorktreeClean": true
+    },
+    "frontend": {
+      "repository": "dwp-frontend",
+      "branch": "dwp-dev",
+      "commit": "bfe02047f91c6aedc00f9b2f507ff02843274032",
+      "tree": "2509a1806fad00f0b4d62dfbf229b023ba009df8",
+      "requiredRemote": "origin/dwp-dev",
+      "requiredRemoteExactBeforeAuthorityCarrier": true,
+      "authorityCarrierAdvanceAllowed": true
+    },
+    "agent": {
+      "repository": "dwp_agent",
+      "branch": "dwp-dev",
+      "commit": "9beb5439cad065e7d919a98c9f9becb44481508a",
+      "tree": "fe3880719360f4bdeff88bbbac1edc6f8affed88",
+      "requiredRemote": "origin/dwp-dev",
+      "requiredRemoteExact": true,
+      "readOnly": true
+    }
+  },
+  "exactCentralBaseline": {
+    "productAuthorization": {
+      "bundle": "v60",
+      "state": "DRAFT",
+      "declaredChecksum": "405ac7c88d30a5730faa40c730968fffc873bd1a3679e4997532f0ea9ff1c47c",
+      "counts": {
+        "capabilities": 278,
+        "accessPolicies": 24,
+        "entitlementExpressions": 17,
+        "predicatePolicies": 86,
+        "routes": 1154,
+        "PAGE": 161,
+        "DATA": 348,
+        "ACTION": 645
+      },
+      "sys008OperationDelta": {
+        "total": 20,
+        "page": 1,
+        "data": 3,
+        "action": 16
+      }
+    },
+    "auth": {
+      "migration": "V269",
+      "feature": "HRIS_INTEGRATION_CONTROL_PLANE",
+      "defaultEnabled": false,
+      "tenantEnrollmentCount": 0,
+      "assignmentOrGrantCount": 0
+    },
+    "gateway": {
+      "operationCount": 20,
+      "iaqCount": 2,
+      "sysApiCount": 18,
+      "trustedContextReconstructed": true,
+      "callerTenantOrAuthorityTrusted": false,
+      "actionIdempotencyKeyRequired": true,
+      "strongIfMatchRouteCount": 12,
+      "commandBoundStepUpRouteCount": 7
+    },
+    "platformContracts": {
+      "packageRoot": "com.dwp.services.platform.hrisconfiguration.integration",
+      "closedSchemaCount": 14,
+      "closedSchemaSourceSha256": "7067a7adad828d4918220fcde54fc0fa9a2add5db1d5745e0a4acb0a50698cf7",
+      "typedArtifacts": [
+        "PDX-007 ConnectorMappingVersion.v1",
+        "PDX-008 ConnectorExecutionRequest.v1",
+        "PDX-009 ConnectorReconciliationReceipt.v1"
+      ],
+      "event": "SYS-EVT-005",
+      "receiptActionMappingCount": 16,
+      "sharedReceiptMappingTotal": 47,
+      "productionRuntimeBindingCount": 0
+    },
+    "frontend": {
+      "root": "apps/dwp/src/features/hris/administration/integration-control-plane",
+      "primaryRoute": "/hr/settings/integrations",
+      "dwpDeepLink": "/admin/integrations/productivity?product=HCM",
+      "projectionCount": 2,
+      "renderStateCount": 9,
+      "viewportWidths": [1440, 1280, 390, 320],
+      "zoomPercent": 200,
+      "mounted": false,
+      "secondSidebarNode": false,
+      "duplicatePageOwner": false
+    }
+  },
+  "businessAndExperienceBoundary": {
+    "businessMeaning": "A tenant-scoped HRIS integration operator governs immutable connector definitions and mapping versions, executes receipt-first provider operations and reconciles ambiguous effects without exposing secrets, raw provider payloads or employee item identities.",
+    "primaryUsers": [
+      "HRIS_INTEGRATION_AUTHOR with hcm.integration.definition.update for definition, test, mapping, validation and submission",
+      "HRIS_INTEGRATION_EXECUTOR with hcm.integration.control-plane.execute for approval, activation, execution, reconciliation, retry and compensation-aware cancellation",
+      "HRIS configuration workbench readers with hcm.configuration.workbench.view for the separately authorized IAQ-057 and IAQ-062 projections"
+    ],
+    "singleOwnerDualProjection": {
+      "owner": "SYS008_SINGLE_OWNER_QUERY",
+      "primaryHrisProjection": "IAQ-057",
+      "dwpControlProjection": "IAQ-062",
+      "sameItemAndEffectiveStatusRevision": true,
+      "duplicatePersistenceControllerDomainOrCompletionCredit": false,
+      "secondSidebarNode": false,
+      "dwpProductivityPageOwnerChanged": false,
+      "mountedNow": false
+    },
+    "queryContract": {
+      "sortCountPerProjection": 8,
+      "minimumLimit": 1,
+      "maximumLimit": 100,
+      "states": ["COMPLETE", "EMPTY", "PARTIAL", "UNAVAILABLE"],
+      "fieldDecisions": ["VIEW", "MASK", "OMIT"],
+      "cursorBindingCount": 11,
+      "stalePartialUnavailableDeniedActionCount": 0,
+      "scopeChange": "CLEAR_SELECTION_CURSOR_AND_CACHED_ROWS"
+    }
+  },
+  "operationContract": {
+    "count": 20,
+    "pageCount": 1,
+    "dataCount": 3,
+    "actionCount": 16,
+    "source": "../sys-008-iaq-transport-event-and-central-authorization-successor.v1.json#/transportAndAuthorizationContract/operationBindings",
+    "bindings": [
+      {"api":"IAQ-057","pep":"IAQ.OP.057","method":"GET","browserPath":"/api/platform/v1/hris/workbench/settings-integrations","servicePath":"/v1/hris/workbench/settings-integrations","routeContractKey":"route.hcm.configuration.settings-integrations.page","routeKind":"PAGE","capability":"hcm.configuration.workbench.view","meaning":"HRIS_SETTINGS_POLICY_PROJECTION"},
+      {"api":"IAQ-062","pep":"IAQ.OP.062","method":"GET","browserPath":"/api/platform/v1/hris/workbench/dwp-integrations","servicePath":"/v1/hris/workbench/dwp-integrations","routeContractKey":"route.hcm.configuration.dwp-integrations.data","routeKind":"DATA","capability":"hcm.configuration.workbench.view","meaning":"DWP_CONTROL_POLICY_PROJECTION"},
+      {"api":"SYS-API-021.GET","pep":"PEP-SYS-022","method":"GET","browserPath":"/api/platform/v1/admin/hris/connectors","servicePath":"/v1/admin/hris/connectors","routeContractKey":"route.hcm.configuration.connector-catalog.data","routeKind":"DATA","capability":"hcm.integration.definition.update","meaning":"LIST_CONNECTORS"},
+      {"api":"SYS-API-021.POST","pep":"PEP-SYS-023","method":"POST","browserPath":"/api/platform/v1/admin/hris/connectors","servicePath":"/v1/admin/hris/connectors","routeContractKey":"route.hcm.configuration.connector-definition-create.action","routeKind":"ACTION","capability":"hcm.integration.definition.update","meaning":"CREATE_DEFINITION_DRAFT"},
+      {"api":"SYS-API-022","pep":"PEP-SYS-024","method":"POST","browserPath":"/api/platform/v1/admin/hris/connectors/{connectorId}/test","servicePath":"/v1/admin/hris/connectors/{connectorId}/test","routeContractKey":"route.hcm.configuration.connector-test.action","routeKind":"ACTION","capability":"hcm.integration.definition.update","meaning":"ISSUE_CONNECTION_TEST_RECEIPT"},
+      {"api":"SYS-API-023","pep":"PEP-SYS-025","method":"POST","browserPath":"/api/platform/v1/admin/hris/connectors/{connectorId}/mappings/{version}/dry-runs","servicePath":"/v1/admin/hris/connectors/{connectorId}/mappings/{version}/dry-runs","routeContractKey":"route.hcm.configuration.connector-mapping-dry-run.action","routeKind":"ACTION","capability":"hcm.integration.definition.update","meaning":"VALIDATE_TRANSFORM_WITHOUT_PROVIDER_OR_DOMAIN_EFFECT"},
+      {"api":"SYS-API-024","pep":"PEP-SYS-026","method":"POST","browserPath":"/api/platform/v1/admin/hris/connectors/{connectorId}/executions","servicePath":"/v1/admin/hris/connectors/{connectorId}/executions","routeContractKey":"route.hcm.configuration.connector-execution-create.action","routeKind":"ACTION","capability":"hcm.integration.control-plane.execute","meaning":"CREATE_RECEIPT_FIRST_EXECUTION"},
+      {"api":"SYS-API-025","pep":"PEP-SYS-027","method":"GET","browserPath":"/api/platform/v1/admin/hris/connector-executions/{executionId}","servicePath":"/v1/admin/hris/connector-executions/{executionId}","routeContractKey":"route.hcm.configuration.connector-execution-detail.data","routeKind":"DATA","capability":"hcm.integration.control-plane.execute","meaning":"READ_EXECUTION_AND_RECONCILIATION_RECEIPT"},
+      {"api":"SYS-API-057","pep":"PEP-SYS-059","method":"POST","browserPath":"/api/platform/v1/admin/hris/connectors/{connectorId}/validate","servicePath":"/v1/admin/hris/connectors/{connectorId}/validate","routeContractKey":"route.hcm.configuration.connector-definition-validate.action","routeKind":"ACTION","capability":"hcm.integration.definition.update","meaning":"VALIDATE_DEFINITION_VERSION"},
+      {"api":"SYS-API-058","pep":"PEP-SYS-060","method":"POST","browserPath":"/api/platform/v1/admin/hris/connectors/{connectorId}/submit","servicePath":"/v1/admin/hris/connectors/{connectorId}/submit","routeContractKey":"route.hcm.configuration.connector-definition-submit.action","routeKind":"ACTION","capability":"hcm.integration.definition.update","meaning":"SUBMIT_TESTED_DEFINITION_VERSION"},
+      {"api":"SYS-API-059","pep":"PEP-SYS-061","method":"POST","browserPath":"/api/platform/v1/admin/hris/connectors/{connectorId}/approve","servicePath":"/v1/admin/hris/connectors/{connectorId}/approve","routeContractKey":"route.hcm.configuration.connector-definition-approve.action","routeKind":"ACTION","capability":"hcm.integration.control-plane.execute","meaning":"APPROVE_DEFINITION_BY_SEPARATE_ACTOR"},
+      {"api":"SYS-API-060","pep":"PEP-SYS-062","method":"POST","browserPath":"/api/platform/v1/admin/hris/connectors/{connectorId}/activate","servicePath":"/v1/admin/hris/connectors/{connectorId}/activate","routeContractKey":"route.hcm.configuration.connector-definition-activate.action","routeKind":"ACTION","capability":"hcm.integration.control-plane.execute","meaning":"ACTIVATE_APPROVED_DEFINITION"},
+      {"api":"SYS-API-061","pep":"PEP-SYS-063","method":"POST","browserPath":"/api/platform/v1/admin/hris/connectors/{connectorId}/mappings","servicePath":"/v1/admin/hris/connectors/{connectorId}/mappings","routeContractKey":"route.hcm.configuration.connector-mapping-version-create.action","routeKind":"ACTION","capability":"hcm.integration.definition.update","meaning":"CREATE_IMMUTABLE_MAPPING_VERSION_DRAFT"},
+      {"api":"SYS-API-062","pep":"PEP-SYS-064","method":"POST","browserPath":"/api/platform/v1/admin/hris/connectors/{connectorId}/mappings/{version}/validate","servicePath":"/v1/admin/hris/connectors/{connectorId}/mappings/{version}/validate","routeContractKey":"route.hcm.configuration.connector-mapping-version-validate.action","routeKind":"ACTION","capability":"hcm.integration.definition.update","meaning":"VALIDATE_MAPPING_VERSION"},
+      {"api":"SYS-API-063","pep":"PEP-SYS-065","method":"POST","browserPath":"/api/platform/v1/admin/hris/connectors/{connectorId}/mappings/{version}/submit","servicePath":"/v1/admin/hris/connectors/{connectorId}/mappings/{version}/submit","routeContractKey":"route.hcm.configuration.connector-mapping-version-submit.action","routeKind":"ACTION","capability":"hcm.integration.definition.update","meaning":"SUBMIT_VALIDATED_MAPPING_VERSION"},
+      {"api":"SYS-API-064","pep":"PEP-SYS-066","method":"POST","browserPath":"/api/platform/v1/admin/hris/connectors/{connectorId}/mappings/{version}/approve","servicePath":"/v1/admin/hris/connectors/{connectorId}/mappings/{version}/approve","routeContractKey":"route.hcm.configuration.connector-mapping-version-approve.action","routeKind":"ACTION","capability":"hcm.integration.control-plane.execute","meaning":"APPROVE_MAPPING_BY_SEPARATE_ACTOR"},
+      {"api":"SYS-API-065","pep":"PEP-SYS-067","method":"POST","browserPath":"/api/platform/v1/admin/hris/connectors/{connectorId}/mappings/{version}/activate","servicePath":"/v1/admin/hris/connectors/{connectorId}/mappings/{version}/activate","routeContractKey":"route.hcm.configuration.connector-mapping-version-activate.action","routeKind":"ACTION","capability":"hcm.integration.control-plane.execute","meaning":"ACTIVATE_APPROVED_MAPPING"},
+      {"api":"SYS-API-066","pep":"PEP-SYS-068","method":"POST","browserPath":"/api/platform/v1/admin/hris/connector-executions/{executionId}/reconcile","servicePath":"/v1/admin/hris/connector-executions/{executionId}/reconcile","routeContractKey":"route.hcm.configuration.connector-execution-reconcile.action","routeKind":"ACTION","capability":"hcm.integration.control-plane.execute","meaning":"RECONCILE_WITH_ORIGINAL_PROVIDER_KEY"},
+      {"api":"SYS-API-067","pep":"PEP-SYS-069","method":"POST","browserPath":"/api/platform/v1/admin/hris/connector-executions/{executionId}/retry","servicePath":"/v1/admin/hris/connector-executions/{executionId}/retry","routeContractKey":"route.hcm.configuration.connector-execution-retry.action","routeKind":"ACTION","capability":"hcm.integration.control-plane.execute","meaning":"RETRY_EXACT_RETRYABLE_FAILED_ITEM_SET"},
+      {"api":"SYS-API-068","pep":"PEP-SYS-070","method":"POST","browserPath":"/api/platform/v1/admin/hris/connector-executions/{executionId}/cancel","servicePath":"/v1/admin/hris/connector-executions/{executionId}/cancel","routeContractKey":"route.hcm.configuration.connector-execution-cancel.action","routeKind":"ACTION","capability":"hcm.integration.control-plane.execute","meaning":"PRE_DISPATCH_CANCEL_OR_EXPLICIT_COMPENSATION"}
+    ],
+    "commandHeaders": {
+      "allActions": ["Authorization", "X-Correlation-Id", "X-Purpose-Code", "Idempotency-Key"],
+      "strongIfMatchCount": 12,
+      "dataRoutes": "Reject command-only Idempotency-Key and If-Match while retaining verified session identity and trusted context reconstruction."
+    }
+  },
+  "implementationShape": {
+    "runtimeOwner": "dwp-platform-server",
+    "forbiddenService": "dwp-sys-server",
+    "packageRoot": "com.dwp.services.platform.hrisconfiguration.integration",
+    "singleOwnerQuery": true,
+    "receiptFirstExecution": true,
+    "typedArtifactsOnly": true,
+    "opaqueReferencesOnly": true,
+    "rawSecretMappingProviderPayloadOrEmployeeIdentityPersistence": false,
+    "realProviderBinding": "WITHHELD_UNTIL_EXPLICIT_TENANT_ENROLLMENT_AND_LATER_RELEASE_GATE",
+    "lifecycle": {
+      "definitionAggregate": ["INACTIVE", "ACTIVE", "SUSPENDED", "RETIRED"],
+      "definitionVersion": ["DRAFT", "VALIDATED", "TESTED", "PENDING_APPROVAL", "APPROVED", "ACTIVE", "SUSPENDED", "RETIRED"],
+      "mappingVersion": ["DRAFT", "VALIDATED", "PENDING_APPROVAL", "APPROVED", "ACTIVE", "SUSPENDED", "RETIRED"],
+      "execution": ["ACCEPTED", "TRANSFORMING", "DISPATCHED", "RESULT_UNKNOWN", "ACKNOWLEDGED", "RECONCILING", "RECONCILED", "PARTIAL", "FAILED", "DEAD_LETTER", "CANCELLED"],
+      "executionItem": ["PENDING", "TRANSFORMED", "DISPATCHED", "RESULT_UNKNOWN", "ACCEPTED", "REJECTED_RETRYABLE", "REJECTED_FINAL", "RECONCILED", "CANCELLED"],
+      "executionAttempt": ["READY", "DISPATCHED", "RESULT_UNKNOWN", "ACKNOWLEDGED", "RECONCILED", "FAILED", "CANCELLED"],
+      "exactMatrices": "INCORPORATED_WITHOUT_NARROWING_FROM_semantic-disposition.v1.json#/lifecycleDecision_SHA256_50cfba8de5469249d44ac149f24f45f7f2a6f40194e2df001b857fac632d6ec3"
+    },
+    "separationOfDuties": {
+      "author": "HRIS_INTEGRATION_AUTHOR",
+      "approverAndExecutor": "HRIS_INTEGRATION_EXECUTOR",
+      "selfApprovalActivationOrOwnUnapprovedExecution": "FORBIDDEN"
+    },
+    "primaryEvent": "SYS-EVT-005",
+    "eventRule": "Validate and append one minimal event per committed execution revision atomically with execution CAS, shared receipt and audit; exclude secrets, raw payload and employee identity."
+  },
+  "ownerWritableBoundary": {
+    "effectiveOnlyAfterSeparateActiveLeaseAndExecutableStartToken": true,
+    "backend": {
+      "migrationExactPath": "dwp-platform-server/src/main/resources/db/migration/V334__create_hris_integration_control_plane.sql",
+      "additionsUnder": [
+        "dwp-platform-server/src/main/java/com/dwp/services/platform/hrisconfiguration/integration/**",
+        "dwp-platform-server/src/test/java/com/dwp/services/platform/hrisconfiguration/integration/**",
+        "dwp-platform-server/src/test/resources/contracts/hris/**"
+      ],
+      "preserveExactCentralContractFiles": [
+        "Sys008ClosedTransportSchemaReference.java",
+        "Sys008TypedArtifactContract.java",
+        "Sys008EventContract.java",
+        "Sys008ProjectionContract.java",
+        "Sys008OpaqueReferenceOwnerPort.java",
+        "Sys008EgressBoundary.java",
+        "sys008-event-payload.v1.schema.json",
+        "sys008-g2-transport-schemas.v1.json"
+      ],
+      "sharedCentralNoTouch": [
+        "Product authorization v60 and all generated copies",
+        "Auth V269 and central Auth validators",
+        "dwp-gateway SYS-008 mappings and trusted-context filter",
+        "HrisCommandReceiptController",
+        "AuthHrisExplorerAuthorityEvidenceQuery",
+        "all Platform migrations V1 through V333"
+      ]
+    },
+    "frontend": {
+      "additionsUnder": ["apps/dwp/src/features/hris/administration/integration-control-plane/**"],
+      "preserveExactCentralContractFiles": [
+        "integration-control-plane-contract.ts",
+        "integration-control-plane-surface.tsx",
+        "integration-control-plane-surface.test.tsx",
+        "index.ts"
+      ],
+      "forbidden": [
+        "route registration",
+        "sidebar or menu registration",
+        "DWP productivity page ownership change",
+        "shell or i18n edits",
+        "changing mounted, defaultEnabled or tenantEnrollmentCount"
+      ]
+    },
+    "evidenceOnly": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-05-module-results-r1/base-tfr-sys-008/**",
+    "agentRepository": "OUT_OF_SCOPE"
+  },
+  "migration": {
+    "stream": "PLATFORM_MAIN",
+    "version": "V334",
+    "predecessorHighWater": "V333",
+    "path": "dwp-platform-server/src/main/resources/db/migration/V334__create_hris_integration_control_plane.sql",
+    "state": "RESERVED_NOT_ACTIVE",
+    "createExactlySixTables": [
+      "sys_connector_definitions",
+      "sys_connector_definition_versions",
+      "sys_connector_mapping_versions",
+      "sys_connector_executions",
+      "sys_connector_execution_items",
+      "sys_connector_execution_attempts"
+    ],
+    "reuseOnly": [
+      "sys_hris_command_receipts",
+      "sys_domain_event_outbox",
+      "sys_domain_event_inbox",
+      "sys_audit_outbox",
+      "sys_audit_events",
+      "shared operations exception projection"
+    ],
+    "sharedReceiptCompatibility": "V334 applies SYS-008 terminal rules only to the exact sixteen SYS-008 originatingAction values and preserves the V333 SYS-006 RESULT_UNKNOWN recovery and every other admitted producer contract.",
+    "seventhTableForbidden": true,
+    "authoringAllowedNow": false,
+    "activationCondition": "A later append-only active-lease successor must hash-bind this independently reviewed packet, the reservation and the fresh clean backend worktree receipt before an executable start token is issued."
+  },
+  "rollout": {
+    "feature": "HRIS_INTEGRATION_CONTROL_PLANE",
+    "defaultEnabled": false,
+    "enrolledTenants": [],
+    "productionProviderBindings": [],
+    "frontendMounted": false,
+    "frontendSidebarNodeAdded": false,
+    "customerDataAuthorized": false,
+    "businessCompletionIncrement": 0
+  },
+  "plannedWorktrees": {
+    "backend": {
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/r7-batch05/sys-008/backend",
+      "branch": "codex/hris-wave7-r7-batch05-sys-008-backend-20261026-r1",
+      "createFromCommit": "7406b9d6a4ba2c3f777fad3b9e9caa609ec9ff72",
+      "expectedInitialTree": "b701265b8b22c4a1ada559a702091344c0686b42"
+    },
+    "frontend": {
+      "absolutePath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/r7-batch05/sys-008/frontend",
+      "branch": "codex/hris-wave7-r7-batch05-sys-008-frontend-20261026-r1",
+      "createFromCommit": "TO_BE_REPLACED_BY_THE_PUSHED_AUTHORITY_CARRIER_COMMIT_IN_THE_WORKTREE_RECEIPT",
+      "expectedInitialTree": "TO_BE_REPLACED_BY_THE_PUSHED_AUTHORITY_CARRIER_TREE_IN_THE_WORKTREE_RECEIPT"
+    },
+    "materializedNow": false,
+    "upstreamAllowedAtMaterialization": false,
+    "branchPushAllowedAtMaterialization": false
+  },
+  "acceptanceCoverage": {
+    "criteriaCount": 15,
+    "criteriaIds": [
+      "SYS008-AC-01",
+      "SYS008-AC-02",
+      "SYS008-AC-03",
+      "SYS008-AC-04",
+      "SYS008-AC-05",
+      "SYS008-AC-06",
+      "SYS008-AC-07",
+      "SYS008-AC-08",
+      "SYS008-AC-09",
+      "SYS008-AC-10",
+      "SYS008-AC-11",
+      "SYS008-AC-12",
+      "SYS008-AC-13",
+      "SYS008-AC-14",
+      "SYS008-AC-15"
+    ],
+    "statements": "INCORPORATED_WITHOUT_SEMANTIC_NARROWING_FROM_semantic-disposition.v1.json#/acceptanceCriteria_SHA256_3062813c9eb06ad98031b8df32bca44d52eb7187f407914e08d26c60cbd12c95"
+  },
+  "targetedVerificationAfterActivation": {
+    "executionAuthorizedNow": false,
+    "goldenScenarios": [
+      "SYS-GOLD-003",
+      "SYS-GOLD-008",
+      "SYS-GOLD-020",
+      "SYS-GOLD-021",
+      "SYS-GOLD-022",
+      "SYS-GOLD-023",
+      "SYS-GOLD-024",
+      "SYS-GOLD-032",
+      "SYS-GOLD-040",
+      "SYS-GOLD-045",
+      "SYS-GOLD-054",
+      "SYS-GOLD-055",
+      "SYS-GOLD-056"
+    ],
+    "themes": [
+      "migration contract plus clean and V333-to-V334 PostgreSQL",
+      "tenant RLS composite key and ACL negatives",
+      "definition and mapping immutability lifecycle and separation of duties",
+      "endpoint allowlist SSRF DNS rebinding and secret non-disclosure",
+      "opaque reference substitution negatives",
+      "receipt idempotency RESULT_UNKNOWN reconciliation and existing-producer compatibility",
+      "failed-only retry cancel compensation and worker recovery",
+      "execution item and attempt transition CAS terminal and direct-SQL negatives",
+      "SYS-EVT-005 exact atomic outbox and inbox dedupe",
+      "IAQ-057 and IAQ-062 single-owner query contract",
+      "VIEW MASK OMIT cursor action and scope-change negatives",
+      "frontend state accessibility responsive and default-OFF tests",
+      "log database DOM event and schema forbidden secret/payload scans"
+    ],
+    "policy": "Run changed-surface targets and contract negatives first; expand only if a targeted failure proves broader impact. Never loop repository-wide suites."
+  },
+  "authority": {
+    "ownerPacketIssued": true,
+    "reservedNotActiveV334Bound": true,
+    "authorityCarrierCommitAndPushMayBeAuthorizedOnlyByIndependentReview": true,
+    "freshCleanWorktreeMaterializationMayBeAuthorizedOnlyAfterOriginExactCarrier": true,
+    "activeV334LeaseAuthorized": false,
+    "executableStartTokenAuthorized": false,
+    "migrationOrSourceAuthoringAuthorized": false,
+    "testExecutionAuthorized": false,
+    "moduleBranchCommitOrPushAuthorized": false,
+    "mergeToDwpDevAuthorized": false,
+    "routeOrMenuMountAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionProviderOrSecretBindingAuthorized": false,
+    "customerDataAuthorized": false,
+    "productionReleaseAuthorized": false
+  },
+  "nonClaims": [
+    "V334 is active or authored.",
+    "An executable SYS-008 start token exists.",
+    "The module worktrees exist before the authority carrier is pushed.",
+    "Any runtime source, test execution, module branch push or dwp-dev merge is authorized.",
+    "The frontend surface is mounted or visible in navigation.",
+    "Any tenant, provider, secret or customer data is connected."
+  ],
+  "nextGate": "INDEPENDENTLY_REVIEW_THIS_PACKET_AND_THE_RESERVED_NOT_ACTIVE_V334_LEASE_COMMIT_AND_PUSH_THE_EXACT_THREE_DOCUMENT_AUTHORITY_CARRIER_VERIFY_ORIGIN_EXACT_THEN_MATERIALIZE_TWO_FRESH_CLEAN_NO_UPSTREAM_WORKTREES_AND_HASH_BIND_THE_MATERIALIZATION_RECEIPT; STOP_BEFORE_ACTIVE_LEASE_TOKEN_OR_SOURCE"
+}
