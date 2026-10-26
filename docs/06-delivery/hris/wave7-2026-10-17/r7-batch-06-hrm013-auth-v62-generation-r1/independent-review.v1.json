@@ -1,0 +1,72 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-auth-v62-generation-execution-authority-independent-review.v1",
+  "reviewedAt": "2026-10-26T17:08:44Z",
+  "reviewer": "INDEPENDENT_HRM013_AUTH_V62_GENERATION_AUTHORITY_REVIEW",
+  "scope": {
+    "authorityPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-v62-generation-r1/auth-v62-generation-execution-authority.v1.json",
+    "tokenPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-v62-generation-r1/auth-v62-generation.start-token.v1.json",
+    "validatorPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-v62-generation-r1/validate_hrm013_auth_v62_generation_authority.py",
+    "packagePath": "package.json",
+    "reviewedBoundaries": [
+      "EXACT_PREDECESSOR_CARRIER_AND_CENTRAL_RECEIPT_PINS",
+      "EXACT_SEMANTIC_AUTHORITY_AND_SERVICE_BINDING_REGISTER_PINS",
+      "EXACT_BACKEND_BASE_GENERATOR_INPUTS_AND_MAXIMUM_CHANGED_PATHS",
+      "CARRIER_PUSH_AND_EXTERNAL_CLEAN_WORKTREE_RECEIPT_REQUIRED",
+      "ONE_RUN_V62_DRAFT_GENERATION_AND_TARGETED_VERIFICATION_ONLY",
+      "FIXED_EIGHTH_VALIDATOR_CARRIER_EXTERNAL_RECEIPT_AND_DIRECT_FAST_FORWARD_HANDOFF",
+      "NO_V271_MIGRATION_RUNTIME_UI_ACTIVATION_OR_PRODUCTION_AUTHORITY"
+    ]
+  },
+  "findings": {
+    "p0": [],
+    "p1": [],
+    "p2": [],
+    "notes": [
+      "The carrier authorizes only deterministic Auth product-authorization v62 generation after its external clean-worktree receipt.",
+      "The committed changed paths must be a nonempty subset of the closed maximum allowlist and v1 through v61 remain byte-identical.",
+      "Backend dwp-dev integration remains forbidden until the fixed eighth-validator successor carrier and its external direct-fast-forward receipt are independently reviewed, committed and pushed.",
+      "No V271 reservation, migration, runtime, UI, activation, tenant enrollment, production binding or business-completion credit is authorized."
+    ]
+  },
+  "finalVerdict": {
+    "p0": 0,
+    "p1": 0,
+    "p2": 0,
+    "decision": "GO_FOR_AUTH_V62_GENERATION_AUTHORITY_CARRIER_COMMIT_AND_PUSH_ONLY"
+  },
+  "authority": {
+    "independentReviewComplete": true,
+    "carrierCommitAndPushAuthorized": true,
+    "cleanWorktreeMaterializationAuthorizedAfterCarrierPush": true,
+    "authV62GenerationAuthorizedAfterCleanReceipt": true,
+    "backendDwpDevIntegrationAuthorized": false,
+    "authV271ReservationAuthorized": false,
+    "authV271ImplementationAuthorized": false,
+    "migrationAuthoringAuthorized": false,
+    "runtimeImplementationAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0
+  },
+  "artifactPins": [
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-v62-generation-r1/auth-v62-generation-execution-authority.v1.json",
+      "bytes": 28892,
+      "sha256": "5e1fcb96b785746eda572c2af1918340b776fcb4e5d152900f8ea29acabc2350"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-v62-generation-r1/auth-v62-generation.start-token.v1.json",
+      "bytes": 6459,
+      "sha256": "c79e902bcc38d20940142685f3403c4ae9c68f8b501807d168d68993a2874fab"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-v62-generation-r1/validate_hrm013_auth_v62_generation_authority.py",
+      "bytes": 73707,
+      "sha256": "838aa615dbe5311f7af28eca26b8d480bdd21f6448e9eea6b80a39b506762794"
+    },
+    {
+      "path": "package.json",
+      "bytes": 14999,
+      "sha256": "64ee851196664cfa8937262a43ae14bb70a5873c294f03868bef34b37bb95794"
+    }
+  ]
+}

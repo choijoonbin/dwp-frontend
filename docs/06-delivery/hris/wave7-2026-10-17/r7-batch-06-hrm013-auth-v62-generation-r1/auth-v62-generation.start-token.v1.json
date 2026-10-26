@@ -1,0 +1,96 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-auth-v62-generation-start-token.v1",
+  "state": "EXECUTABLE_ONLY_AFTER_CARRIER_PUSH_AND_HASH_BOUND_CLEAN_WORKTREE_RECEIPT",
+  "tokenId": "HRIS-WAVE7-R7-BATCH06-HRM013-AUTH-V62-GENERATION-20261027-R1",
+  "lane": "AUTH_PRODUCT_AUTHORIZATION_V62_GENERATION_PREP",
+  "authorityBinding": {
+    "authorityPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-v62-generation-r1/auth-v62-generation-execution-authority.v1.json",
+    "authoritySchema": "dwp.hris.wave7.hrm013-auth-v62-generation-execution-authority.v1",
+    "validatorPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-v62-generation-r1/validate_hrm013_auth_v62_generation_authority.py",
+    "reviewPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-v62-generation-r1/independent-review.v1.json",
+    "packagePath": "package.json",
+    "bindingRule": "The independent review pins the exact authority, token, validator and package bytes. All four artifacts and the package append are introduced together; this token does not self-pin or create a cyclic artifact hash."
+  },
+  "execution": {
+    "repository": "dwp-backend",
+    "baseCommit": "3505cb2e84fc73f97d62de385cc347c5f8c81572",
+    "baseTree": "fa84a79668fd0f133d34c81d5a649747a6c527b6",
+    "branch": "codex/hris-wave7-batch06-hrm013-auth-v62-generation-backend-20261026-r1",
+    "worktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/auth-v62-generation",
+    "cleanWorktreeReceiptPath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/receipts/auth-v62-generation-clean-worktree-receipt.v1.json",
+    "operation": "GENERATE_VALIDATE_COMMIT_AND_PUSH_AUTH_PRODUCT_AUTHORIZATION_V62_ONLY",
+    "generatorRunCount": 1,
+    "changedPathRule": "The committed changed paths are a nonempty subset of generationExecution.maximumChangedPaths in the bound authority; byte-identical allowlisted outputs are omitted and every unlisted path fails closed.",
+    "requiredOutcomes": [
+      "Create one immutable product-authorization v62 DRAFT successor with exactly one capability and one dedicated Approval ACTION route over byte-identical v61.",
+      "Generate the canonical alias, immutable v62 bundle, indexes, optional deterministic fixture successor, Auth seed artifacts, explicit Approval PEP and version-62 service PEP artifacts.",
+      "Run only the authority-bound generator checks and named tests once, correcting and rerunning only the smallest failed target.",
+      "Commit and push only the exact verified generation-lane tree and issue external hash-bound verification and independent-review receipts."
+    ]
+  },
+  "verification": {
+    "requiredBeforeCommit": [
+      "exact changed-path subset and regular-file mode check",
+      "v1 through v61 byte-immutability check",
+      "generator --check",
+      "fixture --check",
+      "scripts.tests.test_product_authorization_v61",
+      "scripts.tests.test_product_authorization_v62",
+      "ProductAuthorizationV62ContractTest",
+      "ProductAuthorizationSeedLoaderTest",
+      "ProductAuthorizationContractReleaseLineageTest",
+      "ProductAuthorizationReleaseLineageTest",
+      "Auth and Gateway PilotAuthorizationFixtureAdapterTest",
+      "ApprovalRelease62PepContractTest",
+      "ProductSurfaceDecisionContextFilterTest",
+      "GeneratedProductRouteCatalogTest",
+      "DRAFT, zero automatic import, zero activation and no migration assertions"
+    ],
+    "requiredBeforePush": [
+      "independent source review reports zero unresolved P0, P1 and P2",
+      "lane commit is one non-merge direct child of the exact base",
+      "lane tree and every changed artifact byte and SHA-256 are recorded in the external targeted-verification receipt"
+    ],
+    "requiredAfterPush": [
+      "the post-implementation review receipt pins the targeted-verification receipt, exact lane commit, tree and changed paths",
+      "the post-implementation review receipt records zero P0, P1 and P2 and GO_FOR_AUTH_V62_GENERATION_LANE_BRANCH_PUSH_ONLY",
+      "the receipt causal order is lane commit <= targeted verification <= independent review <= push observation <= receipt recording",
+      "both external receipts are current-user 0600 single-link regular no-follow files within the sealed size bound"
+    ],
+    "requiredBeforeBackendDwpDevIntegration": [
+      "a separate central integration authority exists",
+      "the sixth-validator two-file descendant-governance side carrier is merged and pushed on frontend dwp-dev",
+      "the external descendant-governance receipt passes the immutable sixth validator"
+    ]
+  },
+  "forbidden": [
+    "Auth V271 reservation, SQL authoring or control-plane implementation",
+    "any database migration",
+    "runtime Java implementation other than the two exact ProductAuthorizationContractValidator and ProductAuthorizationReleaseLineage compatibility paths",
+    "seed-loader, release-lineage, fixture-adapter or Gateway production implementation beyond the exact optional test-only paths in the bound authority",
+    "Approval, People, Time, Payroll or Auth HRM-013 controller, relay, client, repository or runtime implementation",
+    "People database migration V62 or Approval database migration V60",
+    "frontend UI, sidebar, menu or route work",
+    "feature enablement, automatic bundle import, tenant enrollment, assignment, grant, credential or key creation",
+    "direct backend dwp-dev merge, rebase or squash",
+    "production binding or release",
+    "repository-wide test execution without an append-only authority successor"
+  ],
+  "authorization": {
+    "tokenPrepared": true,
+    "executableAfterCarrierPushAndCleanReceipt": true,
+    "authV62GenerationAuthorized": true,
+    "boundedGenerationCompatibilitySourceAuthorized": true,
+    "laneCommitAndPushAuthorizedAfterVerification": true,
+    "backendDwpDevIntegrationAuthorized": false,
+    "authV271ReservationAuthorized": false,
+    "authV271ImplementationAuthorized": false,
+    "migrationAuthoringAuthorized": false,
+    "runtimeImplementationAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0
+  },
+  "nextGate": "COMMIT_AND_PUSH_THE_AUTHORITY_CARRIER_MATERIALIZE_THE_EXACT_CLEAN_WORKTREE_ISSUE_THE_HASH_BOUND_RECEIPT_THEN_GENERATE_AND_VERIFY_V62_ONCE"
+}

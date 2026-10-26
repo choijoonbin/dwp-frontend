@@ -1,0 +1,496 @@
+{
+  "schema": "dwp.hris.wave7.hrm013-auth-v62-generation-execution-authority.v1",
+  "state": "INDEPENDENTLY_REVIEWED_HASH_BOUND_AUTH_V62_GENERATION_PREPARATION_AUTHORITY",
+  "lane": "AUTH_PRODUCT_AUTHORIZATION_V62_GENERATION_PREP",
+  "predecessorCarrier": {
+    "repository": "dwp-frontend",
+    "branch": "dwp-dev",
+    "commit": "b3841a03d3ee60864b721cc1d98397c3004de1d8",
+    "tree": "127540e50eae673fbf63bb96b025a8a0e641e5ea",
+    "carrierRule": "This authority, its executable token, independent review and validator plus the one package.json validator append are introduced together by one non-merge direct child of this predecessor.",
+    "exactCarrierChangedPaths": [
+      "package.json",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-v62-generation-r1/auth-v62-generation-execution-authority.v1.json",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-v62-generation-r1/auth-v62-generation.start-token.v1.json",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-v62-generation-r1/independent-review.v1.json",
+      "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-v62-generation-r1/validate_hrm013_auth_v62_generation_authority.py"
+    ],
+    "validatorPosition": 7,
+    "packageAppendRule": "Append exactly one tracked regular Python validator immediately after the immutable sixth validator using literal space-ampersand-ampersand-space; no pre-hook, post-hook, duplicate command or other package change is allowed."
+  },
+  "predecessorArtifacts": [
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-shared-contract-integration-r1/shared-contract-central-integration-authority.v1.json",
+      "bytes": 4774,
+      "sha256": "a55181b2477c6a0d7edb6aaba42248e12709d39ab65bc9fa203838cc4000becc"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-shared-contract-integration-r1/validate_hrm013_shared_contract_integration.py",
+      "bytes": 78934,
+      "sha256": "d177b30ca101a1cc3fd69749ff064d5a8e73224ff308fe812f18690ef291d49e"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-shared-contract-integration-r1/independent-review.v1.json",
+      "bytes": 2945,
+      "sha256": "2f0d8a62b8cf4d0e3ba960bca214a0bd2c721d6b4b53af67957553731210d211"
+    },
+    {
+      "path": "package.json",
+      "bytes": 14858,
+      "sha256": "ca2693e843d440191a84f29d417e553c8296b5b93a1dcdc8644b13d1a92eb1bb"
+    },
+    {
+      "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/receipts/shared-central-integration-authority.v1.json",
+      "bytes": 4186,
+      "sha256": "742db293eee814cbb038eede1222a2841c711346101ea1c466e2051c276ad672"
+    }
+  ],
+  "semanticAuthorityPins": [
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-owner-runtime-binding-gate-r1/hrm-013-owner-runtime-binding-gate.v1.json",
+      "bytes": 170804,
+      "sha256": "aa88b6116f2fa8ca4e96d85204414a737e763afa4e1bb01372e31fdaa59deb47",
+      "introducingCommit": "2d07c6a830d01b1702b08f44b372ec611bbc5d31",
+      "introducingTree": "3215d5fd107c01410b7555f2254719ba371c1aac"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-owner-runtime-binding-gate-r1/independent-review.v1.json",
+      "bytes": 8545,
+      "sha256": "18487992c6f20f9fa66b7e12b06791a5e074e4bf7e816e9a37956d5822075410",
+      "introducingCommit": "2d07c6a830d01b1702b08f44b372ec611bbc5d31",
+      "introducingTree": "3215d5fd107c01410b7555f2254719ba371c1aac"
+    },
+    {
+      "path": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-owner-runtime-execution-r1/service-api-auth-binding-register.successor.v3.csv",
+      "bytes": 23958,
+      "sha256": "16e1401119b1bfff0cf6fa0383ec311e154db91e86df738fb9dffa5e4dd8bf1a",
+      "introducingCommit": "58cad5d0b1506cda5103dfe87a54b589bdebdc52",
+      "introducingTree": "46e0a4f71fe1d545a9dbd9f4a25d9f1284c948cb"
+    }
+  ],
+  "backendBase": {
+    "repository": "dwp-backend",
+    "branch": "dwp-dev",
+    "commit": "3505cb2e84fc73f97d62de385cc347c5f8c81572",
+    "tree": "fa84a79668fd0f133d34c81d5a649747a6c527b6",
+    "requiredState": "SHARED_CONTRACT_DIRECT_FAST_FORWARD_INTEGRATED",
+    "requiredClean": true,
+    "requiredOriginEquality": true,
+    "v62BundleMustBeAbsent": true,
+    "authV271MigrationMustBeAbsent": true,
+    "inputPins": [
+      {
+        "path": "contracts/product-authorization/product-surfaces-v1.yaml",
+        "bytes": 2613851,
+        "sha256": "396af80df9123d7eae5e8dcabae9d6b719ba91d47646d1cac4d6b612d09050a5"
+      },
+      {
+        "path": "scripts/generate-product-authorization-contracts.py",
+        "bytes": 276087,
+        "sha256": "2b504d8a63520962e314744c2e5c5c4308bf0d06136846cf8c8364f2b758cc5a"
+      },
+      {
+        "path": "scripts/generate-product-authorization-fixtures.py",
+        "bytes": 73969,
+        "sha256": "acafcd5959e16835570e725fe3107178d9f4dfb694ed56d1725eb8569b606fd5"
+      },
+      {
+        "path": "contracts/product-authorization/product-surfaces-v1.bundle-v61.json",
+        "bytes": 2765962,
+        "sha256": "c4f38d4f943ccc7c07135699b26aaef549d7c271b50683fe14341ada95b598d7"
+      },
+      {
+        "path": "contracts/product-authorization/product-surfaces-v1.json",
+        "bytes": 2765962,
+        "sha256": "c4f38d4f943ccc7c07135699b26aaef549d7c271b50683fe14341ada95b598d7"
+      },
+      {
+        "path": "contracts/product-authorization/product-surfaces-v1.index.json",
+        "bytes": 28557,
+        "sha256": "ebf8cf6c5fdd6a670b3a7c93abad2600011137602c65b53cdff38e1f8dc36f3e"
+      }
+    ]
+  },
+  "generationExecution": {
+    "repository": "dwp-backend",
+    "branch": "codex/hris-wave7-batch06-hrm013-auth-v62-generation-backend-20261026-r1",
+    "worktree": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/auth-v62-generation",
+    "operation": "GENERATE_VALIDATE_COMMIT_AND_PUSH_AUTH_PRODUCT_AUTHORIZATION_V62_ONLY",
+    "predecessorVersion": 61,
+    "generatedVersion": 62,
+    "bundleStatus": "DRAFT",
+    "generationRunCount": 1,
+    "semanticDelta": {
+      "capabilitiesAdded": [
+        "approvals.work.hris-separation-waiver-task.approve"
+      ],
+      "accessPoliciesAdded": [],
+      "entitlementExpressionsAdded": [],
+      "predicatePoliciesAdded": [],
+      "routesAdded": [
+        "route.approvals.work.hris-separation-waiver-task-approve.action"
+      ],
+      "expectedCounts": {
+        "capabilities": 280,
+        "accessPolicies": 24,
+        "entitlementExpressions": 17,
+        "predicatePolicies": 87,
+        "routes": 1158
+      },
+      "dedicatedRoute": {
+        "routeContractKey": "route.approvals.work.hris-separation-waiver-task-approve.action",
+        "gatewayPath": "/api/approvals/v1/hris/separation-waiver-tasks/{taskId}/approve",
+        "servicePath": "/v1/hris/separation-waiver-tasks/{taskId}/approve",
+        "method": "POST",
+        "capabilityContractKey": "approvals.work.hris-separation-waiver-task.approve",
+        "riskTier": "HIGH",
+        "activationPolicy": "STEPUP-MGMT-HIGH-V1",
+        "scopeResolver": "DECIDABLE_TASK_SELF_APPROVAL_SOD",
+        "targetType": "HRIS_SEPARATION_WAIVER_TASK",
+        "targetIdPathParameter": "taskId",
+        "expectedObjectVersionSource": "COMMAND_HEADER",
+        "expectedObjectVersionName": "X-DWP-Expected-Object-Version",
+        "requestSchema": "ApprovalDtos.DecisionRequest",
+        "requiredCommandHeaders": [
+          "Idempotency-Key",
+          "X-Correlation-ID",
+          "X-DWP-Step-Up-Challenge",
+          "X-DWP-Expected-Decision-Revision",
+          "X-DWP-Expected-Object-Version"
+        ],
+        "stepUpAudience": "dwp-approval-server",
+        "bodyRule": "Accept exactly decision, comment, expectedVersion and quorum under the existing strict Approval JSON rules. Command decision equals APPROVE; expectedVersion is the current task version and equals X-DWP-Expected-Object-Version; comment is null or a bounded 2000-character value; quorum is mandatory and contains positive generation and expectedStageVersion, the exact six current workflow/form/policy pins, positive payloadRevision, exact lowercase payloadSha256 and a non-null current expectedRequestVersion. The locked workflow runtime revalidates every quorum value before mutation. No step-up evidence field is accepted in the body.",
+        "workflowRuntimeAuthority": "This is a first-class CAST route in ApprovalWorkflowRuntimeSource, WorkflowRuntimeBindingContract, Auth WorkflowRuntimeBindings, WorkflowRuntimeAuthorityService and WorkflowRuntimeIdentityAuthorityBridge. It maps only an HRM-013-bound command Decision.APPROVE to ACTION.APPROVAL_TASK:APPROVE and terminal Outcome.APPROVED, preserves the existing sealed owner, stage and target evidence, and may never be rewritten to or synthesized as the generic task-decision route."
+      }
+    },
+    "maximumChangedPaths": [
+      "contracts/product-authorization/product-surfaces-v1.yaml",
+      "scripts/generate-product-authorization-contracts.py",
+      "scripts/generate-product-authorization-fixtures.py",
+      "scripts/tests/test_product_authorization_v61.py",
+      "scripts/tests/test_product_authorization_v62.py",
+      "contracts/product-authorization/product-surfaces-v1.json",
+      "contracts/product-authorization/product-surfaces-v1.bundle-v62.json",
+      "contracts/product-authorization/product-surfaces-v1.index.json",
+      "contracts/product-authorization/pilot-fixtures.v1.generated.json",
+      "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.generated.json",
+      "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.bundle-v62.generated.json",
+      "dwp-auth-server/src/main/resources/product-authorization/product-surfaces-v1.index.generated.json",
+      "dwp-approval-server/src/main/resources/product-authorization/approval-pilot-pep-v62.generated.json",
+      "dwp-payroll-server/src/main/resources/product-authorization/hcm-payroll-pep-v62.generated.json",
+      "dwp-people-server/src/main/resources/product-authorization/hcm-people-pep-v62.generated.json",
+      "dwp-platform-server/src/main/resources/product-authorization/hcm-platform-pep-v62.generated.json",
+      "dwp-time-server/src/main/resources/product-authorization/hcm-time-pep-v62.generated.json",
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationContractValidator.java",
+      "dwp-auth-server/src/main/java/com/dwp/services/auth/service/ProductAuthorizationReleaseLineage.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/config/ProductAuthorizationSeedLoaderTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationContractReleaseLineageTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationReleaseLineageTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/service/ProductAuthorizationV62ContractTest.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/support/PilotAuthorizationFixtureAdapter.java",
+      "dwp-auth-server/src/test/java/com/dwp/services/auth/support/PilotAuthorizationFixtureAdapterTest.java",
+      "dwp-gateway/src/test/java/com/dwp/gateway/support/PilotAuthorizationFixtureAdapter.java",
+      "dwp-gateway/src/test/java/com/dwp/gateway/support/PilotAuthorizationFixtureAdapterTest.java",
+      "dwp-approval-server/src/test/java/com/dwp/services/approval/security/ApprovalRelease62PepContractTest.java",
+      "dwp-gateway/src/test/java/com/dwp/gateway/ProductSurfaceDecisionContextFilterTest.java",
+      "dwp-gateway/src/test/java/com/dwp/gateway/productsurface/GeneratedProductRouteCatalogTest.java"
+    ],
+    "pathRules": {
+      "actualChangedPathsMustBeNonemptySubset": true,
+      "byteIdenticalAllowlistedOutputMustNotBeCommitted": true,
+      "unlistedChangedPathFailsClosed": true,
+      "pathExpansionRequiresAppendOnlyAuthoritySuccessor": true,
+      "laneCommitMustBeSingleDirectChildOfExactBase": true,
+      "v1ThroughV61ArtifactsMustRemainByteIdentical": true,
+      "compatibilitySourceChangesLimitedToClosedValidatorAndLineagePaths": true,
+      "v61TestChangeLimitedToFixedArtifactAndHistoricalIndexAssertions": true,
+      "optionalCompatibilityPathMustBeOmittedWhenByteIdentical": true
+    },
+    "generatorCommands": [
+      "python3 scripts/generate-product-authorization-contracts.py",
+      "python3 scripts/generate-product-authorization-fixtures.py --write"
+    ],
+    "generatorRule": "The contracts generator runs exactly once. The fixture generator may run in the same bounded generation execution only when deterministic fixture closure changes; otherwise its script and output remain byte-identical and absent from the commit."
+  },
+  "worktreeReceiptContract": {
+    "path": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/receipts/auth-v62-generation-clean-worktree-receipt.v1.json",
+    "schema": "dwp.hris.wave7.hrm013-auth-v62-generation-clean-worktree-receipt.v1",
+    "state": "HASH_BOUND_FRESH_CLEAN_AUTH_V62_GENERATION_WORKTREE_RECEIPT",
+    "requiredBeforeSourceAuthoring": true,
+    "externalIssuanceOnly": true,
+    "fileSecurity": {
+      "regularFile": true,
+      "mode": "0600",
+      "owner": "CURRENT_EFFECTIVE_UID",
+      "linkCount": 1,
+      "maximumBytes": 65536,
+      "symlinkAllowed": false
+    },
+    "requiredEvidence": [
+      "authority carrier commit, tree, committedAt and pushObservedAt",
+      "authority and executable-token artifact bytes and SHA-256",
+      "backend repository and real worktree roots",
+      "exact branch, base commit, base tree, HEAD and tree",
+      "origin/dwp-dev at materialization equals the pinned backend base",
+      "upstream is absent and remote generation branch is absent",
+      "porcelain-v2 status and ignored/untracked source, test and build shadow inventories are empty",
+      "replace refs, grafts, sparse checkout, fsmonitor, external diff, assume-unchanged, skip-worktree and path symlinks are absent",
+      "verifiedAt and trusted verifier identity"
+    ]
+  },
+  "verificationContract": {
+    "generationChecks": [
+      "python3 scripts/generate-product-authorization-contracts.py --check",
+      "python3 scripts/generate-product-authorization-fixtures.py --check",
+      "python3 -m unittest scripts.tests.test_product_authorization_v61",
+      "python3 -m unittest scripts.tests.test_product_authorization_v62"
+    ],
+    "namedGradleTests": [
+      "com.dwp.services.auth.service.ProductAuthorizationV62ContractTest",
+      "com.dwp.services.auth.config.ProductAuthorizationSeedLoaderTest",
+      "com.dwp.services.auth.service.ProductAuthorizationContractReleaseLineageTest",
+      "com.dwp.services.auth.service.ProductAuthorizationReleaseLineageTest",
+      "com.dwp.services.auth.support.PilotAuthorizationFixtureAdapterTest",
+      "com.dwp.services.approval.security.ApprovalRelease62PepContractTest",
+      "com.dwp.gateway.support.PilotAuthorizationFixtureAdapterTest",
+      "com.dwp.gateway.ProductSurfaceDecisionContextFilterTest",
+      "com.dwp.gateway.productsurface.GeneratedProductRouteCatalogTest"
+    ],
+    "requiredAssertions": [
+      "v62 is an immutable DRAFT successor of byte-identical v61",
+      "the exact one capability and one ACTION route are the only semantic additions",
+      "canonical alias, Auth seed alias, both v62 bundles and both indexes bind the same embedded checksum",
+      "the explicit Approval PEP contains the dedicated route and HIGH capability",
+      "all listed service PEPs bind version 62 and the same checksum",
+      "the two compatibility production paths change only to admit the exact immutable v62 descriptor checksum, counts and closed capability semantics",
+      "all optional seed-loader, release-lineage, fixture-adapter and gateway tests retain prior semantics while advancing only exact v62 expectations",
+      "automatic import is false and no feature policy, assignment, tenant enrollment, service grant, key, credential or activation row is created",
+      "no migration file is added"
+    ],
+    "rerunPolicy": "Run each target group once; after a failure rerun only the smallest affected generator check or named test. No repository-wide suite is authorized."
+  },
+  "integrationHandoff": {
+    "laneCommitAndPushAuthorizedAfterZeroFindingVerification": true,
+    "directBackendDwpDevIntegrationAuthorized": false,
+    "generationReceiptRequired": true,
+    "generationReceiptPath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/receipts/auth-v62-generation-targeted-verification-receipt.v1.json",
+    "generationReceiptContract": {
+      "schema": "dwp.hris.wave7.hrm013-auth-v62-generation-targeted-verification-receipt.v1",
+      "state": "TRUSTED_EXACT_AUTH_V62_GENERATION_TREE_AND_TARGETED_TESTS_PASS",
+      "closedTopLevelFields": [
+        "schema",
+        "state",
+        "authorityCarrierCommit",
+        "authorityCarrierTree",
+        "authorityArtifact",
+        "tokenArtifact",
+        "cleanWorktreeReceiptSha256",
+        "repository",
+        "branch",
+        "baseCommit",
+        "baseTree",
+        "testedCommit",
+        "testedTree",
+        "changedPaths",
+        "changedArtifacts",
+        "generationCommands",
+        "generationRunCount",
+        "verificationCommands",
+        "exitCodes",
+        "semanticEvidence",
+        "verifiedAt",
+        "verifiedBy"
+      ],
+      "verifiedBy": "TRUSTED_HRM013_AUTH_V62_GENERATION_TARGETED_VERIFICATION",
+      "fileSecurity": {
+        "regularFile": true,
+        "mode": "0600",
+        "owner": "CURRENT_EFFECTIVE_UID",
+        "linkCount": 1,
+        "maximumBytes": 65536,
+        "symlinkAllowed": false
+      }
+    },
+    "postImplementationReviewRequired": true,
+    "postImplementationReviewPath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/receipts/auth-v62-generation-post-implementation-review.v1.json",
+    "postImplementationReviewContract": {
+      "schema": "dwp.hris.wave7.hrm013-auth-v62-generation-post-implementation-review.v1",
+      "state": "INDEPENDENTLY_REVIEWED_EXACT_AUTH_V62_GENERATION_TREE_BRANCH_PUSH_ONLY",
+      "closedTopLevelFields": [
+        "schema",
+        "state",
+        "authorityCarrierCommit",
+        "authorityCarrierTree",
+        "authorityArtifact",
+        "tokenArtifact",
+        "targetedVerificationReceiptSha256",
+        "laneCommit",
+        "laneTree",
+        "changedPaths",
+        "p0",
+        "p1",
+        "p2",
+        "decision",
+        "reviewedAt",
+        "lanePushObservedAt",
+        "recordedAt",
+        "reviewedBy"
+      ],
+      "decision": "GO_FOR_AUTH_V62_GENERATION_LANE_BRANCH_PUSH_ONLY",
+      "reviewedBy": "INDEPENDENT_HRM013_AUTH_V62_GENERATION_POST_IMPLEMENTATION_REVIEW",
+      "fileSecurity": {
+        "regularFile": true,
+        "mode": "0600",
+        "owner": "CURRENT_EFFECTIVE_UID",
+        "linkCount": 1,
+        "maximumBytes": 65536,
+        "symlinkAllowed": false
+      },
+      "causalOrder": [
+        "laneCommit.committedAt",
+        "generationReceipt.verifiedAt",
+        "postReview.reviewedAt",
+        "postReview.lanePushObservedAt",
+        "postReview.recordedAt"
+      ]
+    },
+    "sixthValidatorGovernance": {
+      "governingValidatorPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-shared-contract-integration-r1/validate_hrm013_shared_contract_integration.py",
+      "generationAuthorityCarrierMustRemainOnFrontendMainline": true,
+      "backendDescendantGovernanceCarrierParent": "b3841a03d3ee60864b721cc1d98397c3004de1d8",
+      "backendDescendantGovernanceCarrierPaths": [
+        "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-backend-descendant-governance/{GENERATION_COMMIT}/authority.v1.json",
+        "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-backend-descendant-governance/{GENERATION_COMMIT}/independent-review.v1.json"
+      ],
+      "backendDescendantReceiptPath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/receipts/backend-descendants/{GENERATION_COMMIT}.hrm013-shared-contract-governance.v1.json",
+      "ordering": [
+        "Commit and push this generation authority carrier on frontend dwp-dev before source authoring.",
+        "Create, verify, commit and push the generation lane without moving backend dwp-dev.",
+        "Create the exact two-file descendant-governance carrier on a side branch whose sole parent is b3841a03d3ee60864b721cc1d98397c3004de1d8.",
+        "Merge that reviewed side carrier into the current frontend dwp-dev while preserving this authority carrier, its validator-chain append and every immutable artifact.",
+        "Issue the external descendant-governance receipt only after the side carrier is present on origin/dwp-dev.",
+        "A separate later central integration authority may then permit direct fast-forward of backend dwp-dev to the reviewed generation commit."
+      ],
+      "rebaseSquashOrCherryPickOfGovernanceCarrierAllowed": false
+    },
+    "futureCentralIntegrationContract": {
+      "authorityPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-v62-generation-integration-r1/auth-v62-generation-central-integration-authority.v1.json",
+      "reviewPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-v62-generation-integration-r1/independent-review.v1.json",
+      "validatorPath": "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-v62-generation-integration-r1/validate_hrm013_auth_v62_generation_integration.py",
+      "packagePath": "package.json",
+      "authoritySchema": "dwp.hris.wave7.hrm013-auth-v62-generation-central-integration-authority.v1",
+      "authorityState": "INDEPENDENTLY_REVIEWED_HASH_BOUND_AUTH_V62_GENERATION_DIRECT_FAST_FORWARD_INTEGRATION_AUTHORITY",
+      "reviewSchema": "dwp.hris.wave7.hrm013-auth-v62-generation-central-integration-authority-independent-review.v1",
+      "reviewDecision": "GO_FOR_AUTH_V62_GENERATION_CENTRAL_INTEGRATION_AUTHORITY_CARRIER_COMMIT_AND_PUSH_ONLY",
+      "validatorPosition": 8,
+      "exactCarrierChangedPaths": [
+        "package.json",
+        "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-v62-generation-integration-r1/auth-v62-generation-central-integration-authority.v1.json",
+        "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-v62-generation-integration-r1/independent-review.v1.json",
+        "docs/06-delivery/hris/wave7-2026-10-17/r7-batch-06-hrm013-auth-v62-generation-integration-r1/validate_hrm013_auth_v62_generation_integration.py"
+      ],
+      "carrierRule": "The four-path successor carrier is one non-merge direct child of the then-current frontend origin/dwp-dev after the reviewed descendant-governance side carrier has been merged and pushed. Its authority pins that exact parent commit and tree, this generation authority carrier and artifacts, both external generation receipts, the exact generation lane commit and tree, and the descendant-governance carrier and receipt. The review pins the successor authority, validator and post-append package without pinning itself.",
+      "packageAppendRule": "Append exactly one tracked regular Python validator at position eight immediately after this immutable seventh validator using literal space-ampersand-ampersand-space; no pre-hook, post-hook, duplicate command or other package change is allowed.",
+      "externalReceiptPath": "/Users/a10697/Work/DWP/.codex-worktrees/hris/wave7-20261026/batch06/hrm013-owner-runtime/receipts/auth-v62-generation-central-integration-authority.v1.json",
+      "externalReceiptContract": {
+        "schema": "dwp.hris.wave7.hrm013-auth-v62-generation-central-integration-authority-receipt.v1",
+        "state": "HASH_BOUND_ZERO_FINDING_AUTH_V62_GENERATION_DIRECT_FAST_FORWARD_INTEGRATION_AUTHORITY",
+        "closedTopLevelFields": [
+          "schema",
+          "state",
+          "generationAuthorityCarrierCommit",
+          "generationAuthorityCarrierTree",
+          "generationAuthorityArtifact",
+          "generationTokenArtifact",
+          "generationValidatorArtifact",
+          "generationIndependentReviewArtifact",
+          "generationPackageArtifact",
+          "targetedVerificationReceiptSha256",
+          "postImplementationReviewReceiptSha256",
+          "backendBaseCommit",
+          "backendBaseTree",
+          "generationLaneCommit",
+          "generationLaneTree",
+          "generationLaneChangedPaths",
+          "descendantGovernanceCarrierCommit",
+          "descendantGovernanceCarrierTree",
+          "descendantGovernanceAuthorityArtifact",
+          "descendantGovernanceIndependentReviewArtifact",
+          "descendantGovernanceReceiptSha256",
+          "centralIntegrationAuthorityCarrierCommit",
+          "centralIntegrationAuthorityCarrierTree",
+          "centralIntegrationAuthorityArtifact",
+          "centralIntegrationValidatorArtifact",
+          "centralIntegrationIndependentReviewArtifact",
+          "centralIntegrationPackageArtifact",
+          "generationLaneCommittedAt",
+          "targetedVerificationVerifiedAt",
+          "postImplementationReviewReviewedAt",
+          "generationLanePushObservedAt",
+          "postImplementationReviewRecordedAt",
+          "descendantGovernanceReceiptRecordedAt",
+          "centralIntegrationReviewReviewedAt",
+          "centralIntegrationAuthorityCarrierCommittedAt",
+          "centralIntegrationAuthorityCarrierPushObservedAt",
+          "p0",
+          "p1",
+          "p2",
+          "decision",
+          "integrationMode",
+          "recordedAt",
+          "recordedBy"
+        ],
+        "decision": "GO_FOR_AUTH_V62_GENERATION_DIRECT_FAST_FORWARD_DWP_DEV_INTEGRATION_ONLY",
+        "integrationMode": "DIRECT_FAST_FORWARD_ONLY",
+        "recordedBy": "INDEPENDENT_HRM013_AUTH_V62_GENERATION_CENTRAL_INTEGRATION_REVIEW",
+        "fileSecurity": {
+          "regularFile": true,
+          "mode": "0600",
+          "owner": "CURRENT_EFFECTIVE_UID",
+          "linkCount": 1,
+          "maximumBytes": 65536,
+          "symlinkAllowed": false
+        },
+        "causalOrder": [
+          "generationLaneCommittedAt",
+          "targetedVerificationVerifiedAt",
+          "postImplementationReviewReviewedAt",
+          "generationLanePushObservedAt",
+          "postImplementationReviewRecordedAt",
+          "descendantGovernanceReceiptRecordedAt",
+          "centralIntegrationReviewReviewedAt",
+          "centralIntegrationAuthorityCarrierCommittedAt",
+          "centralIntegrationAuthorityCarrierPushObservedAt",
+          "recordedAt"
+        ]
+      },
+      "backendFastForwardRule": "Backend dwp-dev must remain at the pinned base until the exact successor carrier is committed and pushed, the external 0600 receipt validates every pinned artifact and zero-finding causal timestamp, and origin/dwp-dev can move by direct fast-forward only to the reviewed generation lane commit. Merge, rebase, squash, cherry-pick and any different target tree fail closed.",
+      "v271DelegationRule": "This generation authority and its central-integration successor authorize no V271 reservation, SQL or control-plane implementation. After the exact direct fast-forward is complete, a separate append-only Auth V271 authority and validator own every later V271 boundary."
+    },
+    "nextGate": "INDEPENDENTLY_REVIEW_THE_COMMITTED_PUSHED_GENERATION_RECEIPT_CREATE_REVIEW_AND_PUSH_THE_FIXED_CENTRAL_INTEGRATION_SUCCESSOR_ISSUE_ITS_EXTERNAL_RECEIPT_DIRECT_FAST_FORWARD_BACKEND_DWP_DEV_THEN_RESERVE_AUTH_MAIN_V271_IN_A_SEPARATE_EXCLUSIVE_LEASE"
+  },
+  "authority": {
+    "generationPreparationAuthorityComplete": true,
+    "independentReviewComplete": true,
+    "carrierCommitAndPushAuthorized": true,
+    "worktreeMaterializationAuthorizedAfterCarrierPush": true,
+    "sourceAuthoringAuthorizedAfterCleanWorktreeReceipt": true,
+    "authV62GenerationAuthorized": true,
+    "boundedGenerationCompatibilitySourceAuthorized": true,
+    "laneCommitAndPushAuthorizedAfterTargetedVerification": true,
+    "backendDwpDevIntegrationAuthorized": false,
+    "authV271ReservationAuthorized": false,
+    "authV271ImplementationAuthorized": false,
+    "migrationAuthoringAuthorized": false,
+    "runtimeJavaImplementationAuthorized": false,
+    "controllerOrRelayImplementationAuthorized": false,
+    "approvalOrPeopleOwnerRuntimeAuthorized": false,
+    "frontendUiMenuOrRouteAuthorized": false,
+    "featureEnablementAuthorized": false,
+    "tenantEnrollmentAuthorized": false,
+    "automaticImportAuthorized": false,
+    "productionBindingAuthorized": false,
+    "productionReleaseAuthorized": false,
+    "businessCompletionCredit": 0
+  }
+}
